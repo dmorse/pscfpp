@@ -2,32 +2,23 @@ Chemistry Descriptors
 ---------------------
 
 class Monomer {
-   Members id, kuhn, name
+   Members: id_, step_, name_
 }
 
-class Block 
+class Block
 {
-   Members:    id, length, Link1, Link2
-   Associated: MonomerDescriptor, Vertex1, Vertex2
-}
-
-class Link
-{
-   Members:    id
-   Associated: Block, headVertex, tailVertex
+   Members: id_, monomerId_, Pair<int> vertexIds_, length_
 }
 
 class Vertex
 {
-   int id, degree;
-   std::vector<Block> blocks_;
-   std::vector<Link>  inLinks_;
-   std::vector<Link>  outLinks_;
+   int id_;
+   std::vector<int> blocksIds_;
 }
 
 class Polymer
 {
-   Has: nVertex, nBlock, vertices, ends, blocks, links, plan
+   Members: nVertex_, nBlock_, vertices_, blocks_, plan_
 };
 
 class Solvent
@@ -40,38 +31,113 @@ class Solvent
 Solver Interfaces (System specific)
 -----------------------------------
 
-class FieldPair {
-   Associated: Monomer
-   Owns:       omega and rho fields
-};
-
-class LinkSolver
+class SpeciesSolver
 {
-   Associated: Link
-   Methods:    init, compute, rho, tailQFunction
-   Members:    sourceLinks
-};
+public:
 
-class SpeciesSolver{
-   Members: phi, mu, compute, q, rho
+   enum Ensemble {UNKNOWN, CLOSED, OPEN};
+
+   SpeciesSolver();
+
+   /**
+   * Sets volume fraction phi and sets ensemble to closed.
+   */
+   void setPhi();
+
+   /**
+   * Sets chemical potential and sets ensemble to closed.
+   */
+   void setMu();
+
+   void init() = 0;
+
+   /**
+   * Solve modified diffusion equation.
+   */
+   virtual void compute() = 0;
+
+   /**
+   * Get overall volume fraction for this species.
+   */
+   double phi() const;
+
+   /**
+   * Get chemical potential for this species.
+   */
+   double mu() const;
+
+   /**
+   * Get normalized partition function for this species.
+   */
+   double z() const;
+
+protected:
+
+   int ensemble_;
+   double phi_;
+   double mu_;
+   double z_;
+   bool isComputed_;
+
 }
 
+template <class BSolver>
 class PolymerSolver : public SpeciesSolver
 {
-   Associated: Polymer
-   Methods:    compute
-   Members:    LinkSolvers, phi, mu, Ensemble
+public:
+
+   void init();
+
+   void compute();
+
+   /**
+   * Get monomer concentration field for specific block.
+   */
+   const Field& blockConcentration(int monomerId) const;
+
+private:
+
+   Polymer* polymerPtr_;
+
+   GArray<Pair<BSolver>> blockSolvers_;
+
+   GArray<Field> blockConcentrations_;
+
 };
 
 class SolventSolver : public Species
 {
-   Associated: Solvent
-   Methods:    Compute
+public:
+
+   void init();
+
+   void compute();
+
+   /**
+   * Get monomer concentration field for specific block.
+   */
+   const Field& blockConcentration(int monomerId) const;
+
+private:
+
+   Solvent* solventPtr_;
+
 };
 
-class Factory {
-   Makes: LinkSolver, SolventSolver
-}
+template <class Field>
+class BlockSolver
+{
+public:
+   void init();
+   void compute(Field& omega);
+   const Field& q() const;
+private:
+   Block* blockPtr_;
+   int sign_;
+   Vertex* headVertex_;
+   Vertex* tailVertex_;
+   GArray<BlockSolver<Field>*> sourcesPtrs_;
+};
 
 -------------------------------------------------------------------
 Fields:
@@ -82,111 +148,13 @@ Fields:
 class Field
 {
    void clear();
-   Array<double>& grid();
+   Array<double>& nodes();
    Array<double>& coeffs();
 };
 
----------------------------------------------------------------
-/**
-* Interface for a species.
-*/
-class SpeciesSolver
+class SystemSolver
 {
-
 public:
-
-   enum Ensemble {UNKNOWN, CLOSED, OPEN};
-
-   Species(System& system);
-   setEnsemble(Ensemble& ensemble);
-   setPhi();
-   setMu();
-
-   /**
-   * Solve modified diffusion equation.
-   */
-   virtual void compute() = 0;
-
-   /**
-   * Get overall occupied volume fraction.
-   */
-   double phi();
-
-   /**
-   * Get chemical potential.
-   */
-   double mu();
-
-   /**
-   * Overall partition function.
-   */
-   double q();
-
-   /**
-   * Return concentration field for specific monomer.
-   */
-   const MonomerField& rho(Monomer& monomer) const;
-
-protected:
-
-   double phi_;
-   double mu_;
-   double q_
-   bool isComputed_;
-
-};
-
-/**
-* A Species associated with a polymer. 
-*
-* The type of the LinkSolver can be determined by a factory.
-*/
-class PolymerSpecies : public Species, PolymerDescriptor
-{
-
-   /**
-   * Constructor.
-   */
-   PolymerSpecies(LinkFactory& linkFactory);
-
-   /**
-   * Initialize system parameters.
-   */
-   void readParameters();
-
-   /**
-   * Calculate partition function.
-   */
-   void compute();
-
-private:
-
-   /// Array of LinkSolvers
-   DPArray<LinkSolver> linkSolvers_;
-
-};
-
-
-class SolventSpecies : public Species
-{
-
-   /**
-   *
-   */
-   void readParameters();
-
-   /**
-   * Calculate partition function and other quantities of interest.
-   */
-   virtual void compute();
-
-};
-
-/**
-* Abstract base class for a system.
-*/
-class System 
-{
 
    int nMonomer();
    int nSpecies();
