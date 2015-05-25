@@ -1,6 +1,7 @@
 chem_= \
   chem/Monomer.cpp\
-  chem/Block.cpp
+  chem/Block.cpp\
+  chem/Vertex.cpp
 
 chem_SRCS=\
      $(addprefix $(SRC_DIR)/, $(chem_))

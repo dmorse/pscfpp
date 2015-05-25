@@ -8,17 +8,23 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <vector>
+
 namespace Pfts{ 
 namespace Chem{
 
+   class Block;
+
    /**
-   * A junction or chain end in a block copolymer.
+   * A junction or chain end in a block polymer.
    */
    class Vertex
    {
    public:
+
+      Vertex();
    
-      void addBlock(Block& block, int end);
+      void addBlock(int blockId, int end);
       int degree();
    
    private:
