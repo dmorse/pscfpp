@@ -2,14 +2,18 @@
 #define PSCF_CHEM_BLOCK_H
 
 /*
-* PSCF++ - Polymer Self-Consistent Field Theory Simulator
+* PFTS - Polymer Field Theory Simulator
 *
 * Copyright 2013, David Morse (morse012@.umn.edu)
 * Distributed under the terms of the GNU General Public License.
 */
 
-namespace Pscf{ 
-namespace Core{
+#include <util/containers/Pair.h>
+
+namespace Pfts{ 
+namespace Chem{
+
+   using namespace Util;
 
    /**
    * A linear homopolymer block within a block copolymer.
@@ -19,10 +23,10 @@ namespace Core{
    
       Block();
    
-      setId(unsigned int id);
-      setVertexIds(int VertexAId, int VertexBId);
-      setMonomerId(int monomerId);
-      setLength(double length);
+      void setId(unsigned int id);
+      void setVertexIds(int VertexAId, int VertexBId);
+      void setMonomerId(int monomerId);
+      void setLength(double length);
    
       int id() const;
       int monomerId() const;

@@ -1,6 +1,6 @@
-chem_=
-  #chem/Monomer.cpp\
-  #chem/Block.cpp\
+chem_= \
+  chem/Monomer.cpp\
+  chem/Block.cpp
 
 chem_SRCS=\
      $(addprefix $(SRC_DIR)/, $(chem_))

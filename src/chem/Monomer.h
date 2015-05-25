@@ -2,13 +2,15 @@
 #define PSCF_CHEM_MONOMER_H
 
 /*
-* PSCF++ - Polymer Self-Consistent Field Theory Simulator
+* PFTS - Polymer Field Theory Simulator
 *
 * Copyright 2013, David Morse (morse012@.umn.edu)
 * Distributed under the terms of the GNU General Public License.
 */
 
-namespace Pscf{ 
+#include <string>
+
+namespace Pfts{ 
 namespace Chem{
 
    /**
@@ -19,9 +21,14 @@ namespace Chem{
    public:
 
       /**
+      * Constructor.
+      */
+      Monomer();
+
+      /**
       * Unique integer index for monomer type.
       */
-      unsigned int id() const;
+      int id() const;
 
       /**
       * Statistical segment length.
@@ -35,7 +42,7 @@ namespace Chem{
 
    private:
 
-      unsigned int  id_;
+      int  id_;
       double  step_;
       std::string  name_;
 
