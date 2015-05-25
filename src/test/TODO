@@ -1,0 +1,9 @@
+TODO:
+
+- Add ability to do regression tests based on small text strings stored 
+  in files, to remove/minimize the need for human inspection of unit test 
+  results.
+
+- Add ifdefs to makefiles and test composite code to allow the correct
+  tests to be run when compiled with MPI enabled or disabled. 
+
