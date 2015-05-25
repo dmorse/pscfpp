@@ -31,13 +31,12 @@ clean:
 clean-tests:
 	cd src/; $(MAKE) clean-tests
 
-clean:
-	cd src; $(MAKE) clean
-
 clean-bin:
+	-rm -f $(BIN_DIR)/makeDep
 	-rm -f $(BIN_DIR)/pft*
  
 veryclean:
+	make clean-bin
 	cd src; $(MAKE) veryclean
 #	cd doc; $(MAKE) clean
 

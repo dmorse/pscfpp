@@ -2,7 +2,6 @@
 .PHONY: all clean veryclean
 
 all: 
-	./configure -m0
 	cd util; $(MAKE) all
 	cd chem; $(MAKE) all
 
