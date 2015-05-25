@@ -11,7 +11,6 @@
 #include <vector>
 
 namespace Pfts{ 
-namespace Chem{
 
    class Block;
 
@@ -33,6 +32,5 @@ namespace Chem{
    
    };
 
-} 
 } 
 #endif 

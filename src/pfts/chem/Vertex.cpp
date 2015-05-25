@@ -5,16 +5,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Monomer.h"
+#include "Vertex.h"
 
 namespace Pfts{ 
-namespace Chem{
 
-   Monomer::Monomer()
-    : id_(-1),
-      step_(0.0),
-      name_()
+   Vertex::Vertex()
+    : blockIds_()
    {}
 
-} 
 } 

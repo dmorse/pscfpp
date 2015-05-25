@@ -11,7 +11,6 @@
 #include <util/containers/Pair.h>
 
 namespace Pfts{ 
-namespace Chem{
 
    using namespace Util;
 
@@ -43,6 +42,5 @@ namespace Chem{
 
    };
 
-} 
 } 
 #endif 

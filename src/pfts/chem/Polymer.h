@@ -9,7 +9,6 @@
 */
 
 namespace Pfts{ 
-namespace Chem{
 
    /**
    * Descriptor for an acyclic block polymer.
@@ -60,6 +59,5 @@ namespace Chem{
 
    };
 
-} 
 } 
 #endif 

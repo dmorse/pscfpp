@@ -9,18 +9,18 @@
 SRC_DIR_REL =..
 include $(SRC_DIR_REL)/config.mk
 include $(BLD_DIR)/util/config.mk
-include $(BLD_DIR)/chem/config.mk
-include $(SRC_DIR)/chem/patterns.mk
+include $(BLD_DIR)/pfts/config.mk
+include $(SRC_DIR)/pfts/patterns.mk
 include $(SRC_DIR)/util/sources.mk
-include $(SRC_DIR)/chem/sources.mk
+include $(SRC_DIR)/pfts/sources.mk
 
 #-----------------------------------------------------------------------
 # Main targets 
 
-all: $(chem_OBJS) $(chem_LIB)
+all: $(pfts_OBJS) $(pfts_LIB)
 
 clean:
-	rm -f $(chem_OBJS) $(chem_OBJS:.o=.d) $(chem_LIB)
+	rm -f $(pfts_OBJS) $(pfts_OBJS:.o=.d) $(pfts_LIB)
 	#cd tests; $(MAKE) clean
 
 veryclean:
@@ -32,4 +32,4 @@ veryclean:
 #-----------------------------------------------------------------------
 # Include dependency files
 
--include $(chem_OBJS:.o=.d)
+-include $(pfts_OBJS:.o=.d)

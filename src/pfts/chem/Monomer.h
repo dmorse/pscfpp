@@ -11,7 +11,6 @@
 #include <string>
 
 namespace Pfts{ 
-namespace Chem{
 
    /**
    * Descriptor for a monomer or particle type.
@@ -48,6 +47,5 @@ namespace Chem{
 
    };
 
-} 
 } 
 #endif 

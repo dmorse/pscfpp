@@ -8,7 +8,6 @@
 #include "Block.h"
 
 namespace Pfts{ 
-namespace Chem{
 
    Block::Block()
     : id_(-1),
@@ -17,5 +16,4 @@ namespace Chem{
       length_(0.0)
    {}
 
-} 
 } 
