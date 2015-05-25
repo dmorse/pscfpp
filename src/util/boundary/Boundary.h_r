@@ -1,0 +1,24 @@
+#ifndef UTIL_BOUNDARY_H
+#define UTIL_BOUNDARY_H
+
+/*
+* Simpatico - Simulation Package for Polymeric and Molecular Liquids
+*
+* Copyright 2010, The Regents of the University of Minnesota
+* Distributed under the terms of the GNU General Public License.
+*/
+
+#include "OrthorhombicBoundary.h"
+
+namespace Util
+{
+
+   /**
+   * Boundary is an alias for the periodic boundary condition class.
+   *
+   * \ingroup Boundary_Module
+   */
+   typedef OrthorhombicBoundary Boundary; 
+
+}
+#endif

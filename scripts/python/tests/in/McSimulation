@@ -1,0 +1,226 @@
+McSimulation{
+  FileMaster{
+    commandFileName                 commands
+    inputPrefix                          in/
+    outputPrefix                        out/
+  }
+  nAtomType                              2
+  nBondType                              1
+  atomTypes      A       1.0
+                 B       1.0
+  maskedPairPolicy                MaskBonded
+  SpeciesManager{
+
+    Diblock{
+      moleculeCapacity                     100
+      blockLength                            4
+                                             4
+      type                                   0
+                                             1
+    }
+
+    Diblock{
+      moleculeCapacity                     100
+      blockLength                            8
+                                             4
+      type                                   0
+                                             1
+    }
+
+    Diblock{
+      moleculeCapacity                     100
+      blockLength                            8
+                                             8
+      type                                   0
+                                             1
+    }
+
+  }
+  Random{
+    seed                          -13741892
+  }
+  McSystem{
+    EnergyEnsemble{
+      type                  isothermal
+      temperature           1.000000000000e+00
+    }
+    BoundaryEnsemble{
+      type                  rigid
+    }
+    maxBoundary             orthorhombic 11.0  11.0  11.0
+    LJPair{
+      epsilon               1.000000000000e+00  2.200000000000e+00
+                            2.200000000000e+00  1.000000000000e+00
+      sigma                 1.000000000000e+00  1.000000000000e+00
+                            1.000000000000e+00  1.000000000000e+00
+      cutoff                1.122460000000e+00  1.122460000000e+00
+                            1.122460000000e+00  1.122460000000e+00
+    }
+    HarmonicBond{
+      kappa                 2.000000000000e+03
+      length                1.000000000000e+00
+    }
+  }
+  McMoveManager{
+
+    HybridMdMove{
+      nStep                                 20
+      MdSystem{
+        PairList{
+          atomCapacity                       20000
+          pairCapacity                      100000
+          skin                  3.000000000000e-01
+        }
+        NVEIntegrator{
+          dt                    4.000000000000e-03
+        }
+      }
+    }
+    probability           0.100000000000e+00
+
+    EndSwapMove{
+      speciesId                         0
+    }
+    probability           0.900000000000e+00
+
+  }
+  AnalyzerManager{
+    baseInterval                          10
+
+    LogProgress{
+      interval                          2000
+    }
+
+    DumpConfig{
+      interval                         10000
+      outputFileName            dump/config.
+    }
+
+    McEnergyOutput{
+      interval                           200
+      outputFileName                  energy
+    }
+
+    McEnergyAverage{
+      interval                           200
+      outputFileName               energyAve
+      nSamplePerBlock                      1
+    }
+
+    McPairEnergyAverage{
+      interval                           200
+      outputFileName              pairEnergy
+      nSamplePerBlock                      1
+      selector                           all   0   1
+    }
+   
+    RadiusGyration{
+      interval                           200
+      outputFileName          RadiusGyration
+      nSamplePerBlock                      1
+      speciesId                            0
+    }
+
+    StructureFactorPGrid{
+      interval                          1000
+      outputFileName    StructureFactorPGrid
+      nAtomTypeIdPair                      2
+      atomTypeIdPairs                  0   0
+                                       0   1
+      hMax                                 4
+      lattice                          Cubic
+    }
+
+    StructureFactorP{
+      interval                           100
+      outputFileName        StructureFactorP
+      nAtomTypeIdPair                      3
+      atomTypeIdPairs                  0   0
+                                       0   1
+                                       1   1
+      nWave                               30
+      waveIntVectors              1    0   0
+                                  2    0   0
+                                  3    0   0
+                                  4    0   0
+                                  5    0   0
+                                  6    0   0
+                                  7    0   0
+                                  8    0   0
+                                  9    0   0
+                                 10    0   0
+                                 11    0   0
+                                 12    0   0
+                                 13    0   0
+                                 14    0   0
+                                 15    0   0
+                                 16    0   0
+                                 17    0   0
+                                 18    0   0
+                                 19    0   0
+                                 20    0   0
+                                 21    0   0
+                                 22    0   0
+                                 23    0   0
+                                 24    0   0
+                                 25    0   0
+                                 26    0   0
+                                 27    0   0
+                                 28    0   0
+                                 29    0   0
+                                 30    0   0
+      
+    }
+
+    StructureFactorGrid{
+      interval                          1000
+      outputFileName     StructureFactorGrid
+      nMode                                2
+      modes                       1.0   -1.0
+                                  1.0    1.0 
+      hMax                                 5
+      lattice                          Cubic
+    }
+
+    StructureFactor{
+      interval                           100
+      outputFileName         StructureFactor
+      nMode                                2
+      modes                       1.0   -1.0
+                                  1.0    1.0 
+      nWave                                5
+      waveIntVectors              1    0   0
+                                  2    0   0
+                                  3    0   0
+                                  4    0   0
+                                  5    0   0
+    }
+
+    VanHove{
+      interval                           100
+      outputFileName                 VanHove
+      atomTypeCoeffs                1.0 -1.0
+      nBuffer                             20
+      nWave                                5
+      waveIntVectors              1    0   0
+                                  2    0   0
+                                  3    0   0
+                                  4    0   0
+                                  5    0   0
+    }
+  }
+
+}
+
+
+
+    RDF{
+      interval                          1000
+      outputFileName                     RDF
+      RadialDistribution{
+         max                             5.0
+         nBin                            500
+      }
+      selector                         inter   -1    -1
+    }
+

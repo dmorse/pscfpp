@@ -1,0 +1,4 @@
+AutoCorrArray{
+  ensembleCapacity  4
+  bufferCapacity   25
+}

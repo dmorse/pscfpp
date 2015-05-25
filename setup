@@ -1,0 +1,46 @@
+#!/bin/bash
+
+#------------------------------------------------------------------------
+# Setup script:
+#
+# This script should be run once before the first time the program is
+# compiled. It must be run from the root pscf++/ directory, in which
+# this script is located.
+# 
+# This script:
+#
+# 1) Copies default or repository versions of several build configuration 
+# files, named config.mk_r, to modifiable user versions, named config.mk. 
+# A separate set of build configuration files is created in the src/
+# directory (for in-source build) and in the bld/serial and bld/parallel
+# object directories. 
+#
+# 2) Sets the makefile variables $(ROOT_DIR) and $(BLD_DIR) in the main
+# config.mk file in each object directory to the absolute paths of the 
+# current working directory of the object directory, respectively. 
+#
+# 3) Creates user-modifiable copies of the sources.mk files in the user/
+# subdirectory of each namespace level subdirectory of src/. 
+#
+# 4) Creates user modifiable copies of repository versions of some C++ 
+# source files that users often need to modify to add new features. 
+# Specifically, it makes copies of the factory implementation files 
+# and Boundary typedef.
+#------------------------------------------------------------------------
+
+# Create main config.mk files and set the value of $(ROOT_DIR) and $(BLD_DIR)
+sed -e "s|=PWD|=$PWD|" -e "s|=OWD|src|" src/config.mk_r > src/config.mk
+
+# Copy the makeDep dependency-maker script
+cp scripts/python/makeDep bin/
+
+# Namespace config.mk in src/ directory (for in-source builds)
+cp src/util/config.mk_r src/util/config.mk
+cp src/chem/config.mk_r src/chem/config.mk
+
+# ---------------------------------------------------------------------
+# Create copies of the configure script.
+
+#cp src/configure bld/serial/configure
+#cp src/configure bld/parallel/configure
+

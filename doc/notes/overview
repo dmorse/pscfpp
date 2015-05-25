@@ -1,0 +1,227 @@
+Chemistry Descriptors
+---------------------
+
+class Monomer {
+   Members id, kuhn, name
+}
+
+class Block 
+{
+   Members:    id, length, Link1, Link2
+   Associated: MonomerDescriptor, Vertex1, Vertex2
+}
+
+class Link
+{
+   Members:    id
+   Associated: Block, headVertex, tailVertex
+}
+
+class Vertex
+{
+   int id, degree;
+   std::vector<Block> blocks_;
+   std::vector<Link>  inLinks_;
+   std::vector<Link>  outLinks_;
+}
+
+class Polymer
+{
+   Has: nVertex, nBlock, vertices, ends, blocks, links, plan
+};
+
+class Solvent
+{
+   Associated: Monomer
+   Member:     Volume
+};
+
+
+Solver Interfaces (System specific)
+-----------------------------------
+
+class FieldPair {
+   Associated: Monomer
+   Owns:       omega and rho fields
+};
+
+class LinkSolver
+{
+   Associated: Link
+   Methods:    init, compute, rho, tailQFunction
+   Members:    sourceLinks
+};
+
+class SpeciesSolver{
+   Members: phi, mu, compute, q, rho
+}
+
+class PolymerSolver : public SpeciesSolver
+{
+   Associated: Polymer
+   Methods:    compute
+   Members:    LinkSolvers, phi, mu, Ensemble
+};
+
+class SolventSolver : public Species
+{
+   Associated: Solvent
+   Methods:    Compute
+};
+
+class Factory {
+   Makes: LinkSolver, SolventSolver
+}
+
+-------------------------------------------------------------------
+Fields:
+
+/**
+* A field that may be represented using either a grid or a basis.
+*/
+class Field
+{
+   void clear();
+   Array<double>& grid();
+   Array<double>& coeffs();
+};
+
+---------------------------------------------------------------
+/**
+* Interface for a species.
+*/
+class SpeciesSolver
+{
+
+public:
+
+   enum Ensemble {UNKNOWN, CLOSED, OPEN};
+
+   Species(System& system);
+   setEnsemble(Ensemble& ensemble);
+   setPhi();
+   setMu();
+
+   /**
+   * Solve modified diffusion equation.
+   */
+   virtual void compute() = 0;
+
+   /**
+   * Get overall occupied volume fraction.
+   */
+   double phi();
+
+   /**
+   * Get chemical potential.
+   */
+   double mu();
+
+   /**
+   * Overall partition function.
+   */
+   double q();
+
+   /**
+   * Return concentration field for specific monomer.
+   */
+   const MonomerField& rho(Monomer& monomer) const;
+
+protected:
+
+   double phi_;
+   double mu_;
+   double q_
+   bool isComputed_;
+
+};
+
+/**
+* A Species associated with a polymer. 
+*
+* The type of the LinkSolver can be determined by a factory.
+*/
+class PolymerSpecies : public Species, PolymerDescriptor
+{
+
+   /**
+   * Constructor.
+   */
+   PolymerSpecies(LinkFactory& linkFactory);
+
+   /**
+   * Initialize system parameters.
+   */
+   void readParameters();
+
+   /**
+   * Calculate partition function.
+   */
+   void compute();
+
+private:
+
+   /// Array of LinkSolvers
+   DPArray<LinkSolver> linkSolvers_;
+
+};
+
+
+class SolventSpecies : public Species
+{
+
+   /**
+   *
+   */
+   void readParameters();
+
+   /**
+   * Calculate partition function and other quantities of interest.
+   */
+   virtual void compute();
+
+};
+
+/**
+* Abstract base class for a system.
+*/
+class System 
+{
+
+   int nMonomer();
+   int nSpecies();
+
+   Monomer& monomer(int id);
+   Species& Species(int id);
+
+   /**
+   * Compute ideal gas properties for all species.
+   */
+   virtual void compute();
+
+   /**
+   * Return omega field for monomer index id.
+   */
+   virtual Field& omega(int id) = 0;
+
+   /**
+   * Return rho (volume fraction) field for monomer 
+   * index id.
+   */
+   virtual Field& rho(int id) = 0;
+
+private:
+
+   DArray<Monomer>  monomers_;
+   PArray<Species>  species_;
+
+};
+
+-----------------------------------------------------------------------
+Concrete Solver Classes:
+
+class FourierBasis {};
+class PeriodicField : public Field {};
+class PlaneWaveField : public PeriodicField {};
+class PseudoSpectralLinkSolver{};
+

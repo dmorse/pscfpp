@@ -1,0 +1,9 @@
+#!/bin/bash -l
+#PBS -l walltime=0:01:00,pmem=200mb,nodes=1:ppn=2
+#PBS -o zout
+#PBS -j oe
+#PBS -N test
+
+cd $HOME/molmcd/trunk/src/util/mpi/tests
+module load ompi/gnu
+/usr/bin/time mpirun -np 2 $HOME/molmcd/trunk/src/util/mpi/tests/Test

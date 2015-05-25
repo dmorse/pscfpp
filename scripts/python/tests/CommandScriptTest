@@ -1,0 +1,23 @@
+#!/usr/bin/env python
+
+from CommandScript import *
+
+p = readCommandFile('in/commands')
+
+print p
+
+print p.RUN
+
+print p.RUN.param()
+print p.THERMALIZE.param(1)
+
+p.THERMALIZE.setParam("3.0", 1)
+
+print p
+
+#print str(p.SpeciesManager.Diblock)
+#print str(p.SpeciesManager.Diblock[0])
+#print str(p.SpeciesManager.Diblock[1])
+#print str(p.SpeciesManager.Diblock[2])
+
+

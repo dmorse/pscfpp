@@ -1,0 +1,4 @@
+TensorAverage{
+  nSamplePerBlock              1
+}
+

@@ -1,0 +1,4 @@
+These tests are designed to run with exactly two processors.
+To run, after compiling:
+
+&> mpirun -np 2 ./MpiTest

@@ -1,0 +1,437 @@
+Descriptors
+---------------------------------
+
+class Monomer
+{
+public:
+
+   /**
+   * Unique integer index for monomer type.
+   */
+   unsigned int id() const;
+
+   /**
+   * Statistical segment length.
+   */
+   double kuhn() const;
+
+   /**
+   * Monomer name string.
+   */
+   std::string name() const;
+
+private:
+
+   unsigned int id_;
+   double       kuhn_;
+   std::string  name_;
+
+   Field* omegaPtr_;
+   Field* rhoPtr_;
+};
+
+--------------------------------------------------------------
+Polymer Descriptors
+ 
+/**
+* A linear hompolymer block within a block copolymer polymer.
+*/
+class Block
+{
+
+   Block();
+
+   setVertices(Vertex& v1, Vertex& v2);
+   setId(unsigned int id);
+   setMonomer(Monomer& monomer);
+   setLength(double length);
+   computeNStep(double dS0);
+
+   unsigned int id() const;
+   const Link& link1() const;
+   const Link& link2() const;
+   const Monomer& monomer() const;
+   double length() const;
+   double ds() const;
+   unsigned int nStep() const;
+ 
+private:
+
+   Link     link1_;
+   Link     link2_;
+   double   length_;
+   double   ds_;
+   Monomer* monomerPtr_
+   int      nStep_;
+   int      id_;
+};
+
+
+/**
+* A directed polymer block, with a distinct head and tail vertices.
+*
+* A link is a directed version of a block, with distinct and tail
+* vertices. It also has an associated LinkSolver, which can solve 
+* the modified diffusion equation.
+*
+* The initial condition for the LinkSolver is given by the singly
+* constrainted partition function q(r) for the partial tree rooted 
+* at the head vertex, pointing away from this link, with the head
+* vertex constrained to position r. The solver propagates this
+* function from the head to the tail node.
+*/
+class Link
+{
+
+public:
+
+   Link();
+
+   void init(Vertex& head, Vertex& tail, Block& block);
+   Block& block() const;
+   Vertex& head() const;
+   set addSolver(LinkSolver& solver)
+   LinkSolver& solver();
+
+private:
+
+   Block*      blockPtr_;
+   Vertex*     headPtr_;
+   Vertex*     tailPtr_;
+   LinkSolver* solverPtr_;
+
+};
+
+class Vertex
+{
+public:
+
+   void addBlock(Block& block);
+   int degree();
+   Link& inLink(unsigned int);
+   Link& outLink(unsigned int);
+
+private:
+
+   int degree_;
+   std::vector<Link*> inLinks_;
+   std::vector<Link*> outLinks_;
+
+};
+
+
+class PolymerDescriptor
+{
+
+   void readParam(std::istream& in);
+   void makePlan();
+
+   Array<Vertex>&  vertices();
+   PArray<Vertex>& ends();
+   PArray<Vertex>& junctions();
+   Array<Block>&   blocks();
+   PolymerSolver&  solver();
+
+   /**
+   * Array of all links.
+   *
+   * The links array is ordered in the order of the computation 
+   * plan, i.e., in an order in which the links must be solved
+   * so that the intitial condition for each link is provided
+   * by the solution of links that have already been solved.
+   */
+   PArray<Link>& links();
+
+   /**
+   * Volume per molecule, in units of reference volume.
+   */
+   double volume();
+   int    nVertex();
+   int    nEnd();  //
+   int    nBlock();  //
+
+private:
+
+   unsigned int    nVertex_;
+   unsigned int    nBond_;
+   PolymerSolver*  solverPtr_;
+   DArray<Vertex>  vertices_;
+   DPArray<Vertex> ends_;
+   DArray<Bond>    bonds_;
+   DArray<Links>   links_;
+
+   (Question: Should LinkSolver be derived from link rather
+    than being associated? The distinction could be hidden
+    by having pass through functions.)
+
+};
+
+-------------------------------------------------------------------
+Fields:
+
+/**
+* A field that may be represented using either a grid or a basis.
+*/
+class Field
+{
+public:
+
+   Field();
+  
+   /**
+   * Clear all field values.
+   */ 
+   void clear();
+
+   DArray<double>& grid();
+   DArray<double>& basis();
+   virtual void computeBasis() = 0;
+   virtual void computeGrid() = 0;
+
+   const DArray<double>& grid() const;
+   const DArray<double>& basis() const;
+};
+
+/**
+* Field associated with a Monomer Type.
+*/
+class MonomerField : public Field
+{
+public:
+   setMonomer(Monomer& monomer);
+   Monomer& monomer();
+private:
+   Monomer* monomerPtr_;
+};
+
+
+---------------------------------------------------------------
+Solver Interfaces:
+
+/**
+* Solver for modified diffusion for one link.
+*/
+class LinkSolver
+{
+
+   /**
+   * Constructor (takes a Link).
+   */
+   LinkSolver(Link& link);
+
+   /**
+   * Create associations to input links of head vertex.
+   */
+   void init();
+
+   /**
+   * Solve modified diffusion equation.
+   */
+   virtual void solve() = 0;
+
+   /**
+   * Return unnormalized concentration field.
+   */
+   virtual Field& rho() = 0;
+
+   /**
+   * Return partition function q(r) at tail vertex.
+   */
+   virtual Field& tailQFunction() = 0;
+
+   /**
+   * Return corresponding link by reference.
+   */
+   const Link& link() const;
+
+protected:
+
+   Link*  linkPtr_;  
+   std::vector<LinkSolver> inLinksSolvers_;
+ 
+};
+
+
+---------------------------------------------------------------
+/**
+* Interface for a species.
+*/
+class Species
+{
+
+public:
+
+   enum Ensemble {UNKNOWN, CLOSED, OPEN};
+
+   Species(System& system);
+   setEnsemble(Ensemble& ensemble);
+   setPhi();
+   setMu();
+
+   /**
+   * Solve modified diffusion equation.
+   */
+   virtual void solve() = 0;
+
+   /**
+   * Get overall occupied volume fraction.
+   */
+   double phi();
+
+   /**
+   * Get chemical potential.
+   */
+   double mu();
+
+   /**
+   * Overall partition function.
+   */
+   double q();
+
+   /**
+   * Return concentration field for specific monomer.
+   */
+   const MonomerField& rho(Monomer& monomer) const;
+
+protected:
+
+   double phi_;
+   double mu_;
+   double q_
+   bool isComputed_;
+
+};
+
+/**
+* A Species associated with a polymer. 
+*
+* The type of the LinkSolver can be determined by a factory.
+*/
+template <class LinkSolverType>
+class PolymerSpecies : public Species, polymerDescriptor
+{
+
+   /**
+   * Constructor.
+   */
+   PolymerSpecies();
+
+   /**
+   * Initialize system parameters.
+   */
+   void readParameters();
+
+   /**
+   * Calculate partition function.
+   */
+   void compute();
+
+private:
+
+   /// Array of LinkSolvers
+   DArray<LinkSolverType> linkSolvers_;
+
+};
+
+template <class FieldType>
+class SolventSpecies : public Species
+{
+
+
+   /**
+   *
+   */
+   void readParameters();
+
+   /**
+   * Calculate partition function and other quantities of interest.
+   */
+   virtual void compute();
+
+};
+
+/**
+* Abstract base class for a system.
+*/
+class System 
+{
+
+   int nMonomer();
+   int nSpecies();
+
+   Monomer& monomer(int id);
+   Species& Species(int id);
+
+   /**
+   * Compute ideal gas properties for all species.
+   */
+   virtual void compute();
+
+   /**
+   * Return omega field for monomer index id.
+   */
+   virtual Field& omega(int id) = 0;
+
+   /**
+   * Return rho (volume fraction) field for monomer 
+   * index id.
+   */
+   virtual Field& rho(int id) = 0;
+
+private:
+
+   DArray<Monomer>  monomers_;
+   DArray<Species>  species_;
+
+};
+
+-----------------------------------------------------------------------
+Concrete Solver Classes:
+
+class FourierBasis {};
+class PeriodicField : public Field {};
+class PlaneWaveField : public PeriodicField {};
+class PseudoSpectralLinkSolver{};
+-----------------------------------------------------------------------
+
+Initialization:
+
+/// Have the System constructor take factories to create Field and Species.
+System::System(FieldFactory& fieldFactory, 
+               LinkFactory& linkFactory, 
+               SolventFactory& solventFactory)
+{
+   SpeciesFactory.setMonomerArray(Array<Monomer>&)
+};
+
+System::readParam() 
+{
+
+    read nMonomer
+    For each Monomer in DArray::Monomer {
+      Read Monomer description
+      Use FieldFactory to create an associated field.
+    }
+    For each Species in SpeciesManager{
+
+        Use SpeciesFactory to create either an instance of either:
+
+           PolymerSpecies (or a templated implementation?)
+           SolventSpecies
+        
+        PolymerSpecies::readParam() {
+
+           Read nVertex, allocate vertices_ array, set ids.
+           Read nBond  , allocate bonds_ array, set ids.
+           For each Bond:
+              Read vertex ids, set vertices.
+              Use factory to create Links (subclasses of Link)
+              Vertex::addBond {
+                 Add in and out links to vertex PArrays
+              }
+           }
+           For each bond {
+              Add inLinks from head vertex
+           }
+        }
+    }
