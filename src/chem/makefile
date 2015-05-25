@@ -21,16 +21,13 @@ all: $(chem_OBJS) $(chem_LIB)
 
 clean:
 	rm -f $(chem_OBJS) $(chem_OBJS:.o=.d) $(chem_LIB)
-	cd tests; $(MAKE) clean
+	#cd tests; $(MAKE) clean
 
 veryclean:
 	$(MAKE) clean
-	rm -f */*.o */*/*.o */*/*/*.o
-	rm -f */*.d */*/*.d */*/*/*.d
-	rm -f lib*.a
-ifeq ($(BLD_DIR),$(SRC_DIR))
-	rm -f boundary/Boundary.h
-endif
+	-rm -f */*.o 
+	-rm -f */*.d 
+	-rm -f lib*.a
 
 #-----------------------------------------------------------------------
 # Include dependency files
