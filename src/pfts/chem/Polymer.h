@@ -1,5 +1,5 @@
-#ifndef PSCF_CHEM_POLYMER_H
-#define PSCF_CHEM_POLYMER_H
+#ifndef PFTS_POLYMER_H
+#define PFTS_POLYMER_H
 
 /*
 * PFTS - Polymer Field Theory Simulator

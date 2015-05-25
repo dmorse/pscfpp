@@ -1,5 +1,5 @@
-#ifndef PSCF_CHEM_MONOMER_H
-#define PSCF_CHEM_MONOMER_H
+#ifndef PFTS_MONOMER_H
+#define PFTS_MONOMER_H
 
 /*
 * PFTS - Polymer Field Theory Simulator

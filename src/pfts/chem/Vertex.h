@@ -1,5 +1,5 @@
-#ifndef PSCF_CHEM_VERTEX_H
-#define PSCF_CHEM_VERTEX_H
+#ifndef PFTS_VERTEX_H
+#define PFTS_VERTEX_H
 
 /*
 * PFTS - Polymer Field Theory Simulator
