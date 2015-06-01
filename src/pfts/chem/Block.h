@@ -27,7 +27,13 @@ namespace Pfts{
       * Constructor.
       */ 
       Block();
-   
+  
+      /**
+      * Serialize to/from archive.
+      */ 
+      template <class Archive>
+      void serialize(Archive& ar, unsigned int);
+    
       /**
       * Set the id for this block.
       *
@@ -83,7 +89,7 @@ namespace Pfts{
       * Get the length (number of monomers) in this block.
       */
       double length() const;
-    
+
    private:
    
       int id_;
@@ -148,6 +154,15 @@ namespace Pfts{
    */
    inline double Block::length() const
    {  return length_; }
+    
+   template <class Archive>
+   void Block::serialize(Archive& ar, unsigned int)
+   {
+      ar & id_;
+      ar & monomerId_;
+      ar & vertexIds_;
+      ar & length_;
+   }
     
 } 
 #endif 

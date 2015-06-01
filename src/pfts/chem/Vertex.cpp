@@ -17,6 +17,9 @@ namespace Pfts{
       id_(-1)
    {}
 
+   Vertex::~Vertex()
+   {}
+
    void Vertex::setId(int id)
    {  id_ = id; }
 

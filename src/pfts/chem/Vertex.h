@@ -24,6 +24,7 @@ namespace Pfts{
    public:
 
       Vertex();
+      ~Vertex();
    
       void setId(int id);
       void addBlock(const Block& block);
