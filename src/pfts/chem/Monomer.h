@@ -10,7 +10,7 @@
 
 #include <string>
 
-namespace Pfts{ 
+namespace Pfts{
 
    /**
    * Descriptor for a monomer or particle type.
@@ -47,5 +47,25 @@ namespace Pfts{
 
    };
 
-} 
-#endif 
+   // inline member functions
+
+   /*
+   * Get monomer type index.
+   */
+   inline int Monomer::id() const
+   {  return id_; }
+
+   /*
+   * Statistical segment length.
+   */
+   inline double Monomer::step() const
+   {  return step_; }
+
+   /*
+   * Monomer name string.
+   */
+   inline std::string Monomer::name() const
+   {  return name_; }
+
+}
+#endif

@@ -31,7 +31,7 @@ namespace Pfts{
       *
       * \param id integer index for this block
       */ 
-      void setId(unsigned int id);
+      void setId(int id);
   
       /**
       * Set indices of associated vertices.
@@ -71,6 +71,13 @@ namespace Pfts{
       const Pair<int>& vertexIds() const;
   
       /**
+      * Get id of an associated vertex.
+      *
+      * \param i index of vertex (0 or 1)
+      */ 
+      int vertexId(int i) const;
+  
+      /**
       * Get the length (number of monomers) in this block.
       */
       double length() const;
@@ -87,25 +94,31 @@ namespace Pfts{
    /*
    * Get the id of this block.
    */ 
-   int Block::id() const
+   inline int Block::id() const
    {  return id_; }
 
    /*
    * Get the monomer type id.
    */ 
-   int Block::monomerId() const
+   inline int Block::monomerId() const
    {  return monomerId_; }
 
    /*
    * Get the pair of associated vertex ids.
    */ 
-   const Pair<int>& Block::vertexIds() const
+   inline const Pair<int>& Block::vertexIds() const
    {  return vertexIds_; }
+
+   /*
+   * Get id of an associated vertex.
+   */ 
+   inline int Block::vertexId(int i) const
+   {  return vertexIds_[i]; }
 
    /*
    * Get the length (number of monomers) in this block.
    */
-   double Block::length() const
+   inline double Block::length() const
    {  return length_; }
     
 } 
