@@ -28,10 +28,10 @@ namespace Pfts{
    /*
    * Set indices of associated vertices.
    */ 
-   void Block::setVertexIds(int vertexAId, int vertexBId)
+   void Block::setVertexIds(int vertexId0, int vertexId1)
    { 
-      vertexIds_[0] = vertexAId; 
-      vertexIds_[1] = vertexBId; 
+      vertexIds_[0] = vertexId0; 
+      vertexIds_[1] = vertexId1; 
    }
   
    /*
@@ -46,4 +46,33 @@ namespace Pfts{
    void Block::setLength(double length)
    {  length_ = length; }
   
+   /* 
+   * Extract a Block from an istream.
+   */
+   std::istream& operator>>(std::istream& in, Block &block)
+   {
+      in >> block.id_;
+      in >> block.monomerId_;
+      in >> block.vertexIds_[0];
+      in >> block.vertexIds_[1];
+      in >> block.length_;
+      return in;
+   }
+   
+   /* 
+   * Output a Block to an ostream, without line breaks.
+   */
+   std::ostream& operator<<(std::ostream& out, const Block &block) 
+   {
+      // out.setf(std::ios::scientific);
+      // out.width(Block::Width);
+      // out.precision(Block::Precision);
+      out << block.id_;
+      out << block.monomerId_;
+      out << block.vertexIds_[0];
+      out << block.vertexIds_[1];
+      out << block.length_;
+      return out;
+   }
+
 } 

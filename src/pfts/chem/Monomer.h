@@ -9,6 +9,7 @@
 */
 
 #include <string>
+#include <iostream>
 
 namespace Pfts{
 
@@ -45,7 +46,33 @@ namespace Pfts{
       double  step_;
       std::string  name_;
 
+   //friends
+
+      friend 
+      std::istream& operator >> (std::istream& in, Monomer& monomer);
+
+      friend 
+      std::ostream& operator << (std::ostream& out, const Monomer& monomer);
+
    };
+
+   /**
+   * istream extractor for a Monomer.
+   *
+   * \param in  input stream
+   * \param monomer  Monomer to be read from stream
+   * \return modified input stream
+   */
+   std::istream& operator >> (std::istream& in, Monomer& monomer);
+
+   /**
+   * ostream inserter for a Monomer.
+   *
+   * \param out  output stream
+   * \param monomer  Monomer to be written to stream
+   * \return modified output stream
+   */
+   std::ostream& operator << (std::ostream& out, const Monomer& monomer);
 
    // inline member functions
 

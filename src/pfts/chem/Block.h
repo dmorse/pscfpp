@@ -10,6 +10,8 @@
 
 #include <util/containers/Pair.h>
 
+#include <iostream>
+
 namespace Pfts{ 
 
    using namespace Util;
@@ -89,7 +91,33 @@ namespace Pfts{
       Pair<int> vertexIds_;
       double length_;
 
+      friend 
+      std::istream& operator >> (std::istream& in, Block &block);
+
+      friend 
+      std::ostream& operator << (std::ostream& out, const Block &block);
+
    };
+
+   /**
+   * istream extractor for a Block.
+   *
+   * \param in  input stream
+   * \param block  Block to be read from stream
+   * \return modified input stream
+   */
+   std::istream& operator >> (std::istream& in, Block &block);
+
+   /**
+   * ostream inserter for a Block.
+   *
+   * \param out  output stream
+   * \param block  Block to be written to stream
+   * \return modified output stream
+   */
+   std::ostream& operator << (std::ostream& out, const Block &block);
+
+   // Inline member functions
 
    /*
    * Get the id of this block.
