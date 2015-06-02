@@ -155,6 +155,9 @@ namespace Pfts{
    inline double Block::length() const
    {  return length_; }
     
+   /*
+   * Serialize to/from an archive.
+   */
    template <class Archive>
    void Block::serialize(Archive& ar, unsigned int)
    {

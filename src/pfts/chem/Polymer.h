@@ -24,6 +24,7 @@ namespace Pfts{
    */
    class Polymer : public ParamComposite
    {
+   public:
 
       /**
       * Constructor.
