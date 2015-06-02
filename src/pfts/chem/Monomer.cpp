@@ -31,11 +31,12 @@ namespace Pfts{
    */
    std::ostream& operator << (std::ostream& out, const Monomer& monomer) 
    {
-      //out.setf(std::ios::scientific);
-      //out.width(Monomer::Width);
-      //out.precision(Monomer::Precision);
       out << monomer.id_;
-      out << monomer.name_;
+      out << "  " << monomer.name_;
+      out << "  ";
+      out.setf(std::ios::scientific);
+      out.width(15);
+      out.precision(8);
       out << monomer.step_;
       return out;
    }

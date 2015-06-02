@@ -64,13 +64,14 @@ namespace Pfts{
    */
    std::ostream& operator<<(std::ostream& out, const Block &block) 
    {
-      // out.setf(std::ios::scientific);
-      // out.width(Block::Width);
-      // out.precision(Block::Precision);
       out << block.id_;
-      out << block.monomerId_;
-      out << block.vertexIds_[0];
-      out << block.vertexIds_[1];
+      out << "  " << block.monomerId_;
+      out << "  " << block.vertexIds_[0];
+      out << "  " << block.vertexIds_[1];
+      out << "  ";
+      out.setf(std::ios::scientific);
+      out.width(16);
+      out.precision(8);
       out << block.length_;
       return out;
    }

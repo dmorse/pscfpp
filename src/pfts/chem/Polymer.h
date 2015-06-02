@@ -9,11 +9,11 @@
 */
 
 #include <util/param/ParamComposite.h>   // base class
+#include <util/containers/DArray.h>      // member template
+#include <util/containers/Pair.h>        // member template
 #include "Monomer.h"                     // member template argument
 #include "Block.h"                       // member template argument
 #include "Vertex.h"                      // member template argument
-#include <util/containers/DArray.h>      // member template
-#include <util/containers/Pair.h>        // member template
 
 namespace Pfts{ 
 

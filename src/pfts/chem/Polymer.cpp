@@ -9,6 +9,9 @@
 
 namespace Pfts{ 
 
+   /*
+   * Constructor.
+   */
    Polymer::Polymer()
     : blocks_(),
       vertices_(),
