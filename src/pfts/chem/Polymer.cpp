@@ -27,8 +27,13 @@ namespace Pfts{
       read<int>(in, "nVertex", nVertex_);
       readDArray<Block>(in, "blocks", blocks_, nBlock_);
 
-      // Allocate vertices array and add blocks.
+      // Allocate array of vertices and set vertex indices
       vertices_.allocate(nVertex_);
+      for (int vertexId = 0; vertexId < nVertex_; ++vertexId) {
+         vertices_[vertexId].setId(vertexId);
+      }
+
+      // Add blocks to vertices
       int vertexId0, vertexId1;
       for (int blockId = 0; blockId < nBlock_; ++blockId) {
           vertexId0 = blocks_[blockId].vertexId(0);

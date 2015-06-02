@@ -1,5 +1,5 @@
 #ifndef BLOCK_TEST_H
-#define BLOCK_TEST
+#define BLOCK_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
@@ -38,7 +38,12 @@ public:
       openInputFile("in/Block", in);
 
       in >> v;
-      std::cout << v << std::endl ;
+      TEST_ASSERT(v.id() == 5);
+      TEST_ASSERT(v.monomerId() == 0);
+      TEST_ASSERT(v.vertexId(0) == 3);
+      TEST_ASSERT(v.vertexId(1) == 4);
+      TEST_ASSERT(eq(v.length(), 2.0));
+      // std::cout << v << std::endl ;
    }
 
 };

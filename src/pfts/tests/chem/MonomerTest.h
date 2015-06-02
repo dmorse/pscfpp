@@ -1,5 +1,5 @@
 #ifndef MONOMER_TEST_H
-#define MONOMER_TEST
+#define MONOMER_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>

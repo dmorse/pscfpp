@@ -31,8 +31,8 @@ namespace Pfts{
 
       int id() const;
       int size() const;
-      const GArray< Pair<int> >& inSolverIds() const;
-      const GArray< Pair<int> >& outSolverIds() const;
+      const Pair<int>& inSolverId(int i) const;
+      const Pair<int>& outSolverId(int i) const;
    
    private:
    
@@ -49,12 +49,12 @@ namespace Pfts{
    {  return outSolverIds_.size(); }
 
    inline 
-   const GArray< Pair<int> >& Vertex::inSolverIds() const
-   {  return inSolverIds_; }
+   const Pair<int>& Vertex::inSolverId(int i) const
+   {  return inSolverIds_[i]; }
 
    inline 
-   const GArray< Pair<int> >& Vertex::outSolverIds() const
-   {  return outSolverIds_; }
+   const Pair<int>& Vertex::outSolverId(int i) const
+   {  return outSolverIds_[i]; }
 
 } 
 #endif 
