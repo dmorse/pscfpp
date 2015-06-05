@@ -1,7 +1,8 @@
 pfts_chem_= \
   pfts/chem/Monomer.cpp\
   pfts/chem/Block.cpp\
-  pfts/chem/Vertex.cpp
+  pfts/chem/Vertex.cpp\
+  pfts/chem/Polymer.cpp
 
 pfts_chem_SRCS=\
      $(addprefix $(SRC_DIR)/, $(pfts_chem_))

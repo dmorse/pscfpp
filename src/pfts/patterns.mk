@@ -12,7 +12,7 @@
 #-----------------------------------------------------------------------
 
 # All libraries needed in src/pfts
-LIBS=$(pfts_LIB)
+LIBS=$(pfts_LIB) $(util_LIB)
 
 # Preprocessor macro definitions needed in src/pfts
 DEFINES=$(UTIL_DEFS)

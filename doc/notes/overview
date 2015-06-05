@@ -31,6 +31,45 @@ class Solvent
 Solver Interfaces (System specific)
 -----------------------------------
 
+template <class BlockSolver, class SolventSolver,
+          class WField, class QField, class CField>
+class SystemSolver
+{
+public:
+
+   int nMonomer();
+   int nPolymer();
+   int nSolvent();
+
+   Monomer& monomer(int id);
+   PolymerSolver& polymer(int id);
+   SolventSolver& solvent(int id);
+
+   /**
+   * Compute ideal gas properties for all species.
+   */
+   virtual void compute();
+
+   /**
+   * Return W (chemical potential) field for monomer index id.
+   */
+   virtual WField& w(int id);
+
+   /**
+   * Return concentration field for monomer index id.
+   */
+   virtual CField& c(int id);
+
+private:
+
+   DArray<Monomer> monomers_;
+   DArray<WField> wFields_;
+   DArray<CField> cFields_;
+   DArray<PolymerSolver> polymers_;
+   DArray<SolventSolver> solvents_;
+
+};
+
 class SpeciesSolver
 {
 public:
@@ -40,15 +79,18 @@ public:
    SpeciesSolver();
 
    /**
-   * Sets volume fraction phi and sets ensemble to closed.
+   * Set volume fraction phi, and set ensemble to closed.
    */
    void setPhi();
 
    /**
-   * Sets chemical potential and sets ensemble to closed.
+   * Sets chemical potential, and sets ensemble to open.
    */
    void setMu();
 
+   /**
+   * Complete initialization.
+   */
    void init() = 0;
 
    /**
@@ -62,27 +104,53 @@ public:
    double phi() const;
 
    /**
-   * Get chemical potential for this species.
+   * Get chemical potential for this species (units kT=1).
    */
    double mu() const;
 
    /**
-   * Get normalized partition function for this species.
+   * Get scalar partition function for this species.
    */
-   double z() const;
+   double q() const;
 
 protected:
 
-   int ensemble_;
    double phi_;
    double mu_;
-   double z_;
+   double q_;
+   int ensemble_;
    bool isComputed_;
 
 }
 
-template <class BSolver>
-class PolymerSolver : public SpeciesSolver
+template <class BlockSolver>
+class PolymerSolver : public SpeciesSolver, public Polymer
+{
+public:
+
+   /**
+   * Complete initialization.
+   */
+   virtual void readParameters();
+
+   virtual void compute();
+
+   /**
+   * Get monomer concentration field for specific block.
+   */
+   const cField& c(int blockId) const;
+
+private:
+
+   DArray<Pair<BlockSolver>> blockSolvers_;
+
+   DArray<CField> cFields_;
+
+   void init();
+
+};
+
+class SolventSolver : public SpeciesSolver, public Solvent
 {
 public:
 
@@ -91,46 +159,23 @@ public:
    void compute();
 
    /**
-   * Get monomer concentration field for specific block.
+   * Get monomer concentration field for this solvent.
    */
-   const Field& blockConcentration(int monomerId) const;
+   const CField& c(int monomerId) const;
 
-private:
+protected:
 
-   Polymer* polymerPtr_;
-
-   GArray<Pair<BSolver>> blockSolvers_;
-
-   GArray<Field> blockConcentrations_;
+   CField cField_;
 
 };
 
-class SolventSolver : public Species
-{
-public:
-
-   void init();
-
-   void compute();
-
-   /**
-   * Get monomer concentration field for specific block.
-   */
-   const Field& blockConcentration(int monomerId) const;
-
-private:
-
-   Solvent* solventPtr_;
-
-};
-
-template <class Field>
+template <class WField, class QField, class CField>
 class BlockSolver
 {
 public:
    void init();
-   void compute(Field& omega);
-   const Field& q() const;
+   void compute(WField& wField);
+   const QField& qField() const;
 private:
    Block* blockPtr_;
    int sign_;
@@ -150,39 +195,6 @@ class Field
    void clear();
    Array<double>& nodes();
    Array<double>& coeffs();
-};
-
-class SystemSolver
-{
-public:
-
-   int nMonomer();
-   int nSpecies();
-
-   Monomer& monomer(int id);
-   Species& Species(int id);
-
-   /**
-   * Compute ideal gas properties for all species.
-   */
-   virtual void compute();
-
-   /**
-   * Return omega field for monomer index id.
-   */
-   virtual Field& omega(int id) = 0;
-
-   /**
-   * Return rho (volume fraction) field for monomer 
-   * index id.
-   */
-   virtual Field& rho(int id) = 0;
-
-private:
-
-   DArray<Monomer>  monomers_;
-   PArray<Species>  species_;
-
 };
 
 -----------------------------------------------------------------------

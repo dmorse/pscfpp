@@ -8,11 +8,13 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <vector>
+#include <util/containers/GArray.h>
+#include <util/containers/Pair.h>
 
 namespace Pfts{ 
 
    class Block;
+   using namespace Util;
 
    /**
    * A junction or chain end in a block polymer.
@@ -22,15 +24,37 @@ namespace Pfts{
    public:
 
       Vertex();
+      ~Vertex();
    
-      void addBlock(int blockId, int end);
-      int degree();
+      void setId(int id);
+      void addBlock(const Block& block);
+
+      int id() const;
+      int size() const;
+      const Pair<int>& inSolverId(int i) const;
+      const Pair<int>& outSolverId(int i) const;
    
    private:
    
-      std::vector<int> blockIds_;
+      GArray< Pair<int> > inSolverIds_;
+      GArray< Pair<int> > outSolverIds_;
+      int id_;
    
    };
+
+   inline int Vertex::id() const
+   {  return id_; }
+
+   inline int Vertex::size() const
+   {  return outSolverIds_.size(); }
+
+   inline 
+   const Pair<int>& Vertex::inSolverId(int i) const
+   {  return inSolverIds_[i]; }
+
+   inline 
+   const Pair<int>& Vertex::outSolverId(int i) const
+   {  return outSolverIds_[i]; }
 
 } 
 #endif 

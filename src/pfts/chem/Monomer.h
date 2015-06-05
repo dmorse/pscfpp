@@ -9,8 +9,9 @@
 */
 
 #include <string>
+#include <iostream>
 
-namespace Pfts{ 
+namespace Pfts{
 
    /**
    * Descriptor for a monomer or particle type.
@@ -45,7 +46,53 @@ namespace Pfts{
       double  step_;
       std::string  name_;
 
+   //friends
+
+      friend 
+      std::istream& operator >> (std::istream& in, Monomer& monomer);
+
+      friend 
+      std::ostream& operator << (std::ostream& out, const Monomer& monomer);
+
    };
 
-} 
-#endif 
+   /**
+   * istream extractor for a Monomer.
+   *
+   * \param in  input stream
+   * \param monomer  Monomer to be read from stream
+   * \return modified input stream
+   */
+   std::istream& operator >> (std::istream& in, Monomer& monomer);
+
+   /**
+   * ostream inserter for a Monomer.
+   *
+   * \param out  output stream
+   * \param monomer  Monomer to be written to stream
+   * \return modified output stream
+   */
+   std::ostream& operator << (std::ostream& out, const Monomer& monomer);
+
+   // inline member functions
+
+   /*
+   * Get monomer type index.
+   */
+   inline int Monomer::id() const
+   {  return id_; }
+
+   /*
+   * Statistical segment length.
+   */
+   inline double Monomer::step() const
+   {  return step_; }
+
+   /*
+   * Monomer name string.
+   */
+   inline std::string Monomer::name() const
+   {  return name_; }
+
+}
+#endif
