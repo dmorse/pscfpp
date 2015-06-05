@@ -2,91 +2,125 @@ Chemistry Descriptors
 ---------------------
 
 class Monomer {
-   Members: id_, step_, name_
-}
+   Data: id_, step_, name_
+};
 
 class Block
 {
-   Members: id_, monomerId_, Pair<int> vertexIds_, length_
-}
+   Data: id_, monomerId_, Pair<int> vertexIds_, length_
+};
 
 class Vertex
 {
    int id_;
-   std::vector<int> blocksIds_;
-}
-
-class Polymer
-{
-   Members: nVertex_, nBlock_, vertices_, blocks_, plan_
+   GArray< Pair<int> > inBlockIds_;
+   GArray< Pair<int> > inBlockIds_;
 };
 
-class Solvent
+class PolymerDescriptor
 {
-   Associated: Monomer
-   Member:     Volume
+   Data: nVertex_, nBlock_, vertices_, blocks_, plan_
 };
 
+class SolventDescriptor
+{
+   Data: monomerId, volume 
+};
 
-Solver Interfaces (System specific)
------------------------------------
+-------------------------------------------------------------
+Field Class Concepts:
 
-template <class BlockSolver, class SolventSolver,
-          class WField, class QField, class CField>
-class SystemSolver
+class WField {
+
+   // Read-only access by grid point
+   const Array<double>& grid();
+   double operator [] (int i) const;
+
+   // Read-write access by basis function coefficient
+   Array<double>& basis();
+   double& operator () (int i);
+   double operator () (int i) const;
+
+   computeGrid();
+   computeBasis();
+
+};
+
+class CField {
+
+   // Read-write access by grid point
+   const Array<double>& grid();
+   double& operator [] (int i);
+   double operator [] (int i) const;
+
+   // Read-write access by basis function coefficient
+   Array<double>& basis);
+   double& operator () (int i);
+   double operator () (int i) const;
+
+   computeGrid();
+   computeBasis();
+};
+
+class QField 
+{
+   /**
+   * Set to identity field.
+   */
+   setToIdentity();
+
+   // Read-write access by grid point
+   double& operator () (int i);
+   double operator [] (int i) const;
+
+   // Multipication of fields
+   QField& operator *= (QField& );
+};
+
+-------------------------------------------------------------
+Propagator Class Template:
+
+template <class W, class Q>
+class Propagator
 {
 public:
 
-   int nMonomer();
-   int nPolymer();
-   int nSolvent();
+   void setBlock(Block& block, int sign);
+   void addSource(Propagator<W, Q>& other);
+   void init();
+   void compute(W& w);
 
-   Monomer& monomer(int id);
-   PolymerSolver& polymer(int id);
-   SolventSolver& solvent(int id);
-
-   /**
-   * Compute ideal gas properties for all species.
-   */
-   virtual void compute();
-
-   /**
-   * Return W (chemical potential) field for monomer index id.
-   */
-   virtual WField& w(int id);
-
-   /**
-   * Return concentration field for monomer index id.
-   */
-   virtual CField& c(int id);
+   const Block& block() const;
+   const Q& tail() const;
 
 private:
 
-   DArray<Monomer> monomers_;
-   DArray<WField> wFields_;
-   DArray<CField> cFields_;
-   DArray<PolymerSolver> polymers_;
-   DArray<SolventSolver> solvents_;
+   Block* blockPtr_;
+   int sign_;
+   GArray<Propagator<W, Q>*> sourcesPtrs_;
 
 };
 
-class SpeciesSolver
+-------------------------------------------------------------
+Molecular Species Base Classes and Templates:
+
+class Species
 {
 public:
 
    enum Ensemble {UNKNOWN, CLOSED, OPEN};
 
-   SpeciesSolver();
+   Species();
 
    /**
    * Set volume fraction phi, and set ensemble to closed.
    */
-   void setPhi();
+   void setPhi(double phi);
 
    /**
    * Sets chemical potential, and sets ensemble to open.
    */
-   void setMu();
+   void setMu(double mu);
 
    /**
    * Complete initialization.
@@ -121,10 +155,10 @@ protected:
    int ensemble_;
    bool isComputed_;
 
-}
+};
 
-template <class BlockSolver>
-class PolymerSolver : public SpeciesSolver, public Polymer
+template <class P, class C>
+class Polymer : public Species, public PolymerDescriptor
 {
 public:
 
@@ -138,19 +172,20 @@ public:
    /**
    * Get monomer concentration field for specific block.
    */
-   const cField& c(int blockId) const;
+   const cField& concentration(int blockId, int sign) const;
 
 private:
 
-   DArray<Pair<BlockSolver>> blockSolvers_;
+   DArray<Pair<P>> propagators_;
 
-   DArray<CField> cFields_;
+   DArray<C> concentrations_;
 
    void init();
-
 };
 
-class SolventSolver : public SpeciesSolver, public Solvent
+
+template <class C>
+class Solvent : public Species, public SolventDescriptor
 {
 public:
 
@@ -161,47 +196,50 @@ public:
    /**
    * Get monomer concentration field for this solvent.
    */
-   const CField& c(int monomerId) const;
+   const C& concentration() const;
 
 protected:
 
-   CField cField_;
+   C concentration_;
 
 };
 
-template <class WField, class QField, class CField>
-class BlockSolver
+template <class Monomer, class Polymer, class Solvent,
+          class W, class Q, class C>
+class System
 {
 public:
-   void init();
-   void compute(WField& wField);
-   const QField& qField() const;
+
+   int nMonomer();
+   int nPolymer();
+   int nSolvent();
+
+   Monomer& monomer(int id);
+   Polymer& polymer(int id);
+   Solvent& solvent(int id);
+
+   /**
+   * Compute ideal gas properties for all species.
+   */
+   virtual void compute();
+
+   /**
+   * Return W (chemical potential) field for monomer index id.
+   */
+   virtual W& w(int id);
+
+   /**
+   * Return concentration field for monomer index id.
+   */
+   virtual C& c(int id);
+
 private:
-   Block* blockPtr_;
-   int sign_;
-   Vertex* headVertex_;
-   Vertex* tailVertex_;
-   GArray<BlockSolver<Field>*> sourcesPtrs_;
+
+   DArray<Monomer> monomers_;
+   DArray<W> wFields_;
+   DArray<C> cFields_;
+   DArray<Polymer> polymers_;
+   DArray<Solvent> solvents_;
+
 };
-
--------------------------------------------------------------------
-Fields:
-
-/**
-* A field that may be represented using either a grid or a basis.
-*/
-class Field
-{
-   void clear();
-   Array<double>& nodes();
-   Array<double>& coeffs();
-};
-
------------------------------------------------------------------------
-Concrete Solver Classes:
-
-class FourierBasis {};
-class PeriodicField : public Field {};
-class PlaneWaveField : public PeriodicField {};
-class PseudoSpectralLinkSolver{};
 

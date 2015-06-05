@@ -1,8 +1,0 @@
------------------------------------------------------------------------
-Concrete Solver Classes:
-
-class FourierBasis {};
-class PeriodicField : public Field {};
-class PlaneWaveField : public PeriodicField {};
-class PseudoSpectralLinkSolver{};
-
