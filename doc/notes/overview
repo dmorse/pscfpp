@@ -19,7 +19,7 @@ class Vertex
 
 class PolymerDescriptor
 {
-   Data: nVertex_, nBlock_, vertices_, blocks_, plan_
+   Data: nVertex_, nBlock_, vertices_, propagators_, plan_
 };
 
 class SolventDescriptor
@@ -42,8 +42,6 @@ class WField {
    double operator () (int i) const;
 
    computeGrid();
-   computeBasis();
-
 };
 
 class CField {
@@ -242,4 +240,3 @@ private:
    DArray<Solvent> solvents_;
 
 };
-
