@@ -1,10 +1,10 @@
-#ifndef POLYMER_TEST_H
-#define POLYMER_TEST_H
+#ifndef POLYMER_DESCRIPTOR_TEST_H
+#define POLYMER_DESCRIPTOR_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pfts/chem/Polymer.h>
+#include <pfts/chem/PolymerDescriptor.h>
 #include <pfts/chem/Vertex.h>
 #include <pfts/chem/Block.h>
 
@@ -13,7 +13,7 @@
 using namespace Pfts;
 //using namespace Util;
 
-class PolymerTest : public UnitTest 
+class PolymerDescriptorTest : public UnitTest 
 {
 
 public:
@@ -28,7 +28,7 @@ public:
    void testConstructor()
    {
       printMethod(TEST_FUNC);
-      Polymer p;
+      PolymerDescriptor p;
    } 
 
    void testReadParam() {
@@ -36,9 +36,9 @@ public:
       printEndl();
 
       std::ifstream in;
-      openInputFile("in/Polymer", in);
+      openInputFile("in/PolymerDescriptor", in);
 
-      Polymer p;
+      PolymerDescriptor p;
       p.readParam(in);
       p.writeParam(std::cout);
 
@@ -50,9 +50,9 @@ public:
 
 };
 
-TEST_BEGIN(PolymerTest)
-TEST_ADD(PolymerTest, testConstructor)
-TEST_ADD(PolymerTest, testReadParam)
-TEST_END(PolymerTest)
+TEST_BEGIN(PolymerDescriptorTest)
+TEST_ADD(PolymerDescriptorTest, testConstructor)
+TEST_ADD(PolymerDescriptorTest, testReadParam)
+TEST_END(PolymerDescriptorTest)
 
 #endif

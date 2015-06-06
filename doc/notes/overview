@@ -121,14 +121,14 @@ public:
    void setMu(double mu);
 
    /**
-   * Complete initialization.
-   */
-   void init() = 0;
-
-   /**
-   * Solve modified diffusion equation.
+   * Solve modified diffusion equation and set related quantities.
    */
    virtual void compute() = 0;
+
+   /**
+   * Clear all computed quantities.
+   */
+   void clear();
 
    /**
    * Get overall volume fraction for this species.
@@ -145,12 +145,36 @@ public:
    */
    double q() const;
 
+   /**
+   * Get statistical ensemble for this species (open or closed).
+   */
+   Ensemble ensemble();
+
 protected:
 
+   /**
+   * Volume fraction, set by either setPhi or compute function.
+   */
    double phi_;
+
+   /**
+   * Chemical potential, set by either setPhi or compute function.
+   */
    double mu_;
+
+   /**
+   * Partition function, set by compute function.
+   */
    double q_;
+
+   /**
+   * Statistical ensemble for this species (open or closed).
+   */
    int ensemble_;
+
+   /**
+   * Set true by upon return by compute() and set false by clear().
+   */
    bool isComputed_;
 
 };
@@ -161,24 +185,33 @@ class Polymer : public Species, public PolymerDescriptor
 public:
 
    /**
-   * Complete initialization.
+   * Read parameters and initialize.
    */
    virtual void readParameters();
 
-   virtual void compute();
+   /**
+   * Solve modified diffusion equation for all blocks.
+   */
+   virtual void compute() = 0;
 
    /**
    * Get monomer concentration field for specific block.
    */
-   const cField& concentration(int blockId, int sign) const;
+   const C& blockCField(int blockId) const;
+
+   /**
+   * Get propagator for a specific block and direction.
+   */
+   const P& propagator(int blockId, int direction) const;
 
 private:
 
    DArray<Pair<P>> propagators_;
 
-   DArray<C> concentrations_;
+   DArray<C> blockCFields_;
 
    void init();
+
 };
 
 
@@ -187,9 +220,15 @@ class Solvent : public Species, public SolventDescriptor
 {
 public:
 
-   void init();
+   /**
+   * Read parameters and initialize.
+   */
+   virtual void readParameters();
 
-   void compute();
+   /**
+   * Compute concentration and partition function.
+   */
+   virtual void compute() = 0;
 
    /**
    * Get monomer concentration field for this solvent.
@@ -203,7 +242,7 @@ protected:
 };
 
 template <class Monomer, class Polymer, class Solvent,
-          class W, class Q, class C>
+          class WField, class CField>
 class System
 {
 public:
@@ -224,19 +263,38 @@ public:
    /**
    * Return W (chemical potential) field for monomer index id.
    */
-   virtual W& w(int id);
+   virtual WField& wField(int id);
 
    /**
    * Return concentration field for monomer index id.
    */
-   virtual C& c(int id);
+   virtual CField& cField(int id);
 
 private:
 
+   /**
+   * Array of monomer type descriptors.
+   */
    DArray<Monomer> monomers_;
-   DArray<W> wFields_;
-   DArray<C> cFields_;
+
+   /**
+   * Array of fields associated with monomer types.
+   */
+   DArray<WField> wFields_;
+
+   /**
+   * Array of monomer concentration fields.
+   */
+   DArray<CField> cFields_;
+
+   /**
+   * Array of polymer species solvers objects.
+   */
    DArray<Polymer> polymers_;
+
+   /**
+   * Array of solvent species solvers.
+   */
    DArray<Solvent> solvents_;
 
 };

@@ -1,4 +1,4 @@
-Polymer{
+PolymerDescriptor{
    nBlock  2
    nVertex 3
    blocks 0 0 0 1 2.0

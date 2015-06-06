@@ -5,14 +5,14 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Polymer.h"
+#include "PolymerDescriptor.h"
 
 namespace Pfts{ 
 
    /*
    * Constructor.
    */
-   Polymer::Polymer()
+   PolymerDescriptor::PolymerDescriptor()
     : blocks_(),
       vertices_(),
       plan_(),
@@ -20,10 +20,10 @@ namespace Pfts{
       nBlock_(0),
       nVertex_()
    {
-      setClassName("Polymer");
+      setClassName("PolymerDescriptor");
    }
 
-   void Polymer::readParameters(std::istream& in)
+   void PolymerDescriptor::readParameters(std::istream& in)
    {
       read<int>(in, "nBlock", nBlock_);
       read<int>(in, "nVertex", nVertex_);

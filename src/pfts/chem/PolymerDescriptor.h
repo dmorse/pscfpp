@@ -1,5 +1,5 @@
-#ifndef PFTS_POLYMER_H
-#define PFTS_POLYMER_H
+#ifndef PFTS_POLYMER_DESCRIPTOR_H
+#define PFTS_POLYMER_DESCRIPTOR_H
 
 /*
 * PFTS - Polymer Field Theory Simulator
@@ -22,14 +22,14 @@ namespace Pfts{
    /**
    * Descriptor for an acyclic block polymer.
    */
-   class Polymer : public ParamComposite
+   class PolymerDescriptor : public ParamComposite
    {
    public:
 
       /**
       * Constructor.
       */
-      Polymer();
+      PolymerDescriptor();
 
       /**
       * Read and initialize polymer structure.
@@ -93,31 +93,31 @@ namespace Pfts{
    /*
    * Number of blocks.
    */
-   inline int Polymer::nBlock() const
+   inline int PolymerDescriptor::nBlock() const
    {  return nBlock_; }
 
    /*
    * Number of vertices (ends and/or junctions)
    */
-   inline int Polymer::nVertex() const
+   inline int PolymerDescriptor::nVertex() const
    {  return nVertex_; }
 
    /*
    * Volume per molecule, in units of reference volume.
    */
-   inline double Polymer::volume() const
+   inline double PolymerDescriptor::volume() const
    {  return volume_; }
 
    /*
    * Get a specified Block.
    */
-   inline const Block& Polymer::blocks(int id) const
+   inline const Block& PolymerDescriptor::blocks(int id) const
    {  return blocks_[id]; }
 
    /*
    * Get a specified Vertex.
    */
-   inline const Vertex& Polymer::vertex(int id) const
+   inline const Vertex& PolymerDescriptor::vertex(int id) const
    {  return vertices_[id]; }
 
 } 
