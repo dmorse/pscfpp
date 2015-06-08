@@ -12,48 +12,12 @@ namespace Pfts{
 
    using namespace Util;
    
-   template <class Monomer, class Polymer, class Solvent,
-             class WField, class CField>
+   template <class TMonomer, class TPolymer, class TSolvent,
+             class TWField, class TCField>
    class SystemTemplate
    {
    public:
   
-      /**
-      * Get number of monomers.
-      */ 
-      int nMonomer();
-  
-      /**
-      * Get number of polymer species.
-      */ 
-      int nPolymer();
-  
-      /**
-      * Get number of solvent (point particle) species.
-      */ 
-      int nSolvent();
-  
-      /**
-      * Get a Monomer type descriptor.
-      * 
-      * \param id integer monomer type index
-      */ 
-      Monomer& monomer(int id);
-  
-      /**
-      * Set a Polymer solver object.
-      * 
-      * \param id integer polymer species index
-      */ 
-      Polymer& polymer(int id);
-  
-      /**
-      * Set a Solvent solver object.
-      * 
-      * \param id integer solvent species index
-      */ 
-      Solvent& solvent(int id);
-   
       /**
       * Compute ideal gas properties for all species.
       */
@@ -61,45 +25,89 @@ namespace Pfts{
       {}
    
       /**
-      * Return W (chemical potential) field for monomer index id.
-      */
-      WField& wField(int id);
+      * Get a Monomer type descriptor.
+      * 
+      * \param id integer monomer type index
+      */ 
+      TMonomer& monomer(int id);
+  
+      /**
+      * Get a polymer object.
+      * 
+      * \param id integer polymer species index
+      */ 
+      TPolymer& polymer(int id);
+  
+      /**
+      * Set a solvent solver object.
+      * 
+      * \param id integer solvent species index
+      */ 
+      TSolvent& solvent(int id);
    
       /**
-      * Return concentration field for monomer index id.
+      * Return W (chemical potential) field for a specific monomer type.
+      * 
+      * \param monomerId integer monomer type index
       */
-      CField& cField(int id);
+      TWField& wField(int monomerId);
    
+      /**
+      * Return concentration field for specific monomer type.
+      *
+      * \param monomerId integer monomer type index
+      */
+      TCField& cField(int id);
+   
+      /**
+      * Get number of monomers.
+      */ 
+      int nMonomer() const;
+  
+      /**
+      * Get number of polymer species.
+      */ 
+      int nPolymer() const;
+  
+      /**
+      * Get number of solvent (point particle) species.
+      */ 
+      int nSolvent() const;
+  
    private:
    
       /**
       * Array of monomer type descriptors.
       */
-      DArray<Monomer> monomers_;
+      DArray<TMonomer> monomers_;
    
       /**
-      * Array of fields associated with monomer types.
+      * Array of chemical potential fields for monomer types.
       *
       * Indexed by monomer typeId, size = nMonomer.
       */
-      DArray<WField> wFields_;
+      DArray<TWField> wFields_;
    
       /**
       * Array of concentration fields for monomer types.
       *
       * Indexed by monomer typeId, size = nMonomer.
       */
-      DArray<CField> cFields_;
+      DArray<TCField> cFields_;
    
       /**
       * Array of polymer species solvers objects.
+      *
+      * Size = nPolymer.
       */
-      DArray<Polymer> polymers_;
+      DArray<TPolymer> polymers_;
    
       /**
       * Array of solvent species solvers.
+      *
+      * Size = nSolvent.
       */
-      DArray<Solvent> solvents_;
+      DArray<TSolvent> solvents_;
    
    };
 

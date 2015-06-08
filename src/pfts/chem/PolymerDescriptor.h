@@ -70,20 +70,28 @@ namespace Pfts{
       /**
       * Computation plan.
       *
-      * The links array is ordered in the order of the computation
-      * plan, i.e., in an order in which the links must be solved
-      * so that the intitial condition for each link is provided
-      * by the solution of links that have already been solved.
+      * An array of propagator ids ordered in the order in which 
+      * they should be computed, so that the intitial condition 
+      * for each link is provided by the solution of links that 
+      * have already been solved.
       */
       const DArray< Pair<int> >& plan() const;
 
    private:
 
+      /// Array of Block objects in this polymer.
       DArray<Block> blocks_;
+
+      /// Array of Vertex objects in this polymer.
       DArray<Vertex> vertices_;
+
+      /// Plan for order in which propagators should be computed.
       DArray< Pair<int> > plan_;
+
       double volume_;
-      int nBlock_;
+      /// Number of blocks in this polymer
+
+      /// Number of vertices (ends or junctions) in this polymer
       int nVertex_;
 
       void makePlan();
