@@ -1,0 +1,10 @@
+
+1) Build a simple 1D finite difference code. 
+   Use simple relaxation and Newton-Raphson iterators.
+
+2) Build a 1D pseudospectral code (no symmetry).
+
+3) Generalize pseudospectral code to 2D and 3D, via templates if possible.
+
+4) Add code for symmetry adapted basis functions.
+
