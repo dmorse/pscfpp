@@ -28,54 +28,6 @@ class SolventDescriptor
 };
 
 -------------------------------------------------------------
-Field Class Concepts:
-
-class WField {
-
-   // Read-only access by grid point
-   const Array<double>& grid();
-   double operator [] (int i) const;
-
-   // Read-write access by basis function coefficient
-   Array<double>& basis();
-   double& operator () (int i);
-   double operator () (int i) const;
-
-   computeGrid();
-};
-
-class CField {
-
-   // Read-write access by grid point
-   const Array<double>& grid();
-   double& operator [] (int i);
-   double operator [] (int i) const;
-
-   // Read-write access by basis function coefficient
-   Array<double>& basis);
-   double& operator () (int i);
-   double operator () (int i) const;
-
-   computeGrid();
-   computeBasis();
-};
-
-class QField 
-{
-   /**
-   * Set to identity field.
-   */
-   setToIdentity();
-
-   // Read-write access by grid point
-   double& operator () (int i);
-   double operator [] (int i) const;
-
-   // Multipication of fields
-   QField& operator *= (QField& );
-};
-
--------------------------------------------------------------
 Propagator Class Template:
 
 template <class W, class Q>
@@ -100,7 +52,7 @@ private:
 };
 
 -------------------------------------------------------------
-Molecular Species Base Classes and Templates:
+Species Base Classes and Templates:
 
 class Species
 {
@@ -214,7 +166,7 @@ private:
 
 };
 
-
+-------------------------------------------------------------
 template <class C>
 class Solvent : public Species, public SolventDescriptor
 {

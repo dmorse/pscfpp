@@ -1,10 +1,30 @@
 
-1) Build a simple 1D finite difference code. 
+0) Test templates in ptfs/chem
+
+1) Build a simple 1D finite difference code.
+   Use directory ptfs/grid1D, namespace Grid1D
    Use simple relaxation and Newton-Raphson iterators.
+   Classes: Simulation (has System, Domain, Iterator)
+            Domain
+            Iterator
+            Polymer 
+            Propagator
 
-2) Build a 1D pseudospectral code (no symmetry).
+2) Build a 1D pseudospectral code for periodic 1D functions.
+   Use directory ptfs/periodicPs, namespace Periodic.
+   Classes: Simulation (has System, UnitCell, Basis, Iterator)
+            UnitCell
+            Basis
+            Iterator
+            Polymer
+            Propagator
 
-3) Generalize pseudospectral code to 2D and 3D, via templates if possible.
+   Start with RelaxationIterator and NewtonRaphsonIterator
 
-4) Add code for symmetry adapted basis functions.
+3) Generalize periodic code to 2D and 3D, via templates if possible.
 
+4) Add approximate NR Iterator, AndersonIterator.
+
+5) Add code for symmetry adapted basis functions.
+
+6) Add stress calculators.

@@ -1,0 +1,72 @@
+-------------------------------------------------------------
+Field Class Concepts:
+
+class WField {
+
+   // Read-only access by grid point
+   const Array<double>& grid();
+   double operator [] (int i) const;
+
+   // Read-write access by basis function coefficient
+   Array<double>& expansion();
+   double& operator () (int i);
+   double operator () (int i) const;
+
+   computeGrid();
+
+   // Assignment operator
+   QField& operator = (QField& other);
+
+   // Increment operator
+   QField& operator += (QField& other);
+
+   // Decrement operator
+   QField& operator -= (QField& other);
+
+};
+
+
+class CField {
+
+   // Read-write access by grid point
+   const Array<double>& grid();
+   double& operator [] (int i);
+   double operator [] (int i) const;
+
+   // Read-write access by basis function coefficient
+   Array<double>& expansion();
+   double& operator () (int i);
+   double operator () (int i) const;
+
+   computeGrid();
+   computeExpansion();
+
+   // Assignment operator
+   QField& operator = (QField& other);
+
+   // Increment operator
+   QField& operator += (QField& other);
+
+   // Decrement operator
+   QField& operator -= (QField& other);
+
+};
+
+class QField 
+{
+   /**
+   * Set to identity field.
+   */
+   setToIdentity();
+
+   // Read-write access by grid point
+   double& operator [] (int i);
+   double operator [] (int i) const;
+
+   // Assignment operator
+   QField& operator = (QField& other);
+
+   // Multipication of fields
+   QField& operator *= (QField& other);
+
+};
