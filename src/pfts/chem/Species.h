@@ -17,16 +17,19 @@ namespace Pfts{
    public:
    
       enum Ensemble {UNKNOWN, CLOSED, OPEN};
-   
+
+      /**
+      * Default constructor.
+      */    
       Species();
    
       /**
-      * Set volume fraction phi, and set ensemble to closed.
+      * Set volume fraction phi, and set ensemble type to closed.
       */
       void setPhi(double phi);
    
       /**
-      * Sets chemical potential, and sets ensemble to open.
+      * Sets chemical potential, and set ensemble type to open.
       */
       void setMu(double mu);
    

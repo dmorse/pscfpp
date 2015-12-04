@@ -24,6 +24,7 @@ namespace Pfts{
    */
    class PolymerDescriptor : public ParamComposite
    {
+
    public:
 
       /**
@@ -46,7 +47,7 @@ namespace Pfts{
       /**
       * Number of vertices (ends and/or junctions).
       */
-      int  nVertex() const;
+      int nVertex() const;
 
       /**
       * Volume per molecule, in units of reference volume.
@@ -58,7 +59,7 @@ namespace Pfts{
       * 
       * \param id block index
       */
-      const Block& blocks(int id) const;
+      const Block& block(int id) const;
 
       /**
       * Get a specified Vertex.
@@ -77,6 +78,10 @@ namespace Pfts{
       */
       const DArray< Pair<int> >& plan() const;
 
+   protected:
+
+      virtual void makePlan();
+
    private:
 
       /// Array of Block objects in this polymer.
@@ -89,12 +94,12 @@ namespace Pfts{
       DArray< Pair<int> > plan_;
 
       double volume_;
+
       /// Number of blocks in this polymer
+      int nBlock_;
 
       /// Number of vertices (ends or junctions) in this polymer
       int nVertex_;
-
-      void makePlan();
 
    };
   
@@ -119,7 +124,7 @@ namespace Pfts{
    /*
    * Get a specified Block.
    */
-   inline const Block& PolymerDescriptor::blocks(int id) const
+   inline const Block& PolymerDescriptor::block(int id) const
    {  return blocks_[id]; }
 
    /*

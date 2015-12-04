@@ -49,4 +49,37 @@ namespace Pfts{
 
    }
 
+   void PolymerDescriptor::makePlan()
+   {
+      DMatrix<bool> isFinished;
+      isFinished.allocate(nBlock_, 2);
+      Pair<int> linkId;
+      Vertex* rootVertexPtr = 0;
+      int rootVertexId = -1;
+      int nFinished = 0;
+      bool isReady;
+      while (nFinished < nBlock_*2) {
+         for (int iBlock = 0; iBlock < nBlock_; ++iBlock) {
+            for (int iDirection = 0; iDirection < 2; ++iDirection) {
+               isReady = true;
+               rootVertexId = blocks_[iBlock].vertexId(iDirection);
+               rootVertexPtr = &vertices_[rootVertexId];
+               for (int j = 0; j < rootVertexPtr->size(); ++j) {
+                  linkId = rootVertexPtr->inSolverId(j);
+                  if (linkId[0] != iBlock) {
+                     if (!isFinished(linkId[0], linkId[1])) {
+                        isReady = false;
+                        break;
+                     }
+                  }
+               }
+               if (isReady) {
+                  isFinished(iBlock, iDirection) = true;
+                   ++nFinished;
+               }
+            }
+         }
+      }
+   }
+
 } 

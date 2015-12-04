@@ -23,7 +23,7 @@ namespace Pfts{
       virtual void readParameters();
    
       /**
-      * Get monomer concentration field for specific block.
+      * Get the monomer concentration field for a specific block.
       *
       * \param blockId integer index of associated block
       */
@@ -34,11 +34,12 @@ namespace Pfts{
       *
       * Convention: The directionId for a propagagor is based on the
       * indexing of vertex ids for the associated Block, as returned 
-      * by Block::vertexId(int). Let p be a PolymerTemplate object,
-      * let i be a block index, and let v0 = p.block.vertexId(0) and 
-      * v1 = p.block(i).vertexId(1) be indices of associated vertices.
-      * Then, p.propagator(i,v0) propagates vertex v0 to v1, while
-      * p.propagator(i, v1) propagates from vertex v1 to v0.
+      * by Block::vertexId(int). Suppose p is a PolymerTemplate object,
+      * object b = p.block(i) is a Block with block index i, and
+      * v0 = b.vertexId(0) and v1 = b.vertexId(1) are vertex labels.
+      * Then, p.propagator(i,v0) is a propagator that propagates from
+      * vertex v0 to v1, while p.propagator(i, v1) propagates from 
+      * vertex v1 to v0.
       *
       * \param blockId integer index of associated block
       * \param directionId integer index for direction (0 or 1)
@@ -65,4 +66,4 @@ namespace Pfts{
    };
 
 } 
-#endif 
+#endif
