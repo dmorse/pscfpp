@@ -50,6 +50,11 @@ namespace Pfts{
       int nVertex() const;
 
       /**
+      * Number of solvers (twice nBlock).
+      */
+      int nSolver() const;  //
+
+      /**
       * Volume per molecule, in units of reference volume.
       */
       double volume() const;
@@ -69,14 +74,14 @@ namespace Pfts{
       const Vertex& vertex(int id) const;
 
       /**
-      * Computation plan.
+      * Solver identifier, indexed by order of computation.
       *
       * An array of propagator ids ordered in the order in which 
       * they should be computed, so that the intitial condition 
       * for each link is provided by the solution of links that 
       * have already been solved.
       */
-      const DArray< Pair<int> >& plan() const;
+      const Pair<int>& solverId(int i) const;
 
    protected:
 
@@ -90,16 +95,19 @@ namespace Pfts{
       /// Array of Vertex objects in this polymer.
       DArray<Vertex> vertices_;
 
-      /// Plan for order in which propagators should be computed.
-      DArray< Pair<int> > plan_;
-
-      double volume_;
+      /// Solver ids, indexed in order in which they should be invoked.
+      DArray< Pair<int> > solverIds_;
 
       /// Number of blocks in this polymer
       int nBlock_;
 
       /// Number of vertices (ends or junctions) in this polymer
       int nVertex_;
+
+      /// Number of solvers (two per block).
+      int nSolver_;
+
+      double volume_;
 
    };
   
@@ -114,6 +122,12 @@ namespace Pfts{
    */
    inline int PolymerDescriptor::nVertex() const
    {  return nVertex_; }
+
+   /*
+   * Number of solvers.
+   */
+   inline int PolymerDescriptor::nSolver() const
+   {  return nSolver_; }
 
    /*
    * Volume per molecule, in units of reference volume.
@@ -133,5 +147,12 @@ namespace Pfts{
    inline const Vertex& PolymerDescriptor::vertex(int id) const
    {  return vertices_[id]; }
 
-} 
+   /*
+   * Get a solver id, indexed in order of computation.
+   */
+   inline 
+   const Pair<int>& PolymerDescriptor::solverId(int id) const
+   {  return solverIds_[id]; }
+
+}
 #endif 

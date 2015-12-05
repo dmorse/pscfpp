@@ -15,10 +15,11 @@ namespace Pfts{
    PolymerDescriptor::PolymerDescriptor()
     : blocks_(),
       vertices_(),
-      plan_(),
-      volume_(0.0),
+      solverIds_(),
       nBlock_(0),
-      nVertex_()
+      nVertex_(0),
+      nSolver_(0),
+      volume_(0.0)
    {
       setClassName("PolymerDescriptor");
    }
@@ -27,11 +28,15 @@ namespace Pfts{
    {
       read<int>(in, "nBlock", nBlock_);
       read<int>(in, "nVertex", nVertex_);
+
+      // Allocate all arrays
       blocks_.allocate(nBlock_);
+      vertices_.allocate(nVertex_);
+      solverIds_.allocate(2*nBlock_);
+
       readDArray<Block>(in, "blocks", blocks_, nBlock_);
 
       // Allocate array of vertices and set vertex indices
-      vertices_.allocate(nVertex_);
       for (int vertexId = 0; vertexId < nVertex_; ++vertexId) {
          vertices_[vertexId].setId(vertexId);
       }
@@ -47,39 +52,55 @@ namespace Pfts{
           vertices_[vertexId1].addBlock(*blockPtr);
       }
 
+      makePlan();
    }
 
    void PolymerDescriptor::makePlan()
    {
+      if (nSolver_ != 0) {
+         UTIL_THROW("nSolver !=0 on entry");
+      }
+
+      // Allocate and initialize isFinished matrix
       DMatrix<bool> isFinished;
       isFinished.allocate(nBlock_, 2);
-      Pair<int> linkId;
-      Vertex* rootVertexPtr = 0;
-      int rootVertexId = -1;
-      int nFinished = 0;
+      for (int iBlock = 0; iBlock < nBlock_; ++iBlock) {
+         for (int iDirection = 0; iDirection < 2; ++iDirection) {
+            isFinished(iBlock, iDirection) = false;
+         }
+      }
+
+      Pair<int> solverId;
+      Vertex* inVertexPtr = 0;
+      int inVertexId = -1;
       bool isReady;
-      while (nFinished < nBlock_*2) {
+      while (nSolver_ < nBlock_*2) {
          for (int iBlock = 0; iBlock < nBlock_; ++iBlock) {
             for (int iDirection = 0; iDirection < 2; ++iDirection) {
-               isReady = true;
-               rootVertexId = blocks_[iBlock].vertexId(iDirection);
-               rootVertexPtr = &vertices_[rootVertexId];
-               for (int j = 0; j < rootVertexPtr->size(); ++j) {
-                  linkId = rootVertexPtr->inSolverId(j);
-                  if (linkId[0] != iBlock) {
-                     if (!isFinished(linkId[0], linkId[1])) {
-                        isReady = false;
-                        break;
+               if (isFinished(iBlock, iDirection) == false) {
+                  inVertexId = blocks_[iBlock].vertexId(iDirection);
+                  inVertexPtr = &vertices_[inVertexId];
+                  isReady = true;
+                  for (int j = 0; j < inVertexPtr->size(); ++j) {
+                     solverId = inVertexPtr->inSolverId(j);
+                     if (solverId[0] != iBlock) {
+                        if (!isFinished(solverId[0], solverId[1])) {
+                           isReady = false;
+                           break;
+                        }
                      }
                   }
-               }
-               if (isReady) {
-                  isFinished(iBlock, iDirection) = true;
-                   ++nFinished;
+                  if (isReady) {
+                     solverIds_[nSolver_][0] = iBlock;
+                     solverIds_[nSolver_][1] = iDirection;
+                     isFinished(iBlock, iDirection) = true;
+                     ++nSolver_;
+                  }
                }
             }
          }
       }
+
    }
 
 } 

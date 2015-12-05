@@ -45,6 +45,11 @@ public:
       for (int i = 0; i < p.nVertex(); ++i) {
          std::cout << p.vertex(i).size() << "\n";
       }
+
+      for (int i = 0; i < p.nSolver(); ++i) {
+         std::cout << p.solverId(i)[0] << "  " 
+                   << p.solverId(i)[1] << "\n";
+      }
       
    }
 
