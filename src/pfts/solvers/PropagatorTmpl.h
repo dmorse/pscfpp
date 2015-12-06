@@ -36,7 +36,7 @@ namespace Pfts{
       * condition for this one, and that thus must be computed before 
       * this one.
       */
-      void addSource(TPropagator& other);
+      void addSource(const TPropagator& other);
 
       /**
       * Set the isComplete flag to false.
@@ -77,7 +77,7 @@ namespace Pfts{
       int directionId_;
 
       /// Pointers to propagators that feed source vertex.
-      GArray<TPropagator*> sourcePtrs_;
+      GArray<TPropagator const *> sourcePtrs_;
 
       /// Set true by compute function and false by clear.
       bool isComplete_;
@@ -118,7 +118,7 @@ namespace Pfts{
    }
 
    template <class TPropagator>
-   void PropagatorTmpl<TPropagator>::addSource(TPropagator& other)
+   void PropagatorTmpl<TPropagator>::addSource(const TPropagator& other)
    {  sourcePtrs_.append(&other); }
 
 } 

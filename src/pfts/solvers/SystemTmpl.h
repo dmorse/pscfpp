@@ -161,16 +161,18 @@ namespace Pfts{
    template <class TP, class TS, class TW, class TC>
    void SystemTmpl<TP,TS,TW,TC>::readParameters(std::istream& in)
    {
+      // Monomers
       read<int>(in, "nMonomer", nMonomer_);
       monomers_.allocate(nMonomer_);
       readDArray< Monomer >(in, "monomers", monomers_, nMonomer_);
       read<int>(in, "nPolymer", nPolymer_);
+
+      // Polymers 
       polymers_.allocate(nPolymer_);
-      readBegin(in, "Polymers");
       for (int i = 0; i < nPolymer_; ++i) {
-         polymers_[i].readParameters(in);
+         readParamComposite(in, polymers_[i]);
       }
-      readEnd(in);
+
    }
 
 }

@@ -76,6 +76,29 @@ namespace Pfts
       PolymerDescriptor::readParameters(in);
       blockCFields_.allocate(nBlock());
       propagators_.allocate(nBlock(), 2);
+
+      // Add sources to all propagators
+      Vertex const * vertexPtr = 0;
+      TProp const * sourcePtr = 0;
+      TProp* propagatorPtr = 0;
+      Pair<int> propagatorId;
+      int blockId, directionId, vertexId, i;
+      for (blockId = 0; blockId < nBlock(); ++blockId) {
+         for (directionId = 0; directionId < 2; ++directionId) {
+            vertexId = block(blockId).vertexId(directionId);
+            vertexPtr = &vertex(vertexId);
+            propagatorPtr = &propagator(blockId, directionId);
+            for (i = 0; i < vertexPtr->size(); ++i) {
+               propagatorId = vertexPtr->inSolverId(i);
+               if (propagatorId[0] != blockId) {
+                   sourcePtr = & propagator(propagatorId[0], propagatorId[1]);
+                   propagatorPtr->addSource(*sourcePtr);
+               }
+            }
+         }
+      }
+
+
    }
 
    /*

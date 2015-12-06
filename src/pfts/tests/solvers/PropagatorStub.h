@@ -19,7 +19,7 @@ namespace Pfts{
 
    public:
 
-      PropagatorStub();
+      PropagatorStub(){}
    
    };
 

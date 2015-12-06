@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include "PropagatorStub.h"
 #include <pfts/solvers/PolymerTmpl.h>
-#include <pfts/solvers/PropagatorStub.h>
 
 namespace Pfts{ 
 
@@ -20,7 +20,8 @@ namespace Pfts{
 
    public:
 
-      PolymerStub();
+      PolymerStub()
+      {  setClassName("Polymer"); }
    
    };
 

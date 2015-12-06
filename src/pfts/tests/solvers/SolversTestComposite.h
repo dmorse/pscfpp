@@ -3,10 +3,12 @@
 
 #include <test/CompositeTestRunner.h>
 
-#include "MonomerTest.h"
+#include "PolymerStubTest.h"
+#include "SystemStubTest.h"
 
 TEST_COMPOSITE_BEGIN(SolversTestComposite)
-TEST_COMPOSITE_ADD_UNIT(MonomerTest);
+TEST_COMPOSITE_ADD_UNIT(PolymerStubTest);
+TEST_COMPOSITE_ADD_UNIT(SystemStubTest);
 TEST_COMPOSITE_END
 
 #endif

@@ -18,7 +18,7 @@ namespace Pfts{
 
    public:
 
-      SolventStub();
+      SolventStub(){}
    
    };
 
