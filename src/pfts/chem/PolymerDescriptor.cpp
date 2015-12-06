@@ -24,6 +24,12 @@ namespace Pfts{
       setClassName("PolymerDescriptor");
    }
 
+   /*
+   * Destructor.
+   */
+   PolymerDescriptor::~PolymerDescriptor()
+   {}
+
    void PolymerDescriptor::readParameters(std::istream& in)
    {
       read<int>(in, "nBlock", nBlock_);

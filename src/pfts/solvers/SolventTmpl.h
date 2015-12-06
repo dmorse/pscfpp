@@ -1,5 +1,5 @@
-#ifndef PFTS_SOLVENT_TEMPLATE_H
-#define PFTS_SOLVENT_TEMPLATE_H
+#ifndef PFTS_SOLVENT_TMPL_H
+#define PFTS_SOLVENT_TMPL_H
 
 /*
 * PFTS - Polymer Field Theory Simulator
@@ -8,20 +8,21 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <pfts/solvers/Species.h>
+
 namespace Pfts{ 
 
    using namespace Util;
 
-
    template <class CField>
-   class SolventTemplate : public Species, public SolventDescriptor
+   class SolventTmpl : public Species
    {
    public:
    
       /**
       * Get monomer concentration field for this solvent.
       */
-      const C& concentration() const;
+      const CField& concentration() const;
    
    protected:
    

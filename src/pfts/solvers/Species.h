@@ -8,6 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+namespace Util{}
+
 namespace Pfts{ 
 
    using namespace Util;
@@ -24,24 +26,14 @@ namespace Pfts{
       Species();
    
       /**
-      * Set volume fraction phi, and set ensemble type to closed.
+      * Clear all computed quantities.
       */
-      void setPhi(double phi);
-   
-      /**
-      * Sets chemical potential, and set ensemble type to open.
-      */
-      void setMu(double mu);
+      virtual void clear(){};
    
       /**
       * Solve modified diffusion equation and set related quantities.
       */
-      virtual void compute() = 0;
-   
-      /**
-      * Clear all computed quantities.
-      */
-      void clear() = 0;
+      virtual void compute(){};
    
       /**
       * Get overall volume fraction for this species.

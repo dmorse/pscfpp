@@ -33,6 +33,11 @@ namespace Pfts{
       PolymerDescriptor();
 
       /**
+      * Destructor.
+      */
+      ~PolymerDescriptor();
+
+      /**
       * Read and initialize polymer structure.
       *
       * \param in input parameter stream

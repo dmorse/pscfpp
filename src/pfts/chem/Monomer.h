@@ -40,6 +40,15 @@ namespace Pfts{
       */
       std::string name() const;
 
+      /**
+      * Serialize to or from an archive.
+      *
+      * \param ar Archive object 
+      * \param version archive format version index
+      */
+      template <class Archive>
+      void serialize(Archive ar, const unsigned int version);
+
    private:
 
       int  id_;
@@ -93,6 +102,17 @@ namespace Pfts{
    */
    inline std::string Monomer::name() const
    {  return name_; }
+
+   /*
+   * Serialize to or from an archive.
+   */
+   template <class Archive>
+   void Monomer::serialize(Archive ar, const unsigned int version)
+   {
+      ar & id_;
+      ar & step_;
+      ar & name_;
+   }
 
 }
 #endif
