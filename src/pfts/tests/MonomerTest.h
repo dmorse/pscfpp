@@ -4,7 +4,7 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pfts/chem/Monomer.h>
+#include <pfts/Monomer.h>
 
 #include <fstream>
 

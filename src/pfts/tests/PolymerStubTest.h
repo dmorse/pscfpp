@@ -5,6 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include "PolymerStub.h"
+#include <util/containers/Pair.h>
 
 #include <fstream>
 
@@ -45,9 +46,19 @@ public:
          std::cout << p.vertex(i).size() << "\n";
       }
 
-      for (int i = 0; i < p.nSolver(); ++i) {
-         std::cout << p.solverId(i)[0] << "  " 
-                   << p.solverId(i)[1] << "\n";
+      Pair<int> propId;
+      PropagatorStub* propPtr = 0;
+      for (int i = 0; i < p.nPropagator(); ++i) {
+         propId = p.propagatorId(i);
+         propPtr = &p.propagator(propId[0], propId[1]);
+         propPtr->setIsComplete(false);
+      }
+
+      for (int i = 0; i < p.nPropagator(); ++i) {
+         propId = p.propagatorId(i);
+         std::cout << propId[0] << "  " << propId[1] << "\n";
+         propPtr = &p.propagator(propId[0], propId[1]);
+         propPtr->setIsComplete(false);
       }
       
    }

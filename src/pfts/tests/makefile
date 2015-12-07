@@ -20,19 +20,7 @@ run: $(pfts_tests_OBJS) $(BLD_DIR)/$(TEST)
 clean:
 	rm -f $(pfts_tests_OBJS) $(pfts_tests_OBJS:.o=.d)
 	rm -f $(BLD_DIR)/$(TEST) $(BLD_DIR)/$(TEST).d
-	rm -f log count dummy
-ifeq ($(BLD_DIR),$(SRC_DIR))
-	cd chem; $(MAKE) clean
-	rm -f */*.o */*/*.o 
-	rm -f */*.d */*/*.d
-else
-	cd $(SRC_DIR)/pfts/tests; $(MAKE) clean-outputs
-endif
-
-ifeq ($(BLD_DIR),$(SRC_DIR))
-clean-outputs:
-	cd chem; $(MAKE) clean-outputs
-endif
+	rm -f log count 
 
 -include $(pfts_tests_OBJS:.o=.d)
 -include $(pfts_OBJS:.o=.d)

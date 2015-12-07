@@ -9,7 +9,7 @@
 */
 
 #include "PropagatorStub.h"
-#include <pfts/solvers/PolymerTmpl.h>
+#include <pfts/PolymerTmpl.h>
 
 namespace Pfts{ 
 

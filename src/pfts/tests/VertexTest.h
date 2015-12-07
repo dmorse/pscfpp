@@ -4,8 +4,8 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pfts/chem/Block.h>
-#include <pfts/chem/Vertex.h>
+#include <pfts/Block.h>
+#include <pfts/Vertex.h>
 
 #include <fstream>
 
@@ -50,14 +50,14 @@ public:
       v.setId(3);
       v.addBlock(b);
       TEST_ASSERT(v.size() == 1);
-      TEST_ASSERT(v.outSolverId(0)[0] == 5);
-      TEST_ASSERT(v.outSolverId(0)[1] == 0);
-      TEST_ASSERT(v.inSolverId(0)[0] == 5);
-      TEST_ASSERT(v.inSolverId(0)[1] == 1);
-      //std::cout << v.inSolverId(0)[0] << "  "
-      //          << v.inSolverId(0)[1] << "\n";
-      //std::cout << v.outSolverId(0)[0] << "  "
-      //          << v.outSolverId(0)[1] << "\n";
+      TEST_ASSERT(v.outPropagatorId(0)[0] == 5);
+      TEST_ASSERT(v.outPropagatorId(0)[1] == 0);
+      TEST_ASSERT(v.inPropagatorId(0)[0] == 5);
+      TEST_ASSERT(v.inPropagatorId(0)[1] == 1);
+      //std::cout << v.inPropagatorId(0)[0] << "  "
+      //          << v.inPropagatorId(0)[1] << "\n";
+      //std::cout << v.outPropagatorId(0)[0] << "  "
+      //          << v.outPropagatorId(0)[1] << "\n";
       
    }
 

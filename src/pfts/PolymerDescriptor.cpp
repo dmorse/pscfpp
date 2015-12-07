@@ -15,10 +15,10 @@ namespace Pfts{
    PolymerDescriptor::PolymerDescriptor()
     : blocks_(),
       vertices_(),
-      solverIds_(),
+      propagatorIds_(),
       nBlock_(0),
       nVertex_(0),
-      nSolver_(0),
+      nPropagator_(0),
       volume_(0.0)
    {
       setClassName("PolymerDescriptor");
@@ -38,7 +38,7 @@ namespace Pfts{
       // Allocate all arrays
       blocks_.allocate(nBlock_);
       vertices_.allocate(nVertex_);
-      solverIds_.allocate(2*nBlock_);
+      propagatorIds_.allocate(2*nBlock_);
 
       readDArray<Block>(in, "blocks", blocks_, nBlock_);
 
@@ -63,8 +63,8 @@ namespace Pfts{
 
    void PolymerDescriptor::makePlan()
    {
-      if (nSolver_ != 0) {
-         UTIL_THROW("nSolver !=0 on entry");
+      if (nPropagator_ != 0) {
+         UTIL_THROW("nPropagator !=0 on entry");
       }
 
       // Allocate and initialize isFinished matrix
@@ -76,11 +76,11 @@ namespace Pfts{
          }
       }
 
-      Pair<int> solverId;
+      Pair<int> propagatorId;
       Vertex* inVertexPtr = 0;
       int inVertexId = -1;
       bool isReady;
-      while (nSolver_ < nBlock_*2) {
+      while (nPropagator_ < nBlock_*2) {
          for (int iBlock = 0; iBlock < nBlock_; ++iBlock) {
             for (int iDirection = 0; iDirection < 2; ++iDirection) {
                if (isFinished(iBlock, iDirection) == false) {
@@ -88,19 +88,19 @@ namespace Pfts{
                   inVertexPtr = &vertices_[inVertexId];
                   isReady = true;
                   for (int j = 0; j < inVertexPtr->size(); ++j) {
-                     solverId = inVertexPtr->inSolverId(j);
-                     if (solverId[0] != iBlock) {
-                        if (!isFinished(solverId[0], solverId[1])) {
+                     propagatorId = inVertexPtr->inPropagatorId(j);
+                     if (propagatorId[0] != iBlock) {
+                        if (!isFinished(propagatorId[0], propagatorId[1])) {
                            isReady = false;
                            break;
                         }
                      }
                   }
                   if (isReady) {
-                     solverIds_[nSolver_][0] = iBlock;
-                     solverIds_[nSolver_][1] = iDirection;
+                     propagatorIds_[nPropagator_][0] = iBlock;
+                     propagatorIds_[nPropagator_][1] = iDirection;
                      isFinished(iBlock, iDirection) = true;
-                     ++nSolver_;
+                     ++nPropagator_;
                   }
                }
             }

@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pfts/chem/Monomer.h>
+#include <pfts/Monomer.h>
 #include <util/param/ParamComposite.h>
 #include <util/containers/DArray.h>
 

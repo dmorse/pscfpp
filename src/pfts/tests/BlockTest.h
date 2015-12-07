@@ -4,7 +4,7 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pfts/chem/Block.h>
+#include <pfts/Block.h>
 
 #include <fstream>
 

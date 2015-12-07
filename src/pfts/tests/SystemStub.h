@@ -10,7 +10,7 @@
 
 #include "PolymerStub.h"
 #include "SolventStub.h"
-#include <pfts/solvers/SystemTmpl.h>
+#include <pfts/SystemTmpl.h>
 
 namespace Pfts{ 
 

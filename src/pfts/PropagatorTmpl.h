@@ -9,7 +9,7 @@
 */
 
 #include <util/containers/GArray.h>
-#include <pfts/chem/Block.h>
+#include <pfts/Block.h>
 
 namespace Pfts{ 
 
@@ -20,7 +20,12 @@ namespace Pfts{
    {
 
    public:
-  
+
+      /**
+      * Constructor.
+      */ 
+      PropagatorTmpl();
+ 
       /**
       * Associate this propagator with a block and direction.
       *
@@ -39,12 +44,12 @@ namespace Pfts{
       void addSource(const TPropagator& other);
 
       /**
-      * Set the isComplete flag to false.
+      * Set the isComplete flag to true or false.
       */
-      virtual void clear();
+      virtual void setIsComplete(bool isComplete);
  
       /**
-      * Get associated Block object by reference.
+      * Get the associated Block object by reference.
       */
       const Block& block() const;
 
@@ -79,14 +84,12 @@ namespace Pfts{
       /// Pointers to propagators that feed source vertex.
       GArray<TPropagator const *> sourcePtrs_;
 
-      /// Set true by compute function and false by clear.
+      /// Set true after solving modified diffusion equation.
       bool isComplete_;
-   
+  
    };
 
-   template <class TPropagator>
-   inline void PropagatorTmpl<TPropagator>::clear()
-   {  isComplete_ = false; }
+   // Inline member functions
 
    template <class TPropagator>
    inline const Block& PropagatorTmpl<TPropagator>::block() const
@@ -106,20 +109,34 @@ namespace Pfts{
    {  return *(sourcePtrs_[id]); }
 
    template <class TPropagator>
-   bool PropagatorTmpl<TPropagator>::isComplete() const
+   inline bool PropagatorTmpl<TPropagator>::isComplete() const
    {  return isComplete_; }
 
+   // Noninline member functions
+
    template <class TPropagator>
-   void PropagatorTmpl<TPropagator>::setBlock(Block& block, 
-                                              int directionId)
+   PropagatorTmpl<TPropagator>::PropagatorTmpl()
+    : blockPtr_(0),
+      directionId_(-1),
+      sourcePtrs_(),
+      isComplete_(false)
+   {}
+
+   template <class TPropagator>
+   void 
+   PropagatorTmpl<TPropagator>::setBlock(Block& block, int directionId)
    {
       blockPtr_ = &block;
-      directionId_ = directionId; 
+      directionId_ = directionId;
    }
 
    template <class TPropagator>
    void PropagatorTmpl<TPropagator>::addSource(const TPropagator& other)
    {  sourcePtrs_.append(&other); }
+
+   template <class TPropagator>
+   void PropagatorTmpl<TPropagator>::setIsComplete(bool isComplete)
+   {  isComplete_ = isComplete; }
 
 } 
 #endif 

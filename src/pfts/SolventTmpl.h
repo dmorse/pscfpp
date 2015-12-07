@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pfts/solvers/Species.h>
+#include <pfts/Species.h>
 
 namespace Pfts{ 
 

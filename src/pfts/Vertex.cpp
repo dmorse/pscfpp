@@ -12,8 +12,8 @@
 namespace Pfts{ 
 
    Vertex::Vertex()
-    : inSolverIds_(),
-      outSolverIds_(),
+    : inPropagatorIds_(),
+      outPropagatorIds_(),
       id_(-1)
    {}
 
@@ -36,19 +36,19 @@ namespace Pfts{
          UTIL_THROW("Error: Equal vertex indices in block");
       }
 
-      Pair<int> solverId;
-      solverId[0] = block.id();
+      Pair<int> propagatorId;
+      propagatorId[0] = block.id();
       if (block.vertexId(0) == id_) {
-         solverId[1] = 0;
-         outSolverIds_.append(solverId);
-         solverId[1] = 1;
-         inSolverIds_.append(solverId);
+         propagatorId[1] = 0;
+         outPropagatorIds_.append(propagatorId);
+         propagatorId[1] = 1;
+         inPropagatorIds_.append(propagatorId);
       } else
       if (block.vertexId(1) == id_) {
-         solverId[1] = 1;
-         outSolverIds_.append(solverId);
-         solverId[1] = 0;
-         inSolverIds_.append(solverId);
+         propagatorId[1] = 1;
+         outPropagatorIds_.append(propagatorId);
+         propagatorId[1] = 0;
+         inPropagatorIds_.append(propagatorId);
       } else {
          UTIL_THROW("Neither block vertex id matches this vertex");
       }

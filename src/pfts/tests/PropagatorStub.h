@@ -1,5 +1,5 @@
-#ifndef PFTS_SOLVENT_STUB_H
-#define PFTS_SOLVENT_STUB_H
+#ifndef PFTS_PROPAGATOR_STUB_H
+#define PFTS_PROPAGATOR_STUB_H
 
 /*
 * PFTS - Polymer Field Theory Simulator
@@ -8,17 +8,18 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pfts/solvers/SolventTmpl.h>
-#include <util/containers/DArray.h>
+#include <pfts/PropagatorTmpl.h>
 
 namespace Pfts{ 
 
-   class SolventStub : public SolventTmpl< DArray<double> >
+   class PropagatorStub;
+
+   class PropagatorStub : public PropagatorTmpl<PropagatorStub>
    {
 
    public:
 
-      SolventStub(){}
+      PropagatorStub(){}
    
    };
 

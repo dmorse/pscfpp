@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pfts/solvers/Species.h>
-#include <pfts/chem/PolymerDescriptor.h>
+#include <pfts/Species.h>
+#include <pfts/PolymerDescriptor.h>
 #include <util/containers/DArray.h>
 #include <util/containers/DMatrix.h>
 
@@ -89,7 +89,7 @@ namespace Pfts
             vertexPtr = &vertex(vertexId);
             propagatorPtr = &propagator(blockId, directionId);
             for (i = 0; i < vertexPtr->size(); ++i) {
-               propagatorId = vertexPtr->inSolverId(i);
+               propagatorId = vertexPtr->inPropagatorId(i);
                if (propagatorId[0] != blockId) {
                    sourcePtr = & propagator(propagatorId[0], propagatorId[1]);
                    propagatorPtr->addSource(*sourcePtr);

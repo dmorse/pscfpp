@@ -4,9 +4,9 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pfts/chem/PolymerDescriptor.h>
-#include <pfts/chem/Vertex.h>
-#include <pfts/chem/Block.h>
+#include <pfts/PolymerDescriptor.h>
+#include <pfts/Vertex.h>
+#include <pfts/Block.h>
 
 #include <fstream>
 
@@ -46,9 +46,9 @@ public:
          std::cout << p.vertex(i).size() << "\n";
       }
 
-      for (int i = 0; i < p.nSolver(); ++i) {
-         std::cout << p.solverId(i)[0] << "  " 
-                   << p.solverId(i)[1] << "\n";
+      for (int i = 0; i < p.nPropagator(); ++i) {
+         std::cout << p.propagatorId(i)[0] << "  " 
+                   << p.propagatorId(i)[1] << "\n";
       }
       
    }

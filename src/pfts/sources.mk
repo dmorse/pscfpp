@@ -1,7 +1,9 @@
-include $(SRC_DIR)/pfts/chem/sources.mk
-include $(SRC_DIR)/pfts/solvers/sources.mk
-
-pfts_= $(pfts_chem_) $(pfts_solvers_) 
+pfts_= \
+  pfts/Monomer.cpp\
+  pfts/Block.cpp\
+  pfts/Vertex.cpp\
+  pfts/PolymerDescriptor.cpp\
+  pfts/Species.cpp
 
 pfts_SRCS=\
      $(addprefix $(SRC_DIR)/, $(pfts_))
