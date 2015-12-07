@@ -16,10 +16,12 @@ namespace Pfts{
 
    using namespace Util;
 
-   template <class TP, class TS, class TW, class TC>
+   template <class TP, class TS>
    class SystemTmpl : public ParamComposite
    {
    public:
+
+      // Typedefs
 
       /// Polymer species type.
       typedef TP Polymer;
@@ -31,10 +33,10 @@ namespace Pfts{
       typedef typename TP::Propagator Propagator;
 
       /// Chemical potential field.
-      typedef TW WField;
+      typedef typename TP::Propagator::WField WField;
 
       /// Monomer concentration field.
-      typedef TC CField;
+      typedef typename TP::Propagator::CField CField;
 
       /**
       * Read parameters from file and initialize.
@@ -150,40 +152,40 @@ namespace Pfts{
 
    // Inline member functions
 
-   template <class TP, class TS, class TW, class TC>
-   inline int SystemTmpl<TP,TS,TW,TC>::nMonomer() const
+   template <class TP, class TS>
+   inline int SystemTmpl<TP,TS>::nMonomer() const
    {  return nMonomer_; }
 
-   template <class TP, class TS, class TW, class TC>
-   inline int SystemTmpl<TP,TS,TW,TC>::nPolymer() const
+   template <class TP, class TS>
+   inline int SystemTmpl<TP,TS>::nPolymer() const
    {  return nPolymer_; }
 
-   template <class TP, class TS, class TW, class TC>
-   inline int SystemTmpl<TP,TS,TW,TC>::nSolvent() const
+   template <class TP, class TS>
+   inline int SystemTmpl<TP,TS>::nSolvent() const
    {  return nSolvent_; }
 
-   template <class TP, class TS, class TW, class TC>
-   inline Monomer& SystemTmpl<TP,TS,TW,TC>::monomer(int id)
+   template <class TP, class TS>
+   inline Monomer& SystemTmpl<TP,TS>::monomer(int id)
    {  return monomers_[id]; }
 
-   template <class TP, class TS, class TW, class TC>
-   inline TP& SystemTmpl<TP,TS,TW,TC>::polymer(int id)
+   template <class TP, class TS>
+   inline TP& SystemTmpl<TP,TS>::polymer(int id)
    {  return polymers_[id]; }
 
-   template <class TP, class TS, class TW, class TC>
-   inline TS& SystemTmpl<TP,TS,TW,TC>::solvent(int id)
+   template <class TP, class TS>
+   inline TS& SystemTmpl<TP,TS>::solvent(int id)
    {  return solvents_[id]; }
 
-   template <class TP, class TS, class TW, class TC>
-   inline TW& SystemTmpl<TP,TS,TW,TC>::wField(int id)
+   template <class TP, class TS>
+   inline typename SystemTmpl<TP,TS>::WField& SystemTmpl<TP,TS>::wField(int id)
    {  return wFields_[id]; }
 
-   template <class TP, class TS, class TW, class TC>
-   inline TC& SystemTmpl<TP,TS,TW,TC>::cField(int id)
+   template <class TP, class TS>
+   inline typename SystemTmpl<TP,TS>::CField& SystemTmpl<TP,TS>::cField(int id)
    {  return cFields_[id]; }
 
-   template <class TP, class TS, class TW, class TC>
-   void SystemTmpl<TP,TS,TW,TC>::readParameters(std::istream& in)
+   template <class TP, class TS>
+   void SystemTmpl<TP,TS>::readParameters(std::istream& in)
    {
       // Monomers
       read<int>(in, "nMonomer", nMonomer_);
@@ -200,11 +202,10 @@ namespace Pfts{
       for (int i = 0; i < nPolymer_; ++i) {
          readParamComposite(in, polymers_[i]);
       }
-
    }
 
-   template <class TP, class TS, class TW, class TC>
-   void SystemTmpl<TP,TS,TW,TC>::compute()
+   template <class TP, class TS>
+   void SystemTmpl<TP,TS>::compute()
    {
       Polymer* polymerPtr = 0;
       Propagator* propagatorPtr = 0;
@@ -222,7 +223,7 @@ namespace Pfts{
                UTIL_THROW("Propagator not ready");
             }
             monomerId = propagatorPtr->block().monomerId();
-            propagatorPtr->compute(wFields_[monomerId]);
+            propagatorPtr->solve(wFields_[monomerId]);
          }
       }
    }

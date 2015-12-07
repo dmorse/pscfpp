@@ -15,7 +15,7 @@ namespace Pfts{
 
    class PolymerStub;
 
-   class PolymerStub : public PolymerTmpl<PropagatorStub, DArray<double> >
+   class PolymerStub : public PolymerTmpl<PropagatorStub>
    {
 
    public:

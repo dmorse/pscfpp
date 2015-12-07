@@ -20,12 +20,40 @@ namespace Pfts{
 
    public:
 
+      // Public typedefs
+
+      /**
+      * Chemical potential field type.
+      */
+      typedef DArray<double> WField;
+
+      /**
+      * Monomer concentration field type.
+      */
+      typedef DArray<double> CField;
+
+      // Member functions
+
+      /**
+      * Constructor.
+      */
       PropagatorStub(){}
 
-      void compute(const DArray<double>& wField)
+      /**
+      * Solve the modified diffusion equation for this block.
+      *
+      * \param w chemical potential field for appropriate monomer type
+      */
+      void solve(const WField& w)
       {
          setIsComplete(true);
       };
+  
+      /**
+      * Integrate to calculate monomer concentration for this block
+      */ 
+      void integrate(const PropagatorStub& partner, CField integral)
+      {};
    
    };
 

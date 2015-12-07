@@ -21,7 +21,7 @@ namespace Pfts
    /**
    * Base class template for classes that represent polymer species.
    */
-   template <class TP, class TC>
+   template <class TP>
    class PolymerTmpl : public PolymerDescriptor, public Species
    {
    public:
@@ -30,7 +30,7 @@ namespace Pfts
       typedef TP Propagator;
 
       // Monomer concentration field.
-      typedef TC CField;
+      typedef typename TP::CField CField;
  
       /**
       * Read parameters and initialize.
@@ -82,8 +82,8 @@ namespace Pfts
    /*
    * Read parameters and allocate arrays.
    */
-   template <class TP, class TC>
-   void PolymerTmpl<TP, TC>::readParameters(std::istream& in)
+   template <class TP>
+   void PolymerTmpl<TP>::readParameters(std::istream& in)
    {
       PolymerDescriptor::readParameters(in);
       blockCFields_.allocate(nBlock());
@@ -124,30 +124,24 @@ namespace Pfts
    /*
    * Get a block monomer concentration.
    */
-   template <class TP, class TC>
-   TC& PolymerTmpl<TP, TC>::blockCField(int blockId)
+   template <class TP>
+   typename TP::CField& PolymerTmpl<TP>::blockCField(int blockId)
    {  return blockCFields_[blockId]; }
 
    /*
    * Get a propagator indexed by block and direction.
    */
-   template <class TP, class TC>
-   TP& PolymerTmpl<TP, TC>::propagator(int blockId, int directionId)
+   template <class TP>
+   TP& PolymerTmpl<TP>::propagator(int blockId, int directionId)
    {  return propagators_(blockId, directionId); }
 
    /*
    * Get a propagator indexed in order of computation.
    */
-   template <class TP, class TC>
-   TP& PolymerTmpl<TP, TC>::propagator(int id)
+   template <class TP>
+   TP& PolymerTmpl<TP>::propagator(int id)
    {
-      UTIL_CHECK(id >= 0);
-      UTIL_CHECK(id < nPropagator());
       Pair<int> propId = propagatorId(id);
-      UTIL_CHECK(propId[0] >= 0);
-      UTIL_CHECK(propId[0] < nBlock());
-      UTIL_CHECK(propId[1] >= 0);
-      UTIL_CHECK(propId[1] < 2);
       return propagators_(propId[0], propId[1]); 
    }
 

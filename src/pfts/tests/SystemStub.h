@@ -17,7 +17,7 @@ namespace Pfts{
    class SystemStub;
 
    class SystemStub 
-    : public SystemTmpl<PolymerStub, SolventStub, DArray<double>, DArray<double> >
+    : public SystemTmpl<PolymerStub, SolventStub>
    {
 
    public:
