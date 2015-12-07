@@ -36,22 +36,22 @@ public:
       std::ifstream in;
       openInputFile("in/System", in);
 
-      SystemStub p;
-      p.readParam(in);
+      SystemStub sys;
+      sys.readParam(in);
+      sys.writeParam(std::cout);
+   }
 
-      p.writeParam(std::cout);
+   void testCompute() 
+   {
+      printMethod(TEST_FUNC);
+      printEndl();
 
-      #if 0
-      for (int i = 0; i < p.nVertex(); ++i) {
-         std::cout << p.vertex(i).size() << "\n";
-      }
+      std::ifstream in;
+      openInputFile("in/System", in);
 
-      for (int i = 0; i < p.nSolver(); ++i) {
-         std::cout << p.solverId(i)[0] << "  " 
-                   << p.solverId(i)[1] << "\n";
-      }
-      #endif
-      
+      SystemStub sys;
+      sys.readParam(in);
+      sys.compute();
    }
 
 };
@@ -59,6 +59,7 @@ public:
 TEST_BEGIN(SystemStubTest)
 TEST_ADD(SystemStubTest, testConstructor)
 TEST_ADD(SystemStubTest, testReadParam)
+TEST_ADD(SystemStubTest, testCompute)
 TEST_END(SystemStubTest)
 
 #endif

@@ -16,11 +16,25 @@ namespace Pfts{
 
    using namespace Util;
 
-   template <class TPolymer, class TSolvent,
-             class TWField, class TCField>
+   template <class TP, class TS, class TW, class TC>
    class SystemTmpl : public ParamComposite
    {
    public:
+
+      /// Polymer species type.
+      typedef TP Polymer;
+
+      /// Solvent species type.
+      typedef TS Solvent;
+
+      /// Polymer species type.
+      typedef typename TP::Propagator Propagator;
+
+      /// Chemical potential field.
+      typedef TW WField;
+
+      /// Monomer concentration field.
+      typedef TC CField;
 
       /**
       * Read parameters from file and initialize.
@@ -30,8 +44,7 @@ namespace Pfts{
       /**
       * Compute ideal gas properties for all species.
       */
-      virtual void compute()
-      {}
+      virtual void compute();
 
       /**
       * Get a Monomer type descriptor.
@@ -45,28 +58,28 @@ namespace Pfts{
       *
       * \param id integer polymer species index
       */
-      TPolymer& polymer(int id);
+      Polymer& polymer(int id);
 
       /**
       * Set a solvent solver object.
       *
       * \param id integer solvent species index
       */
-      TSolvent& solvent(int id);
+      Solvent& solvent(int id);
 
       /**
-      * Return W (chemical potential) field for a specific monomer type.
+      * Return chemical potential field for a specific monomer type.
       *
       * \param monomerId integer monomer type index
       */
-      TWField& wField(int monomerId);
+      WField& wField(int monomerId);
 
       /**
       * Return concentration field for specific monomer type.
       *
       * \param monomerId integer monomer type index
       */
-      TCField& cField(int id);
+      CField& cField(int id);
 
       /**
       * Get number of monomers.
@@ -95,36 +108,47 @@ namespace Pfts{
       *
       * Indexed by monomer typeId, size = nMonomer.
       */
-      DArray<TWField> wFields_;
+      DArray<WField> wFields_;
 
       /**
       * Array of concentration fields for monomer types.
       *
       * Indexed by monomer typeId, size = nMonomer.
       */
-      DArray<TCField> cFields_;
+      DArray<CField> cFields_;
 
       /**
       * Array of polymer species solvers objects.
       *
       * Size = nPolymer.
       */
-      DArray<TPolymer> polymers_;
+      DArray<Polymer> polymers_;
 
       /**
       * Array of solvent species solvers.
       *
       * Size = nSolvent.
       */
-      DArray<TSolvent> solvents_;
+      DArray<Solvent> solvents_;
 
+      /**
+      * Number of monomer types.
+      */
       int nMonomer_; 
 
+      /**
+      * Number of polymer species.
+      */
       int nPolymer_;
 
+      /**
+      * Number of solvent species.
+      */
       int nSolvent_;
 
    };
+
+   // Inline member functions
 
    template <class TP, class TS, class TW, class TC>
    inline int SystemTmpl<TP,TS,TW,TC>::nMonomer() const
@@ -165,14 +189,42 @@ namespace Pfts{
       read<int>(in, "nMonomer", nMonomer_);
       monomers_.allocate(nMonomer_);
       readDArray< Monomer >(in, "monomers", monomers_, nMonomer_);
-      read<int>(in, "nPolymer", nPolymer_);
+
+      // Chemical potential and concentration fiels
+      wFields_.allocate(nMonomer_);
+      cFields_.allocate(nMonomer_);
 
       // Polymers 
+      read<int>(in, "nPolymer", nPolymer_);
       polymers_.allocate(nPolymer_);
       for (int i = 0; i < nPolymer_; ++i) {
          readParamComposite(in, polymers_[i]);
       }
 
+   }
+
+   template <class TP, class TS, class TW, class TC>
+   void SystemTmpl<TP,TS,TW,TC>::compute()
+   {
+      Polymer* polymerPtr = 0;
+      Propagator* propagatorPtr = 0;
+      int nPropagator, i, j, monomerId;
+      for (i = 0; i < nPolymer_; ++i) {
+         polymerPtr = &polymer(i);
+         nPropagator = polymerPtr->nPropagator();
+         for (j = 0; j < nPropagator; ++j) {
+            propagatorPtr = &polymerPtr->propagator(j);
+            propagatorPtr->setIsComplete(false);
+         }
+         for (j = 0; j < nPropagator; ++j) {
+            propagatorPtr = &polymerPtr->propagator(j);
+            if (!propagatorPtr->isReady()) {
+               UTIL_THROW("Propagator not ready");
+            }
+            monomerId = propagatorPtr->block().monomerId();
+            propagatorPtr->compute(wFields_[monomerId]);
+         }
+      }
    }
 
 }

@@ -9,6 +9,7 @@
 */
 
 #include <pfts/PropagatorTmpl.h>
+#include <util/containers/DArray.h>
 
 namespace Pfts{ 
 
@@ -20,6 +21,11 @@ namespace Pfts{
    public:
 
       PropagatorStub(){}
+
+      void compute(const DArray<double>& wField)
+      {
+         setIsComplete(true);
+      };
    
    };
 

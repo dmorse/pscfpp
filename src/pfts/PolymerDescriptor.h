@@ -20,7 +20,7 @@ namespace Pfts{
    using namespace Util;
 
    /**
-   * Descriptor for an acyclic block polymer.
+   * Structure descriptor for an acyclic block polymer.
    */
    class PolymerDescriptor : public ParamComposite
    {
@@ -50,7 +50,7 @@ namespace Pfts{
       int nBlock() const;  //
 
       /**
-      * Number of vertices (ends and/or junctions).
+      * Number of vertices (junctions and chain ends).
       */
       int nVertex() const;
 
@@ -84,7 +84,7 @@ namespace Pfts{
       * An array of propagator ids ordered in the order in which 
       * they should be computed, so that the intitial condition 
       * for each link is provided by the solution of links that 
-      * have already been solved.
+      * have been computed previously.
       */
       const Pair<int>& propagatorId(int i) const;
 
@@ -112,6 +112,7 @@ namespace Pfts{
       /// Number of propagators (two per block).
       int nPropagator_;
 
+      /// Total volume per molecule, in units of reference volume.
       double volume_;
 
    };
@@ -157,7 +158,11 @@ namespace Pfts{
    */
    inline 
    const Pair<int>& PolymerDescriptor::propagatorId(int id) const
-   {  return propagatorIds_[id]; }
+   {
+      UTIL_CHECK(id >= 0);  
+      UTIL_CHECK(id < nPropagator_);  
+      return propagatorIds_[id]; 
+   }
 
 }
 #endif 

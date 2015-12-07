@@ -21,11 +21,17 @@ namespace Pfts
    /**
    * Base class template for classes that represent polymer species.
    */
-   template <class TProp, class TCField>
+   template <class TP, class TC>
    class PolymerTmpl : public PolymerDescriptor, public Species
    {
    public:
-   
+ 
+      // Modified diffusion equation propagator for one block.
+      typedef TP Propagator;
+
+      // Monomer concentration field.
+      typedef TC CField;
+ 
       /**
       * Read parameters and initialize.
       */
@@ -36,7 +42,7 @@ namespace Pfts
       *
       * \param blockId integer index of associated block
       */
-      TCField& blockCField(int blockId);
+      CField& blockCField(int blockId);
    
       /**
       * Get propagator for a specific block and direction.
@@ -50,39 +56,54 @@ namespace Pfts
       * \param blockId integer index of associated block
       * \param directionId integer index for direction (0 or 1)
       */
-      TProp& propagator(int blockId, int directionId);
+      Propagator& propagator(int blockId, int directionId);
+   
+      /**
+      * Get propagator indexed in order of computation.
+      *
+      * \param id integer index, in order of computation plan
+      */
+      Propagator& propagator(int id);
    
    private:
 
       /**
       * Array of propagators, indexed by block and direction.
       */ 
-      DMatrix<TProp> propagators_;
+      DMatrix<Propagator> propagators_;
    
       /**
       * Array of block concentration fields, indexed by block.
       */ 
-      DArray<TCField> blockCFields_;
+      DArray<CField> blockCFields_;
    
    };
 
    /*
    * Read parameters and allocate arrays.
    */
-   template <class TProp, class TCField>
-   void 
-   PolymerTmpl<TProp, TCField>::readParameters(std::istream& in)
+   template <class TP, class TC>
+   void PolymerTmpl<TP, TC>::readParameters(std::istream& in)
    {
       PolymerDescriptor::readParameters(in);
       blockCFields_.allocate(nBlock());
       propagators_.allocate(nBlock(), 2);
 
+      // Associate propagators with blocks and directions
+      Propagator* propagatorPtr = 0;
+      int blockId, directionId;
+      for (blockId = 0; blockId < nBlock(); ++blockId) {
+         for (directionId = 0; directionId < 2; ++directionId) {
+            propagatorPtr = &propagator(blockId, directionId);
+            propagatorPtr->setBlock(block(blockId), directionId);
+         }
+      }
+      
       // Add sources to all propagators
       Vertex const * vertexPtr = 0;
-      TProp const * sourcePtr = 0;
-      TProp* propagatorPtr = 0;
+      Propagator const * sourcePtr = 0;
       Pair<int> propagatorId;
-      int blockId, directionId, vertexId, i;
+      int vertexId, i;
       for (blockId = 0; blockId < nBlock(); ++blockId) {
          for (directionId = 0; directionId < 2; ++directionId) {
             vertexId = block(blockId).vertexId(directionId);
@@ -98,24 +119,37 @@ namespace Pfts
          }
       }
 
-
    }
 
    /*
-   * Get a block concentration.
+   * Get a block monomer concentration.
    */
-   template <class TProp, class TCField>
-   TCField& 
-   PolymerTmpl<TProp, TCField>::blockCField(int blockId)
+   template <class TP, class TC>
+   TC& PolymerTmpl<TP, TC>::blockCField(int blockId)
    {  return blockCFields_[blockId]; }
 
    /*
-   * Get a propagator.
+   * Get a propagator indexed by block and direction.
    */
-   template <class TProp, class TCField>
-   TProp& 
-   PolymerTmpl<TProp, TCField>::propagator(int blockId, int directionId)
+   template <class TP, class TC>
+   TP& PolymerTmpl<TP, TC>::propagator(int blockId, int directionId)
    {  return propagators_(blockId, directionId); }
 
-} 
+   /*
+   * Get a propagator indexed in order of computation.
+   */
+   template <class TP, class TC>
+   TP& PolymerTmpl<TP, TC>::propagator(int id)
+   {
+      UTIL_CHECK(id >= 0);
+      UTIL_CHECK(id < nPropagator());
+      Pair<int> propId = propagatorId(id);
+      UTIL_CHECK(propId[0] >= 0);
+      UTIL_CHECK(propId[0] < nBlock());
+      UTIL_CHECK(propId[1] >= 0);
+      UTIL_CHECK(propId[1] < 2);
+      return propagators_(propId[0], propId[1]); 
+   }
+
+}
 #endif
