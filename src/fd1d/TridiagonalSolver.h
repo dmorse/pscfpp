@@ -21,6 +21,7 @@ namespace Fd1d {
   
    class TridiagonalSolver
    {
+   public:
 
       /**
       * Constructor.
@@ -40,7 +41,12 @@ namespace Fd1d {
       void computeLU(const DArray<double>& d, const DArray<double>& u);
 
       /**
-      * Solve Ax = b.
+      * Evaluate product Ab = x for known b to compute x.
+      */
+      void multiply(const DArray<double>& b, DArray<double>& x);
+
+      /**
+      * Solve Ax = b for known b to compute x.
       */
       void solve(const DArray<double>& b, DArray<double>& x);
 

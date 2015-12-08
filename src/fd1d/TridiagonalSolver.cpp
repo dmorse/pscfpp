@@ -48,6 +48,35 @@ namespace Fd1d
          d_[i+1] -= q*u_[i];
          l_[i] = q;
       }
+
+      std::cout << "\n";
+      for (int i=0; i < n_; ++i) {
+         std::cout << "  " << d_[i];
+      }
+      std::cout << "\n";
+      for (int i=0; i < n_ - 1; ++i) {
+         std::cout << "  " << u_[i];
+      }
+      std::cout << "\n";
+      for (int i=0; i < n_ - 1; ++i) {
+         std::cout << "  " << l_[i];
+      }
+      std::cout << "\n";
+   }
+
+   /*
+   * Compute Ab = x for known b
+   */
+   void TridiagonalSolver::multiply(const DArray<double>& b, DArray<double>& x)
+   {
+      for (int i = 0; i < n_ - 1; ++i) {
+         y_[i] = d_[i]*b[i] + u_[i]*b[i+1];
+      }
+      y_[n_ - 1] = d_[n_ - 1]*b[n_ - 1];
+      x[0] = y_[0];
+      for (int i = 1; i < n_; ++i) {
+         x[i] = y_[i] + l_[i-1]*y_[i-1];
+      }
    }
 
    /*
@@ -62,7 +91,7 @@ namespace Fd1d
        } 
 
        // Solve Ux = y by back substitution.
-       x[n_ - 1] = y_[n_ - 1];
+       x[n_ - 1] = y_[n_ - 1]/d_[n_ - 1];
        for (int i = n_ - 2; i >= 0; --i) {
           x[i] = (y_[i] - u_[i]*x[i+1])/d_[i]; 
        }
