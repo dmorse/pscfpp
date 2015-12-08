@@ -45,14 +45,12 @@ namespace Pfts{
       * \param w chemical potential field for appropriate monomer type
       */
       void solve(const WField& w)
-      {
-         setIsComplete(true);
-      };
+      {  setIsSolved(true); };
   
       /**
       * Integrate to calculate monomer concentration for this block
       */ 
-      void integrate(const PropagatorStub& partner, CField integral)
+      void integrate(CField& integral)
       {};
    
    };

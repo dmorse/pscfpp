@@ -13,8 +13,6 @@
 
 namespace Pfts{ 
 
-   class PolymerStub;
-
    class PolymerStub : public PolymerTmpl<PropagatorStub>
    {
 
@@ -22,7 +20,7 @@ namespace Pfts{
 
       PolymerStub()
       {  setClassName("Polymer"); }
-   
+
    };
 
 } 

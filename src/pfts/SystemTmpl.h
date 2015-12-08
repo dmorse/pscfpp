@@ -16,6 +16,9 @@ namespace Pfts{
 
    using namespace Util;
 
+   /**
+   * Template for classes that represent an entire SCFT system.
+   */
    template <class TP, class TS>
    class SystemTmpl : public ParamComposite
    {
@@ -120,14 +123,14 @@ namespace Pfts{
       DArray<CField> cFields_;
 
       /**
-      * Array of polymer species solvers objects.
+      * Array of polymer species objects.
       *
       * Size = nPolymer.
       */
       DArray<Polymer> polymers_;
 
       /**
-      * Array of solvent species solvers.
+      * Array of solvent species objects.
       *
       * Size = nSolvent.
       */
@@ -184,6 +187,11 @@ namespace Pfts{
    inline typename SystemTmpl<TP,TS>::CField& SystemTmpl<TP,TS>::cField(int id)
    {  return cFields_[id]; }
 
+   // Non-inline member functions
+
+   /*
+   * Read all parameters and initialize.
+   */
    template <class TP, class TS>
    void SystemTmpl<TP,TS>::readParameters(std::istream& in)
    {
@@ -204,27 +212,14 @@ namespace Pfts{
       }
    }
 
+   /*
+   * Solve MDE, compute concentrations and free energy.
+   */
    template <class TP, class TS>
    void SystemTmpl<TP,TS>::compute()
    {
-      Polymer* polymerPtr = 0;
-      Propagator* propagatorPtr = 0;
-      int nPropagator, i, j, monomerId;
-      for (i = 0; i < nPolymer_; ++i) {
-         polymerPtr = &polymer(i);
-         nPropagator = polymerPtr->nPropagator();
-         for (j = 0; j < nPropagator; ++j) {
-            propagatorPtr = &polymerPtr->propagator(j);
-            propagatorPtr->setIsComplete(false);
-         }
-         for (j = 0; j < nPropagator; ++j) {
-            propagatorPtr = &polymerPtr->propagator(j);
-            if (!propagatorPtr->isReady()) {
-               UTIL_THROW("Propagator not ready");
-            }
-            monomerId = propagatorPtr->block().monomerId();
-            propagatorPtr->solve(wFields_[monomerId]);
-         }
+      for (int i = 0; i < nPolymer_; ++i) {
+         polymer(i).compute(wFields_);
       }
    }
 

@@ -60,15 +60,15 @@ public:
          propPtr = &p.propagator(i);
          TEST_ASSERT(propPtr->block().id() == propId[0]);
          TEST_ASSERT(propPtr->directionId() == propId[1]);
-         propPtr->setIsComplete(false);
+         propPtr->setIsSolved(false);
       }
 
       // Check computation plan
       for (int i = 0; i < p.nPropagator(); ++i) {
          TEST_ASSERT(p.propagator(i).isReady());
-         p.propagator(i).setIsComplete(true);
+         p.propagator(i).setIsSolved(true);
       }
-      
+ 
    }
 
 };

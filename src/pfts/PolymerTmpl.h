@@ -21,22 +21,30 @@ namespace Pfts
    /**
    * Base class template for classes that represent polymer species.
    */
-   template <class TP>
+   template <class TProp>
    class PolymerTmpl : public PolymerDescriptor, public Species
    {
    public:
  
       // Modified diffusion equation propagator for one block.
-      typedef TP Propagator;
+      typedef TProp Propagator;
 
       // Monomer concentration field.
-      typedef typename TP::CField CField;
+      typedef typename TProp::CField CField;
+ 
+      // Chemical potential field.
+      typedef typename TProp::WField WField;
  
       /**
       * Read parameters and initialize.
       */
       virtual void readParameters(std::istream& in);
-   
+ 
+      /**
+      * Compute solution to modified diffusion equation.
+      */ 
+      virtual void compute(const DArray<WField>& wFields);
+ 
       /**
       * Get the monomer concentration field for a specific block.
       *
@@ -79,11 +87,38 @@ namespace Pfts
    
    };
 
+   // Inline functions
+
+   /*
+   * Get a block monomer concentration.
+   */
+   template <class TProp>
+   inline
+   typename PolymerTmpl<TProp>::CField& PolymerTmpl<TProp>::blockCField(int blockId)
+   {  return blockCFields_[blockId]; }
+
+   /*
+   * Get a propagator indexed by block and direction.
+   */
+   template <class TProp>
+   inline TProp& PolymerTmpl<TProp>::propagator(int blockId, int directionId)
+   {  return propagators_(blockId, directionId); }
+
+   /*
+   * Get a propagator indexed in order of computation.
+   */
+   template <class TProp>
+   inline TProp& PolymerTmpl<TProp>::propagator(int id)
+   {
+      Pair<int> propId = propagatorId(id);
+      return propagators_(propId[0], propId[1]); 
+   }
+
    /*
    * Read parameters and allocate arrays.
    */
-   template <class TP>
-   void PolymerTmpl<TP>::readParameters(std::istream& in)
+   template <class TProp>
+   void PolymerTmpl<TProp>::readParameters(std::istream& in)
    {
       PolymerDescriptor::readParameters(in);
       blockCFields_.allocate(nBlock());
@@ -99,51 +134,65 @@ namespace Pfts
          }
       }
       
-      // Add sources to all propagators
+      // Set sources and partners for all propagators
       Vertex const * vertexPtr = 0;
       Propagator const * sourcePtr = 0;
       Pair<int> propagatorId;
       int vertexId, i;
       for (blockId = 0; blockId < nBlock(); ++blockId) {
+         // Add sources
          for (directionId = 0; directionId < 2; ++directionId) {
             vertexId = block(blockId).vertexId(directionId);
             vertexPtr = &vertex(vertexId);
             propagatorPtr = &propagator(blockId, directionId);
             for (i = 0; i < vertexPtr->size(); ++i) {
                propagatorId = vertexPtr->inPropagatorId(i);
-               if (propagatorId[0] != blockId) {
-                   sourcePtr = & propagator(propagatorId[0], propagatorId[1]);
-                   propagatorPtr->addSource(*sourcePtr);
+               if (propagatorId[0] == blockId) {
+                  UTIL_CHECK(propagatorId[1] != directionId);
+               } else {
+                  sourcePtr = & propagator(propagatorId[0], propagatorId[1]);
+                  propagatorPtr->addSource(*sourcePtr);
                }
             }
          }
+         // Set partners
+         propagator(blockId, 0).setPartner(propagator(blockId, 1));
+         propagator(blockId, 1).setPartner(propagator(blockId, 0));
+      }
+   }
+
+   /*
+   * Compute solution to modified diffusion equation, concentrations, etc.
+   */ 
+   template <class TProp>
+   void PolymerTmpl<TProp>::compute(const DArray<WField>& wFields)
+   {
+
+      // Clear all propagators
+      for (int j = 0; j < nPropagator(); ++j) {
+         propagator(j).setIsSolved(false);
       }
 
+      // Solve modified diffusion equation for all propagators
+      int monomerId;
+      for (int j = 0; j < nPropagator(); ++j) {
+         if (!propagator(j).isReady()) {
+            UTIL_THROW("Propagator not ready");
+         }
+         monomerId = propagator(j).block().monomerId();
+         propagator(j).solve(wFields[monomerId]);
+      }
+
+      // Compute unnormalized block concentration fields
+      for (int j = 0; j < nBlock(); ++j) {
+         propagator(j, 0).integrate(blockCFields_[j]);
+      }
+
+      // Compute overall partition function for molecule
+
+      // Normalize block concentration fields
+
    }
-
-   /*
-   * Get a block monomer concentration.
-   */
-   template <class TP>
-   typename TP::CField& PolymerTmpl<TP>::blockCField(int blockId)
-   {  return blockCFields_[blockId]; }
-
-   /*
-   * Get a propagator indexed by block and direction.
-   */
-   template <class TP>
-   TP& PolymerTmpl<TP>::propagator(int blockId, int directionId)
-   {  return propagators_(blockId, directionId); }
-
-   /*
-   * Get a propagator indexed in order of computation.
-   */
-   template <class TP>
-   TP& PolymerTmpl<TP>::propagator(int id)
-   {
-      Pair<int> propId = propagatorId(id);
-      return propagators_(propId[0], propId[1]); 
-   }
-
+ 
 }
 #endif

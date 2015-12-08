@@ -19,15 +19,45 @@ namespace Pfts{
    * Template for propagator classes.
    *
    * The template argument Propagator should be a concrete class that is
-   * derived from the template PropagatorTmpl<Propagator>, with a class
-   * definition something like:
+   * derived from the template PropagatorTmpl<Propagator>, as in the following
+   * example: 
    * \code
    *    class Propagator : public PropagatorTmpl<Propagator>
-   *    {} 
+   *    {
+   *     ...
+   *    }; 
    * \endcode
    * This usage is an example of the so-called "curiously recurring template 
-   * pattern" (CRTP). It is used here to allow the template to have a member
-   * array that stores pointers to other instances of class Propagator.
+   * pattern" (CRTP). It is used here to allow the template to have a members
+   * that stores pointers to other instances of derived class Propagator.
+   *
+   * The Propagator class is used in templates PolymerTmpl and SystemTmpl that 
+   * require that it define the following public typedefs and member functions:
+   * \code
+   *    class Propagator : public PropagatorTmpl<Propagator> 
+   *    {
+   *    public:
+   * 
+   *        // Chemical potential field type.
+   *        typedef DArray<double> WField;
+   *
+   *        // Monomer concentration field type.
+   *        typedef DArray<double> CField;
+   *
+   *        // Solve the modified diffusion equation for this direction.
+   *        void solve(const WField& wField);
+   *
+   *        // Compute the integral \int q(r,s)q^{*}(r,s) for this block
+   *        void integrate(const CField& integral);
+   * 
+   *    }; 
+   * \endcode
+   * The typedefs WField and CField define the types of the objects used
+   * to represent a chemical potential field for a particular monomer type
+   * and a monomer concentration field. In the above example, both of these
+   * typenames are defined to be synonyms for DArrray<double>, i.e., for 
+   * dynamically allocated arrays of double precision floating point 
+   * numbers. Other implementations may use more specialized types.
    */
    template <class Propagator>
    class PropagatorTmpl
@@ -49,13 +79,25 @@ namespace Pfts{
       void setBlock(const Block& block, int directionId);
 
       /**
-      * Add another propagator to the list of sources for this one.
+      * Set the partner of this propagator.
+      *
+      * A partner of a propagator is the propagator for the same block
+      * that propagates in the opposite direction.
+      *
+      * \param partner reference to partner propagator
+      */
+      void setPartner(const Propagator& partner);
+
+      /**
+      * Add a propagator to the list of sources for this one.
       *
       * A source is a propagator that is needed to compute the initial
       * condition for this one, and that thus must be computed before 
       * this one.
+      * 
+      * \param source reference to source propagator
       */
-      void addSource(const Propagator& other);
+      void addSource(const Propagator& source);
 
       /**
       * Check if all sources are completed.
@@ -63,9 +105,9 @@ namespace Pfts{
       bool isReady();
  
       /**
-      * Set the isComplete flag to true or false.
+      * Set the isSolved flag to true or false.
       */
-      void setIsComplete(bool isComplete);
+      void setIsSolved(bool isSolved);
  
       /**
       * Get the associated Block object by reference.
@@ -92,21 +134,24 @@ namespace Pfts{
       /**
       * Has the modified diffusion equation been solved?
       */
-      bool isComplete() const;
+      bool isSolved() const;
  
    private:
   
       /// Pointer to associated block.
       Block const * blockPtr_;
 
-      /// Direction of propagation (0 or 1)
+      /// Direction of propagation (0 or 1).
       int directionId_;
+
+      /// Pointer to partner - same block,opposite direction.
+      Propagator const * partnerPtr_;
 
       /// Pointers to propagators that feed source vertex.
       GArray<Propagator const *> sourcePtrs_;
 
       /// Set true after solving modified diffusion equation.
-      bool isComplete_;
+      bool isSolved_;
   
    };
 
@@ -145,8 +190,8 @@ namespace Pfts{
    * Is the computation of this propagator completed?
    */
    template <class Propagator>
-   inline bool PropagatorTmpl<Propagator>::isComplete() const
-   {  return isComplete_; }
+   inline bool PropagatorTmpl<Propagator>::isSolved() const
+   {  return isSolved_; }
 
    // Noninline member functions
 
@@ -158,7 +203,7 @@ namespace Pfts{
     : blockPtr_(0),
       directionId_(-1),
       sourcePtrs_(),
-      isComplete_(false)
+      isSolved_(false)
    {}
 
    /*
@@ -172,11 +217,18 @@ namespace Pfts{
    }
 
    /*
+   * Set the partner propagator.
+   */
+   template <class Propagator>
+   void PropagatorTmpl<Propagator>::setPartner(const Propagator& partner)
+   {  partnerPtr_ = &partner; }
+
+   /*
    * Add a source propagator to the list.
    */
    template <class Propagator>
-   void PropagatorTmpl<Propagator>::addSource(const Propagator& other)
-   {  sourcePtrs_.append(&other); }
+   void PropagatorTmpl<Propagator>::addSource(const Propagator& source)
+   {  sourcePtrs_.append(&source); }
 
    /*
    * Check if all source propagators are marked completed.
@@ -185,7 +237,7 @@ namespace Pfts{
    bool PropagatorTmpl<Propagator>::isReady()
    {
       for (int i=0; i < sourcePtrs_.size(); ++i) {
-         if (!sourcePtrs_[i]->isComplete()) {
+         if (!sourcePtrs_[i]->isSolved()) {
             return false;
          }
       }
@@ -193,11 +245,11 @@ namespace Pfts{
    }
 
    /*
-   * Mark this propagator as complete (true) or incomplete (false).
+   * Mark this propagator as solved (true) or not (false).
    */
    template <class Propagator>
-   void PropagatorTmpl<Propagator>::setIsComplete(bool isComplete)
-   {  isComplete_ = isComplete; }
+   void PropagatorTmpl<Propagator>::setIsSolved(bool isSolved)
+   {  isSolved_ = isSolved; }
 
 }
 #endif 
