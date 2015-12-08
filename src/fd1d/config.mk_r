@@ -1,0 +1,51 @@
+#-----------------------------------------------------------------------
+# This makefile fragment defines:
+#
+#   - A variable $(FD1D_DEFS) that is passed to the processor to define 
+#     preprocessor flags that effect the code in the fd1d/ directory. 
+#
+#   - A variable $(FD1D_MPI_SUFFIX) that is set to "_m" if MPI is enabled
+#     and left undefined otherwise. This is added as a suffix to the name
+#     of the fd1d library.
+#
+#   - A variable $(FD1D_SUFFIX) that indicates what other features are
+#     enabled, which is also added after FD1D_MPI_SUFFIX to the file
+#     name of fd1d library. 
+#
+#   - A variable $(FD1D_LIB) that the absolute path to the fd1d library 
+#     file.
+#
+# This file must be included by every makefile in the fd1d directory. 
+#-----------------------------------------------------------------------
+# Flag to define preprocessor macros.
+
+# Most users will not need to modify the rest of this file. 
+#-----------------------------------------------------------------------
+# Comments:
+#
+# The variable FD1D_DEFS is used to pass preprocessor definitions to
+# the compiler, using the "-D" compiler option. If not empty, it must 
+# consist of a list of zero or more preprocessor macro names, each 
+# preceded by the compiler flag "-D".  
+#
+# The variable FD1D_SUFFIX is appended to the base name fd1d.a of the 
+# static library $(FD1D_LIB). 
+#
+ 
+# Initialize macros to empty strings
+FD1D_DEFS=
+FD1D_SUFFIX:=
+
+# Each if-block below contains a line that appends a preprocessor macro 
+# definition to FD1D_DEFS, thus defining an associated C++ preprocessor 
+# macro. In some blocks, a second line add a suffix to the FD1D_SUFFIX 
+# or FD1D_MPI_SUFFIX variable, thus changing the name of the fd1d library
+# and other libraries and executables that depend on the fd1d library.
+
+#-----------------------------------------------------------------------
+# Path to the fd1d library 
+# Note: BLD_DIR is defined in config.mk
+
+fd1d_LIBNAME=fd1d$(FD1D_SUFFIX)$(UTIL_SUFFIX)
+fd1d_LIB=$(BLD_DIR)/fd1d/lib$(fd1d_LIBNAME).a
+#-----------------------------------------------------------------------

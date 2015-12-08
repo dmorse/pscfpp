@@ -36,7 +36,8 @@ cp scripts/python/makeDep bin/
 
 # Namespace config.mk in src/ directory (for in-source builds)
 cp src/util/config.mk_r src/util/config.mk
-cp src/pfts/config.mk_r src/pfts/config.mk
+cp src/chem/config.mk_r src/chem/config.mk
+cp src/fd1d/config.mk_r src/fd1d/config.mk
 
 # ---------------------------------------------------------------------
 # Create copies of the configure script.
