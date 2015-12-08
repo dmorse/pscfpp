@@ -13,7 +13,6 @@
 #include <string>
 #include <iostream>
 
-#endif
 
 namespace Fd1d {
 
@@ -68,3 +67,4 @@ namespace Fd1d {
    };
 
 }
+#endif
