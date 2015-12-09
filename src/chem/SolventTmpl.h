@@ -9,13 +9,14 @@
 */
 
 #include <chem/Species.h>
+#include <util/param/ParamComposite.h>
 
 namespace Chem{ 
 
    using namespace Util;
 
    template <class CField>
-   class SolventTmpl : public Species
+   class SolventTmpl : public Species, public ParamComposite
    {
    public:
    

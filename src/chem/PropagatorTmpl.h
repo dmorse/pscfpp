@@ -79,6 +79,13 @@ namespace Chem{
       void setBlock(const Block& block, int directionId);
 
       /**
+      * Set monomer statistical segment length.
+      *
+      * \param kuhn monomer statistical segment length
+      */
+      void setKuhn(double kuhn);
+
+      /**
       * Set the partner of this propagator.
       *
       * A partner of a propagator is the propagator for the same block
@@ -120,6 +127,11 @@ namespace Chem{
       int directionId() const;
 
       /**
+      * Get monomer statistical segment length.
+      */
+      double kuhn() const;
+
+      /**
       * Number of source / prerequisite propagators.
       */
       int nSource() const;
@@ -148,6 +160,9 @@ namespace Chem{
  
    private:
   
+      /// Monomer statistical segment length.
+      double kuhn_;
+
       /// Pointer to associated block.
       Block const * blockPtr_;
 
@@ -180,6 +195,13 @@ namespace Chem{
    template <class Propagator>
    inline int PropagatorTmpl<Propagator>::directionId() const
    {  return directionId_; }
+
+   /*
+   * Get the monomer statistical segment length. 
+   */
+   template <class Propagator>
+   inline double PropagatorTmpl<Propagator>::kuhn() const
+   {  return kuhn_; }
 
    /*
    * Get the number of source propagators.
@@ -233,6 +255,13 @@ namespace Chem{
       blockPtr_ = &block;
       directionId_ = directionId;
    }
+
+   /*
+   * Set the monomer statistical segment length.
+   */
+   template <class Propagator>
+   void PropagatorTmpl<Propagator>::setKuhn(double kuhn)
+   {  kuhn_ = kuhn; }
 
    /*
    * Set the partner propagator.

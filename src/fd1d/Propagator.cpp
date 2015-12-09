@@ -16,12 +16,12 @@ namespace Fd1d{
    * Constructor.
    */
    Propagator::Propagator()
-    : ds_(0.0),
+    : xMin_(0.0),
+      xMax_(0.0),
       dx_(0.0),
-      step_(0.0),
+      ds_(0.0),
       ns_(0),
-      nx_(0),
-      hasHead_(false)
+      nx_(0)
    {}
 
    /*
@@ -30,15 +30,16 @@ namespace Fd1d{
    Propagator::~Propagator()
    {}
 
-   void Propagator::init(int ns, int nx, double dx, double step)
-   {
-      ns_ = ns;
+   void Propagator::setGrid(double xMin, double xMax, int nx, int ns)
+   {  
+      xMin_ = xMin;
+      xMax_ = xMax;
       nx_ = nx;
-      dx_ = dx;
-      step_ = step;
-      ds_ = block().length()/double(ns_);
-      qFields_.allocate(ns_ + 1);
-      for (int i = 0; i <= ns_; ++i) {
+      ns_ = ns;
+      dx_ = (xMax - xMin)/double(nx_ - 1);
+      ds_ = block().length()/double(ns_ - 1);
+      qFields_.allocate(ns_);
+      for (int i = 0; i < ns_; ++i) {
          qFields_[i].allocate(nx_);
       }
       dA_.allocate(nx_);
@@ -49,31 +50,35 @@ namespace Fd1d{
       solver_.allocate(nx_);
    }
 
-   void Propagator::setHead(const Propagator::QField& head) 
-   {
-      QField& q = qFields_[0];
-      for (int i = 0; i < nx_; ++i) {
-         q[i] = head[i];
-      }
-      hasHead_ = true;
-   }
-
    /*
-   * Setup before the main propagation loop.
+   * Setup the contour length step algorithm.
    *
-   * The step routine propagates by one time step of the Crank-Nicholson 
-   * algorithm, in which Aq(i) = Bq(i-1), with nx_ x nx_ matrices
+   * This implementation uses the Crank-Nicholson algorithm for stepping
+   * the modified diffusion equation. One step of this algorithm, which
+   * is implemented by the step() function, solves a matrix equation of 
+   * the form
+   *
+   *         A q(i) = B q(i-1)
+   *
+   * where A and B are nx_ x nx_ symmetric tridiagonal matrices given by
    * 
-   *           A = 1 + 0.5ds*H
-   *           B = 1 + 0.5ds*H
+   *           A = 1 + 0.5*ds_*H
+   *           B = 1 + 0.5*ds_*H
+   *
+   * in which ds_ is the contour step and 
+   *
    *           H = -(b^2/6)d^2/dx^2 + w 
    *
-   * where H is the finite element representation of the "Hamiltonian" 
-   * operator. This member function sets up the diagonal (dA_ and dB_) 
-   * and off-diagonal (uA_ and uB_) elements of the tridiagonal matrices 
-   * A and B, and computes and LU decomposition of A.
+   * is a finite difference representation of the "Hamiltonian" operator,
+   * in which b = kuhn() is the statistical segment length. 
+   *
+   * This function sets up arrays containing diagonal and off-diagonal 
+   * elements of the matrices A and B, and computes the LU decomposition 
+   * of matrix A. Arrays of nx_ diagonal elements of A and B are denoted 
+   * by dA_ and dB_, respectively, while arrays of nx_ - 1 off-diagonal 
+   * ("upper") elements of A and B are denoted by uA_ and uB_.
    */
-   void Propagator::setup(Propagator::WField const& w)
+   void Propagator::setupSolver(Propagator::WField const& w)
    {
       // Initialize diagonals with identity and potential terms
       double halfdS = 0.5*ds_;
@@ -82,8 +87,8 @@ namespace Fd1d{
          dB_[i] = 1.0 - halfdS*w[i];
       }
 
-      // Add second derivative term
-      double bx = step_/dx_;
+      // Add diagonal second derivative terms
+      double bx = kuhn()/dx_;
       double c1 = bx*bx*ds_/12.0;
       double c2 = 2.0*c1;
       dA_[0] += c1;
@@ -94,34 +99,52 @@ namespace Fd1d{
       }
       dA_[nx_ - 1] += c1;
       dB_[nx_ - 1] -= c1;
-      for (int i = 0; i < nx_ - 1; ++i) {
-         uA_[i] -= c1;
-         uB_[i] += c1;
-      }
-      solver_.computeLU(dA_, uA_);
 
-      // Initialize head q-Field (if not already set externally)
-      if (!hasHead_) {
-         QField& q = qFields_[0];
-         for (int j = 0; j < nx_; ++j) {
-            q[j] = 1.0;
-         }
-         int j;
-         for (int i = 0; i < nSource(); ++i) {
-            QField const& qTail = source(i).tail();
-            for (j = 0; j < nx_; ++j) {
-               q[j] *= qTail[j];
-            }
-         }
+      // Assign off-diagonal second derivative terms
+      // (Opposite sign of corresponding diagonals)
+      for (int i = 0; i < nx_ - 1; ++i) {
+         uA_[i] = -c1;
+         uB_[i] = +c1;
       }
+
+      // Compute the LU decomposition of the A matrix
+      solver_.computeLU(dA_, uA_);
 
    }
 
    /*
-   * Propagate from step iStep to iStep + 1.
+   * Compute initial head QField from final tail QFields of sources.
+   */
+   void Propagator::computeHead()
+   {
+
+      // Reference to head of this propagator
+      QField& qh = qFields_[0];
+
+      // Initialize qh field to 1.0 at all grid points
+      int ix;
+      for (ix = 0; ix < nx_; ++ix) {
+         qh[ix] = 1.0;
+      }
+
+      // Pointwise multiply tail QFields of all sources
+      for (int is = 0; is < nSource(); ++is) {
+         if (!source(is).isSolved()) {
+            UTIL_THROW("Source not solved in computeHead");
+         }
+         QField const& qt = source(is).tail();
+         for (ix = 0; ix < nx_; ++ix) {
+            qh[ix] *= qt[ix];
+         }
+      }
+   }
+
+   /*
+   * Propagate solution from step iStep to iStep + 1.
    *
-   * This algorithm solves A q(i+1) = B q(i), where A and B are matrices
-   * defined in the documentation of the setup function.
+   * This algorithm implements one step of the Crank-Nicholson algorithm.
+   * To do so, it solves A q(i+1) = B q(i), where A and B are constant 
+   * matrices defined in the documentation of the setupStep() function.
    */
    void Propagator::step(int iStep)
    {
@@ -139,11 +162,31 @@ namespace Fd1d{
    */
    void Propagator::solve(const Propagator::WField& w)
    {
-      setup(w);
-      for (int iStep = 0; iStep < ns_; ++iStep) {
+      computeHead();
+      setupSolver(w);
+      for (int iStep = 0; iStep < ns_ - 1; ++iStep) {
          step(iStep);
       }
-      hasHead_ = false;
+      setIsSolved(true);
+   }
+
+   /*
+   * Solve the modified diffusion equation with specified initial field.
+   */
+   void Propagator::solve(const Propagator::WField& w, const Propagator::QField& head) 
+   {
+      // Initialize head QField
+      QField& qh = qFields_[0];
+      for (int i = 0; i < nx_; ++i) {
+         qh[i] = head[i];
+      }
+
+      // Setup solver and solve
+      setupSolver(w);
+      for (int iStep = 0; iStep < ns_ - 1; ++iStep) {
+         step(iStep);
+      }
+      setIsSolved(true);
    }
 
    /*
@@ -154,22 +197,48 @@ namespace Fd1d{
       if (!hasPartner()) {
          UTIL_THROW("No partner");
       }
-      if (partner().isSolved()) {
+      if (!partner().isSolved()) {
          UTIL_THROW("Partner not solved");
+      }
+      if (integral.capacity() != nx_) {
+         UTIL_THROW("integral not allocated or wrong size");
       }
       int i;
       for (int i = 0; i < nx_; ++i) {
-         integral[i]= 0.0;
+         integral[i] = 0.0;
       }
       int j;
-      for (j = 0; j <= ns_; ++j) {
+      for (j = 0; j < ns_; ++j) {
          for (i = 0; i < nx_; ++i) {
-            integral[i] += qFields_[j][i]*partner().qFields_[ns_ - j][i];
+            integral[i] += qFields_[j][i]*partner().qFields_[ns_ - 1 - j][i];
          }
       }
       for (i = 0; i < nx_; ++i) {
          integral[i] *= ds_;
       }
+   }
+
+   /*
+   * Integrate to calculate monomer concentration for this block
+   */
+   double Propagator::computeQ()
+   {
+      if (!isSolved()) {
+         UTIL_THROW("Propagator is not solved.");
+      }
+      if (!hasPartner()) {
+         UTIL_THROW("Propagator has no partner set.");
+      }
+      if (!partner().isSolved()) {
+         UTIL_THROW("Partner propagator is not solved");
+      }
+      QField const& qh = head();
+      QField const& qt = partner().tail();
+      double Q = 0.0;
+      for (int i = 0; i < nx_; ++i) {
+         Q += qh[i]*qt[i];
+      }
+      return Q/double(nx_);
    }
 
 }

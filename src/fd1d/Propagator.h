@@ -52,31 +52,65 @@ namespace Fd1d{
       ~Propagator();
 
       /**
-      * Initialize grids and allocate required memory.
+      * Initialize grid and allocate required memory.
       *
-      * \param ns number of contour grid points
+      * \param xMin minimum value of space coordinate
+      * \param xMax minimum value of space coordinate
       * \param nx number of spatial grid points
-      * \param dx spatial grid step size
-      * \param step monomer statistical length
+      * \param ns number of contour steps, # grid points - 1
       */
-      void init(int ns, int nx, double dx, double step);
+      void setGrid(double xMin, double xMax, int nx, int ns);
 
       /**
-      * Specify an initial condition for q-field.
-      */
-      void setHead(const QField& head); 
-
-      /**
-      * Solve the modified diffusion equation for this block.
+      * Solve the modified diffusion equation (MDE) for this block.
       *
-      * \param w chemical potential field for appropriate monomer type
+      * This function computes an initial QField at the head of this
+      * block, and then solves the modified diffusion equation for 
+      * the block to propagate from the head to the tail. The initial
+      * QField at the head is computed by pointwise multiplication of
+      * of the tail QFields of all source propagators.
+      *
+      * \param w chemical potential field for relevant monomer type
       */
       void solve(const WField& w);
   
       /**
-      * Integrate to calculate monomer concentration for this block
+      * Solve the MDE for a specified initial condition.
+      *
+      * This function solves the modified diffusion equation for this
+      * block with a specified initial condition, which is given by 
+      * head parameter of the function. The function is intended for 
+      * use in testing.
+      *
+      * \param w chemical potential field for relevant monomer type
+      * \param head initial condition of QField at head of block
+      */
+      void solve(const WField& w, const QField& head);
+  
+      /**
+      * Compute unnormalized concentration for block by integration.
+      *
+      * Upon return, grid point r of the integral array contains the 
+      * integral int ds q(r,s)q^{*}(r,L-s), q(r,s) is the solution 
+      * obtained from this propagator, q^{*} is the solution of the
+      * partner propagator, which solves the MDE for the same block
+      * in the opposite direction, and s is contour variable that is
+      * integrated over the domain 0 < s < L, where L is the length
+      * of the block. 
+      *
+      * \param integral contour integral of propagator product.
       */ 
       void integrate(CField& integral);
+
+      /**
+      * Compute and return partition function for the molecule.
+      *
+      * This function computes the partition function Q for the 
+      * molecule as a spatial average of the initial/head Qfield 
+      * for this propagator and the final/tail Qfield of its
+      * partner. 
+      */ 
+      double computeQ();
 
       /**
       * Return q-field at beginning of block (initial condition).
@@ -91,9 +125,14 @@ namespace Fd1d{
    protected:
 
       /**
-      * Set up before main integration loop.
+      * Set Crank-Nicholson solver before main integration loop.
       */
-      void setup(const WField& w);
+      void setupSolver(const WField& w);
+
+      /**
+      * Compute initial QField at head from tail QFields of sources.
+      */
+      void computeHead();
 
       /**
       * One step of integration loop, from i to i+1.
@@ -118,14 +157,20 @@ namespace Fd1d{
       // Solver used in Crank-Nicholson algorithm
       TridiagonalSolver solver_;
 
-      /// Contour length step size.
-      double ds_;
+      /// Monomer statistical segment length.
+      double step_;
+
+      /// Minimum value of spatial coordinate.
+      double xMin_;
+
+      /// Maximum value of spatial coordinate.
+      double xMax_;
 
       /// Spatial grid step size.
       double dx_;
 
-      /// Monomer statistical segment length.
-      double step_;
+      /// Contour length step size.
+      double ds_;
 
       /// Number of contour length steps = # grid points - 1.
       int ns_;
@@ -148,7 +193,7 @@ namespace Fd1d{
    * Return q-field at end of block, after solution.
    */
    inline Propagator::QField const& Propagator::tail() const
-   {  return qFields_[ns_]; }
+   {  return qFields_[ns_-1]; }
 
 } 
 #endif

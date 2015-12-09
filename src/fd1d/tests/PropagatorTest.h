@@ -44,11 +44,13 @@ public:
       Propagator propagator;
       propagator.setBlock(block, 0);
        
-      int ns = 100;
-      int nx = 10;
-      double dx = 1.0/double(nx - 1);
       double step = sqrt(6.0);
-      propagator.init(ns, nx, dx, step);
+      propagator.setKuhn(step);
+      double xMin = 0.0;
+      double xMax = 1.0;
+      int nx = 11;
+      int ns = 101;
+      propagator.setGrid(xMin, xMax, nx, ns);
       DArray<double> w;
       w.allocate(nx);
       double wc = 0.3;
@@ -83,11 +85,13 @@ public:
       Propagator propagator;
       propagator.setBlock(block, 0);
        
-      int ns = 10000;
-      int nx = 33;
-      double dx = 1.0/double(nx);
       double step = 1.0;
-      propagator.init(ns, nx, dx, step);
+      propagator.setKuhn(step);
+      double xMin = 0.0;
+      double xMax = 1.0;
+      int nx = 33;
+      int ns = 10001;
+      propagator.setGrid(xMin, xMax, nx, ns);
       DArray<double> q, w;
       q.allocate(nx);
       w.allocate(nx);
@@ -96,8 +100,7 @@ public:
          q[i] = cos(Constants::Pi*(double(i)+0.5)/nx);
          w[i] = wc;
       }
-      propagator.setHead(q);
-      propagator.solve(w);
+      propagator.solve(w, q);
 
       std::cout << "\n Head:\n";
       for (int i = 0; i < nx; ++i) {
@@ -111,10 +114,12 @@ public:
       }
       std::cout << "\n";
 
+      double dx = (xMax - xMin)/double(nx - 1);
       double k = 2.0*sin(Constants::Pi/(2*nx))/dx;
       double f = k*k*step*step/6.0 + wc;
       std::cout << exp(-f*length) << "\n";
    }
+
 };
 
 TEST_BEGIN(PropagatorTest)

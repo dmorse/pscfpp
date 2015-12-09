@@ -200,7 +200,7 @@ namespace Chem{
       monomers_.allocate(nMonomer_);
       readDArray< Monomer >(in, "monomers", monomers_, nMonomer_);
 
-      // Chemical potential and concentration fiels
+      // Allocate arrays of per-monomer fields
       wFields_.allocate(nMonomer_);
       cFields_.allocate(nMonomer_);
 
@@ -209,6 +209,18 @@ namespace Chem{
       polymers_.allocate(nPolymer_);
       for (int i = 0; i < nPolymer_; ++i) {
          readParamComposite(in, polymers_[i]);
+      }
+
+      // Set kuhn lengths for all propagators
+      double kuhn;
+      int monomerId;
+      for (int i = 0; i < nPolymer_; ++i) {
+         for (int j = 0; j < polymer(i).nBlock(); ++j) {
+            monomerId = polymer(i).block(j).monomerId();
+            kuhn = monomer(monomerId).step();
+            polymer(i).propagator(j, 0).setKuhn(kuhn);
+            polymer(i).propagator(j, 1).setKuhn(kuhn);
+         }
       }
    }
 
