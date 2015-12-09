@@ -192,8 +192,9 @@ namespace Fd1d{
    /*
    * Integrate to calculate monomer concentration for this block
    */
-   void Propagator::integrate(Propagator::CField& integral)
+   void Propagator::integrate(double prefactor, Propagator::CField& integral)
    {
+      // Preconditions
       if (!hasPartner()) {
          UTIL_THROW("No partner");
       }
@@ -203,19 +204,27 @@ namespace Fd1d{
       if (integral.capacity() != nx_) {
          UTIL_THROW("integral not allocated or wrong size");
       }
+
+      // Initialize to zero at all points
       int i;
       for (int i = 0; i < nx_; ++i) {
          integral[i] = 0.0;
       }
+
+      // Evaluate unnormalized integral
       int j;
       for (j = 0; j < ns_; ++j) {
          for (i = 0; i < nx_; ++i) {
             integral[i] += qFields_[j][i]*partner().qFields_[ns_ - 1 - j][i];
          }
       }
+
+      // Normalize
+      prefactor *= dx_;
       for (i = 0; i < nx_; ++i) {
-         integral[i] *= ds_;
+         integral[i] *= prefactor;
       }
+
    }
 
    /*

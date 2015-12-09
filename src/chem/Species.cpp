@@ -12,6 +12,7 @@ namespace Chem{
    using namespace Util;
 
    Species::Species()
+    : ensemble_(Species::CLOSED)
    {}
 
 } 

@@ -98,9 +98,10 @@ namespace Fd1d{
       * integrated over the domain 0 < s < L, where L is the length
       * of the block. 
       *
+      * \param prefactor multiplying integral
       * \param integral contour integral of propagator product.
       */ 
-      void integrate(CField& integral);
+      void integrate(double prefactor, CField& integral);
 
       /**
       * Compute and return partition function for the molecule.

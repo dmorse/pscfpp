@@ -13,6 +13,8 @@
 #include <util/containers/DArray.h>
 #include <util/containers/DMatrix.h>
 
+#include <cmath>
+
 namespace Chem
 {
 
@@ -209,14 +211,26 @@ namespace Chem
          propagator(j).solve(wFields[monomerId]);
       }
 
-      // Compute unnormalized block concentration fields
-      for (int j = 0; j < nBlock(); ++j) {
-         propagator(j, 0).integrate(blockCFields_[j]);
+      // Compute molecular partition function
+      double q = propagator(0,0).computeQ();
+      if (ensemble() == Species::CLOSED) {
+         mu_ = log(phi_ / q);
+      } 
+      else if (ensemble() == Species::OPEN) {
+         phi_ = exp(mu_)*q;
       }
 
-      // Compute overall partition function for molecule
+      // Compute overall length
+      double length = 0;
+      for (int i = 0; i < nBlock(); ++i) {
+         length += block(i).length();
+      }
 
-      // Normalize block concentration fields
+      // Compute block concentration fields
+      double prefactor = phi_ / (q*length);
+      for (int i = 0; i < nBlock(); ++i) {
+         propagator(i, 0).integrate(prefactor, blockCFields_[i]);
+      }
 
    }
  

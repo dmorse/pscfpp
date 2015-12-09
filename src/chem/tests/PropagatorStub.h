@@ -50,8 +50,14 @@ namespace Chem{
       /**
       * Integrate to calculate monomer concentration for this block
       */ 
-      void integrate(CField& integral)
+      void integrate(double prefactor, CField& integral)
       {};
+   
+      /**
+      * Compute and return molecular partition function.
+      */ 
+      double computeQ()
+      {  return 1.0; };
    
    };
 

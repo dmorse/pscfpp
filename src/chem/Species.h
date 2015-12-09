@@ -75,7 +75,7 @@ namespace Chem{
       /**
       * Statistical ensemble for this species (open or closed).
       */
-      int ensemble_;
+      Ensemble ensemble_;
    
       /**
       * Set true by upon return by compute() and set false by clear().
@@ -84,5 +84,11 @@ namespace Chem{
    
    };
 
+   /*
+   * Get statistical ensemble for this species (open or closed).
+   */
+   inline Species::Ensemble Species::ensemble()
+   {  return ensemble_; }
+   
 } 
 #endif 
