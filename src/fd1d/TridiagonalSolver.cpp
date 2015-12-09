@@ -49,6 +49,7 @@ namespace Fd1d
          l_[i] = q;
       }
 
+      #if 0
       std::cout << "\n";
       for (int i=0; i < n_; ++i) {
          std::cout << "  " << d_[i];
@@ -62,6 +63,7 @@ namespace Fd1d
          std::cout << "  " << l_[i];
       }
       std::cout << "\n";
+      #endif
    }
 
    /*

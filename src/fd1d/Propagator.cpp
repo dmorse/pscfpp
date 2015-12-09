@@ -20,7 +20,8 @@ namespace Fd1d{
       dx_(0.0),
       step_(0.0),
       ns_(0),
-      nx_(0)
+      nx_(0),
+      hasHead_(false)
    {}
 
    void Propagator::init(int ns, int nx, double dx, double step)
@@ -30,7 +31,7 @@ namespace Fd1d{
       dx_ = dx;
       step_ = step;
       ds_ = block().length()/double(ns_);
-      qFields_.allocate(ns_+1);
+      qFields_.allocate(ns_ + 1);
       for (int i = 0; i <= ns_; ++i) {
          qFields_[i].allocate(nx_);
       }
@@ -40,6 +41,15 @@ namespace Fd1d{
       uB_.allocate(nx_ - 1);
       v_.allocate(nx_);
       solver_.allocate(nx_);
+   }
+
+   void Propagator::setHead(const Propagator::QField& head) 
+   {
+      QField& q = qFields_[0];
+      for (int i = 0; i < nx_; ++i) {
+         q[i] = head[i];
+      }
+      hasHead_ = true;
    }
 
    /*
@@ -84,25 +94,28 @@ namespace Fd1d{
       }
       solver_.computeLU(dA_, uA_);
 
-      // Initialize head
-      QField& q = qFields_[0];
-      for (int j = 0; j < nx_; ++j) {
-         q[j] = 1.0;
-      }
-      int j;
-      for (int i = 0; i < nSource(); ++i) {
-         QField const& qTail = source(i).tail();
-         for (j = 0; j < nx_; ++j) {
-            q[j] *= qTail[j];
+      // Initialize head q-Field (if not already set externally)
+      if (!hasHead_) {
+         QField& q = qFields_[0];
+         for (int j = 0; j < nx_; ++j) {
+            q[j] = 1.0;
+         }
+         int j;
+         for (int i = 0; i < nSource(); ++i) {
+            QField const& qTail = source(i).tail();
+            for (j = 0; j < nx_; ++j) {
+               q[j] *= qTail[j];
+            }
          }
       }
+
    }
 
    /*
-   * Propagate from step i to i+1.
+   * Propagate from step iStep to iStep + 1.
    *
-   * This algorithm solves Aq(i+1) = Bq(i), where A and B are defined
-   * in the documentation of the setup function.
+   * This algorithm solves A q(i+1) = B q(i), where A and B are matrices
+   * defined in the documentation of the setup function.
    */
    void Propagator::step(int iStep)
    {
@@ -124,6 +137,7 @@ namespace Fd1d{
       for (int iStep = 0; iStep < ns_; ++iStep) {
          step(iStep);
       }
+      hasHead_ = false;
    }
 
    /*

@@ -4,9 +4,11 @@
 #include <test/CompositeTestRunner.h>
 
 #include "TridiagonalSolverTest.h"
+#include "PropagatorTest.h"
 
 TEST_COMPOSITE_BEGIN(Fd1dTestComposite)
 TEST_COMPOSITE_ADD_UNIT(TridiagonalSolverTest);
+TEST_COMPOSITE_ADD_UNIT(PropagatorTest);
 TEST_COMPOSITE_END
 
 #endif

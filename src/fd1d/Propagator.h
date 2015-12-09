@@ -52,9 +52,14 @@ namespace Fd1d{
       * \param ns number of contour grid points
       * \param nx number of spatial grid points
       * \param dx spatial grid step size
-      * \param step monomer statistical step size
+      * \param step monomer statistical length
       */
       void init(int ns, int nx, double dx, double step);
+
+      /**
+      * Specify an initial condition for q-field.
+      */
+      void setHead(const QField& head); 
 
       /**
       * Solve the modified diffusion equation for this block.
@@ -69,7 +74,7 @@ namespace Fd1d{
       void integrate(CField& integral);
 
       /**
-      * Return q-field at beginning of block.
+      * Return q-field at beginning of block (initial condition).
       */
       const QField& head() const;
 
@@ -80,9 +85,17 @@ namespace Fd1d{
 
    protected:
 
+      /**
+      * Set up before main integration loop.
+      */
       void setup(const WField& w);
 
-      void step(int i);
+      /**
+      * One step of integration loop, from i to i+1.
+      *
+      * \param iStep time step index, in range 0 to ns.
+      */
+      void step(int iStep);
  
    private:
       
@@ -114,6 +127,9 @@ namespace Fd1d{
 
       /// Number of spatial grid points.
       int nx_;
+
+      /// Has an specified initial condition (head).
+      bool hasHead_;
 
    };
 
