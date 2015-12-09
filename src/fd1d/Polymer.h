@@ -22,6 +22,8 @@ namespace Fd1d{
 
       Polymer();
 
+      ~Polymer();
+
    };
 
 } 

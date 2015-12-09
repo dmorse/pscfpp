@@ -47,6 +47,11 @@ namespace Fd1d{
       Propagator();
 
       /**
+      * Destructor.
+      */
+      ~Propagator();
+
+      /**
       * Initialize grids and allocate required memory.
       *
       * \param ns number of contour grid points

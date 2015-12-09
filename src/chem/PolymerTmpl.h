@@ -34,7 +34,17 @@ namespace Chem
  
       // Chemical potential field.
       typedef typename TProp::WField WField;
+
+      /**
+      * Constructor.
+      */
+      PolymerTmpl();
  
+      /**
+      * Destructor.
+      */
+      ~PolymerTmpl();
+
       /**
       * Read parameters and initialize.
       */
@@ -113,6 +123,22 @@ namespace Chem
       Pair<int> propId = propagatorId(id);
       return propagators_(propId[0], propId[1]); 
    }
+
+   // Non-inline functions
+
+   /*
+   * Constructor.
+   */
+   template <class TProp>
+   PolymerTmpl<TProp>::PolymerTmpl()
+   {}
+
+   /*
+   * Destructor.
+   */
+   template <class TProp>
+   PolymerTmpl<TProp>::~PolymerTmpl()
+   {}
 
    /*
    * Read parameters and allocate arrays.

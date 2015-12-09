@@ -85,15 +85,16 @@ public:
        
       int ns = 10000;
       int nx = 33;
-      double dx = 1.0/double(nx - 1);
+      double dx = 1.0/double(nx);
       double step = 1.0;
       propagator.init(ns, nx, dx, step);
       DArray<double> q, w;
       q.allocate(nx);
       w.allocate(nx);
+      double wc = 0.5;
       for (int i = 0; i < nx; ++i) {
-         q[i] = cos(Constants::Pi*double(i)*dx);
-         w[i] = 0.0;
+         q[i] = cos(Constants::Pi*(double(i)+0.5)/nx);
+         w[i] = wc;
       }
       propagator.setHead(q);
       propagator.solve(w);
@@ -107,13 +108,12 @@ public:
       std::cout << "\n Tail:\n";
       for (int i = 0; i < nx; ++i) {
          std::cout << "  " << propagator.tail()[i]/propagator.head()[i];
-         //std::cout << "  " << propagator.tail()[i];
       }
       std::cout << "\n";
 
-      double k = sin(Constants::Pi*dx)/dx;
-      double kb = k*step;
-      std::cout << exp(-kb*kb*length/6.0) << "\n";
+      double k = 2.0*sin(Constants::Pi/(2*nx))/dx;
+      double f = k*k*step*step/6.0 + wc;
+      std::cout << exp(-f*length) << "\n";
    }
 };
 

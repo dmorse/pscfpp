@@ -24,6 +24,12 @@ namespace Fd1d{
       hasHead_(false)
    {}
 
+   /*
+   * Destructor.
+   */
+   Propagator::~Propagator()
+   {}
+
    void Propagator::init(int ns, int nx, double dx, double step)
    {
       ns_ = ns;
@@ -145,6 +151,25 @@ namespace Fd1d{
    */
    void Propagator::integrate(Propagator::CField& integral)
    {
+      if (!hasPartner()) {
+         UTIL_THROW("No partner");
+      }
+      if (partner().isSolved()) {
+         UTIL_THROW("Partner not solved");
+      }
+      int i;
+      for (int i = 0; i < nx_; ++i) {
+         integral[i]= 0.0;
+      }
+      int j;
+      for (j = 0; j <= ns_; ++j) {
+         for (i = 0; i < nx_; ++i) {
+            integral[i] += qFields_[j][i]*partner().qFields_[ns_ - j][i];
+         }
+      }
+      for (i = 0; i < nx_; ++i) {
+         integral[i] *= ds_;
+      }
    }
 
 }

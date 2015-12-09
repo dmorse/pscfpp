@@ -132,6 +132,16 @@ namespace Chem{
       const Propagator& source(int id) const;
 
       /**
+      * Does this have a partner propagator?
+      */
+      bool hasPartner() const;
+
+      /**
+      * Get partner propagator.
+      */
+      const Propagator& partner() const;
+
+      /**
       * Has the modified diffusion equation been solved?
       */
       bool isSolved() const;
@@ -185,6 +195,14 @@ namespace Chem{
    inline const Propagator& 
    PropagatorTmpl<Propagator>::source(int id) const
    {  return *(sourcePtrs_[id]); }
+
+   /**
+   * Does this have a partner propagator?
+   */
+   template <class Propagator>
+   inline
+   bool PropagatorTmpl<Propagator>::hasPartner() const
+   {  return partnerPtr_; }
 
    /*
    * Is the computation of this propagator completed?
@@ -242,6 +260,17 @@ namespace Chem{
          }
       }
       return true;
+   }
+
+   /*
+   * Get partner propagator.
+   */
+   template <class Propagator>
+   const Propagator& PropagatorTmpl<Propagator>::partner() 
+   const
+   {
+      UTIL_CHECK(partnerPtr_);
+      return *partnerPtr_;
    }
 
    /*

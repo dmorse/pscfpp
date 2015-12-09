@@ -14,4 +14,7 @@ namespace Fd1d{
    Polymer::Polymer()
    {  setClassName("Polymer"); }
 
+   Polymer::~Polymer()
+   {}
+
 } 
