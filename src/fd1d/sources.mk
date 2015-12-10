@@ -1,5 +1,4 @@
 fd1d_= \
-  fd1d/TridiagonalSolver.cpp \
   fd1d/Propagator.cpp \
   fd1d/Polymer.cpp \
   fd1d/Solvent.cpp \

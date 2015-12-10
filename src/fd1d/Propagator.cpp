@@ -7,11 +7,11 @@
 
 #include "Propagator.h"
 
+namespace Pfts { 
 namespace Fd1d
 {
 
    using namespace Util;
-   using namespace Chem;
 
    /*
    * Constructor.
@@ -193,7 +193,7 @@ namespace Fd1d
    /*
    * Integrate to calculate monomer concentration for this block
    */
-   void Propagator::integrate(double prefactor, Propagator::CField& integral)
+   void Propagator::computeConcentration(double prefactor, Propagator::CField& integral)
    {
       // Preconditions
       if (!hasPartner()) {
@@ -251,4 +251,5 @@ namespace Fd1d
       return Q/double(nx_);
    }
 
+}
 }

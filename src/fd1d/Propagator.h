@@ -8,15 +8,15 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <chem/PropagatorTmpl.h>       // base class template
-#include <fd1d/TridiagonalSolver.h>    // member
+#include <pfts/PropagatorTmpl.h>       // base class template
+#include <pfts/TridiagonalSolver.h>    // member
 #include <util/containers/DArray.h>    // member template
 
+namespace Pfts { 
 namespace Fd1d
 { 
 
    using namespace Util;
-   using namespace Chem;
 
    class Propagator : public PropagatorTmpl<Propagator>
    {
@@ -102,7 +102,7 @@ namespace Fd1d
       * \param prefactor multiplying integral
       * \param integral contour integral of propagator product.
       */ 
-      void integrate(double prefactor, CField& integral);
+      void computeConcentration(double prefactor, CField& integral);
 
       /**
       * Compute and return partition function for the molecule.
@@ -197,5 +197,6 @@ namespace Fd1d
    inline Propagator::QField const& Propagator::tail() const
    {  return qFields_[ns_-1]; }
 
+}
 } 
 #endif

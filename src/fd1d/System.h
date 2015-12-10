@@ -10,12 +10,11 @@
 
 #include "Polymer.h"
 #include "Solvent.h"
-#include <chem/SystemTmpl.h>
+#include <pfts/SystemTmpl.h>
 
+namespace Pfts {
 namespace Fd1d
-{ 
-
-   class System;
+{
 
    class System : public SystemTmpl<Polymer, Solvent>
    {
@@ -25,8 +24,8 @@ namespace Fd1d
       System();
 
       ~System();
-  
-      void readParameters(std::istream& in); 
+
+      void readParameters(std::istream& in);
 
       /**
       * Get number of spatial grid points.
@@ -56,5 +55,6 @@ namespace Fd1d
    inline double System::dx() const
    {  return dx_; }
 
-} 
+}
+}
 #endif

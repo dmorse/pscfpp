@@ -9,23 +9,28 @@
 */
 
 #include "Propagator.h"
-#include <chem/SolventTmpl.h>
+#include <pfts/SolventTmpl.h>
 
+namespace Pfts { 
 namespace Fd1d
 { 
 
-   using namespace Chem;
-
    class Solvent : public SolventTmpl<Propagator>
    {
-
    public:
 
+      /**
+      * Constructor.
+      */
       Solvent();
 
+      /**
+      * Destructor.
+      */
       ~Solvent();
 
    };
 
+}
 } 
 #endif

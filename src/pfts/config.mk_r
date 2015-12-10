@@ -1,0 +1,62 @@
+#-----------------------------------------------------------------------
+# This makefile fragment defines:
+#
+#   - A variable $(PFTS_DEFS) that is passed to the processor to define 
+#     preprocessor flags that effect the code in the util/ directory. 
+#
+#   - A variable $(PFTS_MPI_SUFFIX) that is set to "_m" if MPI is enabled
+#     and left undefined otherwise. This is added as a suffix to the name
+#     of the util library.
+#
+#   - A variable $(PFTS_SUFFIX) that indicates what other features are
+#     enabled, which is also added after PFTS_MPI_SUFFIX to the file
+#     name of util library. 
+#
+#   - A variable $(PFTS_LIB) that the absolute path to the util library 
+#     file.
+#
+# This file must be included by every makefile in the util directory. 
+#-----------------------------------------------------------------------
+# Flag to define preprocessor macros.
+
+# Most users will not need to modify the rest of this file. 
+#-----------------------------------------------------------------------
+# Comments:
+#
+# The variable PFTS_DEFS is used to pass preprocessor definitions to
+# the compiler, using the "-D" compiler option. If not empty, it must 
+# consist of a list of zero or more preprocessor macro names, each 
+# preceded by the compiler flag "-D".  For example, setting PFTS_DEFS 
+# to "-DPFTS_MPI -DPFTS_DEBUG" will cause compilation of a parallel
+# version of the code with debugging enabled.
+#
+# The variable PFTS_SUFFIX is appended to the base name util.a of the 
+# static library $(PFTS_LIB). Setting PFTS_SUFFIX to "_g", to denote 
+# a debugging version, in the absence of other macros, will create a 
+# library named util_g.a in directory $(SRC_DIR)/util.
+#
+# The variable PFTS_DEFS is a recursive (normal) makefile variable, and
+# may be extended using the += operator, e.g., PFTS_DEFS+=-DPFTS_ANGLE.
+# PFTS_SUFFIX is instead a non-recursive makefile variable, which may 
+# be extended using the := operator, as PFTS_SUFFIX:=$(PFTS_SUFFIX)_g. 
+# They are defined differently because the += operator for recursive
+# variables adds a white space before an added string, which is 
+# appropriate for PFTS_DEFS, but not for PFTS_SUFFIX. 
+ 
+# Initialize macros to empty strings
+PFTS_DEFS=
+PFTS_SUFFIX:=
+
+# Each if-block below contains a line that appends a preprocessor macro 
+# definition to PFTS_DEFS, thus defining an associated C++ preprocessor 
+# macro. In some blocks, a second line add a suffix to the PFTS_SUFFIX 
+# or PFTS_MPI_SUFFIX variable, thus changing the name of the util library
+# and other libraries and executables that depend on the util library.
+
+#-----------------------------------------------------------------------
+# Path to the util library 
+# Note: BLD_DIR is defined in config.mk
+
+pfts_LIBNAME=pfts$(PFTS_SUFFIX)$(UTIL_SUFFIX)
+pfts_LIB=$(BLD_DIR)/pfts/lib$(pfts_LIBNAME).a
+#-----------------------------------------------------------------------

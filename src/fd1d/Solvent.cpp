@@ -7,10 +7,9 @@
 
 #include "Solvent.h"
 
+namespace Pfts { 
 namespace Fd1d
 { 
-
-   using namespace Chem;
 
    Solvent::Solvent()
    {  setClassName("Solvent"); }
@@ -18,4 +17,5 @@ namespace Fd1d
    Solvent::~Solvent()
    {}
 
+}
 }

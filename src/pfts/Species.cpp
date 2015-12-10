@@ -5,17 +5,13 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Polymer.h"
+#include "Species.h"
 
-namespace Pfts {
-namespace Fd1d 
+namespace Pfts
 { 
 
-   Polymer::Polymer()
-   {  setClassName("Polymer"); }
-
-   Polymer::~Polymer()
+   Species::Species()
+    : ensemble_(Species::CLOSED)
    {}
 
-}
-}
+} 
