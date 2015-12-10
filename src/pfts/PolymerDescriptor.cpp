@@ -43,12 +43,6 @@ namespace Pfts
 
       readDArray<Block>(in, "blocks", blocks_, nBlock_);
 
-      // Compute molecular length / volume
-      length_ = 0.0;
-      for (int blockId = 0; blockId < nBlock_; ++blockId) {
-         length_ += blocks_[blockId].length();
-      }
-
       // Set vertex indices
       for (int vertexId = 0; vertexId < nVertex_; ++vertexId) {
          vertices_[vertexId].setId(vertexId);
@@ -66,6 +60,13 @@ namespace Pfts
       }
 
       makePlan();
+
+      // Compute molecular length / volume
+      length_ = 0.0;
+      for (int blockId = 0; blockId < nBlock_; ++blockId) {
+         length_ += blocks_[blockId].length();
+      }
+
    }
 
    void PolymerDescriptor::makePlan()

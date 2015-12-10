@@ -208,20 +208,25 @@ namespace Fd1d
 
       // Initialize to zero at all points
       int i;
-      for (int i = 0; i < nx_; ++i) {
+      for (i = 0; i < nx_; ++i) {
          integral[i] = 0.0;
       }
 
       // Evaluate unnormalized integral
-      int j;
-      for (j = 0; j < ns_; ++j) {
+      for (i = 0; i < nx_; ++i) {
+         integral[i] += 0.5*qFields_[0][i]*partner().qFields_[ns_ - 1][i];
+      }
+      for (int j = 1; j < ns_ - 1; ++j) {
          for (i = 0; i < nx_; ++i) {
             integral[i] += qFields_[j][i]*partner().qFields_[ns_ - 1 - j][i];
          }
       }
+      for (i = 0; i < nx_; ++i) {
+         integral[i] += 0.5*qFields_[ns_ - 1][i]*partner().qFields_[0][i];
+      }
 
       // Normalize
-      prefactor *= dx_;
+      prefactor *= ds_;
       for (i = 0; i < nx_; ++i) {
          integral[i] *= prefactor;
       }

@@ -65,10 +65,24 @@ public:
          sys.wField(1)[i] = -cos(Constants::Pi*(double(i)+0.5)/nx);
       }
       sys.compute();
+
+      // Test if same Q is obtained from different methods
       std::cout << sys.polymer(0).propagator(0, 0).computeQ() << "\n";
       std::cout << sys.polymer(0).propagator(1, 0).computeQ() << "\n";
       std::cout << sys.polymer(0).propagator(1, 1).computeQ() << "\n";
       std::cout << sys.polymer(0).propagator(0, 1).computeQ() << "\n";
+
+      // Test spatial integral of block concentration
+      double sum0 = 0.0;
+      double sum1 = 0.0;
+      for (int i = 0; i < nx; ++i) {
+         sum0 += sys.polymer(0).blockCField(0)[i];
+         sum1 += sys.polymer(0).blockCField(1)[i];
+      }
+      sum0 = sum0/double(nx);
+      sum1 = sum1/double(nx);
+      std::cout << "Volume fraction of block 0 = " << sum0 << "\n";
+      std::cout << "Volume fraction of block 1 = " << sum1 << "\n";
       
    }
 };

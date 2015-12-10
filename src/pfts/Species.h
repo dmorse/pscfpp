@@ -8,6 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <util/global.h>
 namespace Pfts
 { 
 
@@ -15,7 +16,7 @@ namespace Pfts
    {
    public:
    
-      enum Ensemble {UNKNOWN, CLOSED, OPEN};
+      enum Ensemble {Unknown, Closed, Open};
 
       /**
       * Default constructor.
@@ -87,5 +88,54 @@ namespace Pfts
    inline Species::Ensemble Species::ensemble()
    {  return ensemble_; }
    
-} 
+   /**
+   * istream extractor for a Species::Ensemble.
+   *
+   * \param  in       input stream
+   * \param  policy   Species::Ensemble to be read
+   * \return modified input stream
+   */
+   std::istream& operator >> (std::istream& in, Species::Ensemble& policy);
+
+   /**
+   * ostream inserter for an Species::Ensemble.
+   *
+   * \param  out      output stream
+   * \param  policy   Species::Ensemble to be written
+   * \return modified output stream
+   */
+   std::ostream& operator << (std::ostream& out, Species::Ensemble policy);
+
+   /**
+   * Serialize a Species::Ensemble
+   *
+   * \param ar      archive object
+   * \param policy  object to be serialized
+   * \param version archive version id
+   */
+   template <class Archive>
+   void serialize(Archive& ar, Species::Ensemble& policy, const unsigned int version)
+   { serializeEnum(ar, policy, version); }
+
+}
+
+#ifdef UTIL_MPI
+#include <util/mpi/MpiTraits.h>
+namespace Util
+{
+
+   /**
+   * Explicit specialization MpiTraits<Species::Ensemble>.
+   */
+   template <>
+   class MpiTraits<Pfts::Species::Ensemble> {  
+   public:  
+      static MPI::Datatype type;     ///< MPI Datatype
+      static bool hasType;           ///< Is the MPI type initialized?
+   };
+
+}
+
+#endif 
+
 #endif 

@@ -148,7 +148,18 @@ namespace Pfts
    template <class TProp>
    void PolymerTmpl<TProp>::readParameters(std::istream& in)
    {
+      // Read polymer structure
       PolymerDescriptor::readParameters(in);
+
+      // Read ensemble and phi or mu
+      ensemble_ = Species::Closed;
+      readOptional<Species::Ensemble>(in, "ensemble", ensemble_);
+      if (ensemble_ == Species::Closed) {
+         read(in, "phi", phi_);
+      } else {
+         read(in, "mu", mu_);
+      }
+
       blockCFields_.allocate(nBlock());
       propagators_.allocate(nBlock(), 2);
 
@@ -213,10 +224,10 @@ namespace Pfts
 
       // Compute molecular partition function
       double q = propagator(0,0).computeQ();
-      if (ensemble() == Species::CLOSED) {
+      if (ensemble() == Species::Closed) {
          mu_ = log(phi_/q);
       } 
-      else if (ensemble() == Species::OPEN) {
+      else if (ensemble() == Species::Open) {
          phi_ = exp(mu_)*q;
       }
 

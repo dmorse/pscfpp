@@ -8,6 +8,7 @@ System{
       nVertex 3
       blocks  0  0  0  1  2.0
               1  1  1  2  3.0
+      phi     1.0
    }
    xMin 0.0
    xMax 1.0
