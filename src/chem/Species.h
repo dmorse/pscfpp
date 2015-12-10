@@ -8,11 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-namespace Util{}
-
-namespace Chem{ 
-
-   using namespace Util;
+namespace Chem
+{ 
 
    class Species
    {

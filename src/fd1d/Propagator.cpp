@@ -7,7 +7,8 @@
 
 #include "Propagator.h"
 
-namespace Fd1d{
+namespace Fd1d
+{
 
    using namespace Util;
    using namespace Chem;

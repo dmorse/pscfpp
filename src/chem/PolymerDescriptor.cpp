@@ -7,7 +7,8 @@
 
 #include "PolymerDescriptor.h"
 
-namespace Chem{ 
+namespace Chem
+{ 
 
    /*
    * Constructor.

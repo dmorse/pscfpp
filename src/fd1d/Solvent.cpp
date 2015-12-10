@@ -7,7 +7,8 @@
 
 #include "Solvent.h"
 
-namespace Fd1d{ 
+namespace Fd1d
+{ 
 
    using namespace Chem;
 

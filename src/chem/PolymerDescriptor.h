@@ -15,7 +15,8 @@
 #include "Block.h"                       // member template argument
 #include "Vertex.h"                      // member template argument
 
-namespace Chem{ 
+namespace Chem
+{ 
 
    using namespace Util;
 

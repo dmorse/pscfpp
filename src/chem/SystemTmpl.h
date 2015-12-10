@@ -12,7 +12,8 @@
 #include <util/param/ParamComposite.h>
 #include <util/containers/DArray.h>
 
-namespace Chem{
+namespace Chem
+{
 
    using namespace Util;
 

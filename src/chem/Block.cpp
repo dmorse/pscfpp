@@ -7,7 +7,8 @@
 
 #include "Block.h"
 
-namespace Chem{ 
+namespace Chem
+{ 
 
    /*
    * Constructor.

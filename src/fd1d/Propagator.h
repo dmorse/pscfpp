@@ -12,7 +12,8 @@
 #include <fd1d/TridiagonalSolver.h>    // member
 #include <util/containers/DArray.h>    // member template
 
-namespace Fd1d{ 
+namespace Fd1d
+{ 
 
    using namespace Util;
    using namespace Chem;

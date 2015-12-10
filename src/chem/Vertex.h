@@ -11,7 +11,8 @@
 #include <util/containers/GArray.h>
 #include <util/containers/Pair.h>
 
-namespace Chem{ 
+namespace Chem
+{ 
 
    class Block;
    using namespace Util;

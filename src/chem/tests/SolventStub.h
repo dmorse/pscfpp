@@ -11,7 +11,8 @@
 #include <chem/SolventTmpl.h>
 #include <util/containers/DArray.h>
 
-namespace Chem{ 
+namespace Chem
+{ 
 
    class SolventStub : public SolventTmpl< DArray<double> >
    {

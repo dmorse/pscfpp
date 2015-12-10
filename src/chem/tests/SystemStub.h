@@ -12,9 +12,8 @@
 #include "SolventStub.h"
 #include <chem/SystemTmpl.h>
 
-namespace Chem{ 
-
-   class SystemStub;
+namespace Chem
+{ 
 
    class SystemStub 
     : public SystemTmpl<PolymerStub, SolventStub>

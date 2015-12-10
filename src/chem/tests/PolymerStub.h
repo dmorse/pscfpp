@@ -11,7 +11,8 @@
 #include "PropagatorStub.h"
 #include <chem/PolymerTmpl.h>
 
-namespace Chem{ 
+namespace Chem
+{ 
 
    class PolymerStub : public PolymerTmpl<PropagatorStub>
    {

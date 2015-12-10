@@ -14,7 +14,8 @@
 #include <iostream>
 
 
-namespace Fd1d {
+namespace Fd1d 
+{
 
    using namespace Util;
   

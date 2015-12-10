@@ -11,7 +11,8 @@
 #include <chem/Species.h>
 #include <util/param/ParamComposite.h>
 
-namespace Chem{ 
+namespace Chem
+{ 
 
    using namespace Util;
 

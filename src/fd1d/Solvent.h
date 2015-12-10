@@ -11,7 +11,8 @@
 #include "Propagator.h"
 #include <chem/SolventTmpl.h>
 
-namespace Fd1d{ 
+namespace Fd1d
+{ 
 
    using namespace Chem;
 

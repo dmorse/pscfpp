@@ -7,9 +7,8 @@
 
 #include "Species.h"
 
-namespace Chem{ 
-
-   using namespace Util;
+namespace Chem
+{ 
 
    Species::Species()
     : ensemble_(Species::CLOSED)

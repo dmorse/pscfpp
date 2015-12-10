@@ -8,7 +8,8 @@
 #include "System.h"
 #include <cmath>
 
-namespace Fd1d{ 
+namespace Fd1d
+{ 
 
    System::System()
    {  setClassName("System"); }

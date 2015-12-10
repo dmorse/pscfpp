@@ -12,7 +12,8 @@
 #include "Solvent.h"
 #include <chem/SystemTmpl.h>
 
-namespace Fd1d{ 
+namespace Fd1d
+{ 
 
    class System;
 

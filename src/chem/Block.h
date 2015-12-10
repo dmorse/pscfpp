@@ -12,7 +12,8 @@
 
 #include <iostream>
 
-namespace Chem{ 
+namespace Chem
+{ 
 
    using namespace Util;
 

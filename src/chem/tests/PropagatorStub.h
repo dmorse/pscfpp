@@ -11,7 +11,8 @@
 #include <chem/PropagatorTmpl.h>
 #include <util/containers/DArray.h>
 
-namespace Chem{ 
+namespace Chem
+{ 
 
    class PropagatorStub;
 

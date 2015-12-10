@@ -9,7 +9,8 @@
 #include "Block.h"
 #include <util/global.h>
 
-namespace Chem{ 
+namespace Chem
+{ 
 
    Vertex::Vertex()
     : inPropagatorIds_(),

@@ -7,7 +7,8 @@
 
 #include "Monomer.h"
 
-namespace Chem{ 
+namespace Chem
+{ 
 
    Monomer::Monomer()
     : id_(-1),

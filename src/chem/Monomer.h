@@ -11,7 +11,8 @@
 #include <string>
 #include <iostream>
 
-namespace Chem{
+namespace Chem
+{
 
    /**
    * Descriptor for a monomer or particle type.
