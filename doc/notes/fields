@@ -1,45 +1,37 @@
 -------------------------------------------------------------
 Field Class Concepts:
 
-class WField {
-
-   // Read-only access by grid point
-   const Array<double>& grid();
-   double operator [] (int i) const;
+class WField : public DArray<double>
+{
 
    // Read-write access by basis function coefficient
    Array<double>& expansion();
    double& operator () (int i);
    double operator () (int i) const;
 
-   computeGrid();
-
    // Assignment operator
-   QField& operator = (QField& other);
+   WField& operator = (WField& other);
 
    // Increment operator
-   QField& operator += (QField& other);
+   WField& operator += (WField& other);
 
    // Decrement operator
-   QField& operator -= (QField& other);
-
+   WField& operator -= (WField& other);
 };
 
 
-class CField {
+class CField : public DArray<double>
+{
 
-   // Read-write access by grid point
-   const Array<double>& grid();
-   double& operator [] (int i);
-   double operator [] (int i) const;
+   /**
+   * Set field to be zero for all positions.
+   */
+   setToZero();
 
    // Read-write access by basis function coefficient
    Array<double>& expansion();
    double& operator () (int i);
    double operator () (int i) const;
-
-   computeGrid();
-   computeExpansion();
 
    // Assignment operator
    QField& operator = (QField& other);
@@ -59,6 +51,16 @@ class QField
    */
    setToIdentity();
 
+   /**
+   * Compute and return spatial average.
+   */
+   virtual double average();
+
+   /**
+   * Return
+   */
+   DArray<double>& grid();
+
    // Read-write access by grid point
    double& operator [] (int i);
    double operator [] (int i) const;
@@ -66,7 +68,16 @@ class QField
    // Assignment operator
    QField& operator = (QField& other);
 
-   // Multipication of fields
+   // Pointwise multipication of fields
    QField& operator *= (QField& other);
 
+   // Addition of fields
+   QField& operator += (QField& other);
+
 };
+
+Functions:
+
+1) Inner product of WField and CField
+
+2) Other functions (quadratic forms involving C) are model dependent 

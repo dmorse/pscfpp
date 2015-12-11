@@ -1,0 +1,151 @@
+-------------------------------------------------------------
+Propagator Class Concept:
+
+W = chemical potential field type
+Q = partition function field
+C = concentration field
+
+class Propagator
+{
+public:
+
+   void setBlock(Block& block, int directionId);
+   void setPartner(Propagator& partner);
+   void addSource(Propagator& other);
+   void setRwStep(double rwStep);
+   void setGrid(...);
+   void solve(const W& w);
+   void computeConcentration(C& c);
+   double computeQ();
+
+   const Block& block() const;
+   const Q& head() const;
+   const Q& tail() const;
+
+private:
+
+   Block* blockPtr_;
+   int directionId_;
+   Propagator* partnerPtr_;
+   GArray<Propagator<W, Q>*> sourcesPtrs_;
+
+};
+-------------------------------------------------------------
+
+template <class Propagator>
+class Polymer : public Species, public PolymerDescriptor
+{
+public:
+
+   /**
+   * Read parameters and initialize.
+   */
+   virtual void readParameters();
+
+   /**
+   * Solve modified diffusion equation for all blocks.
+   */
+   virtual void compute(DArray<WField>& wFields) = 0;
+
+   /**
+   * Get monomer concentration field for specific block.
+   */
+   const C& blockCField(int blockId) const;
+
+   /**
+   * Get propagator for a specific block and direction.
+   */
+   const P& propagator(int blockId, int direction) const;
+
+private:
+
+   Matrix<Propagator> propagators_;
+
+   DArray<C> blockCFields_;
+
+};
+
+-------------------------------------------------------------
+template <class C>
+class Solvent : public Species, public SolventDescriptor
+{
+public:
+
+   /**
+   * Read parameters and initialize.
+   */
+   virtual void readParameters();
+
+   /**
+   * Compute concentration and partition function.
+   */
+   virtual void compute() = 0;
+
+   /**
+   * Get monomer concentration field for this solvent.
+   */
+   const C& concentration() const;
+
+protected:
+
+   C concentration_;
+
+};
+
+template <class Monomer, class Polymer, class Solvent,
+          class WField, class CField>
+class System
+{
+public:
+
+   int nMonomer();
+   int nPolymer();
+   int nSolvent();
+
+   Monomer& monomer(int id);
+   Polymer& polymer(int id);
+   Solvent& solvent(int id);
+
+   /**
+   * Compute ideal gas properties for all species.
+   */
+   virtual void compute();
+
+   /**
+   * Return W (chemical potential) field for monomer index id.
+   */
+   virtual WField& wField(int id);
+
+   /**
+   * Return concentration field for monomer index id.
+   */
+   virtual CField& cField(int id);
+
+private:
+
+   /**
+   * Array of monomer type descriptors.
+   */
+   DArray<Monomer> monomers_;
+
+   /**
+   * Array of fields associated with monomer types.
+   */
+   DArray<WField> wFields_;
+
+   /**
+   * Array of monomer concentration fields.
+   */
+   DArray<CField> cFields_;
+
+   /**
+   * Array of polymer species solvers objects.
+   */
+   DArray<Polymer> polymers_;
+
+   /**
+   * Array of solvent species solvers.
+   */
+   DArray<Solvent> solvents_;
+
+};

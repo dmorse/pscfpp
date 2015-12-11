@@ -19,7 +19,7 @@ class Vertex
 
 class PolymerDescriptor
 {
-   Data: nVertex_, nBlock_, vertices_, propagators_, plan_
+   Data: nVertex_, nBlock_, blocks_, vertices_, plan_
 };
 
 class SolventDescriptor
@@ -27,60 +27,15 @@ class SolventDescriptor
    Data: monomerId, volume 
 };
 
--------------------------------------------------------------
-Propagator Class Template:
-
-template <class W, class Q>
-class Propagator
-{
-public:
-
-   void setBlock(Block& block, int sign);
-   void addSource(Propagator<W, Q>& other);
-   void init();
-   void compute(W& w);
-
-   const Block& block() const;
-   const Q& tail() const;
-
-private:
-
-   Block* blockPtr_;
-   int sign_;
-   GArray<Propagator<W, Q>*> sourcesPtrs_;
-
-};
-
--------------------------------------------------------------
-Species Base Classes and Templates:
+-------------------------------------------------------
 
 class Species
 {
 public:
 
-   enum Ensemble {UNKNOWN, CLOSED, OPEN};
+   enum Ensemble {Unknown, Closed, Open};
 
    Species();
-
-   /**
-   * Set volume fraction phi, and set ensemble to closed.
-   */
-   void setPhi(double phi);
-
-   /**
-   * Sets chemical potential, and sets ensemble to open.
-   */
-   void setMu(double mu);
-
-   /**
-   * Solve modified diffusion equation and set related quantities.
-   */
-   virtual void compute() = 0;
-
-   /**
-   * Clear all computed quantities.
-   */
-   void clear();
 
    /**
    * Get overall volume fraction for this species.
@@ -93,7 +48,7 @@ public:
    double mu() const;
 
    /**
-   * Get scalar partition function for this species.
+   * Get molecular partition function for this species.
    */
    double q() const;
 
@@ -122,131 +77,7 @@ protected:
    /**
    * Statistical ensemble for this species (open or closed).
    */
-   int ensemble_;
-
-   /**
-   * Set true by upon return by compute() and set false by clear().
-   */
-   bool isComputed_;
+   Ensemble ensemble_;
 
 };
 
-template <class P, class C>
-class Polymer : public Species, public PolymerDescriptor
-{
-public:
-
-   /**
-   * Read parameters and initialize.
-   */
-   virtual void readParameters();
-
-   /**
-   * Solve modified diffusion equation for all blocks.
-   */
-   virtual void compute() = 0;
-
-   /**
-   * Get monomer concentration field for specific block.
-   */
-   const C& blockCField(int blockId) const;
-
-   /**
-   * Get propagator for a specific block and direction.
-   */
-   const P& propagator(int blockId, int direction) const;
-
-private:
-
-   DArray<Pair<P>> propagators_;
-
-   DArray<C> blockCFields_;
-
-   void init();
-
-};
-
--------------------------------------------------------------
-template <class C>
-class Solvent : public Species, public SolventDescriptor
-{
-public:
-
-   /**
-   * Read parameters and initialize.
-   */
-   virtual void readParameters();
-
-   /**
-   * Compute concentration and partition function.
-   */
-   virtual void compute() = 0;
-
-   /**
-   * Get monomer concentration field for this solvent.
-   */
-   const C& concentration() const;
-
-protected:
-
-   C concentration_;
-
-};
-
-template <class Monomer, class Polymer, class Solvent,
-          class WField, class CField>
-class System
-{
-public:
-
-   int nMonomer();
-   int nPolymer();
-   int nSolvent();
-
-   Monomer& monomer(int id);
-   Polymer& polymer(int id);
-   Solvent& solvent(int id);
-
-   /**
-   * Compute ideal gas properties for all species.
-   */
-   virtual void compute();
-
-   /**
-   * Return W (chemical potential) field for monomer index id.
-   */
-   virtual WField& wField(int id);
-
-   /**
-   * Return concentration field for monomer index id.
-   */
-   virtual CField& cField(int id);
-
-private:
-
-   /**
-   * Array of monomer type descriptors.
-   */
-   DArray<Monomer> monomers_;
-
-   /**
-   * Array of fields associated with monomer types.
-   */
-   DArray<WField> wFields_;
-
-   /**
-   * Array of monomer concentration fields.
-   */
-   DArray<CField> cFields_;
-
-   /**
-   * Array of polymer species solvers objects.
-   */
-   DArray<Polymer> polymers_;
-
-   /**
-   * Array of solvent species solvers.
-   */
-   DArray<Solvent> solvents_;
-
-};
