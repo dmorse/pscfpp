@@ -76,8 +76,8 @@ public:
       double sum0 = 0.0;
       double sum1 = 0.0;
       for (int i = 0; i < nx; ++i) {
-         sum0 += sys.polymer(0).blockCField(0)[i];
-         sum1 += sys.polymer(0).blockCField(1)[i];
+         sum0 += sys.cField(0)[i];
+         sum1 += sys.cField(1)[i];
       }
       sum0 = sum0/double(nx);
       sum1 = sum1/double(nx);

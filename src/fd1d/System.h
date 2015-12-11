@@ -21,11 +21,25 @@ namespace Fd1d
 
    public:
 
+      /**
+      * Constructor.
+      */
       System();
 
+      /**
+      * Destructor.
+      */
       ~System();
 
+      /**
+      * Read all parameters and initialize.
+      */
       void readParameters(std::istream& in);
+
+      /**
+      * Compute molecular partition functions and concentrations.
+      */
+      void compute();
 
       /**
       * Get number of spatial grid points.

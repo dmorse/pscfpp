@@ -60,5 +60,38 @@ namespace Fd1d
 
    }
 
+   void System::compute()
+   {
+
+      // Clear all monomer concentration fields
+      int i, j;
+      for (i = 0; i < nMonomer(); ++i) {
+         for (j = 0; j < nx_; ++j) {
+            cField(i)[j] = 0.0;
+         }
+      }
+
+      // Solve MDE for all polymers
+      for (i = 0; i < nPolymer(); ++i) {
+         polymer(i).compute(wFields());
+      }
+
+      #if 1
+      // Accumulate monomer concentration fields
+      for (i = 0; i < nPolymer(); ++i) {
+         for (j = 0; j < polymer(i).nBlock(); ++j) {
+            int monomerId = polymer(i).block(j).monomerId();
+            UTIL_CHECK(monomerId >= 0);
+            UTIL_CHECK(monomerId < nMonomer());
+            CField& monomerField = cField(monomerId);
+            CField& blockField = polymer(i).blockCField(j);
+            for (int k = 0; k < nx_; ++k) {
+               monomerField[k] += blockField[k];
+            }
+         }
+      }
+      #endif
+    
+   }
 }
 }

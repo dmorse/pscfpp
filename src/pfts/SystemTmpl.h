@@ -81,6 +81,11 @@ namespace Pfts
       WField& wField(int monomerId);
 
       /**
+      * Array of all chemical potential fields.
+      */
+      DArray<WField>& wFields();
+
+      /**
       * Return concentration field for specific monomer type.
       *
       * \param monomerId integer monomer type index
@@ -179,6 +184,12 @@ namespace Pfts
    template <class TP, class TS>
    inline TS& SystemTmpl<TP,TS>::solvent(int id)
    {  return solvents_[id]; }
+
+   template <class TP, class TS>
+   inline 
+   DArray< typename SystemTmpl<TP,TS>::WField >& 
+   SystemTmpl<TP,TS>::wFields()
+   {  return wFields_; }
 
    template <class TP, class TS>
    inline typename SystemTmpl<TP,TS>::WField& SystemTmpl<TP,TS>::wField(int id)
