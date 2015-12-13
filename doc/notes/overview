@@ -1,0 +1,125 @@
+Chemistry
+---------
+
+    These classes are used to describe molecular structures
+
+    Monomer
+    Vertex
+    Bond 
+    PolymerDescriptor : public Species
+    SolventDescriptor : public Species
+    
+Each Monomer, Vertex, Bond, and PolymerDescriptor has an id that
+corresponds to the array index in any array of such structures. A 
+bond has the ids of the vertices to which it is attached and the
+id of the associated monomer type. A vertex has the ids of the 
+bonds to which it is attached. 
+
+Each PolymerDescriptor and SolventDescriptor also contains the
+ensemble (Open or Closed) and the volume fraction phi or chemical
+potential mu of the species. These variables are protected members
+of the Species base class.
+
+Fields
+------
+
+   class Field
+   class WField : public WField
+   class QField : public Qield
+   class CField : public CField
+
+   Base on DArray<double> (derived or copy and paste)
+   Provide methods or global functions:
+
+      1) Pointwise multiplication of fields, operator *=
+      1) Addition of fields, operator +=
+      2) Inner product: Functor with two fields as arguments.
+
+SCF Solvers
+-----------
+
+   The SCF solvers class hierarchy is based on template rather 
+than run time polymorphism. 
+
+   Propagator (base class PropagatorTmpl), two per block
+      Has q(r,s) data structure, pointers to MDESolver, Monomer
+   BlockSolver, one per block. 
+      Has data structures used to compute both propagators for 
+      one block in both directions, including ns_, ds_ and arrays.
+   Polymer (base class PolymerTmpl, derived from PolymerDescriptor)
+      Has one solver, one CField and two Propagators per block
+   Solvent (public SolventDescriptor)
+      Implements a solver.
+   Mixture (base class MixtureTmpl)
+      Has an array of polymers, array of solvents, array of Monomers,
+      array of CFields, and an array of WFields
+
+   Questions / Comments:
+   1) Make each propagator a member of BlockSolver ?
+   2) Make BlockSolver a subclass of Block ?
+   3) Rename Block -> BlockDescriptor, Vertex -> VertexDescriptor ?
+
+Top Level 
+---------
+
+   For 1D finite difference:
+
+   namespace Scf {
+   namespace Fd1d {
+      System {
+         Mixture
+         Interaction (chi parameters)
+         Boundary
+         Iterator
+      }
+   } 
+   }
+
+   For pseuddospectroal, periodic with symmetry constraints:
+
+   namespace Scf {
+   namespace PsSpec {
+      System {
+         Mixture
+         Interaction (chi parameters)
+         UnitCell
+         SpaceGroup
+         Basis
+         Iterator
+      }
+   }
+   }
+
+   Questions / comments about periodic pseudospectral code:
+
+   1) Basis must provide methods to convert basisToGrid and gridToBasis.
+   Where will the basis representation be stored? In the field object?
+   If so, these functions could take one Field as an argument and update
+   one of the two representations.
+
+   2) How to handle different dimensions in C++ ? It would be nice to 
+   have only code, even if it needed to be recompiled. 
+
+      - The simplest solution would be to use a preprocessor macro. 
+        This, however, would make it impossible to have different
+        objects with different dimensions in the same code.
+
+      - The most flexible, but messier, solution would be to make all
+        relevant class templates in terms of Dimension.
+
+   ---------------------------------------------------------------------
+
+   General Questions:
+   1) Should wFields_ be a member of the Mixture, or the main System?
+   2) Should cFields_ be a member of the Mixture, or the main System?
+   3) What interface is required for the Interaction class?
+
+   Remarks:
+
+   1) Making Wfields_ and cFields_ members of the System yields an 
+   increase in flexibility for Newton-Raphson style iterators with 
+   no loss of speed.
+
+   2) A preprocessor macro for dimension could help. Define a grid
+   position class that can be passed to an accessor?
+
