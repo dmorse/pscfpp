@@ -21,7 +21,7 @@ all: $(pscf_OBJS) $(pscf_LIB)
 
 clean:
 	rm -f $(pscf_OBJS) $(pscf_OBJS:.o=.d) $(pscf_LIB)
-	#cd tests; $(MAKE) clean
+	cd tests; $(MAKE) clean
 
 veryclean:
 	$(MAKE) clean

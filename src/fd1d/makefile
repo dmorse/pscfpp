@@ -23,7 +23,7 @@ all: $(fd1d_OBJS) $(fd1d_LIB)
 
 clean:
 	rm -f $(fd1d_OBJS) $(fd1d_OBJS:.o=.d) $(fd1d_LIB)
-	#cd tests; $(MAKE) clean
+	cd tests; $(MAKE) clean
 
 veryclean:
 	$(MAKE) clean
