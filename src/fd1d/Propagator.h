@@ -8,11 +8,11 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pfts/PropagatorTmpl.h>       // base class template
-#include <pfts/TridiagonalSolver.h>    // member
+#include <pscf/PropagatorTmpl.h>       // base class template
+#include <pscf/TridiagonalSolver.h>    // member
 #include <util/containers/DArray.h>    // member template
 
-namespace Pfts { 
+namespace Pscf { 
 namespace Fd1d
 { 
 

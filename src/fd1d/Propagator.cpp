@@ -7,7 +7,7 @@
 
 #include "Propagator.h"
 
-namespace Pfts { 
+namespace Pscf { 
 namespace Fd1d
 {
 

@@ -7,7 +7,7 @@
 
 #include "Polymer.h"
 
-namespace Pfts {
+namespace Pscf {
 namespace Fd1d 
 { 
 

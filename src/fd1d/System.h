@@ -10,9 +10,9 @@
 
 #include "Polymer.h"
 #include "Solvent.h"
-#include <pfts/SystemTmpl.h>
+#include <pscf/SystemTmpl.h>
 
-namespace Pfts {
+namespace Pscf {
 namespace Fd1d
 {
 

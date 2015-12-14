@@ -7,7 +7,7 @@
 
 #include "Solvent.h"
 
-namespace Pfts { 
+namespace Pscf { 
 namespace Fd1d
 { 
 

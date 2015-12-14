@@ -1,5 +1,5 @@
-#ifndef FD1D_POLYMER_H
-#define FD1D_POLYMER_H
+#ifndef PSCF_POLYMER_STUB_H
+#define PSCF_POLYMER_STUB_H
 
 /*
 * PFTS - Polymer Field Theory Simulator
@@ -8,24 +8,21 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Propagator.h"
+#include "PropagatorStub.h"
 #include <pscf/PolymerTmpl.h>
 
-namespace Pscf { 
-namespace Fd1d
+namespace Pscf
 { 
 
-   class Polymer : public PolymerTmpl<Propagator>
+   class PolymerStub : public PolymerTmpl<PropagatorStub>
    {
 
    public:
 
-      Polymer();
-
-      ~Polymer();
+      PolymerStub()
+      {  setClassName("Polymer"); }
 
    };
 
 } 
-}
 #endif

@@ -8,7 +8,7 @@
 #include "System.h"
 #include <cmath>
 
-namespace Pfts { 
+namespace Pscf { 
 namespace Fd1d
 { 
 
