@@ -1,0 +1,34 @@
+#include "Dimension.h"
+
+class Basis {
+
+   void setUnitCell(const UnitCell& unitCell)
+   void setDimensions(Grid::Vector);
+   void allocate()
+   void deallocate()
+   void computeKSq()
+   Grid::Vector computeKtoFFT(Grid::Vector)
+   Grid::Vector computeKtoBZ(Grid::Vector)
+   void computeMaxKabs()
+
+   const KField& kSq()
+   double maxKSq()
+   
+private:
+
+   int nWave_;
+   int NStar_;
+   DArray<Grid::Vector> wave_;
+   DArray<double> GSq_;
+   DArray<std::complex<double>> coeff_;
+   DArray<int> starOfWave_;
+   DArray<int> whichWave_;   <---- Function that allows access by Grid::Vector
+   DArray<int> starBegin_; 
+   DArray<int> starEnd_;  
+   DArray<int> starCount_; 
+   DArray<int> starInvert_; 
+   DArray<int> basisSign_; 
+   DArray<Grid::Vector> waveOfStar_;
+   DArray<bool> starCancel_;
+   
+}
