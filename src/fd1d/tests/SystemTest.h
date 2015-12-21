@@ -5,14 +5,14 @@
 #include <test/UnitTestRunner.h>
 
 #include <fd1d/System.h>
-//#include <pfts/Block.h>
+//#include <pscf/Block.h>
 //#include <util/math/Constants.h>
 
 #include <fstream>
 
 using namespace Util;
-using namespace Pfts;
-using namespace Pfts::Fd1d;
+using namespace Pscf;
+using namespace Pscf::Fd1d;
 
 class SystemTest : public UnitTest 
 {

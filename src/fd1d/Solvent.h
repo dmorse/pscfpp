@@ -9,9 +9,9 @@
 */
 
 #include "Propagator.h"
-#include <pfts/SolventTmpl.h>
+#include <pscf/SolventTmpl.h>
 
-namespace Pfts { 
+namespace Pscf { 
 namespace Fd1d
 { 
 

@@ -10,19 +10,17 @@ SRC_DIR_REL =..
 include $(SRC_DIR_REL)/config.mk
 include $(BLD_DIR)/util/config.mk
 include $(BLD_DIR)/pscf/config.mk
-include $(BLD_DIR)/fd1d/config.mk
-include $(SRC_DIR)/fd1d/patterns.mk
+include $(SRC_DIR)/pscf/patterns.mk
 include $(SRC_DIR)/util/sources.mk
 include $(SRC_DIR)/pscf/sources.mk
-include $(SRC_DIR)/fd1d/sources.mk
 
 #-----------------------------------------------------------------------
 # Main targets 
 
-all: $(fd1d_OBJS) $(fd1d_LIB)
+all: $(pscf_OBJS) $(pscf_LIB)
 
 clean:
-	rm -f $(fd1d_OBJS) $(fd1d_OBJS:.o=.d) $(fd1d_LIB)
+	rm -f $(pscf_OBJS) $(pscf_OBJS:.o=.d) $(pscf_LIB)
 	cd tests; $(MAKE) clean
 
 veryclean:
@@ -34,4 +32,4 @@ veryclean:
 #-----------------------------------------------------------------------
 # Include dependency files
 
--include $(fd1d_OBJS:.o=.d)
+-include $(pscf_OBJS:.o=.d)
