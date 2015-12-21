@@ -2,27 +2,35 @@
 
 class Basis {
 
+   // Associate
    void setUnitCell(const UnitCell& unitCell)
-   void setDimensions(Grid::Vector);
-   void allocate()
-   void deallocate()
-   void computeKSq()
-   Grid::Vector computeKtoFFT(Grid::Vector)
-   Grid::Vector computeKtoBZ(Grid::Vector)
-   void computeMaxKabs()
+   void setGrid(const Grid& grid)
 
-   const KField& kSq()
-   double maxKSq()
-   
+   // Initialize
+   void allocate();
+   void deallocate();
+
+   // Accessors for data to describe basis
+ 
+   int nWave()
+   int NStar()
+
+   const& Wave wave(int i);
+   const& Wave star(int i);
+
 private:
 
    int nWave_;
    int NStar_;
+
+   // Wave class ?
    DArray<Grid::Vector> wave_;
    DArray<double> GSq_;
    DArray<std::complex<double>> coeff_;
    DArray<int> starOfWave_;
    DArray<int> whichWave_;   <---- Function that allows access by Grid::Vector
+
+   // Star class ?
    DArray<int> starBegin_; 
    DArray<int> starEnd_;  
    DArray<int> starCount_; 

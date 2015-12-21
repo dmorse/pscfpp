@@ -1,14 +1,10 @@
 #include "Dimension.h"
+#include "RField.h"
+#include "KField.h"
 
 class Grid {
 
    class Vector {
-   }
-
-   class RField {
-   }
-
-   class KField {
    }
 
    void setUnitCell(const UnitCell& unitCell)
@@ -16,8 +12,8 @@ class Grid {
    void allocate()
    void deallocate()
    void computeKSq()
-   Grid::Vector computeKtoFFT(Grid::Vector)
-   Grid::Vector computeKtoBZ(Grid::Vector)
+   Grid::Vector kToFFT(Grid::Vector)
+   Grid::Vector kToBZ(Grid::Vector)
    void computeMaxKabs()
 
    const KField& kSq()
@@ -25,8 +21,8 @@ class Grid {
    
 private:
 
-   Grid::Vector  dimensions_
-   Grid::KField  ksq_;
+   Grid::Vector dimensions_
+   Grid::KField ksq_;
    double maxKSq_;
 
 }
