@@ -20,14 +20,14 @@ namespace Pscf
    /**
    * A linear homopolymer block within a block copolymer.
    */
-   class Block
+   class BlockDescriptor
    {
    public:
   
       /**
       * Constructor.
       */ 
-      Block();
+      BlockDescriptor();
   
       /**
       * Serialize to/from archive.
@@ -99,68 +99,68 @@ namespace Pscf
       double length_;
 
       friend 
-      std::istream& operator >> (std::istream& in, Block &block);
+      std::istream& operator >> (std::istream& in, BlockDescriptor &block);
 
       friend 
-      std::ostream& operator << (std::ostream& out, const Block &block);
+      std::ostream& operator << (std::ostream& out, const BlockDescriptor &block);
 
    };
 
    /**
-   * istream extractor for a Block.
+   * istream extractor for a BlockDescriptor.
    *
    * \param in  input stream
-   * \param block  Block to be read from stream
+   * \param block  BlockDescriptor to be read from stream
    * \return modified input stream
    */
-   std::istream& operator >> (std::istream& in, Block &block);
+   std::istream& operator >> (std::istream& in, BlockDescriptor &block);
 
    /**
-   * ostream inserter for a Block.
+   * ostream inserter for a BlockDescriptor.
    *
    * \param out  output stream
-   * \param block  Block to be written to stream
+   * \param block  BlockDescriptor to be written to stream
    * \return modified output stream
    */
-   std::ostream& operator << (std::ostream& out, const Block &block);
+   std::ostream& operator << (std::ostream& out, const BlockDescriptor &block);
 
    // Inline member functions
 
    /*
    * Get the id of this block.
    */ 
-   inline int Block::id() const
+   inline int BlockDescriptor::id() const
    {  return id_; }
 
    /*
    * Get the monomer type id.
    */ 
-   inline int Block::monomerId() const
+   inline int BlockDescriptor::monomerId() const
    {  return monomerId_; }
 
    /*
    * Get the pair of associated vertex ids.
    */ 
-   inline const Pair<int>& Block::vertexIds() const
+   inline const Pair<int>& BlockDescriptor::vertexIds() const
    {  return vertexIds_; }
 
    /*
    * Get id of an associated vertex.
    */ 
-   inline int Block::vertexId(int i) const
+   inline int BlockDescriptor::vertexId(int i) const
    {  return vertexIds_[i]; }
 
    /*
    * Get the length (number of monomers) in this block.
    */
-   inline double Block::length() const
+   inline double BlockDescriptor::length() const
    {  return length_; }
     
    /*
    * Serialize to/from an archive.
    */
    template <class Archive>
-   void Block::serialize(Archive& ar, unsigned int)
+   void BlockDescriptor::serialize(Archive& ar, unsigned int)
    {
       ar & id_;
       ar & monomerId_;

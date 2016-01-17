@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Block.h"
+#include "BlockDescriptor.h"
 
 namespace Pscf
 { 
@@ -13,7 +13,7 @@ namespace Pscf
    /*
    * Constructor.
    */ 
-   Block::Block()
+   BlockDescriptor::BlockDescriptor()
     : id_(-1),
       monomerId_(-1),
       vertexIds_(),
@@ -23,13 +23,13 @@ namespace Pscf
    /*
    * Set the id for this block.
    */ 
-   void Block::setId(int id)
+   void BlockDescriptor::setId(int id)
    {  id_ = id; }
   
    /*
    * Set indices of associated vertices.
    */ 
-   void Block::setVertexIds(int vertexId0, int vertexId1)
+   void BlockDescriptor::setVertexIds(int vertexId0, int vertexId1)
    { 
       vertexIds_[0] = vertexId0; 
       vertexIds_[1] = vertexId1; 
@@ -38,19 +38,19 @@ namespace Pscf
    /*
    * Set the monomer id.
    */ 
-   void Block::setMonomerId(int monomerId)
+   void BlockDescriptor::setMonomerId(int monomerId)
    {  monomerId_ = monomerId; }
   
    /*
    * Set the length of this block.
    */ 
-   void Block::setLength(double length)
+   void BlockDescriptor::setLength(double length)
    {  length_ = length; }
   
    /* 
-   * Extract a Block from an istream.
+   * Extract a BlockDescriptor from an istream.
    */
-   std::istream& operator>>(std::istream& in, Block &block)
+   std::istream& operator>>(std::istream& in, BlockDescriptor &block)
    {
       in >> block.id_;
       in >> block.monomerId_;
@@ -61,9 +61,9 @@ namespace Pscf
    }
    
    /* 
-   * Output a Block to an ostream, without line breaks.
+   * Output a BlockDescriptor to an ostream, without line breaks.
    */
-   std::ostream& operator<<(std::ostream& out, const Block &block) 
+   std::ostream& operator<<(std::ostream& out, const BlockDescriptor &block) 
    {
       out << block.id_;
       out << "  " << block.monomerId_;

@@ -4,7 +4,7 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pscf/Block.h>
+#include <pscf/BlockDescriptor.h>
 #include <pscf/Vertex.h>
 
 #include <fstream>
@@ -34,9 +34,9 @@ public:
       printMethod(TEST_FUNC);
       printEndl();
 
-      Block b;
+      BlockDescriptor b;
       std::ifstream in;
-      openInputFile("in/Block", in);
+      openInputFile("in/BlockDescriptor", in);
 
       in >> b;
       TEST_ASSERT(b.id() == 5);

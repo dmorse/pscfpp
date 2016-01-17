@@ -1,17 +1,17 @@
-#ifndef BLOCK_TEST_H
-#define BLOCK_TEST_H
+#ifndef BLOCK_DESCRIPTOR_TEST_H
+#define BLOCK_DESCRIPTOR_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pscf/Block.h>
+#include <pscf/BlockDescriptor.h>
 
 #include <fstream>
 
 using namespace Pscf;
 //using namespace Util;
 
-class BlockTest : public UnitTest 
+class BlockDescriptorTest : public UnitTest 
 {
 
 public:
@@ -26,16 +26,16 @@ public:
    void testConstructor()
    {
       printMethod(TEST_FUNC);
-      Block v;
+      BlockDescriptor v;
    } 
 
    void testReadWrite() {
       printMethod(TEST_FUNC);
       printEndl();
 
-      Block v;
+      BlockDescriptor v;
       std::ifstream in;
-      openInputFile("in/Block", in);
+      openInputFile("in/BlockDescriptor", in);
 
       in >> v;
       TEST_ASSERT(v.id() == 5);
@@ -48,9 +48,9 @@ public:
 
 };
 
-TEST_BEGIN(BlockTest)
-TEST_ADD(BlockTest, testConstructor)
-TEST_ADD(BlockTest, testReadWrite)
-TEST_END(BlockTest)
+TEST_BEGIN(BlockDescriptorTest)
+TEST_ADD(BlockDescriptorTest, testConstructor)
+TEST_ADD(BlockDescriptorTest, testReadWrite)
+TEST_END(BlockDescriptorTest)
 
 #endif

@@ -14,7 +14,7 @@
 namespace Pscf
 { 
 
-   class Block;
+   class BlockDescriptor;
    using namespace Util;
 
    /**
@@ -37,9 +37,9 @@ namespace Pscf
       /**
       * Add to the list of attached blocks.
       * 
-      * \param block attached Block object
+      * \param block attached BlockDescriptor object
       */ 
-      void addBlock(const Block& block);
+      void addBlock(const BlockDescriptor& block);
 
       /**
       * Get the id of this vertex.

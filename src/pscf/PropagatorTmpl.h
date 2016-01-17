@@ -9,7 +9,7 @@
 */
 
 #include <util/containers/GArray.h>
-#include <pscf/Block.h>
+#include <pscf/BlockDescriptor.h>
 
 namespace Pscf
 { 
@@ -74,10 +74,10 @@ namespace Pscf
       /**
       * Associate this propagator with a block and direction.
       *
-      * \param block associated Block object.
+      * \param block associated BlockDescriptor object.
       * \param directionId direction = 0 or 1.
       */ 
-      void setBlock(const Block& block, int directionId);
+      void setBlock(const BlockDescriptor& block, int directionId);
 
       /**
       * Set monomer statistical segment length.
@@ -118,9 +118,9 @@ namespace Pscf
       void setIsSolved(bool isSolved);
  
       /**
-      * Get the associated Block object by reference.
+      * Get the associated BlockDescriptor object by reference.
       */
-      const Block& block() const;
+      const BlockDescriptor& block() const;
 
       /**
       * Get direction index for this propagator.
@@ -165,7 +165,7 @@ namespace Pscf
       double kuhn_;
 
       /// Pointer to associated block.
-      Block const * blockPtr_;
+      BlockDescriptor const * blockPtr_;
 
       /// Direction of propagation (0 or 1).
       int directionId_;
@@ -184,10 +184,10 @@ namespace Pscf
    // Inline member functions
 
    /*
-   * Get the associated Block object.
+   * Get the associated BlockDescriptor object.
    */
    template <class Propagator>
-   inline const Block& PropagatorTmpl<Propagator>::block() const
+   inline const BlockDescriptor& PropagatorTmpl<Propagator>::block() const
    {  return *blockPtr_; }
 
    /*
@@ -251,7 +251,9 @@ namespace Pscf
    * Associate this propagator with a block and direction
    */
    template <class Propagator>
-   void PropagatorTmpl<Propagator>::setBlock(const Block& block, int directionId)
+   void 
+   PropagatorTmpl<Propagator>::setBlock(const BlockDescriptor& block, 
+                                        int directionId)
    {
       blockPtr_ = &block;
       directionId_ = directionId;

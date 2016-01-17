@@ -8,34 +8,40 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/Species.h>
-#include <pscf/PolymerDescriptor.h>
-#include <util/containers/DArray.h>
+#include <pscf/Species.h>                // base class
+#include <util/param/ParamComposite.h>   // base class
+
+#include <pscf/Monomer.h>                // member template argument
+#include <pscf/Vertex.h>                 // member template argument
+#include <util/containers/Pair.h>        // member template
+#include <util/containers/DArray.h>      // member template
 #include <util/containers/DMatrix.h>
 
 #include <cmath>
 
 namespace Pscf
-{
+{ 
 
+   class Block;
    using namespace Util;
 
    /**
-   * Base class template for classes that represent polymer species.
+   * Structure descriptor for an acyclic block polymer.
    */
-   template <class TProp>
-   class PolymerTmpl : public PolymerDescriptor, public Species
+   template <class Block>
+   class PolymerTmpl : public Species, public ParamComposite
    {
+
    public:
- 
+
       // Modified diffusion equation propagator for one block.
-      typedef TProp Propagator;
+      typedef typename Block::Propagator Propagator;
 
       // Monomer concentration field.
-      typedef typename TProp::CField CField;
+      typedef typename Propagator::CField CField;
  
       // Chemical potential field.
-      typedef typename TProp::WField WField;
+      typedef typename Propagator::WField WField;
 
       /**
       * Constructor.
@@ -48,15 +54,51 @@ namespace Pscf
       ~PolymerTmpl();
 
       /**
-      * Read parameters and initialize.
+      * Read and initialize.
+      *
+      * \param in input parameter stream
       */
       virtual void readParameters(std::istream& in);
- 
+
       /**
       * Compute solution to modified diffusion equation.
       */ 
       virtual void compute(const DArray<WField>& wFields);
  
+      /**
+      * Number of blocks.
+      */
+      int nBlock() const; 
+
+      /**
+      * Number of vertices (junctions and chain ends).
+      */
+      int nVertex() const;
+
+      /**
+      * Number of propagators (twice nBlock).
+      */
+      int nPropagator() const;  //
+
+      /**
+      * Total length of all blocks = volume / reference volume.
+      */
+      double length() const;
+
+      /**
+      * Get a specified Block.
+      * 
+      * \param id block index
+      */
+      const Block& block(int id) const;
+
+      /**
+      * Get a specified Vertex.
+      * 
+      * \param id vertex index
+      */
+      const Vertex& vertex(int id) const;
+
       /**
       * Get the monomer concentration field for a specific block.
       *
@@ -84,72 +126,190 @@ namespace Pscf
       * \param id integer index, in order of computation plan
       */
       Propagator& propagator(int id);
-   
+
+   protected:
+
+      /**
+      * Propagator identifier, indexed by order of computation.
+      *
+      * An array of propagator ids ordered in the order in which 
+      * they should be computed, so that the intitial condition 
+      * for each link is provided by the solution of links that 
+      * have been computed previously.
+      */
+      const Pair<int>& propagatorId(int i) const;
+
+      virtual void makePlan();
+
    private:
 
-      /**
-      * Array of propagators, indexed by block and direction.
-      */ 
-      DMatrix<Propagator> propagators_;
-   
-      /**
-      * Array of block concentration fields, indexed by block.
-      */ 
-      DArray<CField> blockCFields_;
-   
+      /// Array of Block objects in this polymer.
+      DArray<Block> blocks_;
+
+      /// Array of Vertex objects in this polymer.
+      DArray<Vertex> vertices_;
+
+      /// Propagator ids, indexed in order of computation.
+      DArray< Pair<int> > propagatorIds_;
+
+      /// Number of blocks in this polymer
+      int nBlock_;
+
+      /// Number of vertices (ends or junctions) in this polymer
+      int nVertex_;
+
+      /// Number of propagators (two per block).
+      int nPropagator_;
+
+      /// Total length of all blocks (in units of reference length).
+      double length_;
+
    };
 
-   // Inline functions
+   /*
+   * Number of vertices (ends and/or junctions)
+   */
+   template <class Block>
+   inline int PolymerTmpl<Block>::nVertex() const
+   {  return nVertex_; }
 
    /*
-   * Get a block monomer concentration.
+   * Number of blocks.
    */
-   template <class TProp>
-   inline
-   typename PolymerTmpl<TProp>::CField& PolymerTmpl<TProp>::blockCField(int blockId)
-   {  return blockCFields_[blockId]; }
+   template <class Block>
+   inline int PolymerTmpl<Block>::nBlock() const
+   {  return nBlock_; }
+
+   /*
+   * Number of propagators.
+   */
+   template <class Block>
+   inline int PolymerTmpl<Block>::nPropagator() const
+   {  return nPropagator_; }
+
+   /*
+   * Total length of all blocks = volume / reference volume
+   */
+   template <class Block>
+   inline double PolymerTmpl<Block>::length() const
+   {  return length_; }
+
+   /*
+   * Get a specified Vertex.
+   */
+   template <class Block>
+   inline 
+   const Vertex& PolymerTmpl<Block>::vertex(int id) const
+   {  return vertices_[id]; }
+
+   /*
+   * Get a specified Block.
+   */
+   template <class Block>
+   inline const Block& PolymerTmpl<Block>::block(int id) const
+   {  return blocks_[id]; }
+
+   /*
+   * Get a propagator id, indexed in order of computation.
+   */
+   template <class Block>
+   inline 
+   const Pair<int>& PolymerTmpl<Block>::propagatorId(int id) const
+   {
+      UTIL_CHECK(id >= 0);  
+      UTIL_CHECK(id < nPropagator_);  
+      return propagatorIds_[id]; 
+   }
 
    /*
    * Get a propagator indexed by block and direction.
    */
-   template <class TProp>
-   inline TProp& PolymerTmpl<TProp>::propagator(int blockId, int directionId)
-   {  return propagators_(blockId, directionId); }
+   template <class Block>
+   inline 
+   TProp& PolymerTmpl<Block>::propagator(int blockId, int directionId)
+   {  return blocks_(blockId).propagator(directionId); }
 
    /*
    * Get a propagator indexed in order of computation.
    */
-   template <class TProp>
-   inline TProp& PolymerTmpl<TProp>::propagator(int id)
+   template <class Block>
+   inline TProp& PolymerTmpl<Block>::propagator(int id)
    {
       Pair<int> propId = propagatorId(id);
       return propagators_(propId[0], propId[1]); 
    }
 
+   /*
+   * Get a block monomer concentration.
+   */
+   template <class Block>
+   inline
+   typename PolymerTmpl<Block>::CField& 
+   PolymerTmpl<Block>::blockCField(int blockId)
+   {  return blockCFields_[blockId]; }
+
+   
    // Non-inline functions
 
    /*
    * Constructor.
    */
-   template <class TProp>
-   PolymerTmpl<TProp>::PolymerTmpl()
-   {}
+   template <class Block>
+   PolymerTmpl<Block>::PolymerDescriptor()
+    : blocks_(),
+      vertices_(),
+      propagatorIds_(),
+      nBlock_(0),
+      nVertex_(0),
+      nPropagator_(0),
+      length_(0.0)
+   {
+      setClassName("PolymerDescriptor");
+   }
 
    /*
    * Destructor.
    */
-   template <class TProp>
-   PolymerTmpl<TProp>::~PolymerTmpl()
+   template <class Block>
+   PolymerTmpl<Block>::~PolymerDescriptor()
    {}
 
-   /*
-   * Read parameters and allocate arrays.
-   */
-   template <class TProp>
-   void PolymerTmpl<TProp>::readParameters(std::istream& in)
+   template <class Block>
+   void PolymerTmpl<Block>::readParameters(std::istream& in)
    {
-      // Read polymer structure
-      PolymerDescriptor::readParameters(in);
+      read<int>(in, "nBlock", nBlock_);
+      read<int>(in, "nVertex", nVertex_);
+
+      // Allocate all arrays
+      blocks_.allocate(nBlock_);
+      vertices_.allocate(nVertex_);
+      propagatorIds_.allocate(2*nBlock_);
+
+      readDArray<Block>(in, "blocks", blocks_, nBlock_);
+
+      // Set vertex indices
+      for (int vertexId = 0; vertexId < nVertex_; ++vertexId) {
+         vertices_[vertexId].setId(vertexId);
+      }
+
+      // Add blocks to vertices
+      int vertexId0, vertexId1;
+      Block* blockPtr;
+      for (int blockId = 0; blockId < nBlock_; ++blockId) {
+          blockPtr = &(blocks_[blockId]);
+          vertexId0 = blockPtr->vertexId(0);
+          vertexId1 = blockPtr->vertexId(1);
+          vertices_[vertexId0].addBlock(*blockPtr);
+          vertices_[vertexId1].addBlock(*blockPtr);
+      }
+
+      makePlan();
+
+      // Compute molecular length / volume
+      length_ = 0.0;
+      for (int blockId = 0; blockId < nBlock_; ++blockId) {
+         length_ += blocks_[blockId].length();
+      }
 
       // Read ensemble and phi or mu
       ensemble_ = Species::Closed;
@@ -194,17 +354,67 @@ namespace Pscf
                }
             }
          }
+
          // Set partners
          propagator(blockId, 0).setPartner(propagator(blockId, 1));
          propagator(blockId, 1).setPartner(propagator(blockId, 0));
       }
    }
 
+   template <class Block>
+   void PolymerTmpl<Block>::makePlan()
+   {
+      if (nPropagator_ != 0) {
+         UTIL_THROW("nPropagator !=0 on entry");
+      }
+
+      // Allocate and initialize isFinished matrix
+      DMatrix<bool> isFinished;
+      isFinished.allocate(nBlock_, 2);
+      for (int iBlock = 0; iBlock < nBlock_; ++iBlock) {
+         for (int iDirection = 0; iDirection < 2; ++iDirection) {
+            isFinished(iBlock, iDirection) = false;
+         }
+      }
+
+      Pair<int> propagatorId;
+      Vertex* inVertexPtr = 0;
+      int inVertexId = -1;
+      bool isReady;
+      while (nPropagator_ < nBlock_*2) {
+         for (int iBlock = 0; iBlock < nBlock_; ++iBlock) {
+            for (int iDirection = 0; iDirection < 2; ++iDirection) {
+               if (isFinished(iBlock, iDirection) == false) {
+                  inVertexId = blocks_[iBlock].vertexId(iDirection);
+                  inVertexPtr = &vertices_[inVertexId];
+                  isReady = true;
+                  for (int j = 0; j < inVertexPtr->size(); ++j) {
+                     propagatorId = inVertexPtr->inPropagatorId(j);
+                     if (propagatorId[0] != iBlock) {
+                        if (!isFinished(propagatorId[0], propagatorId[1])) {
+                           isReady = false;
+                           break;
+                        }
+                     }
+                  }
+                  if (isReady) {
+                     propagatorIds_[nPropagator_][0] = iBlock;
+                     propagatorIds_[nPropagator_][1] = iDirection;
+                     isFinished(iBlock, iDirection) = true;
+                     ++nPropagator_;
+                  }
+               }
+            }
+         }
+      }
+
+   }
+
    /*
-   * Compute solution to modified diffusion equation, concentrations, etc.
+   * Compute solution to MDE and concentrations.
    */ 
-   template <class TProp>
-   void PolymerTmpl<TProp>::compute(const DArray<WField>& wFields)
+   template <class Block>
+   void PolymerTmpl<Block>::compute(const DArray<WField>& wFields)
    {
 
       // Clear all propagators

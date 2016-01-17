@@ -1,8 +1,7 @@
 pscf_= \
   pscf/Monomer.cpp \
-  pscf/Block.cpp \
   pscf/Vertex.cpp \
-  pscf/PolymerDescriptor.cpp \
+  pscf/BlockDescriptor.cpp \
   pscf/Species.cpp \
   pscf/TridiagonalSolver.cpp
 

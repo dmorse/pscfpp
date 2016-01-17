@@ -6,7 +6,7 @@
 */
 
 #include "Vertex.h"
-#include "Block.h"
+#include "BlockDescriptor.h"
 #include <util/global.h>
 
 namespace Pscf
@@ -24,7 +24,7 @@ namespace Pscf
    void Vertex::setId(int id)
    {  id_ = id; }
 
-   void Vertex::addBlock(const Block& block)
+   void Vertex::addBlock(const BlockDescriptor& block)
    {
       // Preconditions
       if (id_ < 0) {
