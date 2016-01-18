@@ -1,26 +1,31 @@
+TW = chemical potential field type
+TQ = partition function field
+TC = concentration field
+
 -------------------------------------------------------------
 Propagator Class Concept:
-
-W = chemical potential field type
-Q = partition function field
-C = concentration field
 
 class Propagator
 {
 public:
 
-   void setBlock(Block& block, int directionId);
+   // Initialization
+   void setBlock(int directionId);
+   void setBlock(Block& block);
    void setPartner(Propagator& partner);
    void addSource(Propagator& other);
-   void setRwStep(double rwStep);
-   void setGrid(...);
-   void solve(const W& w);
-   void computeConcentration(C& c);
+
+   void solve(const TW& w);
    double computeQ();
 
-   const Block& block() const;
-   const Q& head() const;
-   const Q& tail() const;
+   const QField& head() const;
+   const QField& tail() const;
+   const QField& q(int i) const;
+
+   Block& block();
+
+   void setIsSolved(bool isSolved);
+   bool isSolved(bool isSolved);
 
 private:
 
@@ -30,6 +35,39 @@ private:
    GArray<Propagator<W, Q>*> sourcesPtrs_;
 
 };
+-------------------------------------------------------------
+Block Class Concept:
+
+class Block
+{
+
+public:
+
+   // Setup discretization of space and contour length.
+   // Call once when discretization is known.
+   // Argumments depend on implementation.
+   setGrid(....);
+
+   // Setup solver for specific omega field.
+   // Call at beginning of solution for polymer.
+   setupSolver(WField const & w); 
+
+   // Compute volume fraction from this block.
+   // Parameter prefactor is phi/(q*length), 
+   // where q = molecular partition function
+   // and length = molecular length or volume
+   computeConcentration(double prefactor);
+
+private:
+
+   // Pair of Propagators (one for each direction)
+   Pair<Propagator> propagators_;
+
+   // Concentration associated with this block
+   CField cField_;
+
+}
+
 -------------------------------------------------------------
 
 template <class Propagator>
@@ -92,9 +130,7 @@ protected:
 
 };
 
-template <class Monomer, class Polymer, class Solvent,
-          class WField, class CField>
-class System
+class Mixture
 {
 public:
 
@@ -129,16 +165,6 @@ private:
    DArray<Monomer> monomers_;
 
    /**
-   * Array of fields associated with monomer types.
-   */
-   DArray<WField> wFields_;
-
-   /**
-   * Array of monomer concentration fields.
-   */
-   DArray<CField> cFields_;
-
-   /**
    * Array of polymer species solvers objects.
    */
    DArray<Polymer> polymers_;
@@ -147,5 +173,15 @@ private:
    * Array of solvent species solvers.
    */
    DArray<Solvent> solvents_;
+
+   /**
+   * Array of fields associated with monomer types.
+   */
+   DArray<WField> wFields_;
+
+   /**
+   * Array of monomer concentration fields.
+   */
+   DArray<CField> cFields_;
 
 };

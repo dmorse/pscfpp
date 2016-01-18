@@ -5,17 +5,18 @@ Chemistry
 
     Monomer
     Vertex
-    Bond 
-    PolymerDescriptor : public Species
+    BlockDescriptor
+    Species
+    PolymerTmpl<Block> : public Species
     SolventDescriptor : public Species
     
-Each Monomer, Vertex, Bond, and PolymerDescriptor has an id that
+Each Monomer, Vertex, Block, and PolymerTmpl<Block> has an id that
 corresponds to the array index in any array of such structures. A 
-bond has the ids of the vertices to which it is attached and the
-id of the associated monomer type. A vertex has the ids of the 
-bonds to which it is attached. 
+bond has the ids of the vertices to which it is attached and the id 
+of the associated monomer type. A vertex has the ids of the bonds 
+to which it is attached. 
 
-Each PolymerDescriptor and SolventDescriptor also contains the
+Each PolymerTmpl<Block> and SolventDescriptor also contains the
 ensemble (Open or Closed) and the volume fraction phi or chemical
 potential mu of the species. These variables are protected members
 of the Species base class.
@@ -35,50 +36,54 @@ Fields
       1) Addition of fields, operator +=
       2) Inner product: Functor with two fields as arguments.
 
-SCF Solvers
------------
+SCF Solvers (General)
+---------------------
 
-   The SCF solvers class hierarchy is based on template rather 
-than run time polymorphism. 
+   Each implementation (one-dimensional finite element, psuedo
+spectral, etc) has a set of MDE solver classes that also contain
+chemical information.  The solvers class system is based in
+part on C++ templates, rather than run time polymorphism alone.
 
-   Propagator (base class PropagatorTmpl), two per block
-      Has q(r,s) data structure, pointers to MDESolver, Monomer
-   BlockSolver, one per block. 
+   class Propagator : publiic PropagatorTmpl<Propagator>
+      Has q(r,s) data structure, pointers to Block.
+
+   class Block : public BlockTmpl<Propagator>
+      one per block, derived from BlockDescriptor
       Has data structures used to compute both propagators for 
       one block in both directions, including ns_, ds_ and arrays.
-   Polymer (base class PolymerTmpl, derived from PolymerDescriptor)
-      Has one solver, one CField and two Propagators per block
-   Solvent (public SolventDescriptor)
-      Implements a solver.
-   Mixture (base class MixtureTmpl)
-      Has an array of polymers, array of solvents, array of Monomers,
-      array of CFields, and an array of WFields
 
-   Questions / Comments:
-   1) Make each propagator a member of BlockSolver ?
-   2) Make BlockSolver a subclass of Block ?
-   3) Rename Block -> BlockDescriptor, Vertex -> VertexDescriptor ?
+   class Polymer : public PolymerTmpl<Block>
+      Has arrays of Block and Vertex objects
 
-Top Level 
----------
+   class Solvent : public SolventDescriptor
+      Implements a simple Boltzmann solver for a point particle.
+
+   class Mixture : public MixtureTmpl<Polymer, Solvent>
+      Has arrays of Monomer, Polymer, Solvent objects
+      Has arrays of WField and CFields 
+
+1D Finite Difference
+--------------------
 
    For 1D finite difference:
 
    namespace Scf {
-   namespace Fd1d {
+   namespace Fd1d 
+   {
       System {
          Mixture
-         Interaction (chi parameters)
-         Boundary
          Iterator
       }
-   } 
+   }
    }
 
    For pseuddospectroal, periodic with symmetry constraints:
 
+Pseudospectral, periodic
+------------------------
+
    namespace Scf {
-   namespace PsSpec {
+   namespace PsSp {
       System {
          Mixture
          Interaction (chi parameters)

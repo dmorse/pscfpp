@@ -1,0 +1,38 @@
+1) Build a simple 1D finite difference code.
+   Use directory fd1d, namespace Pscf::Fd1d.
+   Start with a Newton-Raphson iterator
+
+   System {
+      Mixture
+      Iterator
+   }
+
+2) Build a pseudospectral code for periodic functions.
+   Use directory pssp, namespace PsSp
+
+   System {
+      Mixture
+      Boundary
+      SpaceGroup
+      Basis
+      Interaction
+      Iterator
+   }
+
+   Develop classes that allow compilation of programs for
+   1D, 2D and 3D. Avoid use of a global dimension variable
+   or macro, to allow objects representing systems with
+   different dimensions to coexist.
+
+   One solution: Templatize everything involving vectors 
+   in terms of dimension?
+
+   Start with a stub of Basis, written for cosines.
+
+   Start with RelaxationIterator and/or NewtonRaphsonIterator
+
+4) Add AndersonIterator, perhaps an approximate NR iterator
+
+5) Add code for symmetry adapted basis functions.
+
+6) Add stress calculators.

@@ -19,7 +19,6 @@ class WField : public DArray<double>
    WField& operator -= (WField& other);
 };
 
-
 class CField : public DArray<double>
 {
 
