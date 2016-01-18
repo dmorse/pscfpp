@@ -4,11 +4,11 @@
 #include <test/CompositeTestRunner.h>
 
 #include "PropagatorTest.h"
-#include "SystemTest.h"
+#include "MixtureTest.h"
 
 TEST_COMPOSITE_BEGIN(Fd1dTestComposite)
 TEST_COMPOSITE_ADD_UNIT(PropagatorTest);
-TEST_COMPOSITE_ADD_UNIT(SystemTest);
+TEST_COMPOSITE_ADD_UNIT(MixtureTest);
 TEST_COMPOSITE_END
 
 #endif

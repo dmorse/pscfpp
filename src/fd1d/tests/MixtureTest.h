@@ -1,12 +1,10 @@
-#ifndef FD1D_SYSTEM_TEST_H
-#define FD1D_SYSTEM_TEST_H
+#ifndef FD1D_MIXTURE_TEST_H
+#define FD1D_MIXTURE_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <fd1d/System.h>
-//#include <pscf/Block.h>
-//#include <util/math/Constants.h>
+#include <fd1d/Mixture.h>
 
 #include <fstream>
 
@@ -14,7 +12,7 @@ using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Fd1d;
 
-class SystemTest : public UnitTest 
+class MixtureTest : public UnitTest 
 {
 
 public:
@@ -29,7 +27,7 @@ public:
    void testConstructor()
    {
       printMethod(TEST_FUNC);
-      System sys;
+      Mixture sys;
    }
 
    void testReadParameters()
@@ -37,9 +35,9 @@ public:
       printMethod(TEST_FUNC);
 
       std::ifstream in;
-      openInputFile("in/System", in);
+      openInputFile("in/Mixture", in);
 
-      System sys;
+      Mixture sys;
       sys.readParam(in);
 
       std::cout << "\n";
@@ -51,18 +49,20 @@ public:
       printMethod(TEST_FUNC);
 
       std::ifstream in;
-      openInputFile("in/System", in);
+      openInputFile("in/Mixture", in);
 
-      System sys;
+      Mixture sys;
       sys.readParam(in);
 
       std::cout << "\n";
       sys.writeParam(std::cout);
 
       double nx = (double)sys.nx();
+      double cs;
       for (int i = 0; i < nx; ++i) {
-         sys.wField(0)[i] = cos(Constants::Pi*(double(i)+0.5)/nx);
-         sys.wField(1)[i] = -cos(Constants::Pi*(double(i)+0.5)/nx);
+         cs = cos(Constants::Pi*(double(i)+0.5)/nx);
+         sys.wField(0)[i] = 0.5 + cs;
+         sys.wField(1)[i] = 0.7 - cs;
       }
       sys.compute();
 
@@ -87,10 +87,10 @@ public:
    }
 };
 
-TEST_BEGIN(SystemTest)
-TEST_ADD(SystemTest, testConstructor)
-TEST_ADD(SystemTest, testReadParameters)
-TEST_ADD(SystemTest, testSolve)
-TEST_END(SystemTest)
+TEST_BEGIN(MixtureTest)
+TEST_ADD(MixtureTest, testConstructor)
+TEST_ADD(MixtureTest, testReadParameters)
+TEST_ADD(MixtureTest, testSolve)
+TEST_END(MixtureTest)
 
 #endif

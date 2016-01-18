@@ -1,5 +1,5 @@
-#ifndef PSCF_SYSTEM_STUB_H
-#define PSCF_SYSTEM_STUB_H
+#ifndef PSCF_MIXTURE_STUB_H
+#define PSCF_MIXTURE_STUB_H
 
 /*
 * PFTS - Polymer Field Theory Simulator
@@ -10,19 +10,19 @@
 
 #include "PolymerStub.h"
 #include "SolventStub.h"
-#include <pscf/SystemTmpl.h>
+#include <pscf/MixtureTmpl.h>
 
 namespace Pscf
 { 
 
-   class SystemStub 
-    : public SystemTmpl<PolymerStub, SolventStub>
+   class MixtureStub 
+    : public MixtureTmpl<PolymerStub, SolventStub>
    {
 
    public:
 
-      SystemStub()
-      {  setClassName("System"); }
+      MixtureStub()
+      {  setClassName("Mixture"); }
    
    };
 

@@ -1,5 +1,5 @@
-#ifndef PSCF_SYSTEM_TMPL_H
-#define PSCF_SYSTEM_TMPL_H
+#ifndef PSCF_MIXTURE_TMPL_H
+#define PSCF_MIXTURE_TMPL_H
 
 /*
 * PFTS - Polymer Field Theory Simulator
@@ -21,7 +21,7 @@ namespace Pscf
    * Template for classes that represent an entire SCFT system.
    */
    template <class TP, class TS>
-   class SystemTmpl : public ParamComposite
+   class MixtureTmpl : public ParamComposite
    {
    public:
 
@@ -162,41 +162,41 @@ namespace Pscf
    // Inline member functions
 
    template <class TP, class TS>
-   inline int SystemTmpl<TP,TS>::nMonomer() const
+   inline int MixtureTmpl<TP,TS>::nMonomer() const
    {  return nMonomer_; }
 
    template <class TP, class TS>
-   inline int SystemTmpl<TP,TS>::nPolymer() const
+   inline int MixtureTmpl<TP,TS>::nPolymer() const
    {  return nPolymer_; }
 
    template <class TP, class TS>
-   inline int SystemTmpl<TP,TS>::nSolvent() const
+   inline int MixtureTmpl<TP,TS>::nSolvent() const
    {  return nSolvent_; }
 
    template <class TP, class TS>
-   inline Monomer& SystemTmpl<TP,TS>::monomer(int id)
+   inline Monomer& MixtureTmpl<TP,TS>::monomer(int id)
    {  return monomers_[id]; }
 
    template <class TP, class TS>
-   inline TP& SystemTmpl<TP,TS>::polymer(int id)
+   inline TP& MixtureTmpl<TP,TS>::polymer(int id)
    {  return polymers_[id]; }
 
    template <class TP, class TS>
-   inline TS& SystemTmpl<TP,TS>::solvent(int id)
+   inline TS& MixtureTmpl<TP,TS>::solvent(int id)
    {  return solvents_[id]; }
 
    template <class TP, class TS>
    inline 
-   DArray< typename SystemTmpl<TP,TS>::WField >& 
-   SystemTmpl<TP,TS>::wFields()
+   DArray< typename MixtureTmpl<TP,TS>::WField >& 
+   MixtureTmpl<TP,TS>::wFields()
    {  return wFields_; }
 
    template <class TP, class TS>
-   inline typename SystemTmpl<TP,TS>::WField& SystemTmpl<TP,TS>::wField(int id)
+   inline typename MixtureTmpl<TP,TS>::WField& MixtureTmpl<TP,TS>::wField(int id)
    {  return wFields_[id]; }
 
    template <class TP, class TS>
-   inline typename SystemTmpl<TP,TS>::CField& SystemTmpl<TP,TS>::cField(int id)
+   inline typename MixtureTmpl<TP,TS>::CField& MixtureTmpl<TP,TS>::cField(int id)
    {  return cFields_[id]; }
 
    // Non-inline member functions
@@ -205,7 +205,7 @@ namespace Pscf
    * Read all parameters and initialize.
    */
    template <class TP, class TS>
-   void SystemTmpl<TP,TS>::readParameters(std::istream& in)
+   void MixtureTmpl<TP,TS>::readParameters(std::istream& in)
    {
       // Monomers
       read<int>(in, "nMonomer", nMonomer_);
@@ -239,7 +239,7 @@ namespace Pscf
    * Solve MDE, compute concentrations and free energy.
    */
    template <class TP, class TS>
-   void SystemTmpl<TP,TS>::compute()
+   void MixtureTmpl<TP,TS>::compute()
    {
       for (int i = 0; i < nPolymer_; ++i) {
          polymer(i).compute(wFields_);

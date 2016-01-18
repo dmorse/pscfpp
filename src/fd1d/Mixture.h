@@ -1,5 +1,5 @@
-#ifndef FD1D_SYSTEM_H
-#define FD1D_SYSTEM_H
+#ifndef FD1D_MIXTURE_H
+#define FD1D_MIXTURE_H
 
 /*
 * PFTS - Polymer Field Theory Simulator
@@ -10,13 +10,13 @@
 
 #include "Polymer.h"
 #include "Solvent.h"
-#include <pscf/SystemTmpl.h>
+#include <pscf/MixtureTmpl.h>
 
 namespace Pscf {
 namespace Fd1d
 {
 
-   class System : public SystemTmpl<Polymer, Solvent>
+   class Mixture : public MixtureTmpl<Polymer, Solvent>
    {
 
    public:
@@ -24,12 +24,12 @@ namespace Fd1d
       /**
       * Constructor.
       */
-      System();
+      Mixture();
 
       /**
       * Destructor.
       */
-      ~System();
+      ~Mixture();
 
       /**
       * Read all parameters and initialize.
@@ -63,10 +63,10 @@ namespace Fd1d
 
    // Inline member functions
 
-   inline int System::nx() const
+   inline int Mixture::nx() const
    {  return nx_; }
 
-   inline double System::dx() const
+   inline double Mixture::dx() const
    {  return dx_; }
 
 }

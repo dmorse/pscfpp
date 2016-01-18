@@ -1,16 +1,16 @@
-#ifndef SYSTEM_STUB_TEST_H
-#define SYSTEM_STUB_TEST_H
+#ifndef PSCF_MIXTURE_STUB_TEST_H
+#define PSCF_MIXTURE_STUB_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include "SystemStub.h"
+#include "MixtureStub.h"
 
 #include <fstream>
 
 using namespace Pscf;
 
-class SystemStubTest : public UnitTest 
+class MixtureStubTest : public UnitTest 
 {
 
 public:
@@ -25,7 +25,7 @@ public:
    void testConstructor()
    {
       printMethod(TEST_FUNC);
-      SystemStub p;
+      MixtureStub p;
    } 
 
    void testReadParam() 
@@ -34,9 +34,9 @@ public:
       printEndl();
 
       std::ifstream in;
-      openInputFile("in/System", in);
+      openInputFile("in/Mixture", in);
 
-      SystemStub sys;
+      MixtureStub sys;
       sys.readParam(in);
       sys.writeParam(std::cout);
    }
@@ -47,19 +47,19 @@ public:
       printEndl();
 
       std::ifstream in;
-      openInputFile("in/System", in);
+      openInputFile("in/Mixture", in);
 
-      SystemStub sys;
+      MixtureStub sys;
       sys.readParam(in);
       sys.compute();
    }
 
 };
 
-TEST_BEGIN(SystemStubTest)
-TEST_ADD(SystemStubTest, testConstructor)
-TEST_ADD(SystemStubTest, testReadParam)
-TEST_ADD(SystemStubTest, testCompute)
-TEST_END(SystemStubTest)
+TEST_BEGIN(MixtureStubTest)
+TEST_ADD(MixtureStubTest, testConstructor)
+TEST_ADD(MixtureStubTest, testReadParam)
+TEST_ADD(MixtureStubTest, testCompute)
+TEST_END(MixtureStubTest)
 
 #endif

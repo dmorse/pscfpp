@@ -5,22 +5,22 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "System.h"
+#include "Mixture.h"
 #include <cmath>
 
 namespace Pscf { 
 namespace Fd1d
 { 
 
-   System::System()
-   {  setClassName("System"); }
+   Mixture::Mixture()
+   {  setClassName("Mixture"); }
 
-   System::~System()
+   Mixture::~Mixture()
    {}
 
-   void System::readParameters(std::istream& in)
+   void Mixture::readParameters(std::istream& in)
    {
-      SystemTmpl<Polymer, Solvent>::readParameters(in);
+      MixtureTmpl<Polymer, Solvent>::readParameters(in);
 
       // Read discretization parameters
       read(in, "xMin", xMin_);
@@ -61,7 +61,7 @@ namespace Fd1d
 
    }
 
-   void System::compute()
+   void Mixture::compute()
    {
 
       // Clear all monomer concentration fields
