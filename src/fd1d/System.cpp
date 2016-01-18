@@ -35,7 +35,7 @@ namespace Fd1d
          cField(i).allocate(nx_);
       } 
 
-      // Set grid for all propagators
+      // Set grid for all blocks
       double length;
       int i, j, ns;
       for (i = 0; i < nPolymer(); ++i) {
@@ -46,17 +46,18 @@ namespace Fd1d
             if (ns%2 == 0) {
                ns += 1;
             }
-            polymer(i).propagator(j, 0).setGrid(xMin_, xMax_, nx_, ns);
-            polymer(i).propagator(j, 1).setGrid(xMin_, xMax_, nx_, ns);
+            polymer(i).block(j).setGrid(xMin_, xMax_, nx_, ns);
          }
       }
 
+      #if 0
       // Allocate per-block concentration fields
       for (i = 0; i < nPolymer(); ++i) {
          for (j = 0; j < polymer(i).nBlock(); ++j) {
             polymer(i).blockCField(j).allocate(nx_);
          }
       }
+      #endif
 
    }
 
@@ -76,7 +77,6 @@ namespace Fd1d
          polymer(i).compute(wFields());
       }
 
-      #if 1
       // Accumulate monomer concentration fields
       for (i = 0; i < nPolymer(); ++i) {
          for (j = 0; j < polymer(i).nBlock(); ++j) {
@@ -84,13 +84,12 @@ namespace Fd1d
             UTIL_CHECK(monomerId >= 0);
             UTIL_CHECK(monomerId < nMonomer());
             CField& monomerField = cField(monomerId);
-            CField& blockField = polymer(i).blockCField(j);
+            CField& blockField = polymer(i).block(j).cField();
             for (int k = 0; k < nx_; ++k) {
                monomerField[k] += blockField[k];
             }
          }
       }
-      #endif
     
    }
 }

@@ -16,6 +16,7 @@ namespace Pscf {
 namespace Fd1d
 { 
 
+   class Block;
    using namespace Util;
 
    class Propagator : public PropagatorTmpl<Propagator>
@@ -53,14 +54,19 @@ namespace Fd1d
       ~Propagator();
 
       /**
-      * Initialize grid and allocate required memory.
+      * Associate this propagator with a block.
       *
-      * \param xMin minimum value of space coordinate
-      * \param xMax minimum value of space coordinate
-      * \param nx number of spatial grid points
-      * \param ns number of contour steps, # grid points - 1
-      */
-      void setGrid(double xMin, double xMax, int nx, int ns);
+      * \param block associated Block object.
+      */ 
+      void setBlock(Block& block);
+
+      /**
+      * Associate this propagator with a block.
+      * 
+      * \param ns number of contour length steps
+      * \param nx number of spatial steps
+      */ 
+      void allocate(int ns, int nx);
 
       /**
       * Solve the modified diffusion equation (MDE) for this block.
@@ -73,7 +79,7 @@ namespace Fd1d
       *
       * \param w chemical potential field for relevant monomer type
       */
-      void solve(const WField& w);
+      void solve();
   
       /**
       * Solve the MDE for a specified initial condition.
@@ -86,24 +92,8 @@ namespace Fd1d
       * \param w chemical potential field for relevant monomer type
       * \param head initial condition of QField at head of block
       */
-      void solve(const WField& w, const QField& head);
-  
-      /**
-      * Compute unnormalized concentration for block by integration.
-      *
-      * Upon return, grid point r of the integral array contains the 
-      * integral int ds q(r,s)q^{*}(r,L-s), q(r,s) is the solution 
-      * obtained from this propagator, q^{*} is the solution of the
-      * partner propagator, which solves the MDE for the same block
-      * in the opposite direction, and s is contour variable that is
-      * integrated over the domain 0 < s < L, where L is the length
-      * of the block. 
-      *
-      * \param prefactor multiplying integral
-      * \param integral contour integral of propagator product.
-      */ 
-      void computeConcentration(double prefactor, CField& integral);
-
+      void solve(const QField& head);
+ 
       /**
       * Compute and return partition function for the molecule.
       *
@@ -115,6 +105,11 @@ namespace Fd1d
       double computeQ();
 
       /**
+      * Return q-field at specified step.
+      */
+      const QField& q(int i) const;
+
+      /**
       * Return q-field at beginning of block (initial condition).
       */
       const QField& head() const;
@@ -124,55 +119,30 @@ namespace Fd1d
       */
       const QField& tail() const;
 
-   protected:
+      /**
+      * Get the associated Block object by reference.
+      */
+      Block & block();
 
       /**
-      * Set Crank-Nicholson solver before main integration loop.
+      * Has memory been allocated for this propagator?
       */
-      void setupSolver(const WField& w);
+      bool isAllocated() const;
+
+   protected:
 
       /**
       * Compute initial QField at head from tail QFields of sources.
       */
       void computeHead();
 
-      /**
-      * One step of integration loop, from i to i+1.
-      *
-      * \param iStep time step index, in range 0 to ns.
-      */
-      void step(int iStep);
- 
    private:
-      
+     
+      // Array of statistical weight fields 
       DArray<QField> qFields_;
 
-      // Elements of tridiagonal matrices used in propagation
-      DArray<double> dA_;
-      DArray<double> dB_;
-      DArray<double> uA_;
-      DArray<double> uB_;
-
-      // Work vector
-      DArray<double> v_;
-
-      // Solver used in Crank-Nicholson algorithm
-      TridiagonalSolver solver_;
-
-      /// Monomer statistical segment length.
-      double step_;
-
-      /// Minimum value of spatial coordinate.
-      double xMin_;
-
-      /// Maximum value of spatial coordinate.
-      double xMax_;
-
-      /// Spatial grid step size.
-      double dx_;
-
-      /// Contour length step size.
-      double ds_;
+      /// Pointer to associated Block.
+      Block* blockPtr_;
 
       /// Number of contour length steps = # grid points - 1.
       int ns_;
@@ -180,10 +150,12 @@ namespace Fd1d
       /// Number of spatial grid points.
       int nx_;
 
-      /// Has an specified initial condition (head).
-      bool hasHead_;
+      /// Is this propagator allocated?
+      bool isAllocated_;
 
    };
+
+   // Inline member functions
 
    /*
    * Return q-field at beginning of block.
@@ -196,6 +168,27 @@ namespace Fd1d
    */
    inline Propagator::QField const& Propagator::tail() const
    {  return qFields_[ns_-1]; }
+
+   /*
+   * Return q-field at specified step.
+   */
+   inline Propagator::QField const& Propagator::q(int i) const
+   {  return qFields_[i]; }
+
+   /*
+   * Get the associated Block object.
+   */
+   inline Block& Propagator::block()
+   {
+      assert(blockPtr_);  
+      return *blockPtr_; 
+   }
+
+   /*
+   * Associate this propagator with a block and direction
+   */
+   inline void Propagator::setBlock(Block& block)
+   {  blockPtr_ = &block; }
 
 }
 } 

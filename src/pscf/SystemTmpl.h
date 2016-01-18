@@ -223,15 +223,14 @@ namespace Pscf
          readParamComposite(in, polymers_[i]);
       }
 
-      // Set kuhn lengths for all propagators
+      // Set kuhn lengths for all blocks
       double kuhn;
       int monomerId;
       for (int i = 0; i < nPolymer_; ++i) {
          for (int j = 0; j < polymer(i).nBlock(); ++j) {
             monomerId = polymer(i).block(j).monomerId();
             kuhn = monomer(monomerId).step();
-            polymer(i).propagator(j, 0).setKuhn(kuhn);
-            polymer(i).propagator(j, 1).setKuhn(kuhn);
+            polymer(i).block(j).setKuhn(kuhn);
          }
       }
    }

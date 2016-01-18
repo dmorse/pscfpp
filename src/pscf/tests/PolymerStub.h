@@ -8,13 +8,13 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "PropagatorStub.h"
+#include "BlockStub.h"
 #include <pscf/PolymerTmpl.h>
 
 namespace Pscf
 { 
 
-   class PolymerStub : public PolymerTmpl<PropagatorStub>
+   class PolymerStub : public PolymerTmpl<BlockStub>
    {
 
    public:

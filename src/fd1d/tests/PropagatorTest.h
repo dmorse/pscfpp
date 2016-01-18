@@ -4,8 +4,8 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
+#include <fd1d/Block.h>
 #include <fd1d/Propagator.h>
-#include <pscf/Block.h>
 #include <util/math/Constants.h>
 
 #include <fstream>
@@ -14,7 +14,7 @@ using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Fd1d;
 
-class PropagatorTest : public UnitTest 
+class PropagatorTest : public UnitTest
 {
 
 public:
@@ -25,73 +25,69 @@ public:
    void tearDown()
    {}
 
-  
    void testConstructor()
    {
       printMethod(TEST_FUNC);
-      Propagator propagator;
+      Block block;
    }
 
    void testSolve1()
    {
-      Block block;
-      block.setId(0);
-      double length = 2.0;
-      block.setLength(length);
-      block.setMonomerId(1);
-
       printMethod(TEST_FUNC);
-      Propagator propagator;
-      propagator.setBlock(block, 0);
-       
+      Block b;
+      b.setId(0);
+      double length = 2.0;
       double step = sqrt(6.0);
-      propagator.setKuhn(step);
+      b.setLength(length);
+      b.setMonomerId(1);
+      b.setKuhn(step);
+
       double xMin = 0.0;
       double xMax = 1.0;
       int nx = 11;
       int ns = 101;
-      propagator.setGrid(xMin, xMax, nx, ns);
+      b.setGrid(xMin, xMax, nx, ns);
       DArray<double> w;
       w.allocate(nx);
       double wc = 0.3;
       for (int i = 0; i < nx; ++i) {
          w[i] = wc;
       }
-      propagator.solve(w);
+
+      b.setupSolver(w);
+      b.propagator(0).solve();
 
       std::cout << "\n Head:\n";
       for (int i = 0; i < nx; ++i) {
-         std::cout << "  " << propagator.head()[i];
+         std::cout << "  " << b.propagator(0).head()[i];
       }
       std::cout << "\n";
 
       std::cout << "\n Tail:\n";
       for (int i = 0; i < nx; ++i) {
-         std::cout << "  " << propagator.tail()[i];
+         std::cout << "  " << b.propagator(0).tail()[i];
       }
       std::cout << "\n";
-      std::cout << exp(-wc*block.length()) << "\n";
+      std::cout << exp(-wc*b.length()) << "\n";
    }
 
    void testSolve2()
    {
-      Block block;
-      block.setId(0);
-      double length = 0.5;
-      block.setLength(length);
-      block.setMonomerId(1);
-
       printMethod(TEST_FUNC);
-      Propagator propagator;
-      propagator.setBlock(block, 0);
-       
+      Block b;
+      double length = 0.5;
       double step = 1.0;
-      propagator.setKuhn(step);
+      b.setId(0);
+      b.setMonomerId(1);
+      b.setLength(length);
+      b.setKuhn(step);
+
       double xMin = 0.0;
       double xMax = 1.0;
       int nx = 33;
       int ns = 10001;
-      propagator.setGrid(xMin, xMax, nx, ns);
+      b.setGrid(xMin, xMax, nx, ns);
+
       DArray<double> q, w;
       q.allocate(nx);
       w.allocate(nx);
@@ -100,17 +96,19 @@ public:
          q[i] = cos(Constants::Pi*(double(i)+0.5)/nx);
          w[i] = wc;
       }
-      propagator.solve(w, q);
+
+      b.setupSolver(w);
+      b.propagator(0).solve(q);
 
       std::cout << "\n Head:\n";
       for (int i = 0; i < nx; ++i) {
-         std::cout << "  " << propagator.head()[i];
+         std::cout << "  " << b.propagator(0).head()[i];
       }
       std::cout << "\n";
 
       std::cout << "\n Tail:\n";
       for (int i = 0; i < nx; ++i) {
-         std::cout << "  " << propagator.tail()[i]/propagator.head()[i];
+         std::cout << "  " << b.propagator(0).tail()[i]/b.propagator(0).head()[i];
       }
       std::cout << "\n";
 

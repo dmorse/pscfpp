@@ -90,7 +90,7 @@ namespace Pscf
       * 
       * \param id block index
       */
-      const Block& block(int id) const;
+      Block& block(int id);
 
       /**
       * Get a specified Vertex.
@@ -100,20 +100,7 @@ namespace Pscf
       const Vertex& vertex(int id) const;
 
       /**
-      * Get the monomer concentration field for a specific block.
-      *
-      * \param blockId integer index of associated block
-      */
-      CField& blockCField(int blockId);
-   
-      /**
       * Get propagator for a specific block and direction.
-      *
-      * Suppose p is a PolymerTmpl, and b = p.block(i) is a block 
-      * terminating at vertices with indices v0 = b.vertexId(0) and 
-      * v1 = b.vertexId(1), then p.propagator(i, 0) is a propagator 
-      * that from v0 to v1, while p.propagator(i, 1) propagates
-      * from v1 to v0.
       *
       * \param blockId integer index of associated block
       * \param directionId integer index for direction (0 or 1)
@@ -127,8 +114,6 @@ namespace Pscf
       */
       Propagator& propagator(int id);
 
-   protected:
-
       /**
       * Propagator identifier, indexed by order of computation.
       *
@@ -138,6 +123,8 @@ namespace Pscf
       * have been computed previously.
       */
       const Pair<int>& propagatorId(int i) const;
+
+   protected:
 
       virtual void makePlan();
 
@@ -206,7 +193,7 @@ namespace Pscf
    * Get a specified Block.
    */
    template <class Block>
-   inline const Block& PolymerTmpl<Block>::block(int id) const
+   inline Block& PolymerTmpl<Block>::block(int id)
    {  return blocks_[id]; }
 
    /*
@@ -226,36 +213,27 @@ namespace Pscf
    */
    template <class Block>
    inline 
-   TProp& PolymerTmpl<Block>::propagator(int blockId, int directionId)
-   {  return blocks_(blockId).propagator(directionId); }
+   typename Block::Propagator& PolymerTmpl<Block>::propagator(int blockId, int directionId)
+   {  return block(blockId).propagator(directionId); }
 
    /*
    * Get a propagator indexed in order of computation.
    */
    template <class Block>
-   inline TProp& PolymerTmpl<Block>::propagator(int id)
+   inline 
+   typename Block::Propagator& PolymerTmpl<Block>::propagator(int id)
    {
       Pair<int> propId = propagatorId(id);
-      return propagators_(propId[0], propId[1]); 
+      return propagator(propId[0], propId[1]); 
    }
 
-   /*
-   * Get a block monomer concentration.
-   */
-   template <class Block>
-   inline
-   typename PolymerTmpl<Block>::CField& 
-   PolymerTmpl<Block>::blockCField(int blockId)
-   {  return blockCFields_[blockId]; }
-
-   
    // Non-inline functions
 
    /*
    * Constructor.
    */
    template <class Block>
-   PolymerTmpl<Block>::PolymerDescriptor()
+   PolymerTmpl<Block>::PolymerTmpl()
     : blocks_(),
       vertices_(),
       propagatorIds_(),
@@ -263,15 +241,13 @@ namespace Pscf
       nVertex_(0),
       nPropagator_(0),
       length_(0.0)
-   {
-      setClassName("PolymerDescriptor");
-   }
+   {  setClassName("PolymerTmpl"); }
 
    /*
    * Destructor.
    */
    template <class Block>
-   PolymerTmpl<Block>::~PolymerDescriptor()
+   PolymerTmpl<Block>::~PolymerTmpl()
    {}
 
    template <class Block>
@@ -320,44 +296,31 @@ namespace Pscf
          read(in, "mu", mu_);
       }
 
-      blockCFields_.allocate(nBlock());
-      propagators_.allocate(nBlock(), 2);
-
-      // Associate propagators with blocks and directions
-      Propagator* propagatorPtr = 0;
-      int blockId, directionId;
-      for (blockId = 0; blockId < nBlock(); ++blockId) {
-         for (directionId = 0; directionId < 2; ++directionId) {
-            propagatorPtr = &propagator(blockId, directionId);
-            propagatorPtr->setBlock(block(blockId), directionId);
-         }
-      }
-      
-      // Set sources and partners for all propagators
+      // Set sources for all propagators
       Vertex const * vertexPtr = 0;
       Propagator const * sourcePtr = 0;
+      Propagator * propagatorPtr = 0;
       Pair<int> propagatorId;
-      int vertexId, i;
+      int blockId, directionId, vertexId, i;
       for (blockId = 0; blockId < nBlock(); ++blockId) {
          // Add sources
          for (directionId = 0; directionId < 2; ++directionId) {
             vertexId = block(blockId).vertexId(directionId);
             vertexPtr = &vertex(vertexId);
-            propagatorPtr = &propagator(blockId, directionId);
+            // propagatorPtr = &propagator(blockId, directionId);
+            propagatorPtr = &block(blockId).propagator(directionId);
             for (i = 0; i < vertexPtr->size(); ++i) {
                propagatorId = vertexPtr->inPropagatorId(i);
                if (propagatorId[0] == blockId) {
                   UTIL_CHECK(propagatorId[1] != directionId);
                } else {
-                  sourcePtr = & propagator(propagatorId[0], propagatorId[1]);
+                  //sourcePtr = & propagator(propagatorId[0], propagatorId[1]);
+                  sourcePtr = &block(propagatorId[0]).propagator(propagatorId[1]);
                   propagatorPtr->addSource(*sourcePtr);
                }
             }
          }
 
-         // Set partners
-         propagator(blockId, 0).setPartner(propagator(blockId, 1));
-         propagator(blockId, 1).setPartner(propagator(blockId, 0));
       }
    }
 
@@ -417,23 +380,26 @@ namespace Pscf
    void PolymerTmpl<Block>::compute(const DArray<WField>& wFields)
    {
 
+      // Setup solvers for all blocks
+      int monomerId;
+      for (int j = 0; j < nBlock(); ++j) {
+         monomerId = block(j).monomerId();
+         block(j).setupSolver(wFields[monomerId]);
+      }
+
       // Clear all propagators
       for (int j = 0; j < nPropagator(); ++j) {
          propagator(j).setIsSolved(false);
       }
 
       // Solve modified diffusion equation for all propagators
-      int monomerId;
       for (int j = 0; j < nPropagator(); ++j) {
-         if (!propagator(j).isReady()) {
-            UTIL_THROW("Propagator not ready");
-         }
-         monomerId = propagator(j).block().monomerId();
-         propagator(j).solve(wFields[monomerId]);
+         UTIL_CHECK(propagator(j).isReady());
+         propagator(j).solve();
       }
 
       // Compute molecular partition function
-      double q = propagator(0,0).computeQ();
+      double q = block(0).propagator(0).computeQ();
       if (ensemble() == Species::Closed) {
          mu_ = log(phi_/q);
       } 
@@ -444,7 +410,7 @@ namespace Pscf
       // Compute block concentration fields
       double prefactor = phi_ / (q*length());
       for (int i = 0; i < nBlock(); ++i) {
-         propagator(i, 0).computeConcentration(prefactor, blockCFields_[i]);
+         block(i).computeConcentration(prefactor);
       }
 
    }

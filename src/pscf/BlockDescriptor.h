@@ -1,5 +1,5 @@
-#ifndef PSCF_BLOCK_H
-#define PSCF_BLOCK_H
+#ifndef PSCF_BLOCK_DESCRIPTOR_H
+#define PSCF_BLOCK_DESCRIPTOR_H
 
 /*
 * PFTS - Polymer Field Theory Simulator

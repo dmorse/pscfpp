@@ -27,6 +27,11 @@ public:
    {
       printMethod(TEST_FUNC);
       BlockStub v;
+
+      TEST_ASSERT(&v.propagator(0).block() == &v);
+      TEST_ASSERT(&v.propagator(1).block() == &v);
+      TEST_ASSERT(&v.propagator(0).partner() == &v.propagator(1));
+      TEST_ASSERT(&v.propagator(1).partner() == &v.propagator(0));
    } 
 
    void testReadWrite() {
@@ -35,7 +40,7 @@ public:
 
       BlockStub v;
       std::ifstream in;
-      openInputFile("in/BlockStub", in);
+      openInputFile("in/BlockDescriptor", in);
 
       in >> v;
       TEST_ASSERT(v.id() == 5);
@@ -43,7 +48,7 @@ public:
       TEST_ASSERT(v.vertexId(0) == 3);
       TEST_ASSERT(v.vertexId(1) == 4);
       TEST_ASSERT(eq(v.length(), 2.0));
-      // std::cout << v << std::endl ;
+      std::cout << v << std::endl ;
    }
 
 };

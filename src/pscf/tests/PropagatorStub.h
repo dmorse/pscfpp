@@ -15,6 +15,7 @@ namespace Pscf
 { 
 
    class PropagatorStub;
+   class BlockStub;
 
    class PropagatorStub : public PropagatorTmpl<PropagatorStub>
    {
@@ -41,17 +42,29 @@ namespace Pscf
       PropagatorStub(){}
 
       /**
+      * Associate this propagator with a block.
+      *
+      * \param block associated Block object.
+      */ 
+      void setBlock(BlockStub& block);
+
+      /**
+      * Get the associated Block object by reference.
+      */
+      BlockStub & block();
+
+      /**
       * Solve the modified diffusion equation for this block.
       *
       * \param w chemical potential field for appropriate monomer type
       */
-      void solve(const WField& w)
+      void solve()
       {  setIsSolved(true); };
   
       /**
       * Compute monomer concentration for this block.
       */ 
-      void computeConcentration(double prefactor, CField& integral)
+      void computeConcentration(double prefactor)
       {};
    
       /**
@@ -59,8 +72,25 @@ namespace Pscf
       */ 
       double computeQ()
       {  return 1.0; };
-   
+
+   private:
+
+      /// Pointer to associated Block.
+      BlockStub* blockPtr_;
+
    };
+
+   /*
+   * Associate this propagator with a block and direction
+   */
+   inline void PropagatorStub::setBlock(BlockStub& block)
+   {  blockPtr_ = &block; }
+
+   /*
+   * Get the associated Block object.
+   */
+   inline BlockStub& PropagatorStub::block()
+   {  return *blockPtr_; }
 
 } 
 #endif

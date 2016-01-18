@@ -9,7 +9,6 @@
 */
 
 #include <util/containers/GArray.h>
-#include <pscf/BlockDescriptor.h>
 
 namespace Pscf
 { 
@@ -19,23 +18,26 @@ namespace Pscf
    /**
    * Template for propagator classes.
    *
-   * The template argument Propagator should be a concrete class that is
-   * derived from the template PropagatorTmpl<Propagator>, as in the following
+   * The template argument TP should be a concrete propagator class that 
+   * is derived from the template PropagatorTmpl<TP>, as in the following
    * example: 
    * \code
-   *    class Propagator : public PropagatorTmpl<Propagator>
+   *
+   *    class TP : public PropagatorTmpl<TP>
    *    {
    *     ...
    *    }; 
+   *
    * \endcode
    * This usage is an example of the so-called "curiously recurring template 
    * pattern" (CRTP). It is used here to allow the template to have a members
-   * that stores pointers to other instances of derived class Propagator.
+   * that stores pointers to other instances of derived class TP.
    *
-   * The Propagator class is used in templates PolymerTmpl and SystemTmpl that 
-   * require that it define the following public typedefs and member functions:
+   * The TP class is used in templates PolymerTmpl and SystemTmpl that require
+   * that it define the following public typedefs and member functions:
    * \code
-   *    class Propagator : public PropagatorTmpl<Propagator> 
+   *
+   *    class TP : public PropagatorTmpl<TP> 
    *    {
    *    public:
    * 
@@ -52,6 +54,7 @@ namespace Pscf
    *        void integrate(const CField& integral);
    * 
    *    }; 
+   *
    * \endcode
    * The typedefs WField and CField define the types of the objects used
    * to represent a chemical potential field for a particular monomer type
@@ -60,7 +63,7 @@ namespace Pscf
    * dynamically allocated arrays of double precision floating point 
    * numbers. Other implementations may use more specialized types.
    */
-   template <class Propagator>
+   template <class TP>
    class PropagatorTmpl
    {
 
@@ -72,65 +75,42 @@ namespace Pscf
       PropagatorTmpl();
  
       /**
-      * Associate this propagator with a block and direction.
+      * Associate this propagator with a direction index.
       *
-      * \param block associated BlockDescriptor object.
       * \param directionId direction = 0 or 1.
       */ 
-      void setBlock(const BlockDescriptor& block, int directionId);
-
-      /**
-      * Set monomer statistical segment length.
-      *
-      * \param kuhn monomer statistical segment length
-      */
-      void setKuhn(double kuhn);
+      void setDirectionId(int directionId);
 
       /**
       * Set the partner of this propagator.
       *
-      * A partner of a propagator is the propagator for the same block
+      * The partner of a propagator is the propagator for the same block
       * that propagates in the opposite direction.
       *
       * \param partner reference to partner propagator
       */
-      void setPartner(const Propagator& partner);
+      void setPartner(const TP& partner);
 
       /**
       * Add a propagator to the list of sources for this one.
       *
-      * A source is a propagator that is needed to compute the initial
-      * condition for this one, and that thus must be computed before 
-      * this one.
+      * A source is a propagator that terminates at the root vertex 
+      * of this one and is needed to compute the initial condition 
+      * for this one, and that thus must be computed before this.
       * 
       * \param source reference to source propagator
       */
-      void addSource(const Propagator& source);
+      void addSource(const TP& source);
 
-      /**
-      * Check if all sources are completed.
-      */
-      bool isReady();
- 
       /**
       * Set the isSolved flag to true or false.
       */
       void setIsSolved(bool isSolved);
  
       /**
-      * Get the associated BlockDescriptor object by reference.
-      */
-      const BlockDescriptor& block() const;
-
-      /**
       * Get direction index for this propagator.
       */
       int directionId() const;
-
-      /**
-      * Get monomer statistical segment length.
-      */
-      double kuhn() const;
 
       /**
       * Number of source / prerequisite propagators.
@@ -142,7 +122,7 @@ namespace Pscf
       * 
       * \param id index of source propagator, < nSource
       */
-      const Propagator& source(int id) const;
+      const TP& source(int id) const;
 
       /**
       * Does this have a partner propagator?
@@ -152,29 +132,28 @@ namespace Pscf
       /**
       * Get partner propagator.
       */
-      const Propagator& partner() const;
+      const TP& partner() const;
 
       /**
       * Has the modified diffusion equation been solved?
       */
       bool isSolved() const;
  
+      /**
+      * Are all source propagators are solved?
+      */
+      bool isReady() const;
+ 
    private:
   
-      /// Monomer statistical segment length.
-      double kuhn_;
-
-      /// Pointer to associated block.
-      BlockDescriptor const * blockPtr_;
-
       /// Direction of propagation (0 or 1).
       int directionId_;
 
       /// Pointer to partner - same block,opposite direction.
-      Propagator const * partnerPtr_;
+      TP const * partnerPtr_;
 
       /// Pointers to propagators that feed source vertex.
-      GArray<Propagator const *> sourcePtrs_;
+      GArray<TP const *> sourcePtrs_;
 
       /// Set true after solving modified diffusion equation.
       bool isSolved_;
@@ -184,54 +163,40 @@ namespace Pscf
    // Inline member functions
 
    /*
-   * Get the associated BlockDescriptor object.
-   */
-   template <class Propagator>
-   inline const BlockDescriptor& PropagatorTmpl<Propagator>::block() const
-   {  return *blockPtr_; }
-
-   /*
    * Get the direction index.
    */
-   template <class Propagator>
-   inline int PropagatorTmpl<Propagator>::directionId() const
+   template <class TP>
+   inline int PropagatorTmpl<TP>::directionId() const
    {  return directionId_; }
-
-   /*
-   * Get the monomer statistical segment length. 
-   */
-   template <class Propagator>
-   inline double PropagatorTmpl<Propagator>::kuhn() const
-   {  return kuhn_; }
 
    /*
    * Get the number of source propagators.
    */
-   template <class Propagator>
-   inline int PropagatorTmpl<Propagator>::nSource() const
+   template <class TP>
+   inline int PropagatorTmpl<TP>::nSource() const
    {  return sourcePtrs_.size(); }
 
    /*
    * Get a source propagator.
    */
-   template <class Propagator>
-   inline const Propagator& 
-   PropagatorTmpl<Propagator>::source(int id) const
+   template <class TP>
+   inline const TP& 
+   PropagatorTmpl<TP>::source(int id) const
    {  return *(sourcePtrs_[id]); }
 
    /**
    * Does this have a partner propagator?
    */
-   template <class Propagator>
+   template <class TP>
    inline
-   bool PropagatorTmpl<Propagator>::hasPartner() const
+   bool PropagatorTmpl<TP>::hasPartner() const
    {  return partnerPtr_; }
 
    /*
    * Is the computation of this propagator completed?
    */
-   template <class Propagator>
-   inline bool PropagatorTmpl<Propagator>::isSolved() const
+   template <class TP>
+   inline bool PropagatorTmpl<TP>::isSolved() const
    {  return isSolved_; }
 
    // Noninline member functions
@@ -239,66 +204,40 @@ namespace Pscf
    /*
    * Constructor.
    */
-   template <class Propagator>
-   PropagatorTmpl<Propagator>::PropagatorTmpl()
-    : blockPtr_(0),
-      directionId_(-1),
+   template <class TP>
+   PropagatorTmpl<TP>::PropagatorTmpl()
+    : directionId_(-1),
+      partnerPtr_(0),
       sourcePtrs_(),
       isSolved_(false)
    {}
 
    /*
-   * Associate this propagator with a block and direction
+   * Set the directionId.
    */
-   template <class Propagator>
-   void 
-   PropagatorTmpl<Propagator>::setBlock(const BlockDescriptor& block, 
-                                        int directionId)
-   {
-      blockPtr_ = &block;
-      directionId_ = directionId;
-   }
-
-   /*
-   * Set the monomer statistical segment length.
-   */
-   template <class Propagator>
-   void PropagatorTmpl<Propagator>::setKuhn(double kuhn)
-   {  kuhn_ = kuhn; }
+   template <class TP>
+   void PropagatorTmpl<TP>::setDirectionId(int directionId)
+   {  directionId_ = directionId; }
 
    /*
    * Set the partner propagator.
    */
-   template <class Propagator>
-   void PropagatorTmpl<Propagator>::setPartner(const Propagator& partner)
+   template <class TP>
+   void PropagatorTmpl<TP>::setPartner(const TP& partner)
    {  partnerPtr_ = &partner; }
 
    /*
    * Add a source propagator to the list.
    */
-   template <class Propagator>
-   void PropagatorTmpl<Propagator>::addSource(const Propagator& source)
+   template <class TP>
+   void PropagatorTmpl<TP>::addSource(const TP& source)
    {  sourcePtrs_.append(&source); }
-
-   /*
-   * Check if all source propagators are marked completed.
-   */
-   template <class Propagator>
-   bool PropagatorTmpl<Propagator>::isReady()
-   {
-      for (int i=0; i < sourcePtrs_.size(); ++i) {
-         if (!sourcePtrs_[i]->isSolved()) {
-            return false;
-         }
-      }
-      return true;
-   }
 
    /*
    * Get partner propagator.
    */
-   template <class Propagator>
-   const Propagator& PropagatorTmpl<Propagator>::partner() 
+   template <class TP>
+   const TP& PropagatorTmpl<TP>::partner() 
    const
    {
       UTIL_CHECK(partnerPtr_);
@@ -308,9 +247,23 @@ namespace Pscf
    /*
    * Mark this propagator as solved (true) or not (false).
    */
-   template <class Propagator>
-   void PropagatorTmpl<Propagator>::setIsSolved(bool isSolved)
+   template <class TP>
+   void PropagatorTmpl<TP>::setIsSolved(bool isSolved)
    {  isSolved_ = isSolved; }
+
+   /*
+   * Check if all source propagators are marked completed.
+   */
+   template <class TP>
+   bool PropagatorTmpl<TP>::isReady() const
+   {
+      for (int i=0; i < sourcePtrs_.size(); ++i) {
+         if (!sourcePtrs_[i]->isSolved()) {
+            return false;
+         }
+      }
+      return true;
+   }
 
 }
 #endif 

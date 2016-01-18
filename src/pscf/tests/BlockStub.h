@@ -16,9 +16,34 @@ namespace Pscf
 
    class BlockStub : public BlockTmpl<PropagatorStub>
    {
+
    public:
+
       typedef PropagatorStub Propagator;
+      typedef PropagatorStub::WField WField; 
+
+      /**
+      * Constructor.
+      */
+      BlockStub()
+      {
+         propagator(0).setBlock(*this);
+         propagator(1).setBlock(*this);
+      }
+
+      /**
+      * Compute monomer concentration for this block.
+      */ 
+      void setupSolver(WField const & wField)
+      {}
+   
+      /**
+      * Compute monomer concentration for this block.
+      */ 
+      void computeConcentration(double prefactor)
+      {}
+   
    };
 
-} 
+}
 #endif

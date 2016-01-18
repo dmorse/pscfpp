@@ -16,11 +16,12 @@
 namespace Pscf
 { 
 
-   class TP;
    using namespace Util;
 
    /**
    * Class template for a block in a block copolymer.
+   *
+   * Class TP is a concrete propagator class.
    */
    template <class TP>
    class BlockTmpl : public BlockDescriptor
@@ -48,11 +49,11 @@ namespace Pscf
       virtual ~BlockTmpl();
 
       /**
-      * Read parameters and initialize.
+      * Set monomer statistical segment length.
       *
-      * \param in input parameter stream
+      * \param kuhn monomer statistical segment length
       */
-      virtual void readParameters(std::istream& in);
+      virtual void setKuhn(double kuhn);
 
       /**
       * Get a Propagator for a specified direction.
@@ -72,6 +73,11 @@ namespace Pscf
       */
       typename TP::CField& cField();
    
+      /**
+      * Get monomer statistical segment length.
+      */
+      double kuhn() const;
+  
    private:
 
       /// Propagators (one for each direction).
@@ -80,7 +86,12 @@ namespace Pscf
       /// Monomer concentration field.
       CField cField_;
 
+      /// Monomer statistical segment length.
+      double kuhn_;
+
    };
+
+   // Inline member functions
 
    /*
    * Get a Propagator indexed by direction.
@@ -98,6 +109,13 @@ namespace Pscf
    typename TP::CField& BlockTmpl<TP>::cField()
    {  return cField_; }
 
+   /*
+   * Get the monomer statistical segment length. 
+   */
+   template <class TP>
+   inline double BlockTmpl<TP>::kuhn() const
+   {  return kuhn_; }
+
    // Non-inline functions
 
    /*
@@ -106,8 +124,14 @@ namespace Pscf
    template <class TP>
    BlockTmpl<TP>::BlockTmpl()
     : propagators_(),
-      cField_()
-   {  setClassName("BlockTmpl"); }
+      cField_(),
+      kuhn_(0.0)
+   {
+      propagator(0).setDirectionId(0);
+      propagator(1).setDirectionId(1);
+      propagator(0).setPartner(propagator(1));
+      propagator(1).setPartner(propagator(0));
+   }
 
    /*
    * Destructor.
@@ -116,18 +140,12 @@ namespace Pscf
    BlockTmpl<TP>::~BlockTmpl()
    {}
 
+   /*
+   * Set the monomer statistical segment length.
+   */
    template <class TP>
-   void BlockTmpl<TP>::readParameters(std::istream& in)
-   {
-      // Read topological description
-      BlockDescriptor::readParameters(in);
+   void BlockTmpl<TP>::setKuhn(double kuhn)
+   {  kuhn_ = kuhn; }
 
-      // Create intra-block associations
-      propagator(0).setBlock(*this, 0);
-      propagator(0).setPartner(propagator(1));
-      propagator(1).setBlock(*this, 1);
-      propagator(1).setPartner(propagator(0));
-   }
- 
 }
 #endif

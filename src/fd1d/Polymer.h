@@ -8,14 +8,14 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Propagator.h"
+#include "Block.h"
 #include <pscf/PolymerTmpl.h>
 
 namespace Pscf { 
 namespace Fd1d
 { 
 
-   class Polymer : public PolymerTmpl<Propagator>
+   class Polymer : public PolymerTmpl<Block>
    {
 
    public:

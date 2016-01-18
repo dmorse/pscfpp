@@ -42,6 +42,13 @@ public:
 
       p.writeParam(std::cout);
 
+    
+      #if 0
+      for (int i = 0; i < p.nVertex(); ++i) {
+         std::cout << p.vertex(i).size() << "\n";
+      }
+      #endif
+
       std::cout << "\nVertices: id, size, block ids\n";
       for (int i = 0; i < p.nVertex(); ++i) {
          std::cout << i << "  " << p.vertex(i).size();
@@ -51,6 +58,13 @@ public:
          std::cout << "\n";
       }
 
+      #if 0
+      for (int i = 0; i < p.nPropagator(); ++i) {
+         std::cout << p.propagatorId(i)[0] << "  " 
+                   << p.propagatorId(i)[1] << "\n";
+      }
+      #endif
+      
       std::cout << "\nPropagator order:\n";
       Pair<int> propId;
       PropagatorStub* propPtr = 0;
