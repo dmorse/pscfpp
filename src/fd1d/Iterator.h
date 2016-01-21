@@ -34,14 +34,14 @@ namespace Fd1d
       /**
       * Create association with the mixture.
       */
-      void setMixture(Mixture& mixture);
+      virtual void setMixture(Mixture& mixture);
 
       /**
       * Iterate to solution.
       *
-      * \return true upon success, false upon failure.
+      * \return error code: 0 for success, 1 for failure.
       */
-      virtual bool solve() = 0;
+      virtual int solve() = 0;
 
    protected:
 

@@ -17,5 +17,8 @@ namespace Fd1d
     : mixturePtr_(0)
    {  setClassName("Iterator"); }
 
+   void Iterator::setMixture(Mixture & mixture )
+   {  mixturePtr_ = &mixture; }
+
 } // namespace Fd1d
 } // namespace Pscf

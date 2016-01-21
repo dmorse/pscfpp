@@ -5,7 +5,8 @@ fd1d_= \
   fd1d/Solvent.cpp \
   fd1d/Mixture.cpp \
   fd1d/Iterator.cpp \
-  fd1d/NrIterator.cpp 
+  fd1d/NrIterator.cpp \
+  fd1d/System.cpp 
 
 fd1d_SRCS=\
      $(addprefix $(SRC_DIR)/, $(fd1d_))

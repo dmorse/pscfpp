@@ -40,10 +40,10 @@ namespace Fd1d
 
       /**
       * Iterate to solution.
-      *
-      * \return true upon success, false upon failure.
+      * 
+      * \return error code: 0 for success, 1 for failure.
       */
-      bool solve();
+      int solve();
 
       /**
       * Get error tolerance.

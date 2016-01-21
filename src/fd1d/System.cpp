@@ -5,6 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include "System.h"
 #include "NrIterator.h"
 
 namespace Pscf {
@@ -13,19 +14,17 @@ namespace Fd1d
 
    using namespace Util;
 
-   NrIterator::NrIterator()
-    : epsilon_(0.0)
-   {  setClassName("NrIterator"); }
-
-   void NrIterator::readParameters(std::istream& in)
-   {
-      read(in, "epsilon", epsilon_);
+   System::System()
+    : mixture_(),
+      iteratorPtr_(0)
+   {  
+      setClassName("System"); 
+      iteratorPtr_ = new NrIterator(); 
    }
 
-   int NrIterator::solve()
+   void System::readParameters(std::istream& in)
    {
-      return 0;
-   }
+   }  
 
 } // namespace Fd1d
 } // namespace Pscf
