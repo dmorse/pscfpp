@@ -23,8 +23,8 @@ namespace Fd1d
 
    public:
 
-      typedef typename Propagator::WField WField;
-      typedef typename Propagator::QField QField;
+      typedef Propagator::WField WField;
+      typedef Propagator::QField QField;
 
       // Member functions
 

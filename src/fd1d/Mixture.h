@@ -53,10 +53,19 @@ namespace Fd1d
 
    private:
 
+      // Lower bound of spatial coordinate
       double xMin_;
+
+      // Upper bound of spatial coordinate
       double xMax_;
+
+      // Spatial discretization step.
       double dx_;
+
+      // Optimal contour length step size.
       double ds_;
+
+      // Number of grid points.
       int nx_;
 
    };
@@ -69,6 +78,6 @@ namespace Fd1d
    inline double Mixture::dx() const
    {  return dx_; }
 
-}
-}
+} // namespace Fd1d
+} // namespace Pscf
 #endif
