@@ -8,14 +8,17 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Mixture.h"
-#include "Iterator.h"
-#include <util/param/ParamComposite.h>
+#include <util/param/ParamComposite.h>     // base class
+
+#include "Mixture.h"                       // member 
+#include "Grid.h"                          // member 
+#include <util/misc/FileMaster.h>          // member
 
 namespace Pscf {
 namespace Fd1d
 {
 
+   class Iterator;
    using namespace Util;
 
    class System : public ParamComposite
@@ -34,14 +37,29 @@ namespace Fd1d
       ~System();
 
       /**
+      * Process command line options.
+      */
+      void setOptions(int argc, char **argv);
+
+      /**
       * Read input parameters. 
       */
       void readParameters(std::istream& in);
 
       /**
+      * Get FileMaster by reference.
+      */
+      FileMaster& fileMaster();
+      
+      /**
       * Get Mixture by reference.
       */
       Mixture& mixture();
+      
+      /**
+      * Get spatial grid.
+      */
+      Grid& grid();
       
       /**
       * Get Iterator by reference.
@@ -50,8 +68,14 @@ namespace Fd1d
 
    private:
 
-      // Associated Mixture object.
+      // Filemaster (holds paths to associated I/O files)
+      FileMaster fileMaster_;
+
+      // Mixture object (solves MDE for all species).
       Mixture mixture_;
+
+      // Spatial discretization.
+      Grid grid_;
 
       // Pointer to associated iterator.
       Iterator* iteratorPtr_;
@@ -59,15 +83,16 @@ namespace Fd1d
 
    // Inline functions
 
-   inline
-   Mixture& System::mixture()
-   {
-      UTIL_ASSERT(mixturePtr_);
-      return mixture_;
-   }
+   inline FileMaster& System::fileMaster()
+   {  return fileMaster_; }
 
-   inline
-   Iterator& System::iterator()
+   inline Mixture& System::mixture()
+   { return mixture_; }
+
+   inline Grid& System::grid()
+   { return grid_; }
+
+   inline Iterator& System::iterator()
    {
       UTIL_ASSERT(iteratorPtr_);
       return *iteratorPtr_;
