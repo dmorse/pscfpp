@@ -34,14 +34,25 @@ namespace Fd1d
    Block::~Block()
    {}
 
-   void Block::setGrid(double xMin, double xMax, int nx, int ns)
+   void 
+   Block::setDiscretization(double xMin, double xMax, int nx, double ds)
    {  
+      UTIL_CHECK(length() > 0);
+
+      // Set spatial grid parameters
       xMin_ = xMin;
       xMax_ = xMax;
       nx_ = nx;
-      ns_ = ns;
       dx_ = (xMax - xMin)/double(nx_ - 1);
+
+      // Set contour length discretization
+      ns_ = floor(length()/ds + 0.5) + 1;
+      if (ns_%2 == 0) {
+         ns_ += 1;
+      }
       ds_ = length()/double(ns_ - 1);
+
+      // Allocate all required memory
       dA_.allocate(nx_);
       uA_.allocate(nx_ - 1);
       dB_.allocate(nx_);
@@ -72,14 +83,15 @@ namespace Fd1d
    *
    *           H = -(b^2/6)d^2/dx^2 + w 
    *
-   * is a finite difference representation of the "Hamiltonian" operator,
-   * in which b = kuhn() is the statistical segment length. 
+   * is a finite difference representation of the "Hamiltonian" 
+   * operator, in which b = kuhn() is the statistical segment length. 
    *
    * This function sets up arrays containing diagonal and off-diagonal 
-   * elements of the matrices A and B, and computes the LU decomposition 
-   * of matrix A. Arrays of nx_ diagonal elements of A and B are denoted 
-   * by dA_ and dB_, respectively, while arrays of nx_ - 1 off-diagonal 
-   * ("upper") elements of A and B are denoted by uA_ and uB_.
+   * elements of the matrices A and B, and computes the LU 
+   * decomposition of matrix A. Arrays of nx_ diagonal elements of A 
+   * and B are denoted by dA_ and dB_, respectively, while arrays of 
+   * nx_ - 1 off-diagonal ("upper") elements of A and B are denoted 
+   * by uA_ and uB_.
    */
    void Block::setupSolver(Block::WField const& w)
    {

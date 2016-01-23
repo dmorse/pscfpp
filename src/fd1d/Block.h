@@ -43,10 +43,11 @@ namespace Fd1d
       *
       * \param xMin minimum value of space coordinate
       * \param xMax minimum value of space coordinate
-      * \param nx number of spatial grid points
-      * \param ns number of contour steps, # grid points - 1
+      * \param nx number of spatial grid points (including end points)
+      * \param ds desired (optimal) value for contour length step
       */
-      void setGrid(double xMin, double xMax, int nx, int ns);
+      void 
+      setDiscretization(double xMin, double xMax, int nx, double ds);
 
       /**
       * Set Crank-Nicholson solver for this block.
@@ -68,23 +69,34 @@ namespace Fd1d
       void computeConcentration(double prefactor);
 
       /**
-      * One step of integration loop, from i to i+1.
+      * Compute step of integration loop, from i to i+1.
       */
       void step(QField const & q, QField& qNew);
  
    private:
  
-      // Elements of tridiagonal matrices used in propagation
+      // Solver used in Crank-Nicholson algorithm
+      TridiagonalSolver solver_;
+
+      // Arrays dA_, uA_, dB_ and uB_ contain elements of the 
+      // symmetric tridiagonal matrices A and B used in propagation 
+      // from step i to i + 1, which requires solution of a linear 
+      // system of the form: A q(i+1) = B q(i).
+
+      // Diagonal elements of matrix A
       DArray<double> dA_;
-      DArray<double> dB_;
+
+      // Off-diagonal (upper or lower) elements of matrix A
       DArray<double> uA_;
+
+      // Diagonal elements of matrix B
+      DArray<double> dB_;
+
+      // Off-diagonal elements of matrix B
       DArray<double> uB_;
 
       // Work vector
       DArray<double> v_;
-
-      // Solver used in Crank-Nicholson algorithm
-      TridiagonalSolver solver_;
 
       /// Monomer statistical segment length.
       double step_;

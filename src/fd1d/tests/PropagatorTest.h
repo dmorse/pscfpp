@@ -37,6 +37,7 @@ public:
       Block b;
       b.setId(0);
       double length = 2.0;
+      double ds = 0.02;
       double step = sqrt(6.0);
       b.setLength(length);
       b.setMonomerId(1);
@@ -45,8 +46,7 @@ public:
       double xMin = 0.0;
       double xMax = 1.0;
       int nx = 11;
-      int ns = 101;
-      b.setGrid(xMin, xMax, nx, ns);
+      b.setDiscretization(xMin, xMax, nx, ds);
       DArray<double> w;
       w.allocate(nx);
       double wc = 0.3;
@@ -76,6 +76,7 @@ public:
       printMethod(TEST_FUNC);
       Block b;
       double length = 0.5;
+      double ds = 0.00005;
       double step = 1.0;
       b.setId(0);
       b.setMonomerId(1);
@@ -85,8 +86,7 @@ public:
       double xMin = 0.0;
       double xMax = 1.0;
       int nx = 33;
-      int ns = 10001;
-      b.setGrid(xMin, xMax, nx, ns);
+      b.setDiscretization(xMin, xMax, nx, ds);
 
       DArray<double> q, w;
       q.allocate(nx);
