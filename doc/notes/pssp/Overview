@@ -1,4 +1,4 @@
-Classes for pseudospectral code:
+Top level classes for pseudospectral code:
 
 System {
    Mixture
@@ -7,4 +7,13 @@ System {
    Grid
    Basis
 }
+
+Supporting classes and functions:
+
+class Vector<int D> -> templated version of existing Vector class
+class IntVector<int D> -> templated version of existing IntVector class
+
+class GridField<int D> - representation of field on an fft grid
+
+Functions to convert basis to grid and grid to basis.
 

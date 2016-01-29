@@ -1,6 +1,22 @@
-#include "Dimension.h"
-
+template <int D>
 class Basis {
+
+   struc Wave {
+      IntVector<D> vector;
+      std::complex<double> coeff;
+      double sqMagnitude;
+      int starId;
+   }
+
+   struc Star {
+      int beginId; 
+      int endId;  
+      int size; 
+      int invertFlag; 
+      int signFlag; 
+      IntVector<D> wave;
+      bool cancel;
+   };
 
    // Associate
    void setUnitCell(const UnitCell& unitCell)
@@ -10,33 +26,28 @@ class Basis {
    void allocate();
    void deallocate();
 
-   // Accessors for data to describe basis
- 
+   // Accessors 
    int nWave()
-   int NStar()
+   int nStar()
 
-   const& Wave wave(int i);
-   const& Wave star(int i);
+   // Get Wave, access by integer index
+   Wave& wave(int i);
+
+   // Access wave by vector
+   Wave& wave(IntVector<D> vector);
+
+   // Get Star, access by integer index
+   Star& star(int i);
 
 private:
 
    int nWave_;
-   int NStar_;
+   int nStar_;
 
-   // Wave class ?
-   DArray<Grid::Vector> wave_;
-   DArray<double> GSq_;
-   DArray<std::complex<double>> coeff_;
-   DArray<int> starOfWave_;
-   DArray<int> whichWave_;   <---- Function that allows access by Grid::Vector
+   DArray<Wave> waves_;
+   DArray<Wave> stars_;
 
-   // Star class ?
-   DArray<int> starBegin_; 
-   DArray<int> starEnd_;  
-   DArray<int> starCount_; 
-   DArray<int> starInvert_; 
-   DArray<int> basisSign_; 
-   DArray<Grid::Vector> waveOfStar_;
-   DArray<bool> starCancel_;
+   // Indexing that allows identification by IntVector
+   DArray<int> waveId_;   
    
-}
+};

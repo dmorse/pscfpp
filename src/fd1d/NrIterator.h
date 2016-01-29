@@ -35,11 +35,13 @@ namespace Fd1d
 
       /**
       * Read all parameters and initialize.
+      *
+      * \param in input parameter stream
       */
       void readParameters(std::istream& in);
 
       /**
-      * Iterate to solution.
+      * Iterate self-consistent field equations to solution.
       * 
       * \return error code: 0 for success, 1 for failure.
       */
@@ -52,14 +54,18 @@ namespace Fd1d
 
    private:
 
+      /// Residual vector. size = (# monomers)x(# grid points).
       DArray<double> residual_;
 
+      /// Jacobian matrix
       DMatrix<double> Jacobian_;
 
-      // Error tolerance.
+      /// Error tolerance.
       double epsilon_;
 
    };
+
+   // Inline function
 
    inline double NrIterator::epsilon()
    {  return epsilon_; }

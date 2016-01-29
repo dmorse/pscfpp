@@ -35,29 +35,23 @@ namespace Fd1d
          cField(i).allocate(nx_);
       } 
 
-      // Set grid for all blocks
-      double length;
-      int i, j, ns;
+      // Set discretization for all blocks
+      // double length;
+      // int i, j, ns;
+      int i, j;
       for (i = 0; i < nPolymer(); ++i) {
          for (j = 0; j < polymer(i).nBlock(); ++j) {
+            #if 0
             length = polymer(i).block(j).length();
             UTIL_CHECK(length > 0);
             ns = floor(length/ds_ + 0.5) + 1;
             if (ns%2 == 0) {
                ns += 1;
             }
-            polymer(i).block(j).setGrid(xMin_, xMax_, nx_, ns);
+            #endif
+            polymer(i).block(j).setDiscretization(xMin_, xMax_, nx_, ds_);
          }
       }
-
-      #if 0
-      // Allocate per-block concentration fields
-      for (i = 0; i < nPolymer(); ++i) {
-         for (j = 0; j < polymer(i).nBlock(); ++j) {
-            polymer(i).blockCField(j).allocate(nx_);
-         }
-      }
-      #endif
 
    }
 

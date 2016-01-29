@@ -2,18 +2,16 @@
 #include "RField.h"
 #include "KField.h"
 
+template <int D>
 class Grid {
 
-   class Vector {
-   }
-
    void setUnitCell(const UnitCell& unitCell)
-   void setDimensions(Grid::Vector);
+   void setDimensions(IntVector<D>);
    void allocate()
    void deallocate()
    void computeKSq()
-   Grid::Vector kToFFT(Grid::Vector)
-   Grid::Vector kToBZ(Grid::Vector)
+   IntVector<D> kToFFT(IntVector<D>)
+   IntVector<D> kToBZ(IntVector<D>)
    void computeMaxKabs()
 
    const KField& kSq()
@@ -21,8 +19,8 @@ class Grid {
    
 private:
 
-   Grid::Vector dimensions_
-   Grid::KField ksq_;
+   IntVector<D> dimensions_
+   GridField ksq_;
    double maxKSq_;
 
 }
