@@ -41,13 +41,10 @@ namespace Fd1d
       /**
       * Initialize grid and allocate required memory.
       *
-      * \param xMin minimum value of space coordinate
-      * \param xMax minimum value of space coordinate
-      * \param nx number of spatial grid points (including end points)
+      * \param grid associated grid object
       * \param ds desired (optimal) value for contour length step
       */
-      void 
-      setDiscretization(double xMin, double xMax, int nx, double ds);
+      void setDiscretization(Grid const & grid, double ds);
 
       /**
       * Set Crank-Nicholson solver for this block.
@@ -98,17 +95,11 @@ namespace Fd1d
       // Work vector
       DArray<double> v_;
 
+      /// Pointer to associated Grid object.
+      Grid const * gridPtr_;
+
       /// Monomer statistical segment length.
       double step_;
-
-      /// Minimum value of spatial coordinate.
-      double xMin_;
-
-      /// Maximum value of spatial coordinate.
-      double xMax_;
-
-      /// Spatial grid step size.
-      double dx_;
 
       /// Contour length step size.
       double ds_;
@@ -119,7 +110,18 @@ namespace Fd1d
       /// Number of spatial grid points.
       int nx_;
 
+      /// Return associated grid by reference.
+      Grid const & grid() const;
+
    };
+
+   // Inline member functions
+
+   inline Grid const & Block::grid() const
+   {   
+      UTIL_ASSERT(gridPtr_);
+      return *gridPtr_;
+   }
 
 } 
 }

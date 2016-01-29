@@ -16,6 +16,8 @@ namespace Pscf {
 namespace Fd1d
 {
 
+   class Grid;
+
    class Mixture : public MixtureTmpl<Polymer, Solvent>
    {
 
@@ -35,6 +37,11 @@ namespace Fd1d
       * Read all parameters and initialize.
       */
       void readParameters(std::istream& in);
+
+      /**
+      * Set grid and allocate all required memory.
+      */
+      void setGrid(Grid& grid);
 
       /**
       * Compute molecular partition functions and concentrations.

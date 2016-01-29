@@ -40,8 +40,13 @@ public:
       Mixture sys;
       sys.readParam(in);
 
+      Grid grid;
+      grid.readParam(in);
+      sys.setGrid(grid);
+
       std::cout << "\n";
       sys.writeParam(std::cout);
+      grid.writeParam(std::cout);
    }
 
    void testSolve()
@@ -54,8 +59,13 @@ public:
       Mixture sys;
       sys.readParam(in);
 
+      Grid grid;
+      grid.readParam(in);
+      sys.setGrid(grid);
+
       std::cout << "\n";
       sys.writeParam(std::cout);
+      grid.writeParam(std::cout);
 
       double nx = (double)sys.nx();
       double cs;

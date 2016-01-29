@@ -6,6 +6,8 @@
 */
 
 #include "Mixture.h"
+#include "Grid.h"
+
 #include <cmath>
 
 namespace Pscf { 
@@ -21,35 +23,31 @@ namespace Fd1d
    void Mixture::readParameters(std::istream& in)
    {
       MixtureTmpl<Polymer, Solvent>::readParameters(in);
+      read(in, "ds", ds_);
+   }
 
+   void Mixture::setGrid(Grid& grid)
+   {
+      #if 0
       // Read discretization parameters
       read(in, "xMin", xMin_);
       read(in, "xMax", xMax_);
       read(in, "nx", nx_);
       read(in, "ds", ds_);
-      dx_ = (xMax_ - xMin_)/double(nx_ - 1);
+      #endif
 
       // Allocate chemical potential and concentration fields
+      double nx = grid.nx();
       for (int i = 0; i < nMonomer(); ++i) {
-         wField(i).allocate(nx_);
-         cField(i).allocate(nx_);
+         wField(i).allocate(nx);
+         cField(i).allocate(nx);
       } 
 
       // Set discretization for all blocks
-      // double length;
-      // int i, j, ns;
       int i, j;
       for (i = 0; i < nPolymer(); ++i) {
          for (j = 0; j < polymer(i).nBlock(); ++j) {
-            #if 0
-            length = polymer(i).block(j).length();
-            UTIL_CHECK(length > 0);
-            ns = floor(length/ds_ + 0.5) + 1;
-            if (ns%2 == 0) {
-               ns += 1;
-            }
-            #endif
-            polymer(i).block(j).setDiscretization(xMin_, xMax_, nx_, ds_);
+            polymer(i).block(j).setDiscretization(grid, ds_);
          }
       }
 

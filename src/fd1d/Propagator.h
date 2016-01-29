@@ -17,6 +17,7 @@ namespace Fd1d
 { 
 
    class Block;
+   class Grid;
    using namespace Util;
 
    class Propagator : public PropagatorTmpl<Propagator>

@@ -5,6 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <fd1d/Block.h>
+#include <fd1d/Grid.h>
 #include <fd1d/Propagator.h>
 #include <util/math/Constants.h>
 
@@ -46,7 +47,9 @@ public:
       double xMin = 0.0;
       double xMax = 1.0;
       int nx = 11;
-      b.setDiscretization(xMin, xMax, nx, ds);
+      Grid grid;
+      grid.setParameters(xMin, xMax, nx);
+      b.setDiscretization(grid, ds);
       DArray<double> w;
       w.allocate(nx);
       double wc = 0.3;
@@ -86,7 +89,9 @@ public:
       double xMin = 0.0;
       double xMax = 1.0;
       int nx = 33;
-      b.setDiscretization(xMin, xMax, nx, ds);
+      Grid grid;
+      grid.setParameters(xMin, xMax, nx);
+      b.setDiscretization(grid, ds);
 
       DArray<double> q, w;
       q.allocate(nx);
@@ -108,7 +113,8 @@ public:
 
       std::cout << "\n Tail:\n";
       for (int i = 0; i < nx; ++i) {
-         std::cout << "  " << b.propagator(0).tail()[i]/b.propagator(0).head()[i];
+         std::cout << "  " 
+                   << b.propagator(0).tail()[i]/b.propagator(0).head()[i];
       }
       std::cout << "\n";
 
