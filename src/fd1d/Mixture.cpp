@@ -33,16 +33,9 @@ namespace Fd1d
       UTIL_CHECK(ds_ > 0);
 
       gridPtr_ = &grid;
-      double nx = grid.nx();
-      int i, j;
-
-      // Allocate chemical potential and concentration fields
-      for (int i = 0; i < nMonomer(); ++i) {
-         wField(i).allocate(nx);
-         cField(i).allocate(nx);
-      }
 
       // Set discretization for all blocks
+      int i, j;
       for (i = 0; i < nPolymer(); ++i) {
          for (j = 0; j < polymer(i).nBlock(); ++j) {
             polymer(i).block(j).setDiscretization(grid, ds_);
@@ -51,7 +44,7 @@ namespace Fd1d
 
    }
 
-   void Mixture::compute()
+   void Mixture::compute(DArray<Mixture::WField> const & wFields, DArray<Mixture::CField>& cFields)
    {
       UTIL_CHECK(gridPtr_);
       UTIL_CHECK(grid().nx() > 0);
@@ -64,13 +57,13 @@ namespace Fd1d
       // Clear all monomer concentration fields
       for (i = 0; i < nMonomer(); ++i) {
          for (j = 0; j < nx; ++j) {
-            cField(i)[j] = 0.0;
+            cFields[i][j] = 0.0;
          }
       }
 
       // Solve MDE for all polymers
       for (i = 0; i < nPolymer(); ++i) {
-         polymer(i).compute(wFields());
+         polymer(i).compute(wFields);
       }
 
       // Accumulate monomer concentration fields
@@ -79,7 +72,7 @@ namespace Fd1d
             int monomerId = polymer(i).block(j).monomerId();
             UTIL_CHECK(monomerId >= 0);
             UTIL_CHECK(monomerId < nMonomer());
-            CField& monomerField = cField(monomerId);
+            CField& monomerField = cFields[monomerId];
             CField& blockField = polymer(i).block(j).cField();
             for (k = 0; k < nx; ++k) {
                monomerField[k] += blockField[k];
@@ -88,5 +81,6 @@ namespace Fd1d
       }
     
    }
+
 }
 }

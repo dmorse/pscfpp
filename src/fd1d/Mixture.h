@@ -11,6 +11,7 @@
 #include "Polymer.h"
 #include "Solvent.h"
 #include <pscf/MixtureTmpl.h>
+#include <util/containers/DArray.h>
 
 namespace Pscf {
 namespace Fd1d
@@ -22,6 +23,12 @@ namespace Fd1d
    {
 
    public:
+
+      /// Monomer chemical potential field type.
+      typedef Propagator::WField WField;
+
+      /// Monomer concentration / volume fraction field type.
+      typedef Propagator::CField CField;
 
       /**
       * Constructor.
@@ -48,7 +55,7 @@ namespace Fd1d
       /**
       * Compute molecular partition functions and concentrations.
       */
-      void compute();
+      void compute(DArray<WField> const & wFields, DArray<CField>& cFields);
 
    private:
 

@@ -27,7 +27,7 @@ public:
    void testConstructor()
    {
       printMethod(TEST_FUNC);
-      Mixture sys;
+      Mixture mix;
    }
 
    void testReadParameters()
@@ -37,15 +37,15 @@ public:
       std::ifstream in;
       openInputFile("in/Mixture", in);
 
-      Mixture sys;
-      sys.readParam(in);
+      Mixture mix;
+      mix.readParam(in);
 
       Grid grid;
       grid.readParam(in);
-      sys.setGrid(grid);
+      mix.setGrid(grid);
 
       std::cout << "\n";
-      sys.writeParam(std::cout);
+      mix.writeParam(std::cout);
       grid.writeParam(std::cout);
    }
 
@@ -56,37 +56,47 @@ public:
       std::ifstream in;
       openInputFile("in/Mixture", in);
 
-      Mixture sys;
+      Mixture mix;
       Grid grid;
-      sys.readParam(in);
+      mix.readParam(in);
       grid.readParam(in);
-      sys.setGrid(grid);
+      mix.setGrid(grid);
 
       std::cout << "\n";
-      sys.writeParam(std::cout);
+      mix.writeParam(std::cout);
       grid.writeParam(std::cout);
 
+      int nMonomer = mix.nMonomer();
+      DArray<Mixture::WField> wFields;
+      DArray<Mixture::CField> cFields;
+      wFields.allocate(nMonomer);
+      cFields.allocate(nMonomer);
       double nx = (double)grid.nx();
+      for (int i = 0; i < nMonomer; ++i) {
+         wFields[i].allocate(nx);
+         cFields[i].allocate(nx);
+      }
+
       double cs;
       for (int i = 0; i < nx; ++i) {
          cs = cos(Constants::Pi*(double(i)+0.5)/nx);
-         sys.wField(0)[i] = 0.5 + cs;
-         sys.wField(1)[i] = 0.7 - cs;
+         wFields[0][i] = 0.5 + cs;
+         wFields[1][i] = 0.7 - cs;
       }
-      sys.compute();
+      mix.compute(wFields, cFields);
 
       // Test if same Q is obtained from different methods
-      std::cout << sys.polymer(0).propagator(0, 0).computeQ() << "\n";
-      std::cout << sys.polymer(0).propagator(1, 0).computeQ() << "\n";
-      std::cout << sys.polymer(0).propagator(1, 1).computeQ() << "\n";
-      std::cout << sys.polymer(0).propagator(0, 1).computeQ() << "\n";
+      std::cout << mix.polymer(0).propagator(0, 0).computeQ() << "\n";
+      std::cout << mix.polymer(0).propagator(1, 0).computeQ() << "\n";
+      std::cout << mix.polymer(0).propagator(1, 1).computeQ() << "\n";
+      std::cout << mix.polymer(0).propagator(0, 1).computeQ() << "\n";
 
       // Test spatial integral of block concentration
       double sum0 = 0.0;
       double sum1 = 0.0;
       for (int i = 0; i < nx; ++i) {
-         sum0 += sys.cField(0)[i];
-         sum1 += sys.cField(1)[i];
+         sum0 += cFields[0][i];
+         sum1 += cFields[1][i];
       }
       sum0 = sum0/double(nx);
       sum1 = sum1/double(nx);

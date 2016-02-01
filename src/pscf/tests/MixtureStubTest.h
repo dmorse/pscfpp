@@ -41,25 +41,11 @@ public:
       sys.writeParam(std::cout);
    }
 
-   void testCompute() 
-   {
-      printMethod(TEST_FUNC);
-      printEndl();
-
-      std::ifstream in;
-      openInputFile("in/Mixture", in);
-
-      MixtureStub sys;
-      sys.readParam(in);
-      sys.compute();
-   }
-
 };
 
 TEST_BEGIN(MixtureStubTest)
 TEST_ADD(MixtureStubTest, testConstructor)
 TEST_ADD(MixtureStubTest, testReadParam)
-TEST_ADD(MixtureStubTest, testCompute)
 TEST_END(MixtureStubTest)
 
 #endif

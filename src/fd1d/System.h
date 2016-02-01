@@ -26,6 +26,12 @@ namespace Fd1d
 
    public:
 
+      /// Monomer chemical potential field type.
+      typedef Propagator::WField WField;
+
+      /// Monomer concentration / volume fraction field type.
+      typedef Propagator::CField CField;
+
       /**
       * Constructor.
       */
@@ -71,6 +77,30 @@ namespace Fd1d
       void readCommands();
 
       /**
+      * Get array of all chemical potential fields.
+      */
+      DArray<WField>& wFields();
+
+      /**
+      * Get chemical potential field for a specific monomer type.
+      *
+      * \param monomerId integer monomer type index
+      */
+      WField& wField(int monomerId);
+
+      /**
+      * Get array of all chemical potential fields.
+      */
+      DArray<CField>& cFields();
+
+      /**
+      * Get chemical potential field for a specific monomer type.
+      *
+      * \param monomerId integer monomer type index
+      */
+      CField& cField(int monomerId);
+
+      /**
       * Get Mixture by reference.
       */
       Mixture& mixture();
@@ -103,6 +133,21 @@ namespace Fd1d
 
       // Pointer to associated iterator.
       Iterator* iteratorPtr_;
+
+      /**
+      * Array of chemical potential fields for monomer types.
+      *
+      * Indexed by monomer typeId, size = nMonomer.
+      */
+      DArray<WField> wFields_;
+
+      /**
+      * Array of concentration fields for monomer types.
+      *
+      * Indexed by monomer typeId, size = nMonomer.
+      */
+      DArray<CField> cFields_;
+
    };
 
    // Inline member functions
@@ -121,6 +166,22 @@ namespace Fd1d
       UTIL_ASSERT(iteratorPtr_);
       return *iteratorPtr_;
    }
+
+   inline 
+   DArray< System::WField >& System::wFields()
+   {  return wFields_; }
+
+   inline 
+   System::WField& System::wField(int id)
+   {  return wFields_[id]; }
+
+   inline
+   DArray< System::CField >& System::cFields()
+   {  return cFields_; }
+
+
+   inline System::CField& System::cField(int id)
+   {  return cFields_[id]; }
 
 } // namespace Fd1d
 } // namespace Pscf

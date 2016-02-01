@@ -121,6 +121,18 @@ namespace Fd1d
       mixture().readParam(in);
       grid().readParam(in);
       mixture().setGrid(grid());
+
+      // Allocate arrays of per-monomer fields
+      int nMonomer = mixture().nMonomer();
+      int nx = grid().nx();
+      wFields_.allocate(nMonomer);
+      cFields_.allocate(nMonomer);
+      for (int i = 0; i < nMonomer; ++i) {
+         wField(i).allocate(nx);
+         cField(i).allocate(nx);
+      }
+
+      // Initialize iterator
       iterator().setMixture(mixture());
    }  
 

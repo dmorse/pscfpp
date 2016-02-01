@@ -50,7 +50,9 @@ namespace Pscf
       /**
       * Compute ideal gas properties for all species.
       */
-      virtual void compute();
+      virtual 
+      void compute(DArray<WField> const & wFields, DArray<CField>& cFields)
+      {}
 
       /**
       * Get a Monomer type descriptor.
@@ -235,6 +237,7 @@ namespace Pscf
       }
    }
 
+   #if 0
    /*
    * Solve MDE, compute concentrations and free energy.
    */
@@ -245,6 +248,7 @@ namespace Pscf
          polymer(i).compute(wFields_);
       }
    }
+   #endif
 
 }
 #endif
