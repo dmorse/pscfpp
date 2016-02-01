@@ -8,6 +8,7 @@
 #include "System.h"
 #include "Iterator.h"
 #include "NrIterator.h"
+#include <util/format/Str.h>
 
 #include <ctime>
 #include <iomanip>
@@ -122,6 +123,77 @@ namespace Fd1d
       mixture().setGrid(grid());
       iterator().setMixture(mixture());
    }  
+
+   /*
+   * Read default parameter file.
+   */
+   void System::readParam(std::istream& in)
+   {
+      readBegin(in, className().c_str());  
+      readParameters(in);  
+      readEnd(in);  
+   }
+
+   /*
+   * Read default parameter file.
+   */
+   void System::readParam()
+   {  readParam(fileMaster().paramFile()); }
+
+   /*
+   * Read and execute commands from a specified command file.
+   */
+   void System::readCommands(std::istream &in)
+   {
+      // if (!isInitialized_) {
+      //    UTIL_THROW("McSimulation is not initialized");
+      // }
+
+      std::string  command;
+      std::string  filename;
+      std::ifstream  inputFile;
+      std::ofstream  outputFile;
+
+      std::istream& inBuffer = in;
+
+      bool readNext = true;
+      while (readNext) {
+
+         inBuffer >> command;
+         Log::file() << command;
+
+         if (command == "FINISH") {
+            Log::file() << std::endl;
+            readNext = false;
+         } else
+         if (command == "READ_OMEGA") {
+            inBuffer >> filename;
+            Log::file() << Str(filename, 15) << std::endl;
+            fileMaster().openInputFile(filename, inputFile);
+            // system().readConfig(inputFile);
+            inputFile.close();
+         } else
+         if (command == "ITERATE") {
+            iterator().solve();
+         } else 
+         {
+            Log::file() << "  Error: Unknown command  " << std::endl;
+            readNext = false;
+         }
+
+      }
+   }
+
+   /*
+   * Read and execute commands from the default command file.
+   */
+   void System::readCommands()
+   {  
+      if (fileMaster().commandFileName().empty()) {
+         UTIL_THROW("Empty command file name");
+      }
+      readCommands(fileMaster().commandFile()); 
+   }
 
 } // namespace Fd1d
 } // namespace Pscf

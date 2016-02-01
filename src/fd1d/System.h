@@ -42,9 +42,33 @@ namespace Fd1d
       void setOptions(int argc, char **argv);
 
       /**
-      * Read input parameters.
+      * Read input parameters (without opening and closing lines).
+      *
+      * \param in input parameter stream
       */
-      void readParameters(std::istream& in);
+      virtual void readParameters(std::istream& in);
+
+      /**
+      * Read input parameters (with opening and closing lines).
+      */
+      virtual void readParam(std::istream& in);
+
+      /**
+      * Read input parameters from default param file.
+      */
+      void readParam();
+
+      /**
+      * Read command script.
+      * 
+      * \param in command script file.
+      */
+      void readCommands(std::istream& in);
+
+      /**
+      * Read commands from default command file.
+      */
+      void readCommands();
 
       /**
       * Get Mixture by reference.
