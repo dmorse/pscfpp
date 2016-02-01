@@ -159,6 +159,7 @@ namespace Fd1d
       // Preconditions
       UTIL_CHECK(grid().nx() > 0);
       UTIL_CHECK(ns_ > 0);
+      UTIL_CHECK(ds_ > 0);
       UTIL_CHECK(dA_.capacity() == grid().nx());
       UTIL_CHECK(dB_.capacity() == grid().nx());
       UTIL_CHECK(uA_.capacity() == grid().nx() -1);
@@ -167,7 +168,7 @@ namespace Fd1d
       UTIL_CHECK(propagator(1).isAllocated());
       UTIL_CHECK(cField().capacity() == grid().nx()) 
 
-      // Initialize to zero at all points
+      // Initialize cField to zero at all points
       int i;
       int nx = grid().nx();
       for (i = 0; i < nx; ++i) {

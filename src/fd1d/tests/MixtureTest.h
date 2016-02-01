@@ -57,9 +57,8 @@ public:
       openInputFile("in/Mixture", in);
 
       Mixture sys;
-      sys.readParam(in);
-
       Grid grid;
+      sys.readParam(in);
       grid.readParam(in);
       sys.setGrid(grid);
 
@@ -67,7 +66,7 @@ public:
       sys.writeParam(std::cout);
       grid.writeParam(std::cout);
 
-      double nx = (double)sys.nx();
+      double nx = (double)grid.nx();
       double cs;
       for (int i = 0; i < nx; ++i) {
          cs = cos(Constants::Pi*(double(i)+0.5)/nx);

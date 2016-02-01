@@ -40,50 +40,36 @@ namespace Fd1d
 
       /**
       * Set grid and allocate all required memory.
+      * 
+      * \param grid associated Grid object (stores address).
       */
-      void setGrid(Grid& grid);
+      void setGrid(Grid const & grid);
 
       /**
       * Compute molecular partition functions and concentrations.
       */
       void compute();
 
-      /**
-      * Get number of spatial grid points.
-      */
-      int nx() const;
-
-      /**
-      * Get spatial grid step size.
-      */
-      double dx() const;
-
    private:
 
-      // Lower bound of spatial coordinate
-      double xMin_;
-
-      // Upper bound of spatial coordinate
-      double xMax_;
-
-      // Spatial discretization step.
-      double dx_;
-
-      // Optimal contour length step size.
+      /// Optimal contour length step size.
       double ds_;
 
-      // Number of grid points.
-      int nx_;
+      /// Pointer to associated Grid object.
+      Grid const * gridPtr_;
+
+      /// Return associated grid by reference.
+      Grid const & grid() const;
 
    };
 
-   // Inline member functions
+   // Inline member function
 
-   inline int Mixture::nx() const
-   {  return nx_; }
-
-   inline double Mixture::dx() const
-   {  return dx_; }
+   inline Grid const & Mixture::grid() const
+   {   
+      UTIL_ASSERT(gridPtr_);
+      return *gridPtr_;
+   }
 
 } // namespace Fd1d
 } // namespace Pscf
