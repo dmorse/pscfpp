@@ -17,6 +17,9 @@ namespace Fd1d
     : epsilon_(0.0)
    {  setClassName("NrIterator"); }
 
+   NrIterator::~NrIterator()
+   {}
+
    void NrIterator::readParameters(std::istream& in)
    {
       read(in, "epsilon", epsilon_);

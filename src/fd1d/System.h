@@ -10,8 +10,8 @@
 
 #include <util/param/ParamComposite.h>     // base class
 
-#include "Mixture.h"                       // member 
-#include "Grid.h"                          // member 
+#include "Mixture.h"                       // member
+#include "Grid.h"                          // member
 #include <util/misc/FileMaster.h>          // member
 
 namespace Pscf {
@@ -42,34 +42,31 @@ namespace Fd1d
       void setOptions(int argc, char **argv);
 
       /**
-      * Read input parameters. 
+      * Read input parameters.
       */
       void readParameters(std::istream& in);
 
       /**
-      * Get FileMaster by reference.
-      */
-      FileMaster& fileMaster();
-      
-      /**
       * Get Mixture by reference.
       */
       Mixture& mixture();
-      
+
       /**
-      * Get spatial grid.
+      * Get spatial grid by reference.
       */
       Grid& grid();
-      
+
       /**
       * Get Iterator by reference.
       */
       Iterator& iterator();
 
-   private:
+      /**
+      * Get FileMaster by reference.
+      */
+      FileMaster& fileMaster();
 
-      // Filemaster (holds paths to associated I/O files)
-      FileMaster fileMaster_;
+   private:
 
       // Mixture object (solves MDE for all species).
       Mixture mixture_;
@@ -77,20 +74,23 @@ namespace Fd1d
       // Spatial discretization.
       Grid grid_;
 
+      // Filemaster (holds paths to associated I/O files)
+      FileMaster fileMaster_;
+
       // Pointer to associated iterator.
       Iterator* iteratorPtr_;
    };
 
-   // Inline functions
-
-   inline FileMaster& System::fileMaster()
-   {  return fileMaster_; }
+   // Inline member functions
 
    inline Mixture& System::mixture()
    { return mixture_; }
 
    inline Grid& System::grid()
    { return grid_; }
+
+   inline FileMaster& System::fileMaster()
+   {  return fileMaster_; }
 
    inline Iterator& System::iterator()
    {

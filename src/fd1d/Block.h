@@ -8,14 +8,15 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Propagator.h"
-#include <pscf/BlockTmpl.h>
+#include <pscf/BlockTmpl.h>            // base class template
+#include "Propagator.h"                // base class argument
 #include <pscf/TridiagonalSolver.h>    // member
 
 namespace Pscf { 
 namespace Fd1d 
 { 
 
+   class Grid;
    using namespace Util;
 
    class Block : public BlockTmpl<Propagator>

@@ -26,11 +26,19 @@ namespace Fd1d
    */
    System::System()
     : mixture_(),
+      grid_(),
+      fileMaster_(),
       iteratorPtr_(0)
    {  
       setClassName("System"); 
       iteratorPtr_ = new NrIterator(); 
    }
+
+   /*
+   * Destructor.
+   */
+   System::~System()
+   {}
 
    /*
    * Process command line options.
@@ -40,11 +48,12 @@ namespace Fd1d
       bool eflag = false;  // echo
       bool pFlag = false;  // param file 
       bool cFlag = false;  // command file 
-      #ifdef MCMD_PERTURB
-      bool  fflag = false;  // free energy perturbation
-      #endif
+      bool iFlag = false;  // input prefix
+      bool oFlag = false;  // output prefix
       char* pArg = 0;
       char* cArg = 0;
+      char* iArg = 0;
+      char* oArg = 0;
    
       // Read program arguments
       int c;
@@ -61,6 +70,14 @@ namespace Fd1d
          case 'c': // command file
             cFlag = true;
             cArg  = optarg;
+            break;
+         case 'i': // input prefix
+            iFlag = true;
+            iArg  = optarg;
+            break;
+         case 'o': // output prefix
+            iFlag = true;
+            oArg  = optarg;
             break;
          case '?':
            Log::file() << "Unknown option -" << optopt << std::endl;
@@ -83,7 +100,6 @@ namespace Fd1d
          fileMaster().setCommandFileName(std::string(cArg));
       }
 
-      #if 0
       // If option -i, set path prefix for input files
       if (iFlag) {
          fileMaster().setInputPrefix(std::string(iArg));
@@ -94,15 +110,6 @@ namespace Fd1d
          fileMaster().setOutputPrefix(std::string(oArg));
       }
 
-      // If option -r, restart
-      if (rFlag) {
-         //Log::file() << "Reading restart file " 
-         //            << std::string(rarg) << std::endl;
-         isRestarting_ = true; 
-         load(std::string(rarg));
-      }
-      #endif
-
    }
 
    /*
@@ -110,6 +117,10 @@ namespace Fd1d
    */
    void System::readParameters(std::istream& in)
    {
+      mixture().readParam(in);
+      grid().readParam(in);
+      mixture().setGrid(grid());
+      iterator().setMixture(mixture());
    }  
 
 } // namespace Fd1d

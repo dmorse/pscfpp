@@ -9,7 +9,6 @@
 */
 
 #include <pscf/PropagatorTmpl.h>       // base class template
-#include <pscf/TridiagonalSolver.h>    // member
 #include <util/containers/DArray.h>    // member template
 
 namespace Pscf { 
@@ -17,7 +16,6 @@ namespace Fd1d
 { 
 
    class Block;
-   class Grid;
    using namespace Util;
 
    class Propagator : public PropagatorTmpl<Propagator>
