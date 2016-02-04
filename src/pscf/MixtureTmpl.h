@@ -25,77 +25,53 @@ namespace Pscf
    {
    public:
 
-      // Typedefs
+      // Public typedefs
 
-      /// Polymer species type.
+      /**
+      * Polymer species solver type.
+      */
       typedef TP Polymer;
 
-      /// Solvent species type.
+      /**
+      * Solvent species solver type.
+      */
       typedef TS Solvent;
 
-      /// Polymer species type.
+      /**
+      * Block MDE solver (propagator) type.
+      */
       typedef typename TP::Propagator Propagator;
-
-      /// Chemical potential field.
-      typedef typename TP::Propagator::WField WField;
-
-      /// Monomer concentration field.
-      typedef typename TP::Propagator::CField CField;
 
       /**
       * Read parameters from file and initialize.
+      *
+      * \param in input parameter file
       */
       virtual void readParameters(std::istream& in);
 
       /**
-      * Compute ideal gas properties for all species.
-      */
-      virtual 
-      void compute(DArray<WField> const & wFields, DArray<CField>& cFields)
-      {}
-
-      /**
       * Get a Monomer type descriptor.
       *
-      * \param id integer monomer type index
+      * \param id integer monomer type index (0 <= id < nMonomer)
       */
       Monomer& monomer(int id);
 
       /**
       * Get a polymer object.
       *
-      * \param id integer polymer species index
+      * \param id integer polymer species index (0 <= id < nPolymer)
       */
       Polymer& polymer(int id);
 
       /**
       * Set a solvent solver object.
       *
-      * \param id integer solvent species index
+      * \param id integer solvent species index (0 <= id < nSolvent)
       */
       Solvent& solvent(int id);
 
       /**
-      * Return chemical potential field for a specific monomer type.
-      *
-      * \param monomerId integer monomer type index
-      */
-      WField& wField(int monomerId);
-
-      /**
-      * Array of all chemical potential fields.
-      */
-      DArray<WField>& wFields();
-
-      /**
-      * Return concentration field for specific monomer type.
-      *
-      * \param monomerId integer monomer type index
-      */
-      CField& cField(int id);
-
-      /**
-      * Get number of monomers.
+      * Get number of monomer types.
       */
       int nMonomer() const;
 
@@ -117,30 +93,16 @@ namespace Pscf
       DArray<Monomer> monomers_;
 
       /**
-      * Array of chemical potential fields for monomer types.
+      * Array of polymer species solver objects.
       *
-      * Indexed by monomer typeId, size = nMonomer.
-      */
-      DArray<WField> wFields_;
-
-      /**
-      * Array of concentration fields for monomer types.
-      *
-      * Indexed by monomer typeId, size = nMonomer.
-      */
-      DArray<CField> cFields_;
-
-      /**
-      * Array of polymer species objects.
-      *
-      * Size = nPolymer.
+      * Array capacity = nPolymer.
       */
       DArray<Polymer> polymers_;
 
       /**
       * Array of solvent species objects.
       *
-      * Size = nSolvent.
+      * Array capacity = nSolvent.
       */
       DArray<Solvent> solvents_;
 
@@ -187,20 +149,6 @@ namespace Pscf
    inline TS& MixtureTmpl<TP,TS>::solvent(int id)
    {  return solvents_[id]; }
 
-   template <class TP, class TS>
-   inline 
-   DArray< typename MixtureTmpl<TP,TS>::WField >& 
-   MixtureTmpl<TP,TS>::wFields()
-   {  return wFields_; }
-
-   template <class TP, class TS>
-   inline typename MixtureTmpl<TP,TS>::WField& MixtureTmpl<TP,TS>::wField(int id)
-   {  return wFields_[id]; }
-
-   template <class TP, class TS>
-   inline typename MixtureTmpl<TP,TS>::CField& MixtureTmpl<TP,TS>::cField(int id)
-   {  return cFields_[id]; }
-
    // Non-inline member functions
 
    /*
@@ -214,10 +162,6 @@ namespace Pscf
       monomers_.allocate(nMonomer_);
       readDArray< Monomer >(in, "monomers", monomers_, nMonomer_);
 
-      // Allocate arrays of per-monomer fields
-      wFields_.allocate(nMonomer_);
-      cFields_.allocate(nMonomer_);
-
       // Polymers 
       read<int>(in, "nPolymer", nPolymer_);
       polymers_.allocate(nPolymer_);
@@ -225,7 +169,7 @@ namespace Pscf
          readParamComposite(in, polymers_[i]);
       }
 
-      // Set kuhn lengths for all blocks
+      // Set statistical segment lengths for all blocks
       double kuhn;
       int monomerId;
       for (int i = 0; i < nPolymer_; ++i) {
@@ -236,19 +180,6 @@ namespace Pscf
          }
       }
    }
-
-   #if 0
-   /*
-   * Solve MDE, compute concentrations and free energy.
-   */
-   template <class TP, class TS>
-   void MixtureTmpl<TP,TS>::compute()
-   {
-      for (int i = 0; i < nPolymer_; ++i) {
-         polymer(i).compute(wFields_);
-      }
-   }
-   #endif
 
 }
 #endif
