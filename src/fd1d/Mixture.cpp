@@ -24,6 +24,10 @@ namespace Fd1d
    {
       MixtureTmpl<Polymer, Solvent>::readParameters(in);
       read(in, "ds", ds_);
+
+      UTIL_CHECK(nMonomer() > 0);
+      UTIL_CHECK(nPolymer()+ nSolvent() > 0);
+      UTIL_CHECK(ds_ > 0);
    }
 
    void Mixture::setGrid(Grid const& grid)
@@ -50,12 +54,16 @@ namespace Fd1d
       UTIL_CHECK(grid().nx() > 0);
       UTIL_CHECK(nMonomer() > 0);
       UTIL_CHECK(nPolymer() + nSolvent() > 0);
+      UTIL_CHECK(wFields.capacity() == nMonomer());
+      UTIL_CHECK(cFields.capacity() == nMonomer());
 
-      int nx = grid().nx();
       int i, j, k;
 
       // Clear all monomer concentration fields
+      int nx = grid().nx();
       for (i = 0; i < nMonomer(); ++i) {
+         UTIL_CHECK(cFields[i].capacity() == nx);
+         UTIL_CHECK(wFields[i].capacity() == nx);
          for (j = 0; j < nx; ++j) {
             cFields[i][j] = 0.0;
          }

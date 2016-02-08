@@ -77,6 +77,16 @@ namespace Fd1d
 
       /**
       * Compute molecular partition functions and concentrations.
+      *
+      * The arrays wFields and cFields must each have size nMonomer(),
+      * and contain fields that are indexed by monomer type index. 
+      * This function calls the compute function of every molecular
+      * species, and then adds the resulting block concentration
+      * fields for blocks of each type to compute a total monomer
+      * concentration (or volume fraction) for each monomer type.
+      *
+      * \param wFields input array of chemical potential fields.
+      * \param cFields output array of monomer concentration fields.
       */
       void compute(DArray<WField> const & wFields, DArray<CField>& cFields);
 

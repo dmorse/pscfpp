@@ -118,8 +118,8 @@ namespace Fd1d
    */
    void System::readParameters(std::istream& in)
    {
-      mixture().readParam(in);
-      grid().readParam(in);
+      readParamComposite(in, mixture());
+      readParamComposite(in, grid());
       mixture().setGrid(grid());
 
       // Allocate arrays of per-monomer fields

@@ -75,6 +75,9 @@ namespace Pscf
       * Constructor.
       */ 
       PropagatorTmpl();
+
+      /// \name Mutators
+      //@{
  
       /**
       * Associate this propagator with a direction index.
@@ -109,6 +112,22 @@ namespace Pscf
       */
       void setIsSolved(bool isSolved);
  
+      //@}
+      /// \name Accessors
+      //@{
+
+      /**
+      * Get a source propagator.
+      * 
+      * \param id index of source propagator, < nSource
+      */
+      const TP& source(int id) const;
+
+      /**
+      * Get partner propagator.
+      */
+      const TP& partner() const;
+
       /**
       * Get direction index for this propagator.
       */
@@ -120,21 +139,9 @@ namespace Pscf
       int nSource() const;
 
       /**
-      * Get a source propagator.
-      * 
-      * \param id index of source propagator, < nSource
-      */
-      const TP& source(int id) const;
-
-      /**
       * Does this have a partner propagator?
       */
       bool hasPartner() const;
-
-      /**
-      * Get partner propagator.
-      */
-      const TP& partner() const;
 
       /**
       * Has the modified diffusion equation been solved?
@@ -146,6 +153,8 @@ namespace Pscf
       */
       bool isReady() const;
  
+      //@}
+
    private:
   
       /// Direction of propagation (0 or 1).

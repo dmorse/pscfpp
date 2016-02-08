@@ -26,7 +26,7 @@ namespace Pscf
    using namespace Util;
 
    /**
-   * Structure descriptor for an acyclic block polymer.
+   * Descriptor and MDE solver for an acyclic block polymer.
    *
    * \ingroup Pscf_Base_Module
    */
@@ -36,7 +36,7 @@ namespace Pscf
 
    public:
 
-      // Modified diffusion equation propagator for one block.
+      // Modified diffusion equation solver for one block.
       typedef typename Block::Propagator Propagator;
 
       // Monomer concentration field.
@@ -64,6 +64,9 @@ namespace Pscf
 
       /**
       * Compute solution to modified diffusion equation.
+      *
+      * Upon return, q functions and block concentration fields
+      * are computed for all propagators and blocks. 
       */ 
       virtual void compute(const DArray<WField>& wFields);
  
