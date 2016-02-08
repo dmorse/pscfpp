@@ -22,6 +22,8 @@ namespace Pscf
    * Class template for a block in a block copolymer.
    *
    * Class TP is a concrete propagator class.
+   *
+   * \ingroup Pscf_Base_Module
    */
    template <class TP>
    class BlockTmpl : public BlockDescriptor

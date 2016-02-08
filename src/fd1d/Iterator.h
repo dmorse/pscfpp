@@ -16,6 +16,11 @@ namespace Fd1d
 
    using namespace Util;
 
+   /**
+   * Base class for iterative solvers for SCF equations.
+   *
+   * \ingroup Pscf_Fd1d_Module
+   */
    class Iterator : public ParamComposite
    {
 

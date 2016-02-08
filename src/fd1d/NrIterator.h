@@ -18,6 +18,11 @@ namespace Fd1d
 
    using namespace Util;
 
+   /**
+   * Newton-Raphson Iterator.
+   *
+   * \ingroup Pscf_Fd1d_Module
+   */
    class NrIterator : public Iterator
    {
 

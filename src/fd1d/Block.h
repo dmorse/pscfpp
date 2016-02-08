@@ -19,6 +19,11 @@ namespace Fd1d
    class Grid;
    using namespace Util;
 
+   /**
+   * Block within a branched polymer.
+   *
+   * \ingroup Pscf_Fd1d_Module
+   */
    class Block : public BlockTmpl<Propagator>
    {
 

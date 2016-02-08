@@ -62,6 +62,8 @@ namespace Pscf
    * typenames are defined to be synonyms for DArrray<double>, i.e., for 
    * dynamically allocated arrays of double precision floating point 
    * numbers. Other implementations may use more specialized types.
+   *
+   * \ingroup Pscf_Base_Module
    */
    template <class TP>
    class PropagatorTmpl

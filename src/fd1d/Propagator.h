@@ -18,6 +18,11 @@ namespace Fd1d
    class Block;
    using namespace Util;
 
+   /**
+   * MDE solver for one-direction of one block.
+   *
+   * \ingroup Pscf_Fd1d_Module
+   */
    class Propagator : public PropagatorTmpl<Propagator>
    {
 

@@ -19,6 +19,8 @@ namespace Pscf
 
    /**
    * A linear homopolymer block within a block copolymer.
+   *
+   * \ingroup Pscf_Base_Module
    */
    class BlockDescriptor
    {

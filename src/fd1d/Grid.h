@@ -18,6 +18,8 @@ namespace Fd1d
 
    /**
    * Spatial discretization grid for a one-dimensional problem.
+   *
+   * \ingroup Pscf_Fd1d_Module
    */
    class Grid : public ParamComposite
    {

@@ -19,6 +19,8 @@ namespace Pscf
 
    /**
    * Template for classes that represent an entire SCFT system.
+   *
+   * \ingroup Pscf_Base_Module
    */
    template <class TP, class TS>
    class MixtureTmpl : public ParamComposite

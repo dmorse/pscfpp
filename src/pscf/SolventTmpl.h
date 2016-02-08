@@ -16,6 +16,11 @@ namespace Pscf
 
    using namespace Util;
 
+   /**
+   * Template for a class representing a solvent species.
+   *
+   * \ingroup Pscf_Base_Module
+   */
    template <class CField>
    class SolventTmpl : public Species, public ParamComposite
    {

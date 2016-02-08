@@ -19,6 +19,11 @@ namespace Fd1d
 
    class Grid;
 
+   /**
+   * Container for species within a mixture.
+   *
+   * \ingroup Pscf_Fd1d_Module
+   */
    class Mixture : public MixtureTmpl<Polymer, Solvent>
    {
 

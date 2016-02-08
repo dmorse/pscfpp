@@ -15,6 +15,11 @@ namespace Pscf {
 namespace Fd1d
 { 
 
+   /**
+   * Descriptor and solver for a branched polymer species.
+   *
+   * \ingroup Pscf_Fd1d_Module
+   */
    class Polymer : public PolymerTmpl<Block>
    {
 

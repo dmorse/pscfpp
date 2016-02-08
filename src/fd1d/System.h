@@ -21,6 +21,11 @@ namespace Fd1d
    class Iterator;
    using namespace Util;
 
+   /**
+   * Main class in SCFT simulation of one system.
+   *
+   * \ingroup Pscf_Fd1d_Module
+   */
    class System : public ParamComposite
    {
 
@@ -42,20 +47,18 @@ namespace Fd1d
       */
       ~System();
 
+      /// \name Lifetime (Actions)
+      //@{
+
       /**
       * Process command line options.
       */
       void setOptions(int argc, char **argv);
 
       /**
-      * Read input parameters (without opening and closing lines).
+      * Read input parameters (with opening and closing lines).
       *
       * \param in input parameter stream
-      */
-      virtual void readParameters(std::istream& in);
-
-      /**
-      * Read input parameters (with opening and closing lines).
       */
       virtual void readParam(std::istream& in);
 
@@ -63,6 +66,13 @@ namespace Fd1d
       * Read input parameters from default param file.
       */
       void readParam();
+
+      /**
+      * Read input parameters (without opening and closing lines).
+      *
+      * \param in input parameter stream
+      */
+      virtual void readParameters(std::istream& in);
 
       /**
       * Read command script.
@@ -76,8 +86,14 @@ namespace Fd1d
       */
       void readCommands();
 
+      //@}
+      /// \name Fields
+      //@{
+
       /**
       * Get array of all chemical potential fields.
+      *
+      * The array capacity is equal to the number of monomer types.
       */
       DArray<WField>& wFields();
 
@@ -90,6 +106,8 @@ namespace Fd1d
 
       /**
       * Get array of all chemical potential fields.
+      *
+      * The array capacity is equal to the number of monomer types.
       */
       DArray<CField>& cFields();
 
@@ -99,6 +117,10 @@ namespace Fd1d
       * \param monomerId integer monomer type index
       */
       CField& cField(int monomerId);
+
+      //@}
+      /// \name Accessors (get objects by reference)
+      //@{
 
       /**
       * Get Mixture by reference.
@@ -119,6 +141,8 @@ namespace Fd1d
       * Get FileMaster by reference.
       */
       FileMaster& fileMaster();
+
+      //@}
 
    private:
 

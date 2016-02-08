@@ -27,6 +27,8 @@ namespace Pscf
 
    /**
    * Structure descriptor for an acyclic block polymer.
+   *
+   * \ingroup Pscf_Base_Module
    */
    template <class Block>
    class PolymerTmpl : public Species, public ParamComposite
