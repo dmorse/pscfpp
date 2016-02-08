@@ -18,7 +18,7 @@ namespace Pscf
    using namespace Util;
 
    /**
-   * Template for classes that represent an entire SCFT system.
+   * A mixture of polymer and solvent species.
    *
    * \ingroup Pscf_Base_Module
    */
@@ -39,10 +39,12 @@ namespace Pscf
       */
       typedef TS Solvent;
 
+      // Public member functions
+
       /**
-      * Block MDE solver (propagator) type.
+      * Constructor.
       */
-      typedef typename TP::Propagator Propagator;
+      MixtureTmpl();
 
       /**
       * Read parameters from file and initialize.
@@ -51,6 +53,9 @@ namespace Pscf
       */
       virtual void readParameters(std::istream& in);
 
+      /// \name Accessors (by non-const reference)
+      //@{
+ 
       /**
       * Get a Monomer type descriptor.
       *
@@ -72,6 +77,10 @@ namespace Pscf
       */
       Solvent& solvent(int id);
 
+      //@}
+      /// \name Accessors (by value)
+      //@{
+ 
       /**
       * Get number of monomer types.
       */
@@ -86,6 +95,8 @@ namespace Pscf
       * Get number of solvent (point particle) species.
       */
       int nSolvent() const;
+
+      //@}
 
    private:
 
@@ -152,6 +163,20 @@ namespace Pscf
    {  return solvents_[id]; }
 
    // Non-inline member functions
+
+   /*
+   * Read all parameters and initialize.
+   */
+   template <class TP, class TS>
+   MixtureTmpl<TP,TS>::MixtureTmpl()
+    : ParamComposite(),
+      monomers_(),
+      polymers_(),
+      solvents_(),
+      nMonomer_(0), 
+      nPolymer_(0),
+      nSolvent_(0)
+   {}
 
    /*
    * Read all parameters and initialize.

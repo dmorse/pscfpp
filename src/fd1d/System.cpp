@@ -121,10 +121,10 @@ namespace Fd1d
    */
    void System::readParameters(std::istream& in)
    {
-      mixture().readParam(in);
+      readParamComposite(in, mixture());
       hasMixture_ = true;
 
-      grid().readParam(in);
+      readParamComposite(in, grid());
       hasGrid_ = true;
       allocateFields();
 
