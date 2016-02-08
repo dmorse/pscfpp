@@ -18,7 +18,12 @@ namespace Pscf
 {
 
    using namespace Util;
-  
+
+   /**
+   * Solver for Ax=b with tridiagonal, symmetric matrix A.
+   *
+   * \ingroup Pscf_Base_Module
+   */  
    class TridiagonalSolver
    {
    public:

@@ -15,6 +15,11 @@ namespace Pscf {
 namespace Fd1d
 { 
 
+   /**
+   * Solver for a point particle solvent species.
+   *
+   * \ingroup Pscf_Fd1d_Module
+   */
    class Solvent : public SolventTmpl<Propagator>
    {
    public:

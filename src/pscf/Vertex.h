@@ -19,6 +19,8 @@ namespace Pscf
 
    /**
    * A junction or chain end in a block polymer.
+   *
+   * \ingroup Pscf_Base_Module
    */
    class Vertex
    {

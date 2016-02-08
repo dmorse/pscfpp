@@ -19,6 +19,8 @@ namespace Pscf
 
    /**
    * A linear homopolymer block within a block copolymer.
+   *
+   * \ingroup Pscf_Base_Module
    */
    class BlockDescriptor
    {
@@ -34,6 +36,9 @@ namespace Pscf
       */ 
       template <class Archive>
       void serialize(Archive& ar, unsigned int);
+
+      /// \name Setters
+      //@{
     
       /**
       * Set the id for this block.
@@ -60,10 +65,16 @@ namespace Pscf
       /**
       * Set the length of this block.
       *
+      * The ``length" is steric volume / reference volume.
+      *
       * \param length block length (number of monomers).
       */ 
       void setLength(double length);
   
+      //@}
+      /// \name Accessors (getters)
+      //@{
+    
       /**
       * Get the id of this block.
       */ 
@@ -90,6 +101,8 @@ namespace Pscf
       * Get the length (number of monomers) in this block.
       */
       double length() const;
+
+      //@}
 
    private:
    
