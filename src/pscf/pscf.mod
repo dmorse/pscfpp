@@ -12,7 +12,7 @@ namespace Pscf{
    */
 
    /**
-   * \defgroup Pscf_Base_Module Pscf Basic Classes
+   * \defgroup Pscf_Base_Module Pscf Common
    *
    * Basic classes in the Pscf namespace, accessible to all sub-namespaces.
    *
