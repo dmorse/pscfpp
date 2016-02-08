@@ -67,6 +67,55 @@ namespace Pscf
       */ 
       virtual void compute(const DArray<WField>& wFields);
  
+      /// \name Accessors (objects, by reference)
+      //@{
+
+      /**
+      * Get a specified Block.
+      *
+      * \param id block index, 0 <= id < nBlock
+      */
+      Block& block(int id);
+
+      /**
+      * Get a specified Vertex.
+      *
+      * Both chain ends and junctions are vertices.
+      * 
+      * \param id vertex index, 0 <= id < nVertex
+      */
+      const Vertex& vertex(int id) const;
+
+      /**
+      * Get propagator for a specific block and direction.
+      *
+      * \param blockId integer index of associated block
+      * \param directionId integer index for direction (0 or 1)
+      */
+      Propagator& propagator(int blockId, int directionId);
+   
+      /**
+      * Get propagator indexed in order of computation.
+      *
+      * The propagator index must satisfy 0 <= id < 2*nBlock.
+      *
+      * \param id integer index, in order of computation plan
+      */
+      Propagator& propagator(int id);
+
+      /**
+      * Propagator identifier, indexed by order of computation.
+      *
+      * The return value is a pair of integers. The first of 
+      * which is a block index between 0 and nBlock - 1 and 
+      * the second is a direction id, which must be 0 or 1.
+      */
+      const Pair<int>& propagatorId(int i) const;
+
+      //@}
+      /// \name Accessors (by value)
+      //@{
+
       /**
       * Number of blocks.
       */
@@ -87,44 +136,7 @@ namespace Pscf
       */
       double length() const;
 
-      /**
-      * Get a specified Block.
-      * 
-      * \param id block index
-      */
-      Block& block(int id);
-
-      /**
-      * Get a specified Vertex.
-      * 
-      * \param id vertex index
-      */
-      const Vertex& vertex(int id) const;
-
-      /**
-      * Get propagator for a specific block and direction.
-      *
-      * \param blockId integer index of associated block
-      * \param directionId integer index for direction (0 or 1)
-      */
-      Propagator& propagator(int blockId, int directionId);
-   
-      /**
-      * Get propagator indexed in order of computation.
-      *
-      * \param id integer index, in order of computation plan
-      */
-      Propagator& propagator(int id);
-
-      /**
-      * Propagator identifier, indexed by order of computation.
-      *
-      * An array of propagator ids ordered in the order in which 
-      * they should be computed, so that the intitial condition 
-      * for each link is provided by the solution of links that 
-      * have been computed previously.
-      */
-      const Pair<int>& propagatorId(int i) const;
+      //@}
 
    protected:
 
