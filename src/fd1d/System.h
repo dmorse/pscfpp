@@ -118,6 +118,16 @@ namespace Fd1d
       */
       CField& cField(int monomerId);
 
+      /**
+      * Read an omega field from file.
+      */
+      void readOmega(std::istream& in);
+
+      /**
+      * Write the current omega field to file.
+      */
+      void writeOmega(std::ostream& out);
+
       //@}
       /// \name Accessors (get objects by reference)
       //@{
@@ -171,6 +181,12 @@ namespace Fd1d
       * Indexed by monomer typeId, size = nMonomer.
       */
       DArray<CField> cFields_;
+
+      bool hasMixture_;
+      bool hasGrid_;
+      bool hasFields_;
+
+      void allocateFields();
 
    };
 
