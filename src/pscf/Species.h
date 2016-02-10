@@ -20,23 +20,16 @@ namespace Pscf
    class Species
    {
    public:
-   
+  
+      /**
+      * Statistical ensemble for number of molecules.
+      */ 
       enum Ensemble {Unknown, Closed, Open};
 
       /**
       * Default constructor.
       */    
       Species();
-   
-      /**
-      * Clear all computed quantities.
-      */
-      virtual void clear(){};
-   
-      /**
-      * Solve modified diffusion equation and set related quantities.
-      */
-      virtual void compute(){};
    
       /**
       * Get overall volume fraction for this species.

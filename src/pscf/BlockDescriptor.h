@@ -33,9 +33,12 @@ namespace Pscf
   
       /**
       * Serialize to/from archive.
+      *
+      * \param ar input or output Archive
+      * \param versionId archive format version index
       */ 
       template <class Archive>
-      void serialize(Archive& ar, unsigned int);
+      void serialize(Archive& ar, unsigned int versionId);
 
       /// \name Setters
       //@{
@@ -53,7 +56,7 @@ namespace Pscf
       * \param vertexAId integer id of vertex A
       * \param vertexBId integer id of vertex B
       */ 
-      void setVertexIds(int VertexAId, int VertexBId);
+      void setVertexIds(int vertexAId, int vertexBId);
   
       /**
       * Set the monomer id.
@@ -105,10 +108,17 @@ namespace Pscf
       //@}
 
    private:
-   
+  
+      /// Identifier for this block, unique within the polymer.
       int id_;
+
+      /// Identifier for the associated monomer type.
       int monomerId_;
+
+      /// Two propagators, one for each direction. 
       Pair<int> vertexIds_;
+
+      /// Length of this block = volume / monomer reference volume. 
       double length_;
 
       friend 
