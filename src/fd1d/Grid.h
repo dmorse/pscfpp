@@ -66,7 +66,6 @@ namespace Fd1d
       */
       int nx() const;
 
-
    private:
 
       // Lower bound of spatial coordinate

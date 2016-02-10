@@ -29,7 +29,10 @@ namespace Fd1d
     : mixture_(),
       grid_(),
       fileMaster_(),
-      iteratorPtr_(0)
+      iteratorPtr_(0),
+      hasMixture_(0),
+      hasGrid_(0),
+      hasFields_(0)
    {  
       setClassName("System"); 
       iteratorPtr_ = new NrIterator(); 
@@ -119,22 +122,15 @@ namespace Fd1d
    void System::readParameters(std::istream& in)
    {
       readParamComposite(in, mixture());
-      readParamComposite(in, grid());
-      mixture().setGrid(grid());
+      hasMixture_ = true;
 
-      // Allocate arrays of per-monomer fields
-      int nMonomer = mixture().nMonomer();
-      int nx = grid().nx();
-      wFields_.allocate(nMonomer);
-      cFields_.allocate(nMonomer);
-      for (int i = 0; i < nMonomer; ++i) {
-         wField(i).allocate(nx);
-         cField(i).allocate(nx);
-      }
+      readParamComposite(in, grid());
+      hasGrid_ = true;
+      allocateFields();
 
       // Initialize iterator
       iterator().setMixture(mixture());
-   }  
+   }
 
    /*
    * Read default parameter file.
@@ -153,6 +149,28 @@ namespace Fd1d
    {  readParam(fileMaster().paramFile()); }
 
    /*
+   * Read parameters and initialize.
+   */
+   void System::allocateFields()
+   {
+      // Preconditions
+      UTIL_CHECK(hasMixture_);
+      UTIL_CHECK(hasGrid_);
+      UTIL_CHECK(!hasFields_);
+
+      mixture().setGrid(grid());
+      int nMonomer = mixture().nMonomer();
+      wFields_.allocate(nMonomer);
+      cFields_.allocate(nMonomer);
+      int nx = grid().nx();
+      for (int i = 0; i < nMonomer; ++i) {
+         wField(i).allocate(nx);
+         cField(i).allocate(nx);
+      }
+      hasFields_ = true;
+   }
+
+   /*
    * Read and execute commands from a specified command file.
    */
    void System::readCommands(std::istream &in)
@@ -161,10 +179,10 @@ namespace Fd1d
       //    UTIL_THROW("McSimulation is not initialized");
       // }
 
-      std::string  command;
-      std::string  filename;
-      std::ifstream  inputFile;
-      std::ofstream  outputFile;
+      std::string command;
+      std::string filename;
+      std::ifstream inputFile;
+      std::ofstream outputFile;
 
       std::istream& inBuffer = in;
 
@@ -182,7 +200,7 @@ namespace Fd1d
             inBuffer >> filename;
             Log::file() << Str(filename, 15) << std::endl;
             fileMaster().openInputFile(filename, inputFile);
-            // system().readConfig(inputFile);
+            readOmega(inputFile);
             inputFile.close();
          } else
          if (command == "ITERATE") {
@@ -205,6 +223,46 @@ namespace Fd1d
          UTIL_THROW("Empty command file name");
       }
       readCommands(fileMaster().commandFile()); 
+   }
+
+   void System::readOmega(std::istream &in)
+   {
+
+      // Read grid parameters:
+      std::string label;
+      double xMin, xMax;
+      int nx;
+      in >> label;
+      UTIL_CHECK (label != "xMin");
+      in >> xMin;
+      in >> label;
+      UTIL_CHECK (label != "xMax");
+      in >> xMax;
+      in >> label;
+      UTIL_CHECK (label != "nx");
+      in >> nx;
+      if (!hasGrid_) {
+         grid().setParameters(xMin, xMax, nx);
+         allocateFields();
+      } else {
+         UTIL_CHECK(nx == grid().nx());
+      }
+
+      // Read fields
+      int i,j, idum;
+      int nMonomer = mixture().nMonomer();
+      for (i = 0; i < nx; ++i) {
+         in >> idum;
+         UTIL_CHECK(idum == i);
+         for (j = 0; j < nMonomer; ++j) {
+            in >> wFields_[i][j];
+         }
+      }
+
+   }
+
+   void System::writeOmega(std::ostream &out)
+   {
    }
 
 } // namespace Fd1d
