@@ -1,0 +1,15 @@
+/*! \page developer_test_organization_page 5.6.3 Unit Test Organization
+
+\ref developer_test_usage_page  (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
+<BR>
+
+Each of the namespace level subdirectories of the src/ directory has a subdirectory named tests/ that contains unit tests for the code in that namespace.  The unit tests are not compiled by makefiles that compiles the classes in the src/ directory. A composite test containing all of the unit tests of classes in a particular namespace may be compiled by cd'ing to the tests/ subdirectory of the directory that holds the source code for that namespace, and then entering "make all" (to compile the tests) and "make run" (to run them).  
+
+Entering  "make all" from a subdirectory of tests/ that contains one or more unit tests will generally also create an executable, named named "Test", that runs all of the tests in that directory. Some unit test directories contain a separate makefile target to build an executable for tests that require MPI, often called MpiTest.
+
+
+<BR>
+\ref developer_test_usage_page (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_test_page  (Up)
+
+*/

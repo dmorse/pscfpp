@@ -1,0 +1,137 @@
+#!/bin/bash
+
+#-----------------------------------------------------------------------
+# Name: configure
+#
+# Purpose: Sets macros enable or disable features prior to compiling.
+#
+# This script should be called prior to compiling in order to enable or
+# disable particular compile time features. See the usage examples at the 
+# bottom of this documentation block. This version of the script must be
+# called from the root of the build directory tree in which a corresponding
+# version of the code will built.  Each of these build directories contains 
+# a copy of this script.  Invoking the configure script in a specific build 
+# directory only affects code that is built in that directory.
+#
+# The configure script works by editing the config.mk makefile fragments 
+# in the build directory from which it is called. These files control
+# which preprocessor macros are passed to the compiler for code compiled 
+# in that build directory.
+#
+# Synopsis:
+#
+#      ./configure [options]
+#
+# Command Line Options: 
+#   
+# Each of the following options enables or disables a feature. Each such
+# options takes 0 or 1 as a required argument, using 1 to denote "enable"
+# and 0 to denote "disable".
+#
+#   -g (0|1)   debugging                   (defines/undefines UTIL_DEBUG)
+#   -k (0|1)   dependency generation       (defines/undefines MAKEDEP)
+#
+# These command line options do not enable or disable features: 
+#
+#   -j compiler  Chooses a compiler, set COMPILER=compiler in config.mk
+#   -q           query: prints report of options that are enabled / disabled.
+#
+# Examples:
+#
+# To disable debugging 
+#
+#   >  ./configure -g0 
+#
+# To set COMPILER=intel in config.mk
+#
+#   >  ./configure -j intel
+#
+#-----------------------------------------------------------------------
+while getopts "g:k:c:j:q" opt; do
+
+  if [ -n "$MACRO" ]; then 
+    MACRO=""
+  fi
+  if [ -n "$FILE" ]; then 
+    FILE=""
+  fi
+  
+  case $opt in
+    g)
+      MACRO=UTIL_DEBUG
+      VALUE=1
+      FILE=util/config.mk
+      ;;
+    k)
+      case $OPTARG in
+      0)  # Disable (comment out) the definition of MAKEDEP
+        if [ `grep "^ *MAKEDEP" config.mk` ]; then
+           echo "Disabling MAKEDEP in file config.mk" >&2
+           sed "s/^ *MAKEDEP/#MAKEDEP/" config.mk > temp
+           cp temp config.mk
+           rm temp
+        else
+           echo "MAKEDEP already disabled in file config.mk" >&2
+        fi
+        ;;
+      1) # Enable (uncomment) the definition of MAKEDEP
+        if [ `grep "^ *MAKEDEP" config.mk` ]; then
+           echo "MAKEDEP already enabled in file config.mk" >&2
+        else
+           echo "Enabling MAKEDEP in file config.mk" >&2
+           sed "s/^ *# *MAKEDEP/MAKEDEP/" config.mk > temp
+           cp temp config.mk
+           rm temp
+        fi
+        ;;
+      esac
+      ;;
+    j)
+      FILE=config.mk
+      cp "$FILE" temp
+      sed "s/COMPILER=.*$/COMPILER=$OPTARG/" temp > "$FILE"
+      echo "Setting COMPILER = $OPTARG in file $FILE" >&2
+      rm temp
+      ;;
+    q)
+      if [ `grep "^ *UTIL_DEBUG *= *1" util/config.mk` ]; then
+         echo "-g ON  - debugging" >&2
+      else
+         echo "-g OFF - debugging" >&2
+      fi
+      if [ `grep "^ *MAKEDEP" config.mk` ]; then
+         echo "-k ON  - automatic dependency tracking" >&2
+      else
+         echo "-k OFF - automatic dependency tracking" >&2
+      fi
+      echo `grep "^ *COMPILER *=" config.mk` >&2
+      ;;
+  esac
+
+  if [ -n "$MACRO" ]; then
+    
+    case $OPTARG in
+    0)  # Disable (comment out) the macro=1 definition
+      if [ `grep "^ *$MACRO *= *1" "$FILE"` ]; then
+         echo "Disabling $MACRO in file $FILE" >&2
+         sed "s/$MACRO *=.*$/$MACRO=1/" "$FILE" > temp
+         sed "s/^ *$MACRO=/#$MACRO=/" temp > "$FILE"
+         rm temp
+      else
+         echo "$MACRO already disabled in file $FILE" >&2
+      fi
+      ;;
+    1) # Enable (uncomment) the macro=1 definition
+      if [ `grep "^ *$MACRO *= *1" "$FILE"` ]; then
+         echo "$MACRO already enabled in file $FILE" >&2
+      else
+         echo "Enabling $MACRO in file $FILE" >&2
+         sed "s/$MACRO *=.*$/$MACRO=1/" "$FILE" > temp
+         sed "s/^ *# *$MACRO=/$MACRO=/" temp > "$FILE"
+         rm temp
+      fi
+      ;;
+    esac
+  fi
+
+done

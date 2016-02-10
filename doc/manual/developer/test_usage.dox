@@ -1,0 +1,75 @@
+/*! \page developer_test_usage_page 5.6.2 Test Framework Usage
+
+\ref developer_test_design_page  (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_test_organization_page  (Next)  
+<BR>
+
+Three simple programs that illustrate usage of the test framework are given in the test/examples/ subdirectory. The basic usage pattern is also described below:
+
+\section developer_test_usage_unittest Writing a Unit Test Class
+
+A unit test class is a class that is derived from UnitTest, and that contains one or more test functions. Each test function must takes no arguments and must have a void return value.  Test functions can be named whatever you wish.
+
+Each test function must use the TEST_ASSERT(expr) macro to assert the truth of one or more logical expressions. If the argument of any TEST_ASSERT macro in a test function is false, the test associated with that function fails. 
+
+Below, we an example of a trivial test class named TestA, with three test functions named test1, test2 and test3. This definition is copied from src/test/examples/example1.cpp. In this trivial example, each of the test functions contains one assertion of an expression that is obviously false (test1 and test 2) or obvioiusly true (for test 3).
+
+\code
+#include "UnitTest.h"
+#include "UnitTestRunner.h"
+#include <iostream>
+
+// Trivial unit test
+class TestA : public UnitTest
+{
+
+public:
+
+void test1() {
+printMethod(TEST_FUNC);
+TEST_ASSERT(eq(1,2));
+}
+
+void test2() {
+printMethod(TEST_FUNC);
+TEST_ASSERT(false);
+}
+
+void test3() {
+printMethod(TEST_FUNC);
+TEST_ASSERT(3 == 3);
+}
+
+};
+
+\endcode
+
+\section developer_test_usage_testrunner Creating a Unit Test Runner
+
+At the bottom of the file that defines a unit test class, one must add a set of preprocessor macros to define an associated unit test runner.
+
+As an example, here are the required macros for the TestA unit test defined above:
+\code
+TEST_BEGIN(TestA)
+TEST_ADD(TestA, test1)
+TEST_ADD(TestA, test2)
+TEST_ADD(TestA, test3)
+TEST_END(TestA)
+\endcode
+The TEST_BEGIN(UnitTestClass) macro takes one argument, UnitTestClass, which is the name of the associated unit test class. The TEST_ADD(UnitTestClass, TestFunction) macro registers a zero parameter void class member function as a test function.  The first argument of TEST_ADD is the name of the unit test class. The second is the name of a member test function. The TEST_END(UnitTestClass) macro also takes the unit test class name as an argument, and ends this block of macros.
+
+This set of macros expands into the code required to create a new subclass of the class template instance UnitTestRunner<UnitTestClass>, and to register a specific set of unit test functions.  The name of the new class defined by this set of macros is constructed by appending the suffix "_Runner" to the name of the unit test class.  The above example thus generates the definition of a class named TestA_Runner, which is a subclass of UnitTestRunner<TestA>. The name of the UnitTestRuner class may also be referred to using the macro TEST_RUNNER(UnitTestClass), which expands to UnitTestClass_Runner, where "UnitTestClass" represents the name of an actual unit test class (e.g., TestA).
+
+\section developer_test_usage_run Running a Unit Test Runner
+To run a unit test, one must call the run() method of an instance of the associated test runner class. The simplest code to do this is simply
+\code
+   TEST_RUNNER(TestA) runner;
+   runner.run()
+\endcode
+The first line creates an instance of TestA_Runner named runner. The run method, which is invoked in the second line, runs all of the registered test functions, in the order in which they were added, and reports the number of successes and failures. 
+
+<BR>
+\ref developer_test_design_page (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_test_page  (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_test_organization_page (Next) 
+*/

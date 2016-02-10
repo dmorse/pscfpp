@@ -1,0 +1,29 @@
+/*! \mainpage Simpatico - Simulation Package for Polymer and Molecular Liquids
+ 
+Simpatico is a C++ package for Monte Carlo (MC), Molecular Dynamics (MD) and 
+hybrid MD/MC simulations of polymeric and molecular liquids.
+
+<h2>Contents:</h2>
+<ul style="list-style: none;">
+ <li> \subpage about_page "1. About"
+   <ul style="list-style: none;">
+   <li> \ref about_about_page  </li> 
+   </ul>
+ </li>
+ <li> \subpage user_page "2. User Guide"
+   <ul style="list-style: none;">
+   <li> \ref user_compile_page  </li>
+   </ul>
+ </li>
+ <li> \subpage developer_page "5. Developer Information"
+   <ul style="list-style: none;">
+   <li> \ref developer_build_page </li>
+   <li> \ref developer_standards_page </li>
+   <li> \ref developer_param_page  </li>
+   <li> \ref developer_iterator_page  </li>
+   <li> \ref developer_test_page </li>
+   </ul>
+ </li>
+</ul>
+ 
+*/

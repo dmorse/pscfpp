@@ -1,0 +1,17 @@
+/*! \page user_page 2 User Guide
+
+\ref about_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref source_page (Next)
+<BR>
+
+<h2> Contents:</h2>
+   <ul style="list-style: none;">
+   <li> \subpage user_compile_page   </li>
+   </ul>
+
+<BR>
+\ref about_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref index "Main Page" (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref source_page (Next)
+
+*/
