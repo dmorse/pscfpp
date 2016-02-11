@@ -3,18 +3,18 @@
 \ref user_usage_page (Next) 
 <BR>
 
-Pfts is distributed only as source code, and must be compiled by the user. All source code is written in ANSI standard C++. By default, all code follows the ANSI 1998 C++98 standard, though it is possible to compile a version that uses a few features from C+11. The package has been developed and tested using the gcc and intel compilers in a linux environment, and with the gcc compiler in Mac OS X.  It should compile with any modern, standard compliant C++ compiler.   
+PSCF is distributed only as source code, and must be compiled by the user. All source code is written in ANSI standard C++. By default, all code follows the ANSI 1998 C++98 standard, though it is possible to compile a version that uses a few features from C+11. The package has been developed and tested using the gcc and intel compilers in a linux environment, and with the gcc compiler in Mac OS X.  It should compile with any modern, standard compliant C++ compiler.   
 
 The build system uses unix makefiles, and is thus designed to work only in unix-like environments (i.e., gnu/linux or Mac OS X). It was developed using the gnu version of make (gmake), which is the default on all modern linux distributions and on Mac OS.
 
 \section compile_getcode_section Getting the source code
 
-The source code for pfts is hosted on <a href=http://github.com>github</a>, as project dmorse/pfts.  The source code may be obtained either by: (1) using a git client to clone the public <a href=https://github.com/dmorse/pfts>git repository</a>, or (2) downloading a compressed tar file.  We recommend using a git client to obtain a working copy of the source code, since this makes it easier to update the code to obtain bug fixes and new features.
+The source code for pfts is hosted on <a href=http://github.com>github</a>, as project dmorse/pfts.  The source code may be obtained either by: (1) using a git client to clone the public <a href=https://github.umn.edu/morse012/pfts>git repository</a>, or (2) downloading a compressed tar file.  We recommend using a git client to obtain a working copy of the source code, since this makes it easier to update the code to obtain bug fixes and new features.
 
 Using Git: Before attempting to use git to clone the source code, first check whether the "git" executable is installed on your machine, by entering "> which git". If this does not return a valid path, you need install git. To obtain a read-only clone of the git repository, via the read-only "git" communication protocol, you should cd to the directory you want to contain the pfts root directory, and enter:
 
 \code
-> git clone git://github.com/dmorse/pfts.git
+> git clone git://github.umn.edu/morse012/pfts.git
 \endcode
 This will create a working copy of the source code in a new subdirectory named "pfts/". User/developers that want to be able to contribute to the project or share their additions to the code with others should instead create a user account on github, create a user fork of pfts on their github account, and use a communication protocol that allows read-write access, such as ssh, to clone their own fork of github.
 
@@ -36,17 +36,7 @@ Here is a brief summary of instructions for compiling all of the pfts programs:
 
    - ./setup
 
-   - make mcMd
-
-   - Check MPI settings in build/parallel/config.mk
-
-   - make mcMd-mpi
-
-   - make ddMd
-
-   - make tools
-
-The setup script and all three main make commands must be executed from the pfts/ root directory. The command "make mcMd" builds the single-processor programs mcSim and mdSim. The command "make mcMd-mpi" builds multi-processor versions of mcSim and mdSim. The command "make ddMd" builds the parallel molecular dynamics program ddSim, and "make tools" builds a single-procssor program mdPp that can analyze and process MD trajectories created by ddSim.
+   - make all
 
 Each of the above steps is discussed in more detail below. 
 
@@ -60,11 +50,11 @@ Before compiling any code, you should:
 
 To do this, if you are using a bash shell, you must add some variant of the following lines to your the .profile or .bash_profile file in your user home directory:
 \code
-SIMPATICO_DIR=${HOME}/pfts
-export PATH=${PATH}:/${SIMPATICO_DIR}/bin
-export PYTHONPATH=${PYTHONPATH}:/${SIMPATICO_DIR}/scripts/python
+PSCF_DIR=${HOME}/pfts
+export PATH=${PATH}:/${PSCF_DIR}/bin
+export PYTHONPATH=${PYTHONPATH}:/${PSCF_DIR}/scripts/python
 \endcode
-The value of SIMPATICO_DIR should be set to the path to the pfts root directory. In the above example, this is assumed to be a subdirectory of the users home directory. After adding an appropriate variant of these lines to .profile or .bash_profile, log out, log back in, and then enter "echo $PATH" and "echo $PYTHONPATH" to make sure that these variables have been set correctly. 
+The value of PSCF_DIR should be set to the path to the pfts root directory. In the above example, this is assumed to be a subdirectory of the users home directory. After adding an appropriate variant of these lines to .profile or .bash_profile, log out, log back in, and then enter "echo $PATH" and "echo $PYTHONPATH" to make sure that these variables have been set correctly. 
 
 Explanation: The pfts/bin directory is the default location for installing executable files created by the build system. This must be added to the users PATH to allow the operating system to find the executable files needed to run a simulation. The pfts/scripts/python directory contains a python script that is used by the build system to generate information about dependencies among C++ files, as discussed in more detail \ref compile_dependency_section "below".
 
@@ -80,17 +70,17 @@ Explanation: The setup script creates several configuration files that are requi
 
 The pfts makefile system can build the package either "out-of-source" or "in-source". When the package is built "in-source", object files, static library files and other non-executable files that are generated during compilation are placed in the src/ directory tree, alongside the corresponding C++ source files. When it is built "out-of-source", these generated files are placed in a separate "build" directory tree, outside the source tree. In either case, the executable files for all programs are installed in the pfts/bin directory. We recommend that most users build the package out of source. 
 
-To perform a standard "out-of-source" build of any pfts program, simply invoke "make" with an appropriate target ("mcMd", "ddMd" or "mcMd-mpi") from the pfts/ root directory, as described in the above short instructions. The main makefile in the root directory will automatically build out-of-source, and uses different build directories for serial (single-processor) and parallel (mpi-enabled) programs: The serial mcSim and mdSim programs are built in the pfts/bld/serial/ directory, whereas the ddSim parallel MD program and multi-processor versions of mcSim and mdSim are built in the pfts/bld/parallel directory.
+To perform a standard "out-of-source" build of any pfts program, simply invoke "make" with an appropriate target ("mcMd", "ddMd" or "mcMd-mpi") from the pfts/ root directory, as described in the above short instructions. The main makefile in the root directory will automatically build out-of-source.
 
-To peform an in-source build of any program, one must instead invoke "make" with an appropriate target from the pfts/src/ directory, rather than from the pfts/ root directory. The same commands are used as those used to build out-of-source from the root directory: Invoking "make mcMd" from the src/ directory performs an in-source build of mcSim and mdSim. Invoking "make ddMd" from src/ builds ddSim. Invoking "make mcMd-mpi" builds multi-processor versions of mcSim and mdSim. In addition, invoking the command "make all" from almost any subdirectory of the src/ directory tree will also compile all C++ files in the tree rooted at that directory. Developers often find it convenient to compile in-source when working on new code. 
+To peform an in-source build of any program, one must instead invoke "make" with an appropriate target from the pfts/src/ directory, rather than from the pfts/ root directory. In addition, invoking the command "make all" from almost any subdirectory of the src/ directory tree will also compile all C++ files in the tree rooted at that directory. Developers often find it convenient to compile in-source when working on new code. 
  
 Hereafter, unless stated otherwise, we will assume that all programs are built out-of-source by invoking make from the pfts/ root directory.
 
 \section compile_build_directories_section Build configuration files
 
-The directories bld/serial, bld/parallel and src/ each contain the directory structure and the set of makefiles required to build any version of pfts. In what follows, we will refer to these three directories collectively as build directories. Each of these build directories contains a tree of subdirectories identical to that of the src/ directory. After setup (i.e., after the setup script has been run), each build directory tree also contains several makefiles and a set of build configuration files. 
+The src/ and bld/ director each contain the directory structure and the set of makefiles required to build any version of pscf. In what follows, we will refer to these three directories collectively as build directories. Each of these build directories contains a tree of subdirectories identical to that of the src/ directory. After setup (i.e., after the setup script has been run), each build directory tree also contains several makefiles and a set of build configuration files. 
 
-The build configuration files are all named "config.mk". The main build configuration file is the file named config.mk in the root directory of the build directory tree (i.e., in bld/serial, bld/parallel, or src/). In addition, the util/, inter/, mcMd/ and ddMd/, and tools/ subdirectories of each build directory also each contain a configuration file named config.mk. The six config.mk files in each build directory together specify the configuration of any code compiled in that directory. Specifically, they specify which compiler will be used, what command line options will be passed to the compiler, and which optional features will be enabled or disabled in any code compiled in that directory. These files are makefile fragments that are included by the actual makefiles. Users may change the configuration before compiling either by: (1) manually editing these configuration files, or (2) by using a script named "configure" to enable or disable specific features. We recommend using the configure script (discussed in more detail \ref compile_configure_section "below") to change configuration whenever possible, but some changes require manual editing.
+The build configuration files are all named "config.mk". The main build configuration file is the file named config.mk in the root directory of the build directory tree (i.e., in bld/ or src/). In addition, the util/, inter/, mcMd/ and ddMd/, and tools/ subdirectories of each build directory also each contain a configuration file named config.mk. The six config.mk files in each build directory together specify the configuration of any code compiled in that directory. Specifically, they specify which compiler will be used, what command line options will be passed to the compiler, and which optional features will be enabled or disabled in any code compiled in that directory. These files are makefile fragments that are included by the actual makefiles. Users may change the configuration before compiling either by: (1) manually editing these configuration files, or (2) by using a script named "configure" to enable or disable specific features. We recommend using the configure script (discussed in more detail \ref compile_configure_section "below") to change configuration whenever possible, but some changes require manual editing.
 
 The src/ directory also contains a corresponding set of 6 files named config.mk_r. Each of these is a default version of a corresponding config.mk file. Only the config.mk_r files are stored in the git repository (the suffix _r stands for "repository"). Initial versions of the config.mk files are created in all build directories by the setup script by copying the config.mk_r files. Users may modify the config.mk files as needed, but should avoid modifying the config.mk_r default versions.
 
@@ -102,56 +92,10 @@ If you prefer to use the intel compiler (and if it is installed on your computer
 \code
 > ./configure -j intel
 \endcode
-from the pfts root/ directory and/or the pfts/src directory. Entering this command from the pfts/ directory selects the intel compiler for use in all out-of-source builds, in both the bld/serial and bld/parallel directories. Entering this command from the pfts/src directory selects the intel compiler for use in in-source builds. To explicitly choose the gcc compiler (e.g., after choosing the intel compiler and then changing your mind), instead enter "./configure -j gcc".
+from the pfts root/ directory and/or the pfts/src directory. Entering this command from the pfts/ directory selects the intel compiler for use in all out-of-source builds. Entering this command from the pfts/src directory selects the intel compiler for use in in-source builds. To explicitly choose the gcc compiler (e.g., after choosing the intel compiler and then changing your mind), instead enter "./configure -j gcc".
 
 Details: The choice of compiler for use in each build directory is specified by the value of a makefile variable named COMPILER that is defined the main config.mk configuration file in that directory. Thus far, the only valid values for this identifier are "gcc" or "intel". The default value, COMPILER=gcc, selects the gnu C++ compiler, for which the compiler command name is "g++". Setting COMPILER=intel selects the intel C++ compiler, for which the compiler command is "icpc".  The value of the COMPILER variable is used to select a block of definitions of other variables that define which command line options should be passed to a specific compiler. To change the options passed to a particular compiler, one must manually edit the values assigned to these makefile variables in the main config.mk file. Users who wish to do this should read the documentation in config.mk file, which explains the purpose of each of the relevant makefile variables. Users who are comfortable with makefiles should also find it straightforward to extend this file so as to allow use of compilers other than the gcc and intel compilers.
 
-\section compile_mcMd_section Compiling mcSim and mdSim
-
-As a first step, try compiling the single-processor versions of the mcSim and mdSim programs. Because these programs are standard C++ with no external dependencies, they usually compile with no difficulties. After running the setup script (see above), and choosing a compiler (or accepting the default choice), simply cd to the pfts/ root directory and then enter:
-\code
-> make mcMd
-\endcode
-This will compile a large number of *.cpp files from the pfts/src/ directory, placing corresponding object (*.o) and dependency (*.d) files in the pfts/bld/serial directory, and then install executable files named mcSim and mdSim in the pfts/bin directory. 
-
-\section compile_mpi_section Choosing an MPI library
-
-The ddSim program and the multi-processor versions of mcSim and mdSim require an MPI library for interprocessor communication. The choice of MPI library implementation is specified by a variable named MPI_LIB that is defined in the main config.mk file in each build directory.  The value of MPI_LIB can be changed by manually editing the relevant line of this file. The values of the variables COMPILER and MPI_LIB are used to choose a block of makefile variable definitions for a specific combination of compiler and MPI library. 
-
-The default value of MPI_LIB is MPI_LIB=mpicxx. This choice selects settings designed for use with systems that use linux <a http://www.open-mpi.org>environment modules</a> to manage user environments, and that use the "mpicxx" wrapper script to simplify the process of compiling and linking MPI programs.  On systems that use linux environment modules, each user must use the "module load" command to select default choices for both a compiler and an mpi library before attempting to compile or run any code.  After appropriate modules have been loaded, the "mpicxx" script can then usually be used to invoke the selected compiler with options that specify appropriate paths for the selected mpi library. This module system is used on all of the machines of the University of Minnesota Supercomputing Institute that were used for development. When using environment modules, the user must make sure that the choice of compiler specified by the pfts build system, in the pfts config.mk configuration file, is consistent with the choices of compiler and MPI library that are chosen by loading appropriate linux modules.
-
-Setting COMPILER=gcc and MPI_LIB=openmpi selects a set of compiler options that we have used to compile pfts on a multi-core Mac laptop, using a copy of the <a http://www.open-mpi.org>openmpi</a> library that was compiled from source using the gcc compiler. 
-
-If you are compiling the code on a system that does not use environment modules, and the settings provided for gcc with openmpi do not work, you may have to edit the variables INCLUDES and/or LDFLAGS variables to specify paths for the header and/or library files for an MPI library on your machine. If you have never compiled an MPI program on a particular machine, you may need to either do a bit of searching to identify the appropriate paths, or ask for help from a local guru.
-
-When pfts is build by invoking make from the pfts/ root directory (as we recommend), MPI will be automatically enabled in the bld/parallel directory and disabled in the bld/serial directory before any code is compiled. For standard out-of-source builds, there is thus no need for users to explicitly enable or disable MPI in different build directories.
-
-When make is invoked from the src/ directory in order to execute an in-source build, however, users are responsible for disabling MPI before compiling serial programs (serial versions of mcSim and mdSim, or the mdPp postprocessor) and enabling MPI before compiling parallel programs (ddSim and parallel versions of mcSim and mdSim). The use of MPI in a particular build directory is enabled if the main config.mk file in that directory contains a line that defines "UTIL_MPI=1", and is disabled if this line is commented out. The simplest way to enable or disable is to invoke the configure script with the "-m" option, by entering "./configure -m0" from the src/ directory to enable MPI, or "./configure -m1" to disable MPI. The configure script is discussed in more detail below. 
-
-\section compile_ddMd_section Compiling ddSim
-
-To compile the ddSim parallel MD program, after choosing a compiler and MPI library (as discussed above), simply enter 
-\code
-> make ddMd
-\endcode
-from the pfts/ root directory.  If successful, this will create an executable named ddSim in the pfts/bin directory. 
-
-\section compile_multi_section Compiling mcSim and mdSim (multi-processor versions)
-
-Multi-processor versions of mcSim and mdSim can be used to run:
-
-  - Multiple independent single-processor simulations as an MPI job, with completely separate input and output files
-
-  - Multiple simulations with a sequence of parameter values specified in a single parameter file
-
-  - Replica exchange simulations
-
-To compile multi-processor versions of mcSim and mdSim, enter:
-\code
-> make mcMd-mpi
-\endcode
-from the pfts/ root directory.  This should create executable files named mcSim_m and mdSim_m in the pfts/bin/ directory. The suffix "_m" on these executable names denotes "MPI", and is used to distinguish multi-processor versions of the mcSim and mdSim executables from single processor versions.
- 
 \section compile_configure_section The configure script (build directories)
 
 Each build directory (i.e., bld/serial, bld/parallel, and src/) contains a bash script named "configure" that can be used enabled or disable specific compile time features. The configure script does its work by editing the build configuration files, which control what options will be passed to the compiler during any subsequent compilation. The configure script in each build directory must be invoked from the directory that contains the script (i.e., from bld/serial, bld/parallel, and src/), and only affects the configuration of code that is compiled in that build directory.

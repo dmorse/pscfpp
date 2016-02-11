@@ -7,7 +7,7 @@ hybrid MD/MC simulations of polymeric and molecular liquids.
 <ul style="list-style: none;">
  <li> \subpage about_page "1. About"
    <ul style="list-style: none;">
-   <li> \ref about_about_page  </li> 
+   <li> \ref about_goals_page  </li> 
    </ul>
  </li>
  <li> \subpage user_page "2. User Guide"

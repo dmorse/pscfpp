@@ -4,19 +4,11 @@
 \ref user_page  (Next)  
 <BR>
 
-Simpatico is a library of C++ classes and programs for molecular dynamics (MD), Monte Carlo (MC) and hybrid MC simulations of molecular and polymer liquids.  It has thus far been used to simulate coarse-grained models of polymer liquids, but is suitable for a much wider range of problems. It contains the following main programs:
-
-- A program for parallel domain-decomposition MD simulations, named ddSim.
-
-- Programs for MC and MD simulations on a single processor, named mcSim and mdSim.
-
-The single-processor mcSim and mdSim programs can also be compiled with MPI to execute embarassingly parallel multi-processor algorithms, such as replica-exchange, in which each processor simulates a different system.
+PSCF is a library of C++ classes and programs for solving the Edwards-Helfand self-consistent for polymer liquids. It is intended to eventually replace the existing Fortran program of the same name. It is a work in progress, but will eventually include a pseudo-spectral implementation for periodic structures, analagous to the existing Fortran code, and a simpler one-dimensional finite difference implementation for studying problems that involve only a single spatial coordinate in Cartesian, cylindrical or spherical coordinates (i.e., brushes, interfaces, and cylindrical or circular micelles).
 
 <h2> Contents: </h2>
 <ul style="list-style: none;">
   <li> \subpage about_goals_page  </li> 
-  <li> \subpage about_capabilities_page </li> 
-  <li> \subpage about_contributors_page </li>
 </ul>
 
 Simpatico is free, open source software. It is distributed under the terms of the GNU General Public License as (GPL) published by the Free Software Foundation, either version 3 of the License or (at your option) any later version.  Simpatico is distributed without any warranty, without even the implied warranty of merchantability or fitness for a particular purpose. See the LICENSE file or the <a href=http://www.gnu.org/licenses/> gnu web page </a> for details.
