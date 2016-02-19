@@ -4,14 +4,9 @@
 \ref user_page  (Next)  
 <BR>
 
-PSCF is a library of C++ classes and programs for solving the Edwards-Helfand self-consistent for polymer liquids. It is intended to eventually replace the existing Fortran program of the same name. It is a work in progress, but will eventually include a pseudo-spectral implementation for periodic structures, analagous to the existing Fortran code, and a simpler one-dimensional finite difference implementation for studying problems that involve only a single spatial coordinate in Cartesian, cylindrical or spherical coordinates (i.e., brushes, interfaces, and cylindrical or circular micelles).
+PSCF is a library of C++ classes and programs for solving the Edwards-Helfand self-consistent for polymer liquids. It is not yet complete or functional, but is intended to eventualy replace the existing Fortran program of the same name. When complete, the package will contain a pseudo-spectral implementation for periodic structures, analagous to the existing Fortran code, as well as a simpler one-dimensional finite difference implementation for studying problems that involve only a single spatial coordinate in Cartesian, cylindrical or spherical coordinates (i.e., brushes, interfaces, and cylindrical or circular micelles).
 
-<h2> Contents: </h2>
-<ul style="list-style: none;">
-  <li> \subpage about_goals_page  </li> 
-</ul>
-
-Simpatico is free, open source software. It is distributed under the terms of the GNU General Public License as (GPL) published by the Free Software Foundation, either version 3 of the License or (at your option) any later version.  Simpatico is distributed without any warranty, without even the implied warranty of merchantability or fitness for a particular purpose. See the LICENSE file or the <a href=http://www.gnu.org/licenses/> gnu web page </a> for details.
+This C++ version of PSCF is free, open source software. It is distributed under the terms of the GNU General Public License as (GPL) published by the Free Software Foundation, either version 3 of the License or (at your option) any later version.  Simpatico is distributed without any warranty, without even the implied warranty of merchantability or fitness for a particular purpose. See the LICENSE file or the <a href=http://www.gnu.org/licenses/> gnu web page </a> for details.
 
 <BR>
 \ref index "Main Page"  (Up) &nbsp; &nbsp; &nbsp; &nbsp; 

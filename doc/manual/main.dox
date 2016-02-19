@@ -1,14 +1,12 @@
 /*! \mainpage Simpatico - Simulation Package for Polymer and Molecular Liquids
- 
-Simpatico is a C++ package for Monte Carlo (MC), Molecular Dynamics (MD) and 
-hybrid MD/MC simulations of polymeric and molecular liquids.
+
+PSCF is a C++ package for implementing the Edwards-Helfand self-consistent field
+theory for spatially inhomgeneous structures of block copolymers and polymer 
+mixtures.
 
 <h2>Contents:</h2>
 <ul style="list-style: none;">
  <li> \subpage about_page "1. About"
-   <ul style="list-style: none;">
-   <li> \ref about_goals_page  </li> 
-   </ul>
  </li>
  <li> \subpage user_page "2. User Guide"
    <ul style="list-style: none;">
