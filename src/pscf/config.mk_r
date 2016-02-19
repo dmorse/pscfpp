@@ -4,10 +4,6 @@
 #   - A variable $(PSCF_DEFS) that is passed to the processor to define 
 #     preprocessor flags that effect the code in the util/ directory. 
 #
-#   - A variable $(PSCF_MPI_SUFFIX) that is set to "_m" if MPI is enabled
-#     and left undefined otherwise. This is added as a suffix to the name
-#     of the util library.
-#
 #   - A variable $(PSCF_SUFFIX) that indicates what other features are
 #     enabled, which is also added after PSCF_MPI_SUFFIX to the file
 #     name of util library. 
@@ -26,14 +22,7 @@
 # The variable PSCF_DEFS is used to pass preprocessor definitions to
 # the compiler, using the "-D" compiler option. If not empty, it must 
 # consist of a list of zero or more preprocessor macro names, each 
-# preceded by the compiler flag "-D".  For example, setting PSCF_DEFS 
-# to "-DPSCF_MPI -DPSCF_DEBUG" will cause compilation of a parallel
-# version of the code with debugging enabled.
-#
-# The variable PSCF_SUFFIX is appended to the base name util.a of the 
-# static library $(PSCF_LIB). Setting PSCF_SUFFIX to "_g", to denote 
-# a debugging version, in the absence of other macros, will create a 
-# library named util_g.a in directory $(SRC_DIR)/util.
+# preceded by the compiler flag "-D". 
 #
 # The variable PSCF_DEFS is a recursive (normal) makefile variable, and
 # may be extended using the += operator, e.g., PSCF_DEFS+=-DPSCF_ANGLE.
@@ -52,6 +41,12 @@ PSCF_SUFFIX:=
 # macro. In some blocks, a second line add a suffix to the PSCF_SUFFIX 
 # or PSCF_MPI_SUFFIX variable, thus changing the name of the util library
 # and other libraries and executables that depend on the util library.
+
+#-----------------------------------------------------------------------
+# Define path to header files for Gnu Scientfic Library
+
+PSCF_GSL_INC=SUB_GSL_INC
+PSCF_GSL_LIB=SUB_GSL_LIB
 
 #-----------------------------------------------------------------------
 # Path to the util library 

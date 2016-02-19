@@ -1,5 +1,5 @@
-#ifndef FD1D_TRIDIAGONAL_SOLVER_H
-#define FD1D_TRIDIAGONAL_SOLVER_H
+#ifndef PSCF_TRIDIAGONAL_SOLVER_H
+#define PSCF_TRIDIAGONAL_SOLVER_H
 
 /*
 * PFTS - Polymer Field Theory Simulator
