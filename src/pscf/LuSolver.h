@@ -22,6 +22,9 @@ namespace Pscf
    /**
    * Solve Ax=b by LU decomposition of A.
    *
+   * This class is a simple wrapper for the functions provided by
+   * the Gnu Scientific Library (GSL).
+   *
    * \ingroup Pscf_Base_Module
    */  
    class LuSolver
@@ -34,6 +37,11 @@ namespace Pscf
       LuSolver();
 
       /**
+      * Destructor.
+      */
+      ~LuSolver();
+
+      /**
       * Allocate memory.
       *
       * \param n dimension of n x n square array.
@@ -42,37 +50,37 @@ namespace Pscf
 
       /**
       * Compute the LU decomposition for later use.
+      *
+      * \param A the square matrix A in problem Ax=b.
       */
       void computeLU(const Matrix<double>& A);
 
       /**
-      * Evaluate product Ab = x for known b to compute x.
-      */
-      void multiply(const Array<double>& b, Array<double>& x);
-
-      /**
       * Solve Ax = b for known b to compute x.
+      *
+      * \param b the RHS vector
+      * \param x the solution vector
       */
       void solve(Array<double>& b, Array<double>& x);
 
    private:
 
-      // RHS b vector
+      /// RHS vector of Ax=b.
       gsl_vector b_;
 
-      // Solution vector
+      /// Solution vector of Ax=b.
       gsl_vector x_;
 
-      // Pointer to LU decomposition
+      /// Pointer to LU decomposition matrix.
       gsl_matrix* luPtr_;
 
-      // Pointer to permutation in LU decomposition
+      /// Pointer to permutation in LU decomposition.
       gsl_permutation* permPtr_;
 
-      /// Pointer of permutation in LU decomposition
+      /// Sign of permuation in LU decomposition.
       int signum_;
 
-      // Number of rows and columns in matrix
+      /// Number of rows and columns in matrix.
       int n_;
 
    };

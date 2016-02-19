@@ -5,9 +5,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-// #include <string>
-// #include <iostream>
-
 #include "LuSolver.h"
 #include <gsl/gsl_linalg.h>
 
@@ -20,11 +17,20 @@ namespace Pscf
       n_(0)
    {}
 
+   LuSolver::~LuSolver()
+   {
+      if (n_ > 0)  {
+         if (luPtr_) delete luPtr_;
+         if (permPtr_) delete permPtr_;
+      }
+   }
+
    /*
    * Allocate memory.
    */
    void LuSolver::allocate(int n)
    {
+      UTIL_CHECK(n > 0);
       luPtr_ = gsl_matrix_alloc(n, n);
       permPtr_ = gsl_permutation_alloc(n);
       n_ = n;
@@ -35,6 +41,10 @@ namespace Pscf
    */
    void LuSolver::computeLU(const Matrix<double>& A)
    {
+      UTIL_CHECK(n_ > 0);
+      UTIL_CHECK(A.capacity1() == n_);
+      UTIL_CHECK(A.capacity2() == n_);
+
       int i, j, k;
       k = 0;
       for (i = 0; i < n_; ++i) {
@@ -50,6 +60,10 @@ namespace Pscf
    */
    void LuSolver::solve(Array<double>& b, Array<double>& x)
    {
+      UTIL_CHECK(n_ > 0);
+      UTIL_CHECK(b.capacity() == n_);
+      UTIL_CHECK(x.capacity() == n_);
+
       // Associate gsl_vector b_ with Array b
       b_.size = n_;
       b_.stride = 1;

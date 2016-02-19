@@ -44,12 +44,12 @@ namespace Util
       /**
       * Get number of rows (range of the first array index).
       */
-      int capacity1();
+      int capacity1() const;
 
       /**
       * Get number of columns (range of the second array index).
       */
-      int capacity2();
+      int capacity2() const;
 
       /**
       * Return element (i,j) of matrix by const reference.
@@ -122,14 +122,14 @@ namespace Util
    * Get number of rows.
    */
    template <typename Data>
-   inline int Matrix<Data>::capacity1()
+   inline int Matrix<Data>::capacity1() const
    {  return capacity1_; }
 
    /*
    * Get number of columns.
    */
    template <typename Data>
-   inline int Matrix<Data>::capacity2()
+   inline int Matrix<Data>::capacity2() const
    {  return capacity2_; }
 
    /*
