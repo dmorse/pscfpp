@@ -57,6 +57,12 @@ namespace Fd1d
       */
       double epsilon();
 
+      void computeResidual(Array<Mixture::WField> const & wFields, Array<double>& residual);
+
+      void computeJacobian();
+
+      void update(Array<Mixture::WField> & wFields);
+
    private:
 
       /// Residual vector. size = (# monomers)x(# grid points).
