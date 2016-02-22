@@ -77,7 +77,7 @@ namespace Pscf
       /// Pointer to permutation in LU decomposition.
       gsl_permutation* permPtr_;
 
-      /// Sign of permuation in LU decomposition.
+      /// Sign of permutation in LU decomposition.
       int signum_;
 
       /// Number of rows and columns in matrix.

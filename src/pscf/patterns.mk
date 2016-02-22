@@ -12,10 +12,7 @@
 #-----------------------------------------------------------------------
 
 # Addition to compiler flags
-INCLUDES+=$(PSCF_GSL_INC)
-CXXFLAGS+=$(PSCF_GSL_LIB)
-TESTFLAGS+=$(PSCF_GSL_LIB)
-LDFLAGS+=$(PSCF_GSL_LIB)
+INCLUDES+= $(PSCF_GSL_INC)
 
 # All libraries needed in src/pscf
 LIBS=$(pscf_LIB) $(util_LIB)
@@ -35,9 +32,9 @@ ifdef MAKEDEP
 endif
 
 # Pattern rule to compile *.cc test programs in src/pscf/tests
-$(BLD_DIR)/% $(BLD_DIR)/%.o:$(SRC_DIR)/%.cc $(LIBS)
-	$(CXX) $(CPPFLAGS) $(TESTFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $<
-	$(CXX) $(LDFLAGS) $(INCLUDES) $(DEFINES) -o $(@:.o=) $@ $(LIBS)
+$(BLD_DIR)/% $(BLD_DIR)/%.o: $(SRC_DIR)/%.cc $(LIBS)
+	$(CXX) $(TESTFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $<
+	$(CXX) $(LDFLAGS) $(INCLUDES) $(DEFINES) -o $(@:.o=) $@ $(LIBS) $(PSCF_GSL_LIB)
 ifdef MAKEDEP
 	$(MAKEDEP) $(INCLUDES) $(DEFINES) $(MAKE_DEPS) -S$(SRC_DIR) -B$(BLD_DIR) $<
 endif

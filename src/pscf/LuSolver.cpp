@@ -20,8 +20,8 @@ namespace Pscf
    LuSolver::~LuSolver()
    {
       if (n_ > 0)  {
-         if (luPtr_) delete luPtr_;
-         if (permPtr_) delete permPtr_;
+         if (luPtr_) gsl_matrix_free(luPtr_);
+         if (permPtr_) gsl_permutation_free(permPtr_);
       }
    }
 
@@ -45,11 +45,12 @@ namespace Pscf
       UTIL_CHECK(A.capacity1() == n_);
       UTIL_CHECK(A.capacity2() == n_);
 
-      int i, j, k;
-      k = 0;
-      for (i = 0; i < n_; ++i) {
-         for (j = 0; j < n_; ++i) {
-            luPtr_->data[k] = A(i, j); 
+      int i, j;
+      int k = 0;
+      for (i = 0; i < n_;  ++i) {
+         for (j = 0; j < n_; ++j) {
+            luPtr_->data[k] = A(i,j);
+            ++k;
          }
       }
       gsl_linalg_LU_decomp(luPtr_, permPtr_, &signum_);
@@ -68,15 +69,15 @@ namespace Pscf
       b_.size = n_;
       b_.stride = 1;
       b_.data = b.cArray();
-      b_.block= 0;
-      b_.owner= 0;
+      b_.block = 0;
+      b_.owner = 0;
 
       // Associate gsl_vector x_ with Array x
       x_.size = n_;
       x_.stride = 1;
       x_.data = x.cArray();
-      x_.block= 0;
-      x_.owner= 0;
+      x_.block = 0;
+      x_.owner = 0;
 
       gsl_linalg_LU_solve(luPtr_, permPtr_, &b_, &x_);
    }

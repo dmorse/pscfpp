@@ -11,6 +11,9 @@ TEST=pscf/tests/Test
 
 all: $(pscf_tests_OBJS) $(BLD_DIR)/$(TEST)
 
+includes:
+	echo $(INCLUDES)
+
 run: $(pscf_tests_OBJS) $(BLD_DIR)/$(TEST)
 	$(BLD_DIR)/$(TEST) $(SRC_DIR)/pscf/tests/ > log
 	@echo `grep failed log` ", "\
