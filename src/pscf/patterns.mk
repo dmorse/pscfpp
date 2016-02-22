@@ -14,6 +14,8 @@
 # Addition to compiler flags
 INCLUDES+=$(PSCF_GSL_INC)
 CXXFLAGS+=$(PSCF_GSL_LIB)
+TESTFLAGS+=$(PSCF_GSL_LIB)
+LDFLAGS+=$(PSCF_GSL_LIB)
 
 # All libraries needed in src/pscf
 LIBS=$(pscf_LIB) $(util_LIB)
