@@ -12,13 +12,13 @@
 #-----------------------------------------------------------------------
 
 # Addition to compiler flags
-INCLUDES+= $(PSCF_GSL_INC)
+INCLUDES+=$(PSCF_GSL_INC)
 
 # All libraries needed in src/pscf
 LIBS=$(pscf_LIB) $(util_LIB)
 
 # Preprocessor macro definitions needed in src/pscf
-DEFINES=$(UTIL_DEFS)
+DEFINES=$(PSCF_DEFS) $(UTIL_DEFS)
 
 # Dependencies on build configuration files
 MAKE_DEPS= -A$(BLD_DIR)/config.mk

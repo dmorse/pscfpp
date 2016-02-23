@@ -45,8 +45,12 @@ PSCF_SUFFIX:=
 #-----------------------------------------------------------------------
 # Define path to header files for Gnu Scientfic Library
 
-PSCF_GSL_INC=SUB_GSL_INC
-PSCF_GSL_LIB=SUB_GSL_LIB
+#PSCF_GSL=1
+ifdef PSCF_GSL
+  PSCF_DEFS+=-DPSCF_GSL
+  PSCF_GSL_INC=SUB_GSL_INC
+  PSCF_GSL_LIB=SUB_GSL_LIB
+endif
 
 #-----------------------------------------------------------------------
 # Path to the util library 

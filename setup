@@ -32,11 +32,16 @@
 sed -e "s|=PWD|=$PWD|" -e "s|=OWD|src|" src/config.mk_r > src/config.mk
 
 # Set paths to Gnu Scientific Library
-GSL_INC=
-GSL_LIB=
-GSL_INC="-isystem $(gsl-config --prefix)/include"
-GSL_LIB=$(gsl-config --libs)
-sed -e "s|=SUB_GSL_INC|=$GSL_INC|" -e "s|=SUB_GSL_LIB|=$GSL_LIB|" src/pscf/config.mk_r > src/pscf/config.mk
+HAS_GSL="$(which gsl-config)"
+if [ -n $HAS_GSL ]; then
+  echo "Found Gnu Scienttific Library (GSL)"
+  GSL_INC="-isystem $(gsl-config --prefix)/include"
+  GSL_LIB=$(gsl-config --libs)
+  sed -e "s|#PSCF_GSL=1|PSCF_GSL=1|" -e "s|=SUB_GSL_INC|=$GSL_INC|" -e "s|=SUB_GSL_LIB|=$GSL_LIB|" src/pscf/config.mk_r > src/pscf/config.mk
+else
+  echo "Did not fine Gnu Scienttific Library (GSL)"
+  sed -e "s|=SUB_GSL_INC|=|" -e "s|=SUB_GSL_LIB|=|" src/pscf/config.mk_r > src/pscf/config.mk
+fi
 
 # Copy the makeDep dependency-maker script
 cp scripts/python/makeDep bin/

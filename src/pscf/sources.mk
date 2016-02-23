@@ -3,8 +3,11 @@ pscf_= \
   pscf/Vertex.cpp \
   pscf/BlockDescriptor.cpp \
   pscf/Species.cpp \
-  pscf/TridiagonalSolver.cpp \
-  pscf/LuSolver.cpp 
+  pscf/TridiagonalSolver.cpp 
+
+ifdef PSCF_GSL
+  pscf_+= pscf/LuSolver.cpp 
+endif
 
 pscf_SRCS=\
      $(addprefix $(SRC_DIR)/, $(pscf_))
