@@ -30,5 +30,33 @@ namespace Fd1d
       return 0;
    }
 
+   void NrIterator::computeResidual(Array<WField> const & wFields, 
+                                    Array<double>& residual)
+   {}
+
+   void NrIterator::computeJacobian()
+   {
+      #if 0
+      Copy mixture().wFields to wFieldsNew.
+      for (each monomer type) {
+         for (each grid point) {
+             Set relevant element of wFields new.
+             computeResidual(wFieldsNew, residualNew);
+             Copy difference in residuals to Jacobian row;
+             Reset relevant element to original value;
+         }
+      }
+      LU decompose Jacobian
+      #endif
+   }
+
+   void NrIterator::update()
+   {
+      #if 0
+      Solve for update;
+      Increment wFields;
+      #endif
+   }
+
 } // namespace Fd1d
 } // namespace Pscf

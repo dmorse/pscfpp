@@ -9,6 +9,7 @@
 */
 
 #include "Iterator.h"
+#include <pscf/LuSolver.h>
 #include <util/containers/DArray.h>
 #include <util/containers/DMatrix.h>
 
@@ -27,6 +28,16 @@ namespace Fd1d
    {
 
    public:
+
+      /**
+      * Monomer chemical potential field.
+      */
+      typedef Mixture::WField WField;
+
+      /**
+      * Monomer concentration / volume fraction field.
+      */
+      typedef Mixture::CField CField;
 
       /**
       * Constructor.
@@ -57,19 +68,31 @@ namespace Fd1d
       */
       double epsilon();
 
-      void computeResidual(Array<Mixture::WField> const & wFields, Array<double>& residual);
+      /**
+      * Compute the residual vector.
+      */
+      void computeResidual(Array<WField> const & wFields, 
+                           Array<double>& residual);
 
       void computeJacobian();
 
-      void update(Array<Mixture::WField> & wFields);
+      void update();
 
    private:
+
+      LuSolver solver_;
 
       /// Residual vector. size = (# monomers)x(# grid points).
       DArray<double> residual_;
 
       /// Jacobian matrix
-      DMatrix<double> Jacobian_;
+      DMatrix<double> jacobian_;
+
+      /// Perturbed residual
+      DMatrix<double> residualNew_;
+
+      /// Perturbed chemical potential fields
+      DArray<WField> wFieldsNew_;
 
       /// Error tolerance.
       double epsilon_;

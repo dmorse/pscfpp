@@ -50,6 +50,7 @@ ifdef PSCF_GSL
   PSCF_DEFS+=-DPSCF_GSL
   PSCF_GSL_INC=SUB_GSL_INC
   PSCF_GSL_LIB=SUB_GSL_LIB
+  INCLUDES+=$(PSCF_GSL_INC)
 endif
 
 #-----------------------------------------------------------------------
