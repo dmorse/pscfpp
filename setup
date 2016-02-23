@@ -33,7 +33,7 @@ sed -e "s|=PWD|=$PWD|" -e "s|=OWD|src|" src/config.mk_r > src/config.mk
 
 # Set paths to Gnu Scientific Library
 HAS_GSL="$(which gsl-config)"
-if [ -n $HAS_GSL ]; then
+if [ -n "$HAS_GSL" ]; then
   echo "Found Gnu Scienttific Library (GSL)"
   GSL_INC="-isystem $(gsl-config --prefix)/include"
   GSL_LIB=$(gsl-config --libs)
