@@ -14,7 +14,8 @@ namespace Fd1d
    using namespace Util;
 
    NrIterator::NrIterator()
-    : epsilon_(0.0)
+    : Iterator(),
+      epsilon_(0.0)
    {  setClassName("NrIterator"); }
 
    NrIterator::~NrIterator()
@@ -23,11 +24,6 @@ namespace Fd1d
    void NrIterator::readParameters(std::istream& in)
    {
       read(in, "epsilon", epsilon_);
-   }
-
-   int NrIterator::solve()
-   {
-      return 0;
    }
 
    void NrIterator::computeResidual(Array<WField> const & wFields, 
@@ -56,6 +52,11 @@ namespace Fd1d
       Solve for update;
       Increment wFields;
       #endif
+   }
+
+   int NrIterator::solve()
+   {
+      return 0;
    }
 
 } // namespace Fd1d

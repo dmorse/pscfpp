@@ -129,7 +129,7 @@ namespace Fd1d
       allocateFields();
 
       // Initialize iterator
-      iterator().setMixture(mixture());
+      iterator().setSystem(*this);
    }
 
    /*

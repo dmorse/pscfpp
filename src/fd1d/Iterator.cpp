@@ -14,14 +14,18 @@ namespace Fd1d
    using namespace Util;
 
    Iterator::Iterator()
-    : mixturePtr_(0)
+    : systemPtr_(0),
+      mixturePtr_(0)
    {  setClassName("Iterator"); }
 
    Iterator::~Iterator()
    {}
 
-   void Iterator::setMixture(Mixture & mixture )
-   {  mixturePtr_ = &mixture; }
+   void Iterator::setSystem(System& system)
+   {  
+      systemPtr_  = &system; 
+      mixturePtr_ = &(system.mixture()); 
+   }
 
 } // namespace Fd1d
 } // namespace Pscf

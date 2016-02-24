@@ -8,6 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include "System.h"
 #include "Mixture.h"
 
 namespace Pscf {
@@ -37,9 +38,11 @@ namespace Fd1d
       ~Iterator();
 
       /**
-      * Create association with the mixture.
+      * Create association with the parent System.
+      * 
+      * \param system parent System object.
       */
-      virtual void setMixture(Mixture& mixture);
+      virtual void setSystem(System& system);
 
       /**
       * Iterate to solution.
@@ -50,14 +53,26 @@ namespace Fd1d
 
    protected:
 
+      System& system();
+      
       Mixture& mixture();
       
    private:
+
+      // Pointer to parent System object.
+      System* systemPtr_;
 
       // Pointer to associated Mixture object.
       Mixture* mixturePtr_;
 
    };
+
+   inline
+   System& Iterator::system()
+   {
+      UTIL_ASSERT(systemPtr_);
+      return *systemPtr_;
+   }
 
    inline
    Mixture& Iterator::mixture()
