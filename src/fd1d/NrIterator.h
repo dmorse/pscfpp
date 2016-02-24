@@ -9,6 +9,7 @@
 */
 
 #include "Iterator.h"
+#include "Mixture.h"
 #include <pscf/LuSolver.h>
 #include <util/containers/DArray.h>
 #include <util/containers/DMatrix.h>
@@ -89,7 +90,7 @@ namespace Fd1d
       DMatrix<double> jacobian_;
 
       /// Perturbed residual
-      DMatrix<double> residualNew_;
+      DArray<double> residualNew_;
 
       /// Perturbed chemical potential fields
       DArray<WField> wFieldsNew_;

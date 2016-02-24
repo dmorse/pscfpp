@@ -8,12 +8,15 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "System.h"
-#include "Mixture.h"
+#include <util/param/ParamComposite.h>    // base class
+#include <util/global.h>                  
 
 namespace Pscf {
 namespace Fd1d
 {
+
+   class Mixture;
+   class System;
 
    using namespace Util;
 

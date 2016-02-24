@@ -6,6 +6,8 @@
 */
 
 #include "Iterator.h"
+#include "System.h"
+#include "Mixture.h"
 
 namespace Pscf {
 namespace Fd1d
