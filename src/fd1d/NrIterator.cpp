@@ -72,9 +72,7 @@ namespace Fd1d
              wFieldsNew_[i][j] = system().wField(i)[j];
          }
       }
-      #if 0
-      // LU decompose Jacobian
-      #endif
+      // solver_.computeLU(jacobian_);
    }
 
    void NrIterator::update()

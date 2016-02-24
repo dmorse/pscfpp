@@ -7,8 +7,10 @@
 
 #include "System.h"
 #include "Iterator.h"
-#include "NrIterator.h"
 #include <util/format/Str.h>
+#ifdef PSCF_GSL
+#include "NrIterator.h"
+#endif
 
 #include <ctime>
 #include <iomanip>
@@ -35,7 +37,10 @@ namespace Fd1d
       hasFields_(0)
    {  
       setClassName("System"); 
+
+      #ifdef PSCF_GSL
       iteratorPtr_ = new NrIterator(); 
+      #endif
    }
 
    /*
