@@ -79,9 +79,19 @@ namespace Fd1d
 
       void update();
 
+      /**
+      * Test criteria for adequate convergence.
+      *
+      * \return true if converged, false if not converged.
+      */
+      bool isConverged();
+
    private:
 
       LuSolver solver_;
+
+      /// Perturbed chemical potential fields
+      DArray<WField> wFieldsNew_;
 
       /// Residual vector. size = (# monomers)x(# grid points).
       DArray<double> residual_;
@@ -92,8 +102,8 @@ namespace Fd1d
       /// Perturbed residual
       DArray<double> residualNew_;
 
-      /// Perturbed chemical potential fields
-      DArray<WField> wFieldsNew_;
+      /// Change in field
+      DArray<double> dOmega_;
 
       /// Error tolerance.
       double epsilon_;

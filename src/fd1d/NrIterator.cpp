@@ -34,6 +34,7 @@ namespace Fd1d
       residual_.allocate(nr);
       jacobian_.allocate(nr, nr);
       residualNew_.allocate(nr);
+      dOmega_.allocate(nr);
       wFieldsNew_.allocate(nm);
       for (int i = 0; i < nm; ++i) {
          wFieldsNew_[i].allocate(nx);
@@ -46,11 +47,13 @@ namespace Fd1d
 
    void NrIterator::computeJacobian()
    {
-      int i, j;
-      int nm = mixture().nMonomer();         // number of  monomers
-      int nx = system().grid().nx();   // number of grid points
-      int nr = nm*nx;                  // number of residual components
+      // Compute residual for current fields
       computeResidual(system().wFields(), residual_);
+
+      int nm = mixture().nMonomer();  // number of  monomers
+      int nx = system().grid().nx();  // number of grid points
+      int i;                          // monomer index
+      int j;                          // grid point index
 
       // Copy system().wFields to wFieldsNew.
       for (i = 0; i < nm; ++i) {
@@ -59,32 +62,68 @@ namespace Fd1d
          }
       }
 
+      // Compute jacobian, column by column
       double delta = 0.001;
-      int jr, jc;
-      jc = 0;
+      int nr = nm*nx;              // number of residual elements
+      int jr;                      // jacobian row index
+      int jc = 0;                  // jacobian column index
       for (i = 0; i < nm; ++i) {
-         for (j = 0; i < nx; ++j) {
-             wFieldsNew_[i][j] += delta;
-             computeResidual(wFieldsNew_, residualNew_);
-             for (jr=0; jr < nr; ++jr) {
-                jacobian_(jr, jc) = (residualNew_[jr] - residual_[jr])/delta;
-             }
-             wFieldsNew_[i][j] = system().wField(i)[j];
+         for (j = 0; j < nx; ++j) {
+            wFieldsNew_[i][j] += delta;
+            computeResidual(wFieldsNew_, residualNew_);
+            for (jr = 0; jr < nr; ++jr) {
+               jacobian_(jr, jc) = 
+                    (residualNew_[jr] - residual_[jr])/delta;
+            }
+            wFieldsNew_[i][j] = system().wField(i)[j];
+            ++jc;
          }
       }
-      // solver_.computeLU(jacobian_);
+
+      // Decompose Jacobian matrix
+      solver_.computeLU(jacobian_);
    }
 
    void NrIterator::update()
    {
-      #if 0
-      Solve for update;
-      Increment wFields;
-      #endif
+      computeJacobian();
+
+      // Compute increment dOmega_
+      solver_.solve(residual_, dOmega_);
+
+      // Increment wFields;
+      int nm = mixture().nMonomer();  // number of  monomers
+      int nx = system().grid().nx();  // number of grid points
+      int i;                          // monomer index
+      int j;                          // grid point index
+      int k = 0;                      // residual element index
+      for (i = 0; i < nm; ++i) {
+         for (j = 0; j < nx; ++j) {
+            system().wField(i)[j] = dOmega_[k];
+            ++k;
+         }
+      }
+
+   }
+
+   bool NrIterator::isConverged()
+   {
+      bool criterion = true;
+      int nm = mixture().nMonomer();  // number of  monomers
+      int nx = system().grid().nx();  // number of grid points
+      int nr = nm*nx;  // number of residual components
+      for (int ir = 0; ir <  nr; ++ir) {
+         if (abs(residual_[ir]) > epsilon_) {
+            criterion = false;
+            break;
+         }
+      }
+      return criterion;
    }
 
    int NrIterator::solve()
    {
+      computeResidual(system().wFields(), residual_);
       return 0;
    }
 
