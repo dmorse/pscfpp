@@ -43,7 +43,23 @@ namespace Fd1d
 
    void NrIterator::computeResidual(Array<WField> const & wFields, 
                                     Array<double>& residual)
-   {}
+   {
+      #if 0
+      int nm = mixture().nMonomer();  // number of  monomers
+      int nx = system().grid().nx();  // number of grid points
+      int i;                          // grid point index
+      int j, k;                       // monomer indices
+      int ir;                         // residual index
+      for (i = 0; i < nx; ++i) {
+         for (j = 0; j < nm; ++j) {
+            ir = j*nx + i;
+            residual[ir] = wFields[j][i];
+            for (k = 0; i < nm; ++i) {
+            }
+         }
+      }
+      #endif
+   }
 
    void NrIterator::computeJacobian()
    {

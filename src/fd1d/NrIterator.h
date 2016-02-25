@@ -90,6 +90,11 @@ namespace Fd1d
 
       LuSolver solver_;
 
+      #if 0
+      /// Perturbed chemical potential fields
+      DMatrix<double> chi_;
+      #endif
+
       /// Perturbed chemical potential fields
       DArray<WField> wFieldsNew_;
 
