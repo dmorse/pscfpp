@@ -3,10 +3,11 @@
 
    System {
       Mixture
+      Interaction
       Grid
+      Iterator
       wFields
       cFields
-      Iterator
    }
 
   Next: Construct a simple iterator, Newton-Raphson and/or relaxation.
@@ -16,10 +17,10 @@
 
    System {
       Mixture
+      Interaction
       Boundary
       SpaceGroup
       Basis
-      Interaction
       wFields
       cFields
       Iterator

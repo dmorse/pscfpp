@@ -3,6 +3,8 @@ pscf_= \
   pscf/Vertex.cpp \
   pscf/BlockDescriptor.cpp \
   pscf/Species.cpp \
+  pscf/Interaction.cpp \
+  pscf/ChiInteraction.cpp \
   pscf/TridiagonalSolver.cpp 
 
 ifdef PSCF_GSL
