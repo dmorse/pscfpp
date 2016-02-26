@@ -46,13 +46,13 @@ namespace Pscf {
       * Compute wField from monomer cFields and pressure.
       */
       virtual void computeWField(Array<double> const & cField, double pressure, 
-                                Array<double>& wField);
+                                Array<double>& wField){}
 
       /**
       * Compute cField from wField. 
       */
       virtual void computecField(Array<double> const & wField, 
-                                 Array<double>& cField);
+                                 Array<double>& cField){}
 
    private:
 

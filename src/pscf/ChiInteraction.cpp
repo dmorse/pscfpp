@@ -21,6 +21,7 @@ namespace Pscf {
    void ChiInteraction::readParameters(std::istream& in)
    {
       UTIL_CHECK(nMonomer() > 0);
+      chi_.allocate(nMonomer(), nMonomer());
       readSymmDMatrix(in, "chi", chi_, nMonomer());
    }
 
