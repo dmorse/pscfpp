@@ -116,7 +116,7 @@ namespace Util
 
       double value;
       int i, j, k;
-      for (k = 0; k < n_(n_+1); ++k) {
+      for (k = 0; k < n_*(n_ + 1); ++k) {
          in >> i >> j >> value;
          (*matrixPtr_)(i, j) = value;
          if (i != j) {

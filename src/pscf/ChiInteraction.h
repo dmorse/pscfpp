@@ -43,17 +43,16 @@ namespace Pscf {
       virtual void readParameters(std::istream& in);
 
       /**
-      * Compute omega from monomer concentrations and pressure.
+      * Compute wField from monomer cFields and pressure.
       */
-      virtual void computeOmega(Array<double> const & concentration, double pressure, 
-                                Array<double>& omega);
+      virtual void computeWField(Array<double> const & cField, double pressure, 
+                                Array<double>& wField);
 
       /**
-      * Compute omega from and pressure p.
-      *
-      * \return error code: 0 for success, 1 for failure.
+      * Compute cField from wField. 
       */
-      virtual void computeConcentration(Array<double> const & omega, Array<double>& omega);
+      virtual void computecField(Array<double> const & wField, 
+                                 Array<double>& cField);
 
    private:
 

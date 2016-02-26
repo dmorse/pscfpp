@@ -18,4 +18,10 @@ namespace Pscf {
    ChiInteraction::~ChiInteraction()
    {}
 
+   void ChiInteraction::readParameters(std::istream& in)
+   {
+      UTIL_CHECK(nMonomer() > 0);
+      readSymmDMatrix(in, "chi", chi_, nMonomer());
+   }
+
 } // namespace Pscf

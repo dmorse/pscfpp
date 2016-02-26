@@ -44,18 +44,24 @@ namespace Pscf {
       void setNMonomer(int nMonomer);
 
       /**
-      * Compute omega from and pressure p.
+      * Compute wField from and pressure p.
       *
       * \return error code: 0 for success, 1 for failure.
       */
-      virtual void computeOmega(Array<double> const & rho, double p, Array<double>& omega) = 0;
+      virtual 
+      void computeWField(Array<double> const & cField, double p, 
+                         Array<double>& wField)
+      {}
 
       /**
-      * Compute omega from and pressure p.
+      * Compute wField from and pressure p.
       *
       * \return error code: 0 for success, 1 for failure.
       */
-      virtual void computeConcentration(Array<double> const & omega, Array<double>& omega) = 0;
+      virtual 
+      void computeCField(Array<double> const & wField, 
+                         Array<double>& cField)
+      {}
 
       /**
       * Get number of monomer types.
