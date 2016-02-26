@@ -114,13 +114,26 @@ namespace Util
          UTIL_THROW("Error: Logical size n_ != DMatrix<Type>::capacity2()");
       }
 
+      // Create matrix of int/bool flags for error checking
+      DMatrix<int> flags;
+      flags.allocate(n_, n_);
+      int i, j;
+      for (i = 0; i < n_; ++i) {
+         for (j = 0; j < n_; ++j) {
+            flags(i,j) = 0;
+         }
+      }
+
       double value;
-      int i, j, k;
-      for (k = 0; k < n_*(n_ + 1); ++k) {
+      for (int k = 0; k < n_*(n_ + 1)/2; ++k) {
          in >> i >> j >> value;
+         UTIL_CHECK(flags(i,j) == 0);
          (*matrixPtr_)(i, j) = value;
+         flags(i, j) = 1;
          if (i != j) {
+            UTIL_CHECK(flags(j,i) == 0);
             (*matrixPtr_)(j, i) = value;
+            flags(j, i) = 1;
          }
       }
 
@@ -202,19 +215,19 @@ namespace Util
          Label space("");
          int i, j;
          for (i = 0; i < n_; ++i) {
-            if (i == 0) {
-               out << indent() << label_;
-            } else {
-               out << indent() << space;
-            }
-            for (j = 0; j < i; ++j) {
+            for (j = 0; j <= i; ++j) {
+               if (i == 0 && j == 0) {
+                  out << indent() << label_;
+               } else {
+                  out << indent() << space;
+               }
                out << Int(i) << "  " << Int(j) << "  "
                    << std::right << std::scientific 
                    << std::setprecision(Parameter::Precision) 
                    << std::setw(Parameter::Width)
-                   << (*matrixPtr_)(i, j);
+                   << (*matrixPtr_)(i, j)
+                   << std::endl;
             }
-            out << std::endl;
          }
       }
    }

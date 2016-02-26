@@ -11,6 +11,7 @@
 #include <util/param/FArrayParam.h>
 #include <util/param/CArray2DParam.h>
 #include <util/param/DMatrixParam.h>
+#include <util/param/SymmDMatrixParam.h>
 
 using namespace Util;
 
@@ -1168,6 +1169,141 @@ public:
       delete presentPrm2;
    }
 
+   void testSymmDMatrixParamDoubleWrite() {
+      printMethod(TEST_FUNC);
+      DMatrix<double> requiredVal;
+      requiredVal.allocate(2, 2);
+      requiredVal(0, 0) = 3.0;
+      requiredVal(0, 1) = 34.7;
+      requiredVal(1, 0) = 34.7;
+      requiredVal(1, 1) = 27.54;
+      Parameter *requiredPrm;
+      requiredPrm = new SymmDMatrixParam<double>("Required", requiredVal, 2);
+      if (verbose() > -3) {
+         printEndl();
+         requiredPrm->writeParam(std::cout);
+      }
+      delete requiredPrm;
+   }
+
+   void testSymmDMatrixParamDoubleRead() {
+      printMethod(TEST_FUNC);
+      DMatrix<double> requiredVal;
+      requiredVal.allocate(2, 2);
+      Parameter *requiredPrm;
+      requiredPrm = new SymmDMatrixParam<double>("Required", requiredVal, 2);
+      std::ifstream in;
+      openInputFile("in/SymmMatrixParamDouble", in);
+      if (ParamComponent::echo()) std::cout << std::endl;
+      requiredPrm->readParam(in);
+      if (verbose() > -1) {
+         printEndl();
+         requiredPrm->writeParam(std::cout);
+      }
+      delete requiredPrm;
+   }
+
+   void testSymmDMatrixParamDoubleReadSaveLoad() 
+   {
+      printMethod(TEST_FUNC);
+      DMatrix<double> absentVal;
+      DMatrix<double> requiredVal;
+      DMatrix<double> presentVal;
+      absentVal.allocate(2, 2);
+      requiredVal.allocate(2, 2);
+      presentVal.allocate(2, 2);
+      Parameter *absentPrm;
+      Parameter *requiredPrm;
+      Parameter *presentPrm;
+      absentPrm = 
+            new SymmDMatrixParam<double>("Absent", absentVal, 2, false);
+      requiredPrm  = 
+            new SymmDMatrixParam<double>("Required", requiredVal, 2);
+      presentPrm = 
+            new SymmDMatrixParam<double>("Present", presentVal, 2, false);
+
+      //Parameter::setEcho(true);
+      if (ParamComponent::echo()) printEndl();
+
+      std::ifstream in;
+      openInputFile("in/SymmMatrixParamDouble", in);
+      absentPrm->readParam(in);
+      TEST_ASSERT(!Label::isClear());
+      requiredPrm->readParam(in);
+      TEST_ASSERT(Label::isClear());
+      presentPrm->readParam(in);
+      TEST_ASSERT(Label::isClear());
+
+      TEST_ASSERT(!absentPrm->isRequired());
+      TEST_ASSERT(!absentPrm->isActive());
+      TEST_ASSERT(requiredPrm->isRequired());
+      TEST_ASSERT(requiredPrm->isActive());
+      TEST_ASSERT(!presentPrm->isRequired());
+      TEST_ASSERT(presentPrm->isActive());
+
+      #if 0
+      if (verbose() > 0) {
+         printEndl();
+         absentPrm->writeParam(std::cout);
+         requiredPrm->writeParam(std::cout);
+         presentPrm->writeParam(std::cout);
+      }
+      #endif
+
+      // Save to archive
+      Serializable::OArchive oar;
+      openOutputFile("out/binary", oar.file());
+      Parameter::saveOptional(oar, absentVal, false);
+      oar << requiredVal;
+      Parameter::saveOptional(oar, presentVal, true);
+      oar.file().close();
+
+      // Load from archive
+      DMatrix<double> absentVal2;
+      DMatrix<double> requiredVal2;
+      DMatrix<double> presentVal2;
+      absentVal2.allocate(2, 2);
+      requiredVal2.allocate(2, 2);
+      presentVal2.allocate(2, 2);
+      Parameter* absentPrm2;
+      Parameter* requiredPrm2;
+      Parameter* presentPrm2;
+      absentPrm2 = 
+           new SymmDMatrixParam<double>("Absent", absentVal2, 2, false);
+      requiredPrm2 = 
+           new SymmDMatrixParam<double>("Required", requiredVal2, 2);
+      presentPrm2 = 
+           new SymmDMatrixParam<double>("Present", presentVal2, 2, false);
+
+      Serializable::IArchive iar;
+      openInputFile("out/binary", iar.file());
+      absentPrm2->load(iar);
+      requiredPrm2->load(iar);
+      presentPrm2->load(iar);
+      iar.file().close();
+      TEST_ASSERT(!absentPrm2->isRequired());
+      TEST_ASSERT(!absentPrm2->isActive());
+      TEST_ASSERT(requiredPrm2->isRequired());
+      TEST_ASSERT(!presentPrm2->isRequired());
+      TEST_ASSERT(presentPrm2->isActive());
+
+      if (verbose() > 0) {
+         printEndl();
+         absentPrm2->writeParam(std::cout);
+         requiredPrm2->writeParam(std::cout);
+         presentPrm2->writeParam(std::cout);
+      }
+
+      delete absentPrm;
+      delete requiredPrm;
+      delete presentPrm;
+      delete absentPrm2;
+      delete requiredPrm2;
+      delete presentPrm2;
+   }
+   #if 0
+   #endif
+
 };
 
 TEST_BEGIN(ParameterTest)
@@ -1204,6 +1340,9 @@ TEST_ADD(ParameterTest, testCArray2DParamDoubleReadSaveLoad)
 TEST_ADD(ParameterTest, testDMatrixParamDoubleWrite)
 TEST_ADD(ParameterTest, testDMatrixParamDoubleRead)
 TEST_ADD(ParameterTest, testDMatrixParamDoubleReadSaveLoad)
+TEST_ADD(ParameterTest, testSymmDMatrixParamDoubleWrite)
+TEST_ADD(ParameterTest, testSymmDMatrixParamDoubleRead)
+TEST_ADD(ParameterTest, testSymmDMatrixParamDoubleReadSaveLoad)
 TEST_END(ParameterTest)
 
 #endif
