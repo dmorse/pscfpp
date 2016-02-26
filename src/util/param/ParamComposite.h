@@ -16,7 +16,7 @@
 #include <util/param/FArrayParam.h>        // member function template
 #include <util/param/CArray2DParam.h>      // member function template
 #include <util/param/DMatrixParam.h>       // member function template
-#include <util/param/SymmDMatrixParam.h>       // member function template
+#include <util/param/DSymmMatrixParam.h>       // member function template
 #include <util/archives/Serializable_includes.h>
 
 #include <vector>
@@ -470,8 +470,8 @@ namespace Util
       * \return reference to the DMatrixParam<Type> object
       */
       template <typename Type>
-      SymmDMatrixParam<Type>&
-      readSymmDMatrix(std::istream &in, const char *label,
+      DSymmMatrixParam<Type>&
+      readDSymmMatrix(std::istream &in, const char *label,
                       DMatrix<Type>& matrix, int n);
 
       /**
@@ -484,8 +484,8 @@ namespace Util
       * \return reference to the DMatrixParam<Type> object
       */
       template <typename Type>
-      SymmDMatrixParam<Type>&
-      readOptionalSymmDMatrix(std::istream &in, const char *label,
+      DSymmMatrixParam<Type>&
+      readOptionalDSymmMatrix(std::istream &in, const char *label,
                               DMatrix<Type>& matrix, int n);
 
       /**
@@ -754,8 +754,8 @@ namespace Util
       * \return reference to the DMatrixParam<Type> object
       */
       template <typename Type>
-      SymmDMatrixParam<Type>&
-      loadSymmDMatrix(Serializable::IArchive &ar, const char *label,
+      DSymmMatrixParam<Type>&
+      loadDSymmMatrix(Serializable::IArchive &ar, const char *label,
                       DMatrix<Type>& matrix, int n, bool isRequired);
 
       /**
@@ -769,8 +769,8 @@ namespace Util
       * \return reference to the DMatrixParam<Type> object
       */
       template <typename Type>
-      SymmDMatrixParam<Type>&
-      loadSymmDMatrix(Serializable::IArchive &ar, const char *label,
+      DSymmMatrixParam<Type>&
+      loadDSymmMatrix(Serializable::IArchive &ar, const char *label,
                       DMatrix<Type>& matrix, int n);
 
       //@}
@@ -1004,8 +1004,8 @@ namespace Util
       * \return reference to the DMatrixParam<Type> object
       */
       template <typename Type>
-      SymmDMatrixParam<Type>&
-      readSymmDMatrix_(std::istream &in, const char *label, 
+      DSymmMatrixParam<Type>&
+      readDSymmMatrix_(std::istream &in, const char *label, 
                    DMatrix<Type>& matrix, int n, bool isRequired);
 
    };
@@ -1400,15 +1400,15 @@ namespace Util
    * Add and read a symmetric DMatrixParam DMatrix (private).
    */
    template <typename Type>
-   SymmDMatrixParam<Type>&
-   ParamComposite::readSymmDMatrix_(std::istream &in, 
+   DSymmMatrixParam<Type>&
+   ParamComposite::readDSymmMatrix_(std::istream &in, 
                                     const char *label,
                                     DMatrix<Type>& matrix, 
                                     int n,
                                     bool isRequired)
    {
-      SymmDMatrixParam<Type>* ptr;
-      ptr = new SymmDMatrixParam<Type>(label, matrix, n, isRequired);
+      DSymmMatrixParam<Type>* ptr;
+      ptr = new DSymmMatrixParam<Type>(label, matrix, n, isRequired);
       setParent(*ptr);
       ptr->readParam(in);
       addComponent(*ptr);
@@ -1419,19 +1419,19 @@ namespace Util
    * Add and read a required DMatrixParam.
    */
    template <typename Type>
-   inline SymmDMatrixParam<Type>&
-   ParamComposite::readSymmDMatrix(std::istream& in, 
+   inline DSymmMatrixParam<Type>&
+   ParamComposite::readDSymmMatrix(std::istream& in, 
                                    const char *label,
                                    DMatrix<Type>& matrix, 
                                    int n)
-   {  return readSymmDMatrix_<Type>(in, label, matrix, n, true); }
+   {  return readDSymmMatrix_<Type>(in, label, matrix, n, true); }
 
    /*
    * Add and read an optional DMatrixParam.
    */
    template <typename Type>
-   inline SymmDMatrixParam<Type>&
-   ParamComposite::readOptionalSymmDMatrix(std::istream &in, 
+   inline DSymmMatrixParam<Type>&
+   ParamComposite::readOptionalDSymmMatrix(std::istream &in, 
                                            const char *label,
                                            DMatrix<Type>& matrix, 
                                            int n)
@@ -1441,15 +1441,15 @@ namespace Util
    * Add and load a DMatrix < Type > C two-dimensional matrix parameter.
    */
    template <typename Type>
-   SymmDMatrixParam<Type>&
-   ParamComposite::loadSymmDMatrix(Serializable::IArchive &ar, 
+   DSymmMatrixParam<Type>&
+   ParamComposite::loadDSymmMatrix(Serializable::IArchive &ar, 
                                    const char *label,
                                    DMatrix<Type>& matrix, 
                                    int n,
                                    bool isRequired)
    {
-      SymmDMatrixParam<Type>* ptr;
-      ptr = new SymmDMatrixParam<Type>(label, matrix, n, isRequired);
+      DSymmMatrixParam<Type>* ptr;
+      ptr = new DSymmMatrixParam<Type>(label, matrix, n, isRequired);
       setParent(*ptr);
       ptr->load(ar);
       addComponent(*ptr);
@@ -1460,12 +1460,12 @@ namespace Util
    * Add and load a required DMatrixParam< Type> matrix parameter.
    */
    template <typename Type>
-   inline SymmDMatrixParam<Type>&
-   ParamComposite::loadSymmDMatrix(Serializable::IArchive &ar, 
+   inline DSymmMatrixParam<Type>&
+   ParamComposite::loadDSymmMatrix(Serializable::IArchive &ar, 
                                    const char *label,
                                    DMatrix<Type>& matrix, 
                                    int n)
-   {  return loadSymmDMatrix<Type>(ar, label, matrix, n, true); }
+   {  return loadDSymmMatrix<Type>(ar, label, matrix, n, true); }
 
 }
 #endif

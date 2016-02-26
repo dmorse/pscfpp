@@ -1,5 +1,5 @@
-#ifndef UTIL_SYMM_DMATRIX_PARAM_H
-#define UTIL_SYMM_DMATRIX_PARAM_H
+#ifndef UTIL_D_SYMM_MATRIX_PARAM_H
+#define UTIL_D_SYMM_MATRIX_PARAM_H
 
 /*
 * Simpatico - Simulation Package for Polymeric and Molecular Liquids
@@ -27,7 +27,7 @@ namespace Util
    * \ingroup Param_Module
    */
    template <class Type>
-   class SymmDMatrixParam : public Parameter
+   class DSymmMatrixParam : public Parameter
    {
       
    public:
@@ -40,7 +40,7 @@ namespace Util
       * \param n number of rows or columns
       * \param isRequired  Is this a required parameter?
       */
-      SymmDMatrixParam(const char *label, DMatrix<Type>& matrix, int n, bool isRequired = true);
+      DSymmMatrixParam(const char *label, DMatrix<Type>& matrix, int n, bool isRequired = true);
  
       /**
       * Write DMatrix to file.
@@ -91,7 +91,7 @@ namespace Util
    * DMatrix constructor.
    */
    template <class Type>
-   SymmDMatrixParam<Type>::SymmDMatrixParam(const char* label, DMatrix<Type>& matrix, int n, bool isRequired)
+   DSymmMatrixParam<Type>::DSymmMatrixParam(const char* label, DMatrix<Type>& matrix, int n, bool isRequired)
     : Parameter(label, isRequired),
       matrixPtr_(&matrix),
       n_(n)
@@ -101,7 +101,7 @@ namespace Util
    * Read a DMatrix from isteam.
    */
    template <class Type>
-   void SymmDMatrixParam<Type>::readValue(std::istream &in)
+   void DSymmMatrixParam<Type>::readValue(std::istream &in)
    {  
       // Preconditions
       if (!(matrixPtr_->isAllocated())) {
@@ -143,7 +143,7 @@ namespace Util
    * Load a DMatrix from input archive.
    */
    template <class Type>
-   void SymmDMatrixParam<Type>::loadValue(Serializable::IArchive& ar)
+   void DSymmMatrixParam<Type>::loadValue(Serializable::IArchive& ar)
    {  
       if (!(matrixPtr_->isAllocated())) {
          matrixPtr_->allocate(n_, n_);
@@ -162,7 +162,7 @@ namespace Util
    * Save a DMatrix to an output archive.
    */
    template <class Type>
-   void SymmDMatrixParam<Type>::saveValue(Serializable::OArchive& ar)
+   void DSymmMatrixParam<Type>::saveValue(Serializable::OArchive& ar)
    {
       if (n_ != matrixPtr_->capacity1()) {
          UTIL_THROW("Error: Logical size n_ != DMatrix<Type>::capacity1()");
@@ -178,7 +178,7 @@ namespace Util
    * Broadcast a DMatrix.
    */
    template <class Type>
-   void SymmDMatrixParam<Type>::bcastValue()
+   void DSymmMatrixParam<Type>::bcastValue()
    {  
       if (!(matrixPtr_->isAllocated())) {
          matrixPtr_->allocate(n_, n_);
@@ -195,10 +195,10 @@ namespace Util
    #endif
 
    /*
-   * Write a SymmDMatrixParam.
+   * Write a DSymmMatrixParam.
    */
    template <class Type>
-   void SymmDMatrixParam<Type>::writeParam(std::ostream &out)
+   void DSymmMatrixParam<Type>::writeParam(std::ostream &out)
    {
       if (isActive()) {
          // Preconditions
