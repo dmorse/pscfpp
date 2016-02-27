@@ -15,6 +15,9 @@
 #include <util/misc/FileMaster.h>          // member
 
 namespace Pscf {
+
+   class Interaction;
+
 namespace Fd1d
 {
 
@@ -143,6 +146,11 @@ namespace Fd1d
       Grid& grid();
 
       /**
+      * Get interaction by reference.
+      */
+      Interaction& interaction();
+
+      /**
       * Get Iterator by reference.
       */
       Iterator& iterator();
@@ -164,6 +172,9 @@ namespace Fd1d
 
       // Filemaster (holds paths to associated I/O files)
       FileMaster fileMaster_;
+
+      // Interaction (excess free energy model)
+      Interaction* interactionPtr_;
 
       // Pointer to associated iterator.
       Iterator* iteratorPtr_;
@@ -200,6 +211,12 @@ namespace Fd1d
 
    inline FileMaster& System::fileMaster()
    {  return fileMaster_; }
+
+   inline Interaction& System::interaction()
+   {
+      UTIL_ASSERT(interactionPtr_);
+      return *interactionPtr_;
+   }
 
    inline Iterator& System::iterator()
    {

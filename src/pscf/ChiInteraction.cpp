@@ -25,4 +25,21 @@ namespace Pscf {
       readSymmDMatrix(in, "chi", chi_, nMonomer());
    }
 
+   void 
+   ChiInteraction::computeW(Array<double> const & c,
+                                double p, Array<double>& w)
+   {
+      int i, j;
+      for (i = 0; i < nMonomer(); ++i) {
+         w[i] = p;
+         for (j = 0; j < nMonomer(); ++j) {
+            w[i] += chi_(i, j)* c[j];
+         }
+      }
+   }
+
+   void 
+   ChiInteraction::computeC(Array<double> const & w, Array<double>& c)
+   {}
+
 } // namespace Pscf

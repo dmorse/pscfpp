@@ -7,6 +7,9 @@
 
 #include "System.h"
 #include "Iterator.h"
+#include <pscf/Interaction.h>
+#include <pscf/ChiInteraction.h>
+#include <util/format/Str.h>
 #include <util/format/Str.h>
 #ifdef PSCF_GSL
 #include "NrIterator.h"
@@ -31,6 +34,7 @@ namespace Fd1d
     : mixture_(),
       grid_(),
       fileMaster_(),
+      interactionPtr_(0),
       iteratorPtr_(0),
       hasMixture_(0),
       hasGrid_(0),
@@ -39,6 +43,7 @@ namespace Fd1d
       setClassName("System"); 
 
       #ifdef PSCF_GSL
+      interactionPtr_ = new ChiInteraction(); 
       iteratorPtr_ = new NrIterator(); 
       #endif
    }
@@ -128,6 +133,9 @@ namespace Fd1d
    {
       readParamComposite(in, mixture());
       hasMixture_ = true;
+
+      interaction().setNMonomer(mixture().nMonomer());
+      readParamComposite(in, interaction());
 
       readParamComposite(in, grid());
       hasGrid_ = true;
