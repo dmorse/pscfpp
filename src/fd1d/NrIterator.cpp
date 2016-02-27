@@ -8,6 +8,7 @@
 #include "NrIterator.h"
 #include "System.h"
 #include "Mixture.h"
+#include <pscf/Interaction.h>
 
 namespace Pscf {
 namespace Fd1d
@@ -31,41 +32,51 @@ namespace Fd1d
       int nm = mixture().nMonomer();   // number of  monomers
       int nx = system().grid().nx();   // number of grid points
       int nr = nm*nx;                  // number of residual components
+      cArray_.allocate(nm);
+      wArray_.allocate(nm);
       residual_.allocate(nr);
       jacobian_.allocate(nr, nr);
       residualNew_.allocate(nr);
       dOmega_.allocate(nr);
       wFieldsNew_.allocate(nm);
+      cFieldsNew_.allocate(nm);
       for (int i = 0; i < nm; ++i) {
          wFieldsNew_[i].allocate(nx);
+         cFieldsNew_[i].allocate(nx);
       }
    }
 
    void NrIterator::computeResidual(Array<WField> const & wFields, 
+                                    Array<CField> const & cFields, 
                                     Array<double>& residual)
    {
-      #if 0
       int nm = mixture().nMonomer();  // number of  monomers
       int nx = system().grid().nx();  // number of grid points
       int i;                          // grid point index
-      int j, k;                       // monomer indices
+      int j;                          // monomer indices
       int ir;                         // residual index
       for (i = 0; i < nx; ++i) {
          for (j = 0; j < nm; ++j) {
+            cArray_[j] = cFields[j][i];
+         }
+         system().interaction().computeW(cArray_, 0, wArray_);
+         for (j = 0; j < nm; ++j) {
             ir = j*nx + i;
-            residual[ir] = wFields[j][i];
-            for (k = 0; i < nm; ++i) {
-            }
+            residual[ir] = wArray_[j] - wFields[j][i];
+         }
+         for (j = 1; j < nm; ++j) {
+            ir = j*nx + i;
+            residual[ir] = residual[ir] - residual[i];
+         }
+         residual[i] = -1.0;
+         for (j = 0; j < nm; ++j) {
+            residual[i] += cArray_[j];
          }
       }
-      #endif
    }
 
    void NrIterator::computeJacobian()
    {
-      // Compute residual for current fields
-      computeResidual(system().wFields(), residual_);
-
       int nm = mixture().nMonomer();  // number of  monomers
       int nx = system().grid().nx();  // number of grid points
       int i;                          // monomer index
@@ -86,7 +97,8 @@ namespace Fd1d
       for (i = 0; i < nm; ++i) {
          for (j = 0; j < nx; ++j) {
             wFieldsNew_[i][j] += delta;
-            computeResidual(wFieldsNew_, residualNew_);
+            mixture().compute(wFieldsNew_, cFieldsNew_);
+            computeResidual(wFieldsNew_, cFieldsNew_, residualNew_);
             for (jr = 0; jr < nr; ++jr) {
                jacobian_(jr, jc) = 
                     (residualNew_[jr] - residual_[jr])/delta;
@@ -119,7 +131,8 @@ namespace Fd1d
             ++k;
          }
       }
-
+      mixture().compute(system().wFields(), system().cFields());
+      computeResidual(system().wFields(), system().cFields(), residual_);
    }
 
    bool NrIterator::isConverged()
@@ -139,8 +152,16 @@ namespace Fd1d
 
    int NrIterator::solve()
    {
-      computeResidual(system().wFields(), residual_);
-      return 0;
+      mixture().compute(system().wFields(), system().cFields());
+      computeResidual(system().wFields(), system().cFields(), residual_);
+      for (int i = 0; i < 100; ++i) {
+         if (isConverged()) {
+            return 0;
+         } else {
+            update();
+         }
+      }
+      return 1;
    }
 
 } // namespace Fd1d

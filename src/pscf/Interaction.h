@@ -49,8 +49,8 @@ namespace Pscf {
       * \return error code: 0 for success, 1 for failure.
       */
       virtual 
-      void computeWField(Array<double> const & cField, double p, 
-                         Array<double>& wField)
+      void computeW(Array<double> const & cField, double p, 
+                    Array<double>& wField)
       {}
 
       /**
@@ -59,8 +59,8 @@ namespace Pscf {
       * \return error code: 0 for success, 1 for failure.
       */
       virtual 
-      void computeCField(Array<double> const & wField, 
-                         Array<double>& cField)
+      void computeC(Array<double> const & wField, 
+                    Array<double>& cField)
       {}
 
       /**
