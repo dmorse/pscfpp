@@ -34,6 +34,11 @@ namespace Pscf
       TridiagonalSolver();
 
       /**
+      * Destructor.
+      */
+      ~TridiagonalSolver();
+
+      /**
       * Allocate memory.
       *
       * \param n dimension of n x n square array.

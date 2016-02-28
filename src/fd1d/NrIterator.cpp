@@ -29,8 +29,8 @@ namespace Fd1d
       read(in, "epsilon", epsilon_);
 
       // Allocate work space
-      int nm = mixture().nMonomer();   // number of  monomers
-      int nx = system().grid().nx();   // number of grid points
+      int nm = mixture().nMonomer();   // number of monomer types
+      int nx = system().domain().nx(); // number of grid points
       int nr = nm*nx;                  // number of residual components
       cArray_.allocate(nm);
       wArray_.allocate(nm);
@@ -50,9 +50,9 @@ namespace Fd1d
                                     Array<CField> const & cFields, 
                                     Array<double>& residual)
    {
-      int nm = mixture().nMonomer();  // number of  monomers
-      int nx = system().grid().nx();  // number of grid points
-      int i;                          // grid point index
+      int nm = mixture().nMonomer();   // number of monomer types
+      int nx = system().domain().nx(); // number of grid points
+      int i;                           // grid point index
       int j;                          // monomer indices
       int ir;                         // residual index
       for (i = 0; i < nx; ++i) {
@@ -77,10 +77,10 @@ namespace Fd1d
 
    void NrIterator::computeJacobian()
    {
-      int nm = mixture().nMonomer();  // number of  monomers
-      int nx = system().grid().nx();  // number of grid points
-      int i;                          // monomer index
-      int j;                          // grid point index
+      int nm = mixture().nMonomer();   // number of monomer types
+      int nx = system().domain().nx(); // number of grid points
+      int i;                           // monomer index
+      int j;                           // grid point index
 
       // Copy system().wFields to wFieldsNew.
       for (i = 0; i < nm; ++i) {
@@ -120,11 +120,11 @@ namespace Fd1d
       solver_.solve(residual_, dOmega_);
 
       // Increment wFields;
-      int nm = mixture().nMonomer();  // number of  monomers
-      int nx = system().grid().nx();  // number of grid points
-      int i;                          // monomer index
-      int j;                          // grid point index
-      int k = 0;                      // residual element index
+      int nm = mixture().nMonomer();   // number of monomers types
+      int nx = system().domain().nx(); // number of grid points
+      int i;                           // monomer index
+      int j;                           // grid point index
+      int k = 0;                       // residual element index
       for (i = 0; i < nm; ++i) {
          for (j = 0; j < nx; ++j) {
             system().wField(i)[j] = dOmega_[k];
@@ -138,8 +138,8 @@ namespace Fd1d
    bool NrIterator::isConverged()
    {
       bool criterion = true;
-      int nm = mixture().nMonomer();  // number of  monomers
-      int nx = system().grid().nx();  // number of grid points
+      int nm = mixture().nMonomer();    // number of monomer types
+      int nx = system().domain().nx();  // number of grid points
       int nr = nm*nx;  // number of residual components
       for (int ir = 0; ir <  nr; ++ir) {
          if (abs(residual_[ir]) > epsilon_) {

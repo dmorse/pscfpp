@@ -32,12 +32,12 @@ namespace Fd1d
    */
    System::System()
     : mixture_(),
-      grid_(),
+      domain_(),
       fileMaster_(),
       interactionPtr_(0),
       iteratorPtr_(0),
       hasMixture_(0),
-      hasGrid_(0),
+      hasDomain_(0),
       hasFields_(0)
    {  
       setClassName("System"); 
@@ -137,8 +137,8 @@ namespace Fd1d
       interaction().setNMonomer(mixture().nMonomer());
       readParamComposite(in, interaction());
 
-      readParamComposite(in, grid());
-      hasGrid_ = true;
+      readParamComposite(in, domain());
+      hasDomain_ = true;
       allocateFields();
 
       // Initialize iterator
@@ -168,14 +168,14 @@ namespace Fd1d
    {
       // Preconditions
       UTIL_CHECK(hasMixture_);
-      UTIL_CHECK(hasGrid_);
+      UTIL_CHECK(hasDomain_);
       UTIL_CHECK(!hasFields_);
 
-      mixture().setGrid(grid());
+      mixture().setDomain(domain());
       int nMonomer = mixture().nMonomer();
       wFields_.allocate(nMonomer);
       cFields_.allocate(nMonomer);
-      int nx = grid().nx();
+      int nx = domain().nx();
       for (int i = 0; i < nMonomer; ++i) {
          wField(i).allocate(nx);
          cField(i).allocate(nx);
@@ -241,7 +241,7 @@ namespace Fd1d
    void System::readOmega(std::istream &in)
    {
 
-      // Read grid parameters:
+      // Read domain and spatial grid parameters:
       std::string label;
       double xMin, xMax;
       int nx;
@@ -254,11 +254,11 @@ namespace Fd1d
       in >> label;
       UTIL_CHECK (label != "nx");
       in >> nx;
-      if (!hasGrid_) {
-         grid().setParameters(xMin, xMax, nx);
+      if (!hasDomain_) {
+         domain().setParameters(xMin, xMax, nx);
          allocateFields();
       } else {
-         UTIL_CHECK(nx == grid().nx());
+         UTIL_CHECK(nx == domain().nx());
       }
 
       // Read fields

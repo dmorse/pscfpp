@@ -5,19 +5,19 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Grid.h"
+#include "Domain.h"
 
 namespace Pscf { 
 namespace Fd1d
 { 
 
-   Grid::Grid()
-   {  setClassName("Grid"); }
+   Domain::Domain()
+   {  setClassName("Domain"); }
 
-   Grid::~Grid()
+   Domain::~Domain()
    {}
 
-   void Grid::setParameters(double xMin, double xMax, int nx)
+   void Domain::setParameters(double xMin, double xMax, int nx)
    {
       xMin_ = xMin;
       xMax_ = xMax;
@@ -25,7 +25,7 @@ namespace Fd1d
       dx_ = (xMax_ - xMin_)/double(nx_ - 1);
    }
 
-   void Grid::readParameters(std::istream& in)
+   void Domain::readParameters(std::istream& in)
    {
       read(in, "xMin", xMin_);
       read(in, "xMax", xMax_);

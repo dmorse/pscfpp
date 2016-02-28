@@ -9,9 +9,8 @@
 */
 
 #include <util/param/ParamComposite.h>     // base class
-
 #include "Mixture.h"                       // member
-#include "Grid.h"                          // member
+#include "Domain.h"                        // member
 #include <util/misc/FileMaster.h>          // member
 
 namespace Pscf {
@@ -22,7 +21,7 @@ namespace Fd1d
 {
 
    class Iterator;
-   using namespace Util;
+   //using namespace Util;
 
    /**
    * Main class in SCFT simulation of one system.
@@ -141,9 +140,9 @@ namespace Fd1d
       Mixture& mixture();
 
       /**
-      * Get spatial grid by reference.
+      * Get spatial domain by reference.
       */
-      Grid& grid();
+      Domain& domain();
 
       /**
       * Get interaction by reference.
@@ -168,7 +167,7 @@ namespace Fd1d
       Mixture mixture_;
 
       // Spatial discretization.
-      Grid grid_;
+      Domain domain_;
 
       // Filemaster (holds paths to associated I/O files)
       FileMaster fileMaster_;
@@ -194,7 +193,7 @@ namespace Fd1d
       DArray<CField> cFields_;
 
       bool hasMixture_;
-      bool hasGrid_;
+      bool hasDomain_;
       bool hasFields_;
 
       void allocateFields();
@@ -206,8 +205,8 @@ namespace Fd1d
    inline Mixture& System::mixture()
    { return mixture_; }
 
-   inline Grid& System::grid()
-   { return grid_; }
+   inline Domain& System::domain()
+   { return domain_; }
 
    inline FileMaster& System::fileMaster()
    {  return fileMaster_; }

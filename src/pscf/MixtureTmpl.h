@@ -47,6 +47,11 @@ namespace Pscf
       MixtureTmpl();
 
       /**
+      * Destructor.
+      */
+      ~MixtureTmpl();
+
+      /**
       * Read parameters from file and initialize.
       *
       * \param in input parameter file
@@ -165,7 +170,7 @@ namespace Pscf
    // Non-inline member functions
 
    /*
-   * Read all parameters and initialize.
+   * Constructor.
    */
    template <class TP, class TS>
    MixtureTmpl<TP,TS>::MixtureTmpl()
@@ -176,6 +181,13 @@ namespace Pscf
       nMonomer_(0), 
       nPolymer_(0),
       nSolvent_(0)
+   {}
+
+   /*
+   * Destructor.
+   */
+   template <class TP, class TS>
+   MixtureTmpl<TP,TS>::~MixtureTmpl()
    {}
 
    /*

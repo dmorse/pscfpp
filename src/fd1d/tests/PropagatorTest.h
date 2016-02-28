@@ -4,8 +4,8 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
+#include <fd1d/Domain.h>
 #include <fd1d/Block.h>
-#include <fd1d/Grid.h>
 #include <fd1d/Propagator.h>
 #include <util/math/Constants.h>
 
@@ -47,9 +47,9 @@ public:
       double xMin = 0.0;
       double xMax = 1.0;
       int nx = 11;
-      Grid grid;
-      grid.setParameters(xMin, xMax, nx);
-      b.setDiscretization(grid, ds);
+      Domain domain;
+      domain.setParameters(xMin, xMax, nx);
+      b.setDiscretization(domain, ds);
       DArray<double> w;
       w.allocate(nx);
       double wc = 0.3;
@@ -89,9 +89,9 @@ public:
       double xMin = 0.0;
       double xMax = 1.0;
       int nx = 33;
-      Grid grid;
-      grid.setParameters(xMin, xMax, nx);
-      b.setDiscretization(grid, ds);
+      Domain domain;
+      domain.setParameters(xMin, xMax, nx);
+      b.setDiscretization(domain, ds);
 
       DArray<double> q, w;
       q.allocate(nx);

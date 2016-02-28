@@ -17,7 +17,7 @@ namespace Pscf {
 namespace Fd1d
 {
 
-   class Grid;
+   class Domain;
 
    /**
    * Container for species within a mixture.
@@ -65,15 +65,15 @@ namespace Fd1d
       void readParameters(std::istream& in);
 
       /**
-      * Create an association with the grid and allocate memory.
+      * Create an association with the domain and allocate memory.
       * 
-      * The grid parameter must have already been initialized, 
+      * The domain parameter must have already been initialized, 
       * e.g., by reading its parameters from a file, so that the
-      * grid dimensions are known on entry.
+      * domain dimensions are known on entry.
       *
-      * \param grid associated Grid object (stores address).
+      * \param domain associated Domain object (stores address).
       */
-      void setGrid(Grid const & grid);
+      void setDomain(Domain const & domain);
 
       /**
       * Compute molecular partition functions and concentrations.
@@ -95,20 +95,20 @@ namespace Fd1d
       /// Optimal contour length step size.
       double ds_;
 
-      /// Pointer to associated Grid object.
-      Grid const * gridPtr_;
+      /// Pointer to associated Domain object.
+      Domain const * domainPtr_;
 
-      /// Return associated grid by reference.
-      Grid const & grid() const;
+      /// Return associated domain by reference.
+      Domain const & domain() const;
 
    };
 
    // Inline member function
 
-   inline Grid const & Mixture::grid() const
+   inline Domain const & Mixture::domain() const
    {   
-      UTIL_ASSERT(gridPtr_);
-      return *gridPtr_;
+      UTIL_ASSERT(domainPtr_);
+      return *domainPtr_;
    }
 
 } // namespace Fd1d
