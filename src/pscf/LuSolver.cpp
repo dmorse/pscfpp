@@ -15,7 +15,21 @@ namespace Pscf
     : luPtr_(0),
       permPtr_(0),
       n_(0)
-   {}
+   {
+      // Initialize gs_vector b_ 
+      b_.size = 0;
+      b_.stride = 1;
+      b_.data = 0;
+      b_.block = 0;
+      b_.owner = 0;
+
+      // Initialize gsl_vector x_ 
+      x_.size = 0;
+      x_.stride = 1;
+      x_.data = 0;
+      x_.block = 0;
+      x_.owner = 0;
+   }
 
    LuSolver::~LuSolver()
    {
@@ -26,13 +40,18 @@ namespace Pscf
    }
 
    /*
-   * Allocate memory.
+   * Allocate memory and set n.
    */
    void LuSolver::allocate(int n)
    {
       UTIL_CHECK(n > 0);
+      UTIL_CHECK(n_ == 0);
+      UTIL_CHECK(luPtr_ == 0);
+      UTIL_CHECK(permPtr_ == 0);
       luPtr_ = gsl_matrix_alloc(n, n);
       permPtr_ = gsl_permutation_alloc(n);
+      b_.size = n;
+      x_.size = n;
       n_ = n;
    }
 
@@ -65,21 +84,16 @@ namespace Pscf
       UTIL_CHECK(b.capacity() == n_);
       UTIL_CHECK(x.capacity() == n_);
 
-      // Associate gsl_vector b_ with Array b
-      b_.size = n_;
-      b_.stride = 1;
+      // Associate gsl_vectors b_ and x_ with Arrays b and x
       b_.data = b.cArray();
-      b_.block = 0;
-      b_.owner = 0;
-
-      // Associate gsl_vector x_ with Array x
-      x_.size = n_;
-      x_.stride = 1;
       x_.data = x.cArray();
-      x_.block = 0;
-      x_.owner = 0;
 
+      // Solve system of equations
       gsl_linalg_LU_solve(luPtr_, permPtr_, &b_, &x_);
+
+      // Destroy temporary associations
+      b_.data = 0;
+      x_.data = 0;
    }
 
 }
