@@ -209,11 +209,11 @@ namespace Fd1d
             Log::file() << std::endl;
             readNext = false;
          } else
-         if (command == "READ_OMEGA") {
+         if (command == "READ_WFIELDS") {
             inBuffer >> filename;
             Log::file() << Str(filename, 15) << std::endl;
             fileMaster().openInputFile(filename, inputFile);
-            readOmega(inputFile);
+            readWFields(inputFile);
             inputFile.close();
          } else
          if (command == "ITERATE") {
@@ -238,7 +238,7 @@ namespace Fd1d
       readCommands(fileMaster().commandFile()); 
    }
 
-   void System::readOmega(std::istream &in)
+   void System::readWFields(std::istream &in)
    {
 
       // Read domain and spatial grid parameters:
@@ -274,7 +274,7 @@ namespace Fd1d
 
    }
 
-   void System::writeOmega(std::ostream &out)
+   void System::writeWFields(std::ostream &out)
    {
    }
 

@@ -18,7 +18,8 @@ namespace Fd1d
 
    NrIterator::NrIterator()
     : Iterator(),
-      epsilon_(0.0)
+      epsilon_(0.0),
+      isAllocated_(false)
    {  setClassName("NrIterator"); }
 
    NrIterator::~NrIterator()
@@ -27,22 +28,35 @@ namespace Fd1d
    void NrIterator::readParameters(std::istream& in)
    {
       read(in, "epsilon", epsilon_);
+      if (system().domain().nx() > 0) {
+         allocate();
+      }
+   }
 
-      // Allocate work space
+   void NrIterator::allocate()
+   {
       int nm = mixture().nMonomer();   // number of monomer types
       int nx = system().domain().nx(); // number of grid points
+      UTIL_CHECK(nm > 0);
+      UTIL_CHECK(nx > 0);
       int nr = nm*nx;                  // number of residual components
-      cArray_.allocate(nm);
-      wArray_.allocate(nm);
-      residual_.allocate(nr);
-      jacobian_.allocate(nr, nr);
-      residualNew_.allocate(nr);
-      dOmega_.allocate(nr);
-      wFieldsNew_.allocate(nm);
-      cFieldsNew_.allocate(nm);
-      for (int i = 0; i < nm; ++i) {
-         wFieldsNew_[i].allocate(nx);
-         cFieldsNew_[i].allocate(nx);
+      if (isAllocated_) {
+         UTIL_CHECK(cArray_.capacity() == nm);
+         UTIL_CHECK(residual_.capacity() == nr);
+      } else {
+         cArray_.allocate(nm);
+         wArray_.allocate(nm);
+         residual_.allocate(nr);
+         jacobian_.allocate(nr, nr);
+         residualNew_.allocate(nr);
+         dOmega_.allocate(nr);
+         wFieldsNew_.allocate(nm);
+         cFieldsNew_.allocate(nm);
+         for (int i = 0; i < nm; ++i) {
+            wFieldsNew_[i].allocate(nx);
+            cFieldsNew_[i].allocate(nx);
+         }
+         isAllocated_ = true;
       }
    }
 
@@ -152,8 +166,14 @@ namespace Fd1d
 
    int NrIterator::solve()
    {
+      // Allocate memory if needed or, if allocated, check array sizes.
+      allocate();
+
+      // Compute current residual
       mixture().compute(system().wFields(), system().cFields());
       computeResidual(system().wFields(), system().cFields(), residual_);
+
+      // Iterative loop
       for (int i = 0; i < 100; ++i) {
          if (isConverged()) {
             return 0;
@@ -162,6 +182,7 @@ namespace Fd1d
          }
       }
       return 1;
+
    }
 
 } // namespace Fd1d

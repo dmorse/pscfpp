@@ -115,6 +115,14 @@ namespace Fd1d
       /// Error tolerance.
       double epsilon_;
 
+      /// Have arrays been allocated?
+      bool isAllocated_;
+
+      /**
+      * Allocate memory if needed. If isAllocated, check array sizes.
+      */
+      void allocate();
+
    };
 
    // Inline function

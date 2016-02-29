@@ -12,6 +12,7 @@
 #include "Mixture.h"                       // member
 #include "Domain.h"                        // member
 #include <util/misc/FileMaster.h>          // member
+#include <util/containers/DArray.h>        // member template
 
 namespace Pscf {
 
@@ -21,7 +22,7 @@ namespace Fd1d
 {
 
    class Iterator;
-   //using namespace Util;
+   using namespace Util;
 
    /**
    * Main class in SCFT simulation of one system.
@@ -121,14 +122,18 @@ namespace Fd1d
       CField& cField(int monomerId);
 
       /**
-      * Read an omega field from file.
+      * Read chemical potential fields from file.
+      *
+      * \param in input stream (i.e., input file)
       */
-      void readOmega(std::istream& in);
+      void readWFields(std::istream& in);
 
       /**
-      * Write the current omega field to file.
+      * Write the current chemical potential fields to file.
+      *
+      * \param out output stream (i.e., output file)
       */
-      void writeOmega(std::ostream& out);
+      void writeWFields(std::ostream& out);
 
       //@}
       /// \name Accessors (get objects by reference)
@@ -140,17 +145,17 @@ namespace Fd1d
       Mixture& mixture();
 
       /**
-      * Get spatial domain by reference.
+      * Get spatial domain (including grid info) by reference.
       */
       Domain& domain();
 
       /**
-      * Get interaction by reference.
+      * Get interaction (i.e., excess free energy model) by reference.
       */
       Interaction& interaction();
 
       /**
-      * Get Iterator by reference.
+      * Get the Iterator by reference.
       */
       Iterator& iterator();
 
@@ -192,8 +197,19 @@ namespace Fd1d
       */
       DArray<CField> cFields_;
 
+      /**
+      * Has the mixture been initialized?
+      */
       bool hasMixture_;
+
+      /**
+      * Have the domain and grid been initialized?
+      */
       bool hasDomain_;
+
+      /**
+      * Have initial chemical potential fields been read from file?
+      */
       bool hasFields_;
 
       void allocateFields();
