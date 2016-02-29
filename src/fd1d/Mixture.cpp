@@ -6,7 +6,7 @@
 */
 
 #include "Mixture.h"
-#include "Grid.h"
+#include "Domain.h"
 
 #include <cmath>
 
@@ -30,19 +30,19 @@ namespace Fd1d
       UTIL_CHECK(ds_ > 0);
    }
 
-   void Mixture::setGrid(Grid const& grid)
+   void Mixture::setDomain(Domain const& domain)
    {
       UTIL_CHECK(nMonomer() > 0);
       UTIL_CHECK(nPolymer()+ nSolvent() > 0);
       UTIL_CHECK(ds_ > 0);
 
-      gridPtr_ = &grid;
+      domainPtr_ = &domain;
 
       // Set discretization for all blocks
       int i, j;
       for (i = 0; i < nPolymer(); ++i) {
          for (j = 0; j < polymer(i).nBlock(); ++j) {
-            polymer(i).block(j).setDiscretization(grid, ds_);
+            polymer(i).block(j).setDiscretization(domain, ds_);
          }
       }
 
@@ -50,8 +50,8 @@ namespace Fd1d
 
    void Mixture::compute(DArray<Mixture::WField> const & wFields, DArray<Mixture::CField>& cFields)
    {
-      UTIL_CHECK(gridPtr_);
-      UTIL_CHECK(grid().nx() > 0);
+      UTIL_CHECK(domainPtr_);
+      UTIL_CHECK(domain().nx() > 0);
       UTIL_CHECK(nMonomer() > 0);
       UTIL_CHECK(nPolymer() + nSolvent() > 0);
       UTIL_CHECK(wFields.capacity() == nMonomer());
@@ -60,7 +60,7 @@ namespace Fd1d
       int i, j, k;
 
       // Clear all monomer concentration fields
-      int nx = grid().nx();
+      int nx = domain().nx();
       for (i = 0; i < nMonomer(); ++i) {
          UTIL_CHECK(cFields[i].capacity() == nx);
          UTIL_CHECK(wFields[i].capacity() == nx);

@@ -73,6 +73,7 @@ namespace Fd1d
       * Compute the residual vector.
       */
       void computeResidual(Array<WField> const & wFields, 
+                           Array<WField> const & cFields, 
                            Array<double>& residual);
 
       void computeJacobian();
@@ -90,13 +91,14 @@ namespace Fd1d
 
       LuSolver solver_;
 
-      #if 0
-      /// Perturbed chemical potential fields
-      DMatrix<double> chi_;
-      #endif
-
       /// Perturbed chemical potential fields
       DArray<WField> wFieldsNew_;
+
+      /// Perturbed monomer concentration fields
+      DArray<WField> cFieldsNew_;
+
+      DArray<double> cArray_;
+      DArray<double> wArray_;
 
       /// Residual vector. size = (# monomers)x(# grid points).
       DArray<double> residual_;
@@ -112,6 +114,14 @@ namespace Fd1d
 
       /// Error tolerance.
       double epsilon_;
+
+      /// Have arrays been allocated?
+      bool isAllocated_;
+
+      /**
+      * Allocate memory if needed. If isAllocated, check array sizes.
+      */
+      void allocate();
 
    };
 

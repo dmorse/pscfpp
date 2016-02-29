@@ -40,13 +40,13 @@ public:
       Mixture mix;
       mix.readParam(in);
 
-      Grid grid;
-      grid.readParam(in);
-      mix.setGrid(grid);
+      Domain domain;
+      domain.readParam(in);
+      mix.setDomain(domain);
 
       std::cout << "\n";
       mix.writeParam(std::cout);
-      grid.writeParam(std::cout);
+      domain.writeParam(std::cout);
    }
 
    void testSolve()
@@ -57,21 +57,21 @@ public:
       openInputFile("in/Mixture", in);
 
       Mixture mix;
-      Grid grid;
+      Domain domain;
       mix.readParam(in);
-      grid.readParam(in);
-      mix.setGrid(grid);
+      domain.readParam(in);
+      mix.setDomain(domain);
 
       std::cout << "\n";
       mix.writeParam(std::cout);
-      grid.writeParam(std::cout);
+      domain.writeParam(std::cout);
 
       int nMonomer = mix.nMonomer();
       DArray<Mixture::WField> wFields;
       DArray<Mixture::CField> cFields;
       wFields.allocate(nMonomer);
       cFields.allocate(nMonomer);
-      double nx = (double)grid.nx();
+      double nx = (double)domain.nx();
       for (int i = 0; i < nMonomer; ++i) {
          wFields[i].allocate(nx);
          cFields[i].allocate(nx);

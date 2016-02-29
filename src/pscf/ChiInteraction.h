@@ -43,16 +43,24 @@ namespace Pscf {
       virtual void readParameters(std::istream& in);
 
       /**
-      * Compute wField from monomer cFields and pressure.
+      * Compute chemical potential from concentration and pressure.
+      *
+      * \param c array of concentrations, for each type (input)
+      * \param p Lagrange multiplier / pressure 
+      * \param w array of chemical potentials for types (ouptut) 
       */
-      virtual void computeWField(Array<double> const & cField, double pressure, 
-                                Array<double>& wField){}
+      virtual 
+      void computeW(Array<double> const & c, double p, 
+                    Array<double>& w);
 
       /**
-      * Compute cField from wField. 
+      * Compute concentration from chemical potential field.
+      *
+      * \param w array of chemical potentials for types (inut) 
+      * \param c array of concentrations, for each type (output)
       */
-      virtual void computecField(Array<double> const & wField, 
-                                 Array<double>& cField){}
+      virtual 
+      void computeC(Array<double> const & w, Array<double>& c);
 
    private:
 

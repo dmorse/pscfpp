@@ -13,7 +13,16 @@
 namespace Pscf
 {
   
+   /*
+   * Constructor.
+   */
    TridiagonalSolver::TridiagonalSolver()
+   {}
+
+   /*
+   * Destructor.
+   */
+   TridiagonalSolver::~TridiagonalSolver()
    {}
 
    /*

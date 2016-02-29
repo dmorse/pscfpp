@@ -16,7 +16,7 @@ namespace Pscf {
 namespace Fd1d 
 { 
 
-   class Grid;
+   class Domain;
    using namespace Util;
 
    /**
@@ -45,12 +45,12 @@ namespace Fd1d
       ~Block();
 
       /**
-      * Initialize grid and allocate required memory.
+      * Initialize discretization and allocate required memory.
       *
-      * \param grid associated grid object
+      * \param domain associated Domain object, with grid info
       * \param ds desired (optimal) value for contour length step
       */
-      void setDiscretization(Grid const & grid, double ds);
+      void setDiscretization(Domain const & domain, double ds);
 
       /**
       * Set Crank-Nicholson solver for this block.
@@ -101,8 +101,8 @@ namespace Fd1d
       // Work vector
       DArray<double> v_;
 
-      /// Pointer to associated Grid object.
-      Grid const * gridPtr_;
+      /// Pointer to associated Domain object.
+      Domain const * domainPtr_;
 
       /// Monomer statistical segment length.
       double step_;
@@ -116,17 +116,17 @@ namespace Fd1d
       /// Number of spatial grid points.
       int nx_;
 
-      /// Return associated grid by reference.
-      Grid const & grid() const;
+      /// Return associated domain by reference.
+      Domain const & domain() const;
 
    };
 
    // Inline member functions
 
-   inline Grid const & Block::grid() const
+   inline Domain const & Block::domain() const
    {   
-      UTIL_ASSERT(gridPtr_);
-      return *gridPtr_;
+      UTIL_ASSERT(domainPtr_);
+      return *domainPtr_;
    }
 
 } 

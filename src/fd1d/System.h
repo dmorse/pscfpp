@@ -9,12 +9,15 @@
 */
 
 #include <util/param/ParamComposite.h>     // base class
-
 #include "Mixture.h"                       // member
-#include "Grid.h"                          // member
+#include "Domain.h"                        // member
 #include <util/misc/FileMaster.h>          // member
+#include <util/containers/DArray.h>        // member template
 
 namespace Pscf {
+
+   class Interaction;
+
 namespace Fd1d
 {
 
@@ -119,14 +122,18 @@ namespace Fd1d
       CField& cField(int monomerId);
 
       /**
-      * Read an omega field from file.
+      * Read chemical potential fields from file.
+      *
+      * \param in input stream (i.e., input file)
       */
-      void readOmega(std::istream& in);
+      void readWFields(std::istream& in);
 
       /**
-      * Write the current omega field to file.
+      * Write the current chemical potential fields to file.
+      *
+      * \param out output stream (i.e., output file)
       */
-      void writeOmega(std::ostream& out);
+      void writeWFields(std::ostream& out);
 
       //@}
       /// \name Accessors (get objects by reference)
@@ -138,12 +145,17 @@ namespace Fd1d
       Mixture& mixture();
 
       /**
-      * Get spatial grid by reference.
+      * Get spatial domain (including grid info) by reference.
       */
-      Grid& grid();
+      Domain& domain();
 
       /**
-      * Get Iterator by reference.
+      * Get interaction (i.e., excess free energy model) by reference.
+      */
+      Interaction& interaction();
+
+      /**
+      * Get the Iterator by reference.
       */
       Iterator& iterator();
 
@@ -160,10 +172,13 @@ namespace Fd1d
       Mixture mixture_;
 
       // Spatial discretization.
-      Grid grid_;
+      Domain domain_;
 
       // Filemaster (holds paths to associated I/O files)
       FileMaster fileMaster_;
+
+      // Interaction (excess free energy model)
+      Interaction* interactionPtr_;
 
       // Pointer to associated iterator.
       Iterator* iteratorPtr_;
@@ -182,8 +197,19 @@ namespace Fd1d
       */
       DArray<CField> cFields_;
 
+      /**
+      * Has the mixture been initialized?
+      */
       bool hasMixture_;
-      bool hasGrid_;
+
+      /**
+      * Have the domain and grid been initialized?
+      */
+      bool hasDomain_;
+
+      /**
+      * Have initial chemical potential fields been read from file?
+      */
       bool hasFields_;
 
       void allocateFields();
@@ -195,11 +221,17 @@ namespace Fd1d
    inline Mixture& System::mixture()
    { return mixture_; }
 
-   inline Grid& System::grid()
-   { return grid_; }
+   inline Domain& System::domain()
+   { return domain_; }
 
    inline FileMaster& System::fileMaster()
    {  return fileMaster_; }
+
+   inline Interaction& System::interaction()
+   {
+      UTIL_ASSERT(interactionPtr_);
+      return *interactionPtr_;
+   }
 
    inline Iterator& System::iterator()
    {

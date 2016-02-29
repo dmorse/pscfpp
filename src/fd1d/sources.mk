@@ -1,5 +1,5 @@
 fd1d_= \
-  fd1d/Grid.cpp \
+  fd1d/Domain.cpp \
   fd1d/Propagator.cpp \
   fd1d/Block.cpp \
   fd1d/Polymer.cpp \

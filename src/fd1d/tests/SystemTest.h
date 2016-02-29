@@ -6,7 +6,7 @@
 
 #include <fd1d/System.h>
 #include <fd1d/Mixture.h>
-#include <fd1d/Grid.h>
+#include <fd1d/Domain.h>
 
 #include <fstream>
 
@@ -60,9 +60,9 @@ public:
       sys.writeParam(std::cout);
 
       Mixture& mix = sys.mixture();
-      Grid& grid = sys.grid();
+      Domain& domain = sys.domain();
 
-      double nx = (double)grid.nx();
+      double nx = (double)domain.nx();
       double cs;
       for (int i = 0; i < nx; ++i) {
          cs = cos(Constants::Pi*(double(i)+0.5)/nx);

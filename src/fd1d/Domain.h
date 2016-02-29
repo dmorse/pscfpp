@@ -17,11 +17,11 @@ namespace Fd1d
    using namespace Util;
 
    /**
-   * Spatial discretization grid for a one-dimensional problem.
+   * One-dimensional spatial domain and discretization grid.
    *
    * \ingroup Pscf_Fd1d_Module
    */
-   class Grid : public ParamComposite
+   class Domain : public ParamComposite
    {
 
    public:
@@ -29,12 +29,12 @@ namespace Fd1d
       /**
       * Constructor.
       */
-      Grid();
+      Domain();
 
       /**
       * Destructor.
       */
-      ~Grid();
+      ~Domain();
 
       /**
       * Set grid parameters. 
@@ -84,16 +84,16 @@ namespace Fd1d
 
    // Inline member functions
 
-   inline int Grid::nx() const
+   inline int Domain::nx() const
    {  return nx_; }
 
-   inline double Grid::dx() const
+   inline double Domain::dx() const
    {  return dx_; }
 
-   inline double Grid::xMin() const
+   inline double Domain::xMin() const
    {  return xMin_; }
 
-   inline double Grid::xMax() const
+   inline double Domain::xMax() const
    {  return xMax_; }
 
 } // namespace Fd1d

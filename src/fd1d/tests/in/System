@@ -13,7 +13,12 @@ System{
      }
      ds   0.001
   }
-  Grid{
+  ChiInteraction{
+     chi   0  1    2.0
+           0  0    0.0
+           1  1    0.0
+  }
+  Domain{
      xMin 0.0
      xMax 1.0
      nx   33
