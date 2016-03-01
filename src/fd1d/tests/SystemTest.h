@@ -98,7 +98,7 @@ public:
       printMethod(TEST_FUNC);
 
       std::ifstream in;
-      openInputFile("in/System", in);
+      openInputFile("in/System2", in);
 
       System sys;
       sys.readParam(in);
@@ -111,35 +111,49 @@ public:
 
       double nx = (double)domain.nx();
       double cs;
+      double chi = 20.0;
       for (int i = 0; i < nx; ++i) {
          cs = cos(2.0*Constants::Pi*(double(i)+0.5)/nx);
-         sys.wField(0)[i] = 4.0*0.5*(1.0 - cs) - 2.0;
-         sys.wField(1)[i] = 4.0*0.5*(1.0 + cs) - 2.0;
+         sys.wField(0)[i] = chi*0.5*(1.0 - cs) - chi*0.5;
+         sys.wField(1)[i] = chi*0.5*(1.0 + cs) - chi*0.5;
       }
       mix.compute(sys.wFields(), sys.cFields());
 
-      #if 0
-      std::cout << "Initial Concentration" << std::endl;
-      for (int i = 0; i < nx; ++i) {
-         std::cout << sys.cField(0)[i] << "  " << sys.cField(1)[i] << std::endl;
-      }
-      #endif
-
       sys.iterator().solve();
 
-      #if 0
-      std::cout << "Final Concentration" << std::endl;
-      for (int i = 0; i < nx; ++i) {
-         std::cout << sys.cField(0)[i] << "  " << sys.cField(1)[i] << std::endl;
-      }
-      #endif
-
       std::ofstream out;
-      out.open("out/w");
+      openOutputFile("out/w", out);
       sys.writeFields(out, sys.wFields());
       out.close();
 
-      out.open("out/c");
+      openOutputFile("out/c", out);
+      sys.writeFields(out, sys.cFields());
+      out.close();
+
+   }
+
+   void testFieldInput()
+   {
+      printMethod(TEST_FUNC);
+
+      std::ifstream in;
+      openInputFile("in/System2", in);
+
+      System sys;
+      sys.readParam(in);
+      in.close();
+
+      std::cout << "\n";
+      // sys.writeParam(std::cout);
+
+      openInputFile("in/omega", in);
+      sys.readWFields(in);
+      in.close();
+
+      sys.iterator().solve();
+
+      std::ofstream out;
+      out.open("out/c2");
       sys.writeFields(out, sys.cFields());
       out.close();
 
@@ -152,6 +166,7 @@ TEST_ADD(SystemTest, testConstructor)
 TEST_ADD(SystemTest, testReadParameters)
 TEST_ADD(SystemTest, testSolveMDE)
 TEST_ADD(SystemTest, testIterator)
+TEST_ADD(SystemTest, testFieldInput)
 TEST_END(SystemTest)
 
 #endif

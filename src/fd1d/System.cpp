@@ -254,11 +254,11 @@ namespace Fd1d
       std::string label;
       int nx, nm;
       in >> label;
-      UTIL_CHECK (label != "nx");
+      UTIL_CHECK(label == "nx");
       in >> nx;
       UTIL_CHECK(nx == domain().nx());
       in >> label;
-      UTIL_CHECK (label != "nm");
+      UTIL_CHECK (label == "nm");
       in >> nm;
       UTIL_CHECK(nm == mixture().nMonomer());
 

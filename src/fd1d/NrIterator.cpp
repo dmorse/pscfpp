@@ -200,7 +200,6 @@ namespace Fd1d
       int nr = nm*nx;                   // number of residual components
       for (int ir = 0; ir <  nr; ++ir) {
          if (fabs(residual_[ir]) > epsilon_) {
-            std::cout << "Not converged" << std::endl;
             return false;
          }
       }
