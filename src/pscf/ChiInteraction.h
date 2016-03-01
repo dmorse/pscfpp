@@ -62,6 +62,14 @@ namespace Pscf {
       virtual 
       void computeC(Array<double> const & w, Array<double>& c);
 
+       /**
+       * Return one element of the chi matrix.
+       *
+       * \param i row index
+       * \param j column index
+       */
+       double chi(int i, int j);
+
    private:
 
       DMatrix<double> chi_;
@@ -69,6 +77,11 @@ namespace Pscf {
       DMatrix<double> chiInverse_;
 
    };
+
+   // Inline function
+
+   inline double ChiInteraction::chi(int i, int j)
+   {  return chi_(i, j); }
 
 } // namespace Pscf
 #endif

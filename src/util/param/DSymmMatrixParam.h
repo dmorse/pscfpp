@@ -221,7 +221,7 @@ namespace Util
                } else {
                   out << indent() << space;
                }
-               out << Int(i) << "  " << Int(j) << "  "
+               out << Int(i, 4) << " " << Int(j, 4) << " "
                    << std::right << std::scientific 
                    << std::setprecision(Parameter::Precision) 
                    << std::setw(Parameter::Width)
