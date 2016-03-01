@@ -10,6 +10,8 @@
 #include "Mixture.h"
 #include <pscf/Interaction.h>
 
+#include <math.h>
+
 namespace Pscf {
 namespace Fd1d
 {
@@ -116,7 +118,6 @@ namespace Fd1d
       int jc = 0;                  // jacobian column index
       for (i = 0; i < nm; ++i) {
          for (j = 0; j < nx; ++j) {
-            //std::cout << "Column " << jc << std::endl;
             wFieldsNew_[i][j] += delta;
             mixture().compute(wFieldsNew_, cFieldsNew_);
             computeResidual(wFieldsNew_, cFieldsNew_, residualNew_);
@@ -137,7 +138,7 @@ namespace Fd1d
 
    void NrIterator::update()
    {
-      std::cout << "Begin update .. ";
+      // std::cout << "Begin update .. ";
       computeJacobian();
 
       // Compute increment dOmega_
@@ -155,27 +156,50 @@ namespace Fd1d
             ++k;
          }
       }
+
+      #if 0
+      std::cout << "WFields" << std::endl;
+      for (j = 0; j < nx; ++j) {
+         std::cout << j << "  ";
+         for (i = 0; i < nm; ++i) {
+            std::cout << system().wField(i)[j] << "  ";
+         }
+         std::cout << std::endl;
+      }
+      #endif
+
       mixture().compute(system().wFields(), system().cFields());
       computeResidual(system().wFields(), system().cFields(), residual_);
 
+      #if 0
       std::cout << "CFields" << std::endl;
       for (j = 0; j < nx; ++j) {
+         std::cout << j << "  ";
          for (i = 0; i < nm; ++i) {
             std::cout << system().cField(i)[j] << "  ";
          }
          std::cout << std::endl;
       }
+      #endif
 
-      std::cout << "Finish update" << std::endl;
+      #if 0
+      std::cout << "Residuals" << std::endl;
+      int nr = nm*nx;
+      for (int ir = 0; ir <  nr; ++ir) {
+         std::cout << ir << "  " << residual_[ir] << std::endl;
+      }
+      #endif
+
+      //std::cout << "Finish update" << std::endl;
    }
 
    bool NrIterator::isConverged()
    {
       int nm = mixture().nMonomer();    // number of monomer types
       int nx = system().domain().nx();  // number of grid points
-      int nr = nm*nx;  // number of residual components
+      int nr = nm*nx;                   // number of residual components
       for (int ir = 0; ir <  nr; ++ir) {
-         if (abs(residual_[ir]) > epsilon_) {
+         if (fabs(residual_[ir]) > epsilon_) {
             std::cout << "Not converged" << std::endl;
             return false;
          }
@@ -204,7 +228,6 @@ namespace Fd1d
          }
       }
       return 1;
-
    }
 
 } // namespace Fd1d

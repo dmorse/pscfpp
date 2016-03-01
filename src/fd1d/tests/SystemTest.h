@@ -112,20 +112,28 @@ public:
       double nx = (double)domain.nx();
       double cs;
       for (int i = 0; i < nx; ++i) {
-         cs = cos(Constants::Pi*(double(i)+0.5)/nx);
-         sys.wField(0)[i] =  3.0*cs;
-         sys.wField(1)[i] = -3.0*cs;
+         cs = cos(2.0*Constants::Pi*(double(i)+0.5)/nx);
+         sys.wField(0)[i] = 4.0*0.5*(1.0 - cs) - 2.0;
+         sys.wField(1)[i] = 4.0*0.5*(1.0 + cs) - 2.0;
       }
       mix.compute(sys.wFields(), sys.cFields());
+
+      #if 0
+      std::cout << "Initial Concentration" << std::endl;
       for (int i = 0; i < nx; ++i) {
          std::cout << sys.cField(0)[i] << "  " << sys.cField(1)[i] << std::endl;
       }
+      #endif
 
       sys.iterator().solve();
 
+      std::cout << "Final Concentration" << std::endl;
       for (int i = 0; i < nx; ++i) {
          std::cout << sys.cField(0)[i] << "  " << sys.cField(1)[i] << std::endl;
       }
+      //for (int i = 0; i < nx; ++i) {
+      //   std::cout << sys.cField(0)[i] << "  " << sys.cField(1)[i] << std::endl;
+      //}
 
    }
 
