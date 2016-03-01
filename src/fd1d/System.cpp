@@ -143,6 +143,7 @@ namespace Fd1d
 
       // Initialize iterator
       iterator().setSystem(*this);
+      readParamComposite(in, iterator());
    }
 
    /*

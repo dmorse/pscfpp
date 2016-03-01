@@ -19,6 +19,7 @@ DEFINES=$(PSCF_DEFS) $(UTIL_DEFS)
 
 # Dependencies on build configuration files
 MAKE_DEPS= -A$(BLD_DIR)/config.mk
+MAKE_DEPS+= -A$(BLD_DIR)/util/config.mk
 MAKE_DEPS+= -A$(BLD_DIR)/pscf/config.mk
 
 # Pattern rule to compile *.cpp class source files in src/pscf

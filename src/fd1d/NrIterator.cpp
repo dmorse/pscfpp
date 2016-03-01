@@ -56,6 +56,7 @@ namespace Fd1d
             wFieldsNew_[i].allocate(nx);
             cFieldsNew_[i].allocate(nx);
          }
+         solver_.allocate(nr);
          isAllocated_ = true;
       }
    }
@@ -64,6 +65,7 @@ namespace Fd1d
                                     Array<CField> const & cFields, 
                                     Array<double>& residual)
    {
+      //std::cout << "Begin computeResidual .. ";
       int nm = mixture().nMonomer();   // number of monomer types
       int nx = system().domain().nx(); // number of grid points
       int i;                           // grid point index
@@ -87,10 +89,12 @@ namespace Fd1d
             residual[i] += cArray_[j];
          }
       }
+      //std::cout << "Finish computingRresidual" << std::endl;
    }
 
    void NrIterator::computeJacobian()
    {
+      // std::cout << "Begin computeJacobian ... ";
       int nm = mixture().nMonomer();   // number of monomer types
       int nx = system().domain().nx(); // number of grid points
       int i;                           // monomer index
@@ -98,7 +102,9 @@ namespace Fd1d
 
       // Copy system().wFields to wFieldsNew.
       for (i = 0; i < nm; ++i) {
-         for (j = 0; i < nx; ++j) {
+         for (j = 0; j < nx; ++j) {
+            UTIL_CHECK(nx == wFieldsNew_[i].capacity());
+            UTIL_CHECK(nx == system().wField(i).capacity());
             wFieldsNew_[i][j] = system().wField(i)[j];
          }
       }
@@ -110,6 +116,7 @@ namespace Fd1d
       int jc = 0;                  // jacobian column index
       for (i = 0; i < nm; ++i) {
          for (j = 0; j < nx; ++j) {
+            //std::cout << "Column " << jc << std::endl;
             wFieldsNew_[i][j] += delta;
             mixture().compute(wFieldsNew_, cFieldsNew_);
             computeResidual(wFieldsNew_, cFieldsNew_, residualNew_);
@@ -124,10 +131,13 @@ namespace Fd1d
 
       // Decompose Jacobian matrix
       solver_.computeLU(jacobian_);
+
+      // std::cout << "Finishing computeJacobian" << std::endl;
    }
 
    void NrIterator::update()
    {
+      std::cout << "Begin update .. ";
       computeJacobian();
 
       // Compute increment dOmega_
@@ -141,27 +151,37 @@ namespace Fd1d
       int k = 0;                       // residual element index
       for (i = 0; i < nm; ++i) {
          for (j = 0; j < nx; ++j) {
-            system().wField(i)[j] = dOmega_[k];
+            system().wField(i)[j] -= dOmega_[k];
             ++k;
          }
       }
       mixture().compute(system().wFields(), system().cFields());
       computeResidual(system().wFields(), system().cFields(), residual_);
+
+      std::cout << "CFields" << std::endl;
+      for (j = 0; j < nx; ++j) {
+         for (i = 0; i < nm; ++i) {
+            std::cout << system().cField(i)[j] << "  ";
+         }
+         std::cout << std::endl;
+      }
+
+      std::cout << "Finish update" << std::endl;
    }
 
    bool NrIterator::isConverged()
    {
-      bool criterion = true;
       int nm = mixture().nMonomer();    // number of monomer types
       int nx = system().domain().nx();  // number of grid points
       int nr = nm*nx;  // number of residual components
       for (int ir = 0; ir <  nr; ++ir) {
          if (abs(residual_[ir]) > epsilon_) {
-            criterion = false;
-            break;
+            std::cout << "Not converged" << std::endl;
+            return false;
          }
       }
-      return criterion;
+      std::cout << "Converged" << std::endl;
+      return true;
    }
 
    int NrIterator::solve()
@@ -174,7 +194,9 @@ namespace Fd1d
       computeResidual(system().wFields(), system().cFields(), residual_);
 
       // Iterative loop
+      
       for (int i = 0; i < 100; ++i) {
+         std::cout << "Begin iteration " << i << std::endl;
          if (isConverged()) {
             return 0;
          } else {

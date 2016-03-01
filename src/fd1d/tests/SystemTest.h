@@ -7,6 +7,7 @@
 #include <fd1d/System.h>
 #include <fd1d/Mixture.h>
 #include <fd1d/Domain.h>
+#include <fd1d/Iterator.h>
 
 #include <fstream>
 
@@ -46,7 +47,9 @@ public:
       sys.writeParam(std::cout);
    }
 
-   void testSolve()
+
+
+   void testSolveMDE()
    {
       printMethod(TEST_FUNC);
 
@@ -88,14 +91,51 @@ public:
       sum1 = sum1/double(nx);
       std::cout << "Volume fraction of block 0 = " << sum0 << "\n";
       std::cout << "Volume fraction of block 1 = " << sum1 << "\n";
-      
    }
+
+   void testResidual()
+   {
+      printMethod(TEST_FUNC);
+
+      std::ifstream in;
+      openInputFile("in/System", in);
+
+      System sys;
+      sys.readParam(in);
+
+      std::cout << "\n";
+      sys.writeParam(std::cout);
+
+      Mixture& mix = sys.mixture();
+      Domain& domain = sys.domain();
+
+      double nx = (double)domain.nx();
+      double cs;
+      for (int i = 0; i < nx; ++i) {
+         cs = cos(Constants::Pi*(double(i)+0.5)/nx);
+         sys.wField(0)[i] =  3.0*cs;
+         sys.wField(1)[i] = -3.0*cs;
+      }
+      mix.compute(sys.wFields(), sys.cFields());
+      for (int i = 0; i < nx; ++i) {
+         std::cout << sys.cField(0)[i] << "  " << sys.cField(1)[i] << std::endl;
+      }
+
+      sys.iterator().solve();
+
+      for (int i = 0; i < nx; ++i) {
+         std::cout << sys.cField(0)[i] << "  " << sys.cField(1)[i] << std::endl;
+      }
+
+   }
+
 };
 
 TEST_BEGIN(SystemTest)
 TEST_ADD(SystemTest, testConstructor)
 TEST_ADD(SystemTest, testReadParameters)
-TEST_ADD(SystemTest, testSolve)
+TEST_ADD(SystemTest, testSolveMDE)
+TEST_ADD(SystemTest, testResidual)
 TEST_END(SystemTest)
 
 #endif
