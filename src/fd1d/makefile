@@ -17,9 +17,13 @@ include $(SRC_DIR)/pscf/sources.mk
 include $(SRC_DIR)/fd1d/sources.mk
 
 #-----------------------------------------------------------------------
+# Variable definition
+
+PSCF_FD=$(BLD_DIR)/fd1d/pscf_fd
+#-----------------------------------------------------------------------
 # Main targets 
 
-all: $(fd1d_OBJS) $(fd1d_LIB)
+all: $(fd1d_OBJS) $(fd1d_LIB) $(PSCF_FD_EXE)
 
 clean:
 	rm -f $(fd1d_OBJS) $(fd1d_OBJS:.o=.d) $(fd1d_LIB)
@@ -31,7 +35,18 @@ veryclean:
 	-rm -f *.d 
 	-rm -f lib*.a
 
+
+# Executable target
+
+$(PSCF_FD_EXE): $(PSCF_FD).o $(LIBS)
+	$(CXX) $(LDFLAGS) -o $(PSCF_FD_EXE) $(PSCF_FD).o $(LIBS) $(PSCF_GSL_LIB)
+
+# Short name for executable target (for convenience)
+pscf_fd:
+	$(MAKE) $(PSCF_FD_EXE)
+
 #-----------------------------------------------------------------------
 # Include dependency files
 
 -include $(fd1d_OBJS:.o=.d)
+-include $(PSCF_FD).d 
