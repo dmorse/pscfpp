@@ -279,6 +279,12 @@ namespace Fd1d
             in >> wFields_[j][i];
          }
       }
+      double shift = wFields_[nm - 1][nx-1];
+      for (i = 0; i < nx; ++i) {
+         for (j = 0; j < nm; ++j) {
+            wFields_[j][i] -= shift;
+         }
+      }
 
    }
 

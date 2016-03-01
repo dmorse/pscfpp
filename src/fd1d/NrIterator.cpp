@@ -91,6 +91,10 @@ namespace Fd1d
             residual[i] += cArray_[j];
          }
       }
+
+      // Use last incompressibility residual to set last field point
+      residual[nx-1] = wFields[nm-1][nx-1];
+
       //std::cout << "Finish computingRresidual" << std::endl;
    }
 

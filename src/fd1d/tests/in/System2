@@ -24,7 +24,7 @@ System{
      nx   101
   }
   NrIterator{
-     epsilon   0.00001
+     epsilon   0.000000001
   }
 }
 
