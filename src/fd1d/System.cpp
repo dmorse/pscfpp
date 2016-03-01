@@ -189,9 +189,9 @@ namespace Fd1d
    */
    void System::readCommands(std::istream &in)
    {
-      // if (!isInitialized_) {
+      //if (!isInitialized_) {
       //    UTIL_THROW("McSimulation is not initialized");
-      // }
+      //}
 
       std::string command;
       std::string filename;
@@ -224,7 +224,15 @@ namespace Fd1d
             writeFields(outputFile, wFields_);
             outputFile.close();
          } else
+         if (command == "WRITE_CFIELDS") {
+            inBuffer >> filename;
+            Log::file() << Str(filename, 15) << std::endl;
+            fileMaster().openOutputFile(filename, outputFile);
+            writeFields(outputFile, cFields_);
+            outputFile.close();
+         } else
          if (command == "ITERATE") {
+            Log::file() << std::endl;
             iterator().solve();
          } else 
          {

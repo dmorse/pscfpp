@@ -159,6 +159,23 @@ public:
 
    }
 
+   void testReadCommands()
+   {
+      printMethod(TEST_FUNC);
+
+      System sys;
+      std::ifstream in;
+
+      openInputFile("in/System2", in);
+      sys.readParam(in);
+      in.close();
+
+      std::cout << "\n";
+      openInputFile("in/command", in);
+      sys.readCommands(in);
+      in.close();
+   }
+
 };
 
 TEST_BEGIN(SystemTest)
@@ -167,6 +184,7 @@ TEST_ADD(SystemTest, testReadParameters)
 TEST_ADD(SystemTest, testSolveMDE)
 TEST_ADD(SystemTest, testIterator)
 TEST_ADD(SystemTest, testFieldInput)
+TEST_ADD(SystemTest, testReadCommands)
 TEST_END(SystemTest)
 
 #endif
