@@ -51,8 +51,20 @@ cp src/util/config.mk_r src/util/config.mk
 cp src/fd1d/config.mk_r src/fd1d/config.mk
 
 # ---------------------------------------------------------------------
-# Create copies of the configure script.
+# Copy files for out-of-source builds
 
-#cp src/configure bld/serial/configure
-#cp src/configure bld/parallel/configure
+BLD="bld"
+sed -e "s|=PWD|=$PWD|" -e "s|=OWD|$BLD|" src/config.mk_r > $BLD/config.mk
+cp src/makefile $BLD/makefile
+cp src/util/makefile $BLD/util/makefile
+cp src/pscf/makefile $BLD/pscf/makefile
+cp src/fd1d/makefile $BLD/fd1d/makefile
+cp src/util/tests/makefile $BLD/util/tests/makefile
+cp src/pscf/tests/makefile $BLD/pscf/tests/makefile
+cp src/fd1d/tests/makefile $BLD/fd1d/tests/makefile
+cp src/util/config.mk $BLD/util/config.mk
+cp src/util/config.mk $BLD/util/config.mk
+cp src/pscf/config.mk $BLD/pscf/config.mk
+cp src/fd1d/config.mk $BLD/fd1d/config.mk
+cp src/configure $BLD/configure
 

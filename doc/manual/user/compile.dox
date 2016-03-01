@@ -3,13 +3,17 @@
 \ref user_usage_page (Next) 
 <BR>
 
-PSCF is distributed only as source code, and must be compiled by the user. All source code is written in ANSI standard C++. By default, all code follows the ANSI 1998 C++98 standard, though it is possible to compile a version that uses a few features from C+11. The package has been developed and tested using the gcc and intel compilers in a linux environment, and with the gcc compiler in Mac OS X.  It should compile with any modern, standard compliant C++ compiler.   
+The C++ version of PSCF is distributed only as source code, and must be compiled by the user. All source code is written in ANSI standard C++. By default, all code follows the ANSI 1998 C++98 standard, though it is possible to compile a version that uses a few features from C+11. 
+
+The current version of PSCF, which provides only a one-dimensional finite element implementation, this code depends upon the Gnu Scientific Library (GSL). This library must be installed before compiling PSCF. When complete, the pseudo-spectral implementation of the code may also require the FFTW Fast Fourier Transform library, but this is not needed yet.
+
+The package has been developed and tested using the gcc and intel compilers in a linux environment, and with the gcc compiler in Mac OS X.  It should compile with any modern, standard compliant C++ compiler.   
 
 The build system uses unix makefiles, and is thus designed to work only in unix-like environments (i.e., gnu/linux or Mac OS X). It was developed using the gnu version of make (gmake), which is the default on all modern linux distributions and on Mac OS.
 
 \section compile_getcode_section Getting the source code
 
-The source code for PSCF is hosted on <a href=http://github.com>github</a>, as project morse012/pscfpp.  The source code may be obtained either by: (1) using a git client to clone the public <a href=https://github.umn.edu/morse012/pscfpp>git repository</a>, or (2) downloading a compressed tar file.  We recommend using a git client to obtain a working copy of the source code, since this makes it easier to update the code to obtain bug fixes and new features.
+The source code for PSCF is hosted on <a href=http://umn.github.com>github</a>, as project morse012/pscfpp.  The source code may be obtained either by: (1) using a git client to clone the public <a href=https://github.umn.edu/morse012/pscfpp>git repository</a>, or (2) downloading a compressed tar file.  We recommend using a git client to obtain a working copy of the source code, since this makes it easier to update the code to obtain bug fixes and new features.
 
 Using Git: Before attempting to use git to clone the source code, first check whether the "git" executable is installed on your machine, by entering "> which git". If this does not return a valid path, you need install git. To obtain a read-only clone of the git repository, via the read-only "git" communication protocol, you should cd to the directory you want to contain the pscfpp root directory, and enter:
 
@@ -26,11 +30,21 @@ from this directory, where "filename" denotes the name of the gzipped tar file. 
 
 Herefafter, we assume that the root project directory is named pscfpp/.  References to paths that do not start explicitly with a prefix "pscfpp/" should be understood to be relative paths, relative to this directory. The directory structure is explained \ref source_directory_page "here".
 
-\section compile_short_section Short instructions
+\section compile_dependencies Installing dependencies
+
+Before attempting to compile PSCF, you should install the Gnu Scientific Library (GSL). The code will eventually also require FFTW, but this is not yet needed. It is possible to install either package either by compiling from source or (preferably) by using the appropriate packgage manager for your system.
+
+If you are using a unix system, the most maintainable method is to use the appropriate package manager for your linux distribution (e.g., for Ubuntu or Fedora) to install the gsl library and (later) the fftw library.
+
+If you are using a OS X mac, we recommend installing the MacPort system to maintain ports of systems that were originally designed for unix, and then using this to install GSL.
+
+If you would like to compile GSL or FFTW from source, go to the project web page, download the appropriate tar file and follow instructions given with the package. 
+
+\section compile_short_section Compiling - Short instructions
 
 Here is a brief summary of instructions for compiling all of the PSCF programs:
 
-   - Add pscfpp/bin to the users PATH, and add pscfpp/scripts/python to PYTHONPATH (as discussed \ref compile_environment_section "here").
+   - Add the pscfpp/bin directory to the users PATH, and add the pscfpp/scripts/python to PYTHONPATH (as discussed \ref compile_environment_section "here").
 
    - cd pscfpp/ (i.e., cd to the pscfpp root directory)
 
@@ -38,15 +52,15 @@ Here is a brief summary of instructions for compiling all of the PSCF programs:
 
    - make all
 
-Each of the above steps is discussed in more detail below. 
+Each of the above steps is discussed in more detail below.  The "setup" script must be run from the pscfpp/ root directory, and (if all goes well) should correctly identify the appropriate paths to the GSL header and library files.
 
 \section compile_environment_section Setting environment variables
 
 Before compiling any code, you should:
 
-  - Add pscfpp/bin to the PATH shell environment variable (the shell command search path)
+  - Add the absolute path to the pscfpp/bin directory to the PATH shell environment variable (the shell command search path)
 
-  - Add pscfpp/scripts/python to the PYTHONPATH environment variable (the python module search path)
+  - Add the pscfpp/scripts/python directory to the PYTHONPATH environment variable (the python module search path)
 
 To do this, if you are using a bash shell, you must add some variant of the following lines to your the .profile or .bash_profile file in your user home directory:
 \code
@@ -60,17 +74,25 @@ Explanation: The pscfpp/bin directory is the default location for installing exe
 
 \section compile_setup_section Initial setup
 
-Before compiling any code, you must run a bash script named "setup". This script is located in the pscfpp/ root directory, and must be executed from this directory. After setting your working directory to the pscfpp/ root directory, enter:
+After installing GSL, and before compiling any code, you must run a bash script named "setup". This script is located in the pscfpp/ root directory, and must be executed from this directory. 
+
+The setup script uses a program named "gsl-config" to locate paths for header and library files needed by the Gnu Scientific Library. This program should have been installed when GSL was installed. To check that this program exists and is in the command path, try entering
+\code
+> which gsl-config
+\endcode
+if this returns a valid path to a file named gsl-config, such as "/usr/bin/gsl-config", then all is well and you may continue. If not, you have not installed GSL, or something is wrong with the installation.
+
+After confirming that gsl-config exists, then change your working directory (cd'ing) to the pscfpp/ root directory, and enter:
 \code
 > ./setup
 \endcode
-Explanation: The setup script creates several configuration files that are required for compilation. These are all files that users may need to modify in order to customize or extend the program, and that are thus not stored in the git repository. The script works by making copies of default file versions that are stored in the repository under slightly different file names. The setup script should only need to be invoked once, before the first time you compile.
+Explanation: The setup script creates several configuration files that are required for compilation. These are all files that users may need to modify in order to customize or extend the program, and that are thus not stored in the git repository. The script works by making copies of default file versions that are stored in the repository under slightly different file names. The setup script should only need to be invoked once, before the first time you compile. Because it creates files that contain absolute paths, you would also need to run it again if you move the pscfpp/ directory.
 
 \section compile_inoutsource_section Building "out-of-source" vs. "in-source"
 
 The pscfpp makefile system can build the package either "out-of-source" or "in-source". When the package is built "in-source", object files, static library files and other non-executable files that are generated during compilation are placed in the src/ directory tree, alongside the corresponding C++ source files. When it is built "out-of-source", these generated files are placed in a separate "build" directory tree, outside the source tree. In either case, the executable files for all programs are installed in the pscfpp/bin directory. We recommend that most users build the package out of source. 
 
-To perform a standard "out-of-source" build of any pscfpp program, simply invoke "make" with an appropriate target ("mcMd", "ddMd" or "mcMd-mpi") from the pscfpp/ root directory, as described in the above short instructions. The main makefile in the root directory will automatically build out-of-source.
+To perform a standard "out-of-source" build of any pscfpp program, simply invoke "make all" from the pscfpp/ root directory, as described in the above short instructions. The main makefile in the root directory will automatically build out-of-source.
 
 To peform an in-source build of any program, one must instead invoke "make" with an appropriate target from the pscfpp/src/ directory, rather than from the pscfpp/ root directory. In addition, invoking the command "make all" from almost any subdirectory of the src/ directory tree will also compile all C++ files in the tree rooted at that directory. Developers often find it convenient to compile in-source when working on new code. 
  

@@ -43,10 +43,10 @@ veryclean:
 # =========================================================================
 # HTML Documentation
  
-#html:
-#	cd doc; $(MAKE) html
+html:
+	cd doc; $(MAKE) html
 
-#clean-html:
-#	cd doc; $(MAKE) clean
+clean-html:
+	cd doc; $(MAKE) clean
 
 # ==========================================================================
