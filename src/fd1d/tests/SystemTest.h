@@ -93,7 +93,7 @@ public:
       std::cout << "Volume fraction of block 1 = " << sum1 << "\n";
    }
 
-   void testResidual()
+   void testIterator()
    {
       printMethod(TEST_FUNC);
 
@@ -127,13 +127,21 @@ public:
 
       sys.iterator().solve();
 
+      #if 0
       std::cout << "Final Concentration" << std::endl;
       for (int i = 0; i < nx; ++i) {
          std::cout << sys.cField(0)[i] << "  " << sys.cField(1)[i] << std::endl;
       }
-      //for (int i = 0; i < nx; ++i) {
-      //   std::cout << sys.cField(0)[i] << "  " << sys.cField(1)[i] << std::endl;
-      //}
+      #endif
+
+      std::ofstream out;
+      out.open("out/w");
+      sys.writeFields(out, sys.wFields());
+      out.close();
+
+      out.open("out/c");
+      sys.writeFields(out, sys.cFields());
+      out.close();
 
    }
 
@@ -143,7 +151,7 @@ TEST_BEGIN(SystemTest)
 TEST_ADD(SystemTest, testConstructor)
 TEST_ADD(SystemTest, testReadParameters)
 TEST_ADD(SystemTest, testSolveMDE)
-TEST_ADD(SystemTest, testResidual)
+TEST_ADD(SystemTest, testIterator)
 TEST_END(SystemTest)
 
 #endif

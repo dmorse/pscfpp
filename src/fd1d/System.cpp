@@ -10,7 +10,8 @@
 #include <pscf/Interaction.h>
 #include <pscf/ChiInteraction.h>
 #include <util/format/Str.h>
-#include <util/format/Str.h>
+#include <util/format/Int.h>
+#include <util/format/Dbl.h>
 #ifdef PSCF_GSL
 #include "NrIterator.h"
 #endif
@@ -170,7 +171,6 @@ namespace Fd1d
       // Preconditions
       UTIL_CHECK(hasMixture_);
       UTIL_CHECK(hasDomain_);
-      UTIL_CHECK(!hasFields_);
 
       mixture().setDomain(domain());
       int nMonomer = mixture().nMonomer();
@@ -217,6 +217,13 @@ namespace Fd1d
             readWFields(inputFile);
             inputFile.close();
          } else
+         if (command == "WRITE_WFIELDS") {
+            inBuffer >> filename;
+            Log::file() << Str(filename, 15) << std::endl;
+            fileMaster().openOutputFile(filename, outputFile);
+            writeFields(outputFile, wFields_);
+            outputFile.close();
+         } else
          if (command == "ITERATE") {
             iterator().solve();
          } else 
@@ -241,42 +248,48 @@ namespace Fd1d
 
    void System::readWFields(std::istream &in)
    {
+      UTIL_CHECK(hasDomain_);
 
-      // Read domain and spatial grid parameters:
+      // Read grid dimensions
       std::string label;
-      double xMin, xMax;
-      int nx;
-      in >> label;
-      UTIL_CHECK (label != "xMin");
-      in >> xMin;
-      in >> label;
-      UTIL_CHECK (label != "xMax");
-      in >> xMax;
+      int nx, nm;
       in >> label;
       UTIL_CHECK (label != "nx");
       in >> nx;
-      if (!hasDomain_) {
-         domain().setParameters(xMin, xMax, nx);
-         allocateFields();
-      } else {
-         UTIL_CHECK(nx == domain().nx());
-      }
+      UTIL_CHECK(nx == domain().nx());
+      in >> label;
+      UTIL_CHECK (label != "nm");
+      in >> nm;
+      UTIL_CHECK(nm == mixture().nMonomer());
 
       // Read fields
       int i,j, idum;
-      int nMonomer = mixture().nMonomer();
       for (i = 0; i < nx; ++i) {
          in >> idum;
          UTIL_CHECK(idum == i);
-         for (j = 0; j < nMonomer; ++j) {
-            in >> wFields_[i][j];
+         for (j = 0; j < nm; ++j) {
+            in >> wFields_[j][i];
          }
       }
 
    }
 
-   void System::writeWFields(std::ostream &out)
+   void System::writeFields(std::ostream &out, Array<Field> const &  fields)
    {
+      int i, j;
+      int nx = domain().nx();
+      int nm = mixture().nMonomer();
+      out << "nx     "  <<  nx              << std::endl;
+      out << "nm     "  <<  nm              << std::endl;
+
+      // Write fields
+      for (i = 0; i < nx; ++i) {
+         out << Int(i, 5);
+         for (j = 0; j < nm; ++j) {
+            out << "  " << Dbl(fields[j][i]);
+         }
+         out << std::endl;
+      }
    }
 
 } // namespace Fd1d

@@ -13,6 +13,7 @@
 #include "Domain.h"                        // member
 #include <util/misc/FileMaster.h>          // member
 #include <util/containers/DArray.h>        // member template
+#include <util/containers/Array.h>         // function parameter
 
 namespace Pscf {
 
@@ -33,6 +34,9 @@ namespace Fd1d
    {
 
    public:
+
+      /// Base class for WField and CField
+      typedef DArray<double> Field;
 
       /// Monomer chemical potential field type.
       typedef Propagator::WField WField;
@@ -129,11 +133,12 @@ namespace Fd1d
       void readWFields(std::istream& in);
 
       /**
-      * Write the current chemical potential fields to file.
+      * Write concentration or chemical potential fields to file.
       *
       * \param out output stream (i.e., output file)
+      * \param fields array of fields for different species
       */
-      void writeWFields(std::ostream& out);
+      void writeFields(std::ostream& out, Array<Field> const & fields);
 
       //@}
       /// \name Accessors (get objects by reference)
