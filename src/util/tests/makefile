@@ -33,8 +33,8 @@ ifeq ($(BLD_DIR),$(SRC_DIR))
 	cd space; $(MAKE) clean
 	rm -f */*.o */*/*.o 
 	rm -f */*.d */*/*.d
-else
-	cd $(SRC_DIR)/util/tests; $(MAKE) clean-outputs
+#else
+#	cd $(SRC_DIR)/util/tests; $(MAKE) clean-outputs
 endif
 
 ifeq ($(BLD_DIR),$(SRC_DIR))

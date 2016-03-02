@@ -27,5 +27,15 @@ veryclean:
 	rm -f pscf/config.mk
 	rm -f fd1d/config.mk
 	rm -f config.mk
+ifneq ($(BLD_DIR),$(SRC_DIR))
+	rm -f util/makefile
+	rm -f pscf/makefile
+	rm -f fd1d/makefile
+	rm -f util/tests/makefile
+	rm -f pscf/tests/makefile
+	rm -f fd1d/tests/makefile
+	rm -f makefile
+	rm -f configure
+endif
 
 # ======================================================================
