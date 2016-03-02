@@ -1,7 +1,7 @@
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
-* Copyright 2013, David Morse (morse012@.umn.edu)
+* Copyright 2016, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.
 */
 
@@ -76,7 +76,6 @@ namespace Fd1d
    */
    void Propagator::solve()
    {
-      //block().setupSolver(w);
       computeHead();
       for (int iStep = 0; iStep < ns_ - 1; ++iStep) {
          block().step(qFields_[iStep], qFields_[iStep + 1]);
@@ -89,14 +88,13 @@ namespace Fd1d
    */
    void Propagator::solve(const Propagator::QField& head) 
    {
-      // Initialize head QField
+      // Initialize initial (head) field
       QField& qh = qFields_[0];
       for (int i = 0; i < nx_; ++i) {
          qh[i] = head[i];
       }
 
       // Setup solver and solve
-      // block().setupSolver(w);
       for (int iStep = 0; iStep < ns_ - 1; ++iStep) {
          block().step(qFields_[iStep], qFields_[iStep + 1]);
       }

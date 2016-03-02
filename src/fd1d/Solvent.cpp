@@ -1,7 +1,7 @@
 /*
 * PFTS - Solvent Field Theory Simulator
 *
-* Copyright 2013, David Morse (morse012@.umn.edu)
+* Copyright 2016, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.
 */
 

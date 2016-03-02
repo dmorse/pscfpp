@@ -6,7 +6,8 @@ fd1d_= \
   fd1d/Solvent.cpp \
   fd1d/Mixture.cpp \
   fd1d/Iterator.cpp \
-  fd1d/System.cpp 
+  fd1d/System.cpp \
+  fd1d/GeometryMode.cpp \
 
 ifdef PSCF_GSL
 fd1d_+= fd1d/NrIterator.cpp

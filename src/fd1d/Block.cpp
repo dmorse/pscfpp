@@ -1,7 +1,7 @@
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
-* Copyright 2013, David Morse (morse012@.umn.edu)
+* Copyright 2016, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.
 */
 
@@ -20,7 +20,8 @@ namespace Fd1d
    Block::Block()
     : domainPtr_(0),
       ds_(0.0),
-      ns_(0)
+      ns_(0),
+      geometryModePtr_(0)
    {
       propagator(0).setBlock(*this);
       propagator(1).setBlock(*this);
@@ -56,6 +57,11 @@ namespace Fd1d
       propagator(0).allocate(ns_, domain.nx());
       propagator(1).allocate(ns_, domain.nx());
       cField().allocate(domain.nx());
+   }
+
+   void Block::setGeometryMode(GeometryMode const & mode)
+   {
+      geometryModePtr_ = & mode;  
    }
 
    /*

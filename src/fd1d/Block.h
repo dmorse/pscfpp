@@ -4,12 +4,13 @@
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
-* Copyright 2013, David Morse (morse012@.umn.edu)
+* Copyright 2016, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.
 */
 
 #include <pscf/BlockTmpl.h>            // base class template
 #include "Propagator.h"                // base class argument
+#include "GeometryMode.h"              // argument (enum)
 #include <pscf/TridiagonalSolver.h>    // member
 
 namespace Pscf { 
@@ -29,7 +30,14 @@ namespace Fd1d
 
    public:
 
+      /**
+      * Monomer chemical potential field.
+      */
       typedef Propagator::WField WField;
+
+      /**
+      * Constrained partition function q(r,s) for fixed s.
+      */
       typedef Propagator::QField QField;
 
       // Member functions
@@ -51,6 +59,11 @@ namespace Fd1d
       * \param ds desired (optimal) value for contour length step
       */
       void setDiscretization(Domain const & domain, double ds);
+
+      /**
+      * Set pointer to GeometryMode flag.
+      */
+      void setGeometryMode(GeometryMode const & mode);
 
       /**
       * Set Crank-Nicholson solver for this block.
@@ -76,6 +89,11 @@ namespace Fd1d
       */
       void step(QField const & q, QField& qNew);
  
+      /**
+      * Get GeometryMode flag.
+      */
+      GeometryMode const & geometryMode();
+
    private:
  
       // Solver used in Crank-Nicholson algorithm
@@ -116,6 +134,9 @@ namespace Fd1d
       /// Number of spatial grid points.
       int nx_;
 
+      /// Pointer to geometry mode (planar, cylindrical or spherical)
+      GeometryMode const * geometryModePtr_;
+
       /// Return associated domain by reference.
       Domain const & domain() const;
 
@@ -123,10 +144,18 @@ namespace Fd1d
 
    // Inline member functions
 
+   /// Get Domain by reference.
    inline Domain const & Block::domain() const
    {   
       UTIL_ASSERT(domainPtr_);
       return *domainPtr_;
+   }
+
+   /// Get GeometryMode flag by const reference.
+   inline GeometryMode const & Block::geometryMode()
+   {  
+      UTIL_ASSERT(geometryPtr_);
+      return *geometryModePtr_; 
    }
 
 } 
