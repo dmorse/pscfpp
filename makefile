@@ -7,7 +7,7 @@ include src/config.mk
 # Main build targets
 
 all:
-	cd src; $(MAKE) all
+	cd bld; $(MAKE) all
 
 # ==========================================================================
 # Test targets
@@ -33,12 +33,13 @@ clean-tests:
 
 clean-bin:
 	-rm -f $(BIN_DIR)/makeDep
-	-rm -f $(BIN_DIR)/pft*
+	-rm -f $(BIN_DIR)/pscf*
  
 veryclean:
 	make clean-bin
+	cd bld; $(MAKE) veryclean
 	cd src; $(MAKE) veryclean
-#	cd doc; $(MAKE) clean
+	cd doc; $(MAKE) clean
 
 # =========================================================================
 # HTML Documentation
