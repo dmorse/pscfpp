@@ -165,12 +165,18 @@ public:
 
       System sys;
       std::ifstream in;
+      std::cout << "\n";
 
       openInputFile("in/System2", in);
       sys.readParam(in);
       in.close();
 
-      std::cout << "\n";
+      // Set System filemaster prefixes to unit test file prefix
+      std::cout << "Test file prefix = |" 
+                << filePrefix() << "|" << std::endl;
+      sys.fileMaster().setInputPrefix(filePrefix());
+      sys.fileMaster().setOutputPrefix(filePrefix());
+
       openInputFile("in/command", in);
       sys.readCommands(in);
       in.close();

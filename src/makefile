@@ -1,3 +1,5 @@
+include config.mk
+
 # ======================================================================
 .PHONY: all clean veryclean
 
@@ -5,6 +7,19 @@ all:
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
 	cd fd1d; $(MAKE) all
+
+# Run all unit tests
+run-tests:
+	cd util/tests; $(MAKE) all; $(MAKE) run
+	cd pscf/tests; $(MAKE) all; $(MAKE) run
+	cd fd1d/tests; $(MAKE) all; $(MAKE) run
+	@cat util/tests/count > count
+	@cat pscf/tests/count >> count
+	@cat fd1d/tests/count >> count
+	@echo " "
+	@echo "Summary"
+	@cat count
+	@rm -f count
 
 # Remove object (*.o), dependency (*.d) and library (*.a) files
 clean:
@@ -26,7 +41,6 @@ veryclean:
 	rm -f util/config.mk
 	rm -f pscf/config.mk
 	rm -f fd1d/config.mk
-	rm -f config.mk
 ifneq ($(BLD_DIR),$(SRC_DIR))
 	rm -f util/makefile
 	rm -f pscf/makefile
@@ -34,8 +48,8 @@ ifneq ($(BLD_DIR),$(SRC_DIR))
 	rm -f util/tests/makefile
 	rm -f pscf/tests/makefile
 	rm -f fd1d/tests/makefile
-	rm -f makefile
 	rm -f configure
 endif
+	rm -f config.mk
 
 # ======================================================================

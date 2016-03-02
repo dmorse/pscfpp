@@ -198,8 +198,17 @@ namespace Util
    FileMaster::open(const std::string& name, std::ifstream& in,
                     std::ios_base::openmode mode) const
    {
-      in.open(name.c_str(), mode);
+      bool error = false;
+      try {
+         in.open(name.c_str(), mode);
+      } 
+      catch (std::ifstream::failure e) {
+         error = true;
+      }
       if (in.fail()) {
+         error = true;
+      }
+      if (error) {
          std::string message = "Error opening input file. Filename: ";
          message += name;
          UTIL_THROW(message.c_str());
@@ -213,8 +222,16 @@ namespace Util
    FileMaster::open(const std::string& name, std::ofstream& out,
                     std::ios_base::openmode mode) const
    {
-      out.open(name.c_str(), mode);
+      bool error = false;
+      try {
+         out.open(name.c_str(), mode);
+      } catch (std::ofstream::failure e) {
+         error = true;
+      }
       if (out.fail()) {
+         error = true;
+      }
+      if (error) {
          std::string message = "Error opening output file. Filename: ";
          message += name;
          UTIL_THROW(message.c_str());

@@ -1,5 +1,5 @@
 /*
-* This program runs all unit tests in the chem/tests directory.
+* This program runs all unit tests in the fd1d/tests directory.
 */ 
 
 #include <util/global.h>
@@ -19,6 +19,6 @@ int main(int argc, char* argv[])
    }
    if (argc == 2) {
       runner.addFilePrefix(argv[1]);
-    }
+   }
    runner.run();
 }

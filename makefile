@@ -14,7 +14,8 @@ all:
 
 test:
 	@cd src/util/tests; $(MAKE) all; $(MAKE) run
-	@cd src/chem/tests; $(MAKE) all; $(MAKE) run
+	@cd src/pscf/tests; $(MAKE) all; $(MAKE) run
+	@cd src/fd1d/tests; $(MAKE) all; $(MAKE) run
 	@cat src/util/tests/count >> count
 	@cat src/chem/tests/count >> count
 	@echo " "
@@ -26,6 +27,7 @@ test:
 # Clean targets
 
 clean:
+	cd bld; $(MAKE) clean
 	cd src; $(MAKE) clean
 
 clean-tests:
@@ -38,6 +40,7 @@ clean-bin:
 veryclean:
 	make clean-bin
 	cd bld; $(MAKE) veryclean
+	rm bld/makefile
 	cd src; $(MAKE) veryclean
 	cd doc; $(MAKE) clean
 
