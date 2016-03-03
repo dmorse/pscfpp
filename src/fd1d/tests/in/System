@@ -22,6 +22,7 @@ System{
      xMin 0.0
      xMax 4.0
      nx   33
+     geometryMode Cylindrical
   }
   NrIterator{
      epsilon   0.00001

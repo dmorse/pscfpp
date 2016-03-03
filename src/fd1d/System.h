@@ -173,19 +173,19 @@ namespace Fd1d
 
    private:
 
-      // Mixture object (solves MDE for all species).
+      /// Mixture object (solves MDE for all species).
       Mixture mixture_;
 
-      // Spatial discretization.
+      /// Spatial domain and grid definition
       Domain domain_;
 
-      // Filemaster (holds paths to associated I/O files)
+      /// Filemaster (holds paths to associated I/O files)
       FileMaster fileMaster_;
 
-      // Interaction (excess free energy model)
+      /// Interaction (excess free energy model)
       Interaction* interactionPtr_;
 
-      // Pointer to associated iterator.
+      /// Pointer to associated iterator.
       Iterator* iteratorPtr_;
 
       /**

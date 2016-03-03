@@ -154,7 +154,7 @@ namespace Fd1d
    /// Get GeometryMode flag by const reference.
    inline GeometryMode const & Block::geometryMode()
    {  
-      UTIL_ASSERT(geometryPtr_);
+      UTIL_ASSERT(geometryModePtr_);
       return *geometryModePtr_; 
    }
 

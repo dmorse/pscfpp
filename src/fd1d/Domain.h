@@ -8,7 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/param/ParamComposite.h>
+#include <util/param/ParamComposite.h>     // base class
+#include "GeometryMode.h"                  // member
 
 namespace Pscf {
 namespace Fd1d
@@ -66,19 +67,37 @@ namespace Fd1d
       */
       int nx() const;
 
+      /**
+      * Get coordinate system flag (Planar, Cylindrical or Spherical).
+      */
+      GeometryMode const & geometryMode() const;
+
    private:
 
-      // Lower bound of spatial coordinate
+      /**
+      * Lower bound of spatial coordinate.
+      */
       double xMin_;
 
-      // Upper bound of spatial coordinate
+      /**
+      * Upper bound of spatial coordinate.
+      */
       double xMax_;
 
-      // Spatial discretization step.
+      /**
+      * Spatial discretization step.
+      */
       double dx_;
 
-      // Number of grid points.
+      /**
+      * Number of grid points.
+      */
       int nx_;
+
+      /**
+      * Coordinate system flag (=Planar, Cylindrical, or Spherical).
+      */
+      GeometryMode geometryMode_;
 
    };
 
@@ -95,6 +114,9 @@ namespace Fd1d
 
    inline double Domain::xMax() const
    {  return xMax_; }
+
+   inline GeometryMode const & Domain::geometryMode() const
+   {  return geometryMode_; }
 
 } // namespace Fd1d
 } // namespace Pscf

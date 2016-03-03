@@ -12,6 +12,11 @@ namespace Fd1d
 { 
 
    Domain::Domain()
+    : xMin_(0.0),
+      xMax_(0.0),
+      dx_(0.0),
+      nx_(0),
+      geometryMode_(Planar)
    {  setClassName("Domain"); }
 
    Domain::~Domain()
@@ -31,6 +36,8 @@ namespace Fd1d
       read(in, "xMax", xMax_);
       read(in, "nx", nx_);
       dx_ = (xMax_ - xMin_)/double(nx_ - 1);
+
+      readOptional(in, "geometryMode", geometryMode_);
    }
 
 }

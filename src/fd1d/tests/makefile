@@ -24,7 +24,7 @@ clean:
 	rm -f $(BLD_DIR)/$(TEST) $(BLD_DIR)/$(TEST).d
 	rm -f log count 
 ifeq ($(BLD_DIR),$(SRC_DIR))
-	rm out/*
+	rm -f out/*
 endif
 
 -include $(fd1d_tests_OBJS:.o=.d)
