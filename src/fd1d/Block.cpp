@@ -114,23 +114,53 @@ namespace Fd1d
       }
 
       // Add diagonal second derivative terms
-      double bx = kuhn()/domain().dx();
+      double dx = domain().dx();
+      double bx = kuhn()/dx;
       double c1 = bx*bx*ds_/12.0;
       double c2 = 2.0*c1;
-      dA_[0] += c1;
-      dB_[0] -= c1;
-      for (int i = 1; i < domain().nx() - 1; ++i) {
-         dA_[i] += c2;
-         dB_[i] -= c2;
-      }
-      dA_[domain().nx() - 1] += c1;
-      dB_[domain().nx() - 1] -= c1;
-
-      // Assign off-diagonal second derivative terms
-      // (Opposite sign of corresponding diagonals)
-      for (int i = 0; i < domain().nx() - 1; ++i) {
-         uA_[i] = -c1;
-         uB_[i] = +c1;
+      if (geometryMode() == Planar) {
+         dA_[0] += c1;
+         dB_[0] -= c1;
+         for (int i = 1; i < domain().nx() - 1; ++i) {
+            dA_[i] += c2;
+            dB_[i] -= c2;
+         }
+         dA_[domain().nx() - 1] += c1;
+         dB_[domain().nx() - 1] -= c1;
+   
+         // Assign off-diagonal second derivative terms
+         // (Opposite sign of corresponding diagonals)
+         for (int i = 0; i < domain().nx() - 1; ++i) {
+            uA_[i] = -c1;
+            uB_[i] = +c1;
+         }
+      } else
+      if (geometryMode() == Spherical) {
+         double xMin = domain().xMin();
+         double halfDx = 0.5*dx;
+         double xi, rp, rm;
+         for (int i = 1; i < domain().nx() - 1; ++i) {
+            xi = xmin + dx*i;
+            rm = 1.0 - halfDx/xi;
+            rp = 1.0 + halfDx/xi;
+            dA_[i] += rm + rp;
+         }
+          
+         dA_[0] += c1;
+         dB_[0] -= c1;
+         for (int i = 1; i < domain().nx() - 1; ++i) {
+            dA_[i] += c2;
+            dB_[i] -= c2;
+         }
+         dA_[domain().nx() - 1] += c1;
+         dB_[domain().nx() - 1] -= c1;
+   
+         // Assign off-diagonal second derivative terms
+         // (Opposite sign of corresponding diagonals)
+         for (int i = 0; i < domain().nx() - 1; ++i) {
+            uA_[i] = -c1;
+            uB_[i] = +c1;
+         }
       }
 
       // Compute the LU decomposition of the A matrix

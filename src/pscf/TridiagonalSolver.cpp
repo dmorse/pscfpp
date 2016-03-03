@@ -38,9 +38,10 @@ namespace Pscf
    }
 
    /*
-   * Compute the LU decomposition for later use.
+   * Compute the LU decomposition of a symmetric matrix for later use.
    */
-   void TridiagonalSolver::computeLU(const DArray<double>& d, const DArray<double>& u)
+   void TridiagonalSolver::computeLU(const DArray<double>& d, 
+                                     const DArray<double>& u)
    {
       // Copy to local arrays
       for (int i = 0; i < n_ - 1; ++i) {
@@ -49,7 +50,28 @@ namespace Pscf
          l_[i] = u[i];
       }
       d_[n_ - 1] = d[n_ - 1];
+      gaussElimination();
+   }
 
+   /*
+   * Compute the LU decomposition of a symmetric matrix for later use.
+   */
+   void TridiagonalSolver::computeLU(const DArray<double>& d, 
+                                     const DArray<double>& u,
+                                     const DArray<double>& l)
+   {
+      // Copy to local arrays
+      for (int i = 0; i < n_ - 1; ++i) {
+         d_[i] = d[i];
+         u_[i] = u[i];
+         l_[i] = l[i];
+      }
+      d_[n_ - 1] = d[n_ - 1];
+      gaussElimination();
+   }
+
+   void TridiagonalSolver::gaussElimination()
+   {
       // Gauss elimination
       double q;
       for (int i = 0; i < n_ - 1; ++i) {
@@ -76,14 +98,17 @@ namespace Pscf
    }
 
    /*
-   * Compute Ab = x for known b
+   * Compute matrix product Ab = x for x, given known vector b.
    */
    void TridiagonalSolver::multiply(const DArray<double>& b, DArray<double>& x)
    {
+      // Compute Ub = y
       for (int i = 0; i < n_ - 1; ++i) {
          y_[i] = d_[i]*b[i] + u_[i]*b[i+1];
       }
       y_[n_ - 1] = d_[n_ - 1]*b[n_ - 1];
+
+      // Compute Ly = x
       x[0] = y_[0];
       for (int i = 1; i < n_; ++i) {
          x[i] = y_[i] + l_[i-1]*y_[i-1];
@@ -91,7 +116,7 @@ namespace Pscf
    }
 
    /*
-   * Solve Ax = b.
+   * Solve Ax = b for x, given known b.
    */
    void TridiagonalSolver::solve(const DArray<double>& b, DArray<double>& x)
    {
