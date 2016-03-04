@@ -1,5 +1,5 @@
-#ifndef PSCF_BLOCK_H
-#define PSCF_BLOCK_H
+#ifndef FD1D_BLOCK_H
+#define FD1D_BLOCK_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -61,11 +61,6 @@ namespace Fd1d
       void setDiscretization(Domain const & domain, double ds);
 
       /**
-      * Set pointer to GeometryMode flag.
-      */
-      void setGeometryMode(GeometryMode const & mode);
-
-      /**
       * Set Crank-Nicholson solver for this block.
       */
       void setupSolver(WField const & w);
@@ -89,34 +84,35 @@ namespace Fd1d
       */
       void step(QField const & q, QField& qNew);
  
-      /**
-      * Get GeometryMode flag.
-      */
-      GeometryMode const & geometryMode();
-
    private:
  
-      // Solver used in Crank-Nicholson algorithm
+      /// Solver used in Crank-Nicholson algorithm
       TridiagonalSolver solver_;
 
-      // Arrays dA_, uA_, dB_ and uB_ contain elements of the 
-      // symmetric tridiagonal matrices A and B used in propagation 
-      // from step i to i + 1, which requires solution of a linear 
-      // system of the form: A q(i+1) = B q(i).
+      // Arrays dA_, uA_, lB_ dB_, uB_, luB_ contain elements of the 
+      // the tridiagonal matrices A and B used in propagation from
+      // step i to i + 1, which requires solution of a linear system 
+      // of the form: A q(i+1) = B q(i).
 
-      // Diagonal elements of matrix A
+      /// Diagonal elements of matrix A
       DArray<double> dA_;
 
-      // Off-diagonal (upper or lower) elements of matrix A
+      /// Off-diagonal upper elements of matrix A
       DArray<double> uA_;
 
-      // Diagonal elements of matrix B
+      /// Off-diagonal lower elements of matrix A
+      DArray<double> lA_;
+
+      /// Diagonal elements of matrix B
       DArray<double> dB_;
 
-      // Off-diagonal elements of matrix B
+      /// Off-diagonal upper elements of matrix B
       DArray<double> uB_;
 
-      // Work vector
+      /// Off-diagonal lower elements of matrix B
+      DArray<double> lB_;
+
+      /// Work vector
       DArray<double> v_;
 
       /// Pointer to associated Domain object.
@@ -134,9 +130,6 @@ namespace Fd1d
       /// Number of spatial grid points.
       int nx_;
 
-      /// Pointer to geometry mode (planar, cylindrical or spherical)
-      GeometryMode const * geometryModePtr_;
-
       /// Return associated domain by reference.
       Domain const & domain() const;
 
@@ -151,13 +144,6 @@ namespace Fd1d
       return *domainPtr_;
    }
 
-   /// Get GeometryMode flag by const reference.
-   inline GeometryMode const & Block::geometryMode()
-   {  
-      UTIL_ASSERT(geometryModePtr_);
-      return *geometryModePtr_; 
-   }
-
-} 
+}
 }
 #endif

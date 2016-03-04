@@ -26,7 +26,9 @@ PSCF_FD=$(BLD_DIR)/fd1d/pscf_fd
 all: $(fd1d_OBJS) $(fd1d_LIB) $(PSCF_FD_EXE)
 
 clean:
-	rm -f $(fd1d_OBJS) $(fd1d_OBJS:.o=.d) $(fd1d_LIB)
+	rm -f $(fd1d_OBJS) $(fd1d_OBJS:.o=.d)
+	rm -f $(PSCF_FD).o $(PSCF_FD).d
+	rm -f $(fd1d_LIB)
 	cd tests; $(MAKE) clean
 
 veryclean:

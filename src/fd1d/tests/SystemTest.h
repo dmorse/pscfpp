@@ -46,9 +46,7 @@ public:
       std::cout << "\n";
       sys.writeParam(std::cout);
 
-      TEST_ASSERT(sys.domain().geometryMode() == Cylindrical);
-      TEST_ASSERT(sys.mixture().polymer(0).block(0).geometryMode() == Cylindrical);
-      TEST_ASSERT(sys.mixture().polymer(0).block(1).geometryMode() == Cylindrical);
+      TEST_ASSERT(sys.domain().geometryMode() == Planar);
    }
 
 

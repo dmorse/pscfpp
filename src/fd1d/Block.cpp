@@ -20,8 +20,7 @@ namespace Fd1d
    Block::Block()
     : domainPtr_(0),
       ds_(0.0),
-      ns_(0),
-      geometryModePtr_(0)
+      ns_(0)
    {
       propagator(0).setBlock(*this);
       propagator(1).setBlock(*this);
@@ -49,19 +48,18 @@ namespace Fd1d
 
       // Allocate all required memory
       dA_.allocate(domain.nx());
-      uA_.allocate(domain.nx() - 1);
       dB_.allocate(domain.nx());
+      uA_.allocate(domain.nx() - 1);
       uB_.allocate(domain.nx() - 1);
+      if (domain.geometryMode() != Planar) {
+         lA_.allocate(domain.nx() - 1);
+         lB_.allocate(domain.nx() - 1);
+      }
       v_.allocate(domain.nx());
       solver_.allocate(domain.nx());
       propagator(0).allocate(ns_, domain.nx());
       propagator(1).allocate(ns_, domain.nx());
       cField().allocate(domain.nx());
-   }
-
-   void Block::setGeometryMode(GeometryMode const & mode)
-   {
-      geometryModePtr_ = & mode;  
    }
 
    /*
@@ -91,80 +89,94 @@ namespace Fd1d
    * elements of the matrices A and B, and computes the LU 
    * decomposition of matrix A. Arrays of domain().nx() diagonal elements 
    * of A and B are denoted by dA_ and dB_, respectively, while arrays of 
-   * domain().nx() - 1 off-diagonal ("upper") elements of A and B are denoted 
-   * by uA_ and uB_.
+   * domain().nx() - 1 upper and lower off-diagonal elements of A and B
+   * are denoted by uA_, lA_, uB_, and lB_, respectively
    */
    void Block::setupSolver(Block::WField const& w)
    {
       // Preconditions
-      UTIL_CHECK(domain().nx() > 0);
+      UTIL_CHECK(domainPtr_);
+      int nx = domain().nx();
+      GeometryMode mode = domain().geometryMode();
+      UTIL_CHECK(nx > 0);
+      UTIL_CHECK(dA_.capacity() == nx);
+      UTIL_CHECK(dB_.capacity() == nx);
+      UTIL_CHECK(uA_.capacity() == nx - 1);
+      UTIL_CHECK(uB_.capacity() == nx - 1);
+      if (mode != Planar) {
+         UTIL_CHECK(lA_.capacity() == nx - 1);
+         UTIL_CHECK(lB_.capacity() == nx - 1);
+      }
       UTIL_CHECK(ns_ > 0);
-      UTIL_CHECK(dA_.capacity() == domain().nx());
-      UTIL_CHECK(dB_.capacity() == domain().nx());
-      UTIL_CHECK(uA_.capacity() == domain().nx() -1);
-      UTIL_CHECK(uB_.capacity() == domain().nx() -1);
       UTIL_CHECK(propagator(0).isAllocated());
       UTIL_CHECK(propagator(1).isAllocated());
 
-      // Initialize diagonals with identity and potential terms
-      double halfdS = 0.5*ds_;
-      for (int i = 0; i < domain().nx(); ++i) {
-         dA_[i] = 1.0 + halfdS*w[i];
-         dB_[i] = 1.0 - halfdS*w[i];
+      // Check mode
+      double gamma;
+      if (mode != Planar) {
+         if (mode == Cylindrical) {
+            gamma = 1.0;
+         } else 
+         if (mode == Spherical) {
+            gamma = 2.0;
+         } else {
+            UTIL_THROW("Unknown geometryMode");
+         }
       }
 
-      // Add diagonal second derivative terms
+      // Chemical potential terms in matrix A
+      double halfdS = 0.5*ds_;
+      for (int i = 0; i < nx; ++i) {
+         dA_[i] = halfdS*w[i];
+      }
+
+      // Lapacian terms of matrix A
       double dx = domain().dx();
-      double bx = kuhn()/dx;
-      double c1 = bx*bx*ds_/12.0;
+      double c0 = halfdS*kuhn()*kuhn()/(6.0*dx);
+      double c1 = c0/dx;
       double c2 = 2.0*c1;
-      if (geometryMode() == Planar) {
-         dA_[0] += c1;
-         dB_[0] -= c1;
-         for (int i = 1; i < domain().nx() - 1; ++i) {
-            dA_[i] += c2;
-            dB_[i] -= c2;
+      dA_[0] += c1;
+      uA_[0] = -c1;
+      for (int i = 1; i < nx - 1; ++i) {
+         dA_[i] += c2;
+         uA_[i] = -c1;
+      }
+      dA_[nx- 1] += c1;
+      if (mode != Planar) {
+         for (int i = 0; i < nx - 1; ++i) {
+            lA_[i] = uA_[i];
          }
-         dA_[domain().nx() - 1] += c1;
-         dB_[domain().nx() - 1] -= c1;
-   
-         // Assign off-diagonal second derivative terms
-         // (Opposite sign of corresponding diagonals)
-         for (int i = 0; i < domain().nx() - 1; ++i) {
-            uA_[i] = -c1;
-            uB_[i] = +c1;
-         }
-      } else
-      if (geometryMode() == Spherical) {
+         double x;
          double xMin = domain().xMin();
-         double halfDx = 0.5*dx;
-         double xi, rp, rm;
-         for (int i = 1; i < domain().nx() - 1; ++i) {
-            xi = xmin + dx*i;
-            rm = 1.0 - halfDx/xi;
-            rp = 1.0 + halfDx/xi;
-            dA_[i] += rm + rp;
+         double c3 = 0.5*gamma*c0;
+         for (int i = 1; i < nx - 1; ++i) {
+            x = xMin + dx*i;
+            uA_[i] -= c3/x;
+            lA_[i-1] += c3/x;
          }
-          
-         dA_[0] += c1;
-         dB_[0] -= c1;
-         for (int i = 1; i < domain().nx() - 1; ++i) {
-            dA_[i] += c2;
-            dB_[i] -= c2;
-         }
-         dA_[domain().nx() - 1] += c1;
-         dB_[domain().nx() - 1] -= c1;
-   
-         // Assign off-diagonal second derivative terms
-         // (Opposite sign of corresponding diagonals)
-         for (int i = 0; i < domain().nx() - 1; ++i) {
-            uA_[i] = -c1;
-            uB_[i] = +c1;
+      }
+
+      // Construct matrix B
+      for (int i = 0; i < nx; ++i) {
+         dB_[i] = -dA_[i];
+         dA_[i] += 1.0;
+         dB_[i] += 1.0;
+      }
+      for (int i = 0; i < nx - 1; ++i) {
+         uB_[i] = -uA_[i];
+      }
+      if (mode != Planar) {
+         for (int i = 0; i < nx - 1; ++i) {
+            lB_[i] = -lA_[i];
          }
       }
 
       // Compute the LU decomposition of the A matrix
-      solver_.computeLU(dA_, uA_);
+      if (mode == Planar) {
+         solver_.computeLU(dA_, uA_);
+      } else {
+         solver_.computeLU(dA_, uA_, lA_);
+      }
 
    }
 

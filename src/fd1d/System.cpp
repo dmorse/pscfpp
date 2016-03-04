@@ -142,16 +142,6 @@ namespace Fd1d
       hasDomain_ = true;
       allocateFields();
 
-      // Set geometry mode for all blocks
-      int np, nb, i, j;
-      np = mixture().nPolymer();
-      for (i = 0; i < np; ++i) {
-         nb = mixture().polymer(i).nBlock();
-         for (j = 0; j < nb; ++j) {
-            mixture().polymer(i).block(j).setGeometryMode(domain().geometryMode());
-         }
-      }
-
       // Initialize iterator
       iterator().setSystem(*this);
       readParamComposite(in, iterator());
@@ -182,7 +172,10 @@ namespace Fd1d
       UTIL_CHECK(hasMixture_);
       UTIL_CHECK(hasDomain_);
 
+      // Allocate memory in mixture
       mixture().setDomain(domain());
+
+      // Allocate wFields and cFields
       int nMonomer = mixture().nMonomer();
       wFields_.allocate(nMonomer);
       cFields_.allocate(nMonomer);
