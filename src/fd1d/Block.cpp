@@ -51,10 +51,8 @@ namespace Fd1d
       dB_.allocate(domain.nx());
       uA_.allocate(domain.nx() - 1);
       uB_.allocate(domain.nx() - 1);
-      if (domain.geometryMode() != Planar) {
-         lA_.allocate(domain.nx() - 1);
-         lB_.allocate(domain.nx() - 1);
-      }
+      lA_.allocate(domain.nx() - 1);
+      lB_.allocate(domain.nx() - 1);
       v_.allocate(domain.nx());
       solver_.allocate(domain.nx());
       propagator(0).allocate(ns_, domain.nx());
@@ -97,23 +95,42 @@ namespace Fd1d
       // Preconditions
       UTIL_CHECK(domainPtr_);
       int nx = domain().nx();
-      GeometryMode mode = domain().geometryMode();
       UTIL_CHECK(nx > 0);
       UTIL_CHECK(dA_.capacity() == nx);
       UTIL_CHECK(dB_.capacity() == nx);
       UTIL_CHECK(uA_.capacity() == nx - 1);
       UTIL_CHECK(uB_.capacity() == nx - 1);
-      if (mode != Planar) {
-         UTIL_CHECK(lA_.capacity() == nx - 1);
-         UTIL_CHECK(lB_.capacity() == nx - 1);
-      }
+      UTIL_CHECK(lA_.capacity() == nx - 1);
+      UTIL_CHECK(lB_.capacity() == nx - 1);
       UTIL_CHECK(ns_ > 0);
       UTIL_CHECK(propagator(0).isAllocated());
       UTIL_CHECK(propagator(1).isAllocated());
 
-      // Check mode
-      double gamma;
+      // Chemical potential terms in matrix A
+      double halfdS = 0.5*ds_;
+      for (int i = 0; i < nx; ++i) {
+         dA_[i] = halfdS*w[i];
+      }
+
+      // Second derivative terms in matrix A
+      double dx = domain().dx();
+      double c0 = halfdS*kuhn()*kuhn()/(6.0*dx);
+      double c1 = c0/dx;
+      double c2 = 2.0*c1;
+      dA_[0] += c2;
+      uA_[0] = -c2;
+      for (int i = 1; i < nx - 1; ++i) {
+         dA_[i] += c2;
+         uA_[i] = -c1;
+         lA_[i-1] = -c1;
+      }
+      dA_[nx - 1] += c2;
+      lA_[nx - 2] = -c2;
+
+      // Additional first derivative terms (if any)
+      GeometryMode mode = domain().geometryMode();
       if (mode != Planar) {
+         double gamma = 0.0;
          if (mode == Cylindrical) {
             gamma = 1.0;
          } else 
@@ -122,37 +139,17 @@ namespace Fd1d
          } else {
             UTIL_THROW("Unknown geometryMode");
          }
-      }
-
-      // Chemical potential terms in matrix A
-      double halfdS = 0.5*ds_;
-      for (int i = 0; i < nx; ++i) {
-         dA_[i] = halfdS*w[i];
-      }
-
-      // Lapacian terms of matrix A
-      double dx = domain().dx();
-      double c0 = halfdS*kuhn()*kuhn()/(6.0*dx);
-      double c1 = c0/dx;
-      double c2 = 2.0*c1;
-      dA_[0] += c1;
-      uA_[0] = -c1;
-      for (int i = 1; i < nx - 1; ++i) {
-         dA_[i] += c2;
-         uA_[i] = -c1;
-      }
-      dA_[nx- 1] += c1;
-      if (mode != Planar) {
-         for (int i = 0; i < nx - 1; ++i) {
-            lA_[i] = uA_[i];
-         }
-         double x;
-         double xMin = domain().xMin();
          double c3 = 0.5*gamma*c0;
+         double xMin = domain().xMin();
+         double x;
          for (int i = 1; i < nx - 1; ++i) {
             x = xMin + dx*i;
             uA_[i] -= c3/x;
             lA_[i-1] += c3/x;
+         }
+         if (xMin/dx < 0.1) {
+            uA_[0] -= gamma*c2;
+            dA_[0] += gamma*c2;
          }
       }
 
@@ -165,25 +162,19 @@ namespace Fd1d
       for (int i = 0; i < nx - 1; ++i) {
          uB_[i] = -uA_[i];
       }
-      if (mode != Planar) {
-         for (int i = 0; i < nx - 1; ++i) {
-            lB_[i] = -lA_[i];
-         }
+      for (int i = 0; i < nx - 1; ++i) {
+         lB_[i] = -lA_[i];
       }
 
       // Compute the LU decomposition of the A matrix
-      if (mode == Planar) {
-         solver_.computeLU(dA_, uA_);
-      } else {
-         solver_.computeLU(dA_, uA_, lA_);
-      }
+      solver_.computeLU(dA_, uA_, lA_);
 
    }
 
    /*
    * Propagate solution by one step.
    *
-   * This algorithm implements one step of the Crank-Nicholson algorithm.
+   * This function implements one step of the Crank-Nicholson algorithm.
    * To do so, it solves A q(i+1) = B q(i), where A and B are constant 
    * matrices defined in the documentation of the setupStep() function.
    */
