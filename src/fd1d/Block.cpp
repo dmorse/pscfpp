@@ -117,15 +117,15 @@ namespace Fd1d
       double c0 = halfdS*kuhn()*kuhn()/(6.0*dx);
       double c1 = c0/dx;
       double c2 = 2.0*c1;
-      dA_[0] += c2;
-      uA_[0] = -c2;
+      dA_[0] += c1;
+      uA_[0] = -c1;
       for (int i = 1; i < nx - 1; ++i) {
          dA_[i] += c2;
          uA_[i] = -c1;
          lA_[i-1] = -c1;
       }
-      dA_[nx - 1] += c2;
-      lA_[nx - 2] = -c2;
+      dA_[nx - 1] += c1;
+      lA_[nx - 2] = -c1;
 
       // Additional first derivative terms (if any)
       GeometryMode mode = domain().geometryMode();

@@ -118,9 +118,11 @@ namespace Fd1d
       QField const& qh = head();
       QField const& qt = partner().tail();
       double Q = 0.0;
-      for (int i = 0; i < nx_; ++i) {
+      Q = qh[0]*qt[0];
+      for (int i = 1; i < nx_ - 1; ++i) {
          Q += qh[i]*qt[i];
       }
+      Q += qh[nx_-1]*qt[nx_-1];
       return Q/double(nx_);
    }
 

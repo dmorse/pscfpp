@@ -25,11 +25,24 @@ namespace Pscf
    class SolventTmpl : public Species, public ParamComposite
    {
    public:
+
+      /**
+      * Constructor.
+      */
+      SolventTmpl()
+      {}
+   
+      /**
+      * Constructor.
+      */
+      ~SolventTmpl()
+      {}
    
       /**
       * Get monomer concentration field for this solvent.
       */
-      const CField& concentration() const;
+      const CField& concentration() const
+      {  return concentration_;  }
    
    protected:
    
