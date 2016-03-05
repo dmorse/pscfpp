@@ -13,6 +13,8 @@
 #include "GeometryMode.h"              // argument (enum)
 #include <pscf/TridiagonalSolver.h>    // member
 
+#define FD1D_BLOCK_IDENTITY_NORM
+
 namespace Pscf { 
 namespace Fd1d 
 { 
@@ -29,6 +31,11 @@ namespace Fd1d
    {
 
    public:
+
+      /**
+      * Generic field (base class)
+      */
+      typedef Propagator::Field Field;
 
       /**
       * Monomer chemical potential field.
@@ -51,6 +58,9 @@ namespace Fd1d
       * Destructor.
       */
       ~Block();
+
+      /// \name Primary public functions
+      //@{
 
       /**
       * Initialize discretization and allocate required memory.
@@ -79,10 +89,33 @@ namespace Fd1d
       */ 
       void computeConcentration(double prefactor);
 
+      //@}
+      /// \name Elementary algorithms (used by Propagator)
+      //@{
+      
       /**
       * Compute step of integration loop, from i to i+1.
       */
       void step(QField const & q, QField& qNew);
+ 
+      /**
+      * Compute spatial average of a field.
+      *
+      * \param f a field that depends on one spatial coordinate
+      * \return spatial average of field f
+      */
+      double spatialAverage(Field const & f) const;
+ 
+      /**
+      * Compute inner product of two real fields.
+      *
+      * \param f first field
+      * \param g second field
+      * \return spatial average of product of two fields.
+      */
+      double innerProduct(Field const & f, Field const & g) const;
+
+      //@}
  
    private:
  

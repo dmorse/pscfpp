@@ -94,12 +94,25 @@ public:
       // Test spatial integral of block concentration
       double sum0 = 0.0;
       double sum1 = 0.0;
-      for (int i = 0; i < nx; ++i) {
+      for (int i = 1; i < nx - 1; ++i) {
          sum0 += cFields[0][i];
          sum1 += cFields[1][i];
       }
+      #ifdef FD1D_BLOCK_IDENTITY_NORM
+      sum0 += cFields[0][0];
+      sum1 += cFields[1][0];
+      sum0 += cFields[0][nx-1];
+      sum1 += cFields[1][nx-1];
       sum0 = sum0/double(nx);
       sum1 = sum1/double(nx);
+      #else 
+      sum0 += 0.5*cFields[0][0];
+      sum1 += 0.5*cFields[1][0];
+      sum0 += 0.5*cFields[0][nx-1];
+      sum1 += 0.5*cFields[1][nx-1];
+      sum0 = sum0/double(nx-1);
+      sum1 = sum1/double(nx-1);
+      #endif
       std::cout << "Volume fraction of block 0 = " << sum0 << "\n";
       std::cout << "Volume fraction of block 1 = " << sum1 << "\n";
       

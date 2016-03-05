@@ -107,57 +107,89 @@ namespace Fd1d
       UTIL_CHECK(propagator(1).isAllocated());
 
       // Chemical potential terms in matrix A
-      double halfdS = 0.5*ds_;
+      double halfDs = 0.5*ds_;
       for (int i = 0; i < nx; ++i) {
-         dA_[i] = halfdS*w[i];
+         dA_[i] = halfDs*w[i];
       }
 
       // Second derivative terms in matrix A
       double dx = domain().dx();
-      double c0 = halfdS*kuhn()*kuhn()/(6.0*dx);
+      double c0 = halfDs*kuhn()*kuhn()/(6.0*dx);
       double c1 = c0/dx;
       double c2 = 2.0*c1;
-      dA_[0] += c1;
-      uA_[0] = -c1;
-      for (int i = 1; i < nx - 1; ++i) {
-         dA_[i] += c2;
-         uA_[i] = -c1;
-         lA_[i-1] = -c1;
-      }
-      dA_[nx - 1] += c1;
-      lA_[nx - 2] = -c1;
-
-      // Additional first derivative terms (if any)
       GeometryMode mode = domain().geometryMode();
-      if (mode != Planar) {
-         double gamma = 0.0;
-         if (mode == Cylindrical) {
-            gamma = 1.0;
-         } else 
-         if (mode == Spherical) {
-            gamma = 2.0;
-         } else {
-            UTIL_THROW("Unknown geometryMode");
-         }
-         double c3 = 0.5*gamma*c0;
-         double xMin = domain().xMin();
-         double x;
+      if (mode == Planar) {
+
+         // Interior rows
          for (int i = 1; i < nx - 1; ++i) {
-            x = xMin + dx*i;
-            uA_[i] -= c3/x;
-            lA_[i-1] += c3/x;
+            dA_[i] += c2;
+            uA_[i] = -c1;
+            lA_[i-1] = -c1;
          }
+    
+         // First and last rows
+         #ifdef FD1D_BLOCK_IDENTITY_NORM
+         dA_[0] += c1;
+         uA_[0] = -c1;
+         dA_[nx - 1] += c1;
+         lA_[nx - 2] = -c1;
+         #else
+         dA_[0] += c2;
+         uA_[0] = -c2;
+         dA_[nx - 1] += c2;
+         lA_[nx - 2] = -c2;
+         #endif
+
+      } else {
+
+         double xMin = domain().xMin();
+         double xMax = domain().xMax();
+         double halfDx = 0.5*dx;
+         double x, rp, rm;
+
+         // Interior rows
+         for (int i = 1; i < nx - 1; ++i) {
+            x = xMin + dx *i;
+            rm = 1.0 - halfDx/x;
+            rp = 1.0 + halfDx/x;
+            if (mode == Spherical) {
+               rm *= rm;
+               rp *= rp;
+            }
+            rm *= c1;
+            rp *= c1;
+            dA_[i] += rm + rp;
+            uA_[i] = -rp;
+            lA_[i-1] = -rm;
+         }
+
+         // Last row: x = xMax
+         rm = 1.0 - halfDx/xMax;
+         if (mode == Spherical) {
+            rm *= rm;
+         }
+         rm *= c1;
+         dA_[nx-1] += 2.0*rm;
+         lA_[nx-2] = -2.0*rm;
+
+         // First row: x = xMin
          if (xMin/dx < 0.1) {
-            uA_[0] -= gamma*c2;
-            dA_[0] += gamma*c2;
+            rp = 1.0;
+         } else {
+            rp = 1.0 + halfDx/xMin;
+            if (mode == Spherical) {
+               rp *= rp;
+            }
          }
+         rp *= c1;
+         dA_[0] += 2.0*rp;
+         uA_[0] = -2.0*rp;
+
       }
 
-      // Construct matrix B
+      // Construct matrix B - 1
       for (int i = 0; i < nx; ++i) {
          dB_[i] = -dA_[i];
-         dA_[i] += 1.0;
-         dB_[i] += 1.0;
       }
       for (int i = 0; i < nx - 1; ++i) {
          uB_[i] = -uA_[i];
@@ -166,29 +198,16 @@ namespace Fd1d
          lB_[i] = -lA_[i];
       }
 
-      // Compute the LU decomposition of the A matrix
+      // Add diagonal identity terms to matrices A and B
+      for (int i = 0; i < nx; ++i) {
+         dA_[i] += 1.0;
+         dB_[i] += 1.0;
+      }
+
+      // Compute the LU decomposition of matrix A 
       solver_.computeLU(dA_, uA_, lA_);
 
    }
-
-   /*
-   * Propagate solution by one step.
-   *
-   * This function implements one step of the Crank-Nicholson algorithm.
-   * To do so, it solves A q(i+1) = B q(i), where A and B are constant 
-   * matrices defined in the documentation of the setupStep() function.
-   */
-   void Block::step(const QField& q, QField& qNew)
-   {
-      int nx = domain().nx();
-      v_[0] = dB_[0]*q[0] + uB_[0]*q[1];
-      for (int i = 1; i < nx - 1; ++i) {
-         v_[i] = dB_[i]*q[i] + uB_[i-1]*q[i-1] + uB_[i]*q[i+1];
-      }
-      v_[nx - 1] = dB_[nx-1]*q[nx-1] + uB_[nx-2]*q[nx-2];
-      solver_.solve(v_, qNew);
-   }
-
 
    /*
    * Integrate to calculate monomer concentration for this block
@@ -236,6 +255,93 @@ namespace Fd1d
          cField()[i] *= prefactor;
       }
 
+   }
+
+   /*
+   * Propagate solution by one step.
+   *
+   * This function implements one step of the Crank-Nicholson algorithm.
+   * To do so, it solves A q(i+1) = B q(i), where A and B are constant 
+   * matrices defined in the documentation of the setupStep() function.
+   */
+   void Block::step(const QField& q, QField& qNew)
+   {
+      int nx = domain().nx();
+      v_[0] = dB_[0]*q[0] + uB_[0]*q[1];
+      for (int i = 1; i < nx - 1; ++i) {
+         v_[i] = dB_[i]*q[i] + uB_[i-1]*q[i-1] + uB_[i]*q[i+1];
+      }
+      v_[nx - 1] = dB_[nx-1]*q[nx-1] + uB_[nx-2]*q[nx-2];
+      solver_.solve(v_, qNew);
+   }
+
+
+   /*
+   * Compute spatial average of a field.
+   */
+   double Block::spatialAverage(Field const & f) const
+   {
+      int nx = domain().nx();
+      double sum = 0.0;
+      double norm = 0.0;
+      if (domain().geometryMode() == Planar) {
+         for (int i = 1; i < nx - 1; ++i) {
+            sum += f[i];
+         }
+         #ifdef FD1D_BLOCK_IDENTITY_NORM
+         sum += f[0];
+         sum += f[nx - 1];
+         norm = double(nx);
+         #else
+         sum += 0.5*f[0];
+         sum += 0.5*f[nx - 1];
+         norm = double(nx - 1);
+         #endif
+      } else 
+      if (domain().geometryMode() == Cylindrical) {
+         double dx = domain().dx();
+         double xMin = domain().xMin()/dx;
+         double xMax = domain().xMax()/dx;
+         double x;
+         for (int i = 1; i < nx - 1; ++i) {
+            x = xMin + double(i);
+            sum  += x*f[i];
+            norm += x;
+         }
+         sum += 0.5*xMin*f[0]/dx;
+         sum += 0.5*xMax*f[nx-1]/dx;
+      } else
+      if (domain().geometryMode() == Spherical) {
+         UTIL_THROW("Spherical average not yet implemented");
+      }
+      return sum/norm;
+   }
+ 
+   /*
+   * Compute inner product of two real fields.
+   */
+   double Block::innerProduct(Field const & f, Field const & g) const
+   {
+      int nx = domain().nx();
+      double sum = 0.0;
+      double norm = 0.0;
+      if (domain().geometryMode() == Planar) {
+         for (int i = 1; i < nx - 1; ++i) {
+            sum += f[i]*g[i];
+         }
+         #ifdef FD1D_BLOCK_IDENTITY_NORM
+         sum += f[0]*g[0];
+         sum += f[nx - 1]*g[nx - 1];
+         norm = double(nx);
+         #else
+         sum += 0.5*f[0]*g[0];
+         sum += 0.5*f[nx - 1]*g[nx - 1];
+         norm = double(nx-1);
+         #endif
+      } else {
+         UTIL_THROW("Non-planar inner product not yet implemented");
+      }
+      return sum/norm;
    }
 
 }

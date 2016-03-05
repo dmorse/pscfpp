@@ -31,6 +31,11 @@ namespace Fd1d
       // Public typedefs
 
       /**
+      * Generic field (function of position).
+      */
+      typedef DArray<double> Field;
+
+      /**
       * Chemical potential field type.
       */
       typedef DArray<double> WField;
