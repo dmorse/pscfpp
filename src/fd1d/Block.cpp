@@ -139,9 +139,15 @@ namespace Fd1d
          double xMax = domain().xMax();
          double halfDx = 0.5*dx;
          double x, rp, rm;
+         bool isShell = domain().isShell();
 
          // First row: x = xMin
-         if (xMin/dx < 0.1) {
+         if (isShell) {
+            rp = 1.0 + halfDx/xMin;
+            if (mode == Spherical) {
+               rp *= rp;
+            }
+         } else {
             if (mode == Spherical) {
                rp = 3.0;
             } else 
@@ -149,11 +155,6 @@ namespace Fd1d
                rp = 2.0;
             } else {
                UTIL_THROW("Invalid GeometryMode");
-            }
-         } else {
-            rp = 1.0 + halfDx/xMin;
-            if (mode == Spherical) {
-               rp *= rp;
             }
          }
          rp *= c1;
@@ -184,7 +185,6 @@ namespace Fd1d
          rm *= c1;
          dA_[nx-1] += 2.0*rm;
          lA_[nx-2] = -2.0*rm;
-
       }
 
       // Construct matrix B - 1

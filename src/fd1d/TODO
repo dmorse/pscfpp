@@ -1,16 +1,10 @@
 Todo for 1D finite difference code:
 
-1) Allow for different geometrical modes (planar, cylindrical, or spherical). 
-This should be specified by the Domain object, and subobjects should have access 
-to this mode.
+1) Test propagator and spatialAverage code for spherical and cylindrical modes.
 
-2) Because some calculations require integration and/or averaging with respect 
-to space, we need generic functions to complete this operation, perhaps with a 
-geometryMode flag to choose coordinate system. 
-
-3) Allow for different ensembles (canonical vs. grand), specified independently
+2) Allow for different ensembles (canonical vs. grand), specified independently
 for each species.
 
-4) Write code to calculate species chemical potentials and/or species volume 
+3) Write code to calculate species chemical potentials and/or species volume 
 fractions, and total free energy densities.
 

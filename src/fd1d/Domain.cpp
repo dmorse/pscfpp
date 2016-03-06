@@ -104,8 +104,9 @@ namespace Fd1d
       } else 
       if (mode_ == Cylindrical) {
 
-         // First value
          double x0 = xMin_/dx_;
+
+         // First value
          if (isShell_) {
             sum += 0.5*x0*f[0];
             norm += 0.5*x0;
@@ -130,8 +131,9 @@ namespace Fd1d
       } else
       if (mode_ == Spherical) {
 
-         // First value
          double x0 = xMin_/dx_;
+
+         // First value
          if (isShell_) {
             sum += 0.5*x0*x0*f[0];
             norm += 0.5*x0*x0;
@@ -144,7 +146,7 @@ namespace Fd1d
          double x;
          for (int i = 1; i < nx_ - 1; ++i) {
             x = x0 + double(i);
-            sum  += x*x*f[i];
+            sum += x*x*f[i];
             norm += x*x;
          }
 
@@ -154,9 +156,7 @@ namespace Fd1d
          norm += 0.5*x*x;
 
       } else {
-
          UTIL_THROW("Invalid geometry mode");
-
       }
 
       return sum/norm;

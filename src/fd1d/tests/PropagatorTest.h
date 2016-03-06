@@ -32,7 +32,7 @@ public:
       Block block;
    }
 
-   void testSolve1()
+   void testPlanarSolve1()
    {
       printMethod(TEST_FUNC);
       Block b;
@@ -74,7 +74,7 @@ public:
       std::cout << exp(-wc*b.length()) << "\n";
    }
 
-   void testSolve2()
+   void testPlanarSolve2()
    {
       printMethod(TEST_FUNC);
       Block b;
@@ -124,12 +124,204 @@ public:
       std::cout << exp(-f*length) << "\n";
    }
 
+
+
+
+
+   void testCylinderSolve1()
+   {
+      printMethod(TEST_FUNC);
+      Block b;
+      double length = 0.5;
+      double ds = 0.00005;
+      double step = 1.0;
+      b.setId(0);
+      b.setMonomerId(1);
+      b.setLength(length);
+      b.setKuhn(step);
+
+      //double xMin = 0.0;
+      double xMax = 1.0;
+      int nx = 33;
+      Domain domain;
+      domain.setCylinderParameters(xMax, nx);
+      b.setDiscretization(domain, ds);
+      int ns = b.ns();
+
+      DArray<double> q, w;
+      q.allocate(nx);
+      w.allocate(nx);
+      double wc = 0.5;
+      for (int i = 0; i < nx; ++i) {
+         q[i] = 1.0;
+         w[i] = wc;
+      }
+
+      b.setupSolver(w);
+      b.propagator(0).solve(q);
+
+      std::cout << "\n";
+      double final = exp(-length*wc);
+      double value;
+      for (int i = 0; i < nx; ++i) {
+         value = b.propagator(0).tail()[i];
+         // std::cout << "  " << value;
+         TEST_ASSERT(eq(value, final));
+      }
+      // std::cout << "\n";
+
+      int m = ns/2;
+      double sum0 = domain.spatialAverage( b.propagator(0).tail() );
+      double sum1 = domain.innerProduct( b.propagator(0).q(m),
+                                         b.propagator(0).q(ns-1-m) );
+      TEST_ASSERT(eq(sum0, sum1));
+      //std::cout << "Average m eq 0  " << sum0 << "\n";
+      //std::cout << "Average m neq 0 " << sum1 << "\n";
+   }
+
+   void testCylinderSolve2()
+   {
+      printMethod(TEST_FUNC);
+      Block b;
+      double length = 0.5;
+      double ds = 0.00005;
+      double step = 1.0;
+      b.setId(0);
+      b.setMonomerId(1);
+      b.setLength(length);
+      b.setKuhn(step);
+
+      //double xMin = 0.0;
+      double xMax = 1.0;
+      int nx = 33;
+      Domain domain;
+      domain.setCylinderParameters(xMax, nx);
+      b.setDiscretization(domain, ds);
+      int ns = b.ns();
+
+      DArray<double> q, w;
+      q.allocate(nx);
+      w.allocate(nx);
+      double wc = 0.5;
+      for (int i = 0; i < nx; ++i) {
+         q[i] = 1.0;
+         w[i] = wc*cos(2.0*Constants::Pi*double(i)/double(nx-1));
+      }
+
+      b.setupSolver(w);
+      b.propagator(0).solve(q);
+
+      int m = ns/2;
+      double sum0 = domain.spatialAverage( b.propagator(0).tail() );
+      double sum1 = domain.innerProduct( b.propagator(0).q(m),
+                                         b.propagator(0).q(ns-1-m) );
+      // std::cout << "Average m eq 0  " << sum0 << "\n";
+      // std::cout << "Average m neq 0 " << sum1 << "\n";
+      TEST_ASSERT(eq(sum0, sum1));
+   }
+
+   void testSphereSolve1()
+   {
+      printMethod(TEST_FUNC);
+      Block b;
+      double length = 0.5;
+      double ds = 0.00005;
+      double step = 1.0;
+      b.setId(0);
+      b.setMonomerId(1);
+      b.setLength(length);
+      b.setKuhn(step);
+
+      //double xMin = 0.0;
+      double xMax = 1.0;
+      int nx = 33;
+      Domain domain;
+      domain.setSphereParameters(xMax, nx);
+      b.setDiscretization(domain, ds);
+      int ns = b.ns();
+
+      DArray<double> q, w;
+      q.allocate(nx);
+      w.allocate(nx);
+      double wc = 0.5;
+      for (int i = 0; i < nx; ++i) {
+         q[i] = 1.0;
+         w[i] = wc;
+      }
+
+      b.setupSolver(w);
+      b.propagator(0).solve(q);
+
+      std::cout << "\n";
+      double final = exp(-length*wc);
+      double value;
+      for (int i = 0; i < nx; ++i) {
+         value = b.propagator(0).tail()[i];
+         // std::cout << "  " << value;
+         TEST_ASSERT(eq(value, final));
+      }
+      // std::cout << "\n";
+
+      int m = ns/2;
+      double sum0 = domain.spatialAverage( b.propagator(0).tail() );
+      double sum1 = domain.innerProduct( b.propagator(0).q(m),
+                                         b.propagator(0).q(ns-1-m) );
+      TEST_ASSERT(eq(sum0, sum1));
+      //std::cout << "Average m eq 0  " << sum0 << "\n";
+      //std::cout << "Average m neq 0 " << sum1 << "\n";
+   }
+
+   void testSphereSolve2()
+   {
+      printMethod(TEST_FUNC);
+      Block b;
+      double length = 0.5;
+      double ds = 0.00005;
+      double step = 1.0;
+      b.setId(0);
+      b.setMonomerId(1);
+      b.setLength(length);
+      b.setKuhn(step);
+
+      //double xMin = 0.0;
+      double xMax = 1.0;
+      int nx = 33;
+      Domain domain;
+      domain.setSphereParameters(xMax, nx);
+      b.setDiscretization(domain, ds);
+      int ns = b.ns();
+
+      DArray<double> q, w;
+      q.allocate(nx);
+      w.allocate(nx);
+      double wc = 0.5;
+      for (int i = 0; i < nx; ++i) {
+         q[i] = 1.0;
+         w[i] = wc*cos(2.0*Constants::Pi*double(i)/double(nx-1));
+      }
+
+      b.setupSolver(w);
+      b.propagator(0).solve(q);
+
+      int m = ns/2;
+      double sum0 = domain.spatialAverage( b.propagator(0).tail() );
+      double sum1 = domain.innerProduct( b.propagator(0).q(m),
+                                         b.propagator(0).q(ns-1-m) );
+      // std::cout << "Average m eq 0  " << sum0 << "\n";
+      // std::cout << "Average m neq 0 " << sum1 << "\n";
+      TEST_ASSERT(eq(sum0, sum1));
+   }
+
 };
 
 TEST_BEGIN(PropagatorTest)
 TEST_ADD(PropagatorTest, testConstructor)
-TEST_ADD(PropagatorTest, testSolve1)
-TEST_ADD(PropagatorTest, testSolve2)
+TEST_ADD(PropagatorTest, testPlanarSolve1)
+TEST_ADD(PropagatorTest, testPlanarSolve2)
+TEST_ADD(PropagatorTest, testCylinderSolve1)
+TEST_ADD(PropagatorTest, testCylinderSolve2)
+TEST_ADD(PropagatorTest, testSphereSolve1)
+TEST_ADD(PropagatorTest, testSphereSolve2)
 TEST_END(PropagatorTest)
 
 #endif

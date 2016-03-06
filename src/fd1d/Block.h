@@ -94,6 +94,11 @@ namespace Fd1d
       */
       Domain const & domain() const;
 
+      /**
+      * Number of contour length steps.
+      */
+      int ns() const;
+
    private:
  
       /// Solver used in Crank-Nicholson algorithm
@@ -150,6 +155,10 @@ namespace Fd1d
       UTIL_ASSERT(domainPtr_);
       return *domainPtr_;
    }
+
+   /// Get number of contour steps.
+   inline int Block::ns() const
+   {  return ns_; }
 
 }
 }
