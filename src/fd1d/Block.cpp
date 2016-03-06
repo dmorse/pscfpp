@@ -35,6 +35,8 @@ namespace Fd1d
    void Block::setDiscretization(Domain const & domain, double ds)
    {  
       UTIL_CHECK(length() > 0);
+      UTIL_CHECK(domain.nx() > 1);
+      UTIL_CHECK(ds > 0.0);
 
       // Set association to spatial domain
       domainPtr_ = &domain;
@@ -47,17 +49,18 @@ namespace Fd1d
       ds_ = length()/double(ns_ - 1);
 
       // Allocate all required memory
-      dA_.allocate(domain.nx());
-      dB_.allocate(domain.nx());
-      uA_.allocate(domain.nx() - 1);
-      uB_.allocate(domain.nx() - 1);
-      lA_.allocate(domain.nx() - 1);
-      lB_.allocate(domain.nx() - 1);
-      v_.allocate(domain.nx());
-      solver_.allocate(domain.nx());
-      propagator(0).allocate(ns_, domain.nx());
-      propagator(1).allocate(ns_, domain.nx());
-      cField().allocate(domain.nx());
+      int nx = domain.nx();
+      dA_.allocate(nx);
+      dB_.allocate(nx);
+      uA_.allocate(nx - 1);
+      uB_.allocate(nx - 1);
+      lA_.allocate(nx - 1);
+      lB_.allocate(nx - 1);
+      v_.allocate(nx);
+      solver_.allocate(nx);
+      propagator(0).allocate(ns_, nx);
+      propagator(1).allocate(ns_, nx);
+      cField().allocate(nx);
    }
 
    /*
@@ -74,7 +77,7 @@ namespace Fd1d
    * matrices given by
    * 
    *           A = 1 + 0.5*ds_*H
-   *           B = 1 + 0.5*ds_*H
+   *           B = 1 - 0.5*ds_*H
    *
    * in which ds_ is the contour step and 
    *
@@ -114,8 +117,8 @@ namespace Fd1d
 
       // Second derivative terms in matrix A
       double dx = domain().dx();
-      double c0 = halfDs*kuhn()*kuhn()/(6.0*dx);
-      double c1 = c0/dx;
+      double db = kuhn()/dx;
+      double c1 = halfDs*db*db/6.0;
       double c2 = 2.0*c1;
       GeometryMode mode = domain().geometryMode();
       if (mode == Planar) {
@@ -128,7 +131,7 @@ namespace Fd1d
          }
     
          // First and last rows
-         #ifdef FD1D_BLOCK_IDENTITY_NORM
+         #ifdef FD1D_DOMAIN_IDENTITY_NORM
          dA_[0] += c1;
          uA_[0] = -c1;
          dA_[nx - 1] += c1;
@@ -149,7 +152,7 @@ namespace Fd1d
 
          // Interior rows
          for (int i = 1; i < nx - 1; ++i) {
-            x = xMin + dx *i;
+            x = xMin + dx*i;
             rm = 1.0 - halfDx/x;
             rp = 1.0 + halfDx/x;
             if (mode == Spherical) {
@@ -206,7 +209,6 @@ namespace Fd1d
 
       // Compute the LU decomposition of matrix A 
       solver_.computeLU(dA_, uA_, lA_);
-
    }
 
    /*
@@ -269,79 +271,10 @@ namespace Fd1d
       int nx = domain().nx();
       v_[0] = dB_[0]*q[0] + uB_[0]*q[1];
       for (int i = 1; i < nx - 1; ++i) {
-         v_[i] = dB_[i]*q[i] + uB_[i-1]*q[i-1] + uB_[i]*q[i+1];
+         v_[i] = dB_[i]*q[i] + lB_[i-1]*q[i-1] + uB_[i]*q[i+1];
       }
-      v_[nx - 1] = dB_[nx-1]*q[nx-1] + uB_[nx-2]*q[nx-2];
+      v_[nx - 1] = dB_[nx-1]*q[nx-1] + lB_[nx-2]*q[nx-2];
       solver_.solve(v_, qNew);
-   }
-
-
-   /*
-   * Compute spatial average of a field.
-   */
-   double Block::spatialAverage(Field const & f) const
-   {
-      int nx = domain().nx();
-      double sum = 0.0;
-      double norm = 0.0;
-      if (domain().geometryMode() == Planar) {
-         for (int i = 1; i < nx - 1; ++i) {
-            sum += f[i];
-         }
-         #ifdef FD1D_BLOCK_IDENTITY_NORM
-         sum += f[0];
-         sum += f[nx - 1];
-         norm = double(nx);
-         #else
-         sum += 0.5*f[0];
-         sum += 0.5*f[nx - 1];
-         norm = double(nx - 1);
-         #endif
-      } else 
-      if (domain().geometryMode() == Cylindrical) {
-         double dx = domain().dx();
-         double xMin = domain().xMin()/dx;
-         double xMax = domain().xMax()/dx;
-         double x;
-         for (int i = 1; i < nx - 1; ++i) {
-            x = xMin + double(i);
-            sum  += x*f[i];
-            norm += x;
-         }
-         sum += 0.5*xMin*f[0]/dx;
-         sum += 0.5*xMax*f[nx-1]/dx;
-      } else
-      if (domain().geometryMode() == Spherical) {
-         UTIL_THROW("Spherical average not yet implemented");
-      }
-      return sum/norm;
-   }
- 
-   /*
-   * Compute inner product of two real fields.
-   */
-   double Block::innerProduct(Field const & f, Field const & g) const
-   {
-      int nx = domain().nx();
-      double sum = 0.0;
-      double norm = 0.0;
-      if (domain().geometryMode() == Planar) {
-         for (int i = 1; i < nx - 1; ++i) {
-            sum += f[i]*g[i];
-         }
-         #ifdef FD1D_BLOCK_IDENTITY_NORM
-         sum += f[0]*g[0];
-         sum += f[nx - 1]*g[nx - 1];
-         norm = double(nx);
-         #else
-         sum += 0.5*f[0]*g[0];
-         sum += 0.5*f[nx - 1]*g[nx - 1];
-         norm = double(nx-1);
-         #endif
-      } else {
-         UTIL_THROW("Non-planar inner product not yet implemented");
-      }
-      return sum/norm;
    }
 
 }

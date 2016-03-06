@@ -150,6 +150,9 @@ namespace Fd1d
       // Array of statistical weight fields 
       DArray<QField> qFields_;
 
+      // Workspace
+      QField work_;
+
       /// Pointer to associated Block.
       Block* blockPtr_;
 

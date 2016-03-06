@@ -98,7 +98,7 @@ public:
       w.allocate(nx);
       double wc = 0.5;
       for (int i = 0; i < nx; ++i) {
-         q[i] = cos(Constants::Pi*(double(i)+0.5)/nx);
+         q[i] = cos(2.0*Constants::Pi*double(i)/double(nx-1));
          w[i] = wc;
       }
 
@@ -119,7 +119,7 @@ public:
       std::cout << "\n";
 
       double dx = (xMax - xMin)/double(nx - 1);
-      double k = 2.0*sin(Constants::Pi/(2*nx))/dx;
+      double k = 2.0*sin(Constants::Pi/double(nx-1))/dx;
       double f = k*k*step*step/6.0 + wc;
       std::cout << exp(-f*length) << "\n";
    }

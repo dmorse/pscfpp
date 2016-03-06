@@ -83,14 +83,8 @@ public:
       std::cout << mix.polymer(0).propagator(0, 1).computeQ() << "\n";
 
       // Test spatial integral of block concentration
-      double sum0 = 0.0;
-      double sum1 = 0.0;
-      for (int i = 0; i < nx; ++i) {
-         sum0 += sys.cField(0)[i];
-         sum1 += sys.cField(1)[i];
-      }
-      sum0 = sum0/double(nx);
-      sum1 = sum1/double(nx);
+      double sum0 = domain.spatialAverage(sys.cField(0));
+      double sum1 = domain.spatialAverage(sys.cField(1));
       std::cout << "Volume fraction of block 0 = " << sum0 << "\n";
       std::cout << "Volume fraction of block 1 = " << sum1 << "\n";
    }

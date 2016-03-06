@@ -67,7 +67,6 @@ namespace Fd1d
                                     Array<CField> const & cFields, 
                                     Array<double>& residual)
    {
-      //std::cout << "Begin computeResidual .. ";
       int nm = mixture().nMonomer();   // number of monomer types
       int nx = system().domain().nx(); // number of grid points
       int i;                           // grid point index
@@ -94,8 +93,6 @@ namespace Fd1d
 
       // Use last incompressibility residual to set last field point
       residual[nx-1] = wFields[nm-1][nx-1];
-
-      //std::cout << "Finish computingRresidual" << std::endl;
    }
 
    void NrIterator::computeJacobian()
@@ -137,7 +134,7 @@ namespace Fd1d
       // Decompose Jacobian matrix
       solver_.computeLU(jacobian_);
 
-      // std::cout << "Finishing computeJacobian" << std::endl;
+      // std::cout << "Finish computeJacobian" << std::endl;
    }
 
    void NrIterator::update()
@@ -161,38 +158,8 @@ namespace Fd1d
          }
       }
 
-      #if 0
-      std::cout << "WFields" << std::endl;
-      for (j = 0; j < nx; ++j) {
-         std::cout << j << "  ";
-         for (i = 0; i < nm; ++i) {
-            std::cout << system().wField(i)[j] << "  ";
-         }
-         std::cout << std::endl;
-      }
-      #endif
-
       mixture().compute(system().wFields(), system().cFields());
       computeResidual(system().wFields(), system().cFields(), residual_);
-
-      #if 0
-      std::cout << "CFields" << std::endl;
-      for (j = 0; j < nx; ++j) {
-         std::cout << j << "  ";
-         for (i = 0; i < nm; ++i) {
-            std::cout << system().cField(i)[j] << "  ";
-         }
-         std::cout << std::endl;
-      }
-      #endif
-
-      #if 0
-      std::cout << "Residuals" << std::endl;
-      int nr = nm*nx;
-      for (int ir = 0; ir <  nr; ++ir) {
-         std::cout << ir << "  " << residual_[ir] << std::endl;
-      }
-      #endif
 
       //std::cout << "Finish update" << std::endl;
    }
@@ -216,12 +183,11 @@ namespace Fd1d
       // Allocate memory if needed or, if allocated, check array sizes.
       allocate();
 
-      // Compute current residual
+      // Compute initial residual vector
       mixture().compute(system().wFields(), system().cFields());
       computeResidual(system().wFields(), system().cFields(), residual_);
 
       // Iterative loop
-      
       for (int i = 0; i < 100; ++i) {
          std::cout << "Begin iteration " << i << std::endl;
          if (isConverged()) {
@@ -230,6 +196,8 @@ namespace Fd1d
             update();
          }
       }
+
+      // Normal return (success)
       return 1;
    }
 

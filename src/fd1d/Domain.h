@@ -1,5 +1,5 @@
-#ifndef FD1D_GRID_H
-#define FD1D_GRID_H
+#ifndef FD1D_DOMAIN_H
+#define FD1D_DOMAIN_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -10,6 +10,8 @@
 
 #include <util/param/ParamComposite.h>     // base class
 #include "GeometryMode.h"                  // member
+
+//#define FD1D_DOMAIN_IDENTITY_NORM
 
 namespace Pscf {
 namespace Fd1d
@@ -26,6 +28,11 @@ namespace Fd1d
    {
 
    public:
+
+      /**
+      * Generic field type (base class)
+      */
+      typedef Array<double> Field;
 
       /**
       * Constructor.
@@ -46,6 +53,9 @@ namespace Fd1d
       * Read all parameters and initialize.
       */
       void readParameters(std::istream& in);
+
+      /// \name Accessors
+      //@{
 
       /**
       * Get minimum spatial coordinate.
@@ -71,6 +81,29 @@ namespace Fd1d
       * Get coordinate system flag (Planar, Cylindrical or Spherical).
       */
       GeometryMode const & geometryMode() const;
+
+      //@}
+      /// \name Spatial integrals
+      //@{
+
+      /**
+      * Compute spatial average of a field.
+      *
+      * \param f a field that depends on one spatial coordinate
+      * \return spatial average of field f
+      */
+      double spatialAverage(Field const & f) const;
+ 
+      /**
+      * Compute inner product of two real fields.
+      *
+      * \param f first field
+      * \param g second field
+      * \return spatial average of product of two fields.
+      */
+      double innerProduct(Field const & f, Field const & g) const;
+
+      //@}
 
    private:
 

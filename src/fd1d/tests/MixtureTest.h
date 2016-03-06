@@ -79,40 +79,26 @@ public:
 
       double cs;
       for (int i = 0; i < nx; ++i) {
-         cs = cos(Constants::Pi*(double(i)+0.5)/nx);
+         //cs = cos(2.0*Constants::Pi*(double(i)+0.5)/nx);
+         cs = cos(2.0*Constants::Pi*double(i)/double(nx-1));
          wFields[0][i] = 0.5 + cs;
-         wFields[1][i] = 0.7 - cs;
+         wFields[1][i] = 0.5 - cs;
       }
       mix.compute(wFields, cFields);
 
       // Test if same Q is obtained from different methods
-      std::cout << mix.polymer(0).propagator(0, 0).computeQ() << "\n";
-      std::cout << mix.polymer(0).propagator(1, 0).computeQ() << "\n";
-      std::cout << mix.polymer(0).propagator(1, 1).computeQ() << "\n";
-      std::cout << mix.polymer(0).propagator(0, 1).computeQ() << "\n";
+      std::cout << "Propagator(0,0), Q = " 
+                << mix.polymer(0).propagator(0, 0).computeQ() << "\n";
+      std::cout << "Propagator(1,0), Q = " 
+                << mix.polymer(0).propagator(1, 0).computeQ() << "\n";
+      std::cout << "Propagator(1,1), Q = " 
+                << mix.polymer(0).propagator(1, 1).computeQ() << "\n";
+      std::cout << "Propagator(0,1), Q = " 
+                << mix.polymer(0).propagator(0, 1).computeQ() << "\n";
 
       // Test spatial integral of block concentration
-      double sum0 = 0.0;
-      double sum1 = 0.0;
-      for (int i = 1; i < nx - 1; ++i) {
-         sum0 += cFields[0][i];
-         sum1 += cFields[1][i];
-      }
-      #ifdef FD1D_BLOCK_IDENTITY_NORM
-      sum0 += cFields[0][0];
-      sum1 += cFields[1][0];
-      sum0 += cFields[0][nx-1];
-      sum1 += cFields[1][nx-1];
-      sum0 = sum0/double(nx);
-      sum1 = sum1/double(nx);
-      #else 
-      sum0 += 0.5*cFields[0][0];
-      sum1 += 0.5*cFields[1][0];
-      sum0 += 0.5*cFields[0][nx-1];
-      sum1 += 0.5*cFields[1][nx-1];
-      sum0 = sum0/double(nx-1);
-      sum1 = sum1/double(nx-1);
-      #endif
+      double sum0 = domain.spatialAverage(cFields[0]);
+      double sum1 = domain.spatialAverage(cFields[1]);
       std::cout << "Volume fraction of block 0 = " << sum0 << "\n";
       std::cout << "Volume fraction of block 1 = " << sum1 << "\n";
       

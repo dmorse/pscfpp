@@ -7,6 +7,7 @@
 
 #include "Propagator.h"
 #include "Block.h"
+#include "Domain.h"
 
 namespace Pscf { 
 namespace Fd1d
@@ -117,7 +118,7 @@ namespace Fd1d
       }
       QField const& qh = head();
       QField const& qt = partner().tail();
-      return block().innerProduct(qh, qt);
+      return block().domain().innerProduct(qh, qt);
    }
 
 }
