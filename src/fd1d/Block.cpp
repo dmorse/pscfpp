@@ -123,25 +123,15 @@ namespace Fd1d
       GeometryMode mode = domain().geometryMode();
       if (mode == Planar) {
 
-         // Interior rows
+         dA_[0] += c2;
+         uA_[0] = -c2;
          for (int i = 1; i < nx - 1; ++i) {
             dA_[i] += c2;
             uA_[i] = -c1;
             lA_[i-1] = -c1;
          }
-    
-         // First and last rows
-         #ifdef FD1D_DOMAIN_IDENTITY_NORM
-         dA_[0] += c1;
-         uA_[0] = -c1;
-         dA_[nx - 1] += c1;
-         lA_[nx - 2] = -c1;
-         #else
-         dA_[0] += c2;
-         uA_[0] = -c2;
          dA_[nx - 1] += c2;
          lA_[nx - 2] = -c2;
-         #endif
 
       } else {
 

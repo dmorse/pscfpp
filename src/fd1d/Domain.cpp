@@ -53,18 +53,12 @@ namespace Fd1d
       double sum = 0.0;
       double norm = 0.0;
       if (geometryMode() == Planar) {
+         sum += 0.5*f[0];
          for (int i = 1; i < nx_ - 1; ++i) {
             sum += f[i];
          }
-         #ifdef FD1D_DOMAIN_IDENTITY_NORM
-         sum += f[0];
-         sum += f[nx_ - 1];
-         norm = double(nx_);
-         #else
-         sum += 0.5*f[0];
          sum += 0.5*f[nx_ - 1];
          norm = double(nx_ - 1);
-         #endif
       } else 
       if (geometryMode() == Cylindrical) {
          double x0 = xMin_/dx_;
@@ -93,18 +87,12 @@ namespace Fd1d
       double sum = 0.0;
       double norm = 0.0;
       if (geometryMode() == Planar) {
+         sum += 0.5*f[0]*g[0];
          for (int i = 1; i < nx_ - 1; ++i) {
             sum += f[i]*g[i];
          }
-         #ifdef FD1D_DOMAIN_IDENTITY_NORM
-         sum += f[0]*g[0];
-         sum += f[nx_ - 1]*g[nx_ - 1];
-         norm = double(nx_);
-         #else
-         sum += 0.5*f[0]*g[0];
          sum += 0.5*f[nx_ - 1]*g[nx_ - 1];
          norm = double(nx_ - 1);
-         #endif
       } else {
          UTIL_THROW("Non-planar inner product not yet implemented");
       }

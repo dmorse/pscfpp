@@ -11,8 +11,6 @@
 #include <util/param/ParamComposite.h>     // base class
 #include "GeometryMode.h"                  // member
 
-//#define FD1D_DOMAIN_IDENTITY_NORM
-
 namespace Pscf {
 namespace Fd1d
 {
