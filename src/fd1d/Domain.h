@@ -42,16 +42,35 @@ namespace Fd1d
       */
       ~Domain();
 
-      /**
-      * Set grid parameters. 
-      */
-      void setParameters(double xMin, double xMax, int nx);
+      /// \name Initialize parameters
+      //@{
 
       /**
       * Read all parameters and initialize.
       */
       void readParameters(std::istream& in);
 
+      /**
+      * Set grid parameters for a planar domain.
+      */
+      void setPlanarParameters(double xMin, double xMax, int nx);
+
+      /**
+      * Set grid parameters for a cylindrical or spherical shell.
+      */
+      void setShellParameters(GeometryMode mode, double xMin, double xMax, int nx);
+
+      /**
+      * Set grid parameters for a cylinder.
+      */
+      void setCylinderParameters(double xMax, int nx);
+
+      /**
+      * Set grid parameters for a cylinder.
+      */
+      void setSphereParameters(double xMax, int nx);
+
+      //@}
       /// \name Accessors
       //@{
 
@@ -78,7 +97,17 @@ namespace Fd1d
       /**
       * Get coordinate system flag (Planar, Cylindrical or Spherical).
       */
-      GeometryMode const & geometryMode() const;
+      GeometryMode const & mode() const;
+
+      /**
+      * Is this a cylindrical or spherical shell?
+      *
+      * This value is relevant only if the geometry mode is spherical
+      * or cylindrical. If so and isShell is true, then xMin > 0, 
+      * giving a cylindrical or spherical shell. If isShell is false,
+      * then xMin = 0, giving a cylinder or sphere.
+      */
+      bool isShell() const;
 
       //@}
       /// \name Spatial integrals
@@ -128,7 +157,12 @@ namespace Fd1d
       /**
       * Coordinate system flag (=Planar, Cylindrical, or Spherical).
       */
-      GeometryMode geometryMode_;
+      GeometryMode mode_;
+
+      /**
+      * Is this a cylindrical or spherical shell?
+      */
+      bool isShell_;
 
       /**
       * Work space vector.
@@ -151,8 +185,11 @@ namespace Fd1d
    inline double Domain::xMax() const
    {  return xMax_; }
 
-   inline GeometryMode const & Domain::geometryMode() const
-   {  return geometryMode_; }
+   inline GeometryMode const & Domain::mode() const
+   {  return mode_; }
+
+   inline bool Domain::isShell() const
+   {  return isShell_; }
 
 } // namespace Fd1d
 } // namespace Pscf

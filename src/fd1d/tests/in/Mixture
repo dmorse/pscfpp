@@ -13,6 +13,7 @@ Mixture{
    ds   0.001
 }
 Domain{
+   mode Planar
    xMin 0.0
    xMax 1.0
    nx   33

@@ -16,28 +16,68 @@ namespace Fd1d
       xMax_(0.0),
       dx_(0.0),
       nx_(0),
-      geometryMode_(Planar)
+      mode_(Planar),
+      isShell_(false)
    {  setClassName("Domain"); }
 
    Domain::~Domain()
    {}
 
-   void Domain::setParameters(double xMin, double xMax, int nx)
+   void Domain::readParameters(std::istream& in)
    {
+      mode_ = Planar;
+      read(in, "mode", mode_);
+      if (mode_ != Planar) {
+         read(in, "isShell", isShell_); 
+      } 
+      if (mode_ == Planar || isShell_) { 
+         read(in, "xMin", xMin_);
+      } else {
+         xMin_ = 0.0;
+      }
+      read(in, "xMax", xMax_);
+      read(in, "nx", nx_);
+      dx_ = (xMax_ - xMin_)/double(nx_ - 1);
+   }
+
+   void Domain::setPlanarParameters(double xMin, double xMax, int nx)
+   {
+      mode_ = Planar;
+      isShell_ = false;
       xMin_ = xMin;
       xMax_ = xMax;
       nx_ = nx;
       dx_ = (xMax_ - xMin_)/double(nx_ - 1);
    }
 
-   void Domain::readParameters(std::istream& in)
+   void Domain::setShellParameters(GeometryMode mode, double xMin, double xMax, int nx)
    {
-      read(in, "xMin", xMin_);
-      read(in, "xMax", xMax_);
-      read(in, "nx", nx_);
+      mode_ = mode;
+      isShell_ = true;
+      xMin_ = xMin;
+      xMax_ = xMax;
+      nx_ = nx;
       dx_ = (xMax_ - xMin_)/double(nx_ - 1);
+   }
 
-      readOptional(in, "geometryMode", geometryMode_);
+   void Domain::setCylinderParameters(double xMax, int nx)
+   {
+      mode_ = Cylindrical;
+      isShell_ = false;
+      xMin_ = 0.0;
+      xMax_ = xMax;
+      nx_ = nx;
+      dx_ = xMax_/double(nx_ - 1);
+   }
+
+   void Domain::setSphereParameters(double xMax, int nx)
+   {
+      mode_ = Spherical;
+      isShell_ = false;
+      xMin_ = 0.0;
+      xMax_ = xMax;
+      nx_ = nx;
+      dx_ = xMax_/double(nx_ - 1);
    }
 
    /*
@@ -50,10 +90,9 @@ namespace Fd1d
       UTIL_CHECK(xMax_ - xMin_ >=  dx_);
       UTIL_CHECK(nx_ == f.capacity());
 
-      GeometryMode mode = geometryMode();
       double sum = 0.0;
       double norm = 0.0;
-      if (mode == Planar) {
+      if (mode_ == Planar) {
 
          sum += 0.5*f[0];
          for (int i = 1; i < nx_ - 1; ++i) {
@@ -63,16 +102,16 @@ namespace Fd1d
          norm = double(nx_ - 1);
 
       } else 
-      if (mode == Cylindrical) {
+      if (mode_ == Cylindrical) {
 
          // First value
          double x0 = xMin_/dx_;
-         if (x0 < 0.1) {
-            sum  += f[0]/8.0;
-            norm += 1.0/8.0;
-         } else {
+         if (isShell_) {
             sum += 0.5*x0*f[0];
             norm += 0.5*x0;
+         } else {
+            sum += f[0]/8.0;
+            norm += 1.0/8.0;
          }
 
          // Interior values
@@ -89,16 +128,16 @@ namespace Fd1d
          norm += 0.5*x;
 
       } else
-      if (mode == Spherical) {
+      if (mode_ == Spherical) {
 
          // First value
          double x0 = xMin_/dx_;
-         if (x0 < 0.1) {
-            sum  += f[0]/24.0;
-            norm += 1.0/24.0;
-         } else {
+         if (isShell_) {
             sum += 0.5*x0*x0*f[0];
             norm += 0.5*x0*x0;
+         } else {
+            sum += f[0]/24.0;
+            norm += 1.0/24.0;
          }
 
          // Interior values

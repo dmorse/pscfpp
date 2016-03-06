@@ -19,10 +19,10 @@ System{
            1  1    0.0
   }
   Domain{
-     xMin 0.0
-     xMax 4.0
-     nx   33
-     geometryMode Planar
+     mode   Planar
+     xMin     0.0
+     xMax     4.0
+     nx        33
   }
   NrIterator{
      epsilon   0.00001

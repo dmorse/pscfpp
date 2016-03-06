@@ -46,7 +46,7 @@ public:
       std::cout << "\n";
       sys.writeParam(std::cout);
 
-      TEST_ASSERT(sys.domain().geometryMode() == Planar);
+      TEST_ASSERT(sys.domain().mode() == Planar);
    }
 
 

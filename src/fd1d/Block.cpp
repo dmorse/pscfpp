@@ -120,7 +120,7 @@ namespace Fd1d
       double db = kuhn()/dx;
       double c1 = halfDs*db*db/6.0;
       double c2 = 2.0*c1;
-      GeometryMode mode = domain().geometryMode();
+      GeometryMode mode = domain().mode();
       if (mode == Planar) {
 
          dA_[0] += c2;
@@ -148,7 +148,7 @@ namespace Fd1d
             if (mode == Cylindrical) {
                rp = 2.0;
             } else {
-               UTIL_THROW("Invalid geometryMode");
+               UTIL_THROW("Invalid GeometryMode");
             }
          } else {
             rp = 1.0 + halfDx/xMin;

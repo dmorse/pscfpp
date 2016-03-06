@@ -48,7 +48,7 @@ public:
       double xMax = 1.0;
       int nx = 11;
       Domain domain;
-      domain.setParameters(xMin, xMax, nx);
+      domain.setPlanarParameters(xMin, xMax, nx);
       b.setDiscretization(domain, ds);
       DArray<double> w;
       w.allocate(nx);
@@ -90,7 +90,7 @@ public:
       double xMax = 1.0;
       int nx = 33;
       Domain domain;
-      domain.setParameters(xMin, xMax, nx);
+      domain.setPlanarParameters(xMin, xMax, nx);
       b.setDiscretization(domain, ds);
 
       DArray<double> q, w;
