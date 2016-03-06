@@ -38,7 +38,7 @@ public:
       printMethod(TEST_FUNC);
 
       std::ifstream in;
-      openInputFile("in/System", in);
+      openInputFile("in/SystemPlanar", in);
 
       System sys;
       sys.readParam(in);
@@ -49,14 +49,12 @@ public:
       TEST_ASSERT(sys.domain().mode() == Planar);
    }
 
-
-
-   void testSolveMDE()
+   void testSolveMdePlanar()
    {
       printMethod(TEST_FUNC);
 
       std::ifstream in;
-      openInputFile("in/System", in);
+      openInputFile("in/SystemPlanar", in);
 
       System sys;
       sys.readParam(in);
@@ -70,7 +68,45 @@ public:
       double nx = (double)domain.nx();
       double cs;
       for (int i = 0; i < nx; ++i) {
-         cs = cos(Constants::Pi*(double(i)+0.5)/nx);
+         cs = cos(2.0*Constants::Pi*(double(i)+0.5)/double(nx-1));
+         sys.wField(0)[i] = 0.5 + cs;
+         sys.wField(1)[i] = 0.7 - cs;
+      }
+      mix.compute(sys.wFields(), sys.cFields());
+
+      // Test if same Q is obtained from different methods
+      std::cout << mix.polymer(0).propagator(0, 0).computeQ() << "\n";
+      std::cout << mix.polymer(0).propagator(1, 0).computeQ() << "\n";
+      std::cout << mix.polymer(0).propagator(1, 1).computeQ() << "\n";
+      std::cout << mix.polymer(0).propagator(0, 1).computeQ() << "\n";
+
+      // Test spatial integral of block concentration
+      double sum0 = domain.spatialAverage(sys.cField(0));
+      double sum1 = domain.spatialAverage(sys.cField(1));
+      std::cout << "Volume fraction of block 0 = " << sum0 << "\n";
+      std::cout << "Volume fraction of block 1 = " << sum1 << "\n";
+   }
+
+   void testSolveMdeSpherical()
+   {
+      printMethod(TEST_FUNC);
+
+      std::ifstream in;
+      openInputFile("in/SystemSpherical", in);
+
+      System sys;
+      sys.readParam(in);
+
+      std::cout << "\n";
+      sys.writeParam(std::cout);
+
+      Mixture& mix = sys.mixture();
+      Domain& domain = sys.domain();
+
+      double nx = (double)domain.nx();
+      double cs;
+      for (int i = 0; i < nx; ++i) {
+         cs = cos(2.0*Constants::Pi*(double(i)+0.5)/double(nx-1));
          sys.wField(0)[i] = 0.5 + cs;
          sys.wField(1)[i] = 0.7 - cs;
       }
@@ -94,7 +130,7 @@ public:
       printMethod(TEST_FUNC);
 
       std::ifstream in;
-      openInputFile("in/System2", in);
+      openInputFile("in/SystemPlanar2", in);
 
       System sys;
       sys.readParam(in);
@@ -133,7 +169,7 @@ public:
       printMethod(TEST_FUNC);
 
       std::ifstream in;
-      openInputFile("in/System2", in);
+      openInputFile("in/SystemPlanar2", in);
 
       System sys;
       sys.readParam(in);
@@ -163,7 +199,7 @@ public:
       std::ifstream in;
       std::cout << "\n";
 
-      openInputFile("in/System2", in);
+      openInputFile("in/SystemPlanar2", in);
       sys.readParam(in);
       in.close();
 
@@ -183,7 +219,8 @@ public:
 TEST_BEGIN(SystemTest)
 TEST_ADD(SystemTest, testConstructor)
 TEST_ADD(SystemTest, testReadParameters)
-TEST_ADD(SystemTest, testSolveMDE)
+TEST_ADD(SystemTest, testSolveMdePlanar)
+TEST_ADD(SystemTest, testSolveMdeSpherical)
 TEST_ADD(SystemTest, testIterator)
 TEST_ADD(SystemTest, testFieldInput)
 TEST_ADD(SystemTest, testReadCommands)
