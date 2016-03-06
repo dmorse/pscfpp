@@ -130,6 +130,11 @@ namespace Fd1d
       */
       GeometryMode geometryMode_;
 
+      /**
+      * Work space vector.
+      */
+      mutable DArray<double> work_;
+
    };
 
    // Inline member functions

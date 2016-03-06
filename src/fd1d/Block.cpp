@@ -100,10 +100,10 @@ namespace Fd1d
       int nx = domain().nx();
       UTIL_CHECK(nx > 0);
       UTIL_CHECK(dA_.capacity() == nx);
-      UTIL_CHECK(dB_.capacity() == nx);
       UTIL_CHECK(uA_.capacity() == nx - 1);
-      UTIL_CHECK(uB_.capacity() == nx - 1);
       UTIL_CHECK(lA_.capacity() == nx - 1);
+      UTIL_CHECK(dB_.capacity() == nx);
+      UTIL_CHECK(uB_.capacity() == nx - 1);
       UTIL_CHECK(lB_.capacity() == nx - 1);
       UTIL_CHECK(ns_ > 0);
       UTIL_CHECK(propagator(0).isAllocated());
@@ -140,6 +140,26 @@ namespace Fd1d
          double halfDx = 0.5*dx;
          double x, rp, rm;
 
+         // First row: x = xMin
+         if (xMin/dx < 0.1) {
+            if (mode == Spherical) {
+               rp = 3.0;
+            } else 
+            if (mode == Cylindrical) {
+               rp = 2.0;
+            } else {
+               UTIL_THROW("Invalid geometryMode");
+            }
+         } else {
+            rp = 1.0 + halfDx/xMin;
+            if (mode == Spherical) {
+               rp *= rp;
+            }
+         }
+         rp *= c1;
+         dA_[0] += 2.0*rp;
+         uA_[0] = -2.0*rp;
+
          // Interior rows
          for (int i = 1; i < nx - 1; ++i) {
             x = xMin + dx*i;
@@ -164,19 +184,6 @@ namespace Fd1d
          rm *= c1;
          dA_[nx-1] += 2.0*rm;
          lA_[nx-2] = -2.0*rm;
-
-         // First row: x = xMin
-         if (xMin/dx < 0.1) {
-            rp = 1.0;
-         } else {
-            rp = 1.0 + halfDx/xMin;
-            if (mode == Spherical) {
-               rp *= rp;
-            }
-         }
-         rp *= c1;
-         dA_[0] += 2.0*rp;
-         uA_[0] = -2.0*rp;
 
       }
 

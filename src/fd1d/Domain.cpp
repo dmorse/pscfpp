@@ -48,34 +48,78 @@ namespace Fd1d
       UTIL_CHECK(nx_ > 1);
       UTIL_CHECK(dx_ > 0.0);
       UTIL_CHECK(xMax_ - xMin_ >=  dx_);
-      UTIL_CHECK(f.capacity() == nx_);
+      UTIL_CHECK(nx_ == f.capacity());
 
+      GeometryMode mode = geometryMode();
       double sum = 0.0;
       double norm = 0.0;
-      if (geometryMode() == Planar) {
+      if (mode == Planar) {
+
          sum += 0.5*f[0];
          for (int i = 1; i < nx_ - 1; ++i) {
             sum += f[i];
          }
          sum += 0.5*f[nx_ - 1];
          norm = double(nx_ - 1);
+
       } else 
-      if (geometryMode() == Cylindrical) {
+      if (mode == Cylindrical) {
+
+         // First value
          double x0 = xMin_/dx_;
-         sum += 0.5*x0*f[0];
+         if (x0 < 0.1) {
+            sum  += f[0]/8.0;
+            norm += 1.0/8.0;
+         } else {
+            sum += 0.5*x0*f[0];
+            norm += 0.5*x0;
+         }
+
+         // Interior values
          double x;
          for (int i = 1; i < nx_ - 1; ++i) {
             x = x0 + double(i);
             sum  += x*f[i];
             norm += x;
          }
+
+         // Last value
          x = x0 + double(nx_-1);
          sum += 0.5*x*f[nx_-1];
          norm += 0.5*x;
+
       } else
-      if (geometryMode() == Spherical) {
-         UTIL_THROW("Spherical average not yet implemented");
+      if (mode == Spherical) {
+
+         // First value
+         double x0 = xMin_/dx_;
+         if (x0 < 0.1) {
+            sum  += f[0]/24.0;
+            norm += 1.0/24.0;
+         } else {
+            sum += 0.5*x0*x0*f[0];
+            norm += 0.5*x0*x0;
+         }
+
+         // Interior values
+         double x;
+         for (int i = 1; i < nx_ - 1; ++i) {
+            x = x0 + double(i);
+            sum  += x*x*f[i];
+            norm += x*x;
+         }
+
+         // Last value
+         x = x0 + double(nx_-1);
+         sum += 0.5*x*x*f[nx_-1];
+         norm += 0.5*x*x;
+
+      } else {
+
+         UTIL_THROW("Invalid geometry mode");
+
       }
+
       return sum/norm;
    }
  
@@ -84,19 +128,21 @@ namespace Fd1d
    */
    double Domain::innerProduct(Field const & f, Field const & g) const
    {
-      double sum = 0.0;
-      double norm = 0.0;
-      if (geometryMode() == Planar) {
-         sum += 0.5*f[0]*g[0];
-         for (int i = 1; i < nx_ - 1; ++i) {
-            sum += f[i]*g[i];
-         }
-         sum += 0.5*f[nx_ - 1]*g[nx_ - 1];
-         norm = double(nx_ - 1);
+      // Preconditions
+      UTIL_CHECK(nx_ > 1);
+      UTIL_CHECK(nx_ == f.capacity());
+      UTIL_CHECK(nx_ == g.capacity());
+      if (!work_.isAllocated()) {
+         work_.allocate(nx_);
       } else {
-         UTIL_THROW("Non-planar inner product not yet implemented");
+         UTIL_ASSERT(nx_ == work_.capacity());
+      } 
+
+      // Compute average of f(x)*g(x)
+      for (int i = 0; i < nx_; ++i) {
+         work_[i] = f[i]*g[i];
       }
-      return sum/norm;
+      return spatialAverage(work_);
    }
 
 }
