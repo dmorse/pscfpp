@@ -87,6 +87,7 @@ public:
       std::cout << "Volume fraction of block 1 = " << sum1 << "\n";
    }
 
+
    void testSolveMdeSpherical()
    {
       printMethod(TEST_FUNC);
@@ -106,9 +107,9 @@ public:
       double nx = (double)domain.nx();
       double cs;
       for (int i = 0; i < nx; ++i) {
-         cs = cos(2.0*Constants::Pi*(double(i)+0.5)/double(nx-1));
-         sys.wField(0)[i] = 0.5 + cs;
-         sys.wField(1)[i] = 0.7 - cs;
+         cs = cos(2.0*Constants::Pi*double(i)/double(nx-1));
+         sys.wField(0)[i] = -cs;
+         sys.wField(1)[i] = +cs;
       }
       mix.compute(sys.wFields(), sys.cFields());
 
@@ -125,7 +126,7 @@ public:
       std::cout << "Volume fraction of block 1 = " << sum1 << "\n";
    }
 
-   void testIterator()
+   void testIteratorPlanar()
    {
       printMethod(TEST_FUNC);
 
@@ -154,11 +155,50 @@ public:
       sys.iterator().solve();
 
       std::ofstream out;
-      openOutputFile("out/w", out);
+      openOutputFile("out/iteratorPlanar.w", out);
       sys.writeFields(out, sys.wFields());
       out.close();
 
-      openOutputFile("out/c", out);
+      openOutputFile("out/iteratorPlanar.c", out);
+      sys.writeFields(out, sys.cFields());
+      out.close();
+
+   }
+
+   void testIteratorSpherical()
+   {
+      printMethod(TEST_FUNC);
+
+      std::ifstream in;
+      openInputFile("in/SystemSpherical", in);
+
+      System sys;
+      sys.readParam(in);
+
+      std::cout << "\n";
+      sys.writeParam(std::cout);
+
+      Mixture& mix = sys.mixture();
+      Domain& domain = sys.domain();
+
+      double nx = (double)domain.nx();
+      double cs;
+      double chi = 10.0;
+      for (int i = 0; i < nx; ++i) {
+         cs = cos(Constants::Pi*double(i)/double(nx-1));
+         sys.wField(0)[i] = -chi*cs/2.0;
+         sys.wField(1)[i] = +chi*cs/2.0;
+      }
+      mix.compute(sys.wFields(), sys.cFields());
+
+      sys.iterator().solve();
+
+      std::ofstream out;
+      openOutputFile("out/iteratorSpherical.w", out);
+      sys.writeFields(out, sys.wFields());
+      out.close();
+
+      openOutputFile("out/iteratorSpherical.c", out);
       sys.writeFields(out, sys.cFields());
       out.close();
 
@@ -221,7 +261,8 @@ TEST_ADD(SystemTest, testConstructor)
 TEST_ADD(SystemTest, testReadParameters)
 TEST_ADD(SystemTest, testSolveMdePlanar)
 TEST_ADD(SystemTest, testSolveMdeSpherical)
-TEST_ADD(SystemTest, testIterator)
+TEST_ADD(SystemTest, testIteratorPlanar)
+//TEST_ADD(SystemTest, testIteratorSpherical)
 TEST_ADD(SystemTest, testFieldInput)
 TEST_ADD(SystemTest, testReadCommands)
 TEST_END(SystemTest)

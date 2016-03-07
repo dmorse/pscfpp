@@ -78,6 +78,9 @@ namespace Fd1d
 
       void computeJacobian();
 
+      /**
+      * Take one step of Jacobian update.
+      */
       void update();
 
       /**
@@ -85,7 +88,7 @@ namespace Fd1d
       *
       * \return true if converged, false if not converged.
       */
-      bool isConverged();
+      double residualNorm(Array<double> const & residual) const;
 
    private:
 

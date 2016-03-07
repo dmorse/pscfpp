@@ -16,6 +16,7 @@ namespace Fd1d
 {
 
    class Mixture;
+   class Domain;
    class System;
 
    using namespace Util;
@@ -56,9 +57,17 @@ namespace Fd1d
 
    protected:
 
-      System& system();
+      System & system();
+
+      System const & system() const;
       
       Mixture& mixture();
+
+      Mixture const & mixture() const;
+      
+      Domain& domain();
+
+      Domain const & domain() const;
       
    private:
 
@@ -67,6 +76,9 @@ namespace Fd1d
 
       // Pointer to associated Mixture object.
       Mixture* mixturePtr_;
+
+      // Pointer to associated Domain object.
+      Domain* domainPtr_;
 
    };
 
@@ -78,10 +90,38 @@ namespace Fd1d
    }
 
    inline
+   System const & Iterator::system() const
+   {
+      UTIL_ASSERT(systemPtr_);
+      return *systemPtr_;
+   }
+
+   inline
    Mixture& Iterator::mixture()
    {
       UTIL_ASSERT(mixturePtr_);
       return *mixturePtr_;
+   }
+
+   inline
+   Mixture const & Iterator::mixture() const
+   {
+      UTIL_ASSERT(mixturePtr_);
+      return *mixturePtr_;
+   }
+
+   inline
+   Domain& Iterator::domain()
+   {
+      UTIL_ASSERT(domainPtr_);
+      return *domainPtr_;
+   }
+
+   inline
+   Domain const & Iterator::domain() const
+   {
+      UTIL_ASSERT(domainPtr_);
+      return *domainPtr_;
    }
 
 } // namespace Fd1d

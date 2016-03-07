@@ -30,7 +30,7 @@ namespace Fd1d
    void NrIterator::readParameters(std::istream& in)
    {
       read(in, "epsilon", epsilon_);
-      if (system().domain().nx() > 0) {
+      if (domain().nx() > 0) {
          allocate();
       }
    }
@@ -38,7 +38,7 @@ namespace Fd1d
    void NrIterator::allocate()
    {
       int nm = mixture().nMonomer();   // number of monomer types
-      int nx = system().domain().nx(); // number of grid points
+      int nx = domain().nx(); // number of grid points
       UTIL_CHECK(nm > 0);
       UTIL_CHECK(nx > 0);
       int nr = nm*nx;                  // number of residual components
@@ -67,9 +67,9 @@ namespace Fd1d
                                     Array<CField> const & cFields, 
                                     Array<double>& residual)
    {
-      int nm = mixture().nMonomer();   // number of monomer types
-      int nx = system().domain().nx(); // number of grid points
-      int i;                           // grid point index
+      int nm = mixture().nMonomer();  // number of monomer types
+      int nx = domain().nx();         // number of grid points
+      int i;                          // grid point index
       int j;                          // monomer indices
       int ir;                         // residual index
       for (i = 0; i < nx; ++i) {
@@ -99,7 +99,7 @@ namespace Fd1d
    {
       // std::cout << "Begin computeJacobian ... ";
       int nm = mixture().nMonomer();   // number of monomer types
-      int nx = system().domain().nx(); // number of grid points
+      int nx = domain().nx();          // number of grid points
       int i;                           // monomer index
       int j;                           // grid point index
 
@@ -147,7 +147,7 @@ namespace Fd1d
 
       // Increment wFields;
       int nm = mixture().nMonomer();   // number of monomers types
-      int nx = system().domain().nx(); // number of grid points
+      int nx = domain().nx();          // number of grid points
       int i;                           // monomer index
       int j;                           // grid point index
       int k = 0;                       // residual element index
@@ -164,18 +164,20 @@ namespace Fd1d
       //std::cout << "Finish update" << std::endl;
    }
 
-   bool NrIterator::isConverged()
+   double NrIterator::residualNorm(Array<double> const & residual) const
    {
-      int nm = mixture().nMonomer();    // number of monomer types
-      int nx = system().domain().nx();  // number of grid points
-      int nr = nm*nx;                   // number of residual components
+      int nm = mixture().nMonomer();  // number of monomer types
+      int nx = domain().nx();         // number of grid points
+      int nr = nm*nx;                 // number of residual components
+      double value, norm;
+      norm = 0.0;
       for (int ir = 0; ir <  nr; ++ir) {
-         if (fabs(residual_[ir]) > epsilon_) {
-            return false;
+         value = fabs(residual[ir]);
+         if (value > norm) {
+            norm = value;
          }
       }
-      std::cout << "Converged" << std::endl;
-      return true;
+      return norm;
    }
 
    int NrIterator::solve()
@@ -188,9 +190,13 @@ namespace Fd1d
       computeResidual(system().wFields(), system().cFields(), residual_);
 
       // Iterative loop
+      double norm;
       for (int i = 0; i < 100; ++i) {
-         std::cout << "Begin iteration " << i << std::endl;
-         if (isConverged()) {
+         std::cout << "Begin iteration " << i;
+         norm = residualNorm(residual_);
+         std::cout << " , residual norm = " << norm << std::endl;
+         if (norm < epsilon_) {
+            std::cout << "Converged" << std::endl;
             return 0;
          } else {
             update();

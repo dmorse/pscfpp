@@ -8,6 +8,7 @@
 #include "Iterator.h"
 #include "System.h"
 #include "Mixture.h"
+#include "Domain.h"
 
 namespace Pscf {
 namespace Fd1d
@@ -17,7 +18,8 @@ namespace Fd1d
 
    Iterator::Iterator()
     : systemPtr_(0),
-      mixturePtr_(0)
+      mixturePtr_(0),
+      domainPtr_(0)
    {  setClassName("Iterator"); }
 
    Iterator::~Iterator()
@@ -27,6 +29,7 @@ namespace Fd1d
    {  
       systemPtr_  = &system; 
       mixturePtr_ = &(system.mixture()); 
+      domainPtr_ = &(system.domain()); 
    }
 
 } // namespace Fd1d
