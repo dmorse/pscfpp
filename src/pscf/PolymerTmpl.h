@@ -324,15 +324,14 @@ namespace Pscf
          for (directionId = 0; directionId < 2; ++directionId) {
             vertexId = block(blockId).vertexId(directionId);
             vertexPtr = &vertex(vertexId);
-            // propagatorPtr = &propagator(blockId, directionId);
             propagatorPtr = &block(blockId).propagator(directionId);
             for (i = 0; i < vertexPtr->size(); ++i) {
                propagatorId = vertexPtr->inPropagatorId(i);
                if (propagatorId[0] == blockId) {
                   UTIL_CHECK(propagatorId[1] != directionId);
                } else {
-                  //sourcePtr = & propagator(propagatorId[0], propagatorId[1]);
-                  sourcePtr = &block(propagatorId[0]).propagator(propagatorId[1]);
+                  sourcePtr = 
+                     &block(propagatorId[0]).propagator(propagatorId[1]);
                   propagatorPtr->addSource(*sourcePtr);
                }
             }
