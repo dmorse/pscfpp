@@ -1,10 +1,10 @@
 Todo for 1D finite difference code:
 
-1) Test propagator and spatialAverage code for spherical and cylindrical modes.
+1) Test propagator and spatialAverage code for cylindrical mode.
 
-2) Allow for different ensembles (canonical vs. grand), specified independently
-for each species.
+2) Test residual and NrIterator code for spherical and cylindrical modes.
 
-3) Write code to calculate species chemical potentials and/or species volume 
-fractions, and total free energy densities.
+3) Test all computations in grand-canonical ensemble (canonical vs. grand).
+
+4) Write code to calculate total Helmholtz free energy and pressure.
 
