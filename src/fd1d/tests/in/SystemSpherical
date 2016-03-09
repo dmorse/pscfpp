@@ -22,7 +22,7 @@ System{
      mode      Spherical
      isShell           0
      xMax            0.6
-     nx               33
+     nx              101
   }
   NrIterator{
      epsilon   0.00001
