@@ -25,6 +25,18 @@ namespace Pscf {
       readDSymmMatrix(in, "chi", chi_, nMonomer());
    }
 
+   double ChiInteraction::fHelmholtz(Array<double> const & c)
+   {
+      int i, j;
+      double sum = 0.0;
+      for (i = 0; i < nMonomer(); ++i) {
+         for (j = 0; j < nMonomer(); ++j) {
+            sum += chi_(i, j)* c[i]*c[j];
+         }
+      }
+      return 0.5*sum;
+   }
+
    void 
    ChiInteraction::computeW(Array<double> const & c,
                                 double p, Array<double>& w)

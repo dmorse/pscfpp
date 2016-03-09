@@ -43,6 +43,14 @@ namespace Pscf {
       virtual void readParameters(std::istream& in);
 
       /**
+      * Compute excess Helmholtz free energy per monomer.
+      *
+      * \param c array of concentrations, for each type (input)
+      */
+      virtual 
+      double fHelmholtz(Array<double> const & c);
+
+      /**
       * Compute chemical potential from concentration and pressure.
       *
       * \param c array of concentrations, for each type (input)
