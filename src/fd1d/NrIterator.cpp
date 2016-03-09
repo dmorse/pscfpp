@@ -137,6 +137,7 @@ namespace Fd1d
       // std::cout << "Finish computeJacobian" << std::endl;
    }
 
+   #if 0
    void NrIterator::update()
    {
       // std::cout << "Begin update .. ";
@@ -146,6 +147,9 @@ namespace Fd1d
       solver_.solve(residual_, dOmega_);
 
       // Increment wFields;
+      incrementWFields(system().wFields(), dOmega_);
+
+      #if 0
       int nm = mixture().nMonomer();   // number of monomers types
       int nx = domain().nx();          // number of grid points
       int i;                           // monomer index
@@ -157,13 +161,32 @@ namespace Fd1d
             ++k;
          }
       }
+      #endif
 
       mixture().compute(system().wFields(), system().cFields());
       computeResidual(system().wFields(), system().cFields(), residual_);
 
       //std::cout << "Finish update" << std::endl;
    }
+   #endif
 
+   void NrIterator::incrementWFields(Array<WField> const & wOld, 
+                                     Array<double> const & dW, 
+                                     Array<WField> & wNew)
+   {
+      int nm = mixture().nMonomer(); // number of monomers types
+      int nx = domain().nx();        // number of grid points
+      int i;                         // monomer index
+      int j;                         // grid point index
+      int k = 0;                     // residual element index
+      for (i = 0; i < nm; ++i) {
+         for (j = 0; j < nx; ++j) {
+            wNew[i][j] = wOld[i][j] - dW[k];
+            ++k;
+         }
+      }
+   }
+   
    double NrIterator::residualNorm(Array<double> const & residual) const
    {
       int nm = mixture().nMonomer();  // number of monomer types
@@ -185,25 +208,87 @@ namespace Fd1d
       // Allocate memory if needed or, if allocated, check array sizes.
       allocate();
 
-      // Compute initial residual vector
+      // Compute initial residual vector and norm
       mixture().compute(system().wFields(), system().cFields());
       computeResidual(system().wFields(), system().cFields(), residual_);
+      double norm = residualNorm(residual_);
+      double normNew;
+
+      int nm = mixture().nMonomer();  // number of monomer types
+      int nx = domain().nx();         // number of grid points
+      int nr = nm*nx;                 // number of residual elements
 
       // Iterative loop
-      double norm;
-      for (int i = 0; i < 100; ++i) {
+      int i, j, k;
+      for (i = 0; i < 100; ++i) {
          std::cout << "Begin iteration " << i;
-         norm = residualNorm(residual_);
+
+         #if 0
+         std::cout << "\n";
+         for (j = 0; j < nx; ++j) {
+             for (k = 0; k < nm; ++k) {
+                std::cout << system().wField(k)[j] << "  ";
+             }
+             for (k = 0; k < nm; ++k) {
+                std::cout << system().cField(k)[j] << "  ";
+             }
+             for (k = 0; k < nm; ++k) {
+                std::cout << residual_[k*nx + j] << "  ";
+             }
+             std::cout << "\n";
+         }
+         #endif
+
          std::cout << " , residual norm = " << norm << std::endl;
+
          if (norm < epsilon_) {
             std::cout << "Converged" << std::endl;
             return 0;
          } else {
-            update();
+            computeJacobian();
+            solver_.solve(residual_, dOmega_);
+            incrementWFields(system().wFields(), dOmega_, wFieldsNew_);
+            mixture().compute(wFieldsNew_, cFieldsNew_);
+            computeResidual(wFieldsNew_, cFieldsNew_, residualNew_);
+            normNew = residualNorm(residualNew_);
          }
-      }
 
-      // Normal return (success)
+         // Decrease increment if necessary
+         j = 0;
+         while (normNew > norm && j < 5) {
+            std::cout << "       decreasing increment, norm = " << normNew << std::endl;
+            for (k = 0; k < nr; ++k) {
+               dOmega_[k] *= 0.66666666;
+            }
+            incrementWFields(system().wFields(), dOmega_, wFieldsNew_);
+            mixture().compute(wFieldsNew_, cFieldsNew_);
+            computeResidual(wFieldsNew_, cFieldsNew_, residualNew_);
+            normNew = residualNorm(residualNew_);
+            ++j;
+         }
+ 
+         if (normNew > norm) {
+            std::cout << "Iteration failed, norm = " << normNew << std::endl;
+            return 1;
+         }
+
+         // Accept update
+         if (normNew < norm) {
+            for (j = 0; j < nm; ++j) {
+               for (k = 0; k < nx; ++k) {
+                  system().wField(j)[k] = wFieldsNew_[j][k];
+                  system().cField(j)[k] = cFieldsNew_[j][k];
+               }
+            }
+            for (j = 0; j < nr; ++j) {
+               residual_[j] = residualNew_[j];
+            }
+            norm = normNew;
+         }
+
+      } 
+
+      // Failure 
       return 1;
    }
 

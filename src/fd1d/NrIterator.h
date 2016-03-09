@@ -11,6 +11,7 @@
 #include "Iterator.h"
 #include "Mixture.h"
 #include <pscf/LuSolver.h>
+#include <util/containers/Array.h>
 #include <util/containers/DArray.h>
 #include <util/containers/DMatrix.h>
 
@@ -125,6 +126,17 @@ namespace Fd1d
       * Allocate memory if needed. If isAllocated, check array sizes.
       */
       void allocate();
+
+      /**
+      * Increment the chemical potential fields
+      *
+      * \param wOld array of old chemical potential fields
+      * \param dW array of increments, indexed as in residual columns
+      * \param wNew array of new chemical potential fields
+      */
+      void incrementWFields(Array<WField> const & wOld,
+                            Array<double> const & dW,
+                            Array<WField>& wNew);
 
    };
 

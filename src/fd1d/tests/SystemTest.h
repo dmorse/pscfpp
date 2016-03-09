@@ -146,20 +146,35 @@ public:
       double cs;
       double chi = 20.0;
       for (int i = 0; i < nx; ++i) {
-         cs = cos(2.0*Constants::Pi*(double(i)+0.5)/nx);
-         sys.wField(0)[i] = chi*0.5*(1.0 - cs) - chi*0.5;
-         sys.wField(1)[i] = chi*0.5*(1.0 + cs) - chi*0.5;
+         cs = cos(Constants::Pi*double(i)/double(nx-1));
+         sys.wField(0)[i] = chi*(-0.5*cs + 0.25*cs*cs);
+         sys.wField(1)[i] = chi*(+0.5*cs + 0.25*cs*cs);
       }
+      double shift = sys.wField(1)[nx-1];
+      for (int i = 0; i < nx; ++i) {
+         sys.wField(0)[i] -= shift;
+         sys.wField(1)[i] -= shift;
+      }
+
+      // Compute initial state
       mix.compute(sys.wFields(), sys.cFields());
 
-      sys.iterator().solve();
-
       std::ofstream out;
-      openOutputFile("out/iteratorPlanar.w", out);
+      openOutputFile("out/initialPlanar.w", out);
       sys.writeFields(out, sys.wFields());
       out.close();
 
-      openOutputFile("out/iteratorPlanar.c", out);
+      openOutputFile("out/initialPlanar.c", out);
+      sys.writeFields(out, sys.cFields());
+      out.close();
+
+      sys.iterator().solve();
+
+      openOutputFile("out/finalPlanar.w", out);
+      sys.writeFields(out, sys.wFields());
+      out.close();
+
+      openOutputFile("out/finalPlanar.c", out);
       sys.writeFields(out, sys.cFields());
       out.close();
 
@@ -181,24 +196,45 @@ public:
       Mixture& mix = sys.mixture();
       Domain& domain = sys.domain();
 
+      // Create initial chemical potential fields
       double nx = (double)domain.nx();
       double cs;
-      double chi = 10.0;
+      double chi = 80.0;
       for (int i = 0; i < nx; ++i) {
          cs = cos(Constants::Pi*double(i)/double(nx-1));
          sys.wField(0)[i] = -chi*cs/2.0;
          sys.wField(1)[i] = +chi*cs/2.0;
       }
+      double shift = sys.wField(1)[nx-1];
+      for (int i = 0; i < nx; ++i) {
+         sys.wField(0)[i] -= shift;
+         sys.wField(1)[i] -= shift;
+      }
+
+      // Solve MDE for initial fields
       mix.compute(sys.wFields(), sys.cFields());
 
-      sys.iterator().solve();
+      std::cout << "Average fraction 0 = " 
+                << domain.spatialAverage(sys.cField(0)) << "\n";
+      std::cout << "Average fraction 1 = " 
+                << domain.spatialAverage(sys.cField(1)) << "\n";
 
       std::ofstream out;
-      openOutputFile("out/iteratorSpherical.w", out);
+      openOutputFile("out/initialSpherical.w", out);
       sys.writeFields(out, sys.wFields());
       out.close();
 
-      openOutputFile("out/iteratorSpherical.c", out);
+      openOutputFile("out/initialSpherical.c", out);
+      sys.writeFields(out, sys.cFields());
+      out.close();
+
+      sys.iterator().solve();
+
+      openOutputFile("out/finalSpherical.w", out);
+      sys.writeFields(out, sys.wFields());
+      out.close();
+
+      openOutputFile("out/finalSpherical.c", out);
       sys.writeFields(out, sys.cFields());
       out.close();
 
@@ -262,7 +298,7 @@ TEST_ADD(SystemTest, testReadParameters)
 TEST_ADD(SystemTest, testSolveMdePlanar)
 TEST_ADD(SystemTest, testSolveMdeSpherical)
 TEST_ADD(SystemTest, testIteratorPlanar)
-//TEST_ADD(SystemTest, testIteratorSpherical)
+TEST_ADD(SystemTest, testIteratorSpherical)
 TEST_ADD(SystemTest, testFieldInput)
 TEST_ADD(SystemTest, testReadCommands)
 TEST_END(SystemTest)
