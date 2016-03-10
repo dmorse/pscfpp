@@ -21,7 +21,20 @@ namespace Fd1d
    class Domain;
 
    /**
-   * Container for species within a mixture.
+   * Mixture of polymers and solvents.
+   *
+   * A Mixture contains a list of Polymer and Solvent objects. Each
+   * such object can solve the single-molecule statistical mechanics 
+   * problem for an ideal gas of the associated species in a set of
+   * specified chemical potential fields, and thereby compute 
+   * concentrations and single-molecule partition functions. A
+   * Mixture is thus both a chemistry descriptor and an ideal-gas 
+   * solver.
+   *
+   * A Mixture is associated with a Domain object, which models a
+   * spatial domain and a spatial discretization. Knowledge of the
+   * domain and discretization is needed to solve the ideal-gas
+   * problem.
    *
    * \ingroup Pscf_Fd1d_Module
    */

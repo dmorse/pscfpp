@@ -22,7 +22,7 @@ namespace Fd1d
    using namespace Util;
 
    /**
-   * Newton-Raphson Iterator.
+   * Newton-Raphson Iterator for SCF equations.
    *
    * \ingroup Pscf_Fd1d_Module
    */
