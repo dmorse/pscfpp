@@ -98,9 +98,14 @@ namespace Fd1d
       /// Optimal contour length step size.
       double ds_;
 
+      /// Helmholtz free energy per monomer / kT.
       double fHelmholtz_;
 
+      /// Pressure times monomer volume / kT.
       double pressure_;
+
+      /// Work array (dimension = number of grid points).
+      DArray<double> work_;
 
       /// Pointer to associated Domain object.
       Domain const * domainPtr_;
