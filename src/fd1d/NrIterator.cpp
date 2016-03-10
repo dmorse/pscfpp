@@ -224,7 +224,9 @@ namespace Fd1d
 
       // Iterative loop
       for (i = 0; i < 100; ++i) {
-         std::cout << "Begin iteration " << i;
+         std::cout << "Begin iteration " << i
+                   << " , residual norm = " << norm
+                   << std::endl;
 
          #if 0
          std::cout << "\n";
@@ -242,10 +244,9 @@ namespace Fd1d
          }
          #endif
 
-         std::cout << " , residual norm = " << norm << std::endl;
-
          if (norm < epsilon_) {
             std::cout << "Converged" << std::endl;
+            std::cout << "fHelhmoltz = " << system().fHelmholtz() << std::endl;
             return 0;
          } 
 
