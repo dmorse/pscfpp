@@ -210,6 +210,7 @@ namespace Fd1d
 
       // Compute initial residual vector and norm
       mixture().compute(system().wFields(), system().cFields());
+      system().computeFreeEnergy();
       computeResidual(system().wFields(), system().cFields(), residual_);
       double norm = residualNorm(residual_);
       double normNew;
@@ -217,9 +218,11 @@ namespace Fd1d
       int nm = mixture().nMonomer();  // number of monomer types
       int nx = domain().nx();         // number of grid points
       int nr = nm*nx;                 // number of residual elements
+      int i, j, k;
+      bool hasJacobian = false;
+      bool needsJacobian = true;
 
       // Iterative loop
-      int i, j, k;
       for (i = 0; i < 100; ++i) {
          std::cout << "Begin iteration " << i;
 
@@ -244,20 +247,30 @@ namespace Fd1d
          if (norm < epsilon_) {
             std::cout << "Converged" << std::endl;
             return 0;
-         } else {
+         } 
+
+         if (needsJacobian) {
+            std::cout << "      computing jacobian" << std::endl;;
             computeJacobian();
-            solver_.solve(residual_, dOmega_);
-            incrementWFields(system().wFields(), dOmega_, wFieldsNew_);
-            mixture().compute(wFieldsNew_, cFieldsNew_);
-            computeResidual(wFieldsNew_, cFieldsNew_, residualNew_);
-            normNew = residualNorm(residualNew_);
+            hasJacobian = true;
+            needsJacobian = false;
          }
+
+         // Compute Newton-Raphson increment dOmega_
+         solver_.solve(residual_, dOmega_);
+
+         // Try full Newton-Raphson update
+         incrementWFields(system().wFields(), dOmega_, wFieldsNew_);
+         mixture().compute(wFieldsNew_, cFieldsNew_);
+         computeResidual(wFieldsNew_, cFieldsNew_, residualNew_);
+         normNew = residualNorm(residualNew_);
 
          // Decrease increment if necessary
          j = 0;
          while (normNew > norm && j < 5) {
-            std::cout << "       decreasing increment, norm = " 
+            std::cout << "      decreasing increment,  norm = " 
                       << normNew << std::endl;
+            needsJacobian = true;
             for (k = 0; k < nr; ++k) {
                dOmega_[k] *= 0.66666666;
             }
@@ -268,12 +281,7 @@ namespace Fd1d
             ++j;
          }
  
-         if (normNew > norm) {
-            std::cout << "Iteration failed, norm = " << normNew << std::endl;
-            return 1;
-         }
-
-         // Accept update
+         // Accept or reject update
          if (normNew < norm) {
             for (j = 0; j < nm; ++j) {
                for (k = 0; k < nx; ++k) {
@@ -282,10 +290,26 @@ namespace Fd1d
                }
             }
             system().computeFreeEnergy();
+            hasJacobian = false;
+            if (normNew/norm < 0.25) {
+               needsJacobian = false;
+            } else {
+               needsJacobian = true;
+            }
             for (j = 0; j < nr; ++j) {
                residual_[j] = residualNew_[j];
             }
             norm = normNew;
+         } else {
+            std::cout << "Iteration failed, norm = " 
+                      << normNew << std::endl;
+            if (hasJacobian) {
+               return 1;
+               std::cout << "Unrecoverable failure " << std::endl;
+            } else {
+               std::cout << "Try rebuilding Jacobian" << std::endl;
+               needsJacobian = true;
+            }
          }
 
       }
