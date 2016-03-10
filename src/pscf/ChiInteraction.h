@@ -48,7 +48,7 @@ namespace Pscf {
       * \param c array of concentrations, for each type (input)
       */
       virtual 
-      double fHelmholtz(Array<double> const & c);
+      double fHelmholtz(Array<double> const & c) const;
 
       /**
       * Compute chemical potential from concentration and pressure.
@@ -59,7 +59,7 @@ namespace Pscf {
       */
       virtual 
       void computeW(Array<double> const & c, double p, 
-                    Array<double>& w);
+                    Array<double>& w) const;
 
       /**
       * Compute concentration from chemical potential field.
@@ -68,15 +68,32 @@ namespace Pscf {
       * \param c array of concentrations, for each type (output)
       */
       virtual 
-      void computeC(Array<double> const & w, Array<double>& c);
+      void computeC(Array<double> const & w, Array<double>& c) 
+      const;
 
-       /**
-       * Return one element of the chi matrix.
-       *
-       * \param i row index
-       * \param j column index
-       */
-       double chi(int i, int j);
+      /**
+      * Compute second derivatives of free energy.
+      *
+      * Upon return, the elements of the square matrix dWdC, are
+      * given by derivatives dWdC(i,j) = dW(i)/dC(j), which are
+      * also second derivatives of the interaction free energy. 
+      * For the Flory-Huggins chi parameter model, this is simply 
+      * given by the chi matrix dWdC(i,j) = chi(i, j).
+      *
+      * \param c array of concentrations, for each type (input)
+      * \param dWdC matrix of derivatives (output) 
+      */
+      virtual 
+      void computeDwDc(Array<double> const & w, Matrix<double>& dWdC)
+      const;
+
+      /**
+      * Return one element of the chi matrix.
+      *
+      * \param i row index
+      * \param j column index
+      */
+      double chi(int i, int j);
 
    private:
 

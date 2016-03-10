@@ -9,7 +9,8 @@
 */
 
 #include <util/param/ParamComposite.h>    // base class
-#include <util/containers/Array.h>        // argument
+#include <util/containers/Array.h>        // argument (template)
+#include <util/containers/Matrix.h>        // argument (template)
 #include <util/global.h>                  
 
 namespace Pscf {
@@ -49,8 +50,8 @@ namespace Pscf {
       * \param c array of concentrations, for each type (input)
       */
       virtual 
-      double fHelmholtz(Array<double> const & c)
-      {  return 0.0; }
+      double fHelmholtz(Array<double> const & c) const
+      { return 0.0; }
 
       /**
       * Compute chemical potentials from concentrations and pressure p.
@@ -60,7 +61,8 @@ namespace Pscf {
       * \param w array of chemical potentials, for each type (output)
       */
       virtual 
-      void computeW(Array<double> const & c, double p, Array<double>& w)
+      void computeW(Array<double> const & c, double p, Array<double>& w) 
+      const
       {}
 
       /**
@@ -72,8 +74,22 @@ namespace Pscf {
       */
       virtual 
       void computeC(Array<double> const & w, 
-                    Array<double>& c,
-                    double p)
+                    Array<double>& c, double p) const
+      {}
+
+      /**
+      * Compute matrix of derivatives of w fields w/ respect to c fields.
+      *
+      * Upon return, the elements of the matrix dWdC are given by 
+      * derivatives elements dWdC(i,j) = dW(i)/dC(j), which are also
+      * second derivatives of fHelmholtz with respect to concentrations.
+      *
+      * \param c array of concentrations, for each type (input)
+      * \param dWdC square symmetric matrix of derivatives (output)
+      */
+      virtual 
+      void computeDwDc(Array<double> const & c, Matrix<double>& dWdC) 
+      const
       {}
 
       /**
