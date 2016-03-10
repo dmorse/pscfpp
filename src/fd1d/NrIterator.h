@@ -72,45 +72,51 @@ namespace Fd1d
 
       /**
       * Compute the residual vector.
+      *
+      * \param wFields monomer chemical potential fields (input)
+      * \param cFields monomer concentration fields (input)
+      * \param residual vector of residuals (errors) (output)
       */
       void computeResidual(Array<WField> const & wFields, 
                            Array<WField> const & cFields, 
                            Array<double>& residual);
 
-      void computeJacobian();
-
       /**
-      * Take one step of Jacobian update.
-      */
-      void update();
-
-      /**
-      * Test criteria for adequate convergence.
+      * Compute and return norm of a residual vector.
       *
-      * \return true if converged, false if not converged.
+      * \param residual vector of residuals (errors) (input)
       */
       double residualNorm(Array<double> const & residual) const;
 
+      /**
+      * Compute the Jacobian matrix (stored in class member).
+      */
+      void computeJacobian();
+
    private:
 
+      /// Solver for linear system Ax = b.
       LuSolver solver_;
 
-      /// Perturbed chemical potential fields
+      /// Perturbed chemical potential fields (work space).
       DArray<WField> wFieldsNew_;
 
-      /// Perturbed monomer concentration fields
+      /// Perturbed monomer concentration fields (work space).
       DArray<WField> cFieldsNew_;
 
+      /// Concentrations at one point (work space).
       DArray<double> cArray_;
+
+      /// Chemical potentials at one point (work space).
       DArray<double> wArray_;
 
-      /// Residual vector. size = (# monomers)x(# grid points).
+      /// Residual vector. size = nr = (# monomers)x(# grid points).
       DArray<double> residual_;
 
-      /// Jacobian matrix
+      /// Jacobian matrix. Dimensions nr x nr.
       DMatrix<double> jacobian_;
 
-      /// Perturbed residual
+      /// Perturbed residual. size = nr.
       DArray<double> residualNew_;
 
       /// Change in field

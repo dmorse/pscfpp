@@ -11,6 +11,7 @@
 #include "Polymer.h"
 #include "Solvent.h"
 #include <pscf/MixtureTmpl.h>
+#include <pscf/Interaction.h>
 #include <util/containers/DArray.h>
 
 namespace Pscf {
@@ -76,22 +77,53 @@ namespace Fd1d
       void setDomain(Domain const & domain);
 
       /**
-      * Compute molecular partition functions and concentrations.
+      * Compute concentrations.
       *
-      * The arrays wFields and cFields must each have size nMonomer(),
-      * and contain fields that are indexed by monomer type index. 
       * This function calls the compute function of every molecular
       * species, and then adds the resulting block concentration
       * fields for blocks of each type to compute a total monomer
       * concentration (or volume fraction) for each monomer type.
+      * It does not compute total Helmholtz free energy or pressure 
+      * for this Mixture. Upon return, values are set for volume 
+      * fraction and chemical potential (mu) members of each 
+      * species, and the concentration fields each Block. The total
+      * concentration for each monomer type is returned in the
+      * cFields output parameter. 
       *
-      * \param wFields input array of chemical potential fields
-      * \param cFields output array of monomer concentration fields
-      * \param thermoFlag if true, compute fHelmholtz and pressure
+      * The arrays wFields and cFields must each have size nMonomer(),
+      * and contain fields that are indexed by monomer type index. 
+      *
+      * \param wFields array of chemical potential fields (input)
+      * \param cFields array of monomer concentration fields (output)
+      */
+      void 
+      compute(DArray<WField> const & wFields, DArray<CField>& cFields);
+
+      /**
+      * Compute concentrations and free energies.
+      *
+      * This function computes concentrations, single molecule partition
+      * functions, total free energy per monomer and total pressure. 
+      * Upon return, values are set for for volume fraction and chemical
+      * potential (mu) members of each species, the concentration fields
+      * for each polymer block, and the Helmholtz free energy (fHelmholtz) 
+      * and pressure members of this Mixture. Total concentration fields 
+      * for each monomer type are returned in the cFields output parameter.
+      *
+      * This function calls compute(DArray<WField> const&, DArray<CField>&)
+      * internally to solve the single molecule problems for all species, 
+      * then also computes free energy and pressure for this Mixture.
+      *
+      * The arrays wFields and cFields must each have size nMonomer(),
+      * and contain fields that are indexed by monomer type index. 
+      *
+      * \param wFields array of chemical potential fields (input)
+      * \param cFields array of monomer concentration fields (output)
+      * \param interaction Interaction object (e.g., chi parameters)
       */
       void 
       compute(DArray<WField> const & wFields, 
-              DArray<CField>& cFields, bool thermoFlag = false);
+              DArray<CField>& cFields, Interaction& interaction);
 
    private:
 
@@ -104,8 +136,11 @@ namespace Fd1d
       /// Pressure times monomer volume / kT.
       double pressure_;
 
-      /// Work array (dimension = number of grid points).
-      DArray<double> work_;
+      /// Work array (size = # of grid points).
+      DArray<double> f_;
+
+      /// Work array (size = # of monomer types).
+      DArray<double> c_;
 
       /// Pointer to associated Domain object.
       Domain const * domainPtr_;
