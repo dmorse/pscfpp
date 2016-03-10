@@ -94,58 +94,5 @@ namespace Fd1d
       }
    }
 
-   /*
-   * Compute concentrations and total free energy.
-   */
-   void Mixture::compute(DArray<Mixture::WField> const & wFields, 
-                         DArray<Mixture::CField>& cFields,
-                         Interaction& interaction)
-   {
-
-      // Solve single species problems to compute concentrations.
-      compute(wFields, cFields);
-
-      fHelmholtz_ = 0.0;
- 
-      // Compute ideal gas contributions to fHelhmoltz_
-      double phi, mu, length;
-      for (int i = 0; i < nPolymer(); ++i) {
-         phi = polymer(i).phi();
-         mu = polymer(i).mu();
-         length = polymer(i).length();
-         fHelmholtz_ += phi*( mu - 1.0 )/length;
-      }
-
-      // Apply Legendre transform subtraction
-      int nm = nMonomer();
-      for (int i = 0; i < nm; ++i) {
-         fHelmholtz_ -= 
-                  domain().innerProduct(wFields[i], cFields[i]);
-      }
-
-      // Add average interaction free energy density per monomer
-      int nx = domain().nx();
-      if (!f_.isAllocated()) f_.allocate(nx);
-      if (!c_.isAllocated()) c_.allocate(nm);
-      int j;
-      for (int i = 0; i < nx; ++i) {
-         for (j = 0; j < nm; ++j) {
-            c_[j] = cFields[j][i];
-         }
-         f_[i] = interaction.fHelmholtz(c_);
-      }
-      fHelmholtz_ = + domain().spatialAverage(f_);
-
-      // Compute pressure
-      pressure_ = -fHelmholtz_;
-      for (int i = 0; i < nPolymer(); ++i) {
-         phi = polymer(i).phi();
-         mu = polymer(i).mu();
-         length = polymer(i).length();
-         pressure_ += phi*mu/length;
-      }
-
-   }
-
 } // namespace Fd1d
 } // namespace Pscf

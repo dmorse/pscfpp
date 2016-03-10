@@ -256,7 +256,8 @@ namespace Fd1d
          // Decrease increment if necessary
          j = 0;
          while (normNew > norm && j < 5) {
-            std::cout << "       decreasing increment, norm = " << normNew << std::endl;
+            std::cout << "       decreasing increment, norm = " 
+                      << normNew << std::endl;
             for (k = 0; k < nr; ++k) {
                dOmega_[k] *= 0.66666666;
             }
@@ -280,13 +281,14 @@ namespace Fd1d
                   system().cField(j)[k] = cFieldsNew_[j][k];
                }
             }
+            system().computeFreeEnergy();
             for (j = 0; j < nr; ++j) {
                residual_[j] = residualNew_[j];
             }
             norm = normNew;
          }
 
-      } 
+      }
 
       // Failure 
       return 1;

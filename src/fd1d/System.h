@@ -93,6 +93,11 @@ namespace Fd1d
       */
       void readCommands();
 
+      /**
+      * Compute free energy density and pressure for current fields.
+      */
+      void computeFreeEnergy();
+
       //@}
       /// \name Fields
       //@{
@@ -169,23 +174,43 @@ namespace Fd1d
       */
       FileMaster& fileMaster();
 
+      /**
+      * Get precomputed Helmoltz free energy per monomer / kT.
+      */
+      double fHelmholtz() const;
+
+      /**
+      * Get precomputed pressure x monomer volume kT.
+      */
+      double pressure() const;
+
       //@}
 
    private:
 
-      /// Mixture object (solves MDE for all species).
+      /**
+      * Mixture object (solves MDE for all species).
+      */
       Mixture mixture_;
 
-      /// Spatial domain and grid definition
+      /**
+      * Spatial domain and grid definition.
+      */
       Domain domain_;
 
-      /// Filemaster (holds paths to associated I/O files)
+      /**
+      * Filemaster (holds paths to associated I/O files).
+      */
       FileMaster fileMaster_;
 
-      /// Interaction (excess free energy model)
+      /**
+      * Pointer to Interaction (excess free energy model).
+      */
       Interaction* interactionPtr_;
 
-      /// Pointer to associated iterator.
+      /**
+      * Pointer to associated iterator.
+      */
       Iterator* iteratorPtr_;
 
       /**
@@ -201,6 +226,26 @@ namespace Fd1d
       * Indexed by monomer typeId, size = nMonomer.
       */
       DArray<CField> cFields_;
+
+      /**
+      * Work array (size = # of grid points).
+      */
+      DArray<double> f_;
+
+      /**
+      * Work array (size = # of monomer types).
+      */
+      DArray<double> c_;
+
+      /**
+      * Helmholtz free energy per monomer / kT.
+      */
+      double fHelmholtz_;
+
+      /**
+      * Pressure times monomer volume / kT.
+      */
+      double pressure_;
 
       /**
       * Has the mixture been initialized?
@@ -259,6 +304,18 @@ namespace Fd1d
 
    inline System::CField& System::cField(int id)
    {  return cFields_[id]; }
+
+   /*
+   * Get precomputed Helmoltz free energy per monomer / kT.
+   */
+   inline double System::fHelmholtz() const
+   {  return fHelmholtz_; }
+
+   /*
+   * Get precomputed pressure x monomer volume kT.
+   */
+   inline double System::pressure() const
+   {  return pressure_; }
 
 } // namespace Fd1d
 } // namespace Pscf

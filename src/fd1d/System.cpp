@@ -257,6 +257,57 @@ namespace Fd1d
       readCommands(fileMaster().commandFile()); 
    }
 
+   /*
+   * Compute Helmoltz free energy and pressure
+   */
+   void System::computeFreeEnergy()
+   {
+      fHelmholtz_ = 0.0;
+ 
+      // Compute ideal gas contributions to fHelhmoltz_
+      Polymer* polymerPtr;
+      double phi, mu, length;
+      int np = mixture().nPolymer();
+      for (int i = 0; i < np; ++i) {
+         polymerPtr = & mixture().polymer(i);
+         phi = polymerPtr->phi();
+         mu = polymerPtr->mu();
+         length = polymerPtr->length();
+         fHelmholtz_ += phi*( mu - 1.0 )/length;
+      }
+
+      // Apply Legendre transform subtraction
+      int nm = mixture().nMonomer();
+      for (int i = 0; i < nm; ++i) {
+         fHelmholtz_ -= 
+                  domain().innerProduct(wFields_[i], cFields_[i]);
+      }
+
+      // Add average interaction free energy density per monomer
+      int nx = domain().nx();
+      if (!f_.isAllocated()) f_.allocate(nx);
+      if (!c_.isAllocated()) c_.allocate(nm);
+      int j;
+      for (int i = 0; i < nx; ++i) {
+         for (j = 0; j < nm; ++j) {
+            c_[j] = cFields_[j][i];
+         }
+         f_[i] = interaction().fHelmholtz(c_);
+      }
+      fHelmholtz_ = + domain().spatialAverage(f_);
+
+      // Compute pressure
+      pressure_ = -fHelmholtz_;
+      for (int i = 0; i < np; ++i) {
+         polymerPtr = & mixture().polymer(i);
+         phi = polymerPtr->phi();
+         mu = polymerPtr->mu();
+         length = polymerPtr->length();
+         pressure_ += phi*mu/length;
+      }
+
+   }
+
    void System::readWFields(std::istream &in)
    {
       UTIL_CHECK(hasDomain_);

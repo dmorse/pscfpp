@@ -83,10 +83,9 @@ namespace Fd1d
       * species, and then adds the resulting block concentration
       * fields for blocks of each type to compute a total monomer
       * concentration (or volume fraction) for each monomer type.
-      * It does not compute total Helmholtz free energy or pressure 
-      * for this Mixture. Upon return, values are set for volume 
-      * fraction and chemical potential (mu) members of each 
-      * species, and the concentration fields each Block. The total
+      * Upon return, values are set for volume fraction and chemical 
+      * potential (mu) members of each species, and for the 
+      * concentration fields for each Block and Solvent. The total
       * concentration for each monomer type is returned in the
       * cFields output parameter. 
       *
@@ -98,32 +97,6 @@ namespace Fd1d
       */
       void 
       compute(DArray<WField> const & wFields, DArray<CField>& cFields);
-
-      /**
-      * Compute concentrations and free energies.
-      *
-      * This function computes concentrations, single molecule partition
-      * functions, total free energy per monomer and total pressure. 
-      * Upon return, values are set for for volume fraction and chemical
-      * potential (mu) members of each species, the concentration fields
-      * for each polymer block, and the Helmholtz free energy (fHelmholtz) 
-      * and pressure members of this Mixture. Total concentration fields 
-      * for each monomer type are returned in the cFields output parameter.
-      *
-      * This function calls compute(DArray<WField> const&, DArray<CField>&)
-      * internally to solve the single molecule problems for all species, 
-      * then also computes free energy and pressure for this Mixture.
-      *
-      * The arrays wFields and cFields must each have size nMonomer(),
-      * and contain fields that are indexed by monomer type index. 
-      *
-      * \param wFields array of chemical potential fields (input)
-      * \param cFields array of monomer concentration fields (output)
-      * \param interaction Interaction object (e.g., chi parameters)
-      */
-      void 
-      compute(DArray<WField> const & wFields, 
-              DArray<CField>& cFields, Interaction& interaction);
 
    private:
 
