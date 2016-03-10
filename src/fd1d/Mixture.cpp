@@ -48,7 +48,8 @@ namespace Fd1d
 
    }
 
-   void Mixture::compute(DArray<Mixture::WField> const & wFields, DArray<Mixture::CField>& cFields)
+   void Mixture::compute(DArray<Mixture::WField> const & wFields, 
+                         DArray<Mixture::CField>& cFields, bool thermoFlag)
    {
       UTIL_CHECK(domainPtr_);
       UTIL_CHECK(domain().nx() > 0);
@@ -86,6 +87,30 @@ namespace Fd1d
                monomerField[k] += blockField[k];
             }
          }
+      }
+
+      if (thermoFlag) {
+         fHelmholtz_ = 0.0;
+         double phi, mu, length;
+         for (i = 0; i < nPolymer(); ++i) {
+            phi = polymer(i).phi();
+            mu = polymer(i).mu();
+            length = polymer(i).length();
+            fHelmholtz_ += phi*( log(mu) - 1.0 )/length;
+         }
+         for (i = 0; i < nMonomer(); ++i) {
+            fHelmholtz_ -= domain().innerProduct(wFields[i],cFields[i]);
+         }
+         if (!work_.isAllocated()) {
+            work_.allocate(nx);
+         }
+         #if 0
+         for (i = 0; i < nx; ++i) {
+            for (j = 0; i < nMonomer(); ++i) {
+            }
+            work_[i] = interaction().fHelmholtz(cArray);
+         }
+         #endif
       }
     
    }

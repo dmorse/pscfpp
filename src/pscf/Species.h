@@ -81,6 +81,18 @@ namespace Pscf
    };
 
    /*
+   * Get species volume fraction.
+   */
+   inline double Species::phi() const
+   {  return phi_; }
+   
+   /*
+   * Get species chemical potential.
+   */
+   inline double Species::mu() const
+   {  return mu_; }
+   
+   /*
    * Get statistical ensemble for this species (open or closed).
    */
    inline Species::Ensemble Species::ensemble()

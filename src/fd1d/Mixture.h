@@ -85,15 +85,22 @@ namespace Fd1d
       * fields for blocks of each type to compute a total monomer
       * concentration (or volume fraction) for each monomer type.
       *
-      * \param wFields input array of chemical potential fields.
-      * \param cFields output array of monomer concentration fields.
+      * \param wFields input array of chemical potential fields
+      * \param cFields output array of monomer concentration fields
+      * \param thermoFlag if true, compute fHelmholtz and pressure
       */
-      void compute(DArray<WField> const & wFields, DArray<CField>& cFields);
+      void 
+      compute(DArray<WField> const & wFields, 
+              DArray<CField>& cFields, bool thermoFlag = false);
 
    private:
 
       /// Optimal contour length step size.
       double ds_;
+
+      double fHelmholtz_;
+
+      double pressure_;
 
       /// Pointer to associated Domain object.
       Domain const * domainPtr_;
