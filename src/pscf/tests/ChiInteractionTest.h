@@ -44,6 +44,11 @@ public:
       TEST_ASSERT(eq(v.chi(1,0), v.chi(0,1)));
       // TEST_ASSERT(v.id() == 5);
       v.writeParam(std::cout);
+
+      TEST_ASSERT(eq(v.chiInverse(0,0), 0.0));
+      TEST_ASSERT(eq(v.chiInverse(1,1), 0.0));
+      TEST_ASSERT(eq(v.chiInverse(0,1), 1.0));
+      TEST_ASSERT(eq(v.chiInverse(1,0), 1.0));
    }
 
    void testComputeW() 
@@ -57,17 +62,27 @@ public:
       openInputFile("in/ChiInteraction", in);
       v.readParam(in);
 
+      // Test computeW
       DArray<double> c;
       DArray<double> w;
       c.allocate(2);
       w.allocate(2);
-      double p = 0.4;
       c[0] = 0.3;
       c[1] = 0.7;
-      v. computeW(c, p, w);
-      TEST_ASSERT(eq(w[0], 1.1));
-      TEST_ASSERT(eq(w[1], 0.7));
+      v. computeW(c, w);
+      TEST_ASSERT(eq(w[0], 0.7));
+      TEST_ASSERT(eq(w[1], 0.3));
+
+      // Test computeC
+      w[0] += 0.4;
+      w[1] += 0.4;
+      double xi;
+      v.computeC(w, c, xi);
+      TEST_ASSERT(eq(c[0], 0.3));
+      TEST_ASSERT(eq(c[1], 0.7));
+      TEST_ASSERT(eq(0.4, xi));
    }
+
 };
 
 TEST_BEGIN(ChiInteractionTest)

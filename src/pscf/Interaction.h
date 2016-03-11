@@ -54,14 +54,16 @@ namespace Pscf {
       { return 0.0; }
 
       /**
-      * Compute chemical potentials from concentrations and pressure p.
+      * Compute interaction contributions to chemical potentials.
+      *
+      * The resulting chemical potential fields are those obtained
+      * with a vanishing Lagrange multiplier / pressure field, xi = 0.
       *
       * \param c array of concentrations, for each type (input)
-      * \param p pressure / Lagrange multiplier (input)
       * \param w array of chemical potentials, for each type (output)
       */
       virtual 
-      void computeW(Array<double> const & c, double p, Array<double>& w) 
+      void computeW(Array<double> const & c, Array<double>& w) 
       const
       {}
 
@@ -70,11 +72,11 @@ namespace Pscf {
       *
       * \param w  array of chemical potentials, for each type (input)
       * \param c  array of concentrations, for each type (output)
-      * \param p  pressure / Lagrange multiplier (output)
+      * \param xi  Lagrange multiplier pressure (output)
       */
       virtual 
       void computeC(Array<double> const & w, 
-                    Array<double>& c, double p) const
+                    Array<double>& c, double& xi) const
       {}
 
       /**

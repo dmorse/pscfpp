@@ -76,7 +76,7 @@ namespace Fd1d
          for (j = 0; j < nm; ++j) {
             cArray_[j] = cFields[j][i];
          }
-         system().interaction().computeW(cArray_, 0, wArray_);
+         system().interaction().computeW(cArray_, wArray_);
          for (j = 0; j < nm; ++j) {
             ir = j*nx + i;
             residual[ir] = wArray_[j] - wFields[j][i];

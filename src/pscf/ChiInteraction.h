@@ -51,24 +51,24 @@ namespace Pscf {
       double fHelmholtz(Array<double> const & c) const;
 
       /**
-      * Compute chemical potential from concentration and pressure.
+      * Compute chemical potential from concentration.
       *
       * \param c array of concentrations, for each type (input)
-      * \param p Lagrange multiplier / pressure 
       * \param w array of chemical potentials for types (ouptut) 
       */
       virtual 
-      void computeW(Array<double> const & c, double p, 
-                    Array<double>& w) const;
+      void computeW(Array<double> const & c, Array<double>& w) 
+      const;
 
       /**
       * Compute concentration from chemical potential field.
       *
       * \param w array of chemical potentials for types (inut) 
-      * \param c array of concentrations, for each type (output)
+      * \param c array of vol. fractions, for each type (output)
+      * \param xi Langrange multiplier pressure (output)
       */
       virtual 
-      void computeC(Array<double> const & w, Array<double>& c) 
+      void computeC(Array<double> const & w, Array<double>& c, double& xi)
       const;
 
       /**
@@ -77,7 +77,7 @@ namespace Pscf {
       * Upon return, the elements of the square matrix dWdC, are
       * given by derivatives dWdC(i,j) = dW(i)/dC(j), which are
       * also second derivatives of the interaction free energy. 
-      * For the Flory-Huggins chi parameter model, this is simply 
+      * For this Flory-Huggins chi parameter model, this is simply 
       * given by the chi matrix dWdC(i,j) = chi(i, j).
       *
       * \param c array of concentrations, for each type (input)
@@ -95,6 +95,14 @@ namespace Pscf {
       */
       double chi(int i, int j);
 
+      /**
+      * Return one element of the inverse chi matrix.
+      *
+      * \param i row index
+      * \param j column index
+      */
+      double chiInverse(int i, int j);
+
    private:
 
       DMatrix<double> chi_;
@@ -107,6 +115,9 @@ namespace Pscf {
 
    inline double ChiInteraction::chi(int i, int j)
    {  return chi_(i, j); }
+
+   inline double ChiInteraction::chiInverse(int i, int j)
+   {  return chiInverse_(i, j); }
 
 } // namespace Pscf
 #endif
