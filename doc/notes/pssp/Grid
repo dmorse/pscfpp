@@ -1,25 +1,25 @@
-#include "Dimension.h"
-#include "RField.h"
-#include "KField.h"
+#include "IntVec.h"
+#include "GridField.h"
+#include "UnitCell.h"
 
 template <int D>
 class Grid {
 
    void setUnitCell(const UnitCell& unitCell)
-   void setDimensions(IntVector<D>);
+   void setDimensions(IntVec<D>);
    void allocate()
    void deallocate()
    void computeKSq()
-   IntVector<D> kToFFT(IntVector<D>)
-   IntVector<D> kToBZ(IntVector<D>)
+   IntVec<D> kToFFT(IntVec<D>)
+   IntVec<D> kToBZ(IntVec<D>)
    void computeMaxKabs()
 
-   const KField& kSq()
+   const GridField& kSq()
    double maxKSq()
-   
+
 private:
 
-   IntVector<D> dimensions_
+   IntVec<D> dimensions_
    GridField ksq_;
    double maxKSq_;
 

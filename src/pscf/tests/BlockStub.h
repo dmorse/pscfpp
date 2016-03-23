@@ -9,7 +9,7 @@
 */
 
 #include "PropagatorStub.h"
-#include <pscf/BlockTmpl.h>
+#include <pscf/solvers/BlockTmpl.h>
 
 namespace Pscf
 { 

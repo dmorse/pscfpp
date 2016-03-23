@@ -4,7 +4,7 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pscf/BlockDescriptor.h>
+#include <pscf/chem/BlockDescriptor.h>
 
 #include <fstream>
 

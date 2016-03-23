@@ -4,7 +4,7 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pscf/TridiagonalSolver.h>
+#include <pscf/math/TridiagonalSolver.h>
 
 #include <fstream>
 

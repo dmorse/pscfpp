@@ -8,7 +8,7 @@
 #include "NrIterator.h"
 #include "System.h"
 #include "Mixture.h"
-#include <pscf/Interaction.h>
+#include <pscf/inter/Interaction.h>
 
 #include <math.h>
 

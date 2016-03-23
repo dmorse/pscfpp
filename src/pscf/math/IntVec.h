@@ -99,11 +99,19 @@ namespace Pscf
 
    };
 
-   /// Equality for IntVec<D, T>s.
+   /**
+   * Equality of two IntVec<D, T>s.
+   *
+   * \return true if v1 == v2, false otherwise.
+   */
    template <int D, typename T> 
    bool operator == (const IntVec<D, T>& v1, const IntVec<D, T>& v2);
 
-   /// Inequality of two IntVec<D, T>s.
+   /**
+   * Inequality of two IntVec<D, T>s.
+   *
+   * \return true if v1 != v2, false if v1 == v2.
+   */
    template <int D, typename T> 
    bool operator != (const IntVec<D, T>& v1, const IntVec<D, T>& v2);
 
@@ -112,7 +120,7 @@ namespace Pscf
    *
    * Input elements of a vector from stream, without line breaks.
    *
-   * \param in      input stream
+   * \param in  input stream
    * \param vector  IntVec<D, T> to be read from stream
    * \return modified input stream
    */
@@ -123,12 +131,13 @@ namespace Pscf
    * ostream inserter for a IntVec<D, T>.
    *
    * Output elements of a vector to stream, without line breaks.
-   * \param  out     output stream
+   * \param  out  output stream
    * \param  vector  IntVec<D, T> to be written to stream
    * \return modified output stream
    */
    template <int D, typename T> 
-   std::ostream& operator << (std::ostream& out, const IntVec<D, T> &vector);
+   std::ostream& 
+   operator << (std::ostream& out, const IntVec<D, T> &vector);
 
    // Inline methods
 
@@ -155,6 +164,50 @@ namespace Pscf
    inline IntVec<D, T>::IntVec(T s)
     : Vec<D,T>(s)
    {}
+
+   // Friend functions and operators
+   
+   template <int D, typename T>
+   inline 
+   bool operator==(const IntVec<D, T>& v1, const IntVec<D, T>& v2) 
+   {
+      for (int i=0; i < D; ++i) {
+         if (v1.elem_[i] != v2.elem_[i]) {
+            return false;
+         }
+      }
+      return true;
+   }
+   
+   template <int D, typename T>
+   inline
+   bool operator!=(const IntVec<D, T>& v1, const IntVec<D, T>& v2) 
+   { return !(v1 == v2); }
+   
+   /* 
+   * Input a IntVec<D, T> from an istream, without line breaks.
+   */
+   template <int D, typename T>
+   std::istream& operator>>(std::istream& in, IntVec<D, T> &vector)
+   {
+      for (int i=0; i < D; ++i) {
+         in >> vector.elem_[i];
+      }
+      return in;
+   }
+   
+   /* 
+   * Output a IntVec<D, T> to an ostream, without line breaks.
+   */
+   template <int D, typename T>
+   std::ostream& operator<<(std::ostream& out, const IntVec<D, T> &vector) 
+   {
+      for (int i=0; i < D; ++i) {
+         out.width(IntVec<D, T>::Width);
+         out << vector.elem_[i];
+      }
+      return out;
+   }
 
 }
 #endif

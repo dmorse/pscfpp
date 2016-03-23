@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/BlockDescriptor.h>   // base class
-#include <util/containers/Pair.h>   // member template
+#include <pscf/chem/BlockDescriptor.h> // base class
+#include <util/containers/Pair.h>      // member template
 
 #include <cmath>
 

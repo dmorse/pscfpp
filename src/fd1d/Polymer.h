@@ -9,7 +9,7 @@
 */
 
 #include "Block.h"
-#include <pscf/PolymerTmpl.h>
+#include <pscf/solvers/PolymerTmpl.h>
 
 namespace Pscf { 
 namespace Fd1d

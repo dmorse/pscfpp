@@ -10,8 +10,8 @@
 
 #include "Polymer.h"
 #include "Solvent.h"
-#include <pscf/MixtureTmpl.h>
-#include <pscf/Interaction.h>
+#include <pscf/solvers/MixtureTmpl.h>
+#include <pscf/inter/Interaction.h>
 #include <util/containers/DArray.h>
 
 namespace Pscf {

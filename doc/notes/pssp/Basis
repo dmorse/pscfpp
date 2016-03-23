@@ -2,7 +2,7 @@ template <int D>
 class Basis {
 
    struc Wave {
-      IntVector<D> vector;
+      IntVec<D> vector;
       std::complex<double> coeff;
       double sqMagnitude;
       int starId;
@@ -14,7 +14,7 @@ class Basis {
       int size; 
       int invertFlag; 
       int signFlag; 
-      IntVector<D> wave;
+      IntVec<D> wave;
       bool cancel;
    };
 
@@ -34,7 +34,7 @@ class Basis {
    Wave& wave(int i);
 
    // Access wave by vector
-   Wave& wave(IntVector<D> vector);
+   Wave& wave(IntVec<D> vector);
 
    // Get Star, access by integer index
    Star& star(int i);
@@ -47,7 +47,7 @@ private:
    DArray<Wave> waves_;
    DArray<Wave> stars_;
 
-   // Indexing that allows identification by IntVector
+   // Indexing that allows identification by IntVec
    DArray<int> waveId_;   
    
 };

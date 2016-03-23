@@ -4,7 +4,7 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pscf/Monomer.h>
+#include <pscf/chem/Monomer.h>
 
 #include <fstream>
 

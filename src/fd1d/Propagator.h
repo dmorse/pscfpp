@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/PropagatorTmpl.h>       // base class template
-#include <util/containers/DArray.h>    // member template
+#include <pscf/solvers/PropagatorTmpl.h> // base class template
+#include <util/containers/DArray.h>      // member template
 
 namespace Pscf { 
 namespace Fd1d

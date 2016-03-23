@@ -8,11 +8,11 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/Species.h>                // base class
+#include <pscf/chem/Species.h>           // base class
 #include <util/param/ParamComposite.h>   // base class
 
-#include <pscf/Monomer.h>                // member template argument
-#include <pscf/Vertex.h>                 // member template argument
+#include <pscf/chem/Monomer.h>           // member template argument
+#include <pscf/chem/Vertex.h>            // member template argument
 #include <util/containers/Pair.h>        // member template
 #include <util/containers/DArray.h>      // member template
 #include <util/containers/DMatrix.h>

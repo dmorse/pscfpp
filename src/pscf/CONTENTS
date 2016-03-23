@@ -1,2 +1,10 @@
 This directory contains source files in namespace Pscf that can be used 
 in several different implementations of self-consistent field theory. 
+
+Subdirectories:
+
+   chem/     - classes to describe chemical species and polymer structure
+   solvers/  - class templates for MDE solvers for blocks, polymers, etc.
+   inter/    - classes to represent excess free energies (interactions)
+   math/     - mathematical utilities
+   

@@ -9,7 +9,7 @@
 */
 
 #include "Propagator.h"
-#include <pscf/SolventTmpl.h>
+#include <pscf/solvers/SolventTmpl.h>
 
 namespace Pscf { 
 namespace Fd1d

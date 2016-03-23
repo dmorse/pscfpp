@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/Species.h>
+#include <pscf/chem/Species.h>
 #include <util/param/ParamComposite.h>
 
 namespace Pscf

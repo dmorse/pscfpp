@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/SolventTmpl.h>
+#include <pscf/solvers/SolventTmpl.h>
 #include <util/containers/DArray.h>
 
 namespace Pscf

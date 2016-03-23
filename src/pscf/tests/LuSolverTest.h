@@ -4,7 +4,7 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pscf/LuSolver.h>
+#include <pscf/math/LuSolver.h>
 
 #include <fstream>
 

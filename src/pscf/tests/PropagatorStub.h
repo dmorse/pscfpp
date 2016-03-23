@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/PropagatorTmpl.h>
+#include <pscf/solvers/PropagatorTmpl.h>
 #include <util/containers/DArray.h>
 
 namespace Pscf

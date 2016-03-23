@@ -8,10 +8,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/BlockTmpl.h>            // base class template
-#include "Propagator.h"                // base class argument
-#include "GeometryMode.h"              // argument (enum)
-#include <pscf/TridiagonalSolver.h>    // member
+#include <pscf/solvers/BlockTmpl.h>       // base class template
+#include "Propagator.h"                   // base class argument
+#include "GeometryMode.h"                 // argument (enum)
+#include <pscf/math/TridiagonalSolver.h>  // member
 
 namespace Pscf { 
 namespace Fd1d 
@@ -133,17 +133,19 @@ namespace Fd1d
       /// Pointer to associated Domain object.
       Domain const * domainPtr_;
 
-      /// Monomer statistical segment length.
-      double step_;
-
       /// Contour length step size.
       double ds_;
 
       /// Number of contour length steps = # grid points - 1.
       int ns_;
 
+      #if 0
       /// Number of spatial grid points.
       int nx_;
+
+      /// Monomer statistical segment length.
+      double step_;
+      #endif
 
    };
 

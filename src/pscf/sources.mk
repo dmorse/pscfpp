@@ -1,16 +1,9 @@
-pscf_= \
-  pscf/Monomer.cpp \
-  pscf/Vertex.cpp \
-  pscf/BlockDescriptor.cpp \
-  pscf/Species.cpp \
-  pscf/Interaction.cpp \
-  pscf/ChiInteraction.cpp \
-  pscf/TridiagonalSolver.cpp \
-  pscf/IntVec.cpp 
+include $(SRC_DIR)/pscf/chem/sources.mk
+include $(SRC_DIR)/pscf/inter/sources.mk
+include $(SRC_DIR)/pscf/math/sources.mk
 
-ifdef PSCF_GSL
-  pscf_+= pscf/LuSolver.cpp 
-endif
+pscf_= \
+  $(pscf_chem_) $(pscf_inter_) $(pscf_math_) 
 
 pscf_SRCS=\
      $(addprefix $(SRC_DIR)/, $(pscf_))

@@ -10,7 +10,7 @@
 
 #include "Iterator.h"
 #include "Mixture.h"
-#include <pscf/LuSolver.h>
+#include <pscf/math/LuSolver.h>
 #include <util/containers/Array.h>
 #include <util/containers/DArray.h>
 #include <util/containers/DMatrix.h>

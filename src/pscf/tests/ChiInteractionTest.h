@@ -4,7 +4,7 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pscf/ChiInteraction.h>
+#include <pscf/inter/ChiInteraction.h>
 
 #include <fstream>
 
