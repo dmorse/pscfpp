@@ -18,6 +18,22 @@ namespace Util
 {
 
    /**
+   * Set an int variable to zero.
+   *
+   * \param value value to be zeroed.
+   */
+   inline void setToZero(int& value)
+   {  value = 0; }
+
+   /**
+   * Set an unsigned int variable to zero.
+   *
+   * \param value value to be zeroed.
+   */
+   inline void setToZero(unsigned int& value)
+   {  value = 0; }
+
+   /**
    * Set a float variable to zero.
    *
    * \param value value to be zeroed.

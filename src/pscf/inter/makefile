@@ -1,9 +1,4 @@
 #-----------------------------------------------------------------------
-# The copy of this namespace-level makefile in the src/ directory is 
-# copied to the bld/serial and bld/parallel directories by the setup
-# script to create the copies in those directories. Only the copy in
-# the src/ directory is stored in the repository.
-#-----------------------------------------------------------------------
 # Include makefiles
 
 SRC_DIR_REL =../..

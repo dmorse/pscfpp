@@ -15,11 +15,6 @@
 namespace Pscf
 {
 
-   template <int D, typename T> class Vec;
-
-   template <int D, typename T>
-   T dot(Vec<D, T> const & v1, Vec<D, T> const & v2);
-
    /**
    * A Vec<D, T><D,T> is a d-component vector with elements of type T.
    *
@@ -28,8 +23,8 @@ namespace Pscf
    *
    * The arithmetic assignment operators +=, -=, and *= are overloaded.
    *
-   * All other unary and binary mathematical operations are implemented as
-   * methods or friend functions. Operations that yield a Vec<D, T>, such 
+   * All other unary and binary mathematical operations are implemented 
+   * as methods or free functions. Operations that yield a Vec<D, T>, such 
    * as addition, are implemented by methods that assign the result to the 
    * invoking Vec object, and return this object by reference. For example,
    * \code
@@ -80,6 +75,13 @@ namespace Pscf
       * \param v Vec<D, T> to be copied
       */
       Vec<D, T>(const Vec<D, T>& v);
+
+      /**
+      * Constructor from a C-array.
+      *
+      * \param v array to be copied
+      */
+      explicit Vec<D, T>(T const *  v);
 
       /**
       * Constructor, initialize all elements to a scalar value.
@@ -218,13 +220,9 @@ namespace Pscf
       /// Elements of the vector.
       T elem_[D];
 
-   //friends:
-
-      friend T dot<>(Vec<D, T> const & v1, Vec<D, T> const & v2);
-
    };
 
-   // Friend functions
+   // Associated functions
 
    /**
    * Return dot product of this vector and vector v.
@@ -240,7 +238,7 @@ namespace Pscf
       T value;
       setToZero(value);
       for (int i = 0; i < D; ++i) {
-         value += v1.elem_[i]*v2.elem_[i];
+         value += v1[i]*v2[i];
       }
       return value;
    }
@@ -262,6 +260,17 @@ namespace Pscf
    {
       for (int i = 0; i < D; ++i) {
          elem_[i] = v.elem_[i];
+      }
+   }
+
+   /*
+   * Constructor, from C-Array.
+   */
+   template <int D, typename T> 
+   inline Vec<D, T>::Vec(T const * v)
+   {
+      for (int i = 0; i < D; ++i) {
+         elem_[i] = v[i];
       }
    }
 

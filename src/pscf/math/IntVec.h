@@ -15,22 +15,6 @@
 namespace Pscf
 {
 
-   // Forward declarations
-
-   template <int D, typename T> class IntVec;
-
-   template <int D, typename T>
-   bool operator == (const IntVec<D, T>& v1, const IntVec<D, T>& v2);
-
-   template <int D, typename T>
-   bool operator == (const IntVec<D, T>& v1, const T* v2);
-
-   template <int D, typename T>
-   std::istream& operator >> (std::istream& in, IntVec<D, T> &vector);
-
-   template <int D, typename T>
-   std::ostream& operator << (std::ostream& out, const IntVec<D, T> &vector);
-
    /**
    * A IntVec<D, T> is D-component vector with elements of integer type.
    */
@@ -46,34 +30,36 @@ namespace Pscf
       /**
       * Default constructor
       */
-      IntVec<D, T>();
+      IntVec<D, T>()
+        : Vec<D, T>()
+      {}
 
       /**
       * Copy constructor
       *
       * \param v IntVec<D, T> to be copied
       */
-      IntVec<D, T>(const IntVec<D, T>& v);
+      IntVec<D, T>(const IntVec<D, T>& v)
+       : Vec<D, T>(v)
+      {}
+
+      /**
+      * Construct from C array.
+      *
+      * \param v C array to be copied
+      */
+      IntVec<D, T>(T const * v)
+       : Vec<D, T>(v)
+      {}
 
       /**
       * Constructor, initialize all elements to a scalar value.
       *
-      * \param scalar initial value for all elements.
+      * \param s scalar initial value for all elements.
       */
-      explicit IntVec<D, T>(T scalar);
-
-      //@}
-      #if 0
-      /// \name Static Members
-      //@{
-
-      /**
-      * Zero IntVec<D, T> = {0.0, 0.0, 0.0}
-      */
-      static const IntVec<D, T> Zero;
-
-      //@}
-      #endif
+      explicit IntVec<D, T>(T s)
+       : Vec<D, T>(s)
+      {}
 
    private:
 
@@ -83,38 +69,10 @@ namespace Pscf
       /// Precision in stream IO of IntVec<D, T> coordinates
       static const int Precision = 17;
 
-   //friends:
-
-      friend 
-      bool operator == <>(const IntVec<D, T>& v1, const IntVec<D, T>& v2);
-
-      friend 
-      bool operator == <>(const IntVec<D, T>& v1, const T* v2);
-
-      friend std::istream& 
-      operator >> <>(std::istream& in, IntVec<D, T> &vector);
-
-      friend std::ostream& 
-      operator << <>(std::ostream& out, const IntVec<D, T> &vector);
-
    };
 
-   /**
-   * Equality of two IntVec<D, T>s.
-   *
-   * \return true if v1 == v2, false otherwise.
-   */
-   template <int D, typename T> 
-   bool operator == (const IntVec<D, T>& v1, const IntVec<D, T>& v2);
-
-   /**
-   * Inequality of two IntVec<D, T>s.
-   *
-   * \return true if v1 != v2, false if v1 == v2.
-   */
-   template <int D, typename T> 
-   bool operator != (const IntVec<D, T>& v1, const IntVec<D, T>& v2);
-
+   // Friend functions and operators
+   
    /**
    * istream extractor for a IntVec<D, T>.
    *
@@ -124,90 +82,61 @@ namespace Pscf
    * \param vector  IntVec<D, T> to be read from stream
    * \return modified input stream
    */
-   template <int D, typename T> 
-   std::istream& operator >> (std::istream& in, IntVec<D, T> &vector);
+   template <int D, typename T>
+   std::istream& operator>>(std::istream& in, IntVec<D, T> &vector)
+   {
+      for (int i=0; i < D; ++i) {
+         in >> vector[i];
+      }
+      return in;
+   }
 
    /**
    * ostream inserter for a IntVec<D, T>.
+   *
+   * Output a IntVec<D, T> to an ostream, without line breaks.
    *
    * Output elements of a vector to stream, without line breaks.
    * \param  out  output stream
    * \param  vector  IntVec<D, T> to be written to stream
    * \return modified output stream
    */
-   template <int D, typename T> 
-   std::ostream& 
-   operator << (std::ostream& out, const IntVec<D, T> &vector);
-
-   // Inline methods
-
-   /*
-   * Default constructor
-   */
-   template <int D, typename T> 
-   inline IntVec<D, T>::IntVec()
-    : Vec<D,T>()
-   {}
-
-   /*
-   * Copy constructor
-   */
-   template <int D, typename T> 
-   inline IntVec<D, T>::IntVec(const IntVec<D, T>& v)
-    : Vec<D,T>(v)
-   {}
-
-   /*
-   * Constructor, initialize all elements to a scalar value.
-   */
-   template <int D, typename T> 
-   inline IntVec<D, T>::IntVec(T s)
-    : Vec<D,T>(s)
-   {}
-
-   // Friend functions and operators
-   
    template <int D, typename T>
-   inline 
-   bool operator==(const IntVec<D, T>& v1, const IntVec<D, T>& v2) 
+   std::ostream& operator<<(std::ostream& out, const IntVec<D, T> &vector) 
    {
       for (int i=0; i < D; ++i) {
-         if (v1.elem_[i] != v2.elem_[i]) {
+         out.width(IntVec<D, T>::Width);
+         out << vector[i];
+      }
+      return out;
+   }
+
+   /**
+   * Equality of two IntVec<D, T>s.
+   *
+   * \return true if v1 == v2, false otherwise.
+   */
+   template <int D, typename T>
+   inline 
+   bool operator == (const IntVec<D, T>& v1, const IntVec<D, T>& v2) 
+   {
+      for (int i=0; i < D; ++i) {
+         if (v1[i] != v2[i]) {
             return false;
          }
       }
       return true;
    }
    
+   /**
+   * Inequality of two IntVec<D, T>s.
+   *
+   * \return true if v1 != v2, false if v1 == v2.
+   */
    template <int D, typename T>
    inline
-   bool operator!=(const IntVec<D, T>& v1, const IntVec<D, T>& v2) 
+   bool operator != (const IntVec<D, T>& v1, const IntVec<D, T>& v2) 
    { return !(v1 == v2); }
    
-   /* 
-   * Input a IntVec<D, T> from an istream, without line breaks.
-   */
-   template <int D, typename T>
-   std::istream& operator>>(std::istream& in, IntVec<D, T> &vector)
-   {
-      for (int i=0; i < D; ++i) {
-         in >> vector.elem_[i];
-      }
-      return in;
-   }
-   
-   /* 
-   * Output a IntVec<D, T> to an ostream, without line breaks.
-   */
-   template <int D, typename T>
-   std::ostream& operator<<(std::ostream& out, const IntVec<D, T> &vector) 
-   {
-      for (int i=0; i < D; ++i) {
-         out.width(IntVec<D, T>::Width);
-         out << vector.elem_[i];
-      }
-      return out;
-   }
-
 }
 #endif
