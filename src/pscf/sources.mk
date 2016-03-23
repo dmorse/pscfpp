@@ -5,7 +5,8 @@ pscf_= \
   pscf/Species.cpp \
   pscf/Interaction.cpp \
   pscf/ChiInteraction.cpp \
-  pscf/TridiagonalSolver.cpp 
+  pscf/TridiagonalSolver.cpp \
+  pscf/IntVec.cpp 
 
 ifdef PSCF_GSL
   pscf_+= pscf/LuSolver.cpp 

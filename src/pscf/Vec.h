@@ -2,33 +2,36 @@
 #define PSCF_VEC_H
 
 /*
-* Simpatico - Simulation Package for Polymeric and Molecular Liquids
+* PSCF - Polymer Self-Consistent Field Theory
 *
-* Copyright 2010 - 2014, The Regents of the University of Minnesota
+* Copyright 2016, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.
 */
 
 #include <util/global.h>
-
+#include <util/accumulators/setToZero.h>
 #include <iostream>
-#include <cmath>
 
 namespace Pscf
 {
 
+   template <int D, typename T> class Vec;
+
+   template <int D, typename T>
+   T dot(Vec<D, T> const & v1, Vec<D, T> const & v2);
+
    /**
-   * A Vec<D, T><D,T> is a simple d-component vector with elements of type T.
+   * A Vec<D, T><D,T> is a d-component vector with elements of type T.
    *
-   * The elements of a Vec<D, T> can be accessed using subscript operator,
-   * as for a built in array.
+   * The elements of a Vec<D, T> can be accessed using subscript operator, as 
+   * for a built in array.
    *
    * The arithmetic assignment operators +=, -=, and *= are overloaded.
    *
    * All other unary and binary mathematical operations are implemented as
    * methods or friend functions. Operations that yield a Vec<D, T>, such 
    * as addition, are implemented by methods that assign the result to the 
-   * invoking vector, and return a reference to the invoking vector. For 
-   * example,
+   * invoking Vec object, and return this object by reference. For example,
    * \code
    *
    *    Vec<3, double> a, b, c;
@@ -51,14 +54,14 @@ namespace Pscf
    *    c.add(a, b);
    *
    * \endcode
-   * This syntax for Vec<D, T> valued operations avoids dynamic allocation 
-   * of temporary Vec<D, T> objects, by requiring that the invoking 
-   * function provide an object to hold the result.
+   * This syntax for functions that yield a vector avoids dynamic allocation 
+   * of temporary Vec<D, T> objects, by requiring that the invoking function 
+   * be a member of an object that will hold the result.
    *
    * For efficiency, all methods in this class are declared inline.
    */
    template <int D, typename T>
-   class Vec<D, T>
+   class Vec
    {
 
    public:
@@ -81,16 +84,11 @@ namespace Pscf
       /**
       * Constructor, initialize all elements to a scalar value.
       *
-      * \param scalar initial value for all elements.
+      * \param s initial value for all elements.
       */
-      explicit Vec<D, T>(T scalar);
+      explicit Vec<D, T>(T s);
 
       //@}
-
-      /**
-      * Set all elements to zero.
-      */
-      Vec<D, T>& setToZero();
 
       /// \name Assignment
       //@{
@@ -99,15 +97,25 @@ namespace Pscf
       * Copy assignment.
       *
       * \param v Vec<D, T> to assign.
+      * \return this object, after modification
       */
       Vec<D, T>& operator = (const Vec<D, T>& v);
 
       /**
-      * Assignment from C T[3] array.
+      * Assignment all elements to the same scalar T value.
       *
-      * \param v  C-array of components
+      * \param s scalar value
+      * \return this object, after modification
       */
-      Vec<D, T>& operator = (const T* v);
+      Vec<D, T>& operator = (T s);
+
+      /**
+      * Set all elements to zero.
+      *
+      * \param s scalar value
+      * \return this object, after modification
+      */
+      Vec<D, T>& setToZero();
 
       //@}
       /// \name Arithmetic Assignment
@@ -161,18 +169,6 @@ namespace Pscf
       T& operator [] (int i);
 
       //@}
-      /// \name Scalar-valued functions
-      //@{
-
-      /**
-      * Return dot product of this vector and vector v.
-      *
-      * \param  v input vector
-      * \return dot product of this vector and vector v
-      */
-      T dot(const Vec<D, T>& v) const;
-
-      //@}
       /// \name Vec<D, T> valued functions (assigned to invoking object)
       //@{
 
@@ -210,15 +206,6 @@ namespace Pscf
       Vec<D, T>& multiply(const Vec<D, T>& v, T s);
 
       //@}
-      /// \name Static Members
-      //@{
-
-      /**
-      * Zero Vec<D, T> = {0.0, 0.0, 0.0}
-      */
-      static const Vec<D, T> Zero;
-
-      //@}
 
    private:
 
@@ -229,59 +216,36 @@ namespace Pscf
       static const int Precision = 17;
 
       /// Elements of the vector.
-      T elem_[Dimension];
+      T elem_[D];
 
    //friends:
 
-      friend bool operator == (const Vec<D, T>& v1, const Vec<D, T>& v2);
-
-      friend bool operator == (const Vec<D, T>& v1, const T* v2);
-
-      friend 
-      std::istream& operator >> (std::istream& in, Vec<D, T> &vector);
-
-      friend 
-      std::ostream& operator << (std::ostream& out, const Vec<D, T> &vector);
+      friend T dot<>(Vec<D, T> const & v1, Vec<D, T> const & v2);
 
    };
 
-   /// Equality for Vec<D, T>s.
-   bool operator == (const Vec<D, T>& v1, const Vec<D, T>& v2);
-
-   /// Equality of Vec<D, T> and C array.
-   bool operator == (const Vec<D, T>& v1, const T* v2);
-
-   /// Inequality of two Vec<D, T>s.
-   bool operator != (const Vec<D, T>& v1, const Vec<D, T>& v2);
-
-   /// Inequality of Vec<D, T> and C array.
-   bool operator != (const Vec<D, T>& v1, const T* v2);
-
-   /// Inequality of C array and Vec<D, T>.
-   bool operator != (const T* v1, const Vec<D, T>& v2);
+   // Friend functions
 
    /**
-   * istream extractor for a Vec<D, T>.
+   * Return dot product of this vector and vector v.
    *
-   * Input elements of a vector from stream, without line breaks.
-   *
-   * \param in      input stream
-   * \param vector  Vec<D, T> to be read from stream
-   * \return modified input stream
+   * \param v1 first input vector
+   * \param v2 second input vector
+   * \return dot product v1.v2
    */
-   std::istream& operator >> (std::istream& in, Vec<D, T> &vector);
+   template <int D, typename T>
+   inline 
+   T dot(Vec<D, T> const & v1, Vec<D, T> const & v2)
+   {
+      T value;
+      setToZero(value);
+      for (int i = 0; i < D; ++i) {
+         value += v1.elem_[i]*v2.elem_[i];
+      }
+      return value;
+   }
 
-   /**
-   * ostream inserter for a Vec<D, T>.
-   *
-   * Output elements of a vector to stream, without line breaks.
-   * \param  out     output stream
-   * \param  vector  Vec<D, T> to be written to stream
-   * \return modified output stream
-   */
-   std::ostream& operator << (std::ostream& out, const Vec<D, T> &vector);
-
-   // Inline methods
+   // Inline method definitions
 
    /*
    * Default constructor
@@ -302,26 +266,14 @@ namespace Pscf
    }
 
    /*
-   * Constructor, initialize all elements to a scalar value.
+   * Constructor, initialize all elements to a scalar value s.
    */
    template <int D, typename T> 
-   inline Vec<D, T>::Vec(T scalar)
+   inline Vec<D, T>::Vec(T s)
    {
       for (int i = 0; i < D; ++i) {
-         elem_[i] = scalar;
+         elem_[i] = s;
       }
-   }
-
-   /*
-   * Set all elements of a 3D vector to zero.
-   */
-   template <int D, typename T> 
-   inline Vec<D, T>& Vec<D, T>::zero()
-   {
-      for (int i = 0; i < D; ++i) {
-         elem_[i] = 0;
-      }
-      return *this;
    }
 
    /*
@@ -337,13 +289,25 @@ namespace Pscf
    }
 
    /*
-   * Assignment from C T[] array.
+   * Assign all elements to a common scalar value.
    */
    template <int D, typename T> 
-   inline Vec<D, T>& Vec<D, T>::operator = (const T* v)
+   inline Vec<D, T>& Vec<D, T>::operator = (T s)
    {
       for (int i = 0; i < D; ++i) {
-         elem_[i] = v[i];
+         elem_[i] = s;
+      }
+      return *this;
+   }
+
+   /*
+   * Set all elements of a 3D vector to zero.
+   */
+   template <int D, typename T> 
+   inline Vec<D, T>& Vec<D, T>::setToZero()
+   {
+      for (int i = 0; i < D; ++i) {
+         setToZero(elem_[i]); 
       }
       return *this;
    }
@@ -388,49 +352,19 @@ namespace Pscf
    inline const T& Vec<D, T>::operator [] (int i) const
    { 
       assert(i >=0); 
-      assert(i < Dimension); 
+      assert(i < D); 
       return elem_[i]; 
    }
 
    /*
    * Return a reference to one element of the vector.
    */
-   */
    template <int D, typename T>
    inline T& Vec<D, T>::operator [] (int i)
    {
       assert(i >=0); 
-      assert(i < Dimension); 
+      assert(i < D); 
       return elem_[i]; 
-   }
-
-   /*
-   * Return square magnitude of this vector.
-   */
-   inline
-   T Vec<D, T>::square() const
-   {
-      return (elem_[0]*elem_[0] + elem_[1]*elem_[1] + elem_[2]*elem_[2]);
-   }
-
-   /*
-   * Return absolute magnitude of this vector.
-   */
-   template <int D, typename T>
-   inline T Vec<D, T>::abs() const
-   {  return sqrt(square()); }
-
-   /*
-   * Return dot product of this vector and vector v.
-   */
-   template <int D, typename T>
-   inline T Vec<D, T>::dot(Vec<D, T> const & v) const
-   {
-      T value = 0;
-      for (i = 0; i < D; ++i) {
-         value += elem_[i]*v.elem_[i];
-      }
-      return value;
    }
 
    /*
@@ -478,17 +412,6 @@ namespace Pscf
          elem_[i] = v.elem_[i]*s;
       }
       return *this;
-   }
-
-   /*
-   * Serialize to/from an archive.
-   */
-   template <class Archive>
-   inline void Vec<D, T>::serialize(Archive& ar, const unsigned int version)
-   {
-      for (int i=0; i < D; ++i) {
-         ar & elem_[i];
-      }
    }
 
 }
