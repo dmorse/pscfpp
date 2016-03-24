@@ -9,8 +9,8 @@
 */
 
 #include <util/containers/FArray.h>
-#include <pscf/math/RealVec.h>
 #include <pscf/math/IntVec.h>
+#include <pscf/math/RealVec.h>
 
 namespace Pscf
 { 
@@ -81,13 +81,13 @@ namespace Pscf
    * Get square magnitude of reciprocal basis vector.
    */
    template <int D>
-   double UnitCellTmp<D>::ksq(IntVec<D> const & k) const
+   double UnitCellTmpl<D>::ksq(IntVec<D> const & k) const
    {
-      RealVec<D> g(0);
+      RealVec<D> g(0.0);
       RealVec<D> p;
       for (int i = 0; i < D; ++i) {
          p.multiply(kBasis_[i], k[i]);
-         g =+ p;
+         g += p;
       }
       double value = 0.0;
       for (int i = 0; i < D; ++i) {
