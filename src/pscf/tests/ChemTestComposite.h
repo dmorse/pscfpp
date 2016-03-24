@@ -15,6 +15,7 @@
 #include "LuSolverTest.h"
 #endif
 #include "IntVecTest.h"
+#include "RealVecTest.h"
 
 TEST_COMPOSITE_BEGIN(ChemTestComposite)
 TEST_COMPOSITE_ADD_UNIT(MonomerTest);
@@ -29,6 +30,7 @@ TEST_COMPOSITE_ADD_UNIT(TridiagonalSolverTest);
 TEST_COMPOSITE_ADD_UNIT(LuSolverTest);
 #endif
 TEST_COMPOSITE_ADD_UNIT(IntVecTest);
+TEST_COMPOSITE_ADD_UNIT(RealVecTest);
 TEST_COMPOSITE_END
 
 #endif

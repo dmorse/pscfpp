@@ -106,11 +106,33 @@ namespace Pscf
    std::ostream& operator<<(std::ostream& out, const RealVec<D, T> &vector)
    {
       for (int i = 0; i < D; ++i) {
-         out.width(RealVec<D, T>::Width);
-         out << vector[i];
+         out.setf(std::ios::scientific);
+         out.width(RealVec<D>::Width);
+         out.precision(RealVec<D>::Precision);
+         out << vector.elem_[i];
       }
       return out;
    }
 
+   // Equality operators
+   
+   #define PSCF_REALVEC_EPSILON 1.0E-8
+   
+   template <int D, typename T>
+   bool operator==(const RealVec<D, T>& v1, const RealVec<D, T>& v2) 
+   {
+      for (int i = 0; i < D; ++i) {
+         if ( fabs(v1[i] - v2[i]) > PSCF_REALVEC_EPSILON) {
+            return false;
+         }
+      }
+      return true;
+   }
+   #undef PSCF_REALVEC_EPSILON
+   
+   template <int D, typename T>
+   bool operator!=(const RealVec<D, T>& v1, const RealVec<D, T>& v2) 
+   { return !(v1 == v2); }
+   
 }
 #endif
