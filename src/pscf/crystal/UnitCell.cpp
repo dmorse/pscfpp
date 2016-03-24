@@ -5,16 +5,16 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "UnitCellTmpl.h"
+#include "UnitCell.h"
 
 namespace Pscf
 { 
 
    using namespace Util;
 
-   template class UnitCellTmpl<1>;
-   template class UnitCellTmpl<2>;
-   template class UnitCellTmpl<3>;
+   template class UnitCell<1>;
+   template class UnitCell<2>;
+   template class UnitCell<3>;
 
    
 } 

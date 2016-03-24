@@ -1,5 +1,5 @@
 pscf_crystal_= \
-  pscf/crystal/UnitCellTmpl.cpp 
+  pscf/crystal/UnitCell.cpp 
 
 pscf_crystal_SRCS=\
      $(addprefix $(SRC_DIR)/, $(pscf_crystal_))
