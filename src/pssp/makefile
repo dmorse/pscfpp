@@ -10,25 +10,25 @@ SRC_DIR_REL =..
 include $(SRC_DIR_REL)/config.mk
 include $(BLD_DIR)/util/config.mk
 include $(BLD_DIR)/pscf/config.mk
-include $(BLD_DIR)/fd1d/config.mk
-include $(SRC_DIR)/fd1d/patterns.mk
+include $(BLD_DIR)/pssp/config.mk
+include $(SRC_DIR)/pssp/patterns.mk
 include $(SRC_DIR)/util/sources.mk
 include $(SRC_DIR)/pscf/sources.mk
-include $(SRC_DIR)/fd1d/sources.mk
+include $(SRC_DIR)/pssp/sources.mk
 
 #-----------------------------------------------------------------------
 # Variable definition
 
-PSCF_FD=$(BLD_DIR)/fd1d/pscf_fd
+PSCF_PS=$(BLD_DIR)/pssp/pscf_ps
 #-----------------------------------------------------------------------
 # Main targets 
 
-all: $(fd1d_OBJS) $(fd1d_LIB) $(PSCF_FD_EXE)
+all: $(pssp_OBJS) $(pssp_LIB) $(PSCF_PS_EXE)
 
 clean:
-	rm -f $(fd1d_OBJS) $(fd1d_OBJS:.o=.d)
-	rm -f $(PSCF_FD).o $(PSCF_FD).d
-	rm -f $(fd1d_LIB)
+	rm -f $(pssp_OBJS) $(pssp_OBJS:.o=.d)
+	rm -f $(PSCF_PS).o $(PSCF_PS).d
+	rm -f $(pssp_LIB)
 	cd tests; $(MAKE) clean
 
 veryclean:
@@ -40,17 +40,17 @@ veryclean:
 
 # Executable target
 
-$(PSCF_FD_EXE): $(PSCF_FD).o $(LIBS)
-	$(CXX) $(LDFLAGS) -o $(PSCF_FD_EXE) $(PSCF_FD).o $(LIBS) $(PSCF_GSL_LIB)
+$(PSCF_PS_EXE): $(PSCF_PS).o $(LIBS)
+	$(CXX) $(LDFLAGS) -o $(PSCF_PS_EXE) $(PSCF_PS).o $(LIBS) $(PSCF_GSL_LIB)
 
 # Short name for executable target (for convenience)
-pscf_fd:
-	$(MAKE) $(PSCF_FD_EXE)
+pscf_ps:
+	$(MAKE) $(PSCF_PS_EXE)
 
 #-----------------------------------------------------------------------
 # Include dependency files
 
--include $(fd1d_OBJS:.o=.d)
+-include $(pssp_OBJS:.o=.d)
 -include $(pscf_OBJS:.o=.d)
 -include $(util_OBJS:.o=.d)
--include $(PSCF_FD).d 
+-include $(PSCF_PS).d 

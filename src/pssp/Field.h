@@ -19,34 +19,46 @@ namespace Pssp
    template <typename T = double>
    class Field : protected DArray<T>
    {
- 
-      public:
+   public:
 
+      /**
+      * Constructor.
+      */
       Field();
  
       // Access as one-dimensional array 
-      T DArray<T>::operator [](int i);
-      const T& DArray<T>::operator [](int i) const;
-   
-      // Assignment operator
+      using DArray<T>::operator [];
+      using DArray<T>::capacity;
+  
+      /** 
+      * Assignment operator.
+      */
       Field<T>& operator = (Field<T>& other);
    
-      // Assignment, assigns all elements to a common scalar.
+      /** 
+      * Assignment - assign all elements to a common scalar.
+      */
       Field<T>& operator = (T& scalar);
    
-      // Increment operator
+      /** 
+      * Increment operator - add one field by another.
+      */
       Field<T>& operator += (Field<T>& other);
    
-      // Decrement operator
+      /** 
+      * Decrement operator - subtract one field from another.
+      */
       Field<T>& operator -= (Field<T>& other);
    
-      // Multipication by scalar operator
+      /** 
+      * Multiplication operator - multiply one field by a scalar.
+      */
       Field<T>& operator *= (T scalar);
    
       /**
       * Pointwise multipication of field operator.
       */
-      GridField<D, T>& operator *= (GridField<D, T>& other);
+      Field<T>& operator *= (Field<T>& other);
    
       /**
       * Set to zero.
@@ -60,6 +72,102 @@ namespace Pssp
    
    };
    
+   /*
+   * Assignment& Field<T>::operator.
+   */
+   template <typename T>
+   Field<T>& Field<T>::operator = (Field<T>& other)
+   {
+      for (int i = 0; i < capacity(); ++i) {
+         (*this)[i] = other[i];
+      }
+      return *this;
+   }
+
+   /*
+   * Assignment - assign all elements to a common scalar.
+   */
+   template <typename T>
+   Field<T>& Field<T>::operator = (T& scalar)
+   {
+      for (int i = 0; i < capacity(); ++i) {
+         (*this)[i] = scalar;
+      }
+      return *this;
+   }
+
+   /*
+   * Increment& Field<T>::operator - add one field by another.
+   */
+   template <typename T>
+   Field<T>& Field<T>::operator += (Field<T>& other)
+   {
+      for (int i = 0; i < capacity(); ++i) {
+         (*this)[i] += other[i];
+      }
+      return *this;
+   }
+
+   /*
+   * Decrement& Field<T>::operator - subtract one field from another.
+   */
+   template <typename T>
+   Field<T>& Field<T>::operator -= (Field<T>& other)
+   {
+      for (int i = 0; i < capacity(); ++i) {
+         (*this)[i] -= other[i];
+      }
+      return *this;
+   }
+
+   /*
+   * Multiplication& Field<T>::operator - multiply one field by a scalar.
+   */
+   template <typename T>
+   Field<T>& Field<T>::operator *= (T scalar)
+   {
+      for (int i = 0; i < capacity(); ++i) {
+         (*this)[i] *= scalar;
+      }
+      return *this;
+   }
+
+   /*
+   * Pointwise multipication of field& Field<T>::operator.
+   */
+   template <typename T>
+   Field<T>& Field<T>::operator *= (Field<T>& other)
+   {
+      for (int i = 0; i < capacity(); ++i) {
+         (*this)[i] *= other[i];
+      }
+      return *this;
+   }
+
+   /*
+   * Set to zero.
+   */
+   template <typename T>
+   void Field<T>::setToZero()
+   {
+      for (int i = 0; i < capacity(); ++i) {
+         (*this)[i] *= 0.0;
+      }
+   }
+
+   /*
+   * Compute and return average of all elements.
+   */
+   template <typename T>
+   T Field<T>::average() const
+   {
+      double value = 0.0;
+      for (int i = 0; i < capacity(); ++i) {
+         value += (*this)[i];
+      }
+      return value/T(capacity());
+   }
+
 }
 }
 #endif
