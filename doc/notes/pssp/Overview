@@ -10,10 +10,10 @@ System {
 
 Supporting classes and functions:
 
-class Vector<int D> -> templated version of existing Vector class
-class IntVector<int D> -> templated version of existing IntVector class
+class RealVec<int D> -> templated version of existing Vector class
+class IntVec<int D> -> templated version of existing IntVector class
 
-class GridField<int D> - representation of field on an fft grid
+class Field<int D> - representation of field as an array
 
 Functions to convert basis to grid and grid to basis.
 
