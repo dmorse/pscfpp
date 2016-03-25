@@ -9,34 +9,85 @@
 */
 
 #include "UnitCellTmpl.h"
+#include <iostream>
 
 namespace Pscf
 { 
 
    using namespace Util;
 
+   template <int D> class UnitCell;
+
    /**
-   * Crystal unit cell.
+   * 1D crystal unit cell.
    *
    * \ingroup Pscf_Base_Module
    */
-   template <int D>
-   class UnitCell : public UnitCellTmpl<D>
+   template <>
+   class UnitCell<1> : public UnitCellTmpl<1>
+   {
+   public:
+
+      enum LatticeSystem {Lamellar};
+
+   };
+   
+   /**
+   * 2D crystal unit cell.
+   *
+   * \ingroup Pscf_Base_Module
+   */
+   template <>
+   class UnitCell<2> : public UnitCellTmpl<2>
+   {
+   public:
+
+      enum LatticeSystem {Square, Rectangular, Rhombic, Hexagonal, Oblique};
+
+   };
+   
+   /**
+   * 3D crystal unit cell.
+   *
+   * \ingroup Pscf_Base_Module
+   */
+   template <>
+   class UnitCell<3> : public UnitCellTmpl<3>
    {
    public:
 
       /**
-      * Constructor.
+      * Enumeration of the 7 possible Bravais lattice systems.
+      *
+      * Allowed values are: Cubic, Tetragonal, Orthorhombic, 
+      * Monoclinic, Triclinic, Rhombohedral, and Hexagonal.
+      *
+      * \ingroup Crystal_Module
       */
-      UnitCell(){}
+      enum LatticeSystem {Cubic, Tetragonal, Orthorhombic, Monoclinic,
+                          Triclinic, Rhombohedral, Hexagonal};
 
-   
-      /**
-      * Destructor.
-      */
-      ~UnitCell(){}
-   
    };
    
+   /**
+   * istream extractor for a UnitCell<3>::LatticeSystem.
+   *
+   * \param  in       input stream
+   * \param  lattice  UnitCell<3>::LatticeSystem to be read
+   * \return modified input stream
+   */
+   std::istream& operator >> (std::istream& in, 
+                              UnitCell<3>::LatticeSystem& lattice);
+
+   /**
+   * ostream inserter for an UnitCell<3>::LatticeSystem.
+   *
+   * \param  out      output stream
+   * \param  lattice  UnitCell<3>::LatticeSystem to be written
+   * \return modified output stream
+   */
+   std::ostream& operator << (std::ostream& out, 
+                              UnitCell<3>::LatticeSystem lattice);
+
 } 
 #endif 
