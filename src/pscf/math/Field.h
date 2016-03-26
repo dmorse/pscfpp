@@ -1,5 +1,5 @@
-#ifndef PSSP_FIELD_H
-#define PSSP_FIELD_H
+#ifndef PSCF_FIELD_H
+#define PSCF_FIELD_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -11,8 +11,6 @@
 #include <util/containers/DArray.h>
 
 namespace Pscf { 
-namespace Pssp
-{ 
 
    using namespace Util;
 
@@ -26,13 +24,15 @@ namespace Pssp
       */
       Field();
  
-      using Array<T>::operator [];
-      using Array<T>::capacity;
+      /** 
+      * Copy constructor.
+      */
+      Field(Field<T> const & other);
   
       /** 
       * Assignment operator.
       */
-      Field<T>& operator = (Field<T>& other);
+      Field<T>& operator = (Field<T> const & other);
    
       /** 
       * Assignment - assign all elements to a common scalar.
@@ -69,6 +69,12 @@ namespace Pssp
       */
       T average() const;
   
+      using Array<T>::operator [];
+      using Array<T>::capacity;
+      using DArray<T>::allocate;
+      using DArray<T>::deallocate;
+      using DArray<T>::isAllocated;
+
    protected:
  
       using Array<T>::capacity_;
@@ -77,14 +83,58 @@ namespace Pssp
    };
    
    /*
-   * Assignment& Field<T>::operator.
+   * Copy constructor.
+   *
+   * Allocates new memory and copies all elements by value.
+   *
+   *\param other the Field to be copied.
    */
-   template <typename T>
-   Field<T>& Field<T>::operator = (Field<T>& other)
+   template <class T>
+   Field<T>::Field(Field<T> const & other)
+    : DArray<T>()
    {
+      if (!other.isAllocated()) {
+         UTIL_THROW("Other Field not allocated.");
+      }
+      Memory::allocate(data_, other.capacity_);
+      capacity_ = other.capacity_;
+      for (int i = 0; i < capacity_; ++i) {
+         data_[i] = other.data_[i];
+      }
+   }
+
+   /*
+   * Assignment from another Field, element-by-element.
+   *
+   * This operator will allocate memory if not allocated previously.
+   *
+   * \throw Exception if other Field is not allocated.
+   * \throw Exception if both Fields are allocated with unequal capacities.
+   *
+   * \param other the rhs Field
+   */
+   template <class T>
+   Field<T>& Field<T>::operator = (Field<T> const & other)
+   {
+      // Check for self assignment
+      if (this == &other) return *this;
+
+      // Precondition
+      if (!other.isAllocated()) {
+         UTIL_THROW("Other Field not allocated.");
+      }
+
+      if (!isAllocated()) {
+         allocate(other.capacity());
+      } else if (capacity_ != other.capacity_) {
+         UTIL_THROW("Fields of unequal capacity");
+      }
+
+      // Copy elements
       for (int i = 0; i < capacity_; ++i) {
          data_[i] = other[i];
       }
+
       return *this;
    }
 
@@ -94,6 +144,9 @@ namespace Pssp
    template <typename T>
    Field<T>& Field<T>::operator = (T& scalar)
    {
+      if (!isAllocated()) {
+         UTIL_THROW("Field not allocated.");
+      }
       for (int i = 0; i < capacity_; ++i) {
          data_[i] = scalar;
       }
@@ -101,25 +154,46 @@ namespace Pssp
    }
 
    /*
-   * Increment& Field<T>::operator - add one field by another.
+   * Increment& Field<T>::operator, add one field by another.
    */
    template <typename T>
    Field<T>& Field<T>::operator += (Field<T>& other)
    {
+      if (!other.isAllocated()) {
+         UTIL_THROW("Other Field no allocated.");
+      }
+      if (!isAllocated()) {
+         UTIL_THROW("This Field not allocated.");
+      }
+      if (capacity_ != other.capacity_) {
+         UTIL_THROW("Fields of unequal capacity");
+      }
       for (int i = 0; i < capacity_; ++i) {
-         data_[i] += other[i];
+         data_[i] += other.data_[i];
       }
       return *this;
    }
 
    /*
-   * Decrement& Field<T>::operator - subtract one field from another.
+   * Decrement& Field<T>::operator, subtract one field from another.
    */
    template <typename T>
    Field<T>& Field<T>::operator -= (Field<T>& other)
    {
+
+      // Preconditions
+      if (!other.isAllocated()) {
+         UTIL_THROW("Other Field not allocated.");
+      }
+      if (!isAllocated()) {
+         UTIL_THROW("This Field not allocated.");
+      }
+      if (capacity_ != other.capacity_) {
+         UTIL_THROW("Fields of unequal capacity");
+      }
+
       for (int i = 0; i < capacity_; ++i) {
-         data_[i] -= other[i];
+         data_[i] -= other.data_[i];
       }
       return *this;
    }
@@ -130,6 +204,11 @@ namespace Pssp
    template <typename T>
    Field<T>& Field<T>::operator *= (T scalar)
    {
+      // Precondition
+      if (!isAllocated()) {
+         UTIL_THROW("Field not allocated.");
+      }
+
       for (int i = 0; i < capacity_; ++i) {
          data_[i] *= scalar;
       }
@@ -142,8 +221,19 @@ namespace Pssp
    template <typename T>
    Field<T>& Field<T>::operator *= (Field<T>& other)
    {
+      // Preconditions
+      if (!other.isAllocated()) {
+         UTIL_THROW("Other Field not allocated.");
+      }
+      if (!isAllocated()) {
+         UTIL_THROW("This Field not allocated.");
+      }
+      if (capacity_ != other.capacity_) {
+         UTIL_THROW("Unequal capacity");
+      }
+
       for (int i = 0; i < capacity_; ++i) {
-         data_[i] *= other[i];
+         data_[i] *= other.data_[i];
       }
       return *this;
    }
@@ -172,6 +262,5 @@ namespace Pssp
       return value/T(capacity_);
    }
 
-}
 }
 #endif

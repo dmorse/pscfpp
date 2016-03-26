@@ -9,10 +9,7 @@
 #include <util/global.h>
 
 namespace Pscf { 
-namespace Pssp
-{ 
 
    template class Field<double>;
 
-}
 }
