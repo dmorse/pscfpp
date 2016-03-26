@@ -17,7 +17,7 @@ namespace Pssp
    using namespace Util;
 
    template <typename T = double>
-   class Field : protected DArray<T>
+   class Field : public DArray<T>
    {
    public:
 
@@ -26,9 +26,8 @@ namespace Pssp
       */
       Field();
  
-      // Access as one-dimensional array 
-      using DArray<T>::operator [];
-      using DArray<T>::capacity;
+      using Array<T>::operator [];
+      using Array<T>::capacity;
   
       /** 
       * Assignment operator.
@@ -69,7 +68,12 @@ namespace Pssp
       * Compute and return average of all elements.
       */
       T average() const;
-   
+  
+   protected:
+ 
+      using Array<T>::capacity_;
+      using Array<T>::data_;
+
    };
    
    /*
@@ -78,8 +82,8 @@ namespace Pssp
    template <typename T>
    Field<T>& Field<T>::operator = (Field<T>& other)
    {
-      for (int i = 0; i < capacity(); ++i) {
-         (*this)[i] = other[i];
+      for (int i = 0; i < capacity_; ++i) {
+         data_[i] = other[i];
       }
       return *this;
    }
@@ -90,8 +94,8 @@ namespace Pssp
    template <typename T>
    Field<T>& Field<T>::operator = (T& scalar)
    {
-      for (int i = 0; i < capacity(); ++i) {
-         (*this)[i] = scalar;
+      for (int i = 0; i < capacity_; ++i) {
+         data_[i] = scalar;
       }
       return *this;
    }
@@ -102,8 +106,8 @@ namespace Pssp
    template <typename T>
    Field<T>& Field<T>::operator += (Field<T>& other)
    {
-      for (int i = 0; i < capacity(); ++i) {
-         (*this)[i] += other[i];
+      for (int i = 0; i < capacity_; ++i) {
+         data_[i] += other[i];
       }
       return *this;
    }
@@ -114,8 +118,8 @@ namespace Pssp
    template <typename T>
    Field<T>& Field<T>::operator -= (Field<T>& other)
    {
-      for (int i = 0; i < capacity(); ++i) {
-         (*this)[i] -= other[i];
+      for (int i = 0; i < capacity_; ++i) {
+         data_[i] -= other[i];
       }
       return *this;
    }
@@ -126,8 +130,8 @@ namespace Pssp
    template <typename T>
    Field<T>& Field<T>::operator *= (T scalar)
    {
-      for (int i = 0; i < capacity(); ++i) {
-         (*this)[i] *= scalar;
+      for (int i = 0; i < capacity_; ++i) {
+         data_[i] *= scalar;
       }
       return *this;
    }
@@ -138,8 +142,8 @@ namespace Pssp
    template <typename T>
    Field<T>& Field<T>::operator *= (Field<T>& other)
    {
-      for (int i = 0; i < capacity(); ++i) {
-         (*this)[i] *= other[i];
+      for (int i = 0; i < capacity_; ++i) {
+         data_[i] *= other[i];
       }
       return *this;
    }
@@ -150,8 +154,8 @@ namespace Pssp
    template <typename T>
    void Field<T>::setToZero()
    {
-      for (int i = 0; i < capacity(); ++i) {
-         (*this)[i] *= 0.0;
+      for (int i = 0; i < capacity_; ++i) {
+         data_[i] *= 0.0;
       }
    }
 
@@ -162,10 +166,10 @@ namespace Pssp
    T Field<T>::average() const
    {
       double value = 0.0;
-      for (int i = 0; i < capacity(); ++i) {
-         value += (*this)[i];
+      for (int i = 0; i < capacity_; ++i) {
+         value += data_[i];
       }
-      return value/T(capacity());
+      return value/T(capacity_);
    }
 
 }
