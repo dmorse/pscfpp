@@ -70,6 +70,26 @@ namespace Pscf
    };
    
    /**
+   * istream extractor for a 2D UnitCell<2>::LatticeSystem.
+   *
+   * \param  in       input stream
+   * \param  lattice  UnitCell<2>::LatticeSystem to be read
+   * \return modified input stream
+   */
+   std::istream& operator >> (std::istream& in, 
+                              UnitCell<2>::LatticeSystem& lattice);
+
+   /**
+   * ostream inserter for a 2D UnitCell<2>::LatticeSystem.
+   *
+   * \param  out      output stream
+   * \param  lattice  UnitCell<2>::LatticeSystem to be written
+   * \return modified output stream
+   */
+   std::ostream& operator << (std::ostream& out, 
+                              UnitCell<2>::LatticeSystem lattice);
+
+   /**
    * istream extractor for a UnitCell<3>::LatticeSystem.
    *
    * \param  in       input stream

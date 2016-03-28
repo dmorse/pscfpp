@@ -55,11 +55,27 @@ namespace Pscf
       virtual double ksq(IntVec<D> const & k) const;
    
    protected:
-  
+ 
+      /**
+      * Array of Bravais lattice basis vectors.
+      */ 
       FArray<RealVec<D>, D> rBasis_;
 
+      /**
+      * Array of reciprocal lattice basis vectors.
+      */ 
       FArray<RealVec<D>, D> kBasis_;
+
+      /**
+      * Parameters used to describe the unit cell.
+      */      
+      FArray<double, 6> parameters_;
    
+      /**
+      * Number of parameters required to specify unit cell.
+      */
+      int nParameter_;
+
    };
 
    /*
