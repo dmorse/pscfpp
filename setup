@@ -49,6 +49,7 @@ cp scripts/python/makeDep bin/
 # Namespace config.mk in src/ directory (for in-source builds)
 cp src/util/config.mk_r src/util/config.mk
 cp src/fd1d/config.mk_r src/fd1d/config.mk
+cp src/pssp/config.mk_r src/pssp/config.mk
 
 # ---------------------------------------------------------------------
 # Copy files for out-of-source builds

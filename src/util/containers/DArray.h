@@ -31,9 +31,6 @@ namespace Util
    class DArray : public Array<Data>
    {
 
-      using Array<Data>::data_;
-      using Array<Data>::capacity_;
-
    public:
 
       /**
@@ -98,6 +95,11 @@ namespace Util
       */
       template <class Archive>
       void serialize(Archive& ar, const unsigned int version);
+
+   protected:
+
+      using Array<Data>::data_;
+      using Array<Data>::capacity_;
 
    };
 

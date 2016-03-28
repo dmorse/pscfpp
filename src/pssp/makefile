@@ -23,7 +23,7 @@ PSCF_PS=$(BLD_DIR)/pssp/pscf_ps
 #-----------------------------------------------------------------------
 # Main targets 
 
-all: $(pssp_OBJS) $(pssp_LIB) $(PSCF_PS_EXE)
+all: $(pssp_OBJS) $(pssp_LIB)
 
 clean:
 	rm -f $(pssp_OBJS) $(pssp_OBJS:.o=.d)

@@ -16,6 +16,14 @@ namespace Pscf
 
    using namespace Util;
 
+   /**
+   * Base template for UnitCell<D> classes, D=1, 2 or 3.
+   *
+   * Explicit specializations are provided for D=1, 2, and 3.
+   * In each case UnitCell<D> is derived from UnitCellTmpl<D>,
+   * and defines an enumeration named LatticeSystem of types
+   * of Bravais lattice systems for the appropriate dimension.
+   */
    template <int D> class UnitCell;
 
    /**

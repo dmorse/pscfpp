@@ -1,6 +1,5 @@
 pssp_= \
-  pssp/Mesh.cpp \
-  pssp/Field.cpp 
+  pssp/Mesh.cpp 
 
 pssp_SRCS=\
      $(addprefix $(SRC_DIR)/, $(pssp_))
