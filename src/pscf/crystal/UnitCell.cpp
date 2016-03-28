@@ -17,6 +17,41 @@ namespace Pscf
    template class UnitCell<3>;
 
    /*
+   * Extract a UnitCell<1>::LatticeSystem from an istream as a string.
+   */
+   std::istream& operator>>(std::istream& in, 
+                            UnitCell<1>::LatticeSystem& lattice)
+   {
+
+      std::string buffer;
+      in >> buffer;
+      if (buffer == "Lamellar" || buffer == "lamellar") {
+         lattice = UnitCell<1>::Lamellar;
+      } else {
+         #if 0
+         Log::file() << "Unknown UnitCell<2>::LatticeSystem: " 
+                     << buffer << std::endl;
+         #endif
+         UTIL_THROW("Invalid UnitCell<1>::LatticeSystem value input");
+      }
+      return in;
+   }
+   
+   /* 
+   * Insert a UnitCell<1>::LatticeSystem to an ostream as a string.
+   */
+   std::ostream& operator<<(std::ostream& out, 
+                            UnitCell<1>::LatticeSystem lattice) 
+   {
+      if (lattice == UnitCell<1>::Lamellar) {
+         out << "lamellar";
+      } else {
+         UTIL_THROW("This should never happen");
+      } 
+      return out;
+   }
+
+   /*
    * Extract a UnitCell<2>::LatticeSystem from an istream as a string.
    */
    std::istream& operator>>(std::istream& in, 
