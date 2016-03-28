@@ -19,8 +19,8 @@ namespace Pscf
    /*
    * Extract a UnitCell<1>::LatticeSystem from an istream as a string.
    */
-   std::istream& operator>>(std::istream& in, 
-                            UnitCell<1>::LatticeSystem& lattice)
+   std::istream& operator >> (std::istream& in, 
+                              UnitCell<1>::LatticeSystem& lattice)
    {
 
       std::string buffer;
@@ -28,10 +28,6 @@ namespace Pscf
       if (buffer == "Lamellar" || buffer == "lamellar") {
          lattice = UnitCell<1>::Lamellar;
       } else {
-         #if 0
-         Log::file() << "Unknown UnitCell<2>::LatticeSystem: " 
-                     << buffer << std::endl;
-         #endif
          UTIL_THROW("Invalid UnitCell<1>::LatticeSystem value input");
       }
       return in;
@@ -46,16 +42,30 @@ namespace Pscf
       if (lattice == UnitCell<1>::Lamellar) {
          out << "lamellar";
       } else {
-         UTIL_THROW("This should never happen");
+         UTIL_THROW("Invalid value of UnitCell<1>::Lamellar");
       } 
       return out;
    }
 
+   /* 
+   * Read the lattice system and set nParameter.
+   */
+   void UnitCell<1>::setNParameter()
+   {
+      if (lattice_ == UnitCell<1>::Lamellar) {
+         nParameter_ = 1;
+      } else {
+         UTIL_THROW("Invalid lattice system value");
+      } 
+   }
+
+   // Two-Dimensional Systems
+
    /*
    * Extract a UnitCell<2>::LatticeSystem from an istream as a string.
    */
-   std::istream& operator>>(std::istream& in, 
-                            UnitCell<2>::LatticeSystem& lattice)
+   std::istream& operator >> (std::istream& in, 
+                              UnitCell<2>::LatticeSystem& lattice)
    {
 
       std::string buffer;
@@ -87,8 +97,8 @@ namespace Pscf
    /* 
    * Insert a UnitCell<2>::LatticeSystem to an ostream as a string.
    */
-   std::ostream& operator<<(std::ostream& out, 
-                            UnitCell<2>::LatticeSystem lattice) 
+   std::ostream& operator << (std::ostream& out, 
+                              UnitCell<2>::LatticeSystem lattice) 
    {
       if (lattice == UnitCell<2>::Square) {
          out << "square";
@@ -111,10 +121,36 @@ namespace Pscf
    }
 
    /* 
+   * Read the lattice system and set nParameter.
+   */
+   void UnitCell<2>::setNParameter()
+   {
+      if (lattice_ == UnitCell<2>::Square) {
+         nParameter_ = 1;
+      } else 
+      if (lattice_ == UnitCell<2>::Rhombic) {
+         nParameter_ = 1;
+      } else
+      if (lattice_ == UnitCell<2>::Hexagonal) {
+         nParameter_ = 1;
+      } else
+      if (lattice_ == UnitCell<2>::Rectangular) {
+         nParameter_ = 2;
+      } else
+      if (lattice_ == UnitCell<2>::Oblique) {
+         nParameter_ = 3;
+      } else {
+         UTIL_THROW("Invalid lattice system value");
+      } 
+   }
+
+   // Three-Dimensional Systems
+
+   /* 
    * Extract a UnitCell<3>::LatticeSystem from an istream as a string.
    */
-   std::istream& operator>>(std::istream& in, 
-                            UnitCell<3>::LatticeSystem& lattice)
+   std::istream& operator >> (std::istream& in, 
+                              UnitCell<3>::LatticeSystem& lattice)
    {
 
       std::string buffer;
@@ -179,6 +215,36 @@ namespace Pscf
          UTIL_THROW("This should never happen");
       } 
       return out;
+   }
+
+   /* 
+   * Read the lattice system and set nParameter.
+   */
+   void UnitCell<3>::setNParameter()
+   {
+      if (lattice_ == UnitCell<3>::Cubic) {
+         nParameter_ = 1;
+      } else 
+      if (lattice_ == UnitCell<3>::Tetragonal) {
+         nParameter_ = 2;
+      } else
+      if (lattice_ == UnitCell<3>::Orthorhombic) {
+         nParameter_ = 3;
+      } else
+      if (lattice_ == UnitCell<3>::Monoclinic) {
+         nParameter_ = 4;
+      } else
+      if (lattice_ == UnitCell<3>::Triclinic) {
+         nParameter_ = 6;
+      } else
+      if (lattice_ == UnitCell<3>::Rhombohedral) {
+         nParameter_ = 2;
+      } else
+      if (lattice_ == UnitCell<3>::Hexagonal) {
+         nParameter_ = 2;
+      } else {
+         UTIL_THROW("Invalid value");
+      } 
    }
 
 } 
