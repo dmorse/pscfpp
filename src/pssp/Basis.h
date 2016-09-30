@@ -14,6 +14,11 @@ namespace Pssp
 
    using namespace Util;
 
+   /**
+   * Basis function for pseudo-spectral scft.
+   *
+   * \ingroup Pscf_Pssp_Module
+   */
    template <int D>
    class Basis {
    

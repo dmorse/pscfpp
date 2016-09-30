@@ -18,7 +18,7 @@ namespace Pscf {
    /**
    * Flory-Huggins excess free energy model.
    *
-   * \ingroup Pscf_Fd1d_Module
+   * \ingroup Pscf_Module
    */
    class ChiInteraction : public  Interaction
    {

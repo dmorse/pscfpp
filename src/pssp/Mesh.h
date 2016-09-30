@@ -31,7 +31,7 @@ namespace Pssp
    * a multi-dimensional C array, with the last coordinate being the
    * most rapidly varying.
    *
-   * \ingroup Space_Module
+   * \ingroup Pscf_Pssp_Module
    */
    template <int D>
    class Mesh

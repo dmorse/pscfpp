@@ -85,8 +85,6 @@ namespace Fd1d
       * the block to propagate from the head to the tail. The initial
       * QField at the head is computed by pointwise multiplication of
       * of the tail QFields of all source propagators.
-      *
-      * \param w chemical potential field for relevant monomer type
       */
       void solve();
   
@@ -98,7 +96,6 @@ namespace Fd1d
       * head parameter of the function. The function is intended for 
       * use in testing.
       *
-      * \param w chemical potential field for relevant monomer type
       * \param head initial condition of QField at head of block
       */
       void solve(const QField& head);
@@ -115,6 +112,8 @@ namespace Fd1d
 
       /**
       * Return q-field at specified step.
+      *
+      * \param i step index
       */
       const QField& q(int i) const;
 

@@ -114,7 +114,6 @@ namespace Pscf
       /**
       * Set all elements to zero.
       *
-      * \param s scalar value
       * \return this object, after modification
       */
       Vec<D, T>& setToZero();
@@ -179,8 +178,8 @@ namespace Pscf
       *
       * Upon return, *this = v1 + v2.
       *
-      * \param v1  vector (input)
-      * \param v2  vector (input)
+      * \param v1 vector (input)
+      * \param v2 vector (input)
       * \return modified invoking vector
       */
       Vec<D, T>& add(const Vec<D, T>& v1, const Vec<D, T>& v2);
@@ -190,8 +189,8 @@ namespace Pscf
       *
       * Upon return, *this = v1 - v2.
       *
-      * \param v1  vector (input)
-      * \param v2  vector (input)
+      * \param v1 vector (input)
+      * \param v2 vector (input)
       * \return modified invoking vector
       */
       Vec<D, T>& subtract(const Vec<D, T>& v1, const Vec<D, T>& v2);
