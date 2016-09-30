@@ -1,48 +1,39 @@
-1) Build a simple 1D finite difference code.  
-   Use directory fd1d, namespace Pscf::Fd1d.  Start with a 
-   Newton-Raphson iterator
+1) For the 1D finite difference code
 
-   System {
-      Mixture
-      Interaction
-      Domain
-      Iterator
-      wFields
-      cFields
-   }
-
-  Next: Test Newton-Raphson iterator.
+   - Finish code to evaluate pressure
+   - Write an Anderson Mixing iterator
+   - Write code to compute Flory-Huggins properties
+   - Write code to compute excess quantities for micelles
 
 2) Build a pseudospectral code for periodic functions.
    Use directory pssp, namespace PsSp
 
-   System {
-      Mixture
+   Develop class templates that allow compilation of 
+   programs for spatial dimension D = 1, 2, or 3.
+
+   template <int D>
+   System<D> {
+      Mixture<D>
       Interaction
-      UnitCell
-      SpaceGroup
-      Basis
+      UnitCell<D>
+      Mesh<D>
+      SpaceGroup<D>
+      Basis<D>
       wFields
       cFields
       Iterator
    }
 
-   Develop classes that allow compilation of programs for 1D, 2D 
-   and 3D. 
-
-   One solution: Use a global dimension variable or macro, supply 
-   different build directories. Down side - codes with different 
-   dimensions cannot coexist in the same build directory.
-
-   Alternative: Templatize everything involving vectors in terms 
-   of dimension?
-
    Next:
 
-       Start with a stub of Basis, written for cosines.
+       Write wrapper code for FFTW
+       Finish interface for Basis
+       Write an explicit specialization Basis<1> of Basis for D=1
+       Write pseudo-spectral Propagator and Block classes
+       Start with PicardIterator and/or NrIterator
+
        Provide functions to convert between FFT and FBZ vectors.
 
-   Start with Gauss-Seidel RelaxationIterator and/or NrIterator
 
 4) Add AndersonIterator, perhaps an approximate NR iterator
 
