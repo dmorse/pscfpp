@@ -3,8 +3,9 @@ in several different implementations of self-consistent field theory.
 
 Subdirectories:
 
-   chem/     - classes that describe species and chemical structure
-   inter/    - classes that model interaction (excess) free energy models
-   solvers/  - class templates for MDE solvers for blocks, polymers, etc.
-   math/     - mathematical utilities
+   chem/        - classes that describe species and chemical structure
+   inter/       - classes that model interaction (excess) free energy models
+   solvers/     - class templates for MDE solvers for blocks, polymers, etc.
+   homogeneous/ - class that model a spatially homogeneous mixture
+   math/        - mathematical utilities
    

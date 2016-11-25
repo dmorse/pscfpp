@@ -12,6 +12,8 @@
 #include <util/accumulators/setToZero.h>
 #include <iostream>
 
+using namespace Util;
+
 namespace Pscf
 {
 

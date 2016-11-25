@@ -5,6 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <pscf/math/LuSolver.h>
+#include <util/containers/DMatrix.h>
 
 #include <fstream>
 
