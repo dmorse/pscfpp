@@ -1,6 +1,7 @@
 pscf_homogeneous_= \
-  pscf/homogeneous/Group.cpp \
-  pscf/homogeneous/Molecule.cpp 
+  pscf/homogeneous/Clump.cpp \
+  pscf/homogeneous/Molecule.cpp \
+  pscf/homogeneous/Mixture.cpp 
 
 pscf_homogeneous_SRCS=\
      $(addprefix $(SRC_DIR)/, $(pscf_homogeneous_))

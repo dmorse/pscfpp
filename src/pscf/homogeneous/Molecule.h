@@ -1,4 +1,5 @@
 #ifndef PSCF_HOMOGENEOUS_MOLECULE_H
+#define PSCF_HOMOGENEOUS_MOLECULE_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -10,109 +11,127 @@
 #include <pscf/chem/Species.h>           // base class
 #include <util/param/ParamComposite.h>   // base class
 
-#include <pscf/homogeneous/Group.h>      // member template argument
+#include <pscf/homogeneous/Clump.h>      // member template argument
 #include <util/containers/Pair.h>        // member template
 #include <util/containers/DArray.h>      // member template
 
 #include <cmath>
 
 namespace Pscf { 
-namespace Homogeneous { 
-
-   using namespace Util;
-
-   /**
-   * Descriptor of a molecular species in a homogeneous mixture.
-   *
-   * \ingroup Pscf_Homogeneous_Module
-   */
-   class Molecule : public Species, public ParamComposite
-   {
-
-   public:
-
+   namespace Homogeneous { 
+   
+      using namespace Util;
+   
       /**
-      * Constructor.
-      */
-      Molecule();
- 
-      /**
-      * Destructor.
-      */
-      ~Molecule();
-
-      /**
-      * Read and initialize.
+      * Descriptor of a molecular species in a homogeneous mixture.
       *
-      * \param in input parameter stream
+      * \inclump Pscf_Homogeneous_Module
       */
-      virtual void readParameters(std::istream& in);
+      class Molecule : public Pscf::Species, public Util::ParamComposite
+      {
+   
+      public:
+   
+         /**
+         * Constructor.
+         */
+         Molecule();
+    
+         /**
+         * Destructor.
+         */
+         ~Molecule();
+   
+         /**
+         * Read and initialize.
+         *
+         * Call either this or setNClump to initialize, not both.
+         *
+         * \param in input parameter stream
+         */
+         virtual void readParameters(std::istream& in);
 
-      #if 0
-      /**
-      * Compute chemical potential or volume fraction.
-      *
-      */ 
-      virtual void compute(const DArray<WField>& wFields);
-      #endif
- 
-      /// \name Accessors (objects, by reference)
-      //@{
-
-      /**
-      * Get a specified Group.
-      *
-      * \param id group index, 0 <= id < nGroup
-      */
-      Group& group(int id);
-
-      //@}
-      /// \name Accessors (by value)
-      //@{
-
-      /**
-      * Number of monomer groups (monomer types).
-      */
-      int nGroup() const; 
-
-      /**
-      * Total molecule size  = volume / reference volume.
-      */
-      double size() const;
-
-      //@}
-
-   private:
-
-      /// Array of Group objects in this polymer.
-      DArray<Group> groups_;
-
-      /// Number of groups in this polymer
-      int nGroup_;
-
-      /// Total size of all groups (in units of reference size).
-      double size_;
-
-   };
+         /**
+         * Set the number of clumps, and allocate memory.
+         *
+         * Call either this or readParameters to initialize, not both.
+         * If this is used to allocate memory, all clump properties
+         * must be set using Clump::setMonomerId() and Clump::setSize().
+         */
+         void setNClump(int nClump);
+   
+         /**
+         * Compute total molecule size by adding clump sizes.
+         */
+         void computeSize();
+   
+         /**
+         * Set volume fraction for molecules of this type.
+         */
+         void setPhi(double phi);
+   
+         #if 0
+         /**
+         * Compute chemical potential or volume fraction.
+         *
+         */ 
+         virtual void compute(const DArray<WField>& wFields);
+         #endif
+    
+         /// \name Accessors 
+         //@{
+   
+         /**
+         * Get a specified Clump.
+         *
+         * \param id clump index, 0 <= id < nClump
+         */
+         Clump& clump(int id);
+   
+         /**
+         * Number of monomer clumps (monomer types).
+         */
+         int nClump() const; 
+   
+         /**
+         * Total molecule size  = volume / reference volume.
+         */
+         double size() const;
+   
+         //@}
+   
+      private:
+   
+         /// Array of Clump objects in this polymer.
+         DArray<Clump> clumps_;
+   
+         /// Number of clumps in this polymer
+         int nClump_;
+   
+         /// Total size of all clumps (in units of reference size).
+         double size_;
+   
+      };
+   
+   }
 
    /*
-   * Number of groups.
+   * Number of clumps.
    */
-   inline int Molecule::nGroup() const
-   {  return nGroup_; }
+   inline int Homogeneous::Molecule::nClump() const
+   {  return nClump_; }
 
    /*
-   * Total size of all groups = volume / reference volume
+   * Total size of all clumps = volume / reference volume
    */
-   inline double Molecule::size() const
+   inline double Homogeneous::Molecule::size() const
    {  return size_; }
 
    /*
-   * Get a specified Group.
+   * Get a specified Clump.
    */
-   inline Group& Molecule::group(int id)
-   {  return groups_[id]; }
+   inline Homogeneous::Clump& Homogeneous::Molecule::clump(int id)
+   {  return clumps_[id]; }
  
-}
 }
 #endif

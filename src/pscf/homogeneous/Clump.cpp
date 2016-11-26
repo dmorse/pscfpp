@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Group.h"
+#include "Clump.h"
 
 namespace Pscf { 
 namespace Homogeneous { 
@@ -13,7 +13,7 @@ namespace Homogeneous {
    /*
    * Constructor.
    */ 
-   Group::Group()
+   Clump::Clump()
     : monomerId_(-1),
       size_(0.0)
    {}
@@ -21,19 +21,19 @@ namespace Homogeneous {
    /*
    * Set the monomer id.
    */ 
-   void Group::setMonomerId(int monomerId)
+   void Clump::setMonomerId(int monomerId)
    {  monomerId_ = monomerId; }
   
    /*
    * Set the size of this block.
    */ 
-   void Group::setSize(double size)
+   void Clump::setSize(double size)
    {  size_ = size; }
   
    /* 
-   * Extract a Group from an istream.
+   * Extract a Clump from an istream.
    */
-   std::istream& operator>>(std::istream& in, Group &block)
+   std::istream& operator>>(std::istream& in, Clump &block)
    {
       in >> block.monomerId_;
       in >> block.size_;
@@ -41,9 +41,9 @@ namespace Homogeneous {
    }
    
    /* 
-   * Output a Group to an ostream, without line breaks.
+   * Output a Clump to an ostream, without line breaks.
    */
-   std::ostream& operator<<(std::ostream& out, const Group &block) 
+   std::ostream& operator<<(std::ostream& out, const Clump &block) 
    {
       out << "  " << block.monomerId_;
       out << "  ";

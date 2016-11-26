@@ -3,10 +3,14 @@
 
 #include <test/CompositeTestRunner.h>
 
-#include "GroupTest.h"
+#include "ClumpTest.h"
+#include "MoleculeTest.h"
+#include "MixtureTest.h"
 
 TEST_COMPOSITE_BEGIN(HomogeneousTestComposite)
-TEST_COMPOSITE_ADD_UNIT(GroupTest);
+TEST_COMPOSITE_ADD_UNIT(ClumpTest);
+TEST_COMPOSITE_ADD_UNIT(MoleculeTest);
+TEST_COMPOSITE_ADD_UNIT(MixtureTest);
 TEST_COMPOSITE_END
 
 #endif

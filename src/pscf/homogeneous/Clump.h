@@ -1,5 +1,5 @@
-#ifndef PSCF_HOMOGENEOUS_GROUP_H
-#define PSCF_HOMOGENEOUS_GROUP_H
+#ifndef PSCF_HOMOGENEOUS_CLUMP_H
+#define PSCF_HOMOGENEOUS_CLUMP_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -18,18 +18,25 @@ namespace Homogeneous {
    using namespace Util;
 
    /**
-   * A linear homopolymer block within a block copolymer.
+   * Set of all monomers of the same type in a molecule.
+   *
+   * A clump has a monomer id and a size. The size of a clump is 
+   * the occupied volume divided by a monomer reference volume.
+   * For a block copolymer, a clump is different than a block
+   * because it may contain monomers in two or more blocks of the
+   * same monomer type. Hompolymers and solvents molecules have 
+   * only one clump.
    *
    * \ingroup Pscf_Homogeneous_Module
    */
-   class Group
+   class Clump
    {
    public:
   
       /**
       * Constructor.
       */ 
-      Group();
+      Clump();
   
       /**
       * Serialize to/from archive.
@@ -84,50 +91,50 @@ namespace Homogeneous {
       double size_;
 
       friend 
-      std::istream& operator >> (std::istream& in, Group &block);
+      std::istream& operator >> (std::istream& in, Clump &block);
 
       friend 
-      std::ostream& operator << (std::ostream& out, const Group &block);
+      std::ostream& operator << (std::ostream& out, const Clump &block);
 
    };
 
    /**
-   * istream extractor for a Group.
+   * istream extractor for a Clump.
    *
    * \param in  input stream
-   * \param block  Group to be read from stream
+   * \param block  Clump to be read from stream
    * \return modified input stream
    */
-   std::istream& operator >> (std::istream& in, Group &block);
+   std::istream& operator >> (std::istream& in, Clump &block);
 
    /**
-   * ostream inserter for a Group.
+   * ostream inserter for a Clump.
    *
    * \param out  output stream
-   * \param block  Group to be written to stream
+   * \param block  Clump to be written to stream
    * \return modified output stream
    */
-   std::ostream& operator << (std::ostream& out, const Group &block);
+   std::ostream& operator << (std::ostream& out, const Clump &block);
 
    // Inline member functions
 
    /*
    * Get the monomer type id.
    */ 
-   inline int Group::monomerId() const
+   inline int Clump::monomerId() const
    {  return monomerId_; }
 
    /*
    * Get the size (number of monomers) in this block.
    */
-   inline double Group::size() const
+   inline double Clump::size() const
    {  return size_; }
     
    /*
    * Serialize to/from an archive.
    */
    template <class Archive>
-   void Group::serialize(Archive& ar, unsigned int)
+   void Clump::serialize(Archive& ar, unsigned int)
    {
       ar & monomerId_;
       ar & size_;
