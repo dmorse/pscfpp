@@ -26,7 +26,7 @@ public:
    void testConstructor()
    {
       printMethod(TEST_FUNC);
-      Homogeneous::Mixture v;
+      Homogeneous::Mixture mixture;
    } 
 
    void testReadWrite() {
@@ -38,7 +38,6 @@ public:
       openInputFile("in/Mixture", in);
 
       mixture.readParam(in);
-      TEST_ASSERT(mixture.nMonomer() == 2);
       TEST_ASSERT(mixture.nMolecule() == 1);
       TEST_ASSERT(eq(mixture.molecule(0).size(), 5.0));
       TEST_ASSERT(mixture.molecule(0).nClump() == 2);

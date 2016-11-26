@@ -8,7 +8,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/chem/Species.h>           // base class
 #include <util/param/ParamComposite.h>   // base class
 
 #include <pscf/homogeneous/Clump.h>      // member template argument
@@ -27,7 +26,7 @@ namespace Pscf {
       *
       * \inclump Pscf_Homogeneous_Module
       */
-      class Molecule : public Pscf::Species, public Util::ParamComposite
+      class Molecule : public Util::ParamComposite
       {
    
       public:
@@ -64,11 +63,6 @@ namespace Pscf {
          * Compute total molecule size by adding clump sizes.
          */
          void computeSize();
-   
-         /**
-         * Set volume fraction for molecules of this type.
-         */
-         void setPhi(double phi);
    
          #if 0
          /**

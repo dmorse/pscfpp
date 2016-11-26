@@ -24,6 +24,9 @@ namespace Pscf{
    Homogeneous::Molecule::~Molecule()
    {}
 
+   /*
+   * Read chemical composition from file. 
+   */
    void Homogeneous::Molecule::readParameters(std::istream& in)
    {
       UTIL_ASSERT(clumps_.capacity() == 0);
@@ -34,20 +37,10 @@ namespace Pscf{
       clumps_.allocate(nClump_);
 
       readDArray<Homogeneous::Clump>(in, "clumps", clumps_, nClump_);
-
       computeSize();
-      // Read ensemble and phi or mu
-      ensemble_ = Species::Closed;
-      readOptional<Species::Ensemble>(in, "ensemble", ensemble_);
-      if (ensemble_ == Species::Closed) {
-         read(in, "phi", phi_);
-      } else {
-         read(in, "mu", mu_);
-      }
-
    }
 
-   /**
+   /*
    * Allocate memory for specified number of clumps.
    */
    void Homogeneous::Molecule::setNClump(int nClump)
@@ -57,9 +50,6 @@ namespace Pscf{
       nClump_ = nClump;
       clumps_.allocate(nClump_);
    }
-
-   void Homogeneous::Molecule::setPhi(double phi)
-   {  phi_ = phi; }
 
    /*
    * Compute molecular size, by adding all clump sizes.
@@ -74,32 +64,5 @@ namespace Pscf{
          size_ += clumps_[clumpId].size();
       }
    }
-
-   #if 0
-   /*
-   * Compute solution to MDE and concentrations.
-   */ 
-   void Homogeneous::Molecule::compute(const DArray<WField>& wFields)
-   {
-      UTIL_ASSERT(clumps_.capacity() > 0);
-      UTIL_ASSERT(clumps_.capacity() == nClump_);
-
-      // Compute molecular partition function
-      double q = clump(0).propagator(0).computeQ();
-      if (ensemble() == Species::Closed) {
-         mu_ = log(phi_/q);
-      } 
-      else if (ensemble() == Species::Open) {
-         phi_ = exp(mu_)*q;
-      }
-
-      // Compute clump concentration fields
-      double prefactor = phi_ / (q*size());
-      for (int i = 0; i < nClump(); ++i) {
-         clump(i).computeConcentration(prefactor);
-      }
-
-   }
-   #endif
  
 }

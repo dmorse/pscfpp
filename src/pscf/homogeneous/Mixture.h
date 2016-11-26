@@ -45,16 +45,19 @@ namespace Homogeneous {
       */
       virtual void readParameters(std::istream& in);
 
+      /**
+      * Set the number of molecular species and allocate memory.
+      */
+      void setNMolecule(int nMonomer);
+      
+      /**
+      * Set the number of monomer types.
+      */
+      void setNMonomer(int nMonomer);
+
       /// \name Accessors (by non-const reference)
       //@{
  
-      /**
-      * Get a Monomer type descriptor.
-      *
-      * \param id integer monomer type index (0 <= id < nMonomer)
-      */
-      Monomer& monomer(int id);
-
       /**
       * Get a molecule object.
       *
@@ -62,28 +65,26 @@ namespace Homogeneous {
       */
       Molecule& molecule(int id);
 
-      //@}
-      /// \name Accessors (by value)
-      //@{
- 
-      /**
-      * Get number of monomer types.
-      */
-      int nMonomer() const;
-
       /**
       * Get number of molecule species.
       */
       int nMolecule() const;
 
+      /**
+      * Get number of monomer types.
+      */
+      int nMonomer() const;
+
       //@}
 
-   private:
-
       /**
-      * Array of monomer type descriptors.
+      * Validate all data structures.
+      *
+      * Throw an exception if an error is found.
       */
-      DArray<Monomer> monomers_;
+      void validate() const;
+
+   private:
 
       /**
       * Array of molecule species solver objects.
@@ -93,30 +94,42 @@ namespace Homogeneous {
       DArray<Molecule> molecules_;
 
       /**
-      * Number of monomer types.
+      * Array of molecular volume fractions.
       */
-      int nMonomer_; 
+      DArray<double> phi_;
+
+      /**
+      * Array of molecular chemical potentials. 
+      */
+      DArray<double> mu_;
+
+      /**
+      * Array of monomer volume fractions.
+      */
+      DArray<double> f_;
 
       /**
       * Number of molecule species.
       */
       int nMolecule_;
 
+      /**
+      * Number of monomer types (maximum monomer id + 1).
+      */
+      int nMonomer_;
+
    };
 
    // Inline member functions
 
-   inline int Mixture::nMonomer() const
-   {  return nMonomer_; }
+   inline Molecule& Mixture::molecule(int id)
+   {  return molecules_[id]; }
 
    inline int Mixture::nMolecule() const
    {  return nMolecule_; }
 
-   inline Monomer& Mixture::monomer(int id)
-   {  return monomers_[id]; }
-
-   inline Molecule& Mixture::molecule(int id)
-   {  return molecules_[id]; }
+   inline int Mixture::nMonomer() const
+   {  return nMonomer_; }
 
 }
 }

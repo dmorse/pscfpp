@@ -58,7 +58,6 @@ public:
       molecule.clump(1).setMonomerId(1);
       molecule.clump(1).setSize(3.0);
       molecule.computeSize();
-      molecule.setPhi(1.0);
 
       TEST_ASSERT(molecule.nClump() == 2);
       TEST_ASSERT(molecule.clump(0).monomerId() == 0);
@@ -66,7 +65,6 @@ public:
       TEST_ASSERT(molecule.clump(1).monomerId() == 1);
       TEST_ASSERT(eq(molecule.clump(1).size(), 3.0));
       TEST_ASSERT(eq(molecule.size(), 5.0));
-      TEST_ASSERT(eq(molecule.phi(), 1.0));
    } 
 
 };
