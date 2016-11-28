@@ -187,6 +187,11 @@ namespace Homogeneous {
       DMatrix<double> jacobian_;
 
       /**
+      * Second derivatives of excess free energy per monomer..
+      */
+      DMatrix<double> dWdC_;
+
+      /**
       * Number of molecule species.
       */
       int nMolecule_;
