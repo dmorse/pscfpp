@@ -82,12 +82,18 @@ namespace Homogeneous {
       UTIL_ASSERT(phi.capacity() == nMolecule_);
 
       // Set molecular volume fractions
+      double sum = 0;
       int i, j, k;
       for (i = 0; i < nMolecule_; ++i) {
+         UTIL_CHECK(phi[i] >= 0.0);
+         UTIL_CHECK(phi[i] <= 1.0);
          phi_[i] = phi[i];
+         sum += phi[i];
       }
+      UTIL_CHECK(sum <= 1.0);
+      phi_[nMolecule_ -1] = 1.0 - sum;
 
-      // Initialize monomer fractions to zero
+      // Initialize monomer volume fractions to zero
       for (k = 0; k < nMonomer_; ++k) {
          c_[k] = 0.0;
       }
@@ -102,7 +108,7 @@ namespace Homogeneous {
             c_[k] += concentration*mol.clump(j).size();
          }
       }
-      
+
    }
 
    /*
@@ -145,6 +151,7 @@ namespace Homogeneous {
       if (residual_.capacity() == 0) {
          residual_.allocate(nMonomer_);
          jacobian_.allocate(nMonomer_, nMonomer_);
+         dWdc_.allocate(nMonomer_, nMonomer_);
       }
 
       // Compute initial state, with assumed xi = 0
@@ -156,13 +163,35 @@ namespace Homogeneous {
       computeResidual(mu, error);
       if (error < epsilon) return;
 
-      //for (int it = 0, converged = false; it < 50 && !converged; ++it) {
+      double s1, v1;, 
+      double s2, v2;, 
+      int m1, c1, i1;
+      int m2, c2, i2;
+
+      #if 0
+      int it = 0;
+      bool converged = false;
+      for ( ; it < 50 && !converged; ++it) {
+
          // Compute jacobian
+         for (m1 = 0; m1 < nMolecule_; ++m1) {
+            jacobian_(m1, m1) = 1.0/phi(m1);
+         }
+
+         interaction.computeDwDc(c_, dWdC_);
+         for (m1 = 0; m1 < nMolecule_; ++m1) {
+            v1 = molecule(m1).size();
+            for (c1 = 0; c1 < molecule(m1).nClump(); ++c1) {
+               s1 = molecule(m1).clump(c1).size();
+               i1 = molecule(m1).clump(c1).monomerId();
+            }
+         }
          // Update
          // Set composition
          // computeMu
          // Test error (return if converged?)
-      //}
+      }
+      #endif
    }
 
    void Mixture::computeResidual(DArray<double> const & mu, double& error)
