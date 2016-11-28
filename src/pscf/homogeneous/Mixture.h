@@ -15,6 +15,7 @@
 #include <util/containers/DArray.h>       // Member template
 
 namespace Pscf {
+   class Interaction;
 namespace Homogeneous {
 
    using namespace Util;
@@ -38,6 +39,9 @@ namespace Homogeneous {
       */
       ~Mixture();
 
+      /// \name Initialization.
+      //@{
+
       /**
       * Read parameters from file and initialize.
       *
@@ -55,6 +59,23 @@ namespace Homogeneous {
       */
       void setNMonomer(int nMonomer);
 
+      //@}
+
+      /**
+      * Set system composition.
+      *
+      * \param phi array of molecular volume fractions.
+      */
+      void setComposition(DArray<double> const & phi);
+
+      /**
+      * Set system composition.
+      *
+      * \param phi array of molecular volume fractions.
+      */
+      void computeMu(Interaction const & interaction, 
+                     DArray<double> const & phi, double xi = 0.0);
+
       /// \name Accessors (by non-const reference)
       //@{
  
@@ -64,6 +85,27 @@ namespace Homogeneous {
       * \param id integer molecule species index (0 <= id < nMolecule)
       */
       Molecule& molecule(int id);
+
+      /** 
+      * Return chemical potential for one species.
+      *
+      * \param id integer molecule species index (0 <= id < nMolecule)
+      */
+      double mu(int id) const;
+
+      /** 
+      * Return molecular volume fraction for one species.
+      *
+      * \param id integer molecule species index (0 <= id < nMolecule)
+      */
+      double phi(int id) const;
+
+      /** 
+      * Return monomer volume fraction for one monomer type.
+      *
+      * \param id monomer type index (0 <= id < nMonomer)
+      */
+      double c(int id) const;
 
       /**
       * Get number of molecule species.
@@ -94,19 +136,24 @@ namespace Homogeneous {
       DArray<Molecule> molecules_;
 
       /**
-      * Array of molecular volume fractions.
-      */
-      DArray<double> phi_;
-
-      /**
       * Array of molecular chemical potentials. 
       */
       DArray<double> mu_;
 
       /**
+      * Array of molecular volume fractions.
+      */
+      DArray<double> phi_;
+
+      /**
       * Array of monomer volume fractions.
       */
-      DArray<double> f_;
+      DArray<double> c_;
+
+      /**
+      * Array of monomer excess chemical potentials.
+      */
+      DArray<double> w_;
 
       /**
       * Number of molecule species.
@@ -123,7 +170,32 @@ namespace Homogeneous {
    // Inline member functions
 
    inline Molecule& Mixture::molecule(int id)
-   {  return molecules_[id]; }
+   {  
+      UTIL_ASSERT(id >= 0);  
+      UTIL_ASSERT(id < nMolecule_);  
+      return molecules_[id]; 
+   }
+
+   inline double Mixture::mu(int id) const
+   {  
+      UTIL_ASSERT(id >= 0);  
+      UTIL_ASSERT(id < nMolecule_);  
+      return mu_[id]; 
+   }
+
+   inline double Mixture::phi(int id) const
+   {
+      UTIL_ASSERT(id >= 0);  
+      UTIL_ASSERT(id < nMolecule_);  
+      return phi_[id]; 
+   }
+
+   inline double Mixture::c(int id) const
+   {  
+      UTIL_ASSERT(id >= 0);  
+      UTIL_ASSERT(id < nMonomer_);  
+      return c_[id]; 
+   }
 
    inline int Mixture::nMolecule() const
    {  return nMolecule_; }

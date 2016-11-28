@@ -1,11 +1,14 @@
 Mixture{
    nMonomer  2 
-   nMolecule 1
+   nMolecule 2
    Molecule{
       nClump  2
       clumps  0   2.0
               1   3.0
    }
+   Molecule{
+      nClump  1
+      clumps  0   1.0
+   }
 }
 
-   nSolvent  0
