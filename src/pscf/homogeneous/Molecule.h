@@ -64,14 +64,6 @@ namespace Pscf {
          */
          void computeSize();
    
-         #if 0
-         /**
-         * Compute chemical potential or volume fraction.
-         *
-         */ 
-         virtual void compute(const DArray<WField>& wFields);
-         #endif
-    
          /// \name Accessors 
          //@{
    

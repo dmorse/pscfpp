@@ -132,7 +132,52 @@ namespace Homogeneous {
    }
 
    /*
-   * Check validity and complete initialization.
+   * Compute composition from chemical potentials.
+   */
+   void Mixture::computePhi(Interaction const & interaction, 
+                           DArray<double> const & mu, 
+                           DArray<double> const & phi, 
+                           double& xi)
+   {
+      UTIL_ASSERT(interaction.nMonomer() == nMonomer_);
+
+      // Allocate residual and jacobian on first use.
+      if (residual_.capacity() == 0) {
+         residual_.allocate(nMonomer_);
+         jacobian_.allocate(nMonomer_, nMonomer_);
+      }
+
+      // Compute initial state, with assumed xi = 0
+      xi = 0.0;
+      computeMu(interaction, phi, xi);
+
+      double error;
+      double epsilon = 1.0E-6;
+      computeResidual(mu, error);
+      if (error < epsilon) return;
+
+      //for (int it = 0, converged = false; it < 50 && !converged; ++it) {
+         // Compute jacobian
+         // Update
+         // Set composition
+         // computeMu
+         // Test error (return if converged?)
+      //}
+   }
+
+   void Mixture::computeResidual(DArray<double> const & mu, double& error)
+   {
+      error = 0.0;
+      for (int i = 0; i < nMonomer_; ++i) {
+         residual_[i] = mu_[i] - mu[i];
+         if (residual_[i] > error) {
+            error = residual_[i];
+         }
+      }
+   }
+
+   /*
+   * Check validity after completing initialization.
    */
    void Mixture::validate() const
    {

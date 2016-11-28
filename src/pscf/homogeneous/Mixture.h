@@ -13,6 +13,7 @@
 #include <pscf/chem/Monomer.h>            // Member template argument
 #include <pscf/homogeneous/Molecule.h>    // Member template argument
 #include <util/containers/DArray.h>       // Member template
+#include <util/containers/DMatrix.h>      // Member template
 
 namespace Pscf {
    class Interaction;
@@ -60,6 +61,8 @@ namespace Homogeneous {
       void setNMonomer(int nMonomer);
 
       //@}
+      /// \name Thermodynamics Computations
+      //@{
 
       /**
       * Set system composition.
@@ -69,14 +72,32 @@ namespace Homogeneous {
       void setComposition(DArray<double> const & phi);
 
       /**
-      * Set system composition.
+      * Set system composition and compute thermodynamic properties.
       *
-      * \param phi array of molecular volume fractions.
+      * Upon return, phi, c, mu arrays are all set.
+      *
+      * \param interaction  excess free energy model (input)
+      * \param phi  molecular volume fractions (input)
+      * \param xi  Lagrange multiplier field (input)
       */
       void computeMu(Interaction const & interaction, 
                      DArray<double> const & phi, double xi = 0.0);
 
-      /// \name Accessors (by non-const reference)
+      /**
+      * Compute composition from chemical potentials.
+      *
+      * \param interaction  excess free energy model (input)
+      * \param mu  molecular chemical potentials (input)
+      * \param phi initial guess of molecular volume fractions (input)
+      * \param xi  Lagrange multiplier field (output)
+      */
+      void computePhi(Interaction const & interaction, 
+                      DArray<double> const & mu, 
+                      DArray<double> const & phi, 
+                      double&  xi);
+
+      //@}
+      /// \name Accessors 
       //@{
  
       /**
@@ -156,6 +177,16 @@ namespace Homogeneous {
       DArray<double> w_;
 
       /**
+      * Residual array for used by computePhi function.
+      */
+      DArray<double> residual_;
+
+      /**
+      * Jacobian matrix for use by computePhi function.
+      */
+      DMatrix<double> jacobian_;
+
+      /**
       * Number of molecule species.
       */
       int nMolecule_;
@@ -164,6 +195,12 @@ namespace Homogeneous {
       * Number of monomer types (maximum monomer id + 1).
       */
       int nMonomer_;
+
+      /*
+      * Compute residual array and return max error.
+      */
+      void computeResidual(DArray<double> const & mu,
+                           double& error);
 
    };
 
@@ -203,6 +240,6 @@ namespace Homogeneous {
    inline int Mixture::nMonomer() const
    {  return nMonomer_; }
 
-}
-}
+} // namespace Homogeneous
+} // namespace Pscf
 #endif
