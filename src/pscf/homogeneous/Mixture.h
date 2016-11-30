@@ -17,6 +17,10 @@
 
 namespace Pscf {
    class Interaction;
+   class LuSolver;
+}
+
+namespace Pscf {
 namespace Homogeneous {
 
    using namespace Util;
@@ -72,24 +76,23 @@ namespace Homogeneous {
       void setComposition(DArray<double> const & phi);
 
       /**
-      * Set system composition and compute thermodynamic properties.
+      * Compute thermodynamic properties, after setting composition.
       *
-      * Upon return, phi, c, mu arrays are all set.
+      * Precondition: setComposition must be called prior.
+      * Postcondition: Upon return, mu array is set.
       *
       * \param interaction  excess free energy model (input)
-      * \param phi  molecular volume fractions (input)
       * \param xi  Lagrange multiplier field (input)
       */
-      void computeMu(Interaction const & interaction, 
-                     DArray<double> const & phi, double xi = 0.0);
+      void computeMu(Interaction const & interaction, double xi = 0.0);
 
       /**
       * Compute composition from chemical potentials.
       *
       * \param interaction  excess free energy model (input)
-      * \param mu  molecular chemical potentials (input)
-      * \param phi initial guess of molecular volume fractions (input)
-      * \param xi  Lagrange multiplier field (output)
+      * \param mu  target molecular chemical potentials (input)
+      * \param phi guess of molecular volume fractions (input)
+      * \param xi  Lagrange multiplier field (input/output)
       */
       void computePhi(Interaction const & interaction, 
                       DArray<double> const & mu, 
@@ -182,14 +185,29 @@ namespace Homogeneous {
       DArray<double> residual_;
 
       /**
+      * Change in input variables (phi, xi)
+      */
+      DArray<double> dX_;
+
+      /**
+      * Derivatives of W with respect to monomer fractions.
+      */
+      DMatrix<double> dWdC_;
+
+      /**
+      * Derivatives of W with respect to molecule fractions.
+      */
+      DMatrix<double> dWdPhi_;
+
+      /**
       * Jacobian matrix for use by computePhi function.
       */
       DMatrix<double> jacobian_;
 
       /**
-      * Second derivatives of excess free energy per monomer..
+      * Pointer to LUSolver.
       */
-      DMatrix<double> dWdC_;
+      LuSolver* solverPtr_;
 
       /**
       * Number of molecule species.
@@ -200,6 +218,11 @@ namespace Homogeneous {
       * Number of monomer types (maximum monomer id + 1).
       */
       int nMonomer_;
+
+      /**
+      * Compute monomer concentrations from phi_.
+      */
+      void computeC();
 
       /*
       * Compute residual array and return max error.

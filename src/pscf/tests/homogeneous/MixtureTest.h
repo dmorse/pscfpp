@@ -98,8 +98,10 @@ public:
       phi.allocate(2);
       phi[0] = 0.6;
       phi[1] = 0.4;
+      mixture.setComposition(phi);
+
       double xi = 3.0;
-      mixture.computeMu(interaction, phi, xi);
+      mixture.computeMu(interaction, xi);
 
       TEST_ASSERT(eq(mixture.phi(0), 0.6));
       TEST_ASSERT(eq(mixture.phi(1), 0.4));
@@ -121,6 +123,46 @@ public:
 
    }
 
+   void testComputePhi() {
+      printMethod(TEST_FUNC);
+      printEndl();
+
+      Homogeneous::Mixture mixture;
+      std::ifstream in;
+      openInputFile("in/Mixture", in);
+      mixture.readParam(in);
+      in.close();
+
+      ChiInteraction interaction;
+      interaction.setNMonomer(mixture.nMonomer());
+      openInputFile("in/ChiInteraction", in);
+      interaction.readParam(in);
+      in.close();
+
+      DArray<double> phi;
+      phi.allocate(2);
+      phi[0] = 0.6;
+      phi[1] = 0.4;
+      mixture.setComposition(phi);
+
+      double xi = 3.0;
+      mixture.computeMu(interaction, xi);
+
+      TEST_ASSERT(eq(mixture.phi(0), 0.6));
+      TEST_ASSERT(eq(mixture.phi(1), 0.4));
+      TEST_ASSERT(eq(mixture.c(0), 0.64));
+      TEST_ASSERT(eq(mixture.c(1), 0.36));
+
+      DArray<double> mu;
+      mu.allocate(2);
+      mu[0] = mixture.mu(0) + 0.10;
+      mu[1] = mixture.mu(1) - 0.10;
+      mixture.computePhi(interaction, mu, phi, xi);
+
+      // Note: Throw exception if convergence fails, 
+      // so normal completion indicates success.
+   }
+
 };
 
 TEST_BEGIN(MixtureTest)
@@ -128,6 +170,7 @@ TEST_ADD(MixtureTest, testConstructor)
 TEST_ADD(MixtureTest, testReadWrite)
 TEST_ADD(MixtureTest, testSetComposition)
 TEST_ADD(MixtureTest, testComputeMu)
+TEST_ADD(MixtureTest, testComputePhi)
 TEST_END(MixtureTest)
 
 #endif

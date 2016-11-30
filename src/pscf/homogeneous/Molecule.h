@@ -75,6 +75,13 @@ namespace Pscf {
          Clump& clump(int id);
    
          /**
+         * Get a specified Clump.
+         *
+         * \param id clump index, 0 <= id < nClump
+         */
+         const Clump& clump(int id) const;
+   
+         /**
          * Number of monomer clumps (monomer types).
          */
          int nClump() const; 
@@ -114,9 +121,15 @@ namespace Pscf {
    {  return size_; }
 
    /*
-   * Get a specified Clump.
+   * Get a specified Clump (non-constant reference)
    */
    inline Homogeneous::Clump& Homogeneous::Molecule::clump(int id)
+   {  return clumps_[id]; }
+ 
+   /*
+   * Get a specified Clump (constant reference)
+   */
+   inline const Homogeneous::Clump& Homogeneous::Molecule::clump(int id) const
    {  return clumps_[id]; }
  
 }
