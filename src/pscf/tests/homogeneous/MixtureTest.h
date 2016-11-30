@@ -159,8 +159,11 @@ public:
       mu[1] = mixture.mu(1) - 0.10;
       mixture.computePhi(interaction, mu, phi, xi);
 
-      // Note: Throw exception if convergence fails, 
-      // so normal completion indicates success.
+      // Note: Throw exception if convergence fails, so
+      // normal completion already indicates success.
+ 
+      TEST_ASSERT(eq(mixture.mu(0), mu[0]));
+      TEST_ASSERT(eq(mixture.mu(1), mu[1]));
    }
 
 };

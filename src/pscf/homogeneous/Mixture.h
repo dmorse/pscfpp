@@ -220,6 +220,11 @@ namespace Homogeneous {
       int nMonomer_;
 
       /**
+      * Initialized false, set true by setComposition().
+      */
+      bool hasComposition_;
+
+      /**
       * Compute monomer concentrations from phi_.
       */
       void computeC();

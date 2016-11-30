@@ -32,7 +32,8 @@ namespace Homogeneous {
       jacobian_(),
       solverPtr_(0),
       nMolecule_(0),
-      nMonomer_(0)
+      nMonomer_(0),
+      hasComposition_(false)
    {  setClassName("Mixture"); }
 
    /*
@@ -101,6 +102,7 @@ namespace Homogeneous {
       phi_[nMolecule_ -1] = 1.0 - sum;
 
       computeC();
+      hasComposition_ = true;
    }
 
    void Mixture::computeC()
@@ -131,22 +133,26 @@ namespace Homogeneous {
    void Mixture::computeMu(Interaction const & interaction, 
                            double xi)
    {
-      UTIL_ASSERT(interaction.nMonomer() == nMonomer_);
+      UTIL_CHECK(interaction.nMonomer() == nMonomer_);
+      UTIL_CHECK(hasComposition_);
 
+      // Compute monomer excess chemical potentials
       interaction.computeW(c_, w_);
 
-      int imol, iclump, imon;
+      int m; // molecule index
+      int c; // clump index
+      int t; // monomer type index
       double mu, size;
-      for (imol = 0; imol < nMolecule_; ++imol) {
-         Molecule& mol = molecules_[imol];
-         mu = log( phi_[imol] );
+      for (m = 0; m < nMolecule_; ++m) {
+         Molecule& mol = molecules_[m];
+         mu = log( phi_[m] );
          mu += xi*mol.size();
-         for (iclump = 0; iclump < mol.nClump(); ++iclump) {
-            imon = mol.clump(iclump).monomerId();
-            size = mol.clump(iclump).size();
-            mu += size*w_[imon];
+         for (c = 0; c < mol.nClump(); ++c) {
+            t = mol.clump(c).monomerId();
+            size = mol.clump(c).size();
+            mu += size*w_[t];
          }
-         mu_[imol] = mu;
+         mu_[m] = mu;
       }
    }
 
@@ -171,7 +177,7 @@ namespace Homogeneous {
          solverPtr_->allocate(nMolecule_);
       }
 
-      // Compute initial state, with guess for xi.
+      // Compute initial state
       setComposition(phi);
       computeMu(interaction, xi);
 
@@ -179,13 +185,15 @@ namespace Homogeneous {
       double epsilon = 1.0E-8;
       computeResidual(mu, error);
 
-      // std::cout << "mu[0] =" << mu[0] << std::endl;
-      // std::cout << "mu[1] =" << mu[1] << std::endl;
-      // std::cout << "mu_[0] =" << mu_[0] << std::endl;
-      // std::cout << "mu_[1] =" << mu_[1] << std::endl;
-      // std::cout << "residual[0] =" << residual_[0] << std::endl;
-      // std::cout << "residual[1] =" << residual_[1] << std::endl;
-      // std::cout << "error     ="  << error << std::endl;
+      #if 0
+      std::cout << "mu[0] =" << mu[0] << std::endl;
+      std::cout << "mu[1] =" << mu[1] << std::endl;
+      std::cout << "mu_[0] =" << mu_[0] << std::endl;
+      std::cout << "mu_[1] =" << mu_[1] << std::endl;
+      std::cout << "residual[0] =" << residual_[0] << std::endl;
+      std::cout << "residual[1] =" << residual_[1] << std::endl;
+      std::cout << "error     ="  << error << std::endl;
+      #endif
 
       if (error < epsilon) return;
 
@@ -237,7 +245,7 @@ namespace Homogeneous {
             }
          }
 
-         // Modify treatment of incompressibility
+         // Impose incompressibility
          int mLast = nMolecule_ - 1;
          for (m1 = 0; m1 < nMolecule_; ++m1) {
             for (m2 = 0; m2 < nMolecule_ - 1; ++m2) {
@@ -265,13 +273,16 @@ namespace Homogeneous {
          computeC();
          computeMu(interaction, xi);
          computeResidual(mu, error);
-         //std::cout << "mu[0] =" << mu[0] << std::endl;
-         //std::cout << "mu[1] =" << mu[1] << std::endl;
-         //std::cout << "mu_[0] =" << mu_[0] << std::endl;
-         //std::cout << "mu_[1] =" << mu_[1] << std::endl;
-         //std::cout << "residual[0] =" << residual_[0] << std::endl;
-         //std::cout << "residual[1] =" << residual_[1] << std::endl;
-         //std::cout << "error     ="  << error << std::endl;
+
+         #if 0
+         std::cout << "mu[0] =" << mu[0] << std::endl;
+         std::cout << "mu[1] =" << mu[1] << std::endl;
+         std::cout << "mu_[0] =" << mu_[0] << std::endl;
+         std::cout << "mu_[1] =" << mu_[1] << std::endl;
+         std::cout << "residual[0] =" << residual_[0] << std::endl;
+         std::cout << "residual[1] =" << residual_[1] << std::endl;
+         std::cout << "error     ="  << error << std::endl;
+         #endif
 
          if (error < epsilon) return;
       }
