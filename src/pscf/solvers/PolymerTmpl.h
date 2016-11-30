@@ -28,7 +28,7 @@ namespace Pscf
    /**
    * Descriptor and MDE solver for an acyclic block polymer.
    *
-   * \ingroup Pscf_Base_Module
+   * \ingroup Pscf_Solvers_Module
    */
    template <class Block>
    class PolymerTmpl : public Species, public ParamComposite

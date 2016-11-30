@@ -20,7 +20,7 @@ namespace Pscf
    /**
    * A linear homopolymer block within a block copolymer.
    *
-   * \ingroup Pscf_Base_Module
+   * \ingroup Pscf_Chem_Module
    */
    class BlockDescriptor
    {

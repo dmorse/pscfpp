@@ -25,7 +25,7 @@ namespace Pscf
    * This class is a simple wrapper for the functions provided by
    * the Gnu Scientific Library (GSL).
    *
-   * \ingroup Pscf_Base_Module
+   * \ingroup Pscf_Math_Module
    */  
    class LuSolver
    {

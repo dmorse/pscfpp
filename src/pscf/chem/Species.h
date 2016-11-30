@@ -15,7 +15,7 @@ namespace Pscf
    /**
    * Base class for a molecular species (polymer or solvent).
    *
-   * \ingroup Pscf_Base_Module
+   * \ingroup Pscf_Chem_Module
    */
    class Species
    {

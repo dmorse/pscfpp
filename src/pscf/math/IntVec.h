@@ -17,6 +17,8 @@ namespace Pscf
 
    /**
    * A IntVec<D, T> is D-component vector with elements of integer type.
+   *
+   * \ingroup Pscf_Math_Module
    */
    template <int D, typename T = int>
    class IntVec : public Vec<D, T>

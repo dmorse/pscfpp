@@ -17,7 +17,7 @@ namespace Pscf
    /**
    * Descriptor for a monomer or particle type.
    *
-   * \ingroup Pscf_Base_Module
+   * \ingroup Pscf_Chem_Module
    */
    class Monomer
    {

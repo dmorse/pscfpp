@@ -20,7 +20,7 @@ namespace Pscf
    /**
    * A mixture of polymer and solvent species.
    *
-   * \ingroup Pscf_Base_Module
+   * \ingroup Pscf_Solvers_Module
    */
    template <class TP, class TS>
    class MixtureTmpl : public ParamComposite

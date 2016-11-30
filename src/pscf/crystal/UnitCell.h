@@ -23,13 +23,15 @@ namespace Pscf
    * each case, class UnitCell<D> is derived from UnitCellTmpl,
    * and defines an enumeration named LatticeSystem of the types 
    * of Bravais lattice systems in D-dimensional space.
+   *
+   * \ingroup Pscf_Crystal_Module
    */
    template <int D> class UnitCell;
 
    /**
    * 1D crystal unit cell.
    *
-   * \ingroup Pscf_Base_Module
+   * \ingroup Pscf_Crystal_Module
    */
    template <>
    class UnitCell<1> : public UnitCellTmpl<1>
@@ -51,7 +53,7 @@ namespace Pscf
    /**
    * 2D crystal unit cell.
    *
-   * \ingroup Pscf_Base_Module
+   * \ingroup Pscf_Crystal_Module
    */
    template <>
    class UnitCell<2> : public UnitCellTmpl<2>
@@ -73,7 +75,7 @@ namespace Pscf
    /**
    * 3D crystal unit cell.
    *
-   * \ingroup Pscf_Base_Module
+   * \ingroup Pscf_Crystal_Module
    */
    template <>
    class UnitCell<3> : public UnitCellTmpl<3>

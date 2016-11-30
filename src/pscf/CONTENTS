@@ -6,6 +6,6 @@ Subdirectories:
    chem/        - classes that describe species and chemical structure
    inter/       - classes that model interaction (excess) free energy models
    solvers/     - class templates for MDE solvers for blocks, polymers, etc.
-   homogeneous/ - class that model a spatially homogeneous mixture
+   homogeneous/ - classes that model a spatially homogeneous mixture
    math/        - mathematical utilities
    

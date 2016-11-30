@@ -22,7 +22,7 @@ namespace Pscf
    /**
    * Solver for Ax=b with tridiagonal matrix A.
    *
-   * \ingroup Pscf_Base_Module
+   * \ingroup Pscf_Math_Module
    */  
    class TridiagonalSolver
    {

@@ -20,7 +20,7 @@ namespace Pscf
    /**
    * Template for a class representing a solvent species.
    *
-   * \ingroup Pscf_Base_Module
+   * \ingroup Pscf_Crystal_Module
    */
    template <int D>
    class UnitCellTmpl 

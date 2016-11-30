@@ -24,7 +24,7 @@ namespace Pscf {
       /**
       * Descriptor of a molecular species in a homogeneous mixture.
       *
-      * \inclump Pscf_Homogeneous_Module
+      * \ingroup Pscf_Homogeneous_Module
       */
       class Molecule : public Util::ParamComposite
       {

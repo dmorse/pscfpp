@@ -23,7 +23,7 @@ namespace Pscf
    *
    * Class TP is a concrete propagator class.
    *
-   * \ingroup Pscf_Base_Module
+   * \ingroup Pscf_Solvers_Module
    */
    template <class TP>
    class BlockTmpl : public BlockDescriptor

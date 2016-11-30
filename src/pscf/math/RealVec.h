@@ -18,6 +18,8 @@ namespace Pscf
 
    /**
    * A RealVec<D, T> is D-component vector with elements of floating type T.
+   *
+   * \ingroup Pscf_Math_Module
    */
    template <int D, typename T = double>
    class RealVec : public Vec<D, T>
