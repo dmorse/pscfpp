@@ -180,9 +180,11 @@ namespace Homogeneous {
       // Compute initial state
       setComposition(phi);
       computeMu(interaction, xi);
+      adjustXi(mu, xi);
 
+      // Compute initial residual
       double error;
-      double epsilon = 1.0E-8;
+      double epsilon = 1.0E-10;
       computeResidual(mu, error);
 
       #if 0
@@ -255,23 +257,25 @@ namespace Homogeneous {
             jacobian_(m1, mLast) = molecule(m1).size();
          }
 
+         // Newton Raphson update of phi and xi fields
          solverPtr_->computeLU(jacobian_);
          solverPtr_->solve(residual_, dX_);
-         // std::cout << "dPhi[0] =" << dX_[0] << std::endl;
-         // std::cout << "dxi     ="  << dX_[1] << std::endl;
-
-         // Update phi and xi fields
          double sum = 0.0;
          for (m1 = 0; m1 < nMolecule_ - 1; ++m1) {
             phi_[m1] = phi_[m1] - dX_[m1];
+            UTIL_CHECK(phi_[m1] >= 0.0);
+            UTIL_CHECK(phi_[m1] <= 1.0);
             sum += phi_[m1];
          }
          phi_[mLast] = 1.0 - sum;
+         UTIL_CHECK(phi_[mLast] >= 0.0);
+         UTIL_CHECK(phi_[mLast] <= 1.0);
          xi = xi - dX_[mLast];
 
-         // Compute and test residual
+         // Compute residual
          computeC();
          computeMu(interaction, xi);
+         adjustXi(mu, xi);
          computeResidual(mu, error);
 
          #if 0
@@ -288,6 +292,21 @@ namespace Homogeneous {
       }
 
       UTIL_THROW("Failed to converge");
+   }
+
+   void Mixture::adjustXi(DArray<double> const & mu, double& xi)
+   {
+      double dxi = 0.0;
+      double sum = 0.0;
+      for (int i=0; i < nMolecule_; ++i) {
+         dxi += mu[i] - mu_[i];
+         sum += molecules_[i].size();
+      }
+      dxi = dxi/sum;
+      for (int i=0; i < nMolecule_; ++i) {
+         mu_[i] += dxi*molecules_[i].size();
+      }
+      xi += dxi;
    }
 
    void Mixture::computeResidual(DArray<double> const & mu, double& error)

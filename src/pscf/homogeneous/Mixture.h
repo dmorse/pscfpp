@@ -229,7 +229,12 @@ namespace Homogeneous {
       */
       void computeC();
 
-      /*
+      /**
+      * Adjust xi to minimize mean-squared residual.
+      */
+      void adjustXi(DArray<double> const & mu, double& xi); 
+
+      /**
       * Compute residual array and return max error.
       */
       void computeResidual(DArray<double> const & mu,

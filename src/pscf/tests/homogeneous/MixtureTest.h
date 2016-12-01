@@ -156,7 +156,8 @@ public:
       DArray<double> mu;
       mu.allocate(2);
       mu[0] = mixture.mu(0) + 0.10;
-      mu[1] = mixture.mu(1) - 0.10;
+      mu[1] = mixture.mu(1) - 0.05;
+      xi = 0.0;
       mixture.computePhi(interaction, mu, phi, xi);
 
       // Note: Throw exception if convergence fails, so
