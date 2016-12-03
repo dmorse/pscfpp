@@ -99,6 +99,13 @@ namespace Fd1d
       */
       void computeFreeEnergy();
 
+      /**
+      * Compute properties of homogeneous reference system.
+      *
+      * \int mode mode index
+      */
+      void computeHomogeneous(int mode);
+
       //@}
       /// \name Fields
       //@{
@@ -147,6 +154,10 @@ namespace Fd1d
       void writeFields(std::ostream& out, Array<Field> const & fields);
 
       //@}
+      /// \name Homogeneous reference system
+      //@{
+
+      //@}
       /// \name Accessors (get objects by reference)
       //@{
 
@@ -164,6 +175,11 @@ namespace Fd1d
       * Get interaction (i.e., excess free energy model) by reference.
       */
       Interaction& interaction();
+
+      /**
+      * Get homogeneous mixture (used for reference calculations).
+      */
+      Homogeneous::Mixture& homogeneous();
 
       /**
       * Get the Iterator by reference.
@@ -244,6 +260,16 @@ namespace Fd1d
       DArray<double> c_;
 
       /**
+      * Work array (size = # of molecular species).
+      */
+      DArray<double> p_;
+
+      /**
+      * Work array (size = # of molecular species).
+      */
+      DArray<double> m_;
+
+      /**
       * Helmholtz free energy per monomer / kT.
       */
       double fHelmholtz_;
@@ -293,6 +319,13 @@ namespace Fd1d
    */
    inline FileMaster& System::fileMaster()
    {  return fileMaster_; }
+
+   /*
+   * Get the Homogeneous::Mixture object.
+   */
+   inline 
+   Homogeneous::Mixture& System::homogeneous()
+   {  return homogeneous_; }
 
    /*
    * Get the Interaction (excess free energy model).

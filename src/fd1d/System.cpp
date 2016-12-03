@@ -241,6 +241,21 @@ namespace Fd1d
             Log::file() << std::endl;
             iterator().solve();
          } else 
+         if (command == "COMPUTE_HOMOGENEOUS") {
+            int mode;
+            inBuffer >> mode;
+            computeHomogeneous(mode);
+            #if 0
+            if (mode == 1) {
+               double fHomo = homogeneous().fHelmholtz();
+               double pHomo = homogeneous().pressure();
+               double df = fHelmholtz() - fHomo;
+               Log::file() << "f (homo) = " << fHomo << std::endl;
+               Log::file() << "p (homo) = " << fHomo << std::endl;
+               std::cout   << "Delta f    " << df    << std::endl;
+            }
+            #endif 
+         } else 
          {
             Log::file() << "  Error: Unknown command  " << std::endl;
             readNext = false;
@@ -414,6 +429,53 @@ namespace Fd1d
         
       }
 
+   }
+
+   /*
+   * Compute properties of a homogeneous reference system.
+   *
+   * mode == 0 : Composition equals spatial average composition
+   * mode == 1:  Chemical potential equal to that of system,
+   *             composition guess given at last grid point.
+   * mode == 2:  Chemical potential equal to that of system,
+   *             composition guess given at last grid point.
+   */
+   void System::computeHomogeneous(int mode)
+   {
+      int np = mixture().nPolymer();
+      int ns = mixture().nSolvent();
+      if (!p_.isAllocated()) p_.allocate(np+ns);
+      if (mode == 0) {
+         for (int i = 0; i < np; ++i) {
+            p_[i] = mixture().polymer(i).phi(); 
+         }
+         homogeneous().setComposition(p_);
+         double xi = 0.0;
+         homogeneous().computeMu(interaction(), xi);
+      } else 
+      if (mode == 1 || mode == 2) {
+         for (int i = 0; i < np; ++i) {
+            m_[i] = mixture().polymer(i).mu(); 
+         }
+         int ix; // Grid index from which we obtain guess of 
+         if (mode == 1) {
+            ix = domain().nx() - 1;
+         } else 
+         if (mode == 2) {
+            ix = 0;
+         }
+         for (int i = 0; i < np; ++i) {
+            p_[i] = 0.0;
+            int nb = mixture().polymer(i).nBlock();
+            for (int j = 0; j < nb; ++j) {
+               p_[i] += mixture().polymer(i).block(j).cField()[ix];
+            }
+         }
+         double xi = 0.0;
+         homogeneous().computePhi(interaction(), m_, p_, xi);
+      } else {
+         UTIL_THROW("Unknown mode in computeHomogeneous");
+      }
    }
 
 } // namespace Fd1d
