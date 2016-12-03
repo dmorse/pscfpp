@@ -24,6 +24,15 @@ namespace Pscf {
       /**
       * Descriptor of a molecular species in a homogeneous mixture.
       *
+      * A Homogeneous::Molecule has:
+      *
+      *  - An array of Homogeneous::Clump objects
+      *  - An overall size (volume/monomer volume)
+      *
+      * Each Clump has a monomer type id and a size. The size is the
+      * total volume of monomers of that type in a molecule of this
+      * species.
+      *
       * \ingroup Pscf_Homogeneous_Module
       */
       class Molecule : public Util::ParamComposite

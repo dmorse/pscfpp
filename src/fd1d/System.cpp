@@ -9,6 +9,7 @@
 #include "Iterator.h"
 #include <pscf/inter/Interaction.h>
 #include <pscf/inter/ChiInteraction.h>
+#include <pscf/homogeneous/Clump.h>
 #include <util/format/Str.h>
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
@@ -134,6 +135,8 @@ namespace Fd1d
    {
       readParamComposite(in, mixture());
       hasMixture_ = true;
+
+      initHomogeneous();
 
       interaction().setNMonomer(mixture().nMonomer());
       readParamComposite(in, interaction());
@@ -358,6 +361,59 @@ namespace Fd1d
          }
          out << std::endl;
       }
+   }
+
+   void System::initHomogeneous()
+   {
+
+      // Set number of molecular species and monomers
+      int nm = mixture().nMonomer(); 
+      int np = mixture().nPolymer(); 
+      //int ns = mixture().nSolvent(); 
+      int ns = 0;
+      homogeneous_.setNMolecule(np+ns);
+      homogeneous_.setNMonomer(nm);
+      if (!c_.isAllocated()) c_.allocate(nm);
+ 
+      int i;   // molecule index
+      int j;   // monomer index
+      int k;   // block or clump index
+      int nb;  // number of blocks
+      int nc;  // number of clumps
+ 
+      // Loop over polymer molecule species
+      for (i = 0; i < np; ++i) {
+ 
+         // Count total number of monomers of each type
+         for (j = 0; j < nm; ++j) {
+            c_[j] = 0.0;
+         }
+         nb = mixture().polymer(i).nBlock(); 
+         for (k = 0; k < nb; ++k) {
+            Block& block = mixture().polymer(i).block(k);
+            j = block.monomerId();
+            c_[j] += block.length();
+         }
+ 
+         // Count the number of clumps of nonzero size
+         nc = 0;
+         for (j = 0; j < nm; ++j) {
+            if (c_[j] > 0.0) ++nc;
+         }
+         homogeneous_.molecule(i).setNClump(nc);
+ 
+         // Set clump properties for this Homogeneous::Molecule
+         k = 0; // Clump index
+         for (j = 0; j < nm; ++j) {
+            if (c_[j] > 0.0) {
+               homogeneous_.molecule(i).clump(k).setMonomerId(j);
+               homogeneous_.molecule(i).clump(k).setSize(c_[j]);
+               ++k;
+            }
+         }
+        
+      }
+
    }
 
 } // namespace Fd1d

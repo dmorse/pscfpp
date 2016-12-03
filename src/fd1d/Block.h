@@ -139,14 +139,6 @@ namespace Fd1d
       /// Number of contour length steps = # grid points - 1.
       int ns_;
 
-      #if 0
-      /// Number of spatial grid points.
-      int nx_;
-
-      /// Monomer statistical segment length.
-      double step_;
-      #endif
-
    };
 
    // Inline member functions

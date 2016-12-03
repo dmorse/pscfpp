@@ -21,11 +21,14 @@ namespace Homogeneous {
    * Set of all monomers of the same type in a molecule.
    *
    * A clump has a monomer id and a size. The size of a clump is 
-   * the occupied volume divided by a monomer reference volume.
-   * For a block copolymer, a clump is different than a block
-   * because it may contain monomers in two or more blocks of the
-   * same monomer type. Hompolymers and solvents molecules have 
-   * only one clump.
+   * the volume occupied by all monomers of the specified type in
+   * particular molecular species, divided by a monomer reference 
+   * volume. 
+   * 
+   * For a block copolymer, a clump is generally different than 
+   * a block because a clump may include the monomers in two or 
+   * more blocks of the same monomer type. Hompolymer and point
+   * solvent molecular species each have only one clump.
    *
    * \ingroup Pscf_Homogeneous_Module
    */

@@ -11,6 +11,7 @@
 #include <util/param/ParamComposite.h>     // base class
 #include "Mixture.h"                       // member
 #include "Domain.h"                        // member
+#include <pscf/homogeneous/Mixture.h>      // member
 #include <util/misc/FileMaster.h>          // member
 #include <util/containers/DArray.h>        // member template
 #include <util/containers/Array.h>         // function parameter
@@ -204,6 +205,11 @@ namespace Fd1d
       FileMaster fileMaster_;
 
       /**
+      * Homogeneous mixture, for reference.
+      */
+      Homogeneous::Mixture homogeneous_;
+
+      /**
       * Pointer to Interaction (excess free energy model).
       */
       Interaction* interactionPtr_;
@@ -264,44 +270,72 @@ namespace Fd1d
 
       void allocateFields();
 
+      void initHomogeneous();
+
    };
 
    // Inline member functions
 
+   /*
+   * Get the associated Mixture object.
+   */
    inline Mixture& System::mixture()
    { return mixture_; }
 
+   /*
+   * Get the spatial Domain.
+   */
    inline Domain& System::domain()
    { return domain_; }
 
+   /*
+   * Get the FileMaster.
+   */
    inline FileMaster& System::fileMaster()
    {  return fileMaster_; }
 
+   /*
+   * Get the Interaction (excess free energy model).
+   */
    inline Interaction& System::interaction()
    {
       UTIL_ASSERT(interactionPtr_);
       return *interactionPtr_;
    }
 
+   /*
+   * Get the Iterator (excess free energy model).
+   */
    inline Iterator& System::iterator()
    {
       UTIL_ASSERT(iteratorPtr_);
       return *iteratorPtr_;
    }
 
+   /*
+   * Get an array of all monomer excess chemical potential fields.
+   */
    inline 
    DArray< System::WField >& System::wFields()
    {  return wFields_; }
 
+   /*
+   * Get a single monomer excess chemical potential field.
+   */
    inline 
    System::WField& System::wField(int id)
    {  return wFields_[id]; }
 
+   /*
+   * Get array of all monomer concentration fields.
+   */
    inline
    DArray< System::CField >& System::cFields()
    {  return cFields_; }
 
-
+   /*
+   * Get a single monomer concentration field.
+   */
    inline System::CField& System::cField(int id)
    {  return cFields_[id]; }
 
