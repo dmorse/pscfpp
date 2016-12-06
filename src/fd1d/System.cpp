@@ -36,8 +36,17 @@ namespace Fd1d
     : mixture_(),
       domain_(),
       fileMaster_(),
+      homogeneous_(),
       interactionPtr_(0),
       iteratorPtr_(0),
+      wFields_(),
+      cFields_(),
+      f_(),
+      c_(),
+      p_(),
+      m_(),
+      fHelmholtz_(0.0),
+      pressure_(0.0),
       hasMixture_(0),
       hasDomain_(0),
       hasFields_(0)
@@ -287,9 +296,10 @@ namespace Fd1d
       double phi, mu, length;
       int np = mixture().nPolymer();
       for (int i = 0; i < np; ++i) {
-         polymerPtr = & mixture().polymer(i);
+         polymerPtr = &mixture().polymer(i);
          phi = polymerPtr->phi();
          mu = polymerPtr->mu();
+         // Recall: mu = ln(phi/q)
          length = polymerPtr->length();
          fHelmholtz_ += phi*( mu - 1.0 )/length;
       }

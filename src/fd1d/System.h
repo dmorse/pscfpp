@@ -177,14 +177,14 @@ namespace Fd1d
       Interaction& interaction();
 
       /**
-      * Get homogeneous mixture (used for reference calculations).
-      */
-      Homogeneous::Mixture& homogeneous();
-
-      /**
       * Get the Iterator by reference.
       */
       Iterator& iterator();
+
+      /**
+      * Get homogeneous mixture (for reference calculations).
+      */
+      Homogeneous::Mixture& homogeneous();
 
       /**
       * Get FileMaster by reference.
@@ -285,7 +285,7 @@ namespace Fd1d
       bool hasMixture_;
 
       /**
-      * Have the domain and grid been initialized?
+      * Has the Domain been initialized?
       */
       bool hasDomain_;
 
@@ -294,8 +294,14 @@ namespace Fd1d
       */
       bool hasFields_;
 
+      /**
+      * Allocate memory for fields (private)
+      */
       void allocateFields();
 
+      /**
+      * Initialize Homogeneous::Mixture object.
+      */
       void initHomogeneous();
 
    };
@@ -379,7 +385,7 @@ namespace Fd1d
    {  return fHelmholtz_; }
 
    /*
-   * Get precomputed pressure x monomer volume kT.
+   * Get precomputed pressure (units of kT / monomer volume).
    */
    inline double System::pressure() const
    {  return pressure_; }
