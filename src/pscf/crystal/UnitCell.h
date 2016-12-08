@@ -103,8 +103,10 @@ namespace Pscf
       friend std::istream& operator >> (std::istream&, UnitCell<3>& );
    };
    
+   // Inserter and Extractor Function Declarations
+
    /**
-   * istream extractor for a 1d UnitCell<2>::LatticeSystem.
+   * istream extractor for a 1D UnitCell<1>::LatticeSystem.
    *
    * \param in  input stream
    * \param lattice  UnitCell<1>::LatticeSystem to be read
@@ -114,7 +116,7 @@ namespace Pscf
                               UnitCell<1>::LatticeSystem& lattice);
 
    /**
-   * ostream inserter for a 1D UnitCell<2>::LatticeSystem.
+   * ostream inserter for a 1D UnitCell<1>::LatticeSystem.
    *
    * \param out  output stream
    * \param lattice  UnitCell<1>::LatticeSystem to be written
@@ -144,7 +146,7 @@ namespace Pscf
                               UnitCell<2>::LatticeSystem lattice);
 
    /**
-   * istream extractor for a UnitCell<3>::LatticeSystem.
+   * istream extractor for a 3D UnitCell<3>::LatticeSystem.
    *
    * \param  in       input stream
    * \param  lattice  UnitCell<3>::LatticeSystem to be read
@@ -154,7 +156,7 @@ namespace Pscf
                               UnitCell<3>::LatticeSystem& lattice);
 
    /**
-   * ostream inserter for an UnitCell<3>::LatticeSystem.
+   * ostream inserter for an 3D UnitCell<3>::LatticeSystem.
    *
    * \param  out      output stream
    * \param  lattice  UnitCell<3>::LatticeSystem to be written
@@ -164,7 +166,7 @@ namespace Pscf
                               UnitCell<3>::LatticeSystem lattice);
 
    /**
-   * ostream inserter for a 1D UnitCell<D>::LatticeSystem.
+   * ostream inserter for a UnitCell<D>::LatticeSystem.
    *
    * \param out  output stream
    * \param lattice  UnitCell<1>::LatticeSystem to be written
@@ -185,6 +187,7 @@ namespace Pscf
    std::istream& operator >> (std::istream& in, 
                               UnitCell<D>& cell);
 
+   // Implementation Template
    
    template <int D>
    std::ostream& operator << (std::ostream& out, 
