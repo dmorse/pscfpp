@@ -60,12 +60,12 @@ namespace Pscf {
       Field<T>& operator *= (T scalar);
    
       /**
-      * Pointwise multipication of field operator.
+      * Pointwise multipication of one field by another.
       */
       Field<T>& operator *= (Field<T>& other);
    
       /**
-      * Set to zero.
+      * Set all elements to zero.
       */
       void setToZero();
    

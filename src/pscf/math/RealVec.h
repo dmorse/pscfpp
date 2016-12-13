@@ -19,6 +19,8 @@ namespace Pscf
    /**
    * A RealVec<D, T> is D-component vector with elements of floating type T.
    *
+   * Default of type T is T = double. 
+   *
    * \ingroup Pscf_Math_Module
    */
    template <int D, typename T = double>

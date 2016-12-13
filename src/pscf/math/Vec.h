@@ -18,12 +18,14 @@ namespace Pscf
 {
 
    /**
-   * A Vec<D, T><D,T> is a d-component vector with elements of type T.
+   * A Vec<D, T><D,T> is a D-component vector with elements of type T.
    *
-   * The elements of a Vec<D, T> can be accessed using subscript operator, as 
-   * for a built in array.
+   * The elements of a Vec<D, T> can be accessed using subscript operator, 
+   * as for a built in array.
    *
-   * The arithmetic assignment operators +=, -=, and *= are overloaded.
+   * The arithmetic assignment operators +=, -=, and *= are overloaded 
+   * to allow vector-vector addition and subtraction and vector-scalar
+   * multiplication.
    *
    * All other unary and binary mathematical operations are implemented 
    * as methods or free functions. Operations that yield a Vec<D, T>, such 
@@ -55,7 +57,7 @@ namespace Pscf
    * of temporary Vec<D, T> objects, by requiring that the invoking function 
    * be a member of an object that will hold the result.
    *
-   * For efficiency, all methods in this class are declared inline.
+   * For efficiency, all member functions are declared inline.
    */
    template <int D, typename T>
    class Vec
@@ -86,7 +88,7 @@ namespace Pscf
       explicit Vec<D, T>(T const *  v);
 
       /**
-      * Constructor, initialize all elements to a scalar value.
+      * Constructor, initialize all elements to a common scalar value.
       *
       * \param s initial value for all elements.
       */

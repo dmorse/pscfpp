@@ -18,7 +18,7 @@ namespace Pscf
    using namespace Util;
 
    /**
-   * Template for a class representing a solvent species.
+   * Base class template for a crystallographic unit cell.
    *
    * \ingroup Pscf_Crystal_Module
    */

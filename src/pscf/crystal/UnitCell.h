@@ -12,7 +12,7 @@
 #include <iostream>
 
 namespace Pscf
-{ 
+{
 
    using namespace Util;
 
@@ -20,8 +20,8 @@ namespace Pscf
    * Base template for UnitCell<D> classes, D=1, 2 or 3.
    *
    * Explicit specializations are provided for D=1, 2, and 3. In
-   * each case, class UnitCell<D> is derived from UnitCellTmpl,
-   * and defines an enumeration named LatticeSystem of the types 
+   * each case, class UnitCell<D> is derived from UnitCellTmpl<D>,
+   * and defines an enumeration named LatticeSystem of the types
    * of Bravais lattice systems in D-dimensional space.
    *
    * \ingroup Pscf_Crystal_Module
@@ -49,7 +49,7 @@ namespace Pscf
       friend std::ostream& operator << (std::ostream&, UnitCell<1>& );
       friend std::istream& operator >> (std::istream&, UnitCell<1>& );
    };
-   
+
    /**
    * 2D crystal unit cell.
    *
@@ -71,7 +71,7 @@ namespace Pscf
       friend std::ostream& operator << (std::ostream&, UnitCell<2>& );
       friend std::istream& operator >> (std::istream&, UnitCell<2>& );
    };
-   
+
    /**
    * 3D crystal unit cell.
    *
@@ -85,7 +85,7 @@ namespace Pscf
       /**
       * Enumeration of the 7 possible Bravais lattice systems.
       *
-      * Allowed values are: Cubic, Tetragonal, Orthorhombic, 
+      * Allowed values are: Cubic, Tetragonal, Orthorhombic,
       * Monoclinic, Triclinic, Rhombohedral, and Hexagonal.
       *
       * \ingroup Crystal_Module
@@ -102,7 +102,7 @@ namespace Pscf
       friend std::ostream& operator << (std::ostream&, UnitCell<3>& );
       friend std::istream& operator >> (std::istream&, UnitCell<3>& );
    };
-   
+
    // Inserter and Extractor Function Declarations
 
    /**
@@ -112,7 +112,7 @@ namespace Pscf
    * \param lattice  UnitCell<1>::LatticeSystem to be read
    * \return modified input stream
    */
-   std::istream& operator >> (std::istream& in, 
+   std::istream& operator >> (std::istream& in,
                               UnitCell<1>::LatticeSystem& lattice);
 
    /**
@@ -122,7 +122,7 @@ namespace Pscf
    * \param lattice  UnitCell<1>::LatticeSystem to be written
    * \return modified output stream
    */
-   std::ostream& operator << (std::ostream& out, 
+   std::ostream& operator << (std::ostream& out,
                               UnitCell<1>::LatticeSystem lattice);
 
    /**
@@ -132,7 +132,7 @@ namespace Pscf
    * \param  lattice  UnitCell<2>::LatticeSystem to be read
    * \return modified input stream
    */
-   std::istream& operator >> (std::istream& in, 
+   std::istream& operator >> (std::istream& in,
                               UnitCell<2>::LatticeSystem& lattice);
 
    /**
@@ -142,7 +142,7 @@ namespace Pscf
    * \param  lattice  UnitCell<2>::LatticeSystem to be written
    * \return modified output stream
    */
-   std::ostream& operator << (std::ostream& out, 
+   std::ostream& operator << (std::ostream& out,
                               UnitCell<2>::LatticeSystem lattice);
 
    /**
@@ -152,7 +152,7 @@ namespace Pscf
    * \param  lattice  UnitCell<3>::LatticeSystem to be read
    * \return modified input stream
    */
-   std::istream& operator >> (std::istream& in, 
+   std::istream& operator >> (std::istream& in,
                               UnitCell<3>::LatticeSystem& lattice);
 
    /**
@@ -162,7 +162,7 @@ namespace Pscf
    * \param  lattice  UnitCell<3>::LatticeSystem to be written
    * \return modified output stream
    */
-   std::ostream& operator << (std::ostream& out, 
+   std::ostream& operator << (std::ostream& out,
                               UnitCell<3>::LatticeSystem lattice);
 
    /**
@@ -173,7 +173,7 @@ namespace Pscf
    * \return modified output stream
    */
    template <int D>
-   std::ostream& operator << (std::ostream& out, 
+   std::ostream& operator << (std::ostream& out,
                               UnitCell<D>& cell);
 
    /**
@@ -184,13 +184,13 @@ namespace Pscf
    * \return modified input stream
    */
    template <int D>
-   std::istream& operator >> (std::istream& in, 
+   std::istream& operator >> (std::istream& in,
                               UnitCell<D>& cell);
 
    // Implementation Template
-   
+
    template <int D>
-   std::ostream& operator << (std::ostream& out, 
+   std::ostream& operator << (std::ostream& out,
                               UnitCell<D>& cell)
    {
       out << cell.lattice_ << cell.nParameter_;
@@ -201,7 +201,7 @@ namespace Pscf
    }
 
    template <int D>
-   std::istream& operator >> (std::istream& in, 
+   std::istream& operator >> (std::istream& in,
                               UnitCell<D>& cell)
    {
       cell.setNParameter(in);
@@ -211,5 +211,5 @@ namespace Pscf
       return in;
    }
 
-} 
-#endif 
+}
+#endif

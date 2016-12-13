@@ -28,6 +28,12 @@ namespace Pscf
    /**
    * Descriptor and MDE solver for an acyclic block polymer.
    *
+   * A PolymerTmpl<Block> object has arrays of Block and Vertex
+   * objects. Each Block has two propagator MDE solver objects.
+   * The compute() member function solves the modified diffusion
+   * equation (MDE) for the entire molecule and computes monomer
+   * concentration fields for all blocks.
+   *
    * \ingroup Pscf_Solvers_Module
    */
    template <class Block>

@@ -33,8 +33,9 @@ namespace Pscf
    * pattern" (CRTP). It is used here to allow the template to have a members
    * that stores pointers to other instances of derived class TP.
    *
-   * The TP class is used in templates PolymerTmpl and SystemTmpl that require
-   * that it define the following public typedefs and member functions:
+   * The TP propagator class is used in templates BlockTmpl, PolymerTmpl and 
+   * SystemTmpl that require that it define the following public typedefs and 
+   * member functions:
    * \code
    *
    *    class TP : public PropagatorTmpl<TP> 
@@ -53,10 +54,10 @@ namespace Pscf
    *        // Compute the integral \int q(r,s)q^{*}(r,s) for this block
    *        void integrate(const CField& integral);
    * 
-   *    }; 
+   *    };
    *
    * \endcode
-   * The typedefs WField and CField define the types of the objects used
+   * The typedefs WField and CField define the types of the objects used 
    * to represent a chemical potential field for a particular monomer type
    * and a monomer concentration field. In the above example, both of these
    * typenames are defined to be synonyms for DArrray<double>, i.e., for 

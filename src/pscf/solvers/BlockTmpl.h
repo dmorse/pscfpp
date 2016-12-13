@@ -21,7 +21,12 @@ namespace Pscf
    /**
    * Class template for a block in a block copolymer.
    *
-   * Class TP is a concrete propagator class.
+   * Class TP is a concrete propagator class. A BlockTmpl<TP>
+   * object has:
+   *
+   *   - two TP propagator objects, one per direction
+   *   - a single monomer concentration field 
+   *   - a single kuhn length
    *
    * \ingroup Pscf_Solvers_Module
    */

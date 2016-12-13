@@ -16,7 +16,9 @@ namespace Pscf
 {
 
    /**
-   * A IntVec<D, T> is D-component vector with elements of integer type.
+   * An IntVec<D, T> is a D-component vector of elements of integer type T.
+   *
+   * Default of type T is T = int.
    *
    * \ingroup Pscf_Math_Module
    */

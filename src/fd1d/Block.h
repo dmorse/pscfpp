@@ -23,6 +23,9 @@ namespace Fd1d
    /**
    * Block within a branched polymer.
    *
+   * Derived from BlockTmpl<Propagator>. A BlockTmpl<Propagator> has two 
+   * Propagator members and is derived from BlockDescriptor.
+   *
    * \ingroup Pscf_Fd1d_Module
    */
    class Block : public BlockTmpl<Propagator>
