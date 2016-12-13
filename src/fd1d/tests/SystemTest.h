@@ -38,7 +38,7 @@ public:
       printMethod(TEST_FUNC);
 
       std::ifstream in;
-      openInputFile("in/System_planar_1.prm", in);
+      openInputFile("in/planar1.prm", in);
 
       System sys;
       sys.readParam(in);
@@ -54,7 +54,7 @@ public:
       printMethod(TEST_FUNC);
 
       std::ifstream in;
-      openInputFile("in/System_planar_1.prm", in);
+      openInputFile("in/planar1.prm", in);
 
       System sys;
       sys.readParam(in);
@@ -93,7 +93,7 @@ public:
       printMethod(TEST_FUNC);
 
       std::ifstream in;
-      openInputFile("in/System_sphere_1.prm", in);
+      openInputFile("in/spherical1.prm", in);
 
       System sys;
       sys.readParam(in);
@@ -131,7 +131,7 @@ public:
       printMethod(TEST_FUNC);
 
       std::ifstream in;
-      openInputFile("in/System_planar_2.prm", in);
+      openInputFile("in/planar2.prm", in);
 
       System sys;
       sys.readParam(in);
@@ -185,7 +185,7 @@ public:
       printMethod(TEST_FUNC);
 
       std::ifstream in;
-      openInputFile("in/System_sphere_1.prm", in);
+      openInputFile("in/spherical1.prm", in);
 
       System sys;
       sys.readParam(in);
@@ -245,7 +245,7 @@ public:
       printMethod(TEST_FUNC);
 
       std::ifstream in;
-      openInputFile("in/System_planar_2.prm", in);
+      openInputFile("in/planar2.prm", in);
 
       System sys;
       sys.readParam(in);
@@ -267,7 +267,7 @@ public:
 
    }
 
-   void testReadCommands()
+   void testReadCommandsPlanar()
    {
       printMethod(TEST_FUNC);
 
@@ -275,7 +275,7 @@ public:
       std::ifstream in;
       std::cout << "\n";
 
-      openInputFile("in/System_planar_2.prm", in);
+      openInputFile("in/planar2.prm", in);
       sys.readParam(in);
       in.close();
 
@@ -285,7 +285,30 @@ public:
       sys.fileMaster().setInputPrefix(filePrefix());
       sys.fileMaster().setOutputPrefix(filePrefix());
 
-      openInputFile("in/command", in);
+      openInputFile("in/planar.cmd", in);
+      sys.readCommands(in);
+      in.close();
+   }
+
+   void testReadCommandsSpherical()
+   {
+      printMethod(TEST_FUNC);
+
+      System sys;
+      std::ifstream in;
+      std::cout << "\n";
+
+      openInputFile("in/spherical2.prm", in);
+      sys.readParam(in);
+      in.close();
+
+      // Set System filemaster prefixes to unit test file prefix
+      std::cout << "Test file prefix = |" 
+                << filePrefix() << "|" << std::endl;
+      sys.fileMaster().setInputPrefix(filePrefix());
+      sys.fileMaster().setOutputPrefix(filePrefix());
+
+      openInputFile("in/spherical2.cmd", in);
       sys.readCommands(in);
       in.close();
    }
@@ -300,7 +323,8 @@ TEST_ADD(SystemTest, testSolveMdeSpherical)
 TEST_ADD(SystemTest, testIteratorPlanar)
 TEST_ADD(SystemTest, testIteratorSpherical)
 TEST_ADD(SystemTest, testFieldInput)
-TEST_ADD(SystemTest, testReadCommands)
+TEST_ADD(SystemTest, testReadCommandsPlanar)
+TEST_ADD(SystemTest, testReadCommandsSpherical)
 TEST_END(SystemTest)
 
 #endif
