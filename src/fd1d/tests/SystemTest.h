@@ -38,7 +38,7 @@ public:
       printMethod(TEST_FUNC);
 
       std::ifstream in;
-      openInputFile("in/SystemPlanar", in);
+      openInputFile("in/System_planar_1.prm", in);
 
       System sys;
       sys.readParam(in);
@@ -54,7 +54,7 @@ public:
       printMethod(TEST_FUNC);
 
       std::ifstream in;
-      openInputFile("in/SystemPlanar", in);
+      openInputFile("in/System_planar_1.prm", in);
 
       System sys;
       sys.readParam(in);
@@ -93,7 +93,7 @@ public:
       printMethod(TEST_FUNC);
 
       std::ifstream in;
-      openInputFile("in/SystemSpherical", in);
+      openInputFile("in/System_sphere_1.prm", in);
 
       System sys;
       sys.readParam(in);
@@ -131,7 +131,7 @@ public:
       printMethod(TEST_FUNC);
 
       std::ifstream in;
-      openInputFile("in/SystemPlanar2", in);
+      openInputFile("in/System_planar_2.prm", in);
 
       System sys;
       sys.readParam(in);
@@ -185,7 +185,7 @@ public:
       printMethod(TEST_FUNC);
 
       std::ifstream in;
-      openInputFile("in/SystemSpherical", in);
+      openInputFile("in/System_sphere_1.prm", in);
 
       System sys;
       sys.readParam(in);
@@ -245,7 +245,7 @@ public:
       printMethod(TEST_FUNC);
 
       std::ifstream in;
-      openInputFile("in/SystemPlanar2", in);
+      openInputFile("in/System_planar_2.prm", in);
 
       System sys;
       sys.readParam(in);
@@ -254,7 +254,7 @@ public:
       std::cout << "\n";
       // sys.writeParam(std::cout);
 
-      openInputFile("in/omega", in);
+      openInputFile("in/planar.w", in);
       sys.readWFields(in);
       in.close();
 
@@ -275,7 +275,7 @@ public:
       std::ifstream in;
       std::cout << "\n";
 
-      openInputFile("in/SystemPlanar2", in);
+      openInputFile("in/System_planar_2.prm", in);
       sys.readParam(in);
       in.close();
 

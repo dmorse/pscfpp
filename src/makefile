@@ -7,7 +7,6 @@ all:
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
 	cd fd1d; $(MAKE) all
-	cd pssp; $(MAKE) all
 
 fd1d: 
 	cd util; $(MAKE) all

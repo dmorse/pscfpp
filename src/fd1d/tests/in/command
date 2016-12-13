@@ -1,4 +1,4 @@
-READ_WFIELDS  in/omega
+READ_WFIELDS  in/planar.w
 ITERATE
 WRITE_CFIELDS  out/c3
 WRITE_WFIELDS  out/w3
