@@ -13,7 +13,7 @@ System{
      }
      Polymer{
         nBlock  1
-        nVertex 3
+        nVertex 2
         blocks  0  1  0  1  1.000
         phi     0.875
      }

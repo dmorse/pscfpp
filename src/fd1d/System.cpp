@@ -257,7 +257,7 @@ namespace Fd1d
             Log::file() << "pressure   = " << pressure() << std::endl;
 
             Log::file() << std::endl;
-            Log::file() << "polymers: " << std::endl;
+            Log::file() << "Polymers: " << std::endl;
             for (int i = 0; i < mixture().nPolymer(); ++i) {
                Log::file() << "phi[" << i << "]   = " 
                            << mixture().polymer(i).phi()
@@ -267,40 +267,14 @@ namespace Fd1d
             Log::file() << std::endl;
 
          } else 
-         if (command == "COMPUTE_HOMOGENEOUS") {
+         if (command == "HOMOGENEOUS") {
             int mode;
             inBuffer >> mode;
-            UTIL_CHECK(mode >= 0);
-            UTIL_CHECK(mode <= 2);
-
             Log::file() << std::endl;
             Log::file() << "mode       = " << mode << std::endl;
+
             computeHomogeneous(mode);
 
-            Log::file() << std::endl;
-            if (mode == 0) {
-               double fHomo = homogeneous().fHelmholtz();
-               double df = fHelmholtz() - fHomo;
-               Log::file() << "f (homo)   = " << fHomo << std::endl;
-               std::cout   << "delta f    = " << df    << std::endl;
-            } else
-            if (mode == 1 || mode == 2) {
-               double dP = homogeneous().pressure() - pressure();
-               std::cout   << "delta P     = " << dP  << std::endl;
-               double volume = domain().volume();
-               std::cout   << "volume      = " << volume  << std::endl;
-               double dOmega = dP*volume;
-               std::cout   << "delta Omega = " << dOmega  << std::endl;
-            }
-            Log::file() << std::endl;
-            Log::file() << "polymers (homo): " << std::endl;
-            for (int i = 0; i < homogeneous().nMolecule(); ++i) {
-               Log::file() << "phi[" << i << "]   = " 
-                           << homogeneous().phi(i) 
-                           << "   mu[" << i << "] = " 
-                           << homogeneous().mu(i)  << std::endl;
-            }
-            Log::file() << std::endl;
          } else {
             Log::file() << "  Error: Unknown command  " << std::endl;
             readNext = false;
@@ -574,6 +548,36 @@ namespace Fd1d
 
       // Compute Helmholtz free energy and pressure
       homogeneous().computeFreeEnergy(interaction());
+
+      // Output free energies
+      Log::file() << std::endl;
+      if (mode == 0) {
+         double fHomo = homogeneous().fHelmholtz();
+         double df = fHelmholtz() - fHomo;
+         Log::file() << "f (homo)    = " << fHomo << std::endl;
+         std::cout   << "delta f     = " << df    << std::endl;
+      } else
+      if (mode == 1 || mode == 2) {
+         double fHomo = homogeneous().fHelmholtz();
+         double pHomo = homogeneous().pressure();
+         double dP = pressure() - pHomo;
+         double dOmega = -1.0*dP*domain().volume(); 
+         Log::file() << "f (homo)    = " << fHomo << std::endl;
+         Log::file() << "p (homo)    = " << pHomo << std::endl;
+         Log::file() << "delta Omega = " << dOmega << std::endl;
+      }
+
+      // Output polymer properties
+      Log::file() << std::endl;
+      Log::file() << "Polymers (homogeneous): " << std::endl;
+      for (int i = 0; i < homogeneous().nMolecule(); ++i) {
+         Log::file() << "phi[" << i << "]   = " 
+                     << homogeneous().phi(i) 
+                     << "   mu[" << i << "] = " 
+                     << homogeneous().mu(i)  << std::endl;
+      }
+      Log::file() << std::endl;
+
    }
 
 } // namespace Fd1d
