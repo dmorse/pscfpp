@@ -76,7 +76,7 @@ namespace Homogeneous {
       void setComposition(DArray<double> const & phi);
 
       /**
-      * Compute thermodynamic properties, after setting composition.
+      * Compute chemical potential from preset composition.
       *
       * Precondition: setComposition must be called prior.
       * Postcondition: Upon return, mu array is set.
@@ -98,6 +98,19 @@ namespace Homogeneous {
                       DArray<double> const & mu, 
                       DArray<double> const & phi, 
                       double&  xi);
+
+      /**
+      * Compute Helmholtz free energy and pressure.
+      * 
+      * Preconditions and postconditions:
+      * 
+      * \pre  setComposition must be called prior.
+      * \pre  computeMu must be called prior.
+      * \post fHelmholtz and pressure are set.
+      *
+      * \param interaction  excess free energy model (input)
+      */
+      void computeFreeEnergy(Interaction const & interaction);
 
       //@}
       /// \name Accessors 
@@ -130,6 +143,16 @@ namespace Homogeneous {
       * \param id monomer type index (0 <= id < nMonomer)
       */
       double c(int id) const;
+
+      /**
+      * Return Helmholtz free energy per monomer / kT.
+      */
+      double fHelmholtz() const;
+
+      /**
+      * Return pressure in units of kT / monomer volume.
+      */
+      double pressure() const;
 
       /**
       * Get number of molecule species.
@@ -205,6 +228,16 @@ namespace Homogeneous {
       DMatrix<double> jacobian_;
 
       /**
+      * Free energy per monomer / kT.
+      */
+      double fHelmholtz_;
+
+      /**
+      * Pressure x monomer volume / kT.
+      */
+      double pressure_;
+
+      /**
       * Pointer to LUSolver.
       */
       LuSolver* solverPtr_;
@@ -271,6 +304,12 @@ namespace Homogeneous {
       UTIL_ASSERT(id < nMonomer_);  
       return c_[id]; 
    }
+
+   inline double Mixture::fHelmholtz() const
+   {  return fHelmholtz_; }
+
+   inline double Mixture::pressure() const
+   {  return pressure_; }
 
    inline int Mixture::nMolecule() const
    {  return nMolecule_; }

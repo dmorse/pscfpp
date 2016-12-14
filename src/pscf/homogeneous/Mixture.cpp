@@ -30,6 +30,8 @@ namespace Homogeneous {
       dWdC_(),
       dWdPhi_(),
       jacobian_(),
+      fHelmholtz_(0.0),
+      pressure_(0.0),
       solverPtr_(0),
       nMolecule_(0),
       nMonomer_(0),
@@ -123,6 +125,19 @@ namespace Homogeneous {
             k = mol.clump(j).monomerId();
             c_[k] += concentration*mol.clump(j).size();
          }
+      }
+
+      // Check and normalize monomer volume fractions
+      double sum = 0.0;
+      for (k = 0; k < nMonomer_; ++k) {
+         UTIL_CHECK(c_[k] >= 0.0);
+         UTIL_CHECK(c_[k] <= 1.0);
+         sum += c_[k];
+      }
+      UTIL_CHECK(sum > 0.9999);
+      UTIL_CHECK(sum < 1.0001);
+      for (k = 0; k < nMonomer_; ++k) {
+         c_[k] /= sum;
       }
 
    }
@@ -318,6 +333,37 @@ namespace Homogeneous {
             error = std::abs(residual_[i]);
          }
       }
+   }
+
+   /*
+   * Compute Helmoltz free energy and pressure
+   */
+   void Mixture::computeFreeEnergy(Interaction const & interaction)
+   {
+      fHelmholtz_ = 0.0;
+ 
+      // Compute ideal gas contributions to fHelhmoltz_
+      double size;
+      for (int i = 0; i < nMolecule_; ++i) {
+         size = molecules_[i].size();
+         fHelmholtz_ += phi_[i]*( mu_[i] - 1.0 )/size;
+      }
+
+      // Apply Legendre transform subtraction
+      for (int i = 0; i < nMonomer_; ++i) {
+         fHelmholtz_ -= w_[i]*c_[i];
+      }
+
+      // Add average interaction free energy density per monomer
+      fHelmholtz_ += interaction.fHelmholtz(c_);
+
+      // Compute pressure
+      pressure_ = -fHelmholtz_;
+      for (int i = 0; i < nMolecule_; ++i) {
+         size = molecules_[i].size();
+         pressure_ += phi_[i]*mu_[i]/size;
+      }
+
    }
 
    /*

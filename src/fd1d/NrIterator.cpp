@@ -210,7 +210,6 @@ namespace Fd1d
 
       // Compute initial residual vector and norm
       mixture().compute(system().wFields(), system().cFields());
-      system().computeFreeEnergy();
       computeResidual(system().wFields(), system().cFields(), residual_);
       double norm = residualNorm(residual_);
       double normNew;
@@ -224,8 +223,8 @@ namespace Fd1d
 
       // Iterative loop
       for (i = 0; i < 100; ++i) {
-         std::cout << "Begin iteration " << i
-                   << " , residual norm = " << norm
+         std::cout << "iteration " << i
+                   << " , error = " << norm
                    << std::endl;
 
          #if 0
@@ -246,12 +245,12 @@ namespace Fd1d
 
          if (norm < epsilon_) {
             std::cout << "Converged" << std::endl;
-            std::cout << "fHelhmoltz = " << system().fHelmholtz() << std::endl;
+            system().computeFreeEnergy();
             return 0;
          } 
 
          if (needsJacobian) {
-            std::cout << "      computing jacobian" << std::endl;;
+            std::cout << "computing jacobian" << std::endl;;
             computeJacobian();
             hasJacobian = true;
             needsJacobian = false;
@@ -290,7 +289,6 @@ namespace Fd1d
                   system().cField(j)[k] = cFieldsNew_[j][k];
                }
             }
-            system().computeFreeEnergy();
             hasJacobian = false;
             if (normNew/norm < 0.25) {
                needsJacobian = false;

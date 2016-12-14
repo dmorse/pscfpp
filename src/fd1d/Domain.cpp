@@ -40,6 +40,7 @@ namespace Fd1d
       read(in, "xMax", xMax_);
       read(in, "nx", nx_);
       dx_ = (xMax_ - xMin_)/double(nx_ - 1);
+      computeVolume();
    }
 
    void Domain::setPlanarParameters(double xMin, double xMax, int nx)

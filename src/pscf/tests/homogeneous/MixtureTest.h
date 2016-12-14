@@ -5,6 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <pscf/homogeneous/Mixture.h>
+#include <pscf/homogeneous/Molecule.h>
 #include <pscf/inter/ChiInteraction.h>
 #include <util/containers/DArray.h>
 
@@ -165,6 +166,10 @@ public:
  
       TEST_ASSERT(eq(mixture.mu(0), mu[0]));
       TEST_ASSERT(eq(mixture.mu(1), mu[1]));
+
+      mixture.computeFreeEnergy(interaction);
+      std::cout << "fHelmholtz = " << mixture.fHelmholtz() << "\n";
+      std::cout << "pressure   = " << mixture.pressure() << "\n";
    }
 
 };

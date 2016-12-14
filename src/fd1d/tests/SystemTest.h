@@ -85,6 +85,8 @@ public:
       double sum1 = domain.spatialAverage(sys.cField(1));
       std::cout << "Volume fraction of block 0 = " << sum0 << "\n";
       std::cout << "Volume fraction of block 1 = " << sum1 << "\n";
+
+      TEST_ASSERT(eq(mix.polymer(0).length(), 5.0));
    }
 
 
