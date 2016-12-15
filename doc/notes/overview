@@ -1,14 +1,14 @@
 Chemistry
 ---------
 
-    These classes are used to describe molecular structures
+These classes are used to describe molecular structures
 
     Monomer
     Vertex
     BlockDescriptor
     Species
     PolymerTmpl<Block> : public Species
-    SolventDescriptor : public Species
+    SolventTmpl : public Species
     
 Each Monomer, Vertex, Block, and PolymerTmpl<Block> has an id that
 corresponds to the array index in any array of such structures. A 
@@ -21,10 +21,21 @@ ensemble (Open or Closed) and the volume fraction phi or chemical
 potential mu of the species. These variables are protected members
 of the Species base class.
 
+Solver Templates
+----------------
+
+
+    PropagatorTmpl
+    BlockTmpl<Propagator>
+    PolymerTmpl<Block>
+    MixtureTmpl<Block>
+
 Fields
 ------
 
-   class Field
+Base class:
+
+   class Field<T>
    class WField : public WField
    class QField : public Qield
    class CField : public CField
@@ -32,17 +43,17 @@ Fields
    Base on DArray<double> (derived or copy and paste)
    Provide methods or global functions:
 
-      1) Pointwise multiplication of fields, operator *=
       1) Addition of fields, operator +=
-      2) Inner product: Functor with two fields as arguments.
+      2) Multiplication by scalar, operator *= (T )
+      3) Pointwise multiplication of fields, operator *= (Field<T>)
 
 SCF Solvers (General)
 ---------------------
 
    Each implementation (one-dimensional finite element, psuedo
 spectral, etc) has a set of MDE solver classes that also contain
-chemical information.  The solvers class system is based in
-part on C++ templates, rather than run time polymorphism alone.
+chemical information.  The solvers class system is based in part 
+on C++ templates, rather than run time polymorphism alone.
 
    class Propagator : publiic PropagatorTmpl<Propagator>
       Has q(r,s) data structure, pointers to Block.
@@ -72,6 +83,8 @@ part on C++ templates, rather than run time polymorphism alone.
    {
       System {
          Mixture
+         Domain
+         Interaction (chi parameters)
          Iterator
       }
    }
@@ -89,6 +102,7 @@ Pseudospectral, periodic
          Interaction (chi parameters)
          UnitCell
          SpaceGroup
+         Mesh
          Basis
          Iterator
       }

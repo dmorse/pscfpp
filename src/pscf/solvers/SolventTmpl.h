@@ -19,12 +19,26 @@ namespace Pscf
    /**
    * Template for a class representing a solvent species.
    *
+   * Template argument TP is a propagator class. This is 
+   * only used to define the data types for concentration 
+   * and chemical potential fields.
+   *
    * \ingroup Pscf_Solvers_Module
    */
-   template <class CField>
+   template <class TP>
    class SolventTmpl : public Species, public ParamComposite
    {
    public:
+
+      /**
+      * Monomer concentration field.
+      */
+      typedef typename TP::CField CField;
+
+      /** 
+      * Monomer chemical potential field.
+      */
+      typedef typename TP::WField WField;
 
       /**
       * Constructor.
@@ -39,13 +53,23 @@ namespace Pscf
       {}
    
       /**
+      * Compute monomer concentration field and phi and/or mu.
+      *
+      * Pure virtual function: Must be implemented by subclasses.
+      * Upon return, concentration field, phi and mu are all set.
+      *
+      * \param wField monomer chemical potential field.
+      */
+      virtual void compute(WField const & wField ) = 0;
+   
+      /**
       * Get monomer concentration field for this solvent.
       */
       const CField& concentration() const
       {  return concentration_;  }
    
    protected:
-   
+
       CField concentration_;
    
    };

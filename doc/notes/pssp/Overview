@@ -7,10 +7,10 @@ class System
    UnitCell<D>
    Mesh<D>
    FFT
-   Basis<D>
    SpaceGroup<D>
-   DArray<RField> -> Omega fields
-   DArray<RField> -> Concentration fields
+   Basis<D>
+   DArray<WField> WFields 
+   DArray<CField> CFields
 }
 
 ------------------------------------------------------------------
@@ -100,6 +100,13 @@ class KField -> representation of Fourier space field
     range (0, ... , N-1). 
 
     Has a pointer to Mesh
+------------------------------------------------------------------
+Fourier space functions:
+
+    Computation of q^2 for wavevector. Member of UnitCell?
+
+    Shift IntVector reciprocal vector to 1st Brillouin Zone.
+    Requires UnitCell and Mesh. Global Function?
 ------------------------------------------------------------------
 template <int D>
 class Basis:
