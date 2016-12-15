@@ -58,6 +58,20 @@ namespace Pscf
       virtual void setKuhn(double kuhn);
 
       /**
+      * Setup W field and solver data for both propagators.
+      *
+      * \param wField monomer chemical potential field.
+      */
+      virtual void setupSolver(WField const & wField) = 0;
+
+      /**
+      * Compute monomer concentration field for this block.
+      *
+      * \param prefactor  numerical prefactor of phi/(q*length)
+      */
+      virtual void computeConcentration(double prefactor) = 0;
+
+      /**
       * Get a Propagator for a specified direction.
       *
       * For a block with v0 = vertexId(0) and v1 = vertexId(1),

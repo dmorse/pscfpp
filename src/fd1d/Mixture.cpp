@@ -92,6 +92,9 @@ namespace Fd1d
             }
          }
       }
+
+      // To do: Add compute functions and accumulation for solvents.
+
    }
 
 } // namespace Fd1d

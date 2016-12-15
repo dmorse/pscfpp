@@ -9,18 +9,21 @@
 */
 
 #include <pscf/solvers/SolventTmpl.h>
-#include <util/containers/DArray.h>
+#include "PropagatorStub.h"
 
 namespace Pscf
 { 
 
-   class SolventStub : public SolventTmpl< DArray<double> >
+   class SolventStub : public SolventTmpl<PropagatorStub>
    {
 
    public:
 
       SolventStub(){}
-   
+
+      void compute(PropagatorStub::WField const &)
+      {}
+
    };
 
 } 

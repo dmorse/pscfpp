@@ -58,6 +58,30 @@ namespace Pscf
       */
       virtual void readParameters(std::istream& in);
 
+      #if 0
+      /**
+      * Compute concentrations.
+      *
+      * This function calls the compute function of every molecular
+      * species, and then adds the resulting block concentration
+      * fields for blocks of each type to compute a total monomer
+      * concentration (or volume fraction) for each monomer type.
+      * Upon return, values are set for volume fraction and chemical 
+      * potential (mu) members of each species, and for the 
+      * concentration fields for each Block and Solvent. The total
+      * concentration for each monomer type is returned in the
+      * cFields output parameter. 
+      *
+      * The arrays wFields and cFields must each have size nMonomer(),
+      * and contain fields that are indexed by monomer type index. 
+      *
+      * \param wFields array of chemical potential fields (input)
+      * \param cFields array of monomer concentration fields (output)
+      */
+      void 
+      compute(DArray<WField> const & wFields, DArray<CField>& cFields) = 0;
+      #endif
+
       /// \name Accessors (by non-const reference)
       //@{
  

@@ -7,10 +7,10 @@ class System
    UnitCell<D>
    Mesh<D>
    FFT
-   Basis<D>
    SpaceGroup<D>
-   DArray<RField> -> Omega fields
-   DArray<RField> -> Concentration fields
+   Basis<D>
+   DArray<WField> WFields 
+   DArray<CField> CFields
 }
 
 ------------------------------------------------------------------
@@ -80,9 +80,10 @@ class KField -> representation of Fourier space field
 ------------------------------------------------------------------
 Fourier Space Functions
 
-    Computation of q^2 for wavev vectors. Member of unit cell?
+    Computation of q^2 for wavevector. Member of UnitCell?
 
     Shift IntVector reciprocal vector to 1st Brillouin Zone.
+    Requires UnitCell and Mesh. Global Function?
 ------------------------------------------------------------------
 Basis - Definition of basis functions
 
