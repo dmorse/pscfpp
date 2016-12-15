@@ -25,9 +25,12 @@ class UnitCell - description of crystallographic unit cell
 
    Has: 
 
-   unit cell parameters
-   Bravais and reciprocal lattice
+     Unit cell parameters
+     Bravais and reciprocal lattice bases
 
+  Provides:
+
+    Computation of q^2 for InvVec<D> wavevector. 
 ------------------------------------------------------------------
 template <int D>
 class Mesh - Description of spatial mesh
@@ -43,55 +46,73 @@ class Mesh - Description of spatial mesh
       Conversion between IntVector<D> positions and 
       integer array indices.
 
+      Shift first Brillouin zone (minimum norm image), given 
+      a UnitCell argument.
+
 ------------------------------------------------------------------
+template <int D>
 class FFT - Wrapper for FFT library.
 
-    Method to convert RField to KField
-    Method to convert KField to RField
+    Has:
+ 
+       Pointer to Mesh
 
-    Provides typedefs to define RField and KField types.
-    These typedefs used by System to define types.
+       Typedefs for RField and KField types.
 
-    Require an association with Mesh
+    Provides:
+
+       function to convert RField to KField
+       function to convert KField to RField
+
 ------------------------------------------------------------------
-class RField<T> -> representation of real space field as an array
+template <int D, int T>
+class RField -> representation of real space field as an array
 
     Question: Use a simple 1D array with external conversions, 
     or have class provide access by IntVector as well as by 
     vector?
+
+    Proposal: Has a pointer to Mesh, to allow possibility of
+    internal conversions.
 ------------------------------------------------------------------
+template <int D, int T>
 class KField -> representation of Fourier space field
 
     Comment: This field will need to provide some acess to
     Fourier components as complex numbers. Do we base this
     on a DArray<std::complex> ?
 
-    Do we hide internal representation, to allow use of
+    How we hide internal representation, to allow use of
     special representation of transform of a real field?
 
-    If we hide the internal representation, how do we
-    represent multipication in Fourier space?
+    Question: If we hide the internal representation, how do 
+    we represent multipication in Fourier space?
 
-    Proposal: Have this class provide functions to convert
-    an internal wave index into IntVector wavevector on the 
-    standard Fourier mesh. Use this to convert between
-    representations.
+    Proposal:
 
+    1) Allow access to elements as references to complex
+    numbers, of type std::complex<T>, using a 1D index that
+    may or may not be the same as that used by the Mesh class.
+
+    2) Provide functions convert back and forth between 
+    integer index used in this class and IntVector<D> in
+    the standard Fourier mesh, with components in the
+    range (0, ... , N-1). 
+
+    Has a pointer to Mesh
 ------------------------------------------------------------------
-Fourier Space Functions
+template <int D>
+class Basis:
 
-    Computation of q^2 for wavev vectors. Member of unit cell?
-
-    Shift IntVector reciprocal vector to 1st Brillouin Zone.
-------------------------------------------------------------------
-Basis - Definition of basis functions
+    Description: Definition of basis functions
 
     Has: Internal definition of basis, using KField indexing.
 
     Provide functions to:
 
-       Set kField given an array of coefficients
-       Infer coefficients from field
+       Convert list of coefficients to kField 
+       Convert kField to a list of coefficients
 
-    Design using public interface of KField, to allow same
-    basis to be used with different FFT libraries. 
+    Design using public interface of KField, to allow the 
+    same Basis class template to be used with different FFT 
+    libraries. 
