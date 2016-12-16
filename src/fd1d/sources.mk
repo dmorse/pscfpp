@@ -1,13 +1,15 @@
 fd1d_= \
   fd1d/Domain.cpp \
+  fd1d/GeometryMode.cpp \
   fd1d/Propagator.cpp \
   fd1d/Block.cpp \
   fd1d/Polymer.cpp \
   fd1d/Solvent.cpp \
   fd1d/Mixture.cpp \
-  fd1d/Iterator.cpp \
   fd1d/System.cpp \
-  fd1d/GeometryMode.cpp \
+  fd1d/Iterator.cpp \
+  fd1d/Sweep.cpp \
+  fd1d/SweepFactory.cpp
 
 ifdef PSCF_GSL
 fd1d_+= fd1d/NrIterator.cpp
