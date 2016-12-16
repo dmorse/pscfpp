@@ -24,6 +24,13 @@ namespace Fd1d
       iteratorPtr_(0)
    {  setClassName("Sweep"); }
 
+   Sweep::Sweep(System& system)
+    : systemPtr_(&system),
+      mixturePtr_(&system.mixture()),
+      domainPtr_(&system.domain()),
+      iteratorPtr_(&system.iterator())
+   {  setClassName("Sweep"); }
+
    Sweep::~Sweep()
    {}
 

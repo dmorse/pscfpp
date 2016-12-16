@@ -33,9 +33,16 @@ namespace Fd1d
    public:
 
       /**
-      * Constructor.
+      * Default Constructor.
       */
       Sweep();
+
+      /**
+      * Constructor.
+      * 
+      * \param system parent System object.
+      */
+      Sweep(System& system);
 
       /**
       * Destructor.
@@ -44,17 +51,31 @@ namespace Fd1d
 
       /**
       * Create association with the parent System.
+      *
+      * Use iff instantiated with default constructor.
       * 
       * \param system parent System object.
       */
-      virtual void setSystem(System& system);
+      void setSystem(System& system);
+
+      /**
+      * Setup operation at beginning sweep.
+      */
+      virtual void setup() = 0;
+
+      /**
+      * Set system parameters.
+      *
+      * \param s path length coordinate, in range [0,1]
+      */
+      virtual void setState(double s) = 0;
 
       /**
       * Iterate to solution.
       *
       * \return error code: 0 for success, 1 for failure.
       */
-      virtual int solve() = 0;
+      virtual void solve() = 0;
 
    protected:
 

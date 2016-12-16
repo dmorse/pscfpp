@@ -2,9 +2,13 @@ Todo for 1D finite difference code:
 
 1) Test code to calculate Helmholtz free energy and pressure.
 
-2) Test propagator, spatialAverage, and iterator for cylindrical mode.
+2) Test code to subtract homogeneous reference system
 
-3) Add system default ensemble and species ensemble to readParameters
+3) Add sweep feature.
 
-4) Test grand-canonical ensemble (canonical vs. grand).
+4) Test propagator, spatialAverage, and iterator for cylindrical mode.
+
+5) Add system default ensemble and species ensemble to readParameters
+
+6) Test grand-canonical ensemble (canonical vs. grand).
 

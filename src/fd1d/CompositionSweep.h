@@ -15,6 +15,7 @@ namespace Pscf {
 namespace Fd1d
 {
 
+   class System;
    using namespace Util;
 
    /**
@@ -33,16 +34,44 @@ namespace Fd1d
       CompositionSweep();
 
       /**
+      * Constructor.
+      */
+      CompositionSweep(System& system);
+
+      /**
       * Destructor.
       */
       ~CompositionSweep();
 
       /**
+      * Read parameters.
+      */
+      virtual void readParameters(std::istream& in);
+
+      /**
+      * Setup operation at beginning sweep.
+      */
+      virtual void setup();
+
+      /**
       * Iterate to solution.
       *
-      * \return error code: 0 for success, 1 for failure.
+      * \param s path length coordinate, in [0,1]
       */
-      virtual int solve(){};
+      virtual void setState(double s);
+
+      /**
+      * Iterate to solution.
+      */
+      virtual void solve();
+
+   private:
+
+      DArray<double> phi0_;
+
+      DArray<double> dPhi_;
+
+      int ns_;
 
    };
 

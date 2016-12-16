@@ -42,6 +42,8 @@ namespace Fd1d
 
       ~Polymer();
 
+       void setPhi(double phi);
+
    };
 
 } 
