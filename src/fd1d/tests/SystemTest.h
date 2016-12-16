@@ -38,7 +38,7 @@ public:
       printMethod(TEST_FUNC);
 
       std::ifstream in;
-      openInputFile("in/SystemPlanar", in);
+      openInputFile("in/planar1.prm", in);
 
       System sys;
       sys.readParam(in);
@@ -54,7 +54,7 @@ public:
       printMethod(TEST_FUNC);
 
       std::ifstream in;
-      openInputFile("in/SystemPlanar", in);
+      openInputFile("in/planar1.prm", in);
 
       System sys;
       sys.readParam(in);
@@ -85,6 +85,8 @@ public:
       double sum1 = domain.spatialAverage(sys.cField(1));
       std::cout << "Volume fraction of block 0 = " << sum0 << "\n";
       std::cout << "Volume fraction of block 1 = " << sum1 << "\n";
+
+      TEST_ASSERT(eq(mix.polymer(0).length(), 5.0));
    }
 
 
@@ -93,7 +95,7 @@ public:
       printMethod(TEST_FUNC);
 
       std::ifstream in;
-      openInputFile("in/SystemSpherical", in);
+      openInputFile("in/spherical1.prm", in);
 
       System sys;
       sys.readParam(in);
@@ -131,7 +133,7 @@ public:
       printMethod(TEST_FUNC);
 
       std::ifstream in;
-      openInputFile("in/SystemPlanar2", in);
+      openInputFile("in/planar2.prm", in);
 
       System sys;
       sys.readParam(in);
@@ -185,7 +187,7 @@ public:
       printMethod(TEST_FUNC);
 
       std::ifstream in;
-      openInputFile("in/SystemSpherical", in);
+      openInputFile("in/spherical1.prm", in);
 
       System sys;
       sys.readParam(in);
@@ -245,7 +247,7 @@ public:
       printMethod(TEST_FUNC);
 
       std::ifstream in;
-      openInputFile("in/SystemPlanar2", in);
+      openInputFile("in/planar2.prm", in);
 
       System sys;
       sys.readParam(in);
@@ -254,7 +256,7 @@ public:
       std::cout << "\n";
       // sys.writeParam(std::cout);
 
-      openInputFile("in/omega", in);
+      openInputFile("in/planar.w", in);
       sys.readWFields(in);
       in.close();
 
@@ -267,7 +269,7 @@ public:
 
    }
 
-   void testReadCommands()
+   void testReadCommandsPlanar()
    {
       printMethod(TEST_FUNC);
 
@@ -275,7 +277,7 @@ public:
       std::ifstream in;
       std::cout << "\n";
 
-      openInputFile("in/SystemPlanar2", in);
+      openInputFile("in/planar2.prm", in);
       sys.readParam(in);
       in.close();
 
@@ -285,7 +287,30 @@ public:
       sys.fileMaster().setInputPrefix(filePrefix());
       sys.fileMaster().setOutputPrefix(filePrefix());
 
-      openInputFile("in/command", in);
+      openInputFile("in/planar.cmd", in);
+      sys.readCommands(in);
+      in.close();
+   }
+
+   void testReadCommandsSpherical()
+   {
+      printMethod(TEST_FUNC);
+
+      System sys;
+      std::ifstream in;
+      std::cout << "\n";
+
+      openInputFile("in/spherical2.prm", in);
+      sys.readParam(in);
+      in.close();
+
+      // Set System filemaster prefixes to unit test file prefix
+      std::cout << "Test file prefix = |" 
+                << filePrefix() << "|" << std::endl;
+      sys.fileMaster().setInputPrefix(filePrefix());
+      sys.fileMaster().setOutputPrefix(filePrefix());
+
+      openInputFile("in/spherical2.cmd", in);
       sys.readCommands(in);
       in.close();
    }
@@ -300,7 +325,8 @@ TEST_ADD(SystemTest, testSolveMdeSpherical)
 TEST_ADD(SystemTest, testIteratorPlanar)
 TEST_ADD(SystemTest, testIteratorSpherical)
 TEST_ADD(SystemTest, testFieldInput)
-TEST_ADD(SystemTest, testReadCommands)
+TEST_ADD(SystemTest, testReadCommandsPlanar)
+TEST_ADD(SystemTest, testReadCommandsSpherical)
 TEST_END(SystemTest)
 
 #endif

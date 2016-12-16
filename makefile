@@ -1,6 +1,6 @@
 include src/config.mk
 # ==========================================================================
-.PHONY: all test clean veryclean \
+.PHONY: all fd1d test clean veryclean \
         html clean-html
 
 # ==============================================================================
@@ -8,6 +8,9 @@ include src/config.mk
 
 all:
 	cd bld; $(MAKE) all
+
+fd1d:
+	cd bld; $(MAKE) fd1d
 
 # ==========================================================================
 # Test targets

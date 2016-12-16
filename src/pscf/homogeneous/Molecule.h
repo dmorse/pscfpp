@@ -112,6 +112,9 @@ namespace Pscf {
    
          /// Total size of all clumps (in units of reference size).
          double size_;
+
+         /// Flag set when computeSize is called.
+         bool hasSize_;
    
       };
    
@@ -127,7 +130,10 @@ namespace Pscf {
    * Total size of all clumps = volume / reference volume
    */
    inline double Homogeneous::Molecule::size() const
-   {  return size_; }
+   {
+      UTIL_CHECK(hasSize_);
+      return size_; 
+   }
 
    /*
    * Get a specified Clump (non-constant reference)

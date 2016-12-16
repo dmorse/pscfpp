@@ -6,6 +6,7 @@
 */
 
 #include "Domain.h"
+#include <util/math/Constants.h>
 
 namespace Pscf { 
 namespace Fd1d
@@ -15,6 +16,7 @@ namespace Fd1d
     : xMin_(0.0),
       xMax_(0.0),
       dx_(0.0),
+      volume_(0.0),
       nx_(0),
       mode_(Planar),
       isShell_(false)
@@ -38,6 +40,7 @@ namespace Fd1d
       read(in, "xMax", xMax_);
       read(in, "nx", nx_);
       dx_ = (xMax_ - xMin_)/double(nx_ - 1);
+      computeVolume();
    }
 
    void Domain::setPlanarParameters(double xMin, double xMax, int nx)
@@ -48,9 +51,11 @@ namespace Fd1d
       xMax_ = xMax;
       nx_ = nx;
       dx_ = (xMax_ - xMin_)/double(nx_ - 1);
+      computeVolume();
    }
 
-   void Domain::setShellParameters(GeometryMode mode, double xMin, double xMax, int nx)
+   void Domain::setShellParameters(GeometryMode mode, 
+                                   double xMin, double xMax, int nx)
    {
       mode_ = mode;
       isShell_ = true;
@@ -58,6 +63,7 @@ namespace Fd1d
       xMax_ = xMax;
       nx_ = nx;
       dx_ = (xMax_ - xMin_)/double(nx_ - 1);
+      computeVolume();
    }
 
    void Domain::setCylinderParameters(double xMax, int nx)
@@ -68,6 +74,7 @@ namespace Fd1d
       xMax_ = xMax;
       nx_ = nx;
       dx_ = xMax_/double(nx_ - 1);
+      computeVolume();
    }
 
    void Domain::setSphereParameters(double xMax, int nx)
@@ -78,6 +85,30 @@ namespace Fd1d
       xMax_ = xMax;
       nx_ = nx;
       dx_ = xMax_/double(nx_ - 1);
+      computeVolume();
+   }
+
+   void Domain::computeVolume()
+   {
+      if (mode_ == Planar) {
+         volume_ = xMax_ - xMin_;
+      } else 
+      if (mode_ == Cylindrical) {
+         volume_ = xMax_*xMax_;
+         if (isShell_) {
+            volume_ -= xMin_*xMin_;
+         }
+         volume_ *= Constants::Pi;
+      } else 
+      if (mode_ == Spherical) {
+         volume_ = xMax_*xMax_*xMax_;
+         if (isShell_) {
+            volume_ -= xMin_*xMin_*xMin_; 
+         }
+         volume_ *= Constants::Pi*(4.0/3.0);
+      } else {
+         UTIL_THROW("Invalid geometry mode");
+      }
    }
 
    /*

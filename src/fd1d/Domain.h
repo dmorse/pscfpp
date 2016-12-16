@@ -85,6 +85,15 @@ namespace Fd1d
       double xMax() const;
 
       /**
+      * Get generalized volume of domain.
+      *
+      * Returns volume of spherical domain, area of
+      * cylindrical domain, or a length of a planar
+      * domain.
+      */
+      double volume() const;
+
+      /**
       * Get spatial grid step size.
       */
       double dx() const;
@@ -150,6 +159,11 @@ namespace Fd1d
       double dx_;
 
       /**
+      * Generalized D-dimensional volume of simulation cell.
+      */
+      double volume_;
+
+      /**
       * Number of grid points.
       */
       int nx_;
@@ -169,6 +183,11 @@ namespace Fd1d
       */
       mutable DArray<double> work_;
 
+      /**
+      * Compute generalized volume, called by each set function.
+      */
+      void computeVolume();
+
    };
 
    // Inline member functions
@@ -184,6 +203,9 @@ namespace Fd1d
 
    inline double Domain::xMax() const
    {  return xMax_; }
+
+   inline double Domain::volume() const
+   {  return volume_; }
 
    inline GeometryMode const & Domain::mode() const
    {  return mode_; }

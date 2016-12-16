@@ -15,7 +15,8 @@ namespace Pscf{
    Homogeneous::Molecule::Molecule()
     : clumps_(),
       nClump_(0),
-      size_(0.0)
+      size_(0.0),
+      hasSize_(false)
    {  setClassName("Molecule"); }
 
    /*
@@ -63,6 +64,7 @@ namespace Pscf{
       for (int clumpId = 0; clumpId < nClump_; ++clumpId) {
          size_ += clumps_[clumpId].size();
       }
+      hasSize_ = true;
    }
  
 }

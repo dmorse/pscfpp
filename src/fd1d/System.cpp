@@ -7,6 +7,8 @@
 
 #include "System.h"
 #include "Iterator.h"
+#include "Sweep.h"
+#include "SweepFactory.h"
 #include <pscf/inter/Interaction.h>
 #include <pscf/inter/ChiInteraction.h>
 #include <pscf/homogeneous/Clump.h>
@@ -36,11 +38,23 @@ namespace Fd1d
     : mixture_(),
       domain_(),
       fileMaster_(),
+      homogeneous_(),
       interactionPtr_(0),
       iteratorPtr_(0),
+      sweepPtr_(0),
+      sweepFactoryPtr_(0),
+      wFields_(),
+      cFields_(),
+      f_(),
+      c_(),
+      p_(),
+      m_(),
+      fHelmholtz_(0.0),
+      pressure_(0.0),
       hasMixture_(0),
       hasDomain_(0),
-      hasFields_(0)
+      hasFields_(0),
+      hasSweep_(0)
    {  
       setClassName("System"); 
 
@@ -48,6 +62,7 @@ namespace Fd1d
       interactionPtr_ = new ChiInteraction(); 
       iteratorPtr_ = new NrIterator(); 
       #endif
+      sweepFactoryPtr_ = new SweepFactory();
    }
 
    /*
@@ -148,6 +163,17 @@ namespace Fd1d
       // Initialize iterator
       iterator().setSystem(*this);
       readParamComposite(in, iterator());
+
+      // Optionally instantiate a Sweep object
+      readOptional<bool>(in, "hasSweep", hasSweep_);
+      if (hasSweep_) {
+         std::string className;
+         bool isEnd;
+         sweepPtr_ = sweepFactoryPtr_->readObject(in, *this, className, isEnd);
+         if (!sweepPtr_) {
+             UTIL_THROW("Unrecognized Sweep subclass name");
+         }
+      }
    }
 
    /*
@@ -218,45 +244,55 @@ namespace Fd1d
          } else
          if (command == "READ_WFIELDS") {
             inBuffer >> filename;
-            Log::file() << Str(filename, 15) << std::endl;
+            Log::file() << "  " << Str(filename, 20) << std::endl;
             fileMaster().openInputFile(filename, inputFile);
             readWFields(inputFile);
             inputFile.close();
          } else
          if (command == "WRITE_WFIELDS") {
             inBuffer >> filename;
-            Log::file() << Str(filename, 15) << std::endl;
+            Log::file() << "  " << Str(filename, 20) << std::endl;
             fileMaster().openOutputFile(filename, outputFile);
             writeFields(outputFile, wFields_);
             outputFile.close();
          } else
          if (command == "WRITE_CFIELDS") {
             inBuffer >> filename;
-            Log::file() << Str(filename, 15) << std::endl;
+            Log::file() << "  " << Str(filename, 20) << std::endl;
             fileMaster().openOutputFile(filename, outputFile);
             writeFields(outputFile, cFields_);
             outputFile.close();
          } else
          if (command == "ITERATE") {
             Log::file() << std::endl;
+
+            Log::file() << std::endl;
             iterator().solve();
+
+            Log::file() << std::endl;
+            Log::file() << "fHelmholtz = " << fHelmholtz() << std::endl;
+            Log::file() << "pressure   = " << pressure() << std::endl;
+
+            Log::file() << std::endl;
+            Log::file() << "Polymers: " << std::endl;
+            for (int i = 0; i < mixture().nPolymer(); ++i) {
+               Log::file() << "phi[" << i << "]   = " 
+                           << mixture().polymer(i).phi()
+                           << "   mu[" << i << "] = " 
+                           << mixture().polymer(i).mu()  << std::endl;
+            }
+            Log::file() << std::endl;
+
          } else 
-         if (command == "COMPUTE_HOMOGENEOUS") {
+         if (command == "HOMOGENEOUS") {
             int mode;
             inBuffer >> mode;
+            Log::file() << std::endl;
+            Log::file() << "mode       = " << mode << std::endl;
+
             computeHomogeneous(mode);
-            #if 0
-            if (mode == 1) {
-               double fHomo = homogeneous().fHelmholtz();
-               double pHomo = homogeneous().pressure();
-               double df = fHelmholtz() - fHomo;
-               Log::file() << "f (homo) = " << fHomo << std::endl;
-               Log::file() << "p (homo) = " << fHomo << std::endl;
-               std::cout   << "Delta f    " << df    << std::endl;
-            }
-            #endif 
-         } else 
-         {
+
+         } else {
             Log::file() << "  Error: Unknown command  " << std::endl;
             readNext = false;
          }
@@ -287,9 +323,10 @@ namespace Fd1d
       double phi, mu, length;
       int np = mixture().nPolymer();
       for (int i = 0; i < np; ++i) {
-         polymerPtr = & mixture().polymer(i);
+         polymerPtr = &mixture().polymer(i);
          phi = polymerPtr->phi();
          mu = polymerPtr->mu();
+         // Recall: mu = ln(phi/q)
          length = polymerPtr->length();
          fHelmholtz_ += phi*( mu - 1.0 )/length;
       }
@@ -306,13 +343,15 @@ namespace Fd1d
       if (!f_.isAllocated()) f_.allocate(nx);
       if (!c_.isAllocated()) c_.allocate(nm);
       int j;
-      for (int i = 0; i < nx; ++i) {
+      for (int i = 0; i < nx; ++i) { 
+         // Store c_[j] = local concentration of species j
          for (j = 0; j < nm; ++j) {
             c_[j] = cFields_[j][i];
          }
+         // Compute f_[i] = excess free eenrgy at grid point i
          f_[i] = interaction().fHelmholtz(c_);
       }
-      fHelmholtz_ = + domain().spatialAverage(f_);
+      fHelmholtz_ += domain().spatialAverage(f_);
 
       // Compute pressure
       pressure_ = -fHelmholtz_;
@@ -388,8 +427,14 @@ namespace Fd1d
       int ns = 0;
       homogeneous_.setNMolecule(np+ns);
       homogeneous_.setNMonomer(nm);
-      if (!c_.isAllocated()) c_.allocate(nm);
- 
+      if (c_.isAllocated()) {
+         UTIL_CHECK(c_.capacity() == nm);
+      } else {
+         c_.allocate(nm);
+      }
+      UTIL_CHECK(homogeneous_.nMolecule() == np + ns);
+      UTIL_CHECK(homogeneous_.nMonomer() == nm);
+
       int i;   // molecule index
       int j;   // monomer index
       int k;   // block or clump index
@@ -398,11 +443,13 @@ namespace Fd1d
  
       // Loop over polymer molecule species
       for (i = 0; i < np; ++i) {
- 
-         // Count total number of monomers of each type
+
+         // Initial array of clump sizes 
          for (j = 0; j < nm; ++j) {
             c_[j] = 0.0;
          }
+
+         // Compute clump sizes for all monomer types.
          nb = mixture().polymer(i).nBlock(); 
          for (k = 0; k < nb; ++k) {
             Block& block = mixture().polymer(i).block(k);
@@ -413,19 +460,36 @@ namespace Fd1d
          // Count the number of clumps of nonzero size
          nc = 0;
          for (j = 0; j < nm; ++j) {
-            if (c_[j] > 0.0) ++nc;
+            if (c_[j] > 1.0E-8) {
+               ++nc;
+            }
          }
          homogeneous_.molecule(i).setNClump(nc);
  
          // Set clump properties for this Homogeneous::Molecule
          k = 0; // Clump index
          for (j = 0; j < nm; ++j) {
-            if (c_[j] > 0.0) {
+            if (c_[j] > 1.0E-8) {
                homogeneous_.molecule(i).clump(k).setMonomerId(j);
                homogeneous_.molecule(i).clump(k).setSize(c_[j]);
                ++k;
             }
          }
+         homogeneous_.molecule(i).computeSize();
+
+         #if 0
+         {
+            std::cout << "Molecule # " << i << std::endl;
+            nc = homogeneous_.molecule(i).nClump();
+            std::cout << "nClump = " << nc << std::endl;
+            double size;
+            for (k = 0; k < nc; ++k) {
+               j = homogeneous_.molecule(i).clump(k).monomerId();
+               size = homogeneous_.molecule(i).clump(k).size();
+               std::cout << k << "  " << j << "  " << size << "\n";
+            }
+         }
+         #endif
         
       }
 
@@ -444,26 +508,38 @@ namespace Fd1d
    {
       int np = mixture().nPolymer();
       int ns = mixture().nSolvent();
-      if (!p_.isAllocated()) p_.allocate(np+ns);
+      if (!p_.isAllocated()) {
+         p_.allocate(np+ns);
+      }
+      UTIL_CHECK(p_.capacity() == homogeneous().nMolecule());
+
       if (mode == 0) {
+
          for (int i = 0; i < np; ++i) {
-            p_[i] = mixture().polymer(i).phi(); 
+            p_[i] = mixture().polymer(i).phi();
          }
          homogeneous().setComposition(p_);
          double xi = 0.0;
          homogeneous().computeMu(interaction(), xi);
+
       } else 
       if (mode == 1 || mode == 2) {
+
+         if (!m_.isAllocated()) {
+            m_.allocate(np+ns);
+         }
+         UTIL_CHECK(m_.capacity() == homogeneous().nMolecule());
          for (int i = 0; i < np; ++i) {
             m_[i] = mixture().polymer(i).mu(); 
          }
-         int ix; // Grid index from which we obtain guess of 
+         int ix; // Grid index from which we obtain guess of composition
          if (mode == 1) {
             ix = domain().nx() - 1;
          } else 
          if (mode == 2) {
             ix = 0;
          }
+
          for (int i = 0; i < np; ++i) {
             p_[i] = 0.0;
             int nb = mixture().polymer(i).nBlock();
@@ -471,11 +547,54 @@ namespace Fd1d
                p_[i] += mixture().polymer(i).block(j).cField()[ix];
             }
          }
+
+         #if 1
+         std::cout << std::endl;
+         std::cout << "Composition at boundary " << std::endl;
+         for (int i = 0; i < np; ++i) {
+            std::cout << "phi[" << i << "] = " << p_[i] << std::endl;
+         }
+         #endif
+    
          double xi = 0.0;
          homogeneous().computePhi(interaction(), m_, p_, xi);
+
       } else {
          UTIL_THROW("Unknown mode in computeHomogeneous");
       }
+
+      // Compute Helmholtz free energy and pressure
+      homogeneous().computeFreeEnergy(interaction());
+
+      // Output free energies
+      Log::file() << std::endl;
+      if (mode == 0) {
+         double fHomo = homogeneous().fHelmholtz();
+         double df = fHelmholtz() - fHomo;
+         Log::file() << "f (homo)    = " << fHomo << std::endl;
+         std::cout   << "delta f     = " << df    << std::endl;
+      } else
+      if (mode == 1 || mode == 2) {
+         double fHomo = homogeneous().fHelmholtz();
+         double pHomo = homogeneous().pressure();
+         double dP = pressure() - pHomo;
+         double dOmega = -1.0*dP*domain().volume(); 
+         Log::file() << "f (homo)    = " << fHomo << std::endl;
+         Log::file() << "p (homo)    = " << pHomo << std::endl;
+         Log::file() << "delta Omega = " << dOmega << std::endl;
+      }
+
+      // Output polymer properties
+      Log::file() << std::endl;
+      Log::file() << "Polymers (homogeneous): " << std::endl;
+      for (int i = 0; i < homogeneous().nMolecule(); ++i) {
+         Log::file() << "phi[" << i << "]   = " 
+                     << homogeneous().phi(i) 
+                     << "   mu[" << i << "] = " 
+                     << homogeneous().mu(i)  << std::endl;
+      }
+      Log::file() << std::endl;
+
    }
 
 } // namespace Fd1d

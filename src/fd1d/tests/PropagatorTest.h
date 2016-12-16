@@ -35,6 +35,16 @@ public:
    void testPlanarSolve1()
    {
       printMethod(TEST_FUNC);
+
+      // Create and initialize Domain
+      double xMin = 0.0;
+      double xMax = 1.0;
+      int nx = 11;
+      Domain domain;
+      domain.setPlanarParameters(xMin, xMax, nx);
+      TEST_ASSERT(eq(domain.volume(), xMax - xMin));
+
+      // Create and initialize block
       Block b;
       b.setId(0);
       double length = 2.0;
@@ -43,13 +53,9 @@ public:
       b.setLength(length);
       b.setMonomerId(1);
       b.setKuhn(step);
-
-      double xMin = 0.0;
-      double xMax = 1.0;
-      int nx = 11;
-      Domain domain;
-      domain.setPlanarParameters(xMin, xMax, nx);
       b.setDiscretization(domain, ds);
+
+      // Create W field
       DArray<double> w;
       w.allocate(nx);
       double wc = 0.3;
@@ -57,6 +63,7 @@ public:
          w[i] = wc;
       }
 
+      // Solve
       b.setupSolver(w);
       b.propagator(0).solve();
 
@@ -77,6 +84,16 @@ public:
    void testPlanarSolve2()
    {
       printMethod(TEST_FUNC);
+
+      // Setup Domain
+      double xMin = 0.0;
+      double xMax = 1.0;
+      int nx = 33;
+      Domain domain;
+      domain.setPlanarParameters(xMin, xMax, nx);
+      TEST_ASSERT(eq(domain.volume(), xMax - xMin));
+
+      // Setup Block
       Block b;
       double length = 0.5;
       double ds = 0.00005;
@@ -85,12 +102,6 @@ public:
       b.setMonomerId(1);
       b.setLength(length);
       b.setKuhn(step);
-
-      double xMin = 0.0;
-      double xMax = 1.0;
-      int nx = 33;
-      Domain domain;
-      domain.setPlanarParameters(xMin, xMax, nx);
       b.setDiscretization(domain, ds);
 
       DArray<double> q, w;
@@ -124,13 +135,20 @@ public:
       std::cout << exp(-f*length) << "\n";
    }
 
-
-
-
-
    void testCylinderSolve1()
    {
       printMethod(TEST_FUNC);
+
+      // Setup Domain
+      //double xMin = 0.0;
+      double xMax = 1.0;
+      int nx = 33;
+      Domain domain;
+      domain.setCylinderParameters(xMax, nx);
+      double volume = Constants::Pi*xMax*xMax;
+      TEST_ASSERT(eq(domain.volume(), volume));
+
+      // Setup Block
       Block b;
       double length = 0.5;
       double ds = 0.00005;
@@ -139,15 +157,10 @@ public:
       b.setMonomerId(1);
       b.setLength(length);
       b.setKuhn(step);
-
-      //double xMin = 0.0;
-      double xMax = 1.0;
-      int nx = 33;
-      Domain domain;
-      domain.setCylinderParameters(xMax, nx);
       b.setDiscretization(domain, ds);
       int ns = b.ns();
 
+      // Create example W field and initial q field
       DArray<double> q, w;
       q.allocate(nx);
       w.allocate(nx);
@@ -156,7 +169,6 @@ public:
          q[i] = 1.0;
          w[i] = wc;
       }
-
       b.setupSolver(w);
       b.propagator(0).solve(q);
 
@@ -182,6 +194,17 @@ public:
    void testCylinderSolve2()
    {
       printMethod(TEST_FUNC);
+
+      // Setup Domain
+      //double xMin = 0.0;
+      double xMax = 1.0;
+      int nx = 33;
+      Domain domain;
+      domain.setCylinderParameters(xMax, nx);
+      double volume = Constants::Pi*xMax*xMax;
+      TEST_ASSERT(eq(domain.volume(), volume));
+
+      // Setup Block
       Block b;
       double length = 0.5;
       double ds = 0.00005;
@@ -190,15 +213,10 @@ public:
       b.setMonomerId(1);
       b.setLength(length);
       b.setKuhn(step);
-
-      //double xMin = 0.0;
-      double xMax = 1.0;
-      int nx = 33;
-      Domain domain;
-      domain.setCylinderParameters(xMax, nx);
       b.setDiscretization(domain, ds);
       int ns = b.ns();
 
+      // Create W and initial q fields
       DArray<double> q, w;
       q.allocate(nx);
       w.allocate(nx);
@@ -223,6 +241,17 @@ public:
    void testSphereSolve1()
    {
       printMethod(TEST_FUNC);
+
+      // Setup Domain
+      //double xMin = 0.0;
+      double xMax = 1.0;
+      int nx = 33;
+      Domain domain;
+      domain.setSphereParameters(xMax, nx);
+      double volume = 4.0*Constants::Pi*xMax*xMax*xMax/3.0;
+      TEST_ASSERT(eq(domain.volume(), volume));
+
+      // Setup Block
       Block b;
       double length = 0.5;
       double ds = 0.00005;
@@ -231,15 +260,10 @@ public:
       b.setMonomerId(1);
       b.setLength(length);
       b.setKuhn(step);
-
-      //double xMin = 0.0;
-      double xMax = 1.0;
-      int nx = 33;
-      Domain domain;
-      domain.setSphereParameters(xMax, nx);
       b.setDiscretization(domain, ds);
       int ns = b.ns();
 
+      // Setup W and Initial Q
       DArray<double> q, w;
       q.allocate(nx);
       w.allocate(nx);
@@ -274,6 +298,16 @@ public:
    void testSphereSolve2()
    {
       printMethod(TEST_FUNC);
+
+      // Setup Domain
+      //double xMin = 0.0;
+      double xMax = 1.0;
+      int nx = 33;
+      Domain domain;
+      domain.setSphereParameters(xMax, nx);
+      double volume = 4.0*Constants::Pi*xMax*xMax*xMax/3.0;
+      TEST_ASSERT(eq(domain.volume(), volume));
+
       Block b;
       double length = 0.5;
       double ds = 0.00005;
@@ -282,12 +316,6 @@ public:
       b.setMonomerId(1);
       b.setLength(length);
       b.setKuhn(step);
-
-      //double xMin = 0.0;
-      double xMax = 1.0;
-      int nx = 33;
-      Domain domain;
-      domain.setSphereParameters(xMax, nx);
       b.setDiscretization(domain, ds);
       int ns = b.ns();
 
