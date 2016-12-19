@@ -4,7 +4,7 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <fd1d/Mixture.h>
+#include <fd1d/solvers/Mixture.h>
 
 #include <fstream>
 

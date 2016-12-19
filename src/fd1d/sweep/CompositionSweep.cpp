@@ -6,10 +6,10 @@
 */
 
 #include "CompositionSweep.h"
-#include "System.h"
-#include "Mixture.h"
-#include "Domain.h"
-#include "Iterator.h"
+#include <fd1d/System.h>
+#include <fd1d/Domain.h>
+#include <fd1d/solvers/Mixture.h>
+#include <fd1d/iterator/Iterator.h>
 
 namespace Pscf {
 namespace Fd1d
@@ -29,17 +29,22 @@ namespace Fd1d
    {}
 
    /*
-   * Read composition increment.
+   * Read parameters.
    */
    void CompositionSweep::readParameters(std::istream& in)
    {
-      read<int>(in, "ns", ns_);
+      Sweep::readParameters(in);
+      // read<int>(in, "ns", ns_);
+      // read<std::string>(in, "baseFileName", baseFileName_);
+
       int np = mixture().nPolymer();
+      dPhi_.allocate(np);
+      phi0_.allocate(np);
       readDArray<double>(in, "dPhi", dPhi_, np);
    }
 
    /*
-   * Setup operation at beginning sweep.
+   * Initialization at beginning sweep.
    */
    void CompositionSweep::setup()
    {
@@ -57,44 +62,6 @@ namespace Fd1d
       int np = mixture().nPolymer();
       for (int i = 0; i < np; ++i) {
          mixture().polymer(i).setPhi(phi0_[i] + s*dPhi_[i]);
-      }
-   }
-
-   void CompositionSweep::solve()
-   {
-
-      // Solve for initial state of sweep
-      int error;
-      error = iterator().solve();
-      if (error) {
-         UTIL_THROW("Failure to converge initial state of sweep");
-      }
-
-      // Set Sweep object
-      setup();
-
-      // Loop over states on path
-      double ds = 1.0/double(ns_);
-      double ds0 = ds;
-      double s = 0.0;
-      bool finished = true;
-      while (!finished) {
-         error = 1;
-         while (error && !finished) {
-            setState(s+ds);
-            error = iterator().solve();
-            if (error) {
-               ds *= 0.50;
-               if (ds < 0.1*ds0) {
-                  UTIL_THROW("Too small step size in sweeep");
-               }
-            } else {
-               s += ds;
-            }
-         }
-         if (s >= 1.0) {
-            finished = true;
-         }
       }
    }
 

@@ -9,7 +9,7 @@
 */
 
 #include "Iterator.h"
-#include "Mixture.h"
+#include <fd1d/solvers/Mixture.h>
 #include <pscf/math/LuSolver.h>
 #include <util/containers/Array.h>
 #include <util/containers/DArray.h>

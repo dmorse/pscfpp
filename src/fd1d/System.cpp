@@ -6,18 +6,21 @@
 */
 
 #include "System.h"
-#include "Iterator.h"
-#include "Sweep.h"
-#include "SweepFactory.h"
+
+#include <fd1d/iterator/Iterator.h>
+#include <fd1d/sweep/Sweep.h>
+#include <fd1d/sweep/SweepFactory.h>
+#ifdef PSCF_GSL
+#include <fd1d/iterator/NrIterator.h>
+#endif
+
 #include <pscf/inter/Interaction.h>
 #include <pscf/inter/ChiInteraction.h>
 #include <pscf/homogeneous/Clump.h>
+
 #include <util/format/Str.h>
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
-#ifdef PSCF_GSL
-#include "NrIterator.h"
-#endif
 
 #include <ctime>
 #include <iomanip>
@@ -62,7 +65,7 @@ namespace Fd1d
       interactionPtr_ = new ChiInteraction(); 
       iteratorPtr_ = new NrIterator(); 
       #endif
-      sweepFactoryPtr_ = new SweepFactory();
+      sweepFactoryPtr_ = new SweepFactory(*this);
    }
 
    /*
@@ -173,6 +176,7 @@ namespace Fd1d
          if (!sweepPtr_) {
              UTIL_THROW("Unrecognized Sweep subclass name");
          }
+         sweepPtr_->setSystem(*this);
       }
    }
 
@@ -291,6 +295,15 @@ namespace Fd1d
             Log::file() << "mode       = " << mode << std::endl;
 
             computeHomogeneous(mode);
+
+         } else 
+         if (command == "SWEEP") {
+
+            if (!hasSweep_) {
+               UTIL_THROW("System has no Sweep object");
+            }
+            UTIL_CHECK(sweepPtr_);
+            sweepPtr_->solve();
 
          } else {
             Log::file() << "  Error: Unknown command  " << std::endl;

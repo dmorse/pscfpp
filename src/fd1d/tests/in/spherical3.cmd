@@ -1,0 +1,3 @@
+READ_WFIELDS  in/spherical2.w
+SWEEP
+FINISH

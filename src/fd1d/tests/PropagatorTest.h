@@ -5,8 +5,8 @@
 #include <test/UnitTestRunner.h>
 
 #include <fd1d/Domain.h>
-#include <fd1d/Block.h>
-#include <fd1d/Propagator.h>
+#include <fd1d/solvers/Block.h>
+#include <fd1d/solvers/Propagator.h>
 #include <util/math/Constants.h>
 
 #include <fstream>

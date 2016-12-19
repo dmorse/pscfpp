@@ -6,7 +6,7 @@
 */
 
 #include "Block.h"
-#include "Domain.h"
+#include <fd1d/Domain.h>
 
 namespace Pscf { 
 namespace Fd1d

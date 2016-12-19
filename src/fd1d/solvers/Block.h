@@ -8,9 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/solvers/BlockTmpl.h>       // base class template
 #include "Propagator.h"                   // base class argument
-#include "GeometryMode.h"                 // argument (enum)
+#include <fd1d/GeometryMode.h>            // argument (enum)
+#include <pscf/solvers/BlockTmpl.h>       // base class template
 #include <pscf/math/TridiagonalSolver.h>  // member
 
 namespace Pscf { 

@@ -1,20 +1,14 @@
-fd1d_= \
+include $(SRC_DIR)/fd1d/solvers/sources.mk
+include $(SRC_DIR)/fd1d/iterator/sources.mk
+include $(SRC_DIR)/fd1d/sweep/sources.mk
+
+fd1d_=\
+  $(fd1d_solvers_) \
+  $(fd1d_iterator_) \
+  $(fd1d_sweep_) \
   fd1d/Domain.cpp \
   fd1d/GeometryMode.cpp \
-  fd1d/Propagator.cpp \
-  fd1d/Block.cpp \
-  fd1d/Polymer.cpp \
-  fd1d/Solvent.cpp \
-  fd1d/Mixture.cpp \
-  fd1d/System.cpp \
-  fd1d/Iterator.cpp \
-  fd1d/SweepFactory.cpp \
-  fd1d/Sweep.cpp \
-  fd1d/CompositionSweep.cpp 
-
-ifdef PSCF_GSL
-fd1d_+= fd1d/NrIterator.cpp
-endif
+  fd1d/System.cpp 
 
 fd1d_SRCS=\
      $(addprefix $(SRC_DIR)/, $(fd1d_))

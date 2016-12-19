@@ -27,12 +27,23 @@ namespace Fd1d {
    public:
 
       /**
-      * Method to create any species supplied with Simpatico.
+      * Constructor.
       *
-      * \param speciesName name of the Sweep subclass
+      * \param system parent System object
+      */
+      SweepFactory(System& system);
+
+      /**
+      * Method to create any Sweep subclass.
+      *
+      * \param className name of the Sweep subclass
       * \return Sweep* pointer to new instance of speciesName
       */
-      Sweep* factory(const std::string &speciesName) const;
+      Sweep* factory(std::string const & className) const;
+
+   private:
+
+      System* systemPtr_;
 
    };
 

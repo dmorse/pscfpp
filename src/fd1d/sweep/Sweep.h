@@ -23,7 +23,7 @@ namespace Fd1d
    using namespace Util;
 
    /**
-   * Base class for classes solve along a line in parameter space.
+   * Solve a sequence of problems along a line in parameter space.
    *
    * \ingroup Pscf_Fd1d_Module
    */
@@ -34,6 +34,9 @@ namespace Fd1d
 
       /**
       * Default Constructor.
+      * 
+      * Objects instantiated with this constructor must also call
+      * the setSystem() function.
       */
       Sweep();
 
@@ -59,9 +62,16 @@ namespace Fd1d
       void setSystem(System& system);
 
       /**
+      * Read ns and baseFileName parameters.
+      *
+      * \param in input stream
+      */
+      virtual void readParameters(std::istream& in);
+
+      /**
       * Setup operation at beginning sweep.
       */
-      virtual void setup() = 0;
+      virtual void setup(){};
 
       /**
       * Set system parameters.
@@ -71,42 +81,73 @@ namespace Fd1d
       virtual void setState(double s) = 0;
 
       /**
-      * Iterate to solution.
+      * Output information after obtaining a converged solution.
       *
-      * \return error code: 0 for success, 1 for failure.
+      * \param stateFileName base name of output files
+      * \param s value of path length parameter s
       */
-      virtual void solve() = 0;
+      virtual void outputSolution(std::string const & stateFileName, double s);
+
+      /**
+      * Output data to a running summary.
+      *
+      * \param outFile  output file, open for writing
+      * \param i  integer index
+      * \param s  value of path length parameter s
+      */
+      virtual void outputSummary(std::ostream& outFile, int i, double s);
+
+      /**
+      * Iterate to solution.
+      */
+      virtual void solve();
 
    protected:
 
+      /// Get parent System by reference.
       System & system();
 
+      /// Get parent System by const reference.
       System const & system() const;
-      
+     
+      /// Get associated Mixture by reference. 
       Mixture& mixture();
 
+      /// Get associated Mixture by const reference. 
       Mixture const & mixture() const;
       
+      /// Get associated Domain by reference. 
       Domain& domain();
 
+      /// Get associated Domain by const reference. 
       Domain const & domain() const;
       
+      /// Get associated Iterator by reference. 
       Iterator& iterator();
 
+      /// Get associated Iterator by const reference. 
       Iterator const & iterator() const;
-      
+     
+   protected:
+
+      /// Number of steps. 
+      int ns_;
+
+      /// Base name for output files
+      std::string baseFileName_;
+
    private:
 
-      // Pointer to parent System object.
+      /// Pointer to parent System object.
       System* systemPtr_;
 
-      // Pointer to associated Mixture object.
+      /// Pointer to associated Mixture object.
       Mixture* mixturePtr_;
 
-      // Pointer to associated Domain object.
+      /// Pointer to associated Domain object.
       Domain* domainPtr_;
 
-      // Pointer to associated Iterator object.
+      /// Pointer to associated Iterator object.
       Iterator* iteratorPtr_;
 
    };

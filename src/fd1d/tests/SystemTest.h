@@ -5,9 +5,9 @@
 #include <test/UnitTestRunner.h>
 
 #include <fd1d/System.h>
-#include <fd1d/Mixture.h>
 #include <fd1d/Domain.h>
-#include <fd1d/Iterator.h>
+#include <fd1d/solvers/Mixture.h>
+#include <fd1d/iterator/Iterator.h>
 
 #include <fstream>
 
@@ -315,6 +315,30 @@ public:
       in.close();
    }
 
+   void testReadCommandsSphericalSweep()
+   {
+      printMethod(TEST_FUNC);
+
+      System sys;
+      std::ifstream in;
+      std::cout << "\n";
+
+      openInputFile("in/spherical3.prm", in);
+      sys.readParam(in);
+      in.close();
+      std::cout << "Finished reading param file" << std::endl;
+      sys.writeParam(std::cout);
+
+      // Set System filemaster prefixes to unit test file prefix
+      std::cout << "Test file prefix = |" 
+                << filePrefix() << "|" << std::endl;
+      sys.fileMaster().setInputPrefix(filePrefix());
+      sys.fileMaster().setOutputPrefix(filePrefix());
+
+      openInputFile("in/spherical3.cmd", in);
+      sys.readCommands(in);
+      in.close();
+   }
 };
 
 TEST_BEGIN(SystemTest)
@@ -327,6 +351,7 @@ TEST_ADD(SystemTest, testIteratorSpherical)
 TEST_ADD(SystemTest, testFieldInput)
 TEST_ADD(SystemTest, testReadCommandsPlanar)
 TEST_ADD(SystemTest, testReadCommandsSpherical)
+TEST_ADD(SystemTest, testReadCommandsSphericalSweep)
 TEST_END(SystemTest)
 
 #endif

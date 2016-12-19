@@ -8,12 +8,16 @@
 #include "SweepFactory.h"  
 
 // Subclasses of Sweep 
-// #include "CompositionSweep.h"
+#include "CompositionSweep.h"
 
 namespace Pscf {
 namespace Fd1d {
 
    using namespace Util;
+
+   SweepFactory::SweepFactory(System& system)
+    : systemPtr_(&system)
+   {}
 
    /* 
    * Return a pointer to a instance of Sweep subclass speciesName.
@@ -27,8 +31,7 @@ namespace Fd1d {
 
       // Try explicit class names
       if (className == "CompositionSweep") {
-         ptr = 0;
-         // ptr = new Sweep();
+         ptr = new CompositionSweep(*systemPtr_);
       } 
 
       return ptr;

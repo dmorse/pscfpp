@@ -6,7 +6,7 @@
 */
 
 #include "Mixture.h"
-#include "Domain.h"
+#include <fd1d/Domain.h>
 
 #include <cmath>
 

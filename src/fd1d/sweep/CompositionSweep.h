@@ -19,7 +19,7 @@ namespace Fd1d
    using namespace Util;
 
    /**
-   * Base class for classes solve along a line in parameter space.
+   * Base class for solution along a line in parameter space.
    *
    * \ingroup Pscf_Fd1d_Module
    */
@@ -29,7 +29,7 @@ namespace Fd1d
    public:
 
       /**
-      * Constructor.
+      * Default constructor.
       */
       CompositionSweep();
 
@@ -45,11 +45,13 @@ namespace Fd1d
 
       /**
       * Read parameters.
+      *
+      * \param in input stream
       */
       virtual void readParameters(std::istream& in);
 
       /**
-      * Setup operation at beginning sweep.
+      * Initialization at beginning sweep.
       */
       virtual void setup();
 
@@ -60,18 +62,11 @@ namespace Fd1d
       */
       virtual void setState(double s);
 
-      /**
-      * Iterate to solution.
-      */
-      virtual void solve();
-
    private:
 
       DArray<double> phi0_;
 
       DArray<double> dPhi_;
-
-      int ns_;
 
    };
 
