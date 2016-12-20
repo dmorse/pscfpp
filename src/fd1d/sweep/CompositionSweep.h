@@ -62,10 +62,25 @@ namespace Fd1d
       */
       virtual void setState(double s);
 
+      /**
+      * Output data to a running summary.
+      *
+      * \param out  output file, open for writing
+      * \param i  integer index
+      * \param s  value of path length parameter s
+      */
+      virtual void outputSummary(std::ostream& out, int i, double s);
+
    private:
 
+      /**
+      * Molecular volume fractions at beginning of sweep (s=0).
+      */
       DArray<double> phi0_;
 
+      /**
+      * Change in molecule volume fractions over sweep s=[0,1].
+      */
       DArray<double> dPhi_;
 
    };

@@ -98,15 +98,65 @@ namespace Fd1d
 
       /**
       * Compute free energy density and pressure for current fields.
+      *
+      * This function should be called after a successful call of
+      * iterator().solve(). Resulting values are returned by the 
+      * freeEnergy() and pressure() accessor functions.
       */
       void computeFreeEnergy();
 
       /**
-      * Compute properties of homogeneous reference system.
+      * Output thermodynamic properties to a file. 
       *
-      * \int mode mode index
+      * This function outputs Helmholtz free energy per monomer,
+      * pressure (in units of kT per monomer volume), and the
+      * volume fraction and chemical potential of each species.
+      *
+      * \param out output stream 
+      */
+      void outputThermo(std::ostream& out);
+
+      //@}
+      /// \name Homogeneous reference system
+      //@{
+
+      /**
+      * Compute properties of a homogeneous reference system.
+      *
+      * This function should be called after iterator().solve()
+      * to compute properties of a homogeneous reference system
+      * to which the properties of the system of interest can 
+      * be compared. The value of the mode parameter controls
+      * the choice of homogeneous reference system used for this
+      * comparison.
+      *
+      * Mode parameter values:
+      *
+      *    - mode = 0   : homogeneous system with same phi's
+      *    - mode = 1,2 : homogeneous system with same mu's
+      *
+      * The difference between mode indices 1 and 2 is the 
+      * initial guess used in the iterative computation of
+      * the composition of the homogeneous reference system:
+      *
+      *    - mode = 1  : composition at last grid point (nx -1)
+      *    - mode = 2  : composition at first grid point (0)
+      * 
+      * Mode indices 1 and 2 are intended to be used for 
+      * calculation of excess properties in, e.g., computation
+      * of properties of a micelle or an interface.
+      *
+      * \param mode mode index
       */
       void computeHomogeneous(int mode);
+
+      /**
+      * Output comparison to a homogeneous reference system.
+      *
+      * \param mode mode index
+      * \param out output stream 
+      */
+      void outputHomogeneous(int mode, std::ostream& out);
 
       //@}
       /// \name Fields
@@ -156,10 +206,6 @@ namespace Fd1d
       void writeFields(std::ostream& out, Array<Field> const & fields);
 
       //@}
-      /// \name Homogeneous reference system
-      //@{
-
-      //@}
       /// \name Accessors (get objects by reference)
       //@{
 
@@ -195,11 +241,17 @@ namespace Fd1d
 
       /**
       * Get precomputed Helmoltz free energy per monomer / kT.
+      *
+      * The value retrieved by this function is computed by the
+      * computeFreeEnergy() function.
       */
       double fHelmholtz() const;
 
       /**
       * Get precomputed pressure x monomer volume kT.
+      *
+      * The value retrieved by this function is computed by the
+      * computeFreeEnergy() function.
       */
       double pressure() const;
 

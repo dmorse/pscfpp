@@ -269,23 +269,10 @@ namespace Fd1d
          } else
          if (command == "ITERATE") {
             Log::file() << std::endl;
-
             Log::file() << std::endl;
+
             iterator().solve();
-
-            Log::file() << std::endl;
-            Log::file() << "fHelmholtz = " << fHelmholtz() << std::endl;
-            Log::file() << "pressure   = " << pressure() << std::endl;
-
-            Log::file() << std::endl;
-            Log::file() << "Polymers: " << std::endl;
-            for (int i = 0; i < mixture().nPolymer(); ++i) {
-               Log::file() << "phi[" << i << "]   = " 
-                           << mixture().polymer(i).phi()
-                           << "   mu[" << i << "] = " 
-                           << mixture().polymer(i).mu()  << std::endl;
-            }
-            Log::file() << std::endl;
+            outputThermo(Log::file());
 
          } else 
          if (command == "HOMOGENEOUS") {
@@ -295,6 +282,7 @@ namespace Fd1d
             Log::file() << "mode       = " << mode << std::endl;
 
             computeHomogeneous(mode);
+            outputHomogeneous(mode, Log::file());
 
          } else 
          if (command == "SWEEP") {
@@ -561,7 +549,7 @@ namespace Fd1d
             }
          }
 
-         #if 1
+         #if 0
          std::cout << std::endl;
          std::cout << "Composition at boundary " << std::endl;
          for (int i = 0; i < np; ++i) {
@@ -578,36 +566,77 @@ namespace Fd1d
 
       // Compute Helmholtz free energy and pressure
       homogeneous().computeFreeEnergy(interaction());
+   }
 
+   void System::outputHomogeneous(int mode, std::ostream& out)
+   {
       // Output free energies
-      Log::file() << std::endl;
+      out << std::endl;
       if (mode == 0) {
+
+         // Output free energies
          double fHomo = homogeneous().fHelmholtz();
          double df = fHelmholtz() - fHomo;
-         Log::file() << "f (homo)    = " << fHomo << std::endl;
-         std::cout   << "delta f     = " << df    << std::endl;
+         out << "f (homo)    = " << Dbl(fHomo, 16) << std::endl;
+         out << "delta f     = " << Dbl(df, 16)    << std::endl;
+
+         // Output polymer properties
+         out << std::endl;
+         out << "Polymers: i, mu(homo)[i], phi[i] " << std::endl;
+         for (int i = 0; i < homogeneous().nMolecule(); ++i) {
+            out << i  
+                << "  " << Dbl(homogeneous().mu(i), 16)
+                << "  " << Dbl(homogeneous().phi(i), 16) 
+                << std::endl;
+         }
+         out << std::endl;
+
       } else
       if (mode == 1 || mode == 2) {
+
+         // Output free energies
          double fHomo = homogeneous().fHelmholtz();
          double pHomo = homogeneous().pressure();
          double dP = pressure() - pHomo;
          double dOmega = -1.0*dP*domain().volume(); 
-         Log::file() << "f (homo)    = " << fHomo << std::endl;
-         Log::file() << "p (homo)    = " << pHomo << std::endl;
-         Log::file() << "delta Omega = " << dOmega << std::endl;
+         out << "f (homo)    = " << Dbl(fHomo, 16) << std::endl;
+         out << "p (homo)    = " << Dbl(pHomo, 16) << std::endl;
+         out << "delta Omega = " << Dbl(dOmega, 16) << std::endl;
+
+         // Output polymer properties
+         double dV; 
+         out << std::endl;
+         out << "Polymers: i, mu[i], phi(homo)[i], dV[i] " << std::endl;
+         for (int i = 0; i < homogeneous().nMolecule(); ++i) {
+            dV = mixture().polymer(i).phi() - homogeneous().phi(i);
+            dV *= domain().volume();
+            out << i  
+                << "  " << Dbl(homogeneous().mu(i), 16)
+                << "  " << Dbl(homogeneous().phi(i), 16) 
+                << "  " << Dbl(dV, 16)
+                << std::endl;
+         }
+         out << std::endl;
+
       }
 
-      // Output polymer properties
-      Log::file() << std::endl;
-      Log::file() << "Polymers (homogeneous): " << std::endl;
-      for (int i = 0; i < homogeneous().nMolecule(); ++i) {
-         Log::file() << "phi[" << i << "]   = " 
-                     << homogeneous().phi(i) 
-                     << "   mu[" << i << "] = " 
-                     << homogeneous().mu(i)  << std::endl;
-      }
-      Log::file() << std::endl;
+   }
 
+   void System::outputThermo(std::ostream& out)
+   {
+      out << std::endl;
+      out << "fHelmholtz = " << fHelmholtz() << std::endl;
+      out << "pressure   = " << pressure() << std::endl;
+      out << std::endl;
+
+      out << "Polymers: i, phi[i], mu[i] " << std::endl;
+      for (int i = 0; i < mixture().nPolymer(); ++i) {
+         out << i 
+                     << "  " << Dbl(mixture().polymer(i).phi(),16)
+                     << "  " << Dbl(mixture().polymer(i).mu(),16)  
+                     << std::endl;
+      }
+      out << std::endl;
    }
 
 } // namespace Fd1d

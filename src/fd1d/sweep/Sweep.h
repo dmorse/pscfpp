@@ -133,6 +133,9 @@ namespace Fd1d
       /// Number of steps. 
       int ns_;
 
+      /// Mode for comparison to homogeneous system (none -> -1)
+      int homogeneousMode_;
+
       /// Base name for output files
       std::string baseFileName_;
 

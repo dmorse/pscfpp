@@ -21,14 +21,20 @@ namespace Fd1d
    using namespace Util;
 
    Sweep::Sweep()
-    : systemPtr_(0),
+    : ns_(0),
+      homogeneousMode_(-1),
+      baseFileName_(), 
+      systemPtr_(0),
       mixturePtr_(0),
       domainPtr_(0),
       iteratorPtr_(0)
    {  setClassName("Sweep"); }
 
    Sweep::Sweep(System& system)
-    : systemPtr_(&system),
+    : ns_(0),
+      homogeneousMode_(-1),
+      baseFileName_(), 
+      systemPtr_(&system),
       mixturePtr_(&system.mixture()),
       domainPtr_(&system.domain()),
       iteratorPtr_(&system.iterator())
@@ -52,6 +58,7 @@ namespace Fd1d
    {
       read<int>(in, "ns", ns_);
       read<std::string>(in, "baseFileName", baseFileName_);
+      readOptional<int>(in, "homogeneousMode", homogeneousMode_);
    }
 
    void Sweep::solve()
@@ -74,6 +81,9 @@ namespace Fd1d
       if (error) {
          UTIL_THROW("Failure to converge initial state of sweep");
       } else { 
+         if (homogeneousMode_ >= 0) {
+            system().computeHomogeneous(homogeneousMode_);
+         }
          fileName = baseFileName_;
          fileName += ".";
          fileName += toString(i);
@@ -101,6 +111,9 @@ namespace Fd1d
                   UTIL_THROW("Step size too small in sweep");
                }
             } else {
+               if (homogeneousMode_ >= 0) {
+                  system().computeHomogeneous(homogeneousMode_);
+               }
                s += ds;
                ++i;
                fileName = baseFileName_;
@@ -110,7 +123,7 @@ namespace Fd1d
                outputSummary(outFile, i, s);
             }
          }
-         if (s + ds > 1.00001) {
+         if (s + ds > 1.0001) {
             finished = true;
          }
       }
@@ -121,11 +134,16 @@ namespace Fd1d
       std::ofstream out;
       std::string outFileName;
 
-      // Write parameter file
+      // Write parameter file, with thermodynamic properties at end
       outFileName = fileName;
       outFileName += ".prm";
       system().fileMaster().openOutputFile(outFileName, out);
       system().writeParam(out);
+      out << std::endl;
+      system().outputThermo(out);
+      if (homogeneousMode_ >= 0) {
+         system().outputHomogeneous(homogeneousMode_, out);
+      }
       out.close();
 
       // Write concentration fields
@@ -144,23 +162,29 @@ namespace Fd1d
 
    }
 
-   void Sweep::outputSummary(std::ostream& outFile, int i, double s) 
+   void Sweep::outputSummary(std::ostream& out, int i, double s) 
    {
-      outFile << Int(i,5) << Dbl(s) 
-              << Dbl(system().fHelmholtz(),16)
-              << Dbl(system().pressure(),16)
-              << std::endl;
-
-      #if 0
-      outFile << "Polymers: " << std::endl;
-      for (int i = 0; i < mixture().nPolymer(); ++i) {
-         outFile << "phi[" << i << "]   = " 
-                     << mixture().polymer(i).phi()
-                     << "   mu[" << i << "] = " 
-                     << mixture().polymer(i).mu()  << std::endl;
+      if (homogeneousMode_ == -1) {
+      out << Int(i,5) << Dbl(s) 
+          << Dbl(system().fHelmholtz(),16)
+          << Dbl(system().pressure(),16)
+          << std::endl;
+      } else {
+         out << Int(i,5) << Dbl(s) 
+             << Dbl(system().fHelmholtz(),16)
+             << Dbl(system().pressure(),16);
+         if (homogeneousMode_ == 0) {
+            double dF = system().fHelmholtz() 
+                      - system().homogeneous().fHelmholtz();
+            out << Dbl(dF, 16);
+         } else {
+            double dP = system().pressure() 
+                      - system().homogeneous().pressure();
+            double dOmega = -1.0*dP*domain().volume();
+            out << Dbl(dOmega, 16);
+         }
+         out << std::endl;
       }
-      #endif
-
    }
 
 } // namespace Fd1d

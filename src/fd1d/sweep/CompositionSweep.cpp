@@ -10,6 +10,7 @@
 #include <fd1d/Domain.h>
 #include <fd1d/solvers/Mixture.h>
 #include <fd1d/iterator/Iterator.h>
+#include <util/format/Dbl.h>
 
 namespace Pscf {
 namespace Fd1d
@@ -33,9 +34,8 @@ namespace Fd1d
    */
    void CompositionSweep::readParameters(std::istream& in)
    {
+      // Read ns, baseFileName and (optionally) homogeneousMode
       Sweep::readParameters(in);
-      // read<int>(in, "ns", ns_);
-      // read<std::string>(in, "baseFileName", baseFileName_);
 
       int np = mixture().nPolymer();
       dPhi_.allocate(np);
@@ -44,7 +44,7 @@ namespace Fd1d
    }
 
    /*
-   * Initialization at beginning sweep.
+   * Initialization at beginning sweep. Set phi0 to current composition.
    */
    void CompositionSweep::setup()
    {
@@ -59,9 +59,47 @@ namespace Fd1d
    */
    void CompositionSweep::setState(double s)
    {
+      double phi;
       int np = mixture().nPolymer();
       for (int i = 0; i < np; ++i) {
-         mixture().polymer(i).setPhi(phi0_[i] + s*dPhi_[i]);
+         phi = phi0_[i] + s*dPhi_[i];
+         mixture().polymer(i).setPhi(phi);
+      }
+   }
+
+   void CompositionSweep::outputSummary(std::ostream& out, int i, double s) 
+   {
+      int np = mixture().nPolymer();
+      if (homogeneousMode_ == -1) {
+         out << Dbl(s) 
+             << Dbl(system().fHelmholtz(), 16)
+             << Dbl(system().pressure(), 16);
+         for (i = 0; i < np - 1; ++i) {
+            out << Dbl(mixture().polymer(i).phi(), 16);
+         }
+         out << std::endl;
+      } else {
+         out << Dbl(s,10);
+         if (homogeneousMode_ == 0) {
+            double dF = system().fHelmholtz() 
+                      - system().homogeneous().fHelmholtz();
+            out << Dbl(dF, 16);
+            for (int j = 0; j < np - 1; ++j) {
+               out << Dbl(mixture().polymer(j).phi(), 16);
+            }
+         } else {
+            double dP = system().pressure() 
+                      - system().homogeneous().pressure();
+            double dOmega = -1.0*dP*domain().volume();
+            out << Dbl(dOmega, 16);
+            for (int j = 0; j < np - 1; ++j) {
+               out << Dbl(system().homogeneous().phi(j), 16);
+            }
+            for (int j = 0; j < np - 1; ++j) {
+               out << Dbl(system().homogeneous().mu(j), 16);
+            }
+         }
+         out << std::endl;
       }
    }
 
