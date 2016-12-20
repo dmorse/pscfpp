@@ -63,6 +63,12 @@ namespace Fd1d
 
    void Sweep::solve()
    {
+      // Compute and output ds
+      double ds = 1.0/double(ns_);
+      double ds0 = ds;
+      std::cout << std::endl;
+      std::cout << "ns = " << ns_ << std::endl;
+      std::cout << "ds = " << ds  << std::endl;
 
       // Set Sweep object
       setup();
@@ -77,6 +83,8 @@ namespace Fd1d
       double s = 0.0;
       int i = 0;
       int error;
+      std::cout << std::endl;
+      std::cout << "Begin s = " << s << std::endl;
       error = iterator().solve();
       if (error) {
          UTIL_THROW("Failure to converge initial state of sweep");
@@ -92,17 +100,13 @@ namespace Fd1d
       }
 
       // Loop over states on path
-      double ds = 1.0/double(ns_);
-      double ds0 = ds;
-      std::cout << "ns = " << ns_ << std::endl;
-      std::cout << "ds = " << ds  << std::endl;
       bool finished = false;
       while (!finished) {
          error = 1;
          while (error) {
 
             std::cout << std::endl;
-            std::cout << "Begin s = " << s << std::endl;
+            std::cout << "Begin s = " << s + ds << std::endl;
             setState(s+ds);
             error = iterator().solve();
             if (error) {
