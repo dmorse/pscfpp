@@ -1,7 +1,7 @@
 include config.mk
 
 # ======================================================================
-.PHONY: all clean veryclean
+.PHONY: all fd1d clean veryclean
 
 all: 
 	cd util; $(MAKE) all
