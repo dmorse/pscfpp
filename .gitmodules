@@ -1,0 +1,6 @@
+[submodule "src/util"]
+	path = src/util
+	url = https://github.com/dmorse/util
+[submodule "src/test"]
+	path = src/test
+	url = https://github.com/dmorse/test
