@@ -18,11 +18,11 @@ namespace Homogeneous {
    using namespace Util;
 
    /**
-   * Set of all monomers of the same type in a molecule.
+   * Collection of all monomers of a single type in a molecule.
    *
    * A clump has a monomer id and a size. The size of a clump is 
    * the volume occupied by all monomers of the specified type in
-   * particular molecular species, divided by a monomer reference 
+   * a particular molecular species, divided by a monomer reference 
    * volume. 
    * 
    * For a block copolymer, a clump is generally different than 

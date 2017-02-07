@@ -2,7 +2,7 @@
 #define PSCF_HOMOGENEOUS_MIXTURE_H
 
 /*
-* PSCF - Molecule Self-Consistent Field Theory
+* PSCF - Polymer Self-Consistent Field Theory
 *
 * Copyright 2016, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.

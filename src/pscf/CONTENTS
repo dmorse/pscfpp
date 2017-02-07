@@ -1,5 +1,5 @@
-This directory contains source files in namespace Pscf that can be used 
-in several different implementations of self-consistent field theory. 
+The src/pscf directory contains source files in namespace Pscf that can be 
+used in several different implementations of self-consistent field theory. 
 
 Subdirectories:
 
@@ -8,4 +8,6 @@ Subdirectories:
    solvers/     - class templates for MDE solvers for blocks, polymers, etc.
    homogeneous/ - classes that model a spatially homogeneous mixture
    math/        - mathematical utilities
-   
+
+All classes in directory homogeneous are defined in a nested namespace 
+Pscf::Homogeneous 
