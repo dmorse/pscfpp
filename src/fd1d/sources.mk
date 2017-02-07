@@ -1,13 +1,13 @@
+include $(SRC_DIR)/fd1d/domain/sources.mk
 include $(SRC_DIR)/fd1d/solvers/sources.mk
 include $(SRC_DIR)/fd1d/iterator/sources.mk
 include $(SRC_DIR)/fd1d/sweep/sources.mk
 
 fd1d_=\
+  $(fd1d_domain_) \
   $(fd1d_solvers_) \
   $(fd1d_iterator_) \
   $(fd1d_sweep_) \
-  fd1d/Domain.cpp \
-  fd1d/GeometryMode.cpp \
   fd1d/System.cpp 
 
 fd1d_SRCS=\

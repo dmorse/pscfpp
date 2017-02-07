@@ -7,7 +7,7 @@
 
 #include "Propagator.h"
 #include "Block.h"
-#include <fd1d/Domain.h>
+#include <fd1d/domain/Domain.h>
 
 namespace Pscf { 
 namespace Fd1d

@@ -7,7 +7,7 @@
 
 #include "Sweep.h"
 #include <fd1d/System.h>
-#include <fd1d/Domain.h>
+#include <fd1d/domain/Domain.h>
 #include <fd1d/solvers/Mixture.h>
 #include <fd1d/iterator/Iterator.h>
 #include <util/misc/ioUtil.h>

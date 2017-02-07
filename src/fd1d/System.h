@@ -9,7 +9,7 @@
 */
 
 #include <util/param/ParamComposite.h>     // base class
-#include "Domain.h"                        // member
+#include <fd1d/domain/Domain.h>            // member
 #include <fd1d/solvers/Mixture.h>          // member
 #include <pscf/homogeneous/Mixture.h>      // member
 #include <util/misc/FileMaster.h>          // member
