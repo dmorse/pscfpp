@@ -503,7 +503,7 @@ namespace Fd1d
    * mode == 1:  Chemical potential equal to that of system,
    *             composition guess given at last grid point.
    * mode == 2:  Chemical potential equal to that of system,
-   *             composition guess given at last grid point.
+   *             composition guess given at first grid point.
    */
    void System::computeHomogeneous(int mode)
    {
@@ -568,6 +568,12 @@ namespace Fd1d
       homogeneous().computeFreeEnergy(interaction());
    }
 
+   /*
+   * Output properties of homogeneous system and free energy difference.
+   *
+   * Mode 0:      Outputs fHomo (Helmholtz) and difference df
+   * Mode 1 or 2: Outputs Helhmoltz, pressure and dOmega
+   */
    void System::outputHomogeneous(int mode, std::ostream& out)
    {
       // Output free energies
