@@ -1,9 +1,0 @@
-#!/bin/bash -l
-#PBS -q devel
-#PBS -l walltime=0:00:20,pmem=200mb,nodes=1:ppn=2
-#PBS -o zout
-#PBS -j oe
-#PBS -N dmjob
-
-cd $PBS_O_WORKDIR
-mpirun -np 2 -hostfile $PBS_NODEFILE $HOME/molmcd/trunk/src/util/param/tests/mpi/MpiTest

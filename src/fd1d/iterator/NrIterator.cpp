@@ -71,29 +71,52 @@ namespace Fd1d
       int i;                          // grid point index
       int j;                          // monomer indices
       int ir;                         // residual index
+
+      // Loop over grid points
       for (i = 0; i < nx; ++i) {
+
+         // Copy volume fractions at grid point i to cArray_
          for (j = 0; j < nm; ++j) {
             cArray_[j] = cFields[j][i];
          }
+
+         // Compute w fields, without Langrange multiplier, from c fields
          system().interaction().computeW(cArray_, wArray_);
+
+         // Initial residual = wPredicted(from above) - actual w
          for (j = 0; j < nm; ++j) {
             ir = j*nx + i;
             residual[ir] = wArray_[j] - wFields[j][i];
          }
+
+         // Residuals j = 1, ..., nm-1 are differences from component j=0
          for (j = 1; j < nm; ++j) {
             ir = j*nx + i;
             residual[ir] = residual[ir] - residual[i];
          }
+
+         // Residual for component j=0 then imposes incompressiblity
          residual[i] = -1.0;
          for (j = 0; j < nm; ++j) {
             residual[i] += cArray_[j];
          }
       }
 
-      // Use last incompressibility residual to set last field point
+      /*
+      * Note: In canonical ensemble, the spatial integral of the incompressiblity
+      * residual is guaranteed to be zero, as a result of how volume fractions are
+      * computed in SCFT. One of the nx incompressibility constraints is thus 
+      * redundant. To avoid this redundancy, replace the incompressibility residual
+      * at the last grid point by a residual that requires the w field for the last 
+      * monomer type at the last grid point must equal zero. 
+      */
       residual[nx-1] = wFields[nm-1][nx-1];
+
    }
 
+   /*
+   * Compute Jacobian matrix numerically, by evaluating finite differences.
+   */
    void NrIterator::computeJacobian()
    {
       // std::cout << "Begin computeJacobian ... ";

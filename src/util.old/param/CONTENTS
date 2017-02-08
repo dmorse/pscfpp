@@ -1,6 +1,0 @@
-This directory contains classes that are used to handle input and output 
-of parameter values from a parameter file. See the file param.mod and the 
-documentation of Util::ParamComposite for more information. Also see the
-discussion of parameter file syntax in the html documentation, or in the
-files doc/manual/user/param.dox, doc/manual/user/param_syntax.dox and
-doc/manual/developer/param.dox.
