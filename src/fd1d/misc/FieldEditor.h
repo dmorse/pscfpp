@@ -42,10 +42,19 @@ namespace Fd1d {
       * Interpolate field onto a new mesh.
       *
       * \param field field to be remeshed
-      * \param nx    new number of grid points
-      * \param out   output stream for new field
+      * \param nx    number of grid points in new mesh
+      * \param out   output stream for remeshed field
       */
       void remesh(DArray<System::WField>& fields, int nx, std::ostream& out);
+
+      /**
+      * Add points to the end of 
+      *
+      * \param field field to be remeshed
+      * \param m     number of added grid points 
+      * \param out   output stream for remeshed field
+      */
+      void extend(DArray<System::WField>& fields, int m, std::ostream& out);
 
    private:
 

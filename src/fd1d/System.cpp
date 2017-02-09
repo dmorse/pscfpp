@@ -280,12 +280,25 @@ namespace Fd1d
             int nx;
             inBuffer >> nx;
             Log::file() << std::endl;
-            Log::file() << "nx      = " << nx << std::endl;
+            Log::file() << "nx      = " << Int(nx, 20) << std::endl;
             inBuffer >> filename;
-            Log::file() << "outfile =" << Str(filename, 20) << std::endl;
+            Log::file() << "outfile = " << Str(filename, 20) << std::endl;
             fileMaster().openOutputFile(filename, outputFile);
             FieldEditor editor(*this);
             editor.remesh(wFields(), nx, outputFile);
+            outputFile.close();
+         } else
+         if (command == "EXTEND_WFIELDS") {
+            int m;
+            inBuffer >> m;
+            Log::file() << std::endl;
+            Log::file() << "m       = " << Int(m, 20) << std::endl;
+            inBuffer >> filename;
+            Log::file() << "outfile = " << Str(filename, 20) << std::endl;
+            fileMaster().openOutputFile(filename, outputFile);
+            FieldEditor editor(*this);
+            editor.extend(wFields(), m, outputFile);
+            outputFile.close();
          } else
          if (command == "ITERATE") {
             Log::file() << std::endl;

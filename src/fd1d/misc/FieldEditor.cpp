@@ -44,7 +44,7 @@ namespace Fd1d
    {}
 
    /*
-   * Compute properties of a homogeneous reference system.
+   * Interpolate fields onto new mesh.
    */
    void 
    FieldEditor::remesh(DArray<System::WField>& fields, int nx, 
@@ -79,14 +79,6 @@ namespace Fd1d
          fu = y - double(yi);
          fl = 1.0 - fu;
 
-         #if 0
-         out << "  " << Dbl(y,10) 
-             << "  " << Int(yi,5) 
-             << "  " << Dbl(fl,10) 
-             << "  " << Dbl(fu,10) 
-             << std::endl;
-         #endif
-
          out << Int(i, 5);
          for (j = 0; j < nm; ++j) {
             w = fl*fields[j][yi] + fu*fields[j][yi+1];
@@ -102,6 +94,40 @@ namespace Fd1d
          out << "  " << Dbl(fields[j][i]);
       }
       out << std::endl;
+
+   }
+
+   /*
+   * Interpolate fields onto new mesh.
+   */
+   void 
+   FieldEditor::extend(DArray<System::WField>& fields, int m, 
+                       std::ostream& out)
+   {
+      int nm = mixture().nMonomer();
+      int nx = domain().nx();
+
+      out << "nx     "  <<  nx + m << std::endl;
+      out << "nm     "  <<  nm              << std::endl;
+      int i, j;
+
+      // Loop over existing points;
+      for (i = 0; i < nx; ++i) {
+         out << Int(i, 5);
+         for (j = 0; j < nm; ++j) {
+            out << "  " << Dbl(fields[j][i]);
+         }
+         out << std::endl;
+      }
+
+      // Add m new points
+      for (i = nx; i < nx + m; ++i) {
+         out << Int(i, 5);
+         for (j = 0; j < nm; ++j) {
+            out << "  " << Dbl(fields[j][nx-1]);
+         }
+         out << std::endl;
+      }
 
    }
 
