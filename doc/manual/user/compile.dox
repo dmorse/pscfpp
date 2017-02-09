@@ -3,40 +3,46 @@
 \ref user_usage_page (Next) 
 <BR>
 
-The C++ version of PSCF is distributed only as source code, and must be compiled by the user. All source code is written in ANSI standard C++. By default, all code follows the ANSI 1998 C++98 standard, though it is possible to compile a version that uses a few features from C+11. 
+The C++ version of PSCF is distributed only as source code, and must be compiled by the user. All source code is written in C++, and complies with the ANSI 1998 C++98 standard.  The package has been developed and tested using the gcc and intel compilers in a linux environment, and with the gcc compiler in Mac OS X.  It should compile with any modern, standard compliant C++ compiler.   
 
-The current version of PSCF, which provides only a one-dimensional finite element implementation, this code depends upon the Gnu Scientific Library (GSL). This library must be installed before compiling PSCF. When complete, the pseudo-spectral implementation of the code may also require the FFTW Fast Fourier Transform library, but this is not needed yet.
+This C++ version of PSCF is an incomplete work in progress. Currently, it only provides a one-dimensional finite element implementation for planar, cylindrical or spherically symmetric geometries. 
 
-The package has been developed and tested using the gcc and intel compilers in a linux environment, and with the gcc compiler in Mac OS X.  It should compile with any modern, standard compliant C++ compiler.   
+The only external dependence of the code is currently a dependency upon the Gnu Scientific Library (GSL). This library must thus be be installed on your computer before compiling PSCF.
 
 The build system uses unix makefiles, and is thus designed to work only in unix-like environments (i.e., gnu/linux or Mac OS X). It was developed using the gnu version of make (gmake), which is the default on all modern linux distributions and on Mac OS.
 
 \section compile_getcode_section Getting the source code
 
-The source code for PSCF is hosted on <a href=http://umn.github.com>github</a>, as project morse012/pscfpp.  The source code may be obtained either by: (1) using a git client to clone the public <a href=https://github.umn.edu/morse012/pscfpp>git repository</a>, or (2) downloading a compressed tar file.  We recommend using a git client to obtain a working copy of the source code, since this makes it easier to update the code to obtain bug fixes and new features.
+The source code for PSCF is hosted on the University of Minnesota at <a href=http://umn.github.com>github server</a>, as a private project morse012/pscfpp.  The source code may be obtained by using a git client to clone the public <a href=https://github.umn.edu/morse012/pscfpp>git repository</a>.
 
-Using Git: Before attempting to use git to clone the source code, first check whether the "git" executable is installed on your machine, by entering "> which git". If this does not return a valid path, you need install git. To obtain a read-only clone of the git repository, via the read-only "git" communication protocol, you should cd to the directory you want to contain the pscfpp root directory, and enter:
+Using Git: Before attempting to use git to clone the source code, first check whether the "git" executable is installed on your machine, by entering 
+\code
+> which git
+\endcode 
+If this does not return a valid path, it means that your computer does not recognize the "git" command, and that you thus need install git. 
 
+To obtain a read-only clone of the git repository, via the read-only "git" communication protocol, you should change directory (cd) to the directory you want to contain the pscfpp root directory, and enter:
 \code
 > git clone git://github.umn.edu/morse012/pscfpp.git
 \endcode
-This will create a working copy of the source code in a new subdirectory named "pscfpp/". User/developers that want to be able to contribute to the project or share their additions to the code with others should instead create a user account on github, create a user fork of pscfpp on their github account, and use a communication protocol that allows read-write access, such as ssh, to clone their own fork of github.
+This will create a working copy of the source code in a new subdirectory named "pscfpp/". 
 
-Getting a tarball: A compressed tar file of the source code can be obtained from the (very simple) <a href=http://morse012.github.com/pscfpp/index.html>home page</a>.  After downloading, move the compressed tar file to the directory that you want to contain the pscfpp root directory, and then enter 
-\code
-> tar -xvf filename
-\endcode
-from this directory, where "filename" denotes the name of the gzipped tar file. This will create a subdirectory with a name of the form morse012-pscfpp-ID/, where "ID" represents a hexadecimal identifier for the most recent commit in the git repository. We recommend that you immediately rename this directory "pscfpp/", which is the name it is given when you clone the repository.
+Users that want to be able to use github to manage their own changes to the code, or who would like to be able contribute their additions to the project should instead 
+<ol>
+<li> Log on to github.umn.edu (using the UMN x500 credentials), and create a user account. <\li>
+<li> Create a user fork of pscfpp on their own github account. <\li>
+<li> Create a local clone of their own fork of pscfpp using a communication protocal that allows read-write access, such as ssh or https. <\li>
+<\ol>
 
 Herefafter, we assume that the root project directory is named pscfpp/.  References to paths that do not start explicitly with a prefix "pscfpp/" should be understood to be relative paths, relative to this directory. The directory structure is explained \ref source_directory_page "here".
 
 \section compile_dependencies Installing dependencies
 
-Before attempting to compile PSCF, you should install the Gnu Scientific Library (GSL). The code will eventually also require FFTW, but this is not yet needed. It is possible to install either package either by compiling from source or (preferably) by using the appropriate packgage manager for your system.
+Before attempting to compile PSCF, you must install the Gnu Scientific Library (GSL). The code will eventually also require FFTW, but this is not yet needed. It is possible to install either package either by compiling from source or (preferably) by using the appropriate packgage manager for your system.
 
 If you are using a unix system, the most maintainable method is to use the appropriate package manager for your linux distribution (e.g., for Ubuntu or Fedora) to install the gsl library and (later) the fftw library.
 
-If you are using a OS X mac, we recommend installing the MacPort system to maintain ports of systems that were originally designed for unix, and then using this to install GSL.
+If you are using a OS X mac, we recommend installing either the Homebrew or MacPort system (but not both!) to maintain ports of systems that were originally designed for unix, and then using this to install GSL. I prefer Homebrew, but both work fine.
 
 If you would like to compile GSL or FFTW from source, go to the project web page, download the appropriate tar file and follow instructions given with the package. 
 
@@ -102,7 +108,7 @@ Hereafter, unless stated otherwise, we will assume that all programs are built o
 
 The src/ and bld/ director each contain the directory structure and the set of makefiles required to build any version of pscf. In what follows, we will refer to these three directories collectively as build directories. Each of these build directories contains a tree of subdirectories identical to that of the src/ directory. After setup (i.e., after the setup script has been run), each build directory tree also contains several makefiles and a set of build configuration files. 
 
-The build configuration files are all named "config.mk". The main build configuration file is the file named config.mk in the root directory of the build directory tree (i.e., in bld/ or src/). In addition, the util/, inter/, mcMd/ and ddMd/, and tools/ subdirectories of each build directory also each contain a configuration file named config.mk. The six config.mk files in each build directory together specify the configuration of any code compiled in that directory. Specifically, they specify which compiler will be used, what command line options will be passed to the compiler, and which optional features will be enabled or disabled in any code compiled in that directory. These files are makefile fragments that are included by the actual makefiles. Users may change the configuration before compiling either by: (1) manually editing these configuration files, or (2) by using a script named "configure" to enable or disable specific features. We recommend using the configure script (discussed in more detail \ref compile_configure_section "below") to change configuration whenever possible, but some changes require manual editing.
+The build configuration files are all named "config.mk". The main build configuration file is the file named config.mk in the root directory of the build directory tree (i.e., in bld/ or src/). In addition the top level subdirectories of each build directory each also contains a configuration file named config.mk. The config.mk files in each build directory together specify the configuration of any code compiled in that directory. Specifically, they specify which compiler will be used, what command line options will be passed to the compiler, and which optional features will be enabled or disabled in any code compiled in that build directory tree. These files are makefile fragments that are included by the actual makefiles. Users may change the configuration before compiling either by: (1) manually editing these configuration files, or (2) by using a script named "configure" to enable or disable specific features. We recommend using the configure script (discussed in more detail \ref compile_configure_section "below") to change configuration whenever possible, but some changes require manual editing.
 
 The src/ directory also contains a corresponding set of 6 files named config.mk_r. Each of these is a default version of a corresponding config.mk file. Only the config.mk_r files are stored in the git repository (the suffix _r stands for "repository"). Initial versions of the config.mk files are created in all build directories by the setup script by copying the config.mk_r files. Users may modify the config.mk files as needed, but should avoid modifying the config.mk_r default versions.
 
@@ -130,13 +136,6 @@ The -q command line option cause the script to print a list of which optional fe
 \code
 -m OFF - MPI
 -g OFF - debugging
--b ON  - bond potential
--a OFF - angle potential
--d OFF - dihedral potential
--e OFF - external potential
--l OFF - McMd links (mutable bonds)
--s OFF - McMd shift
--u OFF - DdMd modifiers
 -k ON  - automatic dependency tracking
 COMPILER:=gcc
 \endcode
