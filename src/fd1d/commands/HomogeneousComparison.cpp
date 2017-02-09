@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "HomogeneousCommand.h"
+#include "HomogeneousComparison.h"
 
 #include <pscf/inter/Interaction.h>
 #include <pscf/inter/ChiInteraction.h>
