@@ -13,10 +13,12 @@
 #ifdef PSCF_GSL
 #include <fd1d/iterator/NrIterator.h>
 #endif
+#include <fd1d/commands/HomogeneousComparison.h>
 
 #include <pscf/inter/Interaction.h>
 #include <pscf/inter/ChiInteraction.h>
 #include <pscf/homogeneous/Clump.h>
+
 
 #include <util/format/Str.h>
 #include <util/format/Int.h>
@@ -50,8 +52,6 @@ namespace Fd1d
       cFields_(),
       f_(),
       c_(),
-      p_(),
-      m_(),
       fHelmholtz_(0.0),
       pressure_(0.0),
       hasMixture_(0),
@@ -154,6 +154,13 @@ namespace Fd1d
       readParamComposite(in, mixture());
       hasMixture_ = true;
 
+      // Initialize homogeneous object
+      int nm = mixture().nMonomer(); 
+      int np = mixture().nPolymer(); 
+      //int ns = mixture().nSolvent(); 
+      int ns = 0;
+      homogeneous_.setNMolecule(np+ns);
+      homogeneous_.setNMonomer(nm);
       initHomogeneous();
 
       interaction().setNMonomer(mixture().nMonomer());
@@ -172,9 +179,10 @@ namespace Fd1d
       if (hasSweep_) {
          std::string className;
          bool isEnd;
-         sweepPtr_ = sweepFactoryPtr_->readObject(in, *this, className, isEnd);
+         sweepPtr_ = 
+            sweepFactoryPtr_->readObject(in, *this, className, isEnd);
          if (!sweepPtr_) {
-             UTIL_THROW("Unrecognized Sweep subclass name");
+            UTIL_THROW("Unrecognized Sweep subclass name");
          }
          sweepPtr_->setSystem(*this);
       }
@@ -275,14 +283,15 @@ namespace Fd1d
             outputThermo(Log::file());
 
          } else 
-         if (command == "HOMOGENEOUS") {
+         if (command == "COMPARE_HOMOGENEOUS") {
             int mode;
             inBuffer >> mode;
             Log::file() << std::endl;
             Log::file() << "mode       = " << mode << std::endl;
 
-            computeHomogeneous(mode);
-            outputHomogeneous(mode, Log::file());
+            HomogeneousComparison comparison(*this);
+            comparison.compute(mode);
+            comparison.output(mode, Log::file());
 
          } else 
          if (command == "SWEEP") {
@@ -426,15 +435,15 @@ namespace Fd1d
       int np = mixture().nPolymer(); 
       //int ns = mixture().nSolvent(); 
       int ns = 0;
-      homogeneous_.setNMolecule(np+ns);
-      homogeneous_.setNMonomer(nm);
+      UTIL_CHECK(homogeneous_.nMolecule() == np + ns);
+      UTIL_CHECK(homogeneous_.nMonomer() == nm);
+
+      // Allocate work array, if necessary
       if (c_.isAllocated()) {
          UTIL_CHECK(c_.capacity() == nm);
       } else {
          c_.allocate(nm);
       }
-      UTIL_CHECK(homogeneous_.nMolecule() == np + ns);
-      UTIL_CHECK(homogeneous_.nMonomer() == nm);
 
       int i;   // molecule index
       int j;   // monomer index
@@ -492,138 +501,6 @@ namespace Fd1d
          }
          #endif
         
-      }
-
-   }
-
-   /*
-   * Compute properties of a homogeneous reference system.
-   *
-   * mode == 0 : Composition equals spatial average composition
-   * mode == 1:  Chemical potential equal to that of system,
-   *             composition guess given at last grid point.
-   * mode == 2:  Chemical potential equal to that of system,
-   *             composition guess given at first grid point.
-   */
-   void System::computeHomogeneous(int mode)
-   {
-      int np = mixture().nPolymer();
-      int ns = mixture().nSolvent();
-      if (!p_.isAllocated()) {
-         p_.allocate(np+ns);
-      }
-      UTIL_CHECK(p_.capacity() == homogeneous().nMolecule());
-
-      if (mode == 0) {
-
-         for (int i = 0; i < np; ++i) {
-            p_[i] = mixture().polymer(i).phi();
-         }
-         homogeneous().setComposition(p_);
-         double xi = 0.0;
-         homogeneous().computeMu(interaction(), xi);
-
-      } else 
-      if (mode == 1 || mode == 2) {
-
-         if (!m_.isAllocated()) {
-            m_.allocate(np+ns);
-         }
-         UTIL_CHECK(m_.capacity() == homogeneous().nMolecule());
-         for (int i = 0; i < np; ++i) {
-            m_[i] = mixture().polymer(i).mu(); 
-         }
-         int ix; // Grid index from which we obtain guess of composition
-         if (mode == 1) {
-            ix = domain().nx() - 1;
-         } else 
-         if (mode == 2) {
-            ix = 0;
-         }
-
-         for (int i = 0; i < np; ++i) {
-            p_[i] = 0.0;
-            int nb = mixture().polymer(i).nBlock();
-            for (int j = 0; j < nb; ++j) {
-               p_[i] += mixture().polymer(i).block(j).cField()[ix];
-            }
-         }
-
-         #if 0
-         std::cout << std::endl;
-         std::cout << "Composition at boundary " << std::endl;
-         for (int i = 0; i < np; ++i) {
-            std::cout << "phi[" << i << "] = " << p_[i] << std::endl;
-         }
-         #endif
-    
-         double xi = 0.0;
-         homogeneous().computePhi(interaction(), m_, p_, xi);
-
-      } else {
-         UTIL_THROW("Unknown mode in computeHomogeneous");
-      }
-
-      // Compute Helmholtz free energy and pressure
-      homogeneous().computeFreeEnergy(interaction());
-   }
-
-   /*
-   * Output properties of homogeneous system and free energy difference.
-   *
-   * Mode 0:      Outputs fHomo (Helmholtz) and difference df
-   * Mode 1 or 2: Outputs Helhmoltz, pressure and dOmega
-   */
-   void System::outputHomogeneous(int mode, std::ostream& out)
-   {
-      // Output free energies
-      out << std::endl;
-      if (mode == 0) {
-
-         // Output free energies
-         double fHomo = homogeneous().fHelmholtz();
-         double df = fHelmholtz() - fHomo;
-         out << "f (homo)    = " << Dbl(fHomo, 16) << std::endl;
-         out << "delta f     = " << Dbl(df, 16)    << std::endl;
-
-         // Output polymer properties
-         out << std::endl;
-         out << "Polymers: i, mu(homo)[i], phi[i] " << std::endl;
-         for (int i = 0; i < homogeneous().nMolecule(); ++i) {
-            out << i  
-                << "  " << Dbl(homogeneous().mu(i), 16)
-                << "  " << Dbl(homogeneous().phi(i), 16) 
-                << std::endl;
-         }
-         out << std::endl;
-
-      } else
-      if (mode == 1 || mode == 2) {
-
-         // Output free energies
-         double fHomo = homogeneous().fHelmholtz();
-         double pHomo = homogeneous().pressure();
-         double dP = pressure() - pHomo;
-         double dOmega = -1.0*dP*domain().volume(); 
-         out << "f (homo)    = " << Dbl(fHomo, 16) << std::endl;
-         out << "p (homo)    = " << Dbl(pHomo, 16) << std::endl;
-         out << "delta Omega = " << Dbl(dOmega, 16) << std::endl;
-
-         // Output polymer properties
-         double dV; 
-         out << std::endl;
-         out << "Polymers: i, mu[i], phi(homo)[i], dV[i] " << std::endl;
-         for (int i = 0; i < homogeneous().nMolecule(); ++i) {
-            dV = mixture().polymer(i).phi() - homogeneous().phi(i);
-            dV *= domain().volume();
-            out << i  
-                << "  " << Dbl(homogeneous().mu(i), 16)
-                << "  " << Dbl(homogeneous().phi(i), 16) 
-                << "  " << Dbl(dV, 16)
-                << std::endl;
-         }
-         out << std::endl;
-
       }
 
    }

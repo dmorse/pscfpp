@@ -24,6 +24,7 @@ namespace Fd1d
     : ns_(0),
       homogeneousMode_(-1),
       baseFileName_(), 
+      comparison_(),
       systemPtr_(0),
       mixturePtr_(0),
       domainPtr_(0),
@@ -34,6 +35,7 @@ namespace Fd1d
     : ns_(0),
       homogeneousMode_(-1),
       baseFileName_(), 
+      comparison_(system),
       systemPtr_(&system),
       mixturePtr_(&system.mixture()),
       domainPtr_(&system.domain()),
@@ -49,6 +51,7 @@ namespace Fd1d
       mixturePtr_ = &(system.mixture());
       domainPtr_ = &(system.domain());
       iteratorPtr_ = &(system.iterator());
+      comparison_.setSystem(system);
    }
 
    /*
@@ -90,7 +93,7 @@ namespace Fd1d
          UTIL_THROW("Failure to converge initial state of sweep");
       } else { 
          if (homogeneousMode_ >= 0) {
-            system().computeHomogeneous(homogeneousMode_);
+            comparison_.compute(homogeneousMode_);
          }
          fileName = baseFileName_;
          fileName += ".";
@@ -116,7 +119,7 @@ namespace Fd1d
                }
             } else {
                if (homogeneousMode_ >= 0) {
-                  system().computeHomogeneous(homogeneousMode_);
+                  comparison_.compute(homogeneousMode_);
                }
                s += ds;
                ++i;
@@ -146,7 +149,7 @@ namespace Fd1d
       out << std::endl;
       system().outputThermo(out);
       if (homogeneousMode_ >= 0) {
-         system().outputHomogeneous(homogeneousMode_, out);
+         comparison_.output(homogeneousMode_, out);
       }
       out.close();
 

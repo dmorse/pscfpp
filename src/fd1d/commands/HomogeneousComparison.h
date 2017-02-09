@@ -24,6 +24,11 @@ namespace Fd1d {
    public:
 
       /**
+      * Default constructor.
+      */
+      HomogeneousComparison();
+
+      /**
       * Constructor.
       */
       HomogeneousComparison(System& system);

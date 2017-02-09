@@ -13,10 +13,17 @@ namespace Fd1d {
    using namespace Util;
 
    /*
+   * Default constructor.
+   */
+   SystemAccess::SystemAccess()
+    : systemPtr_(0)
+   {}
+
+   /*
    * Constructor.
    */
    SystemAccess::SystemAccess(System& system)
-    : system_(system)
+    : systemPtr_(&system)
    {}
 
    /**
@@ -24,6 +31,12 @@ namespace Fd1d {
    */
    SystemAccess::~SystemAccess()
    {}
+
+   /*
+   * Set the system pointer.
+   */
+   void SystemAccess::setSystem(System& system)
+   {  systemPtr_ = &system; }
 
 } // namespace Fd1d
 } // namespace Pscf

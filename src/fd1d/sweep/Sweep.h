@@ -8,7 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/param/ParamComposite.h>    // base class
+#include <util/param/ParamComposite.h>            // base class
+#include <fd1d/commands/HomogeneousComparison.h>  // member
+
 #include <util/global.h>                  
 
 namespace Pscf {
@@ -140,6 +142,9 @@ namespace Fd1d
       std::string baseFileName_;
 
    private:
+
+      /// Algorithm for comparing to a homogeneous system
+      HomogeneousComparison comparison_;
 
       /// Pointer to parent System object.
       System* systemPtr_;

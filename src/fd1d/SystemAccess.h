@@ -25,14 +25,10 @@ namespace Fd1d {
 
    public:
 
-      /// Base class for WField and CField
-      typedef DArray<double> Field;
-
-      /// Monomer chemical potential field type.
-      typedef Propagator::WField WField;
-
-      /// Monomer concentration / volume fraction field type.
-      typedef Propagator::CField CField;
+      /**
+      * Default constructor.
+      */
+      SystemAccess();
 
       /**
       * Constructor.
@@ -43,6 +39,11 @@ namespace Fd1d {
       * Destructor.
       */
       ~SystemAccess();
+
+      /**
+      * Set the system after construction.
+      */
+      void setSystem(System& system);
 
       /// \name Accessors (get objects by reference)
       //@{
@@ -116,7 +117,7 @@ namespace Fd1d {
       /**
       * Mixture object (solves MDE for all species).
       */ 
-      System& system_;
+      System* systemPtr_;
 
    };
 
@@ -126,65 +127,95 @@ namespace Fd1d {
    * Get the parent System object.
    */
    inline System& SystemAccess::system()
-   { return system_; }
+   { 
+      UTIL_ASSERT(systemPtr_);
+      return *systemPtr_; 
+   }
 
    /*
    * Get the associated Mixture object.
    */
    inline Mixture& SystemAccess::mixture()
-   { return system_.mixture(); }
+   { 
+      UTIL_ASSERT(systemPtr_);
+      return systemPtr_->mixture(); 
+   }
 
    /*
    * Get the spatial Domain.
    */
    inline Domain& SystemAccess::domain()
-   { return system_.domain(); }
+   {  
+      UTIL_ASSERT(systemPtr_);
+      return systemPtr_->domain(); 
+   }
 
    /*
    * Get the FileMaster.
    */
    inline FileMaster& SystemAccess::fileMaster()
-   {  return system_.fileMaster(); }
+   {  
+      UTIL_ASSERT(systemPtr_);
+      return systemPtr_->fileMaster(); 
+   }
 
    /*
    * Get the Homogeneous::Mixture object.
    */
    inline 
    Homogeneous::Mixture& SystemAccess::homogeneous()
-   {  return system_.homogeneous(); }
+   {  
+      UTIL_ASSERT(systemPtr_);
+      return systemPtr_->homogeneous(); 
+   }
 
    /*
    * Get the Interaction (excess free energy model).
    */
    inline Interaction& SystemAccess::interaction()
-   {  return system_.interaction(); }
+   {  
+      UTIL_ASSERT(systemPtr_);
+      return systemPtr_->interaction(); 
+   }
 
    /*
    * Get an array of all monomer excess chemical potential fields.
    */
    inline 
    DArray< System::WField >& SystemAccess::wFields()
-   {  return system_.wFields(); }
+   {  
+      UTIL_ASSERT(systemPtr_);
+      return systemPtr_->wFields(); 
+   }
 
    /*
    * Get a single monomer excess chemical potential field.
    */
    inline 
    System::WField& SystemAccess::wField(int id)
-   {  return system_.wField(id); }
+   {  
+      UTIL_ASSERT(systemPtr_);
+      return systemPtr_->wField(id); 
+   }
 
    /*
    * Get array of all monomer concentration fields.
    */
    inline
    DArray< System::CField >& SystemAccess::cFields()
-   {  return system_.cFields(); }
+   {  
+      UTIL_ASSERT(systemPtr_);
+      return systemPtr_->cFields(); 
+   }
 
    /*
    * Get a single monomer concentration field.
    */
    inline System::CField& SystemAccess::cField(int id)
-   {  return system_.cField(id); }
+   {  
+      UTIL_ASSERT(systemPtr_);
+      return systemPtr_->cField(id); 
+   }
 
 } // namespace Fd1d
 } // namespace Pscf

@@ -28,6 +28,13 @@ namespace Fd1d
    using namespace Util;
 
    /*
+   * Default constructor.
+   */
+   HomogeneousComparison::HomogeneousComparison()
+    : SystemAccess()
+   {}
+
+   /*
    * Constructor.
    */
    HomogeneousComparison::HomogeneousComparison(System& system)
