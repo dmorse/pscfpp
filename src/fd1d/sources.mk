@@ -2,14 +2,14 @@ include $(SRC_DIR)/fd1d/domain/sources.mk
 include $(SRC_DIR)/fd1d/solvers/sources.mk
 include $(SRC_DIR)/fd1d/iterator/sources.mk
 include $(SRC_DIR)/fd1d/sweep/sources.mk
-include $(SRC_DIR)/fd1d/commands/sources.mk
+include $(SRC_DIR)/fd1d/misc/sources.mk
 
 fd1d_=\
   $(fd1d_domain_) \
   $(fd1d_solvers_) \
   $(fd1d_iterator_) \
   $(fd1d_sweep_) \
-  $(fd1d_commands_) \
+  $(fd1d_misc_) \
   fd1d/System.cpp \
   fd1d/SystemAccess.cpp 
 

@@ -19,10 +19,10 @@ include $(SRC_DIR)/fd1d/sources.mk
 #-----------------------------------------------------------------------
 # Main targets 
 
-all: $(fd1d_commands_OBJS) 
+all: $(fd1d_misc_OBJS) 
 
 clean:
-	rm -f $(fd1d_commands_OBJS) $(fd1d_commands_OBJS:.o=.d)
+	rm -f $(fd1d_misc_OBJS) $(fd1d_misc_OBJS:.o=.d)
 
 veryclean:
 	$(MAKE) clean

@@ -13,8 +13,8 @@
 #ifdef PSCF_GSL
 #include <fd1d/iterator/NrIterator.h>
 #endif
-#include <fd1d/commands/HomogeneousComparison.h>
-#include <fd1d/commands/FieldEditor.h>
+#include <fd1d/misc/HomogeneousComparison.h>
+#include <fd1d/misc/FieldEditor.h>
 
 #include <pscf/inter/Interaction.h>
 #include <pscf/inter/ChiInteraction.h>

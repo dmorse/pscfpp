@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/param/ParamComposite.h>            // base class
-#include <fd1d/commands/HomogeneousComparison.h>  // member
+#include <util/param/ParamComposite.h>        // base class
+#include <fd1d/misc/HomogeneousComparison.h>  // member
 
 #include <util/global.h>                  
 
