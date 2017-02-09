@@ -14,6 +14,7 @@
 #include <fd1d/iterator/NrIterator.h>
 #endif
 #include <fd1d/commands/HomogeneousComparison.h>
+#include <fd1d/commands/FieldEditor.h>
 
 #include <pscf/inter/Interaction.h>
 #include <pscf/inter/ChiInteraction.h>
@@ -274,6 +275,17 @@ namespace Fd1d
             fileMaster().openOutputFile(filename, outputFile);
             writeFields(outputFile, cFields_);
             outputFile.close();
+         } else
+         if (command == "REMESH_WFIELDS") {
+            int nx;
+            inBuffer >> nx;
+            Log::file() << std::endl;
+            Log::file() << "nx      = " << nx << std::endl;
+            inBuffer >> filename;
+            Log::file() << "outfile =" << Str(filename, 20) << std::endl;
+            fileMaster().openOutputFile(filename, outputFile);
+            FieldEditor editor(*this);
+            editor.remesh(wFields(), nx, outputFile);
          } else
          if (command == "ITERATE") {
             Log::file() << std::endl;
