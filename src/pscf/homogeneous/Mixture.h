@@ -228,6 +228,11 @@ namespace Homogeneous {
       DMatrix<double> jacobian_;
 
       /**
+      * Array of old molecular volume fractions, for use in computePhi.
+      */
+      DArray<double> phiOld_;
+
+      /**
       * Free energy per monomer / kT.
       */
       double fHelmholtz_;

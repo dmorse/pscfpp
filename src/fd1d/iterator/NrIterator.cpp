@@ -289,7 +289,7 @@ namespace Fd1d
 
          // Decrease increment if necessary
          j = 0;
-         while (normNew > norm && j < 5) {
+         while (normNew > norm && j < 3) {
             std::cout << "      decreasing increment,  norm = " 
                       << normNew << std::endl;
             needsJacobian = true;
@@ -302,7 +302,21 @@ namespace Fd1d
             normNew = residualNorm(residualNew_);
             ++j;
          }
- 
+
+         // If necessary, try reversing direction
+         if (normNew > norm) {
+            std::cout << "      decreasing increment,  norm = " 
+                      << normNew << std::endl;
+            needsJacobian = true;
+            for (k = 0; k < nr; ++k) {
+               dOmega_[k] *= -1.000;
+            }
+            incrementWFields(system().wFields(), dOmega_, wFieldsNew_);
+            mixture().compute(wFieldsNew_, cFieldsNew_);
+            computeResidual(wFieldsNew_, cFieldsNew_, residualNew_);
+            normNew = residualNorm(residualNew_);
+         }
+
          // Accept or reject update
          if (normNew < norm) {
             for (j = 0; j < nm; ++j) {

@@ -30,6 +30,7 @@ namespace Homogeneous {
       dWdC_(),
       dWdPhi_(),
       jacobian_(),
+      phiOld_(),
       fHelmholtz_(0.0),
       pressure_(0.0),
       solverPtr_(0),
@@ -188,6 +189,7 @@ namespace Homogeneous {
          dWdC_.allocate(nMonomer_, nMonomer_);
          dWdPhi_.allocate(nMonomer_, nMolecule_);
          jacobian_.allocate(nMolecule_, nMolecule_);
+         phiOld_.allocate(nMolecule_);
          solverPtr_ = new LuSolver();
          solverPtr_->allocate(nMolecule_);
       }
@@ -275,17 +277,46 @@ namespace Homogeneous {
          // Newton Raphson update of phi and xi fields
          solverPtr_->computeLU(jacobian_);
          solverPtr_->solve(residual_, dX_);
-         double sum = 0.0;
-         for (m1 = 0; m1 < nMolecule_ - 1; ++m1) {
-            phi_[m1] = phi_[m1] - dX_[m1];
-            UTIL_CHECK(phi_[m1] >= 0.0);
-            UTIL_CHECK(phi_[m1] <= 1.0);
-            sum += phi_[m1];
+
+         // Store old value of phi
+         for (m1 = 0; m1 < nMolecule_; ++m1) {
+            phiOld_[m1] = phi_[m1];
          }
-         phi_[mLast] = 1.0 - sum;
-         UTIL_CHECK(phi_[mLast] >= 0.0);
-         UTIL_CHECK(phi_[mLast] <= 1.0);
-         xi = xi - dX_[mLast];
+
+         // Apply update
+         bool inRange = false;
+         for (int j = 0; j < 5; ++j) {
+
+            // Update volume fractions
+            double sum = 0.0;
+            for (m1 = 0; m1 < nMolecule_ - 1; ++m1) {
+               phi_[m1] = phiOld_[m1] - dX_[m1];
+               sum += phi_[m1];
+            }
+            phi_[mLast] = 1.0 - sum;
+
+            // Check if all volume fractions are in [0,1]
+            inRange = true;
+            for (m1 = 0; m1 < nMolecule_; ++m1) {
+               if (phi_[m1] < 0.0) inRange = false;
+               if (phi_[m1] > 1.0) inRange = false;
+            }
+
+            // Exit loop or reduce increment
+            if (inRange) {
+               break;
+            } else {
+               for (m1 = 0; m1 < nMolecule_; ++m1) {
+                  dX_[m1] *= 0.5;
+               }
+            }
+
+         }
+         if (inRange) {
+            xi = xi - dX_[mLast];
+         } else {
+            UTIL_THROW("Volume fractions remain out of range");
+         }
 
          // Compute residual
          computeC();
@@ -346,12 +377,7 @@ namespace Homogeneous {
       double size;
       for (int i = 0; i < nMolecule_; ++i) {
          size = molecules_[i].size();
-         fHelmholtz_ += phi_[i]*( mu_[i] - 1.0 )/size;
-      }
-
-      // Apply Legendre transform subtraction
-      for (int i = 0; i < nMonomer_; ++i) {
-         fHelmholtz_ -= w_[i]*c_[i];
+         fHelmholtz_ += phi_[i]*( log(phi_[i]) - 1.0 )/size;
       }
 
       // Add average interaction free energy density per monomer
