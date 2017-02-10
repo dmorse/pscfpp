@@ -9,13 +9,13 @@ System{
         nVertex 3
         blocks  0  0  0  1  0.125
                 1  1  1  2  0.875
-        phi     0.125
+        phi     0.024777
      }
      Polymer{
         nBlock  1
         nVertex 2
         blocks  0  1  0  1  1.000
-        phi     0.875
+        phi     0.975223
      }
      ds   0.005
   }
@@ -27,8 +27,8 @@ System{
   Domain{
      mode      Spherical
      isShell           0
-     xMax          2.700 
-     nx              201
+     xMax           4.00
+     nx              401
   }
   NrIterator{
      epsilon   0.0000001
