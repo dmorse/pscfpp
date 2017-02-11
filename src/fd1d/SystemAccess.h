@@ -69,6 +69,11 @@ namespace Fd1d {
       Interaction& interaction();
 
       /**
+      * Get Iterator object by reference.
+      */
+      Iterator& iterator();
+
+      /**
       * Get homogeneous mixture (for reference calculations).
       */
       Homogeneous::Mixture& homogeneous();
@@ -151,6 +156,24 @@ namespace Fd1d {
    }
 
    /*
+   * Get the Interaction (excess free energy model).
+   */
+   inline Interaction& SystemAccess::interaction()
+   {  
+      UTIL_ASSERT(systemPtr_);
+      return systemPtr_->interaction(); 
+   }
+
+   /*
+   * Get the Iterator.
+   */
+   inline Iterator& SystemAccess::iterator()
+   {  
+      UTIL_ASSERT(systemPtr_);
+      return systemPtr_->iterator(); 
+   }
+
+   /*
    * Get the FileMaster.
    */
    inline FileMaster& SystemAccess::fileMaster()
@@ -167,15 +190,6 @@ namespace Fd1d {
    {  
       UTIL_ASSERT(systemPtr_);
       return systemPtr_->homogeneous(); 
-   }
-
-   /*
-   * Get the Interaction (excess free energy model).
-   */
-   inline Interaction& SystemAccess::interaction()
-   {  
-      UTIL_ASSERT(systemPtr_);
-      return systemPtr_->interaction(); 
    }
 
    /*

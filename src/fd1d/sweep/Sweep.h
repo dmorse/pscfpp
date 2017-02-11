@@ -9,18 +9,14 @@
 */
 
 #include <util/param/ParamComposite.h>        // base class
+#include <fd1d/SystemAccess.h>                // base class
 #include <fd1d/misc/HomogeneousComparison.h>  // member
 
-#include <util/global.h>                  
+#include <util/global.h>
 
 namespace Pscf {
 namespace Fd1d
 {
-
-   class Mixture;
-   class Domain;
-   class System;
-   class Iterator;
 
    using namespace Util;
 
@@ -29,7 +25,7 @@ namespace Fd1d
    *
    * \ingroup Pscf_Fd1d_Module
    */
-   class Sweep : public ParamComposite
+   class Sweep : public ParamComposite, public SystemAccess
    {
 
    public:
@@ -53,15 +49,6 @@ namespace Fd1d
       * Destructor.
       */
       ~Sweep();
-
-      /**
-      * Create association with the parent System.
-      *
-      * Use iff instantiated with default constructor.
-      * 
-      * \param system parent System object.
-      */
-      void setSystem(System& system);
 
       /**
       * Read ns and baseFileName parameters.
@@ -106,32 +93,6 @@ namespace Fd1d
 
    protected:
 
-      /// Get parent System by reference.
-      System & system();
-
-      /// Get parent System by const reference.
-      System const & system() const;
-     
-      /// Get associated Mixture by reference. 
-      Mixture& mixture();
-
-      /// Get associated Mixture by const reference. 
-      Mixture const & mixture() const;
-      
-      /// Get associated Domain by reference. 
-      Domain& domain();
-
-      /// Get associated Domain by const reference. 
-      Domain const & domain() const;
-      
-      /// Get associated Iterator by reference. 
-      Iterator& iterator();
-
-      /// Get associated Iterator by const reference. 
-      Iterator const & iterator() const;
-     
-   protected:
-
       /// Number of steps. 
       int ns_;
 
@@ -146,75 +107,7 @@ namespace Fd1d
       /// Algorithm for comparing to a homogeneous system
       HomogeneousComparison comparison_;
 
-      /// Pointer to parent System object.
-      System* systemPtr_;
-
-      /// Pointer to associated Mixture object.
-      Mixture* mixturePtr_;
-
-      /// Pointer to associated Domain object.
-      Domain* domainPtr_;
-
-      /// Pointer to associated Iterator object.
-      Iterator* iteratorPtr_;
-
    };
-
-   inline
-   System& Sweep::system()
-   {
-      UTIL_ASSERT(systemPtr_);
-      return *systemPtr_;
-   }
-
-   inline
-   System const & Sweep::system() const
-   {
-      UTIL_ASSERT(systemPtr_);
-      return *systemPtr_;
-   }
-
-   inline
-   Mixture& Sweep::mixture()
-   {
-      UTIL_ASSERT(mixturePtr_);
-      return *mixturePtr_;
-   }
-
-   inline
-   Mixture const & Sweep::mixture() const
-   {
-      UTIL_ASSERT(mixturePtr_);
-      return *mixturePtr_;
-   }
-
-   inline
-   Domain& Sweep::domain()
-   {
-      UTIL_ASSERT(domainPtr_);
-      return *domainPtr_;
-   }
-
-   inline
-   Domain const & Sweep::domain() const
-   {
-      UTIL_ASSERT(domainPtr_);
-      return *domainPtr_;
-   }
-
-   inline
-   Iterator& Sweep::iterator()
-   {
-      UTIL_ASSERT(iteratorPtr_);
-      return *iteratorPtr_;
-   }
-
-   inline
-   Iterator const & Sweep::iterator() const
-   {
-      UTIL_ASSERT(iteratorPtr_);
-      return *iteratorPtr_;
-   }
 
 } // namespace Fd1d
 } // namespace Pscf

@@ -21,38 +21,23 @@ namespace Fd1d
    using namespace Util;
 
    Sweep::Sweep()
-    : ns_(0),
+    : SystemAccess(),
+      ns_(0),
       homogeneousMode_(-1),
       baseFileName_(), 
-      comparison_(),
-      systemPtr_(0),
-      mixturePtr_(0),
-      domainPtr_(0),
-      iteratorPtr_(0)
+      comparison_()
    {  setClassName("Sweep"); }
 
    Sweep::Sweep(System& system)
-    : ns_(0),
+    : SystemAccess(system),
+      ns_(0),
       homogeneousMode_(-1),
       baseFileName_(), 
-      comparison_(system),
-      systemPtr_(&system),
-      mixturePtr_(&system.mixture()),
-      domainPtr_(&system.domain()),
-      iteratorPtr_(&system.iterator())
+      comparison_(system)
    {  setClassName("Sweep"); }
 
    Sweep::~Sweep()
    {}
-
-   void Sweep::setSystem(System& system)
-   {
-      systemPtr_  = &system;
-      mixturePtr_ = &(system.mixture());
-      domainPtr_ = &(system.domain());
-      iteratorPtr_ = &(system.iterator());
-      comparison_.setSystem(system);
-   }
 
    /*
    * Read parameters.
@@ -80,7 +65,7 @@ namespace Fd1d
       // Open summary file
       std::ofstream outFile;
       std::string fileName = baseFileName_;
-      fileName += ".out";
+      fileName += "log";
       system().fileMaster().openOutputFile(fileName, outFile);
 
       // Solve for initial state of sweep
@@ -97,7 +82,6 @@ namespace Fd1d
             comparison_.compute(homogeneousMode_);
          }
          fileName = baseFileName_;
-         fileName += ".";
          fileName += toString(i);
          outputSolution(fileName, s);
          outputSummary(outFile, i, s);
@@ -125,7 +109,6 @@ namespace Fd1d
                s += ds;
                ++i;
                fileName = baseFileName_;
-               fileName += ".";
                fileName += toString(i);
                outputSolution(fileName, s);
                outputSummary(outFile, i, s);
