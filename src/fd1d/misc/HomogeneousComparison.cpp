@@ -203,7 +203,7 @@ namespace Fd1d
    * Output properties of homogeneous system and free energy difference.
    *
    * Mode 0:      Outputs fHomo (Helmholtz) and difference df
-   * Mode 1 or 2: Outputs Helhmoltz, pressure and dOmega
+   * Mode 1 or 2: Outputs Helhmoltz, pressure and difference dp
    */
    void HomogeneousComparison::output(int mode, std::ostream& out)
    {
@@ -214,16 +214,16 @@ namespace Fd1d
          // Output free energies
          double fHomo = homogeneous().fHelmholtz();
          double df = system().fHelmholtz() - fHomo;
-         out << "f (homo)    = " << Dbl(fHomo, 16) << std::endl;
-         out << "delta f     = " << Dbl(df, 16)    << std::endl;
+         out << "f (homo)    = " << Dbl(fHomo, 18, 11) << std::endl;
+         out << "delta f     = " << Dbl(df, 18, 11)    << std::endl;
 
          // Output polymer properties
          out << std::endl;
          out << "Polymers: i, mu(homo)[i], phi[i] " << std::endl;
          for (int i = 0; i < homogeneous().nMolecule(); ++i) {
             out << i  
-                << "  " << Dbl(homogeneous().mu(i), 16)
-                << "  " << Dbl(homogeneous().phi(i), 16) 
+                << "  " << Dbl(homogeneous().mu(i), 18, 11)
+                << "  " << Dbl(homogeneous().phi(i), 18, 11) 
                 << std::endl;
          }
          out << std::endl;
@@ -234,23 +234,33 @@ namespace Fd1d
          // Output free energies
          double fHomo = homogeneous().fHelmholtz();
          double pHomo = homogeneous().pressure();
-         double dP = system().pressure() - pHomo;
-         double dOmega = -1.0*dP*domain().volume(); 
-         out << "f (homo)    = " << Dbl(fHomo, 16) << std::endl;
-         out << "p (homo)    = " << Dbl(pHomo, 16) << std::endl;
-         out << "delta Omega = " << Dbl(dOmega, 16) << std::endl;
+         double pEx   = system().pressure() - pHomo;
+         double fEx   = system().fHelmholtz() - fHomo;
+         double PExV  = -1.0*pEx*domain().volume(); 
+         double FExV  = fEx*domain().volume(); 
+         out << "f (homo)   = " << Dbl(fHomo, 18, 11) << std::endl;
+         out << "p (homo)   = " << Dbl(pHomo, 18, 11) << std::endl;
+         out << "f (ex)     = " << Dbl(fEx, 18, 11)   << std::endl;
+         out << "p (homo)   = " << Dbl(pEx, 18, 11)   << std::endl;
+         out << "-p(ex)*V   = " << Dbl(PExV, 18, 11)  << std::endl;
+         out << "f(ex)*V    = " << Dbl(FExV, 18, 11)  << std::endl;
 
          // Output polymer properties
          double dV; 
          out << std::endl;
-         out << "Polymers: i, mu[i], phi(homo)[i], dV[i] " << std::endl;
+         out << "Polymers:" << std::endl;
+         out << "    i"
+             << "      mu[i]         "
+             << "      phi(homo)[i]  "
+             << "      dV[i]         " 
+             << std::endl;
          for (int i = 0; i < homogeneous().nMolecule(); ++i) {
             dV = mixture().polymer(i).phi() - homogeneous().phi(i);
             dV *= domain().volume();
-            out << i  
-                << "  " << Dbl(homogeneous().mu(i), 16)
-                << "  " << Dbl(homogeneous().phi(i), 16) 
-                << "  " << Dbl(dV, 16)
+            out << Int(i,5)
+                << "  " << Dbl(homogeneous().mu(i), 18, 11)
+                << "  " << Dbl(homogeneous().phi(i), 18, 11) 
+                << "  " << Dbl(dV, 18, 11)
                 << std::endl;
          }
          out << std::endl;

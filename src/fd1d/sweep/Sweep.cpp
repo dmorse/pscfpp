@@ -61,6 +61,7 @@ namespace Fd1d
    {
       read<int>(in, "ns", ns_);
       read<std::string>(in, "baseFileName", baseFileName_);
+      homogeneousMode_ = -1; // default value
       readOptional<int>(in, "homogeneousMode", homogeneousMode_);
    }
 

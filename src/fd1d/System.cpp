@@ -533,16 +533,20 @@ namespace Fd1d
    void System::outputThermo(std::ostream& out)
    {
       out << std::endl;
-      out << "fHelmholtz = " << fHelmholtz() << std::endl;
-      out << "pressure   = " << pressure() << std::endl;
+      out << "fHelmholtz = " << Dbl(fHelmholtz(), 18, 11) << std::endl;
+      out << "pressure   = " << Dbl(pressure(), 18, 11) << std::endl;
       out << std::endl;
 
-      out << "Polymers: i, phi[i], mu[i] " << std::endl;
+      out << "Polymers:" << std::endl;
+      out << "    i"
+          << "        phi[i]      "
+          << "        mu[i]       " 
+          << std::endl;
       for (int i = 0; i < mixture().nPolymer(); ++i) {
-         out << i 
-                     << "  " << Dbl(mixture().polymer(i).phi(),16)
-                     << "  " << Dbl(mixture().polymer(i).mu(),16)  
-                     << std::endl;
+         out << Int(i, 5) 
+             << "  " << Dbl(mixture().polymer(i).phi(),18, 11)
+             << "  " << Dbl(mixture().polymer(i).mu(), 18, 11)  
+             << std::endl;
       }
       out << std::endl;
    }

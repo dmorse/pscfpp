@@ -10,6 +10,7 @@
 #include <fd1d/domain/Domain.h>
 #include <fd1d/solvers/Mixture.h>
 #include <fd1d/iterator/Iterator.h>
+#include <util/format/Int.h>
 #include <util/format/Dbl.h>
 
 namespace Pscf {
@@ -72,10 +73,10 @@ namespace Fd1d
       int np = mixture().nPolymer();
       if (homogeneousMode_ == -1) {
          out << Dbl(s) 
-             << Dbl(system().fHelmholtz(), 16)
-             << Dbl(system().pressure(), 16);
+             << Dbl(system().fHelmholtz(), 20, 10)
+             << Dbl(system().pressure(), 20, 10);
          for (i = 0; i < np - 1; ++i) {
-            out << Dbl(mixture().polymer(i).phi(), 16);
+            out << Dbl(mixture().polymer(i).phi(), 20, 10);
          }
          out << std::endl;
       } else {
@@ -83,20 +84,29 @@ namespace Fd1d
          if (homogeneousMode_ == 0) {
             double dF = system().fHelmholtz() 
                       - system().homogeneous().fHelmholtz();
-            out << Dbl(dF, 16);
-            for (int j = 0; j < np - 1; ++j) {
-               out << Dbl(mixture().polymer(j).phi(), 16);
+            out << Dbl(dF, 20, 10);
+            for (int i = 0; i < np - 1; ++i) {
+               out << Dbl(mixture().polymer(i).phi(), 16);
             }
          } else {
-            double dP = system().pressure() 
-                      - system().homogeneous().pressure();
-            double dOmega = -1.0*dP*domain().volume();
-            out << Dbl(dOmega, 16);
-            for (int j = 0; j < np - 1; ++j) {
-               out << Dbl(system().homogeneous().phi(j), 16);
+            double fEx = system().fHelmholtz() 
+                       - system().homogeneous().fHelmholtz();
+            double pEx = system().pressure() 
+                       - system().homogeneous().pressure();
+            double V = domain().volume();
+            double fExV = fEx*V;
+            double pExV = pEx*V;
+            out << Dbl(fExV, 20, 10);
+            out << Dbl(pExV, 20, 10);
+            for (int i = 0; i < np; ++i) {
+               out << Dbl(system().mixture().polymer(i).mu(), 16);
             }
-            for (int j = 0; j < np - 1; ++j) {
-               out << Dbl(system().homogeneous().mu(j), 16);
+            double dV;
+            for (int i = 0; i < np - 1; ++i) {
+               dV = system().mixture().polymer(i).phi()
+                  - system().homogeneous().phi(i);
+               dV *= V;
+               out << Dbl(dV, 16);
             }
          }
          out << std::endl;
