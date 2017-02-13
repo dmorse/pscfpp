@@ -11,6 +11,7 @@
 #include <util/param/ParamComposite.h>        // base class
 #include <fd1d/SystemAccess.h>                // base class
 #include <fd1d/misc/HomogeneousComparison.h>  // member
+#include <util/containers/DArray.h>           // member
 
 #include <util/global.h>
 
@@ -106,6 +107,15 @@ namespace Fd1d
 
       /// Algorithm for comparing to a homogeneous system
       HomogeneousComparison comparison_;
+
+      /// Current solution 
+      DArray<System::WField> wFields0_;
+
+      /// Previous solution (for 1st order continuation)
+      DArray<System::WField> wFields1_;
+
+      void assignFields(DArray<System::WField>& lhs, 
+                        DArray<System::WField> const & rhs) const;
 
    };
 

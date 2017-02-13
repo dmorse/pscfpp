@@ -24,7 +24,7 @@ namespace Fd1d
     : SystemAccess(),
       ns_(0),
       homogeneousMode_(-1),
-      baseFileName_(), 
+      baseFileName_(),
       comparison_()
    {  setClassName("Sweep"); }
 
@@ -32,7 +32,7 @@ namespace Fd1d
     : SystemAccess(system),
       ns_(0),
       homogeneousMode_(-1),
-      baseFileName_(), 
+      baseFileName_(),
       comparison_(system)
    {  setClassName("Sweep"); }
 
@@ -52,6 +52,26 @@ namespace Fd1d
 
    void Sweep::solve()
    {
+
+      int nm = mixture().nMonomer();
+      int nx = domain().nx();
+      UTIL_CHECK(nm > 0);
+      UTIL_CHECK(nx > 0);
+
+      // Allocate memory for solutions
+      if (!wFields0_.isAllocated()) {
+         wFields0_.allocate(nm);
+         for (int i = 0; i < nm; ++i) {
+            wFields0_[i].allocate(nx);
+         }
+      }
+      if (!wFields1_.isAllocated()) {
+         wFields1_.allocate(nm);
+         for (int i = 0; i < nm; ++i) {
+            wFields1_[i].allocate(nx);
+         }
+      }
+
       // Compute and output ds
       double ds = 1.0/double(ns_);
       double ds0 = ds;
@@ -66,7 +86,7 @@ namespace Fd1d
       std::ofstream outFile;
       std::string fileName = baseFileName_;
       fileName += "log";
-      system().fileMaster().openOutputFile(fileName, outFile);
+      fileMaster().openOutputFile(fileName, outFile);
 
       // Solve for initial state of sweep
       double s = 0.0;
@@ -74,10 +94,12 @@ namespace Fd1d
       int error;
       std::cout << std::endl;
       std::cout << "Begin s = " << s << std::endl;
-      error = iterator().solve();
+      bool isContinuation = false; // False on first step
+      error = system().iterator().solve(isContinuation);
       if (error) {
          UTIL_THROW("Failure to converge initial state of sweep");
-      } else { 
+      } else {
+         assignFields(wFields0_, wFields());
          if (homogeneousMode_ >= 0) {
             comparison_.compute(homogeneousMode_);
          }
@@ -88,39 +110,80 @@ namespace Fd1d
       }
 
       // Loop over states on path
-      bool finished = false;
+      bool finished = false;   // Are we finished with the loop?
+      int  nPrev = 0;          // Number of previous solutions stored
+      double s1 = 0.0;         // Value of s at previous solution (if any)
       while (!finished) {
          error = 1;
          while (error) {
 
             std::cout << std::endl;
-            std::cout << "Begin s = " << s + ds << std::endl;
+            std::cout << "Attempt s = " << s + ds << std::endl;
+
+            // Setup guess for fields
+            if (nPrev == 0) {
+               std::cout << "Zeroth order continuation" << std::endl;
+            } else {
+               std::cout << "1st order continuation" << std::endl;
+               double f1 = ds/(s - s1);
+               double f0 = 1.0 + f1;
+               // std::cout << " ds = " << ds << std::endl;
+               // std::cout << "  s = " << s  << ", s1 = " << s1 << std::endl;
+               // std::cout << " f1 = " << f1 << ", f0 = " << f0 << std::endl;
+               int i, j;
+               for (i = 0; i < nm; ++i) {
+                  for (j = 0; j < nx; ++j) {
+                     wFields()[i][j] = f0*wFields0_[i][j] - f1*wFields1_[i][j];
+                  }
+               }
+            }
+
+            // Attempt solution
             setState(s+ds);
-            error = iterator().solve();
+            isContinuation = true;
+            error = system().iterator().solve(isContinuation);
+
             if (error) {
+
+               // Upon failure, reset to fields from last converged solution
+               assignFields(wFields(), wFields0_);
+
+               // Decrease ds by half
                ds *= 0.50;
-               if (ds < 0.1*ds0) {
+               if (ds < 0.2*ds0) {
                   UTIL_THROW("Step size too small in sweep");
                }
+
             } else {
+
+               // Upon success, save new field
+               s1 = s;
+               nPrev = 1;
+               assignFields(wFields1_, wFields0_);
+               assignFields(wFields0_, wFields());
+
+               // Compare to homogeneous reference system
                if (homogeneousMode_ >= 0) {
                   comparison_.compute(homogeneousMode_);
                }
+
+               // Update s and output
                s += ds;
                ++i;
                fileName = baseFileName_;
                fileName += toString(i);
                outputSolution(fileName, s);
                outputSummary(outFile, i, s);
+
             }
          }
-         if (s + ds > 1.0001) {
+         if (s + ds > 1.0000001) {
             finished = true;
          }
       }
    }
 
-   void Sweep::outputSolution(std::string const & fileName, double s) 
+   void Sweep::outputSolution(std::string const & fileName, double s)
    {
       std::ofstream out;
       std::string outFileName;
@@ -128,7 +191,7 @@ namespace Fd1d
       // Write parameter file, with thermodynamic properties at end
       outFileName = fileName;
       outFileName += ".prm";
-      system().fileMaster().openOutputFile(outFileName, out);
+      fileMaster().openOutputFile(outFileName, out);
       system().writeParam(out);
       out << std::endl;
       system().outputThermo(out);
@@ -140,41 +203,62 @@ namespace Fd1d
       // Write concentration fields
       outFileName = fileName;
       outFileName += ".c";
-      system().fileMaster().openOutputFile(outFileName, out);
-      system().writeFields(out, system().cFields());
+      fileMaster().openOutputFile(outFileName, out);
+      system().writeFields(out, cFields());
       out.close();
-      
+
       // Write chemical potential fields
       outFileName = fileName;
       outFileName += ".w";
-      system().fileMaster().openOutputFile(outFileName, out);
-      system().writeFields(out, system().wFields());
+      fileMaster().openOutputFile(outFileName, out);
+      system().writeFields(out, wFields());
       out.close();
 
    }
 
-   void Sweep::outputSummary(std::ostream& out, int i, double s) 
+   void Sweep::outputSummary(std::ostream& out, int i, double s)
    {
       if (homogeneousMode_ == -1) {
-      out << Int(i,5) << Dbl(s) 
+      out << Int(i,5) << Dbl(s)
           << Dbl(system().fHelmholtz(),16)
           << Dbl(system().pressure(),16)
           << std::endl;
       } else {
-         out << Int(i,5) << Dbl(s) 
+         out << Int(i,5) << Dbl(s)
              << Dbl(system().fHelmholtz(),16)
              << Dbl(system().pressure(),16);
          if (homogeneousMode_ == 0) {
-            double dF = system().fHelmholtz() 
+            double dF = system().fHelmholtz()
                       - system().homogeneous().fHelmholtz();
             out << Dbl(dF, 16);
          } else {
-            double dP = system().pressure() 
+            double dP = system().pressure()
                       - system().homogeneous().pressure();
             double dOmega = -1.0*dP*domain().volume();
             out << Dbl(dOmega, 16);
          }
          out << std::endl;
+      }
+   }
+
+   void Sweep::assignFields(DArray<System::Field>& lhs,
+                            DArray<System::Field> const & rhs) const
+   {
+
+      int nm = mixture().nMonomer();
+      int nx = domain().nx();
+
+      UTIL_CHECK(lhs.capacity() == nm);
+      UTIL_CHECK(rhs.capacity() == nm);
+      int i, j;
+      for (i = 0; i < nm; ++i) {
+         UTIL_CHECK(rhs[i].isAllocated());
+         UTIL_CHECK(rhs[i].capacity() == nx);
+         UTIL_CHECK(lhs[i].isAllocated());
+         UTIL_CHECK(lhs[i].capacity() == nx);
+         for (j = 0; j < nx; ++j) {
+            lhs[i][j] = rhs[i][j];
+         }
       }
    }
 

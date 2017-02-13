@@ -61,9 +61,10 @@ namespace Fd1d
       /**
       * Iterate self-consistent field equations to solution.
       * 
+      * \param isContinuation True if part of sweep, and not first step.
       * \return error code: 0 for success, 1 for failure.
       */
-      int solve();
+      int solve(bool isContinuation = false);
 
       /**
       * Get error tolerance.
@@ -127,6 +128,12 @@ namespace Fd1d
 
       /// Have arrays been allocated?
       bool isAllocated_;
+
+      /// Has the Jacobian been calculated at current state?
+      bool newJacobian_;
+
+      /// Does the Jacobian need to be re-calculated ?
+      bool needsJacobian_;
 
       /**
       * Allocate memory if needed. If isAllocated, check array sizes.

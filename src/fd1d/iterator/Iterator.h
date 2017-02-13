@@ -51,9 +51,10 @@ namespace Fd1d
       /**
       * Iterate to solution.
       *
+      * \param isContinuation true iff part of sweep, and not first step.
       * \return error code: 0 for success, 1 for failure.
       */
-      virtual int solve() = 0;
+      virtual int solve(bool isContinuation = false) = 0;
 
    protected:
 

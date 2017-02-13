@@ -51,7 +51,17 @@ namespace Fd1d {
       /**
       * Get parent System by reference.
       */
+      const System& system() const;
+
+      /**
+      * Get parent System by reference.
+      */
       System& system();
+
+      /**
+      * Get Mixture by reference.
+      */
+      const Mixture& mixture() const;
 
       /**
       * Get Mixture by reference.
@@ -61,17 +71,39 @@ namespace Fd1d {
       /**
       * Get spatial domain (including grid info) by reference.
       */
+      const Domain& domain() const;
+
+      /**
+      * Get spatial domain (including grid info) by reference.
+      */
       Domain& domain();
+
+      /**
+      * Get interaction (i.e., excess free energy model) by reference.
+      */
+      const Interaction& interaction() const;
 
       /**
       * Get interaction (i.e., excess free energy model) by reference.
       */
       Interaction& interaction();
 
+      #if 0
+      /**
+      * Get Iterator object by reference.
+      */
+      const Iterator& iterator() const;
+
       /**
       * Get Iterator object by reference.
       */
       Iterator& iterator();
+      #endif
+
+      /**
+      * Get homogeneous mixture (for reference calculations).
+      */
+      const Homogeneous::Mixture& homogeneous() const;
 
       /**
       * Get homogeneous mixture (for reference calculations).
@@ -131,10 +163,28 @@ namespace Fd1d {
    /*
    * Get the parent System object.
    */
+   inline const System& SystemAccess::system() const
+   { 
+      UTIL_ASSERT(systemPtr_);
+      return *systemPtr_; 
+   }
+
+   /*
+   * Get the parent System object.
+   */
    inline System& SystemAccess::system()
    { 
       UTIL_ASSERT(systemPtr_);
       return *systemPtr_; 
+   }
+
+   /*
+   * Get the associated Mixture object.
+   */
+   inline const Mixture& SystemAccess::mixture() const
+   { 
+      UTIL_ASSERT(systemPtr_);
+      return systemPtr_->mixture(); 
    }
 
    /*
@@ -149,10 +199,28 @@ namespace Fd1d {
    /*
    * Get the spatial Domain.
    */
+   inline const Domain& SystemAccess::domain() const
+   {  
+      UTIL_ASSERT(systemPtr_);
+      return systemPtr_->domain(); 
+   }
+
+   /*
+   * Get the spatial Domain.
+   */
    inline Domain& SystemAccess::domain()
    {  
       UTIL_ASSERT(systemPtr_);
       return systemPtr_->domain(); 
+   }
+
+   /*
+   * Get the Interaction (excess free energy model).
+   */
+   inline const Interaction& SystemAccess::interaction() const
+   {  
+      UTIL_ASSERT(systemPtr_);
+      return systemPtr_->interaction(); 
    }
 
    /*
@@ -164,6 +232,16 @@ namespace Fd1d {
       return systemPtr_->interaction(); 
    }
 
+   #if 0
+   /*
+   * Get the Iterator.
+   */
+   inline const Iterator& SystemAccess::iterator() const
+   {  
+      UTIL_ASSERT(systemPtr_);
+      return systemPtr_->iterator(); 
+   }
+
    /*
    * Get the Iterator.
    */
@@ -172,6 +250,7 @@ namespace Fd1d {
       UTIL_ASSERT(systemPtr_);
       return systemPtr_->iterator(); 
    }
+   #endif
 
    /*
    * Get the FileMaster.

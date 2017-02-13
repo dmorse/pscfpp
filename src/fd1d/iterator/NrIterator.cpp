@@ -20,7 +20,9 @@ namespace Fd1d
    NrIterator::NrIterator()
     : Iterator(),
       epsilon_(0.0),
-      isAllocated_(false)
+      isAllocated_(false),
+      newJacobian_(false),
+      needsJacobian_(true)
    {  setClassName("NrIterator"); }
 
    NrIterator::~NrIterator()
@@ -159,39 +161,6 @@ namespace Fd1d
       // std::cout << "Finish computeJacobian" << std::endl;
    }
 
-   #if 0
-   void NrIterator::update()
-   {
-      // std::cout << "Begin update .. ";
-      computeJacobian();
-
-      // Compute increment dOmega_
-      solver_.solve(residual_, dOmega_);
-
-      // Increment wFields;
-      incrementWFields(system().wFields(), dOmega_);
-
-      #if 0
-      int nm = mixture().nMonomer();   // number of monomers types
-      int nx = domain().nx();          // number of grid points
-      int i;                           // monomer index
-      int j;                           // grid point index
-      int k = 0;                       // residual element index
-      for (i = 0; i < nm; ++i) {
-         for (j = 0; j < nx; ++j) {
-            system().wField(i)[j] -= dOmega_[k];
-            ++k;
-         }
-      }
-      #endif
-
-      mixture().compute(system().wFields(), system().cFields());
-      computeResidual(system().wFields(), system().cFields(), residual_);
-
-      //std::cout << "Finish update" << std::endl;
-   }
-   #endif
-
    void NrIterator::incrementWFields(Array<WField> const & wOld, 
                                      Array<double> const & dW, 
                                      Array<WField> & wNew)
@@ -201,10 +170,20 @@ namespace Fd1d
       int i;                         // monomer index
       int j;                         // grid point index
       int k = 0;                     // residual element index
+
+      // Add dW
       for (i = 0; i < nm; ++i) {
          for (j = 0; j < nx; ++j) {
             wNew[i][j] = wOld[i][j] - dW[k];
             ++k;
+         }
+      }
+
+      // Shift such that last element is exactly zero
+      double shift = wNew[nm-1][nx-1];
+      for (i = 0; i < nm; ++i) {
+         for (j = 0; j < nx; ++j) {
+            wNew[i][j] -= shift;
          }
       }
    }
@@ -225,8 +204,12 @@ namespace Fd1d
       return norm;
    }
 
-   int NrIterator::solve()
+   int NrIterator::solve(bool isContinuation)
    {
+      int nm = mixture().nMonomer();  // number of monomer types
+      int nx = domain().nx();         // number of grid points
+      int nr = nm*nx;                 // number of residual elements
+
       // Allocate memory if needed or, if allocated, check array sizes.
       allocate();
 
@@ -234,48 +217,33 @@ namespace Fd1d
       mixture().compute(system().wFields(), system().cFields());
       computeResidual(system().wFields(), system().cFields(), residual_);
       double norm = residualNorm(residual_);
-      double normNew;
 
-      int nm = mixture().nMonomer();  // number of monomer types
-      int nx = domain().nx();         // number of grid points
-      int nr = nm*nx;                 // number of residual elements
-      int i, j, k;
-      bool hasJacobian = false;
-      bool needsJacobian = true;
+      // Set Jacobian status
+      newJacobian_ = false;
+      if (!isContinuation) {
+         needsJacobian_ = true;
+      }
 
       // Iterative loop
+      double normNew;
+      int i, j, k;
       for (i = 0; i < 100; ++i) {
          std::cout << "iteration " << i
                    << " , error = " << norm
                    << std::endl;
 
-         #if 0
-         std::cout << "\n";
-         for (j = 0; j < nx; ++j) {
-             for (k = 0; k < nm; ++k) {
-                std::cout << system().wField(k)[j] << "  ";
-             }
-             for (k = 0; k < nm; ++k) {
-                std::cout << system().cField(k)[j] << "  ";
-             }
-             for (k = 0; k < nm; ++k) {
-                std::cout << residual_[k*nx + j] << "  ";
-             }
-             std::cout << "\n";
-         }
-         #endif
-
          if (norm < epsilon_) {
             std::cout << "Converged" << std::endl;
             system().computeFreeEnergy();
+            // Success
             return 0;
          } 
 
-         if (needsJacobian) {
-            std::cout << "computing jacobian" << std::endl;;
+         if (needsJacobian_) {
+            std::cout << "Computing jacobian" << std::endl;;
             computeJacobian();
-            hasJacobian = true;
-            needsJacobian = false;
+            newJacobian_ = true;
+            needsJacobian_ = false;
          }
 
          // Compute Newton-Raphson increment dOmega_
@@ -290,9 +258,9 @@ namespace Fd1d
          // Decrease increment if necessary
          j = 0;
          while (normNew > norm && j < 3) {
-            std::cout << "      decreasing increment,  norm = " 
+            std::cout << "      decreasing increment,  error = " 
                       << normNew << std::endl;
-            needsJacobian = true;
+            needsJacobian_ = true;
             for (k = 0; k < nr; ++k) {
                dOmega_[k] *= 0.66666666;
             }
@@ -305,9 +273,9 @@ namespace Fd1d
 
          // If necessary, try reversing direction
          if (normNew > norm) {
-            std::cout << "      decreasing increment,  norm = " 
+            std::cout << "      reversing increment,  norm = " 
                       << normNew << std::endl;
-            needsJacobian = true;
+            needsJacobian_ = true;
             for (k = 0; k < nr; ++k) {
                dOmega_[k] *= -1.000;
             }
@@ -319,31 +287,33 @@ namespace Fd1d
 
          // Accept or reject update
          if (normNew < norm) {
+
+            // Update system fields and residual vector
             for (j = 0; j < nm; ++j) {
                for (k = 0; k < nx; ++k) {
                   system().wField(j)[k] = wFieldsNew_[j][k];
                   system().cField(j)[k] = cFieldsNew_[j][k];
                }
             }
-            hasJacobian = false;
-            if (normNew/norm < 0.25) {
-               needsJacobian = false;
-            } else {
-               needsJacobian = true;
-            }
             for (j = 0; j < nr; ++j) {
                residual_[j] = residualNew_[j];
+            }
+            newJacobian_ = false;
+            if (!needsJacobian_) {
+               if (normNew/norm > 0.5) {
+                  needsJacobian_ = true;
+               }
             }
             norm = normNew;
          } else {
             std::cout << "Iteration failed, norm = " 
                       << normNew << std::endl;
-            if (hasJacobian) {
+            if (newJacobian_) {
                return 1;
                std::cout << "Unrecoverable failure " << std::endl;
             } else {
                std::cout << "Try rebuilding Jacobian" << std::endl;
-               needsJacobian = true;
+               needsJacobian_ = true;
             }
          }
 

@@ -99,11 +99,11 @@ namespace Fd1d
             out << Dbl(fExV, 20, 10);
             out << Dbl(pExV, 20, 10);
             for (int i = 0; i < np; ++i) {
-               out << Dbl(system().mixture().polymer(i).mu(), 16);
+               out << Dbl(mixture().polymer(i).mu(), 16);
             }
             double dV;
             for (int i = 0; i < np - 1; ++i) {
-               dV = system().mixture().polymer(i).phi()
+               dV = mixture().polymer(i).phi()
                   - system().homogeneous().phi(i);
                dV *= V;
                out << Dbl(dV, 16);
