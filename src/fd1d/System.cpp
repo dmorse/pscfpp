@@ -64,7 +64,7 @@ namespace Fd1d
 
       #ifdef PSCF_GSL
       interactionPtr_ = new ChiInteraction(); 
-      iteratorPtr_ = new NrIterator(); 
+      iteratorPtr_ = new NrIterator(*this); 
       #endif
       sweepFactoryPtr_ = new SweepFactory(*this);
    }
@@ -172,7 +172,6 @@ namespace Fd1d
       allocateFields();
 
       // Initialize iterator
-      iterator().setSystem(*this);
       readParamComposite(in, iterator());
 
       // Optionally instantiate a Sweep object

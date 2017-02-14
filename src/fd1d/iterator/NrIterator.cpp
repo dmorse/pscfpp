@@ -22,7 +22,17 @@ namespace Fd1d
       epsilon_(0.0),
       isAllocated_(false),
       newJacobian_(false),
-      needsJacobian_(true)
+      needsJacobian_(true),
+      isCanonical_(true)
+   {  setClassName("NrIterator"); }
+
+   NrIterator::NrIterator(System& system)
+    : Iterator(system),
+      epsilon_(0.0),
+      isAllocated_(false),
+      newJacobian_(false),
+      needsJacobian_(true),
+      isCanonical_(true)
    {  setClassName("NrIterator"); }
 
    NrIterator::~NrIterator()
@@ -110,9 +120,12 @@ namespace Fd1d
       * computed in SCFT. One of the nx incompressibility constraints is thus 
       * redundant. To avoid this redundancy, replace the incompressibility residual
       * at the last grid point by a residual that requires the w field for the last 
-      * monomer type at the last grid point must equal zero. 
+      * monomer type at the last grid point to equal zero. 
       */
-      residual[nx-1] = wFields[nm-1][nx-1];
+
+      if (isCanonical_) {
+         residual[nx-1] = wFields[nm-1][nx-1];
+      }
 
    }
 
@@ -179,13 +192,16 @@ namespace Fd1d
          }
       }
 
-      // Shift such that last element is exactly zero
-      double shift = wNew[nm-1][nx-1];
-      for (i = 0; i < nm; ++i) {
-         for (j = 0; j < nx; ++j) {
-            wNew[i][j] -= shift;
+      // If canonical, shift such that last element is exactly zero
+      if (isCanonical_) {
+         double shift = wNew[nm-1][nx-1];
+         for (i = 0; i < nm; ++i) {
+            for (j = 0; j < nx; ++j) {
+               wNew[i][j] -= shift;
+            }
          }
       }
+
    }
    
    double NrIterator::residualNorm(Array<double> const & residual) const
@@ -207,11 +223,24 @@ namespace Fd1d
    int NrIterator::solve(bool isContinuation)
    {
       int nm = mixture().nMonomer();  // number of monomer types
+      int np = mixture().nPolymer();  // number of polymer species 
       int nx = domain().nx();         // number of grid points
       int nr = nm*nx;                 // number of residual elements
 
       // Allocate memory if needed or, if allocated, check array sizes.
       allocate();
+
+      isCanonical_ = true;
+      Species::Ensemble ensemble;
+      for (int i = 0; i < np; ++i) {
+         ensemble = mixture().polymer(i).ensemble();
+         if (ensemble == Species::Unknown) {
+            UTIL_THROW("Unknown species ensemble");
+         }
+         if (ensemble == Species::Open) {
+            isCanonical_ = false;
+         }
+      }
 
       // Compute initial residual vector and norm
       mixture().compute(system().wFields(), system().cFields());

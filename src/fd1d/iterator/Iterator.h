@@ -9,15 +9,12 @@
 */
 
 #include <util/param/ParamComposite.h>    // base class
+#include <fd1d/SystemAccess.h>            // base class
 #include <util/global.h>                  
 
 namespace Pscf {
 namespace Fd1d
 {
-
-   class Mixture;
-   class Domain;
-   class System;
 
    using namespace Util;
 
@@ -26,27 +23,27 @@ namespace Fd1d
    *
    * \ingroup Pscf_Fd1d_Module
    */
-   class Iterator : public ParamComposite
+   class Iterator : public ParamComposite, public SystemAccess
    {
 
    public:
 
       /**
-      * Constructor.
+      * Default constructor.
       */
       Iterator();
+
+      /**
+      * Constructor.
+      * 
+      * \param system parent System object
+      */
+      Iterator(System& system);
 
       /**
       * Destructor.
       */
       ~Iterator();
-
-      /**
-      * Create association with the parent System.
-      * 
-      * \param system parent System object.
-      */
-      virtual void setSystem(System& system);
 
       /**
       * Iterate to solution.
@@ -56,74 +53,7 @@ namespace Fd1d
       */
       virtual int solve(bool isContinuation = false) = 0;
 
-   protected:
-
-      System & system();
-
-      System const & system() const;
-      
-      Mixture& mixture();
-
-      Mixture const & mixture() const;
-      
-      Domain& domain();
-
-      Domain const & domain() const;
-      
-   private:
-
-      // Pointer to parent System object.
-      System* systemPtr_;
-
-      // Pointer to associated Mixture object.
-      Mixture* mixturePtr_;
-
-      // Pointer to associated Domain object.
-      Domain* domainPtr_;
-
    };
-
-   inline
-   System& Iterator::system()
-   {
-      UTIL_ASSERT(systemPtr_);
-      return *systemPtr_;
-   }
-
-   inline
-   System const & Iterator::system() const
-   {
-      UTIL_ASSERT(systemPtr_);
-      return *systemPtr_;
-   }
-
-   inline
-   Mixture& Iterator::mixture()
-   {
-      UTIL_ASSERT(mixturePtr_);
-      return *mixturePtr_;
-   }
-
-   inline
-   Mixture const & Iterator::mixture() const
-   {
-      UTIL_ASSERT(mixturePtr_);
-      return *mixturePtr_;
-   }
-
-   inline
-   Domain& Iterator::domain()
-   {
-      UTIL_ASSERT(domainPtr_);
-      return *domainPtr_;
-   }
-
-   inline
-   Domain const & Iterator::domain() const
-   {
-      UTIL_ASSERT(domainPtr_);
-      return *domainPtr_;
-   }
 
 } // namespace Fd1d
 } // namespace Pscf

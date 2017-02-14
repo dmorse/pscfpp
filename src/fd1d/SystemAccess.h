@@ -88,18 +88,6 @@ namespace Fd1d {
       */
       Interaction& interaction();
 
-      #if 0
-      /**
-      * Get Iterator object by reference.
-      */
-      const Iterator& iterator() const;
-
-      /**
-      * Get Iterator object by reference.
-      */
-      Iterator& iterator();
-      #endif
-
       /**
       * Get homogeneous mixture (for reference calculations).
       */
@@ -231,26 +219,6 @@ namespace Fd1d {
       UTIL_ASSERT(systemPtr_);
       return systemPtr_->interaction(); 
    }
-
-   #if 0
-   /*
-   * Get the Iterator.
-   */
-   inline const Iterator& SystemAccess::iterator() const
-   {  
-      UTIL_ASSERT(systemPtr_);
-      return systemPtr_->iterator(); 
-   }
-
-   /*
-   * Get the Iterator.
-   */
-   inline Iterator& SystemAccess::iterator()
-   {  
-      UTIL_ASSERT(systemPtr_);
-      return systemPtr_->iterator(); 
-   }
-   #endif
 
    /*
    * Get the FileMaster.

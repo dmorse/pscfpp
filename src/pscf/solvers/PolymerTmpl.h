@@ -257,7 +257,8 @@ namespace Pscf
    */
    template <class Block>
    PolymerTmpl<Block>::PolymerTmpl()
-    : blocks_(),
+    : Species(),
+      blocks_(),
       vertices_(),
       propagatorIds_(),
       nBlock_(0),

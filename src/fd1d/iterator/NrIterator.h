@@ -42,9 +42,16 @@ namespace Fd1d
       typedef Mixture::CField CField;
 
       /**
-      * Constructor.
+      * Default constructor.
       */
       NrIterator();
+
+      /**
+      * Constructor.
+      *
+      * \param system parent System object.
+      */
+      NrIterator(System& system);
 
       /**
       * Destructor.
@@ -134,6 +141,9 @@ namespace Fd1d
 
       /// Does the Jacobian need to be re-calculated ?
       bool needsJacobian_;
+
+      /// Is the ensemble canonical for all species ?
+      bool isCanonical_;
 
       /**
       * Allocate memory if needed. If isAllocated, check array sizes.
