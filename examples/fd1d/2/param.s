@@ -33,5 +33,14 @@ System{
   NrIterator{
      epsilon   0.0000001
   }
+  hasSweep     1
+  CompositionSweep{
+     ns                    200
+     baseFileName         out/
+     homogeneousMode         1
+     dPhi             -0.01222
+                       0.01222
+  }
 }
+
 

@@ -124,7 +124,7 @@ namespace Fd1d
             if (nPrev == 0) {
                std::cout << "Zeroth order continuation" << std::endl;
             } else {
-               std::cout << "1st order continuation" << std::endl;
+               // std::cout << "1st order continuation" << std::endl;
                double f1 = ds/(s - s1);
                double f0 = 1.0 + f1;
                // std::cout << " ds = " << ds << std::endl;

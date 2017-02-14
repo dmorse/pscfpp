@@ -101,6 +101,9 @@ namespace Fd1d
             for (int i = 0; i < np; ++i) {
                out << Dbl(mixture().polymer(i).mu(), 16);
             }
+            for (int i = 0; i < np - 1; ++i) {
+               out << Dbl(system().homogeneous().phi(i), 16);
+            }
             double dV;
             for (int i = 0; i < np - 1; ++i) {
                dV = mixture().polymer(i).phi()

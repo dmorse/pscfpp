@@ -1,0 +1,52 @@
+Examples in this directory simulate a spherical micelle of AB diblock
+copolymers (length N=1.0, N_A = 0.125) in a B hompolymer solvent 
+(length N=1.0) with chi chosen to give a CMC of about 0.5 % by volume
+(0.005 volume fraction).
+
+----------------------------------------------------------------------
+The parameter and command files param and command solve the canonical
+ensemble SCFT equations for a micelle at conditions very near its cmc, 
+as defined as the point where the SCFT excess grand free energy is zero. 
+To run this simulation enter
+
+>   pscf_fd -e -p param -c command 
+
+or (to redirect log output to a file)
+
+>   pscf_fd -e -p param -c command  > log
+
+Resulting output concentration and chemical potential files are out.c
+and out.w
+
+----------------------------------------------------------------------
+The parameter and command files param.s and command.s peform a composition
+sweep that starts from the same near-cmc conditions as the above simulation
+and decreases the overall copolymer concentration. This is a much longer
+simulation than the first one - be prepared to wait 10 minutes or so for
+it to finish. To run this simulation, enter
+
+>   pscf_fd -e -p param.s -c command.s 
+
+Output files are placed in the out/ subdirectory. The file named out/log 
+is a summary file with one line of basic thermodynamic information per 
+state point. 
+
+Comment: This sweep ends near the minimum attainable total copolymer 
+concentration for this system in this simulation cell. The micelle size 
+(excess of copolymer) in a system with significant molecular solubility
+is a multivalued function of total concentration. Equivalently, the 
+total concentration is a non-monotonic function of micelle size that
+reaches a mininum at some critical micelle size that depends on the simulation
+cell size. This is a result of the fact that the concentration of dissolved 
+copolymers increases with decreasing micelle size for small micelles, below 
+an inflection point in the free energy curve, and that dissolved copolymer
+may be a substantial fraction of the total in a system with signicant
+solubility. Because the total concentration in a finite simulation domain 
+is dominated by the excess for sufficiently large micelles (or small domains) 
+and by the dissolved copolymer contribution for small micelles (or very large 
+domains), the excess micelle size in a system with significant solubility 
+increases with increasing total concentration for larger micelles but 
+increases with decreasing total concentration below a critical size. The 
+change in behavior occurs a a critical micelle size at which the total 
+concentration is minimum. 
+
