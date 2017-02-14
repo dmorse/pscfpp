@@ -69,7 +69,8 @@ namespace Pscf {
    }
 
    void 
-   ChiInteraction::computeC(Array<double> const & w, Array<double>& c, double& xi)
+   ChiInteraction::computeC(Array<double> const & w, 
+                            Array<double>& c, double& xi)
    const
    {
       double sum1 = 0.0;
@@ -89,6 +90,23 @@ namespace Pscf {
          }
       }
    }
+
+   void 
+   ChiInteraction::computeXi(Array<double> const & w, double& xi)
+   const
+   {
+      double sum1 = 0.0;
+      double sum2 = 0.0;
+      int i, j;
+      for (i = 0; i < nMonomer(); ++i) {
+         for (j = 0; j < nMonomer(); ++j) {
+            sum1 += chiInverse_(i, j)*w[j];
+            sum2 += chiInverse_(i, j);
+         }
+      }
+      xi = (sum1 - 1.0)/sum2;
+   }
+
 
    void 
    ChiInteraction::computeDwDc(Array<double> const & c, Matrix<double>& dWdC)

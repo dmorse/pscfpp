@@ -61,7 +61,7 @@ namespace Pscf {
       const;
 
       /**
-      * Compute concentration from chemical potential field.
+      * Compute concentration from chemical potential fields.
       *
       * \param w array of chemical potentials for types (inut) 
       * \param c array of vol. fractions, for each type (output)
@@ -69,6 +69,16 @@ namespace Pscf {
       */
       virtual 
       void computeC(Array<double> const & w, Array<double>& c, double& xi)
+      const;
+
+      /**
+      * Compute Langrange multiplier xi from chemical potential fields.
+      *
+      * \param w array of chemical potentials for types (inut) 
+      * \param xi Langrange multiplier pressure (output)
+      */
+      virtual 
+      void computeXi(Array<double> const & w, double& xi)
       const;
 
       /**

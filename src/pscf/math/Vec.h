@@ -228,7 +228,7 @@ namespace Pscf
    // Associated functions
 
    /**
-   * Return dot product of this vector and vector v.
+   * Return dot product of two vectors.
    *
    * \param v1 first input vector
    * \param v2 second input vector

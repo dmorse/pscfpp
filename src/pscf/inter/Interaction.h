@@ -50,8 +50,8 @@ namespace Pscf {
       * \param c array of concentrations, for each type (input)
       */
       virtual 
-      double fHelmholtz(Array<double> const & c) const
-      { return 0.0; }
+      double fHelmholtz(Array<double> const & c) const = 0;
+      // { return 0.0; }
 
       /**
       * Compute interaction contributions to chemical potentials.
@@ -64,11 +64,11 @@ namespace Pscf {
       */
       virtual 
       void computeW(Array<double> const & c, Array<double>& w) 
-      const
-      {}
+      const = 0;
+      // {}
 
       /**
-      * Compute concentration and pressure p from chemical potentials.
+      * Compute concentration and xi from chemical potentials.
       *
       * \param w  array of chemical potentials, for each type (input)
       * \param c  array of concentrations, for each type (output)
@@ -76,8 +76,18 @@ namespace Pscf {
       */
       virtual 
       void computeC(Array<double> const & w, 
-                    Array<double>& c, double& xi) const
-      {}
+                    Array<double>& c, double& xi) const = 0;
+      // {}
+
+      /**
+      * Compute Langrange multiplier xi from chemical potentials.
+      *
+      * \param w  array of chemical potentials, for each type (input)
+      * \param xi  Lagrange multiplier pressure (output)
+      */
+      virtual 
+      void computeXi(Array<double> const & w, double& xi) const = 0;
+      //{}
 
       /**
       * Compute matrix of derivatives of w fields w/ respect to c fields.
@@ -90,9 +100,9 @@ namespace Pscf {
       * \param dWdC square symmetric matrix of derivatives (output)
       */
       virtual 
-      void computeDwDc(Array<double> const & c, Matrix<double>& dWdC) 
-      const
-      {}
+      void computeDwDc(Array<double> const & c, Matrix<double>& dWdC)
+      const = 0;
+      //{}
 
       /**
       * Get number of monomer types.
