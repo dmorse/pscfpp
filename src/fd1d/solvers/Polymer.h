@@ -44,6 +44,8 @@ namespace Fd1d
 
        void setPhi(double phi);
 
+       void setMu(double mu);
+
    };
 
 } 

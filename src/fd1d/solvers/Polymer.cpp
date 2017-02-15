@@ -19,9 +19,16 @@ namespace Fd1d
 
    void Polymer::setPhi(double phi)
    {
+      UTIL_CHECK(ensemble() == Species::Closed);  
       UTIL_CHECK(phi >= 0.0);  
       UTIL_CHECK(phi <= 1.0);  
       phi_ = phi; 
+   }
+
+   void Polymer::setMu(double mu)
+   {
+      UTIL_CHECK(ensemble() == Species::Open);  
+      mu_ = mu; 
    }
 
 }

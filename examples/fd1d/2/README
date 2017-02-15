@@ -71,3 +71,18 @@ micelles but increases with decreasing total concentration below a
 critical size. The change in behavior occurs at a critical micelle 
 size at which the total copolymer concentration is minimum. 
 
+-------------------------------------------------------------------
+Simulation #4:
+
+The parameter and command files param.s and command.s peform a 
+composition sweep in grand-canonical ensemble that starts from 
+the end of the sweep produced by Simulation #3 and sweeps out a
+curve of increasing copolymer chemical potential and decreasing
+micelle size. To run this simulation, enter:
+
+>   pscf_fd -e -p param.gs -c command.gs 
+
+Output files are placed in the out2/ subdirectory. The file out/log is 
+a summary file with one line of basic thermodynamic information per 
+state point. 
+

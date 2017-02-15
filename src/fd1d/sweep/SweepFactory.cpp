@@ -9,6 +9,7 @@
 
 // Subclasses of Sweep 
 #include "CompositionSweep.h"
+#include "MuSweep.h"
 
 namespace Pscf {
 namespace Fd1d {
@@ -26,13 +27,17 @@ namespace Fd1d {
    {
       Sweep *ptr = 0;
 
+      // First if name is known by any subfactories
       ptr = trySubfactories(className);
       if (ptr) return ptr;     
 
-      // Try explicit class names
+      // Explicit class names
       if (className == "CompositionSweep") {
          ptr = new CompositionSweep(*systemPtr_);
-      } 
+      } else
+      if (className == "MuSweep") {
+         ptr = new MuSweep(*systemPtr_);
+      }
 
       return ptr;
    }
