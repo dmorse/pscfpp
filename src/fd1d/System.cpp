@@ -409,10 +409,12 @@ namespace Fd1d
       in >> label;
       UTIL_CHECK(label == "nx");
       in >> nx;
+      UTIL_CHECK(nx > 0);
       UTIL_CHECK(nx == domain().nx());
       in >> label;
       UTIL_CHECK (label == "nm");
       in >> nm;
+      UTIL_CHECK(nm > 0);
       UTIL_CHECK(nm == mixture().nMonomer());
 
       // Read fields
@@ -424,16 +426,30 @@ namespace Fd1d
             in >> wFields_[j][i];
          }
       }
-      double shift = wFields_[nm - 1][nx-1];
-      for (i = 0; i < nx; ++i) {
-         for (j = 0; j < nm; ++j) {
-            wFields_[j][i] -= shift;
+
+      #if 0
+      // Determine if all species are treated in closed ensemble.
+      bool isCanonical = true;
+      for (i = 0; i < mixture().nPolymer(); ++i) {
+         if (mixture().polymer(i).ensemble == Species::Open) {
+            isCanonical = false;
          }
       }
 
+      if (isCanonical) {
+         double shift = wFields_[nm - 1][nx-1];
+         for (i = 0; i < nx; ++i) {
+            for (j = 0; j < nm; ++j) {
+               wFields_[j][i] -= shift;
+            }
+         }
+      }
+      #endif
+
    }
 
-   void System::writeFields(std::ostream &out, Array<Field> const &  fields)
+   void System::writeFields(std::ostream &out, 
+                            Array<Field> const &  fields)
    {
       int i, j;
       int nx = domain().nx();
@@ -445,7 +461,7 @@ namespace Fd1d
       for (i = 0; i < nx; ++i) {
          out << Int(i, 5);
          for (j = 0; j < nm; ++j) {
-            out << "  " << Dbl(fields[j][i]);
+            out << "  " << Dbl(fields[j][i], 18, 11);
          }
          out << std::endl;
       }
@@ -462,7 +478,7 @@ namespace Fd1d
       UTIL_CHECK(homogeneous_.nMolecule() == np + ns);
       UTIL_CHECK(homogeneous_.nMonomer() == nm);
 
-      // Allocate work array, if necessary
+      // Allocate c_ work array, if necessary
       if (c_.isAllocated()) {
          UTIL_CHECK(c_.capacity() == nm);
       } else {
@@ -511,20 +527,6 @@ namespace Fd1d
          }
          homogeneous_.molecule(i).computeSize();
 
-         #if 0
-         {
-            std::cout << "Molecule # " << i << std::endl;
-            nc = homogeneous_.molecule(i).nClump();
-            std::cout << "nClump = " << nc << std::endl;
-            double size;
-            for (k = 0; k < nc; ++k) {
-               j = homogeneous_.molecule(i).clump(k).monomerId();
-               size = homogeneous_.molecule(i).clump(k).size();
-               std::cout << k << "  " << j << "  " << size << "\n";
-            }
-         }
-         #endif
-        
       }
 
    }

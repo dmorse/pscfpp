@@ -230,6 +230,7 @@ namespace Fd1d
       // Allocate memory if needed or, if allocated, check array sizes.
       allocate();
 
+      // Determine if isCanonical (iff all species ensembles are closed)
       isCanonical_ = true;
       Species::Ensemble ensemble;
       for (int i = 0; i < np; ++i) {
@@ -239,6 +240,18 @@ namespace Fd1d
          }
          if (ensemble == Species::Open) {
             isCanonical_ = false;
+         }
+      }
+
+      // If isCanonical, shift so that last element is zero.
+      // Note: This is one of the residuals in this case.
+      if (isCanonical_) {
+         double shift = wFields()[nm-1][nx-1];
+         int i, j;
+         for (i = 0; i < nm; ++i) {
+            for (j = 0; j < nx; ++j) {
+               wFields()[i][j] -= shift;
+            }
          }
       }
 

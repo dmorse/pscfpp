@@ -1,9 +1,9 @@
 1) For the 1D finite difference code
 
-   - Finish code to evaluate pressure
+   - Write a chemical potential sweep
+   - Write more flexible sweep classes
+   - Add an iterator factory
    - Write an Anderson Mixing iterator
-   - Write code to compute Flory-Huggins properties
-   - Write code to compute excess quantities for micelles
 
 2) Build a pseudospectral code for periodic functions.
    Use directory pssp, namespace PsSp

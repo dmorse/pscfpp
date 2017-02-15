@@ -10,14 +10,14 @@ System{
         blocks    0  0  0  1  0.125
                   1  1  1  2  0.875
         ensemble  open
-        mu        5.74775182864
+        mu        5.74775182858
      }
      Polymer{
         nBlock    1
         nVertex   2
         blocks    0  1  0  1  1.000
         ensemble  open
-        mu        -0.004205100672
+        mu        -0.0042051012549
      }
      ds   0.005
   }
