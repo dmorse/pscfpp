@@ -57,7 +57,7 @@ namespace Pssp
       // Get Wave, access by integer index
       Wave& wave(int i);
    
-      // Get wave, access wave by integer vector
+      // Get wave, access wave by IntVec wavevector
       Wave& wave(IntVec<D> vector);
    
       // Get Star, access by integer index
@@ -69,7 +69,7 @@ namespace Pssp
       int nStar_;
    
       DArray<Wave> waves_;
-      DArray<Wave> stars_;
+      DArray<Star> stars_;
    
       // Indexing that allows identification by IntVec
       DArray<int> waveId_;   
