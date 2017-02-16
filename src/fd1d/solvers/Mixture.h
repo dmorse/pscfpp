@@ -111,7 +111,15 @@ namespace Fd1d
       void 
       compute(DArray<WField> const & wFields, DArray<CField>& cFields);
 
+      /**
+      * Get monomer reference volume.
+      */
+      double vMonomer() const;
+
    private:
+
+      /// Monomer reference volume (set to 1.0 by default).
+      double vMonomer_;
 
       /// Optimal contour length step size.
       double ds_;
@@ -126,6 +134,15 @@ namespace Fd1d
 
    // Inline member function
 
+   /*
+   * Get monomer reference volume (public).
+   */
+   inline double Mixture::vMonomer() const
+   {  return vMonomer_; }
+
+   /*
+   * Get Domain by constant reference (private).
+   */
    inline Domain const & Mixture::domain() const
    {   
       UTIL_ASSERT(domainPtr_);

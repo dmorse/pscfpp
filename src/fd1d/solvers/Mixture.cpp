@@ -15,6 +15,9 @@ namespace Fd1d
 { 
 
    Mixture::Mixture()
+    : vMonomer_(1.0),
+      ds_(-1.0),
+      domainPtr_(0)
    {  setClassName("Mixture"); }
 
    Mixture::~Mixture()
@@ -23,6 +26,8 @@ namespace Fd1d
    void Mixture::readParameters(std::istream& in)
    {
       MixtureTmpl<Polymer, Solvent>::readParameters(in);
+      vMonomer_ = 1.0; // Default value
+      readOptional(in, "vMonomer", vMonomer_);
       read(in, "ds", ds_);
 
       UTIL_CHECK(nMonomer() > 0);

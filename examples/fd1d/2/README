@@ -8,15 +8,15 @@ closely related simulations:
 Simulation #1:
 
 The parameter and command files param.c and command solve the canonical
-ensemble SCFT equations for a micelle at conditions very near its cmc, 
+ensemble SCFT equations for a micelle at conditions very near its cmc,
 as defined as the point where the SCFT excess grand free energy is zero. 
 To run this simulation enter
 
->   pscf_fd -e -p param.c -c command 
+>   pscf_fd -e -p param.c1 -c command.1
 
 or (to redirect log output to a file)
 
->   pscf_fd -e -p param.c -c command  > log
+>   pscf_fd -e -p param.c1 -c command.1  > log
 
 Resulting output concentration and chemical potential files are out.c
 and out.w
@@ -27,11 +27,7 @@ Simulation #2:
 The parameter and command files param.g and command solve the same
 problem in grand canonical problem. To run this simulation enter
 
->   pscf_fd -e -p param.g -c command 
-
-or (to redirect log output to a file)
-
->   pscf_fd -e -p param -c command  > log
+>   pscf_fd -e -p param.g1 -c command.1
 
 Output concentration and chemical potential files are again written 
 as out.c and out.w
@@ -42,14 +38,14 @@ The parameter and command files param.s and command.s peform a
 composition sweep in canonical ensemble that starts from the same 
 near-cmc conditions as the above two simulations and performs a 
 sweep of decreasing total copolymer concentration. This is a much
-longer simulation than the first two - be prepared to wait 10 
-minutes or so for it to finish. To run this simulation, enter:
+longer simulation than simulations #1 and #2 - be prepared to wait 
+a few minutes for it to finish. To run this simulation, enter:
 
->   pscf_fd -e -p param.s -c command.s 
+>   pscf_fd -e -p param.csl -c command.s1
 
-Output files are placed in the out/ subdirectory. The file out/log is 
-a summary file with one line of basic thermodynamic information per 
-state point. 
+Output files are placed in the csl/ subdirectory. The file csl/log 
+is a summary file with one line of basic thermodynamic information 
+per state point. 
 
 Comment: This sweep ends near the minimum attainable total copolymer 
 concentration for this system in this simulation cell. The micelle size 
@@ -80,9 +76,9 @@ the end of the sweep produced by Simulation #3 and sweeps out a
 curve of increasing copolymer chemical potential and decreasing
 micelle size. To run this simulation, enter:
 
->   pscf_fd -e -p param.gs -c command.gs 
+>   pscf_fd -e -p param.gs -c command.s2
 
-Output files are placed in the out2/ subdirectory. The file out/log is 
-a summary file with one line of basic thermodynamic information per 
-state point. 
+Output files are placed in the gs/ output subdirectory. The file 
+gs/log is a summary file with one line of basic thermodynamic 
+information per state point. 
 

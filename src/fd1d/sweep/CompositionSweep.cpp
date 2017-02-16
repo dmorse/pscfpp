@@ -93,7 +93,7 @@ namespace Fd1d
                        - system().homogeneous().fHelmholtz();
             double pEx = system().pressure() 
                        - system().homogeneous().pressure();
-            double V = domain().volume();
+            double V = domain().volume()/mixture().vMonomer();
             double fExV = fEx*V;
             double pExV = pEx*V;
             out << Dbl(fExV, 20, 10);

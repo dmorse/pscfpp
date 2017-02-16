@@ -236,8 +236,9 @@ namespace Fd1d
          double pHomo = homogeneous().pressure();
          double pEx   = system().pressure() - pHomo;
          double fEx   = system().fHelmholtz() - fHomo;
-         double PExV  = -1.0*pEx*domain().volume(); 
-         double FExV  = fEx*domain().volume(); 
+         double V     = domain().volume()/mixture().vMonomer();
+         double PExV  = -1.0*pEx*V;
+         double FExV  = fEx*V; 
          out << "f (homo)   = " << Dbl(fHomo, 18, 11) << std::endl;
          out << "p (homo)   = " << Dbl(pHomo, 18, 11) << std::endl;
          out << "f (ex)     = " << Dbl(fEx, 18, 11)   << std::endl;
@@ -256,7 +257,7 @@ namespace Fd1d
              << std::endl;
          for (int i = 0; i < homogeneous().nMolecule(); ++i) {
             dV = mixture().polymer(i).phi() - homogeneous().phi(i);
-            dV *= domain().volume();
+            dV *= V;
             out << Int(i,5)
                 << "  " << Dbl(homogeneous().mu(i), 18, 11)
                 << "  " << Dbl(homogeneous().phi(i), 18, 11) 

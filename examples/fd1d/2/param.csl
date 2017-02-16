@@ -17,7 +17,8 @@ System{
         blocks  0  1  0  1  1.000
         phi     0.981777
      }
-     ds   0.005
+     vMonomer   0.045787
+     ds         0.005
   }
   ChiInteraction{
      chi   0  1    88.5
@@ -33,5 +34,14 @@ System{
   NrIterator{
      epsilon   0.0000001
   }
+  hasSweep     1
+  CompositionSweep{
+     ns                    200
+     baseFileName         csl/
+     homogeneousMode         1
+     dPhi             -0.01222
+                       0.01222
+  }
 }
+
 

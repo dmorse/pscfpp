@@ -19,7 +19,8 @@ System{
         ensemble  open
         mu        -0.0042051012549
      }
-     ds   0.005
+     vMonomer   0.045787
+     ds         0.005
   }
   ChiInteraction{
      chi   0  1    88.5
