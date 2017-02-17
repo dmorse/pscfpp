@@ -242,7 +242,7 @@ namespace Fd1d
          out << "f (homo)   = " << Dbl(fHomo, 18, 11) << std::endl;
          out << "p (homo)   = " << Dbl(pHomo, 18, 11) << std::endl;
          out << "f (ex)     = " << Dbl(fEx, 18, 11)   << std::endl;
-         out << "p (homo)   = " << Dbl(pEx, 18, 11)   << std::endl;
+         out << "p (ex)     = " << Dbl(pEx, 18, 11)   << std::endl;
          out << "-p(ex)*V   = " << Dbl(PExV, 18, 11)  << std::endl;
          out << "f(ex)*V    = " << Dbl(FExV, 18, 11)  << std::endl;
 
