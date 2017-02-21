@@ -1,11 +1,30 @@
 1) For the 1D finite difference code
 
-   - Write a chemical potential sweep
-   - Write more flexible sweep classes
+   TODO:
+   - Write more and/or more flexible sweep classes
    - Add an iterator factory
    - Write an Anderson Mixing iterator
+   - Add point-like solvents
 
-2) Build a pseudospectral code for periodic functions.
+2) Build specialized pseudospectral code for 1D periodic functions.
+   Use directory ps1d, namespace Ps1d
+
+   System {
+      Mixture<D>
+      Interaction
+      Domain
+      wFields
+      cFields
+      Iterator
+   }
+
+   TODO: (Bottom Up)
+      -Install and test FFT library
+      -Define Field class
+      -Class skeletons
+
+3) Build a pseudospectral code for periodic functions with
+   known space group symmetry, in 1D, 2D or 3D.
    Use directory pssp, namespace PsSp
 
    Develop class templates that allow compilation of 
@@ -33,9 +52,6 @@
        Start with PicardIterator and/or NrIterator
 
        Provide functions to convert between FFT and FBZ vectors.
-
-
-4) Add AndersonIterator, perhaps an approximate NR iterator
 
 5) Add general code for symmetry adapted basis functions.
 

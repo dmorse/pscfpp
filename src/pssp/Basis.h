@@ -40,11 +40,11 @@ namespace Pssp
       };
 
       // Constructor  
-      Grid();
+      Basis();
  
       // Associate
       void setUnitCell(const UnitCell& unitCell)
-      void setGrid(const Grid& grid)
+      void setMesh(const Mesh& mesh)
    
       // Initialize
       void allocate();
@@ -72,7 +72,7 @@ namespace Pssp
       DArray<Star> stars_;
    
       // Indexing that allows identification by IntVec
-      DArray<int> waveId_;   
+      DArray<int> waveId_;
       
    };
 

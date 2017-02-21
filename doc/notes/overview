@@ -1,7 +1,8 @@
 Chemistry
 ---------
 
-These classes are used to describe molecular structures
+These classes are used to describe molecular structures, and are 
+common to all SCFT implementations:
 
     Monomer
     Vertex
@@ -24,28 +25,68 @@ of the Species base class.
 Solver Templates
 ----------------
 
+These templates are base classes for modified diffusion equation
+solvers, containing the data structures and algorithms that should
+be common to all implementations of SCFT.
 
     PropagatorTmpl
     BlockTmpl<Propagator>
     PolymerTmpl<Block>
+    SolventTmpl<Block>
     MixtureTmpl<Block>
+
+Each implementation is defined in a separate namespace, and defines 
+the following concrete classes:
+
+    class Propagator : public PropagatorTmpl<Propagator>
+    class Block : public BlockTmpl<Propagator>
+    class Polymer : public PolymerTmpl<Block>
+    class Mixture : public MixtureTmpl<Polymer, Solvent>
+
+Each of these is discussed in more detail in further below. The 
+Propagator class must define typedefs named WField and CField which 
+are aliases for classes that represent a chemical potential field 
+or monomer concentration field, respectively, for one monomer type. 
 
 Fields
 ------
 
+The 1D finite difference implementation of SCFT in namespace Fd1d and
+directory fd1d thus far defines both WField and CField to aliases for
+a DArray<double> array container type. We envision that other 
+implementations may define a specialized Field class that provides 
+some additional methods that are not provided by DArray<double>. The
+WField and CField may be defined either as subclasses of Field, or
+simply as
+
 Base class:
 
    class Field<T>
-   class WField : public WField
-   class QField : public Qield
-   class CField : public CField
+   class WField : public Field<double>
+   class CField : public Field<double>
+   class QField : public Field<double>
 
    Base on DArray<double> (derived or copy and paste)
    Provide methods or global functions:
 
-      1) Addition of fields, operator +=
-      2) Multiplication by scalar, operator *= (T )
-      3) Pointwise multiplication of fields, operator *= (Field<T>)
+      1) Assignment to another field (standard operator)
+
+      2) Assignment to constant at all points: operator = (double& const T)
+         Used in Propagator::computeHead to initialize vertices to 1
+         Used in Block::computeConcentration to initialize to 0.0
+
+      3) Multiplication by a scalar constant: operator *= (double& const )
+         Used in Block::step() to scale by prefactor
+         Used in Block::computeConcentration() to scale by prefactor
+
+      4) Addition of fields, operator +=
+         Standard operation for abstract vectors.
+
+      5) Pointwise multiplication of fields, operator *= (Field<T>)
+         Used in Propagator::computeHead to multiply source fields
+
+      6) Inner product, method provided by Domain class.
+         Used to compute Q in propagator computeQ()
 
 SCF Solvers (General)
 ---------------------
@@ -57,21 +98,44 @@ on C++ templates, rather than run time polymorphism alone.
 
    class Propagator : publiic PropagatorTmpl<Propagator>
       Has q(r,s) data structure, pointers to Block.
+      Defines typedefs WField and CField.
+      Provides a solve() method, which uses the step() method
+      of the associated block.
 
    class Block : public BlockTmpl<Propagator>
-      one per block, derived from BlockDescriptor
-      Has data structures used to compute both propagators for 
-      one block in both directions, including ns_, ds_ and arrays.
+      Has a pair of Propagator objects (one for each direction).
+      Has a monomer concentration field for the block, and kuhn length.
+      Has data structures used to compute both propagators for one block,
+      including ns_, ds_ and any necessary work arrays.
+      Provides step() and computeConcentration() methods.
 
    class Polymer : public PolymerTmpl<Block>
-      Has arrays of Block and Vertex objects
+      Has arrays of Block and Vertex objects.
+      Defines topology of an acyclic polymer.
+      Provides a compute() function that calls solve for all
+      propagators and computes concentrations for all blocks.
 
    class Solvent : public SolventDescriptor
       Implements a simple Boltzmann solver for a point particle.
 
    class Mixture : public MixtureTmpl<Polymer, Solvent>
       Has arrays of Monomer, Polymer, Solvent objects
-      Has arrays of WField and CFields 
+      Provides a compute function that takes a const reference to 
+      an array of WField objects as an input and a non-constant 
+      reference to an array of CField objects as an output.
+
+   class System
+
+      Main simulation object. Has a Mixture as well as other main
+      classes, as discussed below. Provides a readParameters() method
+      to read entire parameter file and a readCommands method to read
+      a command file.
+
+   Remark: We will make wFields_ and cFields_ members of the System, 
+   rather than of the mixture, and require the compute() method of 
+   the mixture to take these as arguments. This yields an increase 
+   in flexibility for Newton-Raphson style iterators with no loss 
+   of speed.
 
 1D Finite Difference
 --------------------
@@ -79,23 +143,25 @@ on C++ templates, rather than run time polymorphism alone.
    For 1D finite difference:
 
    namespace Scf {
-   namespace Fd1d 
-   {
-      System {
+   namespace Fd1d {
+      class System {
          Mixture
          Domain
          Interaction (chi parameters)
          Iterator
+         DArray<WField> : chemical potential fields
+         DArray<CField> : monomer concentration fields
       }
    }
    }
 
-   For pseuddospectroal, periodic with symmetry constraints:
 
 Pseudospectral, periodic
 ------------------------
 
-   namespace Scf {
+   For pseuddospectroal, periodic with symmetry constraints:
+
+   namespace Pscf {
    namespace PsSp {
       System {
          Mixture
@@ -112,33 +178,27 @@ Pseudospectral, periodic
    Questions / comments about periodic pseudospectral code:
 
    1) Basis must provide methods to convert basisToGrid and gridToBasis.
-   Where will the basis representation be stored? In the field object?
-   If so, these functions could take one Field as an argument and update
-   one of the two representations.
+   Where will the basis representation be stored? Where will these 
+   functions be defined (global functions or member functions?)
+
+   Tentative choice: Make these member functions of the Basis object.
 
    2) How to handle different dimensions in C++ ? It would be nice to 
-   have only code, even if it needed to be recompiled. 
+   have only one code, even if it needed to be recompiled. 
 
       - The simplest solution would be to use a preprocessor macro. 
         This, however, would make it impossible to have different
         objects with different dimensions in the same code.
 
-      - The most flexible, but messier, solution would be to make all
-        relevant class templates in terms of Dimension.
+      - The most flexible, but more verbose, solution would be to 
+        make all relevant class templates with Dimension as a template
+        argument.
 
+   Choice: Use templates. Perhaps choose from among dimensions using 
+   a command line option -d of the main program. For example:
+
+   >  pscf_ps -d 3 -p param -c command 
+
+   for a 3 dimensional computation.
    ---------------------------------------------------------------------
-
-   General Questions:
-   1) Should wFields_ be a member of the Mixture, or the main System?
-   2) Should cFields_ be a member of the Mixture, or the main System?
-   3) What interface is required for the Interaction class?
-
-   Remarks:
-
-   1) Making Wfields_ and cFields_ members of the System yields an 
-   increase in flexibility for Newton-Raphson style iterators with 
-   no loss of speed.
-
-   2) A preprocessor macro for dimension could help. Define a grid
-   position class that can be passed to an accessor?
 

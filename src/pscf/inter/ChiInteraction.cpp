@@ -11,13 +11,22 @@ namespace Pscf {
    
    using namespace Util;
 
+   /*
+   * Constructor.
+   */
    ChiInteraction::ChiInteraction()
     : Interaction()
    {  setClassName("ChiInteraction"); }
 
+   /*
+   * Destructor.
+   */
    ChiInteraction::~ChiInteraction()
    {}
 
+   /*
+   * Read chi matrix from file. 
+   */
    void ChiInteraction::readParameters(std::istream& in)
    {
       UTIL_CHECK(nMonomer() > 0);
@@ -43,6 +52,9 @@ namespace Pscf {
 
    }
 
+   /*
+   * Compute and return excess Helmholtz free energy per monomer.
+   */
    double ChiInteraction::fHelmholtz(Array<double> const & c) const
    {
       int i, j;
@@ -55,6 +67,9 @@ namespace Pscf {
       return 0.5*sum;
    }
 
+   /*
+   * Compute chemical potential from monomer concentrations
+   */
    void 
    ChiInteraction::computeW(Array<double> const & c, 
                             Array<double>& w) const
@@ -68,6 +83,9 @@ namespace Pscf {
       }
    }
 
+   /*
+   * Compute concentrations and xi from chemical potentials.
+   */ 
    void 
    ChiInteraction::computeC(Array<double> const & w, 
                             Array<double>& c, double& xi)
@@ -91,6 +109,9 @@ namespace Pscf {
       }
    }
 
+   /*
+   * Compute Langrange multiplier from chemical potentials.
+   */ 
    void 
    ChiInteraction::computeXi(Array<double> const & w, double& xi)
    const
@@ -107,7 +128,9 @@ namespace Pscf {
       xi = (sum1 - 1.0)/sum2;
    }
 
-
+   /*
+   * Return dWdC = chi matrix.
+   */
    void 
    ChiInteraction::computeDwDc(Array<double> const & c, Matrix<double>& dWdC)
    const

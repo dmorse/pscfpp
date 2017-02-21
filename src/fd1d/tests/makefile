@@ -18,6 +18,7 @@ run: $(fd1d_tests_OBJS) $(BLD_DIR)/$(TEST)
 	@echo `grep failed log` ", "\
               `grep successful log` "in fd1d/tests/log" > count
 	@cat count
+	@rm -f count
 
 clean:
 	rm -f $(fd1d_tests_OBJS) $(fd1d_tests_OBJS:.o=.d)
