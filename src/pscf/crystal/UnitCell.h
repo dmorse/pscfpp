@@ -193,7 +193,8 @@ namespace Pscf
    std::ostream& operator << (std::ostream& out,
                               UnitCell<D>& cell)
    {
-      out << cell.lattice_ << cell.nParameter_;
+      out << cell.lattice_;
+      // out << cell.nParameter_;
       for (int i = 0; i < cell.nParameter_; ++i) {
          out << cell.parameters_[i];
       }
@@ -204,7 +205,8 @@ namespace Pscf
    std::istream& operator >> (std::istream& in,
                               UnitCell<D>& cell)
    {
-      cell.setNParameter(in);
+      in >> cell.lattice_;
+      cell.setNParameter();
       for (int i = 0; i < cell.nParameter_; ++i) {
          in >> cell.parameters_[i];
       }

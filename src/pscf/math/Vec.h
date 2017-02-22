@@ -145,6 +145,20 @@ namespace Pscf
       void operator -= (const Vec<D, T>& dv);
 
       /**
+      * Add a common scalar to all components.
+      *
+      * \param dv  vector increment (input)
+      */
+      void operator += (T s);
+
+      /**
+      * Subtract a common scalar from all components.
+      *
+      * \param dv  vector increment (input)
+      */
+      void operator -= (T s);
+
+      /**
       * Multiply this vector by scalar s.
       *
       * Upon return, *this = (*this)*s.
@@ -343,6 +357,28 @@ namespace Pscf
    {
       for (int i = 0; i < D; ++i) {
          elem_[i] -= dv.elem_[i];
+      }
+   }
+
+   /*
+   * Add a common scalar to all components.
+   */
+   template <int D, typename T> 
+   inline void Vec<D, T>::operator += (T s)
+   {
+      for (int i = 0; i < D; ++i) {
+         elem_[i] += s;
+      }
+   }
+
+   /*
+   * Subtract a common scalar from all components.
+   */
+   template <int D, typename T> 
+   inline void Vec<D, T>::operator -= (T s)
+   {
+      for (int i = 0; i < D; ++i) {
+         elem_[i] -= s;
       }
    }
 
