@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "UnitCellTmpl.h"
+#include "UnitCellBase.h"
 #include <iostream>
 
 namespace Pscf
@@ -20,7 +20,7 @@ namespace Pscf
    * Base template for UnitCell<D> classes, D=1, 2 or 3.
    *
    * Explicit specializations are provided for D=1, 2, and 3. In
-   * each case, class UnitCell<D> is derived from UnitCellTmpl<D>,
+   * each case, class UnitCell<D> is derived from UnitCellBase<D>,
    * and defines an enumeration named LatticeSystem of the types
    * of Bravais lattice systems in D-dimensional space.
    *
@@ -34,7 +34,7 @@ namespace Pscf
    * \ingroup Pscf_Crystal_Module
    */
    template <>
-   class UnitCell<1> : public UnitCellTmpl<1>
+   class UnitCell<1> : public UnitCellBase<1>
    {
    public:
 
@@ -56,7 +56,7 @@ namespace Pscf
    * \ingroup Pscf_Crystal_Module
    */
    template <>
-   class UnitCell<2> : public UnitCellTmpl<2>
+   class UnitCell<2> : public UnitCellBase<2>
    {
    public:
 
@@ -78,7 +78,7 @@ namespace Pscf
    * \ingroup Pscf_Crystal_Module
    */
    template <>
-   class UnitCell<3> : public UnitCellTmpl<3>
+   class UnitCell<3> : public UnitCellBase<3>
    {
    public:
 
