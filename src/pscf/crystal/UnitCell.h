@@ -9,6 +9,7 @@
 */
 
 #include "UnitCellBase.h"
+#include <util/format/Dbl.h>
 #include <iostream>
 
 namespace Pscf
@@ -29,6 +30,28 @@ namespace Pscf
    template <int D> class UnitCell;
 
    /**
+   * istream extractor for a UnitCell<D>.
+   *
+   * \param  in       input stream
+   * \param  lattice  UnitCell<2>::LatticeSystem to be read
+   * \return modified input stream
+   */
+   template <int D>
+   std::istream& operator >> (std::istream& in,
+                              UnitCell<D>& cell);
+
+   /**
+   * ostream inserter for a UnitCell<D>::LatticeSystem.
+   *
+   * \param out  output stream
+   * \param lattice  UnitCell<1>::LatticeSystem to be written
+   * \return modified output stream
+   */
+   template <int D>
+   std::ostream& operator << (std::ostream& out,
+                              UnitCell<D>& cell);
+
+   /**
    * 1D crystal unit cell.
    *
    * \ingroup Pscf_Crystal_Module
@@ -40,14 +63,19 @@ namespace Pscf
 
       enum LatticeSystem {Lamellar};
 
-      void setNParameter();
-
    private:
 
       LatticeSystem lattice_;
 
-      friend std::ostream& operator << (std::ostream&, UnitCell<1>& );
-      friend std::istream& operator >> (std::istream&, UnitCell<1>& );
+      void setNParameter();
+      void setLattice();
+
+      template <int D> 
+      friend std::ostream& operator << (std::ostream&, UnitCell<D>& );
+
+      template <int D>
+      friend std::istream& operator >> (std::istream&, UnitCell<D>& );
+
    };
 
    /**
@@ -62,14 +90,19 @@ namespace Pscf
 
       enum LatticeSystem {Square, Rectangular, Rhombic, Hexagonal, Oblique};
 
-      void setNParameter();
-
    private:
 
       LatticeSystem lattice_;
 
-      friend std::ostream& operator << (std::ostream&, UnitCell<2>& );
-      friend std::istream& operator >> (std::istream&, UnitCell<2>& );
+      void setNParameter();
+      void setLattice();
+
+      template <int D> 
+      friend std::ostream& operator << (std::ostream&, UnitCell<D>& );
+
+      template <int D>
+      friend std::istream& operator >> (std::istream&, UnitCell<D>& );
+
    };
 
    /**
@@ -93,14 +126,19 @@ namespace Pscf
       enum LatticeSystem {Cubic, Tetragonal, Orthorhombic, Monoclinic,
                           Triclinic, Rhombohedral, Hexagonal};
 
-      void setNParameter();
-
    private:
 
       LatticeSystem lattice_;
 
-      friend std::ostream& operator << (std::ostream&, UnitCell<3>& );
-      friend std::istream& operator >> (std::istream&, UnitCell<3>& );
+      void setNParameter();
+      void setLattice();
+
+      template <int D> 
+      friend std::ostream& operator << (std::ostream&, UnitCell<D>& );
+
+      template <int D>
+      friend std::istream& operator >> (std::istream&, UnitCell<D>& );
+
    };
 
    // Inserter and Extractor Function Declarations
@@ -165,41 +203,9 @@ namespace Pscf
    std::ostream& operator << (std::ostream& out,
                               UnitCell<3>::LatticeSystem lattice);
 
-   /**
-   * ostream inserter for a UnitCell<D>::LatticeSystem.
-   *
-   * \param out  output stream
-   * \param lattice  UnitCell<1>::LatticeSystem to be written
-   * \return modified output stream
-   */
-   template <int D>
-   std::ostream& operator << (std::ostream& out,
-                              UnitCell<D>& cell);
-
-   /**
-   * istream extractor for a UnitCell<D>.
-   *
-   * \param  in       input stream
-   * \param  lattice  UnitCell<2>::LatticeSystem to be read
-   * \return modified input stream
-   */
-   template <int D>
-   std::istream& operator >> (std::istream& in,
-                              UnitCell<D>& cell);
+   // Unit Cell inserter (>>) and extractor (<<) operators
 
    // Implementation Template
-
-   template <int D>
-   std::ostream& operator << (std::ostream& out,
-                              UnitCell<D>& cell)
-   {
-      out << cell.lattice_;
-      // out << cell.nParameter_;
-      for (int i = 0; i < cell.nParameter_; ++i) {
-         out << cell.parameters_[i];
-      }
-      return out;
-   }
 
    template <int D>
    std::istream& operator >> (std::istream& in,
@@ -210,7 +216,19 @@ namespace Pscf
       for (int i = 0; i < cell.nParameter_; ++i) {
          in >> cell.parameters_[i];
       }
+      cell.setLattice();
       return in;
+   }
+
+   template <int D>
+   std::ostream& operator << (std::ostream& out,
+                              UnitCell<D>& cell)
+   {
+      out << cell.lattice_;
+      for (int i = 0; i < cell.nParameter_; ++i) {
+         out << Dbl(cell.parameters_[i], 18, 10);
+      }
+      return out;
    }
 
 }
