@@ -59,9 +59,14 @@ namespace Pscf
       void begin();
 
       /**
-      * Increment operator
+      * Increment iterator to next mesh point.
       */
       void operator ++();
+
+      /**
+      * Is this the end (i.e., one past the last point)?
+      */
+      bool atEnd() const;
 
       /**
       * Get current position in the grid, as integer vector.
@@ -106,8 +111,8 @@ namespace Pscf
    template<> 
    void MeshIterator<2>::operator ++();
 
-   template<> 
-   void MeshIterator<3>::operator ++();
+   //template<> 
+   //void MeshIterator<3>::operator ++();
 
    // Inline member functions
 
@@ -134,6 +139,59 @@ namespace Pscf
       if (position_[D-1] == dimensions_[D-1]) {
          position_[D-1] = 0;
          increment(D-2);
+      }
+      rank_++;
+   }
+
+   /*
+   * Is this the end (i.e., on e past the last point)?
+   */
+   template <int D>
+   inline bool MeshIterator<D>::atEnd() const
+   { return (bool)(rank_ == size_); }
+
+   template <int D>
+   inline void MeshIterator<D>::increment(int i)
+   {
+      position_[i]++;   
+      if (position_[i] == dimensions_[i]) {
+         position_[i] = 0;
+         if (i > 0) {
+            increment(i-1);
+         }
+      }
+   }
+
+   // Inline explicit specializations 
+
+   template <>
+   inline void MeshIterator<1>::operator ++ ()
+   {
+      position_[0]++;
+      if (position_[0] == dimensions_[0]) {
+         position_[0] = 0;
+      }
+      rank_++;
+   }
+
+   template <>
+   inline void MeshIterator<2>::operator ++ ()
+   {
+      position_[1]++;
+      if (position_[1] == dimensions_[1]) {
+         position_[1] = 0;
+         increment(0);
+      }
+      rank_++;
+   }
+
+   template <>
+   inline void MeshIterator<3>::operator ++ ()
+   {
+      position_[2]++;
+      if (position_[2] == dimensions_[2]) {
+         position_[2] = 0;
+         increment(1);
       }
       rank_++;
    }
@@ -192,18 +250,6 @@ namespace Pscf
       rank_ = 0;
       for (int i = 0; i < D; ++i) {
          position_[i] = 0;
-      }
-   }
-
-   template <int D>
-   void MeshIterator<D>::increment(int i)
-   {
-      position_[i]++;   
-      if (position_[i] == dimensions_[i]) {
-         position_[i] = 0;
-         if (i > 0) {
-            increment(i-1);
-         }
       }
    }
 

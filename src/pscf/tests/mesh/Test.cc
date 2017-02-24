@@ -3,7 +3,9 @@
 */ 
 
 #include <util/global.h>
-#include "MeshTest.h"
+//#include "MeshTest.h"
+//#include "MeshIteratorTest.h"
+#include "MeshTestComposite.h"
 
 #include <test/TestRunner.h>
 #include <test/CompositeTestRunner.h>
@@ -13,7 +15,9 @@ using namespace Util;
 
 int main(int argc, char* argv[])
 {
-   TEST_RUNNER(MeshTest) runner;
+   // TEST_RUNNER(MeshTest) runner;
+   //TEST_RUNNER(MeshIteratorTest) runner;
+   MeshTestComposite runner;
 
    #if 0
    if (argc > 2) {

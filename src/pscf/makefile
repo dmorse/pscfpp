@@ -8,11 +8,7 @@
 
 SRC_DIR_REL =..
 include $(SRC_DIR_REL)/config.mk
-include $(BLD_DIR)/util/config.mk
-include $(BLD_DIR)/pscf/config.mk
-include $(SRC_DIR)/pscf/patterns.mk
-include $(SRC_DIR)/util/sources.mk
-include $(SRC_DIR)/pscf/sources.mk
+include $(SRC_DIR)/pscf/include.mk
 
 #-----------------------------------------------------------------------
 # Main targets 
