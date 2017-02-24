@@ -66,8 +66,6 @@ namespace Pscf
        : Vec<D, T>(s)
       {}
 
-   private:
-
       /// Width of field per Cartesian coordinate in stream IO
       static const int Width = 25;
 
@@ -88,7 +86,7 @@ namespace Pscf
    * \return modified input stream
    */
    template <int D, typename T>
-   std::istream& operator>>(std::istream& in, RealVec<D, T> &vector)
+   std::istream& operator >> (std::istream& in, RealVec<D, T> &vector)
    {
       for (int i = 0; i < D; ++i) {
          in >> vector[i];
@@ -107,13 +105,13 @@ namespace Pscf
    * \return modified output stream
    */
    template <int D, typename T>
-   std::ostream& operator<<(std::ostream& out, const RealVec<D, T> &vector)
+   std::ostream& operator << (std::ostream& out, const RealVec<D, T> &vector)
    {
       for (int i = 0; i < D; ++i) {
          out.setf(std::ios::scientific);
          out.width(RealVec<D>::Width);
          out.precision(RealVec<D>::Precision);
-         out << vector.elem_[i];
+         out << vector[i];
       }
       return out;
    }

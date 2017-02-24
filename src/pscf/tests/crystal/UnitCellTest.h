@@ -61,6 +61,9 @@ public:
       std::cout << v << std::endl ;
 
       TEST_ASSERT(isValidReciprocal(v));
+
+      std::cout << v.rBasis(0) << std::endl;
+      std::cout << v.kBasis(0) << std::endl;
    }
 
    void test2DSquare() {
@@ -77,6 +80,10 @@ public:
       std::cout << v << std::endl ;
 
       TEST_ASSERT(isValidReciprocal(v));
+      std::cout << "a(0) = " << v.rBasis(0) << std::endl;
+      std::cout << "a(1) = " << v.rBasis(1) << std::endl;
+      std::cout << "b(0) = " << v.kBasis(0) << std::endl;
+      std::cout << "b(1) = " << v.kBasis(1) << std::endl;
    }
 
 };
