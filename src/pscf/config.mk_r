@@ -43,8 +43,9 @@ PSCF_SUFFIX:=
 # and other libraries and executables that depend on the util library.
 
 #-----------------------------------------------------------------------
-# Define path to header files for Gnu Scientfic Library
+# Define path to files for external libraries 
 
+# Paths for Gnu Scientific Library
 #PSCF_GSL=1
 ifdef PSCF_GSL
   PSCF_DEFS+=-DPSCF_GSL
@@ -53,6 +54,15 @@ ifdef PSCF_GSL
   INCLUDES+=$(PSCF_GSL_INC)
 endif
 
+#PSCF_FFTW=1
+ifdef PSCF_FFTW
+  PSCF_DEFS+=-DPSCF_FFTW
+  PSCF_FFTW_PREFIX=/usr/local/Cellar/fftw3/3.3.4_1
+  PSCF_FFTW_INC=-I$(PSCF_FFTW_PREFIX)/include
+  PSCF_FFTW_LIB=-L$(PSCF_FFTW_PREFIX)/lib -lfftw3
+  INCLUDES+=$(PSCF_GSL_INC)
+  LDFLAGS+=$(PSCF_FFTW_LIB) 
+endif
 #-----------------------------------------------------------------------
 # Path to the util library 
 # Note: BLD_DIR is defined in config.mk
