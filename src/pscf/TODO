@@ -1,2 +1,6 @@
 
-1) Add unit tests for UnitCell classes
+1) Add more unit tests for UnitCell classes
+2) Add more unit tests for Mesh
+3) Add unit tests for MeshIterator
+
+4) Write classes related to FFTs

@@ -9,10 +9,8 @@
 */
 
 #include <pscf/math/IntVec.h>
-//#include <pscf/crystal/UnitCell.h>
 
-namespace Pscf {
-namespace Pssp
+namespace Pscf 
 {
 
    using namespace Util;
@@ -175,5 +173,5 @@ namespace Pssp
    {  return size_; }
 
 }
-}
+#include "Mesh.tpp"
 #endif

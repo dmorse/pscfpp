@@ -42,12 +42,12 @@ namespace Pscf
       /**
       * Get a Bravais basis vector i.
       */
-      const RealVec<D>& rBasisVector(int i) const;
+      const RealVec<D>& rBasis(int i) const;
    
       /**
       * Get reciprocal basis vector i.
       */
-      const RealVec<D>& kBasisVector(int i) const;
+      const RealVec<D>& kBasis(int i) const;
    
       /**
       * Get square magnitude of reciprocal basis vector.
@@ -82,7 +82,7 @@ namespace Pscf
    * Get a Bravais basis vector i.
    */
    template <int D>
-   const RealVec<D>& UnitCellBase<D>::rBasisVector(int i) const
+   const RealVec<D>& UnitCellBase<D>::rBasis(int i) const
    {  return rBasis_[i];  }
 
    /*
@@ -90,7 +90,7 @@ namespace Pscf
    */
    template <int D>
    inline
-   const RealVec<D>& UnitCellBase<D>::kBasisVector(int i) const
+   const RealVec<D>& UnitCellBase<D>::kBasis(int i) const
    {  return kBasis_[i];  }
 
    /*

@@ -27,6 +27,8 @@ clean:
 	rm -f chem/Test chem/Test.o chem/Test.d
 	rm -f solvers/Test solvers/Test.o solvers/Test.d
 	rm -f inter/Test inter/Test.o inter/Test.d
+	rm -f mesh/Test mesh/Test.o mesh/Test.d
+	rm -f crystal/Test crystal/Test.o crystal/Test.d
 	rm -f log count 
 
 -include $(pscf_tests_OBJS:.o=.d)
