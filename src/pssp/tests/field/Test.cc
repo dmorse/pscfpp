@@ -3,17 +3,14 @@
 */ 
 
 #include <util/global.h>
-#include "FieldTest.h"
+#include "RFieldTest.h"
 
 #include <test/TestRunner.h>
 #include <test/CompositeTestRunner.h>
 
-//using namespace Pscf;
-//using namespace Util;
-
 int main(int argc, char* argv[])
 {
-   TEST_RUNNER(FieldTest) runner;
+   TEST_RUNNER(RMeshFieldTest) runner;
 
    #if 0
    if (argc > 2) {

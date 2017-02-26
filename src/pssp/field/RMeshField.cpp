@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "RField.h"
+#include "RMeshField.h"
 
 namespace Pssp
 {

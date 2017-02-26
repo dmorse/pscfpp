@@ -47,6 +47,8 @@ namespace Pssp
       */
       virtual ~RMeshField();
 
+      using Field<double>::allocate;
+
       /**
       * Allocate the underlying C array for an FFT grid.
       *
