@@ -1,5 +1,5 @@
-pssp_field_= 
-  #pssp/field/RField.cpp 
+pssp_field_= \
+  pssp/field/RField.cpp 
 
 pssp_field_SRCS=\
      $(addprefix $(SRC_DIR)/, $(pssp_field_))

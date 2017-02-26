@@ -1,5 +1,5 @@
-#ifndef PSSP_RFIELD_H
-#define PSSP_RFIELD_H
+#ifndef PSSP_R_MESH_FIELD_H
+#define PSSP_R_MESH_FIELD_H
 
 /*
 * PSCF++ Package 
@@ -8,17 +8,20 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include "Field.h"
+#include <pscf/math/IntVec.h>
 #include <util/global.h>
 
 namespace Pssp
 {
 
    using namespace Util;
+   using namespace Pscf;
 
    /**
-   * Field of real double precision values for FFT transform.
+   * Field of real double precision values on an FFT mesh.
    */
-   class RField
+   class RMeshField : public Field<double>
    {
 
    public:
@@ -26,184 +29,90 @@ namespace Pssp
       /**
       * Default constructor.
       */
-      RField();
+      RMeshField();
 
       /**
       * Copy constructor.
       *
       * Allocates new memory and copies all elements by value.
       *
-      *\param other the RField to be copied.
+      *\param other the RMeshField to be copied.
       */
-      RField(const RField& other);
+      RMeshField(const RMeshField& other);
 
       /**
       * Destructor.
       *
       * Deletes underlying C array, if allocated previously.
       */
-      virtual ~RField();
+      virtual ~RMeshField();
 
       /**
-      * Assignment operator.
+      * Allocate the underlying C array for an FFT grid.
       *
-      * If this RField is not allocated, allocates and copies all elements.
+      * \throw Exception if the RMeshField is already allocated.
       *
-      * If this and the other RField are both allocated, the capacities must
-      * be exactly equal. If so, this method copies all elements.
-      *
-      * \param other the RHS RField
+      * \param dimensions vector containing number of grid points in each direction.
       */
-      RField& operator = (const RField& other);
+      template <int D>
+      void allocate(const IntVec<D>& meshDimensions);
 
       /**
-      * Allocate the underlying C array.
+      * Get the dimensions of the grid for which this was allocated.
       *
-      * \throw Exception if the RField is already allocated.
+      * \throw Exception if dimensions of space do not match.
       *
-      * \param capacity number of elements to allocate.
+      * \param dimensions vector containing number of grid points in each direction.
       */
-      void allocate(int capacity);
+      template <int D>
+      void getMeshDimension(IntVec<D>& meshDimensions);
 
-      /**
-      * Dellocate the underlying C array.
-      *
-      * \throw Exception if the RField is not allocated.
-      */
-      void deallocate();
+   private:
 
-      /**
-      * Return true if the RField has been allocated, false otherwise.
-      */
-      bool isAllocated() const;
+      // Dimension of space (1, 2, or 3)
+      int spaceDimension_;
 
-      /**
-      * Return allocated size.
-      *
-      * \return Number of elements allocated in array.
-      */
-      int capacity() const;
-
-      /**
-      * Get an element by non-const reference.
-      *
-      * Mimic C-array subscripting.
-      *
-      * \param  i array index
-      * \return non-const reference to element i
-      */
-      double& operator[] (int i);
-
-      /**
-      * Get an element by const reference.
-      *
-      * Mimics C-array subscripting.
-      *
-      * \param i array index
-      * \return const reference to element i
-      */
-      const double& operator[] (int i) const;
-
-      /**
-      * Return pointer to underlying C array.
-      */
-      double* cRField();
-
-      /**
-      * Return pointer to const to underlying C array.
-      */
-      const double* cRField() const;
-
-      /**
-      * Serialize a RField to/from an Archive.
-      *
-      * \param ar       archive
-      * \param version  archive version id
-      */
-      template <class Archive>
-      void serialize(Archive& ar, const unsigned int version);
-
-   protected:
-
-      /// Pointer to an array of double elements.
-      double* data_;
-
-      /// Allocated size of the data_ array.
-      int capacity_;
+      // Vector containing number of grid points in each direction.
+      IntVec<3> meshDimensions_;
 
    };
 
    /*
-   * Return allocated size.
+   * Allocate the underlying C array for an FFT grid.
    */
-   inline int RField::capacity() const
-   {  return capacity_; }
-
-   /*
-   * Get an element by reference (C-array subscripting)
-   */
-   inline double& RField::operator[] (int i)
+   template <int D>
+   void RMeshField::allocate(const IntVec<D>& meshDimensions)
    {
-      assert(data_ != 0);
-      assert(i >= 0);
-      assert(i < capacity_);
-      return *(data_ + i);
+      // Preconditions
+      UTIL_CHECK(D > 0);
+      UTIL_CHECK(D < 4);
+
+      // Initialize mesh dimensions to zero
+      for (int i = 0; i < 3; ++i) {
+         meshDimensions_[i] = 1;
+      }
+
+      int size = 1;
+      for (int i = 0; i < D; ++i) {
+         UTIL_CHECK(meshDimensions[i] > 0);
+         size *= meshDimensions[i];
+         meshDimensions_[i] = meshDimensions[i];
+      }
+      spaceDimension_ = D;
+      Field<double>::allocate(size);
    }
 
-   /*
-   * Get an element by const reference (C-array subscripting)
+   /**
+   * Get the dimensions of the grid for which this was allocated.
    */
-   inline const double& RField::operator[] (int i) const
+   template <int D>
+   void RMeshField::getMeshDimension(IntVec<D>& meshDimensions)
    {
-      assert(data_ != 0);
-      assert(i >= 0 );
-      assert(i < capacity_);
-      return *(data_ + i);
-   }
-
-   /*
-   * Get a pointer to the underlying C array.
-   */
-   inline double* RField::cRField()
-   {  return data_; }
-
-   /*
-   * Get a pointer to const to the underlying C array.
-   */
-   inline const double* RField::cRField() const
-   {  return data_; }
-
-   /*
-   * Return true if the RField has been allocated, false otherwise.
-   */
-   inline bool RField::isAllocated() const
-   {  return (bool)data_; }
-
-   /*
-   * Serialize a RField to/from an Archive.
-   */
-   template <class Archive>
-   void RField::serialize(Archive& ar, const unsigned int version)
-   {
-      int capacity;
-      if (Archive::is_saving()) {
-         capacity = capacity_;
-      }
-      ar & capacity;
-      if (Archive::is_loading()) {
-         if (!isAllocated()) {
-            if (capacity > 0) {
-               allocate(capacity);
-            }
-         } else {
-            if (capacity != capacity_) {
-               UTIL_THROW("Inconsistent RField capacities");
-            }
-         }
-      }
-      if (isAllocated()) {
-         for (int i = 0; i < capacity_; ++i) {
-            ar & data_[i];
+      if (D != spaceDimension_) {
+         UTIL_THROW("Argument with wrong number of spatial dimensions");
+      } else {
+         for (int i = 0; i < D; ++i) {
+            meshDimensions[i] = meshDimensions_[i];
          }
       }
    }
