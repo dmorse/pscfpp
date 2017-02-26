@@ -3,14 +3,16 @@
 */ 
 
 #include <util/global.h>
-#include "RFieldTest.h"
+//#include "RFieldTest.h"
+#include "FieldTestComposite.h"
 
 #include <test/TestRunner.h>
 #include <test/CompositeTestRunner.h>
 
 int main(int argc, char* argv[])
 {
-   TEST_RUNNER(RMeshFieldTest) runner;
+   //TEST_RUNNER(RMeshFieldTest) runner;
+   FieldTestComposite runner;
 
    #if 0
    if (argc > 2) {

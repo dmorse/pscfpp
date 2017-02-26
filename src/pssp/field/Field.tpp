@@ -28,6 +28,19 @@ namespace Pssp
    {}
 
    /*
+   * Destructor.
+   */
+   template <typename Data>
+   Field<Data>::~Field()
+   {
+      if (isAllocated()) {
+         fftw_free(data_);
+         capacity_ = 0;
+      }
+   }
+
+   #if 0
+   /*
    * Copy constructor.
    *
    * Allocates new memory and copies all elements by value.
@@ -46,18 +59,6 @@ namespace Pssp
       capacity_ = other.capacity_;
       for (int i = 0; i < capacity_; ++i) {
          data_[i] = other.data_[i];
-      }
-   }
-
-   /*
-   * Destructor.
-   */
-   template <typename Data>
-   Field<Data>::~Field()
-   {
-      if (isAllocated()) {
-         fftw_free(data_);
-         capacity_ = 0;
       }
    }
 
@@ -95,6 +96,7 @@ namespace Pssp
 
       return *this;
    }
+   #endif
 
    /*
    * Allocate the underlying C array.

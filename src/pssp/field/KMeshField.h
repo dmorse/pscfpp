@@ -1,5 +1,5 @@
-#ifndef PSSP_R_MESH_FIELD_H
-#define PSSP_R_MESH_FIELD_H
+#ifndef PSSP_K_MESH_FIELD_H
+#define PSSP_K_MESH_FIELD_H
 
 /*
 * PSCF++ Package 
@@ -12,6 +12,8 @@
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
 
+#include <fftw3.h>
+
 namespace Pssp
 {
 
@@ -21,7 +23,7 @@ namespace Pssp
    /**
    * Field of real double precision values on an FFT mesh.
    */
-   class RMeshField : public Field<double>
+   class KMeshField : public Field<fftw_complex>
    {
 
    public:
@@ -29,23 +31,23 @@ namespace Pssp
       /**
       * Default constructor.
       */
-      RMeshField();
+      KMeshField();
 
       /**
       * Copy constructor.
       *
       * Allocates new memory and copies all elements by value.
       *
-      *\param other the RMeshField to be copied.
+      *\param other the KMeshField to be copied.
       */
-      RMeshField(const RMeshField& other);
+      KMeshField(const KMeshField& other);
 
       /**
       * Destructor.
       *
       * Deletes underlying C array, if allocated previously.
       */
-      virtual ~RMeshField();
+      virtual ~KMeshField();
 
       /**
       * Assignment operator.
@@ -57,14 +59,14 @@ namespace Pssp
       *
       * \param other the RHS Field
       */
-      RMeshField& operator = (const RMeshField& other);
+      KMeshField& operator = (const KMeshField& other);
 
-      using Field<double>::allocate;
+      using Field<fftw_complex>::allocate;
 
       /**
       * Allocate the underlying C array for an FFT grid.
       *
-      * \throw Exception if the RMeshField is already allocated.
+      * \throw Exception if the KMeshField is already allocated.
       *
       * \param dimensions vector containing number of grid points in each direction.
       */
@@ -95,7 +97,7 @@ namespace Pssp
    * Allocate the underlying C array for an FFT grid.
    */
    template <int D>
-   void RMeshField::allocate(const IntVec<D>& meshDimensions)
+   void KMeshField::allocate(const IntVec<D>& meshDimensions)
    {
       // Preconditions
       UTIL_CHECK(D > 0);
@@ -113,14 +115,14 @@ namespace Pssp
          meshDimensions_[i] = meshDimensions[i];
       }
       spaceDimension_ = D;
-      Field<double>::allocate(size);
+      Field<fftw_complex>::allocate(size);
    }
 
    /**
    * Get the dimensions of the grid for which this was allocated.
    */
    template <int D>
-   void RMeshField::getMeshDimension(IntVec<D>& meshDimensions)
+   void KMeshField::getMeshDimension(IntVec<D>& meshDimensions)
    {
       if (D != spaceDimension_) {
          UTIL_THROW("Argument with wrong number of spatial dimensions");

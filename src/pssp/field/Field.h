@@ -30,32 +30,11 @@ namespace Pssp
       Field();
 
       /**
-      * Copy constructor.
-      *
-      * Allocates new memory and copies all elements by value.
-      *
-      *\param other the Field to be copied.
-      */
-      Field(const Field& other);
-
-      /**
       * Destructor.
       *
       * Deletes underlying C array, if allocated previously.
       */
       virtual ~Field();
-
-      /**
-      * Assignment operator.
-      *
-      * If this Field is not allocated, allocates and copies all elements.
-      *
-      * If this and the other Field are both allocated, the capacities must
-      * be exactly equal. If so, this method copies all elements.
-      *
-      * \param other the RHS Field
-      */
-      Field& operator = (const Field& other);
 
       /**
       * Allocate the underlying C array.
@@ -131,6 +110,18 @@ namespace Pssp
 
       /// Allocated size of the data_ array.
       int capacity_;
+
+   private:
+
+      /**
+      * Copy constructor (private and not implemented to prohibit).
+      */
+      Field(const Field& other);
+
+      /**
+      * Assignment operator (private and non implemented to prohibit).
+      */
+      Field& operator = (const Field& other);
 
    };
 

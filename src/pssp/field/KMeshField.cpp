@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "RMeshField.h"
+#include "KMeshField.h"
 
 namespace Pssp
 {
@@ -15,14 +15,14 @@ namespace Pssp
    /**
    * Default constructor.
    */
-   RMeshField::RMeshField()
-    : Field<double>()
+   KMeshField::KMeshField()
+    : Field<fftw_complex>()
    {}
 
    /*
    * Destructor.
    */
-   RMeshField::~RMeshField()
+   KMeshField::~KMeshField()
    {}
 
    /*
@@ -32,18 +32,17 @@ namespace Pssp
    *
    *\param other the Field to be copied.
    */
-   RMeshField::RMeshField(const RMeshField& other)
-    : Field<double>(),
-      spaceDimension_(0),
-      meshDimensions_(0)
+   KMeshField::KMeshField(const KMeshField& other)
+    : Field<fftw_complex>()
    {
       if (!other.isAllocated()) {
          UTIL_THROW("Other Field must be allocated.");
       }
-      data_ = (double*) fftw_malloc(sizeof(double)*other.capacity_);
+      data_ = (fftw_complex*) fftw_malloc(sizeof(fftw_complex)*other.capacity_);
       capacity_ = other.capacity_;
       for (int i = 0; i < capacity_; ++i) {
-         data_[i] = other.data_[i];
+         data_[i][0] = other.data_[i][0];
+         data_[i][1] = other.data_[i][1];
       }
       spaceDimension_ = other.spaceDimension_;
       meshDimensions_ = other.meshDimensions_;
@@ -59,7 +58,7 @@ namespace Pssp
    *
    * \param other the rhs Field
    */
-   RMeshField& RMeshField::operator = (const RMeshField& other)
+   KMeshField& KMeshField::operator = (const KMeshField& other)
    {
       // Check for self assignment
       if (this == &other) return *this;
@@ -77,12 +76,14 @@ namespace Pssp
 
       // Copy elements
       for (int i = 0; i < capacity_; ++i) {
-         data_[i] = other[i];
+         data_[i][0] = other.data_[i][0];
+         data_[i][1] = other.data_[i][1];
       }
       spaceDimension_ = other.spaceDimension_;
       meshDimensions_ = other.meshDimensions_;
 
       return *this;
    }
+
 
 }

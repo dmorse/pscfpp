@@ -30,8 +30,6 @@ public:
    void testConstructor();
    void testAllocate();
    void testSubscript();
-   //void testCopyConstructor();
-   void testAssignment();
    void testSerialize1Memory();
    void testSerialize2Memory();
    void testSerialize1File();
@@ -73,36 +71,6 @@ void FieldTest::testSubscript()
    
       TEST_ASSERT(v[0] == 10.0);
       TEST_ASSERT(v[2] == 30.0);
-   }
-} 
-
-void FieldTest::testAssignment()
-{
-   printMethod(TEST_FUNC);
-
-   {
-      Field<double> v;
-      v.allocate(capacity);
-      TEST_ASSERT(v.capacity() == 3 );
-      TEST_ASSERT(v.isAllocated() );
-   
-      Field<double> u;
-      u.allocate(3);
-      TEST_ASSERT(u.capacity() == 3 );
-      TEST_ASSERT(u.isAllocated() );
-   
-      for (int i=0; i < capacity; i++ ) {
-         v[i] = (i+1)*10.0;
-      }
-   
-      u  = v;
-   
-      TEST_ASSERT(u.capacity() == 3 );
-      TEST_ASSERT(u.isAllocated() );
-      TEST_ASSERT(v[0] == 10.0);
-      TEST_ASSERT(v[2] == 30.0);
-      TEST_ASSERT(u[0] == 10.0);
-      TEST_ASSERT(u[2] == 30.0);
    }
 } 
 
@@ -341,8 +309,6 @@ TEST_BEGIN(FieldTest)
 TEST_ADD(FieldTest, testConstructor)
 TEST_ADD(FieldTest, testAllocate)
 TEST_ADD(FieldTest, testSubscript)
-//TEST_ADD(FieldTest, testCopyConstructor)
-TEST_ADD(FieldTest, testAssignment)
 TEST_ADD(FieldTest, testSerialize1Memory)
 TEST_ADD(FieldTest, testSerialize2Memory)
 TEST_ADD(FieldTest, testSerialize1File)
