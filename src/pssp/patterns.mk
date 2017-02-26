@@ -3,22 +3,34 @@
 #
 # This makefile contains the pattern rule used to compile all sources
 # files in the directory tree rooted at the src/pssp directory, which
-# contains all source code for the Util namespace. It is included by
+# contains all source code for the PsSp namespace. It is included by
 # all "makefile" files in this directory tree. 
 #
-# This file should be included in other makefiles after inclusion of
-# the files src/config.mk and src/pssp/config.mk because this file
-# uses makefile variables defined in those files.
+# This file must be included in other makefiles after inclusion of
+# the root src/config.mk and relevant namespace level config.mk files 
+# in the build directory, because this file uses makefile variables 
+# defined in those configuration files.
 #-----------------------------------------------------------------------
 
-# All libraries needed in src/pssp
-LIBS=$(pssp_LIB) $(pscf_LIB) $(util_LIB)
+# Local pscf-specific libraries needed in src/pssp
+PSCF_LIBS=$(pssp_LIB) $(pscf_LIB) $(util_LIB)
+
+# All libraries needed in executables built in src/pssp
+LIBS=$(PSCF_LIBS)
+ifdef PSCF_GSL
+LIBS+=$(PSCF_GSL_LIB) 
+endif
+ifdef PSSP_FFTW
+LIBS+=$(PSSP_FFTW_LIB) 
+endif
 
 # Preprocessor macro definitions needed in src/pssp
-DEFINES=$(PSCF_DEFS) $(UTIL_DEFS)
+DEFINES=$(UTIL_DEFS) $(PSCF_DEFS) $(PSSP_DEFS) 
 
 # Dependencies on build configuration files
 MAKE_DEPS= -A$(BLD_DIR)/config.mk
+MAKE_DEPS+= -A$(BLD_DIR)/util/config.mk
+MAKE_DEPS+= -A$(BLD_DIR)/pscf/config.mk
 MAKE_DEPS+= -A$(BLD_DIR)/pssp/config.mk
 
 # Pattern rule to compile *.cpp class source files in src/pssp
@@ -29,9 +41,9 @@ ifdef MAKEDEP
 endif
 
 # Pattern rule to compile *.cc test programs in src/pssp/tests
-$(BLD_DIR)/% $(BLD_DIR)/%.o:$(SRC_DIR)/%.cc $(LIBS)
+$(BLD_DIR)/% $(BLD_DIR)/%.o:$(SRC_DIR)/%.cc $(PSCF_LIBS)
 	$(CXX) $(TESTFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $<
-	$(CXX) $(LDFLAGS) $(INCLUDES) $(DEFINES) -o $(@:.o=) $@ $(LIBS) $(PSCF_GSL_LIB)
+	$(CXX) $(LDFLAGS) $(INCLUDES) $(DEFINES) -o $(@:.o=) $@ $(LIBS)
 ifdef MAKEDEP
 	$(MAKEDEP) $(INCLUDES) $(DEFINES) $(MAKE_DEPS) -S$(SRC_DIR) -B$(BLD_DIR) $<
 endif

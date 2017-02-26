@@ -11,8 +11,14 @@
 # uses makefile variables defined in those files.
 #-----------------------------------------------------------------------
 
-# All libraries needed in src/pscf
-LIBS=$(pscf_LIB) $(util_LIB)
+# All pscf-specific libraries needed in src/pscf
+PSCF_LIBS=$(pscf_LIB) $(util_LIB) 
+
+# All libraries needed for executables in src/pscf, including external
+LIBS=$(PSCF_LIBS)
+ifdef PSCF_GSL
+LIBS+=$(PSCF_GSL_LIB) 
+endif
 
 # Preprocessor macro definitions needed in src/pscf
 DEFINES=$(PSCF_DEFS) $(UTIL_DEFS)
@@ -30,9 +36,9 @@ ifdef MAKEDEP
 endif
 
 # Pattern rule to compile *.cc test programs in src/pscf/tests
-$(BLD_DIR)/% $(BLD_DIR)/%.o: $(SRC_DIR)/%.cc $(LIBS)
+$(BLD_DIR)/% $(BLD_DIR)/%.o: $(SRC_DIR)/%.cc $(PSCF_LIBS)
 	$(CXX) $(TESTFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $<
-	$(CXX) $(LDFLAGS) $(INCLUDES) $(DEFINES) -o $(@:.o=) $@ $(LIBS) $(PSCF_GSL_LIB)
+	$(CXX) $(LDFLAGS) $(INCLUDES) $(DEFINES) -o $(@:.o=) $@ $(LIBS)
 ifdef MAKEDEP
 	$(MAKEDEP) $(INCLUDES) $(DEFINES) $(MAKE_DEPS) -S$(SRC_DIR) -B$(BLD_DIR) $<
 endif

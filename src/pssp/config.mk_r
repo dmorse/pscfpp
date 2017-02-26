@@ -19,8 +19,6 @@
 #-----------------------------------------------------------------------
 # Flag to define preprocessor macros.
 
-# Most users will not need to modify the rest of this file. 
-#-----------------------------------------------------------------------
 # Comments:
 #
 # The variable PSSP_DEFS is used to pass preprocessor definitions to
@@ -41,6 +39,19 @@ PSSP_SUFFIX:=
 # macro. In some blocks, a second line add a suffix to the PSSP_SUFFIX 
 # or PSSP_MPI_SUFFIX variable, thus changing the name of the pssp library
 # and other libraries and executables that depend on the pssp library.
+
+#-----------------------------------------------------------------------
+# Macros related to use of external libraries
+
+# FFTW Fast Fourier transform library
+#PSSP_FFTW=1
+ifdef PSSP_FFTW
+  PSSP_DEFS+=-DPSSP_FFTW
+  PSSP_FFTW_PREFIX=/usr/local/Cellar/fftw/3.3.4_1
+  PSSP_FFTW_INC=-I$(PSSP_FFTW_PREFIX)/include
+  PSSP_FFTW_LIB=-L$(PSSP_FFTW_PREFIX)/lib -lfftw3
+  INCLUDES+=$(PSSP_FFTW_INC)
+endif
 
 #-----------------------------------------------------------------------
 # Path to the pssp library 

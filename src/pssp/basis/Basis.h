@@ -1,6 +1,5 @@
 #ifndef PSSP_BASIS_H
 #define PSSP_BASIS_H
-
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
@@ -8,9 +7,15 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <pscf/math/IntVec.h>
+#include <util/containers/DArray.h>
+
 namespace Pscf { 
 namespace Pssp
 { 
+
+   class Mesh;
+   class UnitCell;
 
    using namespace Util;
 
@@ -22,14 +27,14 @@ namespace Pssp
    template <int D>
    class Basis {
    
-      struc Wave {
+      struct Wave {
          std::complex<double> coeff;
          double sqNorm;
          IntVec<D> vector;
          int starId;
-      }
+      };
    
-      struc Star {
+      struct Star {
          int size; 
          int beginId; 
          int endId;  
@@ -43,8 +48,8 @@ namespace Pssp
       Basis();
  
       // Associate
-      void setUnitCell(const UnitCell& unitCell)
-      void setMesh(const Mesh& mesh)
+      void setUnitCell(const UnitCell& unitCell);
+      void setMesh(const Mesh& mesh);
    
       // Initialize
       void allocate();

@@ -8,13 +8,15 @@
 
 SRC_DIR_REL =..
 include $(SRC_DIR_REL)/config.mk
-include $(BLD_DIR)/util/config.mk
-include $(BLD_DIR)/pscf/config.mk
-include $(BLD_DIR)/pssp/config.mk
-include $(SRC_DIR)/pssp/patterns.mk
-include $(SRC_DIR)/util/sources.mk
-include $(SRC_DIR)/pscf/sources.mk
-include $(SRC_DIR)/pssp/sources.mk
+include $(BLD_DIR)/pssp/include.mk
+
+#include $(BLD_DIR)/util/config.mk
+#include $(BLD_DIR)/pscf/config.mk
+#include $(BLD_DIR)/pssp/config.mk
+#include $(SRC_DIR)/pssp/patterns.mk
+#include $(SRC_DIR)/util/sources.mk
+#include $(SRC_DIR)/pscf/sources.mk
+#include $(SRC_DIR)/pssp/sources.mk
 
 #-----------------------------------------------------------------------
 # Variable definition
@@ -37,11 +39,10 @@ veryclean:
 	-rm -f *.d 
 	-rm -f lib*.a
 
-
 # Executable target
 
 $(PSCF_PS_EXE): $(PSCF_PS).o $(LIBS)
-	$(CXX) $(LDFLAGS) -o $(PSCF_PS_EXE) $(PSCF_PS).o $(LIBS) $(PSCF_GSL_LIB)
+	$(CXX) $(LDFLAGS) -o $(PSCF_PS_EXE) $(PSCF_PS).o $(LIBS)
 
 # Short name for executable target (for convenience)
 pscf_ps:

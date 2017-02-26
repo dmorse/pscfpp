@@ -2,20 +2,16 @@
 # This makefile fragment defines:
 #
 #   - A variable $(PSCF_DEFS) that is passed to the processor to define 
-#     preprocessor flags that effect the code in the util/ directory. 
+#     preprocessor flags that effect the code in the pscf/ directory. 
 #
 #   - A variable $(PSCF_SUFFIX) that indicates what other features are
 #     enabled, which is also added after PSCF_MPI_SUFFIX to the file
-#     name of util library. 
+#     name of pscf library. 
 #
-#   - A variable $(PSCF_LIB) that the absolute path to the util library 
+#   - A variable $(PSCF_LIB) that the absolute path to the pscf library 
 #     file.
 #
-# This file must be included by every makefile in the util directory. 
-#-----------------------------------------------------------------------
-# Flag to define preprocessor macros.
-
-# Most users will not need to modify the rest of this file. 
+# This file must be included by every makefile in the pscf directory. 
 #-----------------------------------------------------------------------
 # Comments:
 #
@@ -36,16 +32,21 @@
 PSCF_DEFS=
 PSCF_SUFFIX:=
 
+#-----------------------------------------------------------------------
+# Flag to define preprocessor macros.
+
 # Each if-block below contains a line that appends a preprocessor macro 
 # definition to PSCF_DEFS, thus defining an associated C++ preprocessor 
 # macro. In some blocks, a second line add a suffix to the PSCF_SUFFIX 
 # or PSCF_MPI_SUFFIX variable, thus changing the name of the util library
 # and other libraries and executables that depend on the util library.
 
-#-----------------------------------------------------------------------
-# Define path to files for external libraries 
+# ...... (Nothing needed here, for now)
 
-# Paths for Gnu Scientific Library
+#-----------------------------------------------------------------------
+# Macros related to external libraries 
+
+# Gnu Scientific Library
 #PSCF_GSL=1
 ifdef PSCF_GSL
   PSCF_DEFS+=-DPSCF_GSL
@@ -54,18 +55,9 @@ ifdef PSCF_GSL
   INCLUDES+=$(PSCF_GSL_INC)
 endif
 
-#PSCF_FFTW=1
-ifdef PSCF_FFTW
-  PSCF_DEFS+=-DPSCF_FFTW
-  PSCF_FFTW_PREFIX=/usr/local/Cellar/fftw3/3.3.4_1
-  PSCF_FFTW_INC=-I$(PSCF_FFTW_PREFIX)/include
-  PSCF_FFTW_LIB=-L$(PSCF_FFTW_PREFIX)/lib -lfftw3
-  INCLUDES+=$(PSCF_GSL_INC)
-  LDFLAGS+=$(PSCF_FFTW_LIB) 
-endif
 #-----------------------------------------------------------------------
-# Path to the util library 
-# Note: BLD_DIR is defined in config.mk
+# Path to the pscf library 
+# Note: BLD_DIR is defined in config.mk in root of bld directory
 
 pscf_LIBNAME=pscf$(PSCF_SUFFIX)$(UTIL_SUFFIX)
 pscf_LIB=$(BLD_DIR)/pscf/lib$(pscf_LIBNAME).a

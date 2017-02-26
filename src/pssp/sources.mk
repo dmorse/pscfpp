@@ -1,5 +1,9 @@
-pssp_= 
-  # pssp/Basis.cpp 
+include $(SRC_DIR)/pssp/basis/sources.mk
+include $(SRC_DIR)/pssp/field/sources.mk
+
+pssp_= \
+  $(pssp_basis_) \
+  $(pssp_field_) 
 
 pssp_SRCS=\
      $(addprefix $(SRC_DIR)/, $(pssp_))

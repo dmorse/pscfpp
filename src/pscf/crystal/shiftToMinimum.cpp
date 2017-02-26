@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "shiftToBZ.h"
+#include "shiftToMinimum.h"
 
 namespace Pscf
 {
@@ -13,7 +13,7 @@ namespace Pscf
    using namespace Util;
 
    template <> 
-   IntVec<1> UnitCell(IntVec<1>& v, IntVec<1> d, UnitCell<1> cell)
+   IntVec<1> shiftToMinimum(IntVec<1>& v, IntVec<1> d, UnitCell<1> cell)
    {
       IntVec<1> u;
       if (v[0] > d[0]/2) {

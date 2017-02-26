@@ -11,14 +11,22 @@
 # uses makefile variables defined in those files.
 #-----------------------------------------------------------------------
 
-# All libraries needed in src/fd1d
-LIBS=$(fd1d_LIB) $(pscf_LIB) $(util_LIB)
+# Local pscf-specific libraries needed in src/fd1d
+PSCF_LIBS=$(fd1d_LIB) $(pscf_LIB) $(util_LIB)
+
+# All libraries needed for executables in src/pscf, including external
+LIBS=$(PSCF_LIBS)
+ifdef PSCF_GSL
+LIBS+=$(PSCF_GSL_LIB) 
+endif
 
 # Preprocessor macro definitions needed in src/fd1d
 DEFINES=$(PSCF_DEFS) $(UTIL_DEFS)
 
 # Dependencies on build configuration files
 MAKE_DEPS= -A$(BLD_DIR)/config.mk
+MAKE_DEPS+= -A$(BLD_DIR)/util/config.mk
+MAKE_DEPS+= -A$(BLD_DIR)/pscf/config.mk
 MAKE_DEPS+= -A$(BLD_DIR)/fd1d/config.mk
 
 # Pattern rule to compile *.cpp class source files in src/fd1d
@@ -29,9 +37,9 @@ ifdef MAKEDEP
 endif
 
 # Pattern rule to compile *.cc test programs in src/fd1d/tests
-$(BLD_DIR)/% $(BLD_DIR)/%.o:$(SRC_DIR)/%.cc $(LIBS)
+$(BLD_DIR)/% $(BLD_DIR)/%.o:$(SRC_DIR)/%.cc $(PSCF_LIBS)
 	$(CXX) $(TESTFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $<
-	$(CXX) $(LDFLAGS) $(INCLUDES) $(DEFINES) -o $(@:.o=) $@ $(LIBS) $(PSCF_GSL_LIB)
+	$(CXX) $(LDFLAGS) $(INCLUDES) $(DEFINES) -o $(@:.o=) $@ $(LIBS)
 ifdef MAKEDEP
 	$(MAKEDEP) $(INCLUDES) $(DEFINES) $(MAKE_DEPS) -S$(SRC_DIR) -B$(BLD_DIR) $<
 endif
