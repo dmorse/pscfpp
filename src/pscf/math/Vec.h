@@ -226,6 +226,17 @@ namespace Pscf
 
       //@}
 
+      /**
+      * Serialize to/from an archive.
+      *
+      * Implementation uses syntax of Boost::serialize.
+      *
+      * \param ar       archive
+      * \param version  archive version id
+      */
+      template <class Archive>
+      void serialize(Archive& ar, const unsigned int version);
+
    private:
 
       /// Width of field per Cartesian coordinate in stream IO
@@ -460,6 +471,19 @@ namespace Pscf
          elem_[i] = v.elem_[i]*s;
       }
       return *this;
+   }
+
+   /*
+   * Serialize to/from an archive.
+   */
+   template <int D, typename T>
+   template <class Archive>
+   inline 
+   void Vec<D, T>::serialize(Archive& ar, const unsigned int version)
+   { 
+      for (int i = 0; i < D; ++i) {
+         ar & elem_[i];
+      }
    }
 
 }

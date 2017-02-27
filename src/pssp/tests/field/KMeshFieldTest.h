@@ -1,10 +1,10 @@
-#ifndef PSSP_RMESHFIELD_TEST_H
-#define PSSP_RMESHFIELD_TEST_H
+#ifndef PSSP_K_MESH_FIELD_TEST_H
+#define PSSP_K_MESH_FIELD_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pssp/field/RMeshField.h>
+#include <pssp/field/KMeshField.h>
 #include <util/archives/MemoryOArchive.h>
 #include <util/archives/MemoryIArchive.h>
 #include <util/archives/MemoryCounter.h>
@@ -14,7 +14,7 @@
 using namespace Util;
 using namespace Pssp;
 
-class RMeshFieldTest : public UnitTest 
+class KMeshFieldTest : public UnitTest 
 {
 private:
 
@@ -31,91 +31,142 @@ public:
 
    void testConstructor();
    void testAllocate();
+   void testAllocate1();
+   void testAllocate3();
    void testSubscript();
-   //void testCopyConstructor();
    void testAssignment();
-   void testSerialize1Memory();
-   void testSerialize2Memory();
-   void testSerialize1File();
-   void testSerialize2File();
+   //void testSerialize1Memory();
+   //void testSerialize2Memory();
+   //void testSerialize1File();
+   //void testSerialize2File();
 
 };
 
 
-void RMeshFieldTest::testConstructor()
+void KMeshFieldTest::testConstructor()
 {
    printMethod(TEST_FUNC);
    {
-      RMeshField v;
+      KMeshField v;
       TEST_ASSERT(v.capacity() == 0 );
       TEST_ASSERT(!v.isAllocated() );
    }
 } 
 
-void RMeshFieldTest::testAllocate()
+void KMeshFieldTest::testAllocate()
 {
    printMethod(TEST_FUNC);
    {
-      RMeshField v;
+      KMeshField v;
       v.allocate(capacity);
       TEST_ASSERT(v.capacity() == capacity );
       TEST_ASSERT(v.isAllocated());
    }
 } 
 
-void RMeshFieldTest::testSubscript()
+void KMeshFieldTest::testAllocate1()
 {
    printMethod(TEST_FUNC);
    {
-      RMeshField v;
+      IntVec<1> d;
+      d[0] = 3;
+      KMeshField v;
+      v.allocate(d);
+      TEST_ASSERT(v.capacity() == 2);
+      TEST_ASSERT(v.isAllocated());
+      TEST_ASSERT(v.spaceDimension() == 1);
+      IntVec<1> c;
+      v.getMeshDimensions(c);
+      TEST_ASSERT(d == c);
+   }
+}
+ 
+void KMeshFieldTest::testAllocate3()
+{
+   printMethod(TEST_FUNC);
+   {
+      IntVec<3> d;
+      d[0] = 2;
+      d[1] = 3;
+      d[2] = 4;
+      KMeshField v;
+      v.allocate(d);
+      TEST_ASSERT(v.capacity() == 18);
+      TEST_ASSERT(v.isAllocated());
+      TEST_ASSERT(v.spaceDimension() == 3);
+      IntVec<3> c;
+      v.getMeshDimensions(c);
+      TEST_ASSERT(d == c);
+   }
+}
+ 
+void KMeshFieldTest::testSubscript()
+{
+   printMethod(TEST_FUNC);
+   {
+      KMeshField v;
       v.allocate(capacity);
       for (int i=0; i < capacity; i++ ) {
-         v[i] = (i+1)*10.0 ;
+         v[i][0] = (i+1)*10.0 ;
+         v[i][1] = (i+1)*10.0 + 0.1;
       }
    
-      TEST_ASSERT(v[0] == 10.0);
-      TEST_ASSERT(v[2] == 30.0);
+      TEST_ASSERT(v[0][0] == 10.0);
+      TEST_ASSERT(v[0][1] == 10.1);
+      TEST_ASSERT(v[1][0] == 20.0);
+      TEST_ASSERT(v[1][1] == 20.1);
+      TEST_ASSERT(v[2][0] == 30.0);
+      TEST_ASSERT(v[2][1] == 30.1);
    }
 } 
 
-void RMeshFieldTest::testAssignment()
+void KMeshFieldTest::testAssignment()
 {
    printMethod(TEST_FUNC);
 
    {
-      RMeshField v;
+      KMeshField v;
       v.allocate(capacity);
       TEST_ASSERT(v.capacity() == 3 );
       TEST_ASSERT(v.isAllocated() );
    
-      RMeshField u;
+      KMeshField u;
       u.allocate(3);
       TEST_ASSERT(u.capacity() == 3 );
       TEST_ASSERT(u.isAllocated() );
    
       for (int i=0; i < capacity; i++ ) {
-         v[i] = (i+1)*10.0;
+         v[i][0] = (i+1)*10.0 ;
+         v[i][1] = (i+1)*10.0 + 0.1;
       }
    
       u  = v;
    
       TEST_ASSERT(u.capacity() == 3 );
       TEST_ASSERT(u.isAllocated() );
-      TEST_ASSERT(v[0] == 10.0);
-      TEST_ASSERT(v[2] == 30.0);
-      TEST_ASSERT(u[0] == 10.0);
-      TEST_ASSERT(u[2] == 30.0);
+      TEST_ASSERT(v[0][0] == 10.0);
+      TEST_ASSERT(v[0][1] == 10.1);
+      TEST_ASSERT(v[1][0] == 20.0);
+      TEST_ASSERT(v[1][1] == 20.1);
+      TEST_ASSERT(u[0][0] == 10.0);
+      TEST_ASSERT(u[0][1] == 10.1);
+      TEST_ASSERT(u[1][0] == 20.0);
+      TEST_ASSERT(u[1][1] == 20.1);
+      TEST_ASSERT(u[2][0] == 30.0);
+      TEST_ASSERT(u[2][1] == 30.1);
    }
 } 
 
-void RMeshFieldTest::testSerialize1Memory()
-{
+#if 0
+void KMeshFieldTest::testSerialize1Memory()
+{ 
    printMethod(TEST_FUNC);
    {
-      RMeshField v;
+      KMeshField v;
       v.allocate(3);
       for (int i=0; i < capacity; i++ ) {
-         v[i] = (i+1)*10.0;
+         v[i][0] = (i+1)*10.0 ;
+         v[i][1] = (i+1)*10.0 + 0.1;
       }
       int size = memorySize(v);
      
@@ -130,10 +181,11 @@ void RMeshFieldTest::testSerialize1Memory()
       oArchive << i1;
    
       // Show that v is unchanged by packing
-      TEST_ASSERT(v[1]==20.0);
+      TEST_ASSERT(v[1][0]==20.0);
+      TEST_ASSERT(v[1][1]==20.0);
       TEST_ASSERT(v.capacity() == 3);
    
-      RMeshField u;
+      KMeshField u;
       u.allocate(3);
    
       MemoryIArchive iArchive;
@@ -166,7 +218,8 @@ void RMeshFieldTest::testSerialize1Memory()
    
       // Clear values of u and i2
       for (int i=0; i < capacity; i++ ) {
-         u[i] = 0.0;
+         u[i][0] = 0.0;
+         u[i][1] = 0.0;
       }
       i2 = 0;
    
@@ -182,21 +235,27 @@ void RMeshFieldTest::testSerialize1Memory()
       TEST_ASSERT(iArchive.begin() == oArchive.begin());
       TEST_ASSERT(iArchive.end() == oArchive.cursor());
    
-      TEST_ASSERT(u[1] == 20.0);
+      TEST_ASSERT(u[0][0] == 10.0);
+      TEST_ASSERT(u[0][1] == 10.1);
+      TEST_ASSERT(u[1][0] == 20.0);
+      TEST_ASSERT(u[1][1] == 20.1);
+      TEST_ASSERT(u[2][0] == 30.0);
+      TEST_ASSERT(u[2][1] == 30.1);
       TEST_ASSERT(i2 == 13);
       TEST_ASSERT(u.capacity() == 3);
    }
 
 }
 
-void RMeshFieldTest::testSerialize2Memory()
+void KMeshFieldTest::testSerialize2Memory()
 {
    printMethod(TEST_FUNC);
    {
-      RMeshField v;
+      KMeshField v;
       v.allocate(capacity);
       for (int i=0; i < capacity; i++ ) {
-         v[i] = (i+1)*10.0;
+         v[i][0] = (i+1)*10.0 ;
+         v[i][1] = (i+1)*10.0 + 0.1;
       }
       int size = memorySize(v);
      
@@ -210,9 +269,9 @@ void RMeshFieldTest::testSerialize2Memory()
       TEST_ASSERT(v[1] == 20.0);
       TEST_ASSERT(v.capacity() == capacity);
    
-      RMeshField u;
+      KMeshField u;
    
-      // Note: We do not allocate RMeshField u in this test.
+      // Note: We do not allocate KMeshField u in this test.
       // This is the main difference from testSerialize1Memory()
    
       MemoryIArchive iArchive;
@@ -225,19 +284,25 @@ void RMeshFieldTest::testSerialize2Memory()
       iArchive >> u;
    
       TEST_ASSERT(iArchive.cursor() == iArchive.begin() + size);
-      TEST_ASSERT(u[1] == 20.0);
+      TEST_ASSERT(u[0][0] == 10.0);
+      TEST_ASSERT(u[0][1] == 10.1);
+      TEST_ASSERT(u[1][0] == 20.0);
+      TEST_ASSERT(u[1][1] == 20.1);
+      TEST_ASSERT(u[2][0] == 30.0);
+      TEST_ASSERT(u[2][1] == 30.1);
       TEST_ASSERT(u.capacity() == 3);
    }
 }
 
-void RMeshFieldTest::testSerialize1File()
+void KMeshFieldTest::testSerialize1File()
 {
    printMethod(TEST_FUNC);
    {
-      RMeshField v;
+      KMeshField v;
       v.allocate(3);
       for (int i=0; i < capacity; i++ ) {
-         v[i] = (i+1)*10.0;
+         v[i][0] = (i+1)*10.0 ;
+         v[i][1] = (i+1)*10.0 + 0.1;
       }
      
       int i1 = 13;
@@ -253,7 +318,7 @@ void RMeshFieldTest::testSerialize1File()
       TEST_ASSERT(v[1]==20.0);
       TEST_ASSERT(v.capacity() == 3);
    
-      RMeshField u;
+      KMeshField u;
       u.allocate(3);
    
       BinaryFileIArchive iArchive;
@@ -283,14 +348,15 @@ void RMeshFieldTest::testSerialize1File()
    }
 }
 
-void RMeshFieldTest::testSerialize2File()
+void KMeshFieldTest::testSerialize2File()
 {
    printMethod(TEST_FUNC);
    {
-      RMeshField v;
+      KMeshField v;
       v.allocate(3);
       for (int i=0; i < capacity; i++ ) {
-         v[i] = (i+1)*10.0;
+         v[i][0] = (i+1)*10.0 ;
+         v[i][1] = (i+1)*10.0 + 0.1;
       }
      
       int i1 = 13;
@@ -306,7 +372,7 @@ void RMeshFieldTest::testSerialize2File()
       TEST_ASSERT(v[1] == 20.0);
       TEST_ASSERT(v.capacity() == 3);
    
-      RMeshField u;
+      KMeshField u;
    
       // u.allocate(3); -> 
       // Note: We do not allocate first. This is the difference 
@@ -338,17 +404,19 @@ void RMeshFieldTest::testSerialize2File()
       TEST_ASSERT(u.capacity() == 3);
    }
 }
+#endif
 
-TEST_BEGIN(RMeshFieldTest)
-TEST_ADD(RMeshFieldTest, testConstructor)
-TEST_ADD(RMeshFieldTest, testAllocate)
-TEST_ADD(RMeshFieldTest, testSubscript)
-//TEST_ADD(RMeshFieldTest, testCopyConstructor)
-TEST_ADD(RMeshFieldTest, testAssignment)
-TEST_ADD(RMeshFieldTest, testSerialize1Memory)
-TEST_ADD(RMeshFieldTest, testSerialize2Memory)
-TEST_ADD(RMeshFieldTest, testSerialize1File)
-TEST_ADD(RMeshFieldTest, testSerialize2File)
-TEST_END(RMeshFieldTest)
+TEST_BEGIN(KMeshFieldTest)
+TEST_ADD(KMeshFieldTest, testConstructor)
+TEST_ADD(KMeshFieldTest, testAllocate)
+TEST_ADD(KMeshFieldTest, testAllocate1)
+TEST_ADD(KMeshFieldTest, testAllocate3)
+TEST_ADD(KMeshFieldTest, testSubscript)
+TEST_ADD(KMeshFieldTest, testAssignment)
+//TEST_ADD(KMeshFieldTest, testSerialize1Memory)
+//TEST_ADD(KMeshFieldTest, testSerialize2Memory)
+//TEST_ADD(KMeshFieldTest, testSerialize1File)
+//TEST_ADD(KMeshFieldTest, testSerialize2File)
+TEST_END(KMeshFieldTest)
 
 #endif

@@ -72,6 +72,11 @@ namespace Pssp
       void allocate(const IntVec<D>& meshDimensions);
 
       /**
+      * Return the dimension of space.  
+      */
+      int spaceDimension() const;
+
+      /**
       * Get the dimensions of the grid for which this was allocated.
       *
       * \throw Exception if dimensions of space do not match.
@@ -79,7 +84,16 @@ namespace Pssp
       * \param dimensions vector containing number of grid points in each direction.
       */
       template <int D>
-      void getMeshDimension(IntVec<D>& meshDimensions);
+      void getMeshDimensions(IntVec<D>& meshDimensions) const;
+
+      /**
+      * Serialize a Field to/from an Archive.
+      *
+      * \param ar       archive
+      * \param version  archive version id
+      */
+      template <class Archive>
+      void serialize(Archive& ar, const unsigned int version);
 
    private:
 
@@ -116,11 +130,14 @@ namespace Pssp
       Field<double>::allocate(size);
    }
 
-   /**
+   inline int RMeshField::spaceDimension() const
+   {  return spaceDimension_;}
+
+   /*
    * Get the dimensions of the grid for which this was allocated.
    */
    template <int D>
-   void RMeshField::getMeshDimension(IntVec<D>& meshDimensions)
+   void RMeshField::getMeshDimensions(IntVec<D>& meshDimensions) const
    {
       if (D != spaceDimension_) {
          UTIL_THROW("Argument with wrong number of spatial dimensions");
@@ -130,6 +147,18 @@ namespace Pssp
          }
       }
    }
+
+   /*
+   * Serialize a Field to/from an Archive.
+   */
+   template <class Archive>
+   void RMeshField::serialize(Archive& ar, const unsigned int version)
+   {
+      Field<double>::serialize(ar, version);
+      ar & spaceDimension_;
+      ar & meshDimensions_;
+   }
+
 
 }
 #endif

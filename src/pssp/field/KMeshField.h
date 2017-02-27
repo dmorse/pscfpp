@@ -74,6 +74,11 @@ namespace Pssp
       void allocate(const IntVec<D>& meshDimensions);
 
       /**
+      * Return the dimension of space.  
+      */
+      int spaceDimension() const;
+
+      /**
       * Get the dimensions of the grid for which this was allocated.
       *
       * \throw Exception if dimensions of space do not match.
@@ -81,7 +86,16 @@ namespace Pssp
       * \param dimensions vector containing number of grid points in each direction.
       */
       template <int D>
-      void getMeshDimension(IntVec<D>& meshDimensions);
+      void getMeshDimensions(IntVec<D>& meshDimensions) const;
+
+      /**
+      * Serialize a Field to/from an Archive.
+      *
+      * \param ar       archive
+      * \param version  archive version id
+      */
+      template <class Archive>
+      void serialize(Archive& ar, const unsigned int version);
 
    private:
 
@@ -111,18 +125,28 @@ namespace Pssp
       int size = 1;
       for (int i = 0; i < D; ++i) {
          UTIL_CHECK(meshDimensions[i] > 0);
-         size *= meshDimensions[i];
          meshDimensions_[i] = meshDimensions[i];
+         if (i < D - 1) {
+            size *= meshDimensions[i];
+         } else {
+            size *= (meshDimensions[i]/2 + 1);
+         }
       }
       spaceDimension_ = D;
       Field<fftw_complex>::allocate(size);
    }
 
-   /**
+   /*
+   * Get the dimensions of space.
+   */
+   inline int KMeshField::spaceDimension() const
+   {  return spaceDimension_;}
+
+   /*
    * Get the dimensions of the grid for which this was allocated.
    */
    template <int D>
-   void KMeshField::getMeshDimension(IntVec<D>& meshDimensions)
+   void KMeshField::getMeshDimensions(IntVec<D>& meshDimensions) const
    {
       if (D != spaceDimension_) {
          UTIL_THROW("Argument with wrong number of spatial dimensions");
@@ -132,6 +156,18 @@ namespace Pssp
          }
       }
    }
+
+   /*
+   * Serialize a Field to/from an Archive.
+   */
+   template <class Archive>
+   void KMeshField::serialize(Archive& ar, const unsigned int version)
+   {
+      Field<fftw_complex>::serialize(ar, version);
+      ar & spaceDimension_;
+      ar & meshDimensions_;
+   }
+
 
 }
 #endif
