@@ -24,8 +24,8 @@ namespace Pssp
       rSize_(0),
       kSize_(0),
       fPlan_(0),
-      rPlan_(0),
-      hasDimensions_(false)
+      iPlan_(0),
+      isSetup_(false)
    {}
 
    /*
@@ -35,10 +35,10 @@ namespace Pssp
    FFT<D>::~FFT()
    {
       if (fPlan_) {
-         fPlan_ = 0;
+         fftw_destroy_plan(fPlan_);
       }
-      if (rPlan_) {
-         rPlan_ = 0;
+      if (iPlan_) {
+         fftw_destroy_plan(iPlan_);
       }
    }
 
@@ -46,18 +46,22 @@ namespace Pssp
    * Check and (if necessary) setup mesh dimensions.
    */
    template <int D>
-   void FFT<D>::setup(const RField<D>& rField, const RFieldDFT<D>& kField)
+   void FFT<D>::setup(RField<D>& rField, RFieldDFT<D>& kField)
    {
       IntVec<D> rDimensions = rField.meshDimensions();
       IntVec<D> kDimensions = kField.meshDimensions();
       UTIL_CHECK(rDimensions == kDimensions);
-      if (hasDimensions_) {
+      if (isSetup_) {
          UTIL_CHECK(rDimensions == meshDimensions_);
+         UTIL_CHECK(rField.capacity() == rSize_);
+         UTIL_CHECK(kField.capacity() == kSize_);
       } else {
          setDimensions(rDimensions);
+         UTIL_CHECK(rField.capacity() == rSize_);
+         UTIL_CHECK(kField.capacity() == kSize_);
+         makePlans(rField, kField);
+         isSetup_ = true;
       }
-      UTIL_CHECK(rField.capacity() == rSize_);
-      UTIL_CHECK(kField.capacity() == kSize_);
    }
 
    /*
@@ -66,7 +70,6 @@ namespace Pssp
    template <int D>
    void FFT<D>::setDimensions(const IntVec<D>& meshDimensions)
    {
-      UTIL_CHECK(!hasDimensions_);
       int rSize_ = 1;
       int kSize_ = 1;
       for (int i = 0; i < D; ++i) {
@@ -79,7 +82,34 @@ namespace Pssp
             kSize_ *= (meshDimensions[i]/2 + 1);
          }
       }
-      hasDimensions_ = true;
+   }
+
+   /*
+   * Execute forward transform.
+   */
+   template <int D>
+   void FFT<D>::forwardTransform(RField<D>& rField, RFieldDFT<D>& kField)
+   {
+      if (!isSetup_) {
+         setup(rField, kField);
+         fftw_execute(fPlan_);
+      } else {
+         fftw_execute_dft_r2c(fPlan_, &rField[0], &kField[0]);
+      }
+   }
+
+   /*
+   * Execute inverse (complex-to-real) transform.
+   */
+   template <int D>
+   void FFT<D>::inverseTransform(RFieldDFT<D>& kField, RField<D>& rField)
+   {
+      if (!isSetup_) {
+         setup(rField, kField);
+         fftw_execute(iPlan_);
+      } else {
+         fftw_execute_dft_c2r(fPlan_, &kField[0], &rField[0]);
+      }
    }
 
 }

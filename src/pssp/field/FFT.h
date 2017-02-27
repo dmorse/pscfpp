@@ -41,6 +41,13 @@ namespace Pssp
       virtual ~FFT();
 
       /**
+      * Check and setup grid dimensions if necessary.
+      *
+      * \param dimensions number of grid points in each direction.
+      */
+      void setup(RField<D>& rField, RFieldDFT<D>& kField);
+
+      /**
       * Compute forward (real-to-complex) Fourier transform.
       *
       * \param in  array of real values on r-space grid
@@ -58,13 +65,9 @@ namespace Pssp
       void inverseTransform(RFieldDFT<D>& in, RField<D>& out);
 
       /**
-      * Get the dimensions of the grid for which this was allocated.
-      *
-      * \throw Exception if dimensions of space do not match.
-      *
-      * \param dimensions number of grid points in each direction.
+      * Return the dimensions of the grid for which this was allocated.
       */
-      void getMeshDimensions(IntVec<D>& meshDimensions) const;
+      const IntVec<D>& meshDimensions() const;
 
    private:
 
@@ -81,17 +84,10 @@ namespace Pssp
       fftw_plan fPlan_;
 
       // Pointer to a plan for an inverse transform.
-      fftw_plan rPlan_;
+      fftw_plan iPlan_;
 
       // True when grid dimensions have been set.
-      bool hasDimensions_;
-
-      /**
-      * Check and setup grid dimensions if necessary.
-      *
-      * \param dimensions number of grid points in each direction.
-      */
-      void setup(const RField<D>& rField, const RFieldDFT<D>& kField);
+      bool isSetup_;
 
       /**
       * Set new grid dimensions.
@@ -100,38 +96,30 @@ namespace Pssp
       */
       void setDimensions(const IntVec<D>& meshDimensions);
 
+      /**
+      * Make FFTW plans for transform and inverse transform.
+      */
+      void makePlans(RField<D>& rField, RFieldDFT<D>& kField);
+
    };
 
    // Declarations of explicit specializations
 
    template <>
-   void FFT<1>::forwardTransform(RField<1>& in, RFieldDFT<1>& out);
+   void FFT<1>::makePlans(RField<1>& rField, RFieldDFT<1>& kField);
 
    template <>
-   void FFT<2>::forwardTransform(RField<2>& in, RFieldDFT<2>& out);
+   void FFT<2>::makePlans(RField<2>& rField, RFieldDFT<2>& kField);
 
    template <>
-   void FFT<3>::forwardTransform(RField<3>& in, RFieldDFT<3>& out);
-
-   template <>
-   void FFT<1>::inverseTransform(RFieldDFT<1>& in, RField<1>& out);
-
-   template <>
-   void FFT<2>::inverseTransform(RFieldDFT<2>& in, RField<2>& out);
-
-   template <>
-   void FFT<3>::inverseTransform(RFieldDFT<3>& in, RField<3>& out);
+   void FFT<3>::makePlans(RField<3>& rField, RFieldDFT<3>& kField);
 
    /*
-   * Get the dimensions of the grid for which this was allocated.
+   * Return the dimensions of the grid for which this was allocated.
    */
    template <int D>
-   void FFT<D>::getMeshDimensions(IntVec<D>& meshDimensions) const
-   {
-      for (int i = 0; i < D; ++i) {
-         meshDimensions[i] = meshDimensions_[i];
-      }
-   }
+   const IntVec<D>& FFT<D>::meshDimensions() const
+   {  return meshDimensions_; }
 
 }
 #include "FFT.tpp"
