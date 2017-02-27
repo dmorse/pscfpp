@@ -40,8 +40,8 @@ veryclean:
 
 # Executable target
 
-$(PSCF_FD_EXE): $(PSCF_FD).o $(LIBS)
-	$(CXX) $(LDFLAGS) -o $(PSCF_FD_EXE) $(PSCF_FD).o $(LIBS) $(PSCF_GSL_LIB)
+$(PSCF_FD_EXE): $(PSCF_FD).o $(PSCF_LIBS)
+	$(CXX) $(LDFLAGS) -o $(PSCF_FD_EXE) $(PSCF_FD).o $(LIBS) 
 
 # Short name for executable target (for convenience)
 pscf_fd:
