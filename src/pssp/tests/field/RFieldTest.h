@@ -1,5 +1,5 @@
-#ifndef PSSP_RMESHFIELD_TEST_H
-#define PSSP_RMESHFIELD_TEST_H
+#ifndef PSSP_R_FIELD_TEST_H
+#define PSSP_R_FIELD_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>

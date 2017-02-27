@@ -74,13 +74,9 @@ namespace Pssp
       void allocate(const IntVec<D>& meshDimensions);
 
       /**
-      * Get the dimensions of the grid for which this was allocated.
-      *
-      * \throw Exception if dimensions of space do not match.
-      *
-      * \param dimensions vector containing number of grid points in each direction.
+      * Return mesh dimensions by constant reference.
       */
-      void getMeshDimensions(IntVec<D>& meshDimensions) const;
+      const IntVec<D>& meshDimensions() const;
 
       /**
       * Serialize a Field to/from an Archive.
@@ -118,15 +114,12 @@ namespace Pssp
    }
 
    /*
-   * Get the dimensions of the grid for which this was allocated.
+   * Return mesh dimensions by constant reference.
    */
    template <int D>
-   void RFieldDFT<D>::getMeshDimensions(IntVec<D>& meshDimensions) const
-   {
-      for (int i = 0; i < D; ++i) {
-         meshDimensions[i] = meshDimensions_[i];
-      }
-   }
+   inline const IntVec<D>& RFieldDFT<D>::meshDimensions() const
+   {  return meshDimensions_; }
+
 
    /*
    * Serialize a Field to/from an Archive.

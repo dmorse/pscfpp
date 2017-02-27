@@ -48,19 +48,13 @@ namespace Pssp
    template <int D>
    void FFT<D>::setup(const RField<D>& rField, const RFieldDFT<D>& kField)
    {
-      IntVec<D> rDimensions;
-      IntVec<D> kDimensions;
-      rField.getMeshDimensions(rDimensions);
-      kField.getMeshDimensions(kDimensions);
+      IntVec<D> rDimensions = rField.meshDimensions();
+      IntVec<D> kDimensions = kField.meshDimensions();
       UTIL_CHECK(rDimensions == kDimensions);
-      if (!hasDimensions_) {
-         setDimensions(rDimensions);
+      if (hasDimensions_) {
+         UTIL_CHECK(rDimensions == meshDimensions_);
       } else {
-         for (int i = 0; i < D; ++i) {
-            if (rDimensions[i] != meshDimensions_[i]) {
-               UTIL_THROW("Mismatched dimensions");
-            }
-         }
+         setDimensions(rDimensions);
       }
       UTIL_CHECK(rField.capacity() == rSize_);
       UTIL_CHECK(kField.capacity() == kSize_);

@@ -74,9 +74,7 @@ void RFieldDFTTest::testAllocate1()
       v.allocate(d);
       TEST_ASSERT(v.capacity() == 2);
       TEST_ASSERT(v.isAllocated());
-      IntVec<1> c;
-      v.getMeshDimensions(c);
-      TEST_ASSERT(d == c);
+      TEST_ASSERT(d == v.meshDimensions());
    }
 }
  
@@ -92,9 +90,7 @@ void RFieldDFTTest::testAllocate3()
       v.allocate(d);
       TEST_ASSERT(v.capacity() == 18);
       TEST_ASSERT(v.isAllocated());
-      IntVec<3> c;
-      v.getMeshDimensions(c);
-      TEST_ASSERT(d == c);
+      TEST_ASSERT(d == v.meshDimensions());
    }
 }
  
