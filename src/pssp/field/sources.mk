@@ -1,6 +1,4 @@
 pssp_field_= \
-  pssp/field/RMeshField.cpp \
-  pssp/field/KMeshField.cpp \
   pssp/field/FFT.cpp 
 
 pssp_field_SRCS=\

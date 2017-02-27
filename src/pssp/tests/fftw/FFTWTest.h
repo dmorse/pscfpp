@@ -48,17 +48,22 @@ public:
       }
       std::cout << std::endl;
 
+      //std::cout << "Entering forward transform plan creation" << std::endl;
       fftw_plan plan_f = fftw_plan_dft_r2c_1d(n, &in[0], &out[0], flags);
+      //std::cout << "Finished forward plan creation" << std::endl;
       fftw_execute(plan_f);
-      //fftw_plan plan = fftw_plan_dft_r2c_1d(n, &in[0], &out[0], flags);
+      //std::cout << "Finished forward transform" << std::endl;
        
       fftw_plan plan_r = fftw_plan_dft_c2r_1d(n, &out[0], &in[0], flags);
+      //std::cout << "Finished inverse plan creation" << std::endl;
       fftw_execute(plan_r);
-     
+      //std::cout << "Finished inverse transform" << std::endl;
+    
       double factor = 1.0/double(n); 
-      for (int i = 0; i < n; ++i) {
+      for (int i = 0; i < n/2 + 1; ++i) {
          out[i][0] *= factor;
          out[i][1] *= factor;
+         //std::cout << out[i][0] << "  " << out[i][1] << std::endl;
       }
 
       for (int i = 0; i < n; ++i) {

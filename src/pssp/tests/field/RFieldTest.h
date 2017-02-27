@@ -4,7 +4,7 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pssp/field/RMeshField.h>
+#include <pssp/field/RField.h>
 #include <util/archives/MemoryOArchive.h>
 #include <util/archives/MemoryIArchive.h>
 #include <util/archives/MemoryCounter.h>
@@ -14,7 +14,7 @@
 using namespace Util;
 using namespace Pssp;
 
-class RMeshFieldTest : public UnitTest 
+class RFieldTest : public UnitTest 
 {
 private:
 
@@ -43,28 +43,28 @@ public:
 };
 
 
-void RMeshFieldTest::testConstructor()
+void RFieldTest::testConstructor()
 {
    printMethod(TEST_FUNC);
    {
-      RMeshField v;
+      RField<3> v;
       TEST_ASSERT(v.capacity() == 0 );
       TEST_ASSERT(!v.isAllocated() );
    }
 } 
 
-void RMeshFieldTest::testAllocate()
+void RFieldTest::testAllocate()
 {
    printMethod(TEST_FUNC);
    {
-      RMeshField v;
+      RField<3> v;
       v.allocate(capacity);
       TEST_ASSERT(v.capacity() == capacity );
       TEST_ASSERT(v.isAllocated());
    }
 } 
 
-void RMeshFieldTest::testAllocate3()
+void RFieldTest::testAllocate3()
 {
    printMethod(TEST_FUNC);
    {
@@ -72,18 +72,18 @@ void RMeshFieldTest::testAllocate3()
       d[0] = 2;
       d[1] = 3;
       d[2] = 4;
-      RMeshField v;
+      RField<3> v;
       v.allocate(d);
       TEST_ASSERT(v.capacity() == 24);
       TEST_ASSERT(v.isAllocated());
    }
 }
  
-void RMeshFieldTest::testSubscript()
+void RFieldTest::testSubscript()
 {
    printMethod(TEST_FUNC);
    {
-      RMeshField v;
+      RField<3> v;
       v.allocate(capacity);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0 ;
@@ -94,17 +94,17 @@ void RMeshFieldTest::testSubscript()
    }
 } 
 
-void RMeshFieldTest::testAssignment()
+void RFieldTest::testAssignment()
 {
    printMethod(TEST_FUNC);
 
    {
-      RMeshField v;
+      RField<3> v;
       v.allocate(capacity);
       TEST_ASSERT(v.capacity() == 3 );
       TEST_ASSERT(v.isAllocated() );
    
-      RMeshField u;
+      RField<3> u;
       u.allocate(3);
       TEST_ASSERT(u.capacity() == 3 );
       TEST_ASSERT(u.isAllocated() );
@@ -124,11 +124,11 @@ void RMeshFieldTest::testAssignment()
    }
 } 
 
-void RMeshFieldTest::testSerialize1Memory()
+void RFieldTest::testSerialize1Memory()
 {
    printMethod(TEST_FUNC);
    {
-      RMeshField v;
+      RField<3> v;
       v.allocate(3);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0;
@@ -149,7 +149,7 @@ void RMeshFieldTest::testSerialize1Memory()
       TEST_ASSERT(v[1]==20.0);
       TEST_ASSERT(v.capacity() == 3);
    
-      RMeshField u;
+      RField<3> u;
       u.allocate(3);
    
       MemoryIArchive iArchive;
@@ -205,11 +205,11 @@ void RMeshFieldTest::testSerialize1Memory()
 
 }
 
-void RMeshFieldTest::testSerialize2Memory()
+void RFieldTest::testSerialize2Memory()
 {
    printMethod(TEST_FUNC);
    {
-      RMeshField v;
+      RField<3> v;
       v.allocate(capacity);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0;
@@ -226,9 +226,9 @@ void RMeshFieldTest::testSerialize2Memory()
       TEST_ASSERT(v[1] == 20.0);
       TEST_ASSERT(v.capacity() == capacity);
    
-      RMeshField u;
+      RField<3> u;
    
-      // Note: We do not allocate RMeshField u in this test.
+      // Note: We do not allocate RField u in this test.
       // This is the main difference from testSerialize1Memory()
    
       MemoryIArchive iArchive;
@@ -246,11 +246,11 @@ void RMeshFieldTest::testSerialize2Memory()
    }
 }
 
-void RMeshFieldTest::testSerialize1File()
+void RFieldTest::testSerialize1File()
 {
    printMethod(TEST_FUNC);
    {
-      RMeshField v;
+      RField<3> v;
       v.allocate(3);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0;
@@ -269,7 +269,7 @@ void RMeshFieldTest::testSerialize1File()
       TEST_ASSERT(v[1]==20.0);
       TEST_ASSERT(v.capacity() == 3);
    
-      RMeshField u;
+      RField<3> u;
       u.allocate(3);
    
       BinaryFileIArchive iArchive;
@@ -299,11 +299,11 @@ void RMeshFieldTest::testSerialize1File()
    }
 }
 
-void RMeshFieldTest::testSerialize2File()
+void RFieldTest::testSerialize2File()
 {
    printMethod(TEST_FUNC);
    {
-      RMeshField v;
+      RField<3> v;
       v.allocate(3);
       for (int i=0; i < capacity; i++ ) {
          v[i] = (i+1)*10.0;
@@ -322,7 +322,7 @@ void RMeshFieldTest::testSerialize2File()
       TEST_ASSERT(v[1] == 20.0);
       TEST_ASSERT(v.capacity() == 3);
    
-      RMeshField u;
+      RField<3> u;
    
       // u.allocate(3); -> 
       // Note: We do not allocate first. This is the difference 
@@ -355,17 +355,17 @@ void RMeshFieldTest::testSerialize2File()
    }
 }
 
-TEST_BEGIN(RMeshFieldTest)
-TEST_ADD(RMeshFieldTest, testConstructor)
-TEST_ADD(RMeshFieldTest, testAllocate)
-TEST_ADD(RMeshFieldTest, testAllocate3)
-TEST_ADD(RMeshFieldTest, testSubscript)
-//TEST_ADD(RMeshFieldTest, testCopyConstructor)
-TEST_ADD(RMeshFieldTest, testAssignment)
-TEST_ADD(RMeshFieldTest, testSerialize1Memory)
-TEST_ADD(RMeshFieldTest, testSerialize2Memory)
-TEST_ADD(RMeshFieldTest, testSerialize1File)
-TEST_ADD(RMeshFieldTest, testSerialize2File)
-TEST_END(RMeshFieldTest)
+TEST_BEGIN(RFieldTest)
+TEST_ADD(RFieldTest, testConstructor)
+TEST_ADD(RFieldTest, testAllocate)
+TEST_ADD(RFieldTest, testAllocate3)
+TEST_ADD(RFieldTest, testSubscript)
+//TEST_ADD(RFieldTest, testCopyConstructor)
+TEST_ADD(RFieldTest, testAssignment)
+TEST_ADD(RFieldTest, testSerialize1Memory)
+TEST_ADD(RFieldTest, testSerialize2Memory)
+TEST_ADD(RFieldTest, testSerialize1File)
+TEST_ADD(RFieldTest, testSerialize2File)
+TEST_END(RFieldTest)
 
 #endif

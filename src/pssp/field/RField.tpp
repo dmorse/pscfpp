@@ -1,3 +1,6 @@
+#ifndef PSSP_R_FIELD_TPP
+#define PSSP_R_FIELD_TPP
+
 /*
 * PSCF++ Package 
 *
@@ -5,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "RMeshField.h"
+#include "RField.h"
 
 namespace Pssp
 {
@@ -15,14 +18,16 @@ namespace Pssp
    /**
    * Default constructor.
    */
-   RMeshField::RMeshField()
+   template <int D>
+   RField<D>::RField()
     : Field<double>()
    {}
 
    /*
    * Destructor.
    */
-   RMeshField::~RMeshField()
+   template <int D>
+   RField<D>::~RField()
    {}
 
    /*
@@ -32,9 +37,9 @@ namespace Pssp
    *
    *\param other the Field to be copied.
    */
-   RMeshField::RMeshField(const RMeshField& other)
+   template <int D>
+   RField<D>::RField(const RField<D>& other)
     : Field<double>(),
-      spaceDimension_(0),
       meshDimensions_(0)
    {
       if (!other.isAllocated()) {
@@ -45,7 +50,6 @@ namespace Pssp
       for (int i = 0; i < capacity_; ++i) {
          data_[i] = other.data_[i];
       }
-      spaceDimension_ = other.spaceDimension_;
       meshDimensions_ = other.meshDimensions_;
    }
 
@@ -59,7 +63,8 @@ namespace Pssp
    *
    * \param other the rhs Field
    */
-   RMeshField& RMeshField::operator = (const RMeshField& other)
+   template <int D>
+   RField<D>& RField<D>::operator = (const RField<D>& other)
    {
       // Check for self assignment
       if (this == &other) return *this;
@@ -79,10 +84,10 @@ namespace Pssp
       for (int i = 0; i < capacity_; ++i) {
          data_[i] = other[i];
       }
-      spaceDimension_ = other.spaceDimension_;
       meshDimensions_ = other.meshDimensions_;
 
       return *this;
    }
 
 }
+#endif

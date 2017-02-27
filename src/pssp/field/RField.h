@@ -21,7 +21,8 @@ namespace Pssp
    /**
    * Field of real double precision values on an FFT mesh.
    */
-   class RMeshField : public Field<double>
+   template <int D>
+   class RField : public Field<double>
    {
 
    public:
@@ -29,23 +30,23 @@ namespace Pssp
       /**
       * Default constructor.
       */
-      RMeshField();
+      RField();
 
       /**
       * Copy constructor.
       *
       * Allocates new memory and copies all elements by value.
       *
-      *\param other the RMeshField to be copied.
+      *\param other the RField to be copied.
       */
-      RMeshField(const RMeshField& other);
+      RField(const RField& other);
 
       /**
       * Destructor.
       *
       * Deletes underlying C array, if allocated previously.
       */
-      virtual ~RMeshField();
+      virtual ~RField();
 
       /**
       * Assignment operator.
@@ -57,24 +58,18 @@ namespace Pssp
       *
       * \param other the RHS Field
       */
-      RMeshField& operator = (const RMeshField& other);
+      RField& operator = (const RField& other);
 
       using Field<double>::allocate;
 
       /**
       * Allocate the underlying C array for an FFT grid.
       *
-      * \throw Exception if the RMeshField is already allocated.
+      * \throw Exception if the RField is already allocated.
       *
       * \param dimensions vector containing number of grid points in each direction.
       */
-      template <int D>
       void allocate(const IntVec<D>& meshDimensions);
-
-      /**
-      * Return the dimension of space.  
-      */
-      int spaceDimension() const;
 
       /**
       * Get the dimensions of the grid for which this was allocated.
@@ -83,7 +78,6 @@ namespace Pssp
       *
       * \param dimensions vector containing number of grid points in each direction.
       */
-      template <int D>
       void getMeshDimensions(IntVec<D>& meshDimensions) const;
 
       /**
@@ -97,11 +91,8 @@ namespace Pssp
 
    private:
 
-      // Dimension of space (1, 2, or 3)
-      int spaceDimension_;
-
       // Vector containing number of grid points in each direction.
-      IntVec<3> meshDimensions_;
+      IntVec<D> meshDimensions_;
 
    };
 
@@ -109,56 +100,40 @@ namespace Pssp
    * Allocate the underlying C array for an FFT grid.
    */
    template <int D>
-   void RMeshField::allocate(const IntVec<D>& meshDimensions)
+   void RField<D>::allocate(const IntVec<D>& meshDimensions)
    {
-      // Preconditions
-      UTIL_CHECK(D > 0);
-      UTIL_CHECK(D < 4);
-
-      // Initialize mesh dimensions to zero
-      for (int i = 0; i < 3; ++i) {
-         meshDimensions_[i] = 1;
-      }
-
       int size = 1;
       for (int i = 0; i < D; ++i) {
          UTIL_CHECK(meshDimensions[i] > 0);
-         size *= meshDimensions[i];
          meshDimensions_[i] = meshDimensions[i];
+         size *= meshDimensions[i];
       }
-      spaceDimension_ = D;
       Field<double>::allocate(size);
    }
-
-   inline int RMeshField::spaceDimension() const
-   {  return spaceDimension_;}
 
    /*
    * Get the dimensions of the grid for which this was allocated.
    */
    template <int D>
-   void RMeshField::getMeshDimensions(IntVec<D>& meshDimensions) const
+   void RField<D>::getMeshDimensions(IntVec<D>& meshDimensions) const
    {
-      if (D != spaceDimension_) {
-         UTIL_THROW("Argument with wrong number of spatial dimensions");
-      } else {
-         for (int i = 0; i < D; ++i) {
-            meshDimensions[i] = meshDimensions_[i];
-         }
+      for (int i = 0; i < D; ++i) {
+         meshDimensions[i] = meshDimensions_[i];
       }
    }
 
    /*
    * Serialize a Field to/from an Archive.
    */
+   template <int D>
    template <class Archive>
-   void RMeshField::serialize(Archive& ar, const unsigned int version)
+   void RField<D>::serialize(Archive& ar, const unsigned int version)
    {
       Field<double>::serialize(ar, version);
-      ar & spaceDimension_;
       ar & meshDimensions_;
    }
 
 
 }
+#include "RField.tpp"
 #endif

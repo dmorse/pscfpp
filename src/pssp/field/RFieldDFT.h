@@ -1,5 +1,5 @@
-#ifndef PSSP_K_MESH_FIELD_H
-#define PSSP_K_MESH_FIELD_H
+#ifndef PSSP_R_FIELD_DFT_H
+#define PSSP_R_FIELD_DFT_H
 
 /*
 * PSCF++ Package 
@@ -23,7 +23,8 @@ namespace Pssp
    /**
    * Field of real double precision values on an FFT mesh.
    */
-   class KMeshField : public Field<fftw_complex>
+   template <int D>
+   class RFieldDFT : public Field<fftw_complex>
    {
 
    public:
@@ -31,23 +32,23 @@ namespace Pssp
       /**
       * Default constructor.
       */
-      KMeshField();
+      RFieldDFT();
 
       /**
       * Copy constructor.
       *
       * Allocates new memory and copies all elements by value.
       *
-      *\param other the KMeshField to be copied.
+      *\param other the RFieldDFT to be copied.
       */
-      KMeshField(const KMeshField& other);
+      RFieldDFT(const RFieldDFT<D>& other);
 
       /**
       * Destructor.
       *
       * Deletes underlying C array, if allocated previously.
       */
-      virtual ~KMeshField();
+      virtual ~RFieldDFT();
 
       /**
       * Assignment operator.
@@ -59,24 +60,18 @@ namespace Pssp
       *
       * \param other the RHS Field
       */
-      KMeshField& operator = (const KMeshField& other);
+      RFieldDFT<D>& operator = (const RFieldDFT<D>& other);
 
       using Field<fftw_complex>::allocate;
 
       /**
       * Allocate the underlying C array for an FFT grid.
       *
-      * \throw Exception if the KMeshField is already allocated.
+      * \throw Exception if the RFieldDFT is already allocated.
       *
       * \param dimensions vector containing number of grid points in each direction.
       */
-      template <int D>
       void allocate(const IntVec<D>& meshDimensions);
-
-      /**
-      * Return the dimension of space.  
-      */
-      int spaceDimension() const;
 
       /**
       * Get the dimensions of the grid for which this was allocated.
@@ -85,7 +80,6 @@ namespace Pssp
       *
       * \param dimensions vector containing number of grid points in each direction.
       */
-      template <int D>
       void getMeshDimensions(IntVec<D>& meshDimensions) const;
 
       /**
@@ -99,11 +93,8 @@ namespace Pssp
 
    private:
 
-      // Dimension of space (1, 2, or 3)
-      int spaceDimension_;
-
       // Vector containing number of grid points in each direction.
-      IntVec<3> meshDimensions_;
+      IntVec<D> meshDimensions_;
 
    };
 
@@ -111,17 +102,8 @@ namespace Pssp
    * Allocate the underlying C array for an FFT grid.
    */
    template <int D>
-   void KMeshField::allocate(const IntVec<D>& meshDimensions)
+   void RFieldDFT<D>::allocate(const IntVec<D>& meshDimensions)
    {
-      // Preconditions
-      UTIL_CHECK(D > 0);
-      UTIL_CHECK(D < 4);
-
-      // Initialize mesh dimensions to zero
-      for (int i = 0; i < 3; ++i) {
-         meshDimensions_[i] = 1;
-      }
-
       int size = 1;
       for (int i = 0; i < D; ++i) {
          UTIL_CHECK(meshDimensions[i] > 0);
@@ -132,42 +114,31 @@ namespace Pssp
             size *= (meshDimensions[i]/2 + 1);
          }
       }
-      spaceDimension_ = D;
       Field<fftw_complex>::allocate(size);
    }
-
-   /*
-   * Get the dimensions of space.
-   */
-   inline int KMeshField::spaceDimension() const
-   {  return spaceDimension_;}
 
    /*
    * Get the dimensions of the grid for which this was allocated.
    */
    template <int D>
-   void KMeshField::getMeshDimensions(IntVec<D>& meshDimensions) const
+   void RFieldDFT<D>::getMeshDimensions(IntVec<D>& meshDimensions) const
    {
-      if (D != spaceDimension_) {
-         UTIL_THROW("Argument with wrong number of spatial dimensions");
-      } else {
-         for (int i = 0; i < D; ++i) {
-            meshDimensions[i] = meshDimensions_[i];
-         }
+      for (int i = 0; i < D; ++i) {
+         meshDimensions[i] = meshDimensions_[i];
       }
    }
 
    /*
    * Serialize a Field to/from an Archive.
    */
+   template <int D>
    template <class Archive>
-   void KMeshField::serialize(Archive& ar, const unsigned int version)
+   void RFieldDFT<D>::serialize(Archive& ar, const unsigned int version)
    {
       Field<fftw_complex>::serialize(ar, version);
-      ar & spaceDimension_;
       ar & meshDimensions_;
    }
 
-
 }
+#include "RFieldDFT.tpp"
 #endif

@@ -1,3 +1,6 @@
+#ifndef PSSP_R_FIELD_DFT_TPP
+#define PSSP_R_FIELD_DFT_TPP
+
 /*
 * PSCF++ Package 
 *
@@ -5,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "KMeshField.h"
+#include "RFieldDFT.h"
 
 namespace Pssp
 {
@@ -15,14 +18,16 @@ namespace Pssp
    /**
    * Default constructor.
    */
-   KMeshField::KMeshField()
+   template <int D>
+   RFieldDFT<D>::RFieldDFT()
     : Field<fftw_complex>()
    {}
 
    /*
    * Destructor.
    */
-   KMeshField::~KMeshField()
+   template <int D>
+   RFieldDFT<D>::~RFieldDFT()
    {}
 
    /*
@@ -30,9 +35,10 @@ namespace Pssp
    *
    * Allocates new memory and copies all elements by value.
    *
-   *\param other the Field to be copied.
+   *\param other the RField<D> to be copied.
    */
-   KMeshField::KMeshField(const KMeshField& other)
+   template <int D>
+   RFieldDFT<D>::RFieldDFT(const RFieldDFT<D>& other)
     : Field<fftw_complex>()
    {
       if (!other.isAllocated()) {
@@ -44,7 +50,6 @@ namespace Pssp
          data_[i][0] = other.data_[i][0];
          data_[i][1] = other.data_[i][1];
       }
-      spaceDimension_ = other.spaceDimension_;
       meshDimensions_ = other.meshDimensions_;
    }
 
@@ -58,7 +63,8 @@ namespace Pssp
    *
    * \param other the rhs Field
    */
-   KMeshField& KMeshField::operator = (const KMeshField& other)
+   template <int D>
+   RFieldDFT<D>& RFieldDFT<D>::operator = (const RFieldDFT<D>& other)
    {
       // Check for self assignment
       if (this == &other) return *this;
@@ -79,11 +85,10 @@ namespace Pssp
          data_[i][0] = other.data_[i][0];
          data_[i][1] = other.data_[i][1];
       }
-      spaceDimension_ = other.spaceDimension_;
       meshDimensions_ = other.meshDimensions_;
 
       return *this;
    }
 
-
 }
+#endif

@@ -4,13 +4,13 @@
 #include <test/CompositeTestRunner.h>
 
 #include "FieldTest.h"
-#include "RMeshFieldTest.h"
-#include "KMeshFieldTest.h"
+#include "RFieldTest.h"
+#include "RFieldDFTTest.h"
 
 TEST_COMPOSITE_BEGIN(FieldTestComposite)
 TEST_COMPOSITE_ADD_UNIT(FieldTest);
-TEST_COMPOSITE_ADD_UNIT(RMeshFieldTest);
-TEST_COMPOSITE_ADD_UNIT(KMeshFieldTest);
+TEST_COMPOSITE_ADD_UNIT(RFieldTest);
+TEST_COMPOSITE_ADD_UNIT(RFieldDFTTest);
 TEST_COMPOSITE_END
 
 #endif
