@@ -13,7 +13,7 @@
 
 #include <pscf/mesh/Mesh.h>
 
-namespace Pscf { 
+namespace Pscf {
 namespace Pssp {
 
    using namespace Util;
@@ -99,9 +99,10 @@ namespace Pssp {
    * Solve the modified diffusion equation with specified initial field.
    */
    template <int D>
-   void Propagator<D>::solve(const Propagator<D>::QField& head) 
+   void Propagator<D>::solve(const Propagator<D>::QField& head)
    {
       int nx = meshPtr_->size();
+      UTIL_CHECK(head.capacity() == nx);
 
       // Initialize initial (head) field
       QField& qh = qFields_[0];
@@ -122,6 +123,7 @@ namespace Pssp {
    template <int D>
    double Propagator<D>::computeQ()
    {
+      // Preconditions
       if (!isSolved()) {
          UTIL_THROW("Propagator is not solved.");
       }
@@ -133,8 +135,17 @@ namespace Pssp {
       }
       QField const& qh = head();
       QField const& qt = partner().tail();
+      int nx = meshPtr_->size();
+      UTIL_CHECK(qt.capacity() == nx);
+      UTIL_CHECK(qh.capacity() == nx);
 
-      //innerProduct(qh, qt);
+      // Take inner product of head and partner tail fields
+      double Q;
+      for (int i =0; i < nx; ++i) {
+         Q = qh[i]*qt[i];
+      }
+      Q /= double(nx);
+      return Q;
    }
 
 }

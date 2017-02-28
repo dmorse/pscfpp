@@ -10,20 +10,23 @@
 
 #include "Propagator.h"                   // base class argument
 #include <pscf/solvers/BlockTmpl.h>       // base class template
+#include <pssp/field/RField.h>            // member
+
+namespace Pscf { 
+   template <int D> class Mesh; 
+   template <int D> class UnitCell;
+}
 
 namespace Pscf { 
 namespace Pssp { 
 
-   template <int D> class UnitCell;
-   template <int D> class Mesh;
    using namespace Util;
-  
 
    /**
    * Block within a branched polymer.
    *
-   * Derived from BlockTmpl<Propagator>. A BlockTmpl<Propagator> has two 
-   * Propagator members and is derived from BlockDescriptor.
+   * Derived from BlockTmpl< Propagator<D> >. A BlockTmpl< Propagator<D> > 
+   * has two Propagator<D> members and is derived from BlockDescriptor.
    *
    * \ingroup Pscf_Fd1d_Module
    */
@@ -63,14 +66,16 @@ namespace Pssp {
       /**
       * Initialize discretization and allocate required memory.
       *
-      * \param domain associated Domain object, with grid info
       * \param ds desired (optimal) value for contour length step
+      * \param mesh spatial discretization mesh
       */
-      // void setDiscretization(Domain const & domain, double ds);
       void setDiscretization(double ds, Mesh<D>& mesh);
 
       /**
       * Set solver for this block.
+      *
+      * \param w  chemical potential field for this monomer type
+      * \param unitCell  unit cell, defining cell dimensions
       */
       void setupSolver(WField const & w, UnitCell<D>& unitCell);
 
@@ -93,12 +98,10 @@ namespace Pssp {
       */
       void step(QField const & q, QField& qNew);
 
-      #if 0
       /**
-      * Return associated domain by reference.
+      * Return associated spatial Mesh by reference.
       */
-      Domain const & domain() const;
-      #endif
+      Mesh<D> const & mesh() const;
 
       /**
       * Number of contour length steps.
@@ -111,7 +114,6 @@ namespace Pssp {
       using BlockTmpl< Propagator<D> >::length;
       using BlockTmpl< Propagator<D> >::kuhn;
 
-      #if 0
       using BlockDescriptor::setId;
       using BlockDescriptor::setVertexIds;
       using BlockDescriptor::setMonomerId;
@@ -121,15 +123,23 @@ namespace Pssp {
       using BlockDescriptor::vertexIds;
       using BlockDescriptor::vertexId;
       using BlockDescriptor::length;
-      #endif
 
    private:
 
-      /// Pointer to associated Domain object.
-      // Domain const * domainPtr_;
+      // Array of elements containing exp(-K^2 b^2 ds/6)
+      RField<D> expKsq_;
+
+      // Array of elements containing exp(-W[i] ds/2)
+      RField<D> expW_;
+
+      /// Pointer to associated Mesh<D> object.
+      Mesh<D> const * meshPtr_;
 
       /// Contour length step size.
       double ds_;
+
+      /// Dimensions of wavevector mesh in real-to-complex transform
+      IntVec<D> kMeshDimensions_;
 
       /// Number of contour length steps = # grid points - 1.
       int ns_;
@@ -138,20 +148,18 @@ namespace Pssp {
 
    // Inline member functions
 
-   #if 0
-   /// Get Domain by reference.
-   template <int D>
-   inline Domain const & Block<D>::domain() const
-   {   
-      UTIL_ASSERT(domainPtr_);
-      return *domainPtr_;
-   }
-   #endif
-
    /// Get number of contour steps.
    template <int D>
    inline int Block<D>::ns() const
    {  return ns_; }
+
+   /// Get Mesh by reference.
+   template <int D>
+   inline Mesh<D> const & Block<D>::mesh() const
+   {   
+      UTIL_ASSERT(meshPtr_);
+      return *meshPtr_;
+   }
 
 }
 }

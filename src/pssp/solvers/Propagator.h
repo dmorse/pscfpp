@@ -12,12 +12,13 @@
 #include <pssp/field/RField.h>           // member template
 #include <util/containers/DArray.h>      // member template
 
+namespace Pscf { template <int D> class Mesh; }
+
 namespace Pscf { 
 namespace Pssp
 { 
 
    template <int D> class Block;
-   template <int D> class Mesh;
    using namespace Util;
 
    /**

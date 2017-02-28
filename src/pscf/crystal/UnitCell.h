@@ -27,7 +27,9 @@ namespace Pscf
    *
    * \ingroup Pscf_Crystal_Module
    */
-   template <int D> class UnitCell;
+   template <int D> 
+   class UnitCell  : public UnitCellBase<D>
+   {};
 
    /**
    * istream extractor for a UnitCell<D>.
