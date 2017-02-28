@@ -22,7 +22,7 @@ namespace Pssp
    using namespace Pscf;
 
    /**
-   * Fourier transform plan for real data.
+   * Fourier transform wrapper for real data.
    */
    template <int D>
    class FFT 
@@ -71,6 +71,9 @@ namespace Pssp
 
    private:
 
+      // Work array for real data.
+      RField<D> work_;
+
       // Vector containing number of grid points in each direction.
       IntVec<D> meshDimensions_;
 
@@ -86,15 +89,8 @@ namespace Pssp
       // Pointer to a plan for an inverse transform.
       fftw_plan iPlan_;
 
-      // True when grid dimensions have been set.
+      // Have array dimension and plan been initialized?
       bool isSetup_;
-
-      /**
-      * Set new grid dimensions.
-      *
-      * \param dimensions number of grid points in each direction.
-      */
-      void setDimensions(const IntVec<D>& meshDimensions);
 
       /**
       * Make FFTW plans for transform and inverse transform.
@@ -118,7 +114,7 @@ namespace Pssp
    * Return the dimensions of the grid for which this was allocated.
    */
    template <int D>
-   const IntVec<D>& FFT<D>::meshDimensions() const
+   inline const IntVec<D>& FFT<D>::meshDimensions() const
    {  return meshDimensions_; }
 
 }

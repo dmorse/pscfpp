@@ -50,31 +50,28 @@ void FftTest::testTransform1D() {
    in.allocate(d);
    out.allocate(d);
 
+   // Initialize input data
    double x;
    double twoPi = 2.0*Constants::Pi;
    for (int i = 0; i < n; ++i) {
       x = twoPi*float(i)/float(n); 
       in[i] = cos(x);
-      std::cout << Dbl(in[i]);
+      // std::cout << Dbl(in[i]);
    }
-   std::cout << std::endl;
+   // std::cout << std::endl;
 
    FFT<1> v;
    v.setup(in, out);
-   
-   #if 0 
-   double factor = 1.0/double(n); 
-   for (int i = 0; i < n/2 + 1; ++i) {
-      out[i][0] *= factor;
-      out[i][1] *= factor;
-      //std::cout << out[i][0] << "  " << out[i][1] << std::endl;
-   }
+   v.forwardTransform(in, out);
+   RField<1> inCopy;
+   inCopy.allocate(d);
+   v.inverseTransform(out, inCopy);
 
    for (int i = 0; i < n; ++i) {
-      std::cout << Dbl(in[i]);
+      //std::cout << Dbl(inCopy[i]);
+      TEST_ASSERT(eq(in[i], inCopy[i]));
    }
-   std::cout << std::endl;
-   #endif
+   //std::cout << std::endl;
 }
 
 
