@@ -10,6 +10,7 @@
 
 #include "RField.h"
 
+namespace Pscf {
 namespace Pssp
 {
 
@@ -89,5 +90,6 @@ namespace Pssp
       return *this;
    }
 
+}
 }
 #endif

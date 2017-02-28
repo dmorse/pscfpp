@@ -12,7 +12,7 @@
 #include <util/archives/BinaryFileIArchive.h>
 
 using namespace Util;
-using namespace Pssp;
+using namespace Pscf::Pssp;
 
 class FieldTest : public UnitTest 
 {

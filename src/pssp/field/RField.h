@@ -12,6 +12,7 @@
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
 
+namespace Pscf {
 namespace Pssp
 {
 
@@ -126,6 +127,7 @@ namespace Pssp
    }
 
 
+}
 }
 #include "RField.tpp"
 #endif

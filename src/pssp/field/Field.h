@@ -10,6 +10,7 @@
 
 #include <util/global.h>
 
+namespace Pscf {
 namespace Pssp
 {
 
@@ -207,6 +208,7 @@ namespace Pssp
       }
    }
 
+}
 }
 #include "Field.tpp"
 #endif

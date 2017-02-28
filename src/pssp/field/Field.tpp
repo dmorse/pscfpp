@@ -13,6 +13,7 @@
 
 #include <fftw3.h>
 
+namespace Pscf {
 namespace Pssp
 {
 
@@ -133,5 +134,6 @@ namespace Pssp
       capacity_ = 0;
    }
 
+}
 }
 #endif

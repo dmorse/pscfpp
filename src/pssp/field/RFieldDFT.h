@@ -14,6 +14,7 @@
 
 #include <fftw3.h>
 
+namespace Pscf {
 namespace Pssp
 {
 
@@ -132,6 +133,7 @@ namespace Pssp
       ar & meshDimensions_;
    }
 
+}
 }
 #include "RFieldDFT.tpp"
 #endif

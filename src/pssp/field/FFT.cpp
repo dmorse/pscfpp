@@ -7,8 +7,8 @@
 
 #include "FFT.h"
 
-namespace Pssp
-{
+namespace Pscf {
+namespace Pssp {
 
    using namespace Util;
 
@@ -22,4 +22,5 @@ namespace Pssp
       iPlan_ = fftw_plan_dft_c2r_1d(rSize_, &kField[0], &rField[0], flags);
    }
 
+}
 }

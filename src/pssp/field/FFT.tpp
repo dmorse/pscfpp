@@ -10,6 +10,7 @@
 
 #include "FFT.h"
 
+namespace Pscf {
 namespace Pssp
 {
 
@@ -117,5 +118,6 @@ namespace Pssp
       }
    }
 
+}
 }
 #endif

@@ -10,8 +10,8 @@
 
 #include "RFieldDFT.h"
 
-namespace Pssp
-{
+namespace Pscf {
+namespace Pssp {
 
    using namespace Util;
 
@@ -90,5 +90,6 @@ namespace Pssp
       return *this;
    }
 
+}
 }
 #endif

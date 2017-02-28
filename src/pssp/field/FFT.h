@@ -15,8 +15,8 @@
 
 #include <fftw3.h>
 
-namespace Pssp
-{
+namespace Pscf {
+namespace Pssp {
 
    using namespace Util;
    using namespace Pscf;
@@ -117,6 +117,7 @@ namespace Pssp
    inline const IntVec<D>& FFT<D>::meshDimensions() const
    {  return meshDimensions_; }
 
+}
 }
 #include "FFT.tpp"
 #endif

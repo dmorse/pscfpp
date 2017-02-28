@@ -12,7 +12,7 @@
 #include <util/format/Dbl.h>
 
 using namespace Util;
-using namespace Pssp;
+using namespace Pscf::Pssp;
 
 class FftTest : public UnitTest 
 {
