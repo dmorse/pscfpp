@@ -14,8 +14,10 @@
 namespace Pscf { 
 namespace Pssp { 
 
-   // class Domain;
+   template <int D> class UnitCell;
+   template <int D> class Mesh;
    using namespace Util;
+  
 
    /**
    * Block within a branched polymer.
@@ -65,12 +67,12 @@ namespace Pssp {
       * \param ds desired (optimal) value for contour length step
       */
       // void setDiscretization(Domain const & domain, double ds);
-      void setDiscretization(double ds);
+      void setDiscretization(double ds, Mesh<D>& mesh);
 
       /**
       * Set solver for this block.
       */
-      void setupSolver(WField const & w);
+      void setupSolver(WField const & w, UnitCell<D>& unitCell);
 
       /**
       * Compute unnormalized concentration for block by integration.
@@ -104,13 +106,12 @@ namespace Pssp {
       int ns() const;
 
       using BlockTmpl< Propagator<D> >::setKuhn;
-      using BlockTmpl< Propagator<D> >::setupSolver;
-      using BlockTmpl< Propagator<D> >::computeConcentration;
       using BlockTmpl< Propagator<D> >::propagator;
       using BlockTmpl< Propagator<D> >::cField;
       using BlockTmpl< Propagator<D> >::length;
       using BlockTmpl< Propagator<D> >::kuhn;
 
+      #if 0
       using BlockDescriptor::setId;
       using BlockDescriptor::setVertexIds;
       using BlockDescriptor::setMonomerId;
@@ -120,6 +121,7 @@ namespace Pssp {
       using BlockDescriptor::vertexIds;
       using BlockDescriptor::vertexId;
       using BlockDescriptor::length;
+      #endif
 
    private:
 

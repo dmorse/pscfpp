@@ -31,5 +31,21 @@ namespace Fd1d
       mu_ = mu; 
    }
 
+   /*
+   * Compute solution to MDE and concentrations.
+   */ 
+   void Polymer::compute(const DArray<Block::WField>& wFields)
+   {
+
+      // Setup solvers for all blocks
+      int monomerId;
+      for (int j = 0; j < nBlock(); ++j) {
+         monomerId = block(j).monomerId();
+         block(j).setupSolver(wFields[monomerId]);
+      }
+
+      solve();
+   }
+
 }
 }

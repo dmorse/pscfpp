@@ -42,9 +42,17 @@ namespace Fd1d
 
       ~Polymer();
 
-       void setPhi(double phi);
+      void setPhi(double phi);
 
-       void setMu(double mu);
+      void setMu(double mu);
+
+      /**
+      * Compute solution to modified diffusion equation.
+      *
+      * Upon return, q functions and block concentration fields
+      * are computed for all propagators and blocks. 
+      */ 
+      void compute(const DArray<Block::WField>& wFields);
 
    };
 

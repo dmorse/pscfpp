@@ -11,7 +11,7 @@
 #include "Propagator.h"
 #include "Block.h"
 
-// #include <fd1d/domain/Domain.h>
+#include <pscf/mesh/Mesh.h>
 
 namespace Pscf { 
 namespace Pssp {
@@ -24,8 +24,8 @@ namespace Pssp {
    template <int D>
    Propagator<D>::Propagator()
     : blockPtr_(0),
+      meshPtr_(0),
       ns_(0),
-      nx_(0),
       isAllocated_(false)
    {}
 
@@ -37,13 +37,14 @@ namespace Pssp {
    {}
 
    template <int D>
-   void Propagator<D>::allocate(int ns, int nx)
+   void Propagator<D>::allocate(int ns, Mesh<D>& mesh)
    {
       ns_ = ns;
-      nx_ = nx;
+      meshPtr_ = &mesh;
+
       qFields_.allocate(ns);
       for (int i = 0; i < ns; ++i) {
-         qFields_[i].allocate(nx);
+         qFields_[i].allocate(mesh.dimensions());
       }
       isAllocated_ = true;
    }
@@ -52,7 +53,6 @@ namespace Pssp {
    bool Propagator<D>::isAllocated() const
    {  return isAllocated_; }
 
-   #if 0
    /*
    * Compute initial head QField from final tail QFields of sources.
    */
@@ -65,7 +65,8 @@ namespace Pssp {
 
       // Initialize qh field to 1.0 at all grid points
       int ix;
-      for (ix = 0; ix < nx_; ++ix) {
+      int nx = meshPtr_->size();
+      for (ix = 0; ix < nx; ++ix) {
          qh[ix] = 1.0;
       }
 
@@ -75,7 +76,7 @@ namespace Pssp {
             UTIL_THROW("Source not solved in computeHead");
          }
          QField const& qt = source(is).tail();
-         for (ix = 0; ix < nx_; ++ix) {
+         for (ix = 0; ix < nx; ++ix) {
             qh[ix] *= qt[ix];
          }
       }
@@ -100,9 +101,11 @@ namespace Pssp {
    template <int D>
    void Propagator<D>::solve(const Propagator<D>::QField& head) 
    {
+      int nx = meshPtr_->size();
+
       // Initialize initial (head) field
       QField& qh = qFields_[0];
-      for (int i = 0; i < nx_; ++i) {
+      for (int i = 0; i < nx; ++i) {
          qh[i] = head[i];
       }
 
@@ -130,9 +133,9 @@ namespace Pssp {
       }
       QField const& qh = head();
       QField const& qt = partner().tail();
-      return block().domain().innerProduct(qh, qt);
+
+      //innerProduct(qh, qt);
    }
-   #endif
 
 }
 }

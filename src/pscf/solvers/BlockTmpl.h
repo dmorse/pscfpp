@@ -62,6 +62,7 @@ namespace Pscf
       */
       virtual void setKuhn(double kuhn);
 
+      #if 0
       /**
       * Setup W field and solver data for both propagators.
       *
@@ -75,6 +76,7 @@ namespace Pscf
       * \param prefactor  numerical prefactor of phi/(q*length)
       */
       virtual void computeConcentration(double prefactor) = 0;
+      #endif
 
       /**
       * Get a Propagator for a specified direction.

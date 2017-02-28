@@ -9,7 +9,8 @@
 */
 
 #include "Block.h"
-//#include <fd1d/domain/Domain.h>
+#include <pscf/crystal/UnitCell.h>
+#include <pscf/mesh/Mesh.h>
 
 namespace Pscf { 
 namespace Pssp {
@@ -37,7 +38,7 @@ namespace Pssp {
 
    template <int D>
    //void Block<D>::setDiscretization(Domain const & domain, double ds)
-   void Block<D>::setDiscretization(double ds)
+   void Block<D>::setDiscretization(double ds, Mesh<D>& mesh)
    {  
       UTIL_CHECK(length() > 0);
       //UTIL_CHECK(domain.nx() > 1);
@@ -60,7 +61,7 @@ namespace Pssp {
    * Setup the contour length step algorithm.
    */
    template <int D>
-   void Block<D>::setupSolver(Block<D>::WField const& w)
+   void Block<D>::setupSolver(Block<D>::WField const& w, UnitCell<D>& unitCell)
    {
       // Preconditions
       // UTIL_CHECK(domainPtr_);

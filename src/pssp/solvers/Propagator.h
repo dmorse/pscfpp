@@ -17,6 +17,7 @@ namespace Pssp
 { 
 
    template <int D> class Block;
+   template <int D> class Mesh;
    using namespace Util;
 
    /**
@@ -75,9 +76,9 @@ namespace Pssp
       * Associate this propagator with a block.
       * 
       * \param ns number of contour length steps
-      * \param nx number of spatial steps
+      * \param mesh spatial discretization mesh
       */ 
-      void allocate(int ns, int nx);
+      void allocate(int ns, Mesh<D>& mesh);
 
       /**
       * Solve the modified diffusion equation (MDE) for this block.
@@ -139,6 +140,13 @@ namespace Pssp
       */
       bool isAllocated() const;
 
+      using PropagatorTmpl< Propagator<D> >::nSource;
+      using PropagatorTmpl< Propagator<D> >::source;
+      using PropagatorTmpl< Propagator<D> >::partner;
+      using PropagatorTmpl< Propagator<D> >::setIsSolved;
+      using PropagatorTmpl< Propagator<D> >::isSolved;
+      using PropagatorTmpl< Propagator<D> >::hasPartner;
+
    protected:
 
       /**
@@ -157,11 +165,11 @@ namespace Pssp
       /// Pointer to associated Block.
       Block<D>* blockPtr_;
 
+      /// Pointer to associated Mesh
+      Mesh<D>* meshPtr_;
+
       /// Number of contour length steps = # grid points - 1.
       int ns_;
-
-      /// Number of spatial grid points.
-      int nx_;
 
       /// Is this propagator allocated?
       bool isAllocated_;
