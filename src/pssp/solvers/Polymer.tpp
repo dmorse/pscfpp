@@ -37,6 +37,24 @@ namespace Pssp {
       mu_ = mu; 
    }
 
+   /*
+   * Compute solution to MDE and concentrations.
+   */ 
+   template <int D>
+   void Polymer<D>::compute(const DArray<Block<D>::WField>& wFields, 
+                            UnitCell<D>& unitCell)
+   {
+
+      // Setup solvers for all blocks
+      int monomerId;
+      for (int j = 0; j < nBlock(); ++j) {
+         monomerId = block(j).monomerId();
+         block(j).setupSolver(wFields[monomerId], unitCell);
+      }
+
+      solve();
+   }
+
 }
 }
 #endif

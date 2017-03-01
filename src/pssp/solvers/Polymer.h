@@ -46,6 +46,12 @@ namespace Pssp {
 
       void setMu(double mu);
 
+      /**
+      * Compute solution to MDE and concentrations.
+      */ 
+      void compute(const DArray<Block<D>::WField>& wFields, 
+                   UnitCell<D>& unitCell);
+
    };
 
 }
