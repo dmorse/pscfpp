@@ -25,8 +25,8 @@ namespace Pssp {
    template <int D>
    Block<D>::Block()
     : meshPtr_(0),
-      ds_(0.0),
       kMeshDimensions_(0),
+      ds_(0.0),
       ns_(0)
    {
       propagator(0).setBlock(*this);
@@ -56,7 +56,7 @@ namespace Pssp {
       }
       ds_ = length()/double(ns_ - 1);
 
-      // Compute MeshDimensions_ 
+      // Compute Fourier space kMeshDimensions_ 
       for (int i = 0; i < D; ++i) {
          if (i < D - 1) {
             kMeshDimensions_[i] = mesh.dimensions()[i];
@@ -66,8 +66,11 @@ namespace Pssp {
       }
 
       // Allocate work arrays
-      expW_.allocate(mesh.dimensions());
       expKsq_.allocate(kMeshDimensions_);
+      expW_.allocate(mesh.dimensions());
+      qr_.allocate(mesh.dimensions());
+      qk_.allocate(mesh.dimensions());
+
    }
 
    /*
@@ -82,22 +85,33 @@ namespace Pssp {
       UTIL_CHECK(nx > 0);
       
       // Populate expW_
-      for (int i = 0; i < nx; ++i) {
-         expW_[i] = exp(-w[i]*ds_);
-         std::cout << "i = " << i 
-                   << " expW_[i] = " << expW_[i]
-                   << std::endl;
+      int i;
+      // std::cout << std::endl;
+      for (i = 0; i < nx; ++i) {
+         expW_[i] = exp(-0.5*w[i]*ds_);
+         // std::cout << "i = " << i 
+         //           << " expW_[i] = " << expW_[i]
+         //          << std::endl;
       }
 
       MeshIterator<D> iter;
       IntVec<D> G;
       IntVec<D> Gmin;
-      std::cout << "kDimensions = " << kMeshDimensions_ << std::endl;
+      double Gsq;
+      double factor = -1.0*kuhn()*kuhn()*ds_/6.0;
+      // std::cout << "kDimensions = " << kMeshDimensions_ << std::endl;
+      // std::cout << "factor      = " << factor << std::endl;
       iter.setDimensions(kMeshDimensions_);
       for (iter.begin(); !iter.atEnd(); ++iter) {
+         i = iter.rank(); 
          G = iter.position();
          Gmin = shiftToMinimum(G, mesh().dimensions(), unitCell);
-         std::cout << G << "  " << Gmin << std::endl;
+         Gsq = unitCell.ksq(Gmin);
+         expKsq_[i] = exp(Gsq*factor);
+         //std::cout << i    << "  " 
+         //          << Gmin << "  " 
+         //          << Gsq  << "  "
+         //          << expKsq_[i] << std::endl;
       }
       
    }
@@ -109,23 +123,22 @@ namespace Pssp {
    void Block<D>::computeConcentration(double prefactor)
    {
       // Preconditions
-      // UTIL_CHECK(domain().nx() > 0);
+      int nx = mesh().size();
+      UTIL_CHECK(nx > 0);
       UTIL_CHECK(ns_ > 0);
       UTIL_CHECK(ds_ > 0);
       UTIL_CHECK(propagator(0).isAllocated());
       UTIL_CHECK(propagator(1).isAllocated());
-      // UTIL_CHECK(cField().capacity() == domain().nx()) 
+      UTIL_CHECK(cField().capacity() == nx) 
 
-      #if 0
       // Initialize cField to zero at all points
       int i;
-      //int nx = domain().nx();
       for (i = 0; i < nx; ++i) {
          cField()[i] = 0.0;
       }
 
-      Propagator const & p0 = propagator(0);
-      Propagator const & p1 = propagator(1);
+      Propagator<D> const & p0 = propagator(0);
+      Propagator<D> const & p1 = propagator(1);
 
       // Evaluate unnormalized integral
       for (i = 0; i < nx; ++i) {
@@ -145,6 +158,7 @@ namespace Pssp {
       for (i = 0; i < nx; ++i) {
          cField()[i] *= prefactor;
       }
+      #if 0
       #endif
 
    }
@@ -155,7 +169,32 @@ namespace Pssp {
    template <int D>
    void Block<D>::step(const QField& q, QField& qNew)
    {
-      //int nx = domain().nx();
+      // Check real-space mesh sizes
+      int nx = mesh().size();
+      UTIL_CHECK(nx > 0);
+      UTIL_CHECK(q.capacity() == nx);
+      UTIL_CHECK(qNew.capacity() == nx);
+      UTIL_CHECK(qr_.capacity() == nx);
+      UTIL_CHECK(expW_.capacity() == nx);
+
+      // Fourier-space mesh sizes
+      int nk = qk_.capacity();
+      UTIL_CHECK(expKsq_.capacity() == nk);
+
+      // Apply pseudo-spectral algorithm
+      int i;
+      for (i = 0; i < nx; ++i) {
+         qr_[i] = q[i]*expW_[i];
+      }
+      fft_.forwardTransform(qr_, qk_);
+      for (i = 0; i < nk; ++i) {
+         qk_[i][0] *= expKsq_[i];
+         qk_[i][1] *= expKsq_[i];
+      }
+      fft_.inverseTransform(qk_, qr_);
+      for (i = 0; i < nx; ++i) {
+         qNew[i] = qr_[i]*expW_[i];
+      }
    }
 
 }

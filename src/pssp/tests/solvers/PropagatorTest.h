@@ -28,13 +28,13 @@ public:
    void tearDown()
    {}
 
-   void testConstructor()
+   void testConstructor1D()
    {
       printMethod(TEST_FUNC);
       Block<1> block;
    }
 
-   void setup1DBlock(Block<1>& block) 
+   void setupBlock1D(Block<1>& block) 
    {
       block.setId(0);
       double length = 2.0;
@@ -44,13 +44,13 @@ public:
       block.setKuhn(step);
    }
 
-   void setup1DMesh(Mesh<1>& mesh) {
+   void setupMesh1D(Mesh<1>& mesh) {
       IntVec<1> d;
       d[0] = 10;
       mesh.setDimensions(d);
    }
 
-   void setup1DUnitCell(UnitCell<1>& unitCell) 
+   void setupUnitCell1D(UnitCell<1>& unitCell) 
    {
       std::ifstream in;
       openInputFile("in/Lamellar", in);
@@ -58,17 +58,17 @@ public:
       in.close();
    }
 
-   void testSetDiscretization()
+   void testSetDiscretization1D()
    {
       printMethod(TEST_FUNC);
 
       // Create and initialize block
       Block<1> block;
-      setup1DBlock(block);
+      setupBlock1D(block);
 
       // Create and initialize mesh
       Mesh<1> mesh;
-      setup1DMesh(mesh);
+      setupMesh1D(mesh);
 
       double ds = 0.02;
       block.setDiscretization(ds, mesh);
@@ -79,23 +79,23 @@ public:
                 << block.mesh().dimensions() << std::endl;
    }
 
-   void testSetupSolver()
+   void testSetupSolver1D()
    {
       printMethod(TEST_FUNC);
 
       // Create and initialize block
       Block<1> block;
-      setup1DBlock(block);
+      setupBlock1D(block);
 
       // Create and initialize mesh
       Mesh<1> mesh;
-      setup1DMesh(mesh);
+      setupMesh1D(mesh);
 
       double ds = 0.02;
       block.setDiscretization(ds, mesh);
 
       UnitCell<1> unitCell;
-      setup1DUnitCell(unitCell);
+      setupUnitCell1D(unitCell);
       std::cout << std::endl;
       std::cout << "unit cell = " << unitCell << std::endl;
 
@@ -109,8 +109,61 @@ public:
 
       block.setupSolver(w, unitCell);
 
-      #if 0
+   }
+
+   void testSolver1D()
+   {
+      printMethod(TEST_FUNC);
+
+      // Create and initialize block
+      Block<1> block;
+      setupBlock1D(block);
+
+      // Create and initialize mesh
+      Mesh<1> mesh;
+      setupMesh1D(mesh);
+
+      double ds = 0.02;
+      block.setDiscretization(ds, mesh);
+
+      UnitCell<1> unitCell;
+      setupUnitCell1D(unitCell);
+      std::cout << std::endl;
+      std::cout << "unit cell = " << unitCell << std::endl;
+
+      // Setup chemical potential field
+      RField<1> w;
+      w.allocate(mesh.dimensions());
+      TEST_ASSERT(w.capacity() == mesh.size());
+      for (int i=0; i < w.capacity(); ++i) {
+         w[i] = 1.0;
+      }
+
+      block.setupSolver(w, unitCell);
+
+      #if 0 
+      // Step
+      int nx = mesh.size();
+      for (int i = 0; i < nx; ++i) {
+         block.propagator(0)[0] = 1.0;
+      }
+     
+      //block.propagator(0).solve();
+
+      std::cout << "\n Head:\n";
+      for (int i = 0; i < nx; ++i) {
+         std::cout << "  " << block.propagator(0).head()[i];
+      }
+      std::cout << "\n";
+
+      std::cout << "\n Tail:\n";
+      for (int i = 0; i < nx; ++i) {
+         std::cout << "  " << block.propagator(0).tail()[i];
+      }
+      std::cout << "\n";
+      std::cout << exp(-wc*block.length()) << "\n";
       #endif
+
    }
 
    #if 0
@@ -167,9 +220,10 @@ public:
 };
 
 TEST_BEGIN(PropagatorTest)
-TEST_ADD(PropagatorTest, testConstructor)
-TEST_ADD(PropagatorTest, testSetDiscretization)
-TEST_ADD(PropagatorTest, testSetupSolver)
+TEST_ADD(PropagatorTest, testConstructor1D)
+TEST_ADD(PropagatorTest, testSetDiscretization1D)
+TEST_ADD(PropagatorTest, testSetupSolver1D)
+TEST_ADD(PropagatorTest, testSolver1D)
 TEST_END(PropagatorTest)
 
 #endif

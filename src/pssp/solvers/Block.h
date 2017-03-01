@@ -11,6 +11,8 @@
 #include "Propagator.h"                   // base class argument
 #include <pscf/solvers/BlockTmpl.h>       // base class template
 #include <pssp/field/RField.h>            // member
+#include <pssp/field/RFieldDFT.h>         // member
+#include <pssp/field/FFT.h>               // member
 
 namespace Pscf { 
    template <int D> class Mesh; 
@@ -80,6 +82,11 @@ namespace Pssp {
       void setupSolver(WField const & w, UnitCell<D>& unitCell);
 
       /**
+      * Compute step of integration loop, from i to i+1.
+      */
+      void step(QField const & q, QField & qNew);
+
+      /**
       * Compute unnormalized concentration for block by integration.
       *
       * Upon return, grid point r of array cField() contains the 
@@ -94,11 +101,6 @@ namespace Pssp {
       void computeConcentration(double prefactor);
 
       /**
-      * Compute step of integration loop, from i to i+1.
-      */
-      void step(QField const & q, QField& qNew);
-
-      /**
       * Return associated spatial Mesh by reference.
       */
       Mesh<D> const & mesh() const;
@@ -108,12 +110,14 @@ namespace Pssp {
       */
       int ns() const;
 
+      // Functions with non-dependent names from BlockTmpl< Propagator<D> >
       using BlockTmpl< Propagator<D> >::setKuhn;
       using BlockTmpl< Propagator<D> >::propagator;
       using BlockTmpl< Propagator<D> >::cField;
       using BlockTmpl< Propagator<D> >::length;
       using BlockTmpl< Propagator<D> >::kuhn;
 
+      // Functions with non-dependent names from BlockDescriptor
       using BlockDescriptor::setId;
       using BlockDescriptor::setVertexIds;
       using BlockDescriptor::setMonomerId;
@@ -126,20 +130,29 @@ namespace Pssp {
 
    private:
 
+      // Fourier transform plan
+      FFT<D> fft_;
+
       // Array of elements containing exp(-K^2 b^2 ds/6)
       RField<D> expKsq_;
 
       // Array of elements containing exp(-W[i] ds/2)
       RField<D> expW_;
 
+      // Work array for real-space field.
+      RField<D> qr_;
+
+      // Work array for wavevector space field.
+      RFieldDFT<D> qk_;
+
       /// Pointer to associated Mesh<D> object.
       Mesh<D> const * meshPtr_;
 
-      /// Contour length step size.
-      double ds_;
-
       /// Dimensions of wavevector mesh in real-to-complex transform
       IntVec<D> kMeshDimensions_;
+
+      /// Contour length step size.
+      double ds_;
 
       /// Number of contour length steps = # grid points - 1.
       int ns_;
