@@ -134,21 +134,33 @@ public:
       // Setup chemical potential field
       RField<1> w;
       w.allocate(mesh.dimensions());
-      TEST_ASSERT(w.capacity() == mesh.size());
+      int nx = mesh.size();
+      TEST_ASSERT(w.capacity() == nx);
+      double wc = 0.3;
       for (int i=0; i < w.capacity(); ++i) {
-         w[i] = 1.0;
+         w[i] = wc;
       }
 
       block.setupSolver(w, unitCell);
 
-      #if 0 
-      // Step
-      int nx = mesh.size();
-      for (int i = 0; i < nx; ++i) {
-         block.propagator(0)[0] = 1.0;
+      #if 0
+      Propagator<1>::QField qin;
+      Propagator<1>::QField qout;
+      qin.allocate(mesh.dimensions());
+      qout.allocate(mesh.dimensions());
+      for (int i=0; i < w.capacity(); ++i) {
+         qin[i] = 1.0;
       }
+      block.step(qin, qout);
+      std::cout << "\n qout:\n";
+      for (int i = 0; i < nx; ++i) {
+         std::cout << "  " << qout[i];
+      }
+      std::cout << "\n";
+      std::cout << exp(-wc*block.ds()) << "\n";
+      #endif
      
-      //block.propagator(0).solve();
+      block.propagator(0).solve();
 
       std::cout << "\n Head:\n";
       for (int i = 0; i < nx; ++i) {
@@ -162,60 +174,11 @@ public:
       }
       std::cout << "\n";
       std::cout << exp(-wc*block.length()) << "\n";
+
+      #if 0 
       #endif
 
    }
-
-   #if 0
-   void testPlanarSolve1()
-   {
-      printMethod(TEST_FUNC);
-
-      // Create and initialize Domain
-      double xMin = 0.0;
-      double xMax = 1.0;
-      int nx = 11;
-      Domain domain;
-      domain.setPlanarParameters(xMin, xMax, nx);
-      TEST_ASSERT(eq(domain.volume(), xMax - xMin));
-
-      // Create and initialize block
-      Block b;
-      b.setId(0);
-      double length = 2.0;
-      double ds = 0.02;
-      double step = sqrt(6.0);
-      b.setLength(length);
-      b.setMonomerId(1);
-      b.setKuhn(step);
-      b.setDiscretization(domain, ds);
-
-      // Create W field
-      DArray<double> w;
-      w.allocate(nx);
-      double wc = 0.3;
-      for (int i = 0; i < nx; ++i) {
-         w[i] = wc;
-      }
-
-      // Solve
-      b.setupSolver(w);
-      b.propagator(0).solve();
-
-      std::cout << "\n Head:\n";
-      for (int i = 0; i < nx; ++i) {
-         std::cout << "  " << b.propagator(0).head()[i];
-      }
-      std::cout << "\n";
-
-      std::cout << "\n Tail:\n";
-      for (int i = 0; i < nx; ++i) {
-         std::cout << "  " << b.propagator(0).tail()[i];
-      }
-      std::cout << "\n";
-      std::cout << exp(-wc*b.length()) << "\n";
-   }
-   #endif
 
 };
 

@@ -71,6 +71,10 @@ namespace Pssp {
       qr_.allocate(mesh.dimensions());
       qk_.allocate(mesh.dimensions());
 
+      propagator(0).allocate(ns_, mesh);
+      propagator(1).allocate(ns_, mesh);
+      cField().allocate(mesh.dimensions());
+
    }
 
    /*
@@ -172,6 +176,8 @@ namespace Pssp {
       // Check real-space mesh sizes
       int nx = mesh().size();
       UTIL_CHECK(nx > 0);
+      UTIL_CHECK(q.isAllocated());
+      UTIL_CHECK(qNew.isAllocated());
       UTIL_CHECK(q.capacity() == nx);
       UTIL_CHECK(qNew.capacity() == nx);
       UTIL_CHECK(qr_.capacity() == nx);

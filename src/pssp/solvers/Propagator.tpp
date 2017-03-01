@@ -49,10 +49,6 @@ namespace Pssp {
       isAllocated_ = true;
    }
 
-   template <int D>
-   bool Propagator<D>::isAllocated() const
-   {  return isAllocated_; }
-
    /*
    * Compute initial head QField from final tail QFields of sources.
    */
@@ -88,6 +84,7 @@ namespace Pssp {
    template <int D>
    void Propagator<D>::solve()
    {
+      UTIL_CHECK(isAllocated());
       computeHead();
       for (int iStep = 0; iStep < ns_ - 1; ++iStep) {
          block().step(qFields_[iStep], qFields_[iStep + 1]);

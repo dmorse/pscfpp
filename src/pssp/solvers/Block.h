@@ -106,6 +106,11 @@ namespace Pssp {
       Mesh<D> const & mesh() const;
 
       /**
+      * Contour length step size.
+      */
+      double ds() const;
+
+      /**
       * Number of contour length steps.
       */
       int ns() const;
@@ -165,6 +170,11 @@ namespace Pssp {
    template <int D>
    inline int Block<D>::ns() const
    {  return ns_; }
+
+   /// Get number of contour steps.
+   template <int D>
+   inline double Block<D>::ds() const
+   {  return ds_; }
 
    /// Get Mesh by reference.
    template <int D>

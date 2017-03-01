@@ -214,6 +214,11 @@ namespace Pssp
       return *blockPtr_; 
    }
 
+   template <int D>
+   inline 
+   bool Propagator<D>::isAllocated() const
+   {  return isAllocated_; }
+
    /*
    * Associate this propagator with a block and direction
    */
