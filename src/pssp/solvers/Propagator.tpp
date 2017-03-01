@@ -37,7 +37,7 @@ namespace Pssp {
    {}
 
    template <int D>
-   void Propagator<D>::allocate(int ns, Mesh<D>& mesh)
+   void Propagator<D>::allocate(int ns, const Mesh<D>& mesh)
    {
       ns_ = ns;
       meshPtr_ = &mesh;

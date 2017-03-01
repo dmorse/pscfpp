@@ -15,7 +15,9 @@ namespace Pssp {
 
    template <int D>
    Polymer<D>::Polymer()
-   {  setClassName("Polymer"); }
+   {
+      setClassName("Polymer"); 
+   }
 
    template <int D>
    Polymer<D>::~Polymer()
@@ -38,20 +40,30 @@ namespace Pssp {
    }
 
    /*
+   * Set unit cell dimensions in all solvers.
+   */ 
+   template <int D>
+   void Polymer<D>::setupUnitCell(UnitCell<D> const & unitCell)
+   {
+      for (int j = 0; j < nBlock(); ++j) {
+         block(j).setupUnitCell(unitCell);
+      }
+   }
+
+   /*
    * Compute solution to MDE and concentrations.
    */ 
    template <int D>
-   void Polymer<D>::compute(const DArray<Block<D>::WField>& wFields, 
-                            UnitCell<D>& unitCell)
+   void Polymer<D>::compute(DArray<WField> const & wFields)
    {
-
       // Setup solvers for all blocks
       int monomerId;
       for (int j = 0; j < nBlock(); ++j) {
          monomerId = block(j).monomerId();
-         block(j).setupSolver(wFields[monomerId], unitCell);
+         block(j).setupSolver(wFields[monomerId]);
       }
 
+      // Call generic solver() method base class template.
       solve();
    }
 

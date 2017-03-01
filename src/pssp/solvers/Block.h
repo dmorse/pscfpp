@@ -71,15 +71,21 @@ namespace Pssp {
       * \param ds desired (optimal) value for contour length step
       * \param mesh spatial discretization mesh
       */
-      void setDiscretization(double ds, Mesh<D>& mesh);
+      void setDiscretization(double ds, const Mesh<D>& mesh);
+
+      /**
+      * Setup parameters that depend on the unit cell.
+      *
+      * \param unitCell unit cell, defining cell dimensions
+      */
+      void setupUnitCell(const UnitCell<D>& unitCell);
 
       /**
       * Set solver for this block.
       *
       * \param w  chemical potential field for this monomer type
-      * \param unitCell  unit cell, defining cell dimensions
       */
-      void setupSolver(WField const & w, UnitCell<D>& unitCell);
+      void setupSolver(WField const & w);
 
       /**
       * Compute step of integration loop, from i to i+1.

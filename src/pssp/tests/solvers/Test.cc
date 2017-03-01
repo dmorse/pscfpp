@@ -3,15 +3,17 @@
 */ 
 
 #include <util/global.h>
-#include "PropagatorTest.h"
-//#include "FieldTestComposite.h"
+//#include "PropagatorTest.h"
+#include "MixtureTest.h"
+//#include "SolverTestComposite.h"
 
 #include <test/TestRunner.h>
 #include <test/CompositeTestRunner.h>
 
 int main(int argc, char* argv[])
 {
-   TEST_RUNNER(PropagatorTest) runner;
+   //TEST_RUNNER(PropagatorTest) runner;
+   TEST_RUNNER(MixtureTest) runner;
    //FieldTestComposite runner;
 
    #if 0

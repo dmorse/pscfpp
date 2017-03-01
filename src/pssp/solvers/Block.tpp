@@ -41,7 +41,7 @@ namespace Pssp {
    {}
 
    template <int D>
-   void Block<D>::setDiscretization(double ds, Mesh<D>& mesh)
+   void Block<D>::setDiscretization(double ds, const Mesh<D>& mesh)
    {  
       UTIL_CHECK(mesh.size() > 1);
       UTIL_CHECK(ds > 0.0);
@@ -78,11 +78,39 @@ namespace Pssp {
    }
 
    /*
+   * Setup data that depend on the unit cell parameters.
+   */
+   template <int D>
+   void 
+   Block<D>::setupUnitCell(const UnitCell<D>& unitCell)
+   {
+      MeshIterator<D> iter;
+      // std::cout << "kDimensions = " << kMeshDimensions_ << std::endl;
+      iter.setDimensions(kMeshDimensions_);
+      IntVec<D> G, Gmin;
+      double Gsq;
+      double factor = -1.0*kuhn()*kuhn()*ds_/6.0;
+      // std::cout << "factor      = " << factor << std::endl;
+      int i;
+      for (iter.begin(); !iter.atEnd(); ++iter) {
+         i = iter.rank(); 
+         G = iter.position();
+         Gmin = shiftToMinimum(G, mesh().dimensions(), unitCell);
+         Gsq = unitCell.ksq(Gmin);
+         expKsq_[i] = exp(Gsq*factor);
+         //std::cout << i    << "  " 
+         //          << Gmin << "  " 
+         //          << Gsq  << "  "
+         //          << expKsq_[i] << std::endl;
+      }
+   }
+      
+   /*
    * Setup the contour length step algorithm.
    */
    template <int D>
    void 
-   Block<D>::setupSolver(Block<D>::WField const& w, UnitCell<D>& unitCell)
+   Block<D>::setupSolver(Block<D>::WField const& w)
    {
       // Preconditions
       int nx = mesh().size();
@@ -98,6 +126,7 @@ namespace Pssp {
          //          << std::endl;
       }
 
+      #if 0
       MeshIterator<D> iter;
       IntVec<D> G;
       IntVec<D> Gmin;
@@ -117,6 +146,7 @@ namespace Pssp {
          //          << Gsq  << "  "
          //          << expKsq_[i] << std::endl;
       }
+      #endif
       
    }
 

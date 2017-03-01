@@ -9,16 +9,17 @@
 */
 
 #include "Polymer.h"
-//#include "Solvent.h"
+#include "Solvent.h"
 #include <pscf/solvers/MixtureTmpl.h>
 #include <pscf/inter/Interaction.h>
 #include <util/containers/DArray.h>
 
+namespace Pscf { template <int D> class Mesh; }
+ 
 namespace Pscf {
 namespace Pssp
 {
 
-   class Domain;
 
    /**
    * Mixture of polymers and solvents.
@@ -31,7 +32,7 @@ namespace Pssp
    * Mixture is thus both a chemistry descriptor and an ideal-gas 
    * solver.
    *
-   * A Mixture is associated with a Domain object, which models a
+   * A Mixture is associated with a Mesh<D> object, which models a
    * spatial domain and a spatial discretization. Knowledge of the
    * domain and discretization is needed to solve the ideal-gas
    * problem.
@@ -39,7 +40,7 @@ namespace Pssp
    * \ingroup Pscf_Fd1d_Module
    */
    template <int D>
-   class Mixture : public MixtureTmpl< Polymer<D>, Solvent >
+   class Mixture : public MixtureTmpl< Polymer<D>, Solvent<D> >
    {
 
    public:
@@ -79,18 +80,23 @@ namespace Pssp
       */
       void readParameters(std::istream& in);
 
-      #if 0
       /**
-      * Create an association with the domain and allocate memory.
+      * Create an association with the mesh and allocate memory.
       * 
-      * The domain parameter must have already been initialized, 
+      * The Mesh<D> object must have already been initialized, 
       * e.g., by reading its parameters from a file, so that the
-      * domain dimensions are known on entry.
+      * mesh dimensions are known on entry.
       *
-      * \param domain associated Domain object (stores address).
+      * \param mesh associated Mesh<D> object (stores address).
       */
-      void setDomain(Domain const & domain);
-      #endif
+      void setMesh(Mesh<D> const & mesh);
+
+      /**
+      * Set unit cell parameters used in solver.
+      * 
+      * \param unitCell UnitCell<D> object that contains Bravais lattice.
+      */
+      void setupUnitCell(const UnitCell<D>& unitCell);
 
       /**
       * Compute concentrations.
@@ -119,6 +125,17 @@ namespace Pssp
       */
       double vMonomer() const;
 
+      using MixtureTmpl< Polymer<D>, Solvent<D> >::nMonomer;
+      using MixtureTmpl< Polymer<D>, Solvent<D> >::nPolymer;
+      using MixtureTmpl< Polymer<D>, Solvent<D> >::nSolvent;
+      using MixtureTmpl< Polymer<D>, Solvent<D> >::polymer;
+
+   protected:
+
+      using MixtureTmpl< Polymer<D>, Solvent<D> >::setClassName;
+      using ParamComposite::read;
+      using ParamComposite::readOptional;
+
    private:
 
       /// Monomer reference volume (set to 1.0 by default).
@@ -127,13 +144,11 @@ namespace Pssp
       /// Optimal contour length step size.
       double ds_;
 
-      #if 0
-      /// Pointer to associated Domain object.
-      Domain const * domainPtr_;
+      /// Pointer to associated Mesh<D> object.
+      Mesh<D> const * meshPtr_;
 
       /// Return associated domain by reference.
-      Domain const & domain() const;
-      #endif
+      Mesh<D> const & mesh() const;
 
    };
 
@@ -142,21 +157,21 @@ namespace Pssp
    /*
    * Get monomer reference volume (public).
    */
-   inline double Mixture::vMonomer() const
+   template <int D>
+   inline double Mixture<D>::vMonomer() const
    {  return vMonomer_; }
 
-   #if 0
    /*
-   * Get Domain by constant reference (private).
+   * Get Mesh<D> by constant reference (private).
    */
-   inline Domain const & Mixture::domain() const
+   template <int D>
+   inline Mesh<D> const & Mixture<D>::mesh() const
    {   
-      UTIL_ASSERT(domainPtr_);
-      return *domainPtr_;
+      UTIL_ASSERT(meshPtr_);
+      return *meshPtr_;
    }
-   #endif
 
-} // namespace Fd1d
+} // namespace Pssp
 } // namespace Pscf
 #include "Mixture.tpp"
 #endif

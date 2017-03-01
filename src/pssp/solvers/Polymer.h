@@ -10,20 +10,22 @@
 
 #include "Block.h"
 #include <pscf/solvers/PolymerTmpl.h>
+#include <pssp/field/RField.h>
 
 namespace Pscf { 
 namespace Pssp { 
 
+
    /**
    * Descriptor and solver for a branched polymer species.
    *
-   * The block concentrations stored in the constituent Block
+   * The block concentrations stored in the constituent Block<D>
    * objects contain the block concentrations (i.e., volume 
    * fractions) computed in the most recent call of the compute 
    * function.
    *
    * The phi() and mu() accessor functions, which are inherited 
-   * from PolymerTmp<Block>, return the value of phi (spatial 
+   * from PolymerTmp< Block<D> >, return the value of phi (spatial 
    * average volume fraction of a species) or mu (chemical
    * potential) computed in the last call of the compute function.
    * If the ensemble for this species is closed, phi is read from 
@@ -38,6 +40,10 @@ namespace Pssp {
 
    public:
 
+      typedef PolymerTmpl< Block<D> > Base;
+
+      typedef typename Block<D>::WField  WField;
+
       Polymer();
 
       ~Polymer();
@@ -49,8 +55,26 @@ namespace Pssp {
       /**
       * Compute solution to MDE and concentrations.
       */ 
-      void compute(const DArray<Block<D>::WField>& wFields, 
-                   UnitCell<D>& unitCell);
+      void setupUnitCell(UnitCell<D> const & unitCell);
+
+      /**
+      * Compute solution to MDE and concentrations.
+      */ 
+      void compute(DArray<WField> const & wFields);
+
+      using Base::nBlock;
+      using Base::block;
+      using Base::ensemble;
+      using Base::solve;
+
+   protected:
+
+      using ParamComposite::setClassName;
+
+   private: 
+
+      using Base::phi_;
+      using Base::mu_;
 
    };
 

@@ -79,7 +79,7 @@ namespace Pssp
       * \param ns number of contour length steps
       * \param mesh spatial discretization mesh
       */ 
-      void allocate(int ns, Mesh<D>& mesh);
+      void allocate(int ns, const Mesh<D>& mesh);
 
       /**
       * Solve the modified diffusion equation (MDE) for this block.
@@ -167,7 +167,7 @@ namespace Pssp
       Block<D>* blockPtr_;
 
       /// Pointer to associated Mesh
-      Mesh<D>* meshPtr_;
+      Mesh<D> const * meshPtr_;
 
       /// Number of contour length steps = # grid points - 1.
       int ns_;

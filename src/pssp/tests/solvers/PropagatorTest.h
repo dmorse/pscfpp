@@ -112,7 +112,8 @@ public:
          w[i] = 1.0;
       }
 
-      block.setupSolver(w, unitCell);
+      block.setupUnitCell(unitCell);
+      block.setupSolver(w);
    }
 
    void testSolver1D()
@@ -145,7 +146,8 @@ public:
          w[i] = wc;
       }
 
-      block.setupSolver(w, unitCell);
+      block.setupUnitCell(unitCell);
+      block.setupSolver(w);
 
       // Test step
       Propagator<1>::QField qin;

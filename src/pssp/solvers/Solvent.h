@@ -8,51 +8,58 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Propagator.h"
-#include <pscf/solvers/SolventTmpl.h>
+#include <pscf/chem/Species.h>
+#include <util/param/ParamComposite.h>
+#include <pssp/field/RField.h>
 
 namespace Pscf { 
 namespace Pssp { 
 
+   using namespace Util;
+
    /**
-   * Solver for a point particle solvent species.
+   * Class representing a solvent species.
    *
-   * \ingroup Pscf_Fd1d_Module
+   * \ingroup Pscf_Solvers_Module
    */
    template <int D>
-   class Solvent : public SolventTmpl< Propagator <D> >
+   class Solvent : public Species, public ParamComposite
    {
    public:
 
       /**
-      * Monomer concentration field type.
+      * Monomer concentration field.
       */
-      typedef typename Propagator<D>::CField CField;
+      typedef RField<D> CField;
 
-      /**
-      * Monomer chemical potential field type.
+      /** 
+      * Monomer chemical potential field.
       */
-      typedef typename Propagator<D>::CField WField;
+      typedef RField<D> WField;
 
       /**
       * Constructor.
       */
-      Solvent();
-
+      Solvent()
+      {}
+   
       /**
-      * Destructor.
+      * Constructor.
       */
-      ~Solvent();
-
+      ~Solvent()
+      {}
+   
       /**
-      * Compute monomer concentration field and partittion function.
+      * Compute monomer concentration field and phi and/or mu.
       *
-      * Upon return, monomer concentration field, phi and mu are set.
+      * Pure virtual function: Must be implemented by subclasses.
+      * Upon return, concentration field, phi and mu are all set.
       *
-      * \param wField monomer chemical potential field
+      * \param wField monomer chemical potential field.
       */
-      void compute(WField const & wField);
-
+      virtual void compute(WField const & wField )
+      {};
+   
       /**
       * Get monomer concentration field for this solvent.
       */
@@ -60,12 +67,11 @@ namespace Pssp {
       {  return concentration_;  }
    
    private:
-   
-      CField concentration_;
 
+      CField concentration_;
+   
    };
 
-} // namespace Fd1d
-} // namespace Pscf
-#include "Solvent.tpp"
-#endif
+}
+} 
+#endif 

@@ -14,14 +14,14 @@
 #include <cmath>
 
 namespace Pscf { 
-namespace Fd1d
+namespace Pssp
 { 
 
    template <int D>
    Mixture<D>::Mixture()
     : vMonomer_(1.0),
       ds_(-1.0),
-      domainPtr_(0)
+      meshPtr_(0)
    {  setClassName("Mixture"); }
 
    template <int D>
@@ -31,7 +31,7 @@ namespace Fd1d
    template <int D>
    void Mixture<D>::readParameters(std::istream& in)
    {
-      MixtureTmpl<Polymer, Solvent>::readParameters(in);
+      MixtureTmpl< Polymer<D>, Solvent<D> >::readParameters(in);
       vMonomer_ = 1.0; // Default value
       readOptional(in, "vMonomer", vMonomer_);
       read(in, "ds", ds_);
@@ -42,22 +42,30 @@ namespace Fd1d
    }
 
    template <int D>
-   void Mixture<D>::setDomain(Domain const& domain)
+   void Mixture<D>::setMesh(Mesh<D> const& mesh)
    {
       UTIL_CHECK(nMonomer() > 0);
       UTIL_CHECK(nPolymer()+ nSolvent() > 0);
       UTIL_CHECK(ds_ > 0);
 
-      domainPtr_ = &domain;
+      meshPtr_ = &mesh;
 
       // Set discretization for all blocks
       int i, j;
       for (i = 0; i < nPolymer(); ++i) {
          for (j = 0; j < polymer(i).nBlock(); ++j) {
-            polymer(i).block(j).setDiscretization(domain, ds_);
+            polymer(i).block(j).setDiscretization(ds_, mesh);
          }
       }
 
+   }
+
+   template <int D>
+   void Mixture<D>::setupUnitCell(const UnitCell<D>& unitCell)
+   {
+      for (int i = 0; i < nPolymer(); ++i) {
+         polymer(i).setupUnitCell(unitCell);
+      }
    }
 
    /*
@@ -67,15 +75,14 @@ namespace Fd1d
    void Mixture<D>::compute(DArray<Mixture<D>::WField> const & wFields, 
                             DArray<Mixture<D>::CField>& cFields)
    {
-      //UTIL_CHECK(domainPtr_);
-      //UTIL_CHECK(domain().nx() > 0);
+      UTIL_CHECK(meshPtr_);
+      UTIL_CHECK(mesh().size() > 0);
       UTIL_CHECK(nMonomer() > 0);
       UTIL_CHECK(nPolymer() + nSolvent() > 0);
       UTIL_CHECK(wFields.capacity() == nMonomer());
       UTIL_CHECK(cFields.capacity() == nMonomer());
 
-      #if 0
-      int nx = domain().nx();
+      int nx = mesh().size();
       int nm = nMonomer();
       int i, j, k;
 
@@ -106,12 +113,11 @@ namespace Fd1d
             }
          }
       }
-      #endif
 
       // To do: Add compute functions and accumulation for solvents.
 
    }
 
-} // namespace Fd1d
+} // namespace Pssp
 } // namespace Pscf
 #endif
