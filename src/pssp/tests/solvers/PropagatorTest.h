@@ -72,11 +72,15 @@ public:
 
       double ds = 0.02;
       block.setDiscretization(ds, mesh);
+      TEST_ASSERT(eq(block.length(), 2.0));
+      TEST_ASSERT(eq(block.ds(), 0.02));
+      TEST_ASSERT(block.ns() == 101);
+      TEST_ASSERT(block.mesh().dimensions()[0] == 10);
 
-      std::cout << std::endl;
-      std::cout << "ns   = " << block.ns() << std::endl;
-      std::cout << "mesh = " 
-                << block.mesh().dimensions() << std::endl;
+      //std::cout << std::endl;
+      //std::cout << "ns   = " << block.ns() << std::endl;
+      //std::cout << "mesh = " 
+      //          << block.mesh().dimensions() << std::endl;
    }
 
    void testSetupSolver1D()
@@ -98,6 +102,7 @@ public:
       setupUnitCell1D(unitCell);
       std::cout << std::endl;
       std::cout << "unit cell = " << unitCell << std::endl;
+      TEST_ASSERT(eq(unitCell.rBasis(0)[0], 4.0));
 
       // Setup chemical potential field
       RField<1> w;
@@ -108,7 +113,6 @@ public:
       }
 
       block.setupSolver(w, unitCell);
-
    }
 
    void testSolver1D()
@@ -128,8 +132,8 @@ public:
 
       UnitCell<1> unitCell;
       setupUnitCell1D(unitCell);
-      std::cout << std::endl;
-      std::cout << "unit cell = " << unitCell << std::endl;
+      // std::cout << std::endl;
+      // std::cout << "unit cell = " << unitCell << std::endl;
 
       // Setup chemical potential field
       RField<1> w;
@@ -137,46 +141,57 @@ public:
       int nx = mesh.size();
       TEST_ASSERT(w.capacity() == nx);
       double wc = 0.3;
-      for (int i=0; i < w.capacity(); ++i) {
+      for (int i=0; i < nx; ++i) {
          w[i] = wc;
       }
 
       block.setupSolver(w, unitCell);
 
-      #if 0
+      // Test step
       Propagator<1>::QField qin;
       Propagator<1>::QField qout;
       qin.allocate(mesh.dimensions());
       qout.allocate(mesh.dimensions());
-      for (int i=0; i < w.capacity(); ++i) {
-         qin[i] = 1.0;
+
+      double twoPi = 2.0*Constants::Pi;
+      for (int i=0; i < nx; ++i) {
+         qin[i] = cos(twoPi*double(i)/double(nx));
       }
       block.step(qin, qout);
-      std::cout << "\n qout:\n";
+      double a = 4.0;
+      double b = block.kuhn();
+      double Gb = twoPi*b/a;
+      double r = Gb*Gb/6.0;
+      ds = block.ds();
+      double expected = exp(-(wc + r)*ds);
       for (int i = 0; i < nx; ++i) {
-         std::cout << "  " << qout[i];
+         //std::cout << "  " << qout[i]
+         //          << "  " << qin[i]*expected
+         //          << "  " << expected << std::endl;
+         TEST_ASSERT(eq(qout[i], qin[i]*expected));
       }
-      std::cout << "\n";
-      std::cout << exp(-wc*block.ds()) << "\n";
-      #endif
-     
+      //std::cout << "\n";
+      //std::cout << "expected ratio = " << expected << "\n";
+    
+      // Test propagator solve 
       block.propagator(0).solve();
 
-      std::cout << "\n Head:\n";
+      //std::cout << "\n Head:\n";
       for (int i = 0; i < nx; ++i) {
-         std::cout << "  " << block.propagator(0).head()[i];
+         //std::cout << "  " << block.propagator(0).head()[i];
+         TEST_ASSERT(eq(block.propagator(0).head()[i],1.0));
       }
       std::cout << "\n";
+      
 
-      std::cout << "\n Tail:\n";
+      // std::cout << "\n Tail:\n";
+      expected = exp(-wc*block.length());
       for (int i = 0; i < nx; ++i) {
-         std::cout << "  " << block.propagator(0).tail()[i];
+         //std::cout << "  " << block.propagator(0).tail()[i];
+         TEST_ASSERT(eq(block.propagator(0).tail()[i], expected));
       }
-      std::cout << "\n";
-      std::cout << exp(-wc*block.length()) << "\n";
-
-      #if 0 
-      #endif
+      // std::cout << "\n";
+      //std::cout << exp(-wc*block.length()) << "\n";
 
    }
 
