@@ -11,7 +11,7 @@
 #include "Propagator.h"                   // base class argument
 #include <pscf/solvers/BlockTmpl.h>       // base class template
 #include <pssp/field/RField.h>            // member
-#include <pssp/field/RFieldDFT.h>         // member
+#include <pssp/field/RFieldDft.h>         // member
 #include <pssp/field/FFT.h>               // member
 
 namespace Pscf { 
@@ -154,7 +154,7 @@ namespace Pssp {
       RField<D> qr_;
 
       // Work array for wavevector space field.
-      RFieldDFT<D> qk_;
+      RFieldDft<D> qk_;
 
       /// Pointer to associated Mesh<D> object.
       Mesh<D> const * meshPtr_;

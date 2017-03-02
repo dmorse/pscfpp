@@ -5,11 +5,12 @@
 #include <test/CompositeTestRunner.h>
 
 #include "field/FieldTestComposite.h"
+#include "solvers/SolverTestComposite.h"
 #include <util/global.h>
 
 TEST_COMPOSITE_BEGIN(PsspNsTestComposite)
 addChild(new FieldTestComposite, "field/");
-//addChild(new TEST_RUNNER(UnitCellTest), "crystal/");
+addChild(new SolverTestComposite, "solvers/");
 TEST_COMPOSITE_END
 
 using namespace Pscf;

@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "RFieldDFT.h"
+#include "RFieldDft.h"
 
 namespace Pscf {
 namespace Pssp {
@@ -19,7 +19,7 @@ namespace Pssp {
    * Default constructor.
    */
    template <int D>
-   RFieldDFT<D>::RFieldDFT()
+   RFieldDft<D>::RFieldDft()
     : Field<fftw_complex>()
    {}
 
@@ -27,7 +27,7 @@ namespace Pssp {
    * Destructor.
    */
    template <int D>
-   RFieldDFT<D>::~RFieldDFT()
+   RFieldDft<D>::~RFieldDft()
    {}
 
    /*
@@ -38,7 +38,7 @@ namespace Pssp {
    *\param other the RField<D> to be copied.
    */
    template <int D>
-   RFieldDFT<D>::RFieldDFT(const RFieldDFT<D>& other)
+   RFieldDft<D>::RFieldDft(const RFieldDft<D>& other)
     : Field<fftw_complex>()
    {
       if (!other.isAllocated()) {
@@ -64,7 +64,7 @@ namespace Pssp {
    * \param other the rhs Field
    */
    template <int D>
-   RFieldDFT<D>& RFieldDFT<D>::operator = (const RFieldDFT<D>& other)
+   RFieldDft<D>& RFieldDft<D>::operator = (const RFieldDft<D>& other)
    {
       // Check for self assignment
       if (this == &other) return *this;

@@ -6,7 +6,7 @@
 
 #include <pssp/field/FFT.h>
 #include <pssp/field/RField.h>
-#include <pssp/field/RFieldDFT.h>
+#include <pssp/field/RFieldDft.h>
 
 #include <util/math/Constants.h>
 #include <util/format/Dbl.h>
@@ -43,7 +43,7 @@ void FftTest::testTransform1D() {
    printEndl();
 
    RField<1> in;
-   RFieldDFT<1> out;
+   RFieldDft<1> out;
    int n = 10;
    IntVec<1> d;
    d[0] = n;

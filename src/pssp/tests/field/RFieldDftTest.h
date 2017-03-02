@@ -1,10 +1,10 @@
-#ifndef PSSP_K_MESH_FIELD_TEST_H
-#define PSSP_K_MESH_FIELD_TEST_H
+#ifndef PSSP_R_FIELD_DFT_TEST_H
+#define PSSP_R_FIELD_DFT_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pssp/field/RFieldDFT.h>
+#include <pssp/field/RFieldDft.h>
 #include <util/archives/MemoryOArchive.h>
 #include <util/archives/MemoryIArchive.h>
 #include <util/archives/MemoryCounter.h>
@@ -14,7 +14,7 @@
 using namespace Util;
 using namespace Pscf::Pssp;
 
-class RFieldDFTTest : public UnitTest 
+class RFieldDftTest : public UnitTest 
 {
 private:
 
@@ -43,34 +43,34 @@ public:
 };
 
 
-void RFieldDFTTest::testConstructor()
+void RFieldDftTest::testConstructor()
 {
    printMethod(TEST_FUNC);
    {
-      RFieldDFT<3> v;
+      RFieldDft<3> v;
       TEST_ASSERT(v.capacity() == 0 );
       TEST_ASSERT(!v.isAllocated() );
    }
 } 
 
-void RFieldDFTTest::testAllocate()
+void RFieldDftTest::testAllocate()
 {
    printMethod(TEST_FUNC);
    {
-      RFieldDFT<3> v;
+      RFieldDft<3> v;
       v.allocate(capacity);
       TEST_ASSERT(v.capacity() == capacity );
       TEST_ASSERT(v.isAllocated());
    }
 } 
 
-void RFieldDFTTest::testAllocate1()
+void RFieldDftTest::testAllocate1()
 {
    printMethod(TEST_FUNC);
    {
       IntVec<1> d;
       d[0] = 3;
-      RFieldDFT<1> v;
+      RFieldDft<1> v;
       v.allocate(d);
       TEST_ASSERT(v.capacity() == 2);
       TEST_ASSERT(v.isAllocated());
@@ -78,7 +78,7 @@ void RFieldDFTTest::testAllocate1()
    }
 }
  
-void RFieldDFTTest::testAllocate3()
+void RFieldDftTest::testAllocate3()
 {
    printMethod(TEST_FUNC);
    {
@@ -86,7 +86,7 @@ void RFieldDFTTest::testAllocate3()
       d[0] = 2;
       d[1] = 3;
       d[2] = 4;
-      RFieldDFT<3> v;
+      RFieldDft<3> v;
       v.allocate(d);
       TEST_ASSERT(v.capacity() == 18);
       TEST_ASSERT(v.isAllocated());
@@ -94,11 +94,11 @@ void RFieldDFTTest::testAllocate3()
    }
 }
  
-void RFieldDFTTest::testSubscript()
+void RFieldDftTest::testSubscript()
 {
    printMethod(TEST_FUNC);
    {
-      RFieldDFT<3> v;
+      RFieldDft<3> v;
       v.allocate(capacity);
       for (int i=0; i < capacity; i++ ) {
          v[i][0] = (i+1)*10.0 ;
@@ -114,17 +114,17 @@ void RFieldDFTTest::testSubscript()
    }
 } 
 
-void RFieldDFTTest::testAssignment()
+void RFieldDftTest::testAssignment()
 {
    printMethod(TEST_FUNC);
 
    {
-      RFieldDFT<3> v;
+      RFieldDft<3> v;
       v.allocate(capacity);
       TEST_ASSERT(v.capacity() == 3);
       TEST_ASSERT(v.isAllocated() );
    
-      RFieldDFT<3> u;
+      RFieldDft<3> u;
       u.allocate(3);
       TEST_ASSERT(u.capacity() == 3 );
       TEST_ASSERT(u.isAllocated() );
@@ -152,11 +152,11 @@ void RFieldDFTTest::testAssignment()
 } 
 
 #if 0
-void RFieldDFTTest::testSerialize1Memory()
+void RFieldDftTest::testSerialize1Memory()
 { 
    printMethod(TEST_FUNC);
    {
-      RFieldDFT<3> v;
+      RFieldDft<3> v;
       v.allocate(3);
       for (int i=0; i < capacity; i++ ) {
          v[i][0] = (i+1)*10.0 ;
@@ -179,7 +179,7 @@ void RFieldDFTTest::testSerialize1Memory()
       TEST_ASSERT(v[1][1]==20.0);
       TEST_ASSERT(v.capacity() == 3);
    
-      RFieldDFT<3> u;
+      RFieldDft<3> u;
       u.allocate(3);
    
       MemoryIArchive iArchive;
@@ -241,11 +241,11 @@ void RFieldDFTTest::testSerialize1Memory()
 
 }
 
-void RFieldDFTTest::testSerialize2Memory()
+void RFieldDftTest::testSerialize2Memory()
 {
    printMethod(TEST_FUNC);
    {
-      RFieldDFT<3> v;
+      RFieldDft<3> v;
       v.allocate(capacity);
       for (int i=0; i < capacity; i++ ) {
          v[i][0] = (i+1)*10.0 ;
@@ -263,9 +263,9 @@ void RFieldDFTTest::testSerialize2Memory()
       TEST_ASSERT(v[1] == 20.0);
       TEST_ASSERT(v.capacity() == capacity);
    
-      RFieldDFT<3> u;
+      RFieldDft<3> u;
    
-      // Note: We do not allocate RFieldDFT<3> u in this test.
+      // Note: We do not allocate RFieldDft<3> u in this test.
       // This is the main difference from testSerialize1Memory()
    
       MemoryIArchive iArchive;
@@ -288,11 +288,11 @@ void RFieldDFTTest::testSerialize2Memory()
    }
 }
 
-void RFieldDFTTest::testSerialize1File()
+void RFieldDftTest::testSerialize1File()
 {
    printMethod(TEST_FUNC);
    {
-      RFieldDFT<3> v;
+      RFieldDft<3> v;
       v.allocate(3);
       for (int i=0; i < capacity; i++ ) {
          v[i][0] = (i+1)*10.0 ;
@@ -312,7 +312,7 @@ void RFieldDFTTest::testSerialize1File()
       TEST_ASSERT(v[1]==20.0);
       TEST_ASSERT(v.capacity() == 3);
    
-      RFieldDFT<3> u;
+      RFieldDft<3> u;
       u.allocate(3);
    
       BinaryFileIArchive iArchive;
@@ -342,11 +342,11 @@ void RFieldDFTTest::testSerialize1File()
    }
 }
 
-void RFieldDFTTest::testSerialize2File()
+void RFieldDftTest::testSerialize2File()
 {
    printMethod(TEST_FUNC);
    {
-      RFieldDFT<3> v;
+      RFieldDft<3> v;
       v.allocate(3);
       for (int i=0; i < capacity; i++ ) {
          v[i][0] = (i+1)*10.0 ;
@@ -366,7 +366,7 @@ void RFieldDFTTest::testSerialize2File()
       TEST_ASSERT(v[1] == 20.0);
       TEST_ASSERT(v.capacity() == 3);
    
-      RFieldDFT<3> u;
+      RFieldDft<3> u;
    
       // u.allocate(3); -> 
       // Note: We do not allocate first. This is the difference 
@@ -400,17 +400,17 @@ void RFieldDFTTest::testSerialize2File()
 }
 #endif
 
-TEST_BEGIN(RFieldDFTTest)
-TEST_ADD(RFieldDFTTest, testConstructor)
-TEST_ADD(RFieldDFTTest, testAllocate)
-TEST_ADD(RFieldDFTTest, testAllocate1)
-TEST_ADD(RFieldDFTTest, testAllocate3)
-TEST_ADD(RFieldDFTTest, testSubscript)
-TEST_ADD(RFieldDFTTest, testAssignment)
-//TEST_ADD(RFieldDFTTest, testSerialize1Memory)
-//TEST_ADD(RFieldDFTTest, testSerialize2Memory)
-//TEST_ADD(RFieldDFTTest, testSerialize1File)
-//TEST_ADD(RFieldDFTTest, testSerialize2File)
-TEST_END(RFieldDFTTest)
+TEST_BEGIN(RFieldDftTest)
+TEST_ADD(RFieldDftTest, testConstructor)
+TEST_ADD(RFieldDftTest, testAllocate)
+TEST_ADD(RFieldDftTest, testAllocate1)
+TEST_ADD(RFieldDftTest, testAllocate3)
+TEST_ADD(RFieldDftTest, testSubscript)
+TEST_ADD(RFieldDftTest, testAssignment)
+//TEST_ADD(RFieldDftTest, testSerialize1Memory)
+//TEST_ADD(RFieldDftTest, testSerialize2Memory)
+//TEST_ADD(RFieldDftTest, testSerialize1File)
+//TEST_ADD(RFieldDftTest, testSerialize2File)
+TEST_END(RFieldDftTest)
 
 #endif

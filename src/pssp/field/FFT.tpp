@@ -48,7 +48,7 @@ namespace Pssp
    * Check and (if necessary) setup mesh dimensions.
    */
    template <int D>
-   void FFT<D>::setup(RField<D>& rField, RFieldDFT<D>& kField)
+   void FFT<D>::setup(RField<D>& rField, RFieldDft<D>& kField)
    {
       // Preconditions
       UTIL_CHECK(!isSetup_);
@@ -84,7 +84,7 @@ namespace Pssp
    * Execute forward transform.
    */
    template <int D>
-   void FFT<D>::forwardTransform(RField<D>& rField, RFieldDFT<D>& kField)
+   void FFT<D>::forwardTransform(RField<D>& rField, RFieldDft<D>& kField)
    {
       // Check dimensions or setup
       if (isSetup_) {
@@ -108,7 +108,7 @@ namespace Pssp
    * Execute inverse (complex-to-real) transform.
    */
    template <int D>
-   void FFT<D>::inverseTransform(RFieldDFT<D>& kField, RField<D>& rField)
+   void FFT<D>::inverseTransform(RFieldDft<D>& kField, RField<D>& rField)
    {
       if (!isSetup_) {
          setup(rField, kField);

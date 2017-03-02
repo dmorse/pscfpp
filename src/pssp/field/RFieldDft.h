@@ -27,7 +27,7 @@ namespace Pssp
    * \ingroup Pssp_Field_Module
    */
    template <int D>
-   class RFieldDFT : public Field<fftw_complex>
+   class RFieldDft : public Field<fftw_complex>
    {
 
    public:
@@ -35,23 +35,23 @@ namespace Pssp
       /**
       * Default constructor.
       */
-      RFieldDFT();
+      RFieldDft();
 
       /**
       * Copy constructor.
       *
       * Allocates new memory and copies all elements by value.
       *
-      *\param other the RFieldDFT to be copied.
+      *\param other the RFieldDft to be copied.
       */
-      RFieldDFT(const RFieldDFT<D>& other);
+      RFieldDft(const RFieldDft<D>& other);
 
       /**
       * Destructor.
       *
       * Deletes underlying C array, if allocated previously.
       */
-      virtual ~RFieldDFT();
+      virtual ~RFieldDft();
 
       /**
       * Assignment operator.
@@ -63,14 +63,14 @@ namespace Pssp
       *
       * \param other the RHS Field
       */
-      RFieldDFT<D>& operator = (const RFieldDFT<D>& other);
+      RFieldDft<D>& operator = (const RFieldDft<D>& other);
 
       using Field<fftw_complex>::allocate;
 
       /**
       * Allocate the underlying C array for an FFT grid.
       *
-      * \throw Exception if the RFieldDFT is already allocated.
+      * \throw Exception if the RFieldDft is already allocated.
       *
       * \param dimensions vector containing number of grid points in each direction.
       */
@@ -101,7 +101,7 @@ namespace Pssp
    * Allocate the underlying C array for an FFT grid.
    */
    template <int D>
-   void RFieldDFT<D>::allocate(const IntVec<D>& meshDimensions)
+   void RFieldDft<D>::allocate(const IntVec<D>& meshDimensions)
    {
       int size = 1;
       for (int i = 0; i < D; ++i) {
@@ -120,7 +120,7 @@ namespace Pssp
    * Return mesh dimensions by constant reference.
    */
    template <int D>
-   inline const IntVec<D>& RFieldDFT<D>::meshDimensions() const
+   inline const IntVec<D>& RFieldDft<D>::meshDimensions() const
    {  return meshDimensions_; }
 
 
@@ -129,7 +129,7 @@ namespace Pssp
    */
    template <int D>
    template <class Archive>
-   void RFieldDFT<D>::serialize(Archive& ar, const unsigned int version)
+   void RFieldDft<D>::serialize(Archive& ar, const unsigned int version)
    {
       Field<fftw_complex>::serialize(ar, version);
       ar & meshDimensions_;
@@ -137,5 +137,5 @@ namespace Pssp
 
 }
 }
-#include "RFieldDFT.tpp"
+#include "RFieldDft.tpp"
 #endif

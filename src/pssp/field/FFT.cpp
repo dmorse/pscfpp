@@ -15,7 +15,7 @@ namespace Pssp {
    // Forward transform, explicit specializations.
 
    template<>
-   void FFT<1>::makePlans(RField<1>& rField, RFieldDFT<1>& kField)
+   void FFT<1>::makePlans(RField<1>& rField, RFieldDft<1>& kField)
    {
       unsigned int flags = FFTW_ESTIMATE;
       fPlan_ = fftw_plan_dft_r2c_1d(rSize_, &rField[0], &kField[0], flags);

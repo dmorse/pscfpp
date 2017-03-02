@@ -22,7 +22,7 @@ namespace Pssp
    /**
    * Basis function for pseudo-spectral scft.
    *
-   * \ingroup Pscf_Pssp_Module
+   * \ingroup Pssp_Basis_Module
    */
    template <int D>
    class Basis {

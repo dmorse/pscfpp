@@ -9,7 +9,7 @@
 */
 
 #include <pssp/field/RField.h>
-#include <pssp/field/RFieldDFT.h>
+#include <pssp/field/RFieldDft.h>
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
 
@@ -45,26 +45,26 @@ namespace Pssp {
       /**
       * Check and setup grid dimensions if necessary.
       *
-      * \param dimensions number of grid points in each direction.
+      * \param rField real data on r-space grid
+      * \param kField complex data on k-space grid
       */
-      void setup(RField<D>& rField, RFieldDFT<D>& kField);
+      void setup(RField<D>& rField, RFieldDft<D>& kField);
 
       /**
       * Compute forward (real-to-complex) Fourier transform.
       *
       * \param in  array of real values on r-space grid
-      * \param out array of complex values on k-space grid
+      * \param out  array of complex values on k-space grid
       */
-      void forwardTransform(RField<D>& in, RFieldDFT<D>& out);
+      void forwardTransform(RField<D>& in, RFieldDft<D>& out);
 
       /**
       * Compute inverse (complex-to-real) Fourier transform.
       *
       * \param in  array of complex values on k-space grid
       * \param out  array of real values on r-space grid
-      * \param meshDimensions number of grid points in each direction.
       */
-      void inverseTransform(RFieldDFT<D>& in, RField<D>& out);
+      void inverseTransform(RFieldDft<D>& in, RField<D>& out);
 
       /**
       * Return the dimensions of the grid for which this was allocated.
@@ -97,20 +97,20 @@ namespace Pssp {
       /**
       * Make FFTW plans for transform and inverse transform.
       */
-      void makePlans(RField<D>& rField, RFieldDFT<D>& kField);
+      void makePlans(RField<D>& rField, RFieldDft<D>& kField);
 
    };
 
    // Declarations of explicit specializations
 
    template <>
-   void FFT<1>::makePlans(RField<1>& rField, RFieldDFT<1>& kField);
+   void FFT<1>::makePlans(RField<1>& rField, RFieldDft<1>& kField);
 
    template <>
-   void FFT<2>::makePlans(RField<2>& rField, RFieldDFT<2>& kField);
+   void FFT<2>::makePlans(RField<2>& rField, RFieldDft<2>& kField);
 
    template <>
-   void FFT<3>::makePlans(RField<3>& rField, RFieldDFT<3>& kField);
+   void FFT<3>::makePlans(RField<3>& rField, RFieldDft<3>& kField);
 
    /*
    * Return the dimensions of the grid for which this was allocated.
