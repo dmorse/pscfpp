@@ -20,7 +20,7 @@ namespace Pssp {
    /**
    * Class representing a solvent species.
    *
-   * \ingroup Pscf_Solvers_Module
+   * \ingroup Pssp_Solvers_Module
    */
    template <int D>
    class Solvent : public Species, public ParamComposite

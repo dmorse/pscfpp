@@ -22,7 +22,7 @@ namespace Pssp
 
 
    /**
-   * Mixture of polymers and solvents.
+   * Solver for a mixture of polymers and solvents.
    *
    * A Mixture contains a list of Polymer and Solvent objects. Each
    * such object can solve the single-molecule statistical mechanics 
@@ -33,11 +33,9 @@ namespace Pssp
    * solver.
    *
    * A Mixture is associated with a Mesh<D> object, which models a
-   * spatial domain and a spatial discretization. Knowledge of the
-   * domain and discretization is needed to solve the ideal-gas
-   * problem.
+   * spatial discretization mesh. 
    *
-   * \ingroup Pscf_Fd1d_Module
+   * \ingroup Pssp_Solvers_Module
    */
    template <int D>
    class Mixture : public MixtureTmpl< Polymer<D>, Solvent<D> >

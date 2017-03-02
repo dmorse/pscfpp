@@ -17,7 +17,9 @@ namespace Pssp
    using namespace Util;
 
    /**
-   * Dynamic array with aligned data.
+   * Dynamic array with aligned data, for use with FFTW library.
+   *
+   * \ingroup Pssp_Field_Module
    */
    template <typename Data>
    class Field

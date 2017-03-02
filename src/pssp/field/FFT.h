@@ -23,6 +23,8 @@ namespace Pssp {
 
    /**
    * Fourier transform wrapper for real data.
+   *
+   * \ingroup Pssp_Field_Module
    */
    template <int D>
    class FFT 

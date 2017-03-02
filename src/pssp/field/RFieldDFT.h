@@ -22,7 +22,9 @@ namespace Pssp
    using namespace Pscf;
 
    /**
-   * Field of real double precision values on an FFT mesh.
+   * Fourier transform of a real field on an FFT mesh.
+   *
+   * \ingroup Pssp_Field_Module
    */
    template <int D>
    class RFieldDFT : public Field<fftw_complex>

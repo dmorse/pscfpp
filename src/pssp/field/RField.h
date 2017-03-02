@@ -1,5 +1,5 @@
-#ifndef PSSP_R_MESH_FIELD_H
-#define PSSP_R_MESH_FIELD_H
+#ifndef PSSP_R_FIELD_H
+#define PSSP_R_FIELD_H
 
 /*
 * PSCF++ Package 
@@ -21,6 +21,8 @@ namespace Pssp
 
    /**
    * Field of real double precision values on an FFT mesh.
+   * 
+   * \ingroup Pssp_Field_Module 
    */
    template <int D>
    class RField : public Field<double>

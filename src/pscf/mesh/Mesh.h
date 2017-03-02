@@ -1,5 +1,5 @@
-#ifndef PSSP_MESH_H
-#define PSSP_MESH_H
+#ifndef PSCF_MESH_H
+#define PSCF_MESH_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -29,7 +29,7 @@ namespace Pscf
    * a multi-dimensional C array, with the last coordinate being the
    * most rapidly varying.
    *
-   * \ingroup Pscf_Pssp_Module
+   * \ingroup Pscf_Mesh_Module
    */
    template <int D>
    class Mesh

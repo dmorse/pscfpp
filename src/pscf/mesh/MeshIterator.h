@@ -22,7 +22,7 @@ namespace Pscf
    * of both the IntVec<D> position and integer rank of the current
    * point as it goes. 
    *
-   * \ingroup Pscf_Module
+   * \ingroup Pscf_Mesh_Module
    */
    template <int D>
    class MeshIterator

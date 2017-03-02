@@ -32,7 +32,7 @@ namespace Pssp {
    * the parameter file and mu is computed. If the ensemble is
    * open, mu is read from the parameter file and phi is computed.
    *
-   * \ingroup Pscf_Fd1d_Module
+   * \ingroup Pssp_Solvers_Module
    */
    template <int D>
    class Polymer : public PolymerTmpl< Block<D> >
