@@ -9,11 +9,38 @@
 */
 
 #include <pscf/math/IntVec.h>
+#include <iostream>
 
 namespace Pscf 
 {
 
    using namespace Util;
+
+   // Forward declarations
+
+   template <int D> class Mesh;
+
+   /**
+   * istream extractor for a Mesh<D>.
+   *
+   * \param  in    input stream
+   * \param  mesh  Mesh<D> object to be read
+   * \return modified input stream
+   */
+   template <int D>
+   std::istream& operator >> (std::istream& in,
+                              Mesh<D>& cell);
+
+   /**
+   * ostream inserter for a Mesh<D>::LatticeSystem.
+   *
+   * \param out  output stream
+   * \param mesh  Mesh<D> to be written
+   * \return modified output stream
+   */
+   template <int D>
+   std::ostream& operator << (std::ostream& out,
+                              Mesh<D>& cell);
 
    /**
    * Description of a regular grid of points in a periodic domain.
@@ -152,9 +179,22 @@ namespace Pscf
       /// Total number of grid points
       int size_;
 
+   //friends:
+
+      friend std::ostream& operator << <>(std::ostream&, Mesh<D>& );
+
+      friend std::istream& operator >> <>(std::istream&, Mesh<D>& );
+
    };
 
-   // Inline member functions
+
+
+
+
+
+
+
+   // Inline member function implementations
 
    template <int D>
    inline IntVec<D> Mesh<D>::dimensions() const

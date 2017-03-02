@@ -9,6 +9,7 @@
 */
 
 #include "Mesh.h"
+#include <util/format/Int.h>
 #include <util/global.h>
 
 namespace Pscf
@@ -129,6 +130,29 @@ namespace Pscf
          shifts[i] = shift(position[i], i);
       }
       return shifts;
+   }
+
+   template <int D>
+   std::istream& operator >> (std::istream& in, 
+                              Mesh<D>& mesh)
+   {
+      IntVec<D> dimensions;
+      in >> dimensions;
+      for (int i = 0; i < D; ++i) {
+         UTIL_CHECK(dimensions[i] > 0);
+      }
+      mesh.setDimensions(dimensions);
+      return in;
+   }
+
+   template <int D>
+   std::ostream& operator << (std::ostream& out,
+                              Mesh<D>& mesh)
+   {
+      for (int i = 0; i < D; ++i) {
+         out << " " << Int(mesh.dimensions_[i], 6);
+      }
+      return out;
    }
 
 }

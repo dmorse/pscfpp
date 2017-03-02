@@ -49,10 +49,23 @@ public:
 
    }
 
+   void test3DMeshIO() {
+      printMethod(TEST_FUNC);
+      printEndl();
+
+      Mesh<3> mesh;
+      std::ifstream in;
+      openInputFile("in/mesh3D", in);
+      in >> mesh;
+      in.close();
+      std::cout << mesh << std::endl;
+   }
+
 };
 
 TEST_BEGIN(MeshTest)
 TEST_ADD(MeshTest, test3DMesh)
+TEST_ADD(MeshTest, test3DMeshIO)
 TEST_END(MeshTest)
 
 #endif
