@@ -137,9 +137,9 @@ namespace Pssp {
       UTIL_CHECK(qh.capacity() == nx);
 
       // Take inner product of head and partner tail fields
-      double Q;
+      double Q = 0;
       for (int i =0; i < nx; ++i) {
-         Q = qh[i]*qt[i];
+         Q += qh[i]*qt[i];
       }
       Q /= double(nx);
       return Q;
