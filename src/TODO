@@ -6,29 +6,16 @@
    - Write an Anderson Mixing iterator
    - Add point-like solvents
 
-2) Build specialized pseudospectral code for 1D periodic functions.
-   Use directory ps1d, namespace Ps1d
+2) For the pseudo-spectral code for 1D, 2D or 3D in
+   directory pssp:
 
-   System {
-      Mixture<D>
-      Interaction
-      Domain
-      wFields
-      cFields
-      Iterator
-   }
+   - Test FFT wrapper and solvers in 2D and 3D
 
-   TODO: (Bottom Up)
-      -Install and test FFT library
-      -Define Field class
-      -Class skeletons
+   - Write a simple mixing iterator for 1D crystal with no imposed
+     symmetry, generalize to Anderson mixing.
 
-3) Build a pseudospectral code for periodic functions with
-   known space group symmetry, in 1D, 2D or 3D.
-   Use directory pssp, namespace PsSp
-
-   Develop class templates that allow compilation of 
-   programs for spatial dimension D = 1, 2, or 3.
+   - Develop an interface to Basis, to allow development of a
+     simple iterator with an imposed symmetry.
 
    template <int D>
    System<D> {
@@ -43,16 +30,8 @@
       Iterator
    }
 
-   Next:
 
-       Write wrapper code for FFTW
-       Finish interface for Basis
-       Write an explicit specialization Basis<1> of Basis for D=1
-       Write pseudo-spectral Propagator and Block classes
-       Start with PicardIterator and/or NrIterator
+   - Add general code for symmetry adapted basis functions.
 
-       Provide functions to convert between FFT and FBZ vectors.
+   - Add stress calculators.
 
-5) Add general code for symmetry adapted basis functions.
-
-6) Add stress calculators.

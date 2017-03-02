@@ -1,14 +1,9 @@
-Todo for 1D finite difference code:
+TDO (1D finite difference code):
 
-1) Test code to calculate Helmholtz free energy and pressure.
-
-2) Test code to subtract homogeneous reference system
-
-3) Add sweep feature.
-
-4) Test propagator, spatialAverage, and iterator for cylindrical mode.
-
-5) Add system default ensemble and species ensemble to readParameters
-
-6) Test grand-canonical ensemble (canonical vs. grand).
+1) Write more and/or more flexible sweep classes
+2) Command to output monomer free energies
+3) Command to output block concentrations
+4) Add an iterator factory
+5) Write an Anderson Mixing iterator
+6) Add point-like solvents
 
