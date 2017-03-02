@@ -25,7 +25,7 @@ PSCF_PS=$(BLD_DIR)/pssp/pscf_ps
 #-----------------------------------------------------------------------
 # Main targets 
 
-all: $(pssp_OBJS) $(pssp_LIB)
+all: $(pssp_OBJS) $(pssp_LIB) $(PSCF_PS_EXE)
 
 clean:
 	rm -f $(pssp_OBJS) $(pssp_OBJS:.o=.d)
@@ -41,7 +41,7 @@ veryclean:
 
 # Executable target
 
-$(PSCF_PS_EXE): $(PSCF_PS).o $(LIBS)
+$(PSCF_PS_EXE): $(PSCF_PS).o $(PSSP_LIBS)
 	$(CXX) $(LDFLAGS) -o $(PSCF_PS_EXE) $(PSCF_PS).o $(LIBS)
 
 # Short name for executable target (for convenience)

@@ -168,6 +168,15 @@ namespace Pscf
       */
       IntVec<D> shift(IntVec<D>& position) const;
 
+      /**
+      * Serialize to/from an archive.
+      *
+      * \param ar       archive
+      * \param version  archive version id
+      */
+      template <class Archive>
+      void serialize(Archive& ar, const unsigned int version);
+
    private:
 
       /// Dimensions of grid
@@ -187,13 +196,6 @@ namespace Pscf
 
    };
 
-
-
-
-
-
-
-
    // Inline member function implementations
 
    template <int D>
@@ -211,6 +213,18 @@ namespace Pscf
    template <int D>
    inline int Mesh<D>::size() const
    {  return size_; }
+
+   /*
+   * Serialize Mesh to/from an archive.
+   */
+   template <int D>
+   template <class Archive>
+   void Mesh<D>::serialize(Archive& ar, const unsigned int version)
+   {
+      for (int i=0; i < D; ++i) {
+         ar & dimensions_[0];
+      }
+   }
 
 }
 #include "Mesh.tpp"

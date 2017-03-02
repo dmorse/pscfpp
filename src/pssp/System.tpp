@@ -22,7 +22,6 @@
 #include <pscf/inter/ChiInteraction.h>
 #include <pscf/homogeneous/Clump.h>
 
-
 #include <util/format/Str.h>
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
@@ -60,7 +59,7 @@ namespace Pssp
       fHelmholtz_(0.0),
       pressure_(0.0),
       hasMixture_(0),
-      hasDomain_(0),
+      hasUnitCell_(0),
       hasFields_(0),
       hasSweep_(0)
    {  
@@ -162,24 +161,30 @@ namespace Pssp
       readParamComposite(in, mixture());
       hasMixture_ = true;
 
-      // Initialize homogeneous object
       int nm = mixture().nMonomer(); 
       int np = mixture().nPolymer(); 
       //int ns = mixture().nSolvent(); 
       int ns = 0;
-      homogeneous_.setNMolecule(np+ns);
-      homogeneous_.setNMonomer(nm);
-      initHomogeneous();
 
+      // Initialize homogeneous object
+      //homogeneous_.setNMolecule(np+ns);
+      //homogeneous_.setNMonomer(nm);
+      // initHomogeneous();
+
+      #if 0
       interaction().setNMonomer(mixture().nMonomer());
       readParamComposite(in, interaction());
 
       read< Mesh<D> >(in, "mesh", mesh_);
       hasMesh_ = true;
-      // allocateFields();
+
+      mixture().setMesh(mesh());
+      allocateFields();
+      allocateFields();
 
       read< UnitCell<D> >(in, "unit", unitCell_);
       hasUnitCell_ = true;
+      #endif
 
       #if 0
       // Initialize iterator
@@ -214,6 +219,7 @@ namespace Pssp
    /*
    * Read default parameter file.
    */
+   template <int D>
    void System<D>::readParam()
    {  readParam(fileMaster().paramFile()); }
 
@@ -225,10 +231,7 @@ namespace Pssp
    {
       // Preconditions
       UTIL_CHECK(hasMixture_);
-      UTIL_CHECK(hasDomain_);
-
-      // Allocate memory in mixture
-      mixture().setDomain(domain());
+      UTIL_CHECK(hasMesh_);
 
       // Allocate wFields and cFields
       int nMonomer = mixture().nMonomer();
@@ -419,7 +422,7 @@ namespace Pssp
    template <int D>
    void System<D>::readWFields(std::istream &in)
    {
-      UTIL_CHECK(hasDomain_);
+      UTIL_CHECK(hasMesh_);
 
       // Read grid dimensions
       std::string label;

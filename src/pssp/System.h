@@ -11,22 +11,23 @@
 #include <util/param/ParamComposite.h>     // base class
 #include <pssp/solvers/Mixture.h>          // member
 #include <pscf/mesh/Mesh.h>                // member
-#include <pscf/unitCell/UnitCell.h>        // member
+#include <pscf/crystal/UnitCell.h>         // member
 #include <pscf/homogeneous/Mixture.h>      // member
 #include <util/misc/FileMaster.h>          // member
 #include <util/containers/DArray.h>        // member template
 #include <util/containers/Array.h>         // function parameter
+#include <pssp/field/RField.h>             // typedef
+
+namespace Pscf { class Interaction; }
 
 namespace Pscf {
-
-   class Interaction;
-
 namespace Pssp
 {
 
    class Iterator;
    class Sweep;
    class SweepFactory;
+
    using namespace Util;
 
    /**
@@ -41,13 +42,13 @@ namespace Pssp
    public:
 
       /// Base class for WField and CField
-      typedef DArray<double> Field;
+      typedef RField<D> Field;
 
       /// Monomer chemical potential field type.
-      typedef Propagator<D>::WField WField;
+      typedef typename Propagator<D>::WField WField;
 
       /// Monomer concentration / volume fraction field type.
-      typedef Propagator<D>::CField CField;
+      typedef typename Propagator<D>::CField CField;
 
       /**
       * Constructor.
@@ -80,7 +81,7 @@ namespace Pssp
       void readParam();
 
       /**
-      * Read input parameters (without opening and closing lines).
+      * Read body of input parameters block (without opening and closing lines).
       *
       * \param in input parameter stream
       */
@@ -172,7 +173,7 @@ namespace Pssp
       /**
       * Get Mixture by reference.
       */
-      Mixture& mixture();
+      Mixture<D>& mixture();
 
       /**
       * Get spatial discretization mesh by reference.
@@ -180,7 +181,7 @@ namespace Pssp
       Mesh<D>& mesh();
 
       /**
-      * Get spatial unitCell (including grid info) by reference.
+      * Get crystal unitCell (i.e., lattice type and parameters) by reference.
       */
       UnitCell<D>& unitCell();
 
@@ -235,7 +236,7 @@ namespace Pssp
       Mesh<D> mesh_;
 
       /**
-      * Spatial unitCell and grid definition.
+      * Crystallographic unit cell (type and dimensions).
       */
       UnitCell<D> unitCell_;
 
@@ -255,17 +256,17 @@ namespace Pssp
       Interaction* interactionPtr_;
 
       /**
-      * Pointer to associated iterator.
+      * Pointer to an iterator.
       */
       Iterator* iteratorPtr_;
 
       /**
-      * Pointer to associated Sweep object
+      * Pointer to an Sweep object
       */
       Sweep* sweepPtr_;
 
       /**
-      * Pointer to associated Sweep object
+      * Pointer to SweepFactory object
       */
       SweepFactory* sweepFactoryPtr_;
 
@@ -389,7 +390,7 @@ namespace Pssp
    }
 
    /*
-   * Get the Iterator (excess free energy model).
+   * Get the Iterator.
    */
    template <int D>
    inline Iterator& System<D>::iterator()
@@ -403,7 +404,7 @@ namespace Pssp
    */
    template <int D>
    inline 
-   DArray< System<D>::WField >& System<D>::wFields()
+   DArray< typename System<D>::WField >& System<D>::wFields()
    {  return wFields_; }
 
    /*
@@ -411,7 +412,7 @@ namespace Pssp
    */
    template <int D>
    inline 
-   System<D>::WField& System<D>::wField(int id)
+   typename System<D>::WField& System<D>::wField(int id)
    {  return wFields_[id]; }
 
    /*
@@ -419,14 +420,14 @@ namespace Pssp
    */
    template <int D>
    inline
-   DArray< System<D>::CField >& System<D>::cFields()
+   DArray< typename System<D>::CField >& System<D>::cFields()
    {  return cFields_; }
 
    /*
    * Get a single monomer concentration field.
    */
    template <int D>
-   inline System<D>::CField& System<D>::cField(int id)
+   inline typename System<D>::CField& System<D>::cField(int id)
    {  return cFields_[id]; }
 
    /*
@@ -445,4 +446,5 @@ namespace Pssp
 
 } // namespace Pssp
 } // namespace Pscf
+#include "System.tpp"
 #endif

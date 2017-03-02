@@ -34,8 +34,8 @@ namespace Pscf
    /**
    * istream extractor for a UnitCell<D>.
    *
-   * \param  in       input stream
-   * \param  lattice  UnitCell<2>::LatticeSystem to be read
+   * \param  in  input stream
+   * \param  cell  UnitCell<D> to be read
    * \return modified input stream
    */
    template <int D>
@@ -46,12 +46,20 @@ namespace Pscf
    * ostream inserter for a UnitCell<D>::LatticeSystem.
    *
    * \param out  output stream
-   * \param lattice  UnitCell<1>::LatticeSystem to be written
+   * \param  cell  UnitCell<D> to be written
    * \return modified output stream
    */
    template <int D>
-   std::ostream& operator << (std::ostream& out,
-                              UnitCell<D>& cell);
+   std::ostream& operator << (std::ostream& out, UnitCell<D>& cell);
+
+   /**
+   * Serialize to/from an archive.
+   *
+   * \param ar       archive
+   * \param version  archive version id
+   */
+   template <class Archive, int D>
+   void serialize(Archive& ar, UnitCell<D>& cell, const unsigned int version);
 
    /**
    * 1D crystal unit cell.
@@ -77,6 +85,9 @@ namespace Pscf
 
       template <int D>
       friend std::istream& operator >> (std::istream&, UnitCell<D>& );
+
+      template <class Archive, int D>
+      friend void serialize(Archive& , UnitCell<D>& , const unsigned int );
 
    };
 
@@ -104,6 +115,9 @@ namespace Pscf
 
       template <int D>
       friend std::istream& operator >> (std::istream&, UnitCell<D>& );
+
+      template <class Archive, int D>
+      friend void serialize(Archive& , UnitCell<D>& , const unsigned int );
 
    };
 
@@ -140,6 +154,9 @@ namespace Pscf
 
       template <int D>
       friend std::istream& operator >> (std::istream&, UnitCell<D>& );
+
+      template <class Archive, int D>
+      friend void serialize(Archive& , UnitCell<D>& , const unsigned int );
 
    };
 
@@ -231,6 +248,19 @@ namespace Pscf
          out << Dbl(cell.parameters_[i], 18, 10);
       }
       return out;
+   }
+
+   /*
+   * Serialize to/from an archive.
+   */
+   template <class Archive, int D>
+   void serialize(Archive& ar, UnitCell<D>& cell, const unsigned int version)
+   {
+      serializeEnum(ar, cell.lattice_, version);
+      ar & cell.nParameter_;
+      for (int i = 0; i < cell.nParameter_; ++i) {
+         ar & cell.parameters_[i];
+      }
    }
 
 }
