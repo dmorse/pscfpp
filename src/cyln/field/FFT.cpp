@@ -8,7 +8,7 @@
 #include "FFT.h"
 
 namespace Pscf {
-namespace Pssp
+namespace Cyln
 {
 
    using namespace Util;
@@ -45,8 +45,9 @@ namespace Pssp
    {
       // Preconditions
       UTIL_CHECK(!isSetup_);
-      IntVec<D> rSize_ = rField.capacity();
-      IntVec<D> kSize_ = kField.capacity();
+      rSize_ = rField.capacity();
+      kSize_ = kField.capacity();
+      UTIL_CHECK(rSize_ > 0);
       UTIL_CHECK(kSize_ == rSize_/2 + 1);
 
       work_.allocate(rSize_);
@@ -61,15 +62,14 @@ namespace Pssp
    /*
    * Execute forward transform.
    */
-   template <int D>
    void FFT::forwardTransform(Array<double>& rField, 
                               Array<fftw_complex>& kField)
    {
       // Check dimensions or setup
       if (isSetup_) {
-         UTIL_CHECK(work_.capacity() == rSize_);
          UTIL_CHECK(rField.capacity() == rSize_);
          UTIL_CHECK(kField.capacity() == kSize_);
+         UTIL_CHECK(work_.capacity() == rSize_);
       } else {
          setup(rField, kField);
       }
@@ -89,14 +89,17 @@ namespace Pssp
    void FFT::inverseTransform(Array<fftw_complex>& kField, 
                               Array<double>& rField)
    {
-      if (!isSetup_) {
-         setup(rField, kField);
-         fftw_execute(iPlan_);
+      // Check dimensions or setup
+      if (isSetup_) {
+         UTIL_CHECK(work_.capacity() == rSize_);
+         UTIL_CHECK(rField.capacity() == rSize_);
+         UTIL_CHECK(kField.capacity() == kSize_);
       } else {
-         fftw_execute_dft_c2r(iPlan_, &kField[0], &rField[0]);
+         setup(rField, kField);
       }
+
+      fftw_execute_dft_c2r(iPlan_, &kField[0], &rField[0]);
    }
 
 }
 }
-#endif

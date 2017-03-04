@@ -8,14 +8,14 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/containers/RArray.h>
+#include <util/containers/DArray.h>
 #include <util/containers/Array.h>
 #include <util/global.h>
 
 #include <fftw3.h>
 
 namespace Pscf {
-namespace Pssp {
+namespace Cyln {
 
    using namespace Util;
    using namespace Pscf;
@@ -23,7 +23,7 @@ namespace Pssp {
    /**
    * Fourier transform wrapper for real data.
    *
-   * \ingroup Pssp_Field_Module
+   * \ingroup Cyln_Field_Module
    */
    class FFT 
    {
@@ -67,10 +67,7 @@ namespace Pssp {
    private:
 
       // Work array for real data.
-      Array<double> work_;
-
-      // Vector containing number of grid points in each direction.
-      IntVec<D> meshDimensions_;
+      DArray<double> work_;
 
       // Number of points in r-space grid
       int rSize_;
@@ -91,5 +88,4 @@ namespace Pssp {
 
 }
 }
-#include "FFT.tpp"
 #endif

@@ -3,25 +3,29 @@
 #
 # This makefile contains the pattern rule used to compile all sources
 # files in the directory tree rooted at the src/cyln directory, which
-# contains all source code for the Util namespace. It is included by
+# contains all source code for the PsSp namespace. It is included by
 # all "makefile" files in this directory tree. 
 #
-# This file should be included in other makefiles after inclusion of
-# the files src/config.mk and src/cyln/config.mk because this file
-# uses makefile variables defined in those files.
+# This file must be included in other makefiles after inclusion of
+# the root src/config.mk and relevant namespace level config.mk files 
+# in the build directory, because this file uses makefile variables 
+# defined in those configuration files.
 #-----------------------------------------------------------------------
 
 # Local pscf-specific libraries needed in src/cyln
 PSCF_LIBS=$(cyln_LIB) $(pscf_LIB) $(util_LIB)
 
-# All libraries needed for executables in src/pscf, including external
+# All libraries needed in executables built in src/cyln
 LIBS=$(PSCF_LIBS)
 ifdef PSCF_GSL
 LIBS+=$(PSCF_GSL_LIB) 
 endif
+ifdef CYLN_FFTW
+LIBS+=$(CYLN_FFTW_LIB) 
+endif
 
 # Preprocessor macro definitions needed in src/cyln
-DEFINES=$(PSCF_DEFS) $(UTIL_DEFS)
+DEFINES=$(UTIL_DEFS) $(PSCF_DEFS) $(CYLN_DEFS) 
 
 # Dependencies on build configuration files
 MAKE_DEPS= -A$(BLD_DIR)/config.mk

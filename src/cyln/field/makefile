@@ -3,20 +3,20 @@
 
 SRC_DIR_REL =../..
 include $(SRC_DIR_REL)/config.mk
-include $(SRC_DIR)/pssp/include.mk
+include $(SRC_DIR)/cyln/include.mk
 
 #--------------------------------------------------------------------
 # Main targets 
 
-all: $(pssp_field_OBJS) 
+all: $(cyln_field_OBJS) 
 
 includes:
 	echo $(INCLUDES)
 
 clean:
-	rm -f $(pssp_field_OBJS) $(pssp_field_OBJS:.o=.d) 
+	rm -f $(cyln_field_OBJS) $(cyln_field_OBJS:.o=.d) 
 
 #--------------------------------------------------------------------
 # Include dependency files
 
--include $(pssp_OBJS:.o=.d)
+-include $(cyln_OBJS:.o=.d)
