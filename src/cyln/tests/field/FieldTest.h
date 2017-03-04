@@ -19,9 +19,6 @@ using namespace Pscf::Cyln;
 
 class FieldTest : public UnitTest 
 {
-private:
-
-   const static int capacity = 3;
 
 public:
 
@@ -33,6 +30,7 @@ public:
    void testConstructor();
    void testAllocate();
    void testSubscript();
+   void testSlice();
  
    #if 0
    void testSerialize1Memory();
@@ -41,6 +39,7 @@ public:
    void testSerialize2File();
    #endif
 
+   void fillValues(Field<double>& v);
 };
 
 
@@ -59,27 +58,73 @@ void FieldTest::testAllocate()
    printMethod(TEST_FUNC);
    {
       Field<double> v;
-      v.allocate(capacity);
-      TEST_ASSERT(v.capacity() == capacity );
+      int nr = 10;
+      int nz = 10;
+      int capacity = nr*nz;
+
+      v.allocate(nr, nz);
+      TEST_ASSERT(v.capacity() == capacity);
+      TEST_ASSERT(v.nr() == nr);
+      TEST_ASSERT(v.nz() == nz);
       TEST_ASSERT(v.isAllocated());
    }
 } 
+
+void FieldTest::fillValues(Field<double>& v) 
+{
+   // Fill field values
+   int i, j, k;
+   k = 0;
+   for (i=0; i < v.nr(); i++) {
+      for (j=0; j < v.nz(); j++) {
+         v[k] = (i+1)*20.0 + j*1.0;
+         ++k;
+      }
+   }
+}
 
 void FieldTest::testSubscript()
 {
    printMethod(TEST_FUNC);
    {
       Field<double> v;
-      v.allocate(capacity);
-      for (int i=0; i < capacity; i++ ) {
-         v[i] = (i+1)*10.0 ;
-      }
+      int nr = 10;
+      int nz = 10;
+      int capacity = nr*nz;
+      v.allocate(nr, nz);
+      TEST_ASSERT(v.capacity() == capacity);
+
+      fillValues(v);
    
-      TEST_ASSERT(v[0] == 10.0);
-      TEST_ASSERT(v[2] == 30.0);
+      TEST_ASSERT(v[0]  ==  20.0);
+      TEST_ASSERT(v[10] ==  40.0);
+      TEST_ASSERT(v[11] ==  41.0);
+      TEST_ASSERT(v[12] ==  42.0);
+      TEST_ASSERT(v[19] ==  49.0);
+      TEST_ASSERT(v[20] ==  60.0);
    }
 } 
 
+void FieldTest::testSlice()
+{
+   printMethod(TEST_FUNC);
+   {
+      Field<double> v;
+      int nr = 10;
+      int nz = 10;
+      int capacity = nr*nz;
+      v.allocate(nr, nz);
+      TEST_ASSERT(v.capacity() == capacity);
+
+      fillValues(v);
+      Array<double> const & slice = v.slice(1);
+      TEST_ASSERT(slice[0] ==  40.0);
+      TEST_ASSERT(slice[1] ==  41.0);
+      TEST_ASSERT(slice[9] ==  49.0);
+
+   }
+}
+   
 #if 0
 void FieldTest::testSerialize1Memory()
 {
@@ -315,8 +360,9 @@ void FieldTest::testSerialize2File()
 
 TEST_BEGIN(FieldTest)
 TEST_ADD(FieldTest, testConstructor)
-//TEST_ADD(FieldTest, testAllocate)
-//TEST_ADD(FieldTest, testSubscript)
+TEST_ADD(FieldTest, testAllocate)
+TEST_ADD(FieldTest, testSubscript)
+TEST_ADD(FieldTest, testSlice)
 
 #if 0
 TEST_ADD(FieldTest, testSerialize1Memory)

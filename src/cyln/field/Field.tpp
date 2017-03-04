@@ -24,7 +24,10 @@ namespace Cyln
    template <typename Data>
    Field<Data>::Field()
     : data_(0),
-      capacity_(0)
+      capacity_(0),
+      nr_(0),
+      nz_(0),
+      slices_()
    {}
 
    /*

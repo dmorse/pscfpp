@@ -8,7 +8,13 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <util/containers/Array.h>
+#include <util/containers/RArray.h>
+#include <util/containers/DArray.h>
+
 #include <util/global.h>
+
+#include <fftw3.h>
 
 namespace Pscf {
 namespace Cyln
@@ -61,11 +67,19 @@ namespace Cyln
       bool isAllocated() const;
 
       /**
-      * Return allocated size.
-      *
-      * \return Number of elements allocated in array.
+      * Return allocated size (equal to 0 if note allocated).
       */
       int capacity() const;
+
+      /**
+      * Return number of element in radial (r) direction.
+      */
+      int nr() const;
+
+      /**
+      * Return number of element in axial (z) direction.
+      */
+      int nz() const;
 
       /**
       * Get a single element by non-const reference.
@@ -88,20 +102,20 @@ namespace Cyln
       const Data& operator[] (int i) const;
 
       /**
-      * Get a 1D constant r array slice by const reference.
+      * Get a 1D constant radius array slice by const reference.
       *
       * \param  i array index
       * \return non-const reference to element i
       */
-      const Array<Data>& slice(int i) const;
+      Array<Data> const & slice(int i) const;
 
       /**
-      * Get a 1D constant r array slice by non-const reference.
+      * Get a 1D constant radius array slice by non-const reference.
       *
       * \param  i array index
       * \return non-const reference to element i
       */
-      Array<Data>& slice() (int i);
+      Array<Data>& slice(int i);
 
       /**
       * Return pointer to underlying C array.
@@ -130,14 +144,14 @@ namespace Cyln
       /// Allocated size of the data_ array.
       int capacity_;
 
-      /// Number of constant r slices
+      /// Number of elements in radial direction (# of slices)
       int nr_;
 
-      /// Number of elements per slices
+      /// Number of elements in axial direction (# per slice)
       int nz_;
 
       /// References arrays containing pointers to slices.
-      DArray<RArray> slices_;
+      DArray< RArray<Data> > slices_;
 
    private:
 
@@ -154,11 +168,25 @@ namespace Cyln
    };
 
    /*
-   * Return allocated size.
+   * Return allocated size (total number of elements).
    */
    template <typename Data>
    inline int Field<Data>::capacity() const
    {  return capacity_; }
+
+   /*
+   * Return number of elements in radial (r) direction.
+   */
+   template <typename Data>
+   inline int Field<Data>::nr() const
+   {  return nr_; }
+
+   /*
+   * Return number of elements in axial (z) direction.
+   */
+   template <typename Data>
+   inline int Field<Data>::nz() const
+   {  return nz_; }
 
    /*
    * Get an element by reference (C-array subscripting)
@@ -183,6 +211,21 @@ namespace Cyln
       assert(i < capacity_);
       return *(data_ + i);
    }
+
+   /*
+   * Get a 1D constant radius array slice by const reference.
+   */
+   template <typename Data>
+   inline Array<Data> const & Field<Data>::slice(int i) const
+   {  return slices_[i]; }
+
+
+   /*
+   * Get a 1D constant radius array slice by non-const reference.
+   */
+   template <typename Data>
+   inline Array<Data>& Field<Data>::slice(int i)
+   {  return slices_[i]; }
 
    /*
    * Get a pointer to the underlying C array.
@@ -210,22 +253,30 @@ namespace Cyln
    */
    template <typename Data>
    template <class Archive>
-   void Field<Data>::serialize(Archive& ar, const unsigned int version)
+   void 
+   Field<Data>::serialize(Archive& ar, const unsigned int version)
    {
-      int capacity;
+      int nr, nz, capacity;
       if (Archive::is_saving()) {
          capacity = capacity_;
+         nr = nr_;
+         nr = nz_;
       }
       ar & capacity;
+      ar & nr;
+      ar & nz;
       if (Archive::is_loading()) {
          if (!isAllocated()) {
             if (capacity > 0) {
-               allocate(capacity);
+               allocate(nr, nz);
+            } else {
+               UTIL_CHECK(nr == 0);
+               UTIL_CHECK(nz == 0);
             }
          } else {
-            if (capacity != capacity_) {
-               UTIL_THROW("Inconsistent Field capacities");
-            }
+            UTIL_CHECK(capacity != capacity_);
+            UTIL_CHECK(nr != nr_);
+            UTIL_CHECK(nz != nz_);
          }
       }
       if (isAllocated()) {
