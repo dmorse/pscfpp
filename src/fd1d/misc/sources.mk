@@ -1,7 +1,8 @@
 
 fd1d_misc_=\
   fd1d/misc/HomogeneousComparison.cpp \
-  fd1d/misc/FieldEditor.cpp 
+  fd1d/misc/FieldEditor.cpp \
+  fd1d/misc/FieldIo.cpp \
 
 fd1d_misc_SRCS=\
      $(addprefix $(SRC_DIR)/, $(fd1d_misc_))
