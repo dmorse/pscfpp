@@ -10,6 +10,7 @@
 
 #include <pscf/solvers/PropagatorTmpl.h> // base class template
 #include <util/containers/DArray.h>      // member template
+#include <cyln/field/Field.h>            // typedef
 
 namespace Pscf { 
 namespace Cyln
@@ -29,11 +30,6 @@ namespace Cyln
    public:
 
       // Public typedefs
-
-      /**
-      * Generic field (function of position).
-      */
-      typedef Field<double> Field;
 
       /**
       * Chemical potential field type.
@@ -73,9 +69,10 @@ namespace Cyln
       * Associate this propagator with a block.
       * 
       * \param ns number of contour length steps
-      * \param nx number of spatial steps
+      * \param nr number of spatial steps in radial (r) direction
+      * \param nz number of spatial steps in axial (z) direction
       */ 
-      void allocate(int ns, int nx);
+      void allocate(int ns, int nr, int nz);
 
       /**
       * Solve the modified diffusion equation (MDE) for this block.

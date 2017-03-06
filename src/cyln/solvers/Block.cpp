@@ -6,7 +6,7 @@
 */
 
 #include "Block.h"
-#include <cyln/domain/Domain.h>
+#include <cyln/misc/Domain.h>
 
 namespace Pscf { 
 namespace Cyln
@@ -35,7 +35,8 @@ namespace Cyln
    void Block::setDiscretization(Domain const & domain, double ds)
    {  
       UTIL_CHECK(length() > 0);
-      UTIL_CHECK(domain.nx() > 1);
+      UTIL_CHECK(domain.nr() > 1);
+      UTIL_CHECK(domain.nz() > 1);
       UTIL_CHECK(ds > 0.0);
 
       // Set association to spatial domain
@@ -48,23 +49,28 @@ namespace Cyln
       }
       ds_ = length()/double(ns_ - 1);
 
-      // Allocate all required memory
-      int nx = domain.nx();
-      dA_.allocate(nx);
-      dB_.allocate(nx);
-      uA_.allocate(nx - 1);
-      uB_.allocate(nx - 1);
-      lA_.allocate(nx - 1);
-      lB_.allocate(nx - 1);
-      v_.allocate(nx);
-      solver_.allocate(nx);
-      propagator(0).allocate(ns_, nx);
-      propagator(1).allocate(ns_, nx);
-      cField().allocate(nx);
+      int nr = domain.nr();
+      int nz = domain.nz();
+
+      // Allocate propagators and cField
+      propagator(0).allocate(ns_, nr, nz);
+      propagator(1).allocate(ns_, nr, nz);
+      cField().allocate(nr, nz);
+
+      // Allocate work arrays for radial Crank-Nicholson
+      dA_.allocate(nr);
+      dB_.allocate(nr);
+      uA_.allocate(nr - 1);
+      uB_.allocate(nr - 1);
+      lA_.allocate(nr - 1);
+      lB_.allocate(nr - 1);
+      v_.allocate(nr);
+      solver_.allocate(nr);
+
    }
 
    /*
-   * Setup the contour length step algorithm.
+   * Setup the Crank-Nicholson work arrays.
    *
    * This implementation uses the Crank-Nicholson algorithm for stepping
    * the modified diffusion equation. One step of this algorithm, which
@@ -73,133 +79,94 @@ namespace Cyln
    *
    *         A q(i) = B q(i-1)
    *
-   * where A and B are domain().nx() x domain().nx() symmetric tridiagonal 
-   * matrices given by
+   * where A and B are nr x nr symmetric tridiagonal matrices given by
    * 
    *           A = 1 + 0.5*ds_*H
    *           B = 1 - 0.5*ds_*H
    *
    * in which ds_ is the contour step and 
    *
-   *           H = -(b^2/6)d^2/dx^2 + w 
+   *           H = -(b^2/6)d^2/dr^2 
    *
-   * is a finite difference representation of the "Hamiltonian" 
-   * operator, in which b = kuhn() is the statistical segment length. 
+   * is a finite difference representation of the radial part of the
+   * "Hamiltonian" operator, in which b = kuhn() is the statistical 
+   * segment length. 
    *
    * This function sets up arrays containing diagonal and off-diagonal 
    * elements of the matrices A and B, and computes the LU 
-   * decomposition of matrix A. Arrays of domain().nx() diagonal elements 
-   * of A and B are denoted by dA_ and dB_, respectively, while arrays of 
-   * domain().nx() - 1 upper and lower off-diagonal elements of A and B
-   * are denoted by uA_, lA_, uB_, and lB_, respectively
+   * decomposition of matrix A. Arrays of the nr diagonal elements of
+   * A and B are denoted by dA_ and dB_, respectively, while arrays 
+   * of nr - 1 upper and lower off-diagonal elements of A and B are
+   * denoted by uA_, lA_, uB_, and lB_, respectively
    */
-   void Block::setupSolver(Block::WField const& w)
+   void Block::setupRadialLaplacian(Domain& domain)
    {
       // Preconditions
-      UTIL_CHECK(domainPtr_);
-      int nx = domain().nx();
-      UTIL_CHECK(nx > 0);
-      UTIL_CHECK(dA_.capacity() == nx);
-      UTIL_CHECK(uA_.capacity() == nx - 1);
-      UTIL_CHECK(lA_.capacity() == nx - 1);
-      UTIL_CHECK(dB_.capacity() == nx);
-      UTIL_CHECK(uB_.capacity() == nx - 1);
-      UTIL_CHECK(lB_.capacity() == nx - 1);
       UTIL_CHECK(ns_ > 0);
       UTIL_CHECK(propagator(0).isAllocated());
       UTIL_CHECK(propagator(1).isAllocated());
+      UTIL_CHECK(domainPtr_);
+      UTIL_CHECK(domain.nr() > 0);
+      UTIL_CHECK(domain.nz() > 0);
 
-      // Chemical potential terms in matrix A
-      double halfDs = 0.5*ds_;
-      for (int i = 0; i < nx; ++i) {
-         dA_[i] = halfDs*w[i];
-      }
+      int nr = domain.nr();
+      double dr = domain.dr();
+      double radius = domain.radius();
+
+      // Check that work arrays are allocated, with correct sizes
+      UTIL_CHECK(dA_.capacity() == nr);
+      UTIL_CHECK(uA_.capacity() == nr - 1);
+      UTIL_CHECK(lA_.capacity() == nr - 1);
+      UTIL_CHECK(dB_.capacity() == nr);
+      UTIL_CHECK(uB_.capacity() == nr - 1);
+      UTIL_CHECK(lB_.capacity() == nr - 1);
+
 
       // Second derivative terms in matrix A
-      double dx = domain().dx();
-      double db = kuhn()/dx;
+      double halfDs = 0.5*ds_;
+      double db = kuhn()/dr;
       double c1 = halfDs*db*db/6.0;
-      double c2 = 2.0*c1;
-      GeometryMode mode = domain().mode();
-      if (mode == Planar) {
+      //double c2 = 2.0*c1;
 
-         dA_[0] += c2;
-         uA_[0] = -c2;
-         for (int i = 1; i < nx - 1; ++i) {
-            dA_[i] += c2;
-            uA_[i] = -c1;
-            lA_[i-1] = -c1;
-         }
-         dA_[nx - 1] += c2;
-         lA_[nx - 2] = -c2;
+      double halfDr = 0.5*dr;
+      double x, rp, rm;
 
-      } else {
+      // First row: x = xMin
+      rp = 2.0*c1;
+      dA_[0] += 2.0*rp;
+      uA_[0] = -2.0*rp;
 
-         double xMin = domain().xMin();
-         double xMax = domain().xMax();
-         double halfDx = 0.5*dx;
-         double x, rp, rm;
-         bool isShell = domain().isShell();
-
-         // First row: x = xMin
-         if (isShell) {
-            rp = 1.0 + halfDx/xMin;
-            if (mode == Spherical) {
-               rp *= rp;
-            }
-         } else {
-            if (mode == Spherical) {
-               rp = 3.0;
-            } else 
-            if (mode == Cylindrical) {
-               rp = 2.0;
-            } else {
-               UTIL_THROW("Invalid GeometryMode");
-            }
-         }
-         rp *= c1;
-         dA_[0] += 2.0*rp;
-         uA_[0] = -2.0*rp;
-
-         // Interior rows
-         for (int i = 1; i < nx - 1; ++i) {
-            x = xMin + dx*i;
-            rm = 1.0 - halfDx/x;
-            rp = 1.0 + halfDx/x;
-            if (mode == Spherical) {
-               rm *= rm;
-               rp *= rp;
-            }
-            rm *= c1;
-            rp *= c1;
-            dA_[i] += rm + rp;
-            uA_[i] = -rp;
-            lA_[i-1] = -rm;
-         }
-
-         // Last row: x = xMax
-         rm = 1.0 - halfDx/xMax;
-         if (mode == Spherical) {
-            rm *= rm;
-         }
+      // Interior rows
+      for (int i = 1; i < nr - 1; ++i) {
+         x = dr*i;
+         rm = 1.0 - halfDr/x;
+         rp = 1.0 + halfDr/x;
          rm *= c1;
-         dA_[nx-1] += 2.0*rm;
-         lA_[nx-2] = -2.0*rm;
+         rp *= c1;
+         dA_[i] += rm + rp;
+         uA_[i] = -rp;
+         lA_[i-1] = -rm;
       }
 
-      // Construct matrix B - 1
-      for (int i = 0; i < nx; ++i) {
+      // Last row: x = radius
+      rm = 1.0 - halfDr/radius;
+      rm *= c1;
+      dA_[nr-1] += 2.0*rm;
+      lA_[nr-2] = -2.0*rm;
+
+      // Construct matrix B 
+      for (int i = 0; i < nr; ++i) {
          dB_[i] = -dA_[i];
       }
-      for (int i = 0; i < nx - 1; ++i) {
+      for (int i = 0; i < nr - 1; ++i) {
          uB_[i] = -uA_[i];
       }
-      for (int i = 0; i < nx - 1; ++i) {
+      for (int i = 0; i < nr - 1; ++i) {
          lB_[i] = -lA_[i];
       }
 
       // Add diagonal identity terms to matrices A and B
-      for (int i = 0; i < nx; ++i) {
+      for (int i = 0; i < nr; ++i) {
          dA_[i] += 1.0;
          dB_[i] += 1.0;
       }
@@ -208,27 +175,33 @@ namespace Cyln
       solver_.computeLU(dA_, uA_, lA_);
    }
 
+   void Block::setupAxialLaplacian(Domain& domain) 
+   {
+      int nz = domain.nz();
+
+   }
+
    /*
    * Integrate to calculate monomer concentration for this block
    */
    void Block::computeConcentration(double prefactor)
    {
       // Preconditions
-      UTIL_CHECK(domain().nx() > 0);
+      UTIL_CHECK(domain().nr() > 0);
       UTIL_CHECK(ns_ > 0);
       UTIL_CHECK(ds_ > 0);
-      UTIL_CHECK(dA_.capacity() == domain().nx());
-      UTIL_CHECK(dB_.capacity() == domain().nx());
-      UTIL_CHECK(uA_.capacity() == domain().nx() -1);
-      UTIL_CHECK(uB_.capacity() == domain().nx() -1);
+      UTIL_CHECK(dA_.capacity() == domain().nr());
+      UTIL_CHECK(dB_.capacity() == domain().nr());
+      UTIL_CHECK(uA_.capacity() == domain().nr() -1);
+      UTIL_CHECK(uB_.capacity() == domain().nr() -1);
       UTIL_CHECK(propagator(0).isAllocated());
       UTIL_CHECK(propagator(1).isAllocated());
-      UTIL_CHECK(cField().capacity() == domain().nx()) 
+      UTIL_CHECK(cField().capacity() == domain().nr()) 
 
       // Initialize cField to zero at all points
       int i;
-      int nx = domain().nx();
-      for (i = 0; i < nx; ++i) {
+      int nr = domain().nr();
+      for (i = 0; i < nr; ++i) {
          cField()[i] = 0.0;
       }
 
@@ -236,26 +209,27 @@ namespace Cyln
       Propagator const & p1 = propagator(1);
 
       // Evaluate unnormalized integral
-      for (i = 0; i < nx; ++i) {
+      for (i = 0; i < nr; ++i) {
          cField()[i] += 0.5*p0.q(0)[i]*p1.q(ns_ - 1)[i];
       }
       for (int j = 1; j < ns_ - 1; ++j) {
-         for (i = 0; i < nx; ++i) {
+         for (i = 0; i < nr; ++i) {
             cField()[i] += p0.q(j)[i]*p1.q(ns_ - 1 - j)[i];
          }
       }
-      for (i = 0; i < nx; ++i) {
+      for (i = 0; i < nr; ++i) {
          cField()[i] += 0.5*p0.q(ns_ - 1)[i]*p1.q(0)[i];
       }
 
       // Normalize
       prefactor *= ds_;
-      for (i = 0; i < nx; ++i) {
+      for (i = 0; i < nr; ++i) {
          cField()[i] *= prefactor;
       }
 
    }
 
+   #if 0
    /*
    * Propagate solution by one step.
    *
@@ -265,14 +239,15 @@ namespace Cyln
    */
    void Block::step(const QField& q, QField& qNew)
    {
-      int nx = domain().nx();
+      int nr = domain().nr();
       v_[0] = dB_[0]*q[0] + uB_[0]*q[1];
-      for (int i = 1; i < nx - 1; ++i) {
+      for (int i = 1; i < nr - 1; ++i) {
          v_[i] = dB_[i]*q[i] + lB_[i-1]*q[i-1] + uB_[i]*q[i+1];
       }
-      v_[nx - 1] = dB_[nx-1]*q[nx-1] + lB_[nx-2]*q[nx-2];
+      v_[nr - 1] = dB_[nr-1]*q[nr-1] + lB_[nr-2]*q[nr-2];
       solver_.solve(v_, qNew);
    }
+   #endif
 
 }
 }

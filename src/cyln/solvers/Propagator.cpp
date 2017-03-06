@@ -21,7 +21,9 @@ namespace Cyln
    Propagator::Propagator()
     : blockPtr_(0),
       ns_(0),
-      nx_(0),
+      nr_(0),
+      nz_(0),
+      nGrid_(0),
       isAllocated_(false)
    {}
 
@@ -31,13 +33,15 @@ namespace Cyln
    Propagator::~Propagator()
    {}
 
-   void Propagator::allocate(int ns, int nx)
+   void Propagator::allocate(int ns, int nr, int nz)
    {
       ns_ = ns;
-      nx_ = nx;
+      nr_ = nr;
+      nz_ = nz;
+      nGrid_ = nr*nz;
       qFields_.allocate(ns);
       for (int i = 0; i < ns; ++i) {
-         qFields_[i].allocate(nx);
+         qFields_[i].allocate(nr, nz);
       }
       isAllocated_ = true;
    }
@@ -56,7 +60,7 @@ namespace Cyln
 
       // Initialize qh field to 1.0 at all grid points
       int ix;
-      for (ix = 0; ix < nx_; ++ix) {
+      for (ix = 0; ix < nGrid_; ++ix) {
          qh[ix] = 1.0;
       }
 
@@ -66,7 +70,7 @@ namespace Cyln
             UTIL_THROW("Source not solved in computeHead");
          }
          QField const& qt = source(is).tail();
-         for (ix = 0; ix < nx_; ++ix) {
+         for (ix = 0; ix < nGrid_; ++ix) {
             qh[ix] *= qt[ix];
          }
       }
@@ -91,7 +95,7 @@ namespace Cyln
    {
       // Initialize initial (head) field
       QField& qh = qFields_[0];
-      for (int i = 0; i < nx_; ++i) {
+      for (int i = 0; i < nGrid_; ++i) {
          qh[i] = head[i];
       }
 

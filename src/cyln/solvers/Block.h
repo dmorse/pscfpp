@@ -8,10 +8,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Propagator.h"                   // base class argument
-#include <cyln/domain/GeometryMode.h>     // argument (enum)
 #include <pscf/solvers/BlockTmpl.h>       // base class template
+#include "Propagator.h"                   // base class argument
 #include <pscf/math/TridiagonalSolver.h>  // member
+#include <cyln/field/Field.h>             // member
+#include <cyln/field/FFT.h>               // member
+#include <util/containers/DArray.h>       // member
 
 namespace Pscf { 
 namespace Cyln 
@@ -32,11 +34,6 @@ namespace Cyln
    {
 
    public:
-
-      /**
-      * Generic field (base class)
-      */
-      typedef Propagator::Field Field;
 
       /**
       * Monomer chemical potential field.
@@ -103,14 +100,33 @@ namespace Cyln
       int ns() const;
 
    private:
+
+      // Data structures for pseudospectral algorithm
+ 
+      // Fourier transform plan
+      FFT fft_;
+
+      // Work array for wavevector space field.
+      Field<fftw_complex> qk_;
+
+      // Array of elements containing exp(-W[i] ds/2)
+      Field<double> expW_;
+
+      // Array of elements containing exp(-K^2 b^2 ds/6)
+      DArray<double> expKsq_;
+
+      // Work array for constant-r slices of real data.
+      double* rWorknz_;
+
+      // Data structures for Crank-Nicholson algorithm
  
       /// Solver used in Crank-Nicholson algorithm
       TridiagonalSolver solver_;
 
       // Arrays dA_, uA_, lB_ dB_, uB_, luB_ contain elements of the 
-      // the tridiagonal matrices A and B used in propagation from
-      // step i to i + 1, which requires solution of a linear system 
-      // of the form: A q(i+1) = B q(i).
+      // the tridiagonal matrices A and B used in propagation by the
+      // radial part of the Laplacian from step i to i + 1, which 
+      // requires solution of a linear system A q(i+1) = B q(i).
 
       /// Diagonal elements of matrix A
       DArray<double> dA_;
@@ -142,13 +158,16 @@ namespace Cyln
       /// Number of contour length steps = # grid points - 1.
       int ns_;
 
+      void setupRadialLaplacian(Domain& domain);
+      void setupAxialLaplacian(Domain& domain);
+
    };
 
    // Inline member functions
 
    /// Get Domain by reference.
    inline Domain const & Block::domain() const
-   {   
+   {
       UTIL_ASSERT(domainPtr_);
       return *domainPtr_;
    }
