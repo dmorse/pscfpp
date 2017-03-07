@@ -25,7 +25,8 @@ namespace Fd1d
       ns_(0),
       homogeneousMode_(-1),
       baseFileName_(),
-      comparison_()
+      comparison_(),
+      fieldIo_()
    {  setClassName("Sweep"); }
 
    Sweep::Sweep(System& system)
@@ -33,11 +34,19 @@ namespace Fd1d
       ns_(0),
       homogeneousMode_(-1),
       baseFileName_(),
-      comparison_(system)
+      comparison_(system),
+      fieldIo_(system)
    {  setClassName("Sweep"); }
 
    Sweep::~Sweep()
    {}
+
+   void Sweep::setSystem(System& system)
+   {
+      SystemAccess::setSystem(system);
+      comparison_.setSystem(system);
+      fieldIo_.setSystem(system);
+   }
 
    /*
    * Read parameters.
@@ -200,19 +209,17 @@ namespace Fd1d
       }
       out.close();
 
+      //FieldIo fieldIo(system());
+
       // Write concentration fields
       outFileName = fileName;
       outFileName += ".c";
-      fileMaster().openOutputFile(outFileName, out);
-      system().writeFields(out, cFields());
-      out.close();
+      fieldIo_.writeFields(outFileName, cFields());
 
       // Write chemical potential fields
       outFileName = fileName;
       outFileName += ".w";
-      fileMaster().openOutputFile(outFileName, out);
-      system().writeFields(out, wFields());
-      out.close();
+      fieldIo_.writeFields(outFileName, wFields());
 
    }
 

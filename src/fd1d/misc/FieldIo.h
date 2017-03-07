@@ -8,13 +8,15 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <fd1d/SystemAccess.h>             // base class
+#include <fd1d/SystemAccess.h>          // base class
+#include <util/containers/DArray.h>     // member
+#include <util/containers/Array.h>      // function argument template
 
 namespace Pscf {
 namespace Fd1d {
 
    /**
-   * 
+   * Read and write fields to file.
    *
    * \ingroup Pscf_Fd1d_Module
    */
@@ -40,12 +42,14 @@ namespace Fd1d {
       */
       ~FieldIo();
 
-
       /**
       * Read a set of fields, one per monomer type.
       *
-      * \param fields  set of fields to read.
-      * \param in  input stream 
+      * This function uses the system FileMaster to opens and close a
+      * input file named filename.
+      *
+      * \param filename name of input file
+      * \param fields  array of fields to read, indexed by monomer id.
       */
       void readFields(std::string const & filename, 
                       Array<Field> &  fields);
@@ -53,13 +57,18 @@ namespace Fd1d {
       /**
       * Read a set of fields, one per monomer type.
       *
-      * \param fields  set of fields to read.
-      * \param in  input stream 
+      * \pre File in must be open for reading.
+      *
+      * \param in  input stream, open for reading.
+      * \param fields  array of fields to read, indexed by monomer id.
       */
       void readFields(std::istream &in, Array<Field> &  fields);
 
       /**
       * Write a set of fields, one per monomer type.
+      *
+      * This function uses the system FileMaster to opens and close a
+      * output file named filename.
       *
       * \param filename  output filename
       * \param fields  set of fields to read.
@@ -70,37 +79,48 @@ namespace Fd1d {
       /**
       * Write a set of fields, one per monomer type.
       *
-      * \param fields set of fields to written.
+      * \pre Stream out must be open for writing. 
+      *
       * \param out  output stream 
+      * \param fields  set of fields to written.
       */
       void writeFields(std::ostream &out, Array<Field> const &  fields);
 
       /**
-      * Interpolate a set of fields onto a new mesh.
+      * Interpolate an array of fields onto a new mesh.
       *
-      * \param fields set of fields to be remeshed
-      * \param nx number of grid points in new mesh
-      * \param out output stream for remeshed field
+      * \param filename name of output file for remeshed field
+      * \param fields  field to be remeshed
+      * \param nx  number of grid points in new mesh
       */
-      void writeFields(DArray<System::WField>& fields, std::ostream& out);
+      void remesh(std::string const & filename, Array<Field> const & fields, int nx);
 
       /**
-      * Interpolate field onto a new mesh.
+      * Interpolate an array of fields onto a new mesh.
       *
-      * \param field field to be remeshed
-      * \param nx    number of grid points in new mesh
-      * \param out   output stream for remeshed field
+      * \param out  output stream for remeshed field
+      * \param fields  field to be remeshed
+      * \param nx  number of grid points in new mesh
       */
-      void remesh(DArray<System::WField>& fields, int nx, std::ostream& out);
+      void remesh(std::ostream& out, Array<Field> const & fields, int nx);
 
       /**
-      * Add points to the end of 
+      * Add points to the end of mesh
       *
-      * \param field field to be remeshed
-      * \param m     number of added grid points 
-      * \param out   output stream for remeshed field
+      * \param filename  name of output file for remeshed field
+      * \param fields  field to be remeshed
+      * \param m  number of added grid points
       */
-      void extend(DArray<System::WField>& fields, int m, std::ostream& out);
+      void extend(std::string const & filename, Array<Field> const & fields, int m);
+
+      /**
+      * Add points to the end of mesh
+      *
+      * \param out  output stream for extended field
+      * \param fields  array of fields to be extended
+      * \param m  number of added grid points
+      */
+      void extend(std::ostream& out, Array<Field> const & fields, int m);
 
    private:
 

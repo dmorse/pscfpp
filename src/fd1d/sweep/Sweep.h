@@ -11,6 +11,7 @@
 #include <util/param/ParamComposite.h>        // base class
 #include <fd1d/SystemAccess.h>                // base class
 #include <fd1d/misc/HomogeneousComparison.h>  // member
+#include <fd1d/misc/FieldIo.h>                // member
 #include <util/containers/DArray.h>           // member
 
 #include <util/global.h>
@@ -50,6 +51,11 @@ namespace Fd1d
       * Destructor.
       */
       ~Sweep();
+
+      /**
+      * Set system if created with default constructor.
+      */
+      void setSystem(System& system);
 
       /**
       * Read ns and baseFileName parameters.
@@ -107,6 +113,9 @@ namespace Fd1d
 
       /// Algorithm for comparing to a homogeneous system
       HomogeneousComparison comparison_;
+
+      /// FieldIo object for writing output files
+      FieldIo fieldIo_;
 
       /// Current solution 
       DArray<System::WField> wFields0_;

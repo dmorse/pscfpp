@@ -108,12 +108,20 @@ namespace Fd1d
       }
    }
 
+   void FieldIo::remesh(std::string const & filename, 
+                        Array<Field> const &  fields, int nx)
+   {
+      std::ofstream out;
+      fileMaster().openOutputFile(filename, out);
+      remesh(out, fields, nx);
+      out.close();
+   }
+
    /*
    * Interpolate fields onto new mesh.
    */
    void 
-   FieldIo::remesh(DArray<System::WField>& fields, int nx, 
-                       std::ostream& out)
+   FieldIo::remesh(std::ostream& out, Array<Field> const & fields, int nx)
    {
       int nm = mixture().nMonomer();
       out << "nx     "  <<  nx              << std::endl;
@@ -162,12 +170,21 @@ namespace Fd1d
 
    }
 
+   void 
+   FieldIo::extend(std::string const & filename, 
+                   Array<Field> const &  fields, int m)
+   {
+      std::ofstream out;
+      fileMaster().openOutputFile(filename, out);
+      extend(out, fields, m);
+      out.close();
+   }
+
    /*
    * Interpolate fields onto new mesh.
    */
    void 
-   FieldIo::extend(DArray<System::WField>& fields, int m, 
-                       std::ostream& out)
+   FieldIo::extend(std::ostream& out, Array<Field> const & fields, int m)
    {
       int nm = mixture().nMonomer();
       int nx = domain().nx();
@@ -193,7 +210,6 @@ namespace Fd1d
          }
          out << std::endl;
       }
-
    }
 
 } // namespace Fd1d

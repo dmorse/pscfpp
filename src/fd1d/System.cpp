@@ -15,11 +15,11 @@
 #endif
 #include <fd1d/misc/HomogeneousComparison.h>
 #include <fd1d/misc/FieldEditor.h>
+#include <fd1d/misc/FieldIo.h>
 
 #include <pscf/inter/Interaction.h>
 #include <pscf/inter/ChiInteraction.h>
 #include <pscf/homogeneous/Clump.h>
-
 
 #include <util/format/Str.h>
 #include <util/format/Int.h>
@@ -233,14 +233,12 @@ namespace Fd1d
    */
    void System::readCommands(std::istream &in)
    {
-      //if (!isInitialized_) {
-      //    UTIL_THROW("McSimulation is not initialized");
-      //}
+      UTIL_CHECK(hasMixture_);
+      UTIL_CHECK(hasDomain_);
 
       std::string command;
       std::string filename;
-      std::ifstream inputFile;
-      std::ofstream outputFile;
+      FieldIo fieldIo(*this);
 
       std::istream& inBuffer = in;
 
@@ -257,55 +255,13 @@ namespace Fd1d
          if (command == "READ_WFIELDS") {
             inBuffer >> filename;
             Log::file() << "  " << Str(filename, 20) << std::endl;
-            fileMaster().openInputFile(filename, inputFile);
-            readWFields(inputFile);
-            inputFile.close();
-         } else
-         if (command == "WRITE_WFIELDS") {
-            inBuffer >> filename;
-            Log::file() << "  " << Str(filename, 20) << std::endl;
-            fileMaster().openOutputFile(filename, outputFile);
-            writeFields(outputFile, wFields_);
-            outputFile.close();
-         } else
-         if (command == "WRITE_CFIELDS") {
-            inBuffer >> filename;
-            Log::file() << "  " << Str(filename, 20) << std::endl;
-            fileMaster().openOutputFile(filename, outputFile);
-            writeFields(outputFile, cFields_);
-            outputFile.close();
-         } else
-         if (command == "REMESH_WFIELDS") {
-            int nx;
-            inBuffer >> nx;
-            Log::file() << std::endl;
-            Log::file() << "nx      = " << Int(nx, 20) << std::endl;
-            inBuffer >> filename;
-            Log::file() << "outfile = " << Str(filename, 20) << std::endl;
-            fileMaster().openOutputFile(filename, outputFile);
-            FieldEditor editor(*this);
-            editor.remesh(wFields(), nx, outputFile);
-            outputFile.close();
-         } else
-         if (command == "EXTEND_WFIELDS") {
-            int m;
-            inBuffer >> m;
-            Log::file() << std::endl;
-            Log::file() << "m       = " << Int(m, 20) << std::endl;
-            inBuffer >> filename;
-            Log::file() << "outfile = " << Str(filename, 20) << std::endl;
-            fileMaster().openOutputFile(filename, outputFile);
-            FieldEditor editor(*this);
-            editor.extend(wFields(), m, outputFile);
-            outputFile.close();
+            fieldIo.readFields(filename, wFields());  
          } else
          if (command == "ITERATE") {
             Log::file() << std::endl;
             Log::file() << std::endl;
-
             iterator().solve();
             outputThermo(Log::file());
-
          } else 
          if (command == "COMPARE_HOMOGENEOUS") {
             int mode;
@@ -316,18 +272,42 @@ namespace Fd1d
             HomogeneousComparison comparison(*this);
             comparison.compute(mode);
             comparison.output(mode, Log::file());
-
          } else 
          if (command == "SWEEP") {
-
-            if (!hasSweep_) {
-               UTIL_THROW("System has no Sweep object");
-            }
+            UTIL_CHECK(hasSweep_);
             UTIL_CHECK(sweepPtr_);
             sweepPtr_->solve();
-
-         } else {
-            Log::file() << "  Error: Unknown command  " << std::endl;
+         } else 
+         if (command == "WRITE_WFIELDS") {
+            inBuffer >> filename;
+            Log::file() << "  " << Str(filename, 20) << std::endl;
+            fieldIo.writeFields(filename, wFields());  
+         } else
+         if (command == "WRITE_CFIELDS") {
+            inBuffer >> filename;
+            Log::file() << "  " << Str(filename, 20) << std::endl;
+            fieldIo.writeFields(filename, cFields());  
+         } else
+         if (command == "REMESH_WFIELDS") {
+            int nx;
+            inBuffer >> nx;
+            Log::file() << std::endl;
+            Log::file() << "nx      = " << Int(nx, 20) << std::endl;
+            inBuffer >> filename;
+            Log::file() << "outfile = " << Str(filename, 20) << std::endl;
+            fieldIo.remesh(filename, wFields(), nx);
+         } else
+         if (command == "EXTEND_WFIELDS") {
+            int m;
+            inBuffer >> m;
+            Log::file() << std::endl;
+            Log::file() << "m       = " << Int(m, 20) << std::endl;
+            inBuffer >> filename;
+            Log::file() << "outfile = " << Str(filename, 20) << std::endl;
+            fieldIo.extend(filename, wFields(), m);
+         } else
+         {
+            Log::file() << "  Error: Unknown command  " << command << std::endl;
             readNext = false;
          }
 
@@ -399,6 +379,7 @@ namespace Fd1d
 
    }
 
+   #if 0
    void System::readWFields(std::istream &in)
    {
       UTIL_CHECK(hasDomain_);
@@ -427,25 +408,6 @@ namespace Fd1d
          }
       }
 
-      #if 0
-      // Determine if all species are treated in closed ensemble.
-      bool isCanonical = true;
-      for (i = 0; i < mixture().nPolymer(); ++i) {
-         if (mixture().polymer(i).ensemble == Species::Open) {
-            isCanonical = false;
-         }
-      }
-
-      if (isCanonical) {
-         double shift = wFields_[nm - 1][nx-1];
-         for (i = 0; i < nx; ++i) {
-            for (j = 0; j < nm; ++j) {
-               wFields_[j][i] -= shift;
-            }
-         }
-      }
-      #endif
-
    }
 
    void System::writeFields(std::ostream &out, 
@@ -466,6 +428,7 @@ namespace Fd1d
          out << std::endl;
       }
    }
+   #endif
 
    void System::initHomogeneous()
    {

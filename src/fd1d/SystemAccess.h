@@ -43,7 +43,7 @@ namespace Fd1d {
       /**
       * Set the system after construction.
       */
-      void setSystem(System& system);
+      virtual void setSystem(System& system);
 
       /// \name Accessors (get objects by reference)
       //@{

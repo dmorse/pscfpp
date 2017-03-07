@@ -148,21 +148,6 @@ namespace Fd1d
       */
       CField& cField(int monomerId);
 
-      /**
-      * Read chemical potential fields from file.
-      *
-      * \param in input stream (i.e., input file)
-      */
-      void readWFields(std::istream& in);
-
-      /**
-      * Write concentration or chemical potential fields to file.
-      *
-      * \param out output stream (i.e., output file)
-      * \param fields array of fields for different species
-      */
-      void writeFields(std::ostream& out, Array<Field> const & fields);
-
       //@}
       /// \name Accessors (get objects by reference)
       //@{
