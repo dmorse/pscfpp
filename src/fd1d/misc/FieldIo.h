@@ -44,10 +44,28 @@ namespace Fd1d {
       /**
       * Read a set of fields, one per monomer type.
       *
-      * \param fields set of fields to read.
-      * \param out  input stream 
+      * \param fields  set of fields to read.
+      * \param in  input stream 
       */
-      void readFields(std::ostream &out, Array<Field> &  fields);
+      void readFields(std::string const & filename, 
+                      Array<Field> &  fields);
+
+      /**
+      * Read a set of fields, one per monomer type.
+      *
+      * \param fields  set of fields to read.
+      * \param in  input stream 
+      */
+      void readFields(std::istream &in, Array<Field> &  fields);
+
+      /**
+      * Write a set of fields, one per monomer type.
+      *
+      * \param filename  output filename
+      * \param fields  set of fields to read.
+      */
+      void writeFields(std::string const & filename, 
+                       Array<Field> const &  fields);
 
       /**
       * Write a set of fields, one per monomer type.

@@ -43,10 +43,18 @@ namespace Fd1d
    FieldIo::~FieldIo()
    {}
 
-   void FieldIo::readWFields(std::istream &in)
+ 
+   void FieldIo::readFields(std::string const & filename, 
+                            Array<Field> &  fields)
    {
-      UTIL_CHECK(hasDomain_);
+      std::ifstream in;
+      fileMaster().openInputFile(filename, in);
+      readFields(in, fields);
+      in.close();
+   }
 
+   void FieldIo::readFields(std::istream &in, Array<Field> &  fields)
+   {
       // Read grid dimensions
       std::string label;
       int nx, nm;
@@ -67,13 +75,22 @@ namespace Fd1d
          in >> idum;
          UTIL_CHECK(idum == i);
          for (j = 0; j < nm; ++j) {
-            in >> wFields_[j][i];
+            in >> fields[j][i];
          }
       }
    }
 
-   void FieldIo::writeFields(std::ostream &out, 
+   void FieldIo::writeFields(std::string const & filename, 
                             Array<Field> const &  fields)
+   {
+      std::ofstream out;
+      fileMaster().openOutputFile(filename, out);
+      writeFields(out, fields);
+      out.close();
+   }
+
+   void FieldIo::writeFields(std::ostream &out, 
+                             Array<Field> const &  fields)
    {
       int i, j;
       int nx = domain().nx();
