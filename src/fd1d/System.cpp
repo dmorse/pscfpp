@@ -14,7 +14,6 @@
 #include <fd1d/iterator/NrIterator.h>
 #endif
 #include <fd1d/misc/HomogeneousComparison.h>
-#include <fd1d/misc/FieldEditor.h>
 #include <fd1d/misc/FieldIo.h>
 
 #include <pscf/inter/Interaction.h>
