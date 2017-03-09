@@ -18,8 +18,8 @@ or (to redirect log output to a file)
 
 >   pscf_fd -e -p param.c1 -c command.1  > log
 
-Resulting output concentration and chemical potential files are out.c
-and out.w
+Resulting output concentration and chemical potential files are out/c
+and out/w. Block concentrations are written to out/b.
 
 ----------------------------------------------------------------------
 Simulation #2: Grand Canonical, near CMC

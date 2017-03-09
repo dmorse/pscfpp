@@ -209,18 +209,15 @@ namespace Fd1d
       }
       out.close();
 
-      //FieldIo fieldIo(system());
-
       // Write concentration fields
       outFileName = fileName;
       outFileName += ".c";
-      fieldIo_.writeFields(outFileName, cFields());
+      fieldIo_.writeFields(cFields(), outFileName);
 
       // Write chemical potential fields
       outFileName = fileName;
       outFileName += ".w";
-      fieldIo_.writeFields(outFileName, wFields());
-
+      fieldIo_.writeFields(wFields(), outFileName);
    }
 
    void Sweep::outputSummary(std::ostream& out, int i, double s)

@@ -254,7 +254,7 @@ namespace Fd1d
          if (command == "READ_WFIELDS") {
             inBuffer >> filename;
             Log::file() << "  " << Str(filename, 20) << std::endl;
-            fieldIo.readFields(filename, wFields());  
+            fieldIo.readFields(wFields(), filename);  
          } else
          if (command == "ITERATE") {
             Log::file() << std::endl;
@@ -280,12 +280,17 @@ namespace Fd1d
          if (command == "WRITE_WFIELDS") {
             inBuffer >> filename;
             Log::file() << "  " << Str(filename, 20) << std::endl;
-            fieldIo.writeFields(filename, wFields());  
+            fieldIo.writeFields(wFields(), filename);  
          } else
          if (command == "WRITE_CFIELDS") {
             inBuffer >> filename;
             Log::file() << "  " << Str(filename, 20) << std::endl;
-            fieldIo.writeFields(filename, cFields());  
+            fieldIo.writeFields(cFields(), filename);  
+         } else
+         if (command == "WRITE_BLOCK_CFIELDS") {
+            inBuffer >> filename;
+            Log::file() << "  " << Str(filename, 20) << std::endl;
+            fieldIo.writeBlockCFields(filename);  
          } else
          if (command == "REMESH_WFIELDS") {
             int nx;
@@ -294,7 +299,7 @@ namespace Fd1d
             Log::file() << "nx      = " << Int(nx, 20) << std::endl;
             inBuffer >> filename;
             Log::file() << "outfile = " << Str(filename, 20) << std::endl;
-            fieldIo.remesh(filename, wFields(), nx);
+            fieldIo.remesh(wFields(), nx, filename);
          } else
          if (command == "EXTEND_WFIELDS") {
             int m;
@@ -303,7 +308,7 @@ namespace Fd1d
             Log::file() << "m       = " << Int(m, 20) << std::endl;
             inBuffer >> filename;
             Log::file() << "outfile = " << Str(filename, 20) << std::endl;
-            fieldIo.extend(filename, wFields(), m);
+            fieldIo.extend(wFields(), m, filename);
          } else
          {
             Log::file() << "  Error: Unknown command  " << command << std::endl;

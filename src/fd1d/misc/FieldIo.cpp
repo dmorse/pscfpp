@@ -44,16 +44,16 @@ namespace Fd1d
    {}
 
  
-   void FieldIo::readFields(std::string const & filename, 
-                            Array<Field> &  fields)
+   void FieldIo::readFields(Array<Field> &  fields, 
+                            std::string const & filename)
    {
       std::ifstream in;
       fileMaster().openInputFile(filename, in);
-      readFields(in, fields);
+      readFields(fields, in);
       in.close();
    }
 
-   void FieldIo::readFields(std::istream &in, Array<Field> &  fields)
+   void FieldIo::readFields(Array<Field>& fields, std::istream& in)
    {
       // Read grid dimensions
       std::string label;
@@ -80,25 +80,24 @@ namespace Fd1d
       }
    }
 
-   void FieldIo::writeFields(std::string const & filename, 
-                            Array<Field> const &  fields)
+   void FieldIo::writeFields(Array<Field> const &  fields, 
+                             std::string const & filename)
    {
       std::ofstream out;
       fileMaster().openOutputFile(filename, out);
-      writeFields(out, fields);
+      writeFields(fields, out);
       out.close();
    }
 
-   void FieldIo::writeFields(std::ostream &out, 
-                             Array<Field> const &  fields)
+   void FieldIo::writeFields(Array<Field> const & fields, std::ostream& out)
    {
-      int i, j;
       int nx = domain().nx();
       int nm = mixture().nMonomer();
       out << "nx     "  <<  nx              << std::endl;
       out << "nm     "  <<  nm              << std::endl;
 
       // Write fields
+      int i, j;
       for (i = 0; i < nx; ++i) {
          out << Int(i, 5);
          for (j = 0; j < nm; ++j) {
@@ -108,12 +107,43 @@ namespace Fd1d
       }
    }
 
-   void FieldIo::remesh(std::string const & filename, 
-                        Array<Field> const &  fields, int nx)
+   void FieldIo::writeBlockCFields(std::string const & filename)
    {
       std::ofstream out;
       fileMaster().openOutputFile(filename, out);
-      remesh(out, fields, nx);
+      writeBlockCFields(out);
+      out.close();
+   }
+
+   /*
+   * Write the concentrations associated with all blocks.
+   */
+   void FieldIo::writeBlockCFields(std::ostream& out)
+   {
+      int nx = domain().nx();          // number grid points
+      int np = mixture().nPolymer();   // number of polymer species
+      int nb;                          // number of blocks per polymer
+      int i, j, k;
+      double c;
+      for (i = 0; i < nx; ++i) {
+         out << Int(i, 5);
+         for (j = 0; j < np; ++j) {
+            nb = mixture().polymer(j).nBlock();
+            for (k = 0; k < nb; ++k) {
+               c = mixture().polymer(j).block(k).cField()[i];
+               out << " " << Dbl(c, 15, 8);
+            }
+         }
+         out << std::endl;
+      }
+   }
+
+   void FieldIo::remesh(Array<Field> const &  fields, int nx, 
+                        std::string const & filename)
+   {
+      std::ofstream out;
+      fileMaster().openOutputFile(filename, out);
+      remesh(fields, nx, out);
       out.close();
    }
 
@@ -121,7 +151,7 @@ namespace Fd1d
    * Interpolate fields onto new mesh.
    */
    void 
-   FieldIo::remesh(std::ostream& out, Array<Field> const & fields, int nx)
+   FieldIo::remesh(Array<Field> const & fields, int nx, std::ostream& out)
    {
       int nm = mixture().nMonomer();
       out << "nx     "  <<  nx              << std::endl;
@@ -171,12 +201,12 @@ namespace Fd1d
    }
 
    void 
-   FieldIo::extend(std::string const & filename, 
-                   Array<Field> const &  fields, int m)
+   FieldIo::extend(Array<Field> const & fields, int m, 
+                   std::string const & filename)
    {
       std::ofstream out;
       fileMaster().openOutputFile(filename, out);
-      extend(out, fields, m);
+      extend(fields, m, out);
       out.close();
    }
 
@@ -184,7 +214,7 @@ namespace Fd1d
    * Interpolate fields onto new mesh.
    */
    void 
-   FieldIo::extend(std::ostream& out, Array<Field> const & fields, int m)
+   FieldIo::extend(Array<Field> const & fields, int m, std::ostream& out)
    {
       int nm = mixture().nMonomer();
       int nx = domain().nx();
@@ -210,6 +240,7 @@ namespace Fd1d
          }
          out << std::endl;
       }
+
    }
 
 } // namespace Fd1d
