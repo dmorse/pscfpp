@@ -292,6 +292,18 @@ namespace Fd1d
             Log::file() << "  " << Str(filename, 20) << std::endl;
             fieldIo.writeBlockCFields(filename);  
          } else
+         if (command == "WRITE_VERTEX_Q") {
+            int polymerId, vertexId;
+            inBuffer >> filename;
+            Log::file() << "  " << Str(filename, 20) << std::endl;
+            inBuffer >> polymerId;
+            Log::file() << "polymerId = " 
+                        << Int(polymerId, 5) << std::endl;
+            inBuffer >> vertexId;
+            Log::file() << "vertexId  = " 
+                        << Int(vertexId, 5) << std::endl;
+            fieldIo.writeVertexQ(polymerId, vertexId, filename);  
+         } else
          if (command == "REMESH_WFIELDS") {
             int nx;
             inBuffer >> nx;

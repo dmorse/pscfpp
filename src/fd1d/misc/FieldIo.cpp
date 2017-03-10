@@ -138,6 +138,49 @@ namespace Fd1d
       }
    }
 
+   /*
+   * Write incoming q fields for a specified vertex.
+   */
+   void FieldIo::writeVertexQ(int polymerId, int vertexId, 
+                              std::string const & filename)
+   {
+      std::ofstream out;
+      fileMaster().openOutputFile(filename, out);
+      writeVertexQ(polymerId, vertexId, out);
+      out.close();
+   }
+
+   /*
+   * Write incoming q fields for a specified vertex.
+   */
+   void FieldIo::writeVertexQ(int polymerId, int vertexId, 
+                              std::ostream& out)
+   {
+      Polymer const & polymer = mixture().polymer(polymerId);
+      Vertex const & vertex = polymer.vertex(vertexId);
+      Pair<int> pId;
+      int bId;
+      int dId;
+      int nb = vertex.size();
+      int nx = domain().nx();          // number grid points
+      int i, j;
+      double c, product;
+      for (i = 0; i < nx; ++i) {
+         out << Int(i, 5);
+         product = 1.0;
+         for (j = 0; j < nb; ++j) {
+            pId = vertex.inPropagatorId(j);
+            bId = pId[0];  // blockId
+            dId = pId[1];  // directionId
+            c = polymer.propagator(bId, dId).tail()[i];
+            product *= c;
+            out << " " << Dbl(c, 15, 8);
+         }
+         out << " " << Dbl(product, 15, 8) << std::endl;
+      }
+     
+   }
+
    void FieldIo::remesh(Array<Field> const &  fields, int nx, 
                         std::string const & filename)
    {

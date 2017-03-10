@@ -102,6 +102,26 @@ namespace Fd1d {
       void writeBlockCFields(std::ostream& out);
 
       /**
+      * Write incoming q fields for a specified vertex.
+      *
+      * \param polymerId integer id of polymer species
+      * \param vertexId integer id of vertex (end or junction)
+      * \param filename name of output file
+      */
+      void writeVertexQ(int polymerId, int vertexId, std::string const & out);
+
+      /**
+      * Write incoming q fields for a specified vertex.
+      *
+      * \pre Stream out must be open for writing. 
+      *
+      * \param polymerId  integer id of polymer species
+      * \param vertexId  integer id of vertex (end or junction)
+      * \param out  output stream 
+      */
+      void writeVertexQ(int polymerId, int vertexId, std::ostream& out);
+
+      /**
       * Interpolate an array of fields onto a new mesh and write to file.
       *
       * \param fields  field to be remeshed

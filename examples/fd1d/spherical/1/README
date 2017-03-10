@@ -19,7 +19,9 @@ or (to redirect log output to a file)
 >   pscf_fd -e -p param.c1 -c command.1  > log
 
 Resulting output concentration and chemical potential files are out/c
-and out/w. Block concentrations are written to out/b.
+and out/w. Block concentrations are written to out/b. The constrained
+partition functions q(s,z) and q^{+}(s,z) evaluated at the junction 
+and their product q q^{+} are written to file out/c.
 
 ----------------------------------------------------------------------
 Simulation #2: Grand Canonical, near CMC
@@ -29,8 +31,9 @@ problem in grand canonical problem. To run this simulation enter
 
 >   pscf_fd -e -p param.g1 -c command.1
 
-Output concentration and chemical potential files are again written 
-as out.c and out.w
+Output concentration and chemical potential files and other output
+files are again written to directory out, with the same file names
+as in simulation example 1.
 -------------------------------------------------------------------
 Simulation #3: Canonical Composition Sweep, Down from CMC
 

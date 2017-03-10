@@ -90,6 +90,15 @@ namespace Pscf
       TP& propagator(int directionId);
    
       /**
+      * Get a const Propagator for a specified direction.
+      *
+      * See above for number conventions.
+      *
+      * \param directionId integer index for direction (0 or 1)
+      */
+      TP const & propagator(int directionId) const;
+   
+      /**
       * Get the associated monomer concentration field.
       *
       * \param blockId integer index of associated block
@@ -122,6 +131,14 @@ namespace Pscf
    template <class TP>
    inline 
    TP& BlockTmpl<TP>::propagator(int directionId)
+   {  return propagators_[directionId]; }
+
+   /*
+   * Get a const Propagator indexed by direction.
+   */
+   template <class TP>
+   inline 
+   TP const & BlockTmpl<TP>::propagator(int directionId) const
    {  return propagators_[directionId]; }
 
    /*

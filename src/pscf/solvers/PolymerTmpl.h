@@ -74,7 +74,6 @@ namespace Pscf
       * Upon return, q functions and block concentration fields
       * are computed for all propagators and blocks. 
       */ 
-      //virtual void compute(const DArray<WField>& wFields);
       virtual void solve();
  
       /// \name Accessors (objects, by reference)
@@ -88,7 +87,14 @@ namespace Pscf
       Block& block(int id);
 
       /**
-      * Get a specified Vertex.
+      * Get a specified Block by const reference.
+      *
+      * \param id block index, 0 <= id < nBlock
+      */
+      Block const& block(int id) const ;
+
+      /**
+      * Get a specified Vertex by const reference.
       *
       * Both chain ends and junctions are vertices.
       * 
@@ -103,6 +109,14 @@ namespace Pscf
       * \param directionId integer index for direction (0 or 1)
       */
       Propagator& propagator(int blockId, int directionId);
+   
+      /**
+      * Get a const propagator for a specific block and direction.
+      *
+      * \param blockId integer index of associated block
+      * \param directionId integer index for direction (0 or 1)
+      */
+      Propagator const & propagator(int blockId, int directionId) const;
    
       /**
       * Get propagator indexed in order of computation.
@@ -221,11 +235,18 @@ namespace Pscf
    {  return blocks_[id]; }
 
    /*
+   * Get a specified Block by const reference.
+   */
+   template <class Block>
+   inline Block const & PolymerTmpl<Block>::block(int id) const
+   {  return blocks_[id]; }
+
+   /*
    * Get a propagator id, indexed in order of computation.
    */
    template <class Block>
    inline 
-   const Pair<int>& PolymerTmpl<Block>::propagatorId(int id) const
+   Pair<int> const & PolymerTmpl<Block>::propagatorId(int id) const
    {
       UTIL_CHECK(id >= 0);  
       UTIL_CHECK(id < nPropagator_);  
@@ -237,7 +258,17 @@ namespace Pscf
    */
    template <class Block>
    inline 
-   typename Block::Propagator& PolymerTmpl<Block>::propagator(int blockId, int directionId)
+   typename Block::Propagator& 
+   PolymerTmpl<Block>::propagator(int blockId, int directionId)
+   {  return block(blockId).propagator(directionId); }
+
+   /*
+   * Get a const propagator indexed by block and direction.
+   */
+   template <class Block>
+   inline 
+   typename Block::Propagator const & 
+   PolymerTmpl<Block>::propagator(int blockId, int directionId) const
    {  return block(blockId).propagator(directionId); }
 
    /*
