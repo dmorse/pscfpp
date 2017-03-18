@@ -19,23 +19,28 @@ namespace Pscf
    * Template for propagator classes.
    *
    * The template argument TP should be a concrete propagator class that 
-   * is derived from the template PropagatorTmpl<TP>, as in the following
-   * example: 
+   * is derived from the template PropagatorTmpl<TP>. By convention, each
+   * implementation of SCFT is defined in a different sub-namespace of
+   * namespace Pscf. For each such implementation, there is a concrete
+   * propagator class, named Propagator by convention, that is a subclass
+   * of the template instance PropagatorTmpl<Propagator>, using the syntax 
+   * shown below:
    * \code
    *
-   *    class TP : public PropagatorTmpl<TP>
+   *    class Propagator : public PropagatorTmpl<Propagator>
    *    {
    *     ...
    *    }; 
    *
    * \endcode
-   * This usage is an example of the so-called "curiously recurring template 
-   * pattern" (CRTP). It is used here to allow the template to have a members
-   * that stores pointers to other instances of derived class TP.
+   * This usage is an example of the so-called "curiously recurring 
+   * template pattern" (CRTP). It is used here to allow the template 
+   * PropagatorTmpl<Propagator> to have a member variables that store 
+   * pointers to other instances of derived class Propagator (or TP).
    *
-   * The TP propagator class is used in templates BlockTmpl, PolymerTmpl and 
-   * SystemTmpl that require that it define the following public typedefs and 
-   * member functions:
+   * The TP propagator class is used in templates BlockTmpl, PolymerTmpl 
+   * and SystemTmpl. The usage in those templates require that it define 
+   * the following public typedefs and member functions:
    * \code
    *
    *    class TP : public PropagatorTmpl<TP> 
@@ -49,11 +54,11 @@ namespace Pscf
    *        typedef DArray<double> CField;
    *
    *        // Solve the modified diffusion equation for this direction.
-   *        void solve(const WField& wField);
+   *        void solve();
    *
-   *        // Compute the integral \int q(r,s)q^{*}(r,s) for this block
-   *        void integrate(const CField& integral);
-   * 
+   *        // Compute and return the molecular partition function Q.
+   *        double computeQ();
+   *
    *    };
    *
    * \endcode
