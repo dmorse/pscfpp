@@ -59,7 +59,7 @@ namespace Pssp
       * If this and the other Field are both allocated, the capacities must
       * be exactly equal. If so, this method copies all elements.
       *
-      * \param other the RHS Field
+      * \param other the RHS RField
       */
       RField& operator = (const RField& other);
 
@@ -70,7 +70,7 @@ namespace Pssp
       *
       * \throw Exception if the RField is already allocated.
       *
-      * \param dimensions vector containing number of grid points in each direction.
+      * \param meshDimensions vector containing number of grid points in each direction
       */
       void allocate(const IntVec<D>& meshDimensions);
 

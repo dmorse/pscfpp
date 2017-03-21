@@ -102,7 +102,7 @@ namespace Pssp
       *
       * \param head initial condition of QField at head of block
       */
-      void solve(const QField& head);
+      void solve(QField const & head);
  
       /**
       * Compute and return partition function for the molecule.

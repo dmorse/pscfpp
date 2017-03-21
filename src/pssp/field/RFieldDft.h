@@ -72,12 +72,12 @@ namespace Pssp
       *
       * \throw Exception if the RFieldDft is already allocated.
       *
-      * \param dimensions vector containing number of grid points in each direction.
+      * \param meshDimensions vector containing number of grid points in each direction
       */
       void allocate(const IntVec<D>& meshDimensions);
 
       /**
-      * Return mesh dimensions by constant reference.
+      * Return vector of mesh dimensions by constant reference.
       */
       const IntVec<D>& meshDimensions() const;
 

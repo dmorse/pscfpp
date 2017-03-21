@@ -96,7 +96,7 @@ namespace Pssp {
    * Solve the modified diffusion equation with specified initial field.
    */
    template <int D>
-   void Propagator<D>::solve(const Propagator<D>::QField& head)
+   void Propagator<D>::solve(QField const & head)
    {
       int nx = meshPtr_->size();
       UTIL_CHECK(head.capacity() == nx);
