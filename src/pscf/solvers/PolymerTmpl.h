@@ -432,18 +432,8 @@ namespace Pscf
    * Compute solution to MDE and concentrations.
    */ 
    template <class Block>
-   //void PolymerTmpl<Block>::compute(const DArray<WField>& wFields)
    void PolymerTmpl<Block>::solve()
    {
-
-      #if 0
-      // Setup solvers for all blocks
-      int monomerId;
-      for (int j = 0; j < nBlock(); ++j) {
-         monomerId = block(j).monomerId();
-         block(j).setupSolver(wFields[monomerId]);
-      }
-      #endif
 
       // Clear all propagators
       for (int j = 0; j < nPropagator(); ++j) {

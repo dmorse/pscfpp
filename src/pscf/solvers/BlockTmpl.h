@@ -21,12 +21,66 @@ namespace Pscf
    /**
    * Class template for a block in a block copolymer.
    *
-   * Class TP is a concrete propagator class. A BlockTmpl<TP>
-   * object has:
+   * Class TP is a concrete propagator class. A BlockTmpl<TP> object
+   * has:
    *
    *   - two TP propagator objects, one per direction
    *   - a single monomer concentration field 
    *   - a single kuhn length
+   * 
+   * Each implementation of self-consistent field theory (SCFT) is defined
+   * in a different sub-namespace of Pscf. Each such implementation defines
+   * a concrete propagator class and a concrete block class, which ar 
+   * named Propagator and Block by convention.The Block class in each 
+   * implementation is derived from BlockTmpl<Propagator>, using the 
+   * following syntax:
+   * \code
+   *  
+   *    class Block : public BlockTmpl<Propagator>
+   *    {
+   *      ....
+   *    }
+   *
+   * \endcode
+   * The algorithms for taking one step of integration of the modified
+   * diffusion equation and for computing the monomer concentration field
+   * arising from monomers in one block must be implemented in the Block
+   * class. These algorithms must be implemented in member functions of
+   * the concrete Block class with the following interfaces:
+   * \code
+   *
+   *   
+   *   // ---------------------------------------------------------------
+   *   // Take one step of integration of the modified diffusion equation.
+   *   // ---------------------------------------------------------------
+   *   void step(Propagator::QField const & in, Propagator::QField& out);
+   *
+   *   // ---------------------------------------------------------------
+   *   // Compute monomer concentration field for this block.
+   *   // 
+   *   // \param prefactor  numerical prefactor of phi/(Q*length)
+   *   // ---------------------------------------------------------------
+   *   void computeConcentration(double prefactor);
+   *
+   * \endcode
+   * These core algorithms are implemented in the Block class, rather than 
+   * the Propagator class, because the data required to implement these 
+   * algorithms generally depends on the monomer type and contour length 
+   * step size ds of a particular block, and can thus be shared by the two 
+   * propagators associated with a particular block. The data required 
+   * to implement these algorithms cannot, however, be shared among 
+   * propagators in different blocks of the same monomer type because the 
+   * requirement that the length of each block be divided into an integer 
+   * number of contour length steps implies that different blocks of 
+   * arbitrary user-specified length must generally be assumed to have 
+   * slightly different values for the step size ds.
+   * 
+   * The step() function is called in the implementation of the 
+   * PropagatorTmpl::solve() member function, within a loop over steps.
+   * The computeConcentration() function is called in the implementation
+   * of the PolymerTmpl::solve() member function, within a loop over all
+   * blocks of the molecule that is called after solution of the modified
+   * diffusion equation for all propagators.
    *
    * \ingroup Pscf_Solvers_Module
    */

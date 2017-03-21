@@ -44,6 +44,10 @@ namespace Fd1d
       */
       ~Solvent();
 
+      void setPhi(double phi);
+
+      void setMu(double mu);
+
       /**
       * Compute monomer concentration field and partittion function.
       *
@@ -52,16 +56,7 @@ namespace Fd1d
       * \param wField monomer chemical potential field
       */
       void compute(WField const & wField);
-
-      /**
-      * Get monomer concentration field for this solvent.
-      */
-      const CField& concentration() const
-      {  return concentration_;  }
-   
-   private:
-   
-      CField concentration_;
+      //void compute(const DArray<Block::WField>& wFields);
 
    };
 

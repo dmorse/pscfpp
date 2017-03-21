@@ -1,10 +1,10 @@
 1) For the 1D finite difference code
 
    TODO:
+   - Add point-like solvents
    - Write more and/or more flexible sweep classes
    - Add an iterator factory
    - Write an Anderson Mixing iterator
-   - Add point-like solvents
 
 2) For the pseudo-spectral code for 1D, 2D or 3D in
    directory pssp:
