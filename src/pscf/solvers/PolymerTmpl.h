@@ -186,9 +186,6 @@ namespace Pscf
       /// Number of propagators (two per block).
       int nPropagator_;
 
-      /// Total length of all blocks (in units of reference length).
-      double length_;
-
    };
 
    /*
@@ -217,7 +214,13 @@ namespace Pscf
    */
    template <class Block>
    inline double PolymerTmpl<Block>::length() const
-   {  return length_; }
+   {  
+      double value = 0.0;
+      for (int blockId = 0; blockId < nBlock_; ++blockId) {
+         value += blocks_[blockId].length();
+      }
+      return value;
+   }
 
    /*
    * Get a specified Vertex.
@@ -295,8 +298,7 @@ namespace Pscf
       propagatorIds_(),
       nBlock_(0),
       nVertex_(0),
-      nPropagator_(0),
-      length_(0.0)
+      nPropagator_(0)
    {  setClassName("PolymerTmpl"); }
 
    /*
@@ -336,12 +338,6 @@ namespace Pscf
       }
 
       makePlan();
-
-      // Compute molecular length / volume
-      length_ = 0.0;
-      for (int blockId = 0; blockId < nBlock_; ++blockId) {
-         length_ += blocks_[blockId].length();
-      }
 
       // Read ensemble and phi or mu
       ensemble_ = Species::Closed;
@@ -456,7 +452,7 @@ namespace Pscf
       }
 
       // Compute block concentration fields
-      double prefactor = phi_ / (q*length());
+      double prefactor = phi_ / (q *length() );
       for (int i = 0; i < nBlock(); ++i) {
          block(i).computeConcentration(prefactor);
       }
