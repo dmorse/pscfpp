@@ -72,7 +72,7 @@ namespace Pscf
       *
       * \param length block length (number of monomers).
       */ 
-      void setLength(double length);
+      virtual void setLength(double length);
   
       //@}
       /// \name Accessors (getters)
