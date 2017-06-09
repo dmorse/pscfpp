@@ -66,7 +66,7 @@ namespace Cyln
       void setDiscretization(Domain const & domain, double ds);
 
       /**
-      * Set Crank-Nicholson solver for this block.
+      * Setup MDE solver for this block.
       */
       void setupSolver(WField const & w);
 
@@ -115,9 +115,6 @@ namespace Cyln
       // Array of elements containing exp(-K^2 b^2 ds/6)
       DArray<double> expKsq_;
 
-      // Work array for constant-r slices of real data.
-      double* rWorknz_;
-
       // Data structures for Crank-Nicholson algorithm
  
       /// Solver used in Crank-Nicholson algorithm
@@ -146,8 +143,8 @@ namespace Cyln
       /// Off-diagonal lower elements of matrix B
       DArray<double> lB_;
 
-      /// Work vector
-      DArray<double> v_;
+      /// Work vector, dimension = nr = # elements in radial direction
+      DArray<double> rWork_;
 
       /// Pointer to associated Domain object.
       Domain const * domainPtr_;
@@ -158,7 +155,16 @@ namespace Cyln
       /// Number of contour length steps = # grid points - 1.
       int ns_;
 
+      /*
+      * Setup data structures associated with Crank-Nicholson stepper
+      * for radial part of Laplacian.
+      */
       void setupRadialLaplacian(Domain& domain);
+
+      /*
+      * Setup data structures associated with pseudospectral stepper
+      * for axial part of Laplacian, using FFTs.
+      */
       void setupAxialLaplacian(Domain& domain);
 
    };

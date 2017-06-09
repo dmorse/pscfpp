@@ -57,15 +57,24 @@ namespace Cyln
       propagator(1).allocate(ns_, nr, nz);
       cField().allocate(nr, nz);
 
-      // Allocate work arrays for radial Crank-Nicholson
+      // Allocate memory for radial Crank-Nicholson
       dA_.allocate(nr);
       dB_.allocate(nr);
       uA_.allocate(nr - 1);
       uB_.allocate(nr - 1);
       lA_.allocate(nr - 1);
       lB_.allocate(nr - 1);
-      v_.allocate(nr);
+      rWork_.allocate(nr);
       solver_.allocate(nr);
+
+      // Allocate memory for axial pseudo-spectral
+      nk = nz/2 + 1;  // Number of wavevectors
+      expW_.allocate(nr, nz);
+      qk_.allocate(nr, nk);
+      expKsq_.allocate(nk);
+      rWork_.allocate(nr);
+      kWork_.allocate(nk);
+      FFTW_.setup(rWork_, qK.slice(0)); 
 
    }
 
@@ -120,7 +129,6 @@ namespace Cyln
       UTIL_CHECK(dB_.capacity() == nr);
       UTIL_CHECK(uB_.capacity() == nr - 1);
       UTIL_CHECK(lB_.capacity() == nr - 1);
-
 
       // Second derivative terms in matrix A
       double halfDs = 0.5*ds_;
@@ -177,8 +185,14 @@ namespace Cyln
 
    void Block::setupAxialLaplacian(Domain& domain) 
    {
+      double length = domain.length();
+      double b = 2.0 * Constants:Pi * kuhn() / length;
+      double c = 0.5*ds_*b*b/6.0;
       int nz = domain.nz();
-
+      int nk = nz/2 + 1;
+      for (i = 0; i < nk; ++i) {
+         expKSq[i] = exp(-c*i*i);
+      }
    }
 
    /*
@@ -237,15 +251,15 @@ namespace Cyln
    * To do so, it solves A q(i+1) = B q(i), where A and B are constant 
    * matrices defined in the documentation of the setupStep() function.
    */
-   void Block::step(const QField& q, QField& qNew)
+   void Block::radialStep(const QField& q, QField& qNew)
    {
       int nr = domain().nr();
-      v_[0] = dB_[0]*q[0] + uB_[0]*q[1];
+      rWork_[0] = dB_[0]*q[0] + uB_[0]*q[1];
       for (int i = 1; i < nr - 1; ++i) {
-         v_[i] = dB_[i]*q[i] + lB_[i-1]*q[i-1] + uB_[i]*q[i+1];
+         rWork_[i] = dB_[i]*q[i] + lB_[i-1]*q[i-1] + uB_[i]*q[i+1];
       }
-      v_[nr - 1] = dB_[nr-1]*q[nr-1] + lB_[nr-2]*q[nr-2];
-      solver_.solve(v_, qNew);
+      rWork_[nr - 1] = dB_[nr-1]*q[nr-1] + lB_[nr-2]*q[nr-2];
+      solver_.solve(rWork_, qNew);
    }
    #endif
 
