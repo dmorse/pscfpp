@@ -10,6 +10,7 @@
 // Subclasses of Sweep 
 #include "CompositionSweep.h"
 #include "MuSweep.h"
+#include "LengthSweep.h"
 
 namespace Pscf {
 namespace Fd1d {
@@ -37,6 +38,9 @@ namespace Fd1d {
       } else
       if (className == "MuSweep") {
          ptr = new MuSweep(*systemPtr_);
+      } else
+      if (className == "LengthSweep") {
+         ptr = new LengthSweep(*systemPtr_);
       }
 
       return ptr;

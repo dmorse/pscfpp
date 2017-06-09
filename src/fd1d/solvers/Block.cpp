@@ -63,6 +63,14 @@ namespace Fd1d
       cField().allocate(nx);
    }
 
+   void Block::setLength(double length)
+   {
+      BlockDescriptor::setLength(length);  
+      if (ns_ > 1) {
+         ds_ = length/double(ns_ - 1);
+      }
+   }
+
    /*
    * Setup the contour length step algorithm.
    *
@@ -108,6 +116,9 @@ namespace Fd1d
       UTIL_CHECK(ns_ > 0);
       UTIL_CHECK(propagator(0).isAllocated());
       UTIL_CHECK(propagator(1).isAllocated());
+
+      // Set step size (in case block length has changed)
+      ds_ = length()/double(ns_ - 1);
 
       // Chemical potential terms in matrix A
       double halfDs = 0.5*ds_;
