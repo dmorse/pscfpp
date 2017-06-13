@@ -44,9 +44,27 @@ public:
       block.setKuhn(step);
    }
 
+   void setupBlock3D(Block<3>& block) 
+   {
+      block.setId(0);
+      double length = 2.0;
+      block.setLength(length);
+      block.setMonomerId(1);
+      double step = sqrt(6.0);
+      block.setKuhn(step);
+   }
+
    void setupMesh1D(Mesh<1>& mesh) {
       IntVec<1> d;
       d[0] = 10;
+      mesh.setDimensions(d);
+   }
+
+   void setupMesh3D(Mesh<3>& mesh) {
+      IntVec<3> d;
+      d[0] = 10;
+      d[1] = 10;
+      d[2] = 10;
       mesh.setDimensions(d);
    }
 
@@ -81,6 +99,27 @@ public:
       //std::cout << "ns   = " << block.ns() << std::endl;
       //std::cout << "mesh = " 
       //          << block.mesh().dimensions() << std::endl;
+   }
+
+   void testSetDiscretization3D()
+   {
+      printMethod(TEST_FUNC);
+
+      //Create and initialize block
+      Block<3> block;
+      setupBlock3D(block);
+
+      Mesh<3> mesh;
+      setupMesh3D(mesh);
+
+      double ds = 0.3;
+      block.setDiscretization(ds, mesh);
+      TEST_ASSERT(eq(block.length(), 2.0));
+      TEST_ASSERT(eq(block.ds(), 0.25));
+      TEST_ASSERT(block.ns() == 9);
+      TEST_ASSERT(block.mesh().dimensions()[0] == 10);
+      TEST_ASSERT(block.mesh().dimensions()[1] == 10);
+      TEST_ASSERT(block.mesh().dimensions()[2] == 10);
    }
 
    void testSetupSolver1D()
@@ -202,6 +241,7 @@ public:
 TEST_BEGIN(PropagatorTest)
 TEST_ADD(PropagatorTest, testConstructor1D)
 TEST_ADD(PropagatorTest, testSetDiscretization1D)
+TEST_ADD(PropagatorTest, testSetDiscretization3D)
 TEST_ADD(PropagatorTest, testSetupSolver1D)
 TEST_ADD(PropagatorTest, testSolver1D)
 TEST_END(PropagatorTest)

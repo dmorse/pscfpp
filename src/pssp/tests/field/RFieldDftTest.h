@@ -35,6 +35,7 @@ public:
    void testAllocate3();
    void testSubscript();
    void testAssignment();
+   void testCopyConst();
    //void testSerialize1Memory();
    //void testSerialize2Memory();
    //void testSerialize1File();
@@ -113,6 +114,37 @@ void RFieldDftTest::testSubscript()
       TEST_ASSERT(v[2][1] == 30.1);
    }
 } 
+
+void RFieldDftTest::testCopyConst()
+{
+   printMethod(TEST_FUNC);
+   {
+      IntVec<3> d;
+      d[0] = 3;
+      d[1] = 3;
+      d[2] = 2;
+      RFieldDft<3> v;
+      v.allocate(d);
+      TEST_ASSERT(v.capacity() == 18);
+      TEST_ASSERT(v.isAllocated());
+      
+      for(int i = 0; i < v.capacity(); i++)
+      {
+         v[i][0] = (i + 1) * 10.0;
+         v[i][1] = (i + 1) * 10.0 + 0.1;
+      }
+
+      RFieldDft<3> u = v;
+      TEST_ASSERT(u.isAllocated());
+      TEST_ASSERT(u.capacity() == v.capacity());
+
+      for(int i = 0; i < v.capacity(); i++)
+      {
+         TEST_ASSERT(u[i][0] == v[i][0]);
+         TEST_ASSERT(u[i][1] == v[i][1]);
+      }
+   }
+}
 
 void RFieldDftTest::testAssignment()
 {
@@ -407,6 +439,7 @@ TEST_ADD(RFieldDftTest, testAllocate1)
 TEST_ADD(RFieldDftTest, testAllocate3)
 TEST_ADD(RFieldDftTest, testSubscript)
 TEST_ADD(RFieldDftTest, testAssignment)
+TEST_ADD(RFieldDftTest, testCopyConst)
 //TEST_ADD(RFieldDftTest, testSerialize1Memory)
 //TEST_ADD(RFieldDftTest, testSerialize2Memory)
 //TEST_ADD(RFieldDftTest, testSerialize1File)

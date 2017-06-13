@@ -113,6 +113,11 @@ public:
       d[1] = 3;
       d[2] = 2;
       test3D(d);
+
+      IntVec<2> twoD;
+      twoD[0] = 2;
+      twoD[1] = 3;
+      test2D(twoD);
    }
 
 };

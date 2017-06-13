@@ -100,7 +100,8 @@ namespace Pssp
       for (int i = 0; i < rSize_; ++i) {
          work_[i] = rField[i]*scale;
       }
-
+      
+      //Are there any instances where the original array is important?
       fftw_execute_dft_r2c(fPlan_, &work_[0], &kField[0]);
    }
 

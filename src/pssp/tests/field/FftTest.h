@@ -25,6 +25,8 @@ public:
 
    void testConstructor();
    void testTransform1D();
+   void testTransform2D();
+   void testTransform3D();
 
 };
 
@@ -74,10 +76,96 @@ void FftTest::testTransform1D() {
    //std::cout << std::endl;
 }
 
+void FftTest::testTransform2D() {
+   printMethod(TEST_FUNC);
+   printEndl();
 
+   RField<2> in;
+   RFieldDft<2> out;
+   int n1 = 3;
+   int n2 = 3;
+   IntVec<2> d;
+   d[0] = n1;
+   d[1] = n2;
+   in.allocate(d);
+   out.allocate(d);
+
+   TEST_ASSERT(eq(in.capacity() / in.meshDimensions()[1],
+                  out.capacity() / (out.meshDimensions()[1]/2 + 1)));
+
+   int rank = 0;
+   for (int i = 0; i < n1; i++) {
+      for (int j = 0; j < n2; j++) {
+         rank = j + (i * n2);
+         in[rank] = 1;
+      }
+   }
+
+   FFT<2> v;
+   v.setup(in, out);
+   v.forwardTransform(in, out);
+   RField<2> inCopy;
+   inCopy.allocate(d);
+   v.inverseTransform(out, inCopy);
+
+   for (int i = 0; i < n1; i++) {
+      for (int j = 0; j < n2; j++) {
+         rank = j + (i * n2);
+         TEST_ASSERT(eq(in[rank], inCopy[rank]));
+      }
+   }
+}
+
+void FftTest::testTransform3D() {
+   printMethod(TEST_FUNC);
+   printEndl();
+
+   RField<3> in;
+   RFieldDft<3> out;
+   int n1 = 3;
+   int n2 = 3;
+   int n3 = 3;
+   IntVec<3> d;
+   d[0] = n1;
+   d[1] = n2;
+   d[2] = n3;
+   in.allocate(d);
+   out.allocate(d);
+
+   TEST_ASSERT(eq(in.capacity() / in.meshDimensions()[2],
+                  out.capacity() / (out.meshDimensions()[2]/2 + 1)));
+
+   int rank = 0;
+   for (int i = 0; i < n1; i++) {
+      for (int j = 0; j < n2; j++) {
+         for (int k = 0; k < n3; k++){
+            rank = k + ((j + (i * n2)) * n3);
+            in[rank] = 1;
+         }
+      }
+   }
+
+   FFT<3> v;
+   v.setup(in, out);
+   v.forwardTransform(in, out);
+   RField<3> inCopy;
+   inCopy.allocate(d);
+   v.inverseTransform(out, inCopy);
+
+   for (int i = 0; i < n1; i++) {
+      for (int j = 0; j < n2; j++) {
+         for (int k = 0; k < n3; k++){
+            rank = k + ((j + (i * n1)) * n3);
+            TEST_ASSERT(eq(in[rank], inCopy[rank]));
+         }
+      }
+   }
+}
 TEST_BEGIN(FftTest)
 TEST_ADD(FftTest, testConstructor)
 TEST_ADD(FftTest, testTransform1D)
+TEST_ADD(FftTest, testTransform2D)
+TEST_ADD(FftTest, testTransform3D)
 TEST_END(FftTest)
 
 #endif

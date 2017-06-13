@@ -125,7 +125,7 @@ namespace Pscf
    {
       assert(i >=0);
       assert(i < D);
-      return dimensions_[i];
+      return position_[i];
    }
 
    template <int D>

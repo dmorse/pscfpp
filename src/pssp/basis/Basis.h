@@ -10,12 +10,14 @@
 #include <pscf/math/IntVec.h>
 #include <util/containers/DArray.h>
 
+namespace Pscf{
+   template <int D> class Mesh;
+   template <int D> class UnitCell;
+}
+
 namespace Pscf { 
 namespace Pssp
 { 
-
-   class Mesh;
-   class UnitCell;
 
    using namespace Util;
 
@@ -48,8 +50,8 @@ namespace Pssp
       Basis();
  
       // Associate
-      void setUnitCell(const UnitCell& unitCell);
-      void setMesh(const Mesh& mesh);
+      void setUnitCell(const UnitCell<D>& unitCell);
+      void setMesh(const Mesh<D>& mesh);
    
       // Initialize
       void allocate();
@@ -79,8 +81,11 @@ namespace Pssp
       // Indexing that allows identification by IntVec
       DArray<int> waveId_;
       
+      UnitCell<D> const * unitCell_;
+      Mesh<D> const * mesh_;
    };
 
 }
 }
+#include "Basis.tpp"
 #endif
