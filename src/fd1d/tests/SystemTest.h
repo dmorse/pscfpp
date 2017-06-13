@@ -8,6 +8,7 @@
 #include <fd1d/domain/Domain.h>
 #include <fd1d/solvers/Mixture.h>
 #include <fd1d/iterator/Iterator.h>
+#include <fd1d/misc/FieldIo.h>
 
 #include <fstream>
 
@@ -137,6 +138,7 @@ public:
 
       System sys;
       sys.readParam(in);
+      FieldIo fieldIo(sys);
 
       std::cout << "\n";
       sys.writeParam(std::cout);
@@ -163,21 +165,21 @@ public:
 
       std::ofstream out;
       openOutputFile("out/initialPlanar.w", out);
-      sys.writeFields(out, sys.wFields());
+      fieldIo.writeFields(sys.wFields(), out);
       out.close();
 
       openOutputFile("out/initialPlanar.c", out);
-      sys.writeFields(out, sys.cFields());
+      fieldIo.writeFields(sys.cFields(), out);
       out.close();
 
       sys.iterator().solve();
 
       openOutputFile("out/finalPlanar.w", out);
-      sys.writeFields(out, sys.wFields());
+      fieldIo.writeFields(sys.wFields(), out);
       out.close();
 
       openOutputFile("out/finalPlanar.c", out);
-      sys.writeFields(out, sys.cFields());
+      fieldIo.writeFields(sys.cFields(), out);
       out.close();
 
    }
@@ -197,6 +199,7 @@ public:
 
       Mixture& mix = sys.mixture();
       Domain& domain = sys.domain();
+      FieldIo fieldIo(sys);
 
       // Create initial chemical potential fields
       double nx = (double)domain.nx();
@@ -223,21 +226,21 @@ public:
 
       std::ofstream out;
       openOutputFile("out/initialSpherical.w", out);
-      sys.writeFields(out, sys.wFields());
+      fieldIo.writeFields(sys.wFields(), out);
       out.close();
 
       openOutputFile("out/initialSpherical.c", out);
-      sys.writeFields(out, sys.cFields());
+      fieldIo.writeFields(sys.cFields(), out);
       out.close();
 
       sys.iterator().solve();
 
       openOutputFile("out/finalSpherical.w", out);
-      sys.writeFields(out, sys.wFields());
+      fieldIo.writeFields(sys.wFields(), out);
       out.close();
 
       openOutputFile("out/finalSpherical.c", out);
-      sys.writeFields(out, sys.cFields());
+      fieldIo.writeFields(sys.cFields(), out);
       out.close();
 
    }
@@ -253,18 +256,20 @@ public:
       sys.readParam(in);
       in.close();
 
+      FieldIo fieldIo(sys);
+
       std::cout << "\n";
       // sys.writeParam(std::cout);
 
       openInputFile("in/planar.w", in);
-      sys.readWFields(in);
+      fieldIo.readFields(sys.wFields(), in);
       in.close();
 
       sys.iterator().solve();
 
       std::ofstream out;
       out.open("out/c2");
-      sys.writeFields(out, sys.cFields());
+      fieldIo.writeFields(sys.cFields(), out);
       out.close();
 
    }

@@ -69,6 +69,11 @@ namespace Fd1d
       void setDiscretization(Domain const & domain, double ds);
 
       /**
+      * Set length and readjust ds_ accordingly.
+      */
+      virtual void setLength(double length);
+
+      /**
       * Set Crank-Nicholson solver for this block.
       */
       void setupSolver(WField const & w);
