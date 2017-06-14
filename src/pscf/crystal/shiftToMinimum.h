@@ -32,5 +32,12 @@ namespace Pscf
    template <> 
    IntVec<1> shiftToMinimum(IntVec<1>& v, IntVec<1> d, UnitCell<1> cell);
 
+   template <> 
+   IntVec<2> shiftToMinimum(IntVec<2>& v, IntVec<2> d, UnitCell<2> cell);
+
+   template <> 
+   IntVec<3> shiftToMinimum(IntVec<3>& v, IntVec<3> d, UnitCell<3> cell);
+
+
 }
 #endif

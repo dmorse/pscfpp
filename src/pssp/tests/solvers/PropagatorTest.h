@@ -51,6 +51,7 @@ public:
       block.setLength(length);
       block.setMonomerId(1);
       double step = sqrt(6.0);
+      //double step = 0;
       block.setKuhn(step);
    }
 
@@ -72,6 +73,15 @@ public:
    {
       std::ifstream in;
       openInputFile("in/Lamellar", in);
+      in >> unitCell;
+      in.close();
+   }
+
+
+   void setupUnitCell3D(UnitCell<3>& unitCell) 
+   {
+      std::ifstream in;
+      openInputFile("in/Cubic", in);
       in >> unitCell;
       in.close();
    }
@@ -154,6 +164,41 @@ public:
       block.setupUnitCell(unitCell);
       block.setupSolver(w);
    }
+   
+   void testSetupSolver3D()
+   {
+      printMethod(TEST_FUNC);
+
+      // Create and initialize block
+      Block<3> block;
+      setupBlock3D(block);
+
+      // Create and initialize mesh
+      Mesh<3> mesh;
+      setupMesh3D(mesh);
+
+      double ds = 0.02;
+      block.setDiscretization(ds, mesh);
+
+      UnitCell<3> unitCell;
+      setupUnitCell3D(unitCell);
+      std::cout << std::endl;
+      std::cout << "unit cell = " << unitCell << std::endl;
+      TEST_ASSERT(eq(unitCell.rBasis(0)[0], 3.0));
+      TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
+      TEST_ASSERT(eq(unitCell.rBasis(2)[2], 5.0));
+
+      // Setup chemical potential field
+      RField<3> w;
+      w.allocate(mesh.dimensions());
+      TEST_ASSERT(w.capacity() == mesh.size());
+      for (int i=0; i < w.capacity(); ++i) {
+         w[i] = 1.0;
+      }
+
+      block.setupUnitCell(unitCell);
+      block.setupSolver(w);
+   }
 
    void testSolver1D()
    {
@@ -207,6 +252,7 @@ public:
       double expected = exp(-(wc + r)*ds);
       for (int i = 0; i < nx; ++i) {
          //std::cout << "  " << qout[i]
+         //          << "  " << qin[i]
          //          << "  " << qin[i]*expected
          //          << "  " << expected << std::endl;
          TEST_ASSERT(eq(qout[i], qin[i]*expected));
@@ -236,6 +282,141 @@ public:
 
    }
 
+   void testSolver3D()
+   {
+
+      printMethod(TEST_FUNC);
+
+      // Create and initialize block
+      Block<3> block;
+      setupBlock3D(block);
+
+      // Create and initialize mesh
+      Mesh<3> mesh;
+      setupMesh3D(mesh);
+
+      double ds = 0.02;
+      block.setDiscretization(ds, mesh);
+
+      UnitCell<3> unitCell;
+      setupUnitCell3D(unitCell);
+      //std::cout << std::endl;
+      //std::cout << "unit cell = " << unitCell << std::endl;
+      TEST_ASSERT(eq(unitCell.rBasis(0)[0], 3.0));
+      TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
+      TEST_ASSERT(eq(unitCell.rBasis(2)[2], 5.0));
+
+      // Setup chemical potential field
+      RField<3> w;
+      w.allocate(mesh.dimensions());
+      IntVec<3> dim = mesh.dimensions();
+      int nx = dim[0];
+      int ny = dim[1];
+      int nz = dim[2];
+      
+
+      TEST_ASSERT(w.capacity() == mesh.size());
+      double wc = 0.3;
+      for (int i=0; i < w.capacity(); ++i) {
+         w[i] = wc;
+      }
+
+      block.setupUnitCell(unitCell);
+      block.setupSolver(w);
+
+      // Test step
+      Propagator<3>::QField qin;
+      Propagator<3>::QField qout;
+      qin.allocate(mesh.dimensions());
+      qout.allocate(mesh.dimensions());
+
+      double twoPi = 2.0*Constants::Pi;
+      for (int i=0; i < nx; ++i) {
+         for (int j=0; j < ny; ++j){
+            for (int k=0; k < nz; ++k){
+               dim[0] = i;
+               dim[1] = j;
+               dim[2] = k;
+               qin[mesh.rank(dim)] = cos(twoPi*(double(i)/double(nx)
+                                     + double(j)/double(ny)
+                                     + double(k)/double(nz)));
+               //qin[mesh.rank(dim)] = 1;
+            }
+         }
+      }
+      
+      std::cout<<std::endl;
+      block.step(qin, qout);
+      double b = block.kuhn();
+      double Gb;
+      double expected;
+      IntVec<3> temp;
+      ds = block.ds();
+      for (int i=0; i < nx; ++i) {
+         for (int j=0; j < ny; ++j){
+            for (int k=0; k < nz; ++k){
+               dim[0] = i;
+               dim[1] = j;
+               dim[2] = k;
+               temp[0] = 1;
+               temp[1] = 1;
+               temp[2] = 1;
+               Gb = unitCell.ksq(temp);
+              // Gb = 1;
+               //double factor = twoPi*b/4.0;
+               double factor = b;
+               double r = Gb*factor*factor/6.0;
+               expected = exp(-(wc + r)*ds);
+
+               //std::cout << "  " << qout[mesh.rank(dim)]
+               //          << "  " << qin[mesh.rank(dim)]
+               //         << "  " << qin[mesh.rank(dim)]*expected
+               //          << "  " << expected << std::endl;
+               TEST_ASSERT(eq(qout[mesh.rank(dim)], 
+                            qin[mesh.rank(dim)]*expected));
+            }
+         }
+      }
+
+      //std::cout << "\n";
+      //std::cout << "expected ratio = " << expected << "\n";
+    
+      // Test propagator solve 
+      block.propagator(0).solve();
+
+      //std::cout << "\n Head:\n";
+      for (int i = 0; i < nx; ++i) {
+         for (int j = 0; j < ny; ++j) {
+            for (int k = 0; k < nz; ++k){
+               //std::cout << "  " << block.propagator(0).head()[i];
+               dim[0] = i;
+               dim[1] = j;
+               dim[2] = k;
+               TEST_ASSERT(eq(block.propagator(0).head()[mesh.rank(dim)],1.0)); 
+            }
+         }
+      }
+      std::cout << "\n";
+      
+
+      // std::cout << "\n Tail:\n";
+      expected = exp(-wc*block.length());
+      for (int i = 0; i < nx; ++i) {
+         for (int j = 0; j < ny; ++j){
+            for (int k = 0; k < nz; ++k){
+               dim[0] = i;
+               dim[1] = j;
+               dim[2] = k;
+               //std::cout << "  " << block.propagator(0).tail()[i];
+               TEST_ASSERT(eq(block.propagator(0).tail()[i], expected));
+            }
+         }
+      }
+      // std::cout << "\n";
+      //std::cout << exp(-wc*block.length()) << "\n";
+
+   }
+
 };
 
 TEST_BEGIN(PropagatorTest)
@@ -243,7 +424,9 @@ TEST_ADD(PropagatorTest, testConstructor1D)
 TEST_ADD(PropagatorTest, testSetDiscretization1D)
 TEST_ADD(PropagatorTest, testSetDiscretization3D)
 TEST_ADD(PropagatorTest, testSetupSolver1D)
+TEST_ADD(PropagatorTest, testSetupSolver3D)
 TEST_ADD(PropagatorTest, testSolver1D)
+TEST_ADD(PropagatorTest, testSolver3D)
 TEST_END(PropagatorTest)
 
 #endif

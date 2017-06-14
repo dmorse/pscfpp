@@ -13,9 +13,9 @@
 namespace Pscf { 
 namespace Pssp
 { 
-
-   class Mesh;
-   class UnitCell;
+   template <int D> class Mesh;
+   template <int D> class UnitCell;
+   template <int D> class RFieldDft;
 
    using namespace Util;
 
@@ -39,7 +39,7 @@ namespace Pssp
          double sqNorm;
 
          // Integer indices of this wavevector
-         IntVec<D> indices
+         IntVec<D> indices;
 
          // Index of star containing this wavevector
          int starId;
@@ -139,7 +139,7 @@ namespace Pssp
       * \param components coefficients of symmetry-adapted basis functions.
       * \param dft complex DFT representation of a field.
       */
-      void convertFieldComponentsToDFT(DArray<double> components, RFieldDft& dft);   
+      void convertFieldComponentsToDFT(DArray<double> components, RFieldDft<D>& dft);   
 
       /**
       * Convert DFT of real field to symmetry-adapted representation.
@@ -147,7 +147,7 @@ namespace Pssp
       * \param dft complex DFT representation of a field.
       * \param components coefficients of symmetry-adapted basis functions.
       */
-      void convertFieldDftToComponents(RFieldDft& dft, DArray<double> components);   
+      void convertFieldDftToComponents(RFieldDft<D>& dft, DArray<double> components);   
 
       // Accessors
 

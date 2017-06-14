@@ -39,7 +39,7 @@ if [ -n "$HAS_GSL" ]; then
   GSL_LIB=$(gsl-config --libs)
   sed -e "s|#PSCF_GSL=1|PSCF_GSL=1|" -e "s|=SUB_GSL_INC|=$GSL_INC|" -e "s|=SUB_GSL_LIB|=$GSL_LIB|" src/pscf/config.mk_r > src/pscf/config.mk
 else
-  echo "Did not fine Gnu Scienttific Library (GSL)"
+  echo "Did not find Gnu Scienttific Library (GSL)"
   sed -e "s|=SUB_GSL_INC|=|" -e "s|=SUB_GSL_LIB|=|" src/pscf/config.mk_r > src/pscf/config.mk
 fi
 
