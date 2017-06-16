@@ -28,7 +28,9 @@ namespace Pscf
    IntVec<D> shiftToMinimum(IntVec<D>& v, IntVec<D> d, UnitCell<D> cell);
 
    // Explicit specializations
-
+   // The explicit specializations assumes that the value of IntVec is strictly
+   // non-negative. This is always safe if IntVec<D>& v is provided 
+   // by MeshIterator
    template <> 
    IntVec<1> shiftToMinimum(IntVec<1>& v, IntVec<1> d, UnitCell<1> cell);
 

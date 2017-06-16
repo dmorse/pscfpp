@@ -54,19 +54,4 @@ namespace Pscf
       return u;
    }
 
-   /*
-   template <>
-   IntVec<2> shiftToMinimum(IntVec<2>& v, IntVec<2> d, UnitCell<2> cell)
-   {
-      IntVec<2> u;
-      for( int i = 0; i < )
-   }
-
-   template <>
-   IntVec<3> shiftToMinimum(IntVec<3>& v, IntVec<3> d, UnitCell<3> cell)
-   {
-      IntVec<3> u;
-
-   }
-   */
 }
