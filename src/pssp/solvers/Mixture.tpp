@@ -109,11 +109,10 @@ namespace Pssp
             CField& monomerField = cFields[monomerId];
             CField& blockField = polymer(i).block(j).cField();
             for (k = 0; k < nx; ++k) {
-               monomerField[k] += blockField[k];
+               monomerField[k] += polymer(i).phi() * blockField[k];
             }
          }
       }
-
       // To do: Add compute functions and accumulation for solvents.
 
    }
