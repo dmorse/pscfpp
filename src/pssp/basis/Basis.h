@@ -44,7 +44,7 @@ namespace Pssp
       * A wavevector used in the construction of symmetry adapted basis functions.
       */ 
       class Wave {
-
+      public:
          // Coefficient of this wave within associated star basis function
          std::complex<double> coeff;
 
@@ -74,7 +74,7 @@ namespace Pssp
       */ 
       class Star 
       {
-
+      public:
          /**
          * Number of wavevectors in the star.
          */

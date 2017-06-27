@@ -13,7 +13,7 @@ namespace Pscf
    using namespace Util;
 
    template <> 
-   IntVec<1> shiftToMinimum(IntVec<1>& v, IntVec<1> d, UnitCell<1> cell)
+   IntVec<1> shiftToMinimum(IntVec<1>& v, const IntVec<1> d, const UnitCell<1> cell)
    {
       IntVec<1> u;
       if (v[0] > d[0]/2) {
@@ -25,7 +25,7 @@ namespace Pscf
    }
 
    template <>
-   IntVec<2> shiftToMinimum(IntVec<2>& v, IntVec<2> d, UnitCell<2> cell)
+   IntVec<2> shiftToMinimum(IntVec<2>& v, const IntVec<2> d, const UnitCell<2> cell)
    {
       IntVec<2> u;
       for( int i = 0; i < 2; i++)
@@ -40,7 +40,7 @@ namespace Pscf
    }
 
    template <>
-   IntVec<3> shiftToMinimum(IntVec<3>& v, IntVec<3> d, UnitCell<3> cell)
+   IntVec<3> shiftToMinimum(IntVec<3>& v, const IntVec<3> d, const UnitCell<3> cell)
    {
       IntVec<3> u;
       for( int i = 0; i < 3; i++)
