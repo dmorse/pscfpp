@@ -24,4 +24,34 @@ namespace Pscf
       return u;
    }
 
+   template <>
+   IntVec<2> shiftToMinimum(IntVec<2>& v, IntVec<2> d, UnitCell<2> cell)
+   {
+      IntVec<2> u;
+      for( int i = 0; i < 2; i++)
+      {
+         if (v[i] > d[i]/2) {
+            u[i] = v[i] - d[i];
+         } else {
+            u[i] = v[i];
+         }
+      }
+      return u;
+   }
+
+   template <>
+   IntVec<3> shiftToMinimum(IntVec<3>& v, IntVec<3> d, UnitCell<3> cell)
+   {
+      IntVec<3> u;
+      for( int i = 0; i < 3; i++)
+      {
+         if (v[i] > d[i]/2) {
+            u[i] = v[i] - d[i];
+         } else {
+            u[i] = v[i];
+         }
+      }
+      return u;
+   }
+
 }

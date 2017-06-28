@@ -99,7 +99,7 @@ namespace Pssp {
          Gsq = unitCell.ksq(Gmin);
          expKsq_[i] = exp(Gsq*factor);
          //std::cout << i    << "  " 
-         //          << Gmin << "  " 
+         //         << Gmin << "  " 
          //          << Gsq  << "  "
          //          << expKsq_[i] << std::endl;
       }

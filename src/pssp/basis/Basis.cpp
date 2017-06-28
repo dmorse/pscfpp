@@ -8,13 +8,14 @@
 #include "Basis.h"
 
 namespace Pscf { 
-namespace Pssp
+namespace Pssp 
 { 
-
-   template class Basis<1>;
 
    using namespace Util;
 
+   template class Basis<1>;
+   template class Basis<2>;
+   template class Basis<3>;
 
 }
 }
