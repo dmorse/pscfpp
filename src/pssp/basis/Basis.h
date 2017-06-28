@@ -8,14 +8,25 @@
 */
 
 #include <pscf/math/IntVec.h>
+#include <pssp/field/RFieldDft.h>
+#include <pscf/mesh/MeshIterator.h>
+#include <pscf/mesh/Mesh.h>
+#include <pscf/crystal/shiftToMinimum.h>
 #include <util/containers/DArray.h>
+#include <util/containers/GArray.h>
 
 namespace Pscf { 
+
+   //since we are using member function of all of these forward declare is not
+   //enough
+
+   //template <int D> class Mesh;
+   template <int D> class UnitCell;
+   //template <int D> class RFieldDft; //needs definition of fftw_complex
+   //template <int D> class meshIterator;
+
 namespace Pssp
 { 
-   template <int D> class Mesh;
-   template <int D> class UnitCell;
-   template <int D> class RFieldDft;
 
    using namespace Util;
 
@@ -26,12 +37,14 @@ namespace Pssp
    */
    template <int D>
    class Basis {
-  
+   
+   public:
+      
       /**
       * A wavevector used in the construction of symmetry adapted basis functions.
       */ 
       class Wave {
-
+      public:
          // Coefficient of this wave within associated star basis function
          std::complex<double> coeff;
 
@@ -39,13 +52,16 @@ namespace Pssp
          double sqNorm;
 
          // Integer indices of this wavevector
-         IntVec<D> indices;
+         IntVec<D> indicesDft;
 
          // Index of star containing this wavevector
          int starId;
 
          // Is this wave represented implicitly in DFT of real field?
          bool implicit;
+         
+      //friends:
+         friend class Basis;
 
       };
   
@@ -58,7 +74,7 @@ namespace Pssp
       */ 
       class Star 
       {
-
+      public:
          /**
          * Number of wavevectors in the star.
          */
@@ -109,7 +125,7 @@ namespace Pssp
          * For invertFlag = 0 or 1, this is the first wave in the star.
          * For invertFlag = -1, this is the last wave in the star.
          */
-         IntVec<D> wave;
+         IntVec<D> waveBz;
 
          /**
          * Is this star cancelled, i.e., associated with a zero function?
@@ -118,6 +134,9 @@ namespace Pssp
          * associated with this star.
          */
          bool cancel;
+
+      //friends:
+         friend class Basis;
 
       };
 
@@ -131,7 +150,7 @@ namespace Pssp
       *
       * Proposal: Initially implementation functions correctly only if groupName == 'I'. 
       */
-      void makeBasis(IntVec<D> meshDimensions, const UnitCell<D>& unitCell, std::string groupName);
+      void makeBasis(const Mesh<D>& mesh, const UnitCell<D>& unitCell, std::string groupName);
      
       /**
       * Convert field from symmetry-adapted representation to complex DFT.
@@ -139,7 +158,7 @@ namespace Pssp
       * \param components coefficients of symmetry-adapted basis functions.
       * \param dft complex DFT representation of a field.
       */
-      void convertFieldComponentsToDFT(DArray<double> components, RFieldDft<D>& dft);   
+      void convertFieldComponentsToDFT(DArray<double>& components, RFieldDft<D>& dft);   
 
       /**
       * Convert DFT of real field to symmetry-adapted representation.
@@ -147,7 +166,7 @@ namespace Pssp
       * \param dft complex DFT representation of a field.
       * \param components coefficients of symmetry-adapted basis functions.
       */
-      void convertFieldDftToComponents(RFieldDft<D>& dft, DArray<double> components);   
+      void convertFieldDftToComponents(RFieldDft<D>& dft, DArray<double>& components);   
 
       // Accessors
 
@@ -180,14 +199,14 @@ namespace Pssp
       * Get a Star, access by integer index.
       */
       Star& star(int i);
-   
+
    private:
   
       /// Array of all Wave objects (all wavevectors)
       DArray<Wave> waves_;
 
       /// Array of Star objects (all stars of wavevectors).
-      DArray<Star> stars_;
+      GArray<Star> stars_;
    
       /// Indexing that allows identification by IntVec
       DArray<int> waveId_;
@@ -199,13 +218,33 @@ namespace Pssp
       int nStar_;
 
       /// Pointer to associated UnitCell<D>
-      UnitCell<D>* unitCellPtr_;
+      const UnitCell<D>* unitCellPtr_;
 
       /// Dimensions of associated spatial grid.
-      IntVec<D> meshDimensions_;
-   
+      //IntVec<D> meshDimensions_;
+      const Mesh<D>* mesh_;
+
    };
+
+   template <int D>
+   inline int Basis<D>::nWave() const
+   { return nWave_; }
+
+   template <int D>
+   inline int Basis<D>::nStar() const
+   { return nStar_; }
+
+   template <int D>
+   inline 
+   typename Basis<D>::Wave& Basis<D>::wave(int i)
+   { return waves_[i]; }
+
+   template <int D>
+   inline 
+   typename Basis<D>::Star& Basis<D>::star(int i)
+   { return stars_[i]; }
 
 }
 }
+#include "Basis.tpp"
 #endif
