@@ -171,7 +171,7 @@ namespace Pssp
 
 
    template <int D>
-   void Basis<D>::convertFieldComponentsToDFT(DArray<double>& components, RFieldDft<D>& dft)
+   void Basis<D>::convertFieldComponentsToDft(DArray<double>& components, RFieldDft<D>& dft)
    {
       std::complex<double> coeff;
       double z;
