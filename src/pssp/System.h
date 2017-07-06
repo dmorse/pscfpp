@@ -10,6 +10,7 @@
 
 #include <util/param/ParamComposite.h>     // base class
 #include <pssp/solvers/Mixture.h>          // member
+#include <pssp/basis/Basis.h>              // member
 #include <pscf/mesh/Mesh.h>                // member
 #include <pscf/crystal/UnitCell.h>         // member
 #include <pscf/homogeneous/Mixture.h>      // member
@@ -18,13 +19,12 @@
 #include <util/containers/Array.h>         // function parameter
 #include <pssp/field/RField.h>             // typedef
 
-namespace Pscf { class Interaction; }
+namespace Pscf { class ChiInteraction; }
 
 namespace Pscf {
 namespace Pssp
 {
-
-   class Iterator;
+   template <int D> class AmIterator;
    class Sweep;
    class SweepFactory;
 
@@ -128,28 +128,44 @@ namespace Pssp
       *
       * The array capacity is equal to the number of monomer types.
       */
-      DArray<WField>& wFields();
+      DArray<DArray <double> >& wFields();
 
       /**
       * Get chemical potential field for a specific monomer type.
       *
       * \param monomerId integer monomer type index
       */
-      WField& wField(int monomerId);
+      DArray<double>& wField(int monomerId);
+
+      DArray<WField>& wFieldGrids();
+
+      WField& wFieldGrid(int monomerId);
+
+      DArray<RFieldDft<D> >& wFieldDfts();
+
+      RFieldDft<D>& wFieldDft(int monomerId);
 
       /**
       * Get array of all chemical potential fields.
       *
       * The array capacity is equal to the number of monomer types.
       */
-      DArray<CField>& cFields();
+      DArray<DArray <double> >& cFields();
 
       /**
       * Get chemical potential field for a specific monomer type.
       *
       * \param monomerId integer monomer type index
       */
-      CField& cField(int monomerId);
+      DArray<double>& cField(int monomerId);
+
+      DArray<CField>& cFieldGrids();
+
+      CField& cFieldGrid(int monomerId);
+
+      DArray<RFieldDft<D> >& cFieldDfts();
+
+      RFieldDft<D>& cFieldDft(int monomerId);
 
       /**
       * Read chemical potential fields from file.
@@ -188,13 +204,20 @@ namespace Pssp
       /**
       * Get interaction (i.e., excess free energy model) by reference.
       */
-      Interaction& interaction();
+      ChiInteraction& interaction();
 
       /**
       * Get the Iterator by reference.
       */
-      Iterator& iterator();
+      //temporarily changed to allow testing on member functions
+      AmIterator<D>& iterator();
 
+      /**
+      * Get basis object by reference.
+      */
+      Basis<D>& basis();
+
+      FFT<D>& fft();
       /**
       * Get homogeneous mixture (for reference calculations).
       */
@@ -253,12 +276,22 @@ namespace Pssp
       /**
       * Pointer to Interaction (excess free energy model).
       */
-      Interaction* interactionPtr_;
+      ChiInteraction* interactionPtr_;
 
       /**
       * Pointer to an iterator.
       */
-      Iterator* iteratorPtr_;
+      AmIterator<D>* iteratorPtr_;
+
+      /**
+      * Pointer to a Basis object
+      */
+      Basis<D>* basisPtr_;
+
+      /**
+      * FFT object to be used by iterator
+      */
+      FFT<D> fft_;
 
       /**
       * Pointer to an Sweep object
@@ -275,14 +308,31 @@ namespace Pssp
       *
       * Indexed by monomer typeId, size = nMonomer.
       */
-      DArray<WField> wFields_;
+      DArray<DArray <double> > wFields_;
+
+      /**
+      * Array of chemical potential fields for monomer types.
+      *
+      * Indexed by monomer typeId, size = nMonomer.
+      */
+      DArray<WField> wFieldGrids_;
+
+      /**
+      * work space for chemical potential fields
+      *
+      */
+      DArray<RFieldDft<D> > wFieldDfts_;
 
       /**
       * Array of concentration fields for monomer types.
       *
       * Indexed by monomer typeId, size = nMonomer.
       */
-      DArray<CField> cFields_;
+      DArray<DArray <double> > cFields_;
+
+      DArray<CField> cFieldGrids_;
+
+      DArray<RFieldDft<D> > cFieldDfts_;
 
       /**
       * Work array (size = # of grid points).
@@ -383,7 +433,7 @@ namespace Pssp
    * Get the Interaction (excess free energy model).
    */
    template <int D>
-   inline Interaction& System<D>::interaction()
+   inline ChiInteraction& System<D>::interaction()
    {
       UTIL_ASSERT(interactionPtr_);
       return *interactionPtr_;
@@ -393,42 +443,94 @@ namespace Pssp
    * Get the Iterator.
    */
    template <int D>
-   inline Iterator& System<D>::iterator()
+   inline AmIterator<D>& System<D>::iterator()
    {
       UTIL_ASSERT(iteratorPtr_);
       return *iteratorPtr_;
    }
 
    /*
+   * Get the basis Object
+   */
+   template <int D>
+   inline Basis<D>& System<D>::basis()
+   {
+      UTIL_ASSERT(basisPtr_);
+      return *basisPtr_;
+   }
+
+   template <int D>
+   inline FFT<D>& System<D>::fft()
+   { return fft_; }
+
+   template <int D>
+   inline
+   DArray<DArray <double> >& System<D>::wFields()
+   { return wFields_; }
+
+   template <int D>
+   inline
+   DArray<double>& System<D>::wField(int id)
+   { return wFields_[id]; }
+   /*
    * Get an array of all monomer excess chemical potential fields.
    */
    template <int D>
    inline 
-   DArray< typename System<D>::WField >& System<D>::wFields()
-   {  return wFields_; }
+   DArray< typename System<D>::WField >& System<D>::wFieldGrids()
+   {  return wFieldGrids_; }
 
    /*
    * Get a single monomer excess chemical potential field.
    */
    template <int D>
    inline 
-   typename System<D>::WField& System<D>::wField(int id)
-   {  return wFields_[id]; }
+   typename System<D>::WField& System<D>::wFieldGrid(int id)
+   {  return wFieldGrids_[id]; }
 
+   template <int D>
+   inline
+   DArray<RFieldDft<D> >& System<D>::wFieldDfts()
+   { return wFieldDfts_; }
+
+   template <int D>
+   inline
+   RFieldDft<D>& System<D>::wFieldDft(int id)
+   { return wFieldDfts_[id]; }
+
+   template <int D>
+   inline
+   DArray<DArray <double> >& System<D>::cFields()
+   { return cFields_; }
+
+   template <int D>
+   inline
+   DArray<double>& System<D>::cField(int id)
+   { return cFields_[id]; }
+
+   template <int D>
+   inline
+   DArray<RFieldDft<D> >& System<D>::cFieldDfts()
+   { return cFieldDfts_; }
+
+   template <int D>
+   inline
+   RFieldDft<D>& System<D>::cFieldDft(int id)
+   { return cFieldDfts_[id]; }
    /*
    * Get array of all monomer concentration fields.
    */
    template <int D>
    inline
-   DArray< typename System<D>::CField >& System<D>::cFields()
-   {  return cFields_; }
+   DArray< typename System<D>::CField >& System<D>::cFieldGrids()
+   {  return cFieldGrids_; }
 
    /*
    * Get a single monomer concentration field.
    */
    template <int D>
-   inline typename System<D>::CField& System<D>::cField(int id)
-   {  return cFields_[id]; }
+   inline typename System<D>::CField& System<D>::cFieldGrid(int id)
+   {  return cFieldGrids_[id]; }
 
    /*
    * Get precomputed Helmoltz free energy per monomer / kT.

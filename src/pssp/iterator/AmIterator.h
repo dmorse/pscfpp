@@ -111,6 +111,7 @@ namespace Pssp
    	int nHist_;
 
       //maximum number of histories to convolute into a new solution
+      //AKA size of matrix
       int maxHist_;
 
    	///number of maximum iteration to perform
@@ -141,6 +142,9 @@ namespace Pssp
       using Iterator<D>::setClassName;
       using Iterator<D>::systemPtr_;
       using ParamComposite::read;
+
+   //friend:
+   //for testing purposes
 
 
 	};

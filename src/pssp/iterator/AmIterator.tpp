@@ -9,6 +9,7 @@
 */
 
 #include "AmIterator.h"
+#include <util/format/Dbl.h>
 
 namespace Pscf {
 namespace Pssp 
@@ -21,7 +22,8 @@ namespace Pssp
     : Iterator<D>(),
       epsilon_(0),
 		lambda_(0),
-		nHist_(0)
+      nHist_(0),
+		maxHist_(0)
 	{ setClassName("AmIterator"); }
 
    template <int D>
@@ -29,7 +31,8 @@ namespace Pssp
     : Iterator<D>(system),
    	epsilon_(0),
    	lambda_(0),
-   	nHist_(0)
+      nHist_(0),
+   	maxHist_(0)
    { setClassName("AmIterator"); }
 
    template <int D>
@@ -49,9 +52,8 @@ namespace Pssp
    template <int D>
    void AmIterator<D>::allocate()
    {
-   	devHists_.allocate(nHist_);
-      omHists_.allocate(nHist_);
-
+   	devHists_.allocate(maxHist_+1);
+      omHists_.allocate(maxHist_+1);
    	/*for(int i = 0; i < nMonomer; i++){
    		monomerDevs_[i].allocate(nHist_, nGrid);
    	}*/
@@ -83,7 +85,6 @@ namespace Pssp
       systemPtr_->mixture().compute(systemPtr_->wFieldGrids(), 
                                     systemPtr_->cFieldGrids());
       
-
       for(int i = 0; i < systemPtr_->mixture().nMonomer(); i++) {
          systemPtr_->fft().forwardTransform( systemPtr_->cFieldGrid(i),
                                              systemPtr_->cFieldDft(i) );
@@ -95,7 +96,7 @@ namespace Pssp
       //check for convergence else resolve SCFT equations with new Fields
       for(int itr = 1; itr <= maxItr_; itr++) {
          
-         if(itr < maxHist_ + 1) {
+         if(itr <= maxHist_) {
             lambda_ = 1.0 - pow (0.9, itr);
             nHist_ = itr-1;
          }
@@ -106,6 +107,8 @@ namespace Pssp
 
          computeDeviation();
 
+         //std::cout<<"iterataion number: "<<itr<<std::endl;
+         //std::cout<<"nHist_ : "<<nHist_<<std::endl;
          if(isConverged()) {
             return 0;
          }
@@ -113,20 +116,23 @@ namespace Pssp
 
             //resize history based matrix appropriately
             //consider making these working space local
-            if(itr < maxHist_ + 1) {
-               invertMatrix_.allocate(nHist_, nHist_);
-               coeffs_.allocate(nHist_);
-               vM_.allocate(nHist_);
+            if(itr <= maxHist_ + 1 ) {
+               if(nHist_ > 0){
+                  invertMatrix_.allocate(nHist_, nHist_);
+                  coeffs_.allocate(nHist_);
+                  vM_.allocate(nHist_);
+               }
             }
-
             minimizeCoeff(itr);
             buildOmega(itr);
 
-            if(itr < maxHist_){
+            if(itr <= maxHist_){
                //will deallocate when out of scope
-               invertMatrix_.deallocate();
-               coeffs_.deallocate();
-               vM_.deallocate();
+               if( nHist_ > 0){
+                  invertMatrix_.deallocate();
+                  coeffs_.deallocate();
+                  vM_.deallocate();
+               }
             }
 
             for(int j = 0; j < systemPtr_->mixture().nMonomer(); j++) {
@@ -136,7 +142,7 @@ namespace Pssp
                systemPtr_->fft().inverseTransform( systemPtr_->wFieldDft(j), 
                                                    systemPtr_->wFieldGrid(j) );
             }
-            //pseudo code here need to be fixed.
+
             systemPtr_->mixture().compute(systemPtr_->wFieldGrids(), 
                                           systemPtr_->cFieldGrids());
          }
@@ -150,6 +156,7 @@ namespace Pssp
    template <int D>
    void AmIterator<D>::computeDeviation()
 	{
+
       omHists_.append(systemPtr_->wFields());
 
       DArray< DArray<double> > tempDev;
@@ -162,7 +169,6 @@ namespace Pssp
             tempDev[i][j] = 0;
          }
       }
-
       //the form for this is slightly different for 3 species
       //Almost impossible to write good code here if using Interaction class
       //over ChiInteraction
@@ -170,10 +176,13 @@ namespace Pssp
       //to potentially speedup the code even with additional loops.
       DArray<double> temp;
       temp.allocate(systemPtr_->basis().nStar());
-      for(int i = 0; i < systemPtr_->basis().nStar(); i++) {
-         temp[i] = 0;
-      }
+
       for ( int i = 0; i < systemPtr_->mixture().nMonomer(); i++) {
+         
+         for(int j = 0; j < systemPtr_->basis().nStar(); j++) {
+            temp[j] = 0;
+         }
+
          for ( int j = 0; j < systemPtr_->mixture().nMonomer(); j++) {
             for ( int k = 0; k < systemPtr_->basis().nStar(); k++) {
                tempDev[i][k] += systemPtr_->interaction().chi(i,j) *
@@ -187,7 +196,6 @@ namespace Pssp
                              - systemPtr_->wField(i)[k] );
          }
       }
-
       /*for ( int i = 0; i < systemPtr_->mixture().nMonomer(); i++) {
          for (int j = 0; j < systemPtr_->basis().nStar(); j++) {
             temp = 0;
@@ -202,8 +210,16 @@ namespace Pssp
             tempDev[i][j] += temp - systemPtr_->wField(i)[j];
          }
       }*/
-
       devHists_.append(tempDev);
+
+      //test code for IteratorTest.testComputeDeviation
+      //should be all zero
+      /*for(int i = 0; i < systemPtr_->mixture().nMonomer();i++){
+         std::cout<<"THis is devfield of "<<i<<std::endl;
+         for(int j = 0; j < systemPtr_->basis().nStar();j++){
+            std::cout<<Dbl(devHists_[0][i][j])<<std::endl;
+         }
+      }*/
 	}
    
    template <int D>
@@ -215,12 +231,15 @@ namespace Pssp
 
       for ( int i = 0; i < systemPtr_->mixture().nMonomer(); i++) {
          for ( int j = 0; j < systemPtr_->basis().nStar(); j++) {
+            //std::cout<<"nMonomer: "<<i<<" nStar : "<<j<<std::endl;
             dError += devHists_[0][i][j] * devHists_[0][i][j];
+            //std::cout<<devHists_[0][i][j] * devHists_[0][i][j]<<std::endl;
             wError += systemPtr_->wField(i)[j] * systemPtr_->wField(i)[j];
+            //std::cout<<systemPtr_->wField(i)[j] * systemPtr_->wField(i)[j]<<std::endl;
          }
       }
       error = sqrt(dError / wError);
-
+      //std::cout<<"error "<<error<<std::endl;
       if( error < epsilon_)
          return true;
       else
@@ -234,6 +253,7 @@ namespace Pssp
          //do nothing
       }
       else {
+         //std::cout<<"What is the size of hist + 1? "<<devHists_.size()<<std::endl;
          for(int i = 0; i < nHist_; i++) {
             vM_[i] = 0;
             for(int j = 0; j < nHist_; j++) {
@@ -247,15 +267,15 @@ namespace Pssp
                for(int k = 0; k < systemPtr_->mixture().nMonomer(); k++) {
                   for(int l = 0; l < systemPtr_->basis().nStar(); l++) {
                      invertMatrix_(i,j) += 
-                        ( (devHists_[0][k][l] - devHists_[i][k][l]) *
-                          (devHists_[0][k][l] - devHists_[j][k][l]) );
+                        ( (devHists_[0][k][l] - devHists_[i+1][k][l]) *
+                          (devHists_[0][k][l] - devHists_[j+1][k][l]) );
                   }
                }
             }
 
             for(int j = 0; j < systemPtr_->mixture().nMonomer(); j++) {
                for(int k = 0; k < systemPtr_->basis().nStar(); k++) {
-                  vM_[i] += ( (devHists_[0][j][k] - devHists_[i][j][k]) *
+                  vM_[i] += ( (devHists_[0][j][k] - devHists_[i+1][j][k]) *
                                devHists_[0][j][k] );
                }
             }
@@ -270,6 +290,7 @@ namespace Pssp
             solver.allocate(nHist_);
             solver.computeLU(invertMatrix_);
             solver.solve(vM_, coeffs_);
+            //std::cout<<"at least it's solved right?"<<std::endl;
          }       
       }
    }
@@ -288,27 +309,37 @@ namespace Pssp
       else {
          //should be strictly correct. coeffs_ is a matrix of size 1 if itr ==2
 
+         //std::cout<<"omHists_"<<std::endl;
          for( int j = 0; j < systemPtr_->mixture().nMonomer(); j++ ) {
             for( int k = 0; k < systemPtr_->basis().nStar(); k++) {
                wArrays_[j][k] = omHists_[0][j][k];
                dArrays_[j][k] = devHists_[0][j][k];
+               //std::cout<<wArrays_[j][k]<<std::endl;
             }
          }
 
+         //std::cout<<"wArrays and dArrays"<<std::endl;
+         //std::cout<<"coeffs"<<std::endl;
          for(int i = 0; i < nHist_; i++) {
             for( int j = 0; j < systemPtr_->mixture().nMonomer(); j++) {
                for( int k = 0; k < systemPtr_->basis().nStar(); k++) {
-                  wArrays_[j][k] += coeffs_[i] * ( omHists_[i][j][k] - 
+                  wArrays_[j][k] += coeffs_[i] * ( omHists_[i+1][j][k] - 
                                                    omHists_[0][j][k] );
-                  dArrays_[j][k] += coeffs_[i] * ( devHists_[i][j][k] - 
+                  dArrays_[j][k] += coeffs_[i] * ( devHists_[i+1][j][k] - 
                                                    devHists_[0][j][k] );
+                  //std::cout<<coeffs_[i]<<std::endl;
+                  //std::cout<<wArrays_[j][k]<<std::endl;
+                  //std::cout<<dArrays_[j][k]<<std::endl;
                }
             }
          }
 
+
+         //std::cout<<"wFields"<<std::endl;
          for( int i = 0; i < systemPtr_->mixture().nMonomer(); i++) {
             for( int j = 0; j < systemPtr_->basis().nStar(); j++) {
               systemPtr_->wField(i)[j] = wArrays_[i][j] + lambda_ * dArrays_[i][j];
+              //std::cout<<systemPtr_->wField(i)[j]<<std::endl;
             }
          }
 
