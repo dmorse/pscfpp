@@ -74,8 +74,15 @@ namespace Pssp
       */
    	double epsilon();
 
+      /**
+      * Getter for the maximum number of field histories to 
+      * convolute into a new field
+      */
       int maxHist();
 
+      /**
+      * Getter for the maximum number of iteration before convergence
+      */
       int maxItr();
 
    	/**
@@ -126,7 +133,7 @@ namespace Pssp
       RingBuffer< DArray < DArray<double> > > omHists_;
 
    	/// Umn, matrix to be minimized
-   	DMatrix<double> invertMatrix_;//prefer a GMatrix here. Not available
+   	DMatrix<double> invertMatrix_;
 
    	/// Cn, coefficient to convolute previous histories with
    	DArray<double> coeffs_;

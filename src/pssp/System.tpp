@@ -197,6 +197,7 @@ namespace Pssp
 
       // Initialize iterator
       readParamComposite(in, iterator());
+      iterator().allocate();
 
       #if 0
       // Optionally instantiate a Sweep object

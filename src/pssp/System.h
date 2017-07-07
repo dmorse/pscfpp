@@ -124,7 +124,7 @@ namespace Pssp
       //@{
 
       /**
-      * Get array of all chemical potential fields.
+      * Get array of all chemical potential fields in star basis.
       *
       * The array capacity is equal to the number of monomer types.
       */
@@ -136,17 +136,27 @@ namespace Pssp
       * \param monomerId integer monomer type index
       */
       DArray<double>& wField(int monomerId);
-
+      
+      /**
+      * Get array of all chemical potential fields in cartesian space.
+      *
+      * The array capacity is equal to the number of monomer types.
+      */
       DArray<WField>& wFieldGrids();
 
       WField& wFieldGrid(int monomerId);
 
+      /**
+      * Get array of all chemical potential fields on k-space
+      *
+      * The array capacity is equal to the number of monomer types.
+      */
       DArray<RFieldDft<D> >& wFieldDfts();
 
       RFieldDft<D>& wFieldDft(int monomerId);
 
       /**
-      * Get array of all chemical potential fields.
+      * Get array of all chemical potential fields in star basis.
       *
       * The array capacity is equal to the number of monomer types.
       */
@@ -159,10 +169,20 @@ namespace Pssp
       */
       DArray<double>& cField(int monomerId);
 
+      /**
+      * Get array of all chemical potential fields in cartesian space.
+      *
+      * The array capacity is equal to the number of monomer types.
+      */
       DArray<CField>& cFieldGrids();
 
       CField& cFieldGrid(int monomerId);
 
+      /**
+      * Get array of all chemical potential fields in k-space.
+      *
+      * The array capacity is equal to the number of monomer types.
+      */
       DArray<RFieldDft<D> >& cFieldDfts();
 
       RFieldDft<D>& cFieldDft(int monomerId);

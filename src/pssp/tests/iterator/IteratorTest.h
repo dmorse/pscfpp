@@ -66,8 +66,7 @@ public:
 		sys.setOptions(5, argv);
 		sys.readParam();
 
-		//consider this doen automatically in system.tpp
-		sys.iterator().allocate();	
+		//Allocate done automatically in system.tpp
 	}
 
 	void testComputeDeviation()
@@ -127,7 +126,6 @@ public:
 		}
 		
 		//calculate deviation by hand();
-		sys.iterator().allocate();	
 		sys.iterator().computeDeviation();
 		
 		//print devHists_
@@ -196,7 +194,6 @@ public:
 		}
 		
 		//calculate deviation
-		sys.iterator().allocate();	
 		sys.iterator().computeDeviation();
 		
 		//should be zero so converged automatically
@@ -255,7 +252,6 @@ public:
 		}
 		
 		//calculate deviation by hand();
-		sys.iterator().allocate();	
 		sys.iterator().computeDeviation();
 		
 		//dev is not zero. check calculation by hand
@@ -296,10 +292,10 @@ public:
       	sys.basis().convertFieldDftToComponents(sys.wFieldDft(i),sys.wField(i));
       }
 
-		sys.iterator().allocate();	
-      int success = sys.iterator().solve();
+      int fail = sys.iterator().solve();
       std::cout<<std::endl;
-      std::cout<<"Iterator success? "<<success<<std::endl;
+      std::cout<<"Iterator fail? "<<fail<<std::endl;
+      TEST_ASSERT(!fail);
 	}
 };
 
