@@ -50,6 +50,7 @@ namespace Pssp
       homogeneous_(),
       interactionPtr_(0),
       iteratorPtr_(0),
+      basisPtr_(0),
       sweepPtr_(0),
       sweepFactoryPtr_(0),
       wFields_(),
@@ -67,7 +68,8 @@ namespace Pssp
 
       #ifdef PSCF_GSL
       interactionPtr_ = new ChiInteraction(); 
-      // iteratorPtr_ = new NrIterator(*this); 
+      iteratorPtr_ = new AmIterator<D>(this); 
+      basisPtr_ = new Basis<D>();
       #endif
       // sweepFactoryPtr_ = new SweepFactory(*this);
    }
@@ -161,35 +163,43 @@ namespace Pssp
       readParamComposite(in, mixture());
       hasMixture_ = true;
 
-      int nm = mixture().nMonomer(); 
-      int np = mixture().nPolymer(); 
+      //int nm = mixture().nMonomer(); 
+      //int np = mixture().nPolymer(); 
       //int ns = mixture().nSolvent(); 
-      int ns = 0;
+      //int ns = 0;
 
       // Initialize homogeneous object
       //homogeneous_.setNMolecule(np+ns);
       //homogeneous_.setNMonomer(nm);
       // initHomogeneous();
 
-      #if 0
       interaction().setNMonomer(mixture().nMonomer());
       readParamComposite(in, interaction());
 
-      read< Mesh<D> >(in, "mesh", mesh_);
+      in >> unitCell_;
+      hasUnitCell_ = true;
+      
+      IntVec<D> d;
+      in >> d;
+      mesh_.setDimensions(d);
       hasMesh_ = true;
 
       mixture().setMesh(mesh());
-      allocateFields();
-      allocateFields();
+      mixture().setupUnitCell(unitCell());
 
-      read< UnitCell<D> >(in, "unit", unitCell_);
-      hasUnitCell_ = true;
-      #endif
+      std::string groupName;
+      in >> groupName;
+      in >> groupName;
+      basis().makeBasis(mesh(), unitCell(), groupName);
 
-      #if 0
+      allocateFields();
+      hasFields_ = true;
+
       // Initialize iterator
       readParamComposite(in, iterator());
+      iterator().allocate();
 
+      #if 0
       // Optionally instantiate a Sweep object
       readOptional<bool>(in, "hasSweep", hasSweep_);
       if (hasSweep_) {
@@ -211,7 +221,7 @@ namespace Pssp
    template <int D>
    void System<D>::readParam(std::istream& in)
    {
-      readBegin(in, className().c_str());  
+      readBegin(in, className().c_str());
       readParameters(in);  
       readEnd(in);  
    }
@@ -236,19 +246,129 @@ namespace Pssp
       // Allocate wFields and cFields
       int nMonomer = mixture().nMonomer();
       wFields_.allocate(nMonomer);
+      wFieldGrids_.allocate(nMonomer);
+      wFieldDfts_.allocate(nMonomer);
+
       cFields_.allocate(nMonomer);
+      cFieldGrids_.allocate(nMonomer);
+      cFieldDfts_.allocate(nMonomer);
+      
+      //size of grid is based on basis function
       for (int i = 0; i < nMonomer; ++i) {
-         wField(i).allocate(mesh().dimensions());
-         cField(i).allocate(mesh().dimensions());
+         wField(i).allocate(basis().nStar());
+         wFieldGrid(i).allocate(mesh().dimensions());
+         wFieldDft(i).allocate(mesh().dimensions());
+
+         cField(i).allocate(basis().nStar());
+         cFieldGrid(i).allocate(mesh().dimensions());
+         cFieldDft(i).allocate(mesh().dimensions());
       }
       hasFields_ = true;
    }
 
-   #if 0
+   
    /*
    * Read and execute commands from a specified command file.
    */
-   void System<D>::readCommands(std::istream &in)
+   //will add more commands as they are tested
+   template <int D>
+   void System<D>::readCommands(std::istream &in) 
+   {
+      UTIL_CHECK(hasFields_);
+
+      std::string command;
+      std::string filename;
+
+      bool readNext = true;
+
+      while (readNext) {
+
+         in >> command;
+         Log::file() << command;
+
+         if (command == "FINISH") {
+            Log::file() << std::endl;
+            readNext = false;
+         } else
+         if (command == "READ_WFIELDS") {
+            in >> filename;
+            Log::file() << " " << Str(filename, 20) <<std::endl;
+
+            std::ifstream inFile;
+            fileMaster().openInputFile(filename, inFile);
+            //readWFields(inFile);
+            inFile.close();
+
+         } else
+         {
+            Log::file() << "  Error: Unknown command  " << command << std::endl;
+            readNext = false;
+         }
+      }
+   }
+
+   /*
+   * Read and execute commands from the default command file.
+   */
+   template <int D>
+   void System<D>::readCommands()
+   {  
+      if (fileMaster().commandFileName().empty()) {
+         UTIL_THROW("Empty command file name");
+      }
+      readCommands(fileMaster().commandFile()); 
+   }
+
+   /*template <int D>
+   void System<D>::readWFields(std::istream &in)
+   {
+      UTIL_CHECK(hasMesh_);
+
+      // Read grid dimensions
+      std::string label;
+      int nx, nm;
+      in >> label;
+      UTIL_CHECK(label == "nx");
+      in >> nx;
+      UTIL_CHECK(nx > 0);
+      UTIL_CHECK(nx == domain().nx());
+      in >> label;
+      UTIL_CHECK (label == "nm");
+      in >> nm;
+      UTIL_CHECK(nm > 0);
+      UTIL_CHECK(nm == mixture().nMonomer());
+
+      // Read fields
+      int i,j, idum;
+      for (i = 0; i < nx; ++i) {
+         in >> idum;
+         UTIL_CHECK(idum == i);
+         for (j = 0; j < nm; ++j) {
+            in >> wFields_[j][i];
+         }
+      }
+
+      #if 0
+      // Determine if all species are treated in closed ensemble.
+      bool isCanonical = true;
+      for (i = 0; i < mixture().nPolymer(); ++i) {
+         if (mixture().polymer(i).ensemble == Species::Open) {
+            isCanonical = false;
+         }
+      }
+
+      if (isCanonical) {
+         double shift = wFields_[nm - 1][nx-1];
+         for (i = 0; i < nx; ++i) {
+            for (j = 0; j < nm; ++j) {
+               wFields_[j][i] -= shift;
+            }
+         }
+      }
+      #endif
+
+   }*/
+   /*void System<D>::readCommands(std::istream &in)
    template <int D>
    {
       //if (!isInitialized_) {
@@ -350,19 +470,10 @@ namespace Pssp
          }
 
       }
-   }
+   }*/
+   #if 0
 
-   /*
-   * Read and execute commands from the default command file.
-   */
-   template <int D>
-   void System<D>::readCommands()
-   {  
-      if (fileMaster().commandFileName().empty()) {
-         UTIL_THROW("Empty command file name");
-      }
-      readCommands(fileMaster().commandFile()); 
-   }
+
 
    /*
    * Compute Helmoltz free energy and pressure
@@ -419,55 +530,7 @@ namespace Pssp
 
    }
 
-   template <int D>
-   void System<D>::readWFields(std::istream &in)
-   {
-      UTIL_CHECK(hasMesh_);
-
-      // Read grid dimensions
-      std::string label;
-      int nx, nm;
-      in >> label;
-      UTIL_CHECK(label == "nx");
-      in >> nx;
-      UTIL_CHECK(nx > 0);
-      UTIL_CHECK(nx == domain().nx());
-      in >> label;
-      UTIL_CHECK (label == "nm");
-      in >> nm;
-      UTIL_CHECK(nm > 0);
-      UTIL_CHECK(nm == mixture().nMonomer());
-
-      // Read fields
-      int i,j, idum;
-      for (i = 0; i < nx; ++i) {
-         in >> idum;
-         UTIL_CHECK(idum == i);
-         for (j = 0; j < nm; ++j) {
-            in >> wFields_[j][i];
-         }
-      }
-
-      #if 0
-      // Determine if all species are treated in closed ensemble.
-      bool isCanonical = true;
-      for (i = 0; i < mixture().nPolymer(); ++i) {
-         if (mixture().polymer(i).ensemble == Species::Open) {
-            isCanonical = false;
-         }
-      }
-
-      if (isCanonical) {
-         double shift = wFields_[nm - 1][nx-1];
-         for (i = 0; i < nx; ++i) {
-            for (j = 0; j < nm; ++j) {
-               wFields_[j][i] -= shift;
-            }
-         }
-      }
-      #endif
-
-   }
+   
 
    template <int D>
    void System<D>::writeFields(std::ostream &out, 

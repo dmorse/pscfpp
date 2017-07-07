@@ -158,7 +158,7 @@ namespace Pssp
       * \param components coefficients of symmetry-adapted basis functions.
       * \param dft complex DFT representation of a field.
       */
-      void convertFieldComponentsToDFT(DArray<double>& components, RFieldDft<D>& dft);   
+      void convertFieldComponentsToDft(DArray<double>& components, RFieldDft<D>& dft);   
 
       /**
       * Convert DFT of real field to symmetry-adapted representation.
