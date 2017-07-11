@@ -1,9 +1,14 @@
 include $(SRC_DIR)/pssp/basis/sources.mk
 include $(SRC_DIR)/pssp/field/sources.mk
+include $(SRC_DIR)/pssp/iterator/sources.mk
+include $(SRC_DIR)/pssp/solvers/sources.mk
 
 pssp_= \
   $(pssp_basis_) \
-  $(pssp_field_) 
+  $(pssp_field_) \
+  $(pssp_solvers_) \
+  $(pssp_iterator_)
+
 
 pssp_SRCS=\
      $(addprefix $(SRC_DIR)/, $(pssp_))

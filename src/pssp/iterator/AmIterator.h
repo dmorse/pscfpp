@@ -14,6 +14,7 @@
 #include <util/containers/DArray.h>
 #include <util/containers/DMatrix.h>
 #include <util/containers/RingBuffer.h>
+#include <pssp/field/RField.h>
 
 
 namespace Pscf {
@@ -31,8 +32,8 @@ namespace Pssp
 	{
    public:
       
-      typedef typename Iterator<D>::WField WField;
-      typedef typename Iterator<D>::CField CField;
+      typedef RField<D> WField;
+      typedef RField<D> CField;
       /**
       * Default constructor
       */

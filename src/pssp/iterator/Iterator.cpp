@@ -6,7 +6,6 @@
 */
 
 #include "Iterator.h"
-#include <pssp/System.h>
 
 
 namespace Pscf {

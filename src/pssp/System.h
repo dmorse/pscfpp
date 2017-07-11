@@ -11,6 +11,7 @@
 #include <util/param/ParamComposite.h>     // base class
 #include <pssp/solvers/Mixture.h>          // member
 #include <pssp/basis/Basis.h>              // member
+#include <pssp/iterator/AmIterator.h>
 #include <pscf/mesh/Mesh.h>                // member
 #include <pscf/crystal/UnitCell.h>         // member
 #include <pscf/homogeneous/Mixture.h>      // member
@@ -200,7 +201,7 @@ namespace Pssp
       * \param out output stream (i.e., output file)
       * \param fields array of fields for different species
       */
-      void writeFields(std::ostream& out, Array<Field> const & fields);
+      void writeFields(std::ostream& out, DArray< DArray <double> > const & fields);
 
       //@}
       /// \name Accessors (get objects by reference)
