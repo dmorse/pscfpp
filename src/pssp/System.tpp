@@ -357,7 +357,7 @@ namespace Pssp
 
             std::ofstream outFile;
             fileMaster().openOutputFile(outFileName, outFile);
-            writeField(outFile, wFieldGrids_, mesh().size(), mixture().nMonomer());
+            writeRFields(outFile, wFieldGrids());
             outFile.close();
 
          } else
@@ -373,7 +373,7 @@ namespace Pssp
 
             std::ifstream inFile;
             fileMaster().openInputFile(inFileName, inFile);
-            readWField(inFile, wFieldGrids());
+            readRFields(inFile);
             inFile.close();
 
             //convert to fields
@@ -384,11 +384,11 @@ namespace Pssp
 
             std::ofstream outFile;
             fileMaster().openOutputFile(outFileName, outFile);
-            writeField(outFile, wFieldGrids_, mesh().size(), mixture().nMonomer());
+            writeRFields(outFile, wFieldGrids());
             outFile.close();
 
-         } //else
-         /*if (command == "KGRID_TO_RGRID") {
+         } else
+         if (command == "KGRID_TO_RGRID") {
             std::string inFileName;
             std::string outFileName;
 
@@ -400,8 +400,8 @@ namespace Pssp
 
             std::ifstream inFile;
             fileMaster().openInputFile(inFileName, inFile);
-            //need to change this
-            readWField(inFile, wFieldDfts());
+            
+            readKFields(inFile);
             inFile.close();
 
             //convert to rgrid
@@ -411,11 +411,48 @@ namespace Pssp
 
             std::ofstream outFile;
             fileMaster().openOutputFile(outFileName, outFile);
-            writeField(outFile, wFieldGrids_, mesh().size(), mixture().nMonomer());
+            writeRFields(outFile, wFieldGrid());
             outFile.close();
 
-         }*/ else 
+         } else 
          if (command == "RHO_TO_OMEGA") {
+            std::string inFileName;
+            std::string outFileName;
+
+            in >> inFileName;
+            Log::file() << " " << Str(inFileName, 20) <<std::endl;
+
+            in >> outFileName;
+            Log::file() << " " << Str(outFileName, 20) << std::endl;
+
+            std::ifstream inFile;
+            fileMaster().openInputFile(inFileName, inFile);
+
+            std::string label;
+            int nStar,nM;
+            inFile >> label;
+            inFile >> nStar;
+            inFile >> label;
+            inFile >> nM;
+
+            int idum;
+            for (int i = 0; i < nStar; ++i) {
+               in >> idum;
+               for (int j = 0; j < nM; ++j) {
+                  inFile >> cFields(j)[i];
+               }
+            }
+
+            inFile.close();
+
+            for (int i = 0; i < mixture().nMonomer(); ++i) {
+               interaction().computeW(cFields(i), wField(i));
+            }
+
+            std::ofstream outFile;
+            fileMaster().openOutputFile(outFileName, outFile);
+            writeFields(outFile, wFields());
+            outFile.close();
 
          } else {
             Log::file() << "  Error: Unknown command  " << command << std::endl;
@@ -436,7 +473,7 @@ namespace Pssp
       readCommands(fileMaster().commandFile()); 
    }
 
-   //need to change this too
+   
    template <int D>
    void System<D>::readWFields(std::istream &in)
    {
@@ -489,28 +526,67 @@ namespace Pssp
 
    }
    
-   template <typename T>
-   void readWField(std::istream &in, T& fields)
+   template <int D>
+   void System<D>::readRFields(std::istream &in)
    {
+      UTIL_CHECK(hasMesh_);
 
-
-      // Read grid dimensions
       std::string label;
-      int nSize, nM;
+      IntVec<D> nGrid;
+      int nM;
 
       in >> label;
-      in >> nSize;
+      UTIL_CHECK(label == "nGrid");
+      in >> nGrid;
+      UTIL_CHECK(nGrid == mesh().dimensions());
 
       in >> label;
+      UTIL_CHECK(label == "nM");
       in >> nM;
+      UTIL_CHECK(nM > 0);
+      UTIL_CHECK(nM == mixture().nMonomer());
 
-      // Read fields
-      int i,j, idum;
-      for (i = 0; i < nSize; ++i) {
+      // Read Fields;
+      int idum;
+      MeshIterator<D> itr(mesh().dimensions());
+      for (itr.begin(); !itr.atEnd(); ++itr) {
          in >> idum;
-         UTIL_CHECK(idum == i);
-         for (j = 0; j < nM; ++j) {
-            in >> fields[j][i];
+         for (int i = 0; i < nM; ++i) {
+            in >> wFieldGrids_[i][itr.rank()];
+         }
+      }
+   }
+
+   //realistically not used
+   template <int D>
+   void System<D>::readKFields(std::istream &in)
+   {
+      UTIL_CHECK(hasMesh_);
+
+      std::string label;
+      IntVec<D> nGrid;
+      int nM;
+
+      in >> label;
+      UTIL_CHECK(label == "nGrid");
+      in >> nGrid;
+      UTIL_CHECK(nGrid == mesh().dimensions());
+
+      in >> label;
+      UTIL_CHECK(label == "nM");
+      in >> nM;
+      UTIL_CHECK(nM > 0);
+      UTIL_CHECK(nM == mixture().nMonomer());
+
+      // Read Fields;
+      int idum;
+      MeshIterator<D> itr(mesh().dimensions());
+      for (itr.begin(); !itr.atEnd(); ++itr) {
+         in >> idum;
+         for (int i = 0; i < nM; ++i) {
+            for (int j = 0; j < 2; ++j) {
+               in >> wFieldDfts_[i][itr.rank()][j];
+            }
          }
       }
    }
@@ -535,27 +611,45 @@ namespace Pssp
       }
    }
 
-   //Kind of a global function within the namespace as workaround until a proper
-   //field io class can be made.
-   template <typename T>
-   void writeField(std::ostream &out, T const &  fields, int nStar_, int nM_)
+   template <int D>
+   void System<D>::writeRFields(std::ostream &out,
+                           DArray<RField<D> > const& fields)
    {
-      int i, j;
-      int nStar = nStar_;
-      int nM = nM_;
-      out << "nStar     "  <<  nStar           << std::endl;
-      out << "nM     "     <<  nM              << std::endl;
+      int nM = mixture().nMonomer();
+      MeshIterator<D> itr(mesh().dimensions());
+      out << "nGrid    " <<  mesh().dimensions() << std::endl;
+      out << "nM    "    <<  nM                << std::endl;
 
-      // Write fields
-      for (i = 0; i < nStar; ++i) {
-         out << Int(i, 5);
-         for (j = 0; j < nM; ++j) {
-            out << "  " << Dbl(fields[j][i], 18, 11);
+      // Write FIelds
+      for (itr.begin(); !itr.atEnd(); ++itr) {
+         out << Int(itr.rank(), 5);
+         for (int j = 0; j < nM; ++j) {
+            out << "  " << Dbl(fields[j][itr.rank()], 18, 11);
          }
+
          out << std::endl;
       }
    }
 
+   template <int D>
+   void System<D>::writeKFields(std::ostream &out,
+                           DArray<RFieldDft<D> > const& fields)
+   {
+      int nM = mixture().nMonomer();
+      MeshIterator<D> itr(mesh().dimensions());
+      out << "nGrid   " << mesh().dimensions() << std::endl;
+      out << "nM      " << nM                << std::endl;
+
+      //write Fields
+      for (itr.begin(); !itr.atEd(); ++itr) {
+         out << Int(itr.rank(), 5);
+         for (int j = 0; j < nM; ++j) {
+               out << "  " << Dbl(fields[j][itr.rank()][0], 18, 11)
+                   << Dbl(fields[j][itr.rank()][1], 18, 11);
+         }
+         out << std::endl;
+      }
+   }
 
    template <int D>
    void System<D>::initHomogeneous()
@@ -698,110 +792,6 @@ namespace Pssp
       out << std::endl;
    }
 
-
-   /*void System<D>::readCommands(std::istream &in)
-   template <int D>
-   {
-      //if (!isInitialized_) {
-      //    UTIL_THROW("McSimulation is not initialized");
-      //}
-
-      std::string command;
-      std::string filename;
-      std::ifstream inputFile;
-      std::ofstream outputFile;
-
-      std::istream& inBuffer = in;
-
-      bool readNext = true;
-      while (readNext) {
-
-         inBuffer >> command;
-         Log::file() << command;
-
-         if (command == "FINISH") {
-            Log::file() << std::endl;
-            readNext = false;
-         } else
-         if (command == "READ_WFIELDS") {
-            inBuffer >> filename;
-            Log::file() << "  " << Str(filename, 20) << std::endl;
-            fileMaster().openInputFile(filename, inputFile);
-            readWFields(inputFile);
-            inputFile.close();
-         } else
-         if (command == "WRITE_WFIELDS") {
-            inBuffer >> filename;
-            Log::file() << "  " << Str(filename, 20) << std::endl;
-            fileMaster().openOutputFile(filename, outputFile);
-            writeFields(outputFile, wFields_);
-            outputFile.close();
-         } else
-         if (command == "WRITE_CFIELDS") {
-            inBuffer >> filename;
-            Log::file() << "  " << Str(filename, 20) << std::endl;
-            fileMaster().openOutputFile(filename, outputFile);
-            writeFields(outputFile, cFields_);
-            outputFile.close();
-         } else
-         if (command == "REMESH_WFIELDS") {
-            int nx;
-            inBuffer >> nx;
-            Log::file() << std::endl;
-            Log::file() << "nx      = " << Int(nx, 20) << std::endl;
-            inBuffer >> filename;
-            Log::file() << "outfile = " << Str(filename, 20) << std::endl;
-            fileMaster().openOutputFile(filename, outputFile);
-            FieldEditor editor(*this);
-            editor.remesh(wFields(), nx, outputFile);
-            outputFile.close();
-         } else
-         if (command == "EXTEND_WFIELDS") {
-            int m;
-            inBuffer >> m;
-            Log::file() << std::endl;
-            Log::file() << "m       = " << Int(m, 20) << std::endl;
-            inBuffer >> filename;
-            Log::file() << "outfile = " << Str(filename, 20) << std::endl;
-            fileMaster().openOutputFile(filename, outputFile);
-            FieldEditor editor(*this);
-            editor.extend(wFields(), m, outputFile);
-            outputFile.close();
-         } else
-         if (command == "ITERATE") {
-            Log::file() << std::endl;
-            Log::file() << std::endl;
-
-            iterator().solve();
-            outputThermo(Log::file());
-
-         } else 
-         if (command == "COMPARE_HOMOGENEOUS") {
-            int mode;
-            inBuffer >> mode;
-            Log::file() << std::endl;
-            Log::file() << "mode       = " << mode << std::endl;
-
-            HomogeneousComparison comparison(*this);
-            comparison.compute(mode);
-            comparison.output(mode, Log::file());
-
-         } else 
-         if (command == "SWEEP") {
-
-            if (!hasSweep_) {
-               UTIL_THROW("System has no Sweep object");
-            }
-            UTIL_CHECK(sweepPtr_);
-            sweepPtr_->solve();
-
-         } else {
-            Log::file() << "  Error: Unknown command  " << std::endl;
-            readNext = false;
-         }
-
-      }
-   }*/
    #if 0
 
 

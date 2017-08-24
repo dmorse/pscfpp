@@ -195,6 +195,9 @@ namespace Pssp
       */
       void readWFields(std::istream& in);
 
+      void readRFields(std::istream& in);
+
+      void readKFields(std::istream& in);
       /**
       * Write concentration or chemical potential fields to file.
       *
@@ -202,6 +205,10 @@ namespace Pssp
       * \param fields array of fields for different species
       */
       void writeFields(std::ostream& out, DArray< DArray <double> > const & fields);
+
+      void writeRFields(std::ostream& out, DArray< RField<D> > const& fields);
+
+      void writeKFields(std::ostream& out, DArray< RFieldDft<D> > const& fields);
 
       //@}
       /// \name Accessors (get objects by reference)

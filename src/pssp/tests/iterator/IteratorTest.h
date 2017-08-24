@@ -365,7 +365,7 @@ public:
 
       std::ofstream outFile;
       FileMaster().openOutputFile("omegaGrid.o", outFile);
-      writeFields(outFile, sys.wFieldGrids(), sys.mesh().size(), sys.mixture().nMonomer());
+      sys.writeRFields(outFile, sys.wFieldGrids());
       outFile.close();
 
       //compare log with omegaGrid.o
