@@ -9,12 +9,14 @@
 */
 
 #include <util/param/ParamComposite.h>    // base class
-#include <pssp/System.h>
 #include <util/global.h>                  
 
 namespace Pscf {
 namespace Pssp
 {
+
+   template <int D>
+   class System;
 
    using namespace Util;
 
@@ -29,8 +31,6 @@ namespace Pssp
 
    public:
 
-      typedef typename Propagator<D>::WField WField;
-      typedef typename Propagator<D>::CField CField;
       /**
       * Default constructor.
       */

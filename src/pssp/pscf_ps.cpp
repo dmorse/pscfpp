@@ -47,16 +47,16 @@
 
 int main(int argc, char **argv)
 {
-   Pscf::Pssp::System<1> system;
+   Pscf::Pssp::System<3> system;
 
    // Process command line options
-   //system.setOptions(argc, argv);
+   system.setOptions(argc, argv);
 
    // Read parameters from default parameter file
-   //system.readParam();
+   system.readParam();
 
    // Read command script to run system
-   //system.readCommands();
+  system.readCommands();
 
    return 0;
 }

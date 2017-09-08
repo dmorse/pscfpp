@@ -163,15 +163,15 @@ namespace Pssp
       readParamComposite(in, mixture());
       hasMixture_ = true;
 
-      //int nm = mixture().nMonomer(); 
-      //int np = mixture().nPolymer(); 
+      int nm = mixture().nMonomer(); 
+      int np = mixture().nPolymer(); 
       //int ns = mixture().nSolvent(); 
-      //int ns = 0;
+      int ns = 0;
 
       // Initialize homogeneous object
-      //homogeneous_.setNMolecule(np+ns);
-      //homogeneous_.setNMonomer(nm);
-      // initHomogeneous();
+      homogeneous_.setNMolecule(np+ns);
+      homogeneous_.setNMonomer(nm);
+      initHomogeneous();
 
       interaction().setNMonomer(mixture().nMonomer());
       readParamComposite(in, interaction());
@@ -296,11 +296,165 @@ namespace Pssp
 
             std::ifstream inFile;
             fileMaster().openInputFile(filename, inFile);
-            //readWFields(inFile);
+            readWFields(inFile);
             inFile.close();
 
          } else
-         {
+         if (command == "WRITE_WFIELDS") {
+            in >> filename;
+            Log::file() << "  " << Str(filename, 20) << std::endl;
+
+            std::ofstream outFile;
+            fileMaster().openOutputFile(filename, outFile);
+            writeFields(outFile, wFields_);
+            outFile.close();
+
+         } else 
+         if (command == "WRITE_CFIELDS") {
+
+            in >> filename;
+            Log::file() << "  " << Str(filename, 20) << std::endl;
+
+            std::ofstream outFile;
+            fileMaster().openOutputFile(filename, outFile);
+            writeFields(outFile, cFields_);
+            outFile.close();
+
+         } else
+         if (command == "ITERATE") {
+            Log::file() << std::endl;
+            Log::file() << std::endl;
+
+            int fail = iterator().solve();
+            if (!fail) {
+               computeFreeEnergy();
+               outputThermo(Log::file());
+               //do something?
+            }
+            //outputThermo(Log::file());
+
+         } else
+         if (command == "FIELD_TO_RGRID") {
+            std::string inFileName;
+            std::string outFileName;
+
+            in >> inFileName;
+            Log::file() << " " << Str(inFileName, 20) <<std::endl;
+
+            in >> outFileName;
+            Log::file() << " " << Str(outFileName, 20) <<std::endl;
+
+            std::ifstream inFile;
+            fileMaster().openInputFile(inFileName, inFile);
+            readWFields(inFile);
+            inFile.close();
+
+            //convert to rgrid
+            for (int i = 0; i < mixture().nMonomer(); ++i) {
+               basis().convertFieldComponentsToDft(wField(i), wFieldDft(i));
+               fft().inverseTransform(wFieldDft(i), wFieldGrid(i));
+            }
+
+            std::ofstream outFile;
+            fileMaster().openOutputFile(outFileName, outFile);
+            writeRFields(outFile, wFieldGrids());
+            outFile.close();
+
+         } else
+         if (command == "RGRID_TO_FIELD") {
+            std::string inFileName;
+            std::string outFileName;
+
+            in >> inFileName;
+            Log::file() << " " << Str(inFileName, 20) <<std::endl;
+
+            in >> outFileName;
+            Log::file() << " " << Str(outFileName, 20) <<std::endl;
+
+            std::ifstream inFile;
+            fileMaster().openInputFile(inFileName, inFile);
+            readRFields(inFile);
+            inFile.close();
+
+            //convert to fields
+            for (int i = 0; i < mixture().nMonomer(); ++i) {
+               fft().forwardTransform(wFieldGrid(i), wFieldDft(i));
+               basis().convertFieldDftToComponents(wFieldDft(i), wField(i));
+            }
+
+            std::ofstream outFile;
+            fileMaster().openOutputFile(outFileName, outFile);
+            writeRFields(outFile, wFieldGrids());
+            outFile.close();
+
+         } else
+         if (command == "KGRID_TO_RGRID") {
+            std::string inFileName;
+            std::string outFileName;
+
+            in >> inFileName;
+            Log::file() << " " << Str(inFileName, 20) <<std::endl;
+
+            in >> outFileName;
+            Log::file() << " " << Str(outFileName, 20) <<std::endl;
+
+            std::ifstream inFile;
+            fileMaster().openInputFile(inFileName, inFile);
+            
+            readKFields(inFile);
+            inFile.close();
+
+            //convert to rgrid
+            for (int i = 0; i < mixture().nMonomer(); ++i) {
+               fft().inverseTransform(wFieldDft(i), wFieldGrid(i));
+            }
+
+            std::ofstream outFile;
+            fileMaster().openOutputFile(outFileName, outFile);
+            writeRFields(outFile, wFieldGrid());
+            outFile.close();
+
+         } else 
+         if (command == "RHO_TO_OMEGA") {
+            std::string inFileName;
+            std::string outFileName;
+
+            in >> inFileName;
+            Log::file() << " " << Str(inFileName, 20) <<std::endl;
+
+            in >> outFileName;
+            Log::file() << " " << Str(outFileName, 20) << std::endl;
+
+            std::ifstream inFile;
+            fileMaster().openInputFile(inFileName, inFile);
+
+            std::string label;
+            int nStar,nM;
+            inFile >> label;
+            inFile >> nStar;
+            inFile >> label;
+            inFile >> nM;
+
+            int idum;
+            for (int i = 0; i < nStar; ++i) {
+               in >> idum;
+               for (int j = 0; j < nM; ++j) {
+                  inFile >> cFields(j)[i];
+               }
+            }
+
+            inFile.close();
+
+            for (int i = 0; i < mixture().nMonomer(); ++i) {
+               interaction().computeW(cFields(i), wField(i));
+            }
+
+            std::ofstream outFile;
+            fileMaster().openOutputFile(outFileName, outFile);
+            writeFields(outFile, wFields());
+            outFile.close();
+
+         } else {
             Log::file() << "  Error: Unknown command  " << command << std::endl;
             readNext = false;
          }
@@ -319,31 +473,34 @@ namespace Pssp
       readCommands(fileMaster().commandFile()); 
    }
 
-   /*template <int D>
+   
+   template <int D>
    void System<D>::readWFields(std::istream &in)
    {
       UTIL_CHECK(hasMesh_);
 
       // Read grid dimensions
       std::string label;
-      int nx, nm;
+      int nStar, nM;
+
       in >> label;
-      UTIL_CHECK(label == "nx");
-      in >> nx;
-      UTIL_CHECK(nx > 0);
-      UTIL_CHECK(nx == domain().nx());
+      UTIL_CHECK(label == "nStar");
+      in >> nStar;
+      UTIL_CHECK(nStar > 0);
+      UTIL_CHECK(nStar == basis().nStar());
+
       in >> label;
-      UTIL_CHECK (label == "nm");
-      in >> nm;
-      UTIL_CHECK(nm > 0);
-      UTIL_CHECK(nm == mixture().nMonomer());
+      UTIL_CHECK (label == "nM");
+      in >> nM;
+      UTIL_CHECK(nM > 0);
+      UTIL_CHECK(nM == mixture().nMonomer());
 
       // Read fields
       int i,j, idum;
-      for (i = 0; i < nx; ++i) {
+      for (i = 0; i < nStar; ++i) {
          in >> idum;
          UTIL_CHECK(idum == i);
-         for (j = 0; j < nm; ++j) {
+         for (j = 0; j < nM; ++j) {
             in >> wFields_[j][i];
          }
       }
@@ -367,110 +524,274 @@ namespace Pssp
       }
       #endif
 
-   }*/
-   /*void System<D>::readCommands(std::istream &in)
+   }
+   
    template <int D>
+   void System<D>::readRFields(std::istream &in)
    {
-      //if (!isInitialized_) {
-      //    UTIL_THROW("McSimulation is not initialized");
-      //}
+      UTIL_CHECK(hasMesh_);
 
-      std::string command;
-      std::string filename;
-      std::ifstream inputFile;
-      std::ofstream outputFile;
+      std::string label;
+      IntVec<D> nGrid;
+      int nM;
 
-      std::istream& inBuffer = in;
+      in >> label;
+      UTIL_CHECK(label == "nGrid");
+      in >> nGrid;
+      UTIL_CHECK(nGrid == mesh().dimensions());
 
-      bool readNext = true;
-      while (readNext) {
+      in >> label;
+      UTIL_CHECK(label == "nM");
+      in >> nM;
+      UTIL_CHECK(nM > 0);
+      UTIL_CHECK(nM == mixture().nMonomer());
 
-         inBuffer >> command;
-         Log::file() << command;
+      // Read Fields;
+      int idum;
+      MeshIterator<D> itr(mesh().dimensions());
+      for (itr.begin(); !itr.atEnd(); ++itr) {
+         in >> idum;
+         for (int i = 0; i < nM; ++i) {
+            in >> wFieldGrids_[i][itr.rank()];
+         }
+      }
+   }
 
-         if (command == "FINISH") {
-            Log::file() << std::endl;
-            readNext = false;
-         } else
-         if (command == "READ_WFIELDS") {
-            inBuffer >> filename;
-            Log::file() << "  " << Str(filename, 20) << std::endl;
-            fileMaster().openInputFile(filename, inputFile);
-            readWFields(inputFile);
-            inputFile.close();
-         } else
-         if (command == "WRITE_WFIELDS") {
-            inBuffer >> filename;
-            Log::file() << "  " << Str(filename, 20) << std::endl;
-            fileMaster().openOutputFile(filename, outputFile);
-            writeFields(outputFile, wFields_);
-            outputFile.close();
-         } else
-         if (command == "WRITE_CFIELDS") {
-            inBuffer >> filename;
-            Log::file() << "  " << Str(filename, 20) << std::endl;
-            fileMaster().openOutputFile(filename, outputFile);
-            writeFields(outputFile, cFields_);
-            outputFile.close();
-         } else
-         if (command == "REMESH_WFIELDS") {
-            int nx;
-            inBuffer >> nx;
-            Log::file() << std::endl;
-            Log::file() << "nx      = " << Int(nx, 20) << std::endl;
-            inBuffer >> filename;
-            Log::file() << "outfile = " << Str(filename, 20) << std::endl;
-            fileMaster().openOutputFile(filename, outputFile);
-            FieldEditor editor(*this);
-            editor.remesh(wFields(), nx, outputFile);
-            outputFile.close();
-         } else
-         if (command == "EXTEND_WFIELDS") {
-            int m;
-            inBuffer >> m;
-            Log::file() << std::endl;
-            Log::file() << "m       = " << Int(m, 20) << std::endl;
-            inBuffer >> filename;
-            Log::file() << "outfile = " << Str(filename, 20) << std::endl;
-            fileMaster().openOutputFile(filename, outputFile);
-            FieldEditor editor(*this);
-            editor.extend(wFields(), m, outputFile);
-            outputFile.close();
-         } else
-         if (command == "ITERATE") {
-            Log::file() << std::endl;
-            Log::file() << std::endl;
+   //realistically not used
+   template <int D>
+   void System<D>::readKFields(std::istream &in)
+   {
+      UTIL_CHECK(hasMesh_);
 
-            iterator().solve();
-            outputThermo(Log::file());
+      std::string label;
+      IntVec<D> nGrid;
+      int nM;
 
-         } else 
-         if (command == "COMPARE_HOMOGENEOUS") {
-            int mode;
-            inBuffer >> mode;
-            Log::file() << std::endl;
-            Log::file() << "mode       = " << mode << std::endl;
+      in >> label;
+      UTIL_CHECK(label == "nGrid");
+      in >> nGrid;
+      UTIL_CHECK(nGrid == mesh().dimensions());
 
-            HomogeneousComparison comparison(*this);
-            comparison.compute(mode);
-            comparison.output(mode, Log::file());
+      in >> label;
+      UTIL_CHECK(label == "nM");
+      in >> nM;
+      UTIL_CHECK(nM > 0);
+      UTIL_CHECK(nM == mixture().nMonomer());
 
-         } else 
-         if (command == "SWEEP") {
-
-            if (!hasSweep_) {
-               UTIL_THROW("System has no Sweep object");
+      // Read Fields;
+      int idum;
+      MeshIterator<D> itr(mesh().dimensions());
+      for (itr.begin(); !itr.atEnd(); ++itr) {
+         in >> idum;
+         for (int i = 0; i < nM; ++i) {
+            for (int j = 0; j < 2; ++j) {
+               in >> wFieldDfts_[i][itr.rank()][j];
             }
-            UTIL_CHECK(sweepPtr_);
-            sweepPtr_->solve();
+         }
+      }
+   }
 
-         } else {
-            Log::file() << "  Error: Unknown command  " << std::endl;
-            readNext = false;
+   template <int D>
+   void System<D>::writeFields(std::ostream &out, 
+                           DArray<DArray<double> > const &  fields)
+   {
+      int i, j;
+      int nStar = basis().nStar();
+      int nM = mixture().nMonomer();
+      out << "nStar     "  <<  nStar           << std::endl;
+      out << "nM     "     <<  nM              << std::endl;
+
+      // Write fields
+      for (i = 0; i < nStar; ++i) {
+         out << Int(i, 5);
+         for (j = 0; j < nM; ++j) {
+            out << "  " << Dbl(fields[j][i], 18, 11);
+         }
+         out << std::endl;
+      }
+   }
+
+   template <int D>
+   void System<D>::writeRFields(std::ostream &out,
+                           DArray<RField<D> > const& fields)
+   {
+      int nM = mixture().nMonomer();
+      MeshIterator<D> itr(mesh().dimensions());
+      out << "nGrid    " <<  mesh().dimensions() << std::endl;
+      out << "nM    "    <<  nM                << std::endl;
+
+      // Write FIelds
+      for (itr.begin(); !itr.atEnd(); ++itr) {
+         out << Int(itr.rank(), 5);
+         for (int j = 0; j < nM; ++j) {
+            out << "  " << Dbl(fields[j][itr.rank()], 18, 11);
+         }
+
+         out << std::endl;
+      }
+   }
+
+   template <int D>
+   void System<D>::writeKFields(std::ostream &out,
+                           DArray<RFieldDft<D> > const& fields)
+   {
+      int nM = mixture().nMonomer();
+      MeshIterator<D> itr(mesh().dimensions());
+      out << "nGrid   " << mesh().dimensions() << std::endl;
+      out << "nM      " << nM                << std::endl;
+
+      //write Fields
+      for (itr.begin(); !itr.atEd(); ++itr) {
+         out << Int(itr.rank(), 5);
+         for (int j = 0; j < nM; ++j) {
+               out << "  " << Dbl(fields[j][itr.rank()][0], 18, 11)
+                   << Dbl(fields[j][itr.rank()][1], 18, 11);
+         }
+         out << std::endl;
+      }
+   }
+
+   template <int D>
+   void System<D>::initHomogeneous()
+   {
+
+      // Set number of molecular species and monomers
+      int nm = mixture().nMonomer(); 
+      int np = mixture().nPolymer(); 
+      //int ns = mixture().nSolvent(); 
+      int ns = 0;
+      UTIL_CHECK(homogeneous_.nMolecule() == np + ns);
+      UTIL_CHECK(homogeneous_.nMonomer() == nm);
+
+      // Allocate c_ work array, if necessary
+      if (c_.isAllocated()) {
+         UTIL_CHECK(c_.capacity() == nm);
+      } else {
+         c_.allocate(nm);
+      }
+
+      int i;   // molecule index
+      int j;   // monomer index
+      int k;   // block or clump index
+      int nb;  // number of blocks
+      int nc;  // number of clumps
+ 
+      // Loop over polymer molecule species
+      for (i = 0; i < np; ++i) {
+
+         // Initial array of clump sizes 
+         for (j = 0; j < nm; ++j) {
+            c_[j] = 0.0;
+         }
+
+         // Compute clump sizes for all monomer types.
+         nb = mixture().polymer(i).nBlock(); 
+         for (k = 0; k < nb; ++k) {
+            Block<D>& block = mixture().polymer(i).block(k);
+            j = block.monomerId();
+            c_[j] += block.length();
+         }
+ 
+         // Count the number of clumps of nonzero size
+         nc = 0;
+         for (j = 0; j < nm; ++j) {
+            if (c_[j] > 1.0E-8) {
+               ++nc;
+            }
+         }
+         homogeneous_.molecule(i).setNClump(nc);
+ 
+         // Set clump properties for this Homogeneous::Molecule
+         k = 0; // Clump index
+         for (j = 0; j < nm; ++j) {
+            if (c_[j] > 1.0E-8) {
+               homogeneous_.molecule(i).clump(k).setMonomerId(j);
+               homogeneous_.molecule(i).clump(k).setSize(c_[j]);
+               ++k;
+            }
+         }
+         homogeneous_.molecule(i).computeSize();
+
+      }
+
+   }
+
+   /*
+   * Compute Helmoltz free energy and pressure
+   */
+   template <int D>
+   void System<D>::computeFreeEnergy()
+   {
+      fHelmholtz_ = 0.0;
+ 
+      // Compute ideal gas contributions to fHelhmoltz_
+      Polymer<D>* polymerPtr;
+      double phi, mu, length;
+      int np = mixture().nPolymer();
+      for (int i = 0; i < np; ++i) {
+         polymerPtr = &mixture().polymer(i);
+         phi = polymerPtr->phi();
+         mu = polymerPtr->mu();
+         // Recall: mu = ln(phi/q)
+         length = polymerPtr->length();
+         fHelmholtz_ += phi*( mu - 1.0 )/length;
+      }
+
+      int nm  = mixture().nMonomer();
+      int nStar = basis().nStar();
+      double temp = 0;
+
+      for (int i = 0; i < nm; ++i) {
+         
+         for (int j = i + 1; j < nm; ++j) {
+            for (int k = 0; k < nStar; ++k) {
+               fHelmholtz_+=
+                  cFields_[i][k] * interaction().chi(i,j) * cFields_[j][k];
+            }
+         }
+
+         for (int j = 0; j < nStar; ++j) {
+            temp += wFields_[i][j] * cFields_[i][j];
          }
 
       }
-   }*/
+      fHelmholtz_ -= temp;
+
+      // Compute pressure
+      pressure_ = -fHelmholtz_;
+      for (int i = 0; i < np; ++i) {
+         polymerPtr = &mixture().polymer(i);
+         phi = polymerPtr->phi();
+         mu = polymerPtr->mu();
+         length = polymerPtr->length();
+
+         pressure_ += mu * phi /length;
+      }
+
+   }
+
+   template <int D>
+   void System<D>::outputThermo(std::ostream& out)
+   {
+      out << std::endl;
+      out << "fHelmholtz = " << Dbl(fHelmholtz(), 18, 11) << std::endl;
+      out << "pressure   = " << Dbl(pressure(), 18, 11) << std::endl;
+      out << std::endl;
+
+      out << "Polymers:" << std::endl;
+      out << "    i"
+          << "        phi[i]      "
+          << "        mu[i]       " 
+          << std::endl;
+      for (int i = 0; i < mixture().nPolymer(); ++i) {
+         out << Int(i, 5) 
+             << "  " << Dbl(mixture().polymer(i).phi(),18, 11)
+             << "  " << Dbl(mixture().polymer(i).mu(), 18, 11)  
+             << std::endl;
+      }
+      out << std::endl;
+   }
+
    #if 0
 
 
@@ -532,90 +853,9 @@ namespace Pssp
 
    
 
-   template <int D>
-   void System<D>::writeFields(std::ostream &out, 
-                            Array<Field> const &  fields)
-   {
-      int i, j;
-      int nx = domain().nx();
-      int nm = mixture().nMonomer();
-      out << "nx     "  <<  nx              << std::endl;
-      out << "nm     "  <<  nm              << std::endl;
 
-      // Write fields
-      for (i = 0; i < nx; ++i) {
-         out << Int(i, 5);
-         for (j = 0; j < nm; ++j) {
-            out << "  " << Dbl(fields[j][i], 18, 11);
-         }
-         out << std::endl;
-      }
-   }
 
-   template <int D>
-   void System<D>::initHomogeneous()
-   {
-
-      // Set number of molecular species and monomers
-      int nm = mixture().nMonomer(); 
-      int np = mixture().nPolymer(); 
-      //int ns = mixture().nSolvent(); 
-      int ns = 0;
-      UTIL_CHECK(homogeneous_.nMolecule() == np + ns);
-      UTIL_CHECK(homogeneous_.nMonomer() == nm);
-
-      // Allocate c_ work array, if necessary
-      if (c_.isAllocated()) {
-         UTIL_CHECK(c_.capacity() == nm);
-      } else {
-         c_.allocate(nm);
-      }
-
-      int i;   // molecule index
-      int j;   // monomer index
-      int k;   // block or clump index
-      int nb;  // number of blocks
-      int nc;  // number of clumps
- 
-      // Loop over polymer molecule species
-      for (i = 0; i < np; ++i) {
-
-         // Initial array of clump sizes 
-         for (j = 0; j < nm; ++j) {
-            c_[j] = 0.0;
-         }
-
-         // Compute clump sizes for all monomer types.
-         nb = mixture().polymer(i).nBlock(); 
-         for (k = 0; k < nb; ++k) {
-            Block& block = mixture().polymer(i).block(k);
-            j = block.monomerId();
-            c_[j] += block.length();
-         }
- 
-         // Count the number of clumps of nonzero size
-         nc = 0;
-         for (j = 0; j < nm; ++j) {
-            if (c_[j] > 1.0E-8) {
-               ++nc;
-            }
-         }
-         homogeneous_.molecule(i).setNClump(nc);
- 
-         // Set clump properties for this Homogeneous::Molecule
-         k = 0; // Clump index
-         for (j = 0; j < nm; ++j) {
-            if (c_[j] > 1.0E-8) {
-               homogeneous_.molecule(i).clump(k).setMonomerId(j);
-               homogeneous_.molecule(i).clump(k).setSize(c_[j]);
-               ++k;
-            }
-         }
-         homogeneous_.molecule(i).computeSize();
-
-      }
-
-   }
+  
 
    template <int D>
    void System<D>::outputThermo(std::ostream& out)

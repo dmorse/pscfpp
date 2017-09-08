@@ -297,6 +297,95 @@ public:
       std::cout<<"Iterator fail? "<<fail<<std::endl;
       TEST_ASSERT(!fail);
 	}
+
+	void testOutput()
+	{
+		System<3> sys;
+		char* argv[5];
+
+		argv[0] = (char*) "diffName";
+		argv[1] = (char*) "-p";
+		argv[2] = (char*) "in/param";
+		argv[3] = (char*) "-c";
+		argv[4] = (char*) "in/command";
+
+		optind = 1;
+		sys.setOptions(5, argv);
+		sys.readParam();
+
+		MeshIterator<3> iter(sys.mesh().dimensions());
+		double twoPi = 2.0*Constants::Pi;
+		for (iter.begin(); !iter.atEnd(); ++iter){
+         sys.wFieldGrid(0)[iter.rank()] = cos(twoPi * 
+                        (double(iter.position(0))/double(sys.mesh().dimension(0)) + 
+                         double(iter.position(1))/double(sys.mesh().dimension(1)) + 
+                         double(iter.position(2))/double(sys.mesh().dimension(2)) ) );
+         sys.wFieldGrid(1)[iter.rank()] = sin(twoPi * 
+                        (double(iter.position(0))/double(sys.mesh().dimension(0)) + 
+                         double(iter.position(1))/double(sys.mesh().dimension(1)) + 
+                         double(iter.position(2))/double(sys.mesh().dimension(2)) ) );
+      }
+
+      for (int i = 0; i < sys.mixture().nMonomer(); i++) {
+      	sys.fft().forwardTransform(sys.wFieldGrid(i), sys.wFieldDft(i));
+      	sys.basis().convertFieldDftToComponents(sys.wFieldDft(i),sys.wField(i));
+      }
+
+      std::ofstream outFile;
+      FileMaster().openOutputFile("omega.o", outFile);
+      sys.writeFields(outFile, sys.wFields());
+      outFile.close();
+	}
+
+	void testConvertFieldToGrid()
+	{
+		System<3> sys;
+		char* argv[5];
+
+		argv[0] = (char*) "diffName";
+		argv[1] = (char*) "-p";
+		argv[2] = (char*) "in/param";
+		argv[3] = (char*) "-c";
+		argv[4] = (char*) "in/command";
+
+		optind = 1;
+		sys.setOptions(5, argv);
+		sys.readParam();
+
+		std::ifstream inFile;
+      FileMaster().openInputFile("omega.o", inFile);
+      sys.readWFields(inFile);
+      inFile.close();
+
+      //convert to rgrid
+      for (int i = 0; i < sys.mixture().nMonomer(); ++i) {
+         sys.basis().convertFieldComponentsToDft(sys.wField(i), sys.wFieldDft(i));
+         sys.fft().inverseTransform(sys.wFieldDft(i), sys.wFieldGrid(i));
+      }
+
+      std::ofstream outFile;
+      FileMaster().openOutputFile("omegaGrid.o", outFile);
+      sys.writeRFields(outFile, sys.wFieldGrids());
+      outFile.close();
+
+      //compare log with omegaGrid.o
+      /*MeshIterator<3> iter(sys.mesh().dimensions());
+		double twoPi = 2.0*Constants::Pi;
+		for (iter.begin(); !iter.atEnd(); ++iter){
+			std::cout<<iter.rank()<<"    ";
+         std::cout<<Dbl(cos(twoPi * 
+                        (double(iter.position(0))/double(sys.mesh().dimension(0)) + 
+                         double(iter.position(1))/double(sys.mesh().dimension(1)) + 
+                         double(iter.position(2))/double(sys.mesh().dimension(2)) ) ));
+         std::cout<<"    ";
+         std::cout<< Dbl(sin(twoPi * 
+                        (double(iter.position(0))/double(sys.mesh().dimension(0)) + 
+                         double(iter.position(1))/double(sys.mesh().dimension(1)) + 
+                         double(iter.position(2))/double(sys.mesh().dimension(2)) ) ));
+         std::cout<<std::endl;
+		}*/
+	}
+
 };
 
 
@@ -308,6 +397,8 @@ TEST_ADD(IteratorTest, testComputeDeviation)
 TEST_ADD(IteratorTest, testIsConverged1)
 //TEST_ADD(IteratorTest, testIsConverged2)
 TEST_ADD(IteratorTest, testSolve)
+TEST_ADD(IteratorTest, testOutput)
+TEST_ADD(IteratorTest, testConvertFieldToGrid)
 TEST_END(IteratorTest)
 
 #endif

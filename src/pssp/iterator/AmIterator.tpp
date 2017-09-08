@@ -9,6 +9,7 @@
 */
 
 #include "AmIterator.h"
+#include <pssp/System.h>
 #include <util/format/Dbl.h>
 
 namespace Pscf {
@@ -79,7 +80,7 @@ namespace Pssp
 
       systemPtr_->mixture().compute(systemPtr_->wFieldGrids(), 
                                     systemPtr_->cFieldGrids());
-      
+
       for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
          systemPtr_->fft().forwardTransform(systemPtr_->cFieldGrid(i),
                                              systemPtr_->cFieldDft(i));
@@ -101,7 +102,7 @@ namespace Pssp
 
          computeDeviation();
 
-
+         std::cout<<"  Iteration  "<<itr<<std::endl;
          if (isConverged()) {
             return 0;
          } else {
@@ -227,6 +228,7 @@ namespace Pssp
          }
       }
       error = sqrt(dError / wError);
+      std::cout<<"  Error  :"<<Dbl(error)<<std::endl;
       if (error < epsilon_) {
          return true;
       } else {
