@@ -57,7 +57,7 @@ namespace Pscf
       * Get the block and direction of an incoming propagator.
       *
       * The first element of the integer pair is the block id,
-      * and the second is a direction id which is 1 if this 
+      * and the second is a direction id which is 0 if this 
       * vertex is vertex 1 of the block, and 1 if this vertex
       * is vertex 0.
       *

@@ -22,5 +22,26 @@ namespace Pssp {
       iPlan_ = fftw_plan_dft_c2r_1d(rSize_, &kField[0], &rField[0], flags);
    }
 
+   template <>
+   void FFT<2>::makePlans(RField<2>& rField, RFieldDft<2>& kField)
+   {
+      unsigned int flags = FFTW_ESTIMATE;
+      fPlan_ = fftw_plan_dft_r2c_2d(meshDimensions_[0], meshDimensions_[1],
+      	                           &rField[0], &kField[0], flags);
+      iPlan_ = fftw_plan_dft_c2r_2d(meshDimensions_[0], meshDimensions_[1],
+                                    &kField[0], &rField[0], flags);
+   }
+
+   template <>
+   void FFT<3>::makePlans(RField<3>& rField, RFieldDft<3>& kField)
+   {
+      unsigned int flags = FFTW_ESTIMATE;
+      fPlan_ = fftw_plan_dft_r2c_3d(meshDimensions_[0], meshDimensions_[1],
+      	                           meshDimensions_[2], &rField[0], &kField[0],
+      	                           flags);
+      iPlan_ = fftw_plan_dft_c2r_3d(meshDimensions_[0], meshDimensions_[1],
+                                    meshDimensions_[2], &kField[0], &rField[0], 
+                                    flags);
+   }
 }
 }

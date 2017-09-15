@@ -76,6 +76,7 @@ void RFieldTest::testAllocate3()
       v.allocate(d);
       TEST_ASSERT(v.capacity() == 24);
       TEST_ASSERT(v.isAllocated());
+      TEST_ASSERT(v.meshDimensions() == d);
    }
 }
  
