@@ -193,11 +193,11 @@ namespace Pssp
       *
       * \param in input stream (i.e., input file)
       */
-      void readWFields(std::istream& in);
+      void readFields(std::istream& in, DArray< DArray <double> >& fields);
 
-      void readRFields(std::istream& in);
+      void readRFields(std::istream& in, DArray< RField<D> >& fields);
 
-      void readKFields(std::istream& in);
+      void readKFields(std::istream& in, DArray< RFieldDft<D> >& fields);
       /**
       * Write concentration or chemical potential fields to file.
       *

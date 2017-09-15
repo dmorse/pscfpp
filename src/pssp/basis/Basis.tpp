@@ -14,21 +14,21 @@
 namespace Pscf {
 namespace Pssp
 {
-	template <int D>
+   template <int D>
    Basis<D>::Basis()
-   	: nWave_(0), nStar_(0), unitCellPtr_(0), mesh_(0)
+      : nWave_(0), nStar_(0), unitCellPtr_(0), mesh_(0)
    {}
 
    template <int D>
    void Basis<D>::makeBasis(const Mesh<D>& mesh, const UnitCell<D>& unitCell,
                             std::string groupName)
    {
-   	if (groupName == "I") {
+      if (groupName == "I") {
          //To Do: Need some method to obtain the space group symmetry 
          //       if other than I
-   	} else {
-   		UTIL_THROW("Unimplemented space group");
-   	}
+      } else {
+         UTIL_THROW("Unimplemented space group");
+      }
 
       //Associate both mesh and unit cell
       mesh_ = &mesh;
@@ -129,9 +129,10 @@ namespace Pssp
          bool isClosed = true;
          for (int j = 0; j < D; ++j) {
             G2[j] = -G1[j];
-            if (G2[j] != G1[j]) {
-               isClosed = false;
-            }
+         }
+         mesh_->shift(G2);
+         if (G2 != G1) {
+            isClosed = false;
          }
          if (isClosed) {
             invertFlag = 0;
@@ -217,6 +218,23 @@ namespace Pssp
                   mesh_->shift(G2);
                   partnerId = mesh_->rank(G2);
                   z2 = components[partnerId];
+                  /*//debug code
+                  if(stars_[partnerId].invertFlag != -1) {
+                     std::cout<<"This star is "<<starId<<" and my partner is "
+                     <<partnerId<<std::endl;
+                     std::cout<<"I have invertFlag of "<<stars_[starId].invertFlag
+                     <<" and he has "<<stars_[partnerId].invertFlag<<std::endl;
+                     std::cout<<" WaveBz "<<stars_[starId].waveBz <<" and he "
+                     <<stars_[partnerId].waveBz<<std::endl;
+                     std::cout<<"Wave dft indices"
+                     <<waves_[stars_[starId].beginId].indicesDft<<"and he is"
+                     <<waves_[stars_[partnerId].beginId].indicesDft<<std::endl;
+                     std::cout<<"My previous wave has implicit of "
+                     <<waves_[stars_[starId].beginId - 1].implicit<<std::endl;
+                     std::cout<<"And position of "
+                     <<waves_[stars_[starId].beginId-1].indicesDft<<std::endl;
+                  }
+                  //end debug*/
                   UTIL_CHECK(stars_[partnerId].invertFlag == -1);
                   coeff = std::complex<double>(z1,-z2)*coeff/sqrt(2);
                   dft[rank][0] = coeff.real();
@@ -348,7 +366,7 @@ namespace Pssp
       if (!mesh_->isInMesh(vector)) {
          mesh_->shift(vector);
       }
-   	return waves_[waveId_[mesh_->rank(vector)]];
+      return waves_[waveId_[mesh_->rank(vector)]];
    }
 
 

@@ -35,7 +35,7 @@ public:
       System<1> system;
 
       std::ifstream in;
-      openInputFile("in/System", in);
+      openInputFile("in/System1D", in);
       system.readParam(in);
       in.close();
    }
@@ -108,12 +108,43 @@ public:
    }
    #endif
 
+   void testConversion3d()
+   {
+      printMethod(TEST_FUNC);
+      System<3> system;
+
+      std::ifstream in;
+      openInputFile("in/System3D", in);
+      system.readParam(in);
+      in.close();
+      std::ifstream command;
+      openInputFile("in/Conversion", command);
+      system.readCommands(command);
+      command.close();
+   }
+
+   void testIterate3d()
+   {
+     printMethod(TEST_FUNC);
+     System<3> system;
+     std::ifstream in;
+     openInputFile("in/System3D", in);
+     system.readParam(in);
+     in.close();
+     std::ifstream command;
+     openInputFile("in/Iterate", command);
+     system.readCommands(command);
+     command.close();
+
+   }
+
 };
 
 TEST_BEGIN(SystemTest)
 TEST_ADD(SystemTest, testConstructor1D)
 TEST_ADD(SystemTest, testReadParameters1D)
-//TEST_ADD(SystemTest, testSolver1D)
+TEST_ADD(SystemTest, testConversion3d)
+TEST_ADD(SystemTest, testIterate3d)
 TEST_END(SystemTest)
 
 #endif

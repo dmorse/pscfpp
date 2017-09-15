@@ -56,7 +56,7 @@ int main(int argc, char **argv)
    system.readParam();
 
    // Read command script to run system
-  system.readCommands();
+   system.readCommands();
 
    return 0;
 }

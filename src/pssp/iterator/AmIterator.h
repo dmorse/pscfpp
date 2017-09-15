@@ -13,14 +13,14 @@
 #include <pscf/math/LuSolver.h>
 #include <util/containers/DArray.h>
 #include <util/containers/DMatrix.h>
-#include <util/containers/RingBuffer.h>
+#include <pssp/iterator/RingBuffer.h>
 #include <pssp/field/RField.h>
 
 
 namespace Pscf {
 namespace Pssp
 {
-	using namespace Util;
+   using namespace Util;
    
    /**
    * Anderson mixing iterator for the pseudo spectral method
@@ -28,8 +28,8 @@ namespace Pssp
    * \ingroup Pssp_Iterator_Module
    */
    template <int D>
-	class AmIterator : public Iterator<D>
-	{
+   class AmIterator : public Iterator<D>
+   {
    public:
       
       typedef RField<D> WField;
@@ -37,43 +37,43 @@ namespace Pssp
       /**
       * Default constructor
       */
-   	AmIterator();
+      AmIterator();
 
-   	/**
-   	* Constructor
-   	*
-   	* \param system pointer to a system object
-   	*/
-   	AmIterator(System<D>* system);
+      /**
+      * Constructor
+      *
+      * \param system pointer to a system object
+      */
+      AmIterator(System<D>* system);
 
-   	/**
-   	* Destructor
-   	*/
-   	~AmIterator();
+      /**
+      * Destructor
+      */
+      ~AmIterator();
 
-   	/**
-   	* Read all parameters and initialize.
-   	*
-   	* \param in input filestream
-   	*/
-   	void readParameters(std::istream& in);
+      /**
+      * Read all parameters and initialize.
+      *
+      * \param in input filestream
+      */
+      void readParameters(std::istream& in);
 
-   	/**
-   	* Allocate all arrays
-   	*
-   	*/
-   	void allocate();
+      /**
+      * Allocate all arrays
+      *
+      */
+      void allocate();
 
-   	/**
-   	* Iterate to a solution
-   	*
-   	*/
-   	int solve();
+      /**
+      * Iterate to a solution
+      *
+      */
+      int solve();
 
       /**
       * Getter for epsilon
       */
-   	double epsilon();
+      double epsilon();
 
       /**
       * Getter for the maximum number of field histories to 
@@ -86,66 +86,68 @@ namespace Pssp
       */
       int maxItr();
 
-   	/**
-   	* Compute the deviation of wFields from a mean field solution
-   	*/
-   	void computeDeviation();
+      /**
+      * Compute the deviation of wFields from a mean field solution
+      */
+      void computeDeviation();
 
-   	/**
-   	* Compute the error from deviations of wFields and compare with epsilon_
-   	* \return true for error < epsilon and false for error >= epsilon
-   	*/
-   	bool isConverged();
+      /**
+      * Compute the error from deviations of wFields and compare with epsilon_
+      * \return true for error < epsilon and false for error >= epsilon
+      */
+      bool isConverged();
 
-   	/**
-   	* Determine the coefficients that would minimize invertMatrix_ Umn
-   	*/
-   	void minimizeCoeff(int itr);
+      /**
+      * Determine the coefficients that would minimize invertMatrix_ Umn
+      */
+      void minimizeCoeff(int itr);
 
-   	/**
-   	* Rebuild wFields for the next iteration from minimized coefficients
-   	*/
-   	void buildOmega(int itr);
+      /**
+      * Rebuild wFields for the next iteration from minimized coefficients
+      */
+      void buildOmega(int itr);
 
    private:
 
-   	///error tolerance
-   	double epsilon_;
+      ///error tolerance
+      double epsilon_;
 
-   	///free parameter for minimization
-   	double lambda_;
+      ///free parameter for minimization
+      double lambda_;
 
-   	///number of histories to convolute into a new solution [0,maxHist_]
-   	int nHist_;
+      ///number of histories to convolute into a new solution [0,maxHist_]
+      int nHist_;
 
       //maximum number of histories to convolute into a new solution
       //AKA size of matrix
       int maxHist_;
 
-   	///number of maximum iteration to perform
-   	int maxItr_;
+      ///number of maximum iteration to perform
+      int maxItr_;
 
-   	/// holds histories of deviation for each monomer
-   	/// 1st index = history, 2nd index = monomer, 3rd index = ngrid
-   	// data member must be integral type or pointer otherwise incur large
-   	// data transfer penalty. Homebrewed RingPBuffer might provide better speed
-   	RingBuffer< DArray < DArray<double> > > devHists_;
+      /// holds histories of deviation for each monomer
+      /// 1st index = history, 2nd index = monomer, 3rd index = ngrid
+      // The ringbuffer used is now slightly modified to return by reference
+      RingBuffer< DArray < DArray<double> > > devHists_;
 
       RingBuffer< DArray < DArray<double> > > omHists_;
 
-   	/// Umn, matrix to be minimized
-   	DMatrix<double> invertMatrix_;
 
-   	/// Cn, coefficient to convolute previous histories with
-   	DArray<double> coeffs_;
+      /// Umn, matrix to be minimized
+      DMatrix<double> invertMatrix_;
+
+      /// Cn, coefficient to convolute previous histories with
+      DArray<double> coeffs_;
 
       DArray<double> vM_;
 
-   	/// bigW, blended omega fields
-   	DArray<DArray <double> > wArrays_;
+      /// bigW, blended omega fields
+      DArray<DArray <double> > wArrays_;
 
-   	/// bigD, blened deviation fields. new wFields = bigW + lambda * bigD
-   	DArray<DArray <double> > dArrays_;
+      /// bigD, blened deviation fields. new wFields = bigW + lambda * bigD
+      DArray<DArray <double> > dArrays_;
+
+      DArray< DArray<double> > tempDev;
 
       using Iterator<D>::setClassName;
       using Iterator<D>::systemPtr_;
@@ -155,11 +157,11 @@ namespace Pssp
    //for testing purposes
 
 
-	};
+   };
 
    template<int D>
-	inline double AmIterator<D>::epsilon()
-	{ return epsilon_; }
+   inline double AmIterator<D>::epsilon()
+   { return epsilon_; }
 
    template<int D>
    inline int AmIterator<D>::maxHist()
