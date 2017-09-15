@@ -1,0 +1,7 @@
+ITERATE
+in/omega
+WRITE_WFIELDS
+out/calc/omega
+WRITE_CFIELDS
+out/calc/rho
+FINISH

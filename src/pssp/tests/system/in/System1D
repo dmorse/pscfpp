@@ -13,9 +13,23 @@ System{
      }
      ds   0.001
   }
+
+
+  ChiInteraction{
+     chi  0   0   0.0
+          1   0   1.0
+          1   1   0.0
+  }
+   
+  Lamellar  3.0
+  10
+
+  Basis I
+
+  AmIterator{
+   maxItr 40
+   epsilon 1e-3
+   maxHist 3
+  }
+
 }
-
-  Interaction {...}
-  mesh      32
-  unitCell  Lamellar   1.0
-

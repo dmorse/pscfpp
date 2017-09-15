@@ -1,7 +1,7 @@
 include config.mk
 
 # ======================================================================
-.PHONY: all fd1d clean veryclean
+.PHONY: all fd1d pssp clean veryclean
 
 all: 
 	cd util; $(MAKE) all
@@ -9,6 +9,11 @@ all:
 	cd fd1d; $(MAKE) all
 
 fd1d: 
+	cd util; $(MAKE) all
+	cd pscf; $(MAKE) all
+	cd fd1d; $(MAKE) all
+
+pssp: 
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
 	cd fd1d; $(MAKE) all
