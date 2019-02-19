@@ -1,2 +1,4 @@
 out.c
 out.w
+*.agr
+*.tmp
