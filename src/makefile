@@ -16,7 +16,7 @@ fd1d:
 pssp: 
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
-	cd fd1d; $(MAKE) all
+	cd pssp; $(MAKE) all
 
 # Run all unit tests
 run-tests:
