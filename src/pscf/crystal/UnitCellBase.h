@@ -9,6 +9,7 @@
 */
 
 #include <util/containers/FArray.h>
+#include <util/containers/FMatrix.h>
 #include <pscf/math/IntVec.h>
 #include <pscf/math/RealVec.h>
 
@@ -48,7 +49,42 @@ namespace Pscf
       * Get reciprocal basis vector i.
       */
       const RealVec<D>& kBasis(int i) const;
-   
+
+      /** 
+      * Get the parameters of unit cell.
+      */  
+      FArray<double, 6> params();
+
+      /** 
+      * Set the parameters of unit cell.
+      */  
+      void SetParams(double val, int m);
+
+      /**
+      * Get the jth component of ith direction of derivative of rBasis basis vector with respect to k.
+      */
+      const double drBasis(int k, int i, int j) const;
+
+      /**
+      * Get the jth component of ith direction of derivative of kBasis basis vector with respect to k.
+      */
+      const double dkBasis(int k, int i, int j) const;
+ 
+      /**
+      * Get the derivative of ki and kj with respect to parameter k.
+      */
+      const double dkkBasis(int k, int i, int j) const;
+
+      /** 
+      * Get the derivative of ri and rj with respect to parameter k.
+      */  
+      const double drrBasis(int k, int i, int j) const;
+  
+      /**
+      * Get the number of Parameters in the unit cell.
+      */
+      const int nParams() const;
+
       /**
       * Get square magnitude of reciprocal basis vector.
       */
@@ -65,6 +101,26 @@ namespace Pscf
       * Array of reciprocal lattice basis vectors.
       */ 
       FArray<RealVec<D>, D> kBasis_;
+
+      /**
+      * Array of derivatives of rBasis
+      */ 
+      FArray<FMatrix<double, D, D>, 6> drBasis_;
+      
+      /**
+      * Array of derivatives of kBasis
+      */
+      FArray<FMatrix<double, D, D>, 6> dkBasis_;
+
+      /**
+      * Array of derivatives of a_i.a_j
+      */
+      FArray<FMatrix<double, D, D>, 6> drrBasis_;
+
+      /**
+      * Array of derivatives of b_i.b_j
+      */
+      FArray<FMatrix<double, D, D>, 6> dkkBasis_;
 
       /**
       * Parameters used to describe the unit cell.
@@ -92,6 +148,62 @@ namespace Pscf
    inline
    const RealVec<D>& UnitCellBase<D>::kBasis(int i) const
    {  return kBasis_[i];  }
+
+   /*
+   * Get the jth component of ith direction of derivative of rBasis basis vector with respect to k.
+   */
+   template <int D>
+   inline
+   const double UnitCellBase<D>::drBasis(int k, int i, int j) const
+   {  return drBasis_[k](i,j);  }
+
+   /*
+   * Get the jth component of ith direction of derivative of kBasis basis vector with respect to k.
+   */
+   template <int D>
+   inline
+   const double UnitCellBase<D>::dkBasis(int k, int i, int j) const
+   {  return dkBasis_[k](i, j);  }
+
+   /*
+   * Get the derivative of ki*kj with respect to parameter k.
+   */
+   template <int D>
+   inline
+   const double UnitCellBase<D>::dkkBasis(int k, int i, int j) const
+   {  return dkkBasis_[k](i, j);  }
+
+   /*
+   * Get the derivative of ri*rj with respect to parameter k.
+   */
+   template <int D>
+   inline
+   const double UnitCellBase<D>::drrBasis(int k, int i, int j) const
+   {  return drrBasis_[k](i, j);  }
+
+   /*
+   * Get the number of Parameters in the unit cell.
+   */
+   template <int D>
+   inline
+   const int UnitCellBase<D>::nParams() const
+   {  return nParameter_;  }
+
+  /*
+   * Get the parameters in the unit cell.
+   */
+   template <int D>
+   inline
+   FArray<double, 6> UnitCellBase<D>::params()
+   {  return parameters_;  }
+
+  /*
+   * Set the parameters in the unit cell.
+   */
+   template <int D>
+   inline
+   void UnitCellBase<D>::SetParams(double val, int m)
+   {  parameters_ [m] = val;}
 
    /*
    * Get square magnitude of reciprocal basis vector.

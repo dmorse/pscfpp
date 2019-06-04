@@ -7,21 +7,21 @@ System{
       Polymer{
          nBlock  2
          nVertex 3
-         blocks  0  0  0  1  0.5
-                 1  1  1  2  0.5
+         blocks  0  0  0  1  2.0
+                 1  1  1  2  3.0
          phi     1.0
       }
-      ds   0.01
+      ds   0.001
    }
 
    ChiInteraction{
    chi  0   0   0.0
-        1   0   15.0
+        1   0   1.0
         1   1   0.0
    }
    
-   Lamellar 1.5261093078E+00 
-   10
+   Orthorhombic  3.0 3.9 5.0
+   3 3 3
 
    Basis I
 

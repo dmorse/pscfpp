@@ -11,6 +11,7 @@
 #include <pscf/solvers/PropagatorTmpl.h> // base class template
 #include <pssp/field/RField.h>           // member template
 #include <util/containers/DArray.h>      // member template
+#include <util/containers/FArray.h>      // member template
 
 namespace Pscf { template <int D> class Mesh; }
 
@@ -48,6 +49,11 @@ namespace Pssp
       * Monomer concentration field type.
       */
       typedef RField<D> CField;
+
+      /** 
+      * Polymer Chain Stress type.
+      */  
+      typedef FArray<double, 6> PStress; 
 
       /**
       * Propagator q-field type.

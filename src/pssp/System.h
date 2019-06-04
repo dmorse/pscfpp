@@ -256,6 +256,11 @@ namespace Pssp
       */
       FileMaster& fileMaster();
 
+      /** 
+      * Get group name.
+      */  
+      std::string groupName();
+
       /**
       * Get precomputed Helmoltz free energy per monomer / kT.
       *
@@ -285,6 +290,11 @@ namespace Pssp
       * Spatial discretization mesh.
       */
       Mesh<D> mesh_;
+
+      /**
+      * group name.
+      */
+      std::string groupName_;
 
       /**
       * Crystallographic unit cell (type and dimensions).
@@ -441,6 +451,13 @@ namespace Pssp
    template <int D>
    inline UnitCell<D>& System<D>::unitCell()
    { return unitCell_; }
+
+   /*
+   * Get group name.
+   */
+   template <int D>
+   inline std::string System<D>::groupName()
+   { return groupName_; }
 
    /*
    * Get the FileMaster.

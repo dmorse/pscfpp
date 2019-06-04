@@ -126,9 +126,14 @@ public:
    void testIterate3d()
    {
      printMethod(TEST_FUNC);
-     System<3> system;
-     std::ifstream in;
-     openInputFile("in/System3D", in);
+    // System<3> system;
+    // std::ifstream in;
+    // openInputFile("in/System3D", in);
+    
+     System<1> system;
+     std::ifstream in; 
+     openInputFile("in/System1D", in);
+     
      system.readParam(in);
      in.close();
      std::ifstream command;

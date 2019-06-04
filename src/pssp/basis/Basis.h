@@ -14,6 +14,7 @@
 #include <pscf/crystal/shiftToMinimum.h>
 #include <util/containers/DArray.h>
 #include <util/containers/GArray.h>
+#include <util/containers/DMatrix.h>
 
 namespace Pscf { 
 
@@ -144,6 +145,10 @@ namespace Pssp
       * Default constructor.
       */
       Basis();
+
+      // Derivatives of dksq with respect to each 
+      // of the parameters (rows)
+      DMatrix<double> dksq; 
  
       /**
       * Construct basis for a specific grid and space group.
@@ -167,6 +172,12 @@ namespace Pssp
       * \param components coefficients of symmetry-adapted basis functions.
       */
       void convertFieldDftToComponents(RFieldDft<D>& dft, DArray<double>& components);   
+
+      /**
+      * Calculates dksq_ assuming ksq are in non increasing order of ksq 
+      * and pairs of stars related by inversion are listed consecutively
+      */
+      void makedksq(const UnitCell<D>& unitCell);
 
       // Accessors
 
@@ -222,7 +233,7 @@ namespace Pssp
 
       /// Dimensions of associated spatial grid.
       //IntVec<D> meshDimensions_;
-      const Mesh<D>* mesh_;
+      const Mesh<D>* mesh_; 
 
    };
 

@@ -12,6 +12,7 @@
 #include <pssp/solvers/Mixture.h>
 #include <pscf/math/LuSolver.h>
 #include <util/containers/DArray.h>
+#include <util/containers/FArray.h>
 #include <util/containers/DMatrix.h>
 #include <pssp/iterator/RingBuffer.h>
 #include <pssp/field/RField.h>
@@ -112,6 +113,9 @@ namespace Pssp
       ///error tolerance
       double epsilon_;
 
+      ///variable cell computation (1) or fixed cell computation (0), default value = 0
+      bool cell_;
+
       ///free parameter for minimization
       double lambda_;
 
@@ -133,6 +137,13 @@ namespace Pssp
       RingBuffer< DArray < DArray<double> > > omHists_;
 
 
+      /// holds histories of deviation for each cell parameter
+      /// 1st index = history, 2nd index = cell parameter
+      // The ringbuffer used is now slightly modified to return by reference
+      RingBuffer< FArray <double, 6> > devCpHists_;
+
+      RingBuffer< FArray<double, 6> > CpHists_;
+
       /// Umn, matrix to be minimized
       DMatrix<double> invertMatrix_;
 
@@ -147,11 +158,18 @@ namespace Pssp
       /// bigD, blened deviation fields. new wFields = bigW + lambda * bigD
       DArray<DArray <double> > dArrays_;
 
+      /// bigWcP, blended parameter
+      FArray <double, 6> wCpArrays_;
+
+      /// bigDCp, blened deviation parameter. new wParameter = bigWCp + lambda * bigDCp
+      FArray <double, 6> dCpArrays_;
+
       DArray< DArray<double> > tempDev;
 
       using Iterator<D>::setClassName;
       using Iterator<D>::systemPtr_;
       using ParamComposite::read;
+      using ParamComposite::readOptional;
 
    //friend:
    //for testing purposes

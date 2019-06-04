@@ -10,6 +10,7 @@
 
 #include "AmIterator.h"
 #include <pssp/System.h>
+#include <util/containers/FArray.h>
 #include <util/format/Dbl.h>
 #include <ctime>
 
@@ -44,10 +45,12 @@ namespace Pssp
    template <int D>
    void AmIterator<D>::readParameters(std::istream& in)
    {
+      cell_ = 0; //default value (fixed cell)
       read(in, "maxItr", maxItr_);
       read(in, "epsilon", epsilon_);
       read(in, "maxHist", maxHist_);
-   }
+      readOptional(in, "domain", cell_); 
+  }
 
    template <int D>
    void AmIterator<D>::allocate()
@@ -55,9 +58,18 @@ namespace Pssp
       devHists_.allocate(maxHist_+1);
       omHists_.allocate(maxHist_+1);
 
+      if (cell_){
+         devCpHists_.allocate(maxHist_+1);
+         CpHists_.allocate(maxHist_+1);
+      }
+
       wArrays_.allocate(systemPtr_->mixture().nMonomer());
       dArrays_.allocate(systemPtr_->mixture().nMonomer());
       tempDev.allocate(systemPtr_->mixture().nMonomer());
+     
+     /// Depending on the value of cell_, Allocate RingBuffer(N_hist+1, Nparam) to store cell parameter cp_hist
+     /// First element of the ring buffer will be the given input to it 
+     /// Depending on the value of cell_, dev_cp(N_hist +1, NParam)
 
       for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
          wArrays_[i].allocate(systemPtr_->basis().nStar() - 1);
@@ -90,6 +102,8 @@ namespace Pssp
       systemPtr_->mixture().compute(systemPtr_->wFieldGrids(), 
                                     systemPtr_->cFieldGrids());
 
+      ///-----------Solving Equations    
+
       for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
          systemPtr_->fft().forwardTransform(systemPtr_->cFieldGrid(i),
                                              systemPtr_->cFieldDft(i));
@@ -97,6 +111,16 @@ namespace Pssp
                               systemPtr_->cFieldDft(i),
                               systemPtr_->cField(i));
       }
+       
+      systemPtr_->computeFreeEnergy();
+      std::cout<<"Free Energy="<<systemPtr_->fHelmholtz();
+
+      if (cell_)
+         systemPtr_->mixture().computeTStress(systemPtr_->basis());
+                       for (int m=0; m<6 ; ++m){
+                std::cout<<"Stress"<<m<<"\t"<<"="<< systemPtr_->mixture().TStress[m]<<"\n";
+                 std::cout<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).params()[m]<<"\n";
+              }   
 
       //check for convergence else resolve SCFT equations with new Fields
       for (int itr = 1; itr <= maxItr_; ++itr) {
@@ -115,9 +139,21 @@ namespace Pssp
          //std::cout<<" Time for computeDeviation ="
          //<< Dbl((float)(time_end - time_begin)/CLOCKS_PER_SEC,18,11)<<std::endl;
 
+         // ---------Compute Stress---------------> Define a variable stress in system which must be calculated or called by this file
+
          std::cout<<"  Iteration  "<<itr<<std::endl;
          if (isConverged()) {
-            return 0;
+      
+           if(!cell_)
+              systemPtr_->mixture().computeTStress(systemPtr_->basis());
+         
+              for (int m=0; m<6 ; ++m){
+                std::cout<<"Stress"<<m<<"\t"<<"="<< systemPtr_->mixture().TStress[m]<<"\n";
+                 std::cout<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).params()[m]<<"\n";
+              }
+
+              return 0;
+     
          } else {
             //resize history based matrix appropriately
             //consider making these working space local
@@ -126,6 +162,7 @@ namespace Pssp
                   invertMatrix_.allocate(nHist_, nHist_);
                   coeffs_.allocate(nHist_);
                   vM_.allocate(nHist_);
+                     /// Depending on the value of cell_, Allocate Matrices similarly
                }
             }
             //time_begin = clock();
@@ -159,6 +196,10 @@ namespace Pssp
 
             systemPtr_->mixture().compute(systemPtr_->wFieldGrids(), 
                                           systemPtr_->cFieldGrids());
+
+            if (cell_)
+               systemPtr_->mixture().computeTStress(systemPtr_->basis());
+
             for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
                systemPtr_->fft().forwardTransform(systemPtr_->cFieldGrid(i),
                                                   systemPtr_->cFieldDft(i));
@@ -182,6 +223,11 @@ namespace Pssp
    {
 
       omHists_.append(systemPtr_->wFields());
+
+      if (cell_)
+         CpHists_.append((systemPtr_->unitCell()).params());
+
+      /// Depending on the value of cell_, append value of parameters to cp_hist 
 
       for (int i = 0 ; i < systemPtr_->mixture().nMonomer(); ++i) {
          for (int j = 0; j < systemPtr_->basis().nStar() - 1; ++j) {
@@ -218,6 +264,15 @@ namespace Pssp
       //pointers
       devHists_.append(tempDev);
 
+      /// Depending on the value of cell_, append -stress (Pointer to the variable through system pointer) to dev_cp
+
+      if (cell_){
+         FArray<double, 6> tempCp;
+         for (int i = 0; i<6; i++){
+            tempCp [i] = -((systemPtr_->mixture()).TStress [i]);
+         }
+         devCpHists_.append(tempCp);
+      }
       //test code for IteratorTest.testComputeDeviation
       //should be all zero
       /*for(int i = 0; i < systemPtr_->mixture().nMonomer();i++){
@@ -244,9 +299,20 @@ namespace Pssp
             wError += systemPtr_->wField(i)[j+1] * systemPtr_->wField(i)[j+1];
          }
       }
+
+      if (cell_){
+         for ( int i = 0; i < 6; i++) {
+            dError +=  devCpHists_[0][i] *  devCpHists_[0][i];
+            wError +=  (systemPtr_->unitCell()).params() [i] * (systemPtr_->unitCell()).params() [i];
+         }
+      }
+
       std::cout<<" dError :"<<Dbl(dError)<<std::endl;
       std::cout<<" wError :"<<Dbl(wError)<<std::endl;
       error = sqrt(dError / wError);
+      
+      // Depending on the value of cell_, residual errors?
+
       std::cout<<"  Error  :"<<Dbl(error)<<std::endl;
       if (error < epsilon_) {
          return true;
@@ -290,7 +356,7 @@ namespace Pssp
             }
          }*/
 
-         double elm;
+         double elm, elm_cp;
 
          for (int i = 0; i < nHist_; ++i) {
             for (int j = i; j < nHist_; ++j) {
@@ -309,8 +375,16 @@ namespace Pssp
 
                   invertMatrix_(i,j) += elm;
 
-
                }
+
+               if (cell_){
+                  elm_cp = 0;
+                  for (int m = 0; m < 6; ++m){
+                     elm_cp += ((devCpHists_[0][m] - devCpHists_[i+1][m]) * 
+                                (devCpHists_[0][m] - devCpHists_[j+1][m])); 
+                  }
+                  invertMatrix_(i,j) += elm_cp;
+               } 
 
                invertMatrix_(j,i) = invertMatrix_(i,j);
             }
@@ -322,7 +396,18 @@ namespace Pssp
                                devHists_[0][j][k] );
                }
             }
+
+            if (cell_){
+               elm_cp = 0;
+               for (int m = 0; m < 6; ++m){
+                  vM_[i] += ((devCpHists_[0][m] - devCpHists_[i+1][m]) *
+                             (devCpHists_[0][m]));
+               }
+            }
          }
+
+      /// Depending on the value of cell_, Calculate vMcp and Umn similarly (will be added in previous Umn) 
+      /// invert it as done further (line 1355, line 1371 fortran)
 
          if (itr == 2) {
             coeffs_[0] = vM_[0] / invertMatrix_(0,0);
@@ -349,8 +434,23 @@ namespace Pssp
             for (int j = 0; j < systemPtr_->basis().nStar() - 1; ++j) {
                systemPtr_->wField(i)[j+1] = omHists_[0][i][j+1] + 
                                              lambda_*devHists_[0][i][j];
+
+      /// Depending on the value of cell_, line 1253 of fortran
+
             }
          }
+
+         if (cell_){
+            for (int m = 0; m < 6; ++m){
+               (systemPtr_->unitCell()).params()[m] = CpHists_[0][m] +
+                                                        lambda_* devCpHists_[0][m]; 
+            }
+                       for (int m=0; m<6 ; ++m){
+                std::cout<<"Stress"<<m<<"\t"<<"="<< systemPtr_->mixture().TStress[m]<<"\n";
+                 std::cout<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).params()[m]<<"\n";
+              }
+         } 
+
       } else {
          //should be strictly correct. coeffs_ is a vector of size 1 if itr ==2
 
@@ -361,6 +461,8 @@ namespace Pssp
                dArrays_[j][k] = devHists_[0][j][k];
             }
          }
+
+      /// Depending on the value of cell_, above shifting...?
 
          for (int i = 0; i < nHist_; ++i) {
             for (int j = 0; j < systemPtr_->mixture().nMonomer(); ++j) {
@@ -373,6 +475,9 @@ namespace Pssp
             }
          }
 
+      /// Depending on the value of cell_, also calculate value of guess value for cell param for next iteration line 1401 of fortran
+
+      /// See how to give input of this value in next iteration, Probably store in unit cell pointer which system already has
 
          for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
             for (int j = 0; j < systemPtr_->basis().nStar() - 1; ++j) {
@@ -380,6 +485,33 @@ namespace Pssp
             }
          }
 
+         if(cell_){
+
+            for (int m = 0; m < 6; ++m){
+               wCpArrays_[m] = CpHists_[0][m];
+               dCpArrays_[m] = devCpHists_[0][m];
+            }
+            for (int i = 0; i < nHist_; ++i) {
+               for (int m = 0; m < 6; ++m) {
+                  wCpArrays_[m] += coeffs_[i] * ( CpHists_[i+1][m]-
+                                                   CpHists_[0][m]);
+                  dCpArrays_[m] += coeffs_[i] * ( devCpHists_[i+1][m]-
+                                                   devCpHists_[0][m]);
+               }
+            } 
+            for (int m = 0; m < 6; ++m){
+               (systemPtr_->unitCell()).SetParams( wCpArrays_[m] + lambda_ * dCpArrays_[m],m);
+            }
+            systemPtr_->mixture().setupUnitCell(systemPtr_->unitCell());
+	    systemPtr_->basis().makedksq(systemPtr_->unitCell());
+
+              for (int m=0; m<6 ; ++m){
+                std::cout<<"Stress"<<m<<"\t"<<"="<< systemPtr_->mixture().TStress[m]<<"\n";
+                 std::cout<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).params()[m]<<"\n";
+              }
+
+
+         }
       }
    }
 }

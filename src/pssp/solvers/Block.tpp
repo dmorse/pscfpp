@@ -13,6 +13,9 @@
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/crystal/UnitCell.h>
 #include <pscf/crystal/shiftToMinimum.h>
+#include <util/containers/FMatrix.h>      // member template
+#include <util/containers/DArray.h>      // member template
+#include <util/containers/FArray.h>      // member template
 
 namespace Pscf { 
 namespace Pssp {
@@ -62,7 +65,7 @@ namespace Pssp {
             kMeshDimensions_[i] = mesh.dimensions()[i];
          } else {
             kMeshDimensions_[i] = mesh.dimensions()[i]/2 + 1;
-         }
+       }
       }
 
       // Allocate work arrays
@@ -70,6 +73,10 @@ namespace Pssp {
       expW_.allocate(mesh.dimensions());
       qr_.allocate(mesh.dimensions());
       qk_.allocate(mesh.dimensions());
+      q1.allocate(mesh.dimensions());
+      q2.allocate(mesh.dimensions());
+      q1p.allocate(mesh.dimensions());
+      q2p.allocate(mesh.dimensions());
 
       propagator(0).allocate(ns_, mesh);
       propagator(1).allocate(ns_, mesh);
@@ -198,12 +205,111 @@ namespace Pssp {
    }
 
    /*
+   * Integrate to Stress exerted by the chain for this block
+   */
+   template <int D>
+   void Block<D>::computeStress(Basis<D>& basis, double prefactor)
+   {   
+      // Preconditions
+      int nx = mesh().size();
+      UTIL_CHECK(nx > 0); 
+      UTIL_CHECK(ns_ > 0); 
+      UTIL_CHECK(ds_ > 0); 
+      UTIL_CHECK(propagator(0).isAllocated());
+      UTIL_CHECK(propagator(1).isAllocated());
+
+      double dels, normal, increment;
+      int r,c;
+ 
+      //normal = nx*nx*3.0*6.0;
+      normal = 3.0*6.0;
+
+      r = basis.dksq.capacity1();
+      c = basis.dksq.capacity2();
+
+      DArray<double> q1s;
+      DArray<double> q2s;
+      DArray<double> q3s;
+      q1s.allocate(basis.nStar());
+      q2s.allocate(basis.nStar());
+      q3s.allocate(basis.nStar());
+
+      FArray<double, 6> dQ;
+
+      //FArray<double, basis.nStar()> q1s;
+      //FArray<double, basis.nStar()> q2s;
+
+      // Initialize work array and pStress to zero at all points
+      int i;
+      for (i = 0; i < 6; ++i) {
+         dQ [i] = 0.0;
+         pStress [i] = 0.0;
+      }   
+
+      Propagator<D> const & p0 = propagator(0);
+      Propagator<D> const & p1 = propagator(1);
+
+      //Evaluate unnormalized integral   
+      for (int j = 0; j < ns_ ; ++j) {
+           
+          // fft_.forwardTransform(p0.q(j), q1);
+         
+           q1p = p0.q(j);
+           fft_.forwardTransform(q1p, q1);
+           basis.convertFieldDftToComponents(q1 , q1s);
+           
+           //fft_.forwardTransform(p1.q(ns_ - 1 - j), q2);  
+           
+           q2p = p1.q(ns_ - 1 - j);
+           //q2p = p1.q(j);
+           fft_.forwardTransform(q2p, q2); 
+           basis.convertFieldDftToComponents(q2 , q2s); 
+
+          // for (int d = 0; d < c; ++d){
+            //  std::cout<<"q1s("<<d<<")="<<"\t"<<q1s[d]<<"\n";
+             // std::cout<<"q2s("<<d<<")="<<"\t"<<q2s[d]<<"\n";
+          // }
+           
+
+
+           dels = ds_;
+
+           if (j != 0 && j != ns_ - 1) {
+              if (j % 2 == 0) {
+                 dels = dels*4.0;
+              } else {
+                 dels = dels*2.0;
+              }           
+           }
+
+           for (int n = 0; n < r ; ++n) {
+              increment = 0;
+
+              for (int m = 0; m < c ; ++m) {
+                 q3s [m] = q1s [m] * basis.dksq (n,m);  
+                 increment += q3s [m]*q2s [m]; 
+              }
+              increment = (increment * kuhn() * kuhn() * dels)/normal;
+              dQ [n] = dQ[n]-increment; 
+           }    
+      }   
+      
+      // Normalize
+      for (i = 0; i < r; ++i) {
+         pStress[i] = pStress[i] - (dQ[i] * prefactor);
+      }   
+      //#if 0
+      //#endif
+
+   }
+
+   /*
    * Propagate solution by one step.
    */
    template <int D>
    void Block<D>::step(const QField& q, QField& qNew)
    {
-      // Check real-space mesh sizes
+      // Check real-space mesh sizes`
       int nx = mesh().size();
       UTIL_CHECK(nx > 0);
       UTIL_CHECK(q.isAllocated());

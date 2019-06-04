@@ -67,6 +67,32 @@ namespace Pssp {
       solve();
    }
 
+   /*
+   * Compute stress from a polymer chain.
+   */
+   template <int D>
+   void Polymer<D>::ComputePcStress(Basis<D>& basis)
+   {
+      double prefactor;
+      prefactor = 0;
+     
+      // Initialize PcStress to 0
+      for (int i = 0; i < 6; ++i) {
+        PcStress [i] = 0.0;
+      }
+
+      for (int i = 0; i < nBlock(); ++i) {
+         prefactor = exp(mu_)/length();
+         block(i).computeStress(basis, prefactor);
+       
+         for (int j=0; j < 6 ; ++j){
+            PcStress [j]  += block(i).pStress [j];
+         }
+      }
+
+   }
+
+
 }
 }
 #endif

@@ -21,7 +21,7 @@ System{
           1   1   0.0
   }
    
-  Lamellar  3.0
+  Lamellar  1.3835
   10
 
   Basis I
@@ -29,7 +29,8 @@ System{
   AmIterator{
    maxItr 40
    epsilon 1e-3
-   maxHist 3
+   maxHist 10
+   domain 1
   }
 
 }

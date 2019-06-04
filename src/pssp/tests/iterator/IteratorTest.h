@@ -29,15 +29,18 @@ public:
 
    void testConstructor1()
    {
-      AmIterator<3> AmItr;
+     // AmIterator<3> AmItr;
+AmIterator<1> AmItr;
 
-      System<3> sys;
+      //System<3> sys;
+System<1> sys;
    }
 
    void testReadParam()
    {
       //building system object
-      System<3> sys;
+      //System<3> sys;
+System<1> sys;
       char* argv[3];
       argv[0] = (char *) "myName";
       argv[1] = (char *) "-p";
@@ -53,7 +56,8 @@ public:
 
    void testAllocate()
    {
-      System<3> sys;
+     // System<3> sys;
+System<1> sys;
       char* argv[5];
 
       argv[0] = (char*) "diffName";
@@ -71,7 +75,8 @@ public:
 
    void testComputeDeviation()
    {
-      System<3> sys;
+      //System<3> sys;
+System<1> sys;
       char* argv[5];
 
       argv[0] = (char*) "diffName";
@@ -85,7 +90,8 @@ public:
       sys.readParam();
 
       //set systemPtr_->wFields()
-      MeshIterator<3> iter(sys.mesh().dimensions());
+      //MeshIterator<3> iter(sys.mesh().dimensions());
+MeshIterator<1> iter(sys.mesh().dimensions());
       double twoPi = 2.0*Constants::Pi;
       for (iter.begin(); !iter.atEnd(); ++iter){
          sys.wFieldGrid(0)[iter.rank()] = cos(twoPi * 
@@ -139,7 +145,8 @@ public:
 
    void testIsConverged1()
    {
-      System<3> sys;
+     // System<3> sys;
+System<1> sys;
       char* argv[5];
 
       argv[0] = (char*) "diffName";
@@ -153,7 +160,8 @@ public:
       sys.readParam();
 
       //set systemPtr_->wFields()
-      MeshIterator<3> iter(sys.mesh().dimensions());
+      //MeshIterator<3> iter(sys.mesh().dimensions());
+MeshIterator<1> iter(sys.mesh().dimensions());
       double twoPi = 2.0*Constants::Pi;
       for (iter.begin(); !iter.atEnd(); ++iter){
          sys.wFieldGrid(0)[iter.rank()] = cos(twoPi * 
@@ -202,7 +210,8 @@ public:
 
    void testIsConverged2()
    {
-      System<3> sys;
+      //System<3> sys;
+System<1> sys;
       char* argv[5];
 
       argv[0] = (char*) "diffName";
@@ -216,7 +225,8 @@ public:
       sys.readParam();
 
       //set systemPtr_->wFields()
-      MeshIterator<3> iter(sys.mesh().dimensions());
+      //MeshIterator<3> iter(sys.mesh().dimensions());
+MeshIterator<1> iter(sys.mesh().dimensions());
       double twoPi = 2.0*Constants::Pi;
       for (iter.begin(); !iter.atEnd(); ++iter){
          sys.wFieldGrid(0)[iter.rank()] = cos(twoPi * 
@@ -261,7 +271,9 @@ public:
 
    void testSolve()
    {
-      System<3> sys;
+      //System<3> sys;
+System<1> sys;
+
       char* argv[5];
 
       argv[0] = (char*) "diffName";
@@ -275,7 +287,8 @@ public:
       sys.readParam();
 
       //set systemPtr_->wFields()
-      MeshIterator<3> iter(sys.mesh().dimensions());
+     // MeshIterator<3> iter(sys.mesh().dimensions());
+MeshIterator<1> iter(sys.mesh().dimensions());
       double twoPi = 2.0*Constants::Pi;
       for (iter.begin(); !iter.atEnd(); ++iter){
          sys.wFieldGrid(0)[iter.rank()] = cos(twoPi * 
@@ -300,7 +313,8 @@ public:
 
    void testOutput()
    {
-      System<3> sys;
+      //System<3> sys;
+System<1> sys;
       char* argv[5];
 
       argv[0] = (char*) "diffName";
@@ -313,7 +327,9 @@ public:
       sys.setOptions(5, argv);
       sys.readParam();
 
-      MeshIterator<3> iter(sys.mesh().dimensions());
+      //MeshIterator<3> iter(sys.mesh().dimensions());
+MeshIterator<1> iter(sys.mesh().dimensions());
+
       double twoPi = 2.0*Constants::Pi;
       for (iter.begin(); !iter.atEnd(); ++iter){
          sys.wFieldGrid(0)[iter.rank()] = cos(twoPi * 
@@ -339,7 +355,8 @@ public:
 
    void testConvertFieldToGrid()
    {
-      System<3> sys;
+      //System<3> sys;
+System<1> sys;
       char* argv[5];
 
       argv[0] = (char*) "diffName";

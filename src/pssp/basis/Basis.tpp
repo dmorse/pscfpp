@@ -166,6 +166,51 @@ namespace Pssp
          iStar++;
          beginWave = endWave;
       }
+
+      //dksq.allocate(unitCellPtr_->nParams(), nStar_); 
+      dksq.allocate(6, nStar_);     
+ 
+      // Initialize all elements to zero
+      int i, j, p, q;
+      for (i = 0; i < 6; ++i) {
+         for (j=0; j < nStar_; ++j){
+            dksq(i,j)=0.0;
+         }   
+      }   
+    
+      for (i = 0; i < unitCellPtr_->nParams(); ++i) {
+         for (j=0; j < nStar_; ++j){
+            for (p=0; p < D; ++p){
+               for (q=0; q < D; ++q){
+
+                  dksq(i,j) = dksq(i,j) + (stars_[j].waveBz[p]*stars_[j].waveBz[q]*(unitCellPtr_->dkkBasis(i, p,q)));
+  
+               }   
+            }   
+         }   
+      } 
+   //  double key; 
+
+     //for (i = 0; i < 6; ++i){
+       // for (j = 0; j < nStar_; ++j) {  
+         //  key = dksq(i,j);  
+          // int m = j - 1;  
+  
+          // while ( m >= 0 && dksq(i,m) < key) {  
+            //  dksq(i,m + 1) = dksq(i,m);  
+             // m = m - 1;  
+          // }  
+        //dksq(i,m + 1) = key;  
+       // } 
+   // }
+
+
+      //for (i = 0; i < 6; ++i) {
+        // for (j=0; j < nStar_; ++j){
+         // std::cout<<"dksq ("<<i<<","<<j<<") = "<<"\t"<< dksq(i,j)<<"\n";
+         //}   
+     // `}   
+
    }
 
 
@@ -369,6 +414,33 @@ namespace Pssp
       return waves_[waveId_[mesh_->rank(vector)]];
    }
 
+   template <int D>
+   void Basis<D>::makedksq(const UnitCell<D>& unitCell)
+   {
+
+      unitCellPtr_ = &unitCell;
+
+      // Initialize all elements to zero
+      int i, j, p, q;
+      for (i = 0; i < unitCellPtr_->nParams(); ++i) {
+         for (j=0; j < nStar_; ++j){
+            dksq(i,j)=0.0;
+         }
+      }
+	
+      for (i = 0; i < unitCellPtr_->nParams(); ++i) {
+         for (j=0; j < nStar_; ++j){
+            for (p=0; p < D; ++p){
+               for (q=0; q < D; ++q){
+
+                  dksq(i,j) = dksq(i,j) + (stars_[j].waveBz[p]*stars_[j].waveBz[q]*(unitCellPtr_->dkkBasis(i, p,q)));
+  
+               }
+            }
+         }
+      }
+
+   }
 
 }
 }

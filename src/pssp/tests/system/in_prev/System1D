@@ -7,29 +7,29 @@ System{
      Polymer{
         nBlock  2
         nVertex 3
-        blocks  0  0  0  1  0.24
-                1  1  1  2  0.76
+        blocks  0  0  0  1  2.0
+                1  1  1  2  3.0
         phi     1.0
      }
-     ds   0.01
+     ds   0.001
   }
 
 
   ChiInteraction{
      chi  0   0   0.0
-          1   0   20.0
+          1   0   1.0
           1   1   0.0
   }
    
-Cubic 1.89
-  16 16 16
+  Lamellar  3.0
+  10
 
   Basis I
 
   AmIterator{
-   maxItr 10
-   epsilon 1e-5
-   maxHist 50
+   maxItr 40
+   epsilon 1e-3
+   maxHist 3
   }
 
 }

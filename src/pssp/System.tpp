@@ -187,10 +187,10 @@ namespace Pssp
       mixture().setMesh(mesh());
       mixture().setupUnitCell(unitCell());
 
-      std::string groupName;
-      in >> groupName;
-      in >> groupName;
-      basis().makeBasis(mesh(), unitCell(), groupName);
+      //std::string groupName;
+      in >> groupName_;
+      in >> groupName_;
+      basis().makeBasis(mesh(), unitCell(), groupName_);
 
       allocateFields();
       hasFields_ = true;
