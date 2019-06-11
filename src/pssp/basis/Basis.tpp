@@ -16,7 +16,7 @@ namespace Pssp
 {
    template <int D>
    Basis<D>::Basis()
-      : nWave_(0), nStar_(0), unitCellPtr_(0), mesh_(0)
+      : nWave_(0), nStar_(0), unitCellPtr_(0), meshPtr_(0)
    {}
 
    template <int D>
@@ -31,7 +31,7 @@ namespace Pssp
       }
 
       //Associate both mesh and unit cell
-      mesh_ = &mesh;
+      meshPtr_ = &mesh;
       unitCellPtr_ = &unitCell;
       
       MeshIterator<D> itr(mesh.dimensions());
@@ -45,7 +45,7 @@ namespace Pssp
          waves_[itr.rank()].sqNorm = unitCell.ksq(itr.position());
          waves_[itr.rank()].indicesDft = itr.position();
 
-         if ((itr.position(D-1) + 1) > (mesh_->dimension(D-1)/2 + 1)) {
+         if ((itr.position(D-1) + 1) > (meshPtr_->dimension(D-1)/2 + 1)) {
             waves_[itr.rank()].implicit = true;
          } else {
             waves_[itr.rank()].implicit = false;
@@ -130,7 +130,7 @@ namespace Pssp
          for (int j = 0; j < D; ++j) {
             G2[j] = -G1[j];
          }
-         mesh_->shift(G2);
+         meshPtr_->shift(G2);
          if (G2 != G1) {
             isClosed = false;
          }
@@ -138,8 +138,8 @@ namespace Pssp
             invertFlag = 0;
             stars_[iStar].invertFlag = invertFlag;
          } else {
-            mesh_->shift(G2);
-            int partnerId = mesh_->rank(G2);
+            meshPtr_->shift(G2);
+            int partnerId = meshPtr_->rank(G2);
             //std::cout<<stars_[partnerId].invertFlag<<std::endl;
             if (stars_[partnerId].invertFlag == 3) {
                stars_[iStar].invertFlag = 1;
@@ -149,7 +149,7 @@ namespace Pssp
          }
 
          /*
-         if(itr.position(D-1) > (mesh_.dimensions(D-1)/2 + 1) )
+         if(itr.position(D-1) > (meshPtr_.dimensions(D-1)/2 + 1) )
             stars_[iStar].invertFlag = -1;
          else
             stars_[iStar].invertFlag = 1;
@@ -157,10 +157,10 @@ namespace Pssp
 
          if (invertFlag == -1) {
             stars_[iStar].waveBz = shiftToMinimum(waves_[endWave-1].indicesDft,
-                                      mesh_->dimensions(), *unitCellPtr_);
+                                      meshPtr_->dimensions(), *unitCellPtr_);
          } else {
             stars_[iStar].waveBz = shiftToMinimum(waves_[beginWave].indicesDft,
-                                      mesh_->dimensions(), *unitCellPtr_);
+                                      meshPtr_->dimensions(), *unitCellPtr_);
          }
 
          iStar++;
@@ -180,10 +180,10 @@ namespace Pssp
       int partnerId;
       //loop through a factor of 2 more indices. 
       //Difficult to optimize without specialization or making new objects
-      for (int i = 0; i < mesh_->size(); ++i) {
+      for (int i = 0; i < meshPtr_->size(); ++i) {
          
          //if last indice of waves is not > n3/2+1
-         IntVec<D> waveId = mesh_->position(i);
+         IntVec<D> waveId = meshPtr_->position(i);
          int starId = wave(waveId).starId;
          if (!wave(waveId).implicit) {
             coeff = wave(waveId).coeff;
@@ -192,9 +192,9 @@ namespace Pssp
             offsets[D-1] = 1;
             for (int j = D-1; j > 0; --j) {
                if (j == D-1) {
-                  offsets[j-1] = offsets[j]*(mesh_->dimension(j)/2 + 1);
+                  offsets[j-1] = offsets[j]*(meshPtr_->dimension(j)/2 + 1);
                } else {
-                  offsets[j-1] = offsets[j]*mesh_->dimension(j);
+                  offsets[j-1] = offsets[j]*meshPtr_->dimension(j);
                }
             }
             int rank = 0;
@@ -215,8 +215,8 @@ namespace Pssp
                   for(int j = 0; j < D; ++j){
                      G2[j] = -waveId[j];
                   }
-                  mesh_->shift(G2);
-                  partnerId = mesh_->rank(G2);
+                  meshPtr_->shift(G2);
+                  partnerId = meshPtr_->rank(G2);
                   z2 = components[partnerId];
                   /*//debug code
                   if(stars_[partnerId].invertFlag != -1) {
@@ -245,8 +245,8 @@ namespace Pssp
                   for(int j = 0; j < D; ++j){
                      G2[j] = -waveId[j];
                   }
-                  mesh_->shift(G2);
-                  partnerId = mesh_->rank(G2);
+                  meshPtr_->shift(G2);
+                  partnerId = meshPtr_->rank(G2);
                   z2 = components[partnerId];
                   UTIL_CHECK(stars_[partnerId].invertFlag == 1);
                   coeff = std::complex<double>(z2, z1) * coeff / sqrt(2);
@@ -277,16 +277,16 @@ namespace Pssp
 
          //check if wave exists in dft
          if (!wave(indiceBz).implicit) {
-            mesh_->shift(indiceBz);
+            meshPtr_->shift(indiceBz);
             //std::cout<<"Yoohoo"<<std::endl;
             //might be good to rethink how elements of RFieldDft is accessed
             IntVec<D> offsets;
             offsets[D-1] = 1;
             for (int j = D-1; j > 0; --j) {
                if(j == D-1) {
-                  offsets[j-1] = offsets[j]*(mesh_->dimension(j)/2 + 1);
+                  offsets[j-1] = offsets[j]*(meshPtr_->dimension(j)/2 + 1);
                } else {
-                  offsets[j-1] = offsets[j]*mesh_->dimension(j);
+                  offsets[j-1] = offsets[j]*meshPtr_->dimension(j);
                }
             }
             int rank = 0;
@@ -301,20 +301,20 @@ namespace Pssp
             //Note: the code implies that we do not need indicesDft from Wave? 
          } else {
          //wave does not exists in dft. have to find explicit pair
-            mesh_->shift(indiceBz);
+            meshPtr_->shift(indiceBz);
             for (int j = 0; j < D; ++j) {
                indiceBz[j] = -indiceBz[j];
             }
-            mesh_->shift(indiceBz);
+            meshPtr_->shift(indiceBz);
 
 
             IntVec<D> offsets;
             offsets[D-1] = 1;
             for (int j = D-1; j > 0; --j) {
                if(j == D-1) {
-                  offsets[j-1] = offsets[j]*(mesh_->dimension(j)/2 + 1);
+                  offsets[j-1] = offsets[j]*(meshPtr_->dimension(j)/2 + 1);
                } else {
-                  offsets[j-1] = offsets[j]*mesh_->dimension(j);
+                  offsets[j-1] = offsets[j]*meshPtr_->dimension(j);
                }
             }
 
@@ -363,10 +363,10 @@ namespace Pssp
    template <int D>
    typename Basis<D>::Wave& Basis<D>::wave(IntVec<D> vector)
    {
-      if (!mesh_->isInMesh(vector)) {
-         mesh_->shift(vector);
+      if (!meshPtr_->isInMesh(vector)) {
+         meshPtr_->shift(vector);
       }
-      return waves_[waveId_[mesh_->rank(vector)]];
+      return waves_[waveId_[meshPtr_->rank(vector)]];
    }
 
 

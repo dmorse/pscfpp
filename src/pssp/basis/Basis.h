@@ -214,9 +214,8 @@ namespace Pssp
       /// Pointer to associated UnitCell<D>
       const UnitCell<D>* unitCellPtr_;
 
-      /// Dimensions of associated spatial grid.
-      //IntVec<D> meshDimensions_;
-      const Mesh<D>* mesh_;
+      /// Pointer to associated Mesh<D>
+      const Mesh<D>* meshPtr_;
 
    };
 
