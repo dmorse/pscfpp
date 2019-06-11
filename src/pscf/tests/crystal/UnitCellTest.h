@@ -63,13 +63,13 @@ public:
             /*if (std::abs(sum) > 1.0E-8) {
                 return false;
              }*/
-          }
+         }
 
-          if (std::abs(sum) > 1.0E-8) {
-             return false;
-          }
-       }
-       return true;
+         if (std::abs(sum) > 1.0E-8) {
+            return false;
+         }
+      }
+      return true;
    }
 
    template <int D>
@@ -84,20 +84,16 @@ public:
          for (i=0; i < D; ++i ) { 
             //sum = 0.0;
             for (j=0; j < D; ++j ) {
-               
                for (t=0; t<D; ++t)  {
- 
                   sum += (cell.dkkBasis(k, i, j)*cell.rBasis(i)[t])-(2*twoPi*cell.dkBasis(k, j, t));
-
                }
             }   
             /*if (std::abs(sum) > 1.0E-8) {
                 return false;
-             }*/ 
+            }*/ 
           }   
-
-         // if (std::abs(sum) > 1.0E-8) {
-           //  return false;
+          // if (std::abs(sum) > 1.0E-8) {
+          //  return false;
           //}   
        }   
        return true;
@@ -120,29 +116,29 @@ public:
  
                   sum += (cell.drrBasis(k, i, j)*cell.kBasis(i)[t])-(2*twoPi*cell.drBasis(k, j, t));
 	          std::cout<< "dk("<<j<<t<<k<<")"<<"\t"<<"="<<cell.dkBasis(k, j, t)<<"\n";
-                   std::cout<< "dr("<<j<<t<<k<<")"<<"\t"<<"="<<cell.drBasis(k, j, t)<<"\n";
-                   std::cout<< "dkk("<<j<<t<<k<<")"<<"\t"<<"="<<cell.dkkBasis(k, j, t)<<"\n";
-                   std::cout<< "drr("<<j<<t<<k<<")"<<"\t"<<"="<<cell.drrBasis(k, j, t)<<"\n";
+                  std::cout<< "dr("<<j<<t<<k<<")"<<"\t"<<"="<<cell.drBasis(k, j, t)<<"\n";
+                  std::cout<< "dkk("<<j<<t<<k<<")"<<"\t"<<"="<<cell.dkkBasis(k, j, t)<<"\n";
+                  std::cout<< "drr("<<j<<t<<k<<")"<<"\t"<<"="<<cell.drrBasis(k, j, t)<<"\n";
 
                   //std::cout<< "dr"<<"\t"<<cell.drBasis(k, j, t);
                   //std::cout<< "dkk"<<"\t"<<cell.dkkBasis(k, j, t);
-                   //std::cout<< "drr"<<"\t"<<cell.drrBasis(k, j, t);
+                  //std::cout<< "drr"<<"\t"<<cell.drrBasis(k, j, t);
                }   
             }   
             /*if (std::abs(sum) > 1.0E-8) {
                 return false;
-             }*/ 
-          }   
+            }*/ 
+         }   
 
-         // if (std::abs(sum) > 1.0E-8) {
-           //  return false;
-          //}   
-       }   
-       return true;
+         //if (std::abs(sum) > 1.0E-8) {
+         //   return false;
+         //}   
+      }   
+      return true;
    }
 
-
-   void test1DLamellar() {
+   void test1DLamellar() 
+   {
       printMethod(TEST_FUNC);
       printEndl();
 
@@ -164,7 +160,8 @@ public:
       std::cout << v.kBasis(0) << std::endl;
    }
 
-   void test2DSquare() {
+   void test2DSquare() 
+   {
       printMethod(TEST_FUNC);
       printEndl();
 
@@ -188,7 +185,8 @@ public:
       std::cout << "b(1) = " << v.kBasis(1) << std::endl;
    }
 
-   void test3DOrthorhombic() {
+   void test3DOrthorhombic() 
+   {
       printMethod(TEST_FUNC);
       printEndl();
 
