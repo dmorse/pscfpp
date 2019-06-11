@@ -12,6 +12,7 @@
 #include <util/containers/FMatrix.h>
 #include <pscf/math/IntVec.h>
 #include <pscf/math/RealVec.h>
+#include <util/math/Constants.h>
 
 namespace Pscf
 { 
@@ -41,12 +42,17 @@ namespace Pscf
       {}
    
       /**
-      * Get a Bravais basis vector i.
+      * Compute square magnitude of reciprocal basis vector.
+      */
+      virtual double ksq(IntVec<D> const & k) const;
+   
+      /**
+      * Get Bravais basis vector i, denoted by a_i.
       */
       const RealVec<D>& rBasis(int i) const;
    
       /**
-      * Get reciprocal basis vector i.
+      * Get reciprocal basis vector i, denoted by b_i.
       */
       const RealVec<D>& kBasis(int i) const;
 
@@ -61,35 +67,30 @@ namespace Pscf
       void SetParams(double val, int m);
 
       /**
-      * Get the jth component of ith direction of derivative of rBasis basis vector with respect to k.
+      * Get component j of derivative of rBasis vector ai w/respect to k.
       */
       const double drBasis(int k, int i, int j) const;
 
       /**
-      * Get the jth component of ith direction of derivative of kBasis basis vector with respect to k.
+      * Get component j of derivative of kBasis vector bi w/respect to k.
       */
       const double dkBasis(int k, int i, int j) const;
  
-      /**
-      * Get the derivative of ki and kj with respect to parameter k.
-      */
-      const double dkkBasis(int k, int i, int j) const;
-
       /** 
-      * Get the derivative of ri and rj with respect to parameter k.
+      * Get the derivative of dot product ri.rj with respect to parameter k.
       */  
       const double drrBasis(int k, int i, int j) const;
   
+      /**
+      * Get the derivative of dot product bi.bj with respect to parameter k.
+      */
+      const double dkkBasis(int k, int i, int j) const;
+
       /**
       * Get the number of Parameters in the unit cell.
       */
       const int nParams() const;
 
-      /**
-      * Get square magnitude of reciprocal basis vector.
-      */
-      virtual double ksq(IntVec<D> const & k) const;
-   
    protected:
  
       /**
@@ -132,7 +133,38 @@ namespace Pscf
       */
       int nParameter_;
 
+      // Protected functions (used in implementation).
+
+      /**
+      * Initialize all arrays to zero.
+      *
+      * Sets all elements of the following arrays to zero:
+      * rBasis_, kBasis_, drBasis_, dkBasis, drrBasis_ and dkkBasis_.
+      */
+      void initializeToZero();
+
+      /**
+      * Compute values of dkBasis_, drrBasis_, and dkkBasis_.
+      */
+      void computeDerivatives();
+
    };
+
+   /*
+   * Get the number of Parameters in the unit cell.
+   */
+   template <int D>
+   inline
+   const int UnitCellBase<D>::nParams() const
+   {  return nParameter_;  }
+
+   /*
+   * Get the parameters in the unit cell.
+   */
+   template <int D>
+   inline
+   FArray<double, 6> UnitCellBase<D>::params()
+   {  return parameters_;  }
 
    /*
    * Get a Bravais basis vector i.
@@ -158,12 +190,16 @@ namespace Pscf
    {  return drBasis_[k](i,j);  }
 
    /*
-   * Get the jth component of ith direction of derivative of kBasis basis vector with respect to k.
+   * Get component j component of derivative of reciprocal vector b_i with 
+   * respect to parameter k.
    */
    template <int D>
    inline
    const double UnitCellBase<D>::dkBasis(int k, int i, int j) const
-   {  return dkBasis_[k](i, j);  }
+   {
+      UTIL_ASSERT(k < nParameters_);  
+      return dkBasis_[k](i, j);  
+   }
 
    /*
    * Get the derivative of ki*kj with respect to parameter k.
@@ -180,22 +216,6 @@ namespace Pscf
    inline
    const double UnitCellBase<D>::drrBasis(int k, int i, int j) const
    {  return drrBasis_[k](i, j);  }
-
-   /*
-   * Get the number of Parameters in the unit cell.
-   */
-   template <int D>
-   inline
-   const int UnitCellBase<D>::nParams() const
-   {  return nParameter_;  }
-
-  /*
-   * Get the parameters in the unit cell.
-   */
-   template <int D>
-   inline
-   FArray<double, 6> UnitCellBase<D>::params()
-   {  return parameters_;  }
 
   /*
    * Set the parameters in the unit cell.
@@ -222,6 +242,76 @@ namespace Pscf
          value += g[i]*g[i];
       }
       return value;
+   }
+
+   // Protected member functions
+
+   /*
+   * Initialize internal arrays to zero.
+   */
+   template <int D>
+   void UnitCellBase<D>::initializeToZero()
+   {
+      // Initialize all elements to zero
+      int i, j, k;
+      for (i = 0; i < D; ++i) { 
+         for (j = 0; j < D; ++j) { 
+            rBasis_[i][j] = 0.0;
+            kBasis_[i][j] = 0.0;
+         }
+      }
+      for (k=0; k < 6; ++k){
+         for (i = 0; i < D; ++i) { 
+            for (j = 0; j < D; ++j) { 
+               drBasis_[k](i,j) = 0.0;
+               dkBasis_[k](i,j) = 0.0;
+               drrBasis_[k](i,j) = 0.0;
+               dkkBasis_[k](i,j) = 0.0;
+            }
+         }
+      }
+   }
+
+   /*
+   * Compute quantities involving derivatives.
+   */
+   template <int D>
+   void UnitCellBase<D>::computeDerivatives()
+   {
+      // Compute dkBasis
+      int p, q, r, s, t;
+      for (p = 0; p < nParameter_; ++p) {
+         for (q = 0; q < D; ++q) {
+            for (r = 0; r < D; ++r) {
+
+               // Loop over free indices s, t
+               for (s = 0; s < D; ++s) {
+                  for (t = 0; t < D; ++t) {
+                     dkBasis_[p](q,r) 
+                       -= kBasis_[q][s]*drBasis_[p](t,s)*kBasis_[t][r];
+                  }
+               }
+               dkBasis_[p](q,r) /= 2.0*Constants::Pi;
+
+            }
+         }
+      }
+
+      // Compute drrBasis and dkkBasis 
+      for (p = 0; p < nParameter_; ++p) {
+         for (q = 0; q < D; ++q) {
+            for (r = 0; r < D; ++r) {
+               for (s = 0; s < D; ++s) {
+                  drrBasis_[p](q,r) += rBasis_[q][s]*drBasis_[p](r,s);
+                  drrBasis_[p](q,r) += rBasis_[r][s]*drBasis_[p](q,s);
+                  dkkBasis_[p](q,r) += kBasis_[q][s]*dkBasis_[p](r,s);
+                  dkkBasis_[p](q,r) += kBasis_[r][s]*dkBasis_[p](q,s);
+ 
+               }
+            }
+         }
+      }
+
    }
    
 } 

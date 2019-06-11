@@ -75,26 +75,25 @@ namespace Pscf
       drBasis_[0](0,0) = 1.0;
       
       // Initialization
-      dkBasis_[0](0,0) = 0.0;
+      dkBasis_[0](0,0)  = 0.0;
       drrBasis_[0](0,0) = 0.0;
       dkkBasis_[0](0,0) = 0.0;
 
       int p;
       for (p=0; p < nParameter_; ++p){
 
-         dkBasis_[p](0,0) = dkBasis_[p](0,0)-((kBasis_[0][0]*drBasis_[p](0,0)*kBasis_[0][0])/(2.0*Constants::Pi));
+         dkBasis_[p](0,0) = dkBasis_[p](0,0) 
+                          -
+                           ((kBasis_[0][0]*drBasis_[p](0,0)*kBasis_[0][0])/(2.0*Constants::Pi));
 
       }
 
       for (p=0; p < nParameter_; ++p){
-               
-         drrBasis_[p](0,0) = drrBasis_[p](0,0)+((rBasis_[0][0]*drBasis_[p](0,0))+(rBasis_[0][0]*drBasis_[p](0,0)));
-
-         dkkBasis_[p](0,0) = dkkBasis_[p](0,0)+((kBasis_[0][0]*dkBasis_[p](0,0))+(kBasis_[0][0]*dkBasis_[p](0,0)));       
-         
+         drrBasis_[p](0,0) += ((rBasis_[0][0]*drBasis_[p](0,0))+(rBasis_[0][0]*drBasis_[p](0,0)));
+         dkkBasis_[p](0,0) += ((kBasis_[0][0]*dkBasis_[p](0,0))+(kBasis_[0][0]*dkBasis_[p](0,0)));       
       }
       
-    }
+   }
 
    // Two-Dimensional Systems
 
@@ -212,43 +211,42 @@ namespace Pscf
             kBasis_[i][i] = TwoPi/parameters_[i];
             drBasis_[i](i,i) = 1.0;
          }
-      } else 
-      {
+      } else {
          UTIL_THROW("Unimplemented 2D lattice type");
       }
 
-       int p, q, r, s, t;
-       for (p=0; p < nParameter_; ++p){
-          for (q=0; q < 2; ++q){
-             for (r=0; r<2; ++r){
-                for (s=0; s<2; ++s){
-                   for (t=0; t<2; ++t){
- 
-                      dkBasis_[p](q,r) = dkBasis_[p](q,r)-((kBasis_[q][s]*drBasis_[p](t,s)*kBasis_[t][r])/(2.0*Constants::Pi));
- 
-                   }
-                }
-             }
-          }
-       }
- 
-       for (p=0; p < nParameter_; ++p){
-          for (q=0; q < 2; ++q){
-             for (r=0; r<2; ++r){
-                for (s=0; s<2; ++s){
- 
-                   //drrBasis_[p](q,r) = drrBasis_[p](q,r)+((rBasis_[q][s]*drBasis_[p](s,r))+(rBasis_[r][s]*drBasis_[p](s,q))); as given in fortran
-                 
-                   drrBasis_[p](q,r) = drrBasis_[p](q,r)+((rBasis_[q][s]*drBasis_[p](r,s))+(rBasis_[r][s]*drBasis_[p](q,s))); // This seems to be correct
+      // Compute dkBasis
+      int p, q, r, s, t;
+      for (p = 0; p < nParameter_; ++p) {
+         for (q = 0; q < 2; ++q) {
+            for (r = 0; r < 2; ++r) {
+               for (s = 0; s < 2; ++s) {
+                  for (t = 0; t < 2; ++t) {
+                     dkBasis_[p](q,r) 
+                       -= kBasis_[q][s]*drBasis_[p](t,s)*kBasis_[t][r];
+                  }
+               }
+               dkBasis_[p](q,r) /= 2.0*Constants::Pi;
+            }
+         }
+      }
 
-                   dkkBasis_[p](q,r) = dkkBasis_[p](q,r)+((kBasis_[q][s]*dkBasis_[p](r,s))+(kBasis_[r][s]*dkBasis_[p](q,s)));
+      // Compute drrBasis and dkkBasis 
+      for (p = 0; p < nParameter_; ++p) {
+         for (q = 0; q < 2; ++q) {
+            for (r = 0; r < 2; ++r) {
+               for (s = 0; s < 2; ++s) {
+                  drrBasis_[p](q,r) += rBasis_[q][s]*drBasis_[p](r,s);
+                  drrBasis_[p](q,r) += rBasis_[r][s]*drBasis_[p](q,s);
+                  dkkBasis_[p](q,r) += kBasis_[q][s]*dkBasis_[p](r,s);
+                  dkkBasis_[p](q,r) += kBasis_[r][s]*dkBasis_[p](q,s);
  
-                }
-             }
-          }
-       }
+               }
+            }
+         }
+      }
+
    }
-
 
    // Three-Dimensional Systems
 
@@ -406,18 +404,21 @@ namespace Pscf
                 for (s=0; s<3; ++s){
                    for (t=0; t<3; ++t){ 
 
-                      dkBasis_[p](q,r) = dkBasis_[p](q,r)-((kBasis_[q][s]*drBasis_[p](t,s)*kBasis_[t][r])/(2.0*Constants::Pi));
+                      //dkBasis_[p](q,r) = dkBasis_[p](q,r)-((kBasis_[q][s]*drBasis_[p](t,s)*kBasis_[t][r])/(2.0*Constants::Pi));
  
+                      dkBasis_[p](q,r) -= 
+                              kBasis_[q][s]*drBasis_[p](t,s)*kBasis_[t][r];
                    }
                 }
+                dkBasis_[p](q,r) /= 2.0*Constants::Pi;
              }
           }
        }
  
-       for (p=0; p < nParameter_; ++p){
-          for (q=0; q < 3; ++q){
-             for (r=0; r<3; ++r){
-                for (s=0; s<3; ++s){
+       for (p=0; p < nParameter_; ++p) {
+          for (q=0; q < 3; ++q) {
+             for (r=0; r<3; ++r) {
+                for (s=0; s<3; ++s) {
  
                    drrBasis_[p](q,r) = drrBasis_[p](q,r)+((rBasis_[q][s]*drBasis_[p](r,s))+(rBasis_[r][s]*drBasis_[p](q,s)));// These indices differ from those in fortran
                    //  drrBasis_[p](q,r) = drrBasis_[p](q,r)+((rBasis_[q][s]*drBasis_[p](s,r))+(rBasis_[r][s]*drBasis_[p](s,q)));
