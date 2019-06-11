@@ -1,5 +1,6 @@
 
 namespace Pscf{
+namespace Pssp{
 
    /**
    * \defgroup Pssp_Solvers_Module Psuedo-spectral solvers
@@ -10,4 +11,5 @@ namespace Pscf{
    * \ingroup Pscf_Pssp_Module
    */
 
+}
 }

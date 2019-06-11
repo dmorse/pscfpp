@@ -1,5 +1,6 @@
 
 namespace Pscf{
+namespace Pssp{
 
    /**
    * \defgroup Pssp_Basis_Module Symmetry-Adapted Bases
@@ -9,4 +10,5 @@ namespace Pscf{
    * \ingroup Pscf_Pssp_Module
    */
 
+}
 }

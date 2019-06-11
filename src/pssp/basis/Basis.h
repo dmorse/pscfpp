@@ -18,13 +18,7 @@
 
 namespace Pscf { 
 
-   //since we are using member function of all of these forward declare is not
-   //enough
-
-   //template <int D> class Mesh;
    template <int D> class UnitCell;
-   //template <int D> class RFieldDft; //needs definition of fftw_complex
-   //template <int D> class meshIterator;
 
 namespace Pssp
 { 
@@ -231,9 +225,8 @@ namespace Pssp
       /// Pointer to associated UnitCell<D>
       const UnitCell<D>* unitCellPtr_;
 
-      /// Dimensions of associated spatial grid.
-      //IntVec<D> meshDimensions_;
-      const Mesh<D>* mesh_; 
+      /// Pointer to associated Mesh<D>
+      const Mesh<D>* meshPtr_;
 
    };
 
@@ -255,7 +248,7 @@ namespace Pssp
    typename Basis<D>::Star& Basis<D>::star(int i)
    { return stars_[i]; }
 
-}
-}
+} // namespace Pscf:Pssp
+} // namespace Pscf
 #include "Basis.tpp"
 #endif

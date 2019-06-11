@@ -1,5 +1,6 @@
 
 namespace Pscf{
+namespace Pssp{
 
    /**
    * \defgroup Pssp_Field_Module FFT Fields
@@ -9,4 +10,5 @@ namespace Pscf{
    * \ingroup Pscf_Pssp_Module
    */
 
+}
 }
