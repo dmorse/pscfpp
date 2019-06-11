@@ -25,20 +25,24 @@ namespace Pssp
    using namespace Util;
 
    /**
-   * Basis function for pseudo-spectral scft.
+   * Symmetry-adapted basis for pseudo-spectral scft.
    *
    * \ingroup Pssp_Basis_Module
    */
    template <int D>
-   class Basis {
+   class Basis 
+   {
    
    public:
       
       /**
-      * A wavevector used in the construction of symmetry adapted basis functions.
+      * Wavevector used to construct a basis function.
       */ 
-      class Wave {
+      class Wave 
+      {
+
       public:
+
          // Coefficient of this wave within associated star basis function
          std::complex<double> coeff;
 
@@ -55,20 +59,24 @@ namespace Pssp
          bool implicit;
          
       //friends:
+
          friend class Basis;
 
       };
   
       /**
-      * A list of wavevectors that are related by space-group symmetry operations.
+      * List of wavevectors that are related by space-group symmetries.
       *
-      * The indices of the wavevectors in a star form a continuous block. Within
-      * this block, waves are listed in descending lexigraphical order of their 
-      * integer (ijk) indices, with more signficant indices listed first.
+      * The indices of the wavevectors in a star form a continuous block. 
+      * Within this block, waves are listed in descending lexigraphical 
+      * order of their integer (ijk) indices, with more signficant indices 
+      * listed first.
       */ 
       class Star 
       {
+
       public:
+
          /**
          * Number of wavevectors in the star.
          */
@@ -85,28 +93,28 @@ namespace Pssp
          int endId;  
 
          /**
-         * Index for symmetry of star under inversion.
+         * Index for inversion symmetry of star.
          *
-         * A star is said to be closed under inversion iff, for each vector G
-         * in the start, -G is also in the star. If a star S is not closed 
+         * A star is said to be closed under inversion iff, for each vector
+         * G in the star, -G is also in the star. If a star S is not closed 
          * under inversion, then there is another star S that is related to 
-         * S by inversion, i.e., such that for each G in S, -G is in S'. Stars
-         * that are related by inversion are always listed consecutively.
+         * S by inversion, i.e., such that for each G in S, -G is in S'. 
+         * Stars that are related by inversion are listed consecutively.
          * 
          * If a star is closed under inversion, invertFlag = 0.
          *
-         * If a start is not closed under inversion, then invertFlag = +1 or -1,
+         * If a star is not closed under inversion, then invertFlag = +1 or -1,
          * with inverFlag = +1 for the first star in the pair of stars related 
          * by inversion and invertFlag = -1 for the second.
          *
          * In a centro-symmetric group, all stars are closed under inversion.
-         * In a non-centro-symmetric group, some stars may still be closed under
-         * inversion.
+         * In a non-centro-symmetric group, some stars may still be closed 
+         * under inversion.
          */
          int invertFlag; 
 
          /**
-         * Index for symmetry of associated basis function under inversion.
+         * Index for inversion symmetry of associated basis function.
          *
          * If basis function is even under inversion signFlag = 1.
          * If basis function is odd under inversion signFlag = -1.
@@ -124,15 +132,18 @@ namespace Pssp
          /**
          * Is this star cancelled, i.e., associated with a zero function?
          *
-         * The cancel flag is true iff there is not a nonzero basis function
+         * The cancel flag is true iff there is no nonzero basis function
          * associated with this star.
          */
          bool cancel;
 
       //friends:
+
          friend class Basis;
 
       };
+
+      // Public member functions of Basis
 
       /**
       * Default constructor.
@@ -142,9 +153,11 @@ namespace Pssp
       /**
       * Construct basis for a specific grid and space group.
       *
-      * Proposal: Initially implementation functions correctly only if groupName == 'I'. 
+      * Proposal: Initially implementation functions correctly only for
+      * identity group, withgroupName == 'I'. 
       */
-      void makeBasis(const Mesh<D>& mesh, const UnitCell<D>& unitCell, std::string groupName);
+      void makeBasis(const Mesh<D>& mesh, const UnitCell<D>& unitCell, 
+                     std::string groupName);
      
       /**
       * Convert field from symmetry-adapted representation to complex DFT.
@@ -152,7 +165,8 @@ namespace Pssp
       * \param components coefficients of symmetry-adapted basis functions.
       * \param dft complex DFT representation of a field.
       */
-      void convertFieldComponentsToDft(DArray<double>& components, RFieldDft<D>& dft);   
+      void convertFieldComponentsToDft(DArray<double>& components, 
+                                       RFieldDft<D>& dft);   
 
       /**
       * Convert DFT of real field to symmetry-adapted representation.
@@ -160,7 +174,8 @@ namespace Pssp
       * \param dft complex DFT representation of a field.
       * \param components coefficients of symmetry-adapted basis functions.
       */
-      void convertFieldDftToComponents(RFieldDft<D>& dft, DArray<double>& components);   
+      void convertFieldDftToComponents(RFieldDft<D>& dft, 
+                                       DArray<double>& components);   
 
       // Accessors
 
