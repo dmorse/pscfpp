@@ -215,7 +215,8 @@ namespace Pssp
 
 
    template <int D>
-   void Basis<D>::convertFieldComponentsToDft(DArray<double>& components, RFieldDft<D>& dft)
+   void Basis<D>::convertFieldComponentsToDft(DArray<double>& components, 
+                                              RFieldDft<D>& dft)
    {
       std::complex<double> coeff;
       double z;
@@ -267,15 +268,21 @@ namespace Pssp
                   if(stars_[partnerId].invertFlag != -1) {
                      std::cout<<"This star is "<<starId<<" and my partner is "
                      <<partnerId<<std::endl;
-                     std::cout<<"I have invertFlag of "<<stars_[starId].invertFlag
-                     <<" and he has "<<stars_[partnerId].invertFlag<<std::endl;
-                     std::cout<<" WaveBz "<<stars_[starId].waveBz <<" and he "
-                     <<stars_[partnerId].waveBz<<std::endl;
-                     std::cout<<"Wave dft indices"
-                     <<waves_[stars_[starId].beginId].indicesDft<<"and he is"
-                     <<waves_[stars_[partnerId].beginId].indicesDft<<std::endl;
-                     std::cout<<"My previous wave has implicit of "
-                     <<waves_[stars_[starId].beginId - 1].implicit<<std::endl;
+                     std::cout << "I have invertFlag of "
+                               << stars_[starId].invertFlag
+                               << " and he has "
+                               << stars_[partnerId].invertFlag<<std::endl;
+                     std::cout << " WaveBz "<<stars_[starId].waveBz 
+                               << " and he "
+                               << stars_[partnerId].waveBz<<std::endl;
+                     std::cout << "Wave dft indices"
+                               << waves_[stars_[starId].beginId].indicesDft
+                               << "and he is" 
+                               << waves_[stars_[partnerId].beginId].indicesDft
+                               << std::endl;
+                     std::cout << "My previous wave has implicit of "
+                               << waves_[stars_[starId].beginId - 1].implicit
+                               << std::endl;
                      std::cout<<"And position of "
                      <<waves_[stars_[starId].beginId-1].indicesDft<<std::endl;
                   }
@@ -307,7 +314,8 @@ namespace Pssp
    }
 
    template <int D>
-   void Basis<D>::convertFieldDftToComponents(RFieldDft<D>& dft, DArray<double>& components)
+   void Basis<D>::convertFieldDftToComponents(RFieldDft<D>& dft, 
+                                              DArray<double>& components)
    {
       //if its not too distrupting maybe use consistent names for logical size?
       int nStars = nStar_;
