@@ -44,7 +44,7 @@ PSSP_SUFFIX:=
 # Macros related to use of external libraries
 
 # FFTW Fast Fourier transform library
-#PSSP_FFTW=1
+PSSP_FFTW=1
 ifdef PSSP_FFTW
   PSSP_DEFS+=-DPSSP_FFTW
   PSSP_FFTW_PREFIX=/usr/local/Cellar/fftw/3.3.4_1
@@ -62,5 +62,5 @@ pssp_LIB=$(BLD_DIR)/pssp/lib$(pssp_LIBNAME).a
 #-----------------------------------------------------------------------
 # Path to executable file
 
-PSCF_PS_EXE=$(BIN_DIR)/pscf_fd$(PSSP_SUFFIX)$(UTIL_SUFFIX)
+PSCF_PS_EXE=$(BIN_DIR)/pscf_ps$(PSSP_SUFFIX)$(UTIL_SUFFIX)
 #-----------------------------------------------------------------------
