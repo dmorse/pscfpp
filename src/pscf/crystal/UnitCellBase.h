@@ -32,8 +32,7 @@ namespace Pscf
       /**
       * Constructor.
       */
-      UnitCellBase()
-      {}
+      UnitCellBase();
    
       /**
       * Destructor.
@@ -41,11 +40,26 @@ namespace Pscf
       ~UnitCellBase()
       {}
    
+      /** 
+      * Set the parameters of unit cell.
+      */  
+      void SetParams(double val, int m);
+
       /**
       * Compute square magnitude of reciprocal basis vector.
       */
       virtual double ksq(IntVec<D> const & k) const;
    
+      /**
+      * Get the number of Parameters in the unit cell.
+      */
+      const int nParams() const;
+
+      /** 
+      * Get the parameters of unit cell.
+      */  
+      FArray<double, 6> params();
+
       /**
       * Get Bravais basis vector i, denoted by a_i.
       */
@@ -55,16 +69,6 @@ namespace Pscf
       * Get reciprocal basis vector i, denoted by b_i.
       */
       const RealVec<D>& kBasis(int i) const;
-
-      /** 
-      * Get the parameters of unit cell.
-      */  
-      FArray<double, 6> params();
-
-      /** 
-      * Set the parameters of unit cell.
-      */  
-      void SetParams(double val, int m);
 
       /**
       * Get component j of derivative of rBasis vector ai w/respect to k.
@@ -86,11 +90,6 @@ namespace Pscf
       */
       const double dkkBasis(int k, int i, int j) const;
 
-      /**
-      * Get the number of Parameters in the unit cell.
-      */
-      const int nParams() const;
-
    protected:
  
       /**
@@ -104,22 +103,36 @@ namespace Pscf
       FArray<RealVec<D>, D> kBasis_;
 
       /**
-      * Array of derivatives of rBasis
+      * Array of derivatives of rBasis.
+      *
+      * Element drBasis_[k](i,j) is derivative with respect to
+      * parameter k of component j of Bravais basis vector i.
       */ 
       FArray<FMatrix<double, D, D>, 6> drBasis_;
       
       /**
       * Array of derivatives of kBasis
+      *
+      * Element dkBasis_[k](i,j) is derivative with respect to
+      * parameter k of component j of reciprocal basis vector i.
       */
       FArray<FMatrix<double, D, D>, 6> dkBasis_;
 
       /**
       * Array of derivatives of a_i.a_j
+      *
+      * Element drrBasis_[k](i,j) is derivative with respect 
+      * to parameter k of the dot product (a_i.a_j) of Bravais 
+      * lattice basis vectors a_i and a_j.
       */
       FArray<FMatrix<double, D, D>, 6> drrBasis_;
 
       /**
       * Array of derivatives of b_i.b_j
+      * 
+      * Element dkkBasis_[k](i,j) is derivative with respect 
+      * to parameter k of the dot product (b_i.b_j) of reciprocal
+      * lattice basis vectors b_i and b_j.
       */
       FArray<FMatrix<double, D, D>, 6> dkkBasis_;
 
@@ -159,7 +172,7 @@ namespace Pscf
    {  return nParameter_;  }
 
    /*
-   * Get the parameters in the unit cell.
+   * Get the unit cell parameters.
    */
    template <int D>
    inline
@@ -167,7 +180,7 @@ namespace Pscf
    {  return parameters_;  }
 
    /*
-   * Get a Bravais basis vector i.
+   * Get Bravais basis vector i.
    */
    template <int D>
    const RealVec<D>& UnitCellBase<D>::rBasis(int i) const
@@ -182,7 +195,7 @@ namespace Pscf
    {  return kBasis_[i];  }
 
    /*
-   * Get the jth component of ith direction of derivative of rBasis basis vector with respect to k.
+   * Get component j of derivative of r basis vector i w/respect to param k.
    */
    template <int D>
    inline
@@ -190,16 +203,12 @@ namespace Pscf
    {  return drBasis_[k](i,j);  }
 
    /*
-   * Get component j component of derivative of reciprocal vector b_i with 
-   * respect to parameter k.
+   * Get component j of derivative of r basis vector i w/respect to param k.
    */
    template <int D>
    inline
    const double UnitCellBase<D>::dkBasis(int k, int i, int j) const
-   {
-      UTIL_ASSERT(k < nParameters_);  
-      return dkBasis_[k](i, j);  
-   }
+   {  return dkBasis_[k](i, j);  }
 
    /*
    * Get the derivative of ki*kj with respect to parameter k.
@@ -224,6 +233,14 @@ namespace Pscf
    inline
    void UnitCellBase<D>::SetParams(double val, int m)
    {  parameters_ [m] = val;}
+
+   /*
+   * Constructor.
+   */
+   template <int D>
+   UnitCellBase<D>::UnitCellBase()
+    : nParameter_(0)
+   {}
 
    /*
    * Get square magnitude of reciprocal basis vector.
@@ -260,7 +277,7 @@ namespace Pscf
             kBasis_[i][j] = 0.0;
          }
       }
-      for (k=0; k < 6; ++k){
+      for (k = 0; k < 6; ++k){
          for (i = 0; i < D; ++i) { 
             for (j = 0; j < D; ++j) { 
                drBasis_[k](i,j) = 0.0;

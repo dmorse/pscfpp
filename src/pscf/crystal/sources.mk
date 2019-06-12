@@ -1,5 +1,7 @@
 pscf_crystal_= \
-  pscf/crystal/UnitCell.cpp \
+  pscf/crystal/UnitCell1.cpp \
+  pscf/crystal/UnitCell2.cpp \
+  pscf/crystal/UnitCell3.cpp \
   pscf/crystal/shiftToMinimum.cpp 
 
 pscf_crystal_SRCS=\

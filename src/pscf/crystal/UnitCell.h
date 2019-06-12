@@ -61,169 +61,6 @@ namespace Pscf
    template <class Archive, int D>
    void serialize(Archive& ar, UnitCell<D>& cell, const unsigned int version);
 
-   /**
-   * 1D crystal unit cell.
-   *
-   * \ingroup Pscf_Crystal_Module
-   */
-   template <>
-   class UnitCell<1> : public UnitCellBase<1>
-   {
-   public:
-
-      enum LatticeSystem {Lamellar};
-
-   private:
-
-      LatticeSystem lattice_;
-
-      void setNParameter();
-      void setLattice();
-
-      template <int D> 
-      friend std::ostream& operator << (std::ostream&, UnitCell<D>& );
-
-      template <int D>
-      friend std::istream& operator >> (std::istream&, UnitCell<D>& );
-
-      template <class Archive, int D>
-      friend void serialize(Archive& , UnitCell<D>& , const unsigned int );
-
-   };
-
-   /**
-   * 2D crystal unit cell.
-   *
-   * \ingroup Pscf_Crystal_Module
-   */
-   template <>
-   class UnitCell<2> : public UnitCellBase<2>
-   {
-   public:
-
-      enum LatticeSystem {Square, Rectangular, Rhombic, Hexagonal, Oblique};
-
-   private:
-
-      LatticeSystem lattice_;
-
-      void setNParameter();
-      void setLattice();
-
-      template <int D> 
-      friend std::ostream& operator << (std::ostream&, UnitCell<D>& );
-
-      template <int D>
-      friend std::istream& operator >> (std::istream&, UnitCell<D>& );
-
-      template <class Archive, int D>
-      friend void serialize(Archive& , UnitCell<D>& , const unsigned int );
-
-   };
-
-   /**
-   * 3D crystal unit cell.
-   *
-   * \ingroup Pscf_Crystal_Module
-   */
-   template <>
-   class UnitCell<3> : public UnitCellBase<3>
-   {
-   public:
-
-      /**
-      * Enumeration of the 7 possible Bravais lattice systems.
-      *
-      * Allowed values are: Cubic, Tetragonal, Orthorhombic,
-      * Monoclinic, Triclinic, Rhombohedral, and Hexagonal.
-      *
-      * \ingroup Crystal_Module
-      */
-      enum LatticeSystem {Cubic, Tetragonal, Orthorhombic, Monoclinic,
-                          Triclinic, Rhombohedral, Hexagonal};
-
-   private:
-
-      LatticeSystem lattice_;
-
-      void setNParameter();
-      void setLattice();
-
-      template <int D> 
-      friend std::ostream& operator << (std::ostream&, UnitCell<D>& );
-
-      template <int D>
-      friend std::istream& operator >> (std::istream&, UnitCell<D>& );
-
-      template <class Archive, int D>
-      friend void serialize(Archive& , UnitCell<D>& , const unsigned int );
-
-   };
-
-   // Inserter and Extractor Function Declarations
-
-   /**
-   * istream extractor for a 1D UnitCell<1>::LatticeSystem.
-   *
-   * \param in  input stream
-   * \param lattice  UnitCell<1>::LatticeSystem to be read
-   * \return modified input stream
-   */
-   std::istream& operator >> (std::istream& in,
-                              UnitCell<1>::LatticeSystem& lattice);
-
-   /**
-   * ostream inserter for a 1D UnitCell<1>::LatticeSystem.
-   *
-   * \param out  output stream
-   * \param lattice  UnitCell<1>::LatticeSystem to be written
-   * \return modified output stream
-   */
-   std::ostream& operator << (std::ostream& out,
-                              UnitCell<1>::LatticeSystem lattice);
-
-   /**
-   * istream extractor for a 2D UnitCell<2>::LatticeSystem.
-   *
-   * \param  in       input stream
-   * \param  lattice  UnitCell<2>::LatticeSystem to be read
-   * \return modified input stream
-   */
-   std::istream& operator >> (std::istream& in,
-                              UnitCell<2>::LatticeSystem& lattice);
-
-   /**
-   * ostream inserter for a 2D UnitCell<2>::LatticeSystem.
-   *
-   * \param  out      output stream
-   * \param  lattice  UnitCell<2>::LatticeSystem to be written
-   * \return modified output stream
-   */
-   std::ostream& operator << (std::ostream& out,
-                              UnitCell<2>::LatticeSystem lattice);
-
-   /**
-   * istream extractor for a 3D UnitCell<3>::LatticeSystem.
-   *
-   * \param  in       input stream
-   * \param  lattice  UnitCell<3>::LatticeSystem to be read
-   * \return modified input stream
-   */
-   std::istream& operator >> (std::istream& in,
-                              UnitCell<3>::LatticeSystem& lattice);
-
-   /**
-   * ostream inserter for an 3D UnitCell<3>::LatticeSystem.
-   *
-   * \param  out      output stream
-   * \param  lattice  UnitCell<3>::LatticeSystem to be written
-   * \return modified output stream
-   */
-   std::ostream& operator << (std::ostream& out,
-                              UnitCell<3>::LatticeSystem lattice);
-
-   // Unit Cell inserter (>>) and extractor (<<) operators
-
    // Implementation Template
 
    template <int D>
@@ -262,6 +99,198 @@ namespace Pscf
          ar & cell.parameters_[i];
       }
    }
+
+
+   // 1D Unit Cell
+
+   /**
+   * 1D crystal unit cell.
+   *
+   * \ingroup Pscf_Crystal_Module
+   */
+   template <>
+   class UnitCell<1> : public UnitCellBase<1>
+   {
+   public:
+
+      /**
+      * Enumeration of 1D lattice system types.
+      */
+      enum LatticeSystem {Lamellar, Null};
+
+      /**
+      * Constructor
+      */
+      UnitCell();
+
+   private:
+
+      LatticeSystem lattice_;
+
+      void setNParameter();
+      void setBasis();
+
+      void setLattice();
+
+      template <int D> 
+      friend std::ostream& operator << (std::ostream&, UnitCell<D>& );
+
+      template <int D>
+      friend std::istream& operator >> (std::istream&, UnitCell<D>& );
+
+      template <class Archive, int D>
+      friend void serialize(Archive& , UnitCell<D>& , const unsigned int );
+
+   };
+
+   /**
+   * istream extractor for a 1D UnitCell<1>::LatticeSystem.
+   *
+   * \param in  input stream
+   * \param lattice  UnitCell<1>::LatticeSystem to be read
+   * \return modified input stream
+   */
+   std::istream& operator >> (std::istream& in,
+                              UnitCell<1>::LatticeSystem& lattice);
+
+   /**
+   * ostream inserter for a 1D UnitCell<1>::LatticeSystem.
+   *
+   * \param out  output stream
+   * \param lattice  UnitCell<1>::LatticeSystem to be written
+   * \return modified output stream
+   */
+   std::ostream& operator << (std::ostream& out,
+                              UnitCell<1>::LatticeSystem lattice);
+
+   /**
+   * 2D crystal unit cell.
+   *
+   * \ingroup Pscf_Crystal_Module
+   */
+   template <>
+   class UnitCell<2> : public UnitCellBase<2>
+   {
+   public:
+
+      /**
+      * Enumeration of 2D lattice system types.
+      */
+      enum LatticeSystem {Square, Rectangular, Rhombic, Hexagonal, Oblique, 
+                          Null};
+
+      /**
+      * Constructor
+      */
+      UnitCell();
+
+   private:
+
+      LatticeSystem lattice_;
+
+      void setNParameter();
+      void setBasis();
+
+      void setLattice();
+
+      template <int D> 
+      friend std::ostream& operator << (std::ostream&, UnitCell<D>& );
+
+      template <int D>
+      friend std::istream& operator >> (std::istream&, UnitCell<D>& );
+
+      template <class Archive, int D>
+      friend void serialize(Archive& , UnitCell<D>& , const unsigned int );
+
+   };
+
+   /**
+   * istream extractor for a 2D UnitCell<2>::LatticeSystem.
+   *
+   * \param  in       input stream
+   * \param  lattice  UnitCell<2>::LatticeSystem to be read
+   * \return modified input stream
+   */
+   std::istream& operator >> (std::istream& in,
+                              UnitCell<2>::LatticeSystem& lattice);
+
+   /**
+   * ostream inserter for a 2D UnitCell<2>::LatticeSystem.
+   *
+   * \param  out      output stream
+   * \param  lattice  UnitCell<2>::LatticeSystem to be written
+   * \return modified output stream
+   */
+   std::ostream& operator << (std::ostream& out,
+                              UnitCell<2>::LatticeSystem lattice);
+
+   // 3D crystal unit cell
+
+   /**
+   * 3D crystal unit cell.
+   *
+   * \ingroup Pscf_Crystal_Module
+   */
+   template <>
+   class UnitCell<3> : public UnitCellBase<3>
+   {
+   public:
+
+      /**
+      * Enumeration of the 7 possible 3D Bravais lattice systems.
+      *
+      * Allowed non-null values are: Cubic, Tetragonal, Orthorhombic,
+      * Monoclinic, Triclinic, Rhombohedral, and Hexagonal.
+      *
+      * \ingroup Crystal_Module
+      */
+      enum LatticeSystem {Cubic, Tetragonal, Orthorhombic, Monoclinic,
+                          Triclinic, Rhombohedral, Hexagonal, Null};
+
+      /**
+      * Constructor
+      */
+      UnitCell();
+
+   private:
+
+      LatticeSystem lattice_;
+
+      void setNParameter();
+      void setBasis();
+
+      void setLattice();
+
+      template <int D> 
+      friend std::ostream& operator << (std::ostream&, UnitCell<D>& );
+
+      template <int D>
+      friend std::istream& operator >> (std::istream&, UnitCell<D>& );
+
+      template <class Archive, int D>
+      friend void serialize(Archive& , UnitCell<D>& , const unsigned int );
+
+   };
+
+   /**
+   * istream extractor for a 3D UnitCell<3>::LatticeSystem.
+   *
+   * \param  in       input stream
+   * \param  lattice  UnitCell<3>::LatticeSystem to be read
+   * \return modified input stream
+   */
+   std::istream& operator >> (std::istream& in,
+                              UnitCell<3>::LatticeSystem& lattice);
+
+   /**
+   * ostream inserter for an 3D UnitCell<3>::LatticeSystem.
+   *
+   * \param  out      output stream
+   * \param  lattice  UnitCell<3>::LatticeSystem to be written
+   * \return modified output stream
+   */
+   std::ostream& operator << (std::ostream& out,
+                              UnitCell<3>::LatticeSystem lattice);
 
 }
 #endif

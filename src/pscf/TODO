@@ -1,4 +1,6 @@
 
-1) Add more unit tests for UnitCell classes
-2) Add unit tests for 1D and 2D Mesh
+Add unit tests for 1D and 2D Mesh
 
+See crystal/TODO
+
+We will need SpaceGroupSymmetry<D> and SpaceGroup<D> templates in util/crystal

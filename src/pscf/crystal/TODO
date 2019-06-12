@@ -1,0 +1,71 @@
+
+UnitCell<D>:
+
+   Add a value Null to each LatticeType<D>::LatticeSystem
+
+   Initialize the value of latticeSystem_ to Null in the constructor, to allow 
+   checks that a LatticeSystem has been set as precondition for other functions.
+
+   Create a private function, setBasis that only sets rBasis, kBasis, drBasis.
+
+   Change setLattice() so as to call (in this order)
+      initializeToZero, setBasis(), computeDerivatives()
+
+   (This is in preparation for moving setLattice to UnitCellBase).
+
+UnitCellBase:
+
+   Private implementation changes:
+
+      Declare a pure virtual function set setBasis();
+
+      Migrate declaration and of setLattice to UnitCellBase.
+
+   Changes to public interface (may require changes elsewhere):
+
+     Change function SetParams() to setParameters(Farray<double, 6>) to 
+     take an array of parameters.  Make this function call setLattice().
+
+     Note/Rationale: You want to make it very difficult for a user to 
+     create inconsistent data. You can do this by forcing them to input
+     all parameters at once and then update all data structures within
+     the function that updates the parameters.
+   
+     Note: In this code base, functions and variable names are "lower
+     case camel", i.e., lower case first letter, words after the first
+     begin upper case, e.g., setParameters() rather than setParams().
+
+     Change params() to parameters() and have it return an FArray<double, 6>
+  
+     Change const int nParams() to int nParameter()
+
+     Note: Names of functions that return values should generally be the
+     same as names of corresponding private member variables, e.g., member
+     variable parameters_ is returned by function parameters(). Functions
+     that return one element of a container should use singular form of
+     the container name. Container names are generally plural.
+
+     Note: Convention elsewhere in this C++ code is that parameters that 
+     tell the number of things have names of the form nThing (not nThings).
+     Hence, the function name should be nParameter().  You could argue for 
+     use of plural, but the choice is arbitrary, and consistency matters 
+     more to people that try to extend code than which convention you choose. 
+
+     Find and change all invokations of params() and nParams() elsewhere.
+
+     Add function double parameter(int i) that returns one parameter.
+     Rationale: convenience. Sometimes you only need one parameter.
+  
+     Remove const qualifier from return value of double, int functions.
+
+     Note: A const qualifier on a return value is only needed on references 
+     and pointers. It is superfluous when applied to a primitive type that
+     is returned by value. For simple accessor functions, the function 
+     should be marked const, rather than the return value.
+
+Tests:
+
+     Add more explicit tests of elements of drrBasis and dggBasis for
+     specific lattice systems. Eventually need to implement test, hexagonal,
+     oblique, etc.
+
