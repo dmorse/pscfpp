@@ -51,22 +51,20 @@ public:
    bool isValidDerivative(UnitCell<D> cell)
    {
       double sum;
-      double Params = cell.nParams();
-      int i, j, k;
-      for (k=0; k < Params; ++k ) {
-         sum = 0.0;
-         for (i=0; i < D; ++i ) {
-            //sum = 0.0;
-            for (j=0; j < D; ++j ) {
-               sum += (cell.drBasis(k, i, j)*cell.kBasis(i)[j])+(cell.dkBasis(k,i,j)*cell.rBasis(i)[j]);
+      double nParams = cell.nParams();
+      int i, j, k, m;
+      for (k = 0; k < nParams; ++k) {
+         for (i = 0; i < D; ++i) {
+            for (j = 0; j < D; ++j) {
+               sum = 0.0;
+               for (m = 0; m < D; ++m) {
+                  sum += cell.drBasis(k, i, m)*cell.kBasis(j)[m];
+                  sum += cell.dkBasis(k, j, m)*cell.rBasis(i)[m];
+               }
             }
-            /*if (std::abs(sum) > 1.0E-8) {
-                return false;
-             }*/
-         }
-
-         if (std::abs(sum) > 1.0E-8) {
-            return false;
+            if (std::abs(sum) > 1.0E-8) {
+               return false;
+            }
          }
       }
       return true;
@@ -77,9 +75,9 @@ public:
    {   
       double sum;
       double twoPi = 2.0*Constants::Pi;
-      double Params = cell.nParams();
+      double nParams = cell.nParams();
       int i, j, k, t;
-      for (k=0; k < Params; ++k ) { 
+      for (k=0; k < nParams; ++k ) { 
          sum = 0.0;
          for (i=0; i < D; ++i ) { 
             //sum = 0.0;
@@ -99,44 +97,6 @@ public:
        return true;
    } 
 
-   template <int D>
-   bool isValidDoublerrDerivative(UnitCell<D> cell)
-   {   
-      double sum;
-      double twoPi = 2.0*Constants::Pi;
-      double Params = cell.nParams();
-      int i, j, k, t;
-      for (k=0; k < Params; ++k ) { 
-         sum = 0.0;
-         for (i=0; i < D; ++i ) { 
-            //sum = 0.0;
-            for (j=0; j < D; ++j ) { 
-    
-               for (t=0; t<D; ++t)  {
- 
-                  sum += (cell.drrBasis(k, i, j)*cell.kBasis(i)[t])-(2*twoPi*cell.drBasis(k, j, t));
-	          std::cout<< "dk("<<j<<t<<k<<")"<<"\t"<<"="<<cell.dkBasis(k, j, t)<<"\n";
-                  std::cout<< "dr("<<j<<t<<k<<")"<<"\t"<<"="<<cell.drBasis(k, j, t)<<"\n";
-                  std::cout<< "dkk("<<j<<t<<k<<")"<<"\t"<<"="<<cell.dkkBasis(k, j, t)<<"\n";
-                  std::cout<< "drr("<<j<<t<<k<<")"<<"\t"<<"="<<cell.drrBasis(k, j, t)<<"\n";
-
-                  //std::cout<< "dr"<<"\t"<<cell.drBasis(k, j, t);
-                  //std::cout<< "dkk"<<"\t"<<cell.dkkBasis(k, j, t);
-                  //std::cout<< "drr"<<"\t"<<cell.drrBasis(k, j, t);
-               }   
-            }   
-            /*if (std::abs(sum) > 1.0E-8) {
-                return false;
-            }*/ 
-         }   
-
-         //if (std::abs(sum) > 1.0E-8) {
-         //   return false;
-         //}   
-      }   
-      return true;
-   }
-
    void test1DLamellar() 
    {
       printMethod(TEST_FUNC);
@@ -151,13 +111,12 @@ public:
       std::cout.precision(6);
       std::cout << v << std::endl ;
 
-      TEST_ASSERT(isValidReciprocal(v));
-      TEST_ASSERT(isValidDerivative(v));
-      TEST_ASSERT(isValidDoublekkDerivative(v));
-      TEST_ASSERT(isValidDoublerrDerivative(v));
-
       std::cout << v.rBasis(0) << std::endl;
       std::cout << v.kBasis(0) << std::endl;
+
+      TEST_ASSERT(isValidReciprocal(v));
+      TEST_ASSERT(isValidDerivative(v));
+
    }
 
    void test2DSquare() 
@@ -174,15 +133,41 @@ public:
       std::cout.precision(6);
       std::cout << v << std::endl ;
 
-      TEST_ASSERT(isValidReciprocal(v));
-      TEST_ASSERT(isValidDerivative(v));
-      TEST_ASSERT(isValidDoublekkDerivative(v));
-      TEST_ASSERT(isValidDoublerrDerivative(v));
-
       std::cout << "a(0) = " << v.rBasis(0) << std::endl;
       std::cout << "a(1) = " << v.rBasis(1) << std::endl;
       std::cout << "b(0) = " << v.kBasis(0) << std::endl;
       std::cout << "b(1) = " << v.kBasis(1) << std::endl;
+
+      TEST_ASSERT(v.nParams() == 1);
+      TEST_ASSERT(isValidReciprocal(v));
+      TEST_ASSERT(isValidDerivative(v));
+
+      double param = v.params()[0];
+      double twoPi = 2.0*Constants::Pi;
+      double b, dbb;
+      int i, j, k;
+      for (k = 0; k < v.nParams(); ++k) {
+         for (i = 0; i < 2; ++i) {
+            for (j = 0; j < 2; ++j) {
+               if (i == j) {
+                  UTIL_ASSERT(eq(v.drrBasis(k, i, j), 1.0));
+               } else {
+                  UTIL_ASSERT(eq(v.drrBasis(k, i, j), 0.0));
+               }
+            }
+         }
+         for (i = 0; i < 2; ++i) {
+            for (j = 0; j < 2; ++j) {
+               if (i == j) {
+                  b = twoPi/param;
+                  dbb = -2.0*b*b/param;
+                  UTIL_ASSERT(eq(v.dkkBasis(k, i, j), dbb));
+               } else {
+                  UTIL_ASSERT(eq(v.drrBasis(k, i, j), 0.0));
+               }
+            }
+         }
+      }
    }
 
    void test3DOrthorhombic() 
@@ -199,15 +184,44 @@ public:
       std::cout.precision(6);
       std::cout << v << std::endl ;
 
-      TEST_ASSERT(isValidReciprocal(v));
-      TEST_ASSERT(isValidDerivative(v));
-      TEST_ASSERT(isValidDoublekkDerivative(v));
-      TEST_ASSERT(isValidDoublerrDerivative(v));
-
       std::cout << "a(0) = " << v.rBasis(0) << std::endl;
       std::cout << "a(1) = " << v.rBasis(1) << std::endl;
+      std::cout << "a(2) = " << v.rBasis(2) << std::endl;
       std::cout << "b(0) = " << v.kBasis(0) << std::endl;
       std::cout << "b(1) = " << v.kBasis(1) << std::endl;
+      std::cout << "b(2) = " << v.kBasis(2) << std::endl;
+
+      TEST_ASSERT(v.nParams() == 3);
+      TEST_ASSERT(isValidReciprocal(v));
+      TEST_ASSERT(isValidDerivative(v));
+
+      double param, b, dbb;
+      double twoPi = 2.0*Constants::Pi;
+      int i, j, k;
+      for (k = 0; k < v.nParams(); ++k) {
+         for (i = 0; i < 3; ++i) {
+            for (j = 0; j < 3; ++j) {
+               if (i == j) {
+                  UTIL_ASSERT(eq(v.drrBasis(k, i, j), 1.0));
+               } else {
+                  UTIL_ASSERT(eq(v.drrBasis(k, i, j), 0.0));
+               }
+            }
+         }
+         for (i = 0; i < 3; ++i) {
+            for (j = 0; j < 3; ++j) {
+               if (i == j) {
+                  param = v.params()[i];
+                  b = twoPi/param;
+                  dbb = -2.0*b*b/param;
+                  UTIL_ASSERT(eq(v.dkkBasis(k, i, j), dbb));
+               } else {
+                  UTIL_ASSERT(eq(v.drrBasis(k, i, j), 0.0));
+               }
+            }
+         }
+      }
+
    }
 
 };

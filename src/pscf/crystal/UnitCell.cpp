@@ -181,8 +181,14 @@ namespace Pscf
    */
    void UnitCell<2>::setLattice()
    {
+      initializeToZero();
+
+      int i;
+
+      #if 0
+      int j, k;
+
       // Initialize all elements to zero
-      int i, j, k;
       for (i = 0; i < 2; ++i) { 
          for (j = 0; j < 2; ++j) { 
             rBasis_[i][j] = 0.0;
@@ -195,6 +201,7 @@ namespace Pscf
 
          }
       }
+      #endif
 
       // Set elements for specific lattice types
       double TwoPi = 2.0*Constants::Pi;
@@ -215,6 +222,9 @@ namespace Pscf
          UTIL_THROW("Unimplemented 2D lattice type");
       }
 
+      computeDerivatives();
+
+      #if 0
       // Compute dkBasis
       int p, q, r, s, t;
       for (p = 0; p < nParameter_; ++p) {
@@ -245,6 +255,7 @@ namespace Pscf
             }
          }
       }
+      #endif
 
    }
 
