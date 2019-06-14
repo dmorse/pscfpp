@@ -5,23 +5,13 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "SpaceGroup.h"
+#include <pscf/crystal/SpaceGroup.h>
 
-namespace Simp {
+namespace Pscf
+{
 
-   /**
-   * Output stream inserter operator writing a SpaceGroup to stream
-   */ 
-   std::ostream& operator << (std::ostream& out, const SpaceGroup& g)
-   {
-      int i, size;
-      size = g.size();
-      out << "size = " << size << std::endl;
-      for (i = 0; i < size; ++i) {
-         out << std::endl;
-         out << g[i];
-      }
-      return out;
-   }
+   template <> class SpaceGroup<1>;
+   template <> class SpaceGroup<2>;
+   template <> class SpaceGroup<3>;
 
 }

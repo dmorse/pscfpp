@@ -138,6 +138,11 @@ namespace Pscf {
       SpaceSymmetry<D>& operator = (const SpaceSymmetry<D>& other);
 
       /**
+      * Shift components of translation to [0,1).
+      */
+      void normalize();
+
+      /**
       * Compute and return the inverse of this symmetry element.
       */
       SpaceSymmetry<D> inverse() const;
@@ -183,7 +188,6 @@ namespace Pscf {
       * Return the identity element.
       */
       static const SpaceSymmetry<D>& identity();
- 
 
    private:
 

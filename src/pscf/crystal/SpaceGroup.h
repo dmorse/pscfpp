@@ -17,6 +17,14 @@
 namespace Pscf
 {
 
+   template <int D> class SpaceGroup;
+
+   /**
+   * Output stream inserter operator writing a SpaceGroup to stream
+   */ 
+   template <int D>
+   std::ostream& operator << (std::ostream& out, const SpaceGroup<D>& A);
+
    using namespace Util;
 
    /**
@@ -24,8 +32,8 @@ namespace Pscf
    *
    * \ingroup Crystal_Module
    */
-   template <D>
-   class SpaceGroup : public SymmetryGroup<SpaceSymmetry <D> >
+   template <int D>
+   class SpaceGroup : public SymmetryGroup< SpaceSymmetry <D> >
    {
 
    public:
@@ -42,30 +50,28 @@ namespace Pscf
    // friends:
 
       friend 
-      std::ostream& operator << (std::ostream& out, const SpaceGroup& A);
+      std::ostream& operator << <> (std::ostream& out, const SpaceGroup<D>& A);
 
    };
 
-   /**
-   * Output stream inserter operator writing a SpaceGroup to stream
-   */ 
-   std::ostream& operator << (std::ostream& out, const SpaceGroup& A);
-
    // Template function definition
 
+   template <int D>
    template <int N>
-   void SpaceGroup::makeStar(const IntVec<D>& root, FSArray<IntVec<D>, N>& star)
+   void SpaceGroup<D>::makeStar(const IntVec<D>& root, FSArray<IntVec<D>, N>& star)
    {
+
       // Precondition
-      if (star.capacity() < size()) {
+      int size = SpaceGroup<D>::size();
+      if (star.capacity() < size) {
          UTIL_THROW("Star array capacity is less than order of group");
       }
 
       IntVec<D> vector;
-      int       i, j;
-      bool      found;
+      int i, j;
+      bool found;
       star.clear();
-      for (i = 0; i < size(); ++i) {
+      for (i = 0; i < size; ++i) {
          vector = root*(*this)[i];
          found = false;
          for (j = 0; j < star.size(); ++j) {
@@ -79,6 +85,22 @@ namespace Pscf
          }
       }
    
+   }
+
+   /*
+   * Output stream inserter operator for a SpaceGroup<D>.
+   */ 
+   template <int D>
+   std::ostream& operator << (std::ostream& out, const SpaceGroup<D>& g)
+   {
+      int i, size;
+      size = g.size();
+      out << "size = " << size << std::endl;
+      for (i = 0; i < size; ++i) {
+         out << std::endl;
+         out << g[i];
+      }
+      return out;
    }
 
 }

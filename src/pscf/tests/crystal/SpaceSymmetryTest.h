@@ -101,7 +101,6 @@ public:
       SpaceSymmetry<2> B;
       B = A.inverse();
       //std::cout << B << std::endl;
-
       
       SpaceSymmetry<2> C;
       C = A*B;
@@ -112,6 +111,13 @@ public:
       SpaceSymmetry<2> D;
       D = A*B;
       TEST_ASSERT(D == C);
+
+      SpaceSymmetry<2> E;
+      E = A*A;
+      //std::cout << E << std::endl;
+      TEST_ASSERT(A == B*E);
+      TEST_ASSERT(A == E*B);
+   
    }
   
    void test3DInvertMultiply() 

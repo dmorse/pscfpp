@@ -41,6 +41,7 @@ namespace Pscf
             R_(i, j) = other.R_(i,j);
          }
       }
+      normalize();
    }
 
    /*
@@ -59,7 +60,34 @@ namespace Pscf
             }
          }
       }
+      normalize();
       return *this;
+   }
+
+   /*
+   * Shift translation to lie in range [0,1). 
+   */
+   template <int D>
+   void SpaceSymmetry<D>::normalize()
+   {
+      for (int i = 0; i < D; ++i) {
+         int num = t_[i].num();
+         int den = t_[i].den();
+         UTIL_ASSERT(den > 0);
+         if (den == 1) {
+            num = 0;
+         } else {
+            while (num < 0) {
+               num += den;
+            }
+            while (num >= den) {
+              num -= den;
+            }
+         }
+         if (num != t_[i].num()) {
+            t_[i] = Rational(num, den);
+         }
+      }
    }
 
    /*
@@ -115,6 +143,7 @@ namespace Pscf
             C.t_[i] -= C.R_(i, j)*t_[j];
          }
       }
+      C.normalize();
 
       return C;
    }
@@ -168,6 +197,7 @@ namespace Pscf
             C.t_[i] += A.R_(i, j)*B.t_[j];
          }
       }
+      C.normalize();
 
       return C;
    }

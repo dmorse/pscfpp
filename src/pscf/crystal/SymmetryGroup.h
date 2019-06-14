@@ -17,7 +17,7 @@ namespace Pscf
    using namespace Util;
 
    /**
-   * Class template for a group of elements of type Symmetry.
+   * Class template for a group of elements.
    *
    * This is written as a template to allow the creation of groups that
    * use different types of objects to represent symmetry elements. The
@@ -48,7 +48,7 @@ namespace Pscf
       /**
       * Copy constructor.
       */
-      SymmetryGroup(const SymmetryGroup& other);
+      SymmetryGroup(const SymmetryGroup<Symmetry>& other);
 
       /**
       * Destructor.
@@ -91,7 +91,8 @@ namespace Pscf
       /**
       * Assignment operator.
       */
-      SymmetryGroup& operator = (const SymmetryGroup& other);
+      SymmetryGroup<Symmetry>& 
+      operator = (const SymmetryGroup<Symmetry>& other);
  
       /**
       * Element access operator (by reference).
