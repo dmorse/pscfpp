@@ -19,7 +19,7 @@ UnitCellBase:
 
       Declare a pure virtual function set setBasis();
 
-      Migrate declaration and of setLattice to UnitCellBase.
+      Migrate declaration of setLattice to UnitCellBase.
 
    Changes to public interface (may require changes elsewhere):
 
@@ -63,9 +63,15 @@ UnitCellBase:
      is returned by value. For simple accessor functions, the function 
      should be marked const, rather than the return value.
 
-Tests:
+     Tests:
 
-     Add more explicit tests of elements of drrBasis and dggBasis for
-     specific lattice systems. Eventually need to implement test, hexagonal,
-     oblique, etc.
+         Add more explicit tests of elements of drrBasis and dggBasis 
+         for specific lattice systems. Eventually need to implement test, 
+         hexagonal, oblique, etc.
 
+SpaceSymmetry<D>:
+
+     Create unit tests, test 2D code.
+
+     Write explicit matrix inversion code for D=3 dimensions.
+     

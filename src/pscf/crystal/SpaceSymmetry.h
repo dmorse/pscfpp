@@ -19,14 +19,14 @@ namespace Pscf {
    * operation (e.g., 2, 3, and 4 fold rotations about axes, reflections, or
    * inversion) with possible translations by a fraction of a unit cell.
    *
-   * For a space group symmetry, both the rotation matrix R and the 
-   * translation t are represented in a basis of Bravais lattice vectors. 
-   * Because Bravais basis vectors must map onto other lattice vectors,
-   * this implies that elements of all elements of the rotation matrix 
-   * must be integers. Elements of the translation vector are small 
-   * fractions (n/2, n/3, n4). In order for the inverse of the rotation
-   * matrix to also be a matrix of integers, the determinant of the
-   * rotation matrix must be +1 or -1.
+   * Both the rotation matrix R and the translation t are represented using 
+   * a basis of Bravais lattice basis vectors.  Because Bravais basis vectors 
+   * must map onto other lattice vectors, this implies that elements of all 
+   * elements of the rotation matrix must be integers.  To guarantee that the 
+   * inverse of the rotation matrix is also a matrix of integers, we require 
+   * that the determinant of the rotation matrix must be +1 or -1. The
+   * translation vector is represented by a vector of D rational numbers
+   * (i.e., fractions) of the form n/m with m = 2, 3, or 4 and n < m. 
    *
    * The basis used to describe a crytallographic group may be either a
    * primitive or non-primitive unit cell. Thus, for example, the space
@@ -43,10 +43,10 @@ namespace Pscf {
 
    public:
 
-      /// Typedef for internal matrix
+      /// Typedef for matrix used to represent point group operation.
       typedef FMatrix<int, D, D> Rotation;
 
-      /// Typedef for space group translation vector type.
+      /// Typedef for vector used to represent fractional translation.
       typedef FArray<Rational, D> Translation;
 
       /**
@@ -67,9 +67,14 @@ namespace Pscf {
       SpaceSymmetry<D>& operator = (const SpaceSymmetry<D>& other);
 
       /**
-      * Return the inverse of this symmetry element.
+      * Compute and return the inverse of this symmetry element.
       */
       SpaceSymmetry<D> inverse() const;
+
+      /**
+      * Compute and return the inverse of the rotation matrix.
+      */
+      SpaceSymmetry<D>::Rotation inverseRotation() const;
 
       /**
       * Return an element of the matrix by reference.
@@ -108,6 +113,7 @@ namespace Pscf {
       */
       static const SpaceSymmetry<D>& identity();
  
+
    private:
 
       /**
@@ -123,6 +129,8 @@ namespace Pscf {
       * Translation vector
       */
       Translation t_;
+
+      // Static member variables
 
       /// Identity element (static member stored for reference)
       static SpaceSymmetry<D> identity_;
@@ -146,20 +154,31 @@ namespace Pscf {
       operator * (const SpaceSymmetry<D>& A, const SpaceSymmetry<D>& B);
 
       friend 
-      IntVec<D> operator * (const SpaceSymmetry<D>& S, const IntVec<D>& V);
+      IntVec<D> operator * (const IntVec<D>& V, const SpaceSymmetry<D>& S);
 
       friend 
-      IntVec<D> operator * (const IntVec<D>& V, const SpaceSymmetry<D>& S);
+      IntVec<D> operator * (const SpaceSymmetry<D>& S, const IntVec<D>& V);
 
       friend 
       std::ostream& operator << (std::ostream& out, const SpaceSymmetry<D>& A);
 
    };
 
-   // Static member declarations
+   // Static member variable declarations
 
    template <int D> SpaceSymmetry<D> SpaceSymmetry<D>::identity_;
    template <int D> bool SpaceSymmetry<D>::hasIdentity_;
+
+   // Explicit specialization of member functions
+
+   template <> 
+   SpaceSymmetry<1>::Rotation SpaceSymmetry<1>::inverseRotation() const;
+
+   template <> 
+   SpaceSymmetry<2>::Rotation SpaceSymmetry<2>::inverseRotation() const;
+
+   template <> 
+   SpaceSymmetry<3>::Rotation SpaceSymmetry<3>::inverseRotation() const;
 
    // Friend function declarations
 

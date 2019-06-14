@@ -19,7 +19,11 @@ namespace Pscf
       for (i = 0; i < D; ++i) {
          t_[i] = 0;
          for (j = 0; j < D; ++j) {
-            R_(i, j) = 0;
+            if (i == j) {
+               R_(i, j) = 1;
+            } else {
+               R_(i, j) = 0;
+            }
          }
       }
    }
@@ -37,6 +41,25 @@ namespace Pscf
             R_(i, j) = other.R_(i,j);
          }
       }
+   }
+
+   /*
+   * Assignment operator.
+   */
+   template <int D>
+   SpaceSymmetry<D>& 
+   SpaceSymmetry<D>::operator = (const SpaceSymmetry<D>& other)
+   {
+      if (this != &other) {
+         int i, j;
+         for (i = 0; i < D; ++i) {
+            t_[i] = other.t_[i];
+            for (j = 0; j < D; ++j) {
+               R_(i, j) = other.R_(i,j);
+            }
+         }
+      }
+      return *this;
    }
 
    /*
@@ -58,40 +81,42 @@ namespace Pscf
       }
    }
 
+   #if 0
+   /*
+   * Return inverse of rotation matrix.
+   *
+   * The general template is unimplemented, and thus throws and error.
+   */
+   template <int D>
+   SpaceSymmetry<D> SpaceSymmetry<D>::inverseRotation() const
+   {
+      UTIL_THROW("Unimplemented SpaceSymmetry<D>::inverseRotation()");
+      SpaceSymmetry<D> C;
+      return C;
+   }
+   #endif
+
    /*
    * Return inverse of this SpaceSymmetry<D>.
    */
    template <int D>
    SpaceSymmetry<D> SpaceSymmetry<D>::inverse() const
    {
-      // Assumes matrix is unitary in Bravais basis.
       SpaceSymmetry<D> C;
+
+      // Compute inverse of rotation matrix
+      C.R_ = inverseRotation();
+
+      // Compute translation -R^{-1}t
       int i, j;
       for (i = 0; i < D; ++i) {
+         C.t_[i] = 0;
          for (j = 0; j < D; ++j) {
-            C.R_(i, j) = R_(j, i);
+            C.t_[i] -= C.R_(i, j)*t_[j];
          }
       }
-      return C;
-   }
 
-   /*
-   * Assignment operator.
-   */
-   template <int D>
-   SpaceSymmetry<D>& 
-   SpaceSymmetry<D>::operator = (const SpaceSymmetry<D>& other)
-   {
-      if (this != &other) {
-         int i, j;
-         for (i = 0; i < D; ++i) {
-            t_[i] = other.t_[i];
-            for (j = 0; j < D; ++j) {
-               R_(i, j) = other.R_(i,j);
-            }
-         }
-      }
-      return *this;
+      return C;
    }
 
    /*
