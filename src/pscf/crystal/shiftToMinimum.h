@@ -20,7 +20,7 @@ namespace Pscf
    /**
    * Returns minimum magnitude image of DFT wavevector.
    *
-   * \param v IntVector<D> containing integer indices of wavevector.
+   * \param v IntVec<D> containing integer indices of wavevector.
    * \param d dimensions of the discrete Fourier transform grid.
    * \param cell UnitCell
    */
