@@ -26,7 +26,7 @@ public:
    void test2Dmake1() 
    {
       printMethod(TEST_FUNC);
-      printEndl();
+      //printEndl();
 
       SpaceGroup<2> G;
       SpaceSymmetry<2> A;

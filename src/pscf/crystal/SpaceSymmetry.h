@@ -106,7 +106,7 @@ namespace Pscf {
    * t = (1/2, 1/2, 1/2), or as a point group using a set of three 
    * non-orthogonal basis vectors for the primitive unit cell. 
    *
-   * \ingroup Crystal_Module
+   * \ingroup Pscf_Crystal_Module
    */
    template <int D>
    class SpaceSymmetry 
@@ -151,6 +151,11 @@ namespace Pscf {
       * Compute and return the inverse of the rotation matrix.
       */
       SpaceSymmetry<D>::Rotation inverseRotation() const;
+
+      /**
+      * Compute and return the determinant of the rotation matrix.
+      */
+      int determinant() const;
 
       /**
       * Return an element of the matrix by reference.
@@ -262,6 +267,15 @@ namespace Pscf {
 
    template <> 
    SpaceSymmetry<3>::Rotation SpaceSymmetry<3>::inverseRotation() const;
+
+   template <> 
+   int SpaceSymmetry<1>::determinant() const;
+
+   template <> 
+   int SpaceSymmetry<2>::determinant() const;
+
+   template <> 
+   int SpaceSymmetry<3>::determinant() const;
 
    // Inline method definitions
 

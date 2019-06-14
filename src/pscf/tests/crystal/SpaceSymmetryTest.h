@@ -34,8 +34,14 @@ public:
    {
       printMethod(TEST_FUNC);
       printEndl();
-
-      std::cout << SpaceSymmetry<2>::identity() << std::endl;
+      SpaceSymmetry<2> E = SpaceSymmetry<2>::identity();
+      TEST_ASSERT(E.R(0,0) == 1);
+      TEST_ASSERT(E.R(1,0) == 0);
+      TEST_ASSERT(E.R(0,1) == 0);
+      TEST_ASSERT(E.R(1,1) == 1);
+      TEST_ASSERT(E.t(0) == 0);
+      TEST_ASSERT(E.t(1) == 0);
+      //std::cout << SpaceSymmetry<2>::identity() << std::endl;
    }
 
    void test2DConstruct() 

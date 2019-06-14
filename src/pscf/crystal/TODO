@@ -1,4 +1,3 @@
-
 UnitCell<D>:
 
    Add a value Null to each LatticeType<D>::LatticeSystem
@@ -69,9 +68,9 @@ UnitCellBase:
          for specific lattice systems. Eventually need to implement test, 
          hexagonal, oblique, etc.
 
-SpaceSymmetry<D>:
+shiftToMinimum:
 
-     Create unit tests, test 2D code.
+   The algorithm is designed to work only with non-negative components.
+   This is a bug waiting to happen.  Modify so it works with negative 
+   components.
 
-     Write explicit matrix inversion code for D=3 dimensions.
-     

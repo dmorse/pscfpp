@@ -109,21 +109,6 @@ namespace Pscf
       }
    }
 
-   #if 0
-   /*
-   * Return inverse of rotation matrix.
-   *
-   * The general template is unimplemented, and thus throws and error.
-   */
-   template <int D>
-   SpaceSymmetry<D> SpaceSymmetry<D>::inverseRotation() const
-   {
-      UTIL_THROW("Unimplemented SpaceSymmetry<D>::inverseRotation()");
-      SpaceSymmetry<D> C;
-      return C;
-   }
-   #endif
-
    /*
    * Return inverse of this SpaceSymmetry<D>.
    */
@@ -144,6 +129,8 @@ namespace Pscf
          }
       }
       C.normalize();
+
+      //UTIL_CHECK(C.determinant()*determinant() == 1);
 
       return C;
    }

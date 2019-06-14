@@ -18,6 +18,10 @@ namespace Pscf
    template<> bool             SpaceSymmetry<3>::hasIdentity_ = false;
 
    template<>
+   int SpaceSymmetry<1>::determinant() const
+   { return R_(0, 0); }
+
+   template<>
    SpaceSymmetry<1>::Rotation SpaceSymmetry<1>::inverseRotation() const
    {
       // Compute and check the determinant
@@ -34,11 +38,14 @@ namespace Pscf
    }
 
    template<>
+   int SpaceSymmetry<2>::determinant() const
+   {  return (R_(0,0)*R(1,1) - R(0,1)*R(1,0)); }
+ 
+   template<>
    SpaceSymmetry<2>::Rotation SpaceSymmetry<2>::inverseRotation() const
    {
       // Compute and check the determinant
-      int det;  // Determinant
-      det = R_(0,0)*R(1,1) - R(0,1)*R(1,0);
+      int det = determinant();
       if (1 != det*det) {
          UTIL_THROW("Invalid SpaceSymmetry<2>: |det| != 1");
       }
@@ -54,13 +61,20 @@ namespace Pscf
    }
 
    template<>
-   SpaceSymmetry<3>::Rotation SpaceSymmetry<3>::inverseRotation() const
-   {
-      // Compute and check the determinant
-      int det = 0;  // Determinant
+   int SpaceSymmetry<3>::determinant() const
+   {  
+      int det = 0;  
       det += R_(0,0)*(R(1,1)*R(2,2) - R(1,2)*R(2,1));
       det += R_(0,1)*(R(1,2)*R(2,0) - R(1,0)*R(2,2));
       det += R_(0,2)*(R(1,0)*R(2,1) - R(1,1)*R(2,0));
+      return det;
+   }
+ 
+   template<>
+   SpaceSymmetry<3>::Rotation SpaceSymmetry<3>::inverseRotation() const
+   {
+      // Compute and check the determinant
+      int det = determinant();
       if (1 != det*det) {
          UTIL_THROW("Invalid SpaceSymmetry<3>: |det| != 1");
       }

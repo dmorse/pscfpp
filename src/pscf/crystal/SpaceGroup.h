@@ -30,7 +30,7 @@ namespace Pscf
    /**
    * Group of crystal symmetries with no translations.
    *
-   * \ingroup Crystal_Module
+   * \ingroup Pscf_Crystal_Module
    */
    template <int D>
    class SpaceGroup : public SymmetryGroup< SpaceSymmetry <D> >
