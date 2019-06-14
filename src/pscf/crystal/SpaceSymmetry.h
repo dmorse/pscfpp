@@ -12,6 +12,77 @@ namespace Pscf {
 
    using namespace Util;
 
+   template <int D> class SpaceSymmetry;
+
+   // Non-member function declarations
+
+   /**
+   * Are two SpaceSymmetry objects equivalent?
+   *
+   * \param A first symmetry
+   * \param B second symmetry
+   * \return True if A == B, false otherwise
+   */
+   template <int D>
+   bool operator == (const SpaceSymmetry<D>& A, const SpaceSymmetry<D>& B);
+
+   /**
+   * Are two SpaceSymmetry objects not equivalent?
+   *
+   * \param A first symmetry
+   * \param B second symmetry
+   * \return True if A != B, false otherwise
+   */
+   template <int D>
+   bool operator != (const SpaceSymmetry<D>& A, const SpaceSymmetry<D>& B);
+
+   /**
+   * Return the product A*B of two symmetry objects.
+   *
+   * \param A first symmetry
+   * \param B second symmetry
+   * \return product A*B
+   */
+   template <int D>
+   SpaceSymmetry<D> 
+   operator * (const SpaceSymmetry<D>& A, const SpaceSymmetry<D>& B);
+
+   /**
+   * Return the IntVec<D> product S*V of a rotation matrix and an IntVec<D>.
+   * 
+   * The product is defined to be the matrix product of the rotation matrix
+   * and the integer vector S.R * V.
+   *
+   * \param S symmetry operation
+   * \param V integer vector
+   * \return product S*V
+   */
+   template <int D>
+   IntVec<D> operator * (const SpaceSymmetry<D>& S, const IntVec<D>& V);
+
+   /**
+   * Return the IntVec<D> product V*S of an IntVec<D> and a rotation matrix.
+   *
+   * The product is defined to be the matrix product of the integer vector
+   * and the space group rotation matrix S.R * V.
+   *
+   * \param V integer vector
+   * \param S symmetry operation
+   * \return product V*S
+   */
+   template <int D>
+   IntVec<D> operator * (const IntVec<D>& V, const SpaceSymmetry<D>& S);
+
+   /**
+   * Output stream inserter for a SpaceSymmetry<D>
+   *
+   * \param out output stream
+   * \param A  SpaceSymmetry<D> object to be output
+   * \return  modified output stream
+   */ 
+   template <int D>
+   std::ostream& operator << (std::ostream& out, const SpaceSymmetry<D>& A);
+
    /**
    * A SpaceSymmetry represents a crystallographic space group symmetry.
    *
@@ -144,32 +215,40 @@ namespace Pscf {
    // friends:
 
       friend 
-      bool operator==(const SpaceSymmetry<D>& A, const SpaceSymmetry<D>& B);
+      bool operator == <> (const SpaceSymmetry<D>& A, 
+                           const SpaceSymmetry<D>& B);
 
       friend 
-      bool operator!=(const SpaceSymmetry<D>& A, const SpaceSymmetry<D>& B);
+      bool operator != <> (const SpaceSymmetry<D>& A, 
+                           const SpaceSymmetry<D>& B);
 
       friend 
       SpaceSymmetry<D>
-      operator * (const SpaceSymmetry<D>& A, const SpaceSymmetry<D>& B);
+      operator * <> (const SpaceSymmetry<D>& A, 
+                     const SpaceSymmetry<D>& B);
 
       friend 
-      IntVec<D> operator * (const IntVec<D>& V, const SpaceSymmetry<D>& S);
+      IntVec<D> operator * <> (const IntVec<D>& V, 
+                               const SpaceSymmetry<D>& S);
 
       friend 
-      IntVec<D> operator * (const SpaceSymmetry<D>& S, const IntVec<D>& V);
+      IntVec<D> operator * <>(const SpaceSymmetry<D>& S, const IntVec<D>& V);
 
       friend 
-      std::ostream& operator << (std::ostream& out, const SpaceSymmetry<D>& A);
+      std::ostream& operator << <> (std::ostream& out, 
+                                    const SpaceSymmetry<D>& A);
 
    };
 
-   // Static member variable declarations
+   // Static member variable declaration templates
 
-   template <int D> SpaceSymmetry<D> SpaceSymmetry<D>::identity_;
-   template <int D> bool SpaceSymmetry<D>::hasIdentity_;
+   template <int D> 
+   SpaceSymmetry<D> SpaceSymmetry<D>::identity_;
 
-   // Explicit specialization of member functions
+   template <int D> 
+   bool SpaceSymmetry<D>::hasIdentity_;
+
+   // Explicit specialization of members
 
    template <> 
    SpaceSymmetry<1>::Rotation SpaceSymmetry<1>::inverseRotation() const;
@@ -179,75 +258,6 @@ namespace Pscf {
 
    template <> 
    SpaceSymmetry<3>::Rotation SpaceSymmetry<3>::inverseRotation() const;
-
-   // Friend function declarations
-
-   /**
-   * Are two SpaceSymmetry objects equivalent?
-   *
-   * \param A first symmetry
-   * \param B second symmetry
-   * \return True if A == B, false otherwise
-   */
-   template <int D>
-   bool operator == (const SpaceSymmetry<D>& A, const SpaceSymmetry<D>& B);
-
-   /**
-   * Are two SpaceSymmetry objects not equivalent?
-   *
-   * \param A first symmetry
-   * \param B second symmetry
-   * \return True if A != B, false otherwise
-   */
-   template <int D>
-   bool operator != (const SpaceSymmetry<D>& A, const SpaceSymmetry<D>& B);
-
-   /**
-   * Return the product A*B of two symmetry objects.
-   *
-   * \param A first symmetry
-   * \param B second symmetry
-   * \return product A*B
-   */
-   template <int D>
-   SpaceSymmetry<D> 
-   operator * (const SpaceSymmetry<D>& A, const SpaceSymmetry<D>& B);
-
-   /**
-   * Return the IntVec<D> product S*V of a rotation matrix and an IntVec<D>.
-   * 
-   * The product is defined to be the matrix product of the rotation matrix
-   * and the integer vector S.R * V.
-   *
-   * \param S symmetry operation
-   * \param V integer vector
-   * \return product S*V
-   */
-   template <int D>
-   IntVec<D> operator * (const SpaceSymmetry<D>& S, const IntVec<D>& V);
-
-   /**
-   * Return the IntVec<D> product V*S of an IntVec<D> and a rotation matrix.
-   *
-   * The product is defined to be the matrix product of the integer vector
-   * and the space group rotation matrix S.R * V.
-   *
-   * \param V integer vector
-   * \param S symmetry operation
-   * \return product V*S
-   */
-   template <int D>
-   IntVec<D> operator * (const IntVec<D>& V, const SpaceSymmetry<D>& S);
-
-   /**
-   * Output stream inserter for a SpaceSymmetry<D>
-   *
-   * \param out output stream
-   * \param A  SpaceSymmetry<D> object to be output
-   * \return  modified output stream
-   */ 
-   template <int D>
-   std::ostream& operator << (std::ostream& out, const SpaceSymmetry<D>& A);
 
    // Inline method definitions
 
@@ -290,7 +300,6 @@ namespace Pscf {
 
    /*
    * Return the identity symmetry operation.
-   *
    */
    template <int D>
    inline 

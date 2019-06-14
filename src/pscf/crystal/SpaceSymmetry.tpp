@@ -215,7 +215,7 @@ namespace Pscf
       int i, j;
       for (i = 0; i < D; ++i) {
          for (j = 0; j < D; ++j) {
-            out << Int(A.R_(i,j));
+            out << " " << Int(A.R_(i,j),2);
          }
          out << std::endl;
       }
