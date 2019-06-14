@@ -220,12 +220,9 @@ namespace Pscf
          out << std::endl;
       }
       for (i = 0; i < D; ++i) {
-         if (A.t_[i].den() == 1) {
-            out << Int(A.t_[i].num());
-         } else {
-            out << A.t_[i];
-         }
+         out << "  " << A.t_[i];
       }
+      out << std::endl;
       return out;
    }
 
