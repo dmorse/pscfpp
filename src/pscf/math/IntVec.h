@@ -145,5 +145,45 @@ namespace Pscf
    bool operator != (const IntVec<D, T>& v1, const IntVec<D, T>& v2) 
    { return !(v1 == v2); }
    
+   /**
+   * Less than comparison for two IntVec<D, T>s.
+   *
+   * \return true if v1 < v2, false otherwise.
+   */
+   template <int D, typename T>
+   inline 
+   bool operator < (const IntVec<D, T>& v1, const IntVec<D, T>& v2) 
+   {
+      for (int i = 0; i < D; ++i) {
+         if (v1[i] > v2[i]) {
+           return false;
+         } else 
+         if (v1[i] < v2[i]) {
+            return true;
+         } 
+      }
+      return false;
+   }
+   
+   /**
+   * Greater than comparison for two IntVec<D, T>s.
+   *
+   * \return true if v1 > v2, false otherwise.
+   */
+   template <int D, typename T>
+   inline 
+   bool operator > (const IntVec<D, T>& v1, const IntVec<D, T>& v2) 
+   {
+      for (int i = 0; i < D; ++i) {
+         if (v1[i] < v2[i]) {
+           return false;
+         } else 
+         if (v1[i] > v2[i]) {
+            return true;
+         } 
+      }
+      return false;
+   }
+   
 }
 #endif

@@ -15,6 +15,7 @@
 #include <util/containers/DArray.h>
 #include <util/containers/GArray.h>
 #include <util/containers/DMatrix.h>
+#include <set>
 
 namespace Pscf { 
 
@@ -33,9 +34,9 @@ namespace Pssp
    template <int D>
    class Basis 
    {
-   
+
    public:
-      
+
       /**
       * Wavevector used to construct a basis function.
       */ 
@@ -50,21 +51,24 @@ namespace Pssp
          // Square magnitude of associated wavevector
          double sqNorm;
 
-         // Integer indices of this wavevector
+         // Integer indices of this wavevector, on discrete Fourier transform mesh.
          IntVec<D> indicesDft;
+
+         // Integer indices of this wavevector, in first Brillouin zone.
+         IntVec<D> indicesBz;
 
          // Index of star containing this wavevector
          int starId;
 
          // Is this wave represented implicitly in DFT of real field?
          bool implicit;
-         
+
       //friends:
 
          friend class Basis;
 
       };
-  
+
       /**
       * List of wavevectors that are related by space-group symmetries.
       *
@@ -154,7 +158,7 @@ namespace Pssp
       // Derivatives of dksq with respect to each 
       // of the parameters (rows)
       DMatrix<double> dksq; 
- 
+
       /**
       * Construct basis for a specific grid and space group.
       *
@@ -163,7 +167,7 @@ namespace Pssp
       */
       void makeBasis(const Mesh<D>& mesh, const UnitCell<D>& unitCell, 
                      std::string groupName);
-     
+
       /**
       * Convert field from symmetry-adapted representation to complex DFT.
       *
@@ -199,38 +203,38 @@ namespace Pssp
       * Total number of stars.
       */
       int nStar() const;
-   
+
       /**
       * Total number of nonzero symmetry-adapted basis functions.
       */
       int nBasis() const;
-  
+
       /** 
       * Get a specific Wave, access by integer array index.
       */
       Wave& wave(int i);
-  
+
       /** 
       * Get a Wave, access wave by IntVec of indices.
       */
       Wave& wave(IntVec<D> vector);
-  
+
       /** 
       * Get a Star, access by integer index.
       */
       Star& star(int i);
 
    private:
-  
+
       /// Array of all Wave objects (all wavevectors)
       DArray<Wave> waves_;
 
       /// Array of Star objects (all stars of wavevectors).
       GArray<Star> stars_;
-   
+
       /// Indexing that allows identification by IntVec
       DArray<int> waveId_;
-     
+
       /// Total number of wavevectors
       int nWave_;
 
@@ -242,6 +246,33 @@ namespace Pssp
 
       /// Pointer to associated Mesh<D>
       const Mesh<D>* meshPtr_;
+
+      struct NWave {
+         double sqNorm;
+         IntVec<D> indicesDft;
+         IntVec<D> indicesBz;
+      };
+
+      struct NWaveComp {
+         bool operator() (NWave, NWave) const;
+      };
+
+      /**
+      * Construct array of ordered waves.
+      */
+      void makeWaves(const Mesh<D>& mesh, const UnitCell<D>& unitCell);
+
+      /**
+      * Construct array of ordered waves.
+      */
+      void makeStars(const Mesh<D>& mesh, const UnitCell<D>& unitCell);
+
+      /**
+      * Construct array of ordered waves.
+      */
+      void getStar(int rootId,
+                   std::set<NWave, NWaveComp>& list,
+                   std::set<NWave, NWaveComp>& star);
 
    };
 

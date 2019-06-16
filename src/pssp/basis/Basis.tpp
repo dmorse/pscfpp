@@ -8,40 +8,212 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-
 #include "Basis.h"
+#include <pscf/crystal/shiftToMinimum.h>
+#include <vector>
+
 
 namespace Pscf {
 namespace Pssp
 {
+
    template <int D>
    Basis<D>::Basis()
-      : nWave_(0), nStar_(0), unitCellPtr_(0), meshPtr_(0)
+    : nWave_(0), 
+      nStar_(0), 
+      unitCellPtr_(0), 
+      meshPtr_(0)
    {}
 
    template <int D>
-   void Basis<D>::makeBasis(const Mesh<D>& mesh, const UnitCell<D>& unitCell,
+   void Basis<D>::makeBasis(const Mesh<D>& mesh, 
+                            const UnitCell<D>& unitCell,
                             std::string groupName)
    {
-      if (groupName == "I") {
-         //To Do: Need some method to obtain the space group symmetry 
-         //       if other than I
-      } else {
-         UTIL_THROW("Unimplemented space group");
-      }
-
-      //Associate both mesh and unit cell
+      // Save pointers to mesh and unit cell
       meshPtr_ = &mesh;
       unitCellPtr_ = &unitCell;
-      
-      MeshIterator<D> itr(mesh.dimensions());
-      
-      //make waves
-      waves_.allocate(mesh.size());
-      waveId_.allocate(mesh.size());
-      nWave_ = mesh.size();
 
-      for (itr.begin(); !itr.atEnd(); ++itr) {
+      // Allocate arrays
+      nWave_ = mesh.size();
+      waves_.allocate(nWave_);
+      waveId_.allocate(nWave_); 
+
+      // Make sorted array of waves
+      makeWaves(mesh, unitCell);
+
+      // Identify stars of waves that are related by symmetry
+      makeStars(mesh, unitCell);
+
+   }
+
+   template <int D>
+   void Basis<D>::makeWaves(const Mesh<D>& mesh, const UnitCell<D>& unitCell)
+   {
+      IntVec<D> meshDimensions = mesh.dimensions();
+
+      // Generate dft mesh of waves, store in local std::vector twaves_
+      std::vector<NWave> twaves;
+      twaves.reserve(nWave_);
+      {
+         NWave w;
+         IntVec<D> v;
+         MeshIterator<D> itr(mesh.dimensions());
+         for (itr.begin(); !itr.atEnd(); ++itr) {
+            w.indicesDft = itr.position();
+            v = shiftToMinimum(w.indicesDft, meshDimensions, *unitCellPtr_);
+            w.indicesBz = v;
+            w.sqNorm = unitCellPtr_->ksq(v);
+            twaves.push_back(w);
+   
+            #if 0
+            for (int i = 0; i < 2; ++i) {
+                std::cout << " " << v[i];
+            }
+            std::cout << "  ";
+            for (int i = 0; i < 2; ++i) {
+                std::cout << " " << w.indicesBz[i];
+            }
+            std::cout << "    " << w.sqNorm << std::endl;
+            #endif
+   
+         }
+      }
+
+      // Sort temporary container twaves_ by wavevector norm
+      {
+         // Define function object to be used for sorting
+         struct NormComparator{
+            bool operator () (NWave a, NWave b)
+            {  return (a.sqNorm < b.sqNorm); }
+         };
+
+         NormComparator comp;
+         std::sort(twaves.begin(), twaves.end(), comp);
+      }
+
+      // Copy temporary array twaves_ into member variable waves_
+      for (int i = 0; i < nWave_; ++i) {
+         waves_[i].sqNorm = twaves[i].sqNorm;
+         waves_[i].indicesDft = twaves[i].indicesDft;
+         waves_[i].indicesBz = twaves[i].indicesBz;
+         #if 0
+         for (int j = 0; j < 2; ++j) {
+             std::cout << " " << waves_[i].indicesBz[j];
+         }
+         std::cout << "    " << waves_[i].sqNorm << std::endl;
+         #endif
+      }
+
+   }
+
+   template <int D>
+   bool Basis<D>::NWaveComp::operator() (Basis::NWave a, Basis::NWave b) const
+   {
+       if (a.indicesDft == b.indicesDft) {
+          return false;
+       } else 
+       if (a.indicesBz > b.indicesBz) {
+          return true;
+       } else
+       if (a.indicesBz < b.indicesBz) {
+          return false;
+       } else {
+          return (a.indicesDft < b.indicesDft);
+       }
+   }
+
+   template <int D>
+   void Basis<D>::makeStars(const Mesh<D>& mesh, 
+                            const UnitCell<D>& unitCell)
+   {
+
+      std::set<NWave, NWaveComp> list; // vectors of equal norm
+      std::set<NWave, NWaveComp> star; // symmetry-related vectors 
+      typename std::set<NWave, NWaveComp>::iterator itr;
+      NWave wave;
+
+      double Gsq;
+      double Gsq_max = 1.0;
+      double epsilon = 1.0E-8;
+      int listId = 0;
+      int listBegin = 0;
+      int listEnd = 0;
+      int listSize = 0;
+      int starId = 0;
+      int i, j;
+      bool newList;
+      for (i = 0; i <= nWave_; ++i) {
+
+          newList = false;
+          if (i == nWave_) {
+             listEnd = i;
+             newList = true;
+          } else {
+             Gsq = waves_[i].sqNorm;
+             if (Gsq > Gsq_max + epsilon) {
+                Gsq_max = Gsq;
+                listEnd = i;
+                newList = true;
+             }
+          }
+
+          // Process new list
+          if (newList && listEnd > 0) {
+             listSize = listEnd - listBegin;
+
+             // Copy list into temporary array "list"
+             list.clear();
+             for (j = listBegin; j < listEnd; ++j) {
+                wave.indicesDft = waves_[j].indicesDft;
+                wave.indicesBz = waves_[j].indicesBz;
+                wave.sqNorm = waves_[j].sqNorm;
+                list.insert(wave);
+             }
+
+             std::cout << std::endl;
+             std::cout << "list id   = " << listId << std::endl;
+             std::cout << "list size = " << listSize << std::endl;
+             for (itr = list.begin(); itr != list.end(); ++itr) {
+                std::cout << (*itr).indicesBz << std::endl;
+             }
+
+             //int invertFlag = 1;
+             while (list.size() > 0) {
+
+                int rootId = 0;
+                getStar(rootId, list, star);
+
+                std::cout << "star id   = " << starId << std::endl;
+                for (itr = star.begin(); itr != star.end(); ++itr) {
+                   std::cout << (*itr).indicesBz << std::endl;
+                }
+
+                ++starId;
+             }
+
+             ++listId;
+             listBegin = listEnd;
+          }
+      }
+       
+   }
+ 
+   template <int D>
+   void Basis<D>::getStar(int rootId,
+                          std::set<NWave, NWaveComp>& list,
+                          std::set<NWave, NWaveComp>& star)
+   {
+      typename std::set<NWave, NWaveComp>::iterator itr;
+      itr = list.begin();
+      NWave rootWave = *itr;
+
+      star.clear();
+      star.insert(*itr);
+      list.erase(itr);
+   }
+
+      #if 0
          waves_[itr.rank()].sqNorm = unitCell.ksq(itr.position());
          waves_[itr.rank()].indicesDft = itr.position();
 
@@ -183,36 +355,14 @@ namespace Pssp
             for (p=0; p < D; ++p){
                for (q=0; q < D; ++q){
 
-                  dksq(i,j) = dksq(i,j) + (stars_[j].waveBz[p]*stars_[j].waveBz[q]*(unitCellPtr_->dkkBasis(i, p,q)));
+                  dksq(i,j) = dksq(i,j) 
+                            + (stars_[j].waveBz[p]*stars_[j].waveBz[q]*(unitCellPtr_->dkkBasis(i, p,q)));
   
                }   
             }   
          }   
-      } 
-   //  double key; 
-
-     //for (i = 0; i < 6; ++i){
-       // for (j = 0; j < nStar_; ++j) {  
-         //  key = dksq(i,j);  
-          // int m = j - 1;  
-  
-          // while ( m >= 0 && dksq(i,m) < key) {  
-            //  dksq(i,m + 1) = dksq(i,m);  
-             // m = m - 1;  
-          // }  
-        //dksq(i,m + 1) = key;  
-       // } 
-   // }
-
-
-      //for (i = 0; i < 6; ++i) {
-        // for (j=0; j < nStar_; ++j){
-         // std::cout<<"dksq ("<<i<<","<<j<<") = "<<"\t"<< dksq(i,j)<<"\n";
-         //}   
-     // `}   
-
-   }
-
+      }
+      #endif 
 
    template <int D>
    void Basis<D>::convertFieldComponentsToDft(DArray<double>& components, 
