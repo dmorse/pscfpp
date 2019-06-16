@@ -87,6 +87,7 @@ public:
       IntVec<3> r;
       r.add(u,v);
       TEST_ASSERT(r == e);
+      TEST_ASSERT(u + v == e);
    }
 
    void testSubtract() 
@@ -113,6 +114,19 @@ public:
       IntVec<3> r;
       r.multiply(u, 3);
       TEST_ASSERT(r == e);
+   }
+
+   void testNegate() 
+   {
+      printMethod(TEST_FUNC);
+      int ua[3] = {1,  -4,  0};
+      IntVec<3> u(ua);
+      IntVec<3> r;
+      r.negate(u);
+      TEST_ASSERT(r[0] == -1);
+      TEST_ASSERT(r[1] ==  4);
+      TEST_ASSERT(r[2] ==  0);
+      TEST_ASSERT(r == u.negate());
    }
 
    void testDot() 
@@ -153,6 +167,7 @@ TEST_ADD(IntVecTest, testAssignment)
 TEST_ADD(IntVecTest, testAdd)
 TEST_ADD(IntVecTest, testSubtract)
 TEST_ADD(IntVecTest, testMultiply)
+TEST_ADD(IntVecTest, testNegate)
 TEST_ADD(IntVecTest, testDot)
 //TEST_ADD(IntVecTest, testReadWrite)
 TEST_END(IntVecTest)
