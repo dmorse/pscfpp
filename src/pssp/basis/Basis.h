@@ -234,7 +234,7 @@ namespace Pssp
       GArray<Star> stars_;
 
       /// Indexing that allows identification by IntVec
-      DArray<int> waveId_;
+      DArray<int> waveIds_;
 
       /// Total number of wavevectors
       int nWave_;

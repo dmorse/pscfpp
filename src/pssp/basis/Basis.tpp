@@ -43,7 +43,7 @@ namespace Pssp
       // Allocate arrays
       nWave_ = mesh.size();
       waves_.allocate(nWave_);
-      waveId_.allocate(nWave_); 
+      waveIds_.allocate(nWave_); 
 
       // Make sorted array of waves
       makeWaves();
@@ -278,7 +278,7 @@ namespace Pssp
             UTIL_CHECK(list.size() == 0);
             UTIL_CHECK(work.size() == listEnd - listBegin);
 
-            // Copy work container into corresponding section of waves_
+            // Copy temp array work into corresponding section of waves_
             int k;
             for (j = 0; j < work.size(); ++j) {
                k = j + listBegin;
@@ -317,6 +317,28 @@ namespace Pssp
          }
       }
 
+      // Final processing of waves
+      IntVec<D> meshDimensions = mesh().dimensions();
+      for (i = 0; i < nStar_; ++i) {
+         vec = waves_[i].indicesDft;
+
+         // Validity check 
+         for (j = 0; j < D; ++j) {
+            UTIL_CHECK(vec[j] >= 0);
+            UTIL_CHECK(vec[j] < meshDimensions[j]);
+         }
+
+         // Set implicit attribute
+         if ((vec[D-1] + 1) > (meshDimensions[D-1]/2 + 1)) {
+            waves_[i].implicit = true;
+         } else {
+            waves_[i].implicit = false;
+         }
+
+         // Look up table for waves
+         waveIds_[mesh().rank(vec)] = i;
+      }
+  
       #if 1
       // Output all waves
       std::cout << std::endl;
@@ -554,10 +576,9 @@ namespace Pssp
    template <int D>
    typename Basis<D>::Wave& Basis<D>::wave(IntVec<D> vector)
    {
-      if (!meshPtr_->isInMesh(vector)) {
-         meshPtr_->shift(vector);
-      }
-      return waves_[waveId_[meshPtr_->rank(vector)]];
+      meshPtr_->shift(vector);
+      int rank = mesh().rank(vector);
+      return waves_[waveIds_[rank]];
    }
 
    template <int D>
