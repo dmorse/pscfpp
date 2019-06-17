@@ -63,10 +63,6 @@ namespace Pssp
          // Is this wave represented implicitly in DFT of real field?
          bool implicit;
 
-      //friends:
-
-         friend class Basis;
-
       };
 
       /**
@@ -83,14 +79,16 @@ namespace Pssp
       public:
 
          /**
-         * Square norm of all wavevectors in star.
+         * Eigenvalue of negative Laplacian for this star.
+         *
+         * Equal to square norm of any wavevector in this star.
          */
-         double kSq;
+         double eigen;
 
          /**
-         * Array of derivatives of kSq with respect to lattice parameters.
+         * Array of derivatives of eigenvalue w/ respect to lattice parameters.
          */
-         FArray<double, 6> dkSq;
+         FArray<double, 6> dEigen;
 
          /**
          * Number of wavevectors in the star.
@@ -112,11 +110,11 @@ namespace Pssp
          *
          * A star is said to be closed under inversion iff, for each vector
          * G in the star, -G is also in the star. If a star S is not closed 
-         * under inversion, then there is another star S that is related to 
+         * under inversion, then there is another star S' that is related to 
          * S by inversion, i.e., such that for each G in S, -G is in S'. 
          * Stars that are related by inversion are listed consecutively.
          * 
-         * If a star is closed under inversion, invertFlag = 0.
+         * If a star is closed under inversion, then invertFlag = 0.
          *
          * If a star is not closed under inversion, then invertFlag = +1 
          * or -1, with inverFlag = +1 for the first star in the pair of 
@@ -131,6 +129,8 @@ namespace Pssp
          /**
          * Integer indices of characteristic wave of this star.
          *
+         * Wave given here is in or on boundary of first Brillouin zone.
+         * As a result, computing the norm of this wave must yield eigen.
          * For invertFlag = 0 or 1, this is the first wave in the star.
          * For invertFlag = -1, this is the last wave in the star.
          */
@@ -143,10 +143,6 @@ namespace Pssp
          * associated with this star.
          */
          bool cancel;
-
-      //friends:
-
-         friend class Basis;
 
       };
 

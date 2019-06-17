@@ -1,17 +1,33 @@
 To get a minimally functional Basis class template:
 
-1) Remove separate (public!) array containing dkSq (it is now a member
-a of Basis::Star).
+1) Remove separate (public!) array containing dkSq (it is now a 
+member Basis::Star::dEigen of class Basis::Star).
 
-2) Add code to compute dkSq member of each Star.
+2) Add code to compute dEigen member of each Star to makeStars() function.
 
-3) Add code to compute "implicit" member for each wave.
+3) Add code to compute "implicit" member for each Basis::Wave.
 
 4) Add code to allow wavevectors to be identitified by dft indices,
-   without assumptions about ordering.
+   without assumptions about ordering: 
+
+     - Add an array indexOfWave_ that contains indices of waves within
+       the wavew array, indexed by the rank of indicesDft wave within
+       the mesh. 
+
+     - Add function "indexOfWave(IntVec<D> ) that computes the rank of
+       a wave that is within the DFT mesh, looks up the corresponding
+       index within the indexOfWave_ array, and returns the index value.
 
 5) Adapt conversion functions (basis-to-DFT and DFT-to-basis) as needed 
 to work with updated data structures. Test these functions.
 
-6) Add code to identify cancelled stars (not necessary for identity group).
+6) Add function Basis::update(const UnitCell& unitCell) that updates
+the values of eigen and dEigen for all stars. You will need to call
+this each time the unit cell parameters change.
+
+7) Add code to generate star for an arbitrary space group
+
+8) Add code to identify cancelled stars (not necessary for identity group).
+
+9) Add code to read a space group from a file, given space group name.
 

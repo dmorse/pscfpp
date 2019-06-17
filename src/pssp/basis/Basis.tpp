@@ -193,7 +193,7 @@ namespace Pssp
 
                // Process the star
                newStar.beginId = starBegin;
-               newStar.kSq = Gsq;
+               newStar.eigen = Gsq;
                if (nextInvert == -1) {
 
                   // If this star is second of pair related by symmetry,
@@ -295,6 +295,12 @@ namespace Pssp
          // Set starId for all associated waves
          for (j = stars_[i].beginId; j < stars_[i].endId; ++j) {
             waves_[j].starId = i;
+            waves_[j].coeff = std::complex<double>(1.0, 0.0);
+         }
+
+         // Set coeff for all associated waves
+         for (j = stars_[i].beginId; j < stars_[i].endId; ++j) {
+            waves_[j].coeff = std::complex<double>(1.0, 0.0);
          }
       }
 
@@ -326,7 +332,7 @@ namespace Pssp
          for (j = 0; j < D; ++j) {
             std::cout << Int(stars_[i].waveBz[j], 4);
          }
-         std::cout << " | " << Dbl(stars_[i].kSq, 12);
+         std::cout << " | " << Dbl(stars_[i].eigen, 12);
          std::cout << std::endl;
       }
       #endif
