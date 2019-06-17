@@ -130,8 +130,11 @@ namespace Pssp
 
       std::set<NWave, NWaveComp> list; // vectors of equal norm
       std::set<NWave, NWaveComp> star; // symmetry-related vectors 
-      typename std::set<NWave, NWaveComp>::iterator itr;
+      std::set<NWave, NWaveComp> work; // temporary list
+      typename std::set<NWave, NWaveComp>::iterator listItr;
+      typename std::set<NWave, NWaveComp>::iterator starItr;
       NWave wave;
+      Star newStar;
 
       double Gsq;
       double Gsq_max = 1.0;
@@ -141,76 +144,178 @@ namespace Pssp
       int listEnd = 0;
       int listSize = 0;
       int starId = 0;
+      int starBegin = 0;
       int i, j;
       bool newList;
       for (i = 0; i <= nWave_; ++i) {
 
-          newList = false;
-          if (i == nWave_) {
-             listEnd = i;
-             newList = true;
-          } else {
-             Gsq = waves_[i].sqNorm;
-             if (Gsq > Gsq_max + epsilon) {
-                Gsq_max = Gsq;
-                listEnd = i;
-                newList = true;
-             }
-          }
+         // Determine if this wave begins a new list
+         newList = false;
+         if (i == nWave_) {
+            listEnd = i;
+            newList = true;
+         } else {
+            Gsq = waves_[i].sqNorm;
+            if (Gsq > Gsq_max + epsilon) {
+               Gsq_max = Gsq;
+               listEnd = i;
+               newList = true;
+            }
+         }
 
-          // Process new list
-          if (newList && listEnd > 0) {
-             listSize = listEnd - listBegin;
+         // Process new list
+         if (newList && listEnd > 0) {
+            listSize = listEnd - listBegin;
 
-             // Copy list into temporary array "list"
-             list.clear();
-             for (j = listBegin; j < listEnd; ++j) {
-                wave.indicesDft = waves_[j].indicesDft;
-                wave.indicesBz = waves_[j].indicesBz;
-                wave.sqNorm = waves_[j].sqNorm;
-                list.insert(wave);
-             }
+            // Copy list into temporary array "list"
+            list.clear();
+            for (j = listBegin; j < listEnd; ++j) {
+               wave.indicesDft = waves_[j].indicesDft;
+               wave.indicesBz = waves_[j].indicesBz;
+               wave.sqNorm = waves_[j].sqNorm;
+               list.insert(wave);
+            }
 
-             std::cout << std::endl;
-             std::cout << "list id   = " << listId << std::endl;
-             std::cout << "list size = " << listSize << std::endl;
-             for (itr = list.begin(); itr != list.end(); ++itr) {
-                std::cout << (*itr).indicesBz << std::endl;
-             }
+            #if 0
+            // Output list
+            std::cout << std::endl;
+            std::cout << "list id   = " << listId << std::endl;
+            std::cout << "list size = " << listSize << std::endl;
+            for (listItr = list.begin(); listItr != list.end(); ++listItr) {
+               std::cout << (*listItr).indicesBz << std::endl;
+            }
+            #endif
 
-             //int invertFlag = 1;
-             while (list.size() > 0) {
+            // Identify stars
+            work.clear();
+            IntVec<D> nVec;
+            typename std::set<NWave, NWaveComp>::iterator listItr;
+            listItr = list.begin();
+            int invertFlag = 1;
+            while (list.size() > 0) {
 
-                int rootId = 0;
-                getStar(rootId, list, star);
+               // Initialize new Star object 
+               newStar.beginId = starBegin;
+               newStar.invertFlag = invertFlag;
 
-                std::cout << "star id   = " << starId << std::endl;
-                for (itr = star.begin(); itr != star.end(); ++itr) {
-                   std::cout << (*itr).indicesBz << std::endl;
-                }
+               // Construct set of NWave objects
+               star.clear();
+               star.insert(*listItr);
+               list.erase(listItr);
 
-                ++starId;
-             }
+               // Set iterator listItr to root of next star
+               if (invertFlag == -1) {
 
-             ++listId;
-             listBegin = listEnd;
-          }
-      }
+                  // If this star is second of pair related by symmetry,
+                  // then set root of next to beginning of remaining list.
+
+                  listItr = list.begin();
+                  invertFlag = 1;
+
+               } else {
+
+                  // If this star is not the second of a pair, then
+                  // determine if it is closed under inversion.
+
+                  // Compute negation of root vector, shift to DFT mesh
+                  nVec.negate(listItr->indicesBz);
+                  (*meshPtr_).shift(nVec);
        
-   }
- 
-   template <int D>
-   void Basis<D>::getStar(int rootId,
-                          std::set<NWave, NWaveComp>& list,
-                          std::set<NWave, NWaveComp>& star)
-   {
-      typename std::set<NWave, NWaveComp>::iterator itr;
-      itr = list.begin();
-      NWave rootWave = *itr;
+                  // Is this star closed under inversion?
+                  bool negationFound = false;
+                  starItr = star.begin(); 
+                  for ( ; starItr != star.end(); ++starItr) {
+                     if (nVec == starItr->indicesDft) {
+                        negationFound = true;
+                        break;
+                     }
+                  }
 
-      star.clear();
-      star.insert(*itr);
-      list.erase(itr);
+                  if (negationFound) {
+
+                     // If star is closed, root = first vector of list.
+                     invertFlag = 1;
+                     listItr = list.begin();
+
+                  } else {
+
+                     // If start is not closed, find negation of root in
+                     // the remaining list, use as root of next star.
+                     invertFlag = -1;
+                     listItr = list.begin(); 
+                     for ( ; listItr != list.end(); ++listItr) {
+                        if (nVec == listItr->indicesDft) {
+                           negationFound = true;
+                           break;
+                        }
+                     }
+                     // On exit after break, *listItr = nVec
+                     if (!negationFound) {
+                        UTIL_THROW("Negative of root vector not found");
+                     }
+                  }
+
+               }
+               newStar.endId = newStar.beginId + star.size();
+               newStar.size = star.size();
+               stars_.append(newStar);
+
+               #if 0
+               std::cout << "star id  = " << starId << std::endl;
+               std::cout << "begin id = " << newStar.beginId << std::endl;
+               std::cout << "end id   = " << newStar.endId << std::endl;
+               std::cout << "invert  = "  << newStar.invertFlag << std::endl;
+               #endif
+
+               // Add waves in star to work
+               starItr = star.begin(); 
+               for ( ; starItr != star.end(); ++starItr) {
+                  //std::cout << (*starItr).indicesBz << std::endl;
+                  work.insert(*starItr);
+               }
+
+               ++starId;
+               starBegin = newStar.endId;
+            }
+            UTIL_CHECK(list.size() == 0);
+
+            // Copy work container into corresponding section of waves_
+            listItr = work.begin();
+            for (j = listBegin; j < listEnd; ++j) {
+               waves_[j].indicesDft = listItr->indicesDft;
+               waves_[j].indicesBz = listItr->indicesBz;
+               waves_[j].sqNorm = listItr->sqNorm;
+               ++listItr;
+            }
+
+            ++listId;
+            listBegin = listEnd;
+         }
+      }
+      nStar_ = stars_.size();
+
+      #if 0
+      // Output all waves
+      for (i = 0; i < nWave_; ++i) {
+         std::cout << i;
+         for (j = 0; j < D; ++j) {
+            std::cout << Int(waves_[i].indicesBz[j], 3);
+         }
+         std::cout << "  " << waves_[i].sqNorm << std::endl;
+      }
+      #endif
+ 
+      #if 0 
+      // Output all stars
+      for (i = 0; i < nStar_; ++i) {
+         std::cout << i 
+                   << Int(stars_[i].beginId, 3)
+                   << Int(stars_[i].endId, 3)
+                   << Int(stars_[i].invertFlag, 3)
+                   << std::endl;
+      }
+      #endif
+  
    }
 
       #if 0
