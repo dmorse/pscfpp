@@ -1,11 +1,17 @@
 To get a minimally functional Basis class template:
 
-1) Write a makeBasis function that works only for groupName == 'I',
-i.e., no symmetry. This should simply makes a star for each nonzero
-vector k with k[3] >= 0, listed in the order they would be listed in 
-the 1D representation of the real-to-complex Fourier grid. Test this
-first for the 1D case, Basis<1>.
+1) Remove separate (public!) array containing dkSq (it is now a member
+a of Basis::Star).
 
-2) Write conversion functions (basis-to-DFT and DFT-to-basis), which 
-should be written so as to work with any space group.
+2) Add code to compute dkSq member of each Star.
+
+3) Add code to compute "implicit" member for each wave.
+
+4) Add code to allow wavevectors to be identitified by dft indices,
+   without assumptions about ordering.
+
+5) Adapt conversion functions (basis-to-DFT and DFT-to-basis) as needed 
+to work with updated data structures. Test these functions.
+
+6) Add code to identify cancelled stars (not necessary for identity group).
 
