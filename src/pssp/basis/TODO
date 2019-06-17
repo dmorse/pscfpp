@@ -25,9 +25,11 @@ to work with updated data structures. Test these functions.
 the values of eigen and dEigen for all stars. You will need to call
 this each time the unit cell parameters change.
 
-7) Add code to generate star for an arbitrary space group
+7) Add code to Basis::makeStars to identify cancelled stars (not 
+necessary for tests with identity group).
 
-8) Add code to identify cancelled stars (not necessary for identity group).
+8) Add code to Basis::makeStars to compute coeff correctly from operation
+of the space group.
 
 9) Add code to read a space group from a file, given space group name.
 

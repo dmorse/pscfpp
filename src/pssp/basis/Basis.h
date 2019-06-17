@@ -11,6 +11,7 @@
 #include <pssp/field/RFieldDft.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/mesh/Mesh.h>
+#include <pscf/crystal/SpaceGroup.h>
 #include <pscf/crystal/shiftToMinimum.h>
 #include <util/containers/DArray.h>
 #include <util/containers/GArray.h>
@@ -268,7 +269,7 @@ namespace Pssp
       /**
       * Sort waves of equal magnitude into stars related by symmetry.
       */
-      void makeStars();
+      void makeStars(const SpaceGroup<D>& group);
 
       /**
       * Access associated Mesh<D> as reference.

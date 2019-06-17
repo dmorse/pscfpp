@@ -48,8 +48,14 @@ namespace Pssp
       // Make sorted array of waves
       makeWaves();
 
+      // Create identity group
+      // Temporary stub: Replace with code to read a group from file,
+      // or pass the group to makeBasis and generate it elsewhere.
+      SpaceGroup<D> group;
+      group.makeCompleteGroup();
+
       // Identify stars of waves that are related by symmetry
-      makeStars();
+      makeStars(group);
 
    }
 
@@ -122,7 +128,7 @@ namespace Pssp
    }
 
    template <int D>
-   void Basis<D>::makeStars()
+   void Basis<D>::makeStars(const SpaceGroup<D>& group)
    {
       std::set<NWave, NWaveComp> list;  // set of vectors of equal norm
       std::set<NWave, NWaveComp> star;  // set of symmetry-related vectors 
@@ -135,6 +141,8 @@ namespace Pssp
       double Gsq;
       double Gsq_max = 1.0;
       double epsilon = 1.0E-8;
+      IntVec<D> rootVec;
+      IntVec<D> vec;
       int listId = 0;      // id for this list
       int listBegin = 0;   // id of first wave in this list
       int listEnd = 0;     // (id of last wave in this list) + 1
@@ -170,9 +178,6 @@ namespace Pssp
                list.insert(wave);
             }
 
-            // Get square norm of wavevectors in this list
-            Gsq = waves_[listBegin].sqNorm;
-
             // Loop over stars within this list
             work.clear();
             IntVec<D> nVec;
@@ -181,12 +186,20 @@ namespace Pssp
             while (list.size() > 0) {
 
                // Construct a star from root wave *rootItr.
-               // This temporary stub uses the identity group (hardcoded).
-               starSize = 1;
+               rootVec = rootItr->indicesBz;
+               Gsq = unitCell().ksq(rootVec);
                star.clear();
-               star.insert(*rootItr);
-               work.append(*rootItr);
-               list.erase(rootItr);
+               for (j = 0; j < group.size(); ++j) {
+                  vec = rootVec*group[j];
+                  wave.sqNorm = Gsq;
+                  wave.indicesBz = vec;
+                  wave.indicesDft = vec;
+                  mesh().shift(wave.indicesDft);
+                  star.insert(wave);
+                  work.append(wave);
+                  list.erase(wave);
+               }
+               starSize = star.size();
 
                // TODO: Replace above by code that generates
                // a star for an arbitrary space group.
