@@ -17,6 +17,9 @@ namespace Pscf {
 namespace Pssp
 {
 
+   /*
+   * Constructor.
+   */
    template <int D>
    Basis<D>::Basis()
     : nWave_(0), 
@@ -25,6 +28,9 @@ namespace Pssp
       meshPtr_(0)
    {}
 
+   /*
+   * Construct basis for pseudo-spectral scft.
+   */
    template <int D>
    void Basis<D>::makeBasis(const Mesh<D>& mesh, 
                             const UnitCell<D>& unitCell,
@@ -40,17 +46,25 @@ namespace Pssp
       waveId_.allocate(nWave_); 
 
       // Make sorted array of waves
-      makeWaves(mesh, unitCell);
+      makeWaves();
 
       // Identify stars of waves that are related by symmetry
-      makeStars(mesh, unitCell);
+      makeStars();
 
    }
 
+   /*
+   * Construct ordered list of waves.
+   * 
+   * On exit:
+   *  - Array waves_ contains list of waves ordered by sqNorm.
+   *  - Each wave has indicesDft, indicesBz and sqNorm set.
+   *  - stars_ array is still empty.
+   */
    template <int D>
-   void Basis<D>::makeWaves(const Mesh<D>& mesh, const UnitCell<D>& unitCell)
+   void Basis<D>::makeWaves()
    {
-      IntVec<D> meshDimensions = mesh.dimensions();
+      IntVec<D> meshDimensions = mesh().dimensions();
 
       // Generate dft mesh of waves, store in local std::vector twaves_
       std::vector<NWave> twaves;
@@ -58,51 +72,35 @@ namespace Pssp
       {
          NWave w;
          IntVec<D> v;
-         MeshIterator<D> itr(mesh.dimensions());
+
+         // Loop over dft mesh to generate all waves
+         MeshIterator<D> itr(mesh().dimensions());
          for (itr.begin(); !itr.atEnd(); ++itr) {
             w.indicesDft = itr.position();
             v = shiftToMinimum(w.indicesDft, meshDimensions, *unitCellPtr_);
             w.indicesBz = v;
             w.sqNorm = unitCellPtr_->ksq(v);
             twaves.push_back(w);
-   
-            #if 0
-            for (int i = 0; i < 2; ++i) {
-                std::cout << " " << v[i];
-            }
-            std::cout << "  ";
-            for (int i = 0; i < 2; ++i) {
-                std::cout << " " << w.indicesBz[i];
-            }
-            std::cout << "    " << w.sqNorm << std::endl;
-            #endif
-   
          }
       }
 
-      // Sort temporary container twaves_ by wavevector norm
+      // Sort temporary container twaves by wavevector norm
       {
-         // Define function object to be used for sorting
+         // Define function object that sorts based on sqNorm
          struct NormComparator{
             bool operator () (NWave a, NWave b)
             {  return (a.sqNorm < b.sqNorm); }
          };
-
+         // Sort twaves
          NormComparator comp;
          std::sort(twaves.begin(), twaves.end(), comp);
       }
 
-      // Copy temporary array twaves_ into member variable waves_
+      // Copy temporary array twaves into member variable waves_
       for (int i = 0; i < nWave_; ++i) {
          waves_[i].sqNorm = twaves[i].sqNorm;
          waves_[i].indicesDft = twaves[i].indicesDft;
          waves_[i].indicesBz = twaves[i].indicesBz;
-         #if 0
-         for (int j = 0; j < 2; ++j) {
-             std::cout << " " << waves_[i].indicesBz[j];
-         }
-         std::cout << "    " << waves_[i].sqNorm << std::endl;
-         #endif
       }
 
    }
@@ -124,15 +122,13 @@ namespace Pssp
    }
 
    template <int D>
-   void Basis<D>::makeStars(const Mesh<D>& mesh, 
-                            const UnitCell<D>& unitCell)
+   void Basis<D>::makeStars()
    {
-
-      std::set<NWave, NWaveComp> list; // vectors of equal norm
-      std::set<NWave, NWaveComp> star; // symmetry-related vectors 
-      std::set<NWave, NWaveComp> work; // temporary list
-      typename std::set<NWave, NWaveComp>::iterator listItr;
-      typename std::set<NWave, NWaveComp>::iterator starItr;
+      std::set<NWave, NWaveComp> list;  // set of vectors of equal norm
+      std::set<NWave, NWaveComp> star;  // set of symmetry-related vectors 
+      GArray<NWave> work;               // temporary list, ordered by star
+      typename std::set<NWave, NWaveComp>::iterator rootItr;
+      typename std::set<NWave, NWaveComp>::iterator setItr;
       NWave wave;
       Star newStar;
 
@@ -142,9 +138,9 @@ namespace Pssp
       int listId = 0;
       int listBegin = 0;
       int listEnd = 0;
-      int listSize = 0;
       int starId = 0;
       int starBegin = 0;
+      int starSize = 0;
       int i, j;
       bool newList;
       for (i = 0; i <= nWave_; ++i) {
@@ -165,9 +161,8 @@ namespace Pssp
 
          // Process new list
          if (newList && listEnd > 0) {
-            listSize = listEnd - listBegin;
 
-            // Copy list into temporary array "list"
+            // Copy waves of equal norm into container "list"
             list.clear();
             for (j = listBegin; j < listEnd; ++j) {
                wave.indicesDft = waves_[j].indicesDft;
@@ -176,56 +171,49 @@ namespace Pssp
                list.insert(wave);
             }
 
-            #if 0
-            // Output list
-            std::cout << std::endl;
-            std::cout << "list id   = " << listId << std::endl;
-            std::cout << "list size = " << listSize << std::endl;
-            for (listItr = list.begin(); listItr != list.end(); ++listItr) {
-               std::cout << (*listItr).indicesBz << std::endl;
-            }
-            #endif
-
-            // Identify stars
+            // Loop over stars
             work.clear();
             IntVec<D> nVec;
-            typename std::set<NWave, NWaveComp>::iterator listItr;
-            listItr = list.begin();
-            int invertFlag = 1;
+            rootItr = list.begin();
+            int nextInvert = 1;
             while (list.size() > 0) {
 
-               // Initialize new Star object 
-               newStar.beginId = starBegin;
-               newStar.invertFlag = invertFlag;
-
-               // Construct set of NWave objects
+               // Construct a star from root wave *rootItr.
+               // This temporary stub uses the identity group (hardcoded).
+               starSize = 1;
                star.clear();
-               star.insert(*listItr);
-               list.erase(listItr);
+               star.insert(*rootItr);
+               work.append(*rootItr);
+               list.erase(rootItr);
 
-               // Set iterator listItr to root of next star
-               if (invertFlag == -1) {
+               // TODO: Replace above by code that generates
+               // a star for an arbitrary space group.
+
+               // Process the star
+               newStar.beginId = starBegin;
+               if (nextInvert == -1) {
 
                   // If this star is second of pair related by symmetry,
                   // then set root of next to beginning of remaining list.
 
-                  listItr = list.begin();
-                  invertFlag = 1;
+                  newStar.invertFlag = -1;
+                  rootItr = list.begin();
+                  nextInvert = 1;
 
                } else {
 
-                  // If this star is not the second of a pair, then
-                  // determine if it is closed under inversion.
+                  // If this star is not the second of a pair, 
+                  // then determine if it is closed under inversion.
 
                   // Compute negation of root vector, shift to DFT mesh
-                  nVec.negate(listItr->indicesBz);
+                  nVec.negate(rootItr->indicesBz);
                   (*meshPtr_).shift(nVec);
        
-                  // Is this star closed under inversion?
+                  // Search for negation of root vector within star.
                   bool negationFound = false;
-                  starItr = star.begin(); 
-                  for ( ; starItr != star.end(); ++starItr) {
-                     if (nVec == starItr->indicesDft) {
+                  setItr = star.begin(); 
+                  for ( ; setItr != star.end(); ++setItr) {
+                     if (nVec == setItr->indicesDft) {
                         negationFound = true;
                         break;
                      }
@@ -233,59 +221,54 @@ namespace Pssp
 
                   if (negationFound) {
 
-                     // If star is closed, root = first vector of list.
-                     invertFlag = 1;
-                     listItr = list.begin();
+                     // If star is closed under inversion, then root
+                     // of next star is first vector of remaining list.
+
+                     newStar.invertFlag = 0;
+                     rootItr = list.begin();
+                     nextInvert = 1;
 
                   } else {
 
+                     newStar.invertFlag = 1;
+                     nextInvert = -1;
+
                      // If start is not closed, find negation of root in
-                     // the remaining list, use as root of next star.
-                     invertFlag = -1;
-                     listItr = list.begin(); 
-                     for ( ; listItr != list.end(); ++listItr) {
-                        if (nVec == listItr->indicesDft) {
+                     // the remaining list, use negation as root of the
+                     // next star.
+
+                     setItr = list.begin(); 
+                     for ( ; setItr != list.end(); ++setItr) {
+                        if (nVec == setItr->indicesDft) {
                            negationFound = true;
+                           rootItr = setItr;
                            break;
                         }
                      }
-                     // On exit after break, *listItr = nVec
+                     // On exit after break, rootItr = &nVec
                      if (!negationFound) {
                         UTIL_THROW("Negative of root vector not found");
                      }
                   }
 
                }
-               newStar.endId = newStar.beginId + star.size();
                newStar.size = star.size();
+               newStar.endId = newStar.beginId + star.size();
                stars_.append(newStar);
-
-               #if 0
-               std::cout << "star id  = " << starId << std::endl;
-               std::cout << "begin id = " << newStar.beginId << std::endl;
-               std::cout << "end id   = " << newStar.endId << std::endl;
-               std::cout << "invert  = "  << newStar.invertFlag << std::endl;
-               #endif
-
-               // Add waves in star to work
-               starItr = star.begin(); 
-               for ( ; starItr != star.end(); ++starItr) {
-                  //std::cout << (*starItr).indicesBz << std::endl;
-                  work.insert(*starItr);
-               }
 
                ++starId;
                starBegin = newStar.endId;
             }
             UTIL_CHECK(list.size() == 0);
+            UTIL_CHECK(work.size() == listEnd - listBegin);
 
             // Copy work container into corresponding section of waves_
-            listItr = work.begin();
-            for (j = listBegin; j < listEnd; ++j) {
-               waves_[j].indicesDft = listItr->indicesDft;
-               waves_[j].indicesBz = listItr->indicesBz;
-               waves_[j].sqNorm = listItr->sqNorm;
-               ++listItr;
+            int k;
+            for (j = 0; j < work.size(); ++j) {
+               k = j + listBegin;
+               waves_[k].indicesDft = work[j].indicesDft;
+               waves_[k].indicesBz = work[j].indicesBz;
+               waves_[k].sqNorm = work[j].sqNorm;
             }
 
             ++listId;
@@ -294,180 +277,56 @@ namespace Pssp
       }
       nStar_ = stars_.size();
 
-      #if 0
+      // Final processing of stars
+      int waveId;
+      for (i = 0; i < nStar_; ++i) {
+
+         // Set characteristic wavevector waveBz for each star
+         if (stars_[i].invertFlag == -1) {
+           waveId = stars_[i].endId - 1;
+         } else {
+           waveId = stars_[i].beginId;
+         }
+         stars_[i].waveBz = waves_[waveId].indicesBz;
+
+         // Set starId for all associated waves
+         for (j = stars_[i].beginId; j < stars_[i].endId; ++j) {
+            waves_[j].starId = i;
+         }
+      }
+
+      #if 1
       // Output all waves
+      std::cout << std::endl;
+      std::cout << "Waves:" << std::endl;
       for (i = 0; i < nWave_; ++i) {
          std::cout << i;
          for (j = 0; j < D; ++j) {
             std::cout << Int(waves_[i].indicesBz[j], 3);
          }
-         std::cout << "  " << waves_[i].sqNorm << std::endl;
+         std::cout << "  " << waves_[i].sqNorm;
+         std::cout << Int(waves_[i].starId, 5);
+         std::cout << std::endl;
       }
       #endif
  
-      #if 0 
+      #if 1 
       // Output all stars
+      std::cout << std::endl;
+      std::cout << "Stars:" << std::endl;
       for (i = 0; i < nStar_; ++i) {
          std::cout << i 
                    << Int(stars_[i].beginId, 3)
                    << Int(stars_[i].endId, 3)
-                   << Int(stars_[i].invertFlag, 3)
-                   << std::endl;
+                   << Int(stars_[i].invertFlag, 3);
+         for (j = 0; j < D; ++j) {
+            std::cout << Int(stars_[i].waveBz[j]);
+         }
+         std::cout << std::endl;
       }
       #endif
   
    }
-
-      #if 0
-         waves_[itr.rank()].sqNorm = unitCell.ksq(itr.position());
-         waves_[itr.rank()].indicesDft = itr.position();
-
-         if ((itr.position(D-1) + 1) > (meshPtr_->dimension(D-1)/2 + 1)) {
-            waves_[itr.rank()].implicit = true;
-         } else {
-            waves_[itr.rank()].implicit = false;
-         }
-
-         //`unsorted' waves; waves appear in grid order
-         waveId_[itr.rank()] = itr.rank();
-      }
-      
-      //make stars
-      //To do: If not I, sort according to increasing ksq values
-      //Changed: The size of stars_ is not known apriori. Used a GArray
-      //For `I', reserved the right size.
-      stars_.reserve(mesh.size());
-      int beginWave = 0;
-      int endWave = 0;
-      int iStar = 0;
-      bool cancel;
-      int invertFlag = 0;
-      std::complex<double> cNorm;
-
-      for (itr.begin(); !itr.atEnd() ; ++itr) {
-         stars_[itr.rank()].invertFlag = 3;
-      }
-
-      for (itr.begin(); !itr.atEnd() ; ++itr) {
-         //To do: If not I, create a list of waves with equal ksq 
-         //magnitudes. The I space group implicitly assumes each waves belong
-         //in a single star and the sorting is not done.
-         
-         endWave = beginWave+1;
-         double starPhase[1] = {0};
-         //To do: unimplemented local scope function
-         //cancel = isCancelled(waves_[beginWave].indices);
-         cancel = false;
-
-         #if 0
-         //check for cancellation consistency in star
-         for(int j = beginWave; j < endWave; ++j) {
-            if( cancel != isCancelled(waves_[j].indices))
-               UTIL_THROW("Inconsistent cancellation in star");
-         }
-         #endif
-
-         if (!cancel) {
-            if (invertFlag == 1) { 
-               cNorm = exp(std::complex<double>(0,1) *
-                          starPhase[endWave-1-beginWave]);
-            } else { 
-               cNorm = exp(std::complex<double>(0,1)*starPhase[0]);
-            }
-
-            cNorm *= sqrt(double(endWave - beginWave));
-         }
-
-         for (int j = beginWave; j < endWave; ++j) {
-            waves_[j].starId = iStar;
-            if (!cancel) {
-               waves_[j].coeff = exp(std::complex<double>(0,1) *
-                                    starPhase[j - beginWave])/cNorm;
-               //std::cout<<waves_[j].coeff<<std::endl;
-            } else {   
-               waves_[j].coeff = exp(std::complex<double>(0,0));
-            }
-         }
-         
-         //fill up stars_ object
-         //unimplemented: sign flag.
-         stars_[iStar].size = endWave - beginWave;
-         stars_[iStar].beginId = beginWave;
-         stars_[iStar].endId = endWave - 1;
-         stars_[iStar].cancel = cancel;
-         ++nStar_;
-
-         //To do: a method here to decide what is the actual invertFlag
-         //A lot easier when waves are sorted in min(ksq). Currently, the second
-         //wave of 001 index 1 is paired with say 009.
-         IntVec<D> G1 = itr.position();
-         IntVec<D> G2;
-
-         bool isClosed = true;
-         for (int j = 0; j < D; ++j) {
-            G2[j] = -G1[j];
-         }
-         meshPtr_->shift(G2);
-         if (G2 != G1) {
-            isClosed = false;
-         }
-         if (isClosed) {
-            invertFlag = 0;
-            stars_[iStar].invertFlag = invertFlag;
-         } else {
-            meshPtr_->shift(G2);
-            int partnerId = meshPtr_->rank(G2);
-            //std::cout<<stars_[partnerId].invertFlag<<std::endl;
-            if (stars_[partnerId].invertFlag == 3) {
-               stars_[iStar].invertFlag = 1;
-            } else {
-               stars_[iStar].invertFlag = -1;
-            }
-         }
-
-         /*
-         if(itr.position(D-1) > (meshPtr_.dimensions(D-1)/2 + 1) )
-            stars_[iStar].invertFlag = -1;
-         else
-            stars_[iStar].invertFlag = 1;
-         */
-
-         if (invertFlag == -1) {
-            stars_[iStar].waveBz = shiftToMinimum(waves_[endWave-1].indicesDft,
-                                      meshPtr_->dimensions(), *unitCellPtr_);
-         } else {
-            stars_[iStar].waveBz = shiftToMinimum(waves_[beginWave].indicesDft,
-                                      meshPtr_->dimensions(), *unitCellPtr_);
-         }
-
-         iStar++;
-         beginWave = endWave;
-      }
-
-      //dksq.allocate(unitCellPtr_->nParams(), nStar_); 
-      dksq.allocate(6, nStar_);     
- 
-      // Initialize all elements to zero
-      int i, j, p, q;
-      for (i = 0; i < 6; ++i) {
-         for (j=0; j < nStar_; ++j){
-            dksq(i,j)=0.0;
-         }   
-      }   
-    
-      for (i = 0; i < unitCellPtr_->nParams(); ++i) {
-         for (j=0; j < nStar_; ++j){
-            for (p=0; p < D; ++p){
-               for (q=0; q < D; ++q){
-
-                  dksq(i,j) = dksq(i,j) 
-                            + (stars_[j].waveBz[p]*stars_[j].waveBz[q]*(unitCellPtr_->dkkBasis(i, p,q)));
-  
-               }   
-            }   
-         }   
-      }
-      #endif 
 
    template <int D>
    void Basis<D>::convertFieldComponentsToDft(DArray<double>& components, 

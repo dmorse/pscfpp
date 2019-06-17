@@ -45,16 +45,16 @@ namespace Pssp
 
       public:
 
-         // Coefficient of this wave within associated star basis function
+         // Coefficient of wave within star basis function
          std::complex<double> coeff;
 
          // Square magnitude of associated wavevector
          double sqNorm;
 
-         // Integer indices of this wavevector, on discrete Fourier transform mesh.
+         // Integer indices of wave, on discrete Fourier transform mesh.
          IntVec<D> indicesDft;
 
-         // Integer indices of this wavevector, in first Brillouin zone.
+         // Integer indices of wave, in first Brillouin zone.
          IntVec<D> indicesBz;
 
          // Index of star containing this wavevector
@@ -83,6 +83,16 @@ namespace Pssp
       public:
 
          /**
+         * Square norm of all wavevectors in star.
+         */
+         double kSq;
+
+         /**
+         * Array of derivatives of kSq with respect to lattice parameters.
+         */
+         FArray<double, 6> dkSq;
+
+         /**
          * Number of wavevectors in the star.
          */
          int size; 
@@ -108,23 +118,15 @@ namespace Pssp
          * 
          * If a star is closed under inversion, invertFlag = 0.
          *
-         * If a star is not closed under inversion, then invertFlag = +1 or -1,
-         * with inverFlag = +1 for the first star in the pair of stars related 
-         * by inversion and invertFlag = -1 for the second.
+         * If a star is not closed under inversion, then invertFlag = +1 
+         * or -1, with inverFlag = +1 for the first star in the pair of 
+         * stars related by inversion and invertFlag = -1 for the second.
          *
-         * In a centro-symmetric group, all stars are closed under inversion.
-         * In a non-centro-symmetric group, some stars may still be closed 
-         * under inversion.
+         * In a centro-symmetric group, all stars are closed under 
+         * inversion. In a non-centro-symmetric group, some stars may 
+         * still be closed under inversion.
          */
          int invertFlag; 
-
-         /**
-         * Index for inversion symmetry of associated basis function.
-         *
-         * If basis function is even under inversion signFlag = 1.
-         * If basis function is odd under inversion signFlag = -1.
-         */
-         int signFlag; 
 
          /**
          * Integer indices of characteristic wave of this star.
@@ -155,8 +157,10 @@ namespace Pssp
       */
       Basis();
 
-      // Derivatives of dksq with respect to each 
-      // of the parameters (rows)
+      /**
+      * Derivatives of dksq with respect to each 
+      * of the parameters (rows).
+      */
       DMatrix<double> dksq; 
 
       /**
@@ -247,6 +251,9 @@ namespace Pssp
       /// Pointer to associated Mesh<D>
       const Mesh<D>* meshPtr_;
 
+      /**
+      * Wave struct used for internal processing.
+      */
       struct NWave {
          double sqNorm;
          IntVec<D> indicesDft;
@@ -260,39 +267,42 @@ namespace Pssp
       /**
       * Construct array of ordered waves.
       */
-      void makeWaves(const Mesh<D>& mesh, const UnitCell<D>& unitCell);
+      void makeWaves();
 
       /**
-      * Construct array of ordered waves.
+      * Sort waves of equal magnitude into stars related by symmetry.
       */
-      void makeStars(const Mesh<D>& mesh, const UnitCell<D>& unitCell);
+      void makeStars();
 
       /**
-      * Construct array of ordered waves.
+      * Access associated Mesh<D> as reference.
       */
-      void getStar(int rootId,
-                   std::set<NWave, NWaveComp>& list,
-                   std::set<NWave, NWaveComp>& star);
+      const Mesh<D>& mesh() { return *meshPtr_; }
+
+      /**
+      * Access associated UnitCell<D> as reference.
+      */
+      const UnitCell<D>& unitCell() { return *unitCellPtr_; }
 
    };
 
    template <int D>
    inline int Basis<D>::nWave() const
-   { return nWave_; }
+   {  return nWave_; }
 
    template <int D>
    inline int Basis<D>::nStar() const
-   { return nStar_; }
+   {  return nStar_; }
 
    template <int D>
    inline 
    typename Basis<D>::Wave& Basis<D>::wave(int i)
-   { return waves_[i]; }
+   {  return waves_[i]; }
 
    template <int D>
    inline 
    typename Basis<D>::Star& Basis<D>::star(int i)
-   { return stars_[i]; }
+   {  return stars_[i]; }
 
 } // namespace Pscf:Pssp
 } // namespace Pscf
