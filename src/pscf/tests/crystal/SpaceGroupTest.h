@@ -23,6 +23,16 @@ public:
    void tearDown()
    {}
  
+   void test2DmakeIdentity() 
+   {
+      printMethod(TEST_FUNC);
+      //printEndl();
+      SpaceGroup<2> G;
+      G.makeCompleteGroup();
+      TEST_ASSERT(1 == G.size());
+      //std::cout << G << std::endl;
+   }
+
    void test2Dmake1() 
    {
       printMethod(TEST_FUNC);
@@ -166,6 +176,7 @@ public:
 };
 
 TEST_BEGIN(SpaceGroupTest)
+TEST_ADD(SpaceGroupTest, test2DmakeIdentity)
 TEST_ADD(SpaceGroupTest, test2Dmake1)
 TEST_ADD(SpaceGroupTest, test2Dmake2)
 TEST_ADD(SpaceGroupTest, test3Dmake)
