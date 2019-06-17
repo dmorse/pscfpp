@@ -135,18 +135,17 @@ namespace Pssp
       double Gsq;
       double Gsq_max = 1.0;
       double epsilon = 1.0E-8;
-      int listId = 0;
-      int listBegin = 0;
-      int listEnd = 0;
-      int starId = 0;
-      int starBegin = 0;
-      int starSize = 0;
+      int listId = 0;      // id for this list
+      int listBegin = 0;   // id of first wave in this list
+      int listEnd = 0;     // (id of last wave in this list) + 1
+      int starId = 0;      // id for this star
+      int starBegin = 0;   // id of first wave in this star
+      int starSize = 0;    // size (number of waves) in this star
       int i, j;
-      bool newList;
       for (i = 0; i <= nWave_; ++i) {
 
          // Determine if this wave begins a new list
-         newList = false;
+         bool newList = false;
          if (i == nWave_) {
             listEnd = i;
             newList = true;
@@ -171,7 +170,10 @@ namespace Pssp
                list.insert(wave);
             }
 
-            // Loop over stars
+            // Get square norm of wavevectors in this list
+            Gsq = waves_[listBegin].sqNorm;
+
+            // Loop over stars within this list
             work.clear();
             IntVec<D> nVec;
             rootItr = list.begin();
@@ -191,6 +193,7 @@ namespace Pssp
 
                // Process the star
                newStar.beginId = starBegin;
+               newStar.kSq = Gsq;
                if (nextInvert == -1) {
 
                   // If this star is second of pair related by symmetry,
@@ -300,12 +303,12 @@ namespace Pssp
       std::cout << std::endl;
       std::cout << "Waves:" << std::endl;
       for (i = 0; i < nWave_; ++i) {
-         std::cout << i;
+         std::cout << Int(i,4);
+         std::cout << Int(waves_[i].starId, 4) << " |";
          for (j = 0; j < D; ++j) {
-            std::cout << Int(waves_[i].indicesBz[j], 3);
+            std::cout << Int(waves_[i].indicesBz[j], 4);
          }
-         std::cout << "  " << waves_[i].sqNorm;
-         std::cout << Int(waves_[i].starId, 5);
+         std::cout << " | " << Dbl(waves_[i].sqNorm, 12);
          std::cout << std::endl;
       }
       #endif
@@ -319,9 +322,11 @@ namespace Pssp
                    << Int(stars_[i].beginId, 3)
                    << Int(stars_[i].endId, 3)
                    << Int(stars_[i].invertFlag, 3);
+         std::cout << " |";
          for (j = 0; j < D; ++j) {
-            std::cout << Int(stars_[i].waveBz[j]);
+            std::cout << Int(stars_[i].waveBz[j], 4);
          }
+         std::cout << " | " << Dbl(stars_[i].kSq, 12);
          std::cout << std::endl;
       }
       #endif
