@@ -8,8 +8,8 @@
 #include "chem/ChemTestComposite.h"
 #include "solvers/SolversTestComposite.h"
 #include "inter/InterTestComposite.h"
-#include "crystal/UnitCellTest.h"
 #include "mesh/MeshTestComposite.h"
+#include "crystal/CrystalTestComposite.h"
 #include <util/global.h>
 
 TEST_COMPOSITE_BEGIN(PscfNsTestComposite)
@@ -17,8 +17,8 @@ addChild(new MathTestComposite, "math/");
 addChild(new ChemTestComposite, "chem/");
 addChild(new SolversTestComposite, "solvers/");
 addChild(new InterTestComposite, "inter/");
-addChild(new TEST_RUNNER(UnitCellTest), "crystal/");
 addChild(new MeshTestComposite, "mesh/");
+addChild(new CrystalTestComposite, "crystal/");
 TEST_COMPOSITE_END
 
 using namespace Pscf;

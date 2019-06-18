@@ -6,6 +6,7 @@
 
 #include <pscf/crystal/UnitCell.h>
 #include <util/math/Constants.h>
+#include <util/format/Int.h>
 
 #include <iostream>
 #include <fstream>
@@ -150,9 +151,9 @@ public:
          for (i = 0; i < 2; ++i) {
             for (j = 0; j < 2; ++j) {
                if (i == j) {
-                  UTIL_ASSERT(eq(v.drrBasis(k, i, j), 1.0));
+                  TEST_ASSERT(eq(v.drrBasis(k, i, j), 2.0*param));
                } else {
-                  UTIL_ASSERT(eq(v.drrBasis(k, i, j), 0.0));
+                  TEST_ASSERT(eq(v.drrBasis(k, i, j), 0.0));
                }
             }
          }
@@ -161,9 +162,9 @@ public:
                if (i == j) {
                   b = twoPi/param;
                   dbb = -2.0*b*b/param;
-                  UTIL_ASSERT(eq(v.dkkBasis(k, i, j), dbb));
+                  TEST_ASSERT(eq(v.dkkBasis(k, i, j), dbb));
                } else {
-                  UTIL_ASSERT(eq(v.drrBasis(k, i, j), 0.0));
+                  TEST_ASSERT(eq(v.drrBasis(k, i, j), 0.0));
                }
             }
          }
@@ -201,8 +202,9 @@ public:
       for (k = 0; k < v.nParams(); ++k) {
          for (i = 0; i < 3; ++i) {
             for (j = 0; j < 3; ++j) {
-               if (i == j) {
-                  UTIL_ASSERT(eq(v.drrBasis(k, i, j), 1.0));
+               if (i == j && i == k) {
+                  param = v.params()[i];
+                  TEST_ASSERT(eq(v.drrBasis(k, i, j), 2.0*param));
                } else {
                   UTIL_ASSERT(eq(v.drrBasis(k, i, j), 0.0));
                }
@@ -210,7 +212,7 @@ public:
          }
          for (i = 0; i < 3; ++i) {
             for (j = 0; j < 3; ++j) {
-               if (i == j) {
+               if (i == j && i == k) {
                   param = v.params()[i];
                   b = twoPi/param;
                   dbb = -2.0*b*b/param;
