@@ -3,8 +3,10 @@ To get a minimally functional Basis class template:
 1) Remove separate (public!) array containing dkSq. This is now a member 
 Basis::Star::dEigen of class Basis::Star).
 
-2) Adapt conversion functions (basis-to-DFT and DFT-to-basis) as needed to work 
-with updated data structures. Test these functions.
+2) Add more  unit tests for conversion functions to test full round-trip 
+(components -> DFT -> components) of a field with nonzero field components of 
+all types (i.e., all values of invertFlag, and both real and imaginary components 
+for components with invertFlag != 0).
 
 3) Add function Basis::update() that updates the values of eigen and dEigen for 
 all stars, and of sqNorm for each wave. You will need to call this each time the 
@@ -12,15 +14,14 @@ unit cell parameters change.
 
 4) Add code to compute dEigen member of each Star to makeStars() function.
 
-5) Add code to Basis::makeStars to identify cancelled stars (not necessary for 
-tests with identity group).
+5) Add code to Basis::makeStars to identify cancelled stars (not necessary for tests 
+with identity group).
 
-6) Add code to Basis::makeStars to compute coeff correctly from operation of 
-the space group.
+6) Add code to Basis::makeStars to compute coeff correctly from operation of the space 
+group.
 
-7) Add code to read a space group from a file, given space group name. If we
-passed a SpaceGroup<D> object to makeBasis, this code could be outside the
-makeBasis function.
+7) Add code to read a space group from a file, given space group name. If we passed a 
+SpaceGroup<D> object to makeBasis, this code could be outside the makeBasis function.
 
-8) Question: Should accessors for stars and waves return const references, to
-prohibit code outside the class from modifying these objects?
+8) Question: Should accessors for stars and waves return const references, to prohibit 
+code outside the class from modifying these objects?

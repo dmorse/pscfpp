@@ -294,6 +294,8 @@ namespace Pssp
       nStar_ = stars_.size();
 
       // Final processing of stars
+      std::complex<double> coeff;
+      double snorm;
       int waveId;
       for (i = 0; i < nStar_; ++i) {
 
@@ -308,12 +310,13 @@ namespace Pssp
          // Set starId for all associated waves
          for (j = stars_[i].beginId; j < stars_[i].endId; ++j) {
             waves_[j].starId = i;
-            waves_[j].coeff = std::complex<double>(1.0, 0.0);
          }
 
          // Set coeff for all associated waves
+         snorm = 1.0/sqrt(double(stars_[i].size));
+         coeff = snorm*(std::complex<double>(1.0, 0.0));
          for (j = stars_[i].beginId; j < stars_[i].endId; ++j) {
-            waves_[j].coeff = std::complex<double>(1.0, 0.0);
+            waves_[j].coeff = coeff;
          }
       }
 
@@ -339,7 +342,7 @@ namespace Pssp
          waveIds_[mesh().rank(vec)] = i;
       }
   
-      #if 1
+      #if 0
       // Output all waves
       std::cout << std::endl;
       std::cout << "Waves:" << std::endl;
@@ -350,11 +353,13 @@ namespace Pssp
             std::cout << Int(waves_[i].indicesBz[j], 4);
          }
          std::cout << " | " << Dbl(waves_[i].sqNorm, 12);
+         std::cout << "  " << Dbl(waves_[i].coeff.real(), 10);
+         std::cout << "  " << Dbl(waves_[i].coeff.imag(), 10);
          std::cout << std::endl;
       }
       #endif
  
-      #if 1 
+      #if 0 
       // Output all stars
       std::cout << std::endl;
       std::cout << "Stars:" << std::endl;
@@ -378,187 +383,152 @@ namespace Pssp
    void Basis<D>::convertFieldComponentsToDft(DArray<double>& components, 
                                               RFieldDft<D>& dft)
    {
-      std::complex<double> coeff;
-      double z;
-      double z1;
-      double z2;
-      IntVec<D> G2;
-      int partnerId;
-      //loop through a factor of 2 more indices. 
-      //Difficult to optimize without specialization or making new objects
-      for (int i = 0; i < meshPtr_->size(); ++i) {
-         
-         //if last indice of waves is not > n3/2+1
-         IntVec<D> waveId = meshPtr_->position(i);
-         int starId = wave(waveId).starId;
-         if (!wave(waveId).implicit) {
-            coeff = wave(waveId).coeff;
-            //determining the rank of RFieldDft
-            IntVec<D> offsets;
-            offsets[D-1] = 1;
-            for (int j = D-1; j > 0; --j) {
-               if (j == D-1) {
-                  offsets[j-1] = offsets[j]*(meshPtr_->dimension(j)/2 + 1);
-               } else {
-                  offsets[j-1] = offsets[j]*meshPtr_->dimension(j);
+      // Create Mesh<D> with dimensions of DFT Fourier grid.
+      Mesh<D> dftMesh(dft.dftDimensions());
+
+      Star* starPtr;                  // pointer to current star
+      Wave* wavePtr;                  // pointer to current wave
+      std::complex<double> component; // coefficient for star
+      std::complex<double> coeff;     // coefficient for wave
+      IntVec<D> indices;              // dft grid indices of wave
+      int rank;                       // dft grid rank of wave
+      int is;                         // star index
+      int iw;                         // wave index
+
+      is = 0;
+      while (is < nStar_) {
+         starPtr = &stars_[is];
+
+         if (starPtr->invertFlag == 0) {
+
+            // Make real component (coefficient for star basis function)
+            component = std::complex<double>(components[is], 0.0);
+
+            // Loop over waves in closed star
+            for (iw = starPtr->beginId; iw < starPtr->endId; ++iw) {
+               wavePtr = &waves_[iw];
+               if (!wavePtr->implicit) {
+                  coeff = component*(wavePtr->coeff);
+                  indices = wavePtr->indicesDft;    
+                  rank = dftMesh.rank(indices);
+                  dft[rank][0] = coeff.real();
+                  dft[rank][1] = coeff.imag();
                }
             }
-            int rank = 0;
-            for (int j = 0; j < D; ++j) {
-               rank += wave(waveId).indicesDft[j] * offsets[j];
-            }
-            //std::cout<<rank<<std::endl;
+            ++is;
 
-            switch (stars_[starId].invertFlag) {
-               case 0 :
-                  z = components[starId];
-                  coeff = z*coeff;
+         } else
+         if (starPtr->invertFlag == 1) {
+
+            // Make complex component for first star
+            component = std::complex<double>(components[is], components[is+1]);
+            component /= sqrt(2.0);
+
+            // Loop over waves in first star
+            starPtr = &stars_[is];
+            for (iw = starPtr->beginId; iw < starPtr->endId; ++iw) {
+               wavePtr = &waves_[iw];
+               if (!wavePtr->implicit) {
+                  coeff = component*(wavePtr->coeff);
+                  indices = wavePtr->indicesDft;    
+                  rank = dftMesh.rank(indices);
                   dft[rank][0] = coeff.real();
                   dft[rank][1] = coeff.imag();
-                  break;
-               case 1 :
-                  z1 = components[starId];
-                  for(int j = 0; j < D; ++j){
-                     G2[j] = -waveId[j];
-                  }
-                  meshPtr_->shift(G2);
-                  partnerId = meshPtr_->rank(G2);
-                  z2 = components[partnerId];
-                  /*//debug code
-                  if(stars_[partnerId].invertFlag != -1) {
-                     std::cout<<"This star is "<<starId<<" and my partner is "
-                     <<partnerId<<std::endl;
-                     std::cout << "I have invertFlag of "
-                               << stars_[starId].invertFlag
-                               << " and he has "
-                               << stars_[partnerId].invertFlag<<std::endl;
-                     std::cout << " WaveBz "<<stars_[starId].waveBz 
-                               << " and he "
-                               << stars_[partnerId].waveBz<<std::endl;
-                     std::cout << "Wave dft indices"
-                               << waves_[stars_[starId].beginId].indicesDft
-                               << "and he is" 
-                               << waves_[stars_[partnerId].beginId].indicesDft
-                               << std::endl;
-                     std::cout << "My previous wave has implicit of "
-                               << waves_[stars_[starId].beginId - 1].implicit
-                               << std::endl;
-                     std::cout<<"And position of "
-                     <<waves_[stars_[starId].beginId-1].indicesDft<<std::endl;
-                  }
-                  //end debug*/
-                  UTIL_CHECK(stars_[partnerId].invertFlag == -1);
-                  coeff = std::complex<double>(z1,-z2)*coeff/sqrt(2);
-                  dft[rank][0] = coeff.real();
-                  dft[rank][1] = coeff.imag();
-                  break;
-               case -1 :
-                  z1 = components[starId];
-                  for(int j = 0; j < D; ++j){
-                     G2[j] = -waveId[j];
-                  }
-                  meshPtr_->shift(G2);
-                  partnerId = meshPtr_->rank(G2);
-                  z2 = components[partnerId];
-                  UTIL_CHECK(stars_[partnerId].invertFlag == 1);
-                  coeff = std::complex<double>(z2, z1) * coeff / sqrt(2);
-                  dft[rank][0] = coeff.real();
-                  dft[rank][1] = coeff.imag();
-                  break;
+               }
             }
+
+            // Loop over waves in second star
+            starPtr = &stars_[is+1];
+            component = conj(component);
+            for (iw = starPtr->beginId; iw < starPtr->endId; ++iw) {
+               wavePtr = &waves_[iw];
+               if (!wavePtr->implicit) {
+                  coeff = component*(wavePtr->coeff);
+                  indices = wavePtr->indicesDft;
+                  rank = dftMesh.rank(indices);
+                  dft[rank][0] = coeff.real();
+                  dft[rank][1] = coeff.imag();
+               }
+            }
+
+            // Increment is by 2 (two stars were processed)
+            is += 2;
 
          } else {
-            //do nothing. Dft does not need allocation for this
+ 
+            UTIL_THROW("Invalid invertFlag value");
+  
          }
+
       }
+
    }
 
    template <int D>
    void Basis<D>::convertFieldDftToComponents(RFieldDft<D>& dft, 
                                               DArray<double>& components)
    {
-      //if its not too distrupting maybe use consistent names for logical size?
-      int nStars = nStar_;
-      UTIL_CHECK(nStars == components.capacity());
-      IntVec<D> indiceBz;
-      std::complex<double> coeff;
-      std::complex<double> temp;
-      fftw_complex z;
-      for (int i = 0; i < nStars; ++i) {
-         indiceBz = stars_[i].waveBz;
-         coeff = wave(indiceBz).coeff;
+      // Create Mesh<D> with dimensions of DFT Fourier grid.
+      Mesh<D> dftMesh(dft.dftDimensions());
 
-         //check if wave exists in dft
-         if (!wave(indiceBz).implicit) {
-            meshPtr_->shift(indiceBz);
-            //std::cout<<"Yoohoo"<<std::endl;
-            //might be good to rethink how elements of RFieldDft is accessed
-            IntVec<D> offsets;
-            offsets[D-1] = 1;
-            for (int j = D-1; j > 0; --j) {
-               if(j == D-1) {
-                  offsets[j-1] = offsets[j]*(meshPtr_->dimension(j)/2 + 1);
-               } else {
-                  offsets[j-1] = offsets[j]*meshPtr_->dimension(j);
-               }
+      Star* starPtr;                  // pointer to current star
+      Wave* wavePtr;                  // pointer to current wave
+      std::complex<double> component; // coefficient for star
+      IntVec<D> indices;              // dft grid indices of wave
+      int rank;                       // dft grid rank of wave
+      int is;                         // star index
+
+      // Loop over stars
+      is = 0;
+      while (is < nStar_) {
+         starPtr = &stars_[is];
+
+         if (starPtr->invertFlag == 0) {
+
+            // Characteristic wave is first wave of star
+            wavePtr = &waves_[starPtr->beginId];
+            indices = wavePtr->indicesDft;
+            rank = dftMesh.rank(indices);
+
+            // Compute component value
+            component = std::complex<double>(dft[rank][0], dft[rank][1]);
+            component /= wavePtr->coeff;
+            UTIL_CHECK(abs(component.imag()) < 1.0E-8);
+            components[is] = component.real();
+            ++is;
+
+         } else
+         if (starPtr->invertFlag == 1) {
+
+            // Identify a characteristic wave that is not implicit:
+            // Either first wave of 1st star or last wave of 2nd star.
+            wavePtr = &waves_[starPtr->beginId];
+            if (wavePtr->implicit) {
+               starPtr = &stars_[is+1];
+               UTIL_CHECK(starPtr->invertFlag == -1);
+               wavePtr = &waves_[starPtr->endId-1];
+               UTIL_CHECK(!(wavePtr->implicit));
+            } 
+            indices = wavePtr->indicesDft;
+            rank = dftMesh.rank(indices);
+
+            // Compute component value
+            component = std::complex<double>(dft[rank][0], dft[rank][1]);
+            UTIL_CHECK(abs(wavePtr->coeff) > 1.0E-8);
+            component /= wavePtr->coeff;
+            component *= sqrt(2.0);
+            if (starPtr->invertFlag == -1) {
+               component = conj(component);
             }
-            int rank = 0;
-            for (int j = 0; j < D; j++) {
-               rank += indiceBz[j] * offsets[j];
-            }
-            //std::cout<<offsets<<std::endl;
-            //std::cout<<indiceBz<<std::endl;
-            //std::cout<<rank<<std::endl;
-            z[0] = dft[rank][0];
-            z[1] = dft[rank][1];
-            //Note: the code implies that we do not need indicesDft from Wave? 
+            components[is] = component.real();
+            components[is+1] = component.imag();
+
+            is += 2;
          } else {
-         //wave does not exists in dft. have to find explicit pair
-            meshPtr_->shift(indiceBz);
-            for (int j = 0; j < D; ++j) {
-               indiceBz[j] = -indiceBz[j];
-            }
-            meshPtr_->shift(indiceBz);
-
-
-            IntVec<D> offsets;
-            offsets[D-1] = 1;
-            for (int j = D-1; j > 0; --j) {
-               if(j == D-1) {
-                  offsets[j-1] = offsets[j]*(meshPtr_->dimension(j)/2 + 1);
-               } else {
-                  offsets[j-1] = offsets[j]*meshPtr_->dimension(j);
-               }
-            }
-
-            int rank = 0;
-            for (int j = 0; j < D; j++) {
-               rank += indiceBz[j] * offsets[j];
-            }
-            //std::cout<<"Yoohoo"<<std::endl;
-            //std::cout<<rank<<std::endl;
-            z[0] = dft[rank][0];
-            z[1] = dft[rank][1];
-            z[1] = -z[1];
+            UTIL_THROW("Invalid invertFlag value");
          }
-         
-         //std::cout<<i<<std::endl;
-         //reintepret cast is not used since coding standards is old
-         temp = std::complex<double>(z[0],z[1]);
-         //std::cout<<temp<<std::endl;
-         //assign value to components
-         switch(stars_[i].invertFlag) {
-            case 0 :
-               components[i] = (temp/coeff).real();
-               break;
-            case 1 :
-               components[i] = (temp/coeff).real() * sqrt(2);
-               break;
-            case -1 :
-               components[i] = (temp/coeff).imag() * sqrt(2);
-               break;
-         }
-      }
+
+      } //  loop over star index is
    }
 
    template <int D>

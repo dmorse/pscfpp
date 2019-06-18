@@ -51,6 +51,7 @@ namespace Pssp {
          data_[i][1] = other.data_[i][1];
       }
       meshDimensions_ = other.meshDimensions_;
+      dftDimensions_ = other.dftDimensions_;
    }
 
    /*
@@ -86,6 +87,7 @@ namespace Pssp {
          data_[i][1] = other.data_[i][1];
       }
       meshDimensions_ = other.meshDimensions_;
+      dftDimensions_ = other.dftDimensions_;
 
       return *this;
    }
