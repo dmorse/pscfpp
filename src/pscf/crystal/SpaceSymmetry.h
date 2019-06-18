@@ -84,6 +84,16 @@ namespace Pscf {
    std::ostream& operator << (std::ostream& out, const SpaceSymmetry<D>& A);
 
    /**
+   * Input stream extractor for a SpaceSymmetry<D>
+   *
+   * \param in  input stream
+   * \param A  SpaceSymmetry<D> object to be input
+   * \return  modified input stream
+   */ 
+   template <int D>
+   std::istream& operator << (std::istream& in, SpaceSymmetry<D>& A);
+
+   /**
    * A SpaceSymmetry represents a crystallographic space group symmetry.
    *
    * Crystallographic space group symmetry operation combines a point group 
@@ -246,6 +256,10 @@ namespace Pscf {
       friend 
       std::ostream& operator << <> (std::ostream& out, 
                                     const SpaceSymmetry<D>& A);
+
+      friend 
+      std::istream& operator << <> (std::istream& out, 
+                                    SpaceSymmetry<D>& A);
 
    };
 
