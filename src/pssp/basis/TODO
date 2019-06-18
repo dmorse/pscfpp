@@ -1,12 +1,48 @@
 TODO (Basis class):
 
-1) Add Basis::isValid() function and unit tests that call it. 
+1) Add bool Basis::isValid() function and unit tests that call it. 
 
-2) Test code to compute dEigen member of each Star to makeStars() function.
+   What to test:
 
-3) Test basis code with groups other than the identity.
+      - Function wave(IntVec<D> ) identifies every vector in full fft grid:
+        Iterate over mesh, call wave() identification function, confirm that
+        waveDft == iterator.position().
 
-4) Add code to read a space group from a file, given space group name. 
+      - Identifiers Wave::startId and Star::beginId and Star::endId are all
+        consistent
+
+      - Stars either have invertFlag = 0 or come in consecutive partners.
+        Partners must have the same size.
+
+      - If G is i from beginning, -G is i from the end of either a closed
+        star or a pair of stars that are related by symmetry.
+
+      - Closure rules are satisifed: If G is in a star, -G is either in
+        the same star (if invertFlag = 0) or its partner. 
+
+      - Coefficients of G and -G are all omplex conjugates.
+
+      - Full internal test of coefficients (phase relationships) ?
+
+   On failure, print message explaining error before returning false.
+   Return true iff object is valid. 
+
+   Once an isValid() function is written, it can be called in unit tests
+   of multiple space groups and grids.
+
+2) Add code to read a space group from a file.
+
+3) Test Basis code with groups other than the identity. 
+
+   Examples: 2D Square, 
+             2D Square centered (has translations and cancellations)
+             2D 4 fold axis (non-centrosymmetric)
+             3D (111 3 fold axis) (non-centrosymmetric)
+             3D cubic BCC (has translations and cancellations)
+
+4) Unit tests to test computation of dEigen member of each Star to 
+   makeStars() function. Test special cases for which answer can be
+   worked out analytically.
 
 5) Question: Should accessors for stars and waves return const references, 
 to prohibit code outside the class from modifying these objects?
