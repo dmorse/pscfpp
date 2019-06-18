@@ -252,6 +252,7 @@ namespace Pssp
       */
       struct NWave {
          double sqNorm;
+         double phase;
          IntVec<D> indicesDft;
          IntVec<D> indicesBz;
       };

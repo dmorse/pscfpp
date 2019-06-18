@@ -150,9 +150,11 @@ namespace Pssp
       NWave wave;
       Star newStar;
 
+      std::complex<double> coeff;
       double Gsq;
       double Gsq_max = 1.0;
       double epsilon = 1.0E-8;
+      double twoPi = 2.0*Constants::Pi;
       IntVec<D> rootVec;
       IntVec<D> vec;
       int listId = 0;      // id for this list
@@ -161,7 +163,9 @@ namespace Pssp
       int starId = 0;      // id for this star
       int starBegin = 0;   // id of first wave in this star
       int starSize = 0;    // size (number of waves) in this star
-      int i, j;
+      int i, j, k;
+      bool cancel;
+
       for (i = 0; i <= nWave_; ++i) {
 
          // Determine if this wave begins a new list
@@ -197,28 +201,53 @@ namespace Pssp
             int nextInvert = 1;
             while (list.size() > 0) {
 
-               // Construct a star from root wave *rootItr.
+               // Construct a star from root vector.
                rootVec = rootItr->indicesBz;
                Gsq = unitCell().ksq(rootVec);
+               cancel = false;
                star.clear();
                for (j = 0; j < group.size(); ++j) {
                   vec = rootVec*group[j];
+
+                  // Construct vectors
                   wave.sqNorm = Gsq;
                   wave.indicesBz = vec;
                   wave.indicesDft = vec;
                   mesh().shift(wave.indicesDft);
+
+                  // Compute phase for basis function coefficient
+                  wave.phase = 0.0;
+                  for (k = 0; k < D; ++k) {
+                     wave.phase += wave.indicesBz[k]*(group[j].t(k));
+                  }
+                  while (wave.phase > 0.5) {
+                     wave.phase -= 1.0;
+                  }
+                  while (wave.phase <= -0.5) {
+                     wave.phase += 1.0;
+                  }
+                  wave.phase *= twoPi;
+
+                  // Check for cancellation of star
+                  if (vec == rootVec) {
+                     if (abs(wave.phase) > 1.0E-6) {
+                        cancel = true;
+                        wave.phase = 0.0;
+                     }
+                  }
+
+                  // Add to star and work containers, erase from list
                   star.insert(wave);
                   work.append(wave);
                   list.erase(wave);
+
                }
                starSize = star.size();
 
-               // TODO: Replace above by code that generates
-               // a star for an arbitrary space group.
-
                // Process the star
-               newStar.beginId = starBegin;
                newStar.eigen = Gsq;
+               newStar.beginId = starBegin;
+               newStar.cancel = cancel;
                if (nextInvert == -1) {
 
                   // If this star is second of pair related by symmetry,
@@ -291,13 +320,17 @@ namespace Pssp
             UTIL_CHECK(work.size() == listEnd - listBegin);
 
             // Copy work array into corresponding section of waves_
-            int k;
             for (j = 0; j < work.size(); ++j) {
                k = j + listBegin;
                waves_[k].indicesDft = work[j].indicesDft;
                waves_[k].indicesBz = work[j].indicesBz;
                waves_[k].sqNorm = work[j].sqNorm;
+               coeff = std::complex<double>(0.0, work[j].phase);
+               waves_[k].coeff = exp(coeff);
             }
+
+            // At this point, waves_[k].coeff has unit absolute magnitude.
+            // Coefficinets are normalized in final processing of stars.
 
             ++listId;
             listBegin = listEnd;
@@ -306,7 +339,6 @@ namespace Pssp
       nStar_ = stars_.size();
 
       // Final processing of stars
-      std::complex<double> coeff;
       double snorm;
       int waveId;
       for (i = 0; i < nStar_; ++i) {
@@ -324,11 +356,10 @@ namespace Pssp
             waves_[j].starId = i;
          }
 
-         // Set coeff for all associated waves
+         // Normalize coeff for all associated waves
          snorm = 1.0/sqrt(double(stars_[i].size));
-         coeff = snorm*(std::complex<double>(1.0, 0.0));
          for (j = stars_[i].beginId; j < stars_[i].endId; ++j) {
-            waves_[j].coeff = coeff;
+            waves_[j].coeff *= snorm;
          }
 
          // Set elements of dEigen
@@ -372,32 +403,40 @@ namespace Pssp
          waveIds_[mesh().rank(vec)] = i;
       }
   
-      #if 0
+      #if 1
       // Output all waves
       std::cout << std::endl;
       std::cout << "Waves:" << std::endl;
       for (i = 0; i < nWave_; ++i) {
          std::cout << Int(i,4);
-         std::cout << Int(waves_[i].starId, 4) << " |";
+         std::cout << Int(waves_[i].starId, 4);
+         std::cout << " |";
+         for (j = 0; j < D; ++j) {
+            std::cout << Int(waves_[i].indicesDft[j], 4);
+         }
+         std::cout << " |";
          for (j = 0; j < D; ++j) {
             std::cout << Int(waves_[i].indicesBz[j], 4);
          }
-         std::cout << " | " << Dbl(waves_[i].sqNorm, 12);
+         std::cout << " | ";
+         std::cout << Dbl(waves_[i].sqNorm, 12);
          std::cout << "  " << Dbl(waves_[i].coeff.real(), 10);
          std::cout << "  " << Dbl(waves_[i].coeff.imag(), 10);
          std::cout << std::endl;
       }
       #endif
  
-      #if 0 
+      #if 1 
       // Output all stars
       std::cout << std::endl;
       std::cout << "Stars:" << std::endl;
       for (i = 0; i < nStar_; ++i) {
-         std::cout << i 
-                   << Int(stars_[i].beginId, 3)
-                   << Int(stars_[i].endId, 3)
-                   << Int(stars_[i].invertFlag, 3);
+         std::cout << Int(i, 4)
+                   << Int(stars_[i].size, 3)
+                   << Int(stars_[i].beginId, 5)
+                   << Int(stars_[i].endId, 5)
+                   << Int(stars_[i].invertFlag, 3)
+                   << Int(stars_[i].cancel, 2);
          std::cout << " |";
          for (j = 0; j < D; ++j) {
             std::cout << Int(stars_[i].waveBz[j], 4);
@@ -461,6 +500,7 @@ namespace Pssp
       is = 0;
       while (is < nStar_) {
          starPtr = &stars_[is];
+         if (starPtr->cancel) continue;
 
          if (starPtr->invertFlag == 0) {
 
@@ -545,6 +585,7 @@ namespace Pssp
       is = 0;
       while (is < nStar_) {
          starPtr = &stars_[is];
+         if (starPtr->cancel) continue;
 
          if (starPtr->invertFlag == 0) {
 

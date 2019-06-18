@@ -1,18 +1,12 @@
 TODO (Basis class):
 
-0) More tests: Basis::isValid() function and unit tests that call it. 
+1) Add Basis::isValid() function and unit tests that call it. 
 
-1) Test code to compute dEigen member of each Star to makeStars() function.
+2) Test code to compute dEigen member of each Star to makeStars() function.
 
-2) Add code to Basis::makeStars to identify cancelled stars (not necessary 
-for tests with identity group).
+3) Test basis code with groups other than the identity.
 
-3) Add code to Basis::makeStars to compute coeff correctly from operation 
-of the space group (not necessary for identity group).
+4) Add code to read a space group from a file, given space group name. 
 
-4) Test basis code with groups other than the identity.
-
-5) Add code to read a space group from a file, given space group name. 
-
-6) Question: Should accessors for stars and waves return const references, 
+5) Question: Should accessors for stars and waves return const references, 
 to prohibit code outside the class from modifying these objects?
