@@ -36,6 +36,24 @@ namespace Pssp
                             const UnitCell<D>& unitCell,
                             std::string groupName)
    {
+      SpaceGroup<D> group;
+      if (groupName == "I") {
+         // Create identity group
+         group.makeCompleteGroup();
+       } else {
+         UTIL_THROW("Unimplemented space group");
+       }
+       makeBasis(mesh, unitCell, group);
+   }
+
+   /*
+   * Construct basis for pseudo-spectral scft.
+   */
+   template <int D>
+   void Basis<D>::makeBasis(const Mesh<D>& mesh, 
+                            const UnitCell<D>& unitCell,
+                            const SpaceGroup<D>& group)
+   {
       // Save pointers to mesh and unit cell
       meshPtr_ = &mesh;
       unitCellPtr_ = &unitCell;
@@ -47,12 +65,6 @@ namespace Pssp
 
       // Make sorted array of waves
       makeWaves();
-
-      // Create identity group
-      // Temporary stub: Replace with code to read a group from file,
-      // or pass the group to makeBasis and generate it elsewhere.
-      SpaceGroup<D> group;
-      group.makeCompleteGroup();
 
       // Identify stars of waves that are related by symmetry
       makeStars(group);
@@ -85,7 +97,7 @@ namespace Pssp
             w.indicesDft = itr.position();
             v = shiftToMinimum(w.indicesDft, meshDimensions, *unitCellPtr_);
             w.indicesBz = v;
-            w.sqNorm = unitCellPtr_->ksq(v);
+            w.sqNorm = unitCell().ksq(v);
             twaves.push_back(w);
          }
       }
@@ -278,7 +290,7 @@ namespace Pssp
             UTIL_CHECK(list.size() == 0);
             UTIL_CHECK(work.size() == listEnd - listBegin);
 
-            // Copy temp array work into corresponding section of waves_
+            // Copy work array into corresponding section of waves_
             int k;
             for (j = 0; j < work.size(); ++j) {
                k = j + listBegin;
@@ -318,6 +330,24 @@ namespace Pssp
          for (j = stars_[i].beginId; j < stars_[i].endId; ++j) {
             waves_[j].coeff = coeff;
          }
+
+         // Set elements of dEigen
+         {
+            vec = stars_[i].waveBz;
+            double element, dEigen;
+            int p, q;
+            for (j = 0; j < unitCell().nParams(); ++j) {
+               dEigen = 0;
+               for (p = 0; p < D; ++p){
+                  for (q = 0; q < D; ++q){
+                     element = unitCellPtr_->dkkBasis(j, p, q);
+                     dEigen += vec[p]*vec[q]*element;
+                  }
+               }
+               stars_[i].dEigen[j] = dEigen;
+            }
+         }
+
       }
 
       // Final processing of waves
@@ -377,6 +407,39 @@ namespace Pssp
       }
       #endif
   
+   }
+
+   template <int D>
+   void Basis<D>::update()
+   {
+      IntVec<D> vec;
+      int i, j, p, q;
+      double element, dEigen;
+
+      // Process stars
+      for (i = 0; i < nStar_; ++i) {
+         vec = stars_[i].waveBz;
+         stars_[i].eigen = unitCell().ksq(vec);
+
+         for (j = 0; j < unitCell().nParams(); ++j) {
+            dEigen = 0.0;
+            for (p = 0; p < D; ++p){
+               for (q = 0; q < D; ++q){
+                  element = unitCell().dkkBasis(j, p, q);
+                  dEigen += vec[p]*vec[q]*element;
+               }
+            }
+            stars_[i].dEigen[j] = dEigen;
+         }
+
+      }
+
+      // Process waves
+      for (i = 0; i < nWave_; ++i) {
+         vec = waves_[i].indicesBz;
+         waves_[i].sqNorm = unitCell().ksq(vec);
+      }
+
    }
 
    template <int D>
@@ -549,34 +612,6 @@ namespace Pssp
       meshPtr_->shift(vector);
       int rank = mesh().rank(vector);
       return waves_[waveIds_[rank]];
-   }
-
-   template <int D>
-   void Basis<D>::makedksq(const UnitCell<D>& unitCell)
-   {
-
-      unitCellPtr_ = &unitCell;
-
-      // Initialize all elements to zero
-      int i, j, p, q;
-      for (i = 0; i < unitCellPtr_->nParams(); ++i) {
-         for (j=0; j < nStar_; ++j){
-            dksq(i,j)=0.0;
-         }
-      }
-	
-      for (i = 0; i < unitCellPtr_->nParams(); ++i) {
-         for (j=0; j < nStar_; ++j){
-            for (p=0; p < D; ++p){
-               for (q=0; q < D; ++q){
-
-                  dksq(i,j) = dksq(i,j) + (stars_[j].waveBz[p]*stars_[j].waveBz[q]*(unitCellPtr_->dkkBasis(i, p,q)));
-  
-               }
-            }
-         }
-      }
-
    }
 
 }

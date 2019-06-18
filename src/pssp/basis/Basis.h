@@ -155,12 +155,6 @@ namespace Pssp
       Basis();
 
       /**
-      * Derivatives of dksq with respect to each 
-      * of the parameters (rows).
-      */
-      DMatrix<double> dksq; 
-
-      /**
       * Construct basis for a specific grid and space group.
       *
       * Proposal: Initially implementation functions correctly only for
@@ -170,7 +164,13 @@ namespace Pssp
                      std::string groupName);
 
       /**
-      * Convert field from symmetry-adapted representation to complex DFT.
+      * Construct basis for a specific grid and space group.
+      */
+      void makeBasis(const Mesh<D>& mesh, const UnitCell<D>& unitCell, 
+                     const SpaceGroup<D>& group);
+
+      /**
+      * Convert field from symmetry-adapted representation to DFT.
       *
       * \param components coefficients of symmetry-adapted basis functions.
       * \param dft complex DFT representation of a field.
@@ -188,10 +188,9 @@ namespace Pssp
                                        DArray<double>& components);   
 
       /**
-      * Calculates dksq_ assuming ksq are in non increasing order of ksq 
-      * and pairs of stars related by inversion are listed consecutively
+      * Update values after change in unit cell parameters.
       */
-      void makedksq(const UnitCell<D>& unitCell);
+      void update();
 
       // Accessors
 
