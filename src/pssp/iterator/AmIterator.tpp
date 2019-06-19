@@ -503,7 +503,7 @@ namespace Pssp
                (systemPtr_->unitCell()).SetParams( wCpArrays_[m] + lambda_ * dCpArrays_[m],m);
             }
             systemPtr_->mixture().setupUnitCell(systemPtr_->unitCell());
-	    systemPtr_->basis().makedksq(systemPtr_->unitCell());
+	    systemPtr_->basis().update();
 
               for (int m=0; m<6 ; ++m){
                 std::cout<<"Stress"<<m<<"\t"<<"="<< systemPtr_->mixture().TStress[m]<<"\n";
