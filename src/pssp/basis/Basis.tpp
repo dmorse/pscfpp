@@ -207,13 +207,18 @@ namespace Pssp
                cancel = false;
                star.clear();
                for (j = 0; j < group.size(); ++j) {
+
+                  // Apply symmetry (i.e., multiply by rotation matrix)
                   vec = rootVec*group[j];
 
-                  // Construct vectors
+                  UTIL_ASSERT(abs(Gsq - unitCell().ksq(vec)) < epsilon);
+
+                  // Initialize NWave object
                   wave.sqNorm = Gsq;
                   wave.indicesBz = vec;
                   wave.indicesDft = vec;
                   mesh().shift(wave.indicesDft);
+                  wave.phase = 0.0;
 
                   // Compute phase for basis function coefficient
                   wave.phase = 0.0;
@@ -236,13 +241,19 @@ namespace Pssp
                      }
                   }
 
-                  // Add to star and work containers, erase from list
+                  // Add to star and erase from list
+                  // Note: Because these are sets, no duplicates exist
                   star.insert(wave);
-                  work.append(wave);
                   list.erase(wave);
 
                }
                starSize = star.size();
+
+               // Append (sorted) contents of star to work array
+               setItr = star.begin(); 
+               for ( ; setItr != star.end(); ++setItr) {
+                  work.append(*setItr);
+               }
 
                // Process the star
                newStar.eigen = Gsq;
@@ -250,8 +261,8 @@ namespace Pssp
                newStar.cancel = cancel;
                if (nextInvert == -1) {
 
-                  // If this star is second of pair related by symmetry,
-                  // then set root of next to beginning of remaining list.
+                  // If this star is the 2nd of pair related by symmetry,
+                  // set root of next star to first wave of remaining list.
 
                   newStar.invertFlag = -1;
                   rootItr = list.begin();
@@ -259,7 +270,7 @@ namespace Pssp
 
                } else {
 
-                  // If this star is not the second of a pair, 
+                  // If this star is not the second of a pair of partners,
                   // then determine if it is closed under inversion.
 
                   // Compute negation of root vector, shift to DFT mesh
@@ -383,7 +394,7 @@ namespace Pssp
 
       // Final processing of waves
       IntVec<D> meshDimensions = mesh().dimensions();
-      for (i = 0; i < nStar_; ++i) {
+      for (i = 0; i < nWave_; ++i) {
          vec = waves_[i].indicesDft;
 
          // Validity check 
