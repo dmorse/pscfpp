@@ -739,7 +739,9 @@ namespace Pssp
          while (is < nStar_) {
             if (stars_[is].invertFlag == 0) {
                ++is;
+
             } else {
+
                if (stars_[is].invertFlag != 1) {
                   std::cout << "Expected invertFlag == 1" << std::endl;
                   return false;
@@ -748,6 +750,11 @@ namespace Pssp
                   std::cout << "Expected invertFlag == -1" << std::endl;
                   return false;
                }
+               if (stars_[is+1].size != stars_[is].size) {
+                  std::cout << "Parners of different dize" << std::endl;
+                  return false;
+               }
+
                is += 2;
             }
          }

@@ -1,12 +1,12 @@
 TODO (Basis class):
 
-1) Keep adding to bool Basis::isValid() function:
+1) Add code to explicitly guarantee that coefficients of G and -G are
+   complex conjugates within a closed star in a non-centrosymmetric group.
 
-      - Stars either have invertFlag = 0 or come in consecutive partners.
-        Partners must have the same size.
+2) Possibility: Add a partnerId to Basis::Wave. Once you've identified 
+   the partner, why not keep track of it?
 
-      - If G is i from beginning, -G is i from the end of either a closed
-        star or a pair of stars that are related by symmetry.
+3) Keep adding to bool Basis::isValid() function:
 
       - Closure rules are satisifed: If G is in a star, -G is either in
         the same star (if invertFlag = 0) or its partner. 
@@ -16,9 +16,9 @@ TODO (Basis class):
    On failure, print message explaining error before returning false.
    Return true iff object is valid. 
 
-2) Add code to read a space group from a file.
+4) Add code to read a space group from a file.
 
-3) Test Basis code with groups other than the identity. 
+5) Test Basis code with groups other than the identity. 
 
    Examples: 2D Square, 
              2D Square centered (has translations and cancellations)
@@ -26,12 +26,15 @@ TODO (Basis class):
              3D (111 3 fold axis) (non-centrosymmetric)
              3D cubic BCC (has translations and cancellations)
 
-4) Unit tests to test computation of dEigen member of each Star to 
+   Make sure to test with even and odd mesh dimension elements
+
+6) Move computation of dEigen for one vector a private function, 
+   call this in makeStars() and udpate(). Alternative: Move this to 
+   UnitCell, giving functions ksq() and dksq().
+   Unit tests to test computation of dEigen member of each vector.
    makeStars() function. Test special cases for which answer can be
    worked out analytically.
 
-5) Write outputBasis(std::ostream& out) function to write Basis to an 
+7) Write outputBasis(std::ostream& out) function to write Basis to an 
    output stream (e.g., a file). 
 
-6) Question: Should accessors for stars and waves return const references, 
-to prohibit code outside the class from modifying these objects?
