@@ -9,20 +9,16 @@
 
 #include <pscf/math/IntVec.h>
 #include <pssp/field/RFieldDft.h>
-#include <pscf/mesh/MeshIterator.h>
 #include <pscf/mesh/Mesh.h>
+#include <pscf/crystal/UnitCell.h>
 #include <pscf/crystal/SpaceGroup.h>
-#include <pscf/crystal/shiftToMinimum.h>
 #include <util/containers/DArray.h>
 #include <util/containers/GArray.h>
 #include <util/containers/DMatrix.h>
 #include <set>
 
 namespace Pscf { 
-
-   template <int D> class UnitCell;
-
-namespace Pssp
+namespace Pssp 
 { 
 
    using namespace Util;
@@ -236,21 +232,6 @@ namespace Pssp
       * Get a Star, access by integer index.
       */
       Star& star(int i);
-
-      /**
-      * Wave struct used for internal processing.
-      */
-      struct NWave {
-         double sqNorm;
-         double phase;
-         IntVec<D> indicesDft;
-         IntVec<D> indicesBz;
-      };
-
-      struct NWaveComp {
-         bool operator() (const Basis<D>::NWave& a, 
-                          const Basis<D>::NWave& b) const;
-      };
 
    private:
 

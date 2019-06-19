@@ -44,5 +44,8 @@ TODO (Basis class):
    makeStars() function. Test special cases for which answer can be
    worked out analytically.
 
-5) Question: Should accessors for stars and waves return const references, 
+5) Write outputBasis(std::ostream& out) function to write Basis to an 
+   output stream (e.g., a file). 
+
+6) Question: Should accessors for stars and waves return const references, 
 to prohibit code outside the class from modifying these objects?

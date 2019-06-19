@@ -9,9 +9,11 @@
 */
 
 #include "Basis.h"
+#include "TWave.h"
 #include <pscf/crystal/shiftToMinimum.h>
+#include <pscf/mesh/MeshIterator.h>
 #include <vector>
-
+#include <set>
 
 namespace Pscf {
 namespace Pssp
@@ -83,36 +85,23 @@ namespace Pssp
    void Basis<D>::makeWaves()
    {
       IntVec<D> meshDimensions = mesh().dimensions();
-
-      // Generate dft mesh of waves, store in local std::vector twaves_
-      std::vector<Basis<D>::NWave> twaves;
+      std::vector< TWave<D> > twaves;
       twaves.reserve(nWave_);
-      {
-         Basis<D>::NWave w;
-         IntVec<D> v;
 
-         // Loop over dft mesh to generate all waves
-         MeshIterator<D> itr(mesh().dimensions());
-         for (itr.begin(); !itr.atEnd(); ++itr) {
-            w.indicesDft = itr.position();
-            v = shiftToMinimum(w.indicesDft, meshDimensions, *unitCellPtr_);
-            w.indicesBz = v;
-            w.sqNorm = unitCell().ksq(v);
-            twaves.push_back(w);
-         }
+      // Loop over dft mesh to generate all waves, store in vector twaves_
+      TWave<D> w;
+      IntVec<D> v;
+      MeshIterator<D> itr(mesh().dimensions());
+      for (itr.begin(); !itr.atEnd(); ++itr) {
+         w.indicesDft = itr.position();
+         v = shiftToMinimum(w.indicesDft, meshDimensions, *unitCellPtr_);
+         w.indicesBz = v;
+         w.sqNorm = unitCell().ksq(v);
+         twaves.push_back(w);
       }
 
-      // Sort temporary container twaves by wavevector norm
-      {
-         // Define function object that sorts based on sqNorm
-         struct NormComparator{
-            bool operator () (const NWave& a, const NWave& b) const
-            {  return (a.sqNorm < b.sqNorm); }
-         };
-         // Sort twaves
-         NormComparator comp;
-         std::sort(twaves.begin(), twaves.end(), comp);
-      }
+      TWaveNormComp<D> comp;
+      std::sort(twaves.begin(), twaves.end(), comp);
 
       // Copy temporary array twaves into member variable waves_
       for (int i = 0; i < nWave_; ++i) {
@@ -124,34 +113,19 @@ namespace Pssp
    }
 
    template <int D>
-   bool Basis<D>::NWaveComp::operator() (const Basis<D>::NWave& a, 
-                                         const Basis<D>::NWave& b) const
-   {
-       if (a.indicesDft == b.indicesDft) {
-          return false;
-       } else {
-          if (a.indicesBz > b.indicesBz) {
-             return true;
-          }
-       }
-       return false;
-   }
-
-   template <int D>
    void Basis<D>::makeStars(const SpaceGroup<D>& group)
    {
-      std::set<Basis<D>::NWave, Basis<D>::NWaveComp> list;  
-      std::set<Basis<D>::NWave, Basis<D>::NWaveComp> star;  
-      GArray<Basis<D>::NWave> work;                         
-      // list = set of vectors of equal norm
-      // star = set of symmetry-related vectors 
-      // work = temporary list, ordered by star
+      std::set< TWave<D>, TWaveDftComp<D> > list;  
+      std::set< TWave<D>, TWaveDftComp<D> > star;  
+      std::vector< TWave<D> > tempStar;  
+      GArray< TWave<D> > tempList;                         
+      // list = set of vectors of equal norm, compared using indicesDft
+      // star = set of symmetry-related vectors, compared using indicesDft
+      // tempList = temporary list, ordered by star
 
-      typename 
-      std::set<Basis<D>::NWave, Basis<D>::NWaveComp>::iterator rootItr;
-      typename 
-      std::set<Basis<D>::NWave, Basis<D>::NWaveComp>::iterator setItr;
-      Basis<D>::NWave wave;
+      typename std::set< TWave<D>, TWaveDftComp<D> >::iterator rootItr;
+      typename std::set< TWave<D>, TWaveDftComp<D> >::iterator setItr;
+      TWave<D> wave;
       Basis<D>::Star newStar;
 
       std::complex<double> coeff;
@@ -190,14 +164,12 @@ namespace Pssp
          if (newList && listEnd > 0) {
 
             // Copy waves of equal norm into container "list"
-            std::cout << "List :" << std::endl;
             list.clear();
-            work.clear();
+            tempList.clear();
             for (j = listBegin; j < listEnd; ++j) {
                wave.indicesDft = waves_[j].indicesDft;
                wave.indicesBz = waves_[j].indicesBz;
                wave.sqNorm = waves_[j].sqNorm;
-               std::cout << wave.indicesBz << std::endl;
                list.insert(wave);
             }
 
@@ -219,7 +191,7 @@ namespace Pssp
 
                   UTIL_CHECK(abs(Gsq - unitCell().ksq(vec)) < epsilon);
 
-                  // Initialize NWave object
+                  // Initialize TWave object
                   wave.sqNorm = Gsq;
                   wave.indicesBz = vec;
                   wave.indicesDft = vec;
@@ -247,44 +219,28 @@ namespace Pssp
                      }
                   }
 
-                  #if 1
-                  for (k = 0; k < D; ++k) {
-                     std::cout << Int(wave.indicesBz[k],4);
-                  }
-                  std::cout << " |" ;
-                  for (k = 0; k < D; ++k) {
-                     std::cout << Int(wave.indicesDft[k],4);
-                  }
-                  std::cout << std::endl;
-                  #endif
-
                   // Add to star 
                   star.insert(wave);
                }
                starSize = star.size();
 
-               std::cout << std::endl;
-               std::cout << "Star size :" << starSize << std::endl;
-
-               // Transfer waves in star from list to work array:
-               // Remove from list, append to work
-               std::cout << "Star :" << std::endl;
+               // Remove waves in set star from list, add to vector tempStar
+               tempStar.clear();
                setItr = star.begin(); 
                for ( ; setItr != star.end(); ++setItr) {
-                  for (j = 0; j < D; ++j) {
-                     std::cout << Int(setItr->indicesBz[j],4);
-                  }
-                  std::cout << " |" ;
-                  for (j = 0; j < D; ++j) {
-                     std::cout << Int(setItr->indicesDft[j],4);
-                  }
                   list.erase(*setItr);
-                  work.append(*setItr);
-                  std::cout << " |" ;
-                  std::cout << Int(list.size(),4);
-                  std::cout << Int(work.size(),4) << std::endl;
+                  tempStar.push_back(*setItr);
                }
-               UTIL_CHECK(work.size() + list.size() == listEnd - listBegin);
+
+               // Sort tempStar vector
+               TWaveBzComp<D> waveBzComp;
+               std::sort(tempStar.begin(), tempStar.end(), waveBzComp);
+         
+               // Append contents of tempStar to tempList 
+               for (j = 0; j < tempStar.size(); ++j) {
+                  tempList.append(tempStar[j]);
+               }
+               UTIL_CHECK(tempList.size() + list.size() == listEnd - listBegin);
 
                // Process the star
                newStar.eigen = Gsq;
@@ -359,15 +315,15 @@ namespace Pssp
                starBegin = newStar.endId;
             }
             UTIL_CHECK(list.size() == 0);
-            UTIL_CHECK(work.size() == listEnd - listBegin);
+            UTIL_CHECK(tempList.size() == listEnd - listBegin);
 
-            // Copy work array into corresponding section of waves_
-            for (j = 0; j < work.size(); ++j) {
+            // Copy tempList array into corresponding section of waves_
+            for (j = 0; j < tempList.size(); ++j) {
                k = j + listBegin;
-               waves_[k].indicesDft = work[j].indicesDft;
-               waves_[k].indicesBz = work[j].indicesBz;
-               waves_[k].sqNorm = work[j].sqNorm;
-               coeff = std::complex<double>(0.0, work[j].phase);
+               waves_[k].indicesDft = tempList[j].indicesDft;
+               waves_[k].indicesBz = tempList[j].indicesBz;
+               waves_[k].sqNorm = tempList[j].sqNorm;
+               coeff = std::complex<double>(0.0, tempList[j].phase);
                waves_[k].coeff = exp(coeff);
             }
 
@@ -445,7 +401,7 @@ namespace Pssp
          waveIds_[mesh().rank(vec)] = i;
       }
   
-      #if 1
+      #if 0
       // Output all waves
       std::cout << std::endl;
       std::cout << "Waves:" << std::endl;
@@ -468,7 +424,7 @@ namespace Pssp
       }
       #endif
  
-      #if 1 
+      #if 0 
       // Output all stars
       std::cout << std::endl;
       std::cout << "Stars:" << std::endl;
@@ -478,7 +434,7 @@ namespace Pssp
                    << Int(stars_[i].beginId, 5)
                    << Int(stars_[i].endId, 5)
                    << Int(stars_[i].invertFlag, 3)
-                   << Int(stars_[i].cancel, 2);
+                   << Int(stars_[i].cancel, 3);
          std::cout << " |";
          for (j = 0; j < D; ++j) {
             std::cout << Int(stars_[i].waveBz[j], 4);
