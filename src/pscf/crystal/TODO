@@ -38,15 +38,15 @@ UnitCellBase:
   
      Change const int nParams() to int nParameter()
 
-     Note: Names of functions that return values should generally be the
-     same as names of corresponding private member variables, e.g., member
-     variable parameters_ is returned by function parameters(). Functions
-     that return one element of a container should use singular form of
-     the container name. Container names are generally plural.
+     Note/Rationale: Names of functions that return values should generally 
+     be the same as names of corresponding private member variables, e.g., 
+     member variable parameters_ is returned by function parameters(). 
+     Functions that return one element of a container should use singular 
+     form of the container name. Container names are generally plural.
 
      Note: Convention elsewhere in this C++ code is that parameters that 
      tell the number of things have names of the form nThing (not nThings).
-     Hence, the function name should be nParameter().  You could argue for 
+     Hence, the function name should be nParameter(). You could argue for 
      use of plural, but the choice is arbitrary, and consistency matters 
      more to people that try to extend code than which convention you choose. 
 
