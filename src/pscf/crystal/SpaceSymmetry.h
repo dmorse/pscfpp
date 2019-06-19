@@ -91,7 +91,7 @@ namespace Pscf {
    * \return  modified input stream
    */ 
    template <int D>
-   std::istream& operator << (std::istream& in, SpaceSymmetry<D>& A);
+   std::istream& operator >> (std::istream& in, SpaceSymmetry<D>& A);
 
    /**
    * A SpaceSymmetry represents a crystallographic space group symmetry.
@@ -258,7 +258,7 @@ namespace Pscf {
                                     const SpaceSymmetry<D>& A);
 
       friend 
-      std::istream& operator << <> (std::istream& out, 
+      std::istream& operator >> <> (std::istream& in, 
                                     SpaceSymmetry<D>& A);
 
    };

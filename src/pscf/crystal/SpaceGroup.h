@@ -17,14 +17,6 @@
 namespace Pscf
 {
 
-   template <int D> class SpaceGroup;
-
-   /**
-   * Output stream inserter operator writing a SpaceGroup to stream
-   */ 
-   template <int D>
-   std::ostream& operator << (std::ostream& out, const SpaceGroup<D>& A);
-
    using namespace Util;
 
    /**
@@ -46,11 +38,6 @@ namespace Pscf
       */
       template <int N>
       void makeStar(const IntVec<D>& root, FSArray<IntVec<D>, N>& star);
-
-   // friends:
-
-      friend 
-      std::ostream& operator << <> (std::ostream& out, const SpaceGroup<D>& A);
 
    };
 
@@ -95,7 +82,7 @@ namespace Pscf
    {
       int i, size;
       size = g.size();
-      out << "size = " << size << std::endl;
+      out << size << std::endl;
       for (i = 0; i < size; ++i) {
          out << std::endl;
          out << g[i];
@@ -103,5 +90,20 @@ namespace Pscf
       return out;
    }
 
+   /*
+   * Output stream inserter operator for a SpaceGroup<D>.
+   */ 
+   template <int D>
+   std::istream& operator >> (std::istream& in, SpaceGroup<D>& g)
+   {
+      SpaceSymmetry<D> s;
+      int size;
+      in >> size;
+      for (int i = 0; i < size; ++i) {
+         in >> s;
+         g.add(s);
+      }
+      return in;
+   }
 }
 #endif
