@@ -92,6 +92,43 @@ public:
       TEST_ASSERT(12 == G.size());
    }
 
+   void test2Dmake3() 
+   {
+      printMethod(TEST_FUNC);
+      //printEndl();
+
+      SpaceGroup<2> G;
+      SpaceSymmetry<2> A;
+
+      A.R(0,0) = 0;
+      A.R(1,0) = 1;
+      A.R(0,1) = 1;
+      A.R(1,1) = 0;
+      A.t(0) = 0;
+      A.t(1) = 0;
+      G.add(A);
+
+      A.R(0,0) = -1;
+      A.R(1,0) = 0;
+      A.R(0,1) = 0;
+      A.R(1,1) = 1;
+      A.t(0) = 0;
+      A.t(1) = 0;
+      G.add(A);
+
+      A.R(0,0) = 1;
+      A.R(1,0) = 0;
+      A.R(0,1) = 0;
+      A.R(1,1) = 1;
+      A.t(0) = Rational(1, 2);
+      A.t(1) = A.t(0);
+      G.add(A);
+
+      G.makeCompleteGroup();
+      //std::cout << G << std::endl;
+      TEST_ASSERT(16 == G.size());
+   }
+
    void test3Dmake() 
    {
       printMethod(TEST_FUNC);
@@ -173,13 +210,29 @@ public:
       TEST_ASSERT(96 == G.size());
    }
 
+   void test2Dread() 
+   {
+      printMethod(TEST_FUNC);
+      //printEndl();
+
+      std::ifstream in;
+      openInputFile("in/Group", in);
+
+      SpaceGroup<2> g;
+      in >> g;
+      //std::cout << g << std::endl;
+      TEST_ASSERT(16 == g.size());
+   }
+
 };
 
 TEST_BEGIN(SpaceGroupTest)
 TEST_ADD(SpaceGroupTest, test2DmakeIdentity)
 TEST_ADD(SpaceGroupTest, test2Dmake1)
 TEST_ADD(SpaceGroupTest, test2Dmake2)
+TEST_ADD(SpaceGroupTest, test2Dmake3)
 TEST_ADD(SpaceGroupTest, test3Dmake)
+TEST_ADD(SpaceGroupTest, test2Dread)
 TEST_END(SpaceGroupTest)
 
 #endif

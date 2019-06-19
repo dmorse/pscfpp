@@ -244,10 +244,10 @@ namespace Pscf
    }
 
    /*
-   * Input stream inserter for a SpaceSymmetry<D>.
+   * Input stream extractor for a SpaceSymmetry<D>.
    */ 
    template <int D>
-   std::istream& operator >> (std::istream& in, const SpaceSymmetry<D>& A)
+   std::istream& operator >> (std::istream& in, SpaceSymmetry<D>& A)
    {
       int i, j;
       for (i = 0; i < D; ++i) {

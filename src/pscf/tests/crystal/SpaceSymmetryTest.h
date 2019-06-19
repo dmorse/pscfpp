@@ -60,6 +60,19 @@ public:
       std::cout << A << std::endl;
    }
 
+   void test2DRead() 
+   {
+      printMethod(TEST_FUNC);
+      printEndl();
+     
+      std::ifstream in;
+      openInputFile("in/Symmetry2D", in);
+
+      SpaceSymmetry<2> A;
+      in >> A;
+      std::cout << A;
+   }
+
    void test2DEquality() 
    {
       printMethod(TEST_FUNC);
@@ -193,6 +206,7 @@ public:
 TEST_BEGIN(SpaceSymmetryTest)
 TEST_ADD(SpaceSymmetryTest, test2DIdentity)
 TEST_ADD(SpaceSymmetryTest, test2DConstruct)
+TEST_ADD(SpaceSymmetryTest, test2DRead)
 TEST_ADD(SpaceSymmetryTest, test2DEquality)
 TEST_ADD(SpaceSymmetryTest, test2DInvertMultiply)
 TEST_ADD(SpaceSymmetryTest, test3DInvertMultiply)
