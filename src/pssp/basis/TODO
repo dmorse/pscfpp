@@ -1,15 +1,6 @@
 TODO (Basis class):
 
-1) Add bool Basis::isValid() function and unit tests that call it. 
-
-   What to test:
-
-      - Function wave(IntVec<D> ) identifies every vector in full fft grid:
-        Iterate over mesh, call wave() identification function, confirm that
-        waveDft == iterator.position().
-
-      - Identifiers Wave::startId and Star::beginId and Star::endId are all
-        consistent
+1) Keep adding to bool Basis::isValid() function:
 
       - Stars either have invertFlag = 0 or come in consecutive partners.
         Partners must have the same size.
@@ -20,15 +11,10 @@ TODO (Basis class):
       - Closure rules are satisifed: If G is in a star, -G is either in
         the same star (if invertFlag = 0) or its partner. 
 
-      - Coefficients of G and -G are all omplex conjugates.
-
-      - Full internal test of coefficients (phase relationships) ?
+      - Coefficients of G and -G are all complex conjugates.
 
    On failure, print message explaining error before returning false.
    Return true iff object is valid. 
-
-   Once an isValid() function is written, it can be called in unit tests
-   of multiple space groups and grids.
 
 2) Add code to read a space group from a file.
 

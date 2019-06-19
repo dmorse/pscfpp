@@ -188,6 +188,11 @@ namespace Pssp
       */
       void update();
 
+      /**
+      * Returns true if valid, false otherwise.
+      */
+      bool isValid() const;
+
       #if 1 
       // Old code to allow current code to compile
       // Derivatives of dksq with respect to each 
@@ -219,19 +224,19 @@ namespace Pssp
       int nBasis() const;
 
       /** 
-      * Get a specific Wave, access by integer array index.
-      */
-      Wave& wave(int i);
-
-      /** 
-      * Get a Wave, access wave by IntVec of indices.
-      */
-      Wave& wave(IntVec<D> vector);
-
-      /** 
       * Get a Star, access by integer index.
       */
-      Star& star(int i);
+      Star const & star(int i) const;
+
+      /** 
+      * Get a specific Wave, access by integer index.
+      */
+      Wave const & wave(int i) const;
+
+      /** 
+      * Get integer index of a Wave.
+      */
+      int waveId(IntVec<D> vector) const;
 
    private:
 
@@ -269,12 +274,12 @@ namespace Pssp
       /**
       * Access associated Mesh<D> as reference.
       */
-      const Mesh<D>& mesh() { return *meshPtr_; }
+      Mesh<D> const & mesh() const { return *meshPtr_; }
 
       /**
       * Access associated UnitCell<D> as reference.
       */
-      const UnitCell<D>& unitCell() { return *unitCellPtr_; }
+      UnitCell<D> const & unitCell() const { return *unitCellPtr_; }
 
    };
 
@@ -288,13 +293,21 @@ namespace Pssp
 
    template <int D>
    inline 
-   typename Basis<D>::Wave& Basis<D>::wave(int i)
+   typename Basis<D>::Wave const & Basis<D>::wave(int i) const
    {  return waves_[i]; }
 
    template <int D>
    inline 
-   typename Basis<D>::Star& Basis<D>::star(int i)
+   typename Basis<D>::Star const & Basis<D>::star(int i) const
    {  return stars_[i]; }
+
+   template <int D>
+   int Basis<D>::waveId(IntVec<D> vector) const
+   {
+      meshPtr_->shift(vector);
+      int rank = mesh().rank(vector);
+      return waveIds_[rank];
+   }
 
 } // namespace Pscf:Pssp
 } // namespace Pscf

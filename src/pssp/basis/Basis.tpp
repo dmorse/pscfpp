@@ -88,7 +88,7 @@ namespace Pssp
       std::vector< TWave<D> > twaves;
       twaves.reserve(nWave_);
 
-      // Loop over dft mesh to generate all waves, store in vector twaves_
+      // Loop over dft mesh to generate all waves, add to twaves
       TWave<D> w;
       IntVec<D> v;
       MeshIterator<D> itr(mesh().dimensions());
@@ -100,6 +100,7 @@ namespace Pssp
          twaves.push_back(w);
       }
 
+      // Sort temporary array twaves
       TWaveNormComp<D> comp;
       std::sort(twaves.begin(), twaves.end(), comp);
 
@@ -115,13 +116,17 @@ namespace Pssp
    template <int D>
    void Basis<D>::makeStars(const SpaceGroup<D>& group)
    {
+      /* 
+      * Local containers that hold TWave<D> objects:
+      * list : set of waves of equal norm, compared using indicesDft
+      * star : set of symmetry-related waves, compared by indicesDft
+      * tempStar : temporary star, sorted by descending indicesBz
+      * tempList:= temporary list, ordered by star
+      */
       std::set< TWave<D>, TWaveDftComp<D> > list;  
       std::set< TWave<D>, TWaveDftComp<D> > star;  
       std::vector< TWave<D> > tempStar;  
-      GArray< TWave<D> > tempList;                         
-      // list = set of vectors of equal norm, compared using indicesDft
-      // star = set of symmetry-related vectors, compared using indicesDft
-      // tempList = temporary list, ordered by star
+      GArray< TWave<D> > tempList;            
 
       typename std::set< TWave<D>, TWaveDftComp<D> >::iterator rootItr;
       typename std::set< TWave<D>, TWaveDftComp<D> >::iterator setItr;
@@ -219,12 +224,12 @@ namespace Pssp
                      }
                   }
 
-                  // Add to star 
+                  // Add wave to star (insertion fails if not unique)
                   star.insert(wave);
                }
                starSize = star.size();
 
-               // Remove waves in set star from list, add to vector tempStar
+               // Append waves in star to tempStar, erase from list
                tempStar.clear();
                setItr = star.begin(); 
                for ( ; setItr != star.end(); ++setItr) {
@@ -232,20 +237,24 @@ namespace Pssp
                   tempStar.push_back(*setItr);
                }
 
-               // Sort tempStar vector
+               // Sort tempStar vector, ordered by indicesBz
                TWaveBzComp<D> waveBzComp;
                std::sort(tempStar.begin(), tempStar.end(), waveBzComp);
          
-               // Append contents of tempStar to tempList 
+               // Append contents of ordered star tempStar to tempList 
                for (j = 0; j < tempStar.size(); ++j) {
                   tempList.append(tempStar[j]);
                }
-               UTIL_CHECK(tempList.size() + list.size() == listEnd - listBegin);
+               UTIL_CHECK(tempList.size()+list.size() == listEnd-listBegin);
 
-               // Process the star
+               // Initialize new Star object
                newStar.eigen = Gsq;
                newStar.beginId = starBegin;
+               newStar.endId = newStar.beginId + star.size();
+               newStar.size = star.size();
                newStar.cancel = cancel;
+
+               // Determine newStar.invertFlag, find root of next star
                if (nextInvert == -1) {
 
                   // If this star is the 2nd of pair related by symmetry,
@@ -288,9 +297,9 @@ namespace Pssp
                      newStar.invertFlag = 1;
                      nextInvert = -1;
 
-                     // If start is not closed, find negation of root in
-                     // the remaining list, use negation as root of the
-                     // next star.
+                     // If star is not closed, find negation of root in
+                     // the remaining list, and use this negation as root 
+                     // of the next star.
 
                      setItr = list.begin(); 
                      for ( ; setItr != list.end(); ++setItr) {
@@ -301,16 +310,15 @@ namespace Pssp
                         }
                      }
                      // On exit after break, rootItr = &nVec
+
                      if (!negationFound) {
                         UTIL_THROW("Negative of root vector not found");
                      }
                   }
 
                }
-               newStar.size = star.size();
-               newStar.endId = newStar.beginId + star.size();
-               stars_.append(newStar);
 
+               stars_.append(newStar);
                ++starId;
                starBegin = newStar.endId;
             }
@@ -326,7 +334,6 @@ namespace Pssp
                coeff = std::complex<double>(0.0, tempList[j].phase);
                waves_[k].coeff = exp(coeff);
             }
-
             // At this point, waves_[k].coeff has unit absolute magnitude.
             // Coefficients are normalized in final processing of stars.
 
@@ -355,9 +362,11 @@ namespace Pssp
          }
 
          // Normalize coeff for all associated waves
-         snorm = 1.0/sqrt(double(stars_[i].size));
-         for (j = stars_[i].beginId; j < stars_[i].endId; ++j) {
-            waves_[j].coeff *= snorm;
+         if (!stars_[i].cancel) {
+            snorm = 1.0/sqrt(double(stars_[i].size));
+            for (j = stars_[i].beginId; j < stars_[i].endId; ++j) {
+               waves_[j].coeff *= snorm;
+            }
          }
 
          // Set elements of dEigen
@@ -646,11 +655,106 @@ namespace Pssp
    }
 
    template <int D>
-   typename Basis<D>::Wave& Basis<D>::wave(IntVec<D> vector)
+   bool Basis<D>::isValid() const
    {
-      meshPtr_->shift(vector);
-      int rank = mesh().rank(vector);
-      return waves_[waveIds_[rank]];
+      IntVec<D> v;
+      int iw, is;
+
+      // Loop over dft mesh to check consistency of waveIds_ and waves_
+      MeshIterator<D> itr(mesh().dimensions());
+      for (itr.begin(); !itr.atEnd(); ++itr) {
+         v = itr.position();
+         iw = waveId(v);
+         if (wave(iw).indicesDft != v) {
+            std::cout << "Inconsistent waveId and Wave::indicesDft" 
+                      << std::endl;
+            return false;
+         }
+      }
+
+      // Loop over waves, check consistency of wave data.
+      for (iw = 0; iw < nWave_; ++iw) {
+
+         // Check that indicesBz is an image of indicesDft
+         v = waves_[iw].indicesBz;
+         mesh().shift(v);
+         if (v != waves_[iw].indicesDft) {
+             std::cout << "shift(indicesBz) != indicesDft" << std::endl;
+             return false;
+         }
+ 
+         // Check starId
+         is = waves_[iw].starId;
+         if (iw < stars_[is].beginId) {
+             std::cout << "Value of Wave::starId < Star::beginId" << std::endl;
+             return false;
+         } 
+         if (iw >= stars_[is].endId) {
+             std::cout << "Value of Wave::starId >= Star::endId" << std::endl;
+             return false;
+         } 
+      }
+
+      // Loop over stars, check consistency of star data.
+      for (is = 0; is < nStar_; ++is) {
+
+         // Check star size
+         if (stars_[is].size != stars_[is].endId - stars_[is].beginId) {
+            std::cout << "Inconsistent Star::size" 
+                      << std::endl;
+             return false;
+         }
+         if (is > 0) {
+            if (stars_[is].beginId != stars_[is-1].endId) {
+               std::cout << "Star ranges not consecutive" << std::endl;
+               return false;
+            }
+         }
+
+         // Check star ids of waves in star
+         for (iw = stars_[is].beginId; iw < stars_[is].endId; ++iw) {
+            if (waves_[iw].starId != is) {
+               std::cout << "Inconsistent Wave::starId and Star range" 
+                         << std::endl;
+               return false;
+            }
+         }
+
+         // Check ordering of waves in star
+         for (iw = stars_[is].beginId + 1; iw < stars_[is].endId; ++iw) {
+            if (waves_[iw].indicesBz > waves_[iw-1].indicesBz) {
+               std::cout << "Failure of ordering by indicesB within star" 
+                         << std::endl;
+               return false;
+            }
+            if (waves_[iw].indicesBz == waves_[iw-1].indicesBz) {
+               std::cout << "Equal values of indicesBz within star" 
+                         << std::endl;
+               return false;
+            }
+         }
+
+         // Loop over closed stars and related pairs of stars
+         is = 0;
+         while (is < nStar_) {
+            if (stars_[is].invertFlag == 0) {
+               ++is;
+            } else {
+               if (stars_[is].invertFlag != 1) {
+                  std::cout << "Expected invertFlag == 1" << std::endl;
+                  return false;
+               }
+               if (stars_[is+1].invertFlag != -1) {
+                  std::cout << "Expected invertFlag == -1" << std::endl;
+                  return false;
+               }
+               is += 2;
+            }
+         }
+
+      }
+
+      return true;
    }
 
 }

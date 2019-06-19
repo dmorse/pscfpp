@@ -70,8 +70,7 @@ public:
       
       TEST_ASSERT(eq(basis.nWave(), 9));
       TEST_ASSERT(eq(basis.nStar(),9));
-      //TEST_ASSERT(eq(basis.nBasis(), 9));
-
+      TEST_ASSERT(basis.isValid());
    }
 
    void testMake2DBasis_2()
@@ -101,8 +100,7 @@ public:
       basis.makeBasis(mesh, unitCell, group);
       
       TEST_ASSERT(eq(basis.nWave(), 16));
-      //TEST_ASSERT(eq(basis.nStar(),9));
-      //TEST_ASSERT(eq(basis.nBasis(), 9));
+      TEST_ASSERT(basis.isValid());
 
    }
 
@@ -130,6 +128,7 @@ public:
       
       TEST_ASSERT(eq(basis.nWave(), 9));
       TEST_ASSERT(eq(basis.nStar(),9));
+      TEST_ASSERT(basis.isValid());
 
       // Associate a grid wise field value
       RField<2> rField;
@@ -239,6 +238,7 @@ public:
       
       TEST_ASSERT(eq(basis.nWave(), 27));
       TEST_ASSERT(eq(basis.nStar(),27));
+      TEST_ASSERT(basis.isValid());
    }
 
    void testFieldConversion3D()
