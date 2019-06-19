@@ -33,7 +33,6 @@
 #
 # These command line options do not enable or disable features: 
 #
-#   -j compiler  Chooses a compiler, set COMPILER=compiler in config.mk
 #   -q           query: prints report of options that are enabled / disabled.
 #
 # Examples:
@@ -42,12 +41,8 @@
 #
 #   >  ./configure -g0 
 #
-# To set COMPILER=intel in config.mk
-#
-#   >  ./configure -j intel
-#
 #-----------------------------------------------------------------------
-while getopts "g:k:c:j:q" opt; do
+while getopts "g:k:c:q" opt; do
 
   if [ -n "$MACRO" ]; then 
     MACRO=""
@@ -60,7 +55,7 @@ while getopts "g:k:c:j:q" opt; do
     g)
       MACRO=UTIL_DEBUG
       VALUE=1
-      FILE=util/config.mk
+      FILE=config.mk
       ;;
     k)
       case $OPTARG in
@@ -86,15 +81,8 @@ while getopts "g:k:c:j:q" opt; do
         ;;
       esac
       ;;
-    j)
-      FILE=config.mk
-      cp "$FILE" temp
-      sed "s/COMPILER=.*$/COMPILER=$OPTARG/" temp > "$FILE"
-      echo "Setting COMPILER = $OPTARG in file $FILE" >&2
-      rm temp
-      ;;
     q)
-      if [ `grep "^ *UTIL_DEBUG *= *1" util/config.mk` ]; then
+      if [ `grep "^ *UTIL_DEBUG *= *1" config.mk` ]; then
          echo "-g ON  - debugging" >&2
       else
          echo "-g OFF - debugging" >&2
@@ -104,7 +92,6 @@ while getopts "g:k:c:j:q" opt; do
       else
          echo "-k OFF - automatic dependency tracking" >&2
       fi
-      echo `grep "^ *COMPILER *=" config.mk` >&2
       ;;
   esac
 

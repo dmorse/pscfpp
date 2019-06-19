@@ -21,7 +21,7 @@
 # preceded by the compiler flag "-D". 
 #
 # The variable PSCF_DEFS is a recursive (normal) makefile variable, and
-# may be extended using the += operator, e.g., PSCF_DEFS+=-DPSCF_ANGLE.
+# may be extended using the += operator, e.g., PSCF_DEFS+=-DPSCF_THING.
 # PSCF_SUFFIX is instead a non-recursive makefile variable, which may 
 # be extended using the := operator, as PSCF_SUFFIX:=$(PSCF_SUFFIX)_g. 
 # They are defined differently because the += operator for recursive

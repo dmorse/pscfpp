@@ -1,0 +1,155 @@
+#-----------------------------------------------------------------------
+# Choose values of CXX and CXX_FLAGS
+
+# Choose values for CXX (compiler command) and CXX_FLAGS (general 
+# compiler options) depending on whether UTIL_MPI and/or UTIL_DEBUG
+# are defined (i.e., on whether MPI and/or debugging features are 
+# enabled).
+
+ifneq ($(UTIL_MPI),1)
+   # Serial programs:
+   # Serial compiler command (MPI disabled)
+   CXX=$(CXX_SER)
+   ifdef UTIL_DEBUG
+      # Flags for serial programs with debugging
+      CXXFLAGS=$(CXXFLAGS_SER_DEBUG)
+   else
+      # Flags for serial programs with no debugging
+      CXXFLAGS=$(CXXFLAGS_SER_FAST)
+   endif
+else
+   # Parallel programs:
+   # Parallel compiler command or wrapper script (MPI enabled)
+   CXX=$(CXX_PAR)
+   ifdef UTIL_DEBUG
+      # Flags for parallel programs with debugging
+      CXXFLAGS=$(CXXFLAGS_PAR_DEBUG)
+   else
+      # Flags for parallel programs with no debugging
+      CXXFLAGS=$(CXXFLAGS_PAR_FAST)
+   endif
+endif
+
+# ======================================================================
+# Makefile Patterns and Recipes
+#
+# The makefile variables defined above are used in the makefile pattern 
+# rules and recipes that control compilation of C++ files, creation of 
+# libraries, and linking to create executables. The following sections 
+# briefly explain these rules, to provide a context for the meaning of 
+# the variables defined above.
+#
+#-----------------------------------------------------------------------
+# Compiler Pattern Rules:
+#
+# The pattern rule for compiling and linking C++ files in a particular 
+# namespace is defined in the appropriate namespace level config.mk 
+# file. For example, the rule for compiling C++ files in the simp/ 
+# directory tree, which contains all classes defined in the Simp C++
+# namespace, is given in the file simp/config.mk. The pattern rules for 
+# different namespaces are similar except for differences in which 
+# preprocessor variable definitions are passed to the compiler. For
+# each namespace, the basic compiler pattern rule is of the form:
+# 
+# $(BLD_DIR)%.o:$(SRC_DIR)/%.cpp
+#      $(CXX) $(INCLUDES) $(DEFINES) $(CXXFLAGS) -c -o $@ $<
+#
+# This pattern compiles a *.cpp file in a subdirectory of the source 
+# directory $(SRC_DIR) and creates a *.o object file in a corresponding
+# subdirectory of the build directory, $(BLD_DIR). The variables used
+# in this pattern are:
+#
+# CXX         - C++ compiler executable name 
+# INCLUDES    - Directories to search for included header files
+# DEFINES     - compiler options that define C preprocessor macros
+# CXXFLAGS    - compiler options used during compilation
+#
+# Comments:
+# 
+# 1) The variable CXX is the name of an executable command that may
+# be either the name of the compiler command (e.g., g++) or the name
+# of a wrapper script that invokes the compiler (e.g., the mpicxx
+# script provided with the OpenMPI MPI library to invoke the compiler
+# with appropriate search paths)
+#
+# 2) The variable INCLUDES is a string that must include the path 
+# $(SRC_DIR) to the simpatico/src directory, in order to allow the 
+# compiler to find header files that are part of the package.
+#
+# 3) The variable DEFINES in the above pattern is a stand-in for a 
+# variable that specifies a list of C preprocessor macro definitions. 
+# This variable is not defined in this main configuration file, and
+# is assigned different values for code in different namespace level 
+# directories, which are defined in the namespace level patterns.mk 
+# files. The value of $(DEFINES) for each namespace contains a string 
+# of compiler options that use the compiler "-D" option to define the 
+# set of preprocessor macro definitions used to control conditional
+# compilation of optional features that are relevant in a particular 
+# namespace. Each of these preprocessor variable macros has the
+# same name as a corresponding makefile variable that must be defined
+# to enable the feature. Thus for, example, when the build system has 
+# been configured to enable debugging, the DEFINES string will include
+# a substring "-D UTIL_DEBUG" to define the UTIL_DEBUG preprocessor 
+# macro and thereby enable conditional compilation of blocks of code
+# that contain optional sanity checks.  
+#
+# 4) The variable $(CXXFLAGS) should specify all flags that are used by 
+# the compiler, rather than only the preprocessor, and that are used in
+# all namespaces. This string normally contains the $(CXX_STD) string 
+# as a substring, as well as options that specify the optimization 
+# level (e.g., -O3) and any desired compiler warnings (e.g., "-Wall").
+#
+#-----------------------------------------------------------------------
+# Archiver Recipes:
+#
+# The simpatico build system creates a static library in each namespace
+# level subdirectory of the build directory in which code is compiled.
+# The recipe used to compile this library is defined in the sources.mk
+# file in the appropriate namespace-level directory. The rule for the
+# McMd namespace, as an example, is of the form
+#
+# $(AR) rcs $(mcMd_LIB) $(mcMd_OBJS)
+#
+# where $(AR) is the name of archiver command used to create a library,
+# $(mcMD_LIB) is an absolute path for the resulting library file and 
+# $(mcMd_OBJS) is a string that contains absolute paths for all of the
+# *.o object files created by compiling source files in the directory
+# src/mcMd. Recipes for other namespaces are analogous.
+#
+#-----------------------------------------------------------------------
+# Linker recipes:
+# 
+# Executable files are created by linking the compiled main program to
+# the required set of static libraries. For example, recipe for creating 
+# the mdSim executable is of the form
+#
+#	$(CXX) -o $(mdSim_EXE) $(mdSim).o $(LIBS) $(LDFLAGS)
+#
+# Here $(mdSim_EXE) is the path to the executable, which is installed 
+# in the bin/ directory by default, $(mdSim).o is the path to the 
+# object file created by compiling the src/mcMd/mdSim.cpp source 
+# file, $(LIBS) is a list of all required state libraries files, and
+# $(LDFLAGS) is a list of flags passed to the linker. 
+#
+# The variable $(LDFLAGS) is empty by default, but can, if necessary, 
+# be used to specify a non-standard path to a directory containing 
+# the MPI library when compiling parallel programs. This should not 
+# be necessary if the compiler is invoked using the name of a wrapper
+# script that sets this path automatically.
+ 
+#=======================================================================
+# Automatic dependency generation.
+ 
+# Executable file invoked to compute dependencies among header files.
+MAKEDEP=$(BIN_DIR)/makeDep
+
+# The file $(BIN_DIR)/makeDep is an executable python script that is
+# installed in the binary directory specified by the setup script, 
+# and that is used during compilation to analyze dependencies among
+# C++ files. The makeDep script imports a python module named makeDepend 
+# that is located in the $(ROOT_DIR)scripts/python directory. If the 
+# python interpreter fails to find the makeDepend module, you may 
+# need to add the absolute path to the simpatico/scripts/python directory 
+# to the PYTHON_PATH environment variable, as described in the web 
+# documentation.
+#
