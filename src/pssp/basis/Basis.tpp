@@ -85,10 +85,10 @@ namespace Pssp
       IntVec<D> meshDimensions = mesh().dimensions();
 
       // Generate dft mesh of waves, store in local std::vector twaves_
-      std::vector<NWave> twaves;
+      std::vector<Basis<D>::NWave> twaves;
       twaves.reserve(nWave_);
       {
-         NWave w;
+         Basis<D>::NWave w;
          IntVec<D> v;
 
          // Loop over dft mesh to generate all waves
@@ -106,7 +106,7 @@ namespace Pssp
       {
          // Define function object that sorts based on sqNorm
          struct NormComparator{
-            bool operator () (NWave a, NWave b)
+            bool operator () (const NWave& a, const NWave& b) const
             {  return (a.sqNorm < b.sqNorm); }
          };
          // Sort twaves
@@ -124,31 +124,35 @@ namespace Pssp
    }
 
    template <int D>
-   bool Basis<D>::NWaveComp::operator() (Basis::NWave a, Basis::NWave b) const
+   bool Basis<D>::NWaveComp::operator() (const Basis<D>::NWave& a, 
+                                         const Basis<D>::NWave& b) const
    {
        if (a.indicesDft == b.indicesDft) {
           return false;
-       } else 
-       if (a.indicesBz > b.indicesBz) {
-          return true;
-       } else
-       if (a.indicesBz < b.indicesBz) {
-          return false;
        } else {
-          return (a.indicesDft < b.indicesDft);
+          if (a.indicesBz > b.indicesBz) {
+             return true;
+          }
        }
+       return false;
    }
 
    template <int D>
    void Basis<D>::makeStars(const SpaceGroup<D>& group)
    {
-      std::set<NWave, NWaveComp> list;  // set of vectors of equal norm
-      std::set<NWave, NWaveComp> star;  // set of symmetry-related vectors 
-      GArray<NWave> work;               // temporary list, ordered by star
-      typename std::set<NWave, NWaveComp>::iterator rootItr;
-      typename std::set<NWave, NWaveComp>::iterator setItr;
-      NWave wave;
-      Star newStar;
+      std::set<Basis<D>::NWave, Basis<D>::NWaveComp> list;  
+      std::set<Basis<D>::NWave, Basis<D>::NWaveComp> star;  
+      GArray<Basis<D>::NWave> work;                         
+      // list = set of vectors of equal norm
+      // star = set of symmetry-related vectors 
+      // work = temporary list, ordered by star
+
+      typename 
+      std::set<Basis<D>::NWave, Basis<D>::NWaveComp>::iterator rootItr;
+      typename 
+      std::set<Basis<D>::NWave, Basis<D>::NWaveComp>::iterator setItr;
+      Basis<D>::NWave wave;
+      Basis<D>::Star newStar;
 
       std::complex<double> coeff;
       double Gsq;
@@ -186,16 +190,18 @@ namespace Pssp
          if (newList && listEnd > 0) {
 
             // Copy waves of equal norm into container "list"
+            std::cout << "List :" << std::endl;
             list.clear();
+            work.clear();
             for (j = listBegin; j < listEnd; ++j) {
                wave.indicesDft = waves_[j].indicesDft;
                wave.indicesBz = waves_[j].indicesBz;
                wave.sqNorm = waves_[j].sqNorm;
+               std::cout << wave.indicesBz << std::endl;
                list.insert(wave);
             }
 
             // Loop over stars within this list
-            work.clear();
             IntVec<D> nVec;
             rootItr = list.begin();
             int nextInvert = 1;
@@ -211,7 +217,7 @@ namespace Pssp
                   // Apply symmetry (i.e., multiply by rotation matrix)
                   vec = rootVec*group[j];
 
-                  UTIL_ASSERT(abs(Gsq - unitCell().ksq(vec)) < epsilon);
+                  UTIL_CHECK(abs(Gsq - unitCell().ksq(vec)) < epsilon);
 
                   // Initialize NWave object
                   wave.sqNorm = Gsq;
@@ -241,19 +247,44 @@ namespace Pssp
                      }
                   }
 
-                  // Add to star and erase from list
-                  // Note: Because these are sets, no duplicates exist
-                  star.insert(wave);
-                  list.erase(wave);
+                  #if 1
+                  for (k = 0; k < D; ++k) {
+                     std::cout << Int(wave.indicesBz[k],4);
+                  }
+                  std::cout << " |" ;
+                  for (k = 0; k < D; ++k) {
+                     std::cout << Int(wave.indicesDft[k],4);
+                  }
+                  std::cout << std::endl;
+                  #endif
 
+                  // Add to star 
+                  star.insert(wave);
                }
                starSize = star.size();
 
-               // Append (sorted) contents of star to work array
+               std::cout << std::endl;
+               std::cout << "Star size :" << starSize << std::endl;
+
+               // Transfer waves in star from list to work array:
+               // Remove from list, append to work
+               std::cout << "Star :" << std::endl;
                setItr = star.begin(); 
                for ( ; setItr != star.end(); ++setItr) {
+                  for (j = 0; j < D; ++j) {
+                     std::cout << Int(setItr->indicesBz[j],4);
+                  }
+                  std::cout << " |" ;
+                  for (j = 0; j < D; ++j) {
+                     std::cout << Int(setItr->indicesDft[j],4);
+                  }
+                  list.erase(*setItr);
                   work.append(*setItr);
+                  std::cout << " |" ;
+                  std::cout << Int(list.size(),4);
+                  std::cout << Int(work.size(),4) << std::endl;
                }
+               UTIL_CHECK(work.size() + list.size() == listEnd - listBegin);
 
                // Process the star
                newStar.eigen = Gsq;
@@ -341,7 +372,7 @@ namespace Pssp
             }
 
             // At this point, waves_[k].coeff has unit absolute magnitude.
-            // Coefficinets are normalized in final processing of stars.
+            // Coefficients are normalized in final processing of stars.
 
             ++listId;
             listBegin = listEnd;

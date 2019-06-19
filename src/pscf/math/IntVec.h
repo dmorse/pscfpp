@@ -66,15 +66,7 @@ namespace Pscf
       {}
 
       /// Width of field per Cartesian coordinate in stream IO
-      static const int Width = 25;
-
-   private:
-
-      //template 
-      // friend std::istream& operator >> (std::istream& in, IntVec<D, T> &vector);
-
-      //template 
-      //friend std::ostream& operator << (std::ostream& in, IntVec<D, T> &vector);
+      static const int Width = 10;
 
    };
 
@@ -183,7 +175,7 @@ namespace Pscf
    {  return !(v1 == v2); }
 
    /**
-   * Equality of an Vec<D, T> and an IntVec<D, T>
+   * Inequality of a Vec<D, T> and an IntVec<D, T>
    *
    * \return true if v1 == v2, false otherwise.
    */

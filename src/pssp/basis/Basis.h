@@ -237,6 +237,21 @@ namespace Pssp
       */
       Star& star(int i);
 
+      /**
+      * Wave struct used for internal processing.
+      */
+      struct NWave {
+         double sqNorm;
+         double phase;
+         IntVec<D> indicesDft;
+         IntVec<D> indicesBz;
+      };
+
+      struct NWaveComp {
+         bool operator() (const Basis<D>::NWave& a, 
+                          const Basis<D>::NWave& b) const;
+      };
+
    private:
 
       /// Array of all Wave objects (all wavevectors)
@@ -259,20 +274,6 @@ namespace Pssp
 
       /// Pointer to associated Mesh<D>
       const Mesh<D>* meshPtr_;
-
-      /**
-      * Wave struct used for internal processing.
-      */
-      struct NWave {
-         double sqNorm;
-         double phase;
-         IntVec<D> indicesDft;
-         IntVec<D> indicesBz;
-      };
-
-      struct NWaveComp {
-         bool operator() (NWave, NWave) const;
-      };
 
       /**
       * Construct array of ordered waves.

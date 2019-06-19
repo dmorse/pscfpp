@@ -45,15 +45,57 @@ public:
       TEST_ASSERT(eq(sampleBasis.nBasis(),0));
    }
 
-   void testMakeBasis2D()
+   void testNWaveComp() 
    {
       printMethod(TEST_FUNC);
-      //printEndl();
+      printEndl();
+
+      typename Basis<2>::NWave a;
+      a.indicesDft[0] = 2;
+      a.indicesDft[1] = 1;
+      a.indicesBz[0] = -2;
+      a.indicesBz[1] =  1;
+
+      typename Basis<2>::NWave b;
+      b.indicesDft[0] = 2;
+      b.indicesDft[1] = 1;
+      b.indicesBz[0] =  2;
+      b.indicesBz[1] =  1;
+
+      typename Basis<2>::NWaveComp comp;
+      TEST_ASSERT(!comp(a,b));
+      TEST_ASSERT(!comp(b,a));
+
+      typename Basis<2>::NWave c;
+      c.indicesDft[0] = 1;
+      c.indicesDft[1] = 2;
+      c.indicesBz[0] =  1;
+      c.indicesBz[1] =  2;
+      TEST_ASSERT(comp(b,c));
+      TEST_ASSERT(!comp(a,c));
+      TEST_ASSERT(!comp(c,c));
+
+      std::set<Basis<2>::NWave, Basis<2>::NWaveComp> set;
+      set.clear();
+      set.insert(a);
+      set.insert(c);
+      set.insert(b);
+      TEST_ASSERT(set.size() == 2);
+      typename std::set<Basis<2>::NWave, Basis<2>::NWaveComp>::iterator itr;
+      for (itr = set.begin(); itr != set.end(); ++itr) {
+         std::cout << itr->indicesDft << itr->indicesBz << std::endl; 
+      }
+   }
+
+   void testMake2DBasis_1()
+   {
+      printMethod(TEST_FUNC);
+      printEndl();
 
       // Make unitcell
       UnitCell<2> unitCell;
       std::ifstream in;
-      openInputFile("in/UnitCell2D", in);
+      openInputFile("in/Square2D_33", in);
       in >> unitCell;
 
       // Make mesh object
@@ -73,6 +115,38 @@ public:
 
    }
 
+   void testMake2DBasis_2()
+   {
+      printMethod(TEST_FUNC);
+      printEndl();
+
+      // Make unitcell
+      UnitCell<2> unitCell;
+      std::ifstream in;
+      openInputFile("in/Square2D_44", in);
+      in >> unitCell;
+
+      // Make mesh object
+      IntVec<2> d;
+      in >> d;
+      in.close();
+      Mesh<2> mesh(d);
+
+      // Read space group
+      SpaceGroup<2> group;
+      openInputFile("in/Group", in);
+      in >> group;
+
+      // Make basis
+      Basis<2> basis;
+      basis.makeBasis(mesh, unitCell, group);
+      
+      TEST_ASSERT(eq(basis.nWave(), 16));
+      //TEST_ASSERT(eq(basis.nStar(),9));
+      //TEST_ASSERT(eq(basis.nBasis(), 9));
+
+   }
+
    void testFieldConversion2D()
    {
       printMethod(TEST_FUNC);
@@ -81,7 +155,7 @@ public:
       // Make unitcell
       UnitCell<2> unitCell;
       std::ifstream in;
-      openInputFile("in/UnitCell2D", in);
+      openInputFile("in/Square2D_33", in);
       in >> unitCell;
 
       // Make mesh object
@@ -328,10 +402,12 @@ public:
 
 TEST_BEGIN(BasisTest)
 TEST_ADD(BasisTest, testConstructor)
-TEST_ADD(BasisTest, testMakeBasis2D)
-TEST_ADD(BasisTest, testFieldConversion2D)
-TEST_ADD(BasisTest, testMakeBasis3D)
-TEST_ADD(BasisTest, testFieldConversion3D)
+TEST_ADD(BasisTest, testNWaveComp)
+//TEST_ADD(BasisTest, testMake2DBasis_1)
+TEST_ADD(BasisTest, testMake2DBasis_2)
+//TEST_ADD(BasisTest, testFieldConversion2D)
+//TEST_ADD(BasisTest, testMakeBasis3D)
+//TEST_ADD(BasisTest, testFieldConversion3D)
 TEST_END(BasisTest)
 
 #endif
