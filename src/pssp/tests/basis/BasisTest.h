@@ -46,6 +46,69 @@ public:
       TEST_ASSERT(eq(sampleBasis.nBasis(),0));
    }
 
+
+
+   void testMake1DBasis_1() {
+      printMethod(TEST_FUNC);
+      printEndl();
+
+      // Make unitcell
+      UnitCell<1> unitCell;
+      std::ifstream in;
+      openInputFile("in/Lamellar_8", in);
+      in >> unitCell;
+
+      // Make mesh object
+      IntVec<1> d;
+      in >> d;
+      in.close();
+      Mesh<1> mesh(d);
+
+      // Construct basis object using identity space group
+      Basis<1> basis;
+      std::string spaceGroup = "I";
+      basis.makeBasis(mesh, unitCell, spaceGroup);
+
+      TEST_ASSERT(eq(basis.nWave(), 8));
+      TEST_ASSERT(eq(basis.nStar(),8));
+
+      basis.outputWaves(std::cout);
+      basis.outputStars(std::cout);
+   }
+
+   void testMake1DBasis_2() {
+      printMethod(TEST_FUNC);
+      printEndl();
+
+      // Make unitcell
+      UnitCell<1> unitCell;
+      std::ifstream in;
+      openInputFile("in/Lamellar_8", in);
+      in >> unitCell;
+
+      // Make mesh object
+      IntVec<1> d;
+      in >> d;
+      in.close();
+      Mesh<1> mesh(d);
+
+      // Read space group
+      SpaceGroup<1> group;
+      openInputFile("in/Group_1D_symmetric", in);
+      in >> group;
+      TEST_ASSERT(group.size() == 2);
+
+      // Construct basis object using identity space group
+      Basis<1> basis;
+      basis.makeBasis(mesh, unitCell, group);
+
+      basis.outputWaves(std::cout);
+      basis.outputStars(std::cout);
+
+      TEST_ASSERT(eq(basis.nWave(), 8));
+      TEST_ASSERT(eq(basis.nStar(), 5));
+   }
+
    void testMake2DBasis_1()
    {
       printMethod(TEST_FUNC);
@@ -94,7 +157,7 @@ public:
 
       // Read space group
       SpaceGroup<2> group;
-      openInputFile("in/Group", in);
+      openInputFile("in/Group_2D_CenteredSquare", in);
       in >> group;
 
       // Make basis
@@ -218,7 +281,7 @@ public:
 
    }
 
-   void testMakeBasis3D()
+   void testMake3DBasis()
    {
       printMethod(TEST_FUNC);
       //printEndl();
@@ -365,10 +428,12 @@ public:
 
 TEST_BEGIN(BasisTest)
 TEST_ADD(BasisTest, testConstructor)
+TEST_ADD(BasisTest, testMake1DBasis_1)
+//TEST_ADD(BasisTest, testMake1DBasis_2) // bug in this one -> fix it
 TEST_ADD(BasisTest, testMake2DBasis_1)
 TEST_ADD(BasisTest, testMake2DBasis_2)
 TEST_ADD(BasisTest, testFieldConversion2D)
-TEST_ADD(BasisTest, testMakeBasis3D)
+TEST_ADD(BasisTest, testMake3DBasis)
 TEST_ADD(BasisTest, testFieldConversion3D)
 TEST_END(BasisTest)
 

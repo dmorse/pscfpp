@@ -27,14 +27,15 @@ namespace Pscf
       // Compute and check the determinant
       int det = R_(0,0);
       if (1 != det*det) {
+         std::cout << "Determinant (1D symmetry) =" << det << std::endl;
          UTIL_THROW("Invalid SpaceSymmetry<1>: |det| != 1");
       }
 
       // Compute the inverse matrix
       SpaceSymmetry<1>::Rotation A;
-      A(0,0) = R_(1,1);
+      A(0,0) = R_(0,0);
 
-      return A; 
+      return A;
    }
 
    template<>

@@ -171,6 +171,7 @@ namespace Pscf
       LatticeSystem lattice_;
 
       void setNParameter();
+
       void setBasis();
 
       void setLattice();
@@ -229,9 +230,13 @@ namespace Pscf
 
    private:
 
+      /**
+      * Lattice system (square, rectangular, etc.)
+      */
       LatticeSystem lattice_;
 
       void setNParameter();
+
       void setBasis();
 
       void setLattice();
@@ -300,6 +305,7 @@ namespace Pscf
       LatticeSystem lattice_;
 
       void setNParameter();
+
       void setBasis();
 
       void setLattice();

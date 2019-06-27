@@ -71,33 +71,6 @@ public:
       return true;
    }
 
-   template <int D>
-   bool isValidDoublekkDerivative(UnitCell<D> cell)
-   {   
-      double sum;
-      double twoPi = 2.0*Constants::Pi;
-      double nParams = cell.nParams();
-      int i, j, k, t;
-      for (k=0; k < nParams; ++k ) { 
-         sum = 0.0;
-         for (i=0; i < D; ++i ) { 
-            //sum = 0.0;
-            for (j=0; j < D; ++j ) {
-               for (t=0; t<D; ++t)  {
-                  sum += (cell.dkkBasis(k, i, j)*cell.rBasis(i)[t])-(2*twoPi*cell.dkBasis(k, j, t));
-               }
-            }   
-            /*if (std::abs(sum) > 1.0E-8) {
-                return false;
-            }*/ 
-          }   
-          // if (std::abs(sum) > 1.0E-8) {
-          //  return false;
-          //}   
-       }   
-       return true;
-   } 
-
    void test1DLamellar() 
    {
       printMethod(TEST_FUNC);
@@ -117,6 +90,12 @@ public:
 
       TEST_ASSERT(isValidReciprocal(v));
       TEST_ASSERT(isValidDerivative(v));
+
+      IntVec<1> x;
+      x[0] = 2;
+      double xSq = v.ksq(x);
+      std::cout << "x^2 = " << xSq << std::endl;
+
 
    }
 
