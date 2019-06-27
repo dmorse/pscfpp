@@ -28,25 +28,55 @@ namespace Pssp {
       IntVec<D> indicesBz;
    };
 
+   /**
+   * Comparator for TWave objects, based on TWave::sqNorm.
+   *
+   * Used to sort in ascending order of wavevector norm.
+   *
+   * \ingroup Pssp_Basis_Module
+   */
    template <int D>
    struct TWaveNormComp {
 
+      /**
+      * Function (a, b) returns true iff a.sqNorm < b.sqNorm.
+      */ 
       bool operator() (const TWave<D>& a, const TWave<D>& b) const
       {  return (a.sqNorm < b.sqNorm); }
 
    };
 
+   /**
+   * Comparator for TWave objects, based on TWave::indicesDft.
+   *
+   * Used to sort set of unique waves in ascending order of dft indices.
+   *
+   * \ingroup Pssp_Basis_Module
+   */
    template <int D>
    struct TWaveDftComp {
 
+      /**
+      * Function (a, b) returns true iff a.indicesDft < b.indicesDft
+      */ 
       bool operator() (const TWave<D>& a, const TWave<D>& b) const
       {  return (a.indicesDft < b.indicesDft); }
 
    };
 
+   /**
+   * Comparator for TWave objects, based on TWave::indicesBz.
+   *
+   * Used to sort in descending order of Bz (Brillouin zone) indices.
+   *
+   * \ingroup Pssp_Basis_Module
+   */
    template <int D>
    struct TWaveBzComp {
 
+      /**
+      * Function (a, b) returns true iff a.indicesBz > b.indicesBz
+      */ 
       bool operator() (const TWave<D>& a, const TWave<D>& b) const
       {  return (a.indicesBz > b.indicesBz); }
 

@@ -71,6 +71,12 @@ namespace Pssp
       // Identify stars of waves that are related by symmetry
       makeStars(group);
 
+      // Apply validity test suite
+      bool valid = isValid();
+      if (!valid) {
+         UTIL_THROW("Basis failed validity check");
+      }
+
    }
 
    /*
@@ -79,7 +85,7 @@ namespace Pssp
    * On exit:
    *  - Array waves_ contains list of waves ordered by sqNorm.
    *  - Each wave has indicesDft, indicesBz and sqNorm set.
-   *  - stars_ array is still empty.
+   *  - Array stars_  is still empty.
    */
    template <int D>
    void Basis<D>::makeWaves()
@@ -116,6 +122,7 @@ namespace Pssp
    template <int D>
    void Basis<D>::makeStars(const SpaceGroup<D>& group)
    {
+
       /* 
       * Local containers that hold TWave<D> objects:
       * list : set of waves of equal norm, compared using indicesDft
@@ -135,11 +142,12 @@ namespace Pssp
 
       std::complex<double> coeff;
       double Gsq;
-      double Gsq_max = 1.0;
+      double Gsq_max = 1.0E-8;
       double epsilon = 1.0E-8;
       double twoPi = 2.0*Constants::Pi;
       IntVec<D> rootVec;
       IntVec<D> vec;
+      IntVec<D> nVec;
       int listId = 0;      // id for this list
       int listBegin = 0;   // id of first wave in this list
       int listEnd = 0;     // (id of last wave in this list) + 1
@@ -179,7 +187,6 @@ namespace Pssp
             }
 
             // Loop over stars within this list
-            IntVec<D> nVec;
             rootItr = list.begin();
             int nextInvert = 1;
             while (list.size() > 0) {
@@ -220,7 +227,6 @@ namespace Pssp
                   if (vec == rootVec) {
                      if (abs(wave.phase) > 1.0E-6) {
                         cancel = true;
-                        wave.phase = 0.0;
                      }
                   }
 
@@ -326,6 +332,7 @@ namespace Pssp
             UTIL_CHECK(tempList.size() == listEnd - listBegin);
 
             // Copy tempList array into corresponding section of waves_
+            // Compute relative complex coefficient of each wave
             for (j = 0; j < tempList.size(); ++j) {
                k = j + listBegin;
                waves_[k].indicesDft = tempList[j].indicesDft;
@@ -334,8 +341,8 @@ namespace Pssp
                coeff = std::complex<double>(0.0, tempList[j].phase);
                waves_[k].coeff = exp(coeff);
             }
-            // At this point, waves_[k].coeff has unit absolute magnitude.
-            // Coefficients are normalized in final processing of stars.
+            // At this point, waves_[k].coeff has unit absolute magnitude,
+            // and correct relative phases for waves within a star.
 
             ++listId;
             listBegin = listEnd;
@@ -343,30 +350,135 @@ namespace Pssp
       }
       nStar_ = stars_.size();
 
-      // Final processing of stars
-      double snorm;
-      int waveId;
+      // Compute final wave coefficient phases
+      std::complex<double> rootCoeff;
+      std::complex<double> partCoeff;
+      std::complex<double> d;
+      int rootId, partId;
       for (i = 0; i < nStar_; ++i) {
 
-         // Set characteristic wavevector waveBz for each star
-         if (stars_[i].invertFlag == -1) {
-           waveId = stars_[i].endId - 1;
-         } else {
-           waveId = stars_[i].beginId;
-         }
-         stars_[i].waveBz = waves_[waveId].indicesBz;
+         // Treat open and closed stars separately
 
-         // Set starId for all associated waves
+         if (stars_[i].invertFlag == 0) {
+      
+            rootId = stars_[i].beginId;
+            stars_[i].waveBz = waves_[rootId].indicesBz;
+
+            if (stars_[i].cancel) {
+
+               std::complex<double> czero(0.0, 0.0);
+               for (j = stars_[i].beginId; j < stars_[i].endId; ++j) {
+                  waves_[j].coeff = czero;
+               }
+
+            } else {
+
+               // Compute negation of root vector, shift to DFT mesh
+               nVec.negate(waves_[rootId].indicesBz);
+               (*meshPtr_).shift(nVec);
+
+               // Find negation of root in this star, set partId to index 
+               bool negationFound = false;
+               for (j = stars_[i].beginId; j < stars_[i].endId; ++j) {
+                  if (nVec == waves_[j].indicesDft) {
+                     partId = j;
+                     negationFound = true;
+                     break;
+                  }
+               }
+               UTIL_CHECK(negationFound);
+
+               // Divide all coefficients by the root coefficient
+               rootCoeff = waves_[rootId].coeff;
+               for (j = stars_[i].beginId; j < stars_[i].endId; ++j) {
+                  waves_[j].coeff /= rootCoeff;
+               }
+
+               if (partId !=  rootId) {
+
+                  // Compute common divisor
+                  partCoeff = waves_[partId].coeff;
+                  d = sqrt(partCoeff);
+                  if (abs(imag(d)) > 1.0E-8) {
+                     if (imag(d) < 0.0) {
+                        d = -d;
+                     }
+                  }
+
+                  // Divide all coefficients by constant divisor
+                  for (j = stars_[i].beginId; j < stars_[i].endId; ++j) {
+                     waves_[j].coeff /= d;
+                  }
+
+               }
+
+            } // end if (cancel) ... else ...
+   
+         } else 
+         if (stars_[i].invertFlag == 1) {
+
+            UTIL_CHECK(stars_[i].size == stars_[i+1].size);
+            UTIL_CHECK(stars_[i].cancel == stars_[i+1].cancel);
+
+            // Identify root of this star (star i)
+            rootId = stars_[i].beginId;
+            stars_[i].waveBz = waves_[rootId].indicesBz;
+
+            // Compute negation of root vector, shift to DFT mesh
+            nVec.negate(waves_[rootId].indicesBz);
+            (*meshPtr_).shift(nVec);
+
+            // Find negation of root wave in the next star (star i+1)
+            bool negationFound = false;
+            for (j = stars_[i+1].beginId; j < stars_[i+1].endId; ++j) {
+               if (nVec == waves_[j].indicesDft) {
+                  partId = j;
+                  stars_[i+1].waveBz = waves_[j].indicesBz;
+                  negationFound = true;
+                  break;
+               }
+            }
+            UTIL_CHECK(negationFound);
+
+            if (stars_[i].cancel) {
+
+               std::complex<double> czero(0.0, 0.0);
+               for (j = stars_[i].beginId; j < stars_[i].endId; ++j) {
+                  waves_[j].coeff = czero;
+               }
+               for (j = stars_[i+1].beginId; j < stars_[i+1].endId; ++j) {
+                  waves_[j].coeff = czero;
+               }
+
+            } else {
+
+               // Divide all coefficients in this star by root coeff
+               rootCoeff = waves_[rootId].coeff;
+               for (j = stars_[i].beginId; j < stars_[i].endId; ++j) {
+                  waves_[j].coeff /= rootCoeff;
+               }
+
+               // Divide coefficients in next star by a partner coeff.
+               partCoeff = waves_[partId].coeff;
+               for (j = stars_[i+1].beginId; j < stars_[i+1].endId; ++j) {
+                  waves_[j].coeff /= partCoeff;
+               }
+   
+            } // end if (cancel) ... else ...
+
+         } // end if (invertFlag == -1)
+   
+      } // end loop over stars
+
+
+      // Final processing of waves in stars
+      for (i = 0; i < nStar_; ++i) {
+
+         // Set starId and normalize coefficients for associated waves
+         double snorm = 1.0/sqrt(double(stars_[i].size));
          for (j = stars_[i].beginId; j < stars_[i].endId; ++j) {
             waves_[j].starId = i;
-         }
-
-         // Normalize coeff for all associated waves
-         if (!stars_[i].cancel) {
-            snorm = 1.0/sqrt(double(stars_[i].size));
-            for (j = stars_[i].beginId; j < stars_[i].endId; ++j) {
-               waves_[j].coeff *= snorm;
-            }
+            waves_[j].coeff *= snorm;
          }
 
          // Set elements of dEigen
@@ -409,52 +521,8 @@ namespace Pssp
          // Look up table for waves
          waveIds_[mesh().rank(vec)] = i;
       }
-  
-      #if 0
-      // Output all waves
-      std::cout << std::endl;
-      std::cout << "Waves:" << std::endl;
-      for (i = 0; i < nWave_; ++i) {
-         std::cout << Int(i,4);
-         std::cout << Int(waves_[i].starId, 4);
-         std::cout << " |";
-         for (j = 0; j < D; ++j) {
-            std::cout << Int(waves_[i].indicesDft[j], 4);
-         }
-         std::cout << " |";
-         for (j = 0; j < D; ++j) {
-            std::cout << Int(waves_[i].indicesBz[j], 4);
-         }
-         std::cout << " | ";
-         std::cout << Dbl(waves_[i].sqNorm, 12);
-         std::cout << "  " << Dbl(waves_[i].coeff.real(), 10);
-         std::cout << "  " << Dbl(waves_[i].coeff.imag(), 10);
-         std::cout << std::endl;
-      }
-      #endif
- 
-      #if 0 
-      // Output all stars
-      std::cout << std::endl;
-      std::cout << "Stars:" << std::endl;
-      for (i = 0; i < nStar_; ++i) {
-         std::cout << Int(i, 4)
-                   << Int(stars_[i].size, 3)
-                   << Int(stars_[i].beginId, 5)
-                   << Int(stars_[i].endId, 5)
-                   << Int(stars_[i].invertFlag, 3)
-                   << Int(stars_[i].cancel, 3);
-         std::cout << " |";
-         for (j = 0; j < D; ++j) {
-            std::cout << Int(stars_[i].waveBz[j], 4);
-         }
-         std::cout << " | " << Dbl(stars_[i].eigen, 12);
-         std::cout << std::endl;
-      }
-      #endif
-  
    }
-
+  
    template <int D>
    void Basis<D>::update()
    {
@@ -531,7 +599,8 @@ namespace Pssp
          if (starPtr->invertFlag == 1) {
 
             // Make complex component for first star
-            component = std::complex<double>(components[is], components[is+1]);
+            component = std::complex<double>(components[is], 
+                                             components[is+1]);
             component /= sqrt(2.0);
 
             // Loop over waves in first star
@@ -655,10 +724,57 @@ namespace Pssp
    }
 
    template <int D>
+   void Basis<D>::outputWaves(std::ostream& out) const
+   {
+      out << std::endl;
+      out << "Waves:" << std::endl;
+      int i, j;
+      for (i = 0; i < nWave_; ++i) {
+         out << Int(i,4);
+         out << Int(waves_[i].starId, 4);
+         out << " |";
+         for (j = 0; j < D; ++j) {
+            out << Int(waves_[i].indicesDft[j], 4);
+         }
+         out << " |";
+         for (j = 0; j < D; ++j) {
+            out << Int(waves_[i].indicesBz[j], 4);
+         }
+         out << " | ";
+         out << Dbl(waves_[i].sqNorm, 12);
+         out << "  " << Dbl(waves_[i].coeff.real(), 10);
+         out << "  " << Dbl(waves_[i].coeff.imag(), 10);
+         out << std::endl;
+      }
+   }
+ 
+   template <int D>
+   void Basis<D>::outputStars(std::ostream& out) const
+   {
+      out << std::endl;
+      out << "Stars:" << std::endl;
+      int i, j;
+      for (i = 0; i < nStar_; ++i) {
+         out << Int(i, 4)
+             << Int(stars_[i].size, 3)
+             << Int(stars_[i].beginId, 5)
+             << Int(stars_[i].endId, 5)
+             << Int(stars_[i].invertFlag, 3)
+             << Int(stars_[i].cancel, 3);
+         out << " |";
+         for (j = 0; j < D; ++j) {
+            out << Int(stars_[i].waveBz[j], 4);
+         }
+         out << " | " << Dbl(stars_[i].eigen, 12);
+         out << std::endl;
+      }
+   }
+
+   template <int D>
    bool Basis<D>::isValid() const
    {
       IntVec<D> v;
-      int iw, is;
+      int is, iw, iwp;
 
       // Loop over dft mesh to check consistency of waveIds_ and waves_
       MeshIterator<D> itr(mesh().dimensions());
@@ -686,11 +802,11 @@ namespace Pssp
          // Check starId
          is = waves_[iw].starId;
          if (iw < stars_[is].beginId) {
-             std::cout << "Value of Wave::starId < Star::beginId" << std::endl;
+             std::cout << "Wave::starId < Star::beginId" << std::endl;
              return false;
          } 
          if (iw >= stars_[is].endId) {
-             std::cout << "Value of Wave::starId >= Star::endId" << std::endl;
+             std::cout << " Wave::starId >= Star::endId" << std::endl;
              return false;
          } 
       }
@@ -735,12 +851,48 @@ namespace Pssp
          }
 
          // Loop over closed stars and related pairs of stars
+         std::complex<double> cdel;
+         int begin, end;
+         bool negationFound, cancel;
          is = 0;
          while (is < nStar_) {
+            cancel = stars_[is].cancel;
+
             if (stars_[is].invertFlag == 0) {
+            
+               // Test open stars
+               begin = stars_[is].beginId; 
+               end = stars_[is].endId; 
+               for (iw = begin; iw < end; ++iw) {
+                  v.negate(waves_[iw].indicesBz);
+                  (*meshPtr_).shift(v);
+                  negationFound = false;
+                  for (iwp = begin; iw < end; ++iwp) {
+                     if (waves_[iwp].indicesDft == v) {
+                        negationFound = true;
+                        if (!cancel) {
+                           cdel = conj(waves_[iwp].coeff);
+                           cdel -= waves_[iw].coeff;
+                        }
+                        break;
+                     }
+                  }
+                  if (!negationFound) {
+                     std::cout << "Negation not found in closed star" << std::endl;
+                     return false;
+                  }
+                  if (!cancel && abs(cdel) > 1.0E-8) {
+                     std::cout << "Coefficients not conjugates in closed star" 
+                               << std::endl;
+                     return false;
+                  }
+               }
+ 
                ++is;
 
             } else {
+
+               // Test pairs of open stars
 
                if (stars_[is].invertFlag != 1) {
                   std::cout << "Expected invertFlag == 1" << std::endl;
@@ -753,6 +905,34 @@ namespace Pssp
                if (stars_[is+1].size != stars_[is].size) {
                   std::cout << "Parners of different dize" << std::endl;
                   return false;
+               }
+
+               // Check negation and coefficients
+               begin = stars_[is+1].beginId; 
+               end = stars_[is+1].endId;
+               for (iw = stars_[is].beginId; iw < stars_[is].endId; ++iw) {
+                  v.negate(waves_[iw].indicesBz);
+                  (*meshPtr_).shift(v);
+                  negationFound = false;
+                  for (iwp = begin; iw < end; ++iwp) {
+                     if (waves_[iwp].indicesDft == v) {
+                        negationFound = true;
+                        if (!cancel) {
+                           cdel = conj(waves_[iwp].coeff);
+                           cdel -= waves_[iw].coeff;
+                        }
+                        break;
+                     }
+                  }
+                  if (!negationFound) {
+                     std::cout << "Negation not found for open star" << std::endl;
+                     return false;
+                  }
+                  if (!cancel && abs(cdel) > 1.0E-8) {
+                     std::cout << "Coefficients not conjugates for open star" 
+                               << std::endl;
+                     return false;
+                  }
                }
 
                is += 2;

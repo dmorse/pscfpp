@@ -63,14 +63,16 @@ public:
       in.close();
       Mesh<2> mesh(d);
 
-      // Construct basis object
+      // Construct basis object using identity space group
       Basis<2> basis;
       std::string spaceGroup = "I";
       basis.makeBasis(mesh, unitCell, spaceGroup);
-      
+   
+      basis.outputWaves(std::cout);   
+      basis.outputStars(std::cout);   
+
       TEST_ASSERT(eq(basis.nWave(), 9));
       TEST_ASSERT(eq(basis.nStar(),9));
-      TEST_ASSERT(basis.isValid());
    }
 
    void testMake2DBasis_2()
@@ -99,6 +101,9 @@ public:
       Basis<2> basis;
       basis.makeBasis(mesh, unitCell, group);
       
+      basis.outputWaves(std::cout);   
+      basis.outputStars(std::cout);   
+
       TEST_ASSERT(eq(basis.nWave(), 16));
       TEST_ASSERT(basis.isValid());
 
@@ -202,11 +207,10 @@ public:
  
       #if 0 
       fftMachine.inverseTransform(kFieldAlt, rFieldAlt);
-      /*std::cout<<"Outputing rFieldAlt values"<<std::endl;
+      std::cout<<"Outputing rFieldAlt values"<<std::endl;
       for( int i = 0; i < mesh.size(); i++) {
          std::cout<<rFieldAlt[i]<<std::endl;
-      }*/
-
+      }
       for ( int i = 0; i < mesh.size(); i++) {
          TEST_ASSERT(eq(rField[i], rFieldAlt[i]));
       }
