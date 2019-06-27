@@ -77,7 +77,7 @@ namespace Pscf
 
 
    /*
-   * Set the Bravais and reciprocal lattice parameters.
+   * Set all lattice parameters.
    */
    void UnitCell<2>::setLattice()
    {
