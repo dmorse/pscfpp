@@ -207,11 +207,10 @@ public:
  
       #if 0 
       fftMachine.inverseTransform(kFieldAlt, rFieldAlt);
-      /*std::cout<<"Outputing rFieldAlt values"<<std::endl;
+      std::cout<<"Outputing rFieldAlt values"<<std::endl;
       for( int i = 0; i < mesh.size(); i++) {
          std::cout<<rFieldAlt[i]<<std::endl;
-      }*/
-
+      }
       for ( int i = 0; i < mesh.size(); i++) {
          TEST_ASSERT(eq(rField[i], rFieldAlt[i]));
       }

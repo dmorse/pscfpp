@@ -774,7 +774,7 @@ namespace Pssp
    bool Basis<D>::isValid() const
    {
       IntVec<D> v;
-      int iw, is;
+      int is, iw, iwp;
 
       // Loop over dft mesh to check consistency of waveIds_ and waves_
       MeshIterator<D> itr(mesh().dimensions());
@@ -851,12 +851,48 @@ namespace Pssp
          }
 
          // Loop over closed stars and related pairs of stars
+         std::complex<double> cdel;
+         int begin, end;
+         bool negationFound, cancel;
          is = 0;
          while (is < nStar_) {
+            cancel = stars_[is].cancel;
+
             if (stars_[is].invertFlag == 0) {
+            
+               // Test open stars
+               begin = stars_[is].beginId; 
+               end = stars_[is].endId; 
+               for (iw = begin; iw < end; ++iw) {
+                  v.negate(waves_[iw].indicesBz);
+                  (*meshPtr_).shift(v);
+                  negationFound = false;
+                  for (iwp = begin; iw < end; ++iwp) {
+                     if (waves_[iwp].indicesDft == v) {
+                        negationFound = true;
+                        if (!cancel) {
+                           cdel = conj(waves_[iwp].coeff);
+                           cdel -= waves_[iw].coeff;
+                        }
+                        break;
+                     }
+                  }
+                  if (!negationFound) {
+                     std::cout << "Negation not found in closed star" << std::endl;
+                     return false;
+                  }
+                  if (!cancel && abs(cdel) > 1.0E-8) {
+                     std::cout << "Coefficients not conjugates in closed star" 
+                               << std::endl;
+                     return false;
+                  }
+               }
+ 
                ++is;
 
             } else {
+
+               // Test pairs of open stars
 
                if (stars_[is].invertFlag != 1) {
                   std::cout << "Expected invertFlag == 1" << std::endl;
@@ -869,6 +905,34 @@ namespace Pssp
                if (stars_[is+1].size != stars_[is].size) {
                   std::cout << "Parners of different dize" << std::endl;
                   return false;
+               }
+
+               // Check negation and coefficients
+               begin = stars_[is+1].beginId; 
+               end = stars_[is+1].endId;
+               for (iw = stars_[is].beginId; iw < stars_[is].endId; ++iw) {
+                  v.negate(waves_[iw].indicesBz);
+                  (*meshPtr_).shift(v);
+                  negationFound = false;
+                  for (iwp = begin; iw < end; ++iwp) {
+                     if (waves_[iwp].indicesDft == v) {
+                        negationFound = true;
+                        if (!cancel) {
+                           cdel = conj(waves_[iwp].coeff);
+                           cdel -= waves_[iw].coeff;
+                        }
+                        break;
+                     }
+                  }
+                  if (!negationFound) {
+                     std::cout << "Negation not found for open star" << std::endl;
+                     return false;
+                  }
+                  if (!cancel && abs(cdel) > 1.0E-8) {
+                     std::cout << "Coefficients not conjugates for open star" 
+                               << std::endl;
+                     return false;
+                  }
                }
 
                is += 2;
