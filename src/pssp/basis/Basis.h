@@ -189,6 +189,16 @@ namespace Pssp
       void update();
 
       /**
+      * Print a list of all waves to an output stream.
+      */
+      void outputWaves(std::ostream& out) const;
+
+      /**
+      * Print a list of all stars to an output stream.
+      */
+      void outputStars(std::ostream& out) const;
+
+      /**
       * Returns true if valid, false otherwise.
       */
       bool isValid() const;
