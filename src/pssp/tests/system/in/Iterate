@@ -1,7 +1,10 @@
 ITERATE
-in/omega
+omega
 WRITE_WFIELDS
-out/calc/omega
+omega
 WRITE_CFIELDS
-out/calc/rho
+rho
+FIELD_TO_RGRID
+rho
+rho_check
 FINISH

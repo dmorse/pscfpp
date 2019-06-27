@@ -71,8 +71,14 @@ namespace Pssp {
       // Allocate work arrays
       expKsq_.allocate(kMeshDimensions_);
       expW_.allocate(mesh.dimensions());
+      expKsq2_.allocate(kMeshDimensions_);
+      expW2_.allocate(mesh.dimensions());
       qr_.allocate(mesh.dimensions());
       qk_.allocate(mesh.dimensions());
+      qr2_.allocate(mesh.dimensions());
+      qk2_.allocate(mesh.dimensions());
+      qf_.allocate(mesh.dimensions());
+
       q1.allocate(mesh.dimensions());
       q2.allocate(mesh.dimensions());
       q1p.allocate(mesh.dimensions());
@@ -105,6 +111,7 @@ namespace Pssp {
          Gmin = shiftToMinimum(G, mesh().dimensions(), unitCell);
          Gsq = unitCell.ksq(Gmin);
          expKsq_[i] = exp(Gsq*factor);
+         expKsq2_[i] = exp(Gsq*factor*0.5);
          //std::cout << i    << "  " 
          //         << Gmin << "  " 
          //          << Gsq  << "  "
@@ -128,6 +135,7 @@ namespace Pssp {
       // std::cout << std::endl;
       for (i = 0; i < nx; ++i) {
          expW_[i] = exp(-0.5*w[i]*ds_);
+         expW2_[i] = exp(-0.5*0.5*w[i]*ds_);
          // std::cout << "i = " << i 
          //           << " expW_[i] = " << expW_[i]
          //          << std::endl;
@@ -148,6 +156,7 @@ namespace Pssp {
          Gmin = shiftToMinimum(G, mesh().dimensions(), unitCell);
          Gsq = unitCell.ksq(Gmin);
          expKsq_[i] = exp(Gsq*factor);
+         expKsq2_[i] = exp(Gsq*factor*0.5);
          //std::cout << i    << "  " 
          //          << Gmin << "  " 
          //          << Gsq  << "  "
@@ -221,11 +230,10 @@ namespace Pssp {
       double dels, normal, increment;
       int r,c;
  
-      //normal = nx*nx*3.0*6.0;
       normal = 3.0*6.0;
 
-      r = basis.dksq.capacity1();
-      c = basis.dksq.capacity2();
+      r = (basis.nStar())-1;
+      c = 6;
 
       DArray<double> q1s;
       DArray<double> q2s;
@@ -286,7 +294,7 @@ namespace Pssp {
               increment = 0;
 
               for (int m = 0; m < c ; ++m) {
-                 q3s [m] = q1s [m] * basis.dksq (n,m);  
+                 q3s [m] = q1s [m] * basis.star(n).dEigen[m];  
                  increment += q3s [m]*q2s [m]; 
               }
               increment = (increment * kuhn() * kuhn() * dels)/normal;
@@ -327,15 +335,34 @@ namespace Pssp {
       int i;
       for (i = 0; i < nx; ++i) {
          qr_[i] = q[i]*expW_[i];
+         qr2_[i] = q[i]*expW2_[i];
       }
       fft_.forwardTransform(qr_, qk_);
+      fft_.forwardTransform(qr2_, qk2_);
       for (i = 0; i < nk; ++i) {
          qk_[i][0] *= expKsq_[i];
          qk_[i][1] *= expKsq_[i];
+         qk2_[i][0] *= expKsq2_[i];
+         qk2_[i][1] *= expKsq2_[i];
       }
       fft_.inverseTransform(qk_, qr_);
+      fft_.inverseTransform(qk2_, qr2_);
       for (i = 0; i < nx; ++i) {
-         qNew[i] = qr_[i]*expW_[i];
+         qf_[i] = qr_[i]*expW_[i];
+         qr2_[i] = qr2_[i]*expW_[i];
+      }
+
+      fft_.forwardTransform(qr2_, qk2_);
+      for (i = 0; i < nk; ++i) {
+         qk2_[i][0] *= expKsq2_[i];
+         qk2_[i][1] *= expKsq2_[i];
+      }
+      fft_.inverseTransform(qk2_, qr2_);
+      for (i = 0; i < nx; ++i) {
+         qr2_[i] = qr2_[i]*expW2_[i];
+      }
+      for (i = 0; i < nx; ++i) {
+         qNew[i] = (4.0*qr2_[i] - qf_[i])/3.0;
       }
    }
 
