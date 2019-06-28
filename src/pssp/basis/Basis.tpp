@@ -26,6 +26,7 @@ namespace Pssp
    Basis<D>::Basis()
     : nWave_(0), 
       nStar_(0), 
+      nBasis_(0), 
       unitCellPtr_(0), 
       meshPtr_(0)
    {}
@@ -157,6 +158,8 @@ namespace Pssp
       int i, j, k;
       bool cancel;
 
+      // Loop over all waves
+      nBasis_ = 0;
       for (i = 0; i <= nWave_; ++i) {
 
          // Determine if this wave begins a new list
@@ -235,23 +238,25 @@ namespace Pssp
                }
                starSize = star.size();
 
-               // Append waves in star to tempStar, erase from list
+               // Append waves in std::set star to std::vector tempStar
                tempStar.clear();
                setItr = star.begin(); 
                for ( ; setItr != star.end(); ++setItr) {
-                  list.erase(*setItr);
                   tempStar.push_back(*setItr);
                }
 
-               // Sort tempStar vector, ordered by indicesBz
+               // Sort tempStar, ordered by indicesBz
                TWaveBzComp<D> waveBzComp;
                std::sort(tempStar.begin(), tempStar.end(), waveBzComp);
-         
-               // Append contents of ordered star tempStar to tempList 
+               
+               // Append contents of tempStar to tempList, erase from list
                for (j = 0; j < tempStar.size(); ++j) {
+                  list.erase(tempStar[j]);
                   tempList.append(tempStar[j]);
                }
                UTIL_CHECK(tempList.size()+list.size() == listEnd-listBegin);
+
+               if (!cancel) ++nBasis_;
 
                // Initialize new Star object
                newStar.eigen = Gsq;
@@ -323,6 +328,7 @@ namespace Pssp
                   }
 
                }
+
 
                stars_.append(newStar);
                ++starId;
@@ -713,7 +719,9 @@ namespace Pssp
 
    template <int D>
    int Basis<D>::nBasis() const
-   {
+   {  return nBasis_; }
+
+      #if 0 
       int count = 0;
       for (int i = 0; i < stars_.capacity(); ++i) {
          if (!stars_[i].cancel) {
@@ -721,7 +729,7 @@ namespace Pssp
          }
       }
       return count;
-   }
+      #endif
 
    template <int D>
    void Basis<D>::outputWaves(std::ostream& out) const

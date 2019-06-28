@@ -50,7 +50,7 @@ public:
 
    void testMake1DBasis_1() {
       printMethod(TEST_FUNC);
-      printEndl();
+      //printEndl();
 
       // Make unitcell
       UnitCell<1> unitCell;
@@ -69,16 +69,19 @@ public:
       std::string spaceGroup = "I";
       basis.makeBasis(mesh, unitCell, spaceGroup);
 
-      TEST_ASSERT(eq(basis.nWave(), 8));
+      TEST_ASSERT(eq(basis.nWave(),8));
       TEST_ASSERT(eq(basis.nStar(),8));
+      TEST_ASSERT(eq(basis.nBasis(),8));
 
+      #if 0
       basis.outputWaves(std::cout);
       basis.outputStars(std::cout);
+      #endif
    }
 
    void testMake1DBasis_2() {
       printMethod(TEST_FUNC);
-      printEndl();
+      //printEndl();
 
       // Make unitcell
       UnitCell<1> unitCell;
@@ -96,23 +99,28 @@ public:
       SpaceGroup<1> group;
       openInputFile("in/Group_1D_symmetric", in);
       in >> group;
+      in.close();
       TEST_ASSERT(group.size() == 2);
 
       // Construct basis object using identity space group
       Basis<1> basis;
       basis.makeBasis(mesh, unitCell, group);
 
-      basis.outputWaves(std::cout);
-      basis.outputStars(std::cout);
-
       TEST_ASSERT(eq(basis.nWave(), 8));
       TEST_ASSERT(eq(basis.nStar(), 5));
+      TEST_ASSERT(eq(basis.nBasis(), 5));
+
+      #if 0
+      basis.outputWaves(std::cout);
+      basis.outputStars(std::cout);
+      #endif
+
    }
 
    void testMake2DBasis_1()
    {
       printMethod(TEST_FUNC);
-      printEndl();
+      //printEndl();
 
       // Make unitcell
       UnitCell<2> unitCell;
@@ -131,17 +139,20 @@ public:
       std::string spaceGroup = "I";
       basis.makeBasis(mesh, unitCell, spaceGroup);
    
-      basis.outputWaves(std::cout);   
-      basis.outputStars(std::cout);   
-
       TEST_ASSERT(eq(basis.nWave(), 9));
       TEST_ASSERT(eq(basis.nStar(),9));
+
+      #if 0
+      basis.outputWaves(std::cout);   
+      basis.outputStars(std::cout);   
+      #endif
+
    }
 
    void testMake2DBasis_2()
    {
       printMethod(TEST_FUNC);
-      printEndl();
+      //printEndl();
 
       // Make unitcell
       UnitCell<2> unitCell;
@@ -163,12 +174,17 @@ public:
       // Make basis
       Basis<2> basis;
       basis.makeBasis(mesh, unitCell, group);
-      
+     
+      TEST_ASSERT(eq(basis.nWave(), 16));
+      TEST_ASSERT(eq(basis.nStar(), 6));
+      TEST_ASSERT(eq(basis.nBasis(), 4));
+      TEST_ASSERT(basis.isValid());
+
+      #if 0 
       basis.outputWaves(std::cout);   
       basis.outputStars(std::cout);   
-
-      TEST_ASSERT(eq(basis.nWave(), 16));
-      TEST_ASSERT(basis.isValid());
+      std::cout << "nBasis = " << basis.nBasis() << std::endl;
+      #endif
 
    }
 
@@ -412,10 +428,10 @@ public:
  
       #if 0 
       fftMachine.inverseTransform(kFieldAlt, rFieldAlt);
-      /*std::cout<<"Outputing rFieldAlt values"<<std::endl;
+      std::cout<<"Outputing rFieldAlt values"<<std::endl;
       for( int i = 0; i < mesh.size(); i++) {
          std::cout<<rFieldAlt[i]<<std::endl;
-      }*/
+      }
 
       for ( int i = 0; i < mesh.size(); i++) {
          TEST_ASSERT(eq(rField[i], rFieldAlt[i]));
@@ -429,7 +445,7 @@ public:
 TEST_BEGIN(BasisTest)
 TEST_ADD(BasisTest, testConstructor)
 TEST_ADD(BasisTest, testMake1DBasis_1)
-//TEST_ADD(BasisTest, testMake1DBasis_2) // bug in this one -> fix it
+TEST_ADD(BasisTest, testMake1DBasis_2)
 TEST_ADD(BasisTest, testMake2DBasis_1)
 TEST_ADD(BasisTest, testMake2DBasis_2)
 TEST_ADD(BasisTest, testFieldConversion2D)

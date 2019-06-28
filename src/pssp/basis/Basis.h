@@ -265,6 +265,9 @@ namespace Pssp
       /// Total number of stars.
       int nStar_;
 
+      /// Total number of basis functions (or uncancelled stars).
+      int nBasis_;
+
       /// Pointer to associated UnitCell<D>
       const UnitCell<D>* unitCellPtr_;
 
