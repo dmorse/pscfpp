@@ -3,4 +3,3 @@ Add unit tests for 1D and 2D Mesh
 
 See crystal/TODO
 
-We will need SpaceGroupSymmetry<D> and SpaceGroup<D> templates in util/crystal
