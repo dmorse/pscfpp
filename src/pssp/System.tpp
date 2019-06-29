@@ -632,10 +632,8 @@ namespace Pssp
       } 
 
       // Read Fields;
-      int idum;
       MeshIterator<D> itr(mesh().dimensions());
       for (itr.begin(); !itr.atEnd(); ++itr) {
-         in >> idum;
          for (int i = 0; i < nM; ++i) {
             in >> temp[i][itr.rank()];
          }
