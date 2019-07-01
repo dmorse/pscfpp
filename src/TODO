@@ -9,29 +9,11 @@
 2) For the pseudo-spectral code for 1D, 2D or 3D in
    directory pssp:
 
-   - Test FFT wrapper and solvers in 2D and 3D
+   - Test agreement with Fortran code, fixed domain
 
-   - Write a simple mixing iterator for 1D crystal with no imposed
-     symmetry, generalize to Anderson mixing.
+   - Modify file formats to allow data interchange with Fortran code
 
-   - Develop an interface to Basis, to allow development of a
-     simple iterator with an imposed symmetry.
+   - Add stress calculator
 
-   template <int D>
-   System<D> {
-      Mixture<D>
-      Interaction
-      UnitCell<D>
-      Mesh<D>
-      SpaceGroup<D>
-      Basis<D>
-      wFields
-      cFields
-      Iterator
-   }
-
-
-   - Add general code for symmetry adapted basis functions.
-
-   - Add stress calculators.
+   - Add domain iteration
 
