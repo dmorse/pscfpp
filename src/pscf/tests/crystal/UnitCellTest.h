@@ -79,23 +79,30 @@ public:
       UnitCell<1> v;
       std::ifstream in;
       openInputFile("in/Lamellar", in);
-
       in >> v;
-      std::cout.width(20);
-      std::cout.precision(6);
-      std::cout << v << std::endl ;
+      double param = v.params()[0];
+      double twoPi = 2.0*Constants::Pi;
 
-      std::cout << v.rBasis(0) << std::endl;
-      std::cout << v.kBasis(0) << std::endl;
-
+      TEST_ASSERT(eq(v.rBasis(0)[0], param));
+      TEST_ASSERT(eq(v.kBasis(0)[0], twoPi/param));
       TEST_ASSERT(isValidReciprocal(v));
       TEST_ASSERT(isValidDerivative(v));
 
+      // Test ksq function
       IntVec<1> x;
-      x[0] = 2;
+      int m = -3;
+      x[0] = m;
       double xSq = v.ksq(x);
-      std::cout << "x^2 = " << xSq << std::endl;
+      double y = (twoPi*m)/param;
+      TEST_ASSERT(eq(xSq, y*y));
 
+      #if 0
+      std::cout.width(20);
+      std::cout.precision(6);
+      std::cout << v << std::endl ;
+      std::cout << v.rBasis(0) << std::endl;
+      std::cout << v.kBasis(0) << std::endl;
+      #endif
 
    }
 

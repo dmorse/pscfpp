@@ -95,16 +95,6 @@ namespace Pscf
    }
 
    /*
-   * Set the Bravais and reciprocal lattice parameters.
-   */
-   void UnitCell<3>::setLattice()
-   {
-      initializeToZero();
-      setBasis();
-      computeDerivatives();
-   }
-
-   /*
    * Extract a UnitCell<3>::LatticeSystem from an istream as a string.
    */
    std::istream& operator >> (std::istream& in,

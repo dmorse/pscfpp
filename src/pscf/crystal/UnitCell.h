@@ -174,8 +174,6 @@ namespace Pscf
 
       void setBasis();
 
-      void setLattice();
-
       template <int D> 
       friend std::ostream& operator << (std::ostream&, UnitCell<D>& );
 
@@ -238,8 +236,6 @@ namespace Pscf
       void setNParameter();
 
       void setBasis();
-
-      void setLattice();
 
       template <int D> 
       friend std::ostream& operator << (std::ostream&, UnitCell<D>& );
@@ -307,8 +303,6 @@ namespace Pscf
       void setNParameter();
 
       void setBasis();
-
-      void setLattice();
 
       template <int D> 
       friend std::ostream& operator << (std::ostream&, UnitCell<D>& );

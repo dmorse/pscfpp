@@ -47,16 +47,6 @@ namespace Pscf
    }
 
    /*
-   * Set all unit cell parameters.
-   */
-   void UnitCell<1>::setLattice()
-   {
-      initializeToZero();
-      setBasis();
-      computeDerivatives();
-   }
-
-   /*
    * Extract a UnitCell<1>::LatticeSystem from an istream as a string.
    */
    std::istream& operator >> (std::istream& in,

@@ -1,19 +1,4 @@
-UnitCell<D>:
-
-   Create a private function, setBasis that only sets rBasis, kBasis, drBasis.
-
-   Change setLattice() so as to call (in this order)
-      initializeToZero, setBasis(), computeDerivatives()
-
-   (This is in preparation for moving setLattice to UnitCellBase).
-
 UnitCellBase:
-
-   Private implementation changes:
-
-      Declare a pure virtual function set setBasis();
-
-      Migrate declaration of setLattice to UnitCellBase.
 
    Changes to public interface (may require changes elsewhere):
 

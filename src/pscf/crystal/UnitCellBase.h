@@ -149,12 +149,30 @@ namespace Pscf
       // Protected functions (used in implementation).
 
       /**
+      * Compute all private data, given latticeSystem and parameters.
+      *
+      * Calls initializeToZero, setBasis, computeDerivatives internally.
+      */
+      void setLattice();
+
+   private:
+
+      /**
       * Initialize all arrays to zero.
       *
       * Sets all elements of the following arrays to zero:
       * rBasis_, kBasis_, drBasis_, dkBasis, drrBasis_ and dkkBasis_.
       */
       void initializeToZero();
+
+      /**
+      * Set values of rBasis, kBasis, and drBasis.
+      *
+      * Invoke initializeToZero before this, computeDerivatives after.
+      *
+      * \pre Lattice system, nParam and parameters must be set.
+      */
+      virtual void setBasis() = 0;
 
       /**
       * Compute values of dkBasis_, drrBasis_, and dkkBasis_.
@@ -331,5 +349,16 @@ namespace Pscf
 
    }
    
+   /*
+   * Set all lattice parameters.
+   */
+   template <int D>
+   void UnitCellBase<D>::setLattice()
+   {
+      initializeToZero();
+      setBasis();
+      computeDerivatives();
+   }
+
 } 
 #endif 
