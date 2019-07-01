@@ -1,5 +1,5 @@
 ITERATE
-omega
+omega_conv
 WRITE_WFIELDS
 omega
 WRITE_CFIELDS
@@ -7,4 +7,7 @@ rho
 FIELD_TO_RGRID
 rho
 rho_check
+FIELD_TO_RGRID
+omega
+omega_check
 FINISH

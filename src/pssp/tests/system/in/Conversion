@@ -1,9 +1,13 @@
 RGRID_TO_FIELD
 rho_rgrid
-rho
+rho_conv
 
 RHO_TO_OMEGA
-rho
-omega
+rho_conv
+omega_conv
+
+FIELD_TO_RGRID
+omega_conv
+omega_conv_check
 
 FINISH

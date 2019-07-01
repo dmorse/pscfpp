@@ -172,7 +172,7 @@ namespace Pssp {
    template <int D>
    void Block<D>::computeConcentration(double prefactor)
    {
-      // Preconditions
+     /* // Preconditions
       int nx = mesh().size();
       UTIL_CHECK(nx > 0);
       UTIL_CHECK(ns_ > 0);
@@ -209,7 +209,51 @@ namespace Pssp {
          cField()[i] *= prefactor;
       }
       #if 0
-      #endif
+      #endif*/
+
+
+      // Preconditions
+      int nx = mesh().size();
+      UTIL_CHECK(nx > 0);
+      UTIL_CHECK(ns_ > 0);
+      UTIL_CHECK(ds_ > 0);
+      UTIL_CHECK(propagator(0).isAllocated());
+      UTIL_CHECK(propagator(1).isAllocated());
+      UTIL_CHECK(cField().capacity() == nx) 
+
+      // Initialize cField to zero at all points
+      int i;
+      for (i = 0; i < nx; ++i) {
+         cField()[i] = 0.0;
+      }
+
+      Propagator<D> const & p0 = propagator(0);
+      Propagator<D> const & p1 = propagator(1);
+
+      // Evaluate unnormalized integral
+      for(i = 0; i < nx; ++i) {
+         cField()[i] += p0.q(0)[i]*p1.q(ns_ - 1)[i];
+         cField()[i] += p0.q(ns_ -1)[i]*p1.q(0)[i];
+      }
+
+      //odd indices
+      for(int j = 1; j < (ns_ -1); j += 2) {
+         for(int i = 0; i < nx; ++i) {
+            cField()[i] += p0.q(j)[i] * p1.q(ns_ - 1 - j)[i] * 4.0;   
+         }
+      }
+
+      //even indices
+      for(int j = 2; j < (ns_ -2); j += 2) {
+         for(int i = 0; i < nx; ++i) {
+            cField()[i] += p0.q(j)[i] * p1.q(ns_ - 1 - j)[i] * 2.0;   
+         }
+      }
+
+      prefactor *= ds_ / 3.0;
+      for (i = 0; i < nx; ++i) {
+         cField()[i] *= prefactor;
+      }
 
    }
 
