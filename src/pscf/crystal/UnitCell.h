@@ -11,6 +11,7 @@
 #include "UnitCellBase.h"
 #include <util/format/Dbl.h>
 #include <iostream>
+#include <iomanip>
 
 namespace Pscf
 {
