@@ -1,1 +1,3 @@
-lamellar 4.0
+crystal_system  lamellar 
+N_cell_param    1
+cell_param      4.0

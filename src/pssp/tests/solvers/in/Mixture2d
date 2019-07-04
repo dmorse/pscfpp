@@ -12,5 +12,7 @@ Mixture{
    }
    ds   0.001
 }
-Rectangular  4.0 5.0
+crystal_system  rectangular
+N_cell_param    2
+cell_param      4.0 5.0
 15 15
