@@ -39,7 +39,9 @@ namespace Pscf
       */
       ~UnitCellBase()
       {}
-   
+  
+      void setLattice();
+ 
       /** 
       * Set the parameters of unit cell.
       */  
@@ -153,7 +155,7 @@ namespace Pscf
       *
       * Calls initializeToZero, setBasis, computeDerivatives internally.
       */
-      void setLattice();
+//      void setLattice();
 
    private:
 

@@ -144,13 +144,12 @@ namespace Pssp
 
          std::cout<<"  Iteration  "<<itr<<std::endl;
          if (isConverged()) {  
-           if(!cell_)
-              //systemPtr_->mixture().computeTStress(systemPtr_->basis());
-         
-             // for (int m=0; m<6 ; ++m){
-               // std::cout<<"Stress"<<m<<"\t"<<"="<< systemPtr_->mixture().TStress[m]<<"\n";
-                 //std::cout<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).params()[m]<<"\n";
-              //}
+          std::cout<<"----------CONVERGED----------";
+          if(cell_)
+              for (int m=0; m<6 ; ++m){
+                 std::cout<<"Stress"<<m<<"\t"<<"="<< systemPtr_->mixture().TStress[m]<<"\n";
+                 std::cout<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).params()[m]<<"\n";
+              }
 
               return 0;
      
@@ -197,8 +196,13 @@ namespace Pssp
             systemPtr_->mixture().compute(systemPtr_->wFieldGrids(), 
                                           systemPtr_->cFieldGrids());
 
-            if (cell_)
+            if (cell_){
                systemPtr_->mixture().computeTStress(systemPtr_->basis());
+
+              for (int m=0; m<6 ; ++m){
+                std::cout<<"Stress"<<m<<"\t"<<"="<< std::setprecision (15)<< systemPtr_->mixture().TStress[m]<<"\n";
+              }
+            }
 
             for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
                systemPtr_->fft().forwardTransform(systemPtr_->cFieldGrid(i),
@@ -441,13 +445,20 @@ namespace Pssp
 
          if (cell_){
             for (int m = 0; m < 6; ++m){
-               (systemPtr_->unitCell()).params()[m] = CpHists_[0][m] +
-                                                        lambda_* devCpHists_[0][m]; 
+
+                 (systemPtr_->unitCell()).SetParams( CpHists_[0][m] +lambda_* devCpHists_[0][m] ,m);
+              //   (systemPtr_->unitCell()).setLattice();
+              //   systemPtr_->mixture().setupUnitCell(systemPtr_->unitCell());
+              //   systemPtr_->basis().update();
             }
-                       //for (int m=0; m<6 ; ++m){
-                //std::cout<<"Stress"<<m<<"\t"<<"="<< systemPtr_->mixture().TStress[m]<<"\n";
-                // std::cout<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).params()[m]<<"\n";
-              //}
+
+                  (systemPtr_->unitCell()).setLattice();
+                  systemPtr_->mixture().setupUnitCell(systemPtr_->unitCell());
+                  systemPtr_->basis().update();
+
+            for (int m=0; m<6 ; ++m){
+               std::cout<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).params()[m]<<"\n";
+            }
          } 
 
       } else {
@@ -501,13 +512,14 @@ namespace Pssp
             for (int m = 0; m < 6; ++m){
                (systemPtr_->unitCell()).SetParams( wCpArrays_[m] + lambda_ * dCpArrays_[m],m);
             }
+
+            (systemPtr_->unitCell()).setLattice();
             systemPtr_->mixture().setupUnitCell(systemPtr_->unitCell());
 	    systemPtr_->basis().update();
 
-              //for (int m=0; m<6 ; ++m){
-                //std::cout<<"Stress"<<m<<"\t"<<"="<< systemPtr_->mixture().TStress[m]<<"\n";
-                 //std::cout<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).params()[m]<<"\n";
-              //}
+              for (int m=0; m<6 ; ++m){
+	          std::cout<<"Parameter"<<m<<"\t"<<"="<< std::setprecision (15)<<(systemPtr_->unitCell()).params()[m]<<"\n";
+              }
 
 
          }

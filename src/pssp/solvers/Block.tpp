@@ -276,8 +276,8 @@ namespace Pssp {
  
       normal = 3.0*6.0;
 
-      r = (basis.nStar())-1;
-      c = 6;
+      c = (basis.nStar());
+      r = 6;
 
       DArray<double> q1s;
       DArray<double> q2s;
@@ -328,9 +328,9 @@ namespace Pssp {
 
            if (j != 0 && j != ns_ - 1) {
               if (j % 2 == 0) {
-                 dels = dels*4.0;
-              } else {
                  dels = dels*2.0;
+              } else {
+                 dels = dels*4.0;
               }           
            }
 
@@ -338,7 +338,7 @@ namespace Pssp {
               increment = 0;
 
               for (int m = 0; m < c ; ++m) {
-                 q3s [m] = q1s [m] * basis.star(n).dEigen[m];  
+                 q3s [m] = q1s [m] * basis.star(m).dEigen[n];  
                  increment += q3s [m]*q2s [m]; 
               }
               increment = (increment * kuhn() * kuhn() * dels)/normal;

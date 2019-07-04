@@ -339,7 +339,6 @@ namespace Pssp
 
             time_begin = clock();
             int fail = iterator().solve();
-            std::cout <<"marker";
             //if (!fail)
             if (1) {
                if(fail)
@@ -635,7 +634,7 @@ namespace Pssp
       MeshIterator<D> itr(mesh().dimensions());
       for (itr.begin(); !itr.atEnd(); ++itr) {
          for (int i = 0; i < nM; ++i) {
-            in >> temp[i][itr.rank()];
+            in >>std::setprecision(15)>>temp[i][itr.rank()];
          }
       }
 
@@ -890,7 +889,7 @@ namespace Pssp
       for (itr.begin(); !itr.atEnd(); ++itr) {
         // out << Int(itr.rank(), 5);
          for (int j = 0; j < nM; ++j) {
-            out << "  " << Dbl(temp[j][itr.rank()], 18, 11);
+            out << "  " << Dbl(temp[j][itr.rank()], 18, 15);
          }
          out << std::endl;
       }
