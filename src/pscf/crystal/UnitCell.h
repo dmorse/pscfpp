@@ -67,24 +67,67 @@ namespace Pscf
    std::istream& operator >> (std::istream& in,
                               UnitCell<D>& cell)
    {
-      in >> cell.lattice_;
+     /* in >> cell.lattice_;
       cell.setNParameter();
       for (int i = 0; i < cell.nParameter_; ++i) {
          in >> cell.parameters_[i];
       }
       cell.setLattice();
-      return in;
+      return in;*/
+
+
+      std::string label;
+      int nParametersIn;
+  
+      in >> label;
+      UTIL_CHECK(label == "crystal_system");
+      in >> cell.lattice_;
+      cell.setNParameter();
+
+      in >> label;
+      UTIL_CHECK(label == "N_cell_param");
+      in >> nParametersIn;
+      UTIL_CHECK(nParametersIn == cell.nParameter_);
+
+      in >> label;
+      UTIL_CHECK(label == "cell_param");
+
+
+      for (int i = 0; i < cell.nParameter_; ++i) {
+         in >>std::setprecision(15)>>cell.parameters_[i];
+      }   
+      cell.setLattice();
+      return in; 
+
+
+
+
    }
 
    template <int D>
    std::ostream& operator << (std::ostream& out,
                               UnitCell<D>& cell)
    {
-      out << cell.lattice_;
+      out << "crystal_system    " <<  std::endl << "              " << cell.lattice_<<std::endl;
+      out << "N_cell_param    " <<  std::endl << "                   "<<cell.nParameter_<< std::endl;
+      out << "cell_param    " <<  std::endl;
+      for (int i = 0; i < cell.nParameter_; ++i) {
+         out <<"    "<< Dbl(cell.parameters_[i], 18, 10);
+      }
+      out<<std::endl;
+      return out;
+
+
+
+
+
+
+
+      /* out << cell.lattice_;
       for (int i = 0; i < cell.nParameter_; ++i) {
          out << Dbl(cell.parameters_[i], 18, 10);
       }
-      return out;
+      return out;*/
    }
 
    /*

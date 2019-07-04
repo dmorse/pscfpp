@@ -11,7 +11,7 @@ System{
                 1  1  1  2  3.0
         phi     1.0
      }
-     ds   0.001
+     ds   0.01
   }
 
 
@@ -21,8 +21,13 @@ System{
           1   1   0.0
   }
    
-  Lamellar  1.3835
-  10
+crystal_system   Lamellar  
+
+N_cell_param     1
+
+cell_param       1.5161093077
+
+  40
 
   Basis I
 
@@ -30,7 +35,7 @@ System{
    maxItr 40
    epsilon 1e-3
    maxHist 10
-   domain 1
+   domain 0
   }
 
 }

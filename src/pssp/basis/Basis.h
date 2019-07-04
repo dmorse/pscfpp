@@ -207,13 +207,13 @@ namespace Pssp
       // Old code to allow current code to compile
       // Derivatives of dksq with respect to each 
       // of the parameters (rows)
-      DMatrix<double> dksq; 
+      //DMatrix<double> dksq; 
 
       /**
       * Calculates dksq_ assuming ksq are in non increasing order of ksq 
       * and pairs of stars related by inversion are listed consecutively
       */
-      void makedksq(const UnitCell<D>& unitCell){};
+      //void makedksq(const UnitCell<D>& unitCell){};
       #endif
 
       // Accessors

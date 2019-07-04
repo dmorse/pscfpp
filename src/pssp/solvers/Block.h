@@ -183,11 +183,26 @@ namespace Pssp {
       // Array of elements containing exp(-W[i] ds/2)
       RField<D> expW_;
 
+      // Array of elements containing exp(-K^2 b^2 ds/(6*2))
+      RField<D> expKsq2_;
+
+      // Array of elements containing exp(-W[i] (ds/2)*0.5)
+      RField<D> expW2_;
+
       // Work array for real-space field.
       RField<D> qr_;
 
       // Work array for wavevector space field.
       RFieldDft<D> qk_;
+
+      // Work array for real-space field.
+      RField<D> qr2_;
+
+      // Work array for wavevector space field.
+      RFieldDft<D> qk2_;
+
+      // Work array for real-space field.
+      RField<D> qf_;
 
       /// Pointer to associated Mesh<D> object.
       Mesh<D> const * meshPtr_;

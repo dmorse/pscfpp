@@ -576,6 +576,146 @@ namespace Pssp
       UTIL_CHECK(hasMesh_);
 
       std::string label;
+      std::string uCell;
+      std::string groupName;
+      IntVec<D> nGrid;
+      int nM;
+      int ver1, ver2;
+      int dim;      
+      int nCellParams;
+      FArray<double,6> params;
+
+      in >> label;
+      UTIL_CHECK(label == "format");
+      in >> ver1;
+      in >> ver2;
+ 
+      in >> label;
+      UTIL_CHECK(label == "dim");
+      in >> dim;
+      UTIL_CHECK(dim == D);
+
+      in >> label;
+      UTIL_CHECK(label == "crystal_system");
+      in >> uCell;
+      
+      in >> label;
+      UTIL_CHECK(label == "N_cell_param");
+      in >> nCellParams;
+
+      in >> label;
+      UTIL_CHECK(label == "cell_param");
+      for (int i = 0; i < nCellParams; ++i) {
+         in >> params[i];
+      }
+ 
+      in >> label;
+      UTIL_CHECK(label == "group_name");
+      in >> groupName;
+
+      in >> label;
+      UTIL_CHECK(label == "N_monomer");
+      in >> nM;
+      UTIL_CHECK(nM > 0);
+      UTIL_CHECK(nM == mixture().nMonomer());
+
+      in >> label;
+      UTIL_CHECK(label == "ngrid");
+      in >> nGrid;
+      UTIL_CHECK(nGrid == mesh().dimensions());
+
+      DArray<RField<D> > temp;
+      temp.allocate(nM);
+      for (int i = 0; i < nM; ++i) {
+         temp[i].allocate(mesh().dimensions());
+      } 
+
+      // Read Fields;
+      MeshIterator<D> itr(mesh().dimensions());
+      for (itr.begin(); !itr.atEnd(); ++itr) {
+         for (int i = 0; i < nM; ++i) {
+            in >>std::setprecision(15)>>temp[i][itr.rank()];
+         }
+      }
+
+      int p = 0;
+      int q = 0;
+      int r = 0;
+      int s = 0;
+      int n1 =0;
+      int n2 =0;
+      int n3 =0;
+
+      if (D==3){
+         while (n1 < mesh().dimension(0)){
+            q = p;
+            n2 = 0;
+            while (n2 < mesh().dimension(1)){
+               r =q;
+               n3 = 0;
+               while (n3 < mesh().dimension(2)){
+                  for (int i = 0; i < nM; ++i) {
+                     fields[i][s] = temp[i][r];
+                  }
+                  r = r + (mesh().dimension(0) * mesh().dimension(1));
+                  ++s;
+                  ++n3;              
+               } 
+               q = q + mesh().dimension(0);
+               ++n2;
+            } 
+            ++n1;
+            ++p;        
+         }
+      }
+
+      else if (D==2){
+         while (n1 < mesh().dimension(0)){
+            r =q; 
+            n2 = 0;
+            while (n2 < mesh().dimension(1)){
+               for (int i = 0; i < nM; ++i) {
+                  fields[i][s] = temp[i][r];
+               }   
+               r = r + (mesh().dimension(0));
+               ++s;
+               ++n2;    
+            }   
+            ++q;
+            ++n1;
+         }   
+      } 
+
+      else if (D==1){
+
+         while (n1 < mesh().dimension(0)){
+            for (int i = 0; i < nM; ++i) {
+               fields[i][s] = temp[i][r];
+            }   
+            ++r;
+            ++s;
+            ++n1;    
+         }   
+      } 
+
+      else{
+         std::cout<<"Invalid Dimensions";
+      }
+
+
+
+
+
+
+
+
+
+
+
+
+      /* UTIL_CHECK(hasMesh_);
+
+      std::string label;
       IntVec<D> nGrid;
       int nM;
 
@@ -598,7 +738,7 @@ namespace Pssp
          for (int i = 0; i < nM; ++i) {
             in >> fields[i][itr.rank()];
          }
-      }
+      }*/
    }
 
    //realistically not used
@@ -663,6 +803,107 @@ namespace Pssp
    {
       int nM = mixture().nMonomer();
       MeshIterator<D> itr(mesh().dimensions());
+
+      out << "format  1   0    " <<  std::endl;
+
+      out << "dim    " <<  std::endl << "                    "<<D<< std::endl;
+
+      out << unitCell();      
+
+      out << "group_name    " <<  std::endl << "          "<<groupName_<< std::endl;
+
+      out << "N_monomer    " <<  std::endl << "                    "<<mixture().nMonomer()<< std::endl;
+
+      out << "ngrid        " <<  std::endl<<"           "<<mesh().dimensions() << std::endl;
+
+      DArray<RField<D> > temp;
+      temp.allocate(nM);
+      for (int i = 0; i < nM; ++i) {
+         temp[i].allocate(mesh().dimensions());
+      } 
+
+      int p = 0; 
+      int q = 0; 
+      int r = 0; 
+      int s = 0; 
+      int n1 =0;
+      int n2 =0;
+      int n3 =0;
+
+      if (D==3){
+         while (n3 < mesh().dimension(2)){
+            q = p; 
+            n2 = 0; 
+            while (n2 < mesh().dimension(1)){
+               r =q;
+               n1 = 0; 
+               while (n1 < mesh().dimension(0)){
+                  for (int i = 0; i < nM; ++i) {
+                     temp[i][s] = fields[i][r];
+                  }    
+                  r = r + (mesh().dimension(1) * mesh().dimension(2));
+                  ++s; 
+                  ++n1;     
+               }    
+               q = q + mesh().dimension(2);
+               ++n2;
+            }    
+            ++n3;
+            ++p;     
+         }    
+      }
+      else if (D==2){
+         while (n2 < mesh().dimension(1)){
+            r =q;
+            n1 = 0;
+            while (n1 < mesh().dimension(0)){
+               for (int i = 0; i < nM; ++i) {
+                  temp[i][s] = fields[i][r];
+               }
+               r = r + (mesh().dimension(1));
+               ++s;
+               ++n1;
+            }
+            ++q;
+            ++n2;
+         }
+      }
+
+      else if (D==1){
+
+         while (n1 < mesh().dimension(0)){
+            for (int i = 0; i < nM; ++i) {
+               temp[i][s] = fields[i][r];
+            }
+            ++r;
+            ++s;
+            ++n1;
+         }
+      }
+
+      else{
+         std::cout<<"Invalid Dimensions";
+      }
+
+      // Write Fields
+      for (itr.begin(); !itr.atEnd(); ++itr) {
+        // out << Int(itr.rank(), 5);
+         for (int j = 0; j < nM; ++j) {
+            out << "  " << Dbl(temp[j][itr.rank()], 18, 15);
+         }
+         out << std::endl;
+      }
+
+
+
+
+
+
+
+
+
+      /* int nM = mixture().nMonomer();
+      MeshIterator<D> itr(mesh().dimensions());
       out << "nGrid    " <<  mesh().dimensions() << std::endl;
       out << "nM    "    <<  nM                << std::endl;
 
@@ -674,7 +915,7 @@ namespace Pssp
          }
 
          out << std::endl;
-      }
+      }*/
    }
 
    template <int D>
