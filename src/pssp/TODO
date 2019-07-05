@@ -1,8 +1,32 @@
+TODO (for pssp pseudospectral code)
 
-TODO (for pseudospectral code)
+   - Create new functions in UnitCell, named readHeader and writeHeader,
+     to read and write UnitCell data in the format used by Fortran code
+     as a header for the field formats. Call these functions (rather 
+     than overloaded >> and << operators) in the functions that read and
+     write these file formats.
 
-1) Write tests for 2D and 3D fields and FFT.
-2) Write innerProduct and spatialAverage functions.
-3) Finish testing skeleton of System (with iterator or sweep)
-4) Finish interface of Basis<D>.
-5) Write explicit specialization of Basis<1> for 1D.
+   - Revert overloaded >> and << operators for a UnitCell to original
+     compact format, which is needed for use in C++ param file format.
+
+   - Create or modify Kgrid and symmetry adapted basis function field file 
+     formats to allow data interchange with Fortran code. Check by comparing
+     files and source code whether current conventions used in C++ Basis
+     class and those used in the Fortran code are identical for noncentrosymmetric
+     groups (They should already be the same for groups that have inversion
+     symmetry, but check this while you are at it). 
+
+   - Clean up unit test in src/pssp/tests. Add unit tests of regression 
+     (i.e., comparison to Fortran) for several classic phases, e.g., lam, 
+     hex and bcc. Ideally, these should use symmetry adapted basis function
+     file format as an input.
+
+   - Add code to read in a space group description from a file, given a
+     file name in the parameter file.
+
+   Later:
+
+   - Add point solvents.
+
+   - Add sweep functionality.
+

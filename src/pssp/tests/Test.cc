@@ -12,7 +12,7 @@
 TEST_COMPOSITE_BEGIN(PsspNsTestComposite)
 addChild(new FieldTestComposite, "field/");
 addChild(new SolverTestComposite, "solvers/");
-//addChild(new TEST_RUNNER(IteratorTest), "iterator/");
+addChild(new TEST_RUNNER(IteratorTest), "iterator/");
 TEST_COMPOSITE_END
 
 using namespace Pscf;
