@@ -76,7 +76,7 @@ BIN_DIR=$(ROOT_DIR)/bin
 # This is disabled by default. If C++11 is disabled, the code uses
 # only syntax and features defined in the older C++ 1998 standard.
 
-#UTIL_CXX11=1
+UTIL_CXX11=1
 
 #-----------------------------------------------------------------------
 # Mesage Passing Library (Disable/enable by commenting out / uncommenting).
