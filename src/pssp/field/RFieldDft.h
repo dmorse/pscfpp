@@ -72,14 +72,23 @@ namespace Pssp
       *
       * \throw Exception if the RFieldDft is already allocated.
       *
-      * \param meshDimensions vector containing number of grid points in each direction
+      * \param meshDimensions vector of grid points in each direction
       */
       void allocate(const IntVec<D>& meshDimensions);
 
       /**
-      * Return vector of mesh dimensions by constant reference.
+      * Return vector of spatial mesh dimensions by constant reference.
       */
       const IntVec<D>& meshDimensions() const;
+
+      /**
+      * Return vector of dft (Fourier) grid dimensions by constant reference.
+      *  
+      * The last element of dftDimensions() and meshDimensions() differ by
+      * about a factor of two: dftDimension()[D-1] = meshDimensions()/2 + 1.
+      * For D > 1, other elements are equal. 
+      */
+      const IntVec<D>& dftDimensions() const;
 
       /**
       * Serialize a Field to/from an Archive.
@@ -95,6 +104,9 @@ namespace Pssp
       // Vector containing number of grid points in each direction.
       IntVec<D> meshDimensions_;
 
+      // Vector containing dimensions of dft (Fourier) grid.
+      IntVec<D> dftDimensions_;
+
    };
 
    /*
@@ -108,9 +120,11 @@ namespace Pssp
          UTIL_CHECK(meshDimensions[i] > 0);
          meshDimensions_[i] = meshDimensions[i];
          if (i < D - 1) {
+            dftDimensions_[i] = meshDimensions[i];
             size *= meshDimensions[i];
          } else {
-            size *= (meshDimensions[i]/2 + 1);
+            dftDimensions_[i] = (meshDimensions[i]/2 + 1);
+            size *= dftDimensions_[i];
          }
       }
       Field<fftw_complex>::allocate(size);
@@ -123,6 +137,12 @@ namespace Pssp
    inline const IntVec<D>& RFieldDft<D>::meshDimensions() const
    {  return meshDimensions_; }
 
+   /*
+   * Return dimensions of dft grid by constant reference.
+   */
+   template <int D>
+   inline const IntVec<D>& RFieldDft<D>::dftDimensions() const
+   {  return dftDimensions_; }
 
    /*
    * Serialize a Field to/from an Archive.
@@ -133,6 +153,7 @@ namespace Pssp
    {
       Field<fftw_complex>::serialize(ar, version);
       ar & meshDimensions_;
+      ar & dftDimensions_;
    }
 
 }

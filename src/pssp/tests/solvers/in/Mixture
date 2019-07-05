@@ -12,6 +12,8 @@ Mixture{
    }
    ds   0.001
 }
-Lamellar   1.0
+crystal_system lamellar
+N_cell_param   1
+cell_param     1.0
 32
 

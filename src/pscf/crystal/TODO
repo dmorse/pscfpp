@@ -1,24 +1,4 @@
-UnitCell<D>:
-
-   Add a value Null to each LatticeType<D>::LatticeSystem
-
-   Initialize the value of latticeSystem_ to Null in the constructor, to allow 
-   checks that a LatticeSystem has been set as precondition for other functions.
-
-   Create a private function, setBasis that only sets rBasis, kBasis, drBasis.
-
-   Change setLattice() so as to call (in this order)
-      initializeToZero, setBasis(), computeDerivatives()
-
-   (This is in preparation for moving setLattice to UnitCellBase).
-
 UnitCellBase:
-
-   Private implementation changes:
-
-      Declare a pure virtual function set setBasis();
-
-      Migrate declaration of setLattice to UnitCellBase.
 
    Changes to public interface (may require changes elsewhere):
 

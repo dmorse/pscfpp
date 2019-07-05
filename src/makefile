@@ -1,7 +1,7 @@
 include config.mk
 
 # ======================================================================
-.PHONY: all fd1d pssp clean veryclean
+.PHONY: all fd1d pssp pscf clean veryclean
 
 all: 
 	cd util; $(MAKE) all
@@ -17,6 +17,10 @@ pssp:
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
 	cd pssp; $(MAKE) all
+
+pscf: 
+	cd util; $(MAKE) all
+	cd pscf; $(MAKE) all
 
 # Run all unit tests
 run-tests:

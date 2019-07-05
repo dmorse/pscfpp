@@ -64,6 +64,33 @@ public:
       TEST_ASSERT(v != u);
    }
  
+   void testComparison()
+   {
+      printMethod(TEST_FUNC);
+      int a[3]  = {2, -3, 2};
+      int b[3]  = {2, -3, 1};
+      int c[3]  = {1, -3, 1};
+      IntVec<3> va(a);
+      IntVec<3> vb(b);
+      IntVec<3> vc(c);
+      TEST_ASSERT(vc < va);
+      TEST_ASSERT(va > vc);
+      TEST_ASSERT(!(vc > va));
+      TEST_ASSERT(!(va < vc));
+      TEST_ASSERT(!(vc < vc));
+      TEST_ASSERT(!(vc > vc));
+      TEST_ASSERT(vc < vb);
+      TEST_ASSERT(vb > vc);
+      TEST_ASSERT(!(vc > vb));
+      TEST_ASSERT(!(vb < vc));
+      TEST_ASSERT(!(vb < vb));
+      TEST_ASSERT(!(vb > vb));
+      TEST_ASSERT(vb < va);
+      TEST_ASSERT(va > vb);
+      TEST_ASSERT(!(vb > va));
+      TEST_ASSERT(!(va < vb));
+   }
+ 
    void testAssignment()
    {
       printMethod(TEST_FUNC);
@@ -163,6 +190,7 @@ TEST_ADD(IntVecTest, testConstructor1)
 TEST_ADD(IntVecTest, testConstructor2)
 TEST_ADD(IntVecTest, testCopyConstructor)
 TEST_ADD(IntVecTest, testEquality)
+TEST_ADD(IntVecTest, testComparison)
 TEST_ADD(IntVecTest, testAssignment)
 TEST_ADD(IntVecTest, testAdd)
 TEST_ADD(IntVecTest, testSubtract)

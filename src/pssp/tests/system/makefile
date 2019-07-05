@@ -18,7 +18,6 @@ run: $(pssp_tests_system_OBJS) $(BLD_DIR)/$(TEST)
 	@echo `grep failed log` ", "\
               `grep successful log` "in pssp/tests/log" > count
 	@cat count
-
 clean:
 	rm -f $(pssp_tests_system_OBJS) $(pssp_tests_system_OBJS:.o=.d)
 	rm -f $(BLD_DIR)/$(TEST) $(BLD_DIR)/$(TEST).d

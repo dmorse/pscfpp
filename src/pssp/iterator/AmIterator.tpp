@@ -115,12 +115,13 @@ namespace Pssp
       systemPtr_->computeFreeEnergy();
       std::cout<<"Free Energy="<<systemPtr_->fHelmholtz();
 
-      if (cell_)
+      if (cell_){
          systemPtr_->mixture().computeTStress(systemPtr_->basis());
                        for (int m=0; m<6 ; ++m){
                 std::cout<<"Stress"<<m<<"\t"<<"="<< systemPtr_->mixture().TStress[m]<<"\n";
                  std::cout<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).params()[m]<<"\n";
-              }   
+              }  
+      } 
 
       //check for convergence else resolve SCFT equations with new Fields
       for (int itr = 1; itr <= maxItr_; ++itr) {
@@ -142,13 +143,11 @@ namespace Pssp
          // ---------Compute Stress---------------> Define a variable stress in system which must be calculated or called by this file
 
          std::cout<<"  Iteration  "<<itr<<std::endl;
-         if (isConverged()) {
-      
-           if(!cell_)
-              systemPtr_->mixture().computeTStress(systemPtr_->basis());
-         
+         if (isConverged()) {  
+          std::cout<<"----------CONVERGED----------";
+          if(cell_)
               for (int m=0; m<6 ; ++m){
-                std::cout<<"Stress"<<m<<"\t"<<"="<< systemPtr_->mixture().TStress[m]<<"\n";
+                 std::cout<<"Stress"<<m<<"\t"<<"="<< systemPtr_->mixture().TStress[m]<<"\n";
                  std::cout<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).params()[m]<<"\n";
               }
 
@@ -197,8 +196,13 @@ namespace Pssp
             systemPtr_->mixture().compute(systemPtr_->wFieldGrids(), 
                                           systemPtr_->cFieldGrids());
 
-            if (cell_)
+            if (cell_){
                systemPtr_->mixture().computeTStress(systemPtr_->basis());
+
+              for (int m=0; m<6 ; ++m){
+                std::cout<<"Stress"<<m<<"\t"<<"="<< std::setprecision (15)<< systemPtr_->mixture().TStress[m]<<"\n";
+              }
+            }
 
             for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
                systemPtr_->fft().forwardTransform(systemPtr_->cFieldGrid(i),
@@ -310,10 +314,9 @@ namespace Pssp
       std::cout<<" dError :"<<Dbl(dError)<<std::endl;
       std::cout<<" wError :"<<Dbl(wError)<<std::endl;
       error = sqrt(dError / wError);
-      
       // Depending on the value of cell_, residual errors?
 
-      std::cout<<"  Error  :"<<Dbl(error)<<std::endl;
+      std::cout<<"  Error :"<<error<<std::endl;
       if (error < epsilon_) {
          return true;
       } else {
@@ -442,13 +445,20 @@ namespace Pssp
 
          if (cell_){
             for (int m = 0; m < 6; ++m){
-               (systemPtr_->unitCell()).params()[m] = CpHists_[0][m] +
-                                                        lambda_* devCpHists_[0][m]; 
+
+                 (systemPtr_->unitCell()).SetParams( CpHists_[0][m] +lambda_* devCpHists_[0][m] ,m);
+              //   (systemPtr_->unitCell()).setLattice();
+              //   systemPtr_->mixture().setupUnitCell(systemPtr_->unitCell());
+              //   systemPtr_->basis().update();
             }
-                       for (int m=0; m<6 ; ++m){
-                std::cout<<"Stress"<<m<<"\t"<<"="<< systemPtr_->mixture().TStress[m]<<"\n";
-                 std::cout<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).params()[m]<<"\n";
-              }
+
+                  (systemPtr_->unitCell()).setLattice();
+                  systemPtr_->mixture().setupUnitCell(systemPtr_->unitCell());
+                  systemPtr_->basis().update();
+
+            for (int m=0; m<6 ; ++m){
+               std::cout<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).params()[m]<<"\n";
+            }
          } 
 
       } else {
@@ -502,12 +512,13 @@ namespace Pssp
             for (int m = 0; m < 6; ++m){
                (systemPtr_->unitCell()).SetParams( wCpArrays_[m] + lambda_ * dCpArrays_[m],m);
             }
+
+            (systemPtr_->unitCell()).setLattice();
             systemPtr_->mixture().setupUnitCell(systemPtr_->unitCell());
-	    systemPtr_->basis().makedksq(systemPtr_->unitCell());
+	    systemPtr_->basis().update();
 
               for (int m=0; m<6 ; ++m){
-                std::cout<<"Stress"<<m<<"\t"<<"="<< systemPtr_->mixture().TStress[m]<<"\n";
-                 std::cout<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).params()[m]<<"\n";
+	          std::cout<<"Parameter"<<m<<"\t"<<"="<< std::setprecision (15)<<(systemPtr_->unitCell()).params()[m]<<"\n";
               }
 
 

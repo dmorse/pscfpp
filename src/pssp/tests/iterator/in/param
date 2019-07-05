@@ -20,7 +20,9 @@ System{
         1   1   0.0
    }
    
-   Lamellar 1.5261093078E+00 
+   crystal_system   lamellar 
+   N_cell_param     1
+   cell_param       1.5261093078E+00 
    10
 
    Basis I

@@ -9,18 +9,16 @@
 
 #include <pscf/math/IntVec.h>
 #include <pssp/field/RFieldDft.h>
-#include <pscf/mesh/MeshIterator.h>
 #include <pscf/mesh/Mesh.h>
-#include <pscf/crystal/shiftToMinimum.h>
+#include <pscf/crystal/UnitCell.h>
+#include <pscf/crystal/SpaceGroup.h>
 #include <util/containers/DArray.h>
 #include <util/containers/GArray.h>
 #include <util/containers/DMatrix.h>
+#include <set>
 
 namespace Pscf { 
-
-   template <int D> class UnitCell;
-
-namespace Pssp
+namespace Pssp 
 { 
 
    using namespace Util;
@@ -33,9 +31,9 @@ namespace Pssp
    template <int D>
    class Basis 
    {
-   
+
    public:
-      
+
       /**
       * Wavevector used to construct a basis function.
       */ 
@@ -44,27 +42,26 @@ namespace Pssp
 
       public:
 
-         // Coefficient of this wave within associated star basis function
+         // Coefficient of wave within star basis function
          std::complex<double> coeff;
 
          // Square magnitude of associated wavevector
          double sqNorm;
 
-         // Integer indices of this wavevector
+         // Integer indices of wave, on discrete Fourier transform mesh.
          IntVec<D> indicesDft;
+
+         // Integer indices of wave, in first Brillouin zone.
+         IntVec<D> indicesBz;
 
          // Index of star containing this wavevector
          int starId;
 
          // Is this wave represented implicitly in DFT of real field?
          bool implicit;
-         
-      //friends:
-
-         friend class Basis;
 
       };
-  
+
       /**
       * List of wavevectors that are related by space-group symmetries.
       *
@@ -77,6 +74,18 @@ namespace Pssp
       {
 
       public:
+
+         /**
+         * Eigenvalue of negative Laplacian for this star.
+         *
+         * Equal to square norm of any wavevector in this star.
+         */
+         double eigen;
+
+         /**
+         * Array of derivatives of eigenvalue w/ respect to lattice parameters.
+         */
+         FArray<double, 6> dEigen;
 
          /**
          * Number of wavevectors in the star.
@@ -98,33 +107,27 @@ namespace Pssp
          *
          * A star is said to be closed under inversion iff, for each vector
          * G in the star, -G is also in the star. If a star S is not closed 
-         * under inversion, then there is another star S that is related to 
+         * under inversion, then there is another star S' that is related to 
          * S by inversion, i.e., such that for each G in S, -G is in S'. 
          * Stars that are related by inversion are listed consecutively.
          * 
-         * If a star is closed under inversion, invertFlag = 0.
+         * If a star is closed under inversion, then invertFlag = 0.
          *
-         * If a star is not closed under inversion, then invertFlag = +1 or -1,
-         * with inverFlag = +1 for the first star in the pair of stars related 
-         * by inversion and invertFlag = -1 for the second.
+         * If a star is not closed under inversion, then invertFlag = +1 
+         * or -1, with inverFlag = +1 for the first star in the pair of 
+         * stars related by inversion and invertFlag = -1 for the second.
          *
-         * In a centro-symmetric group, all stars are closed under inversion.
-         * In a non-centro-symmetric group, some stars may still be closed 
-         * under inversion.
+         * In a centro-symmetric group, all stars are closed under 
+         * inversion. In a non-centro-symmetric group, some stars may 
+         * still be closed under inversion.
          */
          int invertFlag; 
 
          /**
-         * Index for inversion symmetry of associated basis function.
-         *
-         * If basis function is even under inversion signFlag = 1.
-         * If basis function is odd under inversion signFlag = -1.
-         */
-         int signFlag; 
-
-         /**
          * Integer indices of characteristic wave of this star.
          *
+         * Wave given here is in or on boundary of first Brillouin zone.
+         * As a result, computing the norm of this wave must yield eigen.
          * For invertFlag = 0 or 1, this is the first wave in the star.
          * For invertFlag = -1, this is the last wave in the star.
          */
@@ -138,10 +141,6 @@ namespace Pssp
          */
          bool cancel;
 
-      //friends:
-
-         friend class Basis;
-
       };
 
       // Public member functions of Basis
@@ -151,10 +150,6 @@ namespace Pssp
       */
       Basis();
 
-      // Derivatives of dksq with respect to each 
-      // of the parameters (rows)
-      DMatrix<double> dksq; 
- 
       /**
       * Construct basis for a specific grid and space group.
       *
@@ -163,9 +158,15 @@ namespace Pssp
       */
       void makeBasis(const Mesh<D>& mesh, const UnitCell<D>& unitCell, 
                      std::string groupName);
-     
+
       /**
-      * Convert field from symmetry-adapted representation to complex DFT.
+      * Construct basis for a specific grid and space group.
+      */
+      void makeBasis(const Mesh<D>& mesh, const UnitCell<D>& unitCell, 
+                     const SpaceGroup<D>& group);
+
+      /**
+      * Convert field from symmetry-adapted representation to DFT.
       *
       * \param components coefficients of symmetry-adapted basis functions.
       * \param dft complex DFT representation of a field.
@@ -183,10 +184,37 @@ namespace Pssp
                                        DArray<double>& components);   
 
       /**
+      * Update values after change in unit cell parameters.
+      */
+      void update();
+
+      /**
+      * Print a list of all waves to an output stream.
+      */
+      void outputWaves(std::ostream& out) const;
+
+      /**
+      * Print a list of all stars to an output stream.
+      */
+      void outputStars(std::ostream& out) const;
+
+      /**
+      * Returns true if valid, false otherwise.
+      */
+      bool isValid() const;
+
+      #if 1 
+      // Old code to allow current code to compile
+      // Derivatives of dksq with respect to each 
+      // of the parameters (rows)
+      //DMatrix<double> dksq; 
+
+      /**
       * Calculates dksq_ assuming ksq are in non increasing order of ksq 
       * and pairs of stars related by inversion are listed consecutively
       */
-      void makedksq(const UnitCell<D>& unitCell);
+      //void makedksq(const UnitCell<D>& unitCell){};
+      #endif
 
       // Accessors
 
@@ -199,43 +227,46 @@ namespace Pssp
       * Total number of stars.
       */
       int nStar() const;
-   
+
       /**
       * Total number of nonzero symmetry-adapted basis functions.
       */
       int nBasis() const;
-  
-      /** 
-      * Get a specific Wave, access by integer array index.
-      */
-      Wave& wave(int i);
-  
-      /** 
-      * Get a Wave, access wave by IntVec of indices.
-      */
-      Wave& wave(IntVec<D> vector);
-  
+
       /** 
       * Get a Star, access by integer index.
       */
-      Star& star(int i);
+      Star const & star(int i) const;
+
+      /** 
+      * Get a specific Wave, access by integer index.
+      */
+      Wave const & wave(int i) const;
+
+      /** 
+      * Get integer index of a Wave.
+      */
+      int waveId(IntVec<D> vector) const;
 
    private:
-  
+
       /// Array of all Wave objects (all wavevectors)
       DArray<Wave> waves_;
 
       /// Array of Star objects (all stars of wavevectors).
       GArray<Star> stars_;
-   
+
       /// Indexing that allows identification by IntVec
-      DArray<int> waveId_;
-     
+      DArray<int> waveIds_;
+
       /// Total number of wavevectors
       int nWave_;
 
       /// Total number of stars.
       int nStar_;
+
+      /// Total number of basis functions (or uncancelled stars).
+      int nBasis_;
 
       /// Pointer to associated UnitCell<D>
       const UnitCell<D>* unitCellPtr_;
@@ -243,25 +274,53 @@ namespace Pssp
       /// Pointer to associated Mesh<D>
       const Mesh<D>* meshPtr_;
 
+      /**
+      * Construct array of ordered waves.
+      */
+      void makeWaves();
+
+      /**
+      * Sort waves of equal magnitude into stars related by symmetry.
+      */
+      void makeStars(const SpaceGroup<D>& group);
+
+      /**
+      * Access associated Mesh<D> as reference.
+      */
+      Mesh<D> const & mesh() const { return *meshPtr_; }
+
+      /**
+      * Access associated UnitCell<D> as reference.
+      */
+      UnitCell<D> const & unitCell() const { return *unitCellPtr_; }
+
    };
 
    template <int D>
    inline int Basis<D>::nWave() const
-   { return nWave_; }
+   {  return nWave_; }
 
    template <int D>
    inline int Basis<D>::nStar() const
-   { return nStar_; }
+   {  return nStar_; }
 
    template <int D>
    inline 
-   typename Basis<D>::Wave& Basis<D>::wave(int i)
-   { return waves_[i]; }
+   typename Basis<D>::Wave const & Basis<D>::wave(int i) const
+   {  return waves_[i]; }
 
    template <int D>
    inline 
-   typename Basis<D>::Star& Basis<D>::star(int i)
-   { return stars_[i]; }
+   typename Basis<D>::Star const & Basis<D>::star(int i) const
+   {  return stars_[i]; }
+
+   template <int D>
+   int Basis<D>::waveId(IntVec<D> vector) const
+   {
+      meshPtr_->shift(vector);
+      int rank = mesh().rank(vector);
+      return waveIds_[rank];
+   }
 
 } // namespace Pscf:Pssp
 } // namespace Pscf
