@@ -636,14 +636,14 @@ namespace Pssp
 
             // Make complex component for first star
             component = std::complex<double>(components[is], 
-                                             components[is+1]);
+                                             -components[is+1]);
             component /= sqrt(2.0);
 
             // Loop over waves in first star
             starPtr = &stars_[is];
             for (iw = starPtr->beginId; iw < starPtr->endId; ++iw) {
                wavePtr = &waves_[iw];
-               if (!wavePtr->implicit) {
+               if (!(wavePtr->implicit)) {
                   coeff = component*(wavePtr->coeff);
                   indices = wavePtr->indicesDft;    
                   rank = dftMesh.rank(indices);
@@ -654,10 +654,11 @@ namespace Pssp
 
             // Loop over waves in second star
             starPtr = &stars_[is+1];
+            UTIL_CHECK(starPtr->invertFlag == -1);
             component = conj(component);
             for (iw = starPtr->beginId; iw < starPtr->endId; ++iw) {
                wavePtr = &waves_[iw];
-               if (!wavePtr->implicit) {
+               if (!(wavePtr->implicit)) {
                   coeff = component*(wavePtr->coeff);
                   indices = wavePtr->indicesDft;
                   rank = dftMesh.rank(indices);
@@ -733,11 +734,8 @@ namespace Pssp
             UTIL_CHECK(abs(wavePtr->coeff) > 1.0E-8);
             component /= wavePtr->coeff;
             component *= sqrt(2.0);
-            if (starPtr->invertFlag == -1) {
-               component = conj(component);
-            }
             components[is] = component.real();
-            components[is+1] = component.imag();
+            components[is+1] = -component.imag();
 
             is += 2;
          } else {
@@ -747,19 +745,11 @@ namespace Pssp
       } //  loop over star index is
    }
 
+
    template <int D>
    int Basis<D>::nBasis() const
    {  return nBasis_; }
 
-      #if 0 
-      int count = 0;
-      for (int i = 0; i < stars_.capacity(); ++i) {
-         if (!stars_[i].cancel) {
-            count++;
-         }
-      }
-      return count;
-      #endif
 
    template <int D>
    void Basis<D>::outputWaves(std::ostream& out) const
@@ -785,7 +775,8 @@ namespace Pssp
          out << std::endl;
       }
    }
- 
+
+
    template <int D>
    void Basis<D>::outputStars(std::ostream& out) const
    {
