@@ -9,17 +9,16 @@ TODO (for pssp pseudospectral code)
    - Revert overloaded >> and << operators for a UnitCell to original
      compact format, which is needed for use in C++ param file format.
 
-   - Create or modify Kgrid and symmetry adapted basis function field file 
-     formats to allow data interchange with Fortran code. Check by comparing
-     files and source code whether current conventions used in C++ Basis
-     class and those used in the Fortran code are identical for noncentrosymmetric
-     groups (They should already be the same for groups that have inversion
-     symmetry, but check this while you are at it). 
+   - Create or modify symmetry adapted basis function and k-grid field file 
+     formats to allow data interchange with Fortran code. If necessary, 
+     modify Basis class to make sure it uses the same convention as the
+     Fortran code for basis functions associated with pairs of open 
+     stars with non-centrosymmetric groups. 
 
    - Clean up unit test in src/pssp/tests. Add unit tests of regression 
-     (i.e., comparison to Fortran) for several classic phases, e.g., lam, 
-     hex and bcc. Ideally, these should use symmetry adapted basis function
-     file format as an input.
+     (i.e., comparison to Fortran) for several classic phases, e.g., 
+     lamellar, hex and bcc. Examples should include some with space
+     groups that are non centro-symmetric. 
 
    - Add code to read in a space group description from a file, given a
      file name in the parameter file.
