@@ -14,8 +14,8 @@ or spherical coordinates (i.e., brushes, interfaces, and cylindrical or
 circular micelles). 
 
 Some differences in design relative to the existing Fortran code for 
-periodic structure, and the expected advantages of the new code are 
-as follows:
+periodic structure, and the expected advantages of the new code are as 
+follows:
 
 - A more flexible design that allow implementation of several different 
 SCFT solvers that are designed for use in different geometries or that
@@ -24,17 +24,15 @@ are based on different algorithms, within the same framework.
 - A description of polymer topology that allows simulation of mixtures 
 containing arbitrarily complex acyclic branched block copolymers and 
 homopolymers, in addition to the linear chains allowed by the existing 
-code.  (This is completed).
+code. 
 
-- The transition from Fortran 90 to a new design in object oriented C++ 
-will facilitate design of simulations of phase coexistence, by allowing 
-the creation of several independent objects to model different phases. 
-The design of the fortran PSCF program was never intended to allow this.
+- Use of object oriented C++ will facilitate simulations of phase 
+coexistence, by making it simple to creation of several independent 
+objects to represent different phases. 
 
-- The adoption of C++ will simplify implementation and maintenance of 
-specialized code to use graphical process units (GPUs) to accelerate 
-core calculations, since kernel code for GPUs is usually written in a 
-variant of C/C++.
+- Adoption of C++ will simplify implementation and maintenance of code 
+to use graphical process units (GPUs) to accelerate core calculations, 
+since kernel code for GPUs is usually written in a variant of C/C++.
 
 This C++ version of PSCF is free, open source software. It is distributed 
 under the terms of the GNU General Public License as (GPL) published by 

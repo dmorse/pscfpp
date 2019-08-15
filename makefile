@@ -12,6 +12,9 @@ all:
 fd1d:
 	cd bld; $(MAKE) fd1d
 
+pssp:
+	cd bld; $(MAKE) pssp
+
 # ==========================================================================
 # Test targets
 
