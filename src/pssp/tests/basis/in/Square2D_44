@@ -1,2 +1,4 @@
-square  4.0
+crystal_system   square  
+N_cell_param     1
+cell_param       4.0
 4 4

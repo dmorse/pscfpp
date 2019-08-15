@@ -1,24 +1,11 @@
 TODO (Basis class):
 
-1) Add code to explicitly guarantee that coefficients of G and -G are
-   complex conjugates within a closed star in a non-centrosymmetric group.
-
-2) Possibility: Add a partnerId to Basis::Wave. Once you've identified 
+1) Possibility: Add a partnerId to Basis::Wave. Once you've identified 
    the partner, why not keep track of it?
 
-3) Keep adding to bool Basis::isValid() function:
+2) Add code to read a space group from a file.
 
-      - Closure rules are satisifed: If G is in a star, -G is either in
-        the same star (if invertFlag = 0) or its partner. 
-
-      - Coefficients of G and -G are all complex conjugates.
-
-   On failure, print message explaining error before returning false.
-   Return true iff object is valid. 
-
-4) Add code to read a space group from a file.
-
-5) Test Basis code with groups other than the identity. 
+3) Test Basis code with groups other than the identity. 
 
    Examples: 2D Square, 
              2D Square centered (has translations and cancellations)
@@ -28,13 +15,14 @@ TODO (Basis class):
 
    Make sure to test with even and odd mesh dimension elements
 
-6) Move computation of dEigen for one vector a private function, 
-   call this in makeStars() and udpate(). Alternative: Move this to 
-   UnitCell, giving functions ksq() and dksq().
+4) Move computation of dEigen for one vector to a private function, 
+   call this in makeStars() and udpate(). Alternative: Make this 
+   a public member of UnitCell, giving functions ksq() and dksq().
    Unit tests to test computation of dEigen member of each vector.
    makeStars() function. Test special cases for which answer can be
    worked out analytically.
 
-7) Write outputBasis(std::ostream& out) function to write Basis to an 
-   output stream (e.g., a file). 
+5) Possibility: Convert TWave::phase to a Rational value. Build 
+   in treatment of corresponding coefficient for special cases of
+   phase = 0, phase = +- 1/2, phase = +- 1/4.
 
