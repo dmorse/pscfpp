@@ -71,7 +71,7 @@ namespace Pscf
    };
 
    // Friend functions and operators
-   
+
    /**
    * istream extractor for a IntVec<D, T>.
    *
@@ -101,7 +101,7 @@ namespace Pscf
    * \return modified output stream
    */
    template <int D, typename T>
-   std::ostream& operator << (std::ostream& out, const IntVec<D, T> &vector) 
+   std::ostream& operator << (std::ostream& out, const IntVec<D, T> &vector)
    {
       for (int i = 0; i < D; ++i) {
          out.width(IntVec<D, T>::Width);
@@ -116,8 +116,8 @@ namespace Pscf
    * \return true if v1 == v2, false otherwise.
    */
    template <int D, typename T>
-   inline 
-   bool operator == (const IntVec<D, T>& v1, const IntVec<D, T>& v2) 
+   inline
+   bool operator == (const IntVec<D, T>& v1, const IntVec<D, T>& v2)
    {
       for (int i = 0; i < D; ++i) {
          if (v1[i] != v2[i]) {
@@ -126,15 +126,15 @@ namespace Pscf
       }
       return true;
    }
-   
+
    /**
    * Equality of an IntVec<D> and a Vec<D, T>
    *
    * \return true if v1 == v2, false otherwise.
    */
    template <int D, typename T>
-   inline 
-   bool operator == (const IntVec<D, T>& v1, const Vec<D, T>& v2) 
+   inline
+   bool operator == (const IntVec<D, T>& v1, const Vec<D, T>& v2)
    {
       for (int i = 0; i < D; ++i) {
          if (v1[i] != v2[i]) {
@@ -143,15 +143,15 @@ namespace Pscf
       }
       return true;
    }
-   
+
    /**
    * Equality of an Vec<D, T> and an IntVec<D, T>
    *
    * \return true if v1 == v2, false otherwise.
    */
    template <int D, typename T>
-   inline 
-   bool operator == (const Vec<D, T>& v1, const IntVec<D, T>& v2) 
+   inline
+   bool operator == (const Vec<D, T>& v1, const IntVec<D, T>& v2)
    {  return (v2 == v1); }
 
    /**
@@ -161,17 +161,17 @@ namespace Pscf
    */
    template <int D, typename T>
    inline
-   bool operator != (const IntVec<D, T>& v1, const IntVec<D, T>& v2) 
+   bool operator != (const IntVec<D, T>& v1, const IntVec<D, T>& v2)
    { return !(v1 == v2); }
-   
+
    /**
    * Inequality of an IntVec<D> and a Vec<D, T>
    *
    * \return true if v1 == v2, false otherwise.
    */
    template <int D, typename T>
-   inline 
-   bool operator != (const IntVec<D, T>& v1, const Vec<D, T>& v2) 
+   inline
+   bool operator != (const IntVec<D, T>& v1, const Vec<D, T>& v2)
    {  return !(v1 == v2); }
 
    /**
@@ -180,49 +180,75 @@ namespace Pscf
    * \return true if v1 == v2, false otherwise.
    */
    template <int D, typename T>
-   inline 
-   bool operator != (const Vec<D, T>& v1, const IntVec<D, T>& v2) 
+   inline
+   bool operator != (const Vec<D, T>& v1, const IntVec<D, T>& v2)
    {  return !(v2 == v1); }
 
    /**
    * Less than comparison for two IntVec<D, T>s.
    *
+   * Elements with lower array indices are treated as more signficant. 
+   *
    * \return true if v1 < v2, false otherwise.
    */
    template <int D, typename T>
-   inline 
-   bool operator < (const IntVec<D, T>& v1, const IntVec<D, T>& v2) 
+   inline
+   bool operator < (const IntVec<D, T>& v1, const IntVec<D, T>& v2)
    {
       for (int i = 0; i < D; ++i) {
          if (v1[i] > v2[i]) {
            return false;
-         } else 
+         } else
          if (v1[i] < v2[i]) {
             return true;
-         } 
+         }
       }
+      // If loop completes, the vectors are equal
       return false;
    }
-   
+
+   /**
+   * Less than or equal to comparison for two IntVec<D, T>s.
+   *
+   * Elements with lower array indices are more signficant digits.
+   *
+   * \return true if v1 < v2, false otherwise.
+   */
+   template <int D, typename T>
+   inline
+   bool operator <= (const IntVec<D, T>& v1, const IntVec<D, T>& v2)
+   {
+      for (int i = 0; i < D; ++i) {
+         if (v1[i] > v2[i]) {
+           return false;
+         } else
+         if (v1[i] < v2[i]) {
+            return true;
+         }
+      }
+      // If loop completes, the vectors are equal
+      return true;
+   }
+
    /**
    * Greater than comparison for two IntVec<D, T>s.
    *
    * \return true if v1 > v2, false otherwise.
    */
    template <int D, typename T>
-   inline 
-   bool operator > (const IntVec<D, T>& v1, const IntVec<D, T>& v2) 
-   {
-      for (int i = 0; i < D; ++i) {
-         if (v1[i] < v2[i]) {
-           return false;
-         } else 
-         if (v1[i] > v2[i]) {
-            return true;
-         } 
-      }
-      return false;
-   }
-   
+   inline
+   bool operator > (const IntVec<D, T>& v1, const IntVec<D, T>& v2)
+   {  return !(v1 <= v2); }
+
+   /**
+   * Greater than or equal to comparison for two IntVec<D, T>s.
+   *
+   * \return true if v1 >= v2, false otherwise.
+   */
+   template <int D, typename T>
+   inline
+   bool operator >= (const IntVec<D, T>& v1, const IntVec<D, T>& v2)
+   {  return !(v1 < v2); }
+
 }
 #endif
