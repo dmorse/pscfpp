@@ -51,6 +51,9 @@ namespace Pssp
       /// Monomer concentration / volume fraction field type.
       typedef typename Propagator<D>::CField CField;
 
+      /// \name Construction and Destruction
+      //@{
+
       /**
       * Constructor.
       */
@@ -61,7 +64,8 @@ namespace Pssp
       */
       ~System();
 
-      /// \name Lifetime (Actions)
+      //@}
+      /// \name Lifetime (Primary Actions)
       //@{
 
       /**
@@ -82,14 +86,14 @@ namespace Pssp
       void readParam();
 
       /**
-      * Read body of input parameters block (without opening and closing lines).
+      * Read body of parameter block (without opening and closing lines).
       *
       * \param in input parameter stream
       */
       virtual void readParameters(std::istream& in);
 
       /**
-      * Read command script.
+      * Read command script from a file.
       * 
       * \param in command script file.
       */
@@ -100,12 +104,16 @@ namespace Pssp
       */
       void readCommands();
 
+      //@}
+      /// \name Thermodynamic Properties
+      //@{
+
       /**
       * Compute free energy density and pressure for current fields.
       *
       * This function should be called after a successful call of
-      * iterator().solve(). Resulting values are returned by the 
-      * freeEnergy() and pressure() accessor functions.
+      * Iterator::solve(). Resulting values are stored and then
+      * accessed by the fHelmholtz() and pressure() functions.
       */
       void computeFreeEnergy();
 
@@ -119,147 +127,6 @@ namespace Pssp
       * \param out output stream 
       */
       void outputThermo(std::ostream& out);
-
-      //@}
-      /// \name Fields
-      //@{
-
-      /**
-      * Get array of all chemical potential fields in star basis.
-      *
-      * The array capacity is equal to the number of monomer types.
-      */
-      DArray<DArray <double> >& wFields();
-
-      /**
-      * Get chemical potential field for a specific monomer type.
-      *
-      * \param monomerId integer monomer type index
-      */
-      DArray<double>& wField(int monomerId);
-      
-      /**
-      * Get array of all chemical potential fields in cartesian space.
-      *
-      * The array capacity is equal to the number of monomer types.
-      */
-      DArray<WField>& wFieldGrids();
-
-      WField& wFieldGrid(int monomerId);
-
-      /**
-      * Get array of all chemical potential fields on k-space
-      *
-      * The array capacity is equal to the number of monomer types.
-      */
-      DArray<RFieldDft<D> >& wFieldDfts();
-
-      RFieldDft<D>& wFieldDft(int monomerId);
-
-      /**
-      * Get array of all chemical potential fields in star basis.
-      *
-      * The array capacity is equal to the number of monomer types.
-      */
-      DArray<DArray <double> >& cFields();
-
-      /**
-      * Get chemical potential field for a specific monomer type.
-      *
-      * \param monomerId integer monomer type index
-      */
-      DArray<double>& cField(int monomerId);
-
-      /**
-      * Get array of all chemical potential fields in cartesian space.
-      *
-      * The array capacity is equal to the number of monomer types.
-      */
-      DArray<CField>& cFieldGrids();
-
-      CField& cFieldGrid(int monomerId);
-
-      /**
-      * Get array of all chemical potential fields in k-space.
-      *
-      * The array capacity is equal to the number of monomer types.
-      */
-      DArray<RFieldDft<D> >& cFieldDfts();
-
-      RFieldDft<D>& cFieldDft(int monomerId);
-
-      /**
-      * Read chemical potential fields from file.
-      *
-      * \param in input stream (i.e., input file)
-      */
-      void readFields(std::istream& in, DArray< DArray <double> >& fields);
-
-      void readRFields(std::istream& in, DArray< RField<D> >& fields);
-
-      void readKFields(std::istream& in, DArray< RFieldDft<D> >& fields);
-      /**
-      * Write concentration or chemical potential fields to file.
-      *
-      * \param out output stream (i.e., output file)
-      * \param fields array of fields for different species
-      */
-      void writeFields(std::ostream& out, DArray< DArray <double> > const & fields);
-
-      void writeRFields(std::ostream& out, DArray< RField<D> > const& fields);
-
-      void writeKFields(std::ostream& out, DArray< RFieldDft<D> > const& fields);
-
-      //@}
-      /// \name Accessors (get objects by reference)
-      //@{
-
-      /**
-      * Get Mixture by reference.
-      */
-      Mixture<D>& mixture();
-
-      /**
-      * Get spatial discretization mesh by reference.
-      */
-      Mesh<D>& mesh();
-
-      /**
-      * Get crystal unitCell (i.e., lattice type and parameters) by reference.
-      */
-      UnitCell<D>& unitCell();
-
-      /**
-      * Get interaction (i.e., excess free energy model) by reference.
-      */
-      ChiInteraction& interaction();
-
-      /**
-      * Get the Iterator by reference.
-      */
-      //temporarily changed to allow testing on member functions
-      AmIterator<D>& iterator();
-
-      /**
-      * Get basis object by reference.
-      */
-      Basis<D>& basis();
-
-      FFT<D>& fft();
-      /**
-      * Get homogeneous mixture (for reference calculations).
-      */
-      Homogeneous::Mixture& homogeneous();
-
-      /**
-      * Get FileMaster by reference.
-      */
-      FileMaster& fileMaster();
-
-      /** 
-      * Get group name.
-      */  
-      std::string groupName();
 
       /**
       * Get precomputed Helmoltz free energy per monomer / kT.
@@ -278,6 +145,215 @@ namespace Pssp
       double pressure() const;
 
       //@}
+      /// \name Field File I/O
+      //@{
+
+      /**
+      * Read concentration or chemical potential field components from file.
+      *
+      * This function writes components in a symmetry adapted basis. 
+      * The capacity of the array is equal to nMonomer, and fields[i] is
+      * the field associated with monomer type i.
+      *
+      * \param in input stream (i.e., input file)
+      */
+      void readFields(std::istream& in, DArray< DArray <double> >& fields);
+
+      /**
+      * Write concentration or chemical potential field components to file.
+      *
+      * This function writes components in a symmetry adapted basis.
+      *
+      * \param out output stream (i.e., output file)
+      * \param fields array of fields for different species
+      */
+      void writeFields(std::ostream& out, 
+                       DArray< DArray <double> > const & fields);
+
+      /**
+      * Read an array of RField objects (fields on an r-space grid) from file.
+      *
+      * The capacity of the array is equal to nMonomer, and fields[i] is
+      * the field associated with monomer type i.
+      * 
+      * \param in input stream (i.e., input file)
+      */
+      void readRFields(std::istream& in, DArray< RField<D> >& fields);
+
+      /**
+      * Write an array of RField objects (fields on an r-space grid) to file.
+      *
+      * \param out output stream (i.e., output file)
+      * \param fields array of fields for different species
+      */
+      void writeRFields(std::ostream& out, 
+                        DArray< RField<D> > const& fields);
+
+      /**
+      * Read an RFieldDft (a real field on a k-space grid) from file.
+      *
+      * The capacity of the array is equal to nMonomer, and fields[i] is
+      * the discrete Fourier transform of the field for monomer type i.
+      * 
+      * \param in input stream (i.e., input file)
+      * \param fields array of fields for different species
+      */
+      void readKFields(std::istream& in, DArray< RFieldDft<D> >& fields);
+
+
+      /**
+      * Write an RFieldDft (a real field on a k-space grid) to file.
+      *
+      * \param out output stream (i.e., output file)
+      * \param fields array of fields for different species
+      */
+      void writeKFields(std::ostream& out, 
+                        DArray< RFieldDft<D> > const& fields);
+
+      //@}
+      /// \name Field Accessor Functions
+      //@{
+
+      /**
+      * Get array of all chemical potential fields expanded in a basis.
+      *
+      * The array capacity is equal to the number of monomer types.
+      */
+      DArray<DArray <double> >& wFields();
+
+      /**
+      * Get chemical potential field for a specific monomer type.
+      *
+      * \param monomerId integer monomer type index
+      */
+      DArray<double>& wField(int monomerId);
+      
+      /**
+      * Get array of all chemical potential fields on an r-space grid.
+      *
+      * The array capacity is equal to the number of monomer types.
+      */
+      DArray<WField>& wFieldGrids();
+
+      /**
+      * Get chemical potential field for one monomer type on r-space grid.
+      *
+      * \param monomerId integer monomer type index
+      */
+      WField& wFieldGrid(int monomerId);
+
+      /**
+      * Get array of all chemical potential fields in k-space.
+      * 
+      * The array capacity is equal to the number of monomer types.
+      */
+      DArray<RFieldDft<D> >& wFieldDfts();
+
+      /**
+      * Get chemical potential field for one monomer type in k-space.
+      *
+      * \param monomerId integer monomer type index
+      */
+      RFieldDft<D>& wFieldDft(int monomerId);
+
+      /**
+      * Get array of all concentration fields expanded in a basis.
+      *
+      * The array capacity is equal to the number of monomer types.
+      */
+      DArray<DArray <double> >& cFields();
+
+      /**
+      * Get concentration field for one monomer type expanded in a basis.
+      *
+      * \param monomerId integer monomer type index
+      */
+      DArray<double>& cField(int monomerId);
+
+      /**
+      * Get array of all concentration fields on r-space grid.
+      *
+      * The array capacity is equal to the number of monomer types.
+      */
+      DArray<CField>& cFieldGrids();
+
+      /**
+      * Get concentration field for one monomer type on r-space grid.
+      *
+      * \param monomerId integer monomer type index
+      */
+      CField& cFieldGrid(int monomerId);
+
+      /**
+      * Get array of all concentration fields in k-space.
+      *
+      * The array capacity is equal to the number of monomer types.
+      */
+      DArray<RFieldDft<D> >& cFieldDfts();
+
+      /**
+      * Get concentration field for one monomer type on k-space grid.
+      *
+      * \param monomerId integer monomer type index
+      */
+      RFieldDft<D>& cFieldDft(int monomerId);
+
+      //@}
+      /// \name Miscellaneous Accessors 
+      //@{
+
+      /**
+      * Get Mixture by reference.
+      */
+      Mixture<D>& mixture();
+
+      /**
+      * Get spatial discretization mesh by reference.
+      */
+      Mesh<D>& mesh();
+
+      /**
+      * Get UnitCell (i.e., lattice type and parameters) by reference.
+      */
+      UnitCell<D>& unitCell();
+
+      /**
+      * Get Interaction (i.e., excess free energy model) by reference.
+      */
+      ChiInteraction& interaction();
+
+      /**
+      * Get the Iterator by reference.
+      */
+      //temporarily changed to allow testing on member functions
+      AmIterator<D>& iterator();
+
+      /**
+      * Get associated Basis object by reference.
+      */
+      Basis<D>& basis();
+
+      /**
+      * Get associated FFT object.
+      */
+      FFT<D>& fft();
+
+      /**
+      * Get homogeneous mixture (for reference calculations).
+      */
+      Homogeneous::Mixture& homogeneous();
+
+      /**
+      * Get FileMaster by reference.
+      */
+      FileMaster& fileMaster();
+
+      /** 
+      * Get group name.
+      */  
+      std::string groupName();
+
+      //@}
 
    private:
 
@@ -292,12 +368,12 @@ namespace Pssp
       Mesh<D> mesh_;
 
       /**
-      * group name.
+      * Group name.
       */
       std::string groupName_;
 
       /**
-      * Crystallographic unit cell (type and dimensions).
+      * Crystallographic unit cell (crystal system and cell parameters).
       */
       UnitCell<D> unitCell_;
 
@@ -356,8 +432,7 @@ namespace Pssp
       DArray<WField> wFieldGrids_;
 
       /**
-      * work space for chemical potential fields
-      *
+      * Work space for chemical potential fields
       */
       DArray<RFieldDft<D> > wFieldDfts_;
 
@@ -368,8 +443,18 @@ namespace Pssp
       */
       DArray<DArray <double> > cFields_;
 
+      /**
+      * Array of concentration fields on real space grid.
+      *
+      * Indexed by monomer typeId, size = nMonomer.
+      */
       DArray<CField> cFieldGrids_;
 
+      /**
+      * Array of concentration fields on Fourier space grid.
+      *
+      * Indexed by monomer typeId, size = nMonomer.
+      */
       DArray<RFieldDft<D> > cFieldDfts_;
 
       /**

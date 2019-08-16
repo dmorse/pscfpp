@@ -30,7 +30,9 @@ class BasisTest : public UnitTest
 public:
 
    void setUp()
-   {}
+   {
+      setVerbose(2);
+   }
 
    void tearDown()
    {}
@@ -110,10 +112,10 @@ public:
       TEST_ASSERT(eq(basis.nStar(), 5));
       TEST_ASSERT(eq(basis.nBasis(), 5));
 
-      #if 0
-      basis.outputWaves(std::cout);
-      basis.outputStars(std::cout);
-      #endif
+      if (verbose() > 1) {
+         basis.outputWaves(std::cout);
+         basis.outputStars(std::cout);
+      }
 
    }
 
@@ -180,11 +182,11 @@ public:
       TEST_ASSERT(eq(basis.nBasis(), 4));
       TEST_ASSERT(basis.isValid());
 
-      #if 0 
-      basis.outputWaves(std::cout);   
-      basis.outputStars(std::cout);   
-      std::cout << "nBasis = " << basis.nBasis() << std::endl;
-      #endif
+      if (verbose() > 1) {
+         basis.outputWaves(std::cout);   
+         basis.outputStars(std::cout);   
+         std::cout << "nBasis = " << basis.nBasis() << std::endl;
+      }
 
    }
 
