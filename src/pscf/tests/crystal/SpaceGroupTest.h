@@ -220,8 +220,10 @@ public:
 
       SpaceGroup<2> g;
       in >> g;
-      //std::cout << g << std::endl;
       TEST_ASSERT(16 == g.size());
+
+      //std::cout << std::endl;
+      //std::cout << g << std::endl;
    }
 
 };

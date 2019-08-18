@@ -42,6 +42,8 @@ namespace Pscf
 
       /**
       * Default constructor.
+      *
+      * After construction, the group contains only the identity element.
       */
       SymmetryGroup();
 
@@ -71,6 +73,13 @@ namespace Pscf
       void makeCompleteGroup();
 
       /**
+      * Remove all elements except the identity.
+      *
+      * Return group to its state after default construction.
+      */
+      void clear();
+
+      /**
       * Find a symmetry within a group.
       *
       * Return a pointer to a symmetry if it is in the group,
@@ -84,7 +93,7 @@ namespace Pscf
       const Symmetry& identity() const;
 
       /**
-      * Return number of elements in group.
+      * Return number of elements in group (i.e., the order of the group).
       */
       int size() const;
 
@@ -136,6 +145,7 @@ namespace Pscf
    template <class Symmetry>
    SymmetryGroup<Symmetry>::SymmetryGroup(const SymmetryGroup& other)
    {
+      elements_.clear();
       identity_ = other.identity();
       for (int i = 0; i < other.size(); ++i) {
          elements_.push_back(other.elements_[i]);
@@ -189,9 +199,11 @@ namespace Pscf
    template <class Symmetry>
    bool SymmetryGroup<Symmetry>::add(Symmetry& symmetry)
    {
+      // Check if symmetry is already present
       const Symmetry* ptr = find(symmetry);
-      bool added; 
 
+      // If not already present, add symmetry to this group
+      bool added; 
       if (ptr == 0) {
          elements_.push_back(symmetry);
          added = true;
@@ -241,6 +253,17 @@ namespace Pscf
          } 
       } 
 
+   }
+
+   /*
+   * Clear all elements except the identity.
+   */
+   template <class Symmetry>
+   void SymmetryGroup<Symmetry>::clear()
+   {
+      elements_.clear();
+      identity_ = Symmetry::identity();
+      elements_.push_back(identity_);
    }
 
 

@@ -12,6 +12,7 @@
 #include <pscf/crystal/SymmetryGroup.h>
 #include <pscf/math/IntVec.h>
 #include <util/containers/FSArray.h>
+#include <util/param/Label.h>
 #include <iostream>
 
 namespace Pscf
@@ -36,10 +37,10 @@ namespace Pscf
    template <int D>
    std::ostream& operator << (std::ostream& out, const SpaceGroup<D>& g)
    {
-      int i, size;
-      size = g.size();
-      out << size << std::endl;
-      for (i = 0; i < size; ++i) {
+      int size = g.size();
+      out << "dim  " << D << std::endl;
+      out << "size " << size << std::endl;
+      for (int i = 0; i < size; ++i) {
          out << std::endl;
          out << g[i];
       }
@@ -47,14 +48,18 @@ namespace Pscf
    }
 
    /*
-   * Output stream inserter operator for a SpaceGroup<D>.
+   * Output stream extractor operator for a SpaceGroup<D>.
    */ 
    template <int D>
    std::istream& operator >> (std::istream& in, SpaceGroup<D>& g)
    {
+      int dim, size;
+      in >> Label("dim") >> dim;
+      UTIL_CHECK(D == dim);
+      in >> Label("size") >> size;
+
       SpaceSymmetry<D> s;
-      int size;
-      in >> size;
+      g.clear();
       for (int i = 0; i < size; ++i) {
          in >> s;
          g.add(s);
