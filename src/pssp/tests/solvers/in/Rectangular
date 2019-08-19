@@ -1,3 +1,2 @@
-crystal_system   Rectangular 
-N_cell_param     2
-cell_param       3.0 4.0
+rectangular 3.0 4.0
+

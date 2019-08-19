@@ -44,8 +44,8 @@ namespace Pssp
    template <int D>
    System<D>::System()
     : mixture_(),
-      mesh_(),
       unitCell_(),
+      mesh_(),
       fileMaster_(),
       homogeneous_(),
       interactionPtr_(0),
@@ -176,20 +176,16 @@ namespace Pssp
       interaction().setNMonomer(mixture().nMonomer());
       readParamComposite(in, interaction());
 
-      in >> unitCell_;
+      read(in, "unitCell", unitCell_);
       hasUnitCell_ = true;
       
-      IntVec<D> d;
-      in >> d;
-      mesh_.setDimensions(d);
+      read(in, "mesh", mesh_);
       hasMesh_ = true;
+
+      read(in, "groupName", groupName_);
 
       mixture().setMesh(mesh());
       mixture().setupUnitCell(unitCell());
-
-      //std::string groupName;
-      in >> groupName_;
-      in >> groupName_;
       basis().makeBasis(mesh(), unitCell(), groupName_);
 
       allocateFields();
@@ -253,7 +249,6 @@ namespace Pssp
       cFieldGrids_.allocate(nMonomer);
       cFieldDfts_.allocate(nMonomer);
       
-      //size of grid is based on basis function
       for (int i = 0; i < nMonomer; ++i) {
          wField(i).allocate(basis().nStar());
          wFieldGrid(i).allocate(mesh().dimensions());
@@ -270,7 +265,6 @@ namespace Pssp
    /*
    * Read and execute commands from a specified command file.
    */
-   //will add more commands as they are tested
    template <int D>
    void System<D>::readCommands(std::istream &in) 
    {
@@ -280,7 +274,6 @@ namespace Pssp
       std::string filename;
 
       bool readNext = true;
-
       while (readNext) {
 
          in >> command;
@@ -349,9 +342,7 @@ namespace Pssp
                Log::file() << "SCF_Time = " 
                << Dbl((float)(time_scf - time_begin)/CLOCKS_PER_SEC, 18, 11) 
                << std::endl;
-               //do something?
             }
-            //outputThermo(Log::file());
 
          } else
          if (command == "FIELD_TO_RGRID") {
@@ -387,7 +378,6 @@ namespace Pssp
 
             in >> inFileName;
             Log::file() << " " << Str(inFileName, 20) <<std::endl;
-
             in >> outFileName;
             Log::file() << " " << Str(outFileName, 20) <<std::endl;
 
@@ -570,71 +560,84 @@ namespace Pssp
    }
    
    template <int D>
+   void System<D>::readFields(std::string filename, 
+                              DArray<DArray<double> >& fields)
+   {
+       std::ifstream inFile;
+       fileMaster().openInputFile(filename, inFile);
+       readFields(inFile, wFields());
+       inFile.close();
+   }
+
+   template <int D>
    void System<D>::readRFields(std::istream &in,
                                 DArray<RField<D> >& fields)
    {
       UTIL_CHECK(hasMesh_);
-
       std::string label;
-      std::string uCell;
-      std::string groupName;
-      IntVec<D> nGrid;
-      int nM;
-      int ver1, ver2;
-      int dim;      
-      int nCellParams;
-      FArray<double,6> params;
 
+      #if 0
       in >> label;
       UTIL_CHECK(label == "format");
-      in >> ver1;
-      in >> ver2;
+      int ver1, ver2;
+      in >> ver1 >> ver2;
  
       in >> label;
       UTIL_CHECK(label == "dim");
+      int dim;
       in >> dim;
       UTIL_CHECK(dim == D);
 
       in >> label;
       UTIL_CHECK(label == "crystal_system");
+      std::string uCell;
       in >> uCell;
       
       in >> label;
       UTIL_CHECK(label == "N_cell_param");
+      int nCellParams;
       in >> nCellParams;
 
       in >> label;
       UTIL_CHECK(label == "cell_param");
+      FArray<double,6> params;
       for (int i = 0; i < nCellParams; ++i) {
          in >> params[i];
       }
  
       in >> label;
       UTIL_CHECK(label == "group_name");
+      std::string groupName;
       in >> groupName;
 
       in >> label;
       UTIL_CHECK(label == "N_monomer");
-      in >> nM;
-      UTIL_CHECK(nM > 0);
-      UTIL_CHECK(nM == mixture().nMonomer());
+      int nMonomer;
+      in >> nMonomer;
+      UTIL_CHECK(nMonomer > 0);
+      UTIL_CHECK(nMonomer == mixture().nMonomer());
+      #endif
+
+      System<D>::readFieldHeader(in);
 
       in >> label;
       UTIL_CHECK(label == "ngrid");
+      IntVec<D> nGrid;
       in >> nGrid;
       UTIL_CHECK(nGrid == mesh().dimensions());
 
+      int nM = mixture().nMonomer();
       DArray<RField<D> > temp;
       temp.allocate(nM);
       for (int i = 0; i < nM; ++i) {
          temp[i].allocate(mesh().dimensions());
-      } 
+      }
 
       // Read Fields;
       MeshIterator<D> itr(mesh().dimensions());
       for (itr.begin(); !itr.atEnd(); ++itr) {
          for (int i = 0; i < nM; ++i) {
-            in >>std::setprecision(15)>>temp[i][itr.rank()];
+            in  >> std::setprecision(15) >> temp[i][itr.rank()];
          }
       }
 
@@ -701,17 +704,6 @@ namespace Pssp
       else{
          std::cout<<"Invalid Dimensions";
       }
-
-
-
-
-
-
-
-
-
-
-
 
       /* UTIL_CHECK(hasMesh_);
 
@@ -798,25 +790,36 @@ namespace Pssp
    }
 
    template <int D>
-   void System<D>::writeRFields(std::ostream &out,
-                           DArray<RField<D> > const& fields)
+   void System<D>::writeFields(std::string filename, 
+                           DArray< DArray<double> > const &  fields)
    {
-      int nM = mixture().nMonomer();
-      MeshIterator<D> itr(mesh().dimensions());
+      std::ofstream outFile;
+      fileMaster().openOutputFile(filename, outFile);
+      writeFields(outFile, wFields_);
+      outFile.close();
+   }
 
+   template <int D>
+   void System<D>::writeRFields(std::ostream &out,
+                                DArray<RField<D> > const& fields)
+   {
+      #if 0
       out << "format  1   0    " <<  std::endl;
-
-      out << "dim    " <<  std::endl << "                    "<<D<< std::endl;
-
+      out << "dim    " <<  std::endl 
+          << "           " << D << std::endl;
       out << unitCell();      
+      out << "group_name    " << std::endl 
+          << "           " << groupName_ <<  std::endl;
+      out << "N_monomer    " << std::endl 
+          << "           " << mixture().nMonomer() << std::endl;
+      #endif
 
-      out << "group_name    " <<  std::endl << "          "<<groupName_<< std::endl;
-
-      out << "N_monomer    " <<  std::endl << "                    "<<mixture().nMonomer()<< std::endl;
-
-      out << "ngrid        " <<  std::endl<<"           "<<mesh().dimensions() << std::endl;
+      writeFieldHeader(out);
+      out << "ngrid" <<  std::endl
+          << "           " << mesh().dimensions() << std::endl;
 
       DArray<RField<D> > temp;
+      int nM = mixture().nMonomer();
       temp.allocate(nM);
       for (int i = 0; i < nM; ++i) {
          temp[i].allocate(mesh().dimensions());
@@ -885,29 +888,23 @@ namespace Pssp
          std::cout<<"Invalid Dimensions";
       }
 
-      // Write Fields
+      // Write fields
+      MeshIterator<D> itr(mesh().dimensions());
       for (itr.begin(); !itr.atEnd(); ++itr) {
-        // out << Int(itr.rank(), 5);
+         // out << Int(itr.rank(), 5);
          for (int j = 0; j < nM; ++j) {
             out << "  " << Dbl(temp[j][itr.rank()], 18, 15);
          }
          out << std::endl;
       }
 
-
-
-
-
-
-
-
-
-      /* int nM = mixture().nMonomer();
+      #if 0
+      int nM = mixture().nMonomer();
       MeshIterator<D> itr(mesh().dimensions());
       out << "nGrid    " <<  mesh().dimensions() << std::endl;
       out << "nM    "    <<  nM                << std::endl;
 
-      // Write FIelds
+      // Write fIelds
       for (itr.begin(); !itr.atEnd(); ++itr) {
          out << Int(itr.rank(), 5);
          for (int j = 0; j < nM; ++j) {
@@ -915,7 +912,8 @@ namespace Pssp
          }
 
          out << std::endl;
-      }*/
+      }
+      #endif
    }
 
    template <int D>
@@ -927,7 +925,7 @@ namespace Pssp
       out << "nGrid   " << mesh().dimensions() << std::endl;
       out << "nM      " << nM                << std::endl;
 
-      //write Fields
+      // Write fields
       for (itr.begin(); !itr.atEnd(); ++itr) {
          out << Int(itr.rank(), 5);
          for (int j = 0; j < nM; ++j) {
@@ -936,6 +934,69 @@ namespace Pssp
          }
          out << std::endl;
       }
+   }
+
+   template <int D>
+   void System<D>::readFieldHeader(std::istream& in) 
+   {
+      std::string label;
+
+      in >> label;
+      UTIL_CHECK(label == "format");
+      int ver1, ver2;
+      in >> ver1 >> ver2;
+ 
+      in >> label;
+      UTIL_CHECK(label == "dim");
+      int dim;
+      in >> dim;
+      UTIL_CHECK(dim == D);
+
+      readUnitCellHeader(in, unitCell_);
+
+      #if 0
+      in >> label;
+      UTIL_CHECK(label == "crystal_system");
+      std::string uCell;
+      in >> uCell;
+
+      in >> label;
+      UTIL_CHECK(label == "N_cell_param");
+      int nCellParams;
+      in >> nCellParams;
+
+      in >> label;
+      UTIL_CHECK(label == "cell_param");
+      FArray<double,6> params;
+      for (int i = 0; i < nCellParams; ++i) {
+         in >> params[i];
+      }
+      #endif
+ 
+      in >> label;
+      UTIL_CHECK(label == "group_name");
+      std::string groupName;
+      in >> groupName;
+
+      in >> label;
+      UTIL_CHECK(label == "N_monomer");
+      int nMonomer;
+      in >> nMonomer;
+      UTIL_CHECK(nMonomer > 0);
+      UTIL_CHECK(nMonomer == mixture().nMonomer());
+   }
+
+   template <int D>
+   void System<D>::writeFieldHeader(std::ostream &out) const
+   {
+      out << "format  1   0" <<  std::endl;
+      out << "dim" <<  std::endl 
+          << "          " << D << std::endl;
+      writeUnitCellHeader(out, unitCell_); 
+      out << "group_name" << std::endl 
+          << "          " << groupName_ <<  std::endl;
+      out << "N_monomer"  << std::endl 
+          << "          " << mixture_.nMonomer() << std::endl;
    }
 
    template <int D>
@@ -1080,9 +1141,6 @@ namespace Pssp
    }
 
    #if 0
-
-
-
    /*
    * Compute Helmoltz free energy and pressure
    */
@@ -1137,12 +1195,6 @@ namespace Pssp
       }
 
    }
-
-   
-
-
-
-  
 
    template <int D>
    void System<D>::outputThermo(std::ostream& out)

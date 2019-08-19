@@ -3,31 +3,20 @@ TODO (for pssp pseudospectral CPU code)
 ------------------------------------------------------------------------
 class Pscf::UnitCell: (assigned to Anshul)
 
-   - Revert overloaded >> and << operators for a UnitCell to original
-     compact format, which is needed for use in C++ param file format.
-
-   - See pscf/crystal/TODO for other requested changes.
+   - See pscf/crystal/TODO 
 
 ------------------------------------------------------------------------
 class Pscf::Pssp::Basis: (assigned to Dave)
 
-   - Add code to read in a space group description from a file, given
-     a file name in the parameter file. One way to do this would be 
-     to have interpret the string passed to Basis:makeBasis as a file
-     name if it is anything other than "I".
+   - See pssp/basis/TODO 
 
-   - See pssp/basis/TODO for less urgent changes (assigned to Dave)
-
-   - Compare examples of waves and star outputs from pscfpp to those
-     from fortran pscf to check compatibility.
+   - Goal: Compare examples of waves and star outputs from pscfpp to 
+     those from fortran pscf to check compatibility.
 
 ------------------------------------------------------------------------
 Unit Tests: (assigned to Anshul, with help with Basis as needed)
 
    - Clean up unit test in src/pssp/tests. 
-
-     - Current system tests seem to yield underflow for errors - 
-       something looks wrong.
 
      - Add unit tests of regression (i.e., comparison to Fortran) for 
        several classic phases, e.g., lamellar, hex and bcc, initially 
@@ -55,10 +44,16 @@ Unit Tests: (assigned to Anshul, with help with Basis as needed)
        directory is for and which tests use it. 
 
 ------------------------------------------------------------------------
-class System: (assigned to Dave, lower priority)
+class System reorganization: (assigned to Dave, lower priority)
 
-   - Think about how to move more code implementation out of the System
-     class, or out of the System::readCommands function. Targets for moving:
+   - Problem: The System class implementation is bloated with code that
+     should somehow be moved to somewhere more appropriate. This is a
+     reflection of the way things were done in the fortran code, but 
+     was always a bad design. 
+
+     Approach: Figure out ways to move more code implementation out of 
+     the System class, or out of the System::readCommands function. 
+     Targets for removal include
  
          - Field file i/o functions (including file open/close)
          - Field file conversion functions (including file open/close)
@@ -68,12 +63,25 @@ class System: (assigned to Dave, lower priority)
 
          - Functions to read and write file formats for multiple monomers
          - Functions to apply conversions to same file formats
-         - Conversion functions that require a Basis can take a Basis as
-           an argument.
+         - Conversion functions that require a Basis can take a Basis 
+           as an argument.
 
-     Add overloaded solve functions to Iterator that opens and close files, 
-     and/or read file names from a file. 
-  
+     Add separate functions to read omega field files in one or more
+     formats. Separate these from the ITERATE command.
+
+------------------------------------------------------------------------
+Main program
+
+     Figure out how to provide users with a convenient interface for
+     simulations with different numbers of spatial dimensions.
+     Either:
+
+       - Provide different programs, with different names, e.g., pscf_ps2d
+ 
+       - Use a command line option -d dimension to specify the dimension
+         of space and provide an if structure with if (dim == 1) etc. in
+         the main program.
+     
 ------------------------------------------------------------------------
 Later:
 

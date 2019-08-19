@@ -13,29 +13,23 @@ System{
      }
      ds   0.01
   }
-
-
   ChiInteraction{
      chi  0   0   0.0
           1   0   25.0
           1   1   0.0
   }
-   
+  unitCell tetragonal 9.3612988916 4.9360231360
+  mesh     64 64 32 
+  groupName I
+  AmIterator{
+    maxItr 1000
+    epsilon 1e-12
+    maxHist 50
+    domain 1
+  }
+}
+
 crystal_system   tetragonal 
-
 N_cell_param     2
-
 cell_param       9.3612988916 4.9360231360
 
-  64 64 32 
-
-  Basis I
-
-  AmIterator{
-   maxItr 1000
-   epsilon 1e-12
-   maxHist 50
-   domain 1
-  }
-
-}

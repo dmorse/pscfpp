@@ -22,6 +22,7 @@ namespace Pscf {
    * \param A first symmetry
    * \param B second symmetry
    * \return True if A == B, false otherwise
+   * \ingroup Pscf_Crystal_Module
    */
    template <int D>
    bool operator == (const SpaceSymmetry<D>& A, const SpaceSymmetry<D>& B);
@@ -32,6 +33,7 @@ namespace Pscf {
    * \param A first symmetry
    * \param B second symmetry
    * \return True if A != B, false otherwise
+   * \ingroup Pscf_Crystal_Module
    */
    template <int D>
    bool operator != (const SpaceSymmetry<D>& A, const SpaceSymmetry<D>& B);
@@ -42,6 +44,7 @@ namespace Pscf {
    * \param A first symmetry
    * \param B second symmetry
    * \return product A*B
+   * \ingroup Pscf_Crystal_Module
    */
    template <int D>
    SpaceSymmetry<D> 
@@ -56,6 +59,7 @@ namespace Pscf {
    * \param S symmetry operation
    * \param V integer vector
    * \return product S*V
+   * \ingroup Pscf_Crystal_Module
    */
    template <int D>
    IntVec<D> operator * (const SpaceSymmetry<D>& S, const IntVec<D>& V);
@@ -69,6 +73,7 @@ namespace Pscf {
    * \param V integer vector
    * \param S symmetry operation
    * \return product V*S
+   * \ingroup Pscf_Crystal_Module
    */
    template <int D>
    IntVec<D> operator * (const IntVec<D>& V, const SpaceSymmetry<D>& S);
@@ -79,6 +84,7 @@ namespace Pscf {
    * \param out output stream
    * \param A  SpaceSymmetry<D> object to be output
    * \return  modified output stream
+   * \ingroup Pscf_Crystal_Module
    */ 
    template <int D>
    std::ostream& operator << (std::ostream& out, const SpaceSymmetry<D>& A);
@@ -89,6 +95,7 @@ namespace Pscf {
    * \param in  input stream
    * \param A  SpaceSymmetry<D> object to be input
    * \return  modified input stream
+   * \ingroup Pscf_Crystal_Module
    */ 
    template <int D>
    std::istream& operator >> (std::istream& in, SpaceSymmetry<D>& A);

@@ -151,10 +151,10 @@ public:
 };
 
 TEST_BEGIN(SystemTest)
-//TEST_ADD(SystemTest, testConstructor1D)
-//TEST_ADD(SystemTest, testReadParameters1D)
+TEST_ADD(SystemTest, testConstructor1D)
+TEST_ADD(SystemTest, testReadParameters1D)
 TEST_ADD(SystemTest, testConversion3d)
-TEST_ADD(SystemTest, testIterate3d)
+//TEST_ADD(SystemTest, testIterate3d)
 TEST_END(SystemTest)
 
 #endif

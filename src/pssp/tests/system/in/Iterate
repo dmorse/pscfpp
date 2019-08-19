@@ -1,5 +1,5 @@
 ITERATE
-omega_conv
+out/omega_conv
 WRITE_WFIELDS
 omega
 WRITE_CFIELDS

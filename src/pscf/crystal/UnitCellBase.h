@@ -9,6 +9,7 @@
 */
 
 #include <util/containers/FArray.h>
+#include <util/containers/FSArray.h>
 #include <util/containers/FMatrix.h>
 #include <pscf/math/IntVec.h>
 #include <pscf/math/RealVec.h>
@@ -40,12 +41,24 @@ namespace Pscf
       ~UnitCellBase()
       {}
   
+      /**
+      * Compute all private data, given latticeSystem and parameters.
+      *
+      * Calls initializeToZero, setBasis, computeDerivatives internally.
+      */
       void setLattice();
  
       /** 
       * Set the parameters of unit cell.
       */  
       void SetParams(double val, int m);
+
+      /** 
+      * Set all the parameters of unit cell (new version).
+      * 
+      * \param parameters array of unit cell parameters
+      */  
+      void setParameters(FSArray<double, 6> const& parameters);
 
       /**
       * Compute square magnitude of reciprocal basis vector.
@@ -55,12 +68,27 @@ namespace Pscf
       /**
       * Get the number of Parameters in the unit cell.
       */
-      const int nParams() const;
+      int nParams() const;
+
+      /**
+      * Get the number of parameters in the unit cell (new version).
+      */
+      int nParameter() const;
 
       /** 
       * Get the parameters of unit cell.
       */  
       FArray<double, 6> params();
+
+      /** 
+      * Get the parameters of this unit cell (new version).
+      */  
+      FSArray<double, 6> parameters() const;
+
+      /** 
+      * Get a single parameters of the unit cell.
+      */  
+      double parameter(int i) const;
 
       /**
       * Get Bravais basis vector i, denoted by a_i.
@@ -150,13 +178,6 @@ namespace Pscf
 
       // Protected functions (used in implementation).
 
-      /**
-      * Compute all private data, given latticeSystem and parameters.
-      *
-      * Calls initializeToZero, setBasis, computeDerivatives internally.
-      */
-//      void setLattice();
-
    private:
 
       /**
@@ -188,7 +209,15 @@ namespace Pscf
    */
    template <int D>
    inline
-   const int UnitCellBase<D>::nParams() const
+   int UnitCellBase<D>::nParams() const
+   {  return nParameter_;  }
+
+   /*
+   * Get the number of Parameters in the unit cell.
+   */
+   template <int D>
+   inline
+   int UnitCellBase<D>::nParameter() const
    {  return nParameter_;  }
 
    /*
@@ -198,6 +227,27 @@ namespace Pscf
    inline
    FArray<double, 6> UnitCellBase<D>::params()
    {  return parameters_;  }
+
+   /*
+   * Get the unit cell parameters.
+   */
+   template <int D>
+   inline
+   FSArray<double, 6> UnitCellBase<D>::parameters() const
+   {  
+      FSArray<double, 6> parameters;
+      for (int i = 0; i < nParameter_; ++i) {
+         parameters.append(parameters_[i]);
+      }
+      return parameters;  
+   }
+
+   /** 
+   * Get a single parameter of the unit cell.
+   */  
+   template <int D>
+   double UnitCellBase<D>::parameter(int i) const
+   {  return parameters_[i]; }
 
    /*
    * Get Bravais basis vector i.
@@ -246,13 +296,27 @@ namespace Pscf
    const double UnitCellBase<D>::drrBasis(int k, int i, int j) const
    {  return drrBasis_[k](i, j);  }
 
-  /*
+   /*
    * Set the parameters in the unit cell.
    */
    template <int D>
    inline
    void UnitCellBase<D>::SetParams(double val, int m)
-   {  parameters_ [m] = val;}
+   {  parameters_[m] = val;}
+
+   /*
+   * Set all the parameters in the unit cell.
+   */
+   template <int D>
+   inline
+   void UnitCellBase<D>::setParameters(FSArray<double, 6> const& parameters)
+   {
+      UTIL_CHECK(parameters.size() == nParameter_);
+      for (int i = 0; i < nParameter_; ++i) {
+         parameters_[i] = parameters[i];
+      }
+      setLattice();
+   }
 
    /*
    * Constructor.

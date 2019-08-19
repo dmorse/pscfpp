@@ -151,13 +151,28 @@ namespace Pssp
       /**
       * Read concentration or chemical potential field components from file.
       *
-      * This function writes components in a symmetry adapted basis. 
-      * The capacity of the array is equal to nMonomer, and fields[i] is
-      * the field associated with monomer type i.
+      * This function reads components in a symmetry adapted basis from 
+      * file in.
+      *
+      * The capacity of DArray fields is equal to nMonomer, and element
+      * fields[i] is a DArray containing components of the field 
+      * associated with monomer type i.
       *
       * \param in input stream (i.e., input file)
       */
       void readFields(std::istream& in, DArray< DArray <double> >& fields);
+
+      /**
+      * Read concentration or chemical potential field components from file.
+      *
+      * This function opens an input file with the specified filename, 
+      * reads components in symmetry-adapted form from that file, and 
+      * closes the file.
+      *
+      * \param filename name of input file
+      */
+      void readFields(std::string filename, 
+                      DArray< DArray <double> >& fields);
 
       /**
       * Write concentration or chemical potential field components to file.
@@ -171,17 +186,29 @@ namespace Pssp
                        DArray< DArray <double> > const & fields);
 
       /**
-      * Read an array of RField objects (fields on an r-space grid) from file.
+      * Write concentration or chemical potential field components to file.
       *
-      * The capacity of the array is equal to nMonomer, and fields[i] is
-      * the field associated with monomer type i.
+      * This function opens an output file with the specified filename, 
+      * writes components in symmetry-adapted form to that file, and then
+      * closes the file. 
+      *
+      * \param filename name of input file
+      */
+      void writeFields(std::string filename, 
+                       DArray< DArray <double> > const & fields);
+
+      /**
+      * Read array of RField objects (fields on an r-space grid) from file.
+      *
+      * The capacity of array fields is equal to nMonomer, and element
+      * fields[i] is the RField<D> associated with monomer type i.
       * 
       * \param in input stream (i.e., input file)
       */
       void readRFields(std::istream& in, DArray< RField<D> >& fields);
 
       /**
-      * Write an array of RField objects (fields on an r-space grid) to file.
+      * Write array of RField objects (fields on an r-space grid) to file.
       *
       * \param out output stream (i.e., output file)
       * \param fields array of fields for different species
@@ -190,19 +217,19 @@ namespace Pssp
                         DArray< RField<D> > const& fields);
 
       /**
-      * Read an RFieldDft (a real field on a k-space grid) from file.
+      * Read array of RFieldDft objects (k-space fields) from file.
       *
-      * The capacity of the array is equal to nMonomer, and fields[i] is
-      * the discrete Fourier transform of the field for monomer type i.
+      * The capacity of the array is equal to nMonomer, and element
+      * fields[i] is the discrete Fourier transform of the field for 
+      * monomer type i.
       * 
       * \param in input stream (i.e., input file)
       * \param fields array of fields for different species
       */
       void readKFields(std::istream& in, DArray< RFieldDft<D> >& fields);
 
-
       /**
-      * Write an RFieldDft (a real field on a k-space grid) to file.
+      * Write array of RFieldDft objects (k-space fields) to file.
       *
       * \param out output stream (i.e., output file)
       * \param fields array of fields for different species
@@ -363,9 +390,9 @@ namespace Pssp
       Mixture<D> mixture_;
 
       /**
-      * Spatial discretization mesh.
+      * Crystallographic unit cell (crystal system and cell parameters).
       */
-      Mesh<D> mesh_;
+      UnitCell<D> unitCell_;
 
       /**
       * Group name.
@@ -373,9 +400,9 @@ namespace Pssp
       std::string groupName_;
 
       /**
-      * Crystallographic unit cell (crystal system and cell parameters).
+      * Spatial discretization mesh.
       */
-      UnitCell<D> unitCell_;
+      Mesh<D> mesh_;
 
       /**
       * Filemaster (holds paths to associated I/O files).
@@ -483,14 +510,14 @@ namespace Pssp
       bool hasMixture_;
 
       /**
-      * Has the Mesh been initialized?
-      */
-      bool hasMesh_;
-
-      /**
       * Has the UnitCell been initialized?
       */
       bool hasUnitCell_;
+
+      /**
+      * Has the Mesh been initialized?
+      */
+      bool hasMesh_;
 
       /**
       * Have initial chemical potential fields been read from file?
@@ -511,6 +538,20 @@ namespace Pssp
       * Initialize Homogeneous::Mixture object.
       */
       void initHomogeneous();
+
+      /**
+      * Reader header of field file (fortran pscf format)
+      *
+      * \param in input stream (i.e., input file)
+      */
+      void readFieldHeader(std::istream& in);
+
+      /**
+      * Write header for field file (fortran pscf format)
+      *
+      * \param out output stream (i.e., output file)
+      */
+      void writeFieldHeader(std::ostream& out) const;
 
    };
 

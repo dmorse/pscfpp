@@ -28,122 +28,71 @@ namespace Pscf
    *
    * \ingroup Pscf_Crystal_Module
    */
-   template <int D> 
-   class UnitCell  : public UnitCellBase<D>
+   template <int D>
+   class UnitCell : public UnitCellBase<D>
    {};
 
+   // Function declations (friends of explicit instantiations)
+
    /**
-   * istream extractor for a UnitCell<D>.
+   * istream input extractor for a UnitCell<D>.
    *
    * \param  in  input stream
    * \param  cell  UnitCell<D> to be read
    * \return modified input stream
+   * \ingroup Pscf_Crystal_Module
    */
    template <int D>
-   std::istream& operator >> (std::istream& in,
-                              UnitCell<D>& cell);
+   std::istream& operator >> (std::istream& in, UnitCell<D>& cell);
 
    /**
-   * ostream inserter for a UnitCell<D>::LatticeSystem.
+   * ostream output inserter for a UnitCell<D>.
    *
    * \param out  output stream
    * \param  cell  UnitCell<D> to be written
    * \return modified output stream
+   * \ingroup Pscf_Crystal_Module
    */
    template <int D>
-   std::ostream& operator << (std::ostream& out, UnitCell<D>& cell);
+   std::ostream& operator << (std::ostream& out, UnitCell<D> const& cell);
 
    /**
    * Serialize to/from an archive.
    *
    * \param ar       archive
    * \param version  archive version id
+   * \ingroup Pscf_Crystal_Module
    */
    template <class Archive, int D>
-   void serialize(Archive& ar, UnitCell<D>& cell, const unsigned int version);
+   void serialize(Archive& ar, UnitCell<D>& cell,
+                  const unsigned int version);
 
-   // Implementation Template
-
-   template <int D>
-   std::istream& operator >> (std::istream& in,
-                              UnitCell<D>& cell)
-   {
-     /* in >> cell.lattice_;
-      cell.setNParameter();
-      for (int i = 0; i < cell.nParameter_; ++i) {
-         in >> cell.parameters_[i];
-      }
-      cell.setLattice();
-      return in;*/
-
-
-      std::string label;
-      int nParametersIn;
-  
-      in >> label;
-      UTIL_CHECK(label == "crystal_system");
-      in >> cell.lattice_;
-      cell.setNParameter();
-
-      in >> label;
-      UTIL_CHECK(label == "N_cell_param");
-      in >> nParametersIn;
-      UTIL_CHECK(nParametersIn == cell.nParameter_);
-
-      in >> label;
-      UTIL_CHECK(label == "cell_param");
-
-
-      for (int i = 0; i < cell.nParameter_; ++i) {
-         in >>std::setprecision(15)>>cell.parameters_[i];
-      }   
-      cell.setLattice();
-      return in; 
-
-
-
-
-   }
-
-   template <int D>
-   std::ostream& operator << (std::ostream& out,
-                              UnitCell<D>& cell)
-   {
-      out << "crystal_system    " <<  std::endl << "              " << cell.lattice_<<std::endl;
-      out << "N_cell_param    " <<  std::endl << "                   "<<cell.nParameter_<< std::endl;
-      out << "cell_param    " <<  std::endl;
-      for (int i = 0; i < cell.nParameter_; ++i) {
-         out <<"    "<< Dbl(cell.parameters_[i], 18, 10);
-      }
-      out<<std::endl;
-      return out;
-
-
-
-
-
-
-
-      /* out << cell.lattice_;
-      for (int i = 0; i < cell.nParameter_; ++i) {
-         out << Dbl(cell.parameters_[i], 18, 10);
-      }
-      return out;*/
-   }
-
-   /*
-   * Serialize to/from an archive.
+   /**
+   * Read UnitCell<D> from a field file header (fortran pscf format).
+   *
+   * If the unit cell has a non-null lattice system on entry, the
+   * value read from file must match this existing value, or this
+   * function throws an exception. If the lattice system is null on
+   * entry, the lattice system value is read from file. In either case,
+   * unit cell parameters (dimensions and angles) are updated using
+   * values read from file.
+   *
+   * \param  in  input stream
+   * \param  cell  UnitCell<D> to be read
+   * \ingroup Pscf_Crystal_Module
    */
-   template <class Archive, int D>
-   void serialize(Archive& ar, UnitCell<D>& cell, const unsigned int version)
-   {
-      serializeEnum(ar, cell.lattice_, version);
-      ar & cell.nParameter_;
-      for (int i = 0; i < cell.nParameter_; ++i) {
-         ar & cell.parameters_[i];
-      }
-   }
+   template <int D>
+   void readUnitCellHeader(std::istream& in, UnitCell<D>& cell);
 
+   /**
+   * Write UnitCell<D> to a field file header (fortran pscf format).
+   *
+   * \param out  output stream
+   * \param  cell  UnitCell<D> to be written
+   * \ingroup Pscf_Crystal_Module
+   */
+   template <int D>
+   void writeUnitCellHeader(std::ostream& out, UnitCell<D> const& cell);
 
    // 1D Unit Cell
 
@@ -175,14 +124,22 @@ namespace Pscf
 
       void setBasis();
 
-      template <int D> 
-      friend std::ostream& operator << (std::ostream&, UnitCell<D>& );
+   // friends:
 
       template <int D>
       friend std::istream& operator >> (std::istream&, UnitCell<D>& );
 
+      template <int D>
+      friend std::ostream& operator << (std::ostream&, UnitCell<D> const&);
+
       template <class Archive, int D>
-      friend void serialize(Archive& , UnitCell<D>& , const unsigned int );
+      friend void serialize(Archive& , UnitCell<D>& , const unsigned int);
+
+      template <int D>
+      friend void readUnitCellHeader(std::istream&, UnitCell<D>& );
+
+      template <int D>
+      friend void writeUnitCellHeader(std::ostream&, UnitCell<D> const&);
 
    };
 
@@ -192,6 +149,7 @@ namespace Pscf
    * \param in  input stream
    * \param lattice  UnitCell<1>::LatticeSystem to be read
    * \return modified input stream
+   * \ingroup Pscf_Crystal_Module
    */
    std::istream& operator >> (std::istream& in,
                               UnitCell<1>::LatticeSystem& lattice);
@@ -202,6 +160,7 @@ namespace Pscf
    * \param out  output stream
    * \param lattice  UnitCell<1>::LatticeSystem to be written
    * \return modified output stream
+   * \ingroup Pscf_Crystal_Module
    */
    std::ostream& operator << (std::ostream& out,
                               UnitCell<1>::LatticeSystem lattice);
@@ -219,8 +178,8 @@ namespace Pscf
       /**
       * Enumeration of 2D lattice system types.
       */
-      enum LatticeSystem {Square, Rectangular, Rhombic, Hexagonal, Oblique, 
-                          Null};
+      enum LatticeSystem {Square, Rectangular, Rhombic, Hexagonal,
+                          Oblique, Null};
 
       /**
       * Constructor
@@ -238,14 +197,22 @@ namespace Pscf
 
       void setBasis();
 
-      template <int D> 
-      friend std::ostream& operator << (std::ostream&, UnitCell<D>& );
+   // friends:
 
       template <int D>
       friend std::istream& operator >> (std::istream&, UnitCell<D>& );
 
+      template <int D>
+      friend std::ostream& operator << (std::ostream&, UnitCell<D> const&);
+
       template <class Archive, int D>
       friend void serialize(Archive& , UnitCell<D>& , const unsigned int );
+
+      template <int D>
+      friend void readUnitCellHeader(std::istream&, UnitCell<D>& );
+
+      template <int D>
+      friend void writeUnitCellHeader(std::ostream&, UnitCell<D> const&);
 
    };
 
@@ -255,6 +222,7 @@ namespace Pscf
    * \param  in       input stream
    * \param  lattice  UnitCell<2>::LatticeSystem to be read
    * \return modified input stream
+   * \ingroup Pscf_Crystal_Module
    */
    std::istream& operator >> (std::istream& in,
                               UnitCell<2>::LatticeSystem& lattice);
@@ -286,8 +254,6 @@ namespace Pscf
       *
       * Allowed non-null values are: Cubic, Tetragonal, Orthorhombic,
       * Monoclinic, Triclinic, Rhombohedral, and Hexagonal.
-      *
-      * \ingroup Crystal_Module
       */
       enum LatticeSystem {Cubic, Tetragonal, Orthorhombic, Monoclinic,
                           Triclinic, Rhombohedral, Hexagonal, Null};
@@ -305,14 +271,22 @@ namespace Pscf
 
       void setBasis();
 
-      template <int D> 
-      friend std::ostream& operator << (std::ostream&, UnitCell<D>& );
+   // friends:
 
       template <int D>
       friend std::istream& operator >> (std::istream&, UnitCell<D>& );
 
+      template <int D>
+      friend std::ostream& operator << (std::ostream&, UnitCell<D> const&);
+
       template <class Archive, int D>
-      friend void serialize(Archive& , UnitCell<D>& , const unsigned int );
+      friend void serialize(Archive& , UnitCell<D>& , const unsigned int);
+
+      template <int D>
+      friend void readUnitCellHeader(std::istream&, UnitCell<D>& );
+
+      template <int D>
+      friend void writeUnitCellHeader(std::ostream&, UnitCell<D> const&);
 
    };
 
@@ -322,6 +296,7 @@ namespace Pscf
    * \param  in       input stream
    * \param  lattice  UnitCell<3>::LatticeSystem to be read
    * \return modified input stream
+   * \ingroup Pscf_Crystal_Module
    */
    std::istream& operator >> (std::istream& in,
                               UnitCell<3>::LatticeSystem& lattice);
@@ -332,9 +307,12 @@ namespace Pscf
    * \param  out      output stream
    * \param  lattice  UnitCell<3>::LatticeSystem to be written
    * \return modified output stream
+   * \ingroup Pscf_Crystal_Module
    */
    std::ostream& operator << (std::ostream& out,
                               UnitCell<3>::LatticeSystem lattice);
 
 }
+
+#include "UnitCell.tpp"
 #endif

@@ -21,7 +21,7 @@ namespace Pscf
    using namespace Util;
 
    /**
-   * Group of crystal symmetries with no translations.
+   * Crystallographic space group.
    *
    * \ingroup Pscf_Crystal_Module
    */
@@ -31,8 +31,12 @@ namespace Pscf
 
    // Template function definition
 
-   /*
+   /**
    * Output stream inserter operator for a SpaceGroup<D>.
+   *
+   * \param out  output stream
+   * \param g  space group
+   * \ingroup Pscf_Crystal_Module
    */ 
    template <int D>
    std::ostream& operator << (std::ostream& out, const SpaceGroup<D>& g)
@@ -47,8 +51,13 @@ namespace Pscf
       return out;
    }
 
-   /*
-   * Output stream extractor operator for a SpaceGroup<D>.
+   /**
+   * Input stream extractor operator for a SpaceGroup<D>.
+   *
+   * \param in  input stream
+   * \param g  space group
+   *
+   * \ingroup Pscf_Crystal_Module
    */ 
    template <int D>
    std::istream& operator >> (std::istream& in, SpaceGroup<D>& g)
@@ -66,5 +75,6 @@ namespace Pscf
       }
       return in;
    }
+
 }
 #endif

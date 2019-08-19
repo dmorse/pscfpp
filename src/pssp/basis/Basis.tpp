@@ -14,6 +14,7 @@
 #include <pscf/mesh/MeshIterator.h>
 #include <vector>
 #include <set>
+#include <fstream>
 
 namespace Pscf {
 namespace Pssp
@@ -43,10 +44,17 @@ namespace Pssp
       if (groupName == "I") {
          // Create identity group
          group.makeCompleteGroup();
-       } else {
-         UTIL_THROW("Unimplemented space group");
-       }
-       makeBasis(mesh, unitCell, group);
+      } else {
+         std::ifstream in;
+         in.open(groupName);
+         if (in.is_open()) {
+           in >> group;
+           UTIL_CHECK(group.isValid());
+         } else {
+           UTIL_THROW("Unknown space group");
+         }
+      }
+      makeBasis(mesh, unitCell, group);
    }
 
    /*

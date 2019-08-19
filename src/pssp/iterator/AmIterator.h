@@ -14,17 +14,19 @@
 #include <util/containers/DArray.h>
 #include <util/containers/FArray.h>
 #include <util/containers/DMatrix.h>
-#include <pssp/iterator/RingBuffer.h>
+#include <util/containers/RingBuffer.h>
+//#include <pssp/iterator/RingBuffer.h>
 #include <pssp/field/RField.h>
 
 
 namespace Pscf {
 namespace Pssp
 {
+
    using namespace Util;
    
    /**
-   * Anderson mixing iterator for the pseudo spectral method
+   * Anderson mixing iterator for the pseudo spectral method.
    *
    * \ingroup Pssp_Iterator_Module
    */
@@ -35,6 +37,7 @@ namespace Pssp
       
       typedef RField<D> WField;
       typedef RField<D> CField;
+
       /**
       * Default constructor
       */
@@ -61,29 +64,26 @@ namespace Pssp
 
       /**
       * Allocate all arrays
-      *
       */
       void allocate();
 
       /**
       * Iterate to a solution
-      *
       */
       int solve();
 
       /**
-      * Getter for epsilon
+      * Get epsilon (error threshhold).
       */
       double epsilon();
 
       /**
-      * Getter for the maximum number of field histories to 
-      * convolute into a new field
+      * Get the maximum number of field histories retained.
       */
       int maxHist();
 
       /**
-      * Getter for the maximum number of iteration before convergence
+      * Get the maximum number of iteration before convergence.
       */
       int maxItr();
 
@@ -93,7 +93,8 @@ namespace Pssp
       void computeDeviation();
 
       /**
-      * Compute the error from deviations of wFields and compare with epsilon_
+      * Check if solution is converge within specified tolerance.
+      *
       * \return true for error < epsilon and false for error >= epsilon
       */
       bool isConverged();
@@ -110,23 +111,22 @@ namespace Pssp
 
    private:
 
-      ///error tolerance
+      /// Error tolerance
       double epsilon_;
 
-      ///variable cell computation (1) or fixed cell computation (0), default value = 0
+      /// Variable cell computation (1) or fixed cell computation (0), default value = 0
       bool cell_;
 
-      ///free parameter for minimization
+      /// Free parameter for minimization
       double lambda_;
 
-      ///number of histories to convolute into a new solution [0,maxHist_]
+      /// Number of previous steps to use to compute next state. [0,maxHist_]
       int nHist_;
 
-      //maximum number of histories to convolute into a new solution
-      //AKA size of matrix
+      // Number of histories to retain.
       int maxHist_;
 
-      ///number of maximum iteration to perform
+      /// Maximum number of iterations to attempt.
       int maxItr_;
 
       /// holds histories of deviation for each monomer
@@ -136,8 +136,7 @@ namespace Pssp
 
       RingBuffer< DArray < DArray<double> > > omHists_;
 
-
-      /// holds histories of deviation for each cell parameter
+      /// History of deviation for each cell parameter
       /// 1st index = history, 2nd index = cell parameter
       // The ringbuffer used is now slightly modified to return by reference
       RingBuffer< FArray <double, 6> > devCpHists_;

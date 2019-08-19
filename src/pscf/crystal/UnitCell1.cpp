@@ -21,7 +21,7 @@ namespace Pscf
    {}
 
    /*
-   * Read the lattice system and set nParameter.
+   * Set nParameter based on the lattice system.
    */
    void UnitCell<1>::setNParameter()
    {
