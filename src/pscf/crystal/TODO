@@ -52,9 +52,4 @@ UnitCellBase:
    consistent use of a convention matters more than choice of convention.
 
 --------------------------------------------------------------------
-shiftToMinimum:
-
-  The algorithm is designed to work only with non-negative components.
-  This is a bug waiting to happen.  Modify so it works with negative 
-  components.
 

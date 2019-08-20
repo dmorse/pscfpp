@@ -190,6 +190,47 @@ public:
 
    }
 
+   void testMake2DBasis_3()
+   {
+      printMethod(TEST_FUNC);
+      //printEndl();
+
+      // Read UnitCell
+      UnitCell<2> unitCell;
+      std::ifstream in;
+      openInputFile("in/hexagonal", in);
+      in >> unitCell;
+      in.close();
+
+      // Make Mesh object
+      IntVec<2> d;
+      d[0] = 4;
+      d[1] = 4;
+      Mesh<2> mesh(d);
+
+      // Read space group
+      SpaceGroup<2> group;
+      openInputFile("in/p_6_m_m", in);
+      in >> group;
+      in.close();
+
+      // Make basis
+      Basis<2> basis;
+      basis.makeBasis(mesh, unitCell, group);
+     
+      TEST_ASSERT(basis.isValid());
+      //TEST_ASSERT(eq(basis.nWave(), 16));
+      //TEST_ASSERT(eq(basis.nStar(), 6));
+      //TEST_ASSERT(eq(basis.nBasis(), 4));
+
+      if (verbose() > 1) {
+         std::cout << "nBasis = " << basis.nBasis() << std::endl;
+         basis.outputWaves(std::cout);   
+         basis.outputStars(std::cout);   
+      }
+
+   }
+
    void testFieldConversion2D()
    {
       printMethod(TEST_FUNC);
@@ -450,6 +491,7 @@ TEST_ADD(BasisTest, testMake1DBasis_1)
 TEST_ADD(BasisTest, testMake1DBasis_2)
 TEST_ADD(BasisTest, testMake2DBasis_1)
 TEST_ADD(BasisTest, testMake2DBasis_2)
+TEST_ADD(BasisTest, testMake2DBasis_3)
 TEST_ADD(BasisTest, testFieldConversion2D)
 TEST_ADD(BasisTest, testMake3DBasis)
 TEST_ADD(BasisTest, testFieldConversion3D)

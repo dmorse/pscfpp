@@ -206,8 +206,9 @@ public:
       G.add(A);
 
       G.makeCompleteGroup();
-      //std::cout << G << std::endl;
       TEST_ASSERT(96 == G.size());
+
+      //std::cout << G << std::endl;
    }
 
    void test2Dread() 
@@ -216,13 +217,14 @@ public:
       //printEndl();
 
       std::ifstream in;
-      openInputFile("in/Group", in);
+      openInputFile("in/p_6_m_m", in);
 
       SpaceGroup<2> g;
       in >> g;
-      TEST_ASSERT(16 == g.size());
+      TEST_ASSERT(12 == g.size());
+      TEST_ASSERT(g.isValid());
 
-      //std::cout << std::endl;
+      // std::cout << std::endl;
       //std::cout << g << std::endl;
    }
 

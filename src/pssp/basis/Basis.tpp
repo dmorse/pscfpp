@@ -194,6 +194,9 @@ namespace Pssp
                wave.indicesDft = waves_[j].indicesDft;
                wave.indicesBz = waves_[j].indicesBz;
                wave.sqNorm = waves_[j].sqNorm;
+               if (j > listBegin) {
+                  UTIL_CHECK(abs(wave.sqNorm-waves_[j].sqNorm) < 2.0*epsilon); 
+               }
                list.insert(wave);
             }
 
@@ -271,7 +274,7 @@ namespace Pssp
                   tempStar.push_back(*setItr);
                }
 
-               // Sort tempStar, ordered by indicesBz, descending order
+               // Sort tempStar, ordered by indicesBz, in descending order
                // Duplicate values of indicesBz are permitted
                TWaveBzComp<D> waveBzComp;
                std::sort(tempStar.begin(), tempStar.end(), waveBzComp);
@@ -297,7 +300,7 @@ namespace Pssp
                // Determine invertFlag, rootItr and nextInvert
                if (nextInvert == -1) {
 
-                  // If this star is the 2nd of pair related by symmetry,
+                  // If this star is the 2nd of a pair related by symmetry,
                   // set root of next star to first wave of remaining list.
 
                   newStar.invertFlag = -1;
@@ -354,6 +357,12 @@ namespace Pssp
                      // On exit after break, rootItr = &nVec
 
                      // Negation should be found in star or remaining list
+                     if (!negationFound) {
+                        std::cout << "Negation not found for: " << "\n";
+                        std::cout << " vec (ft):" << rootItr->indicesDft <<"\n"; 
+                        std::cout << " vec (bz):" << rootItr->indicesBz <<"\n"; 
+                        std::cout << "-vec (dft:" << nVec << "\n";
+                     }
                      UTIL_CHECK(negationFound);
                   }
 

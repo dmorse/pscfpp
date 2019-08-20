@@ -70,6 +70,26 @@ namespace Pscf
             kBasis_[i][i] = twoPi/parameters_[i];
             drBasis_[i](i,i) = 1.0;
          }
+      } else 
+      if (lattice_ == UnitCell<2>::Hexagonal) {
+         UTIL_CHECK(nParameter_ == 1);
+         double a = parameters_[0];
+         double rt3 = sqrt(3.0);
+
+         rBasis_[0][0] = a;
+         rBasis_[0][1] = 0.0;
+         rBasis_[1][0] = -0.5*a;
+         rBasis_[1][1] = 0.5*rt3*a;
+
+         drBasis_[0](0, 0) = 1.0;
+         drBasis_[0](0, 1) = 0.0;
+         drBasis_[0](1, 0) = -0.5;
+         drBasis_[0](1, 1) = 0.5*rt3;
+
+         kBasis_[0][0] = twoPi/a;
+         kBasis_[0][1] = twoPi/(rt3*a);
+         kBasis_[1][0] = 0.0;
+         kBasis_[1][1] = twoPi/(0.5*rt3*a);
       } else {
          UTIL_THROW("Unimplemented 2D lattice type");
       }

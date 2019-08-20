@@ -74,7 +74,7 @@ public:
    void test1DLamellar() 
    {
       printMethod(TEST_FUNC);
-      printEndl();
+      // printEndl();
 
       UnitCell<1> v;
       std::ifstream in;
@@ -106,16 +106,23 @@ public:
 
    }
 
+
+
    void test2DSquare() 
    {
       printMethod(TEST_FUNC);
-      printEndl();
+      // printEndl();
 
       UnitCell<2> v;
       std::ifstream in;
       openInputFile("in/Square", in);
 
       in >> v;
+      TEST_ASSERT(v.nParams() == 1);
+      TEST_ASSERT(isValidReciprocal(v));
+      TEST_ASSERT(isValidDerivative(v));
+
+      #if 0
       std::cout.width(20);
       std::cout.precision(6);
       std::cout << v << std::endl ;
@@ -124,10 +131,7 @@ public:
       std::cout << "a(1) = " << v.rBasis(1) << std::endl;
       std::cout << "b(0) = " << v.kBasis(0) << std::endl;
       std::cout << "b(1) = " << v.kBasis(1) << std::endl;
-
-      TEST_ASSERT(v.nParams() == 1);
-      TEST_ASSERT(isValidReciprocal(v));
-      TEST_ASSERT(isValidDerivative(v));
+      #endif
 
       double param = v.params()[0];
       double twoPi = 2.0*Constants::Pi;
@@ -157,16 +161,47 @@ public:
       }
    }
 
+   void test2DHexagonal() 
+   {
+      printMethod(TEST_FUNC);
+      // printEndl();
+
+      UnitCell<2> v;
+      std::ifstream in;
+      openInputFile("in/Hexagonal", in);
+
+      in >> v;
+      TEST_ASSERT(v.nParams() == 1);
+      TEST_ASSERT(isValidReciprocal(v));
+      TEST_ASSERT(isValidDerivative(v));
+
+      #if 0
+      std::cout.width(20);
+      std::cout.precision(6);
+      std::cout << v << std::endl ;
+
+      std::cout << "a(0) = " << v.rBasis(0) << std::endl;
+      std::cout << "a(1) = " << v.rBasis(1) << std::endl;
+      std::cout << "b(0) = " << v.kBasis(0) << std::endl;
+      std::cout << "b(1) = " << v.kBasis(1) << std::endl;
+      #endif
+   }
+
    void test3DOrthorhombic() 
    {
       printMethod(TEST_FUNC);
-      printEndl();
+      // printEndl();
 
       UnitCell<3> v;
       std::ifstream in;
       openInputFile("in/Orthorhombic", in);
-
       in >> v;
+
+      TEST_ASSERT(v.nParams() == 3);
+      TEST_ASSERT(isValidReciprocal(v));
+      TEST_ASSERT(isValidDerivative(v));
+
+      #if 0
       std::cout.width(20);
       std::cout.precision(6);
       std::cout << v << std::endl ;
@@ -177,10 +212,7 @@ public:
       std::cout << "b(0) = " << v.kBasis(0) << std::endl;
       std::cout << "b(1) = " << v.kBasis(1) << std::endl;
       std::cout << "b(2) = " << v.kBasis(2) << std::endl;
-
-      TEST_ASSERT(v.nParams() == 3);
-      TEST_ASSERT(isValidReciprocal(v));
-      TEST_ASSERT(isValidDerivative(v));
+      #endif
 
       double param, b, dbb;
       double twoPi = 2.0*Constants::Pi;
@@ -217,6 +249,7 @@ public:
 TEST_BEGIN(UnitCellTest)
 TEST_ADD(UnitCellTest, test1DLamellar)
 TEST_ADD(UnitCellTest, test2DSquare)
+TEST_ADD(UnitCellTest, test2DHexagonal)
 TEST_ADD(UnitCellTest, test3DOrthorhombic)
 TEST_END(UnitCellTest)
 

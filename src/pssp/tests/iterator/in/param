@@ -29,6 +29,3 @@ System{
    }
 }
 
-   crystal_system   lamellar 
-   N_cell_param     1
-   cell_param       1.5261093078E+00 

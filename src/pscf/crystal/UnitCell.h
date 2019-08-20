@@ -118,10 +118,13 @@ namespace Pscf
 
    private:
 
+      // Lattice type
       LatticeSystem lattice_;
 
+      // Set number of parameters required to describe current lattice type
       void setNParameter();
 
+      // Set all internal data after setting parameter values
       void setBasis();
 
    // friends:

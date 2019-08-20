@@ -86,12 +86,16 @@ namespace Pscf
       FSArray<double, 6> parameters() const;
 
       /** 
-      * Get a single parameters of the unit cell.
+      * Get a single parameter of the unit cell.
+      *
+      * \param i array index of the desired parameter
       */  
       double parameter(int i) const;
 
       /**
       * Get Bravais basis vector i, denoted by a_i.
+      *
+      * \param i array index of the desired basis vector.
       */
       const RealVec<D>& rBasis(int i) const;
    
