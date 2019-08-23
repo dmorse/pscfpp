@@ -29,7 +29,7 @@ groupName I
   AmIterator{
    maxItr 400
    epsilon 1e-10
-   maxHist 40
+   maxHist 20
    domain 1
   }
 
