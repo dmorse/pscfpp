@@ -1,7 +1,0 @@
-RGRID_TO_FIELD
-in/rho_rgrid
-out/rho
-RHO_TO_OMEGA
-out/rho
-out/omega
-FINISH
