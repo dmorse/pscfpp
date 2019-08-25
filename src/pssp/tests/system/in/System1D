@@ -7,29 +7,30 @@ System{
      Polymer{
         nBlock  2
         nVertex 3
-        blocks  0  0  0  1  2.0
-                1  1  1  2  3.0
+        blocks  0  0  0  1  0.5
+                1  1  1  2  0.5
         phi     1.0
      }
      ds   0.01
   }
+
+
   ChiInteraction{
      chi  0   0   0.0
-          1   0   1.0
+          1   0   15.0
           1   1   0.0
   }
-  unitCell   lamellar   1.5161093077
-  mesh       40
+   
+unitCell Lamellar   1.3835952906
+mesh  40
+
   groupName I
+
   AmIterator{
-    maxItr 40
-    epsilon 1e-3
-    maxHist 10
-    domain 0
+   maxItr 100
+   epsilon 1e-12
+   maxHist 10
+   domain 1
   }
 
 }
-
-crystal_system   Lamellar  
-N_cell_param     1
-cell_param       1.5161093077
