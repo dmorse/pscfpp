@@ -515,26 +515,36 @@ namespace Pssp
       // Read grid dimensions
       std::string label;
       int nStar, nM;
+      IntVec<D> waveDft;
+      int nWaveVectors;
+
+      System<D>::readFieldHeader(in);
 
       in >> label;
-      UTIL_CHECK(label == "nStar");
+      UTIL_CHECK(label == "N_star");
       in >> nStar;
       UTIL_CHECK(nStar > 0);
       UTIL_CHECK(nStar == basis().nStar());
 
-      in >> label;
-      UTIL_CHECK (label == "nM");
-      in >> nM;
-      UTIL_CHECK(nM > 0);
-      UTIL_CHECK(nM == mixture().nMonomer());
+      nM = mixture().nMonomer();
+
+      DArray<double> temp;
+      temp.allocate(nM);
 
       // Read fields
-      int i,j, idum;
-      for (i = 0; i < nStar; ++i) {
-         in >> idum;
-         UTIL_CHECK(idum == i);
+      int j, idum;
+      for (int i = 0; i < nStar; ++i) {
          for (j = 0; j < nM; ++j) {
-            in >> fields[j][i];
+            in >> temp [j];
+         }
+
+         in >> waveDft;
+         in >> nWaveVectors;
+         idum = basis().waveId(waveDft);
+
+         for (j = 0; j < nM; ++j) {
+            fields[j][basis().wave(idum).starId] = temp [j];
+            temp [j] = 0;
          }
       }
 
@@ -705,32 +715,6 @@ namespace Pssp
          std::cout<<"Invalid Dimensions";
       }
 
-      /* UTIL_CHECK(hasMesh_);
-
-      std::string label;
-      IntVec<D> nGrid;
-      int nM;
-
-      in >> label;
-      UTIL_CHECK(label == "nGrid");
-      in >> nGrid;
-      UTIL_CHECK(nGrid == mesh().dimensions());
-
-      in >> label;
-      UTIL_CHECK(label == "nM");
-      in >> nM;
-      UTIL_CHECK(nM > 0);
-      UTIL_CHECK(nM == mixture().nMonomer());
-
-      // Read Fields;
-      int idum;
-      MeshIterator<D> itr(mesh().dimensions());
-      for (itr.begin(); !itr.atEnd(); ++itr) {
-         in >> idum;
-         for (int i = 0; i < nM; ++i) {
-            in >> fields[i][itr.rank()];
-         }
-      }*/
    }
 
    //realistically not used
@@ -772,21 +756,22 @@ namespace Pssp
    void System<D>::writeFields(std::ostream &out, 
                            DArray<DArray<double> > const &  fields)
    {
-      int i, j;
       int nStar = basis().nStar();
-      int nM = mixture().nMonomer();
-      out << "nStar     "  <<  nStar           << std::endl;
-      out << "nM     "     <<  nM              << std::endl;
+      int nM = mixture().nMonomer();  
 
-      // Write fields
-      for (i = 0; i < nStar; ++i) {
-         out << Int(i, 5);
-         for (j = 0; j < nM; ++j) {
+      writeFieldHeader(out);
+      out << "N_star       " << std::endl 
+          << "                    "<< nStar << std::endl;
+
+     // Write fields
+     for (int i = 0; i < nStar; ++i) {
+         //out << Int(i, 5);
+         for (int j = 0; j < nM; ++j) {
             out << "  " << Dbl(fields[j][i], 18, 11);
          }
-         //out<< "  " << basis().wave(basis().star(i).beginId).indicesDft;
-         out << std::endl;
-      }
+          out<< "  " <<  basis().star(i).waveBz <<"                  "<<basis().star(i).size << std::endl;
+     }
+
    }
 
    template <int D>

@@ -616,7 +616,7 @@ public:
       bool diff = true;
       for (itr.begin(); !itr.atEnd(); ++itr) {
          for (int i = 0; i < nM; ++i) {
-            if((std::abs(cFields_check[i][itr.rank()]-cFields[i][itr.rank()]))>1.0E-8){
+           if((std::abs(cFields_check[i][itr.rank()]-cFields[i][itr.rank()]))>1.0E-8){
                diff = false;
                break;
             }

@@ -374,7 +374,8 @@ namespace Pssp
          }         
 
          //std::cout<<" Stress Error :"<<temp2<<std::endl;
-         error = (temp1>(100*temp2)) ? temp1 : (100*temp2);  // 100 is chose as stress rescale factor, seperate implementation of errors needs to be done 
+         error = (temp1>(100*temp2)) ? temp1 : (100*temp2);  // 100 is chose as stress rescale factor, seperate implementation of errors needs to be done
+         //error = (temp1>(temp2)) ? temp1 : (temp2); 
       }    
 
       // Depending on the value of cell_, residual errors?
