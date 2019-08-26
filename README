@@ -3,9 +3,9 @@ PSCF++ is a library of C++ classes and programs for solving the
 Edwards-Helfand self-consistent for polymer liquids. It is still under 
 development, but is intended to eventually replace the existing 
 PSCF Fortran program.  When complete, the package will contain a 
-pseudo-spectral implementation for periodic structures, analagous to 
-the existing Fortran code, as well as specialized implementations for 
-other geometries and boundary conditons. 
+pseudo-spectral implementation for periodic structures, analagous to
+that provided by the existing Fortran code, as well as specialized 
+implementations for other geometries and boundary conditons. 
 
 Some differences in design relative to the existing Fortran code for 
 periodic structure, and the expected advantages of the new code are as 
@@ -20,13 +20,13 @@ follows:
      addition to the linear copolymers and homopoylmers allowed by the 
      Fortran code.
 
-   - The object oriented design will facilitate analysis of phase 
-     coexistence allowing creation of several independent objects to 
-     represent different phases. 
+   - An object oriented design will facilitate analysis of phase 
+     coexistence, by allowing creation of several independent objects 
+     to represent different phases. 
 
    - Adoption of C++ will simplify implementation and maintenance of 
-     variants that use graphical process units (GPUs) to accelerate core 
-     calculations.
+     variants that use graphical process units (GPUs) to accelerate 
+     core calculations.
 
 Currently, the code contains:
 
@@ -38,8 +38,8 @@ Currently, the code contains:
    - A nearly complete pseudo-spectral implementation for periodic
      structures similar to that provided by the Fortran PSCF program.
 
-A GPU accelerated code for periodic microstructure has been developed,
-but not yet integrated into this repository.
+A GPU accelerated code for periodic microstructure has also been 
+developed, but has not yet been integrated into this git repository.
 
 PSCF++ is free, open source software. It is distributed under the terms 
 of the GNU General Public License as (GPL) published by the Free Software 
