@@ -53,16 +53,20 @@ veryclean:
 	cd util; $(MAKE) veryclean
 	cd pscf; $(MAKE) veryclean
 	cd fd1d; $(MAKE) veryclean
+	cd pssp; $(MAKE) veryclean
 	rm -f util/config.mk
 	rm -f pscf/config.mk
 	rm -f fd1d/config.mk
+	rm -f pssp/config.mk
 ifneq ($(BLD_DIR),$(SRC_DIR))
 	rm -f util/makefile
 	rm -f pscf/makefile
 	rm -f fd1d/makefile
+	rm -f pssp/makefile
 	rm -f util/tests/makefile
 	rm -f pscf/tests/makefile
 	rm -f fd1d/tests/makefile
+	rm -f pssp/tests/makefile
 	rm -f configure
 endif
 	rm -f config.mk

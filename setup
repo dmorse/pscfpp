@@ -80,19 +80,27 @@ sed -e "s|=PWD|=$PWD|" -e "s|=OWD|bld|" make/config/main_config.1 > bld/temp
 cat bld/temp "$VARFILE" make/config/main_config.2 > bld/config.mk
 rm bld/temp
 
+# Copy main and namespace level makefiles
 cp src/makefile bld/makefile
 cp src/util/makefile bld/util/makefile
 cp src/pscf/makefile bld/pscf/makefile
 cp src/fd1d/makefile bld/fd1d/makefile
+cp src/pssp/makefile bld/pssp/makefile
+
+# Copy makefiles in namespace level test directories
 cp src/util/tests/makefile bld/util/tests/makefile
 cp src/pscf/tests/makefile bld/pscf/tests/makefile
 cp src/fd1d/tests/makefile bld/fd1d/tests/makefile
-cp src/util/config.mk bld/util/config.mk
+cp src/pssp/tests/makefile bld/pssp/tests/makefile
+
+# Copy namespace level config.mk files
 cp src/util/config.mk bld/util/config.mk
 cp src/pscf/config.mk bld/pscf/config.mk
 cp src/fd1d/config.mk bld/fd1d/config.mk
-cp src/configure bld/configure
+cp src/pssp/config.mk bld/pssp/config.mk
 
+# Copy configure script
+cp src/configure bld/configure
 #========================================================================
 # Install makeDep script
 
