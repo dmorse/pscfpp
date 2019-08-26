@@ -105,7 +105,7 @@ namespace Pscf
    {   
       UTIL_CHECK(n_ > 0); 
 
-      gMatInverse_->data = inv.cMatrix();
+      gMatInverse_->data = inv.cArray();
       gsl_linalg_LU_invert(luPtr_, permPtr_, gMatInverse_);
 
    } 
