@@ -1,0 +1,13 @@
+ITERATE
+out/omega_conv_bcc
+WRITE_WFIELDS
+out/omega_bcc
+WRITE_CFIELDS
+out/rho_bcc
+FIELD_TO_RGRID
+out/rho_bcc
+out/rho_check_bcc
+FIELD_TO_RGRID
+out/omega_bcc
+out/omega_check_bcc
+FINISH

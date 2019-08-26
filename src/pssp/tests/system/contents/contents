@@ -1,0 +1,39 @@
+rho_rgrid_lam in the in folder : Results of the Fortran code having the same rgrid file as initial guess as in the C++ code (Lamellar Phase).
+rho_rgrid_hex in the in folder : Results of the Fortran code having the same rgrid file as initial guess as in the C++ code (Hexagonal Phase).
+rho_rgrid_bcc in the in folder : Results of the Fortran code having the same rgrid file as initial guess as in the C++ code (BCC Phase).
+Iterate in the in folder : Contains the Commands for the respective dimensions.
+
+
+#Lamellar Phase
+rho_conv_lam in the out folder : rho field of the lamellar code.
+omega_conv_lam in the out folder : omega field converted from rho field.
+omega_lam in the out folder : omega field of the converged solution of the lamellar phase.
+rho_lam in the out folder : rho field of the converged solution of the lamellar phase.
+rho_check_lam in the out folder : real space rho of the converged solution of the lamellar phase.
+
+
+#Hexagonal Cylinders Phase
+rho_conv_hex in the out folder : rho field of the hex code.
+omega_conv_hex in the out folder : omega field converted from rho field.
+omega_hex in the out folder : omega field of the converged solution of the hex phase.
+rho_hex in the out folder : rho field of the converged solution of the hex phase.
+rho_check_hex in the out folder : real space rho of the converged solution of the hex phase.
+
+#BCC Phase
+rho_conv_bcc in the out folder : rho field of the bcc code.
+rho_conv_check_bcc in the out folder : rho_conv_bcc converted to real space. Should be same as rho_rgrid_bcc.
+omega_conv_bcc in the out folder : omega field converted from rho field.
+omega_conv_check_bcc in the out folder : omega field converted to real space.
+omega_bcc in the out folder : omega field of the converged solution of the bcc phase.
+rho_bcc in the out folder : rho field of the converged solution of the bcc phase.
+rho_check_bcc in the out folder : real space rho of the converged solution of the bcc phase.
+omega_check_bcc in the out folder : real space omega of the converged solution of the bcc phase.
+
+
+rho_rgrid_lam in the contents folder : Results of the Fortran code having the same rgrid file as initial guess as in the C++ code (Lamellar Phase). 
+rho_rgrid_hex in the contents folder : Results of the Fortran code having the same rgrid file as initial guess as in the C++ code (Hexagonal Phase).
+rho_rgrid_bcc in the contents folder : Results of the Fortran code having the same rgrid file as initial guess as in the C++ code (BCC Phase).
+
+param_lam in the contents folder : Parameter file of Fortran Code for the Lamellar Phase.
+param_hex in the contents folder : Parameter file of Fortran Code for the Hexagonal Phase.
+param_bcc in the contents folder : Parameter file of Fortran Code for the BCC Phase.

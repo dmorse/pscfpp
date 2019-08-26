@@ -6,6 +6,7 @@
 */
 
 #include "ChiInteraction.h"
+#include <pscf/math/LuSolver.h>
 
 namespace Pscf {
    
@@ -32,6 +33,7 @@ namespace Pscf {
       UTIL_CHECK(nMonomer() > 0);
       chi_.allocate(nMonomer(), nMonomer());
       chiInverse_.allocate(nMonomer(), nMonomer());
+      indemp_.allocate(nMonomer(), nMonomer());
       readDSymmMatrix(in, "chi", chi_, nMonomer());
 
       if (nMonomer() == 2) {
@@ -46,9 +48,70 @@ namespace Pscf {
          chiInverse_(1,1) = chi_(0,0)/det;
          chiInverse_(0,0) = chi_(1,1)/det;
 
-      } else {
-         UTIL_THROW("Inversion of general chi not yet implemented");
       }
+
+      else {
+
+      LuSolver solver;
+      solver.allocate(nMonomer());
+      solver.computeLU(chi_); 
+      solver.inverse(chiInverse_); 
+
+      }
+
+     /* int i, j;
+
+      for (i = 0; i < chiInverse_.capacity1(); ++i) { //row
+         for (j = 0; j < chiInverse_.capacity2(); ++j) { //coloumn
+           
+            std::cout <<chiInverse_(i,j)<<std::endl;
+
+         }
+      }*/
+
+
+        //    std::cout <<chiInverse_.capacity1()<<std::endl;
+      //std::cout <<chiInverse_.capacity2()<<std::endl;
+
+      double sum = 0;
+      int i, j, k;
+      std::cout<<std::endl;
+
+      for (i = 0; i < nMonomer(); ++i) { //coloumn
+         indemp_(0,i) = 0;
+         for (j = 0; j < nMonomer(); ++j) { //row     
+            indemp_(0,i) -= chiInverse_(j,i);        
+         }
+
+     //std::cout <<"indemp (0,"<<i<<") = "<<indemp_(0,i)<<std::endl; 
+         sum -= indemp_(0,i);
+         for (k = 0; k < nMonomer(); ++k) { //row                                             
+            indemp_(k,i) = indemp_(0,i);
+         }
+      }
+
+     // std :: cout <<"sum = "<<sum<<std::endl;
+
+      for (i = 0; i < nMonomer(); ++i) { //row
+         for (j = 0; j < nMonomer(); ++j) { //coloumn                                             
+            indemp_(i,j) /= sum;
+         }
+         indemp_(i,i) +=1 ; 
+      }
+
+
+      //for (i = 0; i < chiInverse_.capacity1(); ++i) { //row
+        // for (j = 0; j < chiInverse_.capacity2(); ++j) { //coloumn
+            
+          //  std::cout <<"chiInverse ("<<i<<","<<j<<") = "<<chiInverse_(i,j)<<std::endl;
+
+           // std::cout <<"indemp ("<<i<<","<<j<<") = "<<indemp_(i,j)<<std::endl;
+        
+        // }
+     // }
+
+
+
 
    }
 

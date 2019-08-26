@@ -63,6 +63,12 @@ namespace Pscf
       */
       void solve(Array<double>& b, Array<double>& x);
 
+      /** 
+      *   
+      * \compute inverse of matrix A returned in inv
+      */  
+      void inverse (Matrix<double>& inv); 
+ 
    private:
 
       /// RHS vector of Ax=b.
@@ -73,6 +79,9 @@ namespace Pscf
 
       /// Pointer to LU decomposition matrix.
       gsl_matrix* luPtr_;
+
+      /// Pointer to inverse matrix.
+      gsl_matrix* gMatInverse_;
 
       /// Pointer to permutation in LU decomposition.
       gsl_permutation* permPtr_;

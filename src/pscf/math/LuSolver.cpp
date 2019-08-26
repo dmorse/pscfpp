@@ -35,6 +35,7 @@ namespace Pscf
    {
       if (n_ > 0)  {
          if (luPtr_) gsl_matrix_free(luPtr_);
+         if (gMatInverse_) gsl_matrix_free(gMatInverse_);
          if (permPtr_) gsl_permutation_free(permPtr_);
       }
    }
@@ -49,6 +50,7 @@ namespace Pscf
       UTIL_CHECK(luPtr_ == 0);
       UTIL_CHECK(permPtr_ == 0);
       luPtr_ = gsl_matrix_alloc(n, n);
+      gMatInverse_ = gsl_matrix_alloc(n, n);
       permPtr_ = gsl_permutation_alloc(n);
       b_.size = n;
       x_.size = n;
@@ -95,5 +97,17 @@ namespace Pscf
       b_.data = 0;
       x_.data = 0;
    }
+
+   /*  
+   * Find inverse 
+   */  
+   void LuSolver::inverse(Matrix<double>& inv)
+   {   
+      UTIL_CHECK(n_ > 0); 
+
+      gMatInverse_->data = inv.cArray();
+      gsl_linalg_LU_invert(luPtr_, permPtr_, gMatInverse_);
+
+   } 
 
 }
