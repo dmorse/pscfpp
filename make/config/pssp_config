@@ -62,5 +62,7 @@ pssp_LIB=$(BLD_DIR)/pssp/lib$(pssp_LIBNAME).a
 #-----------------------------------------------------------------------
 # Path to executable file
 
-PSCF_PS_EXE=$(BIN_DIR)/pscf_ps$(PSSP_SUFFIX)$(UTIL_SUFFIX)
+PSCF_PS1D_EXE=$(BIN_DIR)/pscf_ps1d
+PSCF_PS2D_EXE=$(BIN_DIR)/pscf_ps2d
+PSCF_PS3D_EXE=$(BIN_DIR)/pscf_ps3d
 #-----------------------------------------------------------------------

@@ -19,9 +19,13 @@ include $(BLD_DIR)/pssp/include.mk
 #include $(SRC_DIR)/pssp/sources.mk
 
 #-----------------------------------------------------------------------
-# Variable definition
+# Main program source file base names 
 
-PSCF_PS=$(BLD_DIR)/pssp/pscf_ps
+PSCF_PS1D=$(BLD_DIR)/pssp/pscf_ps1d
+PSCF_PS2D=$(BLD_DIR)/pssp/pscf_ps2d
+PSCF_PS3D=$(BLD_DIR)/pssp/pscf_ps3d
+
+PSCF_PS_EXE = $(PSCF_PS1D_EXE) $(PSCF_PS2D_EXE) $(PSCF_PS3D_EXE)
 #-----------------------------------------------------------------------
 # Main targets 
 
@@ -29,8 +33,10 @@ all: $(pssp_OBJS) $(pssp_LIB) $(PSCF_PS_EXE)
 
 clean:
 	rm -f $(pssp_OBJS) $(pssp_OBJS:.o=.d)
-	rm -f $(PSCF_PS).o $(PSCF_PS).d
 	rm -f $(pssp_LIB)
+	rm -f $(PSCF_PS1D).o $(PSCF_PS1D).d
+	rm -f $(PSCF_PS2D).o $(PSCF_PS2D).d
+	rm -f $(PSCF_PS3D).o $(PSCF_PS3D).d
 	cd tests; $(MAKE) clean
 
 veryclean:
@@ -39,14 +45,27 @@ veryclean:
 	-rm -f *.d 
 	-rm -f lib*.a
 
-# Executable target
+# Executable targets
 
-$(PSCF_PS_EXE): $(PSCF_PS).o $(PSSP_LIBS)
-	$(CXX) $(LDFLAGS) -o $(PSCF_PS_EXE) $(PSCF_PS).o $(LIBS)
+$(PSCF_PS1D_EXE): $(PSCF_PS1D).o $(PSSP_LIBS)
+	$(CXX) $(LDFLAGS) -o $(PSCF_PS1D_EXE) $(PSCF_PS1D).o $(LIBS)
+
+$(PSCF_PS2D_EXE): $(PSCF_PS2D).o $(PSSP_LIBS)
+	$(CXX) $(LDFLAGS) -o $(PSCF_PS2D_EXE) $(PSCF_PS2D).o $(LIBS)
+
+$(PSCF_PS3D_EXE): $(PSCF_PS3D).o $(PSSP_LIBS)
+	$(CXX) $(LDFLAGS) -o $(PSCF_PS3D_EXE) $(PSCF_PS3D).o $(LIBS)
+
 
 # Short name for executable target (for convenience)
-pscf_ps:
-	$(MAKE) $(PSCF_PS_EXE)
+pscf_ps1d:
+	$(MAKE) $(PSCF_PS1D)
+
+pscf_ps2d:
+	$(MAKE) $(PSCF_PS2D)
+
+pscf_ps3d:
+	$(MAKE) $(PSCF_PS3D)
 
 #-----------------------------------------------------------------------
 # Include dependency files

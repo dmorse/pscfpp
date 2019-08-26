@@ -13,6 +13,8 @@ class Pscf::Pssp::Basis: (assigned to Dave)
    - Goal: Compare examples of waves and star outputs from pscfpp to 
      those from fortran pscf to check compatibility.
 
+   - Fix discrepancy in choice of characteristic wave Basis:Star:waveBz
+
 ------------------------------------------------------------------------
 Unit Tests: (assigned to Anshul, with help with Basis as needed)
 
@@ -59,7 +61,7 @@ class System reorganization: (assigned to Dave, lower priority)
          - Field file conversion functions (including file open/close)
          - Iteration including opening and reading of input file
 
-     Possibility: Add FieldFile class in pssp/field to contain 
+     Possibility: Add fieldUtil class in pssp/field to contain 
 
          - Functions to read and write file formats for multiple monomers
          - Functions to apply conversions to same file formats
@@ -69,19 +71,6 @@ class System reorganization: (assigned to Dave, lower priority)
      Add separate functions to read omega field files in one or more
      formats. Separate these from the ITERATE command.
 
-------------------------------------------------------------------------
-Main program
-
-     Figure out how to provide users with a convenient interface for
-     simulations with different numbers of spatial dimensions.
-     Either:
-
-       - Provide different programs, with different names, e.g., pscf_ps2d
- 
-       - Use a command line option -d dimension to specify the dimension
-         of space and provide an if structure with if (dim == 1) etc. in
-         the main program.
-     
 ------------------------------------------------------------------------
 Later:
 

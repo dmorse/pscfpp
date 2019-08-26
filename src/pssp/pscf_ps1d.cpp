@@ -8,13 +8,13 @@
 #include <pssp/System.h>
 
 /**
-* \page pscf_pssp_page pscf_pssp
+* \page pscf_ps1d_page pscf_ps1d
 *
-* Polymer Self-Consistent Field Theory - One-dimensional Finite Difference
+* Polymer Self-Consistent Field Theory - One-dimensional Pseudo-spectral
 *
 * Usage:
 *
-*    pscf_pssp [-e] [-r file] [-p file] [-c file] [-i prefix] [-o prefix]
+*    pscf_ps1d [-e] [-r file] [-p file] [-c file] [-i prefix] [-o prefix]
 *
 * Options:
 *
@@ -47,7 +47,7 @@
 
 int main(int argc, char **argv)
 {
-   Pscf::Pssp::System<3> system;
+   Pscf::Pssp::System<1> system;
 
    // Process command line options
    system.setOptions(argc, argv);

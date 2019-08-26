@@ -1,17 +1,20 @@
 TODO (Basis class):
 
-1) Test code to read a space group from a file. Test relationship of
+1) Fix discrepancy in choice of characteristic wave Basis::Star:waveBz
+   (assigned to Anshul)
+
+2) Test code to read a space group from a file. Test relationship of
    resulting basis to that produced by fortran code for a variety of
    groups.
 
-2) Add function makeGroupFileName to convert standard file name (in
+3) Add function makeGroupFileName to convert standard file name (in
    format used by fortran pscf) to a valid file name with no slashes
    or spaces.
 
-3) Possibility: Add a partnerId to Basis::Wave. Once you've identified 
+4) Possibility: Add a partnerId to Basis::Wave. Once you've identified 
    the partner, why not keep track of it?
 
-4) Test Basis code with more varied groups:
+5) Test Basis code with more varied groups:
 
    Examples: 2D Square, 
              2D Square centered (has translations and cancellations)
@@ -21,20 +24,20 @@ TODO (Basis class):
 
    Make sure to test with even and odd mesh dimension elements
 
-5) In function that converts from rGrid to symmetry adapted basis,
+6) In function that converts from rGrid to symmetry adapted basis,
    add check that coefficients of components within a start have
    the same magnitude and appropriate phase relationships. Also
    check that cancelled stars have zero components. The tolerance 
    could be passed to function as a parameter with a default value.
 
-6) Move computation of dEigen for one vector to a private function, 
+7) Move computation of dEigen for one vector to a private function, 
    call this in makeStars() and udpate(). Alternative: Make this 
    a public member of UnitCell, giving functions ksq() and dksq().
    Unit tests to test computation of dEigen member of each vector.
    makeStars() function. Test special cases for which answer can be
    worked out analytically.
 
-7) Possibility: Convert TWave::phase to a Rational value. Build 
+8) Possibility: Convert TWave::phase to a Rational value. Build 
    in treatment of corresponding coefficient for special cases of
    phase = 0, phase = +- 1/2, phase = +- 1/4.
 
