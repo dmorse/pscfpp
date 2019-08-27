@@ -14,8 +14,7 @@
 #include <pscf/math/IntVec.h>
 
 namespace Pscf {
-namespace Pssp
-{
+namespace Pssp {
 
    template <int D>
    void convertFieldBasisToDft(Basis<D> const & basis,
@@ -25,15 +24,15 @@ namespace Pssp
       // Create Mesh<D> with dimensions of DFT grid.
       Mesh<D> dftMesh(dft.dftDimensions());
 
-      typename Basis<D>::Star* starPtr; // pointer to current star
-      typename Basis<D>::Wave* wavePtr; // pointer to current wave
-      std::complex<double> component;   // complex coefficient for star
-      std::complex<double> coeff;       // coefficient for wave
-      IntVec<D> indices;                // dft grid indices of wave
-      int rank;                         // dft grid rank of wave
-      int nStar = basis.nStar();        // number of stars
-      int is;                           // star index
-      int iw;                           // wave index
+      typename Basis<D>::Star const* starPtr; // pointer to current star
+      typename Basis<D>::Wave const* wavePtr; // pointer to current wave
+      std::complex<double> component;         // coefficient of star
+      std::complex<double> coeff;             // coefficient of wave
+      IntVec<D> indices;                      // dft grid indices of wave
+      int rank;                               // dft grid rank of wave
+      int nStar = basis.nStar();              // number of stars
+      int is;                                 // star index
+      int iw;                                 // wave index
 
       is = 0;
       while (is < nStar) {
@@ -108,20 +107,20 @@ namespace Pssp
    }
 
    template <int D>
-   void convertFieldDfToBasis(Basis<D> const & basis,
-                              RFieldDft<D> const & dft, 
-                              DArray<double>& components)
+   void convertFieldDftToBasis(Basis<D> const & basis,
+                               RFieldDft<D> const & dft, 
+                               DArray<double>& components)
    {
       // Create Mesh<D> with dimensions of DFT grid.
       Mesh<D> dftMesh(dft.dftDimensions());
 
-      typename Basis<D>::Star* starPtr;  // pointer to current star
-      typename Basis<D>::Wave* wavePtr;  // pointer to current wave
-      std::complex<double> component;    // complex coefficient for star
-      IntVec<D> indices;                 // dft grid indices of wave
-      int rank;                          // dft grid rank of wave
-      int is;                            // star index
-      int nStar = basis.nStar();         // number of stars
+      typename Basis<D>::Star const* starPtr; // pointer to current star
+      typename Basis<D>::Wave const* wavePtr; // pointer to current wave
+      std::complex<double> component;         // coefficient of star
+      IntVec<D> indices;                      // dft grid indices of wave
+      int rank;                               // dft grid rank of wave
+      int is;                                 // star index
+      int nStar = basis.nStar();              // number of stars
 
       // Loop over stars
       is = 0;

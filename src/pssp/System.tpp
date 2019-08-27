@@ -508,7 +508,7 @@ namespace Pssp
    
    template <int D>
    void System<D>::readFields(std::istream &in, 
-                                DArray<DArray<double> >& fields)
+                              DArray<DArray<double> >& fields)
    {
       UTIL_CHECK(hasMesh_);
 
@@ -565,13 +565,13 @@ namespace Pssp
    {
        std::ifstream inFile;
        fileMaster().openInputFile(filename, inFile);
-       readFields(inFile, wFields());
+       readFields(inFile, fields);
        inFile.close();
    }
 
    template <int D>
    void System<D>::readRFields(std::istream &in,
-                                DArray<RField<D> >& fields)
+                               DArray<RField<D> >& fields)
    {
       UTIL_CHECK(hasMesh_);
       std::string label;
@@ -770,7 +770,7 @@ namespace Pssp
 
    template <int D>
    void System<D>::writeFields(std::ostream &out, 
-                           DArray<DArray<double> > const &  fields)
+                               DArray<DArray<double> > const&  fields)
    {
       int i, j;
       int nStar = basis().nStar();
@@ -791,11 +791,11 @@ namespace Pssp
 
    template <int D>
    void System<D>::writeFields(std::string filename, 
-                           DArray< DArray<double> > const &  fields)
+                               DArray< DArray<double> > const &  fields)
    {
       std::ofstream outFile;
       fileMaster().openOutputFile(filename, outFile);
-      writeFields(outFile, wFields_);
+      writeFields(outFile, fields);
       outFile.close();
    }
 
