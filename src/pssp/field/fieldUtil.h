@@ -41,7 +41,7 @@ namespace Pssp
    */
    template <int D>
    void convertFieldDftToBasis(Basis<D> const & basis,
-                               RFieldDft<D>& dft, 
+                               RFieldDft<D> const& dft, 
                                DArray<double>& components);
 
 } // namespace Pscf:Pssp

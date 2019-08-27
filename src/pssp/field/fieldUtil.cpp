@@ -16,7 +16,7 @@ namespace Pssp
                                DArray<double> const& components, 
                                RFieldDft<3>& dft);
    template <>
-   void convertFieldDfToBasis(Basis<3> const & basis,
+   void convertFieldDftToBasis(Basis<3> const & basis,
                               RFieldDft<3> const & dft, 
                               DArray<double>& components);
 
