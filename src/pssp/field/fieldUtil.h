@@ -32,7 +32,7 @@ namespace Pssp
                                RFieldDft<D>& dft);
 
    /**
-   * Convert DFT of field (k-grid) to symmetry-adapted Fourier transform.
+   * Convert field from DFT (k-grid) to symmetry-adapted Fourier transform.
    *
    * \param basis symmetry adapted discrete Fourier basis
    * \param dft complex DFT representation of a field.
