@@ -35,10 +35,10 @@ System{
   }
   hasSweep 1
   CompositionSweep{
-     ns              100
+     ns              5
      baseFileName    out/spherical
      homogeneousMode 1
-     dPhi            -0.0625  0.0625
+     dPhi            +0.0625  -0.0625
   }
 }
 

@@ -25,12 +25,14 @@ pscf:
 
 # Run all unit tests
 run-tests:
-	cd util/tests; $(MAKE) all; $(MAKE) run
+	cd util/tests; $(MAKE) all; $(MAKE) quiet
 	cd pscf/tests; $(MAKE) all; $(MAKE) run
 	cd fd1d/tests; $(MAKE) all; $(MAKE) run
+	cd pssp/tests; $(MAKE) all; $(MAKE) run
 	@cat util/tests/count > count
 	@cat pscf/tests/count >> count
 	@cat fd1d/tests/count >> count
+	@cat pssp/tests/count >> count
 	@echo " "
 	@echo "Summary"
 	@cat count
