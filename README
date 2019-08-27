@@ -1,24 +1,24 @@
 
 PSCF++ is a library of C++ classes and programs for solving the 
-Edwards-Helfand self-consistent for polymer liquids. It is still under 
-development, but is intended to eventually replace the existing 
-PSCF Fortran program.  When complete, the package will contain a 
-pseudo-spectral implementation for periodic structures, analagous to
-that provided by the existing Fortran code, as well as specialized 
-implementations for other geometries and boundary conditons. 
+Edwards-Helfand self-consistent field theory for polymer liquids. 
+PSCF++ is still under development, but is intended to eventually replace 
+the existing PSCF Fortran program.  When complete, the package will 
+contain a pseudo-spectral implementation for periodic structures, 
+analagous to that provided by the existing Fortran code, as well as 
+specialized implementations for other geometries and boundary conditons. 
 
-Some differences in design relative to the existing Fortran code for 
-periodic structure, and the expected advantages of the new code are as 
-follows:
+Some differences from the existing PSCF Fortran code and expected
+advantages of the new code include:
 
-   - A more package flexible design provides a common framework for 
-     implementation of several different SCFT solvers that are designed 
-     for different geometries or that use different algorithms.
+   - A more flexible design provides a common framework for 
+     implementation of several different SCFT solvers that are 
+     intended for different geometries or that use different 
+     algorithms.
 
    - A more general description of polymer topology allows simulations 
      of mixtures containing arbitrary acyclic branched copolymers, in 
-     addition to the linear copolymers and homopoylmers allowed by the 
-     Fortran code.
+     addition to the linear copolymers and homopolymers allowed by the 
+     existing Fortran code.
 
    - An object oriented design will facilitate analysis of phase 
      coexistence, by allowing creation of several independent objects 
