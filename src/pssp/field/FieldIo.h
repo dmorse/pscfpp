@@ -150,6 +150,24 @@ namespace Pssp
       */
       void writeKFields(std::ostream& out, 
                         DArray< RFieldDft<D> > const& fields);
+   
+      /**
+      * Convert field from symmetry-adapted Fourier transform to DFT.
+      *
+      * \param components coefficients of symmetry-adapted basis functions
+      * \param dft discrete Fourier transform of a real field
+      */
+      void convertFieldBasisToDft(DArray<double> const& components, 
+                                  RFieldDft<D>& dft);
+   
+      /**
+      * Convert field from DFT to symmetry-adapted Fourier transform.
+      *
+      * \param dft complex DFT representation of a field.
+      * \param components coefficients of symmetry-adapted basis functions.
+      */
+      void convertFieldDftToBasis(RFieldDft<D> const& dft, 
+                               DArray<double>& components);
 
    private:
 
