@@ -21,7 +21,7 @@ System{
           1   1   0.0
   }
    
-unitCell hexagonal   1.77703537
+unitCell hexagonal   1.7770353700E+00
 mesh  24 24
 
 groupName I
