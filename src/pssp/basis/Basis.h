@@ -190,13 +190,19 @@ namespace Pssp
 
       /**
       * Print a list of all waves to an output stream.
+      *
+      * \param out output stream to which to write
+      * \param outputAll output cancelled waves only if true
       */
-      void outputWaves(std::ostream& out) const;
+      void outputWaves(std::ostream& out, bool outputAll = false) const;
 
       /**
       * Print a list of all stars to an output stream.
+      *
+      * \param out output stream to which to write
+      * \param outputAll output cancelled waves only if true
       */
-      void outputStars(std::ostream& out) const;
+      void outputStars(std::ostream& out, bool outputAll = false) const;
 
       /**
       * Returns true if valid, false otherwise.

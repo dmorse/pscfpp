@@ -51,13 +51,13 @@ $(PSCF_PS3D_EXE): $(PSCF_PS3D).o $(PSSP_LIBS)
 
 # Short name for executable target (for convenience)
 pscf_ps1d:
-	$(MAKE) $(PSCF_PS1D)
+	$(MAKE) $(PSCF_PS1D_EXE)
 
 pscf_ps2d:
-	$(MAKE) $(PSCF_PS2D)
+	$(MAKE) $(PSCF_PS2D_EXE)
 
 pscf_ps3d:
-	$(MAKE) $(PSCF_PS3D)
+	$(MAKE) $(PSCF_PS3D_EXE)
 
 #-----------------------------------------------------------------------
 # Include dependency files
@@ -65,4 +65,6 @@ pscf_ps3d:
 -include $(pssp_OBJS:.o=.d)
 -include $(pscf_OBJS:.o=.d)
 -include $(util_OBJS:.o=.d)
--include $(PSCF_PS).d 
+-include $(PSCF_PS1D).d 
+-include $(PSCF_PS2D).d 
+-include $(PSCF_PS3D).d 

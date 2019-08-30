@@ -80,8 +80,6 @@ namespace Pssp
       // Identify stars of waves that are related by symmetry
       makeStars(group);
 
-      //outputWaves(std::cout);
-
       // Apply validity test suite
       bool valid = isValid();
       if (!valid) {
@@ -154,8 +152,9 @@ namespace Pssp
       std::complex<double> coeff;
       double Gsq;
       double Gsq_max;
-      double epsilon = 1.0E-8;
-      double twoPi = 2.0*Constants::Pi;
+      double phase_diff;
+      const double twoPi = 2.0*Constants::Pi;
+      const double epsilon = 1.0E-8;
       IntVec<D> meshDimensions = mesh().dimensions();
       IntVec<D> rootVec;
       IntVec<D> vec;
@@ -255,33 +254,58 @@ namespace Pssp
                   }
                   wave.phase *= twoPi;
 
-                  // Check for cancellation of star: It can be shown
-                  // that a star is cancelled iff application of any
-                  // symmetry operation in the group yields a rotated
-                  // vector vec equal to the root vector rootVec, but 
-                  // with a nonzero phase, creating a contradiction.
+                  // Check for cancellation of star: The star is
+                  // cancelled if application of any symmetry operation
+                  // in the group to the root vector yields a rotated 
+                  // vector equivalent to the root vector but with a 
+                  // nonzero phase, creating a contradiction.
 
-                  if (vec == rootVec) {
+                  if (wave.indicesDft == rootItr->indicesDft) {
                      if (abs(wave.phase) > 1.0E-6) {
                         cancel = true;
                      }
                   }
 
-                  // Attempt to add wave to set star. Insertion fails 
-                  // if star contains a TWave with the same indicesDft.
-                  star.insert(wave);
+                  // Search for an equivalent wave already in the star.
+                  // Note: Equivalent waves have equal DFT indices.
+                  setItr = star.find(wave);
+
+                  if (setItr == star.end()) {
+
+                     // If no equivalent wave is found in the star,
+                     // then add this wave to the star
+                     star.insert(wave);
+
+                  } else {
+
+                     // If an equivalent wave is found, check if the
+                     // phases are equivalent. If not, the star is
+                     // cancelled.
+
+                     phase_diff = setItr->phase - wave.phase;
+                     while (phase_diff > 0.5) {
+                        phase_diff -= 1.0;
+                     }
+                     while (phase_diff <= -0.5) {
+                        phase_diff += 1.0;
+                     }
+                     if (abs(phase_diff) > 1.0E-6) {
+                        cancel = true;
+                     }
+
+                  }
+
                }
                starSize = star.size();
 
-               // Append waves from std::set star to std::vector tempStar
+               // Copy all waves from set star to std::vector tempStar
                tempStar.clear();
                setItr = star.begin(); 
                for ( ; setItr != star.end(); ++setItr) {
                   tempStar.push_back(*setItr);
                }
 
-               // Sort tempStar, in descending order by indicesBz
-               // Note: Duplicate values of indicesBz are permitted
+               // Sort tempStar, in descending order by indicesBz.
                TWaveBzComp<D> waveBzComp;
                std::sort(tempStar.begin(), tempStar.end(), waveBzComp);
                
@@ -793,50 +817,57 @@ namespace Pssp
 
 
    template <int D>
-   void Basis<D>::outputWaves(std::ostream& out) const
+   void Basis<D>::outputWaves(std::ostream& out, bool outputAll) const
    {
       out << std::endl;
       out << "Waves:" << std::endl;
-      int i, j;
+      int i, j, starId;
       for (i = 0; i < nWave_; ++i) {
-         out << Int(i,4);
-         out << Int(waves_[i].starId, 4);
-         out << " |";
-         for (j = 0; j < D; ++j) {
-            out << Int(waves_[i].indicesDft[j], 4);
+         starId = waves_[i].starId;
+         if (outputAll || (!stars_[starId].cancel)) {
+            out << Int(i,4);
+            out << Int(waves_[i].starId, 4);
+            out << " |";
+            for (j = 0; j < D; ++j) {
+               out << Int(waves_[i].indicesDft[j], 4);
+            }
+            out << " |";
+            for (j = 0; j < D; ++j) {
+               out << Int(waves_[i].indicesBz[j], 4);
+            }
+            out << " | ";
+            out << Dbl(waves_[i].sqNorm, 12);
+            out << "  " << Dbl(waves_[i].coeff.real(), 10);
+            out << "  " << Dbl(waves_[i].coeff.imag(), 10);
+            out << std::endl;
          }
-         out << " |";
-         for (j = 0; j < D; ++j) {
-            out << Int(waves_[i].indicesBz[j], 4);
-         }
-         out << " | ";
-         out << Dbl(waves_[i].sqNorm, 12);
-         out << "  " << Dbl(waves_[i].coeff.real(), 10);
-         out << "  " << Dbl(waves_[i].coeff.imag(), 10);
-         out << std::endl;
       }
    }
 
 
    template <int D>
-   void Basis<D>::outputStars(std::ostream& out) const
+   void Basis<D>::outputStars(std::ostream& out, bool outputAll) const
    {
       out << std::endl;
       out << "Stars:" << std::endl;
       int i, j;
       for (i = 0; i < nStar_; ++i) {
-         out << Int(i, 4)
-             << Int(stars_[i].size, 3)
-             << Int(stars_[i].beginId, 5)
-             << Int(stars_[i].endId, 5)
-             << Int(stars_[i].invertFlag, 3)
-             << Int(stars_[i].cancel, 3);
-         out << " |";
-         for (j = 0; j < D; ++j) {
-            out << Int(stars_[i].waveBz[j], 4);
+         if (outputAll || (!stars_[i].cancel)) {
+            out << Int(i, 4)
+                << Int(stars_[i].size, 3)
+                << Int(stars_[i].beginId, 7)
+                << Int(stars_[i].endId, 7)
+                << Int(stars_[i].invertFlag, 3);
+            if (outputAll) {
+               out << Int(stars_[i].cancel, 3);
+            }
+            out << " |";
+            for (j = 0; j < D; ++j) {
+               out << Int(stars_[i].waveBz[j], 5);
+            }
+            out << " | " << Dbl(stars_[i].eigen, 12);
+            out << std::endl;
          }
-         out << " | " << Dbl(stars_[i].eigen, 12);
-         out << std::endl;
       }
    }
 
@@ -844,7 +875,7 @@ namespace Pssp
    bool Basis<D>::isValid() const
    {
       IntVec<D> v;
-      int is, iw, iwp;
+      int is, iw, iwp, j;
 
       // Loop over dft mesh to check consistency of waveIds_ and waves_
       MeshIterator<D> itr(mesh().dimensions());
@@ -886,13 +917,21 @@ namespace Pssp
 
          // Check star size
          if (stars_[is].size != stars_[is].endId - stars_[is].beginId) {
-            std::cout << "Inconsistent Star::size" 
-                      << std::endl;
-             return false;
+            std::cout << "Inconsistent Star::size:" << std::endl;
+            std::cout << "Star id    "  << is << std::endl;
+            std::cout << "star size  "  << stars_[is].size << std::endl;
+            std::cout << "Star begin "  << stars_[is].beginId << std::endl;
+            std::cout << "Star end   "  << stars_[is].endId << std::endl;
+            return false;
          }
          if (is > 0) {
             if (stars_[is].beginId != stars_[is-1].endId) {
-               std::cout << "Star ranges not consecutive" << std::endl;
+               std::cout << "Star ranges not consecutive:" << std::endl;
+               std::cout << "Star id    "     << is << std::endl;
+               std::cout << "stars_[" << is << "]"   << ".beginId = " 
+                         << stars_[is].beginId << std::endl;
+               std::cout << "stars_[" << is-1 << "]" << ".endId   = " 
+                         << stars_[is-1].endId << std::endl;
                return false;
             }
          }
@@ -900,8 +939,12 @@ namespace Pssp
          // Check star ids of waves in star
          for (iw = stars_[is].beginId; iw < stars_[is].endId; ++iw) {
             if (waves_[iw].starId != is) {
-               std::cout << "Inconsistent Wave::starId and Star range" 
-                         << std::endl;
+               std::cout << "Inconsistent Wave::starId :" << std::endl;
+               std::cout << "star id      "  << is << std::endl;
+               std::cout << "star beginId "  << stars_[is].beginId << "\n";
+               std::cout << "star endId   "  << stars_[is].endId << "\n";
+               std::cout << "wave id      "  << iw << "\n";
+               std::cout << "wave starId  "  << waves_[iw].starId << "\n";
                return false;
             }
          }
@@ -956,18 +999,24 @@ namespace Pssp
                      return false;
                   }
                   if (!cancel && abs(cdel) > 1.0E-8) {
+                     std::cout << "Closed star is not real:" << "\n";
                      std::cout << "+G = " << waves_[iw].indicesBz
                                << "  coeff = " << waves_[iw].coeff 
-                               << std::endl;
+                               << "\n";
                      std::cout << "-G = " << waves_[iwp].indicesBz
-                               << "  coeff = " << waves_[iwp].coeff
-                               << std::endl;
-                     std::cout << "Coefficients not conjugates in closed star" 
-                               << std::endl;
+                               << "  coeff = " << waves_[iwp].coeff 
+                               << "\n";
+                     std::cout << "Coefficients not conjugates." << "\n";
+                     std::cout << "All waves in star:" << "\n";
+                     for (j=begin; j < end; ++j) {
+                        std::cout << waves_[j].indicesBz 
+                                  << waves_[j].coeff << "\n";
+                     }
                      return false;
                   }
                }
- 
+
+               // Finished processing a closed star, increment counter is
                ++is;
 
             } else {
@@ -983,7 +1032,7 @@ namespace Pssp
                   return false;
                }
                if (stars_[is+1].size != stars_[is].size) {
-                  std::cout << "Parners of different size" << std::endl;
+                  std::cout << "Partners of different size" << std::endl;
                   return false;
                }
 
@@ -1004,9 +1053,9 @@ namespace Pssp
                            cdel = conj(waves_[iwp].coeff);
                            cdel -= waves_[iw].coeff;
                            if (abs(cdel) > 1.0E-8) {
-                              std::cout  <<
-                                 "Coefficients not conjugates for open star" 
-                                 << std::endl;
+                              std::cout  << 
+                                "Coefficients not conjugates in open star"
+                                << std::endl;
                               return false;
                            }
                         }
@@ -1020,13 +1069,16 @@ namespace Pssp
                   }
                }
 
+               // Finished processing a pair, increment star counter by 2
                is += 2;
-            }
-         }
+
+            } // end if (stars_[is].invertFlag == 0) ... else ...
+
+         } // end while (is < nStar_) loop
 
       }
  
-      // If end of function is reached, then all tests passed
+      // The end of this function is reached iff all tests passed.
       return true;
    }
 

@@ -536,11 +536,12 @@ namespace Pssp
 
       // Read grid dimensions
       std::string label;
-      int nStar, nM;
-      IntVec<D> waveDft;
+      int nStar, nMonomer;
+      IntVec<D> waveBz, waveDft;
       int nWaveVectors;
 
       System<D>::readFieldHeader(in);
+      nMonomer = mixture().nMonomer();
 
       in >> label;
       UTIL_CHECK(label == "N_star");
@@ -548,46 +549,28 @@ namespace Pssp
       UTIL_CHECK(nStar > 0);
       UTIL_CHECK(nStar == basis().nStar());
 
-      nM = mixture().nMonomer();
 
       DArray<double> temp;
-      temp.allocate(nM);
+      temp.allocate(nMonomer);
 
       // Read fields
-      int j, idum;
+      int j, waveId, starId;
       for (int i = 0; i < nStar; ++i) {
-         for (j = 0; j < nM; ++j) {
+         for (j = 0; j < nMonomer; ++j) {
             in >> temp [j];
          }
 
-         in >> waveDft;
+         in >> waveBz;
+         waveDft = waveBz;
+         mesh().shift(waveDft);
          in >> nWaveVectors;
-         idum = basis().waveId(waveDft);
-
-         for (j = 0; j < nM; ++j) {
-            fields[j][basis().wave(idum).starId] = temp [j];
-            temp [j] = 0;
+         waveId = basis().waveId(waveDft);
+         starId = basis().wave(waveId).starId;
+         UTIL_CHECK(basis().star(starId).waveBz == waveBz);
+         for (j = 0; j < nMonomer; ++j) {
+            fields[j][starId] = temp [j];
          }
       }
-
-      #if 0
-      // Determine if all species are treated in closed ensemble.
-      bool isCanonical = true;
-      for (i = 0; i < mixture().nPolymer(); ++i) {
-         if (mixture().polymer(i).ensemble == Species::Open) {
-            isCanonical = false;
-         }
-      }
-
-      if (isCanonical) {
-         double shift = wFields_[nm - 1][nx-1];
-         for (i = 0; i < nx; ++i) {
-            for (j = 0; j < nm; ++j) {
-               wFields_[j][i] -= shift;
-            }
-         }
-      }
-      #endif
 
    }
    
