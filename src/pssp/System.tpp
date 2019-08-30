@@ -486,6 +486,28 @@ namespace Pssp
             writeFields(outFile, wFields());
             outFile.close();
 
+         } else
+         if (command == "OUTPUT_STARS") {
+
+            std::string outFileName;
+            in >> outFileName;
+            Log::file() << " " << Str(outFileName, 20) << std::endl;
+
+            std::ofstream outFile;
+            fileMaster().openOutputFile(outFileName, outFile);
+            basis().outputStars(outFile);
+
+         } else
+         if (command == "OUTPUT_WAVES") {
+
+            std::string outFileName;
+            in >> outFileName;
+            Log::file() << " " << Str(outFileName, 20) << std::endl;
+
+            std::ofstream outFile;
+            fileMaster().openOutputFile(outFileName, outFile);
+            basis().outputWaves(outFile);
+
          } else {
             Log::file() << "  Error: Unknown command  " << command << std::endl;
             readNext = false;

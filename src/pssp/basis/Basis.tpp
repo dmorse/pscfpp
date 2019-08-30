@@ -80,6 +80,8 @@ namespace Pssp
       // Identify stars of waves that are related by symmetry
       makeStars(group);
 
+      //outputWaves(std::cout);
+
       // Apply validity test suite
       bool valid = isValid();
       if (!valid) {
@@ -151,9 +153,10 @@ namespace Pssp
 
       std::complex<double> coeff;
       double Gsq;
-      double Gsq_max = 1.0E-8;
+      double Gsq_max;
       double epsilon = 1.0E-8;
       double twoPi = 2.0*Constants::Pi;
+      IntVec<D> meshDimensions = mesh().dimensions();
       IntVec<D> rootVec;
       IntVec<D> vec;
       IntVec<D> nVec;
@@ -168,7 +171,8 @@ namespace Pssp
 
       // Loop over all waves
       nBasis_ = 0;
-      for (i = 0; i <= nWave_; ++i) {
+      Gsq_max = waves_[0].sqNorm;
+      for (i = 1; i <= nWave_; ++i) {
 
          // Determine if this wave begins a new list
          bool newList = false;
@@ -195,7 +199,8 @@ namespace Pssp
                wave.indicesBz = waves_[j].indicesBz;
                wave.sqNorm = waves_[j].sqNorm;
                if (j > listBegin) {
-                  UTIL_CHECK(abs(wave.sqNorm-waves_[j].sqNorm) < 2.0*epsilon); 
+                  UTIL_CHECK( abs(wave.sqNorm-waves_[j].sqNorm) 
+                                 < 2.0*epsilon ); 
                }
                list.insert(wave);
             }
@@ -214,12 +219,12 @@ namespace Pssp
             while (list.size() > 0) {
 
                rootVec = rootItr->indicesBz;
-               Gsq = unitCell().ksq(rootVec);
+               Gsq = rootItr->sqNorm;
                cancel = false;
+               star.clear();
 
                // Construct a star from root vector, by applying every
                // symmetry operation in the group to the root wavevector.
-               star.clear();
                for (j = 0; j < group.size(); ++j) {
 
                   // Apply symmetry (i.e., multiply by rotation matrix)
@@ -231,7 +236,8 @@ namespace Pssp
 
                   // Initialize TWave object associated with rotated wave
                   wave.sqNorm = Gsq;
-                  wave.indicesBz = vec;
+                  wave.indicesBz = shiftToMinimum(vec, meshDimensions, 
+                                                  *unitCellPtr_);
                   wave.indicesDft = vec;
                   mesh().shift(wave.indicesDft);
 
@@ -239,7 +245,7 @@ namespace Pssp
                   // Convention -pi < phase <= pi.
                   wave.phase = 0.0;
                   for (k = 0; k < D; ++k) {
-                     wave.phase += wave.indicesBz[k]*(group[j].t(k));
+                     wave.phase += rootVec[k]*(group[j].t(k));
                   }
                   while (wave.phase > 0.5) {
                      wave.phase -= 1.0;
@@ -253,7 +259,7 @@ namespace Pssp
                   // that a star is cancelled iff application of any
                   // symmetry operation in the group yields a rotated
                   // vector vec equal to the root vector rootVec, but 
-                  // with an nonzero phase, creating a contradiction.
+                  // with a nonzero phase, creating a contradiction.
 
                   if (vec == rootVec) {
                      if (abs(wave.phase) > 1.0E-6) {
@@ -267,15 +273,15 @@ namespace Pssp
                }
                starSize = star.size();
 
-               // Append waves in star to the std::vector tempStar
+               // Append waves from std::set star to std::vector tempStar
                tempStar.clear();
                setItr = star.begin(); 
                for ( ; setItr != star.end(); ++setItr) {
                   tempStar.push_back(*setItr);
                }
 
-               // Sort tempStar, ordered by indicesBz, in descending order
-               // Duplicate values of indicesBz are permitted
+               // Sort tempStar, in descending order by indicesBz
+               // Note: Duplicate values of indicesBz are permitted
                TWaveBzComp<D> waveBzComp;
                std::sort(tempStar.begin(), tempStar.end(), waveBzComp);
                
@@ -284,7 +290,7 @@ namespace Pssp
                   list.erase(tempStar[j]);
                   tempList.append(tempStar[j]);
                }
-               UTIL_CHECK(tempList.size()+list.size() == listEnd-listBegin);
+               UTIL_CHECK(tempList.size()+list.size()==listEnd-listBegin);
 
                // If this star is not cancelled, increment the total
                // number of basis functions.
@@ -300,8 +306,8 @@ namespace Pssp
                // Determine invertFlag, rootItr and nextInvert
                if (nextInvert == -1) {
 
-                  // If this star is the 2nd of a pair related by symmetry,
-                  // set root of next star to first wave of remaining list.
+                  // If this star is 2nd of a pair related by symmetry,
+                  // set root of next star to 1st wave of remaining list.
 
                   newStar.invertFlag = -1;
                   rootItr = list.begin();
@@ -309,7 +315,7 @@ namespace Pssp
 
                } else {
 
-                  // If this star is not the second of a pair of partners,
+                  // If this star is not the 2nd of a pair of partners,
                   // then determine if it is closed under inversion.
 
                   // Compute negation of root vector. 
@@ -359,23 +365,28 @@ namespace Pssp
                      // Negation should be found in star or remaining list
                      if (!negationFound) {
                         std::cout << "Negation not found for: " << "\n";
-                        std::cout << " vec (ft):" << rootItr->indicesDft <<"\n"; 
-                        std::cout << " vec (bz):" << rootItr->indicesBz <<"\n"; 
-                        std::cout << "-vec (dft:" << nVec << "\n";
+                        std::cout << " vec (ft):" 
+                                  << rootItr->indicesDft <<"\n"; 
+                        std::cout << " vec (bz):" 
+                                  << rootItr->indicesBz <<"\n"; 
+                        std::cout << "-vec (bz):" << nVec << "\n";
                      }
                      UTIL_CHECK(negationFound);
+
                   }
 
                }
 
-
                stars_.append(newStar);
                ++starId;
                starBegin = newStar.endId;
+
             } 
+            // End loop over stars within a list.
+            // Processing of list is now complete.
+
             UTIL_CHECK(list.size() == 0);
             UTIL_CHECK(tempList.size() == listEnd - listBegin);
-            // Process of list is now complete
 
             // Copy tempList into corresponding section of waves_,
             // overwriting the section of waves_ used to create the list.
@@ -386,26 +397,40 @@ namespace Pssp
                waves_[k].indicesBz = tempList[j].indicesBz;
                waves_[k].sqNorm = tempList[j].sqNorm;
                coeff = std::complex<double>(0.0, tempList[j].phase);
-               waves_[k].coeff = exp(coeff);
+               coeff = exp(coeff);
+               if (abs(imag(coeff)) < 1.0E-6) {
+                  coeff = std::complex<double>(real(coeff), 0.0);
+               }
+               if (abs(real(coeff)) < 1.0E-6) {
+                  coeff = std::complex<double>(0.0, imag(coeff));
+               }
+               waves_[k].coeff = coeff;
             }
+
             // At this point, waves_[k].coeff has unit absolute magnitude,
-            // and correct relative phases for waves within a star. The
-            // root star has coefficient of unity.
+            // and correct relative phases for waves within a star, but
+            // the coeff may not be unity for the first or last wave in
+            // the star.
 
             ++listId;
             listBegin = listEnd;
-         }
-      }
+         } 
+         // Finished processing a list of waves of equal norm
+
+      } // End loop over all waves
       nStar_ = stars_.size();
+      // Complete initial processing of all lists and stars
 
       std::complex<double> rootCoeff; // Coefficient of root wave
       std::complex<double> partCoeff; // Coefficient of partner of root
       std::complex<double> d;
       int rootId, partId;
 
-      // Final processing of coefficients of waves in stars. Require
-      // that the root wave of each star and its negation have conjugate 
-      // coefficients, and each basis function is normalized.
+      // Final processing of coefficients of waves in stars. 
+      // Require that the root wave of each star and its negation 
+      // have conjugate coefficients, and that each basis function 
+      // is normalized.
+
       for (i = 0; i < nStar_; ++i) {
 
          // Treat open and closed stars separately
@@ -451,7 +476,7 @@ namespace Pssp
                   // Compute common divisor
                   partCoeff = waves_[partId].coeff;
                   d = sqrt(partCoeff);
-                  if (abs(imag(d)) > 1.0E-8) {
+                  if (abs(imag(d)) > 1.0E-5) {
                      if (imag(d) < 0.0) {
                         d = -d;
                      }
@@ -554,7 +579,6 @@ namespace Pssp
       }
 
       // Final processing of waves
-      IntVec<D> meshDimensions = mesh().dimensions();
       for (i = 0; i < nWave_; ++i) {
          vec = waves_[i].indicesDft;
 
@@ -907,7 +931,6 @@ namespace Pssp
             if (stars_[is].invertFlag == 0) {
             
                // Test star that is closed under inversion
-
                begin = stars_[is].beginId; 
                end = stars_[is].endId; 
                for (iw = begin; iw < end; ++iw) {
@@ -925,11 +948,20 @@ namespace Pssp
                      }
                   }
                   if (!negationFound) {
+                     std::cout << "+G = " << waves_[iw].indicesBz
+                               << "coeff = " << waves_[iw].coeff 
+                               << std::endl;
                      std::cout << "Negation not found in closed star" 
                                << std::endl;
                      return false;
                   }
                   if (!cancel && abs(cdel) > 1.0E-8) {
+                     std::cout << "+G = " << waves_[iw].indicesBz
+                               << "  coeff = " << waves_[iw].coeff 
+                               << std::endl;
+                     std::cout << "-G = " << waves_[iwp].indicesBz
+                               << "  coeff = " << waves_[iwp].coeff
+                               << std::endl;
                      std::cout << "Coefficients not conjugates in closed star" 
                                << std::endl;
                      return false;

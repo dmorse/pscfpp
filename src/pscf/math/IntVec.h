@@ -197,11 +197,12 @@ namespace Pscf
    {
       for (int i = 0; i < D; ++i) {
          if (v1[i] > v2[i]) {
-           return false;
+            return false;
          } else
          if (v1[i] < v2[i]) {
-            return true;
+             return true;
          }
+         // This point is reached iff v1[i] == v2[i]
       }
       // If loop completes, the vectors are equal
       return false;
@@ -225,6 +226,7 @@ namespace Pscf
          if (v1[i] < v2[i]) {
             return true;
          }
+         // This point is reached iff v1[i] == v2[i]
       }
       // If loop completes, the vectors are equal
       return true;

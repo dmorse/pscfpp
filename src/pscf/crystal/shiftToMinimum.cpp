@@ -33,19 +33,28 @@ namespace Pscf
    IntVec<2> shiftToMinimum(IntVec<2>& v, const IntVec<2> d, 
                             const UnitCell<2> cell)
    {
-      double Gsq;
-      double Gsq_min = cell.ksq(v);
-      IntVec<2> r = v;               // Minimum image
-      IntVec<2> u;                   // Vector used in loop
+      // Initialize minimum to input value
+      const double epsilon = 1.0E-6;
+      double Gsq = cell.ksq(v);
+      double Gsq_min_lo = Gsq - epsilon;
+      double Gsq_min_hi = Gsq + epsilon;
+
+      // Loop over neighboring images 
+      IntVec<2> r = v;                    // Minimum image of v
+      IntVec<2> u;                        // Vector used in loop
       int s0, s1;
-      for (s0 = 1; s0 >= - 1; --s0) { 
+      const int q = 2;
+      for (s0 = -q; s0 < q+1; ++s0) { 
          u[0] = v[0] + s0*d[0];
-         for (s1 = 1; s1 >= - 1; --s1) {
+         for (s1 = -q; s1 < q+1; ++s1) {
             u[1] = v[1] + s1*d[1];
             Gsq = cell.ksq(u);
-            if (Gsq < Gsq_min) {
-               Gsq_min = Gsq;
-               r = u;
+            if (Gsq < Gsq_min_hi) {
+               if ((Gsq < Gsq_min_lo) || (r < u)) {
+                  Gsq_min_lo = Gsq - epsilon;
+                  Gsq_min_hi = Gsq + epsilon;
+                  r = u;
+               }
             }
          }
       }
@@ -56,21 +65,30 @@ namespace Pscf
    IntVec<3> shiftToMinimum(IntVec<3>& v, const IntVec<3> d, 
                             const UnitCell<3> cell)
    {
-      double Gsq;
-      double Gsq_min = cell.ksq(v);
+      // Initialize minimum to input value
+      const double epsilon = 1.0E-6;
+      double Gsq = cell.ksq(v);
+      double Gsq_min_lo = Gsq - epsilon;
+      double Gsq_min_hi = Gsq + epsilon;
+
+      // Loop over neighboring images
       IntVec<3> r = v;               // Minimum image
       IntVec<3> u;                   // Vector used in loop
       int s0, s1, s2;
-      for (s0 = 1; s0 >= -1; --s0) { 
+      const int q = 2;
+      for (s0 = -q; s0 < q + 1; ++s0) { 
          u[0] = v[0] + s0*d[0];
-         for (s1 = 1; s1 >= -1; --s1) {
+         for (s1 = -q; s1 < q + 1; ++s1) {
             u[1] = v[1] + s1*d[1];
-            for (s2 = 1; s2 >= -1; --s2) {
+            for (s2 = -q; s2 < q + 1; ++s2) {
                u[2] = v[2] + s2*d[2];
                Gsq = cell.ksq(u);
-               if (Gsq < Gsq_min) {
-                  Gsq_min = Gsq;
-                  r = u;
+               if (Gsq < Gsq_min_hi) {
+                  if ((Gsq < Gsq_min_lo) || (r < u)) {
+                     Gsq_min_lo = Gsq - epsilon;
+                     Gsq_min_hi = Gsq + epsilon;
+                     r = u;
+                  }
                }
             }
          }

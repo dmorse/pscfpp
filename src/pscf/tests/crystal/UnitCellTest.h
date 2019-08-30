@@ -5,6 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <pscf/crystal/UnitCell.h>
+#include <pscf/crystal/shiftToMinimum.h>
 #include <util/math/Constants.h>
 #include <util/format/Int.h>
 
@@ -224,7 +225,7 @@ public:
                   param = v.params()[i];
                   TEST_ASSERT(eq(v.drrBasis(k, i, j), 2.0*param));
                } else {
-                  UTIL_ASSERT(eq(v.drrBasis(k, i, j), 0.0));
+                  TEST_ASSERT(eq(v.drrBasis(k, i, j), 0.0));
                }
             }
          }
@@ -234,13 +235,91 @@ public:
                   param = v.params()[i];
                   b = twoPi/param;
                   dbb = -2.0*b*b/param;
-                  UTIL_ASSERT(eq(v.dkkBasis(k, i, j), dbb));
+                  TEST_ASSERT(eq(v.dkkBasis(k, i, j), dbb));
                } else {
-                  UTIL_ASSERT(eq(v.drrBasis(k, i, j), 0.0));
+                  TEST_ASSERT(eq(v.drrBasis(k, i, j), 0.0));
                }
             }
          }
       }
+
+   }
+
+   void test3DCubic() 
+   {
+      printMethod(TEST_FUNC);
+      // printEndl();
+
+      UnitCell<3> v;
+      std::ifstream in;
+      openInputFile("in/Cubic", in);
+      in >> v;
+
+      TEST_ASSERT(v.nParams() == 1);
+      TEST_ASSERT(isValidReciprocal(v));
+      TEST_ASSERT(isValidDerivative(v));
+
+      #if 0
+      std::cout.width(20);
+      std::cout.precision(6);
+      std::cout << v << std::endl ;
+
+      std::cout << "a(0) = " << v.rBasis(0) << std::endl;
+      std::cout << "a(1) = " << v.rBasis(1) << std::endl;
+      std::cout << "a(2) = " << v.rBasis(2) << std::endl;
+      std::cout << "b(0) = " << v.kBasis(0) << std::endl;
+      std::cout << "b(1) = " << v.kBasis(1) << std::endl;
+      std::cout << "b(2) = " << v.kBasis(2) << std::endl;
+      #endif
+
+      #if 0
+      double param, b, dbb;
+      double twoPi = 2.0*Constants::Pi;
+      int i, j, k;
+      for (k = 0; k < v.nParams(); ++k) {
+         for (i = 0; i < 3; ++i) {
+            for (j = 0; j < 3; ++j) {
+               if (i == j && i == k) {
+                  param = v.params()[i];
+                  TEST_ASSERT(eq(v.drrBasis(k, i, j), 2.0*param));
+               } else {
+                  TEST_ASSERT(eq(v.drrBasis(k, i, j), 0.0));
+               }
+            }
+         }
+         for (i = 0; i < 3; ++i) {
+            for (j = 0; j < 3; ++j) {
+               if (i == j && i == k) {
+                  param = v.params()[i];
+                  b = twoPi/param;
+                  dbb = -2.0*b*b/param;
+                  TEST_ASSERT(eq(v.dkkBasis(k, i, j), dbb));
+               } else {
+                  TEST_ASSERT(eq(v.drrBasis(k, i, j), 0.0));
+               }
+            }
+         }
+      }
+      #endif
+
+      IntVec<3> d;
+      d[0] = 8;
+      d[1] = 8;
+      d[2] = 8;
+      IntVec<3> x;
+      x[0] = -4;
+      x[1] = +4;
+      x[2] =  7;
+      IntVec<3> y;
+     
+      //std::cout << "Before shift " << x << std::endl;
+      y = shiftToMinimum(x, d, v);
+      TEST_ASSERT(y[0] == 4);
+      TEST_ASSERT(y[1] == 4);
+      TEST_ASSERT(y[2] == -1);
+      //std::cout << "After shift  " << y << std::endl;
+      //y = shiftToMinimum(y, d, v);
+      //std::cout << "After again  " << y << std::endl;
 
    }
 
@@ -251,6 +330,7 @@ TEST_ADD(UnitCellTest, test1DLamellar)
 TEST_ADD(UnitCellTest, test2DSquare)
 TEST_ADD(UnitCellTest, test2DHexagonal)
 TEST_ADD(UnitCellTest, test3DOrthorhombic)
+TEST_ADD(UnitCellTest, test3DCubic)
 TEST_END(UnitCellTest)
 
 #endif

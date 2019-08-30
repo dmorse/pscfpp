@@ -70,25 +70,38 @@ public:
       int a[3]  = {2, -3, 2};
       int b[3]  = {2, -3, 1};
       int c[3]  = {1, -3, 1};
+      int d[3]  = {-2, -3, 1};
       IntVec<3> va(a);
       IntVec<3> vb(b);
       IntVec<3> vc(c);
+      IntVec<3> vd(d);
+
       TEST_ASSERT(vc < va);
       TEST_ASSERT(va > vc);
       TEST_ASSERT(!(vc > va));
       TEST_ASSERT(!(va < vc));
       TEST_ASSERT(!(vc < vc));
       TEST_ASSERT(!(vc > vc));
+
       TEST_ASSERT(vc < vb);
       TEST_ASSERT(vb > vc);
       TEST_ASSERT(!(vc > vb));
       TEST_ASSERT(!(vb < vc));
+
       TEST_ASSERT(!(vb < vb));
       TEST_ASSERT(!(vb > vb));
+
       TEST_ASSERT(vb < va);
       TEST_ASSERT(va > vb);
       TEST_ASSERT(!(vb > va));
       TEST_ASSERT(!(va < vb));
+
+      TEST_ASSERT(vb > vd);
+      TEST_ASSERT(vb >= vd);
+      TEST_ASSERT(!(vb < vd));
+      TEST_ASSERT(!(vb <= vd));
+      TEST_ASSERT(vb != vd);
+      TEST_ASSERT(vd != vb);
    }
  
    void testAssignment()

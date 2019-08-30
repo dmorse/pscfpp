@@ -48,22 +48,20 @@ public:
       TEST_ASSERT(eq(sampleBasis.nBasis(),0));
    }
 
-
-
-   void testMake1DBasis_1() {
+   void testMake1DBasis_I() {
       printMethod(TEST_FUNC);
       //printEndl();
 
       // Make unitcell
       UnitCell<1> unitCell;
       std::ifstream in;
-      openInputFile("in/Lamellar_8", in);
+      openInputFile("in/UnitCell_lamellar", in);
       in >> unitCell;
+      in.close();
 
       // Make mesh object
       IntVec<1> d;
-      in >> d;
-      in.close();
+      d[0] = 8;
       Mesh<1> mesh(d);
 
       // Construct basis object using identity space group
@@ -81,14 +79,14 @@ public:
       #endif
    }
 
-   void testMake1DBasis_2() {
+   void testMake1DBasis_Ib() {
       printMethod(TEST_FUNC);
       //printEndl();
 
       // Make unitcell
       UnitCell<1> unitCell;
       std::ifstream in;
-      openInputFile("in/Lamellar_8", in);
+      openInputFile("in/UnitCell_lamellar", in);
       in >> unitCell;
 
       // Make mesh object
@@ -119,7 +117,7 @@ public:
 
    }
 
-   void testMake2DBasis_1()
+   void testMake2DBasis_square_33()
    {
       printMethod(TEST_FUNC);
       //printEndl();
@@ -127,13 +125,14 @@ public:
       // Make unitcell
       UnitCell<2> unitCell;
       std::ifstream in;
-      openInputFile("in/Square2D_33", in);
+      openInputFile("in/UnitCell_square", in);
       in >> unitCell;
+      in.close();
 
       // Make mesh object
       IntVec<2> d;
-      in >> d;
-      in.close();
+      d[0] = 3;
+      d[1] = 3;
       Mesh<2> mesh(d);
 
       // Construct basis object using identity space group
@@ -151,7 +150,7 @@ public:
 
    }
 
-   void testMake2DBasis_2()
+   void testMake2DBasis_square_44()
    {
       printMethod(TEST_FUNC);
       //printEndl();
@@ -159,13 +158,14 @@ public:
       // Make unitcell
       UnitCell<2> unitCell;
       std::ifstream in;
-      openInputFile("in/Square2D_44", in);
+      openInputFile("in/UnitCell_square", in);
       in >> unitCell;
+      in.close();
 
       // Make mesh object
       IntVec<2> d;
-      in >> d;
-      in.close();
+      d[0] = 4;
+      d[1] = 4;
       Mesh<2> mesh(d);
 
       // Read space group
@@ -190,7 +190,7 @@ public:
 
    }
 
-   void testMake2DBasis_3()
+   void testMake2DBasis_hex()
    {
       printMethod(TEST_FUNC);
       //printEndl();
@@ -198,7 +198,7 @@ public:
       // Read UnitCell
       UnitCell<2> unitCell;
       std::ifstream in;
-      openInputFile("in/hexagonal", in);
+      openInputFile("in/UnitCell_hexagonal", in);
       in >> unitCell;
       in.close();
 
@@ -239,13 +239,14 @@ public:
       // Make unitcell
       UnitCell<2> unitCell;
       std::ifstream in;
-      openInputFile("in/Square2D_33", in);
+      openInputFile("in/UnitCell_square", in);
       in >> unitCell;
+      in.close();
 
       // Make mesh object
       IntVec<2> d;
-      in >> d;
-      in.close();
+      d[0] = 3;
+      d[1] = 3;
       Mesh<2> mesh(d);
 
       // Construct basis object
@@ -340,7 +341,7 @@ public:
 
    }
 
-   void testMake3DBasis()
+   void testMake3DBasis_I()
    {
       printMethod(TEST_FUNC);
       //printEndl();
@@ -348,13 +349,15 @@ public:
       // Make unitcell
       UnitCell<3> unitCell;
       std::ifstream in;
-      openInputFile("in/UnitCell3D", in);
+      openInputFile("in/UnitCell_cubic", in);
       in >> unitCell;
+      in.close();
 
       // Make mesh object
       IntVec<3> d;
-      in >> d;
-      in.close();
+      d[0] = 3;
+      d[1] = 3;
+      d[2] = 3;
       Mesh<3> mesh(d);
 
       // Construct basis object
@@ -363,8 +366,100 @@ public:
       basis.makeBasis(mesh, unitCell, spaceGroup);
       
       TEST_ASSERT(eq(basis.nWave(), 27));
-      TEST_ASSERT(eq(basis.nStar(),27));
+      TEST_ASSERT(eq(basis.nStar(), 27));
       TEST_ASSERT(basis.isValid());
+   }
+
+
+
+
+
+
+
+
+
+   void testMake3DBasis_I_m_3b_m()
+   {
+      printMethod(TEST_FUNC);
+      printEndl();
+
+      // Make unitcell
+      UnitCell<3> unitCell;
+      std::ifstream in;
+      openInputFile("in/UnitCell_cubic", in);
+      in >> unitCell;
+      in.close();
+
+      // Make mesh object
+      IntVec<3> d;
+      d[0] = 8;
+      d[1] = 8;
+      d[2] = 8;
+      Mesh<3> mesh(d);
+
+      // Read group
+      SpaceGroup<3> group;
+      openInputFile("in/I_m_-3_m", in);
+      in >> group;
+      in.close();
+
+      // Construct basis object
+      Basis<3> basis;
+      basis.makeBasis(mesh, unitCell, group);
+      
+      TEST_ASSERT(basis.isValid());
+      //TEST_ASSERT(eq(basis.nWave(), 512));
+
+      #if 0
+      if (verbose() > 1) {
+         std::cout << "nBasis = " << basis.nBasis() << std::endl;
+         basis.outputWaves(std::cout);   
+         basis.outputStars(std::cout);   
+      }
+      #endif
+
+   }
+
+   void testMake3DBasis_I_a_3b_d()
+   {
+      printMethod(TEST_FUNC);
+      printEndl();
+
+      // Make unitcell
+      UnitCell<3> unitCell;
+      std::ifstream in;
+      openInputFile("in/UnitCell_cubic", in);
+      in >> unitCell;
+      in.close();
+
+      // Make mesh object
+      IntVec<3> d;
+      d[0] = 8;
+      d[1] = 8;
+      d[2] = 8;
+      Mesh<3> mesh(d);
+
+      // Read group
+      SpaceGroup<3> group;
+      openInputFile("in/I_a_-3_d", in);
+      in >> group;
+      in.close();
+
+      // Construct basis object
+      Basis<3> basis;
+      basis.makeBasis(mesh, unitCell, group);
+      
+      //TEST_ASSERT(basis.isValid());
+      //TEST_ASSERT(eq(basis.nWave(), 512));
+
+      #if 0
+      if (verbose() > 1) {
+         std::cout << "nBasis = " << basis.nBasis() << std::endl;
+         basis.outputWaves(std::cout);   
+         basis.outputStars(std::cout);   
+      }
+      #endif
+
    }
 
    void testFieldConversion3D()
@@ -375,13 +470,15 @@ public:
       // Make unitcell
       UnitCell<3> unitCell;
       std::ifstream in;
-      openInputFile("in/UnitCell3D", in);
+      openInputFile("in/UnitCell_cubic", in);
       in >> unitCell;
+      in.close();
 
       // Make mesh object
       IntVec<3> d;
-      in >> d;
-      in.close();
+      d[0] = 3;
+      d[1] = 3;
+      d[2] = 3;
       Mesh<3> mesh(d);
 
       // Construct basis object
@@ -487,13 +584,15 @@ public:
 
 TEST_BEGIN(BasisTest)
 TEST_ADD(BasisTest, testConstructor)
-TEST_ADD(BasisTest, testMake1DBasis_1)
-TEST_ADD(BasisTest, testMake1DBasis_2)
-TEST_ADD(BasisTest, testMake2DBasis_1)
-TEST_ADD(BasisTest, testMake2DBasis_2)
-TEST_ADD(BasisTest, testMake2DBasis_3)
+TEST_ADD(BasisTest, testMake1DBasis_I)
+TEST_ADD(BasisTest, testMake1DBasis_Ib)
+TEST_ADD(BasisTest, testMake2DBasis_square_33)
+TEST_ADD(BasisTest, testMake2DBasis_square_44)
+TEST_ADD(BasisTest, testMake2DBasis_hex)
+TEST_ADD(BasisTest, testMake3DBasis_I)
+TEST_ADD(BasisTest, testMake3DBasis_I_m_3b_m)
+TEST_ADD(BasisTest, testMake3DBasis_I_a_3b_d) 
 TEST_ADD(BasisTest, testFieldConversion2D)
-TEST_ADD(BasisTest, testMake3DBasis)
 TEST_ADD(BasisTest, testFieldConversion3D)
 TEST_END(BasisTest)
 
