@@ -331,18 +331,17 @@ namespace Pssp
             clock_t time_scf;
 
             time_begin = clock();
+            Log::file() << "Calling iterator" << std::endl;
             int fail = iterator().solve();
-            //if (!fail)
-            if (1) {
-               if(fail)
-               {}
-               time_scf = clock();
+            time_scf = clock();
+            time_scf = time_scf - time_begin;
+            if (!fail) {
                computeFreeEnergy();
                outputThermo(Log::file());
-               Log::file() << "SCF_Time = " 
-               << Dbl((float)(time_scf - time_begin)/CLOCKS_PER_SEC, 18, 11) 
-               << std::endl;
             }
+            Log::file() << "SCF_Time = " 
+                        << Dbl((float)(time_scf/CLOCKS_PER_SEC), 18, 11)
+                        << std::endl;
 
          } else
          if (command == "FIELD_TO_RGRID") {
@@ -495,6 +494,7 @@ namespace Pssp
 
             std::ofstream outFile;
             fileMaster().openOutputFile(outFileName, outFile);
+            writeFieldHeader(outFile);
             basis().outputStars(outFile);
 
          } else
@@ -506,6 +506,7 @@ namespace Pssp
 
             std::ofstream outFile;
             fileMaster().openOutputFile(outFileName, outFile);
+            writeFieldHeader(outFile);
             basis().outputWaves(outFile);
 
          } else {
@@ -530,46 +531,70 @@ namespace Pssp
    
    template <int D>
    void System<D>::readFields(std::istream &in, 
-                              DArray<DArray<double> >& fields)
+                              DArray< DArray<double> >& fields)
    {
+      UTIL_CHECK(hasMixture_);
+      UTIL_CHECK(hasUnitCell_);
       UTIL_CHECK(hasMesh_);
-
-      // Read grid dimensions
-      std::string label;
-      int nStar, nMonomer;
-      IntVec<D> waveBz, waveDft;
-      int nWaveVectors;
+      UTIL_CHECK(hasFields_);
 
       System<D>::readFieldHeader(in);
-      nMonomer = mixture().nMonomer();
+      int nMonomer = mixture().nMonomer();
+      UTIL_CHECK(fields.capacity() == nMonomer);
 
+      // Read number of stars
+      std::string label;
       in >> label;
       UTIL_CHECK(label == "N_star");
-      in >> nStar;
-      UTIL_CHECK(nStar > 0);
-      UTIL_CHECK(nStar == basis().nStar());
+      int nStarIn;
+      in >> nStarIn;
+      UTIL_CHECK(nStarIn > 0);
 
+      // Initialize all field components to zero
+      int i, j;
+      int nStar = basis().nStar();
+      for (j = 0; j < nMonomer; ++j) {
+         UTIL_CHECK(fields[j].capacity() == nStar);
+         for (i = 0; i < nStar; ++i) {
+            fields[j][i] = 0.0;
+         }
+      }
 
       DArray<double> temp;
       temp.allocate(nMonomer);
 
-      // Read fields
-      int j, waveId, starId;
-      for (int i = 0; i < nStar; ++i) {
+      // Loop over stars to read field components
+      IntVec<D> waveIn, waveBz, waveDft;
+      int waveId, starId, nWaveVectors;
+      for (i = 0; i < nStarIn; ++i) {
+
+         // Read components for different monomers
          for (j = 0; j < nMonomer; ++j) {
             in >> temp [j];
          }
 
-         in >> waveBz;
-         waveDft = waveBz;
-         mesh().shift(waveDft);
+         // Read characteristic wave and number of wavectors in star.
+         in >> waveIn;
          in >> nWaveVectors;
-         waveId = basis().waveId(waveDft);
-         starId = basis().wave(waveId).starId;
-         UTIL_CHECK(basis().star(starId).waveBz == waveBz);
-         for (j = 0; j < nMonomer; ++j) {
-            fields[j][starId] = temp [j];
+
+         // Check if waveIn is in first Brillouin zone (FBZ) for the mesh.
+         waveBz = shiftToMinimum(waveIn, mesh().dimensions(), unitCell());
+         bool waveExists = (waveIn == waveBz);
+
+         // If wave is in FBZ, find in basis and set field components
+         if (waveExists) {
+            waveDft = waveBz;
+            mesh().shift(waveDft);
+            waveId = basis().waveId(waveDft);
+            starId = basis().wave(waveId).starId;
+            UTIL_CHECK(basis().star(starId).waveBz == waveBz);
+            if (!basis().star(starId).cancel) {
+               for (j = 0; j < nMonomer; ++j) {
+                  fields[j][starId] = temp [j];
+               }
+            }
          }
+
       }
 
    }
@@ -762,19 +787,25 @@ namespace Pssp
                                DArray<DArray<double> > const&  fields)
    {
       int nStar = basis().nStar();
-      int nM = mixture().nMonomer();  
+      int nBasis = basis().nBasis();
+      int nMonomer = mixture().nMonomer();  
 
       writeFieldHeader(out);
       out << "N_star       " << std::endl 
-          << "                    "<< nStar << std::endl;
+          << "             "<< nBasis << std::endl;
 
      // Write fields
      for (int i = 0; i < nStar; ++i) {
-         //out << Int(i, 5);
-         for (int j = 0; j < nM; ++j) {
-            out << "  " << Dbl(fields[j][i], 18, 11);
+         if (!basis().star(i).cancel) {
+            for (int j = 0; j < nMonomer; ++j) {
+               out << Dbl(fields[j][i], 20, 10);
+            }
+            out << "   ";
+            for (int j = 0; j < D; ++j) {
+               out << Int(basis().star(i).waveBz[j], 5);
+            } 
+            out << Int(basis().star(i).size, 5) << std::endl;
          }
-          out<< "  " <<  basis().star(i).waveBz <<"                  "<<basis().star(i).size << std::endl;
      }
 
    }
@@ -793,17 +824,6 @@ namespace Pssp
    void System<D>::writeRFields(std::ostream &out,
                                 DArray<RField<D> > const& fields)
    {
-      #if 0
-      out << "format  1   0    " <<  std::endl;
-      out << "dim    " <<  std::endl 
-          << "           " << D << std::endl;
-      out << unitCell();      
-      out << "group_name    " << std::endl 
-          << "           " << groupName_ <<  std::endl;
-      out << "N_monomer    " << std::endl 
-          << "           " << mixture().nMonomer() << std::endl;
-      #endif
-
       writeFieldHeader(out);
       out << "ngrid" <<  std::endl
           << "           " << mesh().dimensions() << std::endl;
@@ -944,25 +964,6 @@ namespace Pssp
 
       readUnitCellHeader(in, unitCell_);
 
-      #if 0
-      in >> label;
-      UTIL_CHECK(label == "crystal_system");
-      std::string uCell;
-      in >> uCell;
-
-      in >> label;
-      UTIL_CHECK(label == "N_cell_param");
-      int nCellParams;
-      in >> nCellParams;
-
-      in >> label;
-      UTIL_CHECK(label == "cell_param");
-      FArray<double,6> params;
-      for (int i = 0; i < nCellParams; ++i) {
-         in >> params[i];
-      }
-      #endif
- 
       in >> label;
       UTIL_CHECK(label == "group_name");
       std::string groupName;

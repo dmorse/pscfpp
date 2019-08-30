@@ -87,7 +87,6 @@ namespace Pssp
       //clock_t time_begin;
       //clock_t time_end;
 
-
       //solve the SCFT equations once
       //assumes basis.makeBasis() has been called
       //assumes AmIterator.allocate() has been called

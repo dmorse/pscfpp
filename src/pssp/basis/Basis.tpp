@@ -170,6 +170,7 @@ namespace Pssp
 
       // Loop over all waves
       nBasis_ = 0;
+      nBasisWave_ = 0;
       Gsq_max = waves_[0].sqNorm;
       for (i = 1; i <= nWave_; ++i) {
 
@@ -316,21 +317,25 @@ namespace Pssp
                }
                UTIL_CHECK(tempList.size()+list.size()==listEnd-listBegin);
 
-               // If this star is not cancelled, increment the total
-               // number of basis functions.
-               if (!cancel) ++nBasis_;
+               // If this star is not cancelled, increment the number
+               // of basis functions (nBasis_) and waves (nBasisWave_)
+               if (!cancel) {
+                  ++nBasis_;
+                  nBasisWave_ += star.size();
+               }
 
-               // Initialize a Star object (startInvert not yet known)
+               // Initialize a Star object 
                newStar.eigen = Gsq;
                newStar.beginId = starBegin;
                newStar.endId = newStar.beginId + star.size();
                newStar.size = star.size();
                newStar.cancel = cancel;
+               // Note: newStar.starInvert is not yet known
 
                // Determine invertFlag, rootItr and nextInvert
                if (nextInvert == -1) {
 
-                  // If this star is 2nd of a pair related by symmetry,
+                  // If this star is 2nd of a pair related by inversion,
                   // set root of next star to 1st wave of remaining list.
 
                   newStar.invertFlag = -1;
@@ -342,10 +347,10 @@ namespace Pssp
                   // If this star is not the 2nd of a pair of partners,
                   // then determine if it is closed under inversion.
 
-                  // Compute negation of root vector. 
+                  // Compute negation nVec of indicesBz of root vector 
                   nVec.negate(rootItr->indicesBz);
 
-                  // Shift of the root to a DFT mesh
+                  // Shift negation nVec to a DFT mesh
                   (*meshPtr_).shift(nVec);
        
                   // Search for negation of root vector within this star
@@ -360,8 +365,8 @@ namespace Pssp
 
                   if (negationFound) {
 
-                     // If star is closed under inversion, then root
-                     // of next star is first vector of remaining list.
+                     // If this star is closed under inversion, the root
+                     // of next star is the 1st vector of remaining list.
 
                      newStar.invertFlag = 0;
                      rootItr = list.begin();
@@ -373,10 +378,10 @@ namespace Pssp
                      nextInvert = -1;
 
                      // If star is not closed, find negation of root in
-                     // the remaining list, and use this negation as root 
-                     // of the next star.
+                     // the remaining list, and use this negation as the
+                     // root of the next star.
 
-                     setItr = list.begin(); 
+                     setItr = list.begin();
                      for ( ; setItr != list.end(); ++setItr) {
                         if (nVec == setItr->indicesDft) {
                            negationFound = true;
@@ -384,9 +389,11 @@ namespace Pssp
                            break;
                         }
                      }
-                     // On exit after break, rootItr = &nVec
+                     // If negationFound, then rootItr->indicesDft = nVec
 
-                     // Negation should be found in star or remaining list
+                     // Failure to find the negation here is an error:
+                     // It should be either in this star or remaining list
+
                      if (!negationFound) {
                         std::cout << "Negation not found for: " << "\n";
                         std::cout << " vec (ft):" 
@@ -394,8 +401,8 @@ namespace Pssp
                         std::cout << " vec (bz):" 
                                   << rootItr->indicesBz <<"\n"; 
                         std::cout << "-vec (bz):" << nVec << "\n";
+                        UTIL_CHECK(negationFound);
                      }
-                     UTIL_CHECK(negationFound);
 
                   }
 
@@ -673,14 +680,25 @@ namespace Pssp
       int is;                         // star index
       int iw;                         // wave index
 
+      // Initially all dft coponents to zero
+      for (rank = 0; rank < dftMesh.size(); ++rank) {
+         dft[rank][0] = 0.0;
+         dft[rank][1] = 0.0;
+      }
+
+      // Loop over stars, skipping cancelled stars
       is = 0;
       while (is < nStar_) {
          starPtr = &stars_[is];
-         if (starPtr->cancel) continue;
+
+         if (starPtr->cancel) {
+            ++is;
+            continue;
+         }
 
          if (starPtr->invertFlag == 0) {
 
-            // Make real component (coefficient for star basis function)
+            // Make complex coefficient for star basis function
             component = std::complex<double>(components[is], 0.0);
 
             // Loop over waves in closed star
@@ -759,11 +777,19 @@ namespace Pssp
       int rank;                       // dft grid rank of wave
       int is;                         // star index
 
+      // Initialize all components to zero
+      for (is = 0; is < nStar_; ++is) {
+         components[is] = 0.0;
+      }
+
       // Loop over stars
       is = 0;
       while (is < nStar_) {
          starPtr = &stars_[is];
-         if (starPtr->cancel) continue;
+         if (starPtr->cancel) {
+            ++is;
+            continue;
+         }
 
          if (starPtr->invertFlag == 0) {
 
@@ -819,27 +845,33 @@ namespace Pssp
    template <int D>
    void Basis<D>::outputWaves(std::ostream& out, bool outputAll) const
    {
-      out << std::endl;
-      out << "Waves:" << std::endl;
-      int i, j, starId;
+      out << "N_wave" << std::endl;
+      if (outputAll) {
+         out << "             " << nWave_ << std::endl;
+      } else {
+         out << "             " << nBasisWave_ << std::endl;
+      }
+      int i, j, k, starId;
+      k = 0;
       for (i = 0; i < nWave_; ++i) {
          starId = waves_[i].starId;
          if (outputAll || (!stars_[starId].cancel)) {
-            out << Int(i,4);
-            out << Int(waves_[i].starId, 4);
-            out << " |";
+            out << Int(k, 8);
+            // out << " |";
+            // for (j = 0; j < D; ++j) {
+            //   out << Int(waves_[i].indicesDft[j], 4);
+            // }
+            // out << " |";
             for (j = 0; j < D; ++j) {
-               out << Int(waves_[i].indicesDft[j], 4);
+               out << Int(waves_[i].indicesBz[j], 5);
             }
-            out << " |";
-            for (j = 0; j < D; ++j) {
-               out << Int(waves_[i].indicesBz[j], 4);
-            }
-            out << " | ";
-            out << Dbl(waves_[i].sqNorm, 12);
-            out << "  " << Dbl(waves_[i].coeff.real(), 10);
-            out << "  " << Dbl(waves_[i].coeff.imag(), 10);
+            // out << " | ";
+            out << Int(waves_[i].starId, 6);
+            out << "  " << Dbl(waves_[i].coeff.real(), 15);
+            out << "  " << Dbl(waves_[i].coeff.imag(), 15);
+            out << Dbl(waves_[i].sqNorm, 20);
             out << std::endl;
+            k++;
          }
       }
    }
@@ -848,25 +880,36 @@ namespace Pssp
    template <int D>
    void Basis<D>::outputStars(std::ostream& out, bool outputAll) const
    {
-      out << std::endl;
-      out << "Stars:" << std::endl;
-      int i, j;
+      // Output number of stars in appropriate format
+      if (outputAll) {
+          out << "N_star" << std::endl
+              << "                 " << nStar_ << std::endl;
+      } else {
+          out << "N_basis" << std::endl
+              << "                 " << nBasis_ << std::endl;
+      }
+
+      // Loop over stars
+      int i, j, k;
+      k = 0;
       for (i = 0; i < nStar_; ++i) {
          if (outputAll || (!stars_[i].cancel)) {
-            out << Int(i, 4)
-                << Int(stars_[i].size, 3)
-                << Int(stars_[i].beginId, 7)
-                << Int(stars_[i].endId, 7)
-                << Int(stars_[i].invertFlag, 3);
+            out << Int(k, 5)
+                << Int(stars_[i].size, 5)
+                << Int(stars_[i].beginId, 8)
+                << Int(stars_[i].endId, 8)
+                << Int(stars_[i].invertFlag, 4);
             if (outputAll) {
-               out << Int(stars_[i].cancel, 3);
+               out << Int(stars_[i].cancel, 4);
             }
-            out << " |";
+            //out << " |";
             for (j = 0; j < D; ++j) {
-               out << Int(stars_[i].waveBz[j], 5);
+               out << Int(stars_[i].waveBz[j], 6);
             }
-            out << " | " << Dbl(stars_[i].eigen, 12);
+            //out << " | " 
+            out << Dbl(stars_[i].eigen, 15);
             out << std::endl;
+            ++k;
          }
       }
    }

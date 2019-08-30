@@ -230,6 +230,11 @@ namespace Pssp
       int nWave() const;
 
       /**
+      * Total number of wavevectors in uncancelled stars.
+      */
+      int nBasisWave() const;
+
+      /**
       * Total number of stars.
       */
       int nStar() const;
@@ -268,6 +273,9 @@ namespace Pssp
       /// Total number of wavevectors
       int nWave_;
 
+      /// Total number of wavevectors in uncancelled stars
+      int nBasisWave_;
+
       /// Total number of stars.
       int nStar_;
 
@@ -304,6 +312,10 @@ namespace Pssp
 
    template <int D>
    inline int Basis<D>::nWave() const
+   {  return nWave_; }
+
+   template <int D>
+   inline int Basis<D>::nBasisWave() const
    {  return nWave_; }
 
    template <int D>
