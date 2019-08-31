@@ -165,7 +165,7 @@ public:
    void test2DHexagonal() 
    {
       printMethod(TEST_FUNC);
-      // printEndl();
+      printEndl();
 
       UnitCell<2> v;
       std::ifstream in;
@@ -186,6 +186,25 @@ public:
       std::cout << "b(0) = " << v.kBasis(0) << std::endl;
       std::cout << "b(1) = " << v.kBasis(1) << std::endl;
       #endif
+
+      IntVec<2> d;
+      d[0] = 8;
+      d[1] = 8;
+      IntVec<2> x;
+      x[0] = -4;
+      x[1] = +5;
+      IntVec<2> y;
+     
+      std::cout << "Before shift " << x << std::endl;
+      y = shiftToMinimum(x, d, v);
+      std::cout << "After shift  " << y << std::endl;
+      TEST_ASSERT(y[0] == 4);
+      TEST_ASSERT(y[1] == -3);
+      y = shiftToMinimum(y, d, v);
+      TEST_ASSERT(y[0] == 4);
+      TEST_ASSERT(y[1] == -3);
+      //std::cout << "After again  " << y << std::endl;
+
    }
 
    void test3DOrthorhombic() 

@@ -80,6 +80,12 @@ namespace Pssp
       // Identify stars of waves that are related by symmetry
       makeStars(group);
 
+      #if 0 
+      // Debugging code 
+      outputStars(std::cout);
+      outputWaves(std::cout);
+      #endif
+
       // Apply validity test suite
       bool valid = isValid();
       if (!valid) {
@@ -131,7 +137,6 @@ namespace Pssp
    template <int D>
    void Basis<D>::makeStars(const SpaceGroup<D>& group)
    {
-
       /* 
       * Local containers that hold TWave<D> objects:
       * list - set of waves of equal norm, compared by indicesDft
@@ -156,7 +161,7 @@ namespace Pssp
       const double twoPi = 2.0*Constants::Pi;
       const double epsilon = 1.0E-8;
       IntVec<D> meshDimensions = mesh().dimensions();
-      IntVec<D> rootVec;
+      IntVec<D> rootVecBz;
       IntVec<D> vec;
       IntVec<D> nVec;
       int listId = 0;      // id for this list
@@ -206,19 +211,25 @@ namespace Pssp
             }
 
             // On entry to each iteration of the loop over stars,
-            // rootIter and nextInvert are known. The iterator rootIter 
-            // points to the wave that will be used as the root of the
-            // next star. The flag nextInvert is equal to -1 iff the 
-            // previous star was open under inversion, +1 otherwise.
+            // rootItr and nextInvert are known. The iterator rootItr 
+            // points to the wave in the remaining list that will be 
+            // used as the root of the next star. The flag nextInvert 
+            // is equal to -1 iff the previous star was the first of
+            // a pair that are open under inversion, and is equal to +1 
+            // otherwise.
 
             // Initial values for first star in this list
             rootItr = list.begin();
             int nextInvert = 1;
 
-            // Loop over stars with a list of waves of equal norm
+            // Loop over stars with a list of waves of equal norm,
+            // removing each star from the list as it is identified.
+            // The root of the next star must have been chosen on
+            // entry to each iteration of this loop.
+
             while (list.size() > 0) {
 
-               rootVec = rootItr->indicesBz;
+               rootVecBz = rootItr->indicesBz;
                Gsq = rootItr->sqNorm;
                cancel = false;
                star.clear();
@@ -229,7 +240,7 @@ namespace Pssp
 
                   // Apply symmetry (i.e., multiply by rotation matrix)
                   // vec = rotated wavevector.
-                  vec = rootVec*group[j];
+                  vec = rootVecBz*group[j];
 
                   // Check that rotated vector has same norm as root.
                   UTIL_CHECK(abs(Gsq - unitCell().ksq(vec)) < epsilon);
@@ -245,7 +256,7 @@ namespace Pssp
                   // Convention -pi < phase <= pi.
                   wave.phase = 0.0;
                   for (k = 0; k < D; ++k) {
-                     wave.phase += rootVec[k]*(group[j].t(k));
+                     wave.phase += rootVecBz[k]*(group[j].t(k));
                   }
                   while (wave.phase > 0.5) {
                      wave.phase -= 1.0;
@@ -347,8 +358,8 @@ namespace Pssp
                   // If this star is not the 2nd of a pair of partners,
                   // then determine if it is closed under inversion.
 
-                  // Compute negation nVec of indicesBz of root vector 
-                  nVec.negate(rootItr->indicesBz);
+                  // Compute negation nVec of root vector in FBZ
+                  nVec.negate(rootVecBz);
 
                   // Shift negation nVec to a DFT mesh
                   (*meshPtr_).shift(nVec);
@@ -400,7 +411,7 @@ namespace Pssp
                                   << rootItr->indicesDft <<"\n"; 
                         std::cout << " vec (bz):" 
                                   << rootItr->indicesBz <<"\n"; 
-                        std::cout << "-vec (bz):" << nVec << "\n";
+                        std::cout << "-vec (dft):" << nVec << "\n";
                         UTIL_CHECK(negationFound);
                      }
 
@@ -1021,7 +1032,7 @@ namespace Pssp
                end = stars_[is].endId; 
                for (iw = begin; iw < end; ++iw) {
                   v.negate(waves_[iw].indicesBz);
-                  (*meshPtr_).shift(v);
+                  mesh().shift(v);
                   negationFound = false;
                   for (iwp = begin; iw < end; ++iwp) {
                      if (waves_[iwp].indicesDft == v) {
@@ -1086,7 +1097,7 @@ namespace Pssp
                // Loop over waves in first star
                for (iw = stars_[is].beginId; iw < stars_[is].endId; ++iw) {
                   v.negate(waves_[iw].indicesBz);
-                  (*meshPtr_).shift(v);
+                  mesh().shift(v);
                   negationFound = false;
                   // Loop over second star, searching for negation
                   for (iwp = begin; iw < end; ++iwp) {
