@@ -10,6 +10,7 @@
 
 #include "Basis.h"
 #include "TWave.h"
+#include "groupFile.h"
 #include <pscf/crystal/shiftToMinimum.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <vector>
@@ -32,6 +33,7 @@ namespace Pssp
       meshPtr_(0)
    {}
 
+   #if 0
    /*
    * Construct basis for pseudo-spectral scft.
    */
@@ -53,6 +55,47 @@ namespace Pssp
          } else {
            UTIL_THROW("Unknown space group");
          }
+      }
+      makeBasis(mesh, unitCell, group);
+   }
+   #endif
+
+   /*
+   * Construct basis for pseudo-spectral scft.
+   */
+   template <int D>
+   void Basis<D>::makeBasis(const Mesh<D>& mesh, 
+                            const UnitCell<D>& unitCell,
+                            std::string groupName)
+   {
+      SpaceGroup<D> group;
+      if (groupName == "I") {
+         // Create identity group
+         group.makeCompleteGroup();
+      } else {
+         bool foundFile = false;
+         {
+            std::ifstream in;
+            in.open(groupName);
+            if (in.is_open()) {
+               // Log::file() << "Reading group from file: " << groupName << std::endl;
+               in >> group;
+               UTIL_CHECK(group.isValid());
+               foundFile = true;
+            } 
+         }
+         if (!foundFile) {
+            std::string fileName = makeGroupFileName(D, groupName);
+            std::ifstream in;
+            in.open(fileName);
+            if (in.is_open()) {
+               // Log::file() << "Reading group from file: " << fileName << std::endl;
+               in >> group;
+               UTIL_CHECK(group.isValid());
+            } else {
+              UTIL_THROW("Unknown space group");
+            }
+         } 
       }
       makeBasis(mesh, unitCell, group);
    }

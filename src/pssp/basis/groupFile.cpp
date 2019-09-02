@@ -6,12 +6,18 @@
 */
 
 #include "groupFile.h"
+#include <util/global.h>
 
-#define AS_STRING(s) # s
+// Macros to generated quoted path to data directory, DAT_DIR
+#define XSTR(s) STR(s)
+#define STR(s) # s
+#define DAT_DIR_STRING XSTR(DAT_DIR)
 
 namespace Pscf { 
 namespace Pssp 
 { 
+
+   using namespace Util;
 
    /**
    * Generates the file name from a group name.
@@ -20,7 +26,7 @@ namespace Pssp
    */
    std::string makeGroupFileName(int D, std::string groupName)
    {
-      std::string filename = AS_STRING(DAT_DIR) ;
+      std::string filename = DAT_DIR_STRING ;
       filename += "/groups/";
       if (D==1) {
          filename += "1/";
@@ -28,8 +34,10 @@ namespace Pssp
       if (D==2) {
          filename += "2/";
       } else
-      if (D==2) {
+      if (D==3) {
          filename += "3/";
+      } else {
+         UTIL_THROW("Invalid dimension of space");
       }
       filename += groupName;
       return filename;

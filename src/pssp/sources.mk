@@ -9,7 +9,6 @@ pssp_= \
   $(pssp_solvers_) \
   $(pssp_iterator_)
 
-
 pssp_SRCS=\
      $(addprefix $(SRC_DIR)/, $(pssp_))
 pssp_OBJS=\
