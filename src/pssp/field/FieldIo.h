@@ -132,12 +132,40 @@ namespace Pssp
       void readFieldsRGrid(std::istream& in, DArray< RField<D> >& fields);
 
       /**
+      * Read array of RField objects (fields on an r-space grid) from file.
+      *
+      * The capacity of array fields is equal to nMonomer, and element
+      * fields[i] is the RField<D> associated with monomer type i.
+      * 
+      * This function opens an input file with the specified filename, 
+      * reads fields in RField<D> real-space grid format from that file, 
+      * and then closes the file. 
+      *
+      * \param filename name of input file
+      * \param fields array of RField fields for different species
+      */
+      void readFieldsRGrid(std::string filename, DArray< RField<D> >& fields);
+
+      /**
       * Write array of RField objects (fields on an r-space grid) to file.
       *
       * \param out output stream (i.e., output file)
       * \param fields array of RField fields for different species
       */
       void writeFieldsRGrid(std::ostream& out, 
+                            DArray< RField<D> > const& fields);
+
+      /**
+      * Write array of RField objects (fields on an r-space grid) to file.
+      *
+      * This function opens an output file with the specified filename, 
+      * writes fields in RField<D> real-space grid format to that file, 
+      * and then closes the file.
+      *
+      * \param filename name of output stream.
+      * \param fields array of RField fields for different species
+      */
+      void writeFieldsRGrid(std::string filename,
                             DArray< RField<D> > const& fields);
 
       /**

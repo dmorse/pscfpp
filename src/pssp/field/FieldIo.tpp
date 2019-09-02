@@ -170,15 +170,14 @@ namespace Pssp
 
    }
 
-
    template <int D>
    void FieldIo<D>::writeFieldsBasis(std::string filename, 
-                                DArray< DArray<double> > const &  fields)
+                                     DArray<DArray<double> > const & fields)
    {
-      std::ofstream outFile;
-      fileMaster().openOutputFile(filename, outFile);
-      writeFieldsBasis(outFile, fields);
-      outFile.close();
+       std::ofstream outFile;
+       fileMaster().openOutputFile(filename, outFile);
+       writeFieldsBasis(outFile, fields);
+       outFile.close();
    }
 
    template <int D>
@@ -277,6 +276,16 @@ namespace Pssp
    }
 
    template <int D>
+   void FieldIo<D>::readFieldsRGrid(std::string filename, 
+                              DArray< RField<D> >& fields)
+   {
+       std::ifstream inFile;
+       fileMaster().openInputFile(filename, inFile);
+       readFieldsRGrid(inFile, fields);
+       inFile.close();
+   }
+
+   template <int D>
    void FieldIo<D>::writeFieldsRGrid(std::ostream &out,
                                      DArray<RField<D> > const& fields)
    {
@@ -364,6 +373,16 @@ namespace Pssp
          out << std::endl;
       }
 
+   }
+
+   template <int D>
+   void FieldIo<D>::writeFieldsRGrid(std::string filename, 
+                                     DArray< RField<D> > const & fields)
+   {
+       std::ofstream outFile;
+       fileMaster().openOutputFile(filename, outFile);
+       writeFieldsRGrid(outFile, fields);
+       outFile.close();
    }
 
 
