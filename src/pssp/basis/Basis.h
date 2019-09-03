@@ -340,7 +340,14 @@ namespace Pssp
       return waveIds_[rank];
    }
 
+   #ifndef PSSP_BASIS_TPP
+   extern template class Basis<1>;
+   extern template class Basis<2>;
+   extern template class Basis<3>;
+   #endif
+
 } // namespace Pscf:Pssp
 } // namespace Pscf
-#include "Basis.tpp"
+
+//#include "Basis.tpp"
 #endif

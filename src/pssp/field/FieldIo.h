@@ -221,12 +221,24 @@ namespace Pssp
       Mixture<D>& mixture()
       {  return *mixturePtr_; }
 
+      /// Get Mixture by const reference.
+      Mixture<D> const& mixture() const
+      {  return *mixturePtr_; }
+
       /// Get UnitCell by reference.
       UnitCell<D>& unitCell()
       {  return *unitCellPtr_; }
 
+      /// Get UnitCell by const reference.
+      UnitCell<D> const & unitCell() const
+      {  return *unitCellPtr_; }
+
       /// Get spatial discretization mesh by reference.
       Mesh<D>& mesh()
+      {  return *meshPtr_; }
+
+      /// Get spatial discretization mesh by const reference.
+      Mesh<D> const & mesh() const
       {  return *meshPtr_; }
 
       /// Get FFT object by reference.
@@ -237,6 +249,9 @@ namespace Pssp
       std::string& groupName()
       {  return *groupNamePtr_; }
 
+      /// Get group name string by const reference.
+      std::string const & groupName() const
+      {  return *groupNamePtr_; }
       /// Get Basis by reference.
       Basis<D>& basis()
       {  return *basisPtr_; }
@@ -261,7 +276,12 @@ namespace Pssp
 
    };
 
+   #ifndef PSSP_FIELD_IO_TPP
+   extern template class FieldIo<1>;
+   extern template class FieldIo<2>;
+   extern template class FieldIo<3>;
+   #endif
+
 } // namespace Pssp
 } // namespace Pscf
-#include "FieldIo.tpp"
 #endif

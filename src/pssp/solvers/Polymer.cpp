@@ -5,15 +5,14 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "FieldIo.tpp"
+#include "Polymer.tpp"
 
 namespace Pscf {
-namespace Pssp
-{
+namespace Pssp { 
 
-   template class FieldIo<1>;
-   template class FieldIo<2>;
-   template class FieldIo<3>;
+   template class Polymer<1>;
+   template class Polymer<2>;
+   template class Polymer<3>;
 
-} // namespace Pscf::Pssp
-} // namespace Pscf
+}
+}

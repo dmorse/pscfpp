@@ -1,4 +1,5 @@
 pssp_basis_= \
+     pssp/basis/Basis.cpp \
      pssp/basis/groupFile.cpp
 
 pssp_basis_SRCS=\

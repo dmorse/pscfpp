@@ -5,6 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <pssp/System.h>
+#include <pscf/mesh/MeshIterator.h>
 
 #include <fstream>
 

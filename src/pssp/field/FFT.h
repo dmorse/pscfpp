@@ -119,7 +119,14 @@ namespace Pssp {
    inline const IntVec<D>& FFT<D>::meshDimensions() const
    {  return meshDimensions_; }
 
+   #ifndef PSSP_FFT_TPP
+   // Suppress implicit instantiation
+   extern template class FFT<1>;
+   extern template class FFT<2>;
+   extern template class FFT<3>;
+   #endif
+
 } // namespace Pscf::Pssp
 } // namespace Pscf
-#include "FFT.tpp"
+// #include "FFT.tpp"
 #endif

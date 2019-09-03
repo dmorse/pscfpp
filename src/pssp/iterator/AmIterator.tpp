@@ -10,6 +10,7 @@
 
 #include "AmIterator.h"
 #include <pssp/System.h>
+#include <pscf/inter/ChiInteraction.h>
 #include <util/containers/FArray.h>
 #include <util/format/Dbl.h>
 #include <ctime>
@@ -589,7 +590,7 @@ namespace Pssp
          }
       }
    }
-}
-}
 
+}
+}
 #endif

@@ -5,6 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <pssp/iterator/AmIterator.h>
+#include <pscf/inter/ChiInteraction.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <util/math/Constants.h>
 

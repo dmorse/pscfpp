@@ -9,13 +9,14 @@
 */
 
 #include "Block.h"
+#include <pssp/basis/Basis.h>
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/crystal/UnitCell.h>
 #include <pscf/crystal/shiftToMinimum.h>
-#include <util/containers/FMatrix.h>      // member template
-#include <util/containers/DArray.h>      // member template
-#include <util/containers/FArray.h>      // member template
+#include <util/containers/FMatrix.h>      
+#include <util/containers/DArray.h>      
+#include <util/containers/FArray.h>      
 
 namespace Pscf { 
 namespace Pssp {

@@ -90,6 +90,21 @@ namespace Pssp
       return *this;
    }
 
+   /*
+   * Allocate the underlying C array for an FFT grid.
+   */
+   template <int D>
+   void RField<D>::allocate(const IntVec<D>& meshDimensions)
+   {
+      int size = 1;
+      for (int i = 0; i < D; ++i) {
+         UTIL_CHECK(meshDimensions[i] > 0);
+         meshDimensions_[i] = meshDimensions[i];
+         size *= meshDimensions[i];
+      }
+      Field<double>::allocate(size);
+   }
+
 }
 }
 #endif

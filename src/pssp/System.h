@@ -9,18 +9,20 @@
 */
 
 #include <util/param/ParamComposite.h>     // base class
+
 #include <pssp/solvers/Mixture.h>          // member
 #include <pssp/field/FFT.h>                // member
 #include <pssp/basis/Basis.h>              // member
 #include <pssp/field/FieldIo.h>            // member
 #include <pscf/mesh/Mesh.h>                // member
-#include <pssp/iterator/AmIterator.h>
+#include <pssp/field/RField.h>             // typedef
+
 #include <pscf/crystal/UnitCell.h>         // member
 #include <pscf/homogeneous/Mixture.h>      // member
+
 #include <util/misc/FileMaster.h>          // member
 #include <util/containers/DArray.h>        // member template
 #include <util/containers/Array.h>         // function parameter
-#include <pssp/field/RField.h>             // typedef
 
 namespace Pscf { class ChiInteraction; }
 
@@ -722,7 +724,15 @@ namespace Pssp
    inline double System<D>::pressure() const
    {  return pressure_; }
 
+
+   #ifndef PSSP_SYSTEM_TPP
+   // Suppress implicit instantiation
+   extern template class System<1>;
+   extern template class System<2>;
+   extern template class System<3>;
+   #endif
+
 } // namespace Pssp
 } // namespace Pscf
-#include "System.tpp"
+//#include "System.tpp"
 #endif
