@@ -226,7 +226,12 @@ namespace Pssp
 
    };
 
+   #ifndef PSSP_FIELD_IO_TPP
+   extern template class FieldIo<1>;
+   extern template class FieldIo<2>;
+   extern template class FieldIo<3>;
+   #endif
+
 } // namespace Pssp
 } // namespace Pscf
-#include "FieldIo.tpp"
 #endif

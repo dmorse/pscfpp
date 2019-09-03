@@ -1,3 +1,6 @@
+#ifndef PSSP_FIELD_IO_TPP
+#define PSSP_FIELD_IO_TPP
+
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
@@ -8,6 +11,8 @@
 #include "FieldIo.h"
 
 #include <pscf/math/IntVec.h>
+#include <pscf/mesh/MeshIterator.h>
+
 #include <util/format/Str.h>
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
@@ -419,3 +424,4 @@ namespace Pssp
 
 } // namespace Pssp
 } // namespace Pscf
+#endif

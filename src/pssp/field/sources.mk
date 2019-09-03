@@ -1,4 +1,6 @@
 pssp_field_= \
+  pssp/field/RField.cpp \
+  pssp/field/RFieldDft.cpp \
   pssp/field/FFT.cpp 
 
 pssp_field_SRCS=\
