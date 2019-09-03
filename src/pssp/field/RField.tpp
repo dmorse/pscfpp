@@ -105,17 +105,6 @@ namespace Pssp
       Field<double>::allocate(size);
    }
 
-   /*
-   * Serialize a Field to/from an Archive.
-   */
-   template <int D>
-   template <class Archive>
-   void RField<D>::serialize(Archive& ar, const unsigned int version)
-   {
-      Field<double>::serialize(ar, version);
-      ar & meshDimensions_;
-   }
-
 }
 }
 #endif

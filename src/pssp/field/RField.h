@@ -102,6 +102,17 @@ namespace Pssp
    inline const IntVec<D>& RField<D>::meshDimensions() const
    {  return meshDimensions_; }
 
+   /*
+   * Serialize a Field to/from an Archive.
+   */
+   template <int D>
+   template <class Archive>
+   void RField<D>::serialize(Archive& ar, const unsigned int version)
+   {
+      Field<double>::serialize(ar, version);
+      ar & meshDimensions_;
+   }
+
    #ifndef PSSP_R_FIELD_TPP
    extern template class RField<1>;
    extern template class RField<2>;
