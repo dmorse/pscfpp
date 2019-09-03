@@ -7,7 +7,8 @@ pssp_= \
   $(pssp_basis_) \
   $(pssp_field_) \
   $(pssp_solvers_) \
-  $(pssp_iterator_)
+  $(pssp_iterator_) \
+  pssp/System.cpp 
 
 pssp_SRCS=\
      $(addprefix $(SRC_DIR)/, $(pssp_))

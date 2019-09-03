@@ -717,7 +717,15 @@ namespace Pssp
    inline double System<D>::pressure() const
    {  return pressure_; }
 
+
+   #ifndef PSSP_SYSTEM_TPP
+   // Suppress implicit instantiation
+   extern template class System<1>;
+   extern template class System<2>;
+   extern template class System<3>;
+   #endif
+
 } // namespace Pssp
 } // namespace Pscf
-#include "System.tpp"
+//#include "System.tpp"
 #endif

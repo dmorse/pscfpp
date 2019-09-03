@@ -233,7 +233,13 @@ namespace Pssp
    void Propagator<D>::setBlock(Block<D>& block)
    {  blockPtr_ = &block; }
 
+   #ifndef PSSP_PROPAGATOR_TPP
+   extern template class Propagator<1>;
+   extern template class Propagator<2>;
+   extern template class Propagator<3>;
+   #endif
+
 }
 }
-#include "Propagator.tpp" 
+//#include "Propagator.tpp" 
 #endif

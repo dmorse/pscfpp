@@ -5,12 +5,14 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "AmIterator.tpp"
+#include "Block.tpp"
 
-namespace Pscf {
+namespace Pscf { 
 namespace Pssp {
-   template class AmIterator<1>;
-   template class AmIterator<2>;
-   template class AmIterator<3>;
+
+   template class Block<1>;
+   template class Block<2>;
+   template class Block<3>;
+
 }
 }

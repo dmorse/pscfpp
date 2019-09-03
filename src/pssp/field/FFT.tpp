@@ -1,5 +1,5 @@
-#ifndef FFT_TPP
-#define FFT_TPP
+#ifndef PSSP_FFT_TPP
+#define PSSP_FFT_TPP
 
 /*
 * PSCF++ Package 
