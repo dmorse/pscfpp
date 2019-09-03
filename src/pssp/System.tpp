@@ -11,15 +11,11 @@
 #include "System.h"
 
 #if 0
-#include <pssp/iterator/Iterator.h>
 #include <pssp/sweep/Sweep.h>
 #include <pssp/sweep/SweepFactory.h>
-#ifdef PSCF_GSL
-#include <pssp/iterator/NrIterator.h>
 #endif
-#include <pssp/misc/HomogeneousComparison.h>
-#include <pssp/misc/FieldEditor.h>
-#endif
+
+#include <pssp/iterator/AmIterator.h>
 
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/crystal/shiftToMinimum.h>

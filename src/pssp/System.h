@@ -9,16 +9,18 @@
 */
 
 #include <util/param/ParamComposite.h>     // base class
+
 #include <pssp/solvers/Mixture.h>          // member
 #include <pssp/basis/Basis.h>              // member
-#include <pssp/iterator/AmIterator.h>
 #include <pscf/mesh/Mesh.h>                // member
+#include <pssp/field/RField.h>             // typedef
+
 #include <pscf/crystal/UnitCell.h>         // member
 #include <pscf/homogeneous/Mixture.h>      // member
+
 #include <util/misc/FileMaster.h>          // member
 #include <util/containers/DArray.h>        // member template
 #include <util/containers/Array.h>         // function parameter
-#include <pssp/field/RField.h>             // typedef
 
 namespace Pscf { class ChiInteraction; }
 
