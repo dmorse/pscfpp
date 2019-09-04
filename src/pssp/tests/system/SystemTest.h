@@ -5,6 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <pssp/System.h>
+#include <pssp/iterator/AmIterator.h>
 #include <pscf/mesh/MeshIterator.h>
 
 #include <fstream>
@@ -147,39 +148,59 @@ public:
 
    }
 
-
-    void testIterate3d()
+   void testIterate_BCC() 
    {   
-     printMethod(TEST_FUNC);
+      printMethod(TEST_FUNC);
+ 
+      System<3> system;
 
-     System<3> system;
-     std::ifstream in; 
-     openInputFile("in/System3D", in);
-    
-     //System<1> system;
-     //std::ifstream in; 
-     //openInputFile("in_check/System1D", in);
-    
-     system.readParam(in);
-     in.close();
-     std::ifstream command;
-     openInputFile("in/Iterate3d", command);
-     system.readCommands(command);
-     command.close();
+      // Read parameter file
+      std::ifstream in; 
+      openInputFile("in/bcc/param", in);
+      system.readParam(in);
+      in.close();
 
-     int nMonomer = system.mixture().nMonomer();
-     DArray<RField<3> > cFields_check;
-     DArray<RField<3>  > cFields;
-     cFields_check.allocate(nMonomer);
-     cFields.allocate(nMonomer);
-     double nx = system.mesh().size();
-     for (int i = 0; i < nMonomer; ++i) {
-         cFields_check[i].allocate(nx);
-         cFields[i].allocate(nx);
-     }   
+      openInputFile("in/bcc/omega", in);
+      system.readFields(in, system.wFields());
+      in.close();
 
-     std::ifstream verify;
-     openInputFile("contents/rho_rgrid_bcc", verify);
+      int err = system.iterator().solve();
+      TEST_ASSERT(!err);
+
+   }
+
+   void testIterate3d() 
+   {   
+      printMethod(TEST_FUNC);
+ 
+      System<3> system;
+      std::ifstream in; 
+      openInputFile("in/System3D", in);
+     
+      //System<1> system;
+      //std::ifstream in; 
+      //openInputFile("in_check/System1D", in);
+     
+      system.readParam(in);
+      in.close();
+      std::ifstream command;
+      openInputFile("in/Iterate3d", command);
+      system.readCommands(command);
+      command.close();
+ 
+      int nMonomer = system.mixture().nMonomer();
+      DArray<RField<3> > cFields_check;
+      DArray<RField<3>  > cFields;
+      cFields_check.allocate(nMonomer);
+      cFields.allocate(nMonomer);
+      double nx = system.mesh().size();
+      for (int i = 0; i < nMonomer; ++i) {
+          cFields_check[i].allocate(nx);
+          cFields[i].allocate(nx);
+      }   
+ 
+      std::ifstream verify;
+      openInputFile("contents/rho_rgrid_bcc", verify);
 
       std::string label;
       std::string uCell;
@@ -309,11 +330,7 @@ public:
 
    }
 
-
-
-
-
-    void testIterate1d()
+   void testIterate1d()
    {
      printMethod(TEST_FUNC);
 
@@ -641,9 +658,10 @@ TEST_BEGIN(SystemTest)
 TEST_ADD(SystemTest, testConstructor1D)
 TEST_ADD(SystemTest, testReadParameters1D)
 TEST_ADD(SystemTest, testConversion3d)
-TEST_ADD(SystemTest, testIterate3d)
-TEST_ADD(SystemTest, testIterate1d)
-TEST_ADD(SystemTest, testIterate2d)
+TEST_ADD(SystemTest, testIterate_BCC)
+//TEST_ADD(SystemTest, testIterate3d)
+//TEST_ADD(SystemTest, testIterate1d)
+//TEST_ADD(SystemTest, testIterate2d)
 TEST_END(SystemTest)
 
 #endif
