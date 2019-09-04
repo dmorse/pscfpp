@@ -8,13 +8,11 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <iostream>
+//#include <iostream>
 #include <vector>
 
 namespace Pscf 
 {
-
-   using namespace Util;
 
    /**
    * Class template for a group of elements.
@@ -127,215 +125,47 @@ namespace Pscf
    };
 
 
-   // Method definitions
-
-   /*
-   * Default constructor
-   */
-   template <class Symmetry>
-   SymmetryGroup<Symmetry>::SymmetryGroup()
-   {
-      identity_ = Symmetry::identity();
-      elements_.push_back(identity_);
-   }
-
-   /*
-   * Copy constructor
-   */
-   template <class Symmetry>
-   SymmetryGroup<Symmetry>::SymmetryGroup(const SymmetryGroup& other)
-   {
-      elements_.clear();
-      identity_ = other.identity();
-      for (int i = 0; i < other.size(); ++i) {
-         elements_.push_back(other.elements_[i]);
-      }
-   }
-
-   /*
-   * Destructor
-   */
-   template <class Symmetry>
-   SymmetryGroup<Symmetry>::~SymmetryGroup()
-   {}
-
-   /*
-   * Assignment operator.
-   */
-   template <class Symmetry>
-   SymmetryGroup<Symmetry>& 
-   SymmetryGroup<Symmetry>::operator = (const SymmetryGroup& other)
-   {
-      if (this != &other) {
-         identity_ = other.identity();
-         elements_.clear();
-         for (int i = 0; i < other.size(); ++i) {
-            elements_.push_back(other.elements_[i]);
-         }
-      }
-      return *this;
-   }
-
-   /*
-   * Find an element in the group, return const pointer to its address.
-   *
-   * Return a null pointer if symmetry is not a member of the group.
-   */
-   template <class Symmetry>
-   const Symmetry* SymmetryGroup<Symmetry>::find(const Symmetry& symmetry) const
-   {
-      for (int i=0; i < size(); ++i) {
-         if (symmetry == elements_[i]) {
-            return &(elements_[i]);
-         }
-      }
-      // Return null pointer if not found
-      return 0;
-   }
- 
-   /*
-   * Add a new element to the group.
-   */
-   template <class Symmetry>
-   bool SymmetryGroup<Symmetry>::add(Symmetry& symmetry)
-   {
-      // Check if symmetry is already present
-      const Symmetry* ptr = find(symmetry);
-
-      // If not already present, add symmetry to this group
-      bool added; 
-      if (ptr == 0) {
-         elements_.push_back(symmetry);
-         added = true;
-      } else {
-         added = false;
-      }
-      return added;
-   }
-
-   /*
-   * Create a complete group.
-   */
-   template <class Symmetry>
-   void SymmetryGroup<Symmetry>::makeCompleteGroup()
-   {
-      Symmetry a, b, c;
-      int      i, j, n;
-      bool added, complete;
-
-      // Add all inverses
-      n = size();
-      for (i = 0; i < n; ++i) {
-         a = elements_[i].inverse();
-         add(a);
-      }
-
-      // Add all products of existing elements, and their inverses
-      complete = false;
-      while (!complete) {
-         complete = true;
-         n = size();
-         for (i = 0; i < n; ++i) {
-            a = elements_[i];
-            for (j = 0; j < n; ++j) {
-               b = elements_[j];
-               c = a*b;
-               added = add(c);
-               if (added) {
-                  complete = false;
-               }
-               b = c.inverse(); 
-               added = add(b);
-               if (added) { 
-                  complete = false;
-               }
-            } 
-         } 
-      } 
-
-   }
-
-   /*
-   * Clear all elements except the identity.
-   */
-   template <class Symmetry>
-   void SymmetryGroup<Symmetry>::clear()
-   {
-      elements_.clear();
-      identity_ = Symmetry::identity();
-      elements_.push_back(identity_);
-   }
-
-
-   /*
-   * Check validity of this group.
-   */
-   template <class Symmetry>
-   bool SymmetryGroup<Symmetry>::isValid() const
-   {
-      Symmetry a, b, c;
-      int      i, j, n;
- 
-      // Check for inclusion of identity element
-      c = Symmetry::identity();
-      if (find(c) == 0) {
-         UTIL_THROW("Identity element is not in group");
-      }
-
-      // Check inverses, uniqueness, and completeness
-      n = size();
-      for (i = 0; i < n; ++i) {
-         a = elements_[i];
-         c = a.inverse();
-         if (find(c) == 0) {
-            UTIL_THROW("Inverse of element not in group");
-         }
-         for (j = 0; j < n; ++j) {
-            b = elements_[j];
-            if (i != j) {
-               if (a == b) {
-                  UTIL_THROW("An element of the group is not unique");
-               }
-            }
-            c = a*b;
-            if (find(c) == 0) {
-               UTIL_THROW("Product of two element is not in group");
-            }
-         }
-      }
-
-      // If no Exceptions have been thrown, return true
-      return true; 
-
-   }
+   // Member function definitions (non-inline)
 
    /*
    * Return the current size of the group.
    */
    template <class Symmetry>
-   inline int SymmetryGroup<Symmetry>::size() const
+   inline 
+   int SymmetryGroup<Symmetry>::size() const
    {  return elements_.size(); }
  
    /*
    * Return identity element.
    */
    template <class Symmetry>
-   inline const Symmetry& SymmetryGroup<Symmetry>::identity() const
+   inline 
+   const Symmetry& SymmetryGroup<Symmetry>::identity() const
    {  return identity_; }
  
    /*
    * Element access operator (by reference).
    */
-   template <class Symmetry> inline 
+   template <class Symmetry> 
+   inline 
    Symmetry& SymmetryGroup<Symmetry>::operator [] (int i)
    { return elements_[i]; }
  
    /*
    * Element access operator (by reference).
    */
-   template <class Symmetry> inline 
+   template <class Symmetry> 
+   inline 
    const Symmetry& SymmetryGroup<Symmetry>::operator [] (int i) const
    { return elements_[i]; }
- 
+
+   #ifndef PSCF_SYMMETRY_GROUP_TPP
+   template <int D> class SpaceSymmetry;
+   extern template class SymmetryGroup< SpaceSymmetry<1> >;
+   extern template class SymmetryGroup< SpaceSymmetry<2> >;
+   extern template class SymmetryGroup< SpaceSymmetry<3> >;
+   #endif 
+
 }
+// #include "SymmetryGroup.tpp"
 #endif

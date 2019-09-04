@@ -76,5 +76,11 @@ namespace Pscf
       return in;
    }
 
+   #ifndef PSCF_SPACE_GROUP_CPP
+   extern template class SpaceGroup<1>;
+   extern template class SpaceGroup<2>;
+   extern template class SpaceGroup<3>;
+   #endif
+
 }
 #endif

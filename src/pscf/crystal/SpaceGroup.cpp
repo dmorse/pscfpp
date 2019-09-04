@@ -5,13 +5,14 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#define PSCF_SPACE_GROUP_CPP
 #include <pscf/crystal/SpaceGroup.h>
 
 namespace Pscf
 {
 
-   template <> class SpaceGroup<1>;
-   template <> class SpaceGroup<2>;
-   template <> class SpaceGroup<3>;
+   template class SpaceGroup<1>;
+   template class SpaceGroup<2>;
+   template class SpaceGroup<3>;
 
 }
