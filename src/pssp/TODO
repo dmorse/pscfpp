@@ -46,6 +46,9 @@ class System reorganization: (assigned to Dave, lower priority)
    - Finish testing FieldIo class and replace member functions of 
      System by calls to corresponding functions of FieldIo.
 
+   - Create class FieldConverter, give member functions to convert
+     between formats.
+
 ------------------------------------------------------------------------
 Later:
 

@@ -1,20 +1,21 @@
 TODO (Basis class):
 
-1) Fix discrepancy in choice of characteristic wave Basis::Star:waveBz
-   (assigned to Anshul)
+1) Move computation of dEigen for one vector to a public member
+   of UnitCell, giving functions ksq() and dksq().  Construct
+   unit tests, including edge cases and special cases for which
+   the answer can be worked out analytically.
 
-2) Test code to read a space group from a file. Test relationship of
-   resulting basis to that produced by fortran code for a variety of
-   groups.
+2) Convert TWave::phase to a Rational value. Add Wave::phase member
+   to Basis::Wave. Build code to compute coefficients that contains
+   common special cases phase = 0, phase = +- 1/2, phase = +- 1/4.
 
-3) Add function makeGroupFileName to convert standard file name (in
-   format used by fortran pscf) to a valid file name with no slashes
-   or spaces.
-
-4) Possibility: Add a partnerId to Basis::Wave. Once you've identified 
+3) Possibility: Add a partnerId to Basis::Wave. Once you've identified 
    the partner, why not keep track of it?
 
-5) Test Basis code with more varied groups:
+4) Test Basis code with more varied groups, including nontrivial
+   non-centrosymmetric cases. Compare each to Fortran as well as
+   testing internal validity. Test with both even and odd mesh
+   dimension values.
 
    Examples: 2D Square, 
              2D Square centered (has translations and cancellations)
@@ -22,22 +23,4 @@ TODO (Basis class):
              3D (111 3 fold axis) (non-centrosymmetric)
              3D cubic BCC (has translations and cancellations)
 
-   Make sure to test with even and odd mesh dimension elements
-
-6) In function that converts from rGrid to symmetry adapted basis,
-   add check that coefficients of components within a start have
-   the same magnitude and appropriate phase relationships. Also
-   check that cancelled stars have zero components. The tolerance 
-   could be passed to function as a parameter with a default value.
-
-7) Move computation of dEigen for one vector to a private function, 
-   call this in makeStars() and udpate(). Alternative: Make this 
-   a public member of UnitCell, giving functions ksq() and dksq().
-   Unit tests to test computation of dEigen member of each vector.
-   makeStars() function. Test special cases for which answer can be
-   worked out analytically.
-
-8) Possibility: Convert TWave::phase to a Rational value. Build 
-   in treatment of corresponding coefficient for special cases of
-   phase = 0, phase = +- 1/2, phase = +- 1/4.
 
