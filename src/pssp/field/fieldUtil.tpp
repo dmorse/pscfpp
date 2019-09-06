@@ -120,7 +120,9 @@ namespace Pssp {
       IntVec<D> indices;                      // dft grid indices of wave
       int rank;                               // dft grid rank of wave
       int is;                                 // star index
+      int iw;                                 // wave id, relative to star beginId
       int nStar = basis.nStar();              // number of stars
+      bool isImplicit;
 
       // Loop over stars
       is = 0;
@@ -130,8 +132,21 @@ namespace Pssp {
 
          if (starPtr->invertFlag == 0) {
 
-            // Characteristic wave is first wave of star
-            wavePtr = &(basis.wave(starPtr->beginId));
+            // Choose a characteristic wave that is not implicit.
+            // Start with the first, alternately searching from
+            // the beginning and end of star.
+            isImplicit = true;
+            iw = 0;
+            while (isImplicit) {
+                UTIL_CHECK(iw <= (starPtr->size)/2);
+                wavePtr = &basis.wave(starPtr->beginId + iw);
+                if (wavePtr->implicit) {
+                   wavePtr = &basis.wave(starPtr->endId - 1 - iw);
+                }
+                isImplicit = wavePtr->implicit;
+                ++iw;
+            }
+            UTIL_CHECK(wavePtr->starId == is);
             indices = wavePtr->indicesDft;
             rank = dftMesh.rank(indices);
 

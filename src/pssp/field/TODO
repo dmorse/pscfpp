@@ -1,0 +1,14 @@
+1) Write unit tests for FieldIo.
+
+2) Test replacing Io functions in System with calls to FieldIo.
+   Remove corresponding code from System when well tested.
+
+3) Move conversion functions to new class FieldConverter.  Unit 
+   test and add
+
+4) Test replacing calls to conversion functions in Basis by 
+   calls to functions in FieldConverter.  Remove from Basis
+   after testing.
+
+5) Move basis to Pscf namespace.
+

@@ -1,0 +1,7 @@
+OUTPUT_STARS     out/stars
+OUTPUT_WAVES     out/waves
+ITERATE          in/omega
+WRITE_WFIELDS    out/omega.bf
+FIELD_TO_RGRID   out/omega  out/omega.rf
+FINISH
+
