@@ -188,7 +188,14 @@ namespace Pssp
    inline int AmIterator<D>::maxItr()
    { return maxItr_; }
 
+   #ifndef PSSP_AM_ITERATOR_TPP
+   // Suppress implicit instantiation
+   extern template class AmIterator<1>;
+   extern template class AmIterator<2>;
+   extern template class AmIterator<3>;
+   #endif
+
 }
 }
-#include "AmIterator.tpp"
+//#include "AmIterator.tpp"
 #endif

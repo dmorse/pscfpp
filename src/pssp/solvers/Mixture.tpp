@@ -9,7 +9,7 @@
 */
 
 #include "Mixture.h"
-#include <fd1d/domain/Domain.h>
+#include <pscf/mesh/Mesh.h>
 
 #include <cmath>
 

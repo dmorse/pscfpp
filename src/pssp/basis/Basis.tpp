@@ -10,6 +10,7 @@
 
 #include "Basis.h"
 #include "TWave.h"
+#include "groupFile.h"
 #include <pscf/crystal/shiftToMinimum.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <vector>
@@ -32,6 +33,7 @@ namespace Pssp
       meshPtr_(0)
    {}
 
+   #if 0
    /*
    * Construct basis for pseudo-spectral scft.
    */
@@ -53,6 +55,47 @@ namespace Pssp
          } else {
            UTIL_THROW("Unknown space group");
          }
+      }
+      makeBasis(mesh, unitCell, group);
+   }
+   #endif
+
+   /*
+   * Construct basis for pseudo-spectral scft.
+   */
+   template <int D>
+   void Basis<D>::makeBasis(const Mesh<D>& mesh, 
+                            const UnitCell<D>& unitCell,
+                            std::string groupName)
+   {
+      SpaceGroup<D> group;
+      if (groupName == "I") {
+         // Create identity group
+         group.makeCompleteGroup();
+      } else {
+         bool foundFile = false;
+         {
+            std::ifstream in;
+            in.open(groupName);
+            if (in.is_open()) {
+               // Log::file() << "Reading group from file: " << groupName << std::endl;
+               in >> group;
+               UTIL_CHECK(group.isValid());
+               foundFile = true;
+            } 
+         }
+         if (!foundFile) {
+            std::string fileName = makeGroupFileName(D, groupName);
+            std::ifstream in;
+            in.open(fileName);
+            if (in.is_open()) {
+               // Log::file() << "Reading group from file: " << fileName << std::endl;
+               in >> group;
+               UTIL_CHECK(group.isValid());
+            } else {
+              UTIL_THROW("Unknown space group");
+            }
+         } 
       }
       makeBasis(mesh, unitCell, group);
    }
@@ -79,12 +122,6 @@ namespace Pssp
 
       // Identify stars of waves that are related by symmetry
       makeStars(group);
-
-      #if 0 
-      // Debugging code 
-      outputStars(std::cout);
-      outputWaves(std::cout);
-      #endif
 
       // Apply validity test suite
       bool valid = isValid();
@@ -691,7 +728,7 @@ namespace Pssp
       int is;                         // star index
       int iw;                         // wave index
 
-      // Initially all dft coponents to zero
+      // Initialize all dft coponents to zero
       for (rank = 0; rank < dftMesh.size(); ++rank) {
          dft[rank][0] = 0.0;
          dft[rank][1] = 0.0;
@@ -787,6 +824,8 @@ namespace Pssp
       IntVec<D> indices;              // dft grid indices of wave
       int rank;                       // dft grid rank of wave
       int is;                         // star index
+      int iw;                         // wave id, relative to star beginId
+      bool isImplicit;
 
       // Initialize all components to zero
       for (is = 0; is < nStar_; ++is) {
@@ -797,6 +836,7 @@ namespace Pssp
       is = 0;
       while (is < nStar_) {
          starPtr = &stars_[is];
+
          if (starPtr->cancel) {
             ++is;
             continue;
@@ -804,8 +844,21 @@ namespace Pssp
 
          if (starPtr->invertFlag == 0) {
 
-            // Characteristic wave is first wave of star
-            wavePtr = &waves_[starPtr->beginId];
+            // Choose a characteristic wave that is not implicit.
+            // Start with the first, alternately searching from
+            // the beginning and end of star.
+            isImplicit = true;
+            iw = 0;
+            while (isImplicit) {
+                UTIL_CHECK(iw <= (starPtr->size)/2);
+                wavePtr = &waves_[starPtr->beginId + iw];
+                if (wavePtr->implicit) {
+                   wavePtr = &waves_[starPtr->endId - 1 - iw];
+                }
+                isImplicit = wavePtr->implicit;
+                ++iw;
+            }
+            UTIL_CHECK(wavePtr->starId == is);
             indices = wavePtr->indicesDft;
             rank = dftMesh.rank(indices);
 
@@ -928,8 +981,14 @@ namespace Pssp
    template <int D>
    bool Basis<D>::isValid() const
    {
+      double Gsq;
       IntVec<D> v;
       int is, iw, iwp, j;
+
+      // Check total number of waves == # of grid points
+      if (nWave_ != mesh().size()) {
+         std::cout << "nWave != size of mesh" << std::endl;
+      }
 
       // Loop over dft mesh to check consistency of waveIds_ and waves_
       MeshIterator<D> itr(mesh().dimensions());
@@ -943,18 +1002,27 @@ namespace Pssp
          }
       }
 
-      // Loop over waves, check consistency of wave data.
+      // Loop over elements of waves_, check consistency of wave data.
       for (iw = 0; iw < nWave_; ++iw) {
 
-         // Check that wave indicesBz is an image of indicesDft
+         // Check sqNorm
          v = waves_[iw].indicesBz;
+         Gsq = unitCell().ksq(v);
+         if (abs(Gsq - waves_[iw].sqNorm) > 1.0E-8) {
+             std::cout << "Incorrect sqNorm:" << "\n"
+                       << "wave.indicesBz = " << "\n"
+                       << "wave.sqNorm    = " << waves_[iw].sqNorm << "\n"
+                       << "|v|^{2}        = " << Gsq << "\n";
+         }
+ 
+         // Check that wave indicesBz is an image of indicesDft
          mesh().shift(v);
          if (v != waves_[iw].indicesDft) {
              std::cout << "shift(indicesBz) != indicesDft" << std::endl;
              return false;
          }
- 
-         // Check starId
+
+         // Compare Wave::starId to Star::beginId and Star::endId
          is = waves_[iw].starId;
          if (iw < stars_[is].beginId) {
              std::cout << "Wave::starId < Star::beginId" << std::endl;
@@ -963,13 +1031,15 @@ namespace Pssp
          if (iw >= stars_[is].endId) {
              std::cout << " Wave::starId >= Star::endId" << std::endl;
              return false;
-         } 
+         }
       }
 
-      // Loop over stars, check consistency of star data.
+      // Loop over all stars (elements of stars_ array)
+      int nWave = 0;
       for (is = 0; is < nStar_; ++is) {
 
          // Check star size
+         nWave += stars_[is].size;
          if (stars_[is].size != stars_[is].endId - stars_[is].beginId) {
             std::cout << "Inconsistent Star::size:" << std::endl;
             std::cout << "Star id    "  << is << std::endl;
@@ -1015,122 +1085,131 @@ namespace Pssp
                          << std::endl;
                return false;
             }
-         }
+         } 
 
-         // Loop over closed stars and related pairs of stars
-         std::complex<double> cdel;
-         int begin, end;
-         bool negationFound, cancel;
-         is = 0;
-         while (is < nStar_) {
-            cancel = stars_[is].cancel;
+      } // End do loop over all stars
 
-            if (stars_[is].invertFlag == 0) {
-            
-               // Test star that is closed under inversion
-               begin = stars_[is].beginId; 
-               end = stars_[is].endId; 
-               for (iw = begin; iw < end; ++iw) {
-                  v.negate(waves_[iw].indicesBz);
-                  mesh().shift(v);
-                  negationFound = false;
-                  for (iwp = begin; iw < end; ++iwp) {
-                     if (waves_[iwp].indicesDft == v) {
-                        negationFound = true;
-                        if (!cancel) {
-                           cdel = conj(waves_[iwp].coeff);
-                           cdel -= waves_[iw].coeff;
-                        }
-                        break;
-                     }
-                  }
-                  if (!negationFound) {
-                     std::cout << "+G = " << waves_[iw].indicesBz
-                               << "coeff = " << waves_[iw].coeff 
-                               << std::endl;
-                     std::cout << "Negation not found in closed star" 
-                               << std::endl;
-                     return false;
-                  }
-                  if (!cancel && abs(cdel) > 1.0E-8) {
-                     std::cout << "Closed star is not real:" << "\n";
-                     std::cout << "+G = " << waves_[iw].indicesBz
-                               << "  coeff = " << waves_[iw].coeff 
-                               << "\n";
-                     std::cout << "-G = " << waves_[iwp].indicesBz
-                               << "  coeff = " << waves_[iwp].coeff 
-                               << "\n";
-                     std::cout << "Coefficients not conjugates." << "\n";
-                     std::cout << "All waves in star:" << "\n";
-                     for (j=begin; j < end; ++j) {
-                        std::cout << waves_[j].indicesBz 
-                                  << waves_[j].coeff << "\n";
-                     }
-                     return false;
-                  }
-               }
-
-               // Finished processing a closed star, increment counter is
-               ++is;
-
-            } else {
-
-               // Test pairs of open stars
-
-               if (stars_[is].invertFlag != 1) {
-                  std::cout << "Expected invertFlag == 1" << std::endl;
-                  return false;
-               }
-               if (stars_[is+1].invertFlag != -1) {
-                  std::cout << "Expected invertFlag == -1" << std::endl;
-                  return false;
-               }
-               if (stars_[is+1].size != stars_[is].size) {
-                  std::cout << "Partners of different size" << std::endl;
-                  return false;
-               }
-
-               begin = stars_[is+1].beginId; 
-               end = stars_[is+1].endId;
-
-               // Check existence of negation and conjugate coefficients
-               // Loop over waves in first star
-               for (iw = stars_[is].beginId; iw < stars_[is].endId; ++iw) {
-                  v.negate(waves_[iw].indicesBz);
-                  mesh().shift(v);
-                  negationFound = false;
-                  // Loop over second star, searching for negation
-                  for (iwp = begin; iw < end; ++iwp) {
-                     if (waves_[iwp].indicesDft == v) {
-                        negationFound = true;
-                        if (!cancel) {
-                           cdel = conj(waves_[iwp].coeff);
-                           cdel -= waves_[iw].coeff;
-                           if (abs(cdel) > 1.0E-8) {
-                              std::cout  << 
-                                "Coefficients not conjugates in open star"
-                                << std::endl;
-                              return false;
-                           }
-                        }
-                        break;
-                     }
-                  }
-                  if (!negationFound) {
-                     std::cout << "Negation not found for open star" 
-                               << std::endl;
-                     return false;
-                  }
-               }
-
-               // Finished processing a pair, increment star counter by 2
-               is += 2;
-
-            } // end if (stars_[is].invertFlag == 0) ... else ...
-
-         } // end while (is < nStar_) loop
-
+      // Check that all waves in mesh are accounted for in stars
+      if (stars_[nStar_-1].endId != mesh().size()) {
+         std::cout << "Star endI of last star != mesh size" << std::endl;
       }
+      if (nWave != mesh().size()) {
+         std::cout << "Sum of star sizes != mesh size" << std::endl;
+      }
+
+      // Loop over closed stars and related pairs of stars.
+      // Test closure under inversion and conjugacy of coefficients.
+      std::complex<double> cdel;
+      int begin, end;
+      bool negationFound, cancel;
+      is = 0;
+      while (is < nStar_) {
+         cancel = stars_[is].cancel;
+
+         if (stars_[is].invertFlag == 0) {
+         
+            // Test star that is closed under inversion
+            begin = stars_[is].beginId; 
+            end = stars_[is].endId; 
+            for (iw = begin; iw < end; ++iw) {
+               v.negate(waves_[iw].indicesBz);
+               mesh().shift(v);
+               negationFound = false;
+               for (iwp = begin; iw < end; ++iwp) {
+                  if (waves_[iwp].indicesDft == v) {
+                     negationFound = true;
+                     if (!cancel) {
+                        cdel = conj(waves_[iwp].coeff);
+                        cdel -= waves_[iw].coeff;
+                     }
+                     break;
+                  }
+               }
+               if (!negationFound) {
+                  std::cout << "+G = " << waves_[iw].indicesBz
+                            << "coeff = " << waves_[iw].coeff 
+                            << std::endl;
+                  std::cout << "Negation not found in closed star" 
+                            << std::endl;
+                  return false;
+               }
+               if (!cancel && abs(cdel) > 1.0E-8) {
+                  std::cout << "Closed star is not real:" << "\n";
+                  std::cout << "+G = " << waves_[iw].indicesBz
+                            << "  coeff = " << waves_[iw].coeff 
+                            << "\n";
+                  std::cout << "-G = " << waves_[iwp].indicesBz
+                            << "  coeff = " << waves_[iwp].coeff 
+                            << "\n";
+                  std::cout << "Coefficients not conjugates." << "\n";
+                  std::cout << "All waves in star:" << "\n";
+                  for (j=begin; j < end; ++j) {
+                     std::cout << waves_[j].indicesBz 
+                               << waves_[j].coeff << "\n";
+                  }
+                  return false;
+               }
+            }
+
+            // Finished processing a closed star, increment counter is
+            ++is;
+
+         } else {
+
+            // Test pairs of open stars
+
+            if (stars_[is].invertFlag != 1) {
+               std::cout << "Expected invertFlag == 1" << std::endl;
+               return false;
+            }
+            if (stars_[is+1].invertFlag != -1) {
+               std::cout << "Expected invertFlag == -1" << std::endl;
+               return false;
+            }
+            if (stars_[is+1].size != stars_[is].size) {
+               std::cout << "Partners of different size" << std::endl;
+               return false;
+            }
+
+            begin = stars_[is+1].beginId; 
+            end = stars_[is+1].endId;
+
+            // Check existence of negation and conjugate coefficients
+            // Loop over waves in first star
+            for (iw = stars_[is].beginId; iw < stars_[is].endId; ++iw) {
+               v.negate(waves_[iw].indicesBz);
+               mesh().shift(v);
+               negationFound = false;
+               // Loop over second star, searching for negation
+               for (iwp = begin; iw < end; ++iwp) {
+                  if (waves_[iwp].indicesDft == v) {
+                     negationFound = true;
+                     if (!cancel) {
+                        cdel = conj(waves_[iwp].coeff);
+                        cdel -= waves_[iw].coeff;
+                        if (abs(cdel) > 1.0E-8) {
+                           std::cout  << 
+                             "Coefficients not conjugates in open star"
+                             << std::endl;
+                           return false;
+                        }
+                     }
+                     break;
+                  }
+               }
+               if (!negationFound) {
+                  std::cout << "Negation not found for open star" 
+                            << std::endl;
+                  return false;
+               }
+            }
+
+            // Finished processing a pair, increment star counter by 2
+            is += 2;
+
+         } // end if (stars_[is].invertFlag == 0) ... else ...
+
+      } // end while (is < nStar_) loop
  
       // The end of this function is reached iff all tests passed.
       return true;

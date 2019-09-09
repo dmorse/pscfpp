@@ -16,9 +16,8 @@
 namespace Pscf { 
 namespace Pssp { 
 
-
    /**
-   * Descriptor and solver for a branched polymer species.
+   * Descriptor and solver for a polymer species.
    *
    * The block concentrations stored in the constituent Block<D>
    * objects contain the block concentrations (i.e., volume 
@@ -87,8 +86,14 @@ namespace Pssp {
       using Base::mu_;
 
    };
+  
+   #ifndef PSSP_POLYMER_TPP
+   extern template class Polymer<1>;
+   extern template class Polymer<2>;
+   extern template class Polymer<3>;
+   #endif
 
 }
 }
-#include "Polymer.tpp"
+// #include "Polymer.tpp"
 #endif

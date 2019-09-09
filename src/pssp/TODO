@@ -10,11 +10,6 @@ class Pscf::Pssp::Basis: (assigned to Dave)
 
    - See pssp/basis/TODO 
 
-   - Goal: Compare examples of waves and star outputs from pscfpp to 
-     those from fortran pscf to check compatibility.
-
-   - Fix discrepancy in choice of characteristic wave Basis:Star:waveBz
-
 ------------------------------------------------------------------------
 Unit Tests: (assigned to Anshul, with help with Basis as needed)
 
@@ -48,28 +43,11 @@ Unit Tests: (assigned to Anshul, with help with Basis as needed)
 ------------------------------------------------------------------------
 class System reorganization: (assigned to Dave, lower priority)
 
-   - Problem: The System class implementation is bloated with code that
-     should somehow be moved to somewhere more appropriate. This is a
-     reflection of the way things were done in the fortran code, but 
-     was always a bad design. 
+   - Finish testing FieldIo class and replace member functions of 
+     System by calls to corresponding functions of FieldIo.
 
-     Approach: Figure out ways to move more code implementation out of 
-     the System class, or out of the System::readCommands function. 
-     Targets for removal include
- 
-         - Field file i/o functions (including file open/close)
-         - Field file conversion functions (including file open/close)
-         - Iteration including opening and reading of input file
-
-     Possibility: Add fieldUtil class in pssp/field to contain 
-
-         - Functions to read and write file formats for multiple monomers
-         - Functions to apply conversions to same file formats
-         - Conversion functions that require a Basis can take a Basis 
-           as an argument.
-
-     Add separate functions to read omega field files in one or more
-     formats. Separate these from the ITERATE command.
+   - Create class FieldConverter, give member functions to convert
+     between formats.
 
 ------------------------------------------------------------------------
 Later:

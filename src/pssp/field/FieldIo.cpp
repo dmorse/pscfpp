@@ -5,17 +5,15 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "FieldIo.h"
+#include "FieldIo.tpp"
 
 namespace Pscf {
 namespace Pssp
 {
 
-   template <>
-   class FieldIo<1>;
-
-   template <>
-   class FieldIo<3>;
+   template class FieldIo<1>;
+   template class FieldIo<2>;
+   template class FieldIo<3>;
 
 } // namespace Pscf::Pssp
 } // namespace Pscf

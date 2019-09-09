@@ -1,6 +1,11 @@
-#include "SpaceSymmetry.h"
+/*
+* PSCF - Polymer Self-Consistent Field Theory
+*
+* Copyright 2016, The Regents of the University of Minnesota
+* Distributed under the terms of the GNU General Public License.
+*/
 
-#include <util/format/Int.h>
+#include "SpaceSymmetry.tpp"
 
 namespace Pscf
 {
@@ -96,5 +101,10 @@ namespace Pscf
 
       return A;
    }
+
+   // Explicit instantiation of required instances
+   template class SpaceSymmetry<1>;
+   template class SpaceSymmetry<2>;
+   template class SpaceSymmetry<3>;
 
 }

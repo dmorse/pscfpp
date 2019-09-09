@@ -5,12 +5,19 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "FFT.h"
+#include "FFT.tpp"
 
 namespace Pscf {
 namespace Pssp {
 
    using namespace Util;
+
+   // Explicit class instantiations
+
+   template class FFT<1>;
+   template class FFT<2>;
+   template class FFT<3>;
+
 
    // Forward transform, explicit specializations.
 
@@ -43,5 +50,6 @@ namespace Pssp {
                                     meshDimensions_[2], &kField[0], &rField[0], 
                                     flags);
    }
+
 }
 }

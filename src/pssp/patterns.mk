@@ -13,10 +13,10 @@
 #-----------------------------------------------------------------------
 
 # Local pscf-specific libraries needed in src/pssp
-PSCF_LIBS=$(pssp_LIB) $(pscf_LIB) $(util_LIB)
+PSSP_LIBS=$(pssp_LIB) $(pscf_LIB) $(util_LIB)
 
 # All libraries needed in executables built in src/pssp
-LIBS=$(PSCF_LIBS)
+LIBS=$(PSSP_LIBS)
 ifdef PSCF_GSL
 LIBS+=$(PSCF_GSL_LIB) 
 endif
@@ -41,7 +41,7 @@ ifdef MAKEDEP
 endif
 
 # Pattern rule to compile *.cc test programs in src/pssp/tests
-$(BLD_DIR)/% $(BLD_DIR)/%.o:$(SRC_DIR)/%.cc $(PSCF_LIBS)
+$(BLD_DIR)/% $(BLD_DIR)/%.o:$(SRC_DIR)/%.cc $(PSSP_LIBS)
 	$(CXX) $(TESTFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $<
 	$(CXX) $(LDFLAGS) $(INCLUDES) $(DEFINES) -o $(@:.o=) $@ $(LIBS)
 ifdef MAKEDEP

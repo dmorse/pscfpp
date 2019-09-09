@@ -182,7 +182,13 @@ namespace Pssp
       return *meshPtr_;
    }
 
+   #ifndef PSSP_MIXTURE_TPP
+   extern template class Mixture<1>;
+   extern template class Mixture<2>;
+   extern template class Mixture<3>;
+   #endif
+
 } // namespace Pssp
 } // namespace Pscf
-#include "Mixture.tpp"
+// #include "Mixture.tpp"
 #endif

@@ -1,0 +1,130 @@
+Notes on how to integrate the GPU code
+--------------------------------------
+
+----------------------------------------------------------
+Stage 1 - Getting the code to work in the same repository 
+without any change of functionality of the GPU code:
+
+1) Clone the current C++ code (dmorse/pscfpp)
+
+2) Copy the pssp gpu directory into the src/ directory, as a
+sister of pscf/ and pssp/, and rename it as src/pssp_gpu
+
+3) Change the name of classes or functions that GK moved
+from pscf/ to pssp_gpu/, adding a suffix _gpu to names of
+entities in pssp_gpu/ for which entities of the same name
+exist in pscf/. The ones we know of are:
+
+     UnitCell              -> UnitCell_gpu
+     shiftToMinimum<int D> -> shiftToMinimum_gpu<int D>
+
+4) Change the name of the namespace in src/pssp_gpu from
+Pssp to Pssp_Gpu.
+
+5) Resolve any other changes that GK made to code in pscf/ 
+or util/, e.g., by adding new features to the class as 
+needed.
+
+6) Test that everything compiles and runs correctly and 
+send a pull request.
+
+----------------------------------------------------------
+Stage 2 - Allow the code to use the version of UnitCell 
+and shiftToMinimum in pscf/ , and thereby to function 
+correctly with non-orthogonal unit cells.
+
+1) Add a data structure to store the minimum image 
+IntVec<D> associated with each wavevector, stored in 
+the order of a DFT (k-space) FFT grid.  You may want
+to store this on the GPU.
+
+2) Add a function to computeMinimumImages that uses the
+version of shiftToMinimum<int D> in pscf/ to compute 
+and store minimum images for all wavevectors. 
+
+3) Add functions that use a reference to the UnitCell
+defined in pscf/ and the precomputed minimum image 
+IntVec<int D> indices to compute ksq and dksq.
+
+Possibile design - Make the three function described 
+above member functions of a class that contains the 
+recomputed array of minimum images that one function
+creates and the other two use. Possibile interface:
+
+template <int D>
+class WaveList() {
+
+    // Allocate memory for all arrays. Call in readParameters.
+    allocate(Mesh& ) 
+
+    // Compute minimum images - only done once, at beginning,
+    // using mesh and the initial unit cell. This can also be
+    // called in the readParameters function.
+    computeMinimumImages(UnitCell& )
+
+    // These are called once per iteration with unit cell relaxation
+    // Implementation can copy geometric data (rBasis, kBasis, etc.)
+    // into local data structures and implement the actual calculation
+    // of kSq or dKSq for each wavevector on the GPU. 
+
+    computeKSq(UnitCell& )
+    computedKSq(UnitCell& )
+
+    // Accessors: Return pointer to arrays, which are allocated in 
+    // the allocate function(). I assume this is the form needed
+    // to allow fast use in GPU kernels. 
+
+    IntVec<D> const * minImage() const;
+    double const * kSq() const;
+    double const * dkSq() const;
+
+private:
+
+    // Bare C array holding precomputed minimum images
+    IntVec<D>*  minImage_;
+
+    // Bare C array holding values of kSq_
+    double*  kSq_
+
+    // Bare C array holding values of dkSq_
+    double*  dkSq_
+
+}
+------------------------------------------------------------------
+Stage 3: Allow omega fields in symmetry adapted basis file format 
+to be read in as initial condition, without preserving symmetry 
+thereafter.
+
+1) Write conversion functions in Pssp_Gpu name space, that use
+a Basis as an argument:
+
+    convertFieldBasisToDft(Basis, .... )
+    convertFieldDftToBasis(Basis, .... )
+
+    convertFieldBasisToGrid(Basis, ... )
+    convertFieldGridToBasis(Basis, ... )
+
+    The functions that convert to and from grid format can 
+    call the functions that convert between Basis and Dft 
+    and also call a forward or reverse FFT to complete the 
+    transform.
+
+    Write initial versions that do the conversion on CPU, 
+    for simplicity and comparison to any GPU accelerated 
+    version that might be written later.
+
+2) Use these functions to read in symmetry adapted files and
+then convert them to a real-space grid, which is then used as
+the input to the MDE solvers and iterator. 
+------------------------------------------------------------------
+Stage 4: Preserve space group symmetry during iteration.
+
+1) Modify iterator so as to use the symmetry adapted field 
+format internally, as done in the CPU code. 
+
+2) Try this using conversion functions implemented on the CPU,
+as described above. Test speed.
+
+3) If the conversion once per iteration during SCFT calculations
+with a variable unit slows things down enough to matter, try 
+re-implementing the conversion functions in GPU kernels. 

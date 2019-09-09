@@ -1,3 +1,6 @@
+#ifndef PSSP_FIELD_IO_TPP
+#define PSSP_FIELD_IO_TPP
+
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
@@ -7,15 +10,16 @@
 
 #include "FieldIo.h"
 
+#include <pscf/crystal/shiftToMinimum.h>
+#include <pscf/mesh/MeshIterator.h>
 #include <pscf/math/IntVec.h>
+
 #include <util/format/Str.h>
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
 
 #include <iomanip>
 #include <string>
-//#include <sstream>
-//#include <unistd.h>
 
 namespace Pscf {
 namespace Pssp
@@ -31,9 +35,9 @@ namespace Pssp
     : mixturePtr_(0),
       unitCellPtr_(0),
       meshPtr_(0),
+      fftPtr_(0),
       groupNamePtr_(0),
       basisPtr_(0),
-      fftPtr_(0),
       fileMasterPtr_()
    {}
 
@@ -51,9 +55,9 @@ namespace Pssp
    void FieldIo<D>::associate(Mixture<D>& mixture,
                              UnitCell<D>& unitCell,
                              Mesh<D>& mesh,
+                             FFT<D>& fft,
                              std::string& groupName,
                              Basis<D>& basis,
-                             FFT<D>& fft,
                              FileMaster& fileMaster)
    {
       mixturePtr_ = &mixture;
@@ -64,102 +68,147 @@ namespace Pssp
       fftPtr_ = &fft;
       fileMasterPtr_ = &fileMaster;
    }
-
+  
    template <int D>
-   void FieldIo<D>::readFields(std::istream& in, 
+   void FieldIo<D>::readFieldsBasis(std::istream& in, 
                                DArray< DArray<double> >& fields)
    {
-      readFieldHeader(in);
+      FieldIo<D>::readFieldHeader(in);
+      int nMonomer = mixture().nMonomer();
+      UTIL_CHECK(fields.capacity() == nMonomer);
 
+      // Read number of stars
       std::string label;
       in >> label;
-      UTIL_CHECK(label == "n_Star");
-      int nStar;
-      in >> nStar;
-      UTIL_CHECK(nStar > 0);
-      UTIL_CHECK(nStar == basis().nStar());
+      UTIL_CHECK(label == "N_star");
+      int nStarIn;
+      in >> nStarIn;
+      UTIL_CHECK(nStarIn > 0);
 
-      // Read fields
-      int nMonomer = mixture().nMonomer();
-      int i, j, idum;
-      for (i = 0; i < nStar; ++i) {
-         in >> idum;
-         UTIL_CHECK(idum == i);
-         for (j = 0; j < nMonomer; ++j) {
-            in >> fields[j][i];
+      // Initialize all field components to zero
+      int i, j;
+      int nStar = basis().nStar();
+      for (j = 0; j < nMonomer; ++j) {
+         UTIL_CHECK(fields[j].capacity() == nStar);
+         for (i = 0; i < nStar; ++i) {
+            fields[j][i] = 0.0;
          }
       }
+
+      DArray<double> temp;
+      temp.allocate(nMonomer);
+
+      // Loop over stars to read field components
+      IntVec<D> waveIn, waveBz, waveDft;
+      int waveId, starId, nWaveVectors;
+      for (i = 0; i < nStarIn; ++i) {
+
+         // Read components for different monomers
+         for (j = 0; j < nMonomer; ++j) {
+            in >> temp [j];
+         }
+
+         // Read characteristic wave and number of wavectors in star.
+         in >> waveIn;
+         in >> nWaveVectors;
+
+         // Check if waveIn is in first Brillouin zone (FBZ) for the mesh.
+         waveBz = shiftToMinimum(waveIn, mesh().dimensions(), unitCell());
+         bool waveExists = (waveIn == waveBz);
+
+         // If wave is in FBZ, find in basis and set field components
+         if (waveExists) {
+            waveDft = waveBz;
+            mesh().shift(waveDft);
+            waveId = basis().waveId(waveDft);
+            starId = basis().wave(waveId).starId;
+            UTIL_CHECK(basis().star(starId).waveBz == waveBz);
+            if (!basis().star(starId).cancel) {
+               for (j = 0; j < nMonomer; ++j) {
+                  fields[j][starId] = temp [j];
+               }
+            }
+         }
+
+      }
+
    }
-  
+   
  
    template <int D>
-   void FieldIo<D>::readFields(std::string filename, 
+   void FieldIo<D>::readFieldsBasis(std::string filename, 
                               DArray<DArray<double> >& fields)
    {
        std::ifstream inFile;
        fileMaster().openInputFile(filename, inFile);
-       readFields(inFile, fields);
+       readFieldsBasis(inFile, fields);
        inFile.close();
    }
 
-
    template <int D>
-   void FieldIo<D>::writeFields(std::ostream &out, 
-                           DArray<DArray<double> > const &  fields)
+   void 
+   FieldIo<D>::writeFieldsBasis(std::ostream &out, 
+                                DArray<DArray<double> > const &  fields)
    {
-      writeFieldHeader(out);
       int nStar = basis().nStar();
-      out << "nStar   "  <<  std::endl << "       " << nStar    <<std::endl;
+      int nBasis = basis().nBasis();
+      int nMonomer = mixture().nMonomer();  
 
-      // Write fields
-      int nMonomer = mixture().nMonomer();
-      int i, j;
-      for (i = 0; i < nStar; ++i) {
-         out << Int(i, 5);
-         for (j = 0; j < nMonomer; ++j) {
-            out << "  " << Dbl(fields[j][i], 18, 11);
+      writeFieldHeader(out);
+      out << "N_star       " << std::endl 
+          << "             "<< nBasis << std::endl;
+
+     // Write fields
+     for (int i = 0; i < nStar; ++i) {
+         if (!basis().star(i).cancel) {
+            for (int j = 0; j < nMonomer; ++j) {
+               out << Dbl(fields[j][i], 20, 10);
+            }
+            out << "   ";
+            for (int j = 0; j < D; ++j) {
+               out << Int(basis().star(i).waveBz[j], 5);
+            } 
+            out << Int(basis().star(i).size, 5) << std::endl;
          }
-         //out<< "  " << basis().wave(basis().star(i).beginId).indicesDft;
-         out << std::endl;
-      }
+     }
+
    }
 
-
    template <int D>
-   void FieldIo<D>::writeFields(std::string filename, 
-                                DArray< DArray<double> > const &  fields)
+   void FieldIo<D>::writeFieldsBasis(std::string filename, 
+                                     DArray<DArray<double> > const & fields)
    {
-      std::ofstream outFile;
-      fileMaster().openOutputFile(filename, outFile);
-      writeFields(outFile, fields);
-      outFile.close();
+       std::ofstream outFile;
+       fileMaster().openOutputFile(filename, outFile);
+       writeFieldsBasis(outFile, fields);
+       outFile.close();
    }
 
-
    template <int D>
-   void FieldIo<D>::readRFields(std::istream &in,
-                                DArray<RField<D> >& fields)
+   void FieldIo<D>::readFieldsRGrid(std::istream &in,
+                                    DArray<RField<D> >& fields)
    {
-      readFieldHeader(in);
-
       std::string label;
+
+      FieldIo<D>::readFieldHeader(in);
+
       in >> label;
-      UTIL_CHECK(label == "n_Grid");
+      UTIL_CHECK(label == "ngrid");
       IntVec<D> nGrid;
       in >> nGrid;
       UTIL_CHECK(nGrid == mesh().dimensions());
 
-      int nMonomer = mixture().nMonomer();
+      int nM = mixture().nMonomer();
       DArray<RField<D> > temp;
-      temp.allocate(nMonomer);
-      for (int i = 0; i < nMonomer; ++i) {
+      temp.allocate(nM);
+      for (int i = 0; i < nM; ++i) {
          temp[i].allocate(mesh().dimensions());
       }
 
       // Read Fields;
       MeshIterator<D> itr(mesh().dimensions());
       for (itr.begin(); !itr.atEnd(); ++itr) {
-         for (int i = 0; i < nMonomer; ++i) {
+         for (int i = 0; i < nM; ++i) {
             in  >> std::setprecision(15) >> temp[i][itr.rank()];
          }
       }
@@ -180,7 +229,7 @@ namespace Pssp
                r =q;
                n3 = 0;
                while (n3 < mesh().dimension(2)){
-                  for (int i = 0; i < nMonomer; ++i) {
+                  for (int i = 0; i < nM; ++i) {
                      fields[i][s] = temp[i][r];
                   }
                   r = r + (mesh().dimension(0) * mesh().dimension(1));
@@ -200,7 +249,7 @@ namespace Pssp
             r =q; 
             n2 = 0;
             while (n2 < mesh().dimension(1)){
-               for (int i = 0; i < nMonomer; ++i) {
+               for (int i = 0; i < nM; ++i) {
                   fields[i][s] = temp[i][r];
                }   
                r = r + (mesh().dimension(0));
@@ -215,30 +264,141 @@ namespace Pssp
       else if (D==1){
 
          while (n1 < mesh().dimension(0)){
-            for (int i = 0; i < nMonomer; ++i) {
+            for (int i = 0; i < nM; ++i) {
                fields[i][s] = temp[i][r];
             }   
             ++r;
             ++s;
             ++n1;    
          }   
+      } 
 
-      } else {
+      else{
          std::cout<<"Invalid Dimensions";
       }
 
    }
 
+   template <int D>
+   void FieldIo<D>::readFieldsRGrid(std::string filename, 
+                              DArray< RField<D> >& fields)
+   {
+       std::ifstream inFile;
+       fileMaster().openInputFile(filename, inFile);
+       readFieldsRGrid(inFile, fields);
+       inFile.close();
+   }
 
    template <int D>
-   void FieldIo<D>::readKFields(std::istream &in,
-                                DArray<RFieldDft<D> >& fields)
+   void FieldIo<D>::writeFieldsRGrid(std::ostream &out,
+                                     DArray<RField<D> > const& fields)
+   {
+      writeFieldHeader(out);
+      out << "ngrid" <<  std::endl
+          << "           " << mesh().dimensions() << std::endl;
+
+      DArray<RField<D> > temp;
+      int nM = mixture().nMonomer();
+      temp.allocate(nM);
+      for (int i = 0; i < nM; ++i) {
+         temp[i].allocate(mesh().dimensions());
+      } 
+
+      int p = 0; 
+      int q = 0; 
+      int r = 0; 
+      int s = 0; 
+      int n1 =0;
+      int n2 =0;
+      int n3 =0;
+
+      if (D==3){
+         while (n3 < mesh().dimension(2)){
+            q = p; 
+            n2 = 0; 
+            while (n2 < mesh().dimension(1)){
+               r =q;
+               n1 = 0; 
+               while (n1 < mesh().dimension(0)){
+                  for (int i = 0; i < nM; ++i) {
+                     temp[i][s] = fields[i][r];
+                  }    
+                  r = r + (mesh().dimension(1) * mesh().dimension(2));
+                  ++s; 
+                  ++n1;     
+               }    
+               q = q + mesh().dimension(2);
+               ++n2;
+            }    
+            ++n3;
+            ++p;     
+         }    
+      }
+      else if (D==2){
+         while (n2 < mesh().dimension(1)){
+            r =q;
+            n1 = 0;
+            while (n1 < mesh().dimension(0)){
+               for (int i = 0; i < nM; ++i) {
+                  temp[i][s] = fields[i][r];
+               }
+               r = r + (mesh().dimension(1));
+               ++s;
+               ++n1;
+            }
+            ++q;
+            ++n2;
+         }
+      }
+
+      else if (D==1){
+
+         while (n1 < mesh().dimension(0)){
+            for (int i = 0; i < nM; ++i) {
+               temp[i][s] = fields[i][r];
+            }
+            ++r;
+            ++s;
+            ++n1;
+         }
+      }
+
+      else{
+         std::cout<<"Invalid Dimensions";
+      }
+
+      // Write fields
+      MeshIterator<D> itr(mesh().dimensions());
+      for (itr.begin(); !itr.atEnd(); ++itr) {
+         // out << Int(itr.rank(), 5);
+         for (int j = 0; j < nM; ++j) {
+            out << "  " << Dbl(temp[j][itr.rank()], 18, 15);
+         }
+         out << std::endl;
+      }
+
+   }
+
+   template <int D>
+   void FieldIo<D>::writeFieldsRGrid(std::string filename, 
+                                     DArray< RField<D> > const & fields)
+   {
+       std::ofstream outFile;
+       fileMaster().openOutputFile(filename, outFile);
+       writeFieldsRGrid(outFile, fields);
+       outFile.close();
+   }
+
+
+   template <int D>
+   void FieldIo<D>::readFieldsKGrid(std::istream &in,
+                                    DArray<RFieldDft<D> >& fields)
    {
       readFieldHeader(in);
 
       std::string label;
       in >> label;
-      UTIL_CHECK(label == "n_Grid");
+      UTIL_CHECK(label == "ngrid");
       IntVec<D> nGrid;
       in >> nGrid;
       UTIL_CHECK(nGrid == mesh().dimensions());
@@ -259,103 +419,13 @@ namespace Pssp
    }
 
 
-   template <int D>
-   void FieldIo<D>::writeRFields(std::ostream &out,
-                                DArray<RField<D> > const& fields)
-   {
-      writeFieldHeader(out);
-      out << "n_Grid" <<  std::endl
-          << "            " << mesh().dimensions() << std::endl;
-
-      int nMonomer = mixture().nMonomer();
-      DArray<RField<D> > temp;
-      temp.allocate(nMonomer);
-      for (int i = 0; i < nMonomer; ++i) {
-         temp[i].allocate(mesh().dimensions());
-      } 
-
-      int p = 0; 
-      int q = 0; 
-      int r = 0; 
-      int s = 0; 
-      int n1 =0;
-      int n2 =0;
-      int n3 =0;
-
-      if (D==3){
-         while (n3 < mesh().dimension(2)){
-            q = p; 
-            n2 = 0; 
-            while (n2 < mesh().dimension(1)){
-               r =q;
-               n1 = 0; 
-               while (n1 < mesh().dimension(0)){
-                  for (int i = 0; i < nMonomer; ++i) {
-                     temp[i][s] = fields[i][r];
-                  }    
-                  r = r + (mesh().dimension(1) * mesh().dimension(2));
-                  ++s; 
-                  ++n1;     
-               }    
-               q = q + mesh().dimension(2);
-               ++n2;
-            }    
-            ++n3;
-            ++p;     
-         }    
-      }
-      else if (D==2){
-         while (n2 < mesh().dimension(1)){
-            r =q;
-            n1 = 0;
-            while (n1 < mesh().dimension(0)){
-               for (int i = 0; i < nMonomer; ++i) {
-                  temp[i][s] = fields[i][r];
-               }
-               r = r + (mesh().dimension(1));
-               ++s;
-               ++n1;
-            }
-            ++q;
-            ++n2;
-         }
-      }
-
-      else if (D==1){
-
-         while (n1 < mesh().dimension(0)){
-            for (int i = 0; i < nMonomer; ++i) {
-               temp[i][s] = fields[i][r];
-            }
-            ++r;
-            ++s;
-            ++n1;
-         }
-      }
-
-      else{
-         std::cout<<"Invalid Dimensions";
-      }
-
-      // Write fields
-      MeshIterator<D> itr(mesh().dimensions());
-      for (itr.begin(); !itr.atEnd(); ++itr) {
-         // out << Int(itr.rank(), 5);
-         for (int j = 0; j < nMonomer; ++j) {
-            out << "  " << Dbl(temp[j][itr.rank()], 18, 15);
-         }
-         out << std::endl;
-      }
-
-   }
-
 
    template <int D>
-   void FieldIo<D>::writeKFields(std::ostream &out,
-                           DArray<RFieldDft<D> > const& fields)
+   void FieldIo<D>::writeFieldsKGrid(std::ostream &out,
+                                     DArray<RFieldDft<D> > const& fields)
    {
       writeFieldHeader(out);
-      out << "n_Grid" << std::endl 
+      out << "ngrid" << std::endl 
           << "               " << mesh().dimensions() << std::endl;
 
       // Write fields
@@ -370,7 +440,6 @@ namespace Pssp
          out << std::endl;
       }
    }
-
 
    template <int D>
    void FieldIo<D>::readFieldHeader(std::istream& in) 
@@ -389,7 +458,7 @@ namespace Pssp
       UTIL_CHECK(dim == D);
 
       readUnitCellHeader(in, unitCell());
- 
+
       in >> label;
       UTIL_CHECK(label == "group_name");
       std::string groupName;
@@ -402,7 +471,6 @@ namespace Pssp
       UTIL_CHECK(nMonomer > 0);
       UTIL_CHECK(nMonomer == mixture().nMonomer());
    }
-
 
    template <int D>
    void FieldIo<D>::writeFieldHeader(std::ostream &out) const
@@ -419,3 +487,4 @@ namespace Pssp
 
 } // namespace Pssp
 } // namespace Pscf
+#endif

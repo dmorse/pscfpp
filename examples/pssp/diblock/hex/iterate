@@ -1,0 +1,4 @@
+ITERATE          in/omega
+WRITE_WFIELDS    out/omega
+FINISH
+

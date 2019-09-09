@@ -9,16 +9,20 @@
 */
 
 #include <util/param/ParamComposite.h>     // base class
+
 #include <pssp/solvers/Mixture.h>          // member
+#include <pssp/field/FFT.h>                // member
 #include <pssp/basis/Basis.h>              // member
-#include <pssp/iterator/AmIterator.h>
+#include <pssp/field/FieldIo.h>            // member
 #include <pscf/mesh/Mesh.h>                // member
+#include <pssp/field/RField.h>             // typedef
+
 #include <pscf/crystal/UnitCell.h>         // member
 #include <pscf/homogeneous/Mixture.h>      // member
+
 #include <util/misc/FileMaster.h>          // member
 #include <util/containers/DArray.h>        // member template
 #include <util/containers/Array.h>         // function parameter
-#include <pssp/field/RField.h>             // typedef
 
 namespace Pscf { class ChiInteraction; }
 
@@ -395,14 +399,24 @@ namespace Pssp
       UnitCell<D> unitCell_;
 
       /**
+      * Spatial discretization mesh.
+      */
+      Mesh<D> mesh_;
+
+      /**
+      * FFT object to be used by iterator
+      */
+      FFT<D> fft_;
+
+      /**
       * Group name.
       */
       std::string groupName_;
 
       /**
-      * Spatial discretization mesh.
+      * Pointer to a Basis object
       */
-      Mesh<D> mesh_;
+      Basis<D> basis_;
 
       /**
       * Filemaster (holds paths to associated I/O files).
@@ -410,12 +424,17 @@ namespace Pssp
       FileMaster fileMaster_;
 
       /**
+      * FieldIo object for field input/output operations
+      */
+      FieldIo<D> fieldIo_;
+
+      /**
       * Homogeneous mixture, for reference.
       */
       Homogeneous::Mixture homogeneous_;
 
       /**
-      * Pointer to Interaction (excess free energy model).
+      * Pointer to Interaction (free energy model).
       */
       ChiInteraction* interactionPtr_;
 
@@ -424,16 +443,7 @@ namespace Pssp
       */
       AmIterator<D>* iteratorPtr_;
 
-      /**
-      * Pointer to a Basis object
-      */
-      Basis<D>* basisPtr_;
-
-      /**
-      * FFT object to be used by iterator
-      */
-      FFT<D> fft_;
-
+      #if 0
       /**
       * Pointer to an Sweep object
       */
@@ -443,6 +453,7 @@ namespace Pssp
       * Pointer to SweepFactory object
       */
       SweepFactory* sweepFactoryPtr_;
+      #endif
 
       /**
       * Array of chemical potential fields for monomer types.
@@ -565,13 +576,6 @@ namespace Pssp
    { return mixture_; }
 
    /*
-   * Get the mesh.
-   */
-   template <int D>
-   inline Mesh<D>& System<D>::mesh()
-   { return mesh_; }
-
-   /*
    * Get the UnitCell<D>.
    */
    template <int D>
@@ -579,11 +583,26 @@ namespace Pssp
    { return unitCell_; }
 
    /*
+   * Get the mesh.
+   */
+   template <int D>
+   inline Mesh<D>& System<D>::mesh()
+   { return mesh_; }
+
+   template <int D>
+   inline FFT<D>& System<D>::fft()
+   {  return fft_; }
+
+   /*
    * Get group name.
    */
    template <int D>
    inline std::string System<D>::groupName()
    { return groupName_; }
+
+   template <int D>
+   inline Basis<D>& System<D>::basis()
+   {  return basis_; }
 
    /*
    * Get the FileMaster.
@@ -620,31 +639,18 @@ namespace Pssp
       return *iteratorPtr_;
    }
 
-   /*
-   * Get the basis Object
-   */
-   template <int D>
-   inline Basis<D>& System<D>::basis()
-   {
-      UTIL_ASSERT(basisPtr_);
-      return *basisPtr_;
-   }
-
-   template <int D>
-   inline FFT<D>& System<D>::fft()
-   { return fft_; }
-
    template <int D>
    inline
    DArray<DArray <double> >& System<D>::wFields()
-   { return wFields_; }
+   {  return wFields_; }
 
    template <int D>
    inline
    DArray<double>& System<D>::wField(int id)
-   { return wFields_[id]; }
+   {  return wFields_[id]; }
+
    /*
-   * Get an array of all monomer excess chemical potential fields.
+   * Get an array of all monomer chemical potential fields.
    */
    template <int D>
    inline 
@@ -652,7 +658,7 @@ namespace Pssp
    {  return wFieldGrids_; }
 
    /*
-   * Get a single monomer excess chemical potential field.
+   * Get a single monomer chemical potential field.
    */
    template <int D>
    inline 
@@ -688,6 +694,7 @@ namespace Pssp
    inline
    RFieldDft<D>& System<D>::cFieldDft(int id)
    { return cFieldDfts_[id]; }
+
    /*
    * Get array of all monomer concentration fields.
    */
@@ -717,7 +724,15 @@ namespace Pssp
    inline double System<D>::pressure() const
    {  return pressure_; }
 
+
+   #ifndef PSSP_SYSTEM_TPP
+   // Suppress implicit instantiation
+   extern template class System<1>;
+   extern template class System<2>;
+   extern template class System<3>;
+   #endif
+
 } // namespace Pssp
 } // namespace Pscf
-#include "System.tpp"
+//#include "System.tpp"
 #endif

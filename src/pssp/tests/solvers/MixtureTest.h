@@ -149,6 +149,7 @@ public:
          cFields[i].allocate(nx);
       }
 
+      #if 0
       double cs;
       for (int i = 0; i < nx; ++i) {
          //cs = cos(2.0*Constants::Pi*(double(i)+0.5)/nx);
@@ -157,6 +158,26 @@ public:
          wFields[0][i] = 0.5 + cs;
          wFields[1][i] = 0.5 - cs;
       }
+      #endif
+
+      // Generate oscillatory wField
+      int dx = mesh.dimension(0);
+      int dy = mesh.dimension(1);
+      double fx = 2.0*Constants::Pi/double(dx);
+      double fy = 2.0*Constants::Pi/double(dy);
+      double cx, cy;
+      int k = 0;
+      for (int i = 0; i < dx; ++i) {
+         cx = cos(fx*double(i));
+         for (int j = 0; j < dy; ++j) {
+            cy = cos(fy*double(j));
+            wFields[0][k] = 0.5 + cx + cy;
+            wFields[1][k] = 0.5 - cx - cy;
+            ++k;
+         }
+      }
+      TEST_ASSERT(k == nx);
+
 
       mixture.compute(wFields, cFields);
 
@@ -180,6 +201,81 @@ public:
       
    }
 
+   void testSolver2D_hex()
+   {
+      printMethod(TEST_FUNC);
+      Mixture<2> mixture;
+
+      std::ifstream in;
+      openInputFile("in/Mixture2d_hex", in);
+      mixture.readParam(in);
+      UnitCell<2> unitCell;
+      in >> unitCell;
+      IntVec<2> d;
+      in >> d;
+      in.close();
+
+      Mesh<2> mesh;
+      mesh.setDimensions(d);
+      mixture.setMesh(mesh);
+      mixture.setupUnitCell(unitCell);
+
+      std::cout << "\n";
+      mixture.writeParam(std::cout);
+      std::cout << "unitCell  " << unitCell << std::endl;
+      std::cout << "mesh      " << mesh.dimensions() << std::endl;
+
+      int nMonomer = mixture.nMonomer();
+      DArray<Mixture<2>::WField> wFields;
+      DArray<Mixture<2>::CField> cFields;
+      wFields.allocate(nMonomer);
+      cFields.allocate(nMonomer);
+      double nx = (double)mesh.size();
+      for (int i = 0; i < nMonomer; ++i) {
+         wFields[i].allocate(nx);
+         cFields[i].allocate(nx);
+      }
+
+      // Generate oscillatory wField
+      int dx = mesh.dimension(0);
+      int dy = mesh.dimension(1);
+      double fx = 2.0*Constants::Pi/double(dx);
+      double fy = 2.0*Constants::Pi/double(dy);
+      double cx, cy;
+      int k = 0;
+      for (int i = 0; i < dx; ++i) {
+         cx = cos(fx*double(i));
+         for (int j = 0; j < dy; ++j) {
+            cy = cos(fy*double(j));
+            wFields[0][k] = 0.5 + cx + cy;
+            wFields[1][k] = 0.5 - cx - cy;
+            ++k;
+         }
+      }
+      TEST_ASSERT(k == nx);
+
+      mixture.compute(wFields, cFields);
+
+      // Test if same Q is obtained from different methods
+      std::cout << "Propagator(0,0), Q = " 
+                << mixture.polymer(0).propagator(0, 0).computeQ() << "\n";
+      std::cout << "Propagator(1,0), Q = " 
+                << mixture.polymer(0).propagator(1, 0).computeQ() << "\n";
+      std::cout << "Propagator(1,1), Q = " 
+                << mixture.polymer(0).propagator(1, 1).computeQ() << "\n";
+      std::cout << "Propagator(0,1), Q = " 
+                << mixture.polymer(0).propagator(0, 1).computeQ() << "\n";
+
+      #if 0
+      // Test spatial integral of block concentration
+      double sum0 = domain.spatialAverage(cFields[0]);
+      double sum1 = domain.spatialAverage(cFields[1]);
+      std::cout << "Volume fraction of block 0 = " << sum0 << "\n";
+      std::cout << "Volume fraction of block 1 = " << sum1 << "\n";
+      #endif
+  
+   }
+    
    void testSolver3D()
    {
       printMethod(TEST_FUNC);
@@ -253,6 +349,7 @@ TEST_ADD(MixtureTest, testConstructor1D)
 TEST_ADD(MixtureTest, testReadParameters1D)
 TEST_ADD(MixtureTest, testSolver1D)
 TEST_ADD(MixtureTest, testSolver2D)
+TEST_ADD(MixtureTest, testSolver2D_hex)
 TEST_ADD(MixtureTest, testSolver3D)
 TEST_END(MixtureTest)
 

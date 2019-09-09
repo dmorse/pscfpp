@@ -238,7 +238,12 @@ namespace Pssp {
       return *meshPtr_;
    }
 
+   #ifndef PSSP_BLOCK_TPP
+   extern template class Block<1>;
+   extern template class Block<2>;
+   extern template class Block<3>;
+   #endif
 }
 }
-#include "Block.tpp"
+//#include "Block.tpp"
 #endif
