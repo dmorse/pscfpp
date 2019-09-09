@@ -1,0 +1,16 @@
+RGRID_TO_FIELD
+in/omega_in
+out/omega_in
+ITERATE
+out/omega_in
+WRITE_WFIELDS
+out/omega
+WRITE_CFIELDS
+out/rho
+FIELD_TO_RGRID
+out/rho
+out/rho_check
+FIELD_TO_RGRID
+out/omega
+out/omega_check
+FINISH
