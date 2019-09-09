@@ -14,7 +14,7 @@ N_block
 block_monomer
               1              2
 block_length
-  3.0000000E-01  7.0000000E-01
+  2.50000000E-01  7.5000000E-01
 
 COMPOSITION
 ensemble
@@ -30,23 +30,23 @@ chi
 
 UNIT_CELL
 dim
-              2
+              3
 crystal_system
-    'hexagonal'
+        'cubic'
 N_cell_param
               1
 cell_param                              
-    1.6908669157E+00
+   1.9254998725
 
 DISCRETIZATION
 ngrid
-             24             24
+             10           10           10
 chain_step
   1.0000000E-02
 
 BASIS
 group_name
-      'P 6 m m'
+      'I m -3 m'
 
 OUTPUT_GROUP
 output_filename
@@ -66,15 +66,14 @@ input_filename
 output_prefix
                'out/'
 max_itr
-             12
+             50
 error_max
   1.0000000E-08
 domain
-              T
+              F
 itr_algo
-           'NR'
-N_cut
-	61
+           'AM'
+N_hist
+            30
 
 FINISH
-
