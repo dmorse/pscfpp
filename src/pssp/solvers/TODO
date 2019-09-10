@@ -1,0 +1,108 @@
+
+The following changes all involve the new functions to compute stress in
+the solver classes.
+----------------------------------------------------------------------------
+Prerequisites:
+
+- Before making any changes to the solvers, write some unit tests to test
+the computation of stress (without iteration), preferably by comparing
+values computed with pscfpp to values obtained for the same state from 
+the fortran pscf. This will allow you to know if you've broken anything
+when you get done.  Create these in a copy of my master branch and send
+me a pull request. 
+
+- Make all changes to the solvers in a new branch that stars as a copy of
+the dmorse master branch, including the new unit tests.
+
+----------------------------------------------------------------------------
+Propagator
+-----
+
+1) Change typedef name "PStress" to "Stress"
+
+----------------------------------------------------------------------------
+Block
+-----
+
+1) Change typedef name "PStress" to "Stress" . I suggest also changing 
+   the array structure from FArray<double, 6> to FArray<double, 6> so
+   that the array stores the number of meaningful values in its size()
+   parameter.
+
+2) Make arrays pStress, q1, s2, q1p, q2p private (move to private section).
+   Add trailing _ to all names, giving q1_, s2_, q1p_, etc. 
+
+   Rationale: Member variables should almost always be private. Names of
+   private member variables are indicated by a name with a trailing underline.
+
+3) Change array name pStress to stress_ .
+
+   Rationale: The meaning of the "p" isn't obvious or helpful. Whether the
+   variable is the stress from a block or polmyer is clear from context, 
+   since it is a member of the Block or Polymer object. The "p" is used
+   here even to refer to the stress from a block, which is confusing.
+   Just call the stress variable "stress" (or stress_ ) whereever it 
+   appears, and use context and documentation to explain what contribution
+   to the stress it refers to. 
+
+4) Add accessor functions to return all stress values or a single value:
+
+   Block::Stress stress() const;
+
+   double stress(int i) const;
+
+5) Have the setUpUnitCell function retain whatever information about 
+   the unit cell you need to compute stress. That is, either retain 
+   retain the value of the number of unit cell parameters in a private 
+   variable named nUnitCellParameters_, if that is all you need, or 
+   retain a pointer named unitCellPtr_ that keeps the UnitCell address, 
+   or both.
+
+6) In computeStress.tpp, change loops over i = 0, ..., 6 to go only over
+   the relevant number of parameters (which you should have access to).
+
+   If you consistently use FSArray<double, 6> containers for stress, you
+   will need to add the append the appropriate number of zero values to
+   the array to initialize the array and set the dimensions before you 
+   can do other operations those elements.
+
+7) Change the implementation of computeStress so that it uses plane waves
+   rather than a symmetry adapted basis. The solvers should not need to
+   know about a Basis. 
+
+---------------------------------------------------------------------------
+Polymer
+-------
+
+1) Change name of function ComputePcStress to computeStress(). There 
+   should be no need for this function to take a Basis as an argument.
+
+2) Make PcStress a private variable, and change its name to stress_ .
+
+3) Add accessors to return either all of the stress components as an
+   array or a single component, as done for Block. 
+
+4) Change the implementation of the computeStress() function to use
+   the new interface of Block.
+
+---------------------------------------------------------------------------
+Mixture:
+
+1) Make the public variable TStress to private and rename it stress_
+
+2) Change the name of computeTStress to computeStress(), and remove
+   the use of Basis as an argument.
+
+3) Add accessor functions to return an FSArray<double, 6> containing
+   all stress components or a double containing one component.
+
+4) Change the implementation of the computeStress() function to use
+   the new interface of Polymer.
+
+---------------------------------------------------------------------------
+Check unit tests to make sure that stress values obtained by this method.
+---------------------------------------------------------------------------
+AmIterator and possibly elsewhere:
+
+--> Change all code that uses a Mixture to compute stress to use the
+    new interface.
