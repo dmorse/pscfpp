@@ -14,7 +14,11 @@
 *
 * Usage:
 *
-*    pscf_ps2d [-e] [-r file] [-p file] [-c file] [-i prefix] [-o prefix]
+*    pscf_ps2d [-e] [-p file] [-c file] [-i prefix] [-o prefix]
+*
+*
+*    Note: Normal usage requires both a parameter file (-p option) and
+*    a command file (-c option). The other options are truly optional.
 *
 * Options:
 *
@@ -40,9 +44,6 @@
 *  -o prefix
 *
 *   Set the output file path prefix, given by the argument "prefix".
-*
-*   Set replicated mode for parallel simulations.
-*
 */
 
 int main(int argc, char **argv)
