@@ -8,6 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <iomanip>
 #include "UnitCell.h"
 
 namespace Pscf
@@ -22,7 +23,7 @@ namespace Pscf
       in >> cell.lattice_;
       cell.setNParameter();
       for (int i = 0; i < cell.nParameter_; ++i) {
-         in >> cell.parameters_[i];
+         in >> std::setprecision(15) >> cell.parameters_[i];
       }
       cell.setLattice();
       return in;
@@ -116,7 +117,7 @@ namespace Pscf
       in >> label;
       UTIL_CHECK(label == "cell_param");
       for (int i = 0; i < cell.nParameter_; ++i) {
-         in >> cell.parameters_[i];
+         in >> std::setprecision(15) >> cell.parameters_[i];
       }   
       cell.setLattice();
    }

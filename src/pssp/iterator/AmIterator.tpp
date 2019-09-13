@@ -123,6 +123,8 @@ namespace Pssp
                  std::cout<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).params()[m]<<"\n";
               }  
       } 
+      else
+         std::cout<<std::endl;
 
       //check for convergence else resolve SCFT equations with new Fields
       for (int itr = 1; itr <= maxItr_; ++itr) {
@@ -147,11 +149,13 @@ namespace Pssp
          std::cout<<"  Iteration  "<<itr<<std::endl;
          if (isConverged()) {  
           std::cout<<"----------CONVERGED----------"<< std::endl;
-          if(cell_)
-              for (int m=0; m<(systemPtr_->unitCell()).nParams() ; ++m){
-                 std::cout<<"Stress"<<m<<"\t"<<"="<< systemPtr_->mixture().TStress[m]<<"\n";
-                 std::cout<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).params()[m]<<"\n";
-              }
+          if(!cell_){
+             systemPtr_->mixture().computeTStress(systemPtr_->basis());
+          }
+          for (int m=0; m<(systemPtr_->unitCell()).nParams() ; ++m){
+             std::cout<<"Stress"<<m<<"\t"<<"="<< systemPtr_->mixture().TStress[m]<<"\n";
+             std::cout<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).params()[m]<<"\n";
+          }
 
               return 0;
      
