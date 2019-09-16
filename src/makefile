@@ -23,6 +23,11 @@ pscf:
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
 
+pscf_gpu:
+	cd util; $(MAKE) all
+	cd pscf; $(MAKE) all
+	cd pssp_gpu; $(MAKE) all
+
 # Run all unit tests
 run-tests:
 	cd util/tests; $(MAKE) all; $(MAKE) quiet

@@ -1,0 +1,11 @@
+To get a minimally functional Basis class template:
+
+1) Write a makeBasis function that works only for groupName == 'I',
+i.e., no symmetry. This should simply makes a star for each nonzero
+vector k with k[3] >= 0, listed in the order they would be listed in 
+the 1D representation of the real-to-complex Fourier grid. Test this
+first for the 1D case, Basis<1>.
+
+2) Write conversion functions (basis-to-DFT and DFT-to-basis), which 
+should be written so as to work with any space group.
+
