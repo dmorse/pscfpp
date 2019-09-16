@@ -1,0 +1,55 @@
+--------------------------------------------------------------------
+UnitCellBase:
+
+   New replacement functions have been created for the following three 
+   functions. Change all code that uses these functions to instead use
+   the replacements, and then remove the original functions:
+
+   void SetParams(double, int) ->
+   void setParameters(FSArray<double, 6> const&);
+
+   FArray<double,6> params() -> 
+   FSArray<double, 6> parameters()
+
+   int nParams() -> 
+   int nParameter();
+
+   Discussion of reasons for these changes in function interfaces:
+  
+   1) Change function SetParams() to setParameters(FSArray<double, 6> const&)
+   to take an array of parameters.  Make this function call setLattice().
+
+   Note/Rationale: You want to make it very difficult for a user to 
+   create inconsistent data. One can do this by forcing the user to 
+   input all parameters at once and then update all data structures 
+   within the function that updates the parameters. Because all internal 
+   data relies on all parameters, this is the only way to guarantee a 
+   consistent internal state.
+   
+   Note: In this code base, functions and variable names are "lower
+   case camel", i.e., lower case first letter, words after the first
+   begin upper case, e.g., setParameters() rather than SetParams().
+
+   2) Change params() to parameters() and have it return an FSArray<double, 6>
+  
+   3) Change const int nParams() to int nParameter()
+
+   Note/Rationale: Names of functions that return values should generally 
+   be the same as names of corresponding private member variables, e.g., 
+   member variable parameters_ is returned by function parameters(). 
+   Functions that return one element of a container should use singular 
+   form of the container name. Container names are generally plural.
+
+   Note: Having the setParameters and parameters function take and return
+   an FSArray<double, 6> rather than an FArray<double, 6> allows us to
+   pass the number of meaningful elements along with the data in a single
+   data structure.
+
+   Note: Convention elsewhere in this C++ code is that variables that 
+   specify the number of things have names of the form nThing (not nThings).
+   Hence, the function that returns nParameter_ should be nParameter(). 
+   One could argue for use of plural, but the choice is arbitrary, and 
+   consistent use of a convention matters more than choice of convention.
+
+--------------------------------------------------------------------
+

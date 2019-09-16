@@ -4,7 +4,7 @@
 /*
 * PSCF++ Package 
 *
-* Copyright 2010 - 2017, The Regents of the University of Minnesota
+* Copyright 2016 - 2019, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.
 */
 
@@ -96,21 +96,6 @@ namespace Pssp
    };
 
    /*
-   * Allocate the underlying C array for an FFT grid.
-   */
-   template <int D>
-   void RField<D>::allocate(const IntVec<D>& meshDimensions)
-   {
-      int size = 1;
-      for (int i = 0; i < D; ++i) {
-         UTIL_CHECK(meshDimensions[i] > 0);
-         meshDimensions_[i] = meshDimensions[i];
-         size *= meshDimensions[i];
-      }
-      Field<double>::allocate(size);
-   }
-
-   /*
    * Return mesh dimensions by constant reference.
    */
    template <int D>
@@ -128,8 +113,13 @@ namespace Pssp
       ar & meshDimensions_;
    }
 
+   #ifndef PSSP_R_FIELD_TPP
+   extern template class RField<1>;
+   extern template class RField<2>;
+   extern template class RField<3>;
+   #endif
 
 }
 }
-#include "RField.tpp"
+//#include "RField.tpp"
 #endif

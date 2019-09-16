@@ -4,7 +4,7 @@
 /*
 * PSCF++ Package 
 *
-* Copyright 2010 - 2017, The Regents of the University of Minnesota
+* Copyright 2016 - 2019, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.
 */
 
@@ -119,7 +119,14 @@ namespace Pssp {
    inline const IntVec<D>& FFT<D>::meshDimensions() const
    {  return meshDimensions_; }
 
-}
-}
-#include "FFT.tpp"
+   #ifndef PSSP_FFT_TPP
+   // Suppress implicit instantiation
+   extern template class FFT<1>;
+   extern template class FFT<2>;
+   extern template class FFT<3>;
+   #endif
+
+} // namespace Pscf::Pssp
+} // namespace Pscf
+// #include "FFT.tpp"
 #endif

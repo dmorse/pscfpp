@@ -3,7 +3,7 @@
 */ 
 
 #include <util/global.h>
-#include "UnitCellTest.h"
+#include "CrystalTestComposite.h"
 
 #include <test/TestRunner.h>
 #include <test/CompositeTestRunner.h>
@@ -13,10 +13,6 @@ using namespace Util;
 
 int main(int argc, char* argv[])
 {
-   TEST_RUNNER(UnitCellTest) runner;
-
-   // MathTestComposite runner;
-
    #if 0
    if (argc > 2) {
       UTIL_THROW("Too many arguments");
@@ -25,5 +21,16 @@ int main(int argc, char* argv[])
       runner.addFilePrefix(argv[1]);
    }
    #endif
+
+   CrystalTestComposite runner;
    runner.run();
+
+   #if 0
+   TEST_RUNNER(UnitCellTest) runner1;
+   runner1.run();
+
+   TEST_RUNNER(SpaceSymmetryTest) runner2;
+   runner2.run();
+   #endif
+
 }

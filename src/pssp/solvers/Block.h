@@ -13,10 +13,14 @@
 #include <pssp/field/RField.h>            // member
 #include <pssp/field/RFieldDft.h>         // member
 #include <pssp/field/FFT.h>               // member
+#include <util/containers/FArray.h>      // member template
 
 namespace Pscf { 
    template <int D> class Mesh; 
    template <int D> class UnitCell;
+   namespace Pssp {
+      template <int D> class Basis;
+   }
 }
 
 namespace Pscf { 
@@ -52,6 +56,9 @@ namespace Pssp {
       * Constrained partition function q(r,s) for fixed s.
       */
       typedef typename Propagator<D>::QField QField;
+
+      // Monomer concentration field.
+      typedef typename Propagator<D>::PStress PStress;
 
       // Member functions
 
@@ -106,6 +113,32 @@ namespace Pssp {
       */ 
       void computeConcentration(double prefactor);
 
+      /** 
+      * Compute Stress by a Polymer chain for a block by integration.
+      *   
+      * Upon return, pStress contains the 
+      * integral int ds <q(r,s)|j> <j|q^{*}(r,L-s)> times the prefactor, 
+      * where q(r,s) is the solution obtained from propagator(0), 
+      * and q^{*} is the solution of propagator(1),  and s is
+      * a contour variable that is integrated over the domain 
+      * 0 < s < length(), where length() is the block length.
+      *   
+      * \param prefactor multiplying integral
+      */  
+      void computeStress(Basis<D>& basis, double prefactor);
+
+      /// Stress exerted by a polymer chain of a block.
+      FArray<double, 6> pStress;
+
+      // Work array for calculate stress.
+      RFieldDft<D> q1;
+
+      // Work array for calculate stress.
+      RFieldDft<D> q2;
+      
+      RField<D> q1p;
+      RField<D> q2p;
+
       /**
       * Return associated spatial Mesh by reference.
       */
@@ -150,11 +183,26 @@ namespace Pssp {
       // Array of elements containing exp(-W[i] ds/2)
       RField<D> expW_;
 
+      // Array of elements containing exp(-K^2 b^2 ds/(6*2))
+      RField<D> expKsq2_;
+
+      // Array of elements containing exp(-W[i] (ds/2)*0.5)
+      RField<D> expW2_;
+
       // Work array for real-space field.
       RField<D> qr_;
 
       // Work array for wavevector space field.
       RFieldDft<D> qk_;
+
+      // Work array for real-space field.
+      RField<D> qr2_;
+
+      // Work array for wavevector space field.
+      RFieldDft<D> qk2_;
+
+      // Work array for real-space field.
+      RField<D> qf_;
 
       /// Pointer to associated Mesh<D> object.
       Mesh<D> const * meshPtr_;
@@ -190,7 +238,12 @@ namespace Pssp {
       return *meshPtr_;
    }
 
+   #ifndef PSSP_BLOCK_TPP
+   extern template class Block<1>;
+   extern template class Block<2>;
+   extern template class Block<3>;
+   #endif
 }
 }
-#include "Block.tpp"
+//#include "Block.tpp"
 #endif

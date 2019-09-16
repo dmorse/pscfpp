@@ -5,13 +5,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Basis.h"
+#include "Basis.tpp"
 
-namespace Pscf { 
-namespace Pssp 
-{ 
-
-   using namespace Util;
+namespace Pscf {
+namespace Pssp{
 
    template class Basis<1>;
    template class Basis<2>;

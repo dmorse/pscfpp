@@ -1,10 +1,10 @@
-#ifndef FFT_TPP
-#define FFT_TPP
+#ifndef PSSP_FFT_TPP
+#define PSSP_FFT_TPP
 
 /*
 * PSCF++ Package 
 *
-* Copyright 2010 - 2017, The Regents of the University of Minnesota
+* Copyright 2016 - 2019, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.
 */
 

@@ -4,7 +4,7 @@
 /*
 * PSCF++ Package 
 *
-* Copyright 2010 - 2017, The Regents of the University of Minnesota
+* Copyright 2016 - 2019, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.
 */
 
@@ -51,6 +51,7 @@ namespace Pssp {
          data_[i][1] = other.data_[i][1];
       }
       meshDimensions_ = other.meshDimensions_;
+      dftDimensions_ = other.dftDimensions_;
    }
 
    /*
@@ -86,6 +87,7 @@ namespace Pssp {
          data_[i][1] = other.data_[i][1];
       }
       meshDimensions_ = other.meshDimensions_;
+      dftDimensions_ = other.dftDimensions_;
 
       return *this;
    }

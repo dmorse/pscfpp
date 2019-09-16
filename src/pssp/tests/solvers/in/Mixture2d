@@ -12,5 +12,6 @@ Mixture{
    }
    ds   0.001
 }
-Rectangular  4.0 5.0
-15 15
+rectangular 4.0 5.0
+15  15
+

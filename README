@@ -1,47 +1,52 @@
 
-PSCF is a library of C++ classes and programs for solving the 
-Edwards-Helfand self-consistent for polymer liquids. It is still under 
-development, but is intended to eventually replace the existing Fortran 
-program of the same name.  When complete, the package will contain a 
-pseudo-spectral implementation for periodic structures, analagous to 
-the existing Fortran code, as well as specialized implementations for 
-other geometries and boundary conditons. 
+PSCF++ is a library of C++ classes and programs for solving the 
+Edwards-Helfand self-consistent field theory for polymer liquids. 
+PSCF++ is still under development, but is intended to eventually replace 
+the existing PSCF Fortran program.  When complete, the package will 
+contain a pseudo-spectral implementation for periodic structures, 
+analagous to that provided by the existing Fortran code, as well as 
+specialized implementations for other geometries and boundary conditons. 
 
-Currently, the only part of the code that is fully functional is a 
-one-dimensional finite difference implementation for studying problems 
-that involve only a single spatial coordinate in Cartesian, cylindrical 
-or spherical coordinates (i.e., brushes, interfaces, and cylindrical or 
-circular micelles). 
+Some differences from the existing PSCF Fortran code and expected
+advantages of the new code include:
 
-Some differences in design relative to the existing Fortran code for 
-periodic structure, and the expected advantages of the new code are 
-as follows:
+   - A more flexible design provides a common framework for 
+     implementation of several different SCFT solvers that are 
+     intended for different geometries or that use different 
+     algorithms.
 
-- A more flexible design that allow implementation of several different 
-SCFT solvers that are designed for use in different geometries or that
-are based on different algorithms, within the same framework. 
+   - A more general description of polymer topology allows simulations 
+     of mixtures containing arbitrary acyclic branched copolymers, in 
+     addition to the linear copolymers and homopolymers allowed by the 
+     existing Fortran code.
 
-- A description of polymer topology that allows simulation of mixtures 
-containing arbitrarily complex acyclic branched block copolymers and 
-homopolymers, in addition to the linear chains allowed by the existing 
-code.  (This is completed).
+   - An object oriented design will facilitate analysis of phase 
+     coexistence, by allowing creation of several independent objects 
+     to represent different phases. 
 
-- The transition from Fortran 90 to a new design in object oriented C++ 
-will facilitate design of simulations of phase coexistence, by allowing 
-the creation of several independent objects to model different phases. 
-The design of the fortran PSCF program was never intended to allow this.
+   - Adoption of C++ will simplify implementation and maintenance of 
+     variants that use graphical process units (GPUs) to accelerate 
+     core calculations.
 
-- The adoption of C++ will simplify implementation and maintenance of 
-specialized code to use graphical process units (GPUs) to accelerate 
-core calculations, since kernel code for GPUs is usually written in a 
-variant of C/C++.
+Currently, the code contains:
 
-This C++ version of PSCF is free, open source software. It is distributed 
-under the terms of the GNU General Public License as (GPL) published by 
-the Free Software Foundation, either version 3 of the License or (at your 
-option) any later version.  PSCF is distributed without any warranty, 
-without even the implied warranty of merchantability or fitness for a 
-particular purpose. See the LICENSE file or the 
+   - A complete one-dimensional finite difference implementation for 
+     studying problems that involve only a single spatial coordinate 
+     in Cartesian, cylindrical or spherical coordinates (i.e., brushes, 
+     interfaces, and cylindrical or circular micelles). 
+
+   - A nearly complete pseudo-spectral implementation for periodic
+     structures similar to that provided by the Fortran PSCF program.
+
+A GPU accelerated code for periodic microstructure has also been 
+developed, but has not yet been integrated into this git repository.
+
+PSCF++ is free, open source software. It is distributed under the terms 
+of the GNU General Public License as (GPL) published by the Free Software 
+Foundation, either version 3 of the License or (at your option) any later 
+version.  PSCF++ is distributed without any warranty, without even the 
+implied warranty of merchantability or fitness for a particular purpose. 
+See the LICENSE file or the 
 <a href=http://www.gnu.org/licenses/> gnu web page </a> for details.
 
 ------------------------------------------------------------------------

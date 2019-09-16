@@ -53,9 +53,9 @@ namespace Pscf
    *    c.add(a, b);
    *
    * \endcode
-   * This syntax for functions that yield a vector avoids dynamic allocation 
-   * of temporary Vec<D, T> objects, by requiring that the invoking function 
-   * be a member of an object that will hold the result.
+   * This syntax for functions that yield a vector makes the allocation of 
+   * a temporary Vec<D, T> object explicit, by requiring that the invoking 
+   * function be a member of an object that will hold the result.
    *
    * For efficiency, all member functions are declared inline.
    */
@@ -96,7 +96,7 @@ namespace Pscf
 
       //@}
 
-      /// \name Assignment
+      /// \name Assignment and Initialization
       //@{
 
       /**
@@ -224,6 +224,25 @@ namespace Pscf
       */
       Vec<D, T>& multiply(const Vec<D, T>& v, T s);
 
+      /**
+      * Return negative of vector v.
+      *
+      * Upon return, *this = -v;
+      *
+      * \param v  vector input
+      * \return modified invoking vector
+      */
+      Vec<D, T>& negate(const Vec<D, T>& v);
+
+      /**
+      * Negate all elements of this vector.
+      *
+      * Upon return, all elements of this have been negated (reversed)
+      *
+      * \return this object, after modification
+      */
+      Vec<D, T>& negate();
+
       //@}
 
       /**
@@ -268,6 +287,22 @@ namespace Pscf
       for (int i = 0; i < D; ++i) {
          value += v1[i]*v2[i];
       }
+      return value;
+   }
+
+   /**
+   * Return the sum of two vectors.
+   *
+   * \param v1 first input vector
+   * \param v2 second input vector
+   * \return sum v1 + v2
+   */
+   template <int D, typename T>
+   inline 
+   Vec<D, T> operator + (Vec<D, T> const & v1, Vec<D, T> const & v2)
+   {
+      Vec<D, T> value;
+      value.add(v1, v2);
       return value;
    }
 
@@ -469,6 +504,36 @@ namespace Pscf
    {
       for (int i = 0; i < D; ++i) {
          elem_[i] = v.elem_[i]*s;
+      }
+      return *this;
+   }
+
+   /*
+   * Compute and return negation of a vector.
+   *
+   * Upon return, *this = -v.
+   */
+   template <int D, typename T>
+   inline 
+   Vec<D, T>& Vec<D, T>::negate(Vec<D, T> const & v)
+   {
+      for (int i = 0; i < D; ++i) {
+         elem_[i] = -v.elem_[i];
+      }
+      return *this;
+   }
+
+   /*
+   * Negate (reverse sign) of this vector.
+   *
+   * Upon return, *this = -v.
+   */
+   template <int D, typename T>
+   inline 
+   Vec<D, T>& Vec<D, T>::negate()
+   {
+      for (int i = 0; i < D; ++i) {
+         elem_[i] = -elem_[i];
       }
       return *this;
    }

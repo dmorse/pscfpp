@@ -1,0 +1,66 @@
+#-----------------------------------------------------------------------
+# This makefile fragment defines:
+#
+#   - A variable $(CYLN_DEFS) that is passed to the processor to define 
+#     preprocessor flags that effect the code in the cyln/ directory. 
+#
+#   - A variable $(CYLN_MPI_SUFFIX) that is set to "_m" if MPI is enabled
+#     and left undefined otherwise. This is added as a suffix to the name
+#     of the cyln library.
+#
+#   - A variable $(CYLN_SUFFIX) that indicates what other features are
+#     enabled, which is also added after CYLN_MPI_SUFFIX to the file
+#     name of cyln library. 
+#
+#   - A variable $(CYLN_LIB) that the absolute path to the cyln library 
+#     file.
+#
+# This file must be included by every makefile in the cyln directory. 
+#-----------------------------------------------------------------------
+# Flag to define preprocessor macros.
+
+# Comments:
+#
+# The variable CYLN_DEFS is used to pass preprocessor definitions to
+# the compiler, using the "-D" compiler option. If not empty, it must 
+# consist of a list of zero or more preprocessor macro names, each 
+# preceded by the compiler flag "-D".  
+#
+# The variable CYLN_SUFFIX is appended to the base name cyln.a of the 
+# static library $(CYLN_LIB). 
+#
+ 
+# Initialize macros to empty strings
+CYLN_DEFS=
+CYLN_SUFFIX:=
+
+# Each if-block below contains a line that appends a preprocessor macro 
+# definition to CYLN_DEFS, thus defining an associated C++ preprocessor 
+# macro. In some blocks, a second line add a suffix to the CYLN_SUFFIX 
+# or CYLN_MPI_SUFFIX variable, thus changing the name of the cyln library
+# and other libraries and executables that depend on the cyln library.
+
+#-----------------------------------------------------------------------
+# Macros related to use of external libraries
+
+# FFTW Fast Fourier transform library
+#CYLN_FFTW=1
+ifdef CYLN_FFTW
+  CYLN_DEFS+=-DCYLN_FFTW
+  CYLN_FFTW_PREFIX=/usr/local/Cellar/fftw/3.3.4_1
+  CYLN_FFTW_INC=-I$(CYLN_FFTW_PREFIX)/include
+  CYLN_FFTW_LIB=-L$(CYLN_FFTW_PREFIX)/lib -lfftw3
+  INCLUDES+=$(CYLN_FFTW_INC)
+endif
+
+#-----------------------------------------------------------------------
+# Path to the cyln library 
+# Note: BLD_DIR is defined in config.mk
+
+cyln_LIBNAME=cyln$(CYLN_SUFFIX)$(UTIL_SUFFIX)
+cyln_LIB=$(BLD_DIR)/cyln/lib$(cyln_LIBNAME).a
+#-----------------------------------------------------------------------
+# Path to executable file
+
+PSCF_PS_EXE=$(BIN_DIR)/pscf_fd$(CYLN_SUFFIX)$(UTIL_SUFFIX)
+#-----------------------------------------------------------------------

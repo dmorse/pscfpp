@@ -1,3 +1,6 @@
+#ifndef PSSP_SYSTEM_TPP
+#define PSSP_SYSTEM_TPP
+
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
@@ -8,16 +11,14 @@
 #include "System.h"
 
 #if 0
-#include <pssp/iterator/Iterator.h>
 #include <pssp/sweep/Sweep.h>
 #include <pssp/sweep/SweepFactory.h>
-#ifdef PSCF_GSL
-#include <pssp/iterator/NrIterator.h>
-#endif
-#include <pssp/misc/HomogeneousComparison.h>
-#include <pssp/misc/FieldEditor.h>
 #endif
 
+#include <pssp/iterator/AmIterator.h>
+
+#include <pscf/mesh/MeshIterator.h>
+#include <pscf/crystal/shiftToMinimum.h>
 #include <pscf/inter/Interaction.h>
 #include <pscf/inter/ChiInteraction.h>
 #include <pscf/homogeneous/Clump.h>
@@ -44,15 +45,18 @@ namespace Pssp
    template <int D>
    System<D>::System()
     : mixture_(),
-      mesh_(),
       unitCell_(),
+      mesh_(),
+      fft_(),
+      groupName_(),
+      basis_(),
       fileMaster_(),
+      fieldIo_(),
       homogeneous_(),
       interactionPtr_(0),
       iteratorPtr_(0),
-      basisPtr_(0),
-      sweepPtr_(0),
-      sweepFactoryPtr_(0),
+      // sweepPtr_(0),
+      // sweepFactoryPtr_(0),
       wFields_(),
       cFields_(),
       f_(),
@@ -66,11 +70,14 @@ namespace Pssp
    {  
       setClassName("System"); 
 
+      fieldIo_.associate(mixture_, unitCell_, mesh_, fft_, groupName_,
+                         basis_, fileMaster_);
+
       #ifdef PSCF_GSL
       interactionPtr_ = new ChiInteraction(); 
       iteratorPtr_ = new AmIterator<D>(this); 
-      basisPtr_ = new Basis<D>();
       #endif
+
       // sweepFactoryPtr_ = new SweepFactory(*this);
    }
 
@@ -176,21 +183,17 @@ namespace Pssp
       interaction().setNMonomer(mixture().nMonomer());
       readParamComposite(in, interaction());
 
-      in >> unitCell_;
+      read(in, "unitCell", unitCell_);
       hasUnitCell_ = true;
       
-      IntVec<D> d;
-      in >> d;
-      mesh_.setDimensions(d);
+      read(in, "mesh", mesh_);
       hasMesh_ = true;
+
+      read(in, "groupName", groupName_);
 
       mixture().setMesh(mesh());
       mixture().setupUnitCell(unitCell());
-
-      std::string groupName;
-      in >> groupName;
-      in >> groupName;
-      basis().makeBasis(mesh(), unitCell(), groupName);
+      basis().makeBasis(mesh(), unitCell(), groupName_);
 
       allocateFields();
       hasFields_ = true;
@@ -253,7 +256,6 @@ namespace Pssp
       cFieldGrids_.allocate(nMonomer);
       cFieldDfts_.allocate(nMonomer);
       
-      //size of grid is based on basis function
       for (int i = 0; i < nMonomer; ++i) {
          wField(i).allocate(basis().nStar());
          wFieldGrid(i).allocate(mesh().dimensions());
@@ -270,7 +272,6 @@ namespace Pssp
    /*
    * Read and execute commands from a specified command file.
    */
-   //will add more commands as they are tested
    template <int D>
    void System<D>::readCommands(std::istream &in) 
    {
@@ -280,7 +281,6 @@ namespace Pssp
       std::string filename;
 
       bool readNext = true;
-
       while (readNext) {
 
          in >> command;
@@ -338,20 +338,17 @@ namespace Pssp
             clock_t time_scf;
 
             time_begin = clock();
+            Log::file() << "Calling iterator" << std::endl;
             int fail = iterator().solve();
-            //if (!fail)
-            if (1) {
-               if(fail)
-               {}
-               time_scf = clock();
+            time_scf = clock();
+            time_scf = time_scf - time_begin;
+            if (!fail) {
                computeFreeEnergy();
                outputThermo(Log::file());
-               Log::file() << "SCF_Time = " 
-               << Dbl((float)(time_scf - time_begin)/CLOCKS_PER_SEC, 18, 11) 
-               << std::endl;
-               //do something?
             }
-            //outputThermo(Log::file());
+            Log::file() << "SCF_Time = " 
+                        << Dbl((float)(time_scf/CLOCKS_PER_SEC), 18, 11)
+                        << std::endl;
 
          } else
          if (command == "FIELD_TO_RGRID") {
@@ -387,7 +384,6 @@ namespace Pssp
 
             in >> inFileName;
             Log::file() << " " << Str(inFileName, 20) <<std::endl;
-
             in >> outFileName;
             Log::file() << " " << Str(outFileName, 20) <<std::endl;
 
@@ -496,6 +492,30 @@ namespace Pssp
             writeFields(outFile, wFields());
             outFile.close();
 
+         } else
+         if (command == "OUTPUT_STARS") {
+
+            std::string outFileName;
+            in >> outFileName;
+            Log::file() << " " << Str(outFileName, 20) << std::endl;
+
+            std::ofstream outFile;
+            fileMaster().openOutputFile(outFileName, outFile);
+            writeFieldHeader(outFile);
+            basis().outputStars(outFile);
+
+         } else
+         if (command == "OUTPUT_WAVES") {
+
+            std::string outFileName;
+            in >> outFileName;
+            Log::file() << " " << Str(outFileName, 20) << std::endl;
+
+            std::ofstream outFile;
+            fileMaster().openOutputFile(outFileName, outFile);
+            writeFieldHeader(outFile);
+            basis().outputWaves(outFile);
+
          } else {
             Log::file() << "  Error: Unknown command  " << command << std::endl;
             readNext = false;
@@ -518,87 +538,220 @@ namespace Pssp
    
    template <int D>
    void System<D>::readFields(std::istream &in, 
-                                DArray<DArray<double> >& fields)
+                              DArray< DArray<double> >& fields)
    {
+      UTIL_CHECK(hasMixture_);
+      UTIL_CHECK(hasUnitCell_);
       UTIL_CHECK(hasMesh_);
+      UTIL_CHECK(hasFields_);
 
-      // Read grid dimensions
+      System<D>::readFieldHeader(in);
+      int nMonomer = mixture().nMonomer();
+      UTIL_CHECK(fields.capacity() == nMonomer);
+
+      // Read number of stars
       std::string label;
-      int nStar, nM;
-
       in >> label;
-      UTIL_CHECK(label == "nStar");
-      in >> nStar;
-      UTIL_CHECK(nStar > 0);
-      UTIL_CHECK(nStar == basis().nStar());
+      UTIL_CHECK(label == "N_star");
+      int nStarIn;
+      in >> nStarIn;
+      UTIL_CHECK(nStarIn > 0);
 
-      in >> label;
-      UTIL_CHECK (label == "nM");
-      in >> nM;
-      UTIL_CHECK(nM > 0);
-      UTIL_CHECK(nM == mixture().nMonomer());
-
-      // Read fields
-      int i,j, idum;
-      for (i = 0; i < nStar; ++i) {
-         in >> idum;
-         UTIL_CHECK(idum == i);
-         for (j = 0; j < nM; ++j) {
-            in >> fields[j][i];
+      // Initialize all field components to zero
+      int i, j;
+      int nStar = basis().nStar();
+      for (j = 0; j < nMonomer; ++j) {
+         UTIL_CHECK(fields[j].capacity() == nStar);
+         for (i = 0; i < nStar; ++i) {
+            fields[j][i] = 0.0;
          }
       }
 
-      #if 0
-      // Determine if all species are treated in closed ensemble.
-      bool isCanonical = true;
-      for (i = 0; i < mixture().nPolymer(); ++i) {
-         if (mixture().polymer(i).ensemble == Species::Open) {
-            isCanonical = false;
-         }
-      }
+      DArray<double> temp;
+      temp.allocate(nMonomer);
 
-      if (isCanonical) {
-         double shift = wFields_[nm - 1][nx-1];
-         for (i = 0; i < nx; ++i) {
-            for (j = 0; j < nm; ++j) {
-               wFields_[j][i] -= shift;
+      // Loop over stars to read field components
+      IntVec<D> waveIn, waveBz, waveDft;
+      int waveId, starId, nWaveVectors;
+      for (i = 0; i < nStarIn; ++i) {
+
+         // Read components for different monomers
+         for (j = 0; j < nMonomer; ++j) {
+            in >> temp [j];
+         }
+
+         // Read characteristic wave and number of wavectors in star.
+         in >> waveIn;
+         in >> nWaveVectors;
+
+         // Check if waveIn is in first Brillouin zone (FBZ) for the mesh.
+         waveBz = shiftToMinimum(waveIn, mesh().dimensions(), unitCell());
+         bool waveExists = (waveIn == waveBz);
+
+         // If wave is in FBZ, find in basis and set field components
+         if (waveExists) {
+            waveDft = waveBz;
+            mesh().shift(waveDft);
+            waveId = basis().waveId(waveDft);
+            starId = basis().wave(waveId).starId;
+            UTIL_CHECK(basis().star(starId).waveBz == waveBz);
+            if (!basis().star(starId).cancel) {
+               for (j = 0; j < nMonomer; ++j) {
+                  fields[j][starId] = temp [j];
+               }
             }
          }
+
       }
-      #endif
 
    }
    
    template <int D>
+   void System<D>::readFields(std::string filename, 
+                              DArray<DArray<double> >& fields)
+   {
+       std::ifstream inFile;
+       fileMaster().openInputFile(filename, inFile);
+       readFields(inFile, fields);
+       inFile.close();
+   }
+
+   template <int D>
    void System<D>::readRFields(std::istream &in,
-                                DArray<RField<D> >& fields)
+                               DArray<RField<D> >& fields)
    {
       UTIL_CHECK(hasMesh_);
-
       std::string label;
-      IntVec<D> nGrid;
-      int nM;
+
+      #if 0
+      in >> label;
+      UTIL_CHECK(label == "format");
+      int ver1, ver2;
+      in >> ver1 >> ver2;
+ 
+      in >> label;
+      UTIL_CHECK(label == "dim");
+      int dim;
+      in >> dim;
+      UTIL_CHECK(dim == D);
 
       in >> label;
-      UTIL_CHECK(label == "nGrid");
+      UTIL_CHECK(label == "crystal_system");
+      std::string uCell;
+      in >> uCell;
+      
+      in >> label;
+      UTIL_CHECK(label == "N_cell_param");
+      int nCellParams;
+      in >> nCellParams;
+
+      in >> label;
+      UTIL_CHECK(label == "cell_param");
+      FArray<double,6> params;
+      for (int i = 0; i < nCellParams; ++i) {
+         in >> params[i];
+      }
+ 
+      in >> label;
+      UTIL_CHECK(label == "group_name");
+      std::string groupName;
+      in >> groupName;
+
+      in >> label;
+      UTIL_CHECK(label == "N_monomer");
+      int nMonomer;
+      in >> nMonomer;
+      UTIL_CHECK(nMonomer > 0);
+      UTIL_CHECK(nMonomer == mixture().nMonomer());
+      #endif
+
+      System<D>::readFieldHeader(in);
+
+      in >> label;
+      UTIL_CHECK(label == "ngrid");
+      IntVec<D> nGrid;
       in >> nGrid;
       UTIL_CHECK(nGrid == mesh().dimensions());
 
-      in >> label;
-      UTIL_CHECK(label == "nM");
-      in >> nM;
-      UTIL_CHECK(nM > 0);
-      UTIL_CHECK(nM == mixture().nMonomer());
+      int nM = mixture().nMonomer();
+      DArray<RField<D> > temp;
+      temp.allocate(nM);
+      for (int i = 0; i < nM; ++i) {
+         temp[i].allocate(mesh().dimensions());
+      }
 
       // Read Fields;
-      int idum;
       MeshIterator<D> itr(mesh().dimensions());
       for (itr.begin(); !itr.atEnd(); ++itr) {
-         in >> idum;
          for (int i = 0; i < nM; ++i) {
-            in >> fields[i][itr.rank()];
+            in  >> std::setprecision(15) >> temp[i][itr.rank()];
          }
       }
+
+      int p = 0;
+      int q = 0;
+      int r = 0;
+      int s = 0;
+      int n1 =0;
+      int n2 =0;
+      int n3 =0;
+
+      if (D==3){
+         while (n1 < mesh().dimension(0)){
+            q = p;
+            n2 = 0;
+            while (n2 < mesh().dimension(1)){
+               r =q;
+               n3 = 0;
+               while (n3 < mesh().dimension(2)){
+                  for (int i = 0; i < nM; ++i) {
+                     fields[i][s] = temp[i][r];
+                  }
+                  r = r + (mesh().dimension(0) * mesh().dimension(1));
+                  ++s;
+                  ++n3;              
+               } 
+               q = q + mesh().dimension(0);
+               ++n2;
+            } 
+            ++n1;
+            ++p;        
+         }
+      }
+
+      else if (D==2){
+         while (n1 < mesh().dimension(0)){
+            r =q; 
+            n2 = 0;
+            while (n2 < mesh().dimension(1)){
+               for (int i = 0; i < nM; ++i) {
+                  fields[i][s] = temp[i][r];
+               }   
+               r = r + (mesh().dimension(0));
+               ++s;
+               ++n2;    
+            }   
+            ++q;
+            ++n1;
+         }   
+      } 
+
+      else if (D==1){
+
+         while (n1 < mesh().dimension(0)){
+            for (int i = 0; i < nM; ++i) {
+               fields[i][s] = temp[i][r];
+            }   
+            ++r;
+            ++s;
+            ++n1;    
+         }   
+      } 
+
+      else{
+         std::cout<<"Invalid Dimensions";
+      }
+
    }
 
    //realistically not used
@@ -638,35 +791,137 @@ namespace Pssp
 
    template <int D>
    void System<D>::writeFields(std::ostream &out, 
-                           DArray<DArray<double> > const &  fields)
+                               DArray<DArray<double> > const&  fields)
    {
-      int i, j;
       int nStar = basis().nStar();
-      int nM = mixture().nMonomer();
-      out << "nStar     "  <<  nStar           << std::endl;
-      out << "nM     "     <<  nM              << std::endl;
+      int nBasis = basis().nBasis();
+      int nMonomer = mixture().nMonomer();  
 
-      // Write fields
-      for (i = 0; i < nStar; ++i) {
-         out << Int(i, 5);
-         for (j = 0; j < nM; ++j) {
-            out << "  " << Dbl(fields[j][i], 18, 11);
+      writeFieldHeader(out);
+      out << "N_star       " << std::endl 
+          << "             "<< nBasis << std::endl;
+
+     // Write fields
+     for (int i = 0; i < nStar; ++i) {
+         if (!basis().star(i).cancel) {
+            for (int j = 0; j < nMonomer; ++j) {
+               out << Dbl(fields[j][i], 20, 10);
+            }
+            out << "   ";
+            for (int j = 0; j < D; ++j) {
+               out << Int(basis().star(i).waveBz[j], 5);
+            } 
+            out << Int(basis().star(i).size, 5) << std::endl;
          }
-         //out<< "  " << basis().wave(basis().star(i).beginId).indicesDft;
-         out << std::endl;
-      }
+     }
+
+   }
+
+   template <int D>
+   void System<D>::writeFields(std::string filename, 
+                               DArray< DArray<double> > const &  fields)
+   {
+      std::ofstream outFile;
+      fileMaster().openOutputFile(filename, outFile);
+      writeFields(outFile, fields);
+      outFile.close();
    }
 
    template <int D>
    void System<D>::writeRFields(std::ostream &out,
-                           DArray<RField<D> > const& fields)
+                                DArray<RField<D> > const& fields)
    {
+      writeFieldHeader(out);
+      out << "ngrid" <<  std::endl
+          << "           " << mesh().dimensions() << std::endl;
+
+      DArray<RField<D> > temp;
+      int nM = mixture().nMonomer();
+      temp.allocate(nM);
+      for (int i = 0; i < nM; ++i) {
+         temp[i].allocate(mesh().dimensions());
+      } 
+
+      int p = 0; 
+      int q = 0; 
+      int r = 0; 
+      int s = 0; 
+      int n1 =0;
+      int n2 =0;
+      int n3 =0;
+
+      if (D==3){
+         while (n3 < mesh().dimension(2)){
+            q = p; 
+            n2 = 0; 
+            while (n2 < mesh().dimension(1)){
+               r =q;
+               n1 = 0; 
+               while (n1 < mesh().dimension(0)){
+                  for (int i = 0; i < nM; ++i) {
+                     temp[i][s] = fields[i][r];
+                  }    
+                  r = r + (mesh().dimension(1) * mesh().dimension(2));
+                  ++s; 
+                  ++n1;     
+               }    
+               q = q + mesh().dimension(2);
+               ++n2;
+            }    
+            ++n3;
+            ++p;     
+         }    
+      }
+      else if (D==2){
+         while (n2 < mesh().dimension(1)){
+            r =q;
+            n1 = 0;
+            while (n1 < mesh().dimension(0)){
+               for (int i = 0; i < nM; ++i) {
+                  temp[i][s] = fields[i][r];
+               }
+               r = r + (mesh().dimension(1));
+               ++s;
+               ++n1;
+            }
+            ++q;
+            ++n2;
+         }
+      }
+
+      else if (D==1){
+
+         while (n1 < mesh().dimension(0)){
+            for (int i = 0; i < nM; ++i) {
+               temp[i][s] = fields[i][r];
+            }
+            ++r;
+            ++s;
+            ++n1;
+         }
+      }
+
+      else{
+         std::cout<<"Invalid Dimensions";
+      }
+
+      // Write fields
+      MeshIterator<D> itr(mesh().dimensions());
+      for (itr.begin(); !itr.atEnd(); ++itr) {
+         // out << Int(itr.rank(), 5);
+         for (int j = 0; j < nM; ++j) {
+            out << "  " << Dbl(temp[j][itr.rank()], 18, 15);
+         }
+         out << std::endl;
+      }
+
+      #if 0
       int nM = mixture().nMonomer();
       MeshIterator<D> itr(mesh().dimensions());
       out << "nGrid    " <<  mesh().dimensions() << std::endl;
       out << "nM    "    <<  nM                << std::endl;
 
-      // Write FIelds
+      // Write fIelds
       for (itr.begin(); !itr.atEnd(); ++itr) {
          out << Int(itr.rank(), 5);
          for (int j = 0; j < nM; ++j) {
@@ -675,6 +930,7 @@ namespace Pssp
 
          out << std::endl;
       }
+      #endif
    }
 
    template <int D>
@@ -686,7 +942,7 @@ namespace Pssp
       out << "nGrid   " << mesh().dimensions() << std::endl;
       out << "nM      " << nM                << std::endl;
 
-      //write Fields
+      // Write fields
       for (itr.begin(); !itr.atEnd(); ++itr) {
          out << Int(itr.rank(), 5);
          for (int j = 0; j < nM; ++j) {
@@ -695,6 +951,50 @@ namespace Pssp
          }
          out << std::endl;
       }
+   }
+
+   template <int D>
+   void System<D>::readFieldHeader(std::istream& in) 
+   {
+      std::string label;
+
+      in >> label;
+      UTIL_CHECK(label == "format");
+      int ver1, ver2;
+      in >> ver1 >> ver2;
+ 
+      in >> label;
+      UTIL_CHECK(label == "dim");
+      int dim;
+      in >> dim;
+      UTIL_CHECK(dim == D);
+
+      readUnitCellHeader(in, unitCell_);
+
+      in >> label;
+      UTIL_CHECK(label == "group_name");
+      std::string groupName;
+      in >> groupName;
+
+      in >> label;
+      UTIL_CHECK(label == "N_monomer");
+      int nMonomer;
+      in >> nMonomer;
+      UTIL_CHECK(nMonomer > 0);
+      UTIL_CHECK(nMonomer == mixture().nMonomer());
+   }
+
+   template <int D>
+   void System<D>::writeFieldHeader(std::ostream &out) const
+   {
+      out << "format  1   0" <<  std::endl;
+      out << "dim" <<  std::endl 
+          << "          " << D << std::endl;
+      writeUnitCellHeader(out, unitCell_); 
+      out << "group_name" << std::endl 
+          << "          " << groupName_ <<  std::endl;
+      out << "N_monomer"  << std::endl 
+          << "          " << mixture_.nMonomer() << std::endl;
    }
 
    template <int D>
@@ -839,9 +1139,6 @@ namespace Pssp
    }
 
    #if 0
-
-
-
    /*
    * Compute Helmoltz free energy and pressure
    */
@@ -897,12 +1194,6 @@ namespace Pssp
 
    }
 
-   
-
-
-
-  
-
    template <int D>
    void System<D>::outputThermo(std::ostream& out)
    {
@@ -928,3 +1219,4 @@ namespace Pssp
 
 } // namespace Pssp
 } // namespace Pscf
+#endif

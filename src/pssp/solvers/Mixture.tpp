@@ -9,7 +9,7 @@
 */
 
 #include "Mixture.h"
-#include <fd1d/domain/Domain.h>
+#include <pscf/mesh/Mesh.h>
 
 #include <cmath>
 
@@ -116,6 +116,31 @@ namespace Pssp
       // To do: Add compute functions and accumulation for solvents.
 
    }
+
+   /*  
+   * Compute Total Stress.
+   */  
+   template <int D>
+   void Mixture<D>::computeTStress(Basis<D>& basis)
+   {   
+      int i, j;
+
+      for (i = 0; i < 6; ++i) {
+         TStress [i] = 0;
+      }   
+
+      // Compute Stress for all polymers, must be done after computing concentrations
+      for (i = 0; i < nPolymer(); ++i) {
+         polymer(i).ComputePcStress(basis);
+      }   
+
+      // Accumulate stress for all the polymer chains
+      for (i = 0; i < 6; ++i) {
+         for (j = 0; j < nPolymer(); ++j) {
+            TStress [i] += polymer(j).PcStress[i];
+         }   
+      }   
+   }   
 
 } // namespace Pssp
 } // namespace Pscf

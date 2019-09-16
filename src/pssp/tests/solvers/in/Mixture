@@ -12,6 +12,6 @@ Mixture{
    }
    ds   0.001
 }
-Lamellar   1.0
+lamellar   1.0
 32
 

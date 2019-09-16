@@ -11,13 +11,13 @@
 #include "Block.h"
 #include <pscf/solvers/PolymerTmpl.h>
 #include <pssp/field/RField.h>
+#include <util/containers/FArray.h>      // member template
 
 namespace Pscf { 
 namespace Pssp { 
 
-
    /**
-   * Descriptor and solver for a branched polymer species.
+   * Descriptor and solver for a polymer species.
    *
    * The block concentrations stored in the constituent Block<D>
    * objects contain the block concentrations (i.e., volume 
@@ -62,10 +62,19 @@ namespace Pssp {
       */ 
       void compute(DArray<WField> const & wFields);
 
+      // Stress due to a whole Polymer chain
+      FArray<double, 6> PcStress;
+
+      /**
+      * Compute stress from a polymer chain, needs a pointer to basis
+      */
+      void ComputePcStress(Basis<D>& basis);
+
       using Base::nBlock;
       using Base::block;
       using Base::ensemble;
       using Base::solve;
+      using Base::length;
 
    protected:
 
@@ -77,8 +86,14 @@ namespace Pssp {
       using Base::mu_;
 
    };
+  
+   #ifndef PSSP_POLYMER_TPP
+   extern template class Polymer<1>;
+   extern template class Polymer<2>;
+   extern template class Polymer<3>;
+   #endif
 
 }
 }
-#include "Polymer.tpp"
+// #include "Polymer.tpp"
 #endif

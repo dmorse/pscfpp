@@ -1,16 +1,23 @@
 /*
 * PSCF++ Package 
 *
-* Copyright 2010 - 2017, The Regents of the University of Minnesota
+* Copyright 2016 - 2019, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "FFT.h"
+#include "FFT.tpp"
 
 namespace Pscf {
 namespace Pssp {
 
    using namespace Util;
+
+   // Explicit class instantiations
+
+   template class FFT<1>;
+   template class FFT<2>;
+   template class FFT<3>;
+
 
    // Forward transform, explicit specializations.
 
@@ -43,5 +50,6 @@ namespace Pssp {
                                     meshDimensions_[2], &kField[0], &rField[0], 
                                     flags);
    }
+
 }
 }

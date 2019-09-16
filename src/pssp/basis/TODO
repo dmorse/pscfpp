@@ -1,11 +1,26 @@
-To get a minimally functional Basis class template:
+TODO (Basis class):
 
-1) Write a makeBasis function that works only for groupName == 'I',
-i.e., no symmetry. This should simply makes a star for each nonzero
-vector k with k[3] >= 0, listed in the order they would be listed in 
-the 1D representation of the real-to-complex Fourier grid. Test this
-first for the 1D case, Basis<1>.
+1) Move computation of dEigen for one vector to a public member
+   of UnitCell, giving functions ksq() and dksq().  Construct
+   unit tests, including edge cases and special cases for which
+   the answer can be worked out analytically.
 
-2) Write conversion functions (basis-to-DFT and DFT-to-basis), which 
-should be written so as to work with any space group.
+2) Convert TWave::phase to a Rational value. Add Wave::phase member
+   to Basis::Wave. Build code to compute coefficients that contains
+   common special cases phase = 0, phase = +- 1/2, phase = +- 1/4.
+
+3) Possibility: Add a partnerId to Basis::Wave. Once you've identified 
+   the partner, why not keep track of it?
+
+4) Test Basis code with more varied groups, including nontrivial
+   non-centrosymmetric cases. Compare each to Fortran as well as
+   testing internal validity. Test with both even and odd mesh
+   dimension values.
+
+   Examples: 2D Square, 
+             2D Square centered (has translations and cancellations)
+             2D 4 fold axis (non-centrosymmetric)
+             3D (111 3 fold axis) (non-centrosymmetric)
+             3D cubic BCC (has translations and cancellations)
+
 

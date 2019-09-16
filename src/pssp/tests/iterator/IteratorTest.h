@@ -5,6 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <pssp/iterator/AmIterator.h>
+#include <pscf/inter/ChiInteraction.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <util/math/Constants.h>
 
@@ -29,15 +30,15 @@ public:
 
    void testConstructor1()
    {
-      AmIterator<3> AmItr;
-
-      System<3> sys;
+      AmIterator<1> AmItr;
+      System<1> sys;
    }
 
    void testReadParam()
    {
-      //building system object
-      System<3> sys;
+      System<1> sys;
+
+      #if 0
       char* argv[3];
       argv[0] = (char *) "myName";
       argv[1] = (char *) "-p";
@@ -45,6 +46,12 @@ public:
       optind = 1;
       sys.setOptions(3, argv);
       sys.readParam();
+      #endif
+
+      std::ifstream paramFile;
+      openInputFile("in/param", paramFile);
+      sys.readParam(paramFile);
+      paramFile.close();
 
       TEST_ASSERT(eq(sys.iterator().epsilon(), 1e-3));
       TEST_ASSERT(sys.iterator().maxHist() == 3);
@@ -53,49 +60,64 @@ public:
 
    void testAllocate()
    {
-      System<3> sys;
-      char* argv[5];
+      System<1> sys;
 
+
+      #if 0
+      char* argv[5];
       argv[0] = (char*) "diffName";
       argv[1] = (char*) "-p";
       argv[2] = (char*) "in/param";
       argv[3] = (char*) "-c";
       argv[4] = (char*) "in/command";
-
       optind = 1;
       sys.setOptions(5, argv);
       sys.readParam();
+      #endif
+
+      std::ifstream paramFile;
+      openInputFile("in/param", paramFile);
+      sys.readParam(paramFile);
+      paramFile.close();
 
       //Allocate done automatically in system.tpp
    }
 
    void testComputeDeviation()
    {
-      System<3> sys;
-      char* argv[5];
+      System<1> sys;
 
+      #if 0
+      char* argv[5];
       argv[0] = (char*) "diffName";
       argv[1] = (char*) "-p";
       argv[2] = (char*) "in/param";
       argv[3] = (char*) "-c";
       argv[4] = (char*) "in/command";
-
       optind = 1;
       sys.setOptions(5, argv);
       sys.readParam();
+      #endif
+      
+      std::ifstream paramFile;
+      openInputFile("in/param", paramFile);
+      sys.readParam(paramFile);
+      paramFile.close();
 
-      //set systemPtr_->wFields()
-      MeshIterator<3> iter(sys.mesh().dimensions());
+      // Set systemPtr_->wFields()
+      MeshIterator<1> iter(sys.mesh().dimensions());
       double twoPi = 2.0*Constants::Pi;
       for (iter.begin(); !iter.atEnd(); ++iter){
          sys.wFieldGrid(0)[iter.rank()] = cos(twoPi * 
-                        (double(iter.position(0))/double(sys.mesh().dimension(0)) + 
-                         double(iter.position(1))/double(sys.mesh().dimension(1)) + 
-                         double(iter.position(2))/double(sys.mesh().dimension(2)) ) );
+                (double(iter.position(0))/double(sys.mesh().dimension(0)) + 
+                 double(iter.position(1))/double(sys.mesh().dimension(1)) + 
+                 double(iter.position(2))/double(sys.mesh().dimension(2)))
+              ); 
          sys.wFieldGrid(1)[iter.rank()] = sin(twoPi * 
-                        (double(iter.position(0))/double(sys.mesh().dimension(0)) + 
-                         double(iter.position(1))/double(sys.mesh().dimension(1)) + 
-                         double(iter.position(2))/double(sys.mesh().dimension(2)) ) );
+                (double(iter.position(0))/double(sys.mesh().dimension(0)) + 
+                 double(iter.position(1))/double(sys.mesh().dimension(1)) + 
+                 double(iter.position(2))/double(sys.mesh().dimension(2)))
+              );
       }
       for (int i = 0; i < sys.mixture().nMonomer(); i++) {
          sys.fft().forwardTransform(sys.wFieldGrid(i), sys.wFieldDft(i));
@@ -139,9 +161,10 @@ public:
 
    void testIsConverged1()
    {
-      System<3> sys;
-      char* argv[5];
+      System<1> sys;
 
+      #if 0
+      char* argv[5];
       argv[0] = (char*) "diffName";
       argv[1] = (char*) "-p";
       argv[2] = (char*) "in/param";
@@ -151,9 +174,15 @@ public:
       optind = 1;
       sys.setOptions(5, argv);
       sys.readParam();
+      #endif
 
-      //set systemPtr_->wFields()
-      MeshIterator<3> iter(sys.mesh().dimensions());
+      std::ifstream paramFile;
+      openInputFile("in/param", paramFile);
+      sys.readParam(paramFile);
+      paramFile.close();
+
+      // Set systemPtr_->wFields()
+      MeshIterator<1> iter(sys.mesh().dimensions());
       double twoPi = 2.0*Constants::Pi;
       for (iter.begin(); !iter.atEnd(); ++iter){
          sys.wFieldGrid(0)[iter.rank()] = cos(twoPi * 
@@ -202,21 +231,27 @@ public:
 
    void testIsConverged2()
    {
-      System<3> sys;
-      char* argv[5];
+      System<1> sys;
 
+      #if 0
+      char* argv[5];
       argv[0] = (char*) "diffName";
       argv[1] = (char*) "-p";
       argv[2] = (char*) "in/param";
       argv[3] = (char*) "-c";
       argv[4] = (char*) "in/command";
-
       optind = 1;
       sys.setOptions(5, argv);
       sys.readParam();
+      #endif
 
-      //set systemPtr_->wFields()
-      MeshIterator<3> iter(sys.mesh().dimensions());
+      std::ifstream paramFile;
+      openInputFile("in/param", paramFile);
+      sys.readParam(paramFile);
+      paramFile.close();
+
+      // Set systemPtr_->wFields()
+      MeshIterator<1> iter(sys.mesh().dimensions());
       double twoPi = 2.0*Constants::Pi;
       for (iter.begin(); !iter.atEnd(); ++iter){
          sys.wFieldGrid(0)[iter.rank()] = cos(twoPi * 
@@ -261,21 +296,27 @@ public:
 
    void testSolve()
    {
-      System<3> sys;
-      char* argv[5];
+      System<1> sys;
 
+      #if 0
+      char* argv[5];
       argv[0] = (char*) "diffName";
       argv[1] = (char*) "-p";
       argv[2] = (char*) "in/param";
       argv[3] = (char*) "-c";
       argv[4] = (char*) "in/command";
-
       optind = 1;
       sys.setOptions(5, argv);
       sys.readParam();
+      #endif
 
-      //set systemPtr_->wFields()
-      MeshIterator<3> iter(sys.mesh().dimensions());
+      std::ifstream paramFile;
+      openInputFile("in/param", paramFile);
+      sys.readParam(paramFile);
+      paramFile.close();
+
+      // Set systemPtr_->wFields()
+      MeshIterator<1> iter(sys.mesh().dimensions());
       double twoPi = 2.0*Constants::Pi;
       for (iter.begin(); !iter.atEnd(); ++iter){
          sys.wFieldGrid(0)[iter.rank()] = cos(twoPi * 
@@ -300,20 +341,27 @@ public:
 
    void testOutput()
    {
-      System<3> sys;
-      char* argv[5];
+      System<1> sys;
 
+      #if 0
+      char* argv[5];
       argv[0] = (char*) "diffName";
       argv[1] = (char*) "-p";
       argv[2] = (char*) "in/param";
       argv[3] = (char*) "-c";
       argv[4] = (char*) "in/command";
-
       optind = 1;
       sys.setOptions(5, argv);
       sys.readParam();
+      #endif
 
-      MeshIterator<3> iter(sys.mesh().dimensions());
+      std::ifstream paramFile;
+      openInputFile("in/param", paramFile);
+      sys.readParam(paramFile);
+      paramFile.close();
+
+      MeshIterator<1> iter(sys.mesh().dimensions());
+
       double twoPi = 2.0*Constants::Pi;
       for (iter.begin(); !iter.atEnd(); ++iter){
          sys.wFieldGrid(0)[iter.rank()] = cos(twoPi * 
@@ -339,18 +387,24 @@ public:
 
    void testConvertFieldToGrid()
    {
-      System<3> sys;
-      char* argv[5];
+      System<1> sys;
 
+      #if 0
+      char* argv[5];
       argv[0] = (char*) "diffName";
       argv[1] = (char*) "-p";
       argv[2] = (char*) "in/param";
       argv[3] = (char*) "-c";
       argv[4] = (char*) "in/command";
-
       optind = 1;
       sys.setOptions(5, argv);
       sys.readParam();
+      #endif
+
+      std::ifstream paramFile;
+      openInputFile("in/param", paramFile);
+      sys.readParam(paramFile);
+      paramFile.close();
 
       std::ifstream inFile;
       FileMaster().openInputFile("omega.o", inFile);

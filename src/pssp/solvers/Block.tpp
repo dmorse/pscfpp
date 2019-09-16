@@ -9,10 +9,14 @@
 */
 
 #include "Block.h"
+#include <pssp/basis/Basis.h>
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/crystal/UnitCell.h>
 #include <pscf/crystal/shiftToMinimum.h>
+#include <util/containers/FMatrix.h>      
+#include <util/containers/DArray.h>      
+#include <util/containers/FArray.h>      
 
 namespace Pscf { 
 namespace Pssp {
@@ -62,14 +66,24 @@ namespace Pssp {
             kMeshDimensions_[i] = mesh.dimensions()[i];
          } else {
             kMeshDimensions_[i] = mesh.dimensions()[i]/2 + 1;
-         }
+       }
       }
 
       // Allocate work arrays
       expKsq_.allocate(kMeshDimensions_);
       expW_.allocate(mesh.dimensions());
+      expKsq2_.allocate(kMeshDimensions_);
+      expW2_.allocate(mesh.dimensions());
       qr_.allocate(mesh.dimensions());
       qk_.allocate(mesh.dimensions());
+      qr2_.allocate(mesh.dimensions());
+      qk2_.allocate(mesh.dimensions());
+      qf_.allocate(mesh.dimensions());
+
+      q1.allocate(mesh.dimensions());
+      q2.allocate(mesh.dimensions());
+      q1p.allocate(mesh.dimensions());
+      q2p.allocate(mesh.dimensions());
 
       propagator(0).allocate(ns_, mesh);
       propagator(1).allocate(ns_, mesh);
@@ -98,6 +112,7 @@ namespace Pssp {
          Gmin = shiftToMinimum(G, mesh().dimensions(), unitCell);
          Gsq = unitCell.ksq(Gmin);
          expKsq_[i] = exp(Gsq*factor);
+         expKsq2_[i] = exp(Gsq*factor*0.5);
          //std::cout << i    << "  " 
          //         << Gmin << "  " 
          //          << Gsq  << "  "
@@ -121,6 +136,7 @@ namespace Pssp {
       // std::cout << std::endl;
       for (i = 0; i < nx; ++i) {
          expW_[i] = exp(-0.5*w[i]*ds_);
+         expW2_[i] = exp(-0.5*0.5*w[i]*ds_);
          // std::cout << "i = " << i 
          //           << " expW_[i] = " << expW_[i]
          //          << std::endl;
@@ -141,6 +157,7 @@ namespace Pssp {
          Gmin = shiftToMinimum(G, mesh().dimensions(), unitCell);
          Gsq = unitCell.ksq(Gmin);
          expKsq_[i] = exp(Gsq*factor);
+         expKsq2_[i] = exp(Gsq*factor*0.5);
          //std::cout << i    << "  " 
          //          << Gmin << "  " 
          //          << Gsq  << "  "
@@ -156,7 +173,7 @@ namespace Pssp {
    template <int D>
    void Block<D>::computeConcentration(double prefactor)
    {
-      // Preconditions
+     /* // Preconditions
       int nx = mesh().size();
       UTIL_CHECK(nx > 0);
       UTIL_CHECK(ns_ > 0);
@@ -193,7 +210,149 @@ namespace Pssp {
          cField()[i] *= prefactor;
       }
       #if 0
-      #endif
+      #endif*/
+
+
+      // Preconditions
+      int nx = mesh().size();
+      UTIL_CHECK(nx > 0);
+      UTIL_CHECK(ns_ > 0);
+      UTIL_CHECK(ds_ > 0);
+      UTIL_CHECK(propagator(0).isAllocated());
+      UTIL_CHECK(propagator(1).isAllocated());
+      UTIL_CHECK(cField().capacity() == nx) 
+
+      // Initialize cField to zero at all points
+      int i;
+      for (i = 0; i < nx; ++i) {
+         cField()[i] = 0.0;
+      }
+
+      Propagator<D> const & p0 = propagator(0);
+      Propagator<D> const & p1 = propagator(1);
+
+      // Evaluate unnormalized integral
+      for(i = 0; i < nx; ++i) {
+         cField()[i] += p0.q(0)[i]*p1.q(ns_ - 1)[i];
+         cField()[i] += p0.q(ns_ -1)[i]*p1.q(0)[i];
+      }
+
+      //odd indices
+      for(int j = 1; j < (ns_ -1); j += 2) {
+         for(int i = 0; i < nx; ++i) {
+            cField()[i] += p0.q(j)[i] * p1.q(ns_ - 1 - j)[i] * 4.0;   
+         }
+      }
+
+      //even indices
+      for(int j = 2; j < (ns_ -2); j += 2) {
+         for(int i = 0; i < nx; ++i) {
+            cField()[i] += p0.q(j)[i] * p1.q(ns_ - 1 - j)[i] * 2.0;   
+         }
+      }
+
+      prefactor *= ds_ / 3.0;
+      for (i = 0; i < nx; ++i) {
+         cField()[i] *= prefactor;
+      }
+
+   }
+
+   /*
+   * Integrate to Stress exerted by the chain for this block
+   */
+   template <int D>
+   void Block<D>::computeStress(Basis<D>& basis, double prefactor)
+   {   
+      // Preconditions
+      int nx = mesh().size();
+      UTIL_CHECK(nx > 0); 
+      UTIL_CHECK(ns_ > 0); 
+      UTIL_CHECK(ds_ > 0); 
+      UTIL_CHECK(propagator(0).isAllocated());
+      UTIL_CHECK(propagator(1).isAllocated());
+
+      double dels, normal, increment;
+      int r,c;
+ 
+      normal = 3.0*6.0;
+
+      c = (basis.nStar());
+      r = 6;
+
+      DArray<double> q1s;
+      DArray<double> q2s;
+      DArray<double> q3s;
+      q1s.allocate(basis.nStar());
+      q2s.allocate(basis.nStar());
+      q3s.allocate(basis.nStar());
+
+      FArray<double, 6> dQ;
+
+      //FArray<double, basis.nStar()> q1s;
+      //FArray<double, basis.nStar()> q2s;
+
+      // Initialize work array and pStress to zero at all points
+      int i;
+      for (i = 0; i < 6; ++i) {
+         dQ [i] = 0.0;
+         pStress [i] = 0.0;
+      }   
+
+      Propagator<D> const & p0 = propagator(0);
+      Propagator<D> const & p1 = propagator(1);
+
+      //Evaluate unnormalized integral   
+      for (int j = 0; j < ns_ ; ++j) {
+           
+          // fft_.forwardTransform(p0.q(j), q1);
+         
+           q1p = p0.q(j);
+           fft_.forwardTransform(q1p, q1);
+           basis.convertFieldDftToComponents(q1 , q1s);
+           
+           //fft_.forwardTransform(p1.q(ns_ - 1 - j), q2);  
+           
+           q2p = p1.q(ns_ - 1 - j);
+           //q2p = p1.q(j);
+           fft_.forwardTransform(q2p, q2); 
+           basis.convertFieldDftToComponents(q2 , q2s); 
+
+          // for (int d = 0; d < c; ++d){
+            //  std::cout<<"q1s("<<d<<")="<<"\t"<<q1s[d]<<"\n";
+             // std::cout<<"q2s("<<d<<")="<<"\t"<<q2s[d]<<"\n";
+          // }
+           
+
+
+           dels = ds_;
+
+           if (j != 0 && j != ns_ - 1) {
+              if (j % 2 == 0) {
+                 dels = dels*2.0;
+              } else {
+                 dels = dels*4.0;
+              }           
+           }
+
+           for (int n = 0; n < r ; ++n) {
+              increment = 0;
+
+              for (int m = 0; m < c ; ++m) {
+                 q3s [m] = q1s [m] * basis.star(m).dEigen[n];  
+                 increment += q3s [m]*q2s [m]; 
+              }
+              increment = (increment * kuhn() * kuhn() * dels)/normal;
+              dQ [n] = dQ[n]-increment; 
+           }    
+      }   
+      
+      // Normalize
+      for (i = 0; i < r; ++i) {
+         pStress[i] = pStress[i] - (dQ[i] * prefactor);
+      }   
+      //#if 0
+      //#endif
 
    }
 
@@ -203,7 +362,7 @@ namespace Pssp {
    template <int D>
    void Block<D>::step(const QField& q, QField& qNew)
    {
-      // Check real-space mesh sizes
+      // Check real-space mesh sizes`
       int nx = mesh().size();
       UTIL_CHECK(nx > 0);
       UTIL_CHECK(q.isAllocated());
@@ -221,15 +380,34 @@ namespace Pssp {
       int i;
       for (i = 0; i < nx; ++i) {
          qr_[i] = q[i]*expW_[i];
+         qr2_[i] = q[i]*expW2_[i];
       }
       fft_.forwardTransform(qr_, qk_);
+      fft_.forwardTransform(qr2_, qk2_);
       for (i = 0; i < nk; ++i) {
          qk_[i][0] *= expKsq_[i];
          qk_[i][1] *= expKsq_[i];
+         qk2_[i][0] *= expKsq2_[i];
+         qk2_[i][1] *= expKsq2_[i];
       }
       fft_.inverseTransform(qk_, qr_);
+      fft_.inverseTransform(qk2_, qr2_);
       for (i = 0; i < nx; ++i) {
-         qNew[i] = qr_[i]*expW_[i];
+         qf_[i] = qr_[i]*expW_[i];
+         qr2_[i] = qr2_[i]*expW_[i];
+      }
+
+      fft_.forwardTransform(qr2_, qk2_);
+      for (i = 0; i < nk; ++i) {
+         qk2_[i][0] *= expKsq2_[i];
+         qk2_[i][1] *= expKsq2_[i];
+      }
+      fft_.inverseTransform(qk2_, qr2_);
+      for (i = 0; i < nx; ++i) {
+         qr2_[i] = qr2_[i]*expW2_[i];
+      }
+      for (i = 0; i < nx; ++i) {
+         qNew[i] = (4.0*qr2_[i] - qf_[i])/3.0;
       }
    }
 

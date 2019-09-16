@@ -1,0 +1,88 @@
+#-----------------------------------------------------------------------
+# This makefile fragment defines:
+#
+#   - A variable $(UTIL_DEFS) that is passed to the processor to define 
+#     preprocessor flags that effect the code in the util/ directory. 
+#
+#   - A variable $(UTIL_MPI_SUFFIX) that is set to "_m" if MPI is enabled
+#     and left undefined otherwise. This is added as a suffix to the name
+#     of the util library.
+#
+#   - A variable $(UTIL_SUFFIX) that can be used (optionally) to indicates 
+#     what other features are enabled, which is added after UTIL_MPI_SUFFIX 
+#     to the file name of util library. By default, this is an empty string.
+#
+#   - A variable $(UTIL_LIB) that the absolute path to the util library 
+#     file.
+#
+# This file must be included by every makefile in the util directory. 
+#-----------------------------------------------------------------------
+# Flag to define preprocessor macros.
+
+# The variables UTIL_MPI, UTIL_DEBUG, and UTIL_CXX11 used in this file
+# must defined (or not not defined) in the file src/config.mk. 
+
+# Most users will not need to modify the rest of this file. 
+#-----------------------------------------------------------------------
+# Comments:
+#
+# The variable UTIL_DEFS is used to pass preprocessor definitions to
+# the compiler, using the "-D" compiler option. If not empty, it must 
+# consist of a list of zero or more preprocessor macro names, each 
+# preceded by the compiler flag "-D".  For example, setting UTIL_DEFS 
+# to "-DUTIL_MPI -DUTIL_DEBUG" will cause compilation of a parallel
+# version of the code with debugging enabled.
+#
+# The variable UTIL_SUFFIX is appended to the base name util.a of the 
+# static library $(UTIL_LIB).  By default, this is an empty string, 
+# but users may uncomment lines that add to this string in order to 
+# enable the addition of suffixes to file names to indicate which 
+# compile-time features are enabled. For example, uncommenting the
+# line that adds the suffix "_g" when debugging is enabled will cause
+# the make system, in the absence of other options, to create a 
+# static library named utillib_g.a rather than utillib.a in the 
+# src/util directory.
+#
+# The variable UTIL_DEFS is a recursive (normal) makefile variable, and
+# may be extended using the += operator, e.g., UTIL_DEFS+=-DUTIL_ANGLE.
+# UTIL_SUFFIX is instead a non-recursive makefile variable, which may 
+# be extended using the := operator, as UTIL_SUFFIX:=$(UTIL_SUFFIX)_g. 
+# They are defined differently because the += operator for recursive
+# variables adds a white space before an added string, which is 
+# appropriate for UTIL_DEFS, but not for UTIL_SUFFIX. 
+ 
+# Initialize macros to empty strings
+UTIL_DEFS=
+UTIL_SUFFIX:=
+UTIL_MPI_SUFFIX:=
+
+# Each if-block below contains a line that appends a preprocessor macro 
+# definition to UTIL_DEFS, thus defining an associated C++ preprocessor 
+# macro. In some blocks, a second line add a suffix to the UTIL_SUFFIX 
+# or UTIL_MPI_SUFFIX variable, thus changing the name of the util library
+# and other libraries and executables that depend on the util library.
+
+# Enable message passing interface
+ifdef UTIL_MPI
+UTIL_DEFS+= -DUTIL_MPI
+UTIL_MPI_SUFFIX:=_m
+endif
+
+# Enable debugging assertions
+ifdef UTIL_DEBUG
+UTIL_DEFS+= -DUTIL_DEBUG
+#UTIL_SUFFIX:=$(UTIL_SUFFIX)_g
+endif
+
+# Enable features that require features of the C++11 standard
+ifdef UTIL_CXX11
+UTIL_DEFS+= -DUTIL_CXX11
+endif
+
+#-----------------------------------------------------------------------
+# Path to the util library 
+# Note: BLD_DIR is defined in config.mk
+
+util_LIBNAME=util$(UTIL_MPI_SUFFIX)$(UTIL_SUFFIX)
+util_LIB=$(BLD_DIR)/util/lib$(util_LIBNAME).a
+#-----------------------------------------------------------------------

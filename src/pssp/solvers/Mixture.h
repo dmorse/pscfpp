@@ -13,8 +13,14 @@
 #include <pscf/solvers/MixtureTmpl.h>
 #include <pscf/inter/Interaction.h>
 #include <util/containers/DArray.h>
+#include <util/containers/FArray.h>
 
-namespace Pscf { template <int D> class Mesh; }
+namespace Pscf { 
+   template <int D> class Mesh; 
+   namespace Pssp{
+      template <int D> class Basis;
+   }
+}
  
 namespace Pscf {
 namespace Pssp
@@ -117,6 +123,13 @@ namespace Pssp
       */
       void 
       compute(DArray<WField> const & wFields, DArray<CField>& cFields);
+      
+      // Array to store total stress
+      FArray<double, 6> TStress;
+
+      // Function to calculate total stress of the unit cell
+      void
+      computeTStress(Basis<D>& basis);
 
       /**
       * Get monomer reference volume.
@@ -169,7 +182,13 @@ namespace Pssp
       return *meshPtr_;
    }
 
+   #ifndef PSSP_MIXTURE_TPP
+   extern template class Mixture<1>;
+   extern template class Mixture<2>;
+   extern template class Mixture<3>;
+   #endif
+
 } // namespace Pssp
 } // namespace Pscf
-#include "Mixture.tpp"
+// #include "Mixture.tpp"
 #endif

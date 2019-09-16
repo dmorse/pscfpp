@@ -1,0 +1,131 @@
+
+The following changes all involve the new functions to compute stress in
+the solver classes.
+----------------------------------------------------------------------------
+Prerequisites:
+
+- Before making any changes to the solvers, write some unit tests to test
+the computation of stress (without iteration), preferably by comparing
+values computed with pscfpp to values obtained for the same state from 
+the fortran pscf. This will allow you to know if you've broken anything
+when you get done.  Create these in a copy of my master branch and send
+me a pull request. 
+
+- Make all changes to the solvers in a new branch that stars as a copy of
+the dmorse master branch, including the new unit tests.
+
+----------------------------------------------------------------------------
+Propagator
+-----
+
+1) Change typedef name "PStress" to "Stress".
+
+I also recommend changing the definition of the typedef to FSArray<double, 6>,
+rather than FArray<double, 6>, and then using FSArray<double, 6> objects for
+stress throughout the code. An FSArray is an array with a maximum physical
+size (6 elements, in this case), returned by the "capacity()" function, and
+a logical size that must be less than or equal to the capacity.  Consistent
+use of FSArray objects for stress would allow the container to document how
+many elements are physically meaningful, and to throw an exception if you
+try to access meaningless elements.  
+
+The size of an FSArray is initially zero, and can be increased by one by
+using the append function. Normal procedure would thus be to intialize 
+both the size and initial values in such an array by appending the 
+appropriate number of zero values, e.g., by a loop of the form:
+
+    for (int i = 0; i < nUnitCellParameter; ++i) {
+       stress_.append(0.0);
+    }
+
+----------------------------------------------------------------------------
+Block
+-----
+
+1) Change typedef name "PStress" to "Stress" and definition, as for Propagator. 
+
+2) Make arrays pStress, q1, s2, q1p, q2p private (i.e., move to private section
+   of class declation).  Add trailing _ to all names, giving q1_, s2_, q1p_, etc. 
+
+   Rationale: Member variables should almost always be private. Names of
+   private member variables are indicated by a name with a trailing underline.
+
+3) Change array name pStress to stress_ .
+
+   Rationale: The meaning of the "p" isn't obvious or helpful. Whether the
+   variable is the stress from a block or polmyer is clear from context, 
+   since it is a member of the Block or Polymer object. The "p" is used
+   here even to refer to the stress from a block, which is confusing.
+   Just call the stress member variable of a Block, Polymer or Mixture 
+   "stress" (or member variable name stress_ ), and use context and 
+   documentation to explain what contribution to the stress it refers to. 
+
+4) Add accessor functions to return all stress values or a single value:
+
+   Block::Stress const & stress() const
+   {  return stress_; }
+
+   double stress(int i) const
+   {  return stress_[i]; }
+
+   Similar accessors should be added to Polymer and Mixture.
+
+5) Have the setUpUnitCell function retain whatever information about 
+   the unit cell you need to compute stress. That is, either retain 
+   retain the value of the number of unit cell parameters in a private 
+   variable named nUnitCellParameters_, if that is all you need, or 
+   retain a pointer named unitCellPtr_ that keeps the UnitCell address, 
+   or both.
+
+6) In computeStress.tpp, change loops over i = 0, ..., 6 to go only over
+   the relevant number of parameters (which should be stored or accessible
+   via a pointer, as discussed in 5).
+
+7) Change the implementation of computeStress so that it uses plane waves
+   rather than a symmetry adapted basis. Remove the use of the Basis as a
+   function parameter.  The solvers should not need to know about a Basis:
+   The use of a Basis in this context does not save time and adds complexity 
+   and many additional possible sources of errors. Keep the solvers simple. 
+
+---------------------------------------------------------------------------
+Polymer
+-------
+
+1) Change name of function ComputePcStress to computeStress(). There 
+   should be no need for this function to take a Basis as an argument.
+
+2) Make PcStress a private variable, and change its name to stress_ ,
+   as for Block.
+
+3) Add accessors to return either all of the stress components as an
+   array or a single component, as done for Block. 
+
+4) Change the implementation of the computeStress() function to use
+   the new interface of Block. Remove the use of Basis as a parameter.
+
+---------------------------------------------------------------------------
+Mixture:
+
+1) Make the public variable TStress to private and rename it stress_
+
+2) Change the name of computeTStress to computeStress(), and remove
+   the use of Basis as a function parameter.
+
+3) Add accessor functions to return an FSArray<double, 6> containing
+   all stress components or a double containing one component, as for
+   Block and Polymer.
+
+4) Change the implementation of the computeStress() function to use
+   the new interface of Polymer, and remove the use of Basis as a 
+   function parameter.
+
+---------------------------------------------------------------------------
+Check unit tests to make sure that stress values obtained by this method
+are correct for several different unit cell types.
+
+---------------------------------------------------------------------------
+AmIterator and possibly elsewhere:
+
+--> Change all code that uses a Mixture to compute stress to use the
+    new interface, calling computeStress and stress() or stress(int i).
+

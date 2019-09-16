@@ -1,10 +1,9 @@
 
-pssp_solvers_=
-  #pssp/solvers/Propagator.cpp \
-  #pssp/solvers/Block.cpp \
-  #pssp/solvers/Polymer.cpp \
-  #pssp/solvers/Solvent.cpp \
-  #pssp/solvers/Mixture.cpp 
+pssp_solvers_= \
+  pssp/solvers/Block.cpp \
+  pssp/solvers/Propagator.cpp \
+  pssp/solvers/Polymer.cpp \
+  pssp/solvers/Mixture.cpp 
 
 pssp_solvers_SRCS=\
      $(addprefix $(SRC_DIR)/, $(pssp_solvers_))
