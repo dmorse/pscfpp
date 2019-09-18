@@ -111,10 +111,11 @@ namespace Pssp
 
       if (cell_){
          systemPtr_->mixture().computeTStress(systemPtr_->basis());
-                       for (int m=0; m<(systemPtr_->unitCell()).nParams() ; ++m){
-                std::cout<<"Stress"<<m<<"\t"<<"="<< systemPtr_->mixture().TStress[m]<<"\n";
-                 std::cout<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).params()[m]<<"\n";
-              }  
+            for (int m=0; m<(systemPtr_->unitCell()).nParameter() ; ++m){
+               std::cout<<"Stress"<<m<<"\t"<<"="<< systemPtr_->mixture().TStress[m]<<"\n";
+                 //std::cout<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).params()[m]<<"\n";
+               std::cout<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).parameters()[m]<<"\n";
+            }  
       } 
       else
          std::cout<<std::endl;
@@ -140,9 +141,10 @@ namespace Pssp
           if(!cell_){
              systemPtr_->mixture().computeTStress(systemPtr_->basis());
           }
-          for (int m=0; m<(systemPtr_->unitCell()).nParams() ; ++m){
+          for (int m=0; m<(systemPtr_->unitCell()).nParameter() ; ++m){
              std::cout<<"Stress"<<m<<"\t"<<"="<< systemPtr_->mixture().TStress[m]<<"\n";
-             std::cout<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).params()[m]<<"\n";
+             //std::cout<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).params()[m]<<"\n";
+             std::cout<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).parameters()[m]<<"\n";
           }
 
               return 0;
@@ -205,7 +207,8 @@ namespace Pssp
       omHists_.append(systemPtr_->wFields());
 
       if (cell_)
-         CpHists_.append((systemPtr_->unitCell()).params());
+         //CpHists_.append((systemPtr_->unitCell()).params());
+         CpHists_.append((systemPtr_->unitCell()).parameters());
 
       for (int i = 0 ; i < systemPtr_->mixture().nMonomer(); ++i) {
          for (int j = 0; j < systemPtr_->basis().nStar() - 1; ++j) {
@@ -254,7 +257,7 @@ namespace Pssp
 
       if (cell_){
          FArray<double, 6 > tempCp;
-         for (int i = 0; i<(systemPtr_->unitCell()).nParams() ; i++){
+         for (int i = 0; i<(systemPtr_->unitCell()).nParameter() ; i++){
             tempCp [i] = -((systemPtr_->mixture()).TStress [i]);
          }
          devCpHists_.append(tempCp);
@@ -281,9 +284,10 @@ namespace Pssp
       }
 
       if (cell_){
-         for ( int i = 0; i < (systemPtr_->unitCell()).nParams() ; i++) {
+         for ( int i = 0; i < (systemPtr_->unitCell()).nParameter() ; i++) {
             dError +=  devCpHists_[0][i] *  devCpHists_[0][i];
-            wError +=  (systemPtr_->unitCell()).params() [i] * (systemPtr_->unitCell()).params() [i];
+            //wError +=  (systemPtr_->unitCell()).params() [i] * (systemPtr_->unitCell()).params() [i];
+            wError +=  (systemPtr_->unitCell()).parameters() [i] * (systemPtr_->unitCell()).parameters() [i];
          }
       }
       std::cout<<" dError :"<<Dbl(dError)<<std::endl;
@@ -305,12 +309,12 @@ namespace Pssp
       error = temp1;
 
       if (cell_){
-         for ( int i = 0; i < (systemPtr_->unitCell()).nParams() ; i++) {
+         for ( int i = 0; i < (systemPtr_->unitCell()).nParameter() ; i++) {
             if (temp2 < fabs (devCpHists_[0][i]))
                 temp2 = fabs (devCpHists_[0][i]);
          }
 
-         for (int m=0; m<(systemPtr_->unitCell()).nParams() ; ++m){
+         for (int m=0; m<(systemPtr_->unitCell()).nParameter() ; ++m){
             std::cout<<" Stress "<<m<<" :"<< std::setprecision (15)<< systemPtr_->mixture().TStress[m]<<"\n";
          }         
          error = (temp1>(100*temp2)) ? temp1 : (100*temp2);  
@@ -360,7 +364,7 @@ namespace Pssp
 
                if (cell_){
                   elm_cp = 0;
-                  for (int m = 0; m < (systemPtr_->unitCell()).nParams() ; ++m){
+                  for (int m = 0; m < (systemPtr_->unitCell()).nParameter() ; ++m){
                      elm_cp += ((devCpHists_[0][m] - devCpHists_[i+1][m]) * 
                                 (devCpHists_[0][m] - devCpHists_[j+1][m])); 
                   }
@@ -380,7 +384,7 @@ namespace Pssp
 
             if (cell_){
                elm_cp = 0;
-               for (int m = 0; m < (systemPtr_->unitCell()).nParams() ; ++m){
+               for (int m = 0; m < (systemPtr_->unitCell()).nParameter() ; ++m){
                   vM_[i] += ((devCpHists_[0][m] - devCpHists_[i+1][m]) *
                              (devCpHists_[0][m]));
                }
@@ -411,17 +415,21 @@ namespace Pssp
          }
 
          if (cell_){
-            for (int m = 0; m < (systemPtr_->unitCell()).nParams() ; ++m){
-
-                 (systemPtr_->unitCell()).SetParams( CpHists_[0][m] +lambda_* devCpHists_[0][m] ,m);
+            for (int m = 0; m < (systemPtr_->unitCell()).nParameter() ; ++m){
+ 
+                 parameters.append(CpHists_[0][m] +lambda_* devCpHists_[0][m]);
+ 
+                 //(systemPtr_->unitCell()).SetParams( CpHists_[0][m] +lambda_* devCpHists_[0][m] ,m);
             }
 
+                  (systemPtr_->unitCell()).setParameters(parameters);
                   (systemPtr_->unitCell()).setLattice();
                   systemPtr_->mixture().setupUnitCell(systemPtr_->unitCell());
                   systemPtr_->basis().update();
 
-            for (int m=0; m<(systemPtr_->unitCell()).nParams()  ; ++m){
-               std::cout<<" Parameter "<<m<<" :"<<(systemPtr_->unitCell()).params()[m]<<"\n";
+            for (int m=0; m<(systemPtr_->unitCell()).nParameter()  ; ++m){
+               //std::cout<<" Parameter "<<m<<" :"<<(systemPtr_->unitCell()).params()[m]<<"\n";
+               std::cout<<" Parameter "<<m<<" :"<<(systemPtr_->unitCell()).parameters()[m]<<"\n"; 
             }
          } 
 
@@ -452,29 +460,33 @@ namespace Pssp
 
          if(cell_){
 
-            for (int m = 0; m < (systemPtr_->unitCell()).nParams() ; ++m){
+            for (int m = 0; m < (systemPtr_->unitCell()).nParameter() ; ++m){
                wCpArrays_[m] = CpHists_[0][m];
                dCpArrays_[m] = devCpHists_[0][m];
             }
             for (int i = 0; i < nHist_; ++i) {
-               for (int m = 0; m < (systemPtr_->unitCell()).nParams() ; ++m) {
+               for (int m = 0; m < (systemPtr_->unitCell()).nParameter() ; ++m) {
                   wCpArrays_[m] += coeffs_[i] * ( CpHists_[i+1][m]-
                                                    CpHists_[0][m]);
                   dCpArrays_[m] += coeffs_[i] * ( devCpHists_[i+1][m]-
                                                    devCpHists_[0][m]);
                }
             } 
-            for (int m = 0; m < (systemPtr_->unitCell()).nParams() ; ++m){
-               (systemPtr_->unitCell()).SetParams( wCpArrays_[m] + lambda_ * dCpArrays_[m],m);
+            for (int m = 0; m < (systemPtr_->unitCell()).nParameter() ; ++m){
+               //(systemPtr_->unitCell()).SetParams( wCpArrays_[m] + lambda_ * dCpArrays_[m],m);
+
+               parameters [m] = wCpArrays_[m] + lambda_ * dCpArrays_[m];
             }
 
+            (systemPtr_->unitCell()).setParameters(parameters);
             (systemPtr_->unitCell()).setLattice();
             systemPtr_->mixture().setupUnitCell(systemPtr_->unitCell());
 	    systemPtr_->basis().update();
 
-              for (int m=0; m<(systemPtr_->unitCell()).nParams() ; ++m){
-	          std::cout<<" Parameter "<<m<<" :"<< std::setprecision (15)<<(systemPtr_->unitCell()).params()[m]<<"\n";
-              }
+            for (int m=0; m<(systemPtr_->unitCell()).nParameter() ; ++m){
+	         // std::cout<<" Parameter "<<m<<" :"<< std::setprecision (15)<<(systemPtr_->unitCell()).params()[m]<<"\n";
+               std::cout<<" Parameter "<<m<<" :"<< std::setprecision (15)<<(systemPtr_->unitCell()).parameters()[m]<<"\n";
+            }
 
 
          }
