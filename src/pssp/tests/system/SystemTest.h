@@ -37,7 +37,7 @@ public:
       System<1> system;
 
       std::ifstream in;
-      openInputFile("in/System1D", in);
+      openInputFile("in/domainOn/System1D", in);
       system.readParam(in);
       in.close();
    }
@@ -108,36 +108,14 @@ public:
       #endif
       
    }
-   #endif
 
    void testConversion3d()
    {
-      /*printMethod(TEST_FUNC);
-
-      System<3> system;
-      std::ifstream in;
-      openInputFile("in_check/System3D", in);
-
-      System<1> system; 
-      std::ifstream in;
-      openInputFile("in_check/System1D", in);
-
-      system.readParam(in);
-      in.close();
-      std::ifstream command;
-      openInputFile("in_check/Conversion", command);
-      system.readCommands(command);
-      command.close();*/
-
       printMethod(TEST_FUNC);
 
       System<3> system;
       std::ifstream in; 
       openInputFile("in/System3D", in);
-
-     // System<1> system; 
-     // std::ifstream in; 
-     // openInputFile("in/System1D", in);
 
       system.readParam(in);
       in.close();
@@ -146,6 +124,541 @@ public:
       system.readCommands(command);
       command.close();
 
+   }
+   #endif
+
+
+   void testConversion_BCC() 
+   {   
+      printMethod(TEST_FUNC);
+ 
+      System<3> system;
+      std::ifstream in; 
+      openInputFile("in/domainOn/System3D", in);
+          
+      system.readParam(in);
+      in.close();
+      std::ifstream command;
+      openInputFile("in/conv/Conversion_3d_step1", command);
+      system.readCommands(command);
+      command.close();
+ 
+      int nMonomer = system.mixture().nMonomer();
+      DArray<RField<3> > wFields_check;
+      DArray<RField<3> > wFields;
+      wFields_check.allocate(nMonomer);
+      wFields.allocate(nMonomer);
+      int ns = system.basis().nStar();
+      for (int i = 0; i < nMonomer; ++i){
+          wFields_check[i].allocate(ns);
+      }
+
+      for (int i = 0; i < nMonomer; ++i){
+         for (int j = 0; j < ns; ++j){         
+            wFields_check[i][j] = system.wFields() [i] [j];
+         }
+      }
+
+      std::ifstream command_2;
+      openInputFile("in/conv/Conversion_3d_step2", command_2);
+      system.readCommands(command_2);
+      command_2.close();
+
+      bool diff = true;
+      for (int j = 0; j < ns; ++j) {
+         for (int i = 0; i < nMonomer; ++i) {
+           if((std::abs(wFields_check[i][j] - system.wFields()[i][j]) > 1.0E-8)){
+               diff = false;
+               break;
+            }
+            else
+               diff = true;
+         }
+         if(diff==false)
+            break;
+      }
+      TEST_ASSERT(diff);
+   }   
+
+
+   void testConversion_hex() 
+   {   
+      printMethod(TEST_FUNC);
+ 
+      System<2> system;
+      std::ifstream in; 
+      openInputFile("in/domainOn/System2D", in);
+    
+      system.readParam(in);
+      in.close();
+      std::ifstream command;
+      openInputFile("in/conv/Conversion_2d_step1", command);
+      system.readCommands(command);
+      command.close();
+ 
+      int nMonomer = system.mixture().nMonomer();
+      DArray<RField<2> > wFields_check;
+      DArray<RField<2> > wFields;
+      wFields_check.allocate(nMonomer);
+      wFields.allocate(nMonomer);
+      int ns = system.basis().nStar();
+      for (int i = 0; i < nMonomer; ++i){
+          wFields_check[i].allocate(ns);
+      }   
+
+      for (int i = 0; i < nMonomer; ++i){
+         for (int j = 0; j < ns; ++j){    
+            wFields_check[i][j] = system.wFields() [i] [j];
+         }   
+      }   
+
+      std::ifstream command_2;
+      openInputFile("in/conv/Conversion_2d_step2", command_2);
+      system.readCommands(command_2);
+      command_2.close();
+
+      bool diff = true;
+      for (int j = 0; j < ns; ++j) {
+         for (int i = 0; i < nMonomer; ++i) {
+           if((std::abs(wFields_check[i][j] - system.wFields()[i][j]) > 1.0E-8)){
+               diff = false;
+               break;
+            }   
+            else
+               diff = true;
+         }   
+         if(diff==false)
+            break;
+      }   
+      TEST_ASSERT(diff);
+   }  
+
+
+   void testConversion_lam() 
+   {   
+      printMethod(TEST_FUNC);
+ 
+      System<1> system;
+      std::ifstream in; 
+      openInputFile("in/domainOn/System1D", in);
+    
+      system.readParam(in);
+      in.close();
+      std::ifstream command;
+      openInputFile("in/conv/Conversion_1d_step1", command);
+      system.readCommands(command);
+      command.close();
+ 
+      int nMonomer = system.mixture().nMonomer();
+      DArray<RField<1> > wFields_check;
+      DArray<RField<1> > wFields;
+      wFields_check.allocate(nMonomer);
+      wFields.allocate(nMonomer);
+      int ns = system.basis().nStar();
+      for (int i = 0; i < nMonomer; ++i){
+          wFields_check[i].allocate(ns);
+      }   
+
+      for (int i = 0; i < nMonomer; ++i){
+         for (int j = 0; j < ns; ++j){    
+            wFields_check[i][j] = system.wFields() [i] [j];
+         }   
+      }   
+
+      std::ifstream command_2;
+      openInputFile("in/conv/Conversion_1d_step2", command_2);
+      system.readCommands(command_2);
+      command_2.close();
+
+      bool diff = true;
+      for (int j = 0; j < ns; ++j) {
+         for (int i = 0; i < nMonomer; ++i) {
+           if((std::abs(wFields_check[i][j] - system.wFields()[i][j]) > 1.0E-8)){
+               diff = false;
+               break;
+            }   
+            else
+               diff = true;
+         }   
+         if(diff==false)
+            break;
+      }   
+      TEST_ASSERT(diff);
+   }  
+
+   void testIterate_bcc_domainOn()
+   {
+      printMethod(TEST_FUNC);
+
+      System<3> system;
+      std::ifstream in; 
+      openInputFile("in/domainOn/System3D", in);
+
+      system.readParam(in);
+      in.close();
+      std::ifstream command;
+      openInputFile("in/domainOn/ReadOmega_bcc", command);
+      system.readCommands(command);
+      command.close();
+
+      int nMonomer = system.mixture().nMonomer();
+      DArray<RField<3> > wFields_check;
+      DArray<RField<3> > wFields;
+      wFields_check.allocate(nMonomer);
+      wFields.allocate(nMonomer);
+      int ns = system.basis().nStar();
+      for (int i = 0; i < nMonomer; ++i){
+          wFields_check[i].allocate(ns);
+      }   
+
+      for (int i = 0; i < nMonomer; ++i){
+         for (int j = 0; j < ns; ++j){
+            wFields_check[i][j] = system.wFields() [i] [j];
+         }   
+      }   
+
+      std::ifstream command_2;
+      openInputFile("in/domainOn/Iterate3d", command_2);
+      system.readCommands(command_2);
+      command_2.close();
+
+      bool diff = true;
+      for (int j = 0; j < ns; ++j) {
+         for (int i = 0; i < nMonomer; ++i) {
+           if((std::abs(wFields_check[i][j] - system.wFields()[i][j]) >=  1.09288e-07)){ 
+               // The above is the maximum error in the omega field.
+               // Occurs for the second star.
+               diff = false;
+               std::cout <<"This is error for break:"<< 
+                  (std::abs(wFields_check[i][j] - system.wFields()[i][j])) <<std::endl;
+               std::cout <<"ns = "<< j << std::endl;
+               break;
+            }
+            else
+               diff = true;
+         }
+         if(diff==false){
+
+            break;
+         }
+      }
+      TEST_ASSERT(diff);
+
+   }
+
+
+  void testIterate_bcc_domainOff()
+   {
+      printMethod(TEST_FUNC);
+
+      System<3> system;
+      std::ifstream in;
+      openInputFile("in/domainOff/System3D", in); 
+
+      system.readParam(in);
+      in.close();
+      std::ifstream command;
+      openInputFile("in/domainOff/ReadOmega_bcc", command);
+      system.readCommands(command);
+      command.close();
+
+      int nMonomer = system.mixture().nMonomer();
+      DArray<RField<3> > wFields_check;
+      DArray<RField<3> > wFields;
+      wFields_check.allocate(nMonomer);
+      wFields.allocate(nMonomer);
+      int ns = system.basis().nStar();
+      for (int i = 0; i < nMonomer; ++i){
+          wFields_check[i].allocate(ns);
+      }    
+
+      for (int i = 0; i < nMonomer; ++i){
+         for (int j = 0; j < ns; ++j){
+            wFields_check[i][j] = system.wFields() [i] [j]; 
+         }    
+      }    
+
+      std::ifstream command_2;
+      openInputFile("in/domainOff/Iterate3d", command_2);
+      system.readCommands(command_2);
+      command_2.close();
+
+      bool diff = true;
+      for (int j = 0; j < ns; ++j) {
+         for (int i = 0; i < nMonomer; ++i) {
+           if((std::abs(wFields_check[i][j] - system.wFields()[i][j]) >= 1.02291e-07)){
+               // The above is the maximum error in the omega field.
+               // Occurs for the second star.               
+               diff = false;
+               std::cout <<"This is error for break:"<< 
+                  (std::abs(wFields_check[i][j] - system.wFields()[i][j])) <<std::endl;
+               std::cout <<"ns = "<< j << std::endl;
+               break;
+            }    
+            else 
+               diff = true;
+         }
+         if(diff==false){
+            break;
+         }
+      }
+      bool stress = false;
+      if(std::abs(system.mixture().TStress[0] - 0.005242863) < 1.0E-8){
+         //0.005242863 is the stress calculated for this omega field 
+         //for no stress relaxation using Fortran
+         stress = true;
+      }
+
+      TEST_ASSERT(stress);
+      TEST_ASSERT(diff);
+   }
+
+   void testIterate_hex_domainOn()
+   {
+      printMethod(TEST_FUNC);
+
+      System<2> system;
+      std::ifstream in;
+      openInputFile("in/domainOn/System2D", in);
+
+      system.readParam(in);
+      in.close();
+      std::ifstream command;
+      openInputFile("in/domainOn/ReadOmega_hex", command);
+      system.readCommands(command);
+      command.close();
+
+      int nMonomer = system.mixture().nMonomer();
+      DArray<RField<2> > wFields_check;
+      DArray<RField<2> > wFields;
+      wFields_check.allocate(nMonomer);
+      wFields.allocate(nMonomer);
+      int ns = system.basis().nStar();
+      for (int i = 0; i < nMonomer; ++i){
+          wFields_check[i].allocate(ns);
+      }
+
+      for (int i = 0; i < nMonomer; ++i){
+         for (int j = 0; j < ns; ++j){
+            wFields_check[i][j] = system.wFields() [i] [j];
+         }
+      }
+
+      std::ifstream command_2;
+      openInputFile("in/domainOn/Iterate2d", command_2);
+      system.readCommands(command_2);
+      command_2.close();
+
+      bool diff = true;
+      for (int j = 0; j < ns; ++j) {
+         for (int i = 0; i < nMonomer; ++i) {
+           if((std::abs(wFields_check[i][j] - system.wFields()[i][j]) >= 2.58007e-07)){
+               // The above is the maximum error in the omega field.
+               // Occurs for the first star
+               diff = false;
+               std::cout <<"This is error for break:"<< 
+                  (std::abs(wFields_check[i][j] - system.wFields()[i][j])) <<std::endl;
+               std::cout <<"ns = "<< j << std::endl;
+               break;
+            }
+            else
+               diff = true;
+         }
+         if(diff==false){
+
+            break;
+         }
+      }
+      TEST_ASSERT(diff);
+   }
+
+   void testIterate_hex_domainOff()
+   {
+      printMethod(TEST_FUNC);
+
+      System<2> system;
+      std::ifstream in;
+      openInputFile("in/domainOff/System2D", in); 
+
+      system.readParam(in);
+      in.close();
+      std::ifstream command;
+      openInputFile("in/domainOff/ReadOmega_hex", command);
+      system.readCommands(command);
+      command.close();
+
+      int nMonomer = system.mixture().nMonomer();
+      DArray<RField<2> > wFields_check;
+      DArray<RField<2> > wFields;
+      wFields_check.allocate(nMonomer);
+      wFields.allocate(nMonomer);
+      int ns = system.basis().nStar();
+      for (int i = 0; i < nMonomer; ++i){
+          wFields_check[i].allocate(ns);
+      }    
+
+      for (int i = 0; i < nMonomer; ++i){
+         for (int j = 0; j < ns; ++j){
+            wFields_check[i][j] = system.wFields() [i] [j]; 
+         }    
+      }    
+
+      std::ifstream command_2;
+      openInputFile("in/domainOff/Iterate2d", command_2);
+      system.readCommands(command_2);
+      command_2.close();
+
+      bool diff = true;
+      for (int j = 0; j < ns; ++j) {
+         for (int i = 0; i < nMonomer; ++i) {
+           if((std::abs(wFields_check[i][j] - system.wFields()[i][j]) >= 2.60828e-07)){
+               // The above is the minimum error in the omega field.
+               // Occurs for the first star            
+               diff = false;
+               std::cout <<"This is error for break:"<< 
+                  (std::abs(wFields_check[i][j] - system.wFields()[i][j])) <<std::endl;
+               std::cout <<"ns = "<< j << std::endl;
+               break;
+            }    
+            else 
+               diff = true;
+         }    
+         if(diff==false){
+            break;
+         }    
+      }    
+      bool stress = false;
+      if(std::abs(system.mixture().TStress[0] - 0.010633960) < 1.0E-8){
+         //0.010633960 is the stress calculated 
+         //for this omega field for no stress relaxation using Fortran
+         stress = true;
+      }
+
+      TEST_ASSERT(stress);
+      TEST_ASSERT(diff);
+   }
+
+
+   void testIterate_lam_domainOn()
+   {
+      printMethod(TEST_FUNC);
+ 
+      System<1> system;
+      std::ifstream in; 
+      openInputFile("in/domainOn/System1D", in);
+    
+      system.readParam(in);
+      in.close();
+      std::ifstream command;
+      openInputFile("in/domainOn/ReadOmega_lam", command);
+      system.readCommands(command);
+      command.close();
+ 
+      int nMonomer = system.mixture().nMonomer();
+      DArray<RField<1> > wFields_check;
+      DArray<RField<1> > wFields;
+      wFields_check.allocate(nMonomer);
+      wFields.allocate(nMonomer);
+      int ns = system.basis().nStar();
+      for (int i = 0; i < nMonomer; ++i){
+          wFields_check[i].allocate(ns);
+      }   
+
+      for (int i = 0; i < nMonomer; ++i){
+         for (int j = 0; j < ns; ++j){    
+            wFields_check[i][j] = system.wFields() [i] [j];
+         }   
+      }   
+
+      std::ifstream command_2;
+      openInputFile("in/domainOn/Iterate1d", command_2);
+      system.readCommands(command_2);
+      command_2.close();
+
+      bool diff = true;
+      for (int j = 0; j < ns; ++j) {
+         for (int i = 0; i < nMonomer; ++i) {
+           if((std::abs(wFields_check[i][j] - system.wFields()[i][j]) > 1.0E-8)){
+               diff = false;
+               std::cout <<"This is error for break:"<< 
+                  (std::abs(wFields_check[i][j] - system.wFields()[i][j])) <<std::endl;
+               std::cout <<"ns = "<< j << std::endl;
+               break;
+            }   
+            else
+               diff = true;
+         }   
+         if(diff==false){
+            break;
+         }
+      }   
+      TEST_ASSERT(diff);
+   }
+
+   void testIterate_lam_domainOff()
+   {
+      printMethod(TEST_FUNC);
+
+      System<1> system;
+      std::ifstream in;
+      openInputFile("in/domainOff/System1D", in); 
+
+      system.readParam(in);
+      in.close();
+      std::ifstream command;
+      openInputFile("in/domainOff/ReadOmega_lam", command);
+      system.readCommands(command);
+      command.close();
+
+      int nMonomer = system.mixture().nMonomer();
+      DArray<RField<1> > wFields_check;
+      DArray<RField<1> > wFields;
+      wFields_check.allocate(nMonomer);
+      wFields.allocate(nMonomer);
+      int ns = system.basis().nStar();
+      for (int i = 0; i < nMonomer; ++i){
+          wFields_check[i].allocate(ns);
+      }    
+
+      for (int i = 0; i < nMonomer; ++i){
+         for (int j = 0; j < ns; ++j){
+            wFields_check[i][j] = system.wFields() [i] [j]; 
+         }    
+      }    
+
+      std::ifstream command_2;
+      openInputFile("in/domainOff/Iterate1d", command_2);
+      system.readCommands(command_2);
+      command_2.close();
+
+      bool diff = true;
+      for (int j = 0; j < ns; ++j) {
+         for (int i = 0; i < nMonomer; ++i) {
+           if((std::abs(wFields_check[i][j] - system.wFields()[i][j]) >= 5.07058e-08)){
+               // The above is the minimum error in the omega field.
+               // Occurs for the first star                 
+               diff = false;
+               std::cout <<"This is error for break:"<< 
+                  (std::abs(wFields_check[i][j] - system.wFields()[i][j])) <<std::endl;
+               std::cout <<"ns = "<< j << std::endl;
+               break;
+            }    
+            else 
+               diff = true;
+         }    
+         if(diff==false){
+            break;
+         }    
+      }    
+      bool stress = false;
+      if(std::abs(system.mixture().TStress[0] - 0.006583929) < 1.0E-8){
+         //0.006583929 is the stress calculated 
+         //for this omega field for no stress relaxation using Fortran
+         stress = true;
+      }
+
+      TEST_ASSERT(stress);
+      TEST_ASSERT(diff);
    }
 
    void testIterate_BCC() 
@@ -169,499 +682,24 @@ public:
 
    }
 
-   void testIterate3d() 
-   {   
-      printMethod(TEST_FUNC);
- 
-      System<3> system;
-      std::ifstream in; 
-      openInputFile("in/System3D", in);
-     
-      //System<1> system;
-      //std::ifstream in; 
-      //openInputFile("in_check/System1D", in);
-     
-      system.readParam(in);
-      in.close();
-      std::ifstream command;
-      openInputFile("in/Iterate3d", command);
-      system.readCommands(command);
-      command.close();
- 
-      int nMonomer = system.mixture().nMonomer();
-      DArray<RField<3> > cFields_check;
-      DArray<RField<3>  > cFields;
-      cFields_check.allocate(nMonomer);
-      cFields.allocate(nMonomer);
-      double nx = system.mesh().size();
-      for (int i = 0; i < nMonomer; ++i) {
-          cFields_check[i].allocate(nx);
-          cFields[i].allocate(nx);
-      }   
- 
-      std::ifstream verify;
-      openInputFile("contents/rho_rgrid_bcc", verify);
-
-      std::string label;
-      std::string uCell;
-      std::string groupName;
-      IntVec<3> nGrid;
-      int nM; 
-      int ver1, ver2;
-      int dim;    
-      int nCellParams;
-      FArray<double,6> params;
-
-      verify >> label;
-      UTIL_CHECK(label == "format");
-      verify >> ver1;
-      verify >> ver2;
-
-      verify >> label;
-      UTIL_CHECK(label == "dim");
-      verify >> dim;
-      UTIL_CHECK(dim == 3);
-
-      verify >> label;
-      UTIL_CHECK(label == "crystal_system");
-      verify >> uCell;
-
-      verify >> label;
-      UTIL_CHECK(label == "N_cell_param");
-      verify >> nCellParams;
-
-      verify >> label;
-      UTIL_CHECK(label == "cell_param");
-      for (int i = 0; i < nCellParams; ++i) {
-         verify >> params[i];
-      }
-
-      verify >> label;
-      UTIL_CHECK(label == "group_name");
-      verify >> groupName;
-
-      verify >> label;
-      UTIL_CHECK(label == "N_monomer");
-      verify >> nM;
-      UTIL_CHECK(nM > 0);
-      UTIL_CHECK(nM == system.mixture().nMonomer());
-
-      verify >> label;
-      UTIL_CHECK(label == "ngrid");
-      verify >> nGrid;
-      UTIL_CHECK(nGrid == system.mesh().dimensions());
-
-      // Read Fields;
-      MeshIterator<3> itr(system.mesh().dimensions());
-      for (itr.begin(); !itr.atEnd(); ++itr) {
-         for (int i = 0; i < nM; ++i) {
-            verify >>std::setprecision(15)>>cFields[i][itr.rank()];
-         }
-      }
-
-     verify.close();
-
-      std::ifstream verify_check;
-      openInputFile("out/rho_check_bcc", verify_check);
-
-      verify_check >> label;
-      UTIL_CHECK(label == "format");
-      verify_check >> ver1;
-      verify_check >> ver2;
-
-      verify_check >> label;
-      UTIL_CHECK(label == "dim");
-      verify_check >> dim;
-      UTIL_CHECK(dim == 3);
-
-      verify_check >> label;
-      UTIL_CHECK(label == "crystal_system");
-      verify_check >> uCell;
-
-      verify_check >> label;
-      UTIL_CHECK(label == "N_cell_param");
-      verify_check >> nCellParams;
-
-      verify_check >> label;
-      UTIL_CHECK(label == "cell_param");
-      for (int i = 0; i < nCellParams; ++i) {
-         verify_check >> params[i];
-      }
-
-      verify_check >> label;
-      UTIL_CHECK(label == "group_name");
-      verify_check >> groupName;
-
-      verify_check >> label;
-      UTIL_CHECK(label == "N_monomer");
-      verify_check >> nM;
-      UTIL_CHECK(nM > 0);
-      UTIL_CHECK(nM == system.mixture().nMonomer());
-
-      verify_check >> label;
-      UTIL_CHECK(label == "ngrid");
-      verify_check >> nGrid;
-      UTIL_CHECK(nGrid == system.mesh().dimensions());
- 
-      // Read Fields;
-      for (itr.begin(); !itr.atEnd(); ++itr) {
-         for (int i = 0; i < nM; ++i) {
-            verify_check >>std::setprecision(15)>>cFields_check[i][itr.rank()];
-         }
-      }
-
-      verify_check.close();
-
-      bool diff = true;
-      for (itr.begin(); !itr.atEnd(); ++itr) {
-         for (int i = 0; i < nM; ++i) {
-            if((std::abs(cFields_check[i][itr.rank()]-cFields[i][itr.rank()]))>1.0E-8){
-               diff = false;
-               break;
-            }
-            else
-               diff = true;
-         }
-         if(diff==false)
-            break;   
-      }
-   
-      TEST_ASSERT(diff);   
-
-   }
-
-   void testIterate1d()
-   {
-     printMethod(TEST_FUNC);
-
-     System<1> system;
-     std::ifstream in;
-     openInputFile("in/System1D", in);
-    
-     system.readParam(in);
-     in.close();
-     std::ifstream command;
-     openInputFile("in/Iterate1d", command);
-     system.readCommands(command);
-     command.close();
-
-     int nMonomer = system.mixture().nMonomer();
-     DArray<RField<1> > cFields_check;
-     DArray<RField<1>  > cFields;
-     cFields_check.allocate(nMonomer);
-     cFields.allocate(nMonomer);
-     double nx = system.mesh().size();
-     for (int i = 0; i < nMonomer; ++i) {
-         cFields_check[i].allocate(nx);
-         cFields[i].allocate(nx);
-     }
-
-     std::ifstream verify;
-     openInputFile("contents/rho_rgrid_lam", verify);
-
-      std::string label;
-      std::string uCell;
-      std::string groupName;
-      IntVec<1> nGrid;
-      int nM;
-      int ver1, ver2;
-      int dim;      
-      int nCellParams;
-      FArray<double,6> params;
-
-      verify >> label;
-      UTIL_CHECK(label == "format");
-      verify >> ver1;
-      verify >> ver2;
- 
-      verify >> label;
-      UTIL_CHECK(label == "dim");
-      verify >> dim;
-      UTIL_CHECK(dim == 1);
-
-      verify >> label;
-      UTIL_CHECK(label == "crystal_system");
-      verify >> uCell;
-      
-      verify >> label;
-      UTIL_CHECK(label == "N_cell_param");
-      verify >> nCellParams;
-
-      verify >> label;
-      UTIL_CHECK(label == "cell_param");
-      for (int i = 0; i < nCellParams; ++i) {
-         verify >> params[i];
-      }
- 
-      verify >> label;
-      UTIL_CHECK(label == "group_name");
-      verify >> groupName;
-
-      verify >> label;
-      UTIL_CHECK(label == "N_monomer");
-      verify >> nM;
-      UTIL_CHECK(nM > 0);
-      UTIL_CHECK(nM == system.mixture().nMonomer());
-
-      verify >> label;
-      UTIL_CHECK(label == "ngrid");
-      verify >> nGrid;
-      UTIL_CHECK(nGrid == system.mesh().dimensions());
-
-      // Read Fields;
-      MeshIterator<1> itr(system.mesh().dimensions());
-      for (itr.begin(); !itr.atEnd(); ++itr) {
-         for (int i = 0; i < nM; ++i) {
-            verify >>std::setprecision(15)>>cFields[i][itr.rank()];
-         }
-      } 
-
-     verify.close(); 
-
-
-      std::ifstream verify_check;
-      openInputFile("out/rho_check_lam", verify_check);
-
-      verify_check >> label;
-      UTIL_CHECK(label == "format");
-      verify_check >> ver1;
-      verify_check >> ver2;
-
-      verify_check >> label;
-      UTIL_CHECK(label == "dim");
-      verify_check >> dim;
-      UTIL_CHECK(dim == 1);
-
-      verify_check >> label;
-      UTIL_CHECK(label == "crystal_system");
-      verify_check >> uCell;
-
-      verify_check >> label;
-      UTIL_CHECK(label == "N_cell_param");
-      verify_check >> nCellParams;
-
-      verify_check >> label;
-      UTIL_CHECK(label == "cell_param");
-      for (int i = 0; i < nCellParams; ++i) {
-         verify_check >> params[i];
-      }   
- 
-      verify_check >> label;
-      UTIL_CHECK(label == "group_name");
-      verify_check >> groupName;
-
-      verify_check >> label;
-      UTIL_CHECK(label == "N_monomer");
-      verify_check >> nM; 
-      UTIL_CHECK(nM > 0); 
-      UTIL_CHECK(nM == system.mixture().nMonomer());
-
-      verify_check >> label;
-      UTIL_CHECK(label == "ngrid");
-      verify_check >> nGrid;
-      UTIL_CHECK(nGrid == system.mesh().dimensions());
-      
-      // Read Fields;
-      for (itr.begin(); !itr.atEnd(); ++itr) {
-         for (int i = 0; i < nM; ++i) {
-            verify_check >>std::setprecision(15)>>cFields_check[i][itr.rank()];
-         }
-      }
-
-      verify_check.close();
-
-      bool diff = true;
-      for (itr.begin(); !itr.atEnd(); ++itr) {
-         for (int i = 0; i < nM; ++i) {
-            if((std::abs(cFields_check[i][itr.rank()]-cFields[i][itr.rank()]))>1.0E-8){
-               diff = false;
-               break;
-            }
-            else
-               diff = true;
-         }
-         if(diff==false)
-            break;   
-      }
-   
-      TEST_ASSERT(diff);   
-
-   }
-
-
-
-
-   void testIterate2d()
-   {
-     printMethod(TEST_FUNC);
-
-     System<2> system;
-     std::ifstream in;
-     openInputFile("in/System2D", in);
-
-     system.readParam(in);
-     in.close();
-     std::ifstream command;
-     openInputFile("in/Iterate2d", command);
-     system.readCommands(command);
-     command.close();
-
-     int nMonomer = system.mixture().nMonomer();
-     DArray<RField<2> > cFields_check;
-     DArray<RField<2>  > cFields;
-     cFields_check.allocate(nMonomer);
-     cFields.allocate(nMonomer);
-     double nx = system.mesh().size();
-     for (int i = 0; i < nMonomer; ++i) {
-         cFields_check[i].allocate(nx);
-         cFields[i].allocate(nx);
-     }
-
-     std::ifstream verify;
-     openInputFile("contents/rho_rgrid_hex", verify);
-
-      std::string label;
-      std::string uCell;
-      std::string groupName;
-      IntVec<2> nGrid;
-      int nM;
-      int ver1, ver2;
-      int dim;
-      int nCellParams;
-      FArray<double,6> params;
-
-      verify >> label;
-      UTIL_CHECK(label == "format");
-      verify >> ver1;
-      verify >> ver2;
-
-      verify >> label;
-      UTIL_CHECK(label == "dim");
-      verify >> dim;
-      UTIL_CHECK(dim == 2);
-
-      verify >> label;
-      UTIL_CHECK(label == "crystal_system");
-      verify >> uCell;
-
-      verify >> label;
-      UTIL_CHECK(label == "N_cell_param");
-      verify >> nCellParams;
-
-      verify >> label;
-      UTIL_CHECK(label == "cell_param");
-      for (int i = 0; i < nCellParams; ++i) {
-         verify >> params[i];
-      }
- 
-      verify >> label;
-      UTIL_CHECK(label == "group_name");
-      verify >> groupName;
-
-      verify >> label;
-      UTIL_CHECK(label == "N_monomer");
-      verify >> nM;
-      UTIL_CHECK(nM > 0);
-      UTIL_CHECK(nM == system.mixture().nMonomer());
-
-      verify >> label;
-      UTIL_CHECK(label == "ngrid");
-      verify >> nGrid;
-      UTIL_CHECK(nGrid == system.mesh().dimensions());
-
-      // Read Fields;
-      MeshIterator<2> itr(system.mesh().dimensions());
-      for (itr.begin(); !itr.atEnd(); ++itr) {
-         for (int i = 0; i < nM; ++i) {
-            verify >>std::setprecision(15)>>cFields[i][itr.rank()];
-         }
-      } 
-
-     verify.close();
-
-
-      std::ifstream verify_check;
-      openInputFile("out/rho_check_hex", verify_check);
-
-      verify_check >> label;
-      UTIL_CHECK(label == "format");
-      verify_check >> ver1;
-      verify_check >> ver2;
-
-      verify_check >> label;
-      UTIL_CHECK(label == "dim");
-      verify_check >> dim;
-      UTIL_CHECK(dim == 2);
-
-      verify_check >> label;
-      UTIL_CHECK(label == "crystal_system");
-      verify_check >> uCell;
-
-      verify_check >> label;
-      UTIL_CHECK(label == "N_cell_param");
-      verify_check >> nCellParams;
-
-      verify_check >> label;
-      UTIL_CHECK(label == "cell_param");
-      for (int i = 0; i < nCellParams; ++i) {
-         verify_check >> params[i];
-      }
- 
-      verify_check >> label;
-      UTIL_CHECK(label == "group_name");
-      verify_check >> groupName;
-
-      verify_check >> label;
-      UTIL_CHECK(label == "N_monomer");
-      verify_check >> nM;
-      UTIL_CHECK(nM > 0);
-      UTIL_CHECK(nM == system.mixture().nMonomer());
-
-      verify_check >> label;
-      UTIL_CHECK(label == "ngrid");
-      verify_check >> nGrid;
-      UTIL_CHECK(nGrid == system.mesh().dimensions());
-
-      // Read Fields;
-      for (itr.begin(); !itr.atEnd(); ++itr) {
-         for (int i = 0; i < nM; ++i) {
-            verify_check >>std::setprecision(15)>>cFields_check[i][itr.rank()];
-         }
-      }
-
-      verify_check.close();
-
-      bool diff = true;
-      for (itr.begin(); !itr.atEnd(); ++itr) {
-         for (int i = 0; i < nM; ++i) {
-           if((std::abs(cFields_check[i][itr.rank()]-cFields[i][itr.rank()]))>1.0E-8){
-               diff = false;
-               break;
-            }
-            else
-               diff = true;
-         }
-         if(diff==false)
-            break;
-      }
- 
-      TEST_ASSERT(diff);
-
-   }
-
-
-
 
 };
 
 TEST_BEGIN(SystemTest)
 TEST_ADD(SystemTest, testConstructor1D)
 TEST_ADD(SystemTest, testReadParameters1D)
-TEST_ADD(SystemTest, testConversion3d)
-TEST_ADD(SystemTest, testIterate_BCC)
-//TEST_ADD(SystemTest, testIterate3d)
-//TEST_ADD(SystemTest, testIterate1d)
-//TEST_ADD(SystemTest, testIterate2d)
+
+TEST_ADD(SystemTest, testConversion_BCC)
+TEST_ADD(SystemTest, testConversion_hex)
+TEST_ADD(SystemTest, testConversion_lam)
+TEST_ADD(SystemTest, testIterate_bcc_domainOn)
+TEST_ADD(SystemTest, testIterate_hex_domainOn)
+TEST_ADD(SystemTest, testIterate_lam_domainOn)
+TEST_ADD(SystemTest, testIterate_bcc_domainOff)
+TEST_ADD(SystemTest, testIterate_hex_domainOff)
+TEST_ADD(SystemTest, testIterate_lam_domainOff)
+
+//TEST_ADD(SystemTest, testIterate_BCC)
 TEST_END(SystemTest)
 
 #endif

@@ -82,6 +82,31 @@ namespace Pscf
          drBasis_[0](1,1) = 1.0;
          drBasis_[1](2,2) = 1.0;
       } else 
+      if (lattice_ == UnitCell<3>::Hexagonal) {
+         UTIL_CHECK(nParameter_ == 2);
+         double a = parameters_[0];
+         double c = parameters_[1];
+         double rt3 = sqrt(3.0);
+
+         rBasis_[0][0] = a;
+         rBasis_[0][1] = 0.0;
+         rBasis_[1][0] = -0.5*a;
+         rBasis_[1][1] = 0.5*rt3*a;
+         rBasis_[2][2] = c;
+
+         drBasis_[0](0, 0) = 1.0;
+         drBasis_[0](0, 1) = 0.0;
+         drBasis_[0](1, 0) = -0.5;
+         drBasis_[0](1, 1) = 0.5*rt3;
+         drBasis_[1](2, 2) = 1.0;
+
+         kBasis_[0][0] = twoPi/a;
+         kBasis_[0][1] = twoPi/(rt3*a);
+         kBasis_[1][0] = 0.0;
+         kBasis_[1][1] = twoPi/(0.5*rt3*a);
+         kBasis_[2][2] = twoPi/(c);
+ 
+      }else 
       if (lattice_ == UnitCell<3>::Orthorhombic) {
          UTIL_CHECK(nParameter_ == 3);
          for (i=0; i < 3; ++i) { 

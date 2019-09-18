@@ -49,11 +49,6 @@ namespace Pscf
       void setLattice();
  
       /** 
-      * Set the parameters of unit cell.
-      */  
-      void SetParams(double val, int m);
-
-      /** 
       * Set all the parameters of unit cell (new version).
       * 
       * \param parameters array of unit cell parameters
@@ -66,19 +61,9 @@ namespace Pscf
       virtual double ksq(IntVec<D> const & k) const;
    
       /**
-      * Get the number of Parameters in the unit cell.
-      */
-      int nParams() const;
-
-      /**
       * Get the number of parameters in the unit cell (new version).
       */
       int nParameter() const;
-
-      /** 
-      * Get the parameters of unit cell.
-      */  
-      FArray<double, 6> params();
 
       /** 
       * Get the parameters of this unit cell (new version).
@@ -213,24 +198,8 @@ namespace Pscf
    */
    template <int D>
    inline
-   int UnitCellBase<D>::nParams() const
-   {  return nParameter_;  }
-
-   /*
-   * Get the number of Parameters in the unit cell.
-   */
-   template <int D>
-   inline
    int UnitCellBase<D>::nParameter() const
-   {  return nParameter_;  }
-
-   /*
-   * Get the unit cell parameters.
-   */
-   template <int D>
-   inline
-   FArray<double, 6> UnitCellBase<D>::params()
-   {  return parameters_;  }
+   {  return nParameter_;  } 
 
    /*
    * Get the unit cell parameters.
@@ -299,14 +268,6 @@ namespace Pscf
    inline
    const double UnitCellBase<D>::drrBasis(int k, int i, int j) const
    {  return drrBasis_[k](i, j);  }
-
-   /*
-   * Set the parameters in the unit cell.
-   */
-   template <int D>
-   inline
-   void UnitCellBase<D>::SetParams(double val, int m)
-   {  parameters_[m] = val;}
 
    /*
    * Set all the parameters in the unit cell.

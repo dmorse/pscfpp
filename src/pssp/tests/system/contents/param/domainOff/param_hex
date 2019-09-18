@@ -1,4 +1,4 @@
- format  1  0
+format  1  0
 
 MONOMERS
 N_monomer
@@ -12,13 +12,13 @@ N_chain
 N_block
               2
 block_monomer
-              1              2
+              1              2               
 block_length
-  3.0000000E-01  7.0000000E-01
+  3.0000000E-01      7.0000000E-01      
 
 COMPOSITION
 ensemble
-              0
+              0   
 phi_chain
   1.0000000E+00
 
@@ -30,53 +30,38 @@ chi
 
 UNIT_CELL
 dim
-              2
+              2   
 crystal_system
     'hexagonal'
 N_cell_param
-              1
+              1   
 cell_param
-  1.77703537E+00
+ 1.7008668698
 
 DISCRETIZATION
 ngrid
-             24             24
+	30	30
 chain_step
   1.0000000E-02
 
 BASIS
 group_name
-      '1'
-
-RGRID_TO_FIELD
-input_filename
-	'rho_rgrid'
-output_filename
-	'rho'
-
-RHO_TO_OMEGA
-input_filename
-	'rho'
-output_filename
-	'omega'
+      'P 6 m m'
 
 ITERATE
 input_filename
            'omega'
 output_prefix
-               ''
+           'converged/'
 max_itr
-             300
+             1000
 error_max
- 	 1.0000000E-10
+  1.0000000E-12
 domain
-              T
+              F
 itr_algo
            'AM'
 N_hist
-	10
-
-
+        30
 
 FINISH
-

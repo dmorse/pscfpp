@@ -54,11 +54,19 @@ namespace Pssp {
       meshPtr_ = &mesh;
 
       // Set contour length discretization
-      ns_ = floor(length()/ds + 0.5) + 1;
-      if (ns_%2 == 0) {
-         ns_ += 1;
-      }
-      ds_ = length()/double(ns_ - 1);
+      //ns_ = floor(length()/ds + 0.5) + 1;
+      //if (ns_%2 == 0) {
+      //   ns_ += 1;
+      //}
+      //ds_ = length()/double(ns_ - 1);
+
+      int tempNs;
+      tempNs = (floor(length()/(2.0 *ds) + 0.5));
+      if (tempNs == 0) {
+         tempNs = 1;
+      } 
+      ds_ = (length()/double(tempNs * 2.0));
+      ns_ = (length()/ds_)  + 1;
 
       // Compute Fourier space kMeshDimensions_ 
       for (int i = 0; i < D; ++i) {

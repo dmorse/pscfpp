@@ -446,7 +446,42 @@ namespace Pssp
             writeRFields(outFile, cFieldGrids());
             outFile.close();
 
-         } else 
+         } else
+         if (command == "OMEGA_TO_RHO") {
+            Log::file() << std::endl;
+            Log::file() << std::endl;
+            
+            std::string inFileName;
+            std::string outFileName;
+
+            in >> inFileName;
+            Log::file() << " " << Str(inFileName, 20) <<std::endl;
+            in >> outFileName;
+            Log::file() << " " << Str(outFileName, 20) << std::endl;       
+             
+            std::ifstream inFile;
+            fileMaster().openInputFile(inFileName, inFile);
+            readFields(inFile, wFields());
+            inFile.close(); 
+
+            for (int j = 0; j < mixture().nMonomer(); ++j) {
+               basis().convertFieldComponentsToDft(wField(j),wFieldDft(j));
+               fft().inverseTransform(wFieldDft(j),wFieldGrid(j));
+            }   
+
+            mixture().compute(wFieldGrids(), cFieldGrids());
+
+            for (int i = 0; i < mixture().nMonomer(); ++i) {
+               fft().forwardTransform(cFieldGrid(i), cFieldDft(i));
+               basis().convertFieldDftToComponents(cFieldDft(i),cField(i));
+            }   
+    
+            std::ofstream outFile;
+            fileMaster().openOutputFile(outFileName, outFile);
+            writeFields(outFile, cFields());
+            outFile.close();
+
+         }else
          if (command == "RHO_TO_OMEGA") {
             std::string inFileName;
             std::string outFileName;
@@ -577,7 +612,7 @@ namespace Pssp
 
          // Read components for different monomers
          for (j = 0; j < nMonomer; ++j) {
-            in >> temp [j];
+            in >> std::setprecision(15) >> temp [j];
          }
 
          // Read characteristic wave and number of wavectors in star.
