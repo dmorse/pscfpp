@@ -28,7 +28,7 @@ The following system unit test have been written:
 
 #Files
 
-The contents folder has also files. 
+The contents folder also has these folders. 
 
 contents/omega/domainOn  : This folder has the respective omega files which are the 
                            converged solution generated from the fortran code.
