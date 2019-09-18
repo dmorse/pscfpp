@@ -69,10 +69,6 @@ namespace Pssp
       dArrays_.allocate(systemPtr_->mixture().nMonomer());
       tempDev.allocate(systemPtr_->mixture().nMonomer());
      
-     /// Depending on the value of cell_, Allocate RingBuffer(N_hist+1, Nparam) to store cell parameter cp_hist
-     /// First element of the ring buffer will be the given input to it 
-     /// Depending on the value of cell_, dev_cp(N_hist +1, NParam)
-
       for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
          wArrays_[i].allocate(systemPtr_->basis().nStar() - 1);
          dArrays_[i].allocate(systemPtr_->basis().nStar() - 1);
@@ -91,7 +87,6 @@ namespace Pssp
       //solve the SCFT equations once
       //assumes basis.makeBasis() has been called
       //assumes AmIterator.allocate() has been called
-      //consider making dft arrays size of one monomer and reuse the same array
       for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
          systemPtr_->basis().convertFieldComponentsToDft(
                               systemPtr_->wField(i),
@@ -102,8 +97,6 @@ namespace Pssp
 
       systemPtr_->mixture().compute(systemPtr_->wFieldGrids(), 
                                     systemPtr_->cFieldGrids());
-
-      ///-----------Solving Equations    
 
       for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
          systemPtr_->fft().forwardTransform(systemPtr_->cFieldGrid(i),
@@ -137,16 +130,11 @@ namespace Pssp
             nHist_ = maxHist_;
          }
 
-         //time_begin = clock();
          computeDeviation();
-         //time_end = clock();
-         //std::cout<<" Time for computeDeviation ="
-         //<< Dbl((float)(time_end - time_begin)/CLOCKS_PER_SEC,18,11)<<std::endl;
-
-         // ---------Compute Stress---------------> Define a variable stress in system which must be calculated or called by this file
 
          std::cout<<"---------------------"<<std::endl;
          std::cout<<"  Iteration  "<<itr<<std::endl;
+
          if (isConverged()) {  
           std::cout<<"----------CONVERGED----------"<< std::endl;
           if(!cell_){
@@ -160,26 +148,16 @@ namespace Pssp
               return 0;
      
          } else {
-            //resize history based matrix appropriately
-            //consider making these working space local
             if (itr <= maxHist_ + 1) {
                if (nHist_ > 0) {
                   invertMatrix_.allocate(nHist_, nHist_);
                   coeffs_.allocate(nHist_);
                   vM_.allocate(nHist_);
-                     /// Depending on the value of cell_, Allocate Matrices similarly
                }
             }
-            //time_begin = clock();
+
             minimizeCoeff(itr);
-            //time_end = clock();
-            //std::cout<<" Time for minimizeCoeff ="
-            //<< Dbl((float)(time_end - time_begin)/CLOCKS_PER_SEC,18,11)<<std::endl;
-            //time_begin = clock();
             buildOmega(itr);
-            //time_end = clock();
-            //std::cout<<" Time for buildOmega ="
-            //<< Dbl((float)(time_end - time_begin)/CLOCKS_PER_SEC,18,11)<<std::endl;
 
             if (itr <= maxHist_) {
                //will deallocate when out of scope
@@ -190,7 +168,6 @@ namespace Pssp
                }
             }
 
-            //time_begin = clock();
             for (int j = 0; j < systemPtr_->mixture().nMonomer(); ++j) {
                systemPtr_->basis().convertFieldComponentsToDft( 
                                     systemPtr_->wField(j),
@@ -204,10 +181,6 @@ namespace Pssp
 
             if (cell_){
                systemPtr_->mixture().computeTStress(systemPtr_->basis());
-
-              //for (int m=0; m<(systemPtr_->unitCell()).nParams() ; ++m){
-               // std::cout<<"Stress"<<m<<"\t"<<"="<< std::setprecision (15)<< systemPtr_->mixture().TStress[m]<<"\n";
-             // }
             }
 
             for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
@@ -217,9 +190,6 @@ namespace Pssp
                                     systemPtr_->cFieldDft(i),
                                     systemPtr_->cField(i));
             }
-            //time_end = clock();
-            //std::cout<<" Time for within loop transform ="
-            //<< Dbl((float)(time_end - time_begin)/CLOCKS_PER_SEC,18,11)<<std::endl;
          }
 
       }
@@ -237,20 +207,17 @@ namespace Pssp
       if (cell_)
          CpHists_.append((systemPtr_->unitCell()).params());
 
-      /// Depending on the value of cell_, append value of parameters to cp_hist 
-
       for (int i = 0 ; i < systemPtr_->mixture().nMonomer(); ++i) {
          for (int j = 0; j < systemPtr_->basis().nStar() - 1; ++j) {
             tempDev[i][j] = 0;
          }
       }
-      //the form for this is slightly different for 3 species
-      //Almost impossible to write good code here if using Interaction class
-      //over ChiInteraction
+
       DArray<double> temp;
       temp.allocate(systemPtr_->basis().nStar() - 1);
 
-      /*for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
+      #if 0
+      for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
          
          for (int j = 0; j < systemPtr_->basis().nStar() - 1; ++j) {
             temp[j] = 0;
@@ -268,10 +235,8 @@ namespace Pssp
             tempDev[i][k] += ((temp[k] / systemPtr_->mixture().nMonomer())
                              - systemPtr_->wField(i)[k + 1]);
          }
-      }*/
-
-
-
+      }
+      #endif
 
       for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
     
@@ -285,27 +250,7 @@ namespace Pssp
 
       } 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      //ultimately might be slow.copys the entire array. Better to just move
-      //pointers
       devHists_.append(tempDev);
-
-      /// Depending on the value of cell_, append -stress (Pointer to the variable through system pointer) to dev_cp
 
       if (cell_){
          FArray<double, 6 > tempCp;
@@ -314,14 +259,6 @@ namespace Pssp
          }
          devCpHists_.append(tempCp);
       }
-      //test code for IteratorTest.testComputeDeviation
-      //should be all zero
-      /*for(int i = 0; i < systemPtr_->mixture().nMonomer();i++){
-         std::cout<<"THis is devfield of "<<i<<std::endl;
-         for(int j = 0; j < systemPtr_->basis().nStar();j++){
-            std::cout<<Dbl(devHists_[0][i][j])<<std::endl;
-         }
-      }*/
    }
    
    template <int D>
@@ -376,10 +313,8 @@ namespace Pssp
          for (int m=0; m<(systemPtr_->unitCell()).nParams() ; ++m){
             std::cout<<" Stress "<<m<<" :"<< std::setprecision (15)<< systemPtr_->mixture().TStress[m]<<"\n";
          }         
-
-         //std::cout<<" Stress Error :"<<temp2<<std::endl;
-         error = (temp1>(100*temp2)) ? temp1 : (100*temp2);  // 100 is chose as stress rescale factor, seperate implementation of errors needs to be done
-         //error = (temp1>(temp2)) ? temp1 : (temp2); 
+         error = (temp1>(100*temp2)) ? temp1 : (100*temp2);  
+         // 100 is chose as stress rescale factor, seperate implementation of errors needs to be done
       }    
 
       // Depending on the value of cell_, residual errors?
@@ -401,32 +336,6 @@ namespace Pssp
       if (itr == 1) {
          //do nothing
       } else {
-
-         /*for (int i = 0; i < nHist_; ++i) {
-            for (int j = i; j < nHist_; ++j) {
-
-
-               invertMatrix_(i,j) = 0;
-
-               for (int k = 0; k < systemPtr_->mixture().nMonomer(); ++k) {
-                  for (int l = 0; l < systemPtr_->basis().nStar() - 1; ++l) {
-                     invertMatrix_(i,j) +=
-                        (  (devHists_[0][k][l] - devHists_[i+1][k][l]) *
-                           (devHists_[0][k][l] - devHists_[j+1][k][l]) );
-                  }
-               }
-
-               invertMatrix_(j,i) = invertMatrix_(i,j);
-            }
-
-            vM_[i] = 0;
-            for (int j = 0; j < systemPtr_->mixture().nMonomer(); ++j) {
-               for (int k = 0; k < systemPtr_->basis().nStar() - 1; ++k) {
-                  vM_[i] += ( (devHists_[0][j][k] - devHists_[i+1][j][k]) *
-                               devHists_[0][j][k] );
-               }
-            }
-         }*/
 
          double elm, elm_cp;
 
@@ -478,21 +387,13 @@ namespace Pssp
             }
          }
 
-      /// Depending on the value of cell_, Calculate vMcp and Umn similarly (will be added in previous Umn) 
-      /// invert it as done further (line 1355, line 1371 fortran)
-
          if (itr == 2) {
             coeffs_[0] = vM_[0] / invertMatrix_(0,0);
          } else {
-            //time_begin = clock();
             LuSolver solver;
             solver.allocate(nHist_);
             solver.computeLU(invertMatrix_);
             solver.solve(vM_, coeffs_);
-            //time_end = clock();
-            //std::cout<<" nHist_ is "<<nHist_<<std::endl;
-            //std::cout<<" Time for LUSolver ="
-            //<< Dbl((float)(time_end - time_begin)/CLOCKS_PER_SEC,18,11)<<std::endl;
          }       
       }
    }
@@ -506,9 +407,6 @@ namespace Pssp
             for (int j = 0; j < systemPtr_->basis().nStar() - 1; ++j) {
                systemPtr_->wField(i)[j+1] = omHists_[0][i][j+1] + 
                                              lambda_*devHists_[0][i][j];
-
-      /// Depending on the value of cell_, line 1253 of fortran
-
             }
          }
 
@@ -516,9 +414,6 @@ namespace Pssp
             for (int m = 0; m < (systemPtr_->unitCell()).nParams() ; ++m){
 
                  (systemPtr_->unitCell()).SetParams( CpHists_[0][m] +lambda_* devCpHists_[0][m] ,m);
-              //   (systemPtr_->unitCell()).setLattice();
-              //   systemPtr_->mixture().setupUnitCell(systemPtr_->unitCell());
-              //   systemPtr_->basis().update();
             }
 
                   (systemPtr_->unitCell()).setLattice();
@@ -531,17 +426,12 @@ namespace Pssp
          } 
 
       } else {
-         //should be strictly correct. coeffs_ is a vector of size 1 if itr ==2
-
          for (int j = 0; j < systemPtr_->mixture().nMonomer(); ++j) {
             for (int k = 0; k < systemPtr_->basis().nStar() - 1; ++k) {
-               //extra shift in wArrays because omHists stores the first star
                wArrays_[j][k] = omHists_[0][j][k + 1];
                dArrays_[j][k] = devHists_[0][j][k];
             }
          }
-
-      /// Depending on the value of cell_, above shifting...?
 
          for (int i = 0; i < nHist_; ++i) {
             for (int j = 0; j < systemPtr_->mixture().nMonomer(); ++j) {
@@ -553,10 +443,6 @@ namespace Pssp
                }
             }
          }
-
-      /// Depending on the value of cell_, also calculate value of guess value for cell param for next iteration line 1401 of fortran
-
-      /// See how to give input of this value in next iteration, Probably store in unit cell pointer which system already has
 
          for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
             for (int j = 0; j < systemPtr_->basis().nStar() - 1; ++j) {
