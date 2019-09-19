@@ -67,10 +67,12 @@ public:
       mixture.setMesh(mesh);
       mixture.setupUnitCell(unitCell);
 
+      #if 0
       std::cout << "\n";
       mixture.writeParam(std::cout);
       std::cout << "unitCell  " << unitCell << std::endl;
       std::cout << "mesh      " << mesh.dimensions() << std::endl;
+      #endif
 
       int nMonomer = mixture.nMonomer();
       DArray<Mixture<1>::WField> wFields;
@@ -95,6 +97,12 @@ public:
       mixture.compute(wFields, cFields);
 
       // Test if same Q is obtained from different methods
+      double Q = mixture.polymer(0).propagator(1, 0).computeQ();
+      TEST_ASSERT(eq(Q, mixture.polymer(0).propagator(0, 1).computeQ()));
+      TEST_ASSERT(eq(Q, mixture.polymer(0).propagator(0, 0).computeQ()));
+      TEST_ASSERT(eq(Q, mixture.polymer(0).propagator(1, 1).computeQ()));
+
+      #if 0
       std::cout << "Propagator(0,0), Q = " 
                 << mixture.polymer(0).propagator(0, 0).computeQ() << "\n";
       std::cout << "Propagator(1,0), Q = " 
@@ -103,6 +111,7 @@ public:
                 << mixture.polymer(0).propagator(1, 1).computeQ() << "\n";
       std::cout << "Propagator(0,1), Q = " 
                 << mixture.polymer(0).propagator(0, 1).computeQ() << "\n";
+      #endif
 
       #if 0
       // Test spatial integral of block concentration
@@ -133,10 +142,12 @@ public:
       mixture.setMesh(mesh);
       mixture.setupUnitCell(unitCell);
 
+      #if 0
       std::cout << "\n";
       mixture.writeParam(std::cout);
       std::cout << "unitCell  " << unitCell << std::endl;
       std::cout << "mesh      " << mesh.dimensions() << std::endl;
+      #endif
 
       int nMonomer = mixture.nMonomer();
       DArray<Mixture<2>::WField> wFields;
@@ -178,10 +189,15 @@ public:
       }
       TEST_ASSERT(k == nx);
 
-
       mixture.compute(wFields, cFields);
 
       // Test if same Q is obtained from different methods
+      double Q = mixture.polymer(0).propagator(1, 0).computeQ();
+      TEST_ASSERT(eq(Q, mixture.polymer(0).propagator(0, 1).computeQ()));
+      TEST_ASSERT(eq(Q, mixture.polymer(0).propagator(0, 0).computeQ()));
+      TEST_ASSERT(eq(Q, mixture.polymer(0).propagator(1, 1).computeQ()));
+
+      #if 0
       std::cout << "Propagator(0,0), Q = " 
                 << mixture.polymer(0).propagator(0, 0).computeQ() << "\n";
       std::cout << "Propagator(1,0), Q = " 
@@ -190,6 +206,7 @@ public:
                 << mixture.polymer(0).propagator(1, 1).computeQ() << "\n";
       std::cout << "Propagator(0,1), Q = " 
                 << mixture.polymer(0).propagator(0, 1).computeQ() << "\n";
+      #endif
 
       #if 0
       // Test spatial integral of block concentration
@@ -220,10 +237,12 @@ public:
       mixture.setMesh(mesh);
       mixture.setupUnitCell(unitCell);
 
+      #if 0
       std::cout << "\n";
       mixture.writeParam(std::cout);
       std::cout << "unitCell  " << unitCell << std::endl;
       std::cout << "mesh      " << mesh.dimensions() << std::endl;
+      #endif
 
       int nMonomer = mixture.nMonomer();
       DArray<Mixture<2>::WField> wFields;
@@ -257,6 +276,12 @@ public:
       mixture.compute(wFields, cFields);
 
       // Test if same Q is obtained from different methods
+      double Q = mixture.polymer(0).propagator(1, 0).computeQ();
+      TEST_ASSERT(eq(Q, mixture.polymer(0).propagator(0, 1).computeQ()));
+      TEST_ASSERT(eq(Q, mixture.polymer(0).propagator(0, 0).computeQ()));
+      TEST_ASSERT(eq(Q, mixture.polymer(0).propagator(1, 1).computeQ()));
+
+      #if 0
       std::cout << "Propagator(0,0), Q = " 
                 << mixture.polymer(0).propagator(0, 0).computeQ() << "\n";
       std::cout << "Propagator(1,0), Q = " 
@@ -265,6 +290,7 @@ public:
                 << mixture.polymer(0).propagator(1, 1).computeQ() << "\n";
       std::cout << "Propagator(0,1), Q = " 
                 << mixture.polymer(0).propagator(0, 1).computeQ() << "\n";
+      #endif
 
       #if 0
       // Test spatial integral of block concentration
@@ -295,10 +321,12 @@ public:
       mixture.setMesh(mesh);
       mixture.setupUnitCell(unitCell);
 
+      #if 0
       std::cout << "\n";
       mixture.writeParam(std::cout);
       std::cout << "unitCell  " << unitCell << std::endl;
       std::cout << "mesh      " << mesh.dimensions() << std::endl;
+      #endif
 
       int nMonomer = mixture.nMonomer();
       DArray<Mixture<3>::WField> wFields;
@@ -323,6 +351,12 @@ public:
       mixture.compute(wFields, cFields);
 
       // Test if same Q is obtained from different methods
+      double Q = mixture.polymer(0).propagator(1, 0).computeQ();
+      TEST_ASSERT(eq(Q, mixture.polymer(0).propagator(0, 1).computeQ()));
+      TEST_ASSERT(eq(Q, mixture.polymer(0).propagator(0, 0).computeQ()));
+      TEST_ASSERT(eq(Q, mixture.polymer(0).propagator(1, 1).computeQ()));
+
+      #if 0
       std::cout << "Propagator(0,0), Q = " 
                 << mixture.polymer(0).propagator(0, 0).computeQ() << "\n";
       std::cout << "Propagator(1,0), Q = " 
@@ -331,6 +365,7 @@ public:
                 << mixture.polymer(0).propagator(1, 1).computeQ() << "\n";
       std::cout << "Propagator(0,1), Q = " 
                 << mixture.polymer(0).propagator(0, 1).computeQ() << "\n";
+      #endif
 
       #if 0
       // Test spatial integral of block concentration
@@ -339,7 +374,7 @@ public:
       std::cout << "Volume fraction of block 0 = " << sum0 << "\n";
       std::cout << "Volume fraction of block 1 = " << sum1 << "\n";
       #endif
-      
+ 
    }
 
 };

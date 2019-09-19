@@ -169,9 +169,13 @@ public:
 
       double ds = 0.3;
       block.setDiscretization(ds, mesh);
+      //std::cout << "block len = " << block.length() << "\n";
+      //std::cout << "block ns  = " << block.ns() << "\n";
+      //std::cout << "block ds  = " << block.ds() << "\n";
+
       TEST_ASSERT(eq(block.length(), 2.0));
-      TEST_ASSERT(eq(block.ds(), 0.25));
-      TEST_ASSERT(block.ns() == 9);
+      TEST_ASSERT(block.ns() == 7);
+      TEST_ASSERT(eq(block.ds(), 1.0/3.0));
       TEST_ASSERT(block.mesh().dimensions()[0] == 10);
       TEST_ASSERT(block.mesh().dimensions()[1] == 10);
       TEST_ASSERT(block.mesh().dimensions()[2] == 10);
@@ -347,7 +351,7 @@ public:
          //std::cout << "  " << block.propagator(0).head()[i];
          TEST_ASSERT(eq(block.propagator(0).head()[i],1.0));
       }
-      std::cout << "\n";
+      //std::cout << "\n";
       
 
       // std::cout << "\n Tail:\n";
@@ -411,7 +415,7 @@ public:
                          double(iter.position(1))/double(mesh.dimension(1)) ) );
       }
       
-      std::cout<<std::endl;
+      //std::cout<<std::endl;
       block.step(qin, qout);
       double b = block.kuhn();
       double Gb;
@@ -445,7 +449,7 @@ public:
       for (iter.begin(); !iter.atEnd(); ++iter){
          TEST_ASSERT(eq(block.propagator(0).head()[iter.rank()], 1.0));
       }
-      std::cout << "\n";
+      //std::cout << "\n";
       
       // std::cout << "\n Tail:\n";
       expected = exp(-wc*block.length());
@@ -509,7 +513,7 @@ public:
                          double(iter.position(2))/double(mesh.dimension(2)) ) );
       }
       
-      std::cout<<std::endl;
+      //std::cout<<std::endl;
       block.step(qin, qout);
       double b = block.kuhn();
       double Gb;
@@ -544,7 +548,7 @@ public:
       for (iter.begin(); !iter.atEnd(); ++iter){
          TEST_ASSERT(eq(block.propagator(0).head()[iter.rank()], 1.0));
       }
-      std::cout << "\n";
+      //std::cout << "\n";
       
       // std::cout << "\n Tail:\n";
       expected = exp(-wc*block.length());
