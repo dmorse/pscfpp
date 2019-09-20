@@ -18,9 +18,7 @@ class FftTest : public UnitTest
 {
 public:
 
-   void setUp() 
-   {  }
-
+   void setUp() {}
    void tearDown() {}
 
    void testConstructor();
@@ -42,7 +40,7 @@ void FftTest::testConstructor()
 
 void FftTest::testTransform1D() {
    printMethod(TEST_FUNC);
-   printEndl();
+   //printEndl();
 
    RField<1> in;
    RFieldDft<1> out;
@@ -58,9 +56,7 @@ void FftTest::testTransform1D() {
    for (int i = 0; i < n; ++i) {
       x = twoPi*float(i)/float(n); 
       in[i] = cos(x);
-      // std::cout << Dbl(in[i]);
    }
-   // std::cout << std::endl;
 
    FFT<1> v;
    v.setup(in, out);
@@ -70,15 +66,14 @@ void FftTest::testTransform1D() {
    v.inverseTransform(out, inCopy);
 
    for (int i = 0; i < n; ++i) {
-      //std::cout << Dbl(inCopy[i]);
       TEST_ASSERT(eq(in[i], inCopy[i]));
    }
-   //std::cout << std::endl;
 }
 
-void FftTest::testTransform2D() {
+void FftTest::testTransform2D() 
+{
    printMethod(TEST_FUNC);
-   printEndl();
+   //printEndl();
 
    RField<2> in;
    RFieldDft<2> out;
@@ -118,7 +113,7 @@ void FftTest::testTransform2D() {
 
 void FftTest::testTransform3D() {
    printMethod(TEST_FUNC);
-   printEndl();
+   //printEndl();
 
    RField<3> in;
    RFieldDft<3> out;
@@ -161,6 +156,7 @@ void FftTest::testTransform3D() {
       }
    }
 }
+
 TEST_BEGIN(FftTest)
 TEST_ADD(FftTest, testConstructor)
 TEST_ADD(FftTest, testTransform1D)
