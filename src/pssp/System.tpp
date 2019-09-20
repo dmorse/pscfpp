@@ -752,9 +752,7 @@ namespace Pssp
             ++n1;
             ++p;        
          }
-      }
-
-      else if (D==2){
+      } else if (D==2) {
          while (n1 < mesh().dimension(0)){
             r =q; 
             n2 = 0;
@@ -769,10 +767,7 @@ namespace Pssp
             ++q;
             ++n1;
          }   
-      } 
-
-      else if (D==1){
-
+      } else if (D==1){
          while (n1 < mesh().dimension(0)){
             for (int i = 0; i < nM; ++i) {
                fields[i][s] = temp[i][r];
@@ -781,10 +776,8 @@ namespace Pssp
             ++s;
             ++n1;    
          }   
-      } 
-
-      else{
-         std::cout<<"Invalid Dimensions";
+      } else {
+         std::cout << "Invalid Dimensions";
       }
 
    }
@@ -934,10 +927,8 @@ namespace Pssp
             ++s;
             ++n1;
          }
-      }
-
-      else{
-         std::cout<<"Invalid Dimensions";
+      } else {
+         std::cout << "Invalid Dimensions";
       }
 
       // Write fields

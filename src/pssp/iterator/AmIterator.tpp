@@ -107,18 +107,18 @@ namespace Pssp
       }
        
       systemPtr_->computeFreeEnergy();
-      std::cout<<"Free Energy="<<systemPtr_->fHelmholtz();
+      Log::file()<<"Free Energy="<<systemPtr_->fHelmholtz();
 
       if (cell_){
          systemPtr_->mixture().computeTStress(systemPtr_->basis());
-            for (int m=0; m<(systemPtr_->unitCell()).nParameter() ; ++m){
-               std::cout<<"Stress"<<m<<"\t"<<"="<< systemPtr_->mixture().TStress[m]<<"\n";
-                 //std::cout<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).params()[m]<<"\n";
-               std::cout<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).parameters()[m]<<"\n";
-            }  
-      } 
-      else
-         std::cout<<std::endl;
+         for (int m=0; m<(systemPtr_->unitCell()).nParameter() ; ++m){
+               Log::file()<<"Stress"<<m<<"\t"<<"="<< systemPtr_->mixture().TStress[m]<<"\n";
+                 //Log::file()<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).params()[m]<<"\n";
+               Log::file()<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).parameters()[m]<<"\n";
+         }  
+      } else {
+         Log::file()<<std::endl;
+      }
 
       //check for convergence else resolve SCFT equations with new Fields
       for (int itr = 1; itr <= maxItr_; ++itr) {
@@ -133,18 +133,18 @@ namespace Pssp
 
          computeDeviation();
 
-         std::cout<<"---------------------"<<std::endl;
-         std::cout<<"  Iteration  "<<itr<<std::endl;
+         Log::file()<<"---------------------"<<std::endl;
+         Log::file()<<"  Iteration  "<<itr<<std::endl;
 
          if (isConverged()) {  
-          std::cout<<"----------CONVERGED----------"<< std::endl;
+          Log::file()<<"----------CONVERGED----------"<< std::endl;
           if(!cell_){
              systemPtr_->mixture().computeTStress(systemPtr_->basis());
           }
           for (int m=0; m<(systemPtr_->unitCell()).nParameter() ; ++m){
-             std::cout<<"Stress"<<m<<"\t"<<"="<< systemPtr_->mixture().TStress[m]<<"\n";
-             //std::cout<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).params()[m]<<"\n";
-             std::cout<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).parameters()[m]<<"\n";
+             Log::file()<<"Stress"<<m<<"\t"<<"="<< systemPtr_->mixture().TStress[m]<<"\n";
+             //Log::file()<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).params()[m]<<"\n";
+             Log::file()<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).parameters()[m]<<"\n";
           }
 
               return 0;
@@ -290,8 +290,8 @@ namespace Pssp
             wError +=  (systemPtr_->unitCell()).parameters() [i] * (systemPtr_->unitCell()).parameters() [i];
          }
       }
-      std::cout<<" dError :"<<Dbl(dError)<<std::endl;
-      std::cout<<" wError :"<<Dbl(wError)<<std::endl;
+      Log::file()<<" dError :"<<Dbl(dError)<<std::endl;
+      Log::file()<<" wError :"<<Dbl(wError)<<std::endl;
       error = sqrt(dError / wError);
       #endif 
 
@@ -305,7 +305,7 @@ namespace Pssp
                 temp1 = fabs (devHists_[0][i][j]);
          }   
       }
-      std::cout<<" SCF Error :"<<temp1<<std::endl;   
+      Log::file()<<" SCF Error :"<<temp1<<std::endl;   
       error = temp1;
 
       if (cell_){
@@ -315,7 +315,7 @@ namespace Pssp
          }
 
          for (int m=0; m<(systemPtr_->unitCell()).nParameter() ; ++m){
-            std::cout<<" Stress "<<m<<" :"<< std::setprecision (15)<< systemPtr_->mixture().TStress[m]<<"\n";
+            Log::file()<<" Stress "<<m<<" :"<< std::setprecision (15)<< systemPtr_->mixture().TStress[m]<<"\n";
          }         
          error = (temp1>(100*temp2)) ? temp1 : (100*temp2);  
          // 100 is chose as stress rescale factor, seperate implementation of errors needs to be done
@@ -323,8 +323,8 @@ namespace Pssp
 
       // Depending on the value of cell_, residual errors?
 
-      std::cout<<" Error :"<<error<<std::endl;
-      //std::cout<<"---------------------"<<std::endl;
+      Log::file()<<" Error :"<<error<<std::endl;
+      //Log::file()<<"---------------------"<<std::endl;
       if (error < epsilon_) {
          return true;
       } else {
@@ -428,8 +428,8 @@ namespace Pssp
                   systemPtr_->basis().update();
 
             for (int m=0; m<(systemPtr_->unitCell()).nParameter()  ; ++m){
-               //std::cout<<" Parameter "<<m<<" :"<<(systemPtr_->unitCell()).params()[m]<<"\n";
-               std::cout<<" Parameter "<<m<<" :"<<(systemPtr_->unitCell()).parameters()[m]<<"\n"; 
+               //Log::file()<<" Parameter "<<m<<" :"<<(systemPtr_->unitCell()).params()[m]<<"\n";
+               Log::file()<<" Parameter "<<m<<" :"<<(systemPtr_->unitCell()).parameters()[m]<<"\n"; 
             }
          } 
 
@@ -484,8 +484,8 @@ namespace Pssp
 	    systemPtr_->basis().update();
 
             for (int m=0; m<(systemPtr_->unitCell()).nParameter() ; ++m){
-	         // std::cout<<" Parameter "<<m<<" :"<< std::setprecision (15)<<(systemPtr_->unitCell()).params()[m]<<"\n";
-               std::cout<<" Parameter "<<m<<" :"<< std::setprecision (15)<<(systemPtr_->unitCell()).parameters()[m]<<"\n";
+	         // Log::file()<<" Parameter "<<m<<" :"<< std::setprecision (15)<<(systemPtr_->unitCell()).params()[m]<<"\n";
+               Log::file()<<" Parameter "<<m<<" :"<< std::setprecision (15)<<(systemPtr_->unitCell()).parameters()[m]<<"\n";
             }
 
 

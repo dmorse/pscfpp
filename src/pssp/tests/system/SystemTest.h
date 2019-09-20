@@ -19,11 +19,23 @@ class SystemTest : public UnitTest
 
 public:
 
+   std::ofstream logFile_;
+
    void setUp()
    {}
 
    void tearDown()
-   {}
+   {
+      if (logFile_.is_open()) {
+         logFile_.close();
+      }
+   }
+
+   void openLogFile(char const * filename)
+   {  
+     openOutputFile(filename, logFile_); 
+     Log::setFile(logFile_);
+   }
 
    void testConstructor1D()
    {
@@ -45,13 +57,14 @@ public:
    void testConversion1D_lam() 
    {   
       printMethod(TEST_FUNC);
- 
       System<1> system;
+
       std::ifstream in; 
       openInputFile("in/domainOn/System1D", in);
-    
       system.readParam(in);
       in.close();
+
+      openLogFile("out/testConversion1D_lam.log"); 
       std::ifstream command;
       openInputFile("in/conv/Conversion_1d_step1", command);
       system.readCommands(command);
@@ -99,15 +112,16 @@ public:
    void testConversion2D_hex() 
    {   
       printMethod(TEST_FUNC);
- 
       System<2> system;
+
       std::ifstream in; 
       openInputFile("in/domainOn/System2D", in);
-    
       system.readParam(in);
       in.close();
+
       std::ifstream command;
       openInputFile("in/conv/Conversion_2d_step1", command);
+      openLogFile("out/testConversion2D_hex.log"); 
       system.readCommands(command);
       command.close();
  
@@ -154,13 +168,15 @@ public:
       printMethod(TEST_FUNC);
  
       System<3> system;
+
       std::ifstream in; 
       openInputFile("in/domainOn/System3D", in);
-          
       system.readParam(in);
       in.close();
+
       std::ifstream command;
       openInputFile("in/conv/Conversion_3d_step1", command);
+      openLogFile("out/testConversion3D_bcc.log"); 
       system.readCommands(command);
       command.close();
  
@@ -206,6 +222,7 @@ public:
    void testIterate1D_lam_rigid()
    {
       printMethod(TEST_FUNC);
+      openLogFile("out/testIterate1D_lam_rigid.log"); 
 
       System<1> system;
       std::ifstream in;
@@ -246,9 +263,9 @@ public:
                // The above is the minimum error in the omega field.
                // Occurs for the first star                 
                diff = false;
-               std::cout <<"This is error for break:"<< 
+               std::cout <<"\n This is error for break:"<< 
                   (std::abs(wFields_check[i][j] - system.wFields()[i][j])) <<std::endl;
-               std::cout <<"ns = "<< j << std::endl;
+               std::cout << "ns = "<< j << std::endl;
                break;
             }    
             else 
@@ -267,11 +284,13 @@ public:
 
       TEST_ASSERT(stress);
       TEST_ASSERT(diff);
+
    }
 
    void testIterate1D_lam_flex()
    {
       printMethod(TEST_FUNC);
+      openLogFile("out/testIterate1D_lam_.log"); 
  
       System<1> system;
       std::ifstream in; 
@@ -310,7 +329,7 @@ public:
          for (int i = 0; i < nMonomer; ++i) {
            if((std::abs(wFields_check[i][j] - system.wFields()[i][j]) > 1.0E-8)){
                diff = false;
-               std::cout <<"This is error for break:"<< 
+               std::cout <<"\n This is error for break:"<< 
                   (std::abs(wFields_check[i][j] - system.wFields()[i][j])) <<std::endl;
                std::cout <<"ns = "<< j << std::endl;
                break;
@@ -328,6 +347,7 @@ public:
    void testIterate2D_hex_rigid()
    {
       printMethod(TEST_FUNC);
+      openLogFile("out/testIterate2D_hex_rigid.log"); 
 
       System<2> system;
       std::ifstream in;
@@ -368,7 +388,7 @@ public:
                // The above is the minimum error in the omega field.
                // Occurs for the first star            
                diff = false;
-               std::cout <<"This is error for break:"<< 
+               std::cout <<"\n This is error for break:"<< 
                   (std::abs(wFields_check[i][j] - system.wFields()[i][j])) <<std::endl;
                std::cout <<"ns = "<< j << std::endl;
                break;
@@ -394,13 +414,14 @@ public:
    void testIterate2D_hex_flex()
    {
       printMethod(TEST_FUNC);
+      openLogFile("out/testIterate2D_hex_flex.log"); 
 
       System<2> system;
       std::ifstream in;
       openInputFile("in/domainOn/System2D", in);
-
       system.readParam(in);
       in.close();
+
       std::ifstream command;
       openInputFile("in/domainOn/ReadOmega_hex", command);
       system.readCommands(command);
@@ -430,20 +451,19 @@ public:
       bool diff = true;
       for (int j = 0; j < ns; ++j) {
          for (int i = 0; i < nMonomer; ++i) {
-           if((std::abs(wFields_check[i][j] - system.wFields()[i][j]) >= 2.58007e-07)){
+            if ((std::abs(wFields_check[i][j] - system.wFields()[i][j]) >= 2.58007e-07)){
                // The above is the maximum error in the omega field.
                // Occurs for the first star
                diff = false;
-               std::cout <<"This is error for break:"<< 
+               std::cout <<"\n This is error for break:"<< 
                   (std::abs(wFields_check[i][j] - system.wFields()[i][j])) <<std::endl;
                std::cout <<"ns = "<< j << std::endl;
                break;
-            }
-            else
+            } else {
                diff = true;
+            }
          }
-         if(diff==false){
-
+         if (diff==false){
             break;
          }
       }
@@ -453,6 +473,7 @@ public:
    void testIterate3D_bcc_rigid()
    {
       printMethod(TEST_FUNC);
+      openLogFile("out/testIterate3D_bcc_rigid.log"); 
 
       System<3> system;
       std::ifstream in;
@@ -493,7 +514,7 @@ public:
                // The above is the maximum error in the omega field.
                // Occurs for the second star.               
                diff = false;
-               std::cout <<"This is error for break:"<< 
+               std::cout <<"\n This is error for break:"<< 
                   (std::abs(wFields_check[i][j] - system.wFields()[i][j])) <<std::endl;
                std::cout <<"ns = "<< j << std::endl;
                break;
@@ -519,6 +540,7 @@ public:
    void testIterate3D_bcc_flex()
    {
       printMethod(TEST_FUNC);
+      openLogFile("out/testIterate3D_bcc_flex.log"); 
 
       System<3> system;
       std::ifstream in; 
@@ -559,7 +581,7 @@ public:
                // The above is the maximum error in the omega field.
                // Occurs for the second star.
                diff = false;
-               std::cout <<"This is error for break:"<< 
+               std::cout <<"\n This is error for break:"<< 
                   (std::abs(wFields_check[i][j] - system.wFields()[i][j])) <<std::endl;
                std::cout <<"ns = "<< j << std::endl;
                break;
@@ -573,7 +595,6 @@ public:
          }
       }
       TEST_ASSERT(diff);
-
    }
 
 
