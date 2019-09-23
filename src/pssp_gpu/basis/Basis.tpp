@@ -681,7 +681,17 @@ namespace Pssp_gpu
       // Do we now need the waveBz from starId and get its coressponding rank?
 
 	}
+
+
 #endif
+
+	template <int D>
+	void Basis<D>::convertFieldDftToComponents(cufftComplex* dft, cufftReal* components)
+	{
+		convertDft2CHelper<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(dft, components, implicitTable_,
+         coeffTable_, invertFlagTable_, star2rank_, nStar_);
+
+	}
 
 
 

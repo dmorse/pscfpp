@@ -140,10 +140,8 @@ namespace Pssp_gpu {
       ns_ = ns;
       meshPtr_ = &mesh;
 
-      qFields_.allocate(ns);
-      for (int i = 0; i < ns; ++i) {
-         qFields_[i].allocate(mesh.dimensions());
-      }
+      cudaMalloc((void**)&qFields_d, sizeof(cufftReal)* mesh.size() *
+                 ns);
       isAllocated_ = true;
    }
 
@@ -155,26 +153,30 @@ namespace Pssp_gpu {
    {
 
       // Reference to head of this propagator
-      QField& qh = qFields_[0];
+      //QField& qh = qFields_[0];
 
       // Initialize qh field to 1.0 at all grid points
       int nx = meshPtr_->size();
 
       //qh[ix] = 1.0;
-      assignUniformReal<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(qh.cDField(), 1.0, nx);
+      //qFields_d points to the first float in gpu memory
+      assignUniformReal<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(qFields_d, 1.0, nx);
       
 
       // Pointwise multiply tail QFields of all sources
       // this could be slow with many sources. Should launch 1 kernel for the whole
       // function of computeHead
+      const cufftReal* qt;
       for (int is = 0; is < nSource(); ++is) {
          if (!source(is).isSolved()) {
             UTIL_THROW("Source not solved in computeHead");
          }
-         QField const& qt = source(is).tail();
+         //need to modify tail to give the total_size - mesh_size pointer
+         qt = source(is).tail();
 
          //qh[ix] *= qt[ix];
-         inPlacePointwiseMul<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(qh.cDField(), qt.cDField(), nx);
+         inPlacePointwiseMul<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>
+            (qFields_d, qt, nx);
       }
    }
 
@@ -188,11 +190,14 @@ namespace Pssp_gpu {
       computeHead();
       // Setup solver and solve
       block().setupFFT();
-	  //cufftReal* qf;
-	  //qf = new cufftReal;
-
+      //cufftReal* qf;
+      //qf = new cufftReal;
+      
+      int currentIdx;
       for (int iStep = 0; iStep < ns_ - 1; ++iStep) {
-         block().step(qFields_[iStep], qFields_[iStep + 1]);
+         currentIdx = iStep * meshPtr_->size();
+         //block has to learn to deal with the cufftReal
+         block().step(qFields_d + currentIdx, qFields_d + currentIdx + meshPtr_->size());
       }
 	  //delete qf;
       setIsSolved(true);
@@ -202,19 +207,20 @@ namespace Pssp_gpu {
    * Solve the modified diffusion equation with specified initial field.
    */
    template <int D>
-   void Propagator<D>::solve(QField const & head)
+   void Propagator<D>::solve(const cufftReal * head)
    {
       int nx = meshPtr_->size();
-      UTIL_CHECK(head.capacity() == nx);
 
       // Initialize initial (head) field
-      QField& qh = qFields_[0];
+      cufftReal* qh = qFields_d;
       // qh[i] = head[i];
-      assignReal<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(qh.cDField(), head.cDField(), nx);
+      assignReal<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(qh, head, nx);
 
       // Setup solver and solve
+      int currentIdx;
       for (int iStep = 0; iStep < ns_ - 1; ++iStep) {
-         block().step(qFields_[iStep], qFields_[iStep + 1]);
+         currentIdx = iStep * nx;
+         block().step(qFields_d + currentIdx, qFields_d + currentIdx + nx);
       }
       setIsSolved(true);
    }
@@ -235,25 +241,15 @@ namespace Pssp_gpu {
       if (!partner().isSolved()) {
          UTIL_THROW("Partner propagator is not solved");
       }
-      QField const& qh = head();
-      QField const& qt = partner().tail();
+      const cufftReal * qh = head();
+      const cufftReal * qt = partner().tail();
       int nx = meshPtr_->size();
-      UTIL_CHECK(qt.capacity() == nx);
-      UTIL_CHECK(qh.capacity() == nx);
 
       // Take inner product of head and partner tail fields
       // cannot reduce assuming one propagator, qh == 1
       // polymers are divided into blocks midway through
       double Q = 0; 
-   
-	  //double PCFreq = 0.0;
-	  //__int64 CounterStart = 0;
-	  //LARGE_INTEGER li;
-	  //QueryPerformanceFrequency(&li);
-	  //PCFreq = double(li.QuadPart) / 1000.0;
-	  //QueryPerformanceCounter(&li);
-	  //CounterStart = li.QuadPart;
-
+      
       Q = innerProduct(qh, qt, nx);
       Q /= double(nx);
 
@@ -262,38 +258,38 @@ namespace Pssp_gpu {
    }
 
    template <int D>
-   cufftReal Propagator<D>::innerProduct(const QField& a, const QField& b, int size) {
+   cufftReal Propagator<D>::innerProduct(const cufftReal* a, const cufftReal* b, int size) {
 	   
      switch(THREADS_PER_BLOCK){
      case 512:
-       deviceInnerProduct<512><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cufftReal)>>>(d_temp_, a.cDField(), b.cDField(), size);
+       deviceInnerProduct<512><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cufftReal)>>>(d_temp_, a, b, size);
        break;
      case 256:
-       deviceInnerProduct<256><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cufftReal)>>>(d_temp_, a.cDField(), b.cDField(), size);
+       deviceInnerProduct<256><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cufftReal)>>>(d_temp_, a, b, size);
        break;
      case 128:
-       deviceInnerProduct<128><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cufftReal)>>>(d_temp_, a.cDField(), b.cDField(), size);
+       deviceInnerProduct<128><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cufftReal)>>>(d_temp_, a, b, size);
        break;
      case 64:
-       deviceInnerProduct<64><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cufftReal)>>>(d_temp_, a.cDField(), b.cDField(), size);
+       deviceInnerProduct<64><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cufftReal)>>>(d_temp_, a, b, size);
        break;
      case 32:
-       deviceInnerProduct<32><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cufftReal)>>>(d_temp_, a.cDField(), b.cDField(), size);
+       deviceInnerProduct<32><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cufftReal)>>>(d_temp_, a, b, size);
        break;
      case 16:
-       deviceInnerProduct<16><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cufftReal)>>>(d_temp_, a.cDField(), b.cDField(), size);
+       deviceInnerProduct<16><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cufftReal)>>>(d_temp_, a, b, size);
        break;
      case 8:
-       deviceInnerProduct<8><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cufftReal)>>>(d_temp_, a.cDField(), b.cDField(), size);
+       deviceInnerProduct<8><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cufftReal)>>>(d_temp_, a, b, size);
        break;
      case 4:
-       deviceInnerProduct<4><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cufftReal)>>>(d_temp_, a.cDField(), b.cDField(), size);
+       deviceInnerProduct<4><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cufftReal)>>>(d_temp_, a, b, size);
        break;
      case 2:
-       deviceInnerProduct<2><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cufftReal)>>>(d_temp_, a.cDField(), b.cDField(), size);
+       deviceInnerProduct<2><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cufftReal)>>>(d_temp_, a, b, size);
        break;
      case 1:
-       deviceInnerProduct<1><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cufftReal)>>>(d_temp_, a.cDField(), b.cDField(), size);
+       deviceInnerProduct<1><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cufftReal)>>>(d_temp_, a, b, size);
        break;
      }
      
