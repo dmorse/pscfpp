@@ -1,0 +1,8 @@
+OUTPUT_STARS
+out/stars_hex
+ITERATE
+contents/omega/domainOn/omega_hex
+WRITE_WFIELDS
+out/omega/domainOn/omega_hex
+
+FINISH

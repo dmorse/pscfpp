@@ -1,0 +1,5 @@
+RGRID_TO_FIELD
+out/omega/conv/omega_rgrid_hex
+out/omega/conv/omega_conv_hex
+
+FINISH

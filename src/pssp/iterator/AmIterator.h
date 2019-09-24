@@ -13,6 +13,7 @@
 #include <pscf/math/LuSolver.h>
 #include <util/containers/DArray.h>
 #include <util/containers/FArray.h>
+#include <util/containers/FSArray.h>
 #include <util/containers/DMatrix.h>
 #include <util/containers/RingBuffer.h>
 //#include <pssp/iterator/RingBuffer.h>
@@ -129,6 +130,9 @@ namespace Pssp
       /// Maximum number of iterations to attempt.
       int maxItr_;
 
+      // Work Array for iterating on parameters 
+      FSArray<double, 6> parameters;
+
       /// holds histories of deviation for each monomer
       /// 1st index = history, 2nd index = monomer, 3rd index = ngrid
       // The ringbuffer used is now slightly modified to return by reference
@@ -141,7 +145,7 @@ namespace Pssp
       // The ringbuffer used is now slightly modified to return by reference
       RingBuffer< FArray <double, 6> > devCpHists_;
 
-      RingBuffer< FArray<double, 6> > CpHists_;
+      RingBuffer< FSArray<double, 6> > CpHists_;
 
       /// Umn, matrix to be minimized
       DMatrix<double> invertMatrix_;

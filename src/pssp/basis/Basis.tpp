@@ -643,7 +643,7 @@ namespace Pssp
             vec = stars_[i].waveBz;
             double element, dEigen;
             int p, q;
-            for (j = 0; j < unitCell().nParams(); ++j) {
+            for (j = 0; j < unitCell().nParameter(); ++j) {
                dEigen = 0;
                for (p = 0; p < D; ++p){
                   for (q = 0; q < D; ++q){
@@ -691,7 +691,7 @@ namespace Pssp
          vec = stars_[i].waveBz;
          stars_[i].eigen = unitCell().ksq(vec);
 
-         for (j = 0; j < unitCell().nParams(); ++j) {
+         for (j = 0; j < unitCell().nParameter(); ++j) {
             dEigen = 0.0;
             for (p = 0; p < D; ++p){
                for (q = 0; q < D; ++q){
