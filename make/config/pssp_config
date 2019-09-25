@@ -47,10 +47,7 @@ PSSP_SUFFIX:=
 PSSP_FFTW=1
 ifdef PSSP_FFTW
   PSSP_DEFS+=-DPSSP_FFTW
-  PSSP_FFTW_PREFIX=/usr/local/Cellar/fftw/3.3.4_1
-  PSSP_FFTW_INC=-I$(PSSP_FFTW_PREFIX)/include
-  PSSP_FFTW_LIB=-L$(PSSP_FFTW_PREFIX)/lib -lfftw3
-  INCLUDES+=$(PSSP_FFTW_INC)
+  PSSP_FFTW_LIB=-lfftw3
 endif
 
 #-----------------------------------------------------------------------
