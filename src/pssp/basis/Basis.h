@@ -57,7 +57,7 @@ namespace Pssp
          /** 
          * Array of derivatives of eigenvalue w/ respect to lattice parameters.
          */  
-         FArray<double, 6> dEigenWave;
+         //FArray<double, 6> dEigenWave;
 
          // Index of star containing this wavevector
          int starId;
@@ -90,7 +90,7 @@ namespace Pssp
          /**
          * Array of derivatives of eigenvalue w/ respect to lattice parameters.
          */
-         FArray<double, 6> dEigen;
+         //FArray<double, 6> dEigen;
 
          /**
          * Number of wavevectors in the star.

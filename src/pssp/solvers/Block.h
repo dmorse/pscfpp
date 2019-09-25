@@ -16,6 +16,7 @@
 #include <pssp/field/RFieldDft.h>         // member
 #include <pssp/field/FFT.h>               // member
 #include <util/containers/FArray.h>       // member template
+#include <util/containers/DMatrix.h>
 
 namespace Pscf { 
    template <int D> class Mesh; 
@@ -178,6 +179,9 @@ namespace Pssp {
 
       /// Pointer to associated Mesh<D>
       //const Mesh<D>* meshPtr_;
+
+      /// Matrix to store derivatives of plane waves 
+      DMatrix<double> dGsq;
 
       /** 
       * Access associated Mesh<D> as reference.
