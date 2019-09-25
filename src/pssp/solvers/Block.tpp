@@ -14,7 +14,8 @@
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/crystal/UnitCell.h>
 #include <pscf/crystal/shiftToMinimum.h>
-#include <util/containers/FMatrix.h>      
+#include <pscf/math/IntVec.h>
+#include <util/containers/DMatrix.h>      
 #include <util/containers/DArray.h>      
 #include <util/containers/FArray.h>      
 
@@ -106,6 +107,9 @@ namespace Pssp {
    void 
    Block<D>::setupUnitCell(const UnitCell<D>& unitCell)
    {
+      // Set association to unitCell
+      unitCellPtr_ = &unitCell;
+
       MeshIterator<D> iter;
       // std::cout << "kDimensions = " << kMeshDimensions_ << std::endl;
       iter.setDimensions(kMeshDimensions_);
@@ -285,15 +289,22 @@ namespace Pssp {
  
       normal = 3.0*6.0;
 
-      c = (basis.nStar());
+      //c = (basis.nStar());
       r = 6;
 
-      DArray<double> q1s;
-      DArray<double> q2s;
-      DArray<double> q3s;
-      q1s.allocate(basis.nStar());
-      q2s.allocate(basis.nStar());
-      q3s.allocate(basis.nStar());
+      int kSize_ = 1;
+      for (int i = 0; i < D; ++i) {
+           kSize_ *= kMeshDimensions_[i];   
+      }   
+
+      c = (kSize_);
+
+      //DArray<double> q1s;
+      //DArray<double> q2s;
+      //DArray<double> q3s;
+      //q1s.allocate(basis.nStar());
+      //q2s.allocate(basis.nStar());
+      //q3s.allocate(basis.nStar());
 
       FArray<double, 6> dQ;
 
@@ -307,6 +318,98 @@ namespace Pssp {
          pStress [i] = 0.0;
       }   
 
+      IntVec <D> temp;
+      IntVec <D> vec;
+      IntVec <D> Partner;    
+      double element;
+      DMatrix<double> dGsq;
+      dGsq.allocate(kSize_, 6);
+      MeshIterator<D> iter;
+      iter.setDimensions(mesh().dimensions());
+      //bool isPartner = 0; //Sees if partner is in kSize or not //Default as false
+      int n1 = 0;
+
+      for (int n = 0; n < r ; ++n) {
+         n1 = 0;
+         for (iter.begin(); !iter.atEnd(); ++iter) {
+ 
+
+            temp = iter.position();
+            //std::cout<<"rank = "<<iter.rank()<<std::endl;
+
+            if (temp[D-1] <= (mesh().dimensions()[D-1]/2)){
+               vec =  shiftToMinimum(temp, mesh().dimensions(), *unitCellPtr_);
+               dGsq(n1, n) = 0;
+               //std::cout<<"temp    ="<<temp<<std::endl;
+
+               for (int p = 0; p < D; ++p){
+                  for (int q = 0; q < D; ++q){
+                     element = unitCellPtr_->dkkBasis(n, p, q);
+                     dGsq(n1, n) += vec[p]*vec[q]*element;
+                  }
+
+                     if (temp [p] !=0)
+                        Partner[p] = mesh().dimensions()[p] - temp[p];
+                     else
+                        Partner[p] = 0;
+ 
+               }
+
+            if (mesh().dimensions()[D-1]%2 == 1){
+
+               if (temp[D-1] !=0){
+
+                  vec = shiftToMinimum(Partner, mesh().dimensions(), *unitCellPtr_);          
+                  for (int p = 0; p < D; ++p){
+                     for (int q = 0; q < D; ++q){
+                        element = unitCellPtr_->dkkBasis(n, p, q);
+                        dGsq(n1, n) += vec[p]*vec[q]*element;
+
+                     }
+                  }
+               }
+
+
+            }
+
+            else{
+               if (temp[D-1] !=0 && temp[D-1] != (mesh().dimensions()[D-1]/2)){
+                  //std::cout<<"Partner ="<<Partner<<std::endl;
+                  vec = shiftToMinimum(Partner, mesh().dimensions(), *unitCellPtr_);
+                  for (int p = 0; p < D; ++p){
+                     for (int q = 0; q < D; ++q){
+                        element = unitCellPtr_->dkkBasis(n, p, q);
+                        dGsq(n1, n) += vec[p]*vec[q]*element;
+                  
+                     }
+                  }
+               }             
+
+            }
+
+
+            //std::cout<<"dGsq("<<n1 <<","<< n<<" ="<<dGsq(n1, n)<<std::endl ;
+               ++n1;
+
+            }
+ 
+         }
+
+      //std::cout <<"---------------Changing unitCell-------------------"<<std::endl; 
+      }
+
+      //std::cout <<"---------------Mirroring done-------------------"<<std::endl;
+
+
+
+
+
+
+
+
+
+
+
       Propagator<D> const & p0 = propagator(0);
       Propagator<D> const & p1 = propagator(1);
 
@@ -317,14 +420,14 @@ namespace Pssp {
          
            q1p = p0.q(j);
            fft_.forwardTransform(q1p, q1);
-           basis.convertFieldDftToComponents(q1 , q1s);
+           //basis.convertFieldDftToComponents(q1 , q1s);
            
            //fft_.forwardTransform(p1.q(ns_ - 1 - j), q2);  
            
            q2p = p1.q(ns_ - 1 - j);
            //q2p = p1.q(j);
            fft_.forwardTransform(q2p, q2); 
-           basis.convertFieldDftToComponents(q2 , q2s); 
+           //basis.convertFieldDftToComponents(q2 , q2s); 
 
           // for (int d = 0; d < c; ++d){
             //  std::cout<<"q1s("<<d<<")="<<"\t"<<q1s[d]<<"\n";
@@ -347,8 +450,14 @@ namespace Pssp {
               increment = 0;
 
               for (int m = 0; m < c ; ++m) {
-                 q3s [m] = q1s [m] * basis.star(m).dEigen[n];  
-                 increment += q3s [m]*q2s [m]; 
+                 //q3s [m] = q1s [m] * basis.star(m).dEigen[n];
+                 double prod = 0;
+                 prod = (q1[m][0] * q2[m][0]) + (q1[m][1] * q2[m][1]);
+                 //std::cout << "increment = "<<increment << std::endl;
+                 //temp *= basis.wave(m).dEigenWave[n];
+                 prod *= dGsq(m,n); 
+                 increment += prod; 
+                 //increment += q3s [m]*q2s [m]; 
               }
               increment = (increment * kuhn() * kuhn() * dels)/normal;
               dQ [n] = dQ[n]-increment; 

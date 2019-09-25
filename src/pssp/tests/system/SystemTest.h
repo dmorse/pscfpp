@@ -686,18 +686,18 @@ public:
 };
 
 TEST_BEGIN(SystemTest)
-TEST_ADD(SystemTest, testConstructor1D)
-TEST_ADD(SystemTest, testReadParameters1D)
+//TEST_ADD(SystemTest, testConstructor1D)
+//TEST_ADD(SystemTest, testReadParameters1D)
 
-TEST_ADD(SystemTest, testConversion_BCC)
-TEST_ADD(SystemTest, testConversion_hex)
-TEST_ADD(SystemTest, testConversion_lam)
+//TEST_ADD(SystemTest, testConversion_BCC)
+//TEST_ADD(SystemTest, testConversion_hex)
+//TEST_ADD(SystemTest, testConversion_lam)
 TEST_ADD(SystemTest, testIterate_bcc_domainOn)
-TEST_ADD(SystemTest, testIterate_hex_domainOn)
-TEST_ADD(SystemTest, testIterate_lam_domainOn)
-TEST_ADD(SystemTest, testIterate_bcc_domainOff)
-TEST_ADD(SystemTest, testIterate_hex_domainOff)
-TEST_ADD(SystemTest, testIterate_lam_domainOff)
+//TEST_ADD(SystemTest, testIterate_hex_domainOn)
+//TEST_ADD(SystemTest, testIterate_lam_domainOn)
+//TEST_ADD(SystemTest, testIterate_bcc_domainOff)
+//TEST_ADD(SystemTest, testIterate_hex_domainOff)
+//TEST_ADD(SystemTest, testIterate_lam_domainOff)
 
 //TEST_ADD(SystemTest, testIterate_BCC)
 TEST_END(SystemTest)

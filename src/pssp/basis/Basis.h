@@ -54,6 +54,11 @@ namespace Pssp
          // Integer indices of wave, in first Brillouin zone.
          IntVec<D> indicesBz;
 
+         /** 
+         * Array of derivatives of eigenvalue w/ respect to lattice parameters.
+         */  
+         FArray<double, 6> dEigenWave;
+
          // Index of star containing this wavevector
          int starId;
 

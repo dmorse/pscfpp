@@ -657,6 +657,11 @@ namespace Pssp
 
       }
 
+
+      IntVec <D> temp;
+      int n1 = 0;
+      bool isBoundary = 1; //Initial Value
+
       // Final processing of waves
       for (i = 0; i < nWave_; ++i) {
          vec = waves_[i].indicesDft;
@@ -674,9 +679,117 @@ namespace Pssp
             waves_[i].implicit = false;
          }
 
+
+
+
+         #if 0
+         // Set elements of dEigenWave
+         {    
+            vec = waves_[i].indicesBz;
+            double element, dEigen;
+            int p, q;
+            for (j = 0; j < unitCell().nParameter(); ++j) {
+               dEigen = 0; 
+               for (p = 0; p < D; ++p){
+                  for (q = 0; q < D; ++q){
+                     if (!waves_[i].implicit){
+                     element = unitCellPtr_->dkkBasis(j, p, q);
+                     dEigen += vec[p]*vec[q]*element;
+
+
+                     temp = waves_[i].indicesDft;
+                     
+
+                     for (int k = D-1; k >= 0; k--){
+                        if (temp[k] == 0 || (double)temp[k] == ((double) meshPtr_->dimensions() [k])/2){
+                           isBoundary = 1;
+                           break;   
+                        }
+                        else{
+                           isBoundary = 0;
+                        } 
+                     }
+                     
+                     if (isBoundary != 1)
+                     {
+                     temp = (meshPtr_->dimensions() - temp);
+                     vec = wave(temp).indicesBz;
+                     dEigen += (vec[p]*vec[q]*element);
+                     isBoundary = 1;
+                     } // reset isBoundary
+
+                  }    
+               }
+               }    
+               waves_[n1].dEigenWave[j] = dEigen;
+               if (!waves_[j].implicit)
+                  n1++;
+            }    
+         }    
+
+         #endif
+
+
+
+
          // Look up table for waves
          waveIds_[mesh().rank(vec)] = i;
       }
+
+     int partnerId;
+
+     for (i = 0; i < nWave_; ++i) {
+            vec = waves_[i].indicesBz;
+            double element, dEigen;
+            int p, q;
+            for (j = 0; j < unitCell().nParameter(); ++j) {
+               dEigen = 0;
+               for (p = 0; p < D; ++p){
+                  for (q = 0; q < D; ++q){
+                     if (!waves_[i].implicit){
+                     element = unitCellPtr_->dkkBasis(j, p, q);
+                     dEigen += vec[p]*vec[q]*element;
+
+
+                     temp = waves_[i].indicesDft;
+     
+
+                     for (int k = D-1; k >= 0; k--){
+                        if (temp[k] == 0 || (double)temp[k] == ((meshPtr_->dimensions() [k])/2.0)){
+                           isBoundary = 1; 
+                           break;   
+                        }    
+                        else{
+                           isBoundary = 0; 
+                        }    
+                     }    
+
+                     if (isBoundary != 1)
+                     {
+                     temp [D-1] = (meshPtr_->dimensions()[D-1]) - temp[D-1];
+                     //temp *= -1;
+                     partnerId =waveId(temp); 
+                     vec = waves_[partnerId].indicesBz;
+                     dEigen += (vec[p]*vec[q]*element);
+                     //std::cout <<"dEigen = " << dEigen <<std::endl;
+                     isBoundary = 1;
+                     } // reset isBoundary
+
+                  }
+               }
+               }
+               waves_[n1].dEigenWave[j] = dEigen;
+               if (!waves_[i].implicit)
+                  n1++;
+            }
+
+
+     }
+
+
+
+
+
    }
   
    template <int D>
@@ -709,6 +822,63 @@ namespace Pssp
          vec = waves_[i].indicesBz;
          waves_[i].sqNorm = unitCell().ksq(vec);
       }
+
+
+     int partnerId;
+     bool isBoundary = 1;
+     int n1 = 0;
+     IntVec <D> temp;
+
+     for (int i = 0; i < nWave_; ++i) {
+            vec = waves_[i].indicesBz;
+            double element, dEigen;
+            int p, q;
+            for (int j = 0; j < unitCell().nParameter(); ++j) {
+               dEigen = 0; 
+               for (p = 0; p < D; ++p){
+                  for (q = 0; q < D; ++q){
+                     if (!waves_[i].implicit){
+                     element = unitCellPtr_->dkkBasis(j, p, q);
+                     dEigen += vec[p]*vec[q]*element;
+
+                     
+                     temp = waves_[i].indicesDft;
+
+                     
+                     for (int k = D-1; k >= 0; k--){
+                        if (temp[k] == 0 ||(double)temp[k] == ((meshPtr_->dimensions() [k])/2.0)){
+                           isBoundary = 1;
+                           break;
+                        }    
+                        else{
+                           isBoundary = 0;
+                        }
+                     }
+                     
+                     if (isBoundary != 1)
+                     {
+                     temp[D-1] = (meshPtr_->dimensions() [D-1]) - temp[D-1];
+                     //temp *= -1;
+                     partnerId = waveId(temp); 
+                     vec = waves_[partnerId].indicesBz;
+                     dEigen += (vec[p]*vec[q]*element);
+                     //std::cout <<"dEigen = " << dEigen <<std::endl;
+                     isBoundary = 1;
+                     } // reset isBoundary
+                  
+                  }
+               }
+               }
+               waves_[n1].dEigenWave[j] = dEigen;
+               if (!waves_[i].implicit)
+                  n1++;
+            }
+
+     
+     }
+
+
+
 
    }
 

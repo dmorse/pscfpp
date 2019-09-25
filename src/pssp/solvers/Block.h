@@ -10,10 +10,12 @@
 
 #include "Propagator.h"                   // base class argument
 #include <pscf/solvers/BlockTmpl.h>       // base class template
+#include <pscf/mesh/Mesh.h>               // member
+#include <pscf/crystal/UnitCell.h>        // member
 #include <pssp/field/RField.h>            // member
 #include <pssp/field/RFieldDft.h>         // member
 #include <pssp/field/FFT.h>               // member
-#include <util/containers/FArray.h>      // member template
+#include <util/containers/FArray.h>       // member template
 
 namespace Pscf { 
    template <int D> class Mesh; 
@@ -173,6 +175,22 @@ namespace Pssp {
       using BlockDescriptor::length;
 
    private:
+
+      /// Pointer to associated Mesh<D>
+      //const Mesh<D>* meshPtr_;
+
+      /** 
+      * Access associated Mesh<D> as reference.
+      */  
+      //Mesh<D> const & mesh() const { return *meshPtr_; }
+
+      /// Pointer to associated UnitCell<D>
+      const UnitCell<D>* unitCellPtr_;
+
+      /** 
+      * Access associated UnitCell<D> as reference.
+      */  
+      UnitCell<D> const & unitCell() const { return *unitCellPtr_; }
 
       // Fourier transform plan
       FFT<D> fft_;
