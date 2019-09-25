@@ -370,6 +370,11 @@ namespace Pssp
       FFT<D>& fft();
 
       /**
+      * Get associated FieldIo object.
+      */
+      FieldIo<D>& fieldIo();
+
+      /**
       * Get homogeneous mixture (for reference calculations).
       */
       Homogeneous::Mixture& homogeneous();
@@ -568,60 +573,52 @@ namespace Pssp
 
    // Inline member functions
 
-   /*
-   * Get the associated Mixture object.
-   */
+   // Get the associated Mixture object.
    template <int D>
    inline Mixture<D>& System<D>::mixture()
    { return mixture_; }
 
-   /*
-   * Get the UnitCell<D>.
-   */
+   // Get the associated UnitCell<D> object.
    template <int D>
    inline UnitCell<D>& System<D>::unitCell()
    { return unitCell_; }
 
-   /*
-   * Get the mesh.
-   */
+   // Get the Mesh<D> object.
    template <int D>
    inline Mesh<D>& System<D>::mesh()
    { return mesh_; }
 
+   // Get the FFT<D> object.
    template <int D>
    inline FFT<D>& System<D>::fft()
    {  return fft_; }
 
-   /*
-   * Get group name.
-   */
+   // Get the groupName string.
    template <int D>
    inline std::string System<D>::groupName()
    { return groupName_; }
 
+   // Get the Basis<D> object.
    template <int D>
    inline Basis<D>& System<D>::basis()
    {  return basis_; }
 
-   /*
-   * Get the FileMaster.
-   */
+   // Get the FieldIo<D> object.
+   template <int D>
+   inline FieldIo<D>& System<D>::fieldIo()
+   {  return fieldIo_; }
+
+   // Get the FileMaster.
    template <int D>
    inline FileMaster& System<D>::fileMaster()
    {  return fileMaster_; }
 
-   /*
-   * Get the Homogeneous::Mixture object.
-   */
+   // Get the Homogeneous::Mixture object.
    template <int D>
-   inline 
-   Homogeneous::Mixture& System<D>::homogeneous()
+   inline Homogeneous::Mixture& System<D>::homogeneous()
    {  return homogeneous_; }
 
-   /*
-   * Get the Interaction (excess free energy model).
-   */
+   // Get the Interaction (excess free energy model).
    template <int D>
    inline ChiInteraction& System<D>::interaction()
    {
@@ -629,9 +626,7 @@ namespace Pssp
       return *interactionPtr_;
    }
 
-   /*
-   * Get the Iterator.
-   */
+   // Get the Iterator.
    template <int D>
    inline AmIterator<D>& System<D>::iterator()
    {
@@ -649,17 +644,13 @@ namespace Pssp
    DArray<double>& System<D>::wField(int id)
    {  return wFields_[id]; }
 
-   /*
-   * Get an array of all monomer chemical potential fields.
-   */
+   // Get an array of monomer chemical potential fields on r-space grids.
    template <int D>
    inline 
    DArray< typename System<D>::WField >& System<D>::wFieldGrids()
    {  return wFieldGrids_; }
 
-   /*
-   * Get a single monomer chemical potential field.
-   */
+   // Get a single monomer chemical potential field on an r-space grid.
    template <int D>
    inline 
    typename System<D>::WField& System<D>::wFieldGrid(int id)
@@ -695,35 +686,26 @@ namespace Pssp
    RFieldDft<D>& System<D>::cFieldDft(int id)
    { return cFieldDfts_[id]; }
 
-   /*
-   * Get array of all monomer concentration fields.
-   */
+   // Get array of all monomer concentration fields on grids.
    template <int D>
    inline
    DArray< typename System<D>::CField >& System<D>::cFieldGrids()
    {  return cFieldGrids_; }
 
-   /*
-   * Get a single monomer concentration field.
-   */
+   // Get a single monomer concentration field on an r-space grid.
    template <int D>
    inline typename System<D>::CField& System<D>::cFieldGrid(int id)
    {  return cFieldGrids_[id]; }
 
-   /*
-   * Get precomputed Helmoltz free energy per monomer / kT.
-   */
+   // Get the precomputed Helmoltz free energy per monomer / kT.
    template <int D>
    inline double System<D>::fHelmholtz() const
    {  return fHelmholtz_; }
 
-   /*
-   * Get precomputed pressure (units of kT / monomer volume).
-   */
+   // Get the precomputed pressure (units of kT / monomer volume).
    template <int D>
    inline double System<D>::pressure() const
    {  return pressure_; }
-
 
    #ifndef PSSP_SYSTEM_TPP
    // Suppress implicit instantiation
@@ -734,5 +716,4 @@ namespace Pssp
 
 } // namespace Pssp
 } // namespace Pscf
-//#include "System.tpp"
 #endif

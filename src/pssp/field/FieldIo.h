@@ -190,6 +190,13 @@ namespace Pssp
       void writeFieldsKGrid(std::ostream& out, 
                             DArray< RFieldDft<D> > const& fields);
    
+      /**
+      * Write header for field file (fortran pscf format)
+      *
+      * \param out output stream (i.e., output file)
+      */
+      void writeFieldHeader(std::ostream& out) const;
+
    private:
 
       // Pointers to associated objects.
@@ -266,13 +273,6 @@ namespace Pssp
       * \param in input stream (i.e., input file)
       */
       void readFieldHeader(std::istream& in);
-
-      /**
-      * Write header for field file (fortran pscf format)
-      *
-      * \param out output stream (i.e., output file)
-      */
-      void writeFieldHeader(std::ostream& out) const;
 
    };
 

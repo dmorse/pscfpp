@@ -294,20 +294,28 @@ namespace Pssp
             in >> filename;
             Log::file() << " " << Str(filename, 20) <<std::endl;
 
+            #if 0
             std::ifstream inFile;
             fileMaster().openInputFile(filename, inFile);
             readFields(inFile, wFields());
             inFile.close();
+            #endif
+
+            fieldIo().readFieldsBasis(filename, wFields());
 
          } else
          if (command == "WRITE_WFIELDS") {
             in >> filename;
             Log::file() << "  " << Str(filename, 20) << std::endl;
 
+            #if 0
             std::ofstream outFile;
             fileMaster().openOutputFile(filename, outFile);
             writeFields(outFile, wFields_);
             outFile.close();
+            #endif
+
+            fieldIo().writeFieldsBasis(filename, wFields());
 
          } else 
          if (command == "WRITE_CFIELDS") {
@@ -315,10 +323,14 @@ namespace Pssp
             in >> filename;
             Log::file() << "  " << Str(filename, 20) << std::endl;
 
+            #if 0
             std::ofstream outFile;
             fileMaster().openOutputFile(filename, outFile);
             writeFields(outFile, cFields_);
             outFile.close();
+            #endif
+
+            fieldIo().writeFieldsBasis(filename, cFields());
 
          } else
          if (command == "ITERATE") {
@@ -329,10 +341,14 @@ namespace Pssp
             in >> inFileName;
             Log::file() << " " << Str(inFileName, 20) <<std::endl;
 
+            #if 0
             std::ifstream inFile;
             fileMaster().openInputFile(inFileName, inFile);
             readFields(inFile, wFields());
             inFile.close();
+            #endif
+
+            fieldIo().readFieldsBasis(inFileName, wFields());
 
             clock_t time_begin;
             clock_t time_scf;
@@ -361,21 +377,29 @@ namespace Pssp
             in >> outFileName;
             Log::file() << " " << Str(outFileName, 20) <<std::endl;
 
+            #if 0
             std::ifstream inFile;
             fileMaster().openInputFile(inFileName, inFile);
             readFields(inFile, cFields());
             inFile.close();
+            #endif
 
-            //convert to rgrid
+            fieldIo().readFieldsBasis(inFileName, cFields());
+
+            // Convert basis -> rgrid
             for (int i = 0; i < mixture().nMonomer(); ++i) {
                basis().convertFieldComponentsToDft(cField(i), cFieldDft(i));
                fft().inverseTransform(cFieldDft(i), cFieldGrid(i));
             }
 
+            #if 0
             std::ofstream outFile;
             fileMaster().openOutputFile(outFileName, outFile);
             writeRFields(outFile, cFieldGrids());
             outFile.close();
+            #endif
+
+            fieldIo().writeFieldsRGrid(outFileName, cFieldGrids());
 
          } else
          if (command == "RGRID_TO_FIELD") {
@@ -387,37 +411,29 @@ namespace Pssp
             in >> outFileName;
             Log::file() << " " << Str(outFileName, 20) <<std::endl;
 
+            #if 0
             std::ifstream inFile;
             fileMaster().openInputFile(inFileName, inFile);
             readRFields(inFile, cFieldGrids());
             inFile.close();
+            #endif
 
-            /*//debug lines
-            std::string junkName = "out/junk";
-            std::ofstream junkFile;
-            fileMaster().openOutputFile(junkName, junkFile);
-            writeRFields(junkFile,cFieldGrids());
-            junkFile.close();
-            //end debug lines*/
+            fieldIo().readFieldsRGrid(inFileName, cFieldGrids());
 
-            //convert to fields
+            // Convert to symmetry adapted basis representation.
             for (int i = 0; i < mixture().nMonomer(); ++i) {
                fft().forwardTransform(cFieldGrid(i), cFieldDft(i));
                basis().convertFieldDftToComponents(cFieldDft(i), cField(i));
             }
 
-            //debug lines
-            /*std::string junkName = "out/junk";
-            std::ofstream junkFile;
-            fileMaster().openOutputFile(junkName, junkFile);
-            writeKFields(junkFile,cFieldDfts());
-            junkFile.close();*/
-            //end debug lines
-
+            #if 0
             std::ofstream outFile;
             fileMaster().openOutputFile(outFileName, outFile);
             writeFields(outFile, cFields());
             outFile.close();
+            #endif
+
+            fieldIo().writeFieldsBasis(outFileName, cFields());
 
          } else
          if (command == "KGRID_TO_RGRID") {
@@ -441,10 +457,14 @@ namespace Pssp
                fft().inverseTransform(cFieldDft(i), cFieldGrid(i));
             }
 
+            #if 0
             std::ofstream outFile;
             fileMaster().openOutputFile(outFileName, outFile);
             writeRFields(outFile, cFieldGrids());
             outFile.close();
+            #endif
+ 
+            fieldIo().writeFieldsRGrid(outFileName, cFieldGrids());
 
          } else
          if (command == "OMEGA_TO_RHO") {
@@ -458,11 +478,15 @@ namespace Pssp
             Log::file() << " " << Str(inFileName, 20) <<std::endl;
             in >> outFileName;
             Log::file() << " " << Str(outFileName, 20) << std::endl;       
-             
+            
+            #if 0 
             std::ifstream inFile;
             fileMaster().openInputFile(inFileName, inFile);
             readFields(inFile, wFields());
             inFile.close(); 
+            #endif
+
+            fieldIo().readFieldsBasis(inFileName, wFields());
 
             for (int j = 0; j < mixture().nMonomer(); ++j) {
                basis().convertFieldComponentsToDft(wField(j),wFieldDft(j));
@@ -475,13 +499,17 @@ namespace Pssp
                fft().forwardTransform(cFieldGrid(i), cFieldDft(i));
                basis().convertFieldDftToComponents(cFieldDft(i),cField(i));
             }   
-    
+   
+            #if 0 
             std::ofstream outFile;
             fileMaster().openOutputFile(outFileName, outFile);
             writeFields(outFile, cFields());
             outFile.close();
+            #endif
 
-         }else
+            fieldIo().writeFieldsBasis(outFileName, cFields());
+
+         } else
          if (command == "RHO_TO_OMEGA") {
             std::string inFileName;
             std::string outFileName;
@@ -522,10 +550,14 @@ namespace Pssp
                }
             }
 
+            #if 0
             std::ofstream outFile;
             fileMaster().openOutputFile(outFileName, outFile);
             writeFields(outFile, wFields());
             outFile.close();
+            #endif
+
+            fieldIo().writeFieldsBasis(outFileName, wFields());
 
          } else
          if (command == "OUTPUT_STARS") {
@@ -536,7 +568,8 @@ namespace Pssp
 
             std::ofstream outFile;
             fileMaster().openOutputFile(outFileName, outFile);
-            writeFieldHeader(outFile);
+            //writeFieldHeader(outFile);
+            fieldIo().writeFieldHeader(outFile);
             basis().outputStars(outFile);
 
          } else
@@ -548,7 +581,8 @@ namespace Pssp
 
             std::ofstream outFile;
             fileMaster().openOutputFile(outFileName, outFile);
-            writeFieldHeader(outFile);
+            // writeFieldHeader(outFile);
+            fieldIo().writeFieldHeader(outFile);
             basis().outputWaves(outFile);
 
          } else {
@@ -570,7 +604,8 @@ namespace Pssp
       readCommands(fileMaster().commandFile()); 
    }
 
-   
+  
+   #if 0 
    template <int D>
    void System<D>::readFields(std::istream &in, 
                               DArray< DArray<double> >& fields)
@@ -650,7 +685,9 @@ namespace Pssp
        readFields(inFile, fields);
        inFile.close();
    }
+   #endif
 
+   #if 0
    template <int D>
    void System<D>::readRFields(std::istream &in,
                                DArray<RField<D> >& fields)
@@ -781,8 +818,8 @@ namespace Pssp
       }
 
    }
+   #endif
 
-   //realistically not used
    template <int D>
    void System<D>::readKFields(std::istream &in,
                                  DArray<RFieldDft<D> >& fields)
@@ -817,6 +854,7 @@ namespace Pssp
       }
    }
 
+   #if 0
    template <int D>
    void System<D>::writeFields(std::ostream &out, 
                                DArray<DArray<double> > const&  fields)
@@ -958,6 +996,7 @@ namespace Pssp
       }
       #endif
    }
+   #endif
 
    template <int D>
    void System<D>::writeKFields(std::ostream &out,
@@ -1010,6 +1049,7 @@ namespace Pssp
       UTIL_CHECK(nMonomer == mixture().nMonomer());
    }
 
+   #if 0
    template <int D>
    void System<D>::writeFieldHeader(std::ostream &out) const
    {
@@ -1022,6 +1062,7 @@ namespace Pssp
       out << "N_monomer"  << std::endl 
           << "          " << mixture_.nMonomer() << std::endl;
    }
+   #endif
 
    template <int D>
    void System<D>::initHomogeneous()
