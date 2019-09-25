@@ -149,6 +149,7 @@ namespace Pssp
       double pressure() const;
 
       //@}
+      #if 0
       /// \name Field File I/O
       //@{
 
@@ -242,6 +243,7 @@ namespace Pssp
                         DArray< RFieldDft<D> > const& fields);
 
       //@}
+      #endif
       /// \name Field Accessor Functions
       //@{
 

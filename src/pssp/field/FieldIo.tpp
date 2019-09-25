@@ -71,7 +71,7 @@ namespace Pssp
   
    template <int D>
    void FieldIo<D>::readFieldsBasis(std::istream& in, 
-                               DArray< DArray<double> >& fields)
+                                    DArray< DArray<double> >& fields)
    {
       FieldIo<D>::readFieldHeader(in);
       int nMonomer = mixture().nMonomer();
@@ -139,10 +139,10 @@ namespace Pssp
    void FieldIo<D>::readFieldsBasis(std::string filename, 
                               DArray<DArray<double> >& fields)
    {
-       std::ifstream inFile;
-       fileMaster().openInputFile(filename, inFile);
-       readFieldsBasis(inFile, fields);
-       inFile.close();
+       std::ifstream file;
+       fileMaster().openInputFile(filename, file);
+       readFieldsBasis(file, fields);
+       file.close();
    }
 
    template <int D>
@@ -178,10 +178,10 @@ namespace Pssp
    void FieldIo<D>::writeFieldsBasis(std::string filename, 
                                      DArray<DArray<double> > const & fields)
    {
-       std::ofstream outFile;
-       fileMaster().openOutputFile(filename, outFile);
-       writeFieldsBasis(outFile, fields);
-       outFile.close();
+       std::ofstream file;
+       fileMaster().openOutputFile(filename, file);
+       writeFieldsBasis(file, fields);
+       file.close();
    }
 
    template <int D>
@@ -221,14 +221,14 @@ namespace Pssp
       int n2 =0;
       int n3 =0;
 
-      if (D==3){
-         while (n1 < mesh().dimension(0)){
+      if (D==3) {
+         while (n1 < mesh().dimension(0)) {
             q = p;
             n2 = 0;
-            while (n2 < mesh().dimension(1)){
+            while (n2 < mesh().dimension(1)) {
                r =q;
                n3 = 0;
-               while (n3 < mesh().dimension(2)){
+               while (n3 < mesh().dimension(2)) {
                   for (int i = 0; i < nM; ++i) {
                      fields[i][s] = temp[i][r];
                   }
@@ -244,11 +244,11 @@ namespace Pssp
          }
       }
 
-      else if (D==2){
-         while (n1 < mesh().dimension(0)){
+      else if (D==2) {
+         while (n1 < mesh().dimension(0)) {
             r =q; 
             n2 = 0;
-            while (n2 < mesh().dimension(1)){
+            while (n2 < mesh().dimension(1)) {
                for (int i = 0; i < nM; ++i) {
                   fields[i][s] = temp[i][r];
                }   
@@ -261,9 +261,9 @@ namespace Pssp
          }   
       } 
 
-      else if (D==1){
+      else if (D==1) {
 
-         while (n1 < mesh().dimension(0)){
+         while (n1 < mesh().dimension(0)) {
             for (int i = 0; i < nM; ++i) {
                fields[i][s] = temp[i][r];
             }   
@@ -274,7 +274,7 @@ namespace Pssp
       } 
 
       else{
-         std::cout<<"Invalid Dimensions";
+         std::cout << "Invalid Dimensions";
       }
 
    }
@@ -283,10 +283,10 @@ namespace Pssp
    void FieldIo<D>::readFieldsRGrid(std::string filename, 
                               DArray< RField<D> >& fields)
    {
-       std::ifstream inFile;
-       fileMaster().openInputFile(filename, inFile);
-       readFieldsRGrid(inFile, fields);
-       inFile.close();
+      std::ifstream file;
+      fileMaster().openInputFile(filename, file);
+      readFieldsRGrid(file, fields);
+      file.close();
    }
 
    template <int D>
@@ -312,14 +312,14 @@ namespace Pssp
       int n2 =0;
       int n3 =0;
 
-      if (D==3){
-         while (n3 < mesh().dimension(2)){
+      if (D==3) {
+         while (n3 < mesh().dimension(2)) {
             q = p; 
             n2 = 0; 
-            while (n2 < mesh().dimension(1)){
+            while (n2 < mesh().dimension(1)) {
                r =q;
                n1 = 0; 
-               while (n1 < mesh().dimension(0)){
+               while (n1 < mesh().dimension(0)) {
                   for (int i = 0; i < nM; ++i) {
                      temp[i][s] = fields[i][r];
                   }    
@@ -334,11 +334,11 @@ namespace Pssp
             ++p;     
          }    
       }
-      else if (D==2){
-         while (n2 < mesh().dimension(1)){
+      else if (D==2) {
+         while (n2 < mesh().dimension(1)) {
             r =q;
             n1 = 0;
-            while (n1 < mesh().dimension(0)){
+            while (n1 < mesh().dimension(0)) {
                for (int i = 0; i < nM; ++i) {
                   temp[i][s] = fields[i][r];
                }
@@ -350,10 +350,8 @@ namespace Pssp
             ++n2;
          }
       }
-
-      else if (D==1){
-
-         while (n1 < mesh().dimension(0)){
+      else if (D==1) {
+         while (n1 < mesh().dimension(0)) {
             for (int i = 0; i < nM; ++i) {
                temp[i][s] = fields[i][r];
             }
@@ -361,10 +359,8 @@ namespace Pssp
             ++s;
             ++n1;
          }
-      }
-
-      else{
-         std::cout<<"Invalid Dimensions";
+      } else {
+         std::cout << "Invalid Dimensions";
       }
 
       // Write fields
@@ -383,12 +379,11 @@ namespace Pssp
    void FieldIo<D>::writeFieldsRGrid(std::string filename, 
                                      DArray< RField<D> > const & fields)
    {
-       std::ofstream outFile;
-       fileMaster().openOutputFile(filename, outFile);
-       writeFieldsRGrid(outFile, fields);
-       outFile.close();
+      std::ofstream file;
+      fileMaster().openOutputFile(filename, file);
+      writeFieldsRGrid(file, fields);
+      file.close();
    }
-
 
    template <int D>
    void FieldIo<D>::readFieldsKGrid(std::istream &in,
@@ -418,7 +413,15 @@ namespace Pssp
       }
    }
 
-
+   template <int D>
+   void FieldIo<D>::readFieldsKGrid(std::string filename, 
+                                    DArray< RFieldDft<D> >& fields)
+   {
+      std::ifstream file;
+      fileMaster().openInputFile(filename, file);
+      readFieldsKGrid(file, fields);
+      file.close();
+   }
 
    template <int D>
    void FieldIo<D>::writeFieldsKGrid(std::ostream &out,
@@ -439,6 +442,16 @@ namespace Pssp
          }
          out << std::endl;
       }
+   }
+
+   template <int D>
+   void FieldIo<D>::writeFieldsKGrid(std::string filename, 
+                                    DArray< RFieldDft<D> > const& fields)
+   {
+      std::ofstream file;
+      fileMaster().openOutputFile(filename, file);
+      writeFieldsKGrid(file, fields);
+      file.close();
    }
 
    template <int D>
