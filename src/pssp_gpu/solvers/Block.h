@@ -16,13 +16,11 @@
 #include <pssp_gpu/field/FFTBatched.h>               // member
 #include <util/containers/FArray.h>
 #include <pssp_gpu/crystal/UnitCell.h>
+#include <pssp_gpu/wavelist/WaveList.h>
 
 namespace Pscf { 
    template <int D> class Mesh; 
 
-   namespace Pssp_gpu{
-      template <int D> class Basis;
-   }
 }
 
 namespace Pscf { 
@@ -113,7 +111,7 @@ namespace Pssp_gpu {
       */ 
       void computeConcentration(double prefactor);
 
-      void computeStress(Basis<D>& basis, double prefactor);
+      void computeStress(WaveList<D>& wavelist, double prefactor);
 
       /// Stress exerted by a polymer chain of a block.
       FArray<double, 6> pStress;

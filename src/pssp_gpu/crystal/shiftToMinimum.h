@@ -27,7 +27,7 @@ namespace Pssp_gpu{
    IntVec<D> shiftToMinimum(IntVec<D>& v, const IntVec<D> d);
 
    template <int D>
-   void shiftToMinimum(IntVec<D>& v, const IntVec<D> d, int* waveBz);
+   void shiftToMinimum(const IntVec<D>& v, const IntVec<D>& d, int* waveBz);
    // Explicit specializations
    // The explicit specializations assumes that the value of IntVec is strictly
    // non-negative. This is always safe if IntVec<D>& v is provided 
@@ -48,7 +48,7 @@ namespace Pssp_gpu{
    }
 
    template<int D>
-   void shiftToMinimum(IntVec<D>& v, const IntVec<D> d, int* waveBz) {      
+   void shiftToMinimum(const IntVec<D>& v, const IntVec<D>& d, int* waveBz) {      
       for(int i = 0; i < D; i++) {
          if (v[i] > d[i] / 2 ) {
             waveBz[i] = v[i] - d[i];

@@ -38,13 +38,13 @@ static __global__ void pointwiseFloatMul(const cufftReal* a, const float* b, cuf
    }
 }
 
-static __global__ void mulDelKsq(cufftReal* result, const cufftReal* q1,
-                                 const cufftReal* q2, const cufftReal* delKsq, 
-                                 int paramN, int size) {
+static __global__ void mulDelKsq(cufftReal* result, const cufftComplex* q1,
+                                 const cufftComplex* q2, const cufftReal* delKsq, 
+                                 int paramN, int kSize, int rSize) {
    int nThreads = blockDim.x * gridDim.x;
    int startID = blockIdx.x * blockDim.x + threadIdx.x;
-   for (int i = startID; i < size; i += nThreads) {
-      result[i] =  q1[i] * delKsq[paramN * size + i] * q2[i];       
+   for (int i = startID; i < kSize; i += nThreads) {
+      result[i] =  cuCmulf(q1[i], cuConjf(q2[i])).x * delKsq[paramN * rSize + i];       
    }
 }
 
@@ -435,7 +435,7 @@ static __global__ void scaleReal(cufftReal* result, int size, float scale) {
    * the symmetry I since none of the code is correct in the first place
    */
    template <int D>
-   void Block<D>::computeStress(Basis<D>& basis, double prefactor)
+   void Block<D>::computeStress(WaveList<D>& wavelist, double prefactor)
    {   
       // Preconditions
 
@@ -448,9 +448,6 @@ static __global__ void scaleReal(cufftReal* result, int size, float scale) {
 
       double dels, normal, increment;
       normal = 3.0*6.0;
-
-      int nStar;
-      nStar = basis.nStar();
        
       //float tempdksq [nStar] = { };
 
@@ -470,9 +467,9 @@ static __global__ void scaleReal(cufftReal* result, int size, float scale) {
       fftBatched_.forwardTransform(p0.head(), qkBatched_, ns_);
       fftBatched_.forwardTransform(p1.head(), qk2Batched_, ns_);
       for (int j = 0; j < ns_ ; ++j) {
-         basis.convertFieldDftToComponents(qkBatched_ + (j* kSize_) , q1_.cDField());
+         //basis.convertFieldDftToComponents(qkBatched_ + (j* kSize_) , q1_.cDField());
 
-         basis.convertFieldDftToComponents(qk2Batched_ + (kSize_ * (ns_ - 1 - j)) , q2_.cDField()); 
+         //basis.convertFieldDftToComponents(qk2Batched_ + (kSize_ * (ns_ - 1 - j)) , q2_.cDField()); 
          
          dels = ds_;
          
@@ -485,17 +482,57 @@ static __global__ void scaleReal(cufftReal* result, int size, float scale) {
          }
 
          for (int n = 0; n < nParams_ ; ++n) {
+            //do i need this?
+            //cudaMemset(qr2_.cDField(), 0, mesh().size() * sizeof(int));
             mulDelKsq<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>>
-               (qr2_.cDField(), q1_.cDField(), q2_.cDField(), basis.dksq, n , nStar);
+               (qr2_.cDField(), qkBatched_ + (j * kSize_), qk2Batched_ + (kSize_ * (ns_ -1 -j)), 
+                wavelist.dkSq(), n , kSize_, nx);
             
-            increment = 0;            
-            increment = reductionH(qr2_, nStar);
+            /*if(j == 0) {
+               cufftReal* temp = new cufftReal[mesh().size()];
+               cufftComplex* complex = new cufftComplex[kSize_];
+               
+               std::cout<<"real propagator 1\n";
+               cudaMemcpy(temp, p0.head() + (mesh().size()* j), sizeof(cufftReal) * mesh().size(), cudaMemcpyDeviceToHost);
+               for(int i = 0; i < mesh().size(); i++) {
+                  std::cout<<temp[i]<<std::endl;
+               }
+
+               std::cout<<"output complex 1\n";
+               cudaMemcpy(complex, qk2Batched_ + ( j *kSize_), sizeof(cufftComplex) * kSize_, cudaMemcpyDeviceToHost);
+               for(int i = 0; i < kSize_; i++) {
+                  std::cout<<complex[i].x <<' '<<complex[i].y<<std::endl;
+               }
+
+               std::cout<<"real propagator 2\n";
+               cudaMemcpy(temp, p1.head() + (mesh().size() * (ns_ - 1 - j)), sizeof(cufftReal) * mesh().size(), cudaMemcpyDeviceToHost);
+               for(int i = 0; i < mesh().size(); i++) {
+                  std::cout<<temp[i]<<std::endl;
+               }
+
+               std::cout<<"output complex2\n";
+               cudaMemcpy(complex, qk2Batched_ + ((ns_ - 1 - j)*kSize_), sizeof(cufftComplex) * kSize_, cudaMemcpyDeviceToHost);
+               for(int i = 0; i < kSize_; i++) {
+                  std::cout<<complex[i].x <<' '<<complex[i].y<<std::endl;
+               }
+
+               std::cout<<"final result\n";
+               cudaMemcpy(temp, qr2_.cDField(), sizeof(cufftReal) * kSize_, cudaMemcpyDeviceToHost);
+               for(int i = 0; i < kSize_; i++) {
+                  std::cout<<temp[i]<<std::endl;
+               }
+               exit(1);
+               }*/
+            increment = reductionH(qr2_, mesh().size());
+            //std::cout<<"This is increment "<<increment<<std::endl;
             increment = (increment * kuhn() * kuhn() * dels)/normal; // try to shift this in tempdksq assignment line.
             dQ [n] = dQ[n]-increment;   
          }    
       } 
       // Normalize
+      //std::cout<<"This is prefactor "<<prefactor<<std::endl;
       for (i = 0; i < nParams_; ++i) {
+         //std::cout<<"This is dQ "<<dQ[i]<<std::endl;
          pStress[i] = pStress[i] - (dQ[i] * prefactor);
          //std::cout<<"pStress ["<<i<<"] = "<< pStress [i]<<std::endl;
       }

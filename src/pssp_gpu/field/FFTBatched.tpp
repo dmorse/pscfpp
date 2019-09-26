@@ -11,6 +11,18 @@
 #include "FFTBatched.h"
 #include <pssp_gpu/GpuResources.h>
 
+static __global__ void scaleComplexData(cufftComplex* data, cufftReal scale, int size) {
+   
+   //write code that will scale
+   int nThreads = blockDim.x * gridDim.x;
+   int startId = blockIdx.x * blockDim.x + threadIdx.x;
+   for(int i = startId; i < size; i += nThreads ) {
+      data[i].x *= scale;
+      data[i].y *= scale;
+   }
+   
+}
+
 namespace Pscf {
 namespace Pssp_gpu
 {
@@ -174,6 +186,7 @@ namespace Pssp_gpu
          std::cout<<"CUFFT error: forward"<<std::endl;
          return;
       }
+      //scaleComplexData<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(kField, scale, kSize_ * batchSize);
       #else
       if(cufftExecD2Z(fPlan_, rField, kField) != CUFFT_SUCCESS) {
          std::cout<<"CUFFT error: forward"<<std::endl;

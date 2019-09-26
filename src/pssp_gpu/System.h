@@ -20,6 +20,7 @@
 #include <util/containers/DArray.h>        // member template
 #include <util/containers/Array.h>         // function parameter
 #include <pssp_gpu/field/RDField.h>             // typedef
+#include <pssp_gpu/wavelist/WaveList.h>
 #include <util/random/Random.h>
 #include <curand.h>
 
@@ -196,7 +197,7 @@ namespace Pssp_gpu
       *
       * \param in input stream (i.e., input file)
       */
-      void readFields(std::istream& in, DArray< RDField<D> >& fields);
+      //void readFields(std::istream& in, DArray< RDField<D> >& fields);
 
       void readRFields(std::istream& in, DArray< RDField<D> >& fields);
 
@@ -207,7 +208,7 @@ namespace Pssp_gpu
       * \param out output stream (i.e., output file)
       * \param fields array of fields for different species
       */
-      void writeFields(std::ostream& out, DArray< RDField<D> > const & fields);
+      //void writeFields(std::ostream& out, DArray< RDField<D> > const & fields);
 
       void writeRFields(std::ostream& out, DArray< RDField<D> > const& fields);
 
@@ -247,6 +248,8 @@ namespace Pssp_gpu
       * Get basis object by reference.
       */
       Basis<D>& basis();
+
+      WaveList<D>& wavelist();
 
       FFT<D>& fft();
       /**
@@ -330,6 +333,8 @@ namespace Pssp_gpu
       * Pointer to a Basis object
       */
       Basis<D>* basisPtr_;
+      
+      WaveList<D>* wavelistPtr_;
 
       /**
       * FFT object to be used by iterator
@@ -533,6 +538,12 @@ namespace Pssp_gpu
    {
       UTIL_ASSERT(basisPtr_);
       return *basisPtr_;
+   }
+
+   template <int D>
+   inline WaveList<D>& System<D>::wavelist()
+   {
+      return *wavelistPtr_;
    }
 
    template <int D>
