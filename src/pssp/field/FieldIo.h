@@ -231,6 +231,24 @@ namespace Pssp
       */
       void writeFieldHeader(std::ostream& out) const;
 
+      /**
+      * Convert field from symmetrized basis to DFT (k-grid).
+      *
+      * \param components coefficients of symmetry-adapted basis functions
+      * \param dft discrete Fourier transform of a real field
+      */
+      void convertBasisToDft(DArray<double> const& components, 
+                             RFieldDft<D>& dft);
+   
+      /**
+      * Convert field from DFT (k-grid) to symmetrized basis.
+      *
+      * \param dft complex DFT representation of a field.
+      * \param components coefficients of symmetry-adapted basis functions.
+      */
+      void convertDftToBasis(RFieldDft<D> const& dft, 
+                             DArray<double>& components);
+
    private:
 
       // Pointers to associated objects.

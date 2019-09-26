@@ -149,101 +149,6 @@ namespace Pssp
       double pressure() const;
 
       //@}
-      #if 0
-      /// \name Field File I/O
-      //@{
-
-      /**
-      * Read concentration or chemical potential field components from file.
-      *
-      * This function reads components in a symmetry adapted basis from 
-      * file in.
-      *
-      * The capacity of DArray fields is equal to nMonomer, and element
-      * fields[i] is a DArray containing components of the field 
-      * associated with monomer type i.
-      *
-      * \param in input stream (i.e., input file)
-      */
-      void readFields(std::istream& in, DArray< DArray <double> >& fields);
-
-      /**
-      * Read concentration or chemical potential field components from file.
-      *
-      * This function opens an input file with the specified filename, 
-      * reads components in symmetry-adapted form from that file, and 
-      * closes the file.
-      *
-      * \param filename name of input file
-      */
-      void readFields(std::string filename, 
-                      DArray< DArray <double> >& fields);
-
-      /**
-      * Write concentration or chemical potential field components to file.
-      *
-      * This function writes components in a symmetry adapted basis.
-      *
-      * \param out output stream (i.e., output file)
-      * \param fields array of fields for different species
-      */
-      void writeFields(std::ostream& out, 
-                       DArray< DArray <double> > const & fields);
-
-      /**
-      * Write concentration or chemical potential field components to file.
-      *
-      * This function opens an output file with the specified filename, 
-      * writes components in symmetry-adapted form to that file, and then
-      * closes the file. 
-      *
-      * \param filename name of input file
-      */
-      void writeFields(std::string filename, 
-                       DArray< DArray <double> > const & fields);
-
-      /**
-      * Read array of RField objects (fields on an r-space grid) from file.
-      *
-      * The capacity of array fields is equal to nMonomer, and element
-      * fields[i] is the RField<D> associated with monomer type i.
-      * 
-      * \param in input stream (i.e., input file)
-      */
-      void readRFields(std::istream& in, DArray< RField<D> >& fields);
-
-      /**
-      * Write array of RField objects (fields on an r-space grid) to file.
-      *
-      * \param out output stream (i.e., output file)
-      * \param fields array of fields for different species
-      */
-      void writeRFields(std::ostream& out, 
-                        DArray< RField<D> > const& fields);
-
-      /**
-      * Read array of RFieldDft objects (k-space fields) from file.
-      *
-      * The capacity of the array is equal to nMonomer, and element
-      * fields[i] is the discrete Fourier transform of the field for 
-      * monomer type i.
-      * 
-      * \param in input stream (i.e., input file)
-      * \param fields array of fields for different species
-      */
-      void readKFields(std::istream& in, DArray< RFieldDft<D> >& fields);
-
-      /**
-      * Write array of RFieldDft objects (k-space fields) to file.
-      *
-      * \param out output stream (i.e., output file)
-      * \param fields array of fields for different species
-      */
-      void writeKFields(std::ostream& out, 
-                        DArray< RFieldDft<D> > const& fields);
-
-      //@}
-      #endif
       /// \name Field Format Conversion
       //@{
 
@@ -278,7 +183,7 @@ namespace Pssp
       * \param in  fields in symmetry adapted basis form
       * \param out fields defined on real-space grid
       */
-      void convertBasisToRgrid(DArray< DArray <double> > & in,
+      void convertBasisToRGrid(DArray< DArray <double> > & in,
                                DArray< RField<D> >& out);
 
       /**
@@ -287,7 +192,7 @@ namespace Pssp
       * \param in  fields defined on real-space grid
       * \param out  fields in symmetry adapted basis form
       */
-      void convertRgridToBasis(DArray< RField<D> > & in,
+      void convertRGridToBasis(DArray< RField<D> > & in,
                                DArray< DArray <double> > & out);
 
       //@}

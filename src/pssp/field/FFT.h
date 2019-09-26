@@ -128,5 +128,4 @@ namespace Pssp {
 
 } // namespace Pscf::Pssp
 } // namespace Pscf
-// #include "FFT.tpp"
 #endif

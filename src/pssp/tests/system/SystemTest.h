@@ -94,7 +94,7 @@ public:
       // Compare result to original
       double err;
       double max = 0.0;
-      //std::cout << std::endl;   
+      std::cout << std::endl;   
       for (int j = 0; j < nStar; ++j) {
          for (int i = 0; i < nMonomer; ++i) {
             err = wFields_check[i][j] - system.wFields()[i][j];
