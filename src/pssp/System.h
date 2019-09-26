@@ -242,6 +242,22 @@ namespace Pssp
                         DArray< RFieldDft<D> > const& fields);
 
       //@}
+      /// \name Field Format Conversion
+      //@{
+
+      void convertBasisToKgrid(DArray< DArray <double> > & in,
+                               DArray< RFieldDft<D> >& out);
+
+      void convertKgridToBasis(DArray< RFieldDft<D> > & in,
+                               DArray< DArray <double> > & out);
+
+      void convertBasisToRgrid(DArray< DArray <double> > & in,
+                               DArray< RField<D> >& out);
+
+      void convertRgridToBasis(DArray< RField<D> > & in,
+                               DArray< DArray <double> > & out);
+
+      //@}
       /// \name Field Accessor Functions
       //@{
 

@@ -1,5 +1,4 @@
-FIELD_TO_RGRID
+READ_WFIELDS
 contents/omega/domainOn/omega_bcc
-out/omega/conv/omega_rgrid_bcc
 
 FINISH
