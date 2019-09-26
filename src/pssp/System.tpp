@@ -362,9 +362,11 @@ namespace Pssp
             in >> outFileName;
             Log::file() << " " << Str(outFileName, 20) <<std::endl;
 
+            // Convert to symmetry adapted basis representation.
             fieldIo().readFieldsRGrid(inFileName, cFieldGrids());
 
-            // Convert to symmetry adapted basis representation.
+
+            // Convert rgrid -> basis
             for (int i = 0; i < mixture().nMonomer(); ++i) {
                fft().forwardTransform(cFieldGrid(i), cFieldDft(i));
                basis().convertFieldDftToComponents(cFieldDft(i), cField(i));
@@ -521,6 +523,147 @@ namespace Pssp
    }
 
   
+   /*
+   * Compute Helmoltz free energy and pressure
+   */
+   template <int D>
+   void System<D>::computeFreeEnergy()
+   {
+      fHelmholtz_ = 0.0;
+ 
+      // Compute ideal gas contributions to fHelhmoltz_
+      Polymer<D>* polymerPtr;
+      double phi, mu, length;
+      int np = mixture().nPolymer();
+      for (int i = 0; i < np; ++i) {
+         polymerPtr = &mixture().polymer(i);
+         phi = polymerPtr->phi();
+         mu = polymerPtr->mu();
+         // Recall: mu = ln(phi/q)
+         length = polymerPtr->length();
+         fHelmholtz_ += phi*( mu - 1.0 )/length;
+      }
+
+      int nm  = mixture().nMonomer();
+      int nStar = basis().nStar();
+      double temp = 0;
+
+      for (int i = 0; i < nm; ++i) {
+         
+         for (int j = i + 1; j < nm; ++j) {
+            for (int k = 0; k < nStar; ++k) {
+               fHelmholtz_+=
+                  cFields_[i][k] * interaction().chi(i,j) * cFields_[j][k];
+            }
+         }
+
+         for (int j = 0; j < nStar; ++j) {
+            temp += wFields_[i][j] * cFields_[i][j];
+         }
+
+      }
+      fHelmholtz_ -= temp;
+
+      // Compute pressure
+      pressure_ = -fHelmholtz_;
+      for (int i = 0; i < np; ++i) {
+         polymerPtr = &mixture().polymer(i);
+         phi = polymerPtr->phi();
+         mu = polymerPtr->mu();
+         length = polymerPtr->length();
+
+         pressure_ += mu * phi /length;
+      }
+
+   }
+
+   template <int D>
+   void System<D>::outputThermo(std::ostream& out)
+   {
+      out << std::endl;
+      out << "fHelmholtz = " << Dbl(fHelmholtz(), 18, 11) << std::endl;
+      out << "pressure   = " << Dbl(pressure(), 18, 11) << std::endl;
+      out << std::endl;
+
+      out << "Polymers:" << std::endl;
+      out << "    i"
+          << "        phi[i]      "
+          << "        mu[i]       " 
+          << std::endl;
+      for (int i = 0; i < mixture().nPolymer(); ++i) {
+         out << Int(i, 5) 
+             << "  " << Dbl(mixture().polymer(i).phi(),18, 11)
+             << "  " << Dbl(mixture().polymer(i).mu(), 18, 11)  
+             << std::endl;
+      }
+      out << std::endl;
+   }
+
+   template <int D>
+   void System<D>::initHomogeneous()
+   {
+
+      // Set number of molecular species and monomers
+      int nm = mixture().nMonomer(); 
+      int np = mixture().nPolymer(); 
+      //int ns = mixture().nSolvent(); 
+      int ns = 0;
+      UTIL_CHECK(homogeneous_.nMolecule() == np + ns);
+      UTIL_CHECK(homogeneous_.nMonomer() == nm);
+
+      // Allocate c_ work array, if necessary
+      if (c_.isAllocated()) {
+         UTIL_CHECK(c_.capacity() == nm);
+      } else {
+         c_.allocate(nm);
+      }
+
+      int i;   // molecule index
+      int j;   // monomer index
+      int k;   // block or clump index
+      int nb;  // number of blocks
+      int nc;  // number of clumps
+ 
+      // Loop over polymer molecule species
+      for (i = 0; i < np; ++i) {
+
+         // Initial array of clump sizes 
+         for (j = 0; j < nm; ++j) {
+            c_[j] = 0.0;
+         }
+
+         // Compute clump sizes for all monomer types.
+         nb = mixture().polymer(i).nBlock(); 
+         for (k = 0; k < nb; ++k) {
+            Block<D>& block = mixture().polymer(i).block(k);
+            j = block.monomerId();
+            c_[j] += block.length();
+         }
+ 
+         // Count the number of clumps of nonzero size
+         nc = 0;
+         for (j = 0; j < nm; ++j) {
+            if (c_[j] > 1.0E-8) {
+               ++nc;
+            }
+         }
+         homogeneous_.molecule(i).setNClump(nc);
+ 
+         // Set clump properties for this Homogeneous::Molecule
+         k = 0; // Clump index
+         for (j = 0; j < nm; ++j) {
+            if (c_[j] > 1.0E-8) {
+               homogeneous_.molecule(i).clump(k).setMonomerId(j);
+               homogeneous_.molecule(i).clump(k).setSize(c_[j]);
+               ++k;
+            }
+         }
+         homogeneous_.molecule(i).computeSize();
+
+      }
+
+   }
+
    #if 0 
    template <int D>
    void System<D>::readFields(std::istream &in, 
@@ -923,224 +1066,52 @@ namespace Pssp
    #endif
 
    template <int D>
-   void System<D>::initHomogeneous()
+   void System<D>::convertBasisToKgrid(DArray< DArray <double> >& in,
+                                       DArray< RFieldDft<D> >& out)
    {
-
-      // Set number of molecular species and monomers
-      int nm = mixture().nMonomer(); 
-      int np = mixture().nPolymer(); 
-      //int ns = mixture().nSolvent(); 
-      int ns = 0;
-      UTIL_CHECK(homogeneous_.nMolecule() == np + ns);
-      UTIL_CHECK(homogeneous_.nMonomer() == nm);
-
-      // Allocate c_ work array, if necessary
-      if (c_.isAllocated()) {
-         UTIL_CHECK(c_.capacity() == nm);
-      } else {
-         c_.allocate(nm);
+      UTIL_ASSERT(in.capacity() == out.capacity());
+      int n = in.capacity();
+      for (int i = 0; i < n; ++i) {
+         basis().convertFieldComponentsToDft(in[i], out[i]);
       }
-
-      int i;   // molecule index
-      int j;   // monomer index
-      int k;   // block or clump index
-      int nb;  // number of blocks
-      int nc;  // number of clumps
- 
-      // Loop over polymer molecule species
-      for (i = 0; i < np; ++i) {
-
-         // Initial array of clump sizes 
-         for (j = 0; j < nm; ++j) {
-            c_[j] = 0.0;
-         }
-
-         // Compute clump sizes for all monomer types.
-         nb = mixture().polymer(i).nBlock(); 
-         for (k = 0; k < nb; ++k) {
-            Block<D>& block = mixture().polymer(i).block(k);
-            j = block.monomerId();
-            c_[j] += block.length();
-         }
- 
-         // Count the number of clumps of nonzero size
-         nc = 0;
-         for (j = 0; j < nm; ++j) {
-            if (c_[j] > 1.0E-8) {
-               ++nc;
-            }
-         }
-         homogeneous_.molecule(i).setNClump(nc);
- 
-         // Set clump properties for this Homogeneous::Molecule
-         k = 0; // Clump index
-         for (j = 0; j < nm; ++j) {
-            if (c_[j] > 1.0E-8) {
-               homogeneous_.molecule(i).clump(k).setMonomerId(j);
-               homogeneous_.molecule(i).clump(k).setSize(c_[j]);
-               ++k;
-            }
-         }
-         homogeneous_.molecule(i).computeSize();
-
-      }
-
-   }
-
-   /*
-   * Compute Helmoltz free energy and pressure
-   */
-   template <int D>
-   void System<D>::computeFreeEnergy()
-   {
-      fHelmholtz_ = 0.0;
- 
-      // Compute ideal gas contributions to fHelhmoltz_
-      Polymer<D>* polymerPtr;
-      double phi, mu, length;
-      int np = mixture().nPolymer();
-      for (int i = 0; i < np; ++i) {
-         polymerPtr = &mixture().polymer(i);
-         phi = polymerPtr->phi();
-         mu = polymerPtr->mu();
-         // Recall: mu = ln(phi/q)
-         length = polymerPtr->length();
-         fHelmholtz_ += phi*( mu - 1.0 )/length;
-      }
-
-      int nm  = mixture().nMonomer();
-      int nStar = basis().nStar();
-      double temp = 0;
-
-      for (int i = 0; i < nm; ++i) {
-         
-         for (int j = i + 1; j < nm; ++j) {
-            for (int k = 0; k < nStar; ++k) {
-               fHelmholtz_+=
-                  cFields_[i][k] * interaction().chi(i,j) * cFields_[j][k];
-            }
-         }
-
-         for (int j = 0; j < nStar; ++j) {
-            temp += wFields_[i][j] * cFields_[i][j];
-         }
-
-      }
-      fHelmholtz_ -= temp;
-
-      // Compute pressure
-      pressure_ = -fHelmholtz_;
-      for (int i = 0; i < np; ++i) {
-         polymerPtr = &mixture().polymer(i);
-         phi = polymerPtr->phi();
-         mu = polymerPtr->mu();
-         length = polymerPtr->length();
-
-         pressure_ += mu * phi /length;
-      }
-
    }
 
    template <int D>
-   void System<D>::outputThermo(std::ostream& out)
+   void System<D>::convertKgridToBasis(DArray< RFieldDft<D> >& in,
+                            DArray< DArray <double> > & out)
    {
-      out << std::endl;
-      out << "fHelmholtz = " << Dbl(fHelmholtz(), 18, 11) << std::endl;
-      out << "pressure   = " << Dbl(pressure(), 18, 11) << std::endl;
-      out << std::endl;
-
-      out << "Polymers:" << std::endl;
-      out << "    i"
-          << "        phi[i]      "
-          << "        mu[i]       " 
-          << std::endl;
-      for (int i = 0; i < mixture().nPolymer(); ++i) {
-         out << Int(i, 5) 
-             << "  " << Dbl(mixture().polymer(i).phi(),18, 11)
-             << "  " << Dbl(mixture().polymer(i).mu(), 18, 11)  
-             << std::endl;
+      UTIL_ASSERT(in.capacity() == out.capacity());
+      int n = in.capacity();
+      for (int i = 0; i < n; ++i) {
+         basis().convertFieldDftToComponents(in[i], out[i]);
       }
-      out << std::endl;
-   }
-
-   #if 0
-   /*
-   * Compute Helmoltz free energy and pressure
-   */
-   template <int D>
-   void System<D>::computeFreeEnergy()
-   {
-      fHelmholtz_ = 0.0;
- 
-      // Compute ideal gas contributions to fHelhmoltz_
-      Polymer* polymerPtr;
-      double phi, mu, length;
-      int np = mixture().nPolymer();
-      for (int i = 0; i < np; ++i) {
-         polymerPtr = &mixture().polymer(i);
-         phi = polymerPtr->phi();
-         mu = polymerPtr->mu();
-         // Recall: mu = ln(phi/q)
-         length = polymerPtr->length();
-         fHelmholtz_ += phi*( mu - 1.0 )/length;
-      }
-
-      // Apply Legendre transform subtraction
-      int nm = mixture().nMonomer();
-      for (int i = 0; i < nm; ++i) {
-         fHelmholtz_ -= 
-                  domain().innerProduct(wFields_[i], cFields_[i]);
-      }
-
-      // Add average interaction free energy density per monomer
-      int nx = domain().nx();
-      if (!f_.isAllocated()) f_.allocate(nx);
-      if (!c_.isAllocated()) c_.allocate(nm);
-      int j;
-      for (int i = 0; i < nx; ++i) { 
-         // Store c_[j] = local concentration of species j
-         for (j = 0; j < nm; ++j) {
-            c_[j] = cFields_[j][i];
-         }
-         // Compute f_[i] = excess free eenrgy at grid point i
-         f_[i] = interaction().fHelmholtz(c_);
-      }
-      fHelmholtz_ += domain().spatialAverage(f_);
-
-      // Compute pressure
-      pressure_ = -fHelmholtz_;
-      for (int i = 0; i < np; ++i) {
-         polymerPtr = & mixture().polymer(i);
-         phi = polymerPtr->phi();
-         mu = polymerPtr->mu();
-         length = polymerPtr->length();
-         pressure_ += phi*mu/length;
-      }
-
    }
 
    template <int D>
-   void System<D>::outputThermo(std::ostream& out)
+   void 
+   System<D>::convertBasisToRgrid(DArray< DArray <double> >& in,
+                                  DArray< RField<D> >& out)
    {
-      out << std::endl;
-      out << "fHelmholtz = " << Dbl(fHelmholtz(), 18, 11) << std::endl;
-      out << "pressure   = " << Dbl(pressure(), 18, 11) << std::endl;
-      out << std::endl;
-
-      out << "Polymers:" << std::endl;
-      out << "    i"
-          << "        phi[i]      "
-          << "        mu[i]       " 
-          << std::endl;
-      for (int i = 0; i < mixture().nPolymer(); ++i) {
-         out << Int(i, 5) 
-             << "  " << Dbl(mixture().polymer(i).phi(),18, 11)
-             << "  " << Dbl(mixture().polymer(i).mu(), 18, 11)  
-             << std::endl;
+      UTIL_ASSERT(in.capacity() == out.capacity());
+      int n = in.capacity();
+      for (int i = 0; i < n; ++i) {
+         basis().convertFieldComponentsToDft(in[i], cFieldDft(i));
+         fft().inverseTransform(cFieldDft(i), out[i]);
       }
-      out << std::endl;
    }
-   #endif
+
+   template <int D>
+   void 
+   System<D>::convertRgridToBasis(DArray< RField<D> >& in,
+                                  DArray< DArray <double> > & out)
+   {
+      UTIL_ASSERT(in.capacity() == out.capacity());
+      int n = in.capacity();
+      for (int i = 0; i < n; ++i) {
+         fft().forwardTransform(in[i], cFieldDft(i));
+         basis().convertFieldDftToComponents(cFieldDft(i), out[i]);
+      }
+   }
 
 } // namespace Pssp
 } // namespace Pscf

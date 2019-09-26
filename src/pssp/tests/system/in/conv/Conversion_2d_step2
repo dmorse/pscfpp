@@ -1,5 +1,12 @@
+FIELD_TO_RGRID
+contents/omega/domainOn/omega_hex
+out/omega/conv/omega_rgrid_hex
+
 RGRID_TO_FIELD
 out/omega/conv/omega_rgrid_hex
+out/omega/conv/omega_conv_hex
+
+READ_WFIELDS
 out/omega/conv/omega_conv_hex
 
 FINISH
