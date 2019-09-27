@@ -299,6 +299,7 @@ namespace Pssp
                                DArray< DArray <double> > & out);
 
       //@}
+
    private:
 
       // DFT work array for two-step conversion basis <-> kgrid <-> rgrid.
@@ -339,23 +340,45 @@ namespace Pssp
 
       /// Get UnitCell by reference.
       UnitCell<D>& unitCell()
-      {  return *unitCellPtr_; }
+      {  
+         // UTIL_ASSERT(unitCellPtr_);  
+         return *unitCellPtr_; 
+      }
 
       /// Get UnitCell by const reference.
       UnitCell<D> const & unitCell() const
-      {  return *unitCellPtr_; }
+      {  
+         // UTIL_ASSERT(unitCellPtr_);  
+         return *unitCellPtr_; 
+      }
 
       /// Get spatial discretization mesh by reference.
       Mesh<D>& mesh()
-      {  return *meshPtr_; }
+      {  
+         // UTIL_ASSERT(meshPtr_);  
+         return *meshPtr_; 
+      }
 
       /// Get spatial discretization mesh by const reference.
       Mesh<D> const & mesh() const
-      {  return *meshPtr_; }
+      {  
+         // UTIL_ASSERT(meshPtr_);  
+         return *meshPtr_; 
+      }
+
+      /// Get FFT object by reference.
+      FFT<D> const & fft() const
+      {
+         // UTIL_ASSERT(fftPtr_);  
+         return *fftPtr_; 
+      }
 
       /// Get FFT object by reference.
       FFT<D>& fft()
-      {  return *fftPtr_; }
+      {
+         // UTIL_ASSERT(fftPtr_);  
+         return *fftPtr_; 
+      }
 
       /// Get group name string by reference.
       std::string& groupName()
@@ -364,13 +387,20 @@ namespace Pssp
       /// Get group name string by const reference.
       std::string const & groupName() const
       {  return *groupNamePtr_; }
+
       /// Get Basis by reference.
       Basis<D>& basis()
-      {  return *basisPtr_; }
+      {
+         // UTIL_ASSERT(basisPtr_);  
+         return *basisPtr_; 
+      }
 
       /// Get FileMaster by reference.
       FileMaster& fileMaster()
-      {  return *fileMasterPtr_; }
+      {  
+         UTIL_ASSERT(fileMasterPtr_);  
+         return *fileMasterPtr_; 
+      }
 
       /**
       * Reader header of field file (fortran pscf format)

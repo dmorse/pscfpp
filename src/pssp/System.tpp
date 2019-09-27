@@ -333,6 +333,30 @@ namespace Pssp
                         << std::endl;
 
          } else
+         if (command == "SOLVE_MDE") {
+            Log::file() << std::endl;
+            Log::file() << std::endl;
+            
+            std::string inFileName;
+            std::string outFileName;
+
+            in >> inFileName;
+            Log::file() << " " << Str(inFileName, 20) <<std::endl;
+            in >> outFileName;
+            Log::file() << " " << Str(outFileName, 20) << std::endl;       
+           
+            // Read field in symmetrized basis form, convert to r-grid
+            fieldIo().readFieldsBasis(inFileName, wFields());
+            fieldIo().convertBasisToRGrid(wFields(), wFieldGrids());
+
+            // Solve the modified diffusion equation (without iteration)
+            mixture().compute(wFieldGrids(), cFieldGrids());
+
+            // Convert r-grid to basis, write components to file
+            fieldIo().convertRGridToBasis(cFieldGrids(), wFields());
+            fieldIo().writeFieldsBasis(outFileName, cFields());
+
+         } else
          if (command == "FIELD_TO_RGRID") {
             std::string inFileName;
             std::string outFileName;
@@ -344,7 +368,7 @@ namespace Pssp
             Log::file() << " " << Str(outFileName, 20) <<std::endl;
 
             fieldIo().readFieldsBasis(inFileName, cFields());
-            convertBasisToRGrid(cFields(), cFieldGrids());
+            fieldIo().convertBasisToRGrid(cFields(), cFieldGrids());
             fieldIo().writeFieldsRGrid(outFileName, cFieldGrids());
 
          } else
@@ -358,7 +382,7 @@ namespace Pssp
             Log::file() << " " << Str(outFileName, 20) <<std::endl;
 
             fieldIo().readFieldsRGrid(inFileName, cFieldGrids());
-            convertRGridToBasis(cFieldGrids(), cFields());
+            fieldIo().convertRGridToBasis(cFieldGrids(), cFields());
             fieldIo().writeFieldsBasis(outFileName, cFields());
 
          } else
@@ -393,30 +417,6 @@ namespace Pssp
                fft().forwardTransform(cFieldGrid(i), cFieldDft(i));
             }
             fieldIo().writeFieldsKGrid(outFileName, cFieldDfts());
-
-         } else
-         if (command == "OMEGA_TO_RHO") {
-            Log::file() << std::endl;
-            Log::file() << std::endl;
-            
-            std::string inFileName;
-            std::string outFileName;
-
-            in >> inFileName;
-            Log::file() << " " << Str(inFileName, 20) <<std::endl;
-            in >> outFileName;
-            Log::file() << " " << Str(outFileName, 20) << std::endl;       
-           
-            // Read field in symmetry adapted basis form, convert to r-grid
-            fieldIo().readFieldsBasis(inFileName, wFields());
-            convertBasisToRGrid(wFields(), wFieldGrids());
-
-            // Solve the modified diffusion equation
-            mixture().compute(wFieldGrids(), cFieldGrids());
-
-            // Convert r-grid to basis, write components to file
-            convertRGridToBasis(cFieldGrids(), wFields());
-            fieldIo().writeFieldsBasis(outFileName, cFields());
 
          } else
          if (command == "RHO_TO_OMEGA") {
@@ -485,7 +485,8 @@ namespace Pssp
             basis().outputWaves(outFile);
 
          } else {
-            Log::file() << "  Error: Unknown command  " << command << std::endl;
+            Log::file() << "Error: Unknown command  " 
+                        << command << std::endl;
             readNext = false;
          }
       }
@@ -643,54 +644,6 @@ namespace Pssp
 
       }
 
-   }
-
-   template <int D>
-   void System<D>::convertBasisToKgrid(DArray< DArray <double> >& in,
-                                       DArray< RFieldDft<D> >& out)
-   {
-      UTIL_ASSERT(in.capacity() == out.capacity());
-      int n = in.capacity();
-      for (int i = 0; i < n; ++i) {
-         basis().convertFieldComponentsToDft(in[i], out[i]);
-      }
-   }
-
-   template <int D>
-   void System<D>::convertKgridToBasis(DArray< RFieldDft<D> >& in,
-                            DArray< DArray <double> > & out)
-   {
-      UTIL_ASSERT(in.capacity() == out.capacity());
-      int n = in.capacity();
-      for (int i = 0; i < n; ++i) {
-         basis().convertFieldDftToComponents(in[i], out[i]);
-      }
-   }
-
-   template <int D>
-   void 
-   System<D>::convertBasisToRGrid(DArray< DArray <double> >& in,
-                                  DArray< RField<D> >& out)
-   {
-      UTIL_ASSERT(in.capacity() == out.capacity());
-      int n = in.capacity();
-      for (int i = 0; i < n; ++i) {
-         basis().convertFieldComponentsToDft(in[i], cFieldDft(i));
-         fft().inverseTransform(cFieldDft(i), out[i]);
-      }
-   }
-
-   template <int D>
-   void 
-   System<D>::convertRGridToBasis(DArray< RField<D> >& in,
-                                  DArray< DArray <double> > & out)
-   {
-      UTIL_ASSERT(in.capacity() == out.capacity());
-      int n = in.capacity();
-      for (int i = 0; i < n; ++i) {
-         fft().forwardTransform(in[i], cFieldDft(i));
-         basis().convertFieldDftToComponents(cFieldDft(i), out[i]);
-      }
    }
 
 } // namespace Pssp

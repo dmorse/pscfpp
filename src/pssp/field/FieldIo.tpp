@@ -502,6 +502,195 @@ namespace Pssp
    void FieldIo<D>::convertBasisToKGrid(DArray<double> const& components, 
                                         RFieldDft<D>& dft)
    {
+      // Create Mesh<D> with dimensions of DFT Fourier grid.
+      Mesh<D> dftMesh(dft.dftDimensions());
+
+      typename Basis<D>::Star const* starPtr; // pointer to current star
+      typename Basis<D>::Wave const* wavePtr; // pointer to current wave
+      std::complex<double> component;         // coefficient for star
+      std::complex<double> coeff;             // coefficient for wave
+      IntVec<D> indices;                      // dft grid indices of wave
+      int rank;                               // dft grid rank of wave
+      int is;                                 // star index
+      int iw;                                 // wave index
+
+      // Initialize all dft coponents to zero
+      for (rank = 0; rank < dftMesh.size(); ++rank) {
+         dft[rank][0] = 0.0;
+         dft[rank][1] = 0.0;
+      }
+
+      // Loop over stars, skipping cancelled stars
+      is = 0;
+      while (is < basis().nStar()) {
+         starPtr = &(basis().star(is));
+
+         if (starPtr->cancel) {
+            ++is;
+            continue;
+         }
+
+         if (starPtr->invertFlag == 0) {
+
+            // Make complex coefficient for star basis function
+            component = std::complex<double>(components[is], 0.0);
+
+            // Loop over waves in closed star
+            for (iw = starPtr->beginId; iw < starPtr->endId; ++iw) {
+               wavePtr = &basis().wave(iw);
+               if (!wavePtr->implicit) {
+                  coeff = component*(wavePtr->coeff);
+                  indices = wavePtr->indicesDft;    
+                  rank = dftMesh.rank(indices);
+                  dft[rank][0] = coeff.real();
+                  dft[rank][1] = coeff.imag();
+               }
+            }
+            ++is;
+
+         } else
+         if (starPtr->invertFlag == 1) {
+
+            // Make complex component for first star
+            component = std::complex<double>(components[is], 
+                                             -components[is+1]);
+            component /= sqrt(2.0);
+
+            // Loop over waves in first star
+            starPtr = &(basis().star(is));
+            for (iw = starPtr->beginId; iw < starPtr->endId; ++iw) {
+               wavePtr = &basis().wave(iw);
+               if (!(wavePtr->implicit)) {
+                  coeff = component*(wavePtr->coeff);
+                  indices = wavePtr->indicesDft;    
+                  rank = dftMesh.rank(indices);
+                  dft[rank][0] = coeff.real();
+                  dft[rank][1] = coeff.imag();
+               }
+            }
+
+            // Loop over waves in second star
+            starPtr = &(basis().star(is+1));
+            UTIL_CHECK(starPtr->invertFlag == -1);
+            component = conj(component);
+            for (iw = starPtr->beginId; iw < starPtr->endId; ++iw) {
+               wavePtr = &basis().wave(iw);
+               if (!(wavePtr->implicit)) {
+                  coeff = component*(wavePtr->coeff);
+                  indices = wavePtr->indicesDft;
+                  rank = dftMesh.rank(indices);
+                  dft[rank][0] = coeff.real();
+                  dft[rank][1] = coeff.imag();
+               }
+            }
+
+            // Increment is by 2 (two stars were processed)
+            is += 2;
+
+         } else {
+ 
+            UTIL_THROW("Invalid invertFlag value");
+  
+         }
+
+      }
+
+   }
+
+   template <int D>
+   void FieldIo<D>::convertKGridToBasis(RFieldDft<D> const& dft, 
+                                        DArray<double>& components)
+   {
+      // Create Mesh<D> with dimensions of DFT Fourier grid.
+      Mesh<D> dftMesh(dft.dftDimensions());
+
+      typename Basis<D>::Star const* starPtr;  // pointer to current star
+      typename Basis<D>::Wave const* wavePtr;  // pointer to current wave
+      std::complex<double> component;          // coefficient for star
+      IntVec<D> indices;                       // dft grid indices of wave
+      int rank;                                // dft grid rank of wave
+      int is;                                  // star index
+      int iw;                                  // wave id, within star 
+      bool isImplicit;
+
+      // Initialize all components to zero
+      for (is = 0; is < basis().nStar(); ++is) {
+         components[is] = 0.0;
+      }
+
+      // Loop over stars
+      is = 0;
+      while (is < basis().nStar()) {
+         starPtr = &(basis().star(is));
+
+         if (starPtr->cancel) {
+            ++is;
+            continue;
+         }
+
+         if (starPtr->invertFlag == 0) {
+
+            // Choose a characteristic wave that is not implicit.
+            // Start with the first, alternately searching from
+            // the beginning and end of star.
+            isImplicit = true;
+            iw = 0;
+            while (isImplicit) {
+                UTIL_CHECK(iw <= (starPtr->size)/2);
+                wavePtr = &basis().wave(starPtr->beginId + iw);
+                if (wavePtr->implicit) {
+                   wavePtr = &basis().wave(starPtr->endId - 1 - iw);
+                }
+                isImplicit = wavePtr->implicit;
+                ++iw;
+            }
+            UTIL_CHECK(wavePtr->starId == is);
+            indices = wavePtr->indicesDft;
+            rank = dftMesh.rank(indices);
+
+            // Compute component value
+            component = std::complex<double>(dft[rank][0], dft[rank][1]);
+            component /= wavePtr->coeff;
+            UTIL_CHECK(abs(component.imag()) < 1.0E-8);
+            components[is] = component.real();
+            ++is;
+
+         } else
+         if (starPtr->invertFlag == 1) {
+
+            // Identify a characteristic wave that is not implicit:
+            // Either first wave of 1st star or last wave of 2nd star.
+            wavePtr = &basis().wave(starPtr->beginId);
+            if (wavePtr->implicit) {
+               starPtr = &(basis().star(is+1));
+               UTIL_CHECK(starPtr->invertFlag == -1);
+               wavePtr = &basis().wave(starPtr->endId-1);
+               UTIL_CHECK(!(wavePtr->implicit));
+            } 
+            indices = wavePtr->indicesDft;
+            rank = dftMesh.rank(indices);
+
+            // Compute component value
+            component = std::complex<double>(dft[rank][0], dft[rank][1]);
+            UTIL_CHECK(abs(wavePtr->coeff) > 1.0E-8);
+            component /= wavePtr->coeff;
+            component *= sqrt(2.0);
+            components[is] = component.real();
+            components[is+1] = -component.imag();
+
+            is += 2;
+         } else {
+            UTIL_THROW("Invalid invertFlag value");
+         }
+
+      } //  loop over star index is
+   }
+
+   #if 0
+   template <int D>
+   void FieldIo<D>::convertBasisToKGrid(DArray<double> const& components, 
+                                        RFieldDft<D>& dft)
+   {
       // Create Mesh<D> with dimensions of DFT grid.
       Mesh<D> dftMesh(dft.dftDimensions());
 
@@ -586,6 +775,7 @@ namespace Pssp
       }
 
    }
+   #endif
 
    template <int D>
    void FieldIo<D>::convertBasisToKGrid(DArray< DArray <double> >& in,
@@ -598,6 +788,7 @@ namespace Pssp
       }
    }
 
+   #if 0
    template <int D>
    void FieldIo<D>::convertKGridToBasis(RFieldDft<D> const & dft, 
                                       DArray<double>& components)
@@ -678,6 +869,7 @@ namespace Pssp
 
       } //  loop over star index is
    }
+   #endif
 
    template <int D>
    void FieldIo<D>::convertKGridToBasis(DArray< RFieldDft<D> >& in,
@@ -724,7 +916,7 @@ namespace Pssp
    void FieldIo<D>::checkWorkDft()
    {
       if (!workDft_.isAllocated()) {
-         workDft_.allocate(fft().meshDimensions());
+         workDft_.allocate(mesh().dimensions());
       } else {
          UTIL_CHECK(workDft_.meshDimensions() == fft().meshDimensions());
       }

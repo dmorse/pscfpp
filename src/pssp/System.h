@@ -149,53 +149,6 @@ namespace Pssp
       double pressure() const;
 
       //@}
-      /// \name Field Format Conversion
-      //@{
-
-      /**
-      * Convert fields from symmetrized basis to Fourier transform (kgrid).
-      * 
-      * The in and out parameters are arrays of fields, in which element
-      * number i is the field associated with monomer type i. 
-      *
-      * \param in  components of fields in symmetry adapted basis 
-      * \param out fields defined as discrete Fourier transforms (k-grid)
-      */
-      void convertBasisToKgrid(DArray< DArray <double> > & in,
-                               DArray< RFieldDft<D> >& out);
-
-      /**
-      * Convert fields from Fourier transform (kgrid) to symmetrized basis.
-      * 
-      * The in and out parameters are each an array of fields,
-      * in which element i is the field associated with monomer
-      * type i. 
-      *
-      * \param in  fields defined as discrete Fourier transforms (k-grid)
-      * \param out  components of fields in symmetry adapted basis 
-      */
-      void convertKgridToBasis(DArray< RFieldDft<D> > & in,
-                               DArray< DArray <double> > & out);
-
-      /**
-      * Convert fields from symmetrized basis to spatial grid (rgrid).
-      * 
-      * \param in  fields in symmetry adapted basis form
-      * \param out fields defined on real-space grid
-      */
-      void convertBasisToRGrid(DArray< DArray <double> > & in,
-                               DArray< RField<D> >& out);
-
-      /**
-      * Convert fields from spatial grid (rgrid) to symmetrized basis.
-      * 
-      * \param in  fields defined on real-space grid
-      * \param out  fields in symmetry adapted basis form
-      */
-      void convertRGridToBasis(DArray< RField<D> > & in,
-                               DArray< DArray <double> > & out);
-
-      //@}
       /// \name Field Accessor Functions
       //@{
 
