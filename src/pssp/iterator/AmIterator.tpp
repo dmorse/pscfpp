@@ -110,9 +110,9 @@ namespace Pssp
       Log::file()<<"Free Energy="<<systemPtr_->fHelmholtz();
 
       if (cell_){
-         systemPtr_->mixture().computeTStress(systemPtr_->basis());
+         systemPtr_->mixture().computeStress();
          for (int m=0; m<(systemPtr_->unitCell()).nParameter() ; ++m){
-               Log::file()<<"Stress"<<m<<"\t"<<"="<< systemPtr_->mixture().TStress[m]<<"\n";
+               Log::file()<<"Stress"<<m<<"\t"<<"="<< systemPtr_->mixture().stress(m)<<"\n";
                  //Log::file()<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).params()[m]<<"\n";
                Log::file()<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).parameters()[m]<<"\n";
          }  
@@ -139,10 +139,10 @@ namespace Pssp
          if (isConverged()) {  
           Log::file()<<"----------CONVERGED----------"<< std::endl;
           if(!cell_){
-             systemPtr_->mixture().computeTStress(systemPtr_->basis());
+             systemPtr_->mixture().computeStress();
           }
           for (int m=0; m<(systemPtr_->unitCell()).nParameter() ; ++m){
-             Log::file()<<"Stress"<<m<<"\t"<<"="<< systemPtr_->mixture().TStress[m]<<"\n";
+             Log::file()<<"Stress"<<m<<"\t"<<"="<< systemPtr_->mixture().stress(m)<<"\n";
              //Log::file()<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).params()[m]<<"\n";
              Log::file()<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).parameters()[m]<<"\n";
           }
@@ -182,7 +182,7 @@ namespace Pssp
                                           systemPtr_->cFieldGrids());
 
             if (cell_){
-               systemPtr_->mixture().computeTStress(systemPtr_->basis());
+               systemPtr_->mixture().computeStress();
             }
 
             for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
@@ -258,7 +258,7 @@ namespace Pssp
       if (cell_){
          FArray<double, 6 > tempCp;
          for (int i = 0; i<(systemPtr_->unitCell()).nParameter() ; i++){
-            tempCp [i] = -((systemPtr_->mixture()).TStress [i]);
+            tempCp [i] = -((systemPtr_->mixture()).stress(i));
          }
          devCpHists_.append(tempCp);
       }
@@ -315,7 +315,7 @@ namespace Pssp
          }
 
          for (int m=0; m<(systemPtr_->unitCell()).nParameter() ; ++m){
-            Log::file()<<" Stress "<<m<<" :"<< std::setprecision (15)<< systemPtr_->mixture().TStress[m]<<"\n";
+            Log::file()<<" Stress "<<m<<" :"<< std::setprecision (15)<< systemPtr_->mixture().stress(m)<<"\n";
          }         
          error = (temp1>(100*temp2)) ? temp1 : (100*temp2);  
          // 100 is chose as stress rescale factor, seperate implementation of errors needs to be done

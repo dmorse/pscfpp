@@ -191,7 +191,7 @@ namespace Pssp
 
       read(in, "groupName", groupName_);
 
-      mixture().setMesh(mesh());
+      mixture().setMesh(mesh(), unitCell());
       mixture().setupUnitCell(unitCell());
       basis().makeBasis(mesh(), unitCell(), groupName_);
 

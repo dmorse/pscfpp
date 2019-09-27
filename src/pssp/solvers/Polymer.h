@@ -62,13 +62,15 @@ namespace Pssp {
       */ 
       void compute(DArray<WField> const & wFields);
 
-      // Stress due to a whole Polymer chain
-      FArray<double, 6> PcStress;
+      /**
+      * Stress with respect to unit cell parameter n.
+      */
+      double stress(int n) const;
 
       /**
       * Compute stress from a polymer chain, needs a pointer to basis
       */
-      void ComputePcStress(Basis<D>& basis);
+      void computeStress();
 
       using Base::nBlock;
       using Base::block;
@@ -82,10 +84,21 @@ namespace Pssp {
 
    private: 
 
+      /// Pointer to associated UnitCell<D>
+      const UnitCell<D>* unitCellPtr_;
+
+      // Stress due to a whole Polymer chain
+      FArray<double, 6> stress_;
+
       using Base::phi_;
       using Base::mu_;
 
    };
+
+   /// Stress with respect to unit cell parameter n.
+   template <int D>
+   inline double Polymer<D>::stress(int n) const
+   {  return stress_[n]; }
   
    #ifndef PSSP_POLYMER_TPP
    extern template class Polymer<1>;
