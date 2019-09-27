@@ -47,8 +47,7 @@ namespace Pssp {
    {}
 
    template <int D>
-   void Block<D>::setDiscretization(double ds, const Mesh<D>& mesh, 
-                                                     const UnitCell<D>& unitCell)
+   void Block<D>::setDiscretization(double ds, const Mesh<D>& mesh)
    {  
       UTIL_CHECK(mesh.size() > 1);
       UTIL_CHECK(ds > 0.0);
@@ -56,7 +55,7 @@ namespace Pssp {
       // Set association to mesh
       meshPtr_ = &mesh;
       // Set association to unitCell
-      unitCellPtr_ = &unitCell;
+      //unitCellPtr_ = &unitCell;
 
       #if 0
       // Set contour length discretization
@@ -110,9 +109,9 @@ namespace Pssp {
       propagator(1).allocate(ns_, mesh);
       cField().allocate(mesh.dimensions());
 
-      for (int i = 0; i < unitCell.nParameter(); ++i) {
-         stress_.append(0.0);
-      }  
+     // for (int i = 0; i < unitCell.nParameter(); ++i) {
+     //    stress_.append(0.0);
+     // }  
 
    }
 
@@ -123,6 +122,10 @@ namespace Pssp {
    void 
    Block<D>::setupUnitCell(const UnitCell<D>& unitCell)
    {
+
+      // Set association to unitCell
+      unitCellPtr_ = &unitCell;
+
       MeshIterator<D> iter;
       // std::cout << "kDimensions = " << kMeshDimensions_ << std::endl;
       iter.setDimensions(kMeshDimensions_);
@@ -298,6 +301,8 @@ namespace Pssp {
       UTIL_CHECK(propagator(0).isAllocated());
       UTIL_CHECK(propagator(1).isAllocated());
 
+      stress_.clear();
+
       double dels, normal, increment;
       int r,c;
  
@@ -316,7 +321,7 @@ namespace Pssp {
       int i;
       for (i = 0; i < r; ++i) {
          dQ.append(0.0);
-         stress_ [i] = 0.0;
+         stress_.append(0.0);
       }   
 
       IntVec <D> temp;

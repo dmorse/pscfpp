@@ -78,7 +78,7 @@ namespace Pssp {
       * \param ds desired (optimal) value for contour length step
       * \param mesh spatial discretization mesh
       */
-      void setDiscretization(double ds, const Mesh<D>& mesh, const UnitCell<D>& unitCell);
+      void setDiscretization(double ds, const Mesh<D>& mesh);
 
       /**
       * Setup parameters that depend on the unit cell.

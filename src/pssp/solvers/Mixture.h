@@ -93,7 +93,7 @@ namespace Pssp
       *
       * \param mesh associated Mesh<D> object (stores address).
       */
-      void setMesh(Mesh<D> const & mesh, const UnitCell<D>& unitCell);
+      void setMesh(Mesh<D> const & mesh);
 
       /**
       * Set unit cell parameters used in solver.
