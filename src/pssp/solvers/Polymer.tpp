@@ -45,6 +45,9 @@ namespace Pssp {
    template <int D>
    void Polymer<D>::setupUnitCell(UnitCell<D> const & unitCell)
    {
+      // Set association to unitCell
+      unitCellPtr_ = &unitCell;
+
       for (int j = 0; j < nBlock(); ++j) {
          block(j).setupUnitCell(unitCell);
       }
@@ -71,22 +74,22 @@ namespace Pssp {
    * Compute stress from a polymer chain.
    */
    template <int D>
-   void Polymer<D>::ComputePcStress(Basis<D>& basis)
+   void Polymer<D>::computeStress()
    {
       double prefactor;
       prefactor = 0;
      
-      // Initialize PcStress to 0
+      // Initialize stress_ to 0
       for (int i = 0; i < 6; ++i) {
-        PcStress [i] = 0.0;
+        stress_ [i] = 0.0;
       }
 
       for (int i = 0; i < nBlock(); ++i) {
          prefactor = exp(mu_)/length();
-         block(i).computeStress(basis, prefactor);
+         block(i).computeStress(prefactor);
        
-         for (int j=0; j < 6 ; ++j){
-            PcStress [j]  += block(i).pStress [j];
+         for (int j=0; j < unitCellPtr_->nParameter() ; ++j){
+            stress_ [j]  += block(i).stress(j);
          }
       }
 

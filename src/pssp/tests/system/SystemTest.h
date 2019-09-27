@@ -403,7 +403,7 @@ public:
          }
       }
       bool stress = false;
-      if(std::abs(system.mixture().TStress[0] - 0.005242863) < 1.0E-8){
+      if(std::abs(system.mixture().stress(0) - 0.005242863) < 1.0E-8){
          //0.005242863 is the stress calculated for this omega field 
          //for no stress relaxation using Fortran
          stress = true;
@@ -528,7 +528,7 @@ public:
          }    
       }    
       bool stress = false;
-      if(std::abs(system.mixture().TStress[0] - 0.010633960) < 1.0E-8){
+      if(std::abs(system.mixture().stress(0) - 0.010633960) < 1.0E-8){
          //0.010633960 is the stress calculated 
          //for this omega field for no stress relaxation using Fortran
          stress = true;
@@ -651,7 +651,7 @@ public:
          }    
       }    
       bool stress = false;
-      if(std::abs(system.mixture().TStress[0] - 0.006583929) < 1.0E-8){
+      if(std::abs(system.mixture().stress(0) - 0.006583929) < 1.0E-8){
          //0.006583929 is the stress calculated 
          //for this omega field for no stress relaxation using Fortran
          stress = true;

@@ -93,7 +93,7 @@ namespace Pssp
       *
       * \param mesh associated Mesh<D> object (stores address).
       */
-      void setMesh(Mesh<D> const & mesh);
+      void setMesh(Mesh<D> const & mesh, const UnitCell<D>& unitCell);
 
       /**
       * Set unit cell parameters used in solver.
@@ -124,12 +124,14 @@ namespace Pssp
       void 
       compute(DArray<WField> const & wFields, DArray<CField>& cFields);
       
-      // Array to store total stress
-      FArray<double, 6> TStress;
+      /**
+      * Stress with respect to unit cell parameter n.
+      */
+      double stress(int n) const;
 
       // Function to calculate total stress of the unit cell
       void
-      computeTStress(Basis<D>& basis);
+      computeStress();
 
       /**
       * Get monomer reference volume.
@@ -149,11 +151,17 @@ namespace Pssp
 
    private:
 
+      /// Pointer to associated UnitCell<D>
+      const UnitCell<D>* unitCellPtr_;
+
       /// Monomer reference volume (set to 1.0 by default).
       double vMonomer_;
 
       /// Optimal contour length step size.
       double ds_;
+
+      // Array to store total stress
+      FArray<double, 6> stress_;
 
       /// Pointer to associated Mesh<D> object.
       Mesh<D> const * meshPtr_;
@@ -171,6 +179,11 @@ namespace Pssp
    template <int D>
    inline double Mixture<D>::vMonomer() const
    {  return vMonomer_; }
+
+   /// Stress with respect to unit cell parameter n.
+   template <int D>
+   inline double Mixture<D>::stress(int n) const
+   {  return stress_[n]; }
 
    /*
    * Get Mesh<D> by constant reference (private).

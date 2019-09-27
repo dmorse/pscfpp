@@ -18,6 +18,7 @@
 #include <util/containers/DMatrix.h>      
 #include <util/containers/DArray.h>      
 #include <util/containers/FArray.h>      
+#include <util/containers/FSArray.h>
 
 namespace Pscf { 
 namespace Pssp {
@@ -46,20 +47,25 @@ namespace Pssp {
    {}
 
    template <int D>
-   void Block<D>::setDiscretization(double ds, const Mesh<D>& mesh)
+   void Block<D>::setDiscretization(double ds, const Mesh<D>& mesh, 
+                                                     const UnitCell<D>& unitCell)
    {  
       UTIL_CHECK(mesh.size() > 1);
       UTIL_CHECK(ds > 0.0);
 
       // Set association to mesh
       meshPtr_ = &mesh;
+      // Set association to unitCell
+      unitCellPtr_ = &unitCell;
 
+      #if 0
       // Set contour length discretization
-      //ns_ = floor(length()/ds + 0.5) + 1;
-      //if (ns_%2 == 0) {
-      //   ns_ += 1;
-      //}
-      //ds_ = length()/double(ns_ - 1);
+      ns_ = floor(length()/ds + 0.5) + 1;
+      if (ns_%2 == 0) {
+         ns_ += 1;
+      }
+      ds_ = length()/double(ns_ - 1);
+      #endif
 
       int tempNs;
       tempNs = (floor(length()/(2.0 *ds) + 0.5));
@@ -104,6 +110,10 @@ namespace Pssp {
       propagator(1).allocate(ns_, mesh);
       cField().allocate(mesh.dimensions());
 
+      for (int i = 0; i < unitCell.nParameter(); ++i) {
+         stress_.append(0.0);
+      }  
+
    }
 
    /*
@@ -113,9 +123,6 @@ namespace Pssp {
    void 
    Block<D>::setupUnitCell(const UnitCell<D>& unitCell)
    {
-      // Set association to unitCell
-      unitCellPtr_ = &unitCell;
-
       MeshIterator<D> iter;
       // std::cout << "kDimensions = " << kMeshDimensions_ << std::endl;
       iter.setDimensions(kMeshDimensions_);
@@ -136,6 +143,7 @@ namespace Pssp {
          //          << Gsq  << "  "
          //          << expKsq_[i] << std::endl;
       }
+
    }
       
    /*
@@ -280,7 +288,7 @@ namespace Pssp {
    * Integrate to Stress exerted by the chain for this block
    */
    template <int D>
-   void Block<D>::computeStress(Basis<D>& basis, double prefactor)
+   void Block<D>::computeStress(double prefactor)
    {   
       // Preconditions
       int nx = mesh().size();
@@ -299,22 +307,21 @@ namespace Pssp {
       for (int i = 0; i < D; ++i) {
            kSize_ *= kMeshDimensions_[i];   
       }   
-      r = 6;
+      r = unitCellPtr_->nParameter();
       c = kSize_;
 
-      FArray<double, 6> dQ;
+      FSArray<double, 6> dQ;
 
-      // Initialize work array and pStress to zero at all points
+      // Initialize work array and stress_ to zero at all points
       int i;
-      for (i = 0; i < 6; ++i) {
-         dQ [i] = 0.0;
-         pStress [i] = 0.0;
+      for (i = 0; i < r; ++i) {
+         dQ.append(0.0);
+         stress_ [i] = 0.0;
       }   
 
       IntVec <D> temp;
       IntVec <D> vec;
       IntVec <D> Partner;    
-      double element;
       MeshIterator<D> iter;
       iter.setDimensions(mesh().dimensions());
       int m = 0;
@@ -323,42 +330,27 @@ namespace Pssp {
          m = 0;
          for (iter.begin(); !iter.atEnd(); ++iter) {
             temp = iter.position();
-            if (temp[D-1] <= (mesh().dimensions()[D-1]/2)){
+            if (temp[D-1] <= (mesh().dimensions()[D-1]/2)) {
                vec =  shiftToMinimum(temp, mesh().dimensions(), *unitCellPtr_);
                dGsq(m, n) = 0;
-               for (int p = 0; p < D; ++p){
-                  for (int q = 0; q < D; ++q){
-                     element = unitCellPtr_->dkkBasis(n, p, q);
-                     dGsq(m, n) += vec[p]*vec[q]*element;
-                  }
-                  if (temp [p] !=0)
+               dGsq(m, n) = unitCellPtr_->computedksq(vec, n);
+               for (int p = 0; p < D; ++p) {
+                  if (temp [p] != 0) {
                      Partner[p] = mesh().dimensions()[p] - temp[p];
-                  else
+                  }
+                  else {
                      Partner[p] = 0;
-               }
-
-               if (mesh().dimensions()[D-1]%2 == 1){
-                  if (temp[D-1] !=0){
-                     vec = shiftToMinimum(Partner, mesh().dimensions(), *unitCellPtr_);          
-                     for (int p = 0; p < D; ++p){
-                        for (int q = 0; q < D; ++q){
-                           element = unitCellPtr_->dkkBasis(n, p, q);
-                           dGsq(m, n) += vec[p]*vec[q]*element;
-                        }
-                     }
                   }
                }
-               else{
-                  if (temp[D-1] !=0 && temp[D-1] != (mesh().dimensions()[D-1]/2)){
-                     vec = shiftToMinimum(Partner, mesh().dimensions(), *unitCellPtr_);
-                     for (int p = 0; p < D; ++p){
-                        for (int q = 0; q < D; ++q){
-                           element = unitCellPtr_->dkkBasis(n, p, q);
-                           dGsq(m, n) += vec[p]*vec[q]*element;                  
-                        }
-                     }
+               if (mesh().dimensions()[D-1]%2 == 1) {
+                  if (temp[D-1] !=0) {
+                     dGsq(m, n) *= 2; 
+                  }
+               }
+               else {
+                  if (temp[D-1] !=0 && temp[D-1] != (mesh().dimensions()[D-1]/2)) {
+                     dGsq(m, n) *= 2;
                   }             
-
                }
                ++m;
             }
@@ -392,7 +384,7 @@ namespace Pssp {
 
               for (m = 0; m < c ; ++m) {
                  double prod = 0;
-                 prod = (q1[m][0] * q2[m][0]) + (q1[m][1] * q2[m][1]);
+                 prod = (q1[m][0] * q2[m][0]) - (q1[m][1] * q2[m][1]);
                  prod *= dGsq(m,n); 
                  increment += prod; 
               }
@@ -403,7 +395,7 @@ namespace Pssp {
       
       // Normalize
       for (i = 0; i < r; ++i) {
-         pStress[i] = pStress[i] - (dQ[i] * prefactor);
+         stress_[i] = stress_[i] - (dQ[i] * prefactor);
       }   
       //#if 0
       //#endif
