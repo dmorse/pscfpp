@@ -53,10 +53,9 @@ namespace Pssp
       // Preconditions
       UTIL_CHECK(!isSetup_);
       IntVec<D> rDimensions = rField.meshDimensions();
-      IntVec<D> kDimensions = kField.meshDimensions();
-      UTIL_CHECK(rDimensions == kDimensions);
+      UTIL_CHECK(rDimensions == kField.meshDimensions());
 
-      // Set Mesh dimensions
+      // Set and check mesh dimensions
       rSize_ = 1;
       kSize_ = 1;
       for (int i = 0; i < D; ++i) {
@@ -69,10 +68,19 @@ namespace Pssp
             kSize_ *= (rDimensions[i]/2 + 1);
          }
       }
-      work_.allocate(rDimensions);
-      UTIL_CHECK(work_.capacity() == rSize_);
       UTIL_CHECK(rField.capacity() == rSize_);
       UTIL_CHECK(kField.capacity() == kSize_);
+
+      // Allocate work array if neceesary
+      if (!work_.isAllocated()) {
+          work_.allocate(rDimensions);
+      } else {
+          if (work_.capacity() != rSize_) {
+             work_.deallocate();
+             work_.allocate(rDimensions);
+          }
+      }
+      UTIL_CHECK(work_.capacity() == rSize_);
 
       // Make FFTW plans (explicit specializations)
       makePlans(rField, kField);

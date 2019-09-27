@@ -156,7 +156,7 @@ namespace Pssp
 
       writeFieldHeader(out);
       out << "N_star       " << std::endl 
-          << "             "<< nBasis << std::endl;
+          << "             " << nBasis << std::endl;
 
      // Write fields
      for (int i = 0; i < nStar; ++i) {
@@ -499,8 +499,8 @@ namespace Pssp
    }
 
    template <int D>
-   void FieldIo<D>::convertBasisToDft(DArray<double> const& components, 
-                                      RFieldDft<D>& dft)
+   void FieldIo<D>::convertBasisToKGrid(DArray<double> const& components, 
+                                        RFieldDft<D>& dft)
    {
       // Create Mesh<D> with dimensions of DFT grid.
       Mesh<D> dftMesh(dft.dftDimensions());
@@ -588,7 +588,18 @@ namespace Pssp
    }
 
    template <int D>
-   void FieldIo<D>::convertDftToBasis(RFieldDft<D> const & dft, 
+   void FieldIo<D>::convertBasisToKGrid(DArray< DArray <double> >& in,
+                                        DArray< RFieldDft<D> >& out)
+   {
+      UTIL_ASSERT(in.capacity() == out.capacity());
+      int n = in.capacity();
+      for (int i = 0; i < n; ++i) {
+         convertBasisToKGrid(in[i], out[i]);
+      }
+   }
+
+   template <int D>
+   void FieldIo<D>::convertKGridToBasis(RFieldDft<D> const & dft, 
                                       DArray<double>& components)
    {
       // Create Mesh<D> with dimensions of DFT grid.
@@ -667,6 +678,58 @@ namespace Pssp
 
       } //  loop over star index is
    }
+
+   template <int D>
+   void FieldIo<D>::convertKGridToBasis(DArray< RFieldDft<D> >& in,
+                                        DArray< DArray <double> > & out)
+   {
+      UTIL_ASSERT(in.capacity() == out.capacity());
+      int n = in.capacity();
+      for (int i = 0; i < n; ++i) {
+         convertKGridToBasis(in[i], out[i]);
+      }
+   }
+
+   template <int D>
+   void 
+   FieldIo<D>::convertBasisToRGrid(DArray< DArray <double> >& in,
+                                   DArray< RField<D> >& out)
+   {
+      UTIL_ASSERT(in.capacity() == out.capacity());
+      checkWorkDft();
+
+      int n = in.capacity();
+      for (int i = 0; i < n; ++i) {
+         convertBasisToKGrid(in[i], workDft_);
+         fft().inverseTransform(workDft_, out[i]);
+      }
+   }
+
+   template <int D>
+   void 
+   FieldIo<D>::convertRGridToBasis(DArray< RField<D> >& in,
+                                   DArray< DArray <double> > & out)
+   {
+      UTIL_ASSERT(in.capacity() == out.capacity());
+      checkWorkDft();
+
+      int n = in.capacity();
+      for (int i = 0; i < n; ++i) {
+         fft().forwardTransform(in[i], workDft_);
+         convertKGridToBasis(workDft_, out[i]);
+      }
+   }
+
+   template <int D>
+   void FieldIo<D>::checkWorkDft()
+   {
+      if (!workDft_.isAllocated()) {
+         workDft_.allocate(fft().meshDimensions());
+      } else {
+         UTIL_CHECK(workDft_.meshDimensions() == fft().meshDimensions());
+      }
+   }
+
 } // namespace Pssp
 } // namespace Pscf
 #endif

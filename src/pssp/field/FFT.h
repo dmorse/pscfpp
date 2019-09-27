@@ -43,7 +43,7 @@ namespace Pssp {
       virtual ~FFT();
 
       /**
-      * Check and setup grid dimensions if necessary.
+      * Setup grid dimensions, plans and work space.
       *
       * \param rField real data on r-space grid
       * \param kField complex data on k-space grid
