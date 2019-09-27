@@ -236,5 +236,4 @@ namespace Pssp
 
 }
 }
-//#include "Propagator.tpp" 
 #endif

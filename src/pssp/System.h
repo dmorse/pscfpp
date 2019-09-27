@@ -149,97 +149,51 @@ namespace Pssp
       double pressure() const;
 
       //@}
-      /// \name Field File I/O
+      /// \name Field Format Conversion
       //@{
 
       /**
-      * Read concentration or chemical potential field components from file.
-      *
-      * This function reads components in a symmetry adapted basis from 
-      * file in.
-      *
-      * The capacity of DArray fields is equal to nMonomer, and element
-      * fields[i] is a DArray containing components of the field 
-      * associated with monomer type i.
-      *
-      * \param in input stream (i.e., input file)
-      */
-      void readFields(std::istream& in, DArray< DArray <double> >& fields);
-
-      /**
-      * Read concentration or chemical potential field components from file.
-      *
-      * This function opens an input file with the specified filename, 
-      * reads components in symmetry-adapted form from that file, and 
-      * closes the file.
-      *
-      * \param filename name of input file
-      */
-      void readFields(std::string filename, 
-                      DArray< DArray <double> >& fields);
-
-      /**
-      * Write concentration or chemical potential field components to file.
-      *
-      * This function writes components in a symmetry adapted basis.
-      *
-      * \param out output stream (i.e., output file)
-      * \param fields array of fields for different species
-      */
-      void writeFields(std::ostream& out, 
-                       DArray< DArray <double> > const & fields);
-
-      /**
-      * Write concentration or chemical potential field components to file.
-      *
-      * This function opens an output file with the specified filename, 
-      * writes components in symmetry-adapted form to that file, and then
-      * closes the file. 
-      *
-      * \param filename name of input file
-      */
-      void writeFields(std::string filename, 
-                       DArray< DArray <double> > const & fields);
-
-      /**
-      * Read array of RField objects (fields on an r-space grid) from file.
-      *
-      * The capacity of array fields is equal to nMonomer, and element
-      * fields[i] is the RField<D> associated with monomer type i.
+      * Convert fields from symmetrized basis to Fourier transform (kgrid).
       * 
-      * \param in input stream (i.e., input file)
+      * The in and out parameters are arrays of fields, in which element
+      * number i is the field associated with monomer type i. 
+      *
+      * \param in  components of fields in symmetry adapted basis 
+      * \param out fields defined as discrete Fourier transforms (k-grid)
       */
-      void readRFields(std::istream& in, DArray< RField<D> >& fields);
+      void convertBasisToKgrid(DArray< DArray <double> > & in,
+                               DArray< RFieldDft<D> >& out);
 
       /**
-      * Write array of RField objects (fields on an r-space grid) to file.
-      *
-      * \param out output stream (i.e., output file)
-      * \param fields array of fields for different species
-      */
-      void writeRFields(std::ostream& out, 
-                        DArray< RField<D> > const& fields);
-
-      /**
-      * Read array of RFieldDft objects (k-space fields) from file.
-      *
-      * The capacity of the array is equal to nMonomer, and element
-      * fields[i] is the discrete Fourier transform of the field for 
-      * monomer type i.
+      * Convert fields from Fourier transform (kgrid) to symmetrized basis.
       * 
-      * \param in input stream (i.e., input file)
-      * \param fields array of fields for different species
+      * The in and out parameters are each an array of fields,
+      * in which element i is the field associated with monomer
+      * type i. 
+      *
+      * \param in  fields defined as discrete Fourier transforms (k-grid)
+      * \param out  components of fields in symmetry adapted basis 
       */
-      void readKFields(std::istream& in, DArray< RFieldDft<D> >& fields);
+      void convertKgridToBasis(DArray< RFieldDft<D> > & in,
+                               DArray< DArray <double> > & out);
 
       /**
-      * Write array of RFieldDft objects (k-space fields) to file.
-      *
-      * \param out output stream (i.e., output file)
-      * \param fields array of fields for different species
+      * Convert fields from symmetrized basis to spatial grid (rgrid).
+      * 
+      * \param in  fields in symmetry adapted basis form
+      * \param out fields defined on real-space grid
       */
-      void writeKFields(std::ostream& out, 
-                        DArray< RFieldDft<D> > const& fields);
+      void convertBasisToRGrid(DArray< DArray <double> > & in,
+                               DArray< RField<D> >& out);
+
+      /**
+      * Convert fields from spatial grid (rgrid) to symmetrized basis.
+      * 
+      * \param in  fields defined on real-space grid
+      * \param out  fields in symmetry adapted basis form
+      */
+      void convertRGridToBasis(DArray< RField<D> > & in,
+                               DArray< DArray <double> > & out);
 
       //@}
       /// \name Field Accessor Functions
@@ -368,6 +322,11 @@ namespace Pssp
       * Get associated FFT object.
       */
       FFT<D>& fft();
+
+      /**
+      * Get associated FieldIo object.
+      */
+      FieldIo<D>& fieldIo();
 
       /**
       * Get homogeneous mixture (for reference calculations).
@@ -568,60 +527,52 @@ namespace Pssp
 
    // Inline member functions
 
-   /*
-   * Get the associated Mixture object.
-   */
+   // Get the associated Mixture object.
    template <int D>
    inline Mixture<D>& System<D>::mixture()
    { return mixture_; }
 
-   /*
-   * Get the UnitCell<D>.
-   */
+   // Get the associated UnitCell<D> object.
    template <int D>
    inline UnitCell<D>& System<D>::unitCell()
    { return unitCell_; }
 
-   /*
-   * Get the mesh.
-   */
+   // Get the Mesh<D> object.
    template <int D>
    inline Mesh<D>& System<D>::mesh()
    { return mesh_; }
 
+   // Get the FFT<D> object.
    template <int D>
    inline FFT<D>& System<D>::fft()
    {  return fft_; }
 
-   /*
-   * Get group name.
-   */
+   // Get the groupName string.
    template <int D>
    inline std::string System<D>::groupName()
    { return groupName_; }
 
+   // Get the Basis<D> object.
    template <int D>
    inline Basis<D>& System<D>::basis()
    {  return basis_; }
 
-   /*
-   * Get the FileMaster.
-   */
+   // Get the FieldIo<D> object.
+   template <int D>
+   inline FieldIo<D>& System<D>::fieldIo()
+   {  return fieldIo_; }
+
+   // Get the FileMaster.
    template <int D>
    inline FileMaster& System<D>::fileMaster()
    {  return fileMaster_; }
 
-   /*
-   * Get the Homogeneous::Mixture object.
-   */
+   // Get the Homogeneous::Mixture object.
    template <int D>
-   inline 
-   Homogeneous::Mixture& System<D>::homogeneous()
+   inline Homogeneous::Mixture& System<D>::homogeneous()
    {  return homogeneous_; }
 
-   /*
-   * Get the Interaction (excess free energy model).
-   */
+   // Get the Interaction (excess free energy model).
    template <int D>
    inline ChiInteraction& System<D>::interaction()
    {
@@ -629,9 +580,7 @@ namespace Pssp
       return *interactionPtr_;
    }
 
-   /*
-   * Get the Iterator.
-   */
+   // Get the Iterator.
    template <int D>
    inline AmIterator<D>& System<D>::iterator()
    {
@@ -649,17 +598,13 @@ namespace Pssp
    DArray<double>& System<D>::wField(int id)
    {  return wFields_[id]; }
 
-   /*
-   * Get an array of all monomer chemical potential fields.
-   */
+   // Get an array of monomer chemical potential fields on r-space grids.
    template <int D>
    inline 
    DArray< typename System<D>::WField >& System<D>::wFieldGrids()
    {  return wFieldGrids_; }
 
-   /*
-   * Get a single monomer chemical potential field.
-   */
+   // Get a single monomer chemical potential field on an r-space grid.
    template <int D>
    inline 
    typename System<D>::WField& System<D>::wFieldGrid(int id)
@@ -695,35 +640,26 @@ namespace Pssp
    RFieldDft<D>& System<D>::cFieldDft(int id)
    { return cFieldDfts_[id]; }
 
-   /*
-   * Get array of all monomer concentration fields.
-   */
+   // Get array of all monomer concentration fields on grids.
    template <int D>
    inline
    DArray< typename System<D>::CField >& System<D>::cFieldGrids()
    {  return cFieldGrids_; }
 
-   /*
-   * Get a single monomer concentration field.
-   */
+   // Get a single monomer concentration field on an r-space grid.
    template <int D>
    inline typename System<D>::CField& System<D>::cFieldGrid(int id)
    {  return cFieldGrids_[id]; }
 
-   /*
-   * Get precomputed Helmoltz free energy per monomer / kT.
-   */
+   // Get the precomputed Helmoltz free energy per monomer / kT.
    template <int D>
    inline double System<D>::fHelmholtz() const
    {  return fHelmholtz_; }
 
-   /*
-   * Get precomputed pressure (units of kT / monomer volume).
-   */
+   // Get the precomputed pressure (units of kT / monomer volume).
    template <int D>
    inline double System<D>::pressure() const
    {  return pressure_; }
-
 
    #ifndef PSSP_SYSTEM_TPP
    // Suppress implicit instantiation
@@ -734,5 +670,4 @@ namespace Pssp
 
 } // namespace Pssp
 } // namespace Pscf
-//#include "System.tpp"
 #endif

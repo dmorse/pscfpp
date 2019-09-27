@@ -203,5 +203,4 @@ namespace Pssp
 
 } // namespace Pssp
 } // namespace Pscf
-// #include "Mixture.tpp"
 #endif

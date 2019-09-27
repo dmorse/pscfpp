@@ -71,7 +71,7 @@ namespace Pssp
   
    template <int D>
    void FieldIo<D>::readFieldsBasis(std::istream& in, 
-                               DArray< DArray<double> >& fields)
+                                    DArray< DArray<double> >& fields)
    {
       FieldIo<D>::readFieldHeader(in);
       int nMonomer = mixture().nMonomer();
@@ -139,10 +139,10 @@ namespace Pssp
    void FieldIo<D>::readFieldsBasis(std::string filename, 
                               DArray<DArray<double> >& fields)
    {
-       std::ifstream inFile;
-       fileMaster().openInputFile(filename, inFile);
-       readFieldsBasis(inFile, fields);
-       inFile.close();
+       std::ifstream file;
+       fileMaster().openInputFile(filename, file);
+       readFieldsBasis(file, fields);
+       file.close();
    }
 
    template <int D>
@@ -156,7 +156,7 @@ namespace Pssp
 
       writeFieldHeader(out);
       out << "N_star       " << std::endl 
-          << "             "<< nBasis << std::endl;
+          << "             " << nBasis << std::endl;
 
      // Write fields
      for (int i = 0; i < nStar; ++i) {
@@ -178,10 +178,10 @@ namespace Pssp
    void FieldIo<D>::writeFieldsBasis(std::string filename, 
                                      DArray<DArray<double> > const & fields)
    {
-       std::ofstream outFile;
-       fileMaster().openOutputFile(filename, outFile);
-       writeFieldsBasis(outFile, fields);
-       outFile.close();
+       std::ofstream file;
+       fileMaster().openOutputFile(filename, file);
+       writeFieldsBasis(file, fields);
+       file.close();
    }
 
    template <int D>
@@ -221,14 +221,14 @@ namespace Pssp
       int n2 =0;
       int n3 =0;
 
-      if (D==3){
-         while (n1 < mesh().dimension(0)){
+      if (D==3) {
+         while (n1 < mesh().dimension(0)) {
             q = p;
             n2 = 0;
-            while (n2 < mesh().dimension(1)){
+            while (n2 < mesh().dimension(1)) {
                r =q;
                n3 = 0;
-               while (n3 < mesh().dimension(2)){
+               while (n3 < mesh().dimension(2)) {
                   for (int i = 0; i < nM; ++i) {
                      fields[i][s] = temp[i][r];
                   }
@@ -244,11 +244,11 @@ namespace Pssp
          }
       }
 
-      else if (D==2){
-         while (n1 < mesh().dimension(0)){
+      else if (D==2) {
+         while (n1 < mesh().dimension(0)) {
             r =q; 
             n2 = 0;
-            while (n2 < mesh().dimension(1)){
+            while (n2 < mesh().dimension(1)) {
                for (int i = 0; i < nM; ++i) {
                   fields[i][s] = temp[i][r];
                }   
@@ -261,9 +261,9 @@ namespace Pssp
          }   
       } 
 
-      else if (D==1){
+      else if (D==1) {
 
-         while (n1 < mesh().dimension(0)){
+         while (n1 < mesh().dimension(0)) {
             for (int i = 0; i < nM; ++i) {
                fields[i][s] = temp[i][r];
             }   
@@ -274,7 +274,7 @@ namespace Pssp
       } 
 
       else{
-         std::cout<<"Invalid Dimensions";
+         std::cout << "Invalid Dimensions";
       }
 
    }
@@ -283,10 +283,10 @@ namespace Pssp
    void FieldIo<D>::readFieldsRGrid(std::string filename, 
                               DArray< RField<D> >& fields)
    {
-       std::ifstream inFile;
-       fileMaster().openInputFile(filename, inFile);
-       readFieldsRGrid(inFile, fields);
-       inFile.close();
+      std::ifstream file;
+      fileMaster().openInputFile(filename, file);
+      readFieldsRGrid(file, fields);
+      file.close();
    }
 
    template <int D>
@@ -312,14 +312,14 @@ namespace Pssp
       int n2 =0;
       int n3 =0;
 
-      if (D==3){
-         while (n3 < mesh().dimension(2)){
+      if (D==3) {
+         while (n3 < mesh().dimension(2)) {
             q = p; 
             n2 = 0; 
-            while (n2 < mesh().dimension(1)){
+            while (n2 < mesh().dimension(1)) {
                r =q;
                n1 = 0; 
-               while (n1 < mesh().dimension(0)){
+               while (n1 < mesh().dimension(0)) {
                   for (int i = 0; i < nM; ++i) {
                      temp[i][s] = fields[i][r];
                   }    
@@ -334,11 +334,11 @@ namespace Pssp
             ++p;     
          }    
       }
-      else if (D==2){
-         while (n2 < mesh().dimension(1)){
+      else if (D==2) {
+         while (n2 < mesh().dimension(1)) {
             r =q;
             n1 = 0;
-            while (n1 < mesh().dimension(0)){
+            while (n1 < mesh().dimension(0)) {
                for (int i = 0; i < nM; ++i) {
                   temp[i][s] = fields[i][r];
                }
@@ -350,10 +350,8 @@ namespace Pssp
             ++n2;
          }
       }
-
-      else if (D==1){
-
-         while (n1 < mesh().dimension(0)){
+      else if (D==1) {
+         while (n1 < mesh().dimension(0)) {
             for (int i = 0; i < nM; ++i) {
                temp[i][s] = fields[i][r];
             }
@@ -361,10 +359,8 @@ namespace Pssp
             ++s;
             ++n1;
          }
-      }
-
-      else{
-         std::cout<<"Invalid Dimensions";
+      } else {
+         std::cout << "Invalid Dimensions";
       }
 
       // Write fields
@@ -383,12 +379,11 @@ namespace Pssp
    void FieldIo<D>::writeFieldsRGrid(std::string filename, 
                                      DArray< RField<D> > const & fields)
    {
-       std::ofstream outFile;
-       fileMaster().openOutputFile(filename, outFile);
-       writeFieldsRGrid(outFile, fields);
-       outFile.close();
+      std::ofstream file;
+      fileMaster().openOutputFile(filename, file);
+      writeFieldsRGrid(file, fields);
+      file.close();
    }
-
 
    template <int D>
    void FieldIo<D>::readFieldsKGrid(std::istream &in,
@@ -418,7 +413,15 @@ namespace Pssp
       }
    }
 
-
+   template <int D>
+   void FieldIo<D>::readFieldsKGrid(std::string filename, 
+                                    DArray< RFieldDft<D> >& fields)
+   {
+      std::ifstream file;
+      fileMaster().openInputFile(filename, file);
+      readFieldsKGrid(file, fields);
+      file.close();
+   }
 
    template <int D>
    void FieldIo<D>::writeFieldsKGrid(std::ostream &out,
@@ -439,6 +442,16 @@ namespace Pssp
          }
          out << std::endl;
       }
+   }
+
+   template <int D>
+   void FieldIo<D>::writeFieldsKGrid(std::string filename, 
+                                    DArray< RFieldDft<D> > const& fields)
+   {
+      std::ofstream file;
+      fileMaster().openOutputFile(filename, file);
+      writeFieldsKGrid(file, fields);
+      file.close();
    }
 
    template <int D>
@@ -483,6 +496,238 @@ namespace Pssp
           << "          " << groupName() <<  std::endl;
       out << "N_monomer"  << std::endl 
           << "          " << mixture().nMonomer() << std::endl;
+   }
+
+   template <int D>
+   void FieldIo<D>::convertBasisToKGrid(DArray<double> const& components, 
+                                        RFieldDft<D>& dft)
+   {
+      // Create Mesh<D> with dimensions of DFT grid.
+      Mesh<D> dftMesh(dft.dftDimensions());
+
+      typename Basis<D>::Star const* starPtr; // pointer to current star
+      typename Basis<D>::Wave const* wavePtr; // pointer to current wave
+      std::complex<double> component;         // coefficient of star
+      std::complex<double> coeff;             // coefficient of wave
+      IntVec<D> indices;                      // dft grid indices of wave
+      int rank;                               // dft grid rank of wave
+      int nStar = basis().nStar();            // number of stars
+      int is;                                 // star index
+      int iw;                                 // wave index
+
+      is = 0;
+      while (is < nStar) {
+         starPtr = &(basis().star(is));
+         if (starPtr->cancel) continue;
+
+         if (starPtr->invertFlag == 0) {
+
+            // Make real component (coefficient for star basis function)
+            component = std::complex<double>(components[is], 0.0);
+
+            // Loop over waves in closed star
+            for (iw = starPtr->beginId; iw < starPtr->endId; ++iw) {
+               wavePtr = &(basis().wave(iw));
+               if (!wavePtr->implicit) {
+                  coeff = component*(wavePtr->coeff);
+                  indices = wavePtr->indicesDft;    
+                  rank = dftMesh.rank(indices);
+                  dft[rank][0] = coeff.real();
+                  dft[rank][1] = coeff.imag();
+               }
+            }
+            ++is;
+
+         } else
+         if (starPtr->invertFlag == 1) {
+
+            // Make complex component for first star
+            component = std::complex<double>(components[is], 
+                                             -components[is+1]);
+            component /= sqrt(2.0);
+
+            // Loop over waves in first star
+            starPtr = &(basis().star(is));
+            for (iw = starPtr->beginId; iw < starPtr->endId; ++iw) {
+               wavePtr = &(basis().wave(iw));
+               if (!(wavePtr->implicit)) {
+                  coeff = component*(wavePtr->coeff);
+                  indices = wavePtr->indicesDft;    
+                  rank = dftMesh.rank(indices);
+                  dft[rank][0] = coeff.real();
+                  dft[rank][1] = coeff.imag();
+               }
+            }
+
+            // Loop over waves in second star
+            starPtr = &(basis().star(is+1));
+            UTIL_CHECK(starPtr->invertFlag == -1);
+            component = conj(component);
+            for (iw = starPtr->beginId; iw < starPtr->endId; ++iw) {
+               wavePtr = &(basis().wave(iw));
+               if (!(wavePtr->implicit)) {
+                  coeff = component*(wavePtr->coeff);
+                  indices = wavePtr->indicesDft;
+                  rank = dftMesh.rank(indices);
+                  dft[rank][0] = coeff.real();
+                  dft[rank][1] = coeff.imag();
+               }
+            }
+
+            // Increment is by 2 (two stars were processed)
+            is += 2;
+
+         } else {
+ 
+            UTIL_THROW("Invalid invertFlag value");
+  
+         }
+
+      }
+
+   }
+
+   template <int D>
+   void FieldIo<D>::convertBasisToKGrid(DArray< DArray <double> >& in,
+                                        DArray< RFieldDft<D> >& out)
+   {
+      UTIL_ASSERT(in.capacity() == out.capacity());
+      int n = in.capacity();
+      for (int i = 0; i < n; ++i) {
+         convertBasisToKGrid(in[i], out[i]);
+      }
+   }
+
+   template <int D>
+   void FieldIo<D>::convertKGridToBasis(RFieldDft<D> const & dft, 
+                                      DArray<double>& components)
+   {
+      // Create Mesh<D> with dimensions of DFT grid.
+      Mesh<D> dftMesh(dft.dftDimensions());
+
+      typename Basis<D>::Star const* starPtr; // pointer to current star
+      typename Basis<D>::Wave const* wavePtr; // pointer to current wave
+      std::complex<double> component;         // coefficient of star
+      IntVec<D> indices;                      // dft grid indices of wave
+      int nStar = basis().nStar();            // number of stars
+      int rank;                               // dft grid rank of wave
+      int is;                                 // star index
+      int iw;                                 // wave id, within star
+      bool isImplicit;
+
+      // Loop over stars
+      is = 0;
+      while (is < nStar) {
+         starPtr = &(basis().star(is));
+         if (starPtr->cancel) continue;
+
+         if (starPtr->invertFlag == 0) {
+
+            // Choose a characteristic wave that is not implicit.
+            // Start with the first, alternately searching from
+            // the beginning and end of star.
+            isImplicit = true;
+            iw = 0;
+            while (isImplicit) {
+                UTIL_CHECK(iw <= (starPtr->size)/2);
+                wavePtr = &basis().wave(starPtr->beginId + iw);
+                if (wavePtr->implicit) {
+                   wavePtr = &basis().wave(starPtr->endId - 1 - iw);
+                }
+                isImplicit = wavePtr->implicit;
+                ++iw;
+            }
+            UTIL_CHECK(wavePtr->starId == is);
+            indices = wavePtr->indicesDft;
+            rank = dftMesh.rank(indices);
+
+            // Compute component value
+            component = std::complex<double>(dft[rank][0], dft[rank][1]);
+            component /= wavePtr->coeff;
+            UTIL_CHECK(abs(component.imag()) < 1.0E-8);
+            components[is] = component.real();
+            ++is;
+
+         } else
+         if (starPtr->invertFlag == 1) {
+
+            // Identify a characteristic wave that is not implicit:
+            // Either first wave of 1st star or last wave of 2nd star.
+            wavePtr = &(basis().wave(starPtr->beginId));
+            if (wavePtr->implicit) {
+               starPtr = &(basis().star(is+1));
+               UTIL_CHECK(starPtr->invertFlag == -1);
+               wavePtr = &(basis().wave(starPtr->endId-1));
+               UTIL_CHECK(!(wavePtr->implicit));
+            } 
+            indices = wavePtr->indicesDft;
+            rank = dftMesh.rank(indices);
+
+            // Compute component value
+            component = std::complex<double>(dft[rank][0], dft[rank][1]);
+            UTIL_CHECK(abs(wavePtr->coeff) > 1.0E-8);
+            component /= wavePtr->coeff;
+            component *= sqrt(2.0);
+            components[is] = component.real();
+            components[is+1] = -component.imag();
+
+            is += 2;
+         } else {
+            UTIL_THROW("Invalid invertFlag value");
+         }
+
+      } //  loop over star index is
+   }
+
+   template <int D>
+   void FieldIo<D>::convertKGridToBasis(DArray< RFieldDft<D> >& in,
+                                        DArray< DArray <double> > & out)
+   {
+      UTIL_ASSERT(in.capacity() == out.capacity());
+      int n = in.capacity();
+      for (int i = 0; i < n; ++i) {
+         convertKGridToBasis(in[i], out[i]);
+      }
+   }
+
+   template <int D>
+   void 
+   FieldIo<D>::convertBasisToRGrid(DArray< DArray <double> >& in,
+                                   DArray< RField<D> >& out)
+   {
+      UTIL_ASSERT(in.capacity() == out.capacity());
+      checkWorkDft();
+
+      int n = in.capacity();
+      for (int i = 0; i < n; ++i) {
+         convertBasisToKGrid(in[i], workDft_);
+         fft().inverseTransform(workDft_, out[i]);
+      }
+   }
+
+   template <int D>
+   void 
+   FieldIo<D>::convertRGridToBasis(DArray< RField<D> >& in,
+                                   DArray< DArray <double> > & out)
+   {
+      UTIL_ASSERT(in.capacity() == out.capacity());
+      checkWorkDft();
+
+      int n = in.capacity();
+      for (int i = 0; i < n; ++i) {
+         fft().forwardTransform(in[i], workDft_);
+         convertKGridToBasis(workDft_, out[i]);
+      }
+   }
+
+   template <int D>
+   void FieldIo<D>::checkWorkDft()
+   {
+      if (!workDft_.isAllocated()) {
+         workDft_.allocate(fft().meshDimensions());
+      } else {
+         UTIL_CHECK(workDft_.meshDimensions() == fft().meshDimensions());
+      }
    }
 
 } // namespace Pssp

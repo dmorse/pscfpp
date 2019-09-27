@@ -1,8 +1,0 @@
-
-TODO (for pseudospectral code)
-
-1) Write tests for 2D and 3D fields and FFT.
-2) Write innerProduct and spatialAverage functions.
-3) Finish testing skeleton of System (with iterator or sweep)
-4) Finish interface of Basis<D>.
-5) Write explicit specialization of Basis<1> for 1D.
