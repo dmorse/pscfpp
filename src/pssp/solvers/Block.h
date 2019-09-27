@@ -10,10 +10,13 @@
 
 #include "Propagator.h"                   // base class argument
 #include <pscf/solvers/BlockTmpl.h>       // base class template
+#include <pscf/mesh/Mesh.h>               // member
+#include <pscf/crystal/UnitCell.h>        // member
 #include <pssp/field/RField.h>            // member
 #include <pssp/field/RFieldDft.h>         // member
 #include <pssp/field/FFT.h>               // member
-#include <util/containers/FArray.h>      // member template
+#include <util/containers/FArray.h>       // member template
+#include <util/containers/DMatrix.h>
 
 namespace Pscf { 
    template <int D> class Mesh; 
@@ -57,9 +60,6 @@ namespace Pssp {
       */
       typedef typename Propagator<D>::QField QField;
 
-      // Monomer concentration field.
-      typedef typename Propagator<D>::PStress PStress;
-
       // Member functions
 
       /**
@@ -78,7 +78,7 @@ namespace Pssp {
       * \param ds desired (optimal) value for contour length step
       * \param mesh spatial discretization mesh
       */
-      void setDiscretization(double ds, const Mesh<D>& mesh);
+      void setDiscretization(double ds, const Mesh<D>& mesh, const UnitCell<D>& unitCell);
 
       /**
       * Setup parameters that depend on the unit cell.
@@ -125,19 +125,7 @@ namespace Pssp {
       *   
       * \param prefactor multiplying integral
       */  
-      void computeStress(Basis<D>& basis, double prefactor);
-
-      /// Stress exerted by a polymer chain of a block.
-      FArray<double, 6> pStress;
-
-      // Work array for calculate stress.
-      RFieldDft<D> q1;
-
-      // Work array for calculate stress.
-      RFieldDft<D> q2;
-      
-      RField<D> q1p;
-      RField<D> q2p;
+      void computeStress(double prefactor);
 
       /**
       * Return associated spatial Mesh by reference.
@@ -153,6 +141,11 @@ namespace Pssp {
       * Number of contour length steps.
       */
       int ns() const;
+
+      /**
+      * Stress with respect to unit cell parameter n.
+      */
+      double stress(int n) const;
 
       // Functions with non-dependent names from BlockTmpl< Propagator<D> >
       using BlockTmpl< Propagator<D> >::setKuhn;
@@ -173,6 +166,29 @@ namespace Pssp {
       using BlockDescriptor::length;
 
    private:
+
+      /// Pointer to associated Mesh<D>
+      //const Mesh<D>* meshPtr_;
+
+      /// Matrix to store derivatives of plane waves 
+      DMatrix<double> dGsq;
+
+      /// Stress exerted by a polymer chain of a block.
+      FSArray<double, 6> stress_;
+
+      // Work array for calculate stress.
+      RFieldDft<D> q1; 
+      RFieldDft<D> q2; 
+      RField<D> q1p;
+      RField<D> q2p;
+
+      /// Pointer to associated UnitCell<D>
+      const UnitCell<D>* unitCellPtr_;
+
+      /** 
+      * Access associated UnitCell<D> as reference.
+      */  
+      UnitCell<D> const & unitCell() const { return *unitCellPtr_; }
 
       // Fourier transform plan
       FFT<D> fft_;
@@ -229,6 +245,11 @@ namespace Pssp {
    template <int D>
    inline double Block<D>::ds() const
    {  return ds_; }
+
+   /// Stress with respect to unit cell parameter n.
+   template <int D>
+   inline double Block<D>::stress(int n) const
+   {  return stress_[n]; }
 
    /// Get Mesh by reference.
    template <int D>

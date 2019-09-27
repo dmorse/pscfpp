@@ -59,7 +59,14 @@ namespace Pscf
       * Compute square magnitude of reciprocal basis vector.
       */
       virtual double ksq(IntVec<D> const & k) const;
-   
+
+      /**
+      * Compute derivative of square magnitude of reciprocal basis vector.
+      */
+      virtual double computedksq(IntVec<D> const & vec, int n) const;   
+
+
+
       /**
       * Get the number of parameters in the unit cell (new version).
       */
@@ -309,6 +316,25 @@ namespace Pscf
       }
       return value;
    }
+
+   /*  
+   * Get magnitude of derivative of square of reciprocal basis vector.
+   */  
+   template <int D>
+   double UnitCellBase<D>::computedksq(IntVec<D> const & vec, int n) const
+   {   
+      double element = 0.0;
+      double value = 0.0;
+
+      for (int p = 0; p < D; ++p){
+         for (int q = 0; q < D; ++q){
+            element = dkkBasis(n, p, q);
+            value += vec[p]*vec[q]*element;
+         }
+      }
+
+      return value;
+   }   
 
    // Protected member functions
 

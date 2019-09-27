@@ -42,7 +42,7 @@ namespace Pssp
    }
 
    template <int D>
-   void Mixture<D>::setMesh(Mesh<D> const& mesh)
+   void Mixture<D>::setMesh(Mesh<D> const& mesh, const UnitCell<D>& unitCell)
    {
       UTIL_CHECK(nMonomer() > 0);
       UTIL_CHECK(nPolymer()+ nSolvent() > 0);
@@ -50,11 +50,14 @@ namespace Pssp
 
       meshPtr_ = &mesh;
 
+      // Set association to unitCell
+      unitCellPtr_ = &unitCell;
+
       // Set discretization for all blocks
       int i, j;
       for (i = 0; i < nPolymer(); ++i) {
          for (j = 0; j < polymer(i).nBlock(); ++j) {
-            polymer(i).block(j).setDiscretization(ds_, mesh);
+            polymer(i).block(j).setDiscretization(ds_, mesh, unitCell);
          }
       }
 
@@ -121,23 +124,23 @@ namespace Pssp
    * Compute Total Stress.
    */  
    template <int D>
-   void Mixture<D>::computeTStress(Basis<D>& basis)
+   void Mixture<D>::computeStress()
    {   
       int i, j;
 
       for (i = 0; i < 6; ++i) {
-         TStress [i] = 0;
+         stress_ [i] = 0;
       }   
 
       // Compute Stress for all polymers, must be done after computing concentrations
       for (i = 0; i < nPolymer(); ++i) {
-         polymer(i).ComputePcStress(basis);
+         polymer(i).computeStress();
       }   
 
       // Accumulate stress for all the polymer chains
-      for (i = 0; i < 6; ++i) {
+      for (i = 0; i < unitCellPtr_->nParameter(); ++i) {
          for (j = 0; j < nPolymer(); ++j) {
-            TStress [i] += polymer(j).PcStress[i];
+            stress_ [i] += polymer(j).stress(i);
          }   
       }   
    }   
