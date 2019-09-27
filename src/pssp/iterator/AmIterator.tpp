@@ -88,11 +88,11 @@ namespace Pssp
       //assumes basis.makeBasis() has been called
       //assumes AmIterator.allocate() has been called
       for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
-         systemPtr_->basis().convertFieldComponentsToDft(
-                              systemPtr_->wField(i),
-                              systemPtr_->wFieldDft(i));
+         systemPtr_->fieldIo().convertBasisToKGrid(
+                                     systemPtr_->wField(i),
+                                     systemPtr_->wFieldDft(i));
          systemPtr_->fft().inverseTransform(systemPtr_->wFieldDft(i),
-                                            systemPtr_->wFieldGrid(i));
+                                      systemPtr_->wFieldGrid(i));
       }
 
       systemPtr_->mixture().compute(systemPtr_->wFieldGrids(), 
@@ -101,7 +101,7 @@ namespace Pssp
       for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
          systemPtr_->fft().forwardTransform(systemPtr_->cFieldGrid(i),
                                              systemPtr_->cFieldDft(i));
-         systemPtr_->basis().convertFieldDftToComponents(
+         systemPtr_->fieldIo().convertKGridToBasis(
                               systemPtr_->cFieldDft(i),
                               systemPtr_->cField(i));
       }
@@ -171,7 +171,7 @@ namespace Pssp
             }
 
             for (int j = 0; j < systemPtr_->mixture().nMonomer(); ++j) {
-               systemPtr_->basis().convertFieldComponentsToDft( 
+               systemPtr_->fieldIo().convertBasisToKGrid( 
                                     systemPtr_->wField(j),
                                     systemPtr_->wFieldDft(j));
                systemPtr_->fft().inverseTransform(systemPtr_->wFieldDft(j), 
@@ -188,7 +188,7 @@ namespace Pssp
             for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
                systemPtr_->fft().forwardTransform(systemPtr_->cFieldGrid(i),
                                                   systemPtr_->cFieldDft(i));
-               systemPtr_->basis().convertFieldDftToComponents(
+               systemPtr_->fieldIo().convertKGridToBasis(
                                     systemPtr_->cFieldDft(i),
                                     systemPtr_->cField(i));
             }

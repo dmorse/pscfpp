@@ -209,7 +209,7 @@ namespace Pssp
       //void makedksq(const UnitCell<D>& unitCell){};
       #endif
 
-      #if 1
+      #if 0
       /**
       * Convert field from symmetry-adapted representation to DFT.
       *

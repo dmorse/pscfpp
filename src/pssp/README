@@ -1,6 +1,6 @@
 This directory contains code specific to a pseudo-spectral implementation 
-of SCFT for periodic structures, closely analagous to that provided by the 
-original fortran PSCF code. 
+of SCFT for periodic structures. The code is based on algorithms similar 
+to those used in the original fortran PSCF code. 
 
 This C++ code, unlike the fortran code, requires the user to invoke different
 executables for problems involving structures that are periodic in different

@@ -683,7 +683,7 @@ namespace Pssp
 
    }
 
-   #if 1
+   #if 0
    template <int D>
    void Basis<D>::convertFieldComponentsToDft(DArray<double>& components, 
                                               RFieldDft<D>& dft)
