@@ -42,7 +42,7 @@ namespace Pssp
    }
 
    template <int D>
-   void Mixture<D>::setMesh(Mesh<D> const& mesh, const UnitCell<D>& unitCell)
+   void Mixture<D>::setMesh(Mesh<D> const& mesh)
    {
       UTIL_CHECK(nMonomer() > 0);
       UTIL_CHECK(nPolymer()+ nSolvent() > 0);
@@ -50,14 +50,11 @@ namespace Pssp
 
       meshPtr_ = &mesh;
 
-      // Set association to unitCell
-      unitCellPtr_ = &unitCell;
-
       // Set discretization for all blocks
       int i, j;
       for (i = 0; i < nPolymer(); ++i) {
          for (j = 0; j < polymer(i).nBlock(); ++j) {
-            polymer(i).block(j).setDiscretization(ds_, mesh, unitCell);
+            polymer(i).block(j).setDiscretization(ds_, mesh);
          }
       }
 
@@ -66,6 +63,10 @@ namespace Pssp
    template <int D>
    void Mixture<D>::setupUnitCell(const UnitCell<D>& unitCell)
    {
+
+      // Set association to unitCell
+      unitCellPtr_ = &unitCell;
+
       for (int i = 0; i < nPolymer(); ++i) {
          polymer(i).setupUnitCell(unitCell);
       }
