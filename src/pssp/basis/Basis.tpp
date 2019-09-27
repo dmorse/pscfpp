@@ -712,6 +712,7 @@ namespace Pssp
 
    }
 
+   #if 1
    template <int D>
    void Basis<D>::convertFieldComponentsToDft(DArray<double>& components, 
                                               RFieldDft<D>& dft)
@@ -899,7 +900,7 @@ namespace Pssp
 
       } //  loop over star index is
    }
-
+   #endif
 
    template <int D>
    int Basis<D>::nBasis() const

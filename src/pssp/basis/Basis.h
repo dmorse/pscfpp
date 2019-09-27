@@ -166,24 +166,6 @@ namespace Pssp
                      const SpaceGroup<D>& group);
 
       /**
-      * Convert field from symmetry-adapted representation to DFT.
-      *
-      * \param components coefficients of symmetry-adapted basis functions.
-      * \param dft complex DFT representation of a field.
-      */
-      void convertFieldComponentsToDft(DArray<double>& components, 
-                                       RFieldDft<D>& dft);   
-
-      /**
-      * Convert DFT of real field to symmetry-adapted representation.
-      *
-      * \param dft complex DFT representation of a field.
-      * \param components coefficients of symmetry-adapted basis functions.
-      */
-      void convertFieldDftToComponents(RFieldDft<D>& dft, 
-                                       DArray<double>& components);   
-
-      /**
       * Update values after change in unit cell parameters.
       */
       void update();
@@ -220,6 +202,26 @@ namespace Pssp
       * and pairs of stars related by inversion are listed consecutively
       */
       //void makedksq(const UnitCell<D>& unitCell){};
+      #endif
+
+      #if 1
+      /**
+      * Convert field from symmetry-adapted representation to DFT.
+      *
+      * \param components coefficients of symmetry-adapted basis functions.
+      * \param dft complex DFT representation of a field.
+      */
+      void convertFieldComponentsToDft(DArray<double>& components, 
+                                       RFieldDft<D>& dft);   
+
+      /**
+      * Convert DFT of real field to symmetry-adapted representation.
+      *
+      * \param dft complex DFT representation of a field.
+      * \param components coefficients of symmetry-adapted basis functions.
+      */
+      void convertFieldDftToComponents(RFieldDft<D>& dft, 
+                                       DArray<double>& components);   
       #endif
 
       // Accessors
