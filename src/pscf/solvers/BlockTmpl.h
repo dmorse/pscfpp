@@ -116,22 +116,6 @@ namespace Pscf
       */
       virtual void setKuhn(double kuhn);
 
-      #if 0
-      /**
-      * Setup W field and solver data for both propagators.
-      *
-      * \param wField monomer chemical potential field.
-      */
-      virtual void setupSolver(WField const & wField) = 0;
-
-      /**
-      * Compute monomer concentration field for this block.
-      *
-      * \param prefactor  numerical prefactor of phi/(q*length)
-      */
-      virtual void computeConcentration(double prefactor) = 0;
-      #endif
-
       /**
       * Get a Propagator for a specified direction.
       *
@@ -154,8 +138,6 @@ namespace Pscf
    
       /**
       * Get the associated monomer concentration field.
-      *
-      * \param blockId integer index of associated block
       */
       typename TP::CField& cField();
    
@@ -166,7 +148,7 @@ namespace Pscf
   
    private:
 
-      /// Propagators (one for each direction).
+      /// Pair of Propagator objects (one for each direction).
       Pair<Propagator> propagators_;
 
       /// Monomer concentration field.

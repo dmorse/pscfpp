@@ -40,14 +40,9 @@ namespace Pssp
       typedef RField<D> CField;
 
       /**
-      * Default constructor
-      */
-      AmIterator();
-
-      /**
       * Constructor
       *
-      * \param system pointer to a system object
+      * \param system pointer to a parent System object
       */
       AmIterator(System<D>* system);
 

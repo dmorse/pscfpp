@@ -81,7 +81,7 @@ namespace Pssp {
      
       // Initialize stress_ to 0
       for (int i = 0; i < 6; ++i) {
-        stress_ [i] = 0.0;
+        stress_[i] = 0.0;
       }
 
       for (int i = 0; i < nBlock(); ++i) {
@@ -89,7 +89,7 @@ namespace Pssp {
          block(i).computeStress(prefactor);
        
          for (int j=0; j < unitCellPtr_->nParameter() ; ++j){
-            stress_ [j]  += block(i).stress(j);
+            stress_[j] += block(i).stress(j);
          }
       }
 

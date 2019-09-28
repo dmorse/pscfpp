@@ -78,7 +78,7 @@ namespace Pssp {
       * \param ds desired (optimal) value for contour length step
       * \param mesh spatial discretization mesh
       */
-      void setDiscretization(double ds, const Mesh<D>& mesh, const UnitCell<D>& unitCell);
+      void setDiscretization(double ds, const Mesh<D>& mesh);
 
       /**
       * Setup parameters that depend on the unit cell.
@@ -109,21 +109,17 @@ namespace Pssp {
       * a contour variable that is integrated over the domain 
       * 0 < s < length(), where length() is the block length.
       *
-      * \param prefactor multiplying integral
+      * \param prefactor constant multiplying integral
       */ 
       void computeConcentration(double prefactor);
 
       /** 
-      * Compute Stress by a Polymer chain for a block by integration.
+      * Compute stress contribution for this block.
+      *
+      * The prefactor should be the same as that used in function
+      * computeConcentration.   
       *   
-      * Upon return, pStress contains the 
-      * integral int ds <q(r,s)|j> <j|q^{*}(r,L-s)> times the prefactor, 
-      * where q(r,s) is the solution obtained from propagator(0), 
-      * and q^{*} is the solution of propagator(1),  and s is
-      * a contour variable that is integrated over the domain 
-      * 0 < s < length(), where length() is the block length.
-      *   
-      * \param prefactor multiplying integral
+      * \param prefactor constant multiplying integral
       */  
       void computeStress(double prefactor);
 
@@ -143,7 +139,9 @@ namespace Pssp {
       int ns() const;
 
       /**
-      * Stress with respect to unit cell parameter n.
+      * Get derivative of free energy w/ respect to unit cell parameter n.
+      *
+      * \param n index of unit cell parameter
       */
       double stress(int n) const;
 
@@ -173,22 +171,8 @@ namespace Pssp {
       /// Matrix to store derivatives of plane waves 
       DMatrix<double> dGsq;
 
-      /// Stress exerted by a polymer chain of a block.
+      /// Stress arising from this block
       FSArray<double, 6> stress_;
-
-      // Work array for calculate stress.
-      RFieldDft<D> q1; 
-      RFieldDft<D> q2; 
-      RField<D> q1p;
-      RField<D> q2p;
-
-      /// Pointer to associated UnitCell<D>
-      const UnitCell<D>* unitCellPtr_;
-
-      /** 
-      * Access associated UnitCell<D> as reference.
-      */  
-      UnitCell<D> const & unitCell() const { return *unitCellPtr_; }
 
       // Fourier transform plan
       FFT<D> fft_;
@@ -206,22 +190,31 @@ namespace Pssp {
       RField<D> expW2_;
 
       // Work array for real-space field.
-      RField<D> qr_;
+      RField<D> qf_;
 
-      // Work array for wavevector space field.
-      RFieldDft<D> qk_;
+      // Work array for real-space field.
+      RField<D> qr_;
 
       // Work array for real-space field.
       RField<D> qr2_;
 
       // Work array for wavevector space field.
+      RFieldDft<D> qk_;
+
+      // Work array for wavevector space field.
       RFieldDft<D> qk2_;
 
-      // Work array for real-space field.
-      RField<D> qf_;
+      // Work arrays for calculate stress.
+      RField<D> q1p;
+      RField<D> q2p;
+      RFieldDft<D> q1; 
+      RFieldDft<D> q2; 
 
       /// Pointer to associated Mesh<D> object.
-      Mesh<D> const * meshPtr_;
+      Mesh<D> const* meshPtr_;
+
+      /// Pointer to associated UnitCell<D>
+      UnitCell<D> const* unitCellPtr_;
 
       /// Dimensions of wavevector mesh in real-to-complex transform
       IntVec<D> kMeshDimensions_;
@@ -231,6 +224,11 @@ namespace Pssp {
 
       /// Number of contour length steps = # grid points - 1.
       int ns_;
+
+      /** 
+      * Access associated UnitCell<D> as reference.
+      */  
+      UnitCell<D> const & unitCell() const { return *unitCellPtr_; }
 
    };
 

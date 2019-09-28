@@ -94,7 +94,7 @@ namespace Pscf {
       * \param dWdC matrix of derivatives (output) 
       */
       virtual 
-      void computeDwDc(Array<double> const & w, Matrix<double>& dWdC)
+      void computeDwDc(Array<double> const & c, Matrix<double>& dWdC)
       const;
 
       /**

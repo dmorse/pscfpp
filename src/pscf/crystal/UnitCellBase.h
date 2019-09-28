@@ -16,7 +16,7 @@
 #include <util/math/Constants.h>
 
 namespace Pscf
-{ 
+{
 
    using namespace Util;
 
@@ -26,7 +26,7 @@ namespace Pscf
    * \ingroup Pscf_Crystal_Module
    */
    template <int D>
-   class UnitCellBase 
+   class UnitCellBase
    {
    public:
 
@@ -34,98 +34,121 @@ namespace Pscf
       * Constructor.
       */
       UnitCellBase();
-   
+
       /**
       * Destructor.
       */
       ~UnitCellBase()
       {}
-  
+
       /**
       * Compute all private data, given latticeSystem and parameters.
       *
       * Calls initializeToZero, setBasis, computeDerivatives internally.
       */
       void setLattice();
- 
-      /** 
+
+      /**
       * Set all the parameters of unit cell (new version).
-      * 
+      *
       * \param parameters array of unit cell parameters
-      */  
+      */
       void setParameters(FSArray<double, 6> const& parameters);
 
       /**
-      * Compute square magnitude of reciprocal basis vector.
+      * Compute square magnitude of reciprocal lattice vector.
       */
       virtual double ksq(IntVec<D> const & k) const;
 
       /**
-      * Compute derivative of square magnitude of reciprocal basis vector.
+      * Compute derivative of square wavevector w/ respect to cell parameter.
+      *
+      * This function computes and returns a derivative with respect to
+      * unit cell parameter number n of the square of a reciprocal lattice
+      * vector with integer coefficients given by the elements of vec.
+      *
+      * \param vec vector of components of a reciprocal lattice vector
+      * \param n   index of a unit cell parameter
       */
-      virtual double computedksq(IntVec<D> const & vec, int n) const;   
-
-
+      virtual double dksq(IntVec<D> const & vec, int n) const;
 
       /**
-      * Get the number of parameters in the unit cell (new version).
+      * Get the number of parameters in the unit cell.
       */
       int nParameter() const;
 
-      /** 
-      * Get the parameters of this unit cell (new version).
-      */  
+      /**
+      * Get the parameters of this unit cell.
+      */
       FSArray<double, 6> parameters() const;
 
-      /** 
+      /**
       * Get a single parameter of the unit cell.
       *
       * \param i array index of the desired parameter
-      */  
+      */
       double parameter(int i) const;
 
       /**
       * Get Bravais basis vector i, denoted by a_i.
       *
-      * \param i array index of the desired basis vector.
+      * \param i array index of the desired basis vector
       */
       const RealVec<D>& rBasis(int i) const;
-   
+
       /**
       * Get reciprocal basis vector i, denoted by b_i.
+      *
+      * \param i array index of the desired reciprocal lattice basis vector
       */
       const RealVec<D>& kBasis(int i) const;
 
       /**
-      * Get component j of derivative of rBasis vector ai w/respect to k.
+      * Get component j of derivative of rBasis vector a_i w/respect to k.
+      *
+      * \param i array index of the desired basis vector a_i
+      * \param j index of a Cartesian component of a_i
+      * \param k index of cell parameter
       */
       const double drBasis(int k, int i, int j) const;
 
       /**
       * Get component j of derivative of kBasis vector bi w/respect to k.
+      *
+      * \param i array index of the desired reciprocal basis vector b_i
+      * \param j index of a Cartesian component of b_i
+      * \param k index of cell parameter
       */
       const double dkBasis(int k, int i, int j) const;
- 
-      /** 
+
+      /**
       * Get the derivative of dot product ri.rj with respect to parameter k.
-      */  
+      *
+      * \param i array index of 1st Bravais basis vector b_i
+      * \param j array index of 2nd Bravais basis vector b_i
+      * \param k index of cell parameter
+      */
       const double drrBasis(int k, int i, int j) const;
-  
+
       /**
       * Get the derivative of dot product bi.bj with respect to parameter k.
+      *
+      * \param i array index of 1st reciprocal basis vector b_i
+      * \param j array index of 2nd reciprocal basis vector b_i
+      * \param k index of cell parameter
       */
       const double dkkBasis(int k, int i, int j) const;
 
    protected:
- 
+
       /**
       * Array of Bravais lattice basis vectors.
-      */ 
+      */
       FArray<RealVec<D>, D> rBasis_;
 
       /**
       * Array of reciprocal lattice basis vectors.
-      */ 
+      */
       FArray<RealVec<D>, D> kBasis_;
 
       /**
@@ -133,9 +156,9 @@ namespace Pscf
       *
       * Element drBasis_[k](i,j) is derivative with respect to
       * parameter k of component j of Bravais basis vector i.
-      */ 
+      */
       FArray<FMatrix<double, D, D>, 6> drBasis_;
-      
+
       /**
       * Array of derivatives of kBasis
       *
@@ -147,16 +170,16 @@ namespace Pscf
       /**
       * Array of derivatives of a_i.a_j
       *
-      * Element drrBasis_[k](i,j) is derivative with respect 
-      * to parameter k of the dot product (a_i.a_j) of Bravais 
+      * Element drrBasis_[k](i,j) is derivative with respect
+      * to parameter k of the dot product (a_i.a_j) of Bravais
       * lattice basis vectors a_i and a_j.
       */
       FArray<FMatrix<double, D, D>, 6> drrBasis_;
 
       /**
       * Array of derivatives of b_i.b_j
-      * 
-      * Element dkkBasis_[k](i,j) is derivative with respect 
+      *
+      * Element dkkBasis_[k](i,j) is derivative with respect
       * to parameter k of the dot product (b_i.b_j) of reciprocal
       * lattice basis vectors b_i and b_j.
       */
@@ -164,15 +187,13 @@ namespace Pscf
 
       /**
       * Parameters used to describe the unit cell.
-      */      
+      */
       FArray<double, 6> parameters_;
-   
+
       /**
       * Number of parameters required to specify unit cell.
       */
       int nParameter_;
-
-      // Protected functions (used in implementation).
 
    private:
 
@@ -206,7 +227,7 @@ namespace Pscf
    template <int D>
    inline
    int UnitCellBase<D>::nParameter() const
-   {  return nParameter_;  } 
+   {  return nParameter_;  }
 
    /*
    * Get the unit cell parameters.
@@ -214,17 +235,17 @@ namespace Pscf
    template <int D>
    inline
    FSArray<double, 6> UnitCellBase<D>::parameters() const
-   {  
+   {
       FSArray<double, 6> parameters;
       for (int i = 0; i < nParameter_; ++i) {
          parameters.append(parameters_[i]);
       }
-      return parameters;  
+      return parameters;
    }
 
-   /** 
+   /**
    * Get a single parameter of the unit cell.
-   */  
+   */
    template <int D>
    double UnitCellBase<D>::parameter(int i) const
    {  return parameters_[i]; }
@@ -317,12 +338,12 @@ namespace Pscf
       return value;
    }
 
-   /*  
+   /*
    * Get magnitude of derivative of square of reciprocal basis vector.
-   */  
+   */
    template <int D>
-   double UnitCellBase<D>::computedksq(IntVec<D> const & vec, int n) const
-   {   
+   double UnitCellBase<D>::dksq(IntVec<D> const & vec, int n) const
+   {
       double element = 0.0;
       double value = 0.0;
 
@@ -334,7 +355,7 @@ namespace Pscf
       }
 
       return value;
-   }   
+   }
 
    // Protected member functions
 
@@ -346,15 +367,15 @@ namespace Pscf
    {
       // Initialize all elements to zero
       int i, j, k;
-      for (i = 0; i < D; ++i) { 
-         for (j = 0; j < D; ++j) { 
+      for (i = 0; i < D; ++i) {
+         for (j = 0; j < D; ++j) {
             rBasis_[i][j] = 0.0;
             kBasis_[i][j] = 0.0;
          }
       }
       for (k = 0; k < 6; ++k){
-         for (i = 0; i < D; ++i) { 
-            for (j = 0; j < D; ++j) { 
+         for (i = 0; i < D; ++i) {
+            for (j = 0; j < D; ++j) {
                drBasis_[k](i,j) = 0.0;
                dkBasis_[k](i,j) = 0.0;
                drrBasis_[k](i,j) = 0.0;
@@ -379,7 +400,7 @@ namespace Pscf
                // Loop over free indices s, t
                for (s = 0; s < D; ++s) {
                   for (t = 0; t < D; ++t) {
-                     dkBasis_[p](q,r) 
+                     dkBasis_[p](q,r)
                        -= kBasis_[q][s]*drBasis_[p](t,s)*kBasis_[t][r];
                   }
                }
@@ -389,7 +410,7 @@ namespace Pscf
          }
       }
 
-      // Compute drrBasis and dkkBasis 
+      // Compute drrBasis and dkkBasis
       for (p = 0; p < nParameter_; ++p) {
          for (q = 0; q < D; ++q) {
             for (r = 0; r < D; ++r) {
@@ -398,14 +419,14 @@ namespace Pscf
                   drrBasis_[p](q,r) += rBasis_[r][s]*drBasis_[p](q,s);
                   dkkBasis_[p](q,r) += kBasis_[q][s]*dkBasis_[p](r,s);
                   dkkBasis_[p](q,r) += kBasis_[r][s]*dkBasis_[p](q,s);
- 
+
                }
             }
          }
       }
 
    }
-   
+
    /*
    * Set all lattice parameters.
    */
@@ -417,5 +438,5 @@ namespace Pscf
       computeDerivatives();
    }
 
-} 
-#endif 
+}
+#endif

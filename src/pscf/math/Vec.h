@@ -147,14 +147,14 @@ namespace Pscf
       /**
       * Add a common scalar to all components.
       *
-      * \param dv  vector increment (input)
+      * \param s  scalar additive constant (input)
       */
       void operator += (T s);
 
       /**
       * Subtract a common scalar from all components.
       *
-      * \param dv  vector increment (input)
+      * \param s  scalar subtractive constant (input)
       */
       void operator -= (T s);
 
