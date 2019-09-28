@@ -338,7 +338,7 @@ namespace Pssp {
             if (temp[D-1] <= (mesh().dimensions()[D-1]/2)) {
                vec =  shiftToMinimum(temp, mesh().dimensions(), *unitCellPtr_);
                dGsq(m, n) = 0;
-               dGsq(m, n) = unitCellPtr_->computedksq(vec, n);
+               dGsq(m, n) = unitCellPtr_->dksq(vec, n);
                for (int p = 0; p < D; ++p) {
                   if (temp [p] != 0) {
                      Partner[p] = mesh().dimensions()[p] - temp[p];
