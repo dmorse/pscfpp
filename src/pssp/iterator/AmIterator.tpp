@@ -22,17 +22,6 @@ namespace Pssp
 
    using namespace Util;
 
-   #if 0
-   template <int D>
-   AmIterator<D>::AmIterator()
-    : Iterator<D>(),
-      epsilon_(0),
-      lambda_(0),
-      nHist_(0),
-      maxHist_(0)
-   { setClassName("AmIterator"); }
-   #endif
-
    template <int D>
    AmIterator<D>::AmIterator(System<D>* system)
     : Iterator<D>(system),

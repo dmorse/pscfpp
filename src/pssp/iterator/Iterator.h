@@ -31,13 +31,6 @@ namespace Pssp
 
    public:
 
-      #if 0
-      /**
-      * Default constructor.
-      */
-      Iterator();
-      #endif
-
       /**
       * Constructor.
       * 

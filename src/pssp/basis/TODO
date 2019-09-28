@@ -1,26 +1,16 @@
 TODO (Basis class):
 
-1) Move computation of dEigen for one vector to a public member
-   of UnitCell, giving functions ksq() and dksq().  Construct
-   unit tests, including edge cases and special cases for which
-   the answer can be worked out analytically.
-
-2) Convert TWave::phase to a Rational value. Add Wave::phase member
+1) Convert TWave::phase to a Rational value. Add Wave::phase member
    to Basis::Wave. Build code to compute coefficients that contains
    common special cases phase = 0, phase = +- 1/2, phase = +- 1/4.
 
-3) Possibility: Add a partnerId to Basis::Wave. Once you've identified 
-   the partner, why not keep track of it?
+2) Store norm of coefficient separately from phase.
 
-4) Test Basis code with more varied groups, including nontrivial
+3) Possibility: Add a negationId to Basis::Wave. Once you've identified 
+   the negation of a vector, why not keep track of it?
+
+4) Test Basis code with more varied groups, including some nontrivial
    non-centrosymmetric cases. Compare each to Fortran as well as
    testing internal validity. Test with both even and odd mesh
    dimension values.
-
-   Examples: 2D Square, 
-             2D Square centered (has translations and cancellations)
-             2D 4 fold axis (non-centrosymmetric)
-             3D (111 3 fold axis) (non-centrosymmetric)
-             3D cubic BCC (has translations and cancellations)
-
 
