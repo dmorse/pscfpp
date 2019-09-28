@@ -32,11 +32,6 @@ namespace Pssp
    public:
 
       /**
-      * Default constructor.
-      */
-      Iterator();
-
-      /**
       * Constructor.
       * 
       * \param system parent System object
@@ -51,12 +46,15 @@ namespace Pssp
       /**
       * Iterate to solution.
       *
-      * \param isContinuation true iff part of sweep, and not first step.
       * \return error code: 0 for success, 1 for failure.
       */
       virtual int solve() = 0;
 
+   protected:
+
+      /// Pointer to parent System object
       System<D>* systemPtr_;
+
    };
 
 } // namespace Pssp

@@ -21,18 +21,18 @@ namespace Pscf
    template <int D> class Mesh;
 
    /**
-   * istream extractor for a Mesh<D>.
+   * Input stream extractor for reading a Mesh<D> object.
    *
-   * \param  in    input stream
+   * \param  in  input stream
    * \param  mesh  Mesh<D> object to be read
    * \return modified input stream
    */
    template <int D>
    std::istream& operator >> (std::istream& in,
-                              Mesh<D>& cell);
+                              Mesh<D>& mesh);
 
    /**
-   * ostream inserter for a Mesh<D>::LatticeSystem.
+   * Output stream inserter for writing a Mesh<D>::LatticeSystem.
    *
    * \param out  output stream
    * \param mesh  Mesh<D> to be written
@@ -40,7 +40,7 @@ namespace Pscf
    */
    template <int D>
    std::ostream& operator << (std::ostream& out,
-                              Mesh<D>& cell);
+                              Mesh<D>& mesh);
 
    /**
    * Description of a regular grid of points in a periodic domain.

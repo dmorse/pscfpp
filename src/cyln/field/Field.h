@@ -46,11 +46,12 @@ namespace Cyln
       virtual ~Field();
 
       /**
-      * Allocate the underlying C array.
+      * Allocate memory.
       *
       * \throw Exception if the Field is already allocated.
       *
-      * \param capacity number of elements to allocate.
+      * \param nr number of grid points in radial direction
+      * \param nz number of grid points in axial (z) direction
       */
       void allocate(int nr, int nz);
 

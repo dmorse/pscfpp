@@ -103,7 +103,7 @@ namespace Pssp
       void setupUnitCell(const UnitCell<D>& unitCell);
 
       /**
-      * Compute concentrations.
+      * Compute partition functions and concentrations.
       *
       * This function calls the compute function of every molecular
       * species, and then adds the resulting block concentration
@@ -124,12 +124,17 @@ namespace Pssp
       void 
       compute(DArray<WField> const & wFields, DArray<CField>& cFields);
       
-      // Array to store total stress
-      FArray<double, 6> TStress;
+      /**
+      * Compute derivatives of free energy w/ respect to cell parameters.
+      */
+      void computeStress();
 
-      // Function to calculate total stress of the unit cell
-      void
-      computeTStress(Basis<D>& basis);
+      /**
+      * Derivative of free energy with respect to unit cell parameter n.
+      *
+      * \param n  index of unit cell parameter
+      */
+      double stress(int n) const;
 
       /**
       * Get monomer reference volume.
@@ -155,8 +160,14 @@ namespace Pssp
       /// Optimal contour length step size.
       double ds_;
 
+      /// Array to store total stress
+      FArray<double, 6> stress_;
+
       /// Pointer to associated Mesh<D> object.
       Mesh<D> const * meshPtr_;
+
+      /// Pointer to associated UnitCell<D>
+      UnitCell<D> const * unitCellPtr_;
 
       /// Return associated domain by reference.
       Mesh<D> const & mesh() const;
@@ -165,19 +176,20 @@ namespace Pssp
 
    // Inline member function
 
-   /*
-   * Get monomer reference volume (public).
-   */
+   // Get monomer reference volume (public).
    template <int D>
    inline double Mixture<D>::vMonomer() const
    {  return vMonomer_; }
 
-   /*
-   * Get Mesh<D> by constant reference (private).
-   */
+   // Stress with respect to unit cell parameter n.
+   template <int D>
+   inline double Mixture<D>::stress(int n) const
+   {  return stress_[n]; }
+
+   // Get Mesh<D> by constant reference (private).
    template <int D>
    inline Mesh<D> const & Mixture<D>::mesh() const
-   {   
+   {
       UTIL_ASSERT(meshPtr_);
       return *meshPtr_;
    }
@@ -190,5 +202,4 @@ namespace Pssp
 
 } // namespace Pssp
 } // namespace Pscf
-// #include "Mixture.tpp"
 #endif

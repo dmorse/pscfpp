@@ -50,11 +50,6 @@ namespace Pssp
       */
       typedef RField<D> CField;
 
-      /** 
-      * Polymer Chain Stress type.
-      */  
-      typedef FArray<double, 6> PStress; 
-
       /**
       * Propagator q-field type.
       */
@@ -241,5 +236,4 @@ namespace Pssp
 
 }
 }
-//#include "Propagator.tpp" 
 #endif

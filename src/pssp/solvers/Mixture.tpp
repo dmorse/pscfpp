@@ -13,15 +13,16 @@
 
 #include <cmath>
 
-namespace Pscf { 
+namespace Pscf {
 namespace Pssp
-{ 
+{
 
    template <int D>
    Mixture<D>::Mixture()
     : vMonomer_(1.0),
       ds_(-1.0),
-      meshPtr_(0)
+      meshPtr_(0),
+      unitCellPtr_(0)
    {  setClassName("Mixture"); }
 
    template <int D>
@@ -63,6 +64,10 @@ namespace Pssp
    template <int D>
    void Mixture<D>::setupUnitCell(const UnitCell<D>& unitCell)
    {
+
+      // Set association to unitCell
+      unitCellPtr_ = &unitCell;
+
       for (int i = 0; i < nPolymer(); ++i) {
          polymer(i).setupUnitCell(unitCell);
       }
@@ -72,7 +77,7 @@ namespace Pssp
    * Compute concentrations (but not total free energy).
    */
    template <int D>
-   void Mixture<D>::compute(DArray<Mixture<D>::WField> const & wFields, 
+   void Mixture<D>::compute(DArray<Mixture<D>::WField> const & wFields,
                             DArray<Mixture<D>::CField>& cFields)
    {
       UTIL_CHECK(meshPtr_);
@@ -101,7 +106,9 @@ namespace Pssp
       }
 
       // Accumulate monomer concentration fields
+      double phi;
       for (i = 0; i < nPolymer(); ++i) {
+         phi = polymer(i).phi();
          for (j = 0; j < polymer(i).nBlock(); ++j) {
             int monomerId = polymer(i).block(j).monomerId();
             UTIL_CHECK(monomerId >= 0);
@@ -109,38 +116,39 @@ namespace Pssp
             CField& monomerField = cFields[monomerId];
             CField& blockField = polymer(i).block(j).cField();
             for (k = 0; k < nx; ++k) {
-               monomerField[k] += polymer(i).phi() * blockField[k];
+               monomerField[k] += phi * blockField[k];
             }
          }
       }
-      // To do: Add compute functions and accumulation for solvents.
 
+      // To do: Add compute functions and accumulation for solvents.
    }
 
-   /*  
-   * Compute Total Stress.
-   */  
+   /*
+   * Compute total stress.
+   */
    template <int D>
-   void Mixture<D>::computeTStress(Basis<D>& basis)
-   {   
+   void Mixture<D>::computeStress()
+   {
       int i, j;
 
+      // Initialize stress to zero
       for (i = 0; i < 6; ++i) {
-         TStress [i] = 0;
-      }   
+         stress_[i] = 0;
+      }
 
-      // Compute Stress for all polymers, must be done after computing concentrations
+      // Compute stress for all polymers, after solving MDE
       for (i = 0; i < nPolymer(); ++i) {
-         polymer(i).ComputePcStress(basis);
-      }   
+         polymer(i).computeStress();
+      }
 
       // Accumulate stress for all the polymer chains
-      for (i = 0; i < 6; ++i) {
+      for (i = 0; i < unitCellPtr_->nParameter(); ++i) {
          for (j = 0; j < nPolymer(); ++j) {
-            TStress [i] += polymer(j).PcStress[i];
-         }   
-      }   
-   }   
+            stress_[i] += polymer(j).stress(i);
+         }
+      }
+   }
 
 } // namespace Pssp
 } // namespace Pscf

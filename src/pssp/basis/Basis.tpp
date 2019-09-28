@@ -638,23 +638,6 @@ namespace Pssp
             waves_[j].coeff *= snorm;
          }
 
-         // Set elements of dEigen
-         {
-            vec = stars_[i].waveBz;
-            double element, dEigen;
-            int p, q;
-            for (j = 0; j < unitCell().nParams(); ++j) {
-               dEigen = 0;
-               for (p = 0; p < D; ++p){
-                  for (q = 0; q < D; ++q){
-                     element = unitCellPtr_->dkkBasis(j, p, q);
-                     dEigen += vec[p]*vec[q]*element;
-                  }
-               }
-               stars_[i].dEigen[j] = dEigen;
-            }
-         }
-
       }
 
       // Final processing of waves
@@ -677,35 +660,23 @@ namespace Pssp
          // Look up table for waves
          waveIds_[mesh().rank(vec)] = i;
       }
+
    }
+
   
    template <int D>
    void Basis<D>::update()
    {
       IntVec<D> vec;
-      int i, j, p, q;
-      double element, dEigen;
 
       // Process stars
-      for (i = 0; i < nStar_; ++i) {
+      for (int i = 0; i < nStar_; ++i) {
          vec = stars_[i].waveBz;
          stars_[i].eigen = unitCell().ksq(vec);
-
-         for (j = 0; j < unitCell().nParams(); ++j) {
-            dEigen = 0.0;
-            for (p = 0; p < D; ++p){
-               for (q = 0; q < D; ++q){
-                  element = unitCell().dkkBasis(j, p, q);
-                  dEigen += vec[p]*vec[q]*element;
-               }
-            }
-            stars_[i].dEigen[j] = dEigen;
-         }
-
       }
 
       // Process waves
-      for (i = 0; i < nWave_; ++i) {
+      for (int i = 0; i < nWave_; ++i) {
          vec = waves_[i].indicesBz;
          waves_[i].sqNorm = unitCell().ksq(vec);
       }

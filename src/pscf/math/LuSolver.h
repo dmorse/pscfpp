@@ -64,8 +64,9 @@ namespace Pscf
       void solve(Array<double>& b, Array<double>& x);
 
       /** 
-      *   
-      * \compute inverse of matrix A returned in inv
+      * Compute inverse of matrix A.
+      *
+      * \param inv inverse of matrix A (output)
       */  
       void inverse (Matrix<double>& inv); 
  

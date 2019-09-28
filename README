@@ -1,45 +1,54 @@
 
 PSCF++ is a library of C++ classes and programs for solving the 
 Edwards-Helfand self-consistent field theory for polymer liquids. 
-PSCF++ is still under development, but is intended to eventually replace 
-the existing PSCF Fortran program.  When complete, the package will 
-contain a pseudo-spectral implementation for periodic structures, 
-analagous to that provided by the existing Fortran code, as well as 
-specialized implementations for other geometries and boundary conditons. 
+PSCF++ is still under development, but is intended to replace and
+signficantly extend the existing PSCF Fortran program, which was
+designed for problems involving periodic microstructures.
 
-Some differences from the existing PSCF Fortran code and expected
+Differences from the existing PSCF Fortran code and expected
 advantages of the new code include:
 
-   - A more flexible design provides a common framework for 
-     implementation of several different SCFT solvers that are 
-     intended for different geometries or that use different 
-     algorithms.
+   - PSCF++ is desigend to allow implementation several different SCFT 
+     solvers for use with different geometries, algorithms or hardware.
 
-   - A more general description of polymer topology allows simulations 
-     of mixtures containing arbitrary acyclic branched copolymers, in 
-     addition to the linear copolymers and homopolymers allowed by the 
-     existing Fortran code.
+   - PSCF++ allows simulations of mixtures containing arbitrary acyclic 
+     branched copolymers, in addition to the linear block copolymers and 
+     homopolymers allowed by Fortran PSCF code.
 
-   - An object oriented design will facilitate analysis of phase 
-     coexistence, by allowing creation of several independent objects 
-     to represent different phases. 
+   - An object oriented design allows creation of independent objects
+     to represent different phases, which will facilitate analysis of 
+     phase coexistence.
 
-   - Adoption of C++ will simplify implementation and maintenance of 
-     variants that use graphical process units (GPUs) to accelerate 
-     core calculations.
+   - Adoption of C/C++ has simplified implementation of solver that
+     uses graphical process units (GPUs) to accelerate performance.
 
-Currently, the code contains:
+Currently, the package contains the following types of SCFT solvers:
 
-   - A complete one-dimensional finite difference implementation for 
-     studying problems that involve only a single spatial coordinate 
-     in Cartesian, cylindrical or spherical coordinates (i.e., brushes, 
-     interfaces, and cylindrical or circular micelles). 
+   - A one-dimensional finite difference solver for problems that involve 
+     only a single spatial coordinate in Cartesian, cylindrical or spherical 
+     coordinates.
 
-   - A nearly complete pseudo-spectral implementation for periodic
-     structures similar to that provided by the Fortran PSCF program.
+   - A CPU-based pseudo-spectral solver for spatially periodic structures, 
+     which is similar in most respects to the Fortran PSCF program. 
 
-A GPU accelerated code for periodic microstructure has also been 
-developed, but has not yet been integrated into this git repository.
+   - A GPU accelerated pseudo-spectral solver for period structures. 
+
+The one-dimensional finite different solver is useful for treating problems
+involving brushes, flat or curved interfaces, and cylindrical or spherical
+micelles, and is being used for these purposes.
+
+The CPU based pseudo-spectral solver for periodic microstructures now has
+most of the capabilities of the Fortran PSCF code but still lacks a few 
+features. Missing features that we plan to add over the next few months
+include the "sweep" continuation feature and ability to simulate 
+point-particle solvents.  The PSCF++ pseudo-spectral solver can read and
+write the field file formats used by the PSCF fortran code, and provides 
+very similar perfomance.
+
+The GPU-accelerated pseudo-spectral solver for periodic structures is the 
+least mature program within the package. Unlike the corresponding CPU
+pseudo-spectral solver, this GPU solver does yet contain code to impose a 
+specified space group symmetry upon the solution.
 
 PSCF++ is free, open source software. It is distributed under the terms 
 of the GNU General Public License as (GPL) published by the Free Software 

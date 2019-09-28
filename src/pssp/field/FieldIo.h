@@ -67,6 +67,9 @@ namespace Pssp
                      Basis<D>& basis,
                      FileMaster& fileMaster);
 
+      /// \name Field File IO
+      //@{
+
       /**
       * Read concentration or chemical potential field components from file.
       *
@@ -78,7 +81,7 @@ namespace Pssp
       * associated with monomer type i.
       *
       * \param in input stream (i.e., input file)
-      * \param fields array of fields for different species
+      * \param fields array of fields (symmetry adapted basis components)
       */
       void 
       readFieldsBasis(std::istream& in, DArray< DArray <double> >& fields);
@@ -91,7 +94,7 @@ namespace Pssp
       * closes the file.
       *
       * \param filename name of input file
-      * \param fields array of fields for different species
+      * \param fields array of fields (symmetry adapted basis components)
       */
       void readFieldsBasis(std::string filename, 
                            DArray< DArray <double> >& fields);
@@ -102,7 +105,7 @@ namespace Pssp
       * This function writes components in a symmetry adapted basis.
       *
       * \param out output stream (i.e., output file)
-      * \param fields array of fields for different species
+      * \param fields array of fields (symmetry adapted basis components)
       */
       void writeFieldsBasis(std::ostream& out, 
                             DArray< DArray <double> > const & fields);
@@ -115,7 +118,7 @@ namespace Pssp
       * closes the file. 
       *
       * \param filename name of input file
-      * \param fields array of fields for different species
+      * \param fields array of fields (symmetry adapted basis components)
       */
       void writeFieldsBasis(std::string filename, 
                             DArray< DArray <double> > const & fields);
@@ -127,7 +130,7 @@ namespace Pssp
       * fields[i] is the RField<D> associated with monomer type i.
       * 
       * \param in input stream (i.e., input file)
-      * \param fields array of RField fields for different species
+      * \param fields array of RField fields (r-space grid)
       */
       void readFieldsRGrid(std::istream& in, DArray< RField<D> >& fields);
 
@@ -142,7 +145,7 @@ namespace Pssp
       * and then closes the file. 
       *
       * \param filename name of input file
-      * \param fields array of RField fields for different species
+      * \param fields array of RField fields (r-space grid)
       */
       void readFieldsRGrid(std::string filename, DArray< RField<D> >& fields);
 
@@ -150,7 +153,7 @@ namespace Pssp
       * Write array of RField objects (fields on an r-space grid) to file.
       *
       * \param out output stream (i.e., output file)
-      * \param fields array of RField fields for different species
+      * \param fields array of RField fields (r-space grid)
       */
       void writeFieldsRGrid(std::ostream& out, 
                             DArray< RField<D> > const& fields);
@@ -162,8 +165,8 @@ namespace Pssp
       * writes fields in RField<D> real-space grid format to that file, 
       * and then closes the file.
       *
-      * \param filename name of output stream.
-      * \param fields array of RField fields for different species
+      * \param filename  name of output file
+      * \param fields  array of RField fields (r-space grid)
       */
       void writeFieldsRGrid(std::string filename,
                             DArray< RField<D> > const& fields);
@@ -175,22 +178,131 @@ namespace Pssp
       * fields[i] is the discrete Fourier transform of the field for 
       * monomer type i.
       * 
-      * \param in input stream (i.e., input file)
-      * \param fields array of RFieldDft fields for different species
+      * \param in  input stream (i.e., input file)
+      * \param fields  array of RFieldDft fields (k-space grid)
       */
       void readFieldsKGrid(std::istream& in, 
                            DArray< RFieldDft<D> >& fields);
 
       /**
+      * Read array of RFieldDft objects (k-space fields) from file.
+      *
+      * This function opens a file with name filename, reads discrete
+      * Fourier components (Dft) of fields from that file, and closes 
+      * the file. 
+      *
+      * The capacity of the array is equal to nMonomer, and element
+      * fields[i] is the discrete Fourier transform of the field for 
+      * monomer type i.
+      * 
+      * \param filename  name of input file
+      * \param fields  array of RFieldDft fields (k-space grid)
+      */
+      void readFieldsKGrid(std::string filename, 
+                           DArray< RFieldDft<D> >& fields);
+
+      /**
       * Write array of RFieldDft objects (k-space fields) to file.
       *
+      * The capacity of the array fields is equal to nMonomer. Element
+      * fields[i] is the discrete Fourier transform of the field for 
+      * monomer type i.
+      * 
       * \param out output stream (i.e., output file)
-      * \param fields array of RFieldDft fields for different species
+      * \param fields array of RFieldDft fields 
       */
       void writeFieldsKGrid(std::ostream& out, 
                             DArray< RFieldDft<D> > const& fields);
    
+      /**
+      * Write array of RFieldDft objects (k-space fields) to a file.
+      *
+      * This function opens a file with name filename, writes discrete
+      * Fourier transform components (DFT) components of fields to that 
+      * file, and closes the file. 
+      *
+      * \param filename  name of output file.
+      * \param fields  array of RFieldDft fields (k-space grid)
+      */
+      void writeFieldsKGrid(std::string filename, 
+                           DArray< RFieldDft<D> > const& fields);
+
+      /**
+      * Write header for field file (fortran pscf format)
+      *
+      * \param out output stream (i.e., output file)
+      */
+      void writeFieldHeader(std::ostream& out) const;
+
+      //@}
+      /// \name Field Format Conversion
+      //@{
+
+      /**
+      * Convert field from symmetrized basis to Fourier transform (k-grid).
+      *
+      * \param components coefficients of symmetry-adapted basis functions
+      * \param dft discrete Fourier transform of a real field
+      */
+      void convertBasisToKGrid(DArray<double> const& components, 
+                               RFieldDft<D>& dft);
+   
+      /**
+      * Convert fields from symmetrized basis to Fourier transform (kgrid).
+      * 
+      * The in and out parameters are arrays of fields, in which element
+      * number i is the field associated with monomer type i. 
+      *
+      * \param in  components of fields in symmetry adapted basis 
+      * \param out fields defined as discrete Fourier transforms (k-grid)
+      */
+      void convertBasisToKGrid(DArray< DArray <double> > & in,
+                               DArray< RFieldDft<D> >& out);
+
+      /**
+      * Convert field from Fourier transform (k-grid) to symmetrized basis.
+      *
+      * \param dft complex DFT (k-grid) representation of a field.
+      * \param components coefficients of symmetry-adapted basis functions.
+      */
+      void convertKGridToBasis(RFieldDft<D> const& dft, 
+                               DArray<double>& components);
+
+      /**
+      * Convert fields from Fourier transform (kgrid) to symmetrized basis.
+      * 
+      * The in and out parameters are each an array of fields, in which
+      * element i is the field associated with monomer type i. 
+      *
+      * \param in  fields defined as discrete Fourier transforms (k-grid)
+      * \param out  components of fields in symmetry adapted basis 
+      */
+      void convertKGridToBasis(DArray< RFieldDft<D> > & in,
+                               DArray< DArray <double> > & out);
+
+      /**
+      * Convert fields from symmetrized basis to spatial grid (rgrid).
+      * 
+      * \param in  fields in symmetry adapted basis form
+      * \param out fields defined on real-space grid
+      */
+      void convertBasisToRGrid(DArray< DArray <double> > & in,
+                               DArray< RField<D> >& out);
+
+      /**
+      * Convert fields from spatial grid (rgrid) to symmetrized basis.
+      * 
+      * \param in  fields defined on real-space grid
+      * \param out  fields in symmetry adapted basis form
+      */
+      void convertRGridToBasis(DArray< RField<D> > & in,
+                               DArray< DArray <double> > & out);
+
+      //@}
    private:
+
+      // DFT work array for two-step conversion basis <-> kgrid <-> rgrid.
+      RFieldDft<D> workDft_;
 
       // Pointers to associated objects.
 
@@ -268,11 +380,9 @@ namespace Pssp
       void readFieldHeader(std::istream& in);
 
       /**
-      * Write header for field file (fortran pscf format)
-      *
-      * \param out output stream (i.e., output file)
+      * Check state of work array, allocate if necessary.
       */
-      void writeFieldHeader(std::ostream& out) const;
+      void checkWorkDft();
 
    };
 

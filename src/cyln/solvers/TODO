@@ -1,0 +1,16 @@
+
+Block class:
+
+    Define functions
+
+    void step(inField, outField)
+    {
+       // Propagate W/2
+       // FFT
+       // Propagate axial Laplacian/2
+       // For each k, propagate radial Laplacian 
+       // Propagate axial Laplacian/2
+       // Inverse FFT
+       // Propagate W/2
+    }
+

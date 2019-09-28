@@ -1,0 +1,12 @@
+FIELD_TO_RGRID
+contents/omega/domainOn/omega_lam
+out/omega/conv/omega_rgrid_lam
+
+RGRID_TO_FIELD
+out/omega/conv/omega_rgrid_lam
+out/omega/conv/omega_conv_lam
+
+READ_WFIELDS
+out/omega/conv/omega_conv_lam
+
+FINISH

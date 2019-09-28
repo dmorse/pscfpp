@@ -12,6 +12,6 @@ Mixture{
    }
    ds   0.001
 }
-hexagonal 4.0
-12  12
+hexagonal   4.0
+16  16
 

@@ -14,9 +14,11 @@
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/crystal/UnitCell.h>
 #include <pscf/crystal/shiftToMinimum.h>
-#include <util/containers/FMatrix.h>      
+#include <pscf/math/IntVec.h>
+#include <util/containers/DMatrix.h>      
 #include <util/containers/DArray.h>      
 #include <util/containers/FArray.h>      
+#include <util/containers/FSArray.h>
 
 namespace Pscf { 
 namespace Pssp {
@@ -52,13 +54,25 @@ namespace Pssp {
 
       // Set association to mesh
       meshPtr_ = &mesh;
+      // Set association to unitCell
+      //unitCellPtr_ = &unitCell;
 
+      #if 0
       // Set contour length discretization
       ns_ = floor(length()/ds + 0.5) + 1;
       if (ns_%2 == 0) {
          ns_ += 1;
       }
       ds_ = length()/double(ns_ - 1);
+      #endif
+
+      int tempNs;
+      tempNs = (floor(length()/(2.0 *ds) + 0.5));
+      if (tempNs == 0) {
+         tempNs = 1;
+      } 
+      ds_ = (length()/double(tempNs * 2.0));
+      ns_ = (length()/ds_)  + 1;
 
       // Compute Fourier space kMeshDimensions_ 
       for (int i = 0; i < D; ++i) {
@@ -68,6 +82,11 @@ namespace Pssp {
             kMeshDimensions_[i] = mesh.dimensions()[i]/2 + 1;
        }
       }
+
+      int kSize_ = 1;
+      for (int i = 0; i < D; ++i) {
+           kSize_ *= kMeshDimensions_[i];   
+      }   
 
       // Allocate work arrays
       expKsq_.allocate(kMeshDimensions_);
@@ -84,10 +103,15 @@ namespace Pssp {
       q2.allocate(mesh.dimensions());
       q1p.allocate(mesh.dimensions());
       q2p.allocate(mesh.dimensions());
+      dGsq.allocate(kSize_, 6);
 
       propagator(0).allocate(ns_, mesh);
       propagator(1).allocate(ns_, mesh);
       cField().allocate(mesh.dimensions());
+
+     // for (int i = 0; i < unitCell.nParameter(); ++i) {
+     //    stress_.append(0.0);
+     // }  
 
    }
 
@@ -98,6 +122,10 @@ namespace Pssp {
    void 
    Block<D>::setupUnitCell(const UnitCell<D>& unitCell)
    {
+
+      // Set association to unitCell
+      unitCellPtr_ = &unitCell;
+
       MeshIterator<D> iter;
       // std::cout << "kDimensions = " << kMeshDimensions_ << std::endl;
       iter.setDimensions(kMeshDimensions_);
@@ -118,6 +146,7 @@ namespace Pssp {
          //          << Gsq  << "  "
          //          << expKsq_[i] << std::endl;
       }
+
    }
       
    /*
@@ -262,7 +291,7 @@ namespace Pssp {
    * Integrate to Stress exerted by the chain for this block
    */
    template <int D>
-   void Block<D>::computeStress(Basis<D>& basis, double prefactor)
+   void Block<D>::computeStress(double prefactor)
    {   
       // Preconditions
       int nx = mesh().size();
@@ -272,58 +301,77 @@ namespace Pssp {
       UTIL_CHECK(propagator(0).isAllocated());
       UTIL_CHECK(propagator(1).isAllocated());
 
+      stress_.clear();
+
       double dels, normal, increment;
       int r,c;
  
       normal = 3.0*6.0;
 
-      c = (basis.nStar());
-      r = 6;
-
-      DArray<double> q1s;
-      DArray<double> q2s;
-      DArray<double> q3s;
-      q1s.allocate(basis.nStar());
-      q2s.allocate(basis.nStar());
-      q3s.allocate(basis.nStar());
-
-      FArray<double, 6> dQ;
-
-      //FArray<double, basis.nStar()> q1s;
-      //FArray<double, basis.nStar()> q2s;
-
-      // Initialize work array and pStress to zero at all points
-      int i;
-      for (i = 0; i < 6; ++i) {
-         dQ [i] = 0.0;
-         pStress [i] = 0.0;
+      int kSize_ = 1;
+      for (int i = 0; i < D; ++i) {
+           kSize_ *= kMeshDimensions_[i];   
       }   
+      r = unitCellPtr_->nParameter();
+      c = kSize_;
+
+      FSArray<double, 6> dQ;
+
+      // Initialize work array and stress_ to zero at all points
+      int i;
+      for (i = 0; i < r; ++i) {
+         dQ.append(0.0);
+         stress_.append(0.0);
+      }   
+
+      IntVec<D> temp;
+      IntVec<D> vec;
+      IntVec<D> Partner;    
+      MeshIterator<D> iter;
+      iter.setDimensions(mesh().dimensions());
+      int m = 0;
+
+      for (int n = 0; n < r ; ++n) {
+         m = 0;
+         for (iter.begin(); !iter.atEnd(); ++iter) {
+            temp = iter.position();
+            if (temp[D-1] <= (mesh().dimensions()[D-1]/2)) {
+               vec =  shiftToMinimum(temp, mesh().dimensions(), *unitCellPtr_);
+               dGsq(m, n) = 0;
+               dGsq(m, n) = unitCellPtr_->dksq(vec, n);
+               for (int p = 0; p < D; ++p) {
+                  if (temp [p] != 0) {
+                     Partner[p] = mesh().dimensions()[p] - temp[p];
+                  }
+                  else {
+                     Partner[p] = 0;
+                  }
+               }
+               if (mesh().dimensions()[D-1]%2 == 1) {
+                  if (temp[D-1] !=0) {
+                     dGsq(m, n) *= 2; 
+                  }
+               } else {
+                  if (temp[D-1] !=0 && temp[D-1] != (mesh().dimensions()[D-1]/2)) {
+                     dGsq(m, n) *= 2;
+                  }             
+               }
+               ++m;
+            }
+         }
+      }
 
       Propagator<D> const & p0 = propagator(0);
       Propagator<D> const & p1 = propagator(1);
 
-      //Evaluate unnormalized integral   
+      // Evaluate unnormalized integral   
       for (int j = 0; j < ns_ ; ++j) {
            
-          // fft_.forwardTransform(p0.q(j), q1);
-         
            q1p = p0.q(j);
            fft_.forwardTransform(q1p, q1);
-           basis.convertFieldDftToComponents(q1 , q1s);
-           
-           //fft_.forwardTransform(p1.q(ns_ - 1 - j), q2);  
            
            q2p = p1.q(ns_ - 1 - j);
-           //q2p = p1.q(j);
            fft_.forwardTransform(q2p, q2); 
-           basis.convertFieldDftToComponents(q2 , q2s); 
-
-          // for (int d = 0; d < c; ++d){
-            //  std::cout<<"q1s("<<d<<")="<<"\t"<<q1s[d]<<"\n";
-             // std::cout<<"q2s("<<d<<")="<<"\t"<<q2s[d]<<"\n";
-          // }
-           
-
 
            dels = ds_;
 
@@ -338,9 +386,11 @@ namespace Pssp {
            for (int n = 0; n < r ; ++n) {
               increment = 0;
 
-              for (int m = 0; m < c ; ++m) {
-                 q3s [m] = q1s [m] * basis.star(m).dEigen[n];  
-                 increment += q3s [m]*q2s [m]; 
+              for (m = 0; m < c ; ++m) {
+                 double prod = 0;
+                 prod = (q1[m][0] * q2[m][0]) - (q1[m][1] * q2[m][1]);
+                 prod *= dGsq(m,n); 
+                 increment += prod; 
               }
               increment = (increment * kuhn() * kuhn() * dels)/normal;
               dQ [n] = dQ[n]-increment; 
@@ -349,10 +399,8 @@ namespace Pssp {
       
       // Normalize
       for (i = 0; i < r; ++i) {
-         pStress[i] = pStress[i] - (dQ[i] * prefactor);
+         stress_[i] = stress_[i] - (dQ[i] * prefactor);
       }   
-      //#if 0
-      //#endif
 
    }
 
