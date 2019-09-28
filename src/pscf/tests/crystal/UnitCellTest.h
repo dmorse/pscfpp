@@ -53,7 +53,7 @@ public:
    bool isValidDerivative(UnitCell<D> cell)
    {
       double sum;
-      double nParams = cell.nParams();
+      double nParams = cell.nParameter();
       int i, j, k, m;
       for (k = 0; k < nParams; ++k) {
          for (i = 0; i < D; ++i) {
@@ -81,7 +81,7 @@ public:
       std::ifstream in;
       openInputFile("in/Lamellar", in);
       in >> v;
-      double param = v.params()[0];
+      double param = v.parameter(0);
       double twoPi = 2.0*Constants::Pi;
 
       TEST_ASSERT(eq(v.rBasis(0)[0], param));
@@ -119,7 +119,7 @@ public:
       openInputFile("in/Square", in);
 
       in >> v;
-      TEST_ASSERT(v.nParams() == 1);
+      TEST_ASSERT(v.nParameter() == 1);
       TEST_ASSERT(isValidReciprocal(v));
       TEST_ASSERT(isValidDerivative(v));
 
@@ -134,11 +134,11 @@ public:
       std::cout << "b(1) = " << v.kBasis(1) << std::endl;
       #endif
 
-      double param = v.params()[0];
+      double param = v.parameter(0);
       double twoPi = 2.0*Constants::Pi;
       double b, dbb;
       int i, j, k;
-      for (k = 0; k < v.nParams(); ++k) {
+      for (k = 0; k < v.nParameter(); ++k) {
          for (i = 0; i < 2; ++i) {
             for (j = 0; j < 2; ++j) {
                if (i == j) {
@@ -172,7 +172,7 @@ public:
       openInputFile("in/Hexagonal", in);
 
       in >> v;
-      TEST_ASSERT(v.nParams() == 1);
+      TEST_ASSERT(v.nParameter() == 1);
       TEST_ASSERT(isValidReciprocal(v));
       TEST_ASSERT(isValidDerivative(v));
 
@@ -217,7 +217,7 @@ public:
       openInputFile("in/Orthorhombic", in);
       in >> v;
 
-      TEST_ASSERT(v.nParams() == 3);
+      TEST_ASSERT(v.nParameter() == 3);
       TEST_ASSERT(isValidReciprocal(v));
       TEST_ASSERT(isValidDerivative(v));
 
@@ -237,11 +237,11 @@ public:
       double param, b, dbb;
       double twoPi = 2.0*Constants::Pi;
       int i, j, k;
-      for (k = 0; k < v.nParams(); ++k) {
+      for (k = 0; k < v.nParameter(); ++k) {
          for (i = 0; i < 3; ++i) {
             for (j = 0; j < 3; ++j) {
                if (i == j && i == k) {
-                  param = v.params()[i];
+                  param = v.parameter(i);
                   TEST_ASSERT(eq(v.drrBasis(k, i, j), 2.0*param));
                } else {
                   TEST_ASSERT(eq(v.drrBasis(k, i, j), 0.0));
@@ -251,7 +251,7 @@ public:
          for (i = 0; i < 3; ++i) {
             for (j = 0; j < 3; ++j) {
                if (i == j && i == k) {
-                  param = v.params()[i];
+                  param = v.parameter(i);
                   b = twoPi/param;
                   dbb = -2.0*b*b/param;
                   TEST_ASSERT(eq(v.dkkBasis(k, i, j), dbb));
@@ -274,7 +274,7 @@ public:
       openInputFile("in/Cubic", in);
       in >> v;
 
-      TEST_ASSERT(v.nParams() == 1);
+      TEST_ASSERT(v.nParameter() == 1);
       TEST_ASSERT(isValidReciprocal(v));
       TEST_ASSERT(isValidDerivative(v));
 
@@ -295,11 +295,11 @@ public:
       double param, b, dbb;
       double twoPi = 2.0*Constants::Pi;
       int i, j, k;
-      for (k = 0; k < v.nParams(); ++k) {
+      for (k = 0; k < v.nParameter(); ++k) {
          for (i = 0; i < 3; ++i) {
             for (j = 0; j < 3; ++j) {
                if (i == j && i == k) {
-                  param = v.params()[i];
+                  param = v.parameter(i);
                   TEST_ASSERT(eq(v.drrBasis(k, i, j), 2.0*param));
                } else {
                   TEST_ASSERT(eq(v.drrBasis(k, i, j), 0.0));
@@ -309,7 +309,7 @@ public:
          for (i = 0; i < 3; ++i) {
             for (j = 0; j < 3; ++j) {
                if (i == j && i == k) {
-                  param = v.params()[i];
+                  param = v.parameter(i);
                   b = twoPi/param;
                   dbb = -2.0*b*b/param;
                   TEST_ASSERT(eq(v.dkkBasis(k, i, j), dbb));

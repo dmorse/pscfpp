@@ -324,9 +324,9 @@ namespace Pssp {
          stress_.append(0.0);
       }   
 
-      IntVec <D> temp;
-      IntVec <D> vec;
-      IntVec <D> Partner;    
+      IntVec<D> temp;
+      IntVec<D> vec;
+      IntVec<D> Partner;    
       MeshIterator<D> iter;
       iter.setDimensions(mesh().dimensions());
       int m = 0;
@@ -351,8 +351,7 @@ namespace Pssp {
                   if (temp[D-1] !=0) {
                      dGsq(m, n) *= 2; 
                   }
-               }
-               else {
+               } else {
                   if (temp[D-1] !=0 && temp[D-1] != (mesh().dimensions()[D-1]/2)) {
                      dGsq(m, n) *= 2;
                   }             
@@ -365,7 +364,7 @@ namespace Pssp {
       Propagator<D> const & p0 = propagator(0);
       Propagator<D> const & p1 = propagator(1);
 
-      //Evaluate unnormalized integral   
+      // Evaluate unnormalized integral   
       for (int j = 0; j < ns_ ; ++j) {
            
            q1p = p0.q(j);
@@ -402,8 +401,6 @@ namespace Pssp {
       for (i = 0; i < r; ++i) {
          stress_[i] = stress_[i] - (dQ[i] * prefactor);
       }   
-      //#if 0
-      //#endif
 
    }
 

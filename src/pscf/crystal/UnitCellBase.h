@@ -56,24 +56,29 @@ namespace Pscf
       void setParameters(FSArray<double, 6> const& parameters);
 
       /**
-      * Compute square magnitude of reciprocal basis vector.
+      * Compute square magnitude of reciprocal lattice vector.
       */
       virtual double ksq(IntVec<D> const & k) const;
 
       /**
-      * Compute derivative of square magnitude of reciprocal basis vector.
+      * Compute derivative of square wavevector w/ respect to cell parameter.
+      *
+      * This function computes and returns a derivative with respect to 
+      * unit cell parameter number n of the square of a reciprocal lattice 
+      * vector with integer coefficients given by the elements of vec.
+      *
+      * \param vec vector of components of a reciprocal lattice vector
+      * \param n   index of a unit cell parameter
       */
       virtual double computedksq(IntVec<D> const & vec, int n) const;   
 
-
-
       /**
-      * Get the number of parameters in the unit cell (new version).
+      * Get the number of parameters in the unit cell.
       */
       int nParameter() const;
 
       /** 
-      * Get the parameters of this unit cell (new version).
+      * Get the parameters of this unit cell.
       */  
       FSArray<double, 6> parameters() const;
 
@@ -87,32 +92,50 @@ namespace Pscf
       /**
       * Get Bravais basis vector i, denoted by a_i.
       *
-      * \param i array index of the desired basis vector.
+      * \param i array index of the desired basis vector
       */
       const RealVec<D>& rBasis(int i) const;
    
       /**
       * Get reciprocal basis vector i, denoted by b_i.
+      *
+      * \param i array index of the desired reciprocal lattice basis vector
       */
       const RealVec<D>& kBasis(int i) const;
 
       /**
-      * Get component j of derivative of rBasis vector ai w/respect to k.
+      * Get component j of derivative of rBasis vector a_i w/respect to k.
+      *
+      * \param i array index of the desired basis vector a_i
+      * \param j index of a Cartesian component of a_i
+      * \param k index of cell parameter
       */
       const double drBasis(int k, int i, int j) const;
 
       /**
       * Get component j of derivative of kBasis vector bi w/respect to k.
+      *
+      * \param i array index of the desired reciprocal basis vector b_i
+      * \param j index of a Cartesian component of b_i
+      * \param k index of cell parameter
       */
       const double dkBasis(int k, int i, int j) const;
  
       /** 
       * Get the derivative of dot product ri.rj with respect to parameter k.
+      *
+      * \param i array index of 1st Bravais basis vector b_i
+      * \param j array index of 2nd Bravais basis vector b_i
+      * \param k index of cell parameter
       */  
       const double drrBasis(int k, int i, int j) const;
   
       /**
       * Get the derivative of dot product bi.bj with respect to parameter k.
+      *
+      * \param i array index of 1st reciprocal basis vector b_i
+      * \param j array index of 2nd reciprocal basis vector b_i
+      * \param k index of cell parameter
       */
       const double dkkBasis(int k, int i, int j) const;
 
@@ -171,8 +194,6 @@ namespace Pscf
       * Number of parameters required to specify unit cell.
       */
       int nParameter_;
-
-      // Protected functions (used in implementation).
 
    private:
 

@@ -17,6 +17,7 @@ namespace Pssp
    /**
    * Generates the file name from a group name.
    *
+   * \param D dimensionality of space (D=1,2 or 3)
    * \param groupName standard name of space group
    */
    std::string makeGroupFileName(int D, std::string groupName);

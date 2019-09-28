@@ -45,17 +45,6 @@ namespace Fd1d {
       /**
       * Read a set of fields, one per monomer type.
       *
-      * This function uses the system FileMaster to opens and close a
-      * input file named filename.
-      *
-      * \param fields  array of fields to read, indexed by monomer id.
-      * \param filename  name of input file
-      */
-      void readFields(Array<Field> &  fields, std::string const & filename);
-
-      /**
-      * Read a set of fields, one per monomer type.
-      *
       * \pre File in must be open for reading.
       *
       * \param fields  array of fields to read, indexed by monomer id
@@ -64,16 +53,15 @@ namespace Fd1d {
       void readFields(Array<Field>& fields, std::istream &in);
 
       /**
-      * Write a set of fields, one per monomer type.
+      * Read a set of fields, one per monomer type.
       *
       * This function uses the system FileMaster to opens and close a
-      * output file named filename.
+      * input file named filename.
       *
-      * \param filename  output filename
-      * \param fields  array of fields to read, indexed by monomer id
+      * \param fields  array of fields to read, indexed by monomer id.
+      * \param filename  name of input file
       */
-      void writeFields(Array<Field> const &  fields, 
-                       std::string const & filename);
+      void readFields(Array<Field> &  fields, std::string const & filename);
 
       /**
       * Write a set of fields, one per monomer type.
@@ -86,11 +74,16 @@ namespace Fd1d {
       void writeFields(Array<Field> const & fields, std::ostream& out);
 
       /**
-      * Write block concentration fields for all blocks.
+      * Write a set of fields, one per monomer type.
       *
-      * \param filename name of output file
+      * This function uses the system FileMaster to opens and close a
+      * output file named filename.
+      *
+      * \param fields  array of fields to read, indexed by monomer id
+      * \param filename  output filename
       */
-      void writeBlockCFields(std::string const & out);
+      void writeFields(Array<Field> const &  fields, 
+                       std::string const & filename);
 
       /**
       * Write block concentration fields for all blocks.
@@ -102,13 +95,14 @@ namespace Fd1d {
       void writeBlockCFields(std::ostream& out);
 
       /**
-      * Write incoming q fields for a specified vertex.
+      * Write block concentration fields for all blocks.
       *
-      * \param polymerId integer id of polymer species
-      * \param vertexId integer id of vertex (end or junction)
+      * This function uses the system FileMaster to opens and close a
+      * output file named filename.
+      *
       * \param filename name of output file
       */
-      void writeVertexQ(int polymerId, int vertexId, std::string const & out);
+      void writeBlockCFields(std::string const & filename);
 
       /**
       * Write incoming q fields for a specified vertex.
@@ -122,6 +116,24 @@ namespace Fd1d {
       void writeVertexQ(int polymerId, int vertexId, std::ostream& out);
 
       /**
+      * Write incoming q fields for a specified vertex.
+      *
+      * \param polymerId integer id of polymer species
+      * \param vertexId integer id of vertex (end or junction)
+      * \param filename name of output file
+      */
+      void writeVertexQ(int polymerId, int vertexId, std::string const & filename);
+
+      /**
+      * Interpolate an array of fields onto a new mesh.
+      *
+      * \param fields  field to be remeshed
+      * \param nx  number of grid points in new mesh
+      * \param out  output stream for remeshed field
+      */
+      void remesh(Array<Field> const & fields, int nx, std::ostream& out);
+
+      /**
       * Interpolate an array of fields onto a new mesh and write to file.
       *
       * \param fields  field to be remeshed
@@ -132,38 +144,27 @@ namespace Fd1d {
                   std::string const & filename);
 
       /**
-      * Interpolate an array of fields onto a new mesh.
+      * Add points to the end of mesh
       *
-      * \param out  output stream for remeshed field
-      * \param fields  field to be remeshed
-      * \param nx  number of grid points in new mesh
+      * \param fields  array of fields to be extended
+      * \param m  number of added grid points
+      * \param out  output stream for extended field
       */
-      void remesh(Array<Field> const & fields, int nx, std::ostream& out);
+      void extend(Array<Field> const & fields, int m, std::ostream& out);
 
       /**
       * Add points to the end of mesh
       *
-      * \param filename  name of output file for remeshed field
       * \param fields  field to be remeshed
       * \param m  number of added grid points
+      * \param filename  name of output file for remeshed field
       */
       void extend(Array<Field> const & fields, int m, 
                   std::string const & filename);
 
-      /**
-      * Add points to the end of mesh
-      *
-      * \param out  output stream for extended field
-      * \param fields  array of fields to be extended
-      * \param m  number of added grid points
-      */
-      void extend(Array<Field> const & fields, int m, std::ostream& out);
-
    private:
 
-      /**
-      * Work array (size = # of monomer types).
-      */
+      /// Work array (capacity = # of monomer types).
       DArray<double> w_;
 
    };

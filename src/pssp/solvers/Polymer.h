@@ -17,7 +17,7 @@ namespace Pscf {
 namespace Pssp { 
 
    /**
-   * Descriptor and solver for a polymer species.
+   * Descriptor and solver for one polymer species.
    *
    * The block concentrations stored in the constituent Block<D>
    * objects contain the block concentrations (i.e., volume 
@@ -44,12 +44,24 @@ namespace Pssp {
 
       typedef typename Block<D>::WField  WField;
 
+      /**
+      * Default constructor.
+      */
       Polymer();
 
+      /**
+      * Destructor.
+      */
       ~Polymer();
 
+      /**
+      * Set value of phi (volume fraction), if ensemble is closed.
+      */
       void setPhi(double phi);
 
+      /**
+      * Set value of mu (chemical potential), if ensemble is closed.
+      */
       void setMu(double mu);
 
       /**
@@ -63,14 +75,18 @@ namespace Pssp {
       void compute(DArray<WField> const & wFields);
 
       /**
-      * Stress with respect to unit cell parameter n.
-      */
-      double stress(int n) const;
-
-      /**
-      * Compute stress from a polymer chain, needs a pointer to basis
+      * Compute stress from a polymer chain.
       */
       void computeStress();
+
+      /**
+      * Get derivative of free energy with respect to unit cell parameter n.
+      *  
+      * This function retrieves a value precomputed by computeStress().
+      *  
+      * \param n index of unit cell parameter.
+      */
+      double stress(int n) const;
 
       using Base::nBlock;
       using Base::block;
@@ -87,7 +103,7 @@ namespace Pssp {
       /// Pointer to associated UnitCell<D>
       const UnitCell<D>* unitCellPtr_;
 
-      // Stress due to a whole Polymer chain
+      /// Stress due to a whole Polymer chain
       FArray<double, 6> stress_;
 
       using Base::phi_;
@@ -101,6 +117,7 @@ namespace Pssp {
    {  return stress_[n]; }
   
    #ifndef PSSP_POLYMER_TPP
+   // Supress implicit instantiation
    extern template class Polymer<1>;
    extern template class Polymer<2>;
    extern template class Polymer<3>;

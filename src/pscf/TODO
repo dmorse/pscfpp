@@ -1,5 +1,6 @@
 
-Add unit tests for 1D and 2D Mesh
 
-See crystal/TODO
+Add unit tests of UnitCell<D>::dksq() function
+
+Move Pssp::Basis to this namespace and directory
 

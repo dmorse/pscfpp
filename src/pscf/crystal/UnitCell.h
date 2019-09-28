@@ -59,13 +59,14 @@ namespace Pscf
    /**
    * Serialize to/from an archive.
    *
-   * \param ar       archive
+   * \param ar  input or output archive
+   * \param cell  UnitCell<D> object to be serialized
    * \param version  archive version id
    * \ingroup Pscf_Crystal_Module
    */
    template <class Archive, int D>
-   void serialize(Archive& ar, UnitCell<D>& cell,
-                  const unsigned int version);
+   void 
+   serialize(Archive& ar, UnitCell<D>& cell, const unsigned int version);
 
    /**
    * Read UnitCell<D> from a field file header (fortran pscf format).

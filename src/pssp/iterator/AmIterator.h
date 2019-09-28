@@ -39,10 +39,12 @@ namespace Pssp
       typedef RField<D> WField;
       typedef RField<D> CField;
 
+      #if 0
       /**
       * Default constructor
       */
       AmIterator();
+      #endif
 
       /**
       * Constructor

@@ -13,9 +13,11 @@ namespace Pssp
 
    using namespace Util;
 
+   #if 0
    template<int D>
    Iterator<D>::Iterator()
    {  setClassName("Iterator"); }
+   #endif
 
    template<int D>
    Iterator<D>::Iterator(System<D>* system)
