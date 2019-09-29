@@ -2,7 +2,7 @@
 namespace Pscf{
 
    /**
-   * \defgroup Pscf_Solvers_Module Solver Templates
+   * \defgroup Pscf_Solver_Module Solver Templates
    *
    * Templates for classes that solve modified diffusion equations.
    *

@@ -2,7 +2,7 @@
 namespace Pscf{
 
    /**
-   * \defgroup Pscf_Mesh_Module Regular Spatial Mesh
+   * \defgroup Pscf_Mesh_Module Spatial Mesh
    *
    * Classes to define a regular grid or mesh.
    *

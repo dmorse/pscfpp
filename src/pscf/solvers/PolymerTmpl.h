@@ -34,7 +34,7 @@ namespace Pscf
    * equation (MDE) for the entire molecule and computes monomer
    * concentration fields for all blocks.
    *
-   * \ingroup Pscf_Solvers_Module
+   * \ingroup Pscf_Solver_Module
    */
    template <class Block>
    class PolymerTmpl : public Species, public ParamComposite

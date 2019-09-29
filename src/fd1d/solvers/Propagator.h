@@ -21,7 +21,7 @@ namespace Fd1d
    /**
    * MDE solver for one-direction of one block.
    *
-   * \ingroup Fd1d_Solvers_Module
+   * \ingroup Fd1d_Solver_Module
    */
    class Propagator : public PropagatorTmpl<Propagator>
    {

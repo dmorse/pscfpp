@@ -37,7 +37,7 @@ namespace Pssp
    * A Mixture is associated with a Mesh<D> object, which models a
    * spatial discretization mesh. 
    *
-   * \ingroup Pssp_Solvers_Module
+   * \ingroup Pssp_Solver_Module
    */
    template <int D>
    class Mixture : public MixtureTmpl< Polymer<D>, Solvent<D> >

@@ -23,7 +23,7 @@ namespace Pscf
    * only used to define the data types for concentration 
    * and chemical potential fields.
    *
-   * \ingroup Pscf_Solvers_Module
+   * \ingroup Pscf_Solver_Module
    */
    template <class TP>
    class SolventTmpl : public Species, public ParamComposite

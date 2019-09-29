@@ -36,7 +36,7 @@ namespace Fd1d
    * domain and discretization is needed to solve the ideal-gas
    * problem.
    *
-   * \ingroup Fd1d_Solvers_Module
+   * \ingroup Fd1d_Solver_Module
    */
    class Mixture : public MixtureTmpl<Polymer, Solvent>
    {

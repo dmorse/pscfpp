@@ -764,7 +764,6 @@ INPUT                  = ../src/util \
                          ../src/pscf \
                          ../src/fd1d \
                          ../src/pssp \
-                         ../src/cyln \
                          manual
 
 # This tag can be used to specify the character encoding of the source files

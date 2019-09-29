@@ -69,7 +69,7 @@ namespace Pscf
    * dynamically allocated arrays of double precision floating point 
    * numbers. Other implementations may use more specialized types.
    *
-   * \ingroup Pscf_Solvers_Module
+   * \ingroup Pscf_Solver_Module
    */
    template <class TP>
    class PropagatorTmpl

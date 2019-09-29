@@ -3,7 +3,7 @@ namespace Pscf{
 namespace Fd1d{
 
    /**
-   * \defgroup Fd1d_Iterator_Module Iterator
+   * \defgroup Fd1d_Iterator_Module Iterators
    *
    * Iterators for use with one-dimensional (1D) finite difference solvers.
    *

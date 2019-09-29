@@ -34,7 +34,7 @@ namespace Pssp {
    * Derived from BlockTmpl< Propagator<D> >. A BlockTmpl< Propagator<D> > 
    * has two Propagator<D> members and is derived from BlockDescriptor.
    *
-   * \ingroup Pssp_Solvers_Module
+   * \ingroup Pssp_Solver_Module
    */
    template <int D>
    class Block : public BlockTmpl< Propagator<D> >

@@ -31,7 +31,7 @@ namespace Fd1d
    * the parameter file and mu is computed. If the ensemble is
    * open, mu is read from the parameter file and phi is computed.
    *
-   * \ingroup Fd1d_Solvers_Module
+   * \ingroup Fd1d_Solver_Module
    */
    class Polymer : public PolymerTmpl<Block>
    {

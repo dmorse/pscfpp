@@ -18,7 +18,7 @@ namespace Fd1d
    /**
    * Solver for a point particle solvent species.
    *
-   * \ingroup Fd1d_Solvers_Module
+   * \ingroup Fd1d_Solver_Module
    */
    class Solvent : public SolventTmpl<Propagator>
    {

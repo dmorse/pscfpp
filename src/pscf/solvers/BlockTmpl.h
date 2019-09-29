@@ -82,7 +82,7 @@ namespace Pscf
    * blocks of the molecule that is called after solution of the modified
    * diffusion equation for all propagators.
    *
-   * \ingroup Pscf_Solvers_Module
+   * \ingroup Pscf_Solver_Module
    */
    template <class TP>
    class BlockTmpl : public BlockDescriptor

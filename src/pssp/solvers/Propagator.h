@@ -25,7 +25,7 @@ namespace Pssp
    /**
    * MDE solver for one-direction of one block.
    *
-   * \ingroup Pssp_Solvers_Module
+   * \ingroup Pssp_Solver_Module
    */
    template <int D>
    class Propagator : public PropagatorTmpl< Propagator<D> >
