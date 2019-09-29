@@ -134,7 +134,7 @@ namespace Pssp_gpu
    * Compute Total Stress.
    */  
    template <int D>
-   void Mixture<D>::computeTStress(Basis<D>& basis)
+   void Mixture<D>::computeTStress(WaveList<D>& wavelist)
    {   
       int i, j;
 
@@ -145,7 +145,7 @@ namespace Pssp_gpu
       // Compute Stress for all polymers, must be done after computing concentrations
 
       for (i = 0; i < nPolymer(); ++i) {
-         polymer(i).ComputePcStress(basis);
+         polymer(i).ComputePcStress(wavelist);
       } 
       std::cout<<"---------"<<std::endl;
       // Accumulate stress for all the polymer chains

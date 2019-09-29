@@ -129,7 +129,7 @@ namespace Pssp_gpu
       /**
       * Get monomer reference volume.
       */
-      void computeTStress(Basis<D>& basis);
+      void computeTStress(WaveList<D>& wavelist);
 
       /**
       * Get monomer reference volume.

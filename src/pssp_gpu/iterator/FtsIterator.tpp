@@ -111,7 +111,7 @@ namespace Pssp_gpu {
       //what if cell_ is not read?
       //why do you point to basis functions?
       gettimeofday(&timeStart, &tz);
-      systemPtr_->mixture().computeTStress(systemPtr_->basis());
+      systemPtr_->mixture().computeTStress(systemPtr_->wavelist());
       gettimeofday(&timeEnd, &tz);
       Log::file() <<"Stress time : "
                   <<Dbl( ( (double)(timeEnd.tv_sec - timeStart.tv_sec) + 
@@ -213,7 +213,7 @@ namespace Pssp_gpu {
      
             gettimeofday(&timeStart, &tz);      
             if (cell_){
-               systemPtr_->mixture().computeTStress(systemPtr_->basis());
+               systemPtr_->mixture().computeTStress(systemPtr_->wavelist());
                
                for (int m = 0; m < systemPtr_->unitCell().nParams() ; ++m){
                   std::cout<<"Stress"<<m<<"\t"<<"="
@@ -506,7 +506,7 @@ namespace Pssp_gpu {
             
             (systemPtr_->unitCell()).setLattice();
             systemPtr_->mixture().setupUnitCell(systemPtr_->unitCell());
-            systemPtr_->basis().update(systemPtr_->unitCell());
+            systemPtr_->wavelist().computedKSq(systemPtr_->unitCell());
             
             for (int m = 0; m < systemPtr_->unitCell().nParams(); ++m){
                std::cout<<"Parameter"<<m<<"\t"<<"="<<systemPtr_->unitCell().params()[m]<<"\n";
@@ -577,7 +577,7 @@ namespace Pssp_gpu {
             
             systemPtr_->unitCell().setLattice();
             systemPtr_->mixture().setupUnitCell(systemPtr_->unitCell());
-            systemPtr_->basis().update(systemPtr_->unitCell());
+            systemPtr_->wavelist().computedKSq(systemPtr_->unitCell());
             
             
             for(int m = 0; m < systemPtr_->unitCell().nParams() ; ++m){

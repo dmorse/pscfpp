@@ -49,6 +49,7 @@ namespace Pssp_gpu
       interactionPtr_(0),
       iteratorPtr_(0),
       basisPtr_(0),
+      wavelistPtr_(0),
       sweepPtr_(0),
       sweepFactoryPtr_(0),
       wFields_(),
@@ -67,8 +68,8 @@ namespace Pssp_gpu
       #ifdef PSCF_GSL
       interactionPtr_ = new ChiInteraction();
       iteratorPtr_ = new FtsIterator<D>(this); 
-      basisPtr_ = new Basis<D>();
-     
+      //basisPtr_ = new Basis<D>();
+      wavelistPtr_ = new WaveList<D>();
       #endif
       // sweepFactoryPtr_ = new SweepFactory(*this);
    }
@@ -202,12 +203,6 @@ namespace Pssp_gpu
       interaction().setNMonomer(mixture().nMonomer());
       readParamComposite(in, interaction());
       std::cout<<"Unit Cell read starting"<<std::endl;
-      //this is some dumb design
-      //why does the header being read  only when rgrid is read???
-      //why isnt it part of the parameter????
-      //whY?????
-      //WHYT?????
-      //WHY??????
       in >> unitCell_;
       hasUnitCell_ = true;
       std::cout<<"Unit Cell read completed"<<std::endl;
@@ -222,13 +217,20 @@ namespace Pssp_gpu
       //std::string groupName;
       in >> groupName_;
       in >> groupName_;
-      basis().makeBasis(mesh(), unitCell(), groupName_);
+      //basis().makeBasis(mesh(), unitCell(), groupName_);
+      std::cout<<"Initializing wavelist"<<std::endl;
+      wavelist().allocate(mesh(), unitCell());
+      std::cout<<"Allocating completed"<<std::endl;
+      wavelist().computeMinimumImages(mesh(), unitCell());
+      std::cout<<"wavelist completed"<<std::endl;
       allocateFields();
+      std::cout<<"fields allocated"<<std::endl;
       hasFields_ = true;
 
       // Initialize iterator
       readParamComposite(in, iterator());
       iterator().allocate();
+      std::cout<<"Iterator Initialized"<<std::endl;
 
    }
 
@@ -272,11 +274,11 @@ namespace Pssp_gpu
 
       //size of grid is based on basis function
       for (int i = 0; i < nMonomer; ++i) {
-         wField(i).allocate(basis().nStar());
+         //wField(i).allocate(basis().nStar());
          wFieldGrid(i).allocate(mesh().dimensions());
          wFieldDft(i).allocate(mesh().dimensions());
 
-         cField(i).allocate(basis().nStar());
+         //cField(i).allocate(basis().nStar());
          cFieldGrid(i).allocate(mesh().dimensions());
          cFieldDft(i).allocate(mesh().dimensions());
       }
@@ -316,7 +318,9 @@ namespace Pssp_gpu
          if (command == "FINISH") {
             Log::file() << std::endl;
             readNext = false;
-         } else if (command == "READ_WFIELDS") {
+         } 
+
+         /*else if (command == "READ_WFIELDS") {
             in >> filename;
             Log::file() << " " << Str(filename, 20) <<std::endl;
 
@@ -334,7 +338,8 @@ namespace Pssp_gpu
             writeFields(outFile, wFields_);
             outFile.close();
 
-         } else if (command == "WRITE_WFIELDGRIDS") {
+            }*/ 
+         else if (command == "WRITE_WFIELDGRIDS") {
             in >> filename;
             Log::file() << "  " << Str(filename, 20) << std::endl;
 
@@ -344,7 +349,8 @@ namespace Pssp_gpu
                         writeRFields(outFile, wFieldGrids());
             outFile.close();
 
-         } else if (command == "WRITE_CFIELDS") {
+         }/* 
+         else if (command == "WRITE_CFIELDS") {
 
             in >> filename;
             Log::file() << "  " << Str(filename, 20) << std::endl;
@@ -354,7 +360,8 @@ namespace Pssp_gpu
             writeFields(outFile, cFields_);
             outFile.close();
 
-         } else if (command == "WRITE_CFIELDGRIDS") {
+            }*/ 
+         else if (command == "WRITE_CFIELDGRIDS") {
             in >> filename;
             Log::file() << "  " << Str(filename, 20) << std::endl;
 
@@ -408,7 +415,8 @@ namespace Pssp_gpu
             << Dbl(time_end - time_start, 18, 11)<<'s' 
             << std::endl;
 
-         }else if (command == "FIELD_TO_RGRID") {
+         }
+         /*else if (command == "FIELD_TO_RGRID") {
             std::string inFileName;
             std::string outFileName;
 
@@ -434,7 +442,8 @@ namespace Pssp_gpu
             writeRFields(outFile, cFieldGrids());
             outFile.close();
 
-         } else if (command == "RGRID_TO_FIELD") {
+            } */
+         /*else if (command == "RGRID_TO_FIELD") {
             std::string inFileName;
             std::string outFileName;
 
@@ -460,7 +469,8 @@ namespace Pssp_gpu
             writeFields(outFile, cFields());
             outFile.close();
 
-         }else if (command == "KGRID_TO_RGRID") {
+            }*/
+         else if (command == "KGRID_TO_RGRID") {
             std::string inFileName;
             std::string outFileName;
 
@@ -539,6 +549,7 @@ namespace Pssp_gpu
       readCommands(fileMaster().commandFile()); 
    }
    
+   /*
    template <int D>
    void System<D>::readFields(std::istream &in,
       DArray< RDField<D> >& fieldsToCopy)
@@ -582,7 +593,7 @@ namespace Pssp_gpu
       }
 
    }
-   
+   */
    template <int D>
    void System<D>::readRFields(std::istream &in,
                                 DArray<RDField<D> >& fields)
@@ -730,6 +741,7 @@ namespace Pssp_gpu
       }
    }
 
+   /*
    template <int D>
    void System<D>::writeFields(std::ostream &out,
       DArray<RDField<D> > const &  fieldsToCopy)
@@ -759,7 +771,7 @@ namespace Pssp_gpu
          delete[] fields[i];
       }
    }
-
+   */
    template <int D>
    void System<D>::writeRFields(std::ostream &out,
                            DArray<RDField<D> > const& fields)
