@@ -13,15 +13,14 @@
 #include <pssp_gpu/field/RDField.h>            // member
 #include <pssp_gpu/field/RDFieldDft.h>         // member
 #include <pssp_gpu/field/FFT.h>               // member
+#include <pssp_gpu/field/FFTBatched.h>               // member
 #include <util/containers/FArray.h>
 #include <pssp_gpu/crystal/UnitCell.h>
+#include <pssp_gpu/wavelist/WaveList.h>
 
 namespace Pscf { 
    template <int D> class Mesh; 
 
-   namespace Pssp_gpu{
-      template <int D> class Basis;
-   }
 }
 
 namespace Pscf { 
@@ -96,7 +95,7 @@ namespace Pssp_gpu {
       /**
       * Compute step of integration loop, from i to i+1.
       */
-      void step(QField const & q, QField & qNew);
+      void step(const cufftReal* q, cufftReal* qNew);
 
       /**
       * Compute unnormalized concentration for block by integration.
@@ -112,7 +111,7 @@ namespace Pssp_gpu {
       */ 
       void computeConcentration(double prefactor);
 
-      void computeStress(Basis<D>& basis, double prefactor);
+      void computeStress(WaveList<D>& wavelist, double prefactor);
 
       /// Stress exerted by a polymer chain of a block.
       FArray<double, 6> pStress;
@@ -155,6 +154,8 @@ namespace Pssp_gpu {
       cufftReal reductionH(const RDField<D>& a, int size);
       // Fourier transform plan
       FFT<D> fft_;
+
+      FFTBatched<D> fftBatched_;
       
       // Array of elements containing exp(-K^2 b^2 ds/6)
       RDField<D> expKsq_;
@@ -178,6 +179,9 @@ namespace Pssp_gpu {
 
       RDFieldDft<D> qk2_;
 
+      cufftComplex* qkBatched_;
+      cufftComplex* qk2Batched_;
+
       RDField<D> q1_;
       RDField<D> q2_;
 
@@ -192,6 +196,8 @@ namespace Pssp_gpu {
       
       /// Dimensions of wavevector mesh in real-to-complex transform
       IntVec<D> kMeshDimensions_;
+
+      int kSize_;
 
       /// Contour length step size.
       double ds_;

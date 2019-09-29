@@ -74,7 +74,7 @@ namespace Pssp_gpu {
    */
 
    template <int D>
-   void Polymer<D>::ComputePcStress(Basis<D>& basis)
+   void Polymer<D>::ComputePcStress(WaveList<D>& wavelist)
    {
       double prefactor;
       prefactor = 0;
@@ -86,7 +86,7 @@ namespace Pssp_gpu {
 
       for (int i = 0; i < nBlock(); ++i) {
          prefactor = exp(mu_)/length();
-         block(i).computeStress(basis, prefactor);
+         block(i).computeStress(wavelist, prefactor);
        
          for (int j=0; j < nParams_; ++j){
             PcStress [j]  += block(i).pStress [j];

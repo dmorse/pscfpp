@@ -173,7 +173,9 @@ namespace Pssp_gpu
       * \param dft complex DFT representation of a field.
       * \param components coefficients of symmetry-adapted basis functions.
       */
-	  void convertFieldDftToComponents(RDFieldDft<D>& dft, RDField<D>& components);
+      void convertFieldDftToComponents(RDFieldDft<D>& dft, RDField<D>& components);
+
+      void convertFieldDftToComponents(cufftComplex* dft, cufftReal* components);
 
       /* 
       * Calculates dksq_ assuming ksq are in non increasing order of ksq 

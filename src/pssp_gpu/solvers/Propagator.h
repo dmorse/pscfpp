@@ -102,7 +102,7 @@ namespace Pssp_gpu
       *
       * \param head initial condition of QField at head of block
       */
-      void solve(QField const & head);
+      void solve(const cufftReal * head);
  
       /**
       * Compute and return partition function for the molecule.
@@ -119,17 +119,17 @@ namespace Pssp_gpu
       *
       * \param i step index
       */
-      const QField& q(int i) const;
+      const cufftReal* q(int i) const;
 
       /**
       * Return q-field at beginning of block (initial condition).
       */
-      const QField& head() const;
+      cufftReal* head() const;
 
       /**
       * Return q-field at end of block.
       */
-      const QField& tail() const;
+      const cufftReal* tail() const;
 
       /**
       * Get the associated Block object by reference.
@@ -157,11 +157,10 @@ namespace Pssp_gpu
 
    private:
 
-      float innerProduct(const QField& a, const QField& b, int size);
-     
-      // Array of statistical weight fields 
-      DArray<QField> qFields_;
+      float innerProduct(const cufftReal* a, const cufftReal* b, int size);
 
+      // new array purely in device
+      cufftReal* qFields_d;
       // Workspace
       // removing this. Does not seem to be used anywhere
       //QField work_;
@@ -191,24 +190,24 @@ namespace Pssp_gpu
    */
    template <int D>
    inline 
-   typename Propagator<D>::QField const& Propagator<D>::head() const
-   {  return qFields_[0]; }
+   cufftReal* Propagator<D>::head() const
+   {  return qFields_d; }
 
    /*
    * Return q-field at end of block, after solution.
    */
    template <int D>
    inline 
-   typename Propagator<D>::QField const& Propagator<D>::tail() const
-   {  return qFields_[ns_-1]; }
+   const cufftReal* Propagator<D>::tail() const
+   {  return qFields_d + ((ns_-1) * meshPtr_->size()); }
 
    /*
    * Return q-field at specified step.
    */
    template <int D>
    inline 
-   typename Propagator<D>::QField const& Propagator<D>::q(int i) const
-   {  return qFields_[i]; }
+   const cufftReal* Propagator<D>::q(int i) const
+   {  return qFields_d + (i * meshPtr_->size()); }
 
    /*
    * Get the associated Block object.

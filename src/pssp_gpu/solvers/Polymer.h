@@ -69,7 +69,7 @@ namespace Pssp_gpu {
       /**
       * Compute stress from a polymer chain, needs a pointer to basis
       */
-      void ComputePcStress(Basis<D>& basis);
+      void ComputePcStress(WaveList<D>& wavelist);
 
       using Base::nBlock;
       using Base::block;

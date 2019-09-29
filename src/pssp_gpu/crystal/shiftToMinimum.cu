@@ -22,13 +22,13 @@ namespace Pssp_gpu{
    IntVec<3> shiftToMinimum(IntVec<3>& v, const IntVec<3> d);
 
    template<>
-   void shiftToMinimum(IntVec<3>& v, const IntVec<3> d, int* waveBz);
+   void shiftToMinimum(const IntVec<3>& v, const IntVec<3>& d, int* waveBz);
 
    template<>
-   void shiftToMinimum(IntVec<2>& v, const IntVec<2> d, int* waveBz);
+   void shiftToMinimum(const IntVec<2>& v, const IntVec<2>& d, int* waveBz);
 
    template<>
-   void shiftToMinimum(IntVec<1>& v, const IntVec<1> d, int* waveBz);
+   void shiftToMinimum(const IntVec<1>& v, const IntVec<1>& d, int* waveBz);
  
 
 }
