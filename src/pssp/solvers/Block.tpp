@@ -9,7 +9,6 @@
 */
 
 #include "Block.h"
-#include <pssp/basis/Basis.h>
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/crystal/UnitCell.h>
