@@ -21,9 +21,6 @@
 namespace Pscf { 
    template <int D> class Mesh; 
    template <int D> class UnitCell;
-   namespace Pssp {
-      template <int D> class Basis;
-   }
 }
 
 namespace Pscf { 

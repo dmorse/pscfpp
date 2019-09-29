@@ -21,7 +21,7 @@ namespace Fd1d
    /**
    * Base class for solution along a line in parameter space.
    *
-   * \ingroup Pscf_Fd1d_Module
+   * \ingroup Fd1d_Sweep_Module
    */
    class MuSweep : public Sweep
    {

@@ -20,7 +20,7 @@ namespace Fd1d
    /**
    * One-dimensional spatial domain and discretization grid.
    *
-   * \ingroup Pscf_Fd1d_Module
+   * \ingroup Fd1d_Domain_Module
    */
    class Domain : public ParamComposite
    {

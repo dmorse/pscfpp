@@ -8,11 +8,9 @@
 #include "Basis.tpp"
 
 namespace Pscf {
-namespace Pssp{
 
    template class Basis<1>;
    template class Basis<2>;
    template class Basis<3>;
 
-}
 }

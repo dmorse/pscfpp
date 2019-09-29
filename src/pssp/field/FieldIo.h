@@ -10,10 +10,10 @@
 
 #include <pssp/solvers/Mixture.h>          // member
 #include <pssp/field/FFT.h>                // member
-#include <pssp/basis/Basis.h>              // member
 #include <pssp/field/RField.h>             // function parameter
 #include <pssp/field/RFieldDft.h>          // function parameter
 
+#include <pscf/crystal/Basis.h>            // member
 #include <pscf/crystal/UnitCell.h>         // member
 #include <pscf/mesh/Mesh.h>                // member
 

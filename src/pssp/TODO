@@ -3,11 +3,12 @@ TODO (for pssp pseudospectral CPU code)
 ------------------------------------------------------------------------
 Clean up fields and basis (assigned to Dave)
 
+   - Complete unit tests for FieldIo
+
+   - Modify unit tests of system so that can be incorporated
+     into Pssp test composite. 
+
    - See pssp/field/TODO
-
-   - See pssp/basis/TODO 
-
-   - Move Basis to namespace Pscf
 
 ------------------------------------------------------------------------
 Later (for CPU code alone)

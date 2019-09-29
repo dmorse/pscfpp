@@ -25,7 +25,7 @@ namespace Fd1d
    /**
    * Solve a sequence of problems along a line in parameter space.
    *
-   * \ingroup Pscf_Fd1d_Module
+   * \ingroup Fd1d_Sweep_Module
    */
    class Sweep : public ParamComposite, public SystemAccess
    {

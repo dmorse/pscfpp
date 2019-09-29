@@ -18,15 +18,13 @@
 #include <set>
 
 namespace Pscf { 
-namespace Pssp 
-{ 
 
    using namespace Util;
 
    /**
    * Symmetry-adapted basis for pseudo-spectral scft.
    *
-   * \ingroup Pssp_Basis_Module
+   * \ingroup Pscf_Crystal_Module
    */
    template <int D>
    class Basis 
@@ -353,7 +351,6 @@ namespace Pssp
    extern template class Basis<3>;
    #endif
 
-} // namespace Pscf:Pssp
 } // namespace Pscf
 
 #endif

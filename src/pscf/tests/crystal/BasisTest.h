@@ -4,25 +4,26 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
+//#include <pssp/field/RField.h>
+//#include <pssp/field/RFieldDft.h>
+//#include <pssp/field/FFT.h>
+
+#include <pscf/crystal/Basis.h>
+#include <pscf/crystal/TWave.h>
+#include <pscf/crystal/groupFile.h>
+#include <pscf/crystal/UnitCell.h>
+#include <pscf/mesh/Mesh.h>
+#include <pscf/mesh/MeshIterator.h>
+
 #include <util/containers/DArray.h>
 #include <util/math/Constants.h>
 #include <util/format/Dbl.h>
-
-#include <pssp/basis/Basis.h>
-#include <pssp/basis/TWave.h>
-#include <pssp/field/RField.h>
-#include <pssp/field/RFieldDft.h>
-#include <pssp/field/FFT.h>
-#include <pscf/mesh/Mesh.h>
-#include <pscf/crystal/UnitCell.h>
-#include <pscf/mesh/MeshIterator.h>
 
 #include <iostream>
 #include <fstream>
 
 using namespace Util;
 using namespace Pscf;
-using namespace Pscf::Pssp;
 
 class BasisTest : public UnitTest 
 {
@@ -55,7 +56,7 @@ public:
       // Make unitcell
       UnitCell<1> unitCell;
       std::ifstream in;
-      openInputFile("in/UnitCell_lamellar", in);
+      openInputFile("in/Lamellar", in);
       in >> unitCell;
       in.close();
 
@@ -86,13 +87,13 @@ public:
       // Make unitcell
       UnitCell<1> unitCell;
       std::ifstream in;
-      openInputFile("in/UnitCell_lamellar", in);
+      openInputFile("in/Lamellar", in);
       in >> unitCell;
+      in.close();
 
       // Make mesh object
       IntVec<1> d;
-      in >> d;
-      in.close();
+      d[0] = 8;
       Mesh<1> mesh(d);
 
       // Read space group
@@ -127,7 +128,7 @@ public:
       // Make unitcell
       UnitCell<2> unitCell;
       std::ifstream in;
-      openInputFile("in/UnitCell_square", in);
+      openInputFile("in/Square", in);
       in >> unitCell;
       in.close();
 
@@ -160,7 +161,7 @@ public:
       // Make unitcell
       UnitCell<2> unitCell;
       std::ifstream in;
-      openInputFile("in/UnitCell_square", in);
+      openInputFile("in/Square", in);
       in >> unitCell;
       in.close();
 
@@ -202,7 +203,7 @@ public:
       // Read UnitCell
       UnitCell<2> unitCell;
       std::ifstream in;
-      openInputFile("in/UnitCell_hexagonal", in);
+      openInputFile("in/Hexagonal", in);
       in >> unitCell;
       in.close();
 
@@ -245,7 +246,7 @@ public:
       // Make unitcell
       UnitCell<3> unitCell;
       std::ifstream in;
-      openInputFile("in/UnitCell_cubic", in);
+      openInputFile("in/Cubic", in);
       in >> unitCell;
       in.close();
 
@@ -274,7 +275,7 @@ public:
       // Make unitcell
       UnitCell<3> unitCell;
       std::ifstream in;
-      openInputFile("in/UnitCell_cubic", in);
+      openInputFile("in/Cubic", in);
       in >> unitCell;
       in.close();
 
@@ -316,7 +317,7 @@ public:
       // Make unitcell
       UnitCell<3> unitCell;
       std::ifstream in;
-      openInputFile("in/UnitCell_cubic", in);
+      openInputFile("in/Cubic", in);
       in >> unitCell;
       in.close();
 

@@ -17,15 +17,11 @@
 
 namespace Pscf { 
    template <int D> class Mesh; 
-   namespace Pssp{
-      template <int D> class Basis;
-   }
 }
  
 namespace Pscf {
 namespace Pssp
 {
-
 
    /**
    * Solver for a mixture of polymers and solvents.

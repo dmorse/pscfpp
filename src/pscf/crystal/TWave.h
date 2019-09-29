@@ -10,14 +10,13 @@
 #include <pscf/math/IntVec.h>
 
 namespace Pscf {
-namespace Pssp {
 
    using namespace Util;
 
    /**
    * Simple wave struct for use within Basis construction.
    *
-   * \ingroup Pssp_Basis_Module
+   * \ingroup Pscf_Crystal_Module
    */
    template <int D>
    struct TWave
@@ -33,7 +32,7 @@ namespace Pssp {
    *
    * Used to sort in ascending order of wavevector norm.
    *
-   * \ingroup Pssp_Basis_Module
+   * \ingroup Pscf_Crystal_Module
    */
    template <int D>
    struct TWaveNormComp {
@@ -51,7 +50,7 @@ namespace Pssp {
    *
    * Used to sort set of unique waves in ascending order of dft indices.
    *
-   * \ingroup Pssp_Basis_Module
+   * \ingroup Pscf_Crystal_Module
    */
    template <int D>
    struct TWaveDftComp {
@@ -69,7 +68,7 @@ namespace Pssp {
    *
    * Used to sort in descending order of Bz (Brillouin zone) indices.
    *
-   * \ingroup Pssp_Basis_Module
+   * \ingroup Pscf_Crystal_Module
    */
    template <int D>
    struct TWaveBzComp {
@@ -82,6 +81,5 @@ namespace Pssp {
 
    };
 
-} // namespace Pscf:Pssp
 } // namespace Pscf
 #endif

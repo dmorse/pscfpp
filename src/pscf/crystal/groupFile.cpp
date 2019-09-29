@@ -14,8 +14,6 @@
 #define DAT_DIR_STRING XSTR(DAT_DIR)
 
 namespace Pscf { 
-namespace Pssp 
-{ 
 
    using namespace Util;
 
@@ -43,5 +41,4 @@ namespace Pssp
       return filename;
    }
 
-} // namespace Pscf:Pssp
 } // namespace Pscf

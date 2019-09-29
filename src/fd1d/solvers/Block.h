@@ -26,7 +26,7 @@ namespace Fd1d
    * Derived from BlockTmpl<Propagator>. A BlockTmpl<Propagator> has two 
    * Propagator members and is derived from BlockDescriptor.
    *
-   * \ingroup Pscf_Fd1d_Module
+   * \ingroup Fd1d_Solvers_Module
    */
    class Block : public BlockTmpl<Propagator>
    {

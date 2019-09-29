@@ -20,6 +20,8 @@ namespace Fd1d {
 
    /**
    * Default Factory for subclasses of Sweep.
+   *
+   * \ingroup Fd1d_Sweep_Module
    */
    class SweepFactory : public Factory<Sweep> 
    {

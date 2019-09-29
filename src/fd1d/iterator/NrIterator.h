@@ -24,7 +24,7 @@ namespace Fd1d
    /**
    * Newton-Raphson Iterator for SCF equations.
    *
-   * \ingroup Pscf_Fd1d_Module
+   * \ingroup Fd1d_Iterator_Module
    */
    class NrIterator : public Iterator
    {

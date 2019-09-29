@@ -12,11 +12,11 @@
 
 #include <pssp/solvers/Mixture.h>          // member
 #include <pssp/field/FFT.h>                // member
-#include <pssp/basis/Basis.h>              // member
 #include <pssp/field/FieldIo.h>            // member
 #include <pscf/mesh/Mesh.h>                // member
 #include <pssp/field/RField.h>             // typedef
 
+#include <pscf/crystal/Basis.h>            // member
 #include <pscf/crystal/UnitCell.h>         // member
 #include <pscf/homogeneous/Mixture.h>      // member
 

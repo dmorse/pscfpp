@@ -20,7 +20,7 @@ namespace Fd1d
    *
    * Allowed values are: Planar, Cylindrical Spherical.
    *
-   * \ingroup Crystal_Module
+   * \ingroup Fd1d_Domain_Module
    */
    enum GeometryMode {Planar, Cylindrical, Spherical};
 

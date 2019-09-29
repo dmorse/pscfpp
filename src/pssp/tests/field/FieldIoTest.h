@@ -7,7 +7,7 @@
 #include <pssp/field/RField.h>
 #include <pssp/field/RFieldDft.h>
 #include <pssp/field/FFT.h>
-#include <pssp/basis/Basis.h>
+#include <pscf/crystal/Basis.h>
 
 #include <pscf/crystal/UnitCell.h>
 #include <pscf/mesh/Mesh.h>
