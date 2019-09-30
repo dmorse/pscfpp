@@ -109,10 +109,6 @@ namespace Pssp {
       propagator(1).allocate(ns_, mesh);
       cField().allocate(mesh.dimensions());
 
-     // for (int i = 0; i < unitCell.nParameter(); ++i) {
-     //    stress_.append(0.0);
-     // }  
-
    }
 
    /*
@@ -202,46 +198,6 @@ namespace Pssp {
    template <int D>
    void Block<D>::computeConcentration(double prefactor)
    {
-     /* // Preconditions
-      int nx = mesh().size();
-      UTIL_CHECK(nx > 0);
-      UTIL_CHECK(ns_ > 0);
-      UTIL_CHECK(ds_ > 0);
-      UTIL_CHECK(propagator(0).isAllocated());
-      UTIL_CHECK(propagator(1).isAllocated());
-      UTIL_CHECK(cField().capacity() == nx) 
-
-      // Initialize cField to zero at all points
-      int i;
-      for (i = 0; i < nx; ++i) {
-         cField()[i] = 0.0;
-      }
-
-      Propagator<D> const & p0 = propagator(0);
-      Propagator<D> const & p1 = propagator(1);
-
-      // Evaluate unnormalized integral
-      for (i = 0; i < nx; ++i) {
-         cField()[i] += 0.5*p0.q(0)[i]*p1.q(ns_ - 1)[i];
-      }
-      for (int j = 1; j < ns_ - 1; ++j) {
-         for (i = 0; i < nx; ++i) {
-            cField()[i] += p0.q(j)[i]*p1.q(ns_ - 1 - j)[i];
-         }
-      }
-      for (i = 0; i < nx; ++i) {
-         cField()[i] += 0.5*p0.q(ns_ - 1)[i]*p1.q(0)[i];
-      }
-
-      // Normalize
-      prefactor *= ds_;
-      for (i = 0; i < nx; ++i) {
-         cField()[i] *= prefactor;
-      }
-      #if 0
-      #endif*/
-
-
       // Preconditions
       int nx = mesh().size();
       UTIL_CHECK(nx > 0);
@@ -328,36 +284,33 @@ namespace Pssp {
       IntVec<D> vec;
       IntVec<D> Partner;    
       MeshIterator<D> iter;
-      iter.setDimensions(mesh().dimensions());
+      iter.setDimensions(kMeshDimensions_);
       int m = 0;
 
       for (int n = 0; n < r ; ++n) {
          m = 0;
          for (iter.begin(); !iter.atEnd(); ++iter) {
             temp = iter.position();
-            if (temp[D-1] <= (mesh().dimensions()[D-1]/2)) {
-               vec =  shiftToMinimum(temp, mesh().dimensions(), *unitCellPtr_);
-               dGsq(m, n) = 0;
-               dGsq(m, n) = unitCellPtr_->dksq(vec, n);
-               for (int p = 0; p < D; ++p) {
-                  if (temp [p] != 0) {
-                     Partner[p] = mesh().dimensions()[p] - temp[p];
-                  }
-                  else {
-                     Partner[p] = 0;
-                  }
-               }
-               if (mesh().dimensions()[D-1]%2 == 1) {
-                  if (temp[D-1] !=0) {
-                     dGsq(m, n) *= 2; 
-                  }
+            vec = shiftToMinimum(temp, mesh().dimensions(), *unitCellPtr_);
+            dGsq(m, n) = 0;
+            dGsq(m, n) = unitCellPtr_->dksq(vec, n);
+            for (int p = 0; p < D; ++p) {
+               if (temp [p] != 0) {
+                  Partner[p] = mesh().dimensions()[p] - temp[p];
                } else {
-                  if (temp[D-1] !=0 && temp[D-1] != (mesh().dimensions()[D-1]/2)) {
-                     dGsq(m, n) *= 2;
-                  }             
+                  Partner[p] = 0;
                }
-               ++m;
             }
+            if (mesh().dimensions()[D-1]%2 == 1) {
+               if (temp[D-1] !=0) {
+                  dGsq(m, n) *= 2; 
+               }
+            } else {
+               if (temp[D-1] !=0 && temp[D-1] != (mesh().dimensions()[D-1]/2)) {
+                  dGsq(m, n) *= 2;
+               }             
+            }
+            ++m;
          }
       }
 
