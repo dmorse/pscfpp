@@ -70,7 +70,7 @@ namespace Pssp
    {  
       setClassName("System"); 
 
-      fieldIo_.associate(mixture_, unitCell_, mesh_, fft_, groupName_,
+      fieldIo_.associate(unitCell_, mesh_, fft_, groupName_,
                          basis_, fileMaster_);
 
       #ifdef PSCF_GSL
@@ -469,7 +469,7 @@ namespace Pssp
 
             std::ofstream outFile;
             fileMaster().openOutputFile(outFileName, outFile);
-            fieldIo().writeFieldHeader(outFile);
+            fieldIo().writeFieldHeader(outFile, mixture().nMonomer());
             basis().outputStars(outFile);
 
          } else
@@ -481,7 +481,7 @@ namespace Pssp
 
             std::ofstream outFile;
             fileMaster().openOutputFile(outFileName, outFile);
-            fieldIo().writeFieldHeader(outFile);
+            fieldIo().writeFieldHeader(outFile, mixture().nMonomer());
             basis().outputWaves(outFile);
 
          } else {

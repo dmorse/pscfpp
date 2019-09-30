@@ -8,7 +8,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pssp/solvers/Mixture.h>          // member
 #include <pssp/field/FFT.h>                // member
 #include <pssp/field/RField.h>             // function parameter
 #include <pssp/field/RFieldDft.h>          // function parameter
@@ -51,7 +50,6 @@ namespace Pssp
       /**
       * Get and store addresses of associated objects.
       *
-      * \param mixture  associated Mixture<D> object (solves MDEs)
       * \param unitCell associated crystallographic UnitCell<D>
       * \param mesh  associated spatial discretization Mesh<D>
       * \param fft   associated FFT object for fast transforms
@@ -59,8 +57,7 @@ namespace Pssp
       * \param basis  associated Basis object
       * \param fileMaster  associated FileMaster (for file paths)
       */
-      void associate(Mixture<D>& mixture,
-                     UnitCell<D>& unitCell,
+      void associate(UnitCell<D>& unitCell,
                      Mesh<D>& mesh,
                      FFT<D>& fft,
                      std::string& groupName,
@@ -231,8 +228,9 @@ namespace Pssp
       * Write header for field file (fortran pscf format)
       *
       * \param out output stream (i.e., output file)
+      * \param nMonomer number of monomer types
       */
-      void writeFieldHeader(std::ostream& out) const;
+      void writeFieldHeader(std::ostream& out, int nMonomer) const;
 
       //@}
       /// \name Field Format Conversion
@@ -307,9 +305,6 @@ namespace Pssp
 
       // Pointers to associated objects.
 
-      /// Pointer to mixture object (solves MDE for all species).
-      Mixture<D>* mixturePtr_;
-
       /// Pointer to crystallographic unit cell.
       UnitCell<D>* unitCellPtr_;
 
@@ -329,14 +324,6 @@ namespace Pssp
       FileMaster* fileMasterPtr_;
 
       // Private accessor functions:
-
-      /// Get Mixture by reference.
-      Mixture<D>& mixture()
-      {  return *mixturePtr_; }
-
-      /// Get Mixture by const reference.
-      Mixture<D> const& mixture() const
-      {  return *mixturePtr_; }
 
       /// Get UnitCell by reference.
       UnitCell<D>& unitCell()

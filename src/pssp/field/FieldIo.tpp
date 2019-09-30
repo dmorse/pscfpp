@@ -32,8 +32,7 @@ namespace Pssp
    */
    template <int D>
    FieldIo<D>::FieldIo()
-    : mixturePtr_(0),
-      unitCellPtr_(0),
+    : unitCellPtr_(0),
       meshPtr_(0),
       fftPtr_(0),
       groupNamePtr_(0),
@@ -52,15 +51,13 @@ namespace Pssp
    * Get and store addresses of associated objects.
    */
    template <int D>
-   void FieldIo<D>::associate(Mixture<D>& mixture,
-                             UnitCell<D>& unitCell,
+   void FieldIo<D>::associate(UnitCell<D>& unitCell,
                              Mesh<D>& mesh,
                              FFT<D>& fft,
                              std::string& groupName,
                              Basis<D>& basis,
                              FileMaster& fileMaster)
    {
-      mixturePtr_ = &mixture;
       unitCellPtr_ = &unitCell;
       meshPtr_ = &mesh;
       groupNamePtr_ = &groupName;
@@ -73,11 +70,11 @@ namespace Pssp
    void FieldIo<D>::readFieldsBasis(std::istream& in, 
                                     DArray< DArray<double> >& fields)
    {
-      FieldIo<D>::readFieldHeader(in);
-      int nMonomer = mixture().nMonomer();
-      UTIL_CHECK(fields.capacity() == nMonomer);
+      int nMonomer = fields.capacity();
+      UTIL_CHECK(nMonomer > 0);
 
-      // Read number of stars
+      // Read header
+      FieldIo<D>::readFieldHeader(in);
       std::string label;
       in >> label;
       UTIL_CHECK(label == "N_star");
@@ -150,16 +147,18 @@ namespace Pssp
    FieldIo<D>::writeFieldsBasis(std::ostream &out, 
                                 DArray<DArray<double> > const &  fields)
    {
+      int nMonomer = fields.capacity();
+      UTIL_CHECK(nMonomer > 0);
+
+      // Write header
+      writeFieldHeader(out, nMonomer);
       int nStar = basis().nStar();
       int nBasis = basis().nBasis();
-      int nMonomer = mixture().nMonomer();  
-
-      writeFieldHeader(out);
       out << "N_star       " << std::endl 
           << "             " << nBasis << std::endl;
 
-     // Write fields
-     for (int i = 0; i < nStar; ++i) {
+      // Write fields
+      for (int i = 0; i < nStar; ++i) {
          if (!basis().star(i).cancel) {
             for (int j = 0; j < nMonomer; ++j) {
                out << Dbl(fields[j][i], 20, 10);
@@ -170,7 +169,7 @@ namespace Pssp
             } 
             out << Int(basis().star(i).size, 5) << std::endl;
          }
-     }
+      }
 
    }
 
@@ -188,27 +187,28 @@ namespace Pssp
    void FieldIo<D>::readFieldsRGrid(std::istream &in,
                                     DArray<RField<D> >& fields)
    {
-      std::string label;
+      int nMonomer = fields.capacity();
+      UTIL_CHECK(nMonomer > 0);
 
       FieldIo<D>::readFieldHeader(in);
 
+      std::string label;
       in >> label;
       UTIL_CHECK(label == "ngrid");
       IntVec<D> nGrid;
       in >> nGrid;
       UTIL_CHECK(nGrid == mesh().dimensions());
 
-      int nM = mixture().nMonomer();
       DArray<RField<D> > temp;
-      temp.allocate(nM);
-      for (int i = 0; i < nM; ++i) {
+      temp.allocate(nMonomer);
+      for (int i = 0; i < nMonomer; ++i) {
          temp[i].allocate(mesh().dimensions());
       }
 
       // Read Fields;
       MeshIterator<D> itr(mesh().dimensions());
       for (itr.begin(); !itr.atEnd(); ++itr) {
-         for (int i = 0; i < nM; ++i) {
+         for (int i = 0; i < nMonomer; ++i) {
             in  >> std::setprecision(15) >> temp[i][itr.rank()];
          }
       }
@@ -229,7 +229,7 @@ namespace Pssp
                r =q;
                n3 = 0;
                while (n3 < mesh().dimension(2)) {
-                  for (int i = 0; i < nM; ++i) {
+                  for (int i = 0; i < nMonomer; ++i) {
                      fields[i][s] = temp[i][r];
                   }
                   r = r + (mesh().dimension(0) * mesh().dimension(1));
@@ -249,7 +249,7 @@ namespace Pssp
             r =q; 
             n2 = 0;
             while (n2 < mesh().dimension(1)) {
-               for (int i = 0; i < nM; ++i) {
+               for (int i = 0; i < nMonomer; ++i) {
                   fields[i][s] = temp[i][r];
                }   
                r = r + (mesh().dimension(0));
@@ -264,7 +264,7 @@ namespace Pssp
       else if (D==1) {
 
          while (n1 < mesh().dimension(0)) {
-            for (int i = 0; i < nM; ++i) {
+            for (int i = 0; i < nMonomer; ++i) {
                fields[i][s] = temp[i][r];
             }   
             ++r;
@@ -293,14 +293,16 @@ namespace Pssp
    void FieldIo<D>::writeFieldsRGrid(std::ostream &out,
                                      DArray<RField<D> > const& fields)
    {
-      writeFieldHeader(out);
+      int nMonomer = fields.capacity();
+      UTIL_CHECK(nMonomer > 0);
+
+      writeFieldHeader(out, nMonomer);
       out << "ngrid" <<  std::endl
           << "           " << mesh().dimensions() << std::endl;
 
       DArray<RField<D> > temp;
-      int nM = mixture().nMonomer();
-      temp.allocate(nM);
-      for (int i = 0; i < nM; ++i) {
+      temp.allocate(nMonomer);
+      for (int i = 0; i < nMonomer; ++i) {
          temp[i].allocate(mesh().dimensions());
       } 
 
@@ -320,7 +322,7 @@ namespace Pssp
                r =q;
                n1 = 0; 
                while (n1 < mesh().dimension(0)) {
-                  for (int i = 0; i < nM; ++i) {
+                  for (int i = 0; i < nMonomer; ++i) {
                      temp[i][s] = fields[i][r];
                   }    
                   r = r + (mesh().dimension(1) * mesh().dimension(2));
@@ -339,7 +341,7 @@ namespace Pssp
             r =q;
             n1 = 0;
             while (n1 < mesh().dimension(0)) {
-               for (int i = 0; i < nM; ++i) {
+               for (int i = 0; i < nMonomer; ++i) {
                   temp[i][s] = fields[i][r];
                }
                r = r + (mesh().dimension(1));
@@ -352,7 +354,7 @@ namespace Pssp
       }
       else if (D==1) {
          while (n1 < mesh().dimension(0)) {
-            for (int i = 0; i < nM; ++i) {
+            for (int i = 0; i < nMonomer; ++i) {
                temp[i][s] = fields[i][r];
             }
             ++r;
@@ -367,7 +369,7 @@ namespace Pssp
       MeshIterator<D> itr(mesh().dimensions());
       for (itr.begin(); !itr.atEnd(); ++itr) {
          // out << Int(itr.rank(), 5);
-         for (int j = 0; j < nM; ++j) {
+         for (int j = 0; j < nMonomer; ++j) {
             out << "  " << Dbl(temp[j][itr.rank()], 18, 15);
          }
          out << std::endl;
@@ -389,8 +391,11 @@ namespace Pssp
    void FieldIo<D>::readFieldsKGrid(std::istream &in,
                                     DArray<RFieldDft<D> >& fields)
    {
-      readFieldHeader(in);
+      int nMonomer = fields.capacity();
+      UTIL_CHECK(nMonomer > 0);
 
+      // Read header
+      readFieldHeader(in);
       std::string label;
       in >> label;
       UTIL_CHECK(label == "ngrid");
@@ -398,9 +403,7 @@ namespace Pssp
       in >> nGrid;
       UTIL_CHECK(nGrid == mesh().dimensions());
 
-
       // Read Fields;
-      int nMonomer = mixture().nMonomer();
       int idum;
       MeshIterator<D> itr(mesh().dimensions());
       for (itr.begin(); !itr.atEnd(); ++itr) {
@@ -427,12 +430,15 @@ namespace Pssp
    void FieldIo<D>::writeFieldsKGrid(std::ostream &out,
                                      DArray<RFieldDft<D> > const& fields)
    {
-      writeFieldHeader(out);
+      int nMonomer = fields.capacity();
+      UTIL_CHECK(nMonomer > 0);
+
+      // Write header
+      writeFieldHeader(out, nMonomer);
       out << "ngrid" << std::endl 
           << "               " << mesh().dimensions() << std::endl;
 
       // Write fields
-      int nMonomer = mixture().nMonomer();
       MeshIterator<D> itr(mesh().dimensions());
       for (itr.begin(); !itr.atEnd(); ++itr) {
          out << Int(itr.rank(), 5);
@@ -482,11 +488,10 @@ namespace Pssp
       int nMonomer;
       in >> nMonomer;
       UTIL_CHECK(nMonomer > 0);
-      UTIL_CHECK(nMonomer == mixture().nMonomer());
    }
 
    template <int D>
-   void FieldIo<D>::writeFieldHeader(std::ostream &out) const
+   void FieldIo<D>::writeFieldHeader(std::ostream &out, int nMonomer) const
    {
       out << "format  1   0" <<  std::endl;
       out << "dim" <<  std::endl 
@@ -495,7 +500,7 @@ namespace Pssp
       out << "group_name" << std::endl 
           << "          " << groupName() <<  std::endl;
       out << "N_monomer"  << std::endl 
-          << "          " << mixture().nMonomer() << std::endl;
+          << "          " << nMonomer << std::endl;
    }
 
    template <int D>
@@ -685,97 +690,6 @@ namespace Pssp
 
       } //  loop over star index is
    }
-
-   #if 0
-   template <int D>
-   void FieldIo<D>::convertBasisToKGrid(DArray<double> const& components, 
-                                        RFieldDft<D>& dft)
-   {
-      // Create Mesh<D> with dimensions of DFT grid.
-      Mesh<D> dftMesh(dft.dftDimensions());
-
-      typename Basis<D>::Star const* starPtr; // pointer to current star
-      typename Basis<D>::Wave const* wavePtr; // pointer to current wave
-      std::complex<double> component;         // coefficient of star
-      std::complex<double> coeff;             // coefficient of wave
-      IntVec<D> indices;                      // dft grid indices of wave
-      int rank;                               // dft grid rank of wave
-      int nStar = basis().nStar();            // number of stars
-      int is;                                 // star index
-      int iw;                                 // wave index
-
-      is = 0;
-      while (is < nStar) {
-         starPtr = &(basis().star(is));
-         if (starPtr->cancel) continue;
-
-         if (starPtr->invertFlag == 0) {
-
-            // Make real component (coefficient for star basis function)
-            component = std::complex<double>(components[is], 0.0);
-
-            // Loop over waves in closed star
-            for (iw = starPtr->beginId; iw < starPtr->endId; ++iw) {
-               wavePtr = &(basis().wave(iw));
-               if (!wavePtr->implicit) {
-                  coeff = component*(wavePtr->coeff);
-                  indices = wavePtr->indicesDft;    
-                  rank = dftMesh.rank(indices);
-                  dft[rank][0] = coeff.real();
-                  dft[rank][1] = coeff.imag();
-               }
-            }
-            ++is;
-
-         } else
-         if (starPtr->invertFlag == 1) {
-
-            // Make complex component for first star
-            component = std::complex<double>(components[is], 
-                                             -components[is+1]);
-            component /= sqrt(2.0);
-
-            // Loop over waves in first star
-            starPtr = &(basis().star(is));
-            for (iw = starPtr->beginId; iw < starPtr->endId; ++iw) {
-               wavePtr = &(basis().wave(iw));
-               if (!(wavePtr->implicit)) {
-                  coeff = component*(wavePtr->coeff);
-                  indices = wavePtr->indicesDft;    
-                  rank = dftMesh.rank(indices);
-                  dft[rank][0] = coeff.real();
-                  dft[rank][1] = coeff.imag();
-               }
-            }
-
-            // Loop over waves in second star
-            starPtr = &(basis().star(is+1));
-            UTIL_CHECK(starPtr->invertFlag == -1);
-            component = conj(component);
-            for (iw = starPtr->beginId; iw < starPtr->endId; ++iw) {
-               wavePtr = &(basis().wave(iw));
-               if (!(wavePtr->implicit)) {
-                  coeff = component*(wavePtr->coeff);
-                  indices = wavePtr->indicesDft;
-                  rank = dftMesh.rank(indices);
-                  dft[rank][0] = coeff.real();
-                  dft[rank][1] = coeff.imag();
-               }
-            }
-
-            // Increment is by 2 (two stars were processed)
-            is += 2;
-
-         } else {
- 
-            UTIL_THROW("Invalid invertFlag value");
-  
-         }
-
-      }
-
-   }
-   #endif
 
    template <int D>
    void FieldIo<D>::convertBasisToKGrid(DArray< DArray <double> >& in,
