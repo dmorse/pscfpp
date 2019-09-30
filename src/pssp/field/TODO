@@ -1,5 +1,0 @@
-1) Write unit tests for FieldIo.
-
-2) Move conversion functions to new class FieldConverter.  
-   Unit test and add
-

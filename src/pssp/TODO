@@ -1,17 +1,23 @@
 TODO (for pssp pseudospectral CPU code)
 
 ------------------------------------------------------------------------
-Clean up fields and basis (assigned to Dave)
+field/ directory: (assigned to Dave)
 
    - Complete unit tests for FieldIo
 
    - Modify unit tests of system so that can be incorporated
      into Pssp test composite. 
 
-   - See pssp/field/TODO
+   - Move conversion functions from FieldIo to new class FieldConverter.
+     Divide FieldIoTest class into two unit test classes.
 
 ------------------------------------------------------------------------
-Later (for CPU code alone)
+solvers/ directory: (assigned to Anshul)
+
+   - See solvers/TODO
+
+------------------------------------------------------------------------
+Later
 
    - Add point solvents.
 
