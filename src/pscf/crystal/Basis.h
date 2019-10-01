@@ -8,7 +8,6 @@
 */
 
 #include <pscf/math/IntVec.h>
-#include <pssp/field/RFieldDft.h>
 #include <pscf/mesh/Mesh.h>
 #include <pscf/crystal/UnitCell.h>
 #include <pscf/crystal/SpaceGroup.h>

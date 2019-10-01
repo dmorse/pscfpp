@@ -68,7 +68,7 @@ fi
 # Namespace config.mk in src/ directory (for in-source builds)
 cp make/config/util_config src/util/config.mk
 cp make/config/fd1d_config src/fd1d/config.mk
-cp make/config/pssp_config src/pssp/config.mk
+cp make/config/pspc_config src/pspc/config.mk
 
 #========================================================================
 # Copy files into build directory out-of-source builds
@@ -85,19 +85,19 @@ cp src/makefile bld/makefile
 cp src/util/makefile bld/util/makefile
 cp src/pscf/makefile bld/pscf/makefile
 cp src/fd1d/makefile bld/fd1d/makefile
-cp src/pssp/makefile bld/pssp/makefile
+cp src/pspc/makefile bld/pspc/makefile
 
 # Copy makefiles in namespace level test directories
 cp src/util/tests/makefile bld/util/tests/makefile
 cp src/pscf/tests/makefile bld/pscf/tests/makefile
 cp src/fd1d/tests/makefile bld/fd1d/tests/makefile
-cp src/pssp/tests/makefile bld/pssp/tests/makefile
+cp src/pspc/tests/makefile bld/pspc/tests/makefile
 
 # Copy namespace level config.mk files
 cp src/util/config.mk bld/util/config.mk
 cp src/pscf/config.mk bld/pscf/config.mk
 cp src/fd1d/config.mk bld/fd1d/config.mk
-cp src/pssp/config.mk bld/pssp/config.mk
+cp src/pspc/config.mk bld/pspc/config.mk
 
 # Copy configure script
 cp src/configure bld/configure
