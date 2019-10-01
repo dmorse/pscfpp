@@ -19,8 +19,14 @@ run: $(pspc_tests_OBJS) $(BLD_DIR)/$(TEST)
 clean:
 	rm -f $(pspc_tests_OBJS) $(pspc_tests_OBJS:.o=.d)
 	rm -f $(BLD_DIR)/$(TEST) $(BLD_DIR)/$(TEST).d
-	rm -f field/Test field/Test.o field/Test.d
 	rm -f log count omega.o omegaGrid.o
+ifeq ($(SRC_DIR),$(BLD_DIR))
+	-cd field; $(MAKE) clean
+	-cd solvers; $(MAKE) clean
+	-cd iterator; $(MAKE) clean
+	-cd system; $(MAKE) clean
+	rm -f */Test */*.o */*.d
+endif
 
 -include $(pspc_tests_OBJS:.o=.d)
 -include $(pspc_OBJS:.o=.d)
