@@ -8,7 +8,6 @@
 */
 
 #include <pscf/math/IntVec.h>
-#include <pssp/field/RFieldDft.h>
 #include <pscf/mesh/Mesh.h>
 #include <pscf/crystal/UnitCell.h>
 #include <pscf/crystal/SpaceGroup.h>
@@ -193,39 +192,6 @@ namespace Pscf {
       * Returns true if valid, false otherwise.
       */
       bool isValid() const;
-
-      #if 1 
-      // Old code to allow current code to compile
-      // Derivatives of dksq with respect to each 
-      // of the parameters (rows)
-      //DMatrix<double> dksq; 
-
-      /**
-      * Calculates dksq_ assuming ksq are in non increasing order of ksq 
-      * and pairs of stars related by inversion are listed consecutively
-      */
-      //void makedksq(const UnitCell<D>& unitCell){};
-      #endif
-
-      #if 0
-      /**
-      * Convert field from symmetry-adapted representation to DFT.
-      *
-      * \param components coefficients of symmetry-adapted basis functions.
-      * \param dft complex DFT representation of a field.
-      */
-      void convertFieldComponentsToDft(DArray<double>& components, 
-                                       RFieldDft<D>& dft);   
-
-      /**
-      * Convert DFT of real field to symmetry-adapted representation.
-      *
-      * \param dft complex DFT representation of a field.
-      * \param components coefficients of symmetry-adapted basis functions.
-      */
-      void convertFieldDftToComponents(RFieldDft<D>& dft, 
-                                       DArray<double>& components);   
-      #endif
 
       // Accessors
 
