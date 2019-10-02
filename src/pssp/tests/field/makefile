@@ -22,7 +22,7 @@ run: $(pssp_tests_field_OBJS) $(BLD_DIR)/$(TEST)
 clean:
 	rm -f $(pssp_tests_field_OBJS) $(pssp_tests_field_OBJS:.o=.d)
 	rm -f $(BLD_DIR)/$(TEST) $(BLD_DIR)/$(TEST).d
-	rm -f log count binary
+	rm -f log count out/* 
 
 -include $(pssp_tests_field_OBJS:.o=.d)
 -include $(pssp_tests_field_OBJS:.o=.d)

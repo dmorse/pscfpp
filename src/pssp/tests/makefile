@@ -20,7 +20,7 @@ clean:
 	rm -f $(pssp_tests_OBJS) $(pssp_tests_OBJS:.o=.d)
 	rm -f $(BLD_DIR)/$(TEST) $(BLD_DIR)/$(TEST).d
 	rm -f field/Test field/Test.o field/Test.d
-	rm -f log count omega.o omegaGrid.o
+	rm -f log count 
 
 -include $(pssp_tests_OBJS:.o=.d)
 -include $(pssp_OBJS:.o=.d)
