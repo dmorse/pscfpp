@@ -335,7 +335,7 @@ void RFieldDftTest::testSerialize1File()
       int i2;
 
       BinaryFileOArchive oArchive;
-      openOutputFile("binary", oArchive.file());
+      openOutputFile("out/binary", oArchive.file());
       oArchive << v;
       oArchive << i1;
       oArchive.file().close();
@@ -348,7 +348,7 @@ void RFieldDftTest::testSerialize1File()
       u.allocate(3);
    
       BinaryFileIArchive iArchive;
-      openInputFile("binary", iArchive.file());
+      openInputFile("out/binary", iArchive.file());
       iArchive >> u;
       iArchive >> i2;
       iArchive.file().close();
@@ -364,7 +364,7 @@ void RFieldDftTest::testSerialize1File()
       i2 = 0;
    
       // Reload into u and i2
-      openInputFile("binary", iArchive.file());
+      openInputFile("out/binary", iArchive.file());
       iArchive >> u;
       iArchive >> i2;
    
@@ -389,7 +389,7 @@ void RFieldDftTest::testSerialize2File()
       int i2;
   
       BinaryFileOArchive oArchive;
-      openOutputFile("binary", oArchive.file());
+      openOutputFile("out/binary", oArchive.file());
       oArchive << v;
       oArchive << i1;
       oArchive.file().close();
@@ -405,7 +405,7 @@ void RFieldDftTest::testSerialize2File()
       // from the previous test
    
       BinaryFileIArchive iArchive;
-      openInputFile("binary", iArchive.file());
+      openInputFile("out/binary", iArchive.file());
       iArchive >> u;
       iArchive >> i2;
       iArchive.file().close();
@@ -421,7 +421,7 @@ void RFieldDftTest::testSerialize2File()
       i2 = 0;
    
       // Reload into u and i2
-      openInputFile("binary", iArchive.file());
+      openInputFile("out/binary", iArchive.file());
       iArchive >> u;
       iArchive >> i2;
    
