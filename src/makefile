@@ -1,23 +1,23 @@
 include config.mk
 
 # ======================================================================
-.PHONY: all fd1d pssp pscf clean veryclean
+.PHONY: all fd1d pspc pscf clean veryclean
 
 all: 
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
 	cd fd1d; $(MAKE) all
-	cd pssp; $(MAKE) all
+	cd pspc; $(MAKE) all
 
 fd1d: 
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
 	cd fd1d; $(MAKE) all
 
-pssp: 
+pspc: 
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
-	cd pssp; $(MAKE) all
+	cd pspc; $(MAKE) all
 
 pscf: 
 	cd util; $(MAKE) all
@@ -26,18 +26,18 @@ pscf:
 pscf_gpu:
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
-	cd pssp_gpu; $(MAKE) all
+	cd pspc_gpu; $(MAKE) all
 
 # Run all unit tests
 run-tests:
 	cd util/tests; $(MAKE) all; $(MAKE) quiet
 	cd pscf/tests; $(MAKE) all; $(MAKE) run
 	cd fd1d/tests; $(MAKE) all; $(MAKE) run
-	cd pssp/tests; $(MAKE) all; $(MAKE) run
+	cd pspc/tests; $(MAKE) all; $(MAKE) run
 	@cat util/tests/count > count
 	@cat pscf/tests/count >> count
 	@cat fd1d/tests/count >> count
-	@cat pssp/tests/count >> count
+	@cat pspc/tests/count >> count
 	@echo " "
 	@echo "Summary"
 	@cat count
@@ -60,20 +60,20 @@ veryclean:
 	cd util; $(MAKE) veryclean
 	cd pscf; $(MAKE) veryclean
 	cd fd1d; $(MAKE) veryclean
-	cd pssp; $(MAKE) veryclean
+	cd pspc; $(MAKE) veryclean
 	rm -f util/config.mk
 	rm -f pscf/config.mk
 	rm -f fd1d/config.mk
-	rm -f pssp/config.mk
+	rm -f pspc/config.mk
 ifneq ($(BLD_DIR),$(SRC_DIR))
 	rm -f util/makefile
 	rm -f pscf/makefile
 	rm -f fd1d/makefile
-	rm -f pssp/makefile
+	rm -f pspc/makefile
 	rm -f util/tests/makefile
 	rm -f pscf/tests/makefile
 	rm -f fd1d/tests/makefile
-	rm -f pssp/tests/makefile
+	rm -f pspc/tests/makefile
 	rm -f configure
 endif
 	rm -f config.mk

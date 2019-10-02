@@ -6,51 +6,33 @@
 #-----------------------------------------------------------------------
 # Include makefiles
 
-SRC_DIR_REL =..
+SRC_DIR_REL =../..
 include $(SRC_DIR_REL)/config.mk
 include $(BLD_DIR)/util/config.mk
 include $(BLD_DIR)/pscf/config.mk
-include $(BLD_DIR)/fd1d/config.mk
-include $(SRC_DIR)/fd1d/patterns.mk
+include $(BLD_DIR)/pspc/config.mk
+include $(SRC_DIR)/pspc/patterns.mk
 include $(SRC_DIR)/util/sources.mk
 include $(SRC_DIR)/pscf/sources.mk
-include $(SRC_DIR)/fd1d/sources.mk
+include $(SRC_DIR)/pspc/sources.mk
 
-#-----------------------------------------------------------------------
-# Variable definition
-
-PSCF_FD=$(BLD_DIR)/fd1d/pscf_fd
 #-----------------------------------------------------------------------
 # Main targets 
 
-all: $(fd1d_OBJS) $(fd1d_LIB) $(PSCF_FD_EXE)
+all: $(pspc_solvers_OBJS) 
 
 clean:
-	rm -f $(fd1d_OBJS) $(fd1d_OBJS:.o=.d)
-	rm -f $(PSCF_FD).o $(PSCF_FD).d
-	rm -f $(fd1d_LIB)
-	cd tests; $(MAKE) clean
+	rm -f $(pspc_solvers_OBJS) $(pspc_solvers_OBJS:.o=.d)
 
 veryclean:
 	$(MAKE) clean
-	-rm -f *.o */*.o
-	-rm -f *.d */*.d
-	-rm -f lib*.a
-
-
-# Executable target
-
-$(PSCF_FD_EXE): $(PSCF_FD).o $(PSCF_LIBS)
-	$(CXX) $(LDFLAGS) -o $(PSCF_FD_EXE) $(PSCF_FD).o $(LIBS) 
-
-# Short name for executable target (for convenience)
-pscf_fd:
-	$(MAKE) $(PSCF_FD_EXE)
+	-rm -f *.o 
+	-rm -f *.d 
 
 #-----------------------------------------------------------------------
 # Include dependency files
 
--include $(fd1d_OBJS:.o=.d)
+-include $(pspc_OBJS:.o=.d)
 -include $(pscf_OBJS:.o=.d)
 -include $(util_OBJS:.o=.d)
 -include $(PSCF_FD).d 
