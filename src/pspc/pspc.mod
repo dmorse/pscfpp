@@ -7,7 +7,7 @@ namespace Pscf
    namespace Pspc {
 
       /**
-      * \defgroup Pscf_Pspc_Module Periodic Pseudo-Spectral 
+      * \defgroup Pscf_Pspc_Module Pseudo-Spectral Periodic (CPU)
       *
       * Pseudo-spectral SCFT for periodic structures.
       * \ingroup Pscf_NS_Module
