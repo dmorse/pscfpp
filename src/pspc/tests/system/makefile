@@ -21,7 +21,7 @@ run: $(pspc_tests_system_OBJS) $(BLD_DIR)/$(TEST)
 clean:
 	rm -f $(pspc_tests_system_OBJS) $(pspc_tests_system_OBJS:.o=.d)
 	rm -f $(BLD_DIR)/$(TEST) $(BLD_DIR)/$(TEST).d
-	rm -f log count binary
+	rm -f log count 
 	rm -f out/stars_hex out/*.log
 	rm -f out/omega/*/*
 
