@@ -483,7 +483,7 @@ static __global__ void scaleReal(cufftReal* result, int size, float scale) {
 
          for (int n = 0; n < nParams_ ; ++n) {
             //do i need this?
-            //cudaMemset(qr2_.cDField(), 0, mesh().size() * sizeof(int));
+            cudaMemset(qr2_.cDField(), 0, mesh().size() * sizeof(int));
             mulDelKsq<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>>
                (qr2_.cDField(), qkBatched_ + (j * kSize_), qk2Batched_ + (kSize_ * (ns_ -1 -j)), 
                 wavelist.dkSq(), n , kSize_, nx);
@@ -521,10 +521,11 @@ static __global__ void scaleReal(cufftReal* result, int size, float scale) {
                for(int i = 0; i < kSize_; i++) {
                   std::cout<<temp[i]<<std::endl;
                }
-               exit(1);
+               //exit(1);
                }*/
             increment = reductionH(qr2_, mesh().size());
-            //std::cout<<"This is increment "<<increment<<std::endl;
+            // std::cout<<"This is increment "<<increment<<std::endl;
+            //exit(1);
             increment = (increment * kuhn() * kuhn() * dels)/normal; // try to shift this in tempdksq assignment line.
             dQ [n] = dQ[n]-increment;   
          }    

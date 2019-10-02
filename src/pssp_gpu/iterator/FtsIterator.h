@@ -13,8 +13,8 @@
 #include <pscf/math/LuSolver.h>
 #include <util/containers/DArray.h>
 #include <util/containers/DMatrix.h>
+#include <util/containers/RingBuffer.h>
 #include <pssp_gpu/iterator/HistMat.h>
-#include <pssp_gpu/iterator/RingBuffer.h>
 #include <pssp_gpu/field/RDField.h>
 #include <util/containers/FArray.h>
 
