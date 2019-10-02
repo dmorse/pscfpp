@@ -340,7 +340,7 @@ namespace Pspc {
 
               for (m = 0; m < c ; ++m) {
                  double prod = 0;
-                 prod = (q1[m][0] * q2[m][0]) - (q1[m][1] * q2[m][1]);
+                 prod = (q1[m][0] * q2[m][0]) + (q1[m][1] * q2[m][1]);
                  prod *= dGsq(m,n); 
                  increment += prod; 
               }
