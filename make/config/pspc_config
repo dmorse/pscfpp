@@ -41,13 +41,12 @@ PSPC_SUFFIX:=
 # and other libraries and executables that depend on the pspc library.
 
 #-----------------------------------------------------------------------
-# Macros related to use of external libraries
+# Changes related to external libraries
 
 # FFTW Fast Fourier transform library
 PSPC_FFTW=1
 ifdef PSPC_FFTW
   PSPC_DEFS+=-DPSPC_FFTW
-  PSPC_FFTW_LIB=-lfftw3
 endif
 
 #-----------------------------------------------------------------------

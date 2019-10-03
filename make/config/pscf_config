@@ -44,16 +44,10 @@ PSCF_SUFFIX:=
 # ...... (Nothing needed here, for now)
 
 #-----------------------------------------------------------------------
-# Macros related to external libraries 
+# Additional paths for libraries
 
 # Gnu Scientific Library
-#PSCF_GSL=1
-ifdef PSCF_GSL
-  PSCF_DEFS+=-DPSCF_GSL
-  PSCF_GSL_INC=SUB_GSL_INC
-  PSCF_GSL_LIB=SUB_GSL_LIB
-  INCLUDES+=$(PSCF_GSL_INC)
-endif
+INCLUDES+=$(PSCF_GSL_INC)
 
 #-----------------------------------------------------------------------
 # Path to the pscf library 

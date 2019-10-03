@@ -51,10 +51,6 @@ DAT_DIR=$(ROOT_DIR)/data
 #======================================================================
 # Variables that (if defined) enable compilation of optional features
 
-# Defining UTIL_MPI enables linking to an MPI library. MPI must be
-# enabled by uncommenting this line to build a parallel program.
-#UTIL_MPI=1
-
 # Defining UTIL_DEBUG enables a variety of extra sanity checks, at some
 # cost in speed. Debugging is disabled (commented out) by default.
 #UTIL_DEBUG=1
@@ -64,7 +60,11 @@ DAT_DIR=$(ROOT_DIR)/data
 # only syntax and features defined in the older 1998 C++ standard.
 UTIL_CXX11=1
 
-# Comment After setup, the above definitions of UTIL_MPI and UTIL_DEBUG 
+# Defining UTIL_MPI enables linking to an MPI library. MPI must be
+# enabled by uncommenting this line to build a parallel program.
+#UTIL_MPI=1
+
+# Comment After setup, the above definitions of UTIL_DEBUG and UTIL_MPI
 # may be uncommented or commented out invoking the "configure" script 
 # from the build directory that contains this file, thus enabling or 
 # disabling the MPI or and/or debugging features.  Specifically, the 
