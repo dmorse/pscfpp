@@ -1,55 +1,46 @@
-#-----------------------------------------------------------------------
-# Choose values of CXX and CXX_FLAGS
+# ======================================================================
+# General definitions for all systems (Do not modify)
 
-# Choose values for CXX (compiler command) and CXX_FLAGS (general 
-# compiler options) depending on whether UTIL_MPI and/or UTIL_DEBUG
-# are defined (i.e., on whether MPI and/or debugging features are 
-# enabled).
-
-ifneq ($(UTIL_MPI),1)
-   # Serial programs:
-   # Serial compiler command (MPI disabled)
-   CXX=$(CXX_SER)
-   ifdef UTIL_DEBUG
-      # Flags for serial programs with debugging
-      CXXFLAGS=$(CXXFLAGS_SER_DEBUG)
-   else
-      # Flags for serial programs with no debugging
-      CXXFLAGS=$(CXXFLAGS_SER_FAST)
-   endif
+# Assign value of CXX_FLAGS, depending on whether debugging is enabled
+ifdef UTIL_DEBUG
+   # Flags for serial programs with debugging
+   CXXFLAGS=$(CXXFLAGS_DEBUG)
 else
-   # Parallel programs:
-   # Parallel compiler command or wrapper script (MPI enabled)
-   CXX=$(CXX_PAR)
-   ifdef UTIL_DEBUG
-      # Flags for parallel programs with debugging
-      CXXFLAGS=$(CXXFLAGS_PAR_DEBUG)
-   else
-      # Flags for parallel programs with no debugging
-      CXXFLAGS=$(CXXFLAGS_PAR_FAST)
-   endif
+   # Flags for serial programs with no debugging
+   CXXFLAGS=$(CXXFLAGS_FAST)
 endif
+
+# Initialize INCLUDE path for header files (must include SRC_DIR)
+# This initial value is added to in the patterns.mk file in each 
+# namespace level subdirectory of the src/ directory.
+INCLUDES= -I$(SRC_DIR)
+
+# Variable UTIL_CXX11 must be defined to enable use of features of
+# the C++ 2011 language standard. 
+UTIL_CXX11=1
 
 # ======================================================================
 # Makefile Patterns and Recipes
 #
 # The makefile variables defined above are used in the makefile pattern 
-# rules and recipes that control compilation of C++ files, creation of 
-# libraries, and linking to create executables. The following sections 
-# briefly explain these rules, to provide a context for the meaning of 
-# the variables defined above.
+# rules that control compilation of C++ files, creation of libraries, 
+# and linking to create executables. The following sections briefly 
+# explain these rules, to provide a context for the meaning of the 
+# variables defined above.
 #
 #-----------------------------------------------------------------------
 # Compiler Pattern Rules:
 #
 # The pattern rule for compiling and linking C++ files in a particular 
-# namespace is defined in the appropriate namespace level config.mk 
-# file. For example, the rule for compiling C++ files in the simp/ 
-# directory tree, which contains all classes defined in the Simp C++
-# namespace, is given in the file simp/config.mk. The pattern rules for 
-# different namespaces are similar except for differences in which 
-# preprocessor variable definitions are passed to the compiler. For
-# each namespace, the basic compiler pattern rule is of the form:
+# top-level subdirectory of the src/ directory is defined in a file
+# named patterns.mk in the relevant subdirectory.  For example, the rule 
+# for compiling C++ files in the src/fd1d/ directory tree, which contains 
+# all entities defined in the Pscf::Fd1d C++ namespace, is given in the 
+# file src/fd1d/patterns.mk. The rules for different subdirectories
+# of src/ are similar except for differences in which preprocessor 
+# variable definitions are passed to the compiler. For each subdirectory
+# of src/ namespace, the basic compiler pattern rule for C++ files is of 
+# the form:
 # 
 # $(BLD_DIR)%.o:$(SRC_DIR)/%.cpp
 #      $(CXX) $(INCLUDES) $(DEFINES) $(CXXFLAGS) -c -o $@ $<
@@ -66,24 +57,19 @@ endif
 #
 # Comments:
 # 
-# 1) The variable CXX is the name of an executable command that may
-# be either the name of the compiler command (e.g., g++) or the name
-# of a wrapper script that invokes the compiler (e.g., the mpicxx
-# script provided with the OpenMPI MPI library to invoke the compiler
-# with appropriate search paths)
-#
-# 2) The variable INCLUDES is a string that must include the path 
+# 1) The variable INCLUDES is a string that must include the path 
 # $(SRC_DIR) to the simpatico/src directory, in order to allow the 
 # compiler to find header files that are part of the package.
 #
-# 3) The variable DEFINES in the above pattern is a stand-in for a 
+# 2) The variable DEFINES in the above pattern is a stand-in for a 
 # variable that specifies a list of C preprocessor macro definitions. 
 # This variable is not defined in this main configuration file, and
-# is assigned different values for code in different namespace level 
-# directories, which are defined in the namespace level patterns.mk 
-# files. The value of $(DEFINES) for each namespace contains a string 
-# of compiler options that use the compiler "-D" option to define the 
-# set of preprocessor macro definitions used to control conditional
+# is assigned different values for code in different top-level 
+# subdirectories of src/. A value of DEFINES for each such directory
+# is assigned in the corresponding pattern.mk file.  The value of 
+# $(DEFINES) for each namespace contains a string of compiler 
+# options that use the compiler "-D" option to define the set of
+# preprocessor macro definitions used to control conditional
 # compilation of optional features that are relevant in a particular 
 # namespace. Each of these preprocessor variable macros has the
 # same name as a corresponding makefile variable that must be defined

@@ -14,10 +14,13 @@
 # Local pscf-specific libraries needed in src/fd1d
 PSCF_LIBS=$(fd1d_LIB) $(pscf_LIB) $(util_LIB)
 
-# All libraries needed for executables in src/pscf, including external
+# List of all libraries needed for executables in src/pscf
 LIBS=$(PSCF_LIBS)
+
+# Gnu-scientific library
 ifdef PSCF_GSL
-LIBS+=$(PSCF_GSL_LIB) 
+  INCLUDES+=$(GSL_INC)
+  LIBS+=$(GSL_LIB) 
 endif
 
 # Preprocessor macro definitions needed in src/fd1d

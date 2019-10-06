@@ -15,8 +15,8 @@
 #-----------------------------------------------------------------------
 # Comments:
 #
-# The variable PSCF_DEFS is used to pass preprocessor definitions to
-# the compiler, using the "-D" compiler option. If not empty, it must 
+# The variable PSCF_DEFS uses the "-D" compiler option to used to pass 
+# C/C++ preprocessor definitions to the compiler. If not empty, it must 
 # consist of a list of zero or more preprocessor macro names, each 
 # preceded by the compiler flag "-D". 
 #
@@ -31,23 +31,6 @@
 # Initialize macros to empty strings
 PSCF_DEFS=
 PSCF_SUFFIX:=
-
-#-----------------------------------------------------------------------
-# Flag to define preprocessor macros.
-
-# Each if-block below contains a line that appends a preprocessor macro 
-# definition to PSCF_DEFS, thus defining an associated C++ preprocessor 
-# macro. In some blocks, a second line add a suffix to the PSCF_SUFFIX 
-# or PSCF_MPI_SUFFIX variable, thus changing the name of the util library
-# and other libraries and executables that depend on the util library.
-
-# ...... (Nothing needed here, for now)
-
-#-----------------------------------------------------------------------
-# Additional paths for libraries
-
-# Gnu Scientific Library
-INCLUDES+=$(PSCF_GSL_INC)
 
 #-----------------------------------------------------------------------
 # Path to the pscf library 

@@ -13,18 +13,27 @@
 #-----------------------------------------------------------------------
 
 # Local pscf-specific libraries needed in src/pspc
+# Variables $(pspc_LIB) etc. are defined in namespace config.mk files
 PSPC_LIBS=$(pspc_LIB) $(pscf_LIB) $(util_LIB)
 
-# All libraries needed in executables built in src/pspc
+# List of all libraries needed for main programs in src/pspc
 LIBS=$(PSPC_LIBS)
+
+# Add Gnu scientific library
 ifdef PSCF_GSL
-LIBS+=$(PSCF_GSL_LIB) 
-endif
-ifdef PSPC_FFTW
-LIBS+=$(PSPC_FFTW_LIB) 
+  INCLUDES+=$(GSL_INC)
+  LIBS+=$(GSL_LIB) 
 endif
 
-# Preprocessor macro definitions needed in src/pspc
+# Add FFTW Fast Fourier transform library
+ifdef PSPC_FFTW
+  PSPC_DEFS+=-DPSPC_FFTW
+  INCLUDES+=$(FFTW_INC)
+  LIBS+=$(FFTW_LIB) 
+endif
+
+# List of all preprocessor macro definitions needed in src/pspc
+# Variables $(PSPC_DEFS) etc are initialized in namespace config.mk files
 DEFINES=$(UTIL_DEFS) $(PSCF_DEFS) $(PSPC_DEFS) 
 
 # Dependencies on build configuration files

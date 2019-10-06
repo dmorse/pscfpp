@@ -18,7 +18,7 @@ PSCF_LIBS=$(cyln_LIB) $(pscf_LIB) $(util_LIB)
 # All libraries needed in executables built in src/cyln
 LIBS=$(PSCF_LIBS)
 ifdef PSCF_GSL
-LIBS+=$(PSCF_GSL_LIB) 
+LIBS+=$(GSL_LIB) 
 endif
 ifdef CYLN_FFTW
 LIBS+=$(CYLN_FFTW_LIB) 

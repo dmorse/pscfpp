@@ -13,15 +13,22 @@
 #-----------------------------------------------------------------------
 
 # Local pscf-specific libraries needed in src/pssp_gpu
-PSCF_LIBS=$(pssp_gpu_LIB) $(pscf_LIB) $(util_LIB)
+PSSP_GPU_LIBS=$(pssp_gpu_LIB) $(pscf_LIB) $(util_LIB)
 
 # All libraries needed in executables built in src/pssp
-LIBS=$(PSCF_LIBS)
+LIBS=$(PSSP_GPU_LIBS)
+
+# Gnu scientific library
 ifdef PSCF_GSL
-LIBS+=$(PSCF_GSL_LIB) 
+  INCLUDES+=$(GSL_INC)
+  LIBS+=$(GSL_LIB) 
 endif
-ifdef PSSP_CUDA
-LIBS+=$(PSSP_CUFFT_LIB)
+
+# Cuda FFT library
+ifdef PSSP_GPU_CUDA
+  PSSP_GPU_DEFS+=-DPSSP_GPU_FFTW -DGPU_OUTER
+  INCLUDES+=$(CUFFT_INC)
+  LIBS+=$(CUFFT_LIB)
 endif
 
 # Preprocessor macro definitions needed in src/pssp
@@ -42,15 +49,15 @@ endif
 
 # Pattern rule to compile *.cu class source files in src/pssp
 $(BLD_DIR)/%.o:$(SRC_DIR)/%.cu
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $<
+	$(NVXX) $(CPPFLAGS) $(NVXXFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $<
 #ifdef MAKEDEP
-#	$(MAKEDEP) -arch=sm_30 $(INCLUDES) $(DEFINES) $(MAKE_DEPS) -S$(SRC_DIR) -B$(BLD_DIR) $<
+#	$(MAKEDEP) $(NVXXFLAGS) $(INCLUDES) $(DEFINES) $(MAKE_DEPS) -S$(SRC_DIR) -B$(BLD_DIR) $<
 #endif
 
-# Pattern rule to compile *.cc test programs in src/pssp/tests
-$(BLD_DIR)/% $(BLD_DIR)/%.o:$(SRC_DIR)/%.cu $(PSCF_LIBS)
-	nvcc  -O3 $(INCLUDES) $(DEFINES) -c -o $@ $<
-	nvcc $(LDFLAGS) $(INCLUDES) $(DEFINES) -o $(@:.o=) $@ $(LIBS)
+# Pattern rule to compile *.ccu test programs in src/pssp/tests
+$(BLD_DIR)/% $(BLD_DIR)/%.o:$(SRC_DIR)/%.ccu $(PSSP_GPU_LIBS)
+	$(NVXX)  $(NVXXFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $<
+	$(NVXX) $(LDFLAGS) $(INCLUDES) $(DEFINES) -o $(@:.o=) $@ $(LIBS)
 ifdef MAKEDEP
 	$(MAKEDEP) $(INCLUDES) $(DEFINES) $(MAKE_DEPS) -S$(SRC_DIR) -B$(BLD_DIR) $<
 endif

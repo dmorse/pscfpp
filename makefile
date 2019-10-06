@@ -1,6 +1,6 @@
 include src/config.mk
 # ==========================================================================
-.PHONY: all fd1d test clean veryclean \
+.PHONY: all util pscf fd1d pspc test clean veryclean \
         html clean-html
 
 # ==============================================================================
@@ -9,8 +9,14 @@ include src/config.mk
 all:
 	cd bld; $(MAKE) all
 
+util:
+	cd bld; $(MAKE) util
+
+pscf:
+	cd bld; $(MAKE) util
+
 fd1d:
-	cd bld; $(MAKE) fd1d
+	cd bld; $(MAKE) pscf
 
 pspc:
 	cd bld; $(MAKE) pspc

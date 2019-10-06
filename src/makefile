@@ -1,13 +1,20 @@
 include config.mk
 
 # ======================================================================
-.PHONY: all fd1d pspc pscf clean veryclean
+.PHONY: all fd1d pspc pscf util clean veryclean
 
 all: 
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
 	cd fd1d; $(MAKE) all
 	cd pspc; $(MAKE) all
+
+util: 
+	cd util; $(MAKE) all
+
+pscf: 
+	cd util; $(MAKE) all
+	cd pscf; $(MAKE) all
 
 fd1d: 
 	cd util; $(MAKE) all
@@ -18,10 +25,6 @@ pspc:
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
 	cd pspc; $(MAKE) all
-
-pscf: 
-	cd util; $(MAKE) all
-	cd pscf; $(MAKE) all
 
 pscf_gpu:
 	cd util; $(MAKE) all

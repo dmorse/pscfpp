@@ -1,0 +1,86 @@
+# ---------------------------------------------------------------
+# Default compiler configuration file (gcc and nvcc)
+#
+# The definitions given below work for systems in which:
+#
+#   - The command g++ is used to invoke the C++ compiler.
+#   - The command nvcc is used to invoke the nvidia cuda compiler
+#   - Header files and libraries for the CUDA and FFTW libraries
+#     are in standard locations.
+#   - The gsl-config command can be used to find the correct header
+#     and library paths for the Gnu Scientific Library (GSL)
+#
+# These definitions work in most linux environments and in a
+# Mac OSX environment with XCode installed, for which g++ invokes 
+# the clang compiler.
+#
+# ---------------------------------------------------------------
+# C++ compiler and options (*.cpp files)
+
+# C++ compiler Command name
+CXX=g++
+
+# Compiler option to specify ANSI C++ 2011 standard (required)
+CXX_STD = --std=c++11
+
+# Flags always passed to compiler when debugging is enabled
+CXXFLAGS_DEBUG= -Wall $(CXX_STD)
+
+# Flags always passed to compiler when debugging is disabled (fast)
+CXXFLAGS_FAST= -Wall $(CXX_STD) -O3 -ffast-math -Winline
+
+# Compiler flags used in unit tests
+TESTFLAGS= -Wall $(CXX_STD)
+
+# ---------------------------------------------------------------
+# Cuda compiler and options (*.cu files)
+
+# Cuda compiler command
+NVXX=nvcc
+
+# Flags always passed to cuda compiler
+NVXX_FLAGS= -O3 -arch=sm_35
+
+# ---------------------------------------------------------------
+# Linker / Loader 
+
+# Flags passed to compiler for linking and loading
+LDFLAGS=
+
+# ---------------------------------------------------------------
+# Archiver
+
+# Library archiver command (for creating static libraries)
+AR=ar
+
+# Flags (command line options) passed to archiver
+ARFLAGS=rcs
+
+#-----------------------------------------------------------------------
+# Paths to header and library files for required external libraries
+
+# Gnu Scientific Library
+# Note: Paths may be automatically generated using gsl-config
+#PSCF_GSL=1
+ifdef PSCF_GSL
+  GSL_INC=SUB_GSL_INC
+  GSL_LIB=SUB_GSL_LIB
+endif
+
+# FFTW Fast Fourier transform library
+PSPC_FFTW=1
+ifdef PSPC_FFTW
+  FFTW_INC=
+  FFTW_LIB=-lfftw3
+endif
+
+# CUDA libraries
+PSSP_GPU_CUDA=1
+ifdef PSSP_GPU_CUDA
+#  PSSP_CUFFT_PREFIX=/usr/local/cuda
+#  CUFFT_INC=-I$(PSSP_CUFFT_PREFIX)/include
+#  CUFFT_LIB=-L$(PSSP_CUFFT_PREFIX)/lib -lcufft -lcudart
+  CUFFT_INC=
+  CUFFT_LIB=-lcufft -lcudart -lcuda -lcurand
+endif
+

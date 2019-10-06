@@ -21,19 +21,21 @@ include $(BLD_DIR)/pssp_gpu/include.mk
 #-----------------------------------------------------------------------
 # Variable definition
 
-PSCF_PS=$(BLD_DIR)/pssp_gpu/pscf_ps
+PSCF_PG=$(BLD_DIR)/pssp_gpu/pscf_pg
 #-----------------------------------------------------------------------
 # Main targets 
 
-all: $(pssp_gpu_OBJS) $(pssp_gpu_LIB) $(PSCF_PS_EXE)
+all: $(pssp_gpu_OBJS) $(pssp_gpu_LIB) $(PSCF_PG_EXE)
 
 move:
-	mv $(BIN_DIR)/pscf_pssp $(BIN_DIR)/../../pscfpp_test/pscf_pssp_openmp_for
+	mv $(BIN_DIR)/pscf_pgsp $(BIN_DIR)/../../pscfpp_test/pscf_pgsp_openmp_for
+
 run1:
 	cd ../../../pscfpp_test && make run4
+
 clean:
 	rm -f $(pssp_gpu_OBJS) $(pssp_gpu_OBJS:.o=.d)
-	rm -f $(PSCF_PS).o $(PSCF_PS).d
+	rm -f $(PSCF_PG).o $(PSCF_PG).d
 	rm -f $(pssp_gpu_LIB)
 	cd tests; $(MAKE) clean
 
@@ -45,12 +47,12 @@ veryclean:
 
 # Executable target
 
-$(PSCF_PS_EXE): $(PSCF_PS).o $(PSSP_gpu_LIBS)
-	$(CXX) $(LDFLAGS) -o $(PSCF_PS_EXE) $(PSCF_PS).o $(LIBS)
+$(PSCF_PG_EXE): $(PSCF_PG).o $(PSSP_gpu_LIBS)
+	$(CXX) $(LDFLAGS) -o $(PSCF_PG_EXE) $(PSCF_PG).o $(LIBS)
 
 # Short name for executable target (for convenience)
-pscf_ps:
-	$(MAKE) $(PSCF_PS_EXE)
+pscf_pg:
+	$(MAKE) $(PSCF_PG_EXE)
 
 #-----------------------------------------------------------------------
 # Include dependency files
@@ -58,4 +60,4 @@ pscf_ps:
 -include $(pssp_gpu_OBJS:.o=.d)
 -include $(pscf_OBJS:.o=.d)
 -include $(util_OBJS:.o=.d)
--include $(PSCF_PS).d 
+-include $(PSCF_PG).d 

@@ -11,13 +11,17 @@
 # uses makefile variables defined in those files.
 #-----------------------------------------------------------------------
 
-# All pscf-specific libraries needed in src/pscf
+# List of pscf-specific libraries needed in src/pscf
 PSCF_LIBS=$(pscf_LIB) $(util_LIB) 
 
-# All libraries needed for executables in src/pscf, including external
+# List of all libraries needed for executables in src/pscf
 LIBS=$(PSCF_LIBS)
+
+# Gnu Scientific Library
 ifdef PSCF_GSL
-LIBS+=$(PSCF_GSL_LIB) 
+  PSCF_DEFS+=-DPSCF_GSL
+  INCLUDES+=$(GSL_INC)
+  LIBS+=$(GSL_LIB) 
 endif
 
 # Preprocessor macro definitions needed in src/pscf
