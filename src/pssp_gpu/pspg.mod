@@ -4,12 +4,13 @@ namespace Pscf
    /**
    * Classes for pseudo-spectral algorithm for periodic boundary conditions.
    */
-   namespace Pssp {
+   namespace Pssp_gpu {
 
       /**
-      * \defgroup Pscf_Pssp_Module Periodic Pseudo-Spectral 
+      * \defgroup Pscf_Pssp_gpu_ Module Periodic Pseudo-Spectral (GPU)
       *
-      * Classes for pseudo-spectral implementation of SCFT for periodic structures.
+      * Pseudo-spectral SCFT for periodic structures on a GPU.
+      *
       * \ingroup Pscf_NS_Module
       */
 

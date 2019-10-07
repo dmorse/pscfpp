@@ -36,7 +36,7 @@ namespace Pssp_gpu {
    /**
    * Fourier transform wrapper for real data.
    *
-   * \ingroup Pssp_Field_Module
+   * \ingroup Pssp_gpu_Field_Module
    */
    template <int D>
    class FFTBatched

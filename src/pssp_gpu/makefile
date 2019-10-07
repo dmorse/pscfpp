@@ -37,12 +37,11 @@ clean:
 	rm -f $(pssp_gpu_OBJS) $(pssp_gpu_OBJS:.o=.d)
 	rm -f $(PSCF_PG).o $(PSCF_PG).d
 	rm -f $(pssp_gpu_LIB)
-	cd tests; $(MAKE) clean
+	rm -f *.o *.d */*.o */*.d
+	#cd tests; $(MAKE) clean
 
 veryclean:
 	$(MAKE) clean
-	-rm -f *.o 
-	-rm -f *.d 
 	-rm -f lib*.a
 
 # Executable target

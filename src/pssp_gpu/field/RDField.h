@@ -23,7 +23,9 @@ namespace Pssp_gpu
 
    /**
    * Field of real single precision values on an FFT mesh on a device.
+   *
    * cufftReal = float
+   *
    * \ingroup Pssp_gpu_Field_Module 
    */
    template <int D>

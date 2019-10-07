@@ -8,13 +8,13 @@
 #include <pssp_gpu/System.h>
 
 /**
-* \page pscf_pssp_gpu_page pscf_pssp_gpu
+* \page pscf_pg_page pscf_pg
 *
-* Polymer Self-Consistent Field Theory - One-dimensional Finite Difference
+* Polymer Self-Consistent Field Theory - Pseudo-spectral Periodic (GPU enabled)
 *
 * Usage:
 *
-*    pscf_pssp_gpu [-e] [-r file] [-p file] [-c file] [-i prefix] [-o prefix]
+*    pscf_pg [-e] [-r file] [-p file] [-c file] [-i prefix] [-o prefix]
 *
 * Options:
 *

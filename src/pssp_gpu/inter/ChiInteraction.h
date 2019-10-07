@@ -19,7 +19,7 @@ namespace Pscf {
    /**
    * Flory-Huggins excess free energy model.
    *
-   * \ingroup Pscf_Module
+   * \ingroup Pscf_gpu_Module
    */
    class ChiInteraction : public  Interaction
    {
