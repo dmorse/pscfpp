@@ -166,7 +166,12 @@ namespace Pspc {
       //const Mesh<D>* meshPtr_;
 
       /// Matrix to store derivatives of plane waves 
-      DMatrix<double> dGsq;
+      DMatrix<double> dGsq_;
+
+      /**
+      * Compute dGsq_.
+      */
+      void computedGsq();
 
       /// Stress arising from this block
       FSArray<double, 6> stress_;
@@ -200,12 +205,6 @@ namespace Pspc {
 
       // Work array for wavevector space field.
       RFieldDft<D> qk2_;
-
-      // Work arrays for calculate stress.
-      RField<D> q1p;
-      RField<D> q2p;
-      RFieldDft<D> q1; 
-      RFieldDft<D> q2; 
 
       /// Pointer to associated Mesh<D> object.
       Mesh<D> const* meshPtr_;
