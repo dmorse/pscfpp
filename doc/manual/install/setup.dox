@@ -1,0 +1,127 @@
+/*! \page install_setup_page 2.5 Setup Script
+
+\ref install_environment_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref install_inout_page (Next) 
+<BR>
+
+Users must run a bash script named "setup" before attempting to compile 
+any code.  This script is located in the pscfpp/ root directory, and 
+must be executed from this directory. The setup script installs a variety 
+of files that are needed to compile simpatico but that are not created 
+by cloning the github repository.  The files installed by this script 
+include configuration files that a user may need to modify in order to
+adapt the simpatico build system to a particular environment or to 
+enable optional features, and other makefile fragments and C++ files 
+that users commonly need to modify in order to add new capabilities. It 
+is only necessary to invoke the setup script once, before the first time 
+you compile any code.
+
+The most important file created by the setup script a file named config.mk
+in the pscfpp/src directory, which is the main configuration file. This 
+file is a makefile fragment that defines variables that specify (among 
+other things) the names of the commands used to compile serial and 
+MPI-enabled code, and some command line options that are passed to the 
+compiler. Users are free to edit this file after it is created as needed
+to adapt the configuration to a particular system, compiler and MPI 
+library. Explanations of the variables defined in this file are given in
+extensive comments in the file. 
+
+\section install_setup_default_sec Default configuration 
+
+To create a default configuration appropriate for a generic unix-like 
+environment, change directory (cd) to the pscfpp/ root directory,
+and then enter:
+\code
+> ./setup
+\endcode
+Note the dot and backslash ("./") before the name of the script.  These 
+must be included to tell the unix shell to look for a script named setup 
+in the current working directory, rather than searching the directories 
+listed in the PATH environment variable for a command with this name.
+The default configuration created by this command assumes that you will
+compile serial code with the gcc compiler, using the g++ compiler command, 
+and that MPI code will be compiled using a wrapper script named "mpicxx".
+
+\section install_setup_special_sec Specialized configuration 
+
+To create predefined configurations for the other types of system, the 
+setup script may also be invoked with a single argument that gives the 
+name of a file containing definitions of variables appropriate to a 
+particular choice of compiler and computing environment.  For example, 
+invoking the command
+\code
+\> ./setup intel
+\endcode
+would instead create configuration files with settings appropriate to 
+a linux system on which one uses the intel C++ compiler. 
+
+When the setup script is invoked with such an argument, the argument 
+(e.g.  "intel") must be the name of a file that exists in the directory 
+pscfpp/make/compiler. Each file in that directory contains a set of 
+variable definitions that specify compiler commands and options 
+appropriate to a specific combination of compiler, MPI library and 
+operating system environment.  We refer to these files as compiler 
+setup files. When the setup script is invoked with an argument, it 
+reads the associated compiler setup file and copies the definitions 
+given in the setup file into a new config.mk configuration file that 
+is created by the setup script.
+
+When the the setup script is invoked with no argument, the script reads
+a file named "pscfpp/make/default" by default. Invoking setup with no 
+argument is thus equivalent to invoking "./setup default". 
+
+\section install_setup_local_file_sec Customized configuration
+
+The "pscfpp/src/make/compiler" directory initially contains only 
+the default setup file.  If the setting in this file are not exactly 
+appropriate for a users system, the user may create a local customized 
+version as follows:
+
+  - Create a copy of the default file within the src/make compiler 
+    directory with a new name such as "local", e.g., by entering 
+    \code
+    > cp default local
+    \endcode
+    from within the pscfpp/make/compiler director.
+
+  - Use a text editor (e.g., vi or emacs) to modify the variable definitions 
+    in the new file as needed to accomodate a particular system.
+
+  - Rerun the "setup" script using the name of the new file as an argument, 
+    e.g., by entering
+    \code
+    > ./setup local
+    \endcode
+    from the pscfpp/ root directory.
+
+In order to understand the meanings of the variables defined in the compiler 
+setup files, we recommend that you first run the setup script with no argument 
+and the read the comments in the file src/config.mk that is created by the 
+setup script, which briefly explain the meaning of each of the makefile 
+variables. If you compare the resulting file to the file make/compiler/local, 
+you will see that the "default" compiler setup file will have simply been 
+copied into the middle part of the src/config.mk file. 
+
+Users may change values of variables defined in the main configuration file
+either by making a customized compiler setup file in the src/make/compiler
+directory before running the setup script, as described above, or by editing 
+the files bld/config.mk and src/config.mk after running the setup script, or 
+both. The advantages of storing required changes in a compiler setup file in 
+the make/compiler directory, rather than just editing the file src/config.mk 
+are that:
+
+   - The files src/config.mk and bld/config.mk will be erased if you invoke
+     "make veryclean" to start over with a fresh configuration, but files
+     created by users in the make/compiler directory will not be erased by
+     this makefile target. 
+
+   - Changes made in customized compiler configuration file will be copied
+     to both src/config.mk and bld/config.mk and will thus be used in both
+     in-source and out-of-source builds.
+
+<BR>
+\ref install_environment_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref install_page   (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref install_inout_page (Next) 
+
+*/

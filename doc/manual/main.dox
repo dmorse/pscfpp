@@ -8,9 +8,23 @@ mixtures.
 <ul style="list-style: none;">
  <li> \subpage about_page "1. About"
  </li>
- <li> \subpage user_page "2. User Guide"
+ <li> \subpage install_page "2. Installation"
    <ul style="list-style: none;">
-   <li> \ref user_compile_page  </li>
+   <li> \ref install_require_page  </li>
+   <li> \ref install_source_page  </li>
+   <li> \ref install_overview_page  </li>
+   <li> \ref install_environment_page  </li>
+   <li> \ref install_setup_page  </li>
+   <li> \ref install_inout_page  </li>
+   <li> \ref install_compile_out_page  </li>
+   <li> \ref install_compile_in_page  </li>
+   <li> \ref install_configure_page  </li>
+   <li> \ref install_doc_page  </li>
+   </ul>
+ </li>
+ <li> \subpage user_page "3. User Guide"
+   <ul style="list-style: none;">
+   <li> \ref user_page  </li>
    </ul>
  </li>
  <li> \subpage developer_page "5. Developer Information"
