@@ -278,14 +278,6 @@ namespace Pscf {
 
    };
 
-   // Static member variable declaration templates
-
-   template <int D> 
-   SpaceSymmetry<D> SpaceSymmetry<D>::identity_;
-
-   template <int D> 
-   bool SpaceSymmetry<D>::hasIdentity_;
-
    // Explicit specialization of members
 
    template <> 
@@ -484,6 +476,14 @@ namespace Pscf {
       return in;
    }
 
+   // Define static members
+   template<int D> 
+   SpaceSymmetry<D> SpaceSymmetry<D>::identity_ = SpaceSymmetry<D>();
+
+   template<int D> 
+   bool SpaceSymmetry<D>::hasIdentity_ = false;
+
+
    #ifndef PSCF_SPACE_SYMMETRY_TPP
    // Suppress implicit instantiation
    extern template class SpaceSymmetry<1>;
@@ -492,5 +492,4 @@ namespace Pscf {
    #endif 
 
 }
-//#include "SpaceSymmetry.tpp"
 #endif
