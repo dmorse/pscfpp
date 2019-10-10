@@ -8,13 +8,13 @@
 #include <pspc/System.h>
 
 /**
-* \page pscf_ps3d_page pscf_ps3d
+* \page pscf_pc2d_page pscf_pc2d
 *
-* Polymer Self-Consistent Field Theory - Three-dimensional, Pseudo-spectral
+* Polymer Self-Consistent Field Theory - Periodic 2D (CPU)
 *
 * Usage:
 *
-*    pscf_ps3d [-e] [-p file] [-c file] [-i prefix] [-o prefix]
+*    pscf_pc2d [-e] [-p file] [-c file] [-i prefix] [-o prefix]
 *
 *
 *    Note: Normal usage requires both a parameter file (-p option) and
@@ -44,12 +44,11 @@
 *  -o prefix
 *
 *   Set the output file path prefix, given by the argument "prefix".
-*
 */
 
 int main(int argc, char **argv)
 {
-   Pscf::Pspc::System<3> system;
+   Pscf::Pspc::System<2> system;
 
    // Process command line options
    system.setOptions(argc, argv);

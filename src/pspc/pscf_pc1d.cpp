@@ -8,13 +8,13 @@
 #include <pspc/System.h>
 
 /**
-* \page pscf_ps1d_page pscf_ps1d
+* \page pscf_pc1d_page pscf_pc1d
 *
-* Polymer Self-Consistent Field Theory - One-dimensional Pseudo-spectral
+* Polymer Self-Consistent Field Theory - Periodic 1D (CPU)
 *
 * Usage:
 *
-*    pscf_ps1d [-e] [-p file] [-c file] [-i prefix] [-o prefix]
+*    pscf_pc1d [-e] [-p file] [-c file] [-i prefix] [-o prefix]
 *
 *
 *    Note: Normal usage requires both a parameter file (-p option) and
