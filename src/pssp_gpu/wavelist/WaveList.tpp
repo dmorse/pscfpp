@@ -1,5 +1,5 @@
-#ifndef PSSP_GPU_WAVE_LIST_TPP
-#define PSSP_GPU_WAVE_LIST_TPP
+#ifndef PSPG_WAVE_LIST_TPP
+#define PSPG_WAVE_LIST_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -11,7 +11,7 @@
 
 #include "WaveList.h"
 #include "cuComplex.h"
-#include <pssp_gpu/GpuResources.h>
+#include <pspg/GpuResources.h>
 
 //need a reference table that maps index to a pair wavevector
 //ideally we can have a group of thread dealing with only
@@ -69,7 +69,7 @@ static __global__ void makeDksqReduction(cufftReal* dksq, const int* partnerId,
 
 
 namespace Pscf {
-namespace Pssp_gpu
+namespace Pspg
 {
    template <int D>
    WaveList<D>::WaveList() {

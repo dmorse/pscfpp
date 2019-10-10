@@ -1,5 +1,5 @@
-#ifndef PSSP_GPU_PROPAGATOR_H
-#define PSSP_GPU_PROPAGATOR_H
+#ifndef PSPG_PROPAGATOR_H
+#define PSPG_PROPAGATOR_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -9,13 +9,13 @@
 */
 
 #include <pscf/solvers/PropagatorTmpl.h> // base class template
-#include <pssp_gpu/field/RDField.h>           // member template
+#include <pspg/field/RDField.h>           // member template
 #include <util/containers/DArray.h>      // member template
 
 namespace Pscf { template <int D> class Mesh; }
 
 namespace Pscf { 
-namespace Pssp_gpu
+namespace Pspg
 { 
 
    template <int D> class Block;
@@ -24,7 +24,7 @@ namespace Pssp_gpu
    /**
    * MDE solver for one-direction of one block.
    *
-   * \ingroup Pssp_gpu_Solvers_Module
+   * \ingroup Pspg_Solvers_Module
    */
    template <int D>
    class Propagator : public PropagatorTmpl< Propagator<D> >

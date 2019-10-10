@@ -1,5 +1,5 @@
-#ifndef PSSP_GPU_SHIFT_MINIMUM_H
-#define PSSP_GPU_SHIFT_MINIMUM_H
+#ifndef PSPG_SHIFT_MINIMUM_H
+#define PSPG_SHIFT_MINIMUM_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -12,7 +12,7 @@
 #include <iostream>
 
 namespace Pscf{
-namespace Pssp_gpu{
+namespace Pspg{
 
    using namespace Util;
 

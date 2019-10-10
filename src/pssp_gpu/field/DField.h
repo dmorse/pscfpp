@@ -1,5 +1,5 @@
-#ifndef PSSP_GPU_DFIELD_H
-#define PSSP_GPU_DFIELD_H
+#ifndef PSPG_DFIELD_H
+#define PSPG_DFIELD_H
 
 /*
 * PSCF++ Package 
@@ -11,7 +11,7 @@
 #include <util/global.h>
 
 namespace Pscf {
-namespace Pssp_gpu
+namespace Pspg
 {
 
    using namespace Util;
@@ -20,7 +20,7 @@ namespace Pssp_gpu
    * Dynamic array with aligned data, for use with cufftw library/device code.
    * This class does not offer memory access via operator[]
    *
-   * \ingroup Pssp_gpu_Field_Module
+   * \ingroup Pspg_Field_Module
    */
    template <typename Data>
    class DField

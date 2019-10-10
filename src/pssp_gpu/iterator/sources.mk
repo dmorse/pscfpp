@@ -1,10 +1,10 @@
-pssp_gpu_iterator_= \
-  pssp_gpu/iterator/Iterator.cu 
+pspg_iterator_= \
+  pspg/iterator/Iterator.cu 
 
   
 
-pssp_gpu_iterator_SRCS=\
-	  $(addprefix $(SRC_DIR)/, $(pssp_gpu_iterator_))
-pssp_gpu_iterator_OBJS=\
-	  $(addprefix $(BLD_DIR)/, $(pssp_gpu_iterator_:.cu=.o))
+pspg_iterator_SRCS=\
+	  $(addprefix $(SRC_DIR)/, $(pspg_iterator_))
+pspg_iterator_OBJS=\
+	  $(addprefix $(BLD_DIR)/, $(pspg_iterator_:.cu=.o))
 

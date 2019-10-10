@@ -1,5 +1,5 @@
-#ifndef PSSP_GPU_R_DFIELD_DFT_TPP
-#define PSSP_GPU_R_DFIELD_DFT_TPP
+#ifndef PSPG_R_DFIELD_DFT_TPP
+#define PSPG_R_DFIELD_DFT_TPP
 
 /*
 * PSCF++ Package 
@@ -11,7 +11,7 @@
 #include "RDFieldDft.h"
 
 namespace Pscf {
-namespace Pssp_gpu {
+namespace Pspg {
 
    using namespace Util;
 

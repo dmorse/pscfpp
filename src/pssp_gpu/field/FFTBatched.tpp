@@ -9,7 +9,7 @@
 */
 
 #include "FFTBatched.h"
-#include <pssp_gpu/GpuResources.h>
+#include <pspg/GpuResources.h>
 
 static __global__ void scaleComplexData(cufftComplex* data, cufftReal scale, int size) {
    
@@ -24,7 +24,7 @@ static __global__ void scaleComplexData(cufftComplex* data, cufftReal scale, int
 }
 
 namespace Pscf {
-namespace Pssp_gpu
+namespace Pspg
 {
 
    using namespace Util;

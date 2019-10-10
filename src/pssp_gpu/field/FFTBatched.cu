@@ -8,7 +8,7 @@
 #include "FFTBatched.h"
 
 namespace Pscf {
-namespace Pssp_gpu {
+namespace Pspg {
 
    using namespace Util;
 

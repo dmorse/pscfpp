@@ -1,5 +1,5 @@
-#ifndef PSSP_GPU_WAVE_LIST_H
-#define PSSP_GPU_WAVE_LIST_H
+#ifndef PSPG_WAVE_LIST_H
+#define PSPG_WAVE_LIST_H
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
@@ -8,18 +8,18 @@
 */
 
 #include <pscf/math/IntVec.h>
-#include <pssp_gpu/field/RDFieldDft.h>
-#include <pssp_gpu/field/RDField.h>
+#include <pspg/field/RDFieldDft.h>
+#include <pspg/field/RDField.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/mesh/Mesh.h>
-#include <pssp_gpu/crystal/shiftToMinimum.h>
-#include <pssp_gpu/crystal/UnitCell.h>
+#include <pspg/crystal/shiftToMinimum.h>
+#include <pspg/crystal/UnitCell.h>
 #include <util/containers/DArray.h>
 #include <util/containers/GArray.h>
 #include <util/containers/DMatrix.h>
 
 namespace Pscf { 
-namespace Pssp_gpu
+namespace Pspg
 { 
 
    using namespace Util;

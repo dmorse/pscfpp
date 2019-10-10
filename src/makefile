@@ -1,7 +1,7 @@
 include config.mk
 
 # ======================================================================
-.PHONY: all util pscf fd1d pspc pssp_gpu clean veryclean
+.PHONY: all util pscf fd1d pspc pspg clean veryclean
 
 all: 
 	cd util; $(MAKE) all
@@ -26,10 +26,10 @@ pspc:
 	cd pscf; $(MAKE) all
 	cd pspc; $(MAKE) all
 
-pssp_gpu:
+pspg:
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
-	cd pssp_gpu; $(MAKE) all
+	cd pspg; $(MAKE) all
 
 # Run all unit tests
 run-tests:

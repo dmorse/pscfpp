@@ -1,5 +1,5 @@
-#ifndef PSSP_GPU_BLOCK_TPP
-#define PSSP_GPU_BLOCK_TPP
+#ifndef PSPG_BLOCK_TPP
+#define PSPG_BLOCK_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -11,9 +11,9 @@
 #include "Block.h"
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
-#include <pssp_gpu/crystal/UnitCell.h>
-#include <pssp_gpu/crystal/shiftToMinimum.h>
-#include <pssp_gpu/GpuResources.h>
+#include <pspg/crystal/UnitCell.h>
+#include <pspg/crystal/shiftToMinimum.h>
+#include <pspg/GpuResources.h>
 #include <util/containers/FMatrix.h>      // member template
 #include <util/containers/DArray.h>      // member template
 #include <util/containers/FArray.h>      // member template
@@ -158,7 +158,7 @@ static __global__ void richardsonExpTwinned(cufftReal* qNew, const cufftReal* q1
 }
 
 namespace Pscf { 
-namespace Pssp_gpu {
+namespace Pspg {
 
    using namespace Util;
    
@@ -347,8 +347,8 @@ static __global__ void scaleReal(cufftReal* result, int size, float scale) {
       //cField()[i] = 0.0;
       assignUniformReal<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(cField().cDField(), 0.0, nx);
 
-      Pscf::Pssp_gpu::Propagator<D> const & p0 = propagator(0);
-      Pscf::Pssp_gpu::Propagator<D> const & p1 = propagator(1);
+      Pscf::Pspg::Propagator<D> const & p0 = propagator(0);
+      Pscf::Pspg::Propagator<D> const & p1 = propagator(1);
      
       
       //cudaDeviceSynchronize();
@@ -461,8 +461,8 @@ static __global__ void scaleReal(cufftReal* result, int size, float scale) {
          pStress [i] = 0.0;
       }   
 
-      Pscf::Pssp_gpu::Propagator<D> const & p0 = propagator(0);
-      Pscf::Pssp_gpu::Propagator<D> const & p1 = propagator(1);
+      Pscf::Pspg::Propagator<D> const & p0 = propagator(0);
+      Pscf::Pspg::Propagator<D> const & p1 = propagator(1);
 
       fftBatched_.forwardTransform(p0.head(), qkBatched_, ns_);
       fftBatched_.forwardTransform(p1.head(), qk2Batched_, ns_);

@@ -3,18 +3,18 @@
 
 SRC_DIR_REL =../..
 include $(SRC_DIR_REL)/config.mk
-include $(SRC_DIR)/pssp_gpu/include.mk
+include $(SRC_DIR)/pspg/include.mk
 
 #--------------------------------------------------------------------
 # Main targets 
 
-all: $(pssp_gpu_field_OBJS) 
+all: $(pspg_field_OBJS) 
 
 includes:
 	echo $(INCLUDES)
 
 clean:
-	rm -f $(pssp_gpu_field_OBJS) $(pssp_gpu_field_OBJS:.o=.d) 
+	rm -f $(pspg_field_OBJS) $(pspg_field_OBJS:.o=.d) 
 
 #--------------------------------------------------------------------
 # Include dependency files

@@ -1,5 +1,5 @@
-#ifndef PSSP_GPU_POLYMER_H
-#define PSSP_GPU_POLYMER_H
+#ifndef PSPG_POLYMER_H
+#define PSPG_POLYMER_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -10,11 +10,11 @@
 
 #include "Block.h"
 #include <pscf/solvers/PolymerTmpl.h>
-#include <pssp_gpu/field/RDField.h>
+#include <pspg/field/RDField.h>
 #include <util/containers/FArray.h> 
 
 namespace Pscf { 
-namespace Pssp_gpu { 
+namespace Pspg { 
 
 
    /**
@@ -33,7 +33,7 @@ namespace Pssp_gpu {
    * the parameter file and mu is computed. If the ensemble is
    * open, mu is read from the parameter file and phi is computed.
    *
-   * \ingroup Pssp_gpu_Solvers_Module
+   * \ingroup Pspg_Solvers_Module
    */
    template <int D>
    class Polymer : public PolymerTmpl< Block<D> >

@@ -1,9 +1,9 @@
-pssp_gpu_field_= \
-  pssp_gpu/field/FFT.cu \
-  pssp_gpu/field/FFTBatched.cu
+pspg_field_= \
+  pspg/field/FFT.cu \
+  pspg/field/FFTBatched.cu
 
-pssp_gpu_field_SRCS=\
-	  $(addprefix $(SRC_DIR)/, $(pssp_gpu_field_))
-pssp_gpu_field_OBJS=\
-	  $(addprefix $(BLD_DIR)/, $(pssp_gpu_field_:.cu=.o))
+pspg_field_SRCS=\
+	  $(addprefix $(SRC_DIR)/, $(pspg_field_))
+pspg_field_OBJS=\
+	  $(addprefix $(BLD_DIR)/, $(pspg_field_:.cu=.o))
 

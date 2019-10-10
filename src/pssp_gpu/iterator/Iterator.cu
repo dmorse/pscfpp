@@ -9,12 +9,12 @@
 
 
 namespace Pscf {
-namespace Pssp_gpu
+namespace Pspg
 {
 
    template class Iterator<3>;
    template class Iterator<2>;
    template class Iterator<1>;
 
-} // namespace Pssp_gpu
+} // namespace Pspg
 } // namespace Pscf

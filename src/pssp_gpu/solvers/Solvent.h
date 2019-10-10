@@ -1,5 +1,5 @@
-#ifndef PSSP_GPU_SOLVENT_H
-#define PSSP_GPU_SOLVENT_H
+#ifndef PSPG_SOLVENT_H
+#define PSPG_SOLVENT_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -10,17 +10,17 @@
 
 #include <pscf/chem/Species.h>
 #include <util/param/ParamComposite.h>
-#include <pssp_gpu/field/RDField.h>
+#include <pspg/field/RDField.h>
 
 namespace Pscf { 
-namespace Pssp_gpu { 
+namespace Pspg { 
 
    using namespace Util;
 
    /**
    * Class representing a solvent species.
    *
-   * \ingroup Pssp_gpu_Solvers_Module
+   * \ingroup Pspg_Solvers_Module
    */
    template <int D>
    class Solvent : public Species, public ParamComposite

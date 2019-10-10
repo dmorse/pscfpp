@@ -1,5 +1,5 @@
-#ifndef PSSP_GPU_UNIT_CELL_H
-#define PSSP_GPU_UNIT_CELL_H
+#ifndef PSPG_UNIT_CELL_H
+#define PSPG_UNIT_CELL_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -14,7 +14,7 @@
 #include <iomanip>
 
 namespace Pscf{
-   namespace Pssp_gpu{
+   namespace Pspg{
 
    using namespace Util;
 

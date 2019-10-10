@@ -8,7 +8,7 @@
 #include "Iterator.h"
 
 namespace Pscf {
-namespace Pssp_gpu
+namespace Pspg
 {
 
    using namespace Util;
@@ -26,5 +26,5 @@ namespace Pssp_gpu
    Iterator<D>::~Iterator()
    {}
 
-} // namespace Pssp_gpu
+} // namespace Pspg
 } // namespace Pscf

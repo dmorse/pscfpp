@@ -1,11 +1,11 @@
-pssp_gpu_crystal_= \
-  pssp_gpu/crystal/UnitCell1.cu \
-  pssp_gpu/crystal/UnitCell2.cu \
-  pssp_gpu/crystal/UnitCell3.cu \
-  pssp_gpu/crystal/shiftToMinimum.cu
+pspg_crystal_= \
+  pspg/crystal/UnitCell1.cu \
+  pspg/crystal/UnitCell2.cu \
+  pspg/crystal/UnitCell3.cu \
+  pspg/crystal/shiftToMinimum.cu
 
-pssp_gpu_crystal_SRCS=\
-     $(addprefix $(SRC_DIR)/, $(pssp_gpu_crystal_))
-pssp_gpu_crystal_OBJS=\
-     $(addprefix $(BLD_DIR)/, $(pssp_gpu_crystal_:.cu=.o))
+pspg_crystal_SRCS=\
+     $(addprefix $(SRC_DIR)/, $(pspg_crystal_))
+pspg_crystal_OBJS=\
+     $(addprefix $(BLD_DIR)/, $(pspg_crystal_:.cu=.o))
 

@@ -1,5 +1,5 @@
-#ifndef PSSP_GPU_MIXTURE_TPP
-#define PSSP_GPU_MIXTURE_TPP
+#ifndef PSPG_MIXTURE_TPP
+#define PSPG_MIXTURE_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -9,7 +9,7 @@
 */
 
 #include "Mixture.h"
-#include <pssp_gpu/GpuResources.h>
+#include <pspg/GpuResources.h>
 //#include <fd1d/domain/Domain.h>
 
 #include <cmath>
@@ -27,7 +27,7 @@ static __global__ void accumulateConc(cufftReal* result, double uniform, cufftRe
 }
 
 namespace Pscf { 
-namespace Pssp_gpu
+namespace Pspg
 { 
 
    template <int D>
@@ -44,7 +44,7 @@ namespace Pssp_gpu
    template <int D>
    void Mixture<D>::readParameters(std::istream& in)
    {
-      MixtureTmpl< Pscf::Pssp_gpu::Polymer<D>, Pscf::Pssp_gpu::Solvent<D> >::readParameters(in);
+      MixtureTmpl< Pscf::Pspg::Polymer<D>, Pscf::Pspg::Solvent<D> >::readParameters(in);
       vMonomer_ = 1.0; // Default value
       readOptional(in, "vMonomer", vMonomer_);
       read(in, "ds", ds_);
@@ -159,7 +159,7 @@ namespace Pssp_gpu
       }   
    }  
 
-} // namespace Pssp_gpu
+} // namespace Pspg
 } // namespace Pscf
 
 

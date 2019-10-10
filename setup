@@ -77,7 +77,7 @@ cp make/config/util_config src/util/config.mk
 cp make/config/pscf_config src/pscf/config.mk
 cp make/config/fd1d_config src/fd1d/config.mk
 cp make/config/pspc_config src/pspc/config.mk
-cp make/config/pssp_gpu_config src/pssp_gpu/config.mk
+cp make/config/pspg_config src/pspg/config.mk
 
 #========================================================================
 # Copy files into build directory out-of-source builds
@@ -96,21 +96,21 @@ cp src/util/makefile bld/util/makefile
 cp src/pscf/makefile bld/pscf/makefile
 cp src/fd1d/makefile bld/fd1d/makefile
 cp src/pspc/makefile bld/pspc/makefile
-cp src/pssp_gpu/makefile bld/pssp_gpu/makefile
+cp src/pspg/makefile bld/pspg/makefile
 
 # Copy makefiles in namespace level test directories
 cp src/util/tests/makefile bld/util/tests/makefile
 cp src/pscf/tests/makefile bld/pscf/tests/makefile
 cp src/fd1d/tests/makefile bld/fd1d/tests/makefile
 cp src/pspc/tests/makefile bld/pspc/tests/makefile
-#cp src/pssp_gpu/tests/makefile bld/pssp_gpu/tests/makefile
+#cp src/pspg/tests/makefile bld/pspg/tests/makefile
 
 # Copy namespace level config.mk files
 cp src/util/config.mk bld/util/config.mk
 cp src/pscf/config.mk bld/pscf/config.mk
 cp src/fd1d/config.mk bld/fd1d/config.mk
 cp src/pspc/config.mk bld/pspc/config.mk
-cp src/pssp_gpu/config.mk bld/pssp_gpu/config.mk
+cp src/pspg/config.mk bld/pspg/config.mk
 
 # Copy configure script
 cp src/configure bld/configure

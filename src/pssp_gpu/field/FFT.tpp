@@ -9,12 +9,12 @@
 */
 
 #include "FFT.h"
-#include <pssp_gpu/GpuResources.h>
+#include <pspg/GpuResources.h>
 //forward declaration
 static __global__ void scaleRealData(cufftReal* data, rtype scale, int size);
 
 namespace Pscf {
-namespace Pssp_gpu
+namespace Pspg
 {
 
    using namespace Util;

@@ -8,16 +8,16 @@
 
 SRC_DIR_REL =..
 include $(SRC_DIR_REL)/config.mk
-include $(BLD_DIR)/pssp_gpu/include.mk
+include $(BLD_DIR)/pspg/include.mk
 
 #-----------------------------------------------------------------------
 # Variable definition
 
-PSCF_PG=$(BLD_DIR)/pssp_gpu/pscf_pg
+PSCF_PG=$(BLD_DIR)/pspg/pscf_pg
 #-----------------------------------------------------------------------
 # Main targets 
 
-all: $(pssp_gpu_OBJS) $(pssp_gpu_LIB) $(PSCF_PG_EXE)
+all: $(pspg_OBJS) $(pspg_LIB) $(PSCF_PG_EXE)
 
 move:
 	mv $(BIN_DIR)/pscf_pgsp $(BIN_DIR)/../../pscfpp_test/pscf_pgsp_openmp_for
@@ -26,9 +26,9 @@ run1:
 	cd ../../../pscfpp_test && make run4
 
 clean:
-	rm -f $(pssp_gpu_OBJS) $(pssp_gpu_OBJS:.o=.d)
+	rm -f $(pspg_OBJS) $(pspg_OBJS:.o=.d)
 	rm -f $(PSCF_PG).o $(PSCF_PG).d
-	rm -f $(pssp_gpu_LIB)
+	rm -f $(pspg_LIB)
 	rm -f *.o *.d */*.o */*.d
 	#cd tests; $(MAKE) clean
 
@@ -48,7 +48,7 @@ pscf_pg:
 #-----------------------------------------------------------------------
 # Include dependency files
 
--include $(pssp_gpu_OBJS:.o=.d)
+-include $(pspg_OBJS:.o=.d)
 -include $(pscf_OBJS:.o=.d)
 -include $(util_OBJS:.o=.d)
 -include $(PSCF_PG).d 

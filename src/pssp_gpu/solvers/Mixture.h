@@ -1,5 +1,5 @@
-#ifndef PSSP_GPU_MIXTURE_H
-#define PSSP_GPU_MIXTURE_H
+#ifndef PSPG_MIXTURE_H
+#define PSPG_MIXTURE_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -16,13 +16,13 @@
 
 namespace Pscf { 
    template <int D> class Mesh; 
-   namespace Pssp_gpu{
+   namespace Pspg{
       template <int D> class Basis;
    }
 }
  
 namespace Pscf {
-namespace Pssp_gpu
+namespace Pspg
 {
 
 
@@ -40,7 +40,7 @@ namespace Pssp_gpu
    * A Mixture is associated with a Mesh<D> object, which models a
    * spatial discretization mesh. 
    *
-   * \ingroup Pssp_gpu_Solvers_Module
+   * \ingroup Pspg_Solvers_Module
    */
    template <int D>
    class Mixture : public MixtureTmpl< Polymer<D>, Solvent<D> >
@@ -136,14 +136,14 @@ namespace Pssp_gpu
       */
       double vMonomer() const;
 	  
-      using MixtureTmpl< Pscf::Pssp_gpu::Polymer<D>, Pscf::Pssp_gpu::Solvent<D> >::nMonomer;
-      using MixtureTmpl< Pscf::Pssp_gpu::Polymer<D>, Pscf::Pssp_gpu::Solvent<D> >::nPolymer;
-      using MixtureTmpl< Pscf::Pssp_gpu::Polymer<D>, Pscf::Pssp_gpu::Solvent<D> >::nSolvent;
-      using MixtureTmpl< Pscf::Pssp_gpu::Polymer<D>, Pscf::Pssp_gpu::Solvent<D> >::polymer;
+      using MixtureTmpl< Pscf::Pspg::Polymer<D>, Pscf::Pspg::Solvent<D> >::nMonomer;
+      using MixtureTmpl< Pscf::Pspg::Polymer<D>, Pscf::Pspg::Solvent<D> >::nPolymer;
+      using MixtureTmpl< Pscf::Pspg::Polymer<D>, Pscf::Pspg::Solvent<D> >::nSolvent;
+      using MixtureTmpl< Pscf::Pspg::Polymer<D>, Pscf::Pspg::Solvent<D> >::polymer;
 
    protected:
 
-      using MixtureTmpl< Pscf::Pssp_gpu::Polymer<D>, Pscf::Pssp_gpu::Solvent<D> >::setClassName;
+      using MixtureTmpl< Pscf::Pspg::Polymer<D>, Pscf::Pspg::Solvent<D> >::setClassName;
       using ParamComposite::read;
       using ParamComposite::readOptional;
 
@@ -184,7 +184,7 @@ namespace Pssp_gpu
       return *meshPtr_;
    }
 
-} // namespace Pssp_gpu
+} // namespace Pspg
 } // namespace Pscf
 #include "Mixture.tpp"
 #endif

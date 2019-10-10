@@ -12,11 +12,11 @@
 # defined in those configuration files.
 #-----------------------------------------------------------------------
 
-# Local pscf-specific libraries needed in src/pssp_gpu
-PSSP_GPU_LIBS=$(pssp_gpu_LIB) $(pscf_LIB) $(util_LIB)
+# Local pscf-specific libraries needed in src/pspg
+PSPG_LIBS=$(pspg_LIB) $(pscf_LIB) $(util_LIB)
 
 # All libraries needed in executables built in src/pssp
-LIBS=$(PSSP_GPU_LIBS)
+LIBS=$(PSPG_LIBS)
 
 # Gnu scientific library
 ifdef PSCF_GSL
@@ -25,20 +25,20 @@ ifdef PSCF_GSL
 endif
 
 # Cuda FFT library
-ifdef PSSP_GPU_CUDA
-  PSSP_GPU_DEFS+=-DPSSP_GPU_FFTW -DGPU_OUTER
+ifdef PSPG_CUDA
+  PSPG_DEFS+=-DPSPG_FFTW -DGPU_OUTER
   INCLUDES+=$(CUFFT_INC)
   LIBS+=$(CUFFT_LIB)
 endif
 
 # Preprocessor macro definitions needed in src/pssp
-DEFINES=$(UTIL_DEFS) $(PSCF_DEFS) $(PSSP_GPU_DEFS) 
+DEFINES=$(UTIL_DEFS) $(PSCF_DEFS) $(PSPG_DEFS) 
 
 # Dependencies on build configuration files
 MAKE_DEPS= -A$(BLD_DIR)/config.mk
 MAKE_DEPS+= -A$(BLD_DIR)/util/config.mk
 MAKE_DEPS+= -A$(BLD_DIR)/pscf/config.mk
-MAKE_DEPS+= -A$(BLD_DIR)/pssp_gpu/config.mk
+MAKE_DEPS+= -A$(BLD_DIR)/pspg/config.mk
 
 # Pattern rule to compile *.cpp class source files in src/pssp
 $(BLD_DIR)/%.o:$(SRC_DIR)/%.cpp
@@ -55,7 +55,7 @@ $(BLD_DIR)/%.o:$(SRC_DIR)/%.cu
 #endif
 
 # Pattern rule to compile *.ccu test programs in src/pssp/tests
-$(BLD_DIR)/% $(BLD_DIR)/%.o:$(SRC_DIR)/%.ccu $(PSSP_GPU_LIBS)
+$(BLD_DIR)/% $(BLD_DIR)/%.o:$(SRC_DIR)/%.ccu $(PSPG_LIBS)
 	$(NVXX)  $(NVXXFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $<
 	$(NVXX) $(LDFLAGS) $(INCLUDES) $(DEFINES) -o $(@:.o=) $@ $(LIBS)
 ifdef MAKEDEP

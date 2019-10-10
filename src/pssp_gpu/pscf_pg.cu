@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pssp_gpu/System.h>
+#include <pspg/System.h>
 
 /**
 * \page pscf_pg_page pscf_pg
@@ -48,7 +48,7 @@
 int main(int argc, char **argv)
 {
    
-   Pscf::Pssp_gpu::System<3> system;
+   Pscf::Pspg::System<3> system;
 
    // Process command line options
    system.setOptions(argc, argv);

@@ -1,5 +1,5 @@
-#ifndef PSSP_GPU_CHI_INTERACTION_H
-#define PSSP_GPU_CHI_INTERACTION_H
+#ifndef PSPG_CHI_INTERACTION_H
+#define PSPG_CHI_INTERACTION_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -12,7 +12,7 @@
 #include <util/global.h>                  
 
 namespace Pscf {
-   namespace Pssp_gpu{
+   namespace Pspg{
 
    using namespace Util;
 

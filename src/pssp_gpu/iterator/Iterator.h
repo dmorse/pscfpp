@@ -1,5 +1,5 @@
-#ifndef PSSP_GPU_ITERATOR_H
-#define PSSP_GPU_ITERATOR_H
+#ifndef PSPG_ITERATOR_H
+#define PSPG_ITERATOR_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -12,7 +12,7 @@
 #include <util/global.h>                  
 
 namespace Pscf {
-namespace Pssp_gpu
+namespace Pspg
 {
 
    template <int D>
@@ -23,7 +23,7 @@ namespace Pssp_gpu
    /**
    * Base class for iterative solvers for SCF equations.
    *
-   * \ingroup Pssp_gpu_Iterator_Module
+   * \ingroup Pspg_Iterator_Module
    */
    template <int D>
    class Iterator : public ParamComposite
@@ -59,7 +59,7 @@ namespace Pssp_gpu
       System<D>* systemPtr_;
    };
 
-} // namespace Pssp_gpu
+} // namespace Pspg
 } // namespace Pscf
 #include "Iterator.tpp"
 #endif

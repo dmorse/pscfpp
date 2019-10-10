@@ -1,5 +1,5 @@
-#ifndef PSSP_GPU_SYSTEM_H
-#define PSSP_GPU_SYSTEM_H
+#ifndef PSPG_SYSTEM_H
+#define PSPG_SYSTEM_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -9,15 +9,15 @@
 */
 
 #include <util/param/ParamComposite.h>      // base class
-#include <pssp_gpu/solvers/Mixture.h>       // member
-//#include <pssp_gpu/basis/Basis.h>          // member
-#include <pssp_gpu/iterator/FtsIterator.h>
-#include <pssp_gpu/inter/ChiInteraction.h>
+#include <pspg/solvers/Mixture.h>       // member
+//#include <pspg/basis/Basis.h>          // member
+#include <pspg/iterator/FtsIterator.h>
+#include <pspg/inter/ChiInteraction.h>
 #include <pscf/mesh/Mesh.h>                 // member
-#include <pssp_gpu/crystal/UnitCell.h>      // member
+#include <pspg/crystal/UnitCell.h>      // member
 #include <pscf/homogeneous/Mixture.h>       // member
-#include <pssp_gpu/wavelist/WaveList.h>
-#include <pssp_gpu/field/RDField.h>         // typedef
+#include <pspg/wavelist/WaveList.h>
+#include <pspg/field/RDField.h>         // typedef
 #include <util/containers/DArray.h>         // member template
 #include <util/containers/Array.h>          // function parameter
 #include <util/misc/FileMaster.h>           // member
@@ -26,7 +26,7 @@
 
 
 namespace Pscf {
-namespace Pssp_gpu
+namespace Pspg
 {
    template <int D> class FtsIterator;
    class Sweep;
@@ -37,7 +37,7 @@ namespace Pssp_gpu
    /**
    * Main class in SCFT simulation of one system.
    *
-   * \ingroup Pscf_Pssp_gpu_Module
+   * \ingroup Pscf_Pspg_Module
    */
    template <int D>
    class System : public ParamComposite
@@ -636,7 +636,7 @@ namespace Pssp_gpu
    inline double System<D>::pressure() const
    {  return pressure_; }
 
-} // namespace Pssp_gpu
+} // namespace Pspg
 } // namespace Pscf
 #include "System.tpp"
 #endif

@@ -6,7 +6,7 @@
 */
 
 #include "System.h"
-#include <pssp_gpu/GpuResources.h>
+#include <pspg/GpuResources.h>
 
 #include <pscf/homogeneous/Clump.h>
 
@@ -21,7 +21,7 @@
 #include <string>
 #include <getopt.h>
 #include <cstdlib>
-#include <pssp_gpu/crystal/shiftToMinimum.h>
+#include <pspg/crystal/shiftToMinimum.h>
 //#include <unistd.h>
 
 
@@ -31,7 +31,7 @@ int THREADS_PER_BLOCK;
 int NUMBER_OF_BLOCKS;
 
 namespace Pscf {
-namespace Pssp_gpu
+namespace Pspg
 {
 
    using namespace Util;
@@ -1092,5 +1092,5 @@ namespace Pssp_gpu
    }
 
 
-} // namespace Pssp_gpu
+} // namespace Pspg
 } // namespace Pscf

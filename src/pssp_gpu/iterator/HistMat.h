@@ -1,10 +1,10 @@
-#ifndef PSSP_GPU_HIST_MAT_H
-#define PSSP_GPU_HIST_MAT_H
+#ifndef PSPG_HIST_MAT_H
+#define PSPG_HIST_MAT_H
 
 #include <util/containers/DMatrix.h>
 
 namespace Pscf {
-namespace Pssp_gpu
+namespace Pspg
 {
 	using namespace Util;
 	template <typename Data>

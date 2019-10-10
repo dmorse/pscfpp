@@ -1,5 +1,5 @@
-#ifndef PSSP_GPU_R_DFIELD_H
-#define PSSP_GPU_R_DFIELD_H
+#ifndef PSPG_R_DFIELD_H
+#define PSPG_R_DFIELD_H
 
 /*
 * PSCF++ Package 
@@ -15,7 +15,7 @@
 #include <cufft.h>
 
 namespace Pscf {
-namespace Pssp_gpu
+namespace Pspg
 {
 
    using namespace Util;
@@ -26,7 +26,7 @@ namespace Pssp_gpu
    *
    * cufftReal = float
    *
-   * \ingroup Pssp_gpu_Field_Module 
+   * \ingroup Pspg_Field_Module 
    */
    template <int D>
    class RDField : public DField<cufftReal>

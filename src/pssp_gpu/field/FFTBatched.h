@@ -1,5 +1,5 @@
-#ifndef PSSP_GPU_FFT_BATCHED_H
-#define PSSP_GPU_FFT_BATCHED_H
+#ifndef PSPG_FFT_BATCHED_H
+#define PSPG_FFT_BATCHED_H
 
 /*
 * PSCF++ Package 
@@ -8,8 +8,8 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pssp_gpu/field/RDField.h>
-#include <pssp_gpu/field/RDFieldDft.h>
+#include <pspg/field/RDField.h>
+#include <pspg/field/RDFieldDft.h>
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
 
@@ -19,7 +19,7 @@
 
 //temporary for debugging
 #include <iostream>
-#include <pssp_gpu/field/FFT.h> //for definition of rtype
+#include <pspg/field/FFT.h> //for definition of rtype
 //#ifdef SINGLE_PRECISION
 //typedef float rtype;
 //#else
@@ -28,7 +28,7 @@
 //typedef rtype; //some type in FFT.h
 
 namespace Pscf {
-namespace Pssp_gpu {
+namespace Pspg {
 
    using namespace Util;
    using namespace Pscf;
@@ -36,7 +36,7 @@ namespace Pssp_gpu {
    /**
    * Fourier transform wrapper for real data.
    *
-   * \ingroup Pssp_gpu_Field_Module
+   * \ingroup Pspg_Field_Module
    */
    template <int D>
    class FFTBatched

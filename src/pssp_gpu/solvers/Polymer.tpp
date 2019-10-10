@@ -1,5 +1,5 @@
-#ifndef PSSP_GPU_POLYMER_TPP
-#define PSSP_GPU_POLYMER_TPP
+#ifndef PSPG_POLYMER_TPP
+#define PSPG_POLYMER_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -9,10 +9,10 @@
 */
 
 #include "Polymer.h"
-#include <pssp_gpu/GpuResources.h>
+#include <pspg/GpuResources.h>
 
 namespace Pscf {
-namespace Pssp_gpu { 
+namespace Pspg { 
 
    template <int D>
    Polymer<D>::Polymer()

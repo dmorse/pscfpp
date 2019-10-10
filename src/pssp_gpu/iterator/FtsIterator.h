@@ -1,5 +1,5 @@
-#ifndef PSSP_GPU_FTS_ITERATOR_H
-#define PSSP_GPU_FTS_ITERATOR_H
+#ifndef PSPG_FTS_ITERATOR_H
+#define PSPG_FTS_ITERATOR_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -8,14 +8,14 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pssp_gpu/iterator/Iterator.h> // base class
-#include <pssp_gpu/solvers/Mixture.h>
+#include <pspg/iterator/Iterator.h> // base class
+#include <pspg/solvers/Mixture.h>
 #include <pscf/math/LuSolver.h>
 #include <util/containers/DArray.h>
 #include <util/containers/DMatrix.h>
 #include <util/containers/RingBuffer.h>
-#include <pssp_gpu/iterator/HistMat.h>
-#include <pssp_gpu/field/RDField.h>
+#include <pspg/iterator/HistMat.h>
+#include <pspg/field/RDField.h>
 #include <util/containers/FArray.h>
 
 //Always defined. Locks out legacy code that does nothing. Eventually remove all legacy code
@@ -25,14 +25,14 @@
 //#define GPU_SCFT
 
 namespace Pscf {
-   namespace Pssp_gpu
+   namespace Pspg
    {
       using namespace Util;
 
       /**
       * Anderson mixing iterator for the pseudo spectral method
       *
-      * \ingroup Pssp_gpu_Iterator_Module
+      * \ingroup Pspg_Iterator_Module
       */
       template <int D>
       class FtsIterator : public Iterator<D>

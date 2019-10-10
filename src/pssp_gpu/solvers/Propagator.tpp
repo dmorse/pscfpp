@@ -1,5 +1,5 @@
-#ifndef PSSP_GPU_PROPAGATOR_TPP
-#define PSSP_GPU_PROPAGATOR_TPP
+#ifndef PSPG_PROPAGATOR_TPP
+#define PSPG_PROPAGATOR_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -15,7 +15,7 @@
 #include <cuda.h>
 #include <device_functions.h>
 #include <thrust/count.h>
-#include <pssp_gpu/GpuResources.h>
+#include <pspg/GpuResources.h>
 #include <pscf/mesh/Mesh.h>
 //#include <Windows.h>
 
@@ -106,7 +106,7 @@ static __global__ void inPlacePointwiseMul(cufftReal* a, const cufftReal* b, int
 
 
 namespace Pscf {
-namespace Pssp_gpu {
+namespace Pspg {
 
    using namespace Util;
 

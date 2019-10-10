@@ -1,5 +1,5 @@
-#ifndef PSSP_GPU_FTS_ITERATOR_TPP
-#define PSSP_GPU_FTS_ITERATOR_TPP
+#ifndef PSPG_FTS_ITERATOR_TPP
+#define PSPG_FTS_ITERATOR_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -9,16 +9,16 @@
 */
 
 #include "FtsIterator.h"
-#include <pssp_gpu/System.h>
+#include <pspg/System.h>
 #include <util/format/Dbl.h>
 //#include <Windows.h>
-#include <pssp_gpu/GpuResources.h>
+#include <pspg/GpuResources.h>
 #include <util/containers/FArray.h>
 #include <sys/time.h>
 
 
 namespace Pscf {
-namespace Pssp_gpu {
+namespace Pspg {
 
    using namespace Util;
 

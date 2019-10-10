@@ -1,5 +1,5 @@
-#ifndef PSSP_GPU_R_DFIELD_DFT_H
-#define PSSP_GPU_R_DFIELD_DFT_H
+#ifndef PSPG_R_DFIELD_DFT_H
+#define PSPG_R_DFIELD_DFT_H
 
 /*
 * PSCF++ Package 
@@ -15,7 +15,7 @@
 #include <cufft.h>
 
 namespace Pscf {
-namespace Pssp_gpu
+namespace Pspg
 {
 
    using namespace Util;
@@ -24,7 +24,7 @@ namespace Pssp_gpu
    /**
    * Fourier transform of a real field on an FFT mesh.
    *
-   * \ingroup Pssp_gpu_Field_Module
+   * \ingroup Pspg_Field_Module
    */
    template <int D>
    class RDFieldDft : public DField<cufftComplex>

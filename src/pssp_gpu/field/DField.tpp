@@ -1,5 +1,5 @@
-#ifndef PSSP_GPU_DFIELD_TPP
-#define PSSP_GPU_DFIELD_TPP
+#ifndef PSPG_DFIELD_TPP
+#define PSPG_DFIELD_TPP
 
 /*
 * PSCF++ Package 
@@ -14,7 +14,7 @@
 
 
 namespace Pscf {
-namespace Pssp_gpu
+namespace Pspg
 {
 
    using namespace Util;

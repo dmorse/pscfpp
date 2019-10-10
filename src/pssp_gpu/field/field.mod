@@ -1,13 +1,13 @@
 
 namespace Pscf{
-namespace Pssp_gpu{
+namespace Pspg{
 
    /**
-   * \defgroup Pssp_gpu_Field_Module FFT Fields
+   * \defgroup Pspg_Field_Module FFT Fields
    *
    * Fields and FFT plan for use with pseudo-spectral algorithm.
    *
-   * \ingroup Pscf_Pssp_gpu_Module
+   * \ingroup Pscf_Pspg_Module
    */
 
 }

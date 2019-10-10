@@ -8,12 +8,12 @@ include $(SRC_DIR)/pssp/include.mk
 #-----------------------------------------------------------------------
 # Main targets 
 
-all: $(pssp_gpu_crystal_OBJS) 
+all: $(pspg_crystal_OBJS) 
 
 clean:
-	rm -f $(pssp_gpu_crystal_OBJS) $(pssp_gpu_crystal_OBJS:.o=.d) 
+	rm -f $(pspg_crystal_OBJS) $(pspg_crystal_OBJS:.o=.d) 
 
 #-----------------------------------------------------------------------
 # Include dependency files
 
--include $(pssp_gpu_OBJS:.o=.d)
+-include $(pspg_OBJS:.o=.d)

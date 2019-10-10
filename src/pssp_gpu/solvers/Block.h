@@ -1,5 +1,5 @@
-#ifndef PSSP_GPU_BLOCK_H
-#define PSSP_GPU_BLOCK_H
+#ifndef PSPG_BLOCK_H
+#define PSPG_BLOCK_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -10,13 +10,13 @@
 
 #include "Propagator.h"                   // base class argument
 #include <pscf/solvers/BlockTmpl.h>       // base class template
-#include <pssp_gpu/field/RDField.h>            // member
-#include <pssp_gpu/field/RDFieldDft.h>         // member
-#include <pssp_gpu/field/FFT.h>               // member
-#include <pssp_gpu/field/FFTBatched.h>               // member
+#include <pspg/field/RDField.h>            // member
+#include <pspg/field/RDFieldDft.h>         // member
+#include <pspg/field/FFT.h>               // member
+#include <pspg/field/FFTBatched.h>               // member
 #include <util/containers/FArray.h>
-#include <pssp_gpu/crystal/UnitCell.h>
-#include <pssp_gpu/wavelist/WaveList.h>
+#include <pspg/crystal/UnitCell.h>
+#include <pspg/wavelist/WaveList.h>
 
 namespace Pscf { 
    template <int D> class Mesh; 
@@ -24,7 +24,7 @@ namespace Pscf {
 }
 
 namespace Pscf { 
-namespace Pssp_gpu { 
+namespace Pspg { 
 
    using namespace Util;
 
@@ -34,7 +34,7 @@ namespace Pssp_gpu {
    * Derived from BlockTmpl< Propagator<D> >. A BlockTmpl< Propagator<D> > 
    * has two Propagator<D> members and is derived from BlockDescriptor.
    *
-   * \ingroup Pssp_gpu_Solvers_Module
+   * \ingroup Pspg_Solvers_Module
    */
    template <int D>
    class Block : public BlockTmpl< Propagator<D> >
@@ -45,17 +45,17 @@ namespace Pssp_gpu {
       /**
       * Generic field (base class)
       */
-      typedef typename Pscf::Pssp_gpu::Propagator<D>::Field Field;
+      typedef typename Pscf::Pspg::Propagator<D>::Field Field;
 
       /**
       * Monomer chemical potential field.
       */
-      typedef typename Pscf::Pssp_gpu::Propagator<D>::WField WField;
+      typedef typename Pscf::Pspg::Propagator<D>::WField WField;
 
       /**
       * Constrained partition function q(r,s) for fixed s.
       */
-      typedef typename Pscf::Pssp_gpu::Propagator<D>::QField QField;
+      typedef typename Pscf::Pspg::Propagator<D>::QField QField;
 
       // Member functions
 
@@ -132,11 +132,11 @@ namespace Pssp_gpu {
       int ns() const;
 
       // Functions with non-dependent names from BlockTmpl< Propagator<D> >
-      using BlockTmpl< Pscf::Pssp_gpu::Propagator<D> >::setKuhn;
-      using BlockTmpl< Pscf::Pssp_gpu::Propagator<D> >::propagator;
-      using BlockTmpl< Pscf::Pssp_gpu::Propagator<D> >::cField;
-      using BlockTmpl< Pscf::Pssp_gpu::Propagator<D> >::length;
-      using BlockTmpl< Pscf::Pssp_gpu::Propagator<D> >::kuhn;
+      using BlockTmpl< Pscf::Pspg::Propagator<D> >::setKuhn;
+      using BlockTmpl< Pscf::Pspg::Propagator<D> >::propagator;
+      using BlockTmpl< Pscf::Pspg::Propagator<D> >::cField;
+      using BlockTmpl< Pscf::Pspg::Propagator<D> >::length;
+      using BlockTmpl< Pscf::Pspg::Propagator<D> >::kuhn;
 
       // Functions with non-dependent names from BlockDescriptor
       using BlockDescriptor::setId;
