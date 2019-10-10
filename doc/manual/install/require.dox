@@ -154,7 +154,9 @@ listed by the "module avail" command.
 
 On the mesabi cluster at MSI, we normally set up the compilation environment by invoking
 \code
- > module load gcc/6.3.0
+ > module unload gcc
+ > module load gcc/5.4.0
+ > module load fftw/3.3.6-double-ompi-3.1.2-gnu-5.4.0.CentOS7
  > module load cuda
 \endcode
 before compiling pscf++.
