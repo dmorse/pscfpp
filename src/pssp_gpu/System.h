@@ -8,20 +8,20 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/param/ParamComposite.h>     // base class
-#include <pssp_gpu/solvers/Mixture.h>          // member
-#include <pssp_gpu/basis/Basis.h>              // member
+#include <util/param/ParamComposite.h>      // base class
+#include <pssp_gpu/solvers/Mixture.h>       // member
+//#include <pssp_gpu/basis/Basis.h>          // member
 #include <pssp_gpu/iterator/FtsIterator.h>
 #include <pssp_gpu/inter/ChiInteraction.h>
-#include <pscf/mesh/Mesh.h>                // member
-#include <pssp_gpu/crystal/UnitCell.h>         // member
-#include <pscf/homogeneous/Mixture.h>      // member
-#include <util/misc/FileMaster.h>          // member
-#include <util/containers/DArray.h>        // member template
-#include <util/containers/Array.h>         // function parameter
-#include <pssp_gpu/field/RDField.h>             // typedef
+#include <pscf/mesh/Mesh.h>                 // member
+#include <pssp_gpu/crystal/UnitCell.h>      // member
+#include <pscf/homogeneous/Mixture.h>       // member
 #include <pssp_gpu/wavelist/WaveList.h>
-#include <util/random/Random.h>
+#include <pssp_gpu/field/RDField.h>         // typedef
+#include <util/containers/DArray.h>         // member template
+#include <util/containers/Array.h>          // function parameter
+#include <util/misc/FileMaster.h>           // member
+//#include <util/random/Random.h>
 #include <curand.h>
 
 
@@ -247,7 +247,7 @@ namespace Pssp_gpu
       /**
       * Get basis object by reference.
       */
-      Basis<D>& basis();
+      //Basis<D>& basis();
 
       WaveList<D>& wavelist();
 
@@ -332,7 +332,7 @@ namespace Pssp_gpu
       /**
       * Pointer to a Basis object
       */
-      Basis<D>* basisPtr_;
+      //Basis<D>* basisPtr_;
       
       WaveList<D>* wavelistPtr_;
 
@@ -530,6 +530,7 @@ namespace Pssp_gpu
       return *iteratorPtr_;
    }
 
+   #if 0
    /*
    * Get the basis Object
    */
@@ -539,6 +540,7 @@ namespace Pssp_gpu
       UTIL_ASSERT(basisPtr_);
       return *basisPtr_;
    }
+   #endif
 
    template <int D>
    inline WaveList<D>& System<D>::wavelist()

@@ -48,7 +48,7 @@ namespace Pssp_gpu
       homogeneous_(),
       interactionPtr_(0),
       iteratorPtr_(0),
-      basisPtr_(0),
+      //basisPtr_(0),
       wavelistPtr_(0),
       sweepPtr_(0),
       sweepFactoryPtr_(0),
