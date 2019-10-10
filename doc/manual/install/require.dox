@@ -1,0 +1,167 @@
+/*! \page install_require_page 2.1 System Requirements
+
+\ref install_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref install_source_page (Next) 
+<BR>
+
+Pscf++ is designed to be compiled and run in a unix-like environment. 
+The package has been compiled and used on systems running either linux 
+or a recent version of Mac OS X operating systems.  Compilation is 
+controlled by a system of unix makefiles. In order to compile on a
+MacIntosh computer running Mac OS X, the computer must first be configured 
+for development by installing both the XCode integrated development 
+environment and the command line tools for XCode. 
+
+Pscf++ is distributed only as source code, and must be compiled by the 
+user.  All source code that is designed to run on a conventional CPU is 
+written in ANSI 2011 C++ language standard.  Code that is designed to 
+run on a NVidia graphics processing unit (GPU) is written in a Cuda.
+
+\section require_overview_section Overview 
+
+The pscf++ package provides several programs that are designed to 
+run on conventional CPUs on a desktop, laptop or cluster, and others
+that are designed to make use of an NVidia GPU. We distinguish these
+in what follows by referring to CPU programs and GPU-enabled programs
+
+In order to compile all of the CPU programs in the pscf++ package, 
+the system on which the code is compiled must have:
+
+   - a ``git" version control client
+   - a C++ compiler
+   - a python interpreter
+   - the GNU Scientific Library (GSL)
+   - the FFTW fast Fourier transform library.
+
+A git client is needed to obtain (clone) the source code, which is 
+maintained in a git repository. A python interpreter is needed during 
+compilation (but not during execution) because the build system that 
+compiles the pscf++ source codes uses a few python scripts that
+are provided with the package. The GSL is used by several programs
+within the package for linear algebra operations. The FFTW library
+is used by the CPU version of the pseudo-spectral algorithm for 
+periodic microstructures.
+
+In order compile GPU-enabled programs, the system must also have:
+
+   - An NVidia graphics card
+   - A Cuda compiler
+   - the CUFFT GPU accelerated fast Fourier transform library.
+
+\section require_git_section Git client
+
+The source code for pscf++ is hosted on the github server, at
+<a href=http://github.com>github</a>, as project dmorse/pscf++.  
+The source code may be obtained by using the git version control 
+manager program to clone the public 
+<a href=https://github.com/dmorse/pscf++>git repository</a>. 
+To do this, a "git" client must be installed on your computer.
+
+Before attempting to use git to clone the source code, you can check 
+whether a "git" client is installed on your machine by entering 
+\code
+> which git
+\endcode 
+from the command line. If git is installed, this should return a valid 
+path, such as "/usr/bin/git".  If this command does not return a valid 
+path, you need to install a git client before proceeding.
+
+Instructions for installing git on different platforms are given in the 
+documentation on the <a href=http://git-scm.com>git web page</a>, in 
+chapter 1.5 of the Pro Git book by Scott Chacon.  If you are using linux, 
+and git is not already installed, you should use the preferred package 
+manager on your linux distribution to install a git client.  If you are 
+using a Macintosh, a client should be installed as a component of the 
+XCode app and command line tools, which are needed for other purposes.  
+
+Once you have confirmed that a git client is available, you may clone
+a copy of the source code.
+
+\section install_require_python Python 
+
+Similarly, one can check if a python interpreter is accessible by checking
+if the command
+\code
+  \> which python
+\endcode
+returns a non-empty path.
+
+\section install_require_compiler_serial C++ compiler 
+
+By default, the pscf++ build system invokes a C++ compiler using the
+the compiler commnd name "g++". On linux systems, this command invokes 
+the gnu compiler collection (gcc) C++ compiler. On a machine running 
+Mac OS X that is set up for C++ developent (see above), the "g++" 
+command is normally a link to the clang compiler, which is the default 
+compiler for the XCode development environment. The clang compiler 
+accepts almost all the same command line options as the compiler, and 
+thus functions as a drop-in replacement for the gnu C++ compiler.  
+
+It is possible to instead configure the build system during the initial 
+setup process so as to use another compiler is invoked with a different
+command and may require different command line options, such as the intel 
+C++ compiler. When the gcc or clang compiler is not used for compilation, 
+however, the pscf++ build system still invokes the "g++" command to 
+analyse dependencies among source files. The pscf++ build system thus
+always requires that the "g++" command be available on the build system.
+
+One can check if the command "g++" exists by entering
+\code
+  \> which g++ 
+\endcode 
+from a terminal command line. If the "which" utility returns a nonempty 
+path, such as /usr/bin/g++, then the command "g++" exists.
+
+The name of the command used to invoke the compiler when compiling
+C++ files and the options passed to the compiler can be changed by 
+modifying a compiler setup file that is read during initial setup 
+of the build system. The setup process is described in more detail 
+\ref install_setup_page "here".
+
+\section install_require_compiler_cuda Cuda compiler
+
+To compile the GPU-accelerated program, the system must also have an
+appropriate Nvidia GPU and a Cuda development package installed.
+(To be added: Where to look for instructions on installing Cuda).
+
+\section install_require_module Software modules (linux clusters)
+
+On any multi-user linux cluster that is set up for use in computational 
+research, at least one MPI library should already be installed. At the 
+University of Minnesota, pscf++ is often run on a cluster provided by 
+the Minnesota Supercomputer Institute (MSI). Clusters at MSI allow the 
+users to choose from among several different choices of MPI library and 
+compiler.
+
+The computer clusters at MSI, like many similar clusters, use the linux 
+"module" command to allow users to load particular software packages, 
+including particular choices of compiler and MPI library. The "module" 
+command is the user interface to the "Modules" package, which is a system 
+for automating changes in a users unix shell environment that are required 
+in order to use particular software packages. 
+The command
+\code
+  > module avail
+\endcode
+should give a listing of all software modules available for use on a 
+particular system. The syntax for the command to load a particular module 
+is
+\code
+ > module load  module-name
+\endcode
+where module-name represents the name of a particular software module, as 
+listed by the "module avail" command.
+
+On the mesabi cluster at MSI, we normally set up the compilation environment by invoking
+\code
+ > module load gcc/6.3.0
+ > module load cuda
+\endcode
+before compiling pscf++.
+
+<BR>
+\ref install_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref install_page (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref install_source_page (Next) 
+
+*/

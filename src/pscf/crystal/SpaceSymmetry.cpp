@@ -12,16 +12,8 @@ namespace Pscf
 
    using namespace Util;
 
-   // Define static members
-   template<> SpaceSymmetry<1> SpaceSymmetry<1>::identity_;
-   template<> bool             SpaceSymmetry<1>::hasIdentity_ = false;
-
-   template<> SpaceSymmetry<2> SpaceSymmetry<2>::identity_;
-   template<> bool             SpaceSymmetry<2>::hasIdentity_ = false;
-
-   template<> SpaceSymmetry<3> SpaceSymmetry<3>::identity_;
-   template<> bool             SpaceSymmetry<3>::hasIdentity_ = false;
-
+   // Explicit specializations D = 1
+   
    template<>
    int SpaceSymmetry<1>::determinant() const
    { return R_(0, 0); }
@@ -43,6 +35,8 @@ namespace Pscf
       return A;
    }
 
+   // Explicit specializations D = 2
+   
    template<>
    int SpaceSymmetry<2>::determinant() const
    {  return (R_(0,0)*R(1,1) - R(0,1)*R(1,0)); }
@@ -66,6 +60,8 @@ namespace Pscf
       return A;
    }
 
+   // Explicit specializations D = 3
+   
    template<>
    int SpaceSymmetry<3>::determinant() const
    {  
@@ -102,7 +98,8 @@ namespace Pscf
       return A;
    }
 
-   // Explicit instantiation of required instances
+   // Explicit instantiation of required class instances
+   
    template class SpaceSymmetry<1>;
    template class SpaceSymmetry<2>;
    template class SpaceSymmetry<3>;

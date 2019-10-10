@@ -39,7 +39,7 @@ TESTFLAGS= -Wall $(CXX_STD)
 NVXX=nvcc
 
 # Flags always passed to cuda compiler
-NVXX_FLAGS= -O3 -arch=sm_35
+NVXXFLAGS= $(CXX_STD) -O3 -arch=sm_35
 
 # ---------------------------------------------------------------
 # Linker / Loader 

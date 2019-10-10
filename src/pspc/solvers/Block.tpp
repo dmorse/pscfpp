@@ -98,11 +98,7 @@ namespace Pspc {
       qk2_.allocate(mesh.dimensions());
       qf_.allocate(mesh.dimensions());
 
-      q1.allocate(mesh.dimensions());
-      q2.allocate(mesh.dimensions());
-      q1p.allocate(mesh.dimensions());
-      q2p.allocate(mesh.dimensions());
-      dGsq.allocate(kSize_, 6);
+      dGsq_.allocate(kSize_, 6);
 
       propagator(0).allocate(ns_, mesh);
       propagator(1).allocate(ns_, mesh);
@@ -259,7 +255,7 @@ namespace Pspc {
       stress_.clear();
 
       double dels, normal, increment;
-      int r,c;
+      int r, c, m;
  
       normal = 3.0*6.0;
 
@@ -279,39 +275,7 @@ namespace Pspc {
          stress_.append(0.0);
       }   
 
-      IntVec<D> temp;
-      IntVec<D> vec;
-      IntVec<D> Partner;    
-      MeshIterator<D> iter;
-      iter.setDimensions(kMeshDimensions_);
-      int m = 0;
-
-      for (int n = 0; n < r ; ++n) {
-         m = 0;
-         for (iter.begin(); !iter.atEnd(); ++iter) {
-            temp = iter.position();
-            vec = shiftToMinimum(temp, mesh().dimensions(), *unitCellPtr_);
-            dGsq(m, n) = 0;
-            dGsq(m, n) = unitCellPtr_->dksq(vec, n);
-            for (int p = 0; p < D; ++p) {
-               if (temp [p] != 0) {
-                  Partner[p] = mesh().dimensions()[p] - temp[p];
-               } else {
-                  Partner[p] = 0;
-               }
-            }
-            if (mesh().dimensions()[D-1]%2 == 1) {
-               if (temp[D-1] !=0) {
-                  dGsq(m, n) *= 2; 
-               }
-            } else {
-               if (temp[D-1] !=0 && temp[D-1] != (mesh().dimensions()[D-1]/2)) {
-                  dGsq(m, n) *= 2;
-               }             
-            }
-            ++m;
-         }
-      }
+      computedGsq();
 
       Propagator<D> const & p0 = propagator(0);
       Propagator<D> const & p1 = propagator(1);
@@ -319,11 +283,11 @@ namespace Pspc {
       // Evaluate unnormalized integral   
       for (int j = 0; j < ns_ ; ++j) {
            
-           q1p = p0.q(j);
-           fft_.forwardTransform(q1p, q1);
+           qr_ = p0.q(j);
+           fft_.forwardTransform(qr_, qk_);
            
-           q2p = p1.q(ns_ - 1 - j);
-           fft_.forwardTransform(q2p, q2); 
+           qr2_ = p1.q(ns_ - 1 - j);
+           fft_.forwardTransform(qr2_, qk2_); 
 
            dels = ds_;
 
@@ -340,8 +304,8 @@ namespace Pspc {
 
               for (m = 0; m < c ; ++m) {
                  double prod = 0;
-                 prod = (q1[m][0] * q2[m][0]) - (q1[m][1] * q2[m][1]);
-                 prod *= dGsq(m,n); 
+                 prod = (qk2_[m][0] * qk_[m][0]) + (qk2_[m][1] * qk_[m][1]);
+                 prod *= dGsq_(m,n); 
                  increment += prod; 
               }
               increment = (increment * kuhn() * kuhn() * dels)/normal;
@@ -354,6 +318,37 @@ namespace Pspc {
          stress_[i] = stress_[i] - (dQ[i] * prefactor);
       }   
 
+   }
+
+   /*  
+   * Compute dGsq_
+   */  
+   template <int D>
+   void Block<D>::computedGsq()
+   {
+      IntVec<D> temp;
+      IntVec<D> vec;
+      IntVec<D> Partner;
+      MeshIterator<D> iter;
+      iter.setDimensions(kMeshDimensions_);
+
+      for (int n = 0; n < unitCellPtr_->nParameter() ; ++n) {
+         for (iter.begin(); !iter.atEnd(); ++iter) {
+            temp = iter.position();
+            vec = shiftToMinimum(temp, mesh().dimensions(), *unitCellPtr_);
+            dGsq_(iter.rank(), n) = unitCellPtr_->dksq(vec, n);
+            for (int p = 0; p < D; ++p) {
+               if (temp [p] != 0) {
+                  Partner[p] = mesh().dimensions()[p] - temp[p];
+               } else {
+                  Partner[p] = 0;
+               }
+            }
+            if (Partner[D-1] > kMeshDimensions_[D-1]) {
+               dGsq_(iter.rank(), n) *= 2;
+            }
+         }
+      }
    }
 
    /*

@@ -13,6 +13,7 @@
 #include "groupFile.h"
 #include <pscf/crystal/shiftToMinimum.h>
 #include <pscf/mesh/MeshIterator.h>
+#include <algorithm>
 #include <vector>
 #include <set>
 #include <fstream>
