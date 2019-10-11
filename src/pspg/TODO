@@ -1,0 +1,28 @@
+TODO (pspg GPU code):
+
+Short term (clean up):
+----------------------
+
+1) Add explicit specializations of BatchFFT for D=1 and D=2, or rewrite as
+   a template to enable compilation of 2D and 3D code. Then add 2D and 3D 
+   executable names to variable PSCF_PG_EXE in makefile.
+
+2) Change inclusion of "device_functions.h" to appropriate public file to
+   suppress warnings from Cuda compiler.
+
+3) Move WaveList class to directory solvers. It's essentially a utility that
+   is used by the solvers, and doesn't need its own directory.
+
+4) Figure out how to remove getopt/ from the public repository while retaining
+   the ability for GK to link to a local copy on his laptop, perhaps by keeping
+   that directory in the copy on his laptop and privately changing a few lines
+   in source and source.mk files in his copy. 
+
+Longer term:
+------------
+
+1) Restore ability to read symmetry adapted files.
+
+2) Restore iteration with imposed symmetry and output in symmetry adapted format.
+
+3) Add sweep functionality and point solvent

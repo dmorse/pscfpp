@@ -1,0 +1,13 @@
+Subdirectories:
+  util/  general utilities for scientific computation (namespace Util)
+  pscf/  shared classes for package pscfp++ (namespace Pscf)
+  fd1d/  finite difference SCFT (namespace Pscf::Fd1d)
+  pspc/  pseudo-spectral periodic SCFT on a CPU (namespace Pscf::Pspc)
+  pspg/  pseudo-spectral periodic SCFT on a GPU (namespace Pscf::Pspc)
+  test/  unit testing framework (base classes)
+  draft/ unfinished or unused software drafts 
+
+Files (after running the setup script):
+  makefile  - main makefile for in-source compilation
+  config.mk - main configuration file for in-source compilation
+  configure - script for managing optional features

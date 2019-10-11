@@ -64,6 +64,7 @@ veryclean:
 	cd pscf; $(MAKE) veryclean
 	cd fd1d; $(MAKE) veryclean
 	cd pspc; $(MAKE) veryclean
+	cd pspg; $(MAKE) veryclean
 	rm -f util/config.mk
 	rm -f pscf/config.mk
 	rm -f fd1d/config.mk
