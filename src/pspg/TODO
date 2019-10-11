@@ -10,15 +10,18 @@ Short term (clean up):
 2) Change inclusion of "device_functions.h" to appropriate public file to
    suppress warnings from Cuda compiler.
 
-3) Move WaveList class to directory solvers. It's essentially a utility that
-   is used by the solvers, and doesn't need its own directory.
+3) Replace dependence on Pscf::Pspg::ChiInteraction by dependence on the
+   shared class Pscf::ChiInteraction - they look similar or identical. 
 
 4) Figure out how to remove getopt/ from the public repository while retaining
    the ability for GK to link to a local copy on his laptop, perhaps by keeping
    that directory in the copy on his laptop and privately changing a few lines
    in source and source.mk files in his copy. 
 
-5) Try to implement suppression of implicit instantiation and compilation of
+5) Move WaveList class to directory solvers. It's essentially a utility that
+   is used by the solvers, and doesn't need its own directory.
+
+6) Try to implement suppression of implicit instantiation and compilation of
    explicit instances of templates in pspg (as done elsewhere), to allow more
    code to be compiled separately. This uses the C+11 extern syntax to suppress
    implicit instantiation. 

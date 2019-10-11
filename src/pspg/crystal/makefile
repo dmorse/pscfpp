@@ -3,7 +3,7 @@
 
 SRC_DIR_REL =../..
 include $(SRC_DIR_REL)/config.mk
-include $(SRC_DIR)/pssp/include.mk
+include $(SRC_DIR)/pspg/include.mk
 
 #-----------------------------------------------------------------------
 # Main targets 
