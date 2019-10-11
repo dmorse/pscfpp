@@ -18,6 +18,11 @@ Short term (clean up):
    that directory in the copy on his laptop and privately changing a few lines
    in source and source.mk files in his copy. 
 
+5) Try to implement suppression of implicit instantiation and compilation of
+   explicit instances of templates in pspg (as done elsewhere), to allow more
+   code to be compiled separately. This uses the C+11 extern syntax to suppress
+   implicit instantiation. 
+
 Longer term:
 ------------
 
