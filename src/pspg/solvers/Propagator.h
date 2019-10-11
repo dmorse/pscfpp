@@ -9,7 +9,7 @@
 */
 
 #include <pscf/solvers/PropagatorTmpl.h> // base class template
-#include <pspg/field/RDField.h>           // member template
+#include <pspg/field/RDField.h>          // member template
 #include <util/containers/DArray.h>      // member template
 
 namespace Pscf { template <int D> class Mesh; }

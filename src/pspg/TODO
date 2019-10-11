@@ -18,7 +18,10 @@ Short term (clean up):
    that directory in the copy on his laptop and privately changing a few lines
    in source and source.mk files in his copy. 
 
-5) Move WaveList class to directory solvers. It's essentially a utility that
+5) Write unit tests or other self-contained, self-validating tests of the 
+   GPU code and put them in the repository.
+
+6) Move WaveList class to directory solvers. It's essentially a utility that
    is used by the solvers, and doesn't need its own directory.
 
 6) Try to implement suppression of implicit instantiation and compilation of

@@ -16,7 +16,6 @@
 namespace Pscf { 
 namespace Pspg { 
 
-
    /**
    * Descriptor and solver for a branched polymer species.
    *

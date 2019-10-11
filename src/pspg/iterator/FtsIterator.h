@@ -18,15 +18,16 @@
 #include <pspg/field/RDField.h>
 #include <util/containers/FArray.h>
 
-//Always defined. Locks out legacy code that does nothing. Eventually remove all legacy code
-//that references memory in cpu
+// Always defined. Locks out legacy code that does nothing. 
+// Eventually remove all legacy code that references memory in cpu
 //#define GPU_OUTER
-//define this if you want to use scft
+
+// Define this if you want to use scft
 //#define GPU_SCFT
 
 namespace Pscf {
-   namespace Pspg
-   {
+namespace Pspg {
+
       using namespace Util;
 
       /**
