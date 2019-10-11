@@ -73,10 +73,8 @@ namespace Pspc
       fieldIo_.associate(unitCell_, mesh_, fft_, groupName_,
                          basis_, fileMaster_);
 
-      #ifdef PSCF_GSL
       interactionPtr_ = new ChiInteraction(); 
       iteratorPtr_ = new AmIterator<D>(this); 
-      #endif
 
       // sweepFactoryPtr_ = new SweepFactory(*this);
    }

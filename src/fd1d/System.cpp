@@ -10,9 +10,7 @@
 #include <fd1d/iterator/Iterator.h>
 #include <fd1d/sweep/Sweep.h>
 #include <fd1d/sweep/SweepFactory.h>
-#ifdef PSCF_GSL
 #include <fd1d/iterator/NrIterator.h>
-#endif
 #include <fd1d/misc/HomogeneousComparison.h>
 #include <fd1d/misc/FieldIo.h>
 
@@ -61,10 +59,8 @@ namespace Fd1d
    {  
       setClassName("System"); 
 
-      #ifdef PSCF_GSL
       interactionPtr_ = new ChiInteraction(); 
       iteratorPtr_ = new NrIterator(*this); 
-      #endif
       sweepFactoryPtr_ = new SweepFactory(*this);
    }
 

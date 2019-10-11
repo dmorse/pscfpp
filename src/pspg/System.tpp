@@ -65,12 +65,11 @@ namespace Pspg
    {  
       setClassName("System"); 
       std::cout<<"Constructor Called"<<std::endl;
-      #ifdef PSCF_GSL
+
       interactionPtr_ = new ChiInteraction();
       iteratorPtr_ = new FtsIterator<D>(this); 
-      //basisPtr_ = new Basis<D>();
       wavelistPtr_ = new WaveList<D>();
-      #endif
+      //basisPtr_ = new Basis<D>();
       // sweepFactoryPtr_ = new SweepFactory(*this);
    }
 

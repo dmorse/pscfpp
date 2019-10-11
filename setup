@@ -47,13 +47,14 @@ echo "Using compiler settings file $VARFILE"
 
 HAS_GSL="$(which gsl-config)"
 if [ -n "$HAS_GSL" ]; then
-  echo "Found gsl-config command for Gnu Scientific Library"
+  echo "Found gsl-config command for Gnu Scientific Library (GSL)"
   GSL_INC="-isystem $(gsl-config --prefix)/include"
   GSL_LIB=$(gsl-config --libs)
-  sed -e "s|#PSCF_GSL=1|PSCF_GSL=1|" -e "s|=SUB_GSL_INC|=$GSL_INC|" -e "s|=SUB_GSL_LIB|=$GSL_LIB|" "$VARFILE" > make/temp
+  sed -e "s|=GSL_INC_AUTO|=$GSL_INC|" -e "s|=GSL_LIB_AUTO|=$GSL_LIB|" "$VARFILE" > make/temp
+  echo "Paths to GSL header and library files have been set in main config.mk files"
 else
-  echo "Did not find gsl-config command for Gnu Scienttific Library"
-  sed -e "s|#PSCF_GSL=1|PSCF_GSL=1|" "$VARFILE" > make/temp
+  echo "Did not find gsl-config command for Gnu Scientific Library"
+  echo "Check paths GSL_INC and GSL_LIB in (src|blc)/config.mk file"
 fi
 
 #=======================================================================

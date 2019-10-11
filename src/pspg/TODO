@@ -1,7 +1,7 @@
 TODO (pspg GPU code):
 
-Short term (clean up):
-----------------------
+Short term clean up (assigned primarily to G.K.)
+------------------------------------------------
 
 1) Add explicit specializations of BatchFFT for D=1 and D=2, or rewrite as
    a template to enable compilation of 2D and 3D code. Then add 2D and 3D 
@@ -11,29 +11,39 @@ Short term (clean up):
    suppress warnings from Cuda compiler.
 
 3) Replace dependence on Pscf::Pspg::ChiInteraction by dependence on the
-   shared class Pscf::ChiInteraction - they look similar or identical. 
+   shared class Pscf::ChiInteraction. These classes look similar or 
+   identical, so this should be easy.
 
-4) Figure out how to remove getopt/ from the public repository while retaining
+4) Remove dependence on src/pspg/UnitCell classes, to allow use of 
+   non-orthogonal unit cells (e.g., 2D hexagonal). This is made easier
+   by introduction of WaveList, allowing ksq and dksq to be computed
+   only once when the unit cell is initialized or modified. 
+
+5) Figure out how to remove getopt/ from the public repository while retaining
    the ability for GK to link to a local copy on his laptop, perhaps by keeping
    that directory in the copy on his laptop and privately changing a few lines
    in source and source.mk files in his copy. 
 
-5) Write unit tests or other self-contained, self-validating tests of the 
-   GPU code and put them in the repository.
-
 6) Move WaveList class to directory solvers. It's essentially a utility that
    is used by the solvers, and doesn't need its own directory.
 
-6) Try to implement suppression of implicit instantiation and compilation of
+7) Try to implement suppression of implicit instantiation and compilation of
    explicit instances of templates in pspg (as done elsewhere), to allow more
    code to be compiled separately. This uses the C+11 extern syntax to suppress
-   implicit instantiation. 
+   implicit instantiation, and is possible only if the cuda compiler recognizes
+   this syntax.
 
-Longer term:
-------------
+8) Complete doxygen documenttion for all classes, functions and parameters in 
+   src/pspg.
 
-1) Restore ability to read symmetry adapted files.
+Longer term (assigned to Anshul)
+--------------------------------
 
-2) Restore iteration with imposed symmetry and output in symmetry adapted format.
+1) Write unit tests or other self-contained, self-validating tests of the 
+   GPU code and put them in the repository.
 
-3) Add sweep functionality and point solvent
+2) Restore ability to read symmetry adapted files.
+
+3) Restore iteration with imposed symmetry and output in symmetry adapted format.
+
+4) Add sweep functionality and point solvent

@@ -18,13 +18,11 @@ PSPG_LIBS=$(pspg_LIB) $(pscf_LIB) $(util_LIB)
 # All libraries needed in executables built in src/pssp
 LIBS=$(PSPG_LIBS)
 
-# Gnu scientific library
-ifdef PSCF_GSL
-  INCLUDES+=$(GSL_INC)
-  LIBS+=$(GSL_LIB) 
-endif
+# Add paths to Gnu scientific library (GSL)
+INCLUDES+=$(GSL_INC)
+LIBS+=$(GSL_LIB) 
 
-# Cuda FFT library
+# Add paths to Cuda FFT library
 ifdef PSPG_CUDA
   PSPG_DEFS+=-DPSPG_FFTW -DGPU_OUTER
   INCLUDES+=$(CUFFT_INC)

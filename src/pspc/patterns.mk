@@ -20,10 +20,8 @@ PSPC_LIBS=$(pspc_LIB) $(pscf_LIB) $(util_LIB)
 LIBS=$(PSPC_LIBS)
 
 # Add Gnu scientific library
-ifdef PSCF_GSL
-  INCLUDES+=$(GSL_INC)
-  LIBS+=$(GSL_LIB) 
-endif
+INCLUDES+=$(GSL_INC)
+LIBS+=$(GSL_LIB) 
 
 # Add FFTW Fast Fourier transform library
 ifdef PSPC_FFTW

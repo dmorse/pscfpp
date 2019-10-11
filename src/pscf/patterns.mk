@@ -17,12 +17,9 @@ PSCF_LIBS=$(pscf_LIB) $(util_LIB)
 # List of all libraries needed for executables in src/pscf
 LIBS=$(PSCF_LIBS)
 
-# Gnu Scientific Library
-ifdef PSCF_GSL
-  PSCF_DEFS+=-DPSCF_GSL
-  INCLUDES+=$(GSL_INC)
-  LIBS+=$(GSL_LIB) 
-endif
+# Add paths to Gnu Scientific Library (GSL)
+INCLUDES+=$(GSL_INC)
+LIBS+=$(GSL_LIB) 
 
 # Preprocessor macro definitions needed in src/pscf
 DEFINES=$(PSCF_DEFS) $(UTIL_DEFS)
