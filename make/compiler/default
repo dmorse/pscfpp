@@ -61,15 +61,12 @@ ARFLAGS=rcs
 
 # Gnu Scientific Library
 # Note: Paths may be automatically generated using gsl-config
-GSL_INC=SUB_GSL_INC
-GSL_LIB=SUB_GSL_LIB
+GSL_INC=GSL_INC_AUTO
+GSL_LIB=GSL_LIB_AUTO
 
 # FFTW Fast Fourier transform library
-PSPC_FFTW=1
-ifdef PSPC_FFTW
-  FFTW_INC=
-  FFTW_LIB=-lfftw3
-endif
+FFTW_INC=
+FFTW_LIB=-lfftw3
 
 # CUDA libraries
 PSPG_CUDA=1

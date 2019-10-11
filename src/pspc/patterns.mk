@@ -19,16 +19,13 @@ PSPC_LIBS=$(pspc_LIB) $(pscf_LIB) $(util_LIB)
 # List of all libraries needed for main programs in src/pspc
 LIBS=$(PSPC_LIBS)
 
-# Add Gnu scientific library
+# Add paths to Gnu scientific library
 INCLUDES+=$(GSL_INC)
 LIBS+=$(GSL_LIB) 
 
-# Add FFTW Fast Fourier transform library
-ifdef PSPC_FFTW
-  PSPC_DEFS+=-DPSPC_FFTW
-  INCLUDES+=$(FFTW_INC)
-  LIBS+=$(FFTW_LIB) 
-endif
+# Add paths to FFTW Fast Fourier transform library
+INCLUDES+=$(FFTW_INC)
+LIBS+=$(FFTW_LIB) 
 
 # List of all preprocessor macro definitions needed in src/pspc
 # Variables $(PSPC_DEFS) etc are initialized in namespace config.mk files

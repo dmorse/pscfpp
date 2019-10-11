@@ -29,12 +29,6 @@ PSPC_DEFS=
 PSPC_SUFFIX:=
 
 #-----------------------------------------------------------------------
-# Changes related to external libraries
-
-# FFTW Fast Fourier transform library
-# PSPC_DEFS+=-DPSPC_FFTW
-
-#-----------------------------------------------------------------------
 # Path to the pspc library 
 # Note: BLD_DIR is defined in config.mk
 
