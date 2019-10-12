@@ -61,12 +61,12 @@ the user to search for a solution with a specified space group symmetry.
 The new program can read and write the same file formats for representing 
 a field in terms of symmetry-adapted basis functions as those used by 
 the PSCF Fortran program, and provides very similar perfomance. The
-new code does, however, still lack a few features of the original
-Fortran code.  Currently, the most important missing features are the 
-absence of the "sweep" continuation feature and the lack of specialized
-code to simulate point-particle solvents. The CPU programs for solving 
-1, 2 and 3 dimensionally periodic structures are named pscf_pc1d,
-pscf_pc2d and pscf_pc3d, respectively.
+new code does, however, still lack a few features of the original Fortran 
+code.  Currently, the most important missing features are the absence of 
+the "sweep" continuation feature and the lack of specialized code to 
+simulate point-particle solvents. The CPU programs for solving 1, 2 and 
+3 dimensionally periodic structures are named pscf_pc1d, pscf_pc2d and 
+pscf_pc3d, respectively, where "pc" stands for "periodic CPU".
 
 The GPU-accelerated pseudo-spectral solver for periodic structures is 
 based on the same algorithms as CPU pseudo-spectral solver, but is 
@@ -74,8 +74,8 @@ less mature. The most important difference in features is that the
 GPU-accelerated code does yet allow the user to use symmetry -adapted
 basis functions to constrain the space group symmetry for the solution.
 The GPU accelerated programs for solving 1, 2 and 3 dimensionally 
-periodic structures are named pscf_pc1d, pscf_pc2d and pscf_pc3d, 
-respectively.
+periodic structures are named pscf_pg1d, pscf_pg2d and pscf_pg3d, 
+respectively, where "pg" stands for "periodic GPU".
 
 ## Getting the Source Code
 
@@ -88,7 +88,7 @@ clone the repository. To do so, enter the command:
 
    git clone --recursive https://github.com/dmorse/pscfpp.git
 
-Note the use of the --recursive option to the git clone command:
+The use of the --recursive option to the git clone command:
 This is necessary to clone some git submodules that are maintained
 in separate repositories. This command will create a directory 
 called pscfpp/ that contains all of the source code and associated
