@@ -1,9 +1,9 @@
 include config.mk
 
 # ======================================================================
-.PHONY: all util pscf fd1d pspc pspg clean veryclean
+.PHONY: all-cpu util pscf fd1d pspc pspg clean veryclean
 
-all: 
+all-cpu: 
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
 	cd fd1d; $(MAKE) all

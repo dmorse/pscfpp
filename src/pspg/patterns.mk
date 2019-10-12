@@ -23,11 +23,9 @@ INCLUDES+=$(GSL_INC)
 LIBS+=$(GSL_LIB) 
 
 # Add paths to Cuda FFT library
-ifdef PSPG_CUDA
-  PSPG_DEFS+=-DPSPG_FFTW -DGPU_OUTER
-  INCLUDES+=$(CUFFT_INC)
-  LIBS+=$(CUFFT_LIB)
-endif
+PSPG_DEFS+=-DPSPG_FFTW -DGPU_OUTER
+INCLUDES+=$(CUFFT_INC)
+LIBS+=$(CUFFT_LIB)
 
 # Preprocessor macro definitions needed in src/pssp
 DEFINES=$(UTIL_DEFS) $(PSCF_DEFS) $(PSPG_DEFS) 

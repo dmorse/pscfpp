@@ -1,12 +1,12 @@
 include src/config.mk
 # ==========================================================================
-.PHONY: all util pscf fd1d pspc test clean veryclean \
-        html clean-html
+.PHONY: all-cpu util pscf fd1d pspc \
+        clean veryclean html clean-html
 
 # ==============================================================================
 # Main build targets
 
-all:
+all-cpu:
 	cd bld; $(MAKE) all
 
 util:
@@ -21,6 +21,9 @@ fd1d:
 pspc:
 	cd bld; $(MAKE) pspc
 
+pspg:
+	cd bld; $(MAKE) pspg
+
 # ==========================================================================
 # Test targets
 
@@ -29,7 +32,8 @@ test:
 	@cd src/pscf/tests; $(MAKE) all; $(MAKE) run
 	@cd src/fd1d/tests; $(MAKE) all; $(MAKE) run
 	@cat src/util/tests/count >> count
-	@cat src/chem/tests/count >> count
+	@cat src/pscf/tests/count >> count
+	@cat src/fd1d/tests/count >> count
 	@echo " "
 	@echo "Summary"
 	@cat count

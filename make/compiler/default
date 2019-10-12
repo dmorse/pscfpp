@@ -69,13 +69,10 @@ FFTW_INC=
 FFTW_LIB=-lfftw3
 
 # CUDA libraries
-PSPG_CUDA=1
-ifdef PSPG_CUDA
-#  PSSP_CUFFT_PREFIX=/usr/local/cuda
-#  CUFFT_INC=-I$(PSSP_CUFFT_PREFIX)/include
-#  CUFFT_LIB=-L$(PSSP_CUFFT_PREFIX)/lib -lcufft -lcudart
-#  CUFFT_LIB=-lcufft -lcudart -lcuda -lcurand
-  CUFFT_INC=
-  CUFFT_LIB=-lcufft -lcudart
-endif
+# PSSP_CUFFT_PREFIX=/usr/local/cuda
+# CUFFT_INC=-I$(PSSP_CUFFT_PREFIX)/include
+# CUFFT_LIB=-L$(PSSP_CUFFT_PREFIX)/lib -lcufft -lcudart
+# CUFFT_LIB=-lcufft -lcudart -lcuda -lcurand
+CUFFT_INC=
+CUFFT_LIB=-lcufft -lcudart
 
