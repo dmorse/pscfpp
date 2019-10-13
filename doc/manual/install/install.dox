@@ -14,10 +14,9 @@ The following pages give instructions for obtaining, configuring and compiling p
   <li> \subpage install_environment_page  "2.4  Environment Variables" </li>
   <li> \subpage install_setup_page        "2.5  Setup Script" </li>
   <li> \subpage install_inout_page        "2.6  Compiling Out-of-source vs. In-source" </li>
-  <li> \subpage install_compile_out_page  "2.7  Compiling (out-of-source)"</li>
-  <li> \subpage install_compile_in_page   "2.8  Compiling (in-source)"</li>
-  <li> \subpage install_configure_page    "2.9  Optional Features" </li>
-  <li> \subpage install_doc_page          "2.10 Generating Documentation"</li>
+  <li> \subpage install_targets_page      "2.7  Makefile Targets"</li>
+  <li> \subpage install_configure_page    "2.8  Optional Features" </li>
+  <li> \subpage install_doc_page          "2.9  Generating Documentation"</li>
   </ul>
 
 <BR>

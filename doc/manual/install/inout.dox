@@ -1,7 +1,7 @@
 /*! \page install_inout_page 2.6 Compiling Out-of-Source vs. In-Source
 
 \ref install_setup_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref install_compile_out_page (Next) 
+\ref install_targets_page (Next) 
 <BR>
 
 \section install_inout_build Intermediate Files and Build Directories
@@ -16,15 +16,16 @@ a directory that we will refer as the "build" directory.
 
 All C++ source code files for pscf++ are contained in the pscfpp/src/ 
 directory.  The build directory used by pscf++ may either be the same as
-the src/ directory or it may be separate directory, depending on whether the
-code is compiled "in-source" or "out-of-source".  When pscf++ is compiled 
-"in-source", each *.o and *.d file created by compiling a *.cpp source 
-file is placed in the same directory as the corresponding source file.  
-When code is built "out-of-source", these generated files are instead 
-placed in an equivalent location in a separate build directory tree.  By 
-default, pscfpp/bld is used as the build directory tree for out-of-source
-builds.  By default, all executable program files are installed in the 
-pscfpp/bin directory, for either in-source or out-of-source compilation.
+the src/ directory or it may be separate directory, depending on whether 
+the code is compiled "in-source" or "out-of-source".  When pscf++ is 
+compiled "in-source", each *.o and *.d file created by compiling a *.cpp 
+source file is placed in the same directory as the corresponding source 
+file.  When code is built "out-of-source", these generated files are 
+instead placed in an equivalent location in a separate build directory 
+tree.  By default, pscfpp/bld is used as the build directory tree for 
+out-of-source builds. All executable program files are installed in 
+the pscfpp/bin directory, for either in-source or out-of-source 
+compilation.
 
 We refer to the two directories src/ and bld/ in what follows as standard 
 build directories.  The bld/ directory has a directory structure analogous 
@@ -34,29 +35,25 @@ contain the source code for entities defined in a corresponding C++
 namespace. We will refer to these five top level directories of each 
 build directory as namespace level directories.
 
-We recommend that most users compile pscf++ out-of source. The overview
-of instructions given in a \ref install_overview_page "previous page" were
-actually instructions for performing an out-of-source build. Subsequent 
-pages give more detailed instructions for compiling either 
-\ref install_compile_out_page "out-of-source" or 
-\ref install_compile_in_page "in-source". A brief overview of the 
-main differences is given below.
-
 \section install_inout_out Out-of-Source Compilation
 
-Out-of-source compilation may be performed by invoking make with appropriate 
-targets from the root pscfpp/ directory. For example, to compile and 
-install the pseudo-spectral CPU programs, one invokes "make pspc" from the 
-pscfpp/ root directory.  Out of source builds can also be performed by
-invoking make with the same arguments from within the pscfpp/bld directory.
+We recommend that most users compile pscf++ out-of source. The overview
+of instructions given in a \ref install_overview_page "previous page" 
+were instructions for performing an out-of-source build. In those
+instructions, the commands "make all-cpu" and "make pspg" were invoked
+from within the bld/ directory.
 
 \section install_inout_in In-Source Compilation
 
-In-source builds are instead performed by invoking the "make" command with 
-appropriate targets from within the src/ directory. The names of the main
-makefile targets used for this purpose are the same as those used when
-make is invoked from the pscfpp/ root directory. For example, invoking
-"make mcMd" from the src/ directory compiles the mcSim and mdSim programs.
+In order to compile pscf++ in-source, one simply invokes the make utility
+from within the src/ directory, rather than from within the bld/ directory.
+The names of the makefile targets used for this purpose are the same as
+those used by invoking make from the bld/ directory to compile out-of-source.  
+Entering the command "make all-cpu" from the pscfpp/src directory will thus 
+perform an in-source compilation all of executables in the pscfp++ package 
+that do not use GPUs, and install the final executable files in pscfpp/bin. 
+Entering "make pspg" from pscfpp/src on a machine with a cuda compiler will 
+compile the GPU enabled executables.
 
 When compiling in-source, the make command can also be invoked from any 
 subdirectory of the src/ directory in order to compile only recently 
@@ -72,5 +69,5 @@ one or more of the pscf++ programs unchanged.
 <BR>
 \ref install_setup_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref install_page   (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref install_compile_out_page (Next) 
+\ref install_targets_page (Next) 
 */

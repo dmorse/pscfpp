@@ -6,15 +6,17 @@
 <BR>
 
 Below is a brief summary of instructions for compiling all of the pscf++ 
-programs using default settings:
+programs using default settings. The directions given here and in 
+subsequent pages assume that you have cloned the pscf++ repository and
+installed all required dependencies, and that the root directory of the 
+repository is named pscfpp/. Instructions:
 
    - **Set environment variables:**
      Modify the users PATH and PYTHONPATH unix environment variables,
      as discussed \ref install_environment_page "here".
 
    - **Navigate to root directory:**
-     Change directory (cd) to the pscfpp/ root directory (i.e., the root
-     directory of the tree created by cloning the pscf++ repository).
+     Change directory (cd) to the pscfpp/ root directory.
 
    - **Setup:**
      Invoke the "setup" script from the pscfpp/ root directory.  Enter 
@@ -26,39 +28,27 @@ programs using default settings:
      invoke the setup with a filename argument for non-default compiler
      options (as discussed \ref install_setup_page "here").
 
-   - **Compile fd1d:** Compile and install the fd1d program for solving 
-     one-dimensional (1D) problems using a finite difference method on
-     a CPU by invoking
-     \code
-     > make fd1d
-     \endcode
-     from the pscfpp/ root directory. This will install executable named
-     "pscf_fd1d" in the pscfpp/bin directory.
+   - **Change directory to the build directory:**
+     Change directory (cd) to the pscfpp/bld subdirectory, by entering
+     "cd bld" from the root directory.
 
-   - **Compile pspc:** Compile and install programs for solving problems
-     with periodic boundary conditions using a pseudo-spectral algorithm
-     on a CPU by invoking
+   - **Compile all cpu programs:** From pscfpp/bld, enter
      \code
-     > make pspc
+     > make all-cpu
      \endcode
-     from the pscfpp/ root directory. This will install executables named
+     This will create generate a large number of intermediate object 
+     (*.o), dependency (*.d) and library (*.a) files in subdirectories of
+     the pscfpp/bld directory, and install executables named "pscf_fd, 
      "pscf_pc1d", "pscf_pc2d" and "pscf_pc3d" in the pscfpp/bin directory.
 
-   - **Compile pspc:** On a system with an nvidia GPU and a cuda compiler,
-     you can install the GPU-enabled program for solving problems with 
-     period boundary conditions using a psuedo-spectral algorithm by
-     invoking
+   - **Compile GPU accelerated program:** To compile the GPU accelerated
+     executables on a machine with an appropriate nVidia GPU and a cuda
+     compiler, invoke
      \code
      > make pspg
      \endcode
-     from the pscfpp/ root directory. This will install executables named
-     "pscf_pg1d", "pscf_pg2d" and "pscf_pg3d" in the pscfpp/bin directory.
-
-   - **Configure optional features and recompile (optional):** Use the 
-     configure script in the pscfpp/ root directory to enable any desired 
-     optional compile-time features that are disabled by default, and then 
-     recompile any programs that are affected by the change (as discussed 
-     in detail \ref install_configure_page "here").
+     If successful, this will install executables named "pscf_pg1d", 
+     "pscf_pg2d" and "pscf_pg3d" in the pscfpp/bin directory.
 
 Each of the above steps is discussed in more detail in the following pages.
 

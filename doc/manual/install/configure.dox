@@ -1,6 +1,6 @@
 /*! \page install_configure_page 2.9 Optional Features
 
-\ref install_compile_in_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref install_targets_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref install_doc_page (Next) 
 <BR>
 
@@ -159,7 +159,7 @@ config.mk configuration files, or by using the configure script to
 to enable or disable some features from the command line.
 
 <BR>
-\ref install_compile_in_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref install_targets_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref install_page   (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref install_doc_page (Next) 
 */
