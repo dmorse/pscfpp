@@ -50,7 +50,9 @@ if [ -n "$HAS_GSL" ]; then
   echo "Found gsl-config command for Gnu Scientific Library (GSL)"
   GSL_INC="-isystem $(gsl-config --prefix)/include"
   GSL_LIB=$(gsl-config --libs)
-  sed -e "s|=GSL_INC_AUTO|=$GSL_INC|" -e "s|=GSL_LIB_AUTO|=$GSL_LIB|" "$VARFILE" > make/temp
+  sed -e "s|=GSL_INC_AUTO|=$GSL_INC|" -e "s|=GSL_LIB_AUTO|=$GSL_LIB|" "$VARFILE" > make/buf
+  sed -e "s|-isystem|-I|" make/buf > make/temp
+  rm make/buf
   echo "Paths to GSL header and library files have been set in main config.mk files"
 else
   echo "Did not find gsl-config command for Gnu Scientific Library"
@@ -81,7 +83,7 @@ cp make/config/pspc_config src/pspc/config.mk
 cp make/config/pspg_config src/pspg/config.mk
 
 #========================================================================
-# Copy files into build directory out-of-source builds
+# Copy files into build directory for out-of-source builds
 
 # Construct and install main config file in bld directory
 # Set $(ROOT_DIR) to absolute path of directory from which script is invoked
