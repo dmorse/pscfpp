@@ -1,0 +1,20 @@
+/*! \page user_param_page 3.2 Parameter Files
+
+\ref user_usage_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_command_page (Next) 
+<BR>
+
+The parameter files required by the different pscp++ programs use a similar syntax, but contain somewhat different contents. The following three sections discuss elements of the parameter file syntax that are common to all three types of simulation, the parameter file formats for pscf_pspc and pscf_pspg, which are nearly identical.
+
+<h2> Contents:</h2>
+   <ul style="list-style: none;">
+   <li> \subpage user_param_syntax_page  "3.2.1 Syntax" </li>
+   <li> \subpage user_param_fd_page      "3.2.2 pscf_fd" </li>
+   <li> \subpage user_param_ps_page      "3.2.3 pscf_ps" </li>
+   </ul>
+<BR>
+\ref user_usage_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_page  (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_command_page (Next) 
+
+*/

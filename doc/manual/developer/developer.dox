@@ -3,7 +3,7 @@ namespace McMd
 
 /*! \page developer_page 5 Developer Information
 
-\ref extend_page  (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_page  (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
 <BR>
  
 <h2> Contents:</h2> 
@@ -17,7 +17,7 @@ namespace McMd
  
 
 <BR> 
-\ref extend_page  (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_page  (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
 \ref index "Main Page"  (Up) 
  
 */

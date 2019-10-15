@@ -1,0 +1,103 @@
+/*! \page user_usage_page 3.1 Invoking an executable
+
+\ref user_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_param_page (Next) 
+<BR>
+
+\sa \subpage programs_page
+
+\section usage_inputs Input files 
+Every pscfp++ executable requires at least two types of input file: 
+<ul>
+   <li> a \ref usage_parameter_section "parameter" file </li>
+   <li> a \ref usage_command_section "command" file </li>
+</ul>
+All pscfp++ programs use similar formats for the parameter and command files. 
+The contents and formats of these two types of file are discussed briefly below and in more detail in several separate pages (see \ref user_param_page , \ref user_command_page). 
+
+When a program simulation is executed, the parameter file is read first. The parameter file is used to initialize the state of the program and allocate memory. The name of the parameter file is specified when a program is invoked as a argument of the "-p" command line option.
+
+The command file is read and interpreted after the parameter file. The command file is a script that contains a list of commands that are interpreted and executed in sequence. This script controls the program flow after initialization. The name of the command file is specified as the argument of the "-c" command line option.
+
+Some commands in a command file require data to be read from or written to additional files that contain. For example, the the first step in solving a SCFT problem is usually to read an initial guess for the chemical potential fields from a file, while the last step may be to write the converged chemical potential and monomer concentration fields to an output file. The names of these data files are specified as parameters within the command file.
+
+\section usage_run_serial_section Command line usage
+
+All of the pscfp++ programs have a similar command line interface.
+The names of the parameter and command files required to perform a pscfp++ computation are passed to the program as arguments of the "-p" and "-c" command line options, respectively. 
+
+As an example, consider use of the program pscf_pc3d, which is used to treat three dimensionally periodic microstructures. 
+To run this program using a parameter file named "param" and command file named "commands" that are both in the current working directory, one would enter:
+\code
+   pscf_pc3d -p param -c commands
+\endcode
+The same command line options can be used to invoke any other pscf++ program.
+
+During execution, some log information is written to standard output (i.e., the screen). This log output can be directed to a file using, for example, 
+\code
+  pscf_pc3d -p param -c commands > log
+\endcode
+Standard output should normally be redirected to a file when a job is run in background or in a queue. 
+
+\section usage_echo_section The "echo" option
+
+All pscfp++ programs accept a command line option "-e" that causes the contents of each line of the parameter file to be echoed as the file is being read. For example, to use "pscf_pc3d" with echoing to a log file, one could enter
+\code
+   pscf_pc3d -e -p param -c commands > log
+\endcode
+This option is useful for locating errors in the parameter file, because the echoed output ends immediately before the line at which an error in the parameter file is detected, and is followed by an error message that explains the nature of the error. 
+
+Other available command line options are discussed \ref usage_options_section "below".
+
+\section usage_parameter_section Parameter file
+
+The parameter file contains most of the data required to define a system of interest and initialize a calculation.  These data includes: 
+
+- Specification of the structure of one or more molecular species within a mixture.
+- A value for either the volume fraction or chemical potential  of each species within a mixture. 
+- Parameters that specify a spatial domain or unit cell.
+- Parameters that specify the discretization used to solve the SCFT problem, i.e., the number of grid points or plane waves.
+
+\section usage_command_section Command file
+
+The command file contains a sequence of commands that are read and executed in the order they appear. Each line of the command file starts with a capitalized command name, followed by zero or more arguments. The minimal command file for an mcSim simulation looks like this:
+\code
+ITERATE           omega_in
+WRITE_WFIELDS     omega_out
+FINISH  
+\endcode
+This file instructs the program to  ...
+
+
+\section usage_cfgfile_section Field files
+
+
+\section usage_options_section Command line options
+
+All pscfp++ simulations of single systems can be invoked with any of the following command line options:
+<ul>
+  <li> -e: Activates echoing of the parameter file to standard output.</li>
+  <li> -p filename: Specifies the name of a parameter file </li>
+  <li> -c filename: Specifies the name of a command file </li>
+  <li> -i filename: Specifies a prefix string for input data files </li>
+  <li> -o filename: Specifies a prefix string for output data files </li>
+  </li>
+</ul>
+
+The -e (echo) option causes each parameter in the parameter file to be echoed to standard output immediately after it is read. This option takes no arguments.
+
+The -p (parameter) option takes a required string parameter, which is the name of a parameter file.  The -p and -r options are incompatible: The simulation must be initialized with either a parameter or a restart file, but not both.
+
+The -c (command) option takes a required string parameter, which is the name of a command file. 
+
+If this file name is not specified as a command line option, it can be specified as the first argument of the FileMaster parameter block in the parameter file. 
+
+The -i (input prefix) option takes a required string parameter, which is a prefix that will be prepended to the names of all input data files. 
+
+The -o (output prefix) option takes a required string parameter, which is a prefix that will be prepended to the names of all output data files. 
+
+<BR>
+\ref user_page (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_param_page (Next) 
+
+*/

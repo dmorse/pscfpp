@@ -1,0 +1,58 @@
+/*! \page user_example_page 3.5 Examples
+
+\ref user_command_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref developer_page (Next)
+<BR>
+
+A good way to become familiar with the pscf++ simulation programs is to run a few example simulations and examine the associated input and output files.
+A set of examples containing input files for pscf++ simulations are provided  in the pscfpp/examples directory of the pscf++ repository.
+
+\section examples_subdirectories_sec Repository directory structure
+
+Each top level subdirectory of the examples root directory contains examples of simulations of a particular program. 
+The next level of subdirectory specifies a type of physical system. For example, the diblock/ subdirectory contains examples of computations involving diblock copolymer melts. 
+The third level contains specific computations.
+
+\section examples_layout_sec Example directory structure
+
+The input files for each example are in a separate directory, which we will refer to as an example directory.  
+Each example directory contains a set of input files that include at least one parameter file, a command file and an input chemical potential file.
+In the simplest examples, the parameter file is named "param" and the command file is named "command". 
+
+A typical example directory contains files and subdirectories with the following names:
+\code
+    param
+    commands
+    in/
+       omega
+    out/
+\endcode
+Here, in/ and out/ are names of subdirectories. The out/ subdirectoryis initially empty.
+
+\section examples_simulate_sec Usage: Invoking the simulation program
+
+Users may also run example simulations by invoking the relevant simulation program directly from the command line. The relevant program name and command line options for a particular example can be determined, if needed, by reading the "run" script and finding the lines that run and restart the simulation.
+
+To run a simple MC example simulation with the above directory structure, while sending log output to the terminal, one must cd to the main directory for the example (the directory that contains the parameter and command files) and issue the command 
+\code
+    > pscf_pc3d -e -p param -c command 
+\endcode
+To run this simulation in background and redirect the log output to a file out/log one would instead type
+\code
+    > pscf_pc3d -e -p param -c command > out/log &
+\endcode
+Commands to run an MD simulation are similar except for the replacement of "pscf_pc3d" by "mdSim".
+
+The command to restart a simple MC simulation and write log output to log/rst is usually 
+\code
+    > pscf_pc3d -e -r restart -c command > rst/log &
+\endcode
+In this command, the -r option specifies the name of the binary restart file.
+
+
+<BR>
+\ref user_command_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_page (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref developer_page (Next)
+
+*/
