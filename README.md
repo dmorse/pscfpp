@@ -83,9 +83,9 @@ The pscf++ source code is maintained in the github repository
 
 It may be obtained by using a git version control system client to
 clone the repository. To do so, enter the command:
-
-   git clone --recursive https://github.com/dmorse/pscfpp.git
-
+``` 
+git clone --recursive https://github.com/dmorse/pscfpp.git
+```
 The use of the --recursive option to the git clone command:
 This is necessary to clone some git submodules that are maintained
 in separate repositories. This command will create a directory 
@@ -196,34 +196,40 @@ names of files to which final chemical potential and monomer
 concentration fields should be written.
 
 The command line syntax for invoking any pscfp++ program is:
-
-   program -p param -c command
-
-where "program" denotes the name of the program (e.g., pscf_pc3d),
-"param" denotes the path to a parameter file, and "command" denotes
-the path to a parameter file. This form of the command would write
-output to the screen.  Output produced during a computation may also 
-be redirected to a log file by using the linux ">" output 
-redirection operator. An additional -e option may also be added to 
-cause the program to echo the parameter file as it is read. With
-echoing and redirection, the command syntax would be
-
-   program -e -p param -c command > log
-
+```
+program -p param -c command
+```
+where "program" denotes the name of the program, "param" denotes the path 
+to a parameter file, and "command" denotes the path to a parameter file. 
+For example, one might enter
+```
+pscf_pc3d -p param -c command
+```
+to run the pscf_pc3d CPU program for three dimensional periodic structures. 
+This form of the command would write log output to the screen.  Output 
+produced during a computation may also be redirected to a log file by 
+using the unix ">" standard output redirection operator. In addition, 
+and -e command line option may also be used to cause the program to echo 
+the parameter file to standard out as this file is read. With echoing and 
+redirection, the command syntax would be 
+```
+program -e -p param -c command > log
+```
 where "log" denotes the name of a log file to which output will be
-written.
+written during the computation.
 
 ## Examples
 
-Directory pscfpp/examples contains a set of examples of simple
-calculations, each of which contains a sample parameter and command
-file. Top level subdirectories of pscfpp/examples contain examples
-for different programs.
+Directory pscfpp/examples contains a set of examples of simple 
+calculations, each of which contains a sample parameter and command file. 
+Top level subdirectories of pscfpp/examples contain examples for different 
+pscf++ programs.
 
 Subdirectory examples/fd1d subdirectory contains examples for the 1D 
 finite-difference program pscf_fd. Top level subdirectories of 
 examples/fd1d contain examples for planar, cylindrical and spherical 
-geometries. One or more examples is given for each type of geometry.
+geometries, as indicated by the subdirectory names. One or more example 
+is given for each type of geometry.
 
 Subdirectory examples/pspc contains examples contains examples the CPU 
 based pscf_pcNd programs for N=1, 2 and 3. Top level subdirectories
@@ -233,4 +239,3 @@ Subdirectories of examples/pspc/diblock contain examples for lamellar
 (N=1), hexagonal (N=2) and BCC (N=3) structures, each of which has a 
 different number of spatially periodic dimensions.
 
-------------------------------------------------------------------------
