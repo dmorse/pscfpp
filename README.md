@@ -156,6 +156,8 @@ are given below:
   (you only need to do this once, before compiling the first time).
 - Change directory (cd) to the directory pscfpp/bld/.
 
+- cd to the pscfpp/bld directory
+
 - To compile and install all CPU-based programs in the package 
   (excluding GPU-accelerated programs), enter "make all-cpu"
 
@@ -164,8 +166,44 @@ are given below:
   "make pspg". 
 
 The setup script installs a file pscfpp/bld/config.mk that contains
-makefile variables that define compiler executable names, compiler 
-options and paths to library files. If the default options are not
-adequate, may edit this file as needed.
+makefile variables that define compiler executable names, compiler options 
+and paths to head and library files for external dependencies.  If the 
+default options are not adequate, edit this file as needed.
+
+## Command Line Syntax for In
+
+Pscf++ is a package containing several different SCFT programs designed 
+for different geometries, different algorithms or different hardware. 
+Executable names (given above) are:
+
+     - pscf_fd1d for the 1D finite-difference program 
+
+     - pscf_pcd1, pscf_pcd2 and pscf_pcd3 for programs that use conventional CPU hardware to treat 1,2 and 3 dimensionally periodic structures, 
+
+     - pscf_pgd1, pscf_pgd2, and pscf_pgd3 for programs that use a GPU to treat periodic structures. 
+
+Each of these programs reads a parameter file and a command file. The 
+parameter file is fixed-format file that contains parameters required 
+to initialize the program. The command file is a more flexible script 
+containing a sequence of commands that are read and executed sequentially 
+to specify a sequence of computational steps.  The command line syntax 
+is
+
+   program -p param -c command
+
+where "program" denotes the name of the program (e.g., pscf_pc3d),
+"param" denotes the path to a parameter file, and "command" denotes
+the path to a parameter file. 
+
+## Examples
+
+Directory pscfpp/examples contains a set of examples of simple
+calculations, each of which contains a sample parameter and command
+file. Subdirectory examples/fd1d subdirectory contains examples of 
+for finite-difference program pscf_fd. Subdirectory examples/pspc
+contains examples contains examples for the pscf_pc1d, pscf_pc2d,
+and pscf_pc3d. Examine the parameter and command files in these 
+examples to see examples of the formats for these input files.
+
 
 ------------------------------------------------------------------------
