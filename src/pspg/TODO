@@ -1,49 +1,65 @@
 TODO (pspg GPU code):
 
-Short term clean up (assigned primarily to G.K.)
-------------------------------------------------
+Short term clean up (assigned primarily to G.K., ideally before submission)
+--------------------------------------------------------------------------
 
-1) Add explicit specializations of BatchFFT for D=1 and D=2, or rewrite as
-   a template to enable compilation of 2D and 3D code. Then add 2D and 3D 
-   executable names to variable PSCF_PG_EXE in makefile.
+1) Enable treatment of 1D and 2D problems: BatchFFT seems to have explicit
+   specializations only for 3D transforms. Add explicit specializations 
+   for D=1 and D=2, or rewrite as a template if possible. Then add 2D and 
+   3D executable names to variable PSCF_PG_EXE in makefile.
 
-2) Change inclusion of "device_functions.h" to appropriate public file to
-   suppress warnings from Cuda compiler.
+2) Enable use of nonorthogonal unit cells such as 2D hexagonal: Remove 
+   dependence on local src/pspg/UnitCell classes and local shiftToMinimum, 
+   which seem to allow only non-orthogonal unit cells.  This should have
+   been made easier and more efficient by the introduction of WaveList, 
+   since this allows ksq and dksq to be computed only once when the unit 
+   cell is initialized or modified.  As a first try, do these
+   infrequent computations on the CPU using the existing classes and
+   see if there is a measurable speed difference.
 
-3) Replace dependence on Pscf::Pspg::ChiInteraction by dependence on the
+3) Add a few examples (e.g., lam, hex, and bcc) to the examples/pspg directory.
+
+4) Replace dependence on Pscf::Pspg::ChiInteraction by dependence on the
    shared class Pscf::ChiInteraction. These classes look similar or 
-   identical, so this should be easy.
+   identical, so this should be easy. I don't see the reason for the
+   duplicated class definition.
 
-4) Remove dependence on src/pspg/UnitCell classes, to allow use of 
-   non-orthogonal unit cells (e.g., 2D hexagonal). This is made easier
-   by introduction of WaveList, allowing ksq and dksq to be computed
-   only once when the unit cell is initialized or modified. 
+5) Change inclusion of deprecated "device_functions.h" file to appropriate 
+   public file to suppress warnings from Cuda compiler on mesabi.
 
-5) Figure out how to remove getopt/ from the public repository while retaining
-   the ability for GK to link to a local copy on his laptop, perhaps by keeping
-   that directory in the copy on his laptop and privately changing a few lines
-   in source and source.mk files in his copy. 
+6) Figure out how to remove getopt/ from the public repository while 
+   retaining the ability for GK to link to a local copy on his laptop, 
+   perhaps by keeping that directory in the copy on his laptop and privately 
+   changing a few lines in source and source.mk files in his copy. 
 
-6) Move WaveList class to directory solvers. It's essentially a utility that
-   is used by the solvers, and doesn't need its own directory.
+Intermediate (possibly before publication) (assigned primarily to Anshul)
+-------------------------------------------------------------------------
 
-7) Try to implement suppression of implicit instantiation and compilation of
-   explicit instances of templates in pspg (as done elsewhere), to allow more
-   code to be compiled separately. This uses the C+11 extern syntax to suppress
-   implicit instantiation, and is possible only if the cuda compiler recognizes
-   this syntax.
+1) Restore ability to read symmetry adapted files (without necessarily
+   imposing symmetry during iteration). This may be possible before
+   submission or, if not, before resubmission after reviews.
 
-8) Complete doxygen documenttion for all classes, functions and parameters in 
-   src/pspg.
+2) Restore iteration with imposed symmetry and output in symmetry adapted 
+   format (may or may not be possible before final publication)
 
-Longer term (assigned to Anshul)
---------------------------------
+3) Try to implement suppression of implicit instantiation and compilation 
+   of explicit instances of templates in pspg (as done elsewhere), to allow 
+   more code to be compiled separately. This uses the C+11 extern syntax 
+   to suppress implicit instantiation, and is possible only if the cuda 
+   compiler recognizes this syntax.
+
+Longer term  (probably after publication)
+-------------------------------------------------------------------------
 
 1) Write unit tests or other self-contained, self-validating tests of the 
-   GPU code and put them in the repository.
+   GPU code and put them in the repository. 
 
-2) Restore ability to read symmetry adapted files.
+2) Complete doxygen documenttion for all classes, functions and parameters 
+   in src/pspg.
 
-3) Restore iteration with imposed symmetry and output in symmetry adapted format.
+3) Move WaveList class to directory solvers. It's essentially a utility 
+   that is used by the solvers, and doesn't need its own directory.
 
-4) Add sweep functionality and point solvent
+4) Add sweep functionality 
+
+5) Add point solvents
