@@ -1,14 +1,12 @@
 
-# Pscf++
-
-Pscf++ - C++ programs for polymer self-consistent field theory 
-
-## Overview
+# pscf++ polymer self-consistent field theory package
 
 Pscf++ is a library of C++ classes and programs for solving the 
 Edwards-Helfand self-consistent field theory for polymer liquids. 
 Pscf++ is still under development, but is intended to eventually
 supersede the existing PSCF Fortran program. 
+
+## Overview
 
 Differences from the existing PSCF Fortran code and expected advantages 
 of the new code include:
@@ -16,7 +14,7 @@ of the new code include:
    - Pscf++ is an extensible package of several different programs 
      designed for use with different geometries and boundary conditions, 
      different algorithms or different hardware, designed around a 
-     common framework. 
+     common software framework. 
 
    - Pscf++ allows simulations of mixtures containing arbitrary acyclic 
      branched copolymers, in addition to the linear block copolymers and 
@@ -77,7 +75,7 @@ The GPU accelerated programs for solving 1, 2 and 3 dimensionally
 periodic structures are named pscf_pg1d, pscf_pg2d and pscf_pg3d, 
 respectively, where "pg" stands for "periodic GPU".
 
-## Getting the Source Code
+## Getting the source code
 
 The pscf++ source code is maintained in the github repository
 
@@ -128,7 +126,7 @@ following external libraries:
 
   - FFTW fast Fourier transform library
 
-The one-dimensional finite difference program pscf_fd1d requires 
+The one-dimensional finite difference program pscf_fd requires 
 only GSL, and not FFTW. The CPU-based programs for spatially
 periodic structures require both GSL and FFTW libraries.
 
@@ -169,13 +167,13 @@ makefile variables that define compiler executable names, compiler options
 and paths to head and library files for external dependencies.  If the 
 default options are not adequate, edit this file as needed.
 
-## Command Line Syntax for In
+## Command line syntax (invoking a program)
 
 Pscf++ is a package containing several different SCFT programs designed 
 for different geometries, different algorithms or different hardware. 
 Executable names (given above) are:
 
-   - pscf_fd1d : 1D finite-difference program 
+   - pscf_fd : 1D finite-difference program 
 
    - pscf_pcNd : CPU based programs for N=1,2, or 3 dimensional periodic
      structures
