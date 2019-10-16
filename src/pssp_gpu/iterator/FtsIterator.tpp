@@ -132,7 +132,7 @@ namespace Pssp_gpu {
       int itr;
       for (itr = 1; itr <= maxItr_; ++itr) {
         
-         std::cout<< "iterations : " << itr << std::endl;
+         std::cout<< "iterations : " << itr << "\n";
          if (itr <= maxHist_) {
             lambda_ = 1.0 - pow(0.9, itr);
             nHist_ = itr - 1;
@@ -326,10 +326,10 @@ namespace Pssp_gpu {
          }
       }
 
-      std::cout << " dError :" << Dbl(dError) << std::endl;
-      std::cout << " wError :" << Dbl(wError) << std::endl;
+      std::cout << " dError :" << Dbl(dError) << '\n';
+      std::cout << " wError :" << Dbl(wError) << '\n';
       error = sqrt(dError / wError);
-      std::cout << "  Error  :" << Dbl(error) << std::endl;
+      std::cout << "  Error  :" << Dbl(error) << '\n';
       if (error < epsilon_) {
          return true;
       }

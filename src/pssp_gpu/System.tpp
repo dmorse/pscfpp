@@ -186,6 +186,18 @@ namespace Pssp_gpu
    template <int D>
    void System<D>::readParameters(std::istream& in)
    {
+
+      double time_start;
+      double time_end;
+      double time_wave_start;
+      double time_wave_end;
+      struct timeval tv;
+      struct timezone tz;
+
+      gettimeofday(&tv, &tz);
+      time_start = (double) tv.tv_sec + 
+         (double)tv.tv_usec / 1000000.0;
+
       std::cout<<"Read in mixture"<<std::endl;
       readParamComposite(in, mixture());
       hasMixture_ = true;
@@ -217,21 +229,41 @@ namespace Pssp_gpu
       //std::string groupName;
       in >> groupName_;
       in >> groupName_;
+
+      gettimeofday(&tv, &tz);
+      time_wave_start = (double)tv.tv_sec + 
+         (double)tv.tv_usec / 1000000.0;
+
       //basis().makeBasis(mesh(), unitCell(), groupName_);
       std::cout<<"Initializing wavelist"<<std::endl;
       wavelist().allocate(mesh(), unitCell());
       std::cout<<"Allocating completed"<<std::endl;
       wavelist().computeMinimumImages(mesh(), unitCell());
       std::cout<<"wavelist completed"<<std::endl;
+
+      gettimeofday(&tv, &tz);
+      time_wave_end = (double)tv.tv_sec + 
+         (double)tv.tv_usec / 1000000.0;
+      Log::file() << "wavelist initialized in  " 
+                  << Dbl(time_wave_end - time_wave_start, 18, 11)<<'s' 
+                  << std::endl;
+
       allocateFields();
       std::cout<<"fields allocated"<<std::endl;
       hasFields_ = true;
+
 
       // Initialize iterator
       readParamComposite(in, iterator());
       iterator().allocate();
       std::cout<<"Iterator Initialized"<<std::endl;
 
+      gettimeofday(&tv, &tz);
+      time_end = (double)tv.tv_sec + 
+         (double)tv.tv_usec / 1000000.0;
+      Log::file() << "System Parameters read in  " 
+                  << Dbl(time_end - time_start, 18, 11)<<'s' 
+                  << std::endl;
    }
 
    /*
@@ -258,6 +290,15 @@ namespace Pssp_gpu
    template <int D>
    void System<D>::allocateFields()
    {
+      double time_start;
+      double time_end;
+      struct timeval tv;
+      struct timezone tz;
+
+      gettimeofday(&tv, &tz);
+      time_start = (double) tv.tv_sec + 
+         (double)tv.tv_usec / 1000000.0;
+
       // Preconditions
       UTIL_CHECK(hasMixture_);
       UTIL_CHECK(hasMesh_);
@@ -293,6 +334,13 @@ namespace Pssp_gpu
       timeval time;
       gettimeofday(&time, NULL);
       hasFields_ = true;
+
+      gettimeofday(&tv, &tz);
+      time_end = (double)tv.tv_sec + 
+         (double)tv.tv_usec / 1000000.0;
+      Log::file() << "System Containers allocated in  " 
+                  << Dbl(time_end - time_start, 18, 11)<<'s' 
+                  << std::endl;
    }
 
    
@@ -346,7 +394,7 @@ namespace Pssp_gpu
             std::ofstream outFile;
             fileMaster().openOutputFile(filename, outFile);
             //writeRFields(outFile, wFieldGrids_);
-                        writeRFields(outFile, wFieldGrids());
+            writeRFields(outFile, wFieldGrids());
             outFile.close();
 
          }/* 
@@ -373,6 +421,14 @@ namespace Pssp_gpu
             Log::file() << std::endl;
             Log::file() << std::endl;
 
+            double time_start;
+            double time_end;
+            struct timeval tv;
+            struct timezone tz;
+
+            gettimeofday(&tv, &tz);
+            time_start = (double) tv.tv_sec + 
+              (double)tv.tv_usec / 1000000.0;
             //input omega fields
             std::string inFileName;
             in >> inFileName;
@@ -384,13 +440,16 @@ namespace Pssp_gpu
             readRFields(inFile, wFieldGrids());
             inFile.close();
 
+            gettimeofday(&tv, &tz);
+            time_end = (double)tv.tv_sec + 
+               (double)tv.tv_usec / 1000000.0;
+            Log::file() << "ReadFile_Time = " 
+                        << Dbl(time_end - time_start, 18, 11)<<'s' 
+                        << std::endl;
+
             //SYSTEMTIME timeStart, timeEnd;
             //double timeElapsed;
             //GetSystemTime(&timeStart);
-            double time_start;
-            double time_end;
-            struct timeval tv;
-            struct timezone tz;
             gettimeofday(&tv, &tz);
             time_start = (double) tv.tv_sec + 
               (double)tv.tv_usec / 1000000.0;
@@ -622,10 +681,12 @@ namespace Pssp_gpu
       unitCell().readHeader(in);
  
       in >> label;
+      std::cout<<label<<std::endl;
       UTIL_CHECK(label == "group_name");
       in >> groupName;
 
       in >> label;
+      std::cout<<label<<std::endl;
       UTIL_CHECK(label == "N_monomer");
       in >> nM;
       UTIL_CHECK(nM > 0);
@@ -776,19 +837,23 @@ namespace Pssp_gpu
    void System<D>::writeRFields(std::ostream &out,
                            DArray<RDField<D> > const& fields)
    {
+      double time_start;
+      double time_end;
+      struct timeval tv;
+      struct timezone tz;
+
+      gettimeofday(&tv, &tz);
+      time_start = (double) tv.tv_sec + 
+         (double)tv.tv_usec / 1000000.0;
+
       int nM = mixture().nMonomer();
       MeshIterator<D> itr(mesh().dimensions());
       //do not use white space like this...
       out << "format  1   0    " <<  std::endl;
-
       out << "dim    " <<  std::endl << "                    "<<D<< std::endl;
-
       unitCell().writeHeader(out);   
-
       out << "group_name    " <<  std::endl << "                    "<<groupName_<< std::endl;
-
       out << "N_monomer    " <<  std::endl << "                    "<<mixture().nMonomer()<< std::endl;
-
       out << "ngrid        " <<  std::endl<<"           "<<mesh().dimensions() << std::endl;
 
       DArray<cufftReal*> temp;
@@ -838,6 +903,13 @@ namespace Pssp_gpu
          temp[i] = nullptr;
          
       }
+
+      gettimeofday(&tv, &tz);
+      time_end = (double)tv.tv_sec + 
+         (double)tv.tv_usec / 1000000.0;
+      Log::file() << "Files written in  " 
+                  << Dbl(time_end - time_start, 18, 11)<<'s' 
+                  << std::endl;
    }
 
    template <int D>
