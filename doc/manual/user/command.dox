@@ -4,22 +4,22 @@
  \ref user_example_page (Next) 
 <BR>
 
-For any Pscf++ simulation program, after the parameter file is processed by the readParam() method, the progress of a simulation is controlled by a command file, which is processed by a readCommand() method. The name of the command file is usually specified in command line argument that invokes the program, as an argument of the -c command line option. If the name of the command file is not specified in the command line, it can instead by given in the parameter file as the value of the optional commandFileName parameter in the FileMaster block of the parameter file. 
+For any Pscf++ simulation program, after the parameter file is processed by the readParam() method, the progress of a simulation is controlled by a command file, which is processed by a readCommand() method. The name of the command file is specified in the unix command that invokes the program as an argument to the -c command line option. 
 
-The command file contains a sequence of one-line commands that are read and executed in sequence. Each command begins with an all upper case label. Some commands take one or more parameters, which must appear after the upper case label, separated by spaces. The script stops execution when it encounters the command string 'FINISH' on a line by itself. 
+The command file contains a sequence of commands that are read and executed in sequence. Each command begins with an all upper case label. Some commands take one or more parameters, which must appear after the upper case label, separated by spaces. The script stops execution when it encounters the command string 'FINISH' on a line by itself. 
 
 \section example_sec Example
 
-Here is a example of a command file for ....
+Here is a example of a minimal command file
 \code
 ITERATE          in/omega
 WRITE_WFIELDS    out/omega.bf
 FINISH
 \endcode
 
-The command "READ_CONFIG config" reads an MC configuration file from a file named "config", prefixed by the input prefix string given in the param file. 
-
-"WRITE_WFIELDS out/omega.bf" writes the final chemical potentials fields in teh symmetry adapted basis function format.
+The command "ITERATE in/omega" instructs the program to read the file in/omega, which contains an initial guess for the chemical potential field, then iteratively solve the self-consistent field equations start from this initial guess.
+The command "WRITE_WFIELDS out/omega.bf" writes the resulting converged set of chemical potential fields to the file out/omega.bf.
+The script stops execution when it encounters the FINISH command.
 
 \section commands_sec Commands
 
