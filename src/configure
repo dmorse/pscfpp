@@ -9,9 +9,11 @@
 # disable particular compile time features. See the usage examples at the 
 # bottom of this documentation block. This version of the script must be
 # called from the root of the build directory tree in which a corresponding
-# version of the code will built.  Each of these build directories contains 
-# a copy of this script.  Invoking the configure script in a specific build 
-# directory only affects code that is built in that directory.
+# version of the code will built (e.g., the src/ directory for in-source
+# compilation or the bld/ directory for out-of-source compilation.  Each 
+# build directories contains a copy of this script.  Invoking the configure 
+# script in a specific build directory only affects code that is built in 
+# that directory.
 #
 # The configure script works by editing the config.mk makefile fragments 
 # in the build directory from which it is called. These files control
@@ -28,8 +30,8 @@
 # options takes 0 or 1 as a required argument, using 1 to denote "enable"
 # and 0 to denote "disable".
 #
-#   -g (0|1)   debugging                   (defines/undefines UTIL_DEBUG)
-#   -k (0|1)   dependency generation       (defines/undefines MAKEDEP)
+#   -b (0|1)   debugging                   (defines/undefines UTIL_DEBUG)
+#   -g (0|1)   gpu acceleration            (defines/undefines PSPG_GPU)
 #
 # These command line options do not enable or disable features: 
 #
@@ -39,10 +41,10 @@
 #
 # To disable debugging 
 #
-#   >  ./configure -g0 
+#   >  ./configure -b0 
 #
 #-----------------------------------------------------------------------
-while getopts "g:k:c:q" opt; do
+while getopts "b:g:q" opt; do
 
   if [ -n "$MACRO" ]; then 
     MACRO=""
@@ -52,34 +54,15 @@ while getopts "g:k:c:q" opt; do
   fi
   
   case $opt in
-    g)
+    b)
       MACRO=UTIL_DEBUG
       VALUE=1
       FILE=config.mk
       ;;
-    k)
-      case $OPTARG in
-      0)  # Disable (comment out) the definition of MAKEDEP
-        if [ `grep "^ *MAKEDEP" config.mk` ]; then
-           echo "Disabling MAKEDEP in file config.mk" >&2
-           sed "s/^ *MAKEDEP/#MAKEDEP/" config.mk > temp
-           cp temp config.mk
-           rm temp
-        else
-           echo "MAKEDEP already disabled in file config.mk" >&2
-        fi
-        ;;
-      1) # Enable (uncomment) the definition of MAKEDEP
-        if [ `grep "^ *MAKEDEP" config.mk` ]; then
-           echo "MAKEDEP already enabled in file config.mk" >&2
-        else
-           echo "Enabling MAKEDEP in file config.mk" >&2
-           sed "s/^ *# *MAKEDEP/MAKEDEP/" config.mk > temp
-           cp temp config.mk
-           rm temp
-        fi
-        ;;
-      esac
+    g)
+      MACRO=PSPC_GPU
+      VALUE=1
+      FILE=config.mk
       ;;
     q)
       if [ `grep "^ *UTIL_DEBUG *= *1" config.mk` ]; then

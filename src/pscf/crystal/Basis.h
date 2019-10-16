@@ -13,8 +13,6 @@
 #include <pscf/crystal/SpaceGroup.h>
 #include <util/containers/DArray.h>
 #include <util/containers/GArray.h>
-#include <util/containers/DMatrix.h>
-#include <set>
 
 namespace Pscf { 
 

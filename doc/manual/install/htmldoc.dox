@@ -1,0 +1,75 @@
+/*! \page install_doc_page 2.10 Generating Documentation
+
+\ref install_configure_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_page (Next) 
+<BR>
+
+The html documentation that you are reading was generated using the 
+<a href=http://www.doxygen.org> doxygen </a> documentation utility. The 
+pscf++ git repository contains all of the source files required to 
+construct this documentation (some of which is extracted from comments 
+in the C++ source files), but does not retain the resulting html files. 
+
+\section install_doc_generate_sec Generating documentation
+ 
+If the doxygen program is installed on your machine, you can regenerate a 
+local copy of the html documentation.  To check whether doxygen is installed, 
+enter 
+\code
+> which doxygen
+\endcode
+ from the command line. If a valid path to a file named doxygen is returned, 
+then doxygen is already installed. If doxygen is not installed, install it 
+before proceeding, either using an appropriate package manager or by 
+downloading from the doxygen web page. 
+
+Once doxygen is installed, simply change directory to the pscfpp/ root 
+directory and enter
+\code
+> make html 
+\endcode
+The resulting html files will be installed in the pscfpp/doc/html/ directory. 
+
+\section install_doc_read_sec Reading the documentation
+ 
+The main page of the html documentation is a file named doc/html/index.html.
+To begin reading your local copy of the documentation, simply open this file 
+in any web browser. To read the documentation on a linux system using the 
+firefox browser, enter
+\code
+> firefox doc/html/index.html
+\endcode
+from the pscfpp/ root directory. On a Mac, on can instead use the "open" 
+command to open this file with the default browser, by entering
+\code
+> open doc/html/index.html
+\endcode 
+from a terminal. Alternatively, one can use the Finder to navigate to the 
+pscfpp/doc/html folder, double click on any file in that directory with 
+an *.html file extension, and then click on the "main page" button in the
+upper left to go to the main page (i.e., the index.html page).
+
+The text of the main manual pages, including the page you are now reading, 
+is contained in a set of files with file extension *.dox in the doc/manual 
+directory. These are written in plain text with a few formatting commands, 
+and can also be read with any text editor. Files in the src/ directory 
+with the file extension *.dox or *.mod contain other parts of the doxygen
+documentation.  In addditional, API documentation for each C++ class and
+function is extracted by doxygen from documentation blocks in every
+C++ header file. 
+
+\section install_doc_clean_sec Cleaning up
+ 
+To delete all html documentation from the doc/html directory and start
+over, enter
+\code
+> make clean-html
+\endcode
+from the pscfpp/ root directory.
+
+<BR>
+\ref install_configure_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref install_page (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_page (Next) 
+
+*/

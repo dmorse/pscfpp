@@ -1,0 +1,43 @@
+#-----------------------------------------------------------------------
+# This makefile fragment defines:
+#
+#   - A variable $(PSPC_DEFS) that is passed to the processor to define 
+#     preprocessor flags that effect the code in the pspc/ directory. 
+#
+#   - A variable $(PSPC_SUFFIX) that can be added to the names of library
+#     and executable files. This is empty by default. 
+#
+#   - A variable $(PSPC_LIB) that the absolute path to the pspc library 
+#     file.
+#
+# This file must be included by every makefile in the pspc directory. 
+#-----------------------------------------------------------------------
+# Flag to define preprocessor macros.
+
+# Comments:
+#
+# The variable PSPC_DEFS uses the "-D" compiler option to to pass 
+# preprocessor definitions to the compiler. If not empty, it must 
+# consist of a list of zero or more preprocessor macro names, each 
+# preceded by the compiler flag "-D".  
+#
+# The variable PSPC_SUFFIX is appended to the base name pspc.a of the 
+# static library $(PSPC_LIB), and to the name of executable files.
+ 
+# Initialize variables to empty strings
+PSPC_DEFS=
+PSPC_SUFFIX:=
+
+#-----------------------------------------------------------------------
+# Path to the pspc library 
+# Note: BLD_DIR is defined in config.mk
+
+pspc_LIBNAME=pspc$(PSPC_SUFFIX)$(UTIL_SUFFIX)
+pspc_LIB=$(BLD_DIR)/pspc/lib$(pspc_LIBNAME).a
+#-----------------------------------------------------------------------
+# Paths to executable main program files
+
+PSCF_PC1D_EXE=$(BIN_DIR)/pscf_pc1d
+PSCF_PC2D_EXE=$(BIN_DIR)/pscf_pc2d
+PSCF_PC3D_EXE=$(BIN_DIR)/pscf_pc3d
+#-----------------------------------------------------------------------

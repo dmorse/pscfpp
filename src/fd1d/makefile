@@ -33,8 +33,8 @@ clean:
 
 veryclean:
 	$(MAKE) clean
-	-rm -f *.o 
-	-rm -f *.d 
+	-rm -f *.o */*.o
+	-rm -f *.d */*.d
 	-rm -f lib*.a
 
 

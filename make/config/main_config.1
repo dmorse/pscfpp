@@ -4,24 +4,23 @@
 # This makefile fragment is the main configuration file for the pscfpp
 # build system.  A copy of this file is included by all other makefiles. 
 # This file is created and installed by the "setup" script. One copy of 
-# this file is installed in the src/ directory, which is used for in-source 
-# compilation. Two others copies are created in the root directories of 
-# the bld/parallel and bld/serial build directory trees, which are used for
-# out-of-source compilation of parallel and serial programs respectively.
+# this file is installed in the root directory of the src/ directory
+# tree, which is used for in-source compilation. Another copy is 
+# installed in the root directory of the bld/ directory tree, which is 
+# used for out-of-source compilation.
 #
-#=========================================================================
 # This file contains user-modifiable definitions of several types of 
 # makefile variables:
 # 
-#  - Variables ROOT_DIR, SRC_DIR, BLD_DIR and BIN_DIR that contains 
-#    absolute paths for the simpatico root directory and some of its
-#    subdirectories.
+#  - Variables ROOT_DIR, SRC_DIR, BLD_DIR, BIN_DIR and DAT_DIR that 
+#    contain absolute paths for the simpatico root directory and some 
+#    of its subdirectories.
 #
-#  - Variables UTIL_MPI, UTIL_DEBUG, and UTIL_CXX11 that, if defined
-#    enabled conditional compilation of optional features of the code.
+#  - A variable UTIL_DEBUG that if defined, enables compilation of
+#    a debugging version fo the code with additional sanity checks.
 #
-#  - Environment-dependent variabes that control the command name by
-#    which the compiler is invoked and some compiler command line options.
+#  - Variables that control the command name by which the compiler 
+#    is invoked and command line options passed to the compiler 
 # 
 #  - A variable MAKEDEP that enables automatic dependency generation.
 #
@@ -49,53 +48,38 @@ BIN_DIR=$(ROOT_DIR)/bin
 DAT_DIR=$(ROOT_DIR)/data
 
 #======================================================================
-# Variables that (if defined) enable compilation of optional features
-
-# Defining UTIL_MPI enables linking to an MPI library. MPI must be
-# enabled by uncommenting this line to build a parallel program.
-#UTIL_MPI=1
+# Conditional compilation of debugging.
 
 # Defining UTIL_DEBUG enables a variety of extra sanity checks, at some
 # cost in speed. Debugging is disabled (commented out) by default.
 #UTIL_DEBUG=1
 
-# Defining UTIL_CXX11 enables the use of features of the C++11 standard.
-# Use of C++11 is enabled by default. If C++11 is disabled, the code uses 
-# only syntax and features defined in the older 1998 C++ standard.
-UTIL_CXX11=1
-
-# Comment After setup, the above definitions of UTIL_MPI and UTIL_DEBUG 
-# may be uncommented or commented out invoking the "configure" script 
-# from the build directory that contains this file, thus enabling or 
-# disabling the MPI or and/or debugging features.  Specifically, the 
-# configure script may be be invoked with option -m to enable 
-# (option -m1) or disable (-m0) MPI, and with option -g to enable 
-# (-g1) or disable (-g0) debugging. For example, the command:
-#
-# ./configure -m1 -g0 
-#
-# would enable MPI (uncomment the definition of UTIL_MPI) and disable 
-# debugging (comment out the definition of UTIL_DEGUB) prior to 
-# compilation. 
+# Comment: After setup but before compilation, the above definitions of 
+# UTIL_DEBUG may be uncommented or commented out from the command line 
+# by using the "configure" script. To do so, invoke the configure script 
+# with the -g option prior to compilation from the directory that contains 
+# this main configuration file (e.g., from src/ or bld/). Specifically, 
+# invoke "./configure -g1" to enable debugging or "./configure -g0" to
+# disable debugging. 
 #
 #======================================================================
-# Environment-dependent makefile variables.
+# Compiler configuration variables.
+#
+# The following block of variable definitions is initialized by 
+# the setup script by copying a compiler configuration file in the 
+# make/compiler directory.  If the setup script is invoked with no 
+# argument, the file "make/compiler/default" is used by default.  
+# Users may add files to the make/compiler directory to store 
+# settings required for a particular environment. The name of a 
+# desired compiler configuration file may be specfied by invoking
+# the setup script with the base name of the desired file as an 
+# argument (e.g., "> ./setup local"). 
 #
 # Variables defined in this block define the names of the commands 
-# used to invoke the compiler when compiling and linking files and 
-# some of the command line options passed to the compiler to control,
-# e.g., optimization level, warnings, and search paths for header files 
-# and libraries. Different choices may be used when compiling serial 
-# programs (when UTIL_MPI is not defined) or parallel programs (when
-# UTIL_MPI is defined). The choice of values of variables defined here 
-# may thus be different for different combinations of compiler, MPI
-# library and operating system.  See the section of this file 
-# entitled "Makefile Patterns and Recipes" for a discussion of how
-# these variables are used.
-#
-# The following block of variable definitions is copied by the setup
-# script from a compiler setup file in the make/compiler directory
-# and incorporated into this config.mk file. The name of the desired 
-# compiler setup file may be specified as an argument to the setup 
-# script command (e.g., "> ./setup intel").
+# used to invoke the compiler when compiling and linking files, some
+# of the command line options passed to the compiler to control,
+# and search paths for header files and libraries files for required
+# external libraries.  See the section of this file entitled "Makefile 
+# Patterns and Recipes" for a discussion of how these variables are 
+# used.
 #

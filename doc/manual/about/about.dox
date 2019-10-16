@@ -4,7 +4,7 @@
 \ref user_page  (Next)  
 <BR>
 
-PSCF is a library of C++ classes and programs for solving the Edwards-Helfand self-consistent for polymer liquids. It is still under development, but is intended to eventually replace the existing Fortran program of the same name. When complete, the package will contain a pseudo-spectral implementation for periodic structures, analagous to the existing Fortran code, as well as implementations for other geometries or boundary conditons. Currently, only part of the code that is fully functional is a simple  one-dimensional finite difference implementation for studying problems that involve only a single spatial coordinate in Cartesian, cylindrical or spherical coordinates (i.e., brushes, interfaces, and cylindrical or circular micelles). 
+Pscf++ is a library of C++ classes and programs for solving the Edwards-Helfand self-consistent for polymer liquids. It is still under development, but is intended to eventually supersede the existing PSCF Fortran program. When complete, the package will contain a pseudo-spectral implementation for periodic structures, analagous to the existing Fortran code, as well as implementations for other geometries or boundary conditons. Currently, only part of the code that is fully functional is a simple  one-dimensional finite difference implementation for studying problems that involve only a single spatial coordinate in Cartesian, cylindrical or spherical coordinates (i.e., brushes, interfaces, and cylindrical or circular micelles). 
 
 Some differences in design relative to the existing Fortran code for periodic structure, and the expected advantages of the new code are as follows:
 <ul>
@@ -23,7 +23,7 @@ This C++ version of PSCF is free, open source software. It is distributed under 
 
 <BR>
 \ref index "Main Page"  (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_page  (Next)  
+\ref user_page  (Next)
 
 */
 

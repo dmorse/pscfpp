@@ -1,0 +1,167 @@
+/*! \page install_targets_page 2.7 Makefile targets
+
+\ref install_inout_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref install_configure_in_page (Next) 
+<BR>
+
+The main makefile in the bld/ or src/ directory may be used to compile
+individual programs or groups of closely programs. On this page, we 
+explain the most important makefile targets in more detail than was
+given in the \ref install_overview_page "overview of instructions".
+All of the makefile targets described here can be invoked either from
+the bld/ directory to perform out-of-source compilation, or from the 
+src/ directory to perform in-source compilation. The following
+instructions assume that you have already made the required changes
+to environment variables and run the setup script.
+
+\section compile_fd1d_section Compiling the 1D finite difference program
+
+The only dependency of the pscf_fd 1D finite-difference program is the
+GSL library.  To compile just this program, simply cd to the root of 
+the desired build directory (i.e., to pscfpp/bld or pscfpp/src) and
+enter:
+\code
+> make fd1d
+\endcode
+This command will:
+
+  - Compile a large number *.cpp files in the util/, pscf/ and fd1d/ 
+    namespace-level subdirectories of the src/ directory.
+
+  - Install corresponding object (*.o) and dependency (*.d) files in 
+    corresponding locations within the chosen build directory (i.e.,
+    the build or bld/ or src/ directory)
+
+  - Create a static library (with file extension *.a) in each of these 
+    three namespace-level subdirectories of the build directory.
+
+  - Install an executable file named pscf_fd1d in the pscfpp/bin 
+    directory. 
+
+To recompile these programs after makeing any chanes to configuration
+files (e.g., after enabling or disabling the debugging feature or changing
+compiler command line options), simply reissue the "make fd1d" command. 
+The build system will detect if you have changed any of the relevant 
+configuration files, and will recompile any file that might be effected 
+by such changes.
+
+\section compile_pspc_section Compiling pseudo-spectral CPU programs
+
+The pseudo-spectral programs for periodic microstructures on a CPU 
+depend on both the GSL library and the FFTW fast Fourier transform
+libraries.  To compile these programs cd to the chosen build directory
+(bld/ or src/) and enter: 
+\code
+> make pspc
+\endcode
+If this is done after compiling pscf_fd1d, this will compile some 
+additional code in src/pspc directory, and will install three executable
+files named pscf_pc1d, pscf_pc2d and pscf_pc3d in the pscfpp/bin 
+directory.  These three programs are used for problems structures 
+that are periodic in 1, 2 and 3 dimensions, respectively. One would 
+thus use pscf_pc1d to simulat a lamellar (one-dimensional) structure,
+pscf_pc2d to simulate a hexagonal cylinder (two-dimension structure),
+an pscf_pc3d to simulate a fully three-dimensional structure such a 
+BCC or gyroid structure.
+
+\section compile_pspg_section Compiling pseudo-spectral GPU programs
+
+To compile the GPU-enabled versions of the pseudo-spectral programs,
+after setup, simply enter 
+\code
+> make pspg
+\endcode
+from the desired build directory. If successful, this will compile 
+code from the util/, pscf/, and pspg/ subdirectories of the src/ 
+directory, place object, dependency and library files in the build
+directory tree, and install executables for 1, 2, and 3 dimensional 
+problems named pscf_pg1d, pscf_pg2d and pscf_pg3d in the pscfpp/bin 
+directory.
+
+\section compile_makeall_sec Invoking "make all" from a subdirectory
+
+When compiling in-source, from within the src/ directory tree, it also 
+to invoke make from a subdirectory of src/ in order to compile a smaller 
+set of source files. Invoking the command 
+\code
+ > make all
+\endcode
+from almost any subdirectory of the src/ directory tree  will compile 
+all C++ files in the tree rooted at that subdirectory, without compiling 
+any code outside of that subdirectory.
+
+Invoking "make all" from any namespace level subdirectory of src/ 
+(i.e., from the src/util, src/simp, src/mcMd, src/ddMd or src/mdPp 
+directory) will cause make to compile all the *.cpp source files in
+the namespace level directory tree, and will also create a library 
+containing all of the resulting object code, and compile and install 
+any main programs for which the source files are in that directory. 
+
+The ability to invoke "make all" from any subdirectory of src/ is
+designed to allow developers to easily recompile a few files from
+the command line from within the directory in which they are working. 
+Typically, when a developer is adding a new feature or fixing a bug, 
+he or she will be actively editing only a few files within one
+subdirectory of the source directory, while other files in that 
+subdirectory are left untouched. Under these circumstances, if all 
+files other than the ones that were recently modified have already 
+been compiled, invoking "make all" from the directory containing 
+the files of interest will only recompile source files that have 
+recently been modified or that include header files that have 
+recently been modified. A common work flow during development is
+thus to edit a file, then invoke "make all" from the directory 
+containing that file. 
+
+\section compile_cleanup_section Cleaning up
+
+If, for any reason, you would like to clean up after compiling by 
+removing all of the object, dependency and library files that are 
+generated during compilation, you may enter
+\code
+> make clean
+\endcode
+from either the chosen build directory or from the pscfpp/ root 
+directory.  The clean target removes all files generated by compilation, 
+but not the configuration files that were created by the setup command.  
+If "make clean" is invoked from the pscfpp/ root directory, it removes 
+all such intermediate files in both the bld/ and src/ directory. If 
+"make clean" is invoked from the src/ or bld/ directory, it only removes 
+such files from the directory from which it is invoked.
+
+The "make clean" command can also be invoked from almost any 
+subdirectory of the src/ directory tree in order to remove recursively
+remove intermediate files from that directory and its subdirectories. 
+The "make clean" command can also be invoked from namespace level 
+subdirectories of the bld/ directory, with the same effect, but not 
+from lower level subdirectories of the bld/ tree, because lower 
+level subdirectories of bld/ do not contain makefiles. 
+
+\section compile_veryclean_section Reverting to initial state
+
+The "make clean" command discussed above removes files that are generated 
+by compilation, but does not remove the various makefile fragments and 
+C++ files that are installed prior to compilation by the "setup" script. 
+To remove these files as well, instead enter 
+\code
+> make veryclean
+\endcode
+from the pscfpp/ root directory. This command returns the pscfpp/ 
+directory tree to a state very close to its state immediately after 
+the repository was cloned.
+
+Because the "make veryclean" command removes files that are created 
+by the setup script, you will need to rerun the setup script after
+"make veryclean" before attempting to compile any code.  
+
+The "veryclean" target does not erase any local compiler setup files 
+that the user may have created in the make/compiler directory. After 
+invoking "make veryclean", a user can thus invoke setup with the name 
+of a previously created compiler configuration file as an argument in
+order to recreate the same configuration.
+
+<BR>
+\ref install_inout_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref install_page   (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref install_configure_page (Next) 
+
+*/

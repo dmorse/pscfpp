@@ -1,0 +1,27 @@
+/*! \page install_page 2 Installation
+
+\ref about_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_page (Next)
+<BR>
+
+The following pages give instructions for obtaining, configuring and compiling pscf++. 
+
+<h2> Contents:</h2>
+  <ul style="list-style: none;">
+  <li> \subpage install_require_page      "2.1  System Requirements" </li>
+  <li> \subpage install_source_page       "2.2  Obtaining the Source Code" </li>
+  <li> \subpage install_overview_page     "2.3  Installation Overview" </li>
+  <li> \subpage install_environment_page  "2.4  Environment Variables" </li>
+  <li> \subpage install_setup_page        "2.5  Setup Script" </li>
+  <li> \subpage install_inout_page        "2.6  Compiling Out-of-source vs. In-source" </li>
+  <li> \subpage install_targets_page      "2.7  Makefile Targets"</li>
+  <li> \subpage install_configure_page    "2.8  Optional Features" </li>
+  <li> \subpage install_doc_page          "2.9  Generating Documentation"</li>
+  </ul>
+
+<BR>
+\ref about_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref index "Main Page" (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_page (Next)
+
+*/
