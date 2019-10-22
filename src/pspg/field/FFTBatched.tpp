@@ -125,6 +125,80 @@ namespace Pspg
    }
 
    /*
+   * Make plans for batch size of 2
+   */
+   template <int D>
+   void FFTBatched<D>::makePlans(RDField<D>& rField, RDFieldDft<D>& kField)
+   {
+      int n[D];
+      int rdist = 1;
+      int kdist = 1;
+      for(int i = 0; i < D; i++) {
+         n[i] = rField.meshDimensions()[i];
+         if( i == D - 1 ) {
+            kdist *= n[i]/2 + 1;
+         } else {
+            kdist *= n[i];
+         }
+         rdist *= n[i];
+         
+      }
+
+      if(cufftPlanMany(&fPlan_, D, n, //plan, rank, n
+                       NULL, 1, rdist, //inembed, istride, idist
+                       NULL, 1, kdist, //onembed, ostride, odist
+                       CUFFT_R2C, 2) != CUFFT_SUCCESS) {
+         std::cout<<"plan creation failed "<<std::endl;
+         exit(1);
+      }
+      if(cufftPlanMany(&iPlan_, D, n, //plan, rank, n
+                       NULL, 1, rdist, //inembed, istride, idist
+                       NULL, 1, kdist, //onembed, ostride, odist
+                       CUFFT_C2R, 2) != CUFFT_SUCCESS) {
+         std::cout<<"plan creation failed "<<std::endl;
+         exit(1);
+      }
+      
+   }
+
+   /*
+   * Make plans for variable batch size
+   */
+
+   template <int D>
+   void FFTBatched<D>::makePlans(const IntVec<D>& rDim, const IntVec<D>& kDim, int batchSize)
+   {
+      int n[D];
+      int rdist = 1;
+      int kdist = 1;
+      for(int i = 0; i < D; i++) {
+         n[i] = rDim[i];
+         if( i == D - 1 ) {
+            kdist *= n[i]/2 + 1;
+         } else {
+            kdist *= n[i];
+         }
+         rdist *= n[i];
+         
+      }
+      if(cufftPlanMany(&fPlan_, D, n, //plan, rank, n
+                       NULL, 1, rdist, //inembed, istride, idist
+                       NULL, 1, kdist, //onembed, ostride, odist
+                       CUFFT_R2C, batchSize) != CUFFT_SUCCESS) {
+         std::cout<<"plan creation failed "<<std::endl;
+         exit(1);
+      }
+      if(cufftPlanMany(&iPlan_, D, n, //plan, rank, n
+                       NULL, 1, kdist, //inembed, istride, idist
+                       NULL, 1, rdist, //onembed, ostride, odist
+                       CUFFT_C2R, batchSize) != CUFFT_SUCCESS) {
+         std::cout<<"plan creation failed "<<std::endl;
+         exit(1);
+      }
+      
+   }
+
+   /*
    * Execute forward transform.
    */
    template <int D>

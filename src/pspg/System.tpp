@@ -223,7 +223,6 @@ namespace Pspg
       mesh_.setDimensions(d);
       hasMesh_ = true;
       mixture().setMesh(mesh());
-      mixture().setupUnitCell(unitCell());
 
       //std::string groupName;
       in >> groupName_;
@@ -239,6 +238,9 @@ namespace Pspg
       std::cout<<"Allocating completed"<<std::endl;
       wavelist().computeMinimumImages(mesh(), unitCell());
       std::cout<<"wavelist completed"<<std::endl;
+
+      //mixture cannot setupunitCell until wavelist has been computed
+      mixture().setupUnitCell(unitCell(), wavelist());
 
       gettimeofday(&tv, &tz);
       time_wave_end = (double)tv.tv_sec + 

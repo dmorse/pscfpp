@@ -82,7 +82,7 @@ namespace Pspg {
       *
       * \param unitCell unit cell, defining cell dimensions
       */
-      void setupUnitCell(const UnitCell<D>& unitCell);
+      void setupUnitCell(const UnitCell<D>& unitCell, const WaveList<D>& wavelist);
 
       /**
       * Set solver for this block.

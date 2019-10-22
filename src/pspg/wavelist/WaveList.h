@@ -50,7 +50,7 @@ namespace Pspg
       // the allocate function(). I assume this is the form needed
       // to allow fast use in GPU kernels. 
       
-      int* minImage() const;
+      const IntVec<D>& minImage(int i) const;
       cufftReal* kSq() const;
       cufftReal* dkSq() const;
       int kSize() const;
@@ -58,7 +58,7 @@ namespace Pspg
    private:
 
       // Bare C array holding precomputed minimum images
-      int* minImage_;
+      //int* minImage_;
       int* minImage_d;
       // Bare C array holding values of kSq_
       cufftReal*  kSq_;
@@ -79,11 +79,13 @@ namespace Pspg
       int kSize_;
       int rSize_;
       int nParams_;
+
+      DArray< IntVec<D> > minImage_;
    };
 
    template <int D>
-   inline int* WaveList<D>::minImage() const
-   { return minImage_; }
+   inline const IntVec<D>& WaveList<D>::minImage(int i) const
+   { return minImage_[i]; }
 
    template <int D>
    inline cufftReal* WaveList<D>::kSq() const

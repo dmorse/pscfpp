@@ -505,7 +505,7 @@ namespace Pspg {
             }
             
             (systemPtr_->unitCell()).setLattice();
-            systemPtr_->mixture().setupUnitCell(systemPtr_->unitCell());
+            systemPtr_->mixture().setupUnitCell(systemPtr_->unitCell(), systemPtr_->wavelist());
             systemPtr_->wavelist().computedKSq(systemPtr_->unitCell());
             
             for (int m = 0; m < systemPtr_->unitCell().nParams(); ++m){
@@ -576,7 +576,7 @@ namespace Pspg {
             }
             
             systemPtr_->unitCell().setLattice();
-            systemPtr_->mixture().setupUnitCell(systemPtr_->unitCell());
+            systemPtr_->mixture().setupUnitCell(systemPtr_->unitCell(), systemPtr_->wavelist());
             systemPtr_->wavelist().computedKSq(systemPtr_->unitCell());
             
             

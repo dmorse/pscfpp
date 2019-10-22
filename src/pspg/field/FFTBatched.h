@@ -122,7 +122,7 @@ namespace Pspg {
 
    };
 
-   // Declarations of explicit specializations
+   // Declarations of explicit specializations -- not needed
 
    //template <>
    //void FFT<1>::makePlans(RDField<1>& rField, RDFieldDft<1>& kField);
@@ -130,8 +130,8 @@ namespace Pspg {
    //template <>
    //void FFT<2>::makePlans(RDField<2>& rField, RDFieldDft<2>& kField);
 
-   template <>
-   void FFTBatched<3>::makePlans(RDField<3>& rField, RDFieldDft<3>& kField);
+   //template <>
+   //void FFTBatched<3>::makePlans(RDField<3>& rField, RDFieldDft<3>& kField);
 
    /*
    * Return the dimensions of the grid for which this was allocated.

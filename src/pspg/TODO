@@ -6,7 +6,7 @@ Short term clean up (assigned primarily to G.K., ideally before submission)
 1) Enable treatment of 1D and 2D problems: BatchFFT seems to have explicit
    specializations only for 3D transforms. Add explicit specializations 
    for D=1 and D=2, or rewrite as a template if possible. Then add 2D and 
-   3D executable names to variable PSCF_PG_EXE in makefile.
+   3D executable names to variable PSCF_PG_EXE in makefile. -- done
 
 2) Enable use of nonorthogonal unit cells such as 2D hexagonal: Remove 
    dependence on local src/pspg/UnitCell classes and local shiftToMinimum, 
@@ -16,22 +16,29 @@ Short term clean up (assigned primarily to G.K., ideally before submission)
    cell is initialized or modified.  As a first try, do these
    infrequent computations on the CPU using the existing classes and
    see if there is a measurable speed difference.
+   -- I kept the files in the pspg directory but updated the shiftToMinimum class
+   to work on nonorthogonal unit cells. For starters this simple change incurred a 
+   10x penalty anytime the shiftToMinimum is called. For now the block method
+   recalculates ksq every iteration so this can be reduced further.
+   -- I kept the files in the pspg directory because the unit cell has very 
+   difficult to use data structures for gpu calculations. I am not sure if there
+   is a nice way to deal with it.
 
 3) Add a few examples (e.g., lam, hex, and bcc) to the examples/pspg directory.
 
 4) Replace dependence on Pscf::Pspg::ChiInteraction by dependence on the
    shared class Pscf::ChiInteraction. These classes look similar or 
    identical, so this should be easy. I don't see the reason for the
-   duplicated class definition.
+   duplicated class definition. Dave: AM in Pspg is done in real space which requires
+   additional terms to be kept i.e. sum_inv. If you are okay with it PSCF's
+   chiInteraction can be modified so they are consistent.
 
-5) Change inclusion of deprecated "device_functions.h" file to appropriate 
-   public file to suppress warnings from Cuda compiler on mesabi.
-
-6) Figure out how to remove getopt/ from the public repository while 
+5) Figure out how to remove getopt/ from the public repository while 
    retaining the ability for GK to link to a local copy on his laptop, 
    perhaps by keeping that directory in the copy on his laptop and privately 
-   changing a few lines in source and source.mk files in his copy. 
+   changing a few lines in source and source.mk files in his copy. -- done
 
+6) nvcc compiler warning - fixed
 Intermediate (possibly before publication) (assigned primarily to Anshul)
 -------------------------------------------------------------------------
 
