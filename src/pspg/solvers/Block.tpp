@@ -293,16 +293,17 @@ static __global__ void scaleReal(cufftReal* result, int size, float scale) {
       int i;
       for (iter.begin(); !iter.atEnd(); ++iter) {
          i = iter.rank(); 
-         G = iter.position();
-         Gmin = shiftToMinimum(G, mesh().dimensions(), unitCell);
+         //G = iter.position();
+         //Gmin = shiftToMinimum(G, mesh().dimensions(), unitCell);
          
+         /*
          for(int l = 0; l < D; l++) {
             if(Gmin[l] != wavelist.minImage(iter.rank())[l]) {
                std::cout<<Gmin[l]<<' '<<wavelist.minImage(iter.rank())[l]<<'\n';
                std::cout<<"This is the bug\n";
             }
-         }
-         Gsq = unitCell.ksq(Gmin);
+            }*/
+         Gsq = unitCell.ksq(wavelist.minImage(iter.rank()));
          //expKsq_[i] = exp(Gsq*factor);
          expKsq_host[i] = exp(Gsq*factor);
          expKsq2_host[i] = exp(Gsq*factor / 2);

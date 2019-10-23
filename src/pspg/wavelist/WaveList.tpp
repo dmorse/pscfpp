@@ -98,7 +98,7 @@ namespace Pspg
          }
       }
 
-      minImage_.allocate(rSize_);
+      minImage_.allocate(kSize_);
       gpuErrchk(cudaMalloc((void**) &minImage_d, sizeof(int) * rSize_ * D));
 
       kSq_ = new cufftReal[rSize_];
@@ -120,6 +120,7 @@ namespace Pspg
       MeshIterator<D> itr(mesh.dimensions());
       IntVec<D> waveId;
       IntVec<D> G2;
+      IntVec<D> tempIntVec;
       int partnerId;
 
       //min image needs mesh size of them
@@ -158,9 +159,13 @@ namespace Pspg
          //not the most elegant code with repeated copying but reduces repeated code
          //from pscf
          waveId = itr.position();
-         minImage_[itr.rank()] = shiftToMinimum(waveId, mesh.dimensions(), unitCell);
+         tempIntVec = shiftToMinimum(waveId, mesh.dimensions(), unitCell);
          for(int i = 0; i < D; i++) {
-            (tempMinImage + (itr.rank() * D))[i] = minImage_[itr.rank()][i];
+            (tempMinImage + (itr.rank() * D))[i] = tempIntVec[i];
+         }
+         
+         if(itr.position(D - 1) < mesh.dimension(D-1)/2 + 1) {
+            minImage_[invertedIdTable[itr.rank()]] = tempIntVec;
          }
 
          for(int j = 0; j < D; ++j) {
@@ -170,6 +175,7 @@ namespace Pspg
          partnerId = mesh.rank(G2);
          partnerIdTable[invertedIdTable[itr.rank()]] = invertedIdTable[partnerId];
       }
+
       /*std::cout<<"Sum kDimRank implicitRank: "<<kDimRank + (implicitRank-kSize_)<<std::endl;
       std::cout<<"This is kDimRank sanity check "<<kDimRank<<std::endl;
       for(int i = 0; i < rSize_; i++) {
