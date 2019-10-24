@@ -132,7 +132,7 @@ namespace Pspg {
       int itr;
       for (itr = 1; itr <= maxItr_; ++itr) {
         
-         std::cout<< "iterations : " << itr << std::endl;
+         std::cout<< "iterations : " << itr << "\n";
          if (itr <= maxHist_) {
             lambda_ = 1.0 - pow(0.9, itr);
             nHist_ = itr - 1;
@@ -326,10 +326,10 @@ namespace Pspg {
          }
       }
 
-      std::cout << " dError :" << Dbl(dError) << std::endl;
-      std::cout << " wError :" << Dbl(wError) << std::endl;
+      std::cout << " dError :" << Dbl(dError) << '\n';
+      std::cout << " wError :" << Dbl(wError) << '\n';
       error = sqrt(dError / wError);
-      std::cout << "  Error  :" << Dbl(error) << std::endl;
+      std::cout << "  Error  :" << Dbl(error) << '\n';
       if (error < epsilon_) {
          return true;
       }
@@ -505,7 +505,7 @@ namespace Pspg {
             }
             
             (systemPtr_->unitCell()).setLattice();
-            systemPtr_->mixture().setupUnitCell(systemPtr_->unitCell());
+            systemPtr_->mixture().setupUnitCell(systemPtr_->unitCell(), systemPtr_->wavelist());
             systemPtr_->wavelist().computedKSq(systemPtr_->unitCell());
             
             for (int m = 0; m < systemPtr_->unitCell().nParams(); ++m){
@@ -576,7 +576,7 @@ namespace Pspg {
             }
             
             systemPtr_->unitCell().setLattice();
-            systemPtr_->mixture().setupUnitCell(systemPtr_->unitCell());
+            systemPtr_->mixture().setupUnitCell(systemPtr_->unitCell(), systemPtr_->wavelist());
             systemPtr_->wavelist().computedKSq(systemPtr_->unitCell());
             
             

@@ -73,7 +73,6 @@ namespace Pspg
 {
    template <int D>
    WaveList<D>::WaveList() {
-      minImage_ = nullptr;
       minImage_d = nullptr;
       dkSq_ = nullptr;
       partnerIdTable = nullptr;
@@ -99,7 +98,7 @@ namespace Pspg
          }
       }
 
-      minImage_ = new int[rSize_ * D];
+      minImage_.allocate(kSize_);
       gpuErrchk(cudaMalloc((void**) &minImage_d, sizeof(int) * rSize_ * D));
 
       kSq_ = new cufftReal[rSize_];
@@ -121,6 +120,7 @@ namespace Pspg
       MeshIterator<D> itr(mesh.dimensions());
       IntVec<D> waveId;
       IntVec<D> G2;
+      IntVec<D> tempIntVec;
       int partnerId;
 
       //min image needs mesh size of them
@@ -145,12 +145,29 @@ namespace Pspg
             implicitRank++;
          }
       }
+
+      int* tempMinImage = new int[rSize_ * D];
       for (itr.begin(); !itr.atEnd(); ++itr) {
          kSq_[itr.rank()] = unitCell.ksq(itr.position());
+
+#if 0
          //we get position but set mesh dim to be larger, should be okay
          shiftToMinimum(itr.position(), mesh.dimensions(), minImage_ + (itr.rank() * D));
+#endif
 
+         //we get position but set mesh dim to be larger, should be okay
+         //not the most elegant code with repeated copying but reduces repeated code
+         //from pscf
          waveId = itr.position();
+         tempIntVec = shiftToMinimum(waveId, mesh.dimensions(), unitCell);
+         for(int i = 0; i < D; i++) {
+            (tempMinImage + (itr.rank() * D))[i] = tempIntVec[i];
+         }
+         
+         if(itr.position(D - 1) < mesh.dimension(D-1)/2 + 1) {
+            minImage_[invertedIdTable[itr.rank()]] = tempIntVec;
+         }
+
          for(int j = 0; j < D; ++j) {
             G2[j] = -waveId[j];
          }
@@ -158,12 +175,13 @@ namespace Pspg
          partnerId = mesh.rank(G2);
          partnerIdTable[invertedIdTable[itr.rank()]] = invertedIdTable[partnerId];
       }
+
       /*std::cout<<"Sum kDimRank implicitRank: "<<kDimRank + (implicitRank-kSize_)<<std::endl;
       std::cout<<"This is kDimRank sanity check "<<kDimRank<<std::endl;
       for(int i = 0; i < rSize_; i++) {
          std::cout<<i<<' '<<selfIdTable[i]<<' '<<partnerIdTable[i]<<' '<<implicit[i]<<std::endl;
          }*/
-      gpuErrchk(cudaMemcpy(minImage_d, minImage_, sizeof(int) * rSize_ * D, cudaMemcpyHostToDevice));
+      gpuErrchk(cudaMemcpy(minImage_d, tempMinImage, sizeof(int) * rSize_ * D, cudaMemcpyHostToDevice));
 
       //partner is much smaller but we keep this for now
       gpuErrchk(cudaMemcpy(partnerIdTable_d, partnerIdTable, sizeof(int) * mesh.size(), cudaMemcpyHostToDevice));
@@ -172,6 +190,7 @@ namespace Pspg
 
       gpuErrchk(cudaMemcpy(implicit_d, implicit, sizeof(bool) * mesh.size(), cudaMemcpyHostToDevice));
       
+      delete[] tempMinImage;
       computedKSq(unitCell);
    }
 

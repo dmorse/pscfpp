@@ -272,7 +272,7 @@ static __global__ void scaleReal(cufftReal* result, int size, float scale) {
    */
    template <int D>
    void 
-   Block<D>::setupUnitCell(const UnitCell<D>& unitCell)
+   Block<D>::setupUnitCell(const UnitCell<D>& unitCell, const WaveList<D>& wavelist)
    {
       //what does this do?
       nParams_ = unitCell.nParams();
@@ -293,9 +293,17 @@ static __global__ void scaleReal(cufftReal* result, int size, float scale) {
       int i;
       for (iter.begin(); !iter.atEnd(); ++iter) {
          i = iter.rank(); 
-         G = iter.position();
-         Gmin = shiftToMinimum(G, mesh().dimensions());
-         Gsq = unitCell.ksq(Gmin);
+         //G = iter.position();
+         //Gmin = shiftToMinimum(G, mesh().dimensions(), unitCell);
+         
+         /*
+         for(int l = 0; l < D; l++) {
+            if(Gmin[l] != wavelist.minImage(iter.rank())[l]) {
+               std::cout<<Gmin[l]<<' '<<wavelist.minImage(iter.rank())[l]<<'\n';
+               std::cout<<"This is the bug\n";
+            }
+            }*/
+         Gsq = unitCell.ksq(wavelist.minImage(iter.rank()));
          //expKsq_[i] = exp(Gsq*factor);
          expKsq_host[i] = exp(Gsq*factor);
          expKsq2_host[i] = exp(Gsq*factor / 2);
@@ -466,6 +474,8 @@ static __global__ void scaleReal(cufftReal* result, int size, float scale) {
 
       fftBatched_.forwardTransform(p0.head(), qkBatched_, ns_);
       fftBatched_.forwardTransform(p1.head(), qk2Batched_, ns_);
+      cudaMemset(qr2_.cDField(), 0, mesh().size() * sizeof(int));
+
       for (int j = 0; j < ns_ ; ++j) {
          //basis.convertFieldDftToComponents(qkBatched_ + (j* kSize_) , q1_.cDField());
 
@@ -483,7 +493,6 @@ static __global__ void scaleReal(cufftReal* result, int size, float scale) {
 
          for (int n = 0; n < nParams_ ; ++n) {
             //do i need this?
-            cudaMemset(qr2_.cDField(), 0, mesh().size() * sizeof(int));
             mulDelKsq<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>>
                (qr2_.cDField(), qkBatched_ + (j * kSize_), qk2Batched_ + (kSize_ * (ns_ -1 -j)), 
                 wavelist.dkSq(), n , kSize_, nx);

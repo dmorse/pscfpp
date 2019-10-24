@@ -99,7 +99,7 @@ namespace Pspg
       * 
       * \param unitCell UnitCell<D> object that contains Bravais lattice.
       */
-      void setupUnitCell(const UnitCell<D>& unitCell);
+      void setupUnitCell(const UnitCell<D>& unitCell, const WaveList<D>& wavelist);
 
       /**
       * Compute concentrations.

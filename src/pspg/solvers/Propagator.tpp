@@ -13,7 +13,7 @@
 #include <thrust/reduce.h>
 #include "device_launch_parameters.h"
 #include <cuda.h>
-#include <device_functions.h>
+//#include <device_functions.h>
 #include <thrust/count.h>
 #include <pspg/GpuResources.h>
 #include <pscf/mesh/Mesh.h>

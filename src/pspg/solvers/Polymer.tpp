@@ -44,11 +44,11 @@ namespace Pspg {
    * Set unit cell dimensions in all solvers.
    */ 
    template <int D>
-   void Polymer<D>::setupUnitCell(UnitCell<D> const & unitCell)
+   void Polymer<D>::setupUnitCell(UnitCell<D> const & unitCell, const WaveList<D>& wavelist)
    {
       nParams_ = unitCell.nParams();
       for (int j = 0; j < nBlock(); ++j) {
-         block(j).setupUnitCell(unitCell);
+         block(j).setupUnitCell(unitCell, wavelist);
       }
    }
 
