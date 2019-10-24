@@ -8,6 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <pspg/crystal/UnitCell.h>
 #include <pscf/math/IntVec.h>
 #include <iostream>
 
@@ -24,39 +25,21 @@ namespace Pspg{
    * \param cell UnitCell
    */
    template <int D>
-   IntVec<D> shiftToMinimum(IntVec<D>& v, const IntVec<D> d);
+   IntVec<D> shiftToMinimum(IntVec<D>& v, const IntVec<D> d, const UnitCell<D> cell);
 
-   template <int D>
-   void shiftToMinimum(const IntVec<D>& v, const IntVec<D>& d, int* waveBz);
    // Explicit specializations
    // The explicit specializations assumes that the value of IntVec is strictly
    // non-negative. This is always safe if IntVec<D>& v is provided 
    // by MeshIterator
+   template <> 
+   IntVec<1> shiftToMinimum(IntVec<1>& v, const IntVec<1> d, const UnitCell<1> cell);
 
-   template <int D> 
-   IntVec<D> shiftToMinimum(IntVec<D>& v, const IntVec<D> d)
-   {
-      IntVec<D> u;
-      for( int i = 0; i < D; ++i) {
-         if (v[i] > d[i]/2) {
-            u[i] = v[i] - d[i];
-         } else {
-            u[i] = v[i];
-         }
-      }
-      return u;
-   }
+   template <> 
+   IntVec<2> shiftToMinimum(IntVec<2>& v, const IntVec<2> d, const UnitCell<2> cell);
 
-   template<int D>
-   void shiftToMinimum(const IntVec<D>& v, const IntVec<D>& d, int* waveBz) {      
-      for(int i = 0; i < D; i++) {
-         if (v[i] > d[i] / 2 ) {
-            waveBz[i] = v[i] - d[i];
-         } else {
-            waveBz[i] = v[i];
-         }
-      }
-   }
+   template <> 
+   IntVec<3> shiftToMinimum(IntVec<3>& v, const IntVec<3> d, const UnitCell<3> cell);
+
 
 }
 }

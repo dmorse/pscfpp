@@ -55,7 +55,7 @@ namespace Pspg {
       /**
       * Compute solution to MDE and concentrations.
       */ 
-      void setupUnitCell(UnitCell<D> const & unitCell);
+      void setupUnitCell(UnitCell<D> const & unitCell, const WaveList<D>& wavelist);
 
       /**
       * Compute solution to MDE and concentrations.

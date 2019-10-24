@@ -12,23 +12,7 @@ namespace Pspg {
 
    using namespace Util;
 
-   // Forward transform, explicit specializations.
-   //use local mesh dimensions later
-   /*template<>
-   void FFTBatched<1>::makePlans(RDField<1>& rField, RDFieldDft<1>& kField)
-   {
-      cufftPlan1d(&fPlan_, rField.capacity(), CUFFT_R2C, 1);
-      cufftPlan1d(&iPlan_, rField.capacity(), CUFFT_C2R, 1);
-   }
-
-   template <>
-   void FFTBatched<2>::makePlans(RDField<2>& rField, RDFieldDft<2>& kField)
-   {
-      cufftPlan2d(&fPlan_, rField.meshDimensions()[0], rField.meshDimensions()[1], CUFFT_R2C);
-      cufftPlan2d(&iPlan_, rField.meshDimensions()[0], rField.meshDimensions()[1], CUFFT_C2R);
-
-      }*/
-
+#if 0
    template <>
    void FFTBatched<3>::makePlans(RDField<3>& rField, RDFieldDft<3>& kField)
    {
@@ -57,7 +41,9 @@ namespace Pspg {
       }
       
    }
+#endif
 
+#if 0
    template <>
    void FFTBatched<3>::makePlans(const IntVec<3>& rDim, const IntVec<3>& kDim, int batchSize)
    {
@@ -86,5 +72,11 @@ namespace Pspg {
       }
       
    }
+#endif
+
+   template class FFTBatched<1>;
+   template class FFTBatched<2>;
+   template class FFTBatched<3>;
+
 }
 }
