@@ -1,47 +1,30 @@
 /*! \page user_command_page 3.3 Command Files
 
- \ref user_param_page     (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref user_param_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref user_example_page (Next) 
 <BR>
 
-For any Pscf++ simulation program, after the parameter file is processed by the readParam() method, the progress of a simulation is controlled by a command file, which is processed by a readCommand() method. The name of the command file is specified in the unix command that invokes the program as an argument to the -c command line option. 
+For any Pscf++ simulation program, the parameter file is read first,
+followed by a command script. The command file controls the sequence
+of operations performed after the program is initialized using 
+information from the parameter file.  The name of the command file 
+is specified when the program is invoked as an argument of the -c 
+command line option.
 
-The command file contains a sequence of commands that are read and executed in sequence. Each command begins with an all upper case label. Some commands take one or more parameters, which must appear after the upper case label, separated by spaces. The script stops execution when it encounters the command string 'FINISH' on a line by itself. 
+The command file contains a sequence of commands that are read and 
+executed in sequence. Each command begins with an all upper case label. 
+Some commands take one or more parameters, which must appear after the 
+upper case label, separated by whitespace. The program stops execution 
+and returns control to the operating system when it encounters the 
+command string 'FINISH' on a line by itself. 
 
-\section example_sec Example
+<h2> Commands for Specific Program:</h2>
 
-Here is a example of a minimal command file
-\code
-ITERATE          in/omega
-WRITE_WFIELDS    out/omega.bf
-FINISH
-\endcode
-
-The command "ITERATE in/omega" instructs the program to read the file in/omega, which contains an initial guess for the chemical potential field, then iteratively solve the self-consistent field equations start from this initial guess.
-The command "WRITE_WFIELDS out/omega.bf" writes the resulting converged set of chemical potential fields to the file out/omega.bf.
-The script stops execution when it encounters the FINISH command.
-
-\section commands_sec Commands
-
-The following table shows a list of available commands for all three programs.  The last three columns indicate which commands are valid for each program: An "X" represents a valid command for mcSim, mdSim, or ddSim.
-<table>
-  <tr> 
-    <td> <b>command     </b> </td>
-    <td> <b>parameter(s)</b> </td>
-    <td> <b>description </b> </td>
-    <td> <b>fd1d</b> </td>
-    <td> <b>pspc</b> </td>
-    <td> <b>pspg</b> </td>
-  </tr>
-  <tr> 
-    <td> READ_CONFIG </td>
-    <td> filename [string] </td>
-    <td> Read configuration from file filename, with input prefix  </td>
-    <td> <b>X</b> </td>
-    <td> <b>X</b> </td>
-    <td> <b>X</b> </td>
-  </tr>
-</table>
+   <ul style="list-style: none;">
+   <li> \subpage user_command_fd_page      "3.3.1 pscf_fd" </li>
+   <li> \subpage user_command_pc_page      "3.3.2 pscf_pcNd" </li>
+   <li> \subpage user_command_pg_page      "3.3.3 pscf_pgNd" </li>
+   </ul>
 
  <BR>
  \ref user_param_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

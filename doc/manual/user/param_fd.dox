@@ -1,7 +1,7 @@
 /*! \page user_param_fd_page 3.2.2 Parameter File: pscf_fd1d
 
-\ref user_param_syntax_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_command_page (Next)
+\ref user_param_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_param_pc_page (Next)
 <BR>
 
 \section user_param_fd_section Example for pscf_fd
@@ -117,8 +117,10 @@ the array is read, and thus requires that the number of
 elements be specified by the the value of a parameter that 
 appears earlier in the file format.
 
-\section user_param_fd_overview_section Overview
-The format is shown below for  ...
+\section user_param_fd_overview_section Parameter File Blocks
+
+The structure of the main blocks of a pscf_fd parameter file
+is shown below in skeleton form.
 \code
 System{
   Mixture{
@@ -130,7 +132,7 @@ System{
   Domain{
      ...
   }
-  Iterator{
+  NrIterator{
      ...
   }
 }
@@ -150,15 +152,20 @@ Domain: The domain block specifies the coordinate system and domain over which t
 equations should be solved, and the number of grid points used for spatial discretization.
 </li>
 <li>
-Iterator: The iterator block gives parameters required by the iteration algorithm used to 
-solve the nonlinear SCFT equations.  The choice of an iteration algorithm is given by the
-title of this block. In this example, NrIterator represents a Newton-Raphson iterator.
+NrIterator: The NrIterator block gives parameters required by the Newton-Raphson iteration algorithm used to solve the nonlinear SCFT equations.
 </li>
 <ul>
 
+\section user_param_fd_mixture_section Mixture Block
+
+\section user_param_fd_ChiInteraction_section ChiInteraction Block
+
+\section user_param_fd_Domain_section Domain Block
+
+\section user_param_fd_NrIterator_section NrIterator Block
+
 <BR>
-\ref user_param_syntax_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_param_page (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_command_page (Next)
+\ref user_param_pc_page (Next)
 
 */

@@ -1,12 +1,12 @@
-/*! \page user_param_ps_page 3.2.3 Parameter Files: pscf_pspc
+/*! \page user_param_pc_page 3.2.3 Parameter Files: pscf_pcNd
 
 \ref user_param_fd_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_command_page (Next)
+\ref user_param_pg_page (Next)
 <BR>
 
 The parameter file formats for mdSim and mcSim simulations are similar in many respects, and so will be discussed together.  
 
-\section user_param_ps_section Example for pscf_pspc:
+\section user_param_pc_section Example for pscf_pspc:
 An example of a parameter file for an pscf_pspc was shown on the previous page. Here is a corresponding example for pscf_pspc program:
 \code
 System{
@@ -41,7 +41,7 @@ System{
 }
 \endcode
 
-\section user_param_ps_overview_section Overview
+\section user_param_pc_overview_section Overview
 The format is shown below for an mcSim file for a code with all potential types enabled at compile time (with bond, angle, dihedral and external potentials). Most parameters are shown in the format "label type" where type is the type of variable expected. Optional parameters are shown in square brackets, using the format [label type = default], where default is the default value assigned to the variable if this line is absent from the parameter file.
 \code
 McSimulation{
@@ -61,6 +61,6 @@ The following parameters appear in the main block in the format for either type 
 <BR>
 \ref user_param_fd_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_param_page (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_command_page (Next)
+\ref user_param_pg_page (Next)
 
 */

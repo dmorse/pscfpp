@@ -10,7 +10,7 @@ The parameter files required by the different pscp++ programs use a similar synt
    <ul style="list-style: none;">
    <li> \subpage user_param_syntax_page  "3.2.1 Syntax" </li>
    <li> \subpage user_param_fd_page      "3.2.2 pscf_fd" </li>
-   <li> \subpage user_param_ps_page      "3.2.3 pscf_ps" </li>
+   <li> \subpage user_param_pc_page      "3.2.3 pscf_pc" </li>
    </ul>
 <BR>
 \ref user_usage_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

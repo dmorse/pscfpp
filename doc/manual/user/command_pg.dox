@@ -1,0 +1,40 @@
+/*! \page user_command_pg_page 3.3.3 Commands for pscf_pgNd (GPU)
+
+ \ref user_command_pc_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref user_example_page    (Next) 
+<BR>
+
+The following table shows a list of available commands for the 
+pscf_PgNd GPU program for N-dimensionally periodic microstructures
+with N=1, 2, 3.  Unless otherwise stated, commands that read or 
+write files that contain w or c fields use the real-space grid 
+(rgrid) format.
+
+<table>
+  <tr> 
+    <td> <b>command     </b> </td>
+    <td> <b>parameter(s)</b> </td>
+    <td> <b>description </b> </td>
+  </tr>
+  <tr> 
+    <td> ITERATE </td>
+    <td> filename [string] </td>
+    <td> Read initial w field from file filename, iterate to convergence  </td>
+  </tr>
+  <tr> 
+    <td> WRITE_WFIELDS_RGRID </td>
+    <td> filename [string] </td>
+    <td> Write w fields to file filename  </td>
+  </tr>
+  <tr> 
+    <td> WRITE_CFIELDS_RGRID </td>
+    <td> filename [string] </td>
+    <td> Write monomer volume fraction fields for each type to file filename  </td>
+  </tr>
+</table>
+
+ <BR>
+ \ref user_command_pc_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref user_command_page     (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref user_example_page     (Next) 
+*/

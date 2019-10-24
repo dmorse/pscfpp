@@ -1,0 +1,82 @@
+/*! \page user_command_pc_page 3.3.2 Commands for pscf_pcNd
+
+ \ref user_command_fd_page     (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref user_command_pg_page (Next) 
+<BR>
+
+
+The following table shows a list of available commands for the pscf_pcNd 
+CPU programs for N-dimensionally periodic microstructures (i.e., pscf_pc1d,
+pscf_pc2d, and pscf_pc3d). Unless otherwise stated, commands that read or 
+write chemical potential (w) fields or monomer volume fraction (c) fields 
+use a file format in which the field associated with each monomer type 
+is specified by giving Fourier coefficients of that field in a 
+symmetry-adapted Fourier exapnsion. This file format is identical to 
+the default file format used by the Fortran PSCF program.
+<table>
+  <tr> 
+    <td> <b>command     </b> </td>
+    <td> <b>parameter(s)</b> </td>
+    <td> <b>description </b> </td>
+  </tr>
+  <tr> 
+    <td> ITERATE </td>
+    <td> filename [string] </td>
+    <td> Read initial w field from file filename, iterate to convergence  
+         </td>
+  </tr>
+  <tr> 
+    <td> READ_WFIELDS </td>
+    <td> filename [string] </td>
+    <td> Write w fields to file filename  </td>
+  </tr>
+  <tr> 
+    <td> WRITE_WFIELDS </td>
+    <td> filename [string] </td>
+    <td> Write chemical potential fields (w fields) for all monomer types 
+         to file filename  </td>
+  </tr>
+  <tr> 
+    <td> WRITE_CFIELDS </td>
+    <td> filename [string] </td>
+    <td> Write monomer volume fraction fields (c fields) for all types 
+         to a file filename  </td>
+  </tr>
+  <tr> 
+    <td> WRITE_BLOCK_CFIELDS </td>
+    <td> filename [string] </td>
+    <td> Write monomer volume fractions (c fields) for each block to 
+         file filename  </td>
+  </tr>
+  <tr> 
+    <td> SOLVE_MDE </td>
+    <td> inFile [string], outFile[string </td>
+    <td> Solve modified diffusion equation for the w fields in file 
+         inFile, then write resulting c field to outCFile </td>
+  </tr>
+  <tr> 
+    <td> RGRID_TO_FIELD </td>
+    <td> inFile [string], outFile[string </td>
+    <td> Read fields from file inFile in real-space grid (rgrid) format, 
+         write to file outFile in symmetry-adapted Fourier format. </td>
+  </tr>
+  <tr> 
+    <td> FIELD_TO_RGRID </td>
+    <td> inFile [string], outFile[string </td>
+    <td> Read fields from file inFile in symmetry-adapted Fourier, 
+         write to file outFile in real-space grid (rgrid) format. </td>
+  </tr>
+  <tr> 
+    <td> KGRID_TO_RGRID </td>
+    <td> inFile [string], outFile[string </td>
+    <td> Read fields from file inFile in plane wave Fourier expansion 
+         (kgrid) format, write to file outFile in rgrid format. </td>
+  </tr>
+</table>
+
+
+ <BR>
+ \ref user_command_fd_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref user_command_page      (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref user_command_pg_page   (Next) 
+*/
