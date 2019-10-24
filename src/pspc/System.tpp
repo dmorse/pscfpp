@@ -293,13 +293,13 @@ namespace Pspc
             Log::file() << " " << Str(filename, 20) <<std::endl;
             fieldIo().readFieldsBasis(filename, wFields());
          } else
-         if (command == "WRITE_WFIELDS") {
+         if (command == "WRITE_W_BASIS") {
             in >> filename;
             Log::file() << "  " << Str(filename, 20) << std::endl;
             fieldIo().writeFieldsBasis(filename, wFields());
 
          } else 
-         if (command == "WRITE_CFIELDS") {
+         if (command == "WRITE_C_BASIS") {
             in >> filename;
             Log::file() << "  " << Str(filename, 20) << std::endl;
             fieldIo().writeFieldsBasis(filename, cFields());
@@ -355,7 +355,7 @@ namespace Pspc
             fieldIo().writeFieldsBasis(outFileName, cFields());
 
          } else
-         if (command == "FIELD_TO_RGRID") {
+         if (command == "BASIS_TO_RGRID") {
             std::string inFileName;
             std::string outFileName;
 
@@ -370,7 +370,7 @@ namespace Pspc
             fieldIo().writeFieldsRGrid(outFileName, cFieldGrids());
 
          } else
-         if (command == "RGRID_TO_FIELD") {
+         if (command == "RGRID_TO_BASIS") {
             std::string inFileName;
             std::string outFileName;
 

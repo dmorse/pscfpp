@@ -1,5 +1,5 @@
 ITERATE
 contents/omega/domainOn/omega_bcc
-WRITE_WFIELDS
+WRITE_W_BASIS
 out/omega/domainOn/omega_bcc
 FINISH

@@ -1,4 +1,4 @@
 ITERATE          in/omega
-WRITE_WFIELDS    out/omega
+WRITE_W_BASIS    out/omega
 FINISH
 

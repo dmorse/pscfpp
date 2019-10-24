@@ -1,6 +1,6 @@
 ITERATE
 contents/omega/domainOff/omega_lam
-WRITE_WFIELDS
+WRITE_W_BASIS
 out/omega/domainOff/omega_lam
 
 FINISH

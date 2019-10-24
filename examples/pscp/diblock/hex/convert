@@ -1,6 +1,0 @@
-OUTPUT_STARS     out/stars
-OUTPUT_WAVES     out/waves
-FIELD_TO_RGRID   in/omega        out/omega.rf
-RGRID_TO_FIELD   out/omega.rf    out/omega.bf
-FINISH
-

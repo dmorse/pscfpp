@@ -1,8 +1,8 @@
-FIELD_TO_RGRID
+BASIS_TO_RGRID
 contents/omega/domainOn/omega_lam
 out/omega/conv/omega_rgrid_lam
 
-RGRID_TO_FIELD
+RGRID_TO_BASIS
 out/omega/conv/omega_rgrid_lam
 out/omega/conv/omega_conv_lam
 

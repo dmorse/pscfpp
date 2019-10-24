@@ -378,7 +378,7 @@ namespace Pspg
             readFields(inFile, wFields());
             inFile.close();
 
-         } else if (command == "WRITE_WFIELDS") {
+         } else if (command == "WRITE_W_BASIS") {
             in >> filename;
             Log::file() << "  " << Str(filename, 20) << std::endl;
 
@@ -399,7 +399,7 @@ namespace Pspg
             outFile.close();
 
          }/* 
-         else if (command == "WRITE_CFIELDS") {
+         else if (command == "WRITE_C_BASIS") {
 
             in >> filename;
             Log::file() << "  " << Str(filename, 20) << std::endl;
@@ -476,7 +476,7 @@ namespace Pspg
             << std::endl;
 
          }
-         /*else if (command == "FIELD_TO_RGRID") {
+         /*else if (command == "BASIS_TO_RGRID") {
             std::string inFileName;
             std::string outFileName;
 
@@ -503,7 +503,7 @@ namespace Pspg
             outFile.close();
 
             } */
-         /*else if (command == "RGRID_TO_FIELD") {
+         /*else if (command == "RGRID_TO_BASIS") {
             std::string inFileName;
             std::string outFileName;
 
