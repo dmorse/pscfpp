@@ -1,28 +1,7 @@
 include src/config.mk
-# ==========================================================================
+# =========================================================================
 .PHONY: all-cpu util pscf fd1d pspc \
         clean veryclean html clean-html
-
-# ==============================================================================
-# Main build targets
-
-all-cpu:
-	cd bld; $(MAKE) all
-
-util:
-	cd bld; $(MAKE) util
-
-pscf:
-	cd bld; $(MAKE) util
-
-fd1d:
-	cd bld; $(MAKE) pscf
-
-pspc:
-	cd bld; $(MAKE) pspc
-
-pspg:
-	cd bld; $(MAKE) pspg
 
 # ==========================================================================
 # Test targets

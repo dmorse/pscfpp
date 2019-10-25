@@ -1,38 +1,48 @@
 include config.mk
 
-# ======================================================================
 .PHONY: all-cpu util pscf fd1d pspc pspg clean veryclean
+# ======================================================================
+# Main build targets
 
+# Build all programs that uses exclusively CPU hardware
 all-cpu: 
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
 	cd fd1d; $(MAKE) all
 	cd pspc; $(MAKE) all
 
+# Build code in Util names (general scientific utilities)
 util: 
 	cd util; $(MAKE) all
 
+# Build common code for pscf++ in Util and Pscf namespaces
 pscf: 
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
 
+# Build pscf_fd 1D finite difference program (install in BIN_DIR)
 fd1d: 
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
 	cd fd1d; $(MAKE) all
 
+# Build pscf_pcNd CPU code for periodic structures (install in BIN_DIR)
 pspc: 
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
 	cd pspc; $(MAKE) all
 
+# Build pscf_pcNd GPU code for periodic structures (install in BIN_DIR)
 pspg:
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all
 	cd pspg; $(MAKE) all
 
-# Run all unit tests
-run-tests:
+# ======================================================================
+# Test targets
+
+# Run all CPU unit tests
+test-cpu:
 	cd util/tests; $(MAKE) all; $(MAKE) quiet
 	cd pscf/tests; $(MAKE) all; $(MAKE) run
 	cd fd1d/tests; $(MAKE) all; $(MAKE) run
@@ -45,6 +55,9 @@ run-tests:
 	@echo "Summary"
 	@cat count
 	@rm -f count
+
+# ======================================================================
+# Clean targets
 
 # Remove object (*.o), dependency (*.d) and library (*.a) files
 clean:

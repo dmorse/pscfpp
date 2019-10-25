@@ -18,4 +18,5 @@ Files:
   configure - script for managing optional features
   config.mk - main configuration file for in-source compilation
 
-Note: File config.mk is created by the setup script.
+Note: File src/config.mk is not in the git repository, and is 
+installed by the setup script.
