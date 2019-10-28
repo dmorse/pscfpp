@@ -1,0 +1,7 @@
+ITERATE
+in/omega
+WRITE_WFIELDGRIDS
+out/omega
+WRITE_CFIELDGRIDS
+out/rho
+FINISH
