@@ -21,7 +21,7 @@
 #include <string>
 #include <getopt.h>
 #include <cstdlib>
-#include <pspg/crystal/shiftToMinimum.h>
+#include <pscf/crystal/shiftToMinimum.h>
 //#include <unistd.h>
 
 

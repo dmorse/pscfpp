@@ -12,7 +12,7 @@
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pspg/crystal/UnitCell.h>
-#include <pspg/crystal/shiftToMinimum.h>
+#include <pscf/crystal/shiftToMinimum.h>
 #include <pspg/GpuResources.h>
 #include <util/containers/FMatrix.h>      // member template
 #include <util/containers/DArray.h>      // member template

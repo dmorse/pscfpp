@@ -12,7 +12,7 @@
 #include <pspg/field/RDField.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/mesh/Mesh.h>
-#include <pspg/crystal/shiftToMinimum.h>
+#include <pscf/crystal/shiftToMinimum.h>
 #include <pspg/crystal/UnitCell.h>
 #include <util/containers/DArray.h>
 #include <util/containers/GArray.h>

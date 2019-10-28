@@ -1,8 +1,7 @@
 pspg_crystal_= \
   pspg/crystal/UnitCell1.cu \
   pspg/crystal/UnitCell2.cu \
-  pspg/crystal/UnitCell3.cu \
-  pspg/crystal/shiftToMinimum.cu
+  pspg/crystal/UnitCell3.cu 
 
 pspg_crystal_SRCS=\
      $(addprefix $(SRC_DIR)/, $(pspg_crystal_))
