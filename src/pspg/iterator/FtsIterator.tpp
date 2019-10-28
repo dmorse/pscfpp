@@ -283,7 +283,7 @@ namespace Pspg {
          
       }
 
-      float sum_chi_inv = (float) systemPtr_->interaction().sum_inv;
+      float sum_chi_inv = (float) systemPtr_->interaction().sum_inv();
 
       for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
          
