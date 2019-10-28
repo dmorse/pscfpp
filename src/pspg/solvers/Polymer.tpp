@@ -46,7 +46,7 @@ namespace Pspg {
    template <int D>
    void Polymer<D>::setupUnitCell(UnitCell<D> const & unitCell, const WaveList<D>& wavelist)
    {
-      nParams_ = unitCell.nParams();
+      nParams_ = unitCell.nParameter();
       for (int j = 0; j < nBlock(); ++j) {
          block(j).setupUnitCell(unitCell, wavelist);
       }

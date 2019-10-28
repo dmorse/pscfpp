@@ -110,7 +110,7 @@ namespace Pscf
       * \param j index of a Cartesian component of a_i
       * \param k index of cell parameter
       */
-      const double drBasis(int k, int i, int j) const;
+      double drBasis(int k, int i, int j) const;
 
       /**
       * Get component j of derivative of kBasis vector bi w/respect to k.
@@ -119,7 +119,7 @@ namespace Pscf
       * \param j index of a Cartesian component of b_i
       * \param k index of cell parameter
       */
-      const double dkBasis(int k, int i, int j) const;
+      double dkBasis(int k, int i, int j) const;
 
       /**
       * Get the derivative of dot product ri.rj with respect to parameter k.
@@ -128,7 +128,7 @@ namespace Pscf
       * \param j array index of 2nd Bravais basis vector b_i
       * \param k index of cell parameter
       */
-      const double drrBasis(int k, int i, int j) const;
+      double drrBasis(int k, int i, int j) const;
 
       /**
       * Get the derivative of dot product bi.bj with respect to parameter k.
@@ -137,7 +137,7 @@ namespace Pscf
       * \param j array index of 2nd reciprocal basis vector b_i
       * \param k index of cell parameter
       */
-      const double dkkBasis(int k, int i, int j) const;
+      double dkkBasis(int k, int i, int j) const;
 
    protected:
 
@@ -270,7 +270,7 @@ namespace Pscf
    */
    template <int D>
    inline
-   const double UnitCellBase<D>::drBasis(int k, int i, int j) const
+   double UnitCellBase<D>::drBasis(int k, int i, int j) const
    {  return drBasis_[k](i,j);  }
 
    /*
@@ -278,7 +278,7 @@ namespace Pscf
    */
    template <int D>
    inline
-   const double UnitCellBase<D>::dkBasis(int k, int i, int j) const
+   double UnitCellBase<D>::dkBasis(int k, int i, int j) const
    {  return dkBasis_[k](i, j);  }
 
    /*
@@ -286,7 +286,7 @@ namespace Pscf
    */
    template <int D>
    inline
-   const double UnitCellBase<D>::dkkBasis(int k, int i, int j) const
+   double UnitCellBase<D>::dkkBasis(int k, int i, int j) const
    {  return dkkBasis_[k](i, j);  }
 
    /*
@@ -294,7 +294,7 @@ namespace Pscf
    */
    template <int D>
    inline
-   const double UnitCellBase<D>::drrBasis(int k, int i, int j) const
+   double UnitCellBase<D>::drrBasis(int k, int i, int j) const
    {  return drrBasis_[k](i, j);  }
 
    /*

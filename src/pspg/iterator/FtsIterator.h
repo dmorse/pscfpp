@@ -148,7 +148,9 @@ namespace Pspg {
          /// 1st index = history, 2nd index = cell parameter
          // The ringbuffer used is now slightly modified to return by reference
          RingBuffer< FArray <double, 6> > devCpHists_;
-         RingBuffer< FArray<double, 6> > CpHists_;
+         RingBuffer< FSArray<double, 6> > CpHists_;
+
+         FSArray<double, 6> cellParameters_;
 
          /// Umn, matrix to be minimized
          DMatrix<double> invertMatrix_;

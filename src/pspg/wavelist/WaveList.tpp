@@ -87,7 +87,7 @@ namespace Pspg
 
       kSize_ = 1;
       rSize_ = mesh.size();
-      nParams_ = unitCell.nParams();
+      nParams_ = unitCell.nParameter();
       dimensions_ = mesh.dimensions();
 
       for(int i = 0; i < D; ++i) {
@@ -113,6 +113,9 @@ namespace Pspg
       implicit = new bool[mesh.size()];
       gpuErrchk(cudaMalloc((void**) &implicit_d, sizeof(bool) * mesh.size()));
 
+      dkkBasis = new cufftReal[6 * D * D];
+      gpuErrchk(cudaMalloc((void**) &dkkBasis_d, sizeof(cufftReal) * 6 * D * D));
+      
    }
 
    template <int D>
@@ -204,14 +207,29 @@ namespace Pspg
       //dkkbasis is something determined from unit cell size
       //min image needs to be on device but okay since its only done once
       //second to last parameter is number of stars originally
-      cudaMemset(dkSq_, 0, unitCell.nParams() * rSize_ * sizeof(cufftReal));
+
+      int idx;
+      for(int i = 0 ; i < unitCell.nParameter(); ++i) {
+         for(int j = 0; j < D; ++j) {
+            for(int k = 0; k < D; ++k) {
+               idx = k + (j * D) + (i * D * D);
+               dkkBasis[idx] = unitCell.dkkBasis(i, j, k);
+            }
+         }
+      }
+
+      cudaMemcpy(dkkBasis_d, dkkBasis,
+                 sizeof(cufftReal) * unitCell.nParameter() * D * D,
+                 cudaMemcpyHostToDevice);
+
+      cudaMemset(dkSq_, 0, unitCell.nParameter() * rSize_ * sizeof(cufftReal));
        makeDksqHelperWave<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>
-         (dkSq_, minImage_d, unitCell.dkkBasis_d, partnerIdTable_d,
-          selfIdTable_d, implicit_d, unitCell.nParams(), 
+         (dkSq_, minImage_d, dkkBasis_d, partnerIdTable_d,
+          selfIdTable_d, implicit_d, unitCell.nParameter(), 
           kSize_, rSize_, D);
        
        makeDksqReduction<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>
-          (dkSq_, partnerIdTable_d, unitCell.nParams(),
+          (dkSq_, partnerIdTable_d, unitCell.nParameter(),
             kSize_, rSize_);
    }
 

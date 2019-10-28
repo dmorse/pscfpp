@@ -11,7 +11,6 @@
 #include "Block.h"
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
-#include <pspg/crystal/UnitCell.h>
 #include <pscf/crystal/shiftToMinimum.h>
 #include <pspg/GpuResources.h>
 #include <util/containers/FMatrix.h>      // member template
@@ -275,7 +274,7 @@ static __global__ void scaleReal(cufftReal* result, int size, float scale) {
    Block<D>::setupUnitCell(const UnitCell<D>& unitCell, const WaveList<D>& wavelist)
    {
       //what does this do?
-      nParams_ = unitCell.nParams();
+      nParams_ = unitCell.nParameter();
       MeshIterator<D> iter;
       // std::cout << "kDimensions = " << kMeshDimensions_ << std::endl;
       iter.setDimensions(kMeshDimensions_);
