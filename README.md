@@ -1,24 +1,24 @@
 
-# PSCF (C++/cuda) - Polymer Self-Consistent Field theory 
+# PSCF - Polymer Self-Consistent Field theory (C++/CUDA version)
 
 PSCF is a package of software for solving the Edwards-Helfand self-consistent 
 field theory for polymer liquids. The version in the directory containing
-this file is written primarily in C++, with GPU accelerated code in cuda.
-This C++/cuda version of PSCF is still under development, but is intended 
+this file is written primarily in C++, with GPU accelerated code in CUDA.
+This C++/CUDA version of PSCF is still under development, but is intended 
 to eventually supersede the existing PSCF Fortran program. The older 
 Fortran program is maintained in a separate github repostory dmorse/pscf.
 
 ## Overview
 
-Differences between this C++/cuda version of PSCF from the older Fortran 
+Differences between this C++/CUDA version of PSCF from the older Fortran 
 version and expected advantages of the new code include:
 
-   - PSCF (C++/cuda) is an extensible package of several different programs 
+   - PSCF (C++/CUDA) is an extensible package of several different programs 
      designed for use with different geometries and boundary conditions, 
      different algorithms or different hardware, designed around a 
      common software framework. 
 
-   - PSCF (C++/cuda) allows simulations of mixtures containing arbitrary 
+   - PSCF (C++/CUDA) allows simulations of mixtures containing arbitrary 
      acyclic branched copolymers, in addition to the linear block copolymers 
      and homopolymers allowed by Fortran PSCF code.
 
@@ -29,7 +29,7 @@ version and expected advantages of the new code include:
    - Adoption of C/C++ as a base language has simplified implementation 
      of variant that that uses graphical process units (GPUs).
 
-The C++/cuda version of PSCF is free, open source software. It is distributed 
+The C++/CUDA version of PSCF is free, open source software. It is distributed 
 under the terms of the GNU General Public License as (GPL) published by the 
 Free Software Foundation, either version 3 of the License or (at your option) 
 any later version.  PSCF is distributed without any warranty, without even 
@@ -84,7 +84,7 @@ respectively, where "pg" stands for "periodic GPU".
 
 ## Getting the source code
 
-The PSCF C++/cuda source code is maintained in the github repository
+The PSCF C++/CUDA source code is maintained in the github repository
 
    <https://github.com/dmorse/pscfpp>.
 
@@ -119,7 +119,7 @@ pscfpp/doc/html/index.html, which is the main page of the manual.
 ## Dependencies
 
 The PSCF source code is written in a combination of C++ and (for
-the GPU accelerated program) Cuda, and must be compiled from source.
+the GPU accelerated program) CUDA, and must be compiled from source.
 The package was developed on linux and and Mac OS X operating systems 
 using standard unix utilities, and is designed to run on these 
 systems. To compile linux-like software on a Mac, you must first 
@@ -138,8 +138,8 @@ only GSL, and not FFTW. The CPU-based programs for spatially
 periodic structures require both GSL and FFTW libraries.
 
 The GPU-accelerated programs can only run on a computer with an
-appropriate nVidia graphics card. To compile these programs, the
-system must also have an nVidia cuda development environment 
+appropriate NVIDIA graphics card. To compile these programs, the
+system must also have an NVIDIA CUDA development environment 
 that provides the CUFFT fast Fourier transform library. 
 
 ## Compiling
@@ -166,7 +166,7 @@ are given below:
      (excluding GPU-accelerated programs), enter "make all-cpu"
    
    - To compile the GPU-accelerated programs on a machine with an
-     nVidia GPU, a Cuda compiler and the CUFFT library, enter
+     NVIDIA GPU, a CUDA compiler and the CUFFT library, enter
      "make pspg". 
 
 The setup script installs a file pscfpp/bld/config.mk that contains

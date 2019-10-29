@@ -15,7 +15,7 @@ environment and the command line tools for XCode.
 PSCF is distributed only as source code, and must be compiled by the 
 user.  All source code that is designed to run on a conventional CPU is 
 written in ANSI 2011 C++ language standard.  Code that is designed to 
-run on a NVidia graphics processing unit (GPU) is written in a Cuda.
+run on a NVidia graphics processing unit (GPU) is written in a CUDA.
 
 \section require_overview_section Overview 
 
@@ -45,7 +45,7 @@ periodic microstructures.
 In order compile GPU-enabled programs, the system must also have:
 
    - An NVidia graphics card
-   - A Cuda compiler
+   - A CUDA compiler
    - the CUFFT GPU accelerated fast Fourier transform library.
 
 \section require_git_section Git client
@@ -118,11 +118,11 @@ modifying a compiler setup file that is read during initial setup
 of the build system. The setup process is described in more detail 
 \ref install_setup_page "here".
 
-\section install_require_compiler_cuda Cuda compiler
+\section install_require_compiler_cuda CUDA compiler
 
 To compile the GPU-accelerated program, the system must also have an
-appropriate Nvidia GPU and a Cuda development package installed.
-(To be added: Where to look for instructions on installing Cuda).
+appropriate NVIDIA GPU and a CUDA development package installed.
+(To be added: Where to look for instructions on installing CUDA).
 
 \section install_require_module Software modules (linux clusters)
 

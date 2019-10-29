@@ -5,7 +5,7 @@
 <BR>
 
 
-The source code for the C++/cuda version of PSCF is hosted on the github 
+The source code for the C++/CUDA version of PSCF is hosted on the github 
 server, at <a href=http://github.com>github</a>, as project dmorse/pscfpp.  
 The source code may be obtained by using a git version control manager to 
 clone the public <a href=https://github.com/dmorse/pscfpp>git repository</a>. 

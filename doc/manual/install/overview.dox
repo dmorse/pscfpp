@@ -42,7 +42,7 @@ repository is named pscfpp/. Instructions:
      "pscf_pc1d", "pscf_pc2d" and "pscf_pc3d" in the pscfpp/bin directory.
 
    - **Compile GPU accelerated program:** To compile the GPU accelerated
-     executables on a machine with an appropriate nVidia GPU and a cuda
+     executables on a machine with an appropriate NVIDIA GPU and a CUDA
      compiler, invoke
      \code
      > make pspg
