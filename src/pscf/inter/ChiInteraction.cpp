@@ -75,6 +75,8 @@ namespace Pscf {
          }
          indemp_(i,i) +=1 ;
       }
+      
+      sum_inv_ = sum;
 
    }
 

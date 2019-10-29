@@ -12,9 +12,9 @@
 #include <pspg/solvers/Mixture.h>       // member
 //#include <pspg/basis/Basis.h>          // member
 #include <pspg/iterator/FtsIterator.h>
-#include <pspg/inter/ChiInteraction.h>
+#include <pscf/inter/ChiInteraction.h>
 #include <pscf/mesh/Mesh.h>                 // member
-#include <pspg/crystal/UnitCell.h>      // member
+#include <pscf/crystal/UnitCell.h>      // member
 #include <pscf/homogeneous/Mixture.h>       // member
 #include <pspg/wavelist/WaveList.h>
 #include <pspg/field/RDField.h>         // typedef

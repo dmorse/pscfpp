@@ -21,7 +21,7 @@
 #include <string>
 #include <getopt.h>
 #include <cstdlib>
-#include <pspg/crystal/shiftToMinimum.h>
+#include <pscf/crystal/shiftToMinimum.h>
 //#include <unistd.h>
 
 
@@ -679,7 +679,7 @@ namespace Pspg
       in >> dim;
       UTIL_CHECK(dim == D);
 
-      unitCell().readHeader(in);
+      readUnitCellHeader(in, unitCell());
  
       in >> label;
       std::cout<<label<<std::endl;
@@ -852,7 +852,7 @@ namespace Pspg
       //do not use white space like this...
       out << "format  1   0    " <<  std::endl;
       out << "dim    " <<  std::endl << "                    "<<D<< std::endl;
-      unitCell().writeHeader(out);   
+      writeUnitCellHeader(out, unitCell());   
       out << "group_name    " <<  std::endl << "                    "<<groupName_<< std::endl;
       out << "N_monomer    " <<  std::endl << "                    "<<mixture().nMonomer()<< std::endl;
       out << "ngrid        " <<  std::endl<<"           "<<mesh().dimensions() << std::endl;

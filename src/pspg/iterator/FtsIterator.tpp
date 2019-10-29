@@ -120,9 +120,9 @@ namespace Pspg {
      
       //for loop formatting all wrong
       //why is there an extra parenthesis in the pointer
-      for (int m = 0; m< systemPtr_->unitCell().nParams() ; ++m){
+      for (int m = 0; m< systemPtr_->unitCell().nParameter() ; ++m){
          std::cout<<"Stress"<<m<<"\t"<<"="<< systemPtr_->mixture().TStress[m]<<"\n";
-         std::cout<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).params()[m]<<"\n";
+         std::cout<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).parameter(m)<<"\n";
       } 
 
 
@@ -154,9 +154,9 @@ namespace Pspg {
             //is it rational to print outputs here
             std::cout<<"----------CONVERGED----------"<< std::endl;
             if(cell_) {
-               for (int m = 0; m < systemPtr_->unitCell().nParams() ; ++m){
+               for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){
                   std::cout<<"Stress"<<m<<"\t"<<"="<< systemPtr_->mixture().TStress[m]<<"\n";
-                  std::cout<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).params()[m]<<"\n";
+                  std::cout<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).parameter(m)<<"\n";
                }
             }
             return 0;
@@ -215,7 +215,7 @@ namespace Pspg {
             if (cell_){
                systemPtr_->mixture().computeTStress(systemPtr_->wavelist());
                
-               for (int m = 0; m < systemPtr_->unitCell().nParams() ; ++m){
+               for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){
                   std::cout<<"Stress"<<m<<"\t"<<"="
                            << std::setprecision (15)
                            << systemPtr_->mixture().TStress[m]<<"\n";
@@ -260,7 +260,7 @@ namespace Pspg {
       omHists_.append(systemPtr_->wFieldGrids());
 
       if (cell_) {
-         CpHists_.append(systemPtr_->unitCell().params());
+         CpHists_.append(systemPtr_->unitCell().parameters());
       }
 
       for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
@@ -283,7 +283,7 @@ namespace Pspg {
          
       }
 
-      float sum_chi_inv = (float) systemPtr_->interaction().sum_inv;
+      float sum_chi_inv = (float) systemPtr_->interaction().sum_inv();
 
       for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
          
@@ -299,7 +299,7 @@ namespace Pspg {
 
       if (cell_){
          FArray<double, 6> tempCp;
-         for (int i = 0; i<(systemPtr_->unitCell()).nParams(); i++){
+         for (int i = 0; i<(systemPtr_->unitCell()).nParameter(); i++){
             //format????
             tempCp [i] = -((systemPtr_->mixture()).TStress [i]);
          }
@@ -320,9 +320,9 @@ namespace Pspg {
       }
 
       if (cell_){
-         for ( int i = 0; i < systemPtr_->unitCell().nParams(); i++) {
+         for ( int i = 0; i < systemPtr_->unitCell().nParameter(); i++) {
             dError +=  devCpHists_[0][i] *  devCpHists_[0][i];
-            wError +=  systemPtr_->unitCell().params() [i] * systemPtr_->unitCell().params() [i];
+            wError +=  systemPtr_->unitCell().parameter(i) * systemPtr_->unitCell().parameter(i);
          }
       }
 
@@ -371,7 +371,7 @@ namespace Pspg {
 
                if (cell_){
                   elm_cp = 0;
-                  for (int m = 0; m < systemPtr_->unitCell().nParams(); ++m){
+                  for (int m = 0; m < systemPtr_->unitCell().nParameter(); ++m){
                      elm_cp += ((devCpHists_[0][m] - devCpHists_[i+1][m]) * 
                                 (devCpHists_[0][m] - devCpHists_[j+1][m])); 
                   }
@@ -387,7 +387,7 @@ namespace Pspg {
 
             if (cell_){
                elm_cp = 0;
-               for (int m = 0; m < systemPtr_->unitCell().nParams(); ++m){
+               for (int m = 0; m < systemPtr_->unitCell().nParameter(); ++m){
                   vM_[i] += ((devCpHists_[0][m] - devCpHists_[i+1][m]) *
                              (devCpHists_[0][m]));
                }
@@ -500,16 +500,17 @@ namespace Pspg {
          }
 
          if (cell_){
-            for (int m = 0; m < (systemPtr_->unitCell()).nParams() ; ++m){
-               systemPtr_->unitCell().SetParams( CpHists_[0][m] +lambda_* devCpHists_[0][m] ,m);
+            cellParameters_.clear();
+            for (int m = 0; m < (systemPtr_->unitCell()).nParameter() ; ++m){
+               cellParameters_.append(CpHists_[0][m] +lambda_* devCpHists_[0][m]);
             }
-            
-            (systemPtr_->unitCell()).setLattice();
+
+            systemPtr_->unitCell().setParameters(cellParameters_);            
             systemPtr_->mixture().setupUnitCell(systemPtr_->unitCell(), systemPtr_->wavelist());
             systemPtr_->wavelist().computedKSq(systemPtr_->unitCell());
             
-            for (int m = 0; m < systemPtr_->unitCell().nParams(); ++m){
-               std::cout<<"Parameter"<<m<<"\t"<<"="<<systemPtr_->unitCell().params()[m]<<"\n";
+            for (int m = 0; m < systemPtr_->unitCell().nParameter(); ++m){
+               std::cout<<"Parameter"<<m<<"\t"<<"="<<systemPtr_->unitCell().parameter(m)<<"\n";
             }
          }
 
@@ -554,12 +555,12 @@ namespace Pspg {
 
          if(cell_){
             
-            for (int m = 0; m < systemPtr_->unitCell().nParams() ; ++m){
+            for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){
                wCpArrays_[m] = CpHists_[0][m];
                dCpArrays_[m] = devCpHists_[0][m];
             }
             for (int i = 0; i < nHist_; ++i) {
-               for (int m = 0; m < systemPtr_->unitCell().nParams() ; ++m) {
+               for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m) {
                   wCpArrays_[m] += coeffs_[i] * ( CpHists_[i+1][m]-
                                                   CpHists_[0][m]);
                   dCpArrays_[m] += coeffs_[i] * ( devCpHists_[i+1][m]-
@@ -571,19 +572,20 @@ namespace Pspg {
             struct timezone tz;
 
             gettimeofday(&timeStart, &tz);                
-            for (int m = 0; m < systemPtr_->unitCell().nParams() ; ++m){
-               systemPtr_->unitCell().SetParams( wCpArrays_[m] + lambda_ * dCpArrays_[m],m);
+            cellParameters_.clear();
+            for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){               
+               cellParameters_.append(wCpArrays_[m] + lambda_* dCpArrays_[m]);
             }
             
-            systemPtr_->unitCell().setLattice();
+            systemPtr_->unitCell().setParameters(cellParameters_);            
             systemPtr_->mixture().setupUnitCell(systemPtr_->unitCell(), systemPtr_->wavelist());
             systemPtr_->wavelist().computedKSq(systemPtr_->unitCell());
             
             
-            for(int m = 0; m < systemPtr_->unitCell().nParams() ; ++m){
+            for(int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){
                std::cout<<"Parameter"<<m<<"\t"<<"="
                         << std::setprecision (15)
-                        <<systemPtr_->unitCell().params()[m]<<"\n";
+                        <<systemPtr_->unitCell().parameter(m)<<"\n";
             }
 
             gettimeofday(&timeEnd, &tz);       

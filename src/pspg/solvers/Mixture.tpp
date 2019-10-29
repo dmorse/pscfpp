@@ -76,7 +76,7 @@ namespace Pspg
    template <int D>
    void Mixture<D>::setupUnitCell(const UnitCell<D>& unitCell, const WaveList<D>& wavelist)
    {
-      nParams_ = unitCell.nParams();
+      nParams_ = unitCell.nParameter();
       for (int i = 0; i < nPolymer(); ++i) {
          polymer(i).setupUnitCell(unitCell, wavelist);
       }

@@ -15,7 +15,7 @@
 #include <pspg/field/FFT.h>               // member
 #include <pspg/field/FFTBatched.h>               // member
 #include <util/containers/FArray.h>
-#include <pspg/crystal/UnitCell.h>
+#include <pscf/crystal/UnitCell.h>
 #include <pspg/wavelist/WaveList.h>
 
 namespace Pscf { 

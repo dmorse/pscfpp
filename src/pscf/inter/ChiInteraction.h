@@ -121,6 +121,7 @@ namespace Pscf {
       */  
       double indemp(int i, int j); 
 
+      double sum_inv();
    private:
 
       DMatrix<double> chi_;
@@ -128,6 +129,8 @@ namespace Pscf {
       DMatrix<double> chiInverse_;
 
       DMatrix<double> indemp_;
+
+      double sum_inv_;
 
    };
 
@@ -141,6 +144,9 @@ namespace Pscf {
 
    inline double ChiInteraction::indemp(int i, int j)
    {  return indemp_(i, j); }
+
+   inline double ChiInteraction::sum_inv()
+   {  return sum_inv_; }
 
 } // namespace Pscf
 #endif

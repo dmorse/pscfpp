@@ -12,8 +12,8 @@
 #include <pspg/field/RDField.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/mesh/Mesh.h>
-#include <pspg/crystal/shiftToMinimum.h>
-#include <pspg/crystal/UnitCell.h>
+#include <pscf/crystal/shiftToMinimum.h>
+#include <pscf/crystal/UnitCell.h>
 #include <util/containers/DArray.h>
 #include <util/containers/GArray.h>
 #include <util/containers/DMatrix.h>
@@ -65,6 +65,9 @@ namespace Pspg
 
       // Bare C array holding values of dkSq_
       cufftReal*  dkSq_;
+
+      cufftReal* dkkBasis_d;
+      cufftReal* dkkBasis;
 
       int* partnerIdTable;
       int* partnerIdTable_d;
