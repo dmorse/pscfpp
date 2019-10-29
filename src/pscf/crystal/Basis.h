@@ -3,7 +3,7 @@
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
-* Copyright 2016, The Regents of the University of Minnesota
+* Copyright 2016 - 2019, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.
 */
 
@@ -49,11 +49,6 @@ namespace Pscf {
          // Integer indices of wave, in first Brillouin zone.
          IntVec<D> indicesBz;
 
-         /** 
-         * Array of derivatives of eigenvalue w/ respect to lattice parameters.
-         */  
-         //FArray<double, 6> dEigenWave;
-
          // Index of star containing this wavevector
          int starId;
 
@@ -81,11 +76,6 @@ namespace Pscf {
          * Equal to square norm of any wavevector in this star.
          */
          double eigen;
-
-         /**
-         * Array of derivatives of eigenvalue w/ respect to lattice parameters.
-         */
-         //FArray<double, 6> dEigen;
 
          /**
          * Number of wavevectors in the star.
@@ -149,6 +139,11 @@ namespace Pscf {
       * Default constructor.
       */
       Basis();
+
+      /**
+      * Destructor.
+      */
+      ~Basis();
 
       /**
       * Construct basis for a specific grid and space group.
@@ -252,10 +247,10 @@ namespace Pscf {
       int nBasis_;
 
       /// Pointer to associated UnitCell<D>
-      const UnitCell<D>* unitCellPtr_;
+      UnitCell<D> const * unitCellPtr_;
 
       /// Pointer to associated Mesh<D>
-      const Mesh<D>* meshPtr_;
+      Mesh<D> const * meshPtr_;
 
       /**
       * Construct array of ordered waves.

@@ -4,7 +4,7 @@
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
-* Copyright 2016, The Regents of the University of Minnesota
+* Copyright 2016 - 2019, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.
 */
 
@@ -30,6 +30,13 @@ namespace Pscf {
       nBasis_(0), 
       unitCellPtr_(0), 
       meshPtr_(0)
+   {}
+
+   /*
+   * Destructor.
+   */
+   template <int D>
+   Basis<D>::~Basis()
    {}
 
    /*
@@ -178,7 +185,6 @@ namespace Pscf {
       int listEnd = 0;     // (id of last wave in this list) + 1
       int starId = 0;      // id for this star
       int starBegin = 0;   // id of first wave in this star
-      int starSize = 0;    // size (number of waves) in this star
       int i, j, k;
       bool cancel;
 
@@ -317,7 +323,6 @@ namespace Pscf {
                   }
 
                }
-               starSize = star.size();
 
                // Copy all waves from set star to std::vector tempStar
                tempStar.clear();
@@ -331,11 +336,12 @@ namespace Pscf {
                std::sort(tempStar.begin(), tempStar.end(), waveBzComp);
                
                // Append contents of tempStar to tempList, erase from list
-               for (j = 0; j < tempStar.size(); ++j) {
+               int tempStarSize = tempStar.size();
+               for (j = 0; j < tempStarSize; ++j) {
                   list.erase(tempStar[j]);
                   tempList.append(tempStar[j]);
                }
-               UTIL_CHECK(tempList.size()+list.size()==listEnd-listBegin);
+               UTIL_CHECK((int)(tempList.size()+list.size())==listEnd-listBegin);
 
                // If this star is not cancelled, increment the number
                // of basis functions (nBasis_) and waves (nBasisWave_)

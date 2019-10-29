@@ -4,7 +4,7 @@
 \ref install_doc_page (Next) 
 <BR>
 
-The source code for all of the pscf++ programs contain some features 
+The source code for all of the PSCF programs contain some features 
 that may be enabled (included in the executable) or disabled (excluded 
 from the executable) when the program is compiled.  This page explains 
 how a "configure" script may be used to enable or disable particular

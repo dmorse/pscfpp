@@ -4,15 +4,14 @@
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
-* Copyright 2016, The Regents of the University of Minnesota
+* Copyright 2016 - 2019, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.
 */
 
 #include "Block.h"
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
-#include <pspg/crystal/UnitCell.h>
-#include <pspg/crystal/shiftToMinimum.h>
+#include <pscf/crystal/shiftToMinimum.h>
 #include <pspg/GpuResources.h>
 #include <util/containers/FMatrix.h>      // member template
 #include <util/containers/DArray.h>      // member template
@@ -275,7 +274,7 @@ static __global__ void scaleReal(cufftReal* result, int size, float scale) {
    Block<D>::setupUnitCell(const UnitCell<D>& unitCell, const WaveList<D>& wavelist)
    {
       //what does this do?
-      nParams_ = unitCell.nParams();
+      nParams_ = unitCell.nParameter();
       MeshIterator<D> iter;
       // std::cout << "kDimensions = " << kMeshDimensions_ << std::endl;
       iter.setDimensions(kMeshDimensions_);

@@ -4,7 +4,7 @@
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
-* Copyright 2016, The Regents of the University of Minnesota
+* Copyright 2016 - 2019, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.
 */
 
@@ -76,7 +76,7 @@ namespace Pspg
    template <int D>
    void Mixture<D>::setupUnitCell(const UnitCell<D>& unitCell, const WaveList<D>& wavelist)
    {
-      nParams_ = unitCell.nParams();
+      nParams_ = unitCell.nParameter();
       for (int i = 0; i < nPolymer(); ++i) {
          polymer(i).setupUnitCell(unitCell, wavelist);
       }

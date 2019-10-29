@@ -4,22 +4,36 @@
 \ref user_page  (Next)  
 <BR>
 
-Pscf++ is a library of C++ classes and programs for solving the Edwards-Helfand self-consistent for polymer liquids. It is still under development, but is intended to eventually supersede the existing PSCF Fortran program. When complete, the package will contain a pseudo-spectral implementation for periodic structures, analagous to the existing Fortran code, as well as implementations for other geometries or boundary conditons. Currently, only part of the code that is fully functional is a simple  one-dimensional finite difference implementation for studying problems that involve only a single spatial coordinate in Cartesian, cylindrical or spherical coordinates (i.e., brushes, interfaces, and cylindrical or circular micelles). 
+PSCF is a package of software for solving the Edwards-Helfand 
+self-consistent theory for polymer liquids. The version presented here is
+written primarily in C++, with code for use on graphics processing units
+(GPUs) written in Cuda. This C++/Cuda version of PSCF is still under 
+development, but is intended to eventually supersede the older Fortran 
+program of the same name. 
 
-Some differences in design relative to the existing Fortran code for periodic structure, and the expected advantages of the new code are as follows:
+Some differences in design relative to the existing Fortran code for 
+periodic structure, and the expected advantages of the new code are as 
+follows:
 <ul>
-<li> A more flexible design that will allow implementation of several different SCFT solvers that are designed for use in different geometries or are based on different algorithms, within the same framework. 
+<li> A more flexible design has allowed implementation of several different 
+SCFT solvers that are designed for use in different geometries or that use
+different algorithms or hardware, within a common framework. 
 </li>
-<li> A description of polymer topology that allows simulation of mixtures containing arbitrarily complex acyclic branched block copolymers and homopolymers, in addition to the linear chains allowed by the existing code.  (This is completed).
+<li> A description of polymer topology that allows simulation of mixtures 
+containing arbitrarily complex acyclic branched block copolymers and 
+homopolymers, in addition to the linear chains allowed by the Fortran code.  
 </li>
-<li> The transition from Fortran 90 to a new design in object oriented C++ will facilitate design of simulations of phase coexistence, by allowing the creation of several independent objects to model different phases. The design of the fortran PSCF program was never intended to allow this.
+<li> An object oriented C++ design will allow the creation of different 
+objects to represent different phases, which we expect to facilitate
+analysis of phase coexistence in mixtures.
 </li>
 <li>
-The transition to C++ will simplify implementation of specialized code to use graphical process units (GPUs) to accelerate core calculations, since kernel code for GPUs is usually written in a variant of C/C++.
+The transition to C++ has simplified implementation of Cuda code to use 
+nVidia GPUs.
 </li>
 </ul>
 
-This C++ version of PSCF is free, open source software. It is distributed under the terms of the GNU General Public License as (GPL) published by the Free Software Foundation, either version 3 of the License or (at your option) any later version.  PSCF is distributed without any warranty, without even the implied warranty of merchantability or fitness for a particular purpose. See the LICENSE file or the <a href=http://www.gnu.org/licenses/> gnu web page </a> for details.
+This C++/Cuda version of PSCF is free, open source software. It is distributed under the terms of the GNU General Public License as (GPL) published by the Free Software Foundation, either version 3 of the License or (at your option) any later version.  PSCF is distributed without any warranty, without even the implied warranty of merchantability or fitness for a particular purpose. See the LICENSE file or the <a href=http://www.gnu.org/licenses/> gnu web page </a> for details.
 
 <BR>
 \ref index "Main Page"  (Up) &nbsp; &nbsp; &nbsp; &nbsp; 

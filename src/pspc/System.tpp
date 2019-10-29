@@ -4,7 +4,7 @@
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
-* Copyright 2016, The Regents of the University of Minnesota
+* Copyright 2016 - 2019, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.
 */
 
@@ -65,8 +65,8 @@ namespace Pspc
       pressure_(0.0),
       hasMixture_(0),
       hasUnitCell_(0),
-      hasFields_(0),
-      hasSweep_(0)
+      hasFields_(0)
+      //hasSweep_(0)
    {  
       setClassName("System"); 
 
@@ -84,7 +84,14 @@ namespace Pspc
    */
    template <int D>
    System<D>::~System()
-   {}
+   {
+      if (interactionPtr_) {
+         delete interactionPtr_;
+      }
+      if (iteratorPtr_) {
+         delete iteratorPtr_;
+      }
+   }
 
    /*
    * Process command line options.

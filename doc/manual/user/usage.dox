@@ -7,12 +7,12 @@
 \sa \subpage programs_page
 
 \section usage_inputs Input files 
-Every pscfp++ executable requires at least two types of input file: 
+Every PSCF executable requires at least two types of input file: 
 <ul>
    <li> a \ref usage_parameter_section "parameter" file </li>
    <li> a \ref usage_command_section "command" file </li>
 </ul>
-All pscfp++ programs use similar formats for the parameter and command files. 
+All PSCF programs use similar formats for the parameter and command files. 
 The contents and formats of these two types of file are discussed briefly below and in more detail in several separate pages (see \ref user_param_page , \ref user_command_page). 
 
 When a program simulation is executed, the parameter file is read first. The parameter file is used to initialize the state of the program and allocate memory. The name of the parameter file is specified when a program is invoked as a argument of the "-p" command line option.
@@ -23,15 +23,15 @@ Some commands in a command file require data to be read from or written to addit
 
 \section usage_run_serial_section Command line usage
 
-All of the pscfp++ programs have a similar command line interface.
-The names of the parameter and command files required to perform a pscfp++ computation are passed to the program as arguments of the "-p" and "-c" command line options, respectively. 
+All of the PSCF programs have a similar command line interface.
+The names of the parameter and command files required to perform a PSCF computation are passed to the program as arguments of the "-p" and "-c" command line options, respectively. 
 
 As an example, consider use of the program pscf_pc3d, which is used to treat three dimensionally periodic microstructures. 
 To run this program using a parameter file named "param" and command file named "commands" that are both in the current working directory, one would enter:
 \code
    pscf_pc3d -p param -c commands
 \endcode
-The same command line options can be used to invoke any other pscf++ program.
+The same command line options can be used to invoke any other PSCF program.
 
 During execution, some log information is written to standard output (i.e., the screen). This log output can be directed to a file using, for example, 
 \code
@@ -41,7 +41,7 @@ Standard output should normally be redirected to a file when a job is run in bac
 
 \section usage_echo_section The "echo" option
 
-All pscfp++ programs accept a command line option "-e" that causes the contents of each line of the parameter file to be echoed as the file is being read. For example, to use "pscf_pc3d" with echoing to a log file, one could enter
+All PSCF programs accept a command line option "-e" that causes the contents of each line of the parameter file to be echoed as the file is being read. For example, to use "pscf_pc3d" with echoing to a log file, one could enter
 \code
    pscf_pc3d -e -p param -c commands > log
 \endcode
@@ -74,7 +74,7 @@ This file instructs the program to  ...
 
 \section usage_options_section Command line options
 
-All pscfp++ simulations of single systems can be invoked with any of the following command line options:
+All PSCF simulations of single systems can be invoked with any of the following command line options:
 <ul>
   <li> -e: Activates echoing of the parameter file to standard output.</li>
   <li> -p filename: Specifies the name of a parameter file </li>

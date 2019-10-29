@@ -4,7 +4,7 @@
 \ref user_command_page (Next) 
 <BR>
 
-The parameter files required by the different pscp++ programs use a similar syntax, but contain somewhat different contents. The following three sections discuss elements of the parameter file syntax that are common to all three types of simulation, the parameter file formats for pscf_pspc and pscf_pspg, which are nearly identical.
+The parameter files required by the different PSCF programs use a similar syntax, but contain somewhat different contents. The following three sections discuss elements of the parameter file syntax that are common to all three types of simulation, the parameter file formats for pscf_pspc and pscf_pspg, which are nearly identical.
 
 <h2> Contents:</h2>
    <ul style="list-style: none;">

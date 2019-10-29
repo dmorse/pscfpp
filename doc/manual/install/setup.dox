@@ -21,7 +21,7 @@ config.mk that is installed the root directory of both the pscfpp/bld
 and pscfpp/src directory trees. This file is a makefile fragment that
 acts as the main configuration file for compilation, which assigns
 values to variables that define the compiler executable names for 
-C++ and cuda code, command line options passed to the compilers, and
+C++ and CUDA code, command line options passed to the compilers, and
 paths for required external libraries. The copy of this file pscfpp/bld 
 is the main configuration file for a standard out-of-source build, in 
 which intermediate files are created in the bld/ directory tree. 
@@ -56,7 +56,7 @@ the "setup" script is invoked with no argument, as indicated above, the
 setup script uses a file named pscfpp/make/compiler/default for this
 purpose. This file contains a default configuration appropriate for a 
 system in which the gnu g++ C++ compiler is used to compile C++ files, 
-the nVidia nvcc compiler is used to compile cuda files, and paths to 
+the nVidia nvcc compiler is used to compile CUDA files, and paths to 
 the gsl and fftw libraries are in common locations.
 
 It is also possible to direct the the setup script to used a customized

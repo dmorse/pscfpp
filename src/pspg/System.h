@@ -4,7 +4,7 @@
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
-* Copyright 2016, The Regents of the University of Minnesota
+* Copyright 2016 - 2019, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.
 */
 
@@ -12,9 +12,9 @@
 #include <pspg/solvers/Mixture.h>       // member
 //#include <pspg/basis/Basis.h>          // member
 #include <pspg/iterator/FtsIterator.h>
-#include <pspg/inter/ChiInteraction.h>
+#include <pscf/inter/ChiInteraction.h>
 #include <pscf/mesh/Mesh.h>                 // member
-#include <pspg/crystal/UnitCell.h>      // member
+#include <pscf/crystal/UnitCell.h>      // member
 #include <pscf/homogeneous/Mixture.h>       // member
 #include <pspg/wavelist/WaveList.h>
 #include <pspg/field/RDField.h>         // typedef

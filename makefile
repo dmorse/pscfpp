@@ -1,22 +1,12 @@
 include src/config.mk
 # =========================================================================
-.PHONY: all-cpu util pscf fd1d pspc \
-        clean veryclean html clean-html
+.PHONY:  html clean clean-tests clean-bin clean-html veryclean 
 
-# ==========================================================================
-# Test targets
-
-test:
-	@cd src/util/tests; $(MAKE) all; $(MAKE) run
-	@cd src/pscf/tests; $(MAKE) all; $(MAKE) run
-	@cd src/fd1d/tests; $(MAKE) all; $(MAKE) run
-	@cat src/util/tests/count >> count
-	@cat src/pscf/tests/count >> count
-	@cat src/fd1d/tests/count >> count
-	@echo " "
-	@echo "Summary"
-	@cat count
-	@rm -f count
+# =========================================================================
+# HTML Documentation
+ 
+html:
+	cd doc; $(MAKE) html
 
 # =========================================================================
 # Clean targets
@@ -27,25 +17,22 @@ clean:
 
 clean-tests:
 	cd src/; $(MAKE) clean-tests
+	cd bld/; $(MAKE) clean-tests
 
 clean-bin:
-	-rm -f $(BIN_DIR)/makeDep
-	-rm -f $(BIN_DIR)/pscf*
+	rm -f $(BIN_DIR)/pscf*
  
+clean-html:
+	cd doc; $(MAKE) clean
+
 veryclean:
 	make clean-bin
+	rm -f $(BIN_DIR)/makeDep
 	cd bld; $(MAKE) veryclean
 	rm bld/makefile
 	cd src; $(MAKE) veryclean
 	cd doc; $(MAKE) clean
 
-# =========================================================================
-# HTML Documentation
- 
-html:
-	cd doc; $(MAKE) html
 
-clean-html:
-	cd doc; $(MAKE) clean
 
 # ==========================================================================

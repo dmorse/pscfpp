@@ -4,12 +4,11 @@
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
-* Copyright 2016, The Regents of the University of Minnesota
+* Copyright 2016 - 2019, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.
 */
 
 #include "UnitCellBase.h"
-#include <util/format/Dbl.h>
 #include <iostream>
 #include <iomanip>
 
@@ -128,6 +127,9 @@ namespace Pscf
       // Set all internal data after setting parameter values
       void setBasis();
 
+      // Private and unimplemented to prevent copy construction.
+      UnitCell(UnitCell<1> const &);
+
    // friends:
 
       template <int D>
@@ -200,6 +202,9 @@ namespace Pscf
       void setNParameter();
 
       void setBasis();
+
+      // Private and unimplemented to prevent copy construction.
+      UnitCell(UnitCell<2> const &);
 
    // friends:
 
@@ -274,6 +279,9 @@ namespace Pscf
       void setNParameter();
 
       void setBasis();
+
+      // Private and unimplemented to prevent copy construction.
+      UnitCell(UnitCell<2> const &);
 
    // friends:
 

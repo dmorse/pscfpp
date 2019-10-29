@@ -4,7 +4,7 @@
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
-* Copyright 2016, The Regents of the University of Minnesota
+* Copyright 2016 - 2019, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.
 */
 
@@ -121,6 +121,7 @@ namespace Pscf {
       */  
       double indemp(int i, int j); 
 
+      double sum_inv();
    private:
 
       DMatrix<double> chi_;
@@ -128,6 +129,8 @@ namespace Pscf {
       DMatrix<double> chiInverse_;
 
       DMatrix<double> indemp_;
+
+      double sum_inv_;
 
    };
 
@@ -141,6 +144,9 @@ namespace Pscf {
 
    inline double ChiInteraction::indemp(int i, int j)
    {  return indemp_(i, j); }
+
+   inline double ChiInteraction::sum_inv()
+   {  return sum_inv_; }
 
 } // namespace Pscf
 #endif
