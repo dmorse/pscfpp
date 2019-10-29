@@ -33,6 +33,13 @@ namespace Pscf {
    {}
 
    /*
+   * Destructor.
+   */
+   template <int D>
+   Basis<D>::~Basis()
+   {}
+
+   /*
    * Construct basis for pseudo-spectral scft.
    */
    template <int D>
@@ -178,7 +185,6 @@ namespace Pscf {
       int listEnd = 0;     // (id of last wave in this list) + 1
       int starId = 0;      // id for this star
       int starBegin = 0;   // id of first wave in this star
-      int starSize = 0;    // size (number of waves) in this star
       int i, j, k;
       bool cancel;
 
@@ -317,7 +323,6 @@ namespace Pscf {
                   }
 
                }
-               starSize = star.size();
 
                // Copy all waves from set star to std::vector tempStar
                tempStar.clear();
@@ -331,11 +336,12 @@ namespace Pscf {
                std::sort(tempStar.begin(), tempStar.end(), waveBzComp);
                
                // Append contents of tempStar to tempList, erase from list
-               for (j = 0; j < tempStar.size(); ++j) {
+               int tempStarSize = tempStar.size();
+               for (j = 0; j < tempStarSize; ++j) {
                   list.erase(tempStar[j]);
                   tempList.append(tempStar[j]);
                }
-               UTIL_CHECK(tempList.size()+list.size()==listEnd-listBegin);
+               UTIL_CHECK((int)(tempList.size()+list.size())==listEnd-listBegin);
 
                // If this star is not cancelled, increment the number
                // of basis functions (nBasis_) and waves (nBasisWave_)

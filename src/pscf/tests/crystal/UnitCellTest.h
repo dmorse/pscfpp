@@ -27,7 +27,7 @@ public:
    {}
  
    template <int D>
-   bool isValidReciprocal(UnitCell<D> cell)
+   bool isValidReciprocal(UnitCell<D> const & cell)
    {
       double sum;
       double twoPi = 2.0*Constants::Pi;
@@ -50,7 +50,7 @@ public:
    }
 
    template <int D>
-   bool isValidDerivative(UnitCell<D> cell)
+   bool isValidDerivative(UnitCell<D> const & cell)
    {
       double sum;
       double nParams = cell.nParameter();

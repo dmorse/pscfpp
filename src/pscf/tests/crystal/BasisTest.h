@@ -98,7 +98,7 @@ public:
 
       // Read space group
       SpaceGroup<1> group;
-      openInputFile("in/Group_1D_symmetric", in);
+      openInputFile("in/Group_1D_Symmetric", in);
       in >> group;
       in.close();
       TEST_ASSERT(group.size() == 2);

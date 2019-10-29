@@ -38,8 +38,7 @@ namespace Pscf
       /**
       * Destructor.
       */
-      ~UnitCellBase()
-      {}
+      ~UnitCellBase();
 
       /**
       * Compute all private data, given latticeSystem and parameters.
@@ -297,19 +296,7 @@ namespace Pscf
    double UnitCellBase<D>::drrBasis(int k, int i, int j) const
    {  return drrBasis_[k](i, j);  }
 
-   /*
-   * Set all the parameters in the unit cell.
-   */
-   template <int D>
-   inline
-   void UnitCellBase<D>::setParameters(FSArray<double, 6> const& parameters)
-   {
-      UTIL_CHECK(parameters.size() == nParameter_);
-      for (int i = 0; i < nParameter_; ++i) {
-         parameters_[i] = parameters[i];
-      }
-      setLattice();
-   }
+   // Non-inline member functions
 
    /*
    * Constructor.
@@ -319,6 +306,26 @@ namespace Pscf
     : nParameter_(0)
    {}
 
+   /*
+   * Destructor.
+   */
+   template <int D>
+   UnitCellBase<D>::~UnitCellBase()
+   {}
+
+   /*
+   * Set all the parameters in the unit cell.
+   */
+   template <int D>
+   void UnitCellBase<D>::setParameters(FSArray<double, 6> const& parameters)
+   {
+      UTIL_CHECK(parameters.size() == nParameter_);
+      for (int i = 0; i < nParameter_; ++i) {
+         parameters_[i] = parameters[i];
+      }
+      setLattice();
+   }
+   
    /*
    * Get square magnitude of reciprocal basis vector.
    */

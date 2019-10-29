@@ -1,45 +1,7 @@
 TODO (pspg GPU code):
 
-Short term clean up (assigned primarily to G.K., ideally before submission)
---------------------------------------------------------------------------
 
-1) Enable treatment of 1D and 2D problems: BatchFFT seems to have explicit
-   specializations only for 3D transforms. Add explicit specializations 
-   for D=1 and D=2, or rewrite as a template if possible. Then add 2D and 
-   3D executable names to variable PSCF_PG_EXE in makefile. -- done
-
-2) Enable use of nonorthogonal unit cells such as 2D hexagonal: Remove 
-   dependence on local src/pspg/UnitCell classes and local shiftToMinimum, 
-   which seem to allow only non-orthogonal unit cells.  This should have
-   been made easier and more efficient by the introduction of WaveList, 
-   since this allows ksq and dksq to be computed only once when the unit 
-   cell is initialized or modified.  As a first try, do these
-   infrequent computations on the CPU using the existing classes and
-   see if there is a measurable speed difference.
-   -- I kept the files in the pspg directory but updated the shiftToMinimum class
-   to work on nonorthogonal unit cells. For starters this simple change incurred a 
-   10x penalty anytime the shiftToMinimum is called. For now the block method
-   recalculates ksq every iteration so this can be reduced further.
-   -- I kept the files in the pspg directory because the unit cell has very 
-   difficult to use data structures for gpu calculations. I am not sure if there
-   is a nice way to deal with it.
-
-3) Add a few examples (e.g., lam, hex, and bcc) to the examples/pspg directory.
-
-4) Replace dependence on Pscf::Pspg::ChiInteraction by dependence on the
-   shared class Pscf::ChiInteraction. These classes look similar or 
-   identical, so this should be easy. I don't see the reason for the
-   duplicated class definition. Dave: AM in Pspg is done in real space which requires
-   additional terms to be kept i.e. sum_inv. If you are okay with it PSCF's
-   chiInteraction can be modified so they are consistent.
-
-5) Figure out how to remove getopt/ from the public repository while 
-   retaining the ability for GK to link to a local copy on his laptop, 
-   perhaps by keeping that directory in the copy on his laptop and privately 
-   changing a few lines in source and source.mk files in his copy. -- done
-
-6) nvcc compiler warning - fixed
-Intermediate (possibly before publication) (assigned primarily to Anshul)
+Short term (assigned primarily to Anshul)
 -------------------------------------------------------------------------
 
 1) Restore ability to read symmetry adapted files (without necessarily
@@ -55,18 +17,19 @@ Intermediate (possibly before publication) (assigned primarily to Anshul)
    to suppress implicit instantiation, and is possible only if the cuda 
    compiler recognizes this syntax.
 
-Longer term  (probably after publication)
+4) Complete doxygen documenttion for all classes, functions and parameters 
+   in src/pspg.
+
+5) Move Pspg::WaveList class to directory solvers/. It's essentially a 
+   utility that is used by the solvers, and doesn't need its own 
+   directory.
+
+Longer term  
 -------------------------------------------------------------------------
 
 1) Write unit tests or other self-contained, self-validating tests of the 
    GPU code and put them in the repository. 
 
-2) Complete doxygen documenttion for all classes, functions and parameters 
-   in src/pspg.
+3) Add sweep functionality 
 
-3) Move WaveList class to directory solvers. It's essentially a utility 
-   that is used by the solvers, and doesn't need its own directory.
-
-4) Add sweep functionality 
-
-5) Add point solvents
+4) Add point solvents
