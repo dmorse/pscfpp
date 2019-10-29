@@ -1,6 +1,7 @@
 include config.mk
 
-.PHONY: all-cpu util pscf fd1d pspc pspg clean veryclean
+.PHONY: all-cpu util pscf fd1d pspc pspg test-cpu \
+        clean clean-tests veryclean
 # ======================================================================
 # Main build targets
 
@@ -15,7 +16,7 @@ all-cpu:
 util: 
 	cd util; $(MAKE) all
 
-# Build common code for pscf++ in Util and Pscf namespaces
+# Build common code for PSCF in Util and Pscf namespaces
 pscf: 
 	cd util; $(MAKE) all
 	cd pscf; $(MAKE) all

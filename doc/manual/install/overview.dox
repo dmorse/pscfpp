@@ -5,9 +5,9 @@
 \ref install_environment_page (Next) 
 <BR>
 
-Below is a brief summary of instructions for compiling all of the pscf++ 
+Below is a brief summary of instructions for compiling all of the PSCF 
 programs using default settings. The directions given here and in 
-subsequent pages assume that you have cloned the pscf++ repository and
+subsequent pages assume that you have cloned the PSCF repository and
 installed all required dependencies, and that the root directory of the 
 repository is named pscfpp/. Instructions:
 

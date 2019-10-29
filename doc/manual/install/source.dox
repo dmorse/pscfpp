@@ -5,61 +5,61 @@
 <BR>
 
 
-The source code for pscf++ is hosted on the github server, at
-<a href=http://github.com>github</a>, as project dmorse/pscf++.  The 
-source code may be obtained by using a git version control manager to clone 
-the public <a href=https://github.com/dmorse/pscf++>git repository</a>. 
+The source code for the C++/cuda version of PSCF is hosted on the github 
+server, at <a href=http://github.com>github</a>, as project dmorse/pscfpp.  
+The source code may be obtained by using a git version control manager to 
+clone the public <a href=https://github.com/dmorse/pscfpp>git repository</a>. 
 The following instructions assume that a "git" client has been installed 
 on your computer.
 
 \section compile_getcode_section Cloning the repository
 
-To obtain a working copy of the pscf++ git repository, you should first
-change directory (cd) to the directory you want to contain the pscf++ 
+To obtain a working copy of the pscfpp git repository, you should first
+change directory (cd) to the directory you want to contain the pscfpp
 root directory. From there, then enter the command
 \code
-> git clone --recursive https://github.com/dmorse/pscf++.git
+> git clone --recursive https://github.com/dmorse/pscfpp.git
 \endcode
-This should create a complete working copy of the pscf++ source code 
+This should create a complete working copy of the PSCF source code 
 in a new subdirectory named "pscfpp/" of the directory from which you 
 invoked the above command.
 
 The above instructions are for users who simply want to get a copy of 
-pscf++ their own use, but who are not (or not yet) interested in sharing 
+PSCF their own use, but who are not (or not yet) interested in sharing 
 modifications of the code with others. Users that want to be able to 
 contribute to the project or share their extensions or improvements of 
-pscf++ with others should go through a slightly more complicated 
+PSCF with others should go through a slightly more complicated 
 procedure. Such users should instead:
 <ul>
 <li> Create a user account on github.com, if they do not already have one.</li>
-<li> Create a fork (i.e., a personal version) of the pscf++ repository in their github user account</li>
-<li> Clone their copy of pscf++ to a computer on which they can compile 
+<li> Create a fork (i.e., a personal version) of the pscfpp repository in their github user account</li>
+<li> Clone their copy of pscfpp to a computer on which they can compile 
 and edit the code, using the --recursive option and using a communication 
 protocol that is set up to allow them write access. </li>
 </ul>
 
-Herefafter, we assume that the root directory of the pscf++ working copy 
+Herefafter, we assume that the root directory of the pscfpp working copy 
 is named pscfpp/.  References to paths that do not start explicitly with 
 a prefix "pscfpp/" should be understood to be relative paths, relative 
-to this directory. The directory structure of the pscf++ repository is 
+to this directory. The directory structure of the pscfpp repository is 
 explained \ref source_directory_page "here".
 
 \section compile_submodules_section Use of git submodules
 
-Some subdirectories of the pscf++/src directory are maintained in 
-separate github repositories and are imported into pscf++ as git
+Some subdirectories of the pscfpp/src directory are maintained in 
+separate github repositories and are imported into pscfpp as git
 "submodules". (See chapter 7.11 of the Pro Git online book). Specifically, 
 the src/util and src/tests directories are submodules that contain clones 
 of the dmorse/util and dmorse/test repositories on github, respectively. 
 
 The use of the "--recursive" option of the git clone command given above 
 should automatically create clones of these submodules in the appropriate 
-locations within the pscf++ source directory tree, creating a complete 
-functional copy of the source code. Cloning a copy of pscf++ without 
+locations within the pscfpp source directory tree, creating a complete 
+functional copy of the source code. Cloning a copy of pscfpp without 
 using the "--recursive" option, however, would create a version of the 
-pscf++ directory tree in which the src/util and src/tests directories 
+pscfpp directory tree in which the src/util and src/tests directories 
 are empty. If you find yourself with a repository clone in which one or 
-both of these repositories is empty, you can either clone pscf++ again 
+both of these repositories is empty, you can either clone pscfpp again 
 with the recursive option, or read chapter 7.11 of the online Pro Git 
 book for instructions on how to manually fetch and update these submodules.
 

@@ -71,7 +71,7 @@ System{
 
 \section user_param_fd_syntax_section Syntax
 
-Any pscf++ parameter file, including this one, contains a series
+Any PSCF parameter file, including this one, contains a series
 of nested blocks that are delimited by braces, using a syntax
 similar to that of a C program (without the semicolons). Each
 block begins with a block label followed by an opening curly

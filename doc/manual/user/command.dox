@@ -4,7 +4,7 @@
  \ref user_example_page (Next) 
 <BR>
 
-For any Pscf++ simulation program, the parameter file is read first,
+For any PSCF simulation program, the parameter file is read first,
 followed by a command script. The command file controls the sequence
 of operations performed after the program is initialized using 
 information from the parameter file.  The name of the command file 

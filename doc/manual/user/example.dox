@@ -4,8 +4,8 @@
 \ref developer_page (Next)
 <BR>
 
-A good way to become familiar with the pscf++ simulation programs is to run a few example simulations and examine the associated input and output files.
-A set of examples containing input files for pscf++ simulations are provided  in the pscfpp/examples directory of the pscf++ repository.
+A good way to become familiar with the PSCF simulation programs is to run a few example simulations and examine the associated input and output files.
+A set of examples containing input files for PSCF simulations are provided  in the pscfpp/examples directory of the PSCF repository.
 
 \section examples_subdirectories_sec Repository directory structure
 

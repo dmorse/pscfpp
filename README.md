@@ -1,37 +1,39 @@
 
-# pscf++ polymer self-consistent field theory package
+# PSCF (C++/cuda) - Polymer Self-Consistent Field theory 
 
-Pscf++ is a library of C++ classes and programs for solving the 
-Edwards-Helfand self-consistent field theory for polymer liquids. 
-Pscf++ is still under development, but is intended to eventually
-supersede the existing PSCF Fortran program. 
+PSCF is a package of software for solving the Edwards-Helfand self-consistent 
+field theory for polymer liquids. The version in the directory containing
+this file is written primarily in C++, with GPU accelerated code in cuda.
+This C++/cuda version of PSCF is still under development, but is intended 
+to eventually supersede the existing PSCF Fortran program. The older 
+Fortran program is maintained in a separate github repostory dmorse/pscf.
 
 ## Overview
 
-Differences from the existing PSCF Fortran code and expected advantages 
-of the new code include:
+Differences between this C++/cuda version of PSCF from the older Fortran 
+version and expected advantages of the new code include:
 
-   - Pscf++ is an extensible package of several different programs 
+   - PSCF (C++/cuda) is an extensible package of several different programs 
      designed for use with different geometries and boundary conditions, 
      different algorithms or different hardware, designed around a 
      common software framework. 
 
-   - Pscf++ allows simulations of mixtures containing arbitrary acyclic 
-     branched copolymers, in addition to the linear block copolymers and 
-     homopolymers allowed by Fortran PSCF code.
+   - PSCF (C++/cuda) allows simulations of mixtures containing arbitrary 
+     acyclic branched copolymers, in addition to the linear block copolymers 
+     and homopolymers allowed by Fortran PSCF code.
 
-   - An object oriented design allows creation of independent objects
-     to represent different phases, which will facilitate analysis of 
-     phase coexistence.
+   - An object oriented design allows creation of independent objects to 
+     represent different phases, which will facilitate analysis of phase
+     coexistence in mixtures.
 
-   - Adoption of C/C++ has simplified implementation of SCFT solvers
-     that uses graphical process units (GPUs).
+   - Adoption of C/C++ as a base language has simplified implementation 
+     of variant that that uses graphical process units (GPUs).
 
-Pscf++ is free, open source software. It is distributed under the terms 
-of the GNU General Public License as (GPL) published by the Free Software 
-Foundation, either version 3 of the License or (at your option) any later 
-version.  Pscf++ is distributed without any warranty, without even the 
-implied warranty of merchantability or fitness for a particular purpose. 
+The C++/cuda version of PSCF is free, open source software. It is distributed 
+under the terms of the GNU General Public License as (GPL) published by the 
+Free Software Foundation, either version 3 of the License or (at your option) 
+any later version.  PSCF is distributed without any warranty, without even 
+the implied warranty of merchantability or fitness for a particular purpose. 
 See the LICENSE file or the 
 <a href=http://www.gnu.org/licenses/> gnu web page </a> for details.
 
@@ -43,10 +45,10 @@ Currently, the package contains the following SCFT solvers:
      variation in a single spatial coordinate in Cartesian, cylindrical 
      or spherical coordinates.
 
-   - A CPU-based pseudo-spectral solver for 1, 2 , or 3 dimensionally 
-     periodic structures.
+   - A CPU-based pseudo-spectral solver periodic microstructures that are
+     periodic in 1, 2, or 3 coordinates.
 
-   - A GPU accelerated pseudo-spectral solver for period structures. 
+   - A GPU accelerated pseudo-spectral solver for period microstructures. 
 
 The one-dimensional finite different solver is useful for treating problems
 involving flat or curved interfaces, and cylindrical or spherical micelles.
@@ -54,30 +56,35 @@ The executable for the this program is named pscf_fd.
 
 The CPU-based pseudo-spectral solver for periodic microstructures is
 similar in most respects to the existing PSCF Fortran program, and 
-provides very similar performance. Like the Fortran program, it allows 
-the user to search for a solution with a specified space group symmetry.
-The new program can read and write the same file formats for representing 
+provides similar level of performance. Like the Fortran program, it 
+allows the user to search for a solution with any specified crystal
+system and space group symmetry, and provides efficient algorithms
+to relax the unit cell parameters so as to minimize the free energy.
+The new code can read and write the same file formats for representing 
 a field in terms of symmetry-adapted basis functions as those used by 
-the PSCF Fortran program, and provides very similar perfomance. The
-new code does, however, still lack a few features of the original Fortran 
-code.  Currently, the most important missing features are the absence of 
-the "sweep" continuation feature and the lack of specialized code to 
-simulate point-particle solvents. The CPU programs for solving 1, 2 and 
-3 dimensionally periodic structures are named pscf_pc1d, pscf_pc2d and 
-pscf_pc3d, respectively, where "pc" stands for "periodic CPU".
+the PSCF Fortran program.  Currently, the most important features of
+the Fortran code that have not yet been reimplemented in the new codes
+are the "sweep" continuation feature and specialized code to represent
+point-particle solvents. Separate executables are used to solve 1, 2 
+and 3 dimensionally periodic structures, which are named pscf_pc1d, 
+pscf_pc2d and pscf_pc3d, respectively. Here, "pc" stands for 
+"periodic CPU".
 
-The GPU-accelerated pseudo-spectral solver for periodic structures is 
-based on the same algorithms as CPU pseudo-spectral solver, but is 
-less mature. The most important difference in features is that the 
-GPU-accelerated code does yet allow the user to use symmetry -adapted
-basis functions to constrain the space group symmetry for the solution.
+The GPU-accelerated pseudo-spectral solver for periodic structures 
+is based on algorithms similar to those used in the CPU pseudo-spectral 
+solver, but is somewhat less mature. Like the corresponding CPU code,
+the GPU-accelerated code allows the use of any unit cell type, 
+including no-orthogonal unit cells, and automatic relaxation of unit 
+cell parameters. The most important difference in features is that the 
+GPU-accelerated code does yet allow the user to use symmetry-adapted
+basis functions to constrain the space group symmetry of the solution.
 The GPU accelerated programs for solving 1, 2 and 3 dimensionally 
 periodic structures are named pscf_pg1d, pscf_pg2d and pscf_pg3d, 
 respectively, where "pg" stands for "periodic GPU".
 
 ## Getting the source code
 
-The pscf++ source code is maintained in the github repository
+The PSCF C++/cuda source code is maintained in the github repository
 
    <https://github.com/dmorse/pscfpp>.
 
@@ -94,7 +101,7 @@ documentation.
 
 ## Documentation
 
-Pscf++ is distributed with source files for an html web manual.
+PSCF is distributed with source files for an html web manual.
 After cloning the source code, you can use the doxygen documentation
 generator to generate a local copy of this documentation. To do this,
 doxygen must be installed on your computer, and the directory 
@@ -111,7 +118,7 @@ pscfpp/doc/html/index.html, which is the main page of the manual.
 
 ## Dependencies
 
-The pscf++ source code is written in a combination of C++ and (for
+The PSCF source code is written in a combination of C++ and (for
 the GPU accelerated program) Cuda, and must be compiled from source.
 The package was developed on linux and and Mac OS X operating systems 
 using standard unix utilities, and is designed to run on these 
@@ -119,7 +126,7 @@ systems. To compile linux-like software on a Mac, you must first
 install the XCode Mac development environment and the unix command 
 line tools.  
 
-The CPU-based programs within the pscf++ package depend on the 
+The CPU-based programs within the PSCF package depend on the 
 following external libraries:
 
   - Gnu scientific library (GSL)
@@ -137,7 +144,7 @@ that provides the CUFFT fast Fourier transform library.
 
 ## Compiling
 
-Complete directions for compiling and installing pscf++ are
+Complete directions for compiling and installing PSCF are
 provided in section 2 of the html documentation. Short instructions
 for compiling, after installing all of the required dependencies,
 are given below:
@@ -169,7 +176,7 @@ default options are not adequate, edit this file as needed.
 
 ## Command line syntax (invoking a program)
 
-Pscf++ is a package containing several different SCFT programs designed 
+PSCF is a package containing several different SCFT programs designed 
 for different geometries, different algorithms or different hardware. 
 Executable names (given above) are:
 
@@ -182,7 +189,7 @@ Executable names (given above) are:
      structures
 
 In the names pscf_pcdN and pscf_pgdN, N denotes a dimension dimension
-of space that can be 1, 2, 3. The CPU program for three-dimensionally
+of space that can be N=1, 2, 3. The CPU program for three-dimensionally
 periodic microstructures is thus pscf_pc3d.
 
 Each of these programs reads a parameter file and a command file. The 
@@ -223,7 +230,7 @@ written during the computation.
 Directory pscfpp/examples contains a set of examples of simple 
 calculations, each of which contains a sample parameter and command file. 
 Top level subdirectories of pscfpp/examples contain examples for different 
-pscf++ programs.
+PSCF programs.
 
 Subdirectory examples/fd1d subdirectory contains examples for the 1D 
 finite-difference program pscf_fd. Top level subdirectories of 

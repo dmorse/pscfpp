@@ -1,7 +1,6 @@
 include src/config.mk
 # =========================================================================
-.PHONY: all-cpu util pscf fd1d pspc \
-        clean veryclean html clean-html
+.PHONY:  test clean clean-tests clean-bin veryclean html clean-html
 
 # ==========================================================================
 # Test targets
@@ -29,11 +28,11 @@ clean-tests:
 	cd src/; $(MAKE) clean-tests
 
 clean-bin:
-	-rm -f $(BIN_DIR)/makeDep
-	-rm -f $(BIN_DIR)/pscf*
+	rm -f $(BIN_DIR)/pscf*
  
 veryclean:
 	make clean-bin
+	rm -f $(BIN_DIR)/makeDep
 	cd bld; $(MAKE) veryclean
 	rm bld/makefile
 	cd src; $(MAKE) veryclean

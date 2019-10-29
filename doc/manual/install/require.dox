@@ -4,7 +4,7 @@
 \ref install_source_page (Next) 
 <BR>
 
-Pscf++ is designed to be compiled and run in a unix-like environment. 
+PSCF is designed to be compiled and run in a unix-like environment. 
 The package has been compiled and used on systems running either linux 
 or a recent version of Mac OS X operating systems.  Compilation is 
 controlled by a system of unix makefiles. In order to compile on a
@@ -12,19 +12,19 @@ MacIntosh computer running Mac OS X, the computer must first be configured
 for development by installing both the XCode integrated development 
 environment and the command line tools for XCode. 
 
-Pscf++ is distributed only as source code, and must be compiled by the 
+PSCF is distributed only as source code, and must be compiled by the 
 user.  All source code that is designed to run on a conventional CPU is 
 written in ANSI 2011 C++ language standard.  Code that is designed to 
 run on a NVidia graphics processing unit (GPU) is written in a Cuda.
 
 \section require_overview_section Overview 
 
-The pscf++ package provides several programs that are designed to 
+The PSCF package provides several programs that are designed to 
 run on conventional CPUs on a desktop, laptop or cluster, and others
 that are designed to make use of an NVidia GPU. We distinguish these
 in what follows by referring to CPU programs and GPU-enabled programs
 
-In order to compile all of the CPU programs in the pscf++ package, 
+In order to compile all of the CPU programs in the PSCF package, 
 the system on which the code is compiled must have:
 
    - a ``git" version control client
@@ -36,7 +36,7 @@ the system on which the code is compiled must have:
 A git client is needed to obtain (clone) the source code, which is 
 maintained in a git repository. A python interpreter is needed during 
 compilation (but not during execution) because the build system that 
-compiles the pscf++ source codes uses a few python scripts that
+compiles the PSCF source codes uses a few python scripts that
 are provided with the package. The GSL is used by several programs
 within the package for linear algebra operations. The FFTW library
 is used by the CPU version of the pseudo-spectral algorithm for 
@@ -50,11 +50,11 @@ In order compile GPU-enabled programs, the system must also have:
 
 \section require_git_section Git client
 
-The source code for pscf++ is hosted on the github server, at
-<a href=http://github.com>github</a>, as project dmorse/pscf++.  
+The source code for PSCF is hosted on the github server, at
+<a href=http://github.com>github</a>, as project dmorse/PSCF.  
 The source code may be obtained by using the git version control 
 manager program to clone the public 
-<a href=https://github.com/dmorse/pscf++>git repository</a>. 
+<a href=https://github.com/dmorse/PSCF>git repository</a>. 
 To do this, a "git" client must be installed on your computer.
 
 Before attempting to use git to clone the source code, you can check 
@@ -88,7 +88,7 @@ returns a non-empty path.
 
 \section install_require_compiler_serial C++ compiler 
 
-By default, the pscf++ build system invokes a C++ compiler using the
+By default, the PSCF build system invokes a C++ compiler using the
 the compiler commnd name "g++". On linux systems, this command invokes 
 the gnu compiler collection (gcc) C++ compiler. On a machine running 
 Mac OS X that is set up for C++ developent (see above), the "g++" 
@@ -101,8 +101,8 @@ It is possible to instead configure the build system during the initial
 setup process so as to use another compiler is invoked with a different
 command and may require different command line options, such as the intel 
 C++ compiler. When the gcc or clang compiler is not used for compilation, 
-however, the pscf++ build system still invokes the "g++" command to 
-analyse dependencies among source files. The pscf++ build system thus
+however, the PSCF build system still invokes the "g++" command to 
+analyse dependencies among source files. The PSCF build system thus
 always requires that the "g++" command be available on the build system.
 
 One can check if the command "g++" exists by entering
@@ -128,7 +128,7 @@ appropriate Nvidia GPU and a Cuda development package installed.
 
 On any multi-user linux cluster that is set up for use in computational 
 research, at least one MPI library should already be installed. At the 
-University of Minnesota, pscf++ is often run on a cluster provided by 
+University of Minnesota, PSCF is often run on a cluster provided by 
 the Minnesota Supercomputer Institute (MSI). Clusters at MSI allow the 
 users to choose from among several different choices of MPI library and 
 compiler.
@@ -159,7 +159,7 @@ On the mesabi cluster at MSI, we normally set up the compilation environment by 
  > module load fftw/3.3.6-double-ompi-3.1.2-gnu-5.4.0.CentOS7
  > module load cuda
 \endcode
-before compiling pscf++.
+before compiling PSCF.
 
 <BR>
 \ref install_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
