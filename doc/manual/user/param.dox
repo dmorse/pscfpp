@@ -8,9 +8,9 @@ The parameter files required by the different pscp++ programs use a similar synt
 
 <h2> Contents:</h2>
    <ul style="list-style: none;">
-   <li> \subpage user_param_syntax_page  "3.2.1 Syntax" </li>
-   <li> \subpage user_param_fd_page      "3.2.2 pscf_fd" </li>
-   <li> \subpage user_param_pc_page      "3.2.3 pscf_pc" </li>
+   <li> \subpage user_param_fd_page      "3.2.1 pscf_fd" </li>
+   <li> \subpage user_param_pc_page      "3.2.2 pscf_pcNd" </li>
+   <li> \subpage user_param_pg_page      "3.2.2 pscf_pgNd" </li>
    </ul>
 <BR>
 \ref user_usage_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
