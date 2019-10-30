@@ -17,6 +17,8 @@ Files:
   makefile  - main makefile for in-source compilation
   configure - script for managing optional features
   config.mk - main configuration file for in-source compilation
+  programs.mod - doxygen documentation of main programs
+  CONTENTS - this file
 
-Note: File src/config.mk is not in the git repository, and is 
-installed by the setup script.
+Note: File src/config.mk is not in the git repository, and is installed 
+by the setup script.

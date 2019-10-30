@@ -1,0 +1,18 @@
+This is the root directory of PSCF C++/Cuda package. See the README.md
+file for basic instructions on usage.
+
+Subdirectories:
+  bin/       default installation directory for executables
+  bld/       build directory for out-of-source builds 
+  data/      read-only data files (i.e., space group description files)
+  doc/       documentation files
+  make/      makefiles and makefile fragments installed by setup script
+  src/       C++ and CUDA source code
+  scripts/   scripts written in python, matlab or other languages
+
+Files: 
+  CONTENTS  - this file
+  README    - brief intro to package
+  setup     - executable script to setup build system prior to compilation
+  makefile  - main makefile for global clean up (not used for compilation)
+

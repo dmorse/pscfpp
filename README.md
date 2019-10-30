@@ -6,12 +6,13 @@ field theory for polymer liquids. The version in the directory containing
 this file is written primarily in C++, with GPU accelerated code in CUDA.
 This C++/CUDA version of PSCF is still under development, but is intended 
 to eventually supersede the existing PSCF Fortran program. The older 
-Fortran program is maintained in a separate github repostory dmorse/pscf.
+Fortran program is maintained in a separate github.com repository as 
+project dmorse/pscf.
 
 ## Overview
 
-Differences between this C++/CUDA version of PSCF from the older Fortran 
-version and expected advantages of the new code include:
+Differences between this C++/CUDA version of PSCF and the older Fortran 
+version, and expected advantages of the new code include:
 
    - PSCF (C++/CUDA) is an extensible package of several different programs 
      designed for use with different geometries and boundary conditions, 
@@ -51,36 +52,37 @@ Currently, the package contains the following SCFT solvers:
    - A GPU accelerated pseudo-spectral solver for period microstructures. 
 
 The one-dimensional finite different solver is useful for treating problems
-involving flat or curved interfaces, and cylindrical or spherical micelles.
-The executable for the this program is named pscf_fd.
+involving flat or curved interfaces, as well as cylindrical or spherical 
+micelles. The executable for this program is named pscf_fd.
 
-The CPU-based pseudo-spectral solver for periodic microstructures is
-similar in most respects to the existing PSCF Fortran program, and 
-provides similar level of performance. Like the Fortran program, it 
-allows the user to search for a solution with any specified crystal
-system and space group symmetry, and provides efficient algorithms
-to relax the unit cell parameters so as to minimize the free energy.
-The new code can read and write the same file formats for representing 
-a field in terms of symmetry-adapted basis functions as those used by 
-the PSCF Fortran program.  Currently, the most important features of
-the Fortran code that have not yet been reimplemented in the new codes
+The CPU-based pseudo-spectral solver for periodic microstructures is 
+similar in most respects to the existing PSCF Fortran program, and provides
+similar level of performance. Like the Fortran program, it allows the user 
+to search for a solution with any specified crystal system and space group 
+symmetry, and provides efficient algorithms to relax the unit cell 
+parameters so as to minimize the free energy.  The new code can read and 
+write the same file formats for representing a field as an expansion in 
+symmetry-adapted basis functions or a values on a regular grid as those 
+used by the PSCF Fortran program. Currently, the most important features 
+of the Fortran code that have not yet been reimplemented in the new code
 are the "sweep" continuation feature and specialized code to represent
-point-particle solvents. Separate executables are used to solve 1, 2 
-and 3 dimensionally periodic structures, which are named pscf_pc1d, 
+point-particle solvents. Different executable files are used to solve 1, 
+2 and 3 dimensionally periodic structures, which are named pscf_pc1d, 
 pscf_pc2d and pscf_pc3d, respectively. Here, "pc" stands for 
 "periodic CPU".
 
-The GPU-accelerated pseudo-spectral solver for periodic structures 
-is based on algorithms similar to those used in the CPU pseudo-spectral 
-solver, but is somewhat less mature. Like the corresponding CPU code,
-the GPU-accelerated code allows the use of any unit cell type, 
-including no-orthogonal unit cells, and automatic relaxation of unit 
-cell parameters. The most important difference in features is that the 
-GPU-accelerated code does yet allow the user to use symmetry-adapted
-basis functions to constrain the space group symmetry of the solution.
-The GPU accelerated programs for solving 1, 2 and 3 dimensionally 
-periodic structures are named pscf_pg1d, pscf_pg2d and pscf_pg3d, 
-respectively, where "pg" stands for "periodic GPU".
+The GPU-accelerated pseudo-spectral solver for periodic structures is 
+based on algorithms similar to those used in the CPU pseudo-spectral 
+code, but is somewhat less mature. Like the corresponding C++/CUDA CPU 
+code, the GPU-accelerated code allows the use of any unit cell type, 
+including no-orthogonal unit cells, and provides automatic relaxation 
+of unit cell parameters. The most important difference in features is 
+that the GPU-accelerated code does yet allow the user to use a
+representation in symmetry-adapted basis functions to constrain the 
+space group symmetry of the solution.  The GPU accelerated programs 
+for solving 1, 2 and 3 dimensionally periodic structures are named 
+pscf_pg1d, pscf_pg2d and pscf_pg3d, respectively, where "pg" stands 
+for "periodic GPU".
 
 ## Getting the source code
 
@@ -93,11 +95,11 @@ clone the repository. To do so, enter the command:
 ``` 
 git clone --recursive https://github.com/dmorse/pscfpp.git
 ```
-The use of the --recursive option to the git clone command:
+Note the use of the --recursive option to the git clone command.
 This is necessary to clone some git submodules that are maintained
 in separate repositories. This command will create a directory 
 called pscfpp/ that contains all of the source code and associated
-documentation.
+documentation, including required git submodules.
 
 ## Documentation
 
@@ -202,7 +204,8 @@ contain an initial guess for monomer chemical potential fields and
 names of files to which final chemical potential and monomer 
 concentration fields should be written.
 
-The command line syntax for invoking any pscfp++ program is:
+The command line syntax for invoking any pscfp++ program that runs on
+a CPU is:
 ```
 program -p param -c command
 ```
@@ -225,12 +228,18 @@ program -e -p param -c command > log
 where "log" denotes the name of a log file to which output will be
 written during the computation.
 
+The command line syntax to invoke the GPU-accelerated programs requires
+two extra options that specify the number of CUDA blocks and the number
+of blocks per thread. This is explained in the README file subdirectory
+pscfpp/examples/pspg/, and in the examples contained in that directory.
+
 ## Examples
 
 Directory pscfpp/examples contains a set of examples of simple 
-calculations, each of which contains a sample parameter and command file. 
-Top level subdirectories of pscfpp/examples contain examples for different 
-PSCF programs.
+calculations. Each example directory contains a parameter file (named
+param), a command file (named command), and a input chemical potential 
+(omega) file.  Top level subdirectories of pscfpp/examples contain 
+examples for different PSCF programs.
 
 Subdirectory examples/fd1d subdirectory contains examples for the 1D 
 finite-difference program pscf_fd. Top level subdirectories of 
@@ -246,3 +255,5 @@ Subdirectories of examples/pspc/diblock contain examples for lamellar
 (N=1), hexagonal (N=2) and BCC (N=3) structures, each of which has a 
 different number of spatially periodic dimensions.
 
+Subdirectory examples/pspg contains examples examples for the 
+pscf_pg3d 3D GPU code for periodic structures.
