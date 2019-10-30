@@ -152,14 +152,14 @@ is
 where module-name represents the name of a particular software module, as 
 listed by the "module avail" command.
 
-On the mesabi cluster at MSI, we normally set up the compilation environment by invoking
+On the mesabi cluster at MSI, we currently normally set up the compilation 
+environment by invoking
 \code
- > module unload gcc
- > module load gcc/5.4.0
- > module load fftw/3.3.6-double-ompi-3.1.2-gnu-5.4.0.CentOS7
+ > module load fftw/3.3.6-double-gnu-7.2.0
  > module load cuda
 \endcode
-before compiling PSCF.
+before compiling PSCF. These commands can entered either from the command
+line or from the users .bashrc or .profile script.
 
 <BR>
 \ref install_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
