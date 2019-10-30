@@ -5,6 +5,11 @@ include config.mk
 # ======================================================================
 # Main build targets
 
+# Build all CPU and GPU programs
+all:
+	$(MAKE) all-cpu
+	$(MAKE) pspg
+
 # Build all programs that uses exclusively CPU hardware
 all-cpu: 
 	cd util; $(MAKE) all
