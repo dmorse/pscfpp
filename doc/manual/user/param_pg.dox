@@ -1,13 +1,12 @@
-/*! \page user_param_pg_page 3.2.3 Parameter Files: pscf_pcNd
+/*! \page user_param_pg_page 3.2.3 Parameter files for pscf_pgNd 
 
 \ref user_param_pc_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_command_page (Next)
 <BR>
 
-The parameter file formats for mdSim and mcSim simulations are similar in many respects, and so will be discussed together.  
+\section user_param_pg_section Example
+An example of a parameter file for pscf_pg3D is shown below. 
 
-\section user_param_pc_section Example for pscf_pspc:
-An example of a parameter file for an pscf_pspc was shown on the previous page. Here is a corresponding example for pscf_pspc program:
 \code
 System{
   Mixture{
@@ -31,7 +30,6 @@ System{
   }
   unitCell  cubic   1.9254998725
   mesh              10  10  10
-  groupName         I_m_-3_m
   AmIterator{
     maxItr   100
     epsilon  1e-10
@@ -41,22 +39,13 @@ System{
 }
 \endcode
 
-\section user_param_pc_overview_section Overview
-The format is shown below for an mcSim file for a code with all potential types enabled at compile time (with bond, angle, dihedral and external potentials). Most parameters are shown in the format "label type" where type is the type of variable expected. Optional parameters are shown in square brackets, using the format [label type = default], where default is the default value assigned to the variable if this line is absent from the parameter file.
-\code
-McSimulation{
-  FileMaster{ ... }
-  Mixture{
-     ...
-  }
-}
-\endcode
-The following parameters appear in the main block in the format for either type of simulation:
-<ul>
-<li> nAtomType: The number of atom types, which are indexed by an integer index with values 0, ...,  nAtomType - 1. </li>
-<li> writeRestartInterval: The interval, in MD time steps or attempted MC moves, between time steps when a restart file is written.
-<li> writeRestartFileName: The base name used for the restart file.
-</ul>
+
+The structure of a pscf_pgNd parameter file is almost identical to that
+of a pscf_pcNd program except for the absence of the groupName parameter.
+This difference reflects the fact that the two programs are based on
+similar algorithms, but that pscf_pgNd does not yet allow the user to
+search for a solution of specified space-group symmetry.
+
 
 <BR>
 \ref user_param_pc_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

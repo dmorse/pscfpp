@@ -193,25 +193,35 @@ namespace Pspg
       RDFieldDft<D>& cFieldDft(int monomerId);
 
       /**
-      * Read chemical potential fields from file.
+      * Read chemical potential fields from file in rgrid format.
       *
       * \param in input stream (i.e., input file)
+      * \param fields array of rgrid fields (one per monomer type)
       */
-      //void readFields(std::istream& in, DArray< RDField<D> >& fields);
-
       void readRFields(std::istream& in, DArray< RDField<D> >& fields);
 
-      void readKFields(std::istream& in, DArray< RDFieldDft<D> >& fields);
       /**
-      * Write concentration or chemical potential fields to file.
+      * Read chemical potential fields from file in kgrid format.
+      *
+      * \param in input stream (i.e., input file)
+      * \param fields array of kgrid fields (one per monomer type)
+      */
+      void readKFields(std::istream& in, DArray< RDFieldDft<D> >& fields);
+
+      /**
+      * Write fields to file in rgrid format.
       *
       * \param out output stream (i.e., output file)
-      * \param fields array of fields for different species
+      * \param fields array of rgrid fields, one per monomer type
       */
-      //void writeFields(std::ostream& out, DArray< RDField<D> > const & fields);
-
       void writeRFields(std::ostream& out, DArray< RDField<D> > const& fields);
 
+      /**
+      * Write fields to file in kgrid format.
+      *
+      * \param out output stream (i.e., output file)
+      * \param fields array of kgrid fields (one per monomer type)
+      */
       void writeKFields(std::ostream& out, DArray< RDFieldDft<D> > const& fields);
 
       //@}
@@ -244,14 +254,23 @@ namespace Pspg
       //temporarily changed to allow testing on member functions
       FtsIterator<D>& iterator();
 
+      #if 0
       /**
       * Get basis object by reference.
       */
-      //Basis<D>& basis();
+      Basis<D>& basis();
+      #endif
 
+      /**
+      * Get container for wavevector data.
+      */
       WaveList<D>& wavelist();
 
+      /**
+      * Get associated FFT objecti by reference.
+      */
       FFT<D>& fft();
+
       /**
       * Get homogeneous mixture (for reference calculations).
       */
@@ -283,8 +302,10 @@ namespace Pspg
       */
       double pressure() const;
 
-	  RDField<D>& pressureField();
-	  RDField<D>& compositionField();
+      RDField<D>& pressureField();
+
+      RDField<D>& compositionField();
+
       //@}
 
    private:
@@ -437,23 +458,28 @@ namespace Pspg
       */
       void initHomogeneous();
 
-	  RDField<D> compositionField_; //rField version
-	  RDFieldDft<D> compositionKField_; //kField
-	  RDField<D> pressureField_;
+      RDField<D> compositionField_; //rField version
 
-	  /**
-	  * Free energy of the new configuration due to random change
-	  */
-	  double fHelmholtzOld_;
+      RDFieldDft<D> compositionKField_; //kField
 
-	  IntVec<D> kMeshDimensions_;
+      RDField<D> pressureField_;
 
-	  RDField<D> workArray;
-	  cufftReal* d_kernelWorkSpace_;
-	  cufftReal* kernelWorkSpace_;
-	  cufftReal innerProduct(const RDField<D>& a, const RDField<D>& b, int size);
-	  cufftReal reductionH(const RDField<D>& a, int size);
+      /**
+      * Free energy of the new configuration due to random change
+      */
+      double fHelmholtzOld_;
 
+      IntVec<D> kMeshDimensions_;
+
+      RDField<D> workArray;
+
+      cufftReal* d_kernelWorkSpace_;
+
+      cufftReal* kernelWorkSpace_;
+
+      cufftReal innerProduct(const RDField<D>& a, const RDField<D>& b, int size);
+
+      cufftReal reductionH(const RDField<D>& a, int size);
 
    };
 
@@ -544,23 +570,21 @@ namespace Pspg
 
    template <int D>
    inline WaveList<D>& System<D>::wavelist()
-   {
-      return *wavelistPtr_;
-   }
+   {  return *wavelistPtr_; }
 
    template <int D>
    inline FFT<D>& System<D>::fft()
-   { return fft_; }
+   {  return fft_; }
 
    template <int D>
    inline
    DArray<RDField<D> >& System<D>::wFields()
-   { return wFields_; }
+   {  return wFields_; }
 
    template <int D>
    inline
    RDField<D>& System<D>::wField(int id)
-   { return wFields_[id]; }
+   {  return wFields_[id]; }
 
    /*
    * Get an array of all monomer excess chemical potential fields.
@@ -581,32 +605,33 @@ namespace Pspg
    template <int D>
    inline
    DArray<RDFieldDft<D> >& System<D>::wFieldDfts()
-   { return wFieldDfts_; }
+   {  return wFieldDfts_; }
 
    template <int D>
    inline
    RDFieldDft<D>& System<D>::wFieldDft(int id)
-   { return wFieldDfts_[id]; }
+   {  return wFieldDfts_[id]; }
 
    template <int D>
    inline
    DArray<RDField<D> >& System<D>::cFields()
-   { return cFields_; }
+   {  return cFields_; }
 
    template <int D>
    inline
    RDField<D>& System<D>::cField(int id)
-   { return cFields_[id]; }
+   {  return cFields_[id]; }
 
    template <int D>
    inline
    DArray<RDFieldDft<D> >& System<D>::cFieldDfts()
-   { return cFieldDfts_; }
+   {  return cFieldDfts_; }
 
    template <int D>
    inline
    RDFieldDft<D>& System<D>::cFieldDft(int id)
-   { return cFieldDfts_[id]; }
+   {  return cFieldDfts_[id]; }
+
    /*
    * Get array of all monomer concentration fields.
    */

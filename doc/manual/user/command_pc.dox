@@ -1,4 +1,4 @@
-/*! \page user_command_pc_page 3.3.2 Commands for pscf_pcNd
+/*! \page user_command_pc_page 3.3.2 Command files for pscf_pcNd (CPU)
 
  \ref user_command_fd_page     (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref user_command_pg_page (Next) 
@@ -26,24 +26,24 @@ the default file format used by the Fortran PSCF program.
          </td>
   </tr>
   <tr> 
-    <td> READ_WFIELDS </td>
+    <td> READ_W_BASIS </td>
     <td> filename [string] </td>
     <td> Write w fields to file filename  </td>
   </tr>
   <tr> 
-    <td> WRITE_WFIELDS </td>
+    <td> WRITE_W_BASIS </td>
     <td> filename [string] </td>
     <td> Write chemical potential fields (w fields) for all monomer types 
          to file filename  </td>
   </tr>
   <tr> 
-    <td> WRITE_CFIELDS </td>
+    <td> WRITE_C_BASIS </td>
     <td> filename [string] </td>
     <td> Write monomer volume fraction fields (c fields) for all types 
          to a file filename  </td>
   </tr>
   <tr> 
-    <td> WRITE_BLOCK_CFIELDS </td>
+    <td> WRITE_BLOCK_C_BASIS </td>
     <td> filename [string] </td>
     <td> Write monomer volume fractions (c fields) for each block to 
          file filename  </td>
@@ -55,13 +55,13 @@ the default file format used by the Fortran PSCF program.
          inFile, then write resulting c field to outCFile </td>
   </tr>
   <tr> 
-    <td> RGRID_TO_FIELD </td>
+    <td> RGRID_TO_BASIS </td>
     <td> inFile [string], outFile[string </td>
     <td> Read fields from file inFile in real-space grid (rgrid) format, 
          write to file outFile in symmetry-adapted Fourier format. </td>
   </tr>
   <tr> 
-    <td> FIELD_TO_RGRID </td>
+    <td> BASIS_TO_RGRID </td>
     <td> inFile [string], outFile[string </td>
     <td> Read fields from file inFile in symmetry-adapted Fourier, 
          write to file outFile in real-space grid (rgrid) format. </td>

@@ -13,15 +13,15 @@ for development by installing both the XCode integrated development
 environment and the command line tools for XCode. 
 
 PSCF is distributed only as source code, and must be compiled by the 
-user.  All source code that is designed to run on a conventional CPU is 
-written in ANSI 2011 C++ language standard.  Code that is designed to 
-run on a NVidia graphics processing unit (GPU) is written in a CUDA.
+user.  All source code that is designed to run on a conventional CPU 
+is written in ANSI 2011 C++ language standard.  Code that is written 
+for an NVIDIA graphics processing unit (GPU) is written in a CUDA.
 
 \section require_overview_section Overview 
 
-The PSCF package provides several programs that are designed to 
-run on conventional CPUs on a desktop, laptop or cluster, and others
-that are designed to make use of an NVidia GPU. We distinguish these
+The PSCF package provides several programs that are designed to run 
+on conventional CPUs on a desktop, laptop or cluster, and others
+that are designed to also use an NVIDIA GPU. We distinguish these
 in what follows by referring to CPU programs and GPU-enabled programs
 
 In order to compile all of the CPU programs in the PSCF package, 
@@ -34,37 +34,44 @@ the system on which the code is compiled must have:
    - the FFTW fast Fourier transform library.
 
 A git client is needed to obtain (clone) the source code, which is 
-maintained in a git repository. A python interpreter is needed during 
-compilation (but not during execution) because the build system that 
-compiles the PSCF source codes uses a few python scripts that
-are provided with the package. The GSL is used by several programs
-within the package for linear algebra operations. The FFTW library
-is used by the CPU version of the pseudo-spectral algorithm for 
-periodic microstructures.
+maintained in a git repository on the github.com server. A python 
+interpreter is needed during compilation (but not during execution) 
+because the build system that compiles the PSCF source codes uses 
+a few python scripts that are provided with the package. The GNU
+scientific library is used by several programs within the package 
+for linear algebra operations. The FFTW Fast Fourier transform 
+library is used by the CPU version of the pseudo-spectral algorithm 
+for periodic microstructures.
 
 In order compile GPU-enabled programs, the system must also have:
 
    - An NVidia graphics card
    - A CUDA compiler
-   - the CUFFT GPU accelerated fast Fourier transform library.
+   - the CUFFT GPU-accelerated fast Fourier transform library.
+
+The CUFFT library is provided with recent versions of the CUDA 
+development environment. 
 
 \section require_git_section Git client
 
-The source code for PSCF is hosted on the github server, at
-<a href=http://github.com>github</a>, as project dmorse/PSCF.  
-The source code may be obtained by using the git version control 
-manager program to clone the public 
-<a href=https://github.com/dmorse/PSCF>git repository</a>. 
-To do this, a "git" client must be installed on your computer.
+The source code for the C++/CUDA version of PSCF is hosted on the 
+github server, at <a href=http://github.com>github</a>, as project 
+dmorse/pscfpp. The older fortran PSCF program is maintained in a 
+separate github repository, as project dmorse/pscf.  The source 
+code of the new version may be obtained by using a git version 
+control manager to clone the public 
+<a href=https://github.com/dmorse/pscfpp>git repository</a>. 
+To do this, a git client must be installed on your computer.
 
 Before attempting to use git to clone the source code, you can check 
-whether a "git" client is installed on your machine by entering 
+whether a git client is installed on your machine by entering 
 \code
 > which git
 \endcode 
-from the command line. If git is installed, this should return a valid 
-path, such as "/usr/bin/git".  If this command does not return a valid 
-path, you need to install a git client before proceeding.
+from the unix command line. If git is installed, this should return 
+a valid path, such as "/usr/bin/git".  If this command does not 
+return a valid path, you will need to install or enable a git 
+client before proceeding.
 
 Instructions for installing git on different platforms are given in the 
 documentation on the <a href=http://git-scm.com>git web page</a>, in 
@@ -73,9 +80,6 @@ and git is not already installed, you should use the preferred package
 manager on your linux distribution to install a git client.  If you are 
 using a Macintosh, a client should be installed as a component of the 
 XCode app and command line tools, which are needed for other purposes.  
-
-Once you have confirmed that a git client is available, you may clone
-a copy of the source code.
 
 \section install_require_python Python 
 
@@ -89,20 +93,19 @@ returns a non-empty path.
 \section install_require_compiler_serial C++ compiler 
 
 By default, the PSCF build system invokes a C++ compiler using the
-the compiler commnd name "g++". On linux systems, this command invokes 
-the gnu compiler collection (gcc) C++ compiler. On a machine running 
-Mac OS X that is set up for C++ developent (see above), the "g++" 
+the compiler commnd name "g++". On linux systems, this command normally
+invokes the gnu compiler collection (gcc) C++ compiler. On a MacIntosh
+running Mac OS X that is set up for C++ developent (see above), the "g++" 
 command is normally a link to the clang compiler, which is the default 
 compiler for the XCode development environment. The clang compiler 
-accepts almost all the same command line options as the compiler, and 
-thus functions as a drop-in replacement for the gnu C++ compiler.  
+accepts almost all the same command line options as the gnu compiler, 
+and thus functions as a drop-in replacement for the gnu C++ compiler.  
 
 It is possible to instead configure the build system during the initial 
-setup process so as to use another compiler is invoked with a different
-command and may require different command line options, such as the intel 
-C++ compiler. When the gcc or clang compiler is not used for compilation, 
-however, the PSCF build system still invokes the "g++" command to 
-analyse dependencies among source files. The PSCF build system thus
+setup process so as to use different compiler for C++ files.  When the 
+gcc or clang compiler is not used for compilation, however, the PSCF 
+build system will still invoke the "g++" command to use the g++ compiler 
+to analyse dependencies among source files. The PSCF build system thus 
 always requires that the "g++" command be available on the build system.
 
 One can check if the command "g++" exists by entering
@@ -121,8 +124,11 @@ of the build system. The setup process is described in more detail
 \section install_require_compiler_cuda CUDA compiler
 
 To compile the GPU-accelerated program, the system must also have an
-appropriate NVIDIA GPU and a CUDA development package installed.
-(To be added: Where to look for instructions on installing CUDA).
+appropriate NVIDIA GPU and a CUDA development package installed. The
+NVIDIA NVCC C++/CUDA compiler is designed to integrate with the GNU
+g++ compiler, so we recommend using the GNU compiler to compile C++
+source files if you are planning to compile CUDA code for use on the 
+same machine.
 
 \section install_require_module Software modules (linux clusters)
 
@@ -158,8 +164,13 @@ environment by invoking
  > module load fftw/3.3.6-double-gnu-7.2.0
  > module load cuda
 \endcode
-before compiling PSCF. These commands can entered either from the command
-line or from the users .bashrc or .profile script.
+before compiling PSCF. We use a version of fftw that was compiled with
+gcc version 7.2.0, rather than then most recent version, because the 
+current version of CUDA (v10.) isn't compatible with gcc versions with 
+primary version number greater than 7. These module load commands can 
+be entered either from the command line after loggin in entered 
+automatically on login by adding them to the users .bashrc or .profile 
+script.
 
 <BR>
 \ref install_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

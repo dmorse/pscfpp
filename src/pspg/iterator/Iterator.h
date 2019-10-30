@@ -51,7 +51,6 @@ namespace Pspg
       /**
       * Iterate to solution.
       *
-      * \param isContinuation true iff part of sweep, and not first step.
       * \return error code: 0 for success, 1 for failure.
       */
       virtual int solve() = 0;

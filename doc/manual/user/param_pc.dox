@@ -1,4 +1,4 @@
-/*! \page user_param_pc_page 3.2.3 Parameter Files: pscf_pcNd
+/*! \page user_param_pc_page 3.2.3 Parameter files for pscf_pcNd 
 
 \ref user_param_fd_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_param_pg_page (Next)
@@ -6,8 +6,9 @@
 
 The parameter file formats for mdSim and mcSim simulations are similar in many respects, and so will be discussed together.  
 
-\section user_param_pc_section Example for pscf_pspc:
-An example of a parameter file for an pscf_pspc was shown on the previous page. Here is a corresponding example for pscf_pspc program:
+\section user_param_pc_section Example
+An example of a parameter file for pscf_pc3D is shown below. 
+
 \code
 System{
   Mixture{
@@ -41,22 +42,62 @@ System{
 }
 \endcode
 
-\section user_param_pc_overview_section Overview
-The format is shown below for an mcSim file for a code with all potential types enabled at compile time (with bond, angle, dihedral and external potentials). Most parameters are shown in the format "label type" where type is the type of variable expected. Optional parameters are shown in square brackets, using the format [label type = default], where default is the default value assigned to the variable if this line is absent from the parameter file.
+
+\section user_param_pc_overview_section File Structure
+
+The structure of a pscf_pcNd parameter file is shown below in skeleton 
+form below.
 \code
-McSimulation{
-  FileMaster{ ... }
+System{
   Mixture{
+     ...
+  }
+  ChiInteraction{
+     ...
+  }
+  unitCell ...
+  mesh ....
+  groupName ...
+  AmIterator{
      ...
   }
 }
 \endcode
-The following parameters appear in the main block in the format for either type of simulation:
+The purpose of each subblock and parameter in the main System block
+is as follows:
 <ul>
-<li> nAtomType: The number of atom types, which are indexed by an integer index with values 0, ...,  nAtomType - 1. </li>
-<li> writeRestartInterval: The interval, in MD time steps or attempted MC moves, between time steps when a restart file is written.
-<li> writeRestartFileName: The base name used for the restart file.
+<li>
+Mixture: Description of molecular species and composition of the mixture. 
+</li>
+<li>
+ChiInteraction: Values of Flory-Huggins (chi) interaction parameters
+</li>
+<li> unitCell: Description of periodic unit cell </li>
+<li> mesh: Description of mesh used for spatial discretization </li>
+<li> groupName: Name of the crystallographic space group </li>
+<li> 
+AmIterator: parameters required by the iterator
+</li>
 </ul>
+
+The Mixture and ChiInteration subblocks are identical to those used in
+the pscf_fd program, and so are not described separately below.
+
+\section user_param_pc_AmIterator_section AmIterator Block
+
+The AmIterator block provides parameters required by the Anderson-Mixing 
+(AM) iterator that is used to solve the nonlinear self-consistent field 
+(SCFT) equations. 
+
+The value of the epsilon parameter gives the desired tolerance in the 
+solution of the SCFT equations. The iterative loop exits when the 
+maximum error drops below epsilon.
+
+The domain parameter is a boolean variable that can be used to enable
+or disable optimization of the unit cell. Setting domain = 0 gives a
+rigid unit cell with the dimensions given by the unitCell parameter.
+Setting domain = 1 instructs the program to adjust the unit cell
+parameters so as to minimize the free energy.
 
 <BR>
 \ref user_param_fd_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

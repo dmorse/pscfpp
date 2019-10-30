@@ -54,17 +54,4 @@ namespace Pscf
       return out; 
    }
 
-}
-
-#ifdef UTIL_MPI
-namespace Util
-{
-
-   /**
-   * Initialize MPI Datatype associated with Species::Ensemble.
-   */
-   MPI::Datatype MpiTraits<McMd::Species::Ensemble>::type    = MPI::INT;
-   bool          MpiTraits<McMd::Species::Ensemble>::hasType = true;
-
-}
-#endif
+} // namespace Pscf
