@@ -1,0 +1,26 @@
+Each subdirectory of this directory contains an example 
+of a three-dimensional periodic phase that can be run on
+a GPU using pscf_pg3d program. To run these examples, 
+you must be logged onto a computer or node with an NVIDIA
+GPU and a CUDA run time environment. 
+
+The command line interface to run a CUDA program contains 
+extra parameters to specify the use of threads. The syntax 
+in all of the example given here is
+
+>  pscf_pg3d -e -p param -c command -1 nblock -2 nthread
+
+Parameters param and command are the names of the parameter 
+and command files for each example.  The argument nblock of 
+option -1 sets the number of CUDA blocks, while argument 
+nthread of option -2 sets the number of threads per block. 
+The nblock x nthread should always chosen to be equal to 
+the number of grid points in the mesh used to discretize
+a unit cell. The number of grid points in each direction
+is specified in the param file. 
+
+Each of these example directories contains an executable
+script named "run" that contains the appropriate form 
+of the above command, including the correct values for
+nblock and nthread. To run an example, you can thus just
+invoke "./run" from the directory containing the

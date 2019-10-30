@@ -1,0 +1,13 @@
+Different subdirectories of this examples/ directory contain examples
+of calcultions that use different PSCF programs:
+
+  Directory    Programs                          Description
+  ---------    -------------------------------   -----------
+   fd1d/       pscf_fd                           one-dimensional (CPU)
+   pspc/       pscf_pc1d, pscf_pc2d, pscf_pc3d   periodic  (CPU)
+   pspg/       pscf_pg1d, pscf_pc2d, pscf_pc3d   periodic  (GPU)
+
+Top level subdirectories of fd1d/, pspc/, and pspg/ each contain
+examples for different types of physical systems, e.g., subdirectory
+pspc/diblock/ contains examples for periodic phases of diblock copolymer
+melts. 

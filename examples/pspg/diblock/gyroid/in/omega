@@ -2,7 +2,7 @@
 dim                 
                    3
 crystal_system      
-             'cubic'
+               cubic
 N_cell_param        
                    1
 cell_param          
