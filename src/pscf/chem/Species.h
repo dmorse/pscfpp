@@ -124,28 +124,9 @@ namespace Pscf
    * \param version archive version id
    */
    template <class Archive>
-   void serialize(Archive& ar, Species::Ensemble& policy, const unsigned int version)
+   void serialize(Archive& ar, Species::Ensemble& policy, 
+                  const unsigned int version)
    { serializeEnum(ar, policy, version); }
 
 }
-
-#ifdef UTIL_MPI
-#include <util/mpi/MpiTraits.h>
-namespace Util
-{
-
-   /**
-   * Explicit specialization MpiTraits<Species::Ensemble>.
-   */
-   template <>
-   class MpiTraits<Pscf::Species::Ensemble> {  
-   public:  
-      static MPI::Datatype type;     ///< MPI Datatype
-      static bool hasType;           ///< Is the MPI type initialized?
-   };
-
-}
-
-#endif 
-
 #endif 

@@ -24,8 +24,6 @@
 #include <pscf/crystal/shiftToMinimum.h>
 //#include <unistd.h>
 
-
-
 //global variable for kernels
 int THREADS_PER_BLOCK;
 int NUMBER_OF_BLOCKS;
@@ -60,8 +58,8 @@ namespace Pspg
       pressure_(0.0),
       hasMixture_(0),
       hasUnitCell_(0),
-      hasFields_(0),
-      hasSweep_(0)
+      hasFields_(0)
+      // hasSweep_(0)
    {  
       setClassName("System"); 
       std::cout<<"Constructor Called"<<std::endl;
@@ -80,7 +78,8 @@ namespace Pspg
    System<D>::~System()
    {
       delete interactionPtr_;
-      delete iteratorPtr_; //there is an issue here. iterator ptr needs info of block size before initiation
+      delete iteratorPtr_; 
+      // There is an issue here. iterator ptr needs info of block size before initiation
       delete[] kernelWorkSpace_;
       cudaFree(d_kernelWorkSpace_);
    }
@@ -369,7 +368,8 @@ namespace Pspg
             readNext = false;
          } 
 
-         /*else if (command == "READ_WFIELDS") {
+         /*
+         else if (command == "READ_WFIELDS") {
             in >> filename;
             Log::file() << " " << Str(filename, 20) <<std::endl;
 
@@ -387,7 +387,9 @@ namespace Pspg
             writeFields(outFile, wFields_);
             outFile.close();
 
-            }*/ 
+         }
+         */ 
+
          else if (command == "WRITE_WFIELDGRIDS") {
             in >> filename;
             Log::file() << "  " << Str(filename, 20) << std::endl;
@@ -398,7 +400,9 @@ namespace Pspg
             writeRFields(outFile, wFieldGrids());
             outFile.close();
 
-         }/* 
+         }
+
+         /* 
          else if (command == "WRITE_C_BASIS") {
 
             in >> filename;
@@ -409,7 +413,9 @@ namespace Pspg
             writeFields(outFile, cFields_);
             outFile.close();
 
-            }*/ 
+         }
+         */ 
+
          else if (command == "WRITE_CFIELDGRIDS") {
             in >> filename;
             Log::file() << "  " << Str(filename, 20) << std::endl;
@@ -476,7 +482,9 @@ namespace Pspg
             << std::endl;
 
          }
-         /*else if (command == "BASIS_TO_RGRID") {
+
+         /*
+         else if (command == "BASIS_TO_RGRID") {
             std::string inFileName;
             std::string outFileName;
 
@@ -502,8 +510,11 @@ namespace Pspg
             writeRFields(outFile, cFieldGrids());
             outFile.close();
 
-            } */
-         /*else if (command == "RGRID_TO_BASIS") {
+         } 
+         */
+
+         /*
+         else if (command == "RGRID_TO_BASIS") {
             std::string inFileName;
             std::string outFileName;
 
@@ -529,7 +540,9 @@ namespace Pspg
             writeFields(outFile, cFields());
             outFile.close();
 
-            }*/
+         }
+         */
+
          else if (command == "KGRID_TO_RGRID") {
             std::string inFileName;
             std::string outFileName;
@@ -654,6 +667,7 @@ namespace Pspg
 
    }
    */
+
    template <int D>
    void System<D>::readRFields(std::istream &in,
                                 DArray<RDField<D> >& fields)
@@ -834,6 +848,7 @@ namespace Pspg
       }
    }
    */
+
    template <int D>
    void System<D>::writeRFields(std::ostream &out,
                            DArray<RDField<D> > const& fields)
@@ -1163,7 +1178,6 @@ namespace Pspg
          }
       return final;
    }
-
 
 } // namespace Pspg
 } // namespace Pscf

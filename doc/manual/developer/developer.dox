@@ -11,7 +11,6 @@ namespace McMd
    <li> \subpage developer_build_page </li>
    <li> \subpage developer_standards_page </li>
    <li> \subpage developer_param_page </li>
-   <li> \subpage developer_iterator_page </li>
    <li> \subpage developer_test_page </li>
    </ul>
  

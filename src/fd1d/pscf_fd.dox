@@ -1,0 +1,48 @@
+
+/*!
+\page pscf_fd_page pscf_fd - Finite-Difference 1D SCFT Program
+
+Finite-difference for one-dimensional (1D) SCFT problems
+
+\section pscf_fd_usage_section Usage
+
+    pscf_fd [-q] [-e] [-p file] [-c file] [-i prefix] [-o prefix]
+
+\section pscf_fd_options_section Command Line Options
+
+   -q 
+
+    Enable echoing of list of enabled and disabled compile-time options
+    to log file, to document which version of the program was used. 
+
+   -e
+
+    Enable echoing of parameter file to log file as it is read. This
+    option is often useful for debugging the parameter file.
+
+
+  -p file
+
+   Set the parameter file name, given by the argument "file".
+   The -p and -r options are incompatible: A simulation must be
+   initialized with either a parameter file or a restart file, 
+   but not both. 
+
+  -c file
+
+   Set the command file name, given by the argument "file". 
+
+  -i prefix
+
+   Set the input file path prefix, given by the argument "prefix".
+   If not set here, this may also be set in the FileMaster block 
+   of the parameter file.
+
+  -o prefix
+
+   Set the output file path prefix, given by the argument "prefix".
+   If not set here, this may also be set in the FileMaster block 
+   of the parameter file.
+
+*/
+

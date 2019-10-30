@@ -1,6 +1,6 @@
-/*! \page developer_test_page 5.6 Unit Tests
+/*! \page developer_test_page 5.4 Unit Tests
 
-\ref developer_mcMdData_page  (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_standards_page  (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
 <BR>
 
 The src/test/ directory contains source code for a simple unit test framework that is used to construct unit tests for individual classes. Usage examples are provided in what follows, and in the src/test/examples directory. 
@@ -18,7 +18,7 @@ Each of the namespace level subdirectories of the src/ directory has a subdirect
  
 
 <BR>
-\ref developer_mcMdData_page  (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_standards_page  (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
 \ref developer_page  (Up)  &nbsp; &nbsp; &nbsp; &nbsp;
 
 */

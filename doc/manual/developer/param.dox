@@ -4,7 +4,7 @@ namespace McMd
 /*! \page developer_param_page 5.3 Parameter File I/O
 
 \ref developer_standards_page   (Prev)   &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_iterator_page  (Next)
+\ref developer_test_page  (Next)
 <BR>
 
 The format of the parameter file (discussed in \ref user_param_page) 
@@ -124,7 +124,7 @@ block.
 <BR>
 \ref developer_standards_page   (Prev)   &nbsp; &nbsp; &nbsp; &nbsp;
 \ref developer_page  (Up)  &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_iterator_page  (Next)
+\ref developer_test_page  (Next)
 
 */
 

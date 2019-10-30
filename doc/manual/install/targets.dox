@@ -14,7 +14,7 @@ src/ directory to perform in-source compilation. The following
 instructions assume that you have already made the required changes
 to environment variables and run the setup script.
 
-\section compile_fd1d_section Compiling the 1D finite difference program
+\section install_targets_fd1d_section Compiling the 1D finite difference program
 
 The only dependency of the pscf_fd 1D finite-difference program is the
 GSL library.  To compile just this program, simply cd to the root of 
@@ -45,7 +45,7 @@ The build system will detect if you have changed any of the relevant
 configuration files, and will recompile any file that might be effected 
 by such changes.
 
-\section compile_pspc_section Compiling pseudo-spectral CPU programs
+\section install_targets_pspc_section Compiling pseudo-spectral CPU programs
 
 The pseudo-spectral programs for periodic microstructures on a CPU 
 depend on both the GSL library and the FFTW fast Fourier transform
@@ -64,7 +64,7 @@ pscf_pc2d to simulate a hexagonal cylinder (two-dimension structure),
 an pscf_pc3d to simulate a fully three-dimensional structure such a 
 BCC or gyroid structure.
 
-\section compile_pspg_section Compiling pseudo-spectral GPU programs
+\section install_targets_pspg_section Compiling pseudo-spectral GPU programs
 
 To compile the GPU-enabled versions of the pseudo-spectral programs,
 after setup, simply enter 
@@ -78,7 +78,7 @@ directory tree, and install executables for 1, 2, and 3 dimensional
 problems named pscf_pg1d, pscf_pg2d and pscf_pg3d in the pscfpp/bin 
 directory.
 
-\section compile_makeall_sec Invoking "make all" from a subdirectory
+\section install_targets_makeall_sec Invoking "make all" from a subdirectory
 
 When compiling in-source, from within the src/ directory tree, it also 
 to invoke make from a subdirectory of src/ in order to compile a smaller 
@@ -112,7 +112,7 @@ recently been modified. A common work flow during development is
 thus to edit a file, then invoke "make all" from the directory 
 containing that file. 
 
-\section compile_cleanup_section Cleaning up
+\section install_targets_cleanup_section Cleaning up
 
 If, for any reason, you would like to clean up after compiling by 
 removing all of the object, dependency and library files that are 
@@ -136,7 +136,7 @@ subdirectories of the bld/ directory, with the same effect, but not
 from lower level subdirectories of the bld/ tree, because lower 
 level subdirectories of bld/ do not contain makefiles. 
 
-\section compile_veryclean_section Reverting to initial state
+\section install_targets_veryclean_section Reverting to initial state
 
 The "make clean" command discussed above removes files that are generated 
 by compilation, but does not remove the various makefile fragments and 

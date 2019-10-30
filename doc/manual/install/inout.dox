@@ -58,7 +58,7 @@ compile the GPU enabled executables.
 When compiling in-source, the make command can also be invoked from any 
 subdirectory of the src/ directory in order to compile only recently 
 modified files in that subdirectory. This usage is discussed in more detail 
-\ref install_compile_in_page "here". The main advantage of in-source 
+\ref install_targets_makeall_sec "here". The main advantage of in-source 
 compilation is that it can be convenient for developers to be able to 
 repeatedly compile a file or a small group of closedly related files on 
 which they are working without leaving the working directory containing 

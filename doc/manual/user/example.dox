@@ -29,26 +29,24 @@ A typical example directory contains files and subdirectories with the following
 \endcode
 Here, in/ and out/ are names of subdirectories. The out/ subdirectoryis initially empty.
 
-\section examples_simulate_sec Usage: Invoking the simulation program
+\section examples_simulate_sec Running an example
 
-Users may also run example simulations by invoking the relevant simulation program directly from the command line. The relevant program name and command line options for a particular example can be determined, if needed, by reading the "run" script and finding the lines that run and restart the simulation.
+Users may run example simulations by invoking the relevant simulation program from the command line. 
 
-To run a simple MC example simulation with the above directory structure, while sending log output to the terminal, one must cd to the main directory for the example (the directory that contains the parameter and command files) and issue the command 
+To use pscf_pc3d to run a simple example computation with the above 
+directory structure, one could change directory (cd) to the main directory 
+for the example and issue the command 
 \code
     > pscf_pc3d -e -p param -c command 
 \endcode
-To run this simulation in background and redirect the log output to a file out/log one would instead type
+This command would send log output to the terminal.  To run the calculation
+in background and redirect the log output to a file out/log one would 
+instead type
 \code
     > pscf_pc3d -e -p param -c command > out/log &
 \endcode
-Commands to run an MD simulation are similar except for the replacement of "pscf_pc3d" by "mdSim".
-
-The command to restart a simple MC simulation and write log output to log/rst is usually 
-\code
-    > pscf_pc3d -e -r restart -c command > rst/log &
-\endcode
-In this command, the -r option specifies the name of the binary restart file.
-
+Commands to use a different program are similar except for the replacement
+of pscf_pc3d by the appropriate executable name.
 
 <BR>
 \ref user_command_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

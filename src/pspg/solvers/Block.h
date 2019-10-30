@@ -81,8 +81,10 @@ namespace Pspg {
       * Setup parameters that depend on the unit cell.
       *
       * \param unitCell unit cell, defining cell dimensions
+      * \param waveList container for properties of recip wavevectors
       */
-      void setupUnitCell(const UnitCell<D>& unitCell, const WaveList<D>& wavelist);
+      void setupUnitCell(const UnitCell<D>& unitCell, 
+                         const WaveList<D>& wavelist);
 
       /**
       * Set solver for this block.
@@ -91,7 +93,11 @@ namespace Pspg {
       */
       void setupSolver(WField const & w);
 
+      /**
+      * Initialize FFT and batch FFT classes.
+      */
       void setupFFT();
+
       /**
       * Compute step of integration loop, from i to i+1.
       */
@@ -111,6 +117,11 @@ namespace Pspg {
       */ 
       void computeConcentration(double prefactor);
 
+      /**
+      * Compute derivatives of free energy with respect to cell parameters.
+      *
+      * \param waveList container for properties of recip. latt. wavevectors.
+      */
       void computeStress(WaveList<D>& wavelist, double prefactor);
 
       /// Stress exerted by a polymer chain of a block.
@@ -152,6 +163,7 @@ namespace Pspg {
    private:
 
       cufftReal reductionH(const RDField<D>& a, int size);
+
       // Fourier transform plan
       FFT<D> fft_;
 

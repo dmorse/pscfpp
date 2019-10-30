@@ -6,7 +6,7 @@
 
 The parameter files required by the different PSCF programs use a similar syntax, but contain somewhat different contents. The following three sections discuss elements of the parameter file syntax that are common to all three types of simulation, the parameter file formats for pscf_pspc and pscf_pspg, which are nearly identical.
 
-<h2> Contents:</h2>
+<h2> Parameter files for specific programs:</h2>
    <ul style="list-style: none;">
    <li> \subpage user_param_fd_page      "3.2.1 pscf_fd" </li>
    <li> \subpage user_param_pc_page      "3.2.2 pscf_pcNd" </li>

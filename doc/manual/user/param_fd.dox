@@ -1,4 +1,4 @@
-/*! \page user_param_fd_page 3.2.2 Parameter File: pscf_fd
+/*! \page user_param_fd_page 3.2.2 Parameter Files for pscf_fd
 
 \ref user_param_page (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_param_pc_page (Next)
@@ -158,7 +158,7 @@ NrIterator: The NrIterator block gives parameters required by the
 Newton-Raphson iteration algorithm used to solve the nonlinear SCFT 
 equations.
 </li>
-<ul>
+</ul>
 
 \section user_param_fd_mixture_section Mixture Block
 

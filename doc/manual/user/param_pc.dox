@@ -1,4 +1,4 @@
-/*! \page user_param_pc_page 3.2.3 Parameter files for pscf_pcNd programs
+/*! \page user_param_pc_page 3.2.3 Parameter files for pscf_pcNd 
 
 \ref user_param_fd_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_param_pg_page (Next)
@@ -78,7 +78,7 @@ ChiInteraction: Values of Flory-Huggins (chi) interaction parameters
 <li> 
 AmIterator: parameters required by the iterator
 </li>
-<ul>
+</ul>
 
 The Mixture and ChiInteration subblocks are identical to those used in
 the pscf_fd program, and so are not described separately below.

@@ -1,9 +1,8 @@
-/*! \page user_param_pg_page 3.2.3 Parameter files for pscf_pgNd programs
+/*! \page user_param_pg_page 3.2.3 Parameter files for pscf_pgNd 
 
-\ref user_param_fc_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_param_pc_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_command_page (Next)
 <BR>
-
 
 \section user_param_pg_section Example
 An example of a parameter file for pscf_pg3D is shown below. 
@@ -31,7 +30,6 @@ System{
   }
   unitCell  cubic   1.9254998725
   mesh              10  10  10
-  groupName         I_m_-3_m
   AmIterator{
     maxItr   100
     epsilon  1e-10
@@ -42,64 +40,15 @@ System{
 \endcode
 
 
-\section user_param_pg_overview_section File Structure
+The structure of a pscf_pgNd parameter file is almost identical to that
+of a pscf_pcNd program except for the absence of the groupName parameter.
+This difference reflects the fact that the two programs are based on
+similar algorithms, but that pscf_pgNd does not yet allow the user to
+search for a solution of specified space-group symmetry.
 
-The structure of a pscf_pgNd parameter file is shown below in skeleton 
-form below.
-\code
-System{
-  Mixture{
-     ...
-  }
-  ChiInteraction{
-     ...
-  }
-  unitCell ...
-  mesh ....
-  groupName ...
-  AmIterator{
-     ...
-  }
-}
-\endcode
-The purpose of each subblock and parameter in the main System block
-is as follows:
-<ul>
-<li>
-Mixture: Description of molecular species and composition of the mixture. 
-</li>
-<li>
-ChiInteraction: Values of Flory-Huggins (chi) interaction parameters
-</li>
-<li> unitCell: Description of periodic unit cell </li>
-<li> mesh: Description of mesh used for spatial discretization </li>
-<li> groupName: Name of the crystallographic space group </li>
-<li> 
-AmIterator: parameters required by the iterator
-</li>
-<ul>
-
-The Mixture and ChiInteration subblocks are identical to those used in
-the pscf_fd program, and so are not described separately below.
-
-\section user_param_pg_AmIterator_section AmIterator Block
-
-The AmIterator block provides parameters required by the Anderson-Mixing 
-(AM) iterator that is used to solve the nonlinear self-consistent field 
-(SCFT) equations. 
-
-The value of the epsilon parameter gives the desired tolerance in the 
-solution of the SCFT equations. The iterative loop exits when the 
-maximum error drops below epsilon.
-
-The domain parameter is a boolean variable that can be used to enable
-or disable optimization of the unit cell. Setting domain = 0 gives a
-rigid unit cell with the dimensions given by the unitCell parameter.
-Setting domain = 1 instructs the program to adjust the unit cell
-parameters so as to minimize the free energy.
 
 <BR>
-\ref user_param_fc_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_param_pc_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_param_page (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_command_page (Next)
 
