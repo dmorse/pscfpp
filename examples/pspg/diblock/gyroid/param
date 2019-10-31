@@ -18,9 +18,8 @@ System{
          1   0   20.0
          1   1   0.0
   }
-  cubic 3.0E+00
-  32 32 32
-  Basis I
+  unitCell cubic 3.0E+00
+  mesh     32 32 32
   AmIterator{
     maxItr 500
     epsilon 1e-5

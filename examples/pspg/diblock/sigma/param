@@ -18,9 +18,8 @@ System{
          1   0   25.0
          1   1   0.0
   }
-  tetragonal 7.183E+00 3.8E+00
-  64 64 32
-  Basis I
+  unitCell tetragonal 7.183E+00 3.8E+00
+  mesh 64 64 32
   AmIterator{
     maxItr   1000
     epsilon  1e-5

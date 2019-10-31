@@ -62,7 +62,6 @@ namespace Pspg
       // hasSweep_(0)
    {  
       setClassName("System"); 
-      std::cout<<"Constructor Called"<<std::endl;
 
       interactionPtr_ = new ChiInteraction();
       iteratorPtr_ = new FtsIterator<D>(this); 
@@ -185,6 +184,7 @@ namespace Pspg
    void System<D>::readParameters(std::istream& in)
    {
 
+      #if 0
       double time_start;
       double time_end;
       double time_wave_start;
@@ -195,8 +195,8 @@ namespace Pspg
       gettimeofday(&tv, &tz);
       time_start = (double) tv.tv_sec + 
          (double)tv.tv_usec / 1000000.0;
+      #endif
 
-      std::cout<<"Read in mixture"<<std::endl;
       readParamComposite(in, mixture());
       hasMixture_ = true;
 
@@ -212,58 +212,65 @@ namespace Pspg
 
       interaction().setNMonomer(mixture().nMonomer());
       readParamComposite(in, interaction());
-      std::cout<<"Unit Cell read starting"<<std::endl;
-      in >> unitCell_;
-      hasUnitCell_ = true;
-      std::cout<<"Unit Cell read completed"<<std::endl;
+      // ----------------------
 
-      IntVec<D> d;
+      read(in, "unitCell", unitCell_);
+      hasUnitCell_ = true;
+      
+      // IntVec<D> d;
+      read(in, "mesh", mesh_);
+      hasMesh_ = true;
+      mixture().setMesh(mesh());
+
+      // read(in, "groupName", groupName_);
+      // basis().makeBasis(mesh(), unitCell(), groupName_);
+      groupName_ = "1";
+
+      // ----------------------
+
+      #if 0
       in >> d;
       mesh_.setDimensions(d);
       hasMesh_ = true;
       mixture().setMesh(mesh());
+      #endif
 
-      //std::string groupName;
-      in >> groupName_;
-      in >> groupName_;
 
+      #if 0
       gettimeofday(&tv, &tz);
       time_wave_start = (double)tv.tv_sec + 
          (double)tv.tv_usec / 1000000.0;
+      #endif
 
-      //basis().makeBasis(mesh(), unitCell(), groupName_);
-      std::cout<<"Initializing wavelist"<<std::endl;
+      // Construct wavelist 
       wavelist().allocate(mesh(), unitCell());
-      std::cout<<"Allocating completed"<<std::endl;
       wavelist().computeMinimumImages(mesh(), unitCell());
-      std::cout<<"wavelist completed"<<std::endl;
-
-      //mixture cannot setupunitCell until wavelist has been computed
       mixture().setupUnitCell(unitCell(), wavelist());
 
+      #if 0
       gettimeofday(&tv, &tz);
       time_wave_end = (double)tv.tv_sec + 
          (double)tv.tv_usec / 1000000.0;
       Log::file() << "wavelist initialized in  " 
-                  << Dbl(time_wave_end - time_wave_start, 18, 11)<<'s' 
-                  << std::endl;
+                 << Dbl(time_wave_end - time_wave_start, 18, 11) << 's' 
+                 << std::endl;
+      #endif
 
       allocateFields();
-      std::cout<<"fields allocated"<<std::endl;
       hasFields_ = true;
-
 
       // Initialize iterator
       readParamComposite(in, iterator());
       iterator().allocate();
-      std::cout<<"Iterator Initialized"<<std::endl;
 
+      #if 0
       gettimeofday(&tv, &tz);
       time_end = (double)tv.tv_sec + 
          (double)tv.tv_usec / 1000000.0;
-      Log::file() << "System Parameters read in  " 
+         Log::file() << "System Parameters read in  " 
                   << Dbl(time_end - time_start, 18, 11)<<'s' 
                   << std::endl;
+      #endif
    }
 
    /*
@@ -290,6 +297,7 @@ namespace Pspg
    template <int D>
    void System<D>::allocateFields()
    {
+      #if 0
       double time_start;
       double time_end;
       struct timeval tv;
@@ -298,6 +306,7 @@ namespace Pspg
       gettimeofday(&tv, &tz);
       time_start = (double) tv.tv_sec + 
          (double)tv.tv_usec / 1000000.0;
+      #endif
 
       // Preconditions
       UTIL_CHECK(hasMixture_);
@@ -330,10 +339,12 @@ namespace Pspg
    
       cudaMalloc((void**)&d_kernelWorkSpace_, NUMBER_OF_BLOCKS * sizeof(cufftReal));
       kernelWorkSpace_ = new cufftReal[NUMBER_OF_BLOCKS];
+      hasFields_ = true;
       //setup seed for rng
+
+      #if 0
       timeval time;
       gettimeofday(&time, NULL);
-      hasFields_ = true;
 
       gettimeofday(&tv, &tz);
       time_end = (double)tv.tv_sec + 
@@ -341,6 +352,7 @@ namespace Pspg
       Log::file() << "System Containers allocated in  " 
                   << Dbl(time_end - time_start, 18, 11)<<'s' 
                   << std::endl;
+      #endif
    }
 
    
@@ -443,44 +455,42 @@ namespace Pspg
 
             std::ifstream inFile;
             fileMaster().openInputFile(inFileName, inFile);
-            //changed this line
             readRFields(inFile, wFieldGrids());
             inFile.close();
 
+            #if 0
             gettimeofday(&tv, &tz);
             time_end = (double)tv.tv_sec + 
                (double)tv.tv_usec / 1000000.0;
             Log::file() << "ReadFile_Time = " 
                         << Dbl(time_end - time_start, 18, 11)<<'s' 
                         << std::endl;
+            #endif
 
-            //SYSTEMTIME timeStart, timeEnd;
-            //double timeElapsed;
-            //GetSystemTime(&timeStart);
+            #if 0
+            SYSTEMTIME timeStart, timeEnd;
+            double timeElapsed;
+            GetSystemTime(&timeStart);
             gettimeofday(&tv, &tz);
             time_start = (double) tv.tv_sec + 
-              (double)tv.tv_usec / 1000000.0;
-            std::cout<<"do we even reach here?"<<std::endl;
+                (double)tv.tv_usec / 1000000.0;
+            #endif
+
             int fail = iterator().solve();
             if(fail) {
                Log::file() << "Iterate has failed. Exiting "<<std::endl;
                exit(1);
             }
-            //GetSystemTime(&timeEnd);
-            //timeElapsed = (timeEnd.wMinute - timeStart.wMinute) * 60;
-            //timeElapsed += (timeEnd.wSecond - timeStart.wSecond);
-            //timeElapsed += (timeEnd.wMilliseconds - timeStart.wMilliseconds) / 1000.0;
-            /*std::cout << " Time for SCFT ="
-               << Dbl(timeElapsed, 18, 11) << 's' << std::endl;*/
+
             gettimeofday(&tv, &tz);
             time_end = (double)tv.tv_sec + 
                (double)tv.tv_usec / 1000000.0;
+            Log::file() << "SCF_Time = " 
+                        << Dbl(time_end - time_start, 18, 11)<<'s' 
+                        << std::endl;
+
             computeFreeEnergy();
             outputThermo(Log::file());
-            Log::file() << "SCF_Time = " 
-            << Dbl(time_end - time_start, 18, 11)<<'s' 
-            << std::endl;
-
          }
 
          /*
@@ -696,12 +706,12 @@ namespace Pspg
       readUnitCellHeader(in, unitCell());
  
       in >> label;
-      std::cout<<label<<std::endl;
+      std::cout << label << std::endl;
       UTIL_CHECK(label == "group_name");
       in >> groupName;
 
       in >> label;
-      std::cout<<label<<std::endl;
+      std::cout << label << std::endl;
       UTIL_CHECK(label == "N_monomer");
       in >> nM;
       UTIL_CHECK(nM > 0);
@@ -853,24 +863,28 @@ namespace Pspg
    void System<D>::writeRFields(std::ostream &out,
                            DArray<RDField<D> > const& fields)
    {
-      double time_start;
-      double time_end;
-      struct timeval tv;
-      struct timezone tz;
+      // double time_start;
+      // double time_end;
+      // struct timeval tv;
+      // struct timezone tz;
 
-      gettimeofday(&tv, &tz);
-      time_start = (double) tv.tv_sec + 
-         (double)tv.tv_usec / 1000000.0;
+      // gettimeofday(&tv, &tz);
+      // time_start = (double) tv.tv_sec + 
+      //    (double)tv.tv_usec / 1000000.0;
 
       int nM = mixture().nMonomer();
       MeshIterator<D> itr(mesh().dimensions());
       //do not use white space like this...
-      out << "format  1   0    " <<  std::endl;
-      out << "dim    " <<  std::endl << "                    "<<D<< std::endl;
+      out << "format  1   0  " <<  std::endl;
+      out << "dim    " <<  std::endl 
+          << "              "<<D<< std::endl;
       writeUnitCellHeader(out, unitCell());   
-      out << "group_name    " <<  std::endl << "                    "<<groupName_<< std::endl;
-      out << "N_monomer    " <<  std::endl << "                    "<<mixture().nMonomer()<< std::endl;
-      out << "ngrid        " <<  std::endl<<"           "<<mesh().dimensions() << std::endl;
+      out << "group_name    " <<  std::endl 
+          << "              " << groupName_ << std::endl;
+      out << "N_monomer     " <<  std::endl 
+          << "              " << mixture().nMonomer()<< std::endl;
+      out << "ngrid         " << std::endl
+          << "              " << mesh().dimensions() << std::endl;
 
       DArray<cufftReal*> temp;
       temp.allocate(nM);
@@ -917,15 +931,16 @@ namespace Pspg
       for(int i = 0; i < nM; ++i) {
          delete[] temp[i];
          temp[i] = nullptr;
-         
       }
 
+      #if 0
       gettimeofday(&tv, &tz);
       time_end = (double)tv.tv_sec + 
          (double)tv.tv_usec / 1000000.0;
       Log::file() << "Files written in  " 
                   << Dbl(time_end - time_start, 18, 11)<<'s' 
                   << std::endl;
+      #endif
    }
 
    template <int D>
@@ -1063,7 +1078,6 @@ namespace Pspg
       //RDField<D> workArray;
       //workArray.allocate(nx);
       float temp = 0;
-      //std::cout<<interaction().chi(0,1)<<std::endl;
       for (int i = 0; i < nm; ++i) {
          for (int j = i + 1; j < nm; ++j) {
            assignUniformReal << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> >(workArray.cDField(), interaction().chi(i, j), nx);
