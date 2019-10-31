@@ -8,7 +8,7 @@ Subdirectories:
   doc/       documentation files
   make/      makefiles and makefile fragments installed by setup script
   src/       C++ and CUDA source code
-  scripts/   scripts written in python, matlab or other languages
+  lib/       modules written in python, matlab or other languages
 
 Files: 
   CONTENTS  - this file
