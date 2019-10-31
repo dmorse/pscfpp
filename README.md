@@ -1,13 +1,22 @@
 
-# PSCF - Polymer Self-Consistent Field theory (C++/CUDA version)
+# PSCF - Polymer Self-Consistent Field Theory (C++/CUDA)
 
-PSCF is a package of software for solving the Edwards-Helfand self-consistent 
-field theory for polymer liquids. The version in the directory containing
-this file is written primarily in C++, with GPU accelerated code in CUDA.
-This C++/CUDA version of PSCF is still under development, but is intended 
-to eventually supersede the existing PSCF Fortran program. The older 
-Fortran program is maintained in a separate github.com repository as 
-project dmorse/pscf.
+PSCF is a package of software for solving the Edwards-Helfand 
+self-consistent field theory for polymer liquids. The version in the 
+directory containing this file is written primarily in C++, with GPU 
+accelerated code in CUDA.  This C++/CUDA version of PSCF is still under 
+development, but is intended to eventually supersede the existing PSCF 
+Fortran program. The older Fortran program is maintained in a separate 
+github.com repository at https://github.com/dmorse/pscf.
+
+The C++/CUDA version of PSCF is free, open source software. It is 
+distributed under the terms of the GNU General Public License as (GPL) 
+published by the Free Software Foundation, either version 3 of the 
+License or (at your option) any later version.  PSCF is distributed 
+without any warranty, without even the implied warranty of 
+merchantability or fitness for a particular purpose.  See the LICENSE 
+file or the <a href=http://www.gnu.org/licenses/>gnu web page</a> for 
+details.
 
 ## Overview
 
@@ -29,14 +38,6 @@ version, and expected advantages of the new code include:
 
    - Adoption of C/C++ as a base language has simplified implementation 
      of variant that that uses graphical process units (GPUs).
-
-The C++/CUDA version of PSCF is free, open source software. It is distributed 
-under the terms of the GNU General Public License as (GPL) published by the 
-Free Software Foundation, either version 3 of the License or (at your option) 
-any later version.  PSCF is distributed without any warranty, without even 
-the implied warranty of merchantability or fitness for a particular purpose. 
-See the LICENSE file or the 
-<a href=http://www.gnu.org/licenses/> gnu web page </a> for details.
 
 ## Programs
 
@@ -257,3 +258,11 @@ different number of spatially periodic dimensions.
 
 Subdirectory examples/pspg contains examples examples for the 
 pscf_pg3d 3D GPU code for periodic structures.
+
+## Contributors
+
+- David Morse
+- Guo Kang Cheong
+- Anshul Chawla
+- Mridul Yadav
+
