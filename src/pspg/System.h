@@ -8,17 +8,20 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/param/ParamComposite.h>      // base class
-#include <pspg/solvers/Mixture.h>       // member
-//#include <pspg/basis/Basis.h>          // member
-#include <pspg/iterator/FtsIterator.h>
+#include <pscf/crystal/Basis.h>            // member
 #include <pscf/inter/ChiInteraction.h>
 #include <pscf/mesh/Mesh.h>                 // member
 #include <pscf/crystal/UnitCell.h>      // member
 #include <pscf/homogeneous/Mixture.h>       // member
+
 #include <pspg/wavelist/WaveList.h>
+#include <pspg/iterator/FtsIterator.h>
+#include <pspg/solvers/Mixture.h>       // member
 #include <pspg/field/RDField.h>         // typedef
+#include <pspg/field/FieldIo.h>            // member
+
 #include <util/containers/DArray.h>         // member template
+#include <util/param/ParamComposite.h>      // base class
 #include <util/containers/Array.h>          // function parameter
 #include <util/misc/FileMaster.h>           // member
 //#include <util/random/Random.h>
@@ -254,17 +257,20 @@ namespace Pspg
       //temporarily changed to allow testing on member functions
       FtsIterator<D>& iterator();
 
-      #if 0
       /**
       * Get basis object by reference.
       */
       Basis<D>& basis();
-      #endif
 
       /**
       * Get container for wavevector data.
       */
       WaveList<D>& wavelist();
+
+      /**
+      * Get associated FieldIo object.
+      */
+      FieldIo<D>& fieldIo();
 
       /**
       * Get associated FFT objecti by reference.
@@ -353,9 +359,14 @@ namespace Pspg
       /**
       * Pointer to a Basis object
       */
-      //Basis<D>* basisPtr_;
+      Basis<D>* basisPtr_;
       
       WaveList<D>* wavelistPtr_;
+
+      /** 
+      * FieldIo object for field input/output operations
+      */
+      FieldIo<D> fieldIo_;
 
       /**
       * FFT object to be used by iterator
@@ -556,7 +567,6 @@ namespace Pspg
       return *iteratorPtr_;
    }
 
-   #if 0
    /*
    * Get the basis Object
    */
@@ -566,11 +576,15 @@ namespace Pspg
       UTIL_ASSERT(basisPtr_);
       return *basisPtr_;
    }
-   #endif
 
    template <int D>
    inline WaveList<D>& System<D>::wavelist()
    {  return *wavelistPtr_; }
+
+   // Get the FieldIo<D> object.
+   template <int D>
+   inline FieldIo<D>& System<D>::fieldIo()
+   {  return fieldIo_; }
 
    template <int D>
    inline FFT<D>& System<D>::fft()

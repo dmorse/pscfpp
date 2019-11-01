@@ -46,8 +46,11 @@ namespace Pspg
       homogeneous_(),
       interactionPtr_(0),
       iteratorPtr_(0),
-      //basisPtr_(0),
+      basisPtr_(),
+      //fft_(),
+      //groupName_(),
       wavelistPtr_(0),
+      fieldIo_(),
       sweepPtr_(0),
       sweepFactoryPtr_(0),
       wFields_(),
@@ -66,7 +69,10 @@ namespace Pspg
       interactionPtr_ = new ChiInteraction();
       iteratorPtr_ = new FtsIterator<D>(this); 
       wavelistPtr_ = new WaveList<D>();
-      //basisPtr_ = new Basis<D>();
+      basisPtr_ = new Basis<D>();
+      //fieldIo_.associate(unitCell_, mesh_, fft_, groupName_,
+      //                   basisPtr_, fileMaster_);
+
       // sweepFactoryPtr_ = new SweepFactory(*this);
    }
 
@@ -222,9 +228,8 @@ namespace Pspg
       hasMesh_ = true;
       mixture().setMesh(mesh());
 
-      // read(in, "groupName", groupName_);
-      // basis().makeBasis(mesh(), unitCell(), groupName_);
-      groupName_ = "1";
+      //read(in, "groupName", groupName_);
+      groupName_ = "1"; // -----------------------------------------Sets group name to identity
 
       // ----------------------
 
@@ -246,6 +251,11 @@ namespace Pspg
       wavelist().allocate(mesh(), unitCell());
       wavelist().computeMinimumImages(mesh(), unitCell());
       mixture().setupUnitCell(unitCell(), wavelist());
+
+      basis().makeBasis(mesh(), unitCell(), groupName_);
+
+      fieldIo_.associate(unitCell_, mesh_, fft_, groupName_,
+                         *basisPtr_, fileMaster_);
 
       #if 0
       gettimeofday(&tv, &tz);
@@ -324,11 +334,11 @@ namespace Pspg
 
       //size of grid is based on basis function
       for (int i = 0; i < nMonomer; ++i) {
-         //wField(i).allocate(basis().nStar());
+         wField(i).allocate(basis().nStar());
          wFieldGrid(i).allocate(mesh().dimensions());
          wFieldDft(i).allocate(mesh().dimensions());
 
-         //cField(i).allocate(basis().nStar());
+         cField(i).allocate(basis().nStar());
          cFieldGrid(i).allocate(mesh().dimensions());
          cFieldDft(i).allocate(mesh().dimensions());
       }
@@ -380,62 +390,66 @@ namespace Pspg
             readNext = false;
          } 
 
-         /*
          else if (command == "READ_WFIELDS") {
             in >> filename;
             Log::file() << " " << Str(filename, 20) <<std::endl;
 
-            std::ifstream inFile;
-            fileMaster().openInputFile(filename, inFile);
-            readFields(inFile, wFields());
-            inFile.close();
+           // std::ifstream inFile;
+           // fileMaster().openInputFile(filename, inFile);
+           // readFields(inFile, wFields());
+           // inFile.close();
+           fieldIo().readFieldsBasis(filename, wFields());
 
          } else if (command == "WRITE_W_BASIS") {
             in >> filename;
             Log::file() << "  " << Str(filename, 20) << std::endl;
 
-            std::ofstream outFile;
-            fileMaster().openOutputFile(filename, outFile);
-            writeFields(outFile, wFields_);
-            outFile.close();
+            //std::ofstream outFile;
+            //fileMaster().openOutputFile(filename, outFile);
+            //writeFields(outFile, wFields_);
+            //outFile.close();
 
-         }
-         */ 
+            fieldIo().writeFieldsBasis(filename, wFields());
+
+         } 
 
          else if (command == "WRITE_WFIELDGRIDS") {
             in >> filename;
             Log::file() << "  " << Str(filename, 20) << std::endl;
 
-            std::ofstream outFile;
-            fileMaster().openOutputFile(filename, outFile);
-            //writeRFields(outFile, wFieldGrids_);
-            writeRFields(outFile, wFieldGrids());
-            outFile.close();
+            //std::ofstream outFile;
+            //fileMaster().openOutputFile(filename, outFile);
+            //writeRFields(outFile, wFieldGrids());
+            //outFile.close();
+            fieldIo().writeFieldsRGrid(filename, wFieldGrids());
 
          }
-
-         /* 
+ 
          else if (command == "WRITE_C_BASIS") {
 
             in >> filename;
             Log::file() << "  " << Str(filename, 20) << std::endl;
 
-            std::ofstream outFile;
-            fileMaster().openOutputFile(filename, outFile);
-            writeFields(outFile, cFields_);
-            outFile.close();
+            //std::ofstream outFile;
+            //fileMaster().openOutputFile(filename, outFile);
+            //writeFields(outFile, cFields_);
+            //outFile.close();
 
-         }
-         */ 
+            fieldIo().writeFieldsBasis(filename, cFields_); //--------------Try using an accessor function
+
+         } 
 
          else if (command == "WRITE_CFIELDGRIDS") {
             in >> filename;
             Log::file() << "  " << Str(filename, 20) << std::endl;
 
-            std::ofstream outFile;
-            fileMaster().openOutputFile(filename, outFile);
-            writeRFields(outFile, cFieldGrids_);
-            outFile.close();
+            //std::ofstream outFile;
+            //fileMaster().openOutputFile(filename, outFile);
+            //writeRFields(outFile, cFieldGrids_);
+            //outFile.close();
+       
+            fieldIo().writeFieldsRGrid(filename, cFieldGrids_);
+
          } else if (command == "ITERATE") {
             Log::file() << std::endl;
             Log::file() << std::endl;
@@ -453,10 +467,12 @@ namespace Pspg
             in >> inFileName;
             Log::file() << " " << Str(inFileName, 20) <<std::endl;
 
-            std::ifstream inFile;
-            fileMaster().openInputFile(inFileName, inFile);
-            readRFields(inFile, wFieldGrids());
-            inFile.close();
+            //std::ifstream inFile;
+            //fileMaster().openInputFile(inFileName, inFile);
+            //readRFields(inFile, wFieldGrids());
+            //inFile.close();
+
+            fieldIo().readFieldsRGrid(inFileName, wFieldGrids());
 
             #if 0
             gettimeofday(&tv, &tz);
@@ -493,7 +509,6 @@ namespace Pspg
             outputThermo(Log::file());
          }
 
-         /*
          else if (command == "BASIS_TO_RGRID") {
             std::string inFileName;
             std::string outFileName;
@@ -504,26 +519,28 @@ namespace Pspg
             in >> outFileName;
             Log::file() << " " << Str(outFileName, 20) <<std::endl;
 
-            std::ifstream inFile;
-            fileMaster().openInputFile(inFileName, inFile);
-            readFields(inFile, cFields());
-            inFile.close();
+            //std::ifstream inFile;
+            //fileMaster().openInputFile(inFileName, inFile);
+            //readFields(inFile, cFields());
+            //inFile.close();
+
+            fieldIo().readFieldsBasis(inFileName, cFields());
+            fieldIo().convertBasisToRGrid(cFields(), cFieldGrids());
+            fieldIo().writeFieldsRGrid(outFileName, cFieldGrids());
 
             //convert to rgrid
-            for (int i = 0; i < mixture().nMonomer(); ++i) {
-               basis().convertFieldComponentsToDft(cField(i), cFieldDft(i));
-               fft().inverseTransform(cFieldDft(i), cFieldGrid(i));
-            }
+            //for (int i = 0; i < mixture().nMonomer(); ++i) {
+            //   basis().convertFieldComponentsToDft(cField(i), cFieldDft(i));
+            //   fft().inverseTransform(cFieldDft(i), cFieldGrid(i));
+            //}
 
-            std::ofstream outFile;
-            fileMaster().openOutputFile(outFileName, outFile);
-            writeRFields(outFile, cFieldGrids());
-            outFile.close();
+            //std::ofstream outFile;
+            //fileMaster().openOutputFile(outFileName, outFile);
+            //writeRFields(outFile, cFieldGrids());
+            //outFile.close();
 
          } 
-         */
 
-         /*
          else if (command == "RGRID_TO_BASIS") {
             std::string inFileName;
             std::string outFileName;
@@ -534,24 +551,27 @@ namespace Pspg
             in >> outFileName;
             Log::file() << " " << Str(outFileName, 20) <<std::endl;
 
-            std::ifstream inFile;
-            fileMaster().openInputFile(inFileName, inFile);
-            readRFields(inFile, cFieldGrids());
-            inFile.close();
+            //std::ifstream inFile;
+            //fileMaster().openInputFile(inFileName, inFile);
+            //readRFields(inFile, cFieldGrids());
+            //inFile.close();
+
+            fieldIo().readFieldsRGrid(inFileName, cFieldGrids());
+            fieldIo().convertRGridToBasis(cFieldGrids(), cFields());
+            fieldIo().writeFieldsBasis(outFileName, cFields());
 
             //convert to fields
-            for (int i = 0; i < mixture().nMonomer(); ++i) {
-               fft().forwardTransform(cFieldGrid(i), cFieldDft(i));
-               basis().convertFieldDftToComponents(cFieldDft(i), cField(i));
-            }
+            //for (int i = 0; i < mixture().nMonomer(); ++i) {
+            //   fft().forwardTransform(cFieldGrid(i), cFieldDft(i));
+            //   basis().convertFieldDftToComponents(cFieldDft(i), cField(i));
+            //}
 
-            std::ofstream outFile;
-            fileMaster().openOutputFile(outFileName, outFile);
-            writeFields(outFile, cFields());
-            outFile.close();
+            //std::ofstream outFile;
+            //fileMaster().openOutputFile(outFileName, outFile);
+            //writeFields(outFile, cFields());
+            //outFile.close();
 
          }
-         */
 
          else if (command == "KGRID_TO_RGRID") {
             std::string inFileName;
@@ -563,21 +583,24 @@ namespace Pspg
             in >> outFileName;
             Log::file() << " " << Str(outFileName, 20) <<std::endl;
 
-            std::ifstream inFile;
-            fileMaster().openInputFile(inFileName, inFile);
-            
-            readKFields(inFile, cFieldDfts());
-            inFile.close();
+            //std::ifstream inFile;
+            //fileMaster().openInputFile(inFileName, inFile);
+            //readKFields(inFile, cFieldDfts());
+            //inFile.close();
+
+            fieldIo().readFieldsKGrid(inFileName, cFieldDfts());
 
             //convert to rgrid
             for (int i = 0; i < mixture().nMonomer(); ++i) {
                fft().inverseTransform(cFieldDft(i), cFieldGrid(i));
             }
 
-            std::ofstream outFile;
-            fileMaster().openOutputFile(outFileName, outFile);
-            writeRFields(outFile, cFieldGrids());
-            outFile.close();
+            //std::ofstream outFile;
+            //fileMaster().openOutputFile(outFileName, outFile);
+            //writeRFields(outFile, cFieldGrids());
+            //outFile.close();
+
+            fieldIo().writeFieldsRGrid(outFileName, cFieldGrids());
 
          } else if (command == "RHO_TO_OMEGA") {
 
@@ -590,12 +613,12 @@ namespace Pspg
             in >> outFileName;
             Log::file() << " " << Str(outFileName, 20) << std::endl;
 
-            std::ifstream inFile;
-            fileMaster().openInputFile(inFileName, inFile);
+            //std::ifstream inFile;
+            //fileMaster().openInputFile(inFileName, inFile);
+            //readRFields(inFile, cFieldGrids());
+            //inFile.close();
 
-            readRFields(inFile, cFieldGrids());
-            
-            inFile.close();
+            fieldIo().writeFieldsRGrid(filename, cFieldGrids());
 
             //code is bad here, `mangled' access of data in array
             for (int i = 0; i < mixture().nMonomer(); ++i) {
@@ -608,10 +631,12 @@ namespace Pspg
                }
             }
 
-            std::ofstream outFile;
-            fileMaster().openOutputFile(outFileName, outFile);
-            writeRFields(outFile, wFieldGrids());
-            outFile.close();
+            //std::ofstream outFile;
+            //fileMaster().openOutputFile(outFileName, outFile);
+            //writeRFields(outFile, wFieldGrids());
+            //outFile.close();
+
+            fieldIo().writeFieldsRGrid(filename, wFieldGrids());
 
          } else {
             Log::file() << "  Error: Unknown command  " << command << std::endl;
