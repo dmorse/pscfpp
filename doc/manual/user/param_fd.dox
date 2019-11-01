@@ -71,26 +71,28 @@ System{
 
 \section user_param_fd_syntax_section Syntax
 
-Any PSCF parameter file, including this one, contains a series
-of nested blocks that are delimited by braces, using a syntax
-similar to that of a C program (without the semicolons). Each
-block begins with a block label followed by an opening curly
-bracket, as in
+Any PSCF parameter file, including the above example one, contains 
+a series of nested blocks that are delimited by opening and closing
+curly braces. The syntax is thus reminiscent of that of a C program 
+(without semicolons).  Each block begins with a capitalized label 
+for the block followed by an opening curly bracket on the same line
+and ends with a closing bracket on a line by itself, as in
+as in
 \code
   BlockName{
      ....
   }
 \endcode
-Each block may contain a combination of parameter values and 
-nested subblocks. Most parameters are given on a single line 
-containing the parameter name followed by one or more values.
-The order of elements within a block is generally predefined,
-though some elements may be optional.
+Each block may contain a combination of parameter values and nested 
+subblocks. Most parameters are given on a single line containing the 
+parameter name followed by a value, or a list of several related 
+values. The order of elements within each block of a parameter file
+is generally predefined, though some elements may be optional.
 
-Names of blocks in a parameter file generally correspond to 
-names of classes or class templates in the underlying C++ code. 
-The nesting of blocks reflects ownership or "has a" relationships 
-among classes: A subblock usually corresponds to an object that 
+Names of blocks in a parameter file generally correspond to names 
+of classes or class templates in the underlying C++ code.  The 
+nesting of blocks reflects ownership or "has a" relationships among 
+C++ classes: Each subblock generally corresponds to an object of 
 is either a member of the parent class or a dynamically created
 object that the parent object is responsible for creating and 
 destroying. The outermost block in the above example is a "System" 
@@ -98,29 +100,30 @@ block, reflecting the fact that main object in the underlying
 code for a 1D finite-difference program is an instance of class 
 Pscf::Fd1d::System.
 
-Names of individual parameters within a parameter file block
-correspond to names of member variables in the relevant class, 
-i.e., members of the class whose name is specfied by the name 
-of the innermost enclosing parameter file block. Parameters 
-that represent primitive C data types (e.g., integers or floating 
-point numbers) are represented by a label (the variable name) 
-followed by a single value on a single line. Parameters that 
-represent instances of a user defined type that has an overloaded 
-">>" input operator are displayed as a label followed by the 
-text representation of that type, as defined by the ">>" operator. 
-Parameters that represent arrays of values are formatted in
-a multi-line format in which the first row contains a label
-(the name of the array) and the value of the first element,
-and subsequent lines contain subsequent elements. This
-format requires that the number of elements be known before
-the array is read, and thus requires that the number of
-elements be specified by the the value of a parameter that 
-appears earlier in the file format.
+Names of individual parameters within a parameter file block generally
+correspond to names of member variables in the relevant class, i.e., 
+member variables of the class whose name is specfied by the name of 
+the innermost enclosing parameter file block. Parameters that represent 
+primitive C data types (e.g., integers or floating point numbers) or
+strings are represented by a label (the variable name) followed by a 
+single value on the same line. Parameters that represent instances of 
+a user defined type that has an overloaded ">>" input operator are 
+displayed as a label followed by the text representation of that 
+type, as defined by the implementation of the ">>" input operator
+for that data type.  Parameters that represent arrays of values are 
+formatted in a multi-line format in which the first row contains a 
+label (the name of the array) and the value of the first element,
+and subsequent lines contain subsequent elements. Because this 
+format does not have a distinctive delimiter after the last element,
+it requires that the number of elements be known before such an 
+array is read. The number of elements in an array-valued parameter
+is thus always specified by the the value of a parameter that 
+appears before that array in the file format.
 
 \section user_param_fd_overview_section Parameter File Blocks
 
-The structure of the main blocks of a pscf_fd parameter file
-is shown below in skeleton form.
+The structure of the main blocks of a pscf_fd parameter file is shown 
+below in skeleton form.
 \code
 System{
   Mixture{
@@ -182,34 +185,54 @@ After this monomer type information, the Mixture block contains
 information about polymer species. The parameter nPolymer specifies 
 the number of distinct polymer species. This is followed by nPolymer 
 subblocks that each begin with a label "Polymer{ ...}, each of which
-describes a different type of block copolymer. Homopolymers are treated 
-as block copolymer that contain only one block.  
-Each 
-polymer is described as an acyclic graph consisting of a set of blocks 
-that connect vertices. Each vertex represents either a chain end or a 
-junction between two or more blocks. Within the description of each 
-species, the parameter nBlock gives the total number blocks in a 
-molecule, and nVertex gives the total number of vertices. A linear 
-block copolymer always has nBlock - 1 junctions and two chain ends, 
-giving nVertex = nBlock + 1. The nBlock and nVertex parameters are
-followed by an array parameter "blocks" for which the file format
-contains nBlock rows, each of which contains a description for one
-block. The data for each block contains, in this order: An integer
-index for the block, the integer index of the monomer type for the
-block, the indices of the vertices to which the two ends of the 
-block are attached, and the length of the block (i.e., measured as
-a number of monomers of the specified type). In a linear block
-copolymer, block number i is attached to vertices i and i+1. A
-homopolymer is a special case containing one block with a block
-id 0 attached to vertices with indices 0 and 1. 
+describes a species of block copolymer that is present in the system
+of interest. Homopolymer species are treated for this purpose as block 
+copolymer that contain only one block.  
+
+The structure of each polymer is described by giving a description of
+an acyclic graph consisting of a set of blocks that connect vertices. 
+Each vertex represents either a chain end or a junction between two 
+or more blocks. Within the description of each species, the parameter 
+nBlock gives the total number blocks in a molecule, and nVertex gives 
+the total number of vertices. A linear block copolymer always has 
+nBlock - 1 junctions and two chain ends, giving nVertex = nBlock + 1. 
+
+The nBlock and nVertex parameters are followed by an array parameter 
+"blocks" for which the file format contains nBlock rows, each of which 
+contains a description of one block. The format of the data for each
+block is shown of the form
+\code
+   blockId monomerId vertexId1 vertexId2 length
+\endcode
+The list of data is comprised of an integer index blockId for 
+the block, the integer index monomerId of the monomer type for the 
+block, two integer indices vertexId1 and vertexId2 that identify
+the two vertices to which the block is attached, and the length 
+of the block. The length parameter is  measured as a number of 
+monomers of the specified type, but is a floating point number
+rather than an integer. In a linear block copolymer, block number 
+i is attached to vertices i and i+1. A homopolymer is a special 
+case containing one block with a block id 0 attached to vertices 
+with indices 0 and 1. 
+
+The last parameter in the Polymer{...} block associated with each
+species specifies either a volume fraction for that species, given
+by a line "phi" followed by a value for the volume fraction, or a
+value of the chemical potential for the species, given by a label
+"mu" followed by a chemical potential label. The code allows the
+user to independently choose whether to specify a volume fraction
+(a closed ensemble) or chemical potential (an ensemble) for each 
+species. If one or more species are assigned volume fractions (phi
+values), the volume fractions must be less than or equal to 1.0. 
+If all of the species are assigned volume fractions, these volue
+fraction should add to 1.0. 
 
 In the above example, nPolymer = 3, and so the mixture is a ternary
-mixture. Correspondingly, the Mixture block contains 3 Polymer{...} 
-subblocks. The first Polymer{...} block describes a homopolymer 
+mixture.  The first Polymer{...} block describes a homopolymer 
 (nBlock = 1 and nVertex = 2) of length 1.0 containing monomers of 
-type 0 (or A). The second describes a homopolymer of length 1.0 with 
-monomers of type 1 (or B).  The third block describes a symmetric AB 
-diblock copolymer with blocks of equal length 0.5.
+type 0 (or A). The second describes a homopolymer of length 1.0 
+with monomers of type 1 (or B).  The third block describes a 
+symmetric AB diblock copolymer with blocks of equal length 0.5.
 
 The value of the parameter vMonomer gives a volume per monomer. 
 This parameter is not used in the solution of the modified diffusion 
@@ -220,22 +243,23 @@ If a line starting with the string vMonomer does not appear at this
 point in the parameter file, vMonomer is set to unity (1.0) by
 default. 
 
-The parameter ds gives the approximate length of the contour 
-length step used to discretize the length of each block during
-numerical solution of the modified diffusion equation. Both
-the contour step length ds and the block lengths for each
-polymer are specified in the same units, as numbers of monomers.
-Because the computation is based on a model of a polymer as a
-continuous Gaussian thread, however, neither block lengths nor
-values of ds need be integers. Thus, if ds = 0.01, then a block 
-of length 1.0 will thus be divided into 100 steps of length 0.1. 
-In the algorithm used in pscf_fd, each block must actually be
-divided into even number of steps of equal length, and the number 
-of steps is chosen to give an actual step size as close as possible 
-to the input parameter ds. The actual step size for each block
-may, however, differ slightly from the value of ds given in the
-parameter file, and may be slightly different for different 
-blocks.
+The last entry in the Mixture block gives the value of a parameter ds.
+Parameter ds is the desired length of the contour length step used 
+to discretize the length of each block during numerical solution of 
+the modified diffusion equation. Both the contour step length ds and 
+the block lengths for each polymer are specified in the same units, 
+as numbers of monomers. Because PSCF is based on a model of a polymer 
+as a continuous Gaussian thread, however, neither block lengths nor
+values of ds need be integers, nor must they even approximately 
+correspond to any kind of chemical repeat unit. Thus, if ds = 0.01, 
+then a block of length 1.0 will thus be divided into 100 steps of 
+length 0.1.  The algorithm used in all of the pscf programs actually
+require that each block be divided into even number of steps of equal 
+length. The number of steps for each block is thus chosen to give an 
+actual step size as close as possible to the value of ds input by the
+user, subject to this constraint. The actual step size for each block
+thus may differ slightly from the value of ds given in the parameter 
+file, and may be slightly different for different blocks.
 
 \section user_param_fd_ChiInteraction_section ChiInteraction Block
 
