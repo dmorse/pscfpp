@@ -1,15 +1,13 @@
 TODO (pspg GPU code):
 
-
 Short term (assigned primarily to Anshul)
 -------------------------------------------------------------------------
 
 1) Restore ability to read symmetry adapted files (without necessarily
-   imposing symmetry during iteration). This may be possible before
-   submission or, if not, before resubmission after reviews.
+   imposing symmetry during iteration). 
 
 2) Restore iteration with imposed symmetry and output in symmetry adapted 
-   format (may or may not be possible before final publication)
+   format.
 
 3) Try to implement suppression of implicit instantiation and compilation 
    of explicit instances of templates in pspg (as done elsewhere), to allow 

@@ -19,6 +19,7 @@
 
 //temporary for debugging
 #include <iostream>
+
 #include <pspg/field/FFT.h> //for definition of rtype
 //#ifdef SINGLE_PRECISION
 //typedef float rtype;
@@ -152,7 +153,13 @@ namespace Pspg {
    inline cufftHandle& FFTBatched<D>::iPlan()
    { return iPlan_; }
 
+   #ifndef PSPG_FFT_BATCHED_TPP
+   // Suppress implicit instantiation
+   extern template class FFTBatched<1>;
+   extern template class FFTBatched<2>;
+   extern template class FFTBatched<3>;
+   #endif
 }
 }
-#include "FFTBatched.tpp"
+//#include "FFTBatched.tpp"
 #endif

@@ -17,10 +17,6 @@
 #include <cuda.h>
 #include <cuda_runtime.h>
 
-//temporary for debugging
-#include <iostream>
-
-
 #ifdef SINGLE_PRECISION
 typedef float rtype;
 #else
@@ -147,7 +143,25 @@ namespace Pspg {
    inline cufftHandle& FFT<D>::iPlan()
    { return iPlan_; }
 
+
+   #ifndef PSPG_FFT_TPP
+   // Suppress implicit instantiation
+   extern template class FFT<1>;
+   extern template class FFT<2>;
+   extern template class FFT<3>;
+   #endif
 }
 }
-#include "FFT.tpp"
+
+static __global__ 
+void scaleRealData(cufftReal* data, rtype scale, int size) {
+   //write code that will scale
+   int nThreads = blockDim.x * gridDim.x;
+   int startId = blockIdx.x * blockDim.x + threadIdx.x;
+   for(int i = startId; i < size; i += nThreads ) {
+      data[i] *= scale;
+   }
+}
+
+//#include "FFT.tpp"
 #endif

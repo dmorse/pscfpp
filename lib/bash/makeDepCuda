@@ -3,6 +3,7 @@
 import sys
 from pscfpp.makeDepend import *
 
+processor = 'nvcc -M'
 source = sys.argv[-1]
 options = ''
 alldeps = ''
@@ -17,7 +18,5 @@ for arg in sys.argv[1:-1]:
       srcdir += arg[2:]   
    else:
       options += ' ' + arg
-options += ' -MM -MF '
-processor = 'nvcc'
 
-makeDepend(processor, options, source, srcdir, blddir, alldeps)
+makeDependCuda(processor, options, source, srcdir, blddir, alldeps)

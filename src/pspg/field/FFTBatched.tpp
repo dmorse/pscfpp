@@ -1,5 +1,5 @@
-#ifndef FFT_GPU_BATCHED_TPP
-#define FFT_GPU_BATCHED_TPP
+#ifndef PSPG_FFT_BATCHED_TPP
+#define PSPG_FFT_BATCHED_TPP
 
 /*
 * PSCF++ Package 
@@ -323,7 +323,4 @@ namespace Pspg
 
 }
 }
-
-
-
 #endif

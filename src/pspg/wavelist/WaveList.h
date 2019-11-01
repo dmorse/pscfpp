@@ -102,9 +102,14 @@ namespace Pspg
    inline int WaveList<D>::kSize() const
    { return kSize_; }
 
-
+   #ifndef PSPG_WAVE_LIST_TPP
+   // Suppress implicit instantiation
+   extern template class WaveList<1>;
+   extern template class WaveList<2>;
+   extern template class WaveList<3>;
+   #endif
 
 }
 }
-#include "WaveList.tpp"
+//#include "WaveList.tpp"
 #endif

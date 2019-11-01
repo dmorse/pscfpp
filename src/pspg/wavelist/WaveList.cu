@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "WaveList.h"
+#include "WaveList.tpp"
 
 namespace Pscf { 
 namespace Pspg 
