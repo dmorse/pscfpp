@@ -16,9 +16,7 @@ namespace Pspg {
 
    template <int D>
    Polymer<D>::Polymer()
-   {
-      setClassName("Polymer"); 
-   }
+   {  setClassName("Polymer"); }
 
    template <int D>
    Polymer<D>::~Polymer()

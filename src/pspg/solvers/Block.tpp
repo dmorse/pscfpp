@@ -9,15 +9,14 @@
 */
 
 #include "Block.h"
+#include <pspg/GpuResources.h>
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/crystal/shiftToMinimum.h>
-#include <pspg/GpuResources.h>
 #include <util/containers/FMatrix.h>      // member template
 #include <util/containers/DArray.h>      // member template
 #include <util/containers/FArray.h>      // member template
 #include <sys/time.h>
-//#include <Windows.h>
 
 //not a bad idea to rewrite these as functors
 static __global__ void pointwiseMul(const cufftReal* a, const cufftReal* b, cufftReal* result, int size) {
@@ -564,12 +563,7 @@ static __global__ void scaleReal(cufftReal* result, int size, float scale) {
       }
       return final;
    }
+
 }
 }
-
-
-
-
-
-
 #endif

@@ -233,7 +233,79 @@ namespace Pspg
    void Propagator<D>::setBlock(Block<D>& block)
    {  blockPtr_ = &block; }
 
+
+   #ifndef PSPG_PROPAGATOR_TPP
+   // Suppress implicit instantiation
+   extern template class Propagator<1>;
+   extern template class Propagator<2>;
+   extern template class Propagator<3>;
+   #endif
+
 }
 }
-#include "Propagator.tpp" 
+
+__global__ 
+void assignUniformReal(cufftReal* result, cufftReal uniform, int size);
+
+__global__ 
+void assignReal(cufftReal* result, const cufftReal* rhs, int size);
+
+__global__ 
+void inPlacePointwiseMul(cufftReal* a, const cufftReal* b, int size);
+
+template<unsigned int blockSize>
+__global__ void deviceInnerProduct(cufftReal* c, const cufftReal* a,
+   const cufftReal* b, int size) {
+   //int nThreads = blockDim.x * gridDim.x;
+   int startID = blockIdx.x * blockDim.x + threadIdx.x;
+
+   //do all pointwise multiplication
+   volatile extern __shared__ cufftReal cache[];
+   cufftReal temp = 0;
+   temp += a[startID] * b[startID];
+   cache[threadIdx.x] = temp;
+
+   __syncthreads();
+
+   if(blockSize >= 512) {
+      if (threadIdx.x < 256){
+         cache[threadIdx.x] += cache[threadIdx.x + 256];
+      }
+      __syncthreads();
+   }
+   if(blockSize >= 256) {
+      if (threadIdx.x < 128){
+         cache[threadIdx.x] += cache[threadIdx.x + 128];
+      }
+      __syncthreads();
+   }
+   if(blockSize >= 128) {
+      if (threadIdx.x < 64){
+         cache[threadIdx.x] += cache[threadIdx.x + 64];
+      }
+      __syncthreads();
+   }
+   //reduce operation
+   //256/2 -- needs to be power of two
+   //for (int j = blockDim.x / 2; j > 32; j /= 2) {
+   //   if (threadIdx.x < j) {
+   //      cache[threadIdx.x] += cache[threadIdx.x + j];
+   //   }
+   //   __syncthreads();
+   //}
+
+   if (threadIdx.x < 32) {
+      if(blockSize >= 64) cache[threadIdx.x] += cache[threadIdx.x + 32];
+      if(blockSize >= 32) cache[threadIdx.x] += cache[threadIdx.x + 16];
+      if(blockSize >= 16) cache[threadIdx.x] += cache[threadIdx.x + 8];
+      if(blockSize >= 8) cache[threadIdx.x] += cache[threadIdx.x + 4];
+      if(blockSize >= 4) cache[threadIdx.x] += cache[threadIdx.x + 2];
+      if(blockSize >= 2) cache[threadIdx.x] += cache[threadIdx.x + 1];
+   }
+
+   if (threadIdx.x == 0) {
+      c[blockIdx.x] = cache[0];
+   }
+}
+//#include "Propagator.tpp" 
 #endif

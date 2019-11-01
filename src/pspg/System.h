@@ -9,15 +9,15 @@
 */
 
 #include <util/param/ParamComposite.h>      // base class
-#include <pspg/solvers/Mixture.h>       // member
-//#include <pspg/basis/Basis.h>          // member
-#include <pspg/iterator/FtsIterator.h>
-#include <pscf/inter/ChiInteraction.h>
+#include <pspg/solvers/Mixture.h>           // member
+#include <pscf/inter/ChiInteraction.h>      // member
 #include <pscf/mesh/Mesh.h>                 // member
-#include <pscf/crystal/UnitCell.h>      // member
+#include <pscf/crystal/UnitCell.h>          // member
 #include <pscf/homogeneous/Mixture.h>       // member
 #include <pspg/wavelist/WaveList.h>
-#include <pspg/field/RDField.h>         // typedef
+//#include <pspg/basis/Basis.h>             // member
+#include <pspg/iterator/FtsIterator.h>
+#include <pspg/field/RDField.h>             // typedef
 #include <util/containers/DArray.h>         // member template
 #include <util/containers/Array.h>          // function parameter
 #include <util/misc/FileMaster.h>           // member
@@ -354,7 +354,10 @@ namespace Pspg
       * Pointer to a Basis object
       */
       //Basis<D>* basisPtr_;
-      
+     
+      /**
+      * Container for wavevector data.   
+      */ 
       WaveList<D>* wavelistPtr_;
 
       /**
@@ -661,7 +664,14 @@ namespace Pspg
    inline double System<D>::pressure() const
    {  return pressure_; }
 
+   #ifndef PSPG_SYSTEM_TPP
+   // Suppress implicit instantiation
+   extern template class System<1>;
+   extern template class System<2>;
+   extern template class System<3>;
+   #endif
+
 } // namespace Pspg
 } // namespace Pscf
-#include "System.tpp"
+//#include "System.tpp"
 #endif

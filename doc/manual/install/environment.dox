@@ -10,7 +10,7 @@ the user should modify the following unix environment variables:
   - Add the PSCF pscfpp/bin directory to the unix PATH shell 
     environment variable (the shell command search path)
 
-  - Add the pscfpp/scripts/python directory to the PYTHONPATH 
+  - Add the pscfpp/lib/python directory to the PYTHONPATH 
     environment variable (the python module search path)
 
 Rationale: 

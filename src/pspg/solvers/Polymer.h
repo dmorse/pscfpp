@@ -9,8 +9,8 @@
 */
 
 #include "Block.h"
-#include <pscf/solvers/PolymerTmpl.h>
 #include <pspg/field/RDField.h>
+#include <pscf/solvers/PolymerTmpl.h>
 #include <util/containers/FArray.h> 
 
 namespace Pscf { 
@@ -88,7 +88,14 @@ namespace Pspg {
 
    };
 
+   #ifndef PSPG_POLYMER_TPP
+   // Suppress implicit instantiation
+   extern template class Polymer<1>;
+   extern template class Polymer<2>;
+   extern template class Polymer<3>;
+   #endif
+
 }
 }
-#include "Polymer.tpp"
+//#include "Polymer.tpp"
 #endif

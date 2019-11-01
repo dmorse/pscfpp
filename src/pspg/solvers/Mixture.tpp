@@ -10,7 +10,6 @@
 
 #include "Mixture.h"
 #include <pspg/GpuResources.h>
-//#include <fd1d/domain/Domain.h>
 
 #include <cmath>
 
@@ -153,14 +152,13 @@ namespace Pspg
       for (i = 0; i < nParams_; ++i) {
          for (j = 0; j < nPolymer(); ++j) {
             TStress [i] += polymer(j).PcStress[i];
-          //  std::cout<<"PcStress ["<<j<<","<<i<<" ] = "<< polymer(j).PcStress[i] <<std::endl;
-           // std::cout<<"TStress ["<<i<<"] = "<< TStress [i]<<std::endl;
+            //  std::cout << "PcStress ["<<j<<","<<i<<" ] = "
+            //            <<  polymer(j).PcStress[i] <<std::endl;
+            // std::cout<<"TStress ["<<i<<"] = "<< TStress [i]<<std::endl;
          }   
       }   
    }  
 
 } // namespace Pspg
 } // namespace Pscf
-
-
 #endif

@@ -1,3 +1,6 @@
+#ifndef PSPG_SYSTEM_TPP
+#define PSPG_SYSTEM_TPP
+
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
@@ -9,20 +12,21 @@
 #include <pspg/GpuResources.h>
 
 #include <pscf/homogeneous/Clump.h>
+#include <pscf/crystal/shiftToMinimum.h>
 
 #include <util/format/Str.h>
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
 
 #include <sys/time.h>
-//#include <Windows.h>
 #include <iomanip>
 #include <sstream>
 #include <string>
 #include <getopt.h>
 #include <cstdlib>
-#include <pscf/crystal/shiftToMinimum.h>
+
 //#include <unistd.h>
+//#include <Windows.h>
 
 //global variable for kernels
 int THREADS_PER_BLOCK;
@@ -1195,3 +1199,4 @@ namespace Pspg
 
 } // namespace Pspg
 } // namespace Pscf
+#endif

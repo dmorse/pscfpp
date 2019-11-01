@@ -10,17 +10,16 @@
 
 #include "Propagator.h"                   // base class argument
 #include <pscf/solvers/BlockTmpl.h>       // base class template
-#include <pspg/field/RDField.h>            // member
-#include <pspg/field/RDFieldDft.h>         // member
+#include <pspg/field/RDField.h>           // member
+#include <pspg/field/RDFieldDft.h>        // member
 #include <pspg/field/FFT.h>               // member
-#include <pspg/field/FFTBatched.h>               // member
+#include <pspg/field/FFTBatched.h>        // member
 #include <util/containers/FArray.h>
 #include <pscf/crystal/UnitCell.h>
 #include <pspg/wavelist/WaveList.h>
 
 namespace Pscf { 
    template <int D> class Mesh; 
-
 }
 
 namespace Pscf { 
@@ -241,7 +240,14 @@ namespace Pspg {
       return *meshPtr_;
    }
 
+   #ifndef PSPG_BLOCK_TPP
+   // Suppress implicit instantiation
+   extern template class Block<1>;
+   extern template class Block<2>;
+   extern template class Block<3>;
+   #endif
+
 }
 }
-#include "Block.tpp"
+//#include "Block.tpp"
 #endif

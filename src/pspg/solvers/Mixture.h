@@ -184,7 +184,14 @@ namespace Pspg
       return *meshPtr_;
    }
 
+   #ifndef PSPG_MIXTURE_TPP
+   // Suppress implicit instantiation
+   extern template class Mixture<1>;
+   extern template class Mixture<2>;
+   extern template class Mixture<3>;
+   #endif
+
 } // namespace Pspg
 } // namespace Pscf
-#include "Mixture.tpp"
+//#include "Mixture.tpp"
 #endif
