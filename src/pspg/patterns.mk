@@ -47,7 +47,7 @@ endif
 $(BLD_DIR)/%.o:$(SRC_DIR)/%.cu
 	$(NVXX) $(CPPFLAGS) $(NVXXFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $<
 #ifdef MAKEDEP
-#	$(MAKEDEP) $(NVXXFLAGS) $(INCLUDES) $(DEFINES) $(MAKE_DEPS) -S$(SRC_DIR) -B$(BLD_DIR) $<
+#	$(MAKEDEP_CUDA) $(NVXXFLAGS) $(INCLUDES) $(DEFINES) $(MAKE_DEPS) -S$(SRC_DIR) -B$(BLD_DIR) $<
 #endif
 
 # Pattern rule to compile *.ccu test programs in src/pssp/tests

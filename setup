@@ -121,5 +121,6 @@ cp src/configure bld/configure
 # Install makeDep script
 
 # Install a copy of the makeDep dependency-maker script in bin/
-(cp lib/bash/makeDep bin/makeDep)
+(cp lib/bash/makeDepCpp bin/makeDepCpp)
+(cp lib/bash/makeDepCuda bin/makeDepCuda)
 

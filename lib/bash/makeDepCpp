@@ -3,6 +3,7 @@
 import sys
 from pscfpp.makeDepend import *
 
+source = sys.argv[-1]
 options = ''
 alldeps = ''
 blddir = ''
@@ -16,6 +17,7 @@ for arg in sys.argv[1:-1]:
       srcdir += arg[2:]   
    else:
       options += ' ' + arg
-source = sys.argv[-1]
+options += ' -MM -MF '
+processor = 'g++'
 
-makeDepend(source, options, srcdir, blddir, alldeps)
+makeDepend(processor, options, source, srcdir, blddir, alldeps)

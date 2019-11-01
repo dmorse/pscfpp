@@ -3,7 +3,7 @@ import os.path
 from string import *
 from TextWrapper import *
 
-def makeDepend(cfile, options, srcdir, blddir, extraDependencies=''):
+def makeDepend(processor, options, cfile, srcdir, blddir, extraDependencies=''):
 
    # Isolate base source file name 
    base = os.path.basename(cfile)
@@ -20,16 +20,16 @@ def makeDepend(cfile, options, srcdir, blddir, extraDependencies=''):
       blddir = os.path.normpath(os.path.join(blddir, reldir))
       srcdir = os.path.normpath(os.path.join(srcdir, reldir))
 
+   # Construct path to dependency files
    pfile = os.path.normpath(os.path.join(srcdir, base)) + '.p'
    dfile = os.path.normpath(os.path.join(blddir, base)) + '.d'
 
    # Create compiler command to calculate dependencies
-   command  = 'g++ '
-   command += options
-   command += ' -MM -MF '
+   command  = processor + ' '
+   command += options + ' '
    command += pfile + ' '
    command += cfile
-   #print command
+   # print command
    os.system(command)
 
    #Edit dependency file

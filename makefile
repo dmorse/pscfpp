@@ -27,7 +27,7 @@ clean-html:
 
 veryclean:
 	make clean-bin
-	rm -f $(BIN_DIR)/makeDep
+	rm -f $(BIN_DIR)/makeDep*
 	cd bld; $(MAKE) veryclean
 	rm bld/makefile
 	cd src; $(MAKE) veryclean
