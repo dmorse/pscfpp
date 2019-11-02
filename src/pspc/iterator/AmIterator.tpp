@@ -13,7 +13,8 @@
 #include <pscf/inter/ChiInteraction.h>
 #include <util/containers/FArray.h>
 #include <util/format/Dbl.h>
-#include <ctime>
+#include <util/misc/Timer.h>
+//#include <ctime>
 #include <cmath> 
 
 namespace Pscf {
@@ -65,19 +66,23 @@ namespace Pspc
          dArrays_[i].allocate(systemPtr_->basis().nStar() - 1);
          tempDev[i].allocate(systemPtr_->basis().nStar() - 1);
       }
-
-
    }
 
    template <int D>
    int AmIterator<D>::solve()
    {
-      //clock_t time_begin;
-      //clock_t time_end;
-
-      //solve the SCFT equations once
       //assumes basis.makeBasis() has been called
       //assumes AmIterator.allocate() has been called
+
+      // Define Timer objects
+      Timer convertTimer;
+      Timer solverTimer;
+      Timer stressTimer;
+      Timer updateTimer;
+      Timer::TimePoint now;
+
+      // Convert from Basis to RGrid
+      convertTimer.start();
       for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
          systemPtr_->fieldIo().convertBasisToKGrid(
                                      systemPtr_->wField(i),
@@ -85,10 +90,18 @@ namespace Pspc
          systemPtr_->fft().inverseTransform(systemPtr_->wFieldDft(i),
                                       systemPtr_->wFieldGrid(i));
       }
+      now = Timer::now();
+      convertTimer.stop(now);
 
+      // Solve MDE
+      solverTimer.start(now);
       systemPtr_->mixture().compute(systemPtr_->wFieldGrids(), 
                                     systemPtr_->cFieldGrids());
+      now = Timer::now();
+      solverTimer.stop(now);
 
+      // Convert from RGrid to Basis
+      convertTimer.start(now);
       for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
          systemPtr_->fft().forwardTransform(systemPtr_->cFieldGrid(i),
                                              systemPtr_->cFieldDft(i));
@@ -96,24 +109,34 @@ namespace Pspc
                               systemPtr_->cFieldDft(i),
                               systemPtr_->cField(i));
       }
-       
-      systemPtr_->computeFreeEnergy();
-      Log::file()<<"Free Energy="<<systemPtr_->fHelmholtz();
+      now = Timer::now();
+      convertTimer.stop(now);
 
+      // Compute stress if needed
       if (cell_){
+         stressTimer.start(now);
          systemPtr_->mixture().computeStress();
          for (int m=0; m<(systemPtr_->unitCell()).nParameter() ; ++m){
-               Log::file()<<"Stress"<<m<<"\t"<<"="<< systemPtr_->mixture().stress(m)<<"\n";
-                 //Log::file()<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).params()[m]<<"\n";
-               Log::file()<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).parameters()[m]<<"\n";
+               Log::file() << "Stress    " << m << " = "
+                           << systemPtr_->mixture().stress(m)<<"\n";
+               Log::file() << "Parameter " << m << " = "
+                           << (systemPtr_->unitCell()).parameters()[m]
+                           << "\n";
          }  
+         now = Timer::now();
+         stressTimer.stop(now);
       } else {
-         Log::file()<<std::endl;
+         Log::file() << std::endl;
       }
 
-      //check for convergence else resolve SCFT equations with new Fields
+      // Iterative loop
       for (int itr = 1; itr <= maxItr_; ++itr) {
          
+         updateTimer.start(now);
+
+         Log::file()<<"---------------------"<<std::endl;
+         Log::file()<<"Iteration  "<<itr<<std::endl;
+
          if (itr <= maxHist_) {
             lambda_ = 1.0 - pow(0.9, itr);
             nHist_ = itr-1;
@@ -121,26 +144,51 @@ namespace Pspc
             lambda_ = 1.0;
             nHist_ = maxHist_;
          }
-
          computeDeviation();
 
-         Log::file()<<"---------------------"<<std::endl;
-         Log::file()<<"  Iteration  "<<itr<<std::endl;
-
          if (isConverged()) {  
-          Log::file()<<"----------CONVERGED----------"<< std::endl;
-          if(!cell_){
-             systemPtr_->mixture().computeStress();
-          }
-          for (int m=0; m<(systemPtr_->unitCell()).nParameter() ; ++m){
-             Log::file()<<"Stress"<<m<<"\t"<<"="<< systemPtr_->mixture().stress(m)<<"\n";
-             //Log::file()<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).params()[m]<<"\n";
-             Log::file()<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).parameters()[m]<<"\n";
-          }
 
-              return 0;
+            updateTimer.stop();
+            Log::file() << "----------CONVERGED----------"<< std::endl;
+            if (!cell_){
+               systemPtr_->mixture().computeStress();
+               for (int m=0; m<(systemPtr_->unitCell()).nParameter() ; ++m){
+                  Log::file() << "Stress    " << m << " = "
+                              << systemPtr_->mixture().stress(m)<<"\n";
+                  Log::file() << "Parameter " << m << " = "
+                              << (systemPtr_->unitCell()).parameters()[m]
+                              << "\n";
+               }  
+            }
+
+            // Output timing results
+            double updateTime = updateTimer.time();
+            double convertTime = convertTimer.time();
+            double solverTime = solverTimer.time();
+            double stressTime = 0.0;
+            double totalTime = updateTime + convertTime + solverTime;
+            if (cell_) {
+               stressTime = stressTimer.time();
+               totalTime += stressTime;
+            }
+            Log::file() << "\n";
+            Log::file() << "Iterator times contributions:\n";
+            Log::file() << "\n";
+            Log::file() << "solver time  = " << solverTime  << " s,  "
+                        << solverTime/totalTime << "\n";
+            Log::file() << "stress time  = " << stressTime  << " s,  "
+                        << stressTime/totalTime << "\n";
+            Log::file() << "convert time = " << convertTime << " s,  "
+                        << convertTime/totalTime << "\n";
+            Log::file() << "update time  = "  << updateTime  << " s,  "
+                        << updateTime/totalTime << "\n";
+            Log::file() << "total time   = "  << totalTime   << " s  ";
+            Log::file() << "\n";
+            
+            return 0;
      
          } else {
+
             if (itr <= maxHist_ + 1) {
                if (nHist_ > 0) {
                   invertMatrix_.allocate(nHist_, nHist_);
@@ -148,7 +196,6 @@ namespace Pspc
                   vM_.allocate(nHist_);
                }
             }
-
             minimizeCoeff(itr);
             buildOmega(itr);
 
@@ -160,22 +207,37 @@ namespace Pspc
                   vM_.deallocate();
                }
             }
+            now = Timer::now();
+            updateTimer.stop(now);
 
+            // Convert Basis to RGrid
+            convertTimer.start(now);
             for (int j = 0; j < systemPtr_->mixture().nMonomer(); ++j) {
                systemPtr_->fieldIo().convertBasisToKGrid( 
                                     systemPtr_->wField(j),
                                     systemPtr_->wFieldDft(j));
                systemPtr_->fft().inverseTransform(systemPtr_->wFieldDft(j), 
-                                                   systemPtr_->wFieldGrid(j));
+                                                 systemPtr_->wFieldGrid(j));
             }
+            now = Timer::now();
+            convertTimer.stop(now);
 
+            // Solve MDE
+            solverTimer.start(now);
             systemPtr_->mixture().compute(systemPtr_->wFieldGrids(), 
                                           systemPtr_->cFieldGrids());
+            now = Timer::now();
+            solverTimer.stop(now);
 
             if (cell_){
+               stressTimer.start(now);
                systemPtr_->mixture().computeStress();
+               now = Timer::now();
+               stressTimer.stop(now);
             }
-
+           
+            // Transform RGrid to Basis 
+            convertTimer.start(now);
             for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
                systemPtr_->fft().forwardTransform(systemPtr_->cFieldGrid(i),
                                                   systemPtr_->cFieldDft(i));
@@ -184,6 +246,8 @@ namespace Pspc
                                     systemPtr_->cField(i));
             }
          }
+         now = Timer::now();
+         convertTimer.stop(now);
 
       }
 
@@ -260,8 +324,8 @@ namespace Pspc
    {
       double error;
 
-     /// Error as defined in Matsen's Papers
       #if 0
+      // Error as defined in Matsen's Papers
       double dError = 0;
       double wError = 0;
       for ( int i = 0; i < systemPtr_->mixture().nMonomer(); i++) {
@@ -277,7 +341,6 @@ namespace Pspc
       if (cell_){
          for ( int i = 0; i < (systemPtr_->unitCell()).nParameter() ; i++) {
             dError +=  devCpHists_[0][i] *  devCpHists_[0][i];
-            //wError +=  (systemPtr_->unitCell()).params() [i] * (systemPtr_->unitCell()).params() [i];
             wError +=  (systemPtr_->unitCell()).parameters() [i] * (systemPtr_->unitCell()).parameters() [i];
          }
       }
@@ -286,8 +349,7 @@ namespace Pspc
       error = sqrt(dError / wError);
       #endif 
 
-      /// Error by Max Residuals
-
+      // Error by Max Residuals
       double temp1 = 0;
       double temp2 = 0;
       for ( int i = 0; i < systemPtr_->mixture().nMonomer(); i++) {
@@ -296,7 +358,7 @@ namespace Pspc
                 temp1 = fabs (devHists_[0][i][j]);
          }   
       }
-      Log::file()<<" SCF Error :"<<temp1<<std::endl;   
+      Log::file() << "SCF Error   = " << temp1 << std::endl;   
       error = temp1;
 
       if (cell_){
@@ -306,7 +368,9 @@ namespace Pspc
          }
 
          for (int m=0; m<(systemPtr_->unitCell()).nParameter() ; ++m){
-            Log::file()<<" Stress "<<m<<" :"<< std::setprecision (15)<< systemPtr_->mixture().stress(m)<<"\n";
+            Log::file() << "Stress  "<< m << "   = " 
+                        << std::setprecision (15)
+                        << systemPtr_->mixture().stress(m)<<"\n";
          }         
          error = (temp1>(100*temp2)) ? temp1 : (100*temp2);  
          // 100 is chose as stress rescale factor, seperate implementation of errors needs to be done
@@ -314,8 +378,7 @@ namespace Pspc
 
       // Depending on the value of cell_, residual errors?
 
-      Log::file()<<" Error :"<<error<<std::endl;
-      //Log::file()<<"---------------------"<<std::endl;
+      Log::file() << "Error       = " << error << std::endl;
       if (error < epsilon_) {
          return true;
       } else {
@@ -326,8 +389,6 @@ namespace Pspc
    template <int D>
    void AmIterator<D>::minimizeCoeff(int itr)
    {
-      //clock_t time_begin;
-      //clock_t time_end;
       if (itr == 1) {
          //do nothing
       } else {
@@ -419,8 +480,7 @@ namespace Pspc
                   systemPtr_->basis().update();
 
             for (int m=0; m<(systemPtr_->unitCell()).nParameter()  ; ++m){
-               //Log::file()<<" Parameter "<<m<<" :"<<(systemPtr_->unitCell()).params()[m]<<"\n";
-               Log::file()<<" Parameter "<<m<<" :"<<(systemPtr_->unitCell()).parameters()[m]<<"\n"; 
+               Log::file() << "Parameter " << m << " = "<<(systemPtr_->unitCell()).parameters()[m]<<"\n"; 
             }
          } 
 
@@ -475,8 +535,9 @@ namespace Pspc
 	    systemPtr_->basis().update();
 
             for (int m=0; m<(systemPtr_->unitCell()).nParameter() ; ++m){
-	         // Log::file()<<" Parameter "<<m<<" :"<< std::setprecision (15)<<(systemPtr_->unitCell()).params()[m]<<"\n";
-               Log::file()<<" Parameter "<<m<<" :"<< std::setprecision (15)<<(systemPtr_->unitCell()).parameters()[m]<<"\n";
+               Log::file()<< "Parameter " << m <<" = "
+                          << std::setprecision (15)
+                          << (systemPtr_->unitCell()).parameters()[m]<<"\n";
             }
 
 
