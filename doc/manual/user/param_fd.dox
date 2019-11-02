@@ -312,11 +312,14 @@ three dimensional solution be differentiable at the origin.
 
 \section user_param_fd_NrIterator_section NrIterator Block
 
-The NrIterator block provides parameters required by the 
-iterator used to solve the nonlinear self-consistent field
-equations. The value of the parameter epsilon gives the 
-desired tolerance in the solution of these equations. The 
-iterative loop when the maximum error drops below epsilon.
+The NrIterator block provides data required by the iterator used 
+to solve the nonlinear self-consistent field (SCF) equations. 
+The only iteration algorithm that is currently available is 
+Newton-Raphson iteration, implemented by the NrIterator class. 
+This class requires only one input parameter, the parameter
+epsilon, which gives the desired tolerance in the solution of 
+the SCF equations.  The iterative loop stops when the maximum 
+error drops below epsilon.
 
 <BR>
 \ref user_param_page (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
