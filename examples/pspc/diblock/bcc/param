@@ -19,7 +19,7 @@ System{
          1   1   0.0
   }
   unitCell  cubic   1.9254998725
-  mesh              10  10  10
+  mesh              32  32  32
   groupName         I_m_-3_m
   AmIterator{
     maxItr   100
