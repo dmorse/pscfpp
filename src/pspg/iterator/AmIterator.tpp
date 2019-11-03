@@ -93,9 +93,6 @@ namespace Pspg {
    int AmIterator<D>::solve()
    {
       
-      struct timeval timeStart, timeEnd;
-      struct timezone tz;
-
       // Define Timer objects
       Timer solverTimer;
       Timer stressTimer;
@@ -104,42 +101,34 @@ namespace Pspg {
 
       // Solve MDE for initial state
       solverTimer.start();
-      gettimeofday(&timeStart, &tz);
       systemPtr_->mixture().compute(systemPtr_->wFieldGrids(),
          systemPtr_->cFieldGrids());
-      gettimeofday(&timeEnd, &tz);
-      Log::file() <<"MDE time : "
-                  << Dbl( ( (double)(timeEnd.tv_sec - timeStart.tv_sec) + 
-                            (double)(timeEnd.tv_usec - timeStart.tv_usec) 
-                             / 1000000.0 ), 18, 11) <<'\n';
       now = Timer::now();
       solverTimer.stop(now);
 
       // Compute stress for initial state
-      stressTimer.start(now);
-      gettimeofday(&timeStart, &tz);
-      systemPtr_->mixture().computeTStress(systemPtr_->wavelist());
-      gettimeofday(&timeEnd, &tz);
-      Log::file() << "Stress time : "
-                  << Dbl( ((double)(timeEnd.tv_sec - timeStart.tv_sec) + 
-                           (double)(timeEnd.tv_usec - timeStart.tv_usec) 
-                            / 1000000.0 ), 18, 11) <<'\n';
-     
-      for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){
-         std::cout << "Stress    " << m << " = "
-                   << systemPtr_->mixture().TStress[m] << "\n";
-         std::cout << "Parameter " << m << " = "
-                   << (systemPtr_->unitCell()).parameter(m) << "\n";
-      } 
-      now = Timer::now();
-      stressTimer.stop(now);
+      if (cell_) {
+         stressTimer.start(now);
+         systemPtr_->mixture().computeTStress(systemPtr_->wavelist());
+         for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){
+            std::cout << "Stress    " << m << " = "
+                      << systemPtr_->mixture().TStress[m]<<"\n";
+         }
+         for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){
+            std::cout << "Parameter " << m << " = "
+                      << (systemPtr_->unitCell()).parameter(m)<<"\n";
+         }
+         now = Timer::now();
+         stressTimer.stop(now);
+      }
 
       // Anderson-Mixing iterative loop
       int itr;
       for (itr = 1; itr <= maxItr_; ++itr) {
          updateTimer.start(now);
         
-         std::cout << "iteration #" << itr << "\n";
+         Log::file() << "---------------------------" << "\n";
+         Log::file() << "iteration #" << itr << "\n";
          if (itr <= maxHist_) {
             lambda_ = 1.0 - pow(0.9, itr);
             nHist_ = itr - 1;
@@ -159,7 +148,7 @@ namespace Pspg {
                vM_.deallocate();
             }
 
-            std::cout<<"----------CONVERGED----------"<< std::endl;
+            Log::file() << "------- CONVERGED ---------"<< std::endl;
 
             // Output final timing results
             double updateTime = updateTimer.time();
@@ -181,14 +170,21 @@ namespace Pspg {
                         << updateTime/totalTime << "\n";
             Log::file() << "total time   = "  << totalTime   << " s  ";
             Log::file() << "\n\n";
-            
-            if(cell_) {
+           
+            if (cell_) {
+               Log::file() << "\n";
+               Log::file() << "Final stress values:" << "\n";
                for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){
                   std::cout << "Stress    " << m << " = "
                             << systemPtr_->mixture().TStress[m]<<"\n";
-                  std::cout << "Parameter " << m << " = "
-                            <<(systemPtr_->unitCell()).parameter(m)<<"\n";
                }
+               Log::file() << "\n";
+               Log::file() << "Final unit cell parameter values:" << "\n";
+               for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){
+                  std::cout << "Parameter " << m << " = "
+                            << (systemPtr_->unitCell()).parameter(m)<<"\n";
+               }
+               Log::file() << "\n";
             }
             return 0;
 
@@ -228,15 +224,8 @@ namespace Pspg {
 
             // Solve MDE
             solverTimer.start(now);
-            gettimeofday(&timeStart, &tz);     
             systemPtr_->mixture().compute(systemPtr_->wFieldGrids(),
                                           systemPtr_->cFieldGrids());
-            gettimeofday(&timeEnd, &tz);
-            Log::file() <<" MDE time : "
-                        << Dbl(((double)(timeEnd.tv_sec - timeStart.tv_sec) + 
-                                (double)(timeEnd.tv_usec - timeStart.tv_usec) 
-                                / 1000000.0) , 18, 11) <<'\n';
-            gettimeofday(&timeStart, &tz);      
             now = Timer::now();
             solverTimer.stop(now);
      
@@ -244,15 +233,13 @@ namespace Pspg {
                stressTimer.start(now);
                systemPtr_->mixture().computeTStress(systemPtr_->wavelist());
                for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){
-                  std::cout<<"Stress"<<m<<"\t"<<"="
-                           << std::setprecision (15)
-                           << systemPtr_->mixture().TStress[m]<<"\n";
+                  std::cout << "Stress    " << m << " = "
+                            << systemPtr_->mixture().TStress[m]<<"\n";
                }
-               gettimeofday(&timeEnd, &tz);
-               Log::file() << "Stress time : "
-                           << Dbl( ((double)(timeEnd.tv_sec - timeStart.tv_sec) 
-                                  + (double)(timeEnd.tv_usec-timeStart.tv_usec)
-                                    / 1000000.0), 18, 11) <<'\n';
+               for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){
+                  std::cout << "Parameter " << m << " = "
+                            << (systemPtr_->unitCell()).parameter(m)<<"\n";
+               }
                now = Timer::now();
                stressTimer.stop(now);
             }
@@ -357,7 +344,7 @@ namespace Pspg {
       std::cout << " dError :" << Dbl(dError) << '\n';
       std::cout << " wError :" << Dbl(wError) << '\n';
       error = sqrt(dError / wError);
-      std::cout << "  Error  :" << Dbl(error) << '\n';
+      std::cout << "  Error :" << Dbl(error) << '\n';
       if (error < epsilon_) {
          return true;
       }
@@ -596,10 +583,10 @@ namespace Pspg {
                }
             } 
 
-            struct timeval timeStart, timeEnd;
-            struct timezone tz;
+            //struct timeval timeStart, timeEnd;
+            //struct timezone tz;
 
-            gettimeofday(&timeStart, &tz);                
+            //gettimeofday(&timeStart, &tz);                
             cellParameters_.clear();
             for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){               
                cellParameters_.append(wCpArrays_[m] + lambda_* dCpArrays_[m]);
@@ -610,17 +597,17 @@ namespace Pspg {
             systemPtr_->wavelist().computedKSq(systemPtr_->unitCell());
             
             
-            for(int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){
-               std::cout<<"Parameter"<<m<<"\t"<<"="
-                        << std::setprecision (15)
-                        <<systemPtr_->unitCell().parameter(m)<<"\n";
-            }
+            //for(int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){
+            //   std::cout<<"Parameter"<<m<<"\t"<<"="
+            //            << std::setprecision (15)
+            //            <<systemPtr_->unitCell().parameter(m)<<"\n";
+            //}
 
-            gettimeofday(&timeEnd, &tz);       
-            Log::file() <<"Parameter update time : "
-                        <<Dbl( ( (double)(timeEnd.tv_sec - timeStart.tv_sec) + 
-                                 (double)(timeEnd.tv_usec - timeStart.tv_usec) / 1000000.0 )
-                               , 18, 11) <<'\n';
+            //gettimeofday(&timeEnd, &tz);       
+            //Log::file() <<"Parameter update time : "
+            //            <<Dbl( ( (double)(timeEnd.tv_sec - timeStart.tv_sec) + 
+            //                     (double)(timeEnd.tv_usec - timeStart.tv_usec) / 1000000.0 )
+            //                   , 18, 11) <<'\n';
 
             
 

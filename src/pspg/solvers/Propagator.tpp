@@ -255,8 +255,6 @@ namespace Pspg {
       
       Q = innerProduct(qh, qt, nx);
       Q /= double(nx);
-      std::cout<<"This is big Q"<<Q<<std::endl;
-	  //QueryPerformanceCounter(&li);
       return Q;
    }
 

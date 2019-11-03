@@ -139,22 +139,17 @@ namespace Pspg
 
       for (i = 0; i < nParams_; ++i) {
          TStress [i] = 0;
-         //std::cout<<"TStress ["<<i<<"] = "<< TStress [i]<<std::endl;
-      } 
-      // Compute Stress for all polymers, must be done after computing concentrations
+      }
 
+      // Compute stress for each polymer.
       for (i = 0; i < nPolymer(); ++i) {
          polymer(i).ComputePcStress(wavelist);
       } 
-      std::cout<<"---------"<<std::endl;
-      // Accumulate stress for all the polymer chains
-      //why is done over all 6 parameter?
+
+      // Accumulate total stress 
       for (i = 0; i < nParams_; ++i) {
          for (j = 0; j < nPolymer(); ++j) {
             TStress [i] += polymer(j).PcStress[i];
-            //  std::cout << "PcStress ["<<j<<","<<i<<" ] = "
-            //            <<  polymer(j).PcStress[i] <<std::endl;
-            // std::cout<<"TStress ["<<i<<"] = "<< TStress [i]<<std::endl;
          }   
       }   
    }  
