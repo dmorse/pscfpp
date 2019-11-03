@@ -1,5 +1,5 @@
-#ifndef PSPG_FTS_ITERATOR_TPP
-#define PSPG_FTS_ITERATOR_TPP
+#ifndef PSPG_AM_ITERATOR_TPP
+#define PSPG_AM_ITERATOR_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -8,14 +8,14 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "FtsIterator.h"
+#include "AmIterator.h"
 #include <pspg/System.h>
 #include <util/format/Dbl.h>
-//#include <Windows.h>
 #include <pspg/GpuResources.h>
 #include <util/containers/FArray.h>
+#include <util/misc/Timer.h>
 #include <sys/time.h>
-
+//#include <Windows.h>
 
 namespace Pscf {
 namespace Pspg {
@@ -23,7 +23,7 @@ namespace Pspg {
    using namespace Util;
 
    template <int D>
-   FtsIterator<D>::FtsIterator()
+   AmIterator<D>::AmIterator()
       : Iterator<D>(),
         epsilon_(0),
         lambda_(0),
@@ -36,26 +36,24 @@ namespace Pspg {
    }
 
    template <int D>
-   FtsIterator<D>::FtsIterator(System<D>* system)
+   AmIterator<D>::AmIterator(System<D>* system)
       : Iterator<D>(system),
         epsilon_(0),
         lambda_(0),
         nHist_(0),
         maxHist_(0),
         cell_(0)
-   {
-      setClassName("AmIterator");
-   }
+   { setClassName("AmIterator"); }
 
    template <int D>
-   FtsIterator<D>::~FtsIterator()
+   AmIterator<D>::~AmIterator()
    {
       delete[] temp_;
       cudaFree(d_temp_);
    }
 
    template <int D>
-   void FtsIterator<D>::readParameters(std::istream& in)
+   void AmIterator<D>::readParameters(std::istream& in)
    {   
       cell_ = 0; //default value (fixed cell)
       read(in, "maxItr", maxItr_);
@@ -65,7 +63,7 @@ namespace Pspg {
    }
 
    template <int D>
-   void FtsIterator<D>::allocate()
+   void AmIterator<D>::allocate()
    {
       devHists_.allocate(maxHist_ + 1);
       omHists_.allocate(maxHist_ + 1);
@@ -92,52 +90,60 @@ namespace Pspg {
    }
 
    template <int D>
-   int FtsIterator<D>::solve()
+   int AmIterator<D>::solve()
    {
       
       struct timeval timeStart, timeEnd;
       struct timezone tz;
 
+      // Define Timer objects
+      Timer solverTimer;
+      Timer stressTimer;
+      Timer updateTimer;
+      Timer::TimePoint now;
+
+      // Solve MDE for initial state
+      solverTimer.start();
       gettimeofday(&timeStart, &tz);
-      //data read in r-space
       systemPtr_->mixture().compute(systemPtr_->wFieldGrids(),
          systemPtr_->cFieldGrids());
-
       gettimeofday(&timeEnd, &tz);
       Log::file() <<"MDE time : "
-                  <<Dbl( ( (double)(timeEnd.tv_sec - timeStart.tv_sec) + 
-                           (double)(timeEnd.tv_usec - timeStart.tv_usec) / 1000000.0 )
-                         , 18, 11) <<'\n';
-      //what if cell_ is not read?
-      //why do you point to basis functions?
+                  << Dbl( ( (double)(timeEnd.tv_sec - timeStart.tv_sec) + 
+                            (double)(timeEnd.tv_usec - timeStart.tv_usec) 
+                             / 1000000.0 ), 18, 11) <<'\n';
+      now = Timer::now();
+      solverTimer.stop(now);
+
+      // Compute stress for initial state
+      stressTimer.start(now);
       gettimeofday(&timeStart, &tz);
       systemPtr_->mixture().computeTStress(systemPtr_->wavelist());
       gettimeofday(&timeEnd, &tz);
-      Log::file() <<"Stress time : "
-                  <<Dbl( ( (double)(timeEnd.tv_sec - timeStart.tv_sec) + 
-                           (double)(timeEnd.tv_usec - timeStart.tv_usec) / 1000000.0 )
-                         , 18, 11) <<'\n';
+      Log::file() << "Stress time : "
+                  << Dbl( ((double)(timeEnd.tv_sec - timeStart.tv_sec) + 
+                           (double)(timeEnd.tv_usec - timeStart.tv_usec) 
+                            / 1000000.0 ), 18, 11) <<'\n';
      
-      //for loop formatting all wrong
-      //why is there an extra parenthesis in the pointer
-      for (int m = 0; m< systemPtr_->unitCell().nParameter() ; ++m){
-         std::cout<<"Stress"<<m<<"\t"<<"="<< systemPtr_->mixture().TStress[m]<<"\n";
-         std::cout<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).parameter(m)<<"\n";
+      for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){
+         std::cout << "Stress    " << m << " = "
+                   << systemPtr_->mixture().TStress[m] << "\n";
+         std::cout << "Parameter " << m << " = "
+                   << (systemPtr_->unitCell()).parameter(m) << "\n";
       } 
+      now = Timer::now();
+      stressTimer.stop(now);
 
-
-      //compute error at each mesh points
-
-      //check for convergence else resolve SCFT equations with new Fields
+      // Anderson-Mixing iterative loop
       int itr;
       for (itr = 1; itr <= maxItr_; ++itr) {
+         updateTimer.start(now);
         
-         std::cout<< "iterations : " << itr << "\n";
+         std::cout << "iteration #" << itr << "\n";
          if (itr <= maxHist_) {
             lambda_ = 1.0 - pow(0.9, itr);
             nHist_ = itr - 1;
-         }
-         else {
+         } else {
             lambda_ = 1.0;
             nHist_ = maxHist_;
          }
@@ -145,38 +151,59 @@ namespace Pspg {
          computeDeviation();
 
          if (isConverged()) {
+            updateTimer.stop();
+
             if (itr > maxHist_ + 1) {
                invertMatrix_.deallocate();
                coeffs_.deallocate();
                vM_.deallocate();
             }
-            //the space are misaligned
-            //is it rational to print outputs here
+
             std::cout<<"----------CONVERGED----------"<< std::endl;
+
+            // Output final timing results
+            double updateTime = updateTimer.time();
+            double solverTime = solverTimer.time();
+            double stressTime = 0.0;
+            double totalTime = updateTime + solverTime;
+            if (cell_) {
+               stressTime = stressTimer.time();
+               totalTime += stressTime;
+            }
+            Log::file() << "\n";
+            Log::file() << "Iterator times contributions:\n";
+            Log::file() << "\n";
+            Log::file() << "solver time  = " << solverTime  << " s,  "
+                        << solverTime/totalTime << "\n";
+            Log::file() << "stress time  = " << stressTime  << " s,  "
+                        << stressTime/totalTime << "\n";
+            Log::file() << "update time  = "  << updateTime  << " s,  "
+                        << updateTime/totalTime << "\n";
+            Log::file() << "total time   = "  << totalTime   << " s  ";
+            Log::file() << "\n\n";
+            
             if(cell_) {
                for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){
-                  std::cout<<"Stress"<<m<<"\t"<<"="<< systemPtr_->mixture().TStress[m]<<"\n";
-                  std::cout<<"Parameter"<<m<<"\t"<<"="<<(systemPtr_->unitCell()).parameter(m)<<"\n";
+                  std::cout << "Stress    " << m << " = "
+                            << systemPtr_->mixture().TStress[m]<<"\n";
+                  std::cout << "Parameter " << m << " = "
+                            <<(systemPtr_->unitCell()).parameter(m)<<"\n";
                }
             }
             return 0;
-         }
-         else {
-            //resize history based matrix appropriately
-            //consider making these working space local
 
-            //GetSystemTime(&timeStart);
+         } else {
 
+            // Resize history based matrix appropriately
+            // consider making these working space local
 
-             if (itr <= maxHist_ + 1) {
-                if (nHist_ > 0) {
-                   invertMatrix_.allocate(nHist_, nHist_);
-                   coeffs_.allocate(nHist_);
-                   vM_.allocate(nHist_);
-                }
-             }
-
-
+            if (itr <= maxHist_ + 1) {
+               if (nHist_ > 0) {
+                  invertMatrix_.allocate(nHist_, nHist_);
+                  coeffs_.allocate(nHist_);
+                  vM_.allocate(nHist_);
+               }
+            }
             int status = minimizeCoeff(itr);
 
             if (status == 1) {
@@ -186,12 +213,9 @@ namespace Pspg {
                coeffs_.deallocate();
                vM_.deallocate();
                return 1;
-
             }
 
-
             buildOmega(itr);
-
             if (itr <= maxHist_) {
                if (nHist_ > 0) {
                   invertMatrix_.deallocate();
@@ -199,52 +223,56 @@ namespace Pspg {
                   vM_.deallocate();
                }
             }
+            now = Timer::now();
+            updateTimer.stop(now);
 
-            //GetSystemTime(&timeStart);
+            // Solve MDE
+            solverTimer.start(now);
             gettimeofday(&timeStart, &tz);     
             systemPtr_->mixture().compute(systemPtr_->wFieldGrids(),
-               systemPtr_->cFieldGrids());
-         
+                                          systemPtr_->cFieldGrids());
             gettimeofday(&timeEnd, &tz);
-            Log::file() <<"MDE time : "
-                        <<Dbl( ( (double)(timeEnd.tv_sec - timeStart.tv_sec) + 
-                                 (double)(timeEnd.tv_usec - timeStart.tv_usec) / 1000000.0 )
-                               , 18, 11) <<'\n';
-     
+            Log::file() <<" MDE time : "
+                        << Dbl(((double)(timeEnd.tv_sec - timeStart.tv_sec) + 
+                                (double)(timeEnd.tv_usec - timeStart.tv_usec) 
+                                / 1000000.0) , 18, 11) <<'\n';
             gettimeofday(&timeStart, &tz);      
+            now = Timer::now();
+            solverTimer.stop(now);
+     
             if (cell_){
+               stressTimer.start(now);
                systemPtr_->mixture().computeTStress(systemPtr_->wavelist());
-               
                for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){
                   std::cout<<"Stress"<<m<<"\t"<<"="
                            << std::setprecision (15)
                            << systemPtr_->mixture().TStress[m]<<"\n";
                }
+               gettimeofday(&timeEnd, &tz);
+               Log::file() << "Stress time : "
+                           << Dbl( ((double)(timeEnd.tv_sec - timeStart.tv_sec) 
+                                  + (double)(timeEnd.tv_usec-timeStart.tv_usec)
+                                    / 1000000.0), 18, 11) <<'\n';
+               now = Timer::now();
+               stressTimer.stop(now);
             }
-            gettimeofday(&timeEnd, &tz);
-            Log::file() <<"Stress time : "
-                        <<Dbl( ( (double)(timeEnd.tv_sec - timeStart.tv_sec) + 
-                                 (double)(timeEnd.tv_usec - timeStart.tv_usec) / 1000000.0 )
-                               , 18, 11) <<'\n';
             
-
-   
-
          }
          
       }
+
       if (itr > maxHist_ + 1) {
          invertMatrix_.deallocate();
          coeffs_.deallocate();
          vM_.deallocate();
       }
-      
-      //should not reach here. iterated more than maxItr. Not converged
+ 
+      // Failure: Not converged after maxItr iterations.
       return 1;
    }
 
    template <int D>
-   void FtsIterator<D>::computeDeviation()
+   void AmIterator<D>::computeDeviation()
    {
 
       //need to average
@@ -308,7 +336,7 @@ namespace Pspg {
    }
 
    template <int D>
-   bool FtsIterator<D>::isConverged()
+   bool AmIterator<D>::isConverged()
    {
       double error;
       double dError = 0;
@@ -339,7 +367,7 @@ namespace Pspg {
    }
 
    template <int D>
-   int FtsIterator<D>::minimizeCoeff(int itr)
+   int AmIterator<D>::minimizeCoeff(int itr)
    {
       if (itr == 1) {
          //do nothing
@@ -358,7 +386,7 @@ namespace Pspg {
 
                elm = 0;
                for (int j = 0; j < systemPtr_->mixture().nMonomer(); ++j) {
-                  elm += FtsIterator<D>::innerProduct(devHists_[0][j], devHists_[i][j], systemPtr_->mesh().size());
+                  elm += AmIterator<D>::innerProduct(devHists_[0][j], devHists_[i][j], systemPtr_->mesh().size());
                }
                histMat_.evaluate(elm, nHist_, i);
             }
@@ -422,7 +450,7 @@ namespace Pspg {
    }
 
    template <int D>
-   cufftReal FtsIterator<D>::innerProduct(const RDField<D>& a, const RDField<D>& b, int size) {
+   cufftReal AmIterator<D>::innerProduct(const RDField<D>& a, const RDField<D>& b, int size) {
 
      switch(THREADS_PER_BLOCK){
      case 512:
@@ -473,7 +501,7 @@ namespace Pspg {
 
 
    template<int D>
-   cufftReal FtsIterator<D>::reductionH(const RDField<D>& a, int size) {
+   cufftReal AmIterator<D>::reductionH(const RDField<D>& a, int size) {
      reduction <<< NUMBER_OF_BLOCKS/2 , THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cufftReal) >> > (d_temp_, a.cDField(), size);
       cudaMemcpy(temp_, d_temp_, NUMBER_OF_BLOCKS/2  * sizeof(cufftReal), cudaMemcpyDeviceToHost);
       cufftReal final = 0;
@@ -488,7 +516,7 @@ namespace Pspg {
    }
 
    template <int D>
-   void FtsIterator<D>::buildOmega(int itr)
+   void AmIterator<D>::buildOmega(int itr)
    {
 
       if (itr == 1) {
@@ -604,6 +632,4 @@ namespace Pspg {
 
 }
 }
-
 #endif
-

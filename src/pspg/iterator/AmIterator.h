@@ -1,5 +1,5 @@
-#ifndef PSPG_FTS_ITERATOR_H
-#define PSPG_FTS_ITERATOR_H
+#ifndef PSPG_AM_ITERATOR_H
+#define PSPG_AM_ITERATOR_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -36,7 +36,7 @@ namespace Pspg {
       * \ingroup Pspg_Iterator_Module
       */
       template <int D>
-      class FtsIterator : public Iterator<D>
+      class AmIterator : public Iterator<D>
       {
       public:
 
@@ -45,19 +45,19 @@ namespace Pspg {
          /**
          * Default constructor
          */
-         FtsIterator();
+         AmIterator();
 
          /**
          * Constructor
          *
          * \param system pointer to a system object
          */
-         FtsIterator(System<D>* system);
+         AmIterator(System<D>* system);
 
          /**
          * Destructor
          */
-         ~FtsIterator();
+         ~AmIterator();
 
          /**
          * Read all parameters and initialize.
@@ -185,31 +185,38 @@ namespace Pspg {
          using Iterator<D>::systemPtr_;
          using ParamComposite::read;
          using ParamComposite::readOptional;
+
          //friend:
          //for testing purposes
-
 
       };
 
       template<int D>
-      inline double FtsIterator<D>::epsilon()
+      inline double AmIterator<D>::epsilon()
       {
          return epsilon_;
       }
 
       template<int D>
-      inline int FtsIterator<D>::maxHist()
+      inline int AmIterator<D>::maxHist()
       {
          return maxHist_;
       }
 
       template<int D>
-      inline int FtsIterator<D>::maxItr()
+      inline int AmIterator<D>::maxItr()
       {
          return maxItr_;
       }
 
+      #ifndef PSPG_AM_ITERATOR_TPP
+      // Suppress implicit instantiation
+      extern template class AmIterator<1>;
+      extern template class AmIterator<2>;
+      extern template class AmIterator<3>;
+      #endif
+
    }
 }
-#include "FtsIterator.tpp"
+//#include "AmIterator.tpp"
 #endif

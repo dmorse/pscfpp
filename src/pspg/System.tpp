@@ -68,10 +68,10 @@ namespace Pspg
       setClassName("System"); 
 
       interactionPtr_ = new ChiInteraction();
-      iteratorPtr_ = new FtsIterator<D>(this); 
+      iteratorPtr_ = new AmIterator<D>(this); 
       wavelistPtr_ = new WaveList<D>();
       //basisPtr_ = new Basis<D>();
-      // sweepFactoryPtr_ = new SweepFactory(*this);
+      //sweepFactoryPtr_ = new SweepFactory(*this);
    }
 
    /*
@@ -82,7 +82,7 @@ namespace Pspg
    {
       delete interactionPtr_;
       delete iteratorPtr_; 
-      // There is an issue here. iterator ptr needs info of block size before initiation
+      delete wavelistPtr_; 
       delete[] kernelWorkSpace_;
       cudaFree(d_kernelWorkSpace_);
    }

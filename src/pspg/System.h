@@ -16,7 +16,7 @@
 #include <pscf/homogeneous/Mixture.h>       // member
 #include <pspg/wavelist/WaveList.h>
 //#include <pspg/basis/Basis.h>             // member
-#include <pspg/iterator/FtsIterator.h>
+#include <pspg/iterator/AmIterator.h>
 #include <pspg/field/RDField.h>             // typedef
 #include <util/containers/DArray.h>         // member template
 #include <util/containers/Array.h>          // function parameter
@@ -28,7 +28,7 @@
 namespace Pscf {
 namespace Pspg
 {
-   template <int D> class FtsIterator;
+   template <int D> class AmIterator;
    class Sweep;
    class SweepFactory;
 
@@ -252,7 +252,7 @@ namespace Pspg
       * Get the Iterator by reference.
       */
       //temporarily changed to allow testing on member functions
-      FtsIterator<D>& iterator();
+      AmIterator<D>& iterator();
 
       #if 0
       /**
@@ -348,7 +348,7 @@ namespace Pspg
       /**
       * Pointer to an iterator.
       */
-      FtsIterator<D>* iteratorPtr_;
+      AmIterator<D>* iteratorPtr_;
 
       /**
       * Pointer to a Basis object
@@ -553,7 +553,7 @@ namespace Pspg
    * Get the Iterator.
    */
    template <int D>
-   inline FtsIterator<D>& System<D>::iterator()
+   inline AmIterator<D>& System<D>::iterator()
    {
       UTIL_ASSERT(iteratorPtr_);
       return *iteratorPtr_;
