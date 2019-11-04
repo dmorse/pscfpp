@@ -130,7 +130,7 @@ namespace Pspc
          updateTimer.start(now);
 
          Log::file()<<"---------------------"<<std::endl;
-         Log::file()<<"Iteration  "<<itr<<std::endl;
+         Log::file()<<" Iteration  "<<itr<<std::endl;
 
          if (itr <= maxHist_) {
             lambda_ = 1.0 - pow(0.9, itr);
@@ -143,14 +143,6 @@ namespace Pspc
 
          // Test for convergence
          done = isConverged();
-
-         if (cell_){
-            for (int m=0; m<(systemPtr_->unitCell()).nParameter() ; ++m){
-               Log::file() << "Parameter " << m << " = "
-                           << (systemPtr_->unitCell()).parameters()[m]
-                           << "\n";
-            }
-         }
 
          if (done) {
 
@@ -340,8 +332,8 @@ namespace Pspc
             wError +=  (systemPtr_->unitCell()).parameters() [i] * (systemPtr_->unitCell()).parameters() [i];
          }
       }
-      Log::file() << " dError :"<<Dbl(dError)<<std::endl;
-      Log::file() << " wError :"<<Dbl(wError)<<std::endl;
+      Log::file() << " dError :" << Dbl(dError)<<std::endl;
+      Log::file() << " wError :" << Dbl(wError)<<std::endl;
       error = sqrt(dError / wError);
       #endif
 
@@ -354,7 +346,7 @@ namespace Pspc
                 temp1 = fabs (devHists_[0][i][j]);
          }
       }
-      Log::file() << "SCF Error   = " << temp1 << std::endl;
+      Log::file() << "SCF Error   = " << Dbl(temp1) << std::endl;
       error = temp1;
 
       if (cell_){
@@ -362,17 +354,27 @@ namespace Pspc
             if (temp2 < fabs (devCpHists_[0][i]))
                 temp2 = fabs (devCpHists_[0][i]);
          }
-
+         // Output current stress values
          for (int m=0; m<(systemPtr_->unitCell()).nParameter() ; ++m){
             Log::file() << "Stress  "<< m << "   = "
-                        << std::setprecision (15)
-                        << systemPtr_->mixture().stress(m)<<"\n";
+                        << Dbl(systemPtr_->mixture().stress(m)) <<"\n";
          }
          error = (temp1>(100*temp2)) ? temp1 : (100*temp2);
          // 100 is chose as stress rescale factor
          // TODO: Separate SCF and stress tolerance limits
       }
-      Log::file() << "Error       = " << error << std::endl;
+      Log::file() << "Error       = " << Dbl(error) << std::endl;
+
+      // Output current unit cell parameter values
+      if (cell_){
+         for (int m=0; m<(systemPtr_->unitCell()).nParameter() ; ++m){
+               Log::file() << "Parameter " << m << " = "
+                           << Dbl((systemPtr_->unitCell()).parameters()[m])
+                           << "\n";
+         }
+      }
+
+      // Check if total error is below tolerance
       if (error < epsilon_) {
          return true;
       } else {
@@ -465,15 +467,10 @@ namespace Pspc
                               + lambda_* devCpHists_[0][m]);
 
             }
-
             unitCell.setParameters(parameters);
             unitCell.setLattice();
             mixture.setupUnitCell(unitCell);
             systemPtr_->basis().update();
-
-            for (int m=0; m<unitCell.nParameter()  ; ++m){
-               Log::file() << "Parameter " << m << " = "<<unitCell.parameters()[m]<<"\n";
-            }
          }
 
       } else {
@@ -483,7 +480,6 @@ namespace Pspc
                dArrays_[j][k] = devHists_[0][j][k];
             }
          }
-
          for (int i = 0; i < nHist_; ++i) {
             for (int j = 0; j < mixture.nMonomer(); ++j) {
                for (int k = 0; k < systemPtr_->basis().nStar() - 1; ++k) {
@@ -494,16 +490,13 @@ namespace Pspc
                }
             }
          }
-
          for (int i = 0; i < mixture.nMonomer(); ++i) {
             for (int j = 0; j < systemPtr_->basis().nStar() - 1; ++j) {
               systemPtr_->wField(i)[j+1] = wArrays_[i][j] 
                                          + lambda_ * dArrays_[i][j];
             }
          }
-
          if(cell_){
-
             for (int m = 0; m < unitCell.nParameter() ; ++m){
                wCpArrays_[m] = CpHists_[0][m];
                dCpArrays_[m] = devCpHists_[0][m];
@@ -519,19 +512,10 @@ namespace Pspc
             for (int m = 0; m < unitCell.nParameter() ; ++m){
                parameters [m] = wCpArrays_[m] + lambda_ * dCpArrays_[m];
             }
-
             unitCell.setParameters(parameters);
             unitCell.setLattice();
             mixture.setupUnitCell(unitCell);
 	    systemPtr_->basis().update();
-
-            // for (int m=0; m < unitCell.nParameter() ; ++m) {
-            //   Log::file() <<  "Parameter " << m <<" = "
-            //               <<  std::setprecision (15)
-            //               <<  unitCell.parameters()[m]
-            //               <<  "\n";
-            //}
-
          }
       }
    }
