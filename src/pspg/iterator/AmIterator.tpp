@@ -291,7 +291,7 @@ namespace Pspg {
             //this is a good add but i dont necessarily know if its right
             pointWiseAddScale << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (tempDev[i].cDField(),
                                                                             systemPtr_->wFieldGrid(j).cDField(),
-                                                                            -systemPtr_->interaction().indemp(i, j),
+                                                                            -systemPtr_->interaction().idemp(i, j),
                                                                             systemPtr_->mesh().size()); 
 
          }

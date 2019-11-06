@@ -301,7 +301,7 @@ namespace Pspc
          for (int j = 0; j < systemPtr_->mixture().nMonomer(); ++j) {
             for (int k = 0; k < systemPtr_->basis().nStar() - 1; ++k) {
                tempDev[i][k] +=( (systemPtr_->interaction().chi(i,j) *
-                              systemPtr_->cField(j)[k + 1]) - (systemPtr_->interaction().indemp(i,j) *
+                              systemPtr_->cField(j)[k + 1]) - (systemPtr_->interaction().idemp(i,j) *
                               systemPtr_->wField(j)[k + 1]) ) ; 
             }   
          }   
