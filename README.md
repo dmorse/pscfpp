@@ -2,11 +2,11 @@
 # PSCF - Polymer Self-Consistent Field Theory (C++/CUDA)
 
 PSCF is a package of software for solving the Edwards-Helfand 
-self-consistent field theory for polymer liquids. The version in the 
-directory containing this file is written primarily in C++, with GPU 
-accelerated code in CUDA.  This C++/CUDA version of PSCF is still under 
-development, but is intended to eventually supersede the existing PSCF 
-Fortran program. The older Fortran program is maintained in a separate 
+self-consistent field theory (SCFT) for polymer liquids. The version 
+described here is written primarily in C++, with GPU accelerated code 
+in CUDA.  This C++/CUDA version of PSCF is still under development, 
+but is intended to eventually supersede the existing PSCF Fortran 
+program. The older Fortran program is maintained in a separate 
 github.com repository at https://github.com/dmorse/pscf.
 
 The C++/CUDA version of PSCF is free, open source software. It is 
@@ -20,17 +20,17 @@ details.
 
 ## Overview
 
-Differences between this C++/CUDA version of PSCF and the older Fortran 
-version, and expected advantages of the new code include:
+Differences between the C++/CUDA version of PSCF and the older Fortran 
+version and expected advantages of the new code include:
 
-   - PSCF (C++/CUDA) is an extensible package of several different programs 
-     designed for use with different geometries and boundary conditions, 
-     different algorithms or different hardware, designed around a 
-     common software framework. 
+   - PSCF (C++/CUDA) is an extensible package of several different 
+     programs designed for use with different geometries, boundary 
+     conditions, different algorithms or hardware, designed around 
+     a common framework. 
 
-   - PSCF (C++/CUDA) allows simulations of mixtures containing arbitrary 
+   - PSCF (C++/CUDA) enables simulations of mixtures containing arbitrary 
      acyclic branched copolymers, in addition to the linear block copolymers 
-     and homopolymers allowed by Fortran PSCF code.
+     and linear homopolymers allowed by Fortran PSCF code.
 
    - An object oriented design allows creation of independent objects to 
      represent different phases, which will facilitate analysis of phase
@@ -47,30 +47,32 @@ Currently, the package contains the following SCFT solvers:
      variation in a single spatial coordinate in Cartesian, cylindrical 
      or spherical coordinates.
 
-   - A CPU-based pseudo-spectral solver periodic microstructures that are
-     periodic in 1, 2, or 3 coordinates.
+   - A CPU-based pseudo-spectral solver for periodic microstructures that 
+     are periodic in 1, 2, or 3 coordinates.
 
-   - A GPU accelerated pseudo-spectral solver for period microstructures. 
+   - A analogous GPU accelerated pseudo-spectral solver for period 
+     microstructures in 1, 2 or 3 dimensions.
 
-The one-dimensional finite different solver is useful for treating problems
-involving flat or curved interfaces, as well as cylindrical or spherical 
-micelles. The executable for this program is named pscf_fd.
+The one-dimensional finite difference solver is useful for treating 
+problems involving flat or curved interfaces, as well as cylindrical or 
+spherical copolymer micelles. The executable for this program is named 
+pscf_fd.
 
-The CPU-based pseudo-spectral solver for periodic microstructures is 
-similar in most respects to the existing PSCF Fortran program, and provides
-similar level of performance. Like the Fortran program, it allows the user 
-to search for a solution with any specified crystal system and space group 
-symmetry, and provides efficient algorithms to relax the unit cell 
+The pseudo-spectral CPU solver for periodic microstructures is closely
+analogous to the older PSCF Fortran program, and provides a similar 
+level of performance. Like the Fortran program, it allows the user to 
+search for a solution with any specified crystal system type and space 
+group symmetry, and provides efficient algorithms to relax the unit cell 
 parameters so as to minimize the free energy.  The new code can read and 
-write the same file formats for representing a field as an expansion in 
-symmetry-adapted basis functions or a values on a regular grid as those 
-used by the PSCF Fortran program. Currently, the most important features 
-of the Fortran code that have not yet been reimplemented in the new code
-are the "sweep" continuation feature and specialized code to represent
-point-particle solvents. Different executable files are used to solve 1, 
-2 and 3 dimensionally periodic structures, which are named pscf_pc1d, 
-pscf_pc2d and pscf_pc3d, respectively. Here, "pc" stands for 
-"periodic CPU".
+write the same file formats for representing a field as the PSCF Fortran
+code, including a format based on an expansion in symmetry-adapted basis 
+functions and one based on values of fields at regularly spaced grid 
+points. Currently, the most important features of the Fortran code that 
+have not yet been reimplemented in the new code are the "sweep" 
+continuation feature and specialized code to represent point-particle 
+solvents. Different executable files are used to solve 1, 2 and 3 
+dimensionally periodic structures, which are named pscf_pc1d, pscf_pc2d 
+and pscf_pc3d, respectively. Here, "pc" stands for "periodic CPU".
 
 The GPU-accelerated pseudo-spectral solver for periodic structures is 
 based on algorithms similar to those used in the CPU pseudo-spectral 
@@ -80,7 +82,7 @@ including no-orthogonal unit cells, and provides automatic relaxation
 of unit cell parameters. The most important difference in features is 
 that the GPU-accelerated code does yet allow the user to use a
 representation in symmetry-adapted basis functions to constrain the 
-space group symmetry of the solution.  The GPU accelerated programs 
+space group symmetry of the structure. The GPU accelerated programs 
 for solving 1, 2 and 3 dimensionally periodic structures are named 
 pscf_pg1d, pscf_pg2d and pscf_pg3d, respectively, where "pg" stands 
 for "periodic GPU".
@@ -92,24 +94,25 @@ The PSCF C++/CUDA source code is maintained in the github repository
    <https://github.com/dmorse/pscfpp>.
 
 It may be obtained by using a git version control system client to
-clone the repository. To do so, enter the command:
+clone the repository. To do so on a machine with a git client, 
+enter the command:
 ``` 
 git clone --recursive https://github.com/dmorse/pscfpp.git
 ```
 Note the use of the --recursive option to the git clone command.
-This is necessary to clone some git submodules that are maintained
-in separate repositories. This command will create a directory 
+This is necessary to clone several git submodules that are maintained
+in separate repositories. This command will create a new directory 
 called pscfpp/ that contains all of the source code and associated
-documentation, including required git submodules.
+documentation, including all required git submodules.
 
 ## Documentation
 
 PSCF is distributed with source files for an html web manual.
 After cloning the source code, you can use the doxygen documentation
-generator to generate a local copy of this documentation. To do this,
-doxygen must be installed on your computer, and the directory 
-containing the doxygen executable must be in your command search
-PATH. To generate documentation:
+generation program to generate a local copy of this documentation. 
+To do this, doxygen must be installed on your computer, and the 
+directory containing the doxygen executable must be in your command 
+search PATH. To generate documentation:
 
    - Change directory (cd) to the pscfpp/ root directory
 
@@ -136,46 +139,48 @@ following external libraries:
 
   - FFTW fast Fourier transform library
 
-The one-dimensional finite difference program pscf_fd requires 
-only GSL, and not FFTW. The CPU-based programs for spatially
-periodic structures require both GSL and FFTW libraries.
+The one-dimensional finite difference program pscf_fd requires only 
+GSL, and not FFTW. The CPU-based programs for spatially periodic 
+structures require both GSL and FFTW.
 
 The GPU-accelerated programs can only run on a computer with an
-appropriate NVIDIA graphics card. To compile these programs, the
-system must also have an NVIDIA CUDA development environment 
-that provides the CUFFT fast Fourier transform library. 
+appropriate NVIDIA GPU. To compile or run these programs, the system 
+must also have an NVIDIA CUDA development environment that provides 
+the CUFFT fast Fourier transform library. 
 
 ## Compiling
 
-Complete directions for compiling and installing PSCF are
-provided in section 2 of the html documentation. Short instructions
-for compiling, after installing all of the required dependencies,
-are given below:
+Complete directions for compiling and installing PSCF are provided 
+in section 2 of the html documentation. Short instructions for 
+compiling, after installing all of the required dependencies, are 
+given below:
 
    - Add the pscfpp/bin directory to your linux command search PATH
      environment variable.
    
-   - Add the pscfpp/scripts/python directory to your PYTHONPATH
+   - Add the pscfpp/lib/python directory to your PYTHONPATH
      environment variable.
    
    - cd to the pscfpp/ root directory
    
-   - Enter "./setup" from this root directory to run a setup script
-     (you only need to do this once, before compiling the first time).
+   - Enter "./setup" from this root directory to run a setup script.
+     This script installs default versions of several files that are 
+     required by the build system. You only need to run the setup
+     script once, before compiling the first time.
 
    - Change directory (cd) to the subdirectory pscfpp/bld/.
    
-   - To compile and install all CPU-based programs in the package 
+   - To compile and install only CPU-based programs in the package 
      (excluding GPU-accelerated programs), enter "make all-cpu"
    
-   - To compile the GPU-accelerated programs on a machine with an
-     NVIDIA GPU, a CUDA compiler and the CUFFT library, enter
-     "make pspg". 
+   - To compile all programs, including the GPU-accelerated programs,
+     on a machine that allows this, instead enter "make all". 
 
-The setup script installs a file pscfpp/bld/config.mk that contains
-makefile variables that define compiler executable names, compiler options 
-and paths to head and library files for external dependencies.  If the 
-default options are not adequate, edit this file as needed.
+The setup script installs a default version of a file 
+pscfpp/bld/config.mk that contains makefile variables that define 
+compiler executable names, compiler options and paths to head and 
+library files for external dependencies.  If the default options 
+are not adequate, the user may edit this file as needed.
 
 ## Command line syntax (invoking a program)
 
@@ -210,9 +215,9 @@ a CPU is:
 ```
 program -p param -c command
 ```
-where "program" denotes the name of the program, "param" denotes the path 
-to a parameter file, and "command" denotes the path to a parameter file. 
-For example, one might enter
+where "program" denotes the name of the program, "param" denotes the 
+path to a parameter file, and "command" denotes the path to a parameter 
+file.  For example, one might enter
 ```
 pscf_pc3d -p param -c command
 ```
@@ -240,7 +245,7 @@ Directory pscfpp/examples contains a set of examples of simple
 calculations. Each example directory contains a parameter file (named
 param), a command file (named command), and a input chemical potential 
 (omega) file.  Top level subdirectories of pscfpp/examples contain 
-examples for different PSCF programs.
+examples for different PSCF programs. 
 
 Subdirectory examples/fd1d subdirectory contains examples for the 1D 
 finite-difference program pscf_fd. Top level subdirectories of 
@@ -256,13 +261,21 @@ Subdirectories of examples/pspc/diblock contain examples for lamellar
 (N=1), hexagonal (N=2) and BCC (N=3) structures, each of which has a 
 different number of spatially periodic dimensions.
 
-Subdirectory examples/pspg contains examples examples for the 
-pscf_pg3d 3D GPU code for periodic structures.
+Subdirectory examples/pspg contains examples examples for the pscf_pg3d 
+3D GPU code for periodic structures.
+
+Each example directory contains a script named "run" that can used to
+run the example using the supplied input files and appropriate options. 
+The simplest way to run an example is to change directory (cd) to the
+directory containing the example and enter "./run" from that directory.
+Users may also inspect the run file to see the command and options
+require to run the program. Most example directories also contain a
+script named "clean" that can be run to remove all output files 
+created by running the example.
 
 ## Contributors
 
 - David Morse
 - Guo Kang Cheong
 - Anshul Chawla
-- Mridul Yadav
 
