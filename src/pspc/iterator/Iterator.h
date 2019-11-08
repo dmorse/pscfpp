@@ -55,6 +55,9 @@ namespace Pspc
       /// Pointer to parent System object
       System<D>* systemPtr_;
 
+      System<D>& system() 
+      {  return *systemPtr_; }
+
    };
 
 } // namespace Pspc
