@@ -1,17 +1,12 @@
 TODO (for pspc pseudospectral CPU code)
 
 ------------------------------------------------------------------------
-field/ directory: (assigned to Dave)
+Housekeeping: (assigned to Dave)
 
    - Complete unit tests for FieldIo
 
    - Modify unit tests of system so that they can be incorporated
      into the Pspc test composite. 
-
-------------------------------------------------------------------------
-solvers/ directory: (assigned to Anshul)
-
-   - See solvers/TODO
 
 ------------------------------------------------------------------------
 Later
