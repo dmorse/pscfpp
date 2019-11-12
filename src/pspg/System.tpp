@@ -74,8 +74,6 @@ namespace Pspg
       iteratorPtr_ = new AmIterator<D>(this); 
       wavelistPtr_ = new WaveList<D>();
       basisPtr_ = new Basis<D>();
-      //fieldIo_.associate(unitCell_, mesh_, fft_, groupName_,
-      //                   basisPtr_, fileMaster_);
 
       // sweepFactoryPtr_ = new SweepFactory(*this);
    }
@@ -233,9 +231,6 @@ namespace Pspg
       mixture().setMesh(mesh());
 
       read(in, "groupName", groupName_);
-      //groupName_ = "1"; // -----------------------------------------Sets group name to identity
-
-      // ----------------------
 
       #if 0
       in >> d;
@@ -399,24 +394,14 @@ namespace Pspg
          } 
 
          else if (command == "READ_WFIELDS") {
-            //std::cout<<"nstar = "<<basis().nStar();
             in >> filename;
             Log::file() << " " << Str(filename, 20) <<std::endl;
 
-           // std::ifstream inFile;
-           // fileMaster().openInputFile(filename, inFile);
-           // readFields(inFile, wFields());
-           // inFile.close();
-           fieldIo().readFieldsBasis(filename, wFields());
+            fieldIo().readFieldsBasis(filename, wFields());
 
          } else if (command == "WRITE_W_BASIS") {
             in >> filename;
             Log::file() << "  " << Str(filename, 20) << std::endl;
-
-            //std::ofstream outFile;
-            //fileMaster().openOutputFile(filename, outFile);
-            //writeFields(outFile, wFields_);
-            //outFile.close();
 
             fieldIo().writeFieldsBasis(filename, wFields());
 
@@ -426,37 +411,23 @@ namespace Pspg
             in >> filename;
             Log::file() << "  " << Str(filename, 20) << std::endl;
 
-            //std::ofstream outFile;
-            //fileMaster().openOutputFile(filename, outFile);
-            //writeRFields(outFile, wFieldGrids());
-            //outFile.close();
             fieldIo().writeFieldsRGrid(filename, wFieldGrids());
 
          }
  
-         //else if (command == "WRITE_C_BASIS") {
+         else if (command == "WRITE_C_BASIS") {
 
-         //   in >> filename;
-         //   Log::file() << "  " << Str(filename, 20) << std::endl;
+            in >> filename;
+            Log::file() << "  " << Str(filename, 20) << std::endl;
 
-            //std::ofstream outFile;
-            //fileMaster().openOutputFile(filename, outFile);
-            //writeFields(outFile, cFields_);
-            //outFile.close();
+            fieldIo().writeFieldsBasis(filename, cFields()); //--------------Try using an accessor function
 
-         //   fieldIo().writeFieldsBasis(filename, cFields_); //--------------Try using an accessor function
-
-         //} 
+         } 
 
          else if (command == "WRITE_CFIELDGRIDS") {
             in >> filename;
             Log::file() << "  " << Str(filename, 20) << std::endl;
 
-            //std::ofstream outFile;
-            //fileMaster().openOutputFile(filename, outFile);
-            //writeRFields(outFile, cFieldGrids_);
-            //outFile.close();
-       
             fieldIo().writeFieldsRGrid(filename, cFieldGrids_);
 
          } else if (command == "ITERATE") {
@@ -475,11 +446,6 @@ namespace Pspg
             std::string inFileName;
             in >> inFileName;
             Log::file() << " " << Str(inFileName, 20) <<std::endl;
-
-            //std::ifstream inFile;
-            //fileMaster().openInputFile(inFileName, inFile);
-            //readRFields(inFile, wFieldGrids());
-            //inFile.close();
 
             fieldIo().readFieldsRGrid(inFileName, wFieldGrids());
 
@@ -528,42 +494,11 @@ namespace Pspg
             in >> outFileName;
             Log::file() << " " << Str(outFileName, 20) <<std::endl;
 
-            //std::ifstream inFile;
-            //fileMaster().openInputFile(inFileName, inFile);
-            //readFields(inFile, cFields());
-            //inFile.close();
-
             fieldIo().readFieldsBasis(inFileName, cFields());
             fieldIo().convertBasisToRGrid(cFields(), cFieldGrids());
             fieldIo().writeFieldsRGrid(outFileName, cFieldGrids());
 
-            //convert to rgrid
-            //for (int i = 0; i < mixture().nMonomer(); ++i) {
-            //   basis().convertFieldComponentsToDft(cField(i), cFieldDft(i));
-            //   fft().inverseTransform(cFieldDft(i), cFieldGrid(i));
-            //}
-
-            //std::ofstream outFile;
-            //fileMaster().openOutputFile(outFileName, outFile);
-            //writeRFields(outFile, cFieldGrids());
-            //outFile.close();
-
          }
-
-         else if (command == "BASIS_TO_KGRID") {
-            std::string inFileName;
-            std::string outFileName;
-
-            in >> inFileName;
-            Log::file() << " " << Str(inFileName, 20) <<std::endl;
-
-            in >> outFileName;
-            Log::file() << " " << Str(outFileName, 20) <<std::endl;
-
-            fieldIo().readFieldsBasis(inFileName, cFields());
-            fieldIo().convertBasisToKGrid(cFields(), cFieldDfts_);
-            fieldIo().writeFieldsKGrid(outFileName, cFieldDfts_);
-          } 
 
          else if (command == "RGRID_TO_BASIS") {
             std::string inFileName;
@@ -575,25 +510,9 @@ namespace Pspg
             in >> outFileName;
             Log::file() << " " << Str(outFileName, 20) <<std::endl;
 
-            //std::ifstream inFile;
-            //fileMaster().openInputFile(inFileName, inFile);
-            //readRFields(inFile, cFieldGrids());
-            //inFile.close();
-
             fieldIo().readFieldsRGrid(inFileName, cFieldGrids());
             fieldIo().convertRGridToBasis(cFieldGrids(), cFields());
             fieldIo().writeFieldsBasis(outFileName, cFields());
-
-            //convert to fields
-            //for (int i = 0; i < mixture().nMonomer(); ++i) {
-            //   fft().forwardTransform(cFieldGrid(i), cFieldDft(i));
-            //   basis().convertFieldDftToComponents(cFieldDft(i), cField(i));
-            //}
-
-            //std::ofstream outFile;
-            //fileMaster().openOutputFile(outFileName, outFile);
-            //writeFields(outFile, cFields());
-            //outFile.close();
 
          }
 
@@ -607,22 +526,12 @@ namespace Pspg
             in >> outFileName;
             Log::file() << " " << Str(outFileName, 20) <<std::endl;
 
-            //std::ifstream inFile;
-            //fileMaster().openInputFile(inFileName, inFile);
-            //readKFields(inFile, cFieldDfts());
-            //inFile.close();
-
             fieldIo().readFieldsKGrid(inFileName, cFieldDfts());
 
             //convert to rgrid
             for (int i = 0; i < mixture().nMonomer(); ++i) {
                fft().inverseTransform(cFieldDft(i), cFieldGrid(i));
             }
-
-            //std::ofstream outFile;
-            //fileMaster().openOutputFile(outFileName, outFile);
-            //writeRFields(outFile, cFieldGrids());
-            //outFile.close();
 
             fieldIo().writeFieldsRGrid(outFileName, cFieldGrids());
 
@@ -637,12 +546,7 @@ namespace Pspg
             in >> outFileName;
             Log::file() << " " << Str(outFileName, 20) << std::endl;
 
-            //std::ifstream inFile;
-            //fileMaster().openInputFile(inFileName, inFile);
-            //readRFields(inFile, cFieldGrids());
-            //inFile.close();
-
-            fieldIo().writeFieldsRGrid(filename, cFieldGrids());
+            fieldIo().readFieldsRGrid(filename, cFieldGrids());
 
             //code is bad here, `mangled' access of data in array
             for (int i = 0; i < mixture().nMonomer(); ++i) {
@@ -654,11 +558,6 @@ namespace Pspg
                      interaction().chi(i,j), mesh().size());
                }
             }
-
-            //std::ofstream outFile;
-            //fileMaster().openOutputFile(outFileName, outFile);
-            //writeRFields(outFile, wFieldGrids());
-            //outFile.close();
 
             fieldIo().writeFieldsRGrid(filename, wFieldGrids());
 
@@ -679,359 +578,6 @@ namespace Pspg
          UTIL_THROW("Empty command file name");
       }
       readCommands(fileMaster().commandFile()); 
-   }
-   
-   /*
-   template <int D>
-   void System<D>::readFields(std::istream &in,
-      DArray< RDField<D> >& fieldsToCopy)
-   {
-      UTIL_CHECK(hasMesh_);
-
-      // Read grid dimensions
-      std::string label;
-      int nStar, nM;
-
-      in >> label;
-      UTIL_CHECK(label == "nStar");
-      in >> nStar;
-      UTIL_CHECK(nStar > 0);
-      UTIL_CHECK(nStar == basis().nStar());
-
-      in >> label;
-      UTIL_CHECK(label == "nM");
-      in >> nM;
-      UTIL_CHECK(nM > 0);
-      UTIL_CHECK(nM == mixture().nMonomer());
-
-      DArray<cufftReal*> fields;
-      fields.allocate(nM);
-      for (int i = 0; i < nM; i++) {
-         fields[i] = new cufftReal[nStar];
-      }
-      // Read fields
-      int i, j, idum;
-      for (i = 0; i < nStar; ++i) {
-         in >> idum;
-         UTIL_CHECK(idum == i);
-         for (j = 0; j < nM; ++j) {
-            in >> fields[j][i];
-         }
-      }
-      
-      for (int i = 0; i < nM; i++) {
-         cudaMemcpy(fieldsToCopy[i].cDField(), fields[i], sizeof(cufftReal) * nStar, cudaMemcpyHostToDevice);
-         delete[] fields[i];
-      }
-
-   }
-   */
-
-   template <int D>
-   void System<D>::readRFields(std::istream &in,
-                                DArray<RDField<D> >& fields)
-   {
-
-      UTIL_CHECK(hasMesh_);
-
-      std::string label;
-      std::string groupName;
-      IntVec<D> nGrid;
-      int nM;
-      int ver1, ver2;
-      int dim;      
-      FArray<double,6> params;
-
-      in >> label;
-      UTIL_CHECK(label == "format");
-      in >> ver1;
-      in >> ver2;
- 
-      in >> label;
-      UTIL_CHECK(label == "dim");
-      in >> dim;
-      UTIL_CHECK(dim == D);
-
-      readUnitCellHeader(in, unitCell());
- 
-      in >> label;
-      std::cout << label << std::endl;
-      UTIL_CHECK(label == "group_name");
-      in >> groupName;
-
-      in >> label;
-      std::cout << label << std::endl;
-      UTIL_CHECK(label == "N_monomer");
-      in >> nM;
-      UTIL_CHECK(nM > 0);
-      UTIL_CHECK(nM == mixture().nMonomer());
-
-      in >> label;
-      UTIL_CHECK(label == "ngrid");
-      in >> nGrid;
-      UTIL_CHECK(nGrid == mesh().dimensions());
-
-
-      DArray<cufftReal*> temp;
-      temp.allocate(nM);
-      for(int i = 0; i < nM; ++i) {
-         temp[i] = new cufftReal[mesh().size()];
-      } 
-      
-      IntVec<D> offsets;
-      offsets[D - 1] = 1;
-      for(int i = D - 1 ; i > 0; --i ) {
-         offsets[i - 1] = offsets[i] * mesh().dimension(i);
-      }
-      IntVec<D> position;
-      for(int i = 0; i < D; ++i) {
-         position[i] = 0;
-      }
-
-      int rank = 0;
-      int positionId;
-      for(int i = 0; i < mesh().size(); i++) {
-         rank = 0;
-         for(int dim = 0; dim < D; ++dim) {
-            rank += offsets[dim] * position[dim];
-         }
-         for(int k = 0; k < nM; ++k) {
-            in >> std::setprecision(15)>> temp[k][rank];
-         }
-         //add position
-         positionId = 0;
-         while( positionId < D) {
-            position[positionId]++;
-            if ( position[positionId] == mesh().dimension(positionId) ) {
-               position[positionId] = 0;
-               positionId++;
-               continue;
-            }
-            break;
-         } 
-      }
-      
-      for(int i = 0; i < nM; i++) {
-         cudaMemcpy(fields[i].cDField(), temp[i],
-            mesh().size() * sizeof(cufftReal), cudaMemcpyHostToDevice);
-         delete[] temp[i];
-         temp[i] = nullptr;
-      }
-
-   }
-
-   template <int D>
-   void System<D>::readKFields(std::istream &in,
-                                 DArray<RDFieldDft<D> >& fields)
-   {
-      UTIL_CHECK(hasMesh_);
-
-      std::string label;
-      IntVec<D> nGrid;
-      int nM;
-
-      in >> label;
-      UTIL_CHECK(label == "nGrid");
-      in >> nGrid;
-      UTIL_CHECK(nGrid == mesh().dimensions());
-
-      in >> label;
-      UTIL_CHECK(label == "nM");
-      in >> nM;
-      UTIL_CHECK(nM > 0);
-      UTIL_CHECK(nM == mixture().nMonomer());
-
-      // Read Fields;
-      int kSize = 1;
-      for (int i = 0; i < D; i++) {
-        if (i == D - 1) {
-           kSize *= (mesh().dimension(i) / 2 + 1);
-        }
-        else {
-           kSize *= mesh().dimension(i);
-        }
-        
-      }
-
-      int idum;
-      DArray<cufftComplex*> temp;
-      temp.allocate(nM);
-      for(int i = 0; i < nM; ++i) {
-         temp[i] = new cufftComplex[kSize];
-      }
-      
-      for(int i = 0; i < kSize; ++i) {
-         in >> idum;
-         for (int j = 0; j < nM; ++j) {
-            in >> temp[j][i].x;
-            in >> temp[j][i].y;
-         }
-      }
-      
-      for(int i = 0; i < nM; ++i) {
-         cudaMemcpy(fields[i].cDField(), temp[i],
-            kSize * sizeof(cufftComplex), cudaMemcpyHostToDevice);
-         delete[] temp[i];
-         temp[i] = nullptr;
-      }
-   }
-
-   /*
-   template <int D>
-   void System<D>::writeFields(std::ostream &out,
-      DArray<RDField<D> > const &  fieldsToCopy)
-   {
-      int i, j;
-      int nStar = basis().nStar();
-      int nM = mixture().nMonomer();
-      out << "nStar     " << nStar << std::endl;
-      out << "nM     " << nM << std::endl;
-
-      DArray<cufftReal*> fields;
-      fields.allocate(nM);
-      for (int i = 0; i < nM; i++) {
-         fields[i] = new cufftReal[nStar];
-         cudaMemcpy(fields[i], fieldsToCopy[i].cDField(), nStar * sizeof(cufftReal), cudaMemcpyDeviceToHost);
-      }
-      // Write fields
-      for (i = 0; i < nStar; ++i) {
-         out << Int(i, 5);
-         for (j = 0; j < nM; ++j) {
-            out << "  " << Dbl(fields[j][i], 18, 11);
-         }
-         //out<< "  " << basis().wave(basis().star(i).beginId).indicesDft;
-         out << std::endl;
-      }
-      for (int i = 0; i < nM; i++) {
-         delete[] fields[i];
-      }
-   }
-   */
-
-   template <int D>
-   void System<D>::writeRFields(std::ostream &out,
-                           DArray<RDField<D> > const& fields)
-   {
-      // double time_start;
-      // double time_end;
-      // struct timeval tv;
-      // struct timezone tz;
-
-      // gettimeofday(&tv, &tz);
-      // time_start = (double) tv.tv_sec + 
-      //    (double)tv.tv_usec / 1000000.0;
-
-      int nM = mixture().nMonomer();
-      MeshIterator<D> itr(mesh().dimensions());
-      //do not use white space like this...
-      out << "format  1   0  " <<  std::endl;
-      out << "dim    " <<  std::endl 
-          << "              "<<D<< std::endl;
-      writeUnitCellHeader(out, unitCell());   
-      out << "group_name    " <<  std::endl 
-          << "              " << groupName_ << std::endl;
-      out << "N_monomer     " <<  std::endl 
-          << "              " << mixture().nMonomer()<< std::endl;
-      out << "ngrid         " << std::endl
-          << "              " << mesh().dimensions() << std::endl;
-
-      DArray<cufftReal*> temp;
-      temp.allocate(nM);
-      for (int i = 0; i < nM; ++i) {
-         temp[i] = new cufftReal[mesh().size()];
-         cudaMemcpy(temp[i], fields[i].cDField(),
-                    mesh().size() * sizeof(cufftReal), cudaMemcpyDeviceToHost);
-      }    
-
-      IntVec<D> offsets;
-      offsets[D - 1] = 1;
-      for(int i = D - 1 ; i > 0; --i ) {
-         offsets[i - 1] = offsets[i] * mesh().dimension(i);
-      }
-      IntVec<D> position;
-      for(int i = 0; i < D; ++i) {
-         position[i] = 0;
-      }
-
-      int rank = 0;
-      int positionId;
-      for(int i = 0; i < mesh().size(); i++) {
-         rank = 0;
-         for(int dim = 0; dim < D; ++dim) {
-            rank += offsets[dim] * position[dim];
-         }
-         for(int k = 0; k < nM; ++k) {
-            out << "  " << Dbl(temp[k][rank], 18, 15);
-         }
-         out<<'\n';
-         //add position
-         positionId = 0;
-         while( positionId < D) {
-            position[positionId]++;
-            if ( position[positionId] == mesh().dimension(positionId) ) {
-               position[positionId] = 0;
-               positionId++;
-               continue;
-            }
-            break;
-         } 
-      }
-      
-      for(int i = 0; i < nM; ++i) {
-         delete[] temp[i];
-         temp[i] = nullptr;
-      }
-
-      #if 0
-      gettimeofday(&tv, &tz);
-      time_end = (double)tv.tv_sec + 
-         (double)tv.tv_usec / 1000000.0;
-      Log::file() << "Files written in  " 
-                  << Dbl(time_end - time_start, 18, 11)<<'s' 
-                  << std::endl;
-      #endif
-   }
-
-   template <int D>
-   void System<D>::writeKFields(std::ostream &out,
-                           DArray<RDFieldDft<D> > const& fields)
-   {
-      int nM = mixture().nMonomer();
-      MeshIterator<D> itr(mesh().dimensions());
-      out << "nGrid   " << mesh().dimensions() << std::endl;
-      out << "nM      " << nM                << std::endl;
-
-      //write Fields
-      DArray<cufftComplex*> temp;
-     int kSize = 1;
-     for (int i = 0; i < D; i++) {
-        if (i == D - 1) {
-           kSize *= (mesh().dimension(i) / 2 + 1);
-        }
-        else {
-           kSize *= mesh().dimension(i);
-        }
-        
-     }
-      temp.allocate(nM);
-      for(int i = 0; i < nM; ++i) {
-         temp[i] = new cufftComplex[kSize];
-         cudaMemcpy(temp[i], fields[i].cDField(), 
-            kSize * sizeof(cufftComplex), cudaMemcpyDeviceToHost);
-      }
-     for (int i = 0; i < kSize; i++) {
-        out << Int(i, 5);
-        for (int j = 0; j < nM; ++j) {
-           out << "  " << Dbl(temp[j][i].x, 18, 11)
-              << Dbl(temp[j][i].y, 18, 11);
-        }
-        out << std::endl;
-     }
-      
-      for(int i = 0; i < nM; ++i) {
-         delete[] temp[i];
-         temp[i] = nullptr;
-      }
    }
 
    template <int D>
