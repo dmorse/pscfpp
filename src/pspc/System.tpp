@@ -321,22 +321,11 @@ namespace Pspc
 
             fieldIo().readFieldsBasis(inFileName, wFields());
 
-            clock_t time_begin;
-            clock_t time_scf;
-
-            time_begin = clock();
-            Log::file() << "Calling iterator" << std::endl;
             int fail = iterator().solve();
-            time_scf = clock();
-            time_scf = time_scf - time_begin;
             if (!fail) {
                computeFreeEnergy();
                outputThermo(Log::file());
             }
-            Log::file() << "SCF_Time = " 
-                        << Dbl((float)(time_scf/CLOCKS_PER_SEC), 18, 11)
-                        << std::endl;
-
          } else
          if (command == "SOLVE_MDE") {
             Log::file() << std::endl;

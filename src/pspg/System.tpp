@@ -1,3 +1,6 @@
+#ifndef PSPG_SYSTEM_TPP
+#define PSPG_SYSTEM_TPP
+
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
@@ -9,20 +12,21 @@
 #include <pspg/GpuResources.h>
 
 #include <pscf/homogeneous/Clump.h>
+#include <pscf/crystal/shiftToMinimum.h>
 
 #include <util/format/Str.h>
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
 
 #include <sys/time.h>
-//#include <Windows.h>
 #include <iomanip>
 #include <sstream>
 #include <string>
 #include <getopt.h>
 #include <cstdlib>
-#include <pscf/crystal/shiftToMinimum.h>
+
 //#include <unistd.h>
+//#include <Windows.h>
 
 //global variable for kernels
 int THREADS_PER_BLOCK;
@@ -67,7 +71,7 @@ namespace Pspg
       setClassName("System"); 
 
       interactionPtr_ = new ChiInteraction();
-      iteratorPtr_ = new FtsIterator<D>(this); 
+      iteratorPtr_ = new AmIterator<D>(this); 
       wavelistPtr_ = new WaveList<D>();
       basisPtr_ = new Basis<D>();
       //fieldIo_.associate(unitCell_, mesh_, fft_, groupName_,
@@ -84,7 +88,7 @@ namespace Pspg
    {
       delete interactionPtr_;
       delete iteratorPtr_; 
-      // There is an issue here. iterator ptr needs info of block size before initiation
+      delete wavelistPtr_; 
       delete[] kernelWorkSpace_;
       cudaFree(d_kernelWorkSpace_);
    }
@@ -228,8 +232,8 @@ namespace Pspg
       hasMesh_ = true;
       mixture().setMesh(mesh());
 
-      //read(in, "groupName", groupName_);
-      groupName_ = "1"; // -----------------------------------------Sets group name to identity
+      read(in, "groupName", groupName_);
+      //groupName_ = "1"; // -----------------------------------------Sets group name to identity
 
       // ----------------------
 
@@ -254,6 +258,8 @@ namespace Pspg
 
       basis().makeBasis(mesh(), unitCell(), groupName_);
 
+      //std::cout<<"nstar = "<<basis().nStar();
+
       fieldIo_.associate(unitCell_, mesh_, fft_, groupName_,
                          *basisPtr_, fileMaster_);
 
@@ -272,6 +278,8 @@ namespace Pspg
       // Initialize iterator
       readParamComposite(in, iterator());
       iterator().allocate();
+
+      //std::cout<<"nstar = "<<basis().nStar();
 
       #if 0
       gettimeofday(&tv, &tz);
@@ -391,6 +399,7 @@ namespace Pspg
          } 
 
          else if (command == "READ_WFIELDS") {
+            //std::cout<<"nstar = "<<basis().nStar();
             in >> filename;
             Log::file() << " " << Str(filename, 20) <<std::endl;
 
@@ -425,19 +434,19 @@ namespace Pspg
 
          }
  
-         else if (command == "WRITE_C_BASIS") {
+         //else if (command == "WRITE_C_BASIS") {
 
-            in >> filename;
-            Log::file() << "  " << Str(filename, 20) << std::endl;
+         //   in >> filename;
+         //   Log::file() << "  " << Str(filename, 20) << std::endl;
 
             //std::ofstream outFile;
             //fileMaster().openOutputFile(filename, outFile);
             //writeFields(outFile, cFields_);
             //outFile.close();
 
-            fieldIo().writeFieldsBasis(filename, cFields_); //--------------Try using an accessor function
+         //   fieldIo().writeFieldsBasis(filename, cFields_); //--------------Try using an accessor function
 
-         } 
+         //} 
 
          else if (command == "WRITE_CFIELDGRIDS") {
             in >> filename;
@@ -539,7 +548,22 @@ namespace Pspg
             //writeRFields(outFile, cFieldGrids());
             //outFile.close();
 
-         } 
+         }
+
+         else if (command == "BASIS_TO_KGRID") {
+            std::string inFileName;
+            std::string outFileName;
+
+            in >> inFileName;
+            Log::file() << " " << Str(inFileName, 20) <<std::endl;
+
+            in >> outFileName;
+            Log::file() << " " << Str(outFileName, 20) <<std::endl;
+
+            fieldIo().readFieldsBasis(inFileName, cFields());
+            fieldIo().convertBasisToKGrid(cFields(), cFieldDfts_);
+            fieldIo().writeFieldsKGrid(outFileName, cFieldDfts_);
+          } 
 
          else if (command == "RGRID_TO_BASIS") {
             std::string inFileName;
@@ -1220,3 +1244,4 @@ namespace Pspg
 
 } // namespace Pspg
 } // namespace Pscf
+#endif

@@ -46,15 +46,15 @@ endif
 # Pattern rule to compile *.cu class source files in src/pssp
 $(BLD_DIR)/%.o:$(SRC_DIR)/%.cu
 	$(NVXX) $(CPPFLAGS) $(NVXXFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $<
-#ifdef MAKEDEP
-#	$(MAKEDEP) $(NVXXFLAGS) $(INCLUDES) $(DEFINES) $(MAKE_DEPS) -S$(SRC_DIR) -B$(BLD_DIR) $<
-#endif
+ifdef MAKEDEP_CUDA
+	$(MAKEDEP_CUDA) $(INCLUDES) $(DEFINES) $(MAKE_DEPS) -S$(SRC_DIR) -B$(BLD_DIR) $<
+endif
 
 # Pattern rule to compile *.ccu test programs in src/pssp/tests
 $(BLD_DIR)/% $(BLD_DIR)/%.o:$(SRC_DIR)/%.ccu $(PSPG_LIBS)
 	$(NVXX)  $(NVXXFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $<
 	$(NVXX) $(LDFLAGS) $(INCLUDES) $(DEFINES) -o $(@:.o=) $@ $(LIBS)
-ifdef MAKEDEP
-	$(MAKEDEP) $(INCLUDES) $(DEFINES) $(MAKE_DEPS) -S$(SRC_DIR) -B$(BLD_DIR) $<
+ifdef MAKEDEP_CUDA
+	$(MAKEDEP_CUDA) $(INCLUDES) $(DEFINES) $(MAKE_DEPS) -S$(SRC_DIR) -B$(BLD_DIR) $<
 endif
 

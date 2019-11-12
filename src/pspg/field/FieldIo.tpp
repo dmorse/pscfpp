@@ -73,6 +73,9 @@ namespace Pspg
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
 
+      DArray<cufftReal*> temp_out;
+      temp_out.allocate(nMonomer);
+
       // Read header
       FieldIo<D>::readFieldHeader(in);
       std::string label;
@@ -82,13 +85,16 @@ namespace Pspg
       in >> nStarIn;
       UTIL_CHECK(nStarIn > 0);
 
-      // Initialize all field components to zero
       int i, j;
       int nStar = basis().nStar();
+      for(int i = 0; i < nMonomer; ++i) {
+         temp_out[i] = new cufftReal[nStar];
+      }   
+
       for (j = 0; j < nMonomer; ++j) {
          UTIL_CHECK(fields[j].capacity() == nStar);
          for (i = 0; i < nStar; ++i) {
-            fields[j].cDField()[i] = 0.0;
+            temp_out[j][i] = 0.0;
          }
       }
 
@@ -122,11 +128,18 @@ namespace Pspg
             UTIL_CHECK(basis().star(starId).waveBz == waveBz);
             if (!basis().star(starId).cancel) {
                for (j = 0; j < nMonomer; ++j) {
-                  fields[j].cDField()[starId] = temp [j];
+                  temp_out[j][starId] = temp [j];
                }
             }
          }
 
+      }
+
+     for(int i = 0; i < nMonomer; i++) {
+         cudaMemcpy(fields[i].cDField(), temp_out[i],
+            nStar * sizeof(cufftReal), cudaMemcpyHostToDevice);
+         delete[] temp_out[i];
+         temp_out[i] = nullptr;
       }
 
    }
@@ -150,10 +163,23 @@ namespace Pspg
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
 
+      DArray<cufftReal*> temp_out;
+      temp_out.allocate(nMonomer);
+
       // Write header
       writeFieldHeader(out, nMonomer);
       int nStar = basis().nStar();
       int nBasis = basis().nBasis();
+
+      for(int i = 0; i < nMonomer; ++i) {
+         temp_out[i] = new cufftReal[nStar];
+      }   
+
+     for(int i = 0; i < nMonomer; i++) {
+         cudaMemcpy(temp_out[i], fields[i].cDField(),
+            nStar * sizeof(cufftReal), cudaMemcpyDeviceToHost);
+     }
+
       out << "N_star       " << std::endl 
           << "             " << nBasis << std::endl;
 
@@ -161,7 +187,7 @@ namespace Pspg
       for (int i = 0; i < nStar; ++i) {
          if (!basis().star(i).cancel) {
             for (int j = 0; j < nMonomer; ++j) {
-               out << Dbl(fields[j].cDField()[i], 20, 10);
+               out << Dbl(temp_out[j][i], 20, 10);
             }
             out << "   ";
             for (int j = 0; j < D; ++j) {
@@ -170,6 +196,11 @@ namespace Pspg
             out << Int(basis().star(i).size, 5) << std::endl;
          }
       }
+
+     for(int i = 0; i < nMonomer; i++) {
+         delete[] temp_out[i];
+         temp_out[i] = nullptr;
+      }   
 
    }
 
@@ -199,82 +230,51 @@ namespace Pspg
       in >> nGrid;
       UTIL_CHECK(nGrid == mesh().dimensions());
 
-      DArray<RDField<D> > temp;
-      temp.allocate(nMonomer);
-      for (int i = 0; i < nMonomer; ++i) {
-         temp[i].allocate(mesh().dimensions());
-      }
 
-      // Read Fields;
-      MeshIterator<D> itr(mesh().dimensions());
-      for (itr.begin(); !itr.atEnd(); ++itr) {
-         for (int i = 0; i < nMonomer; ++i) {
-            in  >> std::setprecision(15) >> temp[i].cDField()[itr.rank()];
-         }
-      }
-
-      int p = 0;
-      int q = 0;
-      int r = 0;
-      int s = 0;
-      int n1 =0;
-      int n2 =0;
-      int n3 =0;
-
-      if (D==3) {
-         while (n1 < mesh().dimension(0)) {
-            q = p;
-            n2 = 0;
-            while (n2 < mesh().dimension(1)) {
-               r =q;
-               n3 = 0;
-               while (n3 < mesh().dimension(2)) {
-                  for (int i = 0; i < nMonomer; ++i) {
-                     fields[i].cDField()[s] = temp[i].cDField()[r];
-                  }
-                  r = r + (mesh().dimension(0) * mesh().dimension(1));
-                  ++s;
-                  ++n3;              
-               } 
-               q = q + mesh().dimension(0);
-               ++n2;
-            } 
-            ++n1;
-            ++p;        
-         }
-      }
-
-      else if (D==2) {
-         while (n1 < mesh().dimension(0)) {
-            r =q; 
-            n2 = 0;
-            while (n2 < mesh().dimension(1)) {
-               for (int i = 0; i < nMonomer; ++i) {
-                  fields[i].cDField()[s] = temp[i].cDField()[r];
-               }   
-               r = r + (mesh().dimension(0));
-               ++s;
-               ++n2;    
-            }   
-            ++q;
-            ++n1;
-         }   
+      DArray<cufftReal*> temp_out;
+      temp_out.allocate(nMonomer);
+      for(int i = 0; i < nMonomer; ++i) {
+         temp_out[i] = new cufftReal[mesh().size()];
       } 
+      
+      IntVec<D> offsets;
+      offsets[D - 1] = 1;
+      for(int i = D - 1 ; i > 0; --i ) {
+         offsets[i - 1] = offsets[i] * mesh().dimension(i);
+      }
+      IntVec<D> position;
+      for(int i = 0; i < D; ++i) {
+         position[i] = 0;
+      }
 
-      else if (D==1) {
-
-         while (n1 < mesh().dimension(0)) {
-            for (int i = 0; i < nMonomer; ++i) {
-               fields[i].cDField()[s] = temp[i].cDField()[r];
-            }   
-            ++r;
-            ++s;
-            ++n1;    
-         }   
-      } 
-
-      else{
-         std::cout << "Invalid Dimensions";
+      int rank = 0;
+      int positionId;
+      for(int i = 0; i < mesh().size(); i++) {
+         rank = 0;
+         for(int dim = 0; dim < D; ++dim) {
+            rank += offsets[dim] * position[dim];
+         }
+         for(int k = 0; k < nMonomer; ++k) {
+            in >> std::setprecision(15)>> temp_out[k][rank];
+         }
+         //add position
+         positionId = 0;
+         while( positionId < D) {
+            position[positionId]++;
+            if ( position[positionId] == mesh().dimension(positionId) ) {
+               position[positionId] = 0;
+               positionId++;
+               continue;
+            }
+            break;
+         } 
+      }
+      
+      for(int i = 0; i < nMonomer; i++) {
+         cudaMemcpy(fields[i].cDField(), temp_out[i],
+            mesh().size() * sizeof(cufftReal), cudaMemcpyHostToDevice);
+         delete[] temp_out[i];
+         temp_out[i] = nullptr;
       }
 
    }
@@ -300,79 +300,51 @@ namespace Pspg
       out << "ngrid" <<  std::endl
           << "           " << mesh().dimensions() << std::endl;
 
-      DArray<RDField<D> > temp;
-      temp.allocate(nMonomer);
+      DArray<cufftReal*> temp_out;
+      temp_out.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
-         temp[i].allocate(mesh().dimensions());
-      } 
+         temp_out[i] = new cufftReal[mesh().size()];
+         cudaMemcpy(temp_out[i], fields[i].cDField(),
+                    mesh().size() * sizeof(cufftReal), cudaMemcpyDeviceToHost);
+      }    
 
-      int p = 0; 
-      int q = 0; 
-      int r = 0; 
-      int s = 0; 
-      int n1 =0;
-      int n2 =0;
-      int n3 =0;
-
-      if (D==3) {
-         while (n3 < mesh().dimension(2)) {
-            q = p; 
-            n2 = 0; 
-            while (n2 < mesh().dimension(1)) {
-               r =q;
-               n1 = 0; 
-               while (n1 < mesh().dimension(0)) {
-                  for (int i = 0; i < nMonomer; ++i) {
-                     temp[i].cDField()[s] = fields[i].cDField()[r];
-                  }    
-                  r = r + (mesh().dimension(1) * mesh().dimension(2));
-                  ++s; 
-                  ++n1;     
-               }    
-               q = q + mesh().dimension(2);
-               ++n2;
-            }    
-            ++n3;
-            ++p;     
-         }    
+      IntVec<D> offsets;
+      offsets[D - 1] = 1;
+      for(int i = D - 1 ; i > 0; --i ) {
+         offsets[i - 1] = offsets[i] * mesh().dimension(i);
       }
-      else if (D==2) {
-         while (n2 < mesh().dimension(1)) {
-            r =q;
-            n1 = 0;
-            while (n1 < mesh().dimension(0)) {
-               for (int i = 0; i < nMonomer; ++i) {
-                  temp[i].cDField()[s] = fields[i].cDField()[r];
-               }
-               r = r + (mesh().dimension(1));
-               ++s;
-               ++n1;
+      IntVec<D> position;
+      for(int i = 0; i < D; ++i) {
+         position[i] = 0;
+      }
+
+      int rank = 0;
+      int positionId;
+      for(int i = 0; i < mesh().size(); i++) {
+         rank = 0;
+         for(int dim = 0; dim < D; ++dim) {
+            rank += offsets[dim] * position[dim];
+         }
+         for(int k = 0; k < nMonomer; ++k) {
+            out << "  " << Dbl(temp_out[k][rank], 18, 15);
+         }
+         out<<'\n';
+         //add position
+         positionId = 0;
+         while( positionId < D) {
+            position[positionId]++;
+            if ( position[positionId] == mesh().dimension(positionId) ) {
+               position[positionId] = 0;
+               positionId++;
+               continue;
             }
-            ++q;
-            ++n2;
-         }
+            break;
+         } 
       }
-      else if (D==1) {
-         while (n1 < mesh().dimension(0)) {
-            for (int i = 0; i < nMonomer; ++i) {
-               temp[i].cDField()[s] = fields[i].cDField()[r];
-            }
-            ++r;
-            ++s;
-            ++n1;
-         }
-      } else {
-         std::cout << "Invalid Dimensions";
-      }
-
-      // Write fields
-      MeshIterator<D> itr(mesh().dimensions());
-      for (itr.begin(); !itr.atEnd(); ++itr) {
-         // out << Int(itr.rank(), 5);
-         for (int j = 0; j < nMonomer; ++j) {
-            out << "  " << Dbl(temp[j].cDField()[itr.rank()], 18, 15);
-         }
-         out << std::endl;
+      
+      for(int i = 0; i < nMonomer; ++i) {
+         delete[] temp_out[i];
+         temp_out[i] = nullptr;
       }
 
    }
@@ -394,6 +366,9 @@ namespace Pspg
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
 
+      DArray<cufftComplex*> temp_out;
+      temp_out.allocate(nMonomer);      
+
       // Read header
       readFieldHeader(in);
       std::string label;
@@ -403,17 +378,36 @@ namespace Pspg
       in >> nGrid;
       UTIL_CHECK(nGrid == mesh().dimensions());
 
+      int kSize = 1;
+      for (int i = 0; i < D; i++) {
+         if (i == D - 1) {
+            kSize *= (mesh().dimension(i) / 2 + 1);
+         }
+         else {
+            kSize *= mesh().dimension(i);
+         }        
+      }
+
+      for(int i = 0; i < nMonomer; ++i) {
+         temp_out[i] = new cufftComplex[kSize];
+      }
+
       // Read Fields;
       int idum;
       MeshIterator<D> itr(mesh().dimensions());
-      for (itr.begin(); !itr.atEnd(); ++itr) {
+      for (int i = 0; i < kSize; ++i) {
          in >> idum;
-         for (int i = 0; i < nMonomer; ++i) {
-            //for (int j = 0; j < 2; ++j) {
-               in >> fields[i].cDField()[itr.rank()].x; // ---------- See how to take input of cufftComplex
-               in >> fields[i].cDField()[itr.rank()].y;
-            //}
+         for (int j = 0; j < nMonomer; ++j) {
+            in >> temp_out [j][i].x;
+            in >> temp_out [j][i].y;
          }
+      }
+
+      for(int i = 0; i < nMonomer; ++i) {
+         cudaMemcpy(fields[i].cDField(), temp_out[i],
+            kSize * sizeof(cufftComplex), cudaMemcpyHostToDevice);
+         delete[] temp_out[i];
+         temp_out[i] = nullptr;
       }
    }
 
@@ -439,15 +433,37 @@ namespace Pspg
       out << "ngrid" << std::endl 
           << "               " << mesh().dimensions() << std::endl;
 
+     DArray<cufftComplex*> temp_out;
+     int kSize = 1;
+     for (int i = 0; i < D; i++) {
+        if (i == D - 1) {
+           kSize *= (mesh().dimension(i) / 2 + 1);
+        }
+        else {
+           kSize *= mesh().dimension(i);
+        }
+     }
+      temp_out.allocate(nMonomer);
+      for(int i = 0; i < nMonomer; ++i) {
+         temp_out[i] = new cufftComplex[kSize];
+         cudaMemcpy(temp_out[i], fields[i].cDField(), 
+            kSize * sizeof(cufftComplex), cudaMemcpyDeviceToHost);
+      }
+
       // Write fields
       MeshIterator<D> itr(mesh().dimensions());
-      for (itr.begin(); !itr.atEnd(); ++itr) {
-         out << Int(itr.rank(), 5);
+      for (int i = 0; i < kSize; i++) {
+         out << Int(i, 5);
          for (int j = 0; j < nMonomer; ++j) {
-               out << "  " << Dbl(fields[j].cDField()[itr.rank()].x, 18, 11)
-                   << Dbl(fields[j].cDField()[itr.rank()].y, 18, 11); // -------- Accessing both real and imaginary parts of cufftComplex
+               out << "  " << Dbl(temp_out[j][i].x, 18, 11)
+              << Dbl(temp_out[j][i].y, 18, 11);
          }
          out << std::endl;
+      }
+
+      for(int i = 0; i < nMonomer; ++i) {
+         delete[] temp_out[i];
+         temp_out[i] = nullptr;
       }
    }
 
@@ -508,8 +524,25 @@ namespace Pspg
    void FieldIo<D>::convertBasisToKGrid(RDField<D> const& components, 
                                         RDFieldDft<D>& dft)
    {
-      // Create Mesh<D> with dimensions of DFT Fourier grid.
-      Mesh<D> dftMesh(dft.meshDimensions());
+     cufftReal* components_in;
+     components_in = new cufftReal[basis().nStar()];
+     cudaMemcpy(components_in, components.cDField(),
+            basis().nStar() * sizeof(cufftReal), cudaMemcpyDeviceToHost);
+
+     int kSize = 1;
+     for (int i = 0; i < D; i++) {
+        if (i == D - 1) {
+           kSize *= (mesh().dimension(i) / 2 + 1); 
+        }   
+        else {
+           kSize *= mesh().dimension(i);
+        }   
+     }   
+     cufftComplex* dft_out;
+     dft_out = new cufftComplex[kSize];
+
+   // Create Mesh<D> with dimensions of DFT Fourier grid.
+      Mesh<D> dftMesh(dft.dftDimensions());
 
       typename Basis<D>::Star const* starPtr; // pointer to current star
       typename Basis<D>::Wave const* wavePtr; // pointer to current wave
@@ -522,8 +555,8 @@ namespace Pspg
 
       // Initialize all dft coponents to zero
       for (rank = 0; rank < dftMesh.size(); ++rank) {
-         dft.cDField()[rank].x = 0.0;
-         dft.cDField()[rank].y = 0.0;
+         dft_out[rank].x = 0.0;
+         dft_out[rank].y = 0.0;
       }
 
       // Loop over stars, skipping cancelled stars
@@ -539,7 +572,7 @@ namespace Pspg
          if (starPtr->invertFlag == 0) {
 
             // Make complex coefficient for star basis function
-            component = std::complex<double>(components.cDField()[is], 0.0);
+            component = std::complex<double>(components_in[is], 0.0);
 
             // Loop over waves in closed star
             for (iw = starPtr->beginId; iw < starPtr->endId; ++iw) {
@@ -548,8 +581,8 @@ namespace Pspg
                   coeff = component*(wavePtr->coeff);
                   indices = wavePtr->indicesDft;    
                   rank = dftMesh.rank(indices);
-                  dft.cDField()[rank].x = coeff.real();
-                  dft.cDField()[rank].y = coeff.imag();
+                  dft_out[rank].x = coeff.real();
+                  dft_out[rank].y = coeff.imag();
                }
             }
             ++is;
@@ -558,8 +591,8 @@ namespace Pspg
          if (starPtr->invertFlag == 1) {
 
             // Make complex component for first star
-            component = std::complex<double>(components.cDField()[is], 
-                                             -components.cDField()[is+1]);
+            component = std::complex<double>(components_in[is], 
+                                             -components_in[is+1]);
             component /= sqrt(2.0);
 
             // Loop over waves in first star
@@ -570,8 +603,8 @@ namespace Pspg
                   coeff = component*(wavePtr->coeff);
                   indices = wavePtr->indicesDft;    
                   rank = dftMesh.rank(indices);
-                  dft.cDField()[rank].x = coeff.real();
-                  dft.cDField()[rank].y = coeff.imag();
+                  dft_out[rank].x = coeff.real();
+                  dft_out[rank].y = coeff.imag();
                }
             }
 
@@ -585,8 +618,8 @@ namespace Pspg
                   coeff = component*(wavePtr->coeff);
                   indices = wavePtr->indicesDft;
                   rank = dftMesh.rank(indices);
-                  dft.cDField()[rank].x = coeff.real();
-                  dft.cDField()[rank].y = coeff.imag();
+                  dft_out[rank].x = coeff.real();
+                  dft_out[rank].y = coeff.imag();
                }
             }
 
@@ -598,17 +631,35 @@ namespace Pspg
             UTIL_THROW("Invalid invertFlag value");
   
          }
-
       }
-
+    
+     cudaMemcpy(dft.cDField(), dft_out,
+              kSize * sizeof(cufftComplex), cudaMemcpyHostToDevice);
    }
 
    template <int D>
    void FieldIo<D>::convertKGridToBasis(RDFieldDft<D> const& dft, 
                                         RDField<D>& components)
    {
+     cufftReal* components_out;
+     components_out = new cufftReal[basis().nStar()];
+
+     int kSize = 1;
+     for (int i = 0; i < D; i++) {
+        if (i == D - 1) {
+           kSize *= (mesh().dimension(i) / 2 + 1); 
+        }   
+        else {
+           kSize *= mesh().dimension(i);
+        }   
+     }   
+     cufftComplex* dft_in;
+     dft_in = new cufftComplex[kSize];
+     cudaMemcpy(dft_in, dft.cDField(),
+            kSize * sizeof(cufftComplex), cudaMemcpyDeviceToHost);
+
       // Create Mesh<D> with dimensions of DFT Fourier grid.
-      Mesh<D> dftMesh(dft.meshDimensions());
+      Mesh<D> dftMesh(dft.dftDimensions());
 
       typename Basis<D>::Star const* starPtr;  // pointer to current star
       typename Basis<D>::Wave const* wavePtr;  // pointer to current wave
@@ -621,7 +672,7 @@ namespace Pspg
 
       // Initialize all components to zero
       for (is = 0; is < basis().nStar(); ++is) {
-         components.cDField()[is] = 0.0;
+         components_out[is] = 0.0;
       }
 
       // Loop over stars
@@ -655,10 +706,10 @@ namespace Pspg
             rank = dftMesh.rank(indices);
 
             // Compute component value
-            component = std::complex<double>(dft.cDField()[rank].x, dft.cDField()[rank].y);
+            component = std::complex<double>(dft_in[rank].x, dft_in[rank].y);
             component /= wavePtr->coeff;
-            UTIL_CHECK(abs(component.imag()) < 1.0E-8);
-            components.cDField()[is] = component.real();
+            UTIL_CHECK(abs(component.imag()) < 1.0E-7); // Did not satisfy 1.0E-8 accuracy due to float point accuracy
+            components_out[is] = component.real();
             ++is;
 
          } else
@@ -677,12 +728,12 @@ namespace Pspg
             rank = dftMesh.rank(indices);
 
             // Compute component value
-            component = std::complex<double>(dft.cDField()[rank].x, dft.cDField()[rank].y);
+            component = std::complex<double>(dft_in[rank].x, dft_in[rank].y);
             UTIL_CHECK(abs(wavePtr->coeff) > 1.0E-8);
             component /= wavePtr->coeff;
             component *= sqrt(2.0);
-            components.cDField()[is] = component.real();
-            components.cDField()[is+1] = -component.imag();
+            components_out [is] = component.real();
+            components_out [is+1] = -component.imag();
 
             is += 2;
          } else {
@@ -690,6 +741,9 @@ namespace Pspg
          }
 
       } //  loop over star index is
+
+     cudaMemcpy(components.cDField(), components_out,
+            basis().nStar() * sizeof(cufftReal), cudaMemcpyHostToDevice);
    }
 
    template <int D>
@@ -698,9 +752,11 @@ namespace Pspg
    {
       UTIL_ASSERT(in.capacity() == out.capacity());
       int n = in.capacity();
+
       for (int i = 0; i < n; ++i) {
          convertBasisToKGrid(in[i], out[i]);
       }
+
    }
 
    #if 0
@@ -790,11 +846,14 @@ namespace Pspg
    void FieldIo<D>::convertKGridToBasis(DArray< RDFieldDft<D> >& in,
                                         DArray< RDField <D> > & out)
    {
+
       UTIL_ASSERT(in.capacity() == out.capacity());
       int n = in.capacity();
+
       for (int i = 0; i < n; ++i) {
          convertKGridToBasis(in[i], out[i]);
-      }
+      }   
+
    }
 
    template <int D>
@@ -803,12 +862,21 @@ namespace Pspg
                                    DArray< RDField<D> >& out)
    {
       UTIL_ASSERT(in.capacity() == out.capacity());
-      checkWorkDft();
+      //checkWorkDft();
 
-      int n = in.capacity();
-      for (int i = 0; i < n; ++i) {
-         convertBasisToKGrid(in[i], workDft_);
-         fft().inverseTransform(workDft_, out[i]);
+      int nMonomer = in.capacity();
+
+      DArray< RDFieldDft<D> > workDft;
+      workDft.allocate(nMonomer);
+      for(int i = 0; i < nMonomer; ++i) {
+         workDft[i].allocate(mesh().dimensions());
+      } 
+
+      convertBasisToKGrid(in, workDft);
+
+      for (int i = 0; i < nMonomer; ++i) {
+         fft().inverseTransform(workDft[i], out[i]);
+         workDft[i].deallocate();
       }
    }
 
@@ -818,12 +886,24 @@ namespace Pspg
                                    DArray< RDField<D> > & out)
    {
       UTIL_ASSERT(in.capacity() == out.capacity());
-      checkWorkDft();
+      //checkWorkDft();
 
-      int n = in.capacity();
-      for (int i = 0; i < n; ++i) {
-         fft().forwardTransform(in[i], workDft_);
-         convertKGridToBasis(workDft_, out[i]);
+      int nMonomer = in.capacity();
+
+      DArray< RDFieldDft<D> > workDft;
+      workDft.allocate(nMonomer);
+      for(int i = 0; i < nMonomer; ++i) {
+         workDft[i].allocate(mesh().dimensions());
+      }   
+
+      for (int i = 0; i < nMonomer; ++i) {
+         fft().forwardTransform(in[i], workDft [i]);
+      }
+
+      convertKGridToBasis(workDft, out);
+
+      for (int i = 0; i < nMonomer; ++i) {
+         workDft[i].deallocate();
       }
    }
 

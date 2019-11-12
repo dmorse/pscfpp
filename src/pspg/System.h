@@ -8,30 +8,33 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/crystal/Basis.h>            // member
-#include <pscf/inter/ChiInteraction.h>
-#include <pscf/mesh/Mesh.h>                 // member
-#include <pscf/crystal/UnitCell.h>      // member
-#include <pscf/homogeneous/Mixture.h>       // member
-
+#include <pspg/iterator/AmIterator.h>
+//#include <pspg/iterator/FtsIterator.h>
+#include <pspg/solvers/Mixture.h>          // member
 #include <pspg/wavelist/WaveList.h>
-#include <pspg/iterator/FtsIterator.h>
-#include <pspg/solvers/Mixture.h>       // member
-#include <pspg/field/RDField.h>         // typedef
+#include <pspg/field/RDField.h>            // typedef
+#include <pspg/field/RDFieldDft.h>         // typedef
 #include <pspg/field/FieldIo.h>            // member
 
-#include <util/containers/DArray.h>         // member template
-#include <util/param/ParamComposite.h>      // base class
-#include <util/containers/Array.h>          // function parameter
-#include <util/misc/FileMaster.h>           // member
+#include <pscf/crystal/Basis.h>            // member
+#include <pscf/mesh/Mesh.h>                // member
+#include <pscf/crystal/UnitCell.h>         // member
+#include <pscf/homogeneous/Mixture.h>      // member
+#include <pscf/inter/ChiInteraction.h>     // member
+
+#include <util/param/ParamComposite.h>     // base class
+#include <util/containers/DArray.h>        // member template
+#include <util/containers/Array.h>         // function parameter
+#include <util/misc/FileMaster.h>          // member
 //#include <util/random/Random.h>
-#include <curand.h>
+
+//#include <curand.h>
 
 
 namespace Pscf {
 namespace Pspg
 {
-   template <int D> class FtsIterator;
+   template <int D> class AmIterator;
    class Sweep;
    class SweepFactory;
 
@@ -255,7 +258,7 @@ namespace Pspg
       * Get the Iterator by reference.
       */
       //temporarily changed to allow testing on member functions
-      FtsIterator<D>& iterator();
+      AmIterator<D>& iterator();
 
       /**
       * Get basis object by reference.
@@ -354,13 +357,17 @@ namespace Pspg
       /**
       * Pointer to an iterator.
       */
-      FtsIterator<D>* iteratorPtr_;
+      AmIterator<D>* iteratorPtr_;
 
       /**
       * Pointer to a Basis object
       */
       Basis<D>* basisPtr_;
       
+     
+      /**
+      * Container for wavevector data.   
+      */ 
       WaveList<D>* wavelistPtr_;
 
       /** 
@@ -561,7 +568,7 @@ namespace Pspg
    * Get the Iterator.
    */
    template <int D>
-   inline FtsIterator<D>& System<D>::iterator()
+   inline AmIterator<D>& System<D>::iterator()
    {
       UTIL_ASSERT(iteratorPtr_);
       return *iteratorPtr_;
@@ -675,7 +682,14 @@ namespace Pspg
    inline double System<D>::pressure() const
    {  return pressure_; }
 
+   #ifndef PSPG_SYSTEM_TPP
+   // Suppress implicit instantiation
+   extern template class System<1>;
+   extern template class System<2>;
+   extern template class System<3>;
+   #endif
+
 } // namespace Pspg
 } // namespace Pscf
-#include "System.tpp"
+//#include "System.tpp"
 #endif

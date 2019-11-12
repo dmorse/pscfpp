@@ -28,32 +28,6 @@ namespace Pscf
       }
       cell.setLattice();
       return in;
-
-      #if 0
-      std::string label;
-      int nParametersIn;
-  
-      in >> label;
-      UTIL_CHECK(label == "crystal_system");
-      in >> cell.lattice_;
-      cell.setNParameter();
-
-      in >> label;
-      UTIL_CHECK(label == "N_cell_param");
-      in >> nParametersIn;
-      UTIL_CHECK(nParametersIn == cell.nParameter_);
-
-      in >> label;
-      UTIL_CHECK(label == "cell_param");
-
-
-      for (int i = 0; i < cell.nParameter_; ++i) {
-         in >> cell.parameters_[i];
-      }   
-      cell.setLattice();
-      return in; 
-      #endif
-
    }
 
    template <int D>
@@ -65,19 +39,6 @@ namespace Pscf
          out << Dbl(cell.parameters_[i], 18, 10);
       }
       return out;
-
-      #if 0
-      out << "crystal_system" <<  std::endl 
-          << "              " << cell.lattice_ << std::endl;
-      out << "N_cell_param" <<  std::endl 
-          << "                   "<< cell.nParameter_<< std::endl;
-      out << "cell_param    " <<  std::endl;
-      for (int i = 0; i < cell.nParameter_; ++i) {
-         out <<"    "<< Dbl(cell.parameters_[i], 18, 10);
-      }
-      out<<std::endl;
-      return out;
-      #endif
    }
 
    /*

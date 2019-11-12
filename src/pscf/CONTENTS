@@ -3,10 +3,10 @@ used in several different implementations of self-consistent field theory.
 
 Subdirectories:
 
-   chem/        - classes that describe species and chemical structure
-   inter/       - classes that model interaction (excess) free energy models
-   solvers/     - class templates for MDE solvers for blocks, polymers, etc.
-   homogeneous/ - classes that model a spatially homogeneous mixture
+   chem/        - molecular structure descriptors
+   inter/       - models of interaction (excess) free energy 
+   solvers/     - templates for modified diffusion eqn (MDE) solvers 
+   homogeneous/ - spatially homogeneous mixtures
    math/        - mathematical utilities
 
 All classes in directory homogeneous are defined in a nested namespace 
