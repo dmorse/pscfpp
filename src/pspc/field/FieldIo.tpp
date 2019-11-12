@@ -82,12 +82,13 @@ namespace Pspc
       in >> nStarIn;
       UTIL_CHECK(nStarIn > 0);
 
-      // Initialize all field components to zero
+      // Initialize all field array elements to zero
       int i, j;
-      int nStar = basis().nStar();
+      int nStarCapacity;
       for (j = 0; j < nMonomer; ++j) {
-         UTIL_CHECK(fields[j].capacity() == nStar);
-         for (i = 0; i < nStar; ++i) {
+         nStarCapacity = fields[j].capacity();
+         UTIL_CHECK(nStarCapacity >= nStarIn);
+         for (i = 0; i < nStarCapacity; ++i) {
             fields[j][i] = 0.0;
          }
       }
@@ -98,6 +99,7 @@ namespace Pspc
       // Loop over stars to read field components
       IntVec<D> waveIn, waveBz, waveDft;
       int waveId, starId, nWaveVectors;
+      bool waveExists;
       for (i = 0; i < nStarIn; ++i) {
 
          // Read components for different monomers
@@ -111,7 +113,7 @@ namespace Pspc
 
          // Check if waveIn is in first Brillouin zone (FBZ) for the mesh.
          waveBz = shiftToMinimum(waveIn, mesh().dimensions(), unitCell());
-         bool waveExists = (waveIn == waveBz);
+         waveExists = (waveIn == waveBz);
 
          // If wave is in FBZ, find in basis and set field components
          if (waveExists) {
@@ -131,7 +133,6 @@ namespace Pspc
 
    }
    
- 
    template <int D>
    void FieldIo<D>::readFieldsBasis(std::string filename, 
                               DArray<DArray<double> >& fields)

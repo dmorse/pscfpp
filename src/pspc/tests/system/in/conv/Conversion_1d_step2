@@ -6,7 +6,7 @@ RGRID_TO_BASIS
 out/omega/conv/omega_rgrid_lam
 out/omega/conv/omega_conv_lam
 
-READ_WFIELDS
+READ_W_BASIS
 out/omega/conv/omega_conv_lam
 
 FINISH

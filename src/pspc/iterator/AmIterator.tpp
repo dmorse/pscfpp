@@ -22,6 +22,9 @@ namespace Pspc
 
    using namespace Util;
 
+   /*
+   * Constructor
+   */
    template <int D>
    AmIterator<D>::AmIterator(System<D>* system)
     : Iterator<D>(system),
@@ -29,12 +32,18 @@ namespace Pspc
       lambda_(0),
       nHist_(0),
       maxHist_(0)
-   { setClassName("AmIterator"); }
+   {  setClassName("AmIterator"); }
 
+   /*
+   * Destructor
+   */
    template <int D>
    AmIterator<D>::~AmIterator()
    {}
 
+   /*
+   * Read parameter file block.
+   */
    template <int D>
    void AmIterator<D>::readParameters(std::istream& in)
    {
@@ -45,6 +54,9 @@ namespace Pspc
       readOptional(in, "domain", cell_);
   }
 
+   /*
+   * Allocate memory required by iterator.
+   */
    template <int D>
    void AmIterator<D>::allocate()
    {
@@ -67,9 +79,11 @@ namespace Pspc
          dArrays_[i].allocate(nStar - 1);
          tempDev[i].allocate(nStar - 1);
       }
-
    }
 
+   /*
+   * Solve iteratively.
+   */
    template <int D>
    int AmIterator<D>::solve()
    {

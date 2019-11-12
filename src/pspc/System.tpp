@@ -65,7 +65,8 @@ namespace Pspc
       pressure_(0.0),
       hasMixture_(0),
       hasUnitCell_(0),
-      hasFields_(0)
+      isAllocated_(false),
+      hasWFields_(false)
       //hasSweep_(0)
    {  
       setClassName("System"); 
@@ -200,8 +201,8 @@ namespace Pspc
       mixture().setupUnitCell(unitCell());
       basis().makeBasis(mesh(), unitCell(), groupName_);
 
-      allocateFields();
-      hasFields_ = true;
+      allocate();
+      isAllocated_ = true;
 
       // Initialize iterator
       readParamComposite(in, iterator());
@@ -245,7 +246,7 @@ namespace Pspc
    * Read parameters and initialize.
    */
    template <int D>
-   void System<D>::allocateFields()
+   void System<D>::allocate()
    {
       // Preconditions
       UTIL_CHECK(hasMixture_);
@@ -270,7 +271,7 @@ namespace Pspc
          cFieldGrid(i).allocate(mesh().dimensions());
          cFieldDft(i).allocate(mesh().dimensions());
       }
-      hasFields_ = true;
+      isAllocated_ = true;
    }
 
    
@@ -280,7 +281,7 @@ namespace Pspc
    template <int D>
    void System<D>::readCommands(std::istream &in) 
    {
-      UTIL_CHECK(hasFields_);
+      UTIL_CHECK(isAllocated_);
 
       std::string command;
       std::string filename;
@@ -295,61 +296,70 @@ namespace Pspc
             Log::file() << std::endl;
             readNext = false;
          } else
-         if (command == "READ_WFIELDS") {
+         if (command == "READ_W_BASIS") {
             in >> filename;
             Log::file() << " " << Str(filename, 20) <<std::endl;
             fieldIo().readFieldsBasis(filename, wFields());
+            hasWFields_ = true;
+         } else
+         if (command == "READ_W_RGRID") {
+            in >> filename;
+            Log::file() << " " << Str(filename, 20) <<std::endl;
+            fieldIo().readFieldsRGrid(filename, wFieldGrids());
+            hasWFields_ = false;
+            fieldIo().convertRGridToBasis(wFieldGrids(), wFields());
+            hasWFields_ = true;
          } else
          if (command == "WRITE_W_BASIS") {
             in >> filename;
             Log::file() << "  " << Str(filename, 20) << std::endl;
             fieldIo().writeFieldsBasis(filename, wFields());
-
          } else 
-         if (command == "WRITE_C_BASIS") {
-            in >> filename;
-            Log::file() << "  " << Str(filename, 20) << std::endl;
-            fieldIo().writeFieldsBasis(filename, cFields());
-         } else
          if (command == "ITERATE") {
+
             Log::file() << std::endl;
             Log::file() << std::endl;
-
-            std::string inFileName;
-            in >> inFileName;
-            Log::file() << " " << Str(inFileName, 20) <<std::endl;
-
-            fieldIo().readFieldsBasis(inFileName, wFields());
+            if (!hasWFields_) {
+               in >> filename;
+               Log::file() << " " << Str(filename, 20) <<std::endl;
+               fieldIo().readFieldsBasis(filename, wFields());
+               hasWFields_ = true;
+            }
 
             int fail = iterator().solve();
-            if (!fail) {
+
+            if (fail) {
+               Log::file() << "Iterator failed to converge\n";
+            } else {
                computeFreeEnergy();
                outputThermo(Log::file());
             }
+
          } else
          if (command == "SOLVE_MDE") {
             Log::file() << std::endl;
             Log::file() << std::endl;
             
-            std::string inFileName;
-            std::string outFileName;
+            if (!hasWFields_) {
+               in >> filename;
+               Log::file() << " " << Str(filename, 20) <<std::endl;
+               fieldIo().readFieldsBasis(filename, wFields());
+            }
 
-            in >> inFileName;
-            Log::file() << " " << Str(inFileName, 20) <<std::endl;
-            in >> outFileName;
-            Log::file() << " " << Str(outFileName, 20) << std::endl;       
-           
-            // Read field in symmetrized basis form, convert to r-grid
-            fieldIo().readFieldsBasis(inFileName, wFields());
+            // Convert representation of w fields in basis to r-grid
             fieldIo().convertBasisToRGrid(wFields(), wFieldGrids());
 
             // Solve the modified diffusion equation (without iteration)
             mixture().compute(wFieldGrids(), cFieldGrids());
 
-            // Convert r-grid to basis, write components to file
-            fieldIo().convertRGridToBasis(cFieldGrids(), wFields());
-            fieldIo().writeFieldsBasis(outFileName, cFields());
+            // Convert representation of c fields on r-grid to basis
+            fieldIo().convertRGridToBasis(cFieldGrids(), cFields());
 
+         } else
+         if (command == "WRITE_C_BASIS") {
+            in >> filename;
+            Log::file() << "  " << Str(filename, 20) << std::endl;
+            fieldIo().writeFieldsBasis(filename, cFields());
          } else
          if (command == "BASIS_TO_RGRID") {
             std::string inFileName;

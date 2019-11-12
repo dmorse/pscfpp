@@ -31,7 +31,6 @@
 # and 0 to denote "disable".
 #
 #   -b (0|1)   debugging                   (defines/undefines UTIL_DEBUG)
-#   -g (0|1)   gpu acceleration            (defines/undefines PSPG_GPU)
 #
 # These command line options do not enable or disable features: 
 #
@@ -56,11 +55,6 @@ while getopts "b:g:q" opt; do
   case $opt in
     b)
       MACRO=UTIL_DEBUG
-      VALUE=1
-      FILE=config.mk
-      ;;
-    g)
-      MACRO=PSPC_GPU
       VALUE=1
       FILE=config.mk
       ;;

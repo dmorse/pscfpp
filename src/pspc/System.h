@@ -300,6 +300,8 @@ namespace Pspc
 
    private:
 
+      // Private member variables
+
       /**
       * Mixture object (solves MDE for all species).
       */
@@ -443,19 +445,33 @@ namespace Pspc
       bool hasMesh_;
 
       /**
-      * Have initial chemical potential fields been read from file?
+      * Has memory been allocated for fields?
       */
-      bool hasFields_;
+      bool isAllocated_;
 
+      /**
+      * Have W fields been read in from file ?
+      */
+      bool hasWFields_;
+
+      /**
+      * Have C fields been computed by solving the MDE ?
+      */
+      // bool hasCFields_;
+
+      #if 0
       /**
       * Does this system have a Sweep object?
       */
       bool hasSweep_;
+      #endif
+
+      // Private member functions
 
       /**
       * Allocate memory for fields (private)
       */
-      void allocateFields();
+      void allocate();
 
       /**
       * Initialize Homogeneous::Mixture object.
