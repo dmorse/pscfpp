@@ -88,6 +88,7 @@ namespace Pspc
    int AmIterator<D>::solve()
    {
       // Preconditions:
+      UTIL_CHECK(system().hasWFields());
       // Assumes basis.makeBasis() has been called
       // Assumes AmIterator.allocate() has been called
       // TODO: Check these conditions on entry
@@ -101,34 +102,36 @@ namespace Pspc
 
       FieldIo<D>& fieldIo = system().fieldIo();
 
+      #if 0
       // Convert from Basis to RGrid
       convertTimer.start();
       fieldIo.convertBasisToRGrid(system().wFields(),
                                   system().wFieldGrids());
       now = Timer::now();
       convertTimer.stop(now);
+      #endif
 
-      // Solve MDE
-      solverTimer.start(now);
+      // Solve MDE for initial state
+      solverTimer.start();
       system().mixture().compute(system().wFieldGrids(),
                                     system().cFieldGrids());
       now = Timer::now();
       solverTimer.stop(now);
 
-      // Compute stress if needed
+      // Convert c fields from RGrid to Basis
+      convertTimer.start(now);
+      fieldIo.convertRGridToBasis(system().cFieldGrids(),
+                                  system().cFields());
+      now = Timer::now();
+      convertTimer.stop(now);
+
+      // Compute initial stress if needed
       if (cell_){
          stressTimer.start(now);
          system().mixture().computeStress();
          now = Timer::now();
          stressTimer.stop(now);
       }
-
-      // Convert from RGrid to Basis
-      convertTimer.start(now);
-      fieldIo.convertRGridToBasis(system().cFieldGrids(),
-                                  system().cFields());
-      now = Timer::now();
-      convertTimer.stop(now);
 
       // Iterative loop
       for (int itr = 1; itr <= maxItr_; ++itr) {
@@ -155,11 +158,6 @@ namespace Pspc
             updateTimer.stop();
             Log::file() << "----------CONVERGED----------"<< std::endl;
 
-            // If unit cell is rigid, compute final stress
-            if (!cell_){
-               system().mixture().computeStress();
-            }
-
             // Output timing results
             double updateTime = updateTimer.time();
             double convertTime = convertTimer.time();
@@ -184,8 +182,9 @@ namespace Pspc
             Log::file() << "total time   = "  << totalTime   << " s  ";
             Log::file() << "\n\n";
 
-            // If unit cell is rigid, output final stress
+            // If the unit cell is rigid, compute and output final stress 
             if (!cell_){
+               system().mixture().computeStress();
                Log::file() << "Final stress:" << "\n";
                for (int m=0; m<(systemPtr_->unitCell()).nParameter(); ++m){
                   Log::file() << "Stress  "<< m << "   = "
@@ -195,6 +194,7 @@ namespace Pspc
                Log::file() << "\n";
             }
 
+            // Successful completion (i.e., converged within tolerance)
             return 0;
 
          } else {

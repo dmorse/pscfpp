@@ -294,7 +294,30 @@ namespace Pspc
       /** 
       * Get group name.
       */  
-      std::string groupName();
+      std::string groupName() const;
+
+      /** 
+      * Have monomer chemical potential fields (w fields) been set?
+      *
+      * A true value is returned if and only if consistent values have been
+      * set for both components in a symmetry-adapated basis (wFields) and 
+      * for values on a regular real space grid (wFieldGrids). Commands that
+      * read w fields from file in either of these formats must immediately 
+      * convert to the other.
+      */
+      bool hasWFields() const;
+
+      /** 
+      * Have monomer concentration fields (c fields) been computed?
+      *
+      * A true value is returned if and only if monomer concentration fields
+      * have been computed by solving the modified diffusion equation for the
+      * current w fields, and consistent values have been set for both values
+      * on a grid (wFieldGrids) and for coefficients in a basis (cFields).
+      * To satisfy this requirement, solution of the MDE on a grid should
+      * always be immediately followed by conversion of c fields to a basis.
+      */  
+      bool hasCFields() const;
 
       //@}
 
@@ -450,14 +473,18 @@ namespace Pspc
       bool isAllocated_;
 
       /**
-      * Have W fields been read in from file ?
+      * Have W fields been set?
+      *
+      * True iff both wFields_ and wFieldGrids_ are set and consistent.
       */
       bool hasWFields_;
 
       /**
       * Have C fields been computed by solving the MDE ?
+      *
+      * True iff both cFields_ and cFieldGrids_ are set and consistent.
       */
-      // bool hasCFields_;
+      bool hasCFields_;
 
       #if 0
       /**
@@ -518,7 +545,7 @@ namespace Pspc
 
    // Get the groupName string.
    template <int D>
-   inline std::string System<D>::groupName()
+   inline std::string System<D>::groupName() const
    { return groupName_; }
 
    // Get the Basis<D> object.
@@ -619,6 +646,16 @@ namespace Pspc
    template <int D>
    inline typename System<D>::CField& System<D>::cFieldGrid(int id)
    {  return cFieldGrids_[id]; }
+
+   // Have the w fields been set?
+   template <int D>
+   inline bool System<D>::hasWFields() const
+   {  return hasWFields_; }
+
+   // Have the c fields been computed for the current w fields?
+   template <int D>
+   inline bool System<D>::hasCFields() const
+   {  return hasCFields_; }
 
    // Get the precomputed Helmoltz free energy per monomer / kT.
    template <int D>
