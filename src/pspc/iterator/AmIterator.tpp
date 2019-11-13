@@ -22,6 +22,9 @@ namespace Pspc
 
    using namespace Util;
 
+   /*
+   * Constructor
+   */
    template <int D>
    AmIterator<D>::AmIterator(System<D>* system)
     : Iterator<D>(system),
@@ -29,12 +32,18 @@ namespace Pspc
       lambda_(0),
       nHist_(0),
       maxHist_(0)
-   { setClassName("AmIterator"); }
+   {  setClassName("AmIterator"); }
 
+   /*
+   * Destructor
+   */
    template <int D>
    AmIterator<D>::~AmIterator()
    {}
 
+   /*
+   * Read parameter file block.
+   */
    template <int D>
    void AmIterator<D>::readParameters(std::istream& in)
    {
@@ -45,6 +54,9 @@ namespace Pspc
       readOptional(in, "domain", cell_);
   }
 
+   /*
+   * Allocate memory required by iterator.
+   */
    template <int D>
    void AmIterator<D>::allocate()
    {
@@ -67,9 +79,11 @@ namespace Pspc
          dArrays_[i].allocate(nStar - 1);
          tempDev[i].allocate(nStar - 1);
       }
-
    }
 
+   /*
+   * Solve iteratively.
+   */
    template <int D>
    int AmIterator<D>::solve()
    {
@@ -85,42 +99,34 @@ namespace Pspc
       Timer::TimePoint now;
       bool done;
 
+      FieldIo<D>& fieldIo = system().fieldIo();
+
       // Convert from Basis to RGrid
       convertTimer.start();
-      for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
-         systemPtr_->fieldIo().convertBasisToKGrid(
-                                     systemPtr_->wField(i),
-                                     systemPtr_->wFieldDft(i));
-         systemPtr_->fft().inverseTransform(systemPtr_->wFieldDft(i),
-                                      systemPtr_->wFieldGrid(i));
-      }
+      fieldIo.convertBasisToRGrid(system().wFields(),
+                                  system().wFieldGrids());
       now = Timer::now();
       convertTimer.stop(now);
 
       // Solve MDE
       solverTimer.start(now);
-      systemPtr_->mixture().compute(systemPtr_->wFieldGrids(),
-                                    systemPtr_->cFieldGrids());
+      system().mixture().compute(system().wFieldGrids(),
+                                    system().cFieldGrids());
       now = Timer::now();
       solverTimer.stop(now);
 
       // Compute stress if needed
       if (cell_){
          stressTimer.start(now);
-         systemPtr_->mixture().computeStress();
+         system().mixture().computeStress();
          now = Timer::now();
          stressTimer.stop(now);
       }
 
       // Convert from RGrid to Basis
       convertTimer.start(now);
-      for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
-         systemPtr_->fft().forwardTransform(systemPtr_->cFieldGrid(i),
-                                             systemPtr_->cFieldDft(i));
-         systemPtr_->fieldIo().convertKGridToBasis(
-                              systemPtr_->cFieldDft(i),
-                              systemPtr_->cField(i));
-      }
+      fieldIo.convertRGridToBasis(system().cFieldGrids(),
+                                  system().cFields());
       now = Timer::now();
       convertTimer.stop(now);
 
@@ -149,6 +155,11 @@ namespace Pspc
             updateTimer.stop();
             Log::file() << "----------CONVERGED----------"<< std::endl;
 
+            // If unit cell is rigid, compute final stress
+            if (!cell_){
+               system().mixture().computeStress();
+            }
+
             // Output timing results
             double updateTime = updateTimer.time();
             double convertTime = convertTimer.time();
@@ -171,7 +182,18 @@ namespace Pspc
             Log::file() << "update time  = "  << updateTime  << " s,  "
                         << updateTime/totalTime << "\n";
             Log::file() << "total time   = "  << totalTime   << " s  ";
-            Log::file() << "\n";
+            Log::file() << "\n\n";
+
+            // If unit cell is rigid, output final stress
+            if (!cell_){
+               Log::file() << "Final stress:" << "\n";
+               for (int m=0; m<(systemPtr_->unitCell()).nParameter(); ++m){
+                  Log::file() << "Stress  "<< m << "   = "
+                              << Dbl(systemPtr_->mixture().stress(m)) 
+                              << "\n";
+               }
+               Log::file() << "\n";
+            }
 
             return 0;
 
@@ -197,45 +219,36 @@ namespace Pspc
             now = Timer::now();
             updateTimer.stop(now);
 
-            // Convert Basis to RGrid
+            // Convert wFields from Basis to RGrid
             convertTimer.start(now);
-            for (int j = 0; j < systemPtr_->mixture().nMonomer(); ++j) {
-               systemPtr_->fieldIo().convertBasisToKGrid(
-                                    systemPtr_->wField(j),
-                                    systemPtr_->wFieldDft(j));
-               systemPtr_->fft().inverseTransform(systemPtr_->wFieldDft(j),
-                                                 systemPtr_->wFieldGrid(j));
-            }
+            fieldIo.convertBasisToRGrid(system().wFields(),
+                                        system().wFieldGrids());
             now = Timer::now();
             convertTimer.stop(now);
 
             // Solve MDE
             solverTimer.start(now);
-            systemPtr_->mixture().compute(systemPtr_->wFieldGrids(),
-                                          systemPtr_->cFieldGrids());
+            system().mixture().compute(system().wFieldGrids(),
+                                       system().cFieldGrids());
             now = Timer::now();
             solverTimer.stop(now);
 
             // Compute stress if needed
             if (cell_){
                stressTimer.start(now);
-               systemPtr_->mixture().computeStress();
+               system().mixture().computeStress();
                now = Timer::now();
                stressTimer.stop(now);
             }
 
-            // Transform RGrid to Basis
+            // Transform computed cFields from RGrid to Basis
             convertTimer.start(now);
-            for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
-               systemPtr_->fft().forwardTransform(systemPtr_->cFieldGrid(i),
-                                                  systemPtr_->cFieldDft(i));
-               systemPtr_->fieldIo().convertKGridToBasis(
-                                    systemPtr_->cFieldDft(i),
-                                    systemPtr_->cField(i));
-            }
+            fieldIo.convertRGridToBasis(system().cFieldGrids(),
+                                        system().cFields());
+            now = Timer::now();
+            convertTimer.stop(now);
+
          }
-         now = Timer::now();
-         convertTimer.stop(now);
 
       }
 

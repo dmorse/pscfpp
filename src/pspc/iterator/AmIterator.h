@@ -166,6 +166,7 @@ namespace Pspc
 
       using Iterator<D>::setClassName;
       using Iterator<D>::systemPtr_;
+      using Iterator<D>::system;
       using ParamComposite::read;
       using ParamComposite::readOptional;
 

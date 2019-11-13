@@ -2,7 +2,7 @@
 # PSCF - Polymer Self-Consistent Field Theory (C++/CUDA)
 
 PSCF is a package of software for solving the Edwards-Helfand 
-self-consistent field theory (SCFT) for polymer liquids. The version 
+self-consistent field theory (SCFT) of polymer liquids. The version 
 described here is written primarily in C++, with GPU accelerated code 
 in CUDA.  This C++/CUDA version of PSCF is still under development, 
 but is intended to eventually supersede the existing PSCF Fortran 
@@ -25,16 +25,12 @@ version and expected advantages of the new code include:
 
    - PSCF (C++/CUDA) is an extensible package of several different 
      programs designed for use with different geometries, boundary 
-     conditions, different algorithms or hardware, designed around 
-     a common framework. 
+     conditions, algorithms or hardware, designed around a common 
+     framework. 
 
    - PSCF (C++/CUDA) enables simulations of mixtures containing arbitrary 
-     acyclic branched copolymers, in addition to the linear block copolymers 
-     and linear homopolymers allowed by Fortran PSCF code.
-
-   - An object oriented design allows creation of independent objects to 
-     represent different phases, which will facilitate analysis of phase
-     coexistence in mixtures.
+     acyclic branched copolymers, in addition to the linear block 
+     copolymers and linear homopolymers allowed by the Fortran PSCF code.
 
    - Adoption of C/C++ as a base language has simplified implementation 
      of variant that that uses graphical process units (GPUs).
