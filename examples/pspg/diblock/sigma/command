@@ -4,4 +4,7 @@ WRITE_WFIELDGRIDS
 out/omega
 WRITE_CFIELDGRIDS
 out/rho
+RHO_TO_OMEGA
+out/rho
+out/omega_check
 FINISH

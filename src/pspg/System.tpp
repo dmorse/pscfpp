@@ -546,7 +546,7 @@ namespace Pspg
             in >> outFileName;
             Log::file() << " " << Str(outFileName, 20) << std::endl;
 
-            fieldIo().readFieldsRGrid(filename, cFieldGrids());
+            fieldIo().readFieldsRGrid(inFileName, cFieldGrids());
 
             //code is bad here, `mangled' access of data in array
             for (int i = 0; i < mixture().nMonomer(); ++i) {
@@ -559,7 +559,7 @@ namespace Pspg
                }
             }
 
-            fieldIo().writeFieldsRGrid(filename, wFieldGrids());
+            fieldIo().writeFieldsRGrid(outFileName, wFieldGrids());
 
          } else {
             Log::file() << "  Error: Unknown command  " << command << std::endl;

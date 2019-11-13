@@ -20,6 +20,7 @@ System{
   }
   unitCell cubic 4.0E+00
   mesh     64 64 64
+  groupName         F_m_-3_m
   AmIterator{
     maxItr 500
     epsilon 1e-5
