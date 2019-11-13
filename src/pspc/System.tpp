@@ -200,8 +200,6 @@ namespace Pspc
       mixture().setupUnitCell(unitCell());
       basis().makeBasis(mesh(), unitCell(), groupName_);
 
-      std::cout<<"nstar = "<<basis().nStar();
-
       allocateFields();
       hasFields_ = true;
 
@@ -368,22 +366,6 @@ namespace Pspc
             fieldIo().writeFieldsRGrid(outFileName, cFieldGrids());
 
          } else 
-         if (command == "BASIS_TO_KGRID") {
-
-            std::string inFileName;
-            std::string outFileName;
-
-            in >> inFileName;
-            Log::file() << " " << Str(inFileName, 20) <<std::endl;
-
-            in >> outFileName;
-            Log::file() << " " << Str(outFileName, 20) <<std::endl;
-
-            fieldIo().readFieldsBasis(inFileName, cFields());
-            fieldIo().convertBasisToKGrid(cFields(), cFieldDfts_);
-            fieldIo().writeFieldsKGrid(outFileName, cFieldDfts_);
-
-          }else
          if (command == "RGRID_TO_BASIS") {
             std::string inFileName;
             std::string outFileName;

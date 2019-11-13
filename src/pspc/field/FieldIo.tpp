@@ -85,7 +85,6 @@ namespace Pspc
       // Initialize all field components to zero
       int i, j;
       int nStar = basis().nStar();
-      std::cout<<"nstar = "<<nStar<<std::endl;
       for (j = 0; j < nMonomer; ++j) {
          UTIL_CHECK(fields[j].capacity() == nStar);
          for (i = 0; i < nStar; ++i) {
