@@ -375,7 +375,7 @@ namespace Pspc
             fieldIo().convertBasisToRGrid(cFields(), cFieldGrids());
             fieldIo().writeFieldsRGrid(outFileName, cFieldGrids());
 
-         } else
+         } else 
          if (command == "RGRID_TO_BASIS") {
             std::string inFileName;
             std::string outFileName;

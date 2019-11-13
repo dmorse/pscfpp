@@ -4,7 +4,7 @@
 /*
 * PSCF++ Package 
 *
-* Copyright 2016 - 2019, The Regents of the University of Minnesota
+* Copyright 2010 - 2017, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.
 */
 
@@ -82,6 +82,15 @@ namespace Pspg
       const IntVec<D>& meshDimensions() const;
 
       /**
+      * Return vector of dft (Fourier) grid dimensions by constant reference.
+      *  
+      * The last element of dftDimensions() and meshDimensions() differ by
+      * about a factor of two: dftDimension()[D-1] = meshDimensions()/2 + 1.
+      * For D > 1, other elements are equal. 
+      */
+      const IntVec<D>& dftDimensions() const;
+
+      /**
       * Serialize a Field to/from an Archive.
       *
       * \param ar       archive
@@ -94,6 +103,9 @@ namespace Pspg
 
       // Vector containing number of grid points in each direction.
       IntVec<D> meshDimensions_;
+
+      // Vector containing dimensions of dft (Fourier) grid.
+      IntVec<D> dftDimensions_;
 
    };
 
@@ -108,8 +120,10 @@ namespace Pspg
          UTIL_CHECK(meshDimensions[i] > 0);
          meshDimensions_[i] = meshDimensions[i];
          if (i < D - 1) {
+            dftDimensions_[i] = meshDimensions[i];
             size *= meshDimensions[i];
          } else {
+            dftDimensions_[i] = (meshDimensions[i]/2 + 1); 
             size *= (meshDimensions[i]/2 + 1);
          }
       }
@@ -123,6 +137,12 @@ namespace Pspg
    inline const IntVec<D>& RDFieldDft<D>::meshDimensions() const
    {  return meshDimensions_; }
 
+   /*  
+   * Return dimensions of dft grid by constant reference. 
+   */
+   template <int D>
+   inline const IntVec<D>& RDFieldDft<D>::dftDimensions() const
+   {  return dftDimensions_; }
 
    /*
    * Serialize a Field to/from an Archive.
