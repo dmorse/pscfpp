@@ -16,9 +16,6 @@
 
 namespace Pscf { 
    template <int D> class Mesh; 
-   namespace Pspg{
-      template <int D> class Basis;
-   }
 }
  
 namespace Pscf {
