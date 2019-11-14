@@ -18,14 +18,13 @@
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
 
-#include <iomanip>
+//#include <iomanip>
 #include <string>
 #include <getopt.h>
 
-//#include <unistd.h>
 //#include <Windows.h>
 
-//global variable for kernels
+// Global variable for kernels
 int THREADS_PER_BLOCK;
 int NUMBER_OF_BLOCKS;
 
@@ -60,9 +59,11 @@ namespace Pspg
       c_(),
       fHelmholtz_(0.0),
       pressure_(0.0),
-      hasMixture_(0),
-      hasUnitCell_(0),
-      hasFields_(0)
+      hasMixture_(false),
+      hasUnitCell_(false),
+      isAllocated_(false),
+      hasWFields_(false),
+      hasCFields_(false)
       // hasSweep_(0)
    {  
       setClassName("System"); 
@@ -189,19 +190,6 @@ namespace Pspg
    void System<D>::readParameters(std::istream& in)
    {
 
-      #if 0
-      double time_start;
-      double time_end;
-      double time_wave_start;
-      double time_wave_end;
-      struct timeval tv;
-      struct timezone tz;
-
-      gettimeofday(&tv, &tz);
-      time_start = (double) tv.tv_sec + 
-         (double)tv.tv_usec / 1000000.0;
-      #endif
-
       readParamComposite(in, mixture());
       hasMixture_ = true;
 
@@ -215,76 +203,39 @@ namespace Pspg
       homogeneous_.setNMonomer(nm);
       initHomogeneous();
 
+      // Read interaction (i.e., chi parameters)
       interaction().setNMonomer(mixture().nMonomer());
       readParamComposite(in, interaction());
-      // ----------------------
 
       read(in, "unitCell", unitCell_);
       hasUnitCell_ = true;
-      
-      // IntVec<D> d;
+     
+      // Read crystallographic unit cell (used only to create basis) 
       read(in, "mesh", mesh_);
-      hasMesh_ = true;
       mixture().setMesh(mesh());
-
-      read(in, "groupName", groupName_);
-
-      #if 0
-      in >> d;
-      mesh_.setDimensions(d);
       hasMesh_ = true;
-      mixture().setMesh(mesh());
-      #endif
-
-
-      #if 0
-      gettimeofday(&tv, &tz);
-      time_wave_start = (double)tv.tv_sec + 
-         (double)tv.tv_usec / 1000000.0;
-      #endif
 
       // Construct wavelist 
       wavelist().allocate(mesh(), unitCell());
       wavelist().computeMinimumImages(mesh(), unitCell());
       mixture().setupUnitCell(unitCell(), wavelist());
 
+      // Read group name, construct basis 
+      read(in, "groupName", groupName_);
       basis().makeBasis(mesh(), unitCell(), groupName_);
-
-      //std::cout<<"nstar = "<<basis().nStar();
-
       fieldIo_.associate(unitCell_, mesh_, fft_, groupName_,
-                         *basisPtr_, fileMaster_);
+                         basis(), fileMaster_);
 
-      #if 0
-      gettimeofday(&tv, &tz);
-      time_wave_end = (double)tv.tv_sec + 
-         (double)tv.tv_usec / 1000000.0;
-      Log::file() << "wavelist initialized in  " 
-                 << Dbl(time_wave_end - time_wave_start, 18, 11) << 's' 
-                 << std::endl;
-      #endif
-
-      allocateFields();
-      hasFields_ = true;
+      // Allocate memory for w and c fields
+      allocate();
 
       // Initialize iterator
       readParamComposite(in, iterator());
       iterator().allocate();
-
-      //std::cout<<"nstar = "<<basis().nStar();
-
-      #if 0
-      gettimeofday(&tv, &tz);
-      time_end = (double)tv.tv_sec + 
-         (double)tv.tv_usec / 1000000.0;
-         Log::file() << "System Parameters read in  " 
-                  << Dbl(time_end - time_start, 18, 11)<<'s' 
-                  << std::endl;
-      #endif
    }
 
    /*
-   * Read default parameter file.
+   * Read parameter file (including open and closing brackets).
    */
    template <int D>
    void System<D>::readParam(std::istream& in)
@@ -302,10 +253,10 @@ namespace Pspg
    {  readParam(fileMaster().paramFile()); }
 
    /*
-   * Read parameters and initialize.
+   * Allocate memory for fields.
    */
    template <int D>
-   void System<D>::allocateFields()
+   void System<D>::allocate()
    {
       // Preconditions
       UTIL_CHECK(hasMixture_);
@@ -321,7 +272,6 @@ namespace Pspg
       cFieldGrids_.allocate(nMonomer);
       cFieldDfts_.allocate(nMonomer);
 
-      //size of grid is based on basis function
       for (int i = 0; i < nMonomer; ++i) {
          wField(i).allocate(basis().nStar());
          wFieldGrid(i).allocate(mesh().dimensions());
@@ -333,24 +283,22 @@ namespace Pspg
       }
 
       //storageCFields_.allocate(mesh().dimensions());
-      compositionKField_.allocate(mesh().dimensions());
+      //compositionKField_.allocate(mesh().dimensions());
       workArray.allocate(mesh().size());
    
       cudaMalloc((void**)&d_kernelWorkSpace_, NUMBER_OF_BLOCKS * sizeof(cufftReal));
       kernelWorkSpace_ = new cufftReal[NUMBER_OF_BLOCKS];
-      hasFields_ = true;
 
+      isAllocated_ = true;
    }
-
    
    /*
    * Read and execute commands from a specified command file.
    */
-   //will add more commands as they are tested
    template <int D>
    void System<D>::readCommands(std::istream &in) 
    {
-      UTIL_CHECK(hasFields_);
+      UTIL_CHECK(isAllocated_);
       std::string command;
       std::string filename;
 
@@ -358,63 +306,86 @@ namespace Pspg
       while (readNext) {
 
          in >> command;
-         Log::file() << command <<std::endl;
+         Log::file() << command << std::endl;
 
          if (command == "FINISH") {
             Log::file() << std::endl;
             readNext = false;
          } else 
-         if (command == "READ_WFIELDS") {
+         if (command == "READ_W_BASIS") {
             in >> filename;
             Log::file() << " " << Str(filename, 20) <<std::endl;
 
             fieldIo().readFieldsBasis(filename, wFields());
+            fieldIo().convertBasisToRGrid(wFields(), wFieldGrids());
+            hasWFields_ = true;
 
          } else 
-         if (command == "WRITE_W_BASIS") {
-            in >> filename;
-            Log::file() << "  " << Str(filename, 20) << std::endl;
-            fieldIo().writeFieldsBasis(filename, wFields());
-         } else 
-         if (command == "WRITE_WFIELDGRIDS") {
-            in >> filename;
-            Log::file() << "  " << Str(filename, 20) << std::endl;
-            fieldIo().writeFieldsRGrid(filename, wFieldGrids());
-         } else 
-         if (command == "WRITE_C_BASIS") {
-            in >> filename;
-            Log::file() << "  " << Str(filename, 20) << std::endl;
-            fieldIo().writeFieldsBasis(filename, cFields());
-         } 
-         else if (command == "WRITE_CFIELDGRIDS") {
-            in >> filename;
-            Log::file() << "  " << Str(filename, 20) << std::endl;
-            fieldIo().writeFieldsRGrid(filename, cFieldGrids_);
-         } 
-         else if (command == "ITERATE") {
-            Log::file() << std::endl;
-            Log::file() << std::endl;
-
-            // Read w fields
+         if (command == "READ_W_RGRID") {
             in >> filename;
             Log::file() << " " << Str(filename, 20) <<std::endl;
+
             fieldIo().readFieldsRGrid(filename, wFieldGrids());
+            hasWFields_ = true;
 
+         } else 
+         if (command == "ITERATE") {
+            Log::file() << std::endl;
+
+            // Read w fields in grid format iff not already set.
+            if (!hasWFields_) {
+               in >> filename;
+               Log::file() << "Reading w fields from file: " 
+                           << Str(filename, 20) <<std::endl;
+               fieldIo().readFieldsRGrid(filename, wFieldGrids());
+               hasWFields_ = true;
+            }
+
+            // Attempt to iteratively solve SCFT equations
             int fail = iterator().solve();
+            hasCFields_ = true;
 
+            // Final output
             if (!fail) {
                computeFreeEnergy();
                outputThermo(Log::file());
             } else {
                Log::file() << "Iterate has failed. Exiting "<<std::endl;
-               exit(1);
             }
+
+         } else 
+         if (command == "WRITE_W_BASIS") {
+            UTIL_CHECK(hasWFields_);
+            in >> filename;
+            Log::file() << "  " << Str(filename, 20) << std::endl;
+            fieldIo().convertRGridToBasis(wFieldGrids(), wFields());
+            fieldIo().writeFieldsBasis(filename, wFields());
+         } else 
+         if (command == "WRITE_W_RGRID") {
+            UTIL_CHECK(hasWFields_);
+            in >> filename;
+            Log::file() << "  " << Str(filename, 20) << std::endl;
+            fieldIo().writeFieldsRGrid(filename, wFieldGrids());
+         } else 
+         if (command == "WRITE_C_BASIS") {
+            UTIL_CHECK(hasCFields_);
+            in >> filename;
+            Log::file() << "  " << Str(filename, 20) << std::endl;
+            fieldIo().convertRGridToBasis(cFieldGrids(), cFields());
+            fieldIo().writeFieldsBasis(filename, cFields());
+         } else 
+         if (command == "WRITE_C_RGRID") {
+            UTIL_CHECK(hasCFields_);
+            in >> filename;
+            Log::file() << "  " << Str(filename, 20) << std::endl;
+            fieldIo().writeFieldsRGrid(filename, cFieldGrids());
          } else 
          if (command == "BASIS_TO_RGRID") {
+            hasCFields_ = false;
+
             std::string inFileName;
             in >> inFileName;
             Log::file() << " " << Str(inFileName, 20) <<std::endl;
-
 
             fieldIo().readFieldsBasis(inFileName, cFields());
             fieldIo().convertBasisToRGrid(cFields(), cFieldGrids());
@@ -425,32 +396,37 @@ namespace Pspg
             fieldIo().writeFieldsRGrid(outFileName, cFieldGrids());
          } else 
          if (command == "RGRID_TO_BASIS") {
+            hasCFields_ = false;
+
             std::string inFileName;
-            std::string outFileName;
 
             in >> inFileName;
             Log::file() << " " << Str(inFileName, 20) <<std::endl;
+            fieldIo().readFieldsRGrid(inFileName, cFieldGrids());
 
+            fieldIo().convertRGridToBasis(cFieldGrids(), cFields());
+
+            std::string outFileName;
             in >> outFileName;
             Log::file() << " " << Str(outFileName, 20) <<std::endl;
-
-            fieldIo().readFieldsRGrid(inFileName, cFieldGrids());
-            fieldIo().convertRGridToBasis(cFieldGrids(), cFields());
             fieldIo().writeFieldsBasis(outFileName, cFields());
 
          } else 
          if (command == "KGRID_TO_RGRID") {
+            hasCFields_ = false;
 
+            // Read from file in k-grid format
             std::string inFileName;
             in >> inFileName;
             Log::file() << " " << Str(inFileName, 20) <<std::endl;
             fieldIo().readFieldsKGrid(inFileName, cFieldDfts());
 
-            // Convert to rgrid
+            // Use FFT to convert k-grid r-grid
             for (int i = 0; i < mixture().nMonomer(); ++i) {
                fft().inverseTransform(cFieldDft(i), cFieldGrid(i));
             }
 
+            // Write to file in r-grid format
             std::string outFileName;
             in >> outFileName;
             Log::file() << " " << Str(outFileName, 20) <<std::endl;
@@ -459,11 +435,13 @@ namespace Pspg
          } else 
          if (command == "RHO_TO_OMEGA") {
 
+            // Read c field file in r-grid format
             std::string inFileName;
             in >> inFileName;
             Log::file() << " " << Str(inFileName, 20) << std::endl;
             fieldIo().readFieldsRGrid(inFileName, cFieldGrids());
 
+            // Compute w fields, excluding Lagrange multiplier contribution
             //code is bad here, `mangled' access of data in array
             for (int i = 0; i < mixture().nMonomer(); ++i) {
                assignUniformReal << < NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (wFieldGrid(i).cDField(), 0, mesh().size());
@@ -475,14 +453,17 @@ namespace Pspg
                }
             }
 
+            // Write w fields to file in r-grid format
             std::string outFileName;
             in >> outFileName;
             Log::file() << " " << Str(outFileName, 20) << std::endl;
             fieldIo().writeFieldsRGrid(outFileName, wFieldGrids());
 
          } else {
+
             Log::file() << "  Error: Unknown command  " << command << std::endl;
             readNext = false;
+
          }
       }
    }
@@ -499,6 +480,9 @@ namespace Pspg
       readCommands(fileMaster().commandFile()); 
    }
 
+   /*
+   * Initialize Pscf::Homogeneous::Mixture homogeneous_ member.
+   */
    template <int D>
    void System<D>::initHomogeneous()
    {
@@ -559,9 +543,7 @@ namespace Pspg
             }
          }
          homogeneous_.molecule(i).computeSize();
-
       }
-
    }
 
    /*
@@ -709,4 +691,4 @@ namespace Pspg
 
 } // namespace Pspg
 } // namespace Pscf
-#endif
+#endif 

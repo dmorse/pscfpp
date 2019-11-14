@@ -1,26 +1,23 @@
 TODO (pspg GPU code):
 
-Short term (assigned primarily to Anshul)
+Short term 
 -------------------------------------------------------------------------
 
-1) Add ability to read symmetry adapted files (without necessarily
-   imposing symmetry during iteration). 
-
-2) Add an iterator with imposed symmetry and output in symmetry adapted 
-   format.
-
-3) Complete doxygen documenttion for all classes, functions and parameters 
+1) Complete doxygen documentation for all classes, functions and parameters 
    in src/pspg.
 
-4) Move Pspg::WaveList class to directory solvers/. It's essentially a 
+2) Move Pspg::WaveList class to directory solvers/. It's essentially a 
    utility that is used by the solvers, and doesn't need its own 
    directory.
+
+3) Add an iterator with imposed symmetry and output in symmetry adapted 
+   format.
 
 Longer term  
 -------------------------------------------------------------------------
 
-1) Write unit tests or other self-contained, self-validating tests of 
-   the GPU classes and put them in the repository. 
+1) Write unit tests or other self-contained, self-validating tests of the 
+   GPU classes and put them in the repository. 
 
 2) Add sweep functionality 
 

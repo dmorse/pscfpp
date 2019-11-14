@@ -30,10 +30,7 @@ namespace Pspg {
         nHist_(0),
         maxHist_(0),
         cell_(0)
-   {
-      //temporary for testing
-      setClassName("AmIterator");
-   }
+   {  setClassName("AmIterator"); }
 
    template <int D>
    AmIterator<D>::AmIterator(System<D>* system)
@@ -519,18 +516,12 @@ namespace Pspg {
             for (int m = 0; m < (systemPtr_->unitCell()).nParameter() ; ++m){
                cellParameters_.append(CpHists_[0][m] +lambda_* devCpHists_[0][m]);
             }
-
             systemPtr_->unitCell().setParameters(cellParameters_);            
             systemPtr_->mixture().setupUnitCell(systemPtr_->unitCell(), systemPtr_->wavelist());
             systemPtr_->wavelist().computedKSq(systemPtr_->unitCell());
-            
-            for (int m = 0; m < systemPtr_->unitCell().nParameter(); ++m){
-               std::cout<<"Parameter"<<m<<"\t"<<"="<<systemPtr_->unitCell().parameter(m)<<"\n";
-            }
          }
 
-      }
-      else {
+      } else {
          //should be strictly correct. coeffs_ is a vector of size 1 if itr ==2
 
          for (int j = 0; j < systemPtr_->mixture().nMonomer(); ++j) {
@@ -538,7 +529,6 @@ namespace Pspg {
                omHists_[0][j].cDField(), systemPtr_->mesh().size());
             assignReal << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> >(dArrays_[j].cDField(),
                devHists_[0][j].cDField(), systemPtr_->mesh().size());
-
          }
 
          for (int i = 0; i < nHist_; ++i) {

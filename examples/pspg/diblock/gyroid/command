@@ -1,7 +1,5 @@
+READ_W_RGRID  in/omega
 ITERATE
-in/omega
-WRITE_WFIELDGRIDS
-out/omega
-WRITE_CFIELDGRIDS
-out/rho
+WRITE_W_RGRID out/omega
+WRITE_C_RGRID out/rho
 FINISH

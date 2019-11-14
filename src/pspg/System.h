@@ -124,108 +124,123 @@ namespace Pspg
       void outputThermo(std::ostream& out);
 
       //@}
-      /// \name Fields
+      /// \name Chemical Potential Fields (W Fields)
       //@{
 
       /**
-      * Get array of all chemical potential fields in star basis.
+      * Get an array of chemical potential fields, in a basis.
       *
-      * The array capacity is equal to the number of monomer types.
+      * This function returns an array in which each element is an
+      * array containing the coefficients of the chemical potential
+      * field (w field) in a symmetry-adapted basis for one monomer 
+      * type. The array capacity is the number of monomer types.
       */
       DArray<RDField <D> >& wFields();
 
-
       /**
-      * Get chemical potential field for a specific monomer type.
+      * Get chemical potential field for one monomer type, in a basis.
+      *
+      * This function returns an array containing coefficients of 
+      * the chemical potential field (w field) in a symmetry-adapted
+      * basis for a specified monomer type.
       *
       * \param monomerId integer monomer type index
       */
       RDField<D>& wField(int monomerId);
 
       /**
-      * Get array of all chemical potential fields in cartesian space.
+      * Get array of chemical potential fields, on an r-space grid.
       *
-      * The array capacity is equal to the number of monomer types.
+      * This function returns an array in which each element is a
+      * WField object containing values of the chemical potential field 
+      * (w field) on a regular grid for one monomer type. The array 
+      * capacity is the number of monomer types.
       */
       DArray<WField>& wFieldGrids();
 
+      /**
+      * Get the chemical potential field for one monomer type, on a grid.
+      *
+      * \param monomerId integer monomer type index
+      */
       WField& wFieldGrid(int monomerId);
 
       /**
-      * Get array of all chemical potential fields on k-space
+      * Get array of chemical potential fields, in Fourier space.
       *
       * The array capacity is equal to the number of monomer types.
       */
       DArray<RDFieldDft<D> >& wFieldDfts();
 
+      /**
+      * Get the chemical potential field for one monomer, in Fourier space.
+      *
+      * \param monomerId integer monomer type index
+      */
       RDFieldDft<D>& wFieldDft(int monomerId);
 
+      //@{
+      /// \name Monomer Concentration / Volume Fraction Fields (C Fields)
+      //@{
+      
       /**
-      * Get array of all chemical potential fields in star basis.
+      * Get an array of all monomer concentration fields, in a basis
       *
+      * This function returns an array in which each element is an
+      * array containing the coefficients of the monomer concentration
+      * field (cfield) for one monomer type in a symmetry-adapted basis.
       * The array capacity is equal to the number of monomer types.
       */
       DArray<RDField <D> >& cFields();
 
       /**
-      * Get chemical potential field for a specific monomer type.
+      * Get the concentration field for one monomer type, in a basis.
+      *
+      * This function returns an array containing the coefficients of 
+      * the monomer concentration / volume fraction field (c field) 
+      * for a specific monomer type. 
       *
       * \param monomerId integer monomer type index
       */
       RDField<D>& cField(int monomerId);
 
       /**
-      * Get array of all chemical potential fields in cartesian space.
+      * Get array of all concentration fields (c fields), on a grid.
       *
-      * The array capacity is equal to the number of monomer types.
+      * This function returns an array in which each element is the
+      * monomer concentration field for one monomer type on a regular 
+      * grid (an r-grid). 
       */
       DArray<CField>& cFieldGrids();
 
+      /**
+      * Get the concentration (c field) for one monomer type, on a grid.
+      *
+      * \param monomerId integer monomer type index
+      */
       CField& cFieldGrid(int monomerId);
 
       /**
-      * Get array of all chemical potential fields in k-space.
+      * Get all monomer concentration fields, in Fourier space (k-grid).
       *
-      * The array capacity is equal to the number of monomer types.
+      * This function returns an arrray in which each element is the
+      * discrete Fourier transform (DFT) of the concentration field
+      * (c field) for on monomer type.
       */
       DArray<RDFieldDft<D> >& cFieldDfts();
 
+      /**
+      * Get the c field for one monomer type, in Fourier space (k-grid).
+      *
+      * This function returns the discrete Fourier transform (DFT) of the 
+      * concentration field (c field) for monomer type index monomerId.
+      *
+      * \param monomerId integer monomer type index
+      */
       RDFieldDft<D>& cFieldDft(int monomerId);
 
-      /**
-      * Read chemical potential fields from file in rgrid format.
-      *
-      * \param in input stream (i.e., input file)
-      * \param fields array of rgrid fields (one per monomer type)
-      */
-      void readRFields(std::istream& in, DArray< RDField<D> >& fields);
-
-      /**
-      * Read chemical potential fields from file in kgrid format.
-      *
-      * \param in input stream (i.e., input file)
-      * \param fields array of kgrid fields (one per monomer type)
-      */
-      void readKFields(std::istream& in, DArray< RDFieldDft<D> >& fields);
-
-      /**
-      * Write fields to file in rgrid format.
-      *
-      * \param out output stream (i.e., output file)
-      * \param fields array of rgrid fields, one per monomer type
-      */
-      void writeRFields(std::ostream& out, DArray< RDField<D> > const& fields);
-
-      /**
-      * Write fields to file in kgrid format.
-      *
-      * \param out output stream (i.e., output file)
-      * \param fields array of kgrid fields (one per monomer type)
-      */
-      void writeKFields(std::ostream& out, DArray< RDFieldDft<D> > const& fields);
-
       //@}
-      /// \name Accessors (get objects by reference)
+      /// \name Accessors (access objects by reference)
       //@{
 
       /**
@@ -284,8 +299,12 @@ namespace Pspg
       */
       FileMaster& fileMaster();
 
+      //@}
+      /// \name Accessors (return values)
+      //@{
+      
       /** 
-      * Get group name.
+      * Get the group name string.
       */  
       std::string groupName();
 
@@ -305,11 +324,33 @@ namespace Pspg
       */
       double pressure() const;
 
+      /** 
+      * Have monomer chemical potential fields (w fields) been set?
+      *
+      * A true value is returned if and only if values have been set on a 
+      * real space grid. The READ_W_BASIS command must immediately convert 
+      * from a basis to a grid to satisfy this requirement.
+      */
+      bool hasWFields() const;
+
+      /** 
+      * Have monomer concentration fields (c fields) been computed?
+      *
+      * A true value is returned if and only if monomer concentration fields
+      * have been computed by solving the modified diffusion equation for the
+      * current w fields, and values are known on a grid (cFieldGrids).
+      */  
+      bool hasCFields() const;
+
+      //@}
+
+      #if 0
+      // Additional functions for field-theoretic Monte-Carlo
+      
       RDField<D>& pressureField();
 
       RDField<D>& compositionField();
-
-      //@}
+      #endif
 
    private:
 
@@ -438,7 +479,7 @@ namespace Pspg
       /**
       * Has the mixture been initialized?
       */
-      bool hasMixture_;
+      bool hasMixture_; 
 
       /**
       * Has the Mesh been initialized?
@@ -451,35 +492,28 @@ namespace Pspg
       bool hasUnitCell_;
 
       /**
-      * Have initial chemical potential fields been read from file?
+      * Has memory been allocated for fields?
       */
-      bool hasFields_;
+      bool isAllocated_;
+
+      /**
+      * Have W fields been set?
+      *
+      * True iff wFieldGrids_ has been set.
+      */
+      bool hasWFields_;
+
+      /**
+      * Have C fields been computed by solving the MDE ?
+      *
+      * True iff cFieldGrids_ has been set.
+      */
+      bool hasCFields_;
 
       /**
       * Does this system have a Sweep object?
       */
       bool hasSweep_;
-
-      /**
-      * Allocate memory for fields (private)
-      */
-      void allocateFields();
-
-      /**
-      * Initialize Homogeneous::Mixture object.
-      */
-      void initHomogeneous();
-
-      RDField<D> compositionField_; //rField version
-
-      RDFieldDft<D> compositionKField_; //kField
-
-      RDField<D> pressureField_;
-
-      /**
-      * Free energy of the new configuration due to random change
-      */
-      double fHelmholtzOld_;
 
       IntVec<D> kMeshDimensions_;
 
@@ -489,68 +523,59 @@ namespace Pspg
 
       cufftReal* kernelWorkSpace_;
 
+      /**
+      * Allocate memory for fields (private)
+      */
+      void allocate();
+
+      /**
+      * Initialize Homogeneous::Mixture object (private).
+      */
+      void initHomogeneous();
+
+      /**
+      * Compute inner product of two RDField fields (private, on GPU).
+      */
       cufftReal innerProduct(const RDField<D>& a, const RDField<D>& b, int size);
 
+      /**
+      * Compute reduction of an RDField (private, on GPU).
+      */
       cufftReal reductionH(const RDField<D>& a, int size);
+
+      #if 0
+      // Additional member variables for field-theoretic Monte Carlo
+      
+      RDField<D> compositionField_; //rField version
+
+      RDFieldDft<D> compositionKField_; //kField
+
+      RDField<D> pressureField_;
+
+      // Free energy of the new configuration due to random change
+      double fHelmholtzOld_;
+      #endif
 
    };
 
    // Inline member functions
 
-   template <int D>
-   inline RDField<D>& System<D>::pressureField()
-   { return pressureField_;}
-
-   template <int D>
-   inline RDField<D>& System<D>::compositionField()
-   { return compositionField_;}
-
-   /*
-   * Get the associated Mixture object.
-   */
+   // Get the associated Mixture<D> object.
    template <int D>
    inline Mixture<D>& System<D>::mixture()
    { return mixture_; }
 
-   /*
-   * Get the mesh.
-   */
+   // Get the Mesh<D>
    template <int D>
    inline Mesh<D>& System<D>::mesh()
    { return mesh_; }
 
-   /*
-   * Get the UnitCell<D>.
-   */
+   // Get the UnitCell<D>.
    template <int D>
    inline UnitCell<D>& System<D>::unitCell()
    { return unitCell_; }
 
-   /*
-   * Get group name.
-   */
-   template <int D>
-   inline std::string System<D>::groupName()
-   { return groupName_; }
-
-   /*
-   * Get the FileMaster.
-   */
-   template <int D>
-   inline FileMaster& System<D>::fileMaster()
-   {  return fileMaster_; }
-
-   /*
-   * Get the Homogeneous::Mixture object.
-   */
-   template <int D>
-   inline 
-   Homogeneous::Mixture& System<D>::homogeneous()
-   {  return homogeneous_; }
-
-   /*
-   * Get the Interaction (excess free energy model).
-   */
+   // Get the Interaction (excess free energy model).
    template <int D>
    inline ChiInteraction& System<D>::interaction()
    {
@@ -558,19 +583,12 @@ namespace Pspg
       return *interactionPtr_;
    }
 
-   /*
-   * Get the Iterator.
-   */
+   // Get the FFT<D> object.
    template <int D>
-   inline AmIterator<D>& System<D>::iterator()
-   {
-      UTIL_ASSERT(iteratorPtr_);
-      return *iteratorPtr_;
-   }
+   inline FFT<D>& System<D>::fft()
+   {  return fft_; }
 
-   /*
-   * Get the basis Object
-   */
+   // Get the Basis<D> object.
    template <int D>
    inline Basis<D>& System<D>::basis()
    {
@@ -578,40 +596,54 @@ namespace Pspg
       return *basisPtr_;
    }
 
-   template <int D>
-   inline WaveList<D>& System<D>::wavelist()
-   {  return *wavelistPtr_; }
-
    // Get the FieldIo<D> object.
    template <int D>
    inline FieldIo<D>& System<D>::fieldIo()
    {  return fieldIo_; }
 
+   // Get the Iterator.
    template <int D>
-   inline FFT<D>& System<D>::fft()
-   {  return fft_; }
+   inline AmIterator<D>& System<D>::iterator()
+   {
+      UTIL_ASSERT(iteratorPtr_);
+      return *iteratorPtr_;
+   }
 
+   // Get the FileMaster.
+   template <int D>
+   inline FileMaster& System<D>::fileMaster()
+   {  return fileMaster_; }
+
+   // Get the Homogeneous::Mixture object.
+   template <int D>
+   inline 
+   Homogeneous::Mixture& System<D>::homogeneous()
+   {  return homogeneous_; }
+
+   // Get the WaveList<D> object.
+   template <int D>
+   inline WaveList<D>& System<D>::wavelist()
+   {  return *wavelistPtr_; }
+
+   // Get all monomer chemical potential (w field), in a basis.
    template <int D>
    inline
    DArray<RDField<D> >& System<D>::wFields()
    {  return wFields_; }
 
+   // Get a single monomer chemical potential (w field), in a basis.
    template <int D>
    inline
    RDField<D>& System<D>::wField(int id)
    {  return wFields_[id]; }
 
-   /*
-   * Get an array of all monomer excess chemical potential fields.
-   */
+   // Get all monomer excess chemical potential fields, on a grid.
    template <int D>
    inline 
    DArray< typename System<D>::WField >& System<D>::wFieldGrids()
    {  return wFieldGrids_; }
 
-   /*
-   * Get a single monomer excess chemical potential field.
-   */
+   // Get a single monomer hemical potential field, on a grid.
    template <int D>
    inline 
    typename System<D>::WField& System<D>::wFieldGrid(int id)
@@ -627,15 +659,28 @@ namespace Pspg
    RDFieldDft<D>& System<D>::wFieldDft(int id)
    {  return wFieldDfts_[id]; }
 
+   // Get all monomer concentration fields, in a basis.
    template <int D>
    inline
    DArray<RDField<D> >& System<D>::cFields()
    {  return cFields_; }
 
+   // Get a single monomer concentration field, in a basis.
    template <int D>
    inline
    RDField<D>& System<D>::cField(int id)
    {  return cFields_[id]; }
+
+   // Get all monomer concentration fields, on a grid.
+   template <int D>
+   inline
+   DArray< typename System<D>::CField >& System<D>::cFieldGrids()
+   {  return cFieldGrids_; }
+
+   // Get a single monomer concentration field, on a grid.
+   template <int D>
+   inline typename System<D>::CField& System<D>::cFieldGrid(int id)
+   {  return cFieldGrids_[id]; }
 
    template <int D>
    inline
@@ -647,34 +692,42 @@ namespace Pspg
    RDFieldDft<D>& System<D>::cFieldDft(int id)
    {  return cFieldDfts_[id]; }
 
-   /*
-   * Get array of all monomer concentration fields.
-   */
+   // Get group name string.
    template <int D>
-   inline
-   DArray< typename System<D>::CField >& System<D>::cFieldGrids()
-   {  return cFieldGrids_; }
+   inline std::string System<D>::groupName()
+   { return groupName_; }
 
-   /*
-   * Get a single monomer concentration field.
-   */
-   template <int D>
-   inline typename System<D>::CField& System<D>::cFieldGrid(int id)
-   {  return cFieldGrids_[id]; }
-
-   /*
-   * Get precomputed Helmoltz free energy per monomer / kT.
-   */
+   // Get precomputed Helmoltz free energy per monomer / kT.
    template <int D>
    inline double System<D>::fHelmholtz() const
    {  return fHelmholtz_; }
 
-   /*
-   * Get precomputed pressure (units of kT / monomer volume).
-   */
+   // Get precomputed pressure (units of kT / monomer volume).
    template <int D>
    inline double System<D>::pressure() const
    {  return pressure_; }
+
+   // Have the w fields been set?
+   template <int D>
+   inline bool System<D>::hasWFields() const
+   {  return hasWFields_; }
+
+   // Have the c fields been computed for the current w fields?
+   template <int D>
+   inline bool System<D>::hasCFields() const
+   {  return hasCFields_; }
+
+   #if 0
+   // Additional functions for field-theoretic Monte-Carlo
+   
+   template <int D>
+   inline RDField<D>& System<D>::pressureField()
+   { return pressureField_;}
+
+   template <int D>
+   inline RDField<D>& System<D>::compositionField()
+   { return compositionField_;}
+   #endif
 
    #ifndef PSPG_SYSTEM_TPP
    // Suppress implicit instantiation
