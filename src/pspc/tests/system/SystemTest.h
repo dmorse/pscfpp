@@ -115,6 +115,7 @@ public:
    {   
       printMethod(TEST_FUNC);
       System<2> system;
+      openLogFile("out/testConversion2D_hex.log"); 
 
       // Read parameter file
       std::ifstream in; 
@@ -125,7 +126,6 @@ public:
       // Read w fields
       std::ifstream command;
       openInputFile("in/conv/Conversion_2d_step1", command);
-      openLogFile("out/testConversion2D_hex.log"); 
       system.readCommands(command);
       command.close();
 

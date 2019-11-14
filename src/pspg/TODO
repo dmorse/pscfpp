@@ -3,19 +3,16 @@ TODO (pspg GPU code):
 Short term (assigned primarily to Anshul)
 -------------------------------------------------------------------------
 
-1) Write and test Pspg::FieldIo class analogous to Pspc::FieldIo.
-   Add Basis and FieldIo member objects to System.
-
-2) Add ability to read symmetry adapted files (without necessarily
+1) Add ability to read symmetry adapted files (without necessarily
    imposing symmetry during iteration). 
 
-3) Add an iterator with imposed symmetry and output in symmetry adapted 
+2) Add an iterator with imposed symmetry and output in symmetry adapted 
    format.
 
-4) Complete doxygen documenttion for all classes, functions and parameters 
+3) Complete doxygen documenttion for all classes, functions and parameters 
    in src/pspg.
 
-5) Move Pspg::WaveList class to directory solvers/. It's essentially a 
+4) Move Pspg::WaveList class to directory solvers/. It's essentially a 
    utility that is used by the solvers, and doesn't need its own 
    directory.
 

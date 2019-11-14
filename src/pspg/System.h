@@ -9,12 +9,11 @@
 */
 
 #include <pspg/iterator/AmIterator.h>
-//#include <pspg/iterator/FtsIterator.h>
+#include <pspg/field/FieldIo.h>            // member
 #include <pspg/solvers/Mixture.h>          // member
-#include <pspg/wavelist/WaveList.h>
+#include <pspg/wavelist/WaveList.h>        // member
 #include <pspg/field/RDField.h>            // typedef
 #include <pspg/field/RDFieldDft.h>         // typedef
-#include <pspg/field/FieldIo.h>            // member
 
 #include <pscf/crystal/Basis.h>            // member
 #include <pscf/mesh/Mesh.h>                // member
@@ -23,18 +22,13 @@
 #include <pscf/inter/ChiInteraction.h>     // member
 
 #include <util/param/ParamComposite.h>     // base class
+#include <util/misc/FileMaster.h>          // member
 #include <util/containers/DArray.h>        // member template
 #include <util/containers/Array.h>         // function parameter
-#include <util/misc/FileMaster.h>          // member
-//#include <util/random/Random.h>
-
-//#include <curand.h>
-
 
 namespace Pscf {
 namespace Pspg
 {
-   template <int D> class AmIterator;
    class Sweep;
    class SweepFactory;
 

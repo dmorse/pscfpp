@@ -18,12 +18,9 @@
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
 
-#include <sys/time.h>
 #include <iomanip>
-#include <sstream>
 #include <string>
 #include <getopt.h>
-#include <cstdlib>
 
 //#include <unistd.h>
 //#include <Windows.h>
@@ -310,17 +307,6 @@ namespace Pspg
    template <int D>
    void System<D>::allocateFields()
    {
-      #if 0
-      double time_start;
-      double time_end;
-      struct timeval tv;
-      struct timezone tz;
-
-      gettimeofday(&tv, &tz);
-      time_start = (double) tv.tv_sec + 
-         (double)tv.tv_usec / 1000000.0;
-      #endif
-
       // Preconditions
       UTIL_CHECK(hasMixture_);
       UTIL_CHECK(hasMesh_);
@@ -353,19 +339,7 @@ namespace Pspg
       cudaMalloc((void**)&d_kernelWorkSpace_, NUMBER_OF_BLOCKS * sizeof(cufftReal));
       kernelWorkSpace_ = new cufftReal[NUMBER_OF_BLOCKS];
       hasFields_ = true;
-      //setup seed for rng
 
-      #if 0
-      timeval time;
-      gettimeofday(&time, NULL);
-
-      gettimeofday(&tv, &tz);
-      time_end = (double)tv.tv_sec + 
-         (double)tv.tv_usec / 1000000.0;
-      Log::file() << "System Containers allocated in  " 
-                  << Dbl(time_end - time_start, 18, 11)<<'s' 
-                  << std::endl;
-      #endif
    }
 
    
@@ -377,12 +351,10 @@ namespace Pspg
    void System<D>::readCommands(std::istream &in) 
    {
       UTIL_CHECK(hasFields_);
-
       std::string command;
       std::string filename;
 
       bool readNext = true;
-
       while (readNext) {
 
          in >> command;
@@ -391,116 +363,68 @@ namespace Pspg
          if (command == "FINISH") {
             Log::file() << std::endl;
             readNext = false;
-         } 
-
-         else if (command == "READ_WFIELDS") {
+         } else 
+         if (command == "READ_WFIELDS") {
             in >> filename;
             Log::file() << " " << Str(filename, 20) <<std::endl;
 
             fieldIo().readFieldsBasis(filename, wFields());
 
-         } else if (command == "WRITE_W_BASIS") {
+         } else 
+         if (command == "WRITE_W_BASIS") {
             in >> filename;
             Log::file() << "  " << Str(filename, 20) << std::endl;
-
             fieldIo().writeFieldsBasis(filename, wFields());
-
-         } 
-
-         else if (command == "WRITE_WFIELDGRIDS") {
+         } else 
+         if (command == "WRITE_WFIELDGRIDS") {
             in >> filename;
             Log::file() << "  " << Str(filename, 20) << std::endl;
-
             fieldIo().writeFieldsRGrid(filename, wFieldGrids());
-
-         }
- 
-         else if (command == "WRITE_C_BASIS") {
-
+         } else 
+         if (command == "WRITE_C_BASIS") {
             in >> filename;
             Log::file() << "  " << Str(filename, 20) << std::endl;
-
-            fieldIo().writeFieldsBasis(filename, cFields()); //--------------Try using an accessor function
-
+            fieldIo().writeFieldsBasis(filename, cFields());
          } 
-
          else if (command == "WRITE_CFIELDGRIDS") {
             in >> filename;
             Log::file() << "  " << Str(filename, 20) << std::endl;
-
             fieldIo().writeFieldsRGrid(filename, cFieldGrids_);
-
-         } else if (command == "ITERATE") {
+         } 
+         else if (command == "ITERATE") {
             Log::file() << std::endl;
             Log::file() << std::endl;
 
-            double time_start;
-            double time_end;
-            struct timeval tv;
-            struct timezone tz;
-
-            gettimeofday(&tv, &tz);
-            time_start = (double) tv.tv_sec + 
-              (double)tv.tv_usec / 1000000.0;
-            //input omega fields
-            std::string inFileName;
-            in >> inFileName;
-            Log::file() << " " << Str(inFileName, 20) <<std::endl;
-
-            fieldIo().readFieldsRGrid(inFileName, wFieldGrids());
-
-            #if 0
-            gettimeofday(&tv, &tz);
-            time_end = (double)tv.tv_sec + 
-               (double)tv.tv_usec / 1000000.0;
-            Log::file() << "ReadFile_Time = " 
-                        << Dbl(time_end - time_start, 18, 11)<<'s' 
-                        << std::endl;
-            #endif
-
-            #if 0
-            SYSTEMTIME timeStart, timeEnd;
-            double timeElapsed;
-            GetSystemTime(&timeStart);
-            gettimeofday(&tv, &tz);
-            time_start = (double) tv.tv_sec + 
-                (double)tv.tv_usec / 1000000.0;
-            #endif
+            // Read w fields
+            in >> filename;
+            Log::file() << " " << Str(filename, 20) <<std::endl;
+            fieldIo().readFieldsRGrid(filename, wFieldGrids());
 
             int fail = iterator().solve();
-            if(fail) {
+
+            if (!fail) {
+               computeFreeEnergy();
+               outputThermo(Log::file());
+            } else {
                Log::file() << "Iterate has failed. Exiting "<<std::endl;
                exit(1);
             }
-
-            gettimeofday(&tv, &tz);
-            time_end = (double)tv.tv_sec + 
-               (double)tv.tv_usec / 1000000.0;
-            Log::file() << "SCF_Time = " 
-                        << Dbl(time_end - time_start, 18, 11)<<'s' 
-                        << std::endl;
-
-            computeFreeEnergy();
-            outputThermo(Log::file());
-         }
-
-         else if (command == "BASIS_TO_RGRID") {
+         } else 
+         if (command == "BASIS_TO_RGRID") {
             std::string inFileName;
-            std::string outFileName;
-
             in >> inFileName;
             Log::file() << " " << Str(inFileName, 20) <<std::endl;
 
-            in >> outFileName;
-            Log::file() << " " << Str(outFileName, 20) <<std::endl;
 
             fieldIo().readFieldsBasis(inFileName, cFields());
             fieldIo().convertBasisToRGrid(cFields(), cFieldGrids());
+
+            std::string outFileName;
+            in >> outFileName;
+            Log::file() << " " << Str(outFileName, 20) <<std::endl;
             fieldIo().writeFieldsRGrid(outFileName, cFieldGrids());
-
-         }
-
-         else if (command == "RGRID_TO_BASIS") {
+         } else 
+         if (command == "RGRID_TO_BASIS") {
             std::string inFileName;
             std::string outFileName;
 
@@ -514,38 +438,30 @@ namespace Pspg
             fieldIo().convertRGridToBasis(cFieldGrids(), cFields());
             fieldIo().writeFieldsBasis(outFileName, cFields());
 
-         }
+         } else 
+         if (command == "KGRID_TO_RGRID") {
 
-         else if (command == "KGRID_TO_RGRID") {
             std::string inFileName;
-            std::string outFileName;
-
             in >> inFileName;
             Log::file() << " " << Str(inFileName, 20) <<std::endl;
-
-            in >> outFileName;
-            Log::file() << " " << Str(outFileName, 20) <<std::endl;
-
             fieldIo().readFieldsKGrid(inFileName, cFieldDfts());
 
-            //convert to rgrid
+            // Convert to rgrid
             for (int i = 0; i < mixture().nMonomer(); ++i) {
                fft().inverseTransform(cFieldDft(i), cFieldGrid(i));
             }
 
+            std::string outFileName;
+            in >> outFileName;
+            Log::file() << " " << Str(outFileName, 20) <<std::endl;
             fieldIo().writeFieldsRGrid(outFileName, cFieldGrids());
 
-         } else if (command == "RHO_TO_OMEGA") {
+         } else 
+         if (command == "RHO_TO_OMEGA") {
 
             std::string inFileName;
-            std::string outFileName;
-
             in >> inFileName;
             Log::file() << " " << Str(inFileName, 20) << std::endl;
-
-            in >> outFileName;
-            Log::file() << " " << Str(outFileName, 20) << std::endl;
-
             fieldIo().readFieldsRGrid(inFileName, cFieldGrids());
 
             //code is bad here, `mangled' access of data in array
@@ -559,6 +475,9 @@ namespace Pspg
                }
             }
 
+            std::string outFileName;
+            in >> outFileName;
+            Log::file() << " " << Str(outFileName, 20) << std::endl;
             fieldIo().writeFieldsRGrid(outFileName, wFieldGrids());
 
          } else {
