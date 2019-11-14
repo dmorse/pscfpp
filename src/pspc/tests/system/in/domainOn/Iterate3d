@@ -1,5 +1,4 @@
+READ_W_BASIS   contents/omega/domainOn/omega_bcc
 ITERATE
-contents/omega/domainOn/omega_bcc
-WRITE_W_BASIS
-out/omega/domainOn/omega_bcc
+WRITE_W_BASIS  out/omega/domainOn/omega_bcc
 FINISH

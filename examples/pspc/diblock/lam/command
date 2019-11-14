@@ -1,7 +1,7 @@
 OUTPUT_STARS     out/stars
 OUTPUT_WAVES     out/waves
-ITERATE          in/omega
+READ_W_BASIS     in/omega
+ITERATE
 WRITE_W_BASIS    out/omega.bf
 BASIS_TO_RGRID   out/omega.bf  out/omega.rf
 FINISH
-
