@@ -1,27 +1,23 @@
-/*! \page user_command_fd_page 3.3.1 Command files for pscf_fd
+/*! \page user_command_fd_page 3.3.1 Commands for pscf_fd
 \ref user_command_page    (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_command_pc_page (Next) 
 <BR>
 
-\section user_command_fd_example_sec Minimal Example
-
 Here is a example of a minimal command file for pscf_fd:
 \code
 ITERATE          in/w
-WRITE_WFIELDS    out/w.bf
-WRITE_CFIELDS    out/c.bf
+WRITE_W    out/w.bf
+WRITE_C    out/c.bf
 FINISH
 \endcode
 The command "ITERATE in/w.bf" instructs the program to read the file 
 in/w.bf, which contains an initial guess for the chemical potential 
 field, then iteratively solve the self-consistent field equations 
-start from this initial guess.  The command "WRITE_WFIELDS out/w.bf" 
+start from this initial guess.  The command "WRITE_W out/w.bf" 
 writes the resulting converged set of chemical potential fields to 
-the file out/w.bf. The command "WRITE_CFIELDS out/c.bf" writes the 
+the file out/w.bf. The command "WRITE_C out/c.bf" writes the 
 corresponding monomer volume fraction fields to the file out/c.bf.
 The script stops execution when it encounters the FINISH command.
-
-\section user_command_fd_commands_sec Available Commands
 
 The following table shows a list of available commands for pscf_fd:
 <table>
@@ -33,20 +29,20 @@ The following table shows a list of available commands for pscf_fd:
   <tr> 
     <td> ITERATE </td>
     <td> filename [string] </td>
-    <td> Read initial W field from file filename, iterate to convergence  </td>
+    <td> Read initial w field from file filename, iterate to convergence  </td>
   </tr>
   <tr> 
-    <td> WRITE_WFIELDS </td>
+    <td> WRITE_W </td>
     <td> filename [string] </td>
-    <td> Write W fields to file filename  </td>
+    <td> Write chemical potential (w) fields to file filename  </td>
   </tr>
   <tr> 
-    <td> WRITE_CFIELDS </td>
+    <td> WRITE_C </td>
     <td> filename [string] </td>
-    <td> Write monomer volume fraction fields for each type to file filename  </td>
+    <td> Write monomer volume fraction (c) fields to file filename  </td>
   </tr>
   <tr> 
-    <td> WRITE_BLOCK_CFIELDS </td>
+    <td> WRITE_BLOCK_C </td>
     <td> filename [string] </td>
     <td> Write monomer volume fractions for each block to file filename  </td>
   </tr>

@@ -1,0 +1,29 @@
+/*! \page user_field_page 3.3 Field Files
+
+ \ref user_example_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref developer_page (Next) 
+<BR>
+
+Each PSCF program can read and write files that contain chemical potential,
+monomer volume fraction fields, and other quantities that can be expressed
+mathematicall as functions of one or more spatial coordinates. Several 
+different file formats are used for this purpose.  The pscf_pcNd and 
+pscf_pgND CPU and GPU programs, which are both designed to treat periodic
+microstructures, both use file formats that were originally created for 
+the older Fortran PSCF program. The pscf_fd1d program for one-dimensional
+programs uses a somewhat simpler file format of its own. Formats used by
+specific programs or groups of programs are described in the pages linked
+below.
+
+<h2> Field Files:</h2>
+
+   <ul style="list-style: none;">
+   <li> \subpage user_field_pp_page   "Periodic Systems (CPU and GPU)" </li>
+   <li> \subpage user_field_1d_page   "One-dimensional Systems" </li>
+   </ul>
+
+ <BR>
+ \ref user_example_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref user_page          (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref developer_page     (Next) 
+*/

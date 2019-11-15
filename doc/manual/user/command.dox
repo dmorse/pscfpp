@@ -18,12 +18,13 @@ upper case label, separated by whitespace. The program stops execution
 and returns control to the operating system when it encounters the 
 command string 'FINISH' on a line by itself. 
 
-<h2> Command files for specific programs:</h2>
+Each of the following subpages gives more detailed information about
+commands available for specific programs.
 
    <ul style="list-style: none;">
    <li> \subpage user_command_fd_page      "3.3.1 pscf_fd" </li>
    <li> \subpage user_command_pc_page      "3.3.2 pscf_pcNd (CPU)" </li>
-   <li> \subpage user_command_pg_page      "3.3.3 pscf_pgNd" (GPU)</li>
+   <li> \subpage user_command_pg_page      "3.3.3 pscf_pgNd (GPU)"</li>
    </ul>
 
  <BR>

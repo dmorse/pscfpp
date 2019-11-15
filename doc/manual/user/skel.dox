@@ -1,0 +1,22 @@
+/*! \page user_???_page 3.3 Command Files
+
+ \ref user_???_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref user_???_page (Next) 
+<BR>
+
+For any PSCF simulation program, the parameter file is read first,
+followed by a command script. 
+
+<h2> Field Files:</h2>
+
+   <ul style="list-style: none;">
+   <li> \subpage user_command_??_page   "3.?.? ??" </li>
+   <li> \subpage user_command_??_page   "3.?.? ?? (CPU)" </li>
+   <li> \subpage user_command_??_page   "3.?.? ??" (GPU)</li>
+   </ul>
+
+ <BR>
+ \ref user_???_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref user_page         (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref user_???_page (Next) 
+*/
