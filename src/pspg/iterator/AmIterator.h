@@ -121,8 +121,8 @@ namespace Pspg {
          ///error tolerance
          double epsilon_;
 
-         ///variable cell computation (1) or fixed cell computation (0), default value = 0
-         bool cell_;
+         /// Flexible unit cell (1) or rigid cell (0), default value = 0
+         bool isFlexible_;
 
          ///free parameter for minimization
          double lambda_;

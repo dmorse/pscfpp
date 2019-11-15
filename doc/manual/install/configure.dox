@@ -78,11 +78,11 @@ optional features are currently enabled, and the name of the current
 choice of compiler. The resulting output for the default configuration 
 should look something like this:
 \code
--g  OFF - debugging
+-d  OFF - debugging
 \endcode
 if debugging is disabled (the default configuration), or
 \code
--g  ON - debugging
+-d  ON - debugging
 \endcode
 
 \subsection install_configure_help_sub The "help" option
@@ -103,7 +103,7 @@ of the output before the last two begins with the name of the command
 line option for the configure script (a dash followed by a letter) 
 that can be used to enable or disable an associated feature.  This
 information is also output by the invoking configure with -h option.
-The "debugging" feature is enabled or disabled using the "-g" option.  
+The "debugging" feature is enabled or disabled using the "-d" option.  
 Each compile-time feature can be enabled by using the associated command 
 line option followed by "1" (ON), or disabled by using the option followed 
 by "0" (OFF), and then compiling or recompiling the desired programs.
@@ -112,12 +112,12 @@ For example, to enable debugging (which enables extensive run-time sanity
 checks, at a slight cost in speed) in code built in one build directory, 
 one would enter
 \code 
-> ./configure -g1
+> ./configure -d1
 \endcode
 from the root of the relevant build directory (i.e., from src/ or bld/).
 To disable debugging before compiling, one would instead enter
 \code 
-> ./configure -g0
+> ./configure -d0
 \endcode
 These and any other desired changes in compile-time configuration must 
 be made before invoking make to compile a program.  
@@ -157,7 +157,7 @@ The optional features are:
   </tr>
   <tr> 
     <td> Debugging - additional error checks </td>
-    <td> -g </td>
+    <td> -d </td>
     <td> OFF </td>
     <td> UTIL_DEBUG </td>
     <td> config.mk </td>

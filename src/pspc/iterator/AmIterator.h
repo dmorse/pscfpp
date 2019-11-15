@@ -110,8 +110,8 @@ namespace Pspc
       /// Error tolerance
       double epsilon_;
 
-      /// Variable cell computation (1) or fixed cell computation (0), default value = 0
-      bool cell_;
+      /// Flexible cell computation (1) or rigid (0), default value = 0
+      bool isFlexible_;
 
       /// Free parameter for minimization
       double lambda_;

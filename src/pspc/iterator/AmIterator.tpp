@@ -47,11 +47,11 @@ namespace Pspc
    template <int D>
    void AmIterator<D>::readParameters(std::istream& in)
    {
-      cell_ = 0; // default value (fixed cell)
+      isFlexible_ = 0; // default value (fixed cell)
       read(in, "maxItr", maxItr_);
       read(in, "epsilon", epsilon_);
       read(in, "maxHist", maxHist_);
-      readOptional(in, "domain", cell_);
+      readOptional(in, "isFlexible", isFlexible_);
   }
 
    /*
@@ -63,7 +63,7 @@ namespace Pspc
       devHists_.allocate(maxHist_+1);
       omHists_.allocate(maxHist_+1);
 
-      if (cell_){
+      if (isFlexible_) {
          devCpHists_.allocate(maxHist_+1);
          CpHists_.allocate(maxHist_+1);
       }
@@ -126,7 +126,7 @@ namespace Pspc
       convertTimer.stop(now);
 
       // Compute initial stress if needed
-      if (cell_){
+      if (isFlexible_) {
          stressTimer.start(now);
          system().mixture().computeStress();
          now = Timer::now();
@@ -164,7 +164,7 @@ namespace Pspc
             double solverTime = solverTimer.time();
             double stressTime = 0.0;
             double totalTime = updateTime + convertTime + solverTime;
-            if (cell_) {
+            if (isFlexible_) {
                stressTime = stressTimer.time();
                totalTime += stressTime;
             }
@@ -183,7 +183,7 @@ namespace Pspc
             Log::file() << "\n\n";
 
             // If the unit cell is rigid, compute and output final stress 
-            if (!cell_){
+            if (!isFlexible_) {
                system().mixture().computeStress();
                Log::file() << "Final stress:" << "\n";
                for (int m=0; m<(systemPtr_->unitCell()).nParameter(); ++m){
@@ -234,7 +234,7 @@ namespace Pspc
             solverTimer.stop(now);
 
             // Compute stress if needed
-            if (cell_){
+            if (isFlexible_){
                stressTimer.start(now);
                system().mixture().computeStress();
                now = Timer::now();
@@ -262,7 +262,7 @@ namespace Pspc
 
       omHists_.append(systemPtr_->wFields());
 
-      if (cell_)
+      if (isFlexible_)
          //CpHists_.append((systemPtr_->unitCell()).params());
          CpHists_.append((systemPtr_->unitCell()).parameters());
 
@@ -309,7 +309,7 @@ namespace Pspc
 
       devHists_.append(tempDev);
 
-      if (cell_){
+      if (isFlexible_){
          FArray<double, 6 > tempCp;
          for (int i = 0; i<(systemPtr_->unitCell()).nParameter() ; i++){
             tempCp [i] = -((systemPtr_->mixture()).stress(i));
@@ -337,7 +337,7 @@ namespace Pspc
          }
       }
 
-      if (cell_){
+      if (isFlexible_){
          for ( int i = 0; i < (systemPtr_->unitCell()).nParameter() ; i++) {
             dError +=  devCpHists_[0][i] *  devCpHists_[0][i];
             wError +=  (systemPtr_->unitCell()).parameters() [i] * (systemPtr_->unitCell()).parameters() [i];
@@ -360,7 +360,7 @@ namespace Pspc
       Log::file() << "SCF Error   = " << Dbl(temp1) << std::endl;
       error = temp1;
 
-      if (cell_){
+      if (isFlexible_){
          for ( int i = 0; i < (systemPtr_->unitCell()).nParameter() ; i++) {
             if (temp2 < fabs (devCpHists_[0][i]))
                 temp2 = fabs (devCpHists_[0][i]);
@@ -377,7 +377,7 @@ namespace Pspc
       Log::file() << "Error       = " << Dbl(error) << std::endl;
 
       // Output current unit cell parameter values
-      if (cell_){
+      if (isFlexible_){
          for (int m=0; m<(systemPtr_->unitCell()).nParameter() ; ++m){
                Log::file() << "Parameter " << m << " = "
                            << Dbl((systemPtr_->unitCell()).parameters()[m])
@@ -419,7 +419,7 @@ namespace Pspc
                   invertMatrix_(i,j) += elm;
                }
 
-               if (cell_){
+               if (isFlexible_){
                   elm_cp = 0;
                   for (int m = 0; m < nParameter ; ++m){
                      elm_cp += ((devCpHists_[0][m] - devCpHists_[i+1][m])*
@@ -438,7 +438,7 @@ namespace Pspc
                }
             }
 
-            if (cell_){
+            if (isFlexible_){
                elm_cp = 0;
                for (int m = 0; m < nParameter ; ++m){
                   vM_[i] += ((devCpHists_[0][m] - devCpHists_[i+1][m]) *
@@ -472,7 +472,7 @@ namespace Pspc
             }
          }
 
-         if (cell_){
+         if (isFlexible_){
             for (int m = 0; m < unitCell.nParameter() ; ++m){
                parameters.append(CpHists_[0][m]
                               + lambda_* devCpHists_[0][m]);
@@ -507,7 +507,7 @@ namespace Pspc
                                          + lambda_ * dArrays_[i][j];
             }
          }
-         if(cell_){
+         if (isFlexible_){
             for (int m = 0; m < unitCell.nParameter() ; ++m){
                wCpArrays_[m] = CpHists_[0][m];
                dCpArrays_[m] = devCpHists_[0][m];

@@ -30,7 +30,7 @@
 # options takes 0 or 1 as a required argument, using 1 to denote "enable"
 # and 0 to denote "disable".
 #
-#   -b (0|1)   debugging                   (defines/undefines UTIL_DEBUG)
+#   -d (0|1)   debugging                   (defines/undefines UTIL_DEBUG)
 #
 # These command line options do not enable or disable features: 
 #
@@ -40,10 +40,10 @@
 #
 # To disable debugging 
 #
-#   >  ./configure -b0 
+#   >  ./configure -d0 
 #
 #-----------------------------------------------------------------------
-while getopts "b:g:q" opt; do
+while getopts "d:g:q" opt; do
 
   if [ -n "$MACRO" ]; then 
     MACRO=""
@@ -53,21 +53,16 @@ while getopts "b:g:q" opt; do
   fi
   
   case $opt in
-    b)
+    d)
       MACRO=UTIL_DEBUG
       VALUE=1
       FILE=config.mk
       ;;
     q)
       if [ `grep "^ *UTIL_DEBUG *= *1" config.mk` ]; then
-         echo "-g ON  - debugging" >&2
+         echo "-d ON  - debugging" >&2
       else
-         echo "-g OFF - debugging" >&2
-      fi
-      if [ `grep "^ *MAKEDEP" config.mk` ]; then
-         echo "-k ON  - automatic dependency tracking" >&2
-      else
-         echo "-k OFF - automatic dependency tracking" >&2
+         echo "-d OFF - debugging" >&2
       fi
       ;;
   esac

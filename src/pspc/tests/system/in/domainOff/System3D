@@ -25,6 +25,6 @@ System{
     maxItr 1000
     epsilon 1e-10
     maxHist 30
-    domain 0
+    isFlexible 0
   }
 }

@@ -29,7 +29,7 @@ namespace Pspg {
         lambda_(0),
         nHist_(0),
         maxHist_(0),
-        cell_(0)
+        isFlexible_(0)
    {  setClassName("AmIterator"); }
 
    template <int D>
@@ -39,7 +39,7 @@ namespace Pspg {
         lambda_(0),
         nHist_(0),
         maxHist_(0),
-        cell_(0)
+        isFlexible_(0)
    { setClassName("AmIterator"); }
 
    template <int D>
@@ -52,11 +52,11 @@ namespace Pspg {
    template <int D>
    void AmIterator<D>::readParameters(std::istream& in)
    {   
-      cell_ = 0; //default value (fixed cell)
+      isFlexible_ = 0; //default value (fixed cell)
       read(in, "maxItr", maxItr_);
       read(in, "epsilon", epsilon_);
       read(in, "maxHist", maxHist_);
-      readOptional(in, "domain", cell_); 
+      readOptional(in, "isFlexible", isFlexible_); 
    }
 
    template <int D>
@@ -65,7 +65,7 @@ namespace Pspg {
       devHists_.allocate(maxHist_ + 1);
       omHists_.allocate(maxHist_ + 1);
 
-      if (cell_){
+      if (isFlexible_) {
          devCpHists_.allocate(maxHist_+1);
          CpHists_.allocate(maxHist_+1);
       }
@@ -104,7 +104,7 @@ namespace Pspg {
       solverTimer.stop(now);
 
       // Compute stress for initial state
-      if (cell_) {
+      if (isFlexible_) {
          stressTimer.start(now);
          systemPtr_->mixture().computeTStress(systemPtr_->wavelist());
          for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){
@@ -152,7 +152,7 @@ namespace Pspg {
             double solverTime = solverTimer.time();
             double stressTime = 0.0;
             double totalTime = updateTime + solverTime;
-            if (cell_) {
+            if (isFlexible_) {
                stressTime = stressTimer.time();
                totalTime += stressTime;
             }
@@ -168,7 +168,7 @@ namespace Pspg {
             Log::file() << "total time   = "  << totalTime   << " s  ";
             Log::file() << "\n\n";
            
-            if (cell_) {
+            if (isFlexible_) {
                Log::file() << "\n";
                Log::file() << "Final stress values:" << "\n";
                for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){
@@ -226,7 +226,7 @@ namespace Pspg {
             now = Timer::now();
             solverTimer.stop(now);
      
-            if (cell_){
+            if (isFlexible_) {
                stressTimer.start(now);
                systemPtr_->mixture().computeTStress(systemPtr_->wavelist());
                for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){
@@ -271,7 +271,7 @@ namespace Pspg {
 
       omHists_.append(systemPtr_->wFieldGrids());
 
-      if (cell_) {
+      if (isFlexible_) {
          CpHists_.append(systemPtr_->unitCell().parameters());
       }
 
@@ -304,12 +304,9 @@ namespace Pspg {
                                                                              systemPtr_->mesh().size());
       }
 
-
-
       devHists_.append(tempDev);
 
-
-      if (cell_){
+      if (isFlexible_) {
          FArray<double, 6> tempCp;
          for (int i = 0; i<(systemPtr_->unitCell()).nParameter(); i++){
             //format????
@@ -331,7 +328,7 @@ namespace Pspg {
          wError += innerProduct(systemPtr_->wFieldGrid(i), systemPtr_->wFieldGrid(i), systemPtr_->mesh().size());
       }
 
-      if (cell_){
+      if (isFlexible_) {
          for ( int i = 0; i < systemPtr_->unitCell().nParameter(); i++) {
             dError +=  devCpHists_[0][i] *  devCpHists_[0][i];
             wError +=  systemPtr_->unitCell().parameter(i) * systemPtr_->unitCell().parameter(i);
@@ -381,7 +378,7 @@ namespace Pspg {
             for (int j = i; j < nHist_; ++j) {
                invertMatrix_(i, j) = histMat_.makeUmn(i, j, nHist_);
 
-               if (cell_){
+               if (isFlexible_) {
                   elm_cp = 0;
                   for (int m = 0; m < systemPtr_->unitCell().nParameter(); ++m){
                      elm_cp += ((devCpHists_[0][m] - devCpHists_[i+1][m]) * 
@@ -397,7 +394,7 @@ namespace Pspg {
          for (int i = 0; i < nHist_; ++i) {
             vM_[i] = histMat_.makeVm(i, nHist_);
 
-            if (cell_){
+            if (isFlexible_) {
                elm_cp = 0;
                for (int m = 0; m < systemPtr_->unitCell().nParameter(); ++m){
                   vM_[i] += ((devCpHists_[0][m] - devCpHists_[i+1][m]) *
@@ -511,7 +508,7 @@ namespace Pspg {
             devHists_[0][i].cDField(), lambda_, systemPtr_->mesh().size());
          }
 
-         if (cell_){
+         if (isFlexible_) {
             cellParameters_.clear();
             for (int m = 0; m < (systemPtr_->unitCell()).nParameter() ; ++m){
                cellParameters_.append(CpHists_[0][m] +lambda_* devCpHists_[0][m]);
@@ -558,7 +555,7 @@ namespace Pspg {
 
 
 
-         if(cell_){
+         if (isFlexible_) {
             
             for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){
                wCpArrays_[m] = CpHists_[0][m];
