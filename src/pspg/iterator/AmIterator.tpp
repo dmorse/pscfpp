@@ -108,12 +108,12 @@ namespace Pspg {
          stressTimer.start(now);
          systemPtr_->mixture().computeTStress(systemPtr_->wavelist());
          for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){
-            std::cout << "Stress    " << m << " = "
-                      << systemPtr_->mixture().TStress[m]<<"\n";
+            Log::file() << "Stress    " << m << " = "
+                        << systemPtr_->mixture().TStress[m]<<"\n";
          }
          for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){
-            std::cout << "Parameter " << m << " = "
-                      << (systemPtr_->unitCell()).parameter(m)<<"\n";
+            Log::file() << "Parameter " << m << " = "
+                        << (systemPtr_->unitCell()).parameter(m)<<"\n";
          }
          now = Timer::now();
          stressTimer.stop(now);
@@ -172,14 +172,14 @@ namespace Pspg {
                Log::file() << "\n";
                Log::file() << "Final stress values:" << "\n";
                for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){
-                  std::cout << "Stress    " << m << " = "
-                            << systemPtr_->mixture().TStress[m]<<"\n";
+                  Log::file() << "Stress    " << m << " = "
+                              << systemPtr_->mixture().TStress[m]<<"\n";
                }
                Log::file() << "\n";
                Log::file() << "Final unit cell parameter values:" << "\n";
                for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){
-                  std::cout << "Parameter " << m << " = "
-                            << (systemPtr_->unitCell()).parameter(m)<<"\n";
+                  Log::file() << "Parameter " << m << " = "
+                              << (systemPtr_->unitCell()).parameter(m)<<"\n";
                }
                Log::file() << "\n";
             }
@@ -230,12 +230,12 @@ namespace Pspg {
                stressTimer.start(now);
                systemPtr_->mixture().computeTStress(systemPtr_->wavelist());
                for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){
-                  std::cout << "Stress    " << m << " = "
-                            << systemPtr_->mixture().TStress[m]<<"\n";
+                  Log::file() << "Stress    " << m << " = "
+                              << systemPtr_->mixture().TStress[m]<<"\n";
                }
                for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){
-                  std::cout << "Parameter " << m << " = "
-                            << (systemPtr_->unitCell()).parameter(m)<<"\n";
+                  Log::file() << "Parameter " << m << " = "
+                              << (systemPtr_->unitCell()).parameter(m)<<"\n";
                }
                now = Timer::now();
                stressTimer.stop(now);
@@ -335,10 +335,10 @@ namespace Pspg {
          }
       }
 
-      std::cout << " dError :" << Dbl(dError) << '\n';
-      std::cout << " wError :" << Dbl(wError) << '\n';
+      Log::file() << " dError :" << Dbl(dError) << '\n';
+      Log::file() << " wError :" << Dbl(wError) << '\n';
       error = sqrt(dError / wError);
-      std::cout << "  Error :" << Dbl(error) << '\n';
+      Log::file() << "  Error :" << Dbl(error) << '\n';
       if (error < epsilon_) {
          return true;
       }
@@ -553,8 +553,6 @@ namespace Pspg {
                dArrays_[i].cDField(), lambda_, systemPtr_->mesh().size());
          }
 
-
-
          if (isFlexible_) {
             
             for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){
@@ -570,10 +568,6 @@ namespace Pspg {
                }
             } 
 
-            //struct timeval timeStart, timeEnd;
-            //struct timezone tz;
-
-            //gettimeofday(&timeStart, &tz);                
             cellParameters_.clear();
             for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){               
                cellParameters_.append(wCpArrays_[m] + lambda_* dCpArrays_[m]);
@@ -583,21 +577,6 @@ namespace Pspg {
             systemPtr_->mixture().setupUnitCell(systemPtr_->unitCell(), systemPtr_->wavelist());
             systemPtr_->wavelist().computedKSq(systemPtr_->unitCell());
             
-            
-            //for(int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){
-            //   std::cout<<"Parameter"<<m<<"\t"<<"="
-            //            << std::setprecision (15)
-            //            <<systemPtr_->unitCell().parameter(m)<<"\n";
-            //}
-
-            //gettimeofday(&timeEnd, &tz);       
-            //Log::file() <<"Parameter update time : "
-            //            <<Dbl( ( (double)(timeEnd.tv_sec - timeStart.tv_sec) + 
-            //                     (double)(timeEnd.tv_usec - timeStart.tv_usec) / 1000000.0 )
-            //                   , 18, 11) <<'\n';
-
-            
-
          }
 
 
