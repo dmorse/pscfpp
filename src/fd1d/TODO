@@ -1,7 +1,7 @@
-TDO (1D finite difference code):
+TODO (1D finite difference code):
 
 1) Add point-like solvents
 2) Write more and/or more flexible sweep classes
 3) Add an iterator factory
-4) Write an Anderson Mixing iterator
+4) Write an Anderson-Mixing iterator
 
