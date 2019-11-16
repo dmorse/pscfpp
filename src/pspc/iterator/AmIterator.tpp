@@ -106,21 +106,21 @@ namespace Pspc
       // Convert from Basis to RGrid
       convertTimer.start();
       fieldIo.convertBasisToRGrid(system().wFields(),
-                                  system().wFieldGrids());
+                                  system().wFieldsRGrid());
       now = Timer::now();
       convertTimer.stop(now);
       #endif
 
       // Solve MDE for initial state
       solverTimer.start();
-      system().mixture().compute(system().wFieldGrids(),
-                                    system().cFieldGrids());
+      system().mixture().compute(system().wFieldsRGrid(),
+                                    system().cFieldsRGrid());
       now = Timer::now();
       solverTimer.stop(now);
 
       // Convert c fields from RGrid to Basis
       convertTimer.start(now);
-      fieldIo.convertRGridToBasis(system().cFieldGrids(),
+      fieldIo.convertRGridToBasis(system().cFieldsRGrid(),
                                   system().cFields());
       now = Timer::now();
       convertTimer.stop(now);
@@ -222,14 +222,14 @@ namespace Pspc
             // Convert wFields from Basis to RGrid
             convertTimer.start(now);
             fieldIo.convertBasisToRGrid(system().wFields(),
-                                        system().wFieldGrids());
+                                        system().wFieldsRGrid());
             now = Timer::now();
             convertTimer.stop(now);
 
             // Solve MDE
             solverTimer.start(now);
-            system().mixture().compute(system().wFieldGrids(),
-                                       system().cFieldGrids());
+            system().mixture().compute(system().wFieldsRGrid(),
+                                       system().cFieldsRGrid());
             now = Timer::now();
             solverTimer.stop(now);
 
@@ -243,7 +243,7 @@ namespace Pspc
 
             // Transform computed cFields from RGrid to Basis
             convertTimer.start(now);
-            fieldIo.convertRGridToBasis(system().cFieldGrids(),
+            fieldIo.convertRGridToBasis(system().cFieldsRGrid(),
                                         system().cFields());
             now = Timer::now();
             convertTimer.stop(now);

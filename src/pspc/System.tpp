@@ -256,21 +256,21 @@ namespace Pspc
       // Allocate wFields and cFields
       int nMonomer = mixture().nMonomer();
       wFields_.allocate(nMonomer);
-      wFieldGrids_.allocate(nMonomer);
-      wFieldDfts_.allocate(nMonomer);
+      wFieldsRGrid_.allocate(nMonomer);
+      wFieldsKGrid_.allocate(nMonomer);
 
       cFields_.allocate(nMonomer);
-      cFieldGrids_.allocate(nMonomer);
-      cFieldDfts_.allocate(nMonomer);
+      cFieldsRGrid_.allocate(nMonomer);
+      cFieldsKGrid_.allocate(nMonomer);
       
       for (int i = 0; i < nMonomer; ++i) {
          wField(i).allocate(basis().nStar());
-         wFieldGrid(i).allocate(mesh().dimensions());
-         wFieldDft(i).allocate(mesh().dimensions());
+         wFieldRGrid(i).allocate(mesh().dimensions());
+         wFieldKGrid(i).allocate(mesh().dimensions());
 
          cField(i).allocate(basis().nStar());
-         cFieldGrid(i).allocate(mesh().dimensions());
-         cFieldDft(i).allocate(mesh().dimensions());
+         cFieldRGrid(i).allocate(mesh().dimensions());
+         cFieldKGrid(i).allocate(mesh().dimensions());
       }
       isAllocated_ = true;
    }
@@ -301,15 +301,15 @@ namespace Pspc
             in >> filename;
             Log::file() << " " << Str(filename, 20) <<std::endl;
             fieldIo().readFieldsBasis(filename, wFields());
-            fieldIo().convertBasisToRGrid(wFields(), wFieldGrids());
+            fieldIo().convertBasisToRGrid(wFields(), wFieldsRGrid());
             hasWFields_ = true;
             hasCFields_ = false;
          } else
          if (command == "READ_W_RGRID") {
             in >> filename;
             Log::file() << " " << Str(filename, 20) <<std::endl;
-            fieldIo().readFieldsRGrid(filename, wFieldGrids());
-            fieldIo().convertRGridToBasis(wFieldGrids(), wFields());
+            fieldIo().readFieldsRGrid(filename, wFieldsRGrid());
+            fieldIo().convertRGridToBasis(wFieldsRGrid(), wFields());
             hasWFields_ = true;
             hasCFields_ = false;
          } else
@@ -323,7 +323,7 @@ namespace Pspc
                in >> filename;
                Log::file() << " " << Str(filename, 20) <<std::endl;
                fieldIo().readFieldsBasis(filename, wFields());
-               fieldIo().convertBasisToRGrid(wFields(), wFieldGrids());
+               fieldIo().convertBasisToRGrid(wFields(), wFieldsRGrid());
                hasWFields_ = true;
             }
 
@@ -348,15 +348,15 @@ namespace Pspc
                in >> filename;
                Log::file() << " " << Str(filename, 20) <<std::endl;
                fieldIo().readFieldsBasis(filename, wFields());
-               fieldIo().convertBasisToRGrid(wFields(), wFieldGrids());
+               fieldIo().convertBasisToRGrid(wFields(), wFieldsRGrid());
                hasWFields_ = true;
             }
 
             // Solve the modified diffusion equation (without iteration)
-            mixture().compute(wFieldGrids(), cFieldGrids());
+            mixture().compute(wFieldsRGrid(), cFieldsRGrid());
 
             // Convert c fields from r-grid to basis
-            fieldIo().convertRGridToBasis(cFieldGrids(), cFields());
+            fieldIo().convertRGridToBasis(cFieldsRGrid(), cFields());
             hasCFields_ = true;
 
          } else
@@ -370,7 +370,7 @@ namespace Pspc
             UTIL_CHECK(hasWFields_);
             in >> filename;
             Log::file() << "  " << Str(filename, 20) << std::endl;
-            fieldIo().writeFieldsRGrid(filename, wFieldGrids());
+            fieldIo().writeFieldsRGrid(filename, wFieldsRGrid());
          } else 
          if (command == "WRITE_C_BASIS") {
             UTIL_CHECK(hasCFields_);
@@ -382,7 +382,7 @@ namespace Pspc
             UTIL_CHECK(hasCFields_);
             in >> filename;
             Log::file() << "  " << Str(filename, 20) << std::endl;
-            fieldIo().writeFieldsRGrid(filename, cFieldGrids());
+            fieldIo().writeFieldsRGrid(filename, cFieldsRGrid());
          } else
          if (command == "BASIS_TO_RGRID") {
 
@@ -397,13 +397,13 @@ namespace Pspc
             fieldIo().readFieldsBasis(inFileName, cFields());
 
             // Convert
-            fieldIo().convertBasisToRGrid(cFields(), cFieldGrids());
+            fieldIo().convertBasisToRGrid(cFields(), cFieldsRGrid());
 
             // Write in r-grid format
             std::string outFileName;
             in >> outFileName;
             Log::file() << " " << Str(outFileName, 20) <<std::endl;
-            fieldIo().writeFieldsRGrid(outFileName, cFieldGrids());
+            fieldIo().writeFieldsRGrid(outFileName, cFieldsRGrid());
 
          } else 
          if (command == "RGRID_TO_BASIS") {
@@ -413,10 +413,10 @@ namespace Pspc
             std::string inFileName;
             in >> inFileName;
             Log::file() << " " << Str(inFileName, 20) <<std::endl;
-            fieldIo().readFieldsRGrid(inFileName, cFieldGrids());
+            fieldIo().readFieldsRGrid(inFileName, cFieldsRGrid());
 
             // Convert from r-grid to basis
-            fieldIo().convertRGridToBasis(cFieldGrids(), cFields());
+            fieldIo().convertRGridToBasis(cFieldsRGrid(), cFields());
 
             // Write in basis format
             std::string outFileName;
@@ -433,15 +433,15 @@ namespace Pspc
             Log::file() << " " << Str(inFileName, 20) <<std::endl;
 
 
-            fieldIo().readFieldsKGrid(inFileName, cFieldDfts());
+            fieldIo().readFieldsKGrid(inFileName, cFieldsKGrid());
             for (int i = 0; i < mixture().nMonomer(); ++i) {
-               fft().inverseTransform(cFieldDft(i), cFieldGrid(i));
+               fft().inverseTransform(cFieldKGrid(i), cFieldRGrid(i));
             }
 
             std::string outFileName;
             in >> outFileName;
             Log::file() << " " << Str(outFileName, 20) <<std::endl;
-            fieldIo().writeFieldsRGrid(outFileName, cFieldGrids());
+            fieldIo().writeFieldsRGrid(outFileName, cFieldsRGrid());
 
          } else
          if (command == "RGRID_TO_KGRID") {
@@ -451,15 +451,15 @@ namespace Pspc
             in >> inFileName;
             Log::file() << " " << Str(inFileName, 20) <<std::endl;
 
-            fieldIo().readFieldsRGrid(inFileName, cFieldGrids());
+            fieldIo().readFieldsRGrid(inFileName, cFieldsRGrid());
             for (int i = 0; i < mixture().nMonomer(); ++i) {
-               fft().forwardTransform(cFieldGrid(i), cFieldDft(i));
+               fft().forwardTransform(cFieldRGrid(i), cFieldKGrid(i));
             }
 
             std::string outFileName;
             in >> outFileName;
             Log::file() << " " << Str(outFileName, 20) <<std::endl;
-            fieldIo().writeFieldsKGrid(outFileName, cFieldDfts());
+            fieldIo().writeFieldsKGrid(outFileName, cFieldsKGrid());
 
          } else
          if (command == "RHO_TO_OMEGA") {
@@ -500,7 +500,7 @@ namespace Pspc
             }
 
             // Convert to r-grid format
-            fieldIo().convertBasisToRGrid(wFields(), wFieldGrids());
+            fieldIo().convertBasisToRGrid(wFields(), wFieldsRGrid());
             hasWFields_ = true;
             hasCFields_ = false;
 

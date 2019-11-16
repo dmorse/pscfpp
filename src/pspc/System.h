@@ -171,28 +171,28 @@ namespace Pspc
       *
       * The array capacity is equal to the number of monomer types.
       */
-      DArray<WField>& wFieldGrids();
+      DArray<WField>& wFieldsRGrid();
 
       /**
       * Get chemical potential field for one monomer type on r-space grid.
       *
       * \param monomerId integer monomer type index
       */
-      WField& wFieldGrid(int monomerId);
+      WField& wFieldRGrid(int monomerId);
 
       /**
       * Get array of all chemical potential fields in k-space.
       * 
       * The array capacity is equal to the number of monomer types.
       */
-      DArray<RFieldDft<D> >& wFieldDfts();
+      DArray<RFieldDft<D> >& wFieldsKGrid();
 
       /**
       * Get chemical potential field for one monomer type in k-space.
       *
       * \param monomerId integer monomer type index
       */
-      RFieldDft<D>& wFieldDft(int monomerId);
+      RFieldDft<D>& wFieldKGrid(int monomerId);
 
       /**
       * Get array of all concentration fields expanded in a basis.
@@ -213,28 +213,28 @@ namespace Pspc
       *
       * The array capacity is equal to the number of monomer types.
       */
-      DArray<CField>& cFieldGrids();
+      DArray<CField>& cFieldsRGrid();
 
       /**
       * Get concentration field for one monomer type on r-space grid.
       *
       * \param monomerId integer monomer type index
       */
-      CField& cFieldGrid(int monomerId);
+      CField& cFieldRGrid(int monomerId);
 
       /**
       * Get array of all concentration fields in k-space.
       *
       * The array capacity is equal to the number of monomer types.
       */
-      DArray<RFieldDft<D> >& cFieldDfts();
+      DArray<RFieldDft<D> >& cFieldsKGrid();
 
       /**
       * Get concentration field for one monomer type on k-space grid.
       *
       * \param monomerId integer monomer type index
       */
-      RFieldDft<D>& cFieldDft(int monomerId);
+      RFieldDft<D>& cFieldKGrid(int monomerId);
 
       //@}
       /// \name Miscellaneous Accessors 
@@ -301,9 +301,9 @@ namespace Pspc
       *
       * A true value is returned if and only if consistent values have been
       * set for both components in a symmetry-adapated basis (wFields) and 
-      * for values on a regular real space grid (wFieldGrids). Commands that
-      * read w fields from file in either of these formats must immediately 
-      * convert to the other.
+      * for values on a regular real space grid (wFieldsRGrid). Commands 
+      * that read w fields from file in either of these formats must 
+      * immediately convert to the other.
       */
       bool hasWFields() const;
 
@@ -311,11 +311,12 @@ namespace Pspc
       * Have monomer concentration fields (c fields) been computed?
       *
       * A true value is returned if and only if monomer concentration fields
-      * have been computed by solving the modified diffusion equation for the
-      * current w fields, and consistent values have been set for both values
-      * on a grid (wFieldGrids) and for coefficients in a basis (cFields).
-      * To satisfy this requirement, solution of the MDE on a grid should
-      * always be immediately followed by conversion of c fields to a basis.
+      * have been computed by solving the modified diffusion equation for 
+      * the current w fields, and consistent values have been set for both 
+      * values on a grid (wFieldsRGrid) and for coefficients in a basis 
+      * (cFields).  To satisfy this requirement, solution of the MDE on a 
+      * grid should always be immediately followed by conversion of c 
+      * fields to a basis.
       */  
       bool hasCFields() const;
 
@@ -404,12 +405,12 @@ namespace Pspc
       *
       * Indexed by monomer typeId, size = nMonomer.
       */
-      DArray<WField> wFieldGrids_;
+      DArray<WField> wFieldsRGrid_;
 
       /**
       * Work space for chemical potential fields
       */
-      DArray<RFieldDft<D> > wFieldDfts_;
+      DArray<RFieldDft<D> > wFieldsKGrid_;
 
       /**
       * Array of concentration fields for monomer types.
@@ -423,14 +424,14 @@ namespace Pspc
       *
       * Indexed by monomer typeId, size = nMonomer.
       */
-      DArray<CField> cFieldGrids_;
+      DArray<CField> cFieldsRGrid_;
 
       /**
       * Array of concentration fields on Fourier space grid.
       *
       * Indexed by monomer typeId, size = nMonomer.
       */
-      DArray<RFieldDft<D> > cFieldDfts_;
+      DArray<RFieldDft<D> > cFieldsKGrid_;
 
       /**
       * Work array (size = # of grid points).
@@ -475,14 +476,14 @@ namespace Pspc
       /**
       * Have W fields been set?
       *
-      * True iff both wFields_ and wFieldGrids_ are set and consistent.
+      * True iff both wFields_ and wFieldsRGrid_ are set and consistent.
       */
       bool hasWFields_;
 
       /**
       * Have C fields been computed by solving the MDE ?
       *
-      * True iff both cFields_ and cFieldGrids_ are set and consistent.
+      * True iff both cFields_ and cFieldsRGrid_ are set and consistent.
       */
       bool hasCFields_;
 
@@ -597,24 +598,24 @@ namespace Pspc
    // Get an array of monomer chemical potential fields on r-space grids.
    template <int D>
    inline 
-   DArray< typename System<D>::WField >& System<D>::wFieldGrids()
-   {  return wFieldGrids_; }
+   DArray< typename System<D>::WField >& System<D>::wFieldsRGrid()
+   {  return wFieldsRGrid_; }
 
    // Get a single monomer chemical potential field on an r-space grid.
    template <int D>
    inline 
-   typename System<D>::WField& System<D>::wFieldGrid(int id)
-   {  return wFieldGrids_[id]; }
+   typename System<D>::WField& System<D>::wFieldRGrid(int id)
+   {  return wFieldsRGrid_[id]; }
 
    template <int D>
    inline
-   DArray<RFieldDft<D> >& System<D>::wFieldDfts()
-   { return wFieldDfts_; }
+   DArray<RFieldDft<D> >& System<D>::wFieldsKGrid()
+   { return wFieldsKGrid_; }
 
    template <int D>
    inline
-   RFieldDft<D>& System<D>::wFieldDft(int id)
-   { return wFieldDfts_[id]; }
+   RFieldDft<D>& System<D>::wFieldKGrid(int id)
+   { return wFieldsKGrid_[id]; }
 
    template <int D>
    inline
@@ -628,24 +629,24 @@ namespace Pspc
 
    template <int D>
    inline
-   DArray<RFieldDft<D> >& System<D>::cFieldDfts()
-   { return cFieldDfts_; }
+   DArray<RFieldDft<D> >& System<D>::cFieldsKGrid()
+   { return cFieldsKGrid_; }
 
    template <int D>
    inline
-   RFieldDft<D>& System<D>::cFieldDft(int id)
-   { return cFieldDfts_[id]; }
+   RFieldDft<D>& System<D>::cFieldKGrid(int id)
+   { return cFieldsKGrid_[id]; }
 
    // Get array of all monomer concentration fields on grids.
    template <int D>
    inline
-   DArray< typename System<D>::CField >& System<D>::cFieldGrids()
-   {  return cFieldGrids_; }
+   DArray< typename System<D>::CField >& System<D>::cFieldsRGrid()
+   {  return cFieldsRGrid_; }
 
    // Get a single monomer concentration field on an r-space grid.
    template <int D>
-   inline typename System<D>::CField& System<D>::cFieldGrid(int id)
-   {  return cFieldGrids_[id]; }
+   inline typename System<D>::CField& System<D>::cFieldRGrid(int id)
+   {  return cFieldsRGrid_[id]; }
 
    // Have the w fields been set?
    template <int D>

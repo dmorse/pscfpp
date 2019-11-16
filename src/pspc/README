@@ -2,15 +2,15 @@ This directory contains code specific to a pseudo-spectral implementation
 of SCFT for periodic structures. The code is based on algorithms similar 
 to those used in the original fortran PSCF code. 
 
-This C++ code, unlike the fortran code, requires the user to invoke different
-executables for problems involving structures that are periodic in different
-numbers of dimensions.  The main executables for 1, 2 and 3 dimensionally
+This C++ code, unlike the fortran code, requires the user to invoke 
+different executables for problems involving structures that are periodic 
+in 1, 2 or 3 dimensions.  The main executables for 1, 2 and 3 dimensionally
 periodic structures are named pscf_ps1d, and pscf_ps2d and pscf_ps3d, 
 respectively.  Examples of the usage of this code are provided in the 
 directory examples/pspc/diblock directory. 
 
-The command line usage for doing a 3D SCFT calculation (e.g., one in the 
-directory examples/pspc/diblock/bcc) is to invoke
+The command line usage for doing a 3D SCFT calculation (e.g., the one in 
+the directory examples/pspc/diblock/bcc) is to invoke
 
      pscf_ps3d -p param -c command
 
