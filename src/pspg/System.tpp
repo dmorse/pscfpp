@@ -564,8 +564,6 @@ namespace Pspg
          mu = polymerPtr->mu();
          // Recall: mu = ln(phi/q)
          length = polymerPtr->length();
-         std::cout<< mu <<std::endl;
-         std::cout << length<<std::endl;
          fHelmholtz_ += phi*( mu - 1.0 )/length;
       }
 
@@ -595,7 +593,6 @@ namespace Pspg
          phi = polymerPtr->phi();
          mu = polymerPtr->mu();
          length = polymerPtr->length();
-
          pressure_ += mu * phi /length;
       }
 
@@ -610,11 +607,11 @@ namespace Pspg
       out << "pressure   = " << Dbl(pressure(), 18, 11) << std::endl;
       out << std::endl;
 
-      //out << "Polymers:" << std::endl;
-      //out << "    i"
-      //    << "        phi[i]      "
-      //    << "        mu[i]       " 
-      //    << std::endl;
+      out << "Polymers:" << std::endl;
+      out << "    i"
+          << "        phi[i]      "
+          << "        mu[i]       " 
+          << std::endl;
       for (int i = 0; i < mixture().nPolymer(); ++i) {
          out << Int(i, 5) 
              << "  " << Dbl(mixture().polymer(i).phi(),18, 11)
