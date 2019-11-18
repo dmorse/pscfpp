@@ -98,8 +98,8 @@ namespace Pspg {
 
       // Solve MDE for initial state
       solverTimer.start();
-      systemPtr_->mixture().compute(systemPtr_->wFieldGrids(),
-         systemPtr_->cFieldGrids());
+      systemPtr_->mixture().compute(systemPtr_->wFieldsRGrid(),
+         systemPtr_->cFieldsRGrid());
       now = Timer::now();
       solverTimer.stop(now);
 
@@ -221,8 +221,8 @@ namespace Pspg {
 
             // Solve MDE
             solverTimer.start(now);
-            systemPtr_->mixture().compute(systemPtr_->wFieldGrids(),
-                                          systemPtr_->cFieldGrids());
+            systemPtr_->mixture().compute(systemPtr_->wFieldsRGrid(),
+                                          systemPtr_->cFieldsRGrid());
             now = Timer::now();
             solverTimer.stop(now);
      
@@ -262,14 +262,14 @@ namespace Pspg {
       //need to average
       float average = 0;
       for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
-         average += reductionH(systemPtr_->wFieldGrid(i), systemPtr_->mesh().size());
+         average += reductionH(systemPtr_->wFieldRGrid(i), systemPtr_->mesh().size());
       }
       average /= (systemPtr_->mixture().nMonomer() * systemPtr_->mesh().size());
       for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
-         subtractUniform << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (systemPtr_->wFieldGrid(i).cDField(), average, systemPtr_->mesh().size());
+         subtractUniform << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (systemPtr_->wFieldRGrid(i).cDField(), average, systemPtr_->mesh().size());
       }
 
-      omHists_.append(systemPtr_->wFieldGrids());
+      omHists_.append(systemPtr_->wFieldsRGrid());
 
       if (isFlexible_) {
          CpHists_.append(systemPtr_->unitCell().parameters());
@@ -282,12 +282,12 @@ namespace Pspg {
       for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
          for (int j = 0; j < systemPtr_->mixture().nMonomer(); ++j) {
             pointWiseAddScale << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (tempDev[i].cDField(),
-                                                                            systemPtr_->cFieldGrid(j).cDField(),
+                                                                            systemPtr_->cFieldRGrid(j).cDField(),
                                                                             systemPtr_->interaction().chi(i, j),
                                                                             systemPtr_->mesh().size());
             //this is a good add but i dont necessarily know if its right
             pointWiseAddScale << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (tempDev[i].cDField(),
-                                                                            systemPtr_->wFieldGrid(j).cDField(),
+                                                                            systemPtr_->wFieldRGrid(j).cDField(),
                                                                             -systemPtr_->interaction().idemp(i, j),
                                                                             systemPtr_->mesh().size()); 
 
@@ -325,7 +325,7 @@ namespace Pspg {
       //float temp = 0;
       for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
          dError += innerProduct(devHists_[0][i], devHists_[0][i], systemPtr_->mesh().size());
-         wError += innerProduct(systemPtr_->wFieldGrid(i), systemPtr_->wFieldGrid(i), systemPtr_->mesh().size());
+         wError += innerProduct(systemPtr_->wFieldRGrid(i), systemPtr_->wFieldRGrid(i), systemPtr_->mesh().size());
       }
 
       if (isFlexible_) {
@@ -502,9 +502,9 @@ namespace Pspg {
 
       if (itr == 1) {
          for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
-            assignReal << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> >(systemPtr_->wFieldGrid(i).cDField(),
+            assignReal << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> >(systemPtr_->wFieldRGrid(i).cDField(),
             omHists_[0][i].cDField(), systemPtr_->mesh().size());
-            pointWiseAddScale << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> >(systemPtr_->wFieldGrid(i).cDField(),
+            pointWiseAddScale << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> >(systemPtr_->wFieldRGrid(i).cDField(),
             devHists_[0][i].cDField(), lambda_, systemPtr_->mesh().size());
          }
 
@@ -547,9 +547,9 @@ namespace Pspg {
          }
          
          for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
-            assignReal << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> >(systemPtr_->wFieldGrid(i).cDField(),
+            assignReal << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> >(systemPtr_->wFieldRGrid(i).cDField(),
                wArrays_[i].cDField(), systemPtr_->mesh().size());
-            pointWiseAddScale << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> >(systemPtr_->wFieldGrid(i).cDField(),
+            pointWiseAddScale << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> >(systemPtr_->wFieldRGrid(i).cDField(),
                dArrays_[i].cDField(), lambda_, systemPtr_->mesh().size());
          }
 

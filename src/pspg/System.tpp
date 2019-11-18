@@ -265,21 +265,21 @@ namespace Pspg
       // Allocate wFields and cFields
       int nMonomer = mixture().nMonomer();
       wFields_.allocate(nMonomer);
-      wFieldGrids_.allocate(nMonomer);
-      wFieldDfts_.allocate(nMonomer);
+      wFieldsRGrid_.allocate(nMonomer);
+      wFieldsKGrid_.allocate(nMonomer);
 
       cFields_.allocate(nMonomer);
-      cFieldGrids_.allocate(nMonomer);
-      cFieldDfts_.allocate(nMonomer);
+      cFieldsRGrid_.allocate(nMonomer);
+      cFieldsKGrid_.allocate(nMonomer);
 
       for (int i = 0; i < nMonomer; ++i) {
          wField(i).allocate(basis().nStar());
-         wFieldGrid(i).allocate(mesh().dimensions());
-         wFieldDft(i).allocate(mesh().dimensions());
+         wFieldRGrid(i).allocate(mesh().dimensions());
+         wFieldKGrid(i).allocate(mesh().dimensions());
 
          cField(i).allocate(basis().nStar());
-         cFieldGrid(i).allocate(mesh().dimensions());
-         cFieldDft(i).allocate(mesh().dimensions());
+         cFieldRGrid(i).allocate(mesh().dimensions());
+         cFieldKGrid(i).allocate(mesh().dimensions());
       }
 
       //storageCFields_.allocate(mesh().dimensions());
@@ -317,7 +317,7 @@ namespace Pspg
             Log::file() << " " << Str(filename, 20) <<std::endl;
 
             fieldIo().readFieldsBasis(filename, wFields());
-            fieldIo().convertBasisToRGrid(wFields(), wFieldGrids());
+            fieldIo().convertBasisToRGrid(wFields(), wFieldsRGrid());
             hasWFields_ = true;
 
          } else 
@@ -325,7 +325,7 @@ namespace Pspg
             in >> filename;
             Log::file() << " " << Str(filename, 20) <<std::endl;
 
-            fieldIo().readFieldsRGrid(filename, wFieldGrids());
+            fieldIo().readFieldsRGrid(filename, wFieldsRGrid());
             hasWFields_ = true;
 
          } else 
@@ -337,7 +337,7 @@ namespace Pspg
                in >> filename;
                Log::file() << "Reading w fields from file: " 
                            << Str(filename, 20) <<std::endl;
-               fieldIo().readFieldsRGrid(filename, wFieldGrids());
+               fieldIo().readFieldsRGrid(filename, wFieldsRGrid());
                hasWFields_ = true;
             }
 
@@ -358,27 +358,27 @@ namespace Pspg
             UTIL_CHECK(hasWFields_);
             in >> filename;
             Log::file() << "  " << Str(filename, 20) << std::endl;
-            fieldIo().convertRGridToBasis(wFieldGrids(), wFields());
+            fieldIo().convertRGridToBasis(wFieldsRGrid(), wFields());
             fieldIo().writeFieldsBasis(filename, wFields());
          } else 
          if (command == "WRITE_W_RGRID") {
             UTIL_CHECK(hasWFields_);
             in >> filename;
             Log::file() << "  " << Str(filename, 20) << std::endl;
-            fieldIo().writeFieldsRGrid(filename, wFieldGrids());
+            fieldIo().writeFieldsRGrid(filename, wFieldsRGrid());
          } else 
          if (command == "WRITE_C_BASIS") {
             UTIL_CHECK(hasCFields_);
             in >> filename;
             Log::file() << "  " << Str(filename, 20) << std::endl;
-            fieldIo().convertRGridToBasis(cFieldGrids(), cFields());
+            fieldIo().convertRGridToBasis(cFieldsRGrid(), cFields());
             fieldIo().writeFieldsBasis(filename, cFields());
          } else 
          if (command == "WRITE_C_RGRID") {
             UTIL_CHECK(hasCFields_);
             in >> filename;
             Log::file() << "  " << Str(filename, 20) << std::endl;
-            fieldIo().writeFieldsRGrid(filename, cFieldGrids());
+            fieldIo().writeFieldsRGrid(filename, cFieldsRGrid());
          } else 
          if (command == "BASIS_TO_RGRID") {
             hasCFields_ = false;
@@ -388,12 +388,12 @@ namespace Pspg
             Log::file() << " " << Str(inFileName, 20) <<std::endl;
 
             fieldIo().readFieldsBasis(inFileName, cFields());
-            fieldIo().convertBasisToRGrid(cFields(), cFieldGrids());
+            fieldIo().convertBasisToRGrid(cFields(), cFieldsRGrid());
 
             std::string outFileName;
             in >> outFileName;
             Log::file() << " " << Str(outFileName, 20) <<std::endl;
-            fieldIo().writeFieldsRGrid(outFileName, cFieldGrids());
+            fieldIo().writeFieldsRGrid(outFileName, cFieldsRGrid());
          } else 
          if (command == "RGRID_TO_BASIS") {
             hasCFields_ = false;
@@ -402,9 +402,9 @@ namespace Pspg
 
             in >> inFileName;
             Log::file() << " " << Str(inFileName, 20) <<std::endl;
-            fieldIo().readFieldsRGrid(inFileName, cFieldGrids());
+            fieldIo().readFieldsRGrid(inFileName, cFieldsRGrid());
 
-            fieldIo().convertRGridToBasis(cFieldGrids(), cFields());
+            fieldIo().convertRGridToBasis(cFieldsRGrid(), cFields());
 
             std::string outFileName;
             in >> outFileName;
@@ -419,18 +419,18 @@ namespace Pspg
             std::string inFileName;
             in >> inFileName;
             Log::file() << " " << Str(inFileName, 20) <<std::endl;
-            fieldIo().readFieldsKGrid(inFileName, cFieldDfts());
+            fieldIo().readFieldsKGrid(inFileName, cFieldsKGrid());
 
             // Use FFT to convert k-grid r-grid
             for (int i = 0; i < mixture().nMonomer(); ++i) {
-               fft().inverseTransform(cFieldDft(i), cFieldGrid(i));
+               fft().inverseTransform(cFieldKGrid(i), cFieldRGrid(i));
             }
 
             // Write to file in r-grid format
             std::string outFileName;
             in >> outFileName;
             Log::file() << " " << Str(outFileName, 20) <<std::endl;
-            fieldIo().writeFieldsRGrid(outFileName, cFieldGrids());
+            fieldIo().writeFieldsRGrid(outFileName, cFieldsRGrid());
 
          } else 
          if (command == "RHO_TO_OMEGA") {
@@ -439,16 +439,16 @@ namespace Pspg
             std::string inFileName;
             in >> inFileName;
             Log::file() << " " << Str(inFileName, 20) << std::endl;
-            fieldIo().readFieldsRGrid(inFileName, cFieldGrids());
+            fieldIo().readFieldsRGrid(inFileName, cFieldsRGrid());
 
             // Compute w fields, excluding Lagrange multiplier contribution
             //code is bad here, `mangled' access of data in array
             for (int i = 0; i < mixture().nMonomer(); ++i) {
-               assignUniformReal << < NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (wFieldGrid(i).cDField(), 0, mesh().size());
+               assignUniformReal << < NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (wFieldRGrid(i).cDField(), 0, mesh().size());
             }
             for (int i = 0; i < mixture().nMonomer(); ++i) {
                for (int j = 0; j < mixture().nMonomer(); ++j) {
-                  pointWiseAddScale << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (wFieldGrid(i).cDField(), cFieldGrid(j).cDField(), 
+                  pointWiseAddScale << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (wFieldRGrid(i).cDField(), cFieldRGrid(j).cDField(), 
                      interaction().chi(i,j), mesh().size());
                }
             }
@@ -457,7 +457,7 @@ namespace Pspg
             std::string outFileName;
             in >> outFileName;
             Log::file() << " " << Str(outFileName, 20) << std::endl;
-            fieldIo().writeFieldsRGrid(outFileName, wFieldGrids());
+            fieldIo().writeFieldsRGrid(outFileName, wFieldsRGrid());
 
          } else {
 
@@ -577,13 +577,13 @@ namespace Pspg
       for (int i = 0; i < nm; ++i) {
          for (int j = i + 1; j < nm; ++j) {
            assignUniformReal << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> >(workArray.cDField(), interaction().chi(i, j), nx);
-           inPlacePointwiseMul << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (workArray.cDField(), cFieldGrids_[i].cDField(), nx);
-           inPlacePointwiseMul << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (workArray.cDField(), cFieldGrids_[j].cDField(), nx);
+           inPlacePointwiseMul << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (workArray.cDField(), cFieldsRGrid_[i].cDField(), nx);
+           inPlacePointwiseMul << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (workArray.cDField(), cFieldsRGrid_[j].cDField(), nx);
            fHelmholtz_ += (reductionH(workArray, nx) / nx);
          }
          
-         assignReal << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (workArray.cDField(), wFieldGrids_[i].cDField(), nx);
-         inPlacePointwiseMul << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (workArray.cDField(), cFieldGrids_[i].cDField(), nx);
+         assignReal << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (workArray.cDField(), wFieldsRGrid_[i].cDField(), nx);
+         inPlacePointwiseMul << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (workArray.cDField(), cFieldsRGrid_[i].cDField(), nx);
          temp += reductionH(workArray, nx);
       }
       fHelmholtz_ -= (temp / nx);
