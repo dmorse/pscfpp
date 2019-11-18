@@ -37,6 +37,9 @@ namespace Pspc
    * A Mixture is associated with a Mesh<D> object, which models a
    * spatial discretization mesh. 
    *
+   * Note: Point-like solvents are not yet implemented. Currently,
+   * a Mixture can only be a mixture of Polymer species.
+   *
    * \ingroup Pspc_Solver_Module
    */
    template <int D>
@@ -72,9 +75,9 @@ namespace Pspc
       /**
       * Read all parameters and initialize.
       *
-      * This function reads in a complete description of
-      * the chemical composition and structure of all species,
-      * as well as the target contour length step size ds.
+      * This function reads in a complete description of the structure of
+      * all species and the composition of the mixture, as well as the
+      * target contour length step size ds.
       *
       * \param in input parameter stream
       */
@@ -94,6 +97,10 @@ namespace Pspc
       /**
       * Set unit cell parameters used in solver.
       * 
+      * This function resets unit cell information in the solvers for 
+      * every species in the system. It should be called once after
+      * every change in the unit cell.
+      *
       * \param unitCell UnitCell<D> object that contains Bravais lattice.
       */
       void setupUnitCell(const UnitCell<D>& unitCell);
@@ -102,16 +109,18 @@ namespace Pspc
       * Compute partition functions and concentrations.
       *
       * This function calls the compute function of every molecular
-      * species, and then adds the resulting block concentration
-      * fields for blocks of each type to compute a total monomer
+      * species, and then adds the resulting block concentration fields
+      * for blocks of the same monomer type to compute a total monomer
       * concentration (or volume fraction) for each monomer type.
       * Upon return, values are set for volume fraction and chemical 
       * potential (mu) members of each species, and for the 
       * concentration fields for each Block and Solvent. The total
       * concentration for each monomer type is returned in the
-      * cFields output parameter. 
+      * cFields output parameter. Monomer "concentrations" are returned 
+      * in units of inverse steric volume per monomer in an incompressible
+      * mixture, and are thus also volume fractions.
       *
-      * The arrays wFields and cFields must each have size nMonomer(),
+      * The arrays wFields and cFields must each have capacity nMonomer(),
       * and contain fields that are indexed by monomer type index. 
       *
       * \param wFields array of chemical potential fields (input)
@@ -126,7 +135,13 @@ namespace Pspc
       void computeStress();
 
       /**
-      * Derivative of free energy with respect to unit cell parameter n.
+      * Get derivative of free energy w/ respect to a unit cell parameter.
+      *
+      * Get the pre-computed derivative with respect to unit cell 
+      * parameter number n of the free energy per monomer (i.e., of the 
+      * product of the free energy density and the monomer reference 
+      * volume). The returned value is precomputed by the computeStress()
+      * function.
       *
       * \param n  index of unit cell parameter
       */
@@ -137,6 +152,7 @@ namespace Pspc
       */
       double vMonomer() const;
 
+      // Inherited public member functions with non-dependent names
       using MixtureTmpl< Polymer<D>, Solvent<D> >::nMonomer;
       using MixtureTmpl< Polymer<D>, Solvent<D> >::nPolymer;
       using MixtureTmpl< Polymer<D>, Solvent<D> >::nSolvent;
@@ -144,6 +160,7 @@ namespace Pspc
 
    protected:
 
+      // Inherited protected member functions with non-dependent names
       using MixtureTmpl< Polymer<D>, Solvent<D> >::setClassName;
       using ParamComposite::read;
       using ParamComposite::readOptional;

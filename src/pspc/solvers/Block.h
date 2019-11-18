@@ -16,7 +16,7 @@
 #include <pspc/field/RFieldDft.h>         // member
 #include <pspc/field/FFT.h>               // member
 #include <util/containers/FArray.h>       // member template
-#include <util/containers/DMatrix.h>
+#include <util/containers/DMatrix.h>      // member template
 
 namespace Pscf { 
    template <int D> class Mesh; 
@@ -80,6 +80,9 @@ namespace Pspc {
       /**
       * Setup parameters that depend on the unit cell.
       *
+      * This should be called once after every change in unit cell
+      * parameters.
+      *
       * \param unitCell unit cell, defining cell dimensions
       */
       void setupUnitCell(const UnitCell<D>& unitCell);
@@ -87,24 +90,36 @@ namespace Pspc {
       /**
       * Set solver for this block.
       *
-      * \param w  chemical potential field for this monomer type
+      * This should be called once after every change in w fields, before
+      * entering the loop used to solve the MDE for either propagator.
+      *
+      * \param w chemical potential field for this monomer type
       */
       void setupSolver(WField const & w);
 
       /**
-      * Compute step of integration loop, from i to i+1.
+      * Compute one step of solution of MDE, from i to i+1.
+      *
+      * \param q  input value of QField, from step i
+      * \param qNew  ouput value of QField, from step i+1
       */
-      void step(QField const & q, QField & qNew);
+      void step(QField const& q, QField& qNew);
 
       /**
-      * Compute unnormalized concentration for block by integration.
+      * Compute concentration (volume fraction) for block by integration.
       *
-      * Upon return, grid point r of array cField() contains the 
-      * integral int ds q(r,s)q^{*}(r,L-s) times the prefactor, 
-      * where q(r,s) is the solution obtained from propagator(0), 
-      * and q^{*} is the solution of propagator(1),  and s is
-      * a contour variable that is integrated over the domain 
-      * 0 < s < length(), where length() is the block length.
+      * This should be called after both associated propagators are known.
+      * Upon return, grid point r of array cField() contains the integal,
+      * int ds q(r,s)q^{*}(r,L-s) times the prefactor parameter, where
+      * q(r,s) is the solution obtained from propagator(0), q^{*}(r,s) is
+      * the solution of propagator(1),  and s is a contour variable that 
+      * is integrated over the domain 0 < s < length(), where length() 
+      * is the block length. The "prefactor" parameter should be set to 
+      * prefactor = phi/(L q), where phi is the overall volume fraction 
+      * for this molecular species, L is the number of monomers in the 
+      * species, and q is the species partition function, i.e., the 
+      * spatial average of q(r,L). This function is called by 
+      * Polymer<D>::compute().
       *
       * \param prefactor constant multiplying integral
       */ 
@@ -113,25 +128,26 @@ namespace Pspc {
       /** 
       * Compute stress contribution for this block.
       *
-      * The prefactor should be the same as that used in function
-      * computeConcentration.   
+      * This function is called by Polymer<D>::computeStress. The
+      * prefactor parameter should be the same as that passed to 
+      * function computeConcentration.   
       *   
       * \param prefactor constant multiplying integral
       */  
       void computeStress(double prefactor);
 
       /**
-      * Return associated spatial Mesh by reference.
+      * Get associated spatial Mesh by reference.
       */
       Mesh<D> const & mesh() const;
 
       /**
-      * Contour length step size.
+      * Get contour length step size.
       */
       double ds() const;
 
       /**
-      * Number of contour length steps.
+      * Get number of contour length steps in this block.
       */
       int ns() const;
 
@@ -161,9 +177,6 @@ namespace Pspc {
       using BlockDescriptor::length;
 
    private:
-
-      /// Pointer to associated Mesh<D>
-      //const Mesh<D>* meshPtr_;
 
       /// Matrix to store derivatives of plane waves 
       DMatrix<double> dGsq_;
