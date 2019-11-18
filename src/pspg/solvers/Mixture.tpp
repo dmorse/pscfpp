@@ -137,10 +137,6 @@ namespace Pspg
    {   
       int i, j;
 
-      for (i = 0; i < nParams_; ++i) {
-         stress_ [i] = 0;
-      }
-
       // Compute stress for each polymer.
       for (i = 0; i < nPolymer(); ++i) {
          polymer(i).computeStress(wavelist);
@@ -148,8 +144,9 @@ namespace Pspg
 
       // Accumulate total stress 
       for (i = 0; i < nParams_; ++i) {
+         stress_[i] = 0.0;
          for (j = 0; j < nPolymer(); ++j) {
-            stress_ [i] += polymer(j).stress(i);
+            stress_[i] += polymer(j).stress(i);
          }   
       }   
    }  

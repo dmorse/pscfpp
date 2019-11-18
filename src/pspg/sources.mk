@@ -1,10 +1,8 @@
-include $(SRC_DIR)/pspg/wavelist/sources.mk
 include $(SRC_DIR)/pspg/field/sources.mk
 include $(SRC_DIR)/pspg/iterator/sources.mk
 include $(SRC_DIR)/pspg/solvers/sources.mk
 
 pspg_= \
-  $(pspg_wavelist_) \
   $(pspg_field_) \
   $(pspg_solvers_) \
   $(pspg_iterator_) \

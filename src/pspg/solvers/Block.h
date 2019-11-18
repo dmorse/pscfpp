@@ -16,7 +16,7 @@
 #include <pspg/field/FFTBatched.h>        // member
 #include <util/containers/FArray.h>
 #include <pscf/crystal/UnitCell.h>
-#include <pspg/wavelist/WaveList.h>
+#include <pspg/solvers/WaveList.h>
 
 namespace Pscf { 
    template <int D> class Mesh; 

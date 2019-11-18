@@ -1,4 +1,5 @@
 pspg_solvers_= \
+     pspg/solvers/WaveList.cu \
      pspg/solvers/Propagator.cu \
      pspg/solvers/Block.cu \
      pspg/solvers/Polymer.cu \

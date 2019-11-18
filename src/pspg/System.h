@@ -11,7 +11,7 @@
 #include <pspg/iterator/AmIterator.h>
 #include <pspg/field/FieldIo.h>            // member
 #include <pspg/solvers/Mixture.h>          // member
-#include <pspg/wavelist/WaveList.h>        // member
+#include <pspg/solvers/WaveList.h>        // member
 #include <pspg/field/RDField.h>            // typedef
 #include <pspg/field/RDFieldDft.h>         // typedef
 

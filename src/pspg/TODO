@@ -1,16 +1,12 @@
 TODO (pspg GPU code):
 
-Short term 
--------------------------------------------------------------------------
-
 1) Complete doxygen documentation for all classes, functions and parameters 
    in src/pspg.
 
-2) Move Pspg::WaveList class to directory solvers/. It's essentially a 
-   utility that is used by the solvers, and doesn't need its own 
-   directory.
+Intermediate term 
+-------------------------------------------------------------------------
 
-3) Add an iterator with imposed symmetry and output in symmetry adapted 
+1) Add an iterator with imposed symmetry and output in symmetry adapted 
    format.
 
 Longer term  
