@@ -123,9 +123,13 @@ namespace Pspg {
       */
       void computeStress(WaveList<D>& wavelist, double prefactor);
 
-      /// Stress exerted by a polymer chain of a block.
-      FArray<double, 6> pStress;
-      
+      /**
+      * Get derivative of free energy with respect to a unit cell parameter.
+      *
+      * \param n  unit cell parameter index   
+      */
+      double stress(int n);
+
       /**
       * Return associated spatial Mesh by reference.
       */
@@ -167,6 +171,9 @@ namespace Pspg {
       FFT<D> fft_;
 
       FFTBatched<D> fftBatched_;
+      
+      /// Stress exerted by a polymer chain of a block.
+      FArray<double, 6> stress_;
       
       // Array of elements containing exp(-K^2 b^2 ds/6)
       RDField<D> expKsq_;
@@ -231,6 +238,11 @@ namespace Pspg {
    template <int D>
    inline double Block<D>::ds() const
    {  return ds_; }
+
+   /// Get derivative of free energy w/ respect to a unit cell parameter.
+   template <int D>
+   inline double Block<D>::stress(int n)
+   {  return stress_[n]; }
 
    /// Get Mesh by reference.
    template <int D>

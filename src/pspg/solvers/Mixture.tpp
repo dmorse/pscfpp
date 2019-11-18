@@ -133,23 +133,23 @@ namespace Pspg
    * Compute Total Stress.
    */  
    template <int D>
-   void Mixture<D>::computeTStress(WaveList<D>& wavelist)
+   void Mixture<D>::computeStress(WaveList<D>& wavelist)
    {   
       int i, j;
 
       for (i = 0; i < nParams_; ++i) {
-         TStress [i] = 0;
+         stress_ [i] = 0;
       }
 
       // Compute stress for each polymer.
       for (i = 0; i < nPolymer(); ++i) {
-         polymer(i).ComputePcStress(wavelist);
+         polymer(i).computeStress(wavelist);
       } 
 
       // Accumulate total stress 
       for (i = 0; i < nParams_; ++i) {
          for (j = 0; j < nPolymer(); ++j) {
-            TStress [i] += polymer(j).PcStress[i];
+            stress_ [i] += polymer(j).stress(i);
          }   
       }   
    }  

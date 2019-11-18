@@ -120,13 +120,21 @@ namespace Pspg
       void 
       compute(DArray<WField> const & wFields, DArray<CField>& cFields);
 
-      // Array to store total stress
-      FArray<double, 6> TStress;
-    
       /**
       * Get monomer reference volume.
       */
-      void computeTStress(WaveList<D>& wavelist);
+      void computeStress(WaveList<D>& wavelist);
+
+      /**
+      * Get derivative of free energy w/ respect to cell parameter.
+      *
+      * Get precomputed value of derivative of free energy per monomer
+      * with respect to unit cell parameter number n.
+      *
+      * \int n unit cell parameter id
+      */
+      double stress(int n)
+      {  return stress_[n]; }
 
       /**
       * Get monomer reference volume.
@@ -146,12 +154,16 @@ namespace Pspg
 
    private:
 
+      /// Derivatives of free energy w/ respect to cell parameters.
+      FArray<double, 6> stress_;
+    
       /// Monomer reference volume (set to 1.0 by default).
       double vMonomer_;
 
       /// Optimal contour length step size.
       double ds_;
 
+      /// Number of unit cell parameters.
       int nParams_;
 
       /// Pointer to associated Mesh<D> object.

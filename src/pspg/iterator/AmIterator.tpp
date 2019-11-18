@@ -106,10 +106,10 @@ namespace Pspg {
       // Compute stress for initial state
       if (isFlexible_) {
          stressTimer.start(now);
-         systemPtr_->mixture().computeTStress(systemPtr_->wavelist());
+         systemPtr_->mixture().computeStress(systemPtr_->wavelist());
          for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){
             Log::file() << "Stress    " << m << " = "
-                        << systemPtr_->mixture().TStress[m]<<"\n";
+                        << systemPtr_->mixture().stress(m)<<"\n";
          }
          for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){
             Log::file() << "Parameter " << m << " = "
@@ -173,7 +173,7 @@ namespace Pspg {
                Log::file() << "Final stress values:" << "\n";
                for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){
                   Log::file() << "Stress    " << m << " = "
-                              << systemPtr_->mixture().TStress[m]<<"\n";
+                              << systemPtr_->mixture().stress(m)<<"\n";
                }
                Log::file() << "\n";
                Log::file() << "Final unit cell parameter values:" << "\n";
@@ -228,10 +228,10 @@ namespace Pspg {
      
             if (isFlexible_) {
                stressTimer.start(now);
-               systemPtr_->mixture().computeTStress(systemPtr_->wavelist());
+               systemPtr_->mixture().computeStress(systemPtr_->wavelist());
                for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){
                   Log::file() << "Stress    " << m << " = "
-                              << systemPtr_->mixture().TStress[m]<<"\n";
+                              << systemPtr_->mixture().stress(m)<<"\n";
                }
                for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){
                   Log::file() << "Parameter " << m << " = "
@@ -310,7 +310,7 @@ namespace Pspg {
          FArray<double, 6> tempCp;
          for (int i = 0; i<(systemPtr_->unitCell()).nParameter(); i++){
             //format????
-            tempCp [i] = -((systemPtr_->mixture()).TStress [i]);
+            tempCp [i] = -((systemPtr_->mixture()).stress(i));
          }
          devCpHists_.append(tempCp);
       }
