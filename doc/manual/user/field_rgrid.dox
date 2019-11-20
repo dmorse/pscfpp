@@ -1,80 +1,86 @@
-Coordinate Grid Format
-=======================
+/*! \page user_field_rgrid_page 3.5.2 R-Grid File Format
 
-The PSCF programs for periodic microstructures can also output
-output the values of set of fields (one per monomer type) 
-evaluated on all of the grid points of the FFT grid that is 
-used to solve the modified diffusion equation.
+ \ref user_field_basis_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref user_field_kgrid_page   (Next) 
+<BR>
 
-**Example: 2D Hex Phase of Diblock Copolymer Melt**
+PSCF can also output the values of set of fields in a format
+that gives values on the nodes of the regular grid that is 
+used by the pseudo-spectral algorithm for solving the modified 
+diffusion equation.
 
-Here is example of a converged omega field for a hex phase::
+<h3> Example: 2D Hex Phase </h3>
 
-    format  1  0
-   dim                 
-                      2
-   crystal_system      
-            'hexagonal'
-   N_cell_param        
-                      1
-   cell_param          
-       1.7703537313E+00
-   group_name          
-              'P 6 m m'
-   N_monomer           
-                      2
-   ngrid               
-                     24                  24
-          0.340581085      19.518839883
-          0.570887775      19.658020087
-          1.199229419      19.984609517
-          2.070864605      20.233012735
-          2.929754416      19.853514300
-               .                 .
-               .                 .
-               .                 .
-          0.999219800      19.890258066
-          0.570887775      19.658020087
+Here is example of a converged omega field for a hex phase of
+a diblock copolymer melt:
 
+\code
+ format  1  0
+dim                 
+                   2
+crystal_system      
+           hexagonal
+N_cell_param        
+                   1
+cell_param          
+    1.7703537313E+00
+group_name          
+             P_6_m_m
+N_monomer           
+                   2
+ngrid               
+                  24                  24
+       0.340581085      19.518839883
+       0.570887775      19.658020087
+       1.199229419      19.984609517
+       2.070864605      20.233012735
+       2.929754416      19.853514300
+            .                 .
+            .                 .
+            .                 .
+       0.999219800      19.890258066
+       0.570887775      19.658020087
+\endcode
 
-**Description of Format**
+<h3> File Format </h3>
 
-Like the others, this file format contains a header section with
-crystallographic information followed by a data section. The header
-section is similar that for the symmetry adapted format, except that
-the last variable is an array "ngrid" of integers giving the number
+Like other field formats, this file format contains a header 
+section with crystallographic information followed by a data section. 
+The header section is similar that for the symmetry adapted format, except 
+that the last variable is an array "ngrid" of integers giving the number
 of grid points in each direction. In this example, because it is a
 two-dimensional crystal (dim = 2), this array contains two numbers,
 both 24, indicating a grid in which there are 24 grid points along
-each axis. To describe a hexagonal phase, we use a non-orthogonal
-coordinate system in which each axis is parallel to one of the 
-Bravais lattice vectors, which in a hexagonal phase have an angle
-of 60 degrees between. 
+each coordinate axis. To describe a hexagonal phase, we use a 
+non-orthogonal coordinate system in which each axis is parallel to 
+one of the Bravais lattice vectors, which in a hexagonal phase have 
+an angle of 60 degrees between them.
 
-The data section contains the values of fields associated with 
-N_monomer monomer types at grid points given by
-
-.. math::
+The data section contains the values of fields associated with N_monomer 
+monomer types at grid points given by
+\f[
 
     \textbf{r}(n_1, \ldots, n_{D}) = \sum_{i=1}^{\textrm{D}}
     \frac{n_{i}}{N_{i}}\textbf{a}_{1}
 
-where :math:`D` is the dimensionality of the crystal (denoted by "dim" 
-in the header and the parameter file), :math:`\textbf{a}_{i}` is a 
-Bravais lattice vector, :math:`N_{i}` is the number of grid points along 
-direction :math:`i`, and :math:`n_{i}` is an integer index in the range
-:math:`0 \leq n_{i} < N_{i}`.  The number of rows in the data section 
-is equal to the total number of grid points. Each row in this section
-contains values of all field components at a single grid point. The number 
-of columns is equal to the number of monomer types, so that data in column 
-:math:`\alpha` contains the values of the field associated with monomer 
-type :math:`\alpha`. 
+\f]
+where \f$D\f$ is the dimensionality of the crystal (denoted by "dim" 
+in the header file), \f$\textbf{a}_{i}\f$is a Bravais lattice vector, 
+\f$N_{i}\f$ is the number of grid points along direction \f$i\f$, and 
+\f$n_{i}\f$ is an integer index in the range \f$0 \leq n_{i} < N_{i}\f$.  
+The number of rows in the data section is equal to the total number 
+of grid points. Each row in this section contains values of all field 
+components at a single grid point. The number of columns is equal to 
+the number of monomer types, so that data in column \f$\alpha\f$ 
+contains the values of the field associated with monomer type 
+\f$\alpha\f$. 
 
-Grid points are listed in order using index :math:`n_{1}` as the most 
+Grid points are listed in order using index \f$n_{1}\f$ as the most 
 rapidly varying (innermost) loop index. This is implemented in the 
 field_io_mod module, in subroutines output_field_grid and 
 input_field_grid as a fortran loop of the form::
 
+\code
    do n3 = 0, ngrid(3) - 1
      do n2 = 0, ngrid(2) - 1
        do n1 = 0, ngrid(1) - 1
@@ -82,4 +88,11 @@ input_field_grid as a fortran loop of the form::
        enddo
      enddo
    enddo
+\endcode
 
+
+ <BR>
+ \ref user_field_basis_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref user_field_page        (Up)   &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref user_field_kgrid_page  (Next) 
+*/
