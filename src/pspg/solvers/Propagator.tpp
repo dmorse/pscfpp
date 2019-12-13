@@ -120,8 +120,6 @@ namespace Pspg {
       ns_(0),
       isAllocated_(false)
    {
-	   cudaMalloc((void**)&d_temp_, NUMBER_OF_BLOCKS * sizeof(cufftReal));
-	   temp_ = new cufftReal[NUMBER_OF_BLOCKS];
    }
 
    /*
@@ -142,6 +140,8 @@ namespace Pspg {
 
       cudaMalloc((void**)&qFields_d, sizeof(cufftReal)* mesh.size() *
                  ns);
+	   cudaMalloc((void**)&d_temp_, NUMBER_OF_BLOCKS * sizeof(cufftReal));
+	   temp_ = new cufftReal[NUMBER_OF_BLOCKS];
       isAllocated_ = true;
    }
 
