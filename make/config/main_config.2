@@ -126,16 +126,14 @@ UTIL_CXX11=1
 #=======================================================================
 # Automatic dependency generation.
  
-# Executable file invoked to compute dependencies among header files.
-MAKEDEP=$(BIN_DIR)/makeDep
+# Scripts invoked to compute dependencies among header files.
+MAKEDEP=$(BIN_DIR)/makeDepCpp
+MAKEDEP_CUDA=$(BIN_DIR)/makeDepCuda
 
-# The file $(BIN_DIR)/makeDep is an executable python script that is
-# installed in the binary directory specified by the setup script, 
-# and that is used during compilation to analyze dependencies among
-# C++ files. The makeDep script imports a python module named makeDepend 
-# that is located in the $(ROOT_DIR)scripts/python directory. If the 
-# python interpreter fails to find the makeDepend module, you may 
-# need to add the absolute path to the simpatico/scripts/python directory 
-# to the PYTHON_PATH environment variable, as described in the web 
-# documentation.
-#
+# The file $(BIN_DIR)/makeDepCpp and $(BIN_DIR)/makeDepCuda are executable 
+# python scripts that are installed in the binary directory specified by 
+# the setup script, and that is used during compilation to analyze 
+# dependencies among C++ files. Both script import a python module named 
+# pscfpp.makeDepend that is located in the $(ROOT_DIR)/lib/python/pscfpp
+# directory. For the python interpreter to find this $(ROOT_DIR)/lib/python
+# must be in your $PYTHON_PATH environment variable.

@@ -1,0 +1,5 @@
+READ_W_RGRID    in/omega
+ITERATE         
+WRITE_W_RGRID   out/omega
+WRITE_C_RGRID   out/rho
+FINISH

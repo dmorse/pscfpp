@@ -15,9 +15,7 @@ namespace Pspc {
 
    template <int D>
    Polymer<D>::Polymer()
-   {
-      setClassName("Polymer"); 
-   }
+   {  setClassName("Polymer");}
 
    template <int D>
    Polymer<D>::~Polymer()
@@ -29,7 +27,7 @@ namespace Pspc {
       UTIL_CHECK(ensemble() == Species::Closed);  
       UTIL_CHECK(phi >= 0.0);  
       UTIL_CHECK(phi <= 1.0);  
-      phi_ = phi; 
+      phi_ = phi;
    }
 
    template <int D>
@@ -54,7 +52,7 @@ namespace Pspc {
    }
 
    /*
-   * Compute solution to MDE and concentrations.
+   * Compute solution to MDE and block concentrations.
    */ 
    template <int D>
    void Polymer<D>::compute(DArray<WField> const & wFields)
@@ -66,7 +64,7 @@ namespace Pspc {
          block(j).setupSolver(wFields[monomerId]);
       }
 
-      // Call generic solver() method base class template.
+      // Call base class PolymerTmpl solver() function
       solve();
    }
 
@@ -76,25 +74,22 @@ namespace Pspc {
    template <int D>
    void Polymer<D>::computeStress()
    {
-      double prefactor;
-      prefactor = 0;
      
-      // Initialize stress_ to 0
+      // Initialize all stress_ elements zero
       for (int i = 0; i < 6; ++i) {
         stress_[i] = 0.0;
       }
 
+      // Compute and accumulate stress contributions from all blocks
+      double prefactor = exp(mu_)/length();
       for (int i = 0; i < nBlock(); ++i) {
-         prefactor = exp(mu_)/length();
          block(i).computeStress(prefactor);
-       
          for (int j=0; j < unitCellPtr_->nParameter() ; ++j){
             stress_[j] += block(i).stress(j);
          }
       }
 
    }
-
 
 }
 }

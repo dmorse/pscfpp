@@ -1,10 +1,10 @@
-#ifndef FFT_GPU_BATCHED_TPP
-#define FFT_GPU_BATCHED_TPP
+#ifndef PSPG_FFT_BATCHED_TPP
+#define PSPG_FFT_BATCHED_TPP
 
 /*
 * PSCF++ Package 
 *
-* Copyright 2016 - 2019, The Regents of the University of Minnesota
+* Copyright 2010 - 2017, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.
 */
 
@@ -323,7 +323,4 @@ namespace Pspg
 
 }
 }
-
-
-
 #endif

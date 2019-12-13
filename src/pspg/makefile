@@ -35,8 +35,6 @@ clean:
 	rm -f $(PSCF_PG3D).o $(PSCF_PG2D).d
 	rm -f $(PSCF_PG3D).o $(PSCF_PG3D).d
 	rm -f $(pspg_LIB)
-	rm -f $(pspg_LIB)
-	rm -f $(pspg_LIB)
 	rm -f *.o *.d */*.o */*.d
 	#cd tests; $(MAKE) clean
 

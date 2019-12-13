@@ -115,6 +115,7 @@ public:
    {   
       printMethod(TEST_FUNC);
       System<2> system;
+      openLogFile("out/testConversion2D_hex.log"); 
 
       // Read parameter file
       std::ifstream in; 
@@ -125,7 +126,6 @@ public:
       // Read w fields
       std::ifstream command;
       openInputFile("in/conv/Conversion_2d_step1", command);
-      openLogFile("out/testConversion2D_hex.log"); 
       system.readCommands(command);
       command.close();
 
@@ -266,17 +266,17 @@ public:
       bool diff = true;
       for (int j = 0; j < ns; ++j) {
          for (int i = 0; i < nMonomer; ++i) {
-           if ((std::abs(wFields_check[i][j] - system.wFields()[i][j]) >= 5.07058e-08)) {
-               // The above is the minimum error in the omega field.
-               // Occurs for the first star                 
-               diff = false;
-               std::cout <<"\n This is error for break:"<< 
-                  (std::abs(wFields_check[i][j] - system.wFields()[i][j])) <<std::endl;
-               std::cout << "star index = " << j << std::endl;
-               break;
-            }    
-            else 
-               diff = true;
+            if ((std::abs(wFields_check[i][j] - system.wFields()[i][j]) >= 5.07058e-08)){
+                // The above is the minimum error in the omega field.
+                // Occurs for the first star                 
+                diff = false;
+                std::cout <<"\n This is error for break:"<<
+                   (std::abs(wFields_check[i][j] - system.wFields()[i][j])) <<std::endl;
+                std::cout << "star index = " << j << std::endl;
+                break;
+            } else {
+                diff = true;
+            }
          }    
          if (diff==false) {
             break;

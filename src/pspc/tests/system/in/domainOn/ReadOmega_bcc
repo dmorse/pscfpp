@@ -1,4 +1,2 @@
-READ_WFIELDS
-contents/omega/domainOn/omega_bcc
-
+READ_W_BASIS  contents/omega/domainOn/omega_bcc
 FINISH

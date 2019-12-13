@@ -9,15 +9,14 @@
 */
 
 #include "Block.h"
+#include <pspg/GpuResources.h>
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/crystal/shiftToMinimum.h>
-#include <pspg/GpuResources.h>
 #include <util/containers/FMatrix.h>      // member template
 #include <util/containers/DArray.h>      // member template
 #include <util/containers/FArray.h>      // member template
 #include <sys/time.h>
-//#include <Windows.h>
 
 //not a bad idea to rewrite these as functors
 static __global__ void pointwiseMul(const cufftReal* a, const cufftReal* b, cufftReal* result, int size) {
@@ -38,17 +37,17 @@ static __global__ void pointwiseFloatMul(const cufftReal* a, const float* b, cuf
 }
 
 static __global__ void mulDelKsq(cufftReal* result, const cufftComplex* q1,
-                                 const cufftComplex* q2, const cufftReal* delKsq, 
+                                 const cufftComplex* q2, const cufftReal* delKsq,
                                  int paramN, int kSize, int rSize) {
    int nThreads = blockDim.x * gridDim.x;
    int startID = blockIdx.x * blockDim.x + threadIdx.x;
    for (int i = startID; i < kSize; i += nThreads) {
-      result[i] =  cuCmulf(q1[i], cuConjf(q2[i])).x * delKsq[paramN * rSize + i];       
+      result[i] =  cuCmulf(q1[i], cuConjf(q2[i])).x * delKsq[paramN * rSize + i];
    }
 }
 
 static __global__ void equalize ( const cufftReal* a, float* result, int size){  //try to add elements of array here itself
-   
+
     int nThreads = blockDim.x * gridDim.x;
     int startID = blockIdx.x * blockDim.x + threadIdx.x;
     for (int i = startID; i < size; i += nThreads) {
@@ -145,7 +144,7 @@ static __global__ void richardsonExp(cufftReal* qNew, const cufftReal* q1, const
    }
 }
 
-static __global__ void richardsonExpTwinned(cufftReal* qNew, const cufftReal* q1, 
+static __global__ void richardsonExpTwinned(cufftReal* qNew, const cufftReal* q1,
    const cufftReal* qr, const cufftReal* expW2, int size) {
    int nThreads = blockDim.x * gridDim.x;
    int startID = blockIdx.x * blockDim.x + threadIdx.x;
@@ -156,14 +155,14 @@ static __global__ void richardsonExpTwinned(cufftReal* qNew, const cufftReal* q1
    }
 }
 
-namespace Pscf { 
+namespace Pscf {
 namespace Pspg {
 
    using namespace Util;
-   
-static __global__ void multiplyScaleQQ(cufftReal* result, 
-                           const cufftReal* p1, 
-                           const cufftReal* p2, 
+
+static __global__ void multiplyScaleQQ(cufftReal* result,
+                           const cufftReal* p1,
+                           const cufftReal* p2,
                            int size, float scale) {
 
    int nThreads = blockDim.x * gridDim.x;
@@ -212,7 +211,7 @@ static __global__ void scaleReal(cufftReal* result, int size, float scale) {
 
    template <int D>
    void Block<D>::setDiscretization(double ds, const Mesh<D>& mesh)
-   {  
+   {
       UTIL_CHECK(mesh.size() > 1);
       UTIL_CHECK(ds > 0.0);
 
@@ -227,7 +226,7 @@ static __global__ void scaleReal(cufftReal* result, int size, float scale) {
 
       ds_ = length()/double(ns_ - 1);
 
-      // Compute Fourier space kMeshDimensions_ 
+      // Compute Fourier space kMeshDimensions_
       for (int i = 0; i < D; ++i) {
          if (i < D - 1) {
             kMeshDimensions_[i] = mesh.dimensions()[i];
@@ -240,7 +239,7 @@ static __global__ void scaleReal(cufftReal* result, int size, float scale) {
       for(int i = 0; i < D; ++i) {
          kSize_ *= kMeshDimensions_[i];
       }
-      
+
       // Allocate work arrays
       expKsq_.allocate(kMeshDimensions_);
       expKsq2_.allocate(kMeshDimensions_);
@@ -252,7 +251,7 @@ static __global__ void scaleReal(cufftReal* result, int size, float scale) {
       qk2_.allocate(mesh.dimensions());
       q1_.allocate(mesh.dimensions());
       q2_.allocate(mesh.dimensions());
-     
+
       propagator(0).allocate(ns_, mesh);
       propagator(1).allocate(ns_, mesh);
       cudaMalloc((void**)&qkBatched_, ns_ * kSize_ * sizeof(cufftComplex));
@@ -270,7 +269,7 @@ static __global__ void scaleReal(cufftReal* result, int size, float scale) {
    * Setup data that depend on the unit cell parameters.
    */
    template <int D>
-   void 
+   void
    Block<D>::setupUnitCell(const UnitCell<D>& unitCell, const WaveList<D>& wavelist)
    {
       //what does this do?
@@ -291,10 +290,10 @@ static __global__ void scaleReal(cufftReal* result, int size, float scale) {
 
       int i;
       for (iter.begin(); !iter.atEnd(); ++iter) {
-         i = iter.rank(); 
+         i = iter.rank();
          //G = iter.position();
          //Gmin = shiftToMinimum(G, mesh().dimensions(), unitCell);
-         
+
          /*
          for(int l = 0; l < D; l++) {
             if(Gmin[l] != wavelist.minImage(iter.rank())[l]) {
@@ -306,33 +305,33 @@ static __global__ void scaleReal(cufftReal* result, int size, float scale) {
          //expKsq_[i] = exp(Gsq*factor);
          expKsq_host[i] = exp(Gsq*factor);
          expKsq2_host[i] = exp(Gsq*factor / 2);
-       //         std::cout << i    << "  " 
-       //         << Gmin << "  " 
+       //         std::cout << i    << "  "
+       //         << Gmin << "  "
                  //  << Gsq  << "  "
        // << temp[i] << std::endl;
       }
       cudaMemcpy(expKsq_.cDField(), expKsq_host, kSize * sizeof(cufftReal), cudaMemcpyHostToDevice);
       cudaMemcpy(expKsq2_.cDField(), expKsq2_host, kSize * sizeof(cufftReal), cudaMemcpyHostToDevice);
-      
+
    }
-      
+
    /*
    * Setup the contour length step algorithm.
    */
    template <int D>
-   void 
+   void
    Block<D>::setupSolver(Block<D>::WField const& w)
    {
       // Preconditions
       int nx = mesh().size();
       UTIL_CHECK(nx > 0);
-      
+
       // Populate expW_
       // std::cout << std::endl;
       // expW_[i] = exp(-0.5*w[i]*ds_);
       assignExp<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(expW_.cDField(), w.cDField(), nx, (float)0.5* ds_);
       assignExp << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> >(expW2_.cDField(), w.cDField(), nx, (float)0.25 * ds_);
-      
+
    }
 
    /*
@@ -348,7 +347,7 @@ static __global__ void scaleReal(cufftReal* result, int size, float scale) {
       UTIL_CHECK(ds_ > 0);
       UTIL_CHECK(propagator(0).isAllocated());
       UTIL_CHECK(propagator(1).isAllocated());
-      UTIL_CHECK(cField().capacity() == nx) 
+      UTIL_CHECK(cField().capacity() == nx)
 
       // Initialize cField to zero at all points
       //cField()[i] = 0.0;
@@ -356,8 +355,8 @@ static __global__ void scaleReal(cufftReal* result, int size, float scale) {
 
       Pscf::Pspg::Propagator<D> const & p0 = propagator(0);
       Pscf::Pspg::Propagator<D> const & p1 = propagator(1);
-     
-      
+
+
       //cudaDeviceSynchronize();
       multiplyScaleQQ << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (cField().cDField(), p0.q(0), p1.q(ns_ - 1), nx, 1.0);
       multiplyScaleQQ << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (cField().cDField(), p0.q(ns_-1), p1.q(0), nx, 1.0);
@@ -412,7 +411,7 @@ static __global__ void scaleReal(cufftReal* result, int size, float scale) {
 
       // Apply pseudo-spectral algorithm
 
-     pointwiseMulSameStart << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > 
+     pointwiseMulSameStart << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> >
         (q, expW_.cDField(), expW2_.cDField(), qr_.cDField(), qr2_.cDField(), nx);
      fft_.forwardTransform(qr_, qk_);
      fft_.forwardTransform(qr2_, qk2_);
@@ -420,7 +419,7 @@ static __global__ void scaleReal(cufftReal* result, int size, float scale) {
         (qk_.cDField(), qk2_.cDField(), expKsq_.cDField(), expKsq2_.cDField(), nk);
      fft_.inverseTransform(qk_, qr_);
      fft_.inverseTransform(qk2_, q2_);
-     pointwiseMulTwinned << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > 
+     pointwiseMulTwinned << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> >
         (qr_.cDField(), q2_.cDField(), expW_.cDField(), q1_.cDField(), qr_.cDField(), nx);
      fft_.forwardTransform(qr_, qk_);
      scaleComplex << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> >(qk_.cDField(), expKsq2_.cDField(), nk);
@@ -436,37 +435,34 @@ static __global__ void scaleReal(cufftReal* result, int size, float scale) {
    /*
    * Integrate to Stress exerted by the chain for this block
    * For many reasons, the code is written in away that tries
-   * to function with basis functions but does nothing 
+   * to function with basis functions but does nothing
    * to actually ensure its correctness.
    * To optimize it, I am rewritting it to only allow
    * the symmetry I since none of the code is correct in the first place
    */
    template <int D>
    void Block<D>::computeStress(WaveList<D>& wavelist, double prefactor)
-   {   
+   {
       // Preconditions
 
       int nx = mesh().size();
-      UTIL_CHECK(nx > 0); 
-      UTIL_CHECK(ns_ > 0); 
-      UTIL_CHECK(ds_ > 0); 
+      UTIL_CHECK(nx > 0);
+      UTIL_CHECK(ns_ > 0);
+      UTIL_CHECK(ds_ > 0);
       UTIL_CHECK(propagator(0).isAllocated());
       UTIL_CHECK(propagator(1).isAllocated());
 
       double dels, normal, increment;
       normal = 3.0*6.0;
-       
-      //float tempdksq [nStar] = { };
 
       //dont use a compile time array.....
-      //ill fix this later....
       FArray<double, 6> dQ;
 
       int i;
       for (i = 0; i < 6; ++i) {
          dQ [i] = 0.0;
-         pStress [i] = 0.0;
-      }   
+         stress_[i] = 0.0;
+      }
 
       Pscf::Pspg::Propagator<D> const & p0 = propagator(0);
       Pscf::Pspg::Propagator<D> const & p1 = propagator(1);
@@ -478,28 +474,28 @@ static __global__ void scaleReal(cufftReal* result, int size, float scale) {
       for (int j = 0; j < ns_ ; ++j) {
          //basis.convertFieldDftToComponents(qkBatched_ + (j* kSize_) , q1_.cDField());
 
-         //basis.convertFieldDftToComponents(qk2Batched_ + (kSize_ * (ns_ - 1 - j)) , q2_.cDField()); 
-         
+         //basis.convertFieldDftToComponents(qk2Batched_ + (kSize_ * (ns_ - 1 - j)) , q2_.cDField());
+
          dels = ds_;
-         
+
          if (j != 0 && j != ns_ - 1) {
             if (j % 2 == 0) {
                dels = dels*2.0;
             } else {
                dels = dels*4.0;
-            }           
+            }
          }
 
          for (int n = 0; n < nParams_ ; ++n) {
             //do i need this?
             mulDelKsq<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>>
-               (qr2_.cDField(), qkBatched_ + (j * kSize_), qk2Batched_ + (kSize_ * (ns_ -1 -j)), 
+               (qr2_.cDField(), qkBatched_ + (j * kSize_), qk2Batched_ + (kSize_ * (ns_ -1 -j)),
                 wavelist.dkSq(), n , kSize_, nx);
-            
+
             /*if(j == 0) {
                cufftReal* temp = new cufftReal[mesh().size()];
                cufftComplex* complex = new cufftComplex[kSize_];
-               
+
                std::cout<<"real propagator 1\n";
                cudaMemcpy(temp, p0.head() + (mesh().size()* j), sizeof(cufftReal) * mesh().size(), cudaMemcpyDeviceToHost);
                for(int i = 0; i < mesh().size(); i++) {
@@ -532,26 +528,19 @@ static __global__ void scaleReal(cufftReal* result, int size, float scale) {
                //exit(1);
                }*/
             increment = reductionH(qr2_, mesh().size());
-            // std::cout<<"This is increment "<<increment<<std::endl;
-            //exit(1);
-            increment = (increment * kuhn() * kuhn() * dels)/normal; // try to shift this in tempdksq assignment line.
-            dQ [n] = dQ[n]-increment;   
-         }    
-      } 
-      // Normalize
-      //std::cout<<"This is prefactor "<<prefactor<<std::endl;
-      for (i = 0; i < nParams_; ++i) {
-         //std::cout<<"This is dQ "<<dQ[i]<<std::endl;
-         pStress[i] = pStress[i] - (dQ[i] * prefactor);
-         //std::cout<<"pStress ["<<i<<"] = "<< pStress [i]<<std::endl;
+            increment = (increment * kuhn() * kuhn() * dels)/normal;
+            dQ [n] = dQ[n]-increment;
+         }
       }
-
+      // Normalize
+      for (i = 0; i < nParams_; ++i) {
+         stress_[i] = stress_[i] - (dQ[i] * prefactor);
+      }
    }
 
-   
    template<int D>
    cufftReal Block<D>::reductionH(const RDField<D>& a, int size) {
-      reduction <<< NUMBER_OF_BLOCKS/2 , THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cufftReal) >> > 
+      reduction <<< NUMBER_OF_BLOCKS/2 , THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cufftReal) >> >
          (d_temp_, a.cDField(), size);
       cudaMemcpy(temp_, d_temp_, NUMBER_OF_BLOCKS/2  * sizeof(cufftReal), cudaMemcpyDeviceToHost);
       cufftReal final = 0;
@@ -564,12 +553,7 @@ static __global__ void scaleReal(cufftReal* result, int size, float scale) {
       }
       return final;
    }
+
 }
 }
-
-
-
-
-
-
 #endif

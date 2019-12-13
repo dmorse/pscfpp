@@ -10,7 +10,6 @@
 
 #include "Mixture.h"
 #include <pspg/GpuResources.h>
-//#include <fd1d/domain/Domain.h>
 
 #include <cmath>
 
@@ -134,33 +133,24 @@ namespace Pspg
    * Compute Total Stress.
    */  
    template <int D>
-   void Mixture<D>::computeTStress(WaveList<D>& wavelist)
+   void Mixture<D>::computeStress(WaveList<D>& wavelist)
    {   
       int i, j;
 
-      for (i = 0; i < nParams_; ++i) {
-         TStress [i] = 0;
-         //std::cout<<"TStress ["<<i<<"] = "<< TStress [i]<<std::endl;
-      } 
-      // Compute Stress for all polymers, must be done after computing concentrations
-
+      // Compute stress for each polymer.
       for (i = 0; i < nPolymer(); ++i) {
-         polymer(i).ComputePcStress(wavelist);
+         polymer(i).computeStress(wavelist);
       } 
-      std::cout<<"---------"<<std::endl;
-      // Accumulate stress for all the polymer chains
-      //why is done over all 6 parameter?
+
+      // Accumulate total stress 
       for (i = 0; i < nParams_; ++i) {
+         stress_[i] = 0.0;
          for (j = 0; j < nPolymer(); ++j) {
-            TStress [i] += polymer(j).PcStress[i];
-          //  std::cout<<"PcStress ["<<j<<","<<i<<" ] = "<< polymer(j).PcStress[i] <<std::endl;
-           // std::cout<<"TStress ["<<i<<"] = "<< TStress [i]<<std::endl;
+            stress_[i] += polymer(j).stress(i);
          }   
       }   
    }  
 
 } // namespace Pspg
 } // namespace Pscf
-
-
 #endif

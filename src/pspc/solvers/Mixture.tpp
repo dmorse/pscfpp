@@ -134,7 +134,7 @@ namespace Pspc
 
       // Initialize stress to zero
       for (i = 0; i < 6; ++i) {
-         stress_[i] = 0;
+         stress_[i] = 0.0;
       }
 
       // Compute stress for all polymers, after solving MDE

@@ -260,11 +260,10 @@ namespace Pspc
       /**
       * Convert field from Fourier transform (k-grid) to symmetrized basis.
       *
-      * \param dft complex DFT (k-grid) representation of a field.
-      * \param components coefficients of symmetry-adapted basis functions.
+      * \param in  complex DFT (k-grid) representation of a field.
+      * \param out  coefficients of symmetry-adapted basis functions.
       */
-      void convertKGridToBasis(RFieldDft<D> const& dft, 
-                               DArray<double>& components);
+      void convertKGridToBasis(RFieldDft<D> const& in, DArray<double>& out);
 
       /**
       * Convert fields from Fourier transform (kgrid) to symmetrized basis.

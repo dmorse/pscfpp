@@ -22,9 +22,6 @@
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
 
-#include <ctime>
-#include <iomanip>
-#include <sstream>
 #include <string>
 #include <unistd.h>
 
@@ -247,13 +244,12 @@ namespace Fd1d
             Log::file() << std::endl;
             readNext = false;
          } else
-         if (command == "READ_WFIELDS") {
+         if (command == "READ_W") {
             inBuffer >> filename;
             Log::file() << "  " << Str(filename, 20) << std::endl;
             fieldIo.readFields(wFields(), filename);  
          } else
          if (command == "ITERATE") {
-            Log::file() << std::endl;
             Log::file() << std::endl;
             iterator().solve();
             outputThermo(Log::file());
@@ -273,17 +269,17 @@ namespace Fd1d
             UTIL_CHECK(sweepPtr_);
             sweepPtr_->solve();
          } else 
-         if (command == "WRITE_WFIELDS") {
+         if (command == "WRITE_W") {
             inBuffer >> filename;
             Log::file() << "  " << Str(filename, 20) << std::endl;
             fieldIo.writeFields(wFields(), filename);  
          } else
-         if (command == "WRITE_CFIELDS") {
+         if (command == "WRITE_C") {
             inBuffer >> filename;
             Log::file() << "  " << Str(filename, 20) << std::endl;
             fieldIo.writeFields(cFields(), filename);  
          } else
-         if (command == "WRITE_BLOCK_CFIELDS") {
+         if (command == "WRITE_BLOCK_C") {
             inBuffer >> filename;
             Log::file() << "  " << Str(filename, 20) << std::endl;
             fieldIo.writeBlockCFields(filename);  
@@ -300,7 +296,7 @@ namespace Fd1d
                         << Int(vertexId, 5) << std::endl;
             fieldIo.writeVertexQ(polymerId, vertexId, filename);  
          } else
-         if (command == "REMESH_WFIELDS") {
+         if (command == "REMESH_W") {
             int nx;
             inBuffer >> nx;
             Log::file() << std::endl;
@@ -309,7 +305,7 @@ namespace Fd1d
             Log::file() << "outfile = " << Str(filename, 20) << std::endl;
             fieldIo.remesh(wFields(), nx, filename);
          } else
-         if (command == "EXTEND_WFIELDS") {
+         if (command == "EXTEND_W") {
             int m;
             inBuffer >> m;
             Log::file() << std::endl;
@@ -317,8 +313,7 @@ namespace Fd1d
             inBuffer >> filename;
             Log::file() << "outfile = " << Str(filename, 20) << std::endl;
             fieldIo.extend(wFields(), m, filename);
-         } else
-         {
+         } else {
             Log::file() << "  Error: Unknown command  " << command << std::endl;
             readNext = false;
          }

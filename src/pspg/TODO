@@ -1,35 +1,20 @@
 TODO (pspg GPU code):
 
-
-Short term (assigned primarily to Anshul)
--------------------------------------------------------------------------
-
-1) Restore ability to read symmetry adapted files (without necessarily
-   imposing symmetry during iteration). This may be possible before
-   submission or, if not, before resubmission after reviews.
-
-2) Restore iteration with imposed symmetry and output in symmetry adapted 
-   format (may or may not be possible before final publication)
-
-3) Try to implement suppression of implicit instantiation and compilation 
-   of explicit instances of templates in pspg (as done elsewhere), to allow 
-   more code to be compiled separately. This uses the C+11 extern syntax 
-   to suppress implicit instantiation, and is possible only if the cuda 
-   compiler recognizes this syntax.
-
-4) Complete doxygen documenttion for all classes, functions and parameters 
+1) Complete doxygen documentation for all classes, functions and parameters 
    in src/pspg.
 
-5) Move Pspg::WaveList class to directory solvers/. It's essentially a 
-   utility that is used by the solvers, and doesn't need its own 
-   directory.
+Intermediate term 
+-------------------------------------------------------------------------
+
+1) Add an iterator with imposed symmetry and output in symmetry adapted 
+   format.
 
 Longer term  
 -------------------------------------------------------------------------
 
 1) Write unit tests or other self-contained, self-validating tests of the 
-   GPU code and put them in the repository. 
+   GPU classes and put them in the repository. 
 
-3) Add sweep functionality 
+2) Add sweep functionality 
 
-4) Add point solvents
+3) Add point solvents

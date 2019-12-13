@@ -13,23 +13,18 @@ System{
      }
      ds   0.01
   }
-
-
   ChiInteraction{
      chi  0   0   0.0
           1   0   20.0
           1   1   0.0
   }
-   
-unitCell cubic  1.9331995124
-mesh     32	32	32
-groupName I_m_-3_m
-
+  unitCell cubic  1.9331995124
+  mesh     32  32  32
+  groupName I_m_-3_m
   AmIterator{
-   maxItr 1000
-   epsilon 1e-10
-   maxHist 30
-   domain 0
+    maxItr 1000
+    epsilon 1e-10
+    maxHist 30
+    isFlexible 0
   }
-
 }

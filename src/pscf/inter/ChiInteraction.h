@@ -114,12 +114,12 @@ namespace Pscf {
       double chiInverse(int i, int j);
 
       /** 
-      * Return one element of the indempotent matrix.
+      * Return one element of the idempotent matrix.
       *   
       * \param i row index
       * \param j column index
       */  
-      double indemp(int i, int j); 
+      double idemp(int i, int j); 
 
       double sum_inv();
    private:
@@ -128,7 +128,7 @@ namespace Pscf {
 
       DMatrix<double> chiInverse_;
 
-      DMatrix<double> indemp_;
+      DMatrix<double> idemp_;
 
       double sum_inv_;
 
@@ -142,8 +142,8 @@ namespace Pscf {
    inline double ChiInteraction::chiInverse(int i, int j)
    {  return chiInverse_(i, j); }
 
-   inline double ChiInteraction::indemp(int i, int j)
-   {  return indemp_(i, j); }
+   inline double ChiInteraction::idemp(int i, int j)
+   {  return idemp_(i, j); }
 
    inline double ChiInteraction::sum_inv()
    {  return sum_inv_; }

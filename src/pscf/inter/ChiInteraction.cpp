@@ -33,7 +33,7 @@ namespace Pscf {
       UTIL_CHECK(nMonomer() > 0);
       chi_.allocate(nMonomer(), nMonomer());
       chiInverse_.allocate(nMonomer(), nMonomer());
-      indemp_.allocate(nMonomer(), nMonomer());
+      idemp_.allocate(nMonomer(), nMonomer());
       readDSymmMatrix(in, "chi", chi_, nMonomer());
 
       if (nMonomer() == 2) {
@@ -59,21 +59,21 @@ namespace Pscf {
       int i, j, k;
 
       for (i = 0; i < nMonomer(); ++i) {
-         indemp_(0,i) = 0;
+         idemp_(0,i) = 0;
          for (j = 0; j < nMonomer(); ++j) {
-            indemp_(0,i) -= chiInverse_(j,i);
+            idemp_(0,i) -= chiInverse_(j,i);
          }
-         sum -= indemp_(0,i);
+         sum -= idemp_(0,i);
          for (k = 0; k < nMonomer(); ++k) { //row
-            indemp_(k,i) = indemp_(0,i);
+            idemp_(k,i) = idemp_(0,i);
          }
       }
 
       for (i = 0; i < nMonomer(); ++i) { //row
          for (j = 0; j < nMonomer(); ++j) { //coloumn
-            indemp_(i,j) /= sum;
+            idemp_(i,j) /= sum;
          }
-         indemp_(i,i) +=1 ;
+         idemp_(i,i) +=1 ;
       }
       
       sum_inv_ = sum;

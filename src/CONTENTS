@@ -6,10 +6,10 @@ as submodules of the pscfpp respository.
 
 Subdirectories:
   util/  general utilities for scientific computation (namespace Util)
-  pscf/  shared classes for package pscfp++ (namespace Pscf)
+  pscf/  shared classes for package PSCF (namespace Pscf)
   fd1d/  finite difference one-dimensional SCFT (namespace Pscf::Fd1d)
   pspc/  pseudo-spectral periodic SCFT on a CPU (namespace Pscf::Pspc)
-  pspg/  pseudo-spectral periodic SCFT on a GPU (namespace Pscf::Pspc)
+  pspg/  pseudo-spectral periodic SCFT on a GPU (namespace Pscf::Pspg)
   test/  unit testing framework (base classes)
   draft/ unfinished or unused software drafts 
 

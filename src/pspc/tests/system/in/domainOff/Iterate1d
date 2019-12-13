@@ -1,6 +1,4 @@
+READ_W_BASIS   contents/omega/domainOff/omega_lam 
 ITERATE
-contents/omega/domainOff/omega_lam
-WRITE_W_BASIS
-out/omega/domainOff/omega_lam
-
+WRITE_W_BASIS  out/omega/domainOff/omega_lam
 FINISH

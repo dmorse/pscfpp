@@ -1,11 +1,11 @@
 /*
 * PSCF++ Package 
 *
-* Copyright 2016 - 2019, The Regents of the University of Minnesota
+* Copyright 2010 - 2017, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "FFT.h"
+#include "FFT.tpp"
 
 namespace Pscf {
 namespace Pspg {
@@ -38,5 +38,11 @@ namespace Pspg {
       cufftPlan3d(&iPlan_, rField.meshDimensions()[0], rField.meshDimensions()[1],
             rField.meshDimensions()[2], CUFFT_C2R);
    }
+
+   // Explicit instantiation of relevant class instances
+   template class FFT<1>;
+   template class FFT<2>;
+   template class FFT<3>;
+
 }
 }

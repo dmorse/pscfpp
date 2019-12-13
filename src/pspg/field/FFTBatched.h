@@ -4,7 +4,7 @@
 /*
 * PSCF++ Package 
 *
-* Copyright 2016 - 2019, The Regents of the University of Minnesota
+* Copyright 2010 - 2017, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.
 */
 
@@ -19,6 +19,7 @@
 
 //temporary for debugging
 #include <iostream>
+
 #include <pspg/field/FFT.h> //for definition of rtype
 //#ifdef SINGLE_PRECISION
 //typedef float rtype;
@@ -152,7 +153,13 @@ namespace Pspg {
    inline cufftHandle& FFTBatched<D>::iPlan()
    { return iPlan_; }
 
+   #ifndef PSPG_FFT_BATCHED_TPP
+   // Suppress implicit instantiation
+   extern template class FFTBatched<1>;
+   extern template class FFTBatched<2>;
+   extern template class FFTBatched<3>;
+   #endif
 }
 }
-#include "FFTBatched.tpp"
+//#include "FFTBatched.tpp"
 #endif

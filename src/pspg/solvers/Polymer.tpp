@@ -16,9 +16,7 @@ namespace Pspg {
 
    template <int D>
    Polymer<D>::Polymer()
-   {
-      setClassName("Polymer"); 
-   }
+   {  setClassName("Polymer"); }
 
    template <int D>
    Polymer<D>::~Polymer()
@@ -74,14 +72,14 @@ namespace Pspg {
    */
 
    template <int D>
-   void Polymer<D>::ComputePcStress(WaveList<D>& wavelist)
+   void Polymer<D>::computeStress(WaveList<D>& wavelist)
    {
       double prefactor;
       prefactor = 0;
      
-      // Initialize PcStress to 0
+      // Initialize stress_ to 0
       for (int i = 0; i < nParams_; ++i) {
-        PcStress [i] = 0.0;
+        stress_ [i] = 0.0;
       }
 
       for (int i = 0; i < nBlock(); ++i) {
@@ -89,8 +87,8 @@ namespace Pspg {
          block(i).computeStress(wavelist, prefactor);
        
          for (int j=0; j < nParams_; ++j){
-            PcStress [j]  += block(i).pStress [j];
-            //std::cout<<"PcStress[j] "<<PcStress[j]<<std::endl;
+            stress_ [j] += block(i).stress(j);
+            //std::cout<<"stress_[j] "<<stress_[j]<<std::endl;
          }
       }
    }

@@ -1,3 +1,6 @@
+#ifndef PSPG_SYSTEM_TPP
+#define PSPG_SYSTEM_TPP
+
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
@@ -9,22 +12,19 @@
 #include <pspg/GpuResources.h>
 
 #include <pscf/homogeneous/Clump.h>
+#include <pscf/crystal/shiftToMinimum.h>
 
 #include <util/format/Str.h>
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
 
-#include <sys/time.h>
-//#include <Windows.h>
-#include <iomanip>
-#include <sstream>
+//#include <iomanip>
 #include <string>
 #include <getopt.h>
-#include <cstdlib>
-#include <pscf/crystal/shiftToMinimum.h>
-//#include <unistd.h>
 
-//global variable for kernels
+//#include <Windows.h>
+
+// Global variable for kernels
 int THREADS_PER_BLOCK;
 int NUMBER_OF_BLOCKS;
 
@@ -46,8 +46,11 @@ namespace Pspg
       homogeneous_(),
       interactionPtr_(0),
       iteratorPtr_(0),
-      //basisPtr_(0),
+      basisPtr_(),
+      //fft_(),
+      //groupName_(),
       wavelistPtr_(0),
+      fieldIo_(),
       sweepPtr_(0),
       sweepFactoryPtr_(0),
       wFields_(),
@@ -56,18 +59,20 @@ namespace Pspg
       c_(),
       fHelmholtz_(0.0),
       pressure_(0.0),
-      hasMixture_(0),
-      hasUnitCell_(0),
-      hasFields_(0)
+      hasMixture_(false),
+      hasUnitCell_(false),
+      isAllocated_(false),
+      hasWFields_(false),
+      hasCFields_(false)
       // hasSweep_(0)
    {  
       setClassName("System"); 
-      std::cout<<"Constructor Called"<<std::endl;
 
       interactionPtr_ = new ChiInteraction();
-      iteratorPtr_ = new FtsIterator<D>(this); 
+      iteratorPtr_ = new AmIterator<D>(this); 
       wavelistPtr_ = new WaveList<D>();
-      //basisPtr_ = new Basis<D>();
+      basisPtr_ = new Basis<D>();
+
       // sweepFactoryPtr_ = new SweepFactory(*this);
    }
 
@@ -79,7 +84,7 @@ namespace Pspg
    {
       delete interactionPtr_;
       delete iteratorPtr_; 
-      // There is an issue here. iterator ptr needs info of block size before initiation
+      delete wavelistPtr_; 
       delete[] kernelWorkSpace_;
       cudaFree(d_kernelWorkSpace_);
    }
@@ -185,18 +190,6 @@ namespace Pspg
    void System<D>::readParameters(std::istream& in)
    {
 
-      double time_start;
-      double time_end;
-      double time_wave_start;
-      double time_wave_end;
-      struct timeval tv;
-      struct timezone tz;
-
-      gettimeofday(&tv, &tz);
-      time_start = (double) tv.tv_sec + 
-         (double)tv.tv_usec / 1000000.0;
-
-      std::cout<<"Read in mixture"<<std::endl;
       readParamComposite(in, mixture());
       hasMixture_ = true;
 
@@ -210,64 +203,39 @@ namespace Pspg
       homogeneous_.setNMonomer(nm);
       initHomogeneous();
 
+      // Read interaction (i.e., chi parameters)
       interaction().setNMonomer(mixture().nMonomer());
       readParamComposite(in, interaction());
-      std::cout<<"Unit Cell read starting"<<std::endl;
-      in >> unitCell_;
+
+      read(in, "unitCell", unitCell_);
       hasUnitCell_ = true;
-      std::cout<<"Unit Cell read completed"<<std::endl;
-
-      IntVec<D> d;
-      in >> d;
-      mesh_.setDimensions(d);
-      hasMesh_ = true;
+     
+      // Read crystallographic unit cell (used only to create basis) 
+      read(in, "mesh", mesh_);
       mixture().setMesh(mesh());
+      hasMesh_ = true;
 
-      //std::string groupName;
-      in >> groupName_;
-      in >> groupName_;
-
-      gettimeofday(&tv, &tz);
-      time_wave_start = (double)tv.tv_sec + 
-         (double)tv.tv_usec / 1000000.0;
-
-      //basis().makeBasis(mesh(), unitCell(), groupName_);
-      std::cout<<"Initializing wavelist"<<std::endl;
+      // Construct wavelist 
       wavelist().allocate(mesh(), unitCell());
-      std::cout<<"Allocating completed"<<std::endl;
       wavelist().computeMinimumImages(mesh(), unitCell());
-      std::cout<<"wavelist completed"<<std::endl;
-
-      //mixture cannot setupunitCell until wavelist has been computed
       mixture().setupUnitCell(unitCell(), wavelist());
 
-      gettimeofday(&tv, &tz);
-      time_wave_end = (double)tv.tv_sec + 
-         (double)tv.tv_usec / 1000000.0;
-      Log::file() << "wavelist initialized in  " 
-                  << Dbl(time_wave_end - time_wave_start, 18, 11)<<'s' 
-                  << std::endl;
+      // Read group name, construct basis 
+      read(in, "groupName", groupName_);
+      basis().makeBasis(mesh(), unitCell(), groupName_);
+      fieldIo_.associate(unitCell_, mesh_, fft_, groupName_,
+                         basis(), fileMaster_);
 
-      allocateFields();
-      std::cout<<"fields allocated"<<std::endl;
-      hasFields_ = true;
-
+      // Allocate memory for w and c fields
+      allocate();
 
       // Initialize iterator
       readParamComposite(in, iterator());
       iterator().allocate();
-      std::cout<<"Iterator Initialized"<<std::endl;
-
-      gettimeofday(&tv, &tz);
-      time_end = (double)tv.tv_sec + 
-         (double)tv.tv_usec / 1000000.0;
-      Log::file() << "System Parameters read in  " 
-                  << Dbl(time_end - time_start, 18, 11)<<'s' 
-                  << std::endl;
    }
 
    /*
-   * Read default parameter file.
+   * Read parameter file (including open and closing brackets).
    */
    template <int D>
    void System<D>::readParam(std::istream& in)
@@ -285,20 +253,11 @@ namespace Pspg
    {  readParam(fileMaster().paramFile()); }
 
    /*
-   * Read parameters and initialize.
+   * Allocate memory for fields.
    */
    template <int D>
-   void System<D>::allocateFields()
+   void System<D>::allocate()
    {
-      double time_start;
-      double time_end;
-      struct timeval tv;
-      struct timezone tz;
-
-      gettimeofday(&tv, &tz);
-      time_start = (double) tv.tv_sec + 
-         (double)tv.tv_usec / 1000000.0;
-
       // Preconditions
       UTIL_CHECK(hasMixture_);
       UTIL_CHECK(hasMesh_);
@@ -306,306 +265,205 @@ namespace Pspg
       // Allocate wFields and cFields
       int nMonomer = mixture().nMonomer();
       wFields_.allocate(nMonomer);
-      wFieldGrids_.allocate(nMonomer);
-      wFieldDfts_.allocate(nMonomer);
+      wFieldsRGrid_.allocate(nMonomer);
+      wFieldsKGrid_.allocate(nMonomer);
 
       cFields_.allocate(nMonomer);
-      cFieldGrids_.allocate(nMonomer);
-      cFieldDfts_.allocate(nMonomer);
+      cFieldsRGrid_.allocate(nMonomer);
+      cFieldsKGrid_.allocate(nMonomer);
 
-      //size of grid is based on basis function
       for (int i = 0; i < nMonomer; ++i) {
-         //wField(i).allocate(basis().nStar());
-         wFieldGrid(i).allocate(mesh().dimensions());
-         wFieldDft(i).allocate(mesh().dimensions());
+         wField(i).allocate(basis().nStar());
+         wFieldRGrid(i).allocate(mesh().dimensions());
+         wFieldKGrid(i).allocate(mesh().dimensions());
 
-         //cField(i).allocate(basis().nStar());
-         cFieldGrid(i).allocate(mesh().dimensions());
-         cFieldDft(i).allocate(mesh().dimensions());
+         cField(i).allocate(basis().nStar());
+         cFieldRGrid(i).allocate(mesh().dimensions());
+         cFieldKGrid(i).allocate(mesh().dimensions());
       }
 
       //storageCFields_.allocate(mesh().dimensions());
-      compositionKField_.allocate(mesh().dimensions());
+      //compositionKField_.allocate(mesh().dimensions());
       workArray.allocate(mesh().size());
    
       cudaMalloc((void**)&d_kernelWorkSpace_, NUMBER_OF_BLOCKS * sizeof(cufftReal));
       kernelWorkSpace_ = new cufftReal[NUMBER_OF_BLOCKS];
-      //setup seed for rng
-      timeval time;
-      gettimeofday(&time, NULL);
-      hasFields_ = true;
 
-      gettimeofday(&tv, &tz);
-      time_end = (double)tv.tv_sec + 
-         (double)tv.tv_usec / 1000000.0;
-      Log::file() << "System Containers allocated in  " 
-                  << Dbl(time_end - time_start, 18, 11)<<'s' 
-                  << std::endl;
+      isAllocated_ = true;
    }
-
    
    /*
    * Read and execute commands from a specified command file.
    */
-   //will add more commands as they are tested
    template <int D>
    void System<D>::readCommands(std::istream &in) 
    {
-      UTIL_CHECK(hasFields_);
-
+      UTIL_CHECK(isAllocated_);
       std::string command;
       std::string filename;
 
       bool readNext = true;
-
       while (readNext) {
 
          in >> command;
-         Log::file() << command <<std::endl;
+         Log::file() << command << std::endl;
 
          if (command == "FINISH") {
             Log::file() << std::endl;
             readNext = false;
-         } 
-
-         /*
-         else if (command == "READ_WFIELDS") {
+         } else 
+         if (command == "READ_W_BASIS") {
             in >> filename;
             Log::file() << " " << Str(filename, 20) <<std::endl;
 
-            std::ifstream inFile;
-            fileMaster().openInputFile(filename, inFile);
-            readFields(inFile, wFields());
-            inFile.close();
+            fieldIo().readFieldsBasis(filename, wFields());
+            fieldIo().convertBasisToRGrid(wFields(), wFieldsRGrid());
+            hasWFields_ = true;
 
-         } else if (command == "WRITE_W_BASIS") {
+         } else 
+         if (command == "READ_W_RGRID") {
             in >> filename;
-            Log::file() << "  " << Str(filename, 20) << std::endl;
+            Log::file() << " " << Str(filename, 20) <<std::endl;
 
-            std::ofstream outFile;
-            fileMaster().openOutputFile(filename, outFile);
-            writeFields(outFile, wFields_);
-            outFile.close();
+            fieldIo().readFieldsRGrid(filename, wFieldsRGrid());
+            hasWFields_ = true;
 
-         }
-         */ 
-
-         else if (command == "WRITE_WFIELDGRIDS") {
-            in >> filename;
-            Log::file() << "  " << Str(filename, 20) << std::endl;
-
-            std::ofstream outFile;
-            fileMaster().openOutputFile(filename, outFile);
-            //writeRFields(outFile, wFieldGrids_);
-            writeRFields(outFile, wFieldGrids());
-            outFile.close();
-
-         }
-
-         /* 
-         else if (command == "WRITE_C_BASIS") {
-
-            in >> filename;
-            Log::file() << "  " << Str(filename, 20) << std::endl;
-
-            std::ofstream outFile;
-            fileMaster().openOutputFile(filename, outFile);
-            writeFields(outFile, cFields_);
-            outFile.close();
-
-         }
-         */ 
-
-         else if (command == "WRITE_CFIELDGRIDS") {
-            in >> filename;
-            Log::file() << "  " << Str(filename, 20) << std::endl;
-
-            std::ofstream outFile;
-            fileMaster().openOutputFile(filename, outFile);
-            writeRFields(outFile, cFieldGrids_);
-            outFile.close();
-         } else if (command == "ITERATE") {
-            Log::file() << std::endl;
+         } else 
+         if (command == "ITERATE") {
             Log::file() << std::endl;
 
-            double time_start;
-            double time_end;
-            struct timeval tv;
-            struct timezone tz;
+            // Read w fields in grid format iff not already set.
+            if (!hasWFields_) {
+               in >> filename;
+               Log::file() << "Reading w fields from file: " 
+                           << Str(filename, 20) <<std::endl;
+               fieldIo().readFieldsRGrid(filename, wFieldsRGrid());
+               hasWFields_ = true;
+            }
 
-            gettimeofday(&tv, &tz);
-            time_start = (double) tv.tv_sec + 
-              (double)tv.tv_usec / 1000000.0;
-            //input omega fields
-            std::string inFileName;
-            in >> inFileName;
-            Log::file() << " " << Str(inFileName, 20) <<std::endl;
-
-            std::ifstream inFile;
-            fileMaster().openInputFile(inFileName, inFile);
-            //changed this line
-            readRFields(inFile, wFieldGrids());
-            inFile.close();
-
-            gettimeofday(&tv, &tz);
-            time_end = (double)tv.tv_sec + 
-               (double)tv.tv_usec / 1000000.0;
-            Log::file() << "ReadFile_Time = " 
-                        << Dbl(time_end - time_start, 18, 11)<<'s' 
-                        << std::endl;
-
-            //SYSTEMTIME timeStart, timeEnd;
-            //double timeElapsed;
-            //GetSystemTime(&timeStart);
-            gettimeofday(&tv, &tz);
-            time_start = (double) tv.tv_sec + 
-              (double)tv.tv_usec / 1000000.0;
-            std::cout<<"do we even reach here?"<<std::endl;
+            // Attempt to iteratively solve SCFT equations
             int fail = iterator().solve();
-            if(fail) {
+            hasCFields_ = true;
+
+            // Final output
+            if (!fail) {
+               computeFreeEnergy();
+               outputThermo(Log::file());
+            } else {
                Log::file() << "Iterate has failed. Exiting "<<std::endl;
-               exit(1);
             }
-            //GetSystemTime(&timeEnd);
-            //timeElapsed = (timeEnd.wMinute - timeStart.wMinute) * 60;
-            //timeElapsed += (timeEnd.wSecond - timeStart.wSecond);
-            //timeElapsed += (timeEnd.wMilliseconds - timeStart.wMilliseconds) / 1000.0;
-            /*std::cout << " Time for SCFT ="
-               << Dbl(timeElapsed, 18, 11) << 's' << std::endl;*/
-            gettimeofday(&tv, &tz);
-            time_end = (double)tv.tv_sec + 
-               (double)tv.tv_usec / 1000000.0;
-            computeFreeEnergy();
-            outputThermo(Log::file());
-            Log::file() << "SCF_Time = " 
-            << Dbl(time_end - time_start, 18, 11)<<'s' 
-            << std::endl;
 
-         }
+         } else 
+         if (command == "WRITE_W_BASIS") {
+            UTIL_CHECK(hasWFields_);
+            in >> filename;
+            Log::file() << "  " << Str(filename, 20) << std::endl;
+            fieldIo().convertRGridToBasis(wFieldsRGrid(), wFields());
+            fieldIo().writeFieldsBasis(filename, wFields());
+         } else 
+         if (command == "WRITE_W_RGRID") {
+            UTIL_CHECK(hasWFields_);
+            in >> filename;
+            Log::file() << "  " << Str(filename, 20) << std::endl;
+            fieldIo().writeFieldsRGrid(filename, wFieldsRGrid());
+         } else 
+         if (command == "WRITE_C_BASIS") {
+            UTIL_CHECK(hasCFields_);
+            in >> filename;
+            Log::file() << "  " << Str(filename, 20) << std::endl;
+            fieldIo().convertRGridToBasis(cFieldsRGrid(), cFields());
+            fieldIo().writeFieldsBasis(filename, cFields());
+         } else 
+         if (command == "WRITE_C_RGRID") {
+            UTIL_CHECK(hasCFields_);
+            in >> filename;
+            Log::file() << "  " << Str(filename, 20) << std::endl;
+            fieldIo().writeFieldsRGrid(filename, cFieldsRGrid());
+         } else 
+         if (command == "BASIS_TO_RGRID") {
+            hasCFields_ = false;
 
-         /*
-         else if (command == "BASIS_TO_RGRID") {
             std::string inFileName;
-            std::string outFileName;
-
             in >> inFileName;
             Log::file() << " " << Str(inFileName, 20) <<std::endl;
 
+            fieldIo().readFieldsBasis(inFileName, cFields());
+            fieldIo().convertBasisToRGrid(cFields(), cFieldsRGrid());
+
+            std::string outFileName;
             in >> outFileName;
             Log::file() << " " << Str(outFileName, 20) <<std::endl;
+            fieldIo().writeFieldsRGrid(outFileName, cFieldsRGrid());
+         } else 
+         if (command == "RGRID_TO_BASIS") {
+            hasCFields_ = false;
 
-            std::ifstream inFile;
-            fileMaster().openInputFile(inFileName, inFile);
-            readFields(inFile, cFields());
-            inFile.close();
-
-            //convert to rgrid
-            for (int i = 0; i < mixture().nMonomer(); ++i) {
-               basis().convertFieldComponentsToDft(cField(i), cFieldDft(i));
-               fft().inverseTransform(cFieldDft(i), cFieldGrid(i));
-            }
-
-            std::ofstream outFile;
-            fileMaster().openOutputFile(outFileName, outFile);
-            writeRFields(outFile, cFieldGrids());
-            outFile.close();
-
-         } 
-         */
-
-         /*
-         else if (command == "RGRID_TO_BASIS") {
             std::string inFileName;
-            std::string outFileName;
 
             in >> inFileName;
             Log::file() << " " << Str(inFileName, 20) <<std::endl;
+            fieldIo().readFieldsRGrid(inFileName, cFieldsRGrid());
 
+            fieldIo().convertRGridToBasis(cFieldsRGrid(), cFields());
+
+            std::string outFileName;
             in >> outFileName;
             Log::file() << " " << Str(outFileName, 20) <<std::endl;
+            fieldIo().writeFieldsBasis(outFileName, cFields());
 
-            std::ifstream inFile;
-            fileMaster().openInputFile(inFileName, inFile);
-            readRFields(inFile, cFieldGrids());
-            inFile.close();
+         } else 
+         if (command == "KGRID_TO_RGRID") {
+            hasCFields_ = false;
 
-            //convert to fields
-            for (int i = 0; i < mixture().nMonomer(); ++i) {
-               fft().forwardTransform(cFieldGrid(i), cFieldDft(i));
-               basis().convertFieldDftToComponents(cFieldDft(i), cField(i));
-            }
-
-            std::ofstream outFile;
-            fileMaster().openOutputFile(outFileName, outFile);
-            writeFields(outFile, cFields());
-            outFile.close();
-
-         }
-         */
-
-         else if (command == "KGRID_TO_RGRID") {
+            // Read from file in k-grid format
             std::string inFileName;
-            std::string outFileName;
-
             in >> inFileName;
             Log::file() << " " << Str(inFileName, 20) <<std::endl;
+            fieldIo().readFieldsKGrid(inFileName, cFieldsKGrid());
 
-            in >> outFileName;
-            Log::file() << " " << Str(outFileName, 20) <<std::endl;
-
-            std::ifstream inFile;
-            fileMaster().openInputFile(inFileName, inFile);
-            
-            readKFields(inFile, cFieldDfts());
-            inFile.close();
-
-            //convert to rgrid
+            // Use FFT to convert k-grid r-grid
             for (int i = 0; i < mixture().nMonomer(); ++i) {
-               fft().inverseTransform(cFieldDft(i), cFieldGrid(i));
+               fft().inverseTransform(cFieldKGrid(i), cFieldRGrid(i));
             }
 
-            std::ofstream outFile;
-            fileMaster().openOutputFile(outFileName, outFile);
-            writeRFields(outFile, cFieldGrids());
-            outFile.close();
-
-         } else if (command == "RHO_TO_OMEGA") {
-
-            std::string inFileName;
+            // Write to file in r-grid format
             std::string outFileName;
+            in >> outFileName;
+            Log::file() << " " << Str(outFileName, 20) <<std::endl;
+            fieldIo().writeFieldsRGrid(outFileName, cFieldsRGrid());
 
+         } else 
+         if (command == "RHO_TO_OMEGA") {
+
+            // Read c field file in r-grid format
+            std::string inFileName;
             in >> inFileName;
             Log::file() << " " << Str(inFileName, 20) << std::endl;
+            fieldIo().readFieldsRGrid(inFileName, cFieldsRGrid());
 
-            in >> outFileName;
-            Log::file() << " " << Str(outFileName, 20) << std::endl;
-
-            std::ifstream inFile;
-            fileMaster().openInputFile(inFileName, inFile);
-
-            readRFields(inFile, cFieldGrids());
-            
-            inFile.close();
-
+            // Compute w fields, excluding Lagrange multiplier contribution
             //code is bad here, `mangled' access of data in array
             for (int i = 0; i < mixture().nMonomer(); ++i) {
-               assignUniformReal << < NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (wFieldGrid(i).cDField(), 0, mesh().size());
+               assignUniformReal << < NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (wFieldRGrid(i).cDField(), 0, mesh().size());
             }
             for (int i = 0; i < mixture().nMonomer(); ++i) {
                for (int j = 0; j < mixture().nMonomer(); ++j) {
-                  pointWiseAddScale << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (wFieldGrid(i).cDField(), cFieldGrid(j).cDField(), 
+                  pointWiseAddScale << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (wFieldRGrid(i).cDField(), cFieldRGrid(j).cDField(), 
                      interaction().chi(i,j), mesh().size());
                }
             }
 
-            std::ofstream outFile;
-            fileMaster().openOutputFile(outFileName, outFile);
-            writeRFields(outFile, wFieldGrids());
-            outFile.close();
+            // Write w fields to file in r-grid format
+            std::string outFileName;
+            in >> outFileName;
+            Log::file() << " " << Str(outFileName, 20) << std::endl;
+            fieldIo().writeFieldsRGrid(outFileName, wFieldsRGrid());
 
          } else {
+
             Log::file() << "  Error: Unknown command  " << command << std::endl;
             readNext = false;
+
          }
       }
    }
@@ -621,355 +479,10 @@ namespace Pspg
       }
       readCommands(fileMaster().commandFile()); 
    }
-   
-   /*
-   template <int D>
-   void System<D>::readFields(std::istream &in,
-      DArray< RDField<D> >& fieldsToCopy)
-   {
-      UTIL_CHECK(hasMesh_);
-
-      // Read grid dimensions
-      std::string label;
-      int nStar, nM;
-
-      in >> label;
-      UTIL_CHECK(label == "nStar");
-      in >> nStar;
-      UTIL_CHECK(nStar > 0);
-      UTIL_CHECK(nStar == basis().nStar());
-
-      in >> label;
-      UTIL_CHECK(label == "nM");
-      in >> nM;
-      UTIL_CHECK(nM > 0);
-      UTIL_CHECK(nM == mixture().nMonomer());
-
-      DArray<cufftReal*> fields;
-      fields.allocate(nM);
-      for (int i = 0; i < nM; i++) {
-         fields[i] = new cufftReal[nStar];
-      }
-      // Read fields
-      int i, j, idum;
-      for (i = 0; i < nStar; ++i) {
-         in >> idum;
-         UTIL_CHECK(idum == i);
-         for (j = 0; j < nM; ++j) {
-            in >> fields[j][i];
-         }
-      }
-      
-      for (int i = 0; i < nM; i++) {
-         cudaMemcpy(fieldsToCopy[i].cDField(), fields[i], sizeof(cufftReal) * nStar, cudaMemcpyHostToDevice);
-         delete[] fields[i];
-      }
-
-   }
-   */
-
-   template <int D>
-   void System<D>::readRFields(std::istream &in,
-                                DArray<RDField<D> >& fields)
-   {
-
-      UTIL_CHECK(hasMesh_);
-
-      std::string label;
-      std::string groupName;
-      IntVec<D> nGrid;
-      int nM;
-      int ver1, ver2;
-      int dim;      
-      FArray<double,6> params;
-
-      in >> label;
-      UTIL_CHECK(label == "format");
-      in >> ver1;
-      in >> ver2;
- 
-      in >> label;
-      UTIL_CHECK(label == "dim");
-      in >> dim;
-      UTIL_CHECK(dim == D);
-
-      readUnitCellHeader(in, unitCell());
- 
-      in >> label;
-      std::cout<<label<<std::endl;
-      UTIL_CHECK(label == "group_name");
-      in >> groupName;
-
-      in >> label;
-      std::cout<<label<<std::endl;
-      UTIL_CHECK(label == "N_monomer");
-      in >> nM;
-      UTIL_CHECK(nM > 0);
-      UTIL_CHECK(nM == mixture().nMonomer());
-
-      in >> label;
-      UTIL_CHECK(label == "ngrid");
-      in >> nGrid;
-      UTIL_CHECK(nGrid == mesh().dimensions());
-
-
-      DArray<cufftReal*> temp;
-      temp.allocate(nM);
-      for(int i = 0; i < nM; ++i) {
-         temp[i] = new cufftReal[mesh().size()];
-      } 
-      
-      IntVec<D> offsets;
-      offsets[D - 1] = 1;
-      for(int i = D - 1 ; i > 0; --i ) {
-         offsets[i - 1] = offsets[i] * mesh().dimension(i);
-      }
-      IntVec<D> position;
-      for(int i = 0; i < D; ++i) {
-         position[i] = 0;
-      }
-
-      int rank = 0;
-      int positionId;
-      for(int i = 0; i < mesh().size(); i++) {
-         rank = 0;
-         for(int dim = 0; dim < D; ++dim) {
-            rank += offsets[dim] * position[dim];
-         }
-         for(int k = 0; k < nM; ++k) {
-            in >> std::setprecision(15)>> temp[k][rank];
-         }
-         //add position
-         positionId = 0;
-         while( positionId < D) {
-            position[positionId]++;
-            if ( position[positionId] == mesh().dimension(positionId) ) {
-               position[positionId] = 0;
-               positionId++;
-               continue;
-            }
-            break;
-         } 
-      }
-      
-      for(int i = 0; i < nM; i++) {
-         cudaMemcpy(fields[i].cDField(), temp[i],
-            mesh().size() * sizeof(cufftReal), cudaMemcpyHostToDevice);
-         delete[] temp[i];
-         temp[i] = nullptr;
-      }
-
-   }
-
-   template <int D>
-   void System<D>::readKFields(std::istream &in,
-                                 DArray<RDFieldDft<D> >& fields)
-   {
-      UTIL_CHECK(hasMesh_);
-
-      std::string label;
-      IntVec<D> nGrid;
-      int nM;
-
-      in >> label;
-      UTIL_CHECK(label == "nGrid");
-      in >> nGrid;
-      UTIL_CHECK(nGrid == mesh().dimensions());
-
-      in >> label;
-      UTIL_CHECK(label == "nM");
-      in >> nM;
-      UTIL_CHECK(nM > 0);
-      UTIL_CHECK(nM == mixture().nMonomer());
-
-      // Read Fields;
-      int kSize = 1;
-      for (int i = 0; i < D; i++) {
-        if (i == D - 1) {
-           kSize *= (mesh().dimension(i) / 2 + 1);
-        }
-        else {
-           kSize *= mesh().dimension(i);
-        }
-        
-      }
-
-      int idum;
-      DArray<cufftComplex*> temp;
-      temp.allocate(nM);
-      for(int i = 0; i < nM; ++i) {
-         temp[i] = new cufftComplex[kSize];
-      }
-      
-      for(int i = 0; i < kSize; ++i) {
-         in >> idum;
-         for (int j = 0; j < nM; ++j) {
-            in >> temp[j][i].x;
-            in >> temp[j][i].y;
-         }
-      }
-      
-      for(int i = 0; i < nM; ++i) {
-         cudaMemcpy(fields[i].cDField(), temp[i],
-            kSize * sizeof(cufftComplex), cudaMemcpyHostToDevice);
-         delete[] temp[i];
-         temp[i] = nullptr;
-      }
-   }
 
    /*
-   template <int D>
-   void System<D>::writeFields(std::ostream &out,
-      DArray<RDField<D> > const &  fieldsToCopy)
-   {
-      int i, j;
-      int nStar = basis().nStar();
-      int nM = mixture().nMonomer();
-      out << "nStar     " << nStar << std::endl;
-      out << "nM     " << nM << std::endl;
-
-      DArray<cufftReal*> fields;
-      fields.allocate(nM);
-      for (int i = 0; i < nM; i++) {
-         fields[i] = new cufftReal[nStar];
-         cudaMemcpy(fields[i], fieldsToCopy[i].cDField(), nStar * sizeof(cufftReal), cudaMemcpyDeviceToHost);
-      }
-      // Write fields
-      for (i = 0; i < nStar; ++i) {
-         out << Int(i, 5);
-         for (j = 0; j < nM; ++j) {
-            out << "  " << Dbl(fields[j][i], 18, 11);
-         }
-         //out<< "  " << basis().wave(basis().star(i).beginId).indicesDft;
-         out << std::endl;
-      }
-      for (int i = 0; i < nM; i++) {
-         delete[] fields[i];
-      }
-   }
+   * Initialize Pscf::Homogeneous::Mixture homogeneous_ member.
    */
-
-   template <int D>
-   void System<D>::writeRFields(std::ostream &out,
-                           DArray<RDField<D> > const& fields)
-   {
-      double time_start;
-      double time_end;
-      struct timeval tv;
-      struct timezone tz;
-
-      gettimeofday(&tv, &tz);
-      time_start = (double) tv.tv_sec + 
-         (double)tv.tv_usec / 1000000.0;
-
-      int nM = mixture().nMonomer();
-      MeshIterator<D> itr(mesh().dimensions());
-      //do not use white space like this...
-      out << "format  1   0    " <<  std::endl;
-      out << "dim    " <<  std::endl << "                    "<<D<< std::endl;
-      writeUnitCellHeader(out, unitCell());   
-      out << "group_name    " <<  std::endl << "                    "<<groupName_<< std::endl;
-      out << "N_monomer    " <<  std::endl << "                    "<<mixture().nMonomer()<< std::endl;
-      out << "ngrid        " <<  std::endl<<"           "<<mesh().dimensions() << std::endl;
-
-      DArray<cufftReal*> temp;
-      temp.allocate(nM);
-      for (int i = 0; i < nM; ++i) {
-         temp[i] = new cufftReal[mesh().size()];
-         cudaMemcpy(temp[i], fields[i].cDField(),
-                    mesh().size() * sizeof(cufftReal), cudaMemcpyDeviceToHost);
-      }    
-
-      IntVec<D> offsets;
-      offsets[D - 1] = 1;
-      for(int i = D - 1 ; i > 0; --i ) {
-         offsets[i - 1] = offsets[i] * mesh().dimension(i);
-      }
-      IntVec<D> position;
-      for(int i = 0; i < D; ++i) {
-         position[i] = 0;
-      }
-
-      int rank = 0;
-      int positionId;
-      for(int i = 0; i < mesh().size(); i++) {
-         rank = 0;
-         for(int dim = 0; dim < D; ++dim) {
-            rank += offsets[dim] * position[dim];
-         }
-         for(int k = 0; k < nM; ++k) {
-            out << "  " << Dbl(temp[k][rank], 18, 15);
-         }
-         out<<'\n';
-         //add position
-         positionId = 0;
-         while( positionId < D) {
-            position[positionId]++;
-            if ( position[positionId] == mesh().dimension(positionId) ) {
-               position[positionId] = 0;
-               positionId++;
-               continue;
-            }
-            break;
-         } 
-      }
-      
-      for(int i = 0; i < nM; ++i) {
-         delete[] temp[i];
-         temp[i] = nullptr;
-         
-      }
-
-      gettimeofday(&tv, &tz);
-      time_end = (double)tv.tv_sec + 
-         (double)tv.tv_usec / 1000000.0;
-      Log::file() << "Files written in  " 
-                  << Dbl(time_end - time_start, 18, 11)<<'s' 
-                  << std::endl;
-   }
-
-   template <int D>
-   void System<D>::writeKFields(std::ostream &out,
-                           DArray<RDFieldDft<D> > const& fields)
-   {
-      int nM = mixture().nMonomer();
-      MeshIterator<D> itr(mesh().dimensions());
-      out << "nGrid   " << mesh().dimensions() << std::endl;
-      out << "nM      " << nM                << std::endl;
-
-      //write Fields
-      DArray<cufftComplex*> temp;
-     int kSize = 1;
-     for (int i = 0; i < D; i++) {
-        if (i == D - 1) {
-           kSize *= (mesh().dimension(i) / 2 + 1);
-        }
-        else {
-           kSize *= mesh().dimension(i);
-        }
-        
-     }
-      temp.allocate(nM);
-      for(int i = 0; i < nM; ++i) {
-         temp[i] = new cufftComplex[kSize];
-         cudaMemcpy(temp[i], fields[i].cDField(), 
-            kSize * sizeof(cufftComplex), cudaMemcpyDeviceToHost);
-      }
-     for (int i = 0; i < kSize; i++) {
-        out << Int(i, 5);
-        for (int j = 0; j < nM; ++j) {
-           out << "  " << Dbl(temp[j][i].x, 18, 11)
-              << Dbl(temp[j][i].y, 18, 11);
-        }
-        out << std::endl;
-     }
-      
-      for(int i = 0; i < nM; ++i) {
-         delete[] temp[i];
-         temp[i] = nullptr;
-      }
-   }
-
    template <int D>
    void System<D>::initHomogeneous()
    {
@@ -1030,9 +543,7 @@ namespace Pspg
             }
          }
          homogeneous_.molecule(i).computeSize();
-
       }
-
    }
 
    /*
@@ -1053,8 +564,6 @@ namespace Pspg
          mu = polymerPtr->mu();
          // Recall: mu = ln(phi/q)
          length = polymerPtr->length();
-         std::cout<< mu <<std::endl;
-         std::cout << length<<std::endl;
          fHelmholtz_ += phi*( mu - 1.0 )/length;
       }
 
@@ -1063,17 +572,16 @@ namespace Pspg
       //RDField<D> workArray;
       //workArray.allocate(nx);
       float temp = 0;
-      //std::cout<<interaction().chi(0,1)<<std::endl;
       for (int i = 0; i < nm; ++i) {
          for (int j = i + 1; j < nm; ++j) {
            assignUniformReal << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> >(workArray.cDField(), interaction().chi(i, j), nx);
-           inPlacePointwiseMul << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (workArray.cDField(), cFieldGrids_[i].cDField(), nx);
-           inPlacePointwiseMul << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (workArray.cDField(), cFieldGrids_[j].cDField(), nx);
+           inPlacePointwiseMul << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (workArray.cDField(), cFieldsRGrid_[i].cDField(), nx);
+           inPlacePointwiseMul << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (workArray.cDField(), cFieldsRGrid_[j].cDField(), nx);
            fHelmholtz_ += (reductionH(workArray, nx) / nx);
          }
          
-         assignReal << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (workArray.cDField(), wFieldGrids_[i].cDField(), nx);
-         inPlacePointwiseMul << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (workArray.cDField(), cFieldGrids_[i].cDField(), nx);
+         assignReal << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (workArray.cDField(), wFieldsRGrid_[i].cDField(), nx);
+         inPlacePointwiseMul << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (workArray.cDField(), cFieldsRGrid_[i].cDField(), nx);
          temp += reductionH(workArray, nx);
       }
       fHelmholtz_ -= (temp / nx);
@@ -1085,7 +593,6 @@ namespace Pspg
          phi = polymerPtr->phi();
          mu = polymerPtr->mu();
          length = polymerPtr->length();
-
          pressure_ += mu * phi /length;
       }
 
@@ -1100,11 +607,11 @@ namespace Pspg
       out << "pressure   = " << Dbl(pressure(), 18, 11) << std::endl;
       out << std::endl;
 
-      //out << "Polymers:" << std::endl;
-      //out << "    i"
-      //    << "        phi[i]      "
-      //    << "        mu[i]       " 
-      //    << std::endl;
+      out << "Polymers:" << std::endl;
+      out << "    i"
+          << "        phi[i]      "
+          << "        mu[i]       " 
+          << std::endl;
       for (int i = 0; i < mixture().nPolymer(); ++i) {
          out << Int(i, 5) 
              << "  " << Dbl(mixture().polymer(i).phi(),18, 11)
@@ -1181,3 +688,4 @@ namespace Pspg
 
 } // namespace Pspg
 } // namespace Pscf
+#endif 

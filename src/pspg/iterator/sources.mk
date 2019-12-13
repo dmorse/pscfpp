@@ -1,5 +1,5 @@
 pspg_iterator_= \
-  pspg/iterator/Iterator.cu 
+  pspg/iterator/AmIterator.cu 
 
   
 

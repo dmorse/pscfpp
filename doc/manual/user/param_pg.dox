@@ -29,7 +29,7 @@ System{
          1   1   0.0
   }
   unitCell  cubic   1.9254998725
-  mesh              10  10  10
+  mesh              32  32  32
   AmIterator{
     maxItr   100
     epsilon  1e-10

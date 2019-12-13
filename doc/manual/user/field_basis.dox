@@ -1,0 +1,286 @@
+/*! \page user_field_basis_page 3.5.1 Basis File Format
+
+ \ref user_field_page       (Prev / Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref user_field_rgrid_page (Next) 
+<BR>
+
+The symmetry-adapted basis file format for a systen with N_monomer 
+different types of monomer contains a description of a N_monomer
+fields (one per monomer type) in which each field is expanded in a
+basis in which all of the basis functions are eigenfunctions of the
+Laplaican that invariant under the space group symmetries of the 
+crystal. Each of these basis functions is associated with a particular
+set of reciprocal lattice vectors that are related by symmetry, which 
+we refer to as a "star".  The star of wavevectors associated with each 
+basis function is identified in the file format by giving the integer 
+indices for a characteristic wavevector in that star.
+
+<h3> Example: 3D Gyroid Phase </h3>
+
+Below is an example of a c file output from a simulation of a 
+gyroid phase for a diblock copolymer melt. A section of the middle
+of this file has been removed, as indicated by the vertical dots.
+\code
+
+    format  1  0
+   dim                 
+                      3
+   crystal_system      
+                  cubic
+   N_cell_param        
+                      1
+   cell_param          
+       3.6735414146E+00
+   group_name          
+              I_ a_-3_d
+   N_monomer           
+                      2
+   N_star              
+                    235
+     3.000000000000E-01  7.000000000000E-01       0   0   0     1
+    -2.942897932802E-01  2.942897932848E-01       2   1   1    24
+    -9.425546329793E-02  9.425546327223E-02       2   2   0    12
+    -3.864399409689E-03  3.864399436086E-03       3   2   1    48
+    -1.483047814338E-02  1.483047815806E-02       4   0   0     6
+    -3.546446264855E-02  3.546446265383E-02       4   2   0    24
+     3.138519869858E-02 -3.138519870524E-02       3   3   2    24
+     2.003121375277E-02 -2.003121374994E-02       4   2   2    24
+     1.572048423239E-02 -1.572048424396E-02       4   3   1    48
+    -1.376822797257E-02  1.376822798292E-02       5   2   1    48
+    -1.063353913450E-02  1.063353913935E-02       4   4   0    12
+            .                   .                 .   .   .    .
+            .                   .                 .   .   .    .
+            .                   .                 .   .   .    .
+    -7.575067702553E-05  7.575067344206E-05      13  13  10    24
+    -2.570604494615E-05  2.570604263390E-05      14  12  10    24
+    -5.627606758688E-05  5.627606408758E-05      14  14   8     6
+     5.879116047898E-05 -5.879115755266E-05      14  14  12     6
+
+\endcode
+
+<h3> Example: 1D Lamellar Phase </h3>
+
+Below is an example the c field file output for a small simulation of a
+lamellar phase of a diblock copolymer melt:
+
+\code
+   format  1  0
+   dim                 
+                      1
+   crystal_system      
+             'lamellar'
+   N_cell_param        
+                      1
+   cell_param          
+       1.3835952906E+00
+   group_name          
+                   '-1'
+   N_monomer           
+                      2
+   N_star              
+                     21
+     5.600000000000E-01  4.400000000000E-01       0     1
+     2.179734275940E-01 -2.179734275841E-01       1     2
+    -1.523969262415E-02  1.523969262143E-02       2     2
+    -5.575240954520E-03  5.575240954490E-03       3     2
+     1.108470498335E-03 -1.108470498556E-03       4     2
+     1.455449531056E-04 -1.455449530934E-04       5     2
+    -6.218980135235E-05  6.218980146350E-05       6     2
+    -8.059872486808E-07  8.059872753625E-07       7     2
+     2.826732709838E-06 -2.826732713547E-06       8     2
+    -2.194238294935E-07  2.194238338772E-07       9     2
+    -1.060764766149E-07  1.060764782164E-07      10     2
+     1.946388906884E-08 -1.946388995126E-08      11     2
+     3.010764186682E-09 -3.010764203812E-09      12     2
+    -1.161872573075E-09  1.161872692383E-09      13     2
+    -3.137859071779E-11  3.137865228352E-11      14     2
+     5.685537948359E-11 -5.685537190418E-11      15     2
+    -3.817653721188E-12  3.817577312625E-12      16     2
+    -2.332684668702E-12  2.332625641218E-12      17     2
+     4.053664853576E-13 -4.051318636739E-13      18     2
+     3.071545504276E-14 -3.077687877704E-14      19     2
+    -1.475930488937E-13 -4.916067553040E-14      20     1
+\endcode
+
+<h3> Description of File Format </h3>
+
+This field file format consists of a header section, which ends with
+the value of N_star, followed by a data section. The parameter N_star
+is the number of basis functions used to expand each field. The data
+section contains exactly N_star rows of data, each of which contains
+information associated with one basis function in the symmetry-adapted
+Fourier expansion.
+
+The header contains information required information about the 
+crystallographic unit cell and basis that is required to interpret 
+the data section. The first line of the header specifies a file 
+format version number (file format v1.0). The rest of the header 
+contains values of the dimensionality of the structure (parameter
+"dim, with a value 1,2, or 3), the name of the crystal system 
+(crystal_system), the unit cell parameters (cell_param), a string
+that identifies a crystallographic space group (space_group),
+the number of monomer types (N_monomer), and the number of basis 
+functions used in the expansion (N_star). 
+
+The data section contains N_star rows, each of which contains the
+coefficients associated with one basis function, along with an 
+identifier for the basis function. The first N_monomer columns of 
+row i (e.g., the first two columns, in both of the above examples) 
+contain the coefficients associated with different monomer types.  
+Specifically, the coefficient multiplying basis function \f$i\f$ 
+in the expansion of the field associated with monomer type \f$\alpha\f$
+is given in column \f$\alpha\f$ of row i of this data section.
+
+In the file format for a crystal with dimension d (e.g., d=1 for a 
+lamellar phase or d=3 for a gyroid phase) the next d columns, after
+the columns containing the expansion coefficients, contain a set of 
+d integers that identify each basis function. As discussed above,
+these are integer indices for one of the wavevectors in the star
+of wavevectors used to construct a basis function.  The last column 
+in each row is the number of wavevectors in the star of wavevectors, 
+which we will refer to as the multiplicity.
+
+The first basis function in the symmetry adapted Fourier expansion, 
+which is given in the first row of the data section, is always the
+spatially homogeneous function \f$f_{1}(\textbf{r}) = 1\f$. This 
+constant function is associated with the single wavevector 
+\f$\textbf{k} = 0\f$, and identified in a 3D crystal by a label 
+"0 0 0", with multiplicity 1.
+
+Consider the above example of 3D gyroid phase.  The second row 
+of the data section in the gyroid example contains the coefficients 
+for the basis function associated with the {211} family of
+wavevectors, which is identified in columns 3-5 by the label 
+"2 1 1".  Because this family contains 24 wavevectors, the last
+column lists a multiplicity of 24. The {211} family is the first 
+star of non-zero wavevectors from which it possible to construct 
+a nonzero basis function that is invariant under all of the 
+symmetries of space group \f$Ia\bar{3}d\f$of the gyroid structure. 
+The stars that can be used to construct a basis function are 
+precisely those that satisfy the reflection rules for allowed 
+reflections in scattering from a particular space group symmetry, 
+for which the {211} family gives the first allowed family of 
+reflections in scattering from a gyroid crystal. 
+
+Consider the second example, which is 1D lamellar phase with 
+inversion symmetry. The first basis function is the constant 
+\f$f_{1}(r)=1\f$, with a label "0" and a multiplicity 1. All
+subsequent basis functions are cosine functions of the form 
+\f$f_{n+1}(r) = \sqrt{2}\cos(k_{n}r)\f$with 
+\f$k_{n} = 2\pi n/L\f$for a crystal with period \f$L\f$, 
+for which we see an integer label n. The multiplicity of each
+cosine basis function is 2, as indicated in the last column,
+since each such function can be expressed as a superposition 
+of two plane waves of wavenumbers \f$\pm k_{n}\f$ . 
+
+The rules for constructing real basis functions for 
+non-centrosymmetric space groups is somewhat more complicated 
+than for centrosymmetric groups.  When the group has no 
+inversion symmetry, a basis function that is constructed 
+by superposing plane waves that are related by symmetry 
+elements of the space group will generally not be proportional
+to a real function. The simplest example of this is a one 
+dimensional crystal with no inversion symmetry (group 1), 
+and thus no symmetry elements other than the identity. In
+this case, no plane wave is related to any other by symmetry. 
+The natural basis functions, from the point of view of symmetry
+alone, are single complex exponential plane waves, but these
+are complex functions of position.  In order to construct basis 
+functions that are real, in this example, one must construct
+two real superpositions of each pair of plane waves that are 
+related by inversion (which is not a symmetry of the crystal).
+The required basis functions in this case are both cosine
+and sine functions. More generally, to form real basis 
+functions in crystals with no inversion symmetry, we use 
+generalizations of the cosine and sign functions that are 
+construction by constructing two different superpositions 
+of "stars" that are related to one another by inversion. 
+Conventions used for doing this are described best in the 
+comments in the source code for the basis_mod module.
+
+<h3> Symmetry-Adapted Fourier Basis </h3>
+
+We now give a more mathematical description of the symmetry-adapted 
+Fourier basis underlying this file format. 
+Consider a system with N_monomer monomer types indexed by an 
+integer \f$\alpha = 1, \ldots,\f$N_monomer.  Let 
+\f$\omega_{\alpha}(\textbf{r})\f$ denote a field (e.g., a monomer chemical
+potential field) associated with monomer type \f$\alpha\f$. We approximate 
+the field \f$\omega_{\alpha}\f$ as an expansion of the form
+\f[
+    \omega_{\alpha}(\textbf{r}) = 
+    \sum_{i=1}^{N_{star}} \omega_{i\alpha} f_{i}(\textbf{r})
+\f]
+in which each function \f$ f_{i}(\textbf{r})\f$ is a real basis 
+function, \f$\omega_{i\alpha}\f$ is an associated real coefficient, 
+and \f$N_{star}\f$ is the number of basis functions used to
+approximate the field. In a symmetry-adapted Fourier expansion of a 
+field with a specified space group symmetry, each basis function 
+\f$f_{i}(\textbf{r})\f$ is a real function that is invariant under 
+all symmetry elements of the chosen space group, and is also an 
+eigenfunction of the Laplacian, such that
+\f[
+   -\nabla^{2}f_{i}(\textbf{r}) = \lambda_{i} f_{i}(\textbf{r})
+\f]
+for some \f$\lambda_{i} \geq 0\f$. The basis functions form 
+an orthogonal basis, which are normalized such that
+\f[
+   \frac{1}{V} \int \! d^{D}r \; f_{i}(\textbf{r}) f_{j}(\textbf{r}) 
+   = \delta_{ij}
+\f]
+where the integral is taken over one unit cell of a periodic structure 
+in D-dimensional space and \f$V\f$is the generalized volume (length, 
+area or volume) of the unit cell. Here \f$\delta_{ij}\f$ denotes the
+Kronecker delta function, which is defined to be \f$\delta_{ij} = 1\f$
+for \f$i=j\f$and 0 otherwise
+
+Each symmetry-adapted basis function can be expressed as a superposition 
+of plane waves with associated wavevectors that are reciprocal lattice 
+vectors of equal magnitude. A basis function \f$f_{i}(\textbf{r})\f$ with 
+associated reciprocal lattice vectors 
+\f$\textbf{k}_{1}, \ldots, \textbf{k}_{M}\f$ can be expressed as a sum
+of the form
+\f[
+   f_{i}(\textbf{r}) = 
+   \sum_{i=1}^{M} a_{i} e^{i\textbf{k}_{i} \cdot \textbf{r}}
+\f]
+where \f$M\f$is the number of associated plane waves, and where the
+the coefficients \f$a_{1}, \ldots ,a_{M}\f$ are complex numbers that 
+all have equal magnitude 
+\f$|a_{1}| = |a_{2}| = \cdots |a_{M}| = 1/\sqrt{M}\f$. 
+
+For any space group with inversion symmetry (i.e., a centrosymmetric 
+group), the set of wavevectors associated with a basis function is a 
+set of vectors that are related to one another by the point group 
+symmetries of the crystal.  For non-centrosymmetric groups, the 
+wavevectors associated with a real basis function are related by 
+point group symmetries or by inversion (i.e., by the relation 
+\f$\textbf{k} \rightarrow - \textbf{k}\f$).  A group of reciprocal lattice 
+wavevectors that are related by symmetries of the crystal is referred 
+to here and in the PSCF source code as a "star".  The number of stars,
+denoted by N_star in the corresponding file format, is equal to the
+number of basis functions. In a cubic crystal, for example, each star
+of wavevectors (and thus each basis functions) correspond to a family 
+of wavevectors with integer indices {ijk} that are related to one another 
+by permutations and/or sign changes. For example, the basis function 
+associated with the {321} star has 48 associated wavevectors that 
+include wavevectors with integer indices (1,2,3), (3,2,1), (-3,2,1),
+etc, whereas the {200} star in a cubic crystal has only six wavevectors 
+\f$(\pm2,0,0), (0,\pm 2, 0), (0, 0, \pm 2)\f$.
+
+Each basis function for d-dimensional crystal is uniquely identified 
+in the symmetry-adapted file format by a label consisting of d integer 
+indices. These indices correspond to the Miller indices for one of the 
+wavevectors associated with the basis function.  Thus for example, we 
+identity the basis function associated with the {321} family of wavevectors 
+in a cubic crystal by a label "3 2 1".  The conventions for choosing 
+which plane wave to use to identify the basis function is discussed 
+in the comments provided in the source code of crystal_mod (See the html
+developers manual for browseable version of this. The set of Miller 
+indices output to file corresponds to the value of the variable 
+wave_of_star.) 
+
+<BR>
+ \ref user_field_page        (Prev / Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref user_field_rgrid_page  (Next) 
+*/

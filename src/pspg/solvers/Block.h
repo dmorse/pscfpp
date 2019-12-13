@@ -10,17 +10,16 @@
 
 #include "Propagator.h"                   // base class argument
 #include <pscf/solvers/BlockTmpl.h>       // base class template
-#include <pspg/field/RDField.h>            // member
-#include <pspg/field/RDFieldDft.h>         // member
+#include <pspg/field/RDField.h>           // member
+#include <pspg/field/RDFieldDft.h>        // member
 #include <pspg/field/FFT.h>               // member
-#include <pspg/field/FFTBatched.h>               // member
+#include <pspg/field/FFTBatched.h>        // member
 #include <util/containers/FArray.h>
 #include <pscf/crystal/UnitCell.h>
-#include <pspg/wavelist/WaveList.h>
+#include <pspg/solvers/WaveList.h>
 
 namespace Pscf { 
    template <int D> class Mesh; 
-
 }
 
 namespace Pscf { 
@@ -124,9 +123,13 @@ namespace Pspg {
       */
       void computeStress(WaveList<D>& wavelist, double prefactor);
 
-      /// Stress exerted by a polymer chain of a block.
-      FArray<double, 6> pStress;
-      
+      /**
+      * Get derivative of free energy with respect to a unit cell parameter.
+      *
+      * \param n  unit cell parameter index   
+      */
+      double stress(int n);
+
       /**
       * Return associated spatial Mesh by reference.
       */
@@ -168,6 +171,9 @@ namespace Pspg {
       FFT<D> fft_;
 
       FFTBatched<D> fftBatched_;
+      
+      /// Stress exerted by a polymer chain of a block.
+      FArray<double, 6> stress_;
       
       // Array of elements containing exp(-K^2 b^2 ds/6)
       RDField<D> expKsq_;
@@ -233,6 +239,11 @@ namespace Pspg {
    inline double Block<D>::ds() const
    {  return ds_; }
 
+   /// Get derivative of free energy w/ respect to a unit cell parameter.
+   template <int D>
+   inline double Block<D>::stress(int n)
+   {  return stress_[n]; }
+
    /// Get Mesh by reference.
    template <int D>
    inline Mesh<D> const & Block<D>::mesh() const
@@ -241,7 +252,14 @@ namespace Pspg {
       return *meshPtr_;
    }
 
+   #ifndef PSPG_BLOCK_TPP
+   // Suppress implicit instantiation
+   extern template class Block<1>;
+   extern template class Block<2>;
+   extern template class Block<3>;
+   #endif
+
 }
 }
-#include "Block.tpp"
+//#include "Block.tpp"
 #endif

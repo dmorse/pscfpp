@@ -1,17 +1,18 @@
-#ifndef FFT_TPP
-#define FFT_TPP
+#ifndef PSPG_FFT_TPP
+#define PSPG_FFT_TPP
 
 /*
 * PSCF++ Package 
 *
-* Copyright 2016 - 2019, The Regents of the University of Minnesota
+* Copyright 2010 - 2017, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.
 */
 
 #include "FFT.h"
 #include <pspg/GpuResources.h>
+
 //forward declaration
-static __global__ void scaleRealData(cufftReal* data, rtype scale, int size);
+//static __global__ void scaleRealData(cufftReal* data, rtype scale, int size);
 
 namespace Pscf {
 namespace Pspg
@@ -146,6 +147,7 @@ namespace Pspg
 }
 }
 
+#if 0
 static __global__ void scaleRealData(cufftReal* data, rtype scale, int size) {
    
    //write code that will scale
@@ -156,5 +158,6 @@ static __global__ void scaleRealData(cufftReal* data, rtype scale, int size) {
    }
    
 }
+#endif
 
 #endif

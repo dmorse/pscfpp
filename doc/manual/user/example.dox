@@ -1,37 +1,47 @@
-/*! \page user_example_page 3.5 Examples
+/*! \page user_example_page 3.4 Examples
 
 \ref user_command_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref developer_page (Next)
+\ref user_field_page (Next)
 <BR>
 
 A good way to become familiar with the PSCF simulation programs is to run a few example simulations and examine the associated input and output files.
 A set of examples containing input files for PSCF simulations are provided  in the pscfpp/examples directory of the PSCF repository.
 
-\section examples_subdirectories_sec Repository directory structure
+Each top level subdirectory of the examples root directory contains examples of simulations of a particular program or set of closely related program. 
+For example, the pcNd directory contains examples that use the pscf_pc1d, pscf_pc2d or pscf_pcNd CPU programs for periodic microstructres.
+The next level of subdirectory specifies a type of physical system. For example, the pscf_pcNd/diblock/ subdirectory contains examples of computations involving diblock copolymer melts. 
+Lower level subdirectories contain specific examples.
 
-Each top level subdirectory of the examples root directory contains examples of simulations of a particular program. 
-The next level of subdirectory specifies a type of physical system. For example, the diblock/ subdirectory contains examples of computations involving diblock copolymer melts. 
-The third level contains specific computations.
-
-\section examples_layout_sec Example directory structure
+\section examples_layout_sec Input files
 
 The input files for each example are in a separate directory, which we will refer to as an example directory.  
 Each example directory contains a set of input files that include at least one parameter file, a command file and an input chemical potential file.
-In the simplest examples, the parameter file is named "param" and the command file is named "command". 
+Generally, the parameter file is named "param" and the command file is named "command".
 
 A typical example directory contains files and subdirectories with the following names:
 \code
     param
     commands
+    run
+    clean
     in/
        omega
     out/
 \endcode
-Here, in/ and out/ are names of subdirectories. The out/ subdirectoryis initially empty.
+Here, in/ and out/ are names of subdirectories. The file in/omega is the input chemical potential field.
+The out/ subdirectory is initially empty. The files named "run" and "clean" are unix shell scripts
+that users may execute to run the simulation and clean up afterwards, respectively.
 
 \section examples_simulate_sec Running an example
 
-Users may run example simulations by invoking the relevant simulation program from the command line. 
+Users may run example simulations either by running the "run" script that is provided with most
+examples, or by invoking the relevant simulation program from the command line. 
+
+To use a "run" script, simply issue the command
+\code
+  > .\run
+\endcode
+from within the directory containing the example and the "run" file. 
 
 To use pscf_pc3d to run a simple example computation with the above 
 directory structure, one could change directory (cd) to the main directory 
@@ -51,6 +61,6 @@ of pscf_pc3d by the appropriate executable name.
 <BR>
 \ref user_command_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_page (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref developer_page (Next)
+\ref user_field_page (Next)
 
 */

@@ -36,7 +36,7 @@ namespace Pspc
       // Public typedefs
 
       /**
-      * Generic field (function of position).
+      * Generic field (function of position, defined on regular grid).
       */
       typedef RField<D> Field;
 
@@ -51,7 +51,7 @@ namespace Pspc
       typedef RField<D> CField;
 
       /**
-      * Propagator q-field type.
+      * Propagator q-field type, i.e., q(r,s) at fixed s.
       */
       typedef RField<D> QField;
 
@@ -75,7 +75,7 @@ namespace Pspc
       void setBlock(Block<D>& block);
 
       /**
-      * Associate this propagator with a block.
+      * Allocate memory used by this propagator.
       * 
       * \param ns number of contour length steps
       * \param mesh spatial discretization mesh
@@ -96,10 +96,9 @@ namespace Pspc
       /**
       * Solve the MDE for a specified initial condition.
       *
-      * This function solves the modified diffusion equation for this
-      * block with a specified initial condition, which is given by 
-      * head parameter of the function. The function is intended for 
-      * use in testing.
+      * This function solves the modified diffusion equation for this 
+      * block with a specified initial condition, which is given by head
+      * parameter of the function. 
       *
       * \param head initial condition of QField at head of block
       */
@@ -109,9 +108,9 @@ namespace Pspc
       * Compute and return partition function for the molecule.
       *
       * This function computes the partition function Q for the 
-      * molecule as a spatial average of the initial/head Qfield 
-      * for this propagator and the final/tail Qfield of its
-      * partner. 
+      * molecule as a spatial average of pointwise product of the 
+      * initial/head Qfield for this propagator and the final/tail 
+      * Qfield of its partner. 
       */ 
       double computeQ();
 
@@ -141,6 +140,8 @@ namespace Pspc
       * Has memory been allocated for this propagator?
       */
       bool isAllocated() const;
+
+      // Inherited public functions with non-dependent names
 
       using PropagatorTmpl< Propagator<D> >::nSource;
       using PropagatorTmpl< Propagator<D> >::source;

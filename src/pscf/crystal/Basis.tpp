@@ -49,7 +49,7 @@ namespace Pscf {
    {
       SpaceGroup<D> group;
       if (groupName == "I") {
-         // Create identity group
+         // Create identity group by default
          group.makeCompleteGroup();
       } else {
          bool foundFile = false;
@@ -57,22 +57,23 @@ namespace Pscf {
             std::ifstream in;
             in.open(groupName);
             if (in.is_open()) {
-               // Log::file() << "Reading group from file: " << groupName << std::endl;
                in >> group;
                UTIL_CHECK(group.isValid());
                foundFile = true;
-            } 
+            }
          }
          if (!foundFile) {
             std::string fileName = makeGroupFileName(D, groupName);
             std::ifstream in;
             in.open(fileName);
             if (in.is_open()) {
-               // Log::file() << "Reading group from file: " << fileName << std::endl;
                in >> group;
                UTIL_CHECK(group.isValid());
             } else {
-              UTIL_THROW("Unknown space group");
+               Log::file() << "\nFailed to open group file: " 
+                           << fileName << "\n";
+               Log::file() << "\n Error: Unknown space group\n";
+               UTIL_THROW("Unknown space group");
             }
          } 
       }

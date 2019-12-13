@@ -108,20 +108,20 @@ public:
       MeshIterator<1> iter(sys.mesh().dimensions());
       double twoPi = 2.0*Constants::Pi;
       for (iter.begin(); !iter.atEnd(); ++iter){
-         sys.wFieldGrid(0)[iter.rank()] = cos(twoPi * 
+         sys.wFieldRGrid(0)[iter.rank()] = cos(twoPi * 
                 (double(iter.position(0))/double(sys.mesh().dimension(0)) + 
                  double(iter.position(1))/double(sys.mesh().dimension(1)) + 
                  double(iter.position(2))/double(sys.mesh().dimension(2)))
               ); 
-         sys.wFieldGrid(1)[iter.rank()] = sin(twoPi * 
+         sys.wFieldRGrid(1)[iter.rank()] = sin(twoPi * 
                 (double(iter.position(0))/double(sys.mesh().dimension(0)) + 
                  double(iter.position(1))/double(sys.mesh().dimension(1)) + 
                  double(iter.position(2))/double(sys.mesh().dimension(2)))
               );
       }
       for (int i = 0; i < sys.mixture().nMonomer(); i++) {
-         sys.fft().forwardTransform(sys.wFieldGrid(i), sys.wFieldDft(i));
-         sys.basis().convertFieldDftToComponents(sys.wFieldDft(i),sys.wField(i));
+         sys.fft().forwardTransform(sys.wFieldRGrid(i), sys.wFieldKGrid(i));
+         sys.basis().convertFieldDftToComponents(sys.wFieldKGrid(i),sys.wField(i));
       }
 
       //set systemPtr_->cField();
@@ -185,18 +185,18 @@ public:
       MeshIterator<1> iter(sys.mesh().dimensions());
       double twoPi = 2.0*Constants::Pi;
       for (iter.begin(); !iter.atEnd(); ++iter){
-         sys.wFieldGrid(0)[iter.rank()] = cos(twoPi * 
+         sys.wFieldRGrid(0)[iter.rank()] = cos(twoPi * 
                         (double(iter.position(0))/double(sys.mesh().dimension(0)) + 
                          double(iter.position(1))/double(sys.mesh().dimension(1)) + 
                          double(iter.position(2))/double(sys.mesh().dimension(2)) ) );
-         sys.wFieldGrid(1)[iter.rank()] = sin(twoPi * 
+         sys.wFieldRGrid(1)[iter.rank()] = sin(twoPi * 
                         (double(iter.position(0))/double(sys.mesh().dimension(0)) + 
                          double(iter.position(1))/double(sys.mesh().dimension(1)) + 
                          double(iter.position(2))/double(sys.mesh().dimension(2)) ) );
       }
       for (int i = 0; i < sys.mixture().nMonomer(); i++) {
-         sys.fft().forwardTransform(sys.wFieldGrid(i), sys.wFieldDft(i));
-         sys.basis().convertFieldDftToComponents(sys.wFieldDft(i),sys.wField(i));
+         sys.fft().forwardTransform(sys.wFieldRGrid(i), sys.wFieldKGrid(i));
+         sys.basis().convertFieldDftToComponents(sys.wFieldKGrid(i),sys.wField(i));
       }
 
       //set systemPtr_->cField();
@@ -254,18 +254,18 @@ public:
       MeshIterator<1> iter(sys.mesh().dimensions());
       double twoPi = 2.0*Constants::Pi;
       for (iter.begin(); !iter.atEnd(); ++iter){
-         sys.wFieldGrid(0)[iter.rank()] = cos(twoPi * 
+         sys.wFieldRGrid(0)[iter.rank()] = cos(twoPi * 
                         (double(iter.position(0))/double(sys.mesh().dimension(0)) + 
                          double(iter.position(1))/double(sys.mesh().dimension(1)) + 
                          double(iter.position(2))/double(sys.mesh().dimension(2)) ) );
-         sys.wFieldGrid(1)[iter.rank()] = sin(twoPi * 
+         sys.wFieldRGrid(1)[iter.rank()] = sin(twoPi * 
                         (double(iter.position(0))/double(sys.mesh().dimension(0)) + 
                          double(iter.position(1))/double(sys.mesh().dimension(1)) + 
                          double(iter.position(2))/double(sys.mesh().dimension(2)) ) );
       }
       for (int i = 0; i < sys.mixture().nMonomer(); i++) {
-         sys.fft().forwardTransform(sys.wFieldGrid(i), sys.wFieldDft(i));
-         sys.basis().convertFieldDftToComponents(sys.wFieldDft(i),sys.wField(i));
+         sys.fft().forwardTransform(sys.wFieldRGrid(i), sys.wFieldKGrid(i));
+         sys.basis().convertFieldDftToComponents(sys.wFieldKGrid(i),sys.wField(i));
       }
 
       //set systemPtr_->cField();
@@ -319,18 +319,18 @@ public:
       MeshIterator<1> iter(sys.mesh().dimensions());
       double twoPi = 2.0*Constants::Pi;
       for (iter.begin(); !iter.atEnd(); ++iter){
-         sys.wFieldGrid(0)[iter.rank()] = cos(twoPi * 
+         sys.wFieldRGrid(0)[iter.rank()] = cos(twoPi * 
                         (double(iter.position(0))/double(sys.mesh().dimension(0)) + 
                          double(iter.position(1))/double(sys.mesh().dimension(1)) + 
                          double(iter.position(2))/double(sys.mesh().dimension(2)) ) );
-         sys.wFieldGrid(1)[iter.rank()] = sin(twoPi * 
+         sys.wFieldRGrid(1)[iter.rank()] = sin(twoPi * 
                         (double(iter.position(0))/double(sys.mesh().dimension(0)) + 
                          double(iter.position(1))/double(sys.mesh().dimension(1)) + 
                          double(iter.position(2))/double(sys.mesh().dimension(2)) ) );
       }
       for (int i = 0; i < sys.mixture().nMonomer(); i++) {
-         sys.fft().forwardTransform(sys.wFieldGrid(i), sys.wFieldDft(i));
-         sys.basis().convertFieldDftToComponents(sys.wFieldDft(i),sys.wField(i));
+         sys.fft().forwardTransform(sys.wFieldRGrid(i), sys.wFieldKGrid(i));
+         sys.basis().convertFieldDftToComponents(sys.wFieldKGrid(i),sys.wField(i));
       }
 
       int fail = sys.iterator().solve();
@@ -364,19 +364,19 @@ public:
 
       double twoPi = 2.0*Constants::Pi;
       for (iter.begin(); !iter.atEnd(); ++iter){
-         sys.wFieldGrid(0)[iter.rank()] = cos(twoPi * 
+         sys.wFieldRGrid(0)[iter.rank()] = cos(twoPi * 
                         (double(iter.position(0))/double(sys.mesh().dimension(0)) + 
                          double(iter.position(1))/double(sys.mesh().dimension(1)) + 
                          double(iter.position(2))/double(sys.mesh().dimension(2)) ) );
-         sys.wFieldGrid(1)[iter.rank()] = sin(twoPi * 
+         sys.wFieldRGrid(1)[iter.rank()] = sin(twoPi * 
                         (double(iter.position(0))/double(sys.mesh().dimension(0)) + 
                          double(iter.position(1))/double(sys.mesh().dimension(1)) + 
                          double(iter.position(2))/double(sys.mesh().dimension(2)) ) );
       }
 
       for (int i = 0; i < sys.mixture().nMonomer(); i++) {
-         sys.fft().forwardTransform(sys.wFieldGrid(i), sys.wFieldDft(i));
-         sys.basis().convertFieldDftToComponents(sys.wFieldDft(i),sys.wField(i));
+         sys.fft().forwardTransform(sys.wFieldRGrid(i), sys.wFieldKGrid(i));
+         sys.basis().convertFieldDftToComponents(sys.wFieldKGrid(i),sys.wField(i));
       }
 
       std::ofstream outFile;
@@ -413,13 +413,13 @@ public:
 
       //convert to rgrid
       for (int i = 0; i < sys.mixture().nMonomer(); ++i) {
-         sys.basis().convertFieldComponentsToDft(sys.wField(i), sys.wFieldDft(i));
-         sys.fft().inverseTransform(sys.wFieldDft(i), sys.wFieldGrid(i));
+         sys.basis().convertFieldComponentsToDft(sys.wField(i), sys.wFieldKGrid(i));
+         sys.fft().inverseTransform(sys.wFieldKGrid(i), sys.wFieldRGrid(i));
       }
 
       std::ofstream outFile;
       FileMaster().openOutputFile("omegaGrid.o", outFile);
-      sys.writeRFields(outFile, sys.wFieldGrids());
+      sys.writeRFields(outFile, sys.wFieldsRGrid());
       outFile.close();
 
       //compare log with omegaGrid.o

@@ -93,7 +93,7 @@ namespace Pspc {
    }
 
    /*
-   * Solve the modified diffusion equation with specified initial field.
+   * Solve the modified diffusion equation with a specified initial condition.
    */
    template <int D>
    void Propagator<D>::solve(QField const & head)

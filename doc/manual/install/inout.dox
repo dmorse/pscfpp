@@ -30,10 +30,8 @@ compilation.
 We refer to the two directories src/ and bld/ in what follows as standard 
 build directories.  The bld/ directory has a directory structure analogous 
 to that of the src/ directory. Both src/ and bld/ contain a set of 
-subdirectories named util/, pscf/, fd1d/, pspc/, and pspg/ that each 
-contain the source code for entities defined in a corresponding C++ 
-namespace. We will refer to these five top level directories of each 
-build directory as namespace level directories.
+subdirectories named util/, pscf/, fd1d/, pspc/, and pspg/, which we
+refer to in what follows as namespace level directories.
 
 \section install_inout_out Out-of-Source Compilation
 

@@ -6,7 +6,7 @@ RGRID_TO_BASIS
 out/omega/conv/omega_rgrid_hex
 out/omega/conv/omega_conv_hex
 
-READ_WFIELDS
+READ_W_BASIS
 out/omega/conv/omega_conv_hex
 
 FINISH

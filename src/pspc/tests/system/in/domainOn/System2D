@@ -20,11 +20,11 @@ System{
   }
   unitCell    hexagonal   1.6908668698
   mesh        30    30
-  groupName   P_6_m_m
+  groupName   p_6_m_m
   AmIterator{
    maxItr 100
    epsilon 1e-10
    maxHist 30
-   domain 1
+   isFlexible 1
   }
 }

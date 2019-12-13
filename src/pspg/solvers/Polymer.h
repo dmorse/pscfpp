@@ -9,8 +9,8 @@
 */
 
 #include "Block.h"
-#include <pscf/solvers/PolymerTmpl.h>
 #include <pspg/field/RDField.h>
+#include <pscf/solvers/PolymerTmpl.h>
 #include <util/containers/FArray.h> 
 
 namespace Pscf { 
@@ -62,14 +62,22 @@ namespace Pspg {
       */ 
       void compute(DArray<WField> const & wFields);
 
-      // Stress due to a whole Polymer chain
-      FArray<double, 6> PcStress;
-      
       /**
       * Compute stress from a polymer chain, needs a pointer to basis
       */
-      void ComputePcStress(WaveList<D>& wavelist);
+      void computeStress(WaveList<D>& wavelist);
 
+      /**
+      * Get derivative of free energy w/ respect to a unit cell parameter.
+      *
+      * Get the contribution from this polymer species to the derivative of
+      * free energy per monomer with respect to unit cell parameter n.
+      *
+      * \param n unit cell parameter index
+      */
+      double stress(int n);
+
+      // public inherited functions with non-dependent names
       using Base::nBlock;
       using Base::block;
       using Base::ensemble;
@@ -78,17 +86,34 @@ namespace Pspg {
 
    protected:
 
+      // protected inherited function with non-dependent names
       using ParamComposite::setClassName;
 
    private: 
 
+      // Stress contribution from this polymer species.
+      FArray<double, 6> stress_;
+     
+      // Number of unit cell parameters. 
       int nParams_;
+
       using Base::phi_;
       using Base::mu_;
 
    };
 
+   template <int D>
+   double Polymer<D>::stress(int n)
+   {  return stress_[n]; }
+
+   #ifndef PSPG_POLYMER_TPP
+   // Suppress implicit instantiation
+   extern template class Polymer<1>;
+   extern template class Polymer<2>;
+   extern template class Polymer<3>;
+   #endif
+
 }
 }
-#include "Polymer.tpp"
+//#include "Polymer.tpp"
 #endif
