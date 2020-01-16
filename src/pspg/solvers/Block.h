@@ -100,7 +100,7 @@ namespace Pspg {
       /**
       * Compute step of integration loop, from i to i+1.
       */
-      void step(const cufftReal* q, cufftReal* qNew);
+      void step(const cudaReal* q, cudaReal* qNew);
 
       /**
       * Compute unnormalized concentration for block by integration.
@@ -165,7 +165,7 @@ namespace Pspg {
 
    private:
 
-      cufftReal reductionH(const RDField<D>& a, int size);
+      cudaReal reductionH(const RDField<D>& a, int size);
 
       // Fourier transform plan
       FFT<D> fft_;
@@ -197,17 +197,17 @@ namespace Pspg {
 
       RDFieldDft<D> qk2_;
 
-      cufftComplex* qkBatched_;
-      cufftComplex* qk2Batched_;
+      cudaComplex* qkBatched_;
+      cudaComplex* qk2Batched_;
 
       RDField<D> q1_;
       RDField<D> q2_;
 
-      cufftReal* d_temp_;
-      cufftReal* temp_;
+      cudaReal* d_temp_;
+      cudaReal* temp_;
 
-      cufftReal* expKsq_host;
-      cufftReal* expKsq2_host;
+      cudaReal* expKsq_host;
+      cudaReal* expKsq2_host;
 
       /// Pointer to associated Mesh<D> object.
       Mesh<D> const * meshPtr_;

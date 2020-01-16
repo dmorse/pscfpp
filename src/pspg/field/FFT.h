@@ -16,12 +16,7 @@
 #include <cufft.h>
 #include <cuda.h>
 #include <cuda_runtime.h>
-
-#ifdef SINGLE_PRECISION
-typedef float rtype;
-#else
-typedef double rtype;
-#endif
+#include <pspg/GpuResources.h>
 
 namespace Pscf {
 namespace Pspg {
@@ -154,7 +149,7 @@ namespace Pspg {
 }
 
 static __global__ 
-void scaleRealData(cufftReal* data, rtype scale, int size) {
+void scaleRealData(cudaReal* data, cudaReal scale, int size) {
    //write code that will scale
    int nThreads = blockDim.x * gridDim.x;
    int startId = blockIdx.x * blockDim.x + threadIdx.x;

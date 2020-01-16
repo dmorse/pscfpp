@@ -11,6 +11,7 @@
 #include "DField.h"
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
+#include <pspg/GpuResources.h>
 
 #include <cufft.h>
 
@@ -27,7 +28,7 @@ namespace Pspg
    * \ingroup Pspg_Field_Module
    */
    template <int D>
-   class RDFieldDft : public DField<cufftComplex>
+   class RDFieldDft : public DField<cudaComplex>
    {
 
    public:
@@ -65,7 +66,7 @@ namespace Pspg
       */
       RDFieldDft<D>& operator = (const RDFieldDft<D>& other);
 
-      using DField<cufftComplex>::allocate;
+      using DField<cudaComplex>::allocate;
 
       /**
       * Allocate the underlying C array for an FFT grid.
@@ -127,7 +128,7 @@ namespace Pspg
             size *= (meshDimensions[i]/2 + 1);
          }
       }
-      DField<cufftComplex>::allocate(size);
+      DField<cudaComplex>::allocate(size);
    }
 
    /*
@@ -169,8 +170,8 @@ namespace Pspg
       }
 
       if (isAllocated()) {
-         cufftComplex* tempData = new cufftComplex[capacity];
-         cudaMemcpy(tempData, data_, capacity * sizeof(cufftComplex), cudaMemcpyDeviceToHost);
+         cudaComplex* tempData = new cudaComplex[capacity];
+         cudaMemcpy(tempData, data_, capacity * sizeof(cudaComplex), cudaMemcpyDeviceToHost);
          for (int i = 0; i < capacity_; ++i) {
             ar & tempData[i].x;
             ar & tempData[i].y;

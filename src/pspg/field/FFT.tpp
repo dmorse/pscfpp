@@ -12,7 +12,7 @@
 #include <pspg/GpuResources.h>
 
 //forward declaration
-//static __global__ void scaleRealData(cufftReal* data, rtype scale, int size);
+//static __global__ void scaleRealData(cudaReal* data, rtype scale, int size);
 
 namespace Pscf {
 namespace Pspg
@@ -100,8 +100,7 @@ namespace Pspg
       }
 
       // Copy rescaled input data prior to work array
-      rtype scale = 1.0/rtype(rSize_);
-      //assume 64x64x64 but works for larger array
+      cudaReal scale = 1.0/cudaReal(rSize_);
       scaleRealData<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(rField.cDField(), scale, rSize_);
       
       //perform fft
@@ -148,7 +147,7 @@ namespace Pspg
 }
 
 #if 0
-static __global__ void scaleRealData(cufftReal* data, rtype scale, int size) {
+static __global__ void scaleRealData(cudaReal* data, cudaReal scale, int size) {
    
    //write code that will scale
    int nThreads = blockDim.x * gridDim.x;

@@ -1,9 +1,28 @@
 #ifndef GPU_RESOURCES_H
 #define GPU_RESOURCES_H
 
+#include <cufft.h>
+
 extern int THREADS_PER_BLOCK;
 extern int NUMBER_OF_BLOCKS;
 #define SINGLE_PRECISION
+//#define DOUBLE_PRECISION
+
+
+#ifdef SINGLE_PRECISION
+typedef cufftReal cudaReal;
+typedef cufftComplex cudaComplex;
+typedef cufftReal hostReal;
+typedef cufftComplex hostComplex;
+#else
+#ifdef DOUBLE_PRECISION
+typedef cufftDoubleReal cudaReal;
+typedef cufftDoubleComplex cudaComplex;
+typedef cufftDoubleReal hostReal;
+typedef cufftDoubleComplex hostComplex;
+#endif
+#endif
+
 
 #define gpuErrchk(ans) { gpuAssert((ans), __FILE__, __LINE__);}
 inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=true)
@@ -15,8 +34,8 @@ inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=t
     }
 }
 
-static __global__ void helmholtzHelper(cufftReal* result, const cufftReal* composition,
-   const cufftReal* pressure, float chi, int size) {
+static __global__ void helmholtzHelper(cudaReal* result, const cudaReal* composition,
+   const cudaReal* pressure, float chi, int size) {
    int nThreads = blockDim.x * gridDim.x;
    int startID = blockIdx.x * blockDim.x + threadIdx.x;
    for (int i = startID; i < size; i += nThreads) {
@@ -24,8 +43,8 @@ static __global__ void helmholtzHelper(cufftReal* result, const cufftReal* compo
    }
 }
 
-static __global__ void reformField(cufftReal* Wa, cufftReal* Wb,
-   const cufftReal* pressureF,const cufftReal* compositionF, int size) {
+static __global__ void reformField(cudaReal* Wa, cudaReal* Wb,
+   const cudaReal* pressureF,const cudaReal* compositionF, int size) {
    int nThreads = blockDim.x * gridDim.x;
    int startID = blockIdx.x * blockDim.x + threadIdx.x;
    for (int i = startID; i < size; i += nThreads) {
@@ -34,14 +53,14 @@ static __global__ void reformField(cufftReal* Wa, cufftReal* Wb,
    }
 }
 
-static __global__ void mcftsStepHelper(cufftReal* result, const cufftReal* A2, const cufftReal* sqrtSq, int size) {
+static __global__ void mcftsStepHelper(cudaReal* result, const cudaReal* A2, const cudaReal* sqrtSq, int size) {
    int nThreads = blockDim.x * gridDim.x;
    int startID = blockIdx.x * blockDim.x + threadIdx.x;
    for (int i = startID; i < size; i += nThreads) {
           result[i] += A2[i] * sqrtSq[i];
    }
 }
-static __global__ void mcftsScale(cufftReal* result, cufftReal scale, int size) {
+static __global__ void mcftsScale(cudaReal* result, cudaReal scale, int size) {
    int nThreads = blockDim.x * gridDim.x;
    int startID = blockIdx.x * blockDim.x + threadIdx.x;
    for (int i = startID; i < size; i += nThreads) {
@@ -49,7 +68,7 @@ static __global__ void mcftsScale(cufftReal* result, cufftReal scale, int size) 
    }
 }
 
-static __global__ void pointWiseAdd(cufftReal* result, const cufftReal* rhs, int size) {
+static __global__ void pointWiseAdd(cudaReal* result, const cudaReal* rhs, int size) {
    int nThreads = blockDim.x * gridDim.x;
    int startID = blockIdx.x * blockDim.x + threadIdx.x;
    for (int i = startID; i < size; i += nThreads) {
@@ -57,7 +76,7 @@ static __global__ void pointWiseAdd(cufftReal* result, const cufftReal* rhs, int
    }
 }
 
-static __global__ void subtractUniform(cufftReal* result, cufftReal rhs, int size) {
+static __global__ void subtractUniform(cudaReal* result, cudaReal rhs, int size) {
    int nThreads = blockDim.x * gridDim.x;
    int startID = blockIdx.x * blockDim.x + threadIdx.x;
    for (int i = startID; i < size; i += nThreads) {
@@ -65,7 +84,7 @@ static __global__ void subtractUniform(cufftReal* result, cufftReal rhs, int siz
    }
 }
 
-static __global__ void pointWiseSubtract(cufftReal* result, const cufftReal* rhs, int size) {
+static __global__ void pointWiseSubtract(cudaReal* result, const cudaReal* rhs, int size) {
    int nThreads = blockDim.x * gridDim.x;
    int startID = blockIdx.x * blockDim.x + threadIdx.x;
    for (int i = startID; i < size; i += nThreads) {
@@ -73,7 +92,7 @@ static __global__ void pointWiseSubtract(cufftReal* result, const cufftReal* rhs
    }
 }
 
-static __global__ void pointWiseSubtractFloat(cufftReal* result, const float rhs, int size) {
+static __global__ void pointWiseSubtractFloat(cudaReal* result, const float rhs, int size) {
    int nThreads = blockDim.x * gridDim.x;
    int startID = blockIdx.x * blockDim.x + threadIdx.x;
    for (int i = startID; i < size; i += nThreads) {
@@ -81,7 +100,7 @@ static __global__ void pointWiseSubtractFloat(cufftReal* result, const float rhs
    }   
 }
 
-static __global__ void pointWiseBinarySubtract(const cufftReal* a, const cufftReal* b, cufftReal* result, int size) {
+static __global__ void pointWiseBinarySubtract(const cudaReal* a, const cudaReal* b, cudaReal* result, int size) {
    int nThreads = blockDim.x * gridDim.x;
    int startID = blockIdx.x * blockDim.x + threadIdx.x;
    for (int i = startID; i < size; i += nThreads) {
@@ -89,7 +108,7 @@ static __global__ void pointWiseBinarySubtract(const cufftReal* a, const cufftRe
    }
 }
 
-static __global__ void pointWiseBinaryAdd(const cufftReal* a, const cufftReal* b, cufftReal* result, int size) {
+static __global__ void pointWiseBinaryAdd(const cudaReal* a, const cudaReal* b, cudaReal* result, int size) {
    int nThreads = blockDim.x * gridDim.x;
    int startID = blockIdx.x * blockDim.x + threadIdx.x;
    for (int i = startID; i < size; i += nThreads) {
@@ -97,7 +116,7 @@ static __global__ void pointWiseBinaryAdd(const cufftReal* a, const cufftReal* b
    }
 }
 
-static __global__ void pointWiseAddScale(cufftReal* result, const cufftReal* rhs, float scale, int size) {
+static __global__ void pointWiseAddScale(cudaReal* result, const cudaReal* rhs, float scale, int size) {
    int nThreads = blockDim.x * gridDim.x;
    int startID = blockIdx.x * blockDim.x + threadIdx.x;
    for (int i = startID; i < size; i += nThreads) {
@@ -106,17 +125,17 @@ static __global__ void pointWiseAddScale(cufftReal* result, const cufftReal* rhs
 }
 
 //the 1 is a placeholder for dr
-static __global__ void AmIsConvergedHelper(cufftReal* out, int size) {
+static __global__ void AmIsConvergedHelper(cudaReal* out, int size) {
    int nThreads = blockDim.x * gridDim.x;
    int startID = blockIdx.x * blockDim.x + threadIdx.x;
-   cufftReal temp;
+   cudaReal temp;
    for (int i = startID; i < size; i += nThreads) {
       temp = (out[i] - 1) * (out[i] - 1) * 1;
       out[i] = temp;
    }
 }
 
-static __global__ void AmHelper(cufftReal* out, cufftReal* present, cufftReal* iPast, cufftReal* jPast, int size) {
+static __global__ void AmHelper(cudaReal* out, cudaReal* present, cudaReal* iPast, cudaReal* jPast, int size) {
    int nThreads = blockDim.x * gridDim.x;
    int startID = blockIdx.x * blockDim.x + threadIdx.x;
    for (int i = startID; i < size; i += nThreads) {
@@ -124,7 +143,7 @@ static __global__ void AmHelper(cufftReal* out, cufftReal* present, cufftReal* i
    }
 }
 
-static __global__ void AmHelperVm(cufftReal* out, cufftReal* present, cufftReal* iPast, int size) {
+static __global__ void AmHelperVm(cudaReal* out, cudaReal* present, cudaReal* iPast, int size) {
    int nThreads = blockDim.x * gridDim.x;
    int startID = blockIdx.x * blockDim.x + threadIdx.x;
    for (int i = startID; i < size; i += nThreads) {
@@ -132,13 +151,13 @@ static __global__ void AmHelperVm(cufftReal* out, cufftReal* present, cufftReal*
    }
 }
 
-static __global__ void reduction(cufftReal* c, const cufftReal* a, int size) {
+static __global__ void reduction(cudaReal* c, const cudaReal* a, int size) {
    //int nThreads = blockDim.x * gridDim.x;
    int startID = blockIdx.x * (blockDim.x*2) + threadIdx.x;
    
    
-   volatile extern __shared__ cufftReal cache[];
-   //cufftReal temp = 0;
+   volatile extern __shared__ cudaReal cache[];
+   //cudaReal temp = 0;
    //no need for loop here will be wrong.
    //for (int i = startID; i < size; i += nThreads) {
    //temp += a[startID];
