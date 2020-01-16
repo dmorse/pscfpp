@@ -102,7 +102,7 @@ namespace Pspg
       *
       * \param head initial condition of QField at head of block
       */
-      void solve(const cufftReal * head);
+      void solve(const cudaReal * head);
  
       /**
       * Compute and return partition function for the molecule.
@@ -119,17 +119,17 @@ namespace Pspg
       *
       * \param i step index
       */
-      const cufftReal* q(int i) const;
+      const cudaReal* q(int i) const;
 
       /**
       * Return q-field at beginning of block (initial condition).
       */
-      cufftReal* head() const;
+      cudaReal* head() const;
 
       /**
       * Return q-field at end of block.
       */
-      const cufftReal* tail() const;
+      const cudaReal* tail() const;
 
       /**
       * Get the associated Block object by reference.
@@ -157,10 +157,10 @@ namespace Pspg
 
    private:
 
-      float innerProduct(const cufftReal* a, const cufftReal* b, int size);
+      cudaReal innerProduct(const cudaReal* a, const cudaReal* b, int size);
 
       // new array purely in device
-      cufftReal* qFields_d;
+      cudaReal* qFields_d;
       // Workspace
       // removing this. Does not seem to be used anywhere
       //QField work_;
@@ -178,8 +178,8 @@ namespace Pspg
       bool isAllocated_;
 
 	  //work array for inner product. Allocated and free-d in con and des
-	  cufftReal* d_temp_;
-	  cufftReal* temp_;
+	  cudaReal* d_temp_;
+	  cudaReal* temp_;
 
    };
 
@@ -190,7 +190,7 @@ namespace Pspg
    */
    template <int D>
    inline 
-   cufftReal* Propagator<D>::head() const
+   cudaReal* Propagator<D>::head() const
    {  return qFields_d; }
 
    /*
@@ -198,7 +198,7 @@ namespace Pspg
    */
    template <int D>
    inline 
-   const cufftReal* Propagator<D>::tail() const
+   const cudaReal* Propagator<D>::tail() const
    {  return qFields_d + ((ns_-1) * meshPtr_->size()); }
 
    /*
@@ -206,7 +206,7 @@ namespace Pspg
    */
    template <int D>
    inline 
-   const cufftReal* Propagator<D>::q(int i) const
+   const cudaReal* Propagator<D>::q(int i) const
    {  return qFields_d + (i * meshPtr_->size()); }
 
    /*
@@ -245,23 +245,23 @@ namespace Pspg
 }
 
 __global__ 
-void assignUniformReal(cufftReal* result, cufftReal uniform, int size);
+void assignUniformReal(cudaReal* result, cudaReal uniform, int size);
 
 __global__ 
-void assignReal(cufftReal* result, const cufftReal* rhs, int size);
+void assignReal(cudaReal* result, const cudaReal* rhs, int size);
 
 __global__ 
-void inPlacePointwiseMul(cufftReal* a, const cufftReal* b, int size);
+void inPlacePointwiseMul(cudaReal* a, const cudaReal* b, int size);
 
 template<unsigned int blockSize>
-__global__ void deviceInnerProduct(cufftReal* c, const cufftReal* a,
-   const cufftReal* b, int size) {
+__global__ void deviceInnerProduct(cudaReal* c, const cudaReal* a,
+   const cudaReal* b, int size) {
    //int nThreads = blockDim.x * gridDim.x;
    int startID = blockIdx.x * blockDim.x + threadIdx.x;
 
    //do all pointwise multiplication
-   volatile extern __shared__ cufftReal cache[];
-   cufftReal temp = 0;
+   volatile extern __shared__ cudaReal cache[];
+   cudaReal temp = 0;
    temp += a[startID] * b[startID];
    cache[threadIdx.x] = temp;
 

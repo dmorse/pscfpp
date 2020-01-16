@@ -11,6 +11,7 @@
 #include "DField.h"
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
+#include <pspg/GpuResources.h>
 
 #include <cufft.h>
 
@@ -24,12 +25,12 @@ namespace Pspg
    /**
    * Field of real single precision values on an FFT mesh on a device.
    *
-   * cufftReal = float
+   * cudaReal = float
    *
    * \ingroup Pspg_Field_Module 
    */
    template <int D>
-   class RDField : public DField<cufftReal>
+   class RDField : public DField<cudaReal>
    {
 
    public:
@@ -69,7 +70,7 @@ namespace Pspg
       */
       RDField& operator = (const RDField& other);
 
-      using DField<cufftReal>::allocate;
+      using DField<cudaReal>::allocate;
 
       /**
       * Allocate the underlying C array for an FFT grid.
@@ -113,7 +114,7 @@ namespace Pspg
          meshDimensions_[i] = meshDimensions[i];
          size *= meshDimensions[i];
       }
-      DField<cufftReal>::allocate(size);
+      DField<cudaReal>::allocate(size);
    }
 
    /*
@@ -149,7 +150,7 @@ namespace Pspg
 
       if (isAllocated()) {
          float* tempData = new float[capacity];
-         cudaMemcpy(tempData, data_, capacity * sizeof(cufftReal), cudaMemcpyDeviceToHost);
+         cudaMemcpy(tempData, data_, capacity * sizeof(cudaReal), cudaMemcpyDeviceToHost);
          for (int i = 0; i < capacity_; ++i) {
             ar & tempData[i];
          }

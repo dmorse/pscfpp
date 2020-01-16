@@ -51,8 +51,8 @@ namespace Pspg
       // to allow fast use in GPU kernels. 
       
       const IntVec<D>& minImage(int i) const;
-      cufftReal* kSq() const;
-      cufftReal* dkSq() const;
+      cudaReal* kSq() const;
+      cudaReal* dkSq() const;
       int kSize() const;
 
    private:
@@ -61,13 +61,13 @@ namespace Pspg
       //int* minImage_;
       int* minImage_d;
       // Bare C array holding values of kSq_
-      cufftReal*  kSq_;
+      cudaReal*  kSq_;
 
       // Bare C array holding values of dkSq_
-      cufftReal*  dkSq_;
+      cudaReal*  dkSq_;
 
-      cufftReal* dkkBasis_d;
-      cufftReal* dkkBasis;
+      cudaReal* dkkBasis_d;
+      cudaReal* dkkBasis;
 
       int* partnerIdTable;
       int* partnerIdTable_d;
@@ -91,11 +91,11 @@ namespace Pspg
    { return minImage_[i]; }
 
    template <int D>
-   inline cufftReal* WaveList<D>::kSq() const
+   inline cudaReal* WaveList<D>::kSq() const
    { return kSq_; }
 
    template <int D>
-   inline cufftReal* WaveList<D>::dkSq() const
+   inline cudaReal* WaveList<D>::dkSq() const
    { return dkSq_; }
 
    template <int D>

@@ -20,7 +20,7 @@ namespace Pspg {
    */
    template <int D>
    RDFieldDft<D>::RDFieldDft()
-    : DField<cufftComplex>()
+    : DField<cudaComplex>()
    {}
 
    /*
@@ -39,16 +39,16 @@ namespace Pspg {
    */
    template <int D>
    RDFieldDft<D>::RDFieldDft(const RDFieldDft<D>& other)
-    : DField<cufftComplex>()
+    : DField<cudaComplex>()
    {
       if (!other.isAllocated()) {
          UTIL_THROW("Other Field must be allocated.");
       }
 
       capacity_ = other.capacity_;
-      cudaMalloc((void**) &data_, capacity_ * sizeof(cufftComplex));
+      cudaMalloc((void**) &data_, capacity_ * sizeof(cudaComplex));
       
-      cudaMemcpy(data_, other.cDField(), capacity_ * sizeof(cufftComplex), cudaMemcpyDeviceToDevice);
+      cudaMemcpy(data_, other.cDField(), capacity_ * sizeof(cudaComplex), cudaMemcpyDeviceToDevice);
       meshDimensions_ = other.meshDimensions_;
    }
 
@@ -80,7 +80,7 @@ namespace Pspg {
       }
 
       // Copy elements
-      cudaMemcpy(data_, other.cDField(), capacity_ * sizeof(cufftComplex), cudaMemcpyDeviceToDevice);
+      cudaMemcpy(data_, other.cDField(), capacity_ * sizeof(cudaComplex), cudaMemcpyDeviceToDevice);
       meshDimensions_ = other.meshDimensions_;
 
       return *this;

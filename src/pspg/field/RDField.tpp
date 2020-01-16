@@ -21,7 +21,7 @@ namespace Pspg
    */
    template <int D>
    RDField<D>::RDField()
-    : DField<cufftReal>()
+    : DField<cudaReal>()
    {}
 
    /*
@@ -40,7 +40,7 @@ namespace Pspg
    */
    template <int D>
    RDField<D>::RDField(const RDField<D>& other)
-    : DField<cufftReal>(),
+    : DField<cudaReal>(),
       meshDimensions_(0)
    {
       if (!other.isAllocated()) {
@@ -48,9 +48,9 @@ namespace Pspg
       }
 
       capacity_ = other.capacity_;
-      cudaMalloc((void**) &data_, capacity_ * sizeof(cufftReal));
+      cudaMalloc((void**) &data_, capacity_ * sizeof(cudaReal));
 
-      cudaMemcpy(data_, other.cDField(), capacity_ * sizeof(cufftReal), cudaMemcpyDeviceToDevice);
+      cudaMemcpy(data_, other.cDField(), capacity_ * sizeof(cudaReal), cudaMemcpyDeviceToDevice);
       meshDimensions_ = other.meshDimensions_;
    }
 
@@ -82,7 +82,7 @@ namespace Pspg
       }
 
       // Copy elements
-      cudaMemcpy(data_, other.cDField(), capacity_ * sizeof(cufftReal), cudaMemcpyDeviceToDevice);
+      cudaMemcpy(data_, other.cDField(), capacity_ * sizeof(cudaReal), cudaMemcpyDeviceToDevice);
       meshDimensions_ = other.meshDimensions_;
 
       return *this;
