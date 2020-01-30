@@ -73,7 +73,7 @@ namespace Pspg
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
 
-      DArray<cufftReal*> temp_out;
+      DArray<cudaReal*> temp_out;
       temp_out.allocate(nMonomer);
 
       // Read header
@@ -88,7 +88,7 @@ namespace Pspg
       int i, j;
       int nStar = basis().nStar();
       for(int i = 0; i < nMonomer; ++i) {
-         temp_out[i] = new cufftReal[nStar];
+         temp_out[i] = new cudaReal[nStar];
       }   
 
       for (j = 0; j < nMonomer; ++j) {
@@ -137,7 +137,7 @@ namespace Pspg
 
      for(int i = 0; i < nMonomer; i++) {
          cudaMemcpy(fields[i].cDField(), temp_out[i],
-            nStar * sizeof(cufftReal), cudaMemcpyHostToDevice);
+            nStar * sizeof(cudaReal), cudaMemcpyHostToDevice);
          delete[] temp_out[i];
          temp_out[i] = nullptr;
       }
@@ -163,7 +163,7 @@ namespace Pspg
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
 
-      DArray<cufftReal*> temp_out;
+      DArray<cudaReal*> temp_out;
       temp_out.allocate(nMonomer);
 
       // Write header
@@ -172,12 +172,12 @@ namespace Pspg
       int nBasis = basis().nBasis();
 
       for(int i = 0; i < nMonomer; ++i) {
-         temp_out[i] = new cufftReal[nStar];
+         temp_out[i] = new cudaReal[nStar];
       }   
 
      for(int i = 0; i < nMonomer; i++) {
          cudaMemcpy(temp_out[i], fields[i].cDField(),
-            nStar * sizeof(cufftReal), cudaMemcpyDeviceToHost);
+            nStar * sizeof(cudaReal), cudaMemcpyDeviceToHost);
      }
 
       out << "N_star       " << std::endl 
@@ -231,10 +231,10 @@ namespace Pspg
       UTIL_CHECK(nGrid == mesh().dimensions());
 
 
-      DArray<cufftReal*> temp_out;
+      DArray<cudaReal*> temp_out;
       temp_out.allocate(nMonomer);
       for(int i = 0; i < nMonomer; ++i) {
-         temp_out[i] = new cufftReal[mesh().size()];
+         temp_out[i] = new cudaReal[mesh().size()];
       } 
       
       IntVec<D> offsets;
@@ -272,7 +272,7 @@ namespace Pspg
       
       for(int i = 0; i < nMonomer; i++) {
          cudaMemcpy(fields[i].cDField(), temp_out[i],
-            mesh().size() * sizeof(cufftReal), cudaMemcpyHostToDevice);
+            mesh().size() * sizeof(cudaReal), cudaMemcpyHostToDevice);
          delete[] temp_out[i];
          temp_out[i] = nullptr;
       }
@@ -300,12 +300,12 @@ namespace Pspg
       out << "ngrid" <<  std::endl
           << "           " << mesh().dimensions() << std::endl;
 
-      DArray<cufftReal*> temp_out;
+      DArray<cudaReal*> temp_out;
       temp_out.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
-         temp_out[i] = new cufftReal[mesh().size()];
+         temp_out[i] = new cudaReal[mesh().size()];
          cudaMemcpy(temp_out[i], fields[i].cDField(),
-                    mesh().size() * sizeof(cufftReal), cudaMemcpyDeviceToHost);
+                    mesh().size() * sizeof(cudaReal), cudaMemcpyDeviceToHost);
       }    
 
       IntVec<D> offsets;
@@ -366,7 +366,7 @@ namespace Pspg
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
 
-      DArray<cufftComplex*> temp_out;
+      DArray<cudaComplex*> temp_out;
       temp_out.allocate(nMonomer);      
 
       // Read header
@@ -389,7 +389,7 @@ namespace Pspg
       }
 
       for(int i = 0; i < nMonomer; ++i) {
-         temp_out[i] = new cufftComplex[kSize];
+         temp_out[i] = new cudaComplex[kSize];
       }
 
       // Read Fields;
@@ -405,7 +405,7 @@ namespace Pspg
 
       for(int i = 0; i < nMonomer; ++i) {
          cudaMemcpy(fields[i].cDField(), temp_out[i],
-            kSize * sizeof(cufftComplex), cudaMemcpyHostToDevice);
+            kSize * sizeof(cudaComplex), cudaMemcpyHostToDevice);
          delete[] temp_out[i];
          temp_out[i] = nullptr;
       }
@@ -433,7 +433,7 @@ namespace Pspg
       out << "ngrid" << std::endl 
           << "               " << mesh().dimensions() << std::endl;
 
-     DArray<cufftComplex*> temp_out;
+     DArray<cudaComplex*> temp_out;
      int kSize = 1;
      for (int i = 0; i < D; i++) {
         if (i == D - 1) {
@@ -445,9 +445,9 @@ namespace Pspg
      }
       temp_out.allocate(nMonomer);
       for(int i = 0; i < nMonomer; ++i) {
-         temp_out[i] = new cufftComplex[kSize];
+         temp_out[i] = new cudaComplex[kSize];
          cudaMemcpy(temp_out[i], fields[i].cDField(), 
-            kSize * sizeof(cufftComplex), cudaMemcpyDeviceToHost);
+            kSize * sizeof(cudaComplex), cudaMemcpyDeviceToHost);
       }
 
       // Write fields
@@ -524,10 +524,10 @@ namespace Pspg
    void FieldIo<D>::convertBasisToKGrid(RDField<D> const& components, 
                                         RDFieldDft<D>& dft)
    {
-     cufftReal* components_in;
-     components_in = new cufftReal[basis().nStar()];
+     cudaReal* components_in;
+     components_in = new cudaReal[basis().nStar()];
      cudaMemcpy(components_in, components.cDField(),
-            basis().nStar() * sizeof(cufftReal), cudaMemcpyDeviceToHost);
+            basis().nStar() * sizeof(cudaReal), cudaMemcpyDeviceToHost);
 
      int kSize = 1;
      for (int i = 0; i < D; i++) {
@@ -538,8 +538,8 @@ namespace Pspg
            kSize *= mesh().dimension(i);
         }   
      }   
-     cufftComplex* dft_out;
-     dft_out = new cufftComplex[kSize];
+     cudaComplex* dft_out;
+     dft_out = new cudaComplex[kSize];
 
    // Create Mesh<D> with dimensions of DFT Fourier grid.
       Mesh<D> dftMesh(dft.dftDimensions());
@@ -634,15 +634,15 @@ namespace Pspg
       }
     
      cudaMemcpy(dft.cDField(), dft_out,
-              kSize * sizeof(cufftComplex), cudaMemcpyHostToDevice);
+              kSize * sizeof(cudaComplex), cudaMemcpyHostToDevice);
    }
 
    template <int D>
    void FieldIo<D>::convertKGridToBasis(RDFieldDft<D> const& dft, 
                                         RDField<D>& components)
    {
-     cufftReal* components_out;
-     components_out = new cufftReal[basis().nStar()];
+     cudaReal* components_out;
+     components_out = new cudaReal[basis().nStar()];
 
      int kSize = 1;
      for (int i = 0; i < D; i++) {
@@ -653,10 +653,10 @@ namespace Pspg
            kSize *= mesh().dimension(i);
         }   
      }   
-     cufftComplex* dft_in;
-     dft_in = new cufftComplex[kSize];
+     cudaComplex* dft_in;
+     dft_in = new cudaComplex[kSize];
      cudaMemcpy(dft_in, dft.cDField(),
-            kSize * sizeof(cufftComplex), cudaMemcpyDeviceToHost);
+            kSize * sizeof(cudaComplex), cudaMemcpyDeviceToHost);
 
       // Create Mesh<D> with dimensions of DFT Fourier grid.
       Mesh<D> dftMesh(dft.dftDimensions());
@@ -743,7 +743,7 @@ namespace Pspg
       } //  loop over star index is
 
      cudaMemcpy(components.cDField(), components_out,
-            basis().nStar() * sizeof(cufftReal), cudaMemcpyHostToDevice);
+            basis().nStar() * sizeof(cudaReal), cudaMemcpyHostToDevice);
    }
 
    template <int D>

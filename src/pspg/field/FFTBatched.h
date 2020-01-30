@@ -16,17 +16,10 @@
 #include <cufft.h>
 #include <cuda.h>
 #include <cuda_runtime.h>
+#include <pspg/GpuResources.h>
 
 //temporary for debugging
 #include <iostream>
-
-#include <pspg/field/FFT.h> //for definition of rtype
-//#ifdef SINGLE_PRECISION
-//typedef float rtype;
-//#else
-//typedef double rtype;
-//#endif
-//typedef rtype; //some type in FFT.h
 
 namespace Pscf {
 namespace Pspg {
@@ -72,7 +65,7 @@ namespace Pspg {
       */
       void forwardTransform(RDField<D>& in, RDFieldDft<D>& out);
 
-      void forwardTransform(cufftReal* in, cufftComplex* out, int batchSize);
+      void forwardTransform(cudaReal* in, cudaComplex* out, int batchSize);
       /**
       * Compute inverse (complex-to-real) Fourier transform.
       *
@@ -81,7 +74,7 @@ namespace Pspg {
       */
       void inverseTransform(RDFieldDft<D>& in, RDField<D>& out);
 
-      void inverseTransform(cufftComplex* in, cufftReal* out, int batchSize);
+      void inverseTransform(cudaComplex* in, cudaReal* out, int batchSize);
 
       /**
       * Return the dimensions of the grid for which this was allocated.
@@ -122,17 +115,6 @@ namespace Pspg {
       void makePlans(const IntVec<D>& rDim, const IntVec<D>& kDField, int batchSize);
 
    };
-
-   // Declarations of explicit specializations -- not needed
-
-   //template <>
-   //void FFT<1>::makePlans(RDField<1>& rField, RDFieldDft<1>& kField);
-
-   //template <>
-   //void FFT<2>::makePlans(RDField<2>& rField, RDFieldDft<2>& kField);
-
-   //template <>
-   //void FFTBatched<3>::makePlans(RDField<3>& rField, RDFieldDft<3>& kField);
 
    /*
    * Return the dimensions of the grid for which this was allocated.

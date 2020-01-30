@@ -16,8 +16,8 @@
 //need a reference table that maps index to a pair wavevector
 //ideally we can have a group of thread dealing with only
 //the non-implicit part and the implicit part
-static __global__ void makeDksqHelperWave(cufftReal* dksq, const int* waveBz,
-                                          const cufftReal* dkkBasis,
+static __global__ void makeDksqHelperWave(cudaReal* dksq, const int* waveBz,
+                                          const cudaReal* dkkBasis,
                                           const int* partnerId,
                                           const int* selfId,
                                           const bool* implicit,
@@ -52,7 +52,7 @@ static __global__ void makeDksqHelperWave(cufftReal* dksq, const int* waveBz,
    }//nParams
 }
 
-static __global__ void makeDksqReduction(cufftReal* dksq, const int* partnerId,
+static __global__ void makeDksqReduction(cudaReal* dksq, const int* partnerId,
                                          int nParams, int kSize, int rSize) {
    int nThreads = blockDim.x * gridDim.x;
    int startID = blockIdx.x * blockDim.x + threadIdx.x;
@@ -101,8 +101,8 @@ namespace Pspg
       minImage_.allocate(kSize_);
       gpuErrchk(cudaMalloc((void**) &minImage_d, sizeof(int) * rSize_ * D));
 
-      kSq_ = new cufftReal[rSize_];
-      gpuErrchk(cudaMalloc((void**) &dkSq_, sizeof(cufftReal) * rSize_ * nParams_));
+      kSq_ = new cudaReal[rSize_];
+      gpuErrchk(cudaMalloc((void**) &dkSq_, sizeof(cudaReal) * rSize_ * nParams_));
 
       partnerIdTable = new int[mesh.size()];
       gpuErrchk(cudaMalloc((void**) &partnerIdTable_d, sizeof(int) * mesh.size()));
@@ -113,8 +113,8 @@ namespace Pspg
       implicit = new bool[mesh.size()];
       gpuErrchk(cudaMalloc((void**) &implicit_d, sizeof(bool) * mesh.size()));
 
-      dkkBasis = new cufftReal[6 * D * D];
-      gpuErrchk(cudaMalloc((void**) &dkkBasis_d, sizeof(cufftReal) * 6 * D * D));
+      dkkBasis = new cudaReal[6 * D * D];
+      gpuErrchk(cudaMalloc((void**) &dkkBasis_d, sizeof(cudaReal) * 6 * D * D));
       
    }
 
@@ -219,10 +219,10 @@ namespace Pspg
       }
 
       cudaMemcpy(dkkBasis_d, dkkBasis,
-                 sizeof(cufftReal) * unitCell.nParameter() * D * D,
+                 sizeof(cudaReal) * unitCell.nParameter() * D * D,
                  cudaMemcpyHostToDevice);
 
-      cudaMemset(dkSq_, 0, unitCell.nParameter() * rSize_ * sizeof(cufftReal));
+      cudaMemset(dkSq_, 0, unitCell.nParameter() * rSize_ * sizeof(cudaReal));
        makeDksqHelperWave<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>
          (dkSq_, minImage_d, dkkBasis_d, partnerIdTable_d,
           selfIdTable_d, implicit_d, unitCell.nParameter(), 

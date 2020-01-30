@@ -11,7 +11,7 @@
 #include "FFTBatched.h"
 #include <pspg/GpuResources.h>
 
-static __global__ void scaleComplexData(cufftComplex* data, cufftReal scale, int size) {
+static __global__ void scaleComplexData(cudaComplex* data, cudaReal scale, int size) {
    
    //write code that will scale
    int nThreads = blockDim.x * gridDim.x;
@@ -22,6 +22,17 @@ static __global__ void scaleComplexData(cufftComplex* data, cufftReal scale, int
    }
    
 }
+
+static __global__ void scaleRealData(cudaReal* data, cudaReal scale, int size) {
+   
+   int nThreads = blockDim.x * gridDim.x;
+   int startId = blockIdx.x * blockDim.x + threadIdx.x;
+   for(int i = startId; i < size; i += nThreads ) {
+      data[i] *= scale;
+   }
+   
+}
+
 
 namespace Pscf {
 namespace Pspg
@@ -144,6 +155,7 @@ namespace Pspg
          
       }
 
+#ifdef SINGLE_PRECISION
       if(cufftPlanMany(&fPlan_, D, n, //plan, rank, n
                        NULL, 1, rdist, //inembed, istride, idist
                        NULL, 1, kdist, //onembed, ostride, odist
@@ -158,7 +170,22 @@ namespace Pspg
          std::cout<<"plan creation failed "<<std::endl;
          exit(1);
       }
-      
+#else
+      if(cufftPlanMany(&fPlan_, D, n, //plan, rank, n
+                       NULL, 1, rdist, //inembed, istride, idist
+                       NULL, 1, kdist, //onembed, ostride, odist
+                       CUFFT_D2Z, 2) != CUFFT_SUCCESS) {
+         std::cout<<"plan creation failed "<<std::endl;
+         exit(1);
+      }
+      if(cufftPlanMany(&iPlan_, D, n, //plan, rank, n
+                       NULL, 1, rdist, //inembed, istride, idist
+                       NULL, 1, kdist, //onembed, ostride, odist
+                       CUFFT_Z2D, 2) != CUFFT_SUCCESS) {
+         std::cout<<"plan creation failed "<<std::endl;
+         exit(1);
+      }
+#endif      
    }
 
    /*
@@ -181,6 +208,8 @@ namespace Pspg
          rdist *= n[i];
          
       }
+
+#ifdef SINGLE_PRECISION
       if(cufftPlanMany(&fPlan_, D, n, //plan, rank, n
                        NULL, 1, rdist, //inembed, istride, idist
                        NULL, 1, kdist, //onembed, ostride, odist
@@ -195,7 +224,22 @@ namespace Pspg
          std::cout<<"plan creation failed "<<std::endl;
          exit(1);
       }
-      
+#else
+      if(cufftPlanMany(&fPlan_, D, n, //plan, rank, n
+                       NULL, 1, rdist, //inembed, istride, idist
+                       NULL, 1, kdist, //onembed, ostride, odist
+                       CUFFT_D2Z, batchSize) != CUFFT_SUCCESS) {
+         std::cout<<"plan creation failed "<<std::endl;
+         exit(1);
+      }
+      if(cufftPlanMany(&iPlan_, D, n, //plan, rank, n
+                       NULL, 1, kdist, //inembed, istride, idist
+                       NULL, 1, rdist, //onembed, ostride, odist
+                       CUFFT_Z2D, batchSize) != CUFFT_SUCCESS) {
+         std::cout<<"plan creation failed "<<std::endl;
+         exit(1);
+      }
+#endif
    }
 
    /*
@@ -215,7 +259,7 @@ namespace Pspg
       }
 
       // Copy rescaled input data prior to work array
-      rtype scale = 1.0/rtype(rSize_);
+      cudaReal scale = 1.0/cudaReal(rSize_);
       //scale for every batch
       scaleRealData<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(rField.cDField(), scale, rSize_ * 2);
       
@@ -237,10 +281,9 @@ namespace Pspg
    /*
    * Execute forward transform.
    */
-   //can i just corrupt the rfield data?
    template <int D>
    void FFTBatched<D>::forwardTransform
-   (cufftReal* rField, cufftComplex* kField, int batchSize)
+   (cudaReal* rField, cudaComplex* kField, int batchSize)
    {
       // Check dimensions or setup
       if (isSetup_) {
@@ -250,7 +293,7 @@ namespace Pspg
       }
 
       // Copy rescaled input data prior to work array
-      rtype scale = 1.0/rtype(rSize_);
+      cudaReal scale = 1.0/cudaReal(rSize_);
       //scale for every batch
       scaleRealData<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(rField, scale, rSize_ * batchSize);
       
@@ -260,7 +303,6 @@ namespace Pspg
          std::cout<<"CUFFT error: forward"<<std::endl;
          return;
       }
-      //scaleComplexData<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(kField, scale, kSize_ * batchSize);
       #else
       if(cufftExecD2Z(fPlan_, rField, kField) != CUFFT_SUCCESS) {
          std::cout<<"CUFFT error: forward"<<std::endl;
@@ -301,7 +343,7 @@ namespace Pspg
    */
    template <int D>
    void FFTBatched<D>::inverseTransform
-   (cufftComplex* kField, cufftReal* rField, int batchSize)
+   (cudaComplex* kField, cudaReal* rField, int batchSize)
    {
       if (!isSetup_) {
          std::cerr<<"Need to setup before running FFTbatchec"<<std::endl;

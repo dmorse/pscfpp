@@ -174,12 +174,12 @@ namespace Pspg {
 
          DArray<RDField<D> > tempDev;
 
-         HistMat <cufftReal> histMat_;
+         HistMat <cudaReal> histMat_;
 
-         cufftReal innerProduct(const RDField<D>& a, const RDField<D>& b, int size);
-         cufftReal reductionH(const RDField<D>& a, int size);
-         cufftReal* d_temp_;
-         cufftReal* temp_;
+         cudaReal innerProduct(const RDField<D>& a, const RDField<D>& b, int size);
+         cudaReal reductionH(const RDField<D>& a, int size);
+         cudaReal* d_temp_;
+         cudaReal* temp_;
 
          using Iterator<D>::setClassName;
          using Iterator<D>::systemPtr_;

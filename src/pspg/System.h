@@ -519,9 +519,9 @@ namespace Pspg
 
       RDField<D> workArray;
 
-      cufftReal* d_kernelWorkSpace_;
+      cudaReal* d_kernelWorkSpace_;
 
-      cufftReal* kernelWorkSpace_;
+      cudaReal* kernelWorkSpace_;
 
       /**
       * Allocate memory for fields (private)
@@ -536,12 +536,12 @@ namespace Pspg
       /**
       * Compute inner product of two RDField fields (private, on GPU).
       */
-      cufftReal innerProduct(const RDField<D>& a, const RDField<D>& b, int size);
+      cudaReal innerProduct(const RDField<D>& a, const RDField<D>& b, int size);
 
       /**
       * Compute reduction of an RDField (private, on GPU).
       */
-      cufftReal reductionH(const RDField<D>& a, int size);
+      cudaReal reductionH(const RDField<D>& a, int size);
 
       #if 0
       // Additional member variables for field-theoretic Monte Carlo

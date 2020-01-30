@@ -286,8 +286,8 @@ namespace Pspg
       //compositionKField_.allocate(mesh().dimensions());
       workArray.allocate(mesh().size());
    
-      cudaMalloc((void**)&d_kernelWorkSpace_, NUMBER_OF_BLOCKS * sizeof(cufftReal));
-      kernelWorkSpace_ = new cufftReal[NUMBER_OF_BLOCKS];
+      cudaMalloc((void**)&d_kernelWorkSpace_, NUMBER_OF_BLOCKS * sizeof(cudaReal));
+      kernelWorkSpace_ = new cudaReal[NUMBER_OF_BLOCKS];
 
       isAllocated_ = true;
    }
@@ -622,47 +622,47 @@ namespace Pspg
    }
 
    template <int D>
-   cufftReal System<D>::innerProduct(const RDField<D>& a, const RDField<D>& b, int size) {
+   cudaReal System<D>::innerProduct(const RDField<D>& a, const RDField<D>& b, int size) {
 
      switch(THREADS_PER_BLOCK){
      case 512:
-       deviceInnerProduct<512><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cufftReal)>>>(d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
+       deviceInnerProduct<512><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
        break;
      case 256:
-       deviceInnerProduct<256><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cufftReal)>>>(d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
+       deviceInnerProduct<256><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
        break;
      case 128:
-       deviceInnerProduct<128><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cufftReal)>>>(d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
+       deviceInnerProduct<128><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
        break;
      case 64:
-       deviceInnerProduct<64><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cufftReal)>>>(d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
+       deviceInnerProduct<64><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
        break;
      case 32:
-       deviceInnerProduct<32><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cufftReal)>>>(d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
+       deviceInnerProduct<32><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
        break;
      case 16:
-       deviceInnerProduct<16><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cufftReal)>>>(d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
+       deviceInnerProduct<16><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
        break;
      case 8:
-       deviceInnerProduct<8><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cufftReal)>>>(d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
+       deviceInnerProduct<8><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
        break;
      case 4:
-       deviceInnerProduct<4><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cufftReal)>>>(d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
+       deviceInnerProduct<4><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
        break;
      case 2:
-       deviceInnerProduct<2><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cufftReal)>>>(d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
+       deviceInnerProduct<2><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
        break;
      case 1:
-       deviceInnerProduct<1><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cufftReal)>>>(d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
+       deviceInnerProduct<1><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
        break;
      }
-      cudaMemcpy(kernelWorkSpace_, d_kernelWorkSpace_, NUMBER_OF_BLOCKS * sizeof(cufftReal), cudaMemcpyDeviceToHost);
-      cufftReal final = 0;
-      cufftReal c = 0;
+      cudaMemcpy(kernelWorkSpace_, d_kernelWorkSpace_, NUMBER_OF_BLOCKS * sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      cudaReal final = 0;
+      cudaReal c = 0;
       //use kahan summation to reduce error
       for (int i = 0; i < NUMBER_OF_BLOCKS; ++i) {
-         cufftReal y = kernelWorkSpace_[i] - c;
-         cufftReal t = final + y;
+         cudaReal y = kernelWorkSpace_[i] - c;
+         cudaReal t = final + y;
          c = (t - final) - y;
          final = t;
 
@@ -672,14 +672,14 @@ namespace Pspg
    }
 
    template<int D>
-   cufftReal System<D>::reductionH(const RDField<D>& a, int size) {
-     reduction << < NUMBER_OF_BLOCKS / 2, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cufftReal) >> > (d_kernelWorkSpace_, a.cDField(), size);
-      cudaMemcpy(kernelWorkSpace_, d_kernelWorkSpace_, NUMBER_OF_BLOCKS / 2 * sizeof(cufftReal), cudaMemcpyDeviceToHost);
-      cufftReal final = 0;
-      cufftReal c = 0;
+   cudaReal System<D>::reductionH(const RDField<D>& a, int size) {
+     reduction << < NUMBER_OF_BLOCKS / 2, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal) >> > (d_kernelWorkSpace_, a.cDField(), size);
+      cudaMemcpy(kernelWorkSpace_, d_kernelWorkSpace_, NUMBER_OF_BLOCKS / 2 * sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      cudaReal final = 0;
+      cudaReal c = 0;
       for (int i = 0; i < NUMBER_OF_BLOCKS / 2; ++i) {
-         cufftReal y = kernelWorkSpace_[i] - c;
-         cufftReal t = final + y;
+         cudaReal y = kernelWorkSpace_[i] - c;
+         cudaReal t = final + y;
          c = (t - final) - y;
          final = t;
          }
