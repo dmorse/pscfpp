@@ -1,15 +1,12 @@
 namespace McMd
 {
 
-/*! \page developer_build_page 4.2 Build System
+/*! \page developer_source_page 4.1 Directory Structure
 
-\ref developer_source_page  (Prev)
-\ref developer_standards_page  (Next)
+\ref developer_build_page  (Next)
 <BR>
 
-PSCF is compiled using a system of unix makefiles.  All development was done using gnu make (gmake). 
-  
-\section make_files Source directory
+\section make_files Source code directory
 
 All C++ and CUDA files for PSCF, are in the pscfpp/src/ directory tree.  The header and source file for each class are in the same directory. 
 The name of each C++ file is the same as the class name, followed by an extension to indicate file type. 
@@ -351,7 +348,6 @@ or
 from either the src/mcMd/simulation or src/mcMd/ directory. Most programmers, however, are unwilling to repeatedly type absolute paths. This is why we recommend getting in the habit of simply using "make all" from the directory that contains the file of interest, and working on only one file at a time.
 
 <BR>
-\ref developer_source_page  (Prev)
 \ref developer_page  (Up)  &nbsp; &nbsp; &nbsp; &nbsp;
 \ref developer_standards_page  (Next)
 

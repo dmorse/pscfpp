@@ -1,7 +1,7 @@
 namespace McMd
 {
 
-/*! \page developer_param_page 5.3 Parameter File I/O
+/*! \page developer_param_page 4.4 Parameter File I/O
 
 \ref developer_standards_page   (Prev)   &nbsp; &nbsp; &nbsp; &nbsp;
 \ref developer_test_page  (Next)
@@ -18,24 +18,23 @@ following two virtual functions:
    void readParameters(std::istream& in);
    void readParam(std::istream& in);
 \endcode
-The readParameters() method to defines the file formt for the 
-body of a parameter file block, excluding the lines containing
-the opening and closing brackets.  The readParam() method defines 
-the file format for a parameter file block.  The default 
-implementation of ParamComposite::readParam() calls readParameters() 
-and adds opening and closing lines.  Most subclasses of ParamComposite 
-re-implement the readParameters() method and rely on the default 
-implementation of readParam() to provide the opening and closing 
-lines. A few (including all the Manager classes) instead 
-re-implement readParam().
+The readParameters() method to defines the file format for the body of 
+a parameter file block, excluding the lines containing the opening and 
+closing brackets.  The readParam() method defines the file format for 
+a parameter file block.  The default implementation of 
+ParamComposite::readParam() calls readParameters() and adds opening and 
+closing lines.  Most subclasses of ParamComposite re-implement the 
+readParameters() method and rely on the default implementation of 
+readParam() to provide the opening and closing lines. A few (including 
+all the Manager classes) instead re-implement readParam().
 
-The source code for the readParameters() or readParam() method of 
-a class is thus the most reliable documentation of the format of
-the associated parameter file block. It is thus useful for users, 
-as well as developers, to be able to read the implementation of 
-these method, so that they can check the source code to resolve 
-any questions about the file format. In the examples below, we 
-discuss the implementation of a readParameters() method.
+The source code for the readParameters() or readParam() method of a class 
+is thus the most reliable documentation of the format of the associated 
+parameter file block. It is thus useful for users, as well as developers, 
+to be able to read the implementation of these method, so that they can 
+check the source code to resolve any questions about the file format. 
+In the examples below, we discuss the implementation of a readParameters() 
+function.
 
 The implementation of readParameters() typically uses a several 
 protected methods that are inherited from the parent Util::ParamComposite 

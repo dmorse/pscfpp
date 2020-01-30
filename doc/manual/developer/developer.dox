@@ -1,13 +1,14 @@
 namespace McMd
 {
 
-/*! \page developer_page 5 Developer Information
+/*! \page developer_page 4 Developer Information
 
 \ref user_page  (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
 <BR>
  
 <h2> Contents:</h2> 
    <ul style="list-style: none;">
+   <li> \subpage developer_source_page </li>
    <li> \subpage developer_build_page </li>
    <li> \subpage developer_standards_page </li>
    <li> \subpage developer_param_page </li>
