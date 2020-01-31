@@ -132,20 +132,16 @@ same machine.
 
 \section install_require_module Software modules (linux clusters)
 
-On any multi-user linux cluster that is set up for use in computational 
-research, at least one MPI library should already be installed. At the 
-University of Minnesota, PSCF is often run on a cluster provided by 
-the Minnesota Supercomputer Institute (MSI). Clusters at MSI allow the 
-users to choose from among several different choices of MPI library and 
-compiler.
+At the University of Minnesota, PSCF is often run on a cluster provided 
+by the Minnesota Supercomputer Institute (MSI).  The computer clusters 
+at MSI, like many similar clusters, use the linux "module" command to 
+allow users to load particular software packages, including particular 
+choices of compiler. The "module" command is the user interface to the 
+"Modules" package, which is a system for automating changes in a users 
+unix shell environment that are required in order to use particular 
+software packages. 
 
-The computer clusters at MSI, like many similar clusters, use the linux 
-"module" command to allow users to load particular software packages, 
-including particular choices of compiler and MPI library. The "module" 
-command is the user interface to the "Modules" package, which is a system 
-for automating changes in a users unix shell environment that are required 
-in order to use particular software packages. 
-The command
+On a system that uses modules, the command
 \code
   > module avail
 \endcode
@@ -166,7 +162,7 @@ environment by invoking
 \endcode
 before compiling PSCF. We use a version of fftw that was compiled with
 gcc version 7.2.0, rather than then most recent version, because the 
-current version of CUDA (v10.) isn't compatible with gcc versions with 
+current version of CUDA (v10.0) isn't compatible with gcc versions with 
 primary version number greater than 7. These module load commands can 
 be entered either from the command line after loggin in entered 
 automatically on login by adding them to the users .bashrc or .profile 

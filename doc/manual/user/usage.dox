@@ -18,7 +18,8 @@ When a program simulation is executed, the parameter file is read first. The par
 
 The command file is read and interpreted after the parameter file. The command file is a script that contains a list of commands that are interpreted and executed in sequence. This script controls the program flow after initialization. The name of the command file is specified as the argument of the "-c" command line option.
 
-Some commands in a command file require data to be read from or written to additional files that contain. For example, the the first step in solving a SCFT problem is usually to read an initial guess for the chemical potential fields from a file, while the last step may be to write the converged chemical potential and monomer concentration fields to an output file. The names of these data files are specified as parameters within the command file.
+Some commands in a command file require data to be read from or written to specific data files. 
+For example, the the first step in solving a SCFT problem is usually to read an initial guess for the chemical potential fields from a file, while the last step may be to write the converged chemical potential and monomer concentration fields to an output file. The names of these data files are specified as parameters within the command file.
 
 \section user_usage_run_serial_section Command line usage
 

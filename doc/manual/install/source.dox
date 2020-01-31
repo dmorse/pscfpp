@@ -1,6 +1,6 @@
 /*! \page install_source_page 2.2 Source Code
 
-\ref install_require_page (Prev) 
+\ref install_require_page (Prev)   &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref install_overview_page (Next) 
 <BR>
 
@@ -42,7 +42,7 @@ Herefafter, we assume that the root directory of the pscfpp working copy
 is named pscfpp/.  References to paths that do not start explicitly with 
 a prefix "pscfpp/" should be understood to be relative paths, relative 
 to this directory. The directory structure of the pscfpp repository is 
-explained \ref source_directory_page "here".
+explained \ref developer_source_page "here".
 
 \section compile_submodules_section Use of git submodules
 
@@ -64,8 +64,8 @@ with the recursive option, or read chapter 7.11 of the online Pro Git
 book for instructions on how to manually fetch and update these submodules.
 
 <BR>
-\ref install_require_page (Prev) 
-\ref install_page   (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref install_require_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref install_page   (Up)         &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref install_overview_page (Next) 
 
 */

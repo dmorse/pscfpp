@@ -5,7 +5,7 @@
 <BR>
 
 This file documents programming and formatting conventions that should be used
-in the source code of Simpatico:
+in the source code of PSCF:
 
 \section file_section Files
 
@@ -53,7 +53,7 @@ in the source code of Simpatico:
 
 \endcode
 
-  - The name of a simple accessor ("getter") class member function that returns a member variable by value or by reference should simply be the name of the member variable, without any trailing underscore. Simpatico thus does NOT use the convention of appending a prefix "get" to the names of accessor functions. The same name convention is use for accessors that return by value, const reference, or non-const reference. Thus, for example:
+  - The name of a simple accessor ("getter") class member function that returns a member variable by value or by reference should simply be the name of the member variable, without any trailing underscore. PSCF thus does NOT use the convention of appending a prefix "get" to the names of accessor functions. The same name convention is use for accessors that return by value, const reference, or non-const reference. Thus, for example:
 \code
 
     int Thing::data() const
@@ -200,7 +200,7 @@ namespace Util
 
 \section Dox_section Documentation (via doxygen):
 
-Simpatico uses the doxygen (www.doxygen.org) utility to create html documentation from documentations blocks that are extracted from the source code. Doxygen will extracts any multi-line comment that begin with a slash and two asterisks ("/**"), or single line comments that begin with three slashes ("///"), like this:
+PSCF uses the doxygen (www.doxygen.org) utility to create html documentation from documentations blocks that are extracted from the source code. Doxygen will extracts any multi-line comment that begin with a slash and two asterisks ("/**"), or single line comments that begin with three slashes ("///"), like this:
 \verbatim
 
    /** 
@@ -327,12 +327,10 @@ These provide pseudo-public access to the position of an Atom (represented as a 
 
   - Use std::string to represent character strings whenever possible.
 
-  - Use Util::Vector objects to represent Cartesian positions and separations, or any array floating point numbers for which the number of elements must equal the dimensionality of space (e.g., the dimensions of the Boundary for a periodic orthorhombic unit cell). Use IntVector to represent corresponding arrays of integers.
-
-  - Prefer the array container templates in src/util/containers over bare C arrays and STL containers. STL containers such as std::vector should be used when their is a need for their resizability. Our preference for the home-made containers is based on the fact that: 
+  - Prefer the array container templates in src/util/containers over bare C arrays and STL containers. STL containers such as std::vector should be used when their is a need for their resizability. Our preference for the home-brewed containers is based on the fact that: 
     <ul>
-    <li> The Simpatico containers provide optional bounds checking, which is enabled only when NDEBUG is not defined. </li>
-    <li> Unlike std::vector, Simpatico array classes are not automatically resizable, and so will never be silently moved to a new location in memory.
+    <li> The home-brewed containers provide optional bounds checking, which is enabled only when NDEBUG is not defined. </li>
+    <li> Unlike std::vector, the home-brewed array classes are not automatically resizable, and so will never be silently moved to a new location in memory.
     </ul>
 The lack of resizability is essential for algorithms that store pointers to particular objects within an array, since the address of an object that is stored in resizable array such as a std::vector generally changes whenever the array is resized.
 

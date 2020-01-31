@@ -98,7 +98,7 @@ directory. The purposes of the files in this directory are:
 
    - makefile is the main makefile for a particular build directory.
 
-   - config.mk is the main build configuration file 
+   - config.mk is the main build configuration file (makefile fragment)
 
    - configure is a bash script that can be used to enable or disable 
      some features before compilation.
@@ -111,22 +111,23 @@ of the form:
    namespace/
       makefile
       config.mk
-      \tests
+      tests/
          makefile
 \endcode
-Here, we use "namespace/" to denote a namespace level directory name.
-The purposes of these files are:
+Here, we use "namespace/" to denote a namespace level directory name,
+such as "util/" or "pspc/". The purposes of these files are:
 
-   - namespace/makefile is the main makefile for a single namespace. 
+   - namespace/makefile is the main makefile for a single namespace.
 
    - namespace/config.mk file is a build configuration file for a 
      single namespace.
 
    - namespace/tests/makefile is a makefile for unit tests for code 
-     in one namespace
+     in one namespace level directory.
 
 The makefile in each namespace level subdirectory contains an "all" target that compiles all of the source files in the corresponding namespace (or subdirectory), creates a static library that contains all of the resulting objects, and compiles and installs any main programs in that directory.
-After setup but before compilation, the bld/ directory is empty except for the files listed above. After setup, the src/ directory also contains copies of these files, in addition to source files and other makefile fragments.  
+After setup but before compilation, the bld/ directory is empty except for the files listed above. 
+After setup, the src/ directory also contains copies of these files, in addition to source files and other makefile fragments.  
 
 The config.mk files in the root of each build directory tree (i.e., in src/ and bld/) and in its namespace level subdirectories will be referred to in what follows as build configuration files. Each such build configuration file file is a makefile fragment that is installed by the setup script by making copies of default versions stored in the directory make/config.
 
@@ -142,7 +143,7 @@ The following variables defined in the main config.mk file define paths:
 
 In the main config.mk in each build directory, BLD_DIR is given by the absolute path for that directory. By default, BIN_DIR is the absolute path to the pscfpp/bin directory. The values of the above three variables are expressed in terms of a variable ROOT_DIR that contains the absolute path to the pscfpp/ root directory. The correct value for ROOT_DIR is set by the setup script. Here is an example of the relevant part of the file bld/serial/config.mk:
 \code
-ROOT_DIR=${HOME}/PSCF
+ROOT_DIR=${HOME}/pscfpp
 SRC_DIR=$(ROOT_DIR)/src
 BLD_DIR=$(ROOT_DIR)/bld
 BIN_DIR=$(ROOT_DIR)/bin
@@ -168,7 +169,7 @@ Every subdirectory of src/ (other than the tests/ directories) contains a makefi
 The code that assigns a value to a [directory]_ source list variable is straightforward in directories that contain source files but no subdirectories, such as the util/space directory. For example, here is the definition of util_space_ from the file src/util/space/sources.mk:
 \code
 
-util_space_=\
+util_space_= \
     util/space/Grid.cpp \
     util/space/IntVector.cpp \
     util/space/Tensor.cpp \
@@ -218,7 +219,7 @@ Here, SRC_DIR expands to the absolute path to the pscfpp/src directory and BLD_D
 
 \section make_patterns Pattern rules (patterns.mk files)
 
-Each namespace level subdirectory of the src/ directory has a makefile fragment named "patterns.mk". This file defines a pattern rule for compiling source files in that directory or namespace. The pattern rule has the same structure in all five namespace level directories. In each case, the rule looks like this:
+Each namespace level subdirectory of the src/ directory has a makefile fragment named "patterns.mk". This file defines pattern rules for compiling source files in that directory or namespace. The pattern rule has the same structure in all five namespace level directories. In directories that contain C++ files, the main rule always looks like this:
 \code
 $(BLD_DIR)/%.o:$(SRC_DIR)/%.cpp
         $(CXX) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $<
@@ -243,23 +244,23 @@ The same values are used for the above variables in all five namespaces. Two add
    - DEFINES: String of all relevant C++ preprocessor macro definitions, defined using the compiler "-D" option
    - MAKE_DEPS: List of build configuration files that should  be listed as dependencies for all object files in this namespace
 
-The DEFINES variable, if not empty, contains a series of preprocessor macro definitions, defined using the "-D" compiler option. Thus, for example, if debugging, bonds, and angles are enabled, and no other optional features, the value of DEFINES within the file src/inter/patterns.mk might expand to
+The DEFINES variable, if not empty, contains a series of preprocessor macro definitions, defined using the "-D" compiler option. Thus, for example, if debugging is enabled, the value of DEFINES within the file src/inter/patterns.mk might expand to
 \code
-DEFINES=-DUTIL_DEBUG -DINTER_BOND -DINTER_ANGLE
+DEFINES=-DUTIL_DEBUG 
 \endcode
-The definitions of DEFINES and MAKE_DEPS within the file src/inter/patterns.mk are shown below as an example:
+The definitions of DEFINES and MAKE_DEPS within the file src/pspc/patterns.mk are shown below as an example:
 \code
 # C preprocessor macro definitions
-DEFINES=$(UTIL_DEFS) $(INTER_DEFS)
+DEFINES=$(UTIL_DEFS) $(PSPC_DEFS)
 
-# Dependencies of source files in src/inter on makefile fragments
+# Dependencies of source files in src/pspc on makefile fragments
 MAKE_DEPS= -A$(BLD_DIR)/config.mk
 MAKE_DEPS+= -A$(BLD_DIR)/util/config.mk
-MAKE_DEPS+= -A$(BLD_DIR)/inter/config.mk
+MAKE_DEPS+= -A$(BLD_DIR)/pspc/config.mk
 \endcode
-The DEFINES variable is constructing by concatenating the NAMESPACE_DEFS variables (UTIL_DEFS, INTER_DEFS, etc.) for this namespace (i.e., INTER_DEFS) and for all namespaces upon which this namespace depends (i.e., UTIL_DEFS). For the Inter namespace, this yields a concatenation of UTIL_DEFS and INTER_DEFS. The resulting string contains all of the preprocessor definitions that are allowed to be used by code in this namespace. 
+The DEFINES variable is constructing by concatenating the NAMESPACE_DEFS variables (UTIL_DEFS, PSPC_DEFS, etc.) for this namespace (i.e., PSPC_DEFS) and for all namespaces upon which this namespace depends (i.e., UTIL_DEFS). For the Pscf::Pspc namespace, this yields a concatenation of UTIL_DEFS and PSPC_DEFS. The resulting string contains all of the preprocessor definitions that are allowed to be used by code in this namespace. 
 
-The MAKE_DEPS variable contains a list of build configuration files whose contents can effect compilation of source code in this namespace. This list always contains the main config.mk file from the parent build directory, the config.mk file for the namespace of interest, and config.mk files for any namespace(s) upon which this namespace depends. For the Inter namespace, MAKE_DEPS thus contains paths to the config.mk files in the inter/ and util/ subdirectories. These build configuration files are added to the list of dependencies for every object file in this namespace because changes to these config.mk files can change which preprocessor macros are defined or which compiler options are set, and thus can change the contents of the resulting object files.
+The MAKE_DEPS variable contains a list of build configuration files whose contents can effect compilation of source code in this namespace. This list always contains the main config.mk file from the parent build directory, the config.mk file for the namespace of interest, and config.mk files for any namespace(s) upon which this namespace depends. For the Pscf::Pspc namespace, MAKE_DEPS thus contains paths to the config.mk files in the pspc/ and util/ subdirectories. These build configuration files are added to the list of dependencies for every object file in this namespace because changes to these config.mk files can change which preprocessor macros are defined or which compiler options are set, and thus can change the contents of the resulting object files.
 
 \section make_dependency Dependency Files (*.d Files)
 
@@ -308,15 +309,15 @@ all: $(inter_OBJS) $(inter_LIB)
 \endcode
 This simplified makefile contains three blocks:
 
-(1) The block of include statements at the top of this file include all of the relevant build configuration files, the appropriate patterns.mk file, and the appropriate source file lists. The main config.mk file must be included using a relative path BLD_DIR_REL_=.. to the parent build directory. The main config.mk file defines variables BLD_DIR and SRC_DIR that contain absolute paths to the object and source directories, which can be used in the remainder of this makefile, and in makefile fragments that it includes. Next, the makefile includes the namespace level config.mk files for this namespace and any namespaces that it depends on. In this example, it thus includes the inter/config.mk and util/config.mk files from the build directory, because the Inter namespace depends upon the Util namespace. Finally, the makefile includes the patterns.mk file and sources.mk file list from the associated namespace level source directory src/inter.
+(1) The block of include statements at the top of this file include all of the relevant build configuration files, the appropriate patterns.mk file, and the appropriate source file lists. The main config.mk file must be included using a relative path BLD_DIR_REL_=.. to the parent build directory. The main config.mk file defines variables BLD_DIR and SRC_DIR that contain absolute paths to the object and source directories, which can be used in the remainder of this makefile, and in makefile fragments that it includes. Next, the makefile includes the namespace level config.mk files for this namespace and any namespaces that it depends on. In this example, it thus includes the inter/config.mk and util/config.mk files from the build directory, because the Pscf::Pspc namespace depends upon the Util namespace. Finally, the makefile includes the patterns.mk file and sources.mk file list from the associated namespace level source directory src/inter.
 
-(2) The "all" target builds all of the object files in the Inter namespace, which are listed in the variable inter_OBJS, and builds the associated library, whose name given by the variable inter_LIB.  The file inter/sources.mk defines both the object file list inter_OBJS and a target rule for building the library inter_LIB. The library name inter_LIB is defined in the namespace level configuration file inter/config.mk.
+(2) The "all" target builds all of the object files in the Pscf::Pscf namespace, which are listed in the variable inter_OBJS, and builds the associated library, whose name given by the variable inter_LIB.  The file inter/sources.mk defines both the object file list inter_OBJS and a target rule for building the library inter_LIB. The library name inter_LIB is defined in the namespace level configuration file inter/config.mk.
 
 (3) The last line of the above makefile fragment instructs make to include all of the dependency files for all of the source files in this namespace. The syntax $(inter_OBJS:.o=.d) creates a list of vfiles in which the .o extension of each object file is replaced by a .d extension. The dash in front of the -include command tells make to continue quietly if any dependency file does not exist.
 
 The first time "make all" is invoked in this directory, neither the object file nor the associated dependency files exist. In this case, since each object target file is absent, make knows that it must be built, and uses the pattern rule defined in inter/patterns.mk to create each object file listed in inter_OBJS.  If "make all" is a called again from the same directory, however, make can use the information in the dependency files to determine which object files needs to be rebuilt as a result in changes in C++ or configuration files. 
 
-The target rule for library inter_LIB lists all of the object files in inter_OBJS as dependencies. The library will thus be built only after the object files are all built, and will automatically be rebuilt if any object file in the Inter namespace is rebuilt.
+The target rule for library inter_LIB lists all of the object files in inter_OBJS as dependencies. The library will thus be built only after the object files are all built, and will automatically be rebuilt if any object file in the Pscf::Pspc namespace is rebuilt.
 
 \section make_makefile_executable Namespace Directory makefiles with Executable Targets
 

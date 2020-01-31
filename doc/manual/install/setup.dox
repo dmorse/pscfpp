@@ -18,18 +18,19 @@ compile any code.
 
 The most important file created by the setup script is a file named 
 config.mk that is installed the root directory of both the pscfpp/bld 
-and pscfpp/src directory trees. This file is a makefile fragment that
-acts as the main configuration file for compilation, which assigns
-values to variables that define the compiler executable names for 
-C++ and CUDA code, command line options passed to the compilers, and
-paths for required external libraries. The copy of this file pscfpp/bld 
+and pscfpp/src directory trees. This is a makefile fragment that acts 
+as the main configuration file for compilation. It assigns values to 
+makefile variables that define the compiler executable names for C++ 
+and CUDA code, command line options passed to the compilers, and paths 
+for required external libraries. The copy of this file in pscfpp/bld 
 is the main configuration file for a standard out-of-source build, in 
-which intermediate files are created in the bld/ directory tree. 
-The overview of directions for compilation given previously give 
-instructions for an out-of-source build, which we recommend for most 
-users who are not working on modifications of the source code.
-The copy in the pscfpp/src directory is the main configuration file 
-for an in-source build, which is a useful alternative for developers.
+which intermediate files are created in the bld/ directory tree. The 
+brief overview of directions for compilation given on a previous page 
+give contain instructions for an out-of-source build, which we 
+recommend for most users who are not working on modifications of the 
+source code.  The copy in the pscfpp/src directory is the main 
+configuration file for an in-source build, which is a useful 
+alternative for compilation during development.
 
 \section install_setup_default_sec Default configuration 
 

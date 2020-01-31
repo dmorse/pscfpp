@@ -1,22 +1,26 @@
 #!/bin/bash
 
-#------------------------------------------------------------------------
+#========================================================================
 # Setup script:
 #
 # This script should be run once before the first time the program is
-# compiled. It must be run from the root pscf++/ directory, in which
-# this script is located.
-# 
+# compiled. It should be run from the root pscf++/ directory in which
+# this script is located. 
+#
 # This script:
 #
-# 1) Creates build configuration files, named config.mk in the src/
-# directory and each namespace level subdirectory of src/
+# - Installs config.mk configuration files in the src/ directory 
+#   tree (for in-source builds) and in the bld/ directory tree (for 
+#   out-of-source builds), with appropriate values for the BLD_DIR
+#   makefile macro and other path definitions in each.
 #
-# 2) Sets the makefile variables $(ROOT_DIR) and $(BLD_DIR) in the main
-# config.mk file in each object directory to the absolute paths of the 
-# current working directory of the object directory, respectively. 
-#------------------------------------------------------------------------
-# Set PWD to directory containing this script
+# - Copies makefiles from src/ directory into the bld/ directory.
+#
+# - Copies the configure script from src/ into bld/
+#
+# - Installs makeDep dependency generation scripts in bld/
+#========================================================================
+# Set PWD to directory containing this script (to pscfpp root directory)
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" > /dev/null && pwd )"
 if [ "$SCRIPT_DIR" != "$PWD" ]; then
@@ -26,13 +30,13 @@ if [ "$SCRIPT_DIR" != "$PWD" ]; then
 fi
 
 #========================================================================
-# Set and export PSCFPP_DIR
+# Set and export PSCFPP_DIR (path to pscfpp root directory)
 
 PSCFPP_DIR=$PWD
 export PSCFPP_DIR
 
 #=======================================================================
-# Choose file to use for compiler settings
+# Choose a compiler settings file from make/compiler directory 
 
 if [ "$#" -gt 0 ]; then
   VARFILE=$1
@@ -56,26 +60,25 @@ if [ -n "$HAS_GSL" ]; then
   echo "Paths to GSL header and library files have been set in main config.mk files"
 else
   echo "Did not find gsl-config command for Gnu Scientific Library"
-  echo "Check paths GSL_INC and GSL_LIB in (src|blc)/config.mk file"
+  echo "Check paths GSL_INC and GSL_LIB in (src|bld)/config.mk file"
 fi
 
 #=======================================================================
-# Construct and install config files in src/ directory tree
+# Install config files in src/ directory tree for in-source builds
 
 # Note: Stream editor (sed) is used here to:
-#   - Set $(ROOT_DIR) to absolute path of directory from which this
-#      script is invoked (i.e., the pscfpp root directory).
+#   - Set $(ROOT_DIR) to absolute path of pscfpp root directory
 #   - Set $(BLD_DIR) to absolute path to src/ directory (in-source-build)
-#   - Set paths for the GSL library
+#   - Set paths for the GSL library, by including file make/temp
 
-# Set directory paths in main_config.1, write to src/temp
+# Set directory paths in main_config.1, write modified file to src/temp
 sed -e "s|=PWD|=$PWD|" -e "s|=OWD|src|" make/config/main_config.1 > src/temp
 
-# Concatenate main_config.1 + make/temp file + main_config.2
+# Concatenate src/temp + make/temp + main_config.2
 cat src/temp make/temp make/config/main_config.2 > src/config.mk
 rm src/temp 
 
-# Namespace config.mk in src/ directory (for in-source builds)
+# Install namespace level config.mk in src/ directory (for in-source builds)
 cp make/config/util_config src/util/config.mk
 cp make/config/pscf_config src/pscf/config.mk
 cp make/config/fd1d_config src/fd1d/config.mk
@@ -83,7 +86,7 @@ cp make/config/pspc_config src/pspc/config.mk
 cp make/config/pspg_config src/pspg/config.mk
 
 #========================================================================
-# Copy files into build directory for out-of-source builds
+# Install files in the bld/ directory for out-of-source builds
 
 # Construct and install main config file in bld directory
 # Set $(ROOT_DIR) to absolute path of directory from which script is invoked
@@ -92,6 +95,13 @@ sed -e "s|=PWD|=$PWD|" -e "s|=OWD|bld|" make/config/main_config.1 > bld/temp
 cat bld/temp make/temp make/config/main_config.2 > bld/config.mk
 rm bld/temp 
 rm make/temp
+
+# Copy namespace level config.mk files
+cp src/util/config.mk bld/util/config.mk
+cp src/pscf/config.mk bld/pscf/config.mk
+cp src/fd1d/config.mk bld/fd1d/config.mk
+cp src/pspc/config.mk bld/pspc/config.mk
+cp src/pspg/config.mk bld/pspg/config.mk
 
 # Copy main and namespace level makefiles
 cp src/makefile bld/makefile
@@ -108,19 +118,11 @@ cp src/fd1d/tests/makefile bld/fd1d/tests/makefile
 cp src/pspc/tests/makefile bld/pspc/tests/makefile
 #cp src/pspg/tests/makefile bld/pspg/tests/makefile
 
-# Copy namespace level config.mk files
-cp src/util/config.mk bld/util/config.mk
-cp src/pscf/config.mk bld/pscf/config.mk
-cp src/fd1d/config.mk bld/fd1d/config.mk
-cp src/pspc/config.mk bld/pspc/config.mk
-cp src/pspg/config.mk bld/pspg/config.mk
-
 # Copy configure script
 cp src/configure bld/configure
 #========================================================================
-# Install makeDep script
+# Install copies of the makeDep dependency-maker scripts in bin/
 
-# Install a copy of the makeDep dependency-maker script in bin/
 (cp lib/bash/makeDepCpp bin/makeDepCpp)
 (cp lib/bash/makeDepCuda bin/makeDepCuda)
 

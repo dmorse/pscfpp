@@ -88,11 +88,6 @@ directory tree, and install executables for 1, 2, and 3 dimensional
 problems named pscf_pg1d, pscf_pg2d and pscf_pg3d in the pscfpp/bin 
 directory.
 
-<h2> cpu-all: </h2>
-
-The cpu-all target compiles all CPU-based programs, i.e., the finite
-difference 1D program and the CPU based programs for periodic structures.
-
 <h2> all: </h2>
 The all target attempts to compile all CPU and GPU programs. It will
 fail if invoked on a machine that does not support compilation of

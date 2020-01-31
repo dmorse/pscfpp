@@ -1,15 +1,16 @@
 /*! \page install_overview_page 2.3 Installation Overview
 
-\ref install_source_page (Prev) 
-\ref install_page (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref install_source_page (Prev)       &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref install_environment_page (Next) 
 <BR>
 
-Below is a brief summary of instructions for compiling all of the PSCF 
+Below is a brief overview of instructions for compiling all of the PSCF 
 programs using default settings. The directions given here and in 
 subsequent pages assume that you have cloned the PSCF repository and
 installed all required dependencies, and that the root directory of the 
-repository is named pscfpp/. Instructions:
+repository is named pscfpp/. 
+
+Instructions:
 
    - **Set environment variables:**
      Modify the users PATH and PYTHONPATH unix environment variables,
@@ -53,8 +54,8 @@ repository is named pscfpp/. Instructions:
 Each of the above steps is discussed in more detail in the following pages.
 
 <BR>
-\ref install_source_page (Prev) 
-\ref install_page (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref install_source_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref install_page (Up)          &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref install_environment_page (Next) 
 
 */

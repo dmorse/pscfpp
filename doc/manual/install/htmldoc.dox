@@ -6,7 +6,7 @@
 
 The html documentation that you are reading was generated using the 
 <a href=http://www.doxygen.org> doxygen </a> documentation utility. The 
-PSCF git repository contains all of the source files required to 
+pscfpp git repository contains all of the source files required to 
 construct this documentation (some of which is extracted from comments 
 in the C++ source files), but does not retain the resulting html files. 
 
