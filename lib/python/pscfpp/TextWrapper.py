@@ -18,6 +18,9 @@ class TextWrapper:
          for i in range(self.nIndent):
             self.text += ' '
          self.column = self.nIndent
+      elif (self.column > 0):
+         self.text += ' '
+         self.column += 1
       self.text += string
       self.column += size
 
