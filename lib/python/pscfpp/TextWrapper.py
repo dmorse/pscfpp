@@ -5,7 +5,7 @@ class TextWrapper:
       self.nIndent = nIndent
       self.column = 0
       self.text = ''
-      self.limit = 78
+      self.limit = 78 
 
    def clear(self):
       self.column = 0
@@ -13,12 +13,13 @@ class TextWrapper:
 
    def append(self, string):
       size = len(string)
-      if (self.column + size > self.limit):
+      if (self.column + 1 + size > self.limit):
          self.text += self.eol
+         self.column = 0
          for i in range(self.nIndent):
             self.text += ' '
          self.column = self.nIndent
-      elif (self.column > 0):
+      elif (self.column > self.nIndent):
          self.text += ' '
          self.column += 1
       self.text += string
