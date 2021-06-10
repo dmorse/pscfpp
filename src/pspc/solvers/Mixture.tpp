@@ -106,9 +106,7 @@ namespace Pspc
       }
 
       // Accumulate monomer concentration fields
-      double phi;
       for (i = 0; i < nPolymer(); ++i) {
-         phi = polymer(i).phi();
          for (j = 0; j < polymer(i).nBlock(); ++j) {
             int monomerId = polymer(i).block(j).monomerId();
             UTIL_CHECK(monomerId >= 0);
@@ -116,7 +114,7 @@ namespace Pspc
             CField& monomerField = cFields[monomerId];
             CField& blockField = polymer(i).block(j).cField();
             for (k = 0; k < nx; ++k) {
-               monomerField[k] += phi * blockField[k];
+               monomerField[k] += blockField[k];
             }
          }
       }
