@@ -494,13 +494,16 @@ namespace Pscf {
          // Treat open and closed stars separately
 
          if (stars_[i].invertFlag == 0) {
-      
+     
+            // Identify root of this star (star i)
+            // Set the root to be the first wave in the star
+
             rootId = stars_[i].beginId;
             stars_[i].waveBz = waves_[rootId].indicesBz;
 
             if (stars_[i].cancel) {
 
-               // If the star is closed set all coefficients to zero
+               // If the star is cancelled, set all coefficients to zero
                std::complex<double> czero(0.0, 0.0);
                for (j = stars_[i].beginId; j < stars_[i].endId; ++j) {
                   waves_[j].coeff = czero;
@@ -508,7 +511,7 @@ namespace Pscf {
 
             } else {
 
-               // Compute negation of root vector, shift to DFT mesh
+               // Compute nVec = negation of root vector, shifted to DFT mesh
                nVec.negate(waves_[rootId].indicesBz);
                (*meshPtr_).shift(nVec);
 
@@ -521,6 +524,9 @@ namespace Pscf {
                      break;
                   }
                }
+
+               // For invertFlag == 0, failure to find nVec in this
+               // star is a fatal error
                UTIL_CHECK(negationFound);
 
                // Divide all coefficients by the root coefficient
@@ -529,7 +535,7 @@ namespace Pscf {
                   waves_[j].coeff /= rootCoeff;
                }
 
-               if (partId !=  rootId) {
+               if (partId != rootId) {
 
                   // Compute common divisor
                   partCoeff = waves_[partId].coeff;
@@ -549,23 +555,27 @@ namespace Pscf {
 
             } // end if (cancel) ... else ...
    
+            // end if (stars_[i].invertFlag == 0) 
          } else 
          if (stars_[i].invertFlag == 1) {
 
             // Process a pair of open stars related by inversion.
+
             // Preconditions:
             UTIL_CHECK(stars_[i].size == stars_[i+1].size);
             UTIL_CHECK(stars_[i].cancel == stars_[i+1].cancel);
+            // UTIL_CHECK(stars_[i+1].invertFlag == -1);
 
             // Identify root of this star (star i)
+            // Set the root to be the first wave in the star
             rootId = stars_[i].beginId;
             stars_[i].waveBz = waves_[rootId].indicesBz;
 
-            // Compute negation of root vector, shift to DFT mesh
+            // Compute nVec = negation of root vector, shifted to DFT mesh
             nVec.negate(waves_[rootId].indicesBz);
             (*meshPtr_).shift(nVec);
 
-            // Find negation of root wave in the next star (star i+1)
+            // Seek negation of root wave in the next star (star i+1)
             bool negationFound = false;
             for (j = stars_[i+1].beginId; j < stars_[i+1].endId; ++j) {
                if (nVec == waves_[j].indicesDft) {
@@ -575,6 +585,8 @@ namespace Pscf {
                   break;
                }
             }
+
+            // For invertFlag = =1, absence of nVec in next star is fatal
             UTIL_CHECK(negationFound);
 
             if (stars_[i].cancel) {
@@ -603,7 +615,10 @@ namespace Pscf {
    
             } // end if (cancel) ... else ...
 
-         } // end if (invertFlag == -1)
+         }  // end if (invertFlag==0) ... else if (invertFlag==1) ...
+
+         // Note: If invertFlag == -1, do nothing and continue
+         // Related stars with invertFlag == 1 and -1 are treated together
    
       } // end loop over stars
 
