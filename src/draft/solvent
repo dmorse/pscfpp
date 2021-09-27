@@ -1,0 +1,178 @@
+Proposed Changes to Implement Solvents in PsPc::
+
+1) Create new branch "solvent", push to github
+
+2) In Pspc, finish implementing the Solvent class.
+
+   Questions: 
+   1) Do we need a stress interface, or does solvent not contribute to stress?
+   2) Do we need a unit cell pointer for Solvent?
+   3) Should we move the concentration_ data member to the Pspc::Solvent ?
+
+   class Pspc::Solvent : public SolventTmpl<Propagator<D>>
+   {
+
+      // Change typedefs to refer to those in Propagator<D>, for consistency.
+      typedef typename Propagator<D>::CField Cfield
+      typedef typename Propagator<D>::WField Wfield
+
+      // Ccompute functions
+      virtual compute(const & WField wField ) = 0;
+
+      virtual setUpUnitCell(UnitCell<D> ) = 0;  (?????)
+      computeStress() = 0;                      (?????)
+      double stress(int n);                     (?????)
+
+      // New functions needed:
+
+      // Concrete get and set functions (copied verbatim from Polymer)
+      setPhi(double);
+      setMu(double);
+
+      // Create association with Mesh and allocate memory
+      void setMesh(const & Mesh mesh);
+
+      // Calls single field version internally, select correct field by monomer type
+      virtual compute(const & DArray<WField> wFields );
+
+      // If concentration field is moved from Pscf::SolventTmpl to this class.
+      const & CField concentration() const;
+
+   private:
+
+      // Existing data members (are either necessary?)
+      unitCellPtr_;                             (??????)
+      FArray<double, 6> stress_;                (??????)
+
+      // New members needed
+
+      Mesh<D>  const * meshPtr_;
+
+      // Notes: 
+      // (1) Concentration field concentration_ is now defined in SolventTmpl
+      //     Note that PolymerTmpl does not provide accessors to actual fields
+      //     For consistency, perhaps definition should be here.
+      //     If so, we should also move the accessor concentration() here.
+      // (2) Because the default CField configuration is real space, it doesn't 
+      //     appear that we need to provide a Fourier transformed version in this 
+      //     class.
+      
+      // Concentration / Boltzmann weight on real space grid (Note: CField = RField<D>)
+      CField concentration_;
+
+   }
+
+3) Write iostream inserter and extractor for Pscf::SolventTmpl.
+
+4) Modify Pscf::MixtureTmpl::readParameters to read in solvent properties.
+
+5) Modify Pspc::Mixture::setMesh to set mesh in solvent members
+
+6) Modify Pspc::Mixture::compute to include contributions from solvents
+      Call compute for all solvents
+      Add solvent contributions to concentrations
+
+7) Modify Pspc::System::computeFreeEnergy to include solvent contributions
+      Add loops over solvent ideal gas contributions for fHelmholtz_ and pressure_
+
+
+8) Modify Pspc::System:outputThermo to include solvent contributions in output
+
+-------------------------------------------------------------------------------------
+Relevant parts of current design:
+
+
+namespace Pscf {
+
+   class Species {
+       enum Ensemble
+       double   mu(), phi(), q()  // Scalar accessors
+       Ensemble ensemble()
+   }
+
+   class PolymerTmpl<Block> Species, ParamComposite {
+
+   public: 
+
+      typedefs for propagator and fields, defined in Block
+      virtual solve();
+      Accessors for blocks, vertices, propagators, etc.
+
+   private:
+
+      DArray<Block> blocks_;    (Note: Each block contains two propagators)
+
+      DArray<Vertex> vertices_;
+
+   }
+
+   template <class TP>
+   class SolventTmpl<TP> : public Species, public ParamComposite {
+
+   public:
+
+      typedef typename TP::CField CField;
+      typedef typename TP::WField WField;
+
+       // Get and set functions for monomerId and size
+
+       virtual void compute(WField const & wField) = 0;
+
+       // Consider moving this to child class Pspc::Solvent
+       const CField& concentration() const;
+       
+   }
+
+   template <class TP, class TS>
+   class MixtureTmpl :: public ParamComposite {
+
+   public:
+
+      typedef TP Polymer;
+      typedef TS Solvent;
+
+      void readParameters(....)
+
+   private:
+
+      DArray::Monomer  monomers_;
+      DArray::Polymer  polymers_;
+      DArray::Solvents solvents_;
+      int nMonomer_;
+      int nPolymer_;
+      int nSolvent_;
+
+   }
+
+}
+
+namespace Pspc {
+
+   class Polymer :: PolymerTmpl< Block<D> > {
+
+      setPhi(double)
+      setMu(double)
+      setUpUnitCell(UnitCell<D> )
+      compute(DArray<WField> )
+      computeStress()
+      double stress(int n)
+
+   }
+
+   class Mixture :: PolymerTmpl<Polymer, Solvent> {
+
+      void readParameters(...)
+      void setMesh(Mesh<D> const & mesh);
+      void setupUnitCell(UnitCell<D> const & unitCell);
+      void compute(DArray<WField> const & wFields, DArray<CField>& cFields);
+      void computeStress();
+
+   }
+
+   class System {
+
+      void computeFreeEnergy();
+      void outputThermo(...);
+
+   }
+}
