@@ -8,9 +8,11 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/chem/Species.h>
-#include <util/param/ParamComposite.h>
 #include <pspc/field/RField.h>
+#include <pscf/chem/Species.h>
+#include <pscf/mesh/Mesh.h>
+#include <pscf/chem/SolventDescriptor.h>
+#include <util/param/ParamComposite.h>
 
 namespace Pscf { 
 namespace Pspc { 
@@ -18,48 +20,88 @@ namespace Pspc {
    using namespace Util;
 
    /**
-   * Class representing a solvent species.
+   * Solver and descriptor for a solvent species.
    *
    * \ingroup Pspc_Solver_Module
    */
    template <int D>
-   class Solvent : public Species, public ParamComposite
+   class Solvent : public SolventDescriptor, public ParamComposite
    {
    public:
 
       /**
-      * Monomer concentration field.
+      * Monomer concentration field type.
       */
       typedef RField<D> CField;
 
       /** 
-      * Monomer chemical potential field.
+      * Monomer chemical potential field type.
       */
       typedef RField<D> WField;
 
       /**
       * Constructor.
       */
-      Solvent()
-      {}
+      Solvent();
    
       /**
       * Constructor.
       */
-      ~Solvent()
-      {}
+      ~Solvent();
+   
+      /**
+      * Set value of phi (volume fraction), if ensemble is closed.
+      *
+      * \throw Exception if ensemble is open
+      * \param phi desired volume fraction for this species
+      */
+      void setPhi(double phi);
+
+      /**
+      * Set value of mu (chemical potential), if ensemble is closed.
+      *
+      * \throw Exception if ensemble is open
+      * \param phi desired chemical potential for this species
+      */
+      void setMu(double mu);
+
+      /**
+      * Set association with Mesh and allocate concentration field array.
+      *
+      * \param mesh associated Mesh<D> object to describe spatial discretization.
+      */
+      void setMesh(Mesh<D> const & mesh);
+
+      /**
+      * Compute monomer concentration field and phi and/or mu.
+      *
+      * Upon return, concentration field, phi, mu, and q are all set.
+      *
+      * \param wField monomer chemical potential field of relevant monomer type.
+      */
+      void compute(WField const & wField );
    
       /**
       * Compute monomer concentration field and phi and/or mu.
       *
-      * Pure virtual function: Must be implemented by subclasses.
-      * Upon return, concentration field, phi and mu are all set.
+      * Takes array of wFields for all monomer types as an argument, but uses 
+      * only the one with the correct monomer id for this solvent, by calling
+      * compute(wFields[monomerId()]) internally. 
       *
-      * \param wField monomer chemical potential field.
-      */
-      virtual void compute(WField const & wField )
-      {};
-   
+      * \param wFields array of chemical potential fields.
+      */ 
+      void compute(DArray<WField> const & wFields);
+
+      // Inherited functions
+
+      using Pscf::SolventDescriptor::ensemble;
+
+   protected:
+
+      using Util::ParamComposite::setClassName;
+      using Pscf::SolventDescriptor::size;
+      using Pscf::SolventDescriptor::monomerId;
+
       /**
       * Get monomer concentration field for this solvent.
       */
@@ -69,8 +111,20 @@ namespace Pspc {
    private:
 
       CField concentration_;
-   
+  
+      Mesh<D> const *  meshPtr_;
+ 
+      using Pscf::Species::phi_;
+      using Pscf::Species::mu_;
+
    };
+
+   #ifndef PSPC_SOLVENT_TPP
+   // Supress implicit instantiation
+   extern template class Solvent<1>;
+   extern template class Solvent<2>;
+   extern template class Solvent<3>;
+   #endif
 
 }
 } 
