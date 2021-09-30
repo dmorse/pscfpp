@@ -42,24 +42,48 @@ namespace Pspc {
    void Solvent<D>::setMesh(Mesh<D> const & mesh)
    {
       meshPtr_ = &mesh;
-      // Allocate concentration_ array
+      cField_.allocate(mesh.dimensions());
    }
 
    /*
    * Compute concentration, q, phi or mu.
    */ 
    template <int D>
-   void Solvent<D>::compute(WField const & wField)
+   void Solvent<D>::solve(WField const & wField)
    {
-      // Setup s
-   }
+      int nx = mesh().size();
+      int i;
 
-   /*
-   * Compute solution to MDE and block concentrations.
-   */ 
-   template <int D>
-   void Solvent<D>::compute(DArray<WField> const & wFields) 
-   {  compute(wFields[monomerId()]); }
+      // Initialize to zero
+      for (i = 0; i < nx; ++i) {
+          cField_[i] = 0.0;
+      }
+
+      // Evaluate unnormalized integral and q_
+      double s = size();
+      q_ = 0.0;
+      for (i = 0; i < nx; ++i) {
+          cField_[i] = exp(-s*wField[i]);
+          q_ += cField_[i];
+      }
+      q_ = q_/double(nx);
+
+      // Compute mu_ or phi_ and prefactor
+      double prefactor;
+      if (ensemble_ == Species::Closed) {
+         prefactor_ = phi_/q_;
+         mu_ = log(prefactor);
+      } else {
+         prefactor_ = exp(mu_);
+         phi_ = prefactor*q_;
+      }
+
+      // Normalize concentration 
+      for (i = 0; i < nx; ++i) {
+          cField_[i] *= prefactor;
+      }
+    
+   }
 
 }
 }

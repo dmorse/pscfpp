@@ -73,11 +73,6 @@ namespace Pscf
       */
       Ensemble ensemble_;
    
-      /**
-      * Set true by upon return by compute() and set false by clear().
-      */
-      bool isComputed_;
-   
    };
 
    /*

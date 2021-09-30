@@ -9,6 +9,7 @@
 */
 
 #include <pspc/field/RField.h>
+#include <pspc/solvers/Propagator.h>
 #include <pscf/chem/Species.h>
 #include <pscf/mesh/Mesh.h>
 #include <pscf/chem/SolventDescriptor.h>
@@ -32,12 +33,12 @@ namespace Pspc {
       /**
       * Monomer concentration field type.
       */
-      typedef RField<D> CField;
+      typedef Propagator<D>::CField CField;
 
       /** 
       * Monomer chemical potential field type.
       */
-      typedef RField<D> WField;
+      typedef Propagator<D>::WField WField;
 
       /**
       * Constructor.
@@ -49,6 +50,13 @@ namespace Pspc {
       */
       ~Solvent();
    
+      /**
+      * Set association with Mesh and allocate concentration field array.
+      *
+      * \param mesh associated Mesh<D> object
+      */
+      void setMesh(Mesh<D> const & mesh);
+
       /**
       * Set value of phi (volume fraction), if ensemble is closed.
       *
@@ -66,57 +74,46 @@ namespace Pspc {
       void setMu(double mu);
 
       /**
-      * Set association with Mesh and allocate concentration field array.
+      * Compute monomer concentration field, q and phi and/or mu.
       *
-      * \param mesh associated Mesh<D> object to describe spatial discretization.
-      */
-      void setMesh(Mesh<D> const & mesh);
-
-      /**
-      * Compute monomer concentration field and phi and/or mu.
-      *
-      * Upon return, concentration field, phi, mu, and q are all set.
+      * Upon return, cField, phi, mu, and q are all set.
       *
       * \param wField monomer chemical potential field of relevant monomer type.
       */
-      void compute(WField const & wField );
-   
-      /**
-      * Compute monomer concentration field and phi and/or mu.
-      *
-      * Takes array of wFields for all monomer types as an argument, but uses 
-      * only the one with the correct monomer id for this solvent, by calling
-      * compute(wFields[monomerId()]) internally. 
-      *
-      * \param wFields array of chemical potential fields.
-      */ 
-      void compute(DArray<WField> const & wFields);
-
-      // Inherited functions
-
-      using Pscf::SolventDescriptor::ensemble;
-
-   protected:
-
-      using Util::ParamComposite::setClassName;
-      using Pscf::SolventDescriptor::size;
-      using Pscf::SolventDescriptor::monomerId;
-
+      void solve(WField const & wField );
+  
       /**
       * Get monomer concentration field for this solvent.
       */
       const CField& concentration() const
       {  return concentration_;  }
    
-   private:
+      // Inherited accessor functions 
+      using Pscf::Species::phi;
+      using Pscf::Species::mu;
+      using Pscf::Species::q;
+      using Pscf::Species::ensemble;
+      using Pscf::SolventDescriptor::monomerId;
+      using Pscf::SolventDescriptor::size;
 
-      CField concentration_;
-  
-      Mesh<D> const *  meshPtr_;
- 
+   protected:
+
+      // Inherited data members
       using Pscf::Species::phi_;
       using Pscf::Species::mu_;
+      using Pscf::Species::q_;
+      using Pscf::Species::ensemble_;
+      using Pscf::SolventDescriptor::monomerId_;
+      using Pscf::SolventDescriptor::size_;
 
+   private:
+
+      // Concentration field for this solvent
+      CField concentration_;
+  
+      // Pointer to associated mesh
+      Mesh<D> const *  meshPtr_;
+ 
    };
 
    #ifndef PSPC_SOLVENT_TPP
