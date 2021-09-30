@@ -27,14 +27,12 @@ namespace Pscf
       /**
       * Constructor.
       */
-      SolventDescriptor()
-      {}
+      SolventDescriptor();
    
       /**
       * Constructor.
       */
-      ~SolventDescriptor()
-      {}
+      ~SolventDescriptor();
    
       /**
       * Set the monomer id for this solvent.
@@ -51,6 +49,15 @@ namespace Pscf
       * \param size volume of solvent
       */ 
       void setSize(double size);
+
+      /**
+      * Serialize to/from archive.
+      *
+      * \param ar input or output Archive
+      * \param versionId archive format version index
+      */ 
+      template <class Archive>
+      void serialize(Archive& ar, unsigned int versionId);
   
       //@}
       /// \name Accessors (getters)
@@ -76,7 +83,6 @@ namespace Pscf
       /// Size of this block = volume / monomer reference volume. 
       double size_;
 
-      #if 0
       friend 
       std::istream& 
       operator >> (std::istream& in, SolventDescriptor &block);
@@ -84,7 +90,6 @@ namespace Pscf
       friend 
       std::ostream& 
       operator << (std::ostream& out, const SolventDescriptor &block);
-      #endif
 
    };
 
@@ -104,7 +109,6 @@ namespace Pscf
     
    // Non-inline functions
 
-   #if 0
    /**
    * istream extractor for a SolventDescriptor.
    *
@@ -133,7 +137,6 @@ namespace Pscf
       ar & monomerId_;
       ar & size_;
    }
-   #endif
     
 } 
 #endif 
