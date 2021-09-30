@@ -14,8 +14,8 @@ one in directory examples/pspc/diblock/bcc) is to invoke
 
      pscf_ps3d -e -p param -c command
 
-Here, "param" denotes the name of a parameter file and command denotes 
-the name of a command file.  The -e option causes the parameter file 
-to be echoed to standard output as it is read.  To perform a 2D (e.g.,
-a hexagonal phase) or 1D calculation (a lamellar phase), instead invoke 
+Here, "param" denotes the name of a parameter file and "command" denotes 
+the name of a command file.  The -e option causes the parameter file to 
+be echoed to standard output as it is read.  To perform a 2D (e.g., a 
+hexagonal phase) or 1D calculation (a lamellar phase), instead invoke 
 the executable pscf_ps2d or pscf_ps1d, respectively. 
