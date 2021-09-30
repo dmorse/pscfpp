@@ -77,7 +77,6 @@ namespace Fd1d
             wFields0_[i].allocate(nx);
          }
       }
-
       if (!wFields1_.isAllocated()) {
          wFields1_.allocate(nm);
          for (int i = 0; i < nm; ++i) {
@@ -86,6 +85,12 @@ namespace Fd1d
       }
 
       initializeHistory(wFields0_, wFields1_);
+
+      // Open log summary file
+      std::string fileName = baseFileName_;
+      fileName += ".log";
+      fileMaster().openOutputFile(fileName, logFile_);
+
    };
 
    /**
@@ -145,18 +150,22 @@ namespace Fd1d
    */
    void Sweep::getSolution() 
    {
+      // Assign current wFields to state(0)
       assignFields(state(0), wFields());
+
       if (homogeneousMode_ >= 0) {
          comparison_.compute(homogeneousMode_);
       }
+
+      // Output information about solution
       int i = nAccept() - 1;
       std::string fileName = baseFileName_;
       fileName += toString(i);
-      outputSolution(fileName, s(0));
-      // outputSummary(outFile, i, s(0));
+      outputSolution(fileName);
+      outputSummary(logFile_);
    };
 
-   void Sweep::outputSolution(std::string const & fileName, double s)
+   void Sweep::outputSolution(std::string const & fileName)
    {
       std::ofstream out;
       std::string outFileName;
@@ -185,15 +194,17 @@ namespace Fd1d
       fieldIo_.writeFields(wFields(), outFileName);
    }
 
-   void Sweep::outputSummary(std::ostream& out, int i, double s)
+   void Sweep::outputSummary(std::ostream& out)
    {
+      int i = nAccept() - 1;
+      double sNew = s(0);
       if (homogeneousMode_ == -1) {
-      out << Int(i,5) << Dbl(s)
-          << Dbl(system().fHelmholtz(),16)
-          << Dbl(system().pressure(),16)
-          << std::endl;
+         out << Int(i,5) << Dbl(sNew)
+             << Dbl(system().fHelmholtz(),16)
+             << Dbl(system().pressure(),16)
+             << std::endl;
       } else {
-         out << Int(i,5) << Dbl(s)
+         out << Int(i,5) << Dbl(sNew)
              << Dbl(system().fHelmholtz(),16)
              << Dbl(system().pressure(),16);
          if (homogeneousMode_ == 0) {

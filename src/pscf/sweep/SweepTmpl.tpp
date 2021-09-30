@@ -8,20 +8,24 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-//#include "SweepTmpl.h"
+#include "SweepTmpl.h"
 
 namespace Pscf {
 
    using namespace Util;
 
-   // Constructor
+   /*
+   * Constructor
+   */
    template <class State>
    SweepTmpl<State>::SweepTmpl()
     : ns_(0),
       baseFileName_()
    {  setClassName("SweepTmpl"); }
 
-   // Destructor
+   /*
+   * Destructor.
+   */
    template <class State>
    SweepTmpl<State>::~SweepTmpl()
    {}
@@ -39,8 +43,6 @@ namespace Pscf {
    template <class State>
    void SweepTmpl<State>::sweep()
    {
-
-      // Note: This was initially called solve
 
       // Compute and output ds
       double ds = 1.0/double(ns_);
@@ -75,7 +77,7 @@ namespace Pscf {
             std::cout << std::endl;
             std::cout << "Attempt s = " << sNew << std::endl;
 
-            // Create a guess for adjustable state variables by continuation
+            // Set a guess for adjustable state variables by continuation
             setGuess(sNew);
 
             // Set non-adjustable system parameters to new values
@@ -92,7 +94,7 @@ namespace Pscf {
 
                // Decrease ds by half
                ds *= 0.50;
-               if (ds < 0.2*ds0) {
+               if (ds < 0.1*ds0) {
                   UTIL_THROW("Step size too small in sweep");
                }
 
@@ -109,15 +111,15 @@ namespace Pscf {
       }
    }
 
-   /**
-   * Initialize history variables.
+   /*
+   * Initialize history variables (must be called by setup function).
    */
    template <class State>
    void SweepTmpl<State>::initializeHistory(State& a, State& b)
    {
       nAccept_ = 0;
       historySize_ = 0;
-      for (int i = 0; i < nHistory - 1; ++i) {
+      for (int i = 0; i < nHistory; ++i) {
          sHistory_[i] = 0.0;
       }
       stateHistory_[0] = &a;
@@ -126,13 +128,13 @@ namespace Pscf {
    }
 
    template <class State>
-   void SweepTmpl<State>::accept(double s)
+   void SweepTmpl<State>::accept(double sNew)
    {
       // Shift elements of sHistory_
       for (int i = nHistory - 1; i > 0; --i) {
          sHistory_[i] = sHistory_[i-1];
       }
-      sHistory_[0] = s;
+      sHistory_[0] = sNew;
 
       // Shift elements of stateHistory_ (pointers to stored solutions)
       State* temp;
@@ -143,12 +145,12 @@ namespace Pscf {
       stateHistory_[0] = temp;
 
       // Update counters
-      ++ nAccept_;
+      ++nAccept_;
       if (historySize_ < nHistory) {
          ++historySize_;
       }
 
-      // Call getSolution to update state(0)
+      // Call getSolution to copy system state to state(0).
       getSolution();
 
    }

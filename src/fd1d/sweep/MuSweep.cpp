@@ -70,11 +70,13 @@ namespace Fd1d
       }
    }
 
-   void MuSweep::outputSummary(std::ostream& out, int i, double s) 
+   void MuSweep::outputSummary(std::ostream& out) 
    {
+      int i = nAccept() - 1;
       int np = mixture().nPolymer();
+      double sNew = s(0);
       if (homogeneousMode_ == -1) {
-         out << Dbl(s) 
+         out << Dbl(sNew) 
              << Dbl(system().fHelmholtz(), 20, 10)
              << Dbl(system().pressure(), 20, 10);
          for (i = 0; i < np - 1; ++i) {
@@ -82,7 +84,7 @@ namespace Fd1d
          }
          out << std::endl;
       } else {
-         out << Dbl(s,10);
+         out << Dbl(sNew, 10);
          if (homogeneousMode_ == 0) {
             double dF = system().fHelmholtz() 
                       - system().homogeneous().fHelmholtz();

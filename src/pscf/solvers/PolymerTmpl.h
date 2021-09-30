@@ -164,6 +164,16 @@ namespace Pscf
 
    protected:
 
+      /**
+      * Make a plan for order in which propagators should be computed.
+      *
+      * The algorithm creates a plan for computing propagators in an
+      * that guarantees that the inital conditions required for each
+      * propagator are known before it is processed. The algorithm is
+      * works for any acyclic branched block copolymer. This function
+      * is called in the default implementation of readParameters, 
+      * and must be called the readParameters method of any subclass.
+      */
       virtual void makePlan();
 
    private:

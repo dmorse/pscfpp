@@ -59,18 +59,16 @@ namespace Fd1d
    {
       double L = length0_ + s*dLength_;
       mixture().polymer(polymerId_).block(blockId_).setLength(L);
-      //std::cout <<" s        = " <<  s 
-      //          << " Polymer = " << mixture().polymer(polymerId_).length() 
-      //          <<" Block    = " << mixture().polymer(polymerId_).block(blockId_).length() 
-      //          << '\n';
    }
 
-   void LengthSweep::outputSummary(std::ostream& out, int i, double s) 
+   void LengthSweep::outputSummary(std::ostream& out) 
    {   
       #if 0
+      sNew = s(0);
+      int i = nAccept() - 1;
       int np = mixture().nPolymer();
       if (homogeneousMode_ == -1) {
-         out << Dbl(s) 
+         out << Dbl(sNew) 
              << Dbl(system().fHelmholtz(), 20, 10)
              << Dbl(system().pressure(), 20, 10);
          for (i = 0; i < np - 1; ++i) {
@@ -78,7 +76,7 @@ namespace Fd1d
          }
          out << std::endl;
       } else {
-         out << Dbl(s,10);
+         out << Dbl(sNew,10);
          if (homogeneousMode_ == 0) {
             double dF = system().fHelmholtz() 
                       - system().homogeneous().fHelmholtz();

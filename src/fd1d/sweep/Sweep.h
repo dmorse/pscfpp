@@ -73,18 +73,15 @@ namespace Fd1d
       * Output information after obtaining a converged solution.
       *
       * \param stateFileName base name of output files
-      * \param s value of path length parameter s
       */
-      virtual void outputSolution(std::string const & stateFileName, double s);
+      virtual void outputSolution(std::string const & stateFileName);
 
       /**
       * Output data to a running summary.
       *
-      * \param outFile  output file, open for writing
-      * \param i  integer index
-      * \param s  value of path length parameter s
+      * \param outFile  output log file, open for writing
       */
-      virtual void outputSummary(std::ostream& outFile, int i, double s);
+      virtual void outputSummary(std::ostream& outFile);
 
    protected:
 
@@ -141,6 +138,9 @@ namespace Fd1d
 
       /// FieldIo object for writing output files
       FieldIo fieldIo_;
+
+      // Summary log file
+      std::ofstream logFile_;
 
       /// Current solution 
       DArray<System::WField> wFields0_;

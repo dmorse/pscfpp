@@ -58,15 +58,15 @@ namespace Pscf {
       std::string baseFileName_;
 
       /**
-      * Get reference to stored solution, with i=0 being current state.
+      * Get reference to stored solution, with i=0 being most recent.
       *
-      * Call state(i) to return the ith from most recent solution.
+      * Call state(i) to return the ith from most recent converged solution.
       */
       State& state(int i)
       { return *stateHistory_[i]; }
 
       /**
-      * Get value of s for stored solution, with i=0 being current state.
+      * Get the value of s for a stored solution, with i=0 most recent.
       *
       * Call s(i) to return the ith from most recent solution.
       */
@@ -80,7 +80,7 @@ namespace Pscf {
       {  return historySize_; }
 
       /**
-      * Get the number of accepted solutions thus far in this sweep.
+      * Get the number of converged solutions accepted thus far in this sweep.
       */ 
       int nAccept()
       {  return nAccept_; }
@@ -95,7 +95,7 @@ namespace Pscf {
       /**
       * Setup operation at the beginning of a sweep.
       *
-      * Must call initializeHistory.
+      * Implementations of this function must call initializeHistory.
       */
       virtual void setup() = 0;
 
@@ -127,11 +127,11 @@ namespace Pscf {
       virtual void reset() = 0;
 
       /**
-      * Update state(0) and output data after successful convergence
+      * Update state(0) and output data after successful solution.
       *
-      * The implementation of this function should copy the current 
-      * system state into state(0) and output any desired information
-      * about the current converged solution.
+      * This function is called by accept(). The implementation of this 
+      * function should copy the current system state into state(0) and 
+      * output any desired information about the current solution.
       */
       virtual void getSolution() = 0;
 
