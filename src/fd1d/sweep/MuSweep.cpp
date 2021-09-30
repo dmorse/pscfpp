@@ -59,7 +59,7 @@ namespace Fd1d
    /*
    * Set state for specified value of s.
    */
-   void MuSweep::setState(double s)
+   void MuSweep::setParameters(double s)
    {
       double mu;
       int np = mixture().nPolymer();

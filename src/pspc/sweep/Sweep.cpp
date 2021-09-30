@@ -40,7 +40,7 @@ namespace Pspc {
    *
    * Return 0 for sucessful solution, 1 on failure to converge.
    */
-   int solve() 
+   int solve(bool isContinuation) 
    {  
       return 0; 
    };

@@ -54,7 +54,7 @@ namespace Fd1d
    /*
    * Set state for specified value of s.
    */
-   void LengthSweep::setState(double s)
+   void LengthSweep::setParameters(double s)
    {
       double L = length0_ + s*dLength_;
       mixture().polymer(polymerId_).block(blockId_).setLength(L);

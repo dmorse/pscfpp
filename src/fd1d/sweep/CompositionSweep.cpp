@@ -58,7 +58,7 @@ namespace Fd1d
    /*
    * Set state for specified value of s.
    */
-   void CompositionSweep::setState(double s)
+   void CompositionSweep::setParameters(double s)
    {
       double phi;
       int np = mixture().nPolymer();

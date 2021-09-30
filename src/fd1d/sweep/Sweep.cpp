@@ -104,7 +104,8 @@ namespace Fd1d
       std::cout << std::endl;
       std::cout << "Begin s = " << s << std::endl;
       bool isContinuation = false; // False on first step
-      error = system().iterator().solve(isContinuation);
+      //error = system().iterator().solve(isContinuation);
+      error = solve(isContinuation);
       if (error) {
          UTIL_THROW("Failure to converge initial state of sweep");
       } else {
@@ -148,14 +149,16 @@ namespace Fd1d
             }
 
             // Attempt solution
-            setState(s+ds);
+            setParameters(s+ds);
             isContinuation = true;
-            error = system().iterator().solve(isContinuation);
+            error = solve(isContinuation);
+            // error = system().iterator().solve(isContinuation);
 
             if (error) {
 
                // Upon failure, reset to fields from last converged solution
-               assignFields(wFields(), wFields0_);
+               // assignFields(wFields(), wFields0_);
+               reset();
 
                // Decrease ds by half
                ds *= 0.50;
@@ -166,8 +169,10 @@ namespace Fd1d
             } else {
 
                // Upon success, save new field
-               s1 = s;
                nPrev = 1;
+               s1 = s;
+               s += ds;
+               ++i;
                assignFields(wFields1_, wFields0_);
                assignFields(wFields0_, wFields());
 
@@ -177,8 +182,6 @@ namespace Fd1d
                }
 
                // Update s and output
-               s += ds;
-               ++i;
                fileName = baseFileName_;
                fileName += toString(i);
                outputSolution(fileName, s);
@@ -191,6 +194,103 @@ namespace Fd1d
          }
       }
    }
+
+   /**
+   * Setup operation at beginning sweep.
+   *
+   * Must call initializeHistory.
+   */
+   void Sweep::setup() 
+   {
+      int nm = mixture().nMonomer();
+      int nx = domain().nx();
+      UTIL_CHECK(nm > 0);
+      UTIL_CHECK(nx > 0);
+
+      // Allocate memory for solutions
+      if (!wFields0_.isAllocated()) {
+         wFields0_.allocate(nm);
+         for (int i = 0; i < nm; ++i) {
+            wFields0_[i].allocate(nx);
+         }
+      }
+      if (!wFields1_.isAllocated()) {
+         wFields1_.allocate(nm);
+         for (int i = 0; i < nm; ++i) {
+            wFields1_[i].allocate(nx);
+         }
+      }
+   };
+
+   /**
+   * Set non-adjustable system parameters to new values.
+   *
+   * \param s path length coordinate, in range [0,1]
+   */
+   // void Sweep::setParameters(double s) {};
+
+   /**
+   * Create guess for adjustable variables by continuation.
+   */
+   void Sweep::setGuess(double s) 
+   {
+      #if 0
+      // Setup guess for fields
+      if (nPrev == 0) {
+         std::cout << "Zeroth order continuation" << std::endl;
+      } else {
+         // std::cout << "1st order continuation" << std::endl;
+         double f1 = ds/(s - s1);
+         double f0 = 1.0 + f1;
+         int i, j;
+         for (i = 0; i < nm; ++i) {
+            for (j = 0; j < nx; ++j) {
+               wFields()[i][j] = f0*wFields0_[i][j] - f1*wFields1_[i][j];
+            }
+         }
+      }
+      #endif
+   };
+
+   /**
+   * Call current iterator to solve SCFT problem.
+   *
+   * Return 0 for sucessful solution, 1 on failure to converge.
+   */
+   int Sweep::solve(bool isContinuation) 
+   {  return system().iterator().solve(isContinuation); };
+
+   /**
+   * Reset system to previous solution after iterature failure.
+   *
+   * The implementation of this function should reset the system state
+   * to correspond to that stored in state(0).
+   */
+   void Sweep::reset() 
+   {
+      assignFields(wFields(), wFields0_);
+   };
+
+   /**
+   * Update state(0) and output data after successful convergence
+   *
+   * The implementation of this function should copy the current 
+   * system state into state(0) and output any desired information
+   * about the current converged solution.
+   */
+   void Sweep::getSolution() 
+   {
+      assignFields(wFields0_, wFields());
+      if (homogeneousMode_ >= 0) {
+         comparison_.compute(homogeneousMode_);
+      }
+      #if 0
+      fileName = baseFileName_;
+      fileName += toString(i);
+      outputSolution(fileName, s);
+      outputSummary(outFile, i, s);
+      #endif
+   };
 
    void Sweep::outputSolution(std::string const & fileName, double s)
    {

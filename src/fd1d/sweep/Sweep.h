@@ -65,16 +65,11 @@ namespace Fd1d
       virtual void readParameters(std::istream& in);
 
       /**
-      * Setup operation at beginning sweep.
-      */
-      virtual void setup(){};
-
-      /**
       * Set system parameters.
       *
       * \param s path length coordinate, in range [0,1]
       */
-      virtual void setState(double s) = 0;
+      // virtual void setState(double s) = 0;
 
       /**
       * Output information after obtaining a converged solution.
@@ -108,6 +103,49 @@ namespace Fd1d
 
       /// Base name for output files
       std::string baseFileName_;
+
+      /**
+      * Setup operation at beginning sweep.
+      *
+      * Must call initializeHistory.
+      */
+      virtual void setup();
+
+      /**
+      * Set non-adjustable system parameters to new values.
+      *
+      * \param s path length coordinate, in range [0,1]
+      */
+      virtual void setParameters(double s) = 0;
+
+      /**
+      * Create guess for adjustable variables by continuation.
+      */
+      virtual void setGuess(double s);
+
+      /**
+      * Call current iterator to solve SCFT problem.
+      *
+      * Return 0 for sucessful solution, 1 on failure to converge.
+      */
+      virtual int solve(bool isContinuation);
+
+      /**
+      * Reset system to previous solution after iterature failure.
+      *
+      * The implementation of this function should reset the system state
+      * to correspond to that stored in state(0).
+      */
+      virtual void reset();
+
+      /**
+      * Update state(0) and output data after successful convergence
+      *
+      * The implementation of this function should copy the current 
+      * system state into state(0) and output any desired information
+      * about the current converged solution.
+      */
+      virtual void getSolution();
 
    private:
 

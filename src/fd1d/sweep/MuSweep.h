@@ -60,7 +60,7 @@ namespace Fd1d
       *
       * \param s path length coordinate, in [0,1]
       */
-      virtual void setState(double s);
+      virtual void setParameters(double s);
 
       /**
       * Output data to a running summary.

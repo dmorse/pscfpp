@@ -62,7 +62,7 @@ namespace Pspc {
       *
       * Return 0 for sucessful solution, 1 on failure to converge.
       */
-      virtual int solve();
+      virtual int solve(bool isContinuation);
 
       /**
       * Reset system to previous solution after iterature failure.
@@ -85,7 +85,7 @@ namespace Pspc {
 
       DArray<double> stateA_;
       DArray<double> stateB_;
-      DArray<double> stateC_;
+      // DArray<double> stateC_;
 
    };
 

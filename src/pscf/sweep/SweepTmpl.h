@@ -116,7 +116,7 @@ namespace Pscf {
       *
       * Return 0 for sucessful solution, 1 on failure to converge.
       */
-      virtual int solve() = 0;
+      virtual int solve(bool isContinuation) = 0;
 
       /**
       * Reset system to previous solution after iterature failure.
