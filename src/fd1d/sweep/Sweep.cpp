@@ -59,7 +59,7 @@ namespace Fd1d
       readOptional<int>(in, "homogeneousMode", homogeneousMode_);
    }
 
-   void Sweep::solve()
+   void Sweep::sweep()
    {
 
       int nm = mixture().nMonomer();

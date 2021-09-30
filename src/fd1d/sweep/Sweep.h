@@ -96,7 +96,7 @@ namespace Fd1d
       /**
       * Iterate to solution.
       */
-      virtual void solve();
+      virtual void sweep();
 
    protected:
 
