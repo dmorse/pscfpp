@@ -1,3 +1,6 @@
+#ifndef PSCF_SWEEP_TMPL_TPP
+#define PSCF_SWEEP_TMPL_TPP
+
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
@@ -5,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "SweepTmpl.h"
+//#include "SweepTmpl.h"
 
 namespace Pscf {
 
@@ -146,8 +149,9 @@ namespace Pscf {
       }
 
       // Call getSolution to update state(0)
-      getSolution(state(0));
+      getSolution();
 
    }
 
 } // namespace Pscf
+#endif

@@ -32,7 +32,7 @@ namespace Pspc {
    /**
    * Create guess for adjustable variables by continuation.
    */
-   void Sweep::setGuess(double s) 
+   void Sweep::setGuess(double sNew) 
    {};
 
    /**

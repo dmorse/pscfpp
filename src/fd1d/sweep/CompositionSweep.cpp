@@ -49,6 +49,7 @@ namespace Fd1d
    */
    void CompositionSweep::setup()
    {
+      Sweep::setup();
       int np = mixture().nPolymer();
       for (int i = 0; i < np; ++i) {
          phi0_[i] = mixture().polymer(i).phi();

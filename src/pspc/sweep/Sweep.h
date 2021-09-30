@@ -55,7 +55,7 @@ namespace Pspc {
       /**
       * Create guess for adjustable variables by continuation.
       */
-      virtual void setGuess(double s);
+      virtual void setGuess(double sNew);
 
       /**
       * Call current iterator to solve SCFT problem.

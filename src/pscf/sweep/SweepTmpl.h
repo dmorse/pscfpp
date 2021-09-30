@@ -109,7 +109,7 @@ namespace Pscf {
       /**
       * Create guess for adjustable variables by continuation.
       */
-      virtual void setGuess(double s) = 0;
+      virtual void setGuess(double sNew) = 0;
 
       /**
       * Call current iterator to solve SCFT problem.
@@ -163,4 +163,5 @@ namespace Pscf {
    };
 
 } // namespace Pscf
+#include "SweepTmpl.tpp"
 #endif

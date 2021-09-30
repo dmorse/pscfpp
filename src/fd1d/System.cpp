@@ -267,7 +267,7 @@ namespace Fd1d
          if (command == "SWEEP") {
             UTIL_CHECK(hasSweep_);
             UTIL_CHECK(sweepPtr_);
-            sweepPtr_->solve();
+            sweepPtr_->sweep();
          } else 
          if (command == "WRITE_W") {
             inBuffer >> filename;

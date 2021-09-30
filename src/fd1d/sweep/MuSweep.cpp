@@ -49,6 +49,7 @@ namespace Fd1d
    */
    void MuSweep::setup()
    {
+      Sweep::setup();
       int np = mixture().nPolymer();
       for (int i = 0; i < np; ++i) {
          UTIL_CHECK(mixture().polymer(i).ensemble() == Species::Open);

@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/param/ParamComposite.h>        // base class
+#include <pscf/sweep/SweepTmpl.h>             // base class
 #include <fd1d/SystemAccess.h>                // base class
 #include <fd1d/misc/HomogeneousComparison.h>  // member
 #include <fd1d/misc/FieldIo.h>                // member
@@ -27,10 +27,15 @@ namespace Fd1d
    *
    * \ingroup Fd1d_Sweep_Module
    */
-   class Sweep : public ParamComposite, public SystemAccess
+   class Sweep : public SweepTmpl<DArray<System::WField> >, 
+                 public SystemAccess
    {
 
    public:
+
+      typedef DArray<System::WField> State;
+
+      typedef SweepTmpl<State>  Base;
 
       /**
       * Default Constructor.
@@ -65,13 +70,6 @@ namespace Fd1d
       virtual void readParameters(std::istream& in);
 
       /**
-      * Set system parameters.
-      *
-      * \param s path length coordinate, in range [0,1]
-      */
-      // virtual void setState(double s) = 0;
-
-      /**
       * Output information after obtaining a converged solution.
       *
       * \param stateFileName base name of output files
@@ -88,21 +86,10 @@ namespace Fd1d
       */
       virtual void outputSummary(std::ostream& outFile, int i, double s);
 
-      /**
-      * Iterate to solution.
-      */
-      virtual void sweep();
-
    protected:
-
-      /// Number of steps. 
-      int ns_;
 
       /// Mode for comparison to homogeneous system (none -> -1)
       int homogeneousMode_;
-
-      /// Base name for output files
-      std::string baseFileName_;
 
       /**
       * Setup operation at beginning sweep.
@@ -116,7 +103,7 @@ namespace Fd1d
       *
       * \param s path length coordinate, in range [0,1]
       */
-      virtual void setParameters(double s) = 0;
+      virtual void setParameters(double s);
 
       /**
       * Create guess for adjustable variables by continuation.

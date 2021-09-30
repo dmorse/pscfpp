@@ -48,6 +48,7 @@ namespace Fd1d
    */
    void LengthSweep::setup()
    {
+      Sweep::setup();
       length0_ = mixture().polymer(polymerId_).block(blockId_).length();
    }
 
