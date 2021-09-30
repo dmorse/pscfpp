@@ -9,7 +9,8 @@
 */
 
 #include "Propagator.h"
-#include <pscf/solvers/SolventTmpl.h>
+#include <pscf/chem/SolventDescriptor.h>
+#include <fd1d/solvers/Propagator.h>
 
 namespace Pscf { 
 namespace Fd1d
@@ -20,7 +21,7 @@ namespace Fd1d
    *
    * \ingroup Fd1d_Solver_Module
    */
-   class Solvent : public SolventTmpl<Propagator>
+   class Solvent : public SolventDescriptor
    {
    public:
 
@@ -56,6 +57,7 @@ namespace Fd1d
       * \param wField monomer chemical potential field
       */
       void compute(WField const & wField);
+
       //void compute(const DArray<Block::WField>& wFields);
 
    };

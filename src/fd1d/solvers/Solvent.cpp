@@ -15,7 +15,7 @@ namespace Fd1d
    * Constructor
    */
    Solvent::Solvent()
-   {  setClassName("Solvent"); }
+   {}
 
    /*
    * Destructor
