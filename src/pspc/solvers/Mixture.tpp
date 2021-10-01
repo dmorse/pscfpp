@@ -124,18 +124,18 @@ namespace Pspc
             polymer(i).compute(wFields);
          }
    
-         // Accumulate monomer concentration fields
-         double phi;
+         // Accumulate block contributions to monomer concentrations
+         int monomerId;
          for (i = 0; i < nPolymer(); ++i) {
-            phi = polymer(i).phi();
             for (j = 0; j < polymer(i).nBlock(); ++j) {
-               int monomerId = polymer(i).block(j).monomerId();
+               monomerId = polymer(i).block(j).monomerId();
                UTIL_CHECK(monomerId >= 0);
                UTIL_CHECK(monomerId < nm);
                CField& monomerField = cFields[monomerId];
                CField const & blockField = polymer(i).block(j).cField();
+               // Loop over grid points
                for (k = 0; k < nx; ++k) {
-                  monomerField[k] += phi * blockField[k];
+                  monomerField[k] += blockField[k];
                }
             }
          }
@@ -149,9 +149,16 @@ namespace Pspc
          int monomerId;
          for (i = 0; i < nSolvent(); ++i) {
             monomerId = solvent(i).monomerId();
+            UTIL_CHECK(monomerId >= 0);
+            UTIL_CHECK(monomerId < nm);
+
+            // Compute solvent concentration
             solvent(i).compute(wFields[monomerId]);
+
+            // Add to relevant monomer concentration
             CField& monomerField = cFields[monomerId];
             CField const & solventField = solvent(i).cField();
+            // Loop over grid points
             for (k = 0; k < nx; ++k) {
                monomerField[k] += solventField[k];
             }
@@ -160,6 +167,7 @@ namespace Pspc
       }
 
    }
+
 
    /*
    * Compute total stress.
