@@ -16,11 +16,27 @@ namespace Pspc {
 
    template <int D>
    Solvent<D>::Solvent()
-   {  setClassName("Solvent");}
+   {}
 
    template <int D>
    Solvent<D>::~Solvent()
    {}
+
+   template <int D>
+   void Solvent<D>::readParameters(std::istream& in)
+   {
+      read<int>(in, "monomerId", monomerId_);
+      read<double>(in, "size", size_);
+
+      // Read ensemble and phi or mu
+      ensemble_ = Species::Closed;
+      readOptional<Species::Ensemble>(in, "ensemble", ensemble_);
+      if (ensemble_ == Species::Closed) {
+         read(in, "phi", phi_);
+      } else {
+         read(in, "mu", mu_);
+      }
+   }
 
    template <int D>
    void Solvent<D>::setPhi(double phi)
@@ -38,6 +54,23 @@ namespace Pspc {
       mu_ = mu; 
    }
 
+   /*
+   * Set the id for this solvent.
+   */ 
+   template <int D>
+   void Solvent<D>::setMonomerId(int monomerId)
+   {  monomerId_ = monomerId; }
+  
+   /*
+   * Set the id for this solvent.
+   */ 
+   template <int D>
+   void Solvent<D>::setSize(double size)
+   {  size_ = size; }
+
+   /*
+   * Set association with Mesh and allocate concentration field.
+   */
    template <int D>
    void Solvent<D>::setMesh(Mesh<D> const & mesh)
    {
@@ -49,9 +82,9 @@ namespace Pspc {
    * Compute concentration, q, phi or mu.
    */ 
    template <int D>
-   void Solvent<D>::solve(WField const & wField)
+   void Solvent<D>::compute(WField const & wField)
    {
-      int nx = mesh().size();
+      int nx = meshPtr_->size();
       int i;
 
       // Initialize to zero
@@ -71,10 +104,10 @@ namespace Pspc {
       // Compute mu_ or phi_ and prefactor
       double prefactor;
       if (ensemble_ == Species::Closed) {
-         prefactor_ = phi_/q_;
+         prefactor = phi_/q_;
          mu_ = log(prefactor);
       } else {
-         prefactor_ = exp(mu_);
+         prefactor = exp(mu_);
          phi_ = prefactor*q_;
       }
 
@@ -83,6 +116,32 @@ namespace Pspc {
           cField_[i] *= prefactor;
       }
     
+   }
+
+   /*
+   * Extract a Solvent<D> from an istream.
+   */
+   template <int D>
+   std::istream& operator >> (std::istream& in, Solvent<D> & solvent)
+   {
+      in >> solvent.monomerId_;
+      in >> solvent.size_;
+      return in;
+   }
+
+   /*
+   * Output a Solvent<D> to an ostream, without line breaks.
+   */
+   template <int D>
+   std::ostream& operator << (std::ostream& out, const Solvent<D> & solvent)
+   {
+      out << solvent.monomerId_;
+      out << "  ";
+      out.setf(std::ios::scientific);
+      out.width(16);
+      out.precision(8);
+      out << solvent.size_;
+      return out;
    }
 
 }

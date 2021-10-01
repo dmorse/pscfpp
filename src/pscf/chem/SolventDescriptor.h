@@ -9,6 +9,7 @@
 */
 
 #include <pscf/chem/Species.h>
+#include <iostream>
 
 namespace Pscf
 { 
@@ -50,6 +51,7 @@ namespace Pscf
       */ 
       void setSize(double size);
 
+      #if 0
       /**
       * Serialize to/from archive.
       *
@@ -58,6 +60,7 @@ namespace Pscf
       */ 
       template <class Archive>
       void serialize(Archive& ar, unsigned int versionId);
+      #endif
   
       //@}
       /// \name Accessors (getters)
@@ -75,7 +78,7 @@ namespace Pscf
 
       //@}
 
-   private:
+   protected:
   
       /// Identifier for the associated monomer type.
       int monomerId_;
@@ -128,7 +131,8 @@ namespace Pscf
    std::ostream& 
    operator << (std::ostream& out, const SolventDescriptor &block);
 
-   /*
+   #if 0
+   /**
    * Serialize to/from an archive.
    */
    template <class Archive>
@@ -137,6 +141,7 @@ namespace Pscf
       ar & monomerId_;
       ar & size_;
    }
+   #endif
     
 } 
 #endif 

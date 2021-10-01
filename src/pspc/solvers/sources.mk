@@ -1,10 +1,11 @@
 
 pspc_solvers_= \
-  pspc/solvers/Block.cpp \
   pspc/solvers/Propagator.cpp \
+  pspc/solvers/Block.cpp \
   pspc/solvers/Polymer.cpp \
-  pspc/solvers/Solvent.cpp \
-  pspc/solvers/Mixture.cpp 
+  pspc/solvers/Mixture.cpp
+
+  #pspc/solvers/Solvent.cpp \
 
 pspc_solvers_SRCS=\
      $(addprefix $(SRC_DIR)/, $(pspc_solvers_))

@@ -32,12 +32,12 @@ namespace Pscf
       /**
       * Polymer species solver type.
       */
-      typedef TP Polymer;
+      // typedef TP Polymer;
 
       /**
       * Solvent species solver type.
       */
-      typedef TS Solvent;
+      // typedef TS Solvent;
 
       // Public member functions
 
@@ -73,14 +73,16 @@ namespace Pscf
       *
       * \param id integer polymer species index (0 <= id < nPolymer)
       */
-      Polymer& polymer(int id);
+      //Polymer& polymer(int id);
+      TP& polymer(int id);
 
       /**
       * Set a solvent solver object.
       *
       * \param id integer solvent species index (0 <= id < nSolvent)
       */
-      Solvent& solvent(int id);
+      //Solvent& solvent(int id);
+      TS& solvent(int id);
 
       //@}
       /// \name Accessors (by value)
@@ -115,14 +117,16 @@ namespace Pscf
       *
       * Array capacity = nPolymer.
       */
-      DArray<Polymer> polymers_;
+      //DArray<Polymer> polymers_;
+      DArray<TP> polymers_;
 
       /**
       * Array of solvent species objects.
       *
       * Array capacity = nSolvent.
       */
-      DArray<Solvent> solvents_;
+      //DArray<Solvent> solvents_;
+      DArray<TS> solvents_;
 
       /**
       * Number of monomer types.
@@ -196,28 +200,47 @@ namespace Pscf
    template <class TP, class TS>
    void MixtureTmpl<TP,TS>::readParameters(std::istream& in)
    {
-      // Monomers
+      // Read monomers
       read<int>(in, "nMonomer", nMonomer_);
       monomers_.allocate(nMonomer_);
       readDArray< Monomer >(in, "monomers", monomers_, nMonomer_);
 
-      // Polymers 
+      // Read polymers 
+      nPolymer_ = 0;
+      nSolvent_ = 0;
       read<int>(in, "nPolymer", nPolymer_);
-      polymers_.allocate(nPolymer_);
-      for (int i = 0; i < nPolymer_; ++i) {
-         readParamComposite(in, polymers_[i]);
+      readOptional<int>(in, "nSolvent", nSolvent_);
+
+      // Read polymers
+      if (nPolymer_ > 0) {
+
+         polymers_.allocate(nPolymer_);
+         for (int i = 0; i < nPolymer_; ++i) {
+            readParamComposite(in, polymers_[i]);
+         }
+   
+         // Set statistical segment lengths for all blocks
+         double kuhn;
+         int monomerId;
+         for (int i = 0; i < nPolymer_; ++i) {
+            for (int j = 0; j < polymer(i).nBlock(); ++j) {
+               monomerId = polymer(i).block(j).monomerId();
+               kuhn = monomer(monomerId).step();
+               polymer(i).block(j).setKuhn(kuhn);
+            }
+         }
+
       }
 
-      // Set statistical segment lengths for all blocks
-      double kuhn;
-      int monomerId;
-      for (int i = 0; i < nPolymer_; ++i) {
-         for (int j = 0; j < polymer(i).nBlock(); ++j) {
-            monomerId = polymer(i).block(j).monomerId();
-            kuhn = monomer(monomerId).step();
-            polymer(i).block(j).setKuhn(kuhn);
+      // Read solvents
+      if (nSolvent_ > 0) {
+         solvents_.allocate(nSolvent_);
+         // readDArray< TS >(in, "solvents", solvents_, nSolvent_);
+         for (int i = 0; i < nPolymer_; ++i) {
+            readParamComposite(in, polymers_[i]);
          }
       }
+
    }
 
 }

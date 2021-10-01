@@ -12,8 +12,11 @@
 #include "Solvent.h"
 #include <pscf/solvers/MixtureTmpl.h>
 #include <pscf/inter/Interaction.h>
+#include <pscf/chem/Monomer.h>
 #include <util/containers/DArray.h>
 #include <util/containers/FArray.h>
+
+#include <iostream>
 
 namespace Pscf { 
    template <int D> class Mesh; 
@@ -157,6 +160,7 @@ namespace Pspc
       using MixtureTmpl< Polymer<D>, Solvent<D> >::nPolymer;
       using MixtureTmpl< Polymer<D>, Solvent<D> >::nSolvent;
       using MixtureTmpl< Polymer<D>, Solvent<D> >::polymer;
+      using MixtureTmpl< Polymer<D>, Solvent<D> >::solvent;
 
    protected:
 

@@ -9,6 +9,8 @@
 */
 
 #include "Mixture.h"
+#include "Solvent.tpp"
+#include "Polymer.tpp"
 #include <pscf/mesh/Mesh.h>
 
 #include <cmath>
@@ -65,11 +67,14 @@ namespace Pspc
    void Mixture<D>::setupUnitCell(const UnitCell<D>& unitCell)
    {
 
-      // Set association to unitCell
+      // Set association of unitCell to this Mixture
       unitCellPtr_ = &unitCell;
 
-      for (int i = 0; i < nPolymer(); ++i) {
-         polymer(i).setupUnitCell(unitCell);
+      // SetupUnitCell for all polymers
+      if (nPolymer() > 0) {
+         for (int i = 0; i < nPolymer(); ++i) {
+            polymer(i).setupUnitCell(unitCell);
+         }
       }
    }
 
@@ -100,28 +105,49 @@ namespace Pspc
          }
       }
 
-      // Solve MDE for all polymers
-      for (i = 0; i < nPolymer(); ++i) {
-         polymer(i).compute(wFields);
-      }
+      // Process polymer species
+      if (nPolymer() > 0) {
 
-      // Accumulate monomer concentration fields
-      double phi;
-      for (i = 0; i < nPolymer(); ++i) {
-         phi = polymer(i).phi();
-         for (j = 0; j < polymer(i).nBlock(); ++j) {
-            int monomerId = polymer(i).block(j).monomerId();
-            UTIL_CHECK(monomerId >= 0);
-            UTIL_CHECK(monomerId < nm);
-            CField& monomerField = cFields[monomerId];
-            CField& blockField = polymer(i).block(j).cField();
-            for (k = 0; k < nx; ++k) {
-               monomerField[k] += phi * blockField[k];
+         // Solve MDE for all polymers
+         for (i = 0; i < nPolymer(); ++i) {
+            polymer(i).compute(wFields);
+         }
+   
+         // Accumulate monomer concentration fields
+         double phi;
+         for (i = 0; i < nPolymer(); ++i) {
+            phi = polymer(i).phi();
+            for (j = 0; j < polymer(i).nBlock(); ++j) {
+               int monomerId = polymer(i).block(j).monomerId();
+               UTIL_CHECK(monomerId >= 0);
+               UTIL_CHECK(monomerId < nm);
+               CField& monomerField = cFields[monomerId];
+               CField const & blockField = polymer(i).block(j).cField();
+               for (k = 0; k < nx; ++k) {
+                  monomerField[k] += phi * blockField[k];
+               }
             }
          }
+
       }
 
-      // To do: Add compute functions and accumulation for solvents.
+      // Process solvent species
+      if (nSolvent() > 0) {
+
+         // For each solvent, call compute and accumulate cFields
+         int monomerId;
+         for (i = 0; i < nSolvent(); ++i) {
+            monomerId = solvent(i).monomerId();
+            solvent(i).compute(wFields[monomerId]);
+            CField& monomerField = cFields[monomerId];
+            CField const & solventField = solvent(i).cField();
+            for (k = 0; k < nx; ++k) {
+               monomerField[k] += solventField[k];
+            }
+         }
+
+      }
+
    }
 
    /*
@@ -137,16 +163,20 @@ namespace Pspc
          stress_[i] = 0.0;
       }
 
-      // Compute stress for all polymers, after solving MDE
-      for (i = 0; i < nPolymer(); ++i) {
-         polymer(i).computeStress();
-      }
+      if (nPolymer() > 0) {
 
-      // Accumulate stress for all the polymer chains
-      for (i = 0; i < unitCellPtr_->nParameter(); ++i) {
-         for (j = 0; j < nPolymer(); ++j) {
-            stress_[i] += polymer(j).stress(i);
+         // Compute stress for all polymers, after solving MDE
+         for (i = 0; i < nPolymer(); ++i) {
+            polymer(i).computeStress();
          }
+   
+         // Accumulate stress for all the polymer chains
+         for (i = 0; i < unitCellPtr_->nParameter(); ++i) {
+            for (j = 0; j < nPolymer(); ++j) {
+               stress_[i] += polymer(j).stress(i);
+            }
+         }
+
       }
    }
 

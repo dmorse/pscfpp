@@ -29,7 +29,7 @@ Proposed Changes to Implement Solvents in PsPc::
 
    }
 
-3) Write iostream inserter and extractor for Pscf::SolventDescriptor
+3) Write iostream inserter and extractor for Pscf::SolventDescriptor (done)
 
 4) Modify Pscf::MixtureTmpl::readParameters to read in solvent properties.
 
