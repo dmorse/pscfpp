@@ -30,14 +30,14 @@ namespace Pscf
       // Public typedefs
 
       /**
-      * Polymer species solver type.
+      * Polymer species solver typename.
       */
-      // typedef TP Polymer;
+      typedef TP Polymer;
 
       /**
-      * Solvent species solver type.
+      * Solvent species solver typename.
       */
-      // typedef TS Solvent;
+      typedef TS Solvent;
 
       // Public member functions
 
@@ -73,8 +73,7 @@ namespace Pscf
       *
       * \param id integer polymer species index (0 <= id < nPolymer)
       */
-      //Polymer& polymer(int id);
-      TP& polymer(int id);
+      Polymer& polymer(int id);
 
       /**
       * Set a solvent solver object.
@@ -82,7 +81,7 @@ namespace Pscf
       * \param id integer solvent species index (0 <= id < nSolvent)
       */
       //Solvent& solvent(int id);
-      TS& solvent(int id);
+      Solvent& solvent(int id);
 
       //@}
       /// \name Accessors (by value)
@@ -118,7 +117,7 @@ namespace Pscf
       * Array capacity = nPolymer.
       */
       //DArray<Polymer> polymers_;
-      DArray<TP> polymers_;
+      DArray<Polymer> polymers_;
 
       /**
       * Array of solvent species objects.
@@ -126,7 +125,7 @@ namespace Pscf
       * Array capacity = nSolvent.
       */
       //DArray<Solvent> solvents_;
-      DArray<TS> solvents_;
+      DArray<Solvent> solvents_;
 
       /**
       * Number of monomer types.
@@ -207,8 +206,8 @@ namespace Pscf
 
       // Read polymers 
       nPolymer_ = 0;
-      nSolvent_ = 0;
       read<int>(in, "nPolymer", nPolymer_);
+      nSolvent_ = 0;
       readOptional<int>(in, "nSolvent", nSolvent_);
 
       // Read polymers
@@ -234,11 +233,13 @@ namespace Pscf
 
       // Read solvents
       if (nSolvent_ > 0) {
+
          solvents_.allocate(nSolvent_);
          // readDArray< TS >(in, "solvents", solvents_, nSolvent_);
          for (int i = 0; i < nPolymer_; ++i) {
             readParamComposite(in, polymers_[i]);
          }
+
       }
 
    }
