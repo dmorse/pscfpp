@@ -2,7 +2,6 @@ pscf_chem_= \
   pscf/chem/Monomer.cpp \
   pscf/chem/Vertex.cpp \
   pscf/chem/BlockDescriptor.cpp \
-  pscf/chem/SolventDescriptor.cpp \
   pscf/chem/Species.cpp 
 
 pscf_chem_SRCS=\

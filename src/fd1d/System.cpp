@@ -338,22 +338,40 @@ namespace Fd1d
    void System::computeFreeEnergy()
    {
       fHelmholtz_ = 0.0;
- 
-      // Compute ideal gas contributions to fHelhmoltz_
-      Polymer* polymerPtr;
-      double phi, mu, length;
       int np = mixture().nPolymer();
-      for (int i = 0; i < np; ++i) {
-         polymerPtr = &mixture().polymer(i);
-         phi = polymerPtr->phi();
-         mu = polymerPtr->mu();
-         // Recall: mu = ln(phi/q)
-         length = polymerPtr->length();
-         fHelmholtz_ += phi*( mu - 1.0 )/length;
+      int ns = mixture().nSolvent();
+      int nm = mixture().nMonomer();
+      double phi, mu;
+ 
+      // Polymeric ideal gas contributions to fHelhmoltz_
+      if (np > 0) {
+         Polymer* polymerPtr;
+         double length;
+         for (int i = 0; i < np; ++i) {
+            polymerPtr = &mixture().polymer(i);
+            phi = polymerPtr->phi();
+            mu = polymerPtr->mu();
+            // Recall: mu = ln(phi/q)
+            length = polymerPtr->length();
+            fHelmholtz_ += phi*( mu - 1.0 )/length;
+         }
+      }
+
+      // Solvent ideal gas contributions to fHelhmoltz_
+      if (ns > 0) {
+         Solvent* solventPtr;
+         double size;
+         for (int i = 0; i < ns; ++i) {
+            solventPtr = &mixture().solvent(i);
+            phi = solventPtr->phi();
+            mu = solventPtr->mu();
+            // Recall: mu = ln(phi/q)
+            size = solventPtr->size();
+            fHelmholtz_ += phi*( mu - 1.0 )/size;
+         }
       }
 
       // Apply Legendre transform subtraction
-      int nm = mixture().nMonomer();
       for (int i = 0; i < nm; ++i) {
          fHelmholtz_ -= 
                   domain().innerProduct(wFields_[i], cFields_[i]);
@@ -376,12 +394,27 @@ namespace Fd1d
 
       // Compute pressure
       pressure_ = -fHelmholtz_;
-      for (int i = 0; i < np; ++i) {
-         polymerPtr = & mixture().polymer(i);
-         phi = polymerPtr->phi();
-         mu = polymerPtr->mu();
-         length = polymerPtr->length();
-         pressure_ += phi*mu/length;
+      if (np > 0) {
+         double length;
+         Polymer* polymerPtr;
+         for (int i = 0; i < np; ++i) {
+            polymerPtr = & mixture().polymer(i);
+            phi = polymerPtr->phi();
+            mu = polymerPtr->mu();
+            length = polymerPtr->length();
+            pressure_ += phi*mu/length;
+         }
+      }
+      if (ns > 0) {
+         double size;
+         Solvent* solventPtr;
+         for (int i = 0; i < ns; ++i) {
+            solventPtr = & mixture().solvent(i);
+            phi = solventPtr->phi();
+            mu = solventPtr->mu();
+            size = solventPtr->size();
+            pressure_ += phi*mu/size;
+         }
       }
 
    }
@@ -508,18 +541,40 @@ namespace Fd1d
       out << "pressure   = " << Dbl(pressure(), 18, 11) << std::endl;
       out << std::endl;
 
-      out << "Polymers:" << std::endl;
-      out << "    i"
-          << "        phi[i]      "
-          << "        mu[i]       " 
-          << std::endl;
-      for (int i = 0; i < mixture().nPolymer(); ++i) {
-         out << Int(i, 5) 
-             << "  " << Dbl(mixture().polymer(i).phi(),18, 11)
-             << "  " << Dbl(mixture().polymer(i).mu(), 18, 11)  
+      // Polymers
+      int np = mixture().nPolymer();
+      if (np > 0) {
+         out << "Polymers:" << std::endl;
+         out << "    i"
+             << "        phi[i]      "
+             << "        mu[i]       " 
              << std::endl;
+         for (int i = 0; i < np; ++i) {
+            out << Int(i, 5) 
+                << "  " << Dbl(mixture().polymer(i).phi(),18, 11)
+                << "  " << Dbl(mixture().polymer(i).mu(), 18, 11)  
+                << std::endl;
+         }
+         out << std::endl;
       }
-      out << std::endl;
+
+      // Solvents
+      int ns = mixture().nSolvent();
+      if (ns > 0) {
+         out << "Solvents:" << std::endl;
+         out << "    i"
+             << "        phi[i]      "
+             << "        mu[i]       " 
+             << std::endl;
+         for (int i = 0; i < ns; ++i) {
+            out << Int(i, 5) 
+                << "  " << Dbl(mixture().solvent(i).phi(),18, 11)
+                << "  " << Dbl(mixture().solvent(i).mu(), 18, 11)  
+                << std::endl;
+         }
+         out << std::endl;
+      }
+
    }
 
 } // namespace Fd1d
