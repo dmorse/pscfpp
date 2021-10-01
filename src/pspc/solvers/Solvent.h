@@ -61,7 +61,7 @@ namespace Pspc {
       *
       * \param mesh associated Mesh<D> object
       */
-      void setMesh(Mesh<D> const & mesh);
+      void setDiscretization(Mesh<D> const & mesh);
 
       /**
       * Compute monomer concentration field, q and phi and/or mu.

@@ -215,7 +215,7 @@ namespace Pscf
 
          polymers_.allocate(nPolymer_);
          for (int i = 0; i < nPolymer_; ++i) {
-            readParamComposite(in, polymers_[i]);
+            readParamComposite(in, polymer(i));
          }
    
          // Set statistical segment lengths for all blocks
@@ -235,9 +235,8 @@ namespace Pscf
       if (nSolvent_ > 0) {
 
          solvents_.allocate(nSolvent_);
-         // readDArray< TS >(in, "solvents", solvents_, nSolvent_);
-         for (int i = 0; i < nPolymer_; ++i) {
-            readParamComposite(in, polymers_[i]);
+         for (int i = 0; i < nSolvent_; ++i) {
+            readParamComposite(in, solvent(i));
          }
 
       }

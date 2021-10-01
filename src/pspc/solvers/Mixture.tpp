@@ -51,13 +51,23 @@ namespace Pspc
       UTIL_CHECK(nPolymer()+ nSolvent() > 0);
       UTIL_CHECK(ds_ > 0);
 
+      // Save address of mesh
       meshPtr_ = &mesh;
 
-      // Set discretization for all blocks
-      int i, j;
-      for (i = 0; i < nPolymer(); ++i) {
-         for (j = 0; j < polymer(i).nBlock(); ++j) {
-            polymer(i).block(j).setDiscretization(ds_, mesh);
+      // Set discretization in space and s for all polymer blocks
+      if (nPolymer() > 0) {
+         int i, j;
+         for (i = 0; i < nPolymer(); ++i) {
+            for (j = 0; j < polymer(i).nBlock(); ++j) {
+               polymer(i).block(j).setDiscretization(ds_, mesh);
+            }
+         }
+      }
+
+      // Set spatial discretization for solvents
+      if (nSolvent() > 0) {
+         for (int i = 0; i < nSolvent(); ++i) {
+            solvent(i).setDiscretization(mesh);
          }
       }
 
@@ -76,6 +86,7 @@ namespace Pspc
             polymer(i).setupUnitCell(unitCell);
          }
       }
+
    }
 
    /*

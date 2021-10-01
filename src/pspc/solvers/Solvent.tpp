@@ -72,7 +72,7 @@ namespace Pspc {
    * Set association with Mesh and allocate concentration field.
    */
    template <int D>
-   void Solvent<D>::setMesh(Mesh<D> const & mesh)
+   void Solvent<D>::setDiscretization(Mesh<D> const & mesh)
    {
       meshPtr_ = &mesh;
       cField_.allocate(mesh.dimensions());
