@@ -84,18 +84,17 @@ namespace Pspc {
    template <int D>
    void Solvent<D>::compute(WField const & wField)
    {
-      int nx = meshPtr_->size();
-      int i;
+      int nx = meshPtr_->size(); // Number of grid points
 
       // Initialize to zero
-      for (i = 0; i < nx; ++i) {
+      for (int i = 0; i < nx; ++i) {
           cField_[i] = 0.0;
       }
 
       // Evaluate unnormalized integral and q_
       double s = size();
       q_ = 0.0;
-      for (i = 0; i < nx; ++i) {
+      for (int i = 0; i < nx; ++i) {
           cField_[i] = exp(-s*wField[i]);
           q_ += cField_[i];
       }
@@ -112,7 +111,7 @@ namespace Pspc {
       }
 
       // Normalize concentration 
-      for (i = 0; i < nx; ++i) {
+      for (int i = 0; i < nx; ++i) {
           cField_[i] *= prefactor;
       }
     
