@@ -8,40 +8,15 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pspc/solvers/Propagator.h>
-#include <pscf/mesh/Mesh.h>
 #include <pscf/chem/Species.h>             // base class
 #include <util/param/ParamComposite.h>     // base class
-
-#include <iostream>
+#include <pspc/solvers/Propagator.h>
+#include <pscf/mesh/Mesh.h>
 
 namespace Pscf { 
 namespace Pspc { 
 
    using namespace Util;
-
-   // Forward declaration of class template
-   template <int D> class Solvent;
-
-   /**
-   * istream extractor for a Solvent.
-   *
-   * \param in  input stream
-   * \param solvent  Solvent to be read from stream
-   * \return modified input stream
-   */
-   template <int D>
-   std::istream& operator>> (std::istream& in, Solvent<D>& solvent);
-
-   /**
-   * ostream inserter for a Solvent.
-   *
-   * \param out  output stream
-   * \param solvent  Solvent to be written to stream
-   * \return modified output stream
-   */
-   template <int D>
-   std::ostream& operator<< (std::ostream& out, const Solvent<D> & solvent);
 
    /**
    * Solver and descriptor for a solvent species.
@@ -96,13 +71,7 @@ namespace Pspc {
       * \param wField monomer chemical potential field of relevant type.
       */
       void compute(WField const & wField );
-  
-      /**
-      * Serialization function.
-      */ 
-      template <class Archive>
-      void serialize(Archive& ar, unsigned int);
-
+ 
       /// \name Setters (set member data)
       //@{
 
@@ -155,8 +124,7 @@ namespace Pspc {
       /**
       * Get monomer concentration field for this solvent.
       */
-      const CField& cField() const
-      {  return cField_;  }
+      const CField& cField() const;
   
       //@}
 
@@ -165,7 +133,6 @@ namespace Pspc {
       using Pscf::Species::mu;
       using Pscf::Species::q;
       using Pscf::Species::ensemble;
-      using Pscf::ParamComposite::read;
 
    protected:
 
@@ -189,14 +156,6 @@ namespace Pspc {
       // Pointer to associated mesh
       Mesh<D> const *  meshPtr_;
 
-   // friend:
- 
-      friend 
-      std::istream& operator>> (std::istream& in, Solvent& solvent);
-
-      friend 
-      std::ostream& operator<< (std::ostream& out, const Solvent& solvent);
-
    };
    
    // Inline member functions
@@ -215,67 +174,20 @@ namespace Pspc {
    inline double Solvent<D>::size() const
    {  return size_; }
     
-   // Non-inline functions
-
-   #if 0
-   /*
-   * Extract a Solvent<D> from an istream.
+   /**
+   * Get monomer concentration field for this solvent.
    */
    template <int D>
-   std::istream& operator>> (std::istream& in, Solvent<D> & solvent)
-   {
-      in >> solvent.monomerId_;
-      in >> solvent.size_;
-      return in;
-   }
-
-   /*
-   * Output a Solvent<D> to an ostream, without line breaks.
-   */
-   template <int D>
-   std::ostream& operator << (std::ostream& out, const Solvent<D> & solvent)
-   {
-      out << solvent.monomerId_;
-      out << "  ";
-      out.setf(std::ios::scientific);
-      out.width(16);
-      out.precision(8);
-      out << solvent.size_;
-      return out;
-   }
-   #endif
-
-   /*
-   * Serialize to/from an archive.
-   */
-   template <int D>
-   template <class Archive>
-   void Solvent<D>::serialize(Archive& ar, unsigned int)
-   {
-      ar & phi_;
-      ar & mu_;
-      ar & q_;
-      ar & ensemble_;
-      ar & monomerId_;
-      ar & size_;
-   }
-
-   #if 0
+   inline const typename Solvent<D>::CField& Solvent<D>::cField() const
+   {  return cField_;  }
+  
    #ifndef PSPC_SOLVENT_TPP
    // Supress implicit instantiation
-   //extern template class Solvent<1>;
-   //extern template class Solvent<2>;
-   //extern template class Solvent<3>;
-   //extern template std::istream& operator>> (std::istream&, Solvent<1> &);
-   //extern template std::ostream& operator<< (std::ostream&, const Solvent<1>&);
-   //extern template std::istream& operator>> (std::istream&, Solvent<2>&);
-   //extern template std::ostream& operator<< (std::ostream&, const Solvent<2>&);
-   //extern template std::istream& operator>> (std::istream&, Solvent<3>& );
-   //extern template std::ostream& operator<< (std::ostream&, const Solvent<3>& );
-   #endif
+   extern template class Solvent<1>;
+   extern template class Solvent<2>;
+   extern template class Solvent<3>;
    #endif
 
 }
 }
-#include "Solvent.tpp" 
 #endif 

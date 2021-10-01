@@ -40,8 +40,14 @@ namespace Pspc {
 
    public:
 
+      /**
+      * Base class typedef (PolymerTmpl instance)
+      */
       typedef PolymerTmpl< Block<D> > Base;
 
+      /**
+      * Chemical potential field typedef
+      */
       typedef typename Block<D>::WField  WField;
 
       /**
@@ -116,7 +122,7 @@ namespace Pspc {
       */
       double stress(int n) const;
 
-      // Inherited functions
+      // Inherited public functions
 
       using Base::nBlock;
       using Base::block;
@@ -127,17 +133,16 @@ namespace Pspc {
    protected:
 
       using ParamComposite::setClassName;
+      using Base::phi_;
+      using Base::mu_;
 
    private: 
-
-      /// Pointer to associated UnitCell<D>
-      const UnitCell<D>* unitCellPtr_;
 
       /// Stress contribution from this polymer species
       FArray<double, 6> stress_;
 
-      using Base::phi_;
-      using Base::mu_;
+      /// Pointer to associated UnitCell<D>
+      const UnitCell<D>* unitCellPtr_;
 
    };
 

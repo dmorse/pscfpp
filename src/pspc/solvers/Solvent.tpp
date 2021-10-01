@@ -118,32 +118,6 @@ namespace Pspc {
     
    }
 
-   /*
-   * Extract a Solvent<D> from an istream.
-   */
-   template <int D>
-   std::istream& operator >> (std::istream& in, Solvent<D> & solvent)
-   {
-      in >> solvent.monomerId_;
-      in >> solvent.size_;
-      return in;
-   }
-
-   /*
-   * Output a Solvent<D> to an ostream, without line breaks.
-   */
-   template <int D>
-   std::ostream& operator << (std::ostream& out, const Solvent<D> & solvent)
-   {
-      out << solvent.monomerId_;
-      out << "  ";
-      out.setf(std::ios::scientific);
-      out.width(16);
-      out.precision(8);
-      out << solvent.size_;
-      return out;
-   }
-
 }
 }
 #endif
