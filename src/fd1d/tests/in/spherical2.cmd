@@ -1,6 +1,6 @@
-READ_WFIELDS  in/spherical2.w
+READ_W  in/spherical2.w
 ITERATE
 COMPARE_HOMOGENEOUS 1
-WRITE_CFIELDS  out/spherical2.c
-WRITE_WFIELDS  out/spherical2.w
+WRITE_C  out/spherical2.c
+WRITE_W  out/spherical2.w
 FINISH
