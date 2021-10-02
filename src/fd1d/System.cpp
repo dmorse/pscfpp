@@ -150,8 +150,7 @@ namespace Fd1d
       // Initialize homogeneous object
       int nm = mixture().nMonomer(); 
       int np = mixture().nPolymer(); 
-      //int ns = mixture().nSolvent(); 
-      int ns = 0;
+      int ns = mixture().nSolvent(); 
       homogeneous_.setNMolecule(np+ns);
       homogeneous_.setNMonomer(nm);
       initHomogeneous();
@@ -476,8 +475,7 @@ namespace Fd1d
       // Set number of molecular species and monomers
       int nm = mixture().nMonomer(); 
       int np = mixture().nPolymer(); 
-      //int ns = mixture().nSolvent(); 
-      int ns = 0;
+      int ns = mixture().nSolvent(); 
       UTIL_CHECK(homogeneous_.nMolecule() == np + ns);
       UTIL_CHECK(homogeneous_.nMonomer() == nm);
 
@@ -495,41 +493,58 @@ namespace Fd1d
       int nc;  // number of clumps
  
       // Loop over polymer molecule species
-      for (i = 0; i < np; ++i) {
-
-         // Initial array of clump sizes 
-         for (j = 0; j < nm; ++j) {
-            c_[j] = 0.0;
-         }
-
-         // Compute clump sizes for all monomer types.
-         nb = mixture().polymer(i).nBlock(); 
-         for (k = 0; k < nb; ++k) {
-            Block& block = mixture().polymer(i).block(k);
-            j = block.monomerId();
-            c_[j] += block.length();
-         }
- 
-         // Count the number of clumps of nonzero size
-         nc = 0;
-         for (j = 0; j < nm; ++j) {
-            if (c_[j] > 1.0E-8) {
-               ++nc;
+      if (np > 0) {
+         for (i = 0; i < np; ++i) {
+   
+            // Initial array of clump sizes 
+            for (j = 0; j < nm; ++j) {
+               c_[j] = 0.0;
             }
-         }
-         homogeneous_.molecule(i).setNClump(nc);
- 
-         // Set clump properties for this Homogeneous::Molecule
-         k = 0; // Clump index
-         for (j = 0; j < nm; ++j) {
-            if (c_[j] > 1.0E-8) {
-               homogeneous_.molecule(i).clump(k).setMonomerId(j);
-               homogeneous_.molecule(i).clump(k).setSize(c_[j]);
-               ++k;
+   
+            // Compute clump sizes for all monomer types.
+            nb = mixture().polymer(i).nBlock(); 
+            for (k = 0; k < nb; ++k) {
+               Block& block = mixture().polymer(i).block(k);
+               j = block.monomerId();
+               c_[j] += block.length();
             }
+    
+            // Count the number of clumps of nonzero size
+            nc = 0;
+            for (j = 0; j < nm; ++j) {
+               if (c_[j] > 1.0E-8) {
+                  ++nc;
+               }
+            }
+            homogeneous_.molecule(i).setNClump(nc);
+    
+            // Set clump properties for this Homogeneous::Molecule
+            k = 0; // Clump index
+            for (j = 0; j < nm; ++j) {
+               if (c_[j] > 1.0E-8) {
+                  homogeneous_.molecule(i).clump(k).setMonomerId(j);
+                  homogeneous_.molecule(i).clump(k).setSize(c_[j]);
+                  ++k;
+               }
+            }
+            homogeneous_.molecule(i).computeSize();
+   
          }
-         homogeneous_.molecule(i).computeSize();
+      }
 
+      // Add solvent contributions
+      if (np > 0) {
+         double size;
+         int monomerId;
+         for (int is = 0; is < ns; ++is) {
+            i = is + np;
+            monomerId = mixture().solvent(is).monomerId();
+            size = mixture().solvent(is).size();
+            homogeneous_.molecule(i).setNClump(1);
+            homogeneous_.molecule(i).clump(0).setMonomerId(monomerId);
+            homogeneous_.molecule(i).clump(0).setSize(size);
+            homogeneous_.molecule(i).computeSize();
+         }
       }
 
    }

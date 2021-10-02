@@ -15,7 +15,7 @@ namespace Pscf {
 namespace Fd1d { 
 
    Solvent::Solvent()
-   {}
+   {  setClassName("Solvent"); }
 
    Solvent::~Solvent()
    {}
