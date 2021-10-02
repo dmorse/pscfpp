@@ -1,0 +1,50 @@
+Steps to clean up and simplify regression tests in unit tests:
+
+1) Add "command" functions to System API that represent complete commands.
+
+Goal: Make it easier to program operations programmatically in unit tests.
+
+Note: Many commands involve operations on wFields or cFields that are stored
+as members of the system but for which the operation is implemented wholly or 
+in part using methods of fieldIo, such as the sequence:
+
+    fieldIo().readFieldsBasis(filename, wFields())
+    fieldIo().convertBasisToGrid(wFields() wFieldsRGrid());
+    hasWFields_ = true;
+    hasCFields_ = false
+
+Create a simple wrapper around such short sequences of operations, such as:
+
+    System::readWBasis(filename);
+
+New "command" functions for Pspc::System:
+
+    readWBasis(filename);
+    readWRgrid(filename);
+    iterate();          
+    compute();
+    writeWBasis(filename);
+    writeWRgrid(filename);
+    writeCBasis(filename);
+    writeCRgrid(filename);
+    BasisToRgrid(inFilename, outFilename);
+    RgridToBasis(inFilename, outFilename);
+    BasisToKgrid(inFilename, outFilename);
+    KgridToBasis(inFilename, outFilename);
+    rhoToOmega(inFilename, outFileName);a
+    outputStars(filename);
+    outputWaves(filename);
+
+2) Rewrite regression tests in pspc/tests/system/ so as to use these 
+commands rather than reading commands from files that contain a single 
+command. There should be no need to use command files in unit tests.
+
+3) Re-organize the pspc/tests/system/contents/ file so that files associated
+with the same or closely related examples are in the same directory.
+
+4) Rewrite regression tests to use newly created rgridState, basisState,
+rgridStateComparison and basisStateComparison functions to simplify unit
+test code.
+
+
+5) Write new tests, including tests for systems with solvent.
