@@ -131,6 +131,11 @@ namespace Fd1d
       */
       virtual void getSolution();
 
+      /**
+      * Close log file after end of sweep.
+      */
+      virtual void cleanup();
+
    private:
 
       /// Algorithm for comparing to a homogeneous system

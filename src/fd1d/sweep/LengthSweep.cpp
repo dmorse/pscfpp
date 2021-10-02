@@ -61,6 +61,7 @@ namespace Fd1d
       mixture().polymer(polymerId_).block(blockId_).setLength(L);
    }
 
+   #if 0
    void LengthSweep::outputSummary(std::ostream& out) 
    {   
       #if 0
@@ -112,6 +113,7 @@ namespace Fd1d
       }
       #endif
    }
+   #endif
 
 } // namespace Fd1d
 } // namespace Pscf

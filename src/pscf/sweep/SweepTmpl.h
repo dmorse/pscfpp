@@ -135,6 +135,13 @@ namespace Pscf {
       */
       virtual void getSolution() = 0;
 
+      /**
+      * Clean up operation at the beginning of a sweep
+      *
+      * Default implementation is empty.
+      */
+      virtual void cleanup();
+
    private:
 
       // Values of s associated with previous solutions

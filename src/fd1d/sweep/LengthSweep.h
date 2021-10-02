@@ -62,12 +62,14 @@ namespace Fd1d
       */
       virtual void setParameters(double s);
 
+      #if 0
       /**
       * Output data to a running summary.
       *
       * \param out  output file, open for writing
       */
       virtual void outputSummary(std::ostream& out);
+      #endif
 
    private:
 

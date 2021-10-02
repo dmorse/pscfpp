@@ -109,6 +109,10 @@ namespace Pscf {
             finished = true;
          }
       }
+
+      // Clean up after end of sweep
+      cleanup();
+
    }
 
    /*
@@ -154,6 +158,10 @@ namespace Pscf {
       getSolution();
 
    }
+
+   template <class State>
+   void SweepTmpl<State>::cleanup()
+   {}
 
 } // namespace Pscf
 #endif

@@ -88,7 +88,7 @@ namespace Fd1d
 
       // Open log summary file
       std::string fileName = baseFileName_;
-      fileName += ".log";
+      fileName += "log";
       fileMaster().openOutputFile(fileName, logFile_);
 
    };
@@ -157,11 +157,13 @@ namespace Fd1d
          comparison_.compute(homogeneousMode_);
       }
 
-      // Output information about solution
+      // Output solution
       int i = nAccept() - 1;
       std::string fileName = baseFileName_;
       fileName += toString(i);
       outputSolution(fileName);
+
+      // Output brief summary to log file
       outputSummary(logFile_);
    };
 
@@ -198,15 +200,11 @@ namespace Fd1d
    {
       int i = nAccept() - 1;
       double sNew = s(0);
-      if (homogeneousMode_ == -1) {
-         out << Int(i,5) << Dbl(sNew)
-             << Dbl(system().fHelmholtz(),16)
-             << Dbl(system().pressure(),16)
-             << std::endl;
-      } else {
-         out << Int(i,5) << Dbl(sNew)
-             << Dbl(system().fHelmholtz(),16)
-             << Dbl(system().pressure(),16);
+      out << Int(i,5) << Dbl(sNew)
+          << Dbl(system().fHelmholtz(),16)
+          << Dbl(system().pressure(),16);
+      #if 0
+      if (homogeneousMode_ != -1) {
          if (homogeneousMode_ == 0) {
             double dF = system().fHelmholtz()
                       - system().homogeneous().fHelmholtz();
@@ -217,9 +215,13 @@ namespace Fd1d
             double dOmega = -1.0*dP*domain().volume();
             out << Dbl(dOmega, 16);
          }
-         out << std::endl;
       }
+      #endif
+      out << std::endl;
    }
+
+   void Sweep::cleanup()
+   {  logFile_.close(); }
 
    void Sweep::assignFields(DArray<System::Field>& lhs,
                             DArray<System::Field> const & rhs) const
