@@ -1,0 +1,51 @@
+
+Notes by David Morse, quick reading of source code, Oct. 13, 2021:
+------------------------------------------------------------------
+
+Everything in this directory appears to broken. We should fix or erase, and ignore in
+the meantime.
+
+  - Invoking "make all" from this directory fails with multiple errors.
+  - Tests in this directory are not included in the Test.cc file in parent directory.
+
+---------------------------
+Attempted compilation:
+
+    In testConstructor1:
+    Attempted call to non-existent default constructor for AmIterator<D>
+
+    Calls to non-existent member Basis::convertFieldDftToComponents(....)
+
+    Call to non-existent members System:readFields, System::writeRFields
+
+---------------------------
+Unit Tests in IteratorTest: 
+testConstructor1:
+    Constructs AmIterator<1>
+
+testsReadParam:
+    Reads parameter file in/param.
+    Note: Actual file does not seem to include an iterator block
+
+testComputeDeviation:
+
+    Create System<1> sys;
+    Read parameter file in/param
+    Create 3D periodic sys.wFieldGrid (????? Not consistent with Sys<1> ?)
+    Set sys.cField that is consistent with wField
+
+    Calls sys.iterator().computeDeviation()
+
+testIsConverged1:
+
+    Tests convergence of same state as in ComputeDeviation, 
+    TEST_ASSERT(sys.iterator().isConverged());
+
+testIsConverged2:
+
+    Read parameter file in/param
+    Tests convergence of another state which supposedly is not converged.
+    Note: This test is not added at bottom of IteratorTest.h file. Presumbably known to be broken.
+
+(Stopped reading in disgust)
+
