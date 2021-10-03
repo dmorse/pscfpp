@@ -2,44 +2,123 @@
 The Pscf::Pspc namespace implements SCFT for periodic structures on a CPU.
 
 -----------------------------------------------------------------------------
-Preliminary notes about potentially confusing patterns:
+General comments:
 
-1) Use of template argument D for the dimension of space: 
+1) Package design goals:
 
-Most main classes in Pscf::Pspc are templates that take the integer D as a
-template parameter that represents the dimensionality of space, or the 
+The PSCF C++/Cuda package was designed so as to allow creation of multiple
+different implementations of SCFT that can differ in the geometry of the problem 
+being solved, the choice of basic algorithms for solving the modified diffusion 
+equation and the hardware on which it designed to run (CPU vs. GPU).
+
+2) Namespace and directory hierarchy:
+
+The src/ directory contains all C++ source code. The source code is divided into
+two top level namespaces, named Util and Pscf.  
+
+The Util namespace contains general utility classes for C++ scientific programming.
+Most of these classes were orginally written for the Simpatico molecular simulation
+MD/MC program, but were separated into separate repository to allow re-usage in
+other projects. All code in the Util namespace is in the src/util directory. The
+contents of this directory are cloned into this project as a git "submodule" by
+cloning the contents of the git dmorse/util repository into this directory.
+
+The Pscf namespace contains all code that is specfic to self-consistent field 
+theory (SCFT). Code that is specific to a specific implementation of SCFT 
+for a specific type of boundary conditions, hardware, etc is in an associated
+ sub-namespace of Pscf. Classes for implementating periodic boundary conditions 
+on a CPU is in namespace Pscf:Pspc (Psuedo SPectral on a Cpu), which is all in 
+directory src/pspc. Shared classes in Pscf that can be used by two or more 
+implementations are all in the main Pscf namespace (not in a sub-namespace), and 
+are all located in the src/pscf directory.
+
+3) Use of template argument D for the dimension of space: 
+
+Most classes in Pscf::Pspc are defined as C++ templates that take an integer 
+D as a template parameter that represents the dimensionality of space, or the 
 number of coordinates required to describe the structure. Different instances 
 of each template with D=1, 2, or 3 are compiled to create codes for 1D (e.g., 
-lamellar), 2D (e.g.  hexagonal), or 3D structures (e.g., BCC or gyroid).
+lamellar), 2D (e.g.  hexagonal), or 3D structures (e.g., BCC or gyroid). This
+allows the dimension of space to be fixed at compile time within the assembly
+code for each program while maintaining only one set of source files for the 
+cases D=1, 2, and 3.
 
-2) Parameter files formats and inheritance from Util::ParamComposite:: 
+4) Parameter files formats and inheritance from Util::ParamComposite:: 
 
-Most main classes are subclasses of a class Util::ParamComposite, which is a 
-class that provides member functions to read and write a parameter file block
-in a standard hierarchichal format. The format associated with a ParamComposite
-may include both individual data members with values that may be read and 
-written using a iostream << and >> operators, as well as child objects that
-are themselves subclasses of ParamComposite. Almost every ParamComposite
-subclass implements a readParameters() that encodes the format for the 
-parameter file block associated with that object. The readParameters() 
-functions for higher level objects invoke those for subobjects to 
-read sub-blocks of the parameter file. To see the parameter file format for
-an object, read the source code of its readParameters() member function.
+Most main classes in Pscf:Pspc are subclasses of a class Util::ParamComposite, 
+which is a class that provides member functions to read and write a parameter 
+file block in a standard hierarchichal format. The file format associated with 
+a ParamComposite object may include both individual data members with values 
+that may be read and written using a iostream << and >> operators, as well as 
+child objects that are themselves subclasses of ParamComposite. Almost every 
+ParamComposite subclass implements a readParameters() that hard codes the 
+format for the parameter file block associated with that object. 
+The readParameters() functions for higher level objects invoke those for 
+subobjects to read sub-blocks of the parameter file. To see the parameter file 
+format for an object, read the source code of its readParameters() member 
+function.
 
-3) Utility Array classes:
+5) Utility DArray and related container classes:
 
-All of the code for pscf uses a set of container templates that are defined
+All of the code for pscf++ uses a set of container templates that are defined
 in the src/util/container directory in preference to either bare C arrays or
 the containers that are provided in the C++ standard library (e.g., std::vector).
 The most heavily used of these is an array container template DArray<T>, which
 represents an array of objects of type T. Elements of a DArray can be accessed
-using the subscript operator [..], as in a C array: If array is an object of 
-type DArray<double> then array[3] returns a reference to a floating point 
-number that is array element with index 3 (the 4th element of the array). 
+using the subscript operator [], as in a C array: If "array" is the name of an
+object of type DArray<double> then array[3] returns a reference to a floating 
+point number that is array element with index 3 (the 4th element of the array). 
 References returned by the [] subscript operator can be used on either the
 right-hand-side of an equals sign, where they simply provide constant values,
 or on the left-hand-side of a equals sign, allowing them to be assigned new
-values, as with a C array or the containers in the C++ standard library.
+values, exactly as with a C array or the containers in the C++ standard library.
+DArray objects differ from fixed dimension C arrays in that they can be allocated 
+by calling the "allocate" member at some point after the array is declared, but 
+differ from std::vector container in that they cannot grow after allocation by
+adding elements.  The DArray and other containers defined in util/container
+all have the property that they can be compiled in a form that provides 
+automatic run-time bounds checking of indices if they are compiled with a
+preprocessor macro "UTIL_DEBUG" defined. The pscf makefile system provides
+methods to turn this preprocessor macro on throughout the code, to enable
+debugging of errors that could potentially have involved an array index 
+overrun, or turned off for speed after you are convinced the code is correct.
+
+6) MDE Solver classes and solver class templates:
+
+Classes that are used to solve the MDE and use the solution to compute monomer
+concentrations are generally constructed using a system of C++ templates that 
+allow common code to be shared in generic form between different implementations 
+of SCFT. For example, the Pscf::Pspc::Polymer class that represents a single
+polymer in Pspc namespace is a subclass of a template Pscf::PolymerTmpl<Block>
+that is defined in the main Pscf namespace. The template Pscf::PolymerTmp<Block>
+takes the type of the object associated with one block in a block polymer as a
+template parameter.  Different implementations of SCFT define different data 
+types for objects that represent blocks, propagators, polymers, solvents, and 
+mixtures, as well as for objects that represent chemical potential or 
+concentration fields, but the algorithms that relate these different types of
+objects can be expressed in forms that the same for all implementations of SCFT
+except for changes in the names of the relevant data types.  Templates are 
+defined in main PSCF namespace for types that represent solvers for propagator, 
+block, polymer, and mixture objects, which are named PropagatorTmpl, BlockTmpl, 
+etc. Each of these templates is used as a base classs for a more specific 
+implementation of each solver type in each implementation and corresponding 
+sub-namespace. The goal of this design is to allow data structures and 
+algorithms that are common to all implementations to be implemented in a
+generic form in the parent class template, using template parameters to 
+represent data types that are different in different implementations. Data
+members and operations that are not common to all SCFT implementations are
+instead implemented in subclass specific to each SCFT implementation.
+
+Consistent use of namespaces allows analogous objects to be given the same 
+name in different implemtations without causing ambiguities or name clashes. 
+Thus far, the PSCF code contains three SCFT implementations: One that uses 
+a finite-difference method for solving 1-dimensional problems (namespace 
+Fd1d, directory src/fd1d), a Pseudo-SPectral method for periodic problems 
+on a Cpu (namespace Pspc, directory src/pspc), and a Psuedo-Spectral method 
+for periodic problems on a Gpu (namespace Pspg, directory src/pspg).  The 
+object that represents an MDE solver for a polymer is simply called Polymer 
+in such each sub-namespace of Pscf, and the object that represents a block 
+is simply called Block.
 
 -----------------------------------------------------------------------------
 Overview of some important classes in Pscf::Pspc::
