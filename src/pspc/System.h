@@ -237,6 +237,177 @@ namespace Pspc
       RFieldDft<D>& cFieldKGrid(int monomerId);
 
       //@}
+      /// \name Commands (1-to-1 correspondence with command file commands)
+      //@{
+
+      /**
+      * Read chemical potential fields in symmetry adapted basis format.
+      *
+      * This function opens and reads the file with name "filename",
+      * which must contain chemical potential fields in symmetry-adapted 
+      * basis format, stores these fields in the system wFields array,
+      * converts these fields to real-space grid format and stores the
+      * result in the wFieldsRgrid array. On exit hasWFields is set true 
+      * and hasCFields is false.
+      *
+      * \param filename name of input w-field basis file
+      */
+      void readWBasis(std::string & filename);
+   
+      /**
+      * Read chemical potential fields in real-space grid (r-grid) format.
+      *
+      * This function opens and reads the file with name filename, 
+      * which must contain chemical potential fields in real space grid
+      * (r-grid) format, stores these fields in the system wFieldsGrid
+      * array, converts these fields to symmetrized basis format and
+      * stores the result in the wFields array. On exit hasWFields is
+      * true and hasCFields is false. 
+      *
+      * \param filename name of input w-field r-grid file
+      */
+      void readWRgrid(std::string & filename);
+   
+      /**
+      * Iteratively solve a SCFT problem.
+      * 
+      * This function calls the iterator to attempt to solve the SCFT
+      * problem for the current mixture and system parameters, using
+      * the current chemical potential fields (wFields and wFieldRgrid) 
+      * and current unit cell parameter values as initial guesses.  
+      * Upon exist, hasCFields is set true whether or not convergence 
+      * is obtained to within the desired tolerance.  The Helmholtz free 
+      * energy and pressure are computed if and only if convergence is
+      * obtained. 
+      *
+      * \pre The hasWFields flag must be true on entry.
+      * \return returns 0 for successful convergence, 1 for failure.
+      */
+      int iterate();
+   
+      /**
+      * Solve the modified diffusion equation once, without iteration.
+      *
+      * This function calls the mixture().compute() function to solve
+      * the statistical mechanics problem for a non-interacting system
+      * subjected to the currrent chemical potential fields (wFields
+      * and wFieldRGrid). This requires solution of the modified 
+      * diffusion equation for all polymers, computation of Boltzmann
+      * weights for all solvents, computation and setting of molecular 
+      * partition functions for all species, and computation and 
+      * setting of block and setting of concentration fields for all
+      * blocks and solvents, and computation of overall concentrations
+      * for all monomer types. This function does not compute the 
+      * canonical (Helmholtz) free energy or grand-canonical free
+      * energy (i.e., pressure). Upon eturn, the flag hasCFields is 
+      * set true.
+      */
+      void compute();
+   
+      /**
+      * Write chemical potential fields in symmetry adapted basis format.
+      *
+      * \param filename name of output file
+      */
+      void writeWBasis(std::string & filename);
+   
+      /**
+      * Write chemical potential fields in real space grid (r-grid) format.
+      *
+      * \param filename name of output file
+      */
+      void writeWRgrid(std::string & filename);
+   
+      /**
+      * Write concentrations in symmetry-adapted basis format.
+      *
+      * \param filename name of output file
+      */
+      void writeCBasis(std::string & filename);
+   
+      /**
+      * Write concentration fields in real space grid format.
+      *
+      * \param filename name of output file
+      */
+      void writeCRgrid(std::string & filename);
+   
+      /**
+      * Convert a field from symmetry-adapted basis to spatial grid format.
+      *
+      * This function uses the arrays that stored monomer concentration 
+      * fields for temporary storage, and thus corrupts any previously
+      * stored values. As a result, flag hasCFields is false on output.
+      *
+      * \param inFileName name of input file
+      * \param outFileName name of output file
+      */
+      void basisToRgrid(std::string & inFileName, std::string & outFileName);
+   
+      /**
+      * Convert a field from real-space grid to symmetrized basis format.
+      *
+      * This function uses the arrays that stored monomer concentration 
+      * fields for temporary storage, and thus corrupts any previously
+      * stored values. As a result, flag hasCFields is false on return.
+      *
+      * \param inFileName name of input file
+      * \param outFileName name of output file
+      */
+      void rgridToBasis(std::string & inFileName, std::string & outFileName);
+   
+      /**
+      * Convert fields from Fourier (k-grid) to real-space (r-grid) format.
+      *
+      * This function corrupts monomer concentration field arrays, and so
+      * cFields is set false on return.
+      *
+      * \param inFileName name of input file
+      * \param outFileName name of output file
+      */
+      void kgridToRgrid(std::string& inFileName, std::string& outFileName);
+   
+      /**
+      * Convert fields from real-space (r-grid) to Fourier (k-grid) format.
+      *
+      * This function corrupts monomer concentration field arrays, and so
+      * cFields is set false on return.
+      *
+      * \param inFileName name of input file
+      * \param outFileName name of output file
+      */
+      void rgridToKgrid(std::string & inFileName, std::string & outFileName);
+   
+      /**
+      * Construct proposed chemical potential fields from concentration fields.
+      *
+      * This function reads concentration fields in symmetrized basis format
+      * from a file named inFileName, constructs an initial guess for 
+      * corresponding chemical potential fields by setting the Lagrange 
+      * multiplier field to zero, stores the result in the system wFields 
+      * array and also outputs the result to file named outFileName. Upon
+      * return, hasWFields is set true and hasCFields is set false. 
+      *
+      * \param inFileName name of input file
+      * \param outFileName name of output file
+      */
+      void rhoToOmega(std::string& inFileName, std::string& outFileName);
+   
+      /**
+      * Output information about stars and symmetry-adapted basis functions.
+      *
+      * \param outFileName name of output file
+      */
+      void outputStars(std::string & outFileName);
+   
+      /**
+      * Output information about waves.
+      *
+      * \param outFileName name of output file
+      */
+      void outputWaves(std::string & outFileName);
+
+      //@}
       /// \name Miscellaneous Accessors 
       //@{
 
@@ -299,8 +470,8 @@ namespace Pspc
       /** 
       * Have monomer chemical potential fields (w fields) been set?
       *
-      * A true value is returned if and only if consistent values have been
-      * set for both components in a symmetry-adapated basis (wFields) and 
+      * A true value is returned if and only if consistent values have 
+      * been set for both components in a symmetrized basis (wFields) and 
       * for values on a regular real space grid (wFieldsRGrid). Commands 
       * that read w fields from file in either of these formats must 
       * immediately convert to the other.
