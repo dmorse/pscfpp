@@ -1,0 +1,69 @@
+Ideas for LinearSweep class:
+
+1) Use a file format in which the user inputs only the values that they want to change. 
+The part of the format that specifies variable that change could look like
+
+    chi           i          j         range
+    blockLength   polymerid  blockid   range
+    polymerPhi    polymerId            range
+    solventPhi    solventId            range
+    polymerMu     polymerId            range
+    solventMu     solventId            range
+    kuhn          monomerId            range
+
+In each of the above lines:
+
+  - The first item is a literal string that is used to recognize the type of variable
+  - The labels i, u, polymerId, blockId etc. represent values of integer array indices
+  - The label range represents a floating point value for how much the variable should
+    be increased relative to its initial value over the range s in [0,1]
+
+Changes to multiple values of the same type would appear as separate lines, e.g.,
+
+   blockLength  0 0     0.2
+   blockLength  0 1    -0.2
+
+2) The main potential problem with this approach is that changes to values of phi must
+add to zero.  To address this, we can require that the sum of all changes to values of 
+polymerPhi and solventPhi add to zero to within some small tolerance.
+
+3) It may be useful to create a simple struct in Pscf in directory pscf/sweep, defined
+as:
+
+struct LinearSweepParameter 
+{
+   double range;    // range of change for s in [0,1] 
+   double initial;  // initial value at beginning of the sweep
+   int id1;         // First intenger id
+   int id2;         // Second integer id, if any
+
+   double value(double s) {
+      return initial + s*range;
+   }
+}
+
+The range and array index or indices for each LinearSweepParameter could be set in
+the readParameters method of the sweep object, and the initial value could be set
+at the beginning of the actual sweep operation.
+
+4) The LinearSweep class could declare a growable array (GArray or std::vector) of
+LinearSweepParameter objects for each type of parameter as a private class member,
+e.g.,
+
+private:
+
+   GArray<LinearSweepParameter> dChis_;
+   GArray<LinearSweepParameter> dKuhns_;
+   GArray<LinearSweepParameter> dBlockLengths_;
+   GArray<LinearSweepParameter> dPolymerPhis_;
+
+etc.
+
+Each such array could be added to within the readParameters method each time that
+one encounters a string label of the appropriate type (chi, blockLength, etc.).
+
+The Sweep::setParameters method would loop over all elements of each non-empty 
+array of LinearSweepParameter objects and call the value(s) method of each to 
+set the associated parameter value of the block, interaction, or species.
+
+
