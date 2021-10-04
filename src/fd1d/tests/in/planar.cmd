@@ -1,6 +1,6 @@
-READ_WFIELDS  in/planar.w
+READ_W      in/planar.w
 ITERATE
 COMPARE_HOMOGENEOUS 0
-WRITE_CFIELDS  out/c3
-WRITE_WFIELDS  out/w3
+WRITE_C     out/c3
+WRITE_W     out/w3
 FINISH
