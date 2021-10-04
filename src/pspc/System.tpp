@@ -304,18 +304,22 @@ namespace Pspc
          if (command == "READ_W_BASIS") {
             in >> filename;
             Log::file() << " " << Str(filename, 20) <<std::endl;
+
             fieldIo().readFieldsBasis(filename, wFields());
             fieldIo().convertBasisToRGrid(wFields(), wFieldsRGrid());
             hasWFields_ = true;
             hasCFields_ = false;
+
          } else
          if (command == "READ_W_RGRID") {
             in >> filename;
             Log::file() << " " << Str(filename, 20) <<std::endl;
+
             fieldIo().readFieldsRGrid(filename, wFieldsRGrid());
             fieldIo().convertRGridToBasis(wFieldsRGrid(), wFields());
             hasWFields_ = true;
             hasCFields_ = false;
+
          } else
          if (command == "ITERATE") {
 
@@ -326,6 +330,7 @@ namespace Pspc
             if (!hasWFields_) {
                in >> filename;
                Log::file() << " " << Str(filename, 20) <<std::endl;
+
                fieldIo().readFieldsBasis(filename, wFields());
                fieldIo().convertBasisToRGrid(wFields(), wFieldsRGrid());
                hasWFields_ = true;
@@ -368,112 +373,110 @@ namespace Pspc
             UTIL_CHECK(hasWFields_);
             in >> filename;
             Log::file() << "  " << Str(filename, 20) << std::endl;
+
             fieldIo().writeFieldsBasis(filename, wFields());
          } else 
          if (command == "WRITE_W_RGRID") {
             UTIL_CHECK(hasWFields_);
             in >> filename;
             Log::file() << "  " << Str(filename, 20) << std::endl;
+
             fieldIo().writeFieldsRGrid(filename, wFieldsRGrid());
          } else 
          if (command == "WRITE_C_BASIS") {
             UTIL_CHECK(hasCFields_);
             in >> filename;
             Log::file() << "  " << Str(filename, 20) << std::endl;
+
             fieldIo().writeFieldsBasis(filename, cFields());
          } else
          if (command == "WRITE_C_RGRID") {
             UTIL_CHECK(hasCFields_);
             in >> filename;
             Log::file() << "  " << Str(filename, 20) << std::endl;
+
             fieldIo().writeFieldsRGrid(filename, cFieldsRGrid());
          } else
          if (command == "BASIS_TO_RGRID") {
+
+            std::string inFileName;
+            in >> inFileName;
+            Log::file() << " " << Str(inFileName, 20) <<std::endl;
+            std::string outFileName;
+            in >> outFileName;
+            Log::file() << " " << Str(outFileName, 20) <<std::endl;
 
             // Note: This and other conversions use the c-field arrays
             // for storage, and thus corrupt previously stored values.
             hasCFields_ = false;
 
-            // Read in basis format
-            std::string inFileName;
-            in >> inFileName;
-            Log::file() << " " << Str(inFileName, 20) <<std::endl;
             fieldIo().readFieldsBasis(inFileName, cFields());
-
-            // Convert
             fieldIo().convertBasisToRGrid(cFields(), cFieldsRGrid());
-
-            // Write in r-grid format
-            std::string outFileName;
-            in >> outFileName;
-            Log::file() << " " << Str(outFileName, 20) <<std::endl;
             fieldIo().writeFieldsRGrid(outFileName, cFieldsRGrid());
 
          } else 
          if (command == "RGRID_TO_BASIS") {
-            hasCFields_ = false;
 
-            // Read in r-grid format
             std::string inFileName;
             in >> inFileName;
             Log::file() << " " << Str(inFileName, 20) <<std::endl;
-            fieldIo().readFieldsRGrid(inFileName, cFieldsRGrid());
-
-            // Convert from r-grid to basis
-            fieldIo().convertRGridToBasis(cFieldsRGrid(), cFields());
-
-            // Write in basis format
             std::string outFileName;
             in >> outFileName;
             Log::file() << " " << Str(outFileName, 20) <<std::endl;
+
+            hasCFields_ = false;
+            fieldIo().readFieldsRGrid(inFileName, cFieldsRGrid());
+            fieldIo().convertRGridToBasis(cFieldsRGrid(), cFields());
             fieldIo().writeFieldsBasis(outFileName, cFields());
 
          } else
          if (command == "KGRID_TO_RGRID") {
-            hasCFields_ = false;
 
             std::string inFileName;
             in >> inFileName;
             Log::file() << " " << Str(inFileName, 20) <<std::endl;
+            std::string outFileName;
+            in >> outFileName;
+            Log::file() << " " << Str(outFileName, 20) <<std::endl;
 
-
+            hasCFields_ = false;
             fieldIo().readFieldsKGrid(inFileName, cFieldsKGrid());
             for (int i = 0; i < mixture().nMonomer(); ++i) {
                fft().inverseTransform(cFieldKGrid(i), cFieldRGrid(i));
             }
-
-            std::string outFileName;
-            in >> outFileName;
-            Log::file() << " " << Str(outFileName, 20) <<std::endl;
             fieldIo().writeFieldsRGrid(outFileName, cFieldsRGrid());
 
          } else
          if (command == "RGRID_TO_KGRID") {
-            hasCFields_ = false;
 
             std::string inFileName;
             in >> inFileName;
             Log::file() << " " << Str(inFileName, 20) <<std::endl;
+            std::string outFileName;
+            in >> outFileName;
+            Log::file() << " " << Str(outFileName, 20) <<std::endl;
 
+            hasCFields_ = false;
             fieldIo().readFieldsRGrid(inFileName, cFieldsRGrid());
             for (int i = 0; i < mixture().nMonomer(); ++i) {
                fft().forwardTransform(cFieldRGrid(i), cFieldKGrid(i));
             }
-
-            std::string outFileName;
-            in >> outFileName;
-            Log::file() << " " << Str(outFileName, 20) <<std::endl;
             fieldIo().writeFieldsKGrid(outFileName, cFieldsKGrid());
 
          } else
          if (command == "RHO_TO_OMEGA") {
+
+            std::string inFileName;
+            in >> inFileName;
+            Log::file() << " " << Str(inFileName, 20) <<std::endl;
+            std::string outFileName;
+            in >> outFileName;
+            Log::file() << " " << Str(outFileName, 20) << std::endl;
+
             hasCFields_ = false;
             hasWFields_ = false;
 
             // Open input file
-            std::string inFileName;
-            in >> inFileName;
-            Log::file() << " " << Str(inFileName, 20) <<std::endl;
             std::ifstream inFile;
             fileMaster().openInputFile(inFileName, inFile);
 
@@ -509,11 +512,7 @@ namespace Pspc
             hasCFields_ = false;
 
             // Write w field
-            std::string outFileName;
-            in >> outFileName;
-            Log::file() << " " << Str(outFileName, 20) << std::endl;
             fieldIo().writeFieldsBasis(outFileName, wFields());
-            hasWFields_ = true;
 
          } else
          if (command == "OUTPUT_STARS") {
@@ -566,6 +565,10 @@ namespace Pspc
    template <int D>
    void System<D>::computeFreeEnergy()
    {
+      UTIL_CHECK(hasWFields_);
+      UTIL_CHECK(hasCFields_);
+
+      // Initialize to zero
       fHelmholtz_ = 0.0;
  
       double phi, mu;
@@ -776,6 +779,247 @@ namespace Pspc
          }
       }
 
+   }
+
+   // Command functions
+
+   /**
+   * Read w-field in symmetry adapted basis format.
+   */
+   template <int D>
+   void System<D>::readWBasis(std::string & filename)
+   {
+      fieldIo().readFieldsBasis(filename, wFields());
+      fieldIo().convertBasisToRGrid(wFields(), wFieldsRGrid());
+      hasWFields_ = true;
+      hasCFields_ = false;
+   }
+
+   /*
+   * Read w-fields in real-space grid (r-grid) format.
+   */
+   template <int D>
+   void System<D>::readWRgrid(std::string & filename)
+   {
+      fieldIo().readFieldsRGrid(filename, wFieldsRGrid());
+      fieldIo().convertRGridToBasis(wFieldsRGrid(), wFields());
+      hasWFields_ = true;
+      hasCFields_ = false;
+   }
+
+   /*
+   * Iteratively solve a SCFT problem for specified parameters.
+   */
+   template <int D>
+   int System<D>::iterate()
+   {
+      UTIL_CHECK(hasWFields_);
+      hasCFields_ = false;
+
+      // Call iterator
+      int error = iterator().solve();
+      hasCFields_ = true;
+
+      if (error) {
+         Log::file() << "Iterator errored to converge\n";
+      } else {
+         computeFreeEnergy();
+         outputThermo(Log::file());
+      }
+      return error;
+   }
+
+   /**
+   * Solve modified diffusion equation for current w-fields, without iteration.
+   */
+   template <int D>
+   void System<D>::compute()
+   {
+      UTIL_CHECK(hasWFields_);
+
+      // Solve the modified diffusion equation (without iteration)
+      mixture().compute(wFieldsRGrid(), cFieldsRGrid());
+
+      // Convert c fields from r-grid to basis
+      fieldIo().convertRGridToBasis(cFieldsRGrid(), cFields());
+      hasCFields_ = true;
+   }
+
+   /**
+   * Write w-fields in symmetry-adapted basis format. 
+   */
+   template <int D>
+   void System<D>::writeWBasis(std::string & filename)
+   {
+      UTIL_CHECK(hasWFields_);
+      fieldIo().writeFieldsBasis(filename, wFields());
+   }
+
+   /**
+   * Write w-fields to real space grid.
+   */
+   template <int D>
+   void System<D>::writeWRgrid(std::string & filename)
+   {
+      UTIL_CHECK(hasWFields_);
+      fieldIo().writeFieldsRGrid(filename, wFieldsRGrid());
+   }
+
+   /**
+   * Write concentrations in symmetry-adapted basis format.
+   */
+   template <int D>
+   void System<D>::writeCBasis(std::string & filename)
+   {
+      UTIL_CHECK(hasCFields_);
+      fieldIo().writeFieldsBasis(filename, cFields());
+   }
+
+   /**
+   * Write concentration fields in real space grid format.
+   */
+   template <int D>
+   void System<D>::writeCRgrid(std::string & filename)
+   {
+      UTIL_CHECK(hasCFields_);
+      fieldIo().writeFieldsRGrid(filename, cFieldsRGrid());
+   }
+
+   /**
+   * Convert a field from symmetry-adpated basis to real-space grid format.
+   */
+   template <int D>
+   void System<D>::basisToRgrid(std::string & inFileName,
+                                std::string & outFileName)
+   {
+      // Note: This and other conversion functions use the c-field
+      // arrays for storage, and thus corrupt previously stored values.
+      hasCFields_ = false;
+
+      fieldIo().readFieldsBasis(inFileName, cFields());
+      fieldIo().convertBasisToRGrid(cFields(), cFieldsRGrid());
+      fieldIo().writeFieldsRGrid(outFileName, cFieldsRGrid());
+   }
+
+   /**
+   * Convert a field from real-space grid to symmetry-adapted basis format.
+   */
+   template <int D>
+   void System<D>::rgridToBasis(std::string & inFileName,
+                                std::string & outFileName)
+   {
+      // This conversion corrupts both cFieldsRGrid and cFields arrays
+      hasCFields_ = false;
+
+      fieldIo().readFieldsRGrid(inFileName, cFieldsRGrid());
+      fieldIo().convertRGridToBasis(cFieldsRGrid(), cFields());
+      fieldIo().writeFieldsBasis(outFileName, cFields());
+   }
+
+   /**
+   * Convert fields from Fourier (k-grid) to real-space grid (r-grid) format.
+   */
+   template <int D>
+   void System<D>::kgridToRgrid(std::string & inFileName,
+                                std::string& outFileName)
+   {
+      // This conversion corrupts cfieldRGrid array
+      hasCFields_ = false;
+
+      fieldIo().readFieldsKGrid(inFileName, cFieldsKGrid());
+      for (int i = 0; i < mixture().nMonomer(); ++i) {
+         fft().inverseTransform(cFieldKGrid(i), cFieldRGrid(i));
+      }
+      fieldIo().writeFieldsRGrid(outFileName, cFieldsRGrid());
+   }
+
+   /**
+   * Convert fields from real-space grid (r-grid) to Fourier (k-grid) format.
+   */
+   template <int D>
+   void System<D>::rgridToKgrid(std::string & inFileName,
+                                std::string & outFileName)
+   {
+      hasCFields_ = false;
+
+      fieldIo().readFieldsRGrid(inFileName, cFieldsRGrid());
+      for (int i = 0; i < mixture().nMonomer(); ++i) {
+         fft().forwardTransform(cFieldRGrid(i), cFieldKGrid(i));
+      }
+      fieldIo().writeFieldsKGrid(outFileName, cFieldsKGrid());
+   }
+
+   /**
+   *
+   */
+   template <int D>
+   void System<D>::rhoToOmega(std::string & inFileName, 
+                              std::string & outFileName)
+   {
+      hasCFields_ = false;
+      hasWFields_ = false;
+
+      // Open input file
+      std::ifstream inFile;
+      fileMaster().openInputFile(inFileName, inFile);
+
+      // Read concentration field
+      std::string label;
+      int nStar,nM;
+      inFile >> label;
+      inFile >> nStar;
+      inFile >> label;
+      inFile >> nM;
+      int idum;
+      for (int i = 0; i < nStar; ++i) {
+         inFile >> idum;
+         for (int j = 0; j < nM; ++j) {
+            inFile >> cField(j)[i];
+         }
+      }
+      inFile.close();
+
+      // Compute w fields from c fields
+      for (int i = 0; i < basis().nStar(); ++i) {
+         for (int j = 0; j < mixture().nMonomer(); ++j) {
+            wField(j)[i] = 0;
+            for (int k = 0; k < mixture().nMonomer(); ++k) {
+               wField(j)[i] += interaction().chi(j,k) * cField(k)[i];
+            }
+         }
+      }
+
+      // Convert to r-grid format
+      fieldIo().convertBasisToRGrid(wFields(), wFieldsRGrid());
+      hasWFields_ = true;
+      hasCFields_ = false;
+
+      // Write w field
+      fieldIo().writeFieldsBasis(outFileName, wFields());
+   }
+
+   /**
+   * Write description of symmetry-adapted stars and basis to file.
+   */
+   template <int D>
+   void System<D>::outputStars(std::string & outFileName)
+   {
+      std::ofstream outFile;
+      fileMaster().openOutputFile(outFileName, outFile);
+      fieldIo().writeFieldHeader(outFile, mixture().nMonomer());
+      basis().outputStars(outFile);
+   }
+
+   /**
+   * Write a list of waves and associated stars to file.
+   */
+   template <int D>
+   void System<D>::outputWaves(std::string & outFileName)
+   {
+      std::ofstream outFile;
+      fileMaster().openOutputFile(outFileName, outFile);
+      fieldIo().writeFieldHeader(outFile, mixture().nMonomer());
+      basis().outputWaves(outFile);
    }
 
 } // namespace Pspc

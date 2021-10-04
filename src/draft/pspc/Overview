@@ -1,0 +1,400 @@
+
+The Pscf::Pspc namespace implements SCFT for periodic structures on a CPU.
+
+-----------------------------------------------------------------------------
+General comments:
+
+1) Package design goals:
+
+The PSCF C++/Cuda package was designed so as to allow creation of multiple
+different implementations of SCFT that can differ in the geometry of the problem 
+being solved, the choice of basic algorithms for solving the modified diffusion 
+equation and the hardware on which it designed to run (CPU vs. GPU).
+
+2) Namespace and directory hierarchy:
+
+The src/ directory contains all C++ source code. The source code is divided into
+two top level namespaces, named Util and Pscf.  
+
+The Util namespace contains general utility classes for C++ scientific programming.
+Most of these classes were orginally written for the Simpatico molecular simulation
+MD/MC program, but were separated into separate repository to allow re-usage in
+other projects. All code in the Util namespace is in the src/util directory. The
+contents of this directory are cloned into this project as a git "submodule" by
+cloning the contents of the git dmorse/util repository into this directory.
+
+The Pscf namespace contains all code that is specfic to self-consistent field 
+theory (SCFT). Code that is specific to a specific implementation of SCFT 
+for a specific type of boundary conditions, hardware, etc is in an associated
+ sub-namespace of Pscf. Classes for implementating periodic boundary conditions 
+on a CPU is in namespace Pscf:Pspc (Psuedo SPectral on a Cpu), which is all in 
+directory src/pspc. Shared classes in Pscf that can be used by two or more 
+implementations are all in the main Pscf namespace (not in a sub-namespace), and 
+are all located in the src/pscf directory.
+
+3) Use of template argument D for the dimension of space: 
+
+Most classes in Pscf::Pspc are defined as C++ templates that take an integer 
+D as a template parameter that represents the dimensionality of space, or the 
+number of coordinates required to describe the structure. Different instances 
+of each template with D=1, 2, or 3 are compiled to create codes for 1D (e.g., 
+lamellar), 2D (e.g.  hexagonal), or 3D structures (e.g., BCC or gyroid). This
+allows the dimension of space to be fixed at compile time within the assembly
+code for each program while maintaining only one set of source files for the 
+cases D=1, 2, and 3.
+
+4) Parameter files formats and inheritance from Util::ParamComposite:: 
+
+Most main classes in Pscf:Pspc are subclasses of a class Util::ParamComposite, 
+which is a class that provides member functions to read and write a parameter 
+file block in a standard hierarchichal format. The file format associated with 
+a ParamComposite object may include both individual data members with values 
+that may be read and written using a iostream << and >> operators, as well as 
+child objects that are themselves subclasses of ParamComposite. Almost every 
+ParamComposite subclass implements a readParameters() that hard codes the 
+format for the parameter file block associated with that object. 
+The readParameters() functions for higher level objects invoke those for 
+subobjects to read sub-blocks of the parameter file. To see the parameter file 
+format for an object, read the source code of its readParameters() member 
+function.
+
+5) Utility DArray and related container classes:
+
+All of the code for pscf++ uses a set of container templates that are defined
+in the src/util/container directory in preference to either bare C arrays or
+the containers that are provided in the C++ standard library (e.g., std::vector).
+The most heavily used of these is an array container template DArray<T>, which
+represents an array of objects of type T. Elements of a DArray can be accessed
+using the subscript operator [], as in a C array: If "array" is the name of an
+object of type DArray<double> then array[3] returns a reference to a floating 
+point number that is array element with index 3 (the 4th element of the array). 
+References returned by the [] subscript operator can be used on either the
+right-hand-side of an equals sign, where they simply provide constant values,
+or on the left-hand-side of a equals sign, allowing them to be assigned new
+values, exactly as with a C array or the containers in the C++ standard library.
+DArray objects differ from fixed dimension C arrays in that they can be allocated 
+by calling the "allocate" member at some point after the array is declared, but 
+differ from std::vector container in that they cannot grow after allocation by
+adding elements.  The DArray and other containers defined in util/container
+all have the property that they can be compiled in a form that provides 
+automatic run-time bounds checking of indices if they are compiled with a
+preprocessor macro "UTIL_DEBUG" defined. The pscf makefile system provides
+methods to turn this preprocessor macro on throughout the code, to enable
+debugging of errors that could potentially have involved an array index 
+overrun, or turned off for speed after you are convinced the code is correct.
+
+6) MDE Solver classes and solver class templates:
+
+Classes that are used to solve the MDE and use the solution to compute monomer
+concentrations are generally constructed using a system of C++ templates that 
+allow common code to be shared in generic form between different implementations 
+of SCFT. For example, the Pscf::Pspc::Polymer class that represents a single
+polymer in Pspc namespace is a subclass of a template Pscf::PolymerTmpl<Block>
+that is defined in the main Pscf namespace. The template Pscf::PolymerTmp<Block>
+takes the type of the object associated with one block in a block polymer as a
+template parameter.  Different implementations of SCFT define different data 
+types for objects that represent blocks, propagators, polymers, solvents, and 
+mixtures, as well as for objects that represent chemical potential or 
+concentration fields, but the algorithms that relate these different types of
+objects can be expressed in forms that the same for all implementations of SCFT
+except for changes in the names of the relevant data types.  Templates are 
+defined in main PSCF namespace for types that represent solvers for propagator, 
+block, polymer, and mixture objects, which are named PropagatorTmpl, BlockTmpl, 
+etc. Each of these templates is used as a base classs for a more specific 
+implementation of each solver type in each implementation and corresponding 
+sub-namespace. The goal of this design is to allow data structures and 
+algorithms that are common to all implementations to be implemented in a
+generic form in the parent class template, using template parameters to 
+represent data types that are different in different implementations. Data
+members and operations that are not common to all SCFT implementations are
+instead implemented in subclass specific to each SCFT implementation.
+
+Consistent use of namespaces allows analogous objects to be given the same 
+name in different implemtations without causing ambiguities or name clashes. 
+Thus far, the PSCF code contains three SCFT implementations: One that uses 
+a finite-difference method for solving 1-dimensional problems (namespace 
+Fd1d, directory src/fd1d), a Pseudo-SPectral method for periodic problems 
+on a Cpu (namespace Pspc, directory src/pspc), and a Psuedo-Spectral method 
+for periodic problems on a Gpu (namespace Pspg, directory src/pspg).  The 
+object that represents an MDE solver for a polymer is simply called Polymer 
+in such each sub-namespace of Pscf, and the object that represents a block 
+is simply called Block.
+
+-----------------------------------------------------------------------------
+Overview of some important classes in Pscf::Pspc::
+
+/*
+* Main system object
+*
+* Inheritance: Pscf::Pspc::System<D> <= Util::ParamComposite
+*/
+template <int D>
+class System
+{
+
+  // Important functions:
+
+  // Read the parameter file to initialize
+  readParameters(std::istream& ) 
+
+  // Read a set of w-fields (chemical potential fields)
+  readWBasis(std::string filename);
+
+  // Iteratively solve a SCFT problem.
+  iterate();
+
+  // Data members:
+
+  Pscf::Pspc Mixture<D>   mixture      :: MDE solver for mixture
+
+  Pscf::Mesh<D>           mesh         :: Spatial discretization mesh
+
+  Pscf::UnitCell<D>       unitCell     :: Periodic unit cell 
+
+  Pscf::Basis<D>          basis        :: Symmetry adapted Fourier basis
+
+  DArray<DArray<double>>  wFields      :: array of w fields, symmetrized basis
+
+  DArray<WField<D>>       wFieldsRgrid :: array of w fields, on r-grid
+
+  DArray<DArray<double>>  cFields      :: array of c fields, symmetrized basis
+
+  DArray<WField<D>>       cFieldsRgrid :: array of c fields, on r-grid
+
+}
+
+/*
+* Modified diffusion equation (MDE) solver for a mixture.
+*
+* This object is a "solver" for the mixture, and a container for all the polymer 
+* and solvent species in the mixture. This class provides a compute function that 
+* takes an array of chemical potential fields as an argument, which is passed to
+* it by the parent system. The Mixture::compute fucntion calls corresponding 
+* compute function for each polymer and solvent. 
+*
+* Pspc::Pscf is subclass of the generic Pscf::MixtureTmpl template. This is part
+* a pattern: Each "solver" in the Pscf::Pspc namespace (i.e., in the CPU code 
+* for periodic systems) is a subclass of a corresponding template in the Pscf.
+* This is true for mixture, polymer, solvent, and propagator solvers. The 
+* implementation of the base class template attempts to include everything that 
+* is the same for different implementations of SCFT, using template parameters 
+* to represent data types that are implementation specific. 
+*
+* Inheritance: 
+*
+*   Pspc::Pspc::Mixture<D>  <=  Pscf::MixtureTpl<Polymer<D>, Solvent<D>>
+*/
+class Mixture {
+
+   // Key functions
+
+   // Creates association with a spatial mesh and allocates memory.
+   setupMesh(Mesh& )
+
+   // Creates association with a UnitCell.
+   setupUnitCell(UnitCell& )
+
+   /*
+   * Solves the modified diffusion equation for all species.
+   *
+   * Solving modifies internal members of Polymer and Solvent members, and
+   * individual Block members of Polymer, that store thermodynamic information
+   * specific to individual molecules or individual blocks. 
+   *
+   * \param wFields   Array of w-field inputs in real-space (r-grid) format
+   * \param cFields   Array of c-field outputs in real-space (r-grid) format
+   */
+   compute(DArray<WField>& wFields, DArray<CField>& cFields)
+
+   /*
+   * Computes derivatives of the free energy w/respect to unit cell parameters.
+   */
+   computeStress()
+
+   // Data members:
+
+   DArray<Pscf::Monomers>        monomers; // Array of monomer objects
+
+   DArray<Pscf::Pspc::Polymer>   polymers; // Array of Polymer objects
+
+   DArray<Pscf::Pspc::Solvent>   solvents; // Array of Solvent objects
+
+}
+
+
+/*
+* Modified diffusion equation solver for one polymer (linear or acyclic branched)
+*
+* Inheritance:
+*
+*   Pscf::Pspc::Polymer<D> <= Pscf::PolymerTmpl::< Block<D> >
+*   
+*   Notes:
+*
+*   1) The Block<D> class defines a typedef Block::Propagator that specifies the 
+*   type of the associated propagator class.
+*
+*   2) The Pscf::PolymerTmpl<Pscf:Pspc::Block<D>> template instance is itself
+*   derived from Util::Paramcomposite and Pscf::Species.
+*  
+*   3) Each Block of a polymer has two associated Propagator objects, representing
+*   solution of the MDE integrating in different directions. Propagators can be
+*   accessed either through the parent block object or directly through a list
+*   maintained in the Polymer object.
+*
+*   3) The initialization of PolymerTmpl within its readParameters method
+*   calls a makePlan() function that creates a plan for the order in which
+*   propagators must be invoked to make sure that the initial condition for
+*   each is available before we attempt to solve the MDE for that block and
+*   direction by time-stepping the MDE. The array of propagators maintained
+*   by the parent Polymer lists them in the order in which they must be 
+*   solved.
+*
+*/
+template <int D>
+class Polymer {
+
+// Important functions
+
+   // Solve modified diffusion equations and compute block concentrations
+   void compute(DArray<WField> const & wFields);
+
+   // Compute stress components (derivatives with respect to unit cell parameters)
+   void computeStress();
+
+   // Return a precomputed stress component
+   double stress(int n);
+
+// Important private members (inherited from PolymerTmpl<Block>)
+
+   DArray<Pspc::Block>       blocks_;
+
+   DArray<Pspc::Vertex>      vertices_;
+
+   DArray<Pspc::Propagator>  propagators_;
+
+}
+
+/*
+* Class Pscf::Pspc::Block represents one block in a block polymer.
+*
+* Notes:
+* 
+* 1) Each block owns two associated Propagator objects.
+* 
+* 2) The monomer type and discretization with respect to the contour variable s
+* are always the same for the two child Propagator objects. Most of the data
+* structures that are required to time-step the MDE for a propagator are thus
+* stored in the parent Block object. As a result, the Block object provides a
+* "step" function that advances the solution of the MDE by one step in the
+* contour discretization. This Block::step function is called repeatedly within 
+* a loop by the "solve" function of the Propagator.
+*
+*/
+class Block{
+
+   // Important functions
+
+   /**
+   * Sets up all data structures that depends on the w field.
+   *
+   * This function must be called for every block after every change in w fields,
+   * e.g., every iteration of an iterative solver.
+   */
+   void setupSolver(WField const &w);
+
+   /**
+   * Sets up all data structures that depends on the unit cell.
+   *
+   * This function must be called for every block after every change in unit cell
+   * parameters, e.g., every iteration of an iterative solver with a flexible 
+   * unit cell, or at the beginning of the iterative solution for a rigid unit
+   * cell. 
+   */
+   void setupUnitCell(const UnitCell& unitCell);
+
+   /**
+   * Compute one step of the solution of the MDE.
+   *
+   * Takes the QField at one step as one argument and outputs the QField at the
+   * next as a output. This is called within a loop in the Propagator::solve
+   * function, with neighboring array elements as arguments.
+   */
+   void step(QField const&q, QField &qNew);
+
+   /**
+   * Compute monomer concentration (volume fraction) for this block.
+   *
+   * This computes a Simpson rule integral with respect to contour length of the 
+   * product of the two propagator solutions.
+   * 
+   * The prefactor is phi/(q*length) in canonical ensemble, where q is the 
+   * molecular partition function and length is the overall length (i.e,. volume)
+   * of the polymer in reference monomer units. This function can't be called 
+   * until all propagators have been solved, because it requires knowledge of q.
+   */
+   computeConcentration(double prefactor);
+
+   /**
+   * Compute the contribution of this block to the stress.
+   */
+   computeStress(double prefactor)
+
+   /**
+   * Return precomputed value of the concentration field for this Block.
+   */
+   CField& cField();
+
+   /**
+   * Return precomputed value for stress component i.
+   */
+   double stress(int i) const;
+
+// Important private members (inherited from BlockTmpl)
+
+   // Pair of Propagator objects.
+   // Note: Pair is an array of fixed dimension 2.
+   Pair<Propagator> propagators_;
+
+   // Concentration field contribution from monomers in this block
+   CField  cField_;
+
+   // Statistical segment length of associated monomer
+   double kuhn_
+
+}
+
+class Propagator{
+
+   // Typedefs: 
+   typedef RField<D>  WField // chemical potential field on r-space grid
+   typedef RField<D>  CField // concentration field on r-space grid
+   typedef RField<D>  QField // Propagator field q(r,s) at fixed s.
+
+   // Note: Type definitions defined in Propagator are also used throughout 
+   // related Block, Polymer, Solvent, and Mixture classes.
+
+   // Important functions
+
+   // Solve the MDE for this block and direction.
+   //
+   // Implementation: Calls Block::step repeatedly within a loop
+   void   solve();
+
+   // Compute and return partition function for the molecule.
+   double computeQ();
+
+   // Return initial condition at "head" of propagator.
+   const QField& head() const;
+
+   // Return final solution at "tail" of propagator.
+   const QField& head() const;
+
+   // Return q-field at the specified integration step.
+   const QField& q(int i) const;
+
+   // Important private data members:
+
+   DArray<QField> qFields_;
+
+}

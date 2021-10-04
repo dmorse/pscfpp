@@ -38,16 +38,6 @@ public:
    {
       System<1> sys;
 
-      #if 0
-      char* argv[3];
-      argv[0] = (char *) "myName";
-      argv[1] = (char *) "-p";
-      argv[2] = (char *) "in/param";
-      optind = 1;
-      sys.setOptions(3, argv);
-      sys.readParam();
-      #endif
-
       std::ifstream paramFile;
       openInputFile("in/param", paramFile);
       sys.readParam(paramFile);
@@ -58,47 +48,10 @@ public:
       TEST_ASSERT(sys.iterator().maxItr() == 40);
    }
 
-   void testAllocate()
-   {
-      System<1> sys;
-
-
-      #if 0
-      char* argv[5];
-      argv[0] = (char*) "diffName";
-      argv[1] = (char*) "-p";
-      argv[2] = (char*) "in/param";
-      argv[3] = (char*) "-c";
-      argv[4] = (char*) "in/command";
-      optind = 1;
-      sys.setOptions(5, argv);
-      sys.readParam();
-      #endif
-
-      std::ifstream paramFile;
-      openInputFile("in/param", paramFile);
-      sys.readParam(paramFile);
-      paramFile.close();
-
-      //Allocate done automatically in system.tpp
-   }
-
    void testComputeDeviation()
    {
       System<1> sys;
 
-      #if 0
-      char* argv[5];
-      argv[0] = (char*) "diffName";
-      argv[1] = (char*) "-p";
-      argv[2] = (char*) "in/param";
-      argv[3] = (char*) "-c";
-      argv[4] = (char*) "in/command";
-      optind = 1;
-      sys.setOptions(5, argv);
-      sys.readParam();
-      #endif
-      
       std::ifstream paramFile;
       openInputFile("in/param", paramFile);
       sys.readParam(paramFile);
@@ -147,7 +100,7 @@ public:
 
       }
       
-      //calculate deviation by hand();
+      // Compute deviation
       sys.iterator().computeDeviation();
       
       //print devHists_
@@ -233,18 +186,6 @@ public:
    {
       System<1> sys;
 
-      #if 0
-      char* argv[5];
-      argv[0] = (char*) "diffName";
-      argv[1] = (char*) "-p";
-      argv[2] = (char*) "in/param";
-      argv[3] = (char*) "-c";
-      argv[4] = (char*) "in/command";
-      optind = 1;
-      sys.setOptions(5, argv);
-      sys.readParam();
-      #endif
-
       std::ifstream paramFile;
       openInputFile("in/param", paramFile);
       sys.readParam(paramFile);
@@ -297,18 +238,6 @@ public:
    void testSolve()
    {
       System<1> sys;
-
-      #if 0
-      char* argv[5];
-      argv[0] = (char*) "diffName";
-      argv[1] = (char*) "-p";
-      argv[2] = (char*) "in/param";
-      argv[3] = (char*) "-c";
-      argv[4] = (char*) "in/command";
-      optind = 1;
-      sys.setOptions(5, argv);
-      sys.readParam();
-      #endif
 
       std::ifstream paramFile;
       openInputFile("in/param", paramFile);
@@ -446,7 +375,6 @@ public:
 TEST_BEGIN(IteratorTest)
 TEST_ADD(IteratorTest, testConstructor1)
 TEST_ADD(IteratorTest, testReadParam)
-TEST_ADD(IteratorTest, testAllocate)
 TEST_ADD(IteratorTest, testComputeDeviation)
 TEST_ADD(IteratorTest, testIsConverged1)
 //TEST_ADD(IteratorTest, testIsConverged2)
