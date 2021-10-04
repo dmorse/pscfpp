@@ -561,6 +561,10 @@ namespace Pspc
    template <int D>
    void System<D>::computeFreeEnergy()
    {
+      UTIL_CHECK(hasWFields_);
+      UTIL_CHECK(hasCFields_);
+
+      // Initialize to zero
       fHelmholtz_ = 0.0;
  
       // Compute ideal gas contributions to fHelhmoltz_

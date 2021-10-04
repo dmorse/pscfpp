@@ -149,7 +149,7 @@ namespace Pspc
       double pressure() const;
 
       //@}
-      /// \name Field Accessor Functions
+      /// \name Chemical Potential Field (w-Field) Accessor Functions
       //@{
 
       /**
@@ -194,6 +194,10 @@ namespace Pspc
       */
       RFieldDft<D>& wFieldKGrid(int monomerId);
 
+      //@}
+      /// \name Concentration Field (c-Field) Accessor Functions
+      //@{
+
       /**
       * Get array of all concentration fields expanded in a basis.
       *
@@ -237,7 +241,91 @@ namespace Pspc
       RFieldDft<D>& cFieldKGrid(int monomerId);
 
       //@}
-      /// \name Commands (1-to-1 correspondence with command file commands)
+      /// \name Miscellaneous Accessors 
+      //@{
+
+      /**
+      * Get Mixture by reference.
+      */
+      Mixture<D>& mixture();
+
+      /**
+      * Get spatial discretization mesh by reference.
+      */
+      Mesh<D>& mesh();
+
+      /**
+      * Get UnitCell (i.e., lattice type and parameters) by reference.
+      */
+      UnitCell<D>& unitCell();
+
+      /**
+      * Get Interaction (i.e., excess free energy model) by reference.
+      */
+      ChiInteraction& interaction();
+
+      /**
+      * Get the Iterator by reference.
+      */
+      //temporarily changed to allow testing on member functions
+      AmIterator<D>& iterator();
+
+      /**
+      * Get associated Basis object by reference.
+      */
+      Basis<D>& basis();
+
+      /**
+      * Get associated FFT object.
+      */
+      FFT<D>& fft();
+
+      /**
+      * Get associated FieldIo object.
+      */
+      FieldIo<D>& fieldIo();
+
+      /**
+      * Get homogeneous mixture (for reference calculations).
+      */
+      Homogeneous::Mixture& homogeneous();
+
+      /**
+      * Get FileMaster by reference.
+      */
+      FileMaster& fileMaster();
+
+      /** 
+      * Get group name.
+      */  
+      std::string groupName() const;
+
+      /** 
+      * Have monomer chemical potential fields (w fields) been set?
+      *
+      * A true value is returned if and only if consistent values have 
+      * been set for both components in a symmetrized basis (wFields) and 
+      * for values on a regular real space grid (wFieldsRGrid). Commands 
+      * that read w fields from file in either of these formats must 
+      * immediately convert to the other.
+      */
+      bool hasWFields() const;
+
+      /** 
+      * Have monomer concentration fields (c fields) been computed?
+      *
+      * A true value is returned if and only if monomer concentration fields
+      * have been computed by solving the modified diffusion equation for 
+      * the current w fields, and consistent values have been set for both 
+      * values on a grid (wFieldsRGrid) and for coefficients in a basis 
+      * (cFields).  To satisfy this requirement, solution of the MDE on a 
+      * grid should always be immediately followed by conversion of c 
+      * fields to a basis.
+      */  
+      bool hasCFields() const;
+
+      //@}
+      /// \name Commands (one-to-one correspondence with command file commands)
       //@{
 
       /**
@@ -406,90 +494,6 @@ namespace Pspc
       * \param outFileName name of output file
       */
       void outputWaves(std::string & outFileName);
-
-      //@}
-      /// \name Miscellaneous Accessors 
-      //@{
-
-      /**
-      * Get Mixture by reference.
-      */
-      Mixture<D>& mixture();
-
-      /**
-      * Get spatial discretization mesh by reference.
-      */
-      Mesh<D>& mesh();
-
-      /**
-      * Get UnitCell (i.e., lattice type and parameters) by reference.
-      */
-      UnitCell<D>& unitCell();
-
-      /**
-      * Get Interaction (i.e., excess free energy model) by reference.
-      */
-      ChiInteraction& interaction();
-
-      /**
-      * Get the Iterator by reference.
-      */
-      //temporarily changed to allow testing on member functions
-      AmIterator<D>& iterator();
-
-      /**
-      * Get associated Basis object by reference.
-      */
-      Basis<D>& basis();
-
-      /**
-      * Get associated FFT object.
-      */
-      FFT<D>& fft();
-
-      /**
-      * Get associated FieldIo object.
-      */
-      FieldIo<D>& fieldIo();
-
-      /**
-      * Get homogeneous mixture (for reference calculations).
-      */
-      Homogeneous::Mixture& homogeneous();
-
-      /**
-      * Get FileMaster by reference.
-      */
-      FileMaster& fileMaster();
-
-      /** 
-      * Get group name.
-      */  
-      std::string groupName() const;
-
-      /** 
-      * Have monomer chemical potential fields (w fields) been set?
-      *
-      * A true value is returned if and only if consistent values have 
-      * been set for both components in a symmetrized basis (wFields) and 
-      * for values on a regular real space grid (wFieldsRGrid). Commands 
-      * that read w fields from file in either of these formats must 
-      * immediately convert to the other.
-      */
-      bool hasWFields() const;
-
-      /** 
-      * Have monomer concentration fields (c fields) been computed?
-      *
-      * A true value is returned if and only if monomer concentration fields
-      * have been computed by solving the modified diffusion equation for 
-      * the current w fields, and consistent values have been set for both 
-      * values on a grid (wFieldsRGrid) and for coefficients in a basis 
-      * (cFields).  To satisfy this requirement, solution of the MDE on a 
-      * grid should always be immediately followed by conversion of c 
-      * fields to a basis.
-      */  
-      bool hasCFields() const;
 
       //@}
 
