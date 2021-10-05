@@ -5,8 +5,9 @@
 #include <test/UnitTestRunner.h>
 
 #include <pspc/System.h>
-#include <pspc/iterator/AmIterator.h>
 #include <pscf/mesh/MeshIterator.h>
+
+//#include <pspc/iterator/AmIterator.h>
 //#include <util/format/Dbl.h>
 
 #include <fstream>
@@ -48,6 +49,8 @@ public:
    {
       printMethod(TEST_FUNC);
       System<1> system;
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
 
       std::ifstream in;
       openInputFile("in/domainOn/System1D", in);
@@ -59,6 +62,9 @@ public:
    {   
       printMethod(TEST_FUNC);
       System<1> system;
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
+
       openLogFile("out/testConversion1D_lam.log"); 
 
       std::ifstream in; 
@@ -115,6 +121,9 @@ public:
    {   
       printMethod(TEST_FUNC);
       System<2> system;
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
+
       openLogFile("out/testConversion2D_hex.log"); 
 
       // Read parameter file
@@ -172,6 +181,9 @@ public:
    {   
       printMethod(TEST_FUNC);
       System<3> system;
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
+
       openLogFile("out/testConversion3D_bcc.log"); 
 
       // Read parameter file
@@ -232,6 +244,9 @@ public:
       openLogFile("out/testIterate1D_lam_rigid.log"); 
 
       System<1> system;
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
+
       std::ifstream in;
       openInputFile("in/domainOff/System1D", in); 
 
@@ -300,11 +315,14 @@ public:
       openLogFile("out/testIterate1D_lam_.log"); 
  
       System<1> system;
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
+
       std::ifstream in; 
       openInputFile("in/domainOn/System1D", in);
-    
       system.readParam(in);
       in.close();
+
       std::ifstream command;
       openInputFile("in/domainOn/ReadOmega_lam", command);
       system.readCommands(command);
@@ -357,6 +375,9 @@ public:
       openLogFile("out/testIterate2D_hex_rigid.log"); 
 
       System<2> system;
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
+
       std::ifstream in;
       openInputFile("in/domainOff/System2D", in); 
 
@@ -425,6 +446,9 @@ public:
       openLogFile("out/testIterate2D_hex_flex.log"); 
 
       System<2> system;
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
+
       std::ifstream in;
       openInputFile("in/domainOn/System2D", in);
       system.readParam(in);
@@ -485,6 +509,9 @@ public:
       openLogFile("out/testIterate3D_bcc_rigid.log"); 
 
       System<3> system;
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
+
       std::ifstream in;
       openInputFile("in/domainOff/System3D", in); 
 
@@ -553,9 +580,11 @@ public:
       openLogFile("out/testIterate3D_bcc_flex.log"); 
 
       System<3> system;
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
+
       std::ifstream in; 
       openInputFile("in/domainOn/System3D", in);
-
       system.readParam(in);
       in.close();
       std::ifstream command;
