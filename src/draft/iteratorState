@@ -1,89 +1,111 @@
-
 Idea: Classes to model SCFT states and differences between states
 
-It would be useful to have class that represents a solution to a SCF problem, along 
-with tools to control file IO of this information and to compare different solutions.
-Different implementations would be required for different SCFT tools (e.g., fd1d vs.
-pspc). The state would always include the w-fields for all monomers, and should include 
-all other parameters that are adjusted during iterative solution. 
+It would be useful to have class that represents a solution to a SCF problem, 
+along with tools to control file IO of this information and to compare 
+different solutions.  Different implementations would be required for 
+different SCFT tools (e.g., fd1d vs.  pspc). The state would always include 
+the w-fields for all monomers, and should include all other parameters that 
+are adjusted during iterative solution. 
 
-In codes designed to solve SCFT for periodic structures with an ajustable unit cell, 
-the state data would include unit cell dimensions as well as w field configurations. 
-The field formats designed for the fortran code all stored precisely this information, 
-giving information about unit cell dimensions in a standard file header.
+In codes designed to solve SCFT for periodic structures with an ajustable unit 
+cell, the state data would include unit cell dimensions as well as w field 
+configurations.  The field formats designed for the fortran code all stored 
+precisely this information, giving information about unit cell dimensions 
+in a standard file header.
 
-Rationale - This seems potentially useful for two purposes:
+Rationale - This seems potentially useful for several purposes:
 
 1) A templatizable way of storing histories during a sweep operation.
 
-2) An aid to writing compact regression tests of SCFT solutions.
+2) Compact interface for reading and writing field files into an that 
+retains unit cell information as well as field information.
+
+3) An aid to writing compact regression tests of SCFT solutions.
 
 
------------------------------------------------------------------------------------------
-Proposed class interfaces:
+-------------------------------------------------------------------------------
+Proposed class or class template interfaces:
 
-
-class IteratorState 
+/**
+*  Container for a set of chemical potential fields and unit cell parameters.
+*
+* A State represents the current state of a System, in the form used by an
+* iterator. The WField template parameter can be either an DArray<double>,
+* to represent each field using a symmetry-adapated Fourier basis, or an
+* RField, to represent each field using a real-space grid.
+*/
+template <int D, class WField>
+class State
 {
 
-   clear();
+   void clear();
 
-   setFieldIO(FieldIO& fieldIO);
+   void setFieldIO(FieldIO& fieldIO);
 
    // Assignment operator from a State
-   operator = (State& )
+   void operator = (State& )
 
-   // Assignment operator from a System
-   operator = (System& )
+   // Get current state from a System
+   void update(System& )
 
-   // File IO methods
-   readBasisFormat(std::in )
-   writeBasisFormat(std::in )
-   
-   readRgridFormat(std::in )
-   writeRgridFormat(std::in )
+   // Read from Omega Field file
+   void read(std::in )
+
+   // Write to Omega Field file
+   void write(std::in )
+
+   // Accessors
+  
+   const DArray<WField>& wFields() const;
+
+   const FArray<double, 6> unitCellParameters_;
+
+   int nUnitCellParameter();
 
    // Create a linear combination of states, store in this object.
    makeLinearCombination(Array<State> states, Array<double> coeffs);
 
-}
-
-class IteratorStateComparison 
-{
-
-   // Lifetime methods
-   setFieldIo(FieldIo& fieldIo);
-
-   clear();
-
-   // Methods that make a comparison
-
-   void compare(State&, State&)
-
-   void readBasis(State&, std::in file)
-   void readBasis(std::in& file1, std::in file2);
-
-   void readRgrid(State&, std::in file)
-   void readRgrid(std::in& file1, std::in file2);
-
-   // Accessors
-
-   double fieldMaxDiff();
-
-   double fieldRmsDiff();
-
-   double cellMaxDiff();
-
-   double cellRmsDiff();
-
 private:
 
-   double fieldMaxDiff_;
+   FieldIo* fieldIoPtr_;
 
-   double fieldRmsDiff_;
+   DArray<WField> wFields_;
 
-   double cellMaxDiff_;
+   FArray<double, 6> unitCellParameters_;
 
-   double cellRmsDiff_;
+   int nUnitCellParameter_;
+
+   bool isRigid_;
+
+}
+
+template <int D, class WField>
+class FieldComparison
+{
+public:
+
+   compare(const DArray<WField> & , const DArray<WField const & );
+   
+   double maxAbsDiff();
+ 
+   double rmsDiff();
+
+private: 
+
+   double maxAbsDiff_;
+ 
+   double rmsDiff_;
+
+}
+
+template
+class UnitCellComparison
+{
+
+public:
+
+   compare(const FArray<double, 6>& const FArray<double, 6>&, nParameter);
+
+private:
 
 }

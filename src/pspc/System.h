@@ -38,6 +38,16 @@ namespace Pspc
    /**
    * Main class in SCFT simulation of one system.
    *
+   * A System has (among other components):
+   *
+   *    - a Mixture (a container for polymer and solvent solvers)
+   *    - a Mesh
+   *    - a UnitCell
+   *    - a Basis (symmetry-adapted Fourier expansion basis)
+   *    - an Iterator
+   *    - Monomer chemical fields in both basis and grid formats
+   *    - Monomer concentration fields in both basis and grid formats
+   *
    * \ingroup Pscf_Pspc_Module
    */
    template <int D>

@@ -26,19 +26,30 @@ namespace Pspc
    /**
    * Solver for a mixture of polymers and solvents.
    *
-   * A Mixture contains a list of Polymer and Solvent objects. Each
-   * such object can solve the single-molecule statistical mechanics 
-   * problem for an ideal gas of the associated species in a set of
-   * specified chemical potential fields, and thereby compute 
-   * concentrations and single-molecule partition functions. A
-   * Mixture is thus both a chemistry descriptor and an ideal-gas 
-   * solver.
+   * A Mixture contains a list of Polymer and Solvent objects. Each such
+   * object can solve the single-molecule statistical mechanics problem
+   * for an ideal gas of the associated species in a set of specified
+   * chemical potential fields, and thereby compute concentrations and
+   * and single-molecule partition functions. A Mixture is thus both a
+   * a chemistry descriptor and an ideal-gas solver.
    *
-   * A Mixture is associated with a Mesh<D> object, which models a
-   * spatial discretization mesh. 
+   * The single-molecule partition functions and concentrations for a
+   * non-interacting mixture of polymer and solvent species are computed
+   * by invoking the Mixture::compute function.  The Mixture::compute 
+   * function takes an arrays of monomer chemical potential fields 
+   * (w fields) as an input argument and an array of monomer concentration 
+   * fields (c fields) as an output. The objects that store these fields 
+   * are owned by the parent System.
    *
-   * Note: Point-like solvents are not yet implemented. Currently,
-   * a Mixture can only be a mixture of Polymer species.
+   * A Mixture is associated with a Mesh<D> object, which models a spatial
+   * discretization mesh, and a UnitCell<D> object, which describes the
+   * the periodic unit cell. The Mixture::setupUnitCell function sets up
+   * all parameters that depend on the unit cell, and must be called once
+   * once after every time the unit cell is initialized or modified, 
+   * before the next call to Mixture::compute.
+   *
+   * Note: Point-like solvents are not yet implemented. Currently, a 
+   * Mixture can only be a mixture of Polymer species.
    *
    * \ingroup Pspc_Solver_Module
    */
