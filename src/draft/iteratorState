@@ -22,69 +22,108 @@ retains unit cell information as well as field information.
 
 3) An aid to writing compact regression tests of SCFT solutions.
 
-
 -------------------------------------------------------------------------------
 Proposed class or class template interfaces:
 
 /**
-*  Container for a set of chemical potential fields and unit cell parameters.
+* Container for a set of chemical potential fields and unit cell parameters.
 *
 * A State represents the current state of a System, in the form used by an
-* iterator. The WField template parameter can be either an DArray<double>,
-* to represent each field using a symmetry-adapated Fourier basis, or an
-* RField, to represent each field using a real-space grid.
+* iterator, of the solution of a SCFT problem. The FT template parameter is 
+* a field type, which can be either an DArray<double>, to represent each 
+* field using a symmetry-adapated Fourier basis, or an RField, to represent 
+* each field using a real-space grid.
+*
+* The State has an internal UnitCell and an internal FieldIo, and a pointer
+* to an associated System. The FieldIo is associated with UnitCell of this
+* State, but with the Mesh, FFT, Basis, groupName, and FileMaster of the 
+* System. That allows the fieldIod to read and write field headers containing 
+* data for the UnitCell of this state.
 */
-template <int D, class WField>
+template <int D, class FT>
 class State
 {
 
-   void clear();
+   /**
+   * Default constructor.
+   */
+   State();
 
-   void setFieldIO(FieldIO& fieldIO);
+   /**
+   * Constructor, associate with System.
+   */
+   State(System& system);
 
-   // Assignment operator from a State
-   void operator = (State& )
+   /**
+   * Destructor.
+   */
+   ~State();
 
-   // Get current state from a System
-   void update(System& )
+   /**
+   * Create association with System and initialize.
+   *
+   * Set associations of FieldIo to Mesh, FFT, groupName, Basis, and 
+   * FileMaster of the associated System, but to the internal UnitCell 
+   * of this State.
+   /*
+   void setSystem(System& system);
 
-   // Read from Omega Field file
-   void read(std::in )
+   /**
+   * Assignment operator from another State
+   */
+   void operator = (State<FT>& )
 
-   // Write to Omega Field file
-   void write(std::in )
+   /**
+   * Get current state from associated System.
+   */
+   void getSystemState()
+
+   /**
+   * Read state from a field file
+   *
+   * Explicit specializations should call the appropriate read method for
+   * files of type FT.
+   */
+   void read(std::in ) = 0;
+
+   /**
+   * Write state to a field file
+   *
+   * Explicit specializations should call the appropriate write method for
+   * files of type FT.
+   */
+   void write(std::in ) = 0;
 
    // Accessors
   
-   const DArray<WField>& wFields() const;
+   const FT& field(int i) const;
 
-   const FArray<double, 6> unitCellParameters_;
+   const DArray<FT>& fields() const;
 
-   int nUnitCellParameter();
+   const UnitCell& unitCell() const;
 
    // Create a linear combination of states, store in this object.
-   makeLinearCombination(Array<State> states, Array<double> coeffs);
+   linearCombination(Array<State> states, Array<double> coeffs, 
+                     bool isRigid);
 
 private:
 
-   FieldIo* fieldIoPtr_;
+   DArray<FT>  fields_;
 
-   DArray<WField> wFields_;
+   UnitCell<D> unitCell_;
 
-   FArray<double, 6> unitCellParameters_;
+   FieldIo<D>  fieldIo_;
 
-   int nUnitCellParameter_;
-
-   bool isRigid_;
+   System<D>*  systemPtr_;
 
 }
 
-template <int D, class WField>
+template <int D, class FT>
 class FieldComparison
 {
 public:
 
-   compare(const DArray<WField> & , const DArray<WField const & );
+   compare(const DArray<FT> & , const DArray<FT> const & );
    
    double maxAbsDiff();
  
@@ -98,14 +137,22 @@ private:
 
 }
 
-template
+template <int D>
 class UnitCellComparison
 {
 
 public:
 
-   compare(const FArray<double, 6>& const FArray<double, 6>&, nParameter);
+   compare(const UnitCell<D>&, const UnitCell<D>& );
 
-private:
+   double maxAbsDiff();
+ 
+   double rmsDiff();
+
+private: 
+
+   double maxAbsDiff_;
+ 
+   double rmsDiff_;
 
 }
