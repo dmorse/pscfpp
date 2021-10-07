@@ -1,0 +1,17 @@
+
+1) Write unit tests for BasisFieldState, in new src/tests/sweep subdirectory
+
+2) Write makeGuess method of Sweep<D>
+
+3) Unit Test Sweep<D> as best you can.
+
+4) Create SweepFactory
+
+5) Write LinearSweep
+
+6) Unit Test LinearSweep
+
+7) Uncomment and debug parts of the System that involve Sweep,
+   uncomment or add code to read a Sweep in System::readParameters
+
+8) Test sweep functionality of system, add unit tests to do so.
