@@ -5,15 +5,14 @@ Housekeeping: (assigned to Dave)
 
    - Complete unit tests for FieldIo
 
-   - Modify unit tests of system so that they can be incorporated
-     into the Pspc test composite. 
-
 ------------------------------------------------------------------------
 Later
 
-   - Add point solvents.
+   - Test point solvent functionality
 
-   - Add sweep functionality.
+   - Finish sweep functionality.
 
-   - Add relaxation iterator.
+   - Write relaxation iterator.
+
+   - Write mask to constrain total density to inhomogeneous field
 

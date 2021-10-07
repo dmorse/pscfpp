@@ -106,6 +106,7 @@ public:
          TEST_ASSERT(eq(u.parameter(i), v.parameter(i)));
       }
       TEST_ASSERT(eq(u.rBasis(0)[0], param));
+      TEST_ASSERT(eq(u.drBasis(0,0,0), 1.0));
       TEST_ASSERT(eq(u.kBasis(0)[0], twoPi/param));
       TEST_ASSERT(isValidReciprocal(u));
       TEST_ASSERT(isValidDerivative(u));
@@ -240,6 +241,15 @@ public:
       for (int i = 0; i < u.nParameter(); ++i) {
          TEST_ASSERT(eq(u.parameter(i), v.parameter(i)));
       }
+      int i, j;
+      for (i = 0; i < 2; ++i) {
+         for (j = 0; j < 2; ++j) {
+            TEST_ASSERT(eq(u.rBasis(i)[j], v.rBasis(i)[j]));
+            TEST_ASSERT(eq(u.kBasis(i)[j], v.kBasis(i)[j]));
+            TEST_ASSERT(eq(u.drBasis(0, i, j), v.drBasis(0, i, j)));
+            TEST_ASSERT(eq(u.dkBasis(0, i, j), v.dkBasis(0, i, j)));
+         }
+      }
       TEST_ASSERT(isValidReciprocal(u));
       TEST_ASSERT(isValidDerivative(u));
 
@@ -308,6 +318,16 @@ public:
       TEST_ASSERT(u.nParameter() == 3);
       for (int i = 0; i < u.nParameter(); ++i) {
          TEST_ASSERT(eq(u.parameter(i), v.parameter(i)));
+      }
+      for (i = 0; i < 3; ++i) {
+         for (j = 0; j < 3; ++j) {
+            TEST_ASSERT(eq(u.rBasis(i)[j], v.rBasis(i)[j]));
+            TEST_ASSERT(eq(u.kBasis(i)[j], v.kBasis(i)[j]));
+            for (k = 0; k < 3; ++k) {
+               TEST_ASSERT(eq(u.drBasis(k,i,j), v.drBasis(k, i, j)));
+               TEST_ASSERT(eq(u.dkBasis(k,i,j), v.dkBasis(k, i, j)));
+            }
+         }
       }
       TEST_ASSERT(isValidReciprocal(u));
       TEST_ASSERT(isValidDerivative(u));
