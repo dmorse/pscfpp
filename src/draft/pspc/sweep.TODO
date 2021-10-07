@@ -3,11 +3,11 @@
 
 2) Write makeGuess method of Sweep<D>
 
-3) Unit Test Sweep<D> as best you can.
+3) Unit Test Sweep<D> as best we can.
 
-4) Create SweepFactory
+4) Create Pscf::Pspc::SweepFactory
 
-5) Write LinearSweep
+5) Write LinearSweep subclass
 
 6) Unit Test LinearSweep
 
