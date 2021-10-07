@@ -30,8 +30,8 @@ namespace Pscf {
 namespace Pspc
 {
    template <int D> class AmIterator;
-   class Sweep;
-   class SweepFactory;
+   template <int D> class Sweep;
+   template <int D> class SweepFactory;
 
    using namespace Util;
 
@@ -570,12 +570,12 @@ namespace Pspc
       /**
       * Pointer to an Sweep object
       */
-      Sweep* sweepPtr_;
+      Sweep<D>* sweepPtr_;
 
       /**
       * Pointer to SweepFactory object
       */
-      SweepFactory* sweepFactoryPtr_;
+      SweepFactory<D>* sweepFactoryPtr_;
       #endif
 
       /**

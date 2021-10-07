@@ -23,8 +23,6 @@ namespace Pscf {
    class SweepTmpl : public ParamComposite
    {
 
-   static const int nHistory = 2;
-
    public:
 
       /**
@@ -50,6 +48,9 @@ namespace Pscf {
       virtual void sweep();
 
    protected:
+
+      /// Maximum number of stored states
+      static const int nHistory = 2;
 
       /// Number of steps. 
       int ns_;

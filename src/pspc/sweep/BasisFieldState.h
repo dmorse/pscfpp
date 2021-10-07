@@ -23,6 +23,7 @@ namespace Pspc
    template <int D>
    class BasisFieldState : public FieldState<D, DArray<double> >
    {
+   public:
 
       /**
       * Default constructor.

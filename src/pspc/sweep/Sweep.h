@@ -22,7 +22,7 @@ namespace Pspc {
    * Solve a sequence of problems along a line in parameter space.
    */
    template <int D>
-   class Sweep : public SweepTmpl<BasisFieldState<D>>
+   class Sweep : public SweepTmpl< BasisFieldState<D> >
    {
 
    public:
@@ -40,7 +40,7 @@ namespace Pspc {
       /**
       * Set association with parent System.
       */
-      setSystem(System& system);
+      void setSystem(System<D>& system);
 
    protected:
 
@@ -87,10 +87,24 @@ namespace Pspc {
       */
       virtual void getSolution();
 
+      using SweepTmpl<BasisFieldState<D>>::nHistory;
+      using SweepTmpl<BasisFieldState<D>>::ns_;
+      using SweepTmpl<BasisFieldState<D>>::baseFileName_;
+      using SweepTmpl<BasisFieldState<D>>::state;
+      using SweepTmpl<BasisFieldState<D>>::s;
+      using SweepTmpl<BasisFieldState<D>>::historySize;
+      using SweepTmpl<BasisFieldState<D>>::nAccept;
+      using SweepTmpl<BasisFieldState<D>>::initializeHistory;
+
+   protected:
+
+      System<D>& system()
+      {  return *systemPtr_; }
+
    private:
 
       // Trial state (produced by continuation)
-      BasisFieldState trial_;
+      BasisFieldState<D> trial_;
 
       // Pointer to parent system.
       System<D>* systemPtr_;

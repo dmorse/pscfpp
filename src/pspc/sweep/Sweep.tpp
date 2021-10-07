@@ -6,6 +6,7 @@
 */
 
 #include "Sweep.h"
+#include <pspc/System.h>
 #include <pscf/sweep/SweepTmpl.tpp>
 
 namespace Pscf {
@@ -21,7 +22,7 @@ namespace Pspc {
    template <int D>
    void Sweep<D>::setup() 
    {
-      for (int i=0; i < nHistory(); ++i) {
+      for (int i=0; i < 2; ++i) {
          state(i).setSystem(system());
       }
       initializeHistory(state(0), state(1));
@@ -59,7 +60,7 @@ namespace Pspc {
    * Return 0 for sucessful solution, 1 on failure to converge.
    */
    template <int D>
-   int solve(bool isContinuation)
+   int Sweep<D>::solve(bool isContinuation)
    {  return system().iterate(); };
 
    /**
