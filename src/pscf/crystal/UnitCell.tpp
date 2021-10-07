@@ -24,7 +24,7 @@ namespace Pscf
       in >> cell.lattice_;
       cell.setNParameter();
       for (int i = 0; i < cell.nParameter_; ++i) {
-         in >> std::setprecision(15) >> cell.parameters_[i];
+         in >> cell.parameters_[i];
       }
       cell.setLattice();
       return in;

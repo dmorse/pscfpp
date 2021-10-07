@@ -26,6 +26,9 @@ namespace Pspc
    *    - a UnitCell
    *    - Monomer chemical fields in both basis and grid formats
    *
+   * The template parameter D is the dimension of space, while
+   * parameter FT is a field type.
+   *
    * \ingroup Pscf_Pspc_Module
    */
    template <int D, class FT>
@@ -33,9 +36,6 @@ namespace Pspc
    {
 
    public:
-
-      /// Field type
-      typedef FT Field;
 
       /// \name Construction and Destruction
       //@{
@@ -48,7 +48,7 @@ namespace Pspc
       /**
       * Constructor, creates association with a System.
       */
-      FieldState(const System& system);
+      FieldState(System<D>& system);
 
       /**
       * Destructor.
@@ -56,33 +56,52 @@ namespace Pspc
       ~FieldState();
 
       /**
+      * Get array of all chemical potential fields by const reference.
+      *
+      * The array capacity is equal to the number of monomer types.
+      */
+      const DArray<FT>& fields() const;
+
+      /**
+      * Get field for a specific monomer type by const reference.
+      *
+      * \param monomerId integer monomer type index
+      */
+      const FT& field(int monomerId) const;
+
+      /**
+      * Get UnitCell (i.e., lattice type and parameters) by const reference.
+      */
+      const UnitCell<D>& unitCell() const;
+
+   protected:
+
+      /**
       * Get array of all chemical potential fields.
       *
       * The array capacity is equal to the number of monomer types.
       */
-      DArray<Field>& fields();
+      DArray<FT>& fields();
 
       /**
       * Get field for a specific monomer type.
       *
       * \param monomerId integer monomer type index
       */
-      DArray<Field>& field(int monomerId);
+      FT& field(int monomerId);
 
       /**
       * Get UnitCell (i.e., lattice type and parameters) by reference.
       */
       UnitCell<D>& unitCell();
 
-   protected:
-
       /**
-      * Get associated System.
+      * Get associated System by reference.
       */
       System<D>& system();
 
       /**
-      * Get associated FieldIo
+      * Get associated FieldIo by reference.
       */
       FieldIo<D>& fieldIo();
 
@@ -91,7 +110,7 @@ namespace Pspc
       /**
       * Array of fields for all monomer types.
       */
-      DArray<Field> fields_;
+      DArray<FT> fields_;
 
       /**
       * Crystallographic unit cell (crystal system and cell parameters).
@@ -114,12 +133,12 @@ namespace Pspc
 
    template <int D, class FT>
    inline
-   DArray<Field>& FieldState<D,FT>::fields()
+   DArray<FT>& FieldState<D,FT>::fields()
    {  return fields_; }
 
    template <int D, class FT>
    inline
-   DArray<Field>& FieldState<D,FT>::field(int id)
+   FT& FieldState<D,FT>::field(int id)
    {  return fields_[id]; }
 
    // Get the internal UnitCell<D> object.
@@ -136,38 +155,6 @@ namespace Pspc
    template <int D, class FT>
    inline System<D>& FieldState<D,FT>::system()
    { return *systemPtr_; }
-
-   /**
-   * FieldState for fields in symmetry-adapted basis format.
-   */
-   template <int D>
-   class BasisFieldState : public FieldState<D, DArray<double> >
-   {
-
-      /**
-      * Read state from file.
-      *
-      * \param filename name of input w-field basis file
-      */
-      void read(std::string & filename);
-   
-      /**
-      * Write state to file.
-      *
-      * \param filename name of input w-field r-grid file
-      */
-      void write(std::string & filename);
-   
-   }
-
-   #if 0
-   #ifndef PSPC_FIELD_STATE_TPP
-   // Suppress implicit instantiation
-   extern template class BasisFieldState<1>;
-   extern template class BasisFieldState<2>;
-   extern template class BasisFieldState<3>;
-   #endif
-   #endif
 
 } // namespace Pspc
 } // namespace Pscf

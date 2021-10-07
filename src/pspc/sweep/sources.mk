@@ -1,6 +1,9 @@
 
 pspc_sweep_= \
-  pspc/sweep/Sweep.cpp 
+  pspc/sweep/BasisFieldState.cpp
+
+
+  #pspc/sweep/Sweep.cpp 
 
 pspc_sweep_SRCS=\
      $(addprefix $(SRC_DIR)/, $(pspc_sweep_))

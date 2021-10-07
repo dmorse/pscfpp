@@ -97,6 +97,19 @@ public:
       double y = (twoPi*m)/param;
       TEST_ASSERT(eq(xSq, y*y));
 
+      // Test assignment
+      UnitCell<1> u;
+      u = v;
+      TEST_ASSERT(u.lattice() == v.lattice());
+      TEST_ASSERT(u.nParameter() == v.nParameter());
+      for (int i = 0; i < u.nParameter(); ++i) {
+         TEST_ASSERT(eq(u.parameter(i), v.parameter(i)));
+      }
+      TEST_ASSERT(eq(u.rBasis(0)[0], param));
+      TEST_ASSERT(eq(u.kBasis(0)[0], twoPi/param));
+      TEST_ASSERT(isValidReciprocal(u));
+      TEST_ASSERT(isValidDerivative(u));
+
       #if 0
       std::cout.width(20);
       std::cout.precision(6);
@@ -160,6 +173,19 @@ public:
             }
          }
       }
+
+      // Test assignment
+      UnitCell<2> u;
+      u = v;
+      TEST_ASSERT(u.lattice() == v.lattice());
+      TEST_ASSERT(u.nParameter() == v.nParameter());
+      TEST_ASSERT(u.nParameter() == 1);
+      for (int i = 0; i < u.nParameter(); ++i) {
+         TEST_ASSERT(eq(u.parameter(i), v.parameter(i)));
+      }
+      TEST_ASSERT(isValidReciprocal(u));
+      TEST_ASSERT(isValidDerivative(u));
+
    }
 
    void test2DHexagonal() 
@@ -204,6 +230,18 @@ public:
       TEST_ASSERT(y[0] == 4);
       TEST_ASSERT(y[1] == -3);
       //std::cout << "After again  " << y << std::endl;
+
+      // Test assignment
+      UnitCell<2> u;
+      u = v;
+      TEST_ASSERT(u.lattice() == v.lattice());
+      TEST_ASSERT(u.nParameter() == v.nParameter());
+      TEST_ASSERT(u.nParameter() == 1);
+      for (int i = 0; i < u.nParameter(); ++i) {
+         TEST_ASSERT(eq(u.parameter(i), v.parameter(i)));
+      }
+      TEST_ASSERT(isValidReciprocal(u));
+      TEST_ASSERT(isValidDerivative(u));
 
    }
 
@@ -261,6 +299,18 @@ public:
             }
          }
       }
+
+      // Test assignment
+      UnitCell<3> u;
+      u = v;
+      TEST_ASSERT(u.lattice() == v.lattice());
+      TEST_ASSERT(u.nParameter() == v.nParameter());
+      TEST_ASSERT(u.nParameter() == 3);
+      for (int i = 0; i < u.nParameter(); ++i) {
+         TEST_ASSERT(eq(u.parameter(i), v.parameter(i)));
+      }
+      TEST_ASSERT(isValidReciprocal(u));
+      TEST_ASSERT(isValidDerivative(u));
 
    }
 
@@ -339,6 +389,18 @@ public:
       //std::cout << "After shift  " << y << std::endl;
       //y = shiftToMinimum(y, d, v);
       //std::cout << "After again  " << y << std::endl;
+
+      // Test assignment
+      UnitCell<3> u;
+      u = v;
+      TEST_ASSERT(u.lattice() == v.lattice());
+      TEST_ASSERT(u.nParameter() == v.nParameter());
+      TEST_ASSERT(u.nParameter() == 1);
+      for (int i = 0; i < u.nParameter(); ++i) {
+         TEST_ASSERT(eq(u.parameter(i), v.parameter(i)));
+      }
+      TEST_ASSERT(isValidReciprocal(u));
+      TEST_ASSERT(isValidDerivative(u));
 
    }
 

@@ -116,6 +116,19 @@ namespace Pscf
       */
       UnitCell();
 
+      /**
+      *  Assignment operator. 
+      *      
+      * \param other UnitCell<1> object to be cloned.
+      */
+      UnitCell<1>& operator = (const UnitCell<1>& other);
+
+      /**
+      * Return lattice system enumeration value.
+      */
+      LatticeSystem lattice()
+      {  return lattice_; }
+
    private:
 
       // Lattice type
@@ -191,6 +204,19 @@ namespace Pscf
       * Constructor
       */
       UnitCell();
+
+      /**
+      *  Assignment operator. 
+      *      
+      * \param other UnitCell<2> object to be cloned.
+      */
+      UnitCell<2>& operator = (const UnitCell<2>& other);
+
+      /**
+      * Return lattice system enumeration value.
+      */
+      LatticeSystem lattice()
+      {  return lattice_; }
 
    private:
 
@@ -271,6 +297,19 @@ namespace Pscf
       * Constructor
       */
       UnitCell();
+
+      /**
+      *  Assignment operator. 
+      *      
+      * \param other UnitCell<3> object to be cloned.
+      */
+      UnitCell<3>& operator = (const UnitCell<3>& other);
+
+      /**
+      * Return lattice system enumeration value.
+      */
+      LatticeSystem lattice()
+      {  return lattice_; }
 
    private:
 
