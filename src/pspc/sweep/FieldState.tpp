@@ -60,6 +60,19 @@ namespace Pspc
    FieldState<D, FT>::~FieldState()
    {}
 
+   /*
+   * Set association with system, after default construction.
+   */
+   template <int D, class FT>
+   void FieldState<D, FT>::setSystem(System<D>& system)
+   {
+      systemPtr_ = &system;
+      std::string groupName = systemPtr_->groupName();
+      fieldIo_.associate(unitCell_, systemPtr_->mesh(), 
+                         systemPtr_->fft(), groupName,
+                         systemPtr_->basis(), systemPtr_->fileMaster());
+   }
+
 } // namespace Pspc
 } // namespace Pscf
 #endif

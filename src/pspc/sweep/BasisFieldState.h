@@ -58,6 +58,11 @@ namespace Pspc
       */
       void getSystemState();
 
+      /**
+      * Set the state of the associated system to this state.
+      */
+      void setSystemState();
+
       using FieldState<D, DArray<double> >::fields;
       using FieldState<D, DArray<double> >::field;
       using FieldState<D, DArray<double> >::unitCell;

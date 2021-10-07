@@ -8,9 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/sweep/SweepTmpl.h>        // base class
-#include <util/param/ParamComposite.h>        // base class
-#include <util/containers/DArray.h>        // base class
+#include <pscf/sweep/SweepTmpl.h>          // base class template
+#include <pspc/sweep/BasisFieldState.h>    // base class template parameter
+//#include <util/param/ParamComposite.h>     // base class
 #include <util/global.h>
 
 namespace Pscf {
@@ -21,7 +21,8 @@ namespace Pspc {
    /**
    * Solve a sequence of problems along a line in parameter space.
    */
-   class Sweep : public SweepTmpl<DArray<double>>
+   template <int D>
+   class Sweep : public SweepTmpl<BasisFieldState<D>>
    {
 
    public:
@@ -35,6 +36,11 @@ namespace Pspc {
       * Destructor.
       */
       ~Sweep();
+
+      /**
+      * Set association with parent System.
+      */
+      setSystem(System& system);
 
    protected:
 
@@ -50,7 +56,7 @@ namespace Pspc {
       *
       * \param s path length coordinate, in range [0,1]
       */
-      virtual void setParameters(double s);
+      virtual void setParameters(double s) = 0;
 
       /**
       * Create guess for adjustable variables by continuation.
@@ -83,9 +89,11 @@ namespace Pspc {
 
    private:
 
-      DArray<double> stateA_;
-      DArray<double> stateB_;
-      // DArray<double> stateC_;
+      // Trial state (produced by continuation)
+      BasisFieldState trial_;
+
+      // Pointer to parent system.
+      System<D>* systemPtr_;
 
    };
 

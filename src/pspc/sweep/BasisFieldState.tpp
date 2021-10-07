@@ -65,7 +65,10 @@ namespace Pspc
    template <int D>
    void BasisFieldState<D>::getSystemState()
    {
+      // Get system unit cell
       unitCell() = system().unitCell();
+
+      // Get system wFields
       allocate();
       int nMonomer = system().mixture().nMonomer();
       int nStar    = system().basis().nStar();
@@ -77,6 +80,33 @@ namespace Pspc
             stateField[j] = systemField[j];
          }
       }
+
+   }
+
+   /*
+   * Get current state of associated System.
+   */
+   template <int D>
+   void BasisFieldState<D>::setSystemState()
+   {
+      // Update system unitCell
+      system().unitCell() = unitCell();
+
+      // Update system  wFields
+      int nMonomer = system().mixture().nMonomer();
+      int nStar = system().basis().nStar();
+      int i, j;
+      for (i = 0; i < nMonomer; ++i) {
+         const DArray<double>& stateField = field(i);
+         DArray<double>& systemField = system().wField(i);
+         for (j = 0; j < nStar; ++j) {
+            systemField[j] = stateField[j];
+         }
+      }
+
+      // Update system wFieldsRgrid
+      system().fieldIo().convertBasisToRGrid(system().wFields(),
+                                             system().wFieldsRGrid());
    }
 
    /*

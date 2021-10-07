@@ -56,6 +56,11 @@ namespace Pspc
       ~FieldState();
 
       /**
+      * Set association with System, after default construction.
+      */
+      void setSystem(System<D>& system);
+
+      /**
       * Get array of all chemical potential fields by const reference.
       *
       * The array capacity is equal to the number of monomer types.

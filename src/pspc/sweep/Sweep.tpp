@@ -18,32 +18,49 @@ namespace Pspc {
    *
    * Must call initializeHistory.
    */
-   void Sweep::setup() 
-   {};
+   template <int D>
+   void Sweep<D>::setup() 
+   {
+      for (int i=0; i < nHistory(); ++i) {
+         state(i).setSystem(system());
+      }
+      initializeHistory(state(0), state(1));
+
+      trial_.setSystem(system());
+   };
 
    /**
    * Set non-adjustable system parameters to new values.
    *
    * \param s path length coordinate, in range [0,1]
    */
-   void Sweep::setParameters(double s) 
-   {};
+   template <int D>
+   void Sweep<D>::setParameters(double s) 
+   {
+      // Empty default implementation to allow Sweep<D> to be compiled.
+   };
 
    /**
    * Create guess for adjustable variables by continuation.
    */
-   void Sweep::setGuess(double sNew) 
-   {};
+   template <int D>
+   void Sweep<D>::setGuess(double sNew) 
+   {
+      DArray<double> coeffs_;
+      coeffs_.allocate(nHistory);
+      // Set coeffs for appropriate continuation order
+      // trial_.linearCombination(history(), coeffs_);
+      // Set unit cell and wFields in system
+   };
 
    /**
    * Call current iterator to solve SCFT problem.
    *
    * Return 0 for sucessful solution, 1 on failure to converge.
    */
-   int solve(bool isContinuation) 
-   {  
-      return 0; 
-   };
+   template <int D>
+   int solve(bool isContinuation)
+   {  return system().iterate(); };
 
    /**
    * Reset system to previous solution after iterature failure.
@@ -51,8 +68,9 @@ namespace Pspc {
    * The implementation of this function should reset the system state
    * to correspond to that stored in state(0).
    */
-   void Sweep::reset() 
-   {};
+   template <int D>
+   void Sweep<D>::reset()
+   {  state(0).setSystemState(); }
 
    /**
    * Update state(0) and output data after successful convergence
@@ -61,8 +79,12 @@ namespace Pspc {
    * system state into state(0) and output any desired information
    * about the current converged solution.
    */
-   void Sweep::getSolution() 
-   {};
+   template <int D>
+   void Sweep<D>::getSolution() 
+   { 
+      state(0).getSystemState(); 
+      // Output operations (see example in Fd1d)
+   };
 
 } // namespace Pspc
 } // namespace Pscf
