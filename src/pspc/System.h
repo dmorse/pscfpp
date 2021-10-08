@@ -345,12 +345,12 @@ namespace Pspc
       * which must contain chemical potential fields in symmetry-adapted 
       * basis format, stores these fields in the system wFields array,
       * converts these fields to real-space grid format and stores the
-      * result in the wFieldsRgrid array. On exit hasWFields is set true 
+      * result in the wFieldsRGrid array. On exit hasWFields is set true 
       * and hasCFields is false.
       *
       * \param filename name of input w-field basis file
       */
-      void readWBasis(std::string & filename);
+      void readWBasis(const std::string & filename);
    
       /**
       * Read chemical potential fields in real-space grid (r-grid) format.
@@ -364,14 +364,14 @@ namespace Pspc
       *
       * \param filename name of input w-field r-grid file
       */
-      void readWRgrid(std::string & filename);
+      void readWRGrid(const std::string & filename);
    
       /**
       * Iteratively solve a SCFT problem.
       * 
       * This function calls the iterator to attempt to solve the SCFT
       * problem for the current mixture and system parameters, using
-      * the current chemical potential fields (wFields and wFieldRgrid) 
+      * the current chemical potential fields (wFields and wFieldRGrid) 
       * and current unit cell parameter values as initial guesses.  
       * Upon exist, hasCFields is set true whether or not convergence 
       * is obtained to within the desired tolerance.  The Helmholtz free 
@@ -407,28 +407,28 @@ namespace Pspc
       *
       * \param filename name of output file
       */
-      void writeWBasis(std::string & filename);
+      void writeWBasis(const std::string & filename);
    
       /**
       * Write chemical potential fields in real space grid (r-grid) format.
       *
       * \param filename name of output file
       */
-      void writeWRgrid(std::string & filename);
+      void writeWRGrid(const std::string & filename);
    
       /**
       * Write concentrations in symmetry-adapted basis format.
       *
       * \param filename name of output file
       */
-      void writeCBasis(std::string & filename);
+      void writeCBasis(const std::string & filename);
    
       /**
       * Write concentration fields in real space grid format.
       *
       * \param filename name of output file
       */
-      void writeCRgrid(std::string & filename);
+      void writeCRGrid(const std::string & filename);
    
       /**
       * Convert a field from symmetry-adapted basis to spatial grid format.
@@ -440,7 +440,8 @@ namespace Pspc
       * \param inFileName name of input file
       * \param outFileName name of output file
       */
-      void basisToRgrid(std::string & inFileName, std::string & outFileName);
+      void basisToRGrid(const std::string & inFileName, 
+                        const std::string & outFileName);
    
       /**
       * Convert a field from real-space grid to symmetrized basis format.
@@ -452,7 +453,8 @@ namespace Pspc
       * \param inFileName name of input file
       * \param outFileName name of output file
       */
-      void rgridToBasis(std::string & inFileName, std::string & outFileName);
+      void rGridToBasis(const std::string & inFileName, 
+                        const std::string & outFileName);
    
       /**
       * Convert fields from Fourier (k-grid) to real-space (r-grid) format.
@@ -463,7 +465,8 @@ namespace Pspc
       * \param inFileName name of input file
       * \param outFileName name of output file
       */
-      void kgridToRgrid(std::string& inFileName, std::string& outFileName);
+      void kGridToRGrid(const std::string& inFileName, 
+                        const std::string& outFileName);
    
       /**
       * Convert fields from real-space (r-grid) to Fourier (k-grid) format.
@@ -474,7 +477,8 @@ namespace Pspc
       * \param inFileName name of input file
       * \param outFileName name of output file
       */
-      void rgridToKgrid(std::string & inFileName, std::string & outFileName);
+      void rGridToKgrid(const std::string & inFileName, 
+                        const std::string & outFileName);
    
       /**
       * Construct proposed chemical potential fields from concentration fields.
@@ -489,21 +493,22 @@ namespace Pspc
       * \param inFileName name of input file
       * \param outFileName name of output file
       */
-      void rhoToOmega(std::string& inFileName, std::string& outFileName);
+      void rhoToOmega(const std::string& inFileName, 
+                      const std::string& outFileName);
    
       /**
       * Output information about stars and symmetry-adapted basis functions.
       *
       * \param outFileName name of output file
       */
-      void outputStars(std::string & outFileName);
+      void outputStars(const std::string & outFileName);
    
       /**
       * Output information about waves.
       *
       * \param outFileName name of output file
       */
-      void outputWaves(std::string & outFileName);
+      void outputWaves(const std::string & outFileName);
 
       //@}
 

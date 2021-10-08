@@ -706,7 +706,7 @@ namespace Pspc
    * Read w-field in symmetry adapted basis format.
    */
    template <int D>
-   void System<D>::readWBasis(std::string & filename)
+   void System<D>::readWBasis(const std::string & filename)
    {
       fieldIo().readFieldsBasis(filename, wFields());
       fieldIo().convertBasisToRGrid(wFields(), wFieldsRGrid());
@@ -718,7 +718,7 @@ namespace Pspc
    * Read w-fields in real-space grid (r-grid) format.
    */
    template <int D>
-   void System<D>::readWRgrid(std::string & filename)
+   void System<D>::readWRGrid(const std::string & filename)
    {
       fieldIo().readFieldsRGrid(filename, wFieldsRGrid());
       fieldIo().convertRGridToBasis(wFieldsRGrid(), wFields());
@@ -768,7 +768,7 @@ namespace Pspc
    * Write w-fields in symmetry-adapted basis format. 
    */
    template <int D>
-   void System<D>::writeWBasis(std::string & filename)
+   void System<D>::writeWBasis(const std::string & filename)
    {
       UTIL_CHECK(hasWFields_);
       fieldIo().writeFieldsBasis(filename, wFields());
@@ -778,7 +778,7 @@ namespace Pspc
    * Write w-fields to real space grid.
    */
    template <int D>
-   void System<D>::writeWRgrid(std::string & filename)
+   void System<D>::writeWRGrid(const std::string & filename)
    {
       UTIL_CHECK(hasWFields_);
       fieldIo().writeFieldsRGrid(filename, wFieldsRGrid());
@@ -788,7 +788,7 @@ namespace Pspc
    * Write concentrations in symmetry-adapted basis format.
    */
    template <int D>
-   void System<D>::writeCBasis(std::string & filename)
+   void System<D>::writeCBasis(const std::string & filename)
    {
       UTIL_CHECK(hasCFields_);
       fieldIo().writeFieldsBasis(filename, cFields());
@@ -798,7 +798,7 @@ namespace Pspc
    * Write concentration fields in real space grid format.
    */
    template <int D>
-   void System<D>::writeCRgrid(std::string & filename)
+   void System<D>::writeCRGrid(const std::string & filename)
    {
       UTIL_CHECK(hasCFields_);
       fieldIo().writeFieldsRGrid(filename, cFieldsRGrid());
@@ -808,8 +808,8 @@ namespace Pspc
    * Convert a field from symmetry-adpated basis to real-space grid format.
    */
    template <int D>
-   void System<D>::basisToRgrid(std::string & inFileName,
-                                std::string & outFileName)
+   void System<D>::basisToRGrid(const std::string & inFileName,
+                                const std::string & outFileName)
    {
       // Note: This and other conversion functions use the c-field
       // arrays for storage, and thus corrupt previously stored values.
@@ -824,8 +824,8 @@ namespace Pspc
    * Convert a field from real-space grid to symmetry-adapted basis format.
    */
    template <int D>
-   void System<D>::rgridToBasis(std::string & inFileName,
-                                std::string & outFileName)
+   void System<D>::rGridToBasis(const std::string & inFileName,
+                                const std::string & outFileName)
    {
       // This conversion corrupts both cFieldsRGrid and cFields arrays
       hasCFields_ = false;
@@ -839,8 +839,8 @@ namespace Pspc
    * Convert fields from Fourier (k-grid) to real-space grid (r-grid) format.
    */
    template <int D>
-   void System<D>::kgridToRgrid(std::string & inFileName,
-                                std::string& outFileName)
+   void System<D>::kGridToRGrid(const std::string & inFileName,
+                                const std::string& outFileName)
    {
       // This conversion corrupts cfieldRGrid array
       hasCFields_ = false;
@@ -856,8 +856,8 @@ namespace Pspc
    * Convert fields from real-space grid (r-grid) to Fourier (k-grid) format.
    */
    template <int D>
-   void System<D>::rgridToKgrid(std::string & inFileName,
-                                std::string & outFileName)
+   void System<D>::rGridToKgrid(const std::string & inFileName,
+                                const std::string & outFileName)
    {
       hasCFields_ = false;
 
@@ -868,12 +868,12 @@ namespace Pspc
       fieldIo().writeFieldsKGrid(outFileName, cFieldsKGrid());
    }
 
-   /**
-   *
+   /*
+   * Construct guess for omega (w-field) from rho (c-field)
    */
    template <int D>
-   void System<D>::rhoToOmega(std::string & inFileName, 
-                              std::string & outFileName)
+   void System<D>::rhoToOmega(const std::string & inFileName, 
+                              const std::string & outFileName)
    {
       hasCFields_ = false;
       hasWFields_ = false;
@@ -921,7 +921,7 @@ namespace Pspc
    * Write description of symmetry-adapted stars and basis to file.
    */
    template <int D>
-   void System<D>::outputStars(std::string & outFileName)
+   void System<D>::outputStars(const std::string & outFileName)
    {
       std::ofstream outFile;
       fileMaster().openOutputFile(outFileName, outFile);
@@ -933,7 +933,7 @@ namespace Pspc
    * Write a list of waves and associated stars to file.
    */
    template <int D>
-   void System<D>::outputWaves(std::string & outFileName)
+   void System<D>::outputWaves(const std::string & outFileName)
    {
       std::ofstream outFile;
       fileMaster().openOutputFile(outFileName, outFile);
