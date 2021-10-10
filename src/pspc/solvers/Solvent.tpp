@@ -33,8 +33,8 @@ namespace Pspc {
       readOptional<Species::Ensemble>(in, "ensemble", ensemble_);
       if (ensemble_ == Species::Closed) {
          read(in, "phi", phi_);
-         UTIL_CHECK(phi >= 0.0);  
-         UTIL_CHECK(phi <= 1.0);  
+         UTIL_CHECK(phi_ >= 0.0);  
+         UTIL_CHECK(phi_ <= 1.0);  
       } else {
          read(in, "mu", mu_);
       }
