@@ -61,7 +61,7 @@ namespace Pspc {
       *
       * \param mesh associated Mesh<D> object
       */
-      void setDiscretization(Mesh<D> const & mesh);
+      void setDiscretization(const Mesh<D>& mesh);
 
       /**
       * Compute monomer concentration field, q and phi and/or mu.
@@ -136,7 +136,7 @@ namespace Pspc {
 
    protected:
 
-      // Inherited data members
+      // Inherited protected data members
       using Pscf::Species::phi_;
       using Pscf::Species::mu_;
       using Pscf::Species::q_;
@@ -144,16 +144,16 @@ namespace Pspc {
 
    private:
 
-      // Concentration field for this solvent
+      /// Concentration field for this solvent
       CField cField_;
   
-      /// Identifier for the associated monomer type.
+      /// Index for the associated monomer type.
       int monomerId_;
 
       /// Size of this block = volume / monomer reference volume. 
       double size_;
 
-      // Pointer to associated mesh
+      /// Pointer to associated mesh
       Mesh<D> const *  meshPtr_;
 
    };
@@ -174,7 +174,7 @@ namespace Pspc {
    inline double Solvent<D>::size() const
    {  return size_; }
     
-   /**
+   /*
    * Get monomer concentration field for this solvent.
    */
    template <int D>

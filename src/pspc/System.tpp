@@ -583,8 +583,8 @@ namespace Pspc
             polymerPtr = &mixture().polymer(i);
             phi = polymerPtr->phi();
             mu = polymerPtr->mu();
-            // Recall: mu = ln(phi/q)
             length = polymerPtr->length();
+            // Recall: mu = ln(phi/q)
             fHelmholtz_ += phi*( mu - 1.0 )/length;
          }
       }
@@ -597,7 +597,6 @@ namespace Pspc
             solventPtr = &mixture().solvent(i);
             phi = solventPtr->phi();
             mu = solventPtr->mu();
-            // Recall: mu = ln(phi/q)
             size = solventPtr->size();
             fHelmholtz_ += phi*( mu - 1.0 )/size;
          }
@@ -607,7 +606,8 @@ namespace Pspc
       int nStar = basis().nStar();
 
       // Compute Legendre transform subtraction
-      double temp = 0;
+      // Use expansion in symmetry-adapted orthonormal basis
+      double temp = 0.0;
       for (int i = 0; i < nm; ++i) {
          for (int k = 0; k < nStar; ++k) {
             temp += wFields_[i][k] * cFields_[i][k];
@@ -783,7 +783,7 @@ namespace Pspc
 
    // Command functions
 
-   /**
+   /*
    * Read w-field in symmetry adapted basis format.
    */
    template <int D>
@@ -829,7 +829,7 @@ namespace Pspc
       return error;
    }
 
-   /**
+   /*
    * Solve modified diffusion equation for current w-fields, without iteration.
    */
    template <int D>
@@ -845,7 +845,7 @@ namespace Pspc
       hasCFields_ = true;
    }
 
-   /**
+   /*
    * Write w-fields in symmetry-adapted basis format. 
    */
    template <int D>
@@ -855,7 +855,7 @@ namespace Pspc
       fieldIo().writeFieldsBasis(filename, wFields());
    }
 
-   /**
+   /*
    * Write w-fields to real space grid.
    */
    template <int D>
@@ -865,8 +865,8 @@ namespace Pspc
       fieldIo().writeFieldsRGrid(filename, wFieldsRGrid());
    }
 
-   /**
-   * Write concentrations in symmetry-adapted basis format.
+   /*
+   * Write all concentration fields in symmetry-adapted basis format.
    */
    template <int D>
    void System<D>::writeCBasis(const std::string & filename)
@@ -875,8 +875,8 @@ namespace Pspc
       fieldIo().writeFieldsBasis(filename, cFields());
    }
 
-   /**
-   * Write concentration fields in real space grid format.
+   /*
+   * Write all concentration fields in real space grid format.
    */
    template <int D>
    void System<D>::writeCRGrid(const std::string & filename)
@@ -885,8 +885,8 @@ namespace Pspc
       fieldIo().writeFieldsRGrid(filename, cFieldsRGrid());
    }
 
-   /**
-   * Convert a field from symmetry-adpated basis to real-space grid format.
+   /*
+   * Convert fields from symmetry-adpated basis to real-space grid format.
    */
    template <int D>
    void System<D>::basisToRGrid(const std::string & inFileName,
@@ -901,8 +901,8 @@ namespace Pspc
       fieldIo().writeFieldsRGrid(outFileName, cFieldsRGrid());
    }
 
-   /**
-   * Convert a field from real-space grid to symmetry-adapted basis format.
+   /*
+   * Convert fields from real-space grid to symmetry-adapted basis format.
    */
    template <int D>
    void System<D>::rGridToBasis(const std::string & inFileName,
@@ -916,14 +916,14 @@ namespace Pspc
       fieldIo().writeFieldsBasis(outFileName, cFields());
    }
 
-   /**
+   /*
    * Convert fields from Fourier (k-grid) to real-space grid (r-grid) format.
    */
    template <int D>
    void System<D>::kGridToRGrid(const std::string & inFileName,
                                 const std::string& outFileName)
    {
-      // This conversion corrupts cfieldRGrid array
+      // This conversion corrupts cFieldsKGrid and cFieldsRGrid
       hasCFields_ = false;
 
       fieldIo().readFieldsKGrid(inFileName, cFieldsKGrid());
@@ -933,13 +933,14 @@ namespace Pspc
       fieldIo().writeFieldsRGrid(outFileName, cFieldsRGrid());
    }
 
-   /**
+   /*
    * Convert fields from real-space grid (r-grid) to Fourier (k-grid) format.
    */
    template <int D>
    void System<D>::rGridToKgrid(const std::string & inFileName,
                                 const std::string & outFileName)
    {
+      // This conversion corrupts cFieldsRGrid and cFieldsKGrid
       hasCFields_ = false;
 
       fieldIo().readFieldsRGrid(inFileName, cFieldsRGrid());
@@ -998,7 +999,7 @@ namespace Pspc
       fieldIo().writeFieldsBasis(outFileName, wFields());
    }
 
-   /**
+   /*
    * Write description of symmetry-adapted stars and basis to file.
    */
    template <int D>
@@ -1010,7 +1011,7 @@ namespace Pspc
       basis().outputStars(outFile);
    }
 
-   /**
+   /*
    * Write a list of waves and associated stars to file.
    */
    template <int D>

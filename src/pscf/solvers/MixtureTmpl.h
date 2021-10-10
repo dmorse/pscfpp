@@ -80,7 +80,6 @@ namespace Pscf
       *
       * \param id integer solvent species index (0 <= id < nSolvent)
       */
-      //Solvent& solvent(int id);
       Solvent& solvent(int id);
 
       //@}
@@ -116,7 +115,6 @@ namespace Pscf
       *
       * Array capacity = nPolymer.
       */
-      //DArray<Polymer> polymers_;
       DArray<Polymer> polymers_;
 
       /**
@@ -124,7 +122,6 @@ namespace Pscf
       *
       * Array capacity = nSolvent.
       */
-      //DArray<Solvent> solvents_;
       DArray<Solvent> solvents_;
 
       /**

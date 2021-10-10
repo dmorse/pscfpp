@@ -33,6 +33,8 @@ namespace Pspc {
       readOptional<Species::Ensemble>(in, "ensemble", ensemble_);
       if (ensemble_ == Species::Closed) {
          read(in, "phi", phi_);
+         UTIL_CHECK(phi >= 0.0);  
+         UTIL_CHECK(phi <= 1.0);  
       } else {
          read(in, "mu", mu_);
       }
@@ -62,14 +64,14 @@ namespace Pspc {
    {  monomerId_ = monomerId; }
   
    /*
-   * Set the id for this solvent.
+   * Set the molecule size (volume / reference volume) for this solvent.
    */ 
    template <int D>
    void Solvent<D>::setSize(double size)
    {  size_ = size; }
 
    /*
-   * Set association with Mesh and allocate concentration field.
+   * Create an association with a Mesh & allocate the concentration field.
    */
    template <int D>
    void Solvent<D>::setDiscretization(Mesh<D> const & mesh)
@@ -86,7 +88,7 @@ namespace Pspc {
    {
       int nx = meshPtr_->size(); // Number of grid points
 
-      // Initialize to zero
+      // Initialize cField_ to zero
       for (int i = 0; i < nx; ++i) {
           cField_[i] = 0.0;
       }

@@ -107,7 +107,7 @@ namespace Pspc
       int nm = nMonomer();
       int i, j, k;
 
-      // Clear all monomer concentration fields
+      // Clear all monomer concentration fields, check capacities
       for (i = 0; i < nm; ++i) {
          UTIL_CHECK(cFields[i].capacity() == nx);
          UTIL_CHECK(wFields[i].capacity() == nx);
@@ -133,7 +133,7 @@ namespace Pspc
                UTIL_CHECK(monomerId < nm);
                CField& monomerField = cFields[monomerId];
                CField const & blockField = polymer(i).block(j).cField();
-               // Loop over grid points
+               UTIL_CHECK(blockField.capacity() == nx);
                for (k = 0; k < nx; ++k) {
                   monomerField[k] += blockField[k];
                }
@@ -155,29 +155,29 @@ namespace Pspc
             // Compute solvent concentration
             solvent(i).compute(wFields[monomerId]);
 
-            // Add to relevant monomer concentration
+            // Add solvent contribution to relevant monomer concentration
             CField& monomerField = cFields[monomerId];
             CField const & solventField = solvent(i).cField();
-            // Loop over grid points
+            UTIL_CHECK(solventField.capacity() == nx);
             for (k = 0; k < nx; ++k) {
                monomerField[k] += solventField[k];
             }
+
          }
 
       }
 
    }
 
-
    /*
-   * Compute total stress.
+   * Compute total stress for this mixture.
    */
    template <int D>
    void Mixture<D>::computeStress()
    {
       int i, j;
 
-      // Initialize stress to zero
+      // Initialize all stress components to zero
       for (i = 0; i < 6; ++i) {
          stress_[i] = 0.0;
       }
@@ -197,6 +197,10 @@ namespace Pspc
          }
 
       }
+
+      // Note: Solvent does not contribute to derivatives of f_Helmholtz
+      // with respect to unit cell parameters at fixed volume fractions.
+
    }
 
 } // namespace Pspc
