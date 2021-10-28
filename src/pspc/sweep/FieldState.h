@@ -23,11 +23,16 @@ namespace Pspc
    /**
    * Record of a state of a System (fields + unit cell).
    *
-   *    - a UnitCell
-   *    - Monomer chemical fields in both basis and grid formats
+   *    - a UnitCell<D> object
+   *    - An array of field objects of class FT
    *
    * The template parameter D is the dimension of space, while
    * parameter FT is a field type.
+   *
+   * A FieldState can be used to store either chemical potential or
+   * concentration fields, along with an associated UnitCell<D>. 
+   * Different choices for class FT can be used to store fields in
+   * symmetry-adapted basis function, r-grid or k-grid format.
    *
    * \ingroup Pscf_Pspc_Module
    */
@@ -47,6 +52,10 @@ namespace Pspc
 
       /**
       * Constructor, creates association with a System.
+      *
+      * Equivalent to default construction followed by setSystem(system).
+      *
+      * \param system associated parent System<D> object.
       */
       FieldState(System<D>& system);
 
@@ -57,18 +66,20 @@ namespace Pspc
 
       /**
       * Set association with System, after default construction.
+      *
+      * \param system associated parent System<D> object.
       */
       void setSystem(System<D>& system);
 
       /**
-      * Get array of all chemical potential fields by const reference.
+      * Get array of all fields by const reference.
       *
       * The array capacity is equal to the number of monomer types.
       */
       const DArray<FT>& fields() const;
 
       /**
-      * Get field for a specific monomer type by const reference.
+      * Get a field for a single monomer type by const reference.
       *
       * \param monomerId integer monomer type index
       */
@@ -82,21 +93,21 @@ namespace Pspc
    protected:
 
       /**
-      * Get array of all chemical potential fields.
+      * Get array of all chemical potential fields (non-const reference).
       *
       * The array capacity is equal to the number of monomer types.
       */
       DArray<FT>& fields();
 
       /**
-      * Get field for a specific monomer type.
+      * Get field for a specific monomer type (non-const reference).
       *
       * \param monomerId integer monomer type index
       */
       FT& field(int monomerId);
 
       /**
-      * Get UnitCell (i.e., lattice type and parameters) by reference.
+      * Get the UnitCell by non-const reference.
       */
       UnitCell<D>& unitCell();
 
@@ -128,25 +139,47 @@ namespace Pspc
       FieldIo<D> fieldIo_;
 
       /**
-      * Pointer to associated System.
+      * Pointer to associated system.
       */
       System<D>* systemPtr_;
 
    };
 
-   // Inline member functions
+   // Public inline member functions
 
+   // Get an array of all fields (const reference)
+   template <int D, class FT>
+   inline
+   const DArray<FT>& FieldState<D,FT>::fields() const
+   {  return fields_; }
+
+   // Get field for monomer type id (const reference)
+   template <int D, class FT>
+   inline
+   const FT& FieldState<D,FT>::field(int id) const
+   {  return fields_[id]; }
+
+   // Get the internal Unitcell (const reference)
+   template <int D, class FT>
+   inline 
+   const UnitCell<D>& FieldState<D,FT>::unitCell() const
+   { return unitCell_; }
+
+   // Protected inline member functions
+
+   // Get an array of all fields (non-const reference)
    template <int D, class FT>
    inline
    DArray<FT>& FieldState<D,FT>::fields()
    {  return fields_; }
 
+   // Get field for monomer type id (non-const reference)
    template <int D, class FT>
    inline
    FT& FieldState<D,FT>::field(int id)
    {  return fields_[id]; }
 
-   // Get the internal UnitCell<D> object.
+   // Get the internal Unitcell (non-const reference)
    template <int D, class FT>
    inline UnitCell<D>& FieldState<D,FT>::unitCell()
    { return unitCell_; }

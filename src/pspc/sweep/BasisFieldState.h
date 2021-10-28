@@ -32,8 +32,10 @@ namespace Pspc
 
       /**
       * Constructor, associate with system.
+      *
+      * \param system associated parent system
       */
-      BasisFieldState(System<D>&);
+      BasisFieldState(System<D>& system);
 
       /**
       * Destructor.
@@ -43,19 +45,19 @@ namespace Pspc
       /**
       * Read state from file.
       *
-      * \param filename name of input w-field basis file
+      * \param filename name of input w-field file in symmetry-adapted format.
       */
       void read(std::string & filename);
    
       /**
       * Write state to file.
       *
-      * \param filename name of input w-field r-grid file
+      * \param filename name of output file, in symmetry-adapated format.
       */
       void write(std::string & filename);
 
       /**
-      * Get the current state of the associated system.
+      * Copy the current state of the associated system.
       */
       void getSystemState();
 
@@ -64,6 +66,7 @@ namespace Pspc
       */
       void setSystemState();
 
+      // Inherited member functions
       using FieldState<D, DArray<double> >::fields;
       using FieldState<D, DArray<double> >::field;
       using FieldState<D, DArray<double> >::unitCell;
@@ -72,6 +75,7 @@ namespace Pspc
 
    private:
 
+      // Check if fields are allocated, allocate if necessary.
       void allocate();
 
    };

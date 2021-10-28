@@ -116,7 +116,7 @@ namespace Pspc
    void BasisFieldState<D>::allocate()
    {
       int nMonomer = system().mixture().nMonomer();
-      int nStar    = system().basis().nStar();
+      int nStar = system().basis().nStar();
       if (fields().isAllocated()) {
          UTIL_CHECK(fields().capacity() == nMonomer);
          for (int i = 0; i < nMonomer; ++i) {
