@@ -391,9 +391,20 @@ namespace Pspc
       /**
       * Reader header of field file (fortran pscf format)
       *
+      * This reads the common part of the header for aoo field file 
+      * formats. This contains the dimension of space, the unit cell, the 
+      * group name and the the number of monomers. The unit cell data is
+      * read into the associated UnitCell<D>, which is thus updated.
+      * 
+      * This function throws an exception if the values of "dim" and 
+      * "N_monomer" read from file do not match values of D and the 
+      * input parameter nMonomer, respectively. The group name is not 
+      * checked.
+      * 
       * \param in input stream (i.e., input file)
+      * \param nMonomer expected value of nMonomer
       */
-      void readFieldHeader(std::istream& in);
+      void readFieldHeader(std::istream& in, int nMonomer);
 
       /**
       * Check state of work array, allocate if necessary.

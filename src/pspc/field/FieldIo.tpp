@@ -74,7 +74,9 @@ namespace Pspc
       UTIL_CHECK(nMonomer > 0);
 
       // Read header
-      FieldIo<D>::readFieldHeader(in);
+      FieldIo<D>::readFieldHeader(in, nMonomer);
+
+      // Read nStar
       std::string label;
       in >> label;
       UTIL_CHECK(label == "N_star");
@@ -191,8 +193,9 @@ namespace Pspc
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
 
-      FieldIo<D>::readFieldHeader(in);
+      FieldIo<D>::readFieldHeader(in, nMonomer);
 
+      // Read grid dimensions
       std::string label;
       in >> label;
       UTIL_CHECK(label == "ngrid");
@@ -396,7 +399,9 @@ namespace Pspc
       UTIL_CHECK(nMonomer > 0);
 
       // Read header
-      readFieldHeader(in);
+      readFieldHeader(in, nMonomer);
+
+      // Read grid dimensions
       std::string label;
       in >> label;
       UTIL_CHECK(label == "ngrid");
@@ -461,8 +466,11 @@ namespace Pspc
       file.close();
    }
 
+   /*
+   * Read common part of field header.
+   */
    template <int D>
-   void FieldIo<D>::readFieldHeader(std::istream& in) 
+   void FieldIo<D>::readFieldHeader(std::istream& in, int nMonomer) 
    {
       std::string label;
 
@@ -486,9 +494,10 @@ namespace Pspc
 
       in >> label;
       UTIL_CHECK(label == "N_monomer");
-      int nMonomer;
-      in >> nMonomer;
-      UTIL_CHECK(nMonomer > 0);
+      int nMonomerIn;
+      in >> nMonomerIn;
+      UTIL_CHECK(nMonomerIn > 0);
+      UTIL_CHECK(nMonomerIn == nMonomer);
    }
 
    template <int D>
