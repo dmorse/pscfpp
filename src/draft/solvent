@@ -1,138 +1,64 @@
-Proposed Changes to Implement Solvents in PsPc::
+Changes to implement solvents 
 
-1) Create new branch "solvent", push to github  (done)
+------------------------------------------------------------------------
+Changes to code in Pscf:: and files src/pscf
 
-2) In Pspc, finish implementing the Solvent class (largely done)
+1) Changes to Pscf::MixtureTmpl<TP,TS> template in src/pscf/solvers
 
-   class Pspc::Solvent : public SolventDescriptor
-   {
+   - Inclusion of private DArray<Solvent> solvents_ and int nSolvent_,
+     and public accessor functions solvent(int id) and nSolvent()
 
-      // Change typedefs to refer to those in Propagator<D>, for consistency.
-      typedef typename Propagator<D>::CField Cfield
-      typedef typename Propagator<D>::WField Wfield
+   - Change to readParameters to read nPolymer and nSolvent and to 
+     read solvent data by calling readParameterComposite(in, polymer(i))
+     [Lines 213-216 of MixtureTmpl.h)
 
-      void setMesh(const & Mesh mesh);
-      setPhi(double);
-      setMu(double);
+------------------------------------------------------------------------
+Changes to classes in Pspc and files src/pspc
 
-      virtual solve(const & WField wField ) = 0;
+1) Creation of Pspc::Solvent class in src/pspc/solvers
 
-      const & CField concentration() const;
+   Notes:
 
-   private:
+   - Solvent is a subclass of Species. In contrast to the case of polymers,
+     there is no SolventTmpl template.
 
-      // Concentration on real space grid (Note: CField = RField<D>)
-      CField concentration_;
+   - The parent Species class defines phi_, mu_, q_ and ensemble_ private 
+     data members, and associated public phi(), mu() etc. accessor functions
 
-      // Association with Mesh object
-      Mesh<D>  const * meshPtr_;
+   - Solvent defines SetPhi and SetMu setter functions 
+     (similar to PolymerTmpl)
 
-   }
+   - Solvent defines private cField_, monomerId_ and size_ members, and 
+     corresponding public accessor functions
 
-3) Write iostream inserter and extractor for Pscf::SolventDescriptor (done)
+   - Solvent::readParameters reads the monomerId_ and size_ values
 
-4) Modify Pscf::MixtureTmpl::readParameters to read in solvent properties.
+   - Solvent::setDiscretization(Mesh<D> const &) allocates the cField_
 
-5) Modify Pspc::Mixture::compute to include contributions from solvents
-      Call compute for all solvents
-      Add solvent contributions to concentrations
+   - The compute(WField const&) function computes the private cField_ and 
+     q_ obtained from wField input argument.
 
-7) Modify Pspc::System::computeFreeEnergy to include solvent contributions
-   Add loops over solvent ideal gas contributions for fHelmholtz_ and pressure_
+2) Changes to the Pspc::Mixture class in src/pspc/solvers
 
-8) Modify Pspc::System:outputThermo to include solvent contributions in output
+   - In setMesh, code to call Solvent::setDiscretization for all solvents
+     Lines 67-72 of Mixture.tpp
 
--------------------------------------------------------------------------------
-Relevant parts of current design:
+   - In compute function, loop to process solvent species, by calling
+     Solvent::compute for each solvent and then adding to monomer cFields
+     Lines 145-168 of Mixture.tpp
 
+3) Changes to the Pspc::System class, in src/pspc
 
-namespace Pscf {
+   - In computeFreeEnergy, added loop to compute ideal gas contributions
+     to fHelhmoltz, lines 591-602 in System.tpp
 
-   class Species {
-       enum Ensemble
-       double  mu(), phi(), q()  // Scalar accessors
-       Ensemble ensemble();
-   protected:
-       double mu_, phi_, q_;
-       Ensemble ensemble_;
-   }
+   - In computeFreeEnergy, added loop to compute additional solvent
+     contributions to pressure (i.e., grand-canonical free energy), 
+     lines 644-655 in System.tpp
 
-   class SolventDescriptor : public Species
-   {
-   public:
-      double size();
-      int    monomerId()
-   protected:
-      double size_;
-      int monomerId_;
-   }
+   - In outputThermo, add loop to output solvent phi and mu values,
+     lines 685-698 in System.tppp
 
-   class PolymerTmpl<Block> Species, ParamComposite {
+   - In initHomogeneous, add loop over solvent species
+     Lines 766-779
 
-   public: 
-
-      typedefs for propagator and fields, defined in Block
-      virtual solve();
-      Accessors for blocks, vertices, propagators, etc.
-
-   private:
-
-      DArray<Block> blocks_;    (Note: Each block contains two propagators)
-
-      DArray<Vertex> vertices_;
-
-   }
-
-   template <class TP, class TS>
-   class MixtureTmpl :: public ParamComposite {
-
-   public:
-
-      typedef TP Polymer;
-      typedef TS Solvent;
-
-      void readParameters(....)
-
-   private:
-
-      DArray::Monomer  monomers_;
-      DArray::Polymer  polymers_;
-      DArray::Solvents solvents_;
-      int nMonomer_;
-      int nPolymer_;
-      int nSolvent_;
-
-   }
-
-}
-
-namespace Pspc {
-
-   class Polymer :: PolymerTmpl< Block<D> > {
-
-      setPhi(double)
-      setMu(double)
-      setUpUnitCell(UnitCell<D> )
-      compute(DArray<WField> )
-      computeStress()
-      double stress(int n)
-
-   }
-
-   class Mixture :: PolymerTmpl<Polymer, Solvent> {
-
-      void readParameters(...)
-      void setMesh(Mesh<D> const & mesh);
-      void setupUnitCell(UnitCell<D> const & unitCell);
-      void compute(DArray<WField> const & wFields, DArray<CField>& cFields);
-      void computeStress();
-
-   }
-
-   class System {
-
-      void computeFreeEnergy();
-      void outputThermo(...);
-
-   }
-}

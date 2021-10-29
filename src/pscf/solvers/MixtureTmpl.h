@@ -201,7 +201,7 @@ namespace Pscf
       monomers_.allocate(nMonomer_);
       readDArray< Monomer >(in, "monomers", monomers_, nMonomer_);
 
-      // Read polymers 
+      // Read nPolymer and (optionally) nSolvent
       nPolymer_ = 0;
       read<int>(in, "nPolymer", nPolymer_);
       nSolvent_ = 0;

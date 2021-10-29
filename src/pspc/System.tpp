@@ -183,8 +183,7 @@ namespace Pspc
 
       int nm = mixture().nMonomer(); 
       int np = mixture().nPolymer(); 
-      //int ns = mixture().nSolvent(); 
-      int ns = 0;
+      int ns = mixture().nSolvent(); 
 
       // Initialize homogeneous object
       homogeneous_.setNMolecule(np+ns);
@@ -626,7 +625,7 @@ namespace Pspc
          }
       }
 
-      // Compute pressure
+      // Initialize pressure
       pressure_ = -fHelmholtz_;
 
       // Polymer corrections to pressure
