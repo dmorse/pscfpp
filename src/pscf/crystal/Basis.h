@@ -263,14 +263,15 @@ namespace Pscf {
       void makeStars(const SpaceGroup<D>& group);
 
       /**
-      * Access associated Mesh<D> as reference.
+      * Access associated Mesh<D> as const reference.
       */
       Mesh<D> const & mesh() const { return *meshPtr_; }
 
       /**
-      * Access associated UnitCell<D> as reference.
+      * Access associated UnitCell<D> as const reference.
       */
-      UnitCell<D> const & unitCell() const { return *unitCellPtr_; }
+      UnitCell<D> const & unitCell() const 
+      { return *unitCellPtr_; }
 
    };
 
