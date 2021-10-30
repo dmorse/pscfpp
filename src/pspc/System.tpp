@@ -275,6 +275,16 @@ namespace Pspc
       isAllocated_ = true;
    }
 
+   /*
+   * Read a filename string and echo to log file (used in readCommands).
+   */
+   template <int D>
+   void System<D>::readEcho(std::istream& in, std::string& string) const
+   {
+      in >> string;
+      Log::file() << " " << Str(string, 20) << std::endl;
+   }
+
    
    /*
    * Read and execute commands from a specified command file.
@@ -283,9 +293,7 @@ namespace Pspc
    void System<D>::readCommands(std::istream &in) 
    {
       UTIL_CHECK(isAllocated_);
-
-      std::string command;
-      std::string filename;
+      std::string command, filename, inFileName, outFileName;
 
       bool readNext = true;
       while (readNext) {
@@ -298,40 +306,55 @@ namespace Pspc
             readNext = false;
          } else
          if (command == "READ_W_BASIS") {
-            in >> filename;
-            Log::file() << " " << Str(filename, 20) <<std::endl;
+            //in >> filename;
+            //Log::file() << " " << Str(filename, 20) <<std::endl;
+            readEcho(in, filename);
+            readWBasis(filename);
 
+            #if 0
             fieldIo().readFieldsBasis(filename, wFields());
             fieldIo().convertBasisToRGrid(wFields(), wFieldsRGrid());
             hasWFields_ = true;
             hasCFields_ = false;
-
+            #endif
          } else
          if (command == "READ_W_RGRID") {
-            in >> filename;
-            Log::file() << " " << Str(filename, 20) <<std::endl;
-
+            //in >> filename;
+            //Log::file() << " " << Str(filename, 20) <<std::endl;
+            readEcho(in, filename);
+            readWRGrid(filename);
+     
+            #if 0 
             fieldIo().readFieldsRGrid(filename, wFieldsRGrid());
             fieldIo().convertRGridToBasis(wFieldsRGrid(), wFields());
             hasWFields_ = true;
             hasCFields_ = false;
+            #endif
 
          } else
          if (command == "ITERATE") {
 
-            Log::file() << std::endl;
-            Log::file() << std::endl;
-
-            // Read w (chemical potential fields) if not done previously 
+            // Read w (chemical potential) fields if not done previously 
             if (!hasWFields_) {
-               in >> filename;
-               Log::file() << " " << Str(filename, 20) <<std::endl;
+               //in >> filename;
+               //Log::file() << " " << Str(filename, 20) <<std::endl;
+               readEcho(in, filename);
+               readWBasis(filename);
 
+               #if 0
                fieldIo().readFieldsBasis(filename, wFields());
                fieldIo().convertBasisToRGrid(wFields(), wFieldsRGrid());
                hasWFields_ = true;
+               #endif
             }
 
+            int fail = iterate();
+
+            if (fail) {
+               readNext = false;
+            }
+
+            #if 0
             // Iterative solution of SCF equations
             int fail = iterator().solve();
             hasCFields_ = true;
@@ -342,66 +365,76 @@ namespace Pspc
                computeFreeEnergy();
                outputThermo(Log::file());
             }
+            #endif
 
          } else
          if (command == "SOLVE_MDE") {
-            Log::file() << std::endl;
-            Log::file() << std::endl;
            
             // Read w (chemical potential fields) if not done previously 
             if (!hasWFields_) {
-               in >> filename;
-               Log::file() << " " << Str(filename, 20) <<std::endl;
+               //in >> filename;
+               //Log::file() << " " << Str(filename, 20) <<std::endl;
+               readEcho(in, filename);
+               readWBasis(filename);
+
+               #if 0
                fieldIo().readFieldsBasis(filename, wFields());
                fieldIo().convertBasisToRGrid(wFields(), wFieldsRGrid());
                hasWFields_ = true;
+               #endif
             }
 
+            // Solve the modified diffusion equation, without iteration
+            compute();
+
+            #if 0
             // Solve the modified diffusion equation (without iteration)
             mixture().compute(wFieldsRGrid(), cFieldsRGrid());
 
             // Convert c fields from r-grid to basis
             fieldIo().convertRGridToBasis(cFieldsRGrid(), cFields());
             hasCFields_ = true;
+            #endif
 
          } else
          if (command == "WRITE_W_BASIS") {
-            UTIL_CHECK(hasWFields_);
-            in >> filename;
-            Log::file() << "  " << Str(filename, 20) << std::endl;
-
-            fieldIo().writeFieldsBasis(filename, wFields());
+            // in >> filename;
+            // Log::file() << "  " << Str(filename, 20) << std::endl;
+            readEcho(in, filename);
+            writeWBasis(filename);
+            // fieldIo().writeFieldsBasis(filename, wFields());
          } else 
          if (command == "WRITE_W_RGRID") {
-            UTIL_CHECK(hasWFields_);
-            in >> filename;
-            Log::file() << "  " << Str(filename, 20) << std::endl;
-
-            fieldIo().writeFieldsRGrid(filename, wFieldsRGrid());
+            //in >> filename;
+            //Log::file() << "  " << Str(filename, 20) << std::endl;
+            readEcho(in, filename);
+            writeWRGrid(filename);
+            //fieldIo().writeFieldsRGrid(filename, wFieldsRGrid());
          } else 
          if (command == "WRITE_C_BASIS") {
-            UTIL_CHECK(hasCFields_);
-            in >> filename;
-            Log::file() << "  " << Str(filename, 20) << std::endl;
-
-            fieldIo().writeFieldsBasis(filename, cFields());
+            // in >> filename;
+            // Log::file() << "  " << Str(filename, 20) << std::endl;
+            readEcho(in, filename);
+            writeCBasis(filename);
+            //fieldIo().writeFieldsBasis(filename, cFields());
          } else
          if (command == "WRITE_C_RGRID") {
-            UTIL_CHECK(hasCFields_);
-            in >> filename;
-            Log::file() << "  " << Str(filename, 20) << std::endl;
-
-            fieldIo().writeFieldsRGrid(filename, cFieldsRGrid());
+            //in >> filename;
+            //Log::file() << "  " << Str(filename, 20) << std::endl;
+            readEcho(in, filename);
+            writeCRGrid(filename);
+            //fieldIo().writeFieldsRGrid(filename, cFieldsRGrid());
          } else
          if (command == "BASIS_TO_RGRID") {
+            //in >> inFileName;
+            //Log::file() << " " << Str(inFileName, 20) <<std::endl;
+            //in >> outFileName;
+            //Log::file() << " " << Str(outFileName, 20) <<std::endl;
+            readEcho(in, inFileName);
+            readEcho(in, outFileName);
+            basisToRGrid(inFileName, outFileName);
 
-            std::string inFileName;
-            in >> inFileName;
-            Log::file() << " " << Str(inFileName, 20) <<std::endl;
-            std::string outFileName;
-            in >> outFileName;
-            Log::file() << " " << Str(outFileName, 20) <<std::endl;
-
+            #if 0
             // Note: This and other conversions use the c-field arrays
             // for storage, and thus corrupt previously stored values.
             hasCFields_ = false;
@@ -409,66 +442,73 @@ namespace Pspc
             fieldIo().readFieldsBasis(inFileName, cFields());
             fieldIo().convertBasisToRGrid(cFields(), cFieldsRGrid());
             fieldIo().writeFieldsRGrid(outFileName, cFieldsRGrid());
+            #endif
 
          } else 
          if (command == "RGRID_TO_BASIS") {
+            //in >> inFileName;
+            //Log::file() << " " << Str(inFileName, 20) <<std::endl;
+            //in >> outFileName;
+            //Log::file() << " " << Str(outFileName, 20) <<std::endl;
+            readEcho(in, inFileName);
+            readEcho(in, outFileName);
+            rGridToBasis(inFileName, outFileName);
 
-            std::string inFileName;
-            in >> inFileName;
-            Log::file() << " " << Str(inFileName, 20) <<std::endl;
-            std::string outFileName;
-            in >> outFileName;
-            Log::file() << " " << Str(outFileName, 20) <<std::endl;
-
+            #if 0
             hasCFields_ = false;
             fieldIo().readFieldsRGrid(inFileName, cFieldsRGrid());
             fieldIo().convertRGridToBasis(cFieldsRGrid(), cFields());
             fieldIo().writeFieldsBasis(outFileName, cFields());
-
+            #endif
          } else
          if (command == "KGRID_TO_RGRID") {
+            //in >> inFileName;
+            //Log::file() << " " << Str(inFileName, 20) <<std::endl;
+            //in >> outFileName;
+            //Log::file() << " " << Str(outFileName, 20) <<std::endl;
+            readEcho(in, inFileName);
+            readEcho(in, outFileName);
+            kGridToRGrid(inFileName, outFileName);
 
-            std::string inFileName;
-            in >> inFileName;
-            Log::file() << " " << Str(inFileName, 20) <<std::endl;
-            std::string outFileName;
-            in >> outFileName;
-            Log::file() << " " << Str(outFileName, 20) <<std::endl;
-
+            #if 0
             hasCFields_ = false;
             fieldIo().readFieldsKGrid(inFileName, cFieldsKGrid());
             for (int i = 0; i < mixture().nMonomer(); ++i) {
                fft().inverseTransform(cFieldKGrid(i), cFieldRGrid(i));
             }
             fieldIo().writeFieldsRGrid(outFileName, cFieldsRGrid());
+            #endif
 
          } else
          if (command == "RGRID_TO_KGRID") {
+            //in >> inFileName;
+            //Log::file() << " " << Str(inFileName, 20) <<std::endl;
+            //in >> outFileName;
+            //Log::file() << " " << Str(outFileName, 20) <<std::endl;
+            readEcho(in, inFileName);
+            readEcho(in, outFileName);
+            rGridToKGrid(inFileName, outFileName);
 
-            std::string inFileName;
-            in >> inFileName;
-            Log::file() << " " << Str(inFileName, 20) <<std::endl;
-            std::string outFileName;
-            in >> outFileName;
-            Log::file() << " " << Str(outFileName, 20) <<std::endl;
-
+            #if 0
             hasCFields_ = false;
             fieldIo().readFieldsRGrid(inFileName, cFieldsRGrid());
             for (int i = 0; i < mixture().nMonomer(); ++i) {
                fft().forwardTransform(cFieldRGrid(i), cFieldKGrid(i));
             }
             fieldIo().writeFieldsKGrid(outFileName, cFieldsKGrid());
+            #endif
 
          } else
          if (command == "RHO_TO_OMEGA") {
+            //in >> inFileName;
+            //Log::file() << " " << Str(inFileName, 20) <<std::endl;
+            //in >> outFileName;
+            //Log::file() << " " << Str(outFileName, 20) << std::endl;
+            readEcho(in, inFileName);
+            readEcho(in, outFileName);
+            rhoToOmega(inFileName, outFileName);
 
-            std::string inFileName;
-            in >> inFileName;
-            Log::file() << " " << Str(inFileName, 20) <<std::endl;
-            std::string outFileName;
-            in >> outFileName;
-            Log::file() << " " << Str(outFileName, 20) << std::endl;
-
+            #if 0
             hasCFields_ = false;
             hasWFields_ = false;
 
@@ -509,31 +549,34 @@ namespace Pspc
 
             // Write w field
             fieldIo().writeFieldsBasis(outFileName, wFields());
+            #endif
 
          } else
          if (command == "OUTPUT_STARS") {
+            //in >> outFileName;
+            //Log::file() << " " << Str(outFileName, 20) << std::endl;
+            readEcho(in, outFileName);
+            outputStars(outFileName);
 
-            std::string outFileName;
-            in >> outFileName;
-            Log::file() << " " << Str(outFileName, 20) << std::endl;
-
+            #if 0
             std::ofstream outFile;
             fileMaster().openOutputFile(outFileName, outFile);
             fieldIo().writeFieldHeader(outFile, mixture().nMonomer());
             basis().outputStars(outFile);
-
+            #endif
          } else
          if (command == "OUTPUT_WAVES") {
+            //in >> outFileName;
+            //Log::file() << " " << Str(outFileName, 20) << std::endl;
+            readEcho(in, outFileName);
+            outputWaves(outFileName);
 
-            std::string outFileName;
-            in >> outFileName;
-            Log::file() << " " << Str(outFileName, 20) << std::endl;
-
+            #if 0
             std::ofstream outFile;
             fileMaster().openOutputFile(outFileName, outFile);
             fieldIo().writeFieldHeader(outFile, mixture().nMonomer());
             basis().outputWaves(outFile);
-
+            #endif
          } else {
             Log::file() << "Error: Unknown command  " 
                         << command << std::endl;
@@ -735,12 +778,15 @@ namespace Pspc
       UTIL_CHECK(hasWFields_);
       hasCFields_ = false;
 
+      Log::file() << std::endl;
+      Log::file() << std::endl;
+
       // Call iterator
       int error = iterator().solve();
       hasCFields_ = true;
 
       if (error) {
-         Log::file() << "Iterator errored to converge\n";
+         Log::file() << "Iterator failed to converge\n";
       } else {
          computeFreeEnergy();
          outputThermo(Log::file());
@@ -749,7 +795,7 @@ namespace Pspc
    }
 
    /**
-   * Solve modified diffusion equation for current w-fields, without iteration.
+   * Solve MDE for current w-fields, without iteration.
    */
    template <int D>
    void System<D>::compute()
@@ -805,7 +851,7 @@ namespace Pspc
    }
 
    /**
-   * Convert a field from symmetry-adpated basis to real-space grid format.
+   * Convert fields from symmetry-adpated basis to real-space grid format.
    */
    template <int D>
    void System<D>::basisToRGrid(const std::string & inFileName,
@@ -827,7 +873,7 @@ namespace Pspc
    void System<D>::rGridToBasis(const std::string & inFileName,
                                 const std::string & outFileName)
    {
-      // This conversion corrupts both cFieldsRGrid and cFields arrays
+      // This conversion corrupts all three c-field arrays
       hasCFields_ = false;
 
       fieldIo().readFieldsRGrid(inFileName, cFieldsRGrid());
@@ -836,7 +882,7 @@ namespace Pspc
    }
 
    /**
-   * Convert fields from Fourier (k-grid) to real-space grid (r-grid) format.
+   * Convert fields from Fourier (k-grid) to real-space (r-grid) format.
    */
    template <int D>
    void System<D>::kGridToRGrid(const std::string & inFileName,
@@ -853,10 +899,10 @@ namespace Pspc
    }
 
    /**
-   * Convert fields from real-space grid (r-grid) to Fourier (k-grid) format.
+   * Convert fields from real-space (r-grid) to Fourier (k-grid) format.
    */
    template <int D>
-   void System<D>::rGridToKgrid(const std::string & inFileName,
+   void System<D>::rGridToKGrid(const std::string & inFileName,
                                 const std::string & outFileName)
    {
       hasCFields_ = false;
@@ -869,7 +915,9 @@ namespace Pspc
    }
 
    /*
-   * Construct guess for omega (w-field) from rho (c-field)
+   * Construct guess for omega (w-field) from rho (c-field).
+   *
+   * Modifies wFields and wFieldsRGrid and outputs wFields.
    */
    template <int D>
    void System<D>::rhoToOmega(const std::string & inFileName, 
@@ -913,7 +961,7 @@ namespace Pspc
       hasWFields_ = true;
       hasCFields_ = false;
 
-      // Write w field
+      // Write w field in basis format
       fieldIo().writeFieldsBasis(outFileName, wFields());
    }
 
