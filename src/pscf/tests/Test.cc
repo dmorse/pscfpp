@@ -6,7 +6,7 @@
 
 #include "math/MathTestComposite.h"
 #include "chem/ChemTestComposite.h"
-//#include "solvers/SolversTestComposite.h"
+#include "solvers/SolversTestComposite.h"
 #include "inter/InterTestComposite.h"
 #include "mesh/MeshTestComposite.h"
 #include "crystal/CrystalTestComposite.h"
