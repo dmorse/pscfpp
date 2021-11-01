@@ -38,7 +38,7 @@ namespace Pscf
 
    // Construct from dimensions
    template <int D>
-   Mesh<D>::Mesh(const IntVec<D>& dimensions)
+   Mesh<D>::Mesh(IntVec<D> const & dimensions)
     : dimensions_(0),
       offsets_(0),
       size_(0)
@@ -46,8 +46,11 @@ namespace Pscf
 
    // Assignment operator.
    template <int D>
-   void Mesh<D>::operator = (Mesh<D> const & other)
-   {  setDimensions(other.dimensions_); }
+   Mesh<D>& Mesh<D>::operator = (Mesh<D> const & other)
+   {  
+      setDimensions(other.dimensions_); 
+      return *this;
+   }
 
    // Set state of existing Mesh<D>
    template <int D>
@@ -70,7 +73,7 @@ namespace Pscf
 
    // Return rank of an IntVec vector within this mesh
    template <int D>
-   int Mesh<D>::rank(const IntVec<D>& position) const
+   int Mesh<D>::rank(IntVec<D> const & position) const
    {
       int i;
       int result = 0;
@@ -114,7 +117,7 @@ namespace Pscf
 
    // Is IntVec<D> argument in the primary cell of this mesh?
    template <int D>
-   bool Mesh<D>::isInMesh(IntVec<D>& position) const
+   bool Mesh<D>::isInMesh(IntVec<D> const & position) const
    {
       bool result = true;
       for (int i = 0; i < D; ++i) {

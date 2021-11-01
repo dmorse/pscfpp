@@ -20,10 +20,13 @@ run: $(pscf_tests_math_OBJS) $(BLD_DIR)/$(TEST)
               `grep successful log` "in pscf/tests/log" > count
 	@cat count
 
+clean-outputs:
+	rm -f log count 
+
 clean:
 	rm -f $(pscf_tests_math_OBJS) $(pscf_tests_math_OBJS:.o=.d)
 	rm -f $(BLD_DIR)/$(TEST) $(BLD_DIR)/$(TEST).d
-	rm -f log count 
+	$(MAKE) clean-outputs
 
 -include $(pscf_tests_math_OBJS:.o=.d)
 -include $(pscf_tests_math_OBJS:.o=.d)

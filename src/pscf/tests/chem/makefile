@@ -23,6 +23,9 @@ run: $(pscf_tests_chem_OBJS) $(BLD_DIR)/$(TEST)
 clean:
 	rm -f $(pscf_tests_chem_OBJS) $(pscf_tests_chem_OBJS:.o=.d)
 	rm -f $(BLD_DIR)/$(TEST) $(BLD_DIR)/$(TEST).d
+	$(MAKE) clean-outputs
+
+clean-outputs:
 	rm -f log count 
 
 -include $(pscf_tests_chem_OBJS:.o=.d)
