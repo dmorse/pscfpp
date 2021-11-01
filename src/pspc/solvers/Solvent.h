@@ -53,15 +53,15 @@ namespace Pspc {
       * Set value of phi (volume fraction), if ensemble is closed.
       *
       * \throw Exception if ensemble is open
-      * \param phi desired volume fraction for this species
+      * \param phi  volume fraction for this species (input)
       */
       void setPhi(double phi);
 
       /**
       * Set value of mu (chemical potential), if ensemble is closed.
       *
-      * \throw Exception if ensemble is open
-      * \param phi desired chemical potential for this species
+      * \throw Exception if ensemble is closed
+      * \param mu  chemical potential for this species (input)
       */
       void setMu(double mu);
 
@@ -77,7 +77,7 @@ namespace Pspc {
       *
       * Upon return, concentration field, phi, mu, and q are all set.
       *
-      * \param wField monomer chemical potential field of relevant monomer type.
+      * \param wField  chemical potential field of relevant monomer type (input)
       */
       void compute(WField const & wField );
    
@@ -88,7 +88,7 @@ namespace Pspc {
       * only the one with the correct monomer id for this solvent, by calling
       * compute(wFields[monomerId()]) internally. 
       *
-      * \param wFields array of chemical potential fields.
+      * \param wFields  array of monomer chemical potential fields (input)
       */ 
       void compute(DArray<WField> const & wFields);
 
