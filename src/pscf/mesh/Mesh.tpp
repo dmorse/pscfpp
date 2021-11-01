@@ -17,6 +17,7 @@ namespace Pscf
 
    using namespace Util;
 
+   // Default constructor
    template <int D>
    Mesh<D>::Mesh()
     : dimensions_(0),
@@ -27,17 +28,30 @@ namespace Pscf
       setDimensions(dimensions);
    }
 
+   // Copy constructor
+   template <int D>
+   Mesh<D>::Mesh(Mesh<D> const & other)
+    : dimensions_(other.dimensions_),
+      offsets_(other.offsets_),
+      size_(other.size_)
+   {}
+
+   // Construct from dimensions
    template <int D>
    Mesh<D>::Mesh(const IntVec<D>& dimensions)
     : dimensions_(0),
       offsets_(0),
       size_(0)
-   {
-      setDimensions(dimensions);
-   }
+   {  setDimensions(dimensions); }
 
+   // Assignment operator.
    template <int D>
-   void Mesh<D>::setDimensions(const IntVec<D>& dimensions)
+   void Mesh<D>::operator = (Mesh<D> const & other)
+   {  setDimensions(other.dimensions_); }
+
+   // Set state of existing Mesh<D>
+   template <int D>
+   void Mesh<D>::setDimensions(IntVec<D> const & dimensions)
    {
       int i;
       for (i = 0; i < D; ++i) {
@@ -54,6 +68,7 @@ namespace Pscf
       size_ = offsets_[0]*dimensions_[0];
    }
 
+   // Return rank of an IntVec vector within this mesh
    template <int D>
    int Mesh<D>::rank(const IntVec<D>& position) const
    {
@@ -70,6 +85,7 @@ namespace Pscf
       return result;
    }
 
+   // Return IntVec vector corresponding to rank id
    template <int D>
    IntVec<D> Mesh<D>::position(int id) const
    {
@@ -96,6 +112,7 @@ namespace Pscf
       return result;
    }
 
+   // Is IntVec<D> argument in the primary cell of this mesh?
    template <int D>
    bool Mesh<D>::isInMesh(IntVec<D>& position) const
    {
@@ -122,6 +139,7 @@ namespace Pscf
       return shift;
    }
 
+   // Shift the vector to the primary cell
    template <int D>
    IntVec<D> Mesh<D>::shift(IntVec<D>& position) const
    {
