@@ -16,7 +16,6 @@ jobs:
       with:
         submodules: recursive
     - run: ./setup
-    - run: ls ${GITHUB_WORKSPACE}
     - run: ls 
     - env:
         PYTHONPATH: "${GITHUB_WORKSPACE}/lib/python"
