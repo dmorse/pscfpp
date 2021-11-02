@@ -23,5 +23,3 @@ jobs:
       run: ./setup
     - name: make
       run: cd bld; make all-cpu
-    - name: make check-pscf
-      run: cd bld/pscf/tests; make run
