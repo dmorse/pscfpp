@@ -21,3 +21,4 @@ jobs:
     - run: ./setup
     - run: ls 
     - run: echo $PYTHONPATH
+    - run: cd bld; make all-cpu
