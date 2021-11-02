@@ -103,12 +103,16 @@ documentation, including all required git submodules.
 
 ## Documentation
 
-PSCF is distributed with source files for an html web manual. After 
-cloning the source code, you can use the doxygen documentation
-generation program to generate a local copy of this documentation.  To 
-do this, doxygen must be installed on your computer, and the directory 
-containing the doxygen executable must be in your command search PATH. 
-To generate documentation:
+PSCF is distributed with source files for an html web manual. A copy
+of the documentation of a recent version is available online at
+
+  <https://dmorse.github.io/pscfpp-man>
+
+After cloning the source code, you can use the doxygen documentation
+generation program to generate a local copy of this documentation. 
+To do this, doxygen must be installed on your computer, and the 
+directory containing the doxygen executable must be in your command 
+search PATH. To generate documentation:
 
    - Change directory (cd) to the pscfpp/ root directory
 
