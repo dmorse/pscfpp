@@ -1,4 +1,4 @@
-name: build
+name: build-cpu
 
 on:
   push:
@@ -16,4 +16,8 @@ jobs:
       with:
         submodules: recursive
     - run: ./setup
-    - run: cd bld; make all-cpu
+    - run: ls ${GITHUB_WORKSPACE}
+    - run: ls 
+    - env:
+        PYTHONPATH: "${GITHUB_WORKSPACE}/lib/python"
+    - run: echo $PYTHONPATH
