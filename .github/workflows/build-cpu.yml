@@ -6,9 +6,12 @@ on:
       - master
       - devel
 
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+       PYTHONPATH: lib/python
     steps:
     - run: sudo apt-get -y install fftw3
     - run: sudo apt-get -y install libgsl-dev
@@ -17,6 +20,4 @@ jobs:
         submodules: recursive
     - run: ./setup
     - run: ls 
-    - env:
-        PYTHONPATH: "${GITHUB_WORKSPACE}/lib/python"
     - run: echo $PYTHONPATH
