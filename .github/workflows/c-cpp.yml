@@ -1,0 +1,27 @@
+name: build
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: install-fftw
+      run: sudo apt-get -y install fftw3
+    - name: install-gsl
+    - run: sudo apt-get -y install libgsl-dev
+    - uses: actions/checkout@v2
+      with:
+        submodules: recursive
+    - name: setup
+      run: ./setup
+    - name: make
+      run: cd bld; make all-cpu
+    - name: make check-pscf
+      run: cd bld/pscf/tests; make run
