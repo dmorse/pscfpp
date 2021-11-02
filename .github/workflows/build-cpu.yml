@@ -13,6 +13,7 @@ jobs:
     env:
        PYTHONPATH: "/home/runner/work/pscfpp/lib/python"
     steps:
+    - run: actions/setup-python@v2
     - run: echo $PYTHONPATH
     - run: sudo apt-get -y install fftw3
     - run: sudo apt-get -y install libgsl-dev
