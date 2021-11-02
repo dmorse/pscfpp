@@ -11,7 +11,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-       PYTHONPATH: "/home/runner/work/pscfpp/pscfpp/lib/python/pscfpp"
+       PYTHONPATH: "/home/runner/work/pscfpp/pscfpp/lib/python"
     steps:
     - run: sudo apt-get -y install fftw3
     - run: sudo apt-get -y install libgsl-dev
