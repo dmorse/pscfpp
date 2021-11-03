@@ -752,6 +752,80 @@ namespace Pspc
       }
    }
 
+   /// Check if an RField<D> has declared space group symmetry.
+   template <int D>
+   int FieldIo<D>::checkFieldSymmetry(RField<D> & in) 
+   {
+      fft().forwardTransform(in, workDft_);
+      return checkFieldSymmetry(workDft_);
+   }
+
+   /// Check if an RFieldDft has the declared space group symmetry.
+   template <int D>
+   int FieldIo<D>::checkFieldSymmetry(RFieldDft<D> const & in) const
+   {
+      typename Basis<D>::Star const* starPtr; // pointer to current star
+      typename Basis<D>::Wave const* wavePtr; // pointer to current wave
+      std::complex<double> waveCoeff;         // coefficient for wave
+      std::complex<double> rootCoeff;         // coefficient for root wave
+      std::complex<double> diff;              // coefficient difference
+      int is;                                 // star index
+      int iw;                                 // wave id, within star 
+      int beginId, endId;                     // begin, end of star
+      int rank;                               // dft grid rank of wave
+
+      // Create Mesh<D> with dimensions of DFT Fourier grid.
+      Mesh<D> dftMesh(in.dftDimensions());
+
+      // Loop over stars
+      is = 0;
+      while (is < basis().nStar()) {
+         starPtr = &(basis().star(is));
+
+         if (starPtr->cancel) {
+
+            // Check that coefficients are zero for all waves in star
+            beginId = starPtr->beginId;
+            endId = starPtr->endId;
+            for (iw = beginId; iw < endId; ++iw) {
+               wavePtr = &basis().wave(iw);
+               if (!wavePtr->implicit) {
+                  rank = dftMesh.rank(wavePtr->indicesDft);
+                  if (abs(in[rank][0]) > 1.0E-9) return 1;
+                  if (abs(in[rank][1]) > 1.0E-9) return 1;
+               }
+            }
+
+         } else {
+
+            // Check agreement with coeff values from all waves
+            bool hasRoot = false;
+            beginId = starPtr->beginId;
+            endId = starPtr->endId;
+            for (int iw = beginId; iw < endId; ++iw) {
+               wavePtr = &basis().wave(iw);
+               if (!(wavePtr->implicit)) {
+                  UTIL_CHECK(wavePtr->starId == is);
+                  rank = dftMesh.rank(wavePtr->indicesDft);
+                  waveCoeff = std::complex<double>(in[rank][0], in[rank][1]);
+                  waveCoeff /= wavePtr->coeff;
+                  if (hasRoot) {
+                     diff = waveCoeff - rootCoeff;
+                     if (abs(diff) > 1.0E-9) return 1;
+                  } else {
+                     rootCoeff = waveCoeff;
+                     hasRoot = true;
+                  }
+               }
+            }
+
+         } 
+
+         ++is;
+      } //  loop over star index is
+      return 0;
+   }
+
    template <int D>
    void FieldIo<D>::checkWorkDft()
    {

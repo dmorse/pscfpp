@@ -297,6 +297,22 @@ namespace Pspc
 
       //@}
 
+      /**
+      * Check if an r-grid field has declared space group symmetry.
+      *
+      * \param in field in real space grid (r-grid) format
+      * \return 0 if the field is symmetric, 1 otherwise
+      */
+      int checkFieldSymmetry(RField<D> & in);
+
+      /**
+      * Check if an r-grid field has declared space group symmetry.
+      *
+      * \param in field in real space grid (r-grid) format
+      * \return 0 if the field is symmetric, 1 otherwise
+      */
+      int checkFieldSymmetry(RFieldDft<D> const & in) const;
+
    private:
 
       // DFT work array for two-step conversion basis <-> kgrid <-> rgrid.
@@ -308,24 +324,24 @@ namespace Pspc
       UnitCell<D>* unitCellPtr_;
 
       /// Pointer to spatial discretization mesh.
-      Mesh<D>* meshPtr_;
+      Mesh<D> const * meshPtr_;
 
       /// Pointer to FFT object.
-      FFT<D>* fftPtr_;
+      FFT<D> mutable * fftPtr_;
 
       /// Pointer to group name string
-      std::string* groupNamePtr_;
+      std::string const * groupNamePtr_;
 
       /// Pointer to a Basis object
-      Basis<D>* basisPtr_;
+      Basis<D> const * basisPtr_;
 
       /// Pointer to Filemaster (holds paths to associated I/O files).
-      FileMaster* fileMasterPtr_;
+      FileMaster const * fileMasterPtr_;
 
       // Private accessor functions:
 
       /// Get UnitCell by reference.
-      UnitCell<D>& unitCell()
+      UnitCell<D> & unitCell()
       {  
          // UTIL_ASSERT(unitCellPtr_);  
          return *unitCellPtr_; 
@@ -336,13 +352,6 @@ namespace Pspc
       {  
          // UTIL_ASSERT(unitCellPtr_);  
          return *unitCellPtr_; 
-      }
-
-      /// Get spatial discretization mesh by reference.
-      Mesh<D>& mesh()
-      {  
-         // UTIL_ASSERT(meshPtr_);  
-         return *meshPtr_; 
       }
 
       /// Get spatial discretization mesh by const reference.
@@ -366,23 +375,19 @@ namespace Pspc
          return *fftPtr_; 
       }
 
-      /// Get group name string by reference.
-      std::string& groupName()
-      {  return *groupNamePtr_; }
-
       /// Get group name string by const reference.
       std::string const & groupName() const
       {  return *groupNamePtr_; }
 
-      /// Get Basis by reference.
-      Basis<D>& basis()
+      /// Get Basis by const reference.
+      Basis<D> const & basis() const
       {
          // UTIL_ASSERT(basisPtr_);  
          return *basisPtr_; 
       }
 
       /// Get FileMaster by reference.
-      FileMaster& fileMaster()
+      FileMaster const & fileMaster() const
       {  
          UTIL_ASSERT(fileMasterPtr_);  
          return *fileMasterPtr_; 
