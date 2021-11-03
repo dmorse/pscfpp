@@ -87,14 +87,14 @@ namespace Pscf
       *
       * \param other Mesh<D> object being copied.
       */
-      void operator = (Mesh<D> const & other);
+      Mesh<D>& operator= (Mesh<D> const & other);
 
       /**
       * Set the grid dimensions for an existing mesh.
       *
       * \param dimensions  IntVec<D> of grid dimensions.
       */
-      void setDimensions(const IntVec<D>& dimensions);
+      void setDimensions(IntVec<D> const & dimensions);
 
       /**
       * Get an IntVec<D> of the grid dimensions.
@@ -127,7 +127,7 @@ namespace Pscf
       * \param position  integer position of a grid point
       * \return integer rank of specified grid point
       */
-      int rank(const IntVec<D>& position) const;
+      int rank(IntVec<D> const & position) const;
 
       /**
       * Is this coordinate in range?
@@ -146,7 +146,7 @@ namespace Pscf
       * \param position  grid point position
       * \return true iff 0 <= coordinate[i] < dimension(i) for all i.
       */
-      bool isInMesh(IntVec<D>& position) const;
+      bool isInMesh(IntVec<D> const & position) const;
 
       /**
       * Shift a periodic coordinate into range.

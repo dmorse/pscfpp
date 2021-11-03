@@ -74,7 +74,7 @@ The GPU-accelerated pseudo-spectral solver for periodic structures is
 based on algorithms similar to those used in the CPU pseudo-spectral 
 code, but is somewhat less mature. Like the corresponding C++/CUDA CPU 
 code, the GPU-accelerated code allows the use of any unit cell type, 
-including no-orthogonal unit cells, and provides automatic relaxation 
+including non-orthogonal unit cells, and provides automatic relaxation 
 of unit cell parameters. The most important difference in features is 
 that the GPU-accelerated code does yet allow the user to use a
 representation in symmetry-adapted basis functions to constrain the 
@@ -89,21 +89,25 @@ The PSCF C++/CUDA source code is maintained in the github repository
 
    <https://github.com/dmorse/pscfpp>.
 
-It may be obtained by using a git version control system client to
-clone the repository. To do so on a machine with a git client, 
+The source code may be obtained by using a git version control system 
+client to clone the repository. To do so on a machine with a git client, 
 enter the command:
 ``` 
 git clone --recursive https://github.com/dmorse/pscfpp.git
 ```
-Note the use of the --recursive option to the git clone command.
-This is necessary to clone several git submodules that are maintained
-in separate repositories. This command will create a new directory 
-called pscfpp/ that contains all of the source code and associated
+Note the use of the --recursive option to the git clone command. This
+is necessary to clone several git submodules that are maintained in 
+separate repositories. This command will create a new directory called 
+pscfpp/ that contains all of the source code and associated 
 documentation, including all required git submodules.
 
 ## Documentation
 
-PSCF is distributed with source files for an html web manual.
+PSCF is distributed with source files for an html web manual. A copy
+of the documentation of a recent version is available online at
+
+  <https://dmorse.github.io/pscfpp-man>
+
 After cloning the source code, you can use the doxygen documentation
 generation program to generate a local copy of this documentation. 
 To do this, doxygen must be installed on your computer, and the 
@@ -114,22 +118,23 @@ search PATH. To generate documentation:
 
    - Enter "make html"
 
-This should create many html files in the pscfpp/doc/html directory.
+This should create many html files in the pscfpp/doc/html directory.  
 To begin reading the documentation, point a browser at the file
 pscfpp/doc/html/index.html, which is the main page of the manual.
 
 ## Dependencies
 
-The PSCF source code is written in a combination of C++ and (for
-the GPU accelerated program) CUDA, and must be compiled from source.
+The PSCF source code is written using C++ as the primary language, with
+CUDA for some parts GPU accelerated program. The package is provided 
+only in source file format - all programs must be compiled from source.
 The package was developed on linux and and Mac OS X operating systems 
-using standard unix utilities, and is designed to run on these 
-systems. To compile linux-like software on a Mac, you must first 
-install the XCode Mac development environment and the unix command 
-line tools.  
+using standard unix utilities, and is designed to run on these or 
+other unix-like systems. To compile this or other unix software on 
+Mac OS X, you must first install the XCode Mac development environment 
+and the unix command line tools.  
 
-The CPU-based programs within the PSCF package depend on the 
-following external libraries:
+The CPU-based programs within the PSCF package depend on the following 
+external libraries:
 
   - Gnu scientific library (GSL)
 
@@ -144,22 +149,27 @@ appropriate NVIDIA GPU. To compile or run these programs, the system
 must also have an NVIDIA CUDA development environment that provides 
 the CUFFT fast Fourier transform library. 
 
+Procedures for installing these dependencies are different for
+different operating system environments and different package
+managers. Instructions for some common environments are given 
+in the web manual.
+
 ## Compiling
 
-Complete directions for compiling and installing PSCF are provided 
-in section 2 of the html documentation. Short instructions for 
-compiling, after installing all of the required dependencies, are 
-given below:
+Complete directions for compiling and installing PSCF are provided in 
+section 2 of the html documentation. Short instructions for compiling, 
+after cloning the git repository and installing all of the required 
+dependencies, are given below:
 
    - Add the pscfpp/bin directory to your linux command search PATH
      environment variable.
    
-   - Add the pscfpp/lib/python directory to your PYTHONPATH
+   - Add the pscfpp/lib/python directory to your PYTHONPATH 
      environment variable.
    
    - cd to the pscfpp/ root directory
    
-   - Enter "./setup" from this root directory to run a setup script.
+   - Enter "./setup" from the pscfpp/ directory to run a setup script.
      This script installs default versions of several files that are 
      required by the build system. You only need to run the setup
      script once, before compiling the first time.
@@ -172,7 +182,7 @@ given below:
    - To compile all programs, including the GPU-accelerated programs,
      on a machine that allows this, instead enter "make all". 
 
-The setup script installs a default version of a file 
+The "setup" script installs a default version of a file named
 pscfpp/bld/config.mk that contains makefile variables that define 
 compiler executable names, compiler options and paths to head and 
 library files for external dependencies.  If the default options 
@@ -187,24 +197,24 @@ Executable names (given above) are:
    - pscf_fd : 1D finite-difference program 
 
    - pscf_pcNd : CPU based programs for N=1,2, or 3 dimensional periodic
-     structures
+     structures. 
 
    - pscf_pgNd : GPU based programs for N=1,2, or 3 dimensional periodic
      structures
 
 In the names pscf_pcdN and pscf_pgdN, N denotes a dimension dimension
-of space that can be N=1, 2, 3. The CPU program for three-dimensionally
-periodic microstructures is thus pscf_pc3d.
+of space that can be N=1, 2, 3. For example, the CPU program for 
+three-dimensionally periodic microstructures is thus pscf_pc3d.
 
 Each of these programs reads a parameter file and a command file. The 
 parameter file is fixed-format file that contains parameters required 
 to initialize the program. The command file is a more flexible script 
 containing a sequence of commands that are read and executed sequentially 
-to specify a sequence of computational steps.  The command file for 
-a standard SCFT calculation also specifies the name of a file that 
-contain an initial guess for monomer chemical potential fields and 
-names of files to which final chemical potential and monomer 
-concentration fields should be written.
+to specify a sequence of computational steps. The command file for a 
+standard SCFT calculation specifies the name of a file that contains 
+an initial guess for monomer chemical potential fields and names of 
+files to which final chemical potential and monomer concentration 
+fields should be written.
 
 The command line syntax for invoking any pscfp++ program that runs on
 a CPU is:
@@ -220,10 +230,11 @@ pscf_pc3d -p param -c command
 to run the pscf_pc3d CPU program for three dimensional periodic structures. 
 This form of the command would write log output to the screen.  Output 
 produced during a computation may also be redirected to a log file by 
-using the unix ">" standard output redirection operator. In addition, 
-and -e command line option may also be used to cause the program to echo 
-the parameter file to standard out as this file is read. With echoing and 
-redirection, the command syntax would be 
+using the unix ">" standard output redirection operator. 
+
+In addition, an -e command line option may also be used to cause the 
+program to echo the parameter file to standard out as this file is read. 
+With echoing and redirection, the command syntax would be 
 ```
 program -e -p param -c command > log
 ```

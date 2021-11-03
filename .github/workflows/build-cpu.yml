@@ -1,0 +1,28 @@
+name: build-cpu
+
+on:
+  push:
+    branches:
+      - master
+      - devel
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+       PYTHONPATH: "/home/runner/work/pscfpp/pscfpp/lib/python"
+    steps:
+    - run: sudo apt-get -y install libfftw3-dev
+    - run: sudo apt-get -y install libgsl-dev
+    - uses: actions/setup-python@v2
+    - run: echo $PYTHONPATH
+    - uses: actions/checkout@v2
+      with:
+        submodules: recursive
+    - run: ./setup
+    - run: ls 
+    - run: cd bld; make all-cpu
+    - run: cd bld/pscf/tests; make run
+    - run: cd bld/fd1d/tests; make run
+    - run: cd bld/pspc/tests; make run

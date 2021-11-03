@@ -355,7 +355,7 @@ namespace Pspc {
    * Propagate solution by one step.
    */
    template <int D>
-   void Block<D>::step(const QField& q, QField& qNew)
+   void Block<D>::step(QField const & q, QField& qNew)
    {
       // Check real-space mesh sizes`
       int nx = mesh().size();

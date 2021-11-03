@@ -1,26 +1,37 @@
 Chemistry
 ---------
 
-These classes are used to describe molecular structures, and are 
-common to all SCFT implementations:
+These classes and class templates are used to describe molecular 
+structures, and are common to all SCFT implementations:
 
     Monomer
     Vertex
     BlockDescriptor
+    BlockTmpl<Propagator> : public BlockDescriptor
     Species
     PolymerTmpl<Block> : public Species
-    SolventTmpl : public Species
-    
-Each Monomer, Vertex, Block, and PolymerTmpl<Block> has an id that
-corresponds to the array index in any array of such structures. A 
-bond has the ids of the vertices to which it is attached and the id 
-of the associated monomer type. A vertex has the ids of the bonds 
-to which it is attached. 
+    MixtureTmpl<Polymer, Solvent> 
 
-Each PolymerTmpl<Block> and SolventDescriptor also contains the
-ensemble (Open or Closed) and the volume fraction phi or chemical
-potential mu of the species. These variables are protected members
-of the Species base class.
+Each implementation of SCFT defines its own Mixture, Polymer, Block 
+and Solvent class, each of which is derived from one of the classes
+or class templates listed above. Mixture is derived from MixtureTmpl
+template, Polymer from the PolymerTmpl, Block from the BlockTmpl,
+and Solvent from Species.
+
+In each implementation, a Mixture contains arrays of Monomer, Polymer,
+and Solvent objects, and a Polymer contains arrays of Block and Vertex
+objects. Each Monomer, Vertex, Block, Polymer, and Solvent class has an 
+id that corresponds to its array index in such an array.
+
+The Block and Vertex classes contain information that specify the graph
+structure for an acyclic polymer.  A Block has the ids of the two vertices 
+to which it is attached and the id of the associated monomer type. A 
+vertex has the ids of the blocks to which it is attached.  Vertices can
+represent either chain ends or junctions of two or more blocks. 
+
+The Species class contains protected members to indicate the ensemble 
+(Open or Closed) and the volume fraction phi or chemical potential 
+mu of the species. 
 
 Solver Templates
 ----------------
@@ -32,7 +43,6 @@ be common to all implementations of SCFT.
     PropagatorTmpl
     BlockTmpl<Propagator>
     PolymerTmpl<Block>
-    SolventTmpl<Block>
     MixtureTmpl<Block>
 
 Each implementation is defined in a separate namespace, and defines 
@@ -41,6 +51,7 @@ the following concrete classes:
     class Propagator : public PropagatorTmpl<Propagator>
     class Block : public BlockTmpl<Propagator>
     class Polymer : public PolymerTmpl<Block>
+    class Solvent : public Species
     class Mixture : public MixtureTmpl<Polymer, Solvent>
 
 Each of these is discussed in more detail in further below. The 
