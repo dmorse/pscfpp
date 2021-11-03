@@ -766,20 +766,19 @@ namespace Pspc
    {
       typename Basis<D>::Star const* starPtr; // pointer to current star
       typename Basis<D>::Wave const* wavePtr; // pointer to current wave
-      std::complex<double> waveCoeff;         // coefficient for wave
-      std::complex<double> rootCoeff;         // coefficient for root wave
+      std::complex<double> waveCoeff;         // coefficient from wave
+      std::complex<double> rootCoeff;         // coefficient from root 
       std::complex<double> diff;              // coefficient difference
       int is;                                 // star index
-      int iw;                                 // wave id, within star 
-      int beginId, endId;                     // begin, end of star
+      int iw;                                 // wave index
+      int beginId, endId;                     // star begin, end ids
       int rank;                               // dft grid rank of wave
 
       // Create Mesh<D> with dimensions of DFT Fourier grid.
       Mesh<D> dftMesh(in.dftDimensions());
 
-      // Loop over stars
-      is = 0;
-      while (is < basis().nStar()) {
+      // Loop over all stars
+      for (is = 0; is < basis().nStar(); ++is) {
          starPtr = &(basis().star(is));
 
          if (starPtr->cancel) {
@@ -798,14 +797,13 @@ namespace Pspc
 
          } else {
 
-            // Check agreement with coeff values from all waves
+            // Check consistency of coeff values from all waves
             bool hasRoot = false;
             beginId = starPtr->beginId;
             endId = starPtr->endId;
-            for (int iw = beginId; iw < endId; ++iw) {
+            for (iw = beginId; iw < endId; ++iw) {
                wavePtr = &basis().wave(iw);
                if (!(wavePtr->implicit)) {
-                  UTIL_CHECK(wavePtr->starId == is);
                   rank = dftMesh.rank(wavePtr->indicesDft);
                   waveCoeff = std::complex<double>(in[rank][0], in[rank][1]);
                   waveCoeff /= wavePtr->coeff;
@@ -821,8 +819,7 @@ namespace Pspc
 
          } 
 
-         ++is;
-      } //  loop over star index is
+      } //  end loop over star index is
       return 0;
    }
 
