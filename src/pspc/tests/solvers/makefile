@@ -19,10 +19,13 @@ run: $(pspc_tests_solvers_OBJS) $(BLD_DIR)/$(TEST)
               `grep successful log` "in pspc/tests/log" > count
 	@cat count
 
+clean-outputs:
+	rm -f log count
+
 clean:
 	rm -f $(pspc_tests_solvers_OBJS) $(pspc_tests_solvers_OBJS:.o=.d)
 	rm -f $(BLD_DIR)/$(TEST) $(BLD_DIR)/$(TEST).d
-	rm -f log count binary
+	$(MAKE) clean-outputs
 
 -include $(pspc_tests_solvers_OBJS:.o=.d)
 -include $(pspc_tests_solvers_OBJS:.o=.d)
