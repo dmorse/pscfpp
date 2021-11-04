@@ -802,6 +802,26 @@ namespace Pspc
    }
 
    /*
+   * Convert fields from real-space grid to symmetry-adapted basis format.
+   */
+   template <int D>
+   bool System<D>::checkRGridFieldSymmetry(const std::string & inFileName)
+   {
+      // This conversion corrupts all three c-field arrays
+      hasCFields_ = false;
+
+      fieldIo().readFieldsRGrid(inFileName, cFieldsRGrid());
+
+      for (int i = 0; i < mixture().nMonomer(); ++i) {
+         int error = fieldIo().checkFieldSymmetry(cFieldRGrid(i));
+         if (error) {
+            return false;
+         }
+      }
+      return true;
+   }
+
+   /*
    * Construct guess for omega (w-field) from rho (c-field).
    *
    * Modifies wFields and wFieldsRGrid and outputs wFields.

@@ -161,16 +161,17 @@ public:
          }   
       }   
 
-      // openInputFile("in/conv/Conversion_2d_step2", command);
-      // system.readCommands(command);
-      // command.close();
-
       // Round trip basis -> rgrid -> basis, read resulting wField
       system.basisToRGrid("contents/omega/domainOn/omega_hex",
                           "out/omega/conv/omega_rgrid_hex");
       system.rGridToBasis("out/omega/conv/omega_rgrid_hex",
                           "out/omega/conv/omega_conv_hex");
       system.readWBasis("out/omega/conv/omega_conv_hex");
+
+      // Check symmetry of rgrid representation
+      bool hasSymmetry
+       = system.checkRGridFieldSymmetry("out/omega/conv/omega_rgrid_hex");
+      TEST_ASSERT(hasSymmetry);
 
       // Compare result to original
       double err;
@@ -189,7 +190,7 @@ public:
          //std::cout << std::endl;   
       }   
       std::cout << "Max error = " << max << std::endl;  
-      TEST_ASSERT(max < 1.0E-8);
+      TEST_ASSERT(max < 1.0E-9);
 
    }  
 
@@ -239,6 +240,11 @@ public:
       system.rGridToBasis("out/omega/conv/omega_rgrid_bcc",
                           "out/omega/conv/omega_conv_bcc");
       system.readWBasis("out/omega/conv/omega_conv_bcc");
+
+      // Check symmetry of rgrid representation
+      bool hasSymmetry
+       = system.checkRGridFieldSymmetry("out/omega/conv/omega_rgrid_bcc");
+      TEST_ASSERT(hasSymmetry);
 
       // Compare result to original
       double err;
