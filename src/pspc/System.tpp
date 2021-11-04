@@ -374,6 +374,10 @@ namespace Pspc
             readEcho(in, outFileName);
             rGridToKGrid(inFileName, outFileName);
          } else
+         if (command == "CHECK_RGRID_SYMMETRY") {
+            readEcho(in, inFileName);
+            checkRGridFieldSymmetry(inFileName);
+         } else
          if (command == "RHO_TO_OMEGA") {
             readEcho(in, inFileName);
             readEcho(in, outFileName);
