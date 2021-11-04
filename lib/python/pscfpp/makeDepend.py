@@ -1,7 +1,7 @@
 import os
 import os.path
 from string import *
-from TextWrapper import *
+from pscfpp.TextWrapper import *
 
 def makeDepend(processor, options, cfile, srcdir, blddir, extraDependencies=''):
 

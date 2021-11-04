@@ -19,10 +19,13 @@ run: $(pspc_tests_field_OBJS) $(BLD_DIR)/$(TEST)
               `grep successful log` "in pspc/tests/log" > count
 	@cat count
 
+clean-outputs:
+	rm -f log count out/*
+
 clean:
 	rm -f $(pspc_tests_field_OBJS) $(pspc_tests_field_OBJS:.o=.d)
 	rm -f $(BLD_DIR)/$(TEST) $(BLD_DIR)/$(TEST).d
-	rm -f log count out/*
+	$(MAKE) clean-outputs
 
 -include $(pspc_tests_field_OBJS:.o=.d)
 -include $(pspc_tests_field_OBJS:.o=.d)

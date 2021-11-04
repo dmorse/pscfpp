@@ -8,13 +8,13 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/solvers/SolventTmpl.h>
 #include "PropagatorStub.h"
+#include <pscf/chem/Species.h>
 
 namespace Pscf
 { 
 
-   class SolventStub : public SolventTmpl<PropagatorStub>
+   class SolventStub : public Species
    {
 
    public:

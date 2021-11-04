@@ -70,11 +70,15 @@ namespace Fd1d
 
       /**
       * Set length and readjust ds_ accordingly.
+      *
+      * \param length  length (# of monomers) for this block
       */
       virtual void setLength(double length);
 
       /**
       * Set Crank-Nicholson solver for this block.
+      *
+      * \param w  Chemical potential field (input)
       */
       void setupSolver(WField const & w);
 
@@ -84,16 +88,19 @@ namespace Fd1d
       * Upon return, grid point r of array cField() contains the 
       * integral int ds q(r,s)q^{*}(r,L-s) times the prefactor, 
       * where q(r,s) is the solution obtained from propagator(0), 
-      * and q^{*} is the solution of propagator(1),  and s is
+      * and q^{*} is the solution of propagator(1),  and s is 
       * a contour variable that is integrated over the domain 
       * 0 < s < length(), where length() is the block length.
       *
-      * \param prefactor multiplying integral
+      * \param prefactor constant prefactor multiplying integral
       */ 
       void computeConcentration(double prefactor);
 
       /**
-      * Compute step of integration loop, from i to i+1.
+      * Compute one step of integration loop, from i to i+1.
+      *
+      * \param q  QField at step i (input)
+      * \param qNew  QField at step i + 1 (output)
       */
       void step(QField const & q, QField& qNew);
 

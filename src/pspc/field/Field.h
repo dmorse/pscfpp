@@ -75,7 +75,7 @@ namespace Pspc
       * \param  i array index
       * \return non-const reference to element i
       */
-      Data& operator[] (int i);
+      Data & operator[] (int i);
 
       /**
       * Get an element by const reference.
@@ -85,7 +85,7 @@ namespace Pspc
       * \param i array index
       * \return const reference to element i
       */
-      const Data& operator[] (int i) const;
+      Data const & operator[] (int i) const;
 
       /**
       * Return pointer to underlying C array.
@@ -95,7 +95,7 @@ namespace Pspc
       /**
       * Return pointer to const to underlying C array.
       */
-      const Data* cField() const;
+      Data const * cField() const;
 
       /**
       * Serialize a Field to/from an Archive.
@@ -119,12 +119,12 @@ namespace Pspc
       /**
       * Copy constructor (private and not implemented to prohibit).
       */
-      Field(const Field& other);
+      Field(Field const & other);
 
       /**
       * Assignment operator (private and non implemented to prohibit).
       */
-      Field& operator = (const Field& other);
+      Field& operator = (Field const & other);
 
    };
 
@@ -151,7 +151,7 @@ namespace Pspc
    * Get an element by const reference (C-array subscripting)
    */
    template <typename Data>
-   inline const Data& Field<Data>::operator[] (int i) const
+   inline Data const & Field<Data>::operator[] (int i) const
    {
       assert(data_ != 0);
       assert(i >= 0 );
@@ -170,7 +170,8 @@ namespace Pspc
    * Get a pointer to const to the underlying C array.
    */
    template <typename Data>
-   inline const Data* Field<Data>::cField() const
+   inline 
+   Data const * Field<Data>::cField() const
    {  return data_; }
 
    /*

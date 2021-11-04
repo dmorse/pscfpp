@@ -327,9 +327,9 @@ namespace Pspc
       * A true value is returned if and only if monomer concentration fields
       * have been computed by solving the modified diffusion equation for 
       * the current w fields, and consistent values have been set for both 
-      * values on a grid (wFieldsRGrid) and for coefficients in a basis 
+      * values on an r-grid (wFieldsRGrid) and for coefficients in a basis 
       * (cFields).  To satisfy this requirement, solution of the MDE on a 
-      * grid should always be immediately followed by conversion of c 
+      * r-grid should always be immediately followed by conversion of c 
       * fields to a basis.
       */  
       bool hasCFields() const;
@@ -362,7 +362,7 @@ namespace Pspc
       * stores the result in the wFields array. On exit hasWFields is
       * true and hasCFields is false. 
       *
-      * \param filename name of input w-field r-grid file
+      * \param filename name of input w-field file in r-grid format
       */
       void readWRGrid(const std::string & filename);
    
@@ -431,7 +431,7 @@ namespace Pspc
       void writeCRGrid(const std::string & filename);
    
       /**
-      * Convert a field from symmetry-adapted basis to spatial grid format.
+      * Convert a field from symmetry-adapted basis to r-grid format.
       *
       * This function uses the arrays that stored monomer concentration 
       * fields for temporary storage, and thus corrupts any previously
@@ -477,7 +477,7 @@ namespace Pspc
       * \param inFileName name of input file
       * \param outFileName name of output file
       */
-      void rGridToKgrid(const std::string & inFileName, 
+      void rGridToKGrid(const std::string & inFileName, 
                         const std::string & outFileName);
    
       /**
@@ -617,7 +617,7 @@ namespace Pspc
       DArray<CField> cFieldsRGrid_;
 
       /**
-      * Array of concentration fields on Fourier space grid.
+      * Array of concentration fields on Fourier grid (k-grid).
       *
       * Indexed by monomer typeId, size = nMonomer.
       */
@@ -709,6 +709,16 @@ namespace Pspc
       * \param out output stream (i.e., output file)
       */
       void writeFieldHeader(std::ostream& out) const;
+
+      /**
+      * Read a filename string and echo to log file.
+      *
+      * Used to read filenames in readCommands.
+      *
+      * \param in  input stream (i.e., input file)
+      * \param string  string to read and echo
+      */
+      void readEcho(std::istream& in, std::string& string) const;
 
    };
 

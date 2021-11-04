@@ -45,6 +45,24 @@ namespace Pspc
    }
 
    /*
+   * Setup mesh dimensions.
+   */
+   template <int D>
+   void FFT<D>::setup(IntVec<D> const& meshDimensions)
+   {
+      // Precondition
+      UTIL_CHECK(!isSetup_);
+
+      // Create local r-grid and k-grid field objects
+      RField<D> rField;
+      rField.allocate(meshDimensions);
+      RFieldDft<D> kField;
+      kField.allocate(meshDimensions);
+
+      setup(rField, kField);
+   }
+
+   /*
    * Check and (if necessary) setup mesh dimensions.
    */
    template <int D>
@@ -71,7 +89,7 @@ namespace Pspc
       UTIL_CHECK(rField.capacity() == rSize_);
       UTIL_CHECK(kField.capacity() == kSize_);
 
-      // Allocate work array if neceesary
+      // Allocate work array if necessary
       if (!work_.isAllocated()) {
           work_.allocate(rDimensions);
       } else {
@@ -92,24 +110,22 @@ namespace Pspc
    * Execute forward transform.
    */
    template <int D>
-   void FFT<D>::forwardTransform(RField<D>& rField, RFieldDft<D>& kField)
+   void FFT<D>::forwardTransform(RField<D> const & rField, RFieldDft<D>& kField)   const
    {
-      // Check dimensions or setup
-      if (isSetup_) {
-         UTIL_CHECK(work_.capacity() == rSize_);
-         UTIL_CHECK(rField.capacity() == rSize_);
-         UTIL_CHECK(kField.capacity() == kSize_);
-      } else {
-         setup(rField, kField);
-      }
+      UTIL_CHECK(isSetup_)
+      UTIL_CHECK(work_.capacity() == rSize_);
+      UTIL_CHECK(rField.capacity() == rSize_);
+      UTIL_CHECK(kField.capacity() == kSize_);
+      UTIL_CHECK(rField.meshDimensions() == meshDimensions_);
+      UTIL_CHECK(kField.meshDimensions() == meshDimensions_);
 
       // Copy rescaled input data prior to work array
       double scale = 1.0/double(rSize_);
       for (int i = 0; i < rSize_; ++i) {
          work_[i] = rField[i]*scale;
       }
-      
-      //Are there any instances where the original array is important?
+     
+      // Execute preplanned forward transform 
       fftw_execute_dft_r2c(fPlan_, &work_[0], &kField[0]);
    }
 
@@ -117,14 +133,30 @@ namespace Pspc
    * Execute inverse (complex-to-real) transform.
    */
    template <int D>
-   void FFT<D>::inverseTransform(RFieldDft<D>& kField, RField<D>& rField)
+   void 
+   FFT<D>::inverseTransform(RFieldDft<D> const & kField, RField<D>& rField)
+   const
    {
-      if (!isSetup_) {
-         setup(rField, kField);
-         fftw_execute(iPlan_);
-      } else {
-         fftw_execute_dft_c2r(iPlan_, &kField[0], &rField[0]);
-      }
+      UTIL_CHECK(isSetup_)
+      UTIL_CHECK(rField.capacity() == rSize_);
+      UTIL_CHECK(kField.capacity() == kSize_);
+      UTIL_CHECK(rField.meshDimensions() == meshDimensions_);
+      UTIL_CHECK(kField.meshDimensions() == meshDimensions_);
+
+      fftw_execute_dft_c2r(iPlan_, 
+                           const_cast<fftw_complex *>(&kField[0]), 
+                           &rField[0]);
+
+      /*
+      * Explanation of above use of const and const_cast:
+      * FFTW documentation states that the input array will not be
+      * modified in this usage, but the fftw_execute_dft_c2r interface 
+      * takes a fftw_complex* non-const pointer. The FFTW interface thus 
+      * does not enforce const correctness. The const declaration on 
+      * the reference kField reflects the actual behavior, while the 
+      * const_cast<fftw_complex*> is required to satisfy the compiler. 
+      */
+
    }
 
 }

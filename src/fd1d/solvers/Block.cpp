@@ -274,7 +274,7 @@ namespace Fd1d
    * To do so, it solves A q(i+1) = B q(i), where A and B are constant 
    * matrices defined in the documentation of the setupStep() function.
    */
-   void Block::step(const QField& q, QField& qNew)
+   void Block::step(QField const & q, QField& qNew)
    {
       int nx = domain().nx();
       v_[0] = dB_[0]*q[0] + uB_[0]*q[1];

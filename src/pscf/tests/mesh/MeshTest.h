@@ -49,6 +49,42 @@ public:
 
    }
 
+   void test3DMeshAssign() {
+      printMethod(TEST_FUNC);
+      printEndl();
+
+      // Make reference mesh
+      IntVec<3> d;
+      d[0] = 2;
+      d[1] = 1;
+      d[2] = 3;
+      Mesh<3> a(d);
+
+      // Construct test vector
+      IntVec<3> p;
+      p[0] = 1;
+      p[1] = 0;
+      p[2] = 1;
+
+      // Test assignment
+      Mesh<3> b;
+      b = a;
+      TEST_ASSERT(a.dimensions() == b.dimensions());
+      TEST_ASSERT(a.size() == b.size());
+      int rank = a.rank(p);
+      IntVec<3> q = b.position(rank);
+      TEST_ASSERT(q == p);
+
+      // Test copy constructor
+      Mesh<3> c(a);
+      TEST_ASSERT(a.dimensions() == c.dimensions());
+      TEST_ASSERT(a.size() == c.size());
+      rank = c.rank(p);
+      q = a.position(rank);
+      TEST_ASSERT(q == p);
+
+   }
+
    void test3DMeshIO() {
       printMethod(TEST_FUNC);
       printEndl();
@@ -65,6 +101,7 @@ public:
 
 TEST_BEGIN(MeshTest)
 TEST_ADD(MeshTest, test3DMesh)
+TEST_ADD(MeshTest, test3DMeshAssign)
 TEST_ADD(MeshTest, test3DMeshIO)
 TEST_END(MeshTest)
 

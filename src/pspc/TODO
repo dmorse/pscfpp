@@ -1,18 +1,9 @@
 TODO (for pspc pseudospectral CPU code)
 
-------------------------------------------------------------------------
-Housekeeping: (assigned to Dave)
-
-   - Complete unit tests for FieldIo
-
-------------------------------------------------------------------------
-Later
-
    - Test point solvent functionality
 
    - Finish sweep functionality.
 
-   - Write relaxation iterator.
+   - Test and debug basis for C15 non-centrosymmetric group setting
 
-   - Write mask to constrain total density to inhomogeneous field
 
