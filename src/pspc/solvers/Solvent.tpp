@@ -16,11 +16,29 @@ namespace Pspc {
 
    template <int D>
    Solvent<D>::Solvent()
-   {  setClassName("Solvent");}
+   {}
 
    template <int D>
    Solvent<D>::~Solvent()
    {}
+
+   template <int D>
+   void Solvent<D>::readParameters(std::istream& in)
+   {
+      read<int>(in, "monomerId", monomerId_);
+      read<double>(in, "size", size_);
+
+      // Read ensemble and phi or mu
+      ensemble_ = Species::Closed;
+      readOptional<Species::Ensemble>(in, "ensemble", ensemble_);
+      if (ensemble_ == Species::Closed) {
+         read(in, "phi", phi_);
+         UTIL_CHECK(phi_ >= 0.0);  
+         UTIL_CHECK(phi_ <= 1.0);  
+      } else {
+         read(in, "mu", mu_);
+      }
+   }
 
    template <int D>
    void Solvent<D>::setPhi(double phi)
@@ -38,11 +56,28 @@ namespace Pspc {
       mu_ = mu; 
    }
 
+   /*
+   * Set the id for this solvent.
+   */ 
    template <int D>
-   void Solvent<D>::setMesh(Mesh<D> const & mesh)
+   void Solvent<D>::setMonomerId(int monomerId)
+   {  monomerId_ = monomerId; }
+  
+   /*
+   * Set the molecule size (volume / reference volume) for this solvent.
+   */ 
+   template <int D>
+   void Solvent<D>::setSize(double size)
+   {  size_ = size; }
+
+   /*
+   * Create an association with a Mesh & allocate the concentration field.
+   */
+   template <int D>
+   void Solvent<D>::setDiscretization(Mesh<D> const & mesh)
    {
       meshPtr_ = &mesh;
-      // Allocate concentration_ array
+      cField_.allocate(mesh.dimensions());
    }
 
    /*
@@ -51,15 +86,38 @@ namespace Pspc {
    template <int D>
    void Solvent<D>::compute(WField const & wField)
    {
-      // Setup s
-   }
+      int nx = meshPtr_->size(); // Number of grid points
 
-   /*
-   * Compute solution to MDE and block concentrations.
-   */ 
-   template <int D>
-   void Solvent<D>::compute(DArray<WField> const & wFields) 
-   {  compute(wFields[monomerId()]); }
+      // Initialize cField_ to zero
+      for (int i = 0; i < nx; ++i) {
+          cField_[i] = 0.0;
+      }
+
+      // Evaluate unnormalized integral and q_
+      double s = size();
+      q_ = 0.0;
+      for (int i = 0; i < nx; ++i) {
+          cField_[i] = exp(-s*wField[i]);
+          q_ += cField_[i];
+      }
+      q_ = q_/double(nx);
+
+      // Compute mu_ or phi_ and prefactor
+      double prefactor;
+      if (ensemble_ == Species::Closed) {
+         prefactor = phi_/q_;
+         mu_ = log(prefactor);
+      } else {
+         prefactor = exp(mu_);
+         phi_ = prefactor*q_;
+      }
+
+      // Normalize concentration 
+      for (int i = 0; i < nx; ++i) {
+          cField_[i] *= prefactor;
+      }
+    
+   }
 
 }
 }

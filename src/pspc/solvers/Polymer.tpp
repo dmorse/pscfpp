@@ -64,7 +64,7 @@ namespace Pspc {
          block(j).setupSolver(wFields[monomerId]);
       }
 
-      // Call base class PolymerTmpl solver() function
+      // Call base class PolymerTmpl solve() function
       solve();
    }
 

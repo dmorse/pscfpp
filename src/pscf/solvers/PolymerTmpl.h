@@ -30,7 +30,7 @@ namespace Pscf
    *
    * A PolymerTmpl<Block> object has arrays of Block and Vertex
    * objects. Each Block has two propagator MDE solver objects.
-   * The compute() member function solves the modified diffusion
+   * The solve() member function solves the modified diffusion
    * equation (MDE) for the entire molecule and computes monomer
    * concentration fields for all blocks.
    *
@@ -71,8 +71,22 @@ namespace Pscf
       /**
       * Solve modified diffusion equation.
       *
-      * Upon return, q functions and block concentration fields
-      * are computed for all propagators and blocks. 
+      * Upon return, propagators for all blocks, molecular 
+      * partitition function q, phi and mu, and the block 
+      * concentration fields for all blocks are set. 
+      *
+      * This function should be called within a member
+      * function named compute() of each concrete subclass.
+      * This compute function must take an array of chemical
+      * potential fields (w-fields) as an argument. Before 
+      * calling this solve() function is invoked, the compute() 
+      * function of each such subclass must store information 
+      * required to solve the MDE within each block within
+      * a set of implementation dependent private members of 
+      * the class of objects that represents blocks. The 
+      * implementation of PolymerTmpl::solve() the calls 
+      * the solve() functions for all of propagators in a 
+      * molecule a predetermined order.
       */ 
       virtual void solve();
  
@@ -442,17 +456,19 @@ namespace Pscf
          propagator(j).solve();
       }
 
-      // Compute molecular partition function
-      double q = block(0).propagator(0).computeQ();
+      // Compute molecular partition function q_
+      q_ = block(0).propagator(0).computeQ();
+
+      // Compute mu_ or phi_, depending on ensemble
       if (ensemble() == Species::Closed) {
-         mu_ = log(phi_/q);
-      } 
-      else if (ensemble() == Species::Open) {
-         phi_ = exp(mu_)*q;
+         mu_ = log(phi_/q_);
+      } else 
+      if (ensemble() == Species::Open) {
+         phi_ = exp(mu_)*q_;
       }
 
       // Compute block concentration fields
-      double prefactor = phi_ / (q *length() );
+      double prefactor = phi_ / ( q_ * length() );
       for (int i = 0; i < nBlock(); ++i) {
          block(i).computeConcentration(prefactor);
       }

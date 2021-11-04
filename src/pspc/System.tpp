@@ -17,6 +17,10 @@
 
 #include <pspc/iterator/AmIterator.h>
 
+#include <pspc/solvers/Mixture.h>
+#include <pspc/solvers/Polymer.h>
+#include <pspc/solvers/Solvent.h>
+
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/crystal/shiftToMinimum.h>
 #include <pscf/inter/Interaction.h>
@@ -179,8 +183,7 @@ namespace Pspc
 
       int nm = mixture().nMonomer(); 
       int np = mixture().nPolymer(); 
-      //int ns = mixture().nSolvent(); 
-      int ns = 0;
+      int ns = mixture().nSolvent(); 
 
       // Initialize homogeneous object
       homogeneous_.setNMolecule(np+ns);
@@ -416,48 +419,88 @@ namespace Pspc
       // Initialize to zero
       fHelmholtz_ = 0.0;
  
-      // Compute ideal gas contributions to fHelhmoltz_
-      Polymer<D>* polymerPtr;
-      double phi, mu, length;
+      double phi, mu;
       int np = mixture().nPolymer();
-      for (int i = 0; i < np; ++i) {
-         polymerPtr = &mixture().polymer(i);
-         phi = polymerPtr->phi();
-         mu = polymerPtr->mu();
-         // Recall: mu = ln(phi/q)
-         length = polymerPtr->length();
-         fHelmholtz_ += phi*( mu - 1.0 )/length;
+      int ns = mixture().nSolvent();
+
+      // Compute polymer ideal gas contributions to fHelhmoltz_
+      if (np > 0) {
+         Polymer<D>* polymerPtr;
+         double length;
+         for (int i = 0; i < np; ++i) {
+            polymerPtr = &mixture().polymer(i);
+            phi = polymerPtr->phi();
+            mu = polymerPtr->mu();
+            length = polymerPtr->length();
+            // Recall: mu = ln(phi/q)
+            fHelmholtz_ += phi*( mu - 1.0 )/length;
+         }
+      }
+
+      // Compute solvent ideal gas contributions to fHelhmoltz_
+      if (ns > 0) {
+         Solvent<D>* solventPtr;
+         double size;
+         for (int i = 0; i < ns; ++i) {
+            solventPtr = &mixture().solvent(i);
+            phi = solventPtr->phi();
+            mu = solventPtr->mu();
+            size = solventPtr->size();
+            fHelmholtz_ += phi*( mu - 1.0 )/size;
+         }
       }
 
       int nm  = mixture().nMonomer();
       int nStar = basis().nStar();
-      double temp = 0;
 
+      // Compute Legendre transform subtraction
+      // Use expansion in symmetry-adapted orthonormal basis
+      double temp = 0.0;
       for (int i = 0; i < nm; ++i) {
-         
-         for (int j = i + 1; j < nm; ++j) {
-            for (int k = 0; k < nStar; ++k) {
-               fHelmholtz_+=
-                  cFields_[i][k] * interaction().chi(i,j) * cFields_[j][k];
-            }
+         for (int k = 0; k < nStar; ++k) {
+            temp += wFields_[i][k] * cFields_[i][k];
          }
-
-         for (int j = 0; j < nStar; ++j) {
-            temp += wFields_[i][j] * cFields_[i][j];
-         }
-
       }
       fHelmholtz_ -= temp;
 
-      // Compute pressure
-      pressure_ = -fHelmholtz_;
-      for (int i = 0; i < np; ++i) {
-         polymerPtr = &mixture().polymer(i);
-         phi = polymerPtr->phi();
-         mu = polymerPtr->mu();
-         length = polymerPtr->length();
+      // Compute excess interaction free energy [ phi^{T}*chi*phi ]
+      double chi;
+      for (int i = 0; i < nm; ++i) {
+         for (int j = i + 1; j < nm; ++j) {
+            chi = interaction().chi(i,j);
+            for (int k = 0; k < nStar; ++k) {
+               fHelmholtz_+= chi * cFields_[i][k] * cFields_[j][k];
+            }
+         }
+      }
 
-         pressure_ += mu * phi /length;
+      // Initialize pressure
+      pressure_ = -fHelmholtz_;
+
+      // Polymer corrections to pressure
+      if (np > 0) {
+         Polymer<D>* polymerPtr;
+         double length;
+         for (int i = 0; i < np; ++i) {
+            polymerPtr = &mixture().polymer(i);
+            phi = polymerPtr->phi();
+            mu = polymerPtr->mu();
+            length = polymerPtr->length();
+            pressure_ += mu * phi /length;
+         }
+      }
+
+      // Solvent corrections to pressure
+      if (ns > 0) {
+         Solvent<D>* solventPtr;
+         double size;
+         for (int i = 0; i < ns; ++i) {
+            solventPtr = &mixture().solvent(i);
+            phi = solventPtr->phi();
+            mu = solventPtr->mu();
+            size = solventPtr->size();
+            pressure_ += mu * phi /size;
+         }
       }
 
    }
@@ -470,18 +513,39 @@ namespace Pspc
       out << "pressure   = " << Dbl(pressure(), 18, 11) << std::endl;
       out << std::endl;
 
-      out << "Polymers:" << std::endl;
-      out << "    i"
-          << "        phi[i]      "
-          << "        mu[i]       " 
-          << std::endl;
-      for (int i = 0; i < mixture().nPolymer(); ++i) {
-         out << Int(i, 5) 
-             << "  " << Dbl(mixture().polymer(i).phi(),18, 11)
-             << "  " << Dbl(mixture().polymer(i).mu(), 18, 11)  
+      int np = mixture().nPolymer();
+      int ns = mixture().nSolvent();
+
+      if (np > 0) {
+         out << "Polymers:" << std::endl;
+         out << "    i"
+             << "        phi[i]      "
+             << "        mu[i]       " 
              << std::endl;
+         for (int i = 0; i < np; ++i) {
+            out << Int(i, 5) 
+                << "  " << Dbl(mixture().polymer(i).phi(),18, 11)
+                << "  " << Dbl(mixture().polymer(i).mu(), 18, 11)  
+                << std::endl;
+         }
+         out << std::endl;
       }
-      out << std::endl;
+
+      if (ns > 0) {
+         out << "Solvents:" << std::endl;
+         out << "    i"
+             << "        phi[i]      "
+             << "        mu[i]       " 
+             << std::endl;
+         for (int i = 0; i < ns; ++i) {
+            out << Int(i, 5) 
+                << "  " << Dbl(mixture().solvent(i).phi(),18, 11)
+                << "  " << Dbl(mixture().solvent(i).mu(), 18, 11)  
+                << std::endl;
+         }
+         out << std::endl;
+      }
+
    }
 
    template <int D>
@@ -491,8 +555,7 @@ namespace Pspc
       // Set number of molecular species and monomers
       int nm = mixture().nMonomer(); 
       int np = mixture().nPolymer(); 
-      //int ns = mixture().nSolvent(); 
-      int ns = 0;
+      int ns = mixture().nSolvent(); 
       UTIL_CHECK(homogeneous_.nMolecule() == np + ns);
       UTIL_CHECK(homogeneous_.nMonomer() == nm);
 
@@ -510,41 +573,58 @@ namespace Pspc
       int nc;  // number of clumps
  
       // Loop over polymer molecule species
-      for (i = 0; i < np; ++i) {
-
-         // Initial array of clump sizes 
-         for (j = 0; j < nm; ++j) {
-            c_[j] = 0.0;
-         }
-
-         // Compute clump sizes for all monomer types.
-         nb = mixture().polymer(i).nBlock(); 
-         for (k = 0; k < nb; ++k) {
-            Block<D>& block = mixture().polymer(i).block(k);
-            j = block.monomerId();
-            c_[j] += block.length();
-         }
- 
-         // Count the number of clumps of nonzero size
-         nc = 0;
-         for (j = 0; j < nm; ++j) {
-            if (c_[j] > 1.0E-8) {
-               ++nc;
+      if (np > 0) {
+         for (i = 0; i < np; ++i) {
+   
+            // Initial array of clump sizes 
+            for (j = 0; j < nm; ++j) {
+               c_[j] = 0.0;
             }
-         }
-         homogeneous_.molecule(i).setNClump(nc);
- 
-         // Set clump properties for this Homogeneous::Molecule
-         k = 0; // Clump index
-         for (j = 0; j < nm; ++j) {
-            if (c_[j] > 1.0E-8) {
-               homogeneous_.molecule(i).clump(k).setMonomerId(j);
-               homogeneous_.molecule(i).clump(k).setSize(c_[j]);
-               ++k;
+   
+            // Compute clump sizes for all monomer types.
+            nb = mixture().polymer(i).nBlock(); 
+            for (k = 0; k < nb; ++k) {
+               Block<D>& block = mixture().polymer(i).block(k);
+               j = block.monomerId();
+               c_[j] += block.length();
             }
+    
+            // Count the number of clumps of nonzero size
+            nc = 0;
+            for (j = 0; j < nm; ++j) {
+               if (c_[j] > 1.0E-8) {
+                  ++nc;
+               }
+            }
+            homogeneous_.molecule(i).setNClump(nc);
+    
+            // Set clump properties for this Homogeneous::Molecule
+            k = 0; // Clump index
+            for (j = 0; j < nm; ++j) {
+               if (c_[j] > 1.0E-8) {
+                  homogeneous_.molecule(i).clump(k).setMonomerId(j);
+                  homogeneous_.molecule(i).clump(k).setSize(c_[j]);
+                  ++k;
+               }
+            }
+            homogeneous_.molecule(i).computeSize();
+   
          }
-         homogeneous_.molecule(i).computeSize();
+      }
 
+      // Add solvent contributions
+      if (np > 0) {
+         double size;
+         int monomerId;
+         for (int is = 0; is < ns; ++is) {
+            i = is + np;
+            monomerId = mixture().solvent(is).monomerId();
+            size = mixture().solvent(is).size();
+            homogeneous_.molecule(i).setNClump(1);
+            homogeneous_.molecule(i).clump(0).setMonomerId(monomerId);
+            homogeneous_.molecule(i).clump(0).setSize(size);
+            homogeneous_.molecule(i).computeSize();
+         }
       }
 
    }
@@ -601,7 +681,7 @@ namespace Pspc
    }
 
    /*
-   * Solve MDE for current w-fields, without iteration.
+   * Solve modified diffusion equation for current w-fields, without iteration.
    */
    template <int D>
    void System<D>::compute()
@@ -637,7 +717,7 @@ namespace Pspc
    }
 
    /*
-   * Write concentrations in symmetry-adapted basis format.
+   * Write all concentration fields in symmetry-adapted basis format.
    */
    template <int D>
    void System<D>::writeCBasis(const std::string & filename)
@@ -647,7 +727,7 @@ namespace Pspc
    }
 
    /*
-   * Write concentration fields in real space grid format.
+   * Write all concentration fields in real space (r-grid) format.
    */
    template <int D>
    void System<D>::writeCRGrid(const std::string & filename)
@@ -673,7 +753,7 @@ namespace Pspc
    }
 
    /*
-   * Convert a field from real-space grid to symmetry-adapted basis format.
+   * Convert fields from real-space grid to symmetry-adapted basis format.
    */
    template <int D>
    void System<D>::rGridToBasis(const std::string & inFileName,
@@ -688,13 +768,13 @@ namespace Pspc
    }
 
    /*
-   * Convert fields from Fourier (k-grid) to real-space (r-grid) format.
+   * Convert fields from Fourier (k-grid) to real-space grid (r-grid) format.
    */
    template <int D>
    void System<D>::kGridToRGrid(const std::string & inFileName,
                                 const std::string& outFileName)
    {
-      // This conversion corrupts cfieldRGrid array
+      // This conversion corrupts cFieldsKGrid and cFieldsRGrid
       hasCFields_ = false;
 
       fieldIo().readFieldsKGrid(inFileName, cFieldsKGrid());
@@ -711,6 +791,7 @@ namespace Pspc
    void System<D>::rGridToKGrid(const std::string & inFileName,
                                 const std::string & outFileName)
    {
+      // This conversion corrupts cFieldsRGrid and cFieldsKGrid
       hasCFields_ = false;
 
       fieldIo().readFieldsRGrid(inFileName, cFieldsRGrid());

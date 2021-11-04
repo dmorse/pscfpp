@@ -30,12 +30,12 @@ namespace Pscf
       // Public typedefs
 
       /**
-      * Polymer species solver type.
+      * Polymer species solver typename.
       */
       typedef TP Polymer;
 
       /**
-      * Solvent species solver type.
+      * Solvent species solver typename.
       */
       typedef TS Solvent;
 
@@ -196,28 +196,48 @@ namespace Pscf
    template <class TP, class TS>
    void MixtureTmpl<TP,TS>::readParameters(std::istream& in)
    {
-      // Monomers
+      // Read monomers
       read<int>(in, "nMonomer", nMonomer_);
       monomers_.allocate(nMonomer_);
       readDArray< Monomer >(in, "monomers", monomers_, nMonomer_);
 
-      // Polymers 
+      // Read nPolymer and (optionally) nSolvent
+      nPolymer_ = 0;
       read<int>(in, "nPolymer", nPolymer_);
-      polymers_.allocate(nPolymer_);
-      for (int i = 0; i < nPolymer_; ++i) {
-         readParamComposite(in, polymers_[i]);
+      nSolvent_ = 0;
+      readOptional<int>(in, "nSolvent", nSolvent_);
+
+      // Read polymers
+      if (nPolymer_ > 0) {
+
+         polymers_.allocate(nPolymer_);
+         for (int i = 0; i < nPolymer_; ++i) {
+            readParamComposite(in, polymer(i));
+         }
+   
+         // Set statistical segment lengths for all blocks
+         double kuhn;
+         int monomerId;
+         for (int i = 0; i < nPolymer_; ++i) {
+            for (int j = 0; j < polymer(i).nBlock(); ++j) {
+               monomerId = polymer(i).block(j).monomerId();
+               kuhn = monomer(monomerId).step();
+               polymer(i).block(j).setKuhn(kuhn);
+            }
+         }
+
       }
 
-      // Set statistical segment lengths for all blocks
-      double kuhn;
-      int monomerId;
-      for (int i = 0; i < nPolymer_; ++i) {
-         for (int j = 0; j < polymer(i).nBlock(); ++j) {
-            monomerId = polymer(i).block(j).monomerId();
-            kuhn = monomer(monomerId).step();
-            polymer(i).block(j).setKuhn(kuhn);
+      // Read solvents
+      if (nSolvent_ > 0) {
+
+         solvents_.allocate(nSolvent_);
+         for (int i = 0; i < nSolvent_; ++i) {
+            readParamComposite(in, solvent(i));
          }
+
       }
+
    }
 
 }

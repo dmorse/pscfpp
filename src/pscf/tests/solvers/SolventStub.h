@@ -8,18 +8,19 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "PropagatorStub.h"
 #include <pscf/chem/Species.h>
+#include <util/param/ParamComposite.h>
 
 namespace Pscf
 { 
 
-   class SolventStub : public Species
+   class SolventStub : public Species, public ParamComposite
    {
 
    public:
 
-      SolventStub(){}
+      SolventStub()
+      {  setClassName("Solvent"); }
 
       void compute(PropagatorStub::WField const &)
       {}
