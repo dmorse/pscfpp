@@ -1,0 +1,66 @@
+
+Create template Pscf::SweepTmpl<State>, where State is a data type that 
+stores the "state" given by a solution to the SCFT problem.
+
+In Fd1d, the State can be DArray<WField> object.
+In Pscf, it should also include a record of the unit cell parameters.
+
+
+class Pscf::SweepTmpl<State>
+{
+
+public:
+
+   // Perform a sweep
+   virtual void sweep();
+
+protected:
+
+   // The following functions are called by sweep
+
+   // Initial setup at beginning of sweep
+   void virtual setup() = 0;
+
+   // Set guess for adjustable variables by continuation of history
+   virtual void setGuess() = 0;
+
+   // Set non-adjustable parameters to values for current value of s
+   virtual void setParameters(double s) = 0;
+ 
+   // Use SCFT to solve at one point, return 0 on success, 1 on failure
+   virtual int solve(bool isContinuation) = 0;
+
+   // Rest after failed attempt at iteration.
+   void virtual reset() = 0;
+
+   // Update history and output data after succesful convergences
+   void virtual accept() = 0;
+
+}
+
+/*
+* Outline of class to hold state for Pspc.
+*/
+Pscf::State 
+{
+
+   Propagator::WField& field(i);
+
+   DArray<double>& cellParameter(int i);
+
+   void allocate(int nm, int ng, int nc) {
+     // nm = number of monomers
+     // ng = number of grid points
+     // nc = number of unit cell parameters
+   }
+
+   void getSystemState(System& system);
+
+   void setSystemState(System& system);
+
+public:
+
+   DArray<Propagator::WField> fields_;
+   DArray<double> cellParameters_;
+
+}

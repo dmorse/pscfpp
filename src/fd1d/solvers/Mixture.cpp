@@ -43,11 +43,20 @@ namespace Fd1d
 
       domainPtr_ = &domain;
 
-      // Set discretization for all blocks
-      int i, j;
-      for (i = 0; i < nPolymer(); ++i) {
-         for (j = 0; j < polymer(i).nBlock(); ++j) {
-            polymer(i).block(j).setDiscretization(domain, ds_);
+      // Process polymers - set discretization for all blocks
+      if (nPolymer() > 0) {
+         int i, j;
+         for (i = 0; i < nPolymer(); ++i) {
+            for (j = 0; j < polymer(i).nBlock(); ++j) {
+               polymer(i).block(j).setDiscretization(domain, ds_);
+            }
+         }
+      }
+
+      // Process solvents 
+      if (nSolvent() > 0) {
+         for (int i = 0; i < nSolvent(); ++i) {
+            solvent(i).setDiscretization(domain);
          }
       }
 
@@ -79,26 +88,50 @@ namespace Fd1d
          }
       }
 
-      // Solve MDE for all polymers
-      for (i = 0; i < nPolymer(); ++i) {
-         polymer(i).compute(wFields);
+      // Process polymer species
+      if (nPolymer() > 0) {
+
+         for (i = 0; i < nPolymer(); ++i) {
+
+            // Solve MDE for all blocks in polymer
+            polymer(i).compute(wFields);
+
+            // Accumulate monomer concentrations
+            for (j = 0; j < polymer(i).nBlock(); ++j) {
+               int monomerId = polymer(i).block(j).monomerId();
+               UTIL_CHECK(monomerId >= 0);
+               UTIL_CHECK(monomerId < nm);
+               CField& monomerField = cFields[monomerId];
+               CField const & blockField = polymer(i).block(j).cField();
+               for (k = 0; k < nx; ++k) {
+                  monomerField[k] += blockField[k];
+               }
+            }
+
+         }
+
       }
 
-      // Accumulate monomer concentration fields
-      for (i = 0; i < nPolymer(); ++i) {
-         for (j = 0; j < polymer(i).nBlock(); ++j) {
-            int monomerId = polymer(i).block(j).monomerId();
+      // Process solvent species
+      if (nSolvent() > 0) {
+         for (i = 0; i < nSolvent(); ++i) {
+
+            int monomerId = solvent(i).monomerId();
             UTIL_CHECK(monomerId >= 0);
             UTIL_CHECK(monomerId < nm);
+
+            // Compute solvent concentration and q
+            solvent(i).compute(wFields[monomerId]);
+
+            // Add to monomer concentrations
             CField& monomerField = cFields[monomerId];
-            CField& blockField = polymer(i).block(j).cField();
+            CField const & solventField = solvent(i).cField();
             for (k = 0; k < nx; ++k) {
-               monomerField[k] += blockField[k];
+               monomerField[k] += solventField[k];
             }
+
          }
       }
-
-      // To do: Add compute functions and accumulation for solvents.
 
    }
 
