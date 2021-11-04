@@ -151,14 +151,14 @@ namespace Pscf {
       * Proposal: Initially implementation functions correctly only for
       * identity group, withgroupName == 'I'. 
       */
-      void makeBasis(const Mesh<D>& mesh, const UnitCell<D>& unitCell, 
+      void makeBasis(Mesh<D> const & mesh, UnitCell<D> const & unitCell, 
                      std::string groupName);
 
       /**
       * Construct basis for a specific grid and space group.
       */
-      void makeBasis(const Mesh<D>& mesh, const UnitCell<D>& unitCell, 
-                     const SpaceGroup<D>& group);
+      void makeBasis(Mesh<D> const & mesh, UnitCell<D> const & unitCell, 
+                     SpaceGroup<D> const & group);
 
       /**
       * Update values after change in unit cell parameters.

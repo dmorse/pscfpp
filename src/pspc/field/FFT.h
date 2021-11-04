@@ -45,6 +45,13 @@ namespace Pspc {
       /**
       * Setup grid dimensions, plans and work space.
       *
+      * \param meshDimensions Dimensions of real-space grid.
+      */
+      void setup(IntVec<D> const & meshDimensions);
+
+      /**
+      * Setup grid dimensions, plans and work space.
+      *
       * \param rField real data on r-space grid
       * \param kField complex data on k-space grid
       */
@@ -56,7 +63,7 @@ namespace Pspc {
       * \param in  array of real values on r-space grid
       * \param out  array of complex values on k-space grid
       */
-      void forwardTransform(RField<D>& in, RFieldDft<D>& out);
+      void forwardTransform(RField<D> const & in, RFieldDft<D>& out) const;
 
       /**
       * Compute inverse (complex-to-real) Fourier transform.
@@ -64,17 +71,22 @@ namespace Pspc {
       * \param in  array of complex values on k-space grid
       * \param out  array of real values on r-space grid
       */
-      void inverseTransform(RFieldDft<D>& in, RField<D>& out);
+      void inverseTransform(RFieldDft<D> const & in, RField<D>& out) const;
 
       /**
       * Return the dimensions of the grid for which this was allocated.
       */
-      const IntVec<D>& meshDimensions() const;
+      IntVec<D> const & meshDimensions() const;
+
+      /** 
+      * Has this object been setup?
+      */
+      bool isSetup() const;
 
    private:
 
       // Work array for real data.
-      RField<D> work_;
+      mutable RField<D> work_;
 
       // Vector containing number of grid points in each direction.
       IntVec<D> meshDimensions_;
@@ -113,10 +125,17 @@ namespace Pspc {
    void FFT<3>::makePlans(RField<3>& rField, RFieldDft<3>& kField);
 
    /*
+   * Has this object been setup?
+   */
+   template <int D>
+   inline bool FFT<D>::isSetup() const
+   {  return isSetup_; }
+
+   /*
    * Return the dimensions of the grid for which this was allocated.
    */
    template <int D>
-   inline const IntVec<D>& FFT<D>::meshDimensions() const
+   inline IntVec<D> const & FFT<D>::meshDimensions() const
    {  return meshDimensions_; }
 
    #ifndef PSPC_FFT_TPP

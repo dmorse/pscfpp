@@ -44,7 +44,7 @@ namespace Pspc
       *
       *\param other the RFieldDft to be copied.
       */
-      RFieldDft(const RFieldDft<D>& other);
+      RFieldDft(RFieldDft<D> const & other);
 
       /**
       * Destructor.
@@ -63,7 +63,7 @@ namespace Pspc
       *
       * \param other the RHS Field
       */
-      RFieldDft<D>& operator = (const RFieldDft<D>& other);
+      RFieldDft<D>& operator = (RFieldDft<D> const & other);
 
       using Field<fftw_complex>::allocate;
 
@@ -74,12 +74,12 @@ namespace Pspc
       *
       * \param meshDimensions vector of grid points in each direction
       */
-      void allocate(const IntVec<D>& meshDimensions);
+      void allocate(IntVec<D> const & meshDimensions);
 
       /**
       * Return vector of spatial mesh dimensions by constant reference.
       */
-      const IntVec<D>& meshDimensions() const;
+      IntVec<D> const & meshDimensions() const;
 
       /**
       * Return vector of dft (Fourier) grid dimensions by constant reference.
@@ -88,7 +88,7 @@ namespace Pspc
       * about a factor of two: dftDimension()[D-1] = meshDimensions()/2 + 1.
       * For D > 1, other elements are equal. 
       */
-      const IntVec<D>& dftDimensions() const;
+      IntVec<D> const & dftDimensions() const;
 
       /**
       * Serialize a Field to/from an Archive.
@@ -113,7 +113,7 @@ namespace Pspc
    * Allocate the underlying C array for an FFT grid.
    */
    template <int D>
-   void RFieldDft<D>::allocate(const IntVec<D>& meshDimensions)
+   void RFieldDft<D>::allocate(IntVec<D> const & meshDimensions)
    {
       int size = 1;
       for (int i = 0; i < D; ++i) {
@@ -134,14 +134,14 @@ namespace Pspc
    * Return mesh dimensions by constant reference.
    */
    template <int D>
-   inline const IntVec<D>& RFieldDft<D>::meshDimensions() const
+   inline IntVec<D> const & RFieldDft<D>::meshDimensions() const
    {  return meshDimensions_; }
 
    /*
    * Return dimensions of dft grid by constant reference.
    */
    template <int D>
-   inline const IntVec<D>& RFieldDft<D>::dftDimensions() const
+   inline IntVec<D> const & RFieldDft<D>::dftDimensions() const
    {  return dftDimensions_; }
 
    /*

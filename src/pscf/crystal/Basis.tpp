@@ -43,8 +43,8 @@ namespace Pscf {
    * Construct basis for pseudo-spectral scft.
    */
    template <int D>
-   void Basis<D>::makeBasis(const Mesh<D>& mesh, 
-                            const UnitCell<D>& unitCell,
+   void Basis<D>::makeBasis(Mesh<D> const & mesh, 
+                            UnitCell<D> const & unitCell,
                             std::string groupName)
    {
       SpaceGroup<D> group;
@@ -84,9 +84,9 @@ namespace Pscf {
    * Construct basis for pseudo-spectral scft.
    */
    template <int D>
-   void Basis<D>::makeBasis(const Mesh<D>& mesh, 
-                            const UnitCell<D>& unitCell,
-                            const SpaceGroup<D>& group)
+   void Basis<D>::makeBasis(Mesh<D> const & mesh, 
+                            UnitCell<D> const & unitCell,
+                            SpaceGroup<D> const & group)
    {
       // Save pointers to mesh and unit cell
       meshPtr_ = &mesh;
@@ -152,7 +152,7 @@ namespace Pscf {
    }
 
    template <int D>
-   void Basis<D>::makeStars(const SpaceGroup<D>& group)
+   void Basis<D>::makeStars(SpaceGroup<D> const & group)
    {
       /* 
       * Local containers that hold TWave<D> objects:

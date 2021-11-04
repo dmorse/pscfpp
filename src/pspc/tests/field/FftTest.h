@@ -42,11 +42,15 @@ void FftTest::testTransform1D() {
    printMethod(TEST_FUNC);
    //printEndl();
 
-   RField<1> in;
-   RFieldDft<1> out;
    int n = 10;
    IntVec<1> d;
    d[0] = n;
+
+   FFT<1> v;
+   v.setup(d);
+
+   RField<1> in;
+   RFieldDft<1> out;
    in.allocate(d);
    out.allocate(d);
 
@@ -58,8 +62,6 @@ void FftTest::testTransform1D() {
       in[i] = cos(x);
    }
 
-   FFT<1> v;
-   v.setup(in, out);
    v.forwardTransform(in, out);
    RField<1> inCopy;
    inCopy.allocate(d);
@@ -75,13 +77,17 @@ void FftTest::testTransform2D()
    printMethod(TEST_FUNC);
    //printEndl();
 
-   RField<2> in;
-   RFieldDft<2> out;
    int n1 = 3;
    int n2 = 3;
    IntVec<2> d;
    d[0] = n1;
    d[1] = n2;
+
+   FFT<2> v;
+   v.setup(d);
+
+   RField<2> in;
+   RFieldDft<2> out;
    in.allocate(d);
    out.allocate(d);
 
@@ -96,8 +102,6 @@ void FftTest::testTransform2D()
       }
    }
 
-   FFT<2> v;
-   v.setup(in, out);
    v.forwardTransform(in, out);
    RField<2> inCopy;
    inCopy.allocate(d);
@@ -115,8 +119,6 @@ void FftTest::testTransform3D() {
    printMethod(TEST_FUNC);
    //printEndl();
 
-   RField<3> in;
-   RFieldDft<3> out;
    int n1 = 3;
    int n2 = 3;
    int n3 = 3;
@@ -124,6 +126,12 @@ void FftTest::testTransform3D() {
    d[0] = n1;
    d[1] = n2;
    d[2] = n3;
+
+   FFT<3> v;
+   v.setup(d);
+
+   RField<3> in;
+   RFieldDft<3> out;
    in.allocate(d);
    out.allocate(d);
 
@@ -140,8 +148,6 @@ void FftTest::testTransform3D() {
       }
    }
 
-   FFT<3> v;
-   v.setup(in, out);
    v.forwardTransform(in, out);
    RField<3> inCopy;
    inCopy.allocate(d);
