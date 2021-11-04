@@ -298,6 +298,26 @@ namespace Pspc
                                DArray< DArray <double> > & out);
 
       //@}
+      /// \name Test Space Group Symmetry
+      //@{
+
+      /**
+      * Check if an r-grid field has the declared space group symmetry.
+      *
+      * \param in field in real space grid (r-grid) format
+      * \return true if the field is symmetric, false otherwise
+      */
+      bool hasSymmetry(RField<D> & in);
+
+      /**
+      * Check if a k-grid field has declared space group symmetry.
+      *
+      * \param in field in real space grid (r-grid) format
+      * \return true if the field is symmetric, false otherwise
+      */
+      bool hasSymmetry(RFieldDft<D> const & in) const;
+
+      //@}
 
    private:
 
@@ -327,7 +347,7 @@ namespace Pspc
       // Private accessor functions:
 
       /// Get UnitCell by reference.
-      UnitCell<D>& unitCell()
+      UnitCell<D> & unitCell()
       {  
          UTIL_ASSERT(unitCellPtr_);  
          return *unitCellPtr_; 
@@ -356,9 +376,12 @@ namespace Pspc
 
       /// Get group name string by const reference.
       std::string const & groupName() const
-      {  return *groupNamePtr_; }
+      {  
+         UTIL_ASSERT(fftPtr_);  
+         return *groupNamePtr_; 
+      }
 
-      /// Get Basis by reference.
+      /// Get Basis by const reference.
       Basis<D> const & basis() const
       {
          UTIL_ASSERT(basisPtr_);  

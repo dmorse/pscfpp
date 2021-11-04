@@ -374,6 +374,10 @@ namespace Pspc
             readEcho(in, outFileName);
             rGridToKGrid(inFileName, outFileName);
          } else
+         if (command == "CHECK_RGRID_SYMMETRY") {
+            readEcho(in, inFileName);
+            checkRGridFieldSymmetry(inFileName);
+         } else
          if (command == "RHO_TO_OMEGA") {
             readEcho(in, inFileName);
             readEcho(in, outFileName);
@@ -799,6 +803,26 @@ namespace Pspc
          fft().forwardTransform(cFieldRGrid(i), cFieldKGrid(i));
       }
       fieldIo().writeFieldsKGrid(outFileName, cFieldsKGrid());
+   }
+
+   /*
+   * Convert fields from real-space grid to symmetry-adapted basis format.
+   */
+   template <int D>
+   bool System<D>::checkRGridFieldSymmetry(const std::string & inFileName)
+   {
+      // This conversion corrupts all three c-field arrays
+      hasCFields_ = false;
+
+      fieldIo().readFieldsRGrid(inFileName, cFieldsRGrid());
+
+      for (int i = 0; i < mixture().nMonomer(); ++i) {
+         bool symmetric = fieldIo().hasSymmetry(cFieldRGrid(i));
+         if (!symmetric) {
+            return false;
+         }
+      }
+      return true;
    }
 
    /*

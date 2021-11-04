@@ -758,6 +758,85 @@ namespace Pspc
       }
    }
 
+   /*
+   * Test if an RField<D> has declared space group symmetry.
+   * Return true if symmetric, false otherwise.
+   */
+   template <int D>
+   bool FieldIo<D>::hasSymmetry(RField<D> & in) 
+   {
+      fft().forwardTransform(in, workDft_);
+      return hasSymmetry(workDft_);
+   }
+
+   /*
+   * Test if an RFieldDft has the declared space group symmetry.
+   * Return true if symmetric, false otherwise.
+   */
+   template <int D>
+   bool FieldIo<D>::hasSymmetry(RFieldDft<D> const & in) const
+   {
+      typename Basis<D>::Star const* starPtr; // pointer to current star
+      typename Basis<D>::Wave const* wavePtr; // pointer to current wave
+      std::complex<double> waveCoeff;         // coefficient from wave
+      std::complex<double> rootCoeff;         // coefficient from root 
+      std::complex<double> diff;              // coefficient difference
+      int is;                                 // star index
+      int iw;                                 // wave index
+      int beginId, endId;                     // star begin, end ids
+      int rank;                               // dft grid rank of wave
+
+      // Create Mesh<D> with dimensions of DFT Fourier grid.
+      Mesh<D> dftMesh(in.dftDimensions());
+
+      // Loop over all stars
+      for (is = 0; is < basis().nStar(); ++is) {
+         starPtr = &(basis().star(is));
+
+         if (starPtr->cancel) {
+
+            // Check that coefficients are zero for all waves in star
+            beginId = starPtr->beginId;
+            endId = starPtr->endId;
+            for (iw = beginId; iw < endId; ++iw) {
+               wavePtr = &basis().wave(iw);
+               if (!wavePtr->implicit) {
+                  rank = dftMesh.rank(wavePtr->indicesDft);
+                  if (abs(in[rank][0]) > 1.0E-9) return false;
+                  if (abs(in[rank][1]) > 1.0E-9) return false;
+               }
+            }
+
+         } else {
+
+            // Check consistency of coeff values from all waves
+            bool hasRoot = false;
+            beginId = starPtr->beginId;
+            endId = starPtr->endId;
+            for (iw = beginId; iw < endId; ++iw) {
+               wavePtr = &basis().wave(iw);
+               if (!(wavePtr->implicit)) {
+                  rank = dftMesh.rank(wavePtr->indicesDft);
+                  waveCoeff = std::complex<double>(in[rank][0], in[rank][1]);
+                  waveCoeff /= wavePtr->coeff;
+                  if (hasRoot) {
+                     diff = waveCoeff - rootCoeff;
+                     if (abs(diff) > 1.0E-9) return false;
+                  } else {
+                     rootCoeff = waveCoeff;
+                     hasRoot = true;
+                  }
+               }
+            }
+
+         }
+
+      } //  end loop over star index is
+
+      // If the code reaches this point, the field is symmetric
+      return true;
+   }
+
    template <int D>
    void FieldIo<D>::checkWorkDft()
    {

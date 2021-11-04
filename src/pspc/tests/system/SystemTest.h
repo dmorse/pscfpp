@@ -161,16 +161,17 @@ public:
          }   
       }   
 
-      // openInputFile("in/conv/Conversion_2d_step2", command);
-      // system.readCommands(command);
-      // command.close();
-
       // Round trip basis -> rgrid -> basis, read resulting wField
       system.basisToRGrid("contents/omega/domainOn/omega_hex",
                           "out/omega/conv/omega_rgrid_hex");
       system.rGridToBasis("out/omega/conv/omega_rgrid_hex",
                           "out/omega/conv/omega_conv_hex");
       system.readWBasis("out/omega/conv/omega_conv_hex");
+
+      // Check symmetry of rgrid representation
+      bool hasSymmetry
+       = system.checkRGridFieldSymmetry("out/omega/conv/omega_rgrid_hex");
+      TEST_ASSERT(hasSymmetry);
 
       // Compare result to original
       double err;
@@ -189,7 +190,7 @@ public:
          //std::cout << std::endl;   
       }   
       std::cout << "Max error = " << max << std::endl;  
-      TEST_ASSERT(max < 1.0E-8);
+      TEST_ASSERT(max < 1.0E-9);
 
    }  
 
@@ -240,6 +241,11 @@ public:
                           "out/omega/conv/omega_conv_bcc");
       system.readWBasis("out/omega/conv/omega_conv_bcc");
 
+      // Check symmetry of rgrid representation
+      bool hasSymmetry
+       = system.checkRGridFieldSymmetry("out/omega/conv/omega_rgrid_bcc");
+      TEST_ASSERT(hasSymmetry);
+
       // Compare result to original
       double err;
       double max = 0.0;
@@ -261,6 +267,32 @@ public:
       TEST_ASSERT(max < 1.0E-8);
 
    }   
+
+   void testCheckSymmetry3D_bcc() 
+   {   
+      printMethod(TEST_FUNC);
+      System<3> system;
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
+
+      openLogFile("out/testSymmetry3D_bcc.log"); 
+
+      // Read system parameter file
+      std::ifstream in; 
+      openInputFile("in/domainOn/System3D", in);
+      system.readParam(in);
+      in.close();
+
+      system.readWBasis("contents/omega/domainOn/omega_bcc");
+      bool hasSymmetry = system.fieldIo().hasSymmetry(system.wFieldRGrid(0));
+      TEST_ASSERT(hasSymmetry);
+
+      // Intentionally mess up the field, check that symmetry is destroyed
+      system.wFieldRGrid(0)[23] += 0.1;
+      hasSymmetry = system.fieldIo().hasSymmetry(system.wFieldRGrid(0));
+      TEST_ASSERT(!hasSymmetry);
+
+   }
 
    void testIterate1D_lam_rigid()
    {
@@ -710,6 +742,7 @@ TEST_ADD(SystemTest, testReadParameters1D)
 TEST_ADD(SystemTest, testConversion1D_lam)
 TEST_ADD(SystemTest, testConversion2D_hex)
 TEST_ADD(SystemTest, testConversion3D_bcc)
+TEST_ADD(SystemTest, testCheckSymmetry3D_bcc)
 TEST_ADD(SystemTest, testIterate1D_lam_rigid)
 TEST_ADD(SystemTest, testIterate1D_lam_flex)
 TEST_ADD(SystemTest, testIterate2D_hex_rigid)

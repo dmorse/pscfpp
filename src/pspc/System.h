@@ -453,7 +453,7 @@ namespace Pspc
       * \param inFileName name of input file
       * \param outFileName name of output file
       */
-      void rGridToBasis(const std::string & inFileName, 
+      void rGridToBasis(const std::string & inFileName,
                         const std::string & outFileName);
    
       /**
@@ -479,7 +479,15 @@ namespace Pspc
       */
       void rGridToKGrid(const std::string & inFileName, 
                         const std::string & outFileName);
-   
+  
+      /** 
+      * Check if r-grid fields have the declared space group symmetry.
+      *
+      * \param inFileName name of input file
+      * \return true if fields all have symmetry, false otherwise
+      */ 
+      bool checkRGridFieldSymmetry(const std::string & inFileName);
+
       /**
       * Construct proposed chemical potential fields from concentration fields.
       *
