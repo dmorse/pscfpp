@@ -16,8 +16,7 @@ namespace Pscf
 
    using namespace Util;
 
-   // Forward declarations
-
+   // Forward declaration
    template <int D> class Mesh;
 
    /**
@@ -70,24 +69,32 @@ namespace Pscf
       Mesh();
 
       /**
-      * Constructor
+      * Copy constructor.
+      *
+      * \param other Mesh<D> object being copied.
+      */
+      Mesh(Mesh<D> const & other);
+
+      /**
+      * Constructor from grid dimensions.
       *
       * \param dimensions  IntVec<D> of grid dimensions
       */
-      Mesh(const IntVec<D>& dimensions);
-
-      // Compiler default destructor.
-
-      // Compiler copy constructor.
+      Mesh(IntVec<D> const & dimensions);
 
       /**
-      * Set the grid dimensions in all directions.
+      * Assignment operator.
+      *
+      * \param other Mesh<D> object being copied.
+      */
+      Mesh<D>& operator= (Mesh<D> const & other);
+
+      /**
+      * Set the grid dimensions for an existing mesh.
       *
       * \param dimensions  IntVec<D> of grid dimensions.
       */
-      void setDimensions(const IntVec<D>& dimensions);
-
-      //void setUnitCell(const UnitCell& unitCell)
+      void setDimensions(IntVec<D> const & dimensions);
 
       /**
       * Get an IntVec<D> of the grid dimensions.
@@ -120,7 +127,7 @@ namespace Pscf
       * \param position  integer position of a grid point
       * \return integer rank of specified grid point
       */
-      int rank(const IntVec<D>& position) const;
+      int rank(IntVec<D> const & position) const;
 
       /**
       * Is this coordinate in range?
@@ -139,7 +146,7 @@ namespace Pscf
       * \param position  grid point position
       * \return true iff 0 <= coordinate[i] < dimension(i) for all i.
       */
-      bool isInMesh(IntVec<D>& position) const;
+      bool isInMesh(IntVec<D> const & position) const;
 
       /**
       * Shift a periodic coordinate into range.

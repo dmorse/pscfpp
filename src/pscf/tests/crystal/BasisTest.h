@@ -351,6 +351,101 @@ public:
 
    }
 
+   void testMake3DBasis_F_d_3b_m_2()
+   {
+      printMethod(TEST_FUNC);
+      // printEndl();
+
+      // Make unitcell
+      UnitCell<3> unitCell;
+      std::ifstream in;
+      openInputFile("in/Cubic", in);
+      in >> unitCell;
+      in.close();
+
+      // Make mesh object
+      IntVec<3> d;
+      d[0] = 8;
+      d[1] = 8;
+      d[2] = 8;
+      Mesh<3> mesh(d);
+
+      // Read group
+      SpaceGroup<3> group;
+      openInputFile("in/F_d_-3_m:2", in);
+      // This is a centro-symmetric setting for the C15 Laves phase
+      in >> group;
+      in.close();
+
+
+      // Construct basis object
+      Basis<3> basis;
+      basis.makeBasis(mesh, unitCell, group);
+      
+      TEST_ASSERT(basis.isValid());
+      TEST_ASSERT(eq(basis.nWave(), 512));
+
+      #if 0
+      if (verbose() > 1) {
+         std::ofstream out;
+         openOutputFile("out/F_d_-3_m:2", out);
+         out << "nBasis = " << basis.nBasis() << std::endl;
+         basis.outputWaves(out);   
+         basis.outputStars(out);   
+         out.close();
+      }
+      #endif
+
+   }
+
+   void testMake3DBasis_F_d_3b_m_1()
+   {
+      printMethod(TEST_FUNC);
+      // printEndl();
+
+      // Make unitcell
+      UnitCell<3> unitCell;
+      std::ifstream in;
+      openInputFile("in/Cubic", in);
+      in >> unitCell;
+      in.close();
+
+      // Make mesh object
+      IntVec<3> d;
+      d[0] = 8;
+      d[1] = 8;
+      d[2] = 8;
+      Mesh<3> mesh(d);
+
+      // Read group
+      SpaceGroup<3> group;
+      openInputFile("in/F_d_-3_m:1", in);
+      // This is a non-centro-symmetric setting for the C15 Laves phase
+      in >> group;
+      in.close();
+
+      // Construct basis object
+      Basis<3> basis;
+      basis.makeBasis(mesh, unitCell, group);
+  
+      TEST_ASSERT(basis.isValid());
+      TEST_ASSERT(eq(basis.nWave(), 512));
+
+      #if 0
+      if (verbose() > 1) {
+         std::ofstream out;
+         openOutputFile("out/F_d_-3_m:1", out);
+         out << "nBasis = " << basis.nBasis() << std::endl;
+         basis.outputWaves(out);   
+         basis.outputStars(out);   
+         out.close();
+      }
+      #endif
+
+
+   }
+
+
 };
 
 TEST_BEGIN(BasisTest)
@@ -363,6 +458,8 @@ TEST_ADD(BasisTest, testMake2DBasis_hex)
 TEST_ADD(BasisTest, testMake3DBasis_I)
 TEST_ADD(BasisTest, testMake3DBasis_I_m_3b_m)
 TEST_ADD(BasisTest, testMake3DBasis_I_a_3b_d) 
+TEST_ADD(BasisTest, testMake3DBasis_F_d_3b_m_2)
+TEST_ADD(BasisTest, testMake3DBasis_F_d_3b_m_1)
 TEST_END(BasisTest)
 
 #endif

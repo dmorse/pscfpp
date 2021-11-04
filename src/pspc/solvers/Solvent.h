@@ -61,14 +61,18 @@ namespace Pspc {
       *
       * \param mesh associated Mesh<D> object
       */
-      void setDiscretization(const Mesh<D>& mesh);
+      void setDiscretization(Mesh<D> const & mesh);
 
       /**
       * Compute monomer concentration field, q and phi and/or mu.
       *
-      * Upon return, cField, phi, mu, and q are all set.
+      * Computes monomer concentration field cField, partition function
+      * q, and either the solvent volume fraction phi or solvent chemical 
+      * potential mu, depending on ensemble. The function takes the
+      * chemical potential field wField for the relevant monomer type as 
+      * its only input argument.
       *
-      * \param wField monomer chemical potential field of relevant type.
+      * \param wField  monomer chemical potential field of relevant type.
       */
       void compute(WField const & wField );
  
@@ -79,15 +83,15 @@ namespace Pspc {
       * Set value of phi (volume fraction), if ensemble is closed.
       *
       * \throw Exception if ensemble is open
-      * \param phi desired volume fraction for this species
+      * \param phi  volume fraction for this species (input)
       */
       void setPhi(double phi);
 
       /**
       * Set value of mu (chemical potential), if ensemble is closed.
       *
-      * \throw Exception if ensemble is open
-      * \param phi desired chemical potential for this species
+      * \throw Exception if ensemble is closed
+      * \param mu  chemical potential for this species (input)
       */
       void setMu(double mu);
 
@@ -101,9 +105,9 @@ namespace Pspc {
       /**
       * Set the size or volume of this solvent species.
       *
-      * The ``size" is steric volume / reference volume.
+      * The ``size" is (solvent steric volume / monomer reference volume).
       *
-      * \param size volume of solvent
+      * \param size volume of solvent, in units of monomer volume
       */ 
       void setSize(double size);
 
@@ -117,14 +121,14 @@ namespace Pspc {
       int monomerId() const;
   
       /**
-      * Get the size (number of monomers) in this solvent.
+      * Get the size (number of monomer volumes) of this solvent.
       */
       double size() const;
 
       /**
-      * Get monomer concentration field for this solvent.
+      * Get the monomer concentration field for this solvent.
       */
-      const CField& cField() const;
+      CField const & cField() const;
   
       //@}
 

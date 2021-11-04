@@ -4,10 +4,12 @@ used in several different implementations of self-consistent field theory.
 Subdirectories:
 
    chem/        - molecular structure descriptors
-   inter/       - models of interaction (excess) free energy 
-   solvers/     - templates for modified diffusion eqn (MDE) solvers 
+   crystal/     - unit cells, space groups, and symmetrized bases
    homogeneous/ - spatially homogeneous mixtures
+   inter/       - models of interaction (excess) free energy 
    math/        - mathematical utilities
+   mesh/        - spatial mesh
+   solvers/     - templates for modified diffusion eqn (MDE) solvers 
 
 All classes in directory homogeneous are defined in a nested namespace 
 Pscf::Homogeneous 

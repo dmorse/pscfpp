@@ -10,12 +10,11 @@
 
 #include <pscf/chem/Species.h>
 #include <util/param/ParamComposite.h>
-#include "PropagatorStub.h"
 
 namespace Pscf
 { 
 
-   class SolventStub : public Species, ParamComposite
+   class SolventStub : public Species, public ParamComposite
    {
 
    public:

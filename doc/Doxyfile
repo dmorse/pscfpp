@@ -38,7 +38,7 @@ PROJECT_NAME           = "PSCF"
 # could be handy for archiving the generated documentation or if some version
 # control system is used.
 
-PROJECT_NUMBER         = v1.50
+PROJECT_NUMBER         = v0.74
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer a
@@ -767,6 +767,7 @@ INPUT                  = ../src/programs.mod \
                          ../src/fd1d \
                          ../src/pspc \
                          ../src/pspg \
+                         ../src/test \
                          manual
 
 # This tag can be used to specify the character encoding of the source files
@@ -823,7 +824,7 @@ EXCLUDE_SYMLINKS       = NO
 # Note that the wildcards are matched against the file with absolute path, so to
 # exclude all test directories for example use the pattern */test/*
 
-EXCLUDE_PATTERNS       = */tests/*
+EXCLUDE_PATTERNS       = */tests/*  */draft/*
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names
 # (namespaces, classes, functions, etc.) that should be excluded from the

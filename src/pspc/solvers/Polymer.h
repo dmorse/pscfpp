@@ -64,7 +64,7 @@ namespace Pspc {
       * Set value of phi (volume fraction), if ensemble is closed.
       *
       * \throw Exception if ensemble is open
-      * \param phi desired volume fraction for this species
+      * \param phi  desired volume fraction for this species
       */
       void setPhi(double phi);
 
@@ -72,7 +72,7 @@ namespace Pspc {
       * Set value of mu (chemical potential), if ensemble is closed.
       *
       * \throw Exception if ensemble is open
-      * \param phi desired chemical potential for this species
+      * \param mu  desired chemical potential for this species
       */
       void setMu(double mu);
 
@@ -91,7 +91,7 @@ namespace Pspc {
       * Compute solution to MDE and block concentrations.
       * 
       * This function sets up w-fields in the MDE solvers for all blocks
-      * and then calls the base class PolymerTmpl< Block<D> >::solve() 
+      * and then calls the base class PolymerTmpl< Block<D> >::solve 
       * function.  The base class solv efunction solves the MDE for all 
       * propagators and computes the properly scaled volume fraction 
       * fields for all blocks. After this function is called, the
