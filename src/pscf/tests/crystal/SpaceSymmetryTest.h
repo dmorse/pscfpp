@@ -41,7 +41,27 @@ public:
       TEST_ASSERT(E.R(1,1) == 1);
       TEST_ASSERT(E.t(0) == 0);
       TEST_ASSERT(E.t(1) == 0);
-      //std::cout << SpaceSymmetry<2>::identity() << std::endl;
+      // std::cout << E << std::endl;
+
+      SpaceSymmetry<2> F = SpaceSymmetry<2>::identity();
+      TEST_ASSERT(F == E);
+   }
+
+   void test2DInversion() 
+   {
+      printMethod(TEST_FUNC);
+      printEndl();
+      SpaceSymmetry<2> E = SpaceSymmetry<2>::inversion();
+      TEST_ASSERT(E.R(0,0) == -1);
+      TEST_ASSERT(E.R(1,0) == 0);
+      TEST_ASSERT(E.R(0,1) == 0);
+      TEST_ASSERT(E.R(1,1) == -1);
+      TEST_ASSERT(E.t(0) == 0);
+      TEST_ASSERT(E.t(1) == 0);
+      // std::cout << E << std::endl;
+
+      SpaceSymmetry<2> F = SpaceSymmetry<2>::inversion();
+      TEST_ASSERT(F == E);
    }
 
    void test2DConstruct() 
@@ -57,7 +77,7 @@ public:
       A.t(0) = 0;
       A.t(1) = Rational(1, 2);
 
-      std::cout << A << std::endl;
+      // std::cout << A << std::endl;
    }
 
    void test2DRead() 
@@ -70,7 +90,8 @@ public:
 
       SpaceSymmetry<2> A;
       in >> A;
-      std::cout << A;
+
+      // std::cout << A;
    }
 
    void test2DEquality() 
@@ -85,10 +106,11 @@ public:
       A.R(1,1) = 0;
       A.t(0) = 0;
       A.t(1) = Rational(1, 2);
-      //std::cout << A << std::endl;
+
+      // std::cout << A << std::endl;
 
       SpaceSymmetry<2> B = A;
-      //std::cout << B << std::endl;
+      // std::cout << B << std::endl;
 
       TEST_ASSERT(A == B);
 
@@ -115,15 +137,15 @@ public:
       A.R(1,1) = 0;
       A.t(0) = 0;
       A.t(1) = Rational(1, 2);
-      //std::cout << A << std::endl;
+      // std::cout << A << std::endl;
 
       SpaceSymmetry<2> B;
       B = A.inverse();
-      //std::cout << B << std::endl;
+      // std::cout << B << std::endl;
       
       SpaceSymmetry<2> C;
       C = A*B;
-      //std::cout << C << std::endl;
+      // std::cout << C << std::endl;
       TEST_ASSERT(C == A*B);
       TEST_ASSERT(C == SpaceSymmetry<2>::identity());
 
@@ -133,7 +155,7 @@ public:
 
       SpaceSymmetry<2> E;
       E = A*A;
-      //std::cout << E << std::endl;
+      // std::cout << E << std::endl;
       TEST_ASSERT(A == B*E);
       TEST_ASSERT(A == E*B);
    
@@ -157,7 +179,7 @@ public:
       A.t(0) = 0;
       A.t(1) = Rational(1,2);
       A.t(2) = Rational(-1,4);
-      //std::cout << A << std::endl;
+      // std::cout << A << std::endl;
       SpaceSymmetry<3> B = A.inverse();
       //std::cout << B << std::endl;
       SpaceSymmetry<3> C = A*B;
@@ -176,11 +198,11 @@ public:
       A.t(0) = 0;
       A.t(1) = Rational(1,2);
       A.t(2) = Rational(-1,4);
-      //std::cout << A << std::endl;
+      // std::cout << A << std::endl;
       B = A.inverse();
-      //std::cout << B << std::endl;
+      // std::cout << B << std::endl;
       C = A*B;
-      //std::cout << C << std::endl;
+      // std::cout << C << std::endl;
       TEST_ASSERT(C == SpaceSymmetry<3>::identity());
 
       A.R(0,0) =  0;
@@ -196,15 +218,16 @@ public:
       A.t(1) = Rational(-3,2);
       A.t(2) = Rational(-1,4);
       B = A.inverse();
-      //std::cout << B << std::endl;
+      // std::cout << B << std::endl;
       C = A*B;
-      //std::cout << C << std::endl;
+      // std::cout << C << std::endl;
       TEST_ASSERT(C == SpaceSymmetry<3>::identity());
    } 
 };
 
 TEST_BEGIN(SpaceSymmetryTest)
 TEST_ADD(SpaceSymmetryTest, test2DIdentity)
+TEST_ADD(SpaceSymmetryTest, test2DInversion)
 TEST_ADD(SpaceSymmetryTest, test2DConstruct)
 TEST_ADD(SpaceSymmetryTest, test2DRead)
 TEST_ADD(SpaceSymmetryTest, test2DEquality)

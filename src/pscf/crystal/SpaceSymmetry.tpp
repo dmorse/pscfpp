@@ -115,6 +115,27 @@ namespace Pscf
             }
          }
       }
+      hasIdentity_ = true;
+   }
+
+   /*
+   * Make inversion (private static method).
+   */
+   template <int D>
+   void SpaceSymmetry<D>::makeInversion()
+   {
+      int i, j;
+      for (i = 0; i < D; ++i) {
+         inversion_.t_[i] = 0;
+         for (j = 0; j < D; ++j) {
+            if (i == j) {
+               inversion_.R_(i, j) = -1;
+            } else {
+               inversion_.R_(i, j) = 0;
+            }
+         }
+      }
+      hasInversion_ = true;
    }
 
    /*
