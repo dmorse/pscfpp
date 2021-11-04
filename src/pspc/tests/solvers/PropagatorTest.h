@@ -136,7 +136,7 @@ public:
       //          << block.mesh().dimensions() << std::endl;
    }
 
-   void testSetDiscretiazation2D()
+   void testSetDiscretization2D()
    {
       printMethod(TEST_FUNC);
 
@@ -147,7 +147,7 @@ public:
       Mesh<2> mesh;
       setupMesh2D(mesh);
 
-      double ds = 0.3;
+      double ds = 0.26;
       block.setDiscretization(ds, mesh);
       TEST_ASSERT(eq(block.length(), 2.0));
       TEST_ASSERT(eq(block.ds(), 0.25));
@@ -565,6 +565,7 @@ public:
 TEST_BEGIN(PropagatorTest)
 TEST_ADD(PropagatorTest, testConstructor1D)
 TEST_ADD(PropagatorTest, testSetDiscretization1D)
+TEST_ADD(PropagatorTest, testSetDiscretization2D)
 TEST_ADD(PropagatorTest, testSetDiscretization3D)
 TEST_ADD(PropagatorTest, testSetupSolver1D)
 TEST_ADD(PropagatorTest, testSetupSolver3D)

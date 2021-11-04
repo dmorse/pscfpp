@@ -16,6 +16,14 @@ run: $(pspc_tests_OBJS) $(BLD_DIR)/$(TEST)
               `grep successful log` "in pspc/tests/log" > count
 	@cat count
 
+clean-outputs:
+	rm -f log count 
+ifeq ($(SRC_DIR),$(BLD_DIR))
+	-cd field; $(MAKE) clean-outputs
+	-cd solvers; $(MAKE) clean-outputs
+	-cd system; $(MAKE) clean-outputs
+endif
+
 clean:
 	rm -f $(pspc_tests_OBJS) $(pspc_tests_OBJS:.o=.d)
 	rm -f $(BLD_DIR)/$(TEST) $(BLD_DIR)/$(TEST).d
@@ -23,7 +31,6 @@ clean:
 ifeq ($(SRC_DIR),$(BLD_DIR))
 	-cd field; $(MAKE) clean
 	-cd solvers; $(MAKE) clean
-	-cd iterator; $(MAKE) clean
 	-cd system; $(MAKE) clean
 	rm -f */Test */*.o */*.d 
 endif

@@ -52,11 +52,11 @@ namespace Pspc
    */
    template <int D>
    void FieldIo<D>::associate(UnitCell<D>& unitCell,
-                             Mesh<D>& mesh,
-                             FFT<D>& fft,
-                             std::string& groupName,
-                             Basis<D>& basis,
-                             FileMaster& fileMaster)
+                             Mesh<D> const & mesh,
+                             FFT<D> const & fft,
+                             std::string const & groupName,
+                             Basis<D> const & basis,
+                             FileMaster const & fileMaster)
    {
       unitCellPtr_ = &unitCell;
       meshPtr_ = &mesh;
@@ -149,6 +149,7 @@ namespace Pspc
    void 
    FieldIo<D>::writeFieldsBasis(std::ostream &out, 
                                 DArray<DArray<double> > const &  fields)
+   const
    {
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
@@ -179,6 +180,7 @@ namespace Pspc
    template <int D>
    void FieldIo<D>::writeFieldsBasis(std::string filename, 
                                      DArray<DArray<double> > const & fields)
+   const
    {
        std::ofstream file;
        fileMaster().openOutputFile(filename, file);
@@ -295,7 +297,8 @@ namespace Pspc
 
    template <int D>
    void FieldIo<D>::writeFieldsRGrid(std::ostream &out,
-                                     DArray<RField<D> > const& fields)
+                                     DArray<RField<D> > const & fields)
+   const
    {
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
@@ -384,6 +387,7 @@ namespace Pspc
    template <int D>
    void FieldIo<D>::writeFieldsRGrid(std::string filename, 
                                      DArray< RField<D> > const & fields)
+   const
    {
       std::ofstream file;
       fileMaster().openOutputFile(filename, file);
@@ -434,7 +438,8 @@ namespace Pspc
 
    template <int D>
    void FieldIo<D>::writeFieldsKGrid(std::ostream &out,
-                                     DArray<RFieldDft<D> > const& fields)
+                                     DArray<RFieldDft<D> > const & fields)
+   const
    {
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
@@ -458,7 +463,8 @@ namespace Pspc
 
    template <int D>
    void FieldIo<D>::writeFieldsKGrid(std::string filename, 
-                                    DArray< RFieldDft<D> > const& fields)
+                                    DArray< RFieldDft<D> > const & fields)
+   const
    {
       std::ofstream file;
       fileMaster().openOutputFile(filename, file);
@@ -514,7 +520,7 @@ namespace Pspc
    }
 
    template <int D>
-   void FieldIo<D>::convertBasisToKGrid(DArray<double> const& in, 
+   void FieldIo<D>::convertBasisToKGrid(DArray<double> const & in, 
                                         RFieldDft<D>& out)
    {
       // Create Mesh<D> with dimensions of DFT Fourier grid.
@@ -612,7 +618,7 @@ namespace Pspc
    }
 
    template <int D>
-   void FieldIo<D>::convertKGridToBasis(RFieldDft<D> const& in, 
+   void FieldIo<D>::convertKGridToBasis(RFieldDft<D> const & in, 
                                         DArray<double>& out)
    {
       // Create Mesh<D> with dimensions of DFT Fourier grid.

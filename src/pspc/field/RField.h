@@ -70,7 +70,7 @@ namespace Pspc
       *
       * \throw Exception if the RField is already allocated.
       *
-      * \param meshDimensions vector containing number of grid points in each direction
+      * \param meshDimensions vector of numbers of grid points per direction
       */
       void allocate(const IntVec<D>& meshDimensions);
 

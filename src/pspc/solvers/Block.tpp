@@ -73,6 +73,8 @@ namespace Pspc {
       ds_ = (length()/double(tempNs * 2.0));
       ns_ = 2 * tempNs + 1;
 
+      fft_.setup(mesh.dimensions());
+
       // Compute Fourier space kMeshDimensions_ 
       for (int i = 0; i < D; ++i) {
          if (i < D - 1) {

@@ -58,11 +58,11 @@ namespace Pspc
       * \param fileMaster  associated FileMaster (for file paths)
       */
       void associate(UnitCell<D>& unitCell,
-                     Mesh<D>& mesh,
-                     FFT<D>& fft,
-                     std::string& groupName,
-                     Basis<D>& basis,
-                     FileMaster& fileMaster);
+                     Mesh<D> const & mesh,
+                     FFT<D> const & fft,
+                     std::string const & groupName,
+                     Basis<D> const & basis,
+                     FileMaster const & fileMaster);
 
       /// \name Field File IO
       //@{
@@ -105,7 +105,8 @@ namespace Pspc
       * \param fields array of fields (symmetry adapted basis components)
       */
       void writeFieldsBasis(std::ostream& out, 
-                            DArray< DArray <double> > const & fields);
+                            DArray< DArray <double> > const & fields)
+      const;
 
       /**
       * Write concentration or chemical potential field components to file.
@@ -118,7 +119,8 @@ namespace Pspc
       * \param fields array of fields (symmetry adapted basis components)
       */
       void writeFieldsBasis(std::string filename, 
-                            DArray< DArray <double> > const & fields);
+                            DArray< DArray <double> > const & fields)
+      const;
 
       /**
       * Read array of RField objects (fields on an r-space grid) from file.
@@ -153,7 +155,7 @@ namespace Pspc
       * \param fields array of RField fields (r-space grid)
       */
       void writeFieldsRGrid(std::ostream& out, 
-                            DArray< RField<D> > const& fields);
+                            DArray< RField<D> > const& fields) const;
 
       /**
       * Write array of RField objects (fields on an r-space grid) to file.
@@ -166,7 +168,7 @@ namespace Pspc
       * \param fields  array of RField fields (r-space grid)
       */
       void writeFieldsRGrid(std::string filename,
-                            DArray< RField<D> > const& fields);
+                            DArray< RField<D> > const& fields) const;
 
       /**
       * Read array of RFieldDft objects (k-space fields) from file.
@@ -209,7 +211,7 @@ namespace Pspc
       * \param fields array of RFieldDft fields 
       */
       void writeFieldsKGrid(std::ostream& out, 
-                            DArray< RFieldDft<D> > const& fields);
+                            DArray< RFieldDft<D> > const& fields) const;
    
       /**
       * Write array of RFieldDft objects (k-space fields) to a file.
@@ -222,7 +224,7 @@ namespace Pspc
       * \param fields  array of RFieldDft fields (k-space grid)
       */
       void writeFieldsKGrid(std::string filename, 
-                           DArray< RFieldDft<D> > const& fields);
+                           DArray< RFieldDft<D> > const& fields) const;
 
       /**
       * Write header for field file (fortran pscf format)
@@ -316,7 +318,7 @@ namespace Pspc
    private:
 
       // DFT work array for two-step conversion basis <-> kgrid <-> rgrid.
-      RFieldDft<D> workDft_;
+      mutable RFieldDft<D> workDft_;
 
       // Pointers to associated objects.
 
@@ -327,7 +329,7 @@ namespace Pspc
       Mesh<D> const * meshPtr_;
 
       /// Pointer to FFT object.
-      FFT<D> mutable * fftPtr_;
+      FFT<D> const * fftPtr_;
 
       /// Pointer to group name string
       std::string const * groupNamePtr_;
@@ -343,46 +345,42 @@ namespace Pspc
       /// Get UnitCell by reference.
       UnitCell<D> & unitCell()
       {  
-         // UTIL_ASSERT(unitCellPtr_);  
+         UTIL_ASSERT(unitCellPtr_);  
          return *unitCellPtr_; 
       }
 
       /// Get UnitCell by const reference.
       UnitCell<D> const & unitCell() const
       {  
-         // UTIL_ASSERT(unitCellPtr_);  
+         UTIL_ASSERT(unitCellPtr_);  
          return *unitCellPtr_; 
       }
 
       /// Get spatial discretization mesh by const reference.
       Mesh<D> const & mesh() const
       {  
-         // UTIL_ASSERT(meshPtr_);  
+         UTIL_ASSERT(meshPtr_);  
          return *meshPtr_; 
       }
 
       /// Get FFT object by reference.
       FFT<D> const & fft() const
       {
-         // UTIL_ASSERT(fftPtr_);  
-         return *fftPtr_; 
-      }
-
-      /// Get FFT object by reference.
-      FFT<D>& fft()
-      {
-         // UTIL_ASSERT(fftPtr_);  
+         UTIL_ASSERT(fftPtr_);  
          return *fftPtr_; 
       }
 
       /// Get group name string by const reference.
       std::string const & groupName() const
-      {  return *groupNamePtr_; }
+      {  
+         UTIL_ASSERT(fftPtr_);  
+         return *groupNamePtr_; 
+      }
 
       /// Get Basis by const reference.
       Basis<D> const & basis() const
       {
-         // UTIL_ASSERT(basisPtr_);  
+         UTIL_ASSERT(basisPtr_);  
          return *basisPtr_; 
       }
 

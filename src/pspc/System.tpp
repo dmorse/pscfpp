@@ -192,8 +192,9 @@ namespace Pspc
 
       read(in, "unitCell", unitCell_);
       hasUnitCell_ = true;
-      
+     
       read(in, "mesh", mesh_);
+      fft_.setup(mesh_.dimensions());
       hasMesh_ = true;
 
       read(in, "groupName", groupName_);
