@@ -183,6 +183,11 @@ namespace Pscf {
       int determinant() const;
 
       /**
+      * Return the matrix by const reference.
+      */
+      Rotation const & R() const;
+ 
+      /**
       * Return an element of the matrix by reference.
       *
       * \param i  1st (row) index
@@ -197,6 +202,11 @@ namespace Pscf {
       * \param j  2nd (column) index
       */
       int R(int i, int j) const;
+
+      /**
+      * Return the translation by const reference.
+      */
+      Translation const & t() const;
 
       /**
       * Return a component of the translation by reference.
@@ -320,6 +330,14 @@ namespace Pscf {
    {  return !(A == B); }
 
    /*
+   * Return the entire rotation matrix by const reference.
+   */
+   template <int D>
+   inline typename
+   SpaceSymmetry<D>::Rotation const & SpaceSymmetry<D>::R() const
+   {  return R_; }
+ 
+   /*
    * Return an element of the matrix by reference.
    */
    template <int D>
@@ -335,6 +353,14 @@ namespace Pscf {
    int SpaceSymmetry<D>::R(int i, int j) const
    {  return R_(i, j); }
 
+   /*
+   * Return the entire translation vector by const reference.
+   */
+   template <int D>
+   inline typename
+   SpaceSymmetry<D>::Translation const & SpaceSymmetry<D>::t() const
+   {  return t_; }
+ 
    /*
    * Return an element of the translation vector by reference.
    */

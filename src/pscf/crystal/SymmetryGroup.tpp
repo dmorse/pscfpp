@@ -25,6 +25,7 @@ namespace Pscf
    SymmetryGroup<Symmetry>::SymmetryGroup()
    {
       identity_ = Symmetry::identity();
+      elements_.clear();
       elements_.push_back(identity_);
    }
 
@@ -34,8 +35,8 @@ namespace Pscf
    template <class Symmetry>
    SymmetryGroup<Symmetry>::SymmetryGroup(const SymmetryGroup& other)
    {
-      elements_.clear();
       identity_ = other.identity();
+      elements_.clear();
       for (int i = 0; i < other.size(); ++i) {
          elements_.push_back(other.elements_[i]);
       }
@@ -151,7 +152,6 @@ namespace Pscf
    void SymmetryGroup<Symmetry>::clear()
    {
       elements_.clear();
-      identity_ = Symmetry::identity();
       elements_.push_back(identity_);
    }
 

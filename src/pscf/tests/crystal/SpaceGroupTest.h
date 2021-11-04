@@ -228,6 +228,81 @@ public:
       //std::cout << g << std::endl;
    }
 
+   void test3D_I_a_3b_d() 
+   {
+      printMethod(TEST_FUNC);
+      //printEndl();
+
+      std::ifstream in;
+      openInputFile("in/I_a_-3_d", in);
+
+      SpaceGroup<3> g;
+      in >> g;
+      TEST_ASSERT(96 == g.size());
+      TEST_ASSERT(g.isValid());
+
+      // std::cout << std::endl;
+      // std::cout << g << std::endl;
+
+      bool hasInversionCenter;
+      typename SpaceSymmetry<3>::Translation center;
+      hasInversionCenter = g.hasInversionCenter(center);
+      if (hasInversionCenter) {
+         for (int i = 0; i < 3; ++i) {
+            TEST_ASSERT(center[i] == 0);
+            //std::cout << "  " << center[i];
+         }
+         //std::cout << std::endl;
+      }
+
+   }
+
+   void test3D_F_d_3b_m() 
+   {
+      printMethod(TEST_FUNC);
+      //printEndl();
+
+      std::ifstream in;
+      bool hasInversionCenter;
+      typename SpaceSymmetry<3>::Translation center;
+
+      SpaceGroup<3> g1;
+      openInputFile("in/F_d_-3_m:1", in);
+      in >> g1;
+      // std::cout << std::endl;
+      // std::cout << g << std::endl;
+      TEST_ASSERT(192 == g1.size());
+      TEST_ASSERT(g1.isValid());
+      hasInversionCenter = g1.hasInversionCenter(center);
+      if (hasInversionCenter) {
+         std::cout << std::endl;
+         for (int i = 0; i < 3; ++i) {
+            TEST_ASSERT(center[i] == Rational(1, 8));
+            // std::cout << "  " << center[i];
+         }
+         // std::cout << std::endl;
+      }
+      in.close();
+
+      SpaceGroup<3> g2;
+      openInputFile("in/F_d_-3_m:2", in);
+      in >> g2;
+      // std::cout << std::endl;
+      // std::cout << g << std::endl;
+      TEST_ASSERT(192 == g2.size());
+      TEST_ASSERT(g2.isValid());
+      hasInversionCenter = g2.hasInversionCenter(center);
+      if (hasInversionCenter) {
+         for (int i = 0; i < 3; ++i) {
+            TEST_ASSERT(center[i] == 0);
+            // std::cout << "  " << center[i];
+         }
+         // std::cout << std::endl;
+      }
+      in.close();
+
+   }
+
 };
 
 TEST_BEGIN(SpaceGroupTest)
@@ -237,6 +312,8 @@ TEST_ADD(SpaceGroupTest, test2Dmake2)
 TEST_ADD(SpaceGroupTest, test2Dmake3)
 TEST_ADD(SpaceGroupTest, test3Dmake)
 TEST_ADD(SpaceGroupTest, test2Dread)
+TEST_ADD(SpaceGroupTest, test3D_I_a_3b_d) 
+TEST_ADD(SpaceGroupTest, test3D_F_d_3b_m) 
 TEST_END(SpaceGroupTest)
 
 #endif
