@@ -298,22 +298,26 @@ namespace Pspc
                                DArray< DArray <double> > & out);
 
       //@}
+      /// \name Test Space Group Symmetry
+      //@{
 
       /**
-      * Check if an r-grid field has declared space group symmetry.
+      * Check if an r-grid field has the declared space group symmetry.
       *
       * \param in field in real space grid (r-grid) format
-      * \return 0 if the field is symmetric, 1 otherwise
+      * \return true if the field is symmetric, false otherwise
       */
-      int checkFieldSymmetry(RField<D> & in);
+      bool hasSymmetry(RField<D> & in);
 
       /**
-      * Check if an r-grid field has declared space group symmetry.
+      * Check if a k-grid field has declared space group symmetry.
       *
       * \param in field in real space grid (r-grid) format
-      * \return 0 if the field is symmetric, 1 otherwise
+      * \return true if the field is symmetric, false otherwise
       */
-      int checkFieldSymmetry(RFieldDft<D> const & in) const;
+      bool hasSymmetry(RFieldDft<D> const & in) const;
+
+      //@}
 
    private:
 

@@ -813,8 +813,8 @@ namespace Pspc
       fieldIo().readFieldsRGrid(inFileName, cFieldsRGrid());
 
       for (int i = 0; i < mixture().nMonomer(); ++i) {
-         int error = fieldIo().checkFieldSymmetry(cFieldRGrid(i));
-         if (error) {
+         bool symmetric = fieldIo().hasSymmetry(cFieldRGrid(i));
+         if (!symmetric) {
             return false;
          }
       }

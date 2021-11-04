@@ -758,17 +758,23 @@ namespace Pspc
       }
    }
 
-   /// Check if an RField<D> has declared space group symmetry.
+   /*
+   * Test if an RField<D> has declared space group symmetry.
+   * Return true if symmetric, false otherwise.
+   */
    template <int D>
-   int FieldIo<D>::checkFieldSymmetry(RField<D> & in) 
+   bool FieldIo<D>::hasSymmetry(RField<D> & in) 
    {
       fft().forwardTransform(in, workDft_);
-      return checkFieldSymmetry(workDft_);
+      return hasSymmetry(workDft_);
    }
 
-   /// Check if an RFieldDft has the declared space group symmetry.
+   /*
+   * Test if an RFieldDft has the declared space group symmetry.
+   * Return true if symmetric, false otherwise.
+   */
    template <int D>
-   int FieldIo<D>::checkFieldSymmetry(RFieldDft<D> const & in) const
+   bool FieldIo<D>::hasSymmetry(RFieldDft<D> const & in) const
    {
       typename Basis<D>::Star const* starPtr; // pointer to current star
       typename Basis<D>::Wave const* wavePtr; // pointer to current wave
@@ -796,8 +802,8 @@ namespace Pspc
                wavePtr = &basis().wave(iw);
                if (!wavePtr->implicit) {
                   rank = dftMesh.rank(wavePtr->indicesDft);
-                  if (abs(in[rank][0]) > 1.0E-9) return 1;
-                  if (abs(in[rank][1]) > 1.0E-9) return 1;
+                  if (abs(in[rank][0]) > 1.0E-9) return false;
+                  if (abs(in[rank][1]) > 1.0E-9) return false;
                }
             }
 
@@ -815,7 +821,7 @@ namespace Pspc
                   waveCoeff /= wavePtr->coeff;
                   if (hasRoot) {
                      diff = waveCoeff - rootCoeff;
-                     if (abs(diff) > 1.0E-9) return 1;
+                     if (abs(diff) > 1.0E-9) return false;
                   } else {
                      rootCoeff = waveCoeff;
                      hasRoot = true;
@@ -823,10 +829,12 @@ namespace Pspc
                }
             }
 
-         } 
+         }
 
       } //  end loop over star index is
-      return 0;
+
+      // If the code reaches this point, the field is symmetric
+      return true;
    }
 
    template <int D>

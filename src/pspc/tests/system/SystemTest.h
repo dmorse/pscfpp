@@ -268,6 +268,32 @@ public:
 
    }   
 
+   void testCheckSymmetry3D_bcc() 
+   {   
+      printMethod(TEST_FUNC);
+      System<3> system;
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
+
+      openLogFile("out/testSymmetry3D_bcc.log"); 
+
+      // Read system parameter file
+      std::ifstream in; 
+      openInputFile("in/domainOn/System3D", in);
+      system.readParam(in);
+      in.close();
+
+      system.readWBasis("contents/omega/domainOn/omega_bcc");
+      bool hasSymmetry = system.fieldIo().hasSymmetry(system.wFieldRGrid(0));
+      TEST_ASSERT(hasSymmetry);
+
+      // Intentionally mess up the field, check that symmetry is destroyed
+      system.wFieldRGrid(0)[23] += 0.1;
+      hasSymmetry = system.fieldIo().hasSymmetry(system.wFieldRGrid(0));
+      TEST_ASSERT(!hasSymmetry);
+
+   }
+
    void testIterate1D_lam_rigid()
    {
       printMethod(TEST_FUNC);
@@ -716,6 +742,7 @@ TEST_ADD(SystemTest, testReadParameters1D)
 TEST_ADD(SystemTest, testConversion1D_lam)
 TEST_ADD(SystemTest, testConversion2D_hex)
 TEST_ADD(SystemTest, testConversion3D_bcc)
+TEST_ADD(SystemTest, testCheckSymmetry3D_bcc)
 TEST_ADD(SystemTest, testIterate1D_lam_rigid)
 TEST_ADD(SystemTest, testIterate1D_lam_flex)
 TEST_ADD(SystemTest, testIterate2D_hex_rigid)
