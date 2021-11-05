@@ -195,8 +195,9 @@ namespace Pscf {
       *
       * Loop over index i of array waves_ {
       *
-      *   Search for end of a "list", contiguous block of waves of equal
-      *   magnitude, with indices [listBegin,listEnd-1]. Set newList true.
+      *   Search for end of a "list", i.e., contiguous block of waves 
+      *   of equal magnitude, with indices [listBegin,listEnd-1]. 
+      *   Set newList true.
       *
       *   // Each list can contain one or more stars.
       *   // Process the newly identified list to identify stars
@@ -212,7 +213,7 @@ namespace Pscf {
       *
       *       // To generate a star from a root wave rootItr, 
       *       // loop over symmetry operations of space group.
-      *       For each group symmetry operation group[j] {
+      *       For each symmetry operation group[j] {
       *         Compute vec = (rootItr->indicesBz)*group[j]
       *         Set phase = rootItr->indicesBz .dot. group[j].t 
       *         Check for cancellation of the star, set cancel flag
@@ -222,14 +223,14 @@ namespace Pscf {
       *
       *       Copy all waves from star to std::vector<TWave> tempStar
       *       Sort tempStar by indicesBz in descending order
-      *       // Here, use of ordered container std::vector allows sorting
+      *       // Here, use of std::vector for tempStar allows sorting
       *       For each wave in tempStar {
       *         Append wave to std::vector<TWave> tempList
       *         Erase wave from std::set<TWave> list
       *         // Here, use of a std::set for list simplifies erasure
       *       }
       *
-      *       Initialize a Star object newStar and assign values
+      *       Initialize a Star object named newStar, assign values
       *       to members beginId, endId, size, eigen, cancel
       *
       *       // Assign values of newStar.invertFlag, rootItr, nextInvert
@@ -253,7 +254,7 @@ namespace Pscf {
       *          }
       *       }
       *
-      *       Append newStar object to DArray<Basis::Star> stars_ 
+      *       Append newStar object to GArray<Star> stars_ 
       *
       *     } // end loop over stars in a single list
       *
@@ -657,16 +658,24 @@ namespace Pscf {
                for (j = stars_[i].beginId; j < stars_[i].endId; ++j) {
                   waves_[j].coeff /= rootCoeff;
                }
+               rootCoeff = waves_[rootId].coeff;
+               UTIL_CHECK(abs(real(rootCoeff) - 1.0) < 1.0E-9);
+               UTIL_CHECK(abs(imag(rootCoeff)) < 1.0E-9);
 
                // Require coefficients of root and negation are conjugates
                if (partId != rootId) {
 
-                  // Compute common divisor
                   partCoeff = waves_[partId].coeff;
-                  d = sqrt(partCoeff);
-                  if (abs(imag(d)) > 1.0E-8) {
-                     if (imag(d) < 0.0) {
+                  UTIL_CHECK(abs(abs(partCoeff) - 1.0) < 1.0E-9);
+                  if (abs(partCoeff - rootCoeff) > 1.0E-6) {
+                     d = sqrt(partCoeff);
+                     if (real(d) < -1.0E-4) {
                         d = -d;
+                     } else 
+                     if (abs(real(d)) <= 1.0E-4) {
+                        if (imag(d) < 0.0) {
+                           d = -d;
+                        }
                      }
                      for (j=stars_[i].beginId; j < stars_[i].endId; ++j) {
                         waves_[j].coeff /= d;
@@ -750,6 +759,18 @@ namespace Pscf {
          for (j = stars_[i].beginId; j < stars_[i].endId; ++j) {
             waves_[j].coeff *= snorm;
             waves_[j].starId = i;
+         }
+      }
+
+      // Set tiny real and imaginary parts to zero (due to round-off)
+      for (i = 0; i < nWave_; ++i) {
+         if (abs(real(waves_[i].coeff)) < 1.0E-12) {
+            waves_[i].coeff 
+                     = std::complex<double>(0.0, imag(waves_[i].coeff));
+         }
+         if (abs(imag(waves_[i].coeff)) < 1.0E-12) {
+            waves_[i].coeff 
+                    = std::complex<double>(real(waves_[i].coeff), 0.0);
          }
       }
 
