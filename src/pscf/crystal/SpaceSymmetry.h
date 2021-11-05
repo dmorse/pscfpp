@@ -183,6 +183,11 @@ namespace Pscf {
       int determinant() const;
 
       /**
+      * Return the matrix by const reference.
+      */
+      Rotation const & R() const;
+ 
+      /**
       * Return an element of the matrix by reference.
       *
       * \param i  1st (row) index
@@ -197,6 +202,11 @@ namespace Pscf {
       * \param j  2nd (column) index
       */
       int R(int i, int j) const;
+
+      /**
+      * Return the translation by const reference.
+      */
+      Translation const & t() const;
 
       /**
       * Return a component of the translation by reference.
@@ -219,6 +229,11 @@ namespace Pscf {
       */
       static const SpaceSymmetry<D>& identity();
 
+      /**
+      * Return the inversion element.
+      */
+      static const SpaceSymmetry<D>& inversion();
+
    private:
 
       /**
@@ -240,11 +255,20 @@ namespace Pscf {
       /// Identity element (static member stored for reference)
       static SpaceSymmetry<D> identity_;
 
+      /// Inversion element (static member stored for reference)
+      static SpaceSymmetry<D> inversion_;
+
       /// Has the static identity_ been constructed?
       static bool hasIdentity_;
 
+      /// Has the static inversion_ been constructed?
+      static bool hasInversion_;
+
       /// Construct static identity_ object.
       static void makeIdentity();
+
+      /// Construct static inversion_ object.
+      static void makeInversion();
 
    // friends:
 
@@ -306,6 +330,14 @@ namespace Pscf {
    {  return !(A == B); }
 
    /*
+   * Return the entire rotation matrix by const reference.
+   */
+   template <int D>
+   inline typename
+   SpaceSymmetry<D>::Rotation const & SpaceSymmetry<D>::R() const
+   {  return R_; }
+ 
+   /*
    * Return an element of the matrix by reference.
    */
    template <int D>
@@ -321,6 +353,14 @@ namespace Pscf {
    int SpaceSymmetry<D>::R(int i, int j) const
    {  return R_(i, j); }
 
+   /*
+   * Return the entire translation vector by const reference.
+   */
+   template <int D>
+   inline typename
+   SpaceSymmetry<D>::Translation const & SpaceSymmetry<D>::t() const
+   {  return t_; }
+ 
    /*
    * Return an element of the translation vector by reference.
    */
@@ -342,10 +382,21 @@ namespace Pscf {
    */
    template <int D>
    inline 
-   const SpaceSymmetry<D>& SpaceSymmetry<D>::identity()
+   SpaceSymmetry<D> const & SpaceSymmetry<D>::identity() 
    {
       if (!hasIdentity_) makeIdentity();
       return identity_;
+   }
+
+   /*
+   * Return the inversion symmetry operation.
+   */
+   template <int D>
+   inline 
+   SpaceSymmetry<D> const & SpaceSymmetry<D>::inversion()
+   {
+      if (!hasInversion_) makeInversion();
+      return inversion_;
    }
 
    // Friend function template definitions
@@ -477,12 +528,18 @@ namespace Pscf {
    }
 
    // Define static members
+
    template<int D> 
    SpaceSymmetry<D> SpaceSymmetry<D>::identity_ = SpaceSymmetry<D>();
 
    template<int D> 
+   SpaceSymmetry<D> SpaceSymmetry<D>::inversion_ = SpaceSymmetry<D>();
+
+   template<int D>
    bool SpaceSymmetry<D>::hasIdentity_ = false;
 
+   template<int D> 
+   bool SpaceSymmetry<D>::hasInversion_ = false;
 
    #ifndef PSCF_SPACE_SYMMETRY_TPP
    // Suppress implicit instantiation

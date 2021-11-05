@@ -5,8 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#define PSCF_SPACE_GROUP_CPP
-#include <pscf/crystal/SpaceGroup.h>
+#include <pscf/crystal/SpaceGroup.tpp>
 
 namespace Pscf
 {

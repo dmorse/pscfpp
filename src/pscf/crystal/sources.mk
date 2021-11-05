@@ -5,6 +5,7 @@ pscf_crystal_= \
   pscf/crystal/shiftToMinimum.cpp \
   pscf/crystal/SpaceSymmetry.cpp \
   pscf/crystal/SymmetryGroup.cpp \
+  pscf/crystal/SpaceGroup.cpp \
   pscf/crystal/Basis.cpp \
   pscf/crystal/groupFile.cpp
 

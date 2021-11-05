@@ -27,7 +27,25 @@ namespace Pscf
    */
    template <int D>
    class SpaceGroup : public SymmetryGroup< SpaceSymmetry <D> >
-   {};
+   {
+
+   public:
+
+      /**
+      * Determines if a symmetric structure has an inversion center.
+      *
+      * Returns true if an inversion center exists, and false otherwise.
+      * If an inversion center exists, its location is returned as the
+      * output value of output argument "center". 
+      *
+      * \param center location of inversion center, if any (output)
+      */
+      bool 
+      hasInversionCenter(typename SpaceSymmetry<D>::Translation& center);
+
+      using SymmetryGroup< SpaceSymmetry <D> >::size;
+
+   };
 
    // Template function definition
 
@@ -76,7 +94,7 @@ namespace Pscf
       return in;
    }
 
-   #ifndef PSCF_SPACE_GROUP_CPP
+   #ifndef PSCF_SPACE_GROUP_TPP
    extern template class SpaceGroup<1>;
    extern template class SpaceGroup<2>;
    extern template class SpaceGroup<3>;
