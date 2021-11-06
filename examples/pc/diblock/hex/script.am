@@ -14,7 +14,7 @@ N_block
 block_monomer
               1              2
 block_length
-  2.50000000E-01  7.5000000E-01
+  3.0000000E-01  7.0000000E-01
 
 COMPOSITION
 ensemble
@@ -30,23 +30,23 @@ chi
 
 UNIT_CELL
 dim
-              3
+              2
 crystal_system
-        'cubic'
+    'hexagonal'
 N_cell_param
               1
 cell_param                              
-   1.9254998725
+    1.6908669157E+00
 
 DISCRETIZATION
 ngrid
-             10           10           10
+             24             24
 chain_step
   1.0000000E-02
 
 BASIS
 group_name
-      'I m -3 m'
+      'P 6 m m'
 
 OUTPUT_GROUP
 output_filename
@@ -62,18 +62,19 @@ output_filename
 
 ITERATE
 input_filename
-           'in/omega'
+            'in/w.bf'
 output_prefix
                'out/'
 max_itr
-             50
+            100
 error_max
-  1.0000000E-08
+  1.0000000E-10
 domain
-              F
+              T
 itr_algo
            'AM'
 N_hist
             30
 
 FINISH
+

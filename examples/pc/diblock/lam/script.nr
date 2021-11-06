@@ -50,19 +50,19 @@ group_name
 
 ITERATE             
 input_filename        
-              'omega'
+           'in/w.bf'
 output_prefix       
               'out/'
 max_itr             
-                 1000
+                1000
 error_max           
     1.0000000000E-10
 domain              
                    T
 itr_algo            
-                'AM'
-N_hist              
-                 10
+                'NR'
+N_cut              
+                  21
 
 FINISH              
 

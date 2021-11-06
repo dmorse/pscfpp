@@ -79,6 +79,6 @@ FIELD_TO_RGRID
 input_filename
            'out/rho'
 output_filename
-         'out/rho.bf'
+        'out/rho.rf'
 
 FINISH

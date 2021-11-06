@@ -1,5 +1,5 @@
-READ_W_BASIS     in/omega
+READ_W_BASIS     in/w.bf
 ITERATE          
-WRITE_W_BASIS    out/omega
+WRITE_W_BASIS    out/w.bf
 FINISH
 
