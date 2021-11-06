@@ -86,13 +86,17 @@ namespace Pspc
 
       // Initialize all field array elements to zero
       int i, j;
-      int nStarCapacity;
+      int nStarCapacity = fields[0].capacity();
       for (j = 0; j < nMonomer; ++j) {
-         nStarCapacity = fields[j].capacity();
-         UTIL_CHECK(nStarCapacity >= nStarIn);
+         UTIL_CHECK(nStarCapacity == fields[j].capacity());
          for (i = 0; i < nStarCapacity; ++i) {
             fields[j][i] = 0.0;
          }
+      }
+
+      // Reset nStarIn = min(nStarIn, nStarCapacity)
+      if (nStarCapacity < nStarIn) {
+         nStarIn = nStarCapacity;
       }
 
       DArray<double> temp;
