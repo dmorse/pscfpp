@@ -53,7 +53,7 @@ public:
       system.fileMaster().setOutputPrefix(filePrefix());
 
       std::ifstream in;
-      openInputFile("in/domainOn/System1D", in);
+      openInputFile("in/diblock/lam/param.flex", in);
       system.readParam(in);
       in.close();
    }
@@ -68,42 +68,25 @@ public:
       openLogFile("out/testConversion1D_lam.log"); 
 
       std::ifstream in; 
-      openInputFile("in/domainOn/System1D", in);
+      openInputFile("in/diblock/lam/param.flex", in);
       system.readParam(in);
       in.close();
 
-      // std::ifstream command;
-      // openInputFile("in/conv/Conversion_1d_step1", command);
-      // system.readCommands(command);
-      // command.close();
-
       // Read w-fields (reference solution, solved by Fortran PSCF)
-      system.readWBasis("contents/omega/domainOn/omega_lam");
+      system.readWBasis("in/diblock/lam/omega.in");
 
       // Copy w field components to wFields_check after reading
       int nMonomer = system.mixture().nMonomer();
       int nStar = system.basis().nStar();
-      DArray< RField<1> > wFields_check;
-      wFields_check.allocate(nMonomer);
-      for (int i = 0; i < nMonomer; ++i){
-         wFields_check[i].allocate(nStar);
-         for (int j = 0; j < nStar; ++j){    
-            wFields_check[i][j] = system.wFields()[i][j];
-            system.wFields()[i][j] = 0.0;
-         }   
-      }   
-
-      // std::ifstream command_2;
-      // openInputFile("in/conv/Conversion_1d_step2", command_2);
-      // system.readCommands(command_2);
-      //command_2.close();
+      DArray< DArray<double> > wFields_check;
+      wFields_check = system.wFields();   
 
       // Round trip conversion basis -> rgrid -> basis, read result
-      system.basisToRGrid("contents/omega/domainOn/omega_lam",
-                          "out/omega/conv/omega_rgrid_lam");
-      system.rGridToBasis("out/omega/conv/omega_rgrid_lam",
-                          "out/omega/conv/omega_conv_lam");
-      system.readWBasis("out/omega/conv/omega_conv_lam");
+      system.basisToRGrid("in/diblock/lam/omega.in",
+                          "out/diblock/lam/omega.rgrid");
+      system.rGridToBasis("out/diblock/lam/omega.rgrid",
+                          "out/diblock/lam/omega.conv");
+      system.readWBasis("out/diblock/lam/omega.conv");
 
       // Compare result to original
       double err;
@@ -136,41 +119,29 @@ public:
 
       // Read parameter file
       std::ifstream in; 
-      openInputFile("in/domainOn/System2D", in);
+      openInputFile("in/diblock/hex/param.flex", in);
       system.readParam(in);
       in.close();
 
-      // std::ifstream command;
-      // openInputFile("in/conv/Conversion_2d_step1", command);
-      // system.readCommands(command);
-      // command.close();
-
       // Read w fields
-      system.readWBasis("contents/omega/domainOn/omega_hex");
+      system.readWBasis("in/diblock/hex/omega.in");
 
       // Store components in wFields_check for later comparison 
       int nMonomer = system.mixture().nMonomer();
       int nStar = system.basis().nStar();
-      DArray<RField<2> > wFields_check;
-      wFields_check.allocate(nMonomer);
-      for (int i = 0; i < nMonomer; ++i) {
-         wFields_check[i].allocate(nStar);
-         for (int j = 0; j < nStar; ++j){    
-            wFields_check[i][j] = system.wFields() [i] [j];
-            system.wFields()[i][j] = 0.0;
-         }   
-      }   
+      DArray< DArray<double> > wFields_check;
+      wFields_check = system.wFields();
 
       // Round trip basis -> rgrid -> basis, read resulting wField
-      system.basisToRGrid("contents/omega/domainOn/omega_hex",
-                          "out/omega/conv/omega_rgrid_hex");
-      system.rGridToBasis("out/omega/conv/omega_rgrid_hex",
-                          "out/omega/conv/omega_conv_hex");
-      system.readWBasis("out/omega/conv/omega_conv_hex");
+      system.basisToRGrid("in/diblock/hex/omega.in",
+                          "out/diblock/hex/omega.rgrid");
+      system.rGridToBasis("out/diblock/hex/omega.rgrid",
+                          "out/diblock/hex/omega.conv");
+      system.readWBasis("out/diblock/hex/omega.conv");
 
       // Check symmetry of rgrid representation
       bool hasSymmetry
-       = system.checkRGridFieldSymmetry("out/omega/conv/omega_rgrid_hex");
+       = system.checkRGridFieldSymmetry("out/diblock/hex/omega.rgrid");
       TEST_ASSERT(hasSymmetry);
 
       // Compare result to original
@@ -205,45 +176,28 @@ public:
 
       // Read parameter file
       std::ifstream in; 
-      openInputFile("in/domainOn/System3D", in);
+      openInputFile("in/diblock/bcc/param.flex", in);
       system.readParam(in);
       in.close();
-
-      // openInputFile("in/conv/Conversion_3d_step1", in);
-      // system.readCommands(in);
-      // in.close();
-
       // Read w fields in system.wFields
-      system.readWBasis("contents/omega/domainOn/omega_bcc");
+      system.readWBasis("in/diblock/bcc/omega.in");
   
       // Store components of field as input 
       int nMonomer = system.mixture().nMonomer();
       int nStar = system.basis().nStar();
-      DArray<RField<3> > wFields_check;
-      wFields_check.allocate(nMonomer);
-      for (int i = 0; i < nMonomer; ++i){
-         wFields_check[i].allocate(nStar);
-         for (int j = 0; j < nStar; ++j){         
-            wFields_check[i][j] = system.wFields()[i][j];
-            system.wFields()[i][j] = 0.0;
-         }
-      }
-
-      // std::ifstream command_2;
-      // openInputFile("in/conv/Conversion_3d_step2", command_2);
-      // system.readCommands(command_2);
-      // command_2.close();
+      DArray< DArray<double> > wFields_check;
+      wFields_check = system.wFields();
 
       // Complete round trip basis -> rgrid -> basis
-      system.basisToRGrid("contents/omega/domainOn/omega_bcc",
-                          "out/omega/conv/omega_rgrid_bcc");
-      system.rGridToBasis("out/omega/conv/omega_rgrid_bcc",
-                          "out/omega/conv/omega_conv_bcc");
-      system.readWBasis("out/omega/conv/omega_conv_bcc");
+      system.basisToRGrid("in/diblock/bcc/omega.in",
+                          "out/diblock/bcc/omega.rgrid");
+      system.rGridToBasis("out/diblock/bcc/omega.rgrid",
+                          "out/diblock/bcc/omega.conv");
+      system.readWBasis("out/diblock/bcc/omega.conv");
 
       // Check symmetry of rgrid representation
       bool hasSymmetry
-       = system.checkRGridFieldSymmetry("out/omega/conv/omega_rgrid_bcc");
+       = system.checkRGridFieldSymmetry("out/diblock/bcc/omega.rgrid");
       TEST_ASSERT(hasSymmetry);
 
       // Compare result to original
@@ -279,11 +233,11 @@ public:
 
       // Read system parameter file
       std::ifstream in; 
-      openInputFile("in/domainOn/System3D", in);
+      openInputFile("in/diblock/bcc/param.flex", in);
       system.readParam(in);
       in.close();
 
-      system.readWBasis("contents/omega/domainOn/omega_bcc");
+      system.readWBasis("in/diblock/bcc/omega.in");
       bool hasSymmetry = system.fieldIo().hasSymmetry(system.wFieldRGrid(0));
       TEST_ASSERT(hasSymmetry);
 
@@ -304,48 +258,29 @@ public:
       system.fileMaster().setOutputPrefix(filePrefix());
 
       std::ifstream in;
-      openInputFile("in/domainOff/System1D", in); 
+      openInputFile("in/diblock/lam/param.rigid", in); 
+      std::cout<<"Read Parameters";
       system.readParam(in);
       in.close();
 
-      // std::ifstream command;
-      // openInputFile("in/domainOff/ReadOmega_lam", command);
-      // system.readCommands(command);
-      // command.close();
-
       // Read w fields
-      system.readWBasis("contents/omega/domainOff/omega_lam");
+      system.readWBasis("in/diblock/lam/omega.ref");
 
       int nMonomer = system.mixture().nMonomer();
-      DArray<RField<1> > wFields_check;
-      DArray<RField<1> > wFields;
-      wFields_check.allocate(nMonomer);
-      wFields.allocate(nMonomer);
       int ns = system.basis().nStar();
-      for (int i = 0; i < nMonomer; ++i) {
-          wFields_check[i].allocate(ns);
-      }    
-
-      for (int i = 0; i < nMonomer; ++i) {
-         for (int j = 0; j < ns; ++j) {
-            wFields_check[i][j] = system.wFields() [i] [j]; 
-         }    
-      }    
-
-      // std::ifstream command_2;
-      // openInputFile("in/domainOff/Iterate1d", command_2);
-      // system.readCommands(command_2);
-      // command_2.close();
+      DArray< DArray<double> > wFields_check;
+      wFields_check = system.wFields();
 
       // Read w-fields, iterate and output solution
-      system.readWBasis("contents/omega/domainOff/omega_lam");
+      system.readWBasis("in/diblock/lam/omega.in");
       system.iterate();
-      system.writeWBasis("out/omega/domainOff/omega_lam");
+      system.writeWBasis("out/diblock/lam/omega.rigid");
+      system.writeCBasis("out/diblock/lam/rho.rigid");
 
       bool diff = true;
-      for (int j = 0; j < ns; ++j) {
+      for (int j = 1; j < ns; ++j) {
          for (int i = 0; i < nMonomer; ++i) {
-            if ((std::abs(wFields_check[i][j] - system.wFields()[i][j]) >= 5.07058e-08)){
+            if ((std::abs(wFields_check[i][j] - system.wFields()[i][j]) >= 1e-10)){
                 // The above is the minimum error in the omega field.
                 // Occurs for the first star                 
                 diff = false;
@@ -362,9 +297,7 @@ public:
          }    
       }    
       bool stress = false;
-      if (std::abs(system.mixture().stress(0) - 0.006583929) < 1.0E-8) {
-         //0.006583929 is the stress calculated 
-         //for this omega field for no stress relaxation using Fortran
+      if (std::abs(system.mixture().stress(0)) < 1.0E-8) {
          stress = true;
       }
 
@@ -376,53 +309,34 @@ public:
    void testIterate1D_lam_flex()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/testIterate1D_lam_.log"); 
+      openLogFile("out/testIterate1D_lam_flex.log"); 
  
       System<1> system;
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
 
       std::ifstream in; 
-      openInputFile("in/domainOn/System1D", in);
+      openInputFile("in/diblock/lam/param.flex", in);
       system.readParam(in);
       in.close();
 
-      // std::ifstream command;
-      // openInputFile("in/domainOn/ReadOmega_lam", command);
-      // system.readCommands(command);
-      // command.close();
-      system.readWBasis("contents/omega/domainOn/omega_lam");
+      system.readWBasis("in/diblock/lam/omega.ref");
  
       int nMonomer = system.mixture().nMonomer();
-      DArray<RField<1> > wFields_check;
-      DArray<RField<1> > wFields;
-      wFields_check.allocate(nMonomer);
-      wFields.allocate(nMonomer);
       int ns = system.basis().nStar();
-      for (int i = 0; i < nMonomer; ++i) {
-          wFields_check[i].allocate(ns);
-      }   
-
-      for (int i = 0; i < nMonomer; ++i) {
-         for (int j = 0; j < ns; ++j) {    
-            wFields_check[i][j] = system.wFields() [i] [j];
-         }   
-      }   
-
-      // std::ifstream command_2;
-      // openInputFile("in/domainOn/Iterate1d", command_2);
-      // system.readCommands(command_2);
-      // command_2.close();
+      DArray< DArray<double> > wFields_check;
+      wFields_check = system.wFields();
 
       // Read input w-fields, iterate and output solution
-      system.readWBasis("contents/omega/domainOn/omega_lam");
+      system.readWBasis("in/diblock/lam/omega.in");
       system.iterate();
-      system.writeWBasis("out/omega/domainOn/omega_lam");
+      system.writeWBasis("out/diblock/lam/omega.flex");
+      system.writeCBasis("out/diblock/lam/rho.flex");
 
       bool diff = true;
-      for (int j = 0; j < ns; ++j) {
+      for (int j = 1; j < ns; ++j) {
          for (int i = 0; i < nMonomer; ++i) {
-           if ((std::abs(wFields_check[i][j] - system.wFields()[i][j]) > 1.0E-8)) {
+           if ((std::abs(wFields_check[i][j] - system.wFields()[i][j]) > 1.0E-10)) {
                diff = false;
                std::cout <<"\n This is error for break:"<< 
                   (std::abs(wFields_check[i][j] - system.wFields()[i][j])) <<std::endl;
@@ -449,50 +363,30 @@ public:
       system.fileMaster().setOutputPrefix(filePrefix());
 
       std::ifstream in;
-      openInputFile("in/domainOff/System2D", in); 
+      openInputFile("in/diblock/hex/param.rigid", in); 
       system.readParam(in);
       in.close();
 
-      //std::ifstream command;
-      // openInputFile("in/domainOff/ReadOmega_hex", command);
-      // system.readCommands(command);
-      // command.close();
-
       // Read reference solution
-      system.readWBasis("contents/omega/domainOff/omega_hex");
+      system.readWBasis("in/diblock/hex/omega.ref");
 
       int nMonomer = system.mixture().nMonomer();
-      DArray<RField<2> > wFields_check;
-      DArray<RField<2> > wFields;
-      wFields_check.allocate(nMonomer);
-      wFields.allocate(nMonomer);
       int ns = system.basis().nStar();
-      for (int i = 0; i < nMonomer; ++i) {
-          wFields_check[i].allocate(ns);
-      }    
-
-      for (int i = 0; i < nMonomer; ++i) {
-         for (int j = 0; j < ns; ++j) {
-            wFields_check[i][j] = system.wFields() [i] [j]; 
-         }    
-      }    
-
-      // std::ifstream command_2;
-      // openInputFile("in/domainOff/Iterate2d", command_2);
-      // system.readCommands(command_2);
-      // command_2.close();
+      DArray< DArray<double> > wFields_check;
+      wFields_check = system.wFields();
 
       // Read initial guess, iterate, output solution
-      system.readWBasis("contents/omega/domainOff/omega_hex");
+      system.readWBasis("in/diblock/hex/omega.in");
       system.iterate();
-      system.writeWBasis("out/omega/domainOff/omega_hex");
+      system.writeWBasis("out/diblock/hex/omega.rigid");
+      system.writeCBasis("out/diblock/hex/rho.rigid");
 
       // Compare current solution to reference solution
       bool diff = true;
-      for (int j = 0; j < ns; ++j) {
+      for (int j = 1; j < ns; ++j) {
          for (int i = 0; i < nMonomer; ++i) {
            //if ((std::abs(wFields_check[i][j] - system.wFields()[i][j]) >= 2.60828e-07)) {
-           if ((std::abs(wFields_check[i][j] - system.wFields()[i][j]) >= 5.0e-07)) {
+           if ((std::abs(wFields_check[i][j] - system.wFields()[i][j]) >= 3.0E-7)) {
                // The above is the minimum error in the omega field.
                // Occurs for the first star            
                diff = false;
@@ -509,9 +403,7 @@ public:
          }    
       }    
       bool stress = false;
-      if (std::abs(system.mixture().stress(0) - 0.010633960) < 1.0E-8) {
-         // 0.010633960 is the stress calculated 
-         // for this omega field for no stress relaxation using Fortran
+      if (std::abs(system.mixture().stress(0)) < 1.0E-8) {
          stress = true;
       }
 
@@ -530,54 +422,35 @@ public:
 
       // Read parameter file
       std::ifstream in;
-      openInputFile("in/domainOn/System2D", in);
+      openInputFile("in/diblock/hex/param.flex", in);
       system.readParam(in);
       in.close();
 
-      // std::ifstream command;
-      // openInputFile("in/domainOn/ReadOmega_hex", command);
-      // system.readCommands(command);
-      // command.close();
-
       // Read reference solution (produced by Fortran code)
-      system.readWBasis("contents/omega/domainOn/omega_hex");
+      system.readWBasis("in/diblock/hex/omega.ref");
 
       // Save reference solution to wFields_check array
       int nMonomer = system.mixture().nMonomer();
-      DArray<RField<2> > wFields_check;
-      DArray<RField<2> > wFields;
-      wFields_check.allocate(nMonomer);
-      wFields.allocate(nMonomer);
       int ns = system.basis().nStar();
-      for (int i = 0; i < nMonomer; ++i) {
-          wFields_check[i].allocate(ns);
-      }
+      DArray< DArray<double> > wFields_check;
+      wFields_check = system.wFields();
 
-      for (int i = 0; i < nMonomer; ++i) {
-         for (int j = 0; j < ns; ++j) {
-            wFields_check[i][j] = system.wFields() [i] [j];
-         }
-      }
-
-      // std::ifstream command_2;
-      // openInputFile("in/domainOn/Iterate2d", command_2);
-      // system.readCommands(command_2);
-      // command_2.close();
-      system.readWBasis("contents/omega/domainOn/omega_hex");
+      system.readWBasis("in/diblock/hex/omega.in");
       system.iterate();
-      system.writeWBasis("out/omega/domainOn/omega_hex");
+      system.writeWBasis("out/diblock/hex/omega.flex");
+      system.writeCBasis("out/diblock/hex/rho.flex");
 
       bool diff = true;
-      for (int j = 0; j < ns; ++j) {
+      for (int j = 1; j < ns; ++j) {
          for (int i = 0; i < nMonomer; ++i) {
             // if ((std::abs(wFields_check[i][j] - system.wFields()[i][j]) >= 2.58007e-07)) {
-            if ((std::abs(wFields_check[i][j] - system.wFields()[i][j]) >= 5.0e-07)) {
+            if ((std::abs(wFields_check[i][j] - system.wFields()[i][j]) >= 3.0e-7)) {
                // The above is the maximum error in the omega field.
                // Occurs for the first star
                diff = false;
                std::cout <<"\n This is error for break:"<< 
                   (std::abs(wFields_check[i][j] - system.wFields()[i][j])) <<std::endl;
-               std::cout <<"ns = "<< j << std::endl;
+               std::cout <<"star index = "<< j << std::endl;
                break;
             } else {
                diff = true;
@@ -600,42 +473,24 @@ public:
       system.fileMaster().setOutputPrefix(filePrefix());
 
       std::ifstream in;
-      openInputFile("in/domainOff/System3D", in); 
+      openInputFile("in/diblock/bcc/param.rigid", in); 
       system.readParam(in);
       in.close();
 
-      // std::ifstream command;
-      // openInputFile("in/domainOff/ReadOmega_bcc", command);
-      // system.readCommands(command);
-      // command.close();
-      system.readWBasis("contents/omega/domainOff/omega_bcc");
+      system.readWBasis("in/diblock/bcc/omega.ref");
 
       int nMonomer = system.mixture().nMonomer();
-      DArray<RField<3> > wFields_check;
-      DArray<RField<3> > wFields;
-      wFields_check.allocate(nMonomer);
-      wFields.allocate(nMonomer);
       int ns = system.basis().nStar();
-      for (int i = 0; i < nMonomer; ++i) {
-          wFields_check[i].allocate(ns);
-      }    
+      DArray< DArray<double> > wFields_check;
+      wFields_check = system.wFields();
 
-      for (int i = 0; i < nMonomer; ++i) {
-         for (int j = 0; j < ns; ++j) {
-            wFields_check[i][j] = system.wFields() [i] [j]; 
-         }    
-      }    
-
-      // std::ifstream command_2;
-      // openInputFile("in/domainOff/Iterate3d", command_2);
-      // system.readCommands(command_2);
-      // command_2.close();
-      system.readWBasis("contents/omega/domainOff/omega_bcc");
+      system.readWBasis("in/diblock/bcc/omega.in");
       system.iterate();
-      system.writeWBasis("out/omega/domainOff/omega_bcc");
+      system.writeWBasis("out/diblock/bcc/omega.rigid");
+      system.writeCBasis("out/diblock/bcc/rho.rigid");
 
       bool diff = true;
-      for (int j = 0; j < ns; ++j) {
+      for (int j = 1; j < ns; ++j) {
          for (int i = 0; i < nMonomer; ++i) {
            //if ((std::abs(wFields_check[i][j] - system.wFields()[i][j]) >= 1.02291e-07)) {
            if ((std::abs(wFields_check[i][j] - system.wFields()[i][j]) >= 5.0e-07)) {
@@ -644,7 +499,7 @@ public:
                diff = false;
                std::cout <<"\n This is error for break:"<< 
                   (std::abs(wFields_check[i][j] - system.wFields()[i][j])) <<std::endl;
-               std::cout <<"ns = "<< j << std::endl;
+               std::cout <<"star index = "<< j << std::endl;
                break;
             }    
             else 
@@ -655,9 +510,7 @@ public:
          }
       }
       bool stress = false;
-      if (std::abs(system.mixture().stress(0) - 0.005242863) < 1.0E-8) {
-         //0.005242863 is the stress calculated for this omega field 
-         //for no stress relaxation using Fortran
+      if (std::abs(system.mixture().stress(0)) < 1.0E-7) {
          stress = true;
       }
 
@@ -675,42 +528,24 @@ public:
       system.fileMaster().setOutputPrefix(filePrefix());
 
       std::ifstream in; 
-      openInputFile("in/domainOn/System3D", in);
+      openInputFile("in/diblock/bcc/param.flex", in);
       system.readParam(in);
       in.close();
 
-      // std::ifstream command;
-      // openInputFile("in/domainOn/ReadOmega_bcc", command);
-      // system.readCommands(command);
-      // command.close();
-      system.readWBasis("contents/omega/domainOn/omega_bcc");
+      system.readWBasis("in/diblock/bcc/omega.ref");
 
       int nMonomer = system.mixture().nMonomer();
-      DArray<RField<3> > wFields_check;
-      DArray<RField<3> > wFields;
-      wFields_check.allocate(nMonomer);
-      wFields.allocate(nMonomer);
       int ns = system.basis().nStar();
-      for (int i = 0; i < nMonomer; ++i) {
-          wFields_check[i].allocate(ns);
-      }   
+      DArray< DArray<double> > wFields_check;
+      wFields_check = system.wFields();
 
-      for (int i = 0; i < nMonomer; ++i) {
-         for (int j = 0; j < ns; ++j) {
-            wFields_check[i][j] = system.wFields() [i] [j];
-         }   
-      }   
-
-      // std::ifstream command_2;
-      // openInputFile("in/domainOn/Iterate3d", command_2);
-      // system.readCommands(command_2);
-      // command_2.close();
-      system.readWBasis("contents/omega/domainOn/omega_bcc");
+      system.readWBasis("in/diblock/bcc/omega.in");
       system.iterate();
-      system.writeWBasis("out/omega/domainOn/omega_bcc");
+      system.writeWBasis("out/diblock/bcc/omega.flex");
+      system.writeCBasis("out/diblock/bcc/rho.flex");
 
       bool diff = true;
-      for (int j = 0; j < ns; ++j) {
+      for (int j = 1; j < ns; ++j) {
          for (int i = 0; i < nMonomer; ++i) {
            //if ((std::abs(wFields_check[i][j] - system.wFields()[i][j]) >=  1.09288e-07)) { 
            if ((std::abs(wFields_check[i][j] - system.wFields()[i][j]) >=  5.0e-07)) { 
@@ -719,7 +554,7 @@ public:
                diff = false;
                std::cout <<"\n This is error for break:"<< 
                   (std::abs(wFields_check[i][j] - system.wFields()[i][j])) <<std::endl;
-               std::cout <<"ns = "<< j << std::endl;
+               std::cout <<"star index = "<< j << std::endl;
                break;
             }
             else
