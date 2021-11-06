@@ -23,7 +23,7 @@ clean:
 	rm -f $(BLD_DIR)/$(TEST) $(BLD_DIR)/$(TEST).d
 	rm -f log count 
 	rm -f out/stars_hex out/*.log
-	rm -f out/omega/*/*
+	rm -f out/diblock/*/*
 
 -include $(pspc_tests_system_OBJS:.o=.d)
 -include $(pspc_tests_system_OBJS:.o=.d)

@@ -23,19 +23,18 @@ The following system unit test have been written:
       used in some phases. This is because for some phases 1.0E-08 accuracy was not 
       achieved. This aspect has been highlighted in the code wherever required. 
       In the same unit test the value of stress calculated is also checked with fortran
-      code. An accuracy of 1.0E-08 is set for all three phases and is achieved for
-      the three phases.
+      code. The initial guess unit cell dimensions are set as the unit cell dimensions 
+      obtained for the solutions converged with domain relaxation. So the final stress 
+      for this tests should be 0. For lam and hex, the final stress is less than 1.0E-08.
+      For bcc, this condition is final stress is instead set to be less than 1.0E-07.
 
-#Files
 
-The contents folder also has these folders. 
+#Files 
 
-contents/omega/domainOn  : This folder has the respective omega files which are the 
-                           converged solution generated from the fortran code.
-contents/omega/domainOff : This folder has the respective omega files which are the 
-                           converged solution generated from the fortran code.
-                           Domain relaxation was switched off to generate these files.
-contents/param/domainOn  : This folder has the respective parameter files which were 
-                           used to generate a relaxed converged solution.
-contents/param/domainOff  : This folder has the respective parameter files which were 
-                           used to generate a non-relaxed converged solution.  
+omega.ref  : Respective omega files which are the converged solution generated from the 
+             fortran code.
+omega.in : Respective omega files used as an initial guess for the tests. These are the 
+           converged solutions at \chi N = 40.9999, \chi N = 19 and \chi N = 14 for bcc, 
+           hex and lam respectively.
+param.flex : Input parameter file for tests with domain relaxation on.
+param.rigid : Input parameter file for tests with domain relaxation off. 
