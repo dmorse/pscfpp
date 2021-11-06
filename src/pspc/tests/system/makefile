@@ -22,7 +22,7 @@ run: $(pspc_tests_system_OBJS) $(BLD_DIR)/$(TEST)
 clean-outputs:
 	rm -f log count 
 	rm -f out/stars_hex out/*.log
-	rm -f out/omega/*/*
+	rm -f out/diblock/*/*
 
 clean:
 	rm -f $(pspc_tests_system_OBJS) $(pspc_tests_system_OBJS:.o=.d)
