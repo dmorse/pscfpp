@@ -24,6 +24,10 @@ veryclean:
 	-rm -f *.o */*.o
 	-rm -f *.d */*.d
 	-rm -f lib*.a
+ifeq ($(BLD_DIR),$(SRC_DIR))
+	-rm -f paths.h
+endif
+
 
 #-----------------------------------------------------------------------
 # Include dependency files

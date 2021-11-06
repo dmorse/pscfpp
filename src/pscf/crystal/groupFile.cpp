@@ -6,12 +6,14 @@
 */
 
 #include "groupFile.h"
+#include <pscf/paths.h>
 #include <util/global.h>
 
 // Macros to generated quoted path to data directory, DAT_DIR
 #define XSTR(s) STR(s)
 #define STR(s) # s
-#define DAT_DIR_STRING XSTR(DAT_DIR)
+#define DAT_DIR_STRING XSTR(PSCF_DATA_DIR)
+//#define DAT_DIR_STRING XSTR(DAT_DIR)
 
 namespace Pscf { 
 
@@ -25,7 +27,7 @@ namespace Pscf {
    std::string makeGroupFileName(int D, std::string groupName)
    {
       std::string filename = DAT_DIR_STRING ;
-      filename += "/groups/";
+      filename += "groups/";
       if (D==1) {
          filename += "1/";
       } else

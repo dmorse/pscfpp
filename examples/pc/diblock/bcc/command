@@ -1,0 +1,9 @@
+OUTPUT_STARS     out/stars
+OUTPUT_WAVES     out/waves
+READ_W_BASIS     in/w.bf
+ITERATE          
+WRITE_W_BASIS    out/w.bf
+WRITE_C_BASIS    out/c.bf
+BASIS_TO_RGRID   out/w.bf  out/w.rf
+FINISH
+

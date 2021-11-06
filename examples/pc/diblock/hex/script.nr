@@ -62,19 +62,19 @@ output_filename
 
 ITERATE
 input_filename
-           'in/omega'
+            'in/w.bf'
 output_prefix
                'out/'
 max_itr
-             12
+            100
 error_max
-  1.0000000E-08
+  1.0000000E-10
 domain
-              F
+              T
 itr_algo
-           'AM'
-N_hist
-            30
+           'NR'
+N_cut
+            61
 
 FINISH
 

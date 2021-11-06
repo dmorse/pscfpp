@@ -16,7 +16,7 @@ namespace Pspc {
 
    template <int D>
    Solvent<D>::Solvent()
-   {}
+   {  setClassName("Solvent"); }
 
    template <int D>
    Solvent<D>::~Solvent()
