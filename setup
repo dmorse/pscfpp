@@ -85,6 +85,9 @@ cp make/config/fd1d_config src/fd1d/config.mk
 cp make/config/pspc_config src/pspc/config.mk
 cp make/config/pspg_config src/pspg/config.mk
 
+# Set directory paths in paths.h, write modified file to src/pscf
+sed -e "s|PWD|$PWD|" make/config/paths.h > src/pscf/paths.h
+
 #========================================================================
 # Install files in the bld/ directory for out-of-source builds
 
