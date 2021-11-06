@@ -47,7 +47,7 @@ crystal_system
 N_cell_param
                    1
 cell_param
-    1.3517874639E+01
+   1.62132470000E+01
 
 DISCRETIZATION
 ngrid
@@ -61,7 +61,7 @@ group_name
 
 ITERATE
 input_filename
-          'in.omega'
+          'ref/w.bf'
 output_prefix
               'out/'
 max_itr
@@ -79,6 +79,6 @@ FIELD_TO_RGRID
 input_filename
            'out/rho'
 output_filename
-       'out/rho_rgrid'
+         'out/rho.bf'
 
 FINISH
