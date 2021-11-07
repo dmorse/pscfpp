@@ -167,7 +167,7 @@ namespace Pspc
       *
       * The array capacity is equal to the number of monomer types.
       */
-      DArray<DArray <double> >& wFields();
+      DArray< DArray<double> >& wFields();
 
       /**
       * Get chemical potential field for a specific monomer type.
@@ -213,7 +213,7 @@ namespace Pspc
       *
       * The array capacity is equal to the number of monomer types.
       */
-      DArray<DArray <double> >& cFields();
+      DArray< DArray<double> >& cFields();
 
       /**
       * Get concentration field for one monomer type expanded in a basis.
@@ -596,7 +596,7 @@ namespace Pspc
       *
       * Indexed by monomer typeId, size = nMonomer.
       */
-      DArray<DArray <double> > wFields_;
+      DArray< DArray<double> > wFields_;
 
       /**
       * Array of chemical potential fields for monomer types.
@@ -615,7 +615,7 @@ namespace Pspc
       *
       * Indexed by monomer typeId, size = nMonomer.
       */
-      DArray<DArray <double> > cFields_;
+      DArray< DArray<double> > cFields_;
 
       /**
       * Array of concentration fields on real space grid.
@@ -630,6 +630,27 @@ namespace Pspc
       * Indexed by monomer typeId, size = nMonomer.
       */
       DArray<RFieldDft<D> > cFieldsKGrid_;
+
+      /**
+      * Work array of field coefficients for all monomer types.
+      *
+      * Indexed by monomer typeId, size = nMonomer.
+      */
+      DArray< DArray<double> > tmpFields_;
+
+      /**
+      * Work array of fields on real space grid.
+      *
+      * Indexed by monomer typeId, size = nMonomer.
+      */
+      DArray<CField> tmpFieldsRGrid_;
+
+      /**
+      * Work array of fields on Fourier grid (k-grid).
+      *
+      * Indexed by monomer typeId, size = nMonomer.
+      */
+      DArray<RFieldDft<D> > tmpFieldsKGrid_;
 
       /**
       * Work array (size = # of grid points).
@@ -795,7 +816,7 @@ namespace Pspc
 
    template <int D>
    inline
-   DArray<DArray <double> >& System<D>::wFields()
+   DArray< DArray<double> >& System<D>::wFields()
    {  return wFields_; }
 
    template <int D>
@@ -827,7 +848,7 @@ namespace Pspc
 
    template <int D>
    inline
-   DArray<DArray <double> >& System<D>::cFields()
+   DArray< DArray<double> >& System<D>::cFields()
    { return cFields_; }
 
    template <int D>

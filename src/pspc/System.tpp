@@ -266,6 +266,10 @@ namespace Pspc
       cFieldsRGrid_.allocate(nMonomer);
       cFieldsKGrid_.allocate(nMonomer);
       
+      tmpFields_.allocate(nMonomer);
+      tmpFieldsRGrid_.allocate(nMonomer);
+      tmpFieldsKGrid_.allocate(nMonomer);
+
       for (int i = 0; i < nMonomer; ++i) {
          wField(i).allocate(basis().nStar());
          wFieldRGrid(i).allocate(mesh().dimensions());
@@ -274,6 +278,10 @@ namespace Pspc
          cField(i).allocate(basis().nStar());
          cFieldRGrid(i).allocate(mesh().dimensions());
          cFieldKGrid(i).allocate(mesh().dimensions());
+
+         tmpFields_[i].allocate(basis().nStar());
+         tmpFieldsRGrid_[i].allocate(mesh().dimensions());
+         tmpFieldsKGrid_[i].allocate(mesh().dimensions());
       }
       isAllocated_ = true;
    }
@@ -739,6 +747,8 @@ namespace Pspc
       fieldIo().writeFieldsRGrid(filename, cFieldsRGrid(), unitCell());
    }
 
+   // Field conversion command functions
+
    /*
    * Convert fields from symmetry-adpated basis to real-space grid format.
    */
@@ -746,15 +756,11 @@ namespace Pspc
    void System<D>::basisToRGrid(const std::string & inFileName,
                                 const std::string & outFileName)
    {
-      // Note: This and other conversion functions use the c-field
-      // arrays for storage, and thus corrupt previously stored values.
-      hasCFields_ = false;
-
-      UnitCell<D> unitCellTmp;
-      fieldIo().readFieldsBasis(inFileName, cFields(), unitCellTmp);
-      fieldIo().convertBasisToRGrid(cFields(), cFieldsRGrid());
-      fieldIo().writeFieldsRGrid(outFileName, cFieldsRGrid(), 
-                                 unitCellTmp);
+      UnitCell<D> tmpUnitCell;
+      fieldIo().readFieldsBasis(inFileName, tmpFields_, tmpUnitCell);
+      fieldIo().convertBasisToRGrid(tmpFields_, tmpFieldsRGrid_);
+      fieldIo().writeFieldsRGrid(outFileName, tmpFieldsRGrid_, 
+                                 tmpUnitCell);
    }
 
    /*
@@ -764,31 +770,26 @@ namespace Pspc
    void System<D>::rGridToBasis(const std::string & inFileName,
                                 const std::string & outFileName)
    {
-      // This conversion corrupts all three c-field arrays
-      hasCFields_ = false;
-
-      UnitCell<D> unitCellTmp;
-      fieldIo().readFieldsRGrid(inFileName, cFieldsRGrid(), unitCellTmp);
-      fieldIo().convertRGridToBasis(cFieldsRGrid(), cFields());
-      fieldIo().writeFieldsBasis(outFileName, cFields(), unitCellTmp);
+      UnitCell<D> tmpUnitCell;
+      fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_, tmpUnitCell);
+      fieldIo().convertRGridToBasis(tmpFieldsRGrid_, tmpFields_);
+      fieldIo().writeFieldsBasis(outFileName, tmpFields_, tmpUnitCell);
    }
 
    /*
-   * Convert fields from Fourier (k-grid) to real-space grid (r-grid) format.
+   * Convert fields from Fourier (k-grid) to real-space (r-grid) format.
    */
    template <int D>
    void System<D>::kGridToRGrid(const std::string & inFileName,
                                 const std::string& outFileName)
    {
-      // This conversion corrupts cFieldsKGrid and cFieldsRGrid
-      hasCFields_ = false;
-
-      UnitCell<D> unitCellTmp;
-      fieldIo().readFieldsKGrid(inFileName, cFieldsKGrid(), unitCellTmp);
+      UnitCell<D> tmpUnitCell;
+      fieldIo().readFieldsKGrid(inFileName, tmpFieldsKGrid_, tmpUnitCell);
       for (int i = 0; i < mixture().nMonomer(); ++i) {
-         fft().inverseTransform(cFieldKGrid(i), cFieldRGrid(i));
+         fft().inverseTransform(tmpFieldsKGrid_[i], tmpFieldsRGrid_[i]);
       }
-      fieldIo().writeFieldsRGrid(outFileName, cFieldsRGrid(), unitCellTmp);
+      fieldIo().writeFieldsRGrid(outFileName, tmpFieldsRGrid_, 
+                                 tmpUnitCell);
    }
 
    /*
@@ -798,16 +799,14 @@ namespace Pspc
    void System<D>::rGridToKGrid(const std::string & inFileName,
                                 const std::string & outFileName)
    {
-      // This conversion corrupts cFieldsRGrid and cFieldsKGrid
-      hasCFields_ = false;
-
-      UnitCell<D> unitCellTmp;
-      fieldIo().readFieldsRGrid(inFileName, cFieldsRGrid(), unitCellTmp);
+      UnitCell<D> tmpUnitCell;
+      fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_, 
+                                tmpUnitCell);
       for (int i = 0; i < mixture().nMonomer(); ++i) {
-         fft().forwardTransform(cFieldRGrid(i), cFieldKGrid(i));
+         fft().forwardTransform(tmpFieldsRGrid_[i], tmpFieldsKGrid_[i]);
       }
-      fieldIo().writeFieldsKGrid(outFileName, cFieldsKGrid(), 
-                                 unitCellTmp);
+      fieldIo().writeFieldsKGrid(outFileName, tmpFieldsKGrid_, 
+                                 tmpUnitCell);
    }
 
    /*
@@ -816,13 +815,10 @@ namespace Pspc
    template <int D>
    bool System<D>::checkRGridFieldSymmetry(const std::string & inFileName)
    {
-      // This conversion corrupts all three c-field arrays
-      hasCFields_ = false;
-
-      UnitCell<D> unitCellTmp;
-      fieldIo().readFieldsRGrid(inFileName, cFieldsRGrid(), unitCellTmp);
+      UnitCell<D> tmpUnitCell;
+      fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_, tmpUnitCell);
       for (int i = 0; i < mixture().nMonomer(); ++i) {
-         bool symmetric = fieldIo().hasSymmetry(cFieldRGrid(i));
+         bool symmetric = fieldIo().hasSymmetry(tmpFieldsRGrid_[i]);
          if (!symmetric) {
             return false;
          }
@@ -842,6 +838,9 @@ namespace Pspc
       hasCFields_ = false;
       hasWFields_ = false;
 
+      fieldIo().readFieldsBasis(inFileName, tmpFields_, unitCell());
+
+      #if 0
       // Open input file
       std::ifstream inFile;
       fileMaster().openInputFile(inFileName, inFile);
@@ -857,17 +856,18 @@ namespace Pspc
       for (int i = 0; i < nStar; ++i) {
          inFile >> idum;
          for (int j = 0; j < nM; ++j) {
-            inFile >> cField(j)[i];
+            inFile >> tmpFields_[j][i];
          }
       }
       inFile.close();
+      #endif
 
       // Compute w fields from c fields
       for (int i = 0; i < basis().nStar(); ++i) {
          for (int j = 0; j < mixture().nMonomer(); ++j) {
             wField(j)[i] = 0;
             for (int k = 0; k < mixture().nMonomer(); ++k) {
-               wField(j)[i] += interaction().chi(j,k) * cField(k)[i];
+               wField(j)[i] += interaction().chi(j,k) * tmpFields_[k][i];
             }
          }
       }
