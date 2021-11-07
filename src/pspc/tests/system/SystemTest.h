@@ -5,9 +5,8 @@
 #include <test/UnitTestRunner.h>
 
 #include <pspc/System.h>
-#include <pscf/mesh/MeshIterator.h>
 
-//#include <pspc/iterator/AmIterator.h>
+//#include <pscf/mesh/MeshIterator.h>
 //#include <util/format/Dbl.h>
 
 #include <fstream>
@@ -34,8 +33,8 @@ public:
    }
 
    void openLogFile(char const * filename)
-   {  
-      openOutputFile(filename, logFile_); 
+   {
+      openOutputFile(filename, logFile_);
       Log::setFile(logFile_);
    }
 
@@ -57,17 +56,17 @@ public:
       system.readParam(in);
       in.close();
    }
- 
-   void testConversion1D_lam() 
-   {   
+
+   void testConversion1D_lam()
+   {
       printMethod(TEST_FUNC);
       System<1> system;
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
 
-      openLogFile("out/testConversion1D_lam.log"); 
+      openLogFile("out/testConversion1D_lam.log");
 
-      std::ifstream in; 
+      std::ifstream in;
       openInputFile("in/diblock/lam/param.flex", in);
       system.readParam(in);
       in.close();
@@ -79,19 +78,19 @@ public:
       int nMonomer = system.mixture().nMonomer();
       int nStar = system.basis().nStar();
       DArray< DArray<double> > wFields_check;
-      wFields_check = system.wFields();   
+      wFields_check = system.wFields();
 
       // Round trip conversion basis -> rgrid -> basis, read result
       system.basisToRGrid("in/diblock/lam/omega.in",
-                          "out/diblock/lam/omega.rgrid");
-      system.rGridToBasis("out/diblock/lam/omega.rgrid",
-                          "out/diblock/lam/omega.conv");
-      system.readWBasis("out/diblock/lam/omega.conv");
+                          "out/testConversion1D_lam_w.rf");
+      system.rGridToBasis("out/testConversion1D_lam_w.rf",
+                          "out/testConversion1D_lam_w.bf");
+      system.readWBasis("out/testConversion1D_lam_w.bf");
 
       // Compare result to original
       double err;
       double max = 0.0;
-      std::cout << std::endl;   
+      // std::cout << std::endl;
       for (int j = 0; j < nStar; ++j) {
          for (int i = 0; i < nMonomer; ++i) {
             err = wFields_check[i][j] - system.wFields()[i][j];
@@ -102,23 +101,23 @@ public:
                max = err;
             }
          }
-         //std::cout << std::endl;   
+         //std::cout << std::endl;
       }
-      std::cout << "Max error = " << max << std::endl;  
-      TEST_ASSERT(max < 1.0E-8);
+      //std::cout << "Max error = " << max << std::endl;
+      TEST_ASSERT(max < 1.0E-10);
    }
 
-   void testConversion2D_hex() 
-   {   
+   void testConversion2D_hex()
+   {
       printMethod(TEST_FUNC);
       System<2> system;
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
 
-      openLogFile("out/testConversion2D_hex.log"); 
+      openLogFile("out/testConversion2D_hex.log");
 
       // Read parameter file
-      std::ifstream in; 
+      std::ifstream in;
       openInputFile("in/diblock/hex/param.flex", in);
       system.readParam(in);
       in.close();
@@ -126,7 +125,7 @@ public:
       // Read w fields
       system.readWBasis("in/diblock/hex/omega.in");
 
-      // Store components in wFields_check for later comparison 
+      // Store components in wFields_check for later comparison
       int nMonomer = system.mixture().nMonomer();
       int nStar = system.basis().nStar();
       DArray< DArray<double> > wFields_check;
@@ -134,55 +133,55 @@ public:
 
       // Round trip basis -> rgrid -> basis, read resulting wField
       system.basisToRGrid("in/diblock/hex/omega.in",
-                          "out/diblock/hex/omega.rgrid");
-      system.rGridToBasis("out/diblock/hex/omega.rgrid",
-                          "out/diblock/hex/omega.conv");
-      system.readWBasis("out/diblock/hex/omega.conv");
+                          "out/testConversion2D_hex_w.rf");
+      system.rGridToBasis("out/testConversion2D_hex_w.rf",
+                          "out/testConversion2D_hex_w.bf");
+      system.readWBasis("out/testConversion2D_hex_w.bf");
 
       // Check symmetry of rgrid representation
       bool hasSymmetry
-       = system.checkRGridFieldSymmetry("out/diblock/hex/omega.rgrid");
+       = system.checkRGridFieldSymmetry("out/testConversion2D_hex_w.rf");
       TEST_ASSERT(hasSymmetry);
 
       // Compare result to original
       double err;
       double max = 0.0;
-      std::cout << std::endl;   
+      // std::cout << std::endl;
       for (int j = 0; j < nStar; ++j) {
          for (int i = 0; i < nMonomer; ++i) {
             err = wFields_check[i][j] - system.wFields()[i][j];
             err = std::abs(err);
-            //std::cout << wFields_check[i][j] 
+            //std::cout << wFields_check[i][j]
             //          << "  " << system.wFields()[i][j];
             if (err > max) {
                max = err;
             }
          }
-         //std::cout << std::endl;   
-      }   
-      std::cout << "Max error = " << max << std::endl;  
-      TEST_ASSERT(max < 1.0E-9);
+         //std::cout << std::endl;
+      }
+      // std::cout << "Max error = " << max << std::endl;
+      TEST_ASSERT(max < 1.0E-10);
 
-   }  
+   }
 
-   void testConversion3D_bcc() 
-   {   
+   void testConversion3D_bcc()
+   {
       printMethod(TEST_FUNC);
       System<3> system;
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
 
-      openLogFile("out/testConversion3D_bcc.log"); 
+      openLogFile("out/testConversion3D_bcc.log");
 
       // Read parameter file
-      std::ifstream in; 
+      std::ifstream in;
       openInputFile("in/diblock/bcc/param.flex", in);
       system.readParam(in);
       in.close();
       // Read w fields in system.wFields
       system.readWBasis("in/diblock/bcc/omega.in");
-  
-      // Store components of field as input 
+
+      // Store components of field as input
       int nMonomer = system.mixture().nMonomer();
       int nStar = system.basis().nStar();
       DArray< DArray<double> > wFields_check;
@@ -190,20 +189,20 @@ public:
 
       // Complete round trip basis -> rgrid -> basis
       system.basisToRGrid("in/diblock/bcc/omega.in",
-                          "out/diblock/bcc/omega.rgrid");
-      system.rGridToBasis("out/diblock/bcc/omega.rgrid",
-                          "out/diblock/bcc/omega.conv");
-      system.readWBasis("out/diblock/bcc/omega.conv");
+                          "out/testConversion3D_bcc_w.rf");
+      system.rGridToBasis("out/testConversion3D_bcc_w.rf",
+                          "out/testConversion3D_bcc_w.bf");
+      system.readWBasis("out/testConversion3D_bcc_w.bf");
 
       // Check symmetry of rgrid representation
       bool hasSymmetry
-       = system.checkRGridFieldSymmetry("out/diblock/bcc/omega.rgrid");
+       = system.checkRGridFieldSymmetry("out/testConversion3D_bcc_w.rf");
       TEST_ASSERT(hasSymmetry);
 
       // Compare result to original
       double err;
       double max = 0.0;
-      std::cout << std::endl;   
+      // std::cout << std::endl;
       for (int j = 0; j < nStar; ++j) {
          //std::cout << j << "  ";
          for (int i = 0; i < nMonomer; ++i) {
@@ -215,24 +214,24 @@ public:
                max = err;
             }
          }
-         //std::cout << std::endl;   
+         //std::cout << std::endl;
       }
-      std::cout << "Max error = " << max << std::endl;  
-      TEST_ASSERT(max < 1.0E-8);
+      // std::cout << "Max error = " << max << std::endl;
+      TEST_ASSERT(max < 1.0E-10);
 
-   }   
+   }
 
-   void testCheckSymmetry3D_bcc() 
-   {   
+   void testCheckSymmetry3D_bcc()
+   {
       printMethod(TEST_FUNC);
       System<3> system;
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
 
-      openLogFile("out/testSymmetry3D_bcc.log"); 
+      openLogFile("out/testSymmetry3D_bcc.log");
 
       // Read system parameter file
-      std::ifstream in; 
+      std::ifstream in;
       openInputFile("in/diblock/bcc/param.flex", in);
       system.readParam(in);
       in.close();
@@ -251,15 +250,14 @@ public:
    void testIterate1D_lam_rigid()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/testIterate1D_lam_rigid.log"); 
+      openLogFile("out/testIterate1D_lam_rigid.log");
 
       System<1> system;
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
 
       std::ifstream in;
-      openInputFile("in/diblock/lam/param.rigid", in); 
-      std::cout<<"Read Parameters";
+      openInputFile("in/diblock/lam/param.rigid", in);
       system.readParam(in);
       in.close();
 
@@ -274,15 +272,15 @@ public:
       // Read w-fields, iterate and output solution
       system.readWBasis("in/diblock/lam/omega.in");
       system.iterate();
-      system.writeWBasis("out/diblock/lam/omega.rigid");
-      system.writeCBasis("out/diblock/lam/rho.rigid");
+      system.writeWBasis("out/testIterate1D_lam_rigid_w.bf");
+      system.writeCBasis("out/testIterate1D_lam_rigid_c.bf");
 
       bool diff = true;
       for (int j = 1; j < ns; ++j) {
          for (int i = 0; i < nMonomer; ++i) {
             if ((std::abs(wFields_check[i][j] - system.wFields()[i][j]) >= 1e-10)){
                 // The above is the minimum error in the omega field.
-                // Occurs for the first star                 
+                // Occurs for the first star
                 diff = false;
                 std::cout <<"\n This is error for break:"<<
                    (std::abs(wFields_check[i][j] - system.wFields()[i][j])) <<std::endl;
@@ -291,11 +289,11 @@ public:
             } else {
                 diff = true;
             }
-         }    
+         }
          if (diff == false) {
             break;
-         }    
-      }    
+         }
+      }
       bool stress = false;
       if (std::abs(system.mixture().stress(0)) < 1.0E-8) {
          stress = true;
@@ -309,19 +307,19 @@ public:
    void testIterate1D_lam_flex()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/testIterate1D_lam_flex.log"); 
- 
+      openLogFile("out/testIterate1D_lam_flex.log");
+
       System<1> system;
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
 
-      std::ifstream in; 
+      std::ifstream in;
       openInputFile("in/diblock/lam/param.flex", in);
       system.readParam(in);
       in.close();
 
       system.readWBasis("in/diblock/lam/omega.ref");
- 
+
       int nMonomer = system.mixture().nMonomer();
       int ns = system.basis().nStar();
       DArray< DArray<double> > wFields_check;
@@ -330,40 +328,40 @@ public:
       // Read input w-fields, iterate and output solution
       system.readWBasis("in/diblock/lam/omega.in");
       system.iterate();
-      system.writeWBasis("out/diblock/lam/omega.flex");
-      system.writeCBasis("out/diblock/lam/rho.flex");
+      system.writeWBasis("out/testIterate1D_lam_flex_w.bf");
+      system.writeCBasis("out/testIterate1D_lam_flex_c.bf");
 
       bool diff = true;
       for (int j = 1; j < ns; ++j) {
          for (int i = 0; i < nMonomer; ++i) {
            if ((std::abs(wFields_check[i][j] - system.wFields()[i][j]) > 1.0E-10)) {
                diff = false;
-               std::cout <<"\n This is error for break:"<< 
+               std::cout <<"\n This is error for break:"<<
                   (std::abs(wFields_check[i][j] - system.wFields()[i][j])) <<std::endl;
                std::cout <<"star index = "<< j << std::endl;
                break;
-            }   
+            }
             else
                diff = true;
-         }   
+         }
          if (diff==false) {
             break;
          }
-      }   
+      }
       TEST_ASSERT(diff);
    }
 
    void testIterate2D_hex_rigid()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/testIterate2D_hex_rigid.log"); 
+      openLogFile("out/testIterate2D_hex_rigid.log");
 
       System<2> system;
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
 
       std::ifstream in;
-      openInputFile("in/diblock/hex/param.rigid", in); 
+      openInputFile("in/diblock/hex/param.rigid", in);
       system.readParam(in);
       in.close();
 
@@ -378,8 +376,8 @@ public:
       // Read initial guess, iterate, output solution
       system.readWBasis("in/diblock/hex/omega.in");
       system.iterate();
-      system.writeWBasis("out/diblock/hex/omega.rigid");
-      system.writeCBasis("out/diblock/hex/rho.rigid");
+      system.writeWBasis("out/testIterate2D_hex_rigid_w.bf");
+      system.writeCBasis("out/testIterate2D_hex_rigid_c.bf");
 
       // Compare current solution to reference solution
       bool diff = true;
@@ -388,20 +386,20 @@ public:
            //if ((std::abs(wFields_check[i][j] - system.wFields()[i][j]) >= 2.60828e-07)) {
            if ((std::abs(wFields_check[i][j] - system.wFields()[i][j]) >= 3.0E-7)) {
                // The above is the minimum error in the omega field.
-               // Occurs for the first star            
+               // Occurs for the first star
                diff = false;
-               std::cout << "\n This is error for break:" << 
+               std::cout << "\n This is error for break:" <<
                   (std::abs(wFields_check[i][j] - system.wFields()[i][j])) <<std::endl;
                std::cout <<"star index = "<< j << std::endl;
                break;
-            }    
-            else 
+            }
+            else
                diff = true;
-         }    
+         }
          if (diff==false) {
             break;
-         }    
-      }    
+         }
+      }
       bool stress = false;
       if (std::abs(system.mixture().stress(0)) < 1.0E-8) {
          stress = true;
@@ -414,7 +412,7 @@ public:
    void testIterate2D_hex_flex()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/testIterate2D_hex_flex.log"); 
+      openLogFile("out/testIterate2D_hex_flex.log");
 
       System<2> system;
       system.fileMaster().setInputPrefix(filePrefix());
@@ -437,8 +435,8 @@ public:
 
       system.readWBasis("in/diblock/hex/omega.in");
       system.iterate();
-      system.writeWBasis("out/diblock/hex/omega.flex");
-      system.writeCBasis("out/diblock/hex/rho.flex");
+      system.writeWBasis("out/testIterate2D_hex_flex_w.bf");
+      system.writeCBasis("out/testIterate2D_hex_flex_c.bf");
 
       bool diff = true;
       for (int j = 1; j < ns; ++j) {
@@ -448,7 +446,7 @@ public:
                // The above is the maximum error in the omega field.
                // Occurs for the first star
                diff = false;
-               std::cout <<"\n This is error for break:"<< 
+               std::cout <<"\n This is error for break:"<<
                   (std::abs(wFields_check[i][j] - system.wFields()[i][j])) <<std::endl;
                std::cout <<"star index = "<< j << std::endl;
                break;
@@ -466,14 +464,14 @@ public:
    void testIterate3D_bcc_rigid()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/testIterate3D_bcc_rigid.log"); 
+      openLogFile("out/testIterate3D_bcc_rigid.log");
 
       System<3> system;
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
 
       std::ifstream in;
-      openInputFile("in/diblock/bcc/param.rigid", in); 
+      openInputFile("in/diblock/bcc/param.rigid", in);
       system.readParam(in);
       in.close();
 
@@ -486,8 +484,8 @@ public:
 
       system.readWBasis("in/diblock/bcc/omega.in");
       system.iterate();
-      system.writeWBasis("out/diblock/bcc/omega.rigid");
-      system.writeCBasis("out/diblock/bcc/rho.rigid");
+      system.writeWBasis("out/testIterate3D_bcc_rigid_w.bf");
+      system.writeCBasis("out/testIterate3D_bcc_rigid_c.bf");
 
       bool diff = true;
       for (int j = 1; j < ns; ++j) {
@@ -495,14 +493,14 @@ public:
            //if ((std::abs(wFields_check[i][j] - system.wFields()[i][j]) >= 1.02291e-07)) {
            if ((std::abs(wFields_check[i][j] - system.wFields()[i][j]) >= 5.0e-07)) {
                // The above is the maximum error in the omega field.
-               // Occurs for the second star.               
+               // Occurs for the second star.
                diff = false;
-               std::cout <<"\n This is error for break:"<< 
+               std::cout <<"\n This is error for break:"<<
                   (std::abs(wFields_check[i][j] - system.wFields()[i][j])) <<std::endl;
                std::cout <<"star index = "<< j << std::endl;
                break;
-            }    
-            else 
+            }
+            else
                diff = true;
          }
          if (diff==false) {
@@ -521,13 +519,13 @@ public:
    void testIterate3D_bcc_flex()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/testIterate3D_bcc_flex.log"); 
+      openLogFile("out/testIterate3D_bcc_flex.log");
 
       System<3> system;
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
 
-      std::ifstream in; 
+      std::ifstream in;
       openInputFile("in/diblock/bcc/param.flex", in);
       system.readParam(in);
       in.close();
@@ -541,18 +539,18 @@ public:
 
       system.readWBasis("in/diblock/bcc/omega.in");
       system.iterate();
-      system.writeWBasis("out/diblock/bcc/omega.flex");
-      system.writeCBasis("out/diblock/bcc/rho.flex");
+      system.writeWBasis("out/testIterate3D_bcc_flex_w.bf");
+      system.writeCBasis("out/testIterate3D_bcc_flex_c.bf");
 
       bool diff = true;
       for (int j = 1; j < ns; ++j) {
          for (int i = 0; i < nMonomer; ++i) {
-           //if ((std::abs(wFields_check[i][j] - system.wFields()[i][j]) >=  1.09288e-07)) { 
-           if ((std::abs(wFields_check[i][j] - system.wFields()[i][j]) >=  5.0e-07)) { 
+           //if ((std::abs(wFields_check[i][j] - system.wFields()[i][j]) >=  1.09288e-07)) {
+           if ((std::abs(wFields_check[i][j] - system.wFields()[i][j]) >=  5.0e-07)) {
                // The above is the maximum error in the omega field.
                // Occurs for the second star.
                diff = false;
-               std::cout <<"\n This is error for break:"<< 
+               std::cout <<"\n This is error for break:"<<
                   (std::abs(wFields_check[i][j] - system.wFields()[i][j])) <<std::endl;
                std::cout <<"star index = "<< j << std::endl;
                break;
