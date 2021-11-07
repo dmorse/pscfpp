@@ -76,8 +76,7 @@ namespace Pspc
    {  
       setClassName("System"); 
 
-      fieldIo_.associate(unitCell_, mesh_, fft_, groupName_,
-                         basis_, fileMaster_);
+      fieldIo_.associate(mesh_, fft_, groupName_, basis_, fileMaster_);
 
       interactionPtr_ = new ChiInteraction(); 
       iteratorPtr_ = new AmIterator<D>(this); 
@@ -641,7 +640,7 @@ namespace Pspc
    template <int D>
    void System<D>::readWBasis(const std::string & filename)
    {
-      fieldIo().readFieldsBasis(filename, wFields());
+      fieldIo().readFieldsBasis(filename, wFields(), unitCell());
       fieldIo().convertBasisToRGrid(wFields(), wFieldsRGrid());
       hasWFields_ = true;
       hasCFields_ = false;
@@ -653,7 +652,7 @@ namespace Pspc
    template <int D>
    void System<D>::readWRGrid(const std::string & filename)
    {
-      fieldIo().readFieldsRGrid(filename, wFieldsRGrid());
+      fieldIo().readFieldsRGrid(filename, wFieldsRGrid(), unitCell());
       fieldIo().convertRGridToBasis(wFieldsRGrid(), wFields());
       hasWFields_ = true;
       hasCFields_ = false;
@@ -685,7 +684,7 @@ namespace Pspc
    }
 
    /*
-   * Solve modified diffusion equation for current w-fields, without iteration.
+   * Solve MDE for current w-fields, without iteration.
    */
    template <int D>
    void System<D>::compute()
@@ -707,7 +706,7 @@ namespace Pspc
    void System<D>::writeWBasis(const std::string & filename)
    {
       UTIL_CHECK(hasWFields_);
-      fieldIo().writeFieldsBasis(filename, wFields());
+      fieldIo().writeFieldsBasis(filename, wFields(), unitCell());
    }
 
    /*
@@ -717,7 +716,7 @@ namespace Pspc
    void System<D>::writeWRGrid(const std::string & filename)
    {
       UTIL_CHECK(hasWFields_);
-      fieldIo().writeFieldsRGrid(filename, wFieldsRGrid());
+      fieldIo().writeFieldsRGrid(filename, wFieldsRGrid(), unitCell());
    }
 
    /*
@@ -727,7 +726,7 @@ namespace Pspc
    void System<D>::writeCBasis(const std::string & filename)
    {
       UTIL_CHECK(hasCFields_);
-      fieldIo().writeFieldsBasis(filename, cFields());
+      fieldIo().writeFieldsBasis(filename, cFields(), unitCell());
    }
 
    /*
@@ -737,7 +736,7 @@ namespace Pspc
    void System<D>::writeCRGrid(const std::string & filename)
    {
       UTIL_CHECK(hasCFields_);
-      fieldIo().writeFieldsRGrid(filename, cFieldsRGrid());
+      fieldIo().writeFieldsRGrid(filename, cFieldsRGrid(), unitCell());
    }
 
    /*
@@ -751,9 +750,11 @@ namespace Pspc
       // arrays for storage, and thus corrupt previously stored values.
       hasCFields_ = false;
 
-      fieldIo().readFieldsBasis(inFileName, cFields());
+      UnitCell<D> unitCellTmp;
+      fieldIo().readFieldsBasis(inFileName, cFields(), unitCellTmp);
       fieldIo().convertBasisToRGrid(cFields(), cFieldsRGrid());
-      fieldIo().writeFieldsRGrid(outFileName, cFieldsRGrid());
+      fieldIo().writeFieldsRGrid(outFileName, cFieldsRGrid(), 
+                                 unitCellTmp);
    }
 
    /*
@@ -766,9 +767,10 @@ namespace Pspc
       // This conversion corrupts all three c-field arrays
       hasCFields_ = false;
 
-      fieldIo().readFieldsRGrid(inFileName, cFieldsRGrid());
+      UnitCell<D> unitCellTmp;
+      fieldIo().readFieldsRGrid(inFileName, cFieldsRGrid(), unitCellTmp);
       fieldIo().convertRGridToBasis(cFieldsRGrid(), cFields());
-      fieldIo().writeFieldsBasis(outFileName, cFields());
+      fieldIo().writeFieldsBasis(outFileName, cFields(), unitCellTmp);
    }
 
    /*
@@ -781,11 +783,12 @@ namespace Pspc
       // This conversion corrupts cFieldsKGrid and cFieldsRGrid
       hasCFields_ = false;
 
-      fieldIo().readFieldsKGrid(inFileName, cFieldsKGrid());
+      UnitCell<D> unitCellTmp;
+      fieldIo().readFieldsKGrid(inFileName, cFieldsKGrid(), unitCellTmp);
       for (int i = 0; i < mixture().nMonomer(); ++i) {
          fft().inverseTransform(cFieldKGrid(i), cFieldRGrid(i));
       }
-      fieldIo().writeFieldsRGrid(outFileName, cFieldsRGrid());
+      fieldIo().writeFieldsRGrid(outFileName, cFieldsRGrid(), unitCellTmp);
    }
 
    /*
@@ -798,11 +801,13 @@ namespace Pspc
       // This conversion corrupts cFieldsRGrid and cFieldsKGrid
       hasCFields_ = false;
 
-      fieldIo().readFieldsRGrid(inFileName, cFieldsRGrid());
+      UnitCell<D> unitCellTmp;
+      fieldIo().readFieldsRGrid(inFileName, cFieldsRGrid(), unitCellTmp);
       for (int i = 0; i < mixture().nMonomer(); ++i) {
          fft().forwardTransform(cFieldRGrid(i), cFieldKGrid(i));
       }
-      fieldIo().writeFieldsKGrid(outFileName, cFieldsKGrid());
+      fieldIo().writeFieldsKGrid(outFileName, cFieldsKGrid(), 
+                                 unitCellTmp);
    }
 
    /*
@@ -814,8 +819,8 @@ namespace Pspc
       // This conversion corrupts all three c-field arrays
       hasCFields_ = false;
 
-      fieldIo().readFieldsRGrid(inFileName, cFieldsRGrid());
-
+      UnitCell<D> unitCellTmp;
+      fieldIo().readFieldsRGrid(inFileName, cFieldsRGrid(), unitCellTmp);
       for (int i = 0; i < mixture().nMonomer(); ++i) {
          bool symmetric = fieldIo().hasSymmetry(cFieldRGrid(i));
          if (!symmetric) {
@@ -873,7 +878,7 @@ namespace Pspc
       hasCFields_ = false;
 
       // Write w field in basis format
-      fieldIo().writeFieldsBasis(outFileName, wFields());
+      fieldIo().writeFieldsBasis(outFileName, wFields(), unitCell());
    }
 
    /*
@@ -884,7 +889,8 @@ namespace Pspc
    {
       std::ofstream outFile;
       fileMaster().openOutputFile(outFileName, outFile);
-      fieldIo().writeFieldHeader(outFile, mixture().nMonomer());
+      fieldIo().writeFieldHeader(outFile, mixture().nMonomer(),
+                                 unitCell());
       basis().outputStars(outFile);
    }
 
@@ -896,7 +902,8 @@ namespace Pspc
    {
       std::ofstream outFile;
       fileMaster().openOutputFile(outFileName, outFile);
-      fieldIo().writeFieldHeader(outFile, mixture().nMonomer());
+      fieldIo().writeFieldHeader(outFile, mixture().nMonomer(), 
+                                 unitCell());
       basis().outputWaves(outFile);
    }
 
