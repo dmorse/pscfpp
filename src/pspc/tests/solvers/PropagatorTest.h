@@ -130,9 +130,9 @@ public:
       TEST_ASSERT(block.ns() == 101);
       TEST_ASSERT(block.mesh().dimensions()[0] == 10);
 
-      //std::cout << std::endl;
-      //std::cout << "ns   = " << block.ns() << std::endl;
-      //std::cout << "mesh = " 
+      // std::cout << std::endl;
+      // std::cout << "ns   = " << block.ns() << std::endl;
+      // std::cout << "mesh = " 
       //          << block.mesh().dimensions() << std::endl;
    }
 
@@ -169,9 +169,9 @@ public:
 
       double ds = 0.3;
       block.setDiscretization(ds, mesh);
-      //std::cout << "block len = " << block.length() << "\n";
-      //std::cout << "block ns  = " << block.ns() << "\n";
-      //std::cout << "block ds  = " << block.ds() << "\n";
+      // std::cout << "block len = " << block.length() << "\n";
+      // std::cout << "block ns  = " << block.ns() << "\n";
+      // std::cout << "block ds  = " << block.ds() << "\n";
 
       TEST_ASSERT(eq(block.length(), 2.0));
       TEST_ASSERT(block.ns() == 7);
@@ -198,8 +198,8 @@ public:
 
       UnitCell<1> unitCell;
       setupUnitCell1D(unitCell);
-      std::cout << std::endl;
-      std::cout << "unit cell = " << unitCell << std::endl;
+      // std::cout << std::endl;
+      // std::cout << "unit cell = " << unitCell << std::endl;
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 4.0));
 
       // Setup chemical potential field
@@ -231,8 +231,8 @@ public:
 
       UnitCell<2> unitCell;
       setupUnitCell2D(unitCell);
-      std::cout << std::endl;
-      std::cout << "unit cell = " << unitCell << std::endl;
+      // std::cout << std::endl;
+      // std::cout << "unit cell = " << unitCell << std::endl;
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 3.0));
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
 
@@ -265,8 +265,8 @@ public:
 
       UnitCell<3> unitCell;
       setupUnitCell3D(unitCell);
-      std::cout << std::endl;
-      std::cout << "unit cell = " << unitCell << std::endl;
+      // std::cout << std::endl;
+      // std::cout << "unit cell = " << unitCell << std::endl;
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 3.0));
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
       TEST_ASSERT(eq(unitCell.rBasis(2)[2], 5.0));
@@ -334,34 +334,34 @@ public:
       ds = block.ds();
       double expected = exp(-(wc + r)*ds);
       for (int i = 0; i < nx; ++i) {
-         //std::cout << "  " << qout[i]
-         //          << "  " << qin[i]
-         //          << "  " << qin[i]*expected
-         //          << "  " << expected << std::endl;
+         // std::cout << "  " << qout[i]
+         //           << "  " << qin[i]
+         //           << "  " << qin[i]*expected
+         //           << "  " << expected << std::endl;
          TEST_ASSERT(eq(qout[i], qin[i]*expected));
       }
-      //std::cout << "\n";
-      //std::cout << "expected ratio = " << expected << "\n";
+      // std::cout << "\n";
+      // std::cout << "expected ratio = " << expected << "\n";
     
       // Test propagator solve 
       block.propagator(0).solve();
 
-      //std::cout << "\n Head:\n";
+      // std::cout << "\n Head:\n";
       for (int i = 0; i < nx; ++i) {
-         //std::cout << "  " << block.propagator(0).head()[i];
+         // std::cout << "  " << block.propagator(0).head()[i];
          TEST_ASSERT(eq(block.propagator(0).head()[i],1.0));
       }
-      //std::cout << "\n";
+      // std::cout << "\n";
       
 
       // std::cout << "\n Tail:\n";
       expected = exp(-wc*block.length());
       for (int i = 0; i < nx; ++i) {
-         //std::cout << "  " << block.propagator(0).tail()[i];
+         // std::cout << "  " << block.propagator(0).tail()[i];
          TEST_ASSERT(eq(block.propagator(0).tail()[i], expected));
       }
       // std::cout << "\n";
-      //std::cout << exp(-wc*block.length()) << "\n";
+      // std::cout << exp(-wc*block.length()) << "\n";
 
    }
 
@@ -383,8 +383,8 @@ public:
 
       UnitCell<2> unitCell;
       setupUnitCell2D(unitCell);
-      //std::cout << std::endl;
-      //std::cout << "unit cell = " << unitCell << std::endl;
+      // std::cout << std::endl;
+      // std::cout << "unit cell = " << unitCell << std::endl;
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 3.0));
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
 
@@ -415,7 +415,7 @@ public:
                          double(iter.position(1))/double(mesh.dimension(1)) ) );
       }
       
-      //std::cout<<std::endl;
+      // std::cout<<std::endl;
       block.step(qin, qout);
       double b = block.kuhn();
       double Gb;
@@ -431,7 +431,7 @@ public:
          double r = Gb*factor*factor/6.0;
          expected = exp(-(wc + r)*ds);
 
-         //std::cout << "  " << qout[iter.rank()]
+         // std::cout << "  " << qout[iter.rank()]
          //          << "  " << qin[iter.rank()]
          //         << "  " << qin[iter.rank()]*expected
          //          << "  " << expected << std::endl;
@@ -439,17 +439,17 @@ public:
          //               qin[iter.rank()]*expected));
       }
 
-      //std::cout << "\n";
-      //std::cout << "expected ratio = " << expected << "\n";
+      // std::cout << "\n";
+      // std::cout << "expected ratio = " << expected << "\n";
     
       // Test propagator solve 
       block.propagator(0).solve();
 
-      //std::cout << "\n Head:\n";
+      // std::cout << "\n Head:\n";
       for (iter.begin(); !iter.atEnd(); ++iter){
          TEST_ASSERT(eq(block.propagator(0).head()[iter.rank()], 1.0));
       }
-      //std::cout << "\n";
+      // std::cout << "\n";
       
       // std::cout << "\n Tail:\n";
       expected = exp(-wc*block.length());
@@ -457,7 +457,7 @@ public:
          TEST_ASSERT(eq(block.propagator(0).tail()[iter.rank()], expected));
       }
       // std::cout << "\n";
-      //std::cout << exp(-wc*block.length()) << "\n";
+      // std::cout << exp(-wc*block.length()) << "\n";
 
    }
 
@@ -479,8 +479,8 @@ public:
 
       UnitCell<3> unitCell;
       setupUnitCell3D(unitCell);
-      //std::cout << std::endl;
-      //std::cout << "unit cell = " << unitCell << std::endl;
+      // std::cout << std::endl;
+      // std::cout << "unit cell = " << unitCell << std::endl;
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 3.0));
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
       TEST_ASSERT(eq(unitCell.rBasis(2)[2], 5.0));
@@ -513,7 +513,7 @@ public:
                          double(iter.position(2))/double(mesh.dimension(2)) ) );
       }
       
-      //std::cout<<std::endl;
+      // std::cout<<std::endl;
       block.step(qin, qout);
       double b = block.kuhn();
       double Gb;
@@ -530,25 +530,25 @@ public:
          double r = Gb*factor*factor/6.0;
          expected = exp(-(wc + r)*ds);
 
-         //std::cout << "  " << qout[iter.rank()]
+         // std::cout << "  " << qout[iter.rank()]
          //          << "  " << qin[iter.rank()]
          //         << "  " << qin[iter.rank()]*expected
          //          << "  " << expected << std::endl;
-         //TEST_ASSERT(eq(qout[iter.rank()], 
+         // TEST_ASSERT(eq(qout[iter.rank()], 
          //               qin[iter.rank()]*expected));
       }
 
-      //std::cout << "\n";
-      //std::cout << "expected ratio = " << expected << "\n";
+      // std::cout << "\n";
+      // std::cout << "expected ratio = " << expected << "\n";
     
       // Test propagator solve 
       block.propagator(0).solve();
 
-      //std::cout << "\n Head:\n";
+      // std::cout << "\n Head:\n";
       for (iter.begin(); !iter.atEnd(); ++iter){
          TEST_ASSERT(eq(block.propagator(0).head()[iter.rank()], 1.0));
       }
-      //std::cout << "\n";
+      // std::cout << "\n";
       
       // std::cout << "\n Tail:\n";
       expected = exp(-wc*block.length());
@@ -556,7 +556,7 @@ public:
          TEST_ASSERT(eq(block.propagator(0).tail()[iter.rank()], expected));
       }
       // std::cout << "\n";
-      //std::cout << exp(-wc*block.length()) << "\n";
+      // std::cout << exp(-wc*block.length()) << "\n";
 
    }
 
