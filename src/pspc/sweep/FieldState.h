@@ -71,26 +71,16 @@ namespace Pspc
       */
       void setSystem(System<D>& system);
 
+      //@}
+      /// \name Accessors
+      //@{
+
       /**
       * Get array of all fields by const reference.
       *
       * The array capacity is equal to the number of monomer types.
       */
       const DArray<FT>& fields() const;
-
-      /**
-      * Get a field for a single monomer type by const reference.
-      *
-      * \param monomerId integer monomer type index
-      */
-      const FT& field(int monomerId) const;
-
-      /**
-      * Get UnitCell (i.e., lattice type and parameters) by const reference.
-      */
-      const UnitCell<D>& unitCell() const;
-
-   protected:
 
       /**
       * Get array of all chemical potential fields (non-const reference).
@@ -100,6 +90,13 @@ namespace Pspc
       DArray<FT>& fields();
 
       /**
+      * Get a field for a single monomer type by const reference.
+      *
+      * \param monomerId integer monomer type index
+      */
+      const FT& field(int monomerId) const;
+
+      /**
       * Get field for a specific monomer type (non-const reference).
       *
       * \param monomerId integer monomer type index
@@ -107,19 +104,28 @@ namespace Pspc
       FT& field(int monomerId);
 
       /**
+      * Get UnitCell (i.e., lattice type and parameters) by const reference.
+      */
+      const UnitCell<D>& unitCell() const;
+
+      /**
       * Get the UnitCell by non-const reference.
       */
       UnitCell<D>& unitCell();
+
+      //@}
+
+   protected:
+
+      /**
+      * Has a system been set?
+      */
+      bool hasSystem();
 
       /**
       * Get associated System by reference.
       */
       System<D>& system();
-
-      /**
-      * Get associated FieldIo by reference.
-      */
-      FieldIo<D>& fieldIo();
 
    private:
 
@@ -132,11 +138,6 @@ namespace Pspc
       * Crystallographic unit cell (crystal system and cell parameters).
       */
       UnitCell<D> unitCell_;
-
-      /**
-      * FieldIo object for field input/output operations
-      */
-      FieldIo<D> fieldIo_;
 
       /**
       * Pointer to associated system.
@@ -153,10 +154,21 @@ namespace Pspc
    const DArray<FT>& FieldState<D,FT>::fields() const
    {  return fields_; }
 
+   // Get an array of all fields (non-const reference)
+   template <int D, class FT>
+   inline
+   DArray<FT>& FieldState<D,FT>::fields()
+   {  return fields_; }
+
    // Get field for monomer type id (const reference)
    template <int D, class FT>
    inline
    const FT& FieldState<D,FT>::field(int id) const
+   {  return fields_[id]; }
+
+   // Get field for monomer type id (non-const reference)
+   template <int D, class FT>
+   inline FT& FieldState<D,FT>::field(int id)
    {  return fields_[id]; }
 
    // Get the internal Unitcell (const reference)
@@ -165,34 +177,22 @@ namespace Pspc
    const UnitCell<D>& FieldState<D,FT>::unitCell() const
    { return unitCell_; }
 
-   // Protected inline member functions
-
-   // Get an array of all fields (non-const reference)
-   template <int D, class FT>
-   inline
-   DArray<FT>& FieldState<D,FT>::fields()
-   {  return fields_; }
-
-   // Get field for monomer type id (non-const reference)
-   template <int D, class FT>
-   inline
-   FT& FieldState<D,FT>::field(int id)
-   {  return fields_[id]; }
-
    // Get the internal Unitcell (non-const reference)
    template <int D, class FT>
    inline UnitCell<D>& FieldState<D,FT>::unitCell()
    { return unitCell_; }
 
-   // Get the internal FieldIo<D> object.
-   template <int D, class FT>
-   inline FieldIo<D>& FieldState<D,FT>::fieldIo()
-   { return fieldIo_; }
+   // Protected inline member functions
 
+   // Has the system been set?
+   template <int D, class FT>
+   inline bool FieldState<D,FT>::hasSystem()
+   {  return (systemPtr_ != 0); }
+   
    // Get the associated System<D> object.
    template <int D, class FT>
    inline System<D>& FieldState<D,FT>::system()
-   { return *systemPtr_; }
+   {  return *systemPtr_; }
 
 } // namespace Pspc
 } // namespace Pscf

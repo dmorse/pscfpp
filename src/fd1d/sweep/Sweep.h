@@ -27,7 +27,7 @@ namespace Fd1d
    *
    * \ingroup Fd1d_Sweep_Module
    */
-   class Sweep : public SweepTmpl<DArray<System::WField> >, 
+   class Sweep : public SweepTmpl< DArray<System::WField> >, 
                  public SystemAccess
    {
 
@@ -89,9 +89,14 @@ namespace Fd1d
       int homogeneousMode_;
 
       /**
-      * Setup operation at beginning sweep.
+      * Check allocation of fields in one state, allocate if needed.
       *
-      * Must call initializeHistory.
+      * \param state  one stored state of the system.
+      */
+      virtual void checkAllocation(State & state);
+
+      /**
+      * Setup operation at beginning sweep.
       */
       virtual void setup();
 
@@ -144,17 +149,11 @@ namespace Fd1d
       /// FieldIo object for writing output files
       FieldIo fieldIo_;
 
-      // Summary log file
+      /// Summary log file
       std::ofstream logFile_;
 
-      /// Current solution 
-      DArray<System::WField> wFields0_;
-
-      /// Previous solution (for 1st order continuation)
-      DArray<System::WField> wFields1_;
-
-      void assignFields(DArray<System::WField>& lhs, 
-                        DArray<System::WField> const & rhs) const;
+      /// Assign state rhs = lhs
+      void assignFields(State& lhs, State const & rhs) const;
 
    };
 

@@ -14,23 +14,64 @@ namespace Pspc {
 
    using namespace Util;
 
-   /**
-   * Setup operation at beginning sweep.
-   *
-   * Must call initializeHistory.
+   /*
+   * Default constructor.
+   */
+   template <int D>
+   Sweep<D>::Sweep() 
+    : SweepTmpl< BasisFieldState<D> >(2),
+      systemPtr_(0)
+   {}
+
+   /*
+   * Constructor, creates association with parent system.
+   */
+   template <int D>
+   Sweep<D>::Sweep(System<D> & system) 
+    : SweepTmpl< BasisFieldState<D> >(2),
+      systemPtr_(0)
+   {  setSystem(system); }
+
+   /*
+   * Destructor.
+   */
+   template <int D>
+   Sweep<D>::~Sweep() 
+   {}
+
+   /*
+   * Set association with a parent system.
+   */
+   template <int D>
+   void Sweep<D>::setSystem(System<D> & system) 
+   {
+      systemPtr_ = & system;
+   }
+
+   /*
+   * Check allocation of one state object, allocate if necessary.
+   */
+   template <int D>
+   void Sweep<D>::checkAllocation(BasisFieldState<D>& state) 
+   {  state.allocate(); }
+
+   /*
+   * Setup operations at the beginning of a sweep.
    */
    template <int D>
    void Sweep<D>::setup() 
    {
-      for (int i=0; i < 2; ++i) {
+      initialize();
+
+      // Check or create associations of states with the parent System
+      // Note: FieldState::setSystem does nothing if already set.
+      for (int i=0; i < historyCapacity(); ++i) {
          state(i).setSystem(system());
       }
-      initializeHistory(state(0), state(1));
-
       trial_.setSystem(system());
    };
 
-   /**
+   /*
    * Set non-adjustable system parameters to new values.
    *
    * \param s path length coordinate, in range [0,1]
@@ -38,23 +79,24 @@ namespace Pspc {
    template <int D>
    void Sweep<D>::setParameters(double s) 
    {
-      // Empty default implementation to allow Sweep<D> to be compiled.
+      // Empty default implementation allows Sweep<D> to be compiled.
+      UTIL_THROW("Calling unimplemented function Sweep::setParameters");
    };
 
-   /**
+   /*
    * Create guess for adjustable variables by continuation.
    */
    template <int D>
    void Sweep<D>::setGuess(double sNew) 
    {
       DArray<double> coeffs_;
-      coeffs_.allocate(nHistory);
+      coeffs_.allocate(historyCapacity());
       // Set coeffs for appropriate continuation order
       // trial_.linearCombination(history(), coeffs_);
       // Set unit cell and wFields in system
    };
 
-   /**
+   /*
    * Call current iterator to solve SCFT problem.
    *
    * Return 0 for sucessful solution, 1 on failure to converge.
@@ -63,7 +105,7 @@ namespace Pspc {
    int Sweep<D>::solve(bool isContinuation)
    {  return system().iterate(); };
 
-   /**
+   /*
    * Reset system to previous solution after iterature failure.
    *
    * The implementation of this function should reset the system state
@@ -71,7 +113,9 @@ namespace Pspc {
    */
    template <int D>
    void Sweep<D>::reset()
-   {  state(0).setSystemState(); }
+   {  
+      state(0).setSystemState(); 
+   }
 
    /**
    * Update state(0) and output data after successful convergence

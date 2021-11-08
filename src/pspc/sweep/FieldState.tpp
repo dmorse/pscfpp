@@ -33,7 +33,6 @@ namespace Pspc
    FieldState<D, FT>::FieldState()
     : fields_(),
       unitCell_(),
-      fieldIo_(),
       systemPtr_(0)
    {}
   
@@ -44,14 +43,8 @@ namespace Pspc
    FieldState<D, FT>::FieldState(System<D>& system)
     : fields_(),
       unitCell_(),
-      fieldIo_(),
-      systemPtr_(&system)
-   {
-      std::string groupName = systemPtr_->groupName();
-      fieldIo_.associate(unitCell_, systemPtr_->mesh(), 
-                         systemPtr_->fft(), groupName,
-                         systemPtr_->basis(), systemPtr_->fileMaster());
-   }
+      systemPtr_(0)
+   { setSystem(system); }
 
    /*
    * Destructor.
@@ -66,11 +59,11 @@ namespace Pspc
    template <int D, class FT>
    void FieldState<D, FT>::setSystem(System<D>& system)
    {
-      systemPtr_ = &system;
-      std::string groupName = systemPtr_->groupName();
-      fieldIo_.associate(unitCell_, systemPtr_->mesh(), 
-                         systemPtr_->fft(), groupName,
-                         systemPtr_->basis(), systemPtr_->fileMaster());
+      if (hasSystem()) {
+         UTIL_CHECK(systemPtr_ = &system);
+      } else {
+         systemPtr_ = &system;
+      }
    }
 
 } // namespace Pspc

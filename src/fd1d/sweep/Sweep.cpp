@@ -22,20 +22,24 @@ namespace Fd1d
    using namespace Util;
 
    Sweep::Sweep()
-    : Base(),
+    : Base(2),
       SystemAccess(),
       homogeneousMode_(-1),
       comparison_(),
       fieldIo_()
-   {  setClassName("Sweep"); }
+   {  
+      setClassName("Sweep"); 
+   }
 
    Sweep::Sweep(System& system)
-    : Base(),
+    : Base(2),
       SystemAccess(system),
       homogeneousMode_(-1),
       comparison_(system),
       fieldIo_(system)
-   {  setClassName("Sweep"); }
+   {
+      setClassName("Sweep"); 
+   }
 
    Sweep::~Sweep()
    {}
@@ -52,39 +56,45 @@ namespace Fd1d
    */
    void Sweep::readParameters(std::istream& in)
    {
-      //SweepTmpl<Sweep::State>::readParameters(in);
       Base::readParameters(in);
       homogeneousMode_ = -1; // default value
       readOptional<int>(in, "homogeneousMode", homogeneousMode_);
    }
 
-   /**
-   * Setup operation at beginning sweep.
-   *
-   * Must call initializeHistory.
+   /*
+   * Check allocation of a state, allocate if necessary.
    */
-   void Sweep::setup() 
+   void Sweep::checkAllocation(Sweep::State& state) 
    {
       int nm = mixture().nMonomer();
       int nx = domain().nx();
       UTIL_CHECK(nm > 0);
       UTIL_CHECK(nx > 0);
 
-      // Allocate memory for solutions
-      if (!wFields0_.isAllocated()) {
-         wFields0_.allocate(nm);
-         for (int i = 0; i < nm; ++i) {
-            wFields0_[i].allocate(nx);
-         }
+      if (state.isAllocated()) {
+         UTIL_CHECK(state.capacity() == nm);
+      } else {
+         state.allocate(nm);
       }
-      if (!wFields1_.isAllocated()) {
-         wFields1_.allocate(nm);
-         for (int i = 0; i < nm; ++i) {
-            wFields1_[i].allocate(nx);
+      for (int j = 0; j < nm; ++j) {
+         if (state[j].isAllocated()) {
+            UTIL_CHECK(state[j].capacity() == nx);
+         } else {
+            state[j].allocate(nx);
          }
       }
 
-      initializeHistory(wFields0_, wFields1_);
+   };
+
+   /*
+   * Setup operation at beginning sweep.
+   *
+   * Must call initializeHistory.
+   */
+   void Sweep::setup() 
+   {
+      // Initialize history
+      initialize();
 
       // Open log summary file
       std::string fileName = baseFileName_;
@@ -98,7 +108,10 @@ namespace Fd1d
    *
    * \param s path length coordinate, in range [0,1]
    */
-   void Sweep::setParameters(double s) {};
+   void Sweep::setParameters(double s) 
+   {  
+      UTIL_THROW("Called un-implemented Fd1d::Sweep::setParameters");
+   };
 
    /**
    * Create guess for adjustable variables by continuation.

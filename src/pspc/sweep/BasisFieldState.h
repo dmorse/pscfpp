@@ -31,7 +31,7 @@ namespace Pspc
       BasisFieldState();
 
       /**
-      * Constructor, associate with system.
+      * Constructor, create association with a parent system.
       *
       * \param system associated parent system
       */
@@ -41,6 +41,13 @@ namespace Pspc
       * Destructor.
       */
       ~BasisFieldState();
+
+      /**
+      * Allocate all fields.
+      *
+      * Precondition: hasSystem() == true
+      */
+      void allocate();
 
       /**
       * Read state from file.
@@ -70,13 +77,8 @@ namespace Pspc
       using FieldState<D, DArray<double> >::fields;
       using FieldState<D, DArray<double> >::field;
       using FieldState<D, DArray<double> >::unitCell;
-      using FieldState<D, DArray<double> >::fieldIo;
       using FieldState<D, DArray<double> >::system;
-
-   private:
-
-      // Check if fields are allocated, allocate if necessary.
-      void allocate();
+      using FieldState<D, DArray<double> >::hasSystem;
 
    };
 

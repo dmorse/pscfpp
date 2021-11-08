@@ -15,7 +15,7 @@ namespace Pscf {
    using namespace Util;
 
    /**
-   * Solve a sequence of problems along a line in parameter space.
+   * Solve a sequence of problems along a path through parameter space.
    *
    * \ingroup Pscf_Sweep_Module
    */
@@ -24,11 +24,6 @@ namespace Pscf {
    {
 
    public:
-
-      /**
-      * Default Constructor.
-      */
-      SweepTmpl();
 
       /**
       * Destructor.
@@ -49,9 +44,6 @@ namespace Pscf {
 
    protected:
 
-      /// Maximum number of stored states
-      static const int nHistory = 2;
-
       /// Number of steps. 
       int ns_;
 
@@ -59,29 +51,58 @@ namespace Pscf {
       std::string baseFileName_;
 
       /**
-      * Get reference to stored solution, with i=0 being most recent.
+      * Constructor (protected).
+      *
+      * The value of historyCapacity depends on the order of continuation,
+      * e.g., 2 for 1st order or linear continuation or 3 for 2nd order
+      * or quadratic contination. It is passed to this template by a
+      * subclass via a protected constructor in order to allow different 
+      * derived classes to use different orders of continuation.
+      */
+      SweepTmpl(int historyCapacity);
+
+      /**
+      * Get reference to a stored state, with i=0 being most recent.
       *
       * Call state(i) to return the ith from most recent converged solution.
       */
       State& state(int i)
-      { return *stateHistory_[i]; }
+      {
+         UTIL_CHECK(i < historySize_); 
+         return *stateHistory_[i]; 
+      }
 
       /**
       * Get the value of s for a stored solution, with i=0 most recent.
       *
-      * Call s(i) to return the ith from most recent solution.
+      * Call s(i) to return the value of the contour variable s for the 
+      * ith from most recent solution.
       */
       double s(int i)
-      { return sHistory_[i]; }
+      {
+         UTIL_CHECK(i < historySize_); 
+         return sHistory_[i]; 
+      }
 
       /**
-      * Get the number of stored solutions.
+      * Get the current number of stored previous states.
       */ 
       int historySize()
       {  return historySize_; }
 
       /**
-      * Get the number of converged solutions accepted thus far in this sweep.
+      * Get the maximum number of stored previous states.
+      *
+      * The value of historyCapacity is a constant that depends on
+      * the order of continuation (i.,e 2 for 1st order continuation,
+      * or 3 for 2nd order), and passed as a parameter to the SweepTmpl 
+      * constructor.
+      */ 
+      int historyCapacity()
+      {  return historyCapacity_; }
+
+      /**
+      * Get the number of converged solutions accepted thus far.
       */ 
       int nAccept()
       {  return nAccept_; }
@@ -89,14 +110,25 @@ namespace Pscf {
       /**
       * Initialize variables that track history of solutions.
       *
-      * This must be called within the setup() function.
+      * This must be called within the virtual setup() function.
       */
-      void initializeHistory(State& state0, State& state1);
+      void initialize();
+
+      /**
+      * Check allocation of one state, allocate if necessary.
+      *
+      * This virtual function is called by SweepTmpl::initialize() 
+      * during setup before a sweep to check if all State objects have
+      * memory allocated for fields, and allocate if necessary.
+      *
+      * \param state one stored state of the system.
+      */
+      virtual void checkAllocation(State & state) = 0;
 
       /**
       * Setup operation at the beginning of a sweep.
       *
-      * Implementations of this function must call initializeHistory.
+      * Implementations of this function must call initialize().
       */
       virtual void setup() = 0;
 
@@ -122,8 +154,8 @@ namespace Pscf {
       /**
       * Reset system to previous solution after iterature failure.
       *
-      * The implementation of this function should reset the system state
-      * to correspond to that stored in state(0).
+      * The implementation of this function should reset the system 
+      * state to correspond to that stored in state(0).
       */
       virtual void reset() = 0;
 
@@ -132,12 +164,17 @@ namespace Pscf {
       *
       * This function is called by accept(). The implementation of this 
       * function should copy the current system state into state(0) and 
-      * output any desired information about the current solution.
+      * output any desired information about the current solution. It
+      * may also take any other actions that would normally be taken
+      * after acceptance of a converted solution. For example, it may
+      * examine the rate of convergence of previous solutions in order 
+      * to decide whether to update any parameters used by the SCFT
+      * iterator.
       */
       virtual void getSolution() = 0;
 
       /**
-      * Clean up operation at the beginning of a sweep
+      * Clean up operation at the end of a sweep
       *
       * Default implementation is empty.
       */
@@ -145,16 +182,22 @@ namespace Pscf {
 
    private:
 
-      // Values of s associated with previous solutions
-      FArray<double, nHistory> sHistory_;
+      /// Array of State objects, not sequential (work space)
+      DArray<State> states_;
 
-      /// Pointers State objects containing old solutions.
-      FArray<State*, nHistory> stateHistory_;
+      /// Values of s associated with previous solutions
+      DArray<double> sHistory_;
 
-      // Number of previous solutions currently stored.
+      /// Pointers to State objects containing old solutions.
+      DArray<State*> stateHistory_;
+
+      /// Maximum number of stored previous states.
+      int historyCapacity_;
+
+      /// Current number of stored previous states.
       int historySize_;
 
-      // Number of converged solutions accepted thus far.
+      /// Number of converged solutions accepted thus far.
       int nAccept_;
 
       /**
@@ -167,6 +210,11 @@ namespace Pscf {
       * \param s value of s associated with new solution.
       */
       void accept(double s);
+
+      /**
+      * Default constructor (private, not implemented to prevent use).
+      */
+      SweepTmpl();
 
    };
 

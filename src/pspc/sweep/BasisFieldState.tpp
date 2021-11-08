@@ -18,7 +18,7 @@ namespace Pspc
    using namespace Util;
 
    /*
-   * Constructor.
+   * Default constructor.
    */
    template <int D>
    BasisFieldState<D>::BasisFieldState()
@@ -40,6 +40,35 @@ namespace Pspc
    BasisFieldState<D>::~BasisFieldState()
    {}
 
+   /*
+   * Allocate all fields.
+   */
+   template <int D>
+   void BasisFieldState<D>::allocate()
+   {
+      // Precondition
+      UTIL_CHECK(hasSystem());
+
+      int nMonomer = system().mixture().nMonomer();
+      UTIL_CHECK(nMonomer > 0);
+      if (fields().isAllocated()) {
+         UTIL_CHECK(fields().capacity() == nMonomer);
+      } else {
+         fields().allocate(nMonomer);
+      }
+
+      int nStar = system().basis().nStar();
+      UTIL_CHECK(nStar > 0);
+      for (int i = 0; i < nMonomer; ++i) {
+         if (field(i).isAllocated()) {
+            UTIL_CHECK(field(i).capacity() == nStar);
+         } else {
+            field(i).allocate(nStar);
+         }
+      }
+
+   }
+ 
    /**
    * Read fields in symmetry-adapted basis format. 
    */
@@ -47,7 +76,7 @@ namespace Pspc
    void BasisFieldState<D>::read(std::string & filename)
    {
       allocate();
-      fieldIo().readFieldsBasis(filename, fields());
+      system().fieldIo().readFieldsBasis(filename, fields(), unitCell());
    }
 
    /**
@@ -56,7 +85,7 @@ namespace Pspc
    template <int D>
    void BasisFieldState<D>::write(std::string & filename)
    {
-      fieldIo().writeFieldsBasis(filename, fields());
+      system().fieldIo().writeFieldsBasis(filename, fields(), unitCell());
    }
 
    /*
@@ -107,28 +136,6 @@ namespace Pspc
       // Update system wFieldsRgrid
       system().fieldIo().convertBasisToRGrid(system().wFields(),
                                              system().wFieldsRGrid());
-   }
-
-   /*
-   * Allocate fields if necessary.
-   */
-   template <int D>
-   void BasisFieldState<D>::allocate()
-   {
-      int nMonomer = system().mixture().nMonomer();
-      int nStar = system().basis().nStar();
-      if (fields().isAllocated()) {
-         UTIL_CHECK(fields().capacity() == nMonomer);
-         for (int i = 0; i < nMonomer; ++i) {
-            UTIL_CHECK(field(i).isAllocated());
-            UTIL_CHECK(field(i).capacity() == nStar);
-         }
-      } else {
-         fields().allocate(nMonomer);
-         for (int i = 0; i < nMonomer; ++i) {
-            field(i).allocate(nStar);
-         }
-      }
    }
 
 } // namespace Pspc

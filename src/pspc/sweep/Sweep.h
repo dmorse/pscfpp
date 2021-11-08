@@ -33,6 +33,11 @@ namespace Pspc {
       Sweep();
 
       /**
+      * Constructor, creates assocation with parent system.
+      */
+      Sweep(System<D>& system);
+
+      /**
       * Destructor.
       */
       ~Sweep();
@@ -45,9 +50,12 @@ namespace Pspc {
    protected:
 
       /**
-      * Setup operation at beginning sweep.
-      *
-      * Must call initializeHistory.
+      * Check allocation state of fields in one state, allocate if necessary.
+      */
+      virtual void checkAllocation(BasisFieldState<D>& state);
+
+      /**
+      * Setup operation at the beginning of a sweep.
       */
       virtual void setup();
 
@@ -59,7 +67,7 @@ namespace Pspc {
       virtual void setParameters(double s) = 0;
 
       /**
-      * Create guess for adjustable variables by continuation.
+      * Create a guess for adjustable variables by continuation.
       */
       virtual void setGuess(double sNew);
 
@@ -87,23 +95,27 @@ namespace Pspc {
       */
       virtual void getSolution();
 
-      using SweepTmpl<BasisFieldState<D>>::nHistory;
-      using SweepTmpl<BasisFieldState<D>>::ns_;
-      using SweepTmpl<BasisFieldState<D>>::baseFileName_;
-      using SweepTmpl<BasisFieldState<D>>::state;
-      using SweepTmpl<BasisFieldState<D>>::s;
-      using SweepTmpl<BasisFieldState<D>>::historySize;
-      using SweepTmpl<BasisFieldState<D>>::nAccept;
-      using SweepTmpl<BasisFieldState<D>>::initializeHistory;
+      // Members inherited from base class template SweepTmpl
+      using SweepTmpl< BasisFieldState<D> >::ns_;
+      using SweepTmpl< BasisFieldState<D> >::baseFileName_;
+      using SweepTmpl< BasisFieldState<D> >::s;
+      using SweepTmpl< BasisFieldState<D> >::state;
+      using SweepTmpl< BasisFieldState<D> >::historyCapacity;
+      using SweepTmpl< BasisFieldState<D> >::historySize;
+      using SweepTmpl< BasisFieldState<D> >::nAccept;
+      using SweepTmpl< BasisFieldState<D> >::initialize;
 
    protected:
+
+      bool hasSystem()
+      {  return (systemPtr_ != 0); }
 
       System<D>& system()
       {  return *systemPtr_; }
 
    private:
 
-      // Trial state (produced by continuation)
+      // Trial state (produced by continuation in setGuess)
       BasisFieldState<D> trial_;
 
       // Pointer to parent system.

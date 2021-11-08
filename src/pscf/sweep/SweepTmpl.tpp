@@ -18,10 +18,16 @@ namespace Pscf {
    * Constructor
    */
    template <class State>
-   SweepTmpl<State>::SweepTmpl()
+   SweepTmpl<State>::SweepTmpl(int historyCapacity)
     : ns_(0),
-      baseFileName_()
-   {  setClassName("SweepTmpl"); }
+      baseFileName_(),
+      historyCapacity_(historyCapacity)
+   {
+      setClassName("SweepTmpl"); 
+      states_.allocate(historyCapacity_);
+      stateHistory_.allocate(historyCapacity_);
+      sHistory_.allocate(historyCapacity_);
+   }
 
    /*
    * Destructor.
@@ -83,7 +89,7 @@ namespace Pscf {
             // Set non-adjustable system parameters to new values
             setParameters(sNew);
 
-            // Attempt SCFT solution
+            // Attempt iterative SCFT solution
             isContinuation = true;
             error = solve(isContinuation);
 
@@ -119,38 +125,47 @@ namespace Pscf {
    * Initialize history variables (must be called by setup function).
    */
    template <class State>
-   void SweepTmpl<State>::initializeHistory(State& a, State& b)
+   void SweepTmpl<State>::initialize()
    {
+      UTIL_CHECK(historyCapacity_  > 1);
+      UTIL_CHECK(states_.capacity() == historyCapacity_);
+      UTIL_CHECK(sHistory_.capacity() == historyCapacity_);
+      UTIL_CHECK(stateHistory_.capacity() == historyCapacity_);
+
+      // Check allocation of all states, allocate if necessary
+      for (int i = 0; i < historyCapacity_; ++i) {
+         checkAllocation(states_[i]);
+      }
+
+      // Set pointers in stateHistory_ to refer to objects in states_
       nAccept_ = 0;
       historySize_ = 0;
-      for (int i = 0; i < nHistory; ++i) {
+      for (int i = 0; i < historyCapacity_; ++i) {
          sHistory_[i] = 0.0;
+         stateHistory_[i] = &states_[i];
       }
-      stateHistory_[0] = &a;
-      stateHistory_[1] = &b;
-      // stateHistory_[2] = &c;  // Add for 2nd order continuation
    }
 
    template <class State>
    void SweepTmpl<State>::accept(double sNew)
    {
       // Shift elements of sHistory_
-      for (int i = nHistory - 1; i > 0; --i) {
+      for (int i = historyCapacity_ - 1; i > 0; --i) {
          sHistory_[i] = sHistory_[i-1];
       }
       sHistory_[0] = sNew;
 
       // Shift elements of stateHistory_ (pointers to stored solutions)
       State* temp;
-      temp = stateHistory_[nHistory-1];
-      for (int i = nHistory - 1; i > 0; --i) {
+      temp = stateHistory_[historyCapacity_-1];
+      for (int i = historyCapacity_ - 1; i > 0; --i) {
          stateHistory_[i] = stateHistory_[i-1];
       }
       stateHistory_[0] = temp;
 
       // Update counters
       ++nAccept_;
-      if (historySize_ < nHistory) {
+      if (historySize_ < historyCapacity_) {
          ++historySize_;
       }
 
