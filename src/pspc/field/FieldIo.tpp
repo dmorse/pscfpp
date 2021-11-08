@@ -32,8 +32,7 @@ namespace Pspc
    */
    template <int D>
    FieldIo<D>::FieldIo()
-    : unitCellPtr_(0),
-      meshPtr_(0),
+    : meshPtr_(0),
       fftPtr_(0),
       groupNamePtr_(0),
       basisPtr_(0),
@@ -51,14 +50,12 @@ namespace Pspc
    * Get and store addresses of associated objects.
    */
    template <int D>
-   void FieldIo<D>::associate(UnitCell<D>& unitCell,
-                             Mesh<D> const & mesh,
-                             FFT<D> const & fft,
-                             std::string const & groupName,
-                             Basis<D> const & basis,
-                             FileMaster const & fileMaster)
+   void FieldIo<D>::associate(Mesh<D> const & mesh,
+                              FFT<D> const & fft,
+                              std::string const & groupName,
+                              Basis<D> const & basis,
+                              FileMaster const & fileMaster)
    {
-      unitCellPtr_ = &unitCell;
       meshPtr_ = &mesh;
       groupNamePtr_ = &groupName;
       basisPtr_ = &basis;
@@ -68,13 +65,14 @@ namespace Pspc
   
    template <int D>
    void FieldIo<D>::readFieldsBasis(std::istream& in, 
-                                    DArray< DArray<double> >& fields)
+                                    DArray< DArray<double> >& fields,
+                                    UnitCell<D>& unitCell)
    {
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
 
       // Read header
-      FieldIo<D>::readFieldHeader(in, nMonomer);
+      FieldIo<D>::readFieldHeader(in, nMonomer, unitCell);
 
       // Read nStar
       std::string label;
@@ -118,7 +116,7 @@ namespace Pspc
          in >> nWaveVectors;
 
          // Check if waveIn is in first Brillouin zone (FBZ) for the mesh.
-         waveBz = shiftToMinimum(waveIn, mesh().dimensions(), unitCell());
+         waveBz = shiftToMinimum(waveIn, mesh().dimensions(), unitCell);
          waveExists = (waveIn == waveBz);
 
          // If wave is in FBZ, find in basis and set field components
@@ -141,25 +139,27 @@ namespace Pspc
    
    template <int D>
    void FieldIo<D>::readFieldsBasis(std::string filename, 
-                              DArray<DArray<double> >& fields)
+                                    DArray<DArray<double> >& fields,
+                                    UnitCell<D>& unitCell)
    {
        std::ifstream file;
        fileMaster().openInputFile(filename, file);
-       readFieldsBasis(file, fields);
+       readFieldsBasis(file, fields, unitCell);
        file.close();
    }
 
    template <int D>
    void 
    FieldIo<D>::writeFieldsBasis(std::ostream &out, 
-                                DArray<DArray<double> > const &  fields)
+                                DArray<DArray<double> > const &  fields,
+                                UnitCell<D> const & unitCell)
    const
    {
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
 
       // Write header
-      writeFieldHeader(out, nMonomer);
+      writeFieldHeader(out, nMonomer, unitCell);
       int nStar = basis().nStar();
       int nBasis = basis().nBasis();
       out << "N_star       " << std::endl 
@@ -182,24 +182,27 @@ namespace Pspc
    }
 
    template <int D>
-   void FieldIo<D>::writeFieldsBasis(std::string filename, 
-                                     DArray<DArray<double> > const & fields)
+   void 
+   FieldIo<D>::writeFieldsBasis(std::string filename, 
+                                DArray<DArray<double> > const & fields,
+                                UnitCell<D> const & unitCell)
    const
    {
        std::ofstream file;
        fileMaster().openOutputFile(filename, file);
-       writeFieldsBasis(file, fields);
+       writeFieldsBasis(file, fields, unitCell);
        file.close();
    }
 
    template <int D>
    void FieldIo<D>::readFieldsRGrid(std::istream &in,
-                                    DArray<RField<D> >& fields)
+                                    DArray<RField<D> >& fields,
+                                    UnitCell<D>& unitCell)
    {
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
 
-      FieldIo<D>::readFieldHeader(in, nMonomer);
+      FieldIo<D>::readFieldHeader(in, nMonomer, unitCell);
 
       // Read grid dimensions
       std::string label;
@@ -291,23 +294,25 @@ namespace Pspc
 
    template <int D>
    void FieldIo<D>::readFieldsRGrid(std::string filename, 
-                              DArray< RField<D> >& fields)
+                              DArray< RField<D> >& fields,
+                              UnitCell<D>& unitCell)
    {
       std::ifstream file;
       fileMaster().openInputFile(filename, file);
-      readFieldsRGrid(file, fields);
+      readFieldsRGrid(file, fields, unitCell);
       file.close();
    }
 
    template <int D>
    void FieldIo<D>::writeFieldsRGrid(std::ostream &out,
-                                     DArray<RField<D> > const & fields)
+                                     DArray<RField<D> > const & fields,
+                                     UnitCell<D> const & unitCell)
    const
    {
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
 
-      writeFieldHeader(out, nMonomer);
+      writeFieldHeader(out, nMonomer, unitCell);
       out << "ngrid" <<  std::endl
           << "           " << mesh().dimensions() << std::endl;
 
@@ -390,24 +395,26 @@ namespace Pspc
 
    template <int D>
    void FieldIo<D>::writeFieldsRGrid(std::string filename, 
-                                     DArray< RField<D> > const & fields)
+                                     DArray< RField<D> > const & fields,
+                                     UnitCell<D> const & unitCell)
    const
    {
       std::ofstream file;
       fileMaster().openOutputFile(filename, file);
-      writeFieldsRGrid(file, fields);
+      writeFieldsRGrid(file, fields, unitCell);
       file.close();
    }
 
    template <int D>
    void FieldIo<D>::readFieldsKGrid(std::istream &in,
-                                    DArray<RFieldDft<D> >& fields)
+                                    DArray<RFieldDft<D> >& fields,
+                                    UnitCell<D>& unitCell)
    {
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
 
       // Read header
-      readFieldHeader(in, nMonomer);
+      readFieldHeader(in, nMonomer, unitCell);
 
       // Read grid dimensions
       std::string label;
@@ -432,24 +439,26 @@ namespace Pspc
 
    template <int D>
    void FieldIo<D>::readFieldsKGrid(std::string filename, 
-                                    DArray< RFieldDft<D> >& fields)
+                                    DArray< RFieldDft<D> >& fields,
+                                    UnitCell<D>& unitCell)
    {
       std::ifstream file;
       fileMaster().openInputFile(filename, file);
-      readFieldsKGrid(file, fields);
+      readFieldsKGrid(file, fields, unitCell);
       file.close();
    }
 
    template <int D>
    void FieldIo<D>::writeFieldsKGrid(std::ostream &out,
-                                     DArray<RFieldDft<D> > const & fields)
+                                     DArray<RFieldDft<D> > const & fields,
+                                     UnitCell<D> const & unitCell)
    const
    {
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
 
       // Write header
-      writeFieldHeader(out, nMonomer);
+      writeFieldHeader(out, nMonomer, unitCell);
       out << "ngrid" << std::endl 
           << "               " << mesh().dimensions() << std::endl;
 
@@ -467,12 +476,13 @@ namespace Pspc
 
    template <int D>
    void FieldIo<D>::writeFieldsKGrid(std::string filename, 
-                                    DArray< RFieldDft<D> > const & fields)
+                                    DArray< RFieldDft<D> > const & fields,
+                                    UnitCell<D> const & unitCell)
    const
    {
       std::ofstream file;
       fileMaster().openOutputFile(filename, file);
-      writeFieldsKGrid(file, fields);
+      writeFieldsKGrid(file, fields, unitCell);
       file.close();
    }
 
@@ -480,7 +490,9 @@ namespace Pspc
    * Read common part of field header.
    */
    template <int D>
-   void FieldIo<D>::readFieldHeader(std::istream& in, int nMonomer) 
+   void FieldIo<D>::readFieldHeader(std::istream& in, 
+                                    int nMonomer,
+                                    UnitCell<D>& unitCell) 
    {
       std::string label;
 
@@ -495,7 +507,7 @@ namespace Pspc
       in >> dim;
       UTIL_CHECK(dim == D);
 
-      readUnitCellHeader(in, unitCell());
+      readUnitCellHeader(in, unitCell);
 
       in >> label;
       UTIL_CHECK(label == "group_name");
@@ -511,12 +523,14 @@ namespace Pspc
    }
 
    template <int D>
-   void FieldIo<D>::writeFieldHeader(std::ostream &out, int nMonomer) const
+   void FieldIo<D>::writeFieldHeader(std::ostream &out, int nMonomer, 
+                                     UnitCell<D> const & unitCell) 
+   const
    {
       out << "format  1   0" <<  std::endl;
       out << "dim" <<  std::endl 
           << "          " << D << std::endl;
-      writeUnitCellHeader(out, unitCell()); 
+      writeUnitCellHeader(out, unitCell); 
       out << "group_name" << std::endl 
           << "          " << groupName() <<  std::endl;
       out << "N_monomer"  << std::endl 
