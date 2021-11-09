@@ -27,6 +27,7 @@ namespace Pscf {
       states_.allocate(historyCapacity_);
       stateHistory_.allocate(historyCapacity_);
       sHistory_.allocate(historyCapacity_);
+      c_.allocate(historyCapacity_);
    }
 
    /*
@@ -172,6 +173,20 @@ namespace Pscf {
       // Call getSolution to copy system state to state(0).
       getSolution();
 
+   }
+
+   template <class State>
+   void SweepTmpl<State>::setCoefficients(double sNew)
+   {
+      if (historySize_ == 1) {
+         c_[0] = 1.0;
+      } else 
+      if (historySize_ == 2) {
+         c_[1] = -(sNew - s(0))/(sNew - s(1));
+         c_[0] = 1.0 - c_[1];
+      } else {
+         UTIL_THROW("Invalid value of historySize");
+      }
    }
 
    template <class State>

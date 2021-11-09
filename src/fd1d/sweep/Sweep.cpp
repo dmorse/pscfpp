@@ -122,18 +122,20 @@ namespace Fd1d
       int nx = domain().nx();
       UTIL_CHECK(nm > 0);
       UTIL_CHECK(nx > 0);
-      if (nAccept() == 1) {
+
+      setCoefficients(sNew);
+      if (historySize() == 1) {
          std::cout << "Zeroth order continuation" << std::endl;
-      } else {
-         double ds = sNew - s(0);
-         double f1 = ds/(sNew - s(1));
-         double f0 = 1.0 + f1;
+      } else 
+      if (historySize() == 2) {
          int i, j;
          for (i = 0; i < nm; ++i) {
             for (j = 0; j < nx; ++j) {
-               wFields()[i][j] = f0*state(0)[i][j] - f1*state(1)[i][j];
+               wFields()[i][j] = c(0)*state(0)[i][j] + c(1)*state(1)[i][j];
             }
          }
+      } else {
+         UTIL_THROW("Invalid value of historySize");
       }
    };
 

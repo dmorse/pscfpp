@@ -73,7 +73,7 @@ namespace Pscf {
       }
 
       /**
-      * Get the value of s for a stored solution, with i=0 most recent.
+      * Get the value of s for a stored solution, with i = 0 most recent.
       *
       * Call s(i) to return the value of the contour variable s for the 
       * ith from most recent solution.
@@ -82,6 +82,18 @@ namespace Pscf {
       {
          UTIL_CHECK(i < historySize_); 
          return sHistory_[i]; 
+      }
+
+      /**
+      * Get the coefficients of previous states used for continuation.
+      *
+      * Call s(i) to return the value of the contour variable s for the 
+      * ith from most recent solution.
+      */
+      double c(int i)
+      {
+         UTIL_CHECK(i < historySize_); 
+         return c_[i]; 
       }
 
       /**
@@ -95,8 +107,7 @@ namespace Pscf {
       *
       * The value of historyCapacity is a constant that depends on
       * the order of continuation (i.,e 2 for 1st order continuation,
-      * or 3 for 2nd order), and passed as a parameter to the SweepTmpl 
-      * constructor.
+      * or 3 for 2nd order).
       */ 
       int historyCapacity()
       {  return historyCapacity_; }
@@ -118,10 +129,10 @@ namespace Pscf {
       * Check allocation of one state, allocate if necessary.
       *
       * This virtual function is called by SweepTmpl::initialize() 
-      * during setup before a sweep to check if all State objects have
-      * memory allocated for fields, and allocate if necessary.
+      * during setup before a sweep to check allocation state and/or
+      * allocate memory for fields in State objects.
       *
-      * \param state one stored state of the system.
+      * \param state  one stored state of the system.
       */
       virtual void checkAllocation(State & state) = 0;
 
@@ -135,14 +146,23 @@ namespace Pscf {
       /**
       * Set non-adjustable system parameters to new values.
       *
-      * \param s path length coordinate, in range [0,1]
+      * \param sNew  new value of path length coordinate, in range [0,1]
       */
-      virtual void setParameters(double s) = 0;
+      virtual void setParameters(double sNew) = 0;
 
       /**
       * Create guess for adjustable variables by continuation.
+      *
+      * \param sNew  new value of path length coordinate.
       */
       virtual void setGuess(double sNew) = 0;
+
+      /**
+      * Compute coefficients of previous states for continuation.
+      *
+      * \param sNew  new value of path length coordinate.
+      */
+      void setCoefficients(double sNew);
 
       /**
       * Call current iterator to solve SCFT problem.
@@ -164,19 +184,16 @@ namespace Pscf {
       *
       * This function is called by accept(). The implementation of this 
       * function should copy the current system state into state(0) and 
-      * output any desired information about the current solution. It
-      * may also take any other actions that would normally be taken
-      * after acceptance of a converted solution. For example, it may
-      * examine the rate of convergence of previous solutions in order 
-      * to decide whether to update any parameters used by the SCFT
-      * iterator.
+      * output any desired information about the current solution, or
+      * any other actions that should be taken immediately after 
+      * acceptance of a converged solution. 
       */
       virtual void getSolution() = 0;
 
       /**
       * Clean up operation at the end of a sweep
       *
-      * Default implementation is empty.
+      * Empty default implementation.
       */
       virtual void cleanup();
 
@@ -190,6 +207,9 @@ namespace Pscf {
 
       /// Pointers to State objects containing old solutions.
       DArray<State*> stateHistory_;
+
+      /// Coefficients for use during continuation
+      DArray<double> c_;
 
       /// Maximum number of stored previous states.
       int historyCapacity_;
