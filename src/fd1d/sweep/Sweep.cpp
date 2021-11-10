@@ -22,7 +22,7 @@ namespace Fd1d
    using namespace Util;
 
    // Define maximum number of stored states = order of continuation + 1
-   #define FD1D_HISTORY_CAPACITY 4
+   #define FD1D_HISTORY_CAPACITY 3
 
    Sweep::Sweep()
     : Base(FD1D_HISTORY_CAPACITY),

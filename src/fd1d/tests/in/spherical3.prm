@@ -38,7 +38,7 @@ System{
      ns              5
      baseFileName    out/spherical
      homogeneousMode 1
-     dPhi            +0.0625  -0.0625
+     dPhi            +0.0200  -0.0200
   }
 }
 
