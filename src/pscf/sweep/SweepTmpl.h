@@ -25,6 +25,8 @@ namespace Pscf {
 
    public:
 
+      // Constructor is protected (see below).
+
       /**
       * Destructor.
       */
@@ -65,6 +67,8 @@ namespace Pscf {
       * Get reference to a stored state, with i=0 being most recent.
       *
       * Call state(i) to return the ith from most recent converged solution.
+      *
+      * \param i history index (i=0 is most recent)
       */
       State& state(int i)
       {
@@ -77,74 +81,104 @@ namespace Pscf {
       *
       * Call s(i) to return the value of the contour variable s for the 
       * ith from most recent solution.
+      *
+      * \param i history index (i=0 is most recent)
       */
-      double s(int i)
+      double s(int i) const
       {
          UTIL_CHECK(i < historySize_); 
          return sHistory_[i]; 
       }
 
       /**
-      * Get the coefficients of previous states used for continuation.
+      * Get a coefficient of a previous state in a continuation.
       *
-      * Call s(i) to return the value of the contour variable s for the 
-      * ith from most recent solution.
+      * An extrapolated trial values for each field or other variables 
+      * that describes a state is constructed as a linear superposition of 
+      * of corresponding values in previous states. Coefficient c(i) is
+      * the coefficient of state state(i) in this linear superposition, 
+      * where i = 0 denotes the most recent accepted solution and 
+      * increasing index i corresponds to increasingly far in the past.
+      * Valid values of i are in the range 0 <= i < historySize().
+      *
+      * The function setCoefficients(double sNew) method computes and 
+      * stores values coefficients c(0), ..., c(historySize-1) from values
+      * of sNew (the contour variable of the new state) and previous 
+      * values of s. These coefficient values can then be retrieved by 
+      * this function. 
+      *
+      * \param i history index (i=0 is most recent)
       */
-      double c(int i)
+      double c(int i) const
       {
+         UTIL_CHECK(i >= 0); 
          UTIL_CHECK(i < historySize_); 
          return c_[i]; 
       }
 
       /**
       * Get the current number of stored previous states.
+      *
+      * \param i history index (i=0 is most recent)
       */ 
-      int historySize()
+      int historySize() const
       {  return historySize_; }
 
       /**
       * Get the maximum number of stored previous states.
       *
-      * The value of historyCapacity is a constant that depends on
-      * the order of continuation (i.,e 2 for 1st order continuation,
-      * or 3 for 2nd order).
+      * The value of historyCapacity is a constant that is one greater
+      * than the maximum order of continuation (e.g., 3 for 2nd order 
+      * continuation).  The value is set by passing it as an argument 
+      * to the constructor, and is constant after construction.
       */ 
-      int historyCapacity()
+      int historyCapacity() const
       {  return historyCapacity_; }
 
       /**
       * Get the number of converged solutions accepted thus far.
+      *
+      * This value is reset to zero by the initialize function, which 
+      * must be called by the setup function, and is incremented by one
+      * by the accept function.
       */ 
-      int nAccept()
+      int nAccept() const
       {  return nAccept_; }
 
       /**
       * Initialize variables that track history of solutions.
       *
-      * This must be called within the virtual setup() function.
+      * This must be called within the implementation of the setup function.
       */
       void initialize();
 
       /**
       * Check allocation of one state, allocate if necessary.
       *
-      * This virtual function is called by SweepTmpl::initialize() 
-      * during setup before a sweep to check allocation state and/or
-      * allocate memory for fields in State objects.
+      * This virtual function is called by SweepTmpl::initialize() during
+      * setup before a sweep to check allocation state and/or allocate 
+      * memory for fields in all stored State objects.
       *
-      * \param state  one stored state of the system.
+      * \param state  a object that represents a state of the system.
       */
       virtual void checkAllocation(State & state) = 0;
 
       /**
       * Setup operation at the beginning of a sweep.
       *
-      * Implementations of this function must call initialize().
+      * Every implementations of this function must call initialize().
       */
       virtual void setup() = 0;
 
       /**
       * Set non-adjustable system parameters to new values.
+      *
+      * This function should set set values for parameters that are treated
+      * as constant input parameters by the SCFT solver, such as block 
+      * polymer block lengths, chi parameters, species volume fractions or 
+      * chemical potentials, etc. The function must modify the values stored
+      * in the parent system to values appropriate to a new contour variable
+      * value sNew that is passed as a parameter.
       *
       * \param sNew  new value of path length coordinate, in range [0,1]
       */
@@ -153,12 +187,26 @@ namespace Pscf {
       /**
       * Create guess for adjustable variables by continuation.
       *
+      * This function should set extrapolated values of the variables that 
+      * are modified by the iterative SCFT solver, i.e., values of fields
+      * (coefficients of basis functions or at grid points) and unit cell
+      * parameters or domain dimensions for problems involving an adjustable 
+      * unit cell or domains. Values should be extrapolated to a new 
+      * contour variable sNew by constructing a linear combination of 
+      * corresponding values obtained in previous converged states. 
+      *
+      * This function should call setCoefficients to compute coefficients
+      * of previous states used to extrapolate previous values using a
+      * polynomial in sNew.
+      *
       * \param sNew  new value of path length coordinate.
       */
-      virtual void setGuess(double sNew) = 0;
+      virtual void extrapolate(double sNew) = 0;
 
       /**
       * Compute coefficients of previous states for continuation.
+      *
+      * This function must be called by the implementation of extrapolate.
       *
       * \param sNew  new value of path length coordinate.
       */

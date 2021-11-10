@@ -115,12 +115,13 @@ namespace Fd1d
       }
 
       /*
-      * Note: In canonical ensemble, the spatial integral of the incompressiblity
-      * residual is guaranteed to be zero, as a result of how volume fractions are
-      * computed in SCFT. One of the nx incompressibility constraints is thus 
-      * redundant. To avoid this redundancy, replace the incompressibility residual
-      * at the last grid point by a residual that requires the w field for the last 
-      * monomer type at the last grid point to equal zero. 
+      * Note: In canonical ensemble, the spatial integral of the 
+      * incompressiblity residual is guaranteed to be zero, as a result of how 
+      * volume fractions are computed in SCFT. One of the nx incompressibility 
+      * constraints is thus redundant. To avoid this redundancy, replace the 
+      * incompressibility residual at the last grid point by a residual that 
+      * requires the w field for the last monomer type at the last grid point 
+      * to equal zero. 
       */
 
       if (isCanonical_) {

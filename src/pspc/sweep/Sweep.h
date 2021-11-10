@@ -47,10 +47,20 @@ namespace Pspc {
       */
       void setSystem(System<D>& system);
 
+      // Public members inherited from base class template SweepTmpl
+      using SweepTmpl< BasisFieldState<D> >::historyCapacity;
+      using SweepTmpl< BasisFieldState<D> >::historySize;
+      using SweepTmpl< BasisFieldState<D> >::nAccept;
+      using SweepTmpl< BasisFieldState<D> >::state;
+      using SweepTmpl< BasisFieldState<D> >::s;
+      using SweepTmpl< BasisFieldState<D> >::c;
+
    protected:
 
       /**
       * Check allocation state of fields in one state, allocate if necessary.
+      *
+      * \param state object that represents a stored state of the system.
       */
       virtual void checkAllocation(BasisFieldState<D>& state);
 
@@ -62,14 +72,16 @@ namespace Pspc {
       /**
       * Set non-adjustable system parameters to new values.
       *
-      * \param s path length coordinate, in range [0,1]
+      * \param sNew contour variable value for new trial solution.
       */
-      virtual void setParameters(double s) = 0;
+      virtual void setParameters(double sNew) = 0;
 
       /**
       * Create a guess for adjustable variables by continuation.
+      *
+      * \param sNew contour variable value for new trial solution.
       */
-      virtual void setGuess(double sNew);
+      virtual void extrapolate(double sNew);
 
       /**
       * Call current iterator to solve SCFT problem.
@@ -95,35 +107,41 @@ namespace Pspc {
       */
       virtual void getSolution();
 
-      // Members inherited from base class template SweepTmpl
-      using SweepTmpl< BasisFieldState<D> >::ns_;
-      using SweepTmpl< BasisFieldState<D> >::baseFileName_;
-      using SweepTmpl< BasisFieldState<D> >::state;
-      using SweepTmpl< BasisFieldState<D> >::s;
-      using SweepTmpl< BasisFieldState<D> >::c;
-      using SweepTmpl< BasisFieldState<D> >::historyCapacity;
-      using SweepTmpl< BasisFieldState<D> >::historySize;
-      using SweepTmpl< BasisFieldState<D> >::nAccept;
-      using SweepTmpl< BasisFieldState<D> >::initialize;
-      using SweepTmpl< BasisFieldState<D> >::setCoefficients;
+      /**
+      * Cleanup operation at the beginning of a sweep.
+      */
+      virtual void cleanup();
 
-   protected:
-
+      /**
+      * Has an association with the parent System been set?
+      */
       bool hasSystem()
       {  return (systemPtr_ != 0); }
 
+      /**
+      * Return the parent system by reference.
+      */
       System<D>& system()
       {  return *systemPtr_; }
 
+      // Protected members inherited from base class template SweepTmpl
+      using SweepTmpl< BasisFieldState<D> >::ns_;
+      using SweepTmpl< BasisFieldState<D> >::baseFileName_;
+      using SweepTmpl< BasisFieldState<D> >::initialize;
+      using SweepTmpl< BasisFieldState<D> >::setCoefficients;
+
    private:
 
-      // Trial state (produced by continuation in setGuess)
+      /// Trial state (produced by continuation in setGuess)
       BasisFieldState<D> trial_;
 
-      // Unit cell parameters for trial state 
+      /// Unit cell parameters for trial state 
       FSArray<double, 6> unitCellParameters_;
 
-      // Pointer to parent system.
+      /// Log file for summary output
+      std::ofstream logFile_;
+
+      /// Pointer to parent system.
       System<D>* systemPtr_;
 
    };

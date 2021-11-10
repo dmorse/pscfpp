@@ -21,10 +21,11 @@ namespace Fd1d
 
    using namespace Util;
 
-   #define FD1D_HISTORY_SIZE 4
+   // Define maximum number of stored states = order of continuation + 1
+   #define FD1D_HISTORY_CAPACITY 4
 
    Sweep::Sweep()
-    : Base(FD1D_HISTORY_SIZE),
+    : Base(FD1D_HISTORY_CAPACITY),
       SystemAccess(),
       homogeneousMode_(-1),
       comparison_(),
@@ -34,7 +35,7 @@ namespace Fd1d
    }
 
    Sweep::Sweep(System& system)
-    : Base(FD1D_HISTORY_SIZE),
+    : Base(FD1D_HISTORY_CAPACITY),
       SystemAccess(system),
       homogeneousMode_(-1),
       comparison_(system),
@@ -105,7 +106,7 @@ namespace Fd1d
 
    };
 
-   /**
+   /*
    * Set non-adjustable system parameters to new values.
    *
    * \param s path length coordinate, in range [0,1]
@@ -115,10 +116,10 @@ namespace Fd1d
       UTIL_THROW("Called un-implemented Fd1d::Sweep::setParameters");
    };
 
-   /**
-   * Create guess for adjustable variables by continuation.
+   /*
+   * Create guess for adjustable variables by polynomial extrapolation.
    */
-   void Sweep::setGuess(double sNew) 
+   void Sweep::extrapolate(double sNew) 
    {
       int nm = mixture().nMonomer();
       int nx = domain().nx();
@@ -127,15 +128,22 @@ namespace Fd1d
 
       if (historySize() > 1) {
 
+         // Compute an array of coefficients for polynomial extrapolation
          setCoefficients(sNew);
+
+         // Set System::wField to a linear combination of previous values
+         // Note: wField(i) is accessed through SystemAccess base class.
+         double coeff;
          int i, j, k;
          for (i = 0; i < nm; ++i) {
+            coeff = c(0);
             for (j = 0; j < nx; ++j) {
-               wField(i)[j] = c(0)*state(0)[i][j];
+               wField(i)[j] = coeff*state(0)[i][j];
             }
             for (k = 1; k < historySize(); ++k) {
+               coeff = c(k);
                for (j = 0; j < nx; ++j) {
-                  wField(i)[j] += c(k)*state(k)[i][j];
+                  wField(i)[j] += coeff*state(k)[i][j];
                }
             }
          }

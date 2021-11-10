@@ -89,7 +89,7 @@ namespace Fd1d
       int homogeneousMode_;
 
       /**
-      * Check allocation of fields in one state, allocate if needed.
+      * Check allocation of w fields in one state, allocate if needed.
       *
       * \param state  one stored state of the system.
       */
@@ -103,17 +103,19 @@ namespace Fd1d
       /**
       * Set non-adjustable system parameters to new values.
       *
-      * \param s path length coordinate, in range [0,1]
+      * \param s new value of contour coordinate, in range [0,1]
       */
       virtual void setParameters(double s);
 
       /**
-      * Create guess for adjustable variables by continuation.
+      * Create initial guess for new w fields by polynomial extrapolation.
+      *
+      * \param s new value of contour coordinate, in range [0,1]
       */
-      virtual void setGuess(double s);
+      virtual void extrapolate(double s);
 
       /**
-      * Call current iterator to solve SCFT problem.
+      * Call the current iterator to solve one SCFT problem.
       *
       * Return 0 for sucessful solution, 1 on failure to converge.
       */
@@ -122,8 +124,8 @@ namespace Fd1d
       /**
       * Reset system to previous solution after iterature failure.
       *
-      * The implementation of this function should reset the system state
-      * to correspond to that stored in state(0).
+      * The implementation of this function resets the system state to
+      * correspond to that stored in state(0).
       */
       virtual void reset();
 

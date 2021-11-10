@@ -58,7 +58,7 @@ namespace Pscf {
       std::cout << "ns = " << ns_ << std::endl;
       std::cout << "ds = " << ds  << std::endl;
 
-      // Initial setup, before sweep
+      // Initial setup, before a sweep
       setup();
 
       // Solve for initial state of sweep
@@ -87,8 +87,8 @@ namespace Pscf {
             // Set non-adjustable system parameters to new values
             setParameters(sNew);
 
-            // Set a guess for all state variables by continuation
-            setGuess(sNew);
+            // Set a guess for all state variables by polynomial extrapolation.
+            extrapolate(sNew);
 
             // Attempt iterative SCFT solution
             isContinuation = true;
@@ -107,7 +107,7 @@ namespace Pscf {
 
             } else {
 
-               // Upon successful convergence, update history
+               // Upon successful convergence, update history and nAccept
                accept(sNew);
 
             }

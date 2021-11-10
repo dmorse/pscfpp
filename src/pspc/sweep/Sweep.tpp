@@ -9,18 +9,22 @@
 #include <pspc/System.h>
 #include <pspc/iterator/AmIterator.h>
 #include <pscf/sweep/SweepTmpl.tpp>
+#include <util/misc/FileMaster.h>
 
 namespace Pscf {
 namespace Pspc {
 
    using namespace Util;
 
+   // Maximum number of previous states = order of continuation + 1
+   # define PSPC_HISTORY_CAPACITY 3
+
    /*
    * Default constructor.
    */
    template <int D>
    Sweep<D>::Sweep() 
-    : SweepTmpl< BasisFieldState<D> >(2),
+    : SweepTmpl< BasisFieldState<D> >(PSPC_HISTORY_CAPACITY),
       systemPtr_(0)
    {}
 
@@ -29,7 +33,7 @@ namespace Pspc {
    */
    template <int D>
    Sweep<D>::Sweep(System<D> & system) 
-    : SweepTmpl< BasisFieldState<D> >(2),
+    : SweepTmpl< BasisFieldState<D> >(PSPC_HISTORY_CAPACITY),
       systemPtr_(0)
    {  setSystem(system); }
 
@@ -68,6 +72,11 @@ namespace Pspc {
          state(i).setSystem(system());
       }
       trial_.setSystem(system());
+
+      // Open log summary file
+      std::string fileName = baseFileName_;
+      fileName += "log";
+      system().fileMaster().openOutputFile(fileName, logFile_);
    };
 
    /*
@@ -83,25 +92,28 @@ namespace Pspc {
    };
 
    /*
-   * Create guess for adjustable variables by continuation.
+   * Create guess for adjustable variables by polynomial extrapolation.
    */
    template <int D>
-   void Sweep<D>::setGuess(double sNew) 
+   void Sweep<D>::extrapolate(double sNew) 
    {
+       UTIL_CHECK(historySize() > 0);
 
-      // If historySize() == 1, do nothing, use previous system state
-      // as guess for the new state.
+      // If historySize() == 1, do nothing: Use previous system state
+      // as trial for the new state.
 
       if (historySize() > 1) {
 
          UTIL_CHECK(historySize() <= historyCapacity());
 
-         // Compute coefficients of previous states for continuation
-         setCoefficients(sNew);
-
+         // Does the iterator allow a flexible unit cell ?
          bool isFlexible = system().iterator().isFlexible();
 
-         // Set trial w fields 
+         // Compute coefficients of polynomial extrapolation to sNew
+         setCoefficients(sNew);
+
+         // Set extrapolated trial w fields 
+         double coeff;
          int nMonomer = system().mixture().nMonomer();
          int nStar = system().basis().nStar();
          DArray<double>* newFieldPtr;
@@ -112,34 +124,50 @@ namespace Pspc {
 
             // Previous state k = 0 (most recent)
             oldFieldPtr = &state(0).field(i);
+            coeff = c(0);
             for (j=0; j < nStar; ++j) {
-               (*newFieldPtr)[j] = (*oldFieldPtr)[j]*c(0);
+               (*newFieldPtr)[j] = coeff*(*oldFieldPtr)[j];
             }
 
             // Previous states k >= 1 (older)
             for (k = 1; k < historySize(); ++k) {
                oldFieldPtr = &state(k).field(i);
+               coeff = c(k);
                for (j=0; j < nStar; ++j) {
-                  (*newFieldPtr)[j] += (*oldFieldPtr)[j]*c(k);
+                  (*newFieldPtr)[j] += coeff*(*oldFieldPtr)[j];
                }
             }
          }
 
-         // Set trial unit cell
+         // IfisFlexible, then extrapolate unit cell parameters
          if (isFlexible) {
+
+            double coeff;
+            double parameter;
             int nParameter = system().unitCell().nParameter();
+
+            // Append contributions from k= 0 (most recent state)
+            coeff = c(0);
             unitCellParameters_.clear();
             for (int i = 0; i < nParameter; ++i) {
-               unitCellParameters_.append(state(0).unitCell().parameter(i)*c(0));
+               parameter = state(0).unitCell().parameter(i);
+               unitCellParameters_.append(coeff*parameter);
             }
+
+            // Add contributions from k > 0 (older states)
             for (k = 1; k < historySize(); ++k) {
+               coeff = c(k);
                for (int i = 0; i < nParameter; ++i) {
-                  unitCellParameters_[i] += state(0).unitCell().parameter(i)*c(k);
+                  parameter = state(k).unitCell().parameter(i);
+                  unitCellParameters_[i] += coeff*parameter;
                }
             }
+
+            // Reset trial_.unitCell() object
             trial_.unitCell().setParameters(unitCellParameters_);
          }
 
+         // Transfer data from trial_ state to parent system
          trial_.setSystemState(isFlexible);
       }
 
@@ -168,7 +196,7 @@ namespace Pspc {
       state(0).setSystemState(isFlexible); 
    }
 
-   /**
+   /*
    * Update state(0) and output data after successful convergence
    *
    * The implementation of this function should copy the current 
@@ -179,8 +207,21 @@ namespace Pspc {
    void Sweep<D>::getSolution() 
    { 
       state(0).getSystemState(); 
-      // Output operations (see example in Fd1d)
+
+      // Output solution
+      // int i = nAccept() - 1;
+      // std::string fileName = baseFileName_;
+      // fileName += toString(i);
+      // outputSolution(fileName);
+
+      // Output summary to log file
+      // outputSummary(logFile_);
+
    };
+
+   template <int D>
+   void Sweep<D>::cleanup() 
+   {  logFile_.close(); }
 
 } // namespace Pspc
 } // namespace Pscf
