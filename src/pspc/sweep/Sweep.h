@@ -98,12 +98,14 @@ namespace Pspc {
       // Members inherited from base class template SweepTmpl
       using SweepTmpl< BasisFieldState<D> >::ns_;
       using SweepTmpl< BasisFieldState<D> >::baseFileName_;
-      using SweepTmpl< BasisFieldState<D> >::s;
       using SweepTmpl< BasisFieldState<D> >::state;
+      using SweepTmpl< BasisFieldState<D> >::s;
+      using SweepTmpl< BasisFieldState<D> >::c;
       using SweepTmpl< BasisFieldState<D> >::historyCapacity;
       using SweepTmpl< BasisFieldState<D> >::historySize;
       using SweepTmpl< BasisFieldState<D> >::nAccept;
       using SweepTmpl< BasisFieldState<D> >::initialize;
+      using SweepTmpl< BasisFieldState<D> >::setCoefficients;
 
    protected:
 
@@ -117,6 +119,9 @@ namespace Pspc {
 
       // Trial state (produced by continuation in setGuess)
       BasisFieldState<D> trial_;
+
+      // Unit cell parameters for trial state 
+      FSArray<double, 6> unitCellParameters_;
 
       // Pointer to parent system.
       System<D>* systemPtr_;

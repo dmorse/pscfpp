@@ -21,8 +21,10 @@ namespace Fd1d
 
    using namespace Util;
 
+   #define FD1D_HISTORY_SIZE 4
+
    Sweep::Sweep()
-    : Base(2),
+    : Base(FD1D_HISTORY_SIZE),
       SystemAccess(),
       homogeneousMode_(-1),
       comparison_(),
@@ -32,7 +34,7 @@ namespace Fd1d
    }
 
    Sweep::Sweep(System& system)
-    : Base(2),
+    : Base(FD1D_HISTORY_SIZE),
       SystemAccess(system),
       homogeneousMode_(-1),
       comparison_(system),
@@ -123,19 +125,20 @@ namespace Fd1d
       UTIL_CHECK(nm > 0);
       UTIL_CHECK(nx > 0);
 
-      setCoefficients(sNew);
-      if (historySize() == 1) {
-         std::cout << "Zeroth order continuation" << std::endl;
-      } else 
-      if (historySize() == 2) {
-         int i, j;
+      if (historySize() > 1) {
+
+         setCoefficients(sNew);
+         int i, j, k;
          for (i = 0; i < nm; ++i) {
             for (j = 0; j < nx; ++j) {
-               wFields()[i][j] = c(0)*state(0)[i][j] + c(1)*state(1)[i][j];
+               wField(i)[j] = c(0)*state(0)[i][j];
+            }
+            for (k = 1; k < historySize(); ++k) {
+               for (j = 0; j < nx; ++j) {
+                  wField(i)[j] += c(k)*state(k)[i][j];
+               }
             }
          }
-      } else {
-         UTIL_THROW("Invalid value of historySize");
       }
    };
 

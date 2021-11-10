@@ -15,7 +15,8 @@ namespace Pspc
 
    template<int D>
    Iterator<D>::Iterator(System<D>* system)
-    : systemPtr_(system)
+    : isFlexible_(false),
+      systemPtr_(system)
    {  setClassName("Iterator"); }
 
    template<int D>

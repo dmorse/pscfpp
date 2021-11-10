@@ -116,11 +116,8 @@ namespace Pspc
    * Get current state of associated System.
    */
    template <int D>
-   void BasisFieldState<D>::setSystemState()
+   void BasisFieldState<D>::setSystemState(bool isFlexible)
    {
-      // Update system unitCell
-      system().unitCell() = unitCell();
-
       // Update system  wFields
       int nMonomer = system().mixture().nMonomer();
       int nStar = system().basis().nStar();
@@ -136,6 +133,12 @@ namespace Pspc
       // Update system wFieldsRgrid
       system().fieldIo().convertBasisToRGrid(system().wFields(),
                                              system().wFieldsRGrid());
+
+      if (isFlexible) {
+         // Update system unitCell
+         system().unitCell() = unitCell();
+      }
+
    }
 
 } // namespace Pspc

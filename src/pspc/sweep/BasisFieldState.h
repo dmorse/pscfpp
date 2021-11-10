@@ -65,13 +65,17 @@ namespace Pspc
 
       /**
       * Copy the current state of the associated system.
+      *
+      * Copy the fields and the unit cell.
       */
       void getSystemState();
 
       /**
       * Set the state of the associated system to this state.
+      *
+      * \param isFlexible update system unit cell iff isFlexible == true.
       */
-      void setSystemState();
+      void setSystemState(bool isFlexible);
 
       // Inherited member functions
       using FieldState<D, DArray<double> >::fields;

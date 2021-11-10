@@ -59,14 +59,19 @@ namespace Pspc
       void readParameters(std::istream& in);
 
       /**
-      * Allocate all arrays
+      * Setup and allocate required memory.
       */
-      void allocate();
+      void setup();
 
       /**
       * Iterate to a solution
       */
       int solve();
+
+      /**
+      * Should the unit cell be adjusted to find a zero stress state?
+      */
+      bool isFlexible();
 
       /**
       * Get epsilon (error threshhold).
@@ -165,7 +170,6 @@ namespace Pspc
       DArray< DArray<double> > tempDev;
 
       using Iterator<D>::setClassName;
-      using Iterator<D>::systemPtr_;
       using Iterator<D>::system;
       using ParamComposite::read;
       using ParamComposite::readOptional;

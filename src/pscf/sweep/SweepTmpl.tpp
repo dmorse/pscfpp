@@ -84,11 +84,11 @@ namespace Pscf {
             std::cout << std::endl;
             std::cout << "Attempt s = " << sNew << std::endl;
 
-            // Set a guess for adjustable state variables by continuation
-            setGuess(sNew);
-
             // Set non-adjustable system parameters to new values
             setParameters(sNew);
+
+            // Set a guess for all state variables by continuation
+            setGuess(sNew);
 
             // Attempt iterative SCFT solution
             isContinuation = true;
@@ -175,17 +175,29 @@ namespace Pscf {
 
    }
 
+   /*
+   * Use Lagrange polynomials to compute coefficients for continuation.
+   */
    template <class State>
    void SweepTmpl<State>::setCoefficients(double sNew)
    {
+      UTIL_CHECK(historySize_ <= historyCapacity_);
       if (historySize_ == 1) {
          c_[0] = 1.0;
-      } else 
-      if (historySize_ == 2) {
-         c_[1] = -(sNew - s(0))/(sNew - s(1));
-         c_[0] = 1.0 - c_[1];
       } else {
-         UTIL_THROW("Invalid value of historySize");
+         double num, den;
+         int i, j;
+         for (i = 0; i < historySize_; ++i) {
+            num = 1.0;
+            den = 1.0;
+            for (j = 0; j < historySize_; ++j) {
+               if (j != i) {
+                  num *= (sNew - s(j));
+                  den *= (s(i) - s(j));
+               }
+            }
+            c_[i] = num/den;
+         }
       }
    }
 

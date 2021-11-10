@@ -7,6 +7,7 @@
 
 #include "Sweep.h"
 #include <pspc/System.h>
+#include <pspc/iterator/AmIterator.h>
 #include <pscf/sweep/SweepTmpl.tpp>
 
 namespace Pscf {
@@ -44,9 +45,7 @@ namespace Pspc {
    */
    template <int D>
    void Sweep<D>::setSystem(System<D> & system) 
-   {
-      systemPtr_ = & system;
-   }
+   {  systemPtr_ = & system; }
 
    /*
    * Check allocation of one state object, allocate if necessary.
@@ -89,11 +88,62 @@ namespace Pspc {
    template <int D>
    void Sweep<D>::setGuess(double sNew) 
    {
-      DArray<double> coeffs_;
-      coeffs_.allocate(historyCapacity());
-      // Set coeffs for appropriate continuation order
-      // trial_.linearCombination(history(), coeffs_);
-      // Set unit cell and wFields in system
+
+      // If historySize() == 1, do nothing, use previous system state
+      // as guess for the new state.
+
+      if (historySize() > 1) {
+
+         UTIL_CHECK(historySize() <= historyCapacity());
+
+         // Compute coefficients of previous states for continuation
+         setCoefficients(sNew);
+
+         bool isFlexible = system().iterator().isFlexible();
+
+         // Set trial w fields 
+         int nMonomer = system().mixture().nMonomer();
+         int nStar = system().basis().nStar();
+         DArray<double>* newFieldPtr;
+         DArray<double>* oldFieldPtr; 
+         int i, j, k;
+         for (i=0; i < nMonomer; ++i) {
+            newFieldPtr = &trial_.field(i);
+
+            // Previous state k = 0 (most recent)
+            oldFieldPtr = &state(0).field(i);
+            for (j=0; j < nStar; ++j) {
+               (*newFieldPtr)[j] = (*oldFieldPtr)[j]*c(0);
+            }
+
+            // Previous states k >= 1 (older)
+            for (k = 1; k < historySize(); ++k) {
+               oldFieldPtr = &state(k).field(i);
+               for (j=0; j < nStar; ++j) {
+                  (*newFieldPtr)[j] += (*oldFieldPtr)[j]*c(k);
+               }
+            }
+         }
+
+         // Set trial unit cell
+         if (isFlexible) {
+            int nParameter = system().unitCell().nParameter();
+            unitCellParameters_.clear();
+            for (int i = 0; i < nParameter; ++i) {
+               unitCellParameters_.append(state(0).unitCell().parameter(i)*c(0));
+            }
+            for (k = 1; k < historySize(); ++k) {
+               for (int i = 0; i < nParameter; ++i) {
+                  unitCellParameters_[i] += state(0).unitCell().parameter(i)*c(k);
+               }
+            }
+            trial_.unitCell().setParameters(unitCellParameters_);
+         }
+
+         trial_.setSystemState(isFlexible);
+      }
+
+    
    };
 
    /*
@@ -114,7 +164,8 @@ namespace Pspc {
    template <int D>
    void Sweep<D>::reset()
    {  
-      state(0).setSystemState(); 
+      bool isFlexible = system().iterator().isFlexible();
+      state(0).setSystemState(isFlexible); 
    }
 
    /**

@@ -29,7 +29,7 @@ namespace Pscf { class ChiInteraction; }
 namespace Pscf {
 namespace Pspc
 {
-   template <int D> class AmIterator;
+   template <int D> class Iterator;
    template <int D> class Sweep;
    template <int D> class SweepFactory;
 
@@ -277,8 +277,7 @@ namespace Pspc
       /**
       * Get the Iterator by reference.
       */
-      //temporarily changed to allow testing on member functions
-      AmIterator<D>& iterator();
+      Iterator<D>& iterator();
 
       /**
       * Get associated Basis object by reference.
@@ -577,7 +576,7 @@ namespace Pspc
       /**
       * Pointer to an iterator.
       */
-      AmIterator<D>* iteratorPtr_;
+      Iterator<D>* iteratorPtr_;
 
       #if 0
       /**
@@ -808,7 +807,7 @@ namespace Pspc
 
    // Get the Iterator.
    template <int D>
-   inline AmIterator<D>& System<D>::iterator()
+   inline Iterator<D>& System<D>::iterator()
    {
       UTIL_ASSERT(iteratorPtr_);
       return *iteratorPtr_;

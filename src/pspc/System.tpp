@@ -16,6 +16,7 @@
 #endif
 
 #include <pspc/iterator/AmIterator.h>
+#include <pspc/iterator/Iterator.h>
 
 #include <pspc/solvers/Mixture.h>
 #include <pspc/solvers/Polymer.h>
@@ -210,7 +211,7 @@ namespace Pspc
 
       // Initialize iterator
       readParamComposite(in, iterator());
-      iterator().allocate();
+      iterator().setup();
 
       #if 0
       // Optionally instantiate a Sweep object

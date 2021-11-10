@@ -44,21 +44,56 @@ namespace Pspc
       ~Iterator();
 
       /**
+      * Setup and allocate memory before iteration.
+      */
+      virtual void setup() = 0;
+
+      /**
       * Iterate to solution.
       *
       * \return error code: 0 for success, 1 for failure.
       */
       virtual int solve() = 0;
 
+      /**
+      * Is the unit cell adjusted to find a zero stress state?
+      */
+      bool isFlexible() const;
+
    protected:
+
+      /// Flexible cell computation (true) or rigid (false), default value = false
+      bool isFlexible_;
+
+      /**
+      * Get the parent system by reference.
+      */
+      System<D>& system();
+
+   private:
 
       /// Pointer to parent System object
       System<D>* systemPtr_;
 
-      System<D>& system() 
-      {  return *systemPtr_; }
+      /**
+      * Default constructor (private and not implemented to prohibit)
+      */
+      Iterator();
+
+      /**
+      * Copy constructor (private and not implemented to prohibit)
+      */
+      Iterator(System<D>& other);
 
    };
+
+   template <int D>
+   inline bool Iterator<D>::isFlexible() const
+   { return isFlexible_; }
+
+   template <int D>
+   inline System<D>& Iterator<D>::system() 
+   {  return *systemPtr_; }
 
 } // namespace Pspc
 } // namespace Pscf
