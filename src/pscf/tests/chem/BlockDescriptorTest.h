@@ -31,11 +31,13 @@ public:
 
    void testReadWrite() {
       printMethod(TEST_FUNC);
-      printEndl();
+      //printEndl();
 
-      BlockDescriptor v;
       std::ifstream in;
       openInputFile("in/BlockDescriptor", in);
+
+      BlockDescriptor v;
+      TEST_ASSERT(v.polymerType() == PolymerType::Branched);
 
       in >> v;
       TEST_ASSERT(v.id() == 5);
@@ -43,7 +45,22 @@ public:
       TEST_ASSERT(v.vertexId(0) == 3);
       TEST_ASSERT(v.vertexId(1) == 4);
       TEST_ASSERT(eq(v.length(), 2.0));
-      // std::cout << v << std::endl ;
+      TEST_ASSERT(v.polymerType() == PolymerType::Branched);
+      std::cout << std::endl ;
+      std::cout << v << std::endl ;
+
+      v.setPolymerType(PolymerType::Linear);
+      in >> v;
+      TEST_ASSERT(v.id() == 2);
+      TEST_ASSERT(v.monomerId() == 1);
+      TEST_ASSERT(v.vertexId(0) == 2);
+      TEST_ASSERT(v.vertexId(1) == 3);
+      TEST_ASSERT(eq(v.length(), 3.0));
+      TEST_ASSERT(v.polymerType() == PolymerType::Linear);
+      std::cout << v << std::endl ;
+
+      v.setPolymerType(PolymerType::Branched);
+      std::cout << v << std::endl ;
    }
 
 };

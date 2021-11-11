@@ -8,6 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include "PolymerType.h"
 #include <util/containers/Pair.h>
 
 #include <iostream>
@@ -25,12 +26,12 @@ namespace Pscf
    class BlockDescriptor
    {
    public:
-  
+
       /**
       * Constructor.
       */ 
       BlockDescriptor();
-  
+ 
       /**
       * Serialize to/from archive.
       *
@@ -74,6 +75,13 @@ namespace Pscf
       */ 
       virtual void setLength(double length);
   
+      /**
+      * Set the polymer type.
+      *
+      * \param type  type of polymer (branched or linear)
+      */ 
+      void setPolymerType(PolymerType::Enum type);
+  
       //@}
       /// \name Accessors (getters)
       //@{
@@ -105,6 +113,11 @@ namespace Pscf
       */
       double length() const;
 
+      /**
+      * Get the type of the parent polymer (branched or linear).
+      */
+      PolymerType::Enum polymerType() const;
+
       //@}
 
    private:
@@ -115,11 +128,14 @@ namespace Pscf
       /// Identifier for the associated monomer type.
       int monomerId_;
 
-      /// Two propagators, one for each direction. 
-      Pair<int> vertexIds_;
-
       /// Length of this block = volume / monomer reference volume. 
       double length_;
+
+      /// Indexes of associated vertices
+      Pair<int> vertexIds_;
+
+      /// Type of polymer (branched or linear)
+      PolymerType::Enum polymerType_;
 
       friend 
       std::istream& operator >> (std::istream& in, BlockDescriptor &block);
@@ -178,6 +194,12 @@ namespace Pscf
    */
    inline double BlockDescriptor::length() const
    {  return length_; }
+    
+   /*
+   * Get the polymer type (branched or linear).
+   */
+   inline PolymerType::Enum BlockDescriptor::polymerType() const
+   {  return polymerType_; }
     
    /*
    * Serialize to/from an archive.

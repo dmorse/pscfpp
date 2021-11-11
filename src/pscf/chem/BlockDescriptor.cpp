@@ -16,8 +16,9 @@ namespace Pscf
    BlockDescriptor::BlockDescriptor()
     : id_(-1),
       monomerId_(-1),
+      length_(0.0),
       vertexIds_(),
-      length_(0.0)
+      polymerType_(PolymerType::Branched)
    {}
 
    /*
@@ -47,6 +48,12 @@ namespace Pscf
    void BlockDescriptor::setLength(double length)
    {  length_ = length; }
   
+   /*
+   * Set the type of the polymer containing this block.
+   */ 
+   void BlockDescriptor::setPolymerType(PolymerType::Enum type)
+   {  polymerType_ = type; }
+  
    /* 
    * Extract a BlockDescriptor from an istream.
    */
@@ -54,8 +61,16 @@ namespace Pscf
    {
       in >> block.id_;
       in >> block.monomerId_;
-      in >> block.vertexIds_[0];
-      in >> block.vertexIds_[1];
+      if (block.polymerType_ == PolymerType::Branched) {
+         in >> block.vertexIds_[0];
+         in >> block.vertexIds_[1];
+      } else 
+      if (block.polymerType_ == PolymerType::Linear) {
+         block.vertexIds_[0] = block.id_;
+         block.vertexIds_[1] = block.id_ + 1;
+      } else {
+         UTIL_THROW("Unknown PolymerType value in Block >> operator");
+      }
       in >> block.length_;
       return in;
    }
@@ -67,12 +82,14 @@ namespace Pscf
    {
       out << block.id_;
       out << "  " << block.monomerId_;
-      out << "  " << block.vertexIds_[0];
-      out << "  " << block.vertexIds_[1];
+      if (block.polymerType_ == PolymerType::Branched) {
+         out << "  " << block.vertexIds_[0];
+         out << "  " << block.vertexIds_[1];
+      }
       out << "  ";
       out.setf(std::ios::scientific);
-      out.width(16);
-      out.precision(8);
+      out.width(20);
+      out.precision(12);
       out << block.length_;
       return out;
    }

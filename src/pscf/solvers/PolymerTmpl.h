@@ -13,6 +13,7 @@
 
 #include <pscf/chem/Monomer.h>           // member template argument
 #include <pscf/chem/Vertex.h>            // member template argument
+#include <pscf/chem/PolymerType.h>       // member 
 #include <util/containers/Pair.h>        // member template
 #include <util/containers/DArray.h>      // member template
 #include <util/containers/DMatrix.h>
@@ -210,6 +211,9 @@ namespace Pscf
       /// Number of propagators (two per block).
       int nPropagator_;
 
+      /// Polymer type (branched or linear)
+      PolymerType::Enum type_;
+
    };
 
    /*
@@ -335,15 +339,62 @@ namespace Pscf
    template <class Block>
    void PolymerTmpl<Block>::readParameters(std::istream& in)
    {
-      read<int>(in, "nBlock", nBlock_);
-      read<int>(in, "nVertex", nVertex_);
+      // Read polymer type (branched by default)
+      type_ = PolymerType::Branched;
+      readOptional<PolymerType::Enum>(in, "type", type_);
 
-      // Allocate all arrays
+      read<int>(in, "nBlock", nBlock_);
+
+      // Note: For any acyclic graph, nVertex = nBlock + 1
+      nVertex_ = nBlock_ + 1;
+
+      // This optional read of nVertex exists for compatibility with an
+      // early param file format that required a value for nVertex.
+      // New files should not include a value for nVertex.
+      readOptional<int>(in, "nVertex", nVertex_);
+      UTIL_CHECK(nVertex_ = nBlock_ + 1);
+
+      // Allocate all arrays (blocks_, vertices_ and propagatorIds_)
       blocks_.allocate(nBlock_);
       vertices_.allocate(nVertex_);
       propagatorIds_.allocate(2*nBlock_);
 
+      // Set polymerType flag for all blocks
+      for (int blockId = 0; blockId < nBlock_; ++blockId) {
+         blocks_[blockId].setPolymerType(type_);
+      }
+
+      // Read all block data 
       readDArray<Block>(in, "blocks", blocks_, nBlock_);
+
+      /*
+      * The parameter file format for each block depends on polymer type.
+      * For a branched polymer, the format for each block is:
+      * 
+      *   id monomerId vertexId(0) vertexId(1) length
+      *
+      * For a linear polymer, vertex id values are excluded, giving:
+      *
+      *   id monomerId length
+      *
+      * The initial "id" entry is an index for the block. These must be
+      * entered sequentially for a linear polymer, but can be in any order 
+      * for a branched polymer. In a linear polymer, vertexId(0) = id 
+      * and vertexId(1) = id + 1. In the case of a linear polymer, these
+      * predetermined vertex id values are set automatically by the
+      * istream extractor (>>) operator for a BlockDescriptor. This can
+      * be done within the extractor operator because blockId is read in.
+      */
+
+      // For a linear polymer, require sequential block and vertex ids 
+      if (type_ == PolymerType::Linear) {
+         for (int blockId = 0; blockId < nBlock_; ++blockId) {
+            Block& block = blocks_[blockId];
+            UTIL_CHECK(block.id() == blockId);
+            UTIL_CHECK(block.vertexId(0) == blockId);
+            UTIL_CHECK(block.vertexId(1) == blockId + 1);
+         }
+      }
 
       // Set vertex indices
       for (int vertexId = 0; vertexId < nVertex_; ++vertexId) {

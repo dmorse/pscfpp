@@ -32,7 +32,7 @@ public:
 
    void testAddBlock() {
       printMethod(TEST_FUNC);
-      printEndl();
+      //printEndl();
 
       BlockDescriptor b;
       std::ifstream in;
