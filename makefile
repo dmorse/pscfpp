@@ -3,6 +3,12 @@ include src/config.mk
 .PHONY:  html clean clean-tests clean-bin clean-html veryclean 
 
 # =========================================================================
+# Main targets 
+ 
+all-cpu:
+	cd bld; $(MAKE) all-cpu
+
+# =========================================================================
 # HTML Documentation
  
 html:
