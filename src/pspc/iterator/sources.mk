@@ -1,5 +1,6 @@
 pspc_iterator_= \
   pspc/iterator/Iterator.cpp \
+  pspc/iterator/IteratorFactory.cpp \
   pspc/iterator/AmIterator.cpp 
 
   

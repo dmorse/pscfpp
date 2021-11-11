@@ -30,6 +30,7 @@ namespace Pscf {
 namespace Pspc
 {
    template <int D> class Iterator;
+   template <int D> class IteratorFactory;
    template <int D> class Sweep;
    template <int D> class SweepFactory;
 
@@ -577,6 +578,11 @@ namespace Pspc
       * Pointer to an iterator.
       */
       Iterator<D>* iteratorPtr_;
+
+      /**
+      * Pointer to iterator factory object
+      */
+      IteratorFactory<D>* iteratorFactoryPtr_;
 
       #if 0
       /**

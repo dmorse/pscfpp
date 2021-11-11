@@ -15,8 +15,8 @@
 #include <pspc/sweep/SweepFactory.h>
 #endif
 
-#include <pspc/iterator/AmIterator.h>
 #include <pspc/iterator/Iterator.h>
+#include <pspc/iterator/IteratorFactory.h>
 
 #include <pspc/solvers/Mixture.h>
 #include <pspc/solvers/Polymer.h>
@@ -60,6 +60,7 @@ namespace Pspc
       homogeneous_(),
       interactionPtr_(0),
       iteratorPtr_(0),
+      iteratorFactoryPtr_(0),
       // sweepPtr_(0),
       // sweepFactoryPtr_(0),
       wFields_(),
@@ -76,12 +77,9 @@ namespace Pspc
       //hasSweep_(false)
    {  
       setClassName("System"); 
-
       fieldIo_.associate(mesh_, fft_, groupName_, basis_, fileMaster_);
-
       interactionPtr_ = new ChiInteraction(); 
-      iteratorPtr_ = new AmIterator<D>(this); 
-
+      iteratorFactoryPtr_ = new IteratorFactory<D>(*this); 
       // sweepFactoryPtr_ = new SweepFactory(*this);
    }
 
@@ -97,6 +95,17 @@ namespace Pspc
       if (iteratorPtr_) {
          delete iteratorPtr_;
       }
+      if (iteratorFactoryPtr_) {
+         delete iteratorFactoryPtr_;
+      }
+      #if 0
+      if (sweepPtr_) {
+         delete sweepPtr_;
+      }
+      if (sweepFactoryPtr_) {
+         delete sweepFactoryPtr_;
+      }
+      #endif
    }
 
    /*
@@ -210,14 +219,21 @@ namespace Pspc
       isAllocated_ = true;
 
       // Initialize iterator
-      readParamComposite(in, iterator());
+      std::string className;
+      bool isEnd;
+      iteratorPtr_ 
+         = iteratorFactoryPtr_->readObject(in, *this, className, isEnd);
+      if (!iteratorPtr_) {
+         std::string msg = "Unrecognized Iterator subclass name ";
+         msg += className;
+         UTIL_THROW(msg.c_str());
+      }
       iterator().setup();
 
       #if 0
       // Optionally instantiate a Sweep object
       readOptional<bool>(in, "hasSweep", hasSweep_);
       if (hasSweep_) {
-         std::string className;
          bool isEnd;
          sweepPtr_ = 
             sweepFactoryPtr_->readObject(in, *this, className, isEnd);
