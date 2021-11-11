@@ -7,8 +7,8 @@ System{
      Polymer{
         type    linear
         nBlock  2
-        blocks  0  0  0.56
-                1  1  0.44
+        blocks  0  0.56
+                1  0.44
         phi     1.0
      }
      ds   0.01

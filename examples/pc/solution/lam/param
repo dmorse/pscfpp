@@ -9,8 +9,8 @@ System{
      Polymer{
         type    linear
         nBlock  2
-        blocks  0  0   0.35
-                1  1   0.65
+        blocks  0   0.35
+                1   0.65
         phi     0.5
      }
      Solvent{

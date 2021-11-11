@@ -5,18 +5,18 @@ System{
               1   B   1.0 
     nPolymer  1
     Polymer{
+      type    linear
       nBlock  2
-      nVertex 3
-      blocks  0  0  0  1  0.125
-              1  1  1  2  0.875
+      blocks  0   0.125
+              1   0.875
       phi     1.0
     }
     ds   0.01
   }
   ChiInteraction{
-    chi  0   0   0.0
-         1   0   41.0
-         1   1   0.0
+    chi  0   0    0.0
+         1   0    41.0
+         1   1    0.0
   }
   unitCell     cubic  1.7593562142
   mesh         32      32    32

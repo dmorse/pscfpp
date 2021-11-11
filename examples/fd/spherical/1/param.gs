@@ -5,17 +5,17 @@ System{
                1   B   1.0 
      nPolymer  2
      Polymer{
+        type      linear
         nBlock    2
-        nVertex   3
-        blocks    0  0  0  1  0.125
-                  1  1  1  2  0.875
+        blocks    0  0.125
+                  1  0.875
         ensemble  open
         mu        5.60908591992e+00   
      }
      Polymer{
+        type      linear
         nBlock    1
-        nVertex   2
-        blocks    0  1  0  1  1.000
+        blocks    1  1.000
         ensemble  open
         mu        -3.6515433392e-03  
      }

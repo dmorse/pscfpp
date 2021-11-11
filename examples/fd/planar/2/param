@@ -7,13 +7,13 @@ System{
      Polymer{
         type    linear
         nBlock  1
-        blocks  0  0  1.0
+        blocks  0  1.0
         phi     0.5
      }
      Polymer{
         type    linear
         nBlock  1
-        blocks  0  1  1.0
+        blocks  1  1.0
         phi     0.5
      }
      vMonomer   1.0

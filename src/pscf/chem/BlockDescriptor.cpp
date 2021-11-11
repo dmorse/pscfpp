@@ -59,19 +59,12 @@ namespace Pscf
    */
    std::istream& operator>>(std::istream& in, BlockDescriptor &block)
    {
-      in >> block.id_;
       in >> block.monomerId_;
+      in >> block.length_;
       if (block.polymerType_ == PolymerType::Branched) {
          in >> block.vertexIds_[0];
          in >> block.vertexIds_[1];
-      } else 
-      if (block.polymerType_ == PolymerType::Linear) {
-         block.vertexIds_[0] = block.id_;
-         block.vertexIds_[1] = block.id_ + 1;
-      } else {
-         UTIL_THROW("Unknown PolymerType value in Block >> operator");
       }
-      in >> block.length_;
       return in;
    }
    
@@ -80,17 +73,16 @@ namespace Pscf
    */
    std::ostream& operator<<(std::ostream& out, const BlockDescriptor &block) 
    {
-      out << block.id_;
       out << "  " << block.monomerId_;
-      if (block.polymerType_ == PolymerType::Branched) {
-         out << "  " << block.vertexIds_[0];
-         out << "  " << block.vertexIds_[1];
-      }
       out << "  ";
       out.setf(std::ios::scientific);
       out.width(20);
       out.precision(12);
       out << block.length_;
+      if (block.polymerType_ == PolymerType::Branched) {
+         out << "  " << block.vertexIds_[0];
+         out << "  " << block.vertexIds_[1];
+      }
       return out;
    }
 
