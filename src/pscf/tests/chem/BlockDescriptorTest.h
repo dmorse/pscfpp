@@ -39,6 +39,7 @@ public:
       BlockDescriptor v;
       TEST_ASSERT(v.polymerType() == PolymerType::Branched);
 
+      v.setId(5);
       in >> v;
       TEST_ASSERT(v.id() == 5);
       TEST_ASSERT(v.monomerId() == 0);
@@ -50,9 +51,11 @@ public:
       std::cout << v << std::endl ;
 
       v.setPolymerType(PolymerType::Linear);
+      v.setId(2);
       in >> v;
       TEST_ASSERT(v.id() == 2);
       TEST_ASSERT(v.monomerId() == 1);
+      v.setVertexIds(2,3);
       TEST_ASSERT(v.vertexId(0) == 2);
       TEST_ASSERT(v.vertexId(1) == 3);
       TEST_ASSERT(eq(v.length(), 3.0));

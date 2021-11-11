@@ -4,12 +4,18 @@ System{
      monomers  A   1.0  
                B   1.0 
      nPolymer  1
+     nSolvent  1
      Polymer{
-        type    linear
+        type    branched
         nBlock  2
-        blocks  0  0.5
-                1  0.5
-        phi     1.0
+        blocks  0   0.5   0   1 
+                1   0.5   1   2 
+        phi     0.95
+     }
+     Solvent{
+        monomerId  0
+        size       0.1
+        phi        0.05
      }
      ds   0.01
   }
@@ -26,14 +32,6 @@ System{
   }
   NrIterator{
      epsilon   0.00000001
-  }
-  hasSweep    1
-  LengthSweep{
-     ns            10
-     baseFileName  sweep/
-     polymerId     0
-     blockId       0
-     dLength       0.1
   }
 }
 

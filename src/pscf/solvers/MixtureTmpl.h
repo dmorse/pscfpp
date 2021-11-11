@@ -199,11 +199,24 @@ namespace Pscf
       // Read monomers
       read<int>(in, "nMonomer", nMonomer_);
       monomers_.allocate(nMonomer_);
+      for (int i = 0; i < nMonomer_; ++i) {
+         monomers_[i].setId(i);
+      }
       readDArray< Monomer >(in, "monomers", monomers_, nMonomer_);
 
-      // Read nPolymer and (optionally) nSolvent
-      nPolymer_ = 0;
+      /*
+      * The input format for a single monomer is defined in the istream
+      * extraction operation (operator >>) for a Pscf::Monomer, in file
+      * pscf/chem/Monomer.cpp. The format consists of the monomer name
+      * string Monomer::name followed by monomer statistical segment 
+      * Monomer::kuhn on a single line.
+      */
+
+      // Read nPolymer and (optionally) nSolvent, with nSolvent=0 by default
       read<int>(in, "nPolymer", nPolymer_);
+      UTIL_CHECK(nPolymer_ > 0);
+
+      // Optionally read nSolvent, with nSolvent=0 by default
       nSolvent_ = 0;
       readOptional<int>(in, "nSolvent", nSolvent_);
 

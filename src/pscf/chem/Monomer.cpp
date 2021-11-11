@@ -16,12 +16,15 @@ namespace Pscf
       name_()
    {}
 
+   void Monomer::setId(int id)
+   {  id_ = id; }
+
    /* 
    * Extract a Monomer from an istream.
    */
    std::istream& operator >> (std::istream& in, Monomer& monomer)
    {
-      in >> monomer.id_;
+      // in >> monomer.id_;
       in >> monomer.name_;
       in >> monomer.step_;
       return in;
@@ -32,8 +35,8 @@ namespace Pscf
    */
    std::ostream& operator << (std::ostream& out, const Monomer& monomer) 
    {
-      out << monomer.id_;
-      out << "  " << monomer.name_;
+      // out << monomer.id_;
+      out << monomer.name_;
       out << "  ";
       out.setf(std::ios::scientific);
       out.width(15);

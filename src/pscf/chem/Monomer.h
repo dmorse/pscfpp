@@ -29,6 +29,13 @@ namespace Pscf
       Monomer();
 
       /**
+      * Set the integer index for this monomer type.
+      *
+      * \param id  new value for index 
+      */
+      void setId(int id);
+
+      /**
       * Unique integer index for monomer type.
       */
       int id() const;

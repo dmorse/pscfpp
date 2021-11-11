@@ -34,10 +34,11 @@ public:
       printMethod(TEST_FUNC);
       //printEndl();
 
-      BlockDescriptor b;
       std::ifstream in;
       openInputFile("in/BlockDescriptor", in);
 
+      BlockDescriptor b;
+      b.setId(5);
       in >> b;
       TEST_ASSERT(b.id() == 5);
       TEST_ASSERT(b.monomerId() == 0);
