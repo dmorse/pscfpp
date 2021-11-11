@@ -1,3 +1,6 @@
+#ifndef PSPC_ITERATOR_TPP
+#define PSPC_ITERATOR_TPP
+
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
@@ -14,9 +17,9 @@ namespace Pspc
    using namespace Util;
 
    template<int D>
-   Iterator<D>::Iterator(System<D>* system)
+   Iterator<D>::Iterator(System<D>& system)
     : isFlexible_(false),
-      systemPtr_(system)
+      systemPtr_(&system)
    {  setClassName("Iterator"); }
 
    template<int D>
@@ -25,3 +28,4 @@ namespace Pspc
 
 } // namespace Pspc
 } // namespace Pscf
+#endif

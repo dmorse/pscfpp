@@ -5,8 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Iterator.h"
-
+#include "Iterator.tpp"
 
 namespace Pscf {
 namespace Pspc

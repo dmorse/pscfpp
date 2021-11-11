@@ -34,8 +34,7 @@ namespace Pspc {
  
       // Try to match classname
       if (className == "AmIterator") {
-         ptr = new AmIterator<D>(systemPtr_);
-
+         ptr = new AmIterator<D>(*systemPtr_);
       } 
       return ptr;
    }

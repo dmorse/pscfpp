@@ -16,9 +16,7 @@
 #include <util/containers/FSArray.h>
 #include <util/containers/DMatrix.h>
 #include <util/containers/RingBuffer.h>
-//#include <pspc/iterator/RingBuffer.h>
 #include <pspc/field/RField.h>
-
 
 namespace Pscf {
 namespace Pspc
@@ -44,7 +42,7 @@ namespace Pspc
       *
       * \param system pointer to a parent System object
       */
-      AmIterator(System<D>* system);
+      AmIterator(System<D>& system);
 
       /**
       * Destructor

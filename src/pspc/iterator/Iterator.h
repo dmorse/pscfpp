@@ -36,7 +36,7 @@ namespace Pspc
       * 
       * \param system parent System object
       */
-      Iterator(System<D>* system);
+      Iterator(System<D>& system);
 
       /**
       * Destructor.
@@ -62,7 +62,7 @@ namespace Pspc
 
    protected:
 
-      /// Flexible cell computation (true) or rigid (false), default value = false
+      /// Flexible cell (true) or rigid (false), default value = false
       bool isFlexible_;
 
       /**
@@ -83,7 +83,7 @@ namespace Pspc
       /**
       * Copy constructor (private and not implemented to prohibit)
       */
-      Iterator(System<D>& other);
+      Iterator(Iterator<D>& other);
 
    };
 
@@ -95,7 +95,13 @@ namespace Pspc
    inline System<D>& Iterator<D>::system() 
    {  return *systemPtr_; }
 
+   #ifndef PSPC_ITERATOR_TPP
+   // Suppress implicit instantiation
+   extern template class Iterator<1>;
+   extern template class Iterator<2>;
+   extern template class Iterator<3>;
+   #endif
+
 } // namespace Pspc
 } // namespace Pscf
-#include "Iterator.tpp"
 #endif

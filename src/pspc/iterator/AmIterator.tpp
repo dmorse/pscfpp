@@ -26,7 +26,7 @@ namespace Pspc
    * Constructor
    */
    template <int D>
-   AmIterator<D>::AmIterator(System<D>* system)
+   AmIterator<D>::AmIterator(System<D>& system)
     : Iterator<D>(system),
       epsilon_(0),
       lambda_(0),
