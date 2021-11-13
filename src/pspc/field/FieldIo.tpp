@@ -414,7 +414,7 @@ namespace Pspc
       UTIL_CHECK(nMonomer > 0);
 
       // Read header
-      readFieldHeader(in, nMonomer, unitCell);
+      FieldIo<D>::readFieldHeader(in, nMonomer, unitCell);
 
       // Read grid dimensions
       std::string label;
@@ -494,47 +494,31 @@ namespace Pspc
                                     int nMonomer,
                                     UnitCell<D>& unitCell) 
    {
-      std::string label;
-
-      in >> label;
-      UTIL_CHECK(label == "format");
       int ver1, ver2;
-      in >> ver1 >> ver2;
- 
-      in >> label;
-      UTIL_CHECK(label == "dim");
-      int dim;
-      in >> dim;
-      UTIL_CHECK(dim == D);
-
-      readUnitCellHeader(in, unitCell);
-
-      in >> label;
-      UTIL_CHECK(label == "group_name");
-      std::string groupName;
-      in >> groupName;
-
-      in >> label;
-      UTIL_CHECK(label == "N_monomer");
+      std::string groupNameIn;
       int nMonomerIn;
-      in >> nMonomerIn;
-      UTIL_CHECK(nMonomerIn > 0);
+      Pscf::readFieldHeader(in, ver1, ver2, unitCell, 
+                            groupNameIn, nMonomerIn);
+      // Note: Function definition in pscf/crystal/UnitCell.tpp
+      if (groupNameIn != groupName()) {
+         std::cout << std::endl 
+             << "Warning - "
+             << "Mismatched group names in FieldIo::readFieldHeader: \n" 
+             << "  FieldIo::groupName :" << groupName() << "\n"
+             << "  Field file header  :" << groupNameIn << "\n";
+      }
       UTIL_CHECK(nMonomerIn == nMonomer);
    }
 
    template <int D>
    void FieldIo<D>::writeFieldHeader(std::ostream &out, int nMonomer, 
-                                     UnitCell<D> const & unitCell) 
-   const
+                                     UnitCell<D> const & unitCell) const
    {
-      out << "format  1   0" <<  std::endl;
-      out << "dim" <<  std::endl 
-          << "          " << D << std::endl;
-      writeUnitCellHeader(out, unitCell); 
-      out << "group_name" << std::endl 
-          << "          " << groupName() <<  std::endl;
-      out << "N_monomer"  << std::endl 
-          << "          " << nMonomer << std::endl;
+      int ver1 = 1;
+      int ver2 = 0;
+      Pscf::writeFieldHeader(out, ver1, ver2, unitCell, 
+                             groupName(), nMonomer);
+      // Note: This is defined in pscf/crystal/UnitCell.tpp
    }
 
    template <int D>

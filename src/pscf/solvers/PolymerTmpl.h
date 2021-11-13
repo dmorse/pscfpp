@@ -138,16 +138,18 @@ namespace Pscf
       *
       * The propagator index must satisfy 0 <= id < 2*nBlock.
       *
-      * \param id integer index, in order of computation plan
+      * \param id propagator index, in order of computation plan
       */
-      Propagator& propagator(int id);
+      Propagator&  propagator(int id);
 
       /**
-      * Propagator identifier, indexed by order of computation.
+      * Get propagator identifier, indexed by order of computation.
       *
-      * The return value is a pair of integers. The first of 
-      * which is a block index between 0 and nBlock - 1 and 
-      * the second is a direction id, which must be 0 or 1.
+      * The return value is a pair of integers. The first integer
+      * is a block index between 0 and nBlock - 1, and the second
+      * is a propagator direction id, which must be 0 or 1.
+      *
+      * \param id  propagator index, in order of computation plan
       */
       const Pair<int>& propagatorId(int i) const;
 
@@ -339,8 +341,8 @@ namespace Pscf
    template <class Block>
    void PolymerTmpl<Block>::readParameters(std::istream& in)
    {
-      // Read polymer type (branched by default)
-      type_ = PolymerType::Branched;
+      // Read polymer type (linear by default)
+      type_ = PolymerType::Linear;
       readOptional<PolymerType::Enum>(in, "type", type_);
 
       read<int>(in, "nBlock", nBlock_);
@@ -353,7 +355,7 @@ namespace Pscf
       vertices_.allocate(nVertex_);
       propagatorIds_.allocate(2*nBlock_);
 
-      // Set block id and polymerType flag for all blocks
+      // Set block id and polymerType for all blocks
       for (int blockId = 0; blockId < nBlock_; ++blockId) {
          blocks_[blockId].setId(blockId);
          blocks_[blockId].setPolymerType(type_);
@@ -364,8 +366,8 @@ namespace Pscf
          vertices_[vertexId].setId(vertexId);
       }
 
-      // If polymer is linear polymer, set block vertex Ids: In a
-      // linear chain, block i connects vertex i and vertex i+1.
+      // If polymer is linear polymer, set all block vertex Ids:
+      // In a linear chain, block i connects vertex i and vertex i+1.
       if (type_ == PolymerType::Linear) {
          for (int blockId = 0; blockId < nBlock_; ++blockId) {
             blocks_[blockId].setVertexIds(blockId, blockId + 1);
@@ -377,25 +379,28 @@ namespace Pscf
 
       /*
       * The parameter file format for each block in the array blocks_
-      * is different for branched and linear polymer:
+      * is different for branched and linear polymer. These formats
+      * are defined in >> and << stream io operators for a Pscf::Block.
+      * The choice of format is controlled by the Block::polymerType.
       *
-      * For a branched polymer, the format for each block is:
+      * For a branched polymer, the text format for each block is:
       * 
       *   monomerId length vertexId(0) vertexId(1) 
       *
       * where monomerId is the index of the block monomer type, length
-      * is the block length, and vertexId(0) and vertexId(1) are indices 
-      * of the two vertices to which the block is attached. 
+      * is the block length, and vertexId(0) and vertexId(1) are the
+      * indices of the two vertices to which the block is attached. 
       *
-      * For a linear polymer, blocks must be entered sequentially, in 
-      * the order they appear along the chain, and vertex id values 
-      * are set automatically. In this case, no vertex ids are needed,
-      * and the format for one block is:
+      * For a linear polymer, blocks must be entered sequentially, in
+      * their order along the chain, and block vertex id values are
+      * set automatically. In this case, the format for one block is:
       *
       *   monomerId length
+      *
+      * with no need for explicit vertex ids.
       */
 
-      // Add blocks to vertices
+      // Add blocks to attached vertices
       int vertexId0, vertexId1;
       Block* blockPtr;
       for (int blockId = 0; blockId < nBlock_; ++blockId) {
@@ -409,10 +414,10 @@ namespace Pscf
       // Polymer topology is now fully specified.
 
       // Construct a plan for the order in which block propagators 
-      // should be computed
+      // should be computed when solving the MDE.
       makePlan();
 
-      // Read ensemble and either phi or mu
+      // Read the species ensemble, and either phi or mu
       ensemble_ = Species::Closed;
       readOptional<Species::Ensemble>(in, "ensemble", ensemble_);
       if (ensemble_ == Species::Closed) {
@@ -502,7 +507,7 @@ namespace Pscf
    }
 
    /*
-   * Compute solution to MDE and concentrations.
+   * Compute a solution to the MDE and block concentrations.
    */ 
    template <class Block>
    void PolymerTmpl<Block>::solve()
@@ -513,7 +518,8 @@ namespace Pscf
          propagator(j).setIsSolved(false);
       }
 
-      // Solve modified diffusion equation for all propagators
+      // Solve modified diffusion equation for all propagators in
+      // the order specified by function makePlan.
       for (int j = 0; j < nPropagator(); ++j) {
          UTIL_CHECK(propagator(j).isReady());
          propagator(j).solve();

@@ -68,7 +68,7 @@ namespace Pscf
    serialize(Archive& ar, UnitCell<D>& cell, const unsigned int version);
 
    /**
-   * Read UnitCell<D> from a field file header (fortran pscf format).
+   * Read UnitCell<D> from a field file header (fortran PSCF format).
    *
    * If the unit cell has a non-null lattice system on entry, the
    * value read from file must match this existing value, or this
@@ -85,7 +85,7 @@ namespace Pscf
    void readUnitCellHeader(std::istream& in, UnitCell<D>& cell);
 
    /**
-   * Write UnitCell<D> to a field file header (fortran pscf format).
+   * Write UnitCell<D> to a field file header (fortran PSCF format).
    *
    * \param out  output stream
    * \param  cell  UnitCell<D> to be written
@@ -93,6 +93,37 @@ namespace Pscf
    */
    template <int D>
    void writeUnitCellHeader(std::ostream& out, UnitCell<D> const& cell);
+
+   /*
+   * Read common part of field header (fortran PSCF format).
+   *
+   * \param ver1  major file format version number (output)
+   * \param ver2  major file format version number (output)
+   * \param cell  UnitCell<D> object (output)
+   * \param groupName  string identifier for space group (output)
+   * \param nMonomer  number of monomers (output)
+   * \ingroup Pscf_Crystal_Module
+   */
+   template <int D>
+   void readFieldHeader(std::istream& in, int& ver1, int& ver2, 
+                        UnitCell<D>& cell, std::string& groupName,
+                        int& nMonomer);
+
+   /*
+   * Write common part of field header (fortran PSCF format).
+   *
+   * \param ver1  major file format version number (input)
+   * \param ver2  major file format version number (input)
+   * \param cell  UnitCell<D> object (input)
+   * \param groupName  string identifier for space group (input)
+   * \param nMonomer  number of monomers (input)
+   * \ingroup Pscf_Crystal_Module
+   */
+   template <int D>
+   void writeFieldHeader(std::ostream &out, int ver1, int ver2,
+                         UnitCell<D> const & cell,
+                         std::string const & groupName,
+                         int nMonomer);
 
    // 1D Unit Cell
 

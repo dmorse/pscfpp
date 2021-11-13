@@ -10,6 +10,7 @@
 
 #include "UnitCell.h"
 #include <util/format/Dbl.h> 
+#include <util/format/Int.h> 
 #include <iomanip>
 
 namespace Pscf
@@ -96,6 +97,60 @@ namespace Pscf
          out << "    " << Dbl(cell.parameters_[i], 18, 10);
       }
       out << std::endl;
+   }
+
+   /*
+   * Read common part of field header (fortran PSCF format).
+   */
+   template <int D>
+   void readFieldHeader(std::istream& in, 
+                        int& ver1, int& ver2, 
+                        UnitCell<D>& cell, 
+                        std::string& groupName,
+                        int& nMonomer)
+   {
+      std::string label;
+
+      in >> label;
+      UTIL_CHECK(label == "format");
+      in >> ver1 >> ver2;
+ 
+      in >> label;
+      UTIL_CHECK(label == "dim");
+      int dim;
+      in >> dim;
+      UTIL_CHECK(dim == D);
+
+      readUnitCellHeader(in, cell);
+
+      in >> label;
+      UTIL_CHECK(label == "group_name");
+      in >> groupName;
+
+      in >> label;
+      UTIL_CHECK(label == "N_monomer");
+      in >> nMonomer;
+      UTIL_CHECK(nMonomer > 0);
+   }
+
+   /*
+   * Write common part of field header (fortran PSCF format).
+   */
+   template <int D>
+   void writeFieldHeader(std::ostream &out, 
+                         int ver1, int ver2,
+                         UnitCell<D> const & cell,
+                         std::string const & groupName,
+                         int nMonomer)
+   {
+      out << "format " << Int(ver1,3) << " " << Int(ver2,3) <<  std::endl;
+      out << "dim" <<  std::endl 
+          << "          " << D << std::endl;
+      writeUnitCellHeader(out, cell); 
+      out << "group_name" << std::endl 
+          << "          " << groupName <<  std::endl;
+      out << "N_monomer"  << std::endl 
+          << "          " << nMonomer << std::endl;
    }
 
 }
