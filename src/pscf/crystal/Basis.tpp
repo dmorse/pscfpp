@@ -54,6 +54,7 @@ namespace Pscf {
       } else {
          bool foundFile = false;
          {
+            // Search first in this directory
             std::ifstream in;
             in.open(groupName);
             if (in.is_open()) {
@@ -63,6 +64,7 @@ namespace Pscf {
             }
          }
          if (!foundFile) {
+            // Search in the data directory containing standard space groups
             std::string fileName = makeGroupFileName(D, groupName);
             std::ifstream in;
             in.open(fileName);
@@ -81,7 +83,7 @@ namespace Pscf {
    }
 
    /*
-   * Construct basis for pseudo-spectral scft.
+   * Construct a symmetry-adapted basis for pseudo-spectral scft.
    */
    template <int D>
    void Basis<D>::makeBasis(Mesh<D> const & mesh, 
@@ -151,26 +153,42 @@ namespace Pscf {
 
    }
 
+   /*
+   * Complete construction of a basis by grouping presorted waves into
+   * stars and completing initialization of all Wave and Star objects.
+   */
    template <int D>
    void Basis<D>::makeStars(SpaceGroup<D> const & group)
    {
-      /* 
-      * Local containers that hold TWave<D> objects:
-      * list - set of waves of equal norm, compared by indicesDft
-      * star - set of symmetry-related waves, compared by indicesDft
-      * tempStar - temporary star, sorted by descending indicesBz
-      * tempList - temporary list, ordered by star
+
+      /*
+      * Conceptual definitions:
+      *   - A "list" is a set of wavevectors of equal magnitude.
+      *   - A "star" is a set of wavevectors that are related by symmetry.
+      * Each list may contain one or more complete stars. Lists are
+      * identified as an intermediate step in identification of stars.
+      *
+      * Local wavevector containers:
+      * During processing, wavevectors are temporarily stored in 
+      * TWave<D> objects.  The following local containers of TWave<D> 
+      * objects used:
+      *   list - a std::set of waves of equal norm (a "list")
+      *   tempList - an ordered list, with contiguous stars
+      *   star - a std::set of symmetry-related waves (a "star")
+      *   tempStar - a sorted star, sorted by descending indicesBz
       */
+
+      // Local TWave<D> containers and associated iterators
       std::set< TWave<D>, TWaveDftComp<D> > list;  
       std::set< TWave<D>, TWaveDftComp<D> > star;  
       std::vector< TWave<D> > tempStar;  
       GArray< TWave<D> > tempList;            
-
       typename std::set< TWave<D>, TWaveDftComp<D> >::iterator rootItr;
       typename std::set< TWave<D>, TWaveDftComp<D> >::iterator setItr;
+
+      // Local variables
       TWave<D> wave;
       Basis<D>::Star newStar;
-
       std::complex<double> coeff;
       double Gsq;
       double Gsq_max;
@@ -193,40 +211,43 @@ namespace Pscf {
       /*
       * Overview of algorithm:
       *
+      * Precondition: Wavevectors in the array waves_ are sorted in
+      * nondecreasing order by wavevector norm.
+      *
       * Loop over index i of array waves_ {
       *
-      *   Search for end of a "list", i.e., contiguous block of waves 
-      *   of equal magnitude, with indices [listBegin,listEnd-1]. 
+      *   Search for end of a "list" (i.e., contiguous block of waves 
+      *   of equal magnitude) by identifying changes in magnitude.
+      *   The resulting list has indices [listBegin,listEnd-1]. 
       *   Set newList true.
       *
-      *   // Each list can contain one or more stars.
+      *   // Each list may contain one or more stars.
       *   // Process the newly identified list to identify stars
-      *
       *   If (newList) {
       *   
-      *     Copy all waves in range into container std::set<TWave<D>> list
+      *     Copy all waves in the range into std::set list
       *
-      *     Set rootItr to first wave in list
+      *     Set rootItr to the first wave in list
       *
-      *     // Loop over stars within list
+      *     // Loop over stars within the list
       *     while (list.size() > 0) {
       *
       *       // To generate a star from a root wave rootItr, 
       *       // loop over symmetry operations of space group.
       *       For each symmetry operation group[j] {
       *         Compute vec = (rootItr->indicesBz)*group[j]
-      *         Set phase = rootItr->indicesBz .dot. group[j].t 
-      *         Check for cancellation of the star, set cancel flag
+      *         Set phase = rootItr->indicesBz .dot. (group[j].t) 
+      *         Check for cancellation of the star, set "cancel" flag
       *         Add wave to std::set<TWave> star if not added before
       *         // Here, use of a std::set simplifies test of uniqueness
       *       }
       *
       *       Copy all waves from star to std::vector<TWave> tempStar
-      *       Sort tempStar by indicesBz in descending order
-      *       // Here, use of std::vector for tempStar allows sorting
+      *       Sort tempStar by indicesBz, in descending order
+      *       // Here, use of a std::vector for tempStar allows sorting
       *       For each wave in tempStar {
-      *         Append wave to std::vector<TWave> tempList
-      *         Erase wave from std::set<TWave> list
+      *         Append the wave to std::vector<TWave> tempList
+      *         Erase the wave from std::set<TWave> list
       *         // Here, use of a std::set for list simplifies erasure
       *       }
       *
@@ -257,48 +278,64 @@ namespace Pscf {
       *       Append newStar object to GArray<Star> stars_ 
       *
       *     } // end loop over stars in a single list
+      * 
+      *     // At this point, tempList contains the contents of the 
+      *     // waves_ array occupying the range [beginId, endId-1], 
+      *     // grouped by stars, with waves within each star sorted
+      *     // by indexBz.
       *
-      *     For each TWave in tempList {
-      *       Copy TWave in tempList to a Basis:Wave in  waves_
+      *     // Overwrite the block of array waves_ with indices in the
+      *     // range [beginId, endId-1] with the contents of tempList.
+      *     For each wave in tempList {
+      *       Copy a TWave in tempList to a Basis:Wave in  waves_
       *       Assign a complex coefficient of unit norm to the Wave
       *     }
-      *     // This overwrites a block of the waves_ array 
       *
-      *     // At this point, coefficients of waves have correct
-      *     // correct relative phases within a star, but not final 
-      *     // absolute phases and have unit absolute magnitude.
+      *     // At this point, coefficients of waves have unit magnitude
+      *     // and correct relative phases within each star, but not 
+      *     // the final absolute phases or magnitude.
       *
       *   } // end processing of one list (waves of equal norm)
       *
       * } // End initial processing of all waves and stars
       *
-      * // Set absolute wave coefficients
+      * // Set phases of wave coefficients
       * For each star in array stars_ {
-      *   if star is closed (star.invertFlag == 0) {
+      *   if star is closed under inversion (star.invertFlag == 0) {
       *     if star is cancelled {
-      *       set all coefficients to zero
+      *       set coefficients of all waves to zero
       *     } else {
       *       Set the root to the first wave in the star
-      *       Check that negation of root is also in this star
-      *       Divide all coefficients by the root coefficient
-      *       Require coeffs of root & negation be complex conjugates
+      *       Check closure (i.e., that negation of root is also in this star)
+      *       For each wave in star:
+      *          Divide coeff by the root coefficient 
+      *       }
+      *       if (coeffs of root and its negation are not complex conjugates){
+      *          Divide all coeffs by a common phasor chosen to obtain 
+      *          complex conjugate coefficients for the root and partner
+      *       }
       *     }
       *   } else
       *   if (star.invertFlag == 1) {
       *     Set root of this star to the 1st wave in the star
-      *     Find negation of root (aka "partner") in next star.
-      *     If star is cancelled {
+      *     Find negation of root (aka "partner") in the next star
+      *     If this star is cancelled {
       *       Set coefficients in this star and next to zero
       *     } else {
-      *       Divide coefficients in this star by root coefficient
-      *       Divide coefficients in next star by partner coefficient
+      *       For each wave in this star:
+      *          Divide coeff by the root coefficient
+      *       }
+      *       For each wave in the next star:
+      *          Divide coeff by the partner coefficient
+      *       }
       *     }
       *   }
-      *   // Note: If star.invertFlag = -1, do nothing
+      *   // Note: If star.invertFlag = -1, do nothing, because coefficients
+      *   // of this star were all set when processing its partner.
       * }
       *
       * // For all waves, normalize coefficients and set starId
-      * For each star in stars_ {
+      * For each star in array stars_ {
       *   For each wave in this star {
       *     Set Wave.starId
       *     Divide coefficient by sqrt(double(star.size))
@@ -306,7 +343,7 @@ namespace Pscf {
       * }
       *
       * // For all waves, set implicit member and add to look up table
-      * For each wave in waves_ { 
+      * For each wave in array waves_ { 
       *   Set implicit attribute
       *   Assign waveIds_[rank] = i
       * }
@@ -470,7 +507,7 @@ namespace Pscf {
                UTIL_CHECK((int)(tempList.size()+list.size()) == listSize);
 
                // If this star is not cancelled, increment the number of 
-               // basis functions (nBasis_) and waves in basis (nBasisWave_)
+               // basis functions (nBasis_) & waves in basis (nBasisWave_)
                if (!cancel) {
                   ++nBasis_;
                   nBasisWave_ += star.size();
@@ -609,10 +646,9 @@ namespace Pscf {
       std::complex<double> d;
       int rootId, partId;
 
-      // Final processing of coefficients of waves in stars. 
+      // Final processing of phases of of waves in stars. 
       // Require that the root wave of each star and its negation 
-      // have conjugate coefficients, and that each basis function 
-      // is normalized.
+      // have complex conjugate coefficients.
       for (i = 0; i < nStar_; ++i) {
 
          // Treat open and closed stars separately

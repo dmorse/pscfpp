@@ -230,16 +230,16 @@ namespace Pspc
       int q = 0;
       int r = 0;
       int s = 0;
-      int n1 =0;
-      int n2 =0;
-      int n3 =0;
+      int n1 = 0;
+      int n2 = 0;
+      int n3 = 0;
 
       if (D==3) {
          while (n1 < mesh().dimension(0)) {
             q = p;
             n2 = 0;
             while (n2 < mesh().dimension(1)) {
-               r =q;
+               r = q;
                n3 = 0;
                while (n3 < mesh().dimension(2)) {
                   for (int i = 0; i < nMonomer; ++i) {
@@ -253,7 +253,7 @@ namespace Pspc
                ++n2;
             } 
             ++n1;
-            ++p;        
+            ++p;
          }
       }
 
@@ -279,7 +279,7 @@ namespace Pspc
          while (n1 < mesh().dimension(0)) {
             for (int i = 0; i < nMonomer; ++i) {
                fields[i][s] = temp[i][r];
-            }   
+            }
             ++r;
             ++s;
             ++n1;    
