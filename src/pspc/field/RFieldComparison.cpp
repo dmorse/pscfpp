@@ -1,3 +1,5 @@
+#define PSPC_R_FIELD_COMPARISON_CPP
+
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
@@ -5,13 +7,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "FieldComparison.tpp"
+#include "RFieldComparison.h"
 
 namespace Pscf {
 namespace Pspc
 {
 
-   class BFieldComparison;
    template class RFieldComparison<1>;
    template class RFieldComparison<2>;
    template class RFieldComparison<3>;

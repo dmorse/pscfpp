@@ -7,6 +7,7 @@
 #include <pspc/field/FFT.h>
 #include <pspc/field/RField.h>
 #include <pspc/field/RFieldDft.h>
+#include <pspc/field/RFieldComparison.h>
 
 #include <util/math/Constants.h>
 #include <util/format/Dbl.h>
@@ -143,7 +144,7 @@ void FftTest::testTransform3D() {
       for (int j = 0; j < n2; j++) {
          for (int k = 0; k < n3; k++){
             rank = k + ((j + (i * n2)) * n3);
-            in[rank] = 1;
+            in[rank] = 1.0 + double(rank)/double(in.capacity());
          }
       }
    }
@@ -161,6 +162,15 @@ void FftTest::testTransform3D() {
          }
       }
    }
+
+   RFieldComparison<3> comparison;
+   comparison.compare(in, inCopy);
+   //std::cout << std::endl;
+   //std::cout << "maxDiff = " 
+   //          << Dbl(comparison.maxDiff(), 20, 13)
+   //          << std::endl;
+   TEST_ASSERT(comparison.maxDiff() < 1.0E-12);
+
 }
 
 TEST_BEGIN(FftTest)

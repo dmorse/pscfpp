@@ -8,7 +8,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "RField.h"
 #include <util/containers/DArray.h>
 
 namespace Pscf {
@@ -33,7 +32,7 @@ namespace Pspc {
       *
       * Initializes maxDiff and rmsDiff to zero.
       */
-      FieldComparison();
+      FieldComparison(int begin = 0);
 
       // Use compiler defined destructor and assignment operator.
 
@@ -91,28 +90,12 @@ namespace Pspc {
       // Room-mean-squared element-by-element difference. 
       double rmsDiff_;
    
+      // Index of first element (0 or 1)
+      int begin_;
+   
    };
-
-   /**
-   * Comparator for fields in symmetry-adapted basis format.
-   */
-   class BFieldComparison : public FieldComparison< DArray<double> >
-   {};
-
-   /**
-   * Comparator for fields in real-space (r-grid) format.
-   */
-   template <int D>
-   class RFieldComparison : public FieldComparison< RField<D> >
-   {};
-
-   #ifndef PSPC_FIELD_COMPARISON_TPP
-   extern class BFieldComparison;
-   extern template class RFieldComparison<1>;
-   extern template class RFieldComparison<2>;
-   extern template class RFieldComparison<3>;
-   #endif
 
 } // namespace Pspc
 } // namespace Pscf
+#include "FieldComparison.tpp"
 #endif

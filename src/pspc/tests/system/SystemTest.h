@@ -5,6 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <pspc/System.h>
+#include <pspc/field/BFieldComparison.h>
 
 //#include <pscf/mesh/MeshIterator.h>
 //#include <util/format/Dbl.h>
@@ -75,8 +76,6 @@ public:
       system.readWBasis("in/diblock/lam/omega.in");
 
       // Copy w field components to wFields_check after reading
-      int nMonomer = system.mixture().nMonomer();
-      int nStar = system.basis().nStar();
       DArray< DArray<double> > wFields_check;
       wFields_check = system.wFields();
 
@@ -88,6 +87,9 @@ public:
       system.readWBasis("out/testConversion1D_lam_w.bf");
 
       // Compare result to original
+      #if 0
+      int nMonomer = system.mixture().nMonomer();
+      int nStar = system.basis().nStar();
       double err;
       double max = 0.0;
       // std::cout << std::endl;
@@ -103,8 +105,16 @@ public:
          }
          //std::cout << std::endl;
       }
-      //std::cout << "Max error = " << max << std::endl;
+      std::cout << std::endl;
+      std::cout << "Max error = " << max << std::endl;
       TEST_ASSERT(max < 1.0E-10);
+      #endif
+
+      BFieldComparison comparison;
+      comparison.compare(wFields_check, system.wFields());
+      //std::cout << "Max error = " << comparison.maxDiff() << std::endl;
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
+
    }
 
    void testConversion2D_hex()
@@ -126,8 +136,6 @@ public:
       system.readWBasis("in/diblock/hex/omega.in");
 
       // Store components in wFields_check for later comparison
-      int nMonomer = system.mixture().nMonomer();
-      int nStar = system.basis().nStar();
       DArray< DArray<double> > wFields_check;
       wFields_check = system.wFields();
 
@@ -144,6 +152,9 @@ public:
       TEST_ASSERT(hasSymmetry);
 
       // Compare result to original
+      #if 0
+      int nMonomer = system.mixture().nMonomer();
+      int nStar = system.basis().nStar();
       double err;
       double max = 0.0;
       // std::cout << std::endl;
@@ -159,9 +170,15 @@ public:
          }
          //std::cout << std::endl;
       }
-      // std::cout << "Max error = " << max << std::endl;
+      std::cout << std::endl;
+      std::cout << "Max error = " << max << std::endl;
       TEST_ASSERT(max < 1.0E-10);
+      #endif
 
+      BFieldComparison comparison;
+      comparison.compare(wFields_check, system.wFields());
+      // std::cout << "Max error = " << comparison.maxDiff() << std::endl;
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
    }
 
    void testConversion3D_bcc()
@@ -182,8 +199,6 @@ public:
       system.readWBasis("in/diblock/bcc/omega.in");
 
       // Store components of field as input
-      int nMonomer = system.mixture().nMonomer();
-      int nStar = system.basis().nStar();
       DArray< DArray<double> > wFields_check;
       wFields_check = system.wFields();
 
@@ -200,6 +215,9 @@ public:
       TEST_ASSERT(hasSymmetry);
 
       // Compare result to original
+      #if 0
+      int nMonomer = system.mixture().nMonomer();
+      int nStar = system.basis().nStar();
       double err;
       double max = 0.0;
       // std::cout << std::endl;
@@ -216,9 +234,15 @@ public:
          }
          //std::cout << std::endl;
       }
-      // std::cout << "Max error = " << max << std::endl;
+      std::cout << std::endl;
+      std::cout << "Max error = " << max << std::endl;
       TEST_ASSERT(max < 1.0E-10);
+      #endif
 
+      BFieldComparison comparison;
+      comparison.compare(wFields_check, system.wFields());
+      // std::cout << "Max error = " << comparison.maxDiff() << std::endl;
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
    }
 
    void testCheckSymmetry3D_bcc()
@@ -264,8 +288,6 @@ public:
       // Read w fields
       system.readWBasis("in/diblock/lam/omega.ref");
 
-      int nMonomer = system.mixture().nMonomer();
-      int ns = system.basis().nStar();
       DArray< DArray<double> > wFields_check;
       wFields_check = system.wFields();
 
@@ -275,6 +297,9 @@ public:
       system.writeWBasis("out/testIterate1D_lam_rigid_w.bf");
       system.writeCBasis("out/testIterate1D_lam_rigid_c.bf");
 
+      #if 0
+      int nMonomer = system.mixture().nMonomer();
+      int ns = system.basis().nStar();
       bool diff = true;
       for (int j = 1; j < ns; ++j) {
          for (int i = 0; i < nMonomer; ++i) {
@@ -294,13 +319,20 @@ public:
             break;
          }
       }
+      TEST_ASSERT(diff);
+      #endif
+
+      BFieldComparison comparison(1);
+      comparison.compare(wFields_check, system.wFields());
+      // std::cout << std::endl;
+      // std::cout << "Max error = " << comparison.maxDiff() << std::endl;
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
+
       bool stress = false;
       if (std::abs(system.mixture().stress(0)) < 1.0E-8) {
          stress = true;
       }
-
       TEST_ASSERT(stress);
-      TEST_ASSERT(diff);
 
    }
 
@@ -320,8 +352,6 @@ public:
 
       system.readWBasis("in/diblock/lam/omega.ref");
 
-      int nMonomer = system.mixture().nMonomer();
-      int ns = system.basis().nStar();
       DArray< DArray<double> > wFields_check;
       wFields_check = system.wFields();
 
@@ -331,6 +361,9 @@ public:
       system.writeWBasis("out/testIterate1D_lam_flex_w.bf");
       system.writeCBasis("out/testIterate1D_lam_flex_c.bf");
 
+      #if 0
+      int nMonomer = system.mixture().nMonomer();
+      int ns = system.basis().nStar();
       bool diff = true;
       for (int j = 1; j < ns; ++j) {
          for (int i = 0; i < nMonomer; ++i) {
@@ -349,6 +382,13 @@ public:
          }
       }
       TEST_ASSERT(diff);
+      #endif
+
+      BFieldComparison comparison(1);
+      comparison.compare(wFields_check, system.wFields());
+      //std::cout << std::endl;
+      //std::cout << "Max error = " << comparison.maxDiff() << std::endl;
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
    }
 
    void testIterate2D_hex_rigid()
@@ -368,8 +408,6 @@ public:
       // Read reference solution
       system.readWBasis("in/diblock/hex/omega.ref");
 
-      int nMonomer = system.mixture().nMonomer();
-      int ns = system.basis().nStar();
       DArray< DArray<double> > wFields_check;
       wFields_check = system.wFields();
 
@@ -380,6 +418,9 @@ public:
       system.writeCBasis("out/testIterate2D_hex_rigid_c.bf");
 
       // Compare current solution to reference solution
+      #if 0
+      int nMonomer = system.mixture().nMonomer();
+      int ns = system.basis().nStar();
       bool diff = true;
       for (int j = 1; j < ns; ++j) {
          for (int i = 0; i < nMonomer; ++i) {
@@ -400,13 +441,21 @@ public:
             break;
          }
       }
+      TEST_ASSERT(diff);
+      #endif
+
+      BFieldComparison comparison(1);
+      comparison.compare(wFields_check, system.wFields());
+      //std::cout << std::endl;
+      //std::cout << "Max error = " << comparison.maxDiff() << std::endl;
+      TEST_ASSERT(comparison.maxDiff() < 3.0E-7);
+      // Maximum error of 2.608E-7 occurs for star 1
+
       bool stress = false;
       if (std::abs(system.mixture().stress(0)) < 1.0E-8) {
          stress = true;
       }
-
       TEST_ASSERT(stress);
-      TEST_ASSERT(diff);
    }
 
    void testIterate2D_hex_flex()
@@ -428,8 +477,6 @@ public:
       system.readWBasis("in/diblock/hex/omega.ref");
 
       // Save reference solution to wFields_check array
-      int nMonomer = system.mixture().nMonomer();
-      int ns = system.basis().nStar();
       DArray< DArray<double> > wFields_check;
       wFields_check = system.wFields();
 
@@ -438,10 +485,13 @@ public:
       system.writeWBasis("out/testIterate2D_hex_flex_w.bf");
       system.writeCBasis("out/testIterate2D_hex_flex_c.bf");
 
+      #if 0
+      int nMonomer = system.mixture().nMonomer();
+      int ns = system.basis().nStar();
       bool diff = true;
       for (int j = 1; j < ns; ++j) {
          for (int i = 0; i < nMonomer; ++i) {
-            // if ((std::abs(wFields_check[i][j] - system.wFields()[i][j]) >= 2.58007e-07)) {
+            // if ((std::abs(wFields_check[i][j]-system.wFields()[i][j]) >= 2.58007e-07)){
             if ((std::abs(wFields_check[i][j] - system.wFields()[i][j]) >= 3.0e-7)) {
                // The above is the maximum error in the omega field.
                // Occurs for the first star
@@ -459,6 +509,15 @@ public:
          }
       }
       TEST_ASSERT(diff);
+      #endif
+
+      BFieldComparison comparison(1);
+      comparison.compare(wFields_check, system.wFields());
+      //std::cout << std::endl;
+      //std::cout << "Max error = " << comparison.maxDiff() << std::endl;
+      TEST_ASSERT(comparison.maxDiff() < 3.0E-7);
+      // Maximum difference of 2.58E-7 occurs for the first star
+
    }
 
    void testIterate3D_bcc_rigid()
@@ -477,8 +536,6 @@ public:
 
       system.readWBasis("in/diblock/bcc/omega.ref");
 
-      int nMonomer = system.mixture().nMonomer();
-      int ns = system.basis().nStar();
       DArray< DArray<double> > wFields_check;
       wFields_check = system.wFields();
 
@@ -487,10 +544,13 @@ public:
       system.writeWBasis("out/testIterate3D_bcc_rigid_w.bf");
       system.writeCBasis("out/testIterate3D_bcc_rigid_c.bf");
 
+      #if 0
+      int nMonomer = system.mixture().nMonomer();
+      int ns = system.basis().nStar();
       bool diff = true;
       for (int j = 1; j < ns; ++j) {
          for (int i = 0; i < nMonomer; ++i) {
-           //if ((std::abs(wFields_check[i][j] - system.wFields()[i][j]) >= 1.02291e-07)) {
+           //if ((std::abs(wFields_check[i][j]-system.wFields()[i][j]) >= 1.02291e-07)){
            if ((std::abs(wFields_check[i][j] - system.wFields()[i][j]) >= 5.0e-07)) {
                // The above is the maximum error in the omega field.
                // Occurs for the second star.
@@ -507,13 +567,23 @@ public:
             break;
          }
       }
+      TEST_ASSERT(diff);
+      #endif
+
+      BFieldComparison comparison(1); // Constructor argument 1 skips star 0
+      comparison.compare(wFields_check, system.wFields());
+      // std::cout << std::endl;
+      // std::cout << "Max error = " << comparison.maxDiff() << std::endl;
+      TEST_ASSERT(comparison.maxDiff() < 5.0E-7);
+      // Maximum difference of 1.023E-7 occurs for the second star
+
+      // Test that stress is small
       bool stress = false;
       if (std::abs(system.mixture().stress(0)) < 1.0E-7) {
          stress = true;
       }
-
       TEST_ASSERT(stress);
-      TEST_ASSERT(diff);
+
    }
 
    void testIterate3D_bcc_flex()
@@ -532,8 +602,6 @@ public:
 
       system.readWBasis("in/diblock/bcc/omega.ref");
 
-      int nMonomer = system.mixture().nMonomer();
-      int ns = system.basis().nStar();
       DArray< DArray<double> > wFields_check;
       wFields_check = system.wFields();
 
@@ -542,6 +610,9 @@ public:
       system.writeWBasis("out/testIterate3D_bcc_flex_w.bf");
       system.writeCBasis("out/testIterate3D_bcc_flex_c.bf");
 
+      #if 0
+      int nMonomer = system.mixture().nMonomer();
+      int ns = system.basis().nStar();
       bool diff = true;
       for (int j = 1; j < ns; ++j) {
          for (int i = 0; i < nMonomer; ++i) {
@@ -564,8 +635,16 @@ public:
          }
       }
       TEST_ASSERT(diff);
-   }
+      #endif
 
+      BFieldComparison comparison(1);
+      comparison.compare(wFields_check, system.wFields());
+      // std::cout << std::endl;
+      // std::cout << "Max error = " << comparison.maxDiff() << std::endl;
+      TEST_ASSERT(comparison.maxDiff() < 5.0E-7);
+      // Maximum difference of 1.09288E-7 occurs for the second star
+
+   }
 
 };
 

@@ -16,9 +16,10 @@ namespace Pspc {
 
    // Default Constructor
    template <class FT>
-   FieldComparison<FT>::FieldComparison()
-    : maxDiff_(0.0), 
-     rmsDiff_(0.0)
+   FieldComparison<FT>::FieldComparison(int begin)
+    : maxDiff_(0.0),
+      rmsDiff_(0.0),
+      begin_(begin)
    {};
 
    // Comparator for individual fields.
@@ -29,23 +30,27 @@ namespace Pspc {
       UTIL_CHECK(a.capacity() == b.capacity());
       int n = a.capacity();
       double diff;
-      double maxDiff_ = 0.0;
-      double rmsDiff_ = 0.0;
-      for (int i = 1; i < n; ++i) {
-         diff = abs(a[i] - b[i]); 
+      maxDiff_ = 0.0;
+      rmsDiff_ = 0.0;
+      for (int i = begin_; i < n; ++i) {
+         diff = abs(a[i] - b[i]);
          if (diff > maxDiff_) {
             maxDiff_ = diff;
          }
          rmsDiff_ += diff*diff;
+         //std::cout << i
+         //          << " " << a[i]
+         //          << " " << b[i]
+         //          << " " << diff << std::endl;
       }
       rmsDiff_ = rmsDiff_/double(n);
       rmsDiff_ = sqrt(rmsDiff_);
       return maxDiff_;
    }
-   
+
    // Comparator for arrays of fields
    template <class FT>
-   double FieldComparison<FT>::compare(DArray<FT> const & a, 
+   double FieldComparison<FT>::compare(DArray<FT> const & a,
                                        DArray<FT> const & b)
    {
       UTIL_CHECK(a.capacity() > 0);
@@ -53,15 +58,15 @@ namespace Pspc {
       UTIL_CHECK(a[0].capacity() > 0);
       int m = a.capacity();
       double diff;
-      double maxDiff_ = 0.0;
-      double rmsDiff_ = 0.0;
+      maxDiff_ = 0.0;
+      rmsDiff_ = 0.0;
       int i, j, n;
-      for (i = 1; i < m; ++i) {
+      for (i = 0; i < m; ++i) {
          n = a[i].capacity();
          UTIL_CHECK(n > 0);
          UTIL_CHECK(n == b[i].capacity());
-         for (j = 0; j < n; ++j) {
-            diff = abs(a[i] - b[i]); 
+         for (j = begin_; j < n; ++j) {
+            diff = abs(a[i][j] - b[i][j]);
             if (diff > maxDiff_) {
                maxDiff_ = diff;
             }
