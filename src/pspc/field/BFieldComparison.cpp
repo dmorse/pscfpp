@@ -6,7 +6,6 @@
 */
 
 #include "BFieldComparison.h"
-#include "FieldComparison.tpp"
 
 namespace Pscf {
 namespace Pspc {

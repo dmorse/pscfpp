@@ -1,5 +1,5 @@
-#ifndef PSPC_FIELD_COMPARISON_H
-#define PSPC_FIELD_COMPARISON_H
+#ifndef PSCF_FIELD_COMPARISON_H
+#define PSCF_FIELD_COMPARISON_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -11,7 +11,6 @@
 #include <util/containers/DArray.h>
 
 namespace Pscf {
-namespace Pspc {
 
    using namespace Util;
 
@@ -95,7 +94,6 @@ namespace Pspc {
    
    };
 
-} // namespace Pspc
 } // namespace Pscf
 #include "FieldComparison.tpp"
 #endif

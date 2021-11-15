@@ -1,5 +1,5 @@
-#ifndef PSPC_FIELD_COMPARISON_TPP
-#define PSPC_FIELD_COMPARISON_TPP
+#ifndef PSCF_FIELD_COMPARISON_TPP
+#define PSCF_FIELD_COMPARISON_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -12,7 +12,6 @@
 #include <cmath>
 
 namespace Pscf {
-namespace Pspc {
 
    // Default Constructor
    template <class FT>
@@ -78,6 +77,5 @@ namespace Pspc {
       return maxDiff_;
    }
 
-}
 }
 #endif

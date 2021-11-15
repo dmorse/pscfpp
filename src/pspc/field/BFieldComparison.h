@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pspc/field/FieldComparison.h>
+#include <pscf/math/FieldComparison.h>
 #include <util/containers/DArray.h>
 
 namespace Pscf {
