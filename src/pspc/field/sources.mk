@@ -3,7 +3,8 @@ pspc_field_= \
   pspc/field/RField.cpp \
   pspc/field/RFieldDft.cpp \
   pspc/field/FFT.cpp \
-  pspc/field/FieldIo.cpp 
+  pspc/field/FieldIo.cpp \
+  pspc/field/FieldComparison.cpp 
 
 pspc_field_SRCS=\
      $(addprefix $(SRC_DIR)/, $(pspc_field_))
