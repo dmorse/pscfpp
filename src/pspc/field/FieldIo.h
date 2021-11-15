@@ -262,7 +262,7 @@ namespace Pspc
       * 
       * \param in input stream (i.e., input file)
       * \param nMonomer expected value of nMonomer
-      * \param associated crystallographic UnitCell<D>
+      * \param unitCell associated crystallographic UnitCell<D>
       */
       void readFieldHeader(std::istream& in, int nMonomer, 
                            UnitCell<D> & unitCell);

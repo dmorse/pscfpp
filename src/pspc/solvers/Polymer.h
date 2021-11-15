@@ -91,12 +91,12 @@ namespace Pspc {
       * Compute solution to MDE and block concentrations.
       * 
       * This function sets up w-fields in the MDE solvers for all blocks
-      * and then calls the base class PolymerTmpl< Block<D> >::solve 
-      * function.  The base class solv efunction solves the MDE for all 
+      * and then calls the base class PolymerTmpl solve function. This
+      * base class solve function solves the MDE for all propagators
       * propagators and computes the properly scaled volume fraction 
       * fields for all blocks. After this function is called, the
-      * associated Block objects store pre-computed propagator solutions 
-      * and block volume fraction fields. 
+      * associated Block objects store pre-computed propagator 
+      * solutions and block volume fraction fields. 
       *
       * \param wFields array of chemical potential fields.
       */ 

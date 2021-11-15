@@ -85,15 +85,15 @@ namespace Fd1d {
       /**
       * Set value of mu (chemical potential), if ensemble is closed.
       *
-      * \throw Exception if ensemble is open
-      * \param phi desired chemical potential for this species
+      * \throw Exception if ensemble is closed
+      * \param mu  desired chemical potential for this species
       */
       void setMu(double mu);
 
       /**
       * Set the monomer id for this solvent.
       *
-      * \param monomerId integer id of monomer type (>=0)
+      * \param monomerId  integer id of monomer type, in [0,nMonomer-1]
       */ 
       void setMonomerId(int monomerId);
   

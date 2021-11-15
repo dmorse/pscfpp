@@ -118,8 +118,6 @@ namespace Pscf {
 
       /**
       * Get the current number of stored previous states.
-      *
-      * \param i history index (i=0 is most recent)
       */ 
       int historySize() const
       {  return historySize_; }
