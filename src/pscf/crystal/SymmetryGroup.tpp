@@ -25,7 +25,6 @@ namespace Pscf
    SymmetryGroup<Symmetry>::SymmetryGroup()
    {
       identity_ = Symmetry::identity();
-      elements_.clear();
       elements_.push_back(identity_);
    }
 
@@ -35,8 +34,8 @@ namespace Pscf
    template <class Symmetry>
    SymmetryGroup<Symmetry>::SymmetryGroup(const SymmetryGroup& other)
    {
-      identity_ = other.identity();
       elements_.clear();
+      identity_ = other.identity();
       for (int i = 0; i < other.size(); ++i) {
          elements_.push_back(other.elements_[i]);
       }
@@ -72,7 +71,8 @@ namespace Pscf
    * Return a null pointer if symmetry is not a member of the group.
    */
    template <class Symmetry>
-   const Symmetry* SymmetryGroup<Symmetry>::find(const Symmetry& symmetry) const
+   Symmetry const * SymmetryGroup<Symmetry>::find(Symmetry const& symmetry) 
+   const
    {
       for (int i=0; i < size(); ++i) {
          if (symmetry == elements_[i]) {
@@ -152,8 +152,42 @@ namespace Pscf
    void SymmetryGroup<Symmetry>::clear()
    {
       elements_.clear();
+      identity_ = Symmetry::identity();
       elements_.push_back(identity_);
    }
+
+   /*
+   * Determine if two space groups are equivalent.
+   */
+   template <class Symmetry>
+   bool 
+   SymmetryGroup<Symmetry>::operator == 
+                              (SymmetryGroup<Symmetry> const & other) const
+   {
+      if (size() != other.size()) {
+         return false; 
+      } else {
+         Symmetry const * ptr = 0;
+         for (int i = 0; i < size(); ++i) {
+            ptr = other.find(elements_[i]);
+            if (ptr == 0) return false;
+         }
+         for (int i = 0; i < other.size(); ++i) {
+            ptr = find(other.elements_[i]);
+            if (ptr == 0) return false;
+         }
+      }
+      return true;
+   }
+
+   /*
+   * Determine if two space groups are inequivalent.
+   */
+   template <class Symmetry>
+   bool 
+   SymmetryGroup<Symmetry>::operator != 
+                              (SymmetryGroup<Symmetry> const & other) const
+   { return !(*this == other); }
 
    /*
    * Check validity of this group.

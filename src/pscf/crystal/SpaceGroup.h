@@ -26,7 +26,7 @@ namespace Pscf
    * \ingroup Pscf_Crystal_Module
    */
    template <int D>
-   class SpaceGroup : public SymmetryGroup< SpaceSymmetry <D> >
+   class SpaceGroup : public SymmetryGroup< SpaceSymmetry<D> >
    {
 
    public:
@@ -41,8 +41,23 @@ namespace Pscf
       * \param center location of inversion center, if any (output)
       */
       bool 
-      hasInversionCenter(typename SpaceSymmetry<D>::Translation& center);
+      hasInversionCenter(typename SpaceSymmetry<D>::Translation& center) const;
 
+
+      /**
+      * Shift the origin of space used in the coordinate system.
+      *
+      * This function modifies each symmetry elements in the group so as
+      * to refer to an equivalent symmetry defined using a new coordinate 
+      * system with a shifted origin. The argument gives the coordinates 
+      * of the origin of the new coordinate system as defined in the old
+      * coordinate system.
+      *
+      * \param origin  location of origin of the new coordinate system
+      */
+      void shiftOrigin(typename SpaceSymmetry<D>::Translation const & origin);
+
+      // Using declarations for some inherited functions
       using SymmetryGroup< SpaceSymmetry <D> >::size;
 
    };

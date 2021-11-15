@@ -22,6 +22,7 @@ namespace Pscf
    bool 
    SpaceGroup<D>::hasInversionCenter(
                             typename SpaceSymmetry<D>::Translation& center)
+   const
    {
       bool isInversion = false;
       int i, j, k;
@@ -44,6 +45,15 @@ namespace Pscf
          }
       }
       return false;
+   }
+
+   template <int D>
+   void 
+   SpaceGroup<D>::shiftOrigin(typename SpaceSymmetry<D>::Translation const & origin)
+   {
+      for (int i = 0; i < size(); ++i) {
+         (*this)[i].shiftOrigin(origin);
+      }
    }
 
 }

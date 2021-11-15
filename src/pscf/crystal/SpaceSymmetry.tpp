@@ -115,27 +115,6 @@ namespace Pscf
             }
          }
       }
-      hasIdentity_ = true;
-   }
-
-   /*
-   * Make inversion (private static method).
-   */
-   template <int D>
-   void SpaceSymmetry<D>::makeInversion()
-   {
-      int i, j;
-      for (i = 0; i < D; ++i) {
-         inversion_.t_[i] = 0;
-         for (j = 0; j < D; ++j) {
-            if (i == j) {
-               inversion_.R_(i, j) = -1;
-            } else {
-               inversion_.R_(i, j) = 0;
-            }
-         }
-      }
-      hasInversion_ = true;
    }
 
    /*
@@ -162,6 +141,23 @@ namespace Pscf
       //UTIL_CHECK(C.determinant()*determinant() == 1);
 
       return C;
+   }
+
+   /*
+   * Shift the origin of the coordinate system.
+   */
+   template <int D>
+   void SpaceSymmetry<D>::shiftOrigin(
+                          SpaceSymmetry<D>::Translation const & origin) 
+   {
+      int i, j;
+      for (i = 0; i < D; ++i) {
+         t_[i] -= origin[i];
+         for (j = 0; j < D; ++j) {
+            t_[i] += R_(i,j)*origin[j];     
+         }
+      }
+      normalize();
    }
 
 }
