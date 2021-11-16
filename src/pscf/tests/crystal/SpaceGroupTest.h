@@ -275,7 +275,7 @@ public:
       TEST_ASSERT(g1.isValid());
       hasInversionCenter = g1.hasInversionCenter(center1);
       if (hasInversionCenter) {
-         std::cout << std::endl;
+         // std::cout << std::endl;
          for (int i = 0; i < 3; ++i) {
             TEST_ASSERT(center1[i] == Rational(1, 8));
             // std::cout << "  " << center1[i];
