@@ -846,11 +846,15 @@ namespace Pscf {
          waveIds_[mesh().rank(vec)] = i;
       }
 
-      // Add all uncancelled stars to look-up table starIds_
+      // Add stars to look-up table starIds_ and basisIds_
       starIds_.allocate(nBasis_);
+      basisIds_.allocate(nStar_);
       j = 0;
       for (i = 0; i < nStar_; ++i) {
-         if (!(stars_[i].cancel)) {
+         if (stars_[i].cancel) {
+            basisIds_[i] = -1;
+         } else {
+            basisIds_[i] = j;
             UTIL_CHECK(j < nBasis_);
             starIds_[j] = i;
             ++j;
@@ -966,11 +970,12 @@ namespace Pscf {
    {
       double Gsq;
       IntVec<D> v;
-      int is, iw, iwp, j;
+      int is, ib, iw, iwp, j;
 
       // Check total number of waves == # of grid points
       if (nWave_ != mesh().size()) {
          std::cout << "nWave != size of mesh" << std::endl;
+         return false;
       }
 
       // Loop over dft mesh to check consistency of waveIds_ and waves_
@@ -992,28 +997,33 @@ namespace Pscf {
          v = waves_[iw].indicesBz;
          Gsq = unitCell().ksq(v);
          if (abs(Gsq - waves_[iw].sqNorm) > 1.0E-8) {
-             std::cout << "Incorrect sqNorm:" << "\n"
-                       << "wave.indicesBz = " << "\n"
-                       << "wave.sqNorm    = " << waves_[iw].sqNorm << "\n"
-                       << "|v|^{2}        = " << Gsq << "\n";
+            std::cout << "\n";
+            std::cout << "Incorrect sqNorm:" << "\n"
+                      << "wave.indicesBz = " << "\n"
+                      << "wave.sqNorm    = " << waves_[iw].sqNorm << "\n"
+                      << "|v|^{2}        = " << Gsq << "\n";
+            return false;
          }
  
          // Check that wave indicesBz is an image of indicesDft
          mesh().shift(v);
          if (v != waves_[iw].indicesDft) {
-             std::cout << "shift(indicesBz) != indicesDft" << std::endl;
-             return false;
+            std::cout << "\n";
+            std::cout << "shift(indicesBz) != indicesDft" << std::endl;
+            return false;
          }
 
          // Compare Wave::starId to Star::beginId and Star::endId
          is = waves_[iw].starId;
          if (iw < stars_[is].beginId) {
-             std::cout << "Wave::starId < Star::beginId" << std::endl;
-             return false;
+            std::cout << "\n";
+            std::cout << "Wave::starId < Star::beginId" << std::endl;
+            return false;
          } 
          if (iw >= stars_[is].endId) {
-             std::cout << " Wave::starId >= Star::endId" << std::endl;
-             return false;
+            std::cout << "\n";
+            std::cout << " Wave::starId >= Star::endId" << std::endl;
+            return false;
          }
       }
 
@@ -1024,6 +1034,7 @@ namespace Pscf {
          // Check star size
          nWave += stars_[is].size;
          if (stars_[is].size != stars_[is].endId - stars_[is].beginId) {
+            std::cout << "\n";
             std::cout << "Inconsistent Star::size:" << std::endl;
             std::cout << "Star id    "  << is << std::endl;
             std::cout << "star size  "  << stars_[is].size << std::endl;
@@ -1033,6 +1044,7 @@ namespace Pscf {
          }
          if (is > 0) {
             if (stars_[is].beginId != stars_[is-1].endId) {
+               std::cout << "\n";
                std::cout << "Star ranges not consecutive:" << std::endl;
                std::cout << "Star id    "     << is << std::endl;
                std::cout << "stars_[" << is << "]"   << ".beginId = " 
@@ -1046,6 +1058,7 @@ namespace Pscf {
          // Check star ids of waves in star
          for (iw = stars_[is].beginId; iw < stars_[is].endId; ++iw) {
             if (waves_[iw].starId != is) {
+               std::cout << "\n";
                std::cout << "Inconsistent Wave::starId :" << std::endl;
                std::cout << "star id      "  << is << std::endl;
                std::cout << "star beginId "  << stars_[is].beginId << "\n";
@@ -1056,14 +1069,36 @@ namespace Pscf {
             }
          }
 
+         // Check basisId_
+         ib = basisIds_[is];
+         if (stars_[is].cancel) {
+            if (ib != -1) {
+               std::cout << "\n";
+               std::cout << "basisId != -1 for cancelled star\n";
+               std::cout << "star id = " << is << "\n";
+               return false;
+            }
+         } else {
+            if (starIds_[ib] != is) {
+               std::cout << "\n";
+               std::cout << "starIds_[basisIds_[is]] != is for star\n";
+               std::cout << "is                 = " << is << "\n";
+               std::cout << "ib = basisIds_[is] = " << ib << "\n";
+               std::cout << "starIds_[ib]       = " << starIds_[ib] << "\n";
+               return false;
+            }
+         }
+
          // Check ordering of waves in star
          for (iw = stars_[is].beginId + 1; iw < stars_[is].endId; ++iw) {
             if (waves_[iw].indicesBz > waves_[iw-1].indicesBz) {
+               std::cout << "\n";
                std::cout << "Failure of ordering by indicesB within star" 
                          << std::endl;
                return false;
             }
             if (waves_[iw].indicesBz == waves_[iw-1].indicesBz) {
+               std::cout << "\n";
                std::cout << "Equal values of indicesBz within star" 
                          << std::endl;
                return false;
@@ -1074,10 +1109,14 @@ namespace Pscf {
 
       // Check that all waves in mesh are accounted for in stars
       if (stars_[nStar_-1].endId != mesh().size()) {
+         std::cout << "\n";
          std::cout << "Star endI of last star != mesh size" << std::endl;
+         return false;
       }
       if (nWave != mesh().size()) {
+         std::cout << "\n";
          std::cout << "Sum of star sizes != mesh size" << std::endl;
+         return false;
       }
 
       // Loop over closed stars and related pairs of stars.
@@ -1108,6 +1147,7 @@ namespace Pscf {
                   }
                }
                if (!negationFound) {
+                  std::cout << "\n";
                   std::cout << "Negation not found in closed star" 
                             << std::endl;
                   std::cout << "G = " << waves_[iw].indicesBz
@@ -1121,6 +1161,7 @@ namespace Pscf {
                   return false;
                }
                if (!cancel && abs(cdel) > 1.0E-8) {
+                  std::cout << "\n";
                   std::cout << "Function for closed star is not real:" 
                             << "\n";
                   std::cout << "+G = " << waves_[iw].indicesBz
@@ -1138,6 +1179,7 @@ namespace Pscf {
                   return false;
                }
                if (cancel && abs(waves_[iw].coeff) > 1.0E-8) {
+                  std::cout << "\n";
                   std::cout << "Nonzero coefficient in a cancelled star" 
                             << "\n";
                   std::cout << "G = " << waves_[iw].indicesBz
@@ -1155,18 +1197,22 @@ namespace Pscf {
             // Test pairs of open stars
 
             if (stars_[is].invertFlag != 1) {
+               std::cout << "\n";
                std::cout << "Expected invertFlag == 1" << std::endl;
                return false;
             }
             if (stars_[is+1].invertFlag != -1) {
+               std::cout << "\n";
                std::cout << "Expected invertFlag == -1" << std::endl;
                return false;
             }
             if (stars_[is+1].size != stars_[is].size) {
+               std::cout << "\n";
                std::cout << "Partner stars of different size" << std::endl;
                return false;
             }
             if (stars_[is+1].cancel != stars_[is].cancel) {
+               std::cout << "\n";
                std::cout << "Partners stars with different cancel flags" 
                          << std::endl;
                return false;
@@ -1196,6 +1242,7 @@ namespace Pscf {
                   }
                }
                if (!negationFound) {
+                  std::cout << "\n";
                   std::cout << "Negation not found for G in open star" 
                             << std::endl;
                   std::cout << "First star id = " << is << std::endl;
@@ -1217,6 +1264,7 @@ namespace Pscf {
                   return false;
                } else 
                if (!cancel && abs(cdel) > 1.0E-8) {
+                  std::cout << "\n";
                   std::cout << "Error of coefficients in open stars:" 
                             << "\n";
                   std::cout << "First star id = " << is << std::endl;
@@ -1250,6 +1298,25 @@ namespace Pscf {
          } // end if (stars_[is].invertFlag == 0) ... else ...
 
       } // end while (is < nStar_) loop over stars
+
+      // Loop over basis functions
+      for (ib = 0; ib < nBasis_; ++ib) {
+         is = starIds_[ib];
+         if (stars_[is].cancel) {
+            std::cout << "\n";
+            std::cout << "Star referred to by starIds_ is cancelled\n";
+            return false;
+         }
+         if (basisIds_[is] != ib) {
+            std::cout << "\n";
+            std::cout << "Eror: basisIds_[starIds_[ib]] != ib\n";
+            std::cout << "Basis function index ib = " << ib << "\n";
+            std::cout << "starIds_[ib] = is       = " << is << "\n";
+            std::cout << "basisIds_[is]           = " << basisIds_[is] 
+                      << "\n";
+            return false;
+         }
+      }
  
       // The end of this function is reached iff all tests passed.
       return true;

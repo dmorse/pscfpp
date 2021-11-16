@@ -344,6 +344,13 @@ namespace Pscf {
       int nBasis() const;
 
       /** 
+      * Get a specific Wave, access by integer index.
+      *
+      * \int id  index for a wave vector.
+      */
+      Wave const & wave(int i) const;
+
+      /** 
       * Get a Star, accessed by integer index.
       *
       * \int id  index for a star
@@ -358,13 +365,6 @@ namespace Pscf {
       Star const & basisFunction(int id) const;
 
       /** 
-      * Get a specific Wave, access by integer index.
-      *
-      * \int id  index for a wave vector.
-      */
-      Wave const & wave(int i) const;
-
-      /** 
       * Get the integer index of a wave, as required by wave(int id).
       * 
       * This function returns the index of a wavevector within the wave  
@@ -376,6 +376,18 @@ namespace Pscf {
       * \param vector vector of integer indices of a wave vector.
       */
       int waveId(IntVec<D> vector) const;
+
+      /** 
+      * Get the integer index of basis function, indexed by star id.
+      *
+      * If starId is the index of an uncancelled star, return the 
+      * index of the corresponding basis function.
+      * 
+      * If starId is the index of a cancelled star, return -1.
+      * 
+      * \param starId integer index for a star.
+      */
+      int basisId(int starId) const;
 
    private:
 
@@ -417,6 +429,17 @@ namespace Pscf {
       * of the corresponding un-cancelled Star in the stars_ array.
       */
       DArray<int> starIds_;
+
+      /**
+      * Look-up table for basis functions by star id.
+      *
+      * After allocation, the capacity_ of basisIds_ is equal to nStar_.
+      * The array index of each element of basisIds_ corresponds to the
+      * index of a star, while the element value is the index of a
+      * corresponding basis function for an uncancelled star, or -1 for
+      * for each cancelled star.
+      */
+      DArray<int> basisIds_;
 
       /**
       * Total number of wavevectors, including those in cancelled stars.
@@ -511,6 +534,10 @@ namespace Pscf {
       return waveIds_[rank];
    }
 
+   template <int D>
+   int Basis<D>::basisId(int starId) const
+   {  return basisIds_[starId]; }
+
    #ifndef PSSP_BASIS_TPP
    extern template class Basis<1>;
    extern template class Basis<2>;
@@ -518,5 +545,4 @@ namespace Pscf {
    #endif
 
 } // namespace Pscf
-
 #endif
