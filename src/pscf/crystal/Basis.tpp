@@ -26,6 +26,7 @@ namespace Pscf {
    template <int D>
    Basis<D>::Basis()
     : nWave_(0), 
+      nBasisWave_(0), 
       nStar_(0), 
       nBasis_(0), 
       unitCellPtr_(0), 
@@ -306,13 +307,13 @@ namespace Pscf {
       *       set coefficients of all waves to zero
       *     } else {
       *       Set the root to the first wave in the star
-      *       Check closure (i.e., that negation of root is also in this star)
+      *       Check closure (i.e., negation of root is in this star)
       *       For each wave in star:
       *          Divide coeff by the root coefficient 
       *       }
-      *       if (coeffs of root and its negation are not complex conjugates){
+      *       if (coeffs of root & negation are not complex conjugates){
       *          Divide all coeffs by a common phasor chosen to obtain 
-      *          complex conjugate coefficients for the root and partner
+      *             complex conjugate coefficients for root and partner
       *       }
       *     }
       *   } else
@@ -330,7 +331,7 @@ namespace Pscf {
       *       }
       *     }
       *   }
-      *   // Note: If star.invertFlag = -1, do nothing, because coefficients
+      *   // Note: If star.invertFlag = -1, do nothing because properties
       *   // of this star were all set when processing its partner.
       * }
       *
@@ -344,7 +345,7 @@ namespace Pscf {
       *
       * // For all waves, set implicit member and add to look up table
       * For each wave in array waves_ { 
-      *   Set implicit attribute
+      *   Set Wave::implicit attribute
       *   Assign waveIds_[rank] = i
       * }
       */
@@ -372,7 +373,7 @@ namespace Pscf {
          }
 
          // Process completed list of wavectors of equal norm
-         if (newList && listEnd > 0) {
+         if (newList) {
 
             // Copy waves of equal norm into std::set "list"
             list.clear();
@@ -525,7 +526,7 @@ namespace Pscf {
                if (nextInvert == -1) {
 
                   // If this star is 2nd of a pair related by inversion,
-                  // set root of next star to 1st wave of remaining list.
+                  // set root for next star to 1st wave of remaining list.
 
                   newStar.invertFlag = -1;
                   rootItr = list.begin();
@@ -539,7 +540,7 @@ namespace Pscf {
                   // Compute negation nVec of root vector in FBZ
                   nVec.negate(rootVecBz);
 
-                  // Shift negation nVec to a DFT mesh
+                  // Shift negation nVec to the DFT mesh
                   (*meshPtr_).shift(nVec);
        
                   // Search for negation of root vector within this star
@@ -563,11 +564,14 @@ namespace Pscf {
 
                   } else {
 
+                     // This star is open under inversion, and is the
+                     // first star of a pair related by inversion
+
                      newStar.invertFlag = 1;
                      nextInvert = -1;
 
-                     // If star is not closed, find negation of root in
-                     // the remaining list, and use this negation as the
+                     // Find negation of the root of this star in the
+                     // remaining list, and use this negation as the
                      // root of the next star.
 
                      setItr = list.begin();
@@ -601,7 +605,7 @@ namespace Pscf {
                ++starId;
                starBegin = newStar.endId;
 
-            } 
+            }
             // End loop over stars within a list.
 
             UTIL_CHECK(list.size() == 0);
@@ -641,17 +645,28 @@ namespace Pscf {
       nStar_ = stars_.size();
       // Complete initial processing of all lists and stars
 
+      /*
+      * Conventions for phases of wave coefficients (imposed below):
+      *   - Coefficients of the root of each star and its negation must
+      *     be complex conjugates.
+      *   - In a closed star (starInvert = 0), the coefficient of the 
+      *     root must have a non-negative real part. If the root
+      *     coefficient is pure imaginary, the imaginary part must
+      *     be negative.
+      *   - In a pair of open stars that are related by inversion 
+      *     symmetry, the coefficients of the first wave of the first star
+      *     and the last wave of the second star (i.e., the roots of both
+      *     stars) must have real coefficients.
+      */
+
+      // Final processing of phases of of waves in stars:
       std::complex<double> rootCoeff; // Coefficient of root wave
       std::complex<double> partCoeff; // Coefficient of partner of root
       std::complex<double> d;
       int rootId, partId;
-
-      // Final processing of phases of of waves in stars. 
-      // Require that the root wave of each star and its negation 
-      // have complex conjugate coefficients.
       for (i = 0; i < nStar_; ++i) {
 
-         // Treat open and closed stars separately
+         // Treat open and closed stars differently
 
          if (stars_[i].invertFlag == 0) {
      
@@ -713,7 +728,7 @@ namespace Pscf {
                            d = -d;
                         }
                      }
-                     for (j=stars_[i].beginId; j < stars_[i].endId; ++j) {
+                     for (j=stars_[i].beginId; j < stars_[i].endId; ++j){
                         waves_[j].coeff /= d;
                      }
                   }
@@ -722,8 +737,8 @@ namespace Pscf {
 
             } // end if (cancel) ... else ...
    
-            // end if (stars_[i].invertFlag == 0) 
-         } else 
+         } // end if (stars_[i].invertFlag == 0) 
+         else 
          if (stars_[i].invertFlag == 1) {
 
             // Process a pair of open stars related by inversion.
@@ -830,6 +845,18 @@ namespace Pscf {
          // Look up table for waves
          waveIds_[mesh().rank(vec)] = i;
       }
+
+      // Add all uncancelled stars to look-up table starIds_
+      starIds_.allocate(nBasis_);
+      j = 0;
+      for (i = 0; i < nStar_; ++i) {
+         if (!(stars_[i].cancel)) {
+            UTIL_CHECK(j < nBasis_);
+            starIds_[j] = i;
+            ++j;
+         }
+      }
+      UTIL_CHECK(j == nBasis_);
 
    }
 

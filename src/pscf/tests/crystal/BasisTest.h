@@ -70,8 +70,8 @@ public:
       std::string spaceGroup = "I";
       basis.makeBasis(mesh, unitCell, spaceGroup);
 
-      TEST_ASSERT(eq(basis.nWave(),8));
-      TEST_ASSERT(eq(basis.nStar(),8));
+      TEST_ASSERT(eq(basis.nWave(), 8));
+      TEST_ASSERT(eq(basis.nStar(), 8));
       TEST_ASSERT(eq(basis.nBasis(),8));
 
       #if 0
@@ -297,7 +297,18 @@ public:
       basis.makeBasis(mesh, unitCell, group);
       
       TEST_ASSERT(basis.isValid());
-      //TEST_ASSERT(eq(basis.nWave(), 512));
+      TEST_ASSERT(eq(basis.nWave(), 512));
+
+      // Check basisFunction
+      int i, j;
+      j = 0;
+      for (i = 0; i < basis.nStar(); ++i) {
+         if (!(basis.star(i).cancel)) {
+            TEST_ASSERT(&basis.star(i) == &basis.basisFunction(j));
+            ++j;
+         }
+      }
+      TEST_ASSERT(j == basis.nBasis());
 
       #if 0
       if (verbose() > 1) {
@@ -340,6 +351,17 @@ public:
       
       TEST_ASSERT(basis.isValid());
       TEST_ASSERT(eq(basis.nWave(), 512));
+
+      // Compare star and basisFunction accessors
+      int i, j;
+      j = 0;
+      for (i = 0; i < basis.nStar(); ++i) {
+         if (!(basis.star(i).cancel)) {
+            TEST_ASSERT(&basis.star(i) == &basis.basisFunction(j));
+            ++j;
+         }
+      }
+      TEST_ASSERT(j == basis.nBasis());
 
       #if 0
       if (verbose() > 1) {
@@ -384,6 +406,17 @@ public:
       
       TEST_ASSERT(basis.isValid());
       TEST_ASSERT(eq(basis.nWave(), 512));
+
+      // Compare star and basisFunction accessors
+      int i, j;
+      j = 0;
+      for (i = 0; i < basis.nStar(); ++i) {
+         if (!(basis.star(i).cancel)) {
+            TEST_ASSERT(&basis.star(i) == &basis.basisFunction(j));
+            ++j;
+         }
+      }
+      TEST_ASSERT(j == basis.nBasis());
 
       #if 0
       if (verbose() > 1) {

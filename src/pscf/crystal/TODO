@@ -1,10 +1,12 @@
 TODO (Basis class):
 
 1) Convert TWave::phase to a Rational value. Add Wave::phase member
-   to Basis::Wave. Build code to compute coefficients that contains
+   to Basis::Wave, which should also be a rational number. Rework
+   code to set using phases in Basis using Rational numbers 
+   throughout. Write compute to compute coefficients that treats
    common special cases phase = 0, phase = +- 1/2, phase = +- 1/4.
 
-2) Store norm of coefficient separately from phase.
+2) Store complex coefficient separately from phase.
 
 3) Possibility: Add a negationId to Basis::Wave. Once you've identified 
    the negation of a vector, why not keep track of it?

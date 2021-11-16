@@ -344,22 +344,34 @@ namespace Pscf {
       int nBasis() const;
 
       /** 
-      * Get a Star, access by integer index.
+      * Get a Star, accessed by integer index.
+      *
+      * \int id  index for a star
       */
-      Star const & star(int i) const;
+      Star const & star(int id) const;
+
+      /** 
+      * Get an uncancelled Star, accessed by basis function index.
+      *
+      * \int id  index for a basis function, or an uncancelled star.
+      */
+      Star const & basisFunction(int id) const;
 
       /** 
       * Get a specific Wave, access by integer index.
+      *
+      * \int id  index for a wave vector.
       */
       Wave const & wave(int i) const;
 
       /** 
-      * Get the integer index of a wave, as required by wave(int i).
+      * Get the integer index of a wave, as required by wave(int id).
       * 
       * This function returns the index of a wavevector within the wave  
-      * array, as required as in input to function Wave::wave(int). The 
-      * components of the input vector are shifted to a value of indexDft 
-      * that lies within the DFT mesh before the index is looked up. 
+      * array, as required as in input to function Wave::wave(int id). 
+      * The vector of input components is shifted internally to an 
+      * equivalent value that lies within the conventional DFT mesh,
+      * in which all components are non-negative integers.
       *
       * \param vector vector of integer indices of a wave vector.
       */
@@ -367,47 +379,92 @@ namespace Pscf {
 
    private:
 
-      /// Array of all Wave objects (all wavevectors)
+      /**
+      * Array of all Wave objects (all wavevectors). 
+      *
+      * Waves are ordered in non-decreasing order by wavevector norm, with
+      * waves in the same star order in a consecutive block, with waves in
+      * each star ordered by integer indices.
+      *
+      * The capacity of array stars_ is equal to nWave_, which is also equal
+      * to the number of points in the associated spatial mesh.
+      */
       DArray<Wave> waves_;
 
-      /// Array of Star objects (all stars of wavevectors).
+      /**
+      * Array of Star objects (all stars of wavevectors).
+      * 
+      * The final size of array stars_ is equal to nStar_.
+      */
       GArray<Star> stars_;
 
-      /// Indexing that allows identification by IntVec
+      /**
+      * Look-up table for identification of waves by IntVec
+      *
+      * After allocation, the capacity_ of waveIds_ is equal to nWave_.
+      * The array index of each element of waveIds_ corresponds to the
+      * rank of the wavevector within a k-space DFT mesh, and the value
+      * is the index of the corresponding Wave within the waves_ array.
+      */
       DArray<int> waveIds_;
 
-      /// Total number of wavevectors
+      /**
+      * Look-up table for uncancelled stars index by basis function id.
+      *
+      * After allocation, the capacity_ of starIds_ is equal to nBasis_.
+      * The array index of each element of starIds_ corresponds to the
+      * index of a basis function, while the element value is the index
+      * of the corresponding un-cancelled Star in the stars_ array.
+      */
+      DArray<int> starIds_;
+
+      /**
+      * Total number of wavevectors, including those in cancelled stars.
+      *
+      * This must equal the number of grid points in the mesh.
+      */
       int nWave_;
 
-      /// Total number of wavevectors in uncancelled stars
+      /**
+      * Total number of wavevectors in uncancelled stars
+      */ 
       int nBasisWave_;
 
-      /// Total number of stars.
+      /**
+      * Total number of stars, including cancelled stars.
+      */
       int nStar_;
 
-      /// Total number of basis functions (or uncancelled stars).
+      /**
+      * Total number of basis functions, or uncancelled stars.
+      */
       int nBasis_;
 
-      /// Pointer to associated UnitCell<D>
+      /**
+      * Pointer to an associated UnitCell<D>
+      */
       UnitCell<D> const * unitCellPtr_;
 
-      /// Pointer to associated Mesh<D>
+      /**
+      * Pointer to an associated Mesh<D>
+      */
       Mesh<D> const * meshPtr_;
 
       /**
-      * Construct array of ordered waves.
+      * Construct an array of ordered waves.
       */
       void makeWaves();
 
       /**
-      * Sort waves of equal magnitude into stars related by symmetry.
+      * Identify stars of wavevectors related by symmetry.
       */
       void makeStars(const SpaceGroup<D>& group);
 
       /**
       * Access associated Mesh<D> as const reference.
       */
-      Mesh<D> const & mesh() const { return *meshPtr_; }
+      Mesh<D> const & mesh() const 
+      { return *meshPtr_; }
 
       /**
       * Access associated UnitCell<D> as const reference.
@@ -417,13 +474,15 @@ namespace Pscf {
 
    };
 
+   // Inline functions
+
    template <int D>
    inline int Basis<D>::nWave() const
    {  return nWave_; }
 
    template <int D>
    inline int Basis<D>::nBasisWave() const
-   {  return nWave_; }
+   {  return nBasisWave_; }
 
    template <int D>
    inline int Basis<D>::nStar() const
@@ -431,13 +490,18 @@ namespace Pscf {
 
    template <int D>
    inline 
-   typename Basis<D>::Wave const & Basis<D>::wave(int i) const
-   {  return waves_[i]; }
+   typename Basis<D>::Wave const & Basis<D>::wave(int id) const
+   {  return waves_[id]; }
 
    template <int D>
    inline 
-   typename Basis<D>::Star const & Basis<D>::star(int i) const
-   {  return stars_[i]; }
+   typename Basis<D>::Star const & Basis<D>::star(int id) const
+   {  return stars_[id]; }
+
+   template <int D>
+   inline 
+   typename Basis<D>::Star const & Basis<D>::basisFunction(int id) const
+   {  return stars_[starIds_[id]]; }
 
    template <int D>
    int Basis<D>::waveId(IntVec<D> vector) const
