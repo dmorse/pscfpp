@@ -250,19 +250,56 @@ namespace Pspc
       //@{
 
       /**
-      * Get Mixture by reference.
+      * Get the Mixture by reference.
       */
       Mixture<D>& mixture();
 
       /**
-      * Get spatial discretization mesh by reference.
+      * Get the Domain by reference.
+      */
+      Domain<D>& domain();
+
+      /**
+      * Get the spatial discretization mesh by reference.
+      *
+      * Equivalent to domain().mesh().
       */
       Mesh<D>& mesh();
 
       /**
       * Get UnitCell (i.e., lattice type and parameters) by reference.
+      *
+      * Equivalent to domain().unitCell().
       */
       UnitCell<D>& unitCell();
+
+      /**
+      * Get associated Basis object by reference.
+      *
+      * Equivalent to domain().basis().
+      */
+      Basis<D>& basis();
+
+      /**
+      * Get associated FFT object.
+      *
+      * Equivalent to domain().fft().
+      */
+      FFT<D>& fft();
+
+      /**
+      * Get associated FieldIo object.
+      *
+      * Equivalent to domain().fieldIo().
+      */
+      FieldIo<D>& fieldIo();
+
+      /** 
+      * Get group name.
+      *
+      * Equivalent to domain().groupName().
+      */  
+      std::string groupName() const;
 
       /**
       * Get Interaction (i.e., excess free energy model) by reference.
@@ -275,21 +312,6 @@ namespace Pspc
       Iterator<D>& iterator();
 
       /**
-      * Get associated Basis object by reference.
-      */
-      Basis<D>& basis();
-
-      /**
-      * Get associated FFT object.
-      */
-      FFT<D>& fft();
-
-      /**
-      * Get associated FieldIo object.
-      */
-      FieldIo<D>& fieldIo();
-
-      /**
       * Get homogeneous mixture (for reference calculations).
       */
       Homogeneous::Mixture& homogeneous();
@@ -298,11 +320,6 @@ namespace Pspc
       * Get FileMaster by reference.
       */
       FileMaster& fileMaster();
-
-      /** 
-      * Get group name.
-      */  
-      std::string groupName() const;
 
       /** 
       * Have monomer chemical potential fields (w fields) been set?
@@ -766,6 +783,11 @@ namespace Pspc
    template <int D>
    inline Mixture<D>& System<D>::mixture()
    { return mixture_; }
+
+   // Get the associated Domain object.
+   template <int D>
+   inline Domain<D>& System<D>::domain()
+   { return domain_; }
 
    // Get the associated UnitCell<D> object.
    template <int D>
