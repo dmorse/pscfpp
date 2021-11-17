@@ -159,12 +159,12 @@ namespace Pspc
    // Get the associated UnitCell<D> object.
    template <int D>
    inline UnitCell<D>& Domain<D>::unitCell()
-   { return unitCell_; }
+   {  return unitCell_; }
 
    // Get the Mesh<D> object.
    template <int D>
    inline Mesh<D>& Domain<D>::mesh()
-   { return mesh_; }
+   {  return mesh_; }
 
    // Get the Basis<D> object.
    template <int D>
@@ -184,7 +184,7 @@ namespace Pspc
    // Get the groupName string.
    template <int D>
    inline std::string Domain<D>::groupName() const
-   { return groupName_; }
+   {  return groupName_; }
 
    #ifndef PSPC_DOMAIN_TPP
    // Suppress implicit instantiation

@@ -8,7 +8,6 @@ pspc_= \
   $(pspc_solvers_) \
   $(pspc_iterator_) \
   $(pspc_sweep_) \
-  pspc/Domain.cpp \
   pspc/System.cpp 
 
 pspc_SRCS=\

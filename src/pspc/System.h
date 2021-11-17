@@ -10,8 +10,8 @@
 
 #include <util/param/ParamComposite.h>     // base class
 
-#include <pspc/Domain.h>                   // member
 #include <pspc/solvers/Mixture.h>          // member
+#include <pspc/field/Domain.h>             // member
 #include <pspc/field/RField.h>             // typedef
 
 #include <pscf/homogeneous/Mixture.h>      // member
