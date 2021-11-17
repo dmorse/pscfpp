@@ -18,9 +18,11 @@ System{
           1   0   12.0
           1   1   0.0
   }
-  unitCell Lamellar   1.3835952906
-  mesh  	 40
-  groupName P_-1
+  Domain{
+     unitCell Lamellar   1.3835952906
+     mesh                 40
+     groupName P_-1
+  }
   AmIterator{
     maxItr 100
     epsilon 1e-12
