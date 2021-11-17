@@ -29,17 +29,13 @@ using namespace Pscf::Pspc;
 class FieldIoTest : public UnitTest 
 {
 
+   std::ofstream logFile_;
+
 public:
 
-   void setUp()
-   {
-      setVerbose(2);
-   }
-
-   void tearDown()
-   {}
-
-
+   /*
+   * A subsystem containing a FieldIo and associated components.
+   */
    template <int D>
    class FieldIoSystem
    {
@@ -82,6 +78,27 @@ public:
 
    };
 
+   void setUp()
+   {
+      setVerbose(0);
+   }
+
+   void tearDown()
+   {
+      if (logFile_.is_open()) {
+         logFile_.close();
+      }
+   }
+
+   void openLogFile(char const * filename)
+   {
+      openOutputFile(filename, logFile_);
+      Log::setFile(logFile_);
+   }
+
+   /*
+   * Open and read file header to initialize FieldIoSystem<D> system.
+   */
    template <int D>
    void readHeader(std::string filename, FieldIoSystem<D>& system)
    {
@@ -91,29 +108,75 @@ public:
       in.close();
    }
 
-   void testSystem3D() 
+   // Allocate an array of fields in symmetry adapated format
+   void allocateFieldsBasis(int nMonomer, int nStar,
+                            DArray< DArray<double> >& fields)
+   {
+      fields.allocate(nMonomer);
+      for (int i = 0; i < nMonomer; ++i) {   
+         fields[i].allocate(nStar);
+      }
+   }
+
+   // Allocate an array of r-grid fields
+   template <int D>
+   void allocateFieldsRGrid(int nMonomer, IntVec<D> dimensions,
+                            DArray< RField<D> >& fields)
+   {
+      fields.allocate(nMonomer);
+      for (int i = 0; i < nMonomer; ++i) {   
+         fields[i].allocate(dimensions);
+      }
+   }
+
+   // Allocate an array of k-grid fields
+   template <int D>
+   void allocateFieldsKGrid(int nMonomer, IntVec<D> dimensions,
+                            DArray< RFieldDft<D> >& fields)
+   {
+      fields.allocate(nMonomer);
+      for (int i = 0; i < nMonomer; ++i) {
+         fields[i].allocate(dimensions);
+      }
+   }
+
+   void testFieldIoSystem3D() 
    {
       printMethod(TEST_FUNC);
 
-      FieldIoSystem<3> system;
-      readHeader<3>("in/w_bcc.rf", system);
+      FieldIoSystem<3> sys;
+      readHeader<3>("in/w_bcc.rf", sys);
 
-      TEST_ASSERT(system.mesh.dimension(0) == 32);
-      TEST_ASSERT(system.mesh.dimension(1) == 32);
-      TEST_ASSERT(system.mesh.dimension(2) == 32);
-      TEST_ASSERT(system.unitCell.lattice() == UnitCell<3>::Cubic);
-      TEST_ASSERT(system.basis.nBasis() == 489);
+      TEST_ASSERT(sys.mesh.dimension(0) == 32);
+      TEST_ASSERT(sys.mesh.dimension(1) == 32);
+      TEST_ASSERT(sys.mesh.dimension(2) == 32);
+      TEST_ASSERT(sys.unitCell.lattice() == UnitCell<3>::Cubic);
+      TEST_ASSERT(sys.basis.nBasis() == 489);
 
-      //std::cout << std::endl;
-      //std::cout << "Cell  = " << system.unitCell << std::endl;
-      //std::cout << "Ngrid = " << system.mesh.dimensions() << std::endl;
-      //system.basis.outputStars(std::cout);
+      if (verbose() > 0) {
+         std::cout << "\n";
+         std::cout << "Cell  = " << sys.unitCell << "\n";
+         std::cout << "Ngrid = " << sys.mesh.dimensions() << "\n";
+         if (verbose() > 1) {
+            sys.basis.outputStars(std::cout);
+         }
+      }
+
+      DArray< DArray<double> > fieldsB;
+      allocateFieldsBasis(sys.nMonomer, sys.basis.nStar(), fieldsB);
+
+      DArray< RField<3> >  fieldsR;
+      allocateFieldsRGrid(sys.nMonomer, sys.mesh.dimensions(), fieldsR);
+
+      DArray< RFieldDft<3> > fieldsK;
+      allocateFieldsKGrid(sys.nMonomer, sys.mesh.dimensions(), fieldsK);
+
    }
 
 };
 
 TEST_BEGIN(FieldIoTest)
-TEST_ADD(FieldIoTest, testSystem3D)
+TEST_ADD(FieldIoTest, testFieldIoSystem3D)
 TEST_END(FieldIoTest)
 
 #endif
