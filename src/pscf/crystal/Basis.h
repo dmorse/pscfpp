@@ -162,8 +162,8 @@ namespace Pscf {
          /**
          * Square magnitude of any wavevector in this star.
          *
-         * Eigenvalue of negative Laplacian for the basis function 
-         * associated with this star.
+         * Equal to the negative of the eigenvalue of the Laplacian for
+         * the basis function associated with this star.
          */
          double eigen;
 
@@ -222,6 +222,27 @@ namespace Pscf {
          IntVec<D> waveBz;
 
          /**
+         * Index of this star in ordered array.
+         *
+         * This is the index of this star within array stars_.
+         */
+         int starId;
+
+         /**
+         * Index of basis function associated with this star.
+         *
+         * If this star is not cancelled (cancel == false), then basisId
+         * is set equal to the index of the associated basis function in
+         * in a list of nonzero basis functions or (equivalently) in a
+         * list of non-cancelled stars.
+         * 
+         * If this star is cancelled (cancel == true), then basisId = -1.
+         *
+         * For any valid starId, basisId_[starId] = stars_[starId].basisId.
+         */
+         int basisId;
+
+         /**
          * Is this star cancelled, i.e., associated with a zero function?
          *
          * The cancel flag is true iff no nonzero basis function can be
@@ -231,7 +252,7 @@ namespace Pscf {
          *
          * Each cancelled star contains a set of waves that are related
          * by symmetry for which the X-ray or neutron scattering intensity 
-         * would exhibit a systematic cancellation imposed by the space
+         * would exhibit a systematic cancellation required by the space
          * group symmetry. 
          */
          bool cancel;
@@ -377,18 +398,6 @@ namespace Pscf {
       */
       int waveId(IntVec<D> vector) const;
 
-      /** 
-      * Get the integer index of basis function, indexed by star id.
-      *
-      * If starId is the index of an uncancelled star, return the 
-      * index of the corresponding basis function.
-      * 
-      * If starId is the index of a cancelled star, return -1.
-      * 
-      * \param starId integer index for a star.
-      */
-      int basisId(int starId) const;
-
    private:
 
       /**
@@ -429,17 +438,6 @@ namespace Pscf {
       * of the corresponding un-cancelled Star in the stars_ array.
       */
       DArray<int> starIds_;
-
-      /**
-      * Look-up table for basis functions by star id.
-      *
-      * After allocation, the capacity_ of basisIds_ is equal to nStar_.
-      * The array index of each element of basisIds_ corresponds to the
-      * index of a star, while the element value is the index of a
-      * corresponding basis function for an uncancelled star, or -1 for
-      * for each cancelled star.
-      */
-      DArray<int> basisIds_;
 
       /**
       * Total number of wavevectors, including those in cancelled stars.
@@ -533,10 +531,6 @@ namespace Pscf {
       int rank = mesh().rank(vector);
       return waveIds_[rank];
    }
-
-   template <int D>
-   int Basis<D>::basisId(int starId) const
-   {  return basisIds_[starId]; }
 
    #ifndef PSSP_BASIS_TPP
    extern template class Basis<1>;

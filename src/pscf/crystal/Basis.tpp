@@ -846,15 +846,15 @@ namespace Pscf {
          waveIds_[mesh().rank(vec)] = i;
       }
 
-      // Add stars to look-up table starIds_ and basisIds_
+      // Set Star::starId and Star::basisId, and to look-up table starIds_.
       starIds_.allocate(nBasis_);
-      basisIds_.allocate(nStar_);
       j = 0;
       for (i = 0; i < nStar_; ++i) {
+         stars_[i].starId = i;
          if (stars_[i].cancel) {
-            basisIds_[i] = -1;
+            stars_[i].basisId = -1;
          } else {
-            basisIds_[i] = j;
+            stars_[i].basisId = j;
             UTIL_CHECK(j < nBasis_);
             starIds_[j] = i;
             ++j;
@@ -1069,8 +1069,16 @@ namespace Pscf {
             }
          }
 
-         // Check basisId_
-         ib = basisIds_[is];
+         // Check Star::starId is equal to array index
+         if (stars_[is].starId != is) {
+            std::cout << "\n";
+            std::cout << "stars_[is].starId != is for "
+                      << "is = " << is << "\n";
+            return false;
+         }
+
+         // Check Star::basisId and starIds_ look up table
+         ib = stars_[is].basisId;
          if (stars_[is].cancel) {
             if (ib != -1) {
                std::cout << "\n";
@@ -1081,10 +1089,11 @@ namespace Pscf {
          } else {
             if (starIds_[ib] != is) {
                std::cout << "\n";
-               std::cout << "starIds_[basisIds_[is]] != is for star\n";
-               std::cout << "is                 = " << is << "\n";
-               std::cout << "ib = basisIds_[is] = " << ib << "\n";
-               std::cout << "starIds_[ib]       = " << starIds_[ib] << "\n";
+               std::cout << "starIds_[stars_[is].basisId] != is for: \n";
+               std::cout << "is                      = " << is << "\n";
+               std::cout << "ib = stars_[is].basisId = " << ib << "\n";
+               std::cout << "starIds_[ib]            = " << starIds_[ib] 
+                         << "\n";
                return false;
             }
          }
@@ -1307,13 +1316,13 @@ namespace Pscf {
             std::cout << "Star referred to by starIds_ is cancelled\n";
             return false;
          }
-         if (basisIds_[is] != ib) {
+         if (stars_[is].basisId != ib) {
             std::cout << "\n";
-            std::cout << "Eror: basisIds_[starIds_[ib]] != ib\n";
+            std::cout << "Eror: stars_[starIds_[ib]].basisId != ib\n";
             std::cout << "Basis function index ib = " << ib << "\n";
-            std::cout << "starIds_[ib] = is       = " << is << "\n";
-            std::cout << "basisIds_[is]           = " << basisIds_[is] 
-                      << "\n";
+            std::cout << "is = starIds_[ib]       = " << is << "\n";
+            std::cout << "stars_[is].basisId      = " 
+                      << stars_[is].basisId << "\n";
             return false;
          }
       }
