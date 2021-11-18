@@ -72,6 +72,14 @@ namespace Pspc
       */
       virtual void readParameters(std::istream& in);
 
+      /**
+      * Read initialization data from header of an r-grid field file.
+      *
+      * \param in input parameter stream
+      * \param nMonomer number of monomers in field file (output)
+      */
+      void readFieldHeader(std::istream& in, int& nMonomer);
+
       //@}
       /// \name Accessors 
       //@{

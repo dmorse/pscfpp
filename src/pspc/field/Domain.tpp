@@ -61,6 +61,30 @@ namespace Pspc
       basis().makeBasis(mesh(), unitCell(), groupName_);
       isInitialized_ = true;
    }
+   
+ 
+   template <int D> 
+   void Domain<D>::readFieldHeader(std::istream& in, int& nMonomer)
+   {
+      // Read common section of standard field header
+      int ver1, ver2;
+      Pscf::readFieldHeader(in, ver1, ver2, 
+                            unitCell_, groupName_, nMonomer);
+ 
+      // Read grid dimensions
+      std::string label;
+      in >> label;
+      UTIL_CHECK(label == "ngrid");
+      IntVec<D> nGrid;
+      in >> nGrid;
+
+      // Initialize mesh, fft and basis
+      mesh_.setDimensions(nGrid);
+      fft_.setup(mesh_.dimensions());
+      basis_.makeBasis(mesh_, unitCell_, groupName_);
+
+      isInitialized_ = true;
+   }
 
 } // namespace Pspc
 } // namespace Pscf
