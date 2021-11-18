@@ -50,13 +50,8 @@ namespace Pspc
    template <int D>
    System<D>::System()
     : mixture_(),
-      unitCell_(),
-      mesh_(),
-      fft_(),
-      groupName_(),
-      basis_(),
+      domain_(),
       fileMaster_(),
-      fieldIo_(),
       homogeneous_(),
       interactionPtr_(0),
       iteratorPtr_(0),
@@ -70,14 +65,13 @@ namespace Pspc
       fHelmholtz_(0.0),
       pressure_(0.0),
       hasMixture_(false),
-      hasUnitCell_(false),
       isAllocated_(false),
       hasWFields_(false),
       hasCFields_(false)
       //hasSweep_(false)
    {  
       setClassName("System"); 
-      fieldIo_.associate(mesh_, fft_, groupName_, basis_, fileMaster_);
+      domain_.setFileMaster(fileMaster_);
       interactionPtr_ = new ChiInteraction(); 
       iteratorFactoryPtr_ = new IteratorFactory<D>(*this); 
       // sweepFactoryPtr_ = new SweepFactory(*this);
@@ -202,6 +196,9 @@ namespace Pspc
       interaction().setNMonomer(mixture().nMonomer());
       readParamComposite(in, interaction());
 
+      readParamComposite(in, domain_);
+
+      #if 0
       read(in, "unitCell", unitCell_);
       hasUnitCell_ = true;
      
@@ -211,9 +208,11 @@ namespace Pspc
 
       read(in, "groupName", groupName_);
 
+      basis().makeBasis(mesh(), unitCell(), groupName_);
+      #endif
+
       mixture().setMesh(mesh());
       mixture().setupUnitCell(unitCell());
-      basis().makeBasis(mesh(), unitCell(), groupName_);
 
       allocate();
       isAllocated_ = true;
@@ -264,14 +263,13 @@ namespace Pspc
    {  readParam(fileMaster().paramFile()); }
 
    /*
-   * Read parameters and initialize.
+   * Allocate memory for fields.
    */
    template <int D>
    void System<D>::allocate()
    {
       // Preconditions
       UTIL_CHECK(hasMixture_);
-      UTIL_CHECK(hasMesh_);
 
       // Allocate wFields and cFields
       int nMonomer = mixture().nMonomer();
