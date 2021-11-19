@@ -9,3 +9,4 @@ count
 *.pyc
 *.orig
 *.temp
+.vscode/
