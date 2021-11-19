@@ -451,6 +451,40 @@ public:
       }
    }
 
+   void testKGridIo_altG() 
+   {
+      printMethod(TEST_FUNC);
+
+      Domain<3> domain;
+      domain.setFileMaster(fileMaster_);
+      readHeader("in/w_altG.rf", domain);
+
+      DArray< DArray<double> > bf_0;
+      allocateFields(nMonomer_, domain.basis().nStar(), bf_0);
+
+      DArray< RFieldDft<3> > kf_0;
+      allocateFields(nMonomer_, domain.mesh().dimensions(), kf_0);
+
+      DArray< RFieldDft<3> > kf_1;
+      allocateFields(nMonomer_, domain.mesh().dimensions(), kf_1);
+
+      readFields("in/w_altG.bf", domain, bf_0);
+      domain.fieldIo().convertBasisToKGrid(bf_0, kf_0);
+
+      writeFields("out/w_altG.kf", domain, kf_0);
+      readFields("out/w_altG.kf", domain, kf_1);
+
+      KFieldComparison<3> comparison;
+      comparison.compare(kf_0, kf_1);
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-11);
+
+      if (verbose() > 0) {
+         std::cout  << "\n";
+         std::cout  << Dbl(comparison.maxDiff(),21,13) << "\n";
+         std::cout  << Dbl(comparison.rmsDiff(),21,13) << "\n";
+      }
+   }
+
    void testKGridIo_lam() 
    {
       printMethod(TEST_FUNC);
@@ -547,6 +581,7 @@ TEST_ADD(FieldIoTest, testConvertBasisKGridBasis_bcc)
 TEST_ADD(FieldIoTest, testConvertBasisRGridBasis_bcc)
 TEST_ADD(FieldIoTest, testConvertBasisKGridBasis_altG)
 TEST_ADD(FieldIoTest, testKGridIo_bcc)
+TEST_ADD(FieldIoTest, testKGridIo_altG)
 TEST_ADD(FieldIoTest, testKGridIo_lam)
 TEST_ADD(FieldIoTest, testConvertBasisKGridRGridKGrid_bcc)
 TEST_END(FieldIoTest)

@@ -815,11 +815,11 @@ namespace Pscf {
 
       // Set tiny real and imaginary parts to zero (due to round-off)
       for (i = 0; i < nWave_; ++i) {
-         if (abs(real(waves_[i].coeff)) < 1.0E-12) {
+         if (abs(real(waves_[i].coeff)) < 1.0E-8) {
             waves_[i].coeff 
                      = std::complex<double>(0.0, imag(waves_[i].coeff));
          }
-         if (abs(imag(waves_[i].coeff)) < 1.0E-12) {
+         if (abs(imag(waves_[i].coeff)) < 1.0E-8) {
             waves_[i].coeff 
                     = std::complex<double>(real(waves_[i].coeff), 0.0);
          }
@@ -1119,7 +1119,7 @@ namespace Pscf {
       // Check that all waves in mesh are accounted for in stars
       if (stars_[nStar_-1].endId != mesh().size()) {
          std::cout << "\n";
-         std::cout << "Star endI of last star != mesh size" << std::endl;
+         std::cout << "Star endId of last star != mesh size" << std::endl;
          return false;
       }
       if (nWave != mesh().size()) {

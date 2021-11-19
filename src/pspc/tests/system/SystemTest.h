@@ -24,7 +24,7 @@ public:
    std::ofstream logFile_;
 
    void setUp()
-   {}
+   {  setVerbose(0); }
 
    void tearDown()
    {
@@ -89,7 +89,10 @@ public:
       // Compare result to original
       BFieldComparison comparison;
       comparison.compare(wFields_check, system.wFields());
-      //std::cout << "Max error = " << comparison.maxDiff() << std::endl;
+      if (verbose()>0) {
+         std::cout << "\n";
+         std::cout << "Max error = " << comparison.maxDiff() << "\n";
+      }
       TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
 
    }
@@ -119,6 +122,7 @@ public:
       // Round trip basis -> rgrid -> basis, read resulting wField
       system.basisToRGrid("in/diblock/hex/omega.in",
                           "out/testConversion2D_hex_w.rf");
+
       system.rGridToBasis("out/testConversion2D_hex_w.rf",
                           "out/testConversion2D_hex_w.bf");
       system.readWBasis("out/testConversion2D_hex_w.bf");
@@ -131,7 +135,10 @@ public:
       // Compare result to original
       BFieldComparison comparison;
       comparison.compare(wFields_check, system.wFields());
-      // std::cout << "Max error = " << comparison.maxDiff() << std::endl;
+      if (verbose() > 0) {
+         std::cout << "\n";
+         std::cout << "Max error = " << comparison.maxDiff() << "\n";
+      }
       TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
    }
 
@@ -171,7 +178,10 @@ public:
       // Compare result to original
       BFieldComparison comparison;
       comparison.compare(wFields_check, system.wFields());
-      // std::cout << "Max error = " << comparison.maxDiff() << std::endl;
+      if (verbose() > 0) {
+         std::cout << "\n";
+         std::cout << "Max error = " << comparison.maxDiff() << "\n";
+      }
       TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
    }
 
@@ -231,8 +241,10 @@ public:
       // Compare solution to original
       BFieldComparison comparison(1);
       comparison.compare(wFields_check, system.wFields());
-      // std::cout << std::endl;
-      // std::cout << "Max error = " << comparison.maxDiff() << std::endl;
+      if (verbose() > 0) {
+         std::cout << "\n";
+         std::cout << "Max error = " << comparison.maxDiff() << "\n";
+      }
       TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
 
       bool stress = false;
@@ -270,8 +282,10 @@ public:
 
       BFieldComparison comparison(1);
       comparison.compare(wFields_check, system.wFields());
-      //std::cout << std::endl;
-      //std::cout << "Max error = " << comparison.maxDiff() << std::endl;
+      if (verbose() > 0) {
+         std::cout << "\n";
+         std::cout << "Max error = " << comparison.maxDiff() << "\n";
+      }
       TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
    }
 
@@ -304,8 +318,10 @@ public:
       // Compare current solution to reference solution
       BFieldComparison comparison(1);
       comparison.compare(wFields_check, system.wFields());
-      //std::cout << std::endl;
-      //std::cout << "Max error = " << comparison.maxDiff() << std::endl;
+      if (verbose() > 0) {
+         std::cout << "\n";
+         std::cout << "Max error = " << comparison.maxDiff() << "\n";
+      }
       TEST_ASSERT(comparison.maxDiff() < 3.0E-7);
       // Maximum error of 2.608E-7 occurs for the first star
 
@@ -347,8 +363,10 @@ public:
       // Compare solution to reference solution
       BFieldComparison comparison(1);
       comparison.compare(wFields_check, system.wFields());
-      //std::cout << std::endl;
-      //std::cout << "Max error = " << comparison.maxDiff() << std::endl;
+      if (verbose() > 0) {
+         std::cout << "\n";
+         std::cout << "Max error = " << comparison.maxDiff() << "\n";
+      }
       TEST_ASSERT(comparison.maxDiff() < 3.0E-7);
       // Maximum difference of 2.58E-7 occurs for the first star
 
@@ -381,8 +399,10 @@ public:
       // Compare solution to reference solution
       BFieldComparison comparison(1); // Constructor argument 1 skips star 0
       comparison.compare(wFields_check, system.wFields());
-      // std::cout << std::endl;
-      // std::cout << "Max error = " << comparison.maxDiff() << std::endl;
+      if (verbose() > 0) {
+         std::cout << "\n";
+         std::cout << "Max error = " << comparison.maxDiff() << "\n";
+      }
       TEST_ASSERT(comparison.maxDiff() < 5.0E-7);
       // Maximum difference of 1.023E-7 occurs for the second star
 
@@ -421,8 +441,10 @@ public:
 
       BFieldComparison comparison(1);
       comparison.compare(wFields_check, system.wFields());
-      // std::cout << std::endl;
-      // std::cout << "Max error = " << comparison.maxDiff() << std::endl;
+      if (verbose() > 0) {
+         std::cout << "\n";
+         std::cout << "Max error = " << comparison.maxDiff() << "\n";
+      }
       TEST_ASSERT(comparison.maxDiff() < 5.0E-7);
       // Maximum difference of 1.09288E-7 occurs for the second star
 

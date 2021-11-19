@@ -7,8 +7,8 @@ System{
     Polymer{
        type    branched
        nBlock  2
-       blocks  0  0.3   0  1
-               1  0.7   1  2
+       blocks  0    0.3    0   1
+               1    0.7    1   2
        phi     1.0
     }
     ds   0.01

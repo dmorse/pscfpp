@@ -653,11 +653,8 @@ namespace Pspc
       typename Basis<D>::Star const* starPtr;  // pointer to current star
       typename Basis<D>::Wave const* wavePtr;  // pointer to current wave
       std::complex<double> component;          // coefficient for star
-      // IntVec<D> indices;                       // dft grid indices of wave
       int rank;                                // dft grid rank of wave
       int is;                                  // star index
-      //int iw;                                  // wave id, within star 
-      //bool isImplicit;
 
       // Initialize all components to zero
       for (is = 0; is < basis().nStar(); ++is) {
@@ -676,17 +673,28 @@ namespace Pspc
 
          if (starPtr->invertFlag == 0) {
 
-            // Choose a wave that is not implicit -
-            // Either the first or last wave in the star
-            wavePtr = &basis().wave(starPtr->beginId);
-            if (wavePtr->implicit) {
-               wavePtr = &basis().wave(starPtr->endId - 1);
-               UTIL_CHECK(!(wavePtr->implicit));
+            // Choose a wave in the star that is not implicit
+            int beginId = starPtr->beginId;
+            int endId = starPtr->endId;
+            int iw = 0;
+            bool isImplicit = true;
+            while (isImplicit) {
+               wavePtr = &basis().wave(beginId + iw);
+               if (!wavePtr->implicit) {
+                  isImplicit = false; 
+               } else {
+                   UTIL_CHECK(beginId + iw < endId - 1 - iw);
+                   wavePtr = &basis().wave(endId - 1 - iw);
+                   if (!wavePtr->implicit) {
+                      isImplicit = false;
+                   }
+               }
+               ++iw;
             }
             UTIL_CHECK(wavePtr->starId == is);
-            rank = dftMesh.rank(wavePtr->indicesDft);
 
             // Compute component value
+            rank = dftMesh.rank(wavePtr->indicesDft);
             component = std::complex<double>(in[rank][0], in[rank][1]);
             component /= wavePtr->coeff;
             UTIL_CHECK(abs(component.imag()) < 1.0E-8);
