@@ -1,5 +1,5 @@
-#ifndef PSCF_FIELD_COMPARISON_TPP
-#define PSCF_FIELD_COMPARISON_TPP
+#ifndef PSPC_K_FIELD_COMPARISON_TPP
+#define PSPC_K_FIELD_COMPARISON_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -8,37 +8,42 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "FieldComparison.h"
+#include "KFieldComparison.h"
+#include <cmath>
 
 namespace Pscf {
+namespace Pspc {
 
    // Default Constructor
-   template <class FT>
-   FieldComparison<FT>::FieldComparison(int begin)
+   template <int D>
+   KFieldComparison<D>::KFieldComparison(int begin)
     : maxDiff_(0.0),
       rmsDiff_(0.0),
       begin_(begin)
    {};
 
    // Comparator for individual fields.
-   template <class FT>
-   double FieldComparison<FT>::compare(FT const& a, FT const& b)
+   template <int D>
+   double KFieldComparison<D>::compare(RFieldDft<D> const& a, RFieldDft<D> const& b)
    {
       UTIL_CHECK(a.capacity() > 0);
       UTIL_CHECK(a.capacity() == b.capacity());
       int n = a.capacity();
-      double diff;
+      double diffSq, diff, d0, d1;
       maxDiff_ = 0.0;
       rmsDiff_ = 0.0;
       for (int i = begin_; i < n; ++i) {
-         diff = abs(a[i] - b[i]);
+         d0 = a[i][0] - b[i][0];
+         d1 = a[i][1] - b[i][1];
+         diffSq = d0*d0 + d1*d1;
+         diff = sqrt(diffSq);
          if (diff > maxDiff_) {
             maxDiff_ = diff;
          }
-         rmsDiff_ += diff*diff;
+         rmsDiff_ += diffSq;
          //std::cout << i
-         //          << " " << a[i]
-         //          << " " << b[i]
+         //          << " " << a[i][0]  << " " << a[i][1]
+         //          << " " << b[i][0]  << " " << b[i][1]
          //          << " " << diff << std::endl;
       }
       rmsDiff_ = rmsDiff_/double(n);
@@ -47,15 +52,15 @@ namespace Pscf {
    }
 
    // Comparator for arrays of fields
-   template <class FT>
-   double FieldComparison<FT>::compare(DArray<FT> const & a,
-                                       DArray<FT> const & b)
+   template <int D>
+   double KFieldComparison<D>::compare(DArray< RFieldDft<D> > const & a,
+                                       DArray< RFieldDft<D> > const & b)
    {
       UTIL_CHECK(a.capacity() > 0);
       UTIL_CHECK(a.capacity() == b.capacity());
       UTIL_CHECK(a[0].capacity() > 0);
       int m = a.capacity();
-      double diff;
+      double diffSq, diff, d0, d1;
       maxDiff_ = 0.0;
       rmsDiff_ = 0.0;
       int i, j, n;
@@ -64,13 +69,18 @@ namespace Pscf {
          UTIL_CHECK(n > 0);
          UTIL_CHECK(n == b[i].capacity());
          for (j = begin_; j < n; ++j) {
-            diff = abs(a[i][j] - b[i][j]);
-            //std::cout << i << "  " << j << "  " << diff 
-            //         << " ( " << a[i][j] << ")  (" << b[i][j] << ") \n";
+            d0 = a[i][j][0] - b[i][j][0];
+            d1 = a[i][j][1] - b[i][j][1];
+            diffSq = d0*d0 + d1*d1;
+            diff = sqrt(diffSq);
+            //std::cout << i
+            //          << "  (" << a[i][j][0]  << " ,  " << a[i][j][1]
+            //          << ") (" << b[i][j][0]  << " ,  " << b[i][j][1]
+            //          << ")  " << diff << std::endl;
             if (diff > maxDiff_) {
                maxDiff_ = diff;
             }
-            rmsDiff_ += diff*diff;
+            rmsDiff_ += diffSq;
          }
       }
       rmsDiff_ = rmsDiff_/double(m*n);
@@ -78,5 +88,6 @@ namespace Pscf {
       return maxDiff_;
    }
 
+}
 }
 #endif

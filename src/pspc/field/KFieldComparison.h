@@ -1,5 +1,5 @@
-#ifndef PSCF_FIELD_COMPARISON_H
-#define PSCF_FIELD_COMPARISON_H
+#ifndef PSPC_K_FIELD_COMPARISON_H
+#define PSPC_K_FIELD_COMPARISON_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -9,22 +9,18 @@
 */
 
 #include <util/containers/DArray.h>
-#include <fftw3.h>
-#include <cmath>
+#include <pspc/field/RFieldDft.h>
 
 namespace Pscf {
+namespace Pspc {
 
    using namespace Util;
 
    /**
-   * Comparison of element-by-element differences between field arrays.
-   *
-   * The template argument FT may be RField<D> for representations of a
-   * field or fields on an r-grid or DArray<double> for representation 
-   * using a symmetry-adapted basis.
+   * Comparison of element-by-element differences between RFieldDft arrays.
    */
-   template <class FT>
-   class FieldComparison {
+   template <int D>
+   class KFieldComparison {
 
    public:
 
@@ -33,7 +29,7 @@ namespace Pscf {
       *
       * Initializes maxDiff and rmsDiff to zero.
       */
-      FieldComparison(int begin = 0);
+      KFieldComparison(int begin = 0);
 
       // Use compiler defined destructor and assignment operator.
 
@@ -47,7 +43,7 @@ namespace Pscf {
       * \param b  2nd field
       * \return   maximum element-by-element difference (maxDiff)
       */ 
-      double compare(FT const& a, FT const& b);
+      double compare(RFieldDft<D> const& a, RFieldDft<D> const& b);
 
       /**
       * Compare arrays of fields associated with different monomer types.
@@ -63,7 +59,8 @@ namespace Pscf {
       * \param b  2nd DArray of field
       * \return   maximum element-by-element difference (maxDiff)
       */ 
-      double compare(DArray<FT> const& a, DArray<FT> const& b);
+      double compare(DArray<RFieldDft<D> > const& a, 
+                     DArray<RFieldDft<D> > const& b);
 
       /**
       * Return the precomputed maximum element-by-element difference.
@@ -93,9 +90,17 @@ namespace Pscf {
    
       // Index of first element (0 or 1)
       int begin_;
-
+   
    };
 
+   #ifndef PSPC_K_FIELD_COMPARISON_TPP
+   // Suppress implicit instantiation
+   extern template class KFieldComparison<1>;
+   extern template class KFieldComparison<2>;
+   extern template class KFieldComparison<3>;
+   #endif
+
+
+} // namespace Pspc
 } // namespace Pscf
-#include "FieldComparison.tpp"
 #endif

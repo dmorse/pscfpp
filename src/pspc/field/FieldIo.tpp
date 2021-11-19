@@ -410,13 +410,17 @@ namespace Pspc
                                     DArray<RFieldDft<D> >& fields,
                                     UnitCell<D>& unitCell)
    {
+      // Inspect fields array
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
+      for (int i = 0; i < nMonomer; ++i) {
+         UTIL_CHECK(fields[i].meshDimensions() == mesh().dimensions());
+      }
 
       // Read header
       FieldIo<D>::readFieldHeader(in, nMonomer, unitCell);
 
-      // Read grid dimensions
+      // Read mesh dimensions
       std::string label;
       in >> label;
       UTIL_CHECK(label == "ngrid");
@@ -424,16 +428,20 @@ namespace Pspc
       in >> nGrid;
       UTIL_CHECK(nGrid == mesh().dimensions());
 
-      // Read Fields;
-      int idum;
-      MeshIterator<D> itr(mesh().dimensions());
+      // Read fields;
+      int i, idum;
+      MeshIterator<D> itr(fields[0].dftDimensions());
+      i = 0;
       for (itr.begin(); !itr.atEnd(); ++itr) {
          in >> idum;
+         UTIL_CHECK(i == idum);
+         UTIL_CHECK(i == itr.rank());
          for (int i = 0; i < nMonomer; ++i) {
             for (int j = 0; j < 2; ++j) {
                in >> fields[i][itr.rank()][j];
             }
          }
+         ++i;
       }
    }
 
@@ -454,8 +462,12 @@ namespace Pspc
                                      UnitCell<D> const & unitCell)
    const
    {
+      // Inspect fields array
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
+      for (int i = 0; i < nMonomer; ++i) {
+         UTIL_CHECK(fields[i].meshDimensions() == mesh().dimensions());
+      }
 
       // Write header
       writeFieldHeader(out, nMonomer, unitCell);
@@ -463,14 +475,18 @@ namespace Pspc
           << "               " << mesh().dimensions() << std::endl;
 
       // Write fields
-      MeshIterator<D> itr(mesh().dimensions());
+      MeshIterator<D> itr(fields[0].dftDimensions());
+      int i = 0;
       for (itr.begin(); !itr.atEnd(); ++itr) {
+         UTIL_CHECK(i == itr.rank());
          out << Int(itr.rank(), 5);
          for (int j = 0; j < nMonomer; ++j) {
-               out << "  " << Dbl(fields[j][itr.rank()][0], 18, 11)
-                   << Dbl(fields[j][itr.rank()][1], 18, 11);
+               out << "  " 
+                   << Dbl(fields[j][itr.rank()][0], 19, 12)
+                   << Dbl(fields[j][itr.rank()][1], 19, 12);
          }
          out << std::endl;
+         ++i;
       }
    }
 
@@ -757,6 +773,30 @@ namespace Pspc
       for (int i = 0; i < n; ++i) {
          fft().forwardTransform(in[i], workDft_);
          convertKGridToBasis(workDft_, out[i]);
+      }
+   }
+
+   template <int D>
+   void 
+   FieldIo<D>::convertKGridToRGrid(DArray< RFieldDft<D> >& in,
+                                   DArray< RField<D> >& out)
+   {
+      UTIL_ASSERT(in.capacity() == out.capacity());
+      int n = in.capacity();
+      for (int i = 0; i < n; ++i) {
+         fft().inverseTransform(in[i], out[i]);
+      }
+   }
+
+   template <int D>
+   void 
+   FieldIo<D>::convertRGridToKGrid(DArray< RField<D> >& in,
+                                   DArray< RFieldDft<D> >& out)
+   {
+      UTIL_ASSERT(in.capacity() == out.capacity());
+      int n = in.capacity();
+      for (int i = 0; i < n; ++i) {
+         fft().forwardTransform(in[i], out[i]);
       }
    }
 
