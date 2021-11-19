@@ -101,7 +101,7 @@ namespace Pspc
       temp.allocate(nMonomer);
 
       // Loop over stars to read field components
-      IntVec<D> waveIn, waveBz, waveDft;
+      IntVec<D> waveIn, waveBz, waveDft, waveStar;
       int waveId, starId, nWaveVectors;
       bool waveExists;
       for (i = 0; i < nStarIn; ++i) {
@@ -125,8 +125,17 @@ namespace Pspc
             mesh().shift(waveDft);
             waveId = basis().waveId(waveDft);
             starId = basis().wave(waveId).starId;
-            UTIL_CHECK(basis().star(starId).waveBz == waveBz);
             if (!basis().star(starId).cancel) {
+               waveStar = basis().star(starId).waveBz;
+               if (waveStar != waveBz) {
+                   std::cout 
+                     <<  "Inconsistent wave of star on input\n"
+                     <<  "waveIn from file = " << waveIn   << "\n"
+                     <<  "starId of waveIn = " << starId   << "\n"
+                     <<  "waveBz of star   = " << waveStar << "\n";
+                     UTIL_THROW("Inconsistent wave ids on file input");
+               }
+               UTIL_CHECK(basis().star(starId).waveBz == waveBz);
                for (j = 0; j < nMonomer; ++j) {
                   fields[j][starId] = temp [j];
                }
@@ -590,17 +599,15 @@ namespace Pspc
          } else
          if (starPtr->invertFlag == 1) {
 
-            // Make complex component for first star
+            // Loop over waves in first star
             component = std::complex<double>(in[is], -in[is+1]);
             component /= sqrt(2.0);
-
-            // Loop over waves in first star
             starPtr = &(basis().star(is));
             for (iw = starPtr->beginId; iw < starPtr->endId; ++iw) {
                wavePtr = &basis().wave(iw);
                if (!(wavePtr->implicit)) {
                   coeff = component*(wavePtr->coeff);
-                  indices = wavePtr->indicesDft;    
+                  indices = wavePtr->indicesDft;
                   rank = dftMesh.rank(indices);
                   out[rank][0] = coeff.real();
                   out[rank][1] = coeff.imag();
@@ -610,7 +617,8 @@ namespace Pspc
             // Loop over waves in second star
             starPtr = &(basis().star(is+1));
             UTIL_CHECK(starPtr->invertFlag == -1);
-            component = conj(component);
+            component = std::complex<double>(in[is], +in[is+1]);
+            component /= sqrt(2.0);
             for (iw = starPtr->beginId; iw < starPtr->endId; ++iw) {
                wavePtr = &basis().wave(iw);
                if (!(wavePtr->implicit)) {
@@ -645,11 +653,11 @@ namespace Pspc
       typename Basis<D>::Star const* starPtr;  // pointer to current star
       typename Basis<D>::Wave const* wavePtr;  // pointer to current wave
       std::complex<double> component;          // coefficient for star
-      IntVec<D> indices;                       // dft grid indices of wave
+      // IntVec<D> indices;                       // dft grid indices of wave
       int rank;                                // dft grid rank of wave
       int is;                                  // star index
-      int iw;                                  // wave id, within star 
-      bool isImplicit;
+      //int iw;                                  // wave id, within star 
+      //bool isImplicit;
 
       // Initialize all components to zero
       for (is = 0; is < basis().nStar(); ++is) {
@@ -668,23 +676,15 @@ namespace Pspc
 
          if (starPtr->invertFlag == 0) {
 
-            // Choose a characteristic wave that is not implicit.
-            // Start with the first, alternately searching from
-            // the beginning and end of star.
-            isImplicit = true;
-            iw = 0;
-            while (isImplicit) {
-                UTIL_CHECK(iw <= (starPtr->size)/2);
-                wavePtr = &basis().wave(starPtr->beginId + iw);
-                if (wavePtr->implicit) {
-                   wavePtr = &basis().wave(starPtr->endId - 1 - iw);
-                }
-                isImplicit = wavePtr->implicit;
-                ++iw;
+            // Choose a wave that is not implicit -
+            // Either the first or last wave in the star
+            wavePtr = &basis().wave(starPtr->beginId);
+            if (wavePtr->implicit) {
+               wavePtr = &basis().wave(starPtr->endId - 1);
+               UTIL_CHECK(!(wavePtr->implicit));
             }
             UTIL_CHECK(wavePtr->starId == is);
-            indices = wavePtr->indicesDft;
-            rank = dftMesh.rank(indices);
+            rank = dftMesh.rank(wavePtr->indicesDft);
 
             // Compute component value
             component = std::complex<double>(in[rank][0], in[rank][1]);
@@ -697,24 +697,30 @@ namespace Pspc
          if (starPtr->invertFlag == 1) {
 
             // Identify a characteristic wave that is not implicit:
-            // Either first wave of 1st star or last wave of 2nd star.
+            // Either the first wave of the 1st star or last wave of 2nd
             wavePtr = &basis().wave(starPtr->beginId);
+            UTIL_CHECK(wavePtr->starId == is);
             if (wavePtr->implicit) {
                starPtr = &(basis().star(is+1));
                UTIL_CHECK(starPtr->invertFlag == -1);
-               wavePtr = &basis().wave(starPtr->endId-1);
+               wavePtr = &basis().wave(starPtr->endId - 1);
                UTIL_CHECK(!(wavePtr->implicit));
-            } 
-            indices = wavePtr->indicesDft;
-            rank = dftMesh.rank(indices);
-
-            // Compute component value
+               UTIL_CHECK(wavePtr->starId == is+1);
+            }
+            rank = dftMesh.rank(wavePtr->indicesDft);
             component = std::complex<double>(in[rank][0], in[rank][1]);
             UTIL_CHECK(abs(wavePtr->coeff) > 1.0E-8);
             component /= wavePtr->coeff;
             component *= sqrt(2.0);
-            out[is] = component.real();
-            out[is+1] = -component.imag();
+
+            // Compute basis function coefficient values
+            if (starPtr->invertFlag == 1) {
+               out[is] = component.real();
+               out[is+1] = -component.imag();
+            } else {
+               out[is] = component.real();
+               out[is+1] = component.imag();
+            }
 
             is += 2;
          } else {

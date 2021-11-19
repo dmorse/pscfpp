@@ -242,11 +242,50 @@ public:
       comparison.compare(bf_0, bf_1);
       TEST_ASSERT(comparison.maxDiff() < 1.0E-12);
 
-      if (verbose() > 1) {
+      if (verbose() > 0) {
          std::cout  << std::endl;
          std::cout  << Dbl(comparison.maxDiff(),21,13) << std::endl;
          std::cout  << Dbl(comparison.rmsDiff(),21,13) << std::endl;
       }
+
+   }
+
+   void testBasisIo_altG() 
+   {
+      printMethod(TEST_FUNC);
+
+      Domain<3> domain;
+      domain.setFileMaster(fileMaster_);
+      readHeader("in/w_altG.rf", domain);
+
+      DArray< DArray<double> > bf_0;
+      allocateFields(nMonomer_, domain.basis().nStar(), bf_0);
+
+      DArray< DArray<double> > bf_1;
+      allocateFields(nMonomer_, domain.basis().nStar(), bf_1);
+
+      std::ifstream in;
+      openInputFile("in/w_altG.bf", in);
+      domain.fieldIo().readFieldsBasis(in, bf_0, domain.unitCell());
+      in.close();
+
+      std::ofstream out;
+      openOutputFile("out/w_altG.bf", out);
+      domain.fieldIo().writeFieldsBasis(out, bf_0, domain.unitCell());
+      out.close();
+
+      openInputFile("out/w_altG.bf", in);
+      domain.fieldIo().readFieldsBasis(in, bf_1, domain.unitCell());
+      in.close();
+
+      BFieldComparison comparison;
+      comparison.compare(bf_0, bf_1);
+      if (verbose() > 0) {
+         std::cout  << std::endl;
+         std::cout  << Dbl(comparison.maxDiff(),21,13) << std::endl;
+         std::cout  << Dbl(comparison.rmsDiff(),21,13) << std::endl;
+      }
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-12);
 
    }
 
@@ -271,7 +310,7 @@ public:
       comparison.compare(rf_0, rf_1);
       TEST_ASSERT(comparison.maxDiff() < 1.0E-12);
 
-      if (verbose() > 1) {
+      if (verbose() > 0) {
          std::cout  << "\n";
          std::cout  << Dbl(comparison.maxDiff(),21,13) << "\n";
          std::cout  << Dbl(comparison.rmsDiff(),21,13) << "\n";
@@ -301,7 +340,7 @@ public:
       comparison.compare(bf_0, bf_1);
       TEST_ASSERT(comparison.maxDiff() < 1.0E-12);
 
-      if (verbose() > 1) {
+      if (verbose() > 0) {
          std::cout  << "\n";
          std::cout  << Dbl(comparison.maxDiff(),21,13) << "\n";
          std::cout  << Dbl(comparison.rmsDiff(),21,13) << "\n";
@@ -332,11 +371,50 @@ public:
       comparison.compare(bf_0, bf_1);
       TEST_ASSERT(comparison.maxDiff() < 1.0E-12);
 
-      if (verbose() > 1) {
+      if (verbose() > 0) {
          std::cout  << "\n";
          std::cout  << Dbl(comparison.maxDiff(),21,13) << "\n";
          std::cout  << Dbl(comparison.rmsDiff(),21,13) << "\n";
       }
+   }
+
+   void testConvertBasisKGridBasis_altG() 
+   {
+      printMethod(TEST_FUNC);
+      nMonomer_ = 3;
+
+      Domain<3> domain;
+      domain.setFileMaster(fileMaster_);
+      readHeader("in/w_altG.rf", domain);
+
+      std::ofstream  out;
+      openOutputFile("out/stars_altG", out);
+      domain.basis().outputStars(out);
+      out.close();
+
+      #if 1
+      DArray< DArray<double> > bf_0;
+      allocateFields(nMonomer_, domain.basis().nStar(), bf_0);
+      DArray< DArray<double> > bf_1;
+      allocateFields(nMonomer_, domain.basis().nStar(), bf_1);
+      DArray< RFieldDft<3> > kf_0;
+      allocateFields(nMonomer_, domain.mesh().dimensions(), kf_0);
+
+      readFields("in/w_altG.bf", domain, bf_0);
+      domain.fieldIo().convertBasisToKGrid(bf_0, kf_0);
+      domain.fieldIo().convertKGridToBasis(kf_0, bf_1);
+
+      BFieldComparison comparison;
+      comparison.compare(bf_0, bf_1);
+
+      if (verbose() > 0) {
+         std::cout  << "\n";
+         std::cout  << Dbl(comparison.maxDiff(),21,13) << "\n";
+         std::cout  << Dbl(comparison.rmsDiff(),21,13) << "\n";
+      }
+      #endif
+
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
    }
 
    void testKGridIo_bcc() 
@@ -366,7 +444,7 @@ public:
       comparison.compare(kf_0, kf_1);
       TEST_ASSERT(comparison.maxDiff() < 1.0E-11);
 
-      if (verbose() > 1) {
+      if (verbose() > 0) {
          std::cout  << "\n";
          std::cout  << Dbl(comparison.maxDiff(),21,13) << "\n";
          std::cout  << Dbl(comparison.rmsDiff(),21,13) << "\n";
@@ -398,7 +476,7 @@ public:
       comparison.compare(kf_0, kf_1);
       TEST_ASSERT(comparison.maxDiff() < 1.0E-12);
 
-      if (verbose() > 1) {
+      if (verbose() > 0) {
          std::cout  << std::endl;
          std::cout  << Dbl(comparison.maxDiff(), 21, 13) << "\n";
          std::cout  << Dbl(comparison.rmsDiff(), 21, 13) << "\n";
@@ -451,7 +529,7 @@ public:
       KFieldComparison<3> comparison;
       comparison.compare(kf_2, kf_1);
       TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
-      if (verbose() > 1) {
+      if (verbose() > 0) {
         std::cout  << std::endl;
         std::cout  << Dbl(comparison.maxDiff(), 21, 13) << "\n";
         std::cout  << Dbl(comparison.rmsDiff(), 21, 13) << "\n";
@@ -463,9 +541,11 @@ public:
 TEST_BEGIN(FieldIoTest)
 TEST_ADD(FieldIoTest, testReadHeader)
 TEST_ADD(FieldIoTest, testBasisIo_bcc)
+TEST_ADD(FieldIoTest, testBasisIo_altG)
 TEST_ADD(FieldIoTest, testRGridIo_bcc)
 TEST_ADD(FieldIoTest, testConvertBasisKGridBasis_bcc)
 TEST_ADD(FieldIoTest, testConvertBasisRGridBasis_bcc)
+TEST_ADD(FieldIoTest, testConvertBasisKGridBasis_altG)
 TEST_ADD(FieldIoTest, testKGridIo_bcc)
 TEST_ADD(FieldIoTest, testKGridIo_lam)
 TEST_ADD(FieldIoTest, testConvertBasisKGridRGridKGrid_bcc)
