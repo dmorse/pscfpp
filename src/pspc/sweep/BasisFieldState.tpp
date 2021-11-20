@@ -73,7 +73,7 @@ namespace Pspc
    * Read fields in symmetry-adapted basis format. 
    */
    template <int D>
-   void BasisFieldState<D>::read(std::string & filename)
+   void BasisFieldState<D>::read(const std::string & filename)
    {
       allocate();
       system().fieldIo().readFieldsBasis(filename, fields(), unitCell());
@@ -83,7 +83,7 @@ namespace Pspc
    * Write fields in symmetry-adapted basis format. 
    */
    template <int D>
-   void BasisFieldState<D>::write(std::string & filename)
+   void BasisFieldState<D>::write(const std::string & filename)
    {
       system().fieldIo().writeFieldsBasis(filename, fields(), unitCell());
    }
@@ -113,7 +113,7 @@ namespace Pspc
    }
 
    /*
-   * Get current state of associated System.
+   * Set System state to current state of the BasisFieldState object.
    */
    template <int D>
    void BasisFieldState<D>::setSystemState(bool isFlexible)

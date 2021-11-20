@@ -54,14 +54,14 @@ namespace Pspc
       *
       * \param filename name of input w-field file in symmetry-adapted format.
       */
-      void read(std::string & filename);
+      void read(const std::string & filename);
    
       /**
       * Write state to file.
       *
       * \param filename name of output file, in symmetry-adapated format.
       */
-      void write(std::string & filename);
+      void write(const std::string & filename);
 
       /**
       * Copy the current state of the associated system.
