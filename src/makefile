@@ -70,12 +70,14 @@ clean:
 	cd util; $(MAKE) clean
 	cd pscf; $(MAKE) clean
 	cd fd1d; $(MAKE) clean
+	cd pspc; $(MAKE) clean
 
 # Clean unit tests
 clean-tests:
 	cd util/tests; $(MAKE) clean
 	cd pscf/tests; $(MAKE) clean
 	cd fd1d/tests; $(MAKE) clean
+	cd pspc/tests; $(MAKE) clean
 
 # Remove all automatically generated files, recreate initial state
 veryclean:
