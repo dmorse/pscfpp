@@ -9,8 +9,11 @@
 */
 
 #include "FieldComparison.h"
+#include <cmath>
 
 namespace Pscf {
+
+   using namespace Util;
 
    // Default Constructor
    template <class FT>
@@ -31,15 +34,11 @@ namespace Pscf {
       maxDiff_ = 0.0;
       rmsDiff_ = 0.0;
       for (int i = begin_; i < n; ++i) {
-         diff = abs(a[i] - b[i]);
+         diff = std::abs(a[i] - b[i]);
          if (diff > maxDiff_) {
             maxDiff_ = diff;
          }
          rmsDiff_ += diff*diff;
-         //std::cout << i
-         //          << " " << a[i]
-         //          << " " << b[i]
-         //          << " " << diff << std::endl;
       }
       rmsDiff_ = rmsDiff_/double(n);
       rmsDiff_ = sqrt(rmsDiff_);
@@ -64,9 +63,7 @@ namespace Pscf {
          UTIL_CHECK(n > 0);
          UTIL_CHECK(n == b[i].capacity());
          for (j = begin_; j < n; ++j) {
-            diff = abs(a[i][j] - b[i][j]);
-            //std::cout << i << "  " << j << "  " << diff 
-            //         << " ( " << a[i][j] << ")  (" << b[i][j] << ") \n";
+            diff = std::abs(a[i][j] - b[i][j]);
             if (diff > maxDiff_) {
                maxDiff_ = diff;
             }
