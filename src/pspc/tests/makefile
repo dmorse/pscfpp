@@ -32,6 +32,7 @@ ifeq ($(SRC_DIR),$(BLD_DIR))
 	-cd field; $(MAKE) clean
 	-cd solvers; $(MAKE) clean
 	-cd system; $(MAKE) clean
+	-cd sweep; $(MAKE) clean
 	rm -f */Test */*.o */*.d 
 endif
 

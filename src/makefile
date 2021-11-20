@@ -77,6 +77,7 @@ clean-tests:
 	cd util/tests; $(MAKE) clean
 	cd pscf/tests; $(MAKE) clean
 	cd fd1d/tests; $(MAKE) clean
+	cd pspc/tests; $(MAKE) clean
 
 # Remove all automatically generated files, recreate initial state
 veryclean:
