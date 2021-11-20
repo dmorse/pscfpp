@@ -41,7 +41,10 @@ int main(int argc, char* argv[])
       // Run all unit test methods
       int failures = runner.run();
 
-      return (failures != 0);
+      if (failures != 0) {
+         failures = 1;
+      }
+      return failures;
 
    } catch (...) {
 

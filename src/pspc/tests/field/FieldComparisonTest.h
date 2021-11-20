@@ -17,7 +17,7 @@ class FieldComparisonTest : public UnitTest
 public:
 
    void setUp()
-   {  }
+   {  setVerbose(0);  }
 
    void tearDown() 
    {}
@@ -36,13 +36,17 @@ public:
       }
       RFieldComparison<1> comparison;
       comparison.compare(rf_0,  rf_1);
+      setVerbose(1);
+      if (verbose() > 0) {
+         std::cout << "\n";
+         std::cout << "MaxDiff = " << comparison.maxDiff() << "\n";
+         std::cout << "RmsDiff = " << comparison.rmsDiff() << "\n";
+      }
       TEST_ASSERT(comparison.maxDiff() < 0.0011);
       TEST_ASSERT(comparison.maxDiff() > 0.0009);
       TEST_ASSERT(comparison.rmsDiff() < 0.0011);
       TEST_ASSERT(comparison.rmsDiff() > 0.0009);
 
-      //std::cout << "MaxDiff = " << comparison.maxDiff() << "\n";
-      //std::cout << "RmsDiff = " << comparison.rmsDiff() << "\n";
    }
 
 };
