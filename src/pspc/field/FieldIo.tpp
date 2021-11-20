@@ -101,7 +101,7 @@ namespace Pspc
       temp.allocate(nMonomer);
 
       // Loop over stars to read field components
-      IntVec<D> waveIn, waveBz, waveDft;
+      IntVec<D> waveIn, waveBz, waveDft, waveStar;
       int waveId, starId, nWaveVectors;
       bool waveExists;
       for (i = 0; i < nStarIn; ++i) {
@@ -125,8 +125,17 @@ namespace Pspc
             mesh().shift(waveDft);
             waveId = basis().waveId(waveDft);
             starId = basis().wave(waveId).starId;
-            UTIL_CHECK(basis().star(starId).waveBz == waveBz);
             if (!basis().star(starId).cancel) {
+               waveStar = basis().star(starId).waveBz;
+               if (waveStar != waveBz) {
+                   std::cout 
+                     <<  "Inconsistent wave of star on input\n"
+                     <<  "waveIn from file = " << waveIn   << "\n"
+                     <<  "starId of waveIn = " << starId   << "\n"
+                     <<  "waveBz of star   = " << waveStar << "\n";
+                     UTIL_THROW("Inconsistent wave ids on file input");
+               }
+               UTIL_CHECK(basis().star(starId).waveBz == waveBz);
                for (j = 0; j < nMonomer; ++j) {
                   fields[j][starId] = temp [j];
                }
@@ -410,13 +419,17 @@ namespace Pspc
                                     DArray<RFieldDft<D> >& fields,
                                     UnitCell<D>& unitCell)
    {
+      // Inspect fields array
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
+      for (int i = 0; i < nMonomer; ++i) {
+         UTIL_CHECK(fields[i].meshDimensions() == mesh().dimensions());
+      }
 
       // Read header
       FieldIo<D>::readFieldHeader(in, nMonomer, unitCell);
 
-      // Read grid dimensions
+      // Read mesh dimensions
       std::string label;
       in >> label;
       UTIL_CHECK(label == "ngrid");
@@ -424,16 +437,20 @@ namespace Pspc
       in >> nGrid;
       UTIL_CHECK(nGrid == mesh().dimensions());
 
-      // Read Fields;
-      int idum;
-      MeshIterator<D> itr(mesh().dimensions());
+      // Read fields;
+      int i, idum;
+      MeshIterator<D> itr(fields[0].dftDimensions());
+      i = 0;
       for (itr.begin(); !itr.atEnd(); ++itr) {
          in >> idum;
+         UTIL_CHECK(i == idum);
+         UTIL_CHECK(i == itr.rank());
          for (int i = 0; i < nMonomer; ++i) {
             for (int j = 0; j < 2; ++j) {
                in >> fields[i][itr.rank()][j];
             }
          }
+         ++i;
       }
    }
 
@@ -454,8 +471,12 @@ namespace Pspc
                                      UnitCell<D> const & unitCell)
    const
    {
+      // Inspect fields array
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
+      for (int i = 0; i < nMonomer; ++i) {
+         UTIL_CHECK(fields[i].meshDimensions() == mesh().dimensions());
+      }
 
       // Write header
       writeFieldHeader(out, nMonomer, unitCell);
@@ -463,14 +484,18 @@ namespace Pspc
           << "               " << mesh().dimensions() << std::endl;
 
       // Write fields
-      MeshIterator<D> itr(mesh().dimensions());
+      MeshIterator<D> itr(fields[0].dftDimensions());
+      int i = 0;
       for (itr.begin(); !itr.atEnd(); ++itr) {
+         UTIL_CHECK(i == itr.rank());
          out << Int(itr.rank(), 5);
          for (int j = 0; j < nMonomer; ++j) {
-               out << "  " << Dbl(fields[j][itr.rank()][0], 18, 11)
-                   << Dbl(fields[j][itr.rank()][1], 18, 11);
+               out << "  " 
+                   << Dbl(fields[j][itr.rank()][0], 19, 12)
+                   << Dbl(fields[j][itr.rank()][1], 19, 12);
          }
          out << std::endl;
+         ++i;
       }
    }
 
@@ -574,17 +599,15 @@ namespace Pspc
          } else
          if (starPtr->invertFlag == 1) {
 
-            // Make complex component for first star
+            // Loop over waves in first star
             component = std::complex<double>(in[is], -in[is+1]);
             component /= sqrt(2.0);
-
-            // Loop over waves in first star
             starPtr = &(basis().star(is));
             for (iw = starPtr->beginId; iw < starPtr->endId; ++iw) {
                wavePtr = &basis().wave(iw);
                if (!(wavePtr->implicit)) {
                   coeff = component*(wavePtr->coeff);
-                  indices = wavePtr->indicesDft;    
+                  indices = wavePtr->indicesDft;
                   rank = dftMesh.rank(indices);
                   out[rank][0] = coeff.real();
                   out[rank][1] = coeff.imag();
@@ -594,7 +617,8 @@ namespace Pspc
             // Loop over waves in second star
             starPtr = &(basis().star(is+1));
             UTIL_CHECK(starPtr->invertFlag == -1);
-            component = conj(component);
+            component = std::complex<double>(in[is], +in[is+1]);
+            component /= sqrt(2.0);
             for (iw = starPtr->beginId; iw < starPtr->endId; ++iw) {
                wavePtr = &basis().wave(iw);
                if (!(wavePtr->implicit)) {
@@ -629,11 +653,8 @@ namespace Pspc
       typename Basis<D>::Star const* starPtr;  // pointer to current star
       typename Basis<D>::Wave const* wavePtr;  // pointer to current wave
       std::complex<double> component;          // coefficient for star
-      IntVec<D> indices;                       // dft grid indices of wave
       int rank;                                // dft grid rank of wave
       int is;                                  // star index
-      int iw;                                  // wave id, within star 
-      bool isImplicit;
 
       // Initialize all components to zero
       for (is = 0; is < basis().nStar(); ++is) {
@@ -652,25 +673,28 @@ namespace Pspc
 
          if (starPtr->invertFlag == 0) {
 
-            // Choose a characteristic wave that is not implicit.
-            // Start with the first, alternately searching from
-            // the beginning and end of star.
-            isImplicit = true;
-            iw = 0;
+            // Choose a wave in the star that is not implicit
+            int beginId = starPtr->beginId;
+            int endId = starPtr->endId;
+            int iw = 0;
+            bool isImplicit = true;
             while (isImplicit) {
-                UTIL_CHECK(iw <= (starPtr->size)/2);
-                wavePtr = &basis().wave(starPtr->beginId + iw);
-                if (wavePtr->implicit) {
-                   wavePtr = &basis().wave(starPtr->endId - 1 - iw);
-                }
-                isImplicit = wavePtr->implicit;
-                ++iw;
+               wavePtr = &basis().wave(beginId + iw);
+               if (!wavePtr->implicit) {
+                  isImplicit = false; 
+               } else {
+                   UTIL_CHECK(beginId + iw < endId - 1 - iw);
+                   wavePtr = &basis().wave(endId - 1 - iw);
+                   if (!wavePtr->implicit) {
+                      isImplicit = false;
+                   }
+               }
+               ++iw;
             }
             UTIL_CHECK(wavePtr->starId == is);
-            indices = wavePtr->indicesDft;
-            rank = dftMesh.rank(indices);
 
             // Compute component value
+            rank = dftMesh.rank(wavePtr->indicesDft);
             component = std::complex<double>(in[rank][0], in[rank][1]);
             component /= wavePtr->coeff;
             UTIL_CHECK(abs(component.imag()) < 1.0E-8);
@@ -681,24 +705,30 @@ namespace Pspc
          if (starPtr->invertFlag == 1) {
 
             // Identify a characteristic wave that is not implicit:
-            // Either first wave of 1st star or last wave of 2nd star.
+            // Either the first wave of the 1st star or last wave of 2nd
             wavePtr = &basis().wave(starPtr->beginId);
+            UTIL_CHECK(wavePtr->starId == is);
             if (wavePtr->implicit) {
                starPtr = &(basis().star(is+1));
                UTIL_CHECK(starPtr->invertFlag == -1);
-               wavePtr = &basis().wave(starPtr->endId-1);
+               wavePtr = &basis().wave(starPtr->endId - 1);
                UTIL_CHECK(!(wavePtr->implicit));
-            } 
-            indices = wavePtr->indicesDft;
-            rank = dftMesh.rank(indices);
-
-            // Compute component value
+               UTIL_CHECK(wavePtr->starId == is+1);
+            }
+            rank = dftMesh.rank(wavePtr->indicesDft);
             component = std::complex<double>(in[rank][0], in[rank][1]);
             UTIL_CHECK(abs(wavePtr->coeff) > 1.0E-8);
             component /= wavePtr->coeff;
             component *= sqrt(2.0);
-            out[is] = component.real();
-            out[is+1] = -component.imag();
+
+            // Compute basis function coefficient values
+            if (starPtr->invertFlag == 1) {
+               out[is] = component.real();
+               out[is+1] = -component.imag();
+            } else {
+               out[is] = component.real();
+               out[is+1] = component.imag();
+            }
 
             is += 2;
          } else {
@@ -757,6 +787,30 @@ namespace Pspc
       for (int i = 0; i < n; ++i) {
          fft().forwardTransform(in[i], workDft_);
          convertKGridToBasis(workDft_, out[i]);
+      }
+   }
+
+   template <int D>
+   void 
+   FieldIo<D>::convertKGridToRGrid(DArray< RFieldDft<D> >& in,
+                                   DArray< RField<D> >& out)
+   {
+      UTIL_ASSERT(in.capacity() == out.capacity());
+      int n = in.capacity();
+      for (int i = 0; i < n; ++i) {
+         fft().inverseTransform(in[i], out[i]);
+      }
+   }
+
+   template <int D>
+   void 
+   FieldIo<D>::convertRGridToKGrid(DArray< RField<D> >& in,
+                                   DArray< RFieldDft<D> >& out)
+   {
+      UTIL_ASSERT(in.capacity() == out.capacity());
+      int n = in.capacity();
+      for (int i = 0; i < n; ++i) {
+         fft().forwardTransform(in[i], out[i]);
       }
    }
 

@@ -217,12 +217,15 @@ namespace Pscf {
          * Wave given here is the value of indexBz for a characteristic
          * wave for the star.  For invertFlag = 0 or 1, the characteristic
          * wave is the first wave in the star.  For invertFlag = -1, this 
-         * is the last wave in the star.
+         * is the negation of the waveBz of the partner star for which
+         * invertFlag = 1.
+         *
+         * The coefficient of wave waveBz is always real and positive.
          */
          IntVec<D> waveBz;
 
          /**
-         * Index of this star in ordered array.
+         * Index of this star in ordered array of all stars.
          *
          * This is the index of this star within array stars_.
          */
@@ -237,8 +240,6 @@ namespace Pscf {
          * list of non-cancelled stars.
          * 
          * If this star is cancelled (cancel == true), then basisId = -1.
-         *
-         * For any valid starId, basisId_[starId] = stars_[starId].basisId.
          */
          int basisId;
 

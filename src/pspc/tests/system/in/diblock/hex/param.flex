@@ -7,8 +7,8 @@ System{
     Polymer{
        type    branched
        nBlock  2
-       blocks  0  0.3   0  1
-               1  0.7   1  2
+       blocks  0    0.3    0   1
+               1    0.7    1   2
        phi     1.0
     }
     ds   0.01
@@ -18,13 +18,15 @@ System{
          1   0   20.0
          1   1   0.0
   }
-  unitCell    hexagonal   1.6651597308
-  mesh        32    32
-  groupName   p_6_m_m
+  Domain{
+     unitCell    hexagonal   1.6651597308
+     mesh        32    32
+     groupName   p_6_m_m
+  }
   AmIterator{
-   maxItr 100
-   epsilon 1e-10
-   maxHist 15
-   isFlexible 1
+    maxItr 100
+    epsilon 1e-10
+    maxHist 15
+    isFlexible 1
   }
 }

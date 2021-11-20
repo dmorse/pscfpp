@@ -11,13 +11,9 @@
 #include <util/param/ParamComposite.h>     // base class
 
 #include <pspc/solvers/Mixture.h>          // member
-#include <pspc/field/FFT.h>                // member
-#include <pspc/field/FieldIo.h>            // member
-#include <pscf/mesh/Mesh.h>                // member
+#include <pspc/field/Domain.h>             // member
 #include <pspc/field/RField.h>             // typedef
 
-#include <pscf/crystal/Basis.h>            // member
-#include <pscf/crystal/UnitCell.h>         // member
 #include <pscf/homogeneous/Mixture.h>      // member
 
 #include <util/misc/FileMaster.h>          // member
@@ -42,9 +38,7 @@ namespace Pspc
    * A System has (among other components):
    *
    *    - a Mixture (a container for polymer and solvent solvers)
-   *    - a Mesh
-   *    - a UnitCell
-   *    - a Basis (symmetry-adapted Fourier expansion basis)
+   *    - a Domain (a description of the crystal domain and discretization)
    *    - an Iterator
    *    - Monomer chemical fields in both basis and grid formats
    *    - Monomer concentration fields in both basis and grid formats
@@ -256,19 +250,56 @@ namespace Pspc
       //@{
 
       /**
-      * Get Mixture by reference.
+      * Get the Mixture by reference.
       */
       Mixture<D>& mixture();
 
       /**
-      * Get spatial discretization mesh by reference.
+      * Get the Domain by reference.
+      */
+      Domain<D>& domain();
+
+      /**
+      * Get the spatial discretization mesh by reference.
+      *
+      * Equivalent to domain().mesh().
       */
       Mesh<D>& mesh();
 
       /**
       * Get UnitCell (i.e., lattice type and parameters) by reference.
+      *
+      * Equivalent to domain().unitCell().
       */
       UnitCell<D>& unitCell();
+
+      /**
+      * Get associated Basis object by reference.
+      *
+      * Equivalent to domain().basis().
+      */
+      Basis<D>& basis();
+
+      /**
+      * Get associated FFT object.
+      *
+      * Equivalent to domain().fft().
+      */
+      FFT<D>& fft();
+
+      /**
+      * Get associated FieldIo object.
+      *
+      * Equivalent to domain().fieldIo().
+      */
+      FieldIo<D>& fieldIo();
+
+      /** 
+      * Get group name.
+      *
+      * Equivalent to domain().groupName().
+      */  
+      std::string groupName() const;
 
       /**
       * Get Interaction (i.e., excess free energy model) by reference.
@@ -281,21 +312,6 @@ namespace Pspc
       Iterator<D>& iterator();
 
       /**
-      * Get associated Basis object by reference.
-      */
-      Basis<D>& basis();
-
-      /**
-      * Get associated FFT object.
-      */
-      FFT<D>& fft();
-
-      /**
-      * Get associated FieldIo object.
-      */
-      FieldIo<D>& fieldIo();
-
-      /**
       * Get homogeneous mixture (for reference calculations).
       */
       Homogeneous::Mixture& homogeneous();
@@ -304,11 +320,6 @@ namespace Pspc
       * Get FileMaster by reference.
       */
       FileMaster& fileMaster();
-
-      /** 
-      * Get group name.
-      */  
-      std::string groupName() const;
 
       /** 
       * Have monomer chemical potential fields (w fields) been set?
@@ -530,6 +541,12 @@ namespace Pspc
       Mixture<D> mixture_;
 
       /**
+      * Domain object (crystallography and mesh).
+      */
+      Domain<D> domain_;
+
+      #if 0
+      /*
       * Crystallographic unit cell (crystal system and cell parameters).
       */
       UnitCell<D> unitCell_;
@@ -545,24 +562,26 @@ namespace Pspc
       FFT<D> fft_;
 
       /**
-      * Group name.
-      */
-      std::string groupName_;
-
-      /**
       * Pointer to a Basis object
       */
       Basis<D> basis_;
 
       /**
-      * Filemaster (holds paths to associated I/O files).
-      */
-      FileMaster fileMaster_;
-
-      /**
       * FieldIo object for field input/output operations
       */
       FieldIo<D> fieldIo_;
+
+      /**
+      * Group name.
+      */
+      std::string groupName_;
+
+      #endif
+
+      /**
+      * Filemaster (holds paths to associated I/O files).
+      */
+      FileMaster fileMaster_;
 
       /**
       * Homogeneous mixture, for reference.
@@ -682,6 +701,7 @@ namespace Pspc
       */
       bool hasMixture_;
 
+      #if 0
       /**
       * Has the UnitCell been initialized?
       */
@@ -691,6 +711,7 @@ namespace Pspc
       * Has the Mesh been initialized?
       */
       bool hasMesh_;
+      #endif
 
       /**
       * Has memory been allocated for fields?
@@ -763,35 +784,40 @@ namespace Pspc
    inline Mixture<D>& System<D>::mixture()
    { return mixture_; }
 
+   // Get the associated Domain object.
+   template <int D>
+   inline Domain<D>& System<D>::domain()
+   { return domain_; }
+
    // Get the associated UnitCell<D> object.
    template <int D>
    inline UnitCell<D>& System<D>::unitCell()
-   { return unitCell_; }
+   { return domain_.unitCell(); }
 
    // Get the Mesh<D> object.
    template <int D>
    inline Mesh<D>& System<D>::mesh()
-   { return mesh_; }
-
-   // Get the FFT<D> object.
-   template <int D>
-   inline FFT<D>& System<D>::fft()
-   {  return fft_; }
-
-   // Get the groupName string.
-   template <int D>
-   inline std::string System<D>::groupName() const
-   { return groupName_; }
+   { return domain_.mesh(); }
 
    // Get the Basis<D> object.
    template <int D>
    inline Basis<D>& System<D>::basis()
-   {  return basis_; }
+   {  return domain_.basis(); }
+
+   // Get the FFT<D> object.
+   template <int D>
+   inline FFT<D>& System<D>::fft()
+   {  return domain_.fft(); }
 
    // Get the FieldIo<D> object.
    template <int D>
    inline FieldIo<D>& System<D>::fieldIo()
-   {  return fieldIo_; }
+   {  return domain_.fieldIo(); }
+
+   // Get the groupName string.
+   template <int D>
+   inline std::string System<D>::groupName() const
+   { return domain_.groupName(); }
 
    // Get the FileMaster.
    template <int D>

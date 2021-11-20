@@ -341,6 +341,24 @@ namespace Pspc
       void convertRGridToBasis(DArray< RField<D> > & in,
                                DArray< DArray<double> > & out);
 
+      /**
+      * Convert fields from k-grid (DFT) to real space (rgrid) format.
+      * 
+      * \param in  fields in discrete Fourier format (k-grid)
+      * \param out fields defined on real-space grid (r-grid)
+      */
+      void convertKGridToRGrid(DArray< RFieldDft<D> > & in,
+                               DArray< RField<D> > & out);
+
+      /**
+      * Convert fields from spatial grid (rgrid) to k-grid format.
+      * 
+      * \param in  fields defined on real-space grid (r-grid)
+      * \param out  fields in discrete Fourier format (k-grid)
+      */
+      void convertRGridToKGrid(DArray< RField<D> > & in,
+                               DArray< RFieldDft<D> > & out);
+
       //@}
       /// \name Test Space Group Symmetry
       //@{
