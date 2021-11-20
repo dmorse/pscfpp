@@ -9,6 +9,8 @@
 #include <pspc/field/RFieldComparison.h>
 #include <pspc/field/KFieldComparison.h>
 
+#include <util/format/Dbl.h>
+
 using namespace Util;
 using namespace Pscf::Pspc;
 
@@ -39,8 +41,10 @@ public:
       setVerbose(1);
       if (verbose() > 0) {
          std::cout << "\n";
-         std::cout << "MaxDiff = " << comparison.maxDiff() << "\n";
-         std::cout << "RmsDiff = " << comparison.rmsDiff() << "\n";
+         std::cout << "MaxDiff = " 
+                   << Dbl(comparison.maxDiff(), 20, 12) << "\n";
+         std::cout << "RmsDiff = " 
+                   << Dbl(comparison.rmsDiff(), 20, 12) << "\n";
       }
       TEST_ASSERT(comparison.maxDiff() < 0.0011);
       TEST_ASSERT(comparison.maxDiff() > 0.0009);
