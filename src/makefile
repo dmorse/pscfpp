@@ -70,6 +70,7 @@ clean:
 	cd util; $(MAKE) clean
 	cd pscf; $(MAKE) clean
 	cd fd1d; $(MAKE) clean
+	cd pspc; $(MAKE) clean
 
 # Clean unit tests
 clean-tests:
