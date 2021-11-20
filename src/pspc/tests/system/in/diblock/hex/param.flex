@@ -5,10 +5,10 @@ System{
               B   1.0 
     nPolymer  1
     Polymer{
-       type    branched
+       type    linear
        nBlock  2
-       blocks  0    0.3    0   1
-               1    0.7    1   2
+       blocks  0    0.3   
+               1    0.7  
        phi     1.0
     }
     ds   0.01
