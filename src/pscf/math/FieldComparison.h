@@ -9,8 +9,6 @@
 */
 
 #include <util/containers/DArray.h>
-#include <fftw3.h>
-#include <cmath>
 
 namespace Pscf {
 
@@ -32,6 +30,8 @@ namespace Pscf {
       * Default constructor.
       *
       * Initializes maxDiff and rmsDiff to zero.
+      *
+      * \param begin  first element of array/field to compare.
       */
       FieldComparison(int begin = 0);
 
