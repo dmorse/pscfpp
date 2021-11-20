@@ -8,6 +8,7 @@
 #include "NrIterator.h"
 #include <fd1d/System.h>
 #include <pscf/inter/Interaction.h>
+#include <util/misc/Log.h>
 
 #include <math.h>
 
@@ -135,7 +136,6 @@ namespace Fd1d
    */
    void NrIterator::computeJacobian()
    {
-      // std::cout << "Begin computeJacobian ... ";
       int nm = mixture().nMonomer();   // number of monomer types
       int nx = domain().nx();          // number of grid points
       int i;                           // monomer index
@@ -172,7 +172,6 @@ namespace Fd1d
       // Decompose Jacobian matrix
       solver_.computeLU(jacobian_);
 
-      // std::cout << "Finish computeJacobian" << std::endl;
    }
 
    void NrIterator::incrementWFields(Array<WField> const & wOld, 
@@ -271,19 +270,19 @@ namespace Fd1d
       double normNew;
       int i, j, k;
       for (i = 0; i < 100; ++i) {
-         std::cout << "iteration " << i
-                   << " , error = " << norm
-                   << std::endl;
+         Log::file() << "iteration " << i
+                     << " , error = " << norm
+                     << std::endl;
 
          if (norm < epsilon_) {
-            std::cout << "Converged" << std::endl;
+            Log::file() << "Converged" << std::endl;
             system().computeFreeEnergy();
             // Success
             return 0;
          } 
 
          if (needsJacobian_) {
-            std::cout << "Computing jacobian" << std::endl;;
+            Log::file() << "Computing jacobian" << std::endl;;
             computeJacobian();
             newJacobian_ = true;
             needsJacobian_ = false;
@@ -301,8 +300,8 @@ namespace Fd1d
          // Decrease increment if necessary
          j = 0;
          while (normNew > norm && j < 3) {
-            std::cout << "      decreasing increment,  error = " 
-                      << normNew << std::endl;
+            Log::file() << "      decreasing increment,  error = " 
+                        << normNew << std::endl;
             needsJacobian_ = true;
             for (k = 0; k < nr; ++k) {
                dOmega_[k] *= 0.66666666;
@@ -316,8 +315,8 @@ namespace Fd1d
 
          // If necessary, try reversing direction
          if (normNew > norm) {
-            std::cout << "      reversing increment,  norm = " 
-                      << normNew << std::endl;
+            Log::file() << "      reversing increment,  norm = " 
+                        << normNew << std::endl;
             needsJacobian_ = true;
             for (k = 0; k < nr; ++k) {
                dOmega_[k] *= -1.000;
@@ -349,13 +348,13 @@ namespace Fd1d
             }
             norm = normNew;
          } else {
-            std::cout << "Iteration failed, norm = " 
+            Log::file() << "Iteration failed, norm = " 
                       << normNew << std::endl;
             if (newJacobian_) {
                return 1;
-               std::cout << "Unrecoverable failure " << std::endl;
+               Log::file() << "Unrecoverable failure " << std::endl;
             } else {
-               std::cout << "Try rebuilding Jacobian" << std::endl;
+               Log::file() << "Try rebuilding Jacobian" << std::endl;
                needsJacobian_ = true;
             }
          }

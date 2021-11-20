@@ -9,6 +9,7 @@
 */
 
 #include "SweepTmpl.h"
+#include <util/misc/Log.h>
 
 namespace Pscf {
 
@@ -54,9 +55,9 @@ namespace Pscf {
       // Compute and output ds
       double ds = 1.0/double(ns_);
       double ds0 = ds;
-      std::cout << std::endl;
-      std::cout << "ns = " << ns_ << std::endl;
-      std::cout << "ds = " << ds  << std::endl;
+      Log::file() << std::endl;
+      Log::file() << "ns = " << ns_ << std::endl;
+      Log::file() << "ds = " << ds  << std::endl;
 
       // Initial setup, before a sweep
       setup();
@@ -64,8 +65,8 @@ namespace Pscf {
       // Solve for initial state of sweep
       int error;
       double sNew = 0.0;
-      std::cout << std::endl;
-      std::cout << "Attempt s = " << sNew << std::endl;
+      Log::file() << std::endl;
+      Log::file() << "Attempt s = " << sNew << std::endl;
       bool isContinuation = false; // False on first step
       error = solve(isContinuation);
       if (error) {
@@ -81,8 +82,8 @@ namespace Pscf {
          while (error) {
 
             sNew = s(0) + ds; 
-            std::cout << std::endl;
-            std::cout << "Attempt s = " << sNew << std::endl;
+            Log::file() << std::endl;
+            Log::file() << "Attempt s = " << sNew << std::endl;
 
             // Set non-adjustable system parameters to new values
             setParameters(sNew);
