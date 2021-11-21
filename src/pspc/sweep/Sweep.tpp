@@ -48,8 +48,8 @@ namespace Pspc {
    * Set association with a parent system.
    */
    template <int D>
-   void Sweep<D>::setSystem(System<D> & system) 
-   {  systemPtr_ = & system; }
+   void Sweep<D>::setSystem(System<D>& system) 
+   {  systemPtr_ = &system; }
 
    /*
    * Check allocation of one state object, allocate if necessary.

@@ -15,36 +15,36 @@
 // #include "NonlinearSweep.h" Eventually!
 
 namespace Pscf{
-namespace Pspc{
+    namespace Pspc{
 
-    using namespace Util;
+        using namespace Util;
 
-    template <int D>
-    SweepFactory<D>::SweepFactory(System<D>& system)
-     : systemPtr_(&system)
-    {}
+        template <int D>
+        SweepFactory<D>::SweepFactory(System<D>& system)
+        : systemPtr_(&system)
+        {}
 
-    /**
-     * Return a pointer to a Sweep subclass with name className
-     */
-    template <int D>
-    Sweep<D>* SweepFactory<D>::factory(std::string const & className) const
-    {
-        Sweep<D> *ptr = 0;
+        /**
+         * Return a pointer to a Sweep subclass with name className
+         */
+        template <int D>
+        Sweep<D>* SweepFactory<D>::factory(std::string const & className) const
+        {
+            Sweep<D> *ptr = 0;
 
-        // First check if name is known by any subfactories
-        ptr = trySubfactories(className);
-        if (ptr) return ptr;
+            // First check if name is known by any subfactories
+            ptr = trySubfactories(className);
+            if (ptr) return ptr;
 
-        // Explicit class names
-        if (className == "LinearSweep") {
-            ptr = new LinearSweep<D>(*systemPtr_);
+            // Explicit class names
+            if (className == "LinearSweep") {
+                ptr = new LinearSweep<D>(*systemPtr_);
+            }
+
+            return ptr;
         }
 
-        return ptr;
     }
-
-}
 }
 
 

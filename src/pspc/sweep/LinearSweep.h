@@ -10,6 +10,7 @@
 
 #include "Sweep.h"      // base class
 #include <util/global.h>
+#include <util/containers/DArray.h>
 
 namespace Pscf {
     namespace Pspc {
@@ -28,10 +29,6 @@ namespace Pscf {
         class LinearSweep : public Sweep<D>
         {
         public:
-            /** 
-             * Default constructor.
-             */
-            LinearSweep();
 
             /** 
              * Constructor.
@@ -42,26 +39,31 @@ namespace Pscf {
             /**
              * Read parameters from param file.
              */
-            virtual void readParameters(std::istream& in);
+            void readParameters(std::istream& in);
 
             /**
              * Setup operation at the beginning of a sweep. Gets initial values of individual parameters.
              */
-            virtual void setup();
+            void setup();
 
             /**
              * Set the state before an iteration. Called with each new iteration in SweepTempl::sweep()
              *
              * \param s path length coordinate, in [0,1]
             */    
-            virtual void setParameters(double s);
+            void setParameters(double s);
 
             /**
              * Output data to a running summary.
              *
              * \param out  output file, open for writing
              */
-            virtual void outputSummary(std::ostream& out);
+            void outputSummary(std::ostream& out);
+
+            /**
+             * Class for storing individual sweep parameters.
+             */
+            class Parameters;
             
         };
 

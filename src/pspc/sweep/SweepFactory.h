@@ -52,6 +52,13 @@ namespace Pspc {
 
    };
 
+   #ifndef PSPC_SWEEP_FACTORY_TPP
+   // Suppress implicit instantiation
+   extern template class SweepFactory<1>;
+   extern template class SweepFactory<2>;
+   extern template class SweepFactory<3>;
+   #endif
+
 }
 }
 #endif

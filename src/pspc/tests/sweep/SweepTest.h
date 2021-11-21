@@ -5,8 +5,11 @@
 #include <test/UnitTestRunner.h>
 
 #include <pspc/System.h>
-#include <pspc/sweep/Sweep.h>
+#include <pspc/sweep/SweepFactory.h>
+#include <pspc/sweep/LinearSweep.h>
+
 #include <fstream>
+
 
 using namespace Util;
 using namespace Pscf;
@@ -17,7 +20,7 @@ class SweepTest : public UnitTest
 
 public:
 
-   std::ofstream logFile_; // Log file for logging errors? Probably?
+   std::ofstream logFile_;
 
    void setUp()
    {}
@@ -35,18 +38,33 @@ public:
       Log::setFile(logFile_);
    }
 
-   void testConstructor()
+   void testConstructors()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/testConstructor.log");
 
+      System<3> system;
+      LinearSweep<3> ls2(system);
+      SweepFactory<3> sf(system);
+
+   }
+
+   void testFactory() 
+   {
+      printMethod(TEST_FUNC);
+
+      System<3> system;
+      Sweep<3>* sweepPtr;
+      SweepFactory<3> sf(system);
+      
+      sweepPtr = sf.factory("LinearSweep");
    }
 };
 
 
 
 TEST_BEGIN(SweepTest)
-TEST_ADD(SweepTest, testConstructor)
+TEST_ADD(SweepTest, testConstructors)
+TEST_ADD(SweepTest, testFactory)
 TEST_END(BasisFieldStateTest)
 
 #endif

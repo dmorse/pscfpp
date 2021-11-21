@@ -10,7 +10,6 @@
 
 #include <pscf/sweep/SweepTmpl.h>          // base class template
 #include <pspc/sweep/BasisFieldState.h>    // base class template parameter
-//#include <util/param/ParamComposite.h>     // base class
 #include <util/global.h>
 
 namespace Pscf {
