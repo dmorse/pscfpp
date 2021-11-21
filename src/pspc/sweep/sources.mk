@@ -1,5 +1,6 @@
 
 pspc_sweep_= \
+  pspc/sweep/FieldState.cpp \
   pspc/sweep/BasisFieldState.cpp \
   pspc/sweep/Sweep.cpp \
   pspc/sweep/LinearSweep.cpp \

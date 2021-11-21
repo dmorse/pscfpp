@@ -19,7 +19,7 @@ class BasisFieldStateTest : public UnitTest
 
 public:
 
-   std::ofstream logFile_; // Log file for logging errors? Probably?
+   std::ofstream logFile_;
 
    void setUp()
    {}
@@ -40,7 +40,6 @@ public:
    void testConstructor()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/testConstructor.log");
 
       System<3> system;
       BasisFieldState<3> bfs1(system);
@@ -51,7 +50,6 @@ public:
    void testRead()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/testRead.log");
       
       System<3> system;
       BasisFieldState<3> bfs(system);
@@ -75,7 +73,6 @@ public:
    {
       // Write tested with a read/write/read/comparison procedure
       printMethod(TEST_FUNC);
-      openLogFile("out/testWrite.log");
 
       System<3> system;
       BasisFieldState<3> bfs1(system), bfs2(system);
@@ -98,7 +95,6 @@ public:
    void testGetSystemState()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/testGetSystemState.log");
 
       System<3> system;
       BasisFieldState<3> bfs(system);
@@ -120,7 +116,6 @@ public:
    void testSetSystemState()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/testSetSystemState.log");
 
       System<3> system;
       BasisFieldState<3> bfs(system);
@@ -137,9 +132,22 @@ public:
       comparison.compare(bfs.fields(),system.wFields());
       // Assert small difference
       TEST_ASSERT(comparison.maxDiff() < 5.0e-7);
-   }  
+   }
 
-   void SetUpSystem(System<3> & system)
+   void testSetSystem()
+   {
+      printMethod(TEST_FUNC);
+
+      System<3> system;
+      BasisFieldState<3> bfs;
+
+      // Setup system
+      BasisFieldStateTest::SetUpSystem(system);
+      // Invoke setSystem
+      bfs.setSystem(system);
+   }
+
+   void SetUpSystem(System<3>& system)
    {
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
@@ -160,6 +168,7 @@ TEST_ADD(BasisFieldStateTest, testRead)
 TEST_ADD(BasisFieldStateTest, testWrite)
 TEST_ADD(BasisFieldStateTest, testGetSystemState)
 TEST_ADD(BasisFieldStateTest, testSetSystemState)
+TEST_ADD(BasisFieldStateTest, testSetSystem)
 
 TEST_END(BasisFieldStateTest)
 

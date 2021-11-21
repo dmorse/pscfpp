@@ -194,6 +194,13 @@ namespace Pspc
    inline System<D>& FieldState<D,FT>::system()
    {  return *systemPtr_; }
 
+   #ifndef PSPC_FIELD_STATE_TPP
+   // Suppress implicit instantiation
+   extern template class FieldState< 1, DArray<double> >;
+   extern template class FieldState< 2, DArray<double> >;
+   extern template class FieldState< 3, DArray<double> >;
+   #endif
+
 } // namespace Pspc
 } // namespace Pscf
 #endif

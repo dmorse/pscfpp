@@ -604,7 +604,7 @@ namespace Pspc
       IteratorFactory<D>* iteratorFactoryPtr_;
 
       /**
-      * Pointer to an Sweep object
+      * Pointer to a Sweep object
       */
       Sweep<D>* sweepPtr_;
 

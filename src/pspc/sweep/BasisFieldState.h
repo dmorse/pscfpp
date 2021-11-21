@@ -83,10 +83,11 @@ namespace Pspc
       using FieldState<D, DArray<double> >::unitCell;
       using FieldState<D, DArray<double> >::system;
       using FieldState<D, DArray<double> >::hasSystem;
+      using FieldState<D, DArray<double> >::setSystem;
 
    };
 
-   #ifndef PSPC_FIELD_STATE_TPP
+   #ifndef PSPC_BASIS_FIELD_STATE_TPP
    // Suppress implicit instantiation
    extern template class BasisFieldState<1>;
    extern template class BasisFieldState<2>;
