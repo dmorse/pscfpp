@@ -34,7 +34,7 @@ namespace Pspc {
    template <int D>
    Sweep<D>::Sweep(System<D> & system) 
     : SweepTmpl< BasisFieldState<D> >(PSPC_HISTORY_CAPACITY),
-      systemPtr_(0)
+      systemPtr_(&system)
    {  setSystem(system); }
 
    /*

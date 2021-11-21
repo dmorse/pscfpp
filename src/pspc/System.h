@@ -603,7 +603,6 @@ namespace Pspc
       */
       IteratorFactory<D>* iteratorFactoryPtr_;
 
-      #if 0
       /**
       * Pointer to an Sweep object
       */
@@ -613,7 +612,6 @@ namespace Pspc
       * Pointer to SweepFactory object
       */
       SweepFactory<D>* sweepFactoryPtr_;
-      #endif
 
       /**
       * Array of chemical potential fields for monomer types.
@@ -732,12 +730,10 @@ namespace Pspc
       */
       bool hasCFields_;
 
-      #if 0
       /**
       * Does this system have a Sweep object?
       */
       bool hasSweep_;
-      #endif
 
       // Private member functions
 
