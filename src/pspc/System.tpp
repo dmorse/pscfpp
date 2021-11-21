@@ -349,9 +349,9 @@ namespace Pspc
             }
             // Attempt iteration to convergence
             int fail = iterate();
-            if (fail) {
-               readNext = false;
-            }
+            //if (fail) {
+            //   readNext = false;
+            //}
          } else
          if (command == "SOLVE_MDE") {
             // Read w (chemical potential fields) if not done previously 

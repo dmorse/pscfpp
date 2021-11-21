@@ -66,12 +66,16 @@ namespace Pspc {
       #endif
 
       int tempNs;
-      tempNs = (floor(length()/(2.0 *ds) + 0.5));
+      tempNs = (floor(length()/(2.0 *ds) + 0.5)); //finds the closest integer
       if (tempNs == 0) {
          tempNs = 1;
       } 
       ds_ = (length()/double(tempNs * 2.0));
-      ns_ = 2 * tempNs + 1;
+      ns_ = (2 * tempNs) + 1;
+
+      // ns_ is the number of grid points, ns_-1 is number of intervals which should be even
+
+      std::cout<<"Number of blocks = "<<(ns_-1)<<" and Delta s for this block = "<<ds_<<std::endl;
 
       fft_.setup(mesh.dimensions());
 
