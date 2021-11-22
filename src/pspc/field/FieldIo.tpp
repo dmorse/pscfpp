@@ -83,9 +83,9 @@ namespace Pspc
       UTIL_CHECK(nStarIn > 0);
 
       // Initialize all field array elements to zero
-      int i, j;
       int nStarCapacity = fields[0].capacity();
-      for (j = 0; j < nMonomer; ++j) {
+      int i, j;
+      for (int j = 0; j < nMonomer; ++j) {
          UTIL_CHECK(nStarCapacity == fields[j].capacity());
          for (i = 0; i < nStarCapacity; ++i) {
             fields[j][i] = 0.0;
@@ -97,51 +97,203 @@ namespace Pspc
          nStarIn = nStarCapacity;
       }
 
-      DArray<double> temp;
+      DArray<double> temp, temp2;
       temp.allocate(nMonomer);
+      temp2.allocate(nMonomer);
+
+      typename Basis<D>::Star const * starPtr;
+      typename Basis<D>::Star const * starPtr2;
+      IntVec<D> waveIn, waveIn2;
+      int starId, starId2;
+      int waveId, waveId2;
+
+      std::complex<double> coeff, phasor;
+      IntVec<D> waveBz, waveDft;
+      int nWaveVector;
+      int nReversedPair = 0;
+      bool waveExists;
 
       // Loop over stars to read field components
-      IntVec<D> waveIn, waveBz, waveDft, waveStar;
-      int waveId, starId, nWaveVectors;
-      bool waveExists;
-      for (i = 0; i < nStarIn; ++i) {
+      i = 0;
+      while (i < nStarIn) {
 
-         // Read components for different monomers
+         // Read next line of data
          for (j = 0; j < nMonomer; ++j) {
-            in >> temp [j];
+            in >> temp[j];               // field components
          }
-
-         // Read characteristic wave and number of wavectors in star.
-         in >> waveIn;
-         in >> nWaveVectors;
+         in >> waveIn;                   // wave of star
+         in >> nWaveVector;              // # of waves in star
 
          // Check if waveIn is in first Brillouin zone (FBZ) for the mesh.
          waveBz = shiftToMinimum(waveIn, mesh().dimensions(), unitCell);
          waveExists = (waveIn == waveBz);
 
-         // If wave is in FBZ, find in basis and set field components
-         if (waveExists) {
-            waveDft = waveBz;
+         if (!waveExists) {
+
+            //  If wave is not in 1st Brilloun zone, ignore and continue 
+            ++i;
+
+         } else {
+
+            // If wave is in FBZ, process the line
+
+            // Find the star containing wave waveIn
+            waveDft = waveIn;
             mesh().shift(waveDft);
             waveId = basis().waveId(waveDft);
             starId = basis().wave(waveId).starId;
-            if (!basis().star(starId).cancel) {
-               waveStar = basis().star(starId).waveBz;
-               if (waveStar != waveBz) {
-                   std::cout 
-                     <<  "Inconsistent wave of star on input\n"
-                     <<  "waveIn from file = " << waveIn   << "\n"
-                     <<  "starId of waveIn = " << starId   << "\n"
-                     <<  "waveBz of star   = " << waveStar << "\n";
-                     UTIL_THROW("Inconsistent wave ids on file input");
-               }
-               UTIL_CHECK(basis().star(starId).waveBz == waveBz);
-               for (j = 0; j < nMonomer; ++j) {
-                  fields[j][starId] = temp [j];
-               }
-            }
-         }
+            starPtr = &basis().star(starId);
+            UTIL_CHECK(!(starPtr->cancel));
 
+            if (starPtr->invertFlag == 0) {
+
+               if (starPtr->waveBz == waveIn) {
+
+                  // Copy components of closed star to fields array
+                  for (j = 0; j < nMonomer; ++j) {
+                      fields[j][starId] = temp[j];
+                  }
+
+               } else {
+                  std::cout 
+                     <<  "Inconsistent wave of closed star on input\n"
+                     <<  "wave from file = " << waveIn  << "\n"
+                     <<  "starId of wave = " << starId  << "\n"
+                     <<  "waveBz of star = " << starPtr->waveBz  << "\n";
+               }
+               ++i;  // increment input line counter i
+
+            } else {
+
+               // Read the next line
+               for (j = 0; j < nMonomer; ++j) {
+                  in >> temp2[j];               // components of field
+               }
+               in >> waveIn2;                   // wave of star
+               in >> nWaveVector;               // # of wavevectors in star
+
+               // Check that waveIn2 is also in the 1st BZ
+               waveBz = 
+                   shiftToMinimum(waveIn2, mesh().dimensions(), unitCell);
+               UTIL_CHECK(waveIn2 == waveBz);
+
+               // Identify the star containing waveIn2
+               waveDft = waveIn2;
+               mesh().shift(waveDft);
+               waveId2 = basis().waveId(waveDft);
+               starId2 = basis().wave(waveId2).starId;
+               starPtr2 = &basis().star(starId2);
+               UTIL_CHECK(!(starPtr2->cancel));
+
+               if (starPtr->invertFlag == 1) {
+
+                  // This is a pair of open stars listed in the same 
+                  // order as in this basis
+                  UTIL_CHECK(starPtr2->invertFlag == -1);
+                  UTIL_CHECK(starId2 = starId + 1);
+                  UTIL_CHECK(starPtr->waveBz == waveIn);
+                  UTIL_CHECK(starPtr2->waveBz == waveIn2);
+
+                  // Copy over components for both stars
+                  for (j = 0; j < nMonomer; ++j) {
+                      fields[j][starId] = temp[j];
+                      fields[j][starId2] = temp2[j];
+                  }
+
+               } else
+               if (starPtr->invertFlag == -1) {
+
+                  UTIL_CHECK(starPtr2->invertFlag == 1);
+                  UTIL_CHECK(starId == starId2 + 1);
+
+                  // Check that waveIn is first wave in enclosing star
+                  UTIL_CHECK(waveId == starPtr->beginId);
+
+                  // Check that waveIn2 is negation of waveIn
+                  IntVec<D> nVec;
+                  nVec.negate(waveIn);
+                  nVec = 
+                       shiftToMinimum(nVec, mesh().dimensions(), unitCell);
+                  UTIL_CHECK(waveIn2 == nVec);
+
+                  #if 0
+                  std::cout 
+                    <<  "Reversed pair of open stars in readFieldsBasis:\n"
+                    <<  "  wave(1) = " << waveIn 
+                    << " ,  star of wave(1) = " << starId << "\n"
+                    <<  "  wave(2) = " << waveIn2   
+                    << " ,  star of wave(2) = " << starId2 << "\n";
+                 #endif
+
+                  /*
+                  * Consider two related stars, C and D, that are listed in
+                  * the order (C,D) in the basis used in this code (the 
+                  * reading program), but that were listed in the opposite
+                  * order (D,C) in the program that created the file (the
+                  * writing program). In the basis of the reading program, 
+                  * star C has star index starId2, while star D has index
+                  * starId = starid2 + 1.
+                  *
+                  * Let f(r) and f^{*}(r) denote the basis functions used
+                  * by the reading program for stars C and D, respectively. 
+                  * Let u(r) and u^{*}(r) denote the corresponding basis 
+                  * function used by the writing program for stars C and D.
+                  * Let exp(i phi) denote the unit magnitude coefficient 
+                  * within f(r) of the wave with wave index waveId2, which
+                  * was the characteristic wave for star C in the writing 
+                  * program. Because the coefficient of this wave within
+                  * u(r) must be real and positive, this implies that
+                  * u(r) = exp(-i phi) f(r).
+                  *
+                  * Focus on the contribution to one monomer type j. 
+                  * Let a and b denote the desired coefficients of stars
+                  * C and D in the reading program, for which the total
+                  * contribution of both stars to the field is:
+                  *
+                  *  (a - ib) f(r) + (a + ib) f^{*}(r)
+                  *
+                  * Let A = temp[j] and B = temp2[j] denote the 
+                  * coefficients read from file.  Noting that the stars
+                  * were listed in the order (D,C) in the basis used by
+                  * the writing program, the contribution of these two
+                  * stars must be (A-iB)u^{*}(r) + (A+iB)u(r), or:
+                  *
+                  *  (A+iB) exp(-i phi)f(r) + (A-iB) exp(i phi) f^{*}(r)
+                  *
+                  * Comparing coefficients of f^{*}(r), we find
+                  * 
+                  *       (a + ib) = (A - iB) exp(i phi)
+                  * 
+                  * This equality is implemented below, where the
+                  * variable phasor is equal to exp(i phi).
+                  */
+                  phasor = basis().wave(waveId2).coeff;
+                  phasor = phasor/std::abs(phasor); 
+                  for (j = 0; j < nMonomer; ++j) {
+                      coeff = std::complex<double>(temp[j],-temp2[j]);
+                      coeff *= phasor;
+                      fields[j][starId2] = real(coeff);
+                      fields[j][starId ] = imag(coeff);
+                  }
+
+                  // Increment count of number of reversed open pairs
+                  ++nReversedPair;
+ 
+               } else {
+                  UTIL_THROW("Invalid starInvert value");
+               } 
+
+               // Increment by 2 because two lines were read from file
+               i = i + 2;
+
+            }   // if (wavePtr->invertFlag == 0) ... else ...
+         }   // if (!waveExists) ... else ...
+      }   // end while (i < nStarIn)
+
+      if (nReversedPair > 0) {
+         std::cout << "\n";
+         std::cout << nReversedPair << " reversed pairs of open stars"
+                   << " detected in FieldIo::readFieldsBasis\n";
       }
 
    }
