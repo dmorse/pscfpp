@@ -211,7 +211,6 @@ namespace Pscf {
         extern template class LinearSweep<2>;
         extern template class LinearSweep<3>;
         #endif
-        
     }
 }
 

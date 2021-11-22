@@ -77,8 +77,6 @@ public:
       std::ifstream in;
       openInputFile("in/param.test", in);
       in >> p;
-      std::cout << '\n' << typeid(in).name() << '\n';
-      std::cout << typeid(p).name() << '\n';
    }
 
    void SetUpSystem(System<3>& system)
