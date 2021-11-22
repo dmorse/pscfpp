@@ -95,11 +95,6 @@ namespace Pscf {
             }
             /// Enumeration of allowed parameter types.
             enum paramType { Block, Chi, Kuhn, Phi, Mu, Solvent };
-        // friends:
-            friend std::istream& operator >> (std::istream&, LinearSweep<D>::Parameter&);
-            friend std::ostream& operator << (std::ostream&, LinearSweep<D>::Parameter const&);
-            // template <class Archive>
-            // friend void serialize(Archive&, LinearSweep<D>::Parameter&, const unsigned int);
 
         private:
             
@@ -115,6 +110,14 @@ namespace Pscf {
             double   final_;
             /// Change in parameter
             double   change_;
+
+        // friends:
+            template<int U>
+            friend std::istream& operator >> (std::istream&, typename LinearSweep<U>::Parameter&);
+            template<int U>
+            friend std::ostream& operator << (std::ostream&, typename LinearSweep<U>::Parameter const&);
+            // template <class Archive>
+            // friend void serialize(Archive&, LinearSweep<D>::Parameter&, const unsigned int);
         
         };
 
