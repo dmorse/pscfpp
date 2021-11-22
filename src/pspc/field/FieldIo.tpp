@@ -849,7 +849,7 @@ namespace Pspc
             rank = dftMesh.rank(wavePtr->indicesDft);
             component = std::complex<double>(in[rank][0], in[rank][1]);
             component /= wavePtr->coeff;
-            UTIL_CHECK(abs(component.imag()) < 1.0E-8);
+            UTIL_CHECK(std::abs(component.imag()) < 1.0E-8);
             out[is] = component.real();
             ++is;
 
@@ -869,7 +869,7 @@ namespace Pspc
             }
             rank = dftMesh.rank(wavePtr->indicesDft);
             component = std::complex<double>(in[rank][0], in[rank][1]);
-            UTIL_CHECK(abs(wavePtr->coeff) > 1.0E-8);
+            UTIL_CHECK(std::abs(wavePtr->coeff) > 1.0E-8);
             component /= wavePtr->coeff;
             component *= sqrt(2.0);
 
@@ -1010,8 +1010,8 @@ namespace Pspc
                wavePtr = &basis().wave(iw);
                if (!wavePtr->implicit) {
                   rank = dftMesh.rank(wavePtr->indicesDft);
-                  if (abs(in[rank][0]) > 1.0E-9) return false;
-                  if (abs(in[rank][1]) > 1.0E-9) return false;
+                  if (std::abs(in[rank][0]) > 1.0E-9) return false;
+                  if (std::abs(in[rank][1]) > 1.0E-9) return false;
                }
             }
 
@@ -1029,7 +1029,7 @@ namespace Pspc
                   waveCoeff /= wavePtr->coeff;
                   if (hasRoot) {
                      diff = waveCoeff - rootCoeff;
-                     if (abs(diff) > 1.0E-9) return false;
+                     if (std::abs(diff) > 1.0E-9) return false;
                   } else {
                      rootCoeff = waveCoeff;
                      hasRoot = true;
