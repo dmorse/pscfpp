@@ -122,14 +122,14 @@ namespace Pscf {
         };
 
         // Declarations of operator templates
-        // template <int D>
-        // std::istream& operator >> (std::istream& in, typename LinearSweep<D>::Parameter::paramType& type);
-        // template <int D>
-        // std::ostream& operator << (std::ostream& out, typename LinearSweep<D>::Parameter::paramType type);
-        // template <int D>
-        // std::istream& operator >> (std::istream& in, typename LinearSweep<D>::Parameter& param);
-        // template <int D>
-        // std::ostream& operator << (std::ostream& out, typename LinearSweep<D>::Parameter param);
+        template <int D>
+        std::istream& operator >> (std::istream& in, typename LinearSweep<D>::Parameter::paramType& type);
+        template <int D>
+        std::ostream& operator << (std::ostream& out, typename LinearSweep<D>::Parameter::paramType type);
+        template <int D>
+        std::istream& operator >> (std::istream& in, typename LinearSweep<D>::Parameter& param);
+        template <int D>
+        std::ostream& operator << (std::ostream& out, typename LinearSweep<D>::Parameter param);
 
         // Definitions of operators, no explicit instantiations. 
         template <int D>
