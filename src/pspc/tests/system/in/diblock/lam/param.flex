@@ -19,7 +19,7 @@ System{
           1   1   0.0
   }
   Domain{
-     unitCell Lamellar   1.3835952907
+     unitCell Lamellar   1.4814442100
      mesh     32
      groupName P_-1
   }

@@ -245,7 +245,7 @@ public:
          std::cout << "\n";
          std::cout << "Max error = " << comparison.maxDiff() << "\n";
       }
-      TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-7);
 
       bool stress = false;
       if (std::abs(system.mixture().stress(0)) < 1.0E-8) {
@@ -286,7 +286,7 @@ public:
          std::cout << "\n";
          std::cout << "Max error = " << comparison.maxDiff() << "\n";
       }
-      TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-7);
    }
 
    void testIterate2D_hex_rigid()
