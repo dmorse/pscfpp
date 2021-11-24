@@ -183,6 +183,16 @@ namespace Pspg
 
    }
 
+   /** 
+   * Set number of blocks and number of threads
+   */
+   template <int D>
+   void System<D>::setGpuResources (int nBlocks, int nThreads)
+   {
+      NUMBER_OF_BLOCKS = nBlocks;
+      THREADS_PER_BLOCK = nThreads;
+   }
+
    /*
    * Read parameters and initialize.
    */
@@ -620,6 +630,86 @@ namespace Pspg
       }
       out << std::endl;
    }
+
+   /*  
+   * Read w-field in symmetry adapted basis format.
+   */  
+   template <int D>
+   void System<D>::readWBasis(const std::string & filename)
+   {   
+      fieldIo().readFieldsBasis(filename, wFields());
+      fieldIo().convertBasisToRGrid(wFields(), wFieldsRGrid());
+      hasWFields_ = true;
+      hasCFields_ = false;
+   } 
+
+
+   /*  
+   * Iteratively solve a SCFT problem for specified parameters.
+   */  
+   template <int D>
+   int System<D>::iterate()
+   {  
+      UTIL_CHECK(hasWFields_);
+      hasCFields_ = false;
+
+      Log::file() << std::endl;
+
+      // Call iterator
+      int error = iterator().solve();
+      hasCFields_ = true;
+
+      if (error) {
+         Log::file() << "Iterator failed to converge\n";
+      } 
+      computeFreeEnergy();
+      outputThermo(Log::file());  
+      return error;
+   }  
+
+   /*
+   * Convert fields from symmetry-adpated basis to real-space grid format.
+   */
+   template <int D>
+   void System<D>::basisToRGrid(const std::string & inFileName,
+                                const std::string & outFileName)
+   {
+      fieldIo().readFieldsBasis(inFileName, tmpFields_);
+      fieldIo().convertBasisToRGrid(tmpFields_, tmpFieldsRGrid_);
+      fieldIo().writeFieldsRGrid(outFileName, tmpFieldsRGrid_);
+   }
+
+   /*
+   * Write w-fields in symmetry-adapted basis format.
+   */
+   template <int D>
+   void System<D>::writeWBasis(const std::string & filename)
+   {
+      UTIL_CHECK(hasWFields_);
+      fieldIo().writeFieldsBasis(filename, wFields());
+   }
+
+   /*
+   * Write all concentration fields in symmetry-adapted basis format.
+   */
+   template <int D>
+   void System<D>::writeCBasis(const std::string & filename)
+   {
+      UTIL_CHECK(hasCFields_);
+      fieldIo().writeFieldsBasis(filename, cFields());
+   }
+
+   /*  
+   * Convert fields from real-space grid to symmetry-adapted basis format.
+   */  
+   template <int D>
+   void System<D>::rGridToBasis(const std::string & inFileName,
+                                const std::string & outFileName)
+   {   
+      fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_);
+      fieldIo().convertRGridToBasis(tmpFieldsRGrid_, tmpFields_);
+      fieldIo().writeFieldsBasis(outFileName, tmpFields_);
+   }  
 
    template <int D>
    cudaReal System<D>::innerProduct(const RDField<D>& a, const RDField<D>& b, int size) {

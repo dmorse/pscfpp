@@ -5,8 +5,8 @@
 
 extern int THREADS_PER_BLOCK;
 extern int NUMBER_OF_BLOCKS;
-#define SINGLE_PRECISION
-//#define DOUBLE_PRECISION
+//#define SINGLE_PRECISION
+#define DOUBLE_PRECISION
 
 
 #ifdef SINGLE_PRECISION

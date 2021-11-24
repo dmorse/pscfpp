@@ -408,7 +408,7 @@ namespace Pspc
       * blocks and solvents, and computation of overall concentrations
       * for all monomer types. This function does not compute the 
       * canonical (Helmholtz) free energy or grand-canonical free
-      * energy (i.e., pressure). Upon eturn, the flag hasCFields is 
+      * energy (i.e., pressure). Upon return, the flag hasCFields is 
       * set true.
       */
       void compute();

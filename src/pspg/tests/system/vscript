@@ -1,0 +1,16 @@
+#!/bin/bash -l
+#SBATCH --time=00:10:00
+#SBATCH --tasks=6
+#SBATCH --mem=1g
+#SBATCH --job-name=pspg_tests
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=chawl029@umn.edu 
+#SBATCH --gres=gpu:v100:1
+#SBATCH -p v100
+#SBATCH --account=morsedc
+
+module load intel
+module load impi
+
+cd $SLURM_SUBMIT_DIR
+./Test

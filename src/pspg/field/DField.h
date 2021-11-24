@@ -78,6 +78,25 @@ namespace Pspg
       */
       const Data* cDField() const;
 
+      /** 
+      * Get an element by non-const reference.
+      *
+      * Mimic C-array subscripting.
+      *
+      * \param  i array index
+      * \return non-const reference to element i
+      */
+      Data& operator [] (int i); 
+
+     /**
+      * Get an element by const reference.
+      *
+      * Mimics C-array subscripting.
+      *
+      * \param i array index
+      * \return const reference to element i
+      */
+      const Data& operator [] (int i) const;
 
       //Removing this. Child class has this function
       /**
@@ -140,6 +159,30 @@ namespace Pspg
    template <typename Data>
    inline bool DField<Data>::isAllocated() const
    {  return (bool)data_; }
+
+   /*  
+   * Get an element by reference (C-array subscripting)
+   */
+   template <typename Data>
+   inline Data& DField<Data>::operator [] (int i)
+   {   
+      assert(data_ != 0); 
+      assert(i >= 0); 
+      assert(i < capacity_);
+      return *(data_ + i); 
+   }  
+
+   /*  
+   * Get an element by const reference (C-array subscripting)
+   */
+   template <typename Data>
+   inline const Data& DField<Data>::operator [] (int i) const
+   {   
+      assert(data_ != 0); 
+      assert(i >= 0 );
+      assert(i < capacity_);
+      return *(data_ + i); 
+   }   
 
    /*
    * Serialize a Field to/from an Archive.

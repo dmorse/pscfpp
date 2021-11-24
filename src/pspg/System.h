@@ -72,6 +72,11 @@ namespace Pspg
       */
       void setOptions(int argc, char **argv);
 
+      /** 
+      * Set number of blocks and number of threads
+      */
+      void setGpuResources (int nBlocks, int nThreads);
+
       /**
       * Read input parameters (with opening and closing lines).
       *
@@ -342,6 +347,77 @@ namespace Pspg
       */  
       bool hasCFields() const;
 
+      /** 
+      * Read chemical potential fields in symmetry adapted basis format.
+      *
+      * This function opens and reads the file with name "filename",
+      * which must contain chemical potential fields in symmetry-adapted 
+      * basis format, stores these fields in the system wFields array,
+      * converts these fields to real-space grid format and stores the
+      * result in the wFieldsRGrid array. On exit hasWFields is set true 
+      * and hasCFields is false.
+      *
+      * \param filename name of input w-field basis file
+      */
+      void readWBasis(const std::string & filename);
+
+      /**
+      * Iteratively solve a SCFT problem.
+      * 
+      * This function calls the iterator to attempt to solve the SCFT
+      * problem for the current mixture and system parameters, using
+      * the current chemical potential fields (wFields and wFieldRGrid) 
+      * and current unit cell parameter values as initial guesses.  
+      * Upon exist, hasCFields is set true whether or not convergence 
+      * is obtained to within the desired tolerance.  The Helmholtz free 
+      * energy and pressure are computed if and only if convergence is
+      * obtained. 
+      *
+      * \pre The hasWFields flag must be true on entry.
+      * \return returns 0 for successful convergence, 1 for failure.
+      */
+      int iterate();
+
+      /**
+      * Convert a field from symmetry-adapted basis to r-grid format.
+      *
+      * This function uses the arrays that stored monomer concentration 
+      * fields for temporary storage, and thus corrupts any previously
+      * stored values. As a result, flag hasCFields is false on output.
+      *
+      * \param inFileName name of input file
+      * \param outFileName name of output file
+      */
+      void basisToRGrid(const std::string & inFileName,
+                        const std::string & outFileName);
+
+      /** 
+      * Convert a field from real-space grid to symmetrized basis format.
+      *
+      * This function uses the arrays that stored monomer concentration 
+      * fields for temporary storage, and thus corrupts any previously
+      * stored values. As a result, flag hasCFields is false on return.
+      *
+      * \param inFileName name of input file
+      * \param outFileName name of output file
+      */
+      void rGridToBasis(const std::string & inFileName,
+                        const std::string & outFileName);
+
+      /**
+      * Write chemical potential fields in symmetry adapted basis format.
+      *
+      * \param filename name of output file
+      */
+      void writeWBasis(const std::string & filename);
+
+      /**
+      * Write concentrations in symmetry-adapted basis format.
+      *
+      * \param filename name of output file
+      */
+      void writeCBasis(const std::string & filename);
+
       //@}
 
       #if 0
@@ -514,6 +590,28 @@ namespace Pspg
       * Does this system have a Sweep object?
       */
       bool hasSweep_;
+
+      /** 
+      * Work array of field coefficients for all monomer types.
+      *
+      * Indexed by monomer typeId, size = nMonomer.
+      */
+      DArray<RDField<D> > tmpFields_;
+
+      /** 
+      * Work array of fields on real space grid.
+      *
+      * Indexed by monomer typeId, size = nMonomer.
+      */
+       DArray<CField> tmpFieldsRGrid_;
+
+      /** 
+      * Work array of fields on Fourier grid (k-grid).
+      *
+      * Indexed by monomer typeId, size = nMonomer.
+      */
+      DArray<RDFieldDft<D> > tmpFieldsKGrid_;
+
 
       IntVec<D> kMeshDimensions_;
 
