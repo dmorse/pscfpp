@@ -88,6 +88,8 @@ public:
                           "out/testConversion1D_lam_w.bf");
       system.readWBasis("out/testConversion1D_lam_w.bf");
 
+      std::cout<<"Yahin hu main"<<std::endl;
+
       // Compare result to original
       BFieldComparison <1> comparison;
       comparison.compare(wFields_check, system.wFields());
@@ -471,18 +473,18 @@ public:
 };
 
 TEST_BEGIN(SystemTest)
-TEST_ADD(SystemTest, testConstructor1D)
-TEST_ADD(SystemTest, testReadParameters1D)
+//TEST_ADD(SystemTest, testConstructor1D)
+//TEST_ADD(SystemTest, testReadParameters1D)
 TEST_ADD(SystemTest, testConversion1D_lam)
-TEST_ADD(SystemTest, testConversion2D_hex)
-TEST_ADD(SystemTest, testConversion3D_bcc)
+//TEST_ADD(SystemTest, testConversion2D_hex)
+//TEST_ADD(SystemTest, testConversion3D_bcc)
 //TEST_ADD(SystemTest, testCheckSymmetry3D_bcc)
-TEST_ADD(SystemTest, testIterate1D_lam_rigid)
-TEST_ADD(SystemTest, testIterate1D_lam_flex)
-TEST_ADD(SystemTest, testIterate2D_hex_rigid)
-TEST_ADD(SystemTest, testIterate2D_hex_flex)
-TEST_ADD(SystemTest, testIterate3D_bcc_rigid)
-TEST_ADD(SystemTest, testIterate3D_bcc_flex)
+//TEST_ADD(SystemTest, testIterate1D_lam_rigid)
+//TEST_ADD(SystemTest, testIterate1D_lam_flex)
+//TEST_ADD(SystemTest, testIterate2D_hex_rigid)
+//TEST_ADD(SystemTest, testIterate2D_hex_flex)
+//TEST_ADD(SystemTest, testIterate3D_bcc_rigid)
+//TEST_ADD(SystemTest, testIterate3D_bcc_flex)
 
 TEST_END(SystemTest)
 

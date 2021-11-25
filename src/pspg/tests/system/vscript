@@ -13,4 +13,4 @@ module load intel
 module load impi
 
 cd $SLURM_SUBMIT_DIR
-./Test
+./Test > log
