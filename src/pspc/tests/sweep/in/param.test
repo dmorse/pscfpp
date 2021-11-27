@@ -1,1 +1,5 @@
-block
+block 0 0 0.25
+chi   0 1 1.00
+kuhn  0 0.1
+phi   0 0 0.01
+mu    0 0 0.01

@@ -65,18 +65,25 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      // set up system
+      // set up system with some data
       System<3> system;
       SweepTest::SetUpSystem(system);
-      
-      // set up LinearSweep<3>::Parameter object 
-      LinearSweep<3> ls(system);
-      LinearSweep<3>::Parameter p;
-
+      // set up LinearSweepParameter objects 
+      DArray< LinearSweepParameter<3> > ps;
+      ps.allocate(5);
       // open test input file
       std::ifstream in;
+      // read in data
       openInputFile("in/param.test", in);
-      in >> p;
+      for (int i = 0; i < 5; ++i) {
+         in >> ps[i];
+         //std::cout << ps[i].type() << " current: " << ps[i].current();
+      }
+      for (int i = 0; i < 5; ++i) {
+         //ps[i].update(0.5);
+         //std::cout << ps[i].type() << " updated: " << ps[i].current();
+      }
+      
    }
 
    void SetUpSystem(System<3>& system)

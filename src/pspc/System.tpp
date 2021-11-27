@@ -10,10 +10,8 @@
 
 #include "System.h"
 
-#if 0
 #include <pspc/sweep/Sweep.h>
 #include <pspc/sweep/SweepFactory.h>
-#endif
 
 #include <pspc/iterator/Iterator.h>
 #include <pspc/iterator/IteratorFactory.h>
@@ -56,8 +54,8 @@ namespace Pspc
       interactionPtr_(0),
       iteratorPtr_(0),
       iteratorFactoryPtr_(0),
-      // sweepPtr_(0),
-      // sweepFactoryPtr_(0),
+      sweepPtr_(0),
+      sweepFactoryPtr_(0),
       wFields_(),
       cFields_(),
       f_(),
@@ -67,14 +65,14 @@ namespace Pspc
       hasMixture_(false),
       isAllocated_(false),
       hasWFields_(false),
-      hasCFields_(false)
-      //hasSweep_(false)
+      hasCFields_(false),
+      hasSweep_(false)
    {  
       setClassName("System"); 
       domain_.setFileMaster(fileMaster_);
       interactionPtr_ = new ChiInteraction(); 
       iteratorFactoryPtr_ = new IteratorFactory<D>(*this); 
-      // sweepFactoryPtr_ = new SweepFactory(*this);
+      sweepFactoryPtr_ = new SweepFactory<D>(*this);
    }
 
    /*
@@ -92,14 +90,12 @@ namespace Pspc
       if (iteratorFactoryPtr_) {
          delete iteratorFactoryPtr_;
       }
-      #if 0
       if (sweepPtr_) {
          delete sweepPtr_;
       }
       if (sweepFactoryPtr_) {
          delete sweepFactoryPtr_;
       }
-      #endif
    }
 
    /*

@@ -9,209 +9,389 @@
 */
 
 #include "Sweep.h"      // base class
+#include <pscf/inter/ChiInteraction.h> // necessary to be able to read/set chi values
 #include <util/global.h>
 #include <util/containers/DArray.h>
 #include <iostream>
 #include <iomanip>
+#include <cstdio>
 
 namespace Pscf {
-    namespace Pspc {
+namespace Pspc {
 
-        template <int D>
-        class System;
+   // Forward declare classes and operators
+   template <int D>
+   class System;
 
-        using namespace Util;
+   template <int D>
+   class LinearSweep;
 
-        /**
-         * Base class for a sweep in parameter space where parameters change
-         * linearly with the sweep variable. 
-         * \ingroup Pspc_Sweep_Module
-        */
-        template <int D>
-        class LinearSweep : public Sweep<D>
-        {
-        public:
+   template <int D>
+   class LinearSweepParameter;
 
-            /** 
-             * Constructor.
-             * \param system parent System object
-             */
-            LinearSweep(System<D>& system);
+//    template <int D>
+//    class LinearSweep;
 
-            /**
-             * Read parameters from param file.
-             */
-            void readParameters(std::istream& in);
+   using namespace Util;
 
-            /**
-             * Setup operation at the beginning of a sweep. Gets initial values of individual parameters.
-             */
-            void setup();
+   /**
+   * Base class for a sweep in parameter space where parameters change
+   * linearly with the sweep variable. 
+   * \ingroup Pspc_Sweep_Module
+   */
+   template <int D>
+   class LinearSweep : public Sweep<D>
+   {
+   public:
 
-            /**
-             * Set the state before an iteration. Called with each new iteration in SweepTempl::sweep()
-             *
-             * \param s path length coordinate, in [0,1]
-            */    
-            void setParameters(double s);
+      /** 
+      * Constructor.
+      * \param system parent System object
+      */
+      LinearSweep(System<D>& system);
 
-            /**
-             * Output data to a running summary.
-             *
-             * \param out  output file, open for writing
-             */
-            void outputSummary(std::ostream& out);
-        
-            /**
-             * Class for storing individual sweep parameters.
-             */
-            class Parameter;
+      /**
+      * Read parameters from param file.
+      */
+      void readParameters(std::istream& in);
 
-        // friends:
-            
-        };
+      /**
+      * Setup operation at the beginning of a sweep. Gets initial values of individual parameters.
+      */
+       void setup();
 
-        /**
-        * Definition of the (eventually private) nested Parameter class, nested in LinearSweep.
-        */
-        template <int D>
-        class LinearSweep<D>::Parameter
-        {
+      /**
+      * Set the state before an iteration. Called with each new iteration in SweepTempl::sweep()
+      *
+      * \param s path length coordinate, in [0,1]
+      */    
+      void setParameters(double s);
 
-        public:
-            /**
-             * @brief Construct a new Parameter object
-             */
-            Parameter()
-            {}
+      /**
+      * Output data to a running summary.
+      *
+      * \param out  output file, open for writing
+      */
+      void outputSummary(std::ostream& out);
+   
+   //private:
 
-            void setInitial()
-            {
+      //DArray< LinearSweepParameter<D> > parameters_; // need to check that, if multiple phi sweeps, that the changes balance to 0 (total is always 1)
 
+   // friends:
+       
+   };
+
+   /**
+   * Class for storing individual sweep parameters.
+   */
+   template <int D>
+   class LinearSweepParameter
+   {
+
+   public:
+
+      /**
+      * @brief Construct a new LinearSweepParameter object.
+      */
+      LinearSweepParameter()
+       : id_(),
+         systemPtr_(0),
+      {}
+
+      /**
+      * @brief Construct a new LinearSweepParameter object with a pointer to the system.
+      */
+      LinearSweepParameter(System<D>& system)
+       : id_(),
+         systemPtr_(&system),
+      {}
+
+      /**
+       * @brief Read in type of parameter being swept, and set relevant member values. 
+       * 
+       * @param in Input stream from param file. 
+       */
+      void readParamType(std::istream& in)
+      {
+         std::string buffer;
+         in >> buffer;
+         std::transform(buffer.begin(), buffer.end(), buffer.begin(), ::tolower);
+
+         if (buffer == "block") {
+            type_ = Block;
+            nID_ = 2; // polymer and block identifiers
+         } else 
+         if (buffer == "chi") {
+            type_ = Chi;
+            nID_ = 2; // two monomer type identifiers
+         } else 
+         if (buffer == "kuhn") {
+            type_ = Kuhn;
+            nID_ = 1; // monomer type identifier
+         } else 
+         if (buffer == "phi") {
+            type_ = Phi;
+            nID_ = 2; // polymer (0) or solvent (1), and species identifier.
+         } else 
+         if (buffer == "mu") {
+            type_ = Mu;
+            nID_ = 2; // polymer (0) or solvent (1), and species identifier.
+         } else 
+         if (buffer == "solvent") {
+            type_ = Solvent;
+            UTIL_THROW("I don't know how to implement 'solvent'.");
+         } else {
+            UTIL_THROW("Invalid LinearSweepParameter::paramType value input");
+         }
+
+         id_.allocate(nID_);
+      }
+
+      void writeParamType(std::ostream& out) const
+      {
+         out << type();
+      }
+
+      void setParamFunc()
+      {
+         if (type_ == Block) {
+            get_ = &LinearSweepParameter::getBlock_;
+            set_ = &LinearSweepParameter::setBlock_;
+            std::cout << (this->*get_)();
+         } else 
+         if (type_ == Chi) {
+            get_ = &LinearSweepParameter::getChi_;
+            set_ = &LinearSweepParameter::setChi_;
+         } else 
+         if (type_ == Kuhn) {
+            get_ = &LinearSweepParameter::getKuhn_;
+            set_ = &LinearSweepParameter::setKuhn_;
+         } else 
+         if (type_ == Phi) {
+            get_ = &LinearSweepParameter::getPhi_;
+            set_ = &LinearSweepParameter::setPhi_;
+         } else 
+         if (type_ == Mu) {
+            get_ = &LinearSweepParameter::getMu_;
+            set_ = &LinearSweepParameter::setMu_;
+         } else 
+         if (type_ == Solvent) {
+            UTIL_THROW("I don't know how to implement 'solvent'.");
+         } else {
+            UTIL_THROW("This should never happen.");
+         }
+      }
+
+      void setInitial()
+      {
+         initial_ = (this->*get_)();
+      }
+
+      void update(double s)
+      {
+         set_(initial_+s*change_);
+      }
+      
+      double current()
+      {
+         return get_();
+      }
+
+      std::string type()
+      {
+         if (type_ == Block) {
+            return "block";
+         } else 
+         if (type_ == Chi) {
+            return "chi";
+         } else 
+         if (type_ == Kuhn) {
+            return "kuhn";
+         } else 
+         if (type_ == Phi) {
+            return "phi";
+         } else 
+         if (type_ == Mu) {
+            return "mu";
+         } else 
+         if (type_ == Solvent) {
+            return "solvent";
+            UTIL_THROW("I don't know how to implement 'solvent'.");
+         } else {
+            UTIL_THROW("This should never happen.");
+         }
+      }
+
+      int id(int i) const
+      {
+         return id_[i];
+      }
+      
+      
+   private:
+      /// Enumeration of allowed parameter types.
+      enum paramType { Block, Chi, Kuhn, Phi, Mu, Solvent };
+
+      /// Type of parameter associated with an object of this class. 
+      paramType type_;
+      
+      /// Number of identifiers needed for this parameter type. 
+      int nID_;
+
+      /// Identifier indices.
+      DArray<int> id_;
+
+      /// Initial value of parameter 
+      double   initial_;
+
+      /// Change in parameter
+      double   change_;
+      
+      /// Pointer to the overall system. Set in LinearSweepParameter constructor.
+      System<D>* systemPtr_;
+
+      /// Pointer to the "get" function for the given parameter
+      double (LinearSweepParameter::*get_)();
+
+      /// Pointer to the "set" function for the given parameter
+      void (LinearSweepParameter::*set_)(double);
+
+      // Functions for getting and setting parameters.
+      double getBlock_()
+      {  return systemPtr_->mixture().polymer(id(0)).block(id(1)).length();  }
+
+      void setBlock_(double newVal)
+      {  return systemPtr_->mixture().polymer(id(0)).block(id(1)).setLength(newVal);  }
+
+      double getChi_()
+      {  return systemPtr_->interaction().chi(id(0),id(1)); }
+
+      void setChi_(double newVal)
+      {  systemPtr_->interaction().setChi(id(0),id(1),newVal); }
+
+      double getKuhn_()
+      {  return systemPtr_->mixture().monomer(id(0)).step();  }
+
+      void setKuhn_(double newVal)
+      {  
+         int monomerId;
+         double kuhn;
+         // Set new value of kuhn length for this monomer.
+         systemPtr_->mixture().monomer(id(0)).setStep(newVal);
+         // Update the kuhn lengths of all blocks. Potential mismatch otherwise.
+         for (int i=0; i < systemPtr_->mixture().nPolymer(); ++i) {
+            for (int j=0; j < systemPtr_->mixture().polymer(i).nBlock(); ++j) {
+               monomerId = systemPtr_->mixture().polymer(i).block(j).monomerId();
+               kuhn = systemPtr_->mixture().monomer(monomerId).step();
+               systemPtr_->mixture().polymer(i).block(j).setKuhn(kuhn);
             }
-            void update(double s)
-            {
+         }
+         // Solvent kuhn doesn't need updating. 
+      }
 
-            }
-            /// Enumeration of allowed parameter types.
-            enum paramType { Block, Chi, Kuhn, Phi, Mu, Solvent };
+      double getPhi_()
+      {
+         if (id(0)==0) {
+            return systemPtr_->mixture().polymer(id(1)).phi();
+         } else
+         if (id(0)==1) {
+            return systemPtr_->mixture().solvent(id(1)).phi();
+         } else {
+            UTIL_THROW("Invalid choice between polymer (0) and solvent (1).");
+         }
+      }
 
-        private:
-            
-            /// Type of parameter associated with an object of this class. 
-            paramType type_;
-            /// Number of species associated with parameter type. For example, Kuhn length is of 1 species, Chi is between two.
-            int nID_;
-            /// List of identifiers of species associated with the parameter type, of length nID.
-            DArray<int> id_;
-            /// Initial value of parameter 
-            double   initial_;
-            /// Final value of parameter
-            double   final_;
-            /// Change in parameter
-            double   change_;
+      void setPhi_(double newVal)
+      {
+         if (id(0)==0) {
+            systemPtr_->mixture().polymer(id(1)).setPhi(newVal);
+         } else
+         if (id(0)==1) {
+            systemPtr_->mixture().solvent(id(1)).setPhi(newVal);
+         } else {
+            UTIL_THROW("Invalid choice between polymer (0) and solvent (1).");
+         }
+      }
 
-        // friends:
-            template<int U>
-            friend std::istream& operator >> (std::istream&, typename LinearSweep<U>::Parameter&);
-            template<int U>
-            friend std::ostream& operator << (std::ostream&, typename LinearSweep<U>::Parameter const&);
-            // template <class Archive>
-            // friend void serialize(Archive&, LinearSweep<D>::Parameter&, const unsigned int);
-        
-        };
+      double getMu_()
+      {
+         if (id(0)==0) {
+            return systemPtr_->mixture().polymer(id(1)).mu();
+         } else
+         if (id(0)==1) {
+            return systemPtr_->mixture().solvent(id(1)).mu();
+         } else {
+            UTIL_THROW("Invalid choice between polymer (0) and solvent (1).");
+         }
+      }
 
-        // Declarations of operator templates
-        // template <int D>
-        // std::istream& operator >> (std::istream& in, typename LinearSweep<D>::Parameter::paramType& type);
-        // template <int D>
-        // std::ostream& operator << (std::ostream& out, typename LinearSweep<D>::Parameter::paramType type);
-        // template <int D>
-        // std::istream& operator >> (std::istream& in, typename LinearSweep<D>::Parameter& param);
-        // template <int D>
-        // std::ostream& operator << (std::ostream& out, typename LinearSweep<D>::Parameter param);
+      void setMu_(double newVal)
+      {
+         if (id(0)==0) {
+            systemPtr_->mixture().polymer(id(1)).setMu(newVal);
+         } else
+         if (id(0)==1) {
+            systemPtr_->mixture().solvent(id(1)).setMu(newVal);
+         } else {
+            UTIL_THROW("Invalid choice between polymer (0) and solvent (1).");
+         }
+      }
 
-        // Definitions of operators, no explicit instantiations. 
-        template <int D>
-        std::istream& operator >> (std::istream& in, typename LinearSweep<D>::Parameter::paramType& type)
-        {
+   // friends:
+      template <int U>
+      friend std::istream& operator >> (std::istream&, LinearSweepParameter<U>&);
 
-            std::string buffer;
-            in >> buffer;
-            std::transform(buffer.begin(), buffer.end(), buffer.begin(), ::tolower);
+      template <int U>
+      friend std::ostream& operator << (std::ostream&, LinearSweepParameter<U> const&);
 
-            if (buffer == "block") {
-                type = LinearSweep<D>::Parameter::Block;
-            } else 
-            if (buffer == "chi") {
-                type = LinearSweep<D>::Parameter::Chi;
-            } else 
-            if (buffer == "kuhn") {
-                type = LinearSweep<D>::Parameter::Kuhn;
-            } else 
-            if (buffer == "phi") {
-                type = LinearSweep<D>::Parameter::Phi;
-            } else 
-            if (buffer == "mu") {
-                type = LinearSweep<D>::Parameter::Mu;
-            } else 
-            if (buffer == "solvent") {
-                type = LinearSweep<D>::Parameter::Solvent;
-            } else {
-                UTIL_THROW("Invalid LinearSweep<D>::Parameter::paramType value input");
-            }
-            return in;
-        }
+      // template <class Archive>
+      // friend void serialize(Archive&, LinearSweep<D>::Parameter&, const unsigned int);
+   
+   };
 
-        template <int D>
-        std::ostream& operator << (std::ostream& out, typename LinearSweep<D>::Parameter::paramType type)
-        {
-            if (type == LinearSweep<D>::Parameter::Block) {
-                out << "block";
-            } else 
-            if (type == LinearSweep<D>::Parameter::Chi) {
-                out << "chi";
-            } else 
-            if (type == LinearSweep<D>::Parameter::Kuhn) {
-                out << "kuhn";
-            } else 
-            if (type == LinearSweep<D>::Parameter::Phi) {
-                out << "phi";
-            } else 
-            if (type == LinearSweep<D>::Parameter::Mu) {
-                out << "mu";
-            } else 
-            if (type == LinearSweep<D>::Parameter::Solvent) {
-                out << "solvent";
-            } else {
-                UTIL_THROW("This should never happen.");
-            }
-            return out;
-        }
+   // Definitions of operators, no explicit instantiations. 
+   template <int D>
+   std::istream& operator >> (std::istream& in, LinearSweepParameter<D>& param)
+   {
+      // read the parameter type.
+      param.readParamType(in);  
+      // read the identifiers associated with this parameter type. 
+      for (int i = 0; i < param.nID_; ++i) {
+         in >> param.id_[i];
+      }
+      // set the get_ and set_ function pointers
+      param.setParamFunc();
+      // get the initial value of the parameter
+      //param.setInitial();
+      // read in the range in the parameter to sweep over.
+      in >> param.change_;
 
-        template <int D>
-        std::istream& operator >> (std::istream& in, typename LinearSweep<D>::Parameter& param)
-        {
-            in >> param.type_;
+      return in;
+   }
 
-            return in;
-        }
+   template <int D>
+   std::ostream& operator << (std::ostream& out, const LinearSweepParameter<D>& param)
+   {
+      param.writeParamType(out);
+      out << "  ";
+      for (int i = 0; i < param.nID_; ++i) {
+         out << param.id(i);
+         out << " ";
+      }
+      out << param.change_;
 
-        template <int D>
-        std::ostream& operator << (std::ostream& out, typename LinearSweep<D>::Parameter param)
-        {
-            out << param.type_;
+      return out;
+   }
 
-            return out;
-        }
 
-        #ifndef PSPC_LINEAR_SWEEP_TPP
-        // Suppress implicit instantiation
-        extern template class LinearSweep<1>;
-        extern template class LinearSweep<2>;
-        extern template class LinearSweep<3>;
-        #endif
-    }
+   #ifndef PSPC_LINEAR_SWEEP_TPP
+   // Suppress implicit instantiation
+   extern template class LinearSweep<1>;
+   extern template class LinearSweep<2>;
+   extern template class LinearSweep<3>;
+   #endif
+
 }
-
+}
 #endif
