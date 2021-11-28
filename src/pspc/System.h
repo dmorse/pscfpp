@@ -395,6 +395,12 @@ namespace Pspc
       int iterate();
    
       /**
+      * Sweep in parameter space, solving SCFT problems at each point.
+      * 
+      */
+      void sweep();
+
+      /**
       * Solve the modified diffusion equation once, without iteration.
       *
       * This function calls the mixture().compute() function to solve

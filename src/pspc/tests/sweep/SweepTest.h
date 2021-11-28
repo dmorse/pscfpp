@@ -57,8 +57,6 @@ public:
       SweepFactory<3> sf(system);
       
       sweepPtr = sf.factory("LinearSweep");
-      std::ifstream in;
-      sweepPtr->readParameters(in);
    }
 
    void testParameters() 
@@ -67,31 +65,59 @@ public:
 
       // set up system with some data
       System<3> system;
-      SweepTest::SetUpSystem(system);
+      SweepTest::SetUpSystem(system, "in/diblock/bcc/param.flex");
       // set up LinearSweepParameter objects 
       DArray< LinearSweepParameter<3> > ps;
-      ps.allocate(5);
+      ps.allocate(4);
+      for (int i = 0; i < 4; ++i) {
+         ps[i].setSystem(system);
+      }
       // open test input file
       std::ifstream in;
       // read in data
       openInputFile("in/param.test", in);
-      for (int i = 0; i < 5; ++i) {
+      for (int i = 0; i < 4; ++i) {
          in >> ps[i];
-         //std::cout << ps[i].type() << " current: " << ps[i].current();
+         ps[i].getInitial();
+         ps[i].update(0.5);
       }
-      for (int i = 0; i < 5; ++i) {
-         //ps[i].update(0.5);
-         //std::cout << ps[i].type() << " updated: " << ps[i].current();
-      }
-      
    }
 
-   void SetUpSystem(System<3>& system)
+   void testLinearSweepRead()
+   {
+      printMethod(TEST_FUNC);
+
+      // set up system with Linear Sweep Object
+      System<3> system;
+      SweepTest::SetUpSystem(system, "in/param.sweep");
+   }
+
+   void testLinearSweepIterate()
+   {
+      printMethod(TEST_FUNC);
+
+      // set up system with Linear Sweep Object
+      System<3> system;
+      SweepTest::SetUpSystem(system, "in/param.sweep");
+      
+      // initial guess and iterate
+      system.readWBasis("in/diblock/bcc/omega.ref");
+      DArray< DArray<double> > wFields_check;
+      wFields_check = system.wFields();
+      system.readWBasis("in/diblock/bcc/omega.in");
+      system.iterate();
+
+      //sweep
+      system.sweep();
+
+   }
+
+   void SetUpSystem(System<3>& system, std::string fname)
    {
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
       std::ifstream in;
-      openInputFile("in/diblock/bcc/param.flex", in);
+      openInputFile(fname, in);
       system.readParam(in);
       in.close();
    }
@@ -103,6 +129,8 @@ TEST_BEGIN(SweepTest)
 TEST_ADD(SweepTest, testConstructors)
 TEST_ADD(SweepTest, testFactory)
 TEST_ADD(SweepTest, testParameters)
-TEST_END(BasisFieldStateTest)
+TEST_ADD(SweepTest, testLinearSweepRead)
+TEST_ADD(SweepTest, testLinearSweepIterate)
+TEST_END(SweepTest)
 
 #endif

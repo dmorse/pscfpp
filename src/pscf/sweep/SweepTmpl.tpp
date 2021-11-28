@@ -68,12 +68,15 @@ namespace Pscf {
       std::cout << "Attempt s = " << sNew << std::endl;
       bool isContinuation = false; // False on first step
       error = solve(isContinuation);
+      
       if (error) {
          UTIL_THROW("Failure to converge initial state of sweep");
       } else {
+         std::cout << "Checkpoint 1! \n";
          accept(sNew);
       }
 
+      std::cout << "Checkpoint 2! \n";
       // Loop over states on path
       bool finished = false;   // Are we finished with the loop?
       while (!finished) {
@@ -83,17 +86,17 @@ namespace Pscf {
             sNew = s(0) + ds; 
             std::cout << std::endl;
             std::cout << "Attempt s = " << sNew << std::endl;
-
+            std::cout << "Checkpoint 3! \n";
             // Set non-adjustable system parameters to new values
             setParameters(sNew);
 
             // Set a guess for all state variables by polynomial extrapolation.
             extrapolate(sNew);
-
+            std::cout << "Checkpoint 4! \n";
             // Attempt iterative SCFT solution
             isContinuation = true;
             error = solve(isContinuation);
-
+            std::cout << "Checkpoint 5! \n";
             if (error) {
 
                // Upon failure, reset state to last converged solution
@@ -155,7 +158,6 @@ namespace Pscf {
          sHistory_[i] = sHistory_[i-1];
       }
       sHistory_[0] = sNew;
-
       // Shift elements of stateHistory_ (pointers to stored solutions)
       State* temp;
       temp = stateHistory_[historyCapacity_-1];
@@ -163,16 +165,14 @@ namespace Pscf {
          stateHistory_[i] = stateHistory_[i-1];
       }
       stateHistory_[0] = temp;
-
       // Update counters
       ++nAccept_;
       if (historySize_ < historyCapacity_) {
          ++historySize_;
       }
-
       // Call getSolution to copy system state to state(0).
+      std::cout << "Checkpoint 1.05! \n";
       getSolution();
-
    }
 
    /*

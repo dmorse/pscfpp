@@ -206,6 +206,8 @@ namespace Pspc {
    template <int D>
    void Sweep<D>::getSolution() 
    { 
+      std::cout << "Checkpoint 1.1! \n";
+      state(0).setSystem(system());
       state(0).getSystemState(); 
 
       // Output solution

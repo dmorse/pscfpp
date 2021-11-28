@@ -225,7 +225,6 @@ namespace Pspc
       }
       iterator().setup();
 
-      #if 0
       // Optionally instantiate a Sweep object
       readOptional<bool>(in, "hasSweep", hasSweep_);
       if (hasSweep_) {
@@ -237,7 +236,6 @@ namespace Pspc
          }
          sweepPtr_->setSystem(*this);
       }
-      #endif
    }
 
    /*
@@ -346,6 +344,10 @@ namespace Pspc
             if (fail) {
                readNext = false;
             }
+         } else
+         if (command == "SWEEP") {
+            // After iterating and converging, sweep.
+            sweep();
          } else
          if (command == "SOLVE_MDE") {
             // Read w (chemical potential fields) if not done previously 
@@ -700,6 +702,19 @@ namespace Pspc
          outputThermo(Log::file());
       }
       return error;
+   }
+
+   /*
+   * Sweep in parameter space.
+   */
+   template <int D>
+   void System<D>::sweep()
+   {
+      UTIL_CHECK(hasWFields_);
+      Log::file() << std::endl;
+      Log::file() << std::endl;
+      // Call sweep
+      sweepPtr_->sweep();
    }
 
    /*

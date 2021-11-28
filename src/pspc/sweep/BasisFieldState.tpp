@@ -94,14 +94,16 @@ namespace Pspc
    template <int D>
    void BasisFieldState<D>::getSystemState()
    {
+      std::cout << "Checkpoint 1.2! \n";
       // Get system unit cell
       unitCell() = system().unitCell();
-
+      std::cout << "Checkpoint 1.3! \n";
       // Get system wFields
       allocate();
       int nMonomer = system().mixture().nMonomer();
       int nStar    = system().basis().nStar();
       int i, j;
+      std::cout << "Checkpoint 1.4! \n";
       for (i = 0; i < nMonomer; ++i) {
          DArray<double>& stateField = field(i);
          const DArray<double>& systemField = system().wField(i);
@@ -109,6 +111,7 @@ namespace Pspc
             stateField[j] = systemField[j];
          }
       }
+      std::cout << "Checkpoint 1.5! \n";
 
    }
 

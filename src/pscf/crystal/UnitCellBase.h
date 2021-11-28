@@ -440,8 +440,11 @@ namespace Pscf
    template <int D>
    void UnitCellBase<D>::setLattice()
    {
+      std::cout << "Checkpoint 1.2.7 \n";
       initializeToZero();
+      std::cout << "Checkpoint 1.2.8 \n";
       setBasis();
+      std::cout << "Checkpoint 1.2.9 \n";
       computeDerivatives();
    }
 
