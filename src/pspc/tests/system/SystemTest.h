@@ -450,6 +450,41 @@ public:
 
    }
 
+   void testIterate3D_c15_1_flex()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testIterate3D_c15_1_flex.log");
+
+      System<3> system;
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
+
+      std::ifstream in;
+      openInputFile("in/diblock/c15_1/param.flex", in);
+      system.readParam(in);
+      in.close();
+
+      system.readWBasis("in/diblock/c15_1/w_ref.bf");
+
+      DArray< DArray<double> > wFields_check;
+      wFields_check = system.wFields();
+
+      system.readWBasis("in/diblock/c15_1/w_in.bf");
+      system.iterate();
+      system.writeWBasis("out/testIterate3D_c15_1_flex_w.bf");
+      system.writeCBasis("out/testIterate3D_c15_1_flex_c.bf");
+
+      BFieldComparison comparison(1);
+      comparison.compare(wFields_check, system.wFields());
+      if (verbose() > 0) {
+         std::cout << "\n";
+         std::cout << "Max error = " << comparison.maxDiff() << "\n";
+      }
+      TEST_ASSERT(comparison.maxDiff() < 5.0E-7);
+      // Maximum difference of 1.09288E-7 occurs for the second star
+
+   }
+
 };
 
 TEST_BEGIN(SystemTest)
@@ -465,6 +500,7 @@ TEST_ADD(SystemTest, testIterate2D_hex_rigid)
 TEST_ADD(SystemTest, testIterate2D_hex_flex)
 TEST_ADD(SystemTest, testIterate3D_bcc_rigid)
 TEST_ADD(SystemTest, testIterate3D_bcc_flex)
+TEST_ADD(SystemTest, testIterate3D_c15_1_flex)
 
 TEST_END(SystemTest)
 
