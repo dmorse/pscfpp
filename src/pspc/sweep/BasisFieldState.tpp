@@ -57,13 +57,13 @@ namespace Pspc
          fields().allocate(nMonomer);
       }
 
-      int nStar = system().basis().nStar();
-      UTIL_CHECK(nStar > 0);
+      int nBasis = system().basis().nBasis();
+      UTIL_CHECK(nBasis > 0);
       for (int i = 0; i < nMonomer; ++i) {
          if (field(i).isAllocated()) {
-            UTIL_CHECK(field(i).capacity() == nStar);
+            UTIL_CHECK(field(i).capacity() == nBasis);
          } else {
-            field(i).allocate(nStar);
+            field(i).allocate(nBasis);
          }
       }
 
@@ -100,12 +100,12 @@ namespace Pspc
       // Get system wFields
       allocate();
       int nMonomer = system().mixture().nMonomer();
-      int nStar    = system().basis().nStar();
+      int nBasis    = system().basis().nBasis();
       int i, j;
       for (i = 0; i < nMonomer; ++i) {
          DArray<double>& stateField = field(i);
          const DArray<double>& systemField = system().wField(i);
-         for (j = 0; j < nStar; ++j) {
+         for (j = 0; j < nBasis; ++j) {
             stateField[j] = systemField[j];
          }
       }
@@ -120,12 +120,12 @@ namespace Pspc
    {
       // Update system  wFields
       int nMonomer = system().mixture().nMonomer();
-      int nStar = system().basis().nStar();
+      int nBasis = system().basis().nBasis();
       int i, j;
       for (i = 0; i < nMonomer; ++i) {
          const DArray<double>& stateField = field(i);
          DArray<double>& systemField = system().wField(i);
-         for (j = 0; j < nStar; ++j) {
+         for (j = 0; j < nBasis; ++j) {
             systemField[j] = stateField[j];
          }
       }
