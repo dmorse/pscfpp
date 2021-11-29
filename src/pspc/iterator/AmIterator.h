@@ -129,7 +129,7 @@ namespace Pspc
       int maxItr_;
 
       // Work Array for iterating on parameters 
-      FSArray<double, 6> parameters;
+      FSArray<double, 6> parameters_;
 
       /// holds histories of deviation for each monomer
       /// 1st index = history, 2nd index = monomer, 3rd index = ngrid

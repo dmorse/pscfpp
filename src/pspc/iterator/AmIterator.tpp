@@ -340,7 +340,7 @@ namespace Pspc
       if (isFlexible_){
          for ( int i = 0; i < (system().unitCell()).nParameter() ; i++) {
             dError +=  devCpHists_[0][i] *  devCpHists_[0][i];
-            wError +=  (system().unitCell()).parameters() [i] * (system().unitCell()).parameters() [i];
+            wError +=  (system().unitCell()).parameters()[i]*(system().unitCell()).parameters()[i];
          }
       }
       Log::file() << " dError :" << Dbl(dError)<<std::endl;
@@ -473,12 +473,13 @@ namespace Pspc
          }
 
          if (isFlexible_){
+            parameters_.clear();
             for (int m = 0; m < unitCell.nParameter() ; ++m){
-               parameters.append(CpHists_[0][m]
+               parameters_.append(CpHists_[0][m]
                               + lambda_* devCpHists_[0][m]);
 
             }
-            unitCell.setParameters(parameters);
+            unitCell.setParameters(parameters_);
             unitCell.setLattice();
             mixture.setupUnitCell(unitCell);
             system().basis().update();
@@ -520,10 +521,11 @@ namespace Pspc
                                                 devCpHists_[0][m]);
                }
             }
+            parameters_.clear();
             for (int m = 0; m < unitCell.nParameter() ; ++m){
-               parameters [m] = wCpArrays_[m] + lambda_ * dCpArrays_[m];
+               parameters_.append(wCpArrays_[m] + lambda_ * dCpArrays_[m]);
             }
-            unitCell.setParameters(parameters);
+            unitCell.setParameters(parameters_);
             unitCell.setLattice();
             mixture.setupUnitCell(unitCell);
 	    system().basis().update();
