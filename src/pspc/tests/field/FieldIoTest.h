@@ -289,6 +289,47 @@ public:
 
    }
 
+   void testBasisIo_altG_fort() 
+   {
+      printMethod(TEST_FUNC);
+
+      Domain<3> domain;
+      domain.setFileMaster(fileMaster_);
+      readHeader("in/w_altG.rf", domain);
+
+      DArray< DArray<double> > bf_0;
+      allocateFields(nMonomer_, domain.basis().nStar(), bf_0);
+
+      DArray< DArray<double> > bf_1;
+      allocateFields(nMonomer_, domain.basis().nStar(), bf_1);
+
+      std::ifstream in;
+      openInputFile("in/w_altG_fort.bf", in);
+      domain.fieldIo().readFieldsBasis(in, bf_0, domain.unitCell());
+      in.close();
+
+      std::ofstream out;
+      openOutputFile("out/w_altG_fort.bf", out);
+      domain.fieldIo().writeFieldsBasis(out, bf_0, domain.unitCell());
+      out.close();
+
+      openInputFile("out/w_altG_fort.bf", in);
+      domain.fieldIo().readFieldsBasis(in, bf_1, domain.unitCell());
+      in.close();
+
+      #if 0
+      BFieldComparison comparison;
+      comparison.compare(bf_0, bf_1);
+      if (verbose() > 0) {
+         std::cout  << std::endl;
+         std::cout  << Dbl(comparison.maxDiff(),21,13) << std::endl;
+         std::cout  << Dbl(comparison.rmsDiff(),21,13) << std::endl;
+      }
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-12);
+      #endif
+
+   }
+
    void testRGridIo_bcc() 
    {
       printMethod(TEST_FUNC);
@@ -576,6 +617,7 @@ TEST_BEGIN(FieldIoTest)
 TEST_ADD(FieldIoTest, testReadHeader)
 TEST_ADD(FieldIoTest, testBasisIo_bcc)
 TEST_ADD(FieldIoTest, testBasisIo_altG)
+TEST_ADD(FieldIoTest, testBasisIo_altG_fort)
 TEST_ADD(FieldIoTest, testRGridIo_bcc)
 TEST_ADD(FieldIoTest, testConvertBasisKGridBasis_bcc)
 TEST_ADD(FieldIoTest, testConvertBasisRGridBasis_bcc)

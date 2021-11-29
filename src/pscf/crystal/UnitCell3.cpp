@@ -189,21 +189,15 @@ namespace Pscf
    /*
    * Assignment operator.
    */
-   UnitCell<3>& UnitCell<3>::operator = (const UnitCell<3>& other)
+   UnitCell<3>& UnitCell<3>::operator = (UnitCell<3> const & other)
    {
-      std::cout << "Checkpoint 1.2.1 \n";
       lattice_ = other.lattice_;
-      std::cout << "Checkpoint 1.2.2 \n";
       setNParameter();
-      std::cout << "Checkpoint 1.2.3 \n";
       UTIL_CHECK(nParameter_ == other.nParameter_);
-      std::cout << "Checkpoint 1.2.4 \n";
       for (int i = 0; i < nParameter_; ++i) {
          parameters_[i] = other.parameters_[i];
       }   
-      std::cout << "Checkpoint 1.2.5 \n";
       setLattice();
-      std::cout << "Checkpoint 1.2.6 \n";
       return *this;
    }
 

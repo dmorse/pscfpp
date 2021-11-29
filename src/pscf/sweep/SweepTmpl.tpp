@@ -9,6 +9,7 @@
 */
 
 #include "SweepTmpl.h"
+#include <util/misc/Log.h>
 
 namespace Pscf {
 
@@ -54,30 +55,30 @@ namespace Pscf {
       // Compute and output ds
       double ds = 1.0/double(ns_);
       double ds0 = ds;
-      std::cout << std::endl;
-      std::cout << "ns = " << ns_ << std::endl;
-      std::cout << "ds = " << ds  << std::endl;
+      Log::file() << std::endl;
+      Log::file() << "ns = " << ns_ << std::endl;
+      Log::file() << "ds = " << ds  << std::endl;
 
       // Initial setup, before a sweep
       setup();
-      std::cout << "Checkpoint 0 (exited setup before sweep) \n";
+      Log::file() << "Checkpoint 0 (exited setup before sweep) \n";
 
       // Solve for initial state of sweep
       int error;
       double sNew = 0.0;
-      std::cout << std::endl;
-      std::cout << "Attempt s = " << sNew << std::endl;
+      Log::file() << std::endl;
+      Log::file() << "Attempt s = " << sNew << std::endl;
       bool isContinuation = false; // False on first step
       error = solve(isContinuation);
       
       if (error) {
          UTIL_THROW("Failure to converge initial state of sweep");
       } else {
-         std::cout << "Checkpoint 1 (accepting initial solution) \n";
+         Log::file() << "Checkpoint 1 (accepting initial solution) \n";
          accept(sNew);
       }
 
-      std::cout << "Checkpoint 2 (begin sweep loop) \n";
+      Log::file() << "Checkpoint 2 (begin sweep loop) \n";
       // Loop over states on path
       bool finished = false;   // Are we finished with the loop?
       while (!finished) {
@@ -85,20 +86,21 @@ namespace Pscf {
          while (error) {
 
             sNew = s(0) + ds; 
-            std::cout << std::endl;
-            std::cout << "Attempt s = " << sNew << std::endl;
-            std::cout << "Checkpoint 3 (entering setParameters) \n";
+            Log::file() << std::endl;
+            Log::file() << "Attempt s = " << sNew << std::endl;
+            Log::file() << "Checkpoint 3 (entering setParameters) \n";
+
             // Set non-adjustable system parameters to new values
             setParameters(sNew);
 
             // Set a guess for all state variables by polynomial extrapolation.
             extrapolate(sNew);
-            std::cout << "Checkpoint 4 (exited extrapolate) \n";
+            Log::file() << "Checkpoint 4 (exited extrapolate) \n";
 
             // Attempt iterative SCFT solution
             isContinuation = true;
             error = solve(isContinuation);
-            std::cout << "Checkpoint 5 (exited solve) \n";
+            Log::file() << "Checkpoint 5 (exited solve) \n";
 
             if (error) {
 
@@ -115,7 +117,7 @@ namespace Pscf {
 
                // Upon successful convergence, update history and nAccept
                accept(sNew);
-               std::cout << "Checkpoint 6 (accepted solution) \n";
+               Log::file() << "Checkpoint 6 (accepted solution) \n";
 
             }
          }
@@ -175,7 +177,7 @@ namespace Pscf {
          ++historySize_;
       }
       // Call getSolution to copy system state to state(0).
-      std::cout << "Checkpoint 1.05! \n";
+      Log::file() << "Checkpoint 1.05! \n";
       getSolution();
    }
 

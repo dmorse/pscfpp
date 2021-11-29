@@ -19,13 +19,27 @@ using namespace Pscf::Fd1d;
 class SystemTest : public UnitTest 
 {
 
+private:
+
+   std::ofstream logFile_;
+
 public:
 
    void setUp()
    {}
 
    void tearDown()
-   {}
+   {
+      if (logFile_.is_open()) {
+         logFile_.close();
+      }
+   }
+
+   void openLogFile(char const * filename)
+   {
+      openOutputFile(filename, logFile_);
+      Log::setFile(logFile_);
+   }
 
   
    void testConstructor()
@@ -37,6 +51,7 @@ public:
    void testReadParameters()
    {
       printMethod(TEST_FUNC);
+      openLogFile("out/testReadParameters.log");
 
       std::ifstream in;
       openInputFile("in/planar1.prm", in);
@@ -44,8 +59,8 @@ public:
       System sys;
       sys.readParam(in);
 
-      std::cout << "\n";
-      sys.writeParam(std::cout);
+      Log::file() << "\n";
+      sys.writeParam(Log::file());
 
       TEST_ASSERT(sys.domain().mode() == Planar);
    }
@@ -53,6 +68,7 @@ public:
    void testSolveMdePlanar()
    {
       printMethod(TEST_FUNC);
+      openLogFile("out/testSolveMdePlanar.log");
 
       std::ifstream in;
       openInputFile("in/planar1.prm", in);
@@ -60,8 +76,8 @@ public:
       System sys;
       sys.readParam(in);
 
-      std::cout << "\n";
-      sys.writeParam(std::cout);
+      Log::file() << "\n";
+      sys.writeParam(Log::file());
 
       Mixture& mix = sys.mixture();
       Domain& domain = sys.domain();
@@ -76,16 +92,16 @@ public:
       mix.compute(sys.wFields(), sys.cFields());
 
       // Test if same Q is obtained from different methods
-      std::cout << mix.polymer(0).propagator(0, 0).computeQ() << "\n";
-      std::cout << mix.polymer(0).propagator(1, 0).computeQ() << "\n";
-      std::cout << mix.polymer(0).propagator(1, 1).computeQ() << "\n";
-      std::cout << mix.polymer(0).propagator(0, 1).computeQ() << "\n";
+      Log::file() << mix.polymer(0).propagator(0, 0).computeQ() << "\n";
+      Log::file() << mix.polymer(0).propagator(1, 0).computeQ() << "\n";
+      Log::file() << mix.polymer(0).propagator(1, 1).computeQ() << "\n";
+      Log::file() << mix.polymer(0).propagator(0, 1).computeQ() << "\n";
 
       // Test spatial integral of block concentration
       double sum0 = domain.spatialAverage(sys.cField(0));
       double sum1 = domain.spatialAverage(sys.cField(1));
-      std::cout << "Volume fraction of block 0 = " << sum0 << "\n";
-      std::cout << "Volume fraction of block 1 = " << sum1 << "\n";
+      Log::file() << "Volume fraction of block 0 = " << sum0 << "\n";
+      Log::file() << "Volume fraction of block 1 = " << sum1 << "\n";
 
       TEST_ASSERT(eq(mix.polymer(0).length(), 5.0));
    }
@@ -94,6 +110,7 @@ public:
    void testSolveMdeSpherical()
    {
       printMethod(TEST_FUNC);
+      openLogFile("out/testSolveMdeSpherical.log");
 
       std::ifstream in;
       openInputFile("in/spherical1.prm", in);
@@ -101,8 +118,8 @@ public:
       System sys;
       sys.readParam(in);
 
-      std::cout << "\n";
-      sys.writeParam(std::cout);
+      Log::file() << "\n";
+      sys.writeParam(Log::file());
 
       Mixture& mix = sys.mixture();
       Domain& domain = sys.domain();
@@ -117,21 +134,22 @@ public:
       mix.compute(sys.wFields(), sys.cFields());
 
       // Test if same Q is obtained from different methods
-      std::cout << mix.polymer(0).propagator(0, 0).computeQ() << "\n";
-      std::cout << mix.polymer(0).propagator(1, 0).computeQ() << "\n";
-      std::cout << mix.polymer(0).propagator(1, 1).computeQ() << "\n";
-      std::cout << mix.polymer(0).propagator(0, 1).computeQ() << "\n";
+      Log::file() << mix.polymer(0).propagator(0, 0).computeQ() << "\n";
+      Log::file() << mix.polymer(0).propagator(1, 0).computeQ() << "\n";
+      Log::file() << mix.polymer(0).propagator(1, 1).computeQ() << "\n";
+      Log::file() << mix.polymer(0).propagator(0, 1).computeQ() << "\n";
 
       // Test spatial integral of block concentration
       double sum0 = domain.spatialAverage(sys.cField(0));
       double sum1 = domain.spatialAverage(sys.cField(1));
-      std::cout << "Volume fraction of block 0 = " << sum0 << "\n";
-      std::cout << "Volume fraction of block 1 = " << sum1 << "\n";
+      Log::file() << "Volume fraction of block 0 = " << sum0 << "\n";
+      Log::file() << "Volume fraction of block 1 = " << sum1 << "\n";
    }
 
    void testIteratorPlanar()
    {
       printMethod(TEST_FUNC);
+      openLogFile("out/testIteratorPlanar.log");
 
       std::ifstream in;
       openInputFile("in/planar2.prm", in);
@@ -140,8 +158,8 @@ public:
       sys.readParam(in);
       FieldIo fieldIo(sys);
 
-      std::cout << "\n";
-      sys.writeParam(std::cout);
+      Log::file() << "\n";
+      sys.writeParam(Log::file());
 
       Mixture& mix = sys.mixture();
       Domain& domain = sys.domain();
@@ -187,6 +205,7 @@ public:
    void testIteratorSpherical()
    {
       printMethod(TEST_FUNC);
+      openLogFile("out/testIteratorSpherical.log");
 
       std::ifstream in;
       openInputFile("in/spherical1.prm", in);
@@ -194,8 +213,8 @@ public:
       System sys;
       sys.readParam(in);
 
-      std::cout << "\n";
-      sys.writeParam(std::cout);
+      Log::file() << "\n";
+      sys.writeParam(Log::file());
 
       Mixture& mix = sys.mixture();
       Domain& domain = sys.domain();
@@ -219,9 +238,9 @@ public:
       // Solve MDE for initial fields
       mix.compute(sys.wFields(), sys.cFields());
 
-      std::cout << "Average fraction 0 = " 
+      Log::file() << "Average fraction 0 = " 
                 << domain.spatialAverage(sys.cField(0)) << "\n";
-      std::cout << "Average fraction 1 = " 
+      Log::file() << "Average fraction 1 = " 
                 << domain.spatialAverage(sys.cField(1)) << "\n";
 
       std::ofstream out;
@@ -248,6 +267,7 @@ public:
    void testFieldInput()
    {
       printMethod(TEST_FUNC);
+      openLogFile("out/testFieldInput.log");
 
       std::ifstream in;
       openInputFile("in/planar2.prm", in);
@@ -258,8 +278,8 @@ public:
 
       FieldIo fieldIo(sys);
 
-      std::cout << "\n";
-      // sys.writeParam(std::cout);
+      Log::file() << "\n";
+      // sys.writeParam(Log::file());
 
       openInputFile("in/planar.w", in);
       fieldIo.readFields(sys.wFields(), in);
@@ -277,17 +297,18 @@ public:
    void testReadCommandsPlanar()
    {
       printMethod(TEST_FUNC);
+      openLogFile("out/testReadCommandsPlanar.log");
 
       System sys;
       std::ifstream in;
-      std::cout << "\n";
+      Log::file() << "\n";
 
       openInputFile("in/planar2.prm", in);
       sys.readParam(in);
       in.close();
 
       // Set System filemaster prefixes to unit test file prefix
-      std::cout << "Test file prefix = |" 
+      Log::file() << "Test file prefix = |" 
                 << filePrefix() << "|" << std::endl;
       sys.fileMaster().setInputPrefix(filePrefix());
       sys.fileMaster().setOutputPrefix(filePrefix());
@@ -300,17 +321,18 @@ public:
    void testReadCommandsSpherical()
    {
       printMethod(TEST_FUNC);
+      openLogFile("out/testReadCommandsSpherical.log");
 
       System sys;
       std::ifstream in;
-      std::cout << "\n";
+      Log::file() << "\n";
 
       openInputFile("in/spherical2.prm", in);
       sys.readParam(in);
       in.close();
 
       // Set System filemaster prefixes to unit test file prefix
-      std::cout << "Test file prefix = |" 
+      Log::file() << "Test file prefix = |" 
                 << filePrefix() << "|" << std::endl;
       sys.fileMaster().setInputPrefix(filePrefix());
       sys.fileMaster().setOutputPrefix(filePrefix());
@@ -323,20 +345,21 @@ public:
    void testReadCommandsSphericalSweep()
    {
       printMethod(TEST_FUNC);
+      openLogFile("out/testReadCommandsSphericalSweep.log");
 
       System sys;
       std::ifstream in;
-      std::cout << "\n";
+      Log::file() << "\n";
 
       openInputFile("in/spherical3.prm", in);
       sys.readParam(in);
       in.close();
-      std::cout << "Finished reading param file" << std::endl;
-      sys.writeParam(std::cout);
+      Log::file() << "Finished reading param file" << std::endl;
+      sys.writeParam(Log::file());
 
       // Set System filemaster prefixes to unit test file prefix
-      std::cout << "Test file prefix = |" 
-                << filePrefix() << "|" << std::endl;
+      Log::file() << "Test file prefix = |" 
+                  << filePrefix() << "|" << std::endl;
       sys.fileMaster().setInputPrefix(filePrefix());
       sys.fileMaster().setOutputPrefix(filePrefix());
 

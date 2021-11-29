@@ -42,7 +42,6 @@ public:
       }
       RFieldComparison<1> comparison;
       comparison.compare(rf_0,  rf_1);
-      setVerbose(1);
       if (verbose() > 0) {
          std::cout << "\n";
          std::cout << "MaxDiff = " 
@@ -77,7 +76,6 @@ public:
       }
       RFieldComparison<2> comparison;
       comparison.compare(rf_0,  rf_1);
-      setVerbose(1);
       if (verbose() > 0) {
          std::cout << "\n";
          std::cout << "MaxDiff = " 
