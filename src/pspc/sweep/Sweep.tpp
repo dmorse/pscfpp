@@ -70,9 +70,7 @@ namespace Pspc {
    void Sweep<D>::setup() 
    {
       initialize();
-
-      trial_.setSystem(system());
-      trial_.unitCell() = system().unitCell();
+      checkAllocation(trial_);
 
       // Open log summary file
       std::string fileName = baseFileName_;
@@ -98,13 +96,12 @@ namespace Pspc {
    template <int D>
    void Sweep<D>::extrapolate(double sNew) 
    {
-       UTIL_CHECK(historySize() > 0);
+      UTIL_CHECK(historySize() > 0);
 
       // If historySize() == 1, do nothing: Use previous system state
       // as trial for the new state.
-
+      
       if (historySize() > 1) {
-
          UTIL_CHECK(historySize() <= historyCapacity());
 
          // Does the iterator allow a flexible unit cell ?
@@ -121,7 +118,7 @@ namespace Pspc {
          DArray<double>* oldFieldPtr; 
          int i, j, k;
          for (i=0; i < nMonomer; ++i) {
-            newFieldPtr = &trial_.field(i);
+            newFieldPtr = &(trial_.field(i));
 
             // Previous state k = 0 (most recent)
             oldFieldPtr = &state(0).field(i);
@@ -207,7 +204,6 @@ namespace Pspc {
    template <int D>
    void Sweep<D>::getSolution() 
    { 
-      std::cout << "Checkpoint 1.1 (enter Sweep<D>::getSolution) \n";
       state(0).setSystem(system());
       state(0).getSystemState(); 
 
