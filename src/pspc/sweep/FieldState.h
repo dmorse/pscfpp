@@ -192,7 +192,10 @@ namespace Pspc
    // Get the associated System<D> object.
    template <int D, class FT>
    inline System<D>& FieldState<D,FT>::system()
-   {  return *systemPtr_; }
+   {
+      assert(systemPtr_ != 0);  
+      return *systemPtr_; 
+   }
 
    #ifndef PSPC_FIELD_STATE_TPP
    // Suppress implicit instantiation

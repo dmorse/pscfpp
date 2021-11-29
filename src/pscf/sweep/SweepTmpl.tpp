@@ -60,6 +60,7 @@ namespace Pscf {
 
       // Initial setup, before a sweep
       setup();
+      std::cout << "Checkpoint 0 (exited setup before sweep) \n";
 
       // Solve for initial state of sweep
       int error;
@@ -72,11 +73,11 @@ namespace Pscf {
       if (error) {
          UTIL_THROW("Failure to converge initial state of sweep");
       } else {
-         std::cout << "Checkpoint 1! \n";
+         std::cout << "Checkpoint 1 (accepting initial solution) \n";
          accept(sNew);
       }
 
-      std::cout << "Checkpoint 2! \n";
+      std::cout << "Checkpoint 2 (begin sweep loop) \n";
       // Loop over states on path
       bool finished = false;   // Are we finished with the loop?
       while (!finished) {
@@ -86,17 +87,19 @@ namespace Pscf {
             sNew = s(0) + ds; 
             std::cout << std::endl;
             std::cout << "Attempt s = " << sNew << std::endl;
-            std::cout << "Checkpoint 3! \n";
+            std::cout << "Checkpoint 3 (entering setParameters) \n";
             // Set non-adjustable system parameters to new values
             setParameters(sNew);
 
             // Set a guess for all state variables by polynomial extrapolation.
             extrapolate(sNew);
-            std::cout << "Checkpoint 4! \n";
+            std::cout << "Checkpoint 4 (exited extrapolate) \n";
+
             // Attempt iterative SCFT solution
             isContinuation = true;
             error = solve(isContinuation);
-            std::cout << "Checkpoint 5! \n";
+            std::cout << "Checkpoint 5 (exited solve) \n";
+
             if (error) {
 
                // Upon failure, reset state to last converged solution
@@ -112,6 +115,7 @@ namespace Pscf {
 
                // Upon successful convergence, update history and nAccept
                accept(sNew);
+               std::cout << "Checkpoint 6 (accepted solution) \n";
 
             }
          }

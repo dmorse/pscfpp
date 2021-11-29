@@ -56,7 +56,12 @@ namespace Pspc {
    */
    template <int D>
    void Sweep<D>::checkAllocation(BasisFieldState<D>& state) 
-   {  state.allocate(); }
+   { 
+      UTIL_CHECK(hasSystem()); 
+      state.setSystem(system());
+      state.allocate(); 
+      state.unitCell() = system().unitCell();
+   }
 
    /*
    * Setup operations at the beginning of a sweep.
@@ -66,12 +71,8 @@ namespace Pspc {
    {
       initialize();
 
-      // Check or create associations of states with the parent System
-      // Note: FieldState::setSystem does nothing if already set.
-      for (int i=0; i < historyCapacity(); ++i) {
-         state(i).setSystem(system());
-      }
       trial_.setSystem(system());
+      trial_.unitCell() = system().unitCell();
 
       // Open log summary file
       std::string fileName = baseFileName_;
@@ -206,7 +207,7 @@ namespace Pspc {
    template <int D>
    void Sweep<D>::getSolution() 
    { 
-      std::cout << "Checkpoint 1.1! \n";
+      std::cout << "Checkpoint 1.1 (enter Sweep<D>::getSolution) \n";
       state(0).setSystem(system());
       state(0).getSystemState(); 
 

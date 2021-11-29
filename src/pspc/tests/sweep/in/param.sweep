@@ -31,10 +31,11 @@ System{
   }
   hasSweep  1
   LinearSweep{
-     ns            3
-     baseFileName  ref/
-     nParameter    2
+     ns            10
+     baseFileName  out/
+     nParameter    1
      parameters    block 0 0 0.05
-                   chi   1 0 1.00
   }
 }
+
+                   chi   1 0 1.00

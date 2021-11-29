@@ -29,9 +29,6 @@ namespace Pspc {
    template <int D>
    class LinearSweepParameter;
 
-//    template <int D>
-//    class LinearSweep;
-
    using namespace Util;
 
    /**
@@ -73,6 +70,11 @@ namespace Pspc {
       * \param out  output file, open for writing
       */
       void outputSummary(std::ostream& out);
+
+   protected:
+
+      using Sweep<D>::system;
+      using Sweep<D>::hasSystem;
    
    private:
 

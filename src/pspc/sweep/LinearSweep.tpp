@@ -29,7 +29,7 @@ namespace Pspc {
       parameters_.allocate(nParameter_);
       this->template readDArray< LinearSweepParameter<D> >(in, "parameters", parameters_, nParameter_);
       // verify net zero change in volume fractions
-      double sum = 0;
+      double sum = 0.0;
       for (int i = 0; i < nParameter_; ++i) {
          if (parameters_[i].type() == "phi") {
             sum += parameters_[i].change();
@@ -42,8 +42,10 @@ namespace Pspc {
    template <int D>
    void LinearSweep<D>::setup()
    {
+      UTIL_CHECK(hasSystem());
+      Sweep<D>::setup();
       for (int i = 0; i < nParameter_; ++i) {
-         parameters_[i].setSystem(Sweep<D>::system());
+         parameters_[i].setSystem(system());
          parameters_[i].getInitial();
       }
    }

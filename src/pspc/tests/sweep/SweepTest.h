@@ -105,7 +105,7 @@ public:
       DArray< DArray<double> > wFields_check;
       wFields_check = system.wFields();
       system.readWBasis("in/diblock/bcc/omega.in");
-      system.iterate();
+      //system.iterate();
 
       //sweep
       system.sweep();
