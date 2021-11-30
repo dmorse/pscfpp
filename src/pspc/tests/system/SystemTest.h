@@ -459,13 +459,16 @@ public:
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
 
+      // Read parameter file
       std::ifstream in;
       openInputFile("in/triblock/altGyr/param", in);
       system.readParam(in);
       in.close();
 
+      // Input a converged solution from PSCF Fortran
       system.readWBasis("in/triblock/altGyr/w.bf");
 
+      // Make copy of input fields for later comparison
       DArray< DArray<double> > wFields_check;
       wFields_check = system.wFields();
 
@@ -473,14 +476,33 @@ public:
       system.writeWBasis("out/testIterate3D_altGyr_flex_w.bf");
       system.writeCBasis("out/testIterate3D_altGyr_flex_c.bf");
 
+      // Compare w fields
       BFieldComparison comparison(1);
       comparison.compare(wFields_check, system.wFields());
+      // setVerbose(1);
       if (verbose() > 0) {
          std::cout << "\n";
          std::cout << "Max error = " << comparison.maxDiff() << "\n";
       }
-      TEST_ASSERT(comparison.maxDiff() < 5.0E-6);
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-6);
 
+      // Compare Helmoltz free energies
+      double fHelmholtz = system.fHelmholtz();
+      double fHelmholtzRef = 3.9642295402;     // from PSCF Fortran
+      double fDiff = fHelmholtz - fHelmholtzRef;
+      if (verbose() > 0) {
+         std::cout << "fHelmholtz diff = " << fDiff << "\n";
+      }
+      TEST_ASSERT(std::abs(fDiff) < 1.0E-7);
+
+      // Compare relaxed unit cell parameters
+      double cellParam = system.unitCell().parameter(0); 
+      double cellParamRef = 2.2348701424;     // from PSCF Fortran
+      double cellDiff = cellParam - cellParamRef;
+      if (verbose() > 0) {
+         std::cout << "Cell param diff = " << cellDiff << "\n";
+      }
+      TEST_ASSERT(std::abs(cellDiff) < 1.0E-7);
    }
 
    void testIterate3D_c15_1_flex()
@@ -509,6 +531,7 @@ public:
 
       BFieldComparison comparison(1);
       comparison.compare(wFields_check, system.wFields());
+      // setVerbose(1);
       if (verbose() > 0) {
          std::cout << "\n";
          std::cout << "Max error = " << comparison.maxDiff() << "\n";
