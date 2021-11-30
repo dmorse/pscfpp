@@ -143,6 +143,12 @@ namespace Pspc {
       /// Pointer to parent system.
       System<D>* systemPtr_;
 
+      /// Output data to several files after convergence
+      void outputSolution();
+
+      /// Output brief summary of thermodynamic properties
+      void outputSummary(std::ostream&);
+
    };
 
 } // namespace Pspc

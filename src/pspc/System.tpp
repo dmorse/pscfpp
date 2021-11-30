@@ -533,8 +533,8 @@ namespace Pspc
    void System<D>::outputThermo(std::ostream& out)
    {
       out << std::endl;
-      out << "fHelmholtz = " << Dbl(fHelmholtz(), 18, 11) << std::endl;
-      out << "pressure   = " << Dbl(pressure(), 18, 11) << std::endl;
+      out << "fHelmholtz    " << Dbl(fHelmholtz(), 18, 11) << std::endl;
+      out << "pressure      " << Dbl(pressure(), 18, 11) << std::endl;
       out << std::endl;
 
       int np = mixture().nPolymer();
@@ -542,9 +542,9 @@ namespace Pspc
 
       if (np > 0) {
          out << "Polymers:" << std::endl;
-         out << "    i"
-             << "        phi[i]      "
-             << "        mu[i]       " 
+         out << "     "
+             << "        phi         "
+             << "        mu          " 
              << std::endl;
          for (int i = 0; i < np; ++i) {
             out << Int(i, 5) 
@@ -557,9 +557,9 @@ namespace Pspc
 
       if (ns > 0) {
          out << "Solvents:" << std::endl;
-         out << "    i"
-             << "        phi[i]      "
-             << "        mu[i]       " 
+         out << "     "
+             << "        phi         "
+             << "        mu          " 
              << std::endl;
          for (int i = 0; i < ns; ++i) {
             out << Int(i, 5) 

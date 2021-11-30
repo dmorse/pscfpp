@@ -41,13 +41,6 @@ namespace Pscf
       ~UnitCellBase();
 
       /**
-      * Compute all private data, given latticeSystem and parameters.
-      *
-      * Calls initializeToZero, setBasis, computeDerivatives internally.
-      */
-      void setLattice();
-
-      /**
       * Set all the parameters of unit cell (new version).
       *
       * \param parameters array of unit cell parameters
@@ -195,6 +188,13 @@ namespace Pscf
       * Number of parameters required to specify unit cell.
       */
       int nParameter_;
+
+      /**
+      * Compute all private data, given latticeSystem and parameters.
+      *
+      * Calls initializeToZero, setBasis, computeDerivatives internally.
+      */
+      void setLattice();
 
    private:
 

@@ -95,19 +95,14 @@ public:
    void testLinearSweepIterate()
    {
       printMethod(TEST_FUNC);
+      openLogFile("out/testLinearSweepIterate");
 
-      // set up system with Linear Sweep Object
+      // Set up system with a LinearSweep object
       System<3> system;
       SweepTest::SetUpSystem(system, "in/param.sweep");
       
-      // initial guess and iterate
+      // Read initial w fields and sweep
       system.readWBasis("in/diblock/bcc/omega.ref");
-      DArray< DArray<double> > wFields_check;
-      wFields_check = system.wFields();
-      system.readWBasis("in/diblock/bcc/omega.in");
-      //system.iterate();
-
-      //sweep
       system.sweep();
 
    }

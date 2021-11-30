@@ -526,7 +526,6 @@ namespace Pspc
                parameters_.append(wCpArrays_[m] + lambda_ * dCpArrays_[m]);
             }
             unitCell.setParameters(parameters_);
-            unitCell.setLattice();
             mixture.setupUnitCell(unitCell);
 	         system().basis().update();
          }

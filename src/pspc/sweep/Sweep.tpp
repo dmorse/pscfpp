@@ -1,3 +1,4 @@
+#ifndef PSPC_SWEEP_TPP
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
@@ -8,8 +9,10 @@
 #include "Sweep.h"
 #include <pspc/System.h>
 #include <pspc/iterator/AmIterator.h>
+#include <pscf/inter/ChiInteraction.h>
 #include <pscf/sweep/SweepTmpl.tpp>
 #include <util/misc/FileMaster.h>
+#include <util/misc/ioUtil.h>
 
 namespace Pscf {
 namespace Pspc {
@@ -207,16 +210,63 @@ namespace Pspc {
       state(0).setSystem(system());
       state(0).getSystemState(); 
 
-      // Output solution
-      // int i = nAccept() - 1;
-      // std::string fileName = baseFileName_;
-      // fileName += toString(i);
-      // outputSolution(fileName);
+      // Output converged solution to several files
+      outputSolution();
 
       // Output summary to log file
-      // outputSummary(logFile_);
+      outputSummary(logFile_);
 
    };
+
+   template <int D>
+   void Sweep<D>::outputSolution()
+   {
+      std::ofstream out;
+      std::string outFileName;
+      std::string indexString = toString(nAccept() - 1);
+
+      // Open parameter file, with thermodynamic properties at end
+      outFileName = baseFileName_;
+      outFileName += indexString;
+      outFileName += "_dat";
+      system().fileMaster().openOutputFile(outFileName, out);
+
+      // Write data file, with thermodynamic properties at end
+      out << "System{" << std::endl;
+      system().mixture().writeParam(out);
+      system().interaction().writeParam(out);
+      out << "}" << std::endl;
+      out << std::endl;
+      out << "unitCell       " << system().unitCell();
+      system().outputThermo(out);
+      out.close();
+
+      // Write w fields
+      outFileName = baseFileName_;
+      outFileName += indexString;
+      outFileName += "_w";
+      outFileName += ".bf";
+      system().writeWBasis(outFileName);
+
+      // Write c fields
+      outFileName = baseFileName_;
+      outFileName += indexString;
+      outFileName += "_c";
+      outFileName += ".bf";
+      system().writeCBasis(outFileName);
+
+   }
+
+   template <int D>
+   void Sweep<D>::outputSummary(std::ostream& out)
+   {
+      int i = nAccept() - 1;
+      double sNew = s(0);
+      out << Int(i,5) << Dbl(sNew)
+          << Dbl(system().fHelmholtz(),16)
+          << Dbl(system().pressure(),16);
+      out << std::endl;
+   }
 
    template <int D>
    void Sweep<D>::cleanup() 
@@ -224,3 +274,4 @@ namespace Pspc {
 
 } // namespace Pspc
 } // namespace Pscf
+#endif
