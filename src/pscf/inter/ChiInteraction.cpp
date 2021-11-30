@@ -43,8 +43,21 @@ namespace Pscf {
       // Read nonzero chi parameters
       readDSymmMatrix(in, "chi", chi_, nMonomer());
 
-      chiInverse_.allocate(nMonomer(), nMonomer());
-      idemp_.allocate(nMonomer(), nMonomer());
+      // Compute relevant AM iterator quantities.
+      updateMembers();
+
+   }
+
+   void ChiInteraction::updateMembers()
+   {
+      if (!chiInverse_.isAllocated()) {
+         chiInverse_.allocate(nMonomer(), nMonomer());
+      }
+      if (!idemp_.isAllocated()) {
+         idemp_.allocate(nMonomer(), nMonomer());
+      }
+
+      // Calculate inverse chi matrix
       if (nMonomer() == 2) {
          double det = chi_(0,0)*chi_(1, 1) - chi_(0,1)*chi_(1,0);
          double norm = chi_(0,0)*chi_(0, 0) + chi_(1,1)*chi_(1,1)
@@ -64,6 +77,7 @@ namespace Pscf {
          solver.inverse(chiInverse_);
       }
 
+      // Calculate idempotent matrix
       double sum = 0;
       int i, j, k;
 
@@ -77,7 +91,7 @@ namespace Pscf {
             idemp_(k,i) = idemp_(0,i);
          }
       }
-
+      // normalization
       for (i = 0; i < nMonomer(); ++i) { //row
          for (j = 0; j < nMonomer(); ++j) { //coloumn
             idemp_(i,j) /= sum;
@@ -85,8 +99,8 @@ namespace Pscf {
          idemp_(i,i) +=1 ;
       }
       
+      // Calculate sum_inv_
       sum_inv_ = sum;
-
    }
 
    /*
@@ -128,16 +142,8 @@ namespace Pscf {
                             Array<double>& c, double& xi)
    const
    {
-      double sum1 = 0.0;
-      double sum2 = 0.0;
+      computeXi(w,xi);
       int i, j;
-      for (i = 0; i < nMonomer(); ++i) {
-         for (j = 0; j < nMonomer(); ++j) {
-            sum1 += chiInverse_(i, j)*w[j];
-            sum2 += chiInverse_(i, j);
-         }
-      }
-      xi = (sum1 - 1.0)/sum2;
       for (i = 0; i < nMonomer(); ++i) {
          c[i] = 0;
          for (j = 0; j < nMonomer(); ++j) {

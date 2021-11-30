@@ -98,6 +98,13 @@ namespace Pscf {
       const;
 
       /**
+      * Compute the inverse of the chi matrix, along with the
+      * corresponding idempotent matrix and sum of all elements.
+      * Must be called after making any changes to the chi matrix.
+      */
+     void updateMembers();
+
+      /**
       * Return one element of the chi matrix.
       *
       * \param i row index
@@ -129,15 +136,23 @@ namespace Pscf {
       */  
       double idemp(int i, int j); 
 
+      /**
+      * Return the sum of all elements in the chiInverse_ matrix.
+      */
       double sum_inv();
+
    private:
 
+      /// Matrix of Flory-Huggin chi interaction parameters.
       DMatrix<double> chi_;
 
+      /// Linear algebraic inverse of the chi_ matrix.
       DMatrix<double> chiInverse_;
 
+      /// Idempotent matrix used in calculating field residuals.
       DMatrix<double> idemp_;
 
+      /// Sum of all elements in chiInverse_.
       double sum_inv_;
 
    };
@@ -148,7 +163,14 @@ namespace Pscf {
    {  return chi_(i, j); }
 
    inline void ChiInteraction::setChi(int i, int j, double chi)
-   {  chi_(i,j) =  chi; }
+   {  
+      chi_(i,j) =  chi; 
+      if (i!=j) {
+         chi_(j,i) = chi;
+      }
+      // compute relevant AM iterator quantities. 
+      updateMembers();
+   }
 
    inline double ChiInteraction::chiInverse(int i, int j)
    {  return chiInverse_(i, j); }

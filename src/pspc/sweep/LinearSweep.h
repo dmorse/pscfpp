@@ -135,7 +135,7 @@ namespace Pspc {
          std::transform(buffer.begin(), buffer.end(), 
                                     buffer.begin(), ::tolower);
 
-         if (buffer == "block") {
+         if (buffer == "block" || buffer == "block_length") {
             type_ = Block;
             nID_ = 2; // polymer and block identifiers
          } else 
@@ -147,15 +147,23 @@ namespace Pspc {
             type_ = Kuhn;
             nID_ = 1; // monomer type identifier
          } else 
-         if (buffer == "phi") {
-            type_ = Phi;
-            nID_ = 2; // polymer (0) or solvent (1), and species identifier.
+         if (buffer == "phi_polymer") {
+            type_ = Phi_Polymer;
+            nID_ = 1; //species identifier.
          } else 
-         if (buffer == "mu") {
-            type_ = Mu;
-            nID_ = 2; // polymer (0) or solvent (1), and species identifier.
+         if (buffer == "phi_solvent") {
+            type_ = Phi_Solvent;
+            nID_ = 1; //species identifier.
          } else 
-         if (buffer == "solvent") {
+         if (buffer == "mu_polymer") {
+            type_ = Mu_Polymer;
+            nID_ = 1; //species identifier.
+         } else 
+         if (buffer == "mu_solvent") {
+            type_ = Mu_Solvent;
+            nID_ = 1; //species identifier.
+         } else 
+         if (buffer == "solvent" || buffer == "solvent_size") {
             type_ = Solvent;
             UTIL_THROW("I don't know how to implement 'solvent'.");
          } else {
@@ -207,7 +215,7 @@ namespace Pspc {
       std::string type() const
       {
          if (type_ == Block) {
-            return "block";
+            return "block_length";
          } else 
          if (type_ == Chi) {
             return "chi";
@@ -215,15 +223,20 @@ namespace Pspc {
          if (type_ == Kuhn) {
             return "kuhn";
          } else 
-         if (type_ == Phi) {
-            return "phi";
+         if (type_ == Phi_Polymer) {
+            return "phi_polymer";
          } else 
-         if (type_ == Mu) {
-            return "mu";
-         } else 
+         if (type_ == Phi_Solvent) {
+            return "phi_solvent";
+         } else  
+         if (type_ == Mu_Polymer) {
+            return "mu_polymer";
+         } else
+         if (type_ == Mu_Solvent) {
+            return "mu_solvent";
+         } else  
          if (type_ == Solvent) {
-            return "solvent";
-            UTIL_THROW("I don't know how to implement 'solvent'.");
+            return "solvent_size";
          } else {
             UTIL_THROW("This should never happen.");
          }
@@ -276,7 +289,8 @@ namespace Pspc {
    private:
 
       /// Enumeration of allowed parameter types.
-      enum paramType { Block, Chi, Kuhn, Phi, Mu, Solvent };
+      enum paramType { Block, Chi, Kuhn, Phi_Polymer, Phi_Solvent,
+                                     Mu_Polymer, Mu_Solvent, Solvent};
 
       /// Type of parameter associated with an object of this class. 
       paramType type_;
@@ -308,28 +322,20 @@ namespace Pspc {
          if (type_ == Kuhn) {
             return systemPtr_->mixture().monomer(id(0)).step();
          } else 
-         if (type_ == Phi) {
-            if (id(0)==0) {
-               return systemPtr_->mixture().polymer(id(1)).phi();
-            } else
-            if (id(0)==1) {
-               return systemPtr_->mixture().solvent(id(1)).phi();
-            } else {
-               UTIL_THROW("Invalid choice between polymer (0) and solvent (1).");
-            }
+         if (type_ == Phi_Polymer) {
+            return systemPtr_->mixture().polymer(id(0)).phi();
+         } else
+         if (type_ == Phi_Solvent) {
+            return systemPtr_->mixture().solvent(id(0)).phi();
          } else 
-         if (type_ == Mu) {
-            if (id(0)==0) {
-               return systemPtr_->mixture().polymer(id(1)).mu();
-            } else
-            if (id(0)==1) {
-               return systemPtr_->mixture().solvent(id(1)).mu();
-            } else {
-               UTIL_THROW("Invalid choice between polymer (0) and solvent (1).");
-            }
+         if (type_ == Mu_Polymer) {
+            return systemPtr_->mixture().polymer(id(0)).mu();
+         } else
+         if (type_ == Mu_Solvent) {
+            return systemPtr_->mixture().solvent(id(0)).mu();
          } else 
          if (type_ == Solvent) {
-            UTIL_THROW("I don't know how to implement 'solvent'.");
+            return systemPtr_->mixture().solvent(id(0)).size();
          } else {
             UTIL_THROW("This should never happen.");
          }
@@ -358,29 +364,21 @@ namespace Pspc {
                }
             }
             // Solvent kuhn doesn't need updating. 
+         } else
+         if (type_ == Phi_Polymer) {
+            systemPtr_->mixture().polymer(id(0)).setPhi(newVal);
+         } else
+         if (type_ == Phi_Solvent) {
+            systemPtr_->mixture().solvent(id(0)).setPhi(newVal);
          } else 
-         if (type_ == Phi) {
-            if (id(0)==0) {
-            systemPtr_->mixture().polymer(id(1)).setPhi(newVal);
-            } else
-            if (id(0)==1) {
-               systemPtr_->mixture().solvent(id(1)).setPhi(newVal);
-            } else {
-               UTIL_THROW("Invalid choice between polymer (0) and solvent (1).");
-            }
-         } else 
-         if (type_ == Mu) {
-            if (id(0)==0) {
-               systemPtr_->mixture().polymer(id(1)).setMu(newVal);
-            } else
-            if (id(0)==1) {
-               systemPtr_->mixture().solvent(id(1)).setMu(newVal);
-            } else {
-               UTIL_THROW("Invalid choice between polymer (0) and solvent (1).");
-            }
+         if (type_ == Mu_Polymer) {
+            systemPtr_->mixture().polymer(id(0)).setMu(newVal);
+         } else
+         if (type_ == Mu_Solvent) {
+            systemPtr_->mixture().solvent(id(0)).setMu(newVal);
          } else 
          if (type_ == Solvent) {
-            UTIL_THROW("I don't know how to implement 'solvent'.");
+            systemPtr_->mixture().solvent(id(0)).setSize(newVal);
          } else {
             UTIL_THROW("This should never happen.");
          }

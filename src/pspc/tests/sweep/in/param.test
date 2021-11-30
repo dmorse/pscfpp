@@ -1,4 +1,4 @@
-block 0 0 0.25
-chi   0 1 5.00
-kuhn  0 0.1
-phi   0 0 -0.01
+block_length 0 0 0.25
+chi          0 1 5.00
+kuhn         0 0.1
+phi_polymer  0 -0.01

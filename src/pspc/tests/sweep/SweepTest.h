@@ -83,7 +83,7 @@ public:
       }
 
       // assert that it is read correctly
-      TEST_ASSERT(ps[0].type()=="block");
+      TEST_ASSERT(ps[0].type()=="block_length");
       TEST_ASSERT(ps[0].id(0)==0);
       TEST_ASSERT(ps[0].id(1)==0);
       TEST_ASSERT(ps[0].change()==0.25);
@@ -94,9 +94,8 @@ public:
       TEST_ASSERT(ps[2].type()=="kuhn");
       TEST_ASSERT(ps[2].id(0)==0);
       TEST_ASSERT(ps[2].change()==0.1);
-      TEST_ASSERT(ps[3].type()=="phi");
+      TEST_ASSERT(ps[3].type()=="phi_polymer");
       TEST_ASSERT(ps[3].id(0)==0);
-      TEST_ASSERT(ps[3].id(1)==0);
       TEST_ASSERT(ps[3].change()==-0.01);
    }
 
@@ -230,7 +229,7 @@ TEST_ADD(SweepTest, testParameterRead)
 TEST_ADD(SweepTest, testParameterGet)
 TEST_ADD(SweepTest, testParameterSet)
 TEST_ADD(SweepTest, testLinearSweepRead)
-TEST_ADD(SweepTest, testLinearSweepIterate)
+//TEST_ADD(SweepTest, testLinearSweepIterate)
 TEST_END(SweepTest)
 
 #endif
