@@ -12,6 +12,7 @@
 #include <pscf/inter/ChiInteraction.h>
 #include <util/global.h>
 #include <iostream>
+#include <algorithm>
 #include <iomanip>
 
 namespace Pscf {

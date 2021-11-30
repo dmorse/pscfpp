@@ -12,7 +12,6 @@
 #include <pspc/System.h>
 #include <cstdio>
 
-
 namespace Pscf {
 namespace Pspc {
 
