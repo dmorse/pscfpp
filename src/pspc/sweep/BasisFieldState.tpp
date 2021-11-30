@@ -10,6 +10,7 @@
 
 #include "BasisFieldState.h"
 #include "FieldState.tpp"
+#include <util/global.h>
 
 namespace Pscf {
 namespace Pspc
@@ -96,7 +97,6 @@ namespace Pspc
    {
       // Get system unit cell
       unitCell() = system().unitCell();
-
       // Get system wFields
       allocate();
       int nMonomer = system().mixture().nMonomer();

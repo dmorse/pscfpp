@@ -106,6 +106,14 @@ namespace Pscf {
       double chi(int i, int j);
 
       /**
+      * Change one element of the chi matrix.
+      *
+      * \param i row index
+      * \param j column index
+      */
+      void setChi(int i, int j, double chi);
+
+      /**
       * Return one element of the inverse chi matrix.
       *
       * \param i row index
@@ -138,6 +146,9 @@ namespace Pscf {
 
    inline double ChiInteraction::chi(int i, int j)
    {  return chi_(i, j); }
+
+   inline void ChiInteraction::setChi(int i, int j, double chi)
+   {  chi_(i,j) =  chi; }
 
    inline double ChiInteraction::chiInverse(int i, int j)
    {  return chiInverse_(i, j); }

@@ -69,6 +69,7 @@ namespace Pscf {
       Log::file() << "Attempt s = " << sNew << std::endl;
       bool isContinuation = false; // False on first step
       error = solve(isContinuation);
+      
       if (error) {
          UTIL_THROW("Failure to converge initial state of sweep");
       } else {
@@ -94,7 +95,6 @@ namespace Pscf {
             // Attempt iterative SCFT solution
             isContinuation = true;
             error = solve(isContinuation);
-
             if (error) {
 
                // Upon failure, reset state to last converged solution
@@ -110,7 +110,6 @@ namespace Pscf {
 
                // Upon successful convergence, update history and nAccept
                accept(sNew);
-
             }
          }
          if (sNew + ds > 1.0000001) {
@@ -156,7 +155,6 @@ namespace Pscf {
          sHistory_[i] = sHistory_[i-1];
       }
       sHistory_[0] = sNew;
-
       // Shift elements of stateHistory_ (pointers to stored solutions)
       State* temp;
       temp = stateHistory_[historyCapacity_-1];
@@ -164,16 +162,13 @@ namespace Pscf {
          stateHistory_[i] = stateHistory_[i-1];
       }
       stateHistory_[0] = temp;
-
       // Update counters
       ++nAccept_;
       if (historySize_ < historyCapacity_) {
          ++historySize_;
       }
-
       // Call getSolution to copy system state to state(0).
       getSolution();
-
    }
 
    /*

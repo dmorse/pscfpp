@@ -195,10 +195,10 @@ namespace Pspc
             }
 
             // Successful completion (i.e., converged within tolerance)
+            cleanUp();
             return 0;
 
          } else {
-
             if (itr <= maxHist_ + 1) {
                if (nHist_ > 0) {
                   invertMatrix_.allocate(nHist_, nHist_);
@@ -253,6 +253,7 @@ namespace Pspc
       }
 
       // Failure: iteration counter itr reached maxItr without converging
+      cleanUp();
       return 1;
    }
 
@@ -480,7 +481,6 @@ namespace Pspc
 
             }
             unitCell.setParameters(parameters_);
-            unitCell.setLattice();
             mixture.setupUnitCell(unitCell);
             system().basis().update();
          }
@@ -528,9 +528,26 @@ namespace Pspc
             unitCell.setParameters(parameters_);
             unitCell.setLattice();
             mixture.setupUnitCell(unitCell);
-	    system().basis().update();
+	         system().basis().update();
          }
       }
+   }
+
+   template <int D>
+   void AmIterator<D>::cleanUp()
+   {
+      // Deallocate allocated arrays and matrices, if allocated.
+      if (invertMatrix_.isAllocated()) {
+         invertMatrix_.deallocate();
+      }
+      if (coeffs_.isAllocated()) {
+         coeffs_.deallocate();
+      }
+      if (vM_.isAllocated()) {
+         vM_.deallocate();
+      }
+
+      
    }
 
 }

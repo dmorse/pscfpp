@@ -34,8 +34,8 @@ namespace Pspc {
    template <int D>
    Sweep<D>::Sweep(System<D> & system) 
     : SweepTmpl< BasisFieldState<D> >(PSPC_HISTORY_CAPACITY),
-      systemPtr_(0)
-   {  setSystem(system); }
+      systemPtr_(&system)
+   {}
 
    /*
    * Destructor.
@@ -48,15 +48,20 @@ namespace Pspc {
    * Set association with a parent system.
    */
    template <int D>
-   void Sweep<D>::setSystem(System<D> & system) 
-   {  systemPtr_ = & system; }
+   void Sweep<D>::setSystem(System<D>& system) 
+   {  systemPtr_ = &system; }
 
    /*
    * Check allocation of one state object, allocate if necessary.
    */
    template <int D>
    void Sweep<D>::checkAllocation(BasisFieldState<D>& state) 
-   {  state.allocate(); }
+   { 
+      UTIL_CHECK(hasSystem()); 
+      state.setSystem(system());
+      state.allocate(); 
+      state.unitCell() = system().unitCell();
+   }
 
    /*
    * Setup operations at the beginning of a sweep.
@@ -65,13 +70,7 @@ namespace Pspc {
    void Sweep<D>::setup() 
    {
       initialize();
-
-      // Check or create associations of states with the parent System
-      // Note: FieldState::setSystem does nothing if already set.
-      for (int i=0; i < historyCapacity(); ++i) {
-         state(i).setSystem(system());
-      }
-      trial_.setSystem(system());
+      checkAllocation(trial_);
 
       // Open log summary file
       std::string fileName = baseFileName_;
@@ -97,13 +96,12 @@ namespace Pspc {
    template <int D>
    void Sweep<D>::extrapolate(double sNew) 
    {
-       UTIL_CHECK(historySize() > 0);
+      UTIL_CHECK(historySize() > 0);
 
       // If historySize() == 1, do nothing: Use previous system state
       // as trial for the new state.
-
+      
       if (historySize() > 1) {
-
          UTIL_CHECK(historySize() <= historyCapacity());
 
          // Does the iterator allow a flexible unit cell ?
@@ -120,7 +118,7 @@ namespace Pspc {
          DArray<double>* oldFieldPtr; 
          int i, j, k;
          for (i=0; i < nMonomer; ++i) {
-            newFieldPtr = &trial_.field(i);
+            newFieldPtr = &(trial_.field(i));
 
             // Previous state k = 0 (most recent)
             oldFieldPtr = &state(0).field(i);
@@ -206,6 +204,7 @@ namespace Pspc {
    template <int D>
    void Sweep<D>::getSolution() 
    { 
+      state(0).setSystem(system());
       state(0).getSystemState(); 
 
       // Output solution

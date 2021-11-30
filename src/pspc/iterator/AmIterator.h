@@ -99,7 +99,7 @@ namespace Pspc
       bool isConverged();
 
       /**
-      * Determine the coefficients that would minimize invertMatrix_ Umn
+      * Determine the coefficients that would minimize invertMatrix_
       */
       void minimizeCoeff(int itr);
 
@@ -107,6 +107,11 @@ namespace Pspc
       * Rebuild wFields for the next iteration from minimized coefficients
       */
       void buildOmega(int itr);
+
+      /**
+      * Clean up after a call to solve(), enabling future calls to solve.
+      */
+      void cleanUp();
 
    private:
 

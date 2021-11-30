@@ -395,6 +395,12 @@ namespace Pspc
       int iterate();
    
       /**
+      * Sweep in parameter space, solving SCFT problems at each point.
+      * 
+      */
+      void sweep();
+
+      /**
       * Solve the modified diffusion equation once, without iteration.
       *
       * This function calls the mixture().compute() function to solve
@@ -603,9 +609,8 @@ namespace Pspc
       */
       IteratorFactory<D>* iteratorFactoryPtr_;
 
-      #if 0
       /**
-      * Pointer to an Sweep object
+      * Pointer to a Sweep object
       */
       Sweep<D>* sweepPtr_;
 
@@ -613,7 +618,6 @@ namespace Pspc
       * Pointer to SweepFactory object
       */
       SweepFactory<D>* sweepFactoryPtr_;
-      #endif
 
       /**
       * Array of chemical potential fields for monomer types.
@@ -732,12 +736,10 @@ namespace Pspc
       */
       bool hasCFields_;
 
-      #if 0
       /**
       * Does this system have a Sweep object?
       */
       bool hasSweep_;
-      #endif
 
       // Private member functions
 
