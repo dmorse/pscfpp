@@ -16,10 +16,9 @@ namespace Pspc {
 
    // Default Constructor
    template <int D>
-   KFieldComparison<D>::KFieldComparison(int begin)
+   KFieldComparison<D>::KFieldComparison()
     : maxDiff_(0.0),
-      rmsDiff_(0.0),
-      begin_(begin)
+      rmsDiff_(0.0)
    {};
 
    // Comparator for individual fields.
@@ -32,7 +31,7 @@ namespace Pspc {
       double diffSq, diff, d0, d1;
       maxDiff_ = 0.0;
       rmsDiff_ = 0.0;
-      for (int i = begin_; i < n; ++i) {
+      for (int i = 0; i < n; ++i) {
          d0 = a[i][0] - b[i][0];
          d1 = a[i][1] - b[i][1];
          diffSq = d0*d0 + d1*d1;
@@ -68,15 +67,11 @@ namespace Pspc {
          n = a[i].capacity();
          UTIL_CHECK(n > 0);
          UTIL_CHECK(n == b[i].capacity());
-         for (j = begin_; j < n; ++j) {
+         for (j = 0; j < n; ++j) {
             d0 = a[i][j][0] - b[i][j][0];
             d1 = a[i][j][1] - b[i][j][1];
             diffSq = d0*d0 + d1*d1;
             diff = sqrt(diffSq);
-            //std::cout << i
-            //          << "  (" << a[i][j][0]  << " ,  " << a[i][j][1]
-            //          << ") (" << b[i][j][0]  << " ,  " << b[i][j][1]
-            //          << ")  " << diff << std::endl;
             if (diff > maxDiff_) {
                maxDiff_ = diff;
             }
