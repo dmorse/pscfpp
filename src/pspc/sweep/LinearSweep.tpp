@@ -8,8 +8,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pspc/System.h>
 #include "LinearSweep.h"
+#include <pspc/System.h>
+#include <cstdio>
+
 
 namespace Pscf {
 namespace Pspc {

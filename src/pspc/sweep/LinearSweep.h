@@ -9,12 +9,10 @@
 */
 
 #include "Sweep.h"      // base class
-#include <pscf/inter/ChiInteraction.h> // necessary to be able to read/set chi values
+#include <pscf/inter/ChiInteraction.h>
 #include <util/global.h>
-#include <util/containers/DArray.h>
 #include <iostream>
 #include <iomanip>
-#include <cstdio>
 
 namespace Pscf {
 namespace Pspc {
@@ -237,6 +235,7 @@ namespace Pspc {
       }
 
    private:
+
       /// Enumeration of allowed parameter types.
       enum paramType { Block, Chi, Kuhn, Phi, Mu, Solvent };
 
@@ -362,7 +361,8 @@ namespace Pspc {
 
    // Definitions of operators, no explicit instantiations. 
    template <int D>
-   std::istream& operator >> (std::istream& in, LinearSweepParameter<D>& param)
+   std::istream& operator >> (std::istream& in, 
+                              LinearSweepParameter<D>& param)
    {
       // read the parameter type.
       param.readParamType(in);  
@@ -377,7 +377,8 @@ namespace Pspc {
    }
 
    template <int D>
-   std::ostream& operator << (std::ostream& out, const LinearSweepParameter<D>& param)
+   std::ostream& operator << (std::ostream& out, 
+                              LinearSweepParameter<D> const & param)
    {
       param.writeParamType(out);
       out << "  ";
