@@ -185,13 +185,13 @@ public:
       TEST_ASSERT(eq(basis.nBasis(), 4));
       TEST_ASSERT(basis.isValid());
 
-      #if 0
       if (verbose() > 1) {
-         basis.outputWaves(std::cout);   
-         basis.outputStars(std::cout);   
-         std::cout << "nBasis = " << basis.nBasis() << std::endl;
+         std::ofstream out;
+         openOutputFile("out/Square_44", out);
+         out << "nBasis = " << basis.nBasis() << std::endl;
+         basis.outputWaves(out);   
+         basis.outputStars(out);   
       }
-      #endif
 
    }
 
@@ -228,13 +228,13 @@ public:
       //TEST_ASSERT(eq(basis.nStar(), 6));
       //TEST_ASSERT(eq(basis.nBasis(), 4));
 
-      #if 0
       if (verbose() > 1) {
-         std::cout << "nBasis = " << basis.nBasis() << std::endl;
-         basis.outputWaves(std::cout);   
-         basis.outputStars(std::cout);   
+         std::ofstream out;
+         openOutputFile("out/p_6_m_m", out);
+         out << "nBasis = " << basis.nBasis() << std::endl;
+         basis.outputWaves(out);   
+         basis.outputStars(out);   
       }
-      #endif
 
    }
 
@@ -310,13 +310,13 @@ public:
       }
       TEST_ASSERT(j == basis.nBasis());
 
-      #if 0
       if (verbose() > 1) {
-         std::cout << "nBasis = " << basis.nBasis() << std::endl;
-         basis.outputWaves(std::cout);   
-         basis.outputStars(std::cout);   
+         std::ofstream out;
+         openOutputFile("out/I_m_3b_m", out);
+         out << "nBasis = " << basis.nBasis() << std::endl;
+         basis.outputWaves(out);   
+         basis.outputStars(out);   
       }
-      #endif
 
    }
 
@@ -363,13 +363,13 @@ public:
       }
       TEST_ASSERT(j == basis.nBasis());
 
-      #if 0
       if (verbose() > 1) {
-         std::cout << "nBasis = " << basis.nBasis() << std::endl;
-         basis.outputWaves(std::cout);   
-         basis.outputStars(std::cout);   
+         std::ofstream out;
+         openOutputFile("out/I_a_3b_d", out);
+         out << "nBasis = " << basis.nBasis() << std::endl;
+         basis.outputWaves(out);   
+         basis.outputStars(out);   
       }
-      #endif
 
    }
 
@@ -418,7 +418,6 @@ public:
       }
       TEST_ASSERT(j == basis.nBasis());
 
-      #if 0
       if (verbose() > 1) {
          std::ofstream out;
          openOutputFile("out/F_d_-3_m:2", out);
@@ -427,7 +426,6 @@ public:
          basis.outputStars(out);   
          out.close();
       }
-      #endif
 
    }
 
@@ -464,7 +462,6 @@ public:
       TEST_ASSERT(basis.isValid());
       TEST_ASSERT(eq(basis.nWave(), 512));
 
-      #if 0
       if (verbose() > 1) {
          std::ofstream out;
          openOutputFile("out/F_d_-3_m:1", out);
@@ -473,11 +470,52 @@ public:
          basis.outputStars(out);   
          out.close();
       }
-      #endif
-
 
    }
 
+   void testMake3DBasis_I_41_3_2()
+   {
+      printMethod(TEST_FUNC);
+      // printEndl();
+
+      // Make unitcell
+      UnitCell<3> unitCell;
+      std::ifstream in;
+      openInputFile("in/Cubic", in);
+      in >> unitCell;
+      in.close();
+
+      // Make mesh object
+      IntVec<3> d;
+      d[0] = 16;
+      d[1] = 16;
+      d[2] = 16;
+      Mesh<3> mesh(d);
+
+      // Read group
+      SpaceGroup<3> group;
+      openInputFile("in/I_41_3_2", in);
+      // This is a non-centro-symmetric alternating gyroid group
+      in >> group;
+      in.close();
+
+      // Construct basis object
+      Basis<3> basis;
+      basis.makeBasis(mesh, unitCell, group);
+  
+      TEST_ASSERT(basis.isValid());
+      TEST_ASSERT(eq(basis.nWave(), 4096));
+
+      if (verbose() > 1) {
+         std::ofstream out;
+         openOutputFile("out/I_41_3_2", out);
+         out << "nBasis = " << basis.nBasis() << std::endl;
+         basis.outputWaves(out);   
+         basis.outputStars(out);   
+         out.close();
+      }
+
+   }
 
 };
 
@@ -493,6 +531,7 @@ TEST_ADD(BasisTest, testMake3DBasis_I_m_3b_m)
 TEST_ADD(BasisTest, testMake3DBasis_I_a_3b_d) 
 TEST_ADD(BasisTest, testMake3DBasis_F_d_3b_m_2)
 TEST_ADD(BasisTest, testMake3DBasis_F_d_3b_m_1)
+TEST_ADD(BasisTest, testMake3DBasis_I_41_3_2)
 TEST_END(BasisTest)
 
 #endif

@@ -450,6 +450,39 @@ public:
 
    }
 
+   void testIterate3D_altGyr_flex()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testIterate3D_altGyr_flex.log");
+
+      System<3> system;
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
+
+      std::ifstream in;
+      openInputFile("in/triblock/altGyr/param", in);
+      system.readParam(in);
+      in.close();
+
+      system.readWBasis("in/triblock/altGyr/w.bf");
+
+      DArray< DArray<double> > wFields_check;
+      wFields_check = system.wFields();
+
+      system.iterate();
+      system.writeWBasis("out/testIterate3D_altGyr_flex_w.bf");
+      system.writeCBasis("out/testIterate3D_altGyr_flex_c.bf");
+
+      BFieldComparison comparison(1);
+      comparison.compare(wFields_check, system.wFields());
+      if (verbose() > 0) {
+         std::cout << "\n";
+         std::cout << "Max error = " << comparison.maxDiff() << "\n";
+      }
+      TEST_ASSERT(comparison.maxDiff() < 5.0E-6);
+
+   }
+
    void testIterate3D_c15_1_flex()
    {
       printMethod(TEST_FUNC);
@@ -500,6 +533,7 @@ TEST_ADD(SystemTest, testIterate2D_hex_rigid)
 TEST_ADD(SystemTest, testIterate2D_hex_flex)
 TEST_ADD(SystemTest, testIterate3D_bcc_rigid)
 TEST_ADD(SystemTest, testIterate3D_bcc_flex)
+TEST_ADD(SystemTest, testIterate3D_altGyr_flex)
 TEST_ADD(SystemTest, testIterate3D_c15_1_flex)
 
 TEST_END(SystemTest)
