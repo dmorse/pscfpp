@@ -9,6 +9,7 @@
 #include <pspc/sweep/LinearSweep.h>
 
 #include <fstream>
+#include <sstream>
 
 
 using namespace Util;
@@ -59,7 +60,7 @@ public:
       sweepPtr = sf.factory("LinearSweep");
    }
 
-   void testParameters() 
+   void testParameterRead() 
    {
       printMethod(TEST_FUNC);
 
@@ -74,12 +75,114 @@ public:
       }
       // open test input file
       std::ifstream in;
+
       // read in data
       openInputFile("in/param.test", in);
       for (int i = 0; i < 4; ++i) {
          in >> ps[i];
+      }
+
+      // assert that it is read correctly
+      TEST_ASSERT(ps[0].type()=="block");
+      TEST_ASSERT(ps[0].id(0)==0);
+      TEST_ASSERT(ps[0].id(1)==0);
+      TEST_ASSERT(ps[0].change()==0.25);
+      TEST_ASSERT(ps[1].type()=="chi");
+      TEST_ASSERT(ps[1].id(0)==0);
+      TEST_ASSERT(ps[1].id(1)==1);
+      TEST_ASSERT(ps[1].change()==5.00);
+      TEST_ASSERT(ps[2].type()=="kuhn");
+      TEST_ASSERT(ps[2].id(0)==0);
+      TEST_ASSERT(ps[2].change()==0.1);
+      TEST_ASSERT(ps[3].type()=="phi");
+      TEST_ASSERT(ps[3].id(0)==0);
+      TEST_ASSERT(ps[3].id(1)==0);
+      TEST_ASSERT(ps[3].change()==-0.01);
+   }
+
+   void testParameterGet()
+   {
+      printMethod(TEST_FUNC);
+
+      // set up system
+      System<3> system;
+      SweepTest::SetUpSystem(system, "in/diblock/bcc/param.flex");
+
+      // set up LinearSweepParameter objects 
+      DArray< LinearSweepParameter<3> > ps;
+      ps.allocate(4);
+      std::ifstream in;
+      openInputFile("in/param.test", in);
+      for (int i = 0; i < 4; ++i) {
+         ps[i].setSystem(system);
+         in >> ps[i];
+      }
+
+      DArray<double> sysval, paramval;
+      sysval.allocate(4);
+      paramval.allocate(4);
+
+      // call get_ function to get value through parameter
+      for (int i = 0; i < 4; ++i) {
+         paramval[i] = ps[i].current();
+      }
+
+      // manually check equality for each one
+      sysval[0] = system.mixture().polymer(0).block(0).length();
+      sysval[1] = system.interaction().chi(0,1);
+      sysval[2] = system.mixture().monomer(0).step();
+      sysval[3] = system.mixture().polymer(0).phi();
+
+      for (int i = 0; i < 4; ++i) {
+         TEST_ASSERT(sysval[i]==paramval[i]);
+      }
+      
+   }
+
+   void testParameterSet()
+   {
+      printMethod(TEST_FUNC);
+
+      // set up system
+      System<3> system;
+      SweepTest::SetUpSystem(system, "in/diblock/bcc/param.flex");
+
+      // set up LinearSweepParameter objects 
+      DArray< LinearSweepParameter<3> > ps;
+      ps.allocate(4);
+      DArray<double> initial;
+      initial.allocate(4);
+      std::ifstream in;
+      openInputFile("in/param.test", in);
+      for (int i = 0; i < 4; ++i) {
+         ps[i].setSystem(system);
+         in >> ps[i];
          ps[i].getInitial();
-         ps[i].update(0.5);
+         initial[i] = ps[i].current();
+      }
+
+      DArray<double> sysval, paramval;
+      sysval.allocate(4);
+      paramval.allocate(4);
+
+      // Set for some arbitrary value of s in [0,1]
+      double s = 0.295586;
+      for (int i = 0; i < 4; ++i) {
+         ps[i].update(s);
+      }
+      // calculate expected value of parameter using s
+      for (int i = 0; i < 4; ++i) {
+         paramval[i] = initial[i] + s*ps[i].change();
+      }
+
+      // manually check equality for each one
+      sysval[0] = system.mixture().polymer(0).block(0).length();
+      sysval[1] = system.interaction().chi(0,1);
+      sysval[2] = system.mixture().monomer(0).step();
+      sysval[3] = system.mixture().polymer(0).phi();
+
+      for (int i = 0; i < 4; ++i) {
+         TEST_ASSERT(sysval[i]==paramval[i]);
       }
    }
 
@@ -123,7 +226,9 @@ public:
 TEST_BEGIN(SweepTest)
 TEST_ADD(SweepTest, testConstructors)
 TEST_ADD(SweepTest, testFactory)
-TEST_ADD(SweepTest, testParameters)
+TEST_ADD(SweepTest, testParameterRead)
+TEST_ADD(SweepTest, testParameterGet)
+TEST_ADD(SweepTest, testParameterSet)
 TEST_ADD(SweepTest, testLinearSweepRead)
 TEST_ADD(SweepTest, testLinearSweepIterate)
 TEST_END(SweepTest)

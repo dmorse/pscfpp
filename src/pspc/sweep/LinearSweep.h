@@ -33,6 +33,7 @@ namespace Pspc {
    /**
    * Base class for a sweep in parameter space where parameters change
    * linearly with the sweep variable. 
+   * 
    * \ingroup Pspc_Sweep_Module
    */
    template <int D>
@@ -48,16 +49,20 @@ namespace Pspc {
 
       /**
       * Read parameters from param file.
+      * 
+      * \param in Input stream from param file.
       */
       void readParameters(std::istream& in);
 
       /**
-      * Setup operation at the beginning of a sweep. Gets initial values of individual parameters.
+      * Setup operation at the beginning of a sweep. Gets initial 
+      * values of individual parameters.
       */
        void setup();
 
       /**
-      * Set the state before an iteration. Called with each new iteration in SweepTempl::sweep()
+      * Set the state before an iteration. Called with each new iteration 
+      * in SweepTempl::sweep()
       *
       * \param s path length coordinate, in [0,1]
       */    
@@ -92,7 +97,9 @@ namespace Pspc {
    };
 
    /**
-   * Class for storing individual sweep parameters.
+   * Class for storing data about an individual sweep parameter.
+   * 
+   * \ingroup Pspc_Sweep_Module
    */
    template <int D>
    class LinearSweepParameter
@@ -109,7 +116,7 @@ namespace Pspc {
       {}
 
       /**
-      * Construct a new LinearSweepParameter object with a pointer to the system.
+      * Construct a LinearSweepParameter object with a pointer to the system.
       */
       LinearSweepParameter(System<D>& system)
        : id_(),
@@ -117,15 +124,16 @@ namespace Pspc {
       {}
 
       /**
-       * Read in type of parameter being swept, and set relevant member values. 
-       * 
-       * \param in Input stream from param file. 
-       */
+      * Read type of parameter being swept, and set number of identifiers.
+      * 
+      * \param in Input stream from param file. 
+      */
       void readParamType(std::istream& in)
       {
          std::string buffer;
          in >> buffer;
-         std::transform(buffer.begin(), buffer.end(), buffer.begin(), ::tolower);
+         std::transform(buffer.begin(), buffer.end(), 
+                                    buffer.begin(), ::tolower);
 
          if (buffer == "block") {
             type_ = Block;
@@ -157,26 +165,45 @@ namespace Pspc {
          id_.allocate(nID_);
       }
 
+      /**
+      * Write type of parameter swept.
+      * 
+      * \param out Output file stream.
+      */
       void writeParamType(std::ostream& out) const
       {
          out << type();
       }
 
+      /**
+      * Store the pre-sweep value of the corresponding parameter.
+      */
       void getInitial()
       {
          initial_ = get_();
       }
 
+      /**
+      * Update the corresponding parameter value in the system. 
+      * 
+      * \param s sweep coordinate, with range [0,1]
+      */
       void update(double s)
       {
          set_(initial_+s*change_);
       }
       
+      /**
+      * Return the current system parameter value. 
+      */
       double current()
       {
          return get_();
       }
 
+      /**
+      * Return a string describing the parameter type for this object. 
+      */
       std::string type() const
       {
          if (type_ == Block) {
@@ -202,16 +229,27 @@ namespace Pspc {
          }
       }
 
+      /**
+      * Accessor for the id_ array.
+      * 
+      * \param i array index to access
+      */
       int id(int i) const
       {
          return id_[i];
       }
       
+      /**
+      * Return the total change planned for this parameter during sweep.
+      */
       double change() const
       {
          return change_;
       }
 
+      /**
+      * Set the system associated with this object.
+      */
       void setSystem(System<D>& system)
       {
          systemPtr_ = &system;
@@ -354,13 +392,14 @@ namespace Pspc {
 
       template <int U>
       friend std::ostream& operator << (std::ostream&, LinearSweepParameter<U> const&);
-
-      // template <class Archive>
-      // friend void serialize(Archive&, LinearSweep<D>::Parameter&, const unsigned int);
    
    };
 
-   // Definitions of operators, no explicit instantiations. 
+   // Definitions of operators, with no explicit instantiations. 
+
+   /**
+   * Inserter operator for reading data into a LinearSweepParameter.
+   */
    template <int D>
    std::istream& operator >> (std::istream& in, 
                               LinearSweepParameter<D>& param)
@@ -377,6 +416,9 @@ namespace Pspc {
       return in;
    }
 
+   /**
+   * Extractor operator for outputting data from a LinearSweepParameter.
+   */
    template <int D>
    std::ostream& operator << (std::ostream& out, 
                               LinearSweepParameter<D> const & param)
