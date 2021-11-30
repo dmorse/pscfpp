@@ -280,15 +280,15 @@ namespace Pspc
       tmpFieldsKGrid_.allocate(nMonomer);
 
       for (int i = 0; i < nMonomer; ++i) {
-         wField(i).allocate(basis().nStar());
+         wField(i).allocate(basis().nBasis());
          wFieldRGrid(i).allocate(mesh().dimensions());
          wFieldKGrid(i).allocate(mesh().dimensions());
 
-         cField(i).allocate(basis().nStar());
+         cField(i).allocate(basis().nBasis());
          cFieldRGrid(i).allocate(mesh().dimensions());
          cFieldKGrid(i).allocate(mesh().dimensions());
 
-         tmpFields_[i].allocate(basis().nStar());
+         tmpFields_[i].allocate(basis().nBasis());
          tmpFieldsRGrid_[i].allocate(mesh().dimensions());
          tmpFieldsKGrid_[i].allocate(mesh().dimensions());
       }
@@ -475,13 +475,13 @@ namespace Pspc
       }
 
       int nm  = mixture().nMonomer();
-      int nStar = basis().nStar();
+      int nBasis = basis().nBasis();
 
       // Compute Legendre transform subtraction
       // Use expansion in symmetry-adapted orthonormal basis
       double temp = 0.0;
       for (int i = 0; i < nm; ++i) {
-         for (int k = 0; k < nStar; ++k) {
+         for (int k = 0; k < nBasis; ++k) {
             temp += wFields_[i][k] * cFields_[i][k];
          }
       }
@@ -492,7 +492,7 @@ namespace Pspc
       for (int i = 0; i < nm; ++i) {
          for (int j = i + 1; j < nm; ++j) {
             chi = interaction().chi(i,j);
-            for (int k = 0; k < nStar; ++k) {
+            for (int k = 0; k < nBasis; ++k) {
                fHelmholtz_+= chi * cFields_[i][k] * cFields_[j][k];
             }
          }
@@ -866,30 +866,8 @@ namespace Pspc
 
       fieldIo().readFieldsBasis(inFileName, tmpFields_, unitCell());
 
-      #if 0
-      // Open input file
-      std::ifstream inFile;
-      fileMaster().openInputFile(inFileName, inFile);
-
-      // Read concentration field
-      std::string label;
-      int nStar,nM;
-      inFile >> label;
-      inFile >> nStar;
-      inFile >> label;
-      inFile >> nM;
-      int idum;
-      for (int i = 0; i < nStar; ++i) {
-         inFile >> idum;
-         for (int j = 0; j < nM; ++j) {
-            inFile >> tmpFields_[j][i];
-         }
-      }
-      inFile.close();
-      #endif
-
       // Compute w fields from c fields
-      for (int i = 0; i < basis().nStar(); ++i) {
+      for (int i = 0; i < basis().nBasis(); ++i) {
          for (int j = 0; j < mixture().nMonomer(); ++j) {
             wField(j)[i] = 0;
             for (int k = 0; k < mixture().nMonomer(); ++k) {

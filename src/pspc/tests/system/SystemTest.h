@@ -527,7 +527,9 @@ public:
       system.readWBasis("in/diblock/c15_1/w_in.bf");
       system.iterate();
       system.writeWBasis("out/testIterate3D_c15_1_flex_w.bf");
-      system.writeCBasis("out/testIterate3D_c15_1_flex_c.bf");
+      system.writeWRGrid("out/testIterate3D_c15_1_flex_w.rf");
+      //system.writeCBasis("out/testIterate3D_c15_1_flex_c.bf");
+      //system.writeCRGrid("out/testIterate3D_c15_1_flex_c.rf");
 
       BFieldComparison comparison(1);
       comparison.compare(wFields_check, system.wFields());

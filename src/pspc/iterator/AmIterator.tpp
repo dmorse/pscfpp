@@ -73,11 +73,11 @@ namespace Pspc
       dArrays_.allocate(nMonomer);
       tempDev.allocate(nMonomer);
 
-      int nStar = system().basis().nStar();
+      int nBasis = system().basis().nBasis();
       for (int i = 0; i < nMonomer; ++i) {
-         wArrays_[i].allocate(nStar - 1);
-         dArrays_[i].allocate(nStar - 1);
-         tempDev[i].allocate(nStar - 1);
+         wArrays_[i].allocate(nBasis - 1);
+         dArrays_[i].allocate(nBasis - 1);
+         tempDev[i].allocate(nBasis - 1);
       }
    }
 
@@ -268,30 +268,30 @@ namespace Pspc
          CpHists_.append((system().unitCell()).parameters());
 
       for (int i = 0 ; i < system().mixture().nMonomer(); ++i) {
-         for (int j = 0; j < system().basis().nStar() - 1; ++j) {
+         for (int j = 0; j < system().basis().nBasis() - 1; ++j) {
             tempDev[i][j] = 0;
          }
       }
 
       DArray<double> temp;
-      temp.allocate(system().basis().nStar() - 1);
+      temp.allocate(system().basis().nBasis() - 1);
 
       #if 0
       for (int i = 0; i < system().mixture().nMonomer(); ++i) {
 
-         for (int j = 0; j < system().basis().nStar() - 1; ++j) {
+         for (int j = 0; j < system().basis().nBasis() - 1; ++j) {
             temp[j] = 0;
          }
 
          for (int j = 0; j < system().mixture().nMonomer(); ++j) {
-            for (int k = 0; k < system().basis().nStar() - 1; ++k) {
+            for (int k = 0; k < system().basis().nBasis() - 1; ++k) {
                tempDev[i][k] += system().interaction().chi(i,j) *
                               system().cField(j)[k + 1];
                temp[k] += system().wField(j)[k + 1];
             }
          }
 
-         for (int k = 0; k < system().basis().nStar() - 1; ++k) {
+         for (int k = 0; k < system().basis().nBasis() - 1; ++k) {
             tempDev[i][k] += ((temp[k] / system().mixture().nMonomer())
                              - system().wField(i)[k + 1]);
          }
@@ -301,7 +301,7 @@ namespace Pspc
       for (int i = 0; i < system().mixture().nMonomer(); ++i) {
 
          for (int j = 0; j < system().mixture().nMonomer(); ++j) {
-            for (int k = 0; k < system().basis().nStar() - 1; ++k) {
+            for (int k = 0; k < system().basis().nBasis() - 1; ++k) {
                tempDev[i][k] +=( (system().interaction().chi(i,j)*system().cField(j)[k + 1])
                                - (system().interaction().idemp(i,j)*system().wField(j)[k + 1]) );
             }
@@ -329,7 +329,7 @@ namespace Pspc
       double dError = 0;
       double wError = 0;
       for ( int i = 0; i < system().mixture().nMonomer(); i++) {
-         for ( int j = 0; j < system().basis().nStar() - 1; j++) {
+         for ( int j = 0; j < system().basis().nBasis() - 1; j++) {
             dError += devHists_[0][i][j] * devHists_[0][i][j];
 
             //the extra shift is due to the zero indice coefficient being
@@ -353,7 +353,7 @@ namespace Pspc
       double temp1 = 0;
       double temp2 = 0;
       for ( int i = 0; i < system().mixture().nMonomer(); i++) {
-         for ( int j = 0; j < system().basis().nStar() - 1; j++) {
+         for ( int j = 0; j < system().basis().nBasis() - 1; j++) {
             if (temp1 < fabs (devHists_[0][i][j]))
                 temp1 = fabs (devHists_[0][i][j]);
          }
@@ -403,7 +403,7 @@ namespace Pspc
 
          int nMonomer = system().mixture().nMonomer();
          int nParameter = system().unitCell().nParameter();
-         int nStar = system().basis().nStar();
+         int nBasis = system().basis().nBasis();
          double elm, elm_cp;
 
          for (int i = 0; i < nHist_; ++i) {
@@ -412,7 +412,7 @@ namespace Pspc
                invertMatrix_(i,j) = 0;
                for (int k = 0; k < nMonomer; ++k) {
                   elm = 0;
-                  for (int l = 0; l < nStar - 1; ++l) {
+                  for (int l = 0; l < nBasis - 1; ++l) {
                      elm +=
                             ((devHists_[0][k][l] - devHists_[i+1][k][l])*
                              (devHists_[0][k][l] - devHists_[j+1][k][l]));
@@ -433,7 +433,7 @@ namespace Pspc
 
             vM_[i] = 0;
             for (int j = 0; j < nMonomer; ++j) {
-               for (int k = 0; k < nStar - 1; ++k) {
+               for (int k = 0; k < nBasis - 1; ++k) {
                   vM_[i] += ( (devHists_[0][j][k] - devHists_[i+1][j][k]) *
                                devHists_[0][j][k] );
                }
@@ -467,7 +467,7 @@ namespace Pspc
 
       if (itr == 1) {
          for (int i = 0; i < mixture.nMonomer(); ++i) {
-            for (int j = 0; j < system().basis().nStar() - 1; ++j) {
+            for (int j = 0; j < system().basis().nBasis() - 1; ++j) {
                system().wField(i)[j+1]
                       = omHists_[0][i][j+1] + lambda_*devHists_[0][i][j];
             }
@@ -487,14 +487,14 @@ namespace Pspc
 
       } else {
          for (int j = 0; j < mixture.nMonomer(); ++j) {
-            for (int k = 0; k < system().basis().nStar() - 1; ++k) {
+            for (int k = 0; k < system().basis().nBasis() - 1; ++k) {
                wArrays_[j][k] = omHists_[0][j][k + 1];
                dArrays_[j][k] = devHists_[0][j][k];
             }
          }
          for (int i = 0; i < nHist_; ++i) {
             for (int j = 0; j < mixture.nMonomer(); ++j) {
-               for (int k = 0; k < system().basis().nStar() - 1; ++k) {
+               for (int k = 0; k < system().basis().nBasis() - 1; ++k) {
                   wArrays_[j][k] += coeffs_[i] * ( omHists_[i+1][j][k+1] -
                                                    omHists_[0][j][k+1] );
                   dArrays_[j][k] += coeffs_[i] * ( devHists_[i+1][j][k] -
@@ -503,8 +503,8 @@ namespace Pspc
             }
          }
          for (int i = 0; i < mixture.nMonomer(); ++i) {
-            for (int j = 0; j < system().basis().nStar() - 1; ++j) {
-              system().wField(i)[j+1] = wArrays_[i][j]
+            for (int j = 0; j < system().basis().nBasis() - 1; ++j) {
+               system().wField(i)[j+1] = wArrays_[i][j]
                                          + lambda_ * dArrays_[i][j];
             }
          }
