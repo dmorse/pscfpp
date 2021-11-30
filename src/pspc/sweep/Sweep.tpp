@@ -116,7 +116,7 @@ namespace Pspc {
          // Set extrapolated trial w fields 
          double coeff;
          int nMonomer = system().mixture().nMonomer();
-         int nStar = system().basis().nStar();
+         int nBasis = system().basis().nBasis();
          DArray<double>* newFieldPtr;
          DArray<double>* oldFieldPtr; 
          int i, j, k;
@@ -126,7 +126,7 @@ namespace Pspc {
             // Previous state k = 0 (most recent)
             oldFieldPtr = &state(0).field(i);
             coeff = c(0);
-            for (j=0; j < nStar; ++j) {
+            for (j=0; j < nBasis; ++j) {
                (*newFieldPtr)[j] = coeff*(*oldFieldPtr)[j];
             }
 
@@ -134,7 +134,7 @@ namespace Pspc {
             for (k = 1; k < historySize(); ++k) {
                oldFieldPtr = &state(k).field(i);
                coeff = c(k);
-               for (j=0; j < nStar; ++j) {
+               for (j=0; j < nBasis; ++j) {
                   (*newFieldPtr)[j] += coeff*(*oldFieldPtr)[j];
                }
             }
