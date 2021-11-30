@@ -136,11 +136,6 @@ namespace Pscf {
       */  
       double idemp(int i, int j); 
 
-      /**
-      * Return the sum of all elements in the chiInverse_ matrix.
-      */
-      double sum_inv();
-
    private:
 
       /// Matrix of Flory-Huggin chi interaction parameters.
@@ -151,9 +146,6 @@ namespace Pscf {
 
       /// Idempotent matrix used in calculating field residuals.
       DMatrix<double> idemp_;
-
-      /// Sum of all elements in chiInverse_.
-      double sum_inv_;
 
    };
 
@@ -177,9 +169,6 @@ namespace Pscf {
 
    inline double ChiInteraction::idemp(int i, int j)
    {  return idemp_(i, j); }
-
-   inline double ChiInteraction::sum_inv()
-   {  return sum_inv_; }
 
 } // namespace Pscf
 #endif

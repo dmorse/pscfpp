@@ -78,7 +78,7 @@ namespace Pscf {
       }
 
       // Calculate idempotent matrix
-      double sum = 0;
+      double sum_inv_ = 0; // sum of all elements in inverse chi matrix
       int i, j, k;
 
       for (i = 0; i < nMonomer(); ++i) {
@@ -86,7 +86,7 @@ namespace Pscf {
          for (j = 0; j < nMonomer(); ++j) {
             idemp_(0,i) -= chiInverse_(j,i);
          }
-         sum -= idemp_(0,i);
+         sum_inv_ -= idemp_(0,i);
          for (k = 0; k < nMonomer(); ++k) { //row
             idemp_(k,i) = idemp_(0,i);
          }
@@ -94,13 +94,10 @@ namespace Pscf {
       // normalization
       for (i = 0; i < nMonomer(); ++i) { //row
          for (j = 0; j < nMonomer(); ++j) { //coloumn
-            idemp_(i,j) /= sum;
+            idemp_(i,j) /= sum_inv_;
          }
          idemp_(i,i) +=1 ;
       }
-      
-      // Calculate sum_inv_
-      sum_inv_ = sum;
    }
 
    /*
