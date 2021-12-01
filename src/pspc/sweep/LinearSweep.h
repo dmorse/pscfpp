@@ -9,6 +9,9 @@
 */
 
 #include "Sweep.h"      // base class
+#include <pspc/solvers/Block.h>
+#include <pspc/solvers/Mixture.h>
+#include <pspc/solvers/Polymer.h>
 #include <pscf/inter/ChiInteraction.h>
 #include <util/global.h>
 #include <iostream>
@@ -108,7 +111,7 @@ namespace Pspc {
    public:
 
       /**
-      * Construct a new LinearSweepParameter object.
+      * Default constructor.
       */
       LinearSweepParameter()
        : id_(),
@@ -116,7 +119,9 @@ namespace Pspc {
       {}
 
       /**
-      * Construct a LinearSweepParameter object with a pointer to the system.
+      * Constructor that stores a pointer to parent system.
+      *
+      * \param system  parent system
       */
       LinearSweepParameter(System<D>& system)
        : id_(),
@@ -126,7 +131,7 @@ namespace Pspc {
       /**
       * Read type of parameter being swept, and set number of identifiers.
       * 
-      * \param in Input stream from param file. 
+      * \param in  input stream from param file. 
       */
       void readParamType(std::istream& in)
       {
@@ -159,7 +164,7 @@ namespace Pspc {
             type_ = Solvent;
             UTIL_THROW("I don't know how to implement 'solvent'.");
          } else {
-            UTIL_THROW("Invalid LinearSweepParameter::paramType value input");
+            UTIL_THROW("Invalid LinearSweepParameter::paramType value");
          }
 
          id_.allocate(nID_);
@@ -168,7 +173,7 @@ namespace Pspc {
       /**
       * Write type of parameter swept.
       * 
-      * \param out Output file stream.
+      * \param out  output file stream
       */
       void writeParamType(std::ostream& out) const
       {
@@ -179,9 +184,7 @@ namespace Pspc {
       * Store the pre-sweep value of the corresponding parameter.
       */
       void getInitial()
-      {
-         initial_ = get_();
-      }
+      {  initial_ = get_(); }
 
       /**
       * Update the corresponding parameter value in the system. 
@@ -189,17 +192,13 @@ namespace Pspc {
       * \param s sweep coordinate, with range [0,1]
       */
       void update(double s)
-      {
-         set_(initial_+s*change_);
-      }
+      {  set_(initial_+s*change_); }
       
       /**
       * Return the current system parameter value. 
       */
       double current()
-      {
-         return get_();
-      }
+      {  return get_(); }
 
       /**
       * Return a string describing the parameter type for this object. 
@@ -235,25 +234,19 @@ namespace Pspc {
       * \param i array index to access
       */
       int id(int i) const
-      {
-         return id_[i];
-      }
+      {  return id_[i];}
       
       /**
       * Return the total change planned for this parameter during sweep.
       */
       double change() const
-      {
-         return change_;
-      }
+      {  return change_; }
 
       /**
       * Set the system associated with this object.
       */
       void setSystem(System<D>& system)
-      {
-         systemPtr_ = &system;
-      }
+      {  systemPtr_ = &system;}
       
       /**
       * Serialize to or from an archive.
@@ -293,10 +286,10 @@ namespace Pspc {
       /// Change in parameter
       double   change_;
       
-      /// Pointer to the overall system. Set in LinearSweepParameter constructor.
+      /// Pointer to the parent system. 
       System<D>* systemPtr_;
 
-      // Gets the current system parameter value.
+      /// Gets the current system parameter value.
       double get_()
       {
          if (type_ == Block) {
@@ -335,38 +328,47 @@ namespace Pspc {
          }
       }
 
-      // Sets the system parameter value. 
+      // Set the system parameter value. 
       void set_(double newVal)
       {
          if (type_ == Block) {
-            systemPtr_->mixture().polymer(id(0)).block(id(1)).setLength(newVal);
+            Pscf::Pspc::Block<D>& block = systemPtr_->mixture().polymer(id(0)).block(id(1));
+            block.setLength(newVal);
+            block.setupUnitCell(systemPtr_->unitCell());
+            // Call Block<D>::setLength to update length and ds
+            // Call Block<D>::setupUnitCell to update expKsq, expKsq2
          } else 
          if (type_ == Chi) {
             systemPtr_->interaction().setChi(id(0),id(1),newVal);
+            // ChiInteraction::setChi must update auxiliary variables
          } else 
          if (type_ == Kuhn) {
-            int monomerId;
-            double kuhn;
-            // Set new value of kuhn length for this monomer.
-            systemPtr_->mixture().monomer(id(0)).setStep(newVal);
-            // Update the kuhn lengths of all blocks. Potential mismatch otherwise.
-            for (int i=0; i < systemPtr_->mixture().nPolymer(); ++i) {
-               for (int j=0; j < systemPtr_->mixture().polymer(i).nBlock(); ++j) {
-                  monomerId = systemPtr_->mixture().polymer(i).block(j).monomerId();
-                  kuhn = systemPtr_->mixture().monomer(monomerId).step();
-                  systemPtr_->mixture().polymer(i).block(j).setKuhn(kuhn);
+            typename Pscf::Pspc::Mixture<D>& mixture = systemPtr_->mixture();
+
+            // Set new kuhn length for this monomer
+            mixture.monomer(id(0)).setStep(newVal);
+
+            // Update kuhn length for all blocks of this monomer type
+            typename Pscf::Pspc::Block<D>* blockPtr;
+            for (int i=0; i < mixture.nPolymer(); ++i) {
+               for (int j=0; j < mixture.polymer(i).nBlock(); ++j) {
+                  blockPtr = &(mixture.polymer(i).block(j));
+                  if (id(0) == blockPtr->monomerId()) {
+                     blockPtr->setKuhn(newVal);
+                     blockPtr->setupUnitCell(systemPtr_->unitCell());
+                  }
                }
             }
-            // Solvent kuhn doesn't need updating. 
+
          } else 
          if (type_ == Phi) {
             if (id(0)==0) {
-            systemPtr_->mixture().polymer(id(1)).setPhi(newVal);
+               systemPtr_->mixture().polymer(id(1)).setPhi(newVal);
             } else
             if (id(0)==1) {
                systemPtr_->mixture().solvent(id(1)).setPhi(newVal);
             } else {
-               UTIL_THROW("Invalid choice between polymer (0) and solvent (1).");
+               UTIL_THROW("Invalid flag for polymer (0) or solvent (1).");
             }
          } else 
          if (type_ == Mu) {
@@ -376,7 +378,7 @@ namespace Pspc {
             if (id(0)==1) {
                systemPtr_->mixture().solvent(id(1)).setMu(newVal);
             } else {
-               UTIL_THROW("Invalid choice between polymer (0) and solvent (1).");
+               UTIL_THROW("Invalid flag for polymer (0) or solvent (1).");
             }
          } else 
          if (type_ == Solvent) {
@@ -387,37 +389,47 @@ namespace Pspc {
       }
 
    // friends:
-      template <int U>
-      friend std::istream& operator >> (std::istream&, LinearSweepParameter<U>&);
 
       template <int U>
-      friend std::ostream& operator << (std::ostream&, LinearSweepParameter<U> const&);
+      friend 
+      std::istream& operator >> (std::istream&, LinearSweepParameter<U>&);
+
+      template <int U>
+      friend 
+      std::ostream& 
+      operator << (std::ostream&, LinearSweepParameter<U> const&);
    
    };
 
    // Definitions of operators, with no explicit instantiations. 
 
    /**
-   * Inserter operator for reading data into a LinearSweepParameter.
+   * Inserter for reading a LinearSweepParameter from an istream.
+   *
+   * \param in  input stream
+   * \param param  LinearSweepParameter<D> object to read
    */
    template <int D>
    std::istream& operator >> (std::istream& in, 
                               LinearSweepParameter<D>& param)
    {
-      // read the parameter type.
+      // Read the parameter type.
       param.readParamType(in);  
-      // read the identifiers associated with this parameter type. 
+      // Read the identifiers associated with this parameter type. 
       for (int i = 0; i < param.nID_; ++i) {
          in >> param.id_[i];
       }
-      // read in the range in the parameter to sweep over.
+      // Read in the range in the parameter to sweep over
       in >> param.change_;
 
       return in;
    }
 
    /**
-   * Extractor operator for outputting data from a LinearSweepParameter.
+   * Extractor for writing a LinearSweepParameter to ostream.
+   *
+   * \param in  output stream
+   * \param param  LinearSweepParameter<D> object to write
    */
    template <int D>
    std::ostream& operator << (std::ostream& out, 

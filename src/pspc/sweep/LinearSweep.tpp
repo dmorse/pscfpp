@@ -34,8 +34,9 @@ namespace Pspc {
       
       // Read in array of LinearSweepParameters, calling << for each
       this->template readDArray< LinearSweepParameter<D> >(in, "parameters", parameters_, nParameter_);
+      //readDArray< LinearSweepParameter<D> >(in, "parameters", parameters_, nParameter_);
 
-      // verify net zero change in volume fractions if being swept
+      // Verify net zero change in volume fractions if being swept
       double sum = 0.0;
       for (int i = 0; i < nParameter_; ++i) {
          if (parameters_[i].type() == "phi") {
