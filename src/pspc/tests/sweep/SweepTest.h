@@ -229,7 +229,7 @@ TEST_ADD(SweepTest, testParameterRead)
 TEST_ADD(SweepTest, testParameterGet)
 TEST_ADD(SweepTest, testParameterSet)
 TEST_ADD(SweepTest, testLinearSweepRead)
-//TEST_ADD(SweepTest, testLinearSweepIterate)
+TEST_ADD(SweepTest, testLinearSweepIterate)
 TEST_END(SweepTest)
 
 #endif
