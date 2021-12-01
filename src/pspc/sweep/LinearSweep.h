@@ -9,6 +9,9 @@
 */
 
 #include "Sweep.h"      // base class
+#include <pspc/solvers/Block.h>
+#include <pspc/solvers/Mixture.h>
+#include <pspc/solvers/Polymer.h>
 #include <pscf/inter/ChiInteraction.h>
 #include <util/global.h>
 #include <iostream>
@@ -108,7 +111,7 @@ namespace Pspc {
    public:
 
       /**
-      * Construct a new LinearSweepParameter object.
+      * Default constructor.
       */
       LinearSweepParameter()
        : id_(),
@@ -116,7 +119,9 @@ namespace Pspc {
       {}
 
       /**
-      * Construct a LinearSweepParameter object with a pointer to the system.
+      * Constructor that stores a pointer to parent system.
+      *
+      * \param system  parent system
       */
       LinearSweepParameter(System<D>& system)
        : id_(),
@@ -126,7 +131,7 @@ namespace Pspc {
       /**
       * Read type of parameter being swept, and set number of identifiers.
       * 
-      * \param in Input stream from param file. 
+      * \param in  input stream from param file. 
       */
       void readParamType(std::istream& in)
       {
@@ -135,7 +140,7 @@ namespace Pspc {
          std::transform(buffer.begin(), buffer.end(), 
                                     buffer.begin(), ::tolower);
 
-         if (buffer == "block") {
+         if (buffer == "block" || buffer == "block_length") {
             type_ = Block;
             nID_ = 2; // polymer and block identifiers
          } else 
@@ -147,19 +152,27 @@ namespace Pspc {
             type_ = Kuhn;
             nID_ = 1; // monomer type identifier
          } else 
-         if (buffer == "phi") {
-            type_ = Phi;
-            nID_ = 2; // polymer (0) or solvent (1), and species identifier.
+         if (buffer == "phi_polymer") {
+            type_ = Phi_Polymer;
+            nID_ = 1; //species identifier.
          } else 
-         if (buffer == "mu") {
-            type_ = Mu;
-            nID_ = 2; // polymer (0) or solvent (1), and species identifier.
+         if (buffer == "phi_solvent") {
+            type_ = Phi_Solvent;
+            nID_ = 1; //species identifier.
          } else 
-         if (buffer == "solvent") {
+         if (buffer == "mu_polymer") {
+            type_ = Mu_Polymer;
+            nID_ = 1; //species identifier.
+         } else 
+         if (buffer == "mu_solvent") {
+            type_ = Mu_Solvent;
+            nID_ = 1; //species identifier.
+         } else 
+         if (buffer == "solvent" || buffer == "solvent_size") {
             type_ = Solvent;
             UTIL_THROW("I don't know how to implement 'solvent'.");
          } else {
-            UTIL_THROW("Invalid LinearSweepParameter::paramType value input");
+            UTIL_THROW("Invalid LinearSweepParameter::paramType value");
          }
 
          id_.allocate(nID_);
@@ -168,7 +181,7 @@ namespace Pspc {
       /**
       * Write type of parameter swept.
       * 
-      * \param out Output file stream.
+      * \param out  output file stream
       */
       void writeParamType(std::ostream& out) const
       {
@@ -179,9 +192,7 @@ namespace Pspc {
       * Store the pre-sweep value of the corresponding parameter.
       */
       void getInitial()
-      {
-         initial_ = get_();
-      }
+      {  initial_ = get_(); }
 
       /**
       * Update the corresponding parameter value in the system. 
@@ -189,17 +200,13 @@ namespace Pspc {
       * \param s sweep coordinate, with range [0,1]
       */
       void update(double s)
-      {
-         set_(initial_+s*change_);
-      }
+      {  set_(initial_+s*change_); }
       
       /**
       * Return the current system parameter value. 
       */
       double current()
-      {
-         return get_();
-      }
+      {  return get_(); }
 
       /**
       * Return a string describing the parameter type for this object. 
@@ -207,7 +214,7 @@ namespace Pspc {
       std::string type() const
       {
          if (type_ == Block) {
-            return "block";
+            return "block_length";
          } else 
          if (type_ == Chi) {
             return "chi";
@@ -215,15 +222,20 @@ namespace Pspc {
          if (type_ == Kuhn) {
             return "kuhn";
          } else 
-         if (type_ == Phi) {
-            return "phi";
+         if (type_ == Phi_Polymer) {
+            return "phi_polymer";
          } else 
-         if (type_ == Mu) {
-            return "mu";
-         } else 
+         if (type_ == Phi_Solvent) {
+            return "phi_solvent";
+         } else  
+         if (type_ == Mu_Polymer) {
+            return "mu_polymer";
+         } else
+         if (type_ == Mu_Solvent) {
+            return "mu_solvent";
+         } else  
          if (type_ == Solvent) {
-            return "solvent";
-            UTIL_THROW("I don't know how to implement 'solvent'.");
+            return "solvent_size";
          } else {
             UTIL_THROW("This should never happen.");
          }
@@ -235,25 +247,19 @@ namespace Pspc {
       * \param i array index to access
       */
       int id(int i) const
-      {
-         return id_[i];
-      }
+      {  return id_[i];}
       
       /**
       * Return the total change planned for this parameter during sweep.
       */
       double change() const
-      {
-         return change_;
-      }
+      {  return change_; }
 
       /**
       * Set the system associated with this object.
       */
       void setSystem(System<D>& system)
-      {
-         systemPtr_ = &system;
-      }
+      {  systemPtr_ = &system;}
       
       /**
       * Serialize to or from an archive.
@@ -276,7 +282,8 @@ namespace Pspc {
    private:
 
       /// Enumeration of allowed parameter types.
-      enum paramType { Block, Chi, Kuhn, Phi, Mu, Solvent };
+      enum paramType { Block, Chi, Kuhn, Phi_Polymer, Phi_Solvent,
+                                     Mu_Polymer, Mu_Solvent, Solvent};
 
       /// Type of parameter associated with an object of this class. 
       paramType type_;
@@ -293,10 +300,10 @@ namespace Pspc {
       /// Change in parameter
       double   change_;
       
-      /// Pointer to the overall system. Set in LinearSweepParameter constructor.
+      /// Pointer to the parent system. 
       System<D>* systemPtr_;
 
-      // Gets the current system parameter value.
+      /// Gets the current system parameter value.
       double get_()
       {
          if (type_ == Block) {
@@ -308,116 +315,119 @@ namespace Pspc {
          if (type_ == Kuhn) {
             return systemPtr_->mixture().monomer(id(0)).step();
          } else 
-         if (type_ == Phi) {
-            if (id(0)==0) {
-               return systemPtr_->mixture().polymer(id(1)).phi();
-            } else
-            if (id(0)==1) {
-               return systemPtr_->mixture().solvent(id(1)).phi();
-            } else {
-               UTIL_THROW("Invalid choice between polymer (0) and solvent (1).");
-            }
+         if (type_ == Phi_Polymer) {
+            return systemPtr_->mixture().polymer(id(0)).phi();
+         } else
+         if (type_ == Phi_Solvent) {
+            return systemPtr_->mixture().solvent(id(0)).phi();
          } else 
-         if (type_ == Mu) {
-            if (id(0)==0) {
-               return systemPtr_->mixture().polymer(id(1)).mu();
-            } else
-            if (id(0)==1) {
-               return systemPtr_->mixture().solvent(id(1)).mu();
-            } else {
-               UTIL_THROW("Invalid choice between polymer (0) and solvent (1).");
-            }
+         if (type_ == Mu_Polymer) {
+            return systemPtr_->mixture().polymer(id(0)).mu();
+         } else
+         if (type_ == Mu_Solvent) {
+            return systemPtr_->mixture().solvent(id(0)).mu();
          } else 
          if (type_ == Solvent) {
-            UTIL_THROW("I don't know how to implement 'solvent'.");
+            return systemPtr_->mixture().solvent(id(0)).size();
          } else {
             UTIL_THROW("This should never happen.");
          }
       }
 
-      // Sets the system parameter value. 
+      // Set the system parameter value. 
       void set_(double newVal)
       {
          if (type_ == Block) {
-            systemPtr_->mixture().polymer(id(0)).block(id(1)).setLength(newVal);
+            Pscf::Pspc::Block<D>& block = systemPtr_->mixture().polymer(id(0)).block(id(1));
+            block.setLength(newVal);
+            block.setupUnitCell(systemPtr_->unitCell());
+            // Call Block<D>::setLength to update length and ds
+            // Call Block<D>::setupUnitCell to update expKsq, expKsq2
          } else 
          if (type_ == Chi) {
             systemPtr_->interaction().setChi(id(0),id(1),newVal);
+            // ChiInteraction::setChi must update auxiliary variables
          } else 
          if (type_ == Kuhn) {
-            int monomerId;
-            double kuhn;
-            // Set new value of kuhn length for this monomer.
-            systemPtr_->mixture().monomer(id(0)).setStep(newVal);
-            // Update the kuhn lengths of all blocks. Potential mismatch otherwise.
-            for (int i=0; i < systemPtr_->mixture().nPolymer(); ++i) {
-               for (int j=0; j < systemPtr_->mixture().polymer(i).nBlock(); ++j) {
-                  monomerId = systemPtr_->mixture().polymer(i).block(j).monomerId();
-                  kuhn = systemPtr_->mixture().monomer(monomerId).step();
-                  systemPtr_->mixture().polymer(i).block(j).setKuhn(kuhn);
+            typename Pscf::Pspc::Mixture<D>& mixture = systemPtr_->mixture();
+
+            // Set new kuhn length for this monomer
+            mixture.monomer(id(0)).setStep(newVal);
+
+            // Update kuhn length for all blocks of this monomer type
+            typename Pscf::Pspc::Block<D>* blockPtr;
+            for (int i=0; i < mixture.nPolymer(); ++i) {
+               for (int j=0; j < mixture.polymer(i).nBlock(); ++j) {
+                  blockPtr = &(mixture.polymer(i).block(j));
+                  if (id(0) == blockPtr->monomerId()) {
+                     blockPtr->setKuhn(newVal);
+                     blockPtr->setupUnitCell(systemPtr_->unitCell());
+                  }
                }
             }
             // Solvent kuhn doesn't need updating. 
+         } else
+         if (type_ == Phi_Polymer) {
+            systemPtr_->mixture().polymer(id(0)).setPhi(newVal);
+         } else
+         if (type_ == Phi_Solvent) {
+            systemPtr_->mixture().solvent(id(0)).setPhi(newVal);
          } else 
-         if (type_ == Phi) {
-            if (id(0)==0) {
-            systemPtr_->mixture().polymer(id(1)).setPhi(newVal);
-            } else
-            if (id(0)==1) {
-               systemPtr_->mixture().solvent(id(1)).setPhi(newVal);
-            } else {
-               UTIL_THROW("Invalid choice between polymer (0) and solvent (1).");
-            }
-         } else 
-         if (type_ == Mu) {
-            if (id(0)==0) {
-               systemPtr_->mixture().polymer(id(1)).setMu(newVal);
-            } else
-            if (id(0)==1) {
-               systemPtr_->mixture().solvent(id(1)).setMu(newVal);
-            } else {
-               UTIL_THROW("Invalid choice between polymer (0) and solvent (1).");
-            }
+         if (type_ == Mu_Polymer) {
+            systemPtr_->mixture().polymer(id(0)).setMu(newVal);
+         } else
+         if (type_ == Mu_Solvent) {
+            systemPtr_->mixture().solvent(id(0)).setMu(newVal);
          } else 
          if (type_ == Solvent) {
-            UTIL_THROW("I don't know how to implement 'solvent'.");
+            systemPtr_->mixture().solvent(id(0)).setSize(newVal);
          } else {
             UTIL_THROW("This should never happen.");
          }
       }
 
    // friends:
-      template <int U>
-      friend std::istream& operator >> (std::istream&, LinearSweepParameter<U>&);
 
       template <int U>
-      friend std::ostream& operator << (std::ostream&, LinearSweepParameter<U> const&);
+      friend 
+      std::istream& operator >> (std::istream&, LinearSweepParameter<U>&);
+
+      template <int U>
+      friend 
+      std::ostream& 
+      operator << (std::ostream&, LinearSweepParameter<U> const&);
    
    };
 
    // Definitions of operators, with no explicit instantiations. 
 
    /**
-   * Inserter operator for reading data into a LinearSweepParameter.
+   * Inserter for reading a LinearSweepParameter from an istream.
+   *
+   * \param in  input stream
+   * \param param  LinearSweepParameter<D> object to read
    */
    template <int D>
    std::istream& operator >> (std::istream& in, 
                               LinearSweepParameter<D>& param)
    {
-      // read the parameter type.
+      // Read the parameter type.
       param.readParamType(in);  
-      // read the identifiers associated with this parameter type. 
+      // Read the identifiers associated with this parameter type. 
       for (int i = 0; i < param.nID_; ++i) {
          in >> param.id_[i];
       }
-      // read in the range in the parameter to sweep over.
+      // Read in the range in the parameter to sweep over
       in >> param.change_;
 
       return in;
    }
 
    /**
-   * Extractor operator for outputting data from a LinearSweepParameter.
+   * Extractor for writing a LinearSweepParameter to ostream.
+   *
+   * \param in  output stream
+   * \param param  LinearSweepParameter<D> object to write
    */
    template <int D>
    std::ostream& operator << (std::ostream& out, 
