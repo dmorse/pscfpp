@@ -18,7 +18,7 @@ namespace Pscf {
    /**
    * Flory-Huggins excess free energy model.
    *
-   * \ingroup Pscf_Module
+   * \ingroup Pscf_Inter_Module
    */
    class ChiInteraction : public  Interaction
    {
@@ -117,6 +117,7 @@ namespace Pscf {
       *
       * \param i row index
       * \param j column index
+      * \param chi  input value of chi
       */
       void setChi(int i, int j, double chi);
 

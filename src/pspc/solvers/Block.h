@@ -88,6 +88,13 @@ namespace Pspc {
       void setupUnitCell(const UnitCell<D>& unitCell);
 
       /**
+      * Set block length.
+      * 
+      * \param length  new block length
+      */
+      void setLength(double length);
+
+      /**
       * Set solver for this block.
       *
       * This should be called once after every change in w fields, before

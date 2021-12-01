@@ -17,7 +17,9 @@ namespace Pspc {
    using namespace Util;
 
    /**
-   * Comparison of element-by-element differences between RFieldDft arrays.
+   * Comparator for RFieldDft (k-grid) arrays.
+   *
+   * \ingroup Pspc_Field_Module
    */
    template <int D>
    class KFieldComparison {
@@ -29,7 +31,7 @@ namespace Pspc {
       *
       * Initializes maxDiff and rmsDiff to zero.
       */
-      KFieldComparison(int begin = 0);
+      KFieldComparison();
 
       // Use compiler defined destructor and assignment operator.
 
@@ -87,9 +89,6 @@ namespace Pspc {
 
       // Room-mean-squared element-by-element difference. 
       double rmsDiff_;
-   
-      // Index of first element (0 or 1)
-      int begin_;
    
    };
 

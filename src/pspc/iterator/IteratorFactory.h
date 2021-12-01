@@ -20,6 +20,8 @@ namespace Pspc {
 
    /**
    * Factory for subclasses of Iterator.
+   *
+   * \ingroup Pspc_Iterator_Module
    */
    template <int D>
    class IteratorFactory : public Factory< Iterator<D> > 

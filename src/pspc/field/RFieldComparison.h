@@ -18,6 +18,8 @@ namespace Pspc {
 
    /**
    * Comparator for fields in real-space (r-grid) format.
+   * 
+   * \ingroup Pspc_Field_Module
    */
    template <int D>
    class RFieldComparison : public FieldComparison< RField<D> >

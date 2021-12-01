@@ -135,8 +135,10 @@ namespace Pspc
                                              system().wFieldsRGrid());
 
       if (isFlexible) {
-         // Update system unitCell
+         // Update system unitCell data
          system().unitCell() = unitCell();
+         // Update unitCell information in all blocks of all polymers
+         system().mixture().setupUnitCell(unitCell());
       }
 
    }
