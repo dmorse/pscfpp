@@ -7,6 +7,7 @@
 #include <pspc/System.h>
 #include <pspc/sweep/SweepFactory.h>
 #include <pspc/sweep/LinearSweep.h>
+#include <pspc/field/BFieldComparison.h>
 
 #include <fstream>
 #include <sstream>
@@ -65,10 +66,10 @@ public:
       printMethod(TEST_FUNC);
 
       // set up system with some data
-      System<3> system;
-      SweepTest::SetUpSystem(system, "in/diblock/bcc/param.flex");
+      System<1> system;
+      SweepTest::SetUpSystem(system, "in/block/param");
       // set up LinearSweepParameter objects 
-      DArray< LinearSweepParameter<3> > ps;
+      DArray< LinearSweepParameter<1> > ps;
       ps.allocate(4);
       for (int i = 0; i < 4; ++i) {
          ps[i].setSystem(system);
@@ -104,11 +105,11 @@ public:
       printMethod(TEST_FUNC);
 
       // set up system
-      System<3> system;
-      SweepTest::SetUpSystem(system, "in/diblock/bcc/param.flex");
+      System<1> system;
+      SweepTest::SetUpSystem(system, "in/block/param");
 
       // set up LinearSweepParameter objects 
-      DArray< LinearSweepParameter<3> > ps;
+      DArray< LinearSweepParameter<1> > ps;
       ps.allocate(4);
       std::ifstream in;
       openInputFile("in/param.test", in);
@@ -143,11 +144,11 @@ public:
       printMethod(TEST_FUNC);
 
       // set up system
-      System<3> system;
-      SweepTest::SetUpSystem(system, "in/diblock/bcc/param.flex");
+      System<1> system;
+      SweepTest::SetUpSystem(system, "in/block/param");
 
       // set up LinearSweepParameter objects 
-      DArray< LinearSweepParameter<3> > ps;
+      DArray< LinearSweepParameter<1> > ps;
       ps.allocate(4);
       DArray<double> initial;
       initial.allocate(4);
@@ -190,26 +191,125 @@ public:
       printMethod(TEST_FUNC);
 
       // set up system with Linear Sweep Object
-      System<3> system;
-      SweepTest::SetUpSystem(system, "in/param.sweep");
+      System<1> system;
+      SweepTest::SetUpSystem(system, "in/block/param");
    }
 
-   void testLinearSweepIterate()
+   void testLinearSweepBlock()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/testLinearSweepIterate");
+      openLogFile("out/testLinearSweepBlock");
 
       // Set up system with a LinearSweep object
-      System<3> system;
-      SweepTest::SetUpSystem(system, "in/param.sweep");
+      System<1> system;
+      SweepTest::SetUpSystem(system, "in/block/param");
       
-      // Read initial w fields and sweep
-      system.readWBasis("in/diblock/bcc/omega.ref");
+      // Read expected w fields
+      DArray< BasisFieldState<1> > fieldsRef;
+      fieldsRef.allocate(5);
+      for (int i = 0; i < 5; ++i) {
+         fieldsRef[i].setSystem(system);
+         fieldsRef[i].read("in/sweepref/block/" + std::to_string(i) +"_w.bf");
+      }
+
+      // Read initial field guess and sweep
+      system.readWBasis("in/block/w.bf");
       system.sweep();
 
+      // Read outputted fields
+      DArray< BasisFieldState<1> > fieldsOut;
+      fieldsOut.allocate(5);
+      for (int i = 0; i < 5; ++i) {
+         fieldsOut[i].setSystem(system);
+         fieldsOut[i].read("out/block/" + std::to_string(i) +"_w.bf");
+      }
+
+      // compare output
+      DArray< BFieldComparison > comparisons;
+      comparisons.allocate(5);
+      for (int i = 0; i < 5; ++i) {
+         comparisons[i].compare( fieldsRef[i].fields(), fieldsOut[i].fields() );
+         TEST_ASSERT(comparisons[i].maxDiff() < 5.0e-7);
+      }
    }
 
-   void SetUpSystem(System<3>& system, std::string fname)
+   void testLinearSweepChi()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testLinearSweepBlock");
+
+      // Set up system with a LinearSweep object
+      System<1> system;
+      SweepTest::SetUpSystem(system, "in/chi/param");
+      
+      // Read expected w fields
+      DArray< BasisFieldState<1> > fieldsRef;
+      fieldsRef.allocate(5);
+      for (int i = 0; i < 5; ++i) {
+         fieldsRef[i].setSystem(system);
+         fieldsRef[i].read("in/sweepref/chi/" + std::to_string(i) +"_w.bf");
+      }
+
+      // Read initial field guess and sweep
+      system.readWBasis("in/chi/w.bf");
+      system.sweep();
+
+      // Read outputted fields
+      DArray< BasisFieldState<1> > fieldsOut;
+      fieldsOut.allocate(5);
+      for (int i = 0; i < 5; ++i) {
+         fieldsOut[i].setSystem(system);
+         fieldsOut[i].read("out/chi/" + std::to_string(i) +"_w.bf");
+      }
+
+      // compare output
+      DArray< BFieldComparison > comparisons;
+      comparisons.allocate(5);
+      for (int i = 0; i < 5; ++i) {
+         comparisons[i].compare( fieldsRef[i].fields(), fieldsOut[i].fields() );
+         TEST_ASSERT(comparisons[i].maxDiff() < 5.0e-7);
+      }
+   }
+
+   void testLinearSweepKuhn()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testLinearSweepBlock");
+
+      // Set up system with a LinearSweep object
+      System<1> system;
+      SweepTest::SetUpSystem(system, "in/kuhn/param");
+      
+      // Read expected w fields
+      DArray< BasisFieldState<1> > fieldsRef;
+      fieldsRef.allocate(5);
+      for (int i = 0; i < 5; ++i) {
+         fieldsRef[i].setSystem(system);
+         fieldsRef[i].read("in/sweepref/kuhn/" + std::to_string(i) +"_w.bf");
+      }
+
+      // Read initial field guess and sweep
+      system.readWBasis("in/kuhn/w.bf");
+      system.sweep();
+
+      // Read outputted fields
+      DArray< BasisFieldState<1> > fieldsOut;
+      fieldsOut.allocate(5);
+      for (int i = 0; i < 5; ++i) {
+         fieldsOut[i].setSystem(system);
+         fieldsOut[i].read("out/kuhn/" + std::to_string(i) +"_w.bf");
+      }
+
+      // compare output
+      DArray< BFieldComparison > comparisons;
+      comparisons.allocate(5);
+      for (int i = 0; i < 5; ++i) {
+         comparisons[i].compare( fieldsRef[i].fields(), fieldsOut[i].fields() );
+         TEST_ASSERT(comparisons[i].maxDiff() < 5.0e-7);
+      }
+   }
+
+   void SetUpSystem(System<1>& system, std::string fname)
    {
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
@@ -229,7 +329,9 @@ TEST_ADD(SweepTest, testParameterRead)
 TEST_ADD(SweepTest, testParameterGet)
 TEST_ADD(SweepTest, testParameterSet)
 TEST_ADD(SweepTest, testLinearSweepRead)
-TEST_ADD(SweepTest, testLinearSweepIterate)
+TEST_ADD(SweepTest, testLinearSweepBlock)
+TEST_ADD(SweepTest, testLinearSweepChi)
+TEST_ADD(SweepTest, testLinearSweepKuhn)
 TEST_END(SweepTest)
 
 #endif

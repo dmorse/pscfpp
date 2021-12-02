@@ -33,8 +33,8 @@ System{
   LinearSweep{
      ns            4
      baseFileName  out/block/
-     nParameter    1
+     nParameter    2
      parameters    block  0 0 +0.02
-                   block  0 1 -0.02
+                   block  0 0 -0.02
   }
 }
