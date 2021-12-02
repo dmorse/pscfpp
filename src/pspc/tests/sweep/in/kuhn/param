@@ -34,6 +34,6 @@ System{
      ns            4
      baseFileName  out/kuhn/
      nParameter    1
-     parameters    kuhn  0 +0.20
+     parameters    kuhn  0 +0.80
   }
 }

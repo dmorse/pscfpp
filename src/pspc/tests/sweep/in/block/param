@@ -34,7 +34,7 @@ System{
      ns            4
      baseFileName  out/block/
      nParameter    2
-     parameters    block  0 0 +0.02
-                   block  0 0 -0.02
+     parameters    block  0 0 +0.08
+                   block  0 1 -0.08
   }
 }

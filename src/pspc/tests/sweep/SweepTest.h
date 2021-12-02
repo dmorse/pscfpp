@@ -236,7 +236,7 @@ public:
    void testLinearSweepChi()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/testLinearSweepBlock");
+      openLogFile("out/testLinearSweepChi");
 
       // Set up system with a LinearSweep object
       System<1> system;
@@ -274,7 +274,7 @@ public:
    void testLinearSweepKuhn()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/testLinearSweepBlock");
+      openLogFile("out/testLinearSweepKuhn");
 
       // Set up system with a LinearSweep object
       System<1> system;

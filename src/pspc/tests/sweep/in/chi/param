@@ -34,6 +34,6 @@ System{
      ns            4
      baseFileName  out/chi/
      nParameter    1
-     parameters    chi  0 1 +1.00
+     parameters    chi  0 1 +4.00
   }
 }
