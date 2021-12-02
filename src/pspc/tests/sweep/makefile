@@ -21,7 +21,7 @@ run: $(pspc_tests_sweep_OBJS) $(BLD_DIR)/$(TEST)
 
 clean-outputs:
 	rm -f log count 
-	rm -f out/*
+	find out -type f \( ! -iname ".*" \) -exec rm -f {} \;
 
 clean:
 	rm -f $(pspc_tests_sweep_OBJS) $(pspc_tests_sweep_OBJS:.o=.d)
