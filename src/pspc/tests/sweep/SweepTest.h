@@ -68,8 +68,8 @@ public:
       // set up system with some data
       System<1> system;
       SweepTest::SetUpSystem(system, "in/block/param");
-      // set up LinearSweepParameter objects 
-      DArray< LinearSweepParameter<1> > ps;
+      // set up SweepParameter objects 
+      DArray< SweepParameter<1> > ps;
       ps.allocate(4);
       for (int i = 0; i < 4; ++i) {
          ps[i].setSystem(system);
@@ -108,8 +108,8 @@ public:
       System<1> system;
       SweepTest::SetUpSystem(system, "in/block/param");
 
-      // set up LinearSweepParameter objects 
-      DArray< LinearSweepParameter<1> > ps;
+      // set up SweepParameter objects 
+      DArray< SweepParameter<1> > ps;
       ps.allocate(4);
       std::ifstream in;
       openInputFile("in/param.test", in);
@@ -147,18 +147,15 @@ public:
       System<1> system;
       SweepTest::SetUpSystem(system, "in/block/param");
 
-      // set up LinearSweepParameter objects 
-      DArray< LinearSweepParameter<1> > ps;
+      // set up SweepParameter objects 
+      DArray< SweepParameter<1> > ps;
       ps.allocate(4);
-      DArray<double> initial;
-      initial.allocate(4);
       std::ifstream in;
       openInputFile("in/param.test", in);
       for (int i = 0; i < 4; ++i) {
          ps[i].setSystem(system);
          in >> ps[i];
          ps[i].getInitial();
-         initial[i] = ps[i].current();
       }
 
       DArray<double> sysval, paramval;
@@ -167,12 +164,14 @@ public:
 
       // Set for some arbitrary value of s in [0,1]
       double s = 0.295586;
+      double newVal;
       for (int i = 0; i < 4; ++i) {
-         ps[i].update(s);
+         newVal = ps[i].initial() + s*ps[i].change();
+         ps[i].update(newVal);
       }
       // calculate expected value of parameter using s
       for (int i = 0; i < 4; ++i) {
-         paramval[i] = initial[i] + s*ps[i].change();
+         paramval[i] = ps[i].initial() + s*ps[i].change();
       }
 
       // manually check equality for each one

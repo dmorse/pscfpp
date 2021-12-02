@@ -9,7 +9,7 @@
 */
 
 #include "Sweep.h"      // base class
-#include "LinearSweepParameter.h" // parameter class
+#include "SweepParameter.h" // parameter class
 #include <pspc/solvers/Block.h>
 #include <pspc/solvers/Mixture.h>
 #include <pspc/solvers/Polymer.h>
@@ -30,7 +30,7 @@ namespace Pspc {
    class LinearSweep;
 
    template <int D>
-   class LinearSweepParameter;
+   class SweepParameter;
 
    using namespace Util;
 
@@ -92,9 +92,9 @@ namespace Pspc {
       int nParameter_; 
 
       /**
-      * Array of LinearSweepParameter objects.
+      * Array of SweepParameter objects.
       */
-      DArray< LinearSweepParameter<D> > parameters_;
+      DArray< SweepParameter<D> > parameters_;
 
    // friends:
        

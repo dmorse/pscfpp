@@ -32,9 +32,8 @@ namespace Pspc {
       this->read(in, "nParameter", nParameter_);
       parameters_.allocate(nParameter_);
       
-      // Read in array of LinearSweepParameters, calling << for each
-      this->template readDArray< LinearSweepParameter<D> >(in, "parameters", parameters_, nParameter_);
-      //readDArray< LinearSweepParameter<D> >(in, "parameters", parameters_, nParameter_);
+      // Read in array of SweepParameters, calling << for each
+      this->template readDArray< SweepParameter<D> >(in, "parameters", parameters_, nParameter_);
 
       // Verify net zero change in volume fractions if being swept
       double sum = 0.0;
@@ -67,8 +66,10 @@ namespace Pspc {
    void LinearSweep<D>::setParameters(double s)
    {
       // Update the system parameter values
+      double newVal;
       for (int i = 0; i < nParameter_; ++i) {
-         parameters_[i].update(s);
+         newVal = parameters_[i].initial() + s*parameters_[i].change();
+         parameters_[i].update(newVal);
       }
    }
 
