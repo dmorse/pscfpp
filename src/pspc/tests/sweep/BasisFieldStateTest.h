@@ -59,9 +59,9 @@ public:
       BasisFieldStateTest::SetUpSystem(system);
 
       // Read in file one way
-      system.readWBasis("in/diblock/bcc/omega.ref");
+      system.readWBasis("in/bcc/omega.ref");
       // Read in file another way
-      bfs.read("in/diblock/bcc/omega.ref");
+      bfs.read("in/bcc/omega.ref");
       // Compare
       comparison.compare(bfs.fields(), system.wFields());
       // Assert small difference
@@ -82,7 +82,7 @@ public:
       BasisFieldStateTest::SetUpSystem(system);
 
       // read, write, read
-      bfs1.read("in/diblock/bcc/omega.ref");
+      bfs1.read("in/bcc/omega.ref");
       bfs1.write("out/testBasisFieldStateWrite.ref");
       bfs2.read("out/testBasisFieldStateWrite.ref");
 
@@ -104,7 +104,7 @@ public:
       BasisFieldStateTest::SetUpSystem(system);
 
       // Read in state using system
-      system.readWBasis("in/diblock/bcc/omega.ref");
+      system.readWBasis("in/bcc/omega.ref");
       // get it using bfs
       bfs.getSystemState();
       // compare
@@ -125,7 +125,7 @@ public:
       BasisFieldStateTest::SetUpSystem(system);
 
       // Read in state using bfs
-      bfs.read("in/diblock/bcc/omega.ref");
+      bfs.read("in/bcc/omega.ref");
       // set system state
       bfs.setSystemState(true);
       // compare
@@ -152,7 +152,7 @@ public:
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
       std::ifstream in;
-      openInputFile("in/diblock/bcc/param.flex", in);
+      openInputFile("in/bcc/param.flex", in);
       system.readParam(in);
       in.close();
    }
