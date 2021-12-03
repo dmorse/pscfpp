@@ -248,6 +248,9 @@ namespace Pspc
             now = Timer::now();
             convertTimer.stop(now);
 
+            // Update basis members
+            system().basis().update();
+
          }
 
       }

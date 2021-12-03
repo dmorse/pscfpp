@@ -663,6 +663,7 @@ namespace Pspc
    {
       fieldIo().readFieldsBasis(filename, wFields(), unitCell());
       fieldIo().convertBasisToRGrid(wFields(), wFieldsRGrid());
+      basis().update();
       hasWFields_ = true;
       hasCFields_ = false;
    }
@@ -675,6 +676,7 @@ namespace Pspc
    {
       fieldIo().readFieldsRGrid(filename, wFieldsRGrid(), unitCell());
       fieldIo().convertRGridToBasis(wFieldsRGrid(), wFields());
+      basis().update();
       hasWFields_ = true;
       hasCFields_ = false;
    }
