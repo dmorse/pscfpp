@@ -1,0 +1,137 @@
+Goal: Change pscfpp interfaces so as to better enforce data validity.
+
+Challenge: We need to be careful about changes to classes that are 
+used by 
+
+======================================================================
+Changes that can be made (mostly) without affecting GPU code:
+
+Block
+-----
+
+   - Add a private boolean variable hasExpKsq_ that is initialized
+     false and set false any time you change anything that could 
+     invalidate data in the arrays expKsq_ an expKsq2_. 
+
+   - Change setupUnitCell to setUnitCell. Have this function store
+     a pointer to UnitCell that can be retrieved later, and have it
+     set hasExpKsq_ = false.
+
+   - Reimplement BlockDescriptor::setLength so as to set ds_ if 
+     ns_ > 1, and to set hasExpKsq_ = false.
+
+   - Add function setKuhn(....) which sets the kuhn_ variable and
+     sets hasExpKsq_ = false
+
+   - Create a private function computeExpKsq that is called by
+     setupSolver if and only if (!hasExpKSq_)
+
+Monomer Kuhn Length
+-------------------
+ 
+   - Create a function Mixture::setKuhn(....) that sets the step
+     value in the Monomer descriptor and calls setKuhn(...) for
+     every block of the relevant type.
+
+   - (Later, when we can test GPU code): Make MixtureTmpl return
+     a const reference to a Monomer, rather than a non-const reference.
+     This will make it impossible for someone with access to a System<D>
+     to call Monomer::setStep
+
+   - (Later, when we can test GPU code): Make nomenclature for 
+     statistical segment lengths consistent, by using "kuhn" or "step"
+     throughout. I think "kuhn" is less subject to misinterpretation.
+     This would change Monomer functions setStep(double ) and step()
+     to setKuhn(double ) and kuhn().
+
+UnitCell
+--------
+
+   - Make System<D> return unitCell() as a const reference.
+
+   - Create public functions System<D>::setUnitCell(FSArray const & )
+     and System<D>::setUnitCell(UnitCell<D> const & ). These functions
+     should call setUnitCell(...) functions for all blocks internally,
+     and Basis<D>::update(....) internally.
+
+C-Fields
+--------
+
+   - Make all System<D> cField accessors return constant references. 
+
+     There is no reason to allow users to modify the concentration 
+     field, which should be computed internally.
+
+W-Fields
+--------
+
+   - Make all System<D> wField accessors return constant references
+
+   - Add setter functions:
+
+         System<D>::setFieldsBasis(DArray<DArray<double> > & ) 
+         System<D>::setFieldBasis(int monomerId, DArray<double>& ) 
+
+         System<D>::setFieldsRGrid(DArray<WField>& )
+         System<D>::setFieldRGrid(int MonomerId, WField& )
+
+     Setter functions will ensure consistency of Basis and RGrid forms.
+
+Accessors to Subobjects:
+------------------------
+
+   - Consider having System<D>::mesh return a constant reference.
+
+     Question: Do we need the ability to set the mesh upon reading
+     a file, or should we assume it will always be set upon reading
+     readParam?
+
+   - Remove function System<D>::domain() to allow control over access
+     to component parts separately.
+
+FieldIo
+-------
+
+   - Check const-correctness on FieldIo: It seems that all the Field
+     Io, conversion and symmetry checking functions could be marked
+     const. 
+
+   - If we can make all functions except associate const, we can change
+     System<D> so as to return a const reference?
+
+======================================================================
+Changes that could affect the GPU code:
+
+ChiInteraction:
+---------------
+
+  - Clean up the interface of ChiInteraction, move quantities that
+    are used by a specific iterator to that iterator.
+
+BlockTmpl:
+----------
+
+  - Make cField_ protected, to allow derived classes to compute it
+
+  - Change BlockTmpl::cField(int i) to return a const reference.
+
+MixtureTmpl 
+-----------
+
+  - Change MixtureTmpl::monomer(int i) to return a const reference.
+
+  The only property we should ever need to change is kuhn, and that
+  should only be changed by System<D>::setKuhn(int i, double value).
+
+
+Basis
+------
+
+   - Check if Basis::Wave::sqNorm and Basis::Star::eigen are actually used.
+
+   - If not, see if they can be removed. The need to keep them updated is
+     dangerous.
+
+   - If we can remove the Basis<D>::update function, we can make System<D>
+     return a const reference.
+

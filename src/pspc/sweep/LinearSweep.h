@@ -8,28 +8,15 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Sweep.h"      // base class
-#include <pspc/solvers/Block.h>
-#include <pspc/solvers/Mixture.h>
-#include <pspc/solvers/Polymer.h>
-#include <pscf/inter/ChiInteraction.h>
+#include "Sweep.h"            // base class
+#include "SweepParameter.h"   // member 
 #include <util/global.h>
 #include <iostream>
-#include <algorithm>
-#include <iomanip>
 
 namespace Pscf {
 namespace Pspc {
 
-   // Forward declare classes and operators
-   template <int D>
-   class System;
-
-   template <int D>
-   class LinearSweep;
-
-   template <int D>
-   class SweepParameter;
+   template <int D> class System;
 
    using namespace Util;
 
