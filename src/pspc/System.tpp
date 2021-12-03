@@ -184,7 +184,7 @@ namespace Pspc
       int np = mixture().nPolymer(); 
       int ns = mixture().nSolvent(); 
 
-      // Initialize homogeneous object
+      // Initialize homogeneous object NOTE: THIS OBJECT IS NOT USED AT ALL.
       homogeneous_.setNMolecule(np+ns);
       homogeneous_.setNMonomer(nm);
       initHomogeneous();
