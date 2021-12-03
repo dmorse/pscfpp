@@ -9,7 +9,6 @@
 */
 
 #include "Sweep.h"      // base class
-#include "SweepParameter.h" // parameter class
 #include <pspc/solvers/Block.h>
 #include <pspc/solvers/Mixture.h>
 #include <pspc/solvers/Polymer.h>
@@ -85,18 +84,8 @@ namespace Pspc {
       using Sweep<D>::hasSystem;
    
    private:
-
-      /**
-      * Number of parameters being swept. 
-      */
-      int nParameter_; 
-
-      /**
-      * Array of SweepParameter objects.
-      */
-      DArray< SweepParameter<D> > parameters_;
-
-   // friends:
+      using Sweep<D>::nParameter_;
+      using Sweep<D>::parameters_;
        
    };
 

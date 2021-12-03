@@ -38,7 +38,7 @@ namespace Pspc {
       // Verify net zero change in volume fractions if being swept
       double sum = 0.0;
       for (int i = 0; i < nParameter_; ++i) {
-         if (parameters_[i].type() == "phi") {
+         if (parameters_[i].type() == "phi_polymer" || parameters_[i].type() == "phi_solvent") {
             sum += parameters_[i].change();
          }
       }

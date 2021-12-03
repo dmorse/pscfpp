@@ -308,6 +308,82 @@ public:
       }
    }
 
+   void testLinearSweepPhi()   
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testLinearSweepPhi");
+
+      // Set up system with a LinearSweep object
+      System<1> system;
+      SweepTest::SetUpSystem(system, "in/phi/param");
+      
+      // Read expected w fields
+      DArray< BasisFieldState<1> > fieldsRef;
+      fieldsRef.allocate(5);
+      for (int i = 0; i < 5; ++i) {
+         fieldsRef[i].setSystem(system);
+         fieldsRef[i].read("in/sweepref/phi/" + std::to_string(i) +"_w.bf");
+      }
+
+      // Read initial field guess and sweep
+      system.readWBasis("in/phi/w.bf");
+      system.sweep();
+
+      // Read outputted fields
+      DArray< BasisFieldState<1> > fieldsOut;
+      fieldsOut.allocate(5);
+      for (int i = 0; i < 5; ++i) {
+         fieldsOut[i].setSystem(system);
+         fieldsOut[i].read("out/phi/" + std::to_string(i) +"_w.bf");
+      }
+
+      // compare output
+      DArray< BFieldComparison > comparisons;
+      comparisons.allocate(5);
+      for (int i = 0; i < 5; ++i) {
+         comparisons[i].compare( fieldsRef[i].fields(), fieldsOut[i].fields() );
+         TEST_ASSERT(comparisons[i].maxDiff() < 5.0e-7);
+      }
+   }
+
+   void testLinearSweepSolvent()   
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testLinearSweepSolvent");
+
+      // Set up system with a LinearSweep object
+      System<1> system;
+      SweepTest::SetUpSystem(system, "in/solvent/param");
+      
+      // Read expected w fields
+      DArray< BasisFieldState<1> > fieldsRef;
+      fieldsRef.allocate(5);
+      for (int i = 0; i < 5; ++i) {
+         fieldsRef[i].setSystem(system);
+         fieldsRef[i].read("in/sweepref/solvent/" + std::to_string(i) +"_w.bf");
+      }
+
+      // Read initial field guess and sweep
+      system.readWBasis("in/solvent/w.bf");
+      system.sweep();
+
+      // Read outputted fields
+      DArray< BasisFieldState<1> > fieldsOut;
+      fieldsOut.allocate(5);
+      for (int i = 0; i < 5; ++i) {
+         fieldsOut[i].setSystem(system);
+         fieldsOut[i].read("out/solvent/" + std::to_string(i) +"_w.bf");
+      }
+
+      // compare output
+      DArray< BFieldComparison > comparisons;
+      comparisons.allocate(5);
+      for (int i = 0; i < 5; ++i) {
+         comparisons[i].compare( fieldsRef[i].fields(), fieldsOut[i].fields() );
+         TEST_ASSERT(comparisons[i].maxDiff() < 5.0e-7);
+      }
+   }
+
    void SetUpSystem(System<1>& system, std::string fname)
    {
       system.fileMaster().setInputPrefix(filePrefix());
@@ -331,6 +407,8 @@ TEST_ADD(SweepTest, testLinearSweepRead)
 TEST_ADD(SweepTest, testLinearSweepBlock)
 TEST_ADD(SweepTest, testLinearSweepChi)
 TEST_ADD(SweepTest, testLinearSweepKuhn)
+TEST_ADD(SweepTest, testLinearSweepPhi)
+TEST_ADD(SweepTest, testLinearSweepSolvent)
 TEST_END(SweepTest)
 
 #endif

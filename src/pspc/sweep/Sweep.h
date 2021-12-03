@@ -10,6 +10,7 @@
 
 #include <pscf/sweep/SweepTmpl.h>          // base class template
 #include <pspc/sweep/BasisFieldState.h>    // base class template parameter
+#include "SweepParameter.h" // parameter class
 #include <util/global.h>
 
 namespace Pscf {
@@ -122,6 +123,12 @@ namespace Pspc {
       */
       System<D>& system()
       {  return *systemPtr_; }
+
+      /// Number of parameters being swept. 
+      int nParameter_; 
+
+      /// Array of SweepParameter objects.
+      DArray< SweepParameter<D> > parameters_;
 
       // Protected members inherited from base class template SweepTmpl
       using SweepTmpl< BasisFieldState<D> >::ns_;

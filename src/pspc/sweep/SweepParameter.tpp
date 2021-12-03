@@ -63,7 +63,7 @@ namespace Pspc {
       } else 
       if (buffer == "solvent" || buffer == "solvent_size") {
          type_ = Solvent;
-         UTIL_THROW("I don't know how to implement 'solvent'.");
+         nID_ = 1; //species identifier.
       } else {
          UTIL_THROW("Invalid SweepParameter::paramType value");
       }
