@@ -102,15 +102,6 @@ namespace Pspc
 
       FieldIo<D>& fieldIo = system().fieldIo();
 
-      #if 0
-      // Convert from Basis to RGrid
-      convertTimer.start();
-      fieldIo.convertBasisToRGrid(system().wFields(),
-                                  system().wFieldsRGrid());
-      now = Timer::now();
-      convertTimer.stop(now);
-      #endif
-
       // Solve MDE for initial state
       solverTimer.start();
       system().mixture().compute(system().wFieldsRGrid(),
@@ -186,7 +177,7 @@ namespace Pspc
             if (!isFlexible_) {
                system().mixture().computeStress();
                Log::file() << "Final stress:" << "\n";
-               for (int m=0; m<(system().unitCell()).nParameter(); ++m){
+               for (int m=0; m < system().unitCell().nParameter(); ++m){
                   Log::file() << "Stress  "<< m << "   = "
                               << Dbl(system().mixture().stress(m)) 
                               << "\n";
@@ -264,8 +255,7 @@ namespace Pspc
       omHists_.append(system().wFields());
 
       if (isFlexible_)
-         //CpHists_.append((system().unitCell()).params());
-         CpHists_.append((system().unitCell()).parameters());
+         CpHists_.append(system().unitCell().parameters());
 
       for (int i = 0 ; i < system().mixture().nMonomer(); ++i) {
          for (int j = 0; j < system().basis().nBasis() - 1; ++j) {
@@ -299,7 +289,6 @@ namespace Pspc
       #endif
 
       for (int i = 0; i < system().mixture().nMonomer(); ++i) {
-
          for (int j = 0; j < system().mixture().nMonomer(); ++j) {
             for (int k = 0; k < system().basis().nBasis() - 1; ++k) {
                tempDev[i][k] +=( (system().interaction().chi(i,j)*system().cField(j)[k + 1])
@@ -312,7 +301,7 @@ namespace Pspc
 
       if (isFlexible_){
          FArray<double, 6 > tempCp;
-         for (int i = 0; i<(system().unitCell()).nParameter() ; i++){
+         for (int i = 0; i < system().unitCell().nParameter() ; i++){
             tempCp [i] = -((system().mixture()).stress(i));
          }
          devCpHists_.append(tempCp);
@@ -339,9 +328,10 @@ namespace Pspc
       }
 
       if (isFlexible_){
-         for ( int i = 0; i < (system().unitCell()).nParameter() ; i++) {
-            dError +=  devCpHists_[0][i] *  devCpHists_[0][i];
-            wError +=  (system().unitCell()).parameters()[i]*(system().unitCell()).parameters()[i];
+         for ( int i = 0; i < system().unitCell().nParameter() ; i++) {
+            dError += devCpHists_[0][i] *  devCpHists_[0][i];
+            wError += system().unitCell().parameters()[i]
+                     *system().unitCell().parameters()[i];
          }
       }
       Log::file() << " dError :" << Dbl(dError)<<std::endl;
@@ -362,12 +352,13 @@ namespace Pspc
       error = temp1;
 
       if (isFlexible_){
-         for ( int i = 0; i < (system().unitCell()).nParameter() ; i++) {
-            if (temp2 < fabs (devCpHists_[0][i]))
+         for ( int i = 0; i < system().unitCell().nParameter() ; i++) {
+            if (temp2 < fabs (devCpHists_[0][i])) {
                 temp2 = fabs (devCpHists_[0][i]);
+            }
          }
          // Output current stress values
-         for (int m=0; m<(system().unitCell()).nParameter() ; ++m){
+         for (int m=0;  m < system().unitCell().nParameter() ; ++m){
             Log::file() << "Stress  "<< m << "   = "
                         << Dbl(system().mixture().stress(m)) <<"\n";
          }
@@ -379,9 +370,9 @@ namespace Pspc
 
       // Output current unit cell parameter values
       if (isFlexible_){
-         for (int m=0; m<(system().unitCell()).nParameter() ; ++m){
+         for (int m=0; m < system().unitCell().nParameter() ; ++m){
                Log::file() << "Parameter " << m << " = "
-                           << Dbl((system().unitCell()).parameters()[m])
+                           << Dbl(system().unitCell().parameters()[m])
                            << "\n";
          }
       }
@@ -527,7 +518,7 @@ namespace Pspc
             }
             unitCell.setParameters(parameters_);
             mixture.setupUnitCell(unitCell);
-	         system().basis().update();
+            system().basis().update();
          }
       }
    }

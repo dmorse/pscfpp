@@ -8,30 +8,56 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <pspc/solvers/Block.h>
+#include <pspc/solvers/Mixture.h>
+#include <pspc/solvers/Polymer.h>
+#include <pspc/System.h>
+#include <pscf/inter/ChiInteraction.h>
+#include <util/global.h>
+#include <algorithm>
+#include <iomanip>
+
 namespace Pscf {
 namespace Pspc {
 
    using namespace Util;
 
+   /*
+   * Default constructor.
+   */
    template <int D>
    SweepParameter<D>::SweepParameter()
-    : id_(),
-    systemPtr_(0)
+    : type_(SweepParameter<D>::Null),
+      nID_(0),
+      id_(),
+      initial_(0.0),
+      change_(0.0),
+      systemPtr_(0)
    {}
 
+   /*
+   * Constructor, creates association with system.
+   */
    template <int D>
    SweepParameter<D>::SweepParameter(System<D>& system)
-    : id_(),
+    : type_(SweepParameter<D>::Null),
+      nID_(0),
+      id_(),
+      initial_(0.0),
+      change_(0.0),
       systemPtr_(&system)
    {}
 
+   /*
+   * Read type, set nId and allocate id_ array.
+   */
    template <int D>
    void SweepParameter<D>::readParamType(std::istream& in)
    {
       std::string buffer;
       in >> buffer;
       std::transform(buffer.begin(), buffer.end(), 
-                                 buffer.begin(), ::tolower);
+                     buffer.begin(), ::tolower);
 
       if (buffer == "block" || buffer == "block_length") {
          type_ = Block;
@@ -65,30 +91,44 @@ namespace Pspc {
          type_ = Solvent;
          UTIL_THROW("I don't know how to implement 'solvent'.");
       } else {
-         UTIL_THROW("Invalid SweepParameter::paramType value");
+         UTIL_THROW("Invalid SweepParameter::ParamType value");
       }
 
+      if (id_.isAllocated()) id_.deallocate();
       id_.allocate(nID_);
+
    }
 
+   /*
+   * Write type enum value
+   */
    template <int D>
    void SweepParameter<D>::writeParamType(std::ostream& out) const
    {
       out << type();
    }
 
+   /*
+   * Get the current value from the parent system.
+   */
    template <int D>
    void SweepParameter<D>::getInitial()
    {
       initial_ = get_();
    }
 
+   /*
+   * Set a new value in the parent system.
+   */
    template <int D>
    void SweepParameter<D>::update(double newVal)
    {
       set_(newVal);
    }
 
+   /*
+   * Get string representation of type enum value.
+   */
    template <int D>
    std::string SweepParameter<D>::type() const
    {
@@ -158,7 +198,9 @@ namespace Pspc {
    void SweepParameter<D>::set_(double newVal)
    {
       if (type_ == Block) {
-         Pscf::Pspc::Block<D>& block = systemPtr_->mixture().polymer(id(0)).block(id(1));
+         // Full name required to distinguish class Block from enum value 
+         Pscf::Pspc::Block<D>& block 
+                      = systemPtr_->mixture().polymer(id(0)).block(id(1));
          block.setLength(newVal);
          block.setupUnitCell(systemPtr_->unitCell());
          // Call Block<D>::setLength to update length and ds
@@ -246,7 +288,7 @@ namespace Pspc {
    /**
    * Extractor for writing a SweepParameter to ostream.
    *
-   * \param in  output stream
+   * \param out  output stream
    * \param param  SweepParameter<D> object to write
    */
    template <int D>

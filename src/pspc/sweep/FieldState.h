@@ -34,7 +34,7 @@ namespace Pspc
    * Different choices for class FT can be used to store fields in
    * symmetry-adapted basis function, r-grid or k-grid format.
    *
-   * \ingroup Pscf_Pspc_Module
+   * \ingroup Pspc_Sweep_Module
    */
    template <int D, class FT>
    class FieldState 
