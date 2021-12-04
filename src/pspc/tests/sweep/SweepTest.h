@@ -8,6 +8,7 @@
 #include <pspc/sweep/SweepFactory.h>
 #include <pspc/sweep/LinearSweep.h>
 #include <pspc/field/BFieldComparison.h>
+#include <util/format/Dbl.h>
 
 #include <fstream>
 #include <sstream>
@@ -25,7 +26,7 @@ public:
    std::ofstream logFile_;
 
    void setUp()
-   {}
+   {  setVerbose(0); }
 
    void tearDown()
    {
@@ -47,7 +48,6 @@ public:
       System<3> system;
       LinearSweep<3> ls(system);
       SweepFactory<3> sf(system);
-
    }
 
    void testFactory() 
@@ -65,25 +65,25 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      // set up system with some data
+      // Set up system with some data
       System<1> system;
       SweepTest::SetUpSystem(system, "in/block/param");
-      // set up SweepParameter objects 
+      // Set up SweepParameter objects 
       DArray< SweepParameter<1> > ps;
       ps.allocate(4);
       for (int i = 0; i < 4; ++i) {
          ps[i].setSystem(system);
       }
-      // open test input file
+      // Open test input file
       std::ifstream in;
 
-      // read in data
+      // Read in data
       openInputFile("in/param.test", in);
       for (int i = 0; i < 4; ++i) {
          in >> ps[i];
       }
 
-      // assert that it is read correctly
+      // Assert that it is read correctly
       TEST_ASSERT(ps[0].type()=="block_length");
       TEST_ASSERT(ps[0].id(0)==0);
       TEST_ASSERT(ps[0].id(1)==0);
@@ -104,11 +104,11 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      // set up system
+      // Set up system
       System<1> system;
       SweepTest::SetUpSystem(system, "in/block/param");
 
-      // set up SweepParameter objects 
+      // Set up SweepParameter objects 
       DArray< SweepParameter<1> > ps;
       ps.allocate(4);
       std::ifstream in;
@@ -122,19 +122,18 @@ public:
       sysval.allocate(4);
       paramval.allocate(4);
 
-      // call get_ function to get value through parameter
+      // Call get_ function to get value through parameter
       for (int i = 0; i < 4; ++i) {
          paramval[i] = ps[i].current();
       }
 
-      // manually check equality for each one
+      // Manually check equality for each one
       sysval[0] = system.mixture().polymer(0).block(0).length();
       sysval[1] = system.interaction().chi(0,1);
       sysval[2] = system.mixture().monomer(0).step();
       sysval[3] = system.mixture().polymer(0).phi();
-
       for (int i = 0; i < 4; ++i) {
-         TEST_ASSERT(sysval[i]==paramval[i]);
+         TEST_ASSERT(sysval[i] == paramval[i]);
       }
       
    }
@@ -143,11 +142,11 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      // set up system
+      // Set up system
       System<1> system;
       SweepTest::SetUpSystem(system, "in/block/param");
 
-      // set up SweepParameter objects 
+      // Set up SweepParameter objects 
       DArray< SweepParameter<1> > ps;
       ps.allocate(4);
       std::ifstream in;
@@ -169,17 +168,16 @@ public:
          newVal = ps[i].initial() + s*ps[i].change();
          ps[i].update(newVal);
       }
-      // calculate expected value of parameter using s
+      // Calculate expected value of parameter using s
       for (int i = 0; i < 4; ++i) {
          paramval[i] = ps[i].initial() + s*ps[i].change();
       }
 
-      // manually check equality for each one
+      // Manually check equality for each one
       sysval[0] = system.mixture().polymer(0).block(0).length();
       sysval[1] = system.interaction().chi(0,1);
       sysval[2] = system.mixture().monomer(0).step();
       sysval[3] = system.mixture().polymer(0).phi();
-
       for (int i = 0; i < 4; ++i) {
          TEST_ASSERT(sysval[i]==paramval[i]);
       }
@@ -189,7 +187,7 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      // set up system with Linear Sweep Object
+      // Set up system with Linear Sweep Object
       System<1> system;
       SweepTest::SetUpSystem(system, "in/block/param");
    }
@@ -223,13 +221,22 @@ public:
          fieldsOut[i].read("out/block/" + std::to_string(i) +"_w.bf");
       }
 
-      // compare output
+      // Compare output
       DArray< BFieldComparison > comparisons;
       comparisons.allocate(5);
+      double maxDiff;
       for (int i = 0; i < 5; ++i) {
-         comparisons[i].compare( fieldsRef[i].fields(), fieldsOut[i].fields() );
-         TEST_ASSERT(comparisons[i].maxDiff() < 5.0e-7);
+         comparisons[i].compare(fieldsRef[i].fields(), fieldsOut[i].fields());
+         if (comparisons[i].maxDiff() > maxDiff) {
+            maxDiff = comparisons[i].maxDiff();
+         }
       }
+      setVerbose(1);
+      if (verbose() > 0) {
+         std::cout << std::endl;
+         std::cout << "maxDiff = " << Dbl(maxDiff, 14, 6) << std::endl;
+      }
+      TEST_ASSERT(maxDiff < 5.0e-7);
    }
 
    void testLinearSweepChi()
@@ -261,13 +268,22 @@ public:
          fieldsOut[i].read("out/chi/" + std::to_string(i) +"_w.bf");
       }
 
-      // compare output
+      // Compare output
       DArray< BFieldComparison > comparisons;
       comparisons.allocate(5);
+      double maxDiff = 0.0;
       for (int i = 0; i < 5; ++i) {
-         comparisons[i].compare( fieldsRef[i].fields(), fieldsOut[i].fields() );
-         TEST_ASSERT(comparisons[i].maxDiff() < 5.0e-7);
+         comparisons[i].compare(fieldsRef[i].fields(), fieldsOut[i].fields());
+         if (comparisons[i].maxDiff() > maxDiff) {
+            maxDiff = comparisons[i].maxDiff();
+         }
       }
+      setVerbose(1);
+      if (verbose() > 0) {
+         std::cout << std::endl;
+         std::cout << "maxDiff = " << Dbl(maxDiff,14,6) << std::endl;
+      }
+      TEST_ASSERT(maxDiff < 5.0e-7);
    }
 
    void testLinearSweepKuhn()
@@ -302,10 +318,19 @@ public:
       // compare output
       DArray< BFieldComparison > comparisons;
       comparisons.allocate(5);
+      double maxDiff = 0.0;
       for (int i = 0; i < 5; ++i) {
-         comparisons[i].compare( fieldsRef[i].fields(), fieldsOut[i].fields() );
-         TEST_ASSERT(comparisons[i].maxDiff() < 5.0e-7);
+         comparisons[i].compare(fieldsRef[i].fields(), fieldsOut[i].fields());
+         if (comparisons[i].maxDiff() > maxDiff) {
+            maxDiff = comparisons[i].maxDiff();
+         }
       }
+      setVerbose(1);
+      if (verbose() > 0) {
+         std::cout << std::endl;
+         std::cout << "maxDiff = " << Dbl(maxDiff,14,6) << std::endl;
+      }
+      TEST_ASSERT(maxDiff < 5.0e-7);
    }
 
    void testLinearSweepPhi()   
@@ -340,10 +365,19 @@ public:
       // compare output
       DArray< BFieldComparison > comparisons;
       comparisons.allocate(5);
+      double maxDiff = 0.0;
       for (int i = 0; i < 5; ++i) {
-         comparisons[i].compare( fieldsRef[i].fields(), fieldsOut[i].fields() );
-         TEST_ASSERT(comparisons[i].maxDiff() < 5.0e-7);
+         comparisons[i].compare(fieldsRef[i].fields(), fieldsOut[i].fields());
+         if (comparisons[i].maxDiff() > maxDiff) {
+            maxDiff = comparisons[i].maxDiff();
+         }
       }
+      setVerbose(1);
+      if (verbose() > 0) {
+         std::cout << std::endl;
+         std::cout << "maxDiff = " << Dbl(maxDiff, 14, 6) << std::endl;
+      }
+      TEST_ASSERT(maxDiff < 5.0e-7);
    }
 
    void testLinearSweepSolvent()   
@@ -375,13 +409,22 @@ public:
          fieldsOut[i].read("out/solvent/" + std::to_string(i) +"_w.bf");
       }
 
-      // compare output
+      // Compare output
       DArray< BFieldComparison > comparisons;
       comparisons.allocate(5);
+      double maxDiff = 0.0;
       for (int i = 0; i < 5; ++i) {
-         comparisons[i].compare( fieldsRef[i].fields(), fieldsOut[i].fields() );
-         TEST_ASSERT(comparisons[i].maxDiff() < 5.0e-7);
+         comparisons[i].compare(fieldsRef[i].fields(), fieldsOut[i].fields());
+         if (comparisons[i].maxDiff() > maxDiff) {
+            maxDiff = comparisons[i].maxDiff();
+         }
       }
+      setVerbose(1);
+      if (verbose() > 0) {
+         std::cout << std::endl;
+         std::cout << "maxDiff = " << Dbl(maxDiff, 14, 6) << std::endl;
+      }
+      TEST_ASSERT(maxDiff < 5.0e-7);
    }
 
    void SetUpSystem(System<1>& system, std::string fname)
@@ -393,6 +436,7 @@ public:
       system.readParam(in);
       in.close();
    }
+
 };
 
 
