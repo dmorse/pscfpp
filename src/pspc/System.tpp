@@ -184,7 +184,7 @@ namespace Pspc
       int np = mixture().nPolymer(); 
       int ns = mixture().nSolvent(); 
 
-      // Initialize homogeneous object
+      // Initialize homogeneous object NOTE: THIS OBJECT IS NOT USED AT ALL.
       homogeneous_.setNMolecule(np+ns);
       homogeneous_.setNMonomer(nm);
       initHomogeneous();
@@ -663,6 +663,7 @@ namespace Pspc
    {
       fieldIo().readFieldsBasis(filename, wFields(), unitCell());
       fieldIo().convertBasisToRGrid(wFields(), wFieldsRGrid());
+      basis().update();
       hasWFields_ = true;
       hasCFields_ = false;
    }
@@ -675,6 +676,7 @@ namespace Pspc
    {
       fieldIo().readFieldsRGrid(filename, wFieldsRGrid(), unitCell());
       fieldIo().convertRGridToBasis(wFieldsRGrid(), wFields());
+      basis().update();
       hasWFields_ = true;
       hasCFields_ = false;
    }

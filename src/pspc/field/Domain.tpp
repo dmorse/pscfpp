@@ -82,7 +82,7 @@ namespace Pspc
       mesh_.setDimensions(nGrid);
       fft_.setup(mesh_.dimensions());
       basis_.makeBasis(mesh_, unitCell_, groupName_);
-
+      
       isInitialized_ = true;
    }
 

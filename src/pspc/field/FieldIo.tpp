@@ -223,15 +223,6 @@ namespace Pspc
                        shiftToMinimum(nVec, mesh().dimensions(), unitCell);
                   UTIL_CHECK(waveIn2 == nVec);
 
-                  #if 0
-                  std::cout 
-                    << "Reversed pair of open stars in readFieldsBasis:\n"
-                    << "  wave(1) = " << waveIn 
-                    << " ,  star of wave(1) = " << starId << "\n"
-                    << "  wave(2) = " << waveIn2   
-                    << " ,  star of wave(2) = " << starId2 << "\n";
-                  #endif
-
                   /*
                   * Consider two related stars, C and D, that are listed in
                   * the order (C,D) in the basis used in this code (the 

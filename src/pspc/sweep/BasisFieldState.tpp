@@ -139,6 +139,7 @@ namespace Pspc
          system().unitCell() = unitCell();
          // Update unitCell information in all blocks of all polymers
          system().mixture().setupUnitCell(unitCell());
+         system().basis().update();
       }
 
    }
