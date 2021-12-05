@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Mesh.h"
+#include "Mesh.tpp"
 #include <util/global.h>
 
 namespace Pscf

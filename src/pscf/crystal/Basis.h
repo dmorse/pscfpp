@@ -1,5 +1,5 @@
-#ifndef PSSP_BASIS_H
-#define PSSP_BASIS_H
+#ifndef PSCF_BASIS_H
+#define PSCF_BASIS_H
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
@@ -7,14 +7,15 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/math/IntVec.h>
-#include <pscf/mesh/Mesh.h>
-#include <pscf/crystal/UnitCell.h>
-#include <pscf/crystal/SpaceGroup.h>
-#include <util/containers/DArray.h>
-#include <util/containers/GArray.h>
+#include <pscf/math/IntVec.h>             // inline waveId
+#include <pscf/mesh/Mesh.h>               // inline waveId
+#include <util/containers/DArray.h>       // member
+#include <util/containers/GArray.h>       // member
 
 namespace Pscf { 
+
+   template <int D> class UnitCell;
+   template <int D> class SpaceGroup;
 
    using namespace Util;
 
@@ -797,7 +798,7 @@ namespace Pscf {
       return waveIds_[rank];
    }
 
-   #ifndef PSSP_BASIS_TPP
+   #ifndef PSCF_BASIS_TPP
    extern template class Basis<1>;
    extern template class Basis<2>;
    extern template class Basis<3>;

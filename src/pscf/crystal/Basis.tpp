@@ -1,5 +1,5 @@
-#ifndef PSSP_BASIS_TPP
-#define PSSP_BASIS_TPP
+#ifndef PSCF_BASIS_TPP
+#define PSCF_BASIS_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -11,7 +11,10 @@
 #include "Basis.h"
 #include "TWave.h"
 #include "groupFile.h"
+#include <pscf/crystal/UnitCell.h>
+#include <pscf/crystal/SpaceGroup.h>
 #include <pscf/crystal/shiftToMinimum.h>
+#include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <algorithm>
 #include <vector>

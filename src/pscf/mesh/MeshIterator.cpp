@@ -5,11 +5,10 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "MeshIterator.h"
+#include "MeshIterator.tpp"
 
-namespace Pscf
+namespace Pscf 
 {
-
    template class MeshIterator<1>;
    template class MeshIterator<2>;
    template class MeshIterator<3>;
