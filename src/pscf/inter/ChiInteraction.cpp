@@ -48,6 +48,16 @@ namespace Pscf {
 
    }
 
+   void ChiInteraction::setChi(int i, int j, double chi)
+   {  
+      chi_(i,j) =  chi; 
+      if (i!=j) {
+         chi_(j,i) = chi;
+      }
+      // compute relevant AM iterator quantities. 
+      updateMembers();
+   }
+
    void ChiInteraction::updateMembers()
    {
       if (!chiInverse_.isAllocated()) {
@@ -82,21 +92,21 @@ namespace Pscf {
       int i, j, k;
 
       for (i = 0; i < nMonomer(); ++i) {
-         idemp_(0,i) = 0;
+         idemp_(0, i) = 0;
          for (j = 0; j < nMonomer(); ++j) {
-            idemp_(0,i) -= chiInverse_(j,i);
+            idemp_(0, i) -= chiInverse_(j, i);
          }
-         sum_inv_ -= idemp_(0,i);
+         sum_inv_ -= idemp_(0, i);
          for (k = 0; k < nMonomer(); ++k) { //row
-            idemp_(k,i) = idemp_(0,i);
+            idemp_(k, i) = idemp_(0, i);
          }
       }
       // normalization
       for (i = 0; i < nMonomer(); ++i) { //row
          for (j = 0; j < nMonomer(); ++j) { //coloumn
-            idemp_(i,j) /= sum_inv_;
+            idemp_(i, j) /= sum_inv_;
          }
-         idemp_(i,i) +=1 ;
+         idemp_(i, i) += 1.0 ;
       }
    }
 
@@ -139,7 +149,7 @@ namespace Pscf {
                             Array<double>& c, double& xi)
    const
    {
-      computeXi(w,xi);
+      computeXi(w, xi);
       int i, j;
       for (i = 0; i < nMonomer(); ++i) {
          c[i] = 0;

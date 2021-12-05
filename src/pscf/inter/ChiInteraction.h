@@ -38,7 +38,9 @@ namespace Pscf {
       /**
       * Read chi parameters.
       *
-      * Must be called after setNMonomer.
+      * Must be called after Interaction::setNMonomer.
+      *
+      * \param in  input parameter stream
       */
       virtual void readParameters(std::istream& in);
 
@@ -78,8 +80,7 @@ namespace Pscf {
       * \param xi Langrange multiplier pressure (output)
       */
       virtual 
-      void computeXi(Array<double> const & w, double& xi)
-      const;
+      void computeXi(Array<double> const & w, double& xi) const;
 
       /**
       * Compute second derivatives of free energy.
@@ -102,15 +103,7 @@ namespace Pscf {
       * corresponding idempotent matrix and sum of all elements.
       * Must be called after making any changes to the chi matrix.
       */
-     void updateMembers();
-
-      /**
-      * Return one element of the chi matrix.
-      *
-      * \param i row index
-      * \param j column index
-      */
-      double chi(int i, int j);
+      void updateMembers();
 
       /**
       * Change one element of the chi matrix.
@@ -122,12 +115,20 @@ namespace Pscf {
       void setChi(int i, int j, double chi);
 
       /**
+      * Return one element of the chi matrix.
+      *
+      * \param i row index
+      * \param j column index
+      */
+      double chi(int i, int j) const;
+
+      /**
       * Return one element of the inverse chi matrix.
       *
       * \param i row index
       * \param j column index
       */
-      double chiInverse(int i, int j);
+      double chiInverse(int i, int j) const;
 
       /** 
       * Return one element of the idempotent matrix.
@@ -135,7 +136,9 @@ namespace Pscf {
       * \param i row index
       * \param j column index
       */  
-      double idemp(int i, int j); 
+      double idemp(int i, int j) const; 
+
+      double sum_inv() const;
 
    private:
 
@@ -148,28 +151,23 @@ namespace Pscf {
       /// Idempotent matrix used in calculating field residuals.
       DMatrix<double> idemp_;
 
+      double sum_inv_;
+
    };
 
    // Inline function
 
-   inline double ChiInteraction::chi(int i, int j)
+   inline double ChiInteraction::chi(int i, int j) const
    {  return chi_(i, j); }
 
-   inline void ChiInteraction::setChi(int i, int j, double chi)
-   {  
-      chi_(i,j) =  chi; 
-      if (i!=j) {
-         chi_(j,i) = chi;
-      }
-      // compute relevant AM iterator quantities. 
-      updateMembers();
-   }
-
-   inline double ChiInteraction::chiInverse(int i, int j)
+   inline double ChiInteraction::chiInverse(int i, int j) const
    {  return chiInverse_(i, j); }
 
-   inline double ChiInteraction::idemp(int i, int j)
+   inline double ChiInteraction::idemp(int i, int j) const
    {  return idemp_(i, j); }
+
+   inline double ChiInteraction::sum_inv() const
+   {  return sum_inv_; }
 
 } // namespace Pscf
 #endif
