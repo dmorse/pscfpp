@@ -224,7 +224,7 @@ public:
       // Compare output
       DArray< BFieldComparison > comparisons;
       comparisons.allocate(5);
-      double maxDiff;
+      double maxDiff = 0.0;
       for (int i = 0; i < 5; ++i) {
          comparisons[i].compare(fieldsRef[i].fields(), fieldsOut[i].fields());
          if (comparisons[i].maxDiff() > maxDiff) {
@@ -315,7 +315,7 @@ public:
          fieldsOut[i].read("out/kuhn/" + std::to_string(i) +"_w.bf");
       }
 
-      // compare output
+      // Compare output
       DArray< BFieldComparison > comparisons;
       comparisons.allocate(5);
       double maxDiff = 0.0;
