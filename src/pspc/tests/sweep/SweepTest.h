@@ -426,8 +426,8 @@ public:
             iFail = 1;
          }
       }
-      if maxDiff > 5.0e-7 {
-         TEST_THROW("maxDiff too big on state " + std::to_string(iFail) + ".")
+      if (maxDiff > 5.0e-7) {
+         TEST_THROW("maxDiff too big on state " + std::to_string(iFail) + ".");
       }
    }
 
