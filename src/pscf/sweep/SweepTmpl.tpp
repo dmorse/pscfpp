@@ -104,6 +104,7 @@ namespace Pscf {
 
             // Process success or failure
             if (error) {
+               std::cout << "\n Backtracking!!!\n" << std::endl;
 
                // Upon failure, reset state to last converged solution
                reset();
