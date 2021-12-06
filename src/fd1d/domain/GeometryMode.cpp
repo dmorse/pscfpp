@@ -17,18 +17,18 @@ namespace Fd1d
    /* 
    * Extract a GeometryMode from an istream as a string.
    */
-   std::istream& operator>>(std::istream& in, GeometryMode& lattice)
+   std::istream& operator>>(std::istream& in, GeometryMode& mode)
    {
       std::string buffer;
       in >> buffer;
       if (buffer == "Planar" || buffer == "planar") {
-         lattice = Planar;
+         mode = Planar;
       } else 
       if (buffer == "Cylindrical" || buffer == "cylindrical") {
-         lattice = Cylindrical;
+         mode = Cylindrical;
       } else 
       if (buffer == "Spherical" || buffer == "spherical") {
-         lattice = Spherical;
+         mode = Spherical;
       } else {
          UTIL_THROW("Invalid GeometryMode value input");
       }
@@ -38,15 +38,15 @@ namespace Fd1d
    /* 
    * Insert a GeometryMode to an ostream as a string.
    */
-   std::ostream& operator<<(std::ostream& out, GeometryMode lattice) 
+   std::ostream& operator<<(std::ostream& out, GeometryMode mode) 
    {
-      if (lattice == Planar) {
+      if (mode == Planar) {
          out << "planar";
       } else 
-      if (lattice == Cylindrical) {
+      if (mode == Cylindrical) {
          out << "cylindrical";
       } else
-      if (lattice == Spherical) {
+      if (mode == Spherical) {
          out << "spherical";
       } else {
          UTIL_THROW("This should never happen");

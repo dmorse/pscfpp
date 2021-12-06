@@ -60,6 +60,8 @@ namespace Pscf {
       * or quadratic contination. It is passed to this template by a
       * subclass via a protected constructor in order to allow different 
       * derived classes to use different orders of continuation.
+      *
+      * \param historyCapacity maximum number of stored states.
       */
       SweepTmpl(int historyCapacity);
 
@@ -82,7 +84,7 @@ namespace Pscf {
       * Call s(i) to return the value of the contour variable s for the 
       * ith from most recent solution.
       *
-      * \param i history index (i=0 is most recent)
+      * \param i history index (i=0 is most the recent converged state)
       */
       double s(int i) const
       {
@@ -94,7 +96,7 @@ namespace Pscf {
       * Get a coefficient of a previous state in a continuation.
       *
       * An extrapolated trial values for each field or other variables 
-      * that describes a state is constructed as a linear superposition of 
+      * that describes a state is constructed as a linear superposition 
       * of corresponding values in previous states. Coefficient c(i) is
       * the coefficient of state state(i) in this linear superposition, 
       * where i = 0 denotes the most recent accepted solution and 
@@ -146,7 +148,7 @@ namespace Pscf {
       /**
       * Initialize variables that track history of solutions.
       *
-      * This must be called within the implementation of the setup function.
+      * This *must* be called within implementation of the setup function.
       */
       void initialize();
 
@@ -157,45 +159,55 @@ namespace Pscf {
       * setup before a sweep to check allocation state and/or allocate 
       * memory for fields in all stored State objects.
       *
-      * \param state  a object that represents a state of the system.
+      * \param state  an object that represents a state of the system
       */
       virtual void checkAllocation(State & state) = 0;
 
       /**
       * Setup operation at the beginning of a sweep.
       *
-      * Every implementations of this function must call initialize().
+      * The implementations of this function must call initialize().
       */
       virtual void setup() = 0;
 
       /**
       * Set non-adjustable system parameters to new values.
       *
-      * This function should set set values for parameters that are treated
-      * as constant input parameters by the SCFT solver, such as block 
-      * polymer block lengths, chi parameters, species volume fractions or 
-      * chemical potentials, etc. The function must modify the values stored
-      * in the parent system to values appropriate to a new contour variable
-      * value sNew that is passed as a parameter.
+      * This function should set set values for variables that are treated
+      * as input parameters by the SCFT solver, such as block polymer
+      * block lengths, chi parameters, species volume fractions or 
+      * chemical potentials, etc. The function must modify the values 
+      * stored in the parent system to values appropriate to a new value
+      * of a contour variable value sNew that is passed as a parameter.
+      * The functional dependence of parameters on the contour variable
+      * over a range [0,1] is defined by the subclass implementation.
       *
       * \param sNew  new value of path length coordinate, in range [0,1]
       */
       virtual void setParameters(double sNew) = 0;
 
       /**
-      * Create guess for adjustable variables by continuation.
+      * Create initial guess for the next state by extrapolation.
       *
       * This function should set extrapolated values of the variables that 
       * are modified by the iterative SCFT solver, i.e., values of fields
-      * (coefficients of basis functions or at grid points) and unit cell
-      * parameters or domain dimensions for problems involving an adjustable 
-      * unit cell or domains. Values should be extrapolated to a new 
+      * (coefficients of basis functions or values grid points) and unit 
+      * cell parameters or domain dimensions for problems involving an 
+      * adjustable domain. Values should be extrapolated to a new 
       * contour variable sNew by constructing a linear combination of 
       * corresponding values obtained in previous converged states. 
+      * After computing the desired extrapolated values, this function
+      * must set these values in the parent system.
       *
-      * This function should call setCoefficients to compute coefficients
-      * of previous states used to extrapolate previous values using a
-      * polynomial in sNew.
+      * Extrapolated values of adjustable variables at the new contour
+      * variable sNew that is passed as a parameter should be computed
+      * for each adjustable variable by constructing a Lagrange polynomial 
+      * in s that passes through all stored values, and evaluating the 
+      * resulting polynomial at sNew.  This yields an expression for
+      * the extrapolated value as a linear combination of stored values
+      * with coefficients that depend only the values of sNew and the
+      * values of s at previous states. This function should call the 
+      * setCoefficients function to compute these coefficients.
       *
       * \param sNew  new value of path length coordinate.
       */
@@ -229,10 +241,10 @@ namespace Pscf {
       * Update state(0) and output data after successful solution.
       *
       * This function is called by accept(). The implementation of this 
-      * function should copy the current system state into state(0) and 
-      * output any desired information about the current solution, or
-      * any other actions that should be taken immediately after 
-      * acceptance of a converged solution. 
+      * function should copy the current system state into state(0),
+      * output any desired information about the current solution,
+      * and perform any other operations that should be performed 
+      * immediately after acceptance of a converged solution. 
       */
       virtual void getSolution() = 0;
 
@@ -269,9 +281,10 @@ namespace Pscf {
       /**
       * Accept a new solution, and update history.
       *
-      * This function should be called whenever a converted solution is 
-      * obtained. The solution calls getSolution() internally to copy
-      * the system state to the most recent stored solution.
+      * This function is called by sweep after a converged solution is 
+      * obtained at a new value of the contour variable s. The function
+      * calls the pure virtual function getSolution() internally to 
+      * copy the system state to the most recent stored solution.
       *
       * \param s value of s associated with new solution.
       */
