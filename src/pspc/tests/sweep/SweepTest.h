@@ -418,13 +418,17 @@ public:
       // Compare output
       BFieldComparison comparison;
       double maxDiff = 0.0;
+      int iFail = 10;
       for (int i = 0; i < 5; ++i) {
          comparison.compare(fieldsRef[i].fields(), fieldsOut[i].fields());
          if (comparison.maxDiff() > maxDiff) {
             maxDiff = comparison.maxDiff();
+            iFail = 1;
          }
       }
-      TEST_ASSERT(maxDiff < 5.0e-7);
+      if maxDiff > 5.0e-7 {
+         TEST_THROW("maxDiff too big on state " + std::to_string(iFail) + ".")
+      }
    }
 
    void SetUpSystem(System<1>& system, std::string fname)
