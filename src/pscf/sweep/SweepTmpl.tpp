@@ -87,6 +87,7 @@ namespace Pscf {
 
             // Set a new contour variable value sNew
             sNew = s(0) + ds; 
+            std::cout << "s = " << sNew << std::endl;
             Log::file() << std::endl;
             Log::file() << "Attempt s = " << sNew << std::endl;
 
