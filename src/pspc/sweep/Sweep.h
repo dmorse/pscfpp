@@ -10,7 +10,7 @@
 
 #include <pscf/sweep/SweepTmpl.h>          // base class template
 #include <pspc/sweep/BasisFieldState.h>    // base class template parameter
-//#include <util/param/ParamComposite.h>     // base class
+#include "SweepParameter.h" // parameter class
 #include <util/global.h>
 
 namespace Pscf {
@@ -124,6 +124,12 @@ namespace Pspc {
       System<D>& system()
       {  return *systemPtr_; }
 
+      /// Number of parameters being swept. 
+      int nParameter_; 
+
+      /// Array of SweepParameter objects.
+      DArray< SweepParameter<D> > parameters_;
+
       // Protected members inherited from base class template SweepTmpl
       using SweepTmpl< BasisFieldState<D> >::ns_;
       using SweepTmpl< BasisFieldState<D> >::baseFileName_;
@@ -143,6 +149,12 @@ namespace Pspc {
 
       /// Pointer to parent system.
       System<D>* systemPtr_;
+
+      /// Output data to several files after convergence
+      void outputSolution();
+
+      /// Output brief summary of thermodynamic properties
+      void outputSummary(std::ostream&);
 
    };
 

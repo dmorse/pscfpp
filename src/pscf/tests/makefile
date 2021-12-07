@@ -11,10 +11,11 @@ includes:
 	echo $(INCLUDES)
 
 run: $(pscf_tests_OBJS) $(BLD_DIR)/$(TEST)
-	$(BLD_DIR)/$(TEST) $(SRC_DIR)/pscf/tests/ > log
-	@echo `grep failed log` ", "\
-              `grep successful log` "in pscf/tests/log" > count
-	@cat count
+	$(BLD_DIR)/$(TEST) $(SRC_DIR)/pscf/tests/ 
+
+#	@echo `grep failed log` ", "\
+#              `grep successful log` "in pscf/tests/log" > count
+#	@cat count
 
 clean-outputs:
 	rm -f log count 

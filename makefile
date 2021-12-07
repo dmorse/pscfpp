@@ -8,18 +8,24 @@ include src/config.mk
 all-cpu:
 	cd bld; $(MAKE) all-cpu
 
+all:
+	cd bld; $(MAKE) all
+
 fd1d:
 	cd bld; $(MAKE) fd1d
 
 pspc:
 	cd bld; $(MAKE) pspc
 
+pspg:
+	cd bld; $(MAKE) pspg
+
 
 # =========================================================================
 # HTML Documentation
  
 html:
-	cd doc; $(MAKE) html
+	cd docs; $(MAKE) html
 
 # =========================================================================
 # Clean targets
@@ -36,7 +42,7 @@ clean-bin:
 	rm -f $(BIN_DIR)/pscf*
  
 clean-html:
-	cd doc; $(MAKE) clean
+	cd docs; $(MAKE) clean
 
 veryclean:
 	make clean-bin
@@ -44,6 +50,6 @@ veryclean:
 	cd bld; $(MAKE) veryclean
 	rm bld/makefile
 	cd src; $(MAKE) veryclean
-	cd doc; $(MAKE) clean
+	cd docs; $(MAKE) clean
 
 # ==========================================================================

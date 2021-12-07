@@ -9,6 +9,7 @@
 */
 
 #include "SweepTmpl.h"
+#include <util/misc/Log.h>
 
 namespace Pscf {
 
@@ -22,13 +23,7 @@ namespace Pscf {
     : ns_(0),
       baseFileName_(),
       historyCapacity_(historyCapacity)
-   {
-      setClassName("SweepTmpl"); 
-      states_.allocate(historyCapacity_);
-      stateHistory_.allocate(historyCapacity_);
-      sHistory_.allocate(historyCapacity_);
-      c_.allocate(historyCapacity_);
-   }
+   {  setClassName("SweepTmpl"); }
 
    /*
    * Destructor.
@@ -45,6 +40,14 @@ namespace Pscf {
    {
       read<int>(in, "ns", ns_);
       read<std::string>(in, "baseFileName", baseFileName_);
+      readOptional<int>(in, "historyCapacity", historyCapacity_);
+      UTIL_CHECK(historyCapacity_ > 0);
+
+      // Allocate required arrays
+      states_.allocate(historyCapacity_);
+      stateHistory_.allocate(historyCapacity_);
+      sHistory_.allocate(historyCapacity_);
+      c_.allocate(historyCapacity_);
    }
 
    template <class State>
@@ -54,20 +57,22 @@ namespace Pscf {
       // Compute and output ds
       double ds = 1.0/double(ns_);
       double ds0 = ds;
-      std::cout << std::endl;
-      std::cout << "ns = " << ns_ << std::endl;
-      std::cout << "ds = " << ds  << std::endl;
+      Log::file() << std::endl;
+      Log::file() << "ns = " << ns_ << std::endl;
+      Log::file() << "ds = " << ds  << std::endl;
 
       // Initial setup, before a sweep
       setup();
 
       // Solve for initial state of sweep
-      int error;
       double sNew = 0.0;
-      std::cout << std::endl;
-      std::cout << "Attempt s = " << sNew << std::endl;
+      Log::file() << std::endl;
+      Log::file() << "Attempt s = " << sNew << std::endl;
+
+      int error;
       bool isContinuation = false; // False on first step
       error = solve(isContinuation);
+      
       if (error) {
          UTIL_THROW("Failure to converge initial state of sweep");
       } else {
@@ -77,23 +82,29 @@ namespace Pscf {
       // Loop over states on path
       bool finished = false;   // Are we finished with the loop?
       while (!finished) {
+
+         // Loop over iteration attempts, with decreasing ds as needed
          error = 1;
          while (error) {
 
+            // Set a new contour variable value sNew
             sNew = s(0) + ds; 
-            std::cout << std::endl;
-            std::cout << "Attempt s = " << sNew << std::endl;
+            Log::file() << std::endl;
+            Log::file() << "Attempt s = " << sNew << std::endl;
 
             // Set non-adjustable system parameters to new values
             setParameters(sNew);
 
-            // Set a guess for all state variables by polynomial extrapolation.
+            // Guess new state variables by polynomial extrapolation.
+            // This function must both compute the extrapolation and
+            // set initial guess values in the parent system.
             extrapolate(sNew);
 
             // Attempt iterative SCFT solution
             isContinuation = true;
             error = solve(isContinuation);
 
+            // Process success or failure
             if (error) {
 
                // Upon failure, reset state to last converged solution
@@ -102,7 +113,7 @@ namespace Pscf {
                // Decrease ds by half
                ds *= 0.50;
                if (ds < 0.1*ds0) {
-                  UTIL_THROW("Step size too small in sweep");
+                  UTIL_THROW("Sweep backtracked due to failed iterations too many times.");
                }
 
             } else {
@@ -117,7 +128,7 @@ namespace Pscf {
          }
       }
 
-      // Clean up after end of sweep
+      // Clean up after end of the entire sweep
       cleanup();
 
    }
@@ -138,7 +149,7 @@ namespace Pscf {
          checkAllocation(states_[i]);
       }
 
-      // Set pointers in stateHistory_ to refer to objects in states_
+      // Set pointers in stateHistory_ to refer to objects in array states_
       nAccept_ = 0;
       historySize_ = 0;
       for (int i = 0; i < historyCapacity_; ++i) {
@@ -150,6 +161,7 @@ namespace Pscf {
    template <class State>
    void SweepTmpl<State>::accept(double sNew)
    {
+
       // Shift elements of sHistory_
       for (int i = historyCapacity_ - 1; i > 0; --i) {
          sHistory_[i] = sHistory_[i-1];
@@ -164,7 +176,7 @@ namespace Pscf {
       }
       stateHistory_[0] = temp;
 
-      // Update counters
+      // Update counters nAccept_ and historySize_
       ++nAccept_;
       if (historySize_ < historyCapacity_) {
          ++historySize_;
@@ -172,7 +184,6 @@ namespace Pscf {
 
       // Call getSolution to copy system state to state(0).
       getSolution();
-
    }
 
    /*
@@ -199,8 +210,20 @@ namespace Pscf {
             c_[i] = num/den;
          }
       }
+      // Theory: The coefficient c_[i] is a Lagrange polynomial 
+      // function c_[i](sNew) of sNew that is defined such that
+      // c_[i](s(i)) = 1 and c_[i](s(j)) = 0 for any j != i.
+      // Given a set of values y(i) previously obtained at contour
+      // variable values s(i) for all 0 <= i < historySize_, a 
+      // linear combination f(sNew) = \sum_i c_[i](sNew)*y(i) summed 
+      // over i = 0, ..., historySize_ - 1 gives a polynomial in
+      // sNew that passes through all previous values, such that
+      // f(sNew) = y(i) for sNew = s(i).
    }
 
+   /*
+   * Clean up after the end of a sweep (empty default implementation).
+   */
    template <class State>
    void SweepTmpl<State>::cleanup()
    {}

@@ -56,6 +56,12 @@ namespace Pscf
       ~SymmetryGroup();
 
       /**
+      * Assignment operator.
+      */
+      SymmetryGroup<Symmetry>& 
+      operator = (const SymmetryGroup<Symmetry>& other);
+ 
+      /**
       * Add a new element to the group.
       *
       * Return false if the element was already present, true otherwise.
@@ -96,20 +102,38 @@ namespace Pscf
       int size() const;
 
       /**
-      * Assignment operator.
-      */
-      SymmetryGroup<Symmetry>& 
-      operator = (const SymmetryGroup<Symmetry>& other);
- 
-      /**
       * Element access operator (by reference).
+      *
+      * \param i  integer id for a symmetry element.
       */
       Symmetry& operator [] (int i);
  
       /**
       * Element access operator (by reference).
+      *
+      * \param i  integer id for a symmetry element.
       */
       const Symmetry& operator [] (int i) const;
+
+      /**
+      * Equality operator.
+      *
+      * Return true if this and other are equivalent symmetry groups,
+      * false otherwise.
+      *
+      * \param  other the group to which this one is compared.
+      */
+      bool operator == (SymmetryGroup<Symmetry> const &  other) const;
+
+      /**
+      * Inequality operator.
+      *
+      * Return true if this and other are inequivalent symmetry groups,
+      * and false if they are equivalent.
+      *
+      * \param  other the group to which this one is compared.
+      */
+      bool operator != (SymmetryGroup<Symmetry> const &  other) const;
 
       /**
       * Return true if valid complete group, or throw an Exception.
@@ -118,14 +142,19 @@ namespace Pscf
  
    private:
 
+      // Array of symmetry elements
       std::vector<Symmetry> elements_;
 
+      // Identity element
       Symmetry identity_;
+
+   //friends:
+
 
    };
 
 
-   // Member function definitions (non-inline)
+   // Inline member function definitions
 
    /*
    * Return the current size of the group.

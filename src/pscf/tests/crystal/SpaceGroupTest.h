@@ -264,42 +264,51 @@ public:
 
       std::ifstream in;
       bool hasInversionCenter;
-      typename SpaceSymmetry<3>::Translation center;
 
       SpaceGroup<3> g1;
+      typename SpaceSymmetry<3>::Translation center1;
       openInputFile("in/F_d_-3_m:1", in);
       in >> g1;
       // std::cout << std::endl;
       // std::cout << g << std::endl;
       TEST_ASSERT(192 == g1.size());
       TEST_ASSERT(g1.isValid());
-      hasInversionCenter = g1.hasInversionCenter(center);
+      hasInversionCenter = g1.hasInversionCenter(center1);
       if (hasInversionCenter) {
-         std::cout << std::endl;
+         // std::cout << std::endl;
          for (int i = 0; i < 3; ++i) {
-            TEST_ASSERT(center[i] == Rational(1, 8));
-            // std::cout << "  " << center[i];
+            TEST_ASSERT(center1[i] == Rational(1, 8));
+            // std::cout << "  " << center1[i];
          }
          // std::cout << std::endl;
       }
       in.close();
 
       SpaceGroup<3> g2;
+      typename SpaceSymmetry<3>::Translation center2;
       openInputFile("in/F_d_-3_m:2", in);
       in >> g2;
       // std::cout << std::endl;
       // std::cout << g << std::endl;
       TEST_ASSERT(192 == g2.size());
       TEST_ASSERT(g2.isValid());
-      hasInversionCenter = g2.hasInversionCenter(center);
+      hasInversionCenter = g2.hasInversionCenter(center2);
       if (hasInversionCenter) {
          for (int i = 0; i < 3; ++i) {
-            TEST_ASSERT(center[i] == 0);
-            // std::cout << "  " << center[i];
+            TEST_ASSERT(center2[i] == 0);
+            // std::cout << "  " << center2[i];
          }
          // std::cout << std::endl;
       }
       in.close();
+
+      TEST_ASSERT(g1 != g2);
+
+      // Shift origin to inversion center of setting 1
+      g1.shiftOrigin(center1);
+
+      // Show that settings 1 and 2 differ only in shift of origin
+      TEST_ASSERT(g1 == g2);
 
    }
 

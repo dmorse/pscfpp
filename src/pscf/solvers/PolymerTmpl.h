@@ -151,7 +151,7 @@ namespace Pscf
       *
       * \param id  propagator index, in order of computation plan
       */
-      const Pair<int>& propagatorId(int i) const;
+      const Pair<int>& propagatorId(int id) const;
 
       //@}
       /// \name Accessors (by value)

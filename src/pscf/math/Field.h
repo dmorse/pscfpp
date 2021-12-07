@@ -18,6 +18,8 @@ namespace Pscf {
    * Base class template for a field defined on a spatial grid.
    *
    * Derived from DArray<T>, and provides useful arithmetic operations.
+   *
+   * \ingroup Pscf_Math_Module
    */
    template <typename T = double>
    class Field : public DArray<T>

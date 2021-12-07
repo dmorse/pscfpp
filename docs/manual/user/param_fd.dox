@@ -1,0 +1,327 @@
+/*! \page user_param_fd_page 3.2.2 Parameter Files for pscf_fd
+
+\ref user_param_page (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_param_pc_page (Next)
+<BR>
+
+\section user_param_fd_section Example 
+An example of a parameter file for an pscf_fd program is shown below. 
+
+This example gives parameters for a calculation of a ternary mixture 
+of two hompolymers of types A and B, and an AB diblock copolymer in 
+a slit geometry. The system contains 40% of each hopolymer and 20% 
+copopolymer by volume.  All three chains are of length 1.0 in the system 
+of units used in this input file, and the diblock copolymer is symmetric 
+(each block has length 1/2). The AB interaction parameter has a value of 
+10, which is high enough to guarantee that homopolymer phase separate and 
+the copolymer will self-assemble along an interface between A and B. The 
+simulation uses a 1D planar geometry, in which variation occurs only along
+one axis of a Cartesian coordinate system. The natural equilibrium state 
+for this system would be a monolayer of AB diblock copolymer along an
+interface between regions of nearly pure A and B homopolymer, with the
+interface near the middle of the slit. The syntax for specifying polymer
+structures and other aspects of the parameter file is described in detail
+below.
+
+\code
+System{
+  Mixture{
+     nMonomer   2
+     monomers   A   1.0  
+                B   1.0 
+     nPolymer   2
+     Polymer{
+        type    linear
+        nBlock  1
+        blocks  0   1.0
+        phi     0.4
+     }
+     Polymer{
+        type    linear
+        nBlock  1
+        blocks  1   1.0
+        phi     0.4
+     }
+     Polymer{
+        nBlock  2
+        blocks  0   0.5
+                1   0.5
+        phi     0.2
+     }
+     vMonomer   1.0
+     ds   0.01
+  }
+  ChiInteraction{
+     chi   0    1    10.0
+           0    0     0.0
+           1    1     0.0
+  }
+  Domain{
+     mode planar
+     xMin 0.0
+     xMax 8.0
+     nx   401
+  }
+  NrIterator{
+     epsilon   0.00000001
+  }
+}
+\endcode
+
+\section user_param_fd_syntax_section Syntax
+
+Any PSCF parameter file, including the above example one, contains 
+a series of nested blocks that are delimited by opening and closing
+curly braces. The syntax is thus reminiscent of that of a C program 
+(without semicolons).  Each block begins with a capitalized label 
+for the block followed by an opening curly bracket on the same line
+and ends with a closing bracket on a line by itself, as in
+as in
+\code
+  BlockName{
+     ....
+  }
+\endcode
+Each block may contain a combination of parameter values and nested 
+subblocks. Most parameters are given on a single line containing the 
+parameter name followed by a value, or a list of several related 
+values. The order of elements within each block of a parameter file
+is generally predefined, though some elements may be optional.
+
+Names of blocks in a parameter file generally correspond to names 
+of classes or class templates in the underlying C++ code.  The 
+nesting of blocks reflects ownership or "has a" relationships among 
+C++ classes: Each subblock generally corresponds to an object of 
+is either a member of the parent class or a dynamically created
+object that the parent object is responsible for creating and 
+destroying. The outermost block in the above example is a "System" 
+block, reflecting the fact that main object in the underlying 
+code for a 1D finite-difference program is an instance of class 
+Pscf::Fd1d::System.
+
+Names of individual parameters within a parameter file block generally
+correspond to names of member variables in the relevant class, i.e., 
+member variables of the class whose name is specfied by the name of 
+the innermost enclosing parameter file block. Parameters that represent 
+primitive C data types (e.g., integers or floating point numbers) or
+strings are represented by a label (the variable name) followed by a 
+single value on the same line. Parameters that represent instances of 
+a user defined type that has an overloaded ">>" input operator are 
+displayed as a label followed by the text representation of that 
+type, as defined by the implementation of the ">>" input operator
+for that data type.  Parameters that represent arrays of values are 
+formatted in a multi-line format in which the first row contains a 
+label (the name of the array) and the value of the first element,
+and subsequent lines contain subsequent elements. Because this 
+format does not have a distinctive delimiter after the last element,
+it requires that the number of elements be known before such an 
+array is read. The number of elements in an array-valued parameter
+is thus always specified by the the value of a parameter that 
+appears before that array in the file format.
+
+\section user_param_fd_overview_section Parameter File Blocks
+
+The structure of the main blocks of a pscf_fd parameter file is shown 
+below in skeleton form.
+\code
+System{
+  Mixture{
+     ...
+  }
+  ChiInteraction{
+     ...
+  }
+  Domain{
+     ...
+  }
+  NrIterator{
+     ...
+  }
+}
+\endcode
+The purposes of each main block is discussed below.
+<ul>
+<li>
+Mixture: The Mixture block contains a description of the desired mixture 
+of containing one or more polymer species. This includes a description of 
+the structure of each molecular species and a specification of either the 
+volume fraction phi or chemical mu of each species. </li>
+<li>
+ChiInteraction: This block contains values for the Flory-Huggins chi 
+parameters between all pairs of monomers types.
+</li>
+<li>
+Domain: The domain block specifies the coordinate system and domain over 
+which the SCFT equations should be solved, and the number of grid points 
+used for spatial discretization.
+</li>
+<li>
+NrIterator: The NrIterator block gives parameters required by the 
+Newton-Raphson iteration algorithm used to solve the nonlinear SCFT 
+equations.
+</li>
+</ul>
+
+\section user_param_fd_mixture_section Mixture Block
+
+The Mixture block describes the chemical constituents of the system of 
+interest, which is generally a mixture of one or more molecular species. 
+
+The first part of the Mixture block contains information about monomers
+The parameter nMonomer and the array give information about monomer types.
+The value of the parameter labelled "nMonomer" gives the number of 
+distinct types of monomer in the system.  Parameter "monomers" represents 
+an array in which each element corresponds to one monomer type. The file
+format for this array contains nMonomer rows, each of which contains a
+description of one monomer type.  Each such row (after the "monomers" 
+label in the first row) contains an integer monomer index, a monomer
+label string, and a statistical segment length, in that order. In the 
+above example, two monomer types with integer ids 0 and 1 are assigned 
+labels 'A' and 'B', and are both assigned a statistical segment length 
+of 1.0.
+
+After this monomer type information, the Mixture block contains 
+information about polymer species. The parameter nPolymer specifies 
+the number of distinct polymer species. This is followed by nPolymer 
+subblocks that each begin with a label "Polymer{ ...}, each of which
+describes a species of block copolymer that is present in the system
+of interest. Homopolymer species are treated for this purpose as block 
+copolymer that contain only one block.  
+
+The structure of each polymer is described by giving a description of
+an acyclic graph consisting of a set of blocks that connect vertices. 
+Each vertex represents either a chain end or a junction between two 
+or more blocks. Within the description of each species, the parameter 
+nBlock gives the total number blocks in a molecule, and nVertex gives 
+the total number of vertices. A linear block copolymer always has 
+nBlock - 1 junctions and two chain ends, giving nVertex = nBlock + 1. 
+
+The nBlock and nVertex parameters are followed by an array parameter 
+"blocks" for which the file format contains nBlock rows, each of which 
+contains a description of one block. The format of the data for each
+block is shown of the form
+\code
+   blockId monomerId vertexId1 vertexId2 length
+\endcode
+The list of data is comprised of an integer index blockId for 
+the block, the integer index monomerId of the monomer type for the 
+block, two integer indices vertexId1 and vertexId2 that identify
+the two vertices to which the block is attached, and the length 
+of the block. The length parameter is  measured as a number of 
+monomers of the specified type, but is a floating point number
+rather than an integer. In a linear block copolymer, block number 
+i is attached to vertices i and i+1. A homopolymer is a special 
+case containing one block with a block id 0 attached to vertices 
+with indices 0 and 1. 
+
+The last parameter in the Polymer{...} block associated with each
+species specifies either a volume fraction for that species, given
+by a line "phi" followed by a value for the volume fraction, or a
+value of the chemical potential for the species, given by a label
+"mu" followed by a chemical potential label. The code allows the
+user to independently choose whether to specify a volume fraction
+(a closed ensemble) or chemical potential (an ensemble) for each 
+species. If one or more species are assigned volume fractions (phi
+values), the volume fractions must be less than or equal to 1.0. 
+If all of the species are assigned volume fractions, these volue
+fraction should add to 1.0. 
+
+In the above example, nPolymer = 3, and so the mixture is a ternary
+mixture.  The first Polymer{...} block describes a homopolymer 
+(nBlock = 1 and nVertex = 2) of length 1.0 containing monomers of 
+type 0 (or A). The second describes a homopolymer of length 1.0 
+with monomers of type 1 (or B).  The third block describes a 
+symmetric AB diblock copolymer with blocks of equal length 0.5.
+
+The value of the parameter vMonomer gives a volume per monomer. 
+This parameter is not used in the solution of the modified diffusion 
+equations or self-consistent field equations, but can be used in 
+auxiliary calculations of some physical quantities (e.g., the total 
+excess free energy of a micelle). Parameter vMonomer is optional: 
+If a line starting with the string vMonomer does not appear at this 
+point in the parameter file, vMonomer is set to unity (1.0) by
+default. 
+
+The last entry in the Mixture block gives the value of a parameter ds.
+Parameter ds is the desired length of the contour length step used 
+to discretize the length of each block during numerical solution of 
+the modified diffusion equation. Both the contour step length ds and 
+the block lengths for each polymer are specified in the same units, 
+as numbers of monomers. Because PSCF is based on a model of a polymer 
+as a continuous Gaussian thread, however, neither block lengths nor
+values of ds need be integers, nor must they even approximately 
+correspond to any kind of chemical repeat unit. Thus, if ds = 0.01, 
+then a block of length 1.0 will thus be divided into 100 steps of 
+length 0.1.  The algorithm used in all of the pscf programs actually
+require that each block be divided into even number of steps of equal 
+length. The number of steps for each block is thus chosen to give an 
+actual step size as close as possible to the value of ds input by the
+user, subject to this constraint. The actual step size for each block
+thus may differ slightly from the value of ds given in the parameter 
+file, and may be slightly different for different blocks.
+
+\section user_param_fd_ChiInteraction_section ChiInteraction Block
+
+The ChiInteraction block specifies chi interaction parameters between
+all distinct monomer types. The "chi" parameter is an array in which
+each row contains a pair of monomer type labels followed by the
+value of the Flory-Huggins interaction parameter for interactions 
+between monomers of those two types. In the above example, chi is
+set to 10.0 for interactions between monomers of type 0 and 1 (or
+A and B), and is set to zero for interactions between monomers of
+the same type. 
+
+\section user_param_fd_Domain_section Domain Block
+
+The domain block describes the spatial domain over which the SCFT
+equations should be solved. 
+
+The pscf_fd program allows the solution of the SCFT field equations 
+for a problem in which all fields depend only on a single coordinate 
+in either planar (Cartesian), cylindrical or spherical geometry. 
+The mode parameter specifies the coordinate system, and may have
+values "planar", "cylindrical" or "spherical". 
+
+The parameters xMin and xMax specify the minimum and maximum values
+of the relevant spatial coordinate. In "planar" mode, these are the
+minimum and maximum values of a Cartesian coordinate, defining a
+slit bounded by constant values of this coordinate. In "cylindrical"
+and "spherical" mode, these are minimum and maximum values of a 
+radial coordinate. In general, the domain for a computation in
+cylindrical or spherical mode can be a cylindrical or spherical 
+annulus, but a complete cylindrical or spherical region can be
+simulated by setting the value of xMin to 0.0. 
+
+The parameter nx specifies the number of equally spaced grid points
+to use to discretize the spatial domain. Because this includes both
+end-points, this is one greater than the number of spatial steps.
+In cylindrical and spherical mode, the program interprets any value
+xMin that is less than the step size (xMax - xMin/(nx-1) as equivalent
+to zero, and interprets that as a cylindrical or spherical domain
+that includes the origin rather than cylindrical or spherical 
+annulus. 
+
+The pscf_fd program solves the modified diffusion equation subject 
+to von Neumann boundary conditions that require derivatives with 
+respect to the relevant Cartesian or radial normal coordinate 
+must vanish at the lower and upper bounds, xMin and xMax. In the 
+special case of a cylindrical or spherical geometry with xMin = 0.0, 
+this is equivalent to a requirement that the corresponding 
+three dimensional solution be differentiable at the origin. 
+
+\section user_param_fd_NrIterator_section NrIterator Block
+
+The NrIterator block provides data required by the iterator used 
+to solve the nonlinear self-consistent field (SCF) equations. 
+The only iteration algorithm that is currently available is 
+Newton-Raphson iteration, implemented by the NrIterator class. 
+This class requires only one input parameter, the parameter
+epsilon, which gives the desired tolerance in the solution of 
+the SCF equations.  The iterative loop stops when the maximum 
+error drops below epsilon.
+
+<BR>
+\ref user_param_page (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_param_pc_page (Next)
+
+*/

@@ -56,7 +56,7 @@ output_prefix
 max_itr             
                 300
 error_max           
-    1.0000000000E-14
+    1.0000000000E-09
 domain              
                    T
 itr_algo            

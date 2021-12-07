@@ -99,7 +99,7 @@ namespace Pspc
       bool isConverged();
 
       /**
-      * Determine the coefficients that would minimize invertMatrix_ Umn
+      * Determine the coefficients that would minimize invertMatrix_
       */
       void minimizeCoeff(int itr);
 
@@ -107,6 +107,11 @@ namespace Pspc
       * Rebuild wFields for the next iteration from minimized coefficients
       */
       void buildOmega(int itr);
+
+      /**
+      * Clean up after a call to solve(), enabling future calls to solve.
+      */
+      void cleanUp();
 
    private:
 
@@ -129,7 +134,7 @@ namespace Pspc
       int maxItr_;
 
       // Work Array for iterating on parameters 
-      FSArray<double, 6> parameters;
+      FSArray<double, 6> parameters_;
 
       /// holds histories of deviation for each monomer
       /// 1st index = history, 2nd index = monomer, 3rd index = ngrid

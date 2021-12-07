@@ -1,0 +1,221 @@
+/*! \page user_param_pc_page 3.2.3 Parameter files for pscf_pcNd 
+
+\ref user_param_fd_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_param_pg_page (Next)
+<BR>
+
+\section user_param_pc_section Example
+An example of a parameter file for the program pscf_pc3D is shown below. 
+
+\code
+System{
+  Mixture{
+    nMonomer  2
+    monomers  A   1.0  
+              B   1.0 
+    nPolymer  1
+    Polymer{
+      type    linear
+      nBlock  2
+      blocks  0  0.25
+              1  0.75
+      phi     1.0
+    }
+    ds   0.01
+  }
+  ChiInteraction{
+    chi   1   0   20.0
+          0   0    0.0
+          1   1    0.0
+  }
+  Domain{
+    unitCell  cubic   1.9254998725
+    mesh              32  32  32
+    groupName         I_m_-3_m
+  }
+  AmIterator{
+    maxItr       100
+    epsilon      1e-10
+    maxHist      50
+    isFlexible   1
+  }
+}
+\endcode
+
+
+\section user_param_pc_overview_section File Structure
+
+The structure of a pscf_pcNd parameter file is shown below in skeleton 
+form below.
+\code
+System{
+  Mixture{
+     ...
+  }
+  ChiInteraction{
+    ...
+  }
+  Domain{
+    ...
+  }
+  AmIterator{
+    ...
+  }
+}
+\endcode
+The purpose of each subblock and parameter in the main System block
+is as follows:
+<ul>
+<li>
+Mixture: Description of molecular species and composition of the mixture. 
+</li>
+<li>
+ChiInteraction: Values of Flory-Huggins (chi) interaction parameters
+</li>
+<li>
+Domain: Description of crystallographic unit cell and discretization mesh
+</li>
+<li> 
+AmIterator: Parameters required by the iterator
+</li>
+</ul>
+
+The Mixture and ChiInteration subblocks are identical in structure to
+those used in the pscf_fd program, and so are not described separately 
+below. 
+
+\section user_param_pc_Domain_section Domain Section
+The Domain block contains information required to describe both the
+unit cell of the periodic structure and the regular mesh that is used
+to discretize fields within each unit cell. 
+
+An example of the format of this block is shown below:
+\code
+  Domain{
+    unitCell     cubic   1.9254998725
+    mesh         32  32  32
+    groupName    I_m_-3_m
+  }
+\endcode
+The unitCell, mesh and groupName parameter lines are discussed 
+separately below.
+
+\subsection user_param_pc_UnitCell_sub unitCell 
+
+The line that begins with the label unitCell contains information
+required to specify an initial value of the crystal unit cell. 
+The data on this line contains a string that specifies the desired 
+crystal system followed by one or more unit cell parameters. The
+format is thus
+\code
+   unitCell   crystalSystem  parmam[0] ..... param[m]
+\endcode
+where m denotes the number of independent parameters required to
+describe a unit cell of the specified crystal system. The allowed 
+values of the crystalSystem string for a 3D structure currently 
+include "cubic", "tetragonal" and "orthorhombic".  The cubic
+crystal system used in the parameter file only requires one unit
+cell parameter, which is the length of each axis of a simple 
+cubic unit cell. 
+
+\subsection user_param_pc_Mesh_sub mesh 
+
+The line that begins with the label "mesh" specifies the number 
+of grid points along each direction of the uniform spatial mesh 
+used to discretize an unit cell. The format is
+\code
+   mesh   N[1] .... N[D]
+\endcode
+where D is the dimension of space (i.e., the number of periodic
+directions), and N[i] is the number of grid points along axis
+number i, for i=1,...,D. 
+
+\subsection user_param_pc_SpaceGroup_sub spaceGroup
+
+The line that begins with the label "spaceGroup" specifies a
+label for the crystallographic space group for the desired
+structure. The format is
+\code
+  spaceGroup groupName
+\endcode
+in which groupName denotes a string that identifies the desired
+space group. 
+
+Each of the allowed values of the groupName string corresponds to 
+a modified version of the name of the space group, as listed in
+the international tables of crystallogrphay. In the above example,
+the groupName string I_m_-3_m is a modified form of the name 
+\f$Im\overline{3}m\f$ for the space group for a BCC lattice. 
+Space group names used here are derived from the names in the 
+international tables, modified by the use of underbars to separate
+distinct symbols, replacement of overbars by a hyphen (-) prefix, 
+and a few other systematic modifications. 
+
+Descriptions of all crystallographic space groups are distributed 
+with PSCF as files the directory pscfpp/data/groups directory.
+Files containing descriptions of 1, 2, and 3 dimensional groups 
+are placed in subdirectories 1/, 2/, and 3/, respectively. The 
+description of each space group is in a single file with a file 
+name corresponding to the label used in the parameter file. 
+Each space group description file contains a list of all symmetry
+operations in the group, in which each symmetry operation is 
+represented as a matrix with integer elements, which represents
+a point group operation, and a vector of rational (i.e., fraction) 
+coordinates, which represents a translation by a fraction of a 
+unit cell. The conventions used to construct the group names 
+from international table names (such as the use of underscore
+symbols to separate symbols) are designed to allow each space 
+group name to be converted into a string with no white space 
+that is a valid file name for a unix file system. The names
+used in the older Fortran PSCF program were similar except for
+the use of space rather than underscores to separate symbols. 
+
+\section user_param_pc_AmIterator_section AmIterator Block
+
+The AmIterator block provides parameters required by the Anderson-Mixing 
+(AM) iterator that is used to solve the nonlinear self-consistent field 
+(SCFT) equations.  An example of the format is shown below:
+\code
+  AmIterator{
+    maxItr       100
+    epsilon      1e-10
+    maxHist      50
+    isFlexible   1
+  }
+\endcode
+
+\subsection user_param_pc_maxItr_sub maxItr
+
+Parameter maxItr is an integer whose value gives the maximum number 
+of allowed iterations that will be attempted in the search for a
+solution.
+
+\subsection user_param_pc_epsilon_sub epsilon
+
+Parameter epsilon gives the desired tolerance in the solution of the 
+SCFT equations. The iterative loop exits if the maximum error drops 
+below epsilon or if the number of iterations exceeds maxItr.
+
+\subsection user_param_pc_maxHist_sub maxHist
+
+The value of maxHist gives the number of previous trial solutions that
+will be retained in memory by the Anderson-Mixing (AM) algorithm. The
+AM algorithm uses knowledge of previous trials to guide the search for 
+a solution, but only makes use of the previous maxHist trials when the
+total number of iterations exceeds maxHist.
+
+\subsection user_param_pc_isFlexible_sub isFlexible
+
+The isFlexible parameter is a boolean variable that can be used to 
+enable or disable optimization of the unit cell. Setting isFlexible = 0 
+gives a rigid unit cell with dimensions that remain constant during
+iteration.  Setting isFlexible to 1 instructs the program to adjust 
+the unit cell parameters during iteration so as to minimize the free
+energy.
+
+<BR>
+\ref user_param_fd_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_param_page (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_param_pg_page (Next)
+
+*/

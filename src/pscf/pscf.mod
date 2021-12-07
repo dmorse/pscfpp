@@ -8,7 +8,7 @@ namespace Pscf{
    /**
    * \defgroup Pscf_NS_Module Pscf namespace
    *
-   * Group of modules containing classes in the Pscf namespace.
+   * Classes in the Pscf namespace, including sub-namespaces.
    */
 
    /**

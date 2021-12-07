@@ -18,6 +18,8 @@ namespace Pscf
 
    /**
    * Struct containing an enumeration of polymer structure types.
+   *
+   * \ingroup Pscf_Chem_Module
    */
    struct PolymerType {
       enum Enum {Branched, Linear};
@@ -42,8 +44,9 @@ namespace Pscf
    /**
    * Input stream extractor for a PolymerType enumeration.
    *
-   * \param out  output stream
-   * \param type  value of PolymerType to be written 
+   * \param ar  archive
+   * \param data  enumeration data to be serialized
+   * \param version  version id
    */ 
    template <class Archive>
    inline void 

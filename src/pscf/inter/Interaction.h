@@ -20,7 +20,7 @@ namespace Pscf {
    /**
    * Base class for excess free energy models.
    *
-   * \ingroup Pscf_Module
+   * \ingroup Pscf_Inter_Module
    */
    class Interaction : public ParamComposite
    {

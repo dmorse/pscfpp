@@ -54,14 +54,14 @@ namespace Pspc
       *
       * \param filename name of input w-field file in symmetry-adapted format.
       */
-      void read(std::string & filename);
+      void read(const std::string & filename);
    
       /**
       * Write state to file.
       *
       * \param filename name of output file, in symmetry-adapated format.
       */
-      void write(std::string & filename);
+      void write(const std::string & filename);
 
       /**
       * Copy the current state of the associated system.
@@ -83,10 +83,11 @@ namespace Pspc
       using FieldState<D, DArray<double> >::unitCell;
       using FieldState<D, DArray<double> >::system;
       using FieldState<D, DArray<double> >::hasSystem;
+      using FieldState<D, DArray<double> >::setSystem;
 
    };
 
-   #ifndef PSPC_FIELD_STATE_TPP
+   #ifndef PSPC_BASIS_FIELD_STATE_TPP
    // Suppress implicit instantiation
    extern template class BasisFieldState<1>;
    extern template class BasisFieldState<2>;

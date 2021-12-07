@@ -18,9 +18,11 @@ System{
          1   0   20.0
          1   1   0.0
   }
-  unitCell    hexagonal   1.6908669157
-  mesh        24   24
-  groupName       p_6_m_m
+  Domain{
+     unitCell    hexagonal   1.6908669157
+     mesh        24   24
+     groupName       p_6_m_m
+  }
   AmIterator{
     maxItr   100
     epsilon  1e-10

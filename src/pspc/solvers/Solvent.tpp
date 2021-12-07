@@ -9,7 +9,7 @@
 */
 
 #include "Solvent.h"
-#include <pscf/mesh/Mesh.tpp>
+#include <pscf/mesh/Mesh.h>
 
 namespace Pscf {
 namespace Pspc { 

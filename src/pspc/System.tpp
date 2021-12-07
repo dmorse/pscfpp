@@ -10,10 +10,8 @@
 
 #include "System.h"
 
-#if 0
 #include <pspc/sweep/Sweep.h>
 #include <pspc/sweep/SweepFactory.h>
-#endif
 
 #include <pspc/iterator/Iterator.h>
 #include <pspc/iterator/IteratorFactory.h>
@@ -50,19 +48,14 @@ namespace Pspc
    template <int D>
    System<D>::System()
     : mixture_(),
-      unitCell_(),
-      mesh_(),
-      fft_(),
-      groupName_(),
-      basis_(),
+      domain_(),
       fileMaster_(),
-      fieldIo_(),
       homogeneous_(),
       interactionPtr_(0),
       iteratorPtr_(0),
       iteratorFactoryPtr_(0),
-      // sweepPtr_(0),
-      // sweepFactoryPtr_(0),
+      sweepPtr_(0),
+      sweepFactoryPtr_(0),
       wFields_(),
       cFields_(),
       f_(),
@@ -70,17 +63,16 @@ namespace Pspc
       fHelmholtz_(0.0),
       pressure_(0.0),
       hasMixture_(false),
-      hasUnitCell_(false),
       isAllocated_(false),
       hasWFields_(false),
-      hasCFields_(false)
-      //hasSweep_(false)
+      hasCFields_(false),
+      hasSweep_(false)
    {  
       setClassName("System"); 
-      fieldIo_.associate(mesh_, fft_, groupName_, basis_, fileMaster_);
+      domain_.setFileMaster(fileMaster_);
       interactionPtr_ = new ChiInteraction(); 
       iteratorFactoryPtr_ = new IteratorFactory<D>(*this); 
-      // sweepFactoryPtr_ = new SweepFactory(*this);
+      sweepFactoryPtr_ = new SweepFactory<D>(*this);
    }
 
    /*
@@ -98,14 +90,12 @@ namespace Pspc
       if (iteratorFactoryPtr_) {
          delete iteratorFactoryPtr_;
       }
-      #if 0
       if (sweepPtr_) {
          delete sweepPtr_;
       }
       if (sweepFactoryPtr_) {
          delete sweepFactoryPtr_;
       }
-      #endif
    }
 
    /*
@@ -194,7 +184,7 @@ namespace Pspc
       int np = mixture().nPolymer(); 
       int ns = mixture().nSolvent(); 
 
-      // Initialize homogeneous object
+      // Initialize homogeneous object NOTE: THIS OBJECT IS NOT USED AT ALL.
       homogeneous_.setNMolecule(np+ns);
       homogeneous_.setNMonomer(nm);
       initHomogeneous();
@@ -202,6 +192,9 @@ namespace Pspc
       interaction().setNMonomer(mixture().nMonomer());
       readParamComposite(in, interaction());
 
+      readParamComposite(in, domain_);
+
+      #if 0
       read(in, "unitCell", unitCell_);
       hasUnitCell_ = true;
      
@@ -211,9 +204,11 @@ namespace Pspc
 
       read(in, "groupName", groupName_);
 
+      basis().makeBasis(mesh(), unitCell(), groupName_);
+      #endif
+
       mixture().setMesh(mesh());
       mixture().setupUnitCell(unitCell());
-      basis().makeBasis(mesh(), unitCell(), groupName_);
 
       allocate();
       isAllocated_ = true;
@@ -230,7 +225,6 @@ namespace Pspc
       }
       iterator().setup();
 
-      #if 0
       // Optionally instantiate a Sweep object
       readOptional<bool>(in, "hasSweep", hasSweep_);
       if (hasSweep_) {
@@ -242,7 +236,6 @@ namespace Pspc
          }
          sweepPtr_->setSystem(*this);
       }
-      #endif
    }
 
    /*
@@ -264,14 +257,13 @@ namespace Pspc
    {  readParam(fileMaster().paramFile()); }
 
    /*
-   * Read parameters and initialize.
+   * Allocate memory for fields.
    */
    template <int D>
    void System<D>::allocate()
    {
       // Preconditions
       UTIL_CHECK(hasMixture_);
-      UTIL_CHECK(hasMesh_);
 
       // Allocate wFields and cFields
       int nMonomer = mixture().nMonomer();
@@ -288,15 +280,15 @@ namespace Pspc
       tmpFieldsKGrid_.allocate(nMonomer);
 
       for (int i = 0; i < nMonomer; ++i) {
-         wField(i).allocate(basis().nStar());
+         wField(i).allocate(basis().nBasis());
          wFieldRGrid(i).allocate(mesh().dimensions());
          wFieldKGrid(i).allocate(mesh().dimensions());
 
-         cField(i).allocate(basis().nStar());
+         cField(i).allocate(basis().nBasis());
          cFieldRGrid(i).allocate(mesh().dimensions());
          cFieldKGrid(i).allocate(mesh().dimensions());
 
-         tmpFields_[i].allocate(basis().nStar());
+         tmpFields_[i].allocate(basis().nBasis());
          tmpFieldsRGrid_[i].allocate(mesh().dimensions());
          tmpFieldsKGrid_[i].allocate(mesh().dimensions());
       }
@@ -352,6 +344,10 @@ namespace Pspc
             //if (fail) {
             //   readNext = false;
             //}
+         } else
+         if (command == "SWEEP") {
+            // After iterating and converging, sweep.
+            sweep();
          } else
          if (command == "SOLVE_MDE") {
             // Read w (chemical potential fields) if not done previously 
@@ -479,13 +475,13 @@ namespace Pspc
       }
 
       int nm  = mixture().nMonomer();
-      int nStar = basis().nStar();
+      int nBasis = basis().nBasis();
 
       // Compute Legendre transform subtraction
       // Use expansion in symmetry-adapted orthonormal basis
       double temp = 0.0;
       for (int i = 0; i < nm; ++i) {
-         for (int k = 0; k < nStar; ++k) {
+         for (int k = 0; k < nBasis; ++k) {
             temp += wFields_[i][k] * cFields_[i][k];
          }
       }
@@ -496,7 +492,7 @@ namespace Pspc
       for (int i = 0; i < nm; ++i) {
          for (int j = i + 1; j < nm; ++j) {
             chi = interaction().chi(i,j);
-            for (int k = 0; k < nStar; ++k) {
+            for (int k = 0; k < nBasis; ++k) {
                fHelmholtz_+= chi * cFields_[i][k] * cFields_[j][k];
             }
          }
@@ -537,8 +533,8 @@ namespace Pspc
    void System<D>::outputThermo(std::ostream& out)
    {
       out << std::endl;
-      out << "fHelmholtz = " << Dbl(fHelmholtz(), 18, 11) << std::endl;
-      out << "pressure   = " << Dbl(pressure(), 18, 11) << std::endl;
+      out << "fHelmholtz    " << Dbl(fHelmholtz(), 18, 11) << std::endl;
+      out << "pressure      " << Dbl(pressure(), 18, 11) << std::endl;
       out << std::endl;
 
       int np = mixture().nPolymer();
@@ -546,9 +542,9 @@ namespace Pspc
 
       if (np > 0) {
          out << "Polymers:" << std::endl;
-         out << "    i"
-             << "        phi[i]      "
-             << "        mu[i]       " 
+         out << "     "
+             << "        phi         "
+             << "        mu          " 
              << std::endl;
          for (int i = 0; i < np; ++i) {
             out << Int(i, 5) 
@@ -561,9 +557,9 @@ namespace Pspc
 
       if (ns > 0) {
          out << "Solvents:" << std::endl;
-         out << "    i"
-             << "        phi[i]      "
-             << "        mu[i]       " 
+         out << "     "
+             << "        phi         "
+             << "        mu          " 
              << std::endl;
          for (int i = 0; i < ns; ++i) {
             out << Int(i, 5) 
@@ -667,6 +663,7 @@ namespace Pspc
    {
       fieldIo().readFieldsBasis(filename, wFields(), unitCell());
       fieldIo().convertBasisToRGrid(wFields(), wFieldsRGrid());
+      basis().update();
       hasWFields_ = true;
       hasCFields_ = false;
    }
@@ -679,6 +676,7 @@ namespace Pspc
    {
       fieldIo().readFieldsRGrid(filename, wFieldsRGrid(), unitCell());
       fieldIo().convertRGridToBasis(wFieldsRGrid(), wFields());
+      basis().update();
       hasWFields_ = true;
       hasCFields_ = false;
    }
@@ -706,6 +704,19 @@ namespace Pspc
          outputThermo(Log::file());
       }
       return error;
+   }
+
+   /*
+   * Sweep in parameter space.
+   */
+   template <int D>
+   void System<D>::sweep()
+   {
+      UTIL_CHECK(hasWFields_);
+      Log::file() << std::endl;
+      Log::file() << std::endl;
+      // Call sweep
+      sweepPtr_->sweep();
    }
 
    /*
@@ -857,30 +868,8 @@ namespace Pspc
 
       fieldIo().readFieldsBasis(inFileName, tmpFields_, unitCell());
 
-      #if 0
-      // Open input file
-      std::ifstream inFile;
-      fileMaster().openInputFile(inFileName, inFile);
-
-      // Read concentration field
-      std::string label;
-      int nStar,nM;
-      inFile >> label;
-      inFile >> nStar;
-      inFile >> label;
-      inFile >> nM;
-      int idum;
-      for (int i = 0; i < nStar; ++i) {
-         inFile >> idum;
-         for (int j = 0; j < nM; ++j) {
-            inFile >> tmpFields_[j][i];
-         }
-      }
-      inFile.close();
-      #endif
-
       // Compute w fields from c fields
-      for (int i = 0; i < basis().nStar(); ++i) {
+      for (int i = 0; i < basis().nBasis(); ++i) {
          for (int j = 0; j < mixture().nMonomer(); ++j) {
             wField(j)[i] = 0;
             for (int k = 0; k < mixture().nMonomer(); ++k) {

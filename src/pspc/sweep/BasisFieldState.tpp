@@ -10,6 +10,7 @@
 
 #include "BasisFieldState.h"
 #include "FieldState.tpp"
+#include <util/global.h>
 
 namespace Pscf {
 namespace Pspc
@@ -57,13 +58,13 @@ namespace Pspc
          fields().allocate(nMonomer);
       }
 
-      int nStar = system().basis().nStar();
-      UTIL_CHECK(nStar > 0);
+      int nBasis = system().basis().nBasis();
+      UTIL_CHECK(nBasis > 0);
       for (int i = 0; i < nMonomer; ++i) {
          if (field(i).isAllocated()) {
-            UTIL_CHECK(field(i).capacity() == nStar);
+            UTIL_CHECK(field(i).capacity() == nBasis);
          } else {
-            field(i).allocate(nStar);
+            field(i).allocate(nBasis);
          }
       }
 
@@ -73,7 +74,7 @@ namespace Pspc
    * Read fields in symmetry-adapted basis format. 
    */
    template <int D>
-   void BasisFieldState<D>::read(std::string & filename)
+   void BasisFieldState<D>::read(const std::string & filename)
    {
       allocate();
       system().fieldIo().readFieldsBasis(filename, fields(), unitCell());
@@ -83,7 +84,7 @@ namespace Pspc
    * Write fields in symmetry-adapted basis format. 
    */
    template <int D>
-   void BasisFieldState<D>::write(std::string & filename)
+   void BasisFieldState<D>::write(const std::string & filename)
    {
       system().fieldIo().writeFieldsBasis(filename, fields(), unitCell());
    }
@@ -96,16 +97,15 @@ namespace Pspc
    {
       // Get system unit cell
       unitCell() = system().unitCell();
-
       // Get system wFields
       allocate();
       int nMonomer = system().mixture().nMonomer();
-      int nStar    = system().basis().nStar();
+      int nBasis    = system().basis().nBasis();
       int i, j;
       for (i = 0; i < nMonomer; ++i) {
          DArray<double>& stateField = field(i);
          const DArray<double>& systemField = system().wField(i);
-         for (j = 0; j < nStar; ++j) {
+         for (j = 0; j < nBasis; ++j) {
             stateField[j] = systemField[j];
          }
       }
@@ -113,19 +113,19 @@ namespace Pspc
    }
 
    /*
-   * Get current state of associated System.
+   * Set System state to current state of the BasisFieldState object.
    */
    template <int D>
    void BasisFieldState<D>::setSystemState(bool isFlexible)
    {
       // Update system  wFields
       int nMonomer = system().mixture().nMonomer();
-      int nStar = system().basis().nStar();
+      int nBasis = system().basis().nBasis();
       int i, j;
       for (i = 0; i < nMonomer; ++i) {
          const DArray<double>& stateField = field(i);
          DArray<double>& systemField = system().wField(i);
-         for (j = 0; j < nStar; ++j) {
+         for (j = 0; j < nBasis; ++j) {
             systemField[j] = stateField[j];
          }
       }
@@ -135,8 +135,11 @@ namespace Pspc
                                              system().wFieldsRGrid());
 
       if (isFlexible) {
-         // Update system unitCell
+         // Update system unitCell data
          system().unitCell() = unitCell();
+         // Update unitCell information in all blocks of all polymers
+         system().mixture().setupUnitCell(unitCell());
+         system().basis().update();
       }
 
    }

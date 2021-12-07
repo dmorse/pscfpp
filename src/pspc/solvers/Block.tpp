@@ -14,12 +14,12 @@
 #include <pscf/crystal/UnitCell.h>
 #include <pscf/crystal/shiftToMinimum.h>
 #include <pscf/math/IntVec.h>
-#include <util/containers/DMatrix.h>      
-#include <util/containers/DArray.h>      
-#include <util/containers/FArray.h>      
+#include <util/containers/DMatrix.h>
+#include <util/containers/DArray.h>
+#include <util/containers/FArray.h>
 #include <util/containers/FSArray.h>
 
-namespace Pscf { 
+namespace Pscf {
 namespace Pspc {
 
    using namespace Util;
@@ -47,56 +47,43 @@ namespace Pspc {
 
    template <int D>
    void Block<D>::setDiscretization(double ds, const Mesh<D>& mesh)
-   {  
+   {
       UTIL_CHECK(mesh.size() > 1);
       UTIL_CHECK(ds > 0.0);
 
       // Set association to mesh
       meshPtr_ = &mesh;
-      // Set association to unitCell
-      //unitCellPtr_ = &unitCell;
 
-      #if 0
       // Set contour length discretization
-      ns_ = floor(length()/ds + 0.5) + 1;
-      if (ns_%2 == 0) {
-         ns_ += 1;
-      }
-      ds_ = length()/double(ns_ - 1);
-      #endif
-
       int tempNs;
-      tempNs = (floor(length()/(2.0 *ds) + 0.5)); //finds the closest integer
+      tempNs = floor( length()/(2.0 *ds) + 0.5 );
       if (tempNs == 0) {
          tempNs = 1;
-      } 
-      ds_ = (length()/double(tempNs * 2.0));
-      ns_ = (2 * tempNs) + 1;
-
-      // ns_ is the number of grid points, ns_-1 is number of intervals which should be even
-
-      std::cout<<"Number of blocks = "<<(ns_-1)<<" and Delta s for this block = "<<ds_<<std::endl;
+      }
+      ns_ = 2*tempNs + 1;
+      ds_ = length()/double(ns_-1);
 
       fft_.setup(mesh.dimensions());
 
-      // Compute Fourier space kMeshDimensions_ 
+      // Compute Fourier space kMeshDimensions_
       for (int i = 0; i < D; ++i) {
          if (i < D - 1) {
             kMeshDimensions_[i] = mesh.dimensions()[i];
          } else {
             kMeshDimensions_[i] = mesh.dimensions()[i]/2 + 1;
-       }
+         }
       }
 
+      // Set number kSize_ of points in k-space mesh
       int kSize_ = 1;
       for (int i = 0; i < D; ++i) {
-           kSize_ *= kMeshDimensions_[i];   
-      }   
+           kSize_ *= kMeshDimensions_[i];
+      }
 
-      // Allocate work arrays
+      // Allocate work arrays for MDE solution
       expKsq_.allocate(kMeshDimensions_);
-      expW_.allocate(mesh.dimensions());
       expKsq2_.allocate(kMeshDimensions_);
+      expW_.allocate(mesh.dimensions());
       expW2_.allocate(mesh.dimensions());
       qr_.allocate(mesh.dimensions());
       qk_.allocate(mesh.dimensions());
@@ -104,8 +91,10 @@ namespace Pspc {
       qk2_.allocate(mesh.dimensions());
       qf_.allocate(mesh.dimensions());
 
+      // Allocate work array for stress calculation
       dGsq_.allocate(kSize_, 6);
 
+      // Allocate memory for solutions to MDE
       propagator(0).allocate(ns_, mesh);
       propagator(1).allocate(ns_, mesh);
       cField().allocate(mesh.dimensions());
@@ -113,10 +102,26 @@ namespace Pspc {
    }
 
    /*
+   * Set or reset the the block length.
+   */
+   template <int D>
+   void Block<D>::setLength(double length)
+   {
+      BlockDescriptor::setLength(length);
+      if (ns_ > 1) {
+         ds_ = length/double(ns_ - 1);
+      }
+      // Note that ns_ is initialized to zero and that ns_ and ds_
+      // are first assigned values in Block<D>::setDiscretiziation.
+      // The value of ds_ will thus be re-computed here only if this
+      // function is called after setDiscretization, as in a sweep.
+   }
+
+   /*
    * Setup data that depend on the unit cell parameters.
    */
    template <int D>
-   void 
+   void
    Block<D>::setupUnitCell(const UnitCell<D>& unitCell)
    {
 
@@ -129,68 +134,37 @@ namespace Pspc {
       IntVec<D> G, Gmin;
       double Gsq;
       double factor = -1.0*kuhn()*kuhn()*ds_/6.0;
-      // std::cout << "factor      = " << factor << std::endl;
       int i;
       for (iter.begin(); !iter.atEnd(); ++iter) {
-         i = iter.rank(); 
+         i = iter.rank();
          G = iter.position();
          Gmin = shiftToMinimum(G, mesh().dimensions(), unitCell);
          Gsq = unitCell.ksq(Gmin);
          expKsq_[i] = exp(Gsq*factor);
          expKsq2_[i] = exp(Gsq*factor*0.5);
-         //std::cout << i    << "  " 
-         //         << Gmin << "  " 
-         //          << Gsq  << "  "
-         //          << expKsq_[i] << std::endl;
       }
 
    }
-      
+
    /*
    * Setup the contour length step algorithm.
    */
    template <int D>
-   void 
+   void
    Block<D>::setupSolver(Block<D>::WField const& w)
    {
       // Preconditions
       int nx = mesh().size();
       UTIL_CHECK(nx > 0);
-      
+
       // Populate expW_
       int i;
       // std::cout << std::endl;
       for (i = 0; i < nx; ++i) {
          expW_[i] = exp(-0.5*w[i]*ds_);
          expW2_[i] = exp(-0.5*0.5*w[i]*ds_);
-         // std::cout << "i = " << i 
-         //           << " expW_[i] = " << expW_[i]
-         //          << std::endl;
       }
 
-      #if 0
-      MeshIterator<D> iter;
-      IntVec<D> G;
-      IntVec<D> Gmin;
-      double Gsq;
-      double factor = -1.0*kuhn()*kuhn()*ds_/6.0;
-      // std::cout << "kDimensions = " << kMeshDimensions_ << std::endl;
-      // std::cout << "factor      = " << factor << std::endl;
-      iter.setDimensions(kMeshDimensions_);
-      for (iter.begin(); !iter.atEnd(); ++iter) {
-         i = iter.rank(); 
-         G = iter.position();
-         Gmin = shiftToMinimum(G, mesh().dimensions(), unitCell);
-         Gsq = unitCell.ksq(Gmin);
-         expKsq_[i] = exp(Gsq*factor);
-         expKsq2_[i] = exp(Gsq*factor*0.5);
-         //std::cout << i    << "  " 
-         //          << Gmin << "  " 
-         //          << Gsq  << "  "
-         //          << expKsq_[i] << std::endl;
-      }
-      #endif
-      
    }
 
    /*
@@ -206,7 +180,7 @@ namespace Pspc {
       UTIL_CHECK(ds_ > 0);
       UTIL_CHECK(propagator(0).isAllocated());
       UTIL_CHECK(propagator(1).isAllocated());
-      UTIL_CHECK(cField().capacity() == nx) 
+      UTIL_CHECK(cField().capacity() == nx)
 
       // Initialize cField to zero at all points
       int i;
@@ -226,14 +200,14 @@ namespace Pspc {
       //odd indices
       for(int j = 1; j < (ns_ -1); j += 2) {
          for(int i = 0; i < nx; ++i) {
-            cField()[i] += p0.q(j)[i] * p1.q(ns_ - 1 - j)[i] * 4.0;   
+            cField()[i] += p0.q(j)[i] * p1.q(ns_ - 1 - j)[i] * 4.0;
          }
       }
 
       //even indices
       for(int j = 2; j < (ns_ -2); j += 2) {
          for(int i = 0; i < nx; ++i) {
-            cField()[i] += p0.q(j)[i] * p1.q(ns_ - 1 - j)[i] * 2.0;   
+            cField()[i] += p0.q(j)[i] * p1.q(ns_ - 1 - j)[i] * 2.0;
          }
       }
 
@@ -249,12 +223,12 @@ namespace Pspc {
    */
    template <int D>
    void Block<D>::computeStress(double prefactor)
-   {   
+   {
       // Preconditions
       int nx = mesh().size();
-      UTIL_CHECK(nx > 0); 
-      UTIL_CHECK(ns_ > 0); 
-      UTIL_CHECK(ds_ > 0); 
+      UTIL_CHECK(nx > 0);
+      UTIL_CHECK(ns_ > 0);
+      UTIL_CHECK(ds_ > 0);
       UTIL_CHECK(propagator(0).isAllocated());
       UTIL_CHECK(propagator(1).isAllocated());
 
@@ -262,13 +236,13 @@ namespace Pspc {
 
       double dels, normal, increment;
       int r, c, m;
- 
+
       normal = 3.0*6.0;
 
       int kSize_ = 1;
       for (int i = 0; i < D; ++i) {
-           kSize_ *= kMeshDimensions_[i];   
-      }   
+           kSize_ *= kMeshDimensions_[i];
+      }
       r = unitCellPtr_->nParameter();
       c = kSize_;
 
@@ -279,21 +253,21 @@ namespace Pspc {
       for (i = 0; i < r; ++i) {
          dQ.append(0.0);
          stress_.append(0.0);
-      }   
+      }
 
       computedGsq();
 
       Propagator<D> const & p0 = propagator(0);
       Propagator<D> const & p1 = propagator(1);
 
-      // Evaluate unnormalized integral   
+      // Evaluate unnormalized integral
       for (int j = 0; j < ns_ ; ++j) {
-           
+
            qr_ = p0.q(j);
            fft_.forwardTransform(qr_, qk_);
-           
+
            qr2_ = p1.q(ns_ - 1 - j);
-           fft_.forwardTransform(qr2_, qk2_); 
+           fft_.forwardTransform(qr2_, qk2_);
 
            dels = ds_;
 
@@ -302,7 +276,7 @@ namespace Pspc {
                  dels = dels*2.0;
               } else {
                  dels = dels*4.0;
-              }           
+              }
            }
 
            for (int n = 0; n < r ; ++n) {
@@ -311,24 +285,24 @@ namespace Pspc {
               for (m = 0; m < c ; ++m) {
                  double prod = 0;
                  prod = (qk2_[m][0] * qk_[m][0]) + (qk2_[m][1] * qk_[m][1]);
-                 prod *= dGsq_(m,n); 
-                 increment += prod; 
+                 prod *= dGsq_(m,n);
+                 increment += prod;
               }
               increment = (increment * kuhn() * kuhn() * dels)/normal;
-              dQ [n] = dQ[n]-increment; 
-           }    
-      }   
-      
+              dQ [n] = dQ[n]-increment;
+           }
+      }
+
       // Normalize
       for (i = 0; i < r; ++i) {
          stress_[i] = stress_[i] - (dQ[i] * prefactor);
-      }   
+      }
 
    }
 
-   /*  
+   /*
    * Compute dGsq_
-   */  
+   */
    template <int D>
    void Block<D>::computedGsq()
    {

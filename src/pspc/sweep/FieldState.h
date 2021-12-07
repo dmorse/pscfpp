@@ -34,7 +34,7 @@ namespace Pspc
    * Different choices for class FT can be used to store fields in
    * symmetry-adapted basis function, r-grid or k-grid format.
    *
-   * \ingroup Pscf_Pspc_Module
+   * \ingroup Pspc_Sweep_Module
    */
    template <int D, class FT>
    class FieldState 
@@ -192,7 +192,17 @@ namespace Pspc
    // Get the associated System<D> object.
    template <int D, class FT>
    inline System<D>& FieldState<D,FT>::system()
-   {  return *systemPtr_; }
+   {
+      assert(systemPtr_ != 0);  
+      return *systemPtr_; 
+   }
+
+   #ifndef PSPC_FIELD_STATE_TPP
+   // Suppress implicit instantiation
+   extern template class FieldState< 1, DArray<double> >;
+   extern template class FieldState< 2, DArray<double> >;
+   extern template class FieldState< 3, DArray<double> >;
+   #endif
 
 } // namespace Pspc
 } // namespace Pscf

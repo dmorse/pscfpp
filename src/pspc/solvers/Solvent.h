@@ -8,12 +8,16 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/chem/Species.h>             // base class
-#include <util/param/ParamComposite.h>     // base class
-#include <pspc/solvers/Propagator.h>
-#include <pscf/mesh/Mesh.h>
+#include <pscf/chem/Species.h>           // base class
+#include <util/param/ParamComposite.h>   // base class
+#include <pspc/solvers/Propagator.h>     // typedefs
+//#include <pscf/mesh/Mesh.h>            // interface and pointer
 
-namespace Pscf { 
+namespace Pscf {
+   template <int D> class Mesh;
+}
+
+namespace Pscf {
 namespace Pspc { 
 
    using namespace Util;

@@ -1,0 +1,96 @@
+--------------------------------------------------------------------------
+v0.8
+
+Pscf:
+
+Change "step" to "kuhn" in Pscf::Monomer class
+
+Fd1d:
+
+Clean up Fd1d::System::readCommands, add readEcho and command functions
+
+Pcpc:
+
+Finish debugging sweep feature and LinearSweep
+
+Pspg:
+
+Introduce simple regression tests (Anshul)
+
+Docs:
+
+1) Update and edit doxygen user manual documentation throughout.
+At a minimum, remove all incorrect or outdated descriptions.
+
+--------------------------------------------------------------------------
+v0.9
+----
+
+Fd1d:
+
+1) Add LinearSweep class analogous to that in Pspc
+
+Pspc:
+
+1) Generalize AM iterator to deal correctly with open and mixed ensembles.
+
+2) Improve encapsulation and data safety throughout 
+
+Pspg:
+
+1) Update FieldIo to correspond to current version in Pspc
+
+2) Generalize AM iterator to deal correctly with open and mixed ensembles
+
+3) Port sweep to pspg, along with tests.
+
+4) Port solvent to pspg, along with tests.
+
+Docs:
+
+1) Fully document param file formats for all classes.
+
+2) Correctly document unit cell parameters
+
+--------------------------------------------------------------------------
+v1.0
+
+Pscf:
+
+1) Introduce a convention in Basis in which pairs of related open stars are
+always listed in the same order (this helps complete the basis field API).
+
+2) Introducing new v2.0 field file formats for basis and rgrid. 
+Basis would contain the mesh. Rgrid would be output in convention C order.
+
+Pspg:
+
+1) Reasonably complete unit tests
+
+2) Generalize AM iterator to use symmetry-adapted basis field format.
+
+Tools:
+
+1) Develop python scripts to read output files and analyze sweeps
+
+Docs:
+
+1) Develop read-the-docs user manual documentation.
+
+2) Improve developer documentation regarding build system, Parameter IO
+
+--------------------------------------------------------------------------
+v1.1
+
+Pscf
+-----
+
+1) Change treatment of phases in Basis to explicitly store and manipulate
+Rational number phases, compute coefficients only at the very end.
+
+Docs
+-----
+
+1) Write a first draft of a latex algorithms and theory manual, or publish 
+as an article in a computational science oriented journal.
+

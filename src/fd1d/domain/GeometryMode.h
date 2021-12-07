@@ -28,30 +28,30 @@ namespace Fd1d
    * istream extractor for a GeometryMode.
    *
    * \param  in       input stream
-   * \param  lattice  GeometryMode to be read
+   * \param  mode  GeometryMode to be read
    * \return modified input stream
    */
-   std::istream& operator >> (std::istream& in, GeometryMode& lattice);
+   std::istream& operator >> (std::istream& in, GeometryMode& mode);
 
    /**
    * ostream inserter for an GeometryMode.
    *
    * \param  out      output stream
-   * \param  lattice  GeometryMode to be written
+   * \param  mode  GeometryMode to be written
    * \return modified output stream
    */
-   std::ostream& operator << (std::ostream& out, GeometryMode lattice);
+   std::ostream& operator << (std::ostream& out, GeometryMode mode);
 
    /**
    * Serialize a GeometryMode value.
    *
    * \param ar      archive object
-   * \param lattice value to be serialized
+   * \param mode value to be serialized
    * \param version archive version id
    */
    template <class Archive>
-   void serialize(Archive& ar, GeometryMode& lattice, const unsigned int version)
-   {  serializeEnum(ar, lattice, version); }
+   void serialize(Archive& ar, GeometryMode& mode, const unsigned int version)
+   {  serializeEnum(ar, mode, version); }
 
 }
 }

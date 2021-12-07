@@ -8,8 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/math/IntVec.h>
-#include <iostream>
+#include <pscf/math/IntVec.h>    // member
+#include <iostream>              // interface
+#include <util/format/Int.h>     // operator << implementation
 
 namespace Pscf 
 {
@@ -27,8 +28,7 @@ namespace Pscf
    * \return modified input stream
    */
    template <int D>
-   std::istream& operator >> (std::istream& in,
-                              Mesh<D>& mesh);
+   std::istream& operator >> (std::istream& in, Mesh<D>& mesh);
 
    /**
    * Output stream inserter for writing a Mesh<D>::LatticeSystem.
@@ -38,8 +38,7 @@ namespace Pscf
    * \return modified output stream
    */
    template <int D>
-   std::ostream& operator << (std::ostream& out,
-                              Mesh<D>& mesh);
+   std::ostream& operator << (std::ostream& out, Mesh<D> const & mesh);
 
    /**
    * Description of a regular grid of points in a periodic domain.
@@ -87,7 +86,7 @@ namespace Pscf
       *
       * \param other Mesh<D> object being copied.
       */
-      Mesh<D>& operator= (Mesh<D> const & other);
+      Mesh<D>& operator = (Mesh<D> const & other);
 
       /**
       * Set the grid dimensions for an existing mesh.
@@ -197,9 +196,10 @@ namespace Pscf
 
    //friends:
 
-      friend std::ostream& operator << <>(std::ostream&, Mesh<D>& );
+      friend std::istream& operator >> <>(std::istream&, Mesh<D> & );
 
-      friend std::istream& operator >> <>(std::istream&, Mesh<D>& );
+      friend std::ostream& operator << <>(std::ostream&, Mesh<D> const & );
+
 
    };
 
@@ -233,6 +233,34 @@ namespace Pscf
       }
    }
 
+   template <int D>
+   std::istream& operator >> (std::istream& in, Mesh<D>& mesh)
+   {
+      IntVec<D> dimensions;
+      in >> dimensions;
+      for (int i = 0; i < D; ++i) {
+         UTIL_CHECK(dimensions[i] > 0);
+      }
+      mesh.setDimensions(dimensions);
+      return in;
+   }
+
+   template <int D>
+   std::ostream& operator << (std::ostream& out, Mesh<D> const & mesh)
+   {
+      for (int i = 0; i < D; ++i) {
+         out << " " << Int(mesh.dimensions_[i], 6);
+      }
+      return out;
+   }
+
+   #ifndef PSCF_MESH_TPP
+   // Suppress implicit instantiation
+   extern template class Mesh<1>;
+   extern template class Mesh<2>;
+   extern template class Mesh<3>;
+   #endif
+
 }
-#include "Mesh.tpp"
+//#include "Mesh.tpp"
 #endif

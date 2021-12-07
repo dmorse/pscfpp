@@ -1,5 +1,5 @@
-#ifndef PSSP_BASIS_TPP
-#define PSSP_BASIS_TPP
+#ifndef PSCF_BASIS_TPP
+#define PSCF_BASIS_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -11,7 +11,10 @@
 #include "Basis.h"
 #include "TWave.h"
 #include "groupFile.h"
+#include <pscf/crystal/UnitCell.h>
+#include <pscf/crystal/SpaceGroup.h>
 #include <pscf/crystal/shiftToMinimum.h>
+#include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <algorithm>
 #include <vector>
@@ -26,6 +29,7 @@ namespace Pscf {
    template <int D>
    Basis<D>::Basis()
     : nWave_(0), 
+      nBasisWave_(0), 
       nStar_(0), 
       nBasis_(0), 
       unitCellPtr_(0), 
@@ -54,6 +58,7 @@ namespace Pscf {
       } else {
          bool foundFile = false;
          {
+            // Search first in this directory
             std::ifstream in;
             in.open(groupName);
             if (in.is_open()) {
@@ -63,6 +68,7 @@ namespace Pscf {
             }
          }
          if (!foundFile) {
+            // Search in the data directory containing standard space groups
             std::string fileName = makeGroupFileName(D, groupName);
             std::ifstream in;
             in.open(fileName);
@@ -81,7 +87,7 @@ namespace Pscf {
    }
 
    /*
-   * Construct basis for pseudo-spectral scft.
+   * Construct a symmetry-adapted basis for pseudo-spectral scft.
    */
    template <int D>
    void Basis<D>::makeBasis(Mesh<D> const & mesh, 
@@ -151,26 +157,42 @@ namespace Pscf {
 
    }
 
+   /*
+   * Complete construction of a basis by grouping presorted waves into
+   * stars and completing initialization of all Wave and Star objects.
+   */
    template <int D>
    void Basis<D>::makeStars(SpaceGroup<D> const & group)
    {
-      /* 
-      * Local containers that hold TWave<D> objects:
-      * list - set of waves of equal norm, compared by indicesDft
-      * star - set of symmetry-related waves, compared by indicesDft
-      * tempStar - temporary star, sorted by descending indicesBz
-      * tempList - temporary list, ordered by star
+
+      /*
+      * Conceptual definitions:
+      *   - A "list" is a set of wavevectors of equal magnitude.
+      *   - A "star" is a set of wavevectors that are related by symmetry.
+      * Each list may contain one or more complete stars. Lists are
+      * identified as an intermediate step in identification of stars.
+      *
+      * Local wavevector containers:
+      * During processing, wavevectors are temporarily stored in 
+      * TWave<D> objects.  The following local containers of TWave<D> 
+      * objects used:
+      *   list - a std::set of waves of equal norm (a "list")
+      *   tempList - an ordered list, with contiguous stars
+      *   star - a std::set of symmetry-related waves (a "star")
+      *   tempStar - a sorted star, sorted by descending indicesBz
       */
+
+      // Local TWave<D> containers and associated iterators
       std::set< TWave<D>, TWaveDftComp<D> > list;  
       std::set< TWave<D>, TWaveDftComp<D> > star;  
       std::vector< TWave<D> > tempStar;  
       GArray< TWave<D> > tempList;            
-
       typename std::set< TWave<D>, TWaveDftComp<D> >::iterator rootItr;
       typename std::set< TWave<D>, TWaveDftComp<D> >::iterator setItr;
+
+      // Local variables
       TWave<D> wave;
       Basis<D>::Star newStar;
-
       std::complex<double> coeff;
       double Gsq;
       double Gsq_max;
@@ -193,40 +215,43 @@ namespace Pscf {
       /*
       * Overview of algorithm:
       *
+      * Precondition: Wavevectors in the array waves_ are sorted in
+      * nondecreasing order by wavevector norm.
+      *
       * Loop over index i of array waves_ {
       *
-      *   Search for end of a "list", i.e., contiguous block of waves 
-      *   of equal magnitude, with indices [listBegin,listEnd-1]. 
+      *   Search for end of a "list" (i.e., contiguous block of waves 
+      *   of equal magnitude) by identifying changes in magnitude.
+      *   The resulting list has indices [listBegin,listEnd-1]. 
       *   Set newList true.
       *
-      *   // Each list can contain one or more stars.
+      *   // Each list may contain one or more stars.
       *   // Process the newly identified list to identify stars
-      *
       *   If (newList) {
       *   
-      *     Copy all waves in range into container std::set<TWave<D>> list
+      *     Copy all waves in the range into std::set list
       *
-      *     Set rootItr to first wave in list
+      *     Set rootItr to the first wave in list
       *
-      *     // Loop over stars within list
+      *     // Loop over stars within the list
       *     while (list.size() > 0) {
       *
       *       // To generate a star from a root wave rootItr, 
       *       // loop over symmetry operations of space group.
       *       For each symmetry operation group[j] {
       *         Compute vec = (rootItr->indicesBz)*group[j]
-      *         Set phase = rootItr->indicesBz .dot. group[j].t 
-      *         Check for cancellation of the star, set cancel flag
+      *         Set phase = rootItr->indicesBz .dot. (group[j].t) 
+      *         Check for cancellation of the star, set "cancel" flag
       *         Add wave to std::set<TWave> star if not added before
       *         // Here, use of a std::set simplifies test of uniqueness
       *       }
       *
       *       Copy all waves from star to std::vector<TWave> tempStar
-      *       Sort tempStar by indicesBz in descending order
-      *       // Here, use of std::vector for tempStar allows sorting
+      *       Sort tempStar by indicesBz, in descending order
+      *       // Here, use of a std::vector for tempStar allows sorting
       *       For each wave in tempStar {
-      *         Append wave to std::vector<TWave> tempList
-      *         Erase wave from std::set<TWave> list
+      *         Append the wave to std::vector<TWave> tempList
+      *         Erase the wave from std::set<TWave> list
       *         // Here, use of a std::set for list simplifies erasure
       *       }
       *
@@ -257,48 +282,64 @@ namespace Pscf {
       *       Append newStar object to GArray<Star> stars_ 
       *
       *     } // end loop over stars in a single list
+      * 
+      *     // At this point, tempList contains the contents of the 
+      *     // waves_ array occupying the range [beginId, endId-1], 
+      *     // grouped by stars, with waves within each star sorted
+      *     // by indexBz.
       *
-      *     For each TWave in tempList {
-      *       Copy TWave in tempList to a Basis:Wave in  waves_
+      *     // Overwrite the block of array waves_ with indices in the
+      *     // range [beginId, endId-1] with the contents of tempList.
+      *     For each wave in tempList {
+      *       Copy a TWave in tempList to a Basis:Wave in  waves_
       *       Assign a complex coefficient of unit norm to the Wave
       *     }
-      *     // This overwrites a block of the waves_ array 
       *
-      *     // At this point, coefficients of waves have correct
-      *     // correct relative phases within a star, but not final 
-      *     // absolute phases and have unit absolute magnitude.
+      *     // At this point, coefficients of waves have unit magnitude
+      *     // and correct relative phases within each star, but not 
+      *     // the final absolute phases or magnitude.
       *
       *   } // end processing of one list (waves of equal norm)
       *
       * } // End initial processing of all waves and stars
       *
-      * // Set absolute wave coefficients
+      * // Set phases of wave coefficients
       * For each star in array stars_ {
-      *   if star is closed (star.invertFlag == 0) {
+      *   if star is closed under inversion (star.invertFlag == 0) {
       *     if star is cancelled {
-      *       set all coefficients to zero
+      *       set coefficients of all waves to zero
       *     } else {
       *       Set the root to the first wave in the star
-      *       Check that negation of root is also in this star
-      *       Divide all coefficients by the root coefficient
-      *       Require coeffs of root & negation be complex conjugates
+      *       Check closure (i.e., negation of root is in this star)
+      *       For each wave in star:
+      *          Divide coeff by the root coefficient 
+      *       }
+      *       if (coeffs of root & negation are not complex conjugates){
+      *          Divide all coeffs by a common phasor chosen to obtain 
+      *             complex conjugate coefficients for root and partner
+      *       }
       *     }
       *   } else
       *   if (star.invertFlag == 1) {
       *     Set root of this star to the 1st wave in the star
-      *     Find negation of root (aka "partner") in next star.
-      *     If star is cancelled {
+      *     Find negation of root (aka "partner") in the next star
+      *     If this star is cancelled {
       *       Set coefficients in this star and next to zero
       *     } else {
-      *       Divide coefficients in this star by root coefficient
-      *       Divide coefficients in next star by partner coefficient
+      *       For each wave in this star:
+      *          Divide coeff by the root coefficient
+      *       }
+      *       For each wave in the next star:
+      *          Divide coeff by the partner coefficient
+      *       }
       *     }
       *   }
-      *   // Note: If star.invertFlag = -1, do nothing
+      *   // Note: If star.invertFlag = -1, do nothing because properties
+      *   // of this star were all set when processing its partner.
       * }
       *
       * // For all waves, normalize coefficients and set starId
-      * For each star in stars_ {
+      * For each star in array stars_ {
       *   For each wave in this star {
       *     Set Wave.starId
       *     Divide coefficient by sqrt(double(star.size))
@@ -306,8 +347,8 @@ namespace Pscf {
       * }
       *
       * // For all waves, set implicit member and add to look up table
-      * For each wave in waves_ { 
-      *   Set implicit attribute
+      * For each wave in array waves_ { 
+      *   Set Wave::implicit attribute
       *   Assign waveIds_[rank] = i
       * }
       */
@@ -335,7 +376,7 @@ namespace Pscf {
          }
 
          // Process completed list of wavectors of equal norm
-         if (newList && listEnd > 0) {
+         if (newList) {
 
             // Copy waves of equal norm into std::set "list"
             list.clear();
@@ -345,7 +386,7 @@ namespace Pscf {
                wave.indicesBz = waves_[j].indicesBz;
                wave.sqNorm = waves_[j].sqNorm;
                if (j > listBegin) {
-                  UTIL_CHECK( abs(wave.sqNorm-waves_[j].sqNorm) 
+                  UTIL_CHECK( std::abs(wave.sqNorm-waves_[j].sqNorm) 
                                  < 2.0*epsilon ); 
                }
                list.insert(wave);
@@ -384,7 +425,7 @@ namespace Pscf {
                   vec = rootVecBz*group[j];
 
                   // Check that rotated vector has same norm as root.
-                  UTIL_CHECK(abs(Gsq - unitCell().ksq(vec)) < epsilon);
+                  UTIL_CHECK(std::abs(Gsq - unitCell().ksq(vec)) < epsilon);
 
                   // Initialize TWave object associated with rotated wave
                   wave.sqNorm = Gsq;
@@ -414,7 +455,7 @@ namespace Pscf {
                   // nonzero phase, creating a contradiction.
 
                   if (wave.indicesDft == rootItr->indicesDft) {
-                     if (abs(wave.phase) > 1.0E-6) {
+                     if (std::abs(wave.phase) > 1.0E-6) {
                         cancel = true;
                      }
                   }
@@ -442,7 +483,7 @@ namespace Pscf {
                      while (phase_diff <= -0.5) {
                         phase_diff += 1.0;
                      }
-                     if (abs(phase_diff) > 1.0E-6) {
+                     if (std::abs(phase_diff) > 1.0E-6) {
                         cancel = true;
                      }
 
@@ -470,7 +511,7 @@ namespace Pscf {
                UTIL_CHECK((int)(tempList.size()+list.size()) == listSize);
 
                // If this star is not cancelled, increment the number of 
-               // basis functions (nBasis_) and waves in basis (nBasisWave_)
+               // basis functions (nBasis_) & waves in basis (nBasisWave_)
                if (!cancel) {
                   ++nBasis_;
                   nBasisWave_ += star.size();
@@ -488,7 +529,7 @@ namespace Pscf {
                if (nextInvert == -1) {
 
                   // If this star is 2nd of a pair related by inversion,
-                  // set root of next star to 1st wave of remaining list.
+                  // set root for next star to 1st wave of remaining list.
 
                   newStar.invertFlag = -1;
                   rootItr = list.begin();
@@ -502,7 +543,7 @@ namespace Pscf {
                   // Compute negation nVec of root vector in FBZ
                   nVec.negate(rootVecBz);
 
-                  // Shift negation nVec to a DFT mesh
+                  // Shift negation nVec to the DFT mesh
                   (*meshPtr_).shift(nVec);
        
                   // Search for negation of root vector within this star
@@ -526,11 +567,14 @@ namespace Pscf {
 
                   } else {
 
+                     // This star is open under inversion, and is the
+                     // first star of a pair related by inversion
+
                      newStar.invertFlag = 1;
                      nextInvert = -1;
 
-                     // If star is not closed, find negation of root in
-                     // the remaining list, and use this negation as the
+                     // Find negation of the root of this star in the
+                     // remaining list, and use this negation as the
                      // root of the next star.
 
                      setItr = list.begin();
@@ -564,7 +608,7 @@ namespace Pscf {
                ++starId;
                starBegin = newStar.endId;
 
-            } 
+            }
             // End loop over stars within a list.
 
             UTIL_CHECK(list.size() == 0);
@@ -580,10 +624,10 @@ namespace Pscf {
                waves_[k].sqNorm = tempList[j].sqNorm;
                coeff = std::complex<double>(0.0, tempList[j].phase);
                coeff = exp(coeff);
-               if (abs(imag(coeff)) < 1.0E-6) {
+               if (std::abs(imag(coeff)) < 1.0E-6) {
                   coeff = std::complex<double>(real(coeff), 0.0);
                }
-               if (abs(real(coeff)) < 1.0E-6) {
+               if (std::abs(real(coeff)) < 1.0E-6) {
                   coeff = std::complex<double>(0.0, imag(coeff));
                }
                waves_[k].coeff = coeff;
@@ -604,18 +648,28 @@ namespace Pscf {
       nStar_ = stars_.size();
       // Complete initial processing of all lists and stars
 
+      /*
+      * Conventions for phases of wave coefficients (imposed below):
+      *   - Coefficients of the root of each star and its negation must
+      *     be complex conjugates.
+      *   - In a closed star (starInvert = 0), the coefficient of the 
+      *     root must have a non-negative real part. If the root
+      *     coefficient is pure imaginary, the imaginary part must
+      *     be negative.
+      *   - In a pair of open stars that are related by inversion 
+      *     symmetry, the coefficients of the first wave of the first star
+      *     and the last wave of the second star (i.e., the roots of both
+      *     stars) must have real coefficients.
+      */
+
+      // Final processing of phases of of waves in stars:
       std::complex<double> rootCoeff; // Coefficient of root wave
       std::complex<double> partCoeff; // Coefficient of partner of root
       std::complex<double> d;
       int rootId, partId;
-
-      // Final processing of coefficients of waves in stars. 
-      // Require that the root wave of each star and its negation 
-      // have conjugate coefficients, and that each basis function 
-      // is normalized.
       for (i = 0; i < nStar_; ++i) {
 
-         // Treat open and closed stars separately
+         // Treat open and closed stars differently
 
          if (stars_[i].invertFlag == 0) {
      
@@ -659,25 +713,25 @@ namespace Pscf {
                   waves_[j].coeff /= rootCoeff;
                }
                rootCoeff = waves_[rootId].coeff;
-               UTIL_CHECK(abs(real(rootCoeff) - 1.0) < 1.0E-9);
-               UTIL_CHECK(abs(imag(rootCoeff)) < 1.0E-9);
+               UTIL_CHECK(std::abs(real(rootCoeff) - 1.0) < 1.0E-9);
+               UTIL_CHECK(std::abs(imag(rootCoeff)) < 1.0E-9);
 
                // Require coefficients of root and negation are conjugates
                if (partId != rootId) {
 
                   partCoeff = waves_[partId].coeff;
-                  UTIL_CHECK(abs(abs(partCoeff) - 1.0) < 1.0E-9);
-                  if (abs(partCoeff - rootCoeff) > 1.0E-6) {
+                  UTIL_CHECK(std::abs(std::abs(partCoeff) - 1.0) < 1.0E-9);
+                  if (std::abs(partCoeff - rootCoeff) > 1.0E-6) {
                      d = sqrt(partCoeff);
                      if (real(d) < -1.0E-4) {
                         d = -d;
                      } else 
-                     if (abs(real(d)) <= 1.0E-4) {
+                     if (std::abs(real(d)) <= 1.0E-4) {
                         if (imag(d) < 0.0) {
                            d = -d;
                         }
                      }
-                     for (j=stars_[i].beginId; j < stars_[i].endId; ++j) {
+                     for (j=stars_[i].beginId; j < stars_[i].endId; ++j){
                         waves_[j].coeff /= d;
                      }
                   }
@@ -686,8 +740,8 @@ namespace Pscf {
 
             } // end if (cancel) ... else ...
    
-            // end if (stars_[i].invertFlag == 0) 
-         } else 
+         } // end if (stars_[i].invertFlag == 0) 
+         else 
          if (stars_[i].invertFlag == 1) {
 
             // Process a pair of open stars related by inversion.
@@ -764,11 +818,11 @@ namespace Pscf {
 
       // Set tiny real and imaginary parts to zero (due to round-off)
       for (i = 0; i < nWave_; ++i) {
-         if (abs(real(waves_[i].coeff)) < 1.0E-12) {
+         if (std::abs(real(waves_[i].coeff)) < 1.0E-8) {
             waves_[i].coeff 
                      = std::complex<double>(0.0, imag(waves_[i].coeff));
          }
-         if (abs(imag(waves_[i].coeff)) < 1.0E-12) {
+         if (std::abs(imag(waves_[i].coeff)) < 1.0E-8) {
             waves_[i].coeff 
                     = std::complex<double>(real(waves_[i].coeff), 0.0);
          }
@@ -794,6 +848,22 @@ namespace Pscf {
          // Look up table for waves
          waveIds_[mesh().rank(vec)] = i;
       }
+
+      // Set Star::starId and Star::basisId, and to look-up table starIds_.
+      starIds_.allocate(nBasis_);
+      j = 0;
+      for (i = 0; i < nStar_; ++i) {
+         stars_[i].starId = i;
+         if (stars_[i].cancel) {
+            stars_[i].basisId = -1;
+         } else {
+            stars_[i].basisId = j;
+            UTIL_CHECK(j < nBasis_);
+            starIds_[j] = i;
+            ++j;
+         }
+      }
+      UTIL_CHECK(j == nBasis_);
 
    }
 
@@ -903,11 +973,12 @@ namespace Pscf {
    {
       double Gsq;
       IntVec<D> v;
-      int is, iw, iwp, j;
+      int is, ib, iw, iwp, j;
 
       // Check total number of waves == # of grid points
       if (nWave_ != mesh().size()) {
          std::cout << "nWave != size of mesh" << std::endl;
+         return false;
       }
 
       // Loop over dft mesh to check consistency of waveIds_ and waves_
@@ -928,29 +999,34 @@ namespace Pscf {
          // Check sqNorm
          v = waves_[iw].indicesBz;
          Gsq = unitCell().ksq(v);
-         if (abs(Gsq - waves_[iw].sqNorm) > 1.0E-8) {
-             std::cout << "Incorrect sqNorm:" << "\n"
-                       << "wave.indicesBz = " << "\n"
-                       << "wave.sqNorm    = " << waves_[iw].sqNorm << "\n"
-                       << "|v|^{2}        = " << Gsq << "\n";
+         if (std::abs(Gsq - waves_[iw].sqNorm) > 1.0E-8) {
+            std::cout << "\n";
+            std::cout << "Incorrect sqNorm:" << "\n"
+                      << "wave.indicesBz = " << "\n"
+                      << "wave.sqNorm    = " << waves_[iw].sqNorm << "\n"
+                      << "|v|^{2}        = " << Gsq << "\n";
+            return false;
          }
  
          // Check that wave indicesBz is an image of indicesDft
          mesh().shift(v);
          if (v != waves_[iw].indicesDft) {
-             std::cout << "shift(indicesBz) != indicesDft" << std::endl;
-             return false;
+            std::cout << "\n";
+            std::cout << "shift(indicesBz) != indicesDft" << std::endl;
+            return false;
          }
 
          // Compare Wave::starId to Star::beginId and Star::endId
          is = waves_[iw].starId;
          if (iw < stars_[is].beginId) {
-             std::cout << "Wave::starId < Star::beginId" << std::endl;
-             return false;
+            std::cout << "\n";
+            std::cout << "Wave::starId < Star::beginId" << std::endl;
+            return false;
          } 
          if (iw >= stars_[is].endId) {
-             std::cout << " Wave::starId >= Star::endId" << std::endl;
-             return false;
+            std::cout << "\n";
+            std::cout << " Wave::starId >= Star::endId" << std::endl;
+            return false;
          }
       }
 
@@ -961,6 +1037,7 @@ namespace Pscf {
          // Check star size
          nWave += stars_[is].size;
          if (stars_[is].size != stars_[is].endId - stars_[is].beginId) {
+            std::cout << "\n";
             std::cout << "Inconsistent Star::size:" << std::endl;
             std::cout << "Star id    "  << is << std::endl;
             std::cout << "star size  "  << stars_[is].size << std::endl;
@@ -970,6 +1047,7 @@ namespace Pscf {
          }
          if (is > 0) {
             if (stars_[is].beginId != stars_[is-1].endId) {
+               std::cout << "\n";
                std::cout << "Star ranges not consecutive:" << std::endl;
                std::cout << "Star id    "     << is << std::endl;
                std::cout << "stars_[" << is << "]"   << ".beginId = " 
@@ -983,6 +1061,7 @@ namespace Pscf {
          // Check star ids of waves in star
          for (iw = stars_[is].beginId; iw < stars_[is].endId; ++iw) {
             if (waves_[iw].starId != is) {
+               std::cout << "\n";
                std::cout << "Inconsistent Wave::starId :" << std::endl;
                std::cout << "star id      "  << is << std::endl;
                std::cout << "star beginId "  << stars_[is].beginId << "\n";
@@ -993,14 +1072,45 @@ namespace Pscf {
             }
          }
 
+         // Check Star::starId is equal to array index
+         if (stars_[is].starId != is) {
+            std::cout << "\n";
+            std::cout << "stars_[is].starId != is for "
+                      << "is = " << is << "\n";
+            return false;
+         }
+
+         // Check Star::basisId and starIds_ look up table
+         ib = stars_[is].basisId;
+         if (stars_[is].cancel) {
+            if (ib != -1) {
+               std::cout << "\n";
+               std::cout << "basisId != -1 for cancelled star\n";
+               std::cout << "star id = " << is << "\n";
+               return false;
+            }
+         } else {
+            if (starIds_[ib] != is) {
+               std::cout << "\n";
+               std::cout << "starIds_[stars_[is].basisId] != is for: \n";
+               std::cout << "is                      = " << is << "\n";
+               std::cout << "ib = stars_[is].basisId = " << ib << "\n";
+               std::cout << "starIds_[ib]            = " << starIds_[ib] 
+                         << "\n";
+               return false;
+            }
+         }
+
          // Check ordering of waves in star
          for (iw = stars_[is].beginId + 1; iw < stars_[is].endId; ++iw) {
             if (waves_[iw].indicesBz > waves_[iw-1].indicesBz) {
+               std::cout << "\n";
                std::cout << "Failure of ordering by indicesB within star" 
                          << std::endl;
                return false;
             }
             if (waves_[iw].indicesBz == waves_[iw-1].indicesBz) {
+               std::cout << "\n";
                std::cout << "Equal values of indicesBz within star" 
                          << std::endl;
                return false;
@@ -1011,10 +1121,14 @@ namespace Pscf {
 
       // Check that all waves in mesh are accounted for in stars
       if (stars_[nStar_-1].endId != mesh().size()) {
-         std::cout << "Star endI of last star != mesh size" << std::endl;
+         std::cout << "\n";
+         std::cout << "Star endId of last star != mesh size" << std::endl;
+         return false;
       }
       if (nWave != mesh().size()) {
+         std::cout << "\n";
          std::cout << "Sum of star sizes != mesh size" << std::endl;
+         return false;
       }
 
       // Loop over closed stars and related pairs of stars.
@@ -1045,6 +1159,7 @@ namespace Pscf {
                   }
                }
                if (!negationFound) {
+                  std::cout << "\n";
                   std::cout << "Negation not found in closed star" 
                             << std::endl;
                   std::cout << "G = " << waves_[iw].indicesBz
@@ -1057,7 +1172,8 @@ namespace Pscf {
                   }
                   return false;
                }
-               if (!cancel && abs(cdel) > 1.0E-8) {
+               if (!cancel && std::abs(cdel) > 1.0E-8) {
+                  std::cout << "\n";
                   std::cout << "Function for closed star is not real:" 
                             << "\n";
                   std::cout << "+G = " << waves_[iw].indicesBz
@@ -1074,7 +1190,8 @@ namespace Pscf {
                   }
                   return false;
                }
-               if (cancel && abs(waves_[iw].coeff) > 1.0E-8) {
+               if (cancel && std::abs(waves_[iw].coeff) > 1.0E-8) {
+                  std::cout << "\n";
                   std::cout << "Nonzero coefficient in a cancelled star" 
                             << "\n";
                   std::cout << "G = " << waves_[iw].indicesBz
@@ -1092,18 +1209,22 @@ namespace Pscf {
             // Test pairs of open stars
 
             if (stars_[is].invertFlag != 1) {
+               std::cout << "\n";
                std::cout << "Expected invertFlag == 1" << std::endl;
                return false;
             }
             if (stars_[is+1].invertFlag != -1) {
+               std::cout << "\n";
                std::cout << "Expected invertFlag == -1" << std::endl;
                return false;
             }
             if (stars_[is+1].size != stars_[is].size) {
+               std::cout << "\n";
                std::cout << "Partner stars of different size" << std::endl;
                return false;
             }
             if (stars_[is+1].cancel != stars_[is].cancel) {
+               std::cout << "\n";
                std::cout << "Partners stars with different cancel flags" 
                          << std::endl;
                return false;
@@ -1133,6 +1254,7 @@ namespace Pscf {
                   }
                }
                if (!negationFound) {
+                  std::cout << "\n";
                   std::cout << "Negation not found for G in open star" 
                             << std::endl;
                   std::cout << "First star id = " << is << std::endl;
@@ -1153,7 +1275,8 @@ namespace Pscf {
                   }
                   return false;
                } else 
-               if (!cancel && abs(cdel) > 1.0E-8) {
+               if (!cancel && std::abs(cdel) > 1.0E-8) {
+                  std::cout << "\n";
                   std::cout << "Error of coefficients in open stars:" 
                             << "\n";
                   std::cout << "First star id = " << is << std::endl;
@@ -1187,6 +1310,25 @@ namespace Pscf {
          } // end if (stars_[is].invertFlag == 0) ... else ...
 
       } // end while (is < nStar_) loop over stars
+
+      // Loop over basis functions
+      for (ib = 0; ib < nBasis_; ++ib) {
+         is = starIds_[ib];
+         if (stars_[is].cancel) {
+            std::cout << "\n";
+            std::cout << "Star referred to by starIds_ is cancelled\n";
+            return false;
+         }
+         if (stars_[is].basisId != ib) {
+            std::cout << "\n";
+            std::cout << "Eror: stars_[starIds_[ib]].basisId != ib\n";
+            std::cout << "Basis function index ib = " << ib << "\n";
+            std::cout << "is = starIds_[ib]       = " << is << "\n";
+            std::cout << "stars_[is].basisId      = " 
+                      << stars_[is].basisId << "\n";
+            return false;
+         }
+      }
  
       // The end of this function is reached iff all tests passed.
       return true;

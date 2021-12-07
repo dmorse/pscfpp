@@ -73,11 +73,11 @@ namespace Pspc
       dArrays_.allocate(nMonomer);
       tempDev.allocate(nMonomer);
 
-      int nStar = system().basis().nStar();
+      int nBasis = system().basis().nBasis();
       for (int i = 0; i < nMonomer; ++i) {
-         wArrays_[i].allocate(nStar - 1);
-         dArrays_[i].allocate(nStar - 1);
-         tempDev[i].allocate(nStar - 1);
+         wArrays_[i].allocate(nBasis - 1);
+         dArrays_[i].allocate(nBasis - 1);
+         tempDev[i].allocate(nBasis - 1);
       }
    }
 
@@ -101,15 +101,6 @@ namespace Pspc
       bool done;
 
       FieldIo<D>& fieldIo = system().fieldIo();
-
-      #if 0
-      // Convert from Basis to RGrid
-      convertTimer.start();
-      fieldIo.convertBasisToRGrid(system().wFields(),
-                                  system().wFieldsRGrid());
-      now = Timer::now();
-      convertTimer.stop(now);
-      #endif
 
       // Solve MDE for initial state
       solverTimer.start();
@@ -186,7 +177,7 @@ namespace Pspc
             if (!isFlexible_) {
                system().mixture().computeStress();
                Log::file() << "Final stress:" << "\n";
-               for (int m=0; m<(system().unitCell()).nParameter(); ++m){
+               for (int m=0; m < system().unitCell().nParameter(); ++m){
                   Log::file() << "Stress  "<< m << "   = "
                               << Dbl(system().mixture().stress(m)) 
                               << "\n";
@@ -195,10 +186,10 @@ namespace Pspc
             }
 
             // Successful completion (i.e., converged within tolerance)
+            cleanUp();
             return 0;
 
          } else {
-
             if (itr <= maxHist_ + 1) {
                if (nHist_ > 0) {
                   invertMatrix_.allocate(nHist_, nHist_);
@@ -247,12 +238,12 @@ namespace Pspc
                                         system().cFields());
             now = Timer::now();
             convertTimer.stop(now);
-
          }
 
       }
 
       // Failure: iteration counter itr reached maxItr without converging
+      cleanUp();
       return 1;
    }
 
@@ -263,34 +254,33 @@ namespace Pspc
       omHists_.append(system().wFields());
 
       if (isFlexible_)
-         //CpHists_.append((system().unitCell()).params());
-         CpHists_.append((system().unitCell()).parameters());
+         CpHists_.append(system().unitCell().parameters());
 
       for (int i = 0 ; i < system().mixture().nMonomer(); ++i) {
-         for (int j = 0; j < system().basis().nStar() - 1; ++j) {
+         for (int j = 0; j < system().basis().nBasis() - 1; ++j) {
             tempDev[i][j] = 0;
          }
       }
 
       DArray<double> temp;
-      temp.allocate(system().basis().nStar() - 1);
+      temp.allocate(system().basis().nBasis() - 1);
 
       #if 0
       for (int i = 0; i < system().mixture().nMonomer(); ++i) {
 
-         for (int j = 0; j < system().basis().nStar() - 1; ++j) {
+         for (int j = 0; j < system().basis().nBasis() - 1; ++j) {
             temp[j] = 0;
          }
 
          for (int j = 0; j < system().mixture().nMonomer(); ++j) {
-            for (int k = 0; k < system().basis().nStar() - 1; ++k) {
+            for (int k = 0; k < system().basis().nBasis() - 1; ++k) {
                tempDev[i][k] += system().interaction().chi(i,j) *
                               system().cField(j)[k + 1];
                temp[k] += system().wField(j)[k + 1];
             }
          }
 
-         for (int k = 0; k < system().basis().nStar() - 1; ++k) {
+         for (int k = 0; k < system().basis().nBasis() - 1; ++k) {
             tempDev[i][k] += ((temp[k] / system().mixture().nMonomer())
                              - system().wField(i)[k + 1]);
          }
@@ -298,9 +288,8 @@ namespace Pspc
       #endif
 
       for (int i = 0; i < system().mixture().nMonomer(); ++i) {
-
          for (int j = 0; j < system().mixture().nMonomer(); ++j) {
-            for (int k = 0; k < system().basis().nStar() - 1; ++k) {
+            for (int k = 0; k < system().basis().nBasis() - 1; ++k) {
                tempDev[i][k] +=( (system().interaction().chi(i,j)*system().cField(j)[k + 1])
                                - (system().interaction().idemp(i,j)*system().wField(j)[k + 1]) );
             }
@@ -311,7 +300,7 @@ namespace Pspc
 
       if (isFlexible_){
          FArray<double, 6 > tempCp;
-         for (int i = 0; i<(system().unitCell()).nParameter() ; i++){
+         for (int i = 0; i < system().unitCell().nParameter() ; i++){
             tempCp [i] = -((system().mixture()).stress(i));
          }
          devCpHists_.append(tempCp);
@@ -328,7 +317,7 @@ namespace Pspc
       double dError = 0;
       double wError = 0;
       for ( int i = 0; i < system().mixture().nMonomer(); i++) {
-         for ( int j = 0; j < system().basis().nStar() - 1; j++) {
+         for ( int j = 0; j < system().basis().nBasis() - 1; j++) {
             dError += devHists_[0][i][j] * devHists_[0][i][j];
 
             //the extra shift is due to the zero indice coefficient being
@@ -338,9 +327,10 @@ namespace Pspc
       }
 
       if (isFlexible_){
-         for ( int i = 0; i < (system().unitCell()).nParameter() ; i++) {
-            dError +=  devCpHists_[0][i] *  devCpHists_[0][i];
-            wError +=  (system().unitCell()).parameters() [i] * (system().unitCell()).parameters() [i];
+         for ( int i = 0; i < system().unitCell().nParameter() ; i++) {
+            dError += devCpHists_[0][i] *  devCpHists_[0][i];
+            wError += system().unitCell().parameters()[i]
+                     *system().unitCell().parameters()[i];
          }
       }
       Log::file() << " dError :" << Dbl(dError)<<std::endl;
@@ -352,7 +342,7 @@ namespace Pspc
       double temp1 = 0;
       double temp2 = 0;
       for ( int i = 0; i < system().mixture().nMonomer(); i++) {
-         for ( int j = 0; j < system().basis().nStar() - 1; j++) {
+         for ( int j = 0; j < system().basis().nBasis() - 1; j++) {
             if (temp1 < fabs (devHists_[0][i][j]))
                 temp1 = fabs (devHists_[0][i][j]);
          }
@@ -361,12 +351,13 @@ namespace Pspc
       error = temp1;
 
       if (isFlexible_){
-         for ( int i = 0; i < (system().unitCell()).nParameter() ; i++) {
-            if (temp2 < fabs (devCpHists_[0][i]))
+         for ( int i = 0; i < system().unitCell().nParameter() ; i++) {
+            if (temp2 < fabs (devCpHists_[0][i])) {
                 temp2 = fabs (devCpHists_[0][i]);
+            }
          }
          // Output current stress values
-         for (int m=0; m<(system().unitCell()).nParameter() ; ++m){
+         for (int m=0;  m < system().unitCell().nParameter() ; ++m){
             Log::file() << "Stress  "<< m << "   = "
                         << Dbl(system().mixture().stress(m)) <<"\n";
          }
@@ -378,9 +369,9 @@ namespace Pspc
 
       // Output current unit cell parameter values
       if (isFlexible_){
-         for (int m=0; m<(system().unitCell()).nParameter() ; ++m){
+         for (int m=0; m < system().unitCell().nParameter() ; ++m){
                Log::file() << "Parameter " << m << " = "
-                           << Dbl((system().unitCell()).parameters()[m])
+                           << Dbl(system().unitCell().parameters()[m])
                            << "\n";
          }
       }
@@ -402,7 +393,7 @@ namespace Pspc
 
          int nMonomer = system().mixture().nMonomer();
          int nParameter = system().unitCell().nParameter();
-         int nStar = system().basis().nStar();
+         int nBasis = system().basis().nBasis();
          double elm, elm_cp;
 
          for (int i = 0; i < nHist_; ++i) {
@@ -411,7 +402,7 @@ namespace Pspc
                invertMatrix_(i,j) = 0;
                for (int k = 0; k < nMonomer; ++k) {
                   elm = 0;
-                  for (int l = 0; l < nStar - 1; ++l) {
+                  for (int l = 0; l < nBasis - 1; ++l) {
                      elm +=
                             ((devHists_[0][k][l] - devHists_[i+1][k][l])*
                              (devHists_[0][k][l] - devHists_[j+1][k][l]));
@@ -432,7 +423,7 @@ namespace Pspc
 
             vM_[i] = 0;
             for (int j = 0; j < nMonomer; ++j) {
-               for (int k = 0; k < nStar - 1; ++k) {
+               for (int k = 0; k < nBasis - 1; ++k) {
                   vM_[i] += ( (devHists_[0][j][k] - devHists_[i+1][j][k]) *
                                devHists_[0][j][k] );
                }
@@ -466,34 +457,34 @@ namespace Pspc
 
       if (itr == 1) {
          for (int i = 0; i < mixture.nMonomer(); ++i) {
-            for (int j = 0; j < system().basis().nStar() - 1; ++j) {
+            for (int j = 0; j < system().basis().nBasis() - 1; ++j) {
                system().wField(i)[j+1]
                       = omHists_[0][i][j+1] + lambda_*devHists_[0][i][j];
             }
          }
 
          if (isFlexible_){
+            parameters_.clear();
             for (int m = 0; m < unitCell.nParameter() ; ++m){
-               parameters.append(CpHists_[0][m]
+               parameters_.append(CpHists_[0][m]
                               + lambda_* devCpHists_[0][m]);
 
             }
-            unitCell.setParameters(parameters);
-            unitCell.setLattice();
+            unitCell.setParameters(parameters_);
             mixture.setupUnitCell(unitCell);
             system().basis().update();
          }
 
       } else {
          for (int j = 0; j < mixture.nMonomer(); ++j) {
-            for (int k = 0; k < system().basis().nStar() - 1; ++k) {
+            for (int k = 0; k < system().basis().nBasis() - 1; ++k) {
                wArrays_[j][k] = omHists_[0][j][k + 1];
                dArrays_[j][k] = devHists_[0][j][k];
             }
          }
          for (int i = 0; i < nHist_; ++i) {
             for (int j = 0; j < mixture.nMonomer(); ++j) {
-               for (int k = 0; k < system().basis().nStar() - 1; ++k) {
+               for (int k = 0; k < system().basis().nBasis() - 1; ++k) {
                   wArrays_[j][k] += coeffs_[i] * ( omHists_[i+1][j][k+1] -
                                                    omHists_[0][j][k+1] );
                   dArrays_[j][k] += coeffs_[i] * ( devHists_[i+1][j][k] -
@@ -502,8 +493,8 @@ namespace Pspc
             }
          }
          for (int i = 0; i < mixture.nMonomer(); ++i) {
-            for (int j = 0; j < system().basis().nStar() - 1; ++j) {
-              system().wField(i)[j+1] = wArrays_[i][j]
+            for (int j = 0; j < system().basis().nBasis() - 1; ++j) {
+               system().wField(i)[j+1] = wArrays_[i][j]
                                          + lambda_ * dArrays_[i][j];
             }
          }
@@ -520,15 +511,32 @@ namespace Pspc
                                                 devCpHists_[0][m]);
                }
             }
+            parameters_.clear();
             for (int m = 0; m < unitCell.nParameter() ; ++m){
-               parameters [m] = wCpArrays_[m] + lambda_ * dCpArrays_[m];
+               parameters_.append(wCpArrays_[m] + lambda_ * dCpArrays_[m]);
             }
-            unitCell.setParameters(parameters);
-            unitCell.setLattice();
+            unitCell.setParameters(parameters_);
             mixture.setupUnitCell(unitCell);
-	    system().basis().update();
+            system().basis().update();
          }
       }
+   }
+
+   template <int D>
+   void AmIterator<D>::cleanUp()
+   {
+      // Deallocate allocated arrays and matrices, if allocated.
+      if (invertMatrix_.isAllocated()) {
+         invertMatrix_.deallocate();
+      }
+      if (coeffs_.isAllocated()) {
+         coeffs_.deallocate();
+      }
+      if (vM_.isAllocated()) {
+         vM_.deallocate();
+      }
+
+      
    }
 
 }
