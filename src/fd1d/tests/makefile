@@ -1,12 +1,7 @@
+
 BLD_DIR_REL =../..
 include $(BLD_DIR_REL)/config.mk
-include $(BLD_DIR)/util/config.mk
-include $(BLD_DIR)/pscf/config.mk
-include $(BLD_DIR)/fd1d/config.mk
-include $(SRC_DIR)/fd1d/patterns.mk
-include $(SRC_DIR)/util/sources.mk
-include $(SRC_DIR)/pscf/sources.mk
-include $(SRC_DIR)/fd1d/sources.mk
+include $(SRC_DIR)/fd1d/include.mk
 include $(SRC_DIR)/fd1d/tests/sources.mk
 
 TEST=fd1d/tests/Test

@@ -409,6 +409,18 @@ namespace Pscf {
          */
          bool implicit;
 
+         /*
+         * Default constructor.   
+         */
+         Wave()
+          : coeff(0.0),
+            sqNorm(0.0),
+            indicesDft(0),
+            indicesBz(0),
+            starId(0),
+            implicit(false)
+         {}
+
       };
 
       /**
@@ -522,6 +534,21 @@ namespace Pscf {
          * group symmetry. 
          */
          bool cancel;
+
+         /*
+         * Default constructor.   
+         */
+         Star()
+          : eigen(0.0),
+            size(0),
+            beginId(0),
+            endId(0),
+            invertFlag(0),
+            waveBz(0),
+            starId(0),
+            basisId(0),
+            cancel(false)
+         {}
 
       };
 
