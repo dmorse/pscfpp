@@ -178,7 +178,6 @@ namespace Pspc
       using ParamComposite::readOptional;
 
    //friend:
-   //for testing purposes
 
 
    };

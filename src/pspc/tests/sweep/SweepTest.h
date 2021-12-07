@@ -55,10 +55,11 @@ public:
       printMethod(TEST_FUNC);
 
       System<3> system;
-      Sweep<3>* sweepPtr;
       SweepFactory<3> sf(system);
+      Sweep<3>* sweepPtr;
       
       sweepPtr = sf.factory("LinearSweep");
+      TEST_ASSERT(sweepPtr != 0);
    }
 
    void testParameterRead() 
@@ -236,6 +237,11 @@ public:
             maxDiff = comparison.maxDiff();
          }
       }
+      //setVerbose(1);
+      if (verbose() > 0) {
+         std::cout << std::endl;
+         std::cout << "maxDiff = " << Dbl(maxDiff, 14, 6) << std::endl;
+      }
       TEST_ASSERT(maxDiff < 5.0e-7);
    }
 
@@ -282,6 +288,11 @@ public:
          if (comparison.maxDiff() > maxDiff) {
             maxDiff = comparison.maxDiff();
          }
+      }
+      //setVerbose(1);
+      if (verbose() > 0) {
+         std::cout << std::endl;
+         std::cout << "maxDiff = " << Dbl(maxDiff, 14, 6) << std::endl;
       }
       TEST_ASSERT(maxDiff < 5.0e-7);
    }
@@ -330,7 +341,12 @@ public:
             maxDiff = comparison.maxDiff();
          }
       }
-      TEST_ASSERT(maxDiff < 5.0e-7);
+      //setVerbose(1);
+      if (verbose() > 0) {
+         std::cout << std::endl;
+         std::cout << "maxDiff = " << Dbl(maxDiff, 14, 6) << std::endl;
+       }
+       TEST_ASSERT(maxDiff < 5.0e-7);
    }
 
    void testLinearSweepPhi()   
@@ -377,6 +393,11 @@ public:
             maxDiff = comparison.maxDiff();
          }
       }
+      //setVerbose(1);
+      if (verbose() > 0) {
+         std::cout << std::endl;
+         std::cout << "maxDiff = " << Dbl(maxDiff, 14, 6) << std::endl;
+      }
       TEST_ASSERT(maxDiff < 5.0e-7);
    }
 
@@ -418,13 +439,16 @@ public:
       // Compare output
       BFieldComparison comparison;
       double maxDiff = 0.0;
-      int iFail = 10;
       for (int i = 0; i < 5; ++i) {
          comparison.compare(fieldsRef[i].fields(), fieldsOut[i].fields());
          if (comparison.maxDiff() > maxDiff) {
             maxDiff = comparison.maxDiff();
-            iFail = i;
          }
+      }
+      //setVerbose(1);
+      if (verbose() > 0) {
+         std::cout << std::endl;
+         std::cout << "maxDiff = " << Dbl(maxDiff, 14, 6) << std::endl;
       }
       TEST_ASSERT(maxDiff < 5.0e-7);
    }
