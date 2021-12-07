@@ -104,7 +104,6 @@ namespace Pspc {
       // If historySize() == 1, do nothing: Use previous system state
       // as trial for the new state.
       
-      // if (false) {
       if (historySize() > 1) {
          UTIL_CHECK(historySize() <= historyCapacity());
 
