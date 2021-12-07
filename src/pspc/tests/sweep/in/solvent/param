@@ -44,6 +44,6 @@ System{
      ns            4
      baseFileName  out/solvent/
      nParameter    1
-     parameters    solvent  0  +0.04
+     parameters    solvent  0  +0.004
   }
 }

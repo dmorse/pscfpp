@@ -213,6 +213,12 @@ public:
       system.readWBasis("in/block/w.bf");
       system.sweep();
 
+      // Check if sweep had to backtrack. It shouldn't need to. 
+      std::ifstream f(std::string("out/block/5_w.bf").c_str());
+      if (f.good()) {
+         TEST_THROW("Sweep backtracked due to iteration count greater than maxItr.");
+      }
+
       // Read outputted fields
       DArray< BasisFieldState<1> > fieldsOut;
       fieldsOut.allocate(5);
@@ -222,19 +228,13 @@ public:
       }
 
       // Compare output
-      DArray< BFieldComparison > comparisons;
-      comparisons.allocate(5);
+      BFieldComparison comparison;
       double maxDiff = 0.0;
       for (int i = 0; i < 5; ++i) {
-         comparisons[i].compare(fieldsRef[i].fields(), fieldsOut[i].fields());
-         if (comparisons[i].maxDiff() > maxDiff) {
-            maxDiff = comparisons[i].maxDiff();
+         comparison.compare(fieldsRef[i].fields(), fieldsOut[i].fields());
+         if (comparison.maxDiff() > maxDiff) {
+            maxDiff = comparison.maxDiff();
          }
-      }
-      setVerbose(1);
-      if (verbose() > 0) {
-         std::cout << std::endl;
-         std::cout << "maxDiff = " << Dbl(maxDiff, 14, 6) << std::endl;
       }
       TEST_ASSERT(maxDiff < 5.0e-7);
    }
@@ -260,6 +260,12 @@ public:
       system.readWBasis("in/chi/w.bf");
       system.sweep();
 
+      // Check if sweep had to backtrack. It shouldn't need to. 
+      std::ifstream f(std::string("out/chi/5_w.bf").c_str());
+      if (f.good()) {
+         TEST_THROW("Sweep backtracked due to iteration count greater than maxItr.");
+      }
+
       // Read outputted fields
       DArray< BasisFieldState<1> > fieldsOut;
       fieldsOut.allocate(5);
@@ -269,19 +275,13 @@ public:
       }
 
       // Compare output
-      DArray< BFieldComparison > comparisons;
-      comparisons.allocate(5);
+      BFieldComparison comparison;
       double maxDiff = 0.0;
       for (int i = 0; i < 5; ++i) {
-         comparisons[i].compare(fieldsRef[i].fields(), fieldsOut[i].fields());
-         if (comparisons[i].maxDiff() > maxDiff) {
-            maxDiff = comparisons[i].maxDiff();
+         comparison.compare(fieldsRef[i].fields(), fieldsOut[i].fields());
+         if (comparison.maxDiff() > maxDiff) {
+            maxDiff = comparison.maxDiff();
          }
-      }
-      setVerbose(1);
-      if (verbose() > 0) {
-         std::cout << std::endl;
-         std::cout << "maxDiff = " << Dbl(maxDiff,14,6) << std::endl;
       }
       TEST_ASSERT(maxDiff < 5.0e-7);
    }
@@ -307,6 +307,12 @@ public:
       system.readWBasis("in/kuhn/w.bf");
       system.sweep();
 
+      // Check if sweep had to backtrack. It shouldn't need to. 
+      std::ifstream f(std::string("out/kuhn/5_w.bf").c_str());
+      if (f.good()) {
+         TEST_THROW("Sweep backtracked due to iteration count greater than maxItr.");
+      }
+
       // Read outputted fields
       DArray< BasisFieldState<1> > fieldsOut;
       fieldsOut.allocate(5);
@@ -316,19 +322,13 @@ public:
       }
 
       // Compare output
-      DArray< BFieldComparison > comparisons;
-      comparisons.allocate(5);
+      BFieldComparison comparison;
       double maxDiff = 0.0;
       for (int i = 0; i < 5; ++i) {
-         comparisons[i].compare(fieldsRef[i].fields(), fieldsOut[i].fields());
-         if (comparisons[i].maxDiff() > maxDiff) {
-            maxDiff = comparisons[i].maxDiff();
+         comparison.compare(fieldsRef[i].fields(), fieldsOut[i].fields());
+         if (comparison.maxDiff() > maxDiff) {
+            maxDiff = comparison.maxDiff();
          }
-      }
-      setVerbose(1);
-      if (verbose() > 0) {
-         std::cout << std::endl;
-         std::cout << "maxDiff = " << Dbl(maxDiff,14,6) << std::endl;
       }
       TEST_ASSERT(maxDiff < 5.0e-7);
    }
@@ -354,6 +354,12 @@ public:
       system.readWBasis("in/phi/w.bf");
       system.sweep();
 
+      // Check if sweep had to backtrack. It shouldn't need to. 
+      std::ifstream f(std::string("out/phi/5_w.bf").c_str());
+      if (f.good()) {
+         TEST_THROW("Sweep backtracked due to iteration count greater than maxItr.");
+      }
+
       // Read outputted fields
       DArray< BasisFieldState<1> > fieldsOut;
       fieldsOut.allocate(5);
@@ -362,20 +368,14 @@ public:
          fieldsOut[i].read("out/phi/" + std::to_string(i) +"_w.bf");
       }
 
-      // compare output
-      DArray< BFieldComparison > comparisons;
-      comparisons.allocate(5);
+      // Compare output
+      BFieldComparison comparison;
       double maxDiff = 0.0;
       for (int i = 0; i < 5; ++i) {
-         comparisons[i].compare(fieldsRef[i].fields(), fieldsOut[i].fields());
-         if (comparisons[i].maxDiff() > maxDiff) {
-            maxDiff = comparisons[i].maxDiff();
+         comparison.compare(fieldsRef[i].fields(), fieldsOut[i].fields());
+         if (comparison.maxDiff() > maxDiff) {
+            maxDiff = comparison.maxDiff();
          }
-      }
-      setVerbose(1);
-      if (verbose() > 0) {
-         std::cout << std::endl;
-         std::cout << "maxDiff = " << Dbl(maxDiff, 14, 6) << std::endl;
       }
       TEST_ASSERT(maxDiff < 5.0e-7);
    }
@@ -401,6 +401,12 @@ public:
       system.readWBasis("in/solvent/w.bf");
       system.sweep();
 
+      // Check if sweep had to backtrack. It shouldn't need to. 
+      std::ifstream f(std::string("out/solvent/5_w.bf").c_str());
+      if (f.good()) {
+         TEST_THROW("Sweep backtracked due to iteration count greater than maxItr.");
+      }
+
       // Read outputted fields
       DArray< BasisFieldState<1> > fieldsOut;
       fieldsOut.allocate(5);
@@ -410,19 +416,15 @@ public:
       }
 
       // Compare output
-      DArray< BFieldComparison > comparisons;
-      comparisons.allocate(5);
+      BFieldComparison comparison;
       double maxDiff = 0.0;
+      int iFail = 10;
       for (int i = 0; i < 5; ++i) {
-         comparisons[i].compare(fieldsRef[i].fields(), fieldsOut[i].fields());
-         if (comparisons[i].maxDiff() > maxDiff) {
-            maxDiff = comparisons[i].maxDiff();
+         comparison.compare(fieldsRef[i].fields(), fieldsOut[i].fields());
+         if (comparison.maxDiff() > maxDiff) {
+            maxDiff = comparison.maxDiff();
+            iFail = i;
          }
-      }
-      setVerbose(1);
-      if (verbose() > 0) {
-         std::cout << std::endl;
-         std::cout << "maxDiff = " << Dbl(maxDiff, 14, 6) << std::endl;
       }
       TEST_ASSERT(maxDiff < 5.0e-7);
    }

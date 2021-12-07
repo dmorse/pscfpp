@@ -113,7 +113,7 @@ namespace Pscf {
                // Decrease ds by half
                ds *= 0.50;
                if (ds < 0.1*ds0) {
-                  UTIL_THROW("Step size too small in sweep");
+                  UTIL_THROW("Sweep backtracked due to failed iterations too many times.");
                }
 
             } else {
