@@ -282,6 +282,10 @@ namespace Pspg
       cFieldsRGrid_.allocate(nMonomer);
       cFieldsKGrid_.allocate(nMonomer);
 
+      tmpFields_.allocate(nMonomer);
+      tmpFieldsRGrid_.allocate(nMonomer);
+      tmpFieldsKGrid_.allocate(nMonomer);
+
       for (int i = 0; i < nMonomer; ++i) {
          wField(i).allocate(basis().nStar());
          wFieldRGrid(i).allocate(mesh().dimensions());
@@ -290,6 +294,10 @@ namespace Pspg
          cField(i).allocate(basis().nStar());
          cFieldRGrid(i).allocate(mesh().dimensions());
          cFieldKGrid(i).allocate(mesh().dimensions());
+
+         tmpFields_[i].allocate(basis().nStar());
+         tmpFieldsRGrid_[i].allocate(mesh().dimensions());
+         tmpFieldsKGrid_[i].allocate(mesh().dimensions());
       }
 
       //storageCFields_.allocate(mesh().dimensions());
@@ -656,6 +664,7 @@ namespace Pspg
       Log::file() << std::endl;
 
       // Call iterator
+      std::cout<<"Starting iterator"<<std::endl;
       int error = iterator().solve();
       hasCFields_ = true;
 
@@ -674,8 +683,11 @@ namespace Pspg
    void System<D>::basisToRGrid(const std::string & inFileName,
                                 const std::string & outFileName)
    {
+      std::cout<<"In System"<<std::endl;
       fieldIo().readFieldsBasis(inFileName, tmpFields_);
+      std::cout<<"Read field files"<<std::endl;
       fieldIo().convertBasisToRGrid(tmpFields_, tmpFieldsRGrid_);
+      std::cout<<"Converted to rgrid files"<<std::endl;
       fieldIo().writeFieldsRGrid(outFileName, tmpFieldsRGrid_);
    }
 

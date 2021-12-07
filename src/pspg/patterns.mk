@@ -51,7 +51,7 @@ ifdef MAKEDEP_CUDA
 endif
 
 # Pattern rule to compile *.cu test programs in src/pssp/tests
-$(BLD_DIR)/% $(BLD_DIR)/%.o:$(SRC_DIR)/%.cuh $(PSPG_LIBS)
+$(BLD_DIR)/% $(BLD_DIR)/%.o:$(SRC_DIR)/%.cu $(PSPG_LIBS)
 	 $(NVXX) $(CPPFLAGS) $(NVXXFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $<
 	 $(CXX) $(LDFLAGS) $(INCLUDES) $(DEFINES) -o $(@:.o=) $@ $(LIBS)
 ifdef MAKEDEP_CUDA

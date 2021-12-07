@@ -9,8 +9,9 @@
 */
 
 #include <pscf/math/FieldComparison.h>
-#include <pspg/field/RDField.h>
+//#include <pspg/field/RDField.h>
 #include <util/containers/DArray.h>
+#include <pspg/GpuResources.h>
 
 namespace Pscf {
 namespace Pspg {
@@ -20,8 +21,7 @@ namespace Pspg {
    /**
    * Comparator for fields in symmetry-adapted basis format.
    */
-   template <int D>
-   class BFieldComparison : public FieldComparison< RDField<D> >
+   class BFieldComparison : public FieldComparison< DArray <cudaReal*> >
    {
 
    public:
@@ -44,6 +44,8 @@ namespace Pspg {
       * \param begin  index of first element to include in comparison.
       */
       BFieldComparison(int begin = 0);
+
+      double compare(DArray<cudaReal*> const& a, DArray<cudaReal*> const& b, int nStar);
 
    };
 

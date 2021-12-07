@@ -83,7 +83,7 @@ namespace Pscf {
       double rmsDiff() const
       {  return rmsDiff_; }
    
-   private:
+   protected:
   
       // Maximum element-by-element difference. 
       double maxDiff_;

@@ -7,6 +7,7 @@
 #include <pspg/System.h>
 #include <pspg/field/BFieldComparison.h>
 #include <pspg/field/RDField.h>
+#include <pspg/GpuResources.h>
 
 //#include <pscf/mesh/MeshIterator.h>
 //#include <util/format/Dbl.h>
@@ -25,7 +26,7 @@ public:
    std::ofstream logFile_;
 
    void setUp()
-   {  setVerbose(0); }
+   {  setVerbose(1); }
 
    void tearDown()
    {
@@ -77,9 +78,25 @@ public:
       // Read w-fields (reference solution, solved by Fortran PSCF)
       system.readWBasis("in/diblock/lam/omega.in");
 
+      DArray< RDField<1> > wFieldsGpu_check;
+      wFieldsGpu_check = system.wFields();
+
+      int nMonomer = system.mixture().nMonomer();
+      int nStar = system.basis().nStar();
+      DArray<cudaReal*> wFields_check;
+      wFields_check.allocate(nMonomer);
+      for(int i = 0; i < nMonomer; ++i) {
+         wFields_check[i] = new cudaReal[nStar];
+      }
+
+     for(int i = 0; i < nMonomer; i++) {
+         cudaMemcpy(wFields_check[i], wFieldsGpu_check[i].cDField(),
+            nStar * sizeof(cudaReal), cudaMemcpyDeviceToHost);
+     }
+
       // Copy w field components to wFields_check after reading
-      DArray< RDField<1> > wFields_check;
-      wFields_check = system.wFields();
+      //DArray< RDField<1> > wFields_check;
+      //wFields_check = system.wFields();
 
       // Round trip conversion basis -> rgrid -> basis, read result
       system.basisToRGrid("in/diblock/lam/omega.in",
@@ -88,11 +105,24 @@ public:
                           "out/testConversion1D_lam_w.bf");
       system.readWBasis("out/testConversion1D_lam_w.bf");
 
-      std::cout<<"Yahin hu main"<<std::endl;
+
+      DArray< RDField<1> > wFieldsGpu_test;
+      wFieldsGpu_test = system.wFields();
+
+      DArray<cudaReal*> wFields_test;
+      wFields_test.allocate(nMonomer);
+      for(int i = 0; i < nMonomer; ++i) {
+         wFields_test[i] = new cudaReal[nStar];
+      }   
+
+     for(int i = 0; i < nMonomer; i++) {
+         cudaMemcpy(wFields_test[i], wFieldsGpu_test[i].cDField(),
+            nStar * sizeof(cudaReal), cudaMemcpyDeviceToHost);
+     } 
 
       // Compare result to original
-      BFieldComparison <1> comparison;
-      comparison.compare(wFields_check, system.wFields());
+      BFieldComparison comparison;
+      comparison.compare(wFields_check, wFields_test, nStar);
       if (verbose()>0) {
          std::cout << "\n";
          std::cout << "Max error = " << comparison.maxDiff() << "\n";
@@ -120,9 +150,25 @@ public:
       // Read w fields
       system.readWBasis("in/diblock/hex/omega.in");
 
+      DArray< RDField<2> > wFieldsGpu_check;
+      wFieldsGpu_check = system.wFields();
+
+      int nMonomer = system.mixture().nMonomer();
+      int nStar = system.basis().nStar();
+      DArray<cudaReal*> wFields_check;
+      wFields_check.allocate(nMonomer);
+      for(int i = 0; i < nMonomer; ++i) {
+         wFields_check[i] = new cudaReal[nStar];
+      }   
+
+     for(int i = 0; i < nMonomer; i++) {
+         cudaMemcpy(wFields_check[i], wFieldsGpu_check[i].cDField(),
+            nStar * sizeof(cudaReal), cudaMemcpyDeviceToHost);
+     }   
+
       // Store components in wFields_check for later comparison
-      DArray< RDField<2>  > wFields_check;
-      wFields_check = system.wFields();
+      //DArray< RDField<2>  > wFields_check;
+      //wFields_check = system.wFields();
 
       // Round trip basis -> rgrid -> basis, read resulting wField
       system.basisToRGrid("in/diblock/hex/omega.in",
@@ -137,14 +183,30 @@ public:
       // = system.checkRGridFieldSymmetry("out/testConversion2D_hex_w.rf");
       //TEST_ASSERT(hasSymmetry);
 
+      DArray< RDField<2> > wFieldsGpu_test;
+      wFieldsGpu_test = system.wFields();
+
+      DArray<cudaReal*> wFields_test;
+      wFields_test.allocate(nMonomer);
+      for(int i = 0; i < nMonomer; ++i) {
+         wFields_test[i] = new cudaReal[nStar];
+      }   
+
+     for(int i = 0; i < nMonomer; i++) {
+         cudaMemcpy(wFields_test[i], wFieldsGpu_test[i].cDField(),
+            nStar * sizeof(cudaReal), cudaMemcpyDeviceToHost);
+     }
+
+
       // Compare result to original
-      BFieldComparison <2> comparison;
-      comparison.compare(wFields_check, system.wFields());
-      if (verbose() > 0) {
+      BFieldComparison comparison;
+      comparison.compare(wFields_check, wFields_test, nStar);
+      if (verbose()>0) {
          std::cout << "\n";
          std::cout << "Max error = " << comparison.maxDiff() << "\n";
       }
       TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
+
    }
 
    void testConversion3D_bcc()
@@ -165,9 +227,25 @@ public:
       // Read w fields in system.wFields
       system.readWBasis("in/diblock/bcc/omega.in");
 
+      DArray< RDField<3> > wFieldsGpu_check;
+      wFieldsGpu_check = system.wFields();
+
+      int nMonomer = system.mixture().nMonomer();
+      int nStar = system.basis().nStar();
+      DArray<cudaReal*> wFields_check;
+      wFields_check.allocate(nMonomer);
+      for(int i = 0; i < nMonomer; ++i) {
+         wFields_check[i] = new cudaReal[nStar];
+      }
+
+     for(int i = 0; i < nMonomer; i++) {
+         cudaMemcpy(wFields_check[i], wFieldsGpu_check[i].cDField(),
+            nStar * sizeof(cudaReal), cudaMemcpyDeviceToHost);
+     }
+
       // Store components of field as input
-      DArray< RDField<3> > wFields_check;
-      wFields_check = system.wFields();
+      //DArray< RDField<3> > wFields_check;
+      //wFields_check = system.wFields();
 
       // Complete round trip basis -> rgrid -> basis
       system.basisToRGrid("in/diblock/bcc/omega.in",
@@ -182,9 +260,25 @@ public:
       //TEST_ASSERT(hasSymmetry);
 
       // Compare result to original
-      BFieldComparison <3> comparison;
-      comparison.compare(wFields_check, system.wFields());
-      if (verbose() > 0) {
+      DArray< RDField<3> > wFieldsGpu_test;
+      wFieldsGpu_test = system.wFields();
+
+      DArray<cudaReal*> wFields_test;
+      wFields_test.allocate(nMonomer);
+      for(int i = 0; i < nMonomer; ++i) {
+         wFields_test[i] = new cudaReal[nStar];
+      }
+
+     for(int i = 0; i < nMonomer; i++) {
+         cudaMemcpy(wFields_test[i], wFieldsGpu_test[i].cDField(),
+            nStar * sizeof(cudaReal), cudaMemcpyDeviceToHost);
+     }
+
+
+      // Compare result to original
+      BFieldComparison comparison;
+      comparison.compare(wFields_check, wFields_test, nStar);
+      if (verbose()>0) {
          std::cout << "\n";
          std::cout << "Max error = " << comparison.maxDiff() << "\n";
       }
@@ -238,20 +332,51 @@ public:
       // Read w fields
       system.readWBasis("in/diblock/lam/omega.ref");
 
+      DArray< RDField<1> > wFieldsGpu_check;
+      wFieldsGpu_check = system.wFields();
+
+      int nMonomer = system.mixture().nMonomer();
+      int nStar = system.basis().nStar();
+      DArray<cudaReal*> wFields_check;
+      wFields_check.allocate(nMonomer);
+      for(int i = 0; i < nMonomer; ++i) {
+         wFields_check[i] = new cudaReal[nStar];
+      }
+
+     for(int i = 0; i < nMonomer; i++) {
+         cudaMemcpy(wFields_check[i], wFieldsGpu_check[i].cDField(),
+            nStar * sizeof(cudaReal), cudaMemcpyDeviceToHost);
+     }
+
       // Make a copy of the original field
-      DArray< RDField<1> > wFields_check;
-      wFields_check = system.wFields();
+      //DArray< RDField<1> > wFields_check;
+      //wFields_check = system.wFields();
 
       // Read w-fields, iterate and output solution
       system.readWBasis("in/diblock/lam/omega.in");
+      std::cout<<"Yahin hu main"<<wFields_check[0][0]<<std::endl;
       system.iterate();
       system.writeWBasis("out/testIterate1D_lam_rigid_w.bf");
       system.writeCBasis("out/testIterate1D_lam_rigid_c.bf");
 
-      // Compare solution to original
-      BFieldComparison <1> comparison (1);
-      comparison.compare(wFields_check, system.wFields());
-      if (verbose() > 0) {
+      DArray< RDField<1> > wFieldsGpu_test;
+      wFieldsGpu_test = system.wFields();
+
+      DArray<cudaReal*> wFields_test;
+      wFields_test.allocate(nMonomer);
+      for(int i = 0; i < nMonomer; ++i) {
+         wFields_test[i] = new cudaReal[nStar];
+      }
+
+     for(int i = 0; i < nMonomer; i++) {
+         cudaMemcpy(wFields_test[i], wFieldsGpu_test[i].cDField(),
+            nStar * sizeof(cudaReal), cudaMemcpyDeviceToHost);
+     }
+
+      // Compare result to original
+      BFieldComparison comparison (1);
+      comparison.compare(wFields_check, wFields_test, nStar);
+      if (verbose()>0) {
          std::cout << "\n";
          std::cout << "Max error = " << comparison.maxDiff() << "\n";
       }
@@ -283,8 +408,24 @@ public:
 
       system.readWBasis("in/diblock/lam/omega.ref");
 
-      DArray< RDField<1> > wFields_check;
-      wFields_check = system.wFields();
+      DArray< RDField<1> > wFieldsGpu_check;
+      wFieldsGpu_check = system.wFields();
+
+      int nMonomer = system.mixture().nMonomer();
+      int nStar = system.basis().nStar();
+      DArray<cudaReal*> wFields_check;
+      wFields_check.allocate(nMonomer);
+      for(int i = 0; i < nMonomer; ++i) {
+         wFields_check[i] = new cudaReal[nStar];
+      }
+
+     for(int i = 0; i < nMonomer; i++) {
+         cudaMemcpy(wFields_check[i], wFieldsGpu_check[i].cDField(),
+            nStar * sizeof(cudaReal), cudaMemcpyDeviceToHost);
+     }
+
+      //DArray< RDField<1> > wFields_check;
+      //wFields_check = system.wFields();
 
       // Read input w-fields, iterate and output solution
       system.readWBasis("in/diblock/lam/omega.in");
@@ -292,13 +433,29 @@ public:
       system.writeWBasis("out/testIterate1D_lam_flex_w.bf");
       system.writeCBasis("out/testIterate1D_lam_flex_c.bf");
 
-      BFieldComparison <1> comparison (1);
-      comparison.compare(wFields_check, system.wFields());
-      if (verbose() > 0) {
+      DArray< RDField<1> > wFieldsGpu_test;
+      wFieldsGpu_test = system.wFields();
+
+      DArray<cudaReal*> wFields_test;
+      wFields_test.allocate(nMonomer);
+      for(int i = 0; i < nMonomer; ++i) {
+         wFields_test[i] = new cudaReal[nStar];
+      }
+
+     for(int i = 0; i < nMonomer; i++) {
+         cudaMemcpy(wFields_test[i], wFieldsGpu_test[i].cDField(),
+            nStar * sizeof(cudaReal), cudaMemcpyDeviceToHost);
+     }
+
+      // Compare result to original
+      BFieldComparison comparison (1);
+      comparison.compare(wFields_check, wFields_test, nStar);
+      if (verbose()>0) {
          std::cout << "\n";
          std::cout << "Max error = " << comparison.maxDiff() << "\n";
       }
       TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
+
    }
 
    void testIterate2D_hex_rigid()
@@ -320,8 +477,24 @@ public:
       // Read reference solution
       system.readWBasis("in/diblock/hex/omega.ref");
 
-      DArray< RDField<2> > wFields_check;
-      wFields_check = system.wFields();
+      DArray< RDField<2> > wFieldsGpu_check;
+      wFieldsGpu_check = system.wFields();
+
+      int nMonomer = system.mixture().nMonomer();
+      int nStar = system.basis().nStar();
+      DArray<cudaReal*> wFields_check;
+      wFields_check.allocate(nMonomer);
+      for(int i = 0; i < nMonomer; ++i) {
+         wFields_check[i] = new cudaReal[nStar];
+      }
+
+     for(int i = 0; i < nMonomer; i++) {
+         cudaMemcpy(wFields_check[i], wFieldsGpu_check[i].cDField(),
+            nStar * sizeof(cudaReal), cudaMemcpyDeviceToHost);
+     }
+
+      //DArray< RDField<2> > wFields_check;
+      //wFields_check = system.wFields();
 
       // Read initial guess, iterate, output solution
       system.readWBasis("in/diblock/hex/omega.in");
@@ -329,15 +502,29 @@ public:
       system.writeWBasis("out/testIterate2D_hex_rigid_w.bf");
       system.writeCBasis("out/testIterate2D_hex_rigid_c.bf");
 
-      // Compare current solution to reference solution
-      BFieldComparison <2> comparison (1);
-      comparison.compare(wFields_check, system.wFields());
-      if (verbose() > 0) {
+      DArray< RDField<2> > wFieldsGpu_test;
+      wFieldsGpu_test = system.wFields();
+
+      DArray<cudaReal*> wFields_test;
+      wFields_test.allocate(nMonomer);
+      for(int i = 0; i < nMonomer; ++i) {
+         wFields_test[i] = new cudaReal[nStar];
+      }
+
+     for(int i = 0; i < nMonomer; i++) {
+         cudaMemcpy(wFields_test[i], wFieldsGpu_test[i].cDField(),
+            nStar * sizeof(cudaReal), cudaMemcpyDeviceToHost);
+     }
+
+
+      // Compare result to original
+      BFieldComparison comparison (1);
+      comparison.compare(wFields_check, wFields_test, nStar);
+      if (verbose()>0) {
          std::cout << "\n";
          std::cout << "Max error = " << comparison.maxDiff() << "\n";
       }
-      TEST_ASSERT(comparison.maxDiff() < 3.0E-7);
-      // Maximum error of 2.608E-7 occurs for the first star
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
 
       // Check stress
       bool stress = false;
@@ -367,24 +554,54 @@ public:
       // Read reference solution (produced by Fortran code)
       system.readWBasis("in/diblock/hex/omega.ref");
 
+      DArray< RDField<2> > wFieldsGpu_check;
+      wFieldsGpu_check = system.wFields();
+
+      int nMonomer = system.mixture().nMonomer();
+      int nStar = system.basis().nStar();
+      DArray<cudaReal*> wFields_check;
+      wFields_check.allocate(nMonomer);
+      for(int i = 0; i < nMonomer; ++i) {
+         wFields_check[i] = new cudaReal[nStar];
+      }
+
+     for(int i = 0; i < nMonomer; i++) {
+         cudaMemcpy(wFields_check[i], wFieldsGpu_check[i].cDField(),
+            nStar * sizeof(cudaReal), cudaMemcpyDeviceToHost);
+     }
+
       // Save reference solution to wFields_check array
-      DArray< RDField<2> > wFields_check;
-      wFields_check = system.wFields();
+      //DArray< RDField<2> > wFields_check;
+      //wFields_check = system.wFields();
 
       system.readWBasis("in/diblock/hex/omega.in");
       system.iterate();
       system.writeWBasis("out/testIterate2D_hex_flex_w.bf");
       system.writeCBasis("out/testIterate2D_hex_flex_c.bf");
 
-      // Compare solution to reference solution
-      BFieldComparison <2> comparison (1);
-      comparison.compare(wFields_check, system.wFields());
-      if (verbose() > 0) {
+      DArray< RDField<2> > wFieldsGpu_test;
+      wFieldsGpu_test = system.wFields();
+
+      DArray<cudaReal*> wFields_test;
+      wFields_test.allocate(nMonomer);
+      for(int i = 0; i < nMonomer; ++i) {
+         wFields_test[i] = new cudaReal[nStar];
+      }
+
+     for(int i = 0; i < nMonomer; i++) {
+         cudaMemcpy(wFields_test[i], wFieldsGpu_test[i].cDField(),
+            nStar * sizeof(cudaReal), cudaMemcpyDeviceToHost);
+     }
+
+
+      // Compare result to original
+      BFieldComparison comparison (1);
+      comparison.compare(wFields_check, wFields_test, nStar);
+      if (verbose()>0) {
          std::cout << "\n";
          std::cout << "Max error = " << comparison.maxDiff() << "\n";
       }
-      TEST_ASSERT(comparison.maxDiff() < 3.0E-7);
-      // Maximum difference of 2.58E-7 occurs for the first star
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
 
    }
 
@@ -406,23 +623,53 @@ public:
 
       system.readWBasis("in/diblock/bcc/omega.ref");
 
-      DArray< RDField<3> > wFields_check;
-      wFields_check = system.wFields();
+      DArray< RDField<3> > wFieldsGpu_check;
+      wFieldsGpu_check = system.wFields();
+
+      int nMonomer = system.mixture().nMonomer();
+      int nStar = system.basis().nStar();
+      DArray<cudaReal*> wFields_check;
+      wFields_check.allocate(nMonomer);
+      for(int i = 0; i < nMonomer; ++i) {
+         wFields_check[i] = new cudaReal[nStar];
+      }
+
+     for(int i = 0; i < nMonomer; i++) {
+         cudaMemcpy(wFields_check[i], wFieldsGpu_check[i].cDField(),
+            nStar * sizeof(cudaReal), cudaMemcpyDeviceToHost);
+     }
+
+      //DArray< RDField<3> > wFields_check;
+      //wFields_check = system.wFields();
 
       system.readWBasis("in/diblock/bcc/omega.in");
       system.iterate();
       system.writeWBasis("out/testIterate3D_bcc_rigid_w.bf");
       system.writeCBasis("out/testIterate3D_bcc_rigid_c.bf");
 
-      // Compare solution to reference solution
-      BFieldComparison <3> comparison (1); // Constructor argument 1 skips star 0
-      comparison.compare(wFields_check, system.wFields());
-      if (verbose() > 0) {
+      DArray< RDField<3> > wFieldsGpu_test;
+      wFieldsGpu_test = system.wFields();
+
+      DArray<cudaReal*> wFields_test;
+      wFields_test.allocate(nMonomer);
+      for(int i = 0; i < nMonomer; ++i) {
+         wFields_test[i] = new cudaReal[nStar];
+      }
+
+     for(int i = 0; i < nMonomer; i++) {
+         cudaMemcpy(wFields_test[i], wFieldsGpu_test[i].cDField(),
+            nStar * sizeof(cudaReal), cudaMemcpyDeviceToHost);
+     }
+
+
+      // Compare result to original
+      BFieldComparison comparison (1);
+      comparison.compare(wFields_check, wFields_test, nStar);
+      if (verbose()>0) {
          std::cout << "\n";
          std::cout << "Max error = " << comparison.maxDiff() << "\n";
       }
-      TEST_ASSERT(comparison.maxDiff() < 5.0E-7);
-      // Maximum difference of 1.023E-7 occurs for the second star
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
 
       // Test that stress is small
       bool stress = false;
@@ -451,40 +698,72 @@ public:
 
       system.readWBasis("in/diblock/bcc/omega.ref");
 
-      DArray< RDField<3> > wFields_check;
-      wFields_check = system.wFields();
+      DArray< RDField<3> > wFieldsGpu_check;
+      wFieldsGpu_check = system.wFields();
+
+      int nMonomer = system.mixture().nMonomer();
+      int nStar = system.basis().nStar();
+      DArray<cudaReal*> wFields_check;
+      wFields_check.allocate(nMonomer);
+      for(int i = 0; i < nMonomer; ++i) {
+         wFields_check[i] = new cudaReal[nStar];
+      }
+
+     for(int i = 0; i < nMonomer; i++) {
+         cudaMemcpy(wFields_check[i], wFieldsGpu_check[i].cDField(),
+            nStar * sizeof(cudaReal), cudaMemcpyDeviceToHost);
+     }
+
+      //DArray< RDField<3> > wFields_check;
+      //wFields_check = system.wFields();
 
       system.readWBasis("in/diblock/bcc/omega.in");
       system.iterate();
       system.writeWBasis("out/testIterate3D_bcc_flex_w.bf");
       system.writeCBasis("out/testIterate3D_bcc_flex_c.bf");
 
-      BFieldComparison <3> comparison (1);
-      comparison.compare(wFields_check, system.wFields());
-      if (verbose() > 0) {
+      DArray< RDField<3> > wFieldsGpu_test;
+      wFieldsGpu_test = system.wFields();
+
+      DArray<cudaReal*> wFields_test;
+      wFields_test.allocate(nMonomer);
+      for(int i = 0; i < nMonomer; ++i) {
+         wFields_test[i] = new cudaReal[nStar];
+      }
+
+     for(int i = 0; i < nMonomer; i++) {
+         cudaMemcpy(wFields_test[i], wFieldsGpu_test[i].cDField(),
+            nStar * sizeof(cudaReal), cudaMemcpyDeviceToHost);
+     }
+
+
+      // Compare result to original
+      BFieldComparison comparison (1);
+      comparison.compare(wFields_check, wFields_test, nStar);
+      if (verbose()>0) {
          std::cout << "\n";
          std::cout << "Max error = " << comparison.maxDiff() << "\n";
       }
-      TEST_ASSERT(comparison.maxDiff() < 5.0E-7);
-      // Maximum difference of 1.09288E-7 occurs for the second star
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
+
 
    }
 
 };
 
 TEST_BEGIN(SystemTest)
-//TEST_ADD(SystemTest, testConstructor1D)
-//TEST_ADD(SystemTest, testReadParameters1D)
+TEST_ADD(SystemTest, testConstructor1D)
+TEST_ADD(SystemTest, testReadParameters1D)
 TEST_ADD(SystemTest, testConversion1D_lam)
-//TEST_ADD(SystemTest, testConversion2D_hex)
-//TEST_ADD(SystemTest, testConversion3D_bcc)
+TEST_ADD(SystemTest, testConversion2D_hex)
+TEST_ADD(SystemTest, testConversion3D_bcc)
 //TEST_ADD(SystemTest, testCheckSymmetry3D_bcc)
-//TEST_ADD(SystemTest, testIterate1D_lam_rigid)
+TEST_ADD(SystemTest, testIterate1D_lam_rigid)
 //TEST_ADD(SystemTest, testIterate1D_lam_flex)
 //TEST_ADD(SystemTest, testIterate2D_hex_rigid)
-//TEST_ADD(SystemTest, testIterate2D_hex_flex)
-//TEST_ADD(SystemTest, testIterate3D_bcc_rigid)
-//TEST_ADD(SystemTest, testIterate3D_bcc_flex)
+TEST_ADD(SystemTest, testIterate2D_hex_flex)
+TEST_ADD(SystemTest, testIterate3D_bcc_rigid)
+TEST_ADD(SystemTest, testIterate3D_bcc_flex)
 
 TEST_END(SystemTest)
 

@@ -86,7 +86,7 @@ namespace Pspg
       * \param  i array index
       * \return non-const reference to element i
       */
-      Data& operator [] (int i); 
+      //Data& operator [] (int i); 
 
      /**
       * Get an element by const reference.
@@ -96,7 +96,7 @@ namespace Pspg
       * \param i array index
       * \return const reference to element i
       */
-      const Data& operator [] (int i) const;
+      //const Data& operator [] (int i) const;
 
       //Removing this. Child class has this function
       /**
@@ -163,26 +163,26 @@ namespace Pspg
    /*  
    * Get an element by reference (C-array subscripting)
    */
-   template <typename Data>
-   inline Data& DField<Data>::operator [] (int i)
-   {   
-      assert(data_ != 0); 
-      assert(i >= 0); 
-      assert(i < capacity_);
-      return *(data_ + i); 
-   }  
+   //template <typename Data>
+   //inline Data& DField<Data>::operator [] (int i)
+   //{   
+   //   assert(data_ != 0); 
+   //   assert(i >= 0); 
+   //   assert(i < capacity_);
+   //   return *(data_ + i); 
+   //}  
 
    /*  
    * Get an element by const reference (C-array subscripting)
    */
-   template <typename Data>
-   inline const Data& DField<Data>::operator [] (int i) const
-   {   
-      assert(data_ != 0); 
-      assert(i >= 0 );
-      assert(i < capacity_);
-      return *(data_ + i); 
-   }   
+   //template <typename Data>
+   //inline const Data& DField<Data>::operator [] (int i) const
+   //{   
+   //   assert(data_ != 0); 
+   //   assert(i >= 0 );
+   //   assert(i < capacity_);
+   //   return *(data_ + i); 
+   //}   
 
    /*
    * Serialize a Field to/from an Archive.

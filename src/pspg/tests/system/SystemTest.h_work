@@ -1,0 +1,155 @@
+#ifndef PSPC_SYSTEM_TEST_H
+#define PSPC_SYSTEM_TEST_H
+
+#include <test/UnitTest.h>
+#include <test/UnitTestRunner.h>
+
+#include <pspg/System.h>
+#include <pspg/field/BFieldComparison.h>
+#include <pspg/field/RDField.h>
+#include <pspg/GpuResources.h>
+
+//#include <pscf/mesh/MeshIterator.h>
+//#include <util/format/Dbl.h>
+
+#include <fstream>
+
+using namespace Util;
+using namespace Pscf;
+using namespace Pscf::Pspg;
+
+class SystemTest : public UnitTest
+{
+
+public:
+
+   std::ofstream logFile_;
+
+   void setUp()
+   {  setVerbose(1); }
+
+   void tearDown()
+   {
+      if (logFile_.is_open()) {
+         logFile_.close();
+      }
+   }
+
+   void openLogFile(char const * filename)
+   {
+      openOutputFile(filename, logFile_);
+      Log::setFile(logFile_);
+   }
+
+   void testConstructor1D()
+   {
+      printMethod(TEST_FUNC);
+      System<1> system;
+   }
+
+   void testReadParameters1D()
+   {
+      printMethod(TEST_FUNC);
+      System<1> system;
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
+
+      std::ifstream in;
+      openInputFile("in/diblock/lam/param.flex", in);
+      system.readParam(in);
+      in.close();
+   }
+
+   void testConversion1D_lam()
+   {
+      printMethod(TEST_FUNC);
+      System<1> system;
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
+
+      openLogFile("out/testConversion1D_lam.log");
+      system.setGpuResources(2, 16);
+
+      std::ifstream in;
+      openInputFile("in/diblock/lam/param.flex", in);
+      system.readParam(in);
+      in.close();
+
+      // Read w-fields (reference solution, solved by Fortran PSCF)
+      system.readWBasis("in/diblock/lam/omega.in");
+
+      DArray< RDField<1> > wFieldsGpu_check;
+      wFieldsGpu_check = system.wFields();
+
+      int nMonomer = system.mixture().nMonomer();
+      int nStar = system.basis().nStar();
+      DArray<cudaReal*> wFields_check;
+      wFields_check.allocate(nMonomer);
+      for(int i = 0; i < nMonomer; ++i) {
+         wFields_check[i] = new cudaReal[nStar];
+      }
+
+     for(int i = 0; i < nMonomer; i++) {
+         cudaMemcpy(wFields_check[i], wFieldsGpu_check[i].cDField(),
+            nStar * sizeof(cudaReal), cudaMemcpyDeviceToHost);
+     }
+
+      // Copy w field components to wFields_check after reading
+      //DArray< RDField<1> > wFields_check;
+      //wFields_check = system.wFields();
+
+      // Round trip conversion basis -> rgrid -> basis, read result
+      system.basisToRGrid("in/diblock/lam/omega.in",
+                          "out/testConversion1D_lam_w.rf");
+      system.rGridToBasis("out/testConversion1D_lam_w.rf",
+                          "out/testConversion1D_lam_w.bf");
+      system.readWBasis("out/testConversion1D_lam_w.bf");
+
+      std::cout<<"Yahin hu main"<<wFields_check[0][2]<<std::endl;
+
+      DArray< RDField<1> > wFieldsGpu_test;
+      wFieldsGpu_test = system.wFields();
+
+      DArray<cudaReal*> wFields_test;
+      wFields_test.allocate(nMonomer);
+      for(int i = 0; i < nMonomer; ++i) {
+         wFields_test[i] = new cudaReal[nStar];
+      }   
+
+     for(int i = 0; i < nMonomer; i++) {
+         cudaMemcpy(wFields_test[i], wFieldsGpu_test[i].cDField(),
+            nStar * sizeof(cudaReal), cudaMemcpyDeviceToHost);
+     } 
+
+
+      // Compare result to original
+      BFieldComparison comparison;
+      comparison.compare(wFields_check, wFields_test, nStar);
+      if (verbose()>0) {
+         std::cout << "\n";
+         std::cout << "Max error = " << comparison.maxDiff() << "\n";
+      }
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
+
+   }
+
+
+};
+
+TEST_BEGIN(SystemTest)
+//TEST_ADD(SystemTest, testConstructor1D)
+//TEST_ADD(SystemTest, testReadParameters1D)
+TEST_ADD(SystemTest, testConversion1D_lam)
+//TEST_ADD(SystemTest, testConversion2D_hex)
+//TEST_ADD(SystemTest, testConversion3D_bcc)
+//TEST_ADD(SystemTest, testCheckSymmetry3D_bcc)
+//TEST_ADD(SystemTest, testIterate1D_lam_rigid)
+//TEST_ADD(SystemTest, testIterate1D_lam_flex)
+//TEST_ADD(SystemTest, testIterate2D_hex_rigid)
+//TEST_ADD(SystemTest, testIterate2D_hex_flex)
+//TEST_ADD(SystemTest, testIterate3D_bcc_rigid)
+//TEST_ADD(SystemTest, testIterate3D_bcc_flex)
+
+TEST_END(SystemTest)
+
+#endif
