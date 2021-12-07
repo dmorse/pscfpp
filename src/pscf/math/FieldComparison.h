@@ -20,6 +20,8 @@ namespace Pscf {
    * The template argument FT may be RField<D> for representations of a
    * field or fields on an r-grid or DArray<double> for representation 
    * using a symmetry-adapted basis.
+   *
+   * \ingroup Pscf_Math_Module
    */
    template <class FT>
    class FieldComparison {

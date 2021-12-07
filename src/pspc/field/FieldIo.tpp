@@ -83,65 +83,218 @@ namespace Pspc
       UTIL_CHECK(nStarIn > 0);
 
       // Initialize all field array elements to zero
+      int fieldCapacity = fields[0].capacity();
       int i, j;
-      int nStarCapacity = fields[0].capacity();
-      for (j = 0; j < nMonomer; ++j) {
-         UTIL_CHECK(nStarCapacity == fields[j].capacity());
-         for (i = 0; i < nStarCapacity; ++i) {
+      for (int j = 0; j < nMonomer; ++j) {
+         UTIL_CHECK(fieldCapacity == fields[j].capacity());
+         for (i = 0; i < fieldCapacity; ++i) {
             fields[j][i] = 0.0;
          }
       }
 
-      // Reset nStarIn = min(nStarIn, nStarCapacity)
-      if (nStarCapacity < nStarIn) {
-         nStarIn = nStarCapacity;
+      // Reset nStarIn = min(nStarIn, fieldCapacity)
+      if (fieldCapacity < nStarIn) {
+         nStarIn = fieldCapacity;
       }
 
-      DArray<double> temp;
+      // Allocate temp arrays used to read in components
+      DArray<double> temp, temp2;
       temp.allocate(nMonomer);
+      temp2.allocate(nMonomer);
 
-      // Loop over stars to read field components
-      IntVec<D> waveIn, waveBz, waveDft, waveStar;
-      int waveId, starId, nWaveVectors;
+      typename Basis<D>::Star const * starPtr;
+      typename Basis<D>::Star const * starPtr2;
+      IntVec<D> waveIn, waveIn2;
+      int starId, starId2;
+      int basisId, basisId2;
+      int waveId, waveId2;
+
+      std::complex<double> coeff, phasor;
+      IntVec<D> waveBz, waveDft;
+      int nWaveVector;
+      int nReversedPair = 0;
       bool waveExists;
-      for (i = 0; i < nStarIn; ++i) {
 
-         // Read components for different monomers
+      // Loop over stars in input file to read field components
+      i = 0;
+      while (i < nStarIn) {
+
+         // Read next line of data
          for (j = 0; j < nMonomer; ++j) {
-            in >> temp [j];
+            in >> temp[j];               // field components
          }
-
-         // Read characteristic wave and number of wavectors in star.
-         in >> waveIn;
-         in >> nWaveVectors;
+         in >> waveIn;                   // wave of star
+         in >> nWaveVector;              // # of waves in star
 
          // Check if waveIn is in first Brillouin zone (FBZ) for the mesh.
          waveBz = shiftToMinimum(waveIn, mesh().dimensions(), unitCell);
          waveExists = (waveIn == waveBz);
 
-         // If wave is in FBZ, find in basis and set field components
-         if (waveExists) {
-            waveDft = waveBz;
+         if (!waveExists) {
+
+            //  If wave is not in FBZ, ignore and continue 
+            ++i;
+
+         } else {
+
+            // If wave is in FBZ, process the line
+
+            // Find the star containing waveIn
+            waveDft = waveIn;
             mesh().shift(waveDft);
             waveId = basis().waveId(waveDft);
             starId = basis().wave(waveId).starId;
-            if (!basis().star(starId).cancel) {
-               waveStar = basis().star(starId).waveBz;
-               if (waveStar != waveBz) {
-                   std::cout 
-                     <<  "Inconsistent wave of star on input\n"
-                     <<  "waveIn from file = " << waveIn   << "\n"
-                     <<  "starId of waveIn = " << starId   << "\n"
-                     <<  "waveBz of star   = " << waveStar << "\n";
-                     UTIL_THROW("Inconsistent wave ids on file input");
-               }
-               UTIL_CHECK(basis().star(starId).waveBz == waveBz);
-               for (j = 0; j < nMonomer; ++j) {
-                  fields[j][starId] = temp [j];
-               }
-            }
-         }
+            starPtr = &basis().star(starId);
+            UTIL_CHECK(!(starPtr->cancel));
+            //basisId = starId;
+            basisId = starPtr->basisId;
 
+            if (starPtr->invertFlag == 0) {
+
+               if (starPtr->waveBz == waveIn) {
+
+                  // Copy components of closed star to fields array
+                  for (j = 0; j < nMonomer; ++j) {
+                      fields[j][basisId] = temp[j];
+                  }
+
+               } else {
+                  std::cout 
+                     <<  "Inconsistent wave of closed star on input\n"
+                     <<  "wave from file = " << waveIn  << "\n"
+                     <<  "starId of wave = " << starId  << "\n"
+                     <<  "waveBz of star = " << starPtr->waveBz  << "\n";
+               }
+               ++i;  // increment input line counter i
+
+            } else {
+
+               // Read the next line
+               for (j = 0; j < nMonomer; ++j) {
+                  in >> temp2[j];               // components of field
+               }
+               in >> waveIn2;                   // wave of star
+               in >> nWaveVector;               // # of wavevectors in star
+
+               // Check that waveIn2 is also in the 1st BZ
+               waveBz = 
+                   shiftToMinimum(waveIn2, mesh().dimensions(), unitCell);
+               UTIL_CHECK(waveIn2 == waveBz);
+
+               // Identify the star containing waveIn2
+               waveDft = waveIn2;
+               mesh().shift(waveDft);
+               waveId2 = basis().waveId(waveDft);
+               starId2 = basis().wave(waveId2).starId;
+               starPtr2 = &basis().star(starId2);
+               UTIL_CHECK(!(starPtr2->cancel));
+               basisId2 = starPtr2->basisId;
+
+               if (starPtr->invertFlag == 1) {
+
+                  // This is a pair of open stars written in the same 
+                  // order as in this basis. Check preconditions:
+                  UTIL_CHECK(starPtr2->invertFlag == -1);
+                  UTIL_CHECK(starId2 = starId + 1);
+                  UTIL_CHECK(basisId2 = basisId + 1);
+                  UTIL_CHECK(starPtr->waveBz == waveIn);
+                  UTIL_CHECK(starPtr2->waveBz == waveIn2);
+
+                  // Copy components for both stars into fields array
+                  for (j = 0; j < nMonomer; ++j) {
+                      fields[j][basisId] = temp[j];
+                      fields[j][basisId2] = temp2[j];
+                  }
+
+               } else
+               if (starPtr->invertFlag == -1) {
+
+                  // This is a pair of open stars written in opposite
+                  // order from in this basis. Check preconditions:
+                  UTIL_CHECK(starPtr2->invertFlag == 1);
+                  UTIL_CHECK(starId == starId2 + 1);
+                  UTIL_CHECK(basisId == basisId2 + 1);
+                  UTIL_CHECK(waveId == starPtr->beginId);
+
+                  // Check that waveIn2 is negation of waveIn
+                  IntVec<D> nVec;
+                  nVec.negate(waveIn);
+                  nVec = 
+                       shiftToMinimum(nVec, mesh().dimensions(), unitCell);
+                  UTIL_CHECK(waveIn2 == nVec);
+
+                  /*
+                  * Consider two related stars, C and D, that are listed in
+                  * the order (C,D) in the basis used in this code (the 
+                  * reading program), but that were listed in the opposite
+                  * order (D,C) in the program that wrote the file (the
+                  * writing program). In the basis of the reading program, 
+                  * star C has star index starId2, while star D has index
+                  * starId = starid2 + 1.
+                  *
+                  * Let f(r) and f^{*}(r) denote the basis functions used
+                  * by the reading program for stars C and D, respectively.
+                  * Let u(r) and u^{*}(r) denote the corresponding basis 
+                  * functions used by the writing program for stars C 
+                  * and D.  Let exp(i phi) denote the unit magnitude 
+                  * coefficient (i.e., phasor) within f(r) of the wave 
+                  * with wave index waveId2, which was the characteristic 
+                  * wave for star C in the writing program. The 
+                  * coefficient of this wave within the basis function
+                  * u(r) used by the writing program must instead be real
+                  * and positive. This implies that 
+                  * u(r) = exp(-i phi) f(r).
+                  *
+                  * Focus on the contribution to the field for a specific
+                  * monomer type j.  Let a and b denote the desired 
+                  * coefficients of stars C and D in the reading program, 
+                  * for which the total contribution of both stars to the 
+                  * field is:
+                  *
+                  *  (a - ib) f(r) + (a + ib) f^{*}(r)
+                  *
+                  * Let A = temp[j] and B = temp2[j] denote the 
+                  * coefficients read from file in order (A,B).  Noting 
+                  * that the stars were listed in the order (D,C) in the 
+                  * basis used by the writing program, the contribution 
+                  * of both stars must be (A-iB)u^{*}(r)+(A+iB)u(r), or:
+                  *
+                  *  (A+iB) exp(-i phi)f(r) + (A-iB) exp(i phi) f^{*}(r)
+                  *
+                  * Comparing coefficients of f^{*}(r), we find that
+                  * 
+                  *       (a + ib) = (A - iB) exp(i phi)
+                  * 
+                  * This equality is implemented below, where the 
+                  * variable "phasor" is set equal to exp(i phi).
+                  */
+                  phasor = basis().wave(waveId2).coeff;
+                  phasor = phasor/std::abs(phasor); 
+                  for (j = 0; j < nMonomer; ++j) {
+                      coeff = std::complex<double>(temp[j],-temp2[j]);
+                      coeff *= phasor;
+                      fields[j][basisId2] = real(coeff);
+                      fields[j][basisId ] = imag(coeff);
+                  }
+
+                  // Increment count of number of reversed open pairs
+                  ++nReversedPair;
+ 
+               } else {
+                  UTIL_THROW("Invalid starInvert value");
+               } 
+
+               // Increment counter by 2 because two lines were read 
+               i = i + 2;
+
+            }   // if (wavePtr->invertFlag == 0) ... else ...
+         }   // if (!waveExists) ... else ...
+      }   // end while (i < nStarIn)
+
+      if (nReversedPair > 0) {
+         std::cout << "\n";
+         std::cout << nReversedPair << " reversed pairs of open stars"
+                   << " detected in FieldIo::readFieldsBasis\n";
       }
 
    }
@@ -175,16 +328,18 @@ namespace Pspc
           << "             " << nBasis << std::endl;
 
       // Write fields
+      int ib = 0;
       for (int i = 0; i < nStar; ++i) {
          if (!basis().star(i).cancel) {
             for (int j = 0; j < nMonomer; ++j) {
-               out << Dbl(fields[j][i], 20, 10);
+               out << Dbl(fields[j][ib], 20, 10);
             }
             out << "   ";
             for (int j = 0; j < D; ++j) {
                out << Int(basis().star(i).waveBz[j], 5);
             } 
             out << Int(basis().star(i).size, 5) << std::endl;
+            ++ib;
          }
       }
 
@@ -393,7 +548,6 @@ namespace Pspc
       // Write fields
       MeshIterator<D> itr(mesh().dimensions());
       for (itr.begin(); !itr.atEnd(); ++itr) {
-         // out << Int(itr.rank(), 5);
          for (int j = 0; j < nMonomer; ++j) {
             out << "  " << Dbl(temp[j][itr.rank()], 18, 15);
          }
@@ -560,6 +714,7 @@ namespace Pspc
       IntVec<D> indices;                      // dft grid indices of wave
       int rank;                               // dft grid rank of wave
       int is;                                 // star index
+      int ib;                                 // basis index
       int iw;                                 // wave index
 
       // Initialize all dft coponents to zero
@@ -576,12 +731,15 @@ namespace Pspc
          if (starPtr->cancel) {
             ++is;
             continue;
-         }
+         } 
+
+         // Set basisId for uncancelled star
+         ib = starPtr->basisId;
 
          if (starPtr->invertFlag == 0) {
 
             // Make complex coefficient for star basis function
-            component = std::complex<double>(in[is], 0.0);
+            component = std::complex<double>(in[ib], 0.0);
 
             // Loop over waves in closed star
             for (iw = starPtr->beginId; iw < starPtr->endId; ++iw) {
@@ -600,7 +758,7 @@ namespace Pspc
          if (starPtr->invertFlag == 1) {
 
             // Loop over waves in first star
-            component = std::complex<double>(in[is], -in[is+1]);
+            component = std::complex<double>(in[ib], -in[ib+1]);
             component /= sqrt(2.0);
             starPtr = &(basis().star(is));
             for (iw = starPtr->beginId; iw < starPtr->endId; ++iw) {
@@ -617,7 +775,7 @@ namespace Pspc
             // Loop over waves in second star
             starPtr = &(basis().star(is+1));
             UTIL_CHECK(starPtr->invertFlag == -1);
-            component = std::complex<double>(in[is], +in[is+1]);
+            component = std::complex<double>(in[ib], +in[ib+1]);
             component /= sqrt(2.0);
             for (iw = starPtr->beginId; iw < starPtr->endId; ++iw) {
                wavePtr = &basis().wave(iw);
@@ -655,9 +813,10 @@ namespace Pspc
       std::complex<double> component;          // coefficient for star
       int rank;                                // dft grid rank of wave
       int is;                                  // star index
+      int ib;                                  // basis index
 
-      // Initialize all components to zero
-      for (is = 0; is < basis().nStar(); ++is) {
+      // Initialize all components to zero 
+      for (is = 0; is < basis().nBasis(); ++is) {
          out[is] = 0.0;
       }
 
@@ -670,6 +829,9 @@ namespace Pspc
             ++is;
             continue;
          }
+
+         // Set basis id for uncancelled star
+         ib = starPtr->basisId;
 
          if (starPtr->invertFlag == 0) {
 
@@ -697,8 +859,8 @@ namespace Pspc
             rank = dftMesh.rank(wavePtr->indicesDft);
             component = std::complex<double>(in[rank][0], in[rank][1]);
             component /= wavePtr->coeff;
-            UTIL_CHECK(abs(component.imag()) < 1.0E-8);
-            out[is] = component.real();
+            UTIL_CHECK(std::abs(component.imag()) < 1.0E-8);
+            out[ib] = component.real();
             ++is;
 
          } else
@@ -717,17 +879,17 @@ namespace Pspc
             }
             rank = dftMesh.rank(wavePtr->indicesDft);
             component = std::complex<double>(in[rank][0], in[rank][1]);
-            UTIL_CHECK(abs(wavePtr->coeff) > 1.0E-8);
+            UTIL_CHECK(std::abs(wavePtr->coeff) > 1.0E-8);
             component /= wavePtr->coeff;
             component *= sqrt(2.0);
 
             // Compute basis function coefficient values
             if (starPtr->invertFlag == 1) {
-               out[is] = component.real();
-               out[is+1] = -component.imag();
+               out[ib] = component.real();
+               out[ib+1] = -component.imag();
             } else {
-               out[is] = component.real();
-               out[is+1] = component.imag();
+               out[ib] = component.real();
+               out[ib+1] = component.imag();
             }
 
             is += 2;
@@ -858,8 +1020,8 @@ namespace Pspc
                wavePtr = &basis().wave(iw);
                if (!wavePtr->implicit) {
                   rank = dftMesh.rank(wavePtr->indicesDft);
-                  if (abs(in[rank][0]) > 1.0E-9) return false;
-                  if (abs(in[rank][1]) > 1.0E-9) return false;
+                  if (std::abs(in[rank][0]) > 1.0E-9) return false;
+                  if (std::abs(in[rank][1]) > 1.0E-9) return false;
                }
             }
 
@@ -877,7 +1039,7 @@ namespace Pspc
                   waveCoeff /= wavePtr->coeff;
                   if (hasRoot) {
                      diff = waveCoeff - rootCoeff;
-                     if (abs(diff) > 1.0E-9) return false;
+                     if (std::abs(diff) > 1.0E-8) return false;
                   } else {
                      rootCoeff = waveCoeff;
                      hasRoot = true;

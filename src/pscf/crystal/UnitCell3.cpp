@@ -189,7 +189,7 @@ namespace Pscf
    /*
    * Assignment operator.
    */
-   UnitCell<3>& UnitCell<3>::operator = (const UnitCell<3>& other)
+   UnitCell<3>& UnitCell<3>::operator = (UnitCell<3> const & other)
    {
       lattice_ = other.lattice_;
       setNParameter();

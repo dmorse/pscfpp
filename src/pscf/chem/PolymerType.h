@@ -18,6 +18,8 @@ namespace Pscf
 
    /**
    * Struct containing an enumeration of polymer structure types.
+   *
+   * \ingroup Pscf_Chem_Module
    */
    struct PolymerType {
       enum Enum {Branched, Linear};

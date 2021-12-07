@@ -1,5 +1,5 @@
-#ifndef PSSP_BASIS_TPP
-#define PSSP_BASIS_TPP
+#ifndef PSCF_BASIS_TPP
+#define PSCF_BASIS_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -11,7 +11,10 @@
 #include "Basis.h"
 #include "TWave.h"
 #include "groupFile.h"
+#include <pscf/crystal/UnitCell.h>
+#include <pscf/crystal/SpaceGroup.h>
 #include <pscf/crystal/shiftToMinimum.h>
+#include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <algorithm>
 #include <vector>
@@ -383,7 +386,7 @@ namespace Pscf {
                wave.indicesBz = waves_[j].indicesBz;
                wave.sqNorm = waves_[j].sqNorm;
                if (j > listBegin) {
-                  UTIL_CHECK( abs(wave.sqNorm-waves_[j].sqNorm) 
+                  UTIL_CHECK( std::abs(wave.sqNorm-waves_[j].sqNorm) 
                                  < 2.0*epsilon ); 
                }
                list.insert(wave);
@@ -422,7 +425,7 @@ namespace Pscf {
                   vec = rootVecBz*group[j];
 
                   // Check that rotated vector has same norm as root.
-                  UTIL_CHECK(abs(Gsq - unitCell().ksq(vec)) < epsilon);
+                  UTIL_CHECK(std::abs(Gsq - unitCell().ksq(vec)) < epsilon);
 
                   // Initialize TWave object associated with rotated wave
                   wave.sqNorm = Gsq;
@@ -452,7 +455,7 @@ namespace Pscf {
                   // nonzero phase, creating a contradiction.
 
                   if (wave.indicesDft == rootItr->indicesDft) {
-                     if (abs(wave.phase) > 1.0E-6) {
+                     if (std::abs(wave.phase) > 1.0E-6) {
                         cancel = true;
                      }
                   }
@@ -480,7 +483,7 @@ namespace Pscf {
                      while (phase_diff <= -0.5) {
                         phase_diff += 1.0;
                      }
-                     if (abs(phase_diff) > 1.0E-6) {
+                     if (std::abs(phase_diff) > 1.0E-6) {
                         cancel = true;
                      }
 
@@ -621,10 +624,10 @@ namespace Pscf {
                waves_[k].sqNorm = tempList[j].sqNorm;
                coeff = std::complex<double>(0.0, tempList[j].phase);
                coeff = exp(coeff);
-               if (abs(imag(coeff)) < 1.0E-6) {
+               if (std::abs(imag(coeff)) < 1.0E-6) {
                   coeff = std::complex<double>(real(coeff), 0.0);
                }
-               if (abs(real(coeff)) < 1.0E-6) {
+               if (std::abs(real(coeff)) < 1.0E-6) {
                   coeff = std::complex<double>(0.0, imag(coeff));
                }
                waves_[k].coeff = coeff;
@@ -710,20 +713,20 @@ namespace Pscf {
                   waves_[j].coeff /= rootCoeff;
                }
                rootCoeff = waves_[rootId].coeff;
-               UTIL_CHECK(abs(real(rootCoeff) - 1.0) < 1.0E-9);
-               UTIL_CHECK(abs(imag(rootCoeff)) < 1.0E-9);
+               UTIL_CHECK(std::abs(real(rootCoeff) - 1.0) < 1.0E-9);
+               UTIL_CHECK(std::abs(imag(rootCoeff)) < 1.0E-9);
 
                // Require coefficients of root and negation are conjugates
                if (partId != rootId) {
 
                   partCoeff = waves_[partId].coeff;
-                  UTIL_CHECK(abs(abs(partCoeff) - 1.0) < 1.0E-9);
-                  if (abs(partCoeff - rootCoeff) > 1.0E-6) {
+                  UTIL_CHECK(std::abs(std::abs(partCoeff) - 1.0) < 1.0E-9);
+                  if (std::abs(partCoeff - rootCoeff) > 1.0E-6) {
                      d = sqrt(partCoeff);
                      if (real(d) < -1.0E-4) {
                         d = -d;
                      } else 
-                     if (abs(real(d)) <= 1.0E-4) {
+                     if (std::abs(real(d)) <= 1.0E-4) {
                         if (imag(d) < 0.0) {
                            d = -d;
                         }
@@ -815,11 +818,11 @@ namespace Pscf {
 
       // Set tiny real and imaginary parts to zero (due to round-off)
       for (i = 0; i < nWave_; ++i) {
-         if (abs(real(waves_[i].coeff)) < 1.0E-8) {
+         if (std::abs(real(waves_[i].coeff)) < 1.0E-8) {
             waves_[i].coeff 
                      = std::complex<double>(0.0, imag(waves_[i].coeff));
          }
-         if (abs(imag(waves_[i].coeff)) < 1.0E-8) {
+         if (std::abs(imag(waves_[i].coeff)) < 1.0E-8) {
             waves_[i].coeff 
                     = std::complex<double>(real(waves_[i].coeff), 0.0);
          }
@@ -996,7 +999,7 @@ namespace Pscf {
          // Check sqNorm
          v = waves_[iw].indicesBz;
          Gsq = unitCell().ksq(v);
-         if (abs(Gsq - waves_[iw].sqNorm) > 1.0E-8) {
+         if (std::abs(Gsq - waves_[iw].sqNorm) > 1.0E-8) {
             std::cout << "\n";
             std::cout << "Incorrect sqNorm:" << "\n"
                       << "wave.indicesBz = " << "\n"
@@ -1169,7 +1172,7 @@ namespace Pscf {
                   }
                   return false;
                }
-               if (!cancel && abs(cdel) > 1.0E-8) {
+               if (!cancel && std::abs(cdel) > 1.0E-8) {
                   std::cout << "\n";
                   std::cout << "Function for closed star is not real:" 
                             << "\n";
@@ -1187,7 +1190,7 @@ namespace Pscf {
                   }
                   return false;
                }
-               if (cancel && abs(waves_[iw].coeff) > 1.0E-8) {
+               if (cancel && std::abs(waves_[iw].coeff) > 1.0E-8) {
                   std::cout << "\n";
                   std::cout << "Nonzero coefficient in a cancelled star" 
                             << "\n";
@@ -1272,7 +1275,7 @@ namespace Pscf {
                   }
                   return false;
                } else 
-               if (!cancel && abs(cdel) > 1.0E-8) {
+               if (!cancel && std::abs(cdel) > 1.0E-8) {
                   std::cout << "\n";
                   std::cout << "Error of coefficients in open stars:" 
                             << "\n";

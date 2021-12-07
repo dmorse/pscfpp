@@ -6,8 +6,8 @@
 
 #include "field/FieldTestComposite.h"
 #include "solvers/SolverTestComposite.h"
-#include "sweep/SweepTestComposite.h"
 #include "system/SystemTest.h"
+#include "sweep/SweepTestComposite.h"
 #include <util/global.h>
 
 TEST_COMPOSITE_BEGIN(PspcNsTestComposite)

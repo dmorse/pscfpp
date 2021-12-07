@@ -38,8 +38,8 @@ namespace Fd1d
 
    public:
 
-      /// Base class for WField and CField
-      typedef DArray<double> Field;
+      /// Generic Field type.
+      typedef Propagator::Field Field;
 
       /// Monomer chemical potential field type.
       typedef Propagator::WField WField;

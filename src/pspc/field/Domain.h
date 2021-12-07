@@ -37,7 +37,7 @@ namespace Pspc
    *    - a FieldIo
    *    - a groupName string
    *
-   * \ingroup Pscf_Pspc_Module
+   * \ingroup Pspc_Field_Module
    */
    template <int D>
    class Domain : public ParamComposite

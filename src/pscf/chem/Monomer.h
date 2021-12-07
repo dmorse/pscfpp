@@ -46,6 +46,11 @@ namespace Pscf
       double step() const;
 
       /**
+      * Set statistical segment length. 
+      */
+      void setStep(double step);
+
+      /**
       * Monomer name string.
       */
       std::string name() const;
@@ -106,6 +111,12 @@ namespace Pscf
    */
    inline double Monomer::step() const
    {  return step_; }
+
+   /*
+   * Set statistical segment length.
+   */
+   inline void Monomer::setStep(double step)
+   {  step_ = step; }
 
    /*
    * Monomer name string.

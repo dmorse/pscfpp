@@ -1,3 +1,4 @@
+#ifndef PSPC_SWEEP_TPP
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
@@ -8,8 +9,10 @@
 #include "Sweep.h"
 #include <pspc/System.h>
 #include <pspc/iterator/AmIterator.h>
+#include <pscf/inter/ChiInteraction.h>
 #include <pscf/sweep/SweepTmpl.tpp>
 #include <util/misc/FileMaster.h>
+#include <util/misc/ioUtil.h>
 
 namespace Pscf {
 namespace Pspc {
@@ -34,8 +37,8 @@ namespace Pspc {
    template <int D>
    Sweep<D>::Sweep(System<D> & system) 
     : SweepTmpl< BasisFieldState<D> >(PSPC_HISTORY_CAPACITY),
-      systemPtr_(0)
-   {  setSystem(system); }
+      systemPtr_(&system)
+   {}
 
    /*
    * Destructor.
@@ -48,15 +51,20 @@ namespace Pspc {
    * Set association with a parent system.
    */
    template <int D>
-   void Sweep<D>::setSystem(System<D> & system) 
-   {  systemPtr_ = & system; }
+   void Sweep<D>::setSystem(System<D>& system) 
+   {  systemPtr_ = &system; }
 
    /*
    * Check allocation of one state object, allocate if necessary.
    */
    template <int D>
    void Sweep<D>::checkAllocation(BasisFieldState<D>& state) 
-   {  state.allocate(); }
+   { 
+      UTIL_CHECK(hasSystem()); 
+      state.setSystem(system());
+      state.allocate(); 
+      state.unitCell() = system().unitCell();
+   }
 
    /*
    * Setup operations at the beginning of a sweep.
@@ -65,13 +73,7 @@ namespace Pspc {
    void Sweep<D>::setup() 
    {
       initialize();
-
-      // Check or create associations of states with the parent System
-      // Note: FieldState::setSystem does nothing if already set.
-      for (int i=0; i < historyCapacity(); ++i) {
-         state(i).setSystem(system());
-      }
-      trial_.setSystem(system());
+      checkAllocation(trial_);
 
       // Open log summary file
       std::string fileName = baseFileName_;
@@ -97,13 +99,12 @@ namespace Pspc {
    template <int D>
    void Sweep<D>::extrapolate(double sNew) 
    {
-       UTIL_CHECK(historySize() > 0);
+      UTIL_CHECK(historySize() > 0);
 
       // If historySize() == 1, do nothing: Use previous system state
       // as trial for the new state.
-
+      
       if (historySize() > 1) {
-
          UTIL_CHECK(historySize() <= historyCapacity());
 
          // Does the iterator allow a flexible unit cell ?
@@ -115,17 +116,17 @@ namespace Pspc {
          // Set extrapolated trial w fields 
          double coeff;
          int nMonomer = system().mixture().nMonomer();
-         int nStar = system().basis().nStar();
+         int nBasis = system().basis().nBasis();
          DArray<double>* newFieldPtr;
          DArray<double>* oldFieldPtr; 
          int i, j, k;
          for (i=0; i < nMonomer; ++i) {
-            newFieldPtr = &trial_.field(i);
+            newFieldPtr = &(trial_.field(i));
 
             // Previous state k = 0 (most recent)
             oldFieldPtr = &state(0).field(i);
             coeff = c(0);
-            for (j=0; j < nStar; ++j) {
+            for (j=0; j < nBasis; ++j) {
                (*newFieldPtr)[j] = coeff*(*oldFieldPtr)[j];
             }
 
@@ -133,7 +134,7 @@ namespace Pspc {
             for (k = 1; k < historySize(); ++k) {
                oldFieldPtr = &state(k).field(i);
                coeff = c(k);
-               for (j=0; j < nStar; ++j) {
+               for (j=0; j < nBasis; ++j) {
                   (*newFieldPtr)[j] += coeff*(*oldFieldPtr)[j];
                }
             }
@@ -206,18 +207,66 @@ namespace Pspc {
    template <int D>
    void Sweep<D>::getSolution() 
    { 
+      state(0).setSystem(system());
       state(0).getSystemState(); 
 
-      // Output solution
-      // int i = nAccept() - 1;
-      // std::string fileName = baseFileName_;
-      // fileName += toString(i);
-      // outputSolution(fileName);
+      // Output converged solution to several files
+      outputSolution();
 
       // Output summary to log file
-      // outputSummary(logFile_);
+      outputSummary(logFile_);
 
    };
+
+   template <int D>
+   void Sweep<D>::outputSolution()
+   {
+      std::ofstream out;
+      std::string outFileName;
+      std::string indexString = toString(nAccept() - 1);
+
+      // Open parameter file, with thermodynamic properties at end
+      outFileName = baseFileName_;
+      outFileName += indexString;
+      outFileName += "_dat";
+      system().fileMaster().openOutputFile(outFileName, out);
+
+      // Write data file, with thermodynamic properties at end
+      out << "System{" << std::endl;
+      system().mixture().writeParam(out);
+      system().interaction().writeParam(out);
+      out << "}" << std::endl;
+      out << std::endl;
+      out << "unitCell       " << system().unitCell();
+      system().outputThermo(out);
+      out.close();
+
+      // Write w fields
+      outFileName = baseFileName_;
+      outFileName += indexString;
+      outFileName += "_w";
+      outFileName += ".bf";
+      system().writeWBasis(outFileName);
+
+      // Write c fields
+      outFileName = baseFileName_;
+      outFileName += indexString;
+      outFileName += "_c";
+      outFileName += ".bf";
+      system().writeCBasis(outFileName);
+
+   }
+
+   template <int D>
+   void Sweep<D>::outputSummary(std::ostream& out)
+   {
+      int i = nAccept() - 1;
+      double sNew = s(0);
+      out << Int(i,5) << Dbl(sNew)
+          << Dbl(system().fHelmholtz(),16)
+          << Dbl(system().pressure(),16);
+      out << std::endl;
+   }
 
    template <int D>
    void Sweep<D>::cleanup() 
@@ -225,3 +274,4 @@ namespace Pspc {
 
 } // namespace Pspc
 } // namespace Pscf
+#endif

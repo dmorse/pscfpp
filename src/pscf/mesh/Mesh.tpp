@@ -9,7 +9,6 @@
 */
 
 #include "Mesh.h"
-#include <util/format/Int.h>
 #include <util/global.h>
 
 namespace Pscf
@@ -52,7 +51,7 @@ namespace Pscf
       return *this;
    }
 
-   // Set state of existing Mesh<D>
+   // Set or reset the state of existing Mesh<D>
    template <int D>
    void Mesh<D>::setDimensions(IntVec<D> const & dimensions)
    {
@@ -71,7 +70,7 @@ namespace Pscf
       size_ = offsets_[0]*dimensions_[0];
    }
 
-   // Return rank of an IntVec vector within this mesh
+   // Return rank of IntVec position
    template <int D>
    int Mesh<D>::rank(IntVec<D> const & position) const
    {
@@ -104,6 +103,7 @@ namespace Pscf
       return position;
    }
 
+   // Is a single coordinate in the primary range?
    template <int D>
    bool Mesh<D>::isInMesh(int coordinate, int i) const
    {
@@ -129,6 +129,7 @@ namespace Pscf
       return result;
    }
 
+   // Shift a single coordinate to the primary range
    template <int D>
    int Mesh<D>::shift(int& coordinate, int i) const
    {
@@ -151,29 +152,6 @@ namespace Pscf
          shifts[i] = shift(position[i], i);
       }
       return shifts;
-   }
-
-   template <int D>
-   std::istream& operator >> (std::istream& in, 
-                              Mesh<D>& mesh)
-   {
-      IntVec<D> dimensions;
-      in >> dimensions;
-      for (int i = 0; i < D; ++i) {
-         UTIL_CHECK(dimensions[i] > 0);
-      }
-      mesh.setDimensions(dimensions);
-      return in;
-   }
-
-   template <int D>
-   std::ostream& operator << (std::ostream& out,
-                              Mesh<D>& mesh)
-   {
-      for (int i = 0; i < D; ++i) {
-         out << " " << Int(mesh.dimensions_[i], 6);
-      }
-      return out;
    }
 
 }

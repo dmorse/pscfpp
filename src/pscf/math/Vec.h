@@ -58,6 +58,8 @@ namespace Pscf
    * function be a member of an object that will hold the result.
    *
    * For efficiency, all member functions are declared inline.
+   *
+   * \ingroup Pscf_Math_Module
    */
    template <int D, typename T>
    class Vec

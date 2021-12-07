@@ -1,5 +1,5 @@
-#ifndef PSSP_MESH_ITERATOR_BASE_H
-#define PSSP_MESH_ITERATOR_BASE_H
+#ifndef PSCF_MESH_ITERATOR_H
+#define PSCF_MESH_ITERATOR_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/math/IntVec.h>
+#include <pscf/math/IntVec.h>           // member
 
 namespace Pscf 
 {
@@ -16,7 +16,7 @@ namespace Pscf
    using namespace Util;
 
    /**
-   * Base class for mesh iterator class template.
+   * Iterator over points in a Mesh<D>.
    *
    * A mesh iterator iterates over the points of a mesh, keeping track
    * of both the IntVec<D> position and integer rank of the current
@@ -42,9 +42,9 @@ namespace Pscf
       */
       MeshIterator(const IntVec<D>& dimensions);
 
-      // Compiler default destructor.
-
       // Compiler copy constructor.
+
+      // Compiler default destructor.
 
       /**
       * Set the grid dimensions in all directions.
@@ -99,6 +99,7 @@ namespace Pscf
       /// Total number of grid points
       int size_;
 
+      /// Recursive function for multi-dimensional increment.
       void increment(int i);
 
    };
@@ -111,15 +112,17 @@ namespace Pscf
    template<> 
    void MeshIterator<2>::operator ++();
 
-   //template<> 
-   //void MeshIterator<3>::operator ++();
+   template<> 
+   void MeshIterator<3>::operator ++();
 
    // Inline member functions
 
+   // Return the entire IntVec<D>
    template <int D>
    inline IntVec<D> MeshIterator<D>::position() const
    {  return position_; }
 
+   // Return one component of the position IntVec<D>
    template <int D>
    inline int MeshIterator<D>::position(int i) const
    {
@@ -128,39 +131,15 @@ namespace Pscf
       return position_[i];
    }
 
+   // Return the rank
    template <int D>
    inline int MeshIterator<D>::rank() const
    {  return rank_; }
 
-   template <int D>
-   inline void MeshIterator<D>::operator ++ ()
-   {
-      position_[D-1]++;
-      if (position_[D-1] == dimensions_[D-1]) {
-         position_[D-1] = 0;
-         increment(D-2);
-      }
-      rank_++;
-   }
-
-   /*
-   * Is this the end (i.e., on e past the last point)?
-   */
+   // Is this the end (i.e., one past the last point)?
    template <int D>
    inline bool MeshIterator<D>::atEnd() const
    { return (bool)(rank_ == size_); }
-
-   template <int D>
-   inline void MeshIterator<D>::increment(int i)
-   {
-      position_[i]++;   
-      if (position_[i] == dimensions_[i]) {
-         position_[i] = 0;
-         if (i > 0) {
-            increment(i-1);
-         }
-      }
-   }
 
    // Inline explicit specializations 
 
@@ -196,62 +175,12 @@ namespace Pscf
       rank_++;
    }
 
-   // Non-inline member functions
-
-   /*
-   * Default constructor
-   */ 
-   template <int D>
-   MeshIterator<D>::MeshIterator()
-    : dimensions_(0),
-      position_(0),
-      rank_(0),
-      size_(0)
-   {}
-
-   /*
-   * Constructor
-   */ 
-   template <int D>
-   MeshIterator<D>::MeshIterator(const IntVec<D>& dimensions)
-    : dimensions_(0),
-      position_(0),
-      rank_(0),
-      size_(0)
-   {
-      setDimensions(dimensions); 
-   }
-
-   /*
-   * Set the mesh dimensions.
-   */
-   template <int D>
-   void MeshIterator<D>::setDimensions(const IntVec<D>& dimensions)
-   { 
-      for (int i = 0; i < D; ++i) {
-         if (dimensions[i] <= 0) {
-            UTIL_THROW("Mesh dimensions must be positive");
-         }
-      }
- 
-      dimensions_ = dimensions;
-      size_ = 1;
-      for (int i = 0; i < D; ++i) {
-         size_ *= dimensions_[i];
-      }
-   }
-
-   /*
-   * Reset iterator to point to first element.
-   */
-   template <int D>
-   void MeshIterator<D>::begin()
-   {
-      rank_ = 0;
-      for (int i = 0; i < D; ++i) {
-         position_[i] = 0;
-      }
-   }
+   #ifndef PSCF_MESH_ITERATOR_TPP
+   // Suppress implicit instantiation
+   extern template class MeshIterator<1>;
+   extern template class MeshIterator<2>;
+   extern template class MeshIterator<3>;
+   #endif
 
 }
 #endif

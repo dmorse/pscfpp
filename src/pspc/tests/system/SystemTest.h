@@ -245,7 +245,7 @@ public:
          std::cout << "\n";
          std::cout << "Max error = " << comparison.maxDiff() << "\n";
       }
-      TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-7);
 
       bool stress = false;
       if (std::abs(system.mixture().stress(0)) < 1.0E-8) {
@@ -286,7 +286,40 @@ public:
          std::cout << "\n";
          std::cout << "Max error = " << comparison.maxDiff() << "\n";
       }
-      TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-7);
+   }
+
+   void testIterate1D_lam_soln()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testIterate1D_lam_soln.log");
+
+      System<1> system;
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
+
+      std::ifstream in;
+      openInputFile("in/solution/lam/param", in);
+      system.readParam(in);
+      in.close();
+
+      system.readWBasis("in/solution/lam/w.bf");
+      DArray< DArray<double> > wFields_check;
+      wFields_check = system.wFields();
+
+      // Read input w-fields, iterate and output solution
+      system.iterate();
+      system.writeWBasis("out/testIterate1D_lam_soln_w.bf");
+      system.writeCBasis("out/testIterate1D_lam_soln_c.bf");
+
+      BFieldComparison comparison(1);
+      comparison.compare(wFields_check, system.wFields());
+      // setVerbose(1);
+      if (verbose() > 0) {
+         std::cout << "\n";
+         std::cout << "Max error = " << comparison.maxDiff() << "\n";
+      }
+      TEST_ASSERT(comparison.maxDiff() < 2.0E-6);
    }
 
    void testIterate2D_hex_rigid()
@@ -450,6 +483,99 @@ public:
 
    }
 
+   void testIterate3D_altGyr_flex()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testIterate3D_altGyr_flex.log");
+
+      System<3> system;
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
+
+      // Read parameter file
+      std::ifstream in;
+      openInputFile("in/triblock/altGyr/param", in);
+      system.readParam(in);
+      in.close();
+
+      // Input a converged solution from PSCF Fortran
+      system.readWBasis("in/triblock/altGyr/w.bf");
+
+      // Make copy of input fields for later comparison
+      DArray< DArray<double> > wFields_check;
+      wFields_check = system.wFields();
+
+      system.iterate();
+      system.writeWBasis("out/testIterate3D_altGyr_flex_w.bf");
+      system.writeCBasis("out/testIterate3D_altGyr_flex_c.bf");
+
+      // Compare w fields
+      BFieldComparison comparison(1);
+      comparison.compare(wFields_check, system.wFields());
+      // setVerbose(1);
+      if (verbose() > 0) {
+         std::cout << "\n";
+         std::cout << "Max error = " << comparison.maxDiff() << "\n";
+      }
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-6);
+
+      // Compare Helmoltz free energies
+      double fHelmholtz = system.fHelmholtz();
+      double fHelmholtzRef = 3.9642295402;     // from PSCF Fortran
+      double fDiff = fHelmholtz - fHelmholtzRef;
+      if (verbose() > 0) {
+         std::cout << "fHelmholtz diff = " << fDiff << "\n";
+      }
+      TEST_ASSERT(std::abs(fDiff) < 1.0E-7);
+
+      // Compare relaxed unit cell parameters
+      double cellParam = system.unitCell().parameter(0); 
+      double cellParamRef = 2.2348701424;     // from PSCF Fortran
+      double cellDiff = cellParam - cellParamRef;
+      if (verbose() > 0) {
+         std::cout << "Cell param diff = " << cellDiff << "\n";
+      }
+      TEST_ASSERT(std::abs(cellDiff) < 1.0E-7);
+   }
+
+   void testIterate3D_c15_1_flex()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testIterate3D_c15_1_flex.log");
+
+      System<3> system;
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
+
+      std::ifstream in;
+      openInputFile("in/diblock/c15_1/param.flex", in);
+      system.readParam(in);
+      in.close();
+
+      system.readWBasis("in/diblock/c15_1/w_ref.bf");
+
+      DArray< DArray<double> > wFields_check;
+      wFields_check = system.wFields();
+
+      system.readWBasis("in/diblock/c15_1/w_in.bf");
+      system.iterate();
+      system.writeWBasis("out/testIterate3D_c15_1_flex_w.bf");
+      system.writeWRGrid("out/testIterate3D_c15_1_flex_w.rf");
+      //system.writeCBasis("out/testIterate3D_c15_1_flex_c.bf");
+      //system.writeCRGrid("out/testIterate3D_c15_1_flex_c.rf");
+
+      BFieldComparison comparison(1);
+      comparison.compare(wFields_check, system.wFields());
+      // setVerbose(1);
+      if (verbose() > 0) {
+         std::cout << "\n";
+         std::cout << "Max error = " << comparison.maxDiff() << "\n";
+      }
+      TEST_ASSERT(comparison.maxDiff() < 5.0E-7);
+      // Maximum difference of 1.09288E-7 occurs for the second star
+
+   }
+
 };
 
 TEST_BEGIN(SystemTest)
@@ -461,11 +587,13 @@ TEST_ADD(SystemTest, testConversion3D_bcc)
 TEST_ADD(SystemTest, testCheckSymmetry3D_bcc)
 TEST_ADD(SystemTest, testIterate1D_lam_rigid)
 TEST_ADD(SystemTest, testIterate1D_lam_flex)
+TEST_ADD(SystemTest, testIterate1D_lam_soln)
 TEST_ADD(SystemTest, testIterate2D_hex_rigid)
 TEST_ADD(SystemTest, testIterate2D_hex_flex)
 TEST_ADD(SystemTest, testIterate3D_bcc_rigid)
 TEST_ADD(SystemTest, testIterate3D_bcc_flex)
-
+TEST_ADD(SystemTest, testIterate3D_altGyr_flex)
+TEST_ADD(SystemTest, testIterate3D_c15_1_flex)
 TEST_END(SystemTest)
 
 #endif
