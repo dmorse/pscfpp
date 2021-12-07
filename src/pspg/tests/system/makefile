@@ -29,4 +29,3 @@ clean:
 	$(MAKE) clean-outputs
 
 -include $(pspg_tests_system_OBJS:.o=.d)
--include $(pspg_tests_system_OBJS:.o=.d)

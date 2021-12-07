@@ -1,4 +1,4 @@
-pspg_tests_=pspg/tests/Test.ccu
+pspg_tests_=pspg/tests/Test.cu
 
 pspg_tests_SRCS=\
      $(addprefix $(SRC_DIR)/, $(pspg_tests_))
