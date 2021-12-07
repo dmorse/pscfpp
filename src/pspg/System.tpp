@@ -683,11 +683,8 @@ namespace Pspg
    void System<D>::basisToRGrid(const std::string & inFileName,
                                 const std::string & outFileName)
    {
-      std::cout<<"In System"<<std::endl;
       fieldIo().readFieldsBasis(inFileName, tmpFields_);
-      std::cout<<"Read field files"<<std::endl;
       fieldIo().convertBasisToRGrid(tmpFields_, tmpFieldsRGrid_);
-      std::cout<<"Converted to rgrid files"<<std::endl;
       fieldIo().writeFieldsRGrid(outFileName, tmpFieldsRGrid_);
    }
 

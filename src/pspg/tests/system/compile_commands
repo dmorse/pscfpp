@@ -1,3 +1,5 @@
+ls
+
 nvcc  --std=c++11 -O3 -arch=sm_35 -I/home/dorfmank/chawl029/GPU_pscfpp/compile31Oct2021/pscfpp/src -I /usr/include   -DUTIL_CXX11   -DPSPG_FFTW -DGPU_OUTER  -c -o /home/dorfmank/chawl029/GPU_pscfpp/compile31Oct2021/pscfpp/src/pspg/tests/system/Test.o /home/dorfmank/chawl029/GPU_pscfpp/compile31Oct2021/pscfpp/src/pspg/tests/system/Test.cu
 
 /home/dorfmank/chawl029/GPU_pscfpp/compile31Oct2021/pscfpp/bin/makeDepCuda -I/home/dorfmank/chawl029/GPU_pscfpp/compile31Oct2021/pscfpp/src -I /usr/include   -DUTIL_CXX11   -DPSPG_FFTW -DGPU_OUTER  -A/home/dorfmank/chawl029/GPU_pscfpp/compile31Oct2021/pscfpp/src/config.mk -A/home/dorfmank/chawl029/GPU_pscfpp/compile31Oct2021/pscfpp/src/util/config.mk -A/home/dorfmank/chawl029/GPU_pscfpp/compile31Oct2021/pscfpp/src/pscf/config.mk -A/home/dorfmank/chawl029/GPU_pscfpp/compile31Oct2021/pscfpp/src/pspg/config.mk -S/home/dorfmank/chawl029/GPU_pscfpp/compile31Oct2021/pscfpp/src -B/home/dorfmank/chawl029/GPU_pscfpp/compile31Oct2021/pscfpp/src /home/dorfmank/chawl029/GPU_pscfpp/compile31Oct2021/pscfpp/src/pspg/tests/system/Test.cu
