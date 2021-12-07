@@ -187,6 +187,7 @@ namespace Pspc
 
             // Successful completion (i.e., converged within tolerance)
             cleanUp();
+            std::cout << "\n Iterations = " << itr << std::endl;
             return 0;
 
          } else {

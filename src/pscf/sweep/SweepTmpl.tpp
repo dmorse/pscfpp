@@ -87,7 +87,6 @@ namespace Pscf {
 
             // Set a new contour variable value sNew
             sNew = s(0) + ds; 
-            std::cout << "s = " << sNew << std::endl;
             Log::file() << std::endl;
             Log::file() << "Attempt s = " << sNew << std::endl;
 
@@ -105,7 +104,6 @@ namespace Pscf {
 
             // Process success or failure
             if (error) {
-               std::cout << "\n Backtracking!!!\n" << std::endl;
 
                // Upon failure, reset state to last converged solution
                reset();
@@ -113,7 +111,7 @@ namespace Pscf {
                // Decrease ds by half
                ds *= 0.50;
                if (ds < 0.1*ds0) {
-                  UTIL_THROW("Step size too small in sweep");
+                  UTIL_THROW("Sweep backtracked due to failed iterations too many times.");
                }
 
             } else {
