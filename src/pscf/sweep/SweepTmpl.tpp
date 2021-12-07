@@ -23,13 +23,7 @@ namespace Pscf {
     : ns_(0),
       baseFileName_(),
       historyCapacity_(historyCapacity)
-   {
-      setClassName("SweepTmpl"); 
-      states_.allocate(historyCapacity_);
-      stateHistory_.allocate(historyCapacity_);
-      sHistory_.allocate(historyCapacity_);
-      c_.allocate(historyCapacity_);
-   }
+   {  setClassName("SweepTmpl"); }
 
    /*
    * Destructor.
@@ -46,6 +40,14 @@ namespace Pscf {
    {
       read<int>(in, "ns", ns_);
       read<std::string>(in, "baseFileName", baseFileName_);
+      readOptional<int>(in, "historyCapacity", historyCapacity_);
+      UTIL_CHECK(historyCapacity_ > 0);
+
+      // Allocate required arrays
+      states_.allocate(historyCapacity_);
+      stateHistory_.allocate(historyCapacity_);
+      sHistory_.allocate(historyCapacity_);
+      c_.allocate(historyCapacity_);
    }
 
    template <class State>

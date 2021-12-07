@@ -8,11 +8,17 @@ include src/config.mk
 all-cpu:
 	cd bld; $(MAKE) all-cpu
 
+all:
+	cd bld; $(MAKE) all
+
 fd1d:
 	cd bld; $(MAKE) fd1d
 
 pspc:
 	cd bld; $(MAKE) pspc
+
+pspg:
+	cd bld; $(MAKE) pspg
 
 
 # =========================================================================

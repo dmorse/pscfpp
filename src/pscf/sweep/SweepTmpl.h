@@ -57,18 +57,18 @@ namespace Pscf {
       *
       * The value of historyCapacity depends on the order of continuation,
       * e.g., 2 for 1st order or linear continuation or 3 for 2nd order
-      * or quadratic contination. It is passed to this template by a
-      * subclass via a protected constructor in order to allow different 
-      * derived classes to use different orders of continuation.
+      * or quadratic contination. The value passed to this constructor is
+      * a default value that may overridden by a optional parameter in
+      * the parameter file format implemented in readParam.
       *
-      * \param historyCapacity maximum number of stored states.
+      * \param historyCapacity default maximum number of stored states
       */
       SweepTmpl(int historyCapacity);
 
       /**
       * Get reference to a stored state, with i=0 being most recent.
       *
-      * Call state(i) to return the ith from most recent converged solution.
+      * Call state(i) to return the ith from most recent previous state.
       *
       * \param i history index (i=0 is most recent)
       */
@@ -81,10 +81,11 @@ namespace Pscf {
       /**
       * Get the value of s for a stored solution, with i = 0 most recent.
       *
-      * Call s(i) to return the value of the contour variable s for the 
-      * ith from most recent solution.
+      * This function returns the value of the contour variable s for a
+      * stored state. Call s(i) to get the value of s for the ith most
+      * recent state.
       *
-      * \param i history index (i=0 is most the recent converged state)
+      * \param i history index (i = 0 is most the recent converged state)
       */
       double s(int i) const
       {
@@ -95,7 +96,7 @@ namespace Pscf {
       /**
       * Get a coefficient of a previous state in a continuation.
       *
-      * An extrapolated trial values for each field or other variables 
+      * An extrapolated trial value for each field or other variables 
       * that describes a state is constructed as a linear superposition 
       * of corresponding values in previous states. Coefficient c(i) is
       * the coefficient of state state(i) in this linear superposition, 
@@ -104,10 +105,10 @@ namespace Pscf {
       * Valid values of i are in the range 0 <= i < historySize().
       *
       * The function setCoefficients(double sNew) method computes and 
-      * stores values coefficients c(0), ..., c(historySize-1) from values
-      * of sNew (the contour variable of the new state) and previous 
-      * values of s. These coefficient values can then be retrieved by 
-      * this function. 
+      * stores values coefficients c(0), ..., c(historySize-1) from 
+      * values of sNew (the contour variable of the new state) and 
+      * previous values of s. These coefficient values can then be 
+      * retrieved by this function. 
       *
       * \param i history index (i=0 is most recent)
       */

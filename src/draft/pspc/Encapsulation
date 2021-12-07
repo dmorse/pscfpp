@@ -47,12 +47,12 @@ Monomer Kuhn Length
 UnitCell
 --------
 
-   - Make System<D> return unitCell() as a const reference.
-
    - Create public functions System<D>::setUnitCell(FSArray const & )
      and System<D>::setUnitCell(UnitCell<D> const & ). These functions
      should call setUnitCell(...) functions for all blocks internally,
      and Basis<D>::update(....) internally.
+
+   - Make System<D> return unitCell() as a const reference.
 
 C-Fields
 --------
