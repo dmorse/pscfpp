@@ -1,8 +1,8 @@
 #-----------------------------------------------------------------------
 # The copy of this namespace-level makefile in the src/ directory is 
-# copied to the bld/serial and bld/parallel directories by the setup
-# script to create the copies in those directories. Only the copy in
-# the src/ directory is stored in the repository.
+# copied to the bld/ directory by the setup script to create the copy 
+# in that directories. Only the copy in the src/ directory is stored in 
+# the repository.
 #-----------------------------------------------------------------------
 # Include makefiles
 
@@ -11,7 +11,7 @@ include $(SRC_DIR_REL)/config.mk
 include $(SRC_DIR)/pspg/include.mk
 
 #-----------------------------------------------------------------------
-# Variable definition
+# Main program source file base names
 
 PSCF_PG1D=$(BLD_DIR)/pspg/pscf_pg1d
 PSCF_PG2D=$(BLD_DIR)/pspg/pscf_pg2d
@@ -31,12 +31,12 @@ run1:
 
 clean:
 	rm -f $(pspg_OBJS) $(pspg_OBJS:.o=.d)
+	rm -f $(pspg_LIB)
 	rm -f $(PSCF_PG1D).o $(PSCF_PG1D).d
 	rm -f $(PSCF_PG3D).o $(PSCF_PG2D).d
 	rm -f $(PSCF_PG3D).o $(PSCF_PG3D).d
-	rm -f $(pspg_LIB)
 	rm -f *.o *.d */*.o */*.d
-	#cd tests; $(MAKE) clean
+	cd tests; $(MAKE) clean
 
 veryclean:
 	$(MAKE) clean

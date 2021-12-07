@@ -119,7 +119,7 @@ cp src/util/tests/makefile bld/util/tests/makefile
 cp src/pscf/tests/makefile bld/pscf/tests/makefile
 cp src/fd1d/tests/makefile bld/fd1d/tests/makefile
 cp src/pspc/tests/makefile bld/pspc/tests/makefile
-#cp src/pspg/tests/makefile bld/pspg/tests/makefile
+cp src/pspg/tests/makefile bld/pspg/tests/makefile
 
 # Copy configure script
 cp src/configure bld/configure
