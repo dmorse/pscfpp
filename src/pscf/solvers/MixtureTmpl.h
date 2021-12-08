@@ -62,11 +62,11 @@ namespace Pscf
       //@{
  
       /**
-      * Get a Monomer type descriptor.
+      * Get a Monomer type descriptor (const reference).
       *
       * \param id integer monomer type index (0 <= id < nMonomer)
       */
-      Monomer& monomer(int id);
+      Monomer const & monomer(int id) const;
 
       /**
       * Get a polymer object.
@@ -102,6 +102,15 @@ namespace Pscf
       int nSolvent() const;
 
       //@}
+
+   protected:
+
+      /**
+      * Get a Monomer type descriptor (non-const reference).
+      *
+      * \param id integer monomer type index (0 <= id < nMonomer)
+      */
+      Monomer& monomer(int id);
 
    private:
 
@@ -154,6 +163,10 @@ namespace Pscf
    template <class TP, class TS>
    inline int MixtureTmpl<TP,TS>::nSolvent() const
    {  return nSolvent_; }
+
+   template <class TP, class TS>
+   inline Monomer const & MixtureTmpl<TP,TS>::monomer(int id) const
+   {  return monomers_[id]; }
 
    template <class TP, class TS>
    inline Monomer& MixtureTmpl<TP,TS>::monomer(int id)

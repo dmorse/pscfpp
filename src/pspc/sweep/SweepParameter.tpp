@@ -204,6 +204,9 @@ namespace Pspc {
          systemPtr_->interaction().setChi(id(0), id(1), newVal);
       } else 
       if (type_ == Kuhn) {
+         systemPtr_->mixture().setKuhn(id(0), newVal);
+
+         #if 0
          Pscf::Pspc::Mixture<D>& mixture = systemPtr_->mixture();
 
          // Set new kuhn length for this monomer
@@ -219,6 +222,7 @@ namespace Pspc {
                }
             }
          }
+         #endif
 
       } else
       if (type_ == Phi_Polymer) {

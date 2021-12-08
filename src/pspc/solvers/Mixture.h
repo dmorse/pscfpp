@@ -120,6 +120,18 @@ namespace Pspc
       void setupUnitCell(const UnitCell<D>& unitCell);
 
       /**
+      * Reset statistical segment length for one monomer type.
+      * 
+      * This function resets the kuhn or statistical segment length value
+      * for a monomer type, and updates the associcated value in every 
+      * block of that monomer type.
+      *
+      * \param monomerId  monomer type id
+      * \param kuhn  new value for the statistical segment length
+      */
+      void setKuhn(int monomerId, double kuhn);
+
+      /**
       * Compute partition functions and concentrations.
       *
       * This function calls the compute function of every molecular
@@ -170,6 +182,7 @@ namespace Pspc
       using MixtureTmpl< Polymer<D>, Solvent<D> >::nMonomer;
       using MixtureTmpl< Polymer<D>, Solvent<D> >::nPolymer;
       using MixtureTmpl< Polymer<D>, Solvent<D> >::nSolvent;
+      using MixtureTmpl< Polymer<D>, Solvent<D> >::monomer;
       using MixtureTmpl< Polymer<D>, Solvent<D> >::polymer;
       using MixtureTmpl< Polymer<D>, Solvent<D> >::solvent;
 
