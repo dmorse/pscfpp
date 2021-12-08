@@ -160,9 +160,6 @@ namespace Pspc {
          }
    }
 
-   // template <int D>
-   // SweepParameter<D>::
-
    template <int D>
    double SweepParameter<D>::get_()
    {
@@ -205,25 +202,6 @@ namespace Pspc {
       } else 
       if (type_ == Kuhn) {
          systemPtr_->mixture().setKuhn(id(0), newVal);
-
-         #if 0
-         Pscf::Pspc::Mixture<D>& mixture = systemPtr_->mixture();
-
-         // Set new kuhn length for this monomer
-         mixture.monomer(id(0)).setKuhn(newVal);
-
-         // Update kuhn length for all blocks of this monomer type
-         Pscf::Pspc::Block<D>* blockPtr;
-         for (int i=0; i < mixture.nPolymer(); ++i) {
-            for (int j=0; j < mixture.polymer(i).nBlock(); ++j) {
-               blockPtr = &(mixture.polymer(i).block(j));
-               if (id(0) == blockPtr->monomerId()) {
-                  blockPtr->setKuhn(newVal);
-               }
-            }
-         }
-         #endif
-
       } else
       if (type_ == Phi_Polymer) {
          systemPtr_->mixture().polymer(id(0)).setPhi(newVal);
