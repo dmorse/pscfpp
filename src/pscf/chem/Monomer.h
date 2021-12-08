@@ -43,12 +43,12 @@ namespace Pscf
       /**
       * Statistical segment length (random walk step size).
       */
-      double step() const;
+      double kuhn() const;
 
       /**
       * Set statistical segment length. 
       */
-      void setStep(double step);
+      void setKuhn(double kuhn);
 
       /**
       * Monomer name string.
@@ -66,8 +66,13 @@ namespace Pscf
 
    private:
 
+      // Integer identifier
       int  id_;
-      double  step_;
+
+      // Statistical segment length / kuhn length
+      double  kuhn_;
+
+      // Species name string
       std::string  name_;
 
    //friends
@@ -109,14 +114,16 @@ namespace Pscf
    /*
    * Statistical segment length.
    */
-   inline double Monomer::step() const
-   {  return step_; }
+   inline double Monomer::kuhn() const
+   {  return kuhn_; }
 
    /*
    * Set statistical segment length.
+   *  
+   *  \param kuhn  new value for statistical segement length
    */
-   inline void Monomer::setStep(double step)
-   {  step_ = step; }
+   inline void Monomer::setKuhn(double kuhn)
+   {  kuhn_ = kuhn; }
 
    /*
    * Monomer name string.
@@ -131,7 +138,7 @@ namespace Pscf
    void Monomer::serialize(Archive ar, const unsigned int version)
    {
       ar & id_;
-      ar & step_;
+      ar & kuhn_;
       ar & name_;
    }
 

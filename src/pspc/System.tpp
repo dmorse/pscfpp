@@ -341,9 +341,9 @@ namespace Pspc
             }
             // Attempt iteration to convergence
             int fail = iterate();
-            //if (fail) {
-            //   readNext = false;
-            //}
+            if (fail) {
+               readNext = false;
+            }
          } else
          if (command == "SWEEP") {
             // After iterating and converging, sweep.

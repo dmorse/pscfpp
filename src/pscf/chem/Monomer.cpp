@@ -12,7 +12,7 @@ namespace Pscf
 
    Monomer::Monomer()
     : id_(-1),
-      step_(0.0),
+      kuhn_(0.0),
       name_()
    {}
 
@@ -26,7 +26,7 @@ namespace Pscf
    {
       // in >> monomer.id_;
       in >> monomer.name_;
-      in >> monomer.step_;
+      in >> monomer.kuhn_;
       return in;
    }
    
@@ -41,7 +41,7 @@ namespace Pscf
       out.setf(std::ios::scientific);
       out.width(15);
       out.precision(8);
-      out << monomer.step_;
+      out << monomer.kuhn_;
       return out;
    }
 

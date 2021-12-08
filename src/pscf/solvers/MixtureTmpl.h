@@ -234,7 +234,7 @@ namespace Pscf
          for (int i = 0; i < nPolymer_; ++i) {
             for (int j = 0; j < polymer(i).nBlock(); ++j) {
                monomerId = polymer(i).block(j).monomerId();
-               kuhn = monomer(monomerId).step();
+               kuhn = monomer(monomerId).kuhn();
                polymer(i).block(j).setKuhn(kuhn);
             }
          }

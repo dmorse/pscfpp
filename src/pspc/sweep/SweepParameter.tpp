@@ -173,7 +173,7 @@ namespace Pspc {
          return systemPtr_->interaction().chi(id(0),id(1));
       } else 
       if (type_ == Kuhn) {
-         return systemPtr_->mixture().monomer(id(0)).step();
+         return systemPtr_->mixture().monomer(id(0)).kuhn();
       } else 
       if (type_ == Phi_Polymer) {
          return systemPtr_->mixture().polymer(id(0)).phi();
@@ -214,7 +214,7 @@ namespace Pspc {
          Pscf::Pspc::Mixture<D>& mixture = systemPtr_->mixture();
 
          // Set new kuhn length for this monomer
-         mixture.monomer(id(0)).setStep(newVal);
+         mixture.monomer(id(0)).setKuhn(newVal);
 
          // Update kuhn length for all blocks of this monomer type
          Pscf::Pspc::Block<D>* blockPtr;

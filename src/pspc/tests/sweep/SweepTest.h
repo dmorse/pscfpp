@@ -131,7 +131,7 @@ public:
       // Manually check equality for each one
       sysval[0] = system.mixture().polymer(0).block(0).length();
       sysval[1] = system.interaction().chi(0,1);
-      sysval[2] = system.mixture().monomer(0).step();
+      sysval[2] = system.mixture().monomer(0).kuhn();
       sysval[3] = system.mixture().polymer(0).phi();
       for (int i = 0; i < 4; ++i) {
          TEST_ASSERT(sysval[i] == paramval[i]);
@@ -177,7 +177,7 @@ public:
       // Manually check equality for each one
       sysval[0] = system.mixture().polymer(0).block(0).length();
       sysval[1] = system.interaction().chi(0,1);
-      sysval[2] = system.mixture().monomer(0).step();
+      sysval[2] = system.mixture().monomer(0).kuhn();
       sysval[3] = system.mixture().polymer(0).phi();
       for (int i = 0; i < 4; ++i) {
          TEST_ASSERT(sysval[i]==paramval[i]);
