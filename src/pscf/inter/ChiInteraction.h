@@ -38,11 +38,18 @@ namespace Pscf {
       /**
       * Read chi parameters.
       *
-      * Must be called after Interaction::setNMonomer.
-      *
-      * \param in  input parameter stream
+      * Must be called after setNMonomer.
       */
       virtual void readParameters(std::istream& in);
+
+      /**
+      * Change one element of the chi matrix.
+      *
+      * \param i row index
+      * \param j column index
+      * \param chi  input value of chi
+      */
+      void setChi(int i, int j, double chi);
 
       /**
       * Compute excess Helmholtz free energy per monomer.
@@ -80,7 +87,8 @@ namespace Pscf {
       * \param xi Langrange multiplier pressure (output)
       */
       virtual 
-      void computeXi(Array<double> const & w, double& xi) const;
+      void computeXi(Array<double> const & w, double& xi)
+      const;
 
       /**
       * Compute second derivatives of free energy.
@@ -91,28 +99,12 @@ namespace Pscf {
       * For this Flory-Huggins chi parameter model, this is simply 
       * given by the chi matrix dWdC(i,j) = chi(i, j).
       *
-      * \param c array of concentrations, for each type (input)
-      * \param dWdC matrix of derivatives (output) 
+      * \param c  array of concentrations, for each type (input)
+      * \param dWdC  matrix of derivatives (output) 
       */
       virtual 
       void computeDwDc(Array<double> const & c, Matrix<double>& dWdC)
       const;
-
-      /**
-      * Compute the inverse of the chi matrix, along with the
-      * corresponding idempotent matrix and sum of all elements.
-      * Must be called after making any changes to the chi matrix.
-      */
-      void updateMembers();
-
-      /**
-      * Change one element of the chi matrix.
-      *
-      * \param i row index
-      * \param j column index
-      * \param chi  input value of chi
-      */
-      void setChi(int i, int j, double chi);
 
       /**
       * Return one element of the chi matrix.
@@ -138,20 +130,32 @@ namespace Pscf {
       */  
       double idemp(int i, int j) const; 
 
+      /** 
+      * Return sum of elements of chiInverse.
+      */  
       double sum_inv() const;
 
    private:
 
-      /// Matrix of Flory-Huggin chi interaction parameters.
+      // Symmetric matrix of interaction parameters.
       DMatrix<double> chi_;
 
-      /// Linear algebraic inverse of the chi_ matrix.
+      // Inverse of matrix chi_.
       DMatrix<double> chiInverse_;
 
-      /// Idempotent matrix used in calculating field residuals.
+      // Idempotent matrix used in residual in formulation
+      // of Arora et al. 
       DMatrix<double> idemp_;
 
+      // Sum of elements of matrix chiInverse_
       double sum_inv_;
+
+      /**
+      * Compute the inverse of the chi matrix, along with the
+      * corresponding idempotent matrix and sum of all elements.
+      * Must be called after making any changes to the chi matrix.
+      */
+      void updateMembers();
 
    };
 

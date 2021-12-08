@@ -31,16 +31,9 @@ namespace Pscf {
    void ChiInteraction::readParameters(std::istream& in)
    {
       UTIL_CHECK(nMonomer() > 0);
-
-      // Allocate chi_ and initialize to zero
       chi_.allocate(nMonomer(), nMonomer());
-      for (int i = 0; i < nMonomer(); ++i) {
-         for (int j = 0; i < nMonomer(); ++i) {
-            chi_(i, j) = 0.0;
-         }
-      }
-
-      // Read nonzero chi parameters
+      chiInverse_.allocate(nMonomer(), nMonomer());
+      idemp_.allocate(nMonomer(), nMonomer());
       readDSymmMatrix(in, "chi", chi_, nMonomer());
 
       // Compute relevant AM iterator quantities.
@@ -48,26 +41,12 @@ namespace Pscf {
 
    }
 
-   void ChiInteraction::setChi(int i, int j, double chi)
-   {  
-      chi_(i,j) =  chi; 
-      if (i!=j) {
-         chi_(j,i) = chi;
-      }
-      // compute relevant AM iterator quantities. 
-      updateMembers();
-   }
-
    void ChiInteraction::updateMembers()
    {
-      if (!chiInverse_.isAllocated()) {
-         chiInverse_.allocate(nMonomer(), nMonomer());
-      }
-      if (!idemp_.isAllocated()) {
-         idemp_.allocate(nMonomer(), nMonomer());
-      }
+      UTIL_CHECK(chi_.isAllocated());
+      UTIL_CHECK(chiInverse_.isAllocated());
+      UTIL_CHECK(idemp_.isAllocated());
 
-      // Calculate inverse chi matrix
       if (nMonomer() == 2) {
          double det = chi_(0,0)*chi_(1, 1) - chi_(0,1)*chi_(1,0);
          double norm = chi_(0,0)*chi_(0, 0) + chi_(1,1)*chi_(1,1)
@@ -87,27 +66,46 @@ namespace Pscf {
          solver.inverse(chiInverse_);
       }
 
-      // Calculate idempotent matrix
-      double sum_inv_ = 0; // sum of all elements in inverse chi matrix
       int i, j, k;
 
       for (i = 0; i < nMonomer(); ++i) {
-         idemp_(0, i) = 0;
          for (j = 0; j < nMonomer(); ++j) {
-            idemp_(0, i) -= chiInverse_(j, i);
-         }
-         sum_inv_ -= idemp_(0, i);
-         for (k = 0; k < nMonomer(); ++k) { //row
-            idemp_(k, i) = idemp_(0, i);
+            idemp_(0,i) = 0.0;
          }
       }
-      // normalization
+
+      double sum = 0.0;
+      for (i = 0; i < nMonomer(); ++i) {
+         idemp_(0,i) = 0.0;
+         for (j = 0; j < nMonomer(); ++j) {
+            idemp_(0,i) -= chiInverse_(j,i);
+         }
+         sum -= idemp_(0,i);
+         for (k = 0; k < nMonomer(); ++k) { //row
+            idemp_(k,i) = idemp_(0,i);
+         }
+      }
+
       for (i = 0; i < nMonomer(); ++i) { //row
          for (j = 0; j < nMonomer(); ++j) { //coloumn
-            idemp_(i, j) /= sum_inv_;
+            idemp_(i,j) /= sum;
          }
-         idemp_(i, i) += 1.0 ;
+         idemp_(i,i) += 1.0 ;
       }
+      
+      sum_inv_ = sum;
+
+   }
+
+   void ChiInteraction::setChi(int i, int j, double chi)
+   {  
+      chi_(i,j) =  chi; 
+      if (i != j) {
+         chi_(j,i) = chi;
+      }
+
+      // Compute relevant AM iterator quantities. 
+      updateMembers();
    }
 
    /*
@@ -149,8 +147,16 @@ namespace Pscf {
                             Array<double>& c, double& xi)
    const
    {
-      computeXi(w, xi);
+      double sum1 = 0.0;
+      double sum2 = 0.0;
       int i, j;
+      for (i = 0; i < nMonomer(); ++i) {
+         for (j = 0; j < nMonomer(); ++j) {
+            sum1 += chiInverse_(i, j)*w[j];
+            sum2 += chiInverse_(i, j);
+         }
+      }
+      xi = (sum1 - 1.0)/sum2;
       for (i = 0; i < nMonomer(); ++i) {
          c[i] = 0;
          for (j = 0; j < nMonomer(); ++j) {
