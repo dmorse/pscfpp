@@ -18,7 +18,7 @@ namespace Pscf
       monomerId_(-1),
       length_(-1.0),
       vertexIds_(),
-      polymerType_(PolymerType::Linear)
+      polymerType_(PolymerType::Branched)
    {}
 
    /*
