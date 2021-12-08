@@ -232,8 +232,7 @@ public:
       DArray< DArray<double> > wFields_check;
       wFields_check = system.wFields();
 
-      // Read w-fields, iterate and output solution
-      system.readWBasis("in/diblock/lam/omega.in");
+      // Iterate and output solution
       system.iterate();
       system.writeWBasis("out/testIterate1D_lam_rigid_w.bf");
       system.writeCBasis("out/testIterate1D_lam_rigid_c.bf");
@@ -241,6 +240,7 @@ public:
       // Compare solution to original
       BFieldComparison comparison(1);
       comparison.compare(wFields_check, system.wFields());
+      setVerbose(1);
       if (verbose() > 0) {
          std::cout << "\n";
          std::cout << "Max error = " << comparison.maxDiff() << "\n";
@@ -342,8 +342,7 @@ public:
       DArray< DArray<double> > wFields_check;
       wFields_check = system.wFields();
 
-      // Read initial guess, iterate, output solution
-      system.readWBasis("in/diblock/hex/omega.in");
+      // Iterate, output solution
       system.iterate();
       system.writeWBasis("out/testIterate2D_hex_rigid_w.bf");
       system.writeCBasis("out/testIterate2D_hex_rigid_c.bf");
@@ -419,12 +418,14 @@ public:
       system.readParam(in);
       in.close();
 
+      // Read initial guess
       system.readWBasis("in/diblock/bcc/omega.ref");
 
+      // Save copy of initial fields
       DArray< DArray<double> > wFields_check;
       wFields_check = system.wFields();
 
-      system.readWBasis("in/diblock/bcc/omega.in");
+      // Iterate and output solution
       system.iterate();
       system.writeWBasis("out/testIterate3D_bcc_rigid_w.bf");
       system.writeCBasis("out/testIterate3D_bcc_rigid_c.bf");

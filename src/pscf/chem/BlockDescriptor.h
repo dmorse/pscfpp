@@ -141,7 +141,8 @@ namespace Pscf
       std::istream& operator >> (std::istream& in, BlockDescriptor &block);
 
       friend 
-      std::ostream& operator << (std::ostream& out, const BlockDescriptor &block);
+      std::ostream& operator << (std::ostream& out, 
+                                 const BlockDescriptor &block);
 
    };
 

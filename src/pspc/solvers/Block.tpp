@@ -32,7 +32,9 @@ namespace Pspc {
     : meshPtr_(0),
       kMeshDimensions_(0),
       ds_(0.0),
-      ns_(0)
+      ns_(0),
+      isAllocated_(false),
+      hasExpKsq_(false)
    {
       propagator(0).setBlock(*this);
       propagator(1).setBlock(*this);
@@ -48,11 +50,10 @@ namespace Pspc {
    template <int D>
    void Block<D>::setDiscretization(double ds, const Mesh<D>& mesh)
    {
+      // Preconditions
       UTIL_CHECK(mesh.size() > 1);
       UTIL_CHECK(ds > 0.0);
-
-      // Set association to mesh
-      meshPtr_ = &mesh;
+      UTIL_CHECK(!isAllocated_);
 
       // Set contour length discretization
       int tempNs;
@@ -62,6 +63,9 @@ namespace Pspc {
       }
       ns_ = 2*tempNs + 1;
       ds_ = length()/double(ns_-1);
+
+      // Set association to mesh
+      meshPtr_ = &mesh;
 
       fft_.setup(mesh.dimensions());
 
@@ -94,11 +98,15 @@ namespace Pspc {
       // Allocate work array for stress calculation
       dGsq_.allocate(kSize_, 6);
 
-      // Allocate memory for solutions to MDE
-      propagator(0).allocate(ns_, mesh);
-      propagator(1).allocate(ns_, mesh);
+      // Allocate block concentration field
       cField().allocate(mesh.dimensions());
 
+      // Allocate memory for solutions to MDE (requires ns_)
+      propagator(0).allocate(ns_, mesh);
+      propagator(1).allocate(ns_, mesh);
+      
+      isAllocated_ = true;
+      hasExpKsq_ = false;
    }
 
    /*
@@ -108,28 +116,39 @@ namespace Pspc {
    void Block<D>::setLength(double length)
    {
       BlockDescriptor::setLength(length);
-      if (ns_ > 1) {
+      if (isAllocated_) {
+         UTIL_CHECK(ns_ > 1); 
          ds_ = length/double(ns_ - 1);
       }
-      // Note that ns_ is initialized to zero and that ns_ and ds_
-      // are first assigned values in Block<D>::setDiscretiziation.
-      // The value of ds_ will thus be re-computed here only if this
-      // function is called after setDiscretization, as in a sweep.
+      hasExpKsq_ = false;
+   }
+
+   /*
+   * Set or reset the the block length.
+   */
+   template <int D>
+   void Block<D>::setKuhn(double kuhn)
+   {
+      BlockTmpl< Propagator<D> >::setKuhn(kuhn);
+      hasExpKsq_ = false;
    }
 
    /*
    * Setup data that depend on the unit cell parameters.
    */
    template <int D>
-   void
-   Block<D>::setupUnitCell(const UnitCell<D>& unitCell)
+   void Block<D>::setupUnitCell(const UnitCell<D>& unitCell)
    {
-
-      // Set association to unitCell
       unitCellPtr_ = &unitCell;
+      hasExpKsq_ = false;
+   }
+
+   template <int D>
+   void Block<D>::computeExpKsq()
+   {
+      UTIL_CHECK(isAllocated_);
 
       MeshIterator<D> iter;
-      // std::cout << "kDimensions = " << kMeshDimensions_ << std::endl;
       iter.setDimensions(kMeshDimensions_);
       IntVec<D> G, Gmin;
       double Gsq;
@@ -138,12 +157,13 @@ namespace Pspc {
       for (iter.begin(); !iter.atEnd(); ++iter) {
          i = iter.rank();
          G = iter.position();
-         Gmin = shiftToMinimum(G, mesh().dimensions(), unitCell);
-         Gsq = unitCell.ksq(Gmin);
+         Gmin = shiftToMinimum(G, mesh().dimensions(), unitCell());
+         Gsq = unitCell().ksq(Gmin);
          expKsq_[i] = exp(Gsq*factor);
          expKsq2_[i] = exp(Gsq*factor*0.5);
       }
 
+      hasExpKsq_ = true;
    }
 
    /*
@@ -156,13 +176,19 @@ namespace Pspc {
       // Preconditions
       int nx = mesh().size();
       UTIL_CHECK(nx > 0);
+      UTIL_CHECK(isAllocated_);
 
-      // Populate expW_
-      int i;
-      // std::cout << std::endl;
-      for (i = 0; i < nx; ++i) {
+      // Compute expW arrays
+      // double factor  = -0.5*ds_;
+      // double factor2 = 0.5*factor;
+      for (int i = 0; i < nx; ++i) {
          expW_[i] = exp(-0.5*w[i]*ds_);
          expW2_[i] = exp(-0.5*0.5*w[i]*ds_);
+      }
+
+      // Compute expKsq arrays if necessary
+      if (!hasExpKsq_) {
+         computeExpKsq();
       }
 
    }
@@ -174,6 +200,7 @@ namespace Pspc {
    void Block<D>::computeConcentration(double prefactor)
    {
       // Preconditions
+      UTIL_CHECK(isAllocated_);
       int nx = mesh().size();
       UTIL_CHECK(nx > 0);
       UTIL_CHECK(ns_ > 0);
@@ -243,7 +270,7 @@ namespace Pspc {
       for (int i = 0; i < D; ++i) {
            kSize_ *= kMeshDimensions_[i];
       }
-      r = unitCellPtr_->nParameter();
+      r = unitCell().nParameter();
       c = kSize_;
 
       FSArray<double, 6> dQ;
@@ -263,34 +290,34 @@ namespace Pspc {
       // Evaluate unnormalized integral
       for (int j = 0; j < ns_ ; ++j) {
 
-           qr_ = p0.q(j);
-           fft_.forwardTransform(qr_, qk_);
+         qr_ = p0.q(j);
+         fft_.forwardTransform(qr_, qk_);
 
-           qr2_ = p1.q(ns_ - 1 - j);
-           fft_.forwardTransform(qr2_, qk2_);
+         qr2_ = p1.q(ns_ - 1 - j);
+         fft_.forwardTransform(qr2_, qk2_);
 
-           dels = ds_;
+         dels = ds_;
 
-           if (j != 0 && j != ns_ - 1) {
-              if (j % 2 == 0) {
-                 dels = dels*2.0;
-              } else {
-                 dels = dels*4.0;
-              }
-           }
+         if (j != 0 && j != ns_ - 1) {
+            if (j % 2 == 0) {
+               dels = dels*2.0;
+            } else {
+               dels = dels*4.0;
+            }
+         }
 
-           for (int n = 0; n < r ; ++n) {
-              increment = 0;
+         for (int n = 0; n < r ; ++n) {
+            increment = 0.0;
 
-              for (m = 0; m < c ; ++m) {
-                 double prod = 0;
-                 prod = (qk2_[m][0] * qk_[m][0]) + (qk2_[m][1] * qk_[m][1]);
-                 prod *= dGsq_(m,n);
-                 increment += prod;
-              }
-              increment = (increment * kuhn() * kuhn() * dels)/normal;
-              dQ [n] = dQ[n]-increment;
-           }
+            for (m = 0; m < c ; ++m) {
+               double prod = 0;
+               prod = (qk2_[m][0] * qk_[m][0]) + (qk2_[m][1] * qk_[m][1]);
+               prod *= dGsq_(m,n);
+               increment += prod;
+            }
+            increment = (increment * kuhn() * kuhn() * dels)/normal;
+            dQ[n] = dQ[n] - increment;
+         }
       }
 
       // Normalize
@@ -301,7 +328,7 @@ namespace Pspc {
    }
 
    /*
-   * Compute dGsq_
+   * Compute dGsq_ array (derivatives of Gsq for all wavevectors)
    */
    template <int D>
    void Block<D>::computedGsq()
@@ -312,11 +339,11 @@ namespace Pspc {
       MeshIterator<D> iter;
       iter.setDimensions(kMeshDimensions_);
 
-      for (int n = 0; n < unitCellPtr_->nParameter() ; ++n) {
+      for (int n = 0; n < unitCell().nParameter() ; ++n) {
          for (iter.begin(); !iter.atEnd(); ++iter) {
             temp = iter.position();
-            vec = shiftToMinimum(temp, mesh().dimensions(), *unitCellPtr_);
-            dGsq_(iter.rank(), n) = unitCellPtr_->dksq(vec, n);
+            vec = shiftToMinimum(temp, mesh().dimensions(), unitCell());
+            dGsq_(iter.rank(), n) = unitCell().dksq(vec, n);
             for (int p = 0; p < D; ++p) {
                if (temp [p] != 0) {
                   Partner[p] = mesh().dimensions()[p] - temp[p];
@@ -337,17 +364,21 @@ namespace Pspc {
    template <int D>
    void Block<D>::step(QField const & q, QField& qNew)
    {
-      // Check real-space mesh sizes`
+      // Preconditions
+      UTIL_CHECK(isAllocated_);
+      UTIL_CHECK(hasExpKsq_);
+
+      // Check real space mesh sizes
       int nx = mesh().size();
       UTIL_CHECK(nx > 0);
       UTIL_CHECK(q.isAllocated());
-      UTIL_CHECK(qNew.isAllocated());
       UTIL_CHECK(q.capacity() == nx);
+      UTIL_CHECK(qNew.isAllocated());
       UTIL_CHECK(qNew.capacity() == nx);
       UTIL_CHECK(qr_.capacity() == nx);
       UTIL_CHECK(expW_.capacity() == nx);
 
-      // Fourier-space mesh sizes
+      // Check Fourier-space mesh sizes
       int nk = qk_.capacity();
       UTIL_CHECK(expKsq_.capacity() == nk);
 

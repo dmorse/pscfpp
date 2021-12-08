@@ -19,18 +19,18 @@ namespace Pspc {
    /**
    * Descriptor and solver for one polymer species.
    *
-   * The phi() and mu() accessor functions, which are inherited 
-   * from PolymerTmp< Block<D> >, return the value of phi (spatial 
-   * average volume fraction of a species) or mu (chemical
-   * potential) computed in the last call of the compute function.
-   * If the ensemble for this species is closed, phi is read from 
-   * the parameter file and mu is computed. If the ensemble is
-   * open, mu is read from the parameter file and phi is computed.
+   * The phi() and mu() accessor functions, which are inherited from
+   * PolymerTmp< Block<D> >, return the value of phi (spatial average
+   * volume fraction of a species) or mu (species chemical potential)
+   * computed in the most recent call of the compute() function.
+   * If the ensemble for this species is closed, phi is read from the
+   * parameter file and mu is computed. If the ensemble is open, mu
+   * mu is read from the parameter file and phi is computed.
    *
    * The block concentrations stored in the constituent Block<D> objects
    * contain the block concentrations (i.e., volume fractions) computed 
    * in the most recent call of the compute function. These can be 
-   * accessed using the Block<D>::cField()
+   * accessed using the Block<D>::cField() function.
    *
    * \ingroup Pspc_Solver_Module
    */
@@ -63,16 +63,28 @@ namespace Pspc {
       /**
       * Set value of phi (volume fraction), if ensemble is closed.
       *
+      * An initial value for phi or mu is normally read from a parameter
+      * file. This function is provided for use in a sweep or other
+      * procedures in which phi for a species with a closed enesmble 
+      * is modified after initialization. It is an error to call setPhi
+      * for a polymer species with an open ensemble.
+      *
       * \throw Exception if ensemble is open
-      * \param phi  desired volume fraction for this species
+      * \param phi  new volume fraction value for this species
       */
       void setPhi(double phi);
 
       /**
       * Set value of mu (chemical potential), if ensemble is closed.
       *
-      * \throw Exception if ensemble is open
-      * \param mu  desired chemical potential for this species
+      * An initial value for phi or mu is normally read from a parameter
+      * file. This function is provided for use in a sweep or other
+      * procedures in which mu for a species with an open enesmble is
+      *  modified after initialization. It is an error to call setMu
+      * for a polymer species with a closed ensemble.
+      *
+      * \throw Exception if ensemble is closed
+      * \param mu  new chemical potential value for this species
       */
       void setMu(double mu);
 
@@ -107,7 +119,7 @@ namespace Pspc {
       *
       * This function computes contributions from this species to the 
       * derivatives of free energy per monomer with respect to unit cell 
-      * parameters and stores the values.
+      * parameters and stores the values. 
       */
       void computeStress();
 
@@ -115,8 +127,8 @@ namespace Pspc {
       * Get derivative of free energy w/ respect to a unit cell parameter.
       *  
       * This function gets the precomputed value of the derivative of
-      * free energy per monomer with respect to unit cell parameter n.
-      * The value must have been pre-computed by calling computeStress().
+      * free energy per monomer with respect to unit cell parameter n,
+      * as computed by the most recent call to computeStress().
       *  
       * \param n index of unit cell parameter
       */

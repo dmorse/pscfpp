@@ -88,11 +88,18 @@ namespace Pspc {
       void setupUnitCell(const UnitCell<D>& unitCell);
 
       /**
-      * Set block length.
+      * Set or reset block length.
       * 
       * \param length  new block length
       */
       void setLength(double length);
+
+      /**
+      * Set or reset monomer statistical segment length.
+      * 
+      * \param kuhn  new monomer statistical segment length.
+      */
+      void setKuhn(double kuhn);
 
       /**
       * Set solver for this block.
@@ -123,8 +130,8 @@ namespace Pspc {
       * is integrated over the domain 0 < s < length(), where length() 
       * is the block length. The "prefactor" parameter should be set to 
       * prefactor = phi/(L q), where phi is the overall volume fraction 
-      * for this molecular species, L is the number of monomers in the 
-      * species, and q is the species partition function, i.e., the 
+      * for this molecular species, L is the total number of monomers in 
+      * the species, and q is the species partition function, i.e., the 
       * spatial average of q(r,L). This function is called by 
       * Polymer<D>::compute().
       *
@@ -161,6 +168,9 @@ namespace Pspc {
       /**
       * Get derivative of free energy w/ respect to unit cell parameter n.
       *
+      * This function returns a value computed by a previous call to the
+      * computeStress function.
+      *
       * \param n index of unit cell parameter
       */
       double stress(int n) const;
@@ -187,11 +197,6 @@ namespace Pspc {
 
       /// Matrix to store derivatives of plane waves 
       DMatrix<double> dGsq_;
-
-      /**
-      * Compute dGsq_.
-      */
-      void computedGsq();
 
       /// Stress arising from this block
       FSArray<double, 6> stress_;
@@ -229,10 +234,10 @@ namespace Pspc {
       /// Pointer to associated Mesh<D> object.
       Mesh<D> const* meshPtr_;
 
-      /// Pointer to associated UnitCell<D>
+      /// Pointer to associated UnitCell<D> object.
       UnitCell<D> const* unitCellPtr_;
 
-      /// Dimensions of wavevector mesh in real-to-complex transform
+      /// Dimensions of wavevector mesh in real-to-complex transform.
       IntVec<D> kMeshDimensions_;
 
       /// Contour length step size.
@@ -241,10 +246,27 @@ namespace Pspc {
       /// Number of contour length steps = # grid points - 1.
       int ns_;
 
+      /// Have arrays been allocated in setDiscretization ?
+      bool isAllocated_;
+
+      /// Are expKsq_ arrays up to date ? (initialize false)
+      bool hasExpKsq_;
+
       /** 
       * Access associated UnitCell<D> as reference.
       */  
-      UnitCell<D> const & unitCell() const { return *unitCellPtr_; }
+      UnitCell<D> const & unitCell() const 
+      {  return *unitCellPtr_; }
+
+      /**
+      * Compute dGsq_ matrix.
+      */
+      void computedGsq();
+
+      /**
+      * Compute expKSq_ arrays.
+      */
+      void computeExpKsq();
 
    };
 
@@ -274,10 +296,12 @@ namespace Pspc {
    }
 
    #ifndef PSPC_BLOCK_TPP
+   // Suppresse implicit instantiation
    extern template class Block<1>;
    extern template class Block<2>;
    extern template class Block<3>;
    #endif
+
 }
 }
 #endif

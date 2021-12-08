@@ -16,9 +16,9 @@ namespace Pscf
    BlockDescriptor::BlockDescriptor()
     : id_(-1),
       monomerId_(-1),
-      length_(0.0),
+      length_(-1.0),
       vertexIds_(),
-      polymerType_(PolymerType::Branched)
+      polymerType_(PolymerType::Linear)
    {}
 
    /*

@@ -198,17 +198,10 @@ namespace Pspc {
    void SweepParameter<D>::set_(double newVal)
    {
       if (type_ == Block) {
-         // Full name required to distinguish class Block from enum value 
-         Pscf::Pspc::Block<D>& block 
-                      = systemPtr_->mixture().polymer(id(0)).block(id(1));
-         block.setLength(newVal);
-         block.setupUnitCell(systemPtr_->unitCell());
-         // Call Block<D>::setLength to update length and ds
-         // Call Block<D>::setupUnitCell to update expKsq, expKsq2
+         systemPtr_->mixture().polymer(id(0)).block(id(1)).setLength(newVal);
       } else 
       if (type_ == Chi) {
-         systemPtr_->interaction().setChi(id(0),id(1),newVal);
-         // ChiInteraction::setChi must update auxiliary variables
+         systemPtr_->interaction().setChi(id(0), id(1), newVal);
       } else 
       if (type_ == Kuhn) {
          Pscf::Pspc::Mixture<D>& mixture = systemPtr_->mixture();
@@ -223,11 +216,10 @@ namespace Pspc {
                blockPtr = &(mixture.polymer(i).block(j));
                if (id(0) == blockPtr->monomerId()) {
                   blockPtr->setKuhn(newVal);
-                  blockPtr->setupUnitCell(systemPtr_->unitCell());
                }
             }
          }
-         // Solvent kuhn doesn't need updating. 
+
       } else
       if (type_ == Phi_Polymer) {
          systemPtr_->mixture().polymer(id(0)).setPhi(newVal);
