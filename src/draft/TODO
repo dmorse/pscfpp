@@ -3,7 +3,7 @@ v0.8
 
 Pspc:
 
-Improve encapsulation and data safety (Block, kuhn, UnitCell data)
+Generalize AmIterator to handle open ensembles
 
 Pspg:
 
@@ -20,25 +20,31 @@ v0.9
 
 Fd1d:
 
-1) Clean up Fd1d::System::readCommands, add readEcho and command functions
-
 1) Add LinearSweep class analogous to that in Pspc
+
+2) Add solvent
+
+3) Clean up Fd1d::System::readCommands, add readEcho and command functions
+
+Pscf:
+
+1) Separate code to compute idemp and chi_inv from ChiInteraction.
 
 Pspc:
 
-1) Generalize AM iterator to deal correctly with open and mixed ensembles.
-
-2) Finish improvements to encapsulation (System c-fields and w-fields)
+1) Finish improvements to encapsulation (System w-fields)
 
 Pspg:
 
-1) Update FieldIo to correspond to current version in Pspc
+1) Add Domain aggregate to make param file format same as in Pspc
 
-2) Generalize AM iterator to deal correctly with open and mixed ensembles
+2) Update FieldIo to correspond to current version in Pspc
 
-3) Port sweep to pspg, along with tests.
+3) Generalize AM iterator to deal correctly with open and mixed ensembles
 
-4) Port solvent to pspg, along with tests.
+4) Port sweep to pspg, along with tests.
+
+5) Port solvent to pspg, along with tests.
 
 Docs:
 
@@ -66,6 +72,8 @@ Pspg:
 3) (Possible): Replace use of global variables for GPU kernel launch 
 parameters.
 
+4) Review and clean up GPU code
+
 Tools:
 
 1) Develop python scripts to read output files and analyze sweeps
@@ -90,4 +98,3 @@ Docs
 
 1) Write a first draft of a latex algorithms and theory manual, or publish 
 as an article in a computational science oriented journal.
-

@@ -208,14 +208,14 @@ namespace Pspc
       *
       * The array capacity is equal to the number of monomer types.
       */
-      DArray< DArray<double> >& cFields();
+      DArray< DArray<double> > const & cFields() const;
 
       /**
       * Get concentration field for one monomer type expanded in a basis.
       *
       * \param monomerId integer monomer type index
       */
-      DArray<double>& cField(int monomerId);
+      DArray<double> const & cField(int monomerId) const;
 
       /**
       * Get array of all concentration fields on r-space grid.
@@ -362,29 +362,6 @@ namespace Pspc
       void readWRGrid(const std::string & filename);
    
       /**
-      * Iteratively solve a SCFT problem.
-      * 
-      * This function calls the iterator to attempt to solve the SCFT
-      * problem for the current mixture and system parameters, using
-      * the current chemical potential fields (wFields and wFieldRGrid) 
-      * and current unit cell parameter values as initial guesses.  
-      * Upon exist, hasCFields is set true whether or not convergence 
-      * is obtained to within the desired tolerance.  The Helmholtz free 
-      * energy and pressure are computed if and only if convergence is
-      * obtained. 
-      *
-      * \pre The hasWFields flag must be true on entry.
-      * \return returns 0 for successful convergence, 1 for failure.
-      */
-      int iterate();
-   
-      /**
-      * Sweep in parameter space, solving SCFT problems at each point.
-      * 
-      */
-      void sweep();
-
-      /**
       * Solve the modified diffusion equation once, without iteration.
       *
       * This function calls the mixture().compute() function to solve
@@ -403,6 +380,28 @@ namespace Pspc
       */
       void compute();
    
+      /**
+      * Iteratively solve a SCFT problem.
+      * 
+      * This function calls the iterator to attempt to solve the SCFT
+      * problem for the current mixture and system parameters, using
+      * the current chemical potential fields (wFields and wFieldRGrid) 
+      * and current unit cell parameter values as initial guesses.  
+      * Upon exist, hasCFields is set true whether or not convergence 
+      * is obtained to within the desired tolerance.  The Helmholtz free 
+      * energy and pressure are computed if and only if convergence is
+      * obtained. 
+      *
+      * \pre The hasWFields flag must be true on entry.
+      * \return returns 0 for successful convergence, 1 for failure.
+      */
+      int iterate();
+   
+      /**
+      * Sweep in parameter space, solving SCFT problems at each point.
+      */
+      void sweep();
+
       /**
       * Write chemical potential fields in symmetry adapted basis format.
       *
@@ -829,12 +828,12 @@ namespace Pspc
 
    template <int D>
    inline
-   DArray< DArray<double> >& System<D>::cFields()
+   DArray< DArray<double> > const & System<D>::cFields() const
    { return cFields_; }
 
    template <int D>
    inline
-   DArray<double>& System<D>::cField(int id)
+   DArray<double> const & System<D>::cField(int id) const
    { return cFields_[id]; }
 
    template <int D>

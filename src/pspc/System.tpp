@@ -270,9 +270,9 @@ namespace Pspc
          wFieldRGrid(i).allocate(mesh().dimensions());
          wFieldKGrid(i).allocate(mesh().dimensions());
 
-         cField(i).allocate(basis().nBasis());
-         cFieldRGrid(i).allocate(mesh().dimensions());
-         cFieldKGrid(i).allocate(mesh().dimensions());
+         cFields_[i].allocate(basis().nBasis());
+         cFieldsRGrid_[i].allocate(mesh().dimensions());
+         cFieldsKGrid_[i].allocate(mesh().dimensions());
 
          tmpFields_[i].allocate(basis().nBasis());
          tmpFieldsRGrid_[i].allocate(mesh().dimensions());
@@ -320,6 +320,15 @@ namespace Pspc
             readEcho(in, filename);
             readWRGrid(filename);
          } else
+         if (command == "SOLVE_MDE") {
+            // Read w (chemical potential fields) if not done previously 
+            if (!hasWFields_) {
+               readEcho(in, filename);
+               readWBasis(filename);
+            }
+            // Solve the modified diffusion equation, without iteration
+            compute();
+         } else
          if (command == "ITERATE") {
             // Read w (chemical potential) fields if not done previously 
             if (!hasWFields_) {
@@ -335,15 +344,6 @@ namespace Pspc
          if (command == "SWEEP") {
             // After iterating and converging, sweep.
             sweep();
-         } else
-         if (command == "SOLVE_MDE") {
-            // Read w (chemical potential fields) if not done previously 
-            if (!hasWFields_) {
-               readEcho(in, filename);
-               readWBasis(filename);
-            }
-            // Solve the modified diffusion equation, without iteration
-            compute();
          } else
          if (command == "WRITE_W_BASIS") {
             readEcho(in, filename);
@@ -669,6 +669,22 @@ namespace Pspc
    }
 
    /*
+   * Solve MDE for current w-fields, without iteration.
+   */
+   template <int D>
+   void System<D>::compute()
+   {
+      UTIL_CHECK(hasWFields_);
+
+      // Solve the modified diffusion equation (without iteration)
+      mixture().compute(wFieldsRGrid(), cFieldsRGrid_);
+
+      // Convert c fields from r-grid to basis
+      fieldIo().convertRGridToBasis(cFieldsRGrid_, cFields_);
+      hasCFields_ = true;
+   }
+
+   /*
    * Iteratively solve a SCFT problem for specified parameters.
    */
    template <int D>
@@ -707,22 +723,6 @@ namespace Pspc
    }
 
    /*
-   * Solve MDE for current w-fields, without iteration.
-   */
-   template <int D>
-   void System<D>::compute()
-   {
-      UTIL_CHECK(hasWFields_);
-
-      // Solve the modified diffusion equation (without iteration)
-      mixture().compute(wFieldsRGrid(), cFieldsRGrid());
-
-      // Convert c fields from r-grid to basis
-      fieldIo().convertRGridToBasis(cFieldsRGrid(), cFields());
-      hasCFields_ = true;
-   }
-
-   /*
    * Write w-fields in symmetry-adapted basis format. 
    */
    template <int D>
@@ -749,7 +749,7 @@ namespace Pspc
    void System<D>::writeCBasis(const std::string & filename)
    {
       UTIL_CHECK(hasCFields_);
-      fieldIo().writeFieldsBasis(filename, cFields(), unitCell());
+      fieldIo().writeFieldsBasis(filename, cFields_, unitCell());
    }
 
    /*
@@ -759,7 +759,7 @@ namespace Pspc
    void System<D>::writeCRGrid(const std::string & filename)
    {
       UTIL_CHECK(hasCFields_);
-      fieldIo().writeFieldsRGrid(filename, cFieldsRGrid(), unitCell());
+      fieldIo().writeFieldsRGrid(filename, cFieldsRGrid_, unitCell());
    }
 
    // Field conversion command functions
