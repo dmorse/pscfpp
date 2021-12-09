@@ -1,17 +1,9 @@
 --------------------------------------------------------------------------
 v0.8
 
-Pscf:
+Pspc:
 
-Change "step" to "kuhn" in Pscf::Monomer class
-
-Fd1d:
-
-Clean up Fd1d::System::readCommands, add readEcho and command functions
-
-Pcpc:
-
-Finish debugging sweep feature and LinearSweep
+Improve encapsulation and data safety (Block, kuhn, UnitCell data)
 
 Pspg:
 
@@ -28,13 +20,15 @@ v0.9
 
 Fd1d:
 
+1) Clean up Fd1d::System::readCommands, add readEcho and command functions
+
 1) Add LinearSweep class analogous to that in Pspc
 
 Pspc:
 
 1) Generalize AM iterator to deal correctly with open and mixed ensembles.
 
-2) Improve encapsulation and data safety throughout 
+2) Finish improvements to encapsulation (System c-fields and w-fields)
 
 Pspg:
 
@@ -68,6 +62,9 @@ Pspg:
 1) Reasonably complete unit tests
 
 2) Generalize AM iterator to use symmetry-adapted basis field format.
+
+3) (Possible): Replace use of global variables for GPU kernel launch 
+parameters.
 
 Tools:
 

@@ -452,7 +452,7 @@ namespace Pspc
    template <int D>
    void AmIterator<D>::buildOmega(int itr)
    {
-      UnitCell<D>& unitCell = system().unitCell();
+      UnitCell<D> const & unitCell = system().unitCell();
       Mixture<D>&  mixture = system().mixture();
 
       if (itr == 1) {
@@ -470,9 +470,12 @@ namespace Pspc
                               + lambda_* devCpHists_[0][m]);
 
             }
+            system().setUnitCell(parameters_);
+            #if 0
             unitCell.setParameters(parameters_);
             mixture.setupUnitCell(unitCell);
             system().basis().update();
+            #endif
          }
 
       } else {
@@ -515,9 +518,12 @@ namespace Pspc
             for (int m = 0; m < unitCell.nParameter() ; ++m){
                parameters_.append(wCpArrays_[m] + lambda_ * dCpArrays_[m]);
             }
+            system().setUnitCell(parameters_);
+            #if 0
             unitCell.setParameters(parameters_);
             mixture.setupUnitCell(unitCell);
             system().basis().update();
+            #endif
          }
       }
    }

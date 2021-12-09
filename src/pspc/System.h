@@ -250,54 +250,44 @@ namespace Pspc
       //@{
 
       /**
+      * Get UnitCell (i.e., type and parameters) by const reference.
+      */
+      UnitCell<D> const & unitCell() const;
+
+      /**
       * Get the Mixture by reference.
       */
       Mixture<D>& mixture();
 
+      #if 0
       /**
       * Get the Domain by reference.
       */
       Domain<D>& domain();
+      #endif
 
       /**
       * Get the spatial discretization mesh by reference.
-      *
-      * Equivalent to domain().mesh().
       */
       Mesh<D>& mesh();
 
       /**
-      * Get UnitCell (i.e., lattice type and parameters) by reference.
-      *
-      * Equivalent to domain().unitCell().
-      */
-      UnitCell<D>& unitCell();
-
-      /**
       * Get associated Basis object by reference.
-      *
-      * Equivalent to domain().basis().
       */
       Basis<D>& basis();
 
       /**
       * Get associated FFT object.
-      *
-      * Equivalent to domain().fft().
       */
       FFT<D>& fft();
 
       /**
       * Get associated FieldIo object.
-      *
-      * Equivalent to domain().fieldIo().
       */
       FieldIo<D>& fieldIo();
 
       /** 
       * Get group name.
-      *
-      * Equivalent to domain().groupName().
       */  
       std::string groupName() const;
 
@@ -335,9 +325,9 @@ namespace Pspc
       /** 
       * Have monomer concentration fields (c fields) been computed?
       *
-      * A true value is returned if and only if monomer concentration fields
-      * have been computed by solving the modified diffusion equation for 
-      * the current w fields, and consistent values have been set for both 
+      * A true value is returned iff monomer concentration fields have
+      * been computed by solving the modified diffusion equation for the
+      * current w fields, and consistent values have been set for both 
       * values on an r-grid (wFieldsRGrid) and for coefficients in a basis 
       * (cFields).  To satisfy this requirement, solution of the MDE on a 
       * r-grid should always be immediately followed by conversion of c 
@@ -346,7 +336,7 @@ namespace Pspc
       bool hasCFields() const;
 
       //@}
-      /// \name Commands (one-to-one correspondence with command file commands)
+      /// \name Commands (many correspondence to command file commands)
       //@{
 
       /**
@@ -535,6 +525,20 @@ namespace Pspc
       */
       void outputWaves(const std::string & outFileName);
 
+      /**
+      * Set parameters of the associated unit cell.
+      *
+      * \param unitCell  new UnitCell<D> (i.e., new parameters).
+      */
+      void setUnitCell(UnitCell<D> const & unitCell);
+
+      /**
+      * Set parameters of the associated unit cell.
+      *
+      * \param parameters  array of new unit cell parameters.
+      */
+      void setUnitCell(FSArray<double, 6> const & parameters);
+
       //@}
 
    private:
@@ -550,39 +554,6 @@ namespace Pspc
       * Domain object (crystallography and mesh).
       */
       Domain<D> domain_;
-
-      #if 0
-      /*
-      * Crystallographic unit cell (crystal system and cell parameters).
-      */
-      UnitCell<D> unitCell_;
-
-      /**
-      * Spatial discretization mesh.
-      */
-      Mesh<D> mesh_;
-
-      /**
-      * FFT object to be used by iterator
-      */
-      FFT<D> fft_;
-
-      /**
-      * Pointer to a Basis object
-      */
-      Basis<D> basis_;
-
-      /**
-      * FieldIo object for field input/output operations
-      */
-      FieldIo<D> fieldIo_;
-
-      /**
-      * Group name.
-      */
-      std::string groupName_;
-
-      #endif
 
       /**
       * Filemaster (holds paths to associated I/O files).
@@ -781,20 +752,22 @@ namespace Pspc
 
    // Inline member functions
 
+   // Get the associated UnitCell<D> object by const reference.
+   template <int D>
+   inline UnitCell<D> const & System<D>::unitCell() const
+   { return domain_.unitCell(); }
+
    // Get the associated Mixture object.
    template <int D>
    inline Mixture<D>& System<D>::mixture()
    { return mixture_; }
 
+   #if 0
    // Get the associated Domain object.
    template <int D>
    inline Domain<D>& System<D>::domain()
    { return domain_; }
-
-   // Get the associated UnitCell<D> object.
-   template <int D>
-   inline UnitCell<D>& System<D>::unitCell()
-   { return domain_.unitCell(); }
+   #endif
 
    // Get the Mesh<D> object.
    template <int D>

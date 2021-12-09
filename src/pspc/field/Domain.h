@@ -90,6 +90,11 @@ namespace Pspc
       UnitCell<D>& unitCell();
 
       /**
+      * Get UnitCell (i.e., lattice type and parameters) by reference.
+      */
+      UnitCell<D> const & unitCell() const;
+
+      /**
       * Get spatial discretization mesh by reference.
       */
       Mesh<D>& mesh();
@@ -164,9 +169,14 @@ namespace Pspc
 
    // Inline member functions
 
-   // Get the associated UnitCell<D> object.
+   // Get the UnitCell<D> object by non-const reference.
    template <int D>
    inline UnitCell<D>& Domain<D>::unitCell()
+   {  return unitCell_; }
+
+   // Get the UnitCell<D> object by const reference.
+   template <int D>
+   inline UnitCell<D> const & Domain<D>::unitCell() const
    {  return unitCell_; }
 
    // Get the Mesh<D> object.

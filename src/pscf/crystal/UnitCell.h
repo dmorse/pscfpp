@@ -157,7 +157,7 @@ namespace Pscf
       /**
       * Return lattice system enumeration value.
       */
-      LatticeSystem lattice()
+      LatticeSystem lattice() const
       {  return lattice_; }
 
    private:
@@ -246,7 +246,7 @@ namespace Pscf
       /**
       * Return lattice system enumeration value.
       */
-      LatticeSystem lattice()
+      LatticeSystem lattice() const
       {  return lattice_; }
 
    private:
@@ -339,7 +339,7 @@ namespace Pscf
       /**
       * Return lattice system enumeration value.
       */
-      LatticeSystem lattice()
+      LatticeSystem lattice() const
       {  return lattice_; }
 
    private:

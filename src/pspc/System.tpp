@@ -194,24 +194,10 @@ namespace Pspc
 
       readParamComposite(in, domain_);
 
-      #if 0
-      read(in, "unitCell", unitCell_);
-      hasUnitCell_ = true;
-     
-      read(in, "mesh", mesh_);
-      fft_.setup(mesh_.dimensions());
-      hasMesh_ = true;
-
-      read(in, "groupName", groupName_);
-
-      basis().makeBasis(mesh(), unitCell(), groupName_);
-      #endif
-
       mixture().setMesh(mesh());
       mixture().setupUnitCell(unitCell());
 
       allocate();
-      isAllocated_ = true;
 
       // Initialize iterator
       std::string className;
@@ -292,6 +278,7 @@ namespace Pspc
          tmpFieldsRGrid_[i].allocate(mesh().dimensions());
          tmpFieldsKGrid_[i].allocate(mesh().dimensions());
       }
+
       isAllocated_ = true;
    }
 
@@ -661,9 +648,9 @@ namespace Pspc
    template <int D>
    void System<D>::readWBasis(const std::string & filename)
    {
-      fieldIo().readFieldsBasis(filename, wFields(), unitCell());
+      fieldIo().readFieldsBasis(filename, wFields(), domain_.unitCell());
       fieldIo().convertBasisToRGrid(wFields(), wFieldsRGrid());
-      basis().update();
+      domain_.basis().update();
       hasWFields_ = true;
       hasCFields_ = false;
    }
@@ -674,9 +661,9 @@ namespace Pspc
    template <int D>
    void System<D>::readWRGrid(const std::string & filename)
    {
-      fieldIo().readFieldsRGrid(filename, wFieldsRGrid(), unitCell());
+      fieldIo().readFieldsRGrid(filename, wFieldsRGrid(), domain_.unitCell());
       fieldIo().convertRGridToBasis(wFieldsRGrid(), wFields());
-      basis().update();
+      domain_.basis().update();
       hasWFields_ = true;
       hasCFields_ = false;
    }
@@ -866,7 +853,7 @@ namespace Pspc
       hasCFields_ = false;
       hasWFields_ = false;
 
-      fieldIo().readFieldsBasis(inFileName, tmpFields_, unitCell());
+      fieldIo().readFieldsBasis(inFileName, tmpFields_, domain_.unitCell());
 
       // Compute w fields from c fields
       for (int i = 0; i < basis().nBasis(); ++i) {
@@ -911,6 +898,31 @@ namespace Pspc
       fieldIo().writeFieldHeader(outFile, mixture().nMonomer(), 
                                  unitCell());
       basis().outputWaves(outFile);
+   }
+
+   /*
+   * Set parameters of the associated unit cell.
+   */
+   template <int D>
+   void System<D>::setUnitCell(UnitCell<D> const & unitCell)
+   {
+      UTIL_CHECK(domain_.unitCell().lattice() == unitCell.lattice());
+      domain_.unitCell() = unitCell;
+      mixture_.setupUnitCell(unitCell);
+      domain_.basis().update();
+   }
+
+   /*
+   * Set parameters of the associated unit cell.
+   */
+   template <int D>
+   void 
+   System<D>::setUnitCell(FSArray<double, 6> const & parameters)
+   {
+      UTIL_CHECK(domain_.unitCell().nParameter() == parameters.size());
+      domain_.unitCell().setParameters(parameters);
+      mixture_.setupUnitCell(domain_.unitCell());
+      domain_.basis().update();
    }
 
 } // namespace Pspc

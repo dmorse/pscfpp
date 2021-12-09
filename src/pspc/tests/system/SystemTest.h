@@ -240,7 +240,7 @@ public:
       // Compare solution to original
       BFieldComparison comparison(1);
       comparison.compare(wFields_check, system.wFields());
-      setVerbose(1);
+      //setVerbose(1);
       if (verbose() > 0) {
          std::cout << "\n";
          std::cout << "Max error = " << comparison.maxDiff() << "\n";
