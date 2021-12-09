@@ -100,9 +100,19 @@ namespace Pspc
       Mesh<D>& mesh();
 
       /**
+      * Get spatial discretization mesh by const reference.
+      */
+      Mesh<D> const & mesh() const;
+
+      /**
       * Get associated Basis object by reference.
       */
       Basis<D>& basis();
+
+      /**
+      * Get associated Basis object by const reference.
+      */
+      Basis<D> const & basis() const ;
 
       /**
       * Get associated FFT object.
@@ -179,14 +189,24 @@ namespace Pspc
    inline UnitCell<D> const & Domain<D>::unitCell() const
    {  return unitCell_; }
 
-   // Get the Mesh<D> object.
+   // Get the Mesh<D> object by reference.
    template <int D>
    inline Mesh<D>& Domain<D>::mesh()
    {  return mesh_; }
 
-   // Get the Basis<D> object.
+   // Get the Mesh<D> object by const reference.
+   template <int D>
+   inline Mesh<D> const & Domain<D>::mesh() const
+   {  return mesh_; }
+
+   // Get the Basis<D> object by non-const reference.
    template <int D>
    inline Basis<D>& Domain<D>::basis()
+   {  return basis_; }
+
+   // Get the Basis<D> object by const reference.
+   template <int D>
+   inline Basis<D> const & Domain<D>::basis() const
    {  return basis_; }
 
    // Get the FFT<D> object.

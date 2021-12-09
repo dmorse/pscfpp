@@ -471,11 +471,6 @@ namespace Pspc
 
             }
             system().setUnitCell(parameters_);
-            #if 0
-            unitCell.setParameters(parameters_);
-            mixture.setupUnitCell(unitCell);
-            system().basis().update();
-            #endif
          }
 
       } else {
@@ -519,11 +514,6 @@ namespace Pspc
                parameters_.append(wCpArrays_[m] + lambda_ * dCpArrays_[m]);
             }
             system().setUnitCell(parameters_);
-            #if 0
-            unitCell.setParameters(parameters_);
-            mixture.setupUnitCell(unitCell);
-            system().basis().update();
-            #endif
          }
       }
    }

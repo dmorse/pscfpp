@@ -254,27 +254,21 @@ namespace Pspc
       */
       UnitCell<D> const & unitCell() const;
 
-      /**
-      * Get the Mixture by reference.
-      */
-      Mixture<D>& mixture();
-
-      #if 0
-      /**
-      * Get the Domain by reference.
-      */
-      Domain<D>& domain();
-      #endif
 
       /**
       * Get the spatial discretization mesh by reference.
       */
-      Mesh<D>& mesh();
+      Mesh<D> const & mesh() const;
+
+      /** 
+      * Get group name.
+      */  
+      std::string groupName() const;
 
       /**
       * Get associated Basis object by reference.
       */
-      Basis<D>& basis();
+      Basis<D> const & basis() const;
 
       /**
       * Get associated FFT object.
@@ -286,10 +280,10 @@ namespace Pspc
       */
       FieldIo<D>& fieldIo();
 
-      /** 
-      * Get group name.
-      */  
-      std::string groupName() const;
+      /**
+      * Get the Mixture by reference.
+      */
+      Mixture<D>& mixture();
 
       /**
       * Get Interaction (i.e., excess free energy model) by reference.
@@ -676,18 +670,6 @@ namespace Pspc
       */
       bool hasMixture_;
 
-      #if 0
-      /**
-      * Has the UnitCell been initialized?
-      */
-      bool hasUnitCell_;
-
-      /**
-      * Has the Mesh been initialized?
-      */
-      bool hasMesh_;
-      #endif
-
       /**
       * Has memory been allocated for fields?
       */
@@ -757,26 +739,19 @@ namespace Pspc
    inline UnitCell<D> const & System<D>::unitCell() const
    { return domain_.unitCell(); }
 
+   // Get the Mesh<D> object.
+   template <int D>
+   inline Mesh<D> const & System<D>::mesh() const
+   { return domain_.mesh(); }
+
    // Get the associated Mixture object.
    template <int D>
    inline Mixture<D>& System<D>::mixture()
    { return mixture_; }
 
-   #if 0
-   // Get the associated Domain object.
-   template <int D>
-   inline Domain<D>& System<D>::domain()
-   { return domain_; }
-   #endif
-
-   // Get the Mesh<D> object.
-   template <int D>
-   inline Mesh<D>& System<D>::mesh()
-   { return domain_.mesh(); }
-
    // Get the Basis<D> object.
    template <int D>
-   inline Basis<D>& System<D>::basis()
+   inline Basis<D> const & System<D>::basis() const
    {  return domain_.basis(); }
 
    // Get the FFT<D> object.
