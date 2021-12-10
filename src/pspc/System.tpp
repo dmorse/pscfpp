@@ -667,6 +667,54 @@ namespace Pspc
    }
 
    /*
+   * Set new w-field values.
+   */
+   template <int D>
+   void System<D>::setWBasis(DArray< DArray<double> > const & fields)
+   {
+      // Update system wFields
+      int nMonomer = mixture_.nMonomer();
+      int nBasis = domain_.basis().nBasis();
+      for (int i = 0; i < nMonomer; ++i) {
+         DArray<double> const & f = fields[i];
+         DArray<double> &       w = wFields_[i];
+         for (int j = 0; j < nBasis; ++j) {
+            w[j] = f[j];
+         }
+      }
+
+      // Update system wFieldsRgrid
+      domain_.fieldIo().convertBasisToRGrid(wFields_, wFieldsRGrid_);
+
+      hasWFields_ = true;
+      hasCFields_ = false;
+   }
+
+   /*
+   * Set new w-field values, using r-grid fields as inputs.
+   */
+   template <int D>
+   void System<D>::setWRGrid(DArray<WField> const & fields)
+   {
+      // Update system wFieldsRGrid
+      int nMonomer = mixture_.nMonomer();
+      int meshSize = domain_.mesh().size();
+      for (int i = 0; i < nMonomer; ++i) {
+         WField const & f = fields[i];
+         WField& w = wFieldsRGrid_[i];
+         for (int j = 0; j < meshSize; ++j) {
+            w[j] = f[j];
+         }
+      }
+
+      // Update system wFieldsRgrid
+      domain_.fieldIo().convertRGridToBasis(wFieldsRGrid_, wFields_);
+
+      hasWFields_ = true;
+      hasCFields_ = false;
+   }
+
+   /*
    * Solve MDE for current w-fields, without iteration.
    */
    template <int D>

@@ -53,14 +53,15 @@ test-cpu:
 	cd pscf/tests; $(MAKE) all; $(MAKE) run
 	cd fd1d/tests; $(MAKE) all; $(MAKE) run
 	cd pspc/tests; $(MAKE) all; $(MAKE) run
-	@cat util/tests/count > count
-	@cat pscf/tests/count >> count
-	@cat fd1d/tests/count >> count
-	@cat pspc/tests/count >> count
-	@echo " "
-	@echo "Summary"
-	@cat count
-	@rm -f count
+
+#	@cat util/tests/count > count
+#	@cat pscf/tests/count >> count
+#	@cat fd1d/tests/count >> count
+#	@cat pspc/tests/count >> count
+#	@echo " "
+#	@echo "Summary"
+#	@cat count
+#	@rm -f count
 
 # ======================================================================
 # Clean targets
