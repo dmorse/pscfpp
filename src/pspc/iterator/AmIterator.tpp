@@ -85,9 +85,9 @@ namespace Pspc
       // Allocate inner arrays with number of basis functions
       int nBasis = system().basis().nBasis();
       for (int i = 0; i < nMonomer; ++i) {
-         wArrays_[i].allocate(nBasis - shift_);
-         dArrays_[i].allocate(nBasis - shift_);
-         tempRes[i].allocate(nBasis - shift_);
+         wArrays_[i].allocate(nBasis);
+         dArrays_[i].allocate(nBasis);
+         tempRes[i].allocate(nBasis);
       }
    }
 
@@ -261,7 +261,7 @@ namespace Pspc
 
       // Initialize temporary residuals workspace 
       for (int i = 0 ; i < nMonomer; ++i) {
-         for (int k = 0; k < nBasis - shift_; ++k) {
+         for (int k = shift_; k < nBasis; ++k) {
             tempRes[i][k] = 0;
          }
       }
@@ -269,9 +269,9 @@ namespace Pspc
       // Compute residual vector
       for (int i = 0; i < nMonomer; ++i) {
          for (int j = 0; j < nMonomer; ++j) {
-            for (int k = 0; k < nBasis - shift_; ++k) {
-               tempRes[i][k] +=( (system().interaction().chi(i,j)*system().cField(j)[k+shift_])
-                               - (system().interaction().idemp(i,j)*system().wField(j)[k+shift_]) );
+            for (int k = shift_; k < nBasis; ++k) {
+               tempRes[i][k] +=( (system().interaction().chi(i,j)*system().cField(j)[k])
+                               - (system().interaction().idemp(i,j)*system().wField(j)[k]) );
             }
          }
       }
@@ -310,7 +310,7 @@ namespace Pspc
       double dError = 0;
       double wError = 0;
       for ( int i = 0; i < nMonomer; i++) {
-         for ( int j = 0; j < nBasis - shift_; j++) {
+         for ( int j = shift_; j < nBasis; j++) {
             dError += resHists_[0][i][j] * resHists_[0][i][j];
 
             //the extra shift is due to the zero indice coefficient being
@@ -335,7 +335,7 @@ namespace Pspc
       double temp1 = 0;
       double temp2 = 0;
       for ( int i = 0; i < nMonomer; i++) {
-         for ( int j = 0; j < nBasis - shift_; j++) {
+         for ( int j = shift_; j < nBasis; j++) {
             if (temp1 < fabs (resHists_[0][i][j]))
                 temp1 = fabs (resHists_[0][i][j]);
          }
@@ -396,7 +396,7 @@ namespace Pspc
                invertMatrix_(i,j) = 0;
                for (int k = 0; k < nMonomer; ++k) {
                   elm = 0;
-                  for (int l = 0; l < nBasis - shift_; ++l) {
+                  for (int l = shift_; l < nBasis; ++l) {
                      elm +=
                             ((resHists_[0][k][l] - resHists_[i+1][k][l])*
                              (resHists_[0][k][l] - resHists_[j+1][k][l]));
@@ -417,7 +417,7 @@ namespace Pspc
 
             vM_[i] = 0;
             for (int j = 0; j < nMonomer; ++j) {
-               for (int k = 0; k < nBasis - shift_; ++k) {
+               for (int k = shift_; k < nBasis; ++k) {
                   vM_[i] += ( (resHists_[0][j][k] - resHists_[i+1][j][k]) *
                                resHists_[0][j][k] );
                }
@@ -452,9 +452,9 @@ namespace Pspc
 
       if (itr == 1) {
          for (int i = 0; i < nMonomer; ++i) {
-            for (int k = 0; k < nBasis - shift_; ++k) {
-               system().wField(i)[k+shift_]
-                      = wHists_[0][i][k+shift_] + lambda_*resHists_[0][i][k];
+            for (int k = shift_; k < nBasis; ++k) {
+               system().wField(i)[k]
+                      = wHists_[0][i][k] + lambda_*resHists_[0][i][k];
             }
          }
 
@@ -470,24 +470,35 @@ namespace Pspc
 
       } else {
          for (int j = 0; j < nMonomer; ++j) {
-            for (int k = 0; k < nBasis - shift_; ++k) {
-               wArrays_[j][k] = wHists_[0][j][k+shift_];
+            for (int k = shift_; k < nBasis; ++k) {
+               wArrays_[j][k] = wHists_[0][j][k];
                dArrays_[j][k] = resHists_[0][j][k];
             }
          }
          for (int i = 0; i < nHist_; ++i) {
             for (int j = 0; j < nMonomer; ++j) {
-               for (int k = 0; k < nBasis - shift_; ++k) {
-                  wArrays_[j][k] += coeffs_[i] * ( wHists_[i+1][j][k+shift_] -
-                                                   wHists_[0][j][k+shift_] );
+               for (int k = shift_; k < nBasis; ++k) {
+                  wArrays_[j][k] += coeffs_[i] * ( wHists_[i+1][j][k] -
+                                                   wHists_[0][j][k] );
                   dArrays_[j][k] += coeffs_[i] * ( resHists_[i+1][j][k] -
                                                    resHists_[0][j][k] );
                }
             }
          }
+         // set the homogeneous basis function values explicitly 
+         // if system is canonical
+         if (isCanonical()) {
+            for (int i = 0; i < nMonomer; ++i) {
+               dArrays_[i][0] = 0.0;
+               wArrays_[i][0] = 0.0;
+               for (int j = 0; j < nMonomer; ++j) {
+                  wArrays_[i][0] += system().interaction().chi(i,j)*system().cField(j)[0];
+               }
+            }
+         }
          for (int i = 0; i < nMonomer; ++i) {
-            for (int k = 0; k < nBasis - shift_; ++k) {
-               system().wField(i)[k+shift_] = wArrays_[i][k]
+            for (int k = 0; k < nBasis; ++k) {
+               system().wField(i)[k] = wArrays_[i][k]
                                          + lambda_ * dArrays_[i][k];
             }
          }
@@ -516,13 +527,13 @@ namespace Pspc
    template <int D>
    bool AmIterator<D>::isCanonical()
    {
-      // check all polymers if open ensemble
+      // check ensemble of all polymers
       for (int i = 0; i < system().mixture().nPolymer(); ++i) {
          if (system().mixture().polymer(i).ensemble() == Species::Open) {
             return false;
          }
       }
-      // check all solvents if open ensemble
+      // check ensemble of all solvents
       for (int i = 0; i < system().mixture().nSolvent(); ++i) {
          if (system().mixture().solvent(i).ensemble() == Species::Open) {
             return false;

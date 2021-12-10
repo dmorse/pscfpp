@@ -294,7 +294,7 @@ public:
             maxDiff = comparison.maxDiff();
          }
       }
-      //setVerbose(1);
+      setVerbose(1);
       if (verbose() > 0) {
          std::cout << std::endl;
          std::cout << "maxDiff = " << Dbl(maxDiff, 14, 6) << std::endl;
