@@ -198,50 +198,8 @@ public:
       printMethod(TEST_FUNC);
       openLogFile("out/testLinearSweepBlock");
 
-      // Set up system with a LinearSweep object
-      System<1> system;
-      SweepTest::SetUpSystem(system, "in/block/param");
+      double maxDiff = testLinearSweepParam("block");
       
-      // Read expected w fields
-      DArray< BasisFieldState<1> > fieldsRef;
-      fieldsRef.allocate(5);
-      for (int i = 0; i < 5; ++i) {
-         fieldsRef[i].setSystem(system);
-         fieldsRef[i].read("in/sweepref/block/" + std::to_string(i) +"_w.bf");
-      }
-
-      // Read initial field guess and sweep
-      system.readWBasis("in/block/w.bf");
-      system.sweep();
-
-      // Check if sweep had to backtrack. It shouldn't need to. 
-      std::ifstream f(std::string("out/block/5_w.bf").c_str());
-      if (f.good()) {
-         TEST_THROW("Sweep backtracked due to iteration count greater than maxItr.");
-      }
-
-      // Read outputted fields
-      DArray< BasisFieldState<1> > fieldsOut;
-      fieldsOut.allocate(5);
-      for (int i = 0; i < 5; ++i) {
-         fieldsOut[i].setSystem(system);
-         fieldsOut[i].read("out/block/" + std::to_string(i) +"_w.bf");
-      }
-
-      // Compare output
-      BFieldComparison comparison;
-      double maxDiff = 0.0;
-      for (int i = 0; i < 5; ++i) {
-         comparison.compare(fieldsRef[i].fields(), fieldsOut[i].fields());
-         if (comparison.maxDiff() > maxDiff) {
-            maxDiff = comparison.maxDiff();
-         }
-      }
-      //setVerbose(1);
-      if (verbose() > 0) {
-         std::cout << std::endl;
-         std::cout << "maxDiff = " << Dbl(maxDiff, 14, 6) << std::endl;
-      }
       TEST_ASSERT(maxDiff < 5.0e-7);
    }
 
@@ -250,50 +208,8 @@ public:
       printMethod(TEST_FUNC);
       openLogFile("out/testLinearSweepChi");
 
-      // Set up system with a LinearSweep object
-      System<1> system;
-      SweepTest::SetUpSystem(system, "in/chi/param");
-      
-      // Read expected w fields
-      DArray< BasisFieldState<1> > fieldsRef;
-      fieldsRef.allocate(5);
-      for (int i = 0; i < 5; ++i) {
-         fieldsRef[i].setSystem(system);
-         fieldsRef[i].read("in/sweepref/chi/" + std::to_string(i) +"_w.bf");
-      }
+      double maxDiff = testLinearSweepParam("chi");
 
-      // Read initial field guess and sweep
-      system.readWBasis("in/chi/w.bf");
-      system.sweep();
-
-      // Check if sweep had to backtrack. It shouldn't need to. 
-      std::ifstream f(std::string("out/chi/5_w.bf").c_str());
-      if (f.good()) {
-         TEST_THROW("Sweep backtracked due to iteration count greater than maxItr.");
-      }
-
-      // Read outputted fields
-      DArray< BasisFieldState<1> > fieldsOut;
-      fieldsOut.allocate(5);
-      for (int i = 0; i < 5; ++i) {
-         fieldsOut[i].setSystem(system);
-         fieldsOut[i].read("out/chi/" + std::to_string(i) +"_w.bf");
-      }
-
-      // Compare output
-      BFieldComparison comparison;
-      double maxDiff = 0.0;
-      for (int i = 0; i < 5; ++i) {
-         comparison.compare(fieldsRef[i].fields(), fieldsOut[i].fields());
-         if (comparison.maxDiff() > maxDiff) {
-            maxDiff = comparison.maxDiff();
-         }
-      }
-      //setVerbose(1);
-      if (verbose() > 0) {
-         std::cout << std::endl;
-         std::cout << "maxDiff = " << Dbl(maxDiff, 14, 6) << std::endl;
-      }
       TEST_ASSERT(maxDiff < 5.0e-7);
    }
 
@@ -302,51 +218,9 @@ public:
       printMethod(TEST_FUNC);
       openLogFile("out/testLinearSweepKuhn");
 
-      // Set up system with a LinearSweep object
-      System<1> system;
-      SweepTest::SetUpSystem(system, "in/kuhn/param");
+      double maxDiff = testLinearSweepParam("kuhn");
       
-      // Read expected w fields
-      DArray< BasisFieldState<1> > fieldsRef;
-      fieldsRef.allocate(5);
-      for (int i = 0; i < 5; ++i) {
-         fieldsRef[i].setSystem(system);
-         fieldsRef[i].read("in/sweepref/kuhn/" + std::to_string(i) +"_w.bf");
-      }
-
-      // Read initial field guess and sweep
-      system.readWBasis("in/kuhn/w.bf");
-      system.sweep();
-
-      // Check if sweep had to backtrack. It shouldn't need to. 
-      std::ifstream f(std::string("out/kuhn/5_w.bf").c_str());
-      if (f.good()) {
-         TEST_THROW("Sweep backtracked due to iteration count greater than maxItr.");
-      }
-
-      // Read outputted fields
-      DArray< BasisFieldState<1> > fieldsOut;
-      fieldsOut.allocate(5);
-      for (int i = 0; i < 5; ++i) {
-         fieldsOut[i].setSystem(system);
-         fieldsOut[i].read("out/kuhn/" + std::to_string(i) +"_w.bf");
-      }
-
-      // Compare output
-      BFieldComparison comparison;
-      double maxDiff = 0.0;
-      for (int i = 0; i < 5; ++i) {
-         comparison.compare(fieldsRef[i].fields(), fieldsOut[i].fields());
-         if (comparison.maxDiff() > maxDiff) {
-            maxDiff = comparison.maxDiff();
-         }
-      }
-      //setVerbose(1);
-      if (verbose() > 0) {
-         std::cout << std::endl;
-         std::cout << "maxDiff = " << Dbl(maxDiff, 14, 6) << std::endl;
-       }
-       TEST_ASSERT(maxDiff < 5.0e-7);
+      TEST_ASSERT(maxDiff < 5.0e-7);
    }
 
    void testLinearSweepPhi()   
@@ -354,50 +228,8 @@ public:
       printMethod(TEST_FUNC);
       openLogFile("out/testLinearSweepPhi");
 
-      // Set up system with a LinearSweep object
-      System<1> system;
-      SweepTest::SetUpSystem(system, "in/phi/param");
-      
-      // Read expected w fields
-      DArray< BasisFieldState<1> > fieldsRef;
-      fieldsRef.allocate(5);
-      for (int i = 0; i < 5; ++i) {
-         fieldsRef[i].setSystem(system);
-         fieldsRef[i].read("in/sweepref/phi/" + std::to_string(i) +"_w.bf");
-      }
+      double maxDiff = testLinearSweepParam("phi");
 
-      // Read initial field guess and sweep
-      system.readWBasis("in/phi/w.bf");
-      system.sweep();
-
-      // Check if sweep had to backtrack. It shouldn't need to. 
-      std::ifstream f(std::string("out/phi/5_w.bf").c_str());
-      if (f.good()) {
-         TEST_THROW("Sweep backtracked due to iteration count greater than maxItr.");
-      }
-
-      // Read outputted fields
-      DArray< BasisFieldState<1> > fieldsOut;
-      fieldsOut.allocate(5);
-      for (int i = 0; i < 5; ++i) {
-         fieldsOut[i].setSystem(system);
-         fieldsOut[i].read("out/phi/" + std::to_string(i) +"_w.bf");
-      }
-
-      // Compare output
-      BFieldComparison comparison;
-      double maxDiff = 0.0;
-      for (int i = 0; i < 5; ++i) {
-         comparison.compare(fieldsRef[i].fields(), fieldsOut[i].fields());
-         if (comparison.maxDiff() > maxDiff) {
-            maxDiff = comparison.maxDiff();
-         }
-      }
-      //setVerbose(1);
-      if (verbose() > 0) {
-         std::cout << std::endl;
-         std::cout << "maxDiff = " << Dbl(maxDiff, 14, 6) << std::endl;
-      }
       TEST_ASSERT(maxDiff < 5.0e-7);
    }
 
@@ -406,50 +238,8 @@ public:
       printMethod(TEST_FUNC);
       openLogFile("out/testLinearSweepSolvent");
 
-      // Set up system with a LinearSweep object
-      System<1> system;
-      SweepTest::SetUpSystem(system, "in/solvent/param");
-      
-      // Read expected w fields
-      DArray< BasisFieldState<1> > fieldsRef;
-      fieldsRef.allocate(5);
-      for (int i = 0; i < 5; ++i) {
-         fieldsRef[i].setSystem(system);
-         fieldsRef[i].read("in/sweepref/solvent/" + std::to_string(i) +"_w.bf");
-      }
+      double maxDiff = testLinearSweepParam("solvent");
 
-      // Read initial field guess and sweep
-      system.readWBasis("in/solvent/w.bf");
-      system.sweep();
-
-      // Check if sweep had to backtrack. It shouldn't need to. 
-      std::ifstream f(std::string("out/solvent/5_w.bf").c_str());
-      if (f.good()) {
-         TEST_THROW("Sweep backtracked due to iteration count greater than maxItr.");
-      }
-
-      // Read outputted fields
-      DArray< BasisFieldState<1> > fieldsOut;
-      fieldsOut.allocate(5);
-      for (int i = 0; i < 5; ++i) {
-         fieldsOut[i].setSystem(system);
-         fieldsOut[i].read("out/solvent/" + std::to_string(i) +"_w.bf");
-      }
-
-      // Compare output
-      BFieldComparison comparison;
-      double maxDiff = 0.0;
-      for (int i = 0; i < 5; ++i) {
-         comparison.compare(fieldsRef[i].fields(), fieldsOut[i].fields());
-         if (comparison.maxDiff() > maxDiff) {
-            maxDiff = comparison.maxDiff();
-         }
-      }
-      //setVerbose(1);
-      if (verbose() > 0) {
-         std::cout << std::endl;
-         std::cout << "maxDiff = " << Dbl(maxDiff, 14, 6) << std::endl;
-      }
       TEST_ASSERT(maxDiff < 5.0e-7);
    }
 
@@ -461,6 +251,56 @@ public:
       openInputFile(fname, in);
       system.readParam(in);
       in.close();
+   }
+
+   double testLinearSweepParam(std::string paramname)
+   {
+      // Set up system with a LinearSweep object
+      System<1> system;
+      SweepTest::SetUpSystem(system, "in/" + paramname + "/param");
+      
+      // Read expected w fields
+      DArray< BasisFieldState<1> > fieldsRef;
+      fieldsRef.allocate(5);
+      for (int i = 0; i < 5; ++i) {
+         fieldsRef[i].setSystem(system);
+         fieldsRef[i].read("in/sweepref/" + paramname + "/" + std::to_string(i) +"_w.bf");
+      }
+
+      // Read initial field guess and sweep
+      system.readWBasis("in/" + paramname + "/w.bf");
+      system.sweep();
+
+      // Check if sweep had to backtrack. It shouldn't need to. 
+      std::ifstream f(std::string("out/" + paramname + "/5_w.bf").c_str());
+      if (f.good()) {
+         TEST_THROW("Sweep backtracked due to iteration count greater than maxItr.");
+      }
+
+      // Read outputted fields
+      DArray< BasisFieldState<1> > fieldsOut;
+      fieldsOut.allocate(5);
+      for (int i = 0; i < 5; ++i) {
+         fieldsOut[i].setSystem(system);
+         fieldsOut[i].read("out/" + paramname + "/" + std::to_string(i) +"_w.bf");
+      }
+
+      // Compare output
+      BFieldComparison comparison;
+      double maxDiff = 0.0;
+      for (int i = 0; i < 5; ++i) {
+         comparison.compare(fieldsRef[i].fields(), fieldsOut[i].fields());
+         if (comparison.maxDiff() > maxDiff) {
+            maxDiff = comparison.maxDiff();
+         }
+      }
+      //setVerbose(1);
+      if (verbose() > 0) {
+         std::cout << std::endl;
+         std::cout << "maxDiff = " << Dbl(maxDiff, 14, 6) << std::endl;
+      }
+
+      return maxDiff;
    }
 
 };

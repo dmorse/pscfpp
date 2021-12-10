@@ -124,12 +124,6 @@ namespace Pspc {
       System<D>& system()
       {  return *systemPtr_; }
 
-      /// Number of parameters being swept. 
-      int nParameter_; 
-
-      /// Array of SweepParameter objects.
-      DArray< SweepParameter<D> > parameters_;
-
       // Protected members inherited from base class template SweepTmpl
       using SweepTmpl< BasisFieldState<D> >::ns_;
       using SweepTmpl< BasisFieldState<D> >::baseFileName_;
