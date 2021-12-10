@@ -322,6 +322,39 @@ public:
       TEST_ASSERT(comparison.maxDiff() < 2.0E-6);
    }
 
+   void testIterate1D_lam_open()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testIterate1D_lam_open.log");
+
+      System<1> system;
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
+
+      std::ifstream in;
+      openInputFile("in/solution/lam/param.open", in);
+      system.readParam(in);
+      in.close();
+
+      // system.readWBasis("in/diblock/lam/omega.ref");
+      // DArray< DArray<double> > wFields_check;
+      // wFields_check = system.wFields();
+
+      // Read input w-fields, iterate and output solution
+      system.readWBasis("in/solution/lam/w.bf");
+      system.iterate();
+      system.writeWBasis("out/testIterate1D_lam_open_w.bf");
+      system.writeCBasis("out/testIterate1D_lam_open_c.bf");
+
+      // BFieldComparison comparison(1);
+      // comparison.compare(wFields_check, system.wFields());
+      // if (verbose() > 0) {
+      //    std::cout << "\n";
+      //    std::cout << "Max error = " << comparison.maxDiff() << "\n";
+      // }
+      // TEST_ASSERT(comparison.maxDiff() < 1.0E-7);
+   }
+
    void testIterate2D_hex_rigid()
    {
       printMethod(TEST_FUNC);
@@ -589,6 +622,7 @@ TEST_ADD(SystemTest, testCheckSymmetry3D_bcc)
 TEST_ADD(SystemTest, testIterate1D_lam_rigid)
 TEST_ADD(SystemTest, testIterate1D_lam_flex)
 TEST_ADD(SystemTest, testIterate1D_lam_soln)
+TEST_ADD(SystemTest, testIterate1D_lam_open)
 TEST_ADD(SystemTest, testIterate2D_hex_rigid)
 TEST_ADD(SystemTest, testIterate2D_hex_flex)
 TEST_ADD(SystemTest, testIterate3D_bcc_rigid)

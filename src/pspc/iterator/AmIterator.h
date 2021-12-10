@@ -72,6 +72,12 @@ namespace Pspc
       bool isFlexible();
 
       /**
+      * Check if ensemble is canonical. Returns false if grand-canonical 
+      * or mixed ensemble.
+      */
+      bool isCanonical();
+
+      /**
       * Get epsilon (error threshhold).
       */
       double epsilon();
@@ -89,7 +95,7 @@ namespace Pspc
       /**
       * Compute the deviation of wFields from a mean field solution
       */
-      void computeDeviation();
+      void computeResidual();
 
       /**
       * Check if solution is converge within specified tolerance.
@@ -133,22 +139,27 @@ namespace Pspc
       /// Maximum number of iterations to attempt.
       int maxItr_;
 
+      // Ensemble shift factor. 1 if canonical, 0 if mixed or grand-canonical
+      // Affects the number of basis functions treated by the residual. Ignore
+      // the spatially homogeneous basis function if canonical.
+      int shift_;  
+
       // Work Array for iterating on parameters 
       FSArray<double, 6> parameters_;
 
       /// holds histories of deviation for each monomer
       /// 1st index = history, 2nd index = monomer, 3rd index = ngrid
       // The ringbuffer used is now slightly modified to return by reference
-      RingBuffer< DArray < DArray<double> > > devHists_;
+      RingBuffer< DArray < DArray<double> > > resHists_;
 
-      RingBuffer< DArray < DArray<double> > > omHists_;
+      RingBuffer< DArray < DArray<double> > > wHists_;
 
       /// History of deviation for each cell parameter
       /// 1st index = history, 2nd index = cell parameter
       // The ringbuffer used is now slightly modified to return by reference
-      RingBuffer< FArray <double, 6> > devCpHists_;
+      RingBuffer< FArray <double, 6> > stressHists_;
 
-      RingBuffer< FSArray<double, 6> > CpHists_;
+      RingBuffer< FSArray<double, 6> > cellParamHists_;
 
       /// Umn, matrix to be minimized
       DMatrix<double> invertMatrix_;
@@ -170,7 +181,8 @@ namespace Pspc
       /// bigDCp, blened deviation parameter. new wParameter = bigWCp + lambda * bigDCp
       FArray <double, 6> dCpArrays_;
 
-      DArray< DArray<double> > tempDev;
+      // workspace for residual calculation
+      DArray< DArray<double> > tempRes;
 
       using Iterator<D>::setClassName;
       using Iterator<D>::system;
