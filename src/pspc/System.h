@@ -231,20 +231,6 @@ namespace Pspc
       */
       CField& cFieldRGrid(int monomerId);
 
-      /**
-      * Get array of all concentration fields in k-space.
-      *
-      * The array capacity is equal to the number of monomer types.
-      */
-      DArray<RFieldDft<D> >& cFieldsKGrid();
-
-      /**
-      * Get concentration field for one monomer type on k-space grid.
-      *
-      * \param monomerId integer monomer type index
-      */
-      RFieldDft<D>& cFieldKGrid(int monomerId);
-
       //@}
       /// \name Miscellaneous Accessors 
       //@{
@@ -617,13 +603,6 @@ namespace Pspc
       DArray<CField> cFieldsRGrid_;
 
       /**
-      * Array of concentration fields on Fourier grid (k-grid).
-      *
-      * Indexed by monomer typeId, size = nMonomer.
-      */
-      DArray<RFieldDft<D> > cFieldsKGrid_;
-
-      /**
       * Work array of field coefficients for all monomer types.
       *
       * Indexed by monomer typeId, size = nMonomer.
@@ -835,16 +814,6 @@ namespace Pspc
    inline
    DArray<double> const & System<D>::cField(int id) const
    { return cFields_[id]; }
-
-   template <int D>
-   inline
-   DArray<RFieldDft<D> >& System<D>::cFieldsKGrid()
-   { return cFieldsKGrid_; }
-
-   template <int D>
-   inline
-   RFieldDft<D>& System<D>::cFieldKGrid(int id)
-   { return cFieldsKGrid_[id]; }
 
    // Get array of all monomer concentration fields on grids.
    template <int D>

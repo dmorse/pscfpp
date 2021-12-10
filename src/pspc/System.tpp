@@ -259,7 +259,6 @@ namespace Pspc
 
       cFields_.allocate(nMonomer);
       cFieldsRGrid_.allocate(nMonomer);
-      cFieldsKGrid_.allocate(nMonomer);
       
       tmpFields_.allocate(nMonomer);
       tmpFieldsRGrid_.allocate(nMonomer);
@@ -272,7 +271,6 @@ namespace Pspc
 
          cFields_[i].allocate(basis().nBasis());
          cFieldsRGrid_[i].allocate(mesh().dimensions());
-         cFieldsKGrid_[i].allocate(mesh().dimensions());
 
          tmpFields_[i].allocate(basis().nBasis());
          tmpFieldsRGrid_[i].allocate(mesh().dimensions());
