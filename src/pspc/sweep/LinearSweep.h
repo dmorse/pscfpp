@@ -71,8 +71,11 @@ namespace Pspc {
       using Sweep<D>::hasSystem;
    
    private:
-      using Sweep<D>::nParameter_;
-      using Sweep<D>::parameters_;
+      /// Number of parameters being swept. 
+      int nParameter_; 
+
+      /// Array of SweepParameter objects.
+      DArray< SweepParameter<D> > parameters_;
        
    };
 
