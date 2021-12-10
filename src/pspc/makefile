@@ -1,24 +1,27 @@
 #-----------------------------------------------------------------------
+# src/pspc/makefile
+#
 # The copy of this namespace-level makefile in the src/ directory is 
-# copied to the bld/serial and bld/parallel directories by the setup
-# script to create the copies in those directories. Only the copy in
-# the src/ directory is stored in the repository.
+# copied to the corresponding subdirectory of the bld/ directory by the 
+# setup script. Only the copy in the src/ directory is stored in the 
+# repository.
 #-----------------------------------------------------------------------
-# Include makefiles
+# Include makefile fragments
 
 SRC_DIR_REL =..
 include $(SRC_DIR_REL)/config.mk
 include $(SRC_DIR)/pspc/include.mk
 
 #-----------------------------------------------------------------------
-# Main program source file base names 
+# Main program names
 
+# Source file base names 
 PSCF_PC1D=$(BLD_DIR)/pspc/pscf_pc1d
 PSCF_PC2D=$(BLD_DIR)/pspc/pscf_pc2d
 PSCF_PC3D=$(BLD_DIR)/pspc/pscf_pc3d
 
+# List of executable names (single names are defined in pspc/config.mk)
 PSCF_PC_EXE = $(PSCF_PC1D_EXE) $(PSCF_PC2D_EXE) $(PSCF_PC3D_EXE)
-
 #-----------------------------------------------------------------------
 # Main targets 
 

@@ -194,24 +194,10 @@ namespace Pspc
 
       readParamComposite(in, domain_);
 
-      #if 0
-      read(in, "unitCell", unitCell_);
-      hasUnitCell_ = true;
-     
-      read(in, "mesh", mesh_);
-      fft_.setup(mesh_.dimensions());
-      hasMesh_ = true;
-
-      read(in, "groupName", groupName_);
-
-      basis().makeBasis(mesh(), unitCell(), groupName_);
-      #endif
-
       mixture().setMesh(mesh());
       mixture().setupUnitCell(unitCell());
 
       allocate();
-      isAllocated_ = true;
 
       // Initialize iterator
       std::string className;
@@ -273,7 +259,6 @@ namespace Pspc
 
       cFields_.allocate(nMonomer);
       cFieldsRGrid_.allocate(nMonomer);
-      cFieldsKGrid_.allocate(nMonomer);
       
       tmpFields_.allocate(nMonomer);
       tmpFieldsRGrid_.allocate(nMonomer);
@@ -284,14 +269,14 @@ namespace Pspc
          wFieldRGrid(i).allocate(mesh().dimensions());
          wFieldKGrid(i).allocate(mesh().dimensions());
 
-         cField(i).allocate(basis().nBasis());
-         cFieldRGrid(i).allocate(mesh().dimensions());
-         cFieldKGrid(i).allocate(mesh().dimensions());
+         cFields_[i].allocate(basis().nBasis());
+         cFieldsRGrid_[i].allocate(mesh().dimensions());
 
          tmpFields_[i].allocate(basis().nBasis());
          tmpFieldsRGrid_[i].allocate(mesh().dimensions());
          tmpFieldsKGrid_[i].allocate(mesh().dimensions());
       }
+
       isAllocated_ = true;
    }
 
@@ -333,6 +318,15 @@ namespace Pspc
             readEcho(in, filename);
             readWRGrid(filename);
          } else
+         if (command == "SOLVE_MDE") {
+            // Read w (chemical potential fields) if not done previously 
+            if (!hasWFields_) {
+               readEcho(in, filename);
+               readWBasis(filename);
+            }
+            // Solve the modified diffusion equation, without iteration
+            compute();
+         } else
          if (command == "ITERATE") {
             // Read w (chemical potential) fields if not done previously 
             if (!hasWFields_) {
@@ -348,15 +342,6 @@ namespace Pspc
          if (command == "SWEEP") {
             // After iterating and converging, sweep.
             sweep();
-         } else
-         if (command == "SOLVE_MDE") {
-            // Read w (chemical potential fields) if not done previously 
-            if (!hasWFields_) {
-               readEcho(in, filename);
-               readWBasis(filename);
-            }
-            // Solve the modified diffusion equation, without iteration
-            compute();
          } else
          if (command == "WRITE_W_BASIS") {
             readEcho(in, filename);
@@ -661,9 +646,9 @@ namespace Pspc
    template <int D>
    void System<D>::readWBasis(const std::string & filename)
    {
-      fieldIo().readFieldsBasis(filename, wFields(), unitCell());
+      fieldIo().readFieldsBasis(filename, wFields(), domain_.unitCell());
       fieldIo().convertBasisToRGrid(wFields(), wFieldsRGrid());
-      basis().update();
+      domain_.basis().update();
       hasWFields_ = true;
       hasCFields_ = false;
    }
@@ -674,11 +659,27 @@ namespace Pspc
    template <int D>
    void System<D>::readWRGrid(const std::string & filename)
    {
-      fieldIo().readFieldsRGrid(filename, wFieldsRGrid(), unitCell());
+      fieldIo().readFieldsRGrid(filename, wFieldsRGrid(), domain_.unitCell());
       fieldIo().convertRGridToBasis(wFieldsRGrid(), wFields());
-      basis().update();
+      domain_.basis().update();
       hasWFields_ = true;
       hasCFields_ = false;
+   }
+
+   /*
+   * Solve MDE for current w-fields, without iteration.
+   */
+   template <int D>
+   void System<D>::compute()
+   {
+      UTIL_CHECK(hasWFields_);
+
+      // Solve the modified diffusion equation (without iteration)
+      mixture().compute(wFieldsRGrid(), cFieldsRGrid_);
+
+      // Convert c fields from r-grid to basis
+      fieldIo().convertRGridToBasis(cFieldsRGrid_, cFields_);
+      hasCFields_ = true;
    }
 
    /*
@@ -720,22 +721,6 @@ namespace Pspc
    }
 
    /*
-   * Solve MDE for current w-fields, without iteration.
-   */
-   template <int D>
-   void System<D>::compute()
-   {
-      UTIL_CHECK(hasWFields_);
-
-      // Solve the modified diffusion equation (without iteration)
-      mixture().compute(wFieldsRGrid(), cFieldsRGrid());
-
-      // Convert c fields from r-grid to basis
-      fieldIo().convertRGridToBasis(cFieldsRGrid(), cFields());
-      hasCFields_ = true;
-   }
-
-   /*
    * Write w-fields in symmetry-adapted basis format. 
    */
    template <int D>
@@ -762,7 +747,7 @@ namespace Pspc
    void System<D>::writeCBasis(const std::string & filename)
    {
       UTIL_CHECK(hasCFields_);
-      fieldIo().writeFieldsBasis(filename, cFields(), unitCell());
+      fieldIo().writeFieldsBasis(filename, cFields_, unitCell());
    }
 
    /*
@@ -772,7 +757,7 @@ namespace Pspc
    void System<D>::writeCRGrid(const std::string & filename)
    {
       UTIL_CHECK(hasCFields_);
-      fieldIo().writeFieldsRGrid(filename, cFieldsRGrid(), unitCell());
+      fieldIo().writeFieldsRGrid(filename, cFieldsRGrid_, unitCell());
    }
 
    // Field conversion command functions
@@ -866,7 +851,7 @@ namespace Pspc
       hasCFields_ = false;
       hasWFields_ = false;
 
-      fieldIo().readFieldsBasis(inFileName, tmpFields_, unitCell());
+      fieldIo().readFieldsBasis(inFileName, tmpFields_, domain_.unitCell());
 
       // Compute w fields from c fields
       for (int i = 0; i < basis().nBasis(); ++i) {
@@ -911,6 +896,31 @@ namespace Pspc
       fieldIo().writeFieldHeader(outFile, mixture().nMonomer(), 
                                  unitCell());
       basis().outputWaves(outFile);
+   }
+
+   /*
+   * Set parameters of the associated unit cell.
+   */
+   template <int D>
+   void System<D>::setUnitCell(UnitCell<D> const & unitCell)
+   {
+      UTIL_CHECK(domain_.unitCell().lattice() == unitCell.lattice());
+      domain_.unitCell() = unitCell;
+      mixture_.setupUnitCell(unitCell);
+      domain_.basis().update();
+   }
+
+   /*
+   * Set parameters of the associated unit cell.
+   */
+   template <int D>
+   void 
+   System<D>::setUnitCell(FSArray<double, 6> const & parameters)
+   {
+      UTIL_CHECK(domain_.unitCell().nParameter() == parameters.size());
+      domain_.unitCell().setParameters(parameters);
+      mixture_.setupUnitCell(domain_.unitCell());
+      domain_.basis().update();
    }
 
 } // namespace Pspc

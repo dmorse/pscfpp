@@ -208,14 +208,14 @@ namespace Pspc
       *
       * The array capacity is equal to the number of monomer types.
       */
-      DArray< DArray<double> >& cFields();
+      DArray< DArray<double> > const & cFields() const;
 
       /**
       * Get concentration field for one monomer type expanded in a basis.
       *
       * \param monomerId integer monomer type index
       */
-      DArray<double>& cField(int monomerId);
+      DArray<double> const & cField(int monomerId) const;
 
       /**
       * Get array of all concentration fields on r-space grid.
@@ -231,75 +231,45 @@ namespace Pspc
       */
       CField& cFieldRGrid(int monomerId);
 
-      /**
-      * Get array of all concentration fields in k-space.
-      *
-      * The array capacity is equal to the number of monomer types.
-      */
-      DArray<RFieldDft<D> >& cFieldsKGrid();
-
-      /**
-      * Get concentration field for one monomer type on k-space grid.
-      *
-      * \param monomerId integer monomer type index
-      */
-      RFieldDft<D>& cFieldKGrid(int monomerId);
-
       //@}
       /// \name Miscellaneous Accessors 
       //@{
 
       /**
-      * Get the Mixture by reference.
+      * Get UnitCell (i.e., type and parameters) by const reference.
       */
-      Mixture<D>& mixture();
+      UnitCell<D> const & unitCell() const;
 
-      /**
-      * Get the Domain by reference.
-      */
-      Domain<D>& domain();
 
       /**
       * Get the spatial discretization mesh by reference.
-      *
-      * Equivalent to domain().mesh().
       */
-      Mesh<D>& mesh();
+      Mesh<D> const & mesh() const;
 
-      /**
-      * Get UnitCell (i.e., lattice type and parameters) by reference.
-      *
-      * Equivalent to domain().unitCell().
-      */
-      UnitCell<D>& unitCell();
+      /** 
+      * Get group name.
+      */  
+      std::string groupName() const;
 
       /**
       * Get associated Basis object by reference.
-      *
-      * Equivalent to domain().basis().
       */
-      Basis<D>& basis();
+      Basis<D> const & basis() const;
 
       /**
       * Get associated FFT object.
-      *
-      * Equivalent to domain().fft().
       */
       FFT<D>& fft();
 
       /**
       * Get associated FieldIo object.
-      *
-      * Equivalent to domain().fieldIo().
       */
       FieldIo<D>& fieldIo();
 
-      /** 
-      * Get group name.
-      *
-      * Equivalent to domain().groupName().
-      */  
-      std::string groupName() const;
+      /**
+      * Get the Mixture by reference.
+      */
+      Mixture<D>& mixture();
 
       /**
       * Get Interaction (i.e., excess free energy model) by reference.
@@ -335,9 +305,9 @@ namespace Pspc
       /** 
       * Have monomer concentration fields (c fields) been computed?
       *
-      * A true value is returned if and only if monomer concentration fields
-      * have been computed by solving the modified diffusion equation for 
-      * the current w fields, and consistent values have been set for both 
+      * A true value is returned iff monomer concentration fields have
+      * been computed by solving the modified diffusion equation for the
+      * current w fields, and consistent values have been set for both 
       * values on an r-grid (wFieldsRGrid) and for coefficients in a basis 
       * (cFields).  To satisfy this requirement, solution of the MDE on a 
       * r-grid should always be immediately followed by conversion of c 
@@ -346,7 +316,7 @@ namespace Pspc
       bool hasCFields() const;
 
       //@}
-      /// \name Commands (one-to-one correspondence with command file commands)
+      /// \name Commands (many correspondence to command file commands)
       //@{
 
       /**
@@ -378,29 +348,6 @@ namespace Pspc
       void readWRGrid(const std::string & filename);
    
       /**
-      * Iteratively solve a SCFT problem.
-      * 
-      * This function calls the iterator to attempt to solve the SCFT
-      * problem for the current mixture and system parameters, using
-      * the current chemical potential fields (wFields and wFieldRGrid) 
-      * and current unit cell parameter values as initial guesses.  
-      * Upon exist, hasCFields is set true whether or not convergence 
-      * is obtained to within the desired tolerance.  The Helmholtz free 
-      * energy and pressure are computed if and only if convergence is
-      * obtained. 
-      *
-      * \pre The hasWFields flag must be true on entry.
-      * \return returns 0 for successful convergence, 1 for failure.
-      */
-      int iterate();
-   
-      /**
-      * Sweep in parameter space, solving SCFT problems at each point.
-      * 
-      */
-      void sweep();
-
-      /**
       * Solve the modified diffusion equation once, without iteration.
       *
       * This function calls the mixture().compute() function to solve
@@ -419,6 +366,28 @@ namespace Pspc
       */
       void compute();
    
+      /**
+      * Iteratively solve a SCFT problem.
+      * 
+      * This function calls the iterator to attempt to solve the SCFT
+      * problem for the current mixture and system parameters, using
+      * the current chemical potential fields (wFields and wFieldRGrid) 
+      * and current unit cell parameter values as initial guesses.  
+      * Upon exist, hasCFields is set true whether or not convergence 
+      * is obtained to within the desired tolerance.  The Helmholtz free 
+      * energy and pressure are computed if and only if convergence is
+      * obtained. 
+      *
+      * \pre The hasWFields flag must be true on entry.
+      * \return returns 0 for successful convergence, 1 for failure.
+      */
+      int iterate();
+   
+      /**
+      * Sweep in parameter space, solving SCFT problems at each point.
+      */
+      void sweep();
+
       /**
       * Write chemical potential fields in symmetry adapted basis format.
       *
@@ -535,6 +504,20 @@ namespace Pspc
       */
       void outputWaves(const std::string & outFileName);
 
+      /**
+      * Set parameters of the associated unit cell.
+      *
+      * \param unitCell  new UnitCell<D> (i.e., new parameters).
+      */
+      void setUnitCell(UnitCell<D> const & unitCell);
+
+      /**
+      * Set parameters of the associated unit cell.
+      *
+      * \param parameters  array of new unit cell parameters.
+      */
+      void setUnitCell(FSArray<double, 6> const & parameters);
+
       //@}
 
    private:
@@ -550,39 +533,6 @@ namespace Pspc
       * Domain object (crystallography and mesh).
       */
       Domain<D> domain_;
-
-      #if 0
-      /*
-      * Crystallographic unit cell (crystal system and cell parameters).
-      */
-      UnitCell<D> unitCell_;
-
-      /**
-      * Spatial discretization mesh.
-      */
-      Mesh<D> mesh_;
-
-      /**
-      * FFT object to be used by iterator
-      */
-      FFT<D> fft_;
-
-      /**
-      * Pointer to a Basis object
-      */
-      Basis<D> basis_;
-
-      /**
-      * FieldIo object for field input/output operations
-      */
-      FieldIo<D> fieldIo_;
-
-      /**
-      * Group name.
-      */
-      std::string groupName_;
-
-      #endif
 
       /**
       * Filemaster (holds paths to associated I/O files).
@@ -653,13 +603,6 @@ namespace Pspc
       DArray<CField> cFieldsRGrid_;
 
       /**
-      * Array of concentration fields on Fourier grid (k-grid).
-      *
-      * Indexed by monomer typeId, size = nMonomer.
-      */
-      DArray<RFieldDft<D> > cFieldsKGrid_;
-
-      /**
       * Work array of field coefficients for all monomer types.
       *
       * Indexed by monomer typeId, size = nMonomer.
@@ -704,18 +647,6 @@ namespace Pspc
       * Has the mixture been initialized?
       */
       bool hasMixture_;
-
-      #if 0
-      /**
-      * Has the UnitCell been initialized?
-      */
-      bool hasUnitCell_;
-
-      /**
-      * Has the Mesh been initialized?
-      */
-      bool hasMesh_;
-      #endif
 
       /**
       * Has memory been allocated for fields?
@@ -781,29 +712,24 @@ namespace Pspc
 
    // Inline member functions
 
+   // Get the associated UnitCell<D> object by const reference.
+   template <int D>
+   inline UnitCell<D> const & System<D>::unitCell() const
+   { return domain_.unitCell(); }
+
+   // Get the Mesh<D> object.
+   template <int D>
+   inline Mesh<D> const & System<D>::mesh() const
+   { return domain_.mesh(); }
+
    // Get the associated Mixture object.
    template <int D>
    inline Mixture<D>& System<D>::mixture()
    { return mixture_; }
 
-   // Get the associated Domain object.
-   template <int D>
-   inline Domain<D>& System<D>::domain()
-   { return domain_; }
-
-   // Get the associated UnitCell<D> object.
-   template <int D>
-   inline UnitCell<D>& System<D>::unitCell()
-   { return domain_.unitCell(); }
-
-   // Get the Mesh<D> object.
-   template <int D>
-   inline Mesh<D>& System<D>::mesh()
-   { return domain_.mesh(); }
-
    // Get the Basis<D> object.
    template <int D>
-   inline Basis<D>& System<D>::basis()
+   inline Basis<D> const & System<D>::basis() const
    {  return domain_.basis(); }
 
    // Get the FFT<D> object.
@@ -881,23 +807,13 @@ namespace Pspc
 
    template <int D>
    inline
-   DArray< DArray<double> >& System<D>::cFields()
+   DArray< DArray<double> > const & System<D>::cFields() const
    { return cFields_; }
 
    template <int D>
    inline
-   DArray<double>& System<D>::cField(int id)
+   DArray<double> const & System<D>::cField(int id) const
    { return cFields_[id]; }
-
-   template <int D>
-   inline
-   DArray<RFieldDft<D> >& System<D>::cFieldsKGrid()
-   { return cFieldsKGrid_; }
-
-   template <int D>
-   inline
-   RFieldDft<D>& System<D>::cFieldKGrid(int id)
-   { return cFieldsKGrid_[id]; }
 
    // Get array of all monomer concentration fields on grids.
    template <int D>

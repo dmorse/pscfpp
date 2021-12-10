@@ -104,17 +104,9 @@ namespace Pspc
 
       // Solve MDE for initial state
       solverTimer.start();
-      system().mixture().compute(system().wFieldsRGrid(),
-                                    system().cFieldsRGrid());
+      system().compute();
       now = Timer::now();
       solverTimer.stop(now);
-
-      // Convert c fields from RGrid to Basis
-      convertTimer.start(now);
-      fieldIo.convertRGridToBasis(system().cFieldsRGrid(),
-                                  system().cFields());
-      now = Timer::now();
-      convertTimer.stop(now);
 
       // Compute initial stress if needed
       if (isFlexible_) {
@@ -150,11 +142,11 @@ namespace Pspc
             Log::file() << "----------CONVERGED----------"<< std::endl;
 
             // Output timing results
-            double updateTime = updateTimer.time();
-            double convertTime = convertTimer.time();
             double solverTime = solverTimer.time();
-            double stressTime = 0.0;
+            double convertTime = convertTimer.time();
+            double updateTime = updateTimer.time();
             double totalTime = updateTime + convertTime + solverTime;
+            double stressTime = 0.0;
             if (isFlexible_) {
                stressTime = stressTimer.time();
                totalTime += stressTime;
@@ -164,8 +156,10 @@ namespace Pspc
             Log::file() << "\n";
             Log::file() << "solver time  = " << solverTime  << " s,  "
                         << solverTime/totalTime << "\n";
-            Log::file() << "stress time  = " << stressTime  << " s,  "
-                        << stressTime/totalTime << "\n";
+            if (isFlexible_) {
+               Log::file() << "stress time  = " << stressTime  << " s,  "
+                           << stressTime/totalTime << "\n";
+            }
             Log::file() << "convert time = " << convertTime << " s,  "
                         << convertTime/totalTime << "\n";
             Log::file() << "update time  = "  << updateTime  << " s,  "
@@ -219,8 +213,7 @@ namespace Pspc
 
             // Solve MDE
             solverTimer.start(now);
-            system().mixture().compute(system().wFieldsRGrid(),
-                                       system().cFieldsRGrid());
+            system().compute();
             now = Timer::now();
             solverTimer.stop(now);
 
@@ -232,12 +225,6 @@ namespace Pspc
                stressTimer.stop(now);
             }
 
-            // Transform computed cFields from RGrid to Basis
-            convertTimer.start(now);
-            fieldIo.convertRGridToBasis(system().cFieldsRGrid(),
-                                        system().cFields());
-            now = Timer::now();
-            convertTimer.stop(now);
          }
 
       }
@@ -452,7 +439,7 @@ namespace Pspc
    template <int D>
    void AmIterator<D>::buildOmega(int itr)
    {
-      UnitCell<D>& unitCell = system().unitCell();
+      UnitCell<D> const & unitCell = system().unitCell();
       Mixture<D>&  mixture = system().mixture();
 
       if (itr == 1) {
@@ -470,9 +457,7 @@ namespace Pspc
                               + lambda_* devCpHists_[0][m]);
 
             }
-            unitCell.setParameters(parameters_);
-            mixture.setupUnitCell(unitCell);
-            system().basis().update();
+            system().setUnitCell(parameters_);
          }
 
       } else {
@@ -515,9 +500,7 @@ namespace Pspc
             for (int m = 0; m < unitCell.nParameter() ; ++m){
                parameters_.append(wCpArrays_[m] + lambda_ * dCpArrays_[m]);
             }
-            unitCell.setParameters(parameters_);
-            mixture.setupUnitCell(unitCell);
-            system().basis().update();
+            system().setUnitCell(parameters_);
          }
       }
    }
