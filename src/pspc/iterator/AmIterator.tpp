@@ -261,7 +261,7 @@ namespace Pspc
 
       // Initialize temporary residuals workspace 
       for (int i = 0 ; i < nMonomer; ++i) {
-         for (int k = shift_; k < nBasis; ++k) {
+         for (int k = 0; k < nBasis; ++k) {
             tempRes[i][k] = 0;
          }
       }
