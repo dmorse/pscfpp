@@ -346,7 +346,21 @@ namespace Pspc
       * \param filename name of input w-field file in r-grid format
       */
       void readWRGrid(const std::string & filename);
-   
+
+      /**
+      * Set new w fields, in symmetrized Fourier format.
+      *
+      * \param fields  array of new w (chemical potential) fields
+      */  
+      void setWBasis(DArray< DArray<double> > const & fields);
+ 
+      /**
+      * Set new w fields, in real-space (r-grid) format.
+      *
+      * \param fields  array of new w (chemical potential) fields
+      */  
+      void setWRGrid(DArray<WField> const & fields);
+ 
       /**
       * Solve the modified diffusion equation once, without iteration.
       *
@@ -355,14 +369,13 @@ namespace Pspc
       * subjected to the currrent chemical potential fields (wFields
       * and wFieldRGrid). This requires solution of the modified 
       * diffusion equation for all polymers, computation of Boltzmann
-      * weights for all solvents, computation and setting of molecular 
-      * partition functions for all species, and computation and 
-      * setting of block and setting of concentration fields for all
-      * blocks and solvents, and computation of overall concentrations
-      * for all monomer types. This function does not compute the 
-      * canonical (Helmholtz) free energy or grand-canonical free
-      * energy (i.e., pressure). Upon return, the flag hasCFields is 
-      * set true.
+      * weights for all solvents, computation of molecular partition
+      * functions for all species, and computation of concentration
+      * fields for blocks and solvents, and computation of overall 
+      * concentrations for all monomer types. This function does not 
+      * compute the canonical (Helmholtz) free energy or grand-canonical 
+      * free energy (i.e., pressure). Upon return, the flag hasCFields 
+      * is set true.
       */
       void compute();
    

@@ -118,6 +118,9 @@ namespace Pspc
    template <int D>
    void BasisFieldState<D>::setSystemState(bool isFlexible)
    {
+      system().setWBasis(fields());
+
+      #if 0
       // Update system  wFields
       int nMonomer = system().mixture().nMonomer();
       int nBasis = system().basis().nBasis();
@@ -133,16 +136,10 @@ namespace Pspc
       // Update system wFieldsRgrid
       system().fieldIo().convertBasisToRGrid(system().wFields(),
                                              system().wFieldsRGrid());
+      #endif
 
       if (isFlexible) {
          system().setUnitCell(unitCell());
-         #if 0
-         // Update system unitCell data
-         system().unitCell() = unitCell();
-         // Update unitCell information in all blocks of all polymers
-         system().mixture().setupUnitCell(unitCell());
-         system().basis().update();
-         #endif
       }
 
    }
