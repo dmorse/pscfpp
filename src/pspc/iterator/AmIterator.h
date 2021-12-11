@@ -105,7 +105,7 @@ namespace Pspc
       bool isConverged();
 
       /**
-      * Determine the coefficients that would minimize invertMatrix_
+      * Determine the coefficients that would minimize U_
       */
       void minimizeCoeff(int itr);
 
@@ -161,13 +161,14 @@ namespace Pspc
 
       RingBuffer< FSArray<double, 6> > cellParamHists_;
 
-      /// Umn, matrix to be minimized
-      DMatrix<double> invertMatrix_;
+      /// Matrix, the dot products of residual differences.
+      DMatrix<double> U_;
 
-      /// Cn, coefficient to convolute previous histories with
+      /// Cn, coefficients for mixing prevous histories
       DArray<double> coeffs_;
 
-      DArray<double> vM_;
+      /// Vector, dot products of residuals with differences from histories
+      DArray<double> v_;
 
       /// bigW, blended omega fields
       DArray<DArray <double> > wArrays_;
@@ -182,7 +183,7 @@ namespace Pspc
       FArray <double, 6> dCpArrays_;
 
       // workspace for residual calculation
-      DArray< DArray<double> > tempRes;
+      DArray< DArray<double> > resArrays_;
 
       using Iterator<D>::setClassName;
       using Iterator<D>::system;
