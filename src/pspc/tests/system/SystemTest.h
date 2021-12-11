@@ -330,29 +330,31 @@ public:
       System<1> system;
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
-
+      
       std::ifstream in;
-      openInputFile("in/solution/lam/param.open", in);
+      openInputFile("in/blend/lam/param", in);
       system.readParam(in);
       in.close();
 
-      // system.readWBasis("in/diblock/lam/omega.ref");
-      // DArray< DArray<double> > wFields_check;
-      // wFields_check = system.wFields();
+      // Read in comparison result
+      system.readWBasis("in/blend/lam/w.ref");
+      DArray< DArray<double> > wFields_check;
+      wFields_check = system.wFields();
 
       // Read input w-fields, iterate and output solution
-      system.readWBasis("in/solution/lam/w.bf");
+      system.readWBasis("in/blend/lam/w.bf");
       system.iterate();
       system.writeWBasis("out/testIterate1D_lam_open_w.bf");
       system.writeCBasis("out/testIterate1D_lam_open_c.bf");
 
-      // BFieldComparison comparison(1);
-      // comparison.compare(wFields_check, system.wFields());
-      // if (verbose() > 0) {
-      //    std::cout << "\n";
-      //    std::cout << "Max error = " << comparison.maxDiff() << "\n";
-      // }
-      // TEST_ASSERT(comparison.maxDiff() < 1.0E-7);
+      // Compare result
+      BFieldComparison comparison(1);
+      comparison.compare(wFields_check, system.wFields());
+      if (verbose() > 0) {
+         std::cout << "\n";
+         std::cout << "Max error = " << comparison.maxDiff() << "\n";
+      }
+      TEST_ASSERT(comparison.maxDiff() < 5.0E-8);
    }
 
    void testIterate2D_hex_rigid()
