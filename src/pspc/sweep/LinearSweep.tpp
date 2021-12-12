@@ -42,8 +42,8 @@ namespace Pspc {
             sum += parameters_[i].change();
          }
       }
-      UTIL_CHECK(sum > -0.0001);
-      UTIL_CHECK(sum < 0.0001);
+      UTIL_CHECK(sum > -0.000001);
+      UTIL_CHECK(sum < 0.000001);
    }
 
    template <int D>

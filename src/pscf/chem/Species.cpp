@@ -19,15 +19,15 @@ namespace Pscf
    /* 
    * Extract a Species::Ensemble from an istream as a string.
    */
-   std::istream& operator >> (std::istream& in, Species::Ensemble& ensemble)
+   std::istream& operator >> (std::istream& in, Species::Ensemble& policy)
    {
       std::string buffer;
       in >> buffer;
       if (buffer == "Closed" || buffer == "closed") {
-         ensemble = Species::Closed;
+         policy = Species::Closed;
       } else 
       if (buffer == "Open" || buffer == "open") {
-         ensemble = Species::Open;
+         policy = Species::Open;
       } else {
          UTIL_THROW("Invalid Species::Ensemble string in operator >>");
       } 
@@ -37,15 +37,15 @@ namespace Pscf
    /* 
    * Insert a Species::Ensemble to an ostream as a string.
    */
-   std::ostream& operator<<(std::ostream& out, Species::Ensemble ensemble) 
+   std::ostream& operator<<(std::ostream& out, Species::Ensemble policy) 
    {
-      if (ensemble == Species::Closed) {
+      if (policy == Species::Closed) {
          out << "Closed";
       } else 
-      if (ensemble == Species::Open) {
+      if (policy == Species::Open) {
          out << "Open";
       } else 
-      if (ensemble == Species::Unknown) {
+      if (policy == Species::Unknown) {
          out << "Unknown";
       } else {
          std::cout << "Invalid Species::Ensemble value on input" << std::endl;

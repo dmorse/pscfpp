@@ -233,7 +233,10 @@ public:
       wFields_check = system.wFields();
 
       // Iterate and output solution
-      system.iterate();
+      int error = system.iterate();
+      if (error) {
+         TEST_THROW("Iterator failed to converge.");
+      }
       system.writeWBasis("out/testIterate1D_lam_rigid_w.bf");
       system.writeCBasis("out/testIterate1D_lam_rigid_c.bf");
 
@@ -276,7 +279,10 @@ public:
 
       // Read input w-fields, iterate and output solution
       system.readWBasis("in/diblock/lam/omega.in");
-      system.iterate();
+      int error = system.iterate();
+      if (error) {
+         TEST_THROW("Iterator failed to converge.");
+      }
       system.writeWBasis("out/testIterate1D_lam_flex_w.bf");
       system.writeCBasis("out/testIterate1D_lam_flex_c.bf");
 
@@ -308,7 +314,10 @@ public:
       wFields_check = system.wFields();
 
       // Read input w-fields, iterate and output solution
-      system.iterate();
+      int error = system.iterate();
+      if (error) {
+         TEST_THROW("Iterator failed to converge.");
+      }
       system.writeWBasis("out/testIterate1D_lam_soln_w.bf");
       system.writeCBasis("out/testIterate1D_lam_soln_c.bf");
 
@@ -322,10 +331,10 @@ public:
       TEST_ASSERT(comparison.maxDiff() < 2.0E-6);
    }
 
-   void testIterate1D_lam_open()
+   void testIterate1D_lam_open_blend()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/testIterate1D_lam_open.log");
+      openLogFile("out/testIterate1D_lam_open_blend.log");
 
       System<1> system;
       system.fileMaster().setInputPrefix(filePrefix());
@@ -343,9 +352,12 @@ public:
 
       // Read input w-fields, iterate and output solution
       system.readWBasis("in/blend/lam/w.bf");
-      system.iterate();
-      system.writeWBasis("out/testIterate1D_lam_open_w.bf");
-      system.writeCBasis("out/testIterate1D_lam_open_c.bf");
+      int error = system.iterate();
+      if (error) {
+         TEST_THROW("Iterator failed to converge.");
+      }
+      system.writeWBasis("out/testIterate1D_lam_open_blend_w.bf");
+      system.writeCBasis("out/testIterate1D_lam_open_blend_c.bf");
 
       // Compare result
       BFieldComparison comparison(1);
@@ -355,6 +367,115 @@ public:
          std::cout << "Max error = " << comparison.maxDiff() << "\n";
       }
       TEST_ASSERT(comparison.maxDiff() < 5.0E-8);
+   }
+
+   void testIterate1D_lam_open_soln()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testIterate1D_lam_open_soln.log");
+
+      System<1> system;
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
+      
+      std::ifstream in;
+      openInputFile("in/solution/lam_open/param", in);
+      system.readParam(in);
+      in.close();
+
+      // Read in comparison result
+      system.readWBasis("in/solution/lam_open/w.ref");
+      DArray< DArray<double> > wFields_check;
+      wFields_check = system.wFields();
+
+      // Read input w-fields, iterate and output solution
+      system.readWBasis("in/solution/lam_open/w.bf");
+      int error = system.iterate();
+      if (error) {
+         TEST_THROW("Iterator failed to converge.");
+      }
+      system.writeWBasis("out/testIterate1D_lam_open_soln_w.bf");
+      system.writeCBasis("out/testIterate1D_lam_open_soln_c.bf");
+
+      // Compare result
+      BFieldComparison comparison(1);
+      comparison.compare(wFields_check, system.wFields());
+      if (verbose() > 0) {
+         std::cout << "\n";
+         std::cout << "Max error = " << comparison.maxDiff() << "\n";
+      }
+      TEST_ASSERT(comparison.maxDiff() < 5.0E-8);
+   }
+
+   void testIterate1D_lam_open_shift()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testIterate1D_lam_open_shift.log");
+
+      System<1> system, systemShift;
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
+      systemShift.fileMaster().setInputPrefix(filePrefix());
+      systemShift.fileMaster().setOutputPrefix(filePrefix());
+      
+      std::ifstream in, inShift;
+      openInputFile("in/solution/lam_open/param", in);
+      system.readParam(in);
+      openInputFile("in/solution/lam_open/param", inShift);
+      systemShift.readParam(inShift);
+      in.close();
+
+      // Read in comparison result
+      system.readWBasis("in/solution/lam_open/w.ref");
+      DArray< DArray<double> > wFields_check;
+      wFields_check = system.wFields();
+
+      // Read input w-fields, iterate and output solution
+      system.readWBasis("in/solution/lam_open/w.bf");
+      systemShift.readWBasis("in/solution/lam_open/w.bf");
+
+      // Apply shift to input fields.
+      double shift = 2;
+      DArray<DArray <double> > wFields_ = systemShift.wFields();
+      for (int i = 0; i < systemShift.mixture().nMonomer(); ++i) {
+         wFields_[i][0] += shift;
+      }
+      systemShift.setWBasis(wFields_);
+
+      // Apply shift to polymer and solvent chemical potentials.
+      for (int i = 0; i < systemShift.mixture().nSolvent(); ++i) {
+         double L = systemShift.mixture().solvent(i).size();
+         double newMu = systemShift.mixture().solvent(i).mu() + L*shift;
+         systemShift.mixture().solvent(i).setMu(newMu);
+      }
+      for (int i = 0; i < systemShift.mixture().nPolymer(); ++i) {
+         double L = 0;
+         for (int j = 0; j < systemShift.mixture().polymer(i).nBlock(); ++j) {
+            L += systemShift.mixture().polymer(i).block(j).length();
+         }
+         double newMu = systemShift.mixture().polymer(i).mu() + L*shift;
+         systemShift.mixture().polymer(i).setMu(newMu);
+      }
+
+      // Iterate
+      int error = system.iterate();
+      if (error) {
+         TEST_THROW("Iterator failed to converge.");
+      }
+      int errorShift = systemShift.iterate();
+      if (errorShift) {
+         TEST_THROW("Shifted iterator failed to converge.");
+      }
+
+      // Verify concentration fields, thermo, and pressure
+      BFieldComparison comparison(1);
+      comparison.compare(system.cFields(),systemShift.cFields());
+      double fDiff = std::abs(system.fHelmholtz() - systemShift.fHelmholtz());
+      double pDiff = std::abs(system.pressure() - systemShift.pressure() + shift);
+      TEST_ASSERT(comparison.maxDiff() < 5.0E-8);
+      TEST_ASSERT(fDiff < 1E-6);
+      TEST_ASSERT(pDiff < 1E-6);
+
    }
 
    void testIterate2D_hex_rigid()
@@ -378,7 +499,10 @@ public:
       wFields_check = system.wFields();
 
       // Iterate, output solution
-      system.iterate();
+      int error = system.iterate();
+      if (error) {
+         TEST_THROW("Iterator failed to converge.");
+      }
       system.writeWBasis("out/testIterate2D_hex_rigid_w.bf");
       system.writeCBasis("out/testIterate2D_hex_rigid_c.bf");
 
@@ -423,7 +547,10 @@ public:
       wFields_check = system.wFields();
 
       system.readWBasis("in/diblock/hex/omega.in");
-      system.iterate();
+      int error = system.iterate();
+      if (error) {
+         TEST_THROW("Iterator failed to converge.");
+      }
       system.writeWBasis("out/testIterate2D_hex_flex_w.bf");
       system.writeCBasis("out/testIterate2D_hex_flex_c.bf");
 
@@ -461,7 +588,10 @@ public:
       wFields_check = system.wFields();
 
       // Iterate and output solution
-      system.iterate();
+      int error = system.iterate();
+      if (error) {
+         TEST_THROW("Iterator failed to converge.");
+      }
       system.writeWBasis("out/testIterate3D_bcc_rigid_w.bf");
       system.writeCBasis("out/testIterate3D_bcc_rigid_c.bf");
 
@@ -504,7 +634,10 @@ public:
       wFields_check = system.wFields();
 
       system.readWBasis("in/diblock/bcc/omega.in");
-      system.iterate();
+      int error = system.iterate();
+      if (error) {
+         TEST_THROW("Iterator failed to converge.");
+      }
       system.writeWBasis("out/testIterate3D_bcc_flex_w.bf");
       system.writeCBasis("out/testIterate3D_bcc_flex_c.bf");
 
@@ -541,7 +674,10 @@ public:
       DArray< DArray<double> > wFields_check;
       wFields_check = system.wFields();
 
-      system.iterate();
+      int error = system.iterate();
+      if (error) {
+         TEST_THROW("Iterator failed to converge.");
+      }
       system.writeWBasis("out/testIterate3D_altGyr_flex_w.bf");
       system.writeCBasis("out/testIterate3D_altGyr_flex_c.bf");
 
@@ -594,7 +730,10 @@ public:
       wFields_check = system.wFields();
 
       system.readWBasis("in/diblock/c15_1/w_in.bf");
-      system.iterate();
+      int error = system.iterate();
+      if (error) {
+         TEST_THROW("Iterator failed to converge.");
+      }
       system.writeWBasis("out/testIterate3D_c15_1_flex_w.bf");
       system.writeWRGrid("out/testIterate3D_c15_1_flex_w.rf");
       //system.writeCBasis("out/testIterate3D_c15_1_flex_c.bf");
@@ -624,7 +763,9 @@ TEST_ADD(SystemTest, testCheckSymmetry3D_bcc)
 TEST_ADD(SystemTest, testIterate1D_lam_rigid)
 TEST_ADD(SystemTest, testIterate1D_lam_flex)
 TEST_ADD(SystemTest, testIterate1D_lam_soln)
-TEST_ADD(SystemTest, testIterate1D_lam_open)
+TEST_ADD(SystemTest, testIterate1D_lam_open_blend)
+TEST_ADD(SystemTest, testIterate1D_lam_open_soln)
+TEST_ADD(SystemTest, testIterate1D_lam_open_shift)
 TEST_ADD(SystemTest, testIterate2D_hex_rigid)
 TEST_ADD(SystemTest, testIterate2D_hex_flex)
 TEST_ADD(SystemTest, testIterate3D_bcc_rigid)
