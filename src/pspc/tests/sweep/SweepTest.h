@@ -286,7 +286,7 @@ public:
       }
 
       // Compare output
-      BFieldComparison comparison;
+      BFieldComparison comparison(1);
       double maxDiff = 0.0;
       for (int i = 0; i < 5; ++i) {
          comparison.compare(fieldsRef[i].fields(), fieldsOut[i].fields());

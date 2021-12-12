@@ -166,19 +166,31 @@ namespace Pscf
 
    template <class TP, class TS>
    inline Monomer const & MixtureTmpl<TP,TS>::monomer(int id) const
-   {  return monomers_[id]; }
+   {  
+      UTIL_CHECK(id < nMonomer_);
+      return monomers_[id]; 
+   }
 
    template <class TP, class TS>
    inline Monomer& MixtureTmpl<TP,TS>::monomer(int id)
-   {  return monomers_[id]; }
+   {  
+      UTIL_CHECK(id < nMonomer_);
+      return monomers_[id]; 
+   }
 
    template <class TP, class TS>
    inline TP& MixtureTmpl<TP,TS>::polymer(int id)
-   {  return polymers_[id]; }
+   {  
+      UTIL_CHECK(id < nPolymer_);
+      return polymers_[id];
+   }
 
    template <class TP, class TS>
    inline TS& MixtureTmpl<TP,TS>::solvent(int id)
-   {  return solvents_[id]; }
+   {  
+      UTIL_CHECK(id < nSolvent_);
+      return solvents_[id]; 
+   }
 
    // Non-inline member functions
 
