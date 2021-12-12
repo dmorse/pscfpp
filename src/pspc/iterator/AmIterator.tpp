@@ -303,7 +303,7 @@ namespace Pspc
       const int nParameter = system().unitCell().nParameter();
       const int nBasis = system().basis().nBasis();
 
-      double error;
+      double error = 0.0;
 
       #if 0
       // Error as defined in Matsen's Papers
@@ -329,7 +329,7 @@ namespace Pspc
       #endif
 
       // Error by max SCF residual
-      double errSCF = 0;
+      double errSCF = 0.0;
       for ( int i = 0; i < nMonomer; i++) {
          for ( int j = shift_; j < nBasis; j++) {
             if (errSCF < fabs (resHists_[0][i][j]))
@@ -341,7 +341,7 @@ namespace Pspc
 
       // Error by max Stress residual
       if (isFlexible_) {
-         double errStress;
+         double errStress = 0.0;
          for ( int i = 0; i < nParameter ; i++) {
             if (errStress < fabs (stressHists_[0][i])) {
                 errStress = fabs (stressHists_[0][i]);
@@ -352,9 +352,12 @@ namespace Pspc
             Log::file() << "Stress  "<< m << "   = "
                         << Dbl(system().mixture().stress(m)) <<"\n";
          }
-         error = (errSCF>(100*errStress)) ? errSCF : (100*errStress);
-         // 100 is chose as stress rescale factor
-         // TODO: Separate SCF and stress tolerance limits
+         // Determine if stress error, scaled by a factor, is larger
+         // than the SCF error. If so, use it.  
+         double scaleStress = 100.0;
+         if (error < scaleStress*errStress) {
+            error = scaleStress*errStress;
+         }
       }
       Log::file() << "Error       = " << Dbl(error) << std::endl;
 
@@ -368,11 +371,7 @@ namespace Pspc
       }
 
       // Check if total error is below tolerance
-      if (error < epsilon_) {
-         return true;
-      } else {
-         return false;
-      }
+      return error < epsilon_;
    }
 
    template <int D>
@@ -449,14 +448,15 @@ namespace Pspc
       const int nParameter = system().unitCell().nParameter();
       const int nBasis = system().basis().nBasis();
 
-      if (itr == 1) { // if no historical solutions
+      if (itr == 1) { // if only 1 historical solutions
          // Update omega field with SCF residuals
          for (int i = 0; i < nMonomer; ++i) {
             for (int k = shift_; k < nBasis; ++k) {
-               system().wField(i)[k]
+               wArrays_[i][k]
                       = wHists_[0][i][k] + lambda_*resHists_[0][i][k];
             }
          }
+         system().setWBasis(wArrays_);
          // Update unit cell parameters with stress residuals
          if (isFlexible_) {
             parameters_.clear();
@@ -487,8 +487,8 @@ namespace Pspc
                }
             }
          }
-         // set the homogeneous basis function values explicitly 
-         // if system is canonical
+         // set the homogeneous basis function values explicitly, 
+         // only if system is canonical
          if (isCanonical()) {
             for (int i = 0; i < nMonomer; ++i) {
                dArrays_[i][0] = 0.0;
