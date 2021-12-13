@@ -182,6 +182,7 @@ namespace Pspc {
       // double factor  = -0.5*ds_;
       // double factor2 = 0.5*factor;
       for (int i = 0; i < nx; ++i) {
+         UTIL_CHECK(std::abs(w[i]*ds_) < 1.0);
          expW_[i] = exp(-0.5*w[i]*ds_);
          expW2_[i] = exp(-0.5*0.5*w[i]*ds_);
       }

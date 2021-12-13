@@ -110,8 +110,6 @@ namespace Pspc
       Timer::TimePoint now;
       bool done;
 
-      FieldIo<D>& fieldIo = system().fieldIo();
-
       // Solve MDE for initial state
       solverTimer.start();
       system().compute();
@@ -214,13 +212,6 @@ namespace Pspc
             now = Timer::now();
             updateTimer.stop(now);
 
-            // Convert wFields from Basis to RGrid
-            convertTimer.start(now);
-            fieldIo.convertBasisToRGrid(system().wFields(),
-                                        system().wFieldsRGrid());
-            now = Timer::now();
-            convertTimer.stop(now);
-
             // Solve MDE
             solverTimer.start(now);
             system().compute();
@@ -262,7 +253,7 @@ namespace Pspc
       // Initialize temporary residuals workspace 
       for (int i = 0 ; i < nMonomer; ++i) {
          for (int k = 0; k < nBasis; ++k) {
-            resArrays_[i][k] = 0;
+            resArrays_[i][k] = 0.0;
          }
       }
       
@@ -270,16 +261,17 @@ namespace Pspc
       for (int i = 0; i < nMonomer; ++i) {
          for (int j = 0; j < nMonomer; ++j) {
             for (int k = shift_; k < nBasis; ++k) {
-               resArrays_[i][k] +=( (system().interaction().chi(i,j)*system().cField(j)[k])
-                               - (system().interaction().idemp(i,j)*system().wField(j)[k]) );
+               resArrays_[i][k] +=
+                 ( system().interaction().chi(i,j)*system().cField(j)[k]
+                 - system().interaction().idemp(i,j)*system().wField(j)[k]);
             }
          }
       }
 
-      // Account for incompressibility in the grand-canonical or mixed case
-      if (!isCanonical()) {
+      // If not canonical, account for incompressibility 
+      if (shift_ == 0) {
          for (int i = 0; i < nMonomer; ++i) {
-            resArrays_[i][0] -= 1/system().interaction().sum_inv();
+            resArrays_[i][0] -= 1.0/system().interaction().sum_inv();
          }
       }
 
@@ -370,6 +362,13 @@ namespace Pspc
          }
       }
 
+      #if 0
+      Log::file() << "n=0 Components of w basis" << std::endl;
+      for (int i=0; i < nMonomer; ++i) {
+         Log::file() << system().wField(i)[0] << std::endl;
+      }
+      #endif
+
       // Check if total error is below tolerance
       return error < epsilon_;
    }
@@ -449,6 +448,7 @@ namespace Pspc
       const int nBasis = system().basis().nBasis();
 
       if (itr == 1) { // if only 1 historical solutions
+
          // Update omega field with SCF residuals
          for (int i = 0; i < nMonomer; ++i) {
             for (int k = shift_; k < nBasis; ++k) {
@@ -456,7 +456,19 @@ namespace Pspc
                       = wHists_[0][i][k] + lambda_*resHists_[0][i][k];
             }
          }
+         // If canonical, set the homogeneous components explicitly
+         if (shift_ == 1) {
+            for (int i = 0; i < nMonomer; ++i) {
+               dArrays_[i][0] = 0.0;
+               wArrays_[i][0] = 0.0;
+               for (int j = 0; j < nMonomer; ++j) {
+                  wArrays_[i][0] += 
+                     system().interaction().chi(i,j)*system().cField(j)[0];
+               }
+            }
+         }
          system().setWBasis(wArrays_);
+
          // Update unit cell parameters with stress residuals
          if (isFlexible_) {
             parameters_.clear();
@@ -487,14 +499,14 @@ namespace Pspc
                }
             }
          }
-         // set the homogeneous basis function values explicitly, 
-         // only if system is canonical
-         if (isCanonical()) {
+         // If isCanonical, set the homogeneous components explicitly
+         if (shift_ == 1) {
             for (int i = 0; i < nMonomer; ++i) {
                dArrays_[i][0] = 0.0;
                wArrays_[i][0] = 0.0;
                for (int j = 0; j < nMonomer; ++j) {
-                  wArrays_[i][0] += system().interaction().chi(i,j)*system().cField(j)[0];
+                  wArrays_[i][0] += 
+                     system().interaction().chi(i,j)*system().cField(j)[0];
                }
             }
          }

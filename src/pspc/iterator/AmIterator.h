@@ -72,12 +72,6 @@ namespace Pspc
       bool isFlexible();
 
       /**
-      * Check if ensemble is canonical. Returns false if grand-canonical 
-      * or mixed ensemble.
-      */
-      bool isCanonical();
-
-      /**
       * Get epsilon (error threshhold).
       */
       double epsilon();
@@ -91,6 +85,83 @@ namespace Pspc
       * Get the maximum number of iteration before convergence.
       */
       int maxItr();
+
+   private:
+
+      /// Error tolerance
+      double epsilon_;
+
+      /// Flexible cell computation (1) or rigid (0), default value = 0
+      bool isFlexible_;
+
+      /// Free parameter for minimization
+      double lambda_;
+
+      /// Number of previous steps to use to compute next state. [0,maxHist_]
+      int nHist_;
+
+      // Number of histories to retain.
+      int maxHist_;
+
+      /// Maximum number of iterations to attempt.
+      int maxItr_;
+
+      /**
+      * Ensemble shift factor: 1 if isCanonical, 0 otherwise.
+      *
+      * A mixture ensemble is canonical iff all polymer and solvent species
+      * have closed ensembles. If ensemble isCanonical, ignore coefficients
+      * of the n=0 (spatially homogeneous) basis function for some purposes.
+      */
+      int shift_;  
+
+      /// Work Array for iterating on parameters 
+      FSArray<double, 6> parameters_;
+
+      /**
+      * History of field residuals.
+      * 1st index = history, 2nd index = monomer, 3rd index = basis func.
+      */
+      RingBuffer< DArray < DArray<double> > > resHists_;
+
+      /// History of previous w-fields
+      RingBuffer< DArray < DArray<double> > > wHists_;
+
+      /// History of previous stress values.
+      RingBuffer< FArray <double, 6> > stressHists_;
+
+      /// History of unit cell parameter values.
+      RingBuffer< FSArray<double, 6> > cellParamHists_;
+
+      /// Matrix, the dot products of residual differences.
+      DMatrix<double> U_;
+
+      /// Cn, coefficients for mixing previous states.
+      DArray<double> coeffs_;
+
+      /// Vector, dot products of residuals with differences from histories
+      DArray<double> v_;
+
+      /// New trial w field (big W in Arora et al. 2017)
+      DArray<DArray <double> > wArrays_;
+
+      /// Predicted field residual for trial state (big D)
+      DArray<DArray <double> > dArrays_;
+
+      /// New trial vector of cell parameters.
+      FArray<double, 6> wCpArrays_;
+
+      /// Predicted stress residual.
+      FArray<double, 6> dCpArrays_;
+
+      /// Workspace for residual calculation.
+      DArray< DArray<double> > resArrays_;
+
+      /**
+      * Check if ensemble is canonical. Returns false if grand-canonical 
+      * or mixed ensemble.
+      */
+      bool isCanonical();
 
       /**
       * Compute the deviation of wFields from a mean field solution
@@ -119,72 +190,7 @@ namespace Pspc
       */
       void cleanUp();
 
-   private:
-
-      /// Error tolerance
-      double epsilon_;
-
-      /// Flexible cell computation (1) or rigid (0), default value = 0
-      bool isFlexible_;
-
-      /// Free parameter for minimization
-      double lambda_;
-
-      /// Number of previous steps to use to compute next state. [0,maxHist_]
-      int nHist_;
-
-      // Number of histories to retain.
-      int maxHist_;
-
-      /// Maximum number of iterations to attempt.
-      int maxItr_;
-
-      // Ensemble shift factor. 1 if canonical, 0 if mixed or grand-canonical
-      // Affects the number of basis functions treated by the residual. Ignore
-      // the spatially homogeneous basis function if canonical.
-      int shift_;  
-
-      // Work Array for iterating on parameters 
-      FSArray<double, 6> parameters_;
-
-      /// holds histories of deviation for each monomer
-      /// 1st index = history, 2nd index = monomer, 3rd index = ngrid
-      // The ringbuffer used is now slightly modified to return by reference
-      RingBuffer< DArray < DArray<double> > > resHists_;
-
-      RingBuffer< DArray < DArray<double> > > wHists_;
-
-      /// History of deviation for each cell parameter
-      /// 1st index = history, 2nd index = cell parameter
-      // The ringbuffer used is now slightly modified to return by reference
-      RingBuffer< FArray <double, 6> > stressHists_;
-
-      RingBuffer< FSArray<double, 6> > cellParamHists_;
-
-      /// Matrix, the dot products of residual differences.
-      DMatrix<double> U_;
-
-      /// Cn, coefficients for mixing prevous histories
-      DArray<double> coeffs_;
-
-      /// Vector, dot products of residuals with differences from histories
-      DArray<double> v_;
-
-      /// bigW, blended omega fields
-      DArray<DArray <double> > wArrays_;
-
-      /// bigD, blened deviation fields. new wFields = bigW + lambda * bigD
-      DArray<DArray <double> > dArrays_;
-
-      /// bigWcP, blended parameter
-      FArray <double, 6> wCpArrays_;
-
-      /// bigDCp, blened deviation parameter. new wParameter = bigWCp + lambda * bigDCp
-      FArray <double, 6> dCpArrays_;
-
-      // workspace for residual calculation
-      DArray< DArray<double> > resArrays_;
-
+      // Members of parent classes with non-dependent names
       using Iterator<D>::setClassName;
       using Iterator<D>::system;
       using ParamComposite::read;
@@ -192,8 +198,9 @@ namespace Pspc
 
    //friend:
 
-
    };
+
+   // Inline member functions
 
    template<int D>
    inline double AmIterator<D>::epsilon()
