@@ -81,7 +81,7 @@ namespace Pspc
       */
       void 
       readFieldsBasis(std::istream& in, DArray< DArray<double> > & fields, 
-                      UnitCell<D> & unitCell);
+                      UnitCell<D> & unitCell) const;
 
       /**
       * Read concentration or chemical potential field components from file.
@@ -96,7 +96,7 @@ namespace Pspc
       */
       void readFieldsBasis(std::string filename, 
                            DArray< DArray<double> > & fields, 
-                           UnitCell<D> & unitCell);
+                           UnitCell<D> & unitCell) const;
 
       /**
       * Write concentration or chemical potential field components to file.
@@ -137,7 +137,7 @@ namespace Pspc
       * \param unitCell associated crystallographic UnitCell<D>
       */
       void readFieldsRGrid(std::istream& in, DArray< RField<D> >& fields, 
-                           UnitCell<D> & unitCell);
+                           UnitCell<D> & unitCell) const;
 
       /**
       * Read array of RField objects (fields on an r-space grid) from file.
@@ -155,7 +155,7 @@ namespace Pspc
       */
       void readFieldsRGrid(std::string filename, 
                            DArray< RField<D> >& fields, 
-                           UnitCell<D> & unitCell);
+                           UnitCell<D> & unitCell) const;
 
       /**
       * Write array of RField objects (fields on an r-space grid) to file.
@@ -196,7 +196,7 @@ namespace Pspc
       */
       void readFieldsKGrid(std::istream& in, 
                            DArray< RFieldDft<D> >& fields, 
-                           UnitCell<D> & unitCell);
+                           UnitCell<D> & unitCell) const;
 
       /**
       * Read array of RFieldDft objects (k-space fields) from file.
@@ -215,7 +215,7 @@ namespace Pspc
       */
       void readFieldsKGrid(std::string filename, 
                            DArray< RFieldDft<D> >& fields, 
-                           UnitCell<D> & unitCell);
+                           UnitCell<D> & unitCell) const;
 
       /**
       * Write array of RFieldDft objects (k-space fields) to file.
@@ -265,7 +265,7 @@ namespace Pspc
       * \param unitCell associated crystallographic UnitCell<D>
       */
       void readFieldHeader(std::istream& in, int nMonomer, 
-                           UnitCell<D> & unitCell);
+                           UnitCell<D> & unitCell) const;
 
       /**
       * Write header for field file (fortran pscf format)
@@ -288,7 +288,7 @@ namespace Pspc
       * \param dft discrete Fourier transform of a real field
       */
       void convertBasisToKGrid(DArray<double> const & components, 
-                               RFieldDft<D>& dft);
+                               RFieldDft<D>& dft) const;
    
       /**
       * Convert fields from symmetrized basis to Fourier transform (kgrid).
@@ -299,8 +299,8 @@ namespace Pspc
       * \param in  components of fields in symmetry adapted basis 
       * \param out fields defined as discrete Fourier transforms (k-grid)
       */
-      void convertBasisToKGrid(DArray< DArray<double> > & in,
-                               DArray< RFieldDft<D> >& out);
+      void convertBasisToKGrid(DArray< DArray<double> > const & in,
+                               DArray< RFieldDft<D> >& out) const;
 
       /**
       * Convert field from Fourier transform (k-grid) to symmetrized basis.
@@ -309,7 +309,7 @@ namespace Pspc
       * \param out  coefficients of symmetry-adapted basis functions.
       */
       void convertKGridToBasis(RFieldDft<D> const & in, 
-                               DArray<double> & out);
+                               DArray<double> & out) const;
 
       /**
       * Convert fields from Fourier transform (kgrid) to symmetrized basis.
@@ -320,8 +320,8 @@ namespace Pspc
       * \param in  fields defined as discrete Fourier transforms (k-grid)
       * \param out  components of fields in symmetry adapted basis 
       */
-      void convertKGridToBasis(DArray< RFieldDft<D> > & in,
-                               DArray< DArray<double> > & out);
+      void convertKGridToBasis(DArray< RFieldDft<D> > const & in,
+                               DArray< DArray<double> > & out) const;
 
       /**
       * Convert fields from symmetrized basis to spatial grid (rgrid).
@@ -329,8 +329,8 @@ namespace Pspc
       * \param in  fields in symmetry adapted basis form
       * \param out fields defined on real-space grid
       */
-      void convertBasisToRGrid(DArray< DArray<double> > & in,
-                               DArray< RField<D> > & out);
+      void convertBasisToRGrid(DArray< DArray<double> > const & in,
+                               DArray< RField<D> > & out) const ;
 
       /**
       * Convert fields from spatial grid (rgrid) to symmetrized basis.
@@ -338,8 +338,8 @@ namespace Pspc
       * \param in  fields defined on real-space grid
       * \param out  fields in symmetry adapted basis form
       */
-      void convertRGridToBasis(DArray< RField<D> > & in,
-                               DArray< DArray<double> > & out);
+      void convertRGridToBasis(DArray< RField<D> > const & in,
+                               DArray< DArray<double> > & out) const;
 
       /**
       * Convert fields from k-grid (DFT) to real space (rgrid) format.
@@ -347,8 +347,8 @@ namespace Pspc
       * \param in  fields in discrete Fourier format (k-grid)
       * \param out fields defined on real-space grid (r-grid)
       */
-      void convertKGridToRGrid(DArray< RFieldDft<D> > & in,
-                               DArray< RField<D> > & out);
+      void convertKGridToRGrid(DArray< RFieldDft<D> > const & in,
+                               DArray< RField<D> > & out) const;
 
       /**
       * Convert fields from spatial grid (rgrid) to k-grid format.
@@ -356,8 +356,8 @@ namespace Pspc
       * \param in  fields defined on real-space grid (r-grid)
       * \param out  fields in discrete Fourier format (k-grid)
       */
-      void convertRGridToKGrid(DArray< RField<D> > & in,
-                               DArray< RFieldDft<D> > & out);
+      void convertRGridToKGrid(DArray< RField<D> > const & in,
+                               DArray< RFieldDft<D> > & out) const;
 
       //@}
       /// \name Test Space Group Symmetry
@@ -369,7 +369,7 @@ namespace Pspc
       * \param in field in real space grid (r-grid) format
       * \return true if the field is symmetric, false otherwise
       */
-      bool hasSymmetry(RField<D> & in);
+      bool hasSymmetry(RField<D> const & in) const;
 
       /**
       * Check if a k-grid field has declared space group symmetry.
@@ -443,7 +443,7 @@ namespace Pspc
       /**
       * Check state of work array, allocate if necessary.
       */
-      void checkWorkDft();
+      void checkWorkDft() const;
 
    };
 

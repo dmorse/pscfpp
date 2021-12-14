@@ -120,9 +120,19 @@ namespace Pspc
       FFT<D>& fft();
 
       /**
+      * Get associated FFT object by const reference.
+      */
+      FFT<D> const & fft() const;
+
+      /**
       * Get associated FieldIo object.
       */
       FieldIo<D>& fieldIo();
+
+      /**
+      * Get associated FieldIo object by const reference.
+      */
+      FieldIo<D> const & fieldIo() const;
 
       /** 
       * Get group name.
@@ -214,9 +224,19 @@ namespace Pspc
    inline FFT<D>& Domain<D>::fft()
    {  return fft_; }
 
+   // Get the FFT<D> object.
+   template <int D>
+   inline FFT<D> const & Domain<D>::fft() const
+   {  return fft_; }
+
    // Get the FieldIo<D> object.
    template <int D>
    inline FieldIo<D>& Domain<D>::fieldIo()
+   {  return fieldIo_; }
+
+   // Get the FieldIo<D> object by const reference.
+   template <int D>
+   inline FieldIo<D> const & Domain<D>::fieldIo() const
    {  return fieldIo_; }
 
    // Get the groupName string.

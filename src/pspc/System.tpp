@@ -255,7 +255,7 @@ namespace Pspc
       int nMonomer = mixture().nMonomer();
       wFields_.allocate(nMonomer);
       wFieldsRGrid_.allocate(nMonomer);
-      wFieldsKGrid_.allocate(nMonomer);
+      //wFieldsKGrid_.allocate(nMonomer);
 
       cFields_.allocate(nMonomer);
       cFieldsRGrid_.allocate(nMonomer);
@@ -265,9 +265,9 @@ namespace Pspc
       tmpFieldsKGrid_.allocate(nMonomer);
 
       for (int i = 0; i < nMonomer; ++i) {
-         wField(i).allocate(basis().nBasis());
-         wFieldRGrid(i).allocate(mesh().dimensions());
-         wFieldKGrid(i).allocate(mesh().dimensions());
+         wFields_[i].allocate(basis().nBasis());
+         wFieldsRGrid_[i].allocate(mesh().dimensions());
+         //wFieldsKGrid_[i].allocate(mesh().dimensions());
 
          cFields_[i].allocate(basis().nBasis());
          cFieldsRGrid_[i].allocate(mesh().dimensions());
@@ -646,8 +646,8 @@ namespace Pspc
    template <int D>
    void System<D>::readWBasis(const std::string & filename)
    {
-      fieldIo().readFieldsBasis(filename, wFields(), domain_.unitCell());
-      fieldIo().convertBasisToRGrid(wFields(), wFieldsRGrid());
+      fieldIo().readFieldsBasis(filename, wFields_, domain_.unitCell());
+      fieldIo().convertBasisToRGrid(wFields_, wFieldsRGrid_);
       domain_.basis().update();
       hasWFields_ = true;
       hasCFields_ = false;
@@ -659,8 +659,8 @@ namespace Pspc
    template <int D>
    void System<D>::readWRGrid(const std::string & filename)
    {
-      fieldIo().readFieldsRGrid(filename, wFieldsRGrid(), domain_.unitCell());
-      fieldIo().convertRGridToBasis(wFieldsRGrid(), wFields());
+      fieldIo().readFieldsRGrid(filename, wFieldsRGrid_, domain_.unitCell());
+      fieldIo().convertRGridToBasis(wFieldsRGrid_, wFields_);
       domain_.basis().update();
       hasWFields_ = true;
       hasCFields_ = false;
@@ -904,15 +904,15 @@ namespace Pspc
       // Compute w fields from c fields
       for (int i = 0; i < basis().nBasis(); ++i) {
          for (int j = 0; j < mixture().nMonomer(); ++j) {
-            wField(j)[i] = 0;
+            wFields_[j][i] = 0.0;
             for (int k = 0; k < mixture().nMonomer(); ++k) {
-               wField(j)[i] += interaction().chi(j,k) * tmpFields_[k][i];
+               wFields_[j][i] += interaction().chi(j,k) * tmpFields_[k][i];
             }
          }
       }
 
       // Convert to r-grid format
-      fieldIo().convertBasisToRGrid(wFields(), wFieldsRGrid());
+      fieldIo().convertBasisToRGrid(wFields_, wFieldsRGrid_);
       hasWFields_ = true;
       hasCFields_ = false;
 

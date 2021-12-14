@@ -162,35 +162,36 @@ namespace Pspc
       *
       * The array capacity is equal to the number of monomer types.
       */
-      DArray< DArray<double> >& wFields();
+      DArray< DArray<double> > const & wFields() const;
 
       /**
       * Get chemical potential field for a specific monomer type.
       *
       * \param monomerId integer monomer type index
       */
-      DArray<double>& wField(int monomerId);
+      DArray<double> const & wField(int monomerId) const;
       
       /**
       * Get array of all chemical potential fields on an r-space grid.
       *
       * The array capacity is equal to the number of monomer types.
       */
-      DArray<WField>& wFieldsRGrid();
+      DArray<WField> const & wFieldsRGrid() const;
 
       /**
       * Get chemical potential field for one monomer type on r-space grid.
       *
       * \param monomerId integer monomer type index
       */
-      WField& wFieldRGrid(int monomerId);
+      WField const & wFieldRGrid(int monomerId) const;
 
+      #if 0 
       /**
       * Get array of all chemical potential fields in k-space.
       * 
       * The array capacity is equal to the number of monomer types.
       */
-      DArray<RFieldDft<D> >& wFieldsKGrid();
+      DArray< RFieldDft<D> >& wFieldsKGrid();
 
       /**
       * Get chemical potential field for one monomer type in k-space.
@@ -198,6 +199,7 @@ namespace Pspc
       * \param monomerId integer monomer type index
       */
       RFieldDft<D>& wFieldKGrid(int monomerId);
+      #endif
 
       //@}
       /// \name Concentration Field (c-Field) Accessor Functions
@@ -259,12 +261,12 @@ namespace Pspc
       /**
       * Get associated FFT object.
       */
-      FFT<D>& fft();
+      FFT<D> const & fft() const;
 
       /**
       * Get associated FieldIo object.
       */
-      FieldIo<D>& fieldIo();
+      FieldIo<D> const & fieldIo() const;
 
       /**
       * Get the Mixture by reference.
@@ -747,12 +749,12 @@ namespace Pspc
 
    // Get the FFT<D> object.
    template <int D>
-   inline FFT<D>& System<D>::fft()
+   inline FFT<D> const & System<D>::fft() const
    {  return domain_.fft(); }
 
    // Get the FieldIo<D> object.
    template <int D>
-   inline FieldIo<D>& System<D>::fieldIo()
+   inline FieldIo<D> const & System<D>::fieldIo() const
    {  return domain_.fieldIo(); }
 
    // Get the groupName string.
@@ -788,35 +790,38 @@ namespace Pspc
 
    template <int D>
    inline
-   DArray< DArray<double> >& System<D>::wFields()
+   DArray< DArray<double> > const & System<D>::wFields() const
    {  return wFields_; }
 
    template <int D>
    inline
-   DArray<double>& System<D>::wField(int id)
+   DArray<double> const & System<D>::wField(int id) const
    {  return wFields_[id]; }
 
    // Get an array of monomer chemical potential fields on r-space grids.
    template <int D>
    inline 
-   DArray< typename System<D>::WField >& System<D>::wFieldsRGrid()
+   DArray< typename System<D>::WField > const & System<D>::wFieldsRGrid() 
+   const
    {  return wFieldsRGrid_; }
 
    // Get a single monomer chemical potential field on an r-space grid.
    template <int D>
    inline 
-   typename System<D>::WField& System<D>::wFieldRGrid(int id)
+   typename System<D>::WField const & System<D>::wFieldRGrid(int id) const
    {  return wFieldsRGrid_[id]; }
 
+   #if 0
    template <int D>
    inline
-   DArray<RFieldDft<D> >& System<D>::wFieldsKGrid()
+   DArray<RFieldDft<D> > const & System<D>::wFieldsKGrid() const
    { return wFieldsKGrid_; }
 
    template <int D>
    inline
-   RFieldDft<D>& System<D>::wFieldKGrid(int id)
+   RFieldDft<D> const & System<D>::wFieldKGrid(int id) const
    { return wFieldsKGrid_[id]; }
+   #endif
 
    template <int D>
    inline

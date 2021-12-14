@@ -204,9 +204,19 @@ public:
       bool hasSymmetry = system.fieldIo().hasSymmetry(system.wFieldRGrid(0));
       TEST_ASSERT(hasSymmetry);
 
+      // Copy the wFieldsRGrid to a temporary container
+      RField<3> field;
+      field.allocate(system.mesh().dimensions());
+      int meshSize = system.mesh().size();
+      for (int j = 0; j < meshSize; ++j) {
+         field[j] = system.wFieldRGrid(0)[j];
+      }
+      hasSymmetry = system.fieldIo().hasSymmetry(field);
+      TEST_ASSERT(hasSymmetry);
+
       // Intentionally mess up the field, check that symmetry is destroyed
-      system.wFieldRGrid(0)[23] += 0.1;
-      hasSymmetry = system.fieldIo().hasSymmetry(system.wFieldRGrid(0));
+      field[23] += 0.1;
+      hasSymmetry = system.fieldIo().hasSymmetry(field);
       TEST_ASSERT(!hasSymmetry);
 
    }

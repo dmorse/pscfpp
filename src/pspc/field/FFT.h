@@ -85,25 +85,25 @@ namespace Pspc {
 
    private:
 
-      // Work array for real data.
+      /// Work array for real data.
       mutable RField<D> work_;
 
-      // Vector containing number of grid points in each direction.
+      /// Vector containing number of grid points in each direction.
       IntVec<D> meshDimensions_;
 
-      // Number of points in r-space grid
+      /// Number of points in r-space grid
       int rSize_;
 
-      // Number of points in k-space grid
+      /// Number of points in k-space grid
       int kSize_;
 
-      // Pointer to a plan for a forward transform.
+      /// Pointer to a plan for a forward transform.
       fftw_plan fPlan_;
 
-      // Pointer to a plan for an inverse transform.
+      /// Pointer to a plan for an inverse transform.
       fftw_plan iPlan_;
 
-      // Have array dimension and plan been initialized?
+      /// Have array dimension and plan been initialized?
       bool isSetup_;
 
       /**

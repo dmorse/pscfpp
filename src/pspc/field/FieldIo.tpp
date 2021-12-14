@@ -66,7 +66,8 @@ namespace Pspc
    template <int D>
    void FieldIo<D>::readFieldsBasis(std::istream& in, 
                                     DArray< DArray<double> >& fields,
-                                    UnitCell<D>& unitCell)
+                                    UnitCell<D>& unitCell) 
+   const
    {
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
@@ -302,7 +303,8 @@ namespace Pspc
    template <int D>
    void FieldIo<D>::readFieldsBasis(std::string filename, 
                                     DArray<DArray<double> >& fields,
-                                    UnitCell<D>& unitCell)
+                                    UnitCell<D>& unitCell) 
+   const
    {
        std::ifstream file;
        fileMaster().openInputFile(filename, file);
@@ -362,6 +364,7 @@ namespace Pspc
    void FieldIo<D>::readFieldsRGrid(std::istream &in,
                                     DArray<RField<D> >& fields,
                                     UnitCell<D>& unitCell)
+   const
    {
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
@@ -460,6 +463,7 @@ namespace Pspc
    void FieldIo<D>::readFieldsRGrid(std::string filename, 
                               DArray< RField<D> >& fields,
                               UnitCell<D>& unitCell)
+   const
    {
       std::ifstream file;
       fileMaster().openInputFile(filename, file);
@@ -572,6 +576,7 @@ namespace Pspc
    void FieldIo<D>::readFieldsKGrid(std::istream &in,
                                     DArray<RFieldDft<D> >& fields,
                                     UnitCell<D>& unitCell)
+   const
    {
       // Inspect fields array
       int nMonomer = fields.capacity();
@@ -612,6 +617,7 @@ namespace Pspc
    void FieldIo<D>::readFieldsKGrid(std::string filename, 
                                     DArray< RFieldDft<D> >& fields,
                                     UnitCell<D>& unitCell)
+   const
    {
       std::ifstream file;
       fileMaster().openInputFile(filename, file);
@@ -672,6 +678,7 @@ namespace Pspc
    void FieldIo<D>::readFieldHeader(std::istream& in, 
                                     int nMonomer,
                                     UnitCell<D>& unitCell) 
+   const
    {
       int ver1, ver2;
       std::string groupNameIn;
@@ -702,7 +709,7 @@ namespace Pspc
 
    template <int D>
    void FieldIo<D>::convertBasisToKGrid(DArray<double> const & in, 
-                                        RFieldDft<D>& out)
+                                        RFieldDft<D>& out) const
    {
       // Create Mesh<D> with dimensions of DFT Fourier grid.
       Mesh<D> dftMesh(out.dftDimensions());
@@ -803,7 +810,7 @@ namespace Pspc
 
    template <int D>
    void FieldIo<D>::convertKGridToBasis(RFieldDft<D> const & in, 
-                                        DArray<double>& out)
+                                        DArray<double>& out) const
    {
       // Create Mesh<D> with dimensions of DFT Fourier grid.
       Mesh<D> dftMesh(in.dftDimensions());
@@ -901,8 +908,8 @@ namespace Pspc
    }
 
    template <int D>
-   void FieldIo<D>::convertBasisToKGrid(DArray< DArray <double> >& in,
-                                        DArray< RFieldDft<D> >& out)
+   void FieldIo<D>::convertBasisToKGrid(DArray< DArray <double> > const & in,
+                                        DArray< RFieldDft<D> >& out) const
    {
       UTIL_ASSERT(in.capacity() == out.capacity());
       int n = in.capacity();
@@ -912,8 +919,8 @@ namespace Pspc
    }
 
    template <int D>
-   void FieldIo<D>::convertKGridToBasis(DArray< RFieldDft<D> >& in,
-                                        DArray< DArray <double> > & out)
+   void FieldIo<D>::convertKGridToBasis(DArray< RFieldDft<D> > const & in,
+                                        DArray< DArray <double> > & out) const
    {
       UTIL_ASSERT(in.capacity() == out.capacity());
       int n = in.capacity();
@@ -924,8 +931,8 @@ namespace Pspc
 
    template <int D>
    void 
-   FieldIo<D>::convertBasisToRGrid(DArray< DArray <double> >& in,
-                                   DArray< RField<D> >& out)
+   FieldIo<D>::convertBasisToRGrid(DArray< DArray <double> > const & in,
+                                   DArray< RField<D> >& out) const
    {
       UTIL_ASSERT(in.capacity() == out.capacity());
       checkWorkDft();
@@ -939,8 +946,8 @@ namespace Pspc
 
    template <int D>
    void 
-   FieldIo<D>::convertRGridToBasis(DArray< RField<D> >& in,
-                                   DArray< DArray <double> > & out)
+   FieldIo<D>::convertRGridToBasis(DArray< RField<D> > const & in,
+                                   DArray< DArray <double> > & out) const
    {
       UTIL_ASSERT(in.capacity() == out.capacity());
       checkWorkDft();
@@ -954,8 +961,8 @@ namespace Pspc
 
    template <int D>
    void 
-   FieldIo<D>::convertKGridToRGrid(DArray< RFieldDft<D> >& in,
-                                   DArray< RField<D> >& out)
+   FieldIo<D>::convertKGridToRGrid(DArray< RFieldDft<D> > const & in,
+                                   DArray< RField<D> >& out) const
    {
       UTIL_ASSERT(in.capacity() == out.capacity());
       int n = in.capacity();
@@ -966,8 +973,8 @@ namespace Pspc
 
    template <int D>
    void 
-   FieldIo<D>::convertRGridToKGrid(DArray< RField<D> >& in,
-                                   DArray< RFieldDft<D> >& out)
+   FieldIo<D>::convertRGridToKGrid(DArray< RField<D> > const & in,
+                                   DArray< RFieldDft<D> >& out) const
    {
       UTIL_ASSERT(in.capacity() == out.capacity());
       int n = in.capacity();
@@ -981,7 +988,7 @@ namespace Pspc
    * Return true if symmetric, false otherwise.
    */
    template <int D>
-   bool FieldIo<D>::hasSymmetry(RField<D> & in) 
+   bool FieldIo<D>::hasSymmetry(RField<D> const & in) const
    {
       fft().forwardTransform(in, workDft_);
       return hasSymmetry(workDft_);
@@ -1056,7 +1063,7 @@ namespace Pspc
    }
 
    template <int D>
-   void FieldIo<D>::checkWorkDft()
+   void FieldIo<D>::checkWorkDft() const
    {
       if (!workDft_.isAllocated()) {
          workDft_.allocate(mesh().dimensions());

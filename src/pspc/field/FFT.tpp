@@ -100,7 +100,7 @@ namespace Pspc
       }
       UTIL_CHECK(work_.capacity() == rSize_);
 
-      // Make FFTW plans (explicit specializations)
+      // Make FFTW plans (see explicit specializations FFT.cpp)
       makePlans(rField, kField);
 
       isSetup_ = true;

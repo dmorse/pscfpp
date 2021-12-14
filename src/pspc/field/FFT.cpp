@@ -1,5 +1,5 @@
 /*
-* PSCF++ Package 
+* PSCF++ Package
 *
 * Copyright 2016 - 2019, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.
@@ -19,7 +19,7 @@ namespace Pspc {
    template class FFT<3>;
 
 
-   // Forward transform, explicit specializations.
+   // Planning functions, explicit specializations.
 
    template<>
    void FFT<1>::makePlans(RField<1>& rField, RFieldDft<1>& kField)
@@ -47,7 +47,7 @@ namespace Pspc {
       	                           meshDimensions_[2], &rField[0], &kField[0],
       	                           flags);
       iPlan_ = fftw_plan_dft_c2r_3d(meshDimensions_[0], meshDimensions_[1],
-                                    meshDimensions_[2], &kField[0], &rField[0], 
+                                    meshDimensions_[2], &kField[0], &rField[0],
                                     flags);
    }
 
