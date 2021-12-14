@@ -213,6 +213,9 @@ namespace Pspc
       /// Return associated domain by reference.
       Mesh<D> const & mesh() const;
 
+      /// Has stress been computed for current w fields?
+      bool hasStress_;
+
    };
 
    // Inline member function
@@ -225,7 +228,10 @@ namespace Pspc
    // Stress with respect to unit cell parameter n.
    template <int D>
    inline double Mixture<D>::stress(int n) const
-   {  return stress_[n]; }
+   {
+      UTIL_CHECK(hasStress_);  
+      return stress_[n]; 
+   }
 
    // Get Mesh<D> by constant reference (private).
    template <int D>

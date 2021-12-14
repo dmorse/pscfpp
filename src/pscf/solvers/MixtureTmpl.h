@@ -76,11 +76,25 @@ namespace Pscf
       Polymer& polymer(int id);
 
       /**
+      * Get a polymer object by const reference.
+      *
+      * \param id integer polymer species index (0 <= id < nPolymer)
+      */
+      Polymer const & polymer(int id) const;
+
+      /**
       * Set a solvent solver object.
       *
       * \param id integer solvent species index (0 <= id < nSolvent)
       */
       Solvent& solvent(int id);
+
+      /**
+      * Set a solvent solver object.
+      *
+      * \param id integer solvent species index (0 <= id < nSolvent)
+      */
+      Solvent const & solvent(int id) const;
 
       //@}
       /// \name Accessors (by value)
@@ -186,7 +200,21 @@ namespace Pscf
    }
 
    template <class TP, class TS>
+   inline TP const & MixtureTmpl<TP,TS>::polymer(int id) const
+   {  
+      UTIL_CHECK(id < nPolymer_);
+      return polymers_[id];
+   }
+
+   template <class TP, class TS>
    inline TS& MixtureTmpl<TP,TS>::solvent(int id)
+   {  
+      UTIL_CHECK(id < nSolvent_);
+      return solvents_[id]; 
+   }
+
+   template <class TP, class TS>
+   inline TS const & MixtureTmpl<TP,TS>::solvent(int id) const
    {  
       UTIL_CHECK(id < nSolvent_);
       return solvents_[id]; 

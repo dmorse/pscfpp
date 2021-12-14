@@ -151,22 +151,22 @@ namespace Pspc
 
       // If option -p, set parameter file name
       if (pFlag) {
-         fileMaster().setParamFileName(std::string(pArg));
+         fileMaster_.setParamFileName(std::string(pArg));
       }
 
       // If option -c, set command file name
       if (cFlag) {
-         fileMaster().setCommandFileName(std::string(cArg));
+         fileMaster_.setCommandFileName(std::string(cArg));
       }
 
       // If option -i, set path prefix for input files
       if (iFlag) {
-         fileMaster().setInputPrefix(std::string(iArg));
+         fileMaster_.setInputPrefix(std::string(iArg));
       }
 
       // If option -o, set path prefix for output files
       if (oFlag) {
-         fileMaster().setOutputPrefix(std::string(oArg));
+         fileMaster_.setOutputPrefix(std::string(oArg));
       }
 
    }
@@ -177,25 +177,25 @@ namespace Pspc
    template <int D>
    void System<D>::readParameters(std::istream& in)
    {
-      readParamComposite(in, mixture());
+      readParamComposite(in, mixture_);
       hasMixture_ = true;
 
-      int nm = mixture().nMonomer(); 
-      int np = mixture().nPolymer(); 
-      int ns = mixture().nSolvent(); 
+      int nm = mixture_.nMonomer(); 
+      int np = mixture_.nPolymer(); 
+      int ns = mixture_.nSolvent(); 
 
       // Initialize homogeneous object NOTE: THIS OBJECT IS NOT USED AT ALL.
       homogeneous_.setNMolecule(np+ns);
       homogeneous_.setNMonomer(nm);
       initHomogeneous();
 
-      interaction().setNMonomer(mixture().nMonomer());
+      interaction().setNMonomer(mixture_.nMonomer());
       readParamComposite(in, interaction());
 
       readParamComposite(in, domain_);
 
-      mixture().setMesh(mesh());
-      mixture().setupUnitCell(unitCell());
+      mixture_.setMesh(mesh());
+      mixture_.setupUnitCell(unitCell());
 
       allocate();
 
@@ -240,7 +240,7 @@ namespace Pspc
    */
    template <int D>
    void System<D>::readParam()
-   {  readParam(fileMaster().paramFile()); }
+   {  readParam(fileMaster_.paramFile()); }
 
    /*
    * Allocate memory for fields.
@@ -252,7 +252,7 @@ namespace Pspc
       UTIL_CHECK(hasMixture_);
 
       // Allocate wFields and cFields
-      int nMonomer = mixture().nMonomer();
+      int nMonomer = mixture_.nMonomer();
       wFields_.allocate(nMonomer);
       wFieldsRGrid_.allocate(nMonomer);
       //wFieldsKGrid_.allocate(nMonomer);
@@ -318,7 +318,7 @@ namespace Pspc
             readEcho(in, filename);
             readWRGrid(filename);
          } else
-         if (command == "SOLVE_MDE") {
+         if (command == "COMPUTE") {
             // Read w (chemical potential fields) if not done previously 
             if (!hasWFields_) {
                readEcho(in, filename);
@@ -409,10 +409,10 @@ namespace Pspc
    template <int D>
    void System<D>::readCommands()
    {  
-      if (fileMaster().commandFileName().empty()) {
+      if (fileMaster_.commandFileName().empty()) {
          UTIL_THROW("Empty command file name");
       }
-      readCommands(fileMaster().commandFile()); 
+      readCommands(fileMaster_.commandFile()); 
    }
 
   
@@ -429,15 +429,15 @@ namespace Pspc
       fHelmholtz_ = 0.0;
  
       double phi, mu;
-      int np = mixture().nPolymer();
-      int ns = mixture().nSolvent();
+      int np = mixture_.nPolymer();
+      int ns = mixture_.nSolvent();
 
       // Compute polymer ideal gas contributions to fHelhmoltz_
       if (np > 0) {
          Polymer<D>* polymerPtr;
          double length;
          for (int i = 0; i < np; ++i) {
-            polymerPtr = &mixture().polymer(i);
+            polymerPtr = &mixture_.polymer(i);
             phi = polymerPtr->phi();
             mu = polymerPtr->mu();
             length = polymerPtr->length();
@@ -451,7 +451,7 @@ namespace Pspc
          Solvent<D>* solventPtr;
          double size;
          for (int i = 0; i < ns; ++i) {
-            solventPtr = &mixture().solvent(i);
+            solventPtr = &mixture_.solvent(i);
             phi = solventPtr->phi();
             mu = solventPtr->mu();
             size = solventPtr->size();
@@ -459,7 +459,7 @@ namespace Pspc
          }
       }
 
-      int nm  = mixture().nMonomer();
+      int nm  = mixture_.nMonomer();
       int nBasis = basis().nBasis();
 
       // Compute Legendre transform subtraction
@@ -491,7 +491,7 @@ namespace Pspc
          Polymer<D>* polymerPtr;
          double length;
          for (int i = 0; i < np; ++i) {
-            polymerPtr = &mixture().polymer(i);
+            polymerPtr = &mixture_.polymer(i);
             phi = polymerPtr->phi();
             mu = polymerPtr->mu();
             length = polymerPtr->length();
@@ -504,7 +504,7 @@ namespace Pspc
          Solvent<D>* solventPtr;
          double size;
          for (int i = 0; i < ns; ++i) {
-            solventPtr = &mixture().solvent(i);
+            solventPtr = &mixture_.solvent(i);
             phi = solventPtr->phi();
             mu = solventPtr->mu();
             size = solventPtr->size();
@@ -515,15 +515,15 @@ namespace Pspc
    }
 
    template <int D>
-   void System<D>::outputThermo(std::ostream& out)
+   void System<D>::outputThermo(std::ostream& out) const
    {
       out << std::endl;
       out << "fHelmholtz    " << Dbl(fHelmholtz(), 18, 11) << std::endl;
       out << "pressure      " << Dbl(pressure(), 18, 11) << std::endl;
       out << std::endl;
 
-      int np = mixture().nPolymer();
-      int ns = mixture().nSolvent();
+      int np = mixture_.nPolymer();
+      int ns = mixture_.nSolvent();
 
       if (np > 0) {
          out << "Polymers:" << std::endl;
@@ -533,8 +533,8 @@ namespace Pspc
              << std::endl;
          for (int i = 0; i < np; ++i) {
             out << Int(i, 5) 
-                << "  " << Dbl(mixture().polymer(i).phi(),18, 11)
-                << "  " << Dbl(mixture().polymer(i).mu(), 18, 11)  
+                << "  " << Dbl(mixture_.polymer(i).phi(),18, 11)
+                << "  " << Dbl(mixture_.polymer(i).mu(), 18, 11)  
                 << std::endl;
          }
          out << std::endl;
@@ -548,8 +548,8 @@ namespace Pspc
              << std::endl;
          for (int i = 0; i < ns; ++i) {
             out << Int(i, 5) 
-                << "  " << Dbl(mixture().solvent(i).phi(),18, 11)
-                << "  " << Dbl(mixture().solvent(i).mu(), 18, 11)  
+                << "  " << Dbl(mixture_.solvent(i).phi(),18, 11)
+                << "  " << Dbl(mixture_.solvent(i).mu(), 18, 11)  
                 << std::endl;
          }
          out << std::endl;
@@ -562,9 +562,9 @@ namespace Pspc
    {
 
       // Set number of molecular species and monomers
-      int nm = mixture().nMonomer(); 
-      int np = mixture().nPolymer(); 
-      int ns = mixture().nSolvent(); 
+      int nm = mixture_.nMonomer(); 
+      int np = mixture_.nPolymer(); 
+      int ns = mixture_.nSolvent(); 
       UTIL_CHECK(homogeneous_.nMolecule() == np + ns);
       UTIL_CHECK(homogeneous_.nMonomer() == nm);
 
@@ -591,9 +591,9 @@ namespace Pspc
             }
    
             // Compute clump sizes for all monomer types.
-            nb = mixture().polymer(i).nBlock(); 
+            nb = mixture_.polymer(i).nBlock(); 
             for (k = 0; k < nb; ++k) {
-               Block<D>& block = mixture().polymer(i).block(k);
+               Block<D>& block = mixture_.polymer(i).block(k);
                j = block.monomerId();
                c_[j] += block.length();
             }
@@ -627,8 +627,8 @@ namespace Pspc
          int monomerId;
          for (int is = 0; is < ns; ++is) {
             i = is + np;
-            monomerId = mixture().solvent(is).monomerId();
-            size = mixture().solvent(is).size();
+            monomerId = mixture_.solvent(is).monomerId();
+            size = mixture_.solvent(is).size();
             homogeneous_.molecule(i).setNClump(1);
             homogeneous_.molecule(i).clump(0).setMonomerId(monomerId);
             homogeneous_.molecule(i).clump(0).setSize(size);
@@ -718,16 +718,20 @@ namespace Pspc
    * Solve MDE for current w-fields, without iteration.
    */
    template <int D>
-   void System<D>::compute()
+   void System<D>::compute(bool needStress)
    {
       UTIL_CHECK(hasWFields_);
 
       // Solve the modified diffusion equation (without iteration)
-      mixture().compute(wFieldsRGrid(), cFieldsRGrid_);
+      mixture_.compute(wFieldsRGrid(), cFieldsRGrid_);
 
       // Convert c fields from r-grid to basis
       fieldIo().convertRGridToBasis(cFieldsRGrid_, cFields_);
       hasCFields_ = true;
+
+      if (needStress) {
+         mixture_.computeStress();
+      }
    }
 
    /*
@@ -772,7 +776,7 @@ namespace Pspc
    * Write w-fields in symmetry-adapted basis format. 
    */
    template <int D>
-   void System<D>::writeWBasis(const std::string & filename)
+   void System<D>::writeWBasis(const std::string & filename) const
    {
       UTIL_CHECK(hasWFields_);
       fieldIo().writeFieldsBasis(filename, wFields(), unitCell());
@@ -782,7 +786,7 @@ namespace Pspc
    * Write w-fields to real space grid.
    */
    template <int D>
-   void System<D>::writeWRGrid(const std::string & filename)
+   void System<D>::writeWRGrid(const std::string & filename) const
    {
       UTIL_CHECK(hasWFields_);
       fieldIo().writeFieldsRGrid(filename, wFieldsRGrid(), unitCell());
@@ -792,7 +796,7 @@ namespace Pspc
    * Write all concentration fields in symmetry-adapted basis format.
    */
    template <int D>
-   void System<D>::writeCBasis(const std::string & filename)
+   void System<D>::writeCBasis(const std::string & filename) const
    {
       UTIL_CHECK(hasCFields_);
       fieldIo().writeFieldsBasis(filename, cFields_, unitCell());
@@ -802,7 +806,7 @@ namespace Pspc
    * Write all concentration fields in real space (r-grid) format.
    */
    template <int D>
-   void System<D>::writeCRGrid(const std::string & filename)
+   void System<D>::writeCRGrid(const std::string & filename) const
    {
       UTIL_CHECK(hasCFields_);
       fieldIo().writeFieldsRGrid(filename, cFieldsRGrid_, unitCell());
@@ -815,7 +819,7 @@ namespace Pspc
    */
    template <int D>
    void System<D>::basisToRGrid(const std::string & inFileName,
-                                const std::string & outFileName)
+                                const std::string & outFileName) const
    {
       UnitCell<D> tmpUnitCell;
       fieldIo().readFieldsBasis(inFileName, tmpFields_, tmpUnitCell);
@@ -829,7 +833,7 @@ namespace Pspc
    */
    template <int D>
    void System<D>::rGridToBasis(const std::string & inFileName,
-                                const std::string & outFileName)
+                                const std::string & outFileName) const
    {
       UnitCell<D> tmpUnitCell;
       fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_, tmpUnitCell);
@@ -842,11 +846,11 @@ namespace Pspc
    */
    template <int D>
    void System<D>::kGridToRGrid(const std::string & inFileName,
-                                const std::string& outFileName)
+                                const std::string& outFileName) const
    {
       UnitCell<D> tmpUnitCell;
       fieldIo().readFieldsKGrid(inFileName, tmpFieldsKGrid_, tmpUnitCell);
-      for (int i = 0; i < mixture().nMonomer(); ++i) {
+      for (int i = 0; i < mixture_.nMonomer(); ++i) {
          fft().inverseTransform(tmpFieldsKGrid_[i], tmpFieldsRGrid_[i]);
       }
       fieldIo().writeFieldsRGrid(outFileName, tmpFieldsRGrid_, 
@@ -858,12 +862,12 @@ namespace Pspc
    */
    template <int D>
    void System<D>::rGridToKGrid(const std::string & inFileName,
-                                const std::string & outFileName)
+                                const std::string & outFileName) const
    {
       UnitCell<D> tmpUnitCell;
       fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_, 
                                 tmpUnitCell);
-      for (int i = 0; i < mixture().nMonomer(); ++i) {
+      for (int i = 0; i < mixture_.nMonomer(); ++i) {
          fft().forwardTransform(tmpFieldsRGrid_[i], tmpFieldsKGrid_[i]);
       }
       fieldIo().writeFieldsKGrid(outFileName, tmpFieldsKGrid_, 
@@ -874,11 +878,11 @@ namespace Pspc
    * Convert fields from real-space grid to symmetry-adapted basis format.
    */
    template <int D>
-   bool System<D>::checkRGridFieldSymmetry(const std::string & inFileName)
+   bool System<D>::checkRGridFieldSymmetry(const std::string & inFileName) const
    {
       UnitCell<D> tmpUnitCell;
       fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_, tmpUnitCell);
-      for (int i = 0; i < mixture().nMonomer(); ++i) {
+      for (int i = 0; i < mixture_.nMonomer(); ++i) {
          bool symmetric = fieldIo().hasSymmetry(tmpFieldsRGrid_[i]);
          if (!symmetric) {
             return false;
@@ -903,9 +907,9 @@ namespace Pspc
 
       // Compute w fields from c fields
       for (int i = 0; i < basis().nBasis(); ++i) {
-         for (int j = 0; j < mixture().nMonomer(); ++j) {
+         for (int j = 0; j < mixture_.nMonomer(); ++j) {
             wFields_[j][i] = 0.0;
-            for (int k = 0; k < mixture().nMonomer(); ++k) {
+            for (int k = 0; k < mixture_.nMonomer(); ++k) {
                wFields_[j][i] += interaction().chi(j,k) * tmpFields_[k][i];
             }
          }
@@ -924,11 +928,11 @@ namespace Pspc
    * Write description of symmetry-adapted stars and basis to file.
    */
    template <int D>
-   void System<D>::outputStars(const std::string & outFileName)
+   void System<D>::outputStars(const std::string & outFileName) const
    {
       std::ofstream outFile;
-      fileMaster().openOutputFile(outFileName, outFile);
-      fieldIo().writeFieldHeader(outFile, mixture().nMonomer(),
+      fileMaster_.openOutputFile(outFileName, outFile);
+      fieldIo().writeFieldHeader(outFile, mixture_.nMonomer(),
                                  unitCell());
       basis().outputStars(outFile);
    }
@@ -937,11 +941,11 @@ namespace Pspc
    * Write a list of waves and associated stars to file.
    */
    template <int D>
-   void System<D>::outputWaves(const std::string & outFileName)
+   void System<D>::outputWaves(const std::string & outFileName) const
    {
       std::ofstream outFile;
-      fileMaster().openOutputFile(outFileName, outFile);
-      fieldIo().writeFieldHeader(outFile, mixture().nMonomer(), 
+      fileMaster_.openOutputFile(outFileName, outFile);
+      fieldIo().writeFieldHeader(outFile, mixture_.nMonomer(), 
                                  unitCell());
       basis().outputWaves(outFile);
    }

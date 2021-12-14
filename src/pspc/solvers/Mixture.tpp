@@ -24,7 +24,8 @@ namespace Pspc
     : vMonomer_(1.0),
       ds_(-1.0),
       meshPtr_(0),
-      unitCellPtr_(0)
+      unitCellPtr_(0),
+      hasStress_(false)
    {  setClassName("Mixture"); }
 
    template <int D>
@@ -87,6 +88,7 @@ namespace Pspc
          }
       }
 
+      hasStress_ = false;
    }
 
 
@@ -107,6 +109,7 @@ namespace Pspc
             }
          }
       }
+      hasStress_ = false;
    }
 
    /*
@@ -187,6 +190,7 @@ namespace Pspc
 
       }
 
+      hasStress_ = false;
    }
 
    /*
@@ -221,6 +225,7 @@ namespace Pspc
       // Note: Solvent does not contribute to derivatives of f_Helmholtz
       // with respect to unit cell parameters at fixed volume fractions.
 
+      hasStress_ = true;
    }
 
 } // namespace Pspc

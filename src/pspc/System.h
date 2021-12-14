@@ -135,7 +135,7 @@ namespace Pspc
       *
       * \param out output stream 
       */
-      void outputThermo(std::ostream& out);
+      void outputThermo(std::ostream& out) const;
 
       /**
       * Get precomputed Helmoltz free energy per monomer / kT.
@@ -224,14 +224,14 @@ namespace Pspc
       *
       * The array capacity is equal to the number of monomer types.
       */
-      DArray<CField>& cFieldsRGrid();
+      DArray<CField> const & cFieldsRGrid() const;
 
       /**
       * Get concentration field for one monomer type on r-space grid.
       *
       * \param monomerId integer monomer type index
       */
-      CField& cFieldRGrid(int monomerId);
+      CField const & cFieldRGrid(int monomerId) const;
 
       //@}
       /// \name Miscellaneous Accessors 
@@ -295,12 +295,6 @@ namespace Pspc
 
       /** 
       * Have monomer chemical potential fields (w fields) been set?
-      *
-      * A true value is returned if and only if consistent values have 
-      * been set for both components in a symmetrized basis (wFields) and 
-      * for values on a regular real space grid (wFieldsRGrid). Commands 
-      * that read w fields from file in either of these formats must 
-      * immediately convert to the other.
       */
       bool hasWFields() const;
 
@@ -309,11 +303,7 @@ namespace Pspc
       *
       * A true value is returned iff monomer concentration fields have
       * been computed by solving the modified diffusion equation for the
-      * current w fields, and consistent values have been set for both 
-      * values on an r-grid (wFieldsRGrid) and for coefficients in a basis 
-      * (cFields).  To satisfy this requirement, solution of the MDE on a 
-      * r-grid should always be immediately followed by conversion of c 
-      * fields to a basis.
+      * current w fields.
       */  
       bool hasCFields() const;
 
@@ -366,7 +356,7 @@ namespace Pspc
       /**
       * Solve the modified diffusion equation once, without iteration.
       *
-      * This function calls the mixture().compute() function to solve
+      * This function calls the Mixture::compute() function to solve
       * the statistical mechanics problem for a non-interacting system
       * subjected to the currrent chemical potential fields (wFields
       * and wFieldRGrid). This requires solution of the modified 
@@ -378,8 +368,13 @@ namespace Pspc
       * compute the canonical (Helmholtz) free energy or grand-canonical 
       * free energy (i.e., pressure). Upon return, the flag hasCFields 
       * is set true.
+      *
+      * If called with needStress == true, then this function also
+      * calls Mixture::computeStress to compute the stress.
+      *
+      * \param needStress true if stress should be computed, false otherwise
       */
-      void compute();
+      void compute(bool needStress = false);
    
       /**
       * Iteratively solve a SCFT problem.
@@ -388,8 +383,8 @@ namespace Pspc
       * problem for the current mixture and system parameters, using
       * the current chemical potential fields (wFields and wFieldRGrid) 
       * and current unit cell parameter values as initial guesses.  
-      * Upon exist, hasCFields is set true whether or not convergence 
-      * is obtained to within the desired tolerance.  The Helmholtz free 
+      * On exit, hasCFields is set true whether or not convergence is
+      * obtained to within the desired tolerance.  The Helmholtz free 
       * energy and pressure are computed if and only if convergence is
       * obtained. 
       *
@@ -408,28 +403,28 @@ namespace Pspc
       *
       * \param filename name of output file
       */
-      void writeWBasis(const std::string & filename);
+      void writeWBasis(const std::string & filename) const;
    
       /**
       * Write chemical potential fields in real space grid (r-grid) format.
       *
       * \param filename name of output file
       */
-      void writeWRGrid(const std::string & filename);
+      void writeWRGrid(const std::string & filename) const;
    
       /**
       * Write concentrations in symmetry-adapted basis format.
       *
       * \param filename name of output file
       */
-      void writeCBasis(const std::string & filename);
+      void writeCBasis(const std::string & filename) const;
    
       /**
       * Write concentration fields in real space grid format.
       *
       * \param filename name of output file
       */
-      void writeCRGrid(const std::string & filename);
+      void writeCRGrid(const std::string & filename) const;
    
       /**
       * Convert a field from symmetry-adapted basis to r-grid format.
@@ -442,7 +437,7 @@ namespace Pspc
       * \param outFileName name of output file
       */
       void basisToRGrid(const std::string & inFileName, 
-                        const std::string & outFileName);
+                        const std::string & outFileName) const;
    
       /**
       * Convert a field from real-space grid to symmetrized basis format.
@@ -455,7 +450,7 @@ namespace Pspc
       * \param outFileName name of output file
       */
       void rGridToBasis(const std::string & inFileName,
-                        const std::string & outFileName);
+                        const std::string & outFileName) const;
    
       /**
       * Convert fields from Fourier (k-grid) to real-space (r-grid) format.
@@ -467,7 +462,7 @@ namespace Pspc
       * \param outFileName name of output file
       */
       void kGridToRGrid(const std::string& inFileName, 
-                        const std::string& outFileName);
+                        const std::string& outFileName) const;
    
       /**
       * Convert fields from real-space (r-grid) to Fourier (k-grid) format.
@@ -479,7 +474,7 @@ namespace Pspc
       * \param outFileName name of output file
       */
       void rGridToKGrid(const std::string & inFileName, 
-                        const std::string & outFileName);
+                        const std::string & outFileName) const;
   
       /** 
       * Check if r-grid fields have the declared space group symmetry.
@@ -487,17 +482,18 @@ namespace Pspc
       * \param inFileName name of input file
       * \return true if fields all have symmetry, false otherwise
       */ 
-      bool checkRGridFieldSymmetry(const std::string & inFileName);
+      bool checkRGridFieldSymmetry(const std::string & inFileName) const;
 
       /**
-      * Construct proposed chemical potential fields from concentration fields.
+      * Construct trial chemical potential fields from concentration fields.
       *
       * This function reads concentration fields in symmetrized basis format
-      * from a file named inFileName, constructs an initial guess for 
+      * from a file named inFileName, and constructs an initial guess for 
       * corresponding chemical potential fields by setting the Lagrange 
-      * multiplier field to zero, stores the result in the system wFields 
-      * array and also outputs the result to file named outFileName. Upon
-      * return, hasWFields is set true and hasCFields is set false. 
+      * multiplier field to zero. The resulting guess is stored in the 
+      * system wFields array and also output to a file named 
+      * outFileName. Upon return, hasWFields is set true and hasCFields 
+      * is set false. 
       *
       * \param inFileName name of input file
       * \param outFileName name of output file
@@ -506,23 +502,23 @@ namespace Pspc
                       const std::string& outFileName);
    
       /**
-      * Output information about stars and symmetry-adapted basis functions.
+      * Output information about stars and symmetrized basis functions.
       *
       * \param outFileName name of output file
       */
-      void outputStars(const std::string & outFileName);
+      void outputStars(const std::string & outFileName) const;
    
       /**
       * Output information about waves.
       *
       * \param outFileName name of output file
       */
-      void outputWaves(const std::string & outFileName);
+      void outputWaves(const std::string & outFileName) const;
 
       /**
       * Set parameters of the associated unit cell.
       *
-      * \param unitCell  new UnitCell<D> (i.e., new parameters).
+      * \param unitCell  new UnitCell<D> (i.e., new parameters)
       */
       void setUnitCell(UnitCell<D> const & unitCell);
 
@@ -622,31 +618,31 @@ namespace Pspc
       *
       * Indexed by monomer typeId, size = nMonomer.
       */
-      DArray< DArray<double> > tmpFields_;
+      mutable DArray< DArray<double> > tmpFields_;
 
       /**
       * Work array of fields on real space grid.
       *
       * Indexed by monomer typeId, size = nMonomer.
       */
-      DArray<CField> tmpFieldsRGrid_;
+      mutable DArray<CField> tmpFieldsRGrid_;
 
       /**
       * Work array of fields on Fourier grid (k-grid).
       *
       * Indexed by monomer typeId, size = nMonomer.
       */
-      DArray<RFieldDft<D> > tmpFieldsKGrid_;
+      mutable DArray<RFieldDft<D> > tmpFieldsKGrid_;
 
       /**
       * Work array (size = # of grid points).
       */
-      DArray<double> f_;
+      mutable DArray<double> f_;
 
       /**
       * Work array (size = # of monomer types).
       */
-      DArray<double> c_;
+      mutable DArray<double> c_;
 
       /**
       * Helmholtz free energy per monomer / kT.
@@ -676,9 +672,10 @@ namespace Pspc
       bool hasWFields_;
 
       /**
-      * Have C fields been computed by solving the MDE ?
+      * Have C fields been computed by solving MDEs for current w fields?
       *
-      * True iff both cFields_ and cFieldsRGrid_ are set and consistent.
+      * Set true when c fields are computed, set false when w fields or
+      * unit cell are reset.
       */
       bool hasCFields_;
 
@@ -836,12 +833,14 @@ namespace Pspc
    // Get array of all monomer concentration fields on grids.
    template <int D>
    inline
-   DArray< typename System<D>::CField >& System<D>::cFieldsRGrid()
+   DArray< typename System<D>::CField > const & System<D>::cFieldsRGrid() 
+   const
    {  return cFieldsRGrid_; }
 
    // Get a single monomer concentration field on an r-space grid.
    template <int D>
-   inline typename System<D>::CField& System<D>::cFieldRGrid(int id)
+   inline typename System<D>::CField const & System<D>::cFieldRGrid(int id)
+   const
    {  return cFieldsRGrid_[id]; }
 
    // Have the w fields been set?
