@@ -961,7 +961,7 @@ namespace Pspc
 
    template <int D>
    void 
-   FieldIo<D>::convertKGridToRGrid(DArray< RFieldDft<D> > const & in,
+   FieldIo<D>::convertKGridToRGrid(DArray< RFieldDft<D> > & in,
                                    DArray< RField<D> >& out) const
    {
       UTIL_ASSERT(in.capacity() == out.capacity());

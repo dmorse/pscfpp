@@ -33,7 +33,7 @@ public:
    void testAllocate();
    void testAllocate3();
    void testSubscript();
-   //void testCopyConstructor();
+   void testCopyConstructor();
    void testAssignment();
    void testSerialize1Memory();
    void testSerialize2Memory();
@@ -92,6 +92,34 @@ void RFieldTest::testSubscript()
    
       TEST_ASSERT(v[0] == 10.0);
       TEST_ASSERT(v[2] == 30.0);
+   }
+}
+ 
+void RFieldTest::testCopyConstructor()
+{
+   printMethod(TEST_FUNC);
+
+   {
+      RField<3> v;
+      v.allocate(capacity);
+      TEST_ASSERT(v.capacity() == 3 );
+      TEST_ASSERT(v.isAllocated() );
+   
+   
+      for (int i=0; i < capacity; i++ ) {
+         v[i] = (i+1)*10.0;
+      }
+   
+      RField<3> u(v);
+      TEST_ASSERT(u.capacity() == 3 );
+      TEST_ASSERT(u.isAllocated() );
+   
+      TEST_ASSERT(u.capacity() == 3 );
+      TEST_ASSERT(u.isAllocated() );
+      TEST_ASSERT(v[0] == 10.0);
+      TEST_ASSERT(v[2] == 30.0);
+      TEST_ASSERT(u[0] == 10.0);
+      TEST_ASSERT(u[2] == 30.0);
    }
 } 
 
@@ -361,7 +389,7 @@ TEST_ADD(RFieldTest, testConstructor)
 TEST_ADD(RFieldTest, testAllocate)
 TEST_ADD(RFieldTest, testAllocate3)
 TEST_ADD(RFieldTest, testSubscript)
-//TEST_ADD(RFieldTest, testCopyConstructor)
+TEST_ADD(RFieldTest, testCopyConstructor)
 TEST_ADD(RFieldTest, testAssignment)
 TEST_ADD(RFieldTest, testSerialize1Memory)
 TEST_ADD(RFieldTest, testSerialize2Memory)

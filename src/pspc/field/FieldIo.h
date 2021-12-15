@@ -344,10 +344,14 @@ namespace Pspc
       /**
       * Convert fields from k-grid (DFT) to real space (rgrid) format.
       * 
+      * This function simply calls the inverse FFT for an array of fields.
+      * The inverse FFT provided by the underlying FFTW library overwrites 
+      * its input, which is why argument "in" not a const reference.
+      *
       * \param in  fields in discrete Fourier format (k-grid)
-      * \param out fields defined on real-space grid (r-grid)
+      * \param out  fields defined on real-space grid (r-grid)
       */
-      void convertKGridToRGrid(DArray< RFieldDft<D> > const & in,
+      void convertKGridToRGrid(DArray< RFieldDft<D> >& in,
                                DArray< RField<D> > & out) const;
 
       /**

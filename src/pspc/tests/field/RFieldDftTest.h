@@ -134,7 +134,7 @@ void RFieldDftTest::testCopyConst()
          v[i][1] = (i + 1) * 10.0 + 0.1;
       }
 
-      RFieldDft<3> u = v;
+      RFieldDft<3> u(v);
       TEST_ASSERT(u.isAllocated());
       TEST_ASSERT(u.capacity() == v.capacity());
 

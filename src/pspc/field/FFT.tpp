@@ -134,7 +134,7 @@ namespace Pspc
    */
    template <int D>
    void 
-   FFT<D>::inverseTransform(RFieldDft<D> const & kField, RField<D>& rField)
+   FFT<D>::inverseTransform(RFieldDft<D> & kField, RField<D>& rField)
    const
    {
       UTIL_CHECK(isSetup_)
@@ -143,19 +143,7 @@ namespace Pspc
       UTIL_CHECK(rField.meshDimensions() == meshDimensions_);
       UTIL_CHECK(kField.meshDimensions() == meshDimensions_);
 
-      fftw_execute_dft_c2r(iPlan_, 
-                           const_cast<fftw_complex *>(&kField[0]), 
-                           &rField[0]);
-
-      /*
-      * Explanation of above use of const and const_cast:
-      * FFTW documentation states that the input array will not be
-      * modified in this usage, but the fftw_execute_dft_c2r interface 
-      * takes a fftw_complex* non-const pointer. The FFTW interface thus 
-      * does not enforce const correctness. The const declaration on 
-      * the reference kField reflects the actual behavior, while the 
-      * const_cast<fftw_complex*> is required to satisfy the compiler. 
-      */
+      fftw_execute_dft_c2r(iPlan_, &kField[0], &rField[0]);
 
    }
 

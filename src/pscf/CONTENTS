@@ -11,5 +11,5 @@ Subdirectories:
    mesh/        - spatial mesh
    solvers/     - templates for modified diffusion eqn (MDE) solvers 
 
-All classes in directory homogeneous are defined in a nested namespace 
+All classes in subdirectory homogeneous are defined in a nested namespace 
 Pscf::Homogeneous 

@@ -60,6 +60,13 @@ namespace Pspc {
       /**
       * Compute forward (real-to-complex) Fourier transform.
       *
+      * This function computes a scaled Fourier transform, which is obtained
+      * by dividing the unscaled transform computed by FFTW by the number of 
+      * elements. A scaled copy of the input data is copied to a temporary 
+      * real array before being passed to the FFT forward transform function.
+      *
+      * This function does not overwrite or corrupt the input array.
+      * 
       * \param in  array of real values on r-space grid
       * \param out  array of complex values on k-space grid
       */
@@ -68,10 +75,20 @@ namespace Pspc {
       /**
       * Compute inverse (complex-to-real) Fourier transform.
       *
-      * \param in  array of complex values on k-space grid
+      * This function computes the same unscaled inverse transform as the
+      * FFTW library.
+      *
+      * NOTE: The inverse transform generally overwrites and corrupts its 
+      * input. This is the behavior of the complex-to-real transform of the 
+      * underlying FFTW library.  See Sec. 2.3 of the FFTW documentation at
+      * https://www.fftw.org/fftw3_doc, One-Dimensional DFTs of Real Data:
+      * "...the inverse transform (complex to real) has the side-effect of 
+      * overwriting its input array, ..."
+      *
+      * \param in  array of complex values on k-space grid (overwritten)
       * \param out  array of real values on r-space grid
       */
-      void inverseTransform(RFieldDft<D> const & in, RField<D>& out) const;
+      void inverseTransform(RFieldDft<D>& in, RField<D>& out) const;
 
       /**
       * Return the dimensions of the grid for which this was allocated.
@@ -79,7 +96,7 @@ namespace Pspc {
       IntVec<D> const & meshDimensions() const;
 
       /** 
-      * Has this object been setup?
+      * Has this FFT object been setup?
       */
       bool isSetup() const;
 
