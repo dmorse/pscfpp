@@ -38,12 +38,28 @@ namespace Fd1d
 
    public:
 
+      /**
+      * Default constructor.
+      */
       Polymer();
 
+      /**
+      * Destructor.
+      */
       ~Polymer();
 
+      /**
+      * Set volume fraction (if ensemble is closed).
+      *
+      * \param phi  new volume fraction for this species
+      */
       void setPhi(double phi);
 
+      /**
+      * Set chemical potential mu (if ensemble is open).
+      *
+      * \param mu  new chemical potential for this species
+      */
       void setMu(double mu);
 
       /**
@@ -51,8 +67,10 @@ namespace Fd1d
       *
       * Upon return, q functions and block concentration fields
       * are computed for all propagators and blocks. 
+      *
+      * \param wFields  array of chemica potential fields.
       */ 
-      void compute(const DArray<Block::WField>& wFields);
+      void compute(DArray<Block::WField> const & wFields);
 
    };
 

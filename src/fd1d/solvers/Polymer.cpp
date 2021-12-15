@@ -34,7 +34,7 @@ namespace Fd1d
    /*
    * Compute solution to MDE and concentrations.
    */ 
-   void Polymer::compute(const DArray<Block::WField>& wFields)
+   void Polymer::compute(DArray<Block::WField> const & wFields)
    {
 
       // Setup solvers for all blocks

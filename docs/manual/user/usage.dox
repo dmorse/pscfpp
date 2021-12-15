@@ -1,4 +1,4 @@
-/*! \page user_usage_page 3.1 Invoking an executable
+/*! \page user_usage_page 3.1 Command Line Interface
 
 \ref user_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_param_page (Next) 
@@ -39,7 +39,7 @@ During execution, some log information is written to standard output (i.e., the 
 \endcode
 Standard output should normally be redirected to a file when a job is run in background or in a queue. 
 
-\section user_usage_echo_section The "echo" option
+\section user_usage_echo_section The echo option
 
 All PSCF programs accept a command line option "-e" that causes the contents of each line of the parameter file to be echoed as the file is being read. For example, to use "pscf_pc3d" with echoing to a log file, one could enter
 \code
@@ -51,23 +51,34 @@ Other available command line options are discussed \ref user_usage_options_secti
 
 \section user_usage_parameter_section Parameter file
 
-The parameter file contains most of the data required to define a system of interest and initialize a calculation.  These data includes: 
+The parameter file contains most of the data required to define initial physical parameters for a system of interest and initialize a calculation.  These data includes: 
 
-- Specification of the structure of one or more molecular species within a mixture.
-- A value for either the volume fraction or chemical potential  of each species within a mixture. 
-- Parameters that specify a spatial domain or unit cell.
-- Parameters that specify the discretization used to solve the SCFT problem, i.e., the number of grid points or plane waves.
+- Mixture: Specification of the structure of one or more molecular species within a mixture, and a value for either the volume fraction or chemical potential for each species.
+- Interaction: Flory-Huggins chi parameters 
+- Domain: Parameters that specify a spatial domain or unit cell, and a discretization mesh.
+- Iterator: Parameters to initialize an iterative solver
 
 \section user_usage_command_section Command file
 
 The command file contains a sequence of commands that are read and executed in the order they appear. Each line of the command file starts with a capitalized command name, followed by zero or more arguments. The minimal command file for an mcSim simulation looks like this:
 \code
-ITERATE           omega_in
-WRITE_WFIELDS     omega_out
+READ_W_BASIS      in/w.bf
+ITERATE           
+WRITE_W_BASIS     out/w.bf
+WRITE_C_RGRID     out/c.rf
 FINISH  
 \endcode
-This file instructs the program to  ...
+This file instructs the program to:
 
+- READ_W_BASIS: Read in a chemical potential (w) field in symmetrized Fourier basis from a file named in/w.bf
+
+- ITERATE: Iteratively solve the SCFT equation, using the iterator initialized in the parameter file. 
+
+- WRITE_W_BASIS: Write the converged chemical potential fields (w-fields) in symmetrized Fourier basis format to a file out/w.bf
+
+- WRITE_C_RGRID: Write the corresponding monomer concentration fields (c-fields) in real-space grid (r-grid) format to a file out/c.rf
+
+- FINISH: finish execution and return from the main program
 
 \section user_usage_options_section Command line options
 

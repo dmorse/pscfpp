@@ -83,7 +83,7 @@ namespace Fd1d
       void setupSolver(WField const & w);
 
       /**
-      * Compute unnormalized concentration for block by integration.
+      * Compute concentration for block by integration.
       *
       * Upon return, grid point r of array cField() contains the 
       * integral int ds q(r,s)q^{*}(r,L-s) times the prefactor, 

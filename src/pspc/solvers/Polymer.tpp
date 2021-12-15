@@ -84,7 +84,7 @@ namespace Pspc {
       double prefactor = exp(mu_)/length();
       for (int i = 0; i < nBlock(); ++i) {
          block(i).computeStress(prefactor);
-         for (int j=0; j < unitCellPtr_->nParameter() ; ++j){
+         for (int j = 0; j < unitCellPtr_->nParameter() ; ++j){
             stress_[j] += block(i).stress(j);
          }
       }

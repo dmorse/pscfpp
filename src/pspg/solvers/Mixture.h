@@ -95,8 +95,10 @@ namespace Pspg
       * Set unit cell parameters used in solver.
       * 
       * \param unitCell UnitCell<D> object that contains Bravais lattice.
+      * \param waveList WaveList<D> object that contains wavevector data
       */
-      void setupUnitCell(const UnitCell<D>& unitCell, const WaveList<D>& wavelist);
+      void setupUnitCell(UnitCell<D> const & unitCell, 
+                         WaveList<D> const & wavelist);
 
       /**
       * Compute concentrations.

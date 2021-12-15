@@ -70,7 +70,7 @@ namespace Fd1d
       void setBlock(Block& block);
 
       /**
-      * Associate this propagator with a block.
+      * Set discretization and allocate memory.
       * 
       * \param ns number of contour length steps
       * \param nx number of spatial steps
@@ -115,41 +115,29 @@ namespace Fd1d
       *
       * \param i step index
       */
-      const QField& q(int i) const;
+      QField const & q(int i) const;
 
       /**
       * Return q-field at beginning of block (initial condition).
       */
-      const QField& head() const;
+      QField const & head() const;
 
       /**
       * Return q-field at end of block.
       */
-      const QField& tail() const;
-
-      /**
-      * Get the associated Block object by reference.
-      */
-      Block & block();
+      QField const & tail() const;
 
       /**
       * Has memory been allocated for this propagator?
       */
       bool isAllocated() const;
 
-   protected:
-
-      /**
-      * Compute initial QField at head from tail QFields of sources.
-      */
-      void computeHead();
-
    private:
      
-      // Array of statistical weight fields 
+      /// Array of statistical weight fields 
       DArray<QField> qFields_;
 
-      // Workspace
+      /// Workspace
       QField work_;
 
       /// Pointer to associated Block.
@@ -163,6 +151,16 @@ namespace Fd1d
 
       /// Is this propagator allocated?
       bool isAllocated_;
+
+      /**
+      * Get the associated Block object by reference.
+      */
+      Block & block();
+
+      /**
+      * Compute initial QField at head from tail QFields of sources.
+      */
+      void computeHead();
 
    };
 

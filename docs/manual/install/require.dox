@@ -5,27 +5,36 @@
 <BR>
 
 PSCF is designed to be compiled and run in a unix-like environment. 
-The package has been compiled and used on systems running either linux 
-or a recent version of Mac OS X operating systems.  Compilation is 
-controlled by a system of unix makefiles. In order to compile on a
-MacIntosh computer running Mac OS X, the computer must first be configured 
-for development by installing both the XCode integrated development 
-environment and the command line tools for XCode. 
+The package has been tested and used on systems running either linux 
+or recent versions of the Mac OS X operating systems.  Compilation is 
+controlled by a system of unix makefiles. 
 
 PSCF is distributed only as source code, and must be compiled by the 
 user.  All source code that is designed to run on a conventional CPU 
 is written in ANSI 2011 C++ language standard.  Code that is written 
 for an NVIDIA graphics processing unit (GPU) is written in a CUDA.
 
+In order to compile in Mac OS X, the computer must be configured to 
+resemble a unix command-line development environment by installing 
+the Command Line Tools package for XCode.  In recent versions of 
+Mac OS X, it is not necessary to install the much larger XCode 
+integrated development environment (IDE) to obtain just the command 
+line tools, though some users may prefer to install XCode. If you do 
+choose to install the XCode package, installation of the Command Line
+Tools is offered as an option during the installation process.
+Instructions for installing just the command line tools are available 
+<a href= https://osxdaily.com/2014/02/12/install-command-line-tools-mac-os-x/>
+online</a>. 
+
 \section require_overview_section Overview 
 
 The PSCF package provides several programs that are designed to run 
-on conventional CPUs on a desktop, laptop or cluster, and others
-that are designed to also use an NVIDIA GPU. We distinguish these
-in what follows by referring to CPU programs and GPU-enabled programs
+on a conventional CPU, and others that are designed to also use an 
+NVIDIA GPU. We distinguish these in what follows by referring to 
+CPU programs and GPU-enabled programs
 
-In order to compile all of the CPU programs in the PSCF package, 
-the system on which the code is compiled must have:
+In order to compile all of the CPU programs in the PSCF package, the 
+system on which the code is compiled and run must have:
 
    - a ``git" version control client
    - a C++ compiler
@@ -35,51 +44,62 @@ the system on which the code is compiled must have:
 
 A git client is needed to obtain (clone) the source code, which is 
 maintained in a git repository on the github.com server. A python 
-interpreter is needed during compilation (but not during execution) 
-because the build system that compiles the PSCF source codes uses 
-a few python scripts that are provided with the package. The GNU
-scientific library is used by several programs within the package 
-for linear algebra operations. The FFTW Fast Fourier transform 
-library is used by the CPU version of the pseudo-spectral algorithm 
-for periodic microstructures.
+interpreter is needed during compilation because the build system 
+that compiles PSCF uses several python scripts that are provided with 
+the package. A git client, C++ compiler and python interpreter will
+will normally come pre-installed in either a linux distribution or 
+a MacIntosh on which command line tools have been installed.  The GNU 
+scientific library is used by several programs within the package for 
+linear algebra operations. The FFTW Fast Fourier transform library is 
+used by the CPU version of the pseudo-spectral algorithm for periodic 
+microstructures.
 
 In order compile GPU-enabled programs, the system must also have:
 
    - An NVidia graphics card
-   - A CUDA compiler
+   - The Nvidia NVCC CUDA compiler
    - the CUFFT GPU-accelerated fast Fourier transform library.
 
 The CUFFT library is provided with recent versions of the CUDA 
 development environment. 
 
+Users who wish to generate a local copy of this html documentation,
+as web pages that reside on their own computer, will also need to
+install the "doxygen" documentation utility.
+
 \section require_git_section Git client
 
-The source code for the C++/CUDA version of PSCF is hosted on the 
-github server, at <a href=http://github.com>github</a>, as project 
-dmorse/pscfpp. The older fortran PSCF program is maintained in a 
-separate github repository, as project dmorse/pscf.  The source 
-code of the new version may be obtained by using a git version 
-control manager to clone the public 
-<a href=https://github.com/dmorse/pscfpp>git repository</a>. 
+The source code for the C++/CUDA version of PSCF described here is hosted 
+on the github server, at <a href=http://github.com>github</a>, as project 
+dmorse/pscfpp.  The older fortran PSCF program is maintained in a separate 
+github repository, as project dmorse/pscf.  The source code of the new 
+version may be obtained by using a git version control manager to clone 
+the public <a href=https://github.com/dmorse/pscfpp>git repository</a>. 
 To do this, a git client must be installed on your computer.
 
 Before attempting to use git to clone the source code, you can check 
-whether a git client is installed on your machine by entering 
+whether a git client is already installed by entering 
 \code
 > which git
 \endcode 
-from the unix command line. If git is installed, this should return 
-a valid path, such as "/usr/bin/git".  If this command does not 
-return a valid path, you will need to install or enable a git 
-client before proceeding.
+from the unix command line. If git is installed, this should return a 
+valid path, such as "/usr/bin/git".  If this command does not return 
+a valid path, you will need to install or enable a git client before 
+proceeding.
 
 Instructions for installing git on different platforms are given in the 
-documentation on the <a href=http://git-scm.com>git web page</a>, in 
-chapter 1.5 of the Pro Git book by Scott Chacon.  If you are using linux, 
-and git is not already installed, you should use the preferred package 
-manager on your linux distribution to install a git client.  If you are 
-using a Macintosh, a client should be installed as a component of the 
-XCode app and command line tools, which are needed for other purposes.  
+documentation on the <a href=http://git-scm.com>git web page</a>, and in
+chapter 1.5 of the 
+<a href=https://git-scm.com/book/en/v2>Pro Git book </a>
+by Scott Chacon which is available to be read for free online.  
+
+If you are using linux, and git is not already installed, you should 
+use the preferred package manager on your linux distribution to install 
+a git client.  
+
+If you are using Mac OS X, a git client should be installed as a 
+component of the XCode Command Line Tools package, which is needed 
+for many other purposes.  
 
 \section install_require_python Python 
 
@@ -89,23 +109,26 @@ if the command
   \> which python
 \endcode
 returns a non-empty path.
+A python interpreter should be available from the command line in any 
+common linux distribution (e.g., Fedora or Ubuntu) or in Mac OS X after 
+installation of the command line tools package.
 
 \section install_require_compiler_serial C++ compiler 
 
 By default, the PSCF build system invokes a C++ compiler using the
-the compiler commnd name "g++". On linux systems, this command normally
+compiler commnd name "g++". On linux systems, this command normally
 invokes the gnu compiler collection (gcc) C++ compiler. On a MacIntosh
 running Mac OS X that is set up for C++ developent (see above), the "g++" 
 command is normally a link to the clang compiler, which is the default 
-compiler for the XCode development environment. The clang compiler 
-accepts almost all the same command line options as the gnu compiler, 
-and thus functions as a drop-in replacement for the gnu C++ compiler.  
+compiler for C++ development on Mac OS X. The clang compiler accepts 
+almost all the same command line options as the gnu compiler, and thus 
+functions as a drop-in replacement for the gnu compiler.  
 
 It is possible to instead configure the build system during the initial 
-setup process so as to use different compiler for C++ files.  When the 
-gcc or clang compiler is not used for compilation, however, the PSCF 
-build system will still invoke the "g++" command to use the g++ compiler 
-to analyse dependencies among source files. The PSCF build system thus 
+setup process so as to use a different C++ compiler.  When the gcc or 
+clang compiler is not used for compilation, however, the PSCF build 
+system will still invoke the "g++" command to use the g++ compiler to 
+analyse dependencies among source files. The PSCF makefile system thus 
 always requires that the "g++" command be available on the build system.
 
 One can check if the command "g++" exists by entering
@@ -130,15 +153,53 @@ g++ compiler, so we recommend using the GNU compiler to compile C++
 source files if you are planning to compile CUDA code for use on the 
 same machine.
 
-\section install_require_module Software modules (linux clusters)
+\section Packages: Ubuntu and other Debian-based Linux Systems
+
+The CPU-based programs in PSCF require access to development versions of the
+Gnu Scientific Library (GSL) and FFTW packages.  These may be installed on 
+on Ubuntu or other Debian based linux distribution later on version 16.0 or later using the commands:
+\code
+sudo apt install libfftw3-dev   
+sudo apt install libgsl-dev   
+\endcode
+To also install doxygen documentation generator utility, use the command
+\code
+sudo apt install doxygen
+\endcode
+On older Debian-based systems, or as a lower level alternative, one get issue the same commands using the "apt-get" command rather than "apt". 
+
+\section Packages: Mac OS X 
+
+We recommend using a package manager to install GSL and FFTW on Mac OS X.
+If you are not already using a package manager for managing unix programs 
+on Max OS X, we recommend that you install the <a href="https://brew.sh/"> 
+Homebrew </a> package manager, following instructions given on the Homebrew
+web site. Possible alternatives include the older MacPorts or Fink package 
+managers, or compiling the required directly from source files obtained 
+from package home pages.
+
+After the Homebrew system is installed, you may install the GSL and FFTW 
+packages with the commands
+\code
+> brew install gsl
+> brew install fftw
+\endcode
+To also install doxygen, issue the command
+\code
+> brew install doxygen
+\endcode
+The default configuration of the PSCF makefile system works correctly with 
+the GSL and FFTW packages as installed by Homebrew.
+
+\section install_require_module Linux Software Modules 
 
 At the University of Minnesota, PSCF is often run on a cluster provided 
 by the Minnesota Supercomputer Institute (MSI).  The computer clusters 
-at MSI, like many similar clusters, use the linux "module" command to 
-allow users to load particular software packages, including particular 
-choices of compiler. The "module" command is the user interface to the 
-"Modules" package, which is a system for automating changes in a users 
-unix shell environment that are required in order to use particular 
+at MSI, like many similar multi-user clusters, use the linux "module" 
+command to allow users to load particular software packages, including 
+particular choices of compiler. The "module" command is the user interface 
+to the "Modules" package, which is a system for automating changes in a 
+users unix shell environment that are required in order to use particular 
 software packages. 
 
 On a system that uses modules, the command
@@ -163,10 +224,12 @@ environment by invoking
 before compiling PSCF. We use a version of fftw that was compiled with
 gcc version 7.2.0, rather than then most recent version, because the 
 current version of CUDA (v10.0) isn't compatible with gcc versions with 
-primary version number greater than 7. These module load commands can 
-be entered either from the command line after loggin in entered 
-automatically on login by adding them to the users .bashrc or .profile 
-script.
+primary version number greater than 7. 
+
+These module load commands can be either be entered manually from the 
+command line by the user after logging in, or they can be configured to 
+be entered automatically on login by adding them to the users .bashrc 
+or .profile script.
 
 <BR>
 \ref install_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

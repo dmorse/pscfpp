@@ -23,7 +23,7 @@ namespace Pspc
    using namespace Util;
 
    /**
-   * MDE solver for one-direction of one block.
+   * MDE solver for one direction of one block.
    *
    * \ingroup Pspc_Solver_Module
    */
@@ -41,12 +41,12 @@ namespace Pspc
       typedef RField<D> Field;
 
       /**
-      * Chemical potential field type.
+      * Chemical potential field type (r-grid format)
       */
       typedef RField<D> WField;
 
       /**
-      * Monomer concentration field type.
+      * Monomer concentration field type (r-grid format)
       */
       typedef RField<D> CField;
 
@@ -68,7 +68,7 @@ namespace Pspc
       ~Propagator();
 
       /**
-      * Associate this propagator with a block.
+      * Associate this propagator with a unique block.
       *
       * \param block associated Block object.
       */ 
@@ -97,15 +97,15 @@ namespace Pspc
       * Solve the MDE for a specified initial condition.
       *
       * This function solves the modified diffusion equation for this 
-      * block with a specified initial condition, which is given by head
-      * parameter of the function. 
+      * block with a specified initial condition, which is given by the
+      * function argument "head". 
       *
       * \param head initial condition of QField at head of block
       */
       void solve(QField const & head);
  
       /**
-      * Compute and return partition function for the molecule.
+      * Compute and return partition function for the polymer.
       *
       * This function computes the partition function Q for the 
       * molecule as a spatial average of pointwise product of the 
@@ -122,12 +122,12 @@ namespace Pspc
       const QField& q(int i) const;
 
       /**
-      * Return q-field at beginning of block (initial condition).
+      * Return q-field at beginning of the block (initial condition).
       */
       const QField& head() const;
 
       /**
-      * Return q-field at end of block.
+      * Return q-field at the end of the block.
       */
       const QField& tail() const;
 
@@ -141,7 +141,7 @@ namespace Pspc
       */
       bool isAllocated() const;
 
-      // Inherited public functions with non-dependent names
+      // Inherited public members with non-dependent names
 
       using PropagatorTmpl< Propagator<D> >::nSource;
       using PropagatorTmpl< Propagator<D> >::source;

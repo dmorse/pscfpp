@@ -83,7 +83,7 @@ namespace Pspg {
       * \param waveList container for properties of recip wavevectors
       */
       void setupUnitCell(const UnitCell<D>& unitCell, 
-                         const WaveList<D>& wavelist);
+                         const WaveList<D>& waveList);
 
       /**
       * Set solver for this block.
@@ -112,16 +112,19 @@ namespace Pspg {
       * a contour variable that is integrated over the domain 
       * 0 < s < length(), where length() is the block length.
       *
-      * \param prefactor multiplying integral
+      * \param prefactor constant prefactor multiplying integral
       */ 
       void computeConcentration(double prefactor);
 
       /**
       * Compute derivatives of free energy with respect to cell parameters.
       *
-      * \param waveList container for properties of recip. latt. wavevectors.
+      * The prefactor is the same as that used in computeConcentration.
+      *
+      * \param waveList  container for properties of recip. latt. wavevectors.
+      * \param prefactor  constant prefactor multiplying integral
       */
-      void computeStress(WaveList<D>& wavelist, double prefactor);
+      void computeStress(WaveList<D>& waveList, double prefactor);
 
       /**
       * Get derivative of free energy with respect to a unit cell parameter.

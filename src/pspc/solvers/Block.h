@@ -42,13 +42,15 @@ namespace Pspc {
 
    public:
 
+      // Typedefs
+
       /**
-      * Generic field (base class)
+      * Generic field (r-grid format).
       */
       typedef typename Propagator<D>::Field Field;
 
       /**
-      * Monomer chemical potential field.
+      * Monomer chemical potential field (r-grid format).
       */
       typedef typename Propagator<D>::WField WField;
 
@@ -81,7 +83,12 @@ namespace Pspc {
       * Setup parameters that depend on the unit cell.
       *
       * This should be called once after every change in unit cell
-      * parameters.
+      * parameters. Internal variables that depend on the unit cell
+      * parameters are actually reset later, in in the setupSolver 
+      * function just before solving the MDE, using a pointer to 
+      * the unit cell that is set in this function. The associated
+      * UnitCell<D> object should thus not be modified after calling
+      * this function and before the MDEs are solved. 
       *
       * \param unitCell unit cell, defining cell dimensions
       */
@@ -104,7 +111,8 @@ namespace Pspc {
       /**
       * Set solver for this block.
       *
-      * This should be called once after every change in w fields, before
+      * This should be called once after every change in w fields, the
+      * unit cell parameters, block length or kuhn lenght, before
       * entering the loop used to solve the MDE for either propagator.
       *
       * \param w chemical potential field for this monomer type
@@ -113,6 +121,11 @@ namespace Pspc {
 
       /**
       * Compute one step of solution of MDE, from i to i+1.
+      *
+      * This function is called internally by the PropagatorTmpl solve
+      * function within a loop over steps. It is implemented in the
+      * Block class because the same private data structures are needed
+      * for the two propagators associated with a Block.
       *
       * \param q  input value of QField, from step i
       * \param qNew  ouput value of QField, from step i+1
@@ -135,7 +148,7 @@ namespace Pspc {
       * spatial average of q(r,L). This function is called by 
       * Polymer<D>::compute().
       *
-      * \param prefactor constant multiplying integral
+      * \param prefactor  constant multiplying integral over s
       */ 
       void computeConcentration(double prefactor);
 
@@ -146,12 +159,12 @@ namespace Pspc {
       * prefactor parameter should be the same as that passed to 
       * function computeConcentration.   
       *   
-      * \param prefactor constant multiplying integral
+      * \param prefactor  constant multiplying integral over s
       */  
       void computeStress(double prefactor);
 
       /**
-      * Get associated spatial Mesh by reference.
+      * Get associated spatial Mesh by const reference.
       */
       Mesh<D> const & mesh() const;
 
@@ -161,7 +174,7 @@ namespace Pspc {
       double ds() const;
 
       /**
-      * Get number of contour length steps in this block.
+      * Get the number of contour length steps in this block.
       */
       int ns() const;
 

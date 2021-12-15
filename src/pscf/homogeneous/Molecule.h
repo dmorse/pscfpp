@@ -88,7 +88,7 @@ namespace Pscf {
          *
          * \param id clump index, 0 <= id < nClump
          */
-         const Clump& clump(int id) const;
+         Clump const & clump(int id) const;
    
          /**
          * Number of monomer clumps (monomer types).

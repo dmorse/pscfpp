@@ -25,7 +25,7 @@ namespace Pspc {
    * computed in the most recent call of the compute() function.
    * If the ensemble for this species is closed, phi is read from the
    * parameter file and mu is computed. If the ensemble is open, mu
-   * mu is read from the parameter file and phi is computed.
+   * is read from the parameter file and phi is computed.
    *
    * The block concentrations stored in the constituent Block<D> objects
    * contain the block concentrations (i.e., volume fractions) computed 
@@ -64,9 +64,9 @@ namespace Pspc {
       * Set value of phi (volume fraction), if ensemble is closed.
       *
       * An initial value for phi or mu is normally read from a parameter
-      * file. This function is provided for use in a sweep or other
-      * procedures in which phi for a species with a closed enesmble 
-      * is modified after initialization. It is an error to call setPhi
+      * file. This function is provided for use by a sweep or other
+      * procedure in which phi for a species with a closed enesmble is
+      * modified after initialization. It is an error to call setPhi
       * for a polymer species with an open ensemble.
       *
       * \throw Exception if ensemble is open
@@ -79,8 +79,8 @@ namespace Pspc {
       *
       * An initial value for phi or mu is normally read from a parameter
       * file. This function is provided for use in a sweep or other
-      * procedures in which mu for a species with an open enesmble is
-      *  modified after initialization. It is an error to call setMu
+      * procedure in which mu for a species with an open enesmble is
+      * modified after initialization. It is an error to call setMu
       * for a polymer species with a closed ensemble.
       *
       * \throw Exception if ensemble is closed
@@ -92,7 +92,7 @@ namespace Pspc {
       * Set up the unit cell after a change in unit cell parameters.
       *
       * This function should be called after each change in the unit
-      * cell. It sets up unit cell information for all blocks in this
+      * cell. It sets unit cell information for all blocks in this
       * polymer.
       *
       * \param unitCell crystallographic unit cell
@@ -104,18 +104,17 @@ namespace Pspc {
       * 
       * This function sets up w-fields in the MDE solvers for all blocks
       * and then calls the base class PolymerTmpl solve function. This
-      * base class solve function solves the MDE for all propagators
-      * propagators and computes the properly scaled volume fraction 
-      * fields for all blocks. After this function is called, the
-      * associated Block objects store pre-computed propagator 
-      * solutions and block volume fraction fields. 
+      * solves the MDE for all propagators and computes the properly 
+      * scaled volume fraction fields for all blocks. After this function 
+      * is called, the associated Block objects store pre-computed 
+      * propagator solutions and block volume fraction fields. 
       *
       * \param wFields array of chemical potential fields.
       */ 
       void compute(DArray<WField> const & wFields);
 
       /**
-      * Compute stress from a polymer chain.
+      * Compute stress contribution from this species.
       *
       * This function computes contributions from this species to the 
       * derivatives of free energy per monomer with respect to unit cell 
@@ -124,7 +123,7 @@ namespace Pspc {
       void computeStress();
 
       /**
-      * Get derivative of free energy w/ respect to a unit cell parameter.
+      * Get precomputed contribution to stress from this species.
       *  
       * This function gets the precomputed value of the derivative of
       * free energy per monomer with respect to unit cell parameter n,
@@ -135,7 +134,6 @@ namespace Pspc {
       double stress(int n) const;
 
       // Inherited public functions
-
       using Base::nBlock;
       using Base::block;
       using Base::ensemble;
@@ -158,7 +156,7 @@ namespace Pspc {
 
    };
 
-   /// Stress with respect to unit cell parameter n.
+   /// Get stress with respect to unit cell parameter n.
    template <int D>
    inline double Polymer<D>::stress(int n) const
    {  return stress_[n]; }

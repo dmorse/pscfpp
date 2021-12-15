@@ -2,20 +2,24 @@ This directory contains code specific to a pseudo-spectral implementation
 of SCFT for periodic structures. The code is based on algorithms similar 
 to those used in the original Fortran PSCF code. 
 
-This C++ code, unlike the Fortran code, requires the user to invoke 
-different executables for problems involving structures that are periodic 
-in different numbers of dimensions.  The main executables for 1, 2 and 3 
-dimensionally periodic structures are named pscf_ps1d, and pscf_ps2d and 
-pscf_ps3d, respectively.  Examples of the usage of these programs are 
-provided in the directory pscfpp/examples/pspc/diblock.
+Users must invoke different executable files for problems involving 
+structures that are periodic in different numbers of dimensions. 
+The executable programs for 1, 2 and 3 dimensionally periodic structures 
+are named pscf_ps1d, and pscf_ps2d and pscf_ps3d, respectively.  
+Examples of the usage of these programs are provided in the directory 
+pscfpp/examples/pspc/diblock.
 
-The usual command line usage for doing a 3D SCFT calculation (e.g., the 
-one in directory examples/pspc/diblock/bcc) is to invoke
+The usual command line usage for doing a 3D SCFT calculation (e.g., 
+the one in directory examples/pspc/diblock/bcc) is to invoke
 
      pscf_ps3d -e -p param -c command
 
-Here, "param" denotes the name of a parameter file and "command" denotes 
+from the directory containing the files "param" and "command". Here, 
+"param" denotes the name of a parameter file and "command" denotes 
 the name of a command file.  The -e option causes the parameter file to 
 be echoed to standard output as it is read.  To perform a 2D (e.g., a 
-hexagonal phase) or 1D calculation (a lamellar phase), instead invoke 
-the executable pscf_ps2d or pscf_ps1d, respectively. 
+hexagonal phase) or 1D calculation (a lamellar phase), one would 
+instead invoke the executable pscf_ps2d or pscf_ps1d, respectively. 
+
+See the html documentation for information about the format of the
+parameter and command files. 

@@ -255,7 +255,6 @@ namespace Pspc
       int nMonomer = mixture_.nMonomer();
       wFields_.allocate(nMonomer);
       wFieldsRGrid_.allocate(nMonomer);
-      //wFieldsKGrid_.allocate(nMonomer);
 
       cFields_.allocate(nMonomer);
       cFieldsRGrid_.allocate(nMonomer);
@@ -267,7 +266,6 @@ namespace Pspc
       for (int i = 0; i < nMonomer; ++i) {
          wFields_[i].allocate(basis().nBasis());
          wFieldsRGrid_[i].allocate(mesh().dimensions());
-         //wFieldsKGrid_[i].allocate(mesh().dimensions());
 
          cFields_[i].allocate(basis().nBasis());
          cFieldsRGrid_[i].allocate(mesh().dimensions());
