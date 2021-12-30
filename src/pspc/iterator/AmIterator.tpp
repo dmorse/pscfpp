@@ -437,6 +437,26 @@ namespace Pspc
             solver.computeLU(U_);
             solver.solve(v_, coeffs_);
          }
+
+         // output U for fun
+         std::cout << "\n";
+         for (int m = 0; m < nHist_; ++m) {
+            for (int n = 0; n < nHist_; ++n) {
+               std::cout << U_(m,n) << "  ";
+            }
+            std::cout << "\n";
+         }
+
+         std::cout << "\n";
+         for (int m = 0; m < nHist_; ++m) {
+            std::cout << v_[m] << std::endl;
+         }
+         std::cout << "\n";
+
+         for (int m = 0; m < nHist_; ++m) {
+            std::cout << coeffs_[m] << std::endl;
+         }
+         std::cout << "\n";
       }
    }
 
@@ -518,6 +538,8 @@ namespace Pspc
          }
          // Updating the system
          system().setWBasis(wArrays_);
+
+         std::cout << "Updated random field value: " << wArrays_[0][2] << std::endl;
          
          // If flexible, do mixing of histories for unit cell parameters
          if (isFlexible_) {
