@@ -252,7 +252,7 @@ namespace Pspc
 
       // Initialize temporary residuals workspace 
       for (int i = 0 ; i < nMonomer; ++i) {
-         for (int k = 0; k < nBasis; ++k) {
+         for (int k = 0; k < nElem(i); ++k) {
             resArrays_[i][k] = 0.0;
          }
       }
@@ -262,8 +262,8 @@ namespace Pspc
          for (int j = 0; j < nMonomer; ++j) {
             for (int k = shift_; k < nBasis; ++k) {
                resArrays_[i][k] +=
-                 ( system().interaction().chi(i,j)*system().cField(j)[k]
-                 - system().interaction().idemp(i,j)*system().wField(j)[k]);
+                  system().interaction().chi(i,j)*system().cField(j)[k]
+                  - system().interaction().idemp(i,j)*system().wField(j)[k];
             }
          }
       }
@@ -582,6 +582,19 @@ namespace Pspc
       // returns true if false was never returned
       return true;
 
+   }
+
+   template <int D>
+   int AmIterator<D>::nElem(int i)
+   {
+      const int nMonomer = system().mixture().nMonomer();
+      int nBasis = system().basis().nBasis();
+
+      if (i < nMonomer) {
+         return nBasis;
+      } else {
+         return 1;
+      }
    }
 
    template <int D>

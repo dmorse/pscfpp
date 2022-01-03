@@ -164,6 +164,13 @@ namespace Pspc
       bool isCanonical();
 
       /**
+      * Return the number of components for a given residual. This is 
+      * either the number of spectral basis functions if the residual
+      * is an SCF residual, or 1 if the residual is a stress residual. 
+      */ 
+      int nElem(int i);
+
+      /**
       * Compute the deviation of wFields from a mean field solution
       */
       void computeResidual();
