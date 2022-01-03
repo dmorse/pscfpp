@@ -60,6 +60,12 @@ namespace Pspc
    template <int D>
    void AmIterator<D>::setup()
    {
+      // Determine length of residual basis vectors
+      nResid_ = system().mixture().nMonomer();
+      if (isFlexible_) {
+         nResid_ += system().unitCell().nParameter(); 
+      }
+
       // Allocate ring buffers
       resHists_.allocate(maxHist_+1);
       wHists_.allocate(maxHist_+1);
@@ -73,7 +79,7 @@ namespace Pspc
       int nMonomer = system().mixture().nMonomer();
       wArrays_.allocate(nMonomer);
       dArrays_.allocate(nMonomer);
-      resArrays_.allocate(nMonomer);
+      resArrays_.allocate(nResid_);
 
       // Determine number of basis functions (nBasis - 1 if canonical)
       if (isCanonical()) {
@@ -87,7 +93,11 @@ namespace Pspc
       for (int i = 0; i < nMonomer; ++i) {
          wArrays_[i].allocate(nBasis);
          dArrays_[i].allocate(nBasis);
-         resArrays_[i].allocate(nBasis);
+      }
+
+      // Allocate inner residual arrays
+      for (int i = 0; i < nResid_; ++i) {
+         resArrays_[i].allocate(nElem(i));
       }
    }
 
@@ -257,7 +267,7 @@ namespace Pspc
          }
       }
       
-      // Compute residual vector
+      // Compute SCF residual vector elements
       for (int i = 0; i < nMonomer; ++i) {
          for (int j = 0; j < nMonomer; ++j) {
             for (int k = shift_; k < nBasis; ++k) {
@@ -275,17 +285,17 @@ namespace Pspc
          }
       }
 
+      // If variable unit cell, compute stress residuals
+      if (isFlexible_) {
+         double scaleStress = 100.0;
+         for (int i = nMonomer; i < nResid_ ; ++i) {
+            resArrays_[i][0] = scaleStress 
+                           * fabs( system().mixture().stress(i) );
+         }
+      }
+      
       // Store residuals
       resHists_.append(resArrays_);
-
-      // If variable unit cell, store stress
-      if (isFlexible_) {
-         FArray<double, 6 > tempCp;
-         for (int i = 0; i < nParameter ; i++) {
-            tempCp [i] = -((system().mixture()).stress(i));
-         }
-         stressHists_.append(tempCp);
-      }
    }
 
    template <int D>
@@ -299,7 +309,7 @@ namespace Pspc
       // Find max residual
       double maxSCF = 0.0, maxStress = 0.0, maxRes = 0.0;
 
-      for (int i = 0; i < nMonomer; ++i) {
+      for (int i = 0; i < nResid_; ++i) {
          for (int k = 0; k < nElem(i); ++k) {
             double currRes = fabs(resHists_[0][i][k]);
             if (i < nMonomer && maxSCF < currRes) {
@@ -315,22 +325,15 @@ namespace Pspc
       maxRes = maxSCF;
 
       // Error by max Stress residual
-      if (isFlexible_) {
-         for ( int i = 0; i < nParameter ; i++) {
-            if (maxStress < fabs (stressHists_[0][i])) {
-                maxStress = fabs (stressHists_[0][i]);
-            }
+      if (isFlexible_) { 
+         // check if stress residual is greater than SCF
+         if (maxStress > maxRes) {
+            maxRes = maxStress;
          }
-         // Output current stress values
+         // outout stress values
          for (int m=0;  m < nParameter ; ++m) {
             Log::file() << "Stress  "<< m << "   = "
                         << Dbl(system().mixture().stress(m)) <<"\n";
-         }
-         // Determine if stress error, scaled by a factor, is larger
-         // than the SCF error. If so, use it.  
-         double scaleStress = 100.0;
-         if (maxRes < scaleStress*maxStress) {
-            maxRes = scaleStress*maxStress;
          }
       }
       Log::file() << "Max Residual = " << Dbl(maxRes) << std::endl;
@@ -347,7 +350,7 @@ namespace Pspc
       // Find norm of residual vector, treat as error
       double errorSq = 0.0, error = 0.0;
 
-      for (int i = 0; i < nMonomer; ++i) {
+      for (int i = 0; i < nResid_; ++i) {
          for (int k = 0; k < nElem(i); ++k) {
             errorSq += resHists_[0][i][k] * resHists_[0][i][k];
          }
@@ -376,18 +379,11 @@ namespace Pspc
             // Initialize U element value
             U_(m,n) = 0;
             // Compute dot products of differences of residual vectors 
-            for (int i = 0; i < nMonomer; ++i) {
-               for (int k = shift_; k < nBasis; ++k) {
+            for (int i = 0; i < nResid_; ++i) {
+               for (int k = 0; k < nElem(i); ++k) {
                   U_(m,n) +=
                            ((resHists_[0][i][k] - resHists_[m+1][i][k])*
                            (resHists_[0][i][k] - resHists_[n+1][i][k]));
-               }
-            }
-            // Include the stress residual contribution, if flexible cell
-            if (isFlexible_) {
-               for (int p = 0; p < nParameter ; ++p) {
-                  U_(m,n) += ((stressHists_[0][p] - stressHists_[m+1][p])*
-                              (stressHists_[0][p] - stressHists_[n+1][p]));
                }
             }
             U_(n,m) = U_(m,n);
@@ -399,17 +395,10 @@ namespace Pspc
          // Initialize v element value. 
          v_[m] = 0;
          // dot product of residual vectors
-         for (int i = 0; i < nMonomer; ++i) {
-            for (int k = shift_; k < nBasis; ++k) {
+         for (int i = 0; i < nResid_; ++i) {
+            for (int k = 0; k < nElem(i); ++k) {
                v_[m] += ( (resHists_[0][i][k] - resHists_[m+1][i][k]) *
                               resHists_[0][i][k] );
-            }
-         }
-         // contributions of stress residuals if flexible cell
-         if (isFlexible_) {
-            for (int p = 0; p < nParameter ; ++p) {
-               v_[m] += ((stressHists_[0][p] - stressHists_[m+1][p]) *
-                           (stressHists_[0][p]));
             }
          }
       }

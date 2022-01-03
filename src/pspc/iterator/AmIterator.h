@@ -115,6 +115,10 @@ namespace Pspc
       */
       int shift_;  
 
+      // Number of residual components. Either equal to number of
+      // monomers, or number of monomers plus number of unit cell parameters
+      int nResid_; 
+
       /// Work Array for iterating on parameters 
       FSArray<double, 6> parameters_;
 
