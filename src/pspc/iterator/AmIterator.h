@@ -185,12 +185,12 @@ namespace Pspc
       /**
       * Determine the coefficients that would minimize U_
       */
-      void minimizeCoeff(int itr);
+      void minimizeCoeff();
 
       /**
       * Rebuild wFields for the next iteration from minimized coefficients
       */
-      void buildOmega(int itr);
+      void buildOmega();
 
       /**
       * Clean up after a call to solve(), enabling future calls to solve.

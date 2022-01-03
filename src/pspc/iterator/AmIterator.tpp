@@ -125,16 +125,16 @@ namespace Pspc
       }
 
       // Iterative loop
-      for (int itr = 1; itr <= maxItr_; ++itr) {
+      for (int itr = 0; itr < maxItr_; ++itr) {
 
          updateTimer.start(now);
 
          Log::file()<<"---------------------"<<std::endl;
          Log::file()<<" Iteration  "<<itr<<std::endl;
 
-         if (itr <= maxHist_) {
-            lambda_ = 1.0 - pow(0.9, itr);
-            nHist_ = itr-1;
+         if (itr < maxHist_) {
+            lambda_ = 1.0 - pow(0.9, itr+1);
+            nHist_ = itr;
          } else {
             lambda_ = 1.0;
             nHist_ = maxHist_;
@@ -192,17 +192,17 @@ namespace Pspc
             return 0;
 
          } else {
-            if (itr <= maxHist_ + 1) {
+            if (itr < maxHist_ + 1) {
                if (nHist_ > 0) {
                   U_.allocate(nHist_, nHist_);
                   coeffs_.allocate(nHist_);
                   v_.allocate(nHist_);
                }
             }
-            minimizeCoeff(itr);
-            buildOmega(itr);
+            minimizeCoeff();
+            buildOmega();
 
-            if (itr <= maxHist_) {
+            if (itr < maxHist_) {
                if (nHist_ > 0) {
                   U_.deallocate();
                   coeffs_.deallocate();
@@ -295,48 +295,30 @@ namespace Pspc
       const int nParameter = system().unitCell().nParameter();
       const int nBasis = system().basis().nBasis();
 
-      double error = 0.0;
 
-      #if 0
-      // Error as defined in Matsen's Papers
-      double dError = 0;
-      double wError = 0;
-      for ( int i = 0; i < nMonomer; i++) {
-         for ( int j = shift_; j < nBasis; j++) {
-            dError += resHists_[0][i][j] * resHists_[0][i][j];
-            wError += system().wField(i)[j] * system().wField(i)[j];
+      // Find max residual
+      double maxSCF = 0.0, maxStress = 0.0, maxRes = 0.0;
+
+      for (int i = 0; i < nMonomer; ++i) {
+         for (int k = 0; k < nElem(i); ++k) {
+            double currRes = fabs(resHists_[0][i][k]);
+            if (i < nMonomer && maxSCF < currRes) {
+               maxSCF = currRes;
+            } else
+            if (i >= nMonomer && maxStress < currRes) {
+               maxStress = currRes;
+            }
          }
       }
 
-      if (isFlexible_) {
-         for ( int i = 0; i < nParameter ; i++) {
-            dError += stressHists_[0][i] *  stressHists_[0][i];
-            wError += system().unitCell().parameters()[i]
-                     *system().unitCell().parameters()[i];
-         }
-      }
-      Log::file() << " dError :" << Dbl(dError)<<std::endl;
-      Log::file() << " wError :" << Dbl(wError)<<std::endl;
-      error = sqrt(dError / wError);
-      #endif
-
-      // Error by max SCF residual
-      double errSCF = 0.0;
-      for ( int i = 0; i < nMonomer; i++) {
-         for ( int j = shift_; j < nBasis; j++) {
-            if (errSCF < fabs (resHists_[0][i][j]))
-                errSCF = fabs (resHists_[0][i][j]);
-         }
-      }
-      Log::file() << "SCF Error   = " << Dbl(errSCF) << std::endl;
-      error = errSCF;
+      Log::file() << "SCF Error   = " << Dbl(maxSCF) << std::endl;
+      maxRes = maxSCF;
 
       // Error by max Stress residual
       if (isFlexible_) {
-         double errStress = 0.0;
          for ( int i = 0; i < nParameter ; i++) {
-            if (errStress < fabs (stressHists_[0][i])) {
-                errStress = fabs (stressHists_[0][i]);
+            if (maxStress < fabs (stressHists_[0][i])) {
+                maxStress = fabs (stressHists_[0][i]);
             }
          }
          // Output current stress values
@@ -347,11 +329,11 @@ namespace Pspc
          // Determine if stress error, scaled by a factor, is larger
          // than the SCF error. If so, use it.  
          double scaleStress = 100.0;
-         if (error < scaleStress*errStress) {
-            error = scaleStress*errStress;
+         if (maxRes < scaleStress*maxStress) {
+            maxRes = scaleStress*maxStress;
          }
       }
-      Log::file() << "Error       = " << Dbl(error) << std::endl;
+      Log::file() << "Max Residual = " << Dbl(maxRes) << std::endl;
 
       // Output current unit cell parameter values
       if (isFlexible_) {
@@ -362,112 +344,116 @@ namespace Pspc
          }
       }
 
-      #if 0
-      Log::file() << "n=0 Components of w basis" << std::endl;
-      for (int i=0; i < nMonomer; ++i) {
-         Log::file() << system().wField(i)[0] << std::endl;
+      // Find norm of residual vector, treat as error
+      double errorSq = 0.0, error = 0.0;
+
+      for (int i = 0; i < nMonomer; ++i) {
+         for (int k = 0; k < nElem(i); ++k) {
+            errorSq += resHists_[0][i][k] * resHists_[0][i][k];
+         }
       }
-      #endif
+      error = sqrt(errorSq);
+
+      Log::file() << "Residual Norm = " << Dbl(error) << std::endl;
 
       // Check if total error is below tolerance
       return error < epsilon_;
    }
 
    template <int D>
-   void AmIterator<D>::minimizeCoeff(int itr)
+   void AmIterator<D>::minimizeCoeff()
    {
       const int nMonomer = system().mixture().nMonomer();
       const int nParameter = system().unitCell().nParameter();
       const int nBasis = system().basis().nBasis();
 
-      if (itr == 1) {
-         //do nothing
-      } else {         
-         // Compute U matrix, as described in Arora 2017.
-         for (int m = 0; m < nHist_; ++m) {
-            for (int n = m; n < nHist_; ++n) {
-               // Initialize U element value
-               U_(m,n) = 0;
-               // Compute dot products of differences of residual vectors 
-               for (int i = 0; i < nMonomer; ++i) {
-                  for (int k = shift_; k < nBasis; ++k) {
-                     U_(m,n) +=
-                            ((resHists_[0][i][k] - resHists_[m+1][i][k])*
-                             (resHists_[0][i][k] - resHists_[n+1][i][k]));
-                  }
-               }
-               // Include the stress residual contribution, if flexible cell
-               if (isFlexible_) {
-                  for (int p = 0; p < nParameter ; ++p) {
-                     U_(m,n) += ((stressHists_[0][p] - stressHists_[m+1][p])*
-                                (stressHists_[0][p] - stressHists_[n+1][p]));
-                  }
-               }
-               U_(n,m) = U_(m,n);
-            }
-         }
-
-         // Compute v vector, as described in Arora 2017.
-         for (int m = 0; m < nHist_; ++m) {
-            // Initialize v element value. 
-            v_[m] = 0;
-            // dot product of residual vectors
+      if (nHist_ == 0) {
+         return;
+      }     
+      // Compute U matrix, as described in Arora 2017.
+      for (int m = 0; m < nHist_; ++m) {
+         for (int n = m; n < nHist_; ++n) {
+            // Initialize U element value
+            U_(m,n) = 0;
+            // Compute dot products of differences of residual vectors 
             for (int i = 0; i < nMonomer; ++i) {
                for (int k = shift_; k < nBasis; ++k) {
-                  v_[m] += ( (resHists_[0][i][k] - resHists_[m+1][i][k]) *
-                               resHists_[0][i][k] );
+                  U_(m,n) +=
+                           ((resHists_[0][i][k] - resHists_[m+1][i][k])*
+                           (resHists_[0][i][k] - resHists_[n+1][i][k]));
                }
             }
-            // contributions of stress residuals if flexible cell
+            // Include the stress residual contribution, if flexible cell
             if (isFlexible_) {
                for (int p = 0; p < nParameter ; ++p) {
-                  v_[m] += ((stressHists_[0][p] - stressHists_[m+1][p]) *
-                             (stressHists_[0][p]));
+                  U_(m,n) += ((stressHists_[0][p] - stressHists_[m+1][p])*
+                              (stressHists_[0][p] - stressHists_[n+1][p]));
                }
             }
+            U_(n,m) = U_(m,n);
          }
-         
-         if (itr == 2) {
-            // solve explicitly for coefficient
-            coeffs_[0] = v_[0] / U_(0,0);
-         } else {
-            // numerically solve for coefficients
-            LuSolver solver;
-            solver.allocate(nHist_);
-            solver.computeLU(U_);
-            solver.solve(v_, coeffs_);
-         }
+      }
 
-         // output U for fun
-         std::cout << "\n";
-         for (int m = 0; m < nHist_; ++m) {
-            for (int n = 0; n < nHist_; ++n) {
-               std::cout << U_(m,n) << "  ";
+      // Compute v vector, as described in Arora 2017.
+      for (int m = 0; m < nHist_; ++m) {
+         // Initialize v element value. 
+         v_[m] = 0;
+         // dot product of residual vectors
+         for (int i = 0; i < nMonomer; ++i) {
+            for (int k = shift_; k < nBasis; ++k) {
+               v_[m] += ( (resHists_[0][i][k] - resHists_[m+1][i][k]) *
+                              resHists_[0][i][k] );
             }
-            std::cout << "\n";
          }
-
-         std::cout << "\n";
-         for (int m = 0; m < nHist_; ++m) {
-            std::cout << v_[m] << std::endl;
+         // contributions of stress residuals if flexible cell
+         if (isFlexible_) {
+            for (int p = 0; p < nParameter ; ++p) {
+               v_[m] += ((stressHists_[0][p] - stressHists_[m+1][p]) *
+                           (stressHists_[0][p]));
+            }
          }
-         std::cout << "\n";
+      }
+      
+      if (nHist_ == 1) {
+         // solve explicitly for coefficient
+         coeffs_[0] = v_[0] / U_(0,0);
+      } else {
+         // numerically solve for coefficients
+         LuSolver solver;
+         solver.allocate(nHist_);
+         solver.computeLU(U_);
+         solver.solve(v_, coeffs_);
+      }
 
-         for (int m = 0; m < nHist_; ++m) {
-            std::cout << coeffs_[m] << std::endl;
+      // output U for fun
+      std::cout << "\n";
+      for (int m = 0; m < nHist_; ++m) {
+         for (int n = 0; n < nHist_; ++n) {
+            std::cout << U_(m,n) << "  ";
          }
          std::cout << "\n";
       }
+
+      std::cout << "\n";
+      for (int m = 0; m < nHist_; ++m) {
+         std::cout << v_[m] << std::endl;
+      }
+      std::cout << "\n";
+
+      for (int m = 0; m < nHist_; ++m) {
+         std::cout << coeffs_[m] << std::endl;
+      }
+      std::cout << "\n";
    }
 
    template <int D>
-   void AmIterator<D>::buildOmega(int itr)
+   void AmIterator<D>::buildOmega()
    {
       const int nMonomer = system().mixture().nMonomer();
       const int nParameter = system().unitCell().nParameter();
       const int nBasis = system().basis().nBasis();
 
-      if (itr == 1) { // if only 1 historical solutions
+      if (nHist_ == 0) { // if only 1 historical solutions
 
          // Update omega field with SCF residuals
          for (int i = 0; i < nMonomer; ++i) {
