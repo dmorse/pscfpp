@@ -287,10 +287,15 @@ namespace Pspc
 
       // If variable unit cell, compute stress residuals
       if (isFlexible_) {
-         double scaleStress = 100.0;
-         for (int i = nMonomer; i < nResid_ ; ++i) {
-            resArrays_[i][0] = scaleStress 
-                           * fabs( system().mixture().stress(i) );
+         FArray<double, 6 > tempCp;
+         for (int i = 0; i < nParameter ; i++) {
+            tempCp [i] = -((system().mixture()).stress(i));
+         }
+         stressHists_.append(tempCp);
+
+         double scaleStress = 1.0;
+         for (int m=0, i = nMonomer; m < nParameter ; ++m, ++i) {
+            resArrays_[i][0] = scaleStress * fabs( stressHists_[0][m] );
          }
       }
       
