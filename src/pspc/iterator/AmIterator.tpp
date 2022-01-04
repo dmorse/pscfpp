@@ -66,6 +66,17 @@ namespace Pspc
          nResid_ += system().unitCell().nParameter(); 
       }
 
+      // Determine how to treat homogeneous basis function coefficients
+      if (isCanonical()) {
+         // directly calculate them
+         shift_ = 1;
+         isCanonical_ = true;
+      } else {
+         // iteratively calculate them
+         shift_ = 0;
+         isCanonical_ = false;
+      }
+
       // Allocate ring buffers
       resHists_.allocate(maxHist_+1);
       wHists_.allocate(maxHist_+1);
@@ -80,13 +91,6 @@ namespace Pspc
       wArrays_.allocate(nMonomer);
       dArrays_.allocate(nMonomer);
       resArrays_.allocate(nResid_);
-
-      // Determine number of basis functions (nBasis - 1 if canonical)
-      if (isCanonical()) {
-         shift_ = 1;
-      } else {
-         shift_ = 0;
-      }
       
       // Allocate inner arrays with number of basis functions
       int nBasis = system().basis().nBasis();
@@ -99,6 +103,11 @@ namespace Pspc
       for (int i = 0; i < nResid_; ++i) {
          resArrays_[i].allocate(nElem(i));
       }
+
+      // Allocate arrays/matrices used in coefficient calculation
+      U_.allocate(maxHist_,maxHist_);
+      v_.allocate(maxHist_);
+      coeffs_.allocate(maxHist_);
    }
 
    /*
@@ -132,6 +141,15 @@ namespace Pspc
          system().mixture().computeStress();
          now = Timer::now();
          stressTimer.stop(now);
+      }
+
+      // Initialize residual dot product matrix/vector to zeroes
+      for (int m = 0; m < maxHist_; ++m) {
+         v_[m] = 0;
+         coeffs_[m] = 0;
+         for (int n = 0; n < maxHist_; ++n) {
+            U_(m,n) = 0;
+         }
       }
 
       // Iterative loop
@@ -202,23 +220,14 @@ namespace Pspc
             return 0;
 
          } else {
-            if (itr < maxHist_ + 1) {
-               if (nHist_ > 0) {
-                  U_.allocate(nHist_, nHist_);
-                  coeffs_.allocate(nHist_);
-                  v_.allocate(nHist_);
-               }
+            // determine optimal linear combination coefficients for 
+            // building the updated field guess
+            if (nHist_ > 0) {
+               minimizeCoeff();
             }
-            minimizeCoeff();
+            // build the updated field
             buildOmega();
 
-            if (itr < maxHist_) {
-               if (nHist_ > 0) {
-                  U_.deallocate();
-                  coeffs_.deallocate();
-                  v_.deallocate();
-               }
-            }
             now = Timer::now();
             updateTimer.stop(now);
 
@@ -261,7 +270,7 @@ namespace Pspc
       }
 
       // Initialize temporary residuals workspace 
-      for (int i = 0 ; i < nMonomer; ++i) {
+      for (int i = 0 ; i < nResid_; ++i) {
          for (int k = 0; k < nElem(i); ++k) {
             resArrays_[i][k] = 0.0;
          }
@@ -279,7 +288,7 @@ namespace Pspc
       }
 
       // If not canonical, account for incompressibility 
-      if (shift_ == 0) {
+      if (!isCanonical_) {
          for (int i = 0; i < nMonomer; ++i) {
             resArrays_[i][0] -= 1.0/system().interaction().sum_inv();
          }
@@ -371,13 +380,11 @@ namespace Pspc
    template <int D>
    void AmIterator<D>::minimizeCoeff()
    {
+
       const int nMonomer = system().mixture().nMonomer();
       const int nParameter = system().unitCell().nParameter();
       const int nBasis = system().basis().nBasis();
 
-      if (nHist_ == 0) {
-         return;
-      }     
       // Compute U matrix, as described in Arora 2017.
       for (int m = 0; m < nHist_; ++m) {
          for (int n = m; n < nHist_; ++n) {
@@ -408,13 +415,42 @@ namespace Pspc
          }
       }
       
+      // Solve linear algebra problem to get coefficients to minimize
+      // the norm of the residual vector  
       if (nHist_ == 1) {
          // solve explicitly for coefficient
          coeffs_[0] = v_[0] / U_(0,0);
-      } else {
-         // numerically solve for coefficients
+      } else
+      if (nHist_ < maxHist_) { 
+         // create temporary smaller version of U_, v_, coeffs_
+         // this is done to avoid reallocating U_. We don't want
+         // to do this because we don't want to recompute the 
+         // dotproducts with every AM iteration.
+         DMatrix<double> tempU;
+         DArray<double> tempv,tempcoeffs;
+         tempU.allocate(nHist_,nHist_);
+         tempv.allocate(nHist_);
+         tempcoeffs.allocate(nHist_);
+         for (int i = 0; i < nHist_; ++i) {
+            tempv[i] = v_[i];
+            for (int j = 0; j < nHist_; ++j) {
+               tempU(i,j) = U_(i,j);
+            }
+         }
+         // solve matrix equation with zeroes eliminated
          LuSolver solver;
          solver.allocate(nHist_);
+         solver.computeLU(tempU);
+         solver.solve(tempv,tempcoeffs);
+         // transfer matrix eqn solution over to full-sized member variable
+         for (int i = 0; i < nHist_; ++i) {
+            coeffs_[i] = tempcoeffs[i];
+         }
+      } else 
+      if (nHist_ == maxHist_) {
+         // numerically solve for coefficients
+         LuSolver solver;
+         solver.allocate(maxHist_);
          solver.computeLU(U_);
          solver.solve(v_, coeffs_);
       }
@@ -447,7 +483,7 @@ namespace Pspc
       const int nParameter = system().unitCell().nParameter();
       const int nBasis = system().basis().nBasis();
 
-      if (nHist_ == 0) { // if only 1 historical solutions
+      if (nHist_ == 0) { // if 0 historical solutions
 
          // Update omega field with SCF residuals
          for (int i = 0; i < nMonomer; ++i) {
@@ -457,7 +493,7 @@ namespace Pspc
             }
          }
          // If canonical, set the homogeneous components explicitly
-         if (shift_ == 1) {
+         if (isCanonical_) {
             for (int i = 0; i < nMonomer; ++i) {
                dArrays_[i][0] = 0.0;
                wArrays_[i][0] = 0.0;
@@ -480,7 +516,7 @@ namespace Pspc
             system().setUnitCell(parameters_);
          }
 
-      } else { // if at least 2 historical results
+      } else { // if at least 1 historical results
          // contribution of the last solution
          for (int j = 0; j < nMonomer; ++j) {
             for (int k = shift_; k < nBasis; ++k) {
@@ -499,8 +535,8 @@ namespace Pspc
                }
             }
          }
-         // If isCanonical, set the homogeneous components explicitly
-         if (shift_ == 1) {
+         // If canonical ensemble, set the homogeneous components explicitly
+         if (isCanonical_) {
             for (int i = 0; i < nMonomer; ++i) {
                dArrays_[i][0] = 0.0;
                wArrays_[i][0] = 0.0;
@@ -590,6 +626,10 @@ namespace Pspc
       if (v_.isAllocated()) {
          v_.deallocate();
       }
+
+      // Clear ring buffers
+      resHists_.clear();
+      wHists_.clear();
 
    }
 

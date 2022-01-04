@@ -94,6 +94,9 @@ namespace Pspc
       /// Flexible cell computation (1) or rigid (0), default value = 0
       bool isFlexible_;
 
+      /// True if all species are closed ensembles, false otherwise.
+      bool isCanonical_;
+
       /// Free parameter for minimization
       double lambda_;
 
@@ -119,9 +122,6 @@ namespace Pspc
       // monomers, or number of monomers plus number of unit cell parameters
       int nResid_; 
 
-      /// Work Array for iterating on parameters 
-      FSArray<double, 6> parameters_;
-
       /**
       * History of field residuals.
       * 1st index = history, 2nd index = monomer, 3rd index = basis func.
@@ -145,6 +145,9 @@ namespace Pspc
 
       /// Vector, dot products of residuals with differences from histories
       DArray<double> v_;
+
+      /// Work Array for iterating on parameters 
+      FSArray<double, 6> parameters_;
 
       /// New trial w field (big W in Arora et al. 2017)
       DArray<DArray <double> > wArrays_;
