@@ -290,6 +290,7 @@ public:
       double maxDiff = 0.0;
       for (int i = 0; i < 5; ++i) {
          comparison.compare(fieldsRef[i].fields(), fieldsOut[i].fields());
+         std::cout << i << ": " << comparison.maxDiff() << std::endl;
          if (comparison.maxDiff() > maxDiff) {
             maxDiff = comparison.maxDiff();
          }

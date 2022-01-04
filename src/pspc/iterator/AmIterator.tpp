@@ -394,8 +394,8 @@ namespace Pspc
             for (int i = 0; i < nResid_; ++i) {
                for (int k = 0; k < nElem(i); ++k) {
                   U_(m,n) +=
-                           ((resHists_[0][i][k] - resHists_[m+1][i][k])*
-                           (resHists_[0][i][k] - resHists_[n+1][i][k]));
+                           ((resHists_[m][i][k] - resHists_[m+1][i][k])*
+                           (resHists_[n][i][k] - resHists_[n+1][i][k]));
                }
             }
             U_(n,m) = U_(m,n);
@@ -409,7 +409,7 @@ namespace Pspc
          // dot product of residual vectors
          for (int i = 0; i < nResid_; ++i) {
             for (int k = 0; k < nElem(i); ++k) {
-               v_[m] += ( (resHists_[0][i][k] - resHists_[m+1][i][k]) *
+               v_[m] += ( (resHists_[m][i][k] - resHists_[m+1][i][k]) *
                               resHists_[0][i][k] );
             }
          }
@@ -455,25 +455,6 @@ namespace Pspc
          solver.solve(v_, coeffs_);
       }
 
-      // output U for fun
-      std::cout << "\n";
-      for (int m = 0; m < nHist_; ++m) {
-         for (int n = 0; n < nHist_; ++n) {
-            std::cout << U_(m,n) << "  ";
-         }
-         std::cout << "\n";
-      }
-
-      std::cout << "\n";
-      for (int m = 0; m < nHist_; ++m) {
-         std::cout << v_[m] << std::endl;
-      }
-      std::cout << "\n";
-
-      for (int m = 0; m < nHist_; ++m) {
-         std::cout << coeffs_[m] << std::endl;
-      }
-      std::cout << "\n";
    }
 
    template <int D>
@@ -529,9 +510,9 @@ namespace Pspc
             for (int j = 0; j < nMonomer; ++j) {
                for (int k = shift_; k < nBasis; ++k) {
                   wArrays_[j][k] += coeffs_[i] * ( wHists_[i+1][j][k] -
-                                                   wHists_[0][j][k] );
+                                                   wHists_[i][j][k] );
                   dArrays_[j][k] += coeffs_[i] * ( resHists_[i+1][j][k] -
-                                                   resHists_[0][j][k] );
+                                                   resHists_[i][j][k] );
                }
             }
          }
@@ -555,7 +536,7 @@ namespace Pspc
          // Updating the system
          system().setWBasis(wArrays_);
 
-         std::cout << "Updated random field value: " << wArrays_[0][2] << std::endl;
+         // std::cout << "Updated random field value: " << wArrays_[0][2] << std::endl;
          
          // If flexible, do mixing of histories for unit cell parameters
          if (isFlexible_) {
@@ -566,9 +547,9 @@ namespace Pspc
             for (int i = 0; i < nHist_; ++i) {
                for (int m = 0; m < nParameter ; ++m) {
                   wCpArrays_[m] += coeffs_[i]*( cellParamHists_[i+1][m] -
-                                                cellParamHists_[0][m]);
+                                                cellParamHists_[i][m]);
                   dCpArrays_[m] += coeffs_[i]*( stressHists_[i+1][m] -
-                                                stressHists_[0][m]);
+                                                stressHists_[i][m]);
                }
             }
             parameters_.clear();
@@ -616,21 +597,9 @@ namespace Pspc
    template <int D>
    void AmIterator<D>::cleanUp()
    {
-      // Deallocate arrays used in coefficient calculation.
-      if (U_.isAllocated()) {
-         U_.deallocate();
-      }
-      if (coeffs_.isAllocated()) {
-         coeffs_.deallocate();
-      }
-      if (v_.isAllocated()) {
-         v_.deallocate();
-      }
-
       // Clear ring buffers
       resHists_.clear();
       wHists_.clear();
-
    }
 
 }
