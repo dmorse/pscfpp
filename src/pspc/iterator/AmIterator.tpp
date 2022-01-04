@@ -116,6 +116,7 @@ namespace Pspc
    template <int D>
    int AmIterator<D>::solve()
    {
+
       // Preconditions:
       UTIL_CHECK(system().hasWFields());
       // Assumes basis.makeBasis() has been called
@@ -302,7 +303,7 @@ namespace Pspc
          }
          stressHists_.append(tempCp);
 
-         double scaleStress = 1.0;
+         double scaleStress = 10.0;
          for (int m=0, i = nMonomer; m < nParameter ; ++m, ++i) {
             resArrays_[i][0] = scaleStress * fabs( stressHists_[0][m] );
          }
@@ -317,8 +318,6 @@ namespace Pspc
    {
       const int nMonomer = system().mixture().nMonomer();
       const int nParameter = system().unitCell().nParameter();
-      const int nBasis = system().basis().nBasis();
-
 
       // Find max residual
       double maxSCF = 0.0, maxStress = 0.0, maxRes = 0.0;
@@ -361,9 +360,8 @@ namespace Pspc
          }
       }
 
-      // Find norm of residual vector, treat as error
+      // Error by norm of residual vector
       double errorSq = 0.0, error = 0.0;
-
       for (int i = 0; i < nResid_; ++i) {
          for (int k = 0; k < nElem(i); ++k) {
             errorSq += resHists_[0][i][k] * resHists_[0][i][k];
@@ -380,12 +378,7 @@ namespace Pspc
    template <int D>
    void AmIterator<D>::minimizeCoeff()
    {
-
-      const int nMonomer = system().mixture().nMonomer();
-      const int nParameter = system().unitCell().nParameter();
-      const int nBasis = system().basis().nBasis();
-
-      // Compute U matrix, as described in Arora 2017.
+      // Compute U matrix
       for (int m = 0; m < nHist_; ++m) {
          for (int n = m; n < nHist_; ++n) {
             // Initialize U element value
@@ -600,6 +593,8 @@ namespace Pspc
       // Clear ring buffers
       resHists_.clear();
       wHists_.clear();
+      stressHists_.clear();
+      cellParamHists_.clear();
    }
 
 }
