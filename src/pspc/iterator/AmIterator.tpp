@@ -86,7 +86,7 @@ namespace Pspc
          cellParamHists_.allocate(maxHist_+1);
       }
 
-      // Allocate outer arrays used in iteration (number of monomers)
+      // Allocate outer arrays used in iteration
       int nMonomer = system().mixture().nMonomer();
       wArrays_.allocate(nMonomer);
       dArrays_.allocate(nMonomer);
@@ -119,10 +119,8 @@ namespace Pspc
 
       // Preconditions:
       UTIL_CHECK(system().hasWFields());
-      // Assumes basis.makeBasis() has been called
-      // Assumes AmIterator.allocate() has been called
-      // TODO: Check these conditions on entry
 
+      // Timers for timing iteration
       Timer convertTimer;
       Timer solverTimer;
       Timer stressTimer;
@@ -142,15 +140,6 @@ namespace Pspc
          system().mixture().computeStress();
          now = Timer::now();
          stressTimer.stop(now);
-      }
-
-      // Initialize residual dot product matrix/vector to zeroes
-      for (int m = 0; m < maxHist_; ++m) {
-         v_[m] = 0;
-         coeffs_[m] = 0;
-         for (int n = 0; n < maxHist_; ++n) {
-            U_(m,n) = 0;
-         }
       }
 
       // Iterative loop
@@ -223,9 +212,7 @@ namespace Pspc
          } else {
             // determine optimal linear combination coefficients for 
             // building the updated field guess
-            if (nHist_ > 0) {
-               minimizeCoeff();
-            }
+            minimizeCoeff();
             // build the updated field
             buildOmega();
 
@@ -282,8 +269,8 @@ namespace Pspc
          for (int j = 0; j < nMonomer; ++j) {
             for (int k = shift_; k < nBasis; ++k) {
                resArrays_[i][k] +=
-                  system().interaction().chi(i,j)*system().cField(j)[k]
-                  - system().interaction().idemp(i,j)*system().wField(j)[k];
+                  system().interaction().chi(i,j)*system().cField(j)[k] -
+                  system().interaction().idemp(i,j)*system().wField(j)[k];
             }
          }
       }
@@ -309,8 +296,10 @@ namespace Pspc
          }
       }
       
-      // Store residuals
+      // Store residuals in residual history ringbuffer
       resHists_.append(resArrays_);
+
+      return;
    }
 
    template <int D>
@@ -378,47 +367,61 @@ namespace Pspc
    template <int D>
    void AmIterator<D>::minimizeCoeff()
    {
-      // Compute U matrix
-      for (int m = 0; m < nHist_; ++m) {
-         for (int n = m; n < nHist_; ++n) {
-            // Initialize U element value
-            U_(m,n) = 0;
-            // Compute dot products of differences of residual vectors 
-            for (int i = 0; i < nResid_; ++i) {
-               for (int k = 0; k < nElem(i); ++k) {
-                  U_(m,n) +=
-                           ((resHists_[m][i][k] - resHists_[m+1][i][k])*
-                           (resHists_[n][i][k] - resHists_[n+1][i][k]));
-               }
+      // Initialize matrix and vector of residual dot products
+      // if this is the first iteration
+      if (nHist_ == 0) {
+         for (int m = 0; m < maxHist_; ++m) {
+            v_[m] = 0;
+            coeffs_[m] = 0;
+            for (int n = 0; n < maxHist_; ++n) {
+               U_(m,n) = 0;
             }
-            U_(n,m) = U_(m,n);
          }
+         return;
+      }
+
+      // update matrix U by shifting elements diagonally
+      for (int m = maxHist_-1; m > 0; --m) {
+         for (int n = maxHist_-1; n > 0; --n) {
+            U_(m,n) = U_(m-1,n-1); 
+         }
+      }
+
+      // compute U matrix's new row 0 and col 0
+      for (int m = 0; m < nHist_; ++m) {
+         // compute basis vector dot product
+         double dotprod = 0;
+         for (int i = 0; i < nResid_; ++i) {
+            for (int k = 0; k < nElem(i); ++k) {
+               dotprod += (resHists_[m][i][k] - resHists_[m+1][i][k]) *
+                          (resHists_[0][i][k] - resHists_[1][i][k]);
+            }
+         }
+         U_(m,0) = dotprod;
+         U_(0,m) = dotprod;
       }
 
       // Compute v vector, as described in Arora 2017.
       for (int m = 0; m < nHist_; ++m) {
-         // Initialize v element value. 
          v_[m] = 0;
          // dot product of residual vectors
          for (int i = 0; i < nResid_; ++i) {
             for (int k = 0; k < nElem(i); ++k) {
-               v_[m] += ( (resHists_[m][i][k] - resHists_[m+1][i][k]) *
-                              resHists_[0][i][k] );
+               v_[m] += resHists_[0][i][k] * 
+                        (resHists_[m][i][k] - resHists_[m+1][i][k]);
             }
          }
       }
       
-      // Solve linear algebra problem to get coefficients to minimize
-      // the norm of the residual vector  
+      // Solve matrix equation problem to get coefficients to minimize
+      // the norm of the residual vector
       if (nHist_ == 1) {
          // solve explicitly for coefficient
          coeffs_[0] = v_[0] / U_(0,0);
       } else
       if (nHist_ < maxHist_) { 
          // create temporary smaller version of U_, v_, coeffs_
-         // this is done to avoid reallocating U_. We don't want
-         // to do this because we don't want to recompute the 
-         // dotproducts with every AM iteration.
+         // this is done to avoid reallocating U_ with each iteration.
          DMatrix<double> tempU;
          DArray<double> tempv,tempcoeffs;
          tempU.allocate(nHist_,nHist_);
@@ -430,24 +433,24 @@ namespace Pspc
                tempU(i,j) = U_(i,j);
             }
          }
-         // solve matrix equation with zeroes eliminated
+         // solve matrix equation
          LuSolver solver;
          solver.allocate(nHist_);
          solver.computeLU(tempU);
          solver.solve(tempv,tempcoeffs);
-         // transfer matrix eqn solution over to full-sized member variable
+         // transfer solution to full-sized member variable
          for (int i = 0; i < nHist_; ++i) {
             coeffs_[i] = tempcoeffs[i];
          }
       } else 
       if (nHist_ == maxHist_) {
-         // numerically solve for coefficients
          LuSolver solver;
          solver.allocate(maxHist_);
          solver.computeLU(U_);
          solver.solve(v_, coeffs_);
       }
 
+      return;
    }
 
    template <int D>
@@ -473,7 +476,7 @@ namespace Pspc
                wArrays_[i][0] = 0.0;
                for (int j = 0; j < nMonomer; ++j) {
                   wArrays_[i][0] += 
-                     system().interaction().chi(i,j)*system().cField(j)[0];
+                     system().interaction().chi(i,j) * system().cField(j)[0];
                }
             }
          }
@@ -484,7 +487,7 @@ namespace Pspc
             parameters_.clear();
             for (int m = 0; m < nParameter ; ++m) {
                parameters_.append(cellParamHists_[0][m]
-                              + lambda_* stressHists_[0][m]);
+                              + lambda_ * stressHists_[0][m]);
 
             }
             system().setUnitCell(parameters_);
@@ -528,8 +531,6 @@ namespace Pspc
          }
          // Updating the system
          system().setWBasis(wArrays_);
-
-         // std::cout << "Updated random field value: " << wArrays_[0][2] << std::endl;
          
          // If flexible, do mixing of histories for unit cell parameters
          if (isFlexible_) {
@@ -539,10 +540,10 @@ namespace Pspc
             }
             for (int i = 0; i < nHist_; ++i) {
                for (int m = 0; m < nParameter ; ++m) {
-                  wCpArrays_[m] += coeffs_[i]*( cellParamHists_[i+1][m] -
-                                                cellParamHists_[i][m]);
-                  dCpArrays_[m] += coeffs_[i]*( stressHists_[i+1][m] -
-                                                stressHists_[i][m]);
+                  wCpArrays_[m] += coeffs_[i] * ( cellParamHists_[i+1][m] -
+                                                  cellParamHists_[i][m] );
+                  dCpArrays_[m] += coeffs_[i] * ( stressHists_[i+1][m] -
+                                                  stressHists_[i][m] );
                }
             }
             parameters_.clear();
@@ -552,6 +553,7 @@ namespace Pspc
             system().setUnitCell(parameters_);
          }
       }
+      return;
    }
 
    template <int D>
@@ -571,7 +573,6 @@ namespace Pspc
       }
       // returns true if false was never returned
       return true;
-
    }
 
    template <int D>
@@ -595,6 +596,8 @@ namespace Pspc
       wHists_.clear();
       stressHists_.clear();
       cellParamHists_.clear();
+
+      return;
    }
 
 }

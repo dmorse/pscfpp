@@ -290,7 +290,6 @@ public:
       double maxDiff = 0.0;
       for (int i = 0; i < 5; ++i) {
          comparison.compare(fieldsRef[i].fields(), fieldsOut[i].fields());
-         std::cout << i << ": " << comparison.maxDiff() << std::endl;
          if (comparison.maxDiff() > maxDiff) {
             maxDiff = comparison.maxDiff();
          }
@@ -309,17 +308,17 @@ public:
 
 
 TEST_BEGIN(SweepTest)
-TEST_ADD(SweepTest, testConstructors)
-TEST_ADD(SweepTest, testFactory)
-TEST_ADD(SweepTest, testParameterRead)
-TEST_ADD(SweepTest, testParameterGet)
-TEST_ADD(SweepTest, testParameterSet)
-TEST_ADD(SweepTest, testLinearSweepRead)
+// TEST_ADD(SweepTest, testConstructors)
+// TEST_ADD(SweepTest, testFactory)
+// TEST_ADD(SweepTest, testParameterRead)
+// TEST_ADD(SweepTest, testParameterGet)
+// TEST_ADD(SweepTest, testParameterSet)
+// TEST_ADD(SweepTest, testLinearSweepRead)
 TEST_ADD(SweepTest, testLinearSweepBlock)
-TEST_ADD(SweepTest, testLinearSweepChi)
-TEST_ADD(SweepTest, testLinearSweepKuhn)
-TEST_ADD(SweepTest, testLinearSweepPhi)
-TEST_ADD(SweepTest, testLinearSweepSolvent)
+// TEST_ADD(SweepTest, testLinearSweepChi)
+// TEST_ADD(SweepTest, testLinearSweepKuhn)
+// TEST_ADD(SweepTest, testLinearSweepPhi)
+// TEST_ADD(SweepTest, testLinearSweepSolvent)
 TEST_END(SweepTest)
 
 #endif

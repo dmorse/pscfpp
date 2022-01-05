@@ -97,6 +97,10 @@ namespace Pspc
       /// True if all species are closed ensembles, false otherwise.
       bool isCanonical_;
 
+      /// Ensemble shift factor. Ignore spatially homogeneous basis
+      /// function coefficients if isCanonical_.
+      int shift_;  
+
       /// Free parameter for minimization
       double lambda_;
 
@@ -109,23 +113,12 @@ namespace Pspc
       /// Maximum number of iterations to attempt.
       int maxItr_;
 
-      /**
-      * Ensemble shift factor: 1 if isCanonical, 0 otherwise.
-      *
-      * A mixture ensemble is canonical iff all polymer and solvent species
-      * have closed ensembles. If ensemble isCanonical, ignore coefficients
-      * of the n=0 (spatially homogeneous) basis function for some purposes.
-      */
-      int shift_;  
-
-      // Number of residual components. Either equal to number of
-      // monomers, or number of monomers plus number of unit cell parameters
+      /// Number of residual components. Either nMonomer if !isFlexible_
+      /// or nMonomer+nParameter if isFlexible_
       int nResid_; 
 
-      /**
-      * History of field residuals.
-      * 1st index = history, 2nd index = monomer, 3rd index = basis func.
-      */
+      /// History of field residuals.
+      /// 1st index = history, 2nd index = monomer, 3rd index = basis func.
       RingBuffer< DArray < DArray<double> > > resHists_;
 
       /// History of previous w-fields
