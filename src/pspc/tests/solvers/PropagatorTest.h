@@ -563,15 +563,15 @@ public:
 };
 
 TEST_BEGIN(PropagatorTest)
-TEST_ADD(PropagatorTest, testConstructor1D)
-TEST_ADD(PropagatorTest, testSetDiscretization1D)
-TEST_ADD(PropagatorTest, testSetDiscretization2D)
-TEST_ADD(PropagatorTest, testSetDiscretization3D)
-// TEST_ADD(PropagatorTest, testSetupSolver1D)
-TEST_ADD(PropagatorTest, testSetupSolver3D)
+// TEST_ADD(PropagatorTest, testConstructor1D)
+// TEST_ADD(PropagatorTest, testSetDiscretization1D)
+// TEST_ADD(PropagatorTest, testSetDiscretization2D)
+// TEST_ADD(PropagatorTest, testSetDiscretization3D)
+TEST_ADD(PropagatorTest, testSetupSolver1D)
+// TEST_ADD(PropagatorTest, testSetupSolver3D)
 // TEST_ADD(PropagatorTest, testSolver1D)
-TEST_ADD(PropagatorTest, testSolver2D)
-TEST_ADD(PropagatorTest, testSolver3D)
-TEST_END(PropagatorTest)
+// TEST_ADD(PropagatorTest, testSolver2D)
+// TEST_ADD(PropagatorTest, testSolver3D)
+// TEST_END(PropagatorTest)
 
 #endif
