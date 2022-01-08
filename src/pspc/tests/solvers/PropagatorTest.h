@@ -198,20 +198,20 @@ public:
 
       UnitCell<1> unitCell;
       setupUnitCell1D(unitCell);
-      // std::cout << std::endl;
-      // std::cout << "unit cell = " << unitCell << std::endl;
-      TEST_ASSERT(eq(unitCell.rBasis(0)[0], 4.0));
+      // // std::cout << std::endl;
+      // // std::cout << "unit cell = " << unitCell << std::endl;
+      // TEST_ASSERT(eq(unitCell.rBasis(0)[0], 4.0));
 
-      // Setup chemical potential field
-      RField<1> w;
-      w.allocate(mesh.dimensions());
-      TEST_ASSERT(w.capacity() == mesh.size());
-      for (int i=0; i < w.capacity(); ++i) {
-         w[i] = 1.0;
-      }
+      // // Setup chemical potential field
+      // RField<1> w;
+      // w.allocate(mesh.dimensions());
+      // TEST_ASSERT(w.capacity() == mesh.size());
+      // for (int i=0; i < w.capacity(); ++i) {
+      //    w[i] = 1.0;
+      // }
 
-      block.setupUnitCell(unitCell);
-      block.setupSolver(w);
+      // block.setupUnitCell(unitCell);
+      // block.setupSolver(w);
    }
    
    void testSetupSolver2D()
