@@ -379,12 +379,12 @@ public:
 };
 
 TEST_BEGIN(MixtureTest)
-// TEST_ADD(MixtureTest, testConstructor1D)
-// TEST_ADD(MixtureTest, testReadParameters1D)
+TEST_ADD(MixtureTest, testConstructor1D)
+TEST_ADD(MixtureTest, testReadParameters1D)
 TEST_ADD(MixtureTest, testSolver1D)
-// TEST_ADD(MixtureTest, testSolver2D)
-// TEST_ADD(MixtureTest, testSolver2D_hex)
-// TEST_ADD(MixtureTest, testSolver3D)
+TEST_ADD(MixtureTest, testSolver2D)
+TEST_ADD(MixtureTest, testSolver2D_hex)
+TEST_ADD(MixtureTest, testSolver3D)
 TEST_END(MixtureTest)
 
 #endif

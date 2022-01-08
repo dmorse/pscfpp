@@ -163,12 +163,12 @@ public:
 
 TEST_BEGIN(BasisFieldStateTest)
 
-// TEST_ADD(BasisFieldStateTest, testConstructor)
-// TEST_ADD(BasisFieldStateTest, testRead)
-// TEST_ADD(BasisFieldStateTest, testWrite)
-// TEST_ADD(BasisFieldStateTest, testGetSystemState)
-// TEST_ADD(BasisFieldStateTest, testSetSystemState)
-// TEST_ADD(BasisFieldStateTest, testSetSystem)
+TEST_ADD(BasisFieldStateTest, testConstructor)
+TEST_ADD(BasisFieldStateTest, testRead)
+TEST_ADD(BasisFieldStateTest, testWrite)
+TEST_ADD(BasisFieldStateTest, testGetSystemState)
+TEST_ADD(BasisFieldStateTest, testSetSystemState)
+TEST_ADD(BasisFieldStateTest, testSetSystem)
 
 TEST_END(BasisFieldStateTest)
 

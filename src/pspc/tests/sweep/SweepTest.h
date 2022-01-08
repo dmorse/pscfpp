@@ -272,7 +272,7 @@ public:
       system.sweep();
 
       // Check if sweep had to backtrack. It shouldn't need to. 
-      std::ifstream f(std::string("out/" + paramname + "/5_w.bf").c_str());
+      std::ifstream f(std::string(filePrefix() + "out/" + paramname + "/5_w.bf").c_str());
       if (f.good()) {
          TEST_THROW("Sweep backtracked due to iteration count greater than maxItr.");
       }
@@ -308,17 +308,17 @@ public:
 
 
 TEST_BEGIN(SweepTest)
-// TEST_ADD(SweepTest, testConstructors)
-// TEST_ADD(SweepTest, testFactory)
-// TEST_ADD(SweepTest, testParameterRead)
-// TEST_ADD(SweepTest, testParameterGet)
-// TEST_ADD(SweepTest, testParameterSet)
-// TEST_ADD(SweepTest, testLinearSweepRead)
+TEST_ADD(SweepTest, testConstructors)
+TEST_ADD(SweepTest, testFactory)
+TEST_ADD(SweepTest, testParameterRead)
+TEST_ADD(SweepTest, testParameterGet)
+TEST_ADD(SweepTest, testParameterSet)
+TEST_ADD(SweepTest, testLinearSweepRead)
 TEST_ADD(SweepTest, testLinearSweepBlock)
-// TEST_ADD(SweepTest, testLinearSweepChi)
-// TEST_ADD(SweepTest, testLinearSweepKuhn)
-// TEST_ADD(SweepTest, testLinearSweepPhi)
-// TEST_ADD(SweepTest, testLinearSweepSolvent)
+TEST_ADD(SweepTest, testLinearSweepChi)
+TEST_ADD(SweepTest, testLinearSweepKuhn)
+TEST_ADD(SweepTest, testLinearSweepPhi)
+TEST_ADD(SweepTest, testLinearSweepSolvent)
 TEST_END(SweepTest)
 
 #endif
