@@ -186,15 +186,15 @@ public:
       printMethod(TEST_FUNC);
 
       // Create and initialize block
-      Block<1> block;
-      setupBlock1D(block);
+      // Block<1> block;
+      // setupBlock1D(block);
 
       // Create and initialize mesh
-      Mesh<1> mesh;
-      setupMesh1D(mesh);
+      // Mesh<1> mesh;
+      // setupMesh1D(mesh);
 
-      double ds = 0.02;
-      block.setDiscretization(ds, mesh);
+      // double ds = 0.02;
+      // block.setDiscretization(ds, mesh);
 
       UnitCell<1> unitCell;
       setupUnitCell1D(unitCell);
