@@ -572,6 +572,6 @@ TEST_ADD(PropagatorTest, testSetupSolver1D)
 // TEST_ADD(PropagatorTest, testSolver1D)
 // TEST_ADD(PropagatorTest, testSolver2D)
 // TEST_ADD(PropagatorTest, testSolver3D)
-// TEST_END(PropagatorTest)
+TEST_END(PropagatorTest)
 
 #endif
