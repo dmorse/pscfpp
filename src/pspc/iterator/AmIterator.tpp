@@ -286,7 +286,7 @@ namespace Pspc
       if (isFlexible_) {
          FArray<double, 6 > tempCp;
          for (int i = 0; i < nParameter ; i++) {
-            tempCp [i] = -((system().mixture()).stress(i));
+            tempCp[i] = -((system().mixture()).stress(i));
          }
          stressHists_.append(tempCp);
 
@@ -332,7 +332,7 @@ namespace Pspc
          if (maxStress > maxRes) {
             maxRes = maxStress;
          }
-         // outout stress values
+         // output stress values
          for (int m=0;  m < nParameter ; ++m) {
             Log::file() << "Stress  "<< m << "   = "
                         << Dbl(system().mixture().stress(m)) <<"\n";
