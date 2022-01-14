@@ -91,6 +91,14 @@ namespace Pspc
       /// Error tolerance
       double epsilon_;
 
+      /// Type of error checked for convergence.
+      /// Either maxResid or normResid.
+      std::string errorType_;
+
+      /// Scale factor for importance of stress in
+      /// residual and error calculations.
+      double scaleStress_;
+
       /// Flexible cell computation (1) or rigid (0), default value = 0
       bool isFlexible_;
 

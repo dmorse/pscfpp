@@ -48,10 +48,19 @@ namespace Pspc
    void AmIterator<D>::readParameters(std::istream& in)
    {
       isFlexible_ = 0; // default value (fixed cell)
+      scaleStress_ = 10.0; // default stress scaling
+      errorType_ = "normResid"; // default type of error
       read(in, "maxItr", maxItr_);
       read(in, "epsilon", epsilon_);
       read(in, "maxHist", maxHist_);
       readOptional(in, "isFlexible", isFlexible_);
+      readOptional(in, "errorType", errorType_);
+      readOptional(in, "scaleStress", scaleStress_);
+
+      if (!(errorType_ == "normResid" || errorType_ == "maxResid")) {
+         UTIL_THROW("Invalid iterator error type in parameter file.");
+      }
+      
    }
 
    /*
@@ -312,9 +321,8 @@ namespace Pspc
          }
          stressHists_.append(tempCp);
 
-         double scaleStress = 10.0;
          for (int m=0, i = nMonomer; m < nParameter ; ++m, ++i) {
-            resArrays_[i][0] = scaleStress * fabs( stressHists_[0][m] );
+            resArrays_[i][0] = scaleStress_ * fabs( stressHists_[0][m] );
          }
       }
       
@@ -372,18 +380,27 @@ namespace Pspc
       }
 
       // Error by norm of residual vector
-      double errorSq = 0.0, error = 0.0;
+      double normResSq = 0.0, normRes = 0.0;
       for (int i = 0; i < nResid_; ++i) {
          for (int k = 0; k < nElem(i); ++k) {
-            errorSq += resHists_[0][i][k] * resHists_[0][i][k];
+            normResSq += resHists_[0][i][k] * resHists_[0][i][k];
          }
       }
-      error = sqrt(errorSq);
+      normRes = sqrt(normResSq);
 
-      Log::file() << "Residual Norm = " << Dbl(error) << std::endl;
+      Log::file() << "Residual Norm = " << Dbl(normRes) << std::endl;
 
       // Check if total error is below tolerance
-      return error < epsilon_;
+      if (errorType_ == "normResid") {
+         return normRes < epsilon_;
+      } else 
+      if (errorType_ == "maxResid") {
+         return maxRes < epsilon_;
+      } else {
+         UTIL_THROW("Invalid iterator error type in parameter file.");
+         return false;
+      }
+
    }
 
    template <int D>
