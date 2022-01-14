@@ -77,11 +77,11 @@ namespace Pspc
 
       // Determine how to treat homogeneous basis function coefficients
       if (isCanonical()) {
-         // directly calculate them
+         // Directly calculate them
          shift_ = 1;
          isCanonical_ = true;
       } else {
-         // iteratively calculate them
+         // Iteratively calculate them
          shift_ = 0;
          isCanonical_ = false;
       }
@@ -192,7 +192,7 @@ namespace Pspc
 
             Log::file() << "----------CONVERGED----------"<< std::endl;
 
-            // Output timing results MAKE BETTER. ITERABLE?
+            // Output timing results
             Log::file() << "\n";
             Log::file() << "Iterator times contributions:\n";
             Log::file() << "\n";
@@ -237,12 +237,12 @@ namespace Pspc
             return 0;
 
          } else {
-            // determine optimal linear combination coefficients for 
+            // Determine optimal linear combination coefficients for 
             // building the updated field guess
             timerCoeff.start();
             minimizeCoeff();
             timerCoeff.stop();
-            // build the updated field
+            // Build the updated field
             timerOmega.start();
             buildOmega();
             timerOmega.stop();
@@ -358,11 +358,11 @@ namespace Pspc
 
       // Error by max Stress residual
       if (isFlexible_) { 
-         // check if stress residual is greater than SCF
+         // Check if stress residual is greater than SCF
          if (maxStress > maxRes) {
             maxRes = maxStress;
          }
-         // output stress values
+         // Output stress values
          for (int m=0;  m < nParameter ; ++m) {
             Log::file() << "Stress  "<< m << "   = "
                         << Dbl(system().mixture().stress(m)) <<"\n";
@@ -419,16 +419,16 @@ namespace Pspc
          return;
       }
 
-      // update matrix U by shifting elements diagonally
+      // Update matrix U by shifting elements diagonally
       for (int m = maxHist_-1; m > 0; --m) {
          for (int n = maxHist_-1; n > 0; --n) {
             U_(m,n) = U_(m-1,n-1); 
          }
       }
 
-      // compute U matrix's new row 0 and col 0
+      // Compute U matrix's new row 0 and col 0
       for (int m = 0; m < nHist_; ++m) {
-         // compute basis vector dot product
+         // Compute basis vector dot product
          double dotprod = 0;
          for (int i = 0; i < nResid_; ++i) {
             for (int k = 0; k < nElem(i); ++k) {
@@ -443,7 +443,7 @@ namespace Pspc
       // Compute v vector, as described in Arora 2017.
       for (int m = 0; m < nHist_; ++m) {
          v_[m] = 0;
-         // dot product of residual vectors
+         // Dot product of residual vectors
          for (int i = 0; i < nResid_; ++i) {
             for (int k = 0; k < nElem(i); ++k) {
                v_[m] += resHists_[0][i][k] * 
@@ -455,11 +455,11 @@ namespace Pspc
       // Solve matrix equation problem to get coefficients to minimize
       // the norm of the residual vector
       if (nHist_ == 1) {
-         // solve explicitly for coefficient
+         // Solve explicitly for coefficient
          coeffs_[0] = v_[0] / U_(0,0);
       } else
       if (nHist_ < maxHist_) { 
-         // create temporary smaller version of U_, v_, coeffs_
+         // Create temporary smaller version of U_, v_, coeffs_
          // this is done to avoid reallocating U_ with each iteration.
          DMatrix<double> tempU;
          DArray<double> tempv,tempcoeffs;
@@ -472,12 +472,12 @@ namespace Pspc
                tempU(i,j) = U_(i,j);
             }
          }
-         // solve matrix equation
+         // Solve matrix equation
          LuSolver solver;
          solver.allocate(nHist_);
          solver.computeLU(tempU);
          solver.solve(tempv,tempcoeffs);
-         // transfer solution to full-sized member variable
+         // Transfer solution to full-sized member variable
          for (int i = 0; i < nHist_; ++i) {
             coeffs_[i] = tempcoeffs[i];
          }
@@ -532,15 +532,15 @@ namespace Pspc
             system().setUnitCell(parameters_);
          }
 
-      } else { // if at least 1 historical results
-         // contribution of the last solution
+      } else { // if at least 1 historical result
+         // Contribution of the last solution
          for (int j = 0; j < nMonomer; ++j) {
             for (int k = shift_; k < nBasis; ++k) {
                wArrays_[j][k] = wHists_[0][j][k];
                dArrays_[j][k] = resHists_[0][j][k];
             }
          }
-         // mixing in historical solutions
+         // Mixing in historical solutions
          for (int i = 0; i < nHist_; ++i) {
             for (int j = 0; j < nMonomer; ++j) {
                for (int k = shift_; k < nBasis; ++k) {
@@ -598,19 +598,19 @@ namespace Pspc
    template <int D>
    bool AmIterator<D>::isCanonical()
    {
-      // check ensemble of all polymers
+      // Check ensemble of all polymers
       for (int i = 0; i < system().mixture().nPolymer(); ++i) {
          if (system().mixture().polymer(i).ensemble() == Species::Open) {
             return false;
          }
       }
-      // check ensemble of all solvents
+      // Check ensemble of all solvents
       for (int i = 0; i < system().mixture().nSolvent(); ++i) {
          if (system().mixture().solvent(i).ensemble() == Species::Open) {
             return false;
          }
       }
-      // returns true if false was never returned
+      // Returns true if false was never returned
       return true;
    }
 

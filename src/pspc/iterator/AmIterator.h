@@ -115,7 +115,7 @@ namespace Pspc
       /// Number of previous steps to use to compute next state. [0,maxHist_]
       int nHist_;
 
-      // Number of histories to retain.
+      /// Number of histories to retain.
       int maxHist_;
 
       /// Maximum number of iterations to attempt.
