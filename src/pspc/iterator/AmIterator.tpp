@@ -103,31 +103,36 @@ namespace Pspc
       // Assumes AmIterator.allocate() has been called
       // TODO: Check these conditions on entry
 
-      Timer convertTimer;
-      Timer solverTimer;
-      Timer stressTimer;
-      Timer updateTimer;
-      Timer::TimePoint now;
-      bool done;
+      Timer timerMDE;
+      Timer timerStress;
+      Timer timerAM;
+      Timer timerResid;
+      Timer timerConverged;
+      Timer timerCoeff;
+      Timer timerOmega;
+      Timer timerTotal;
+      
 
+      // Start overall timer 
+      timerTotal.start();
+      
       // Solve MDE for initial state
-      solverTimer.start();
+      timerMDE.start();
       system().compute();
-      now = Timer::now();
-      solverTimer.stop(now);
+      timerMDE.stop();
 
       // Compute initial stress if needed
       if (isFlexible_) {
-         stressTimer.start(now);
+         timerStress.start();
          system().mixture().computeStress();
-         now = Timer::now();
-         stressTimer.stop(now);
+         timerStress.stop();
       }
 
       // Iterative loop
+      bool done;
       for (int itr = 1; itr <= maxItr_; ++itr) {
 
-         updateTimer.start(now);
+         timerAM.start();
 
          Log::file()<<"---------------------"<<std::endl;
          Log::file()<<" Iteration  "<<itr<<std::endl;
@@ -139,40 +144,48 @@ namespace Pspc
             lambda_ = 1.0;
             nHist_ = maxHist_;
          }
+         timerResid.start();
          computeResidual();
+         timerResid.stop();
 
          // Test for convergence
+         timerConverged.start();
          done = isConverged();
+         timerConverged.stop();
 
          if (done) {
 
-            updateTimer.stop();
+            timerAM.stop();
+            timerTotal.stop();
+
             Log::file() << "----------CONVERGED----------"<< std::endl;
 
             // Output timing results
-            double solverTime = solverTimer.time();
-            double convertTime = convertTimer.time();
-            double updateTime = updateTimer.time();
-            double totalTime = updateTime + convertTime + solverTime;
-            double stressTime = 0.0;
-            if (isFlexible_) {
-               stressTime = stressTimer.time();
-               totalTime += stressTime;
-            }
             Log::file() << "\n";
             Log::file() << "Iterator times contributions:\n";
             Log::file() << "\n";
-            Log::file() << "solver time  = " << solverTime  << " s,  "
-                        << solverTime/totalTime << "\n";
+            Log::file() << "MDE solution:         " 
+                        << timerMDE.time()  << " s,  "
+                        << timerMDE.time()/timerTotal.time() << "\n";
             if (isFlexible_) {
-               Log::file() << "stress time  = " << stressTime  << " s,  "
-                           << stressTime/totalTime << "\n";
+               Log::file() << "stress computation:   " 
+                           << timerStress.time()  << " s,  "
+                           << timerStress.time()/timerTotal.time() << "\n";
             }
-            Log::file() << "convert time = " << convertTime << " s,  "
-                        << convertTime/totalTime << "\n";
-            Log::file() << "update time  = "  << updateTime  << " s,  "
-                        << updateTime/totalTime << "\n";
-            Log::file() << "total time   = "  << totalTime   << " s  ";
+            Log::file() << "residual computation: "  
+                        << timerResid.time()  << " s,  "
+                        << timerResid.time()/timerTotal.time() << "\n";
+            Log::file() << "mixing coefficients:  "  
+                        << timerCoeff.time()  << " s,  "
+                        << timerCoeff.time()/timerTotal.time() << "\n";
+            Log::file() << "checking convergence: "  
+                        << timerConverged.time()  << " s,  "
+                        << timerConverged.time()/timerTotal.time() << "\n";
+            Log::file() << "updating field guess: "  
+                        << timerOmega.time()  << " s,  "
+                        << timerOmega.time()/timerTotal.time() << "\n";
+            Log::file() << "total time:           "  
+                        << timerTotal.time()   << " s  ";
             Log::file() << "\n\n";
 
             // If the unit cell is rigid, compute and output final stress 
@@ -192,6 +205,7 @@ namespace Pspc
             return 0;
 
          } else {
+            timerCoeff.start();
             if (itr <= maxHist_ + 1) {
                if (nHist_ > 0) {
                   U_.allocate(nHist_, nHist_);
@@ -200,8 +214,13 @@ namespace Pspc
                }
             }
             minimizeCoeff(itr);
-            buildOmega(itr);
+            timerCoeff.stop();
 
+            timerOmega.start();
+            buildOmega(itr);
+            timerOmega.stop();
+
+            timerCoeff.start();
             if (itr <= maxHist_) {
                if (nHist_ > 0) {
                   U_.deallocate();
@@ -209,27 +228,27 @@ namespace Pspc
                   v_.deallocate();
                }
             }
-            now = Timer::now();
-            updateTimer.stop(now);
+            timerCoeff.stop();
+            timerAM.stop();
 
             // Solve MDE
-            solverTimer.start(now);
+            timerMDE.start();
             system().compute();
-            now = Timer::now();
-            solverTimer.stop(now);
+            timerMDE.stop();
 
             // Compute stress if needed
             if (isFlexible_) {
-               stressTimer.start(now);
+               timerStress.start();
                system().mixture().computeStress();
-               now = Timer::now();
-               stressTimer.stop(now);
+               timerStress.stop();
             }
 
          }
 
       }
       // Failure: iteration counter itr reached maxItr without converging
+      timerTotal.stop();
+
       cleanUp();
       return 1;
    }
