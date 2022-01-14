@@ -46,7 +46,6 @@ public:
       mixture.readParam(in);
       in.close();
    }
- 
 
    void testSolver1D()
    {

@@ -91,8 +91,23 @@ namespace Pspc
       /// Error tolerance
       double epsilon_;
 
+      /// Type of error checked for convergence.
+      /// Either maxResid or normResid.
+      std::string errorType_;
+
+      /// Scale factor for importance of stress in
+      /// residual and error calculations.
+      double scaleStress_;
+
       /// Flexible cell computation (1) or rigid (0), default value = 0
       bool isFlexible_;
+
+      /// True if all species are closed ensembles, false otherwise.
+      bool isCanonical_;
+
+      /// Ensemble shift factor. Ignore spatially homogeneous basis
+      /// function coefficients if isCanonical_.
+      int shift_;  
 
       /// Free parameter for minimization
       double lambda_;
@@ -100,28 +115,18 @@ namespace Pspc
       /// Number of previous steps to use to compute next state. [0,maxHist_]
       int nHist_;
 
-      // Number of histories to retain.
+      /// Number of histories to retain.
       int maxHist_;
 
       /// Maximum number of iterations to attempt.
       int maxItr_;
 
-      /**
-      * Ensemble shift factor: 1 if isCanonical, 0 otherwise.
-      *
-      * A mixture ensemble is canonical iff all polymer and solvent species
-      * have closed ensembles. If ensemble isCanonical, ignore coefficients
-      * of the n=0 (spatially homogeneous) basis function for some purposes.
-      */
-      int shift_;  
+      /// Number of residual components. Either nMonomer if !isFlexible_
+      /// or nMonomer+nParameter if isFlexible_
+      int nResid_; 
 
-      /// Work Array for iterating on parameters 
-      FSArray<double, 6> parameters_;
-
-      /**
-      * History of field residuals.
-      * 1st index = history, 2nd index = monomer, 3rd index = basis func.
-      */
+      /// History of field residuals.
+      /// 1st index = history, 2nd index = monomer, 3rd index = basis func.
       RingBuffer< DArray < DArray<double> > > resHists_;
 
       /// History of previous w-fields
@@ -141,6 +146,9 @@ namespace Pspc
 
       /// Vector, dot products of residuals with differences from histories
       DArray<double> v_;
+
+      /// Work Array for iterating on parameters 
+      FSArray<double, 6> parameters_;
 
       /// New trial w field (big W in Arora et al. 2017)
       DArray<DArray <double> > wArrays_;
@@ -164,6 +172,13 @@ namespace Pspc
       bool isCanonical();
 
       /**
+      * Return the number of components for a given residual. This is 
+      * either the number of spectral basis functions if the residual
+      * is an SCF residual, or 1 if the residual is a stress residual. 
+      */ 
+      int nElem(int i);
+
+      /**
       * Compute the deviation of wFields from a mean field solution
       */
       void computeResidual();
@@ -178,12 +193,12 @@ namespace Pspc
       /**
       * Determine the coefficients that would minimize U_
       */
-      void minimizeCoeff(int itr);
+      void minimizeCoeff();
 
       /**
       * Rebuild wFields for the next iteration from minimized coefficients
       */
-      void buildOmega(int itr);
+      void buildOmega();
 
       /**
       * Clean up after a call to solve(), enabling future calls to solve.

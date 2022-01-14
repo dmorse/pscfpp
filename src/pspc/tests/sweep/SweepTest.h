@@ -272,7 +272,7 @@ public:
       system.sweep();
 
       // Check if sweep had to backtrack. It shouldn't need to. 
-      std::ifstream f(std::string("out/" + paramname + "/5_w.bf").c_str());
+      std::ifstream f(std::string(filePrefix() + "out/" + paramname + "/5_w.bf").c_str());
       if (f.good()) {
          TEST_THROW("Sweep backtracked due to iteration count greater than maxItr.");
       }
