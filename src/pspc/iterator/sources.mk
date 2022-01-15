@@ -1,7 +1,8 @@
 pspc_iterator_= \
   pspc/iterator/Iterator.cpp \
   pspc/iterator/IteratorFactory.cpp \
-  pspc/iterator/AmIterator.cpp 
+  pspc/iterator/AmIterator.cpp \
+  pspc/iterator/AmmIterator.cpp \
 
 pspc_iterator_SRCS=\
      $(addprefix $(SRC_DIR)/, $(pspc_iterator_))

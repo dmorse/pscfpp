@@ -24,9 +24,9 @@ System{
      groupName P_-1
   }
   AmIterator{
-     maxItr 400
-     epsilon 1e-14
-     maxHist 5
+     maxItr 300
+     epsilon 1e-10
+     maxHist 10
      isFlexible 1
   }
 }
