@@ -66,17 +66,11 @@ namespace Pscf {
          solver.inverse(chiInverse_);
       }
 
+      double sum = 0;
       int i, j, k;
 
       for (i = 0; i < nMonomer(); ++i) {
-         for (j = 0; j < nMonomer(); ++j) {
-            idemp_(0,i) = 0.0;
-         }
-      }
-
-      double sum = 0.0;
-      for (i = 0; i < nMonomer(); ++i) {
-         idemp_(0,i) = 0.0;
+         idemp_(0,i) = 0;
          for (j = 0; j < nMonomer(); ++j) {
             idemp_(0,i) -= chiInverse_(j,i);
          }

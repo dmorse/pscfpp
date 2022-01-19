@@ -748,9 +748,7 @@ namespace Pspc
       int error = iterator().solve();
       hasCFields_ = true;
 
-      if (error) {
-         Log::file() << "Iterator failed to converge\n";
-      } else {
+      if (!error) {   
          computeFreeEnergy();
          outputThermo(Log::file());
       }

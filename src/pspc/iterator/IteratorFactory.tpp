@@ -5,6 +5,7 @@
 
 // Subclasses of Iterator 
 #include "AmIterator.h"
+#include "AmmIterator.h"
 
 namespace Pscf {
 namespace Pspc {
@@ -35,7 +36,11 @@ namespace Pspc {
       // Try to match classname
       if (className == "AmIterator") {
          ptr = new AmIterator<D>(*systemPtr_);
-      } 
+      } else 
+      if (className == "AmmIterator") {
+         ptr = new AmmIterator<D>(*systemPtr_);
+      }
+
       return ptr;
    }
 

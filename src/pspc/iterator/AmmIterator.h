@@ -1,5 +1,5 @@
-#ifndef PSPC_AM_ITERATOR_H
-#define PSPC_AM_ITERATOR_H
+#ifndef PSPC_AMM_ITERATOR_H
+#define PSPC_AMM_ITERATOR_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -27,10 +27,16 @@ namespace Pspc
    /**
    * Anderson mixing iterator for the pseudo spectral method.
    *
+   * This version was written by Akash Arora, based closely on algorithm
+   * as described Matsen and coworkers, in:
+   *
+   *      Matsen 2009,  European Physical Journal E
+   *      Stasiak and Matsen 2011,  Eur. Phys. J. E
+   *
    * \ingroup Pspc_Iterator_Module
    */
    template <int D>
-   class AmIterator : public Iterator<D>
+   class AmmIterator : public Iterator<D>
    {
    public:
       
@@ -42,12 +48,12 @@ namespace Pspc
       *
       * \param system pointer to a parent System object
       */
-      AmIterator(System<D>& system);
+      AmmIterator(System<D>& system);
 
       /**
       * Destructor
       */
-      ~AmIterator();
+      ~AmmIterator();
 
       /**
       * Read all parameters and initialize.
@@ -91,23 +97,8 @@ namespace Pspc
       /// Error tolerance
       double epsilon_;
 
-      /// Type of error checked for convergence.
-      /// Either maxResid or normResid.
-      std::string errorType_;
-
-      /// Scale factor for importance of stress in
-      /// residual and error calculations.
-      double scaleStress_;
-
       /// Flexible cell computation (1) or rigid (0), default value = 0
       bool isFlexible_;
-
-      /// True if all species are closed ensembles, false otherwise.
-      bool isCanonical_;
-
-      /// Ensemble shift factor. Ignore spatially homogeneous basis
-      /// function coefficients if isCanonical_.
-      int shift_;  
 
       /// Free parameter for minimization
       double lambda_;
@@ -115,18 +106,28 @@ namespace Pspc
       /// Number of previous steps to use to compute next state. [0,maxHist_]
       int nHist_;
 
-      /// Number of histories to retain.
+      // Number of histories to retain.
       int maxHist_;
 
       /// Maximum number of iterations to attempt.
       int maxItr_;
 
-      /// Number of residual components. Either nMonomer if !isFlexible_
-      /// or nMonomer+nParameter if isFlexible_
-      int nResid_; 
+      /**
+      * Ensemble shift factor: 1 if isCanonical, 0 otherwise.
+      *
+      * A mixture ensemble is canonical iff all polymer and solvent species
+      * have closed ensembles. If ensemble isCanonical, ignore coefficients
+      * of the n=0 (spatially homogeneous) basis function for some purposes.
+      */
+      int shift_;  
 
-      /// History of field residuals.
-      /// 1st index = history, 2nd index = monomer, 3rd index = basis func.
+      /// Work Array for iterating on parameters 
+      FSArray<double, 6> parameters_;
+
+      /**
+      * History of field residuals.
+      * 1st index = history, 2nd index = monomer, 3rd index = basis func.
+      */
       RingBuffer< DArray < DArray<double> > > resHists_;
 
       /// History of previous w-fields
@@ -146,9 +147,6 @@ namespace Pspc
 
       /// Vector, dot products of residuals with differences from histories
       DArray<double> v_;
-
-      /// Work Array for iterating on parameters 
-      FSArray<double, 6> parameters_;
 
       /// New trial w field (big W in Arora et al. 2017)
       DArray<DArray <double> > wArrays_;
@@ -172,13 +170,6 @@ namespace Pspc
       bool isCanonical();
 
       /**
-      * Return the number of components for a given residual. This is 
-      * either the number of spectral basis functions if the residual
-      * is an SCF residual, or 1 if the residual is a stress residual. 
-      */ 
-      int nElem(int i);
-
-      /**
       * Compute the deviation of wFields from a mean field solution
       */
       void computeResidual();
@@ -193,12 +184,12 @@ namespace Pspc
       /**
       * Determine the coefficients that would minimize U_
       */
-      void minimizeCoeff();
+      void minimizeCoeff(int itr);
 
       /**
       * Rebuild wFields for the next iteration from minimized coefficients
       */
-      void buildOmega();
+      void buildOmega(int itr);
 
       /**
       * Clean up after a call to solve(), enabling future calls to solve.
@@ -218,22 +209,22 @@ namespace Pspc
    // Inline member functions
 
    template<int D>
-   inline double AmIterator<D>::epsilon()
+   inline double AmmIterator<D>::epsilon()
    { return epsilon_; }
 
    template<int D>
-   inline int AmIterator<D>::maxHist()
+   inline int AmmIterator<D>::maxHist()
    { return maxHist_; }
 
    template<int D>
-   inline int AmIterator<D>::maxItr()
+   inline int AmmIterator<D>::maxItr()
    { return maxItr_; }
 
    #ifndef PSPC_AM_ITERATOR_TPP
    // Suppress implicit instantiation
-   extern template class AmIterator<1>;
-   extern template class AmIterator<2>;
-   extern template class AmIterator<3>;
+   extern template class AmmIterator<1>;
+   extern template class AmmIterator<2>;
+   extern template class AmmIterator<3>;
    #endif
 
 }

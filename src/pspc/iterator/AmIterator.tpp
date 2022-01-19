@@ -48,10 +48,19 @@ namespace Pspc
    void AmIterator<D>::readParameters(std::istream& in)
    {
       isFlexible_ = 0; // default value (fixed cell)
+      scaleStress_ = 10.0; // default stress scaling
+      errorType_ = "normResid"; // default type of error
       read(in, "maxItr", maxItr_);
       read(in, "epsilon", epsilon_);
       read(in, "maxHist", maxHist_);
       readOptional(in, "isFlexible", isFlexible_);
+      readOptional(in, "errorType", errorType_);
+      readOptional(in, "scaleStress", scaleStress_);
+
+      if (!(errorType_ == "normResid" || errorType_ == "maxResid")) {
+         UTIL_THROW("Invalid iterator error type in parameter file.");
+      }
+      
    }
 
    /*
@@ -60,6 +69,23 @@ namespace Pspc
    template <int D>
    void AmIterator<D>::setup()
    {
+      // Determine length of residual basis vectors
+      nResid_ = system().mixture().nMonomer();
+      if (isFlexible_) {
+         nResid_ += system().unitCell().nParameter(); 
+      }
+
+      // Determine how to treat homogeneous basis function coefficients
+      if (isCanonical()) {
+         // Directly calculate them
+         shift_ = 1;
+         isCanonical_ = true;
+      } else {
+         // Iteratively calculate them
+         shift_ = 0;
+         isCanonical_ = false;
+      }
+
       // Allocate ring buffers
       resHists_.allocate(maxHist_+1);
       wHists_.allocate(maxHist_+1);
@@ -69,26 +95,28 @@ namespace Pspc
          cellParamHists_.allocate(maxHist_+1);
       }
 
-      // Allocate outer arrays used in iteration (number of monomers)
+      // Allocate outer arrays used in iteration
       int nMonomer = system().mixture().nMonomer();
       wArrays_.allocate(nMonomer);
       dArrays_.allocate(nMonomer);
-      resArrays_.allocate(nMonomer);
-
-      // Determine number of basis functions (nBasis - 1 if canonical)
-      if (isCanonical()) {
-         shift_ = 1;
-      } else {
-         shift_ = 0;
-      }
+      resArrays_.allocate(nResid_);
       
       // Allocate inner arrays with number of basis functions
       int nBasis = system().basis().nBasis();
       for (int i = 0; i < nMonomer; ++i) {
          wArrays_[i].allocate(nBasis);
          dArrays_[i].allocate(nBasis);
-         resArrays_[i].allocate(nBasis);
       }
+
+      // Allocate inner residual arrays
+      for (int i = 0; i < nResid_; ++i) {
+         resArrays_[i].allocate(nElem(i));
+      }
+
+      // Allocate arrays/matrices used in coefficient calculation
+      U_.allocate(maxHist_,maxHist_);
+      v_.allocate(maxHist_);
+      coeffs_.allocate(maxHist_);
    }
 
    /*
@@ -97,11 +125,15 @@ namespace Pspc
    template <int D>
    int AmIterator<D>::solve()
    {
+
       // Preconditions:
       UTIL_CHECK(system().hasWFields());
-      // Assumes basis.makeBasis() has been called
-      // Assumes AmIterator.allocate() has been called
-      // TODO: Check these conditions on entry
+
+      // Timers for timing iteration components
+      // An idea: timer "dictionary" to make iterating over timers easy
+      // Automating output with flexible numbers of timers
+      // DArray< Timer > timers;
+      // DArray< std::string > timernames;
 
       Timer timerMDE;
       Timer timerStress;
@@ -130,16 +162,16 @@ namespace Pspc
 
       // Iterative loop
       bool done;
-      for (int itr = 1; itr <= maxItr_; ++itr) {
+      for (int itr = 0; itr < maxItr_; ++itr) {
 
          timerAM.start();
 
          Log::file()<<"---------------------"<<std::endl;
          Log::file()<<" Iteration  "<<itr<<std::endl;
 
-         if (itr <= maxHist_) {
-            lambda_ = 1.0 - pow(0.9, itr);
-            nHist_ = itr-1;
+         if (itr < maxHist_) {
+            lambda_ = 1.0 - pow(0.9, itr+1);
+            nHist_ = itr;
          } else {
             lambda_ = 1.0;
             nHist_ = maxHist_;
@@ -154,7 +186,7 @@ namespace Pspc
          timerConverged.stop();
 
          if (done) {
-
+            // Stop timers
             timerAM.stop();
             timerTotal.stop();
 
@@ -205,30 +237,16 @@ namespace Pspc
             return 0;
 
          } else {
+            // Determine optimal linear combination coefficients for 
+            // building the updated field guess
             timerCoeff.start();
-            if (itr <= maxHist_ + 1) {
-               if (nHist_ > 0) {
-                  U_.allocate(nHist_, nHist_);
-                  coeffs_.allocate(nHist_);
-                  v_.allocate(nHist_);
-               }
-            }
-            minimizeCoeff(itr);
+            minimizeCoeff();
             timerCoeff.stop();
-
+            // Build the updated field
             timerOmega.start();
-            buildOmega(itr);
+            buildOmega();
             timerOmega.stop();
 
-            timerCoeff.start();
-            if (itr <= maxHist_) {
-               if (nHist_ > 0) {
-                  U_.deallocate();
-                  coeffs_.deallocate();
-                  v_.deallocate();
-               }
-            }
-            timerCoeff.stop();
             timerAM.stop();
 
             // Solve MDE
@@ -248,7 +266,8 @@ namespace Pspc
       }
       // Failure: iteration counter itr reached maxItr without converging
       timerTotal.stop();
-
+      
+      Log::file() << "Iterator failed to converge before the maximum number of iterations.\n";
       cleanUp();
       return 1;
    }
@@ -270,41 +289,47 @@ namespace Pspc
       }
 
       // Initialize temporary residuals workspace 
-      for (int i = 0 ; i < nMonomer; ++i) {
-         for (int k = 0; k < nBasis; ++k) {
+      for (int i = 0 ; i < nResid_; ++i) {
+         for (int k = 0; k < nElem(i); ++k) {
             resArrays_[i][k] = 0.0;
          }
       }
       
-      // Compute residual vector
+      // Compute SCF residual vector elements
       for (int i = 0; i < nMonomer; ++i) {
          for (int j = 0; j < nMonomer; ++j) {
             for (int k = shift_; k < nBasis; ++k) {
                resArrays_[i][k] +=
-                 ( system().interaction().chi(i,j)*system().cField(j)[k]
-                 - system().interaction().idemp(i,j)*system().wField(j)[k]);
+                  system().interaction().chi(i,j)*system().cField(j)[k] -
+                  system().interaction().idemp(i,j)*system().wField(j)[k];
             }
          }
       }
 
       // If not canonical, account for incompressibility 
-      if (shift_ == 0) {
+      if (!isCanonical_) {
          for (int i = 0; i < nMonomer; ++i) {
             resArrays_[i][0] -= 1.0/system().interaction().sum_inv();
          }
       }
 
-      // Store residuals
-      resHists_.append(resArrays_);
-
-      // If variable unit cell, store stress
+      // If variable unit cell, compute stress residuals
       if (isFlexible_) {
          FArray<double, 6 > tempCp;
          for (int i = 0; i < nParameter ; i++) {
-            tempCp [i] = -((system().mixture()).stress(i));
+            tempCp[i] = -((system().mixture()).stress(i));
          }
          stressHists_.append(tempCp);
+
+         for (int m=0, i = nMonomer; m < nParameter ; ++m, ++i) {
+            resArrays_[i][0] = scaleStress_ * fabs( stressHists_[0][m] );
+         }
       }
+      
+      // Store residuals in residual history ringbuffer
+      resHists_.append(resArrays_);
+
+      return;
    }
 
    template <int D>
@@ -312,65 +337,38 @@ namespace Pspc
    {
       const int nMonomer = system().mixture().nMonomer();
       const int nParameter = system().unitCell().nParameter();
-      const int nBasis = system().basis().nBasis();
 
-      double error = 0.0;
+      // Find max residual
+      double maxSCF = 0.0, maxStress = 0.0, maxRes = 0.0;
 
-      #if 0
-      // Error as defined in Matsen's Papers
-      double dError = 0;
-      double wError = 0;
-      for ( int i = 0; i < nMonomer; i++) {
-         for ( int j = shift_; j < nBasis; j++) {
-            dError += resHists_[0][i][j] * resHists_[0][i][j];
-            wError += system().wField(i)[j] * system().wField(i)[j];
-         }
-      }
-
-      if (isFlexible_) {
-         for ( int i = 0; i < nParameter ; i++) {
-            dError += stressHists_[0][i] *  stressHists_[0][i];
-            wError += system().unitCell().parameters()[i]
-                     *system().unitCell().parameters()[i];
-         }
-      }
-      Log::file() << " dError :" << Dbl(dError)<<std::endl;
-      Log::file() << " wError :" << Dbl(wError)<<std::endl;
-      error = sqrt(dError / wError);
-      #endif
-
-      // Error by max SCF residual
-      double errSCF = 0.0;
-      for ( int i = 0; i < nMonomer; i++) {
-         for ( int j = shift_; j < nBasis; j++) {
-            if (errSCF < fabs (resHists_[0][i][j]))
-                errSCF = fabs (resHists_[0][i][j]);
-         }
-      }
-      Log::file() << "SCF Error   = " << Dbl(errSCF) << std::endl;
-      error = errSCF;
-
-      // Error by max Stress residual
-      if (isFlexible_) {
-         double errStress = 0.0;
-         for ( int i = 0; i < nParameter ; i++) {
-            if (errStress < fabs (stressHists_[0][i])) {
-                errStress = fabs (stressHists_[0][i]);
+      for (int i = 0; i < nResid_; ++i) {
+         for (int k = 0; k < nElem(i); ++k) {
+            double currRes = fabs(resHists_[0][i][k]);
+            if (i < nMonomer && maxSCF < currRes) {
+               maxSCF = currRes;
+            } else
+            if (i >= nMonomer && maxStress < currRes) {
+               maxStress = currRes;
             }
          }
-         // Output current stress values
+      }
+
+      Log::file() << "SCF Error   = " << Dbl(maxSCF) << std::endl;
+      maxRes = maxSCF;
+
+      // Error by max Stress residual
+      if (isFlexible_) { 
+         // Check if stress residual is greater than SCF
+         if (maxStress > maxRes) {
+            maxRes = maxStress;
+         }
+         // Output stress values
          for (int m=0;  m < nParameter ; ++m) {
             Log::file() << "Stress  "<< m << "   = "
                         << Dbl(system().mixture().stress(m)) <<"\n";
          }
-         // Determine if stress error, scaled by a factor, is larger
-         // than the SCF error. If so, use it.  
-         double scaleStress = 100.0;
-         if (error < scaleStress*errStress) {
-            error = scaleStress*errStress;
-         }
       }
-      Log::file() << "Error       = " << Dbl(error) << std::endl;
+      Log::file() << "Max Residual = " << Dbl(maxRes) << std::endl;
 
       // Output current unit cell parameter values
       if (isFlexible_) {
@@ -381,92 +379,127 @@ namespace Pspc
          }
       }
 
-      #if 0
-      Log::file() << "n=0 Components of w basis" << std::endl;
-      for (int i=0; i < nMonomer; ++i) {
-         Log::file() << system().wField(i)[0] << std::endl;
+      // Error by norm of residual vector
+      double normResSq = 0.0, normRes = 0.0;
+      for (int i = 0; i < nResid_; ++i) {
+         for (int k = 0; k < nElem(i); ++k) {
+            normResSq += resHists_[0][i][k] * resHists_[0][i][k];
+         }
       }
-      #endif
+      normRes = sqrt(normResSq);
+
+      Log::file() << "Residual Norm = " << Dbl(normRes) << std::endl;
 
       // Check if total error is below tolerance
-      return error < epsilon_;
+      if (errorType_ == "normResid") {
+         return normRes < epsilon_;
+      } else 
+      if (errorType_ == "maxResid") {
+         return maxRes < epsilon_;
+      } else {
+         UTIL_THROW("Invalid iterator error type in parameter file.");
+         return false;
+      }
+
    }
 
    template <int D>
-   void AmIterator<D>::minimizeCoeff(int itr)
+   void AmIterator<D>::minimizeCoeff()
    {
-      const int nMonomer = system().mixture().nMonomer();
-      const int nParameter = system().unitCell().nParameter();
-      const int nBasis = system().basis().nBasis();
-
-      if (itr == 1) {
-         //do nothing
-      } else {         
-         // Compute U matrix, as described in Arora 2017.
-         for (int m = 0; m < nHist_; ++m) {
-            for (int n = m; n < nHist_; ++n) {
-               // Initialize U element value
-               U_(m,n) = 0;
-               // Compute dot products of differences of residual vectors 
-               for (int i = 0; i < nMonomer; ++i) {
-                  for (int k = shift_; k < nBasis; ++k) {
-                     U_(m,n) +=
-                            ((resHists_[0][i][k] - resHists_[m+1][i][k])*
-                             (resHists_[0][i][k] - resHists_[n+1][i][k]));
-                  }
-               }
-               // Include the stress residual contribution, if flexible cell
-               if (isFlexible_) {
-                  for (int p = 0; p < nParameter ; ++p) {
-                     U_(m,n) += ((stressHists_[0][p] - stressHists_[m+1][p])*
-                                (stressHists_[0][p] - stressHists_[n+1][p]));
-                  }
-               }
-               U_(n,m) = U_(m,n);
-            }
-         }
-
-         // Compute v vector, as described in Arora 2017.
-         for (int m = 0; m < nHist_; ++m) {
-            // Initialize v element value. 
+      // Initialize matrix and vector of residual dot products
+      // if this is the first iteration
+      if (nHist_ == 0) {
+         for (int m = 0; m < maxHist_; ++m) {
             v_[m] = 0;
-            // dot product of residual vectors
-            for (int i = 0; i < nMonomer; ++i) {
-               for (int k = shift_; k < nBasis; ++k) {
-                  v_[m] += ( (resHists_[0][i][k] - resHists_[m+1][i][k]) *
-                               resHists_[0][i][k] );
-               }
-            }
-            // contributions of stress residuals if flexible cell
-            if (isFlexible_) {
-               for (int p = 0; p < nParameter ; ++p) {
-                  v_[m] += ((stressHists_[0][p] - stressHists_[m+1][p]) *
-                             (stressHists_[0][p]));
-               }
+            coeffs_[m] = 0;
+            for (int n = 0; n < maxHist_; ++n) {
+               U_(m,n) = 0;
             }
          }
-         
-         if (itr == 2) {
-            // solve explicitly for coefficient
-            coeffs_[0] = v_[0] / U_(0,0);
-         } else {
-            // numerically solve for coefficients
-            LuSolver solver;
-            solver.allocate(nHist_);
-            solver.computeLU(U_);
-            solver.solve(v_, coeffs_);
+         return;
+      }
+
+      // Update matrix U by shifting elements diagonally
+      for (int m = maxHist_-1; m > 0; --m) {
+         for (int n = maxHist_-1; n > 0; --n) {
+            U_(m,n) = U_(m-1,n-1); 
          }
       }
+
+      // Compute U matrix's new row 0 and col 0
+      for (int m = 0; m < nHist_; ++m) {
+         // Compute basis vector dot product
+         double dotprod = 0;
+         for (int i = 0; i < nResid_; ++i) {
+            for (int k = 0; k < nElem(i); ++k) {
+               dotprod += (resHists_[m][i][k] - resHists_[m+1][i][k]) *
+                          (resHists_[0][i][k] - resHists_[1][i][k]);
+            }
+         }
+         U_(m,0) = dotprod;
+         U_(0,m) = dotprod;
+      }
+
+      // Compute v vector, as described in Arora 2017.
+      for (int m = 0; m < nHist_; ++m) {
+         v_[m] = 0;
+         // Dot product of residual vectors
+         for (int i = 0; i < nResid_; ++i) {
+            for (int k = 0; k < nElem(i); ++k) {
+               v_[m] += resHists_[0][i][k] * 
+                        (resHists_[m][i][k] - resHists_[m+1][i][k]);
+            }
+         }
+      }
+      
+      // Solve matrix equation problem to get coefficients to minimize
+      // the norm of the residual vector
+      if (nHist_ == 1) {
+         // Solve explicitly for coefficient
+         coeffs_[0] = v_[0] / U_(0,0);
+      } else
+      if (nHist_ < maxHist_) { 
+         // Create temporary smaller version of U_, v_, coeffs_
+         // this is done to avoid reallocating U_ with each iteration.
+         DMatrix<double> tempU;
+         DArray<double> tempv,tempcoeffs;
+         tempU.allocate(nHist_,nHist_);
+         tempv.allocate(nHist_);
+         tempcoeffs.allocate(nHist_);
+         for (int i = 0; i < nHist_; ++i) {
+            tempv[i] = v_[i];
+            for (int j = 0; j < nHist_; ++j) {
+               tempU(i,j) = U_(i,j);
+            }
+         }
+         // Solve matrix equation
+         LuSolver solver;
+         solver.allocate(nHist_);
+         solver.computeLU(tempU);
+         solver.solve(tempv,tempcoeffs);
+         // Transfer solution to full-sized member variable
+         for (int i = 0; i < nHist_; ++i) {
+            coeffs_[i] = tempcoeffs[i];
+         }
+      } else 
+      if (nHist_ == maxHist_) {
+         LuSolver solver;
+         solver.allocate(maxHist_);
+         solver.computeLU(U_);
+         solver.solve(v_, coeffs_);
+      }
+
+      return;
    }
 
    template <int D>
-   void AmIterator<D>::buildOmega(int itr)
+   void AmIterator<D>::buildOmega()
    {
       const int nMonomer = system().mixture().nMonomer();
       const int nParameter = system().unitCell().nParameter();
       const int nBasis = system().basis().nBasis();
 
-      if (itr == 1) { // if only 1 historical solutions
+      if (nHist_ == 0) { // if 0 historical solutions
 
          // Update omega field with SCF residuals
          for (int i = 0; i < nMonomer; ++i) {
@@ -476,13 +509,13 @@ namespace Pspc
             }
          }
          // If canonical, set the homogeneous components explicitly
-         if (shift_ == 1) {
+         if (isCanonical_) {
             for (int i = 0; i < nMonomer; ++i) {
                dArrays_[i][0] = 0.0;
                wArrays_[i][0] = 0.0;
                for (int j = 0; j < nMonomer; ++j) {
                   wArrays_[i][0] += 
-                     system().interaction().chi(i,j)*system().cField(j)[0];
+                     system().interaction().chi(i,j) * system().cField(j)[0];
                }
             }
          }
@@ -493,33 +526,33 @@ namespace Pspc
             parameters_.clear();
             for (int m = 0; m < nParameter ; ++m) {
                parameters_.append(cellParamHists_[0][m]
-                              + lambda_* stressHists_[0][m]);
+                              + lambda_ * stressHists_[0][m]);
 
             }
             system().setUnitCell(parameters_);
          }
 
-      } else { // if at least 2 historical results
-         // contribution of the last solution
+      } else { // if at least 1 historical result
+         // Contribution of the last solution
          for (int j = 0; j < nMonomer; ++j) {
             for (int k = shift_; k < nBasis; ++k) {
                wArrays_[j][k] = wHists_[0][j][k];
                dArrays_[j][k] = resHists_[0][j][k];
             }
          }
-         // mixing in historical solutions
+         // Mixing in historical solutions
          for (int i = 0; i < nHist_; ++i) {
             for (int j = 0; j < nMonomer; ++j) {
                for (int k = shift_; k < nBasis; ++k) {
                   wArrays_[j][k] += coeffs_[i] * ( wHists_[i+1][j][k] -
-                                                   wHists_[0][j][k] );
+                                                   wHists_[i][j][k] );
                   dArrays_[j][k] += coeffs_[i] * ( resHists_[i+1][j][k] -
-                                                   resHists_[0][j][k] );
+                                                   resHists_[i][j][k] );
                }
             }
          }
-         // If isCanonical, set the homogeneous components explicitly
-         if (shift_ == 1) {
+         // If canonical ensemble, set the homogeneous components explicitly
+         if (isCanonical_) {
             for (int i = 0; i < nMonomer; ++i) {
                dArrays_[i][0] = 0.0;
                wArrays_[i][0] = 0.0;
@@ -546,10 +579,10 @@ namespace Pspc
             }
             for (int i = 0; i < nHist_; ++i) {
                for (int m = 0; m < nParameter ; ++m) {
-                  wCpArrays_[m] += coeffs_[i]*( cellParamHists_[i+1][m] -
-                                                cellParamHists_[0][m]);
-                  dCpArrays_[m] += coeffs_[i]*( stressHists_[i+1][m] -
-                                                stressHists_[0][m]);
+                  wCpArrays_[m] += coeffs_[i] * ( cellParamHists_[i+1][m] -
+                                                  cellParamHists_[i][m] );
+                  dCpArrays_[m] += coeffs_[i] * ( stressHists_[i+1][m] -
+                                                  stressHists_[i][m] );
                }
             }
             parameters_.clear();
@@ -559,42 +592,51 @@ namespace Pspc
             system().setUnitCell(parameters_);
          }
       }
+      return;
    }
 
    template <int D>
    bool AmIterator<D>::isCanonical()
    {
-      // check ensemble of all polymers
+      // Check ensemble of all polymers
       for (int i = 0; i < system().mixture().nPolymer(); ++i) {
          if (system().mixture().polymer(i).ensemble() == Species::Open) {
             return false;
          }
       }
-      // check ensemble of all solvents
+      // Check ensemble of all solvents
       for (int i = 0; i < system().mixture().nSolvent(); ++i) {
          if (system().mixture().solvent(i).ensemble() == Species::Open) {
             return false;
          }
       }
-      // returns true if false was never returned
+      // Returns true if false was never returned
       return true;
+   }
 
+   template <int D>
+   int AmIterator<D>::nElem(int i)
+   {
+      const int nMonomer = system().mixture().nMonomer();
+      int nBasis = system().basis().nBasis();
+
+      if (i < nMonomer) {
+         return nBasis;
+      } else {
+         return 1;
+      }
    }
 
    template <int D>
    void AmIterator<D>::cleanUp()
    {
-      // Deallocate arrays used in coefficient calculation.
-      if (U_.isAllocated()) {
-         U_.deallocate();
-      }
-      if (coeffs_.isAllocated()) {
-         coeffs_.deallocate();
-      }
-      if (v_.isAllocated()) {
-         v_.deallocate();
-      }
+      // Clear ring buffers
+      resHists_.clear();
+      wHists_.clear();
+      stressHists_.clear();
+      cellParamHists_.clear();
 
+      return;
    }
 
 }
