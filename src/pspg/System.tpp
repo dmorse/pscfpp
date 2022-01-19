@@ -82,11 +82,19 @@ namespace Pspg
    template <int D>
    System<D>::~System()
    {
-      delete interactionPtr_;
-      delete iteratorPtr_; 
-      delete wavelistPtr_; 
-      delete[] kernelWorkSpace_;
-      cudaFree(d_kernelWorkSpace_);
+      if (interactionPtr_) {
+         delete interactionPtr_;
+      }
+      if (iteratorPtr_) {
+         delete iteratorPtr_;
+      }
+      if (wavelistPtr_) {
+         delete wavelistPtr_; 
+      }
+      if (isAllocated_) {
+         delete[] kernelWorkSpace_;
+         cudaFree(d_kernelWorkSpace_);
+      }
    }
 
    /*
@@ -664,7 +672,7 @@ namespace Pspg
       Log::file() << std::endl;
 
       // Call iterator
-      std::cout<<"Starting iterator"<<std::endl;
+      std::cout<<"\nStarting iterator"<<std::endl;
       int error = iterator().solve();
       hasCFields_ = true;
 
