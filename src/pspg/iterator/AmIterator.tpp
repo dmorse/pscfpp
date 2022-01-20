@@ -95,6 +95,7 @@ namespace Pspg {
       Timer stressTimer;
       Timer updateTimer;
       Timer::TimePoint now;
+      bool done;
 
       // Solve MDE for initial state
       solverTimer.start();
@@ -124,8 +125,8 @@ namespace Pspg {
       for (itr = 1; itr <= maxItr_; ++itr) {
          updateTimer.start(now);
         
-         Log::file() << "---------------------------" << "\n";
-         Log::file() << "iteration #" << itr << "\n";
+         Log::file() << "---------------------" << std::endl;
+         Log::file() << " Iteration  " << itr << std::endl;
          if (itr <= maxHist_) {
             lambda_ = 1.0 - pow(0.9, itr);
             nHist_ = itr - 1;
@@ -135,8 +136,9 @@ namespace Pspg {
          }
 
          computeDeviation();
+         done = isConverged();
 
-         if (isConverged()) {
+         if (done) {
             updateTimer.stop();
 
             if (itr > maxHist_ + 1) {

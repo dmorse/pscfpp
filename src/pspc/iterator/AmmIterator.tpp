@@ -129,8 +129,8 @@ namespace Pspc
 
          updateTimer.start(now);
 
-         Log::file()<<"---------------------"<<std::endl;
-         Log::file()<<" Iteration  "<<itr<<std::endl;
+         Log::file() << "---------------------" << std::endl;
+         Log::file() << " Iteration  "<<itr<<std::endl;
 
          if (itr <= maxHist_) {
             lambda_ = 1.0 - pow(0.9, itr);
