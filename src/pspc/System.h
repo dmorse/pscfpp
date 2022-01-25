@@ -413,6 +413,15 @@ namespace Pspc
       void sweep();
 
       /**
+      * Compare two fields and output their maximum and root-mean-squared
+      * difference. Requires a parameter file to set up the system object. 
+      * 
+      */
+
+      void compare(const DArray< DArray<double> > field1, 
+                   const DArray< DArray<double> > field2);
+
+      /**
       * Write chemical potential fields in symmetry adapted basis format.
       *
       * \param filename name of output file
@@ -670,6 +679,11 @@ namespace Pspc
       * Does this system have a Sweep object?
       */
       bool hasSweep_;
+      
+      /**
+      * Does this system have an iterator object?
+      */
+      // bool hasIterator_;
 
       // Private member functions
 

@@ -25,6 +25,7 @@
 #include <pscf/inter/Interaction.h>
 #include <pscf/inter/ChiInteraction.h>
 #include <pscf/homogeneous/Clump.h>
+#include <pspc/field/BFieldComparison.h>
 
 #include <util/format/Str.h>
 #include <util/format/Int.h>
@@ -67,6 +68,7 @@ namespace Pspc
       hasWFields_(false),
       hasCFields_(false),
       hasSweep_(false)
+      // hasIterator_(true)
    {  
       setClassName("System"); 
       domain_.setFileMaster(fileMaster_);
@@ -202,6 +204,7 @@ namespace Pspc
       // Initialize iterator
       std::string className;
       bool isEnd;
+      // readOptional<bool>(in, "hasIterator", hasIterator_);
       iteratorPtr_ 
          = iteratorFactoryPtr_->readObject(in, *this, className, isEnd);
       if (!iteratorPtr_) {
@@ -341,6 +344,23 @@ namespace Pspc
             // After iterating and converging, sweep.
             sweep();
          } else
+         if (command == "COMPARE_W_BASIS") {
+            // Get two filenames for comparison
+            std::string filecompare1, filecompare2;
+            DArray< DArray<double> > Bfield1, Bfield2;
+            readEcho(in, filecompare1);
+            readEcho(in, filecompare2);
+            
+            // Store fields
+            readWBasis(filecompare1);
+            Bfield1 = wFields();
+            readWBasis(filecompare2);
+            Bfield2 = wFields();
+
+            // Compare and output
+            compare(Bfield1, Bfield2);
+
+         } else
          if (command == "WRITE_W_BASIS") {
             readEcho(in, filename);
             writeWBasis(filename);
@@ -413,7 +433,6 @@ namespace Pspc
       readCommands(fileMaster_.commandFile()); 
    }
 
-  
    /*
    * Compute Helmoltz free energy and pressure
    */
@@ -766,6 +785,24 @@ namespace Pspc
       Log::file() << std::endl;
       // Call sweep
       sweepPtr_->sweep();
+   }
+   
+   /*
+   * Compare two fields.
+   */ 
+   template <int D>
+   void System<D>::compare(const DArray< DArray<double> > field1, const DArray< DArray<double> > field2)
+   {
+      BFieldComparison comparison(1);
+      comparison.compare(field1,field2);
+
+      // ADD UNIT CELL PARAMETER COMPARISON //
+
+      Log::file() << "\n Basis-format field comparison results" << std::endl;
+      Log::file() << "     Maximum Absolute Difference:   " 
+                  << comparison.maxDiff() << std::endl;
+      Log::file() << "     Root-Mean-Square Difference:   " 
+                  << comparison.rmsDiff() << "\n" << std::endl;
    }
 
    /*
