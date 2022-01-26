@@ -416,7 +416,7 @@ namespace Pspg
    void FieldIo<D>::readFieldRGrid(std::string filename, RDField<D> &field)
    {
       std::ifstream file;
-      fileMaster().openOutputFile(filename, file);
+      fileMaster().openInputFile(filename, file);
       readFieldRGrid(file, field);
       file.close();
    }
