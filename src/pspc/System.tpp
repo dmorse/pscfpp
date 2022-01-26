@@ -397,6 +397,15 @@ namespace Pspc
             readEcho(in, filename);
             writeCRGrid(filename);
          } else
+         if (command == "WRITE_PROPAGATOR") {
+            int polymerID, blockID;
+            readEcho(in, filename);
+            in >> polymerID;
+            in >> blockID;
+            Log::file() << Str("polymer ID   ", 21) << polymerID << "\n"
+                        << Str("block ID   ", 21) << blockID << std::endl;
+            writePropagatorRGrid(filename, polymerID, blockID);
+         } else
          if (command == "BASIS_TO_RGRID") {
             readEcho(in, inFileName);
             readEcho(in, outFileName);
@@ -881,6 +890,16 @@ namespace Pspc
    {
       UTIL_CHECK(hasCFields_);
       fieldIo().writeFieldsRGrid(filename, cFieldsRGrid_, unitCell());
+   }
+
+   /*
+   * Write the last time slice of the propagator.
+   */
+   template <int D>
+   void System<D>::writePropagatorRGrid(const std::string & filename, int polymerID, int blockID) const
+   {
+      RField<D> tailField = mixture_.polymer(polymerID).propagator(blockID, 1).tail();
+      fieldIo().writeFieldRGrid(filename, tailField, unitCell());
    }
 
    // Field conversion command functions
