@@ -183,6 +183,22 @@ namespace Pspc
                             DArray< RField<D> > const & fields, 
                             UnitCell<D> const & unitCell) const;
 
+      void readFieldRGrid(std::istream &in, 
+                           RField<D> & field, 
+                           UnitCell<D>& unitCell) const;
+
+      void readFieldRGrid(std::string filename, 
+                           RField<D> & field, 
+                           UnitCell<D>& unitCell) const;
+
+      void writeFieldRGrid(std::ostream &out, 
+                           RField<D> const & field, 
+                           UnitCell<D> const & unitCell) const;
+
+      void writeFieldRGrid(std::string filename, 
+                           RField<D> const & field, 
+                           UnitCell<D> const & unitCell) const;
+
       /**
       * Read array of RFieldDft objects (k-space fields) from file.
       *

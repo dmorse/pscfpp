@@ -573,6 +573,188 @@ namespace Pspc
    }
 
    template <int D>
+   void FieldIo<D>::readFieldRGrid(std::istream &in, 
+                                    RField<D> & field, 
+                                    UnitCell<D>& unitCell)
+   const
+   {
+      FieldIo<D>::readFieldHeader(in, 1, unitCell);
+
+      // Read grid dimensions
+      std::string label;
+      in >> label;
+      UTIL_CHECK(label == "ngrid");
+      IntVec<D> nGrid;
+      in >> nGrid;
+      UTIL_CHECK(nGrid == mesh().dimensions());
+
+      RField<D> temp;
+      temp.allocate(mesh().dimensions());
+
+      // Read Field;
+      MeshIterator<D> itr(mesh().dimensions());
+      for (itr.begin(); !itr.atEnd(); ++itr) {
+         in  >> std::setprecision(15) >> temp[itr.rank()];
+      }
+
+      int p = 0;
+      int q = 0;
+      int r = 0;
+      int s = 0;
+      int n1 = 0;
+      int n2 = 0;
+      int n3 = 0;
+
+      if (D==3) {
+         while (n1 < mesh().dimension(0)) {
+            q = p;
+            n2 = 0;
+            while (n2 < mesh().dimension(1)) {
+               r = q;
+               n3 = 0;
+               while (n3 < mesh().dimension(2)) {
+                  field[s] = temp[r];
+                  r = r + (mesh().dimension(0) * mesh().dimension(1));
+                  ++s;
+                  ++n3;              
+               } 
+               q = q + mesh().dimension(0);
+               ++n2;
+            } 
+            ++n1;
+            ++p;
+         }
+      }
+
+      else if (D==2) {
+         while (n1 < mesh().dimension(0)) {
+            r =q; 
+            n2 = 0;
+            while (n2 < mesh().dimension(1)) {
+               field[s] = temp[r];
+               r = r + (mesh().dimension(0));
+               ++s;
+               ++n2;    
+            }   
+            ++q;
+            ++n1;
+         }   
+      } 
+
+      else if (D==1) {
+
+         while (n1 < mesh().dimension(0)) {
+               field[s] = temp[r];
+            ++r;
+            ++s;
+            ++n1;    
+         }   
+      } 
+
+      else{
+         std::cout << "Invalid Dimensions";
+      }
+   }
+
+   template <int D>
+   void FieldIo<D>::readFieldRGrid(std::string filename, 
+                                    RField<D> & field, 
+                                    UnitCell<D>& unitCell)
+   const
+   {
+      std::ifstream file;
+      fileMaster().openInputFile(filename, file);
+      readFieldRGrid(file, field, unitCell);
+      file.close();
+   }
+
+   template <int D>
+   void FieldIo<D>::writeFieldRGrid(std::ostream &out, 
+                                    RField<D> const & field, 
+                                    UnitCell<D> const & unitCell)
+   const
+   {
+      writeFieldHeader(out, 1, unitCell);
+      out << "ngrid" <<  std::endl
+          << "           " << mesh().dimensions() << std::endl;
+
+      RField<D> temp;
+      temp.allocate(mesh().dimensions());
+
+      int p = 0; 
+      int q = 0; 
+      int r = 0; 
+      int s = 0; 
+      int n1 =0;
+      int n2 =0;
+      int n3 =0;
+
+      if (D==3) {
+         while (n3 < mesh().dimension(2)) {
+            q = p; 
+            n2 = 0; 
+            while (n2 < mesh().dimension(1)) {
+               r =q;
+               n1 = 0; 
+               while (n1 < mesh().dimension(0)) {
+                  temp[s] = field[r];
+                  r = r + (mesh().dimension(1) * mesh().dimension(2));
+                  ++s; 
+                  ++n1;     
+               }    
+               q = q + mesh().dimension(2);
+               ++n2;
+            }    
+            ++n3;
+            ++p;     
+         }
+      }
+      else if (D==2) {
+         while (n2 < mesh().dimension(1)) {
+            r =q;
+            n1 = 0;
+            while (n1 < mesh().dimension(0)) {
+               temp[s] = field[r];
+               r = r + (mesh().dimension(1));
+               ++s;
+               ++n1;
+            }
+            ++q;
+            ++n2;
+         }
+      }
+      else if (D==1) {
+         while (n1 < mesh().dimension(0)) {
+            temp[s] = field[r];
+            ++r;
+            ++s;
+            ++n1;
+         }
+      } else {
+         std::cout << "Invalid Dimensions";
+      }
+
+      // Write field
+      MeshIterator<D> itr(mesh().dimensions());
+      for (itr.begin(); !itr.atEnd(); ++itr) {
+         out << "  " << Dbl(temp[itr.rank()], 18, 15);
+         out << std::endl;
+      }
+   }
+
+   template <int D>
+   void FieldIo<D>::writeFieldRGrid(std::string filename, 
+                                    RField<D> const & field, 
+                                    UnitCell<D> const & unitCell)
+   const
+   {
+      std::ofstream file;
+      fileMaster().openOutputFile(filename, file);
+      writeFieldRGrid(file, field, unitCell);
+      file.close();
+   }
+
+   template <int D>
    void FieldIo<D>::readFieldsKGrid(std::istream &in,
                                     DArray<RFieldDft<D> >& fields,
                                     UnitCell<D>& unitCell)
