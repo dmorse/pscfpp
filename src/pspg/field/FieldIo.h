@@ -169,11 +169,11 @@ namespace Pspg
                             DArray< RDField<D> > const& fields);
 
 
-      void readFieldRGrid(std::istream &in, RDField<D> &field);
+      void readFieldRGrid(std::istream& in, RDField<D> &field);
 
       void readFieldRGrid(std::string filename, RDField<D> &field);
 
-      void writeFieldRGrid(std::ostream &out, RDField<D> const & field);
+      void writeFieldRGrid(std::ostream& out, RDField<D> const & field);
 
       void writeFieldRGrid(std::string filename, RDField<D> const & field);
 

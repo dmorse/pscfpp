@@ -413,13 +413,20 @@ namespace Pspc
       void sweep();
 
       /**
-      * Compare two fields and output their maximum and root-mean-squared
-      * difference. Requires a parameter file to set up the system object. 
-      * 
+      * Compare two basis function format fields and output their maximum 
+      * and root-mean-squared difference. Requires a parameter file 
+      * to set up the system object. 
       */
-
       void compare(const DArray< DArray<double> > field1, 
                    const DArray< DArray<double> > field2);
+
+      /**
+      * Compare two real-space fields and output their maximum and
+      * root-mean-squared difference. Requires a parameter file
+      * to set up the system object. 
+      */
+      void compare(const DArray< RField<D> > field1, 
+                   const DArray< RField<D> > field2);
 
       /**
       * Write chemical potential fields in symmetry adapted basis format.
