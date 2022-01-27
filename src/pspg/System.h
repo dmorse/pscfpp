@@ -362,6 +362,29 @@ namespace Pspg
       void readWBasis(const std::string & filename);
 
       /**
+      * Solve the modified diffusion equation once, without iteration.
+      *
+      * This function calls the Mixture::compute() function to solve
+      * the statistical mechanics problem for a non-interacting system
+      * subjected to the currrent chemical potential fields (wFields
+      * and wFieldRGrid). This requires solution of the modified 
+      * diffusion equation for all polymers, computation of Boltzmann
+      * weights for all solvents, computation of molecular partition
+      * functions for all species, and computation of concentration
+      * fields for blocks and solvents, and computation of overall 
+      * concentrations for all monomer types. This function does not 
+      * compute the canonical (Helmholtz) free energy or grand-canonical 
+      * free energy (i.e., pressure). Upon return, the flag hasCFields 
+      * is set true.
+      *
+      * If argument needStress == true, then this function also calls
+      * Mixture<D>::computeStress() to compute the stress.
+      *
+      * \param needStress true if stress is needed, false otherwise
+      */
+      void compute(bool needStress = false);
+
+      /**
       * Iteratively solve a SCFT problem.
       * 
       * This function calls the iterator to attempt to solve the SCFT
@@ -417,6 +440,13 @@ namespace Pspg
       * \param filename name of output file
       */
       void writeCBasis(const std::string & filename);
+
+      /**
+      * Write last contour slice of the propagator in real space grid format.
+      *
+      * \param filename name of output file
+      */
+      void writePropagatorRGrid(const std::string & filename, int polymerID, int blockID);
 
       //@}
 
@@ -630,6 +660,16 @@ namespace Pspg
       * Initialize Homogeneous::Mixture object (private).
       */
       void initHomogeneous();
+
+      /**
+      * Read a filename string and echo to log file.
+      *
+      * Used to read filenames in readCommands.
+      *
+      * \param in  input stream (i.e., input file)
+      * \param string  string to read and echo
+      */
+      void readEcho(std::istream& in, std::string& string) const;
 
       /**
       * Compute inner product of two RDField fields (private, on GPU).
