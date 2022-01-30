@@ -354,11 +354,10 @@ namespace Pspc
             readEcho(in, filecompare1);
             readEcho(in, filecompare2);
             
-            // Store fields
-            fieldIo().readFieldsBasis(filecompare1, tmpFields_, domain_.unitCell());
-            Bfield1 = tmpFields_;
-            fieldIo().readFieldsBasis(filecompare2, tmpFields_, domain_.unitCell());
-            Bfield2 = tmpFields_;
+            // Store fields. Bfield1 and Bfield2 are unallocated, and thus will be
+            // allocated by the readFieldsBasis function.
+            fieldIo().readFieldsBasis(filecompare1, Bfield1, domain_.unitCell());
+            fieldIo().readFieldsBasis(filecompare2, Bfield2, domain_.unitCell());
 
             // Compare and output
             compare(Bfield1, Bfield2);
@@ -371,11 +370,10 @@ namespace Pspc
             readEcho(in, filecompare1);
             readEcho(in, filecompare2);
             
-            // Store fields
-            fieldIo().readFieldsRGrid(filecompare1, tmpFieldsRGrid_, domain_.unitCell());
-            Rfield1 = tmpFieldsRGrid_;
-            fieldIo().readFieldsRGrid(filecompare2, tmpFieldsRGrid_, domain_.unitCell());
-            Rfield2 = tmpFieldsRGrid_;
+            // Store fields. Rfield1 and Rfield2 are unallocated, but will be
+            // allocated by the readFieldsBasis function.
+            fieldIo().readFieldsRGrid(filecompare1, Rfield1, domain_.unitCell());
+            fieldIo().readFieldsRGrid(filecompare2, Rfield2, domain_.unitCell());
 
             // Compare and output
             compare(Rfield1, Rfield2);

@@ -69,13 +69,14 @@ namespace Pspc
                                     UnitCell<D>& unitCell) 
    const
    {
-      int nMonomer = fields.capacity();
-      UTIL_CHECK(nMonomer > 0);
 
-      // Read header
+      // Read in the field header and get the "number of monomers", 
+      // equivalent to the number of fields in the file.
+      int nMonomer;
+      int fieldCapacity;
       FieldIo<D>::readFieldHeader(in, nMonomer, unitCell);
 
-      // Read nStar
+      // Read the number of stars into nStarIn
       std::string label;
       in >> label;
       UTIL_CHECK(label == "N_star");
@@ -83,13 +84,40 @@ namespace Pspc
       in >> nStarIn;
       UTIL_CHECK(nStarIn > 0);
 
+      // If "fields" passed by reference is already allocated, check that the
+      // input stream field dimensions match the fields parameter. 
+      
+      // Otherwise, allocate fields parameter to match the input stream.
+      
+      if (fields.isAllocated()) {
+         // If outer DArray is allocated, require that it matches the 
+         // number of inputted fields and that internal DArrays are also
+         // allocated all with the same dimensions.
+         int nMonomerFields = fields.capacity();
+
+         UTIL_CHECK(nMonomerFields > 0);
+         UTIL_CHECK(nMonomerFields == nMonomer);
+
+         // Check that all internal DArrays have same dimension.
+         fieldCapacity = fields[0].capacity();
+         for (int i = 0; i < nMonomer; ++i) {
+            UTIL_CHECK( fields[i].capacity() == fieldCapacity );
+         }
+      } else {
+         // Else, allocate fields to the number of inputted fields
+         // and the internal dimensions to the number of stars.
+         fields.allocate(nMonomer);
+         fieldCapacity = nStarIn;
+
+         for (int i = 0; i < nMonomer; ++i) {
+            fields[i].allocate(fieldCapacity);
+         }
+      }    
+
       // Initialize all field array elements to zero
-      int fieldCapacity = fields[0].capacity();
-      int i, j;
-      for (int j = 0; j < nMonomer; ++j) {
-         UTIL_CHECK(fieldCapacity == fields[j].capacity());
-         for (i = 0; i < fieldCapacity; ++i) {
-            fields[j][i] = 0.0;
+      for (int i = 0; i < nMonomer; ++i) {
+         for (int j = 0; j < fieldCapacity; ++j) {
+            fields[i][j] = 0.0;
          }
       }
 
@@ -117,11 +145,11 @@ namespace Pspc
       bool waveExists;
 
       // Loop over stars in input file to read field components
-      i = 0;
+      int i = 0;
       while (i < nStarIn) {
 
          // Read next line of data
-         for (j = 0; j < nMonomer; ++j) {
+         for (int j = 0; j < nMonomer; ++j) {
             in >> temp[j];               // field components
          }
          in >> waveIn;                   // wave of star
@@ -155,7 +183,7 @@ namespace Pspc
                if (starPtr->waveBz == waveIn) {
 
                   // Copy components of closed star to fields array
-                  for (j = 0; j < nMonomer; ++j) {
+                  for (int j = 0; j < nMonomer; ++j) {
                       fields[j][basisId] = temp[j];
                   }
 
@@ -171,7 +199,7 @@ namespace Pspc
             } else {
 
                // Read the next line
-               for (j = 0; j < nMonomer; ++j) {
+               for (int j = 0; j < nMonomer; ++j) {
                   in >> temp2[j];               // components of field
                }
                in >> waveIn2;                   // wave of star
@@ -202,7 +230,7 @@ namespace Pspc
                   UTIL_CHECK(starPtr2->waveBz == waveIn2);
 
                   // Copy components for both stars into fields array
-                  for (j = 0; j < nMonomer; ++j) {
+                  for (int j = 0; j < nMonomer; ++j) {
                       fields[j][basisId] = temp[j];
                       fields[j][basisId2] = temp2[j];
                   }
@@ -271,7 +299,7 @@ namespace Pspc
                   */
                   phasor = basis().wave(waveId2).coeff;
                   phasor = phasor/std::abs(phasor); 
-                  for (j = 0; j < nMonomer; ++j) {
+                  for (int j = 0; j < nMonomer; ++j) {
                       coeff = std::complex<double>(temp[j],-temp2[j]);
                       coeff *= phasor;
                       fields[j][basisId2] = real(coeff);
@@ -366,12 +394,34 @@ namespace Pspc
                                     UnitCell<D>& unitCell)
    const
    {
-      int nMonomer = fields.capacity();
-      UTIL_CHECK(nMonomer > 0);
-
+      // Read in the field header and get the "number of monomers", 
+      // equivalent to the number of fields in the file.
+      int nMonomer;
       FieldIo<D>::readFieldHeader(in, nMonomer, unitCell);
 
-      // Read grid dimensions
+
+      // If "fields" passed by reference is already allocated, check it is allocated
+      // to match the system's mesh. 
+      
+      // Otherwise, allocate fields parameter to match the system's mesh.
+      
+      if (fields.isAllocated()) {
+         int nMonomerFields = fields.capacity();
+
+         UTIL_CHECK(nMonomerFields > 0);
+         UTIL_CHECK(nMonomerFields == nMonomer);
+
+         for (int i = 0; i < nMonomer; ++i) {
+            UTIL_CHECK(fields[i].meshDimensions() == mesh().dimensions());
+         }
+      } else {
+         fields.allocate(nMonomer);
+         for (int i = 0; i < nMonomer; ++i) {
+            fields[i].allocate(mesh().dimensions());
+         }
+      }
+
+      // Read and check input stream mesh dimensions
       std::string label;
       in >> label;
       UTIL_CHECK(label == "ngrid");
@@ -379,6 +429,7 @@ namespace Pspc
       in >> nGrid;
       UTIL_CHECK(nGrid == mesh().dimensions());
 
+      // Setup temporary workspace array.
       DArray<RField<D> > temp;
       temp.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
@@ -578,9 +629,26 @@ namespace Pspc
                                     UnitCell<D>& unitCell)
    const
    {
-      FieldIo<D>::readFieldHeader(in, 1, unitCell);
+      // Read in the field header and get the "number of monomers", 
+      // equivalent to the number of fields in the file.
+      int nMonomer;
+      FieldIo<D>::readFieldHeader(in, nMonomer, unitCell);
 
-      // Read grid dimensions
+      // Only reading in a file with a single field.
+      UTIL_CHECK(nMonomer == 1);
+
+      // If "fields" passed by reference is already allocated, check it is allocated
+      // to match the system's mesh. 
+      
+      // Otherwise, allocate fields parameter to match the system's mesh.
+
+      if (field.isAllocated()) {
+         UTIL_CHECK(field.meshDimensions() == mesh().dimensions());
+      } else {
+         field.allocate(mesh().dimensions());
+      }
+
+      // Read and check input stream mesh dimensions
       std::string label;
       in >> label;
       UTIL_CHECK(label == "ngrid");
@@ -588,6 +656,7 @@ namespace Pspc
       in >> nGrid;
       UTIL_CHECK(nGrid == mesh().dimensions());
 
+      // Setup temporary workspace.
       RField<D> temp;
       temp.allocate(mesh().dimensions());
 
@@ -760,17 +829,37 @@ namespace Pspc
                                     UnitCell<D>& unitCell)
    const
    {
-      // Inspect fields array
-      int nMonomer = fields.capacity();
-      UTIL_CHECK(nMonomer > 0);
-      for (int i = 0; i < nMonomer; ++i) {
-         UTIL_CHECK(fields[i].meshDimensions() == mesh().dimensions());
-      }
-
-      // Read header
+      // Read in the field header and get the "number of monomers", 
+      // equivalent to the number of fields in the file.
+      int nMonomer;
       FieldIo<D>::readFieldHeader(in, nMonomer, unitCell);
 
-      // Read mesh dimensions
+      // If "fields" passed by reference is already allocated, check it is allocated
+      // to match the system's mesh. 
+      
+      // Otherwise, allocate fields parameter to match the system's mesh.
+      
+      if (fields.isAllocated()) {
+
+         int nMonomerFields = fields.capacity();
+
+         UTIL_CHECK(nMonomerFields > 0)
+         UTIL_CHECK(nMonomerFields == nMonomer)
+
+         for (int i = 0; i < nMonomer; ++i) {
+            UTIL_CHECK(fields[i].meshDimensions() == mesh().dimensions());
+         }
+         
+      } else {
+
+         fields.allocate(nMonomer);
+         for (int i = 0; i < nMonomer; ++i) {
+            fields[i].allocate(mesh().dimensions());
+         }
+
+      }      
+
+      // Read and check input stream mesh dimensions
       std::string label;
       in >> label;
       UTIL_CHECK(label == "ngrid");
@@ -854,19 +943,19 @@ namespace Pspc
    }
 
    /*
-   * Read common part of field header.
+   * Read common part of field header and extract 
+   * the number of monomers (number of fields) in the file.
    */
    template <int D>
    void FieldIo<D>::readFieldHeader(std::istream& in, 
-                                    int nMonomer,
+                                    int& nMonomer,
                                     UnitCell<D>& unitCell) 
    const
    {
       int ver1, ver2;
       std::string groupNameIn;
-      int nMonomerIn;
       Pscf::readFieldHeader(in, ver1, ver2, unitCell, 
-                            groupNameIn, nMonomerIn);
+                            groupNameIn, nMonomer);
       // Note: Function definition in pscf/crystal/UnitCell.tpp
       if (groupNameIn != groupName()) {
          std::cout << std::endl 
@@ -875,7 +964,6 @@ namespace Pspc
              << "  FieldIo::groupName :" << groupName() << "\n"
              << "  Field file header  :" << groupNameIn << "\n";
       }
-      UTIL_CHECK(nMonomerIn == nMonomer);
    }
 
    template <int D>
