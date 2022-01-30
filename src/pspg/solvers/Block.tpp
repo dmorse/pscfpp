@@ -334,7 +334,7 @@ static __global__ void scaleReal(cudaReal* result, int size, float scale) {
       // std::cout << std::endl;
       // expW_[i] = exp(-0.5*w[i]*ds_);
       assignExp<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(expW_.cDField(), w.cDField(), nx, (float)0.5* ds_);
-      assignExp << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> >(expW2_.cDField(), w.cDField(), nx, (float)0.25 * ds_);
+      assignExp<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(expW2_.cDField(), w.cDField(), nx, (float)0.25 * ds_);
 
    }
 
@@ -362,15 +362,15 @@ static __global__ void scaleReal(cudaReal* result, int size, float scale) {
 
 
       //cudaDeviceSynchronize();
-      multiplyScaleQQ << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (cField().cDField(), p0.q(0), p1.q(ns_ - 1), nx, 1.0);
-      multiplyScaleQQ << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (cField().cDField(), p0.q(ns_-1), p1.q(0), nx, 1.0);
+      multiplyScaleQQ<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(cField().cDField(), p0.q(0), p1.q(ns_ - 1), nx, 1.0);
+      multiplyScaleQQ<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(cField().cDField(), p0.q(ns_-1), p1.q(0), nx, 1.0);
       for (int j = 1; j < ns_ - 1; j += 2) {
         //odd indices
-         multiplyScaleQQ << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (cField().cDField(), p0.q(j), p1.q(ns_ - 1 - j), nx, 4.0);
+         multiplyScaleQQ<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(cField().cDField(), p0.q(j), p1.q(ns_ - 1 - j), nx, 4.0);
       }
       for (int j = 2; j < ns_ - 2; j += 2) {
          //even indices
-         multiplyScaleQQ << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (cField().cDField(), p0.q(j), p1.q(ns_ - 1 - j), nx, 2.0);
+         multiplyScaleQQ<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(cField().cDField(), p0.q(j), p1.q(ns_ - 1 - j), nx, 2.0);
       }
 
     // cudaReal* tempVal = new cudaReal;
@@ -380,7 +380,7 @@ static __global__ void scaleReal(cudaReal* result, int size, float scale) {
      //std::cout << "This is ds_ " << ds_ << std::endl;
      //delete tempVal;
 
-     scaleReal << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (cField().cDField(), nx, (float)(prefactor *ds_ / 3.0));
+     scaleReal<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(cField().cDField(), nx, (float)(prefactor *ds_ / 3.0));
      //cudaDeviceSynchronize();
 
 
@@ -415,21 +415,21 @@ static __global__ void scaleReal(cudaReal* result, int size, float scale) {
 
       // Apply pseudo-spectral algorithm
 
-     pointwiseMulSameStart << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> >
-        (q, expW_.cDField(), expW2_.cDField(), qr_.cDField(), qr2_.cDField(), nx);
+     pointwiseMulSameStart<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>
+                           (q, expW_.cDField(), expW2_.cDField(), qr_.cDField(), qr2_.cDField(), nx);
      fft_.forwardTransform(qr_, qk_);
      fft_.forwardTransform(qr2_, qk2_);
-     scaleComplexTwinned << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> >
-        (qk_.cDField(), qk2_.cDField(), expKsq_.cDField(), expKsq2_.cDField(), nk);
+     scaleComplexTwinned<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>
+                           (qk_.cDField(), qk2_.cDField(), expKsq_.cDField(), expKsq2_.cDField(), nk);
      fft_.inverseTransform(qk_, qr_);
      fft_.inverseTransform(qk2_, q2_);
-     pointwiseMulTwinned << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> >
-        (qr_.cDField(), q2_.cDField(), expW_.cDField(), q1_.cDField(), qr_.cDField(), nx);
+     pointwiseMulTwinned<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>
+                           (qr_.cDField(), q2_.cDField(), expW_.cDField(), q1_.cDField(), qr_.cDField(), nx);
      fft_.forwardTransform(qr_, qk_);
-     scaleComplex << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> >(qk_.cDField(), expKsq2_.cDField(), nk);
+     scaleComplex<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(qk_.cDField(), expKsq2_.cDField(), nk);
      fft_.inverseTransform(qk_, qr_);
-     richardsonExpTwinned << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (qNew, q1_.cDField(),
-        qr_.cDField(), expW2_.cDField(), nx);
+     richardsonExpTwinned<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(qNew, q1_.cDField(),
+                           qr_.cDField(), expW2_.cDField(), nx);
      //remove the use of q2
 
 
@@ -544,7 +544,7 @@ static __global__ void scaleReal(cudaReal* result, int size, float scale) {
 
    template<int D>
    cudaReal Block<D>::reductionH(const RDField<D>& a, int size) {
-      reduction <<< NUMBER_OF_BLOCKS/2 , THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cudaReal) >> >
+      reduction <<< NUMBER_OF_BLOCKS/2 , THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cudaReal)>>>
          (d_temp_, a.cDField(), size);
       cudaMemcpy(temp_, d_temp_, NUMBER_OF_BLOCKS/2  * sizeof(cudaReal), cudaMemcpyDeviceToHost);
       cudaReal final = 0;

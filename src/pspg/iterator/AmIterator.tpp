@@ -268,7 +268,7 @@ namespace Pspg {
       }
       average /= (systemPtr_->mixture().nMonomer() * systemPtr_->mesh().size());
       for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
-         subtractUniform << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (systemPtr_->wFieldRGrid(i).cDField(), average, systemPtr_->mesh().size());
+         subtractUniform <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (systemPtr_->wFieldRGrid(i).cDField(), average, systemPtr_->mesh().size());
       }
 
       omHists_.append(systemPtr_->wFieldsRGrid());
@@ -278,17 +278,17 @@ namespace Pspg {
       }
 
       for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
-         assignUniformReal << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> >(tempDev[i].cDField(), 0, systemPtr_->mesh().size());
+         assignUniformReal <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (tempDev[i].cDField(), 0, systemPtr_->mesh().size());
       }
       
       for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
          for (int j = 0; j < systemPtr_->mixture().nMonomer(); ++j) {
-            pointWiseAddScale << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (tempDev[i].cDField(),
+            pointWiseAddScale <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (tempDev[i].cDField(),
                                                                             systemPtr_->cFieldRGrid(j).cDField(),
                                                                             systemPtr_->interaction().chi(i, j),
                                                                             systemPtr_->mesh().size());
             //this is a good add but i dont necessarily know if its right
-            pointWiseAddScale << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (tempDev[i].cDField(),
+            pointWiseAddScale <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (tempDev[i].cDField(),
                                                                             systemPtr_->wFieldRGrid(j).cDField(),
                                                                             -systemPtr_->interaction().idemp(i, j),
                                                                             systemPtr_->mesh().size()); 
@@ -301,7 +301,7 @@ namespace Pspg {
 
       for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
          
-         pointWiseSubtractFloat << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> >(tempDev[i].cDField(),
+         pointWiseSubtractFloat <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (tempDev[i].cDField(),
                                                                              1/sum_chi_inv, 
                                                                              systemPtr_->mesh().size());
       }
@@ -485,7 +485,7 @@ namespace Pspg {
 
    template<int D>
    cudaReal AmIterator<D>::reductionH(const RDField<D>& a, int size) {
-     reduction <<< NUMBER_OF_BLOCKS/2 , THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cudaReal) >> > (d_temp_, a.cDField(), size);
+     reduction <<< NUMBER_OF_BLOCKS/2 , THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cudaReal) >>> (d_temp_, a.cDField(), size);
       cudaMemcpy(temp_, d_temp_, NUMBER_OF_BLOCKS/2  * sizeof(cudaReal), cudaMemcpyDeviceToHost);
       cudaReal final = 0;
       cudaReal c = 0;
@@ -504,9 +504,9 @@ namespace Pspg {
 
       if (itr == 1) {
          for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
-            assignReal << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> >(systemPtr_->wFieldRGrid(i).cDField(),
+            assignReal <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (systemPtr_->wFieldRGrid(i).cDField(),
             omHists_[0][i].cDField(), systemPtr_->mesh().size());
-            pointWiseAddScale << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> >(systemPtr_->wFieldRGrid(i).cDField(),
+            pointWiseAddScale <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (systemPtr_->wFieldRGrid(i).cDField(),
             devHists_[0][i].cDField(), lambda_, systemPtr_->mesh().size());
          }
 
@@ -524,34 +524,34 @@ namespace Pspg {
          //should be strictly correct. coeffs_ is a vector of size 1 if itr ==2
 
          for (int j = 0; j < systemPtr_->mixture().nMonomer(); ++j) {
-            assignReal << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> >(wArrays_[j].cDField(),
+            assignReal <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (wArrays_[j].cDField(),
                omHists_[0][j].cDField(), systemPtr_->mesh().size());
-            assignReal << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> >(dArrays_[j].cDField(),
+            assignReal <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (dArrays_[j].cDField(),
                devHists_[0][j].cDField(), systemPtr_->mesh().size());
          }
 
          for (int i = 0; i < nHist_; ++i) {
             for (int j = 0; j < systemPtr_->mixture().nMonomer(); ++j) {
                //wArrays
-               pointWiseBinarySubtract << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> >(omHists_[i + 1][j].cDField(),
+               pointWiseBinarySubtract <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (omHists_[i + 1][j].cDField(),
                   omHists_[0][j].cDField(), tempDev[0].cDField(),
                   systemPtr_->mesh().size());
-               pointWiseAddScale << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> >(wArrays_[j].cDField(),
+               pointWiseAddScale <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (wArrays_[j].cDField(),
                   tempDev[0].cDField(), coeffs_[i], systemPtr_->mesh().size());
 
                //dArrays
-               pointWiseBinarySubtract << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> >(devHists_[i + 1][j].cDField(),
+               pointWiseBinarySubtract <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (devHists_[i + 1][j].cDField(),
                   devHists_[0][j].cDField(), tempDev[0].cDField(),
                   systemPtr_->mesh().size());
-               pointWiseAddScale << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> >(dArrays_[j].cDField(),
+               pointWiseAddScale <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (dArrays_[j].cDField(),
                   tempDev[0].cDField(), coeffs_[i], systemPtr_->mesh().size());
             }
          }
          
          for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
-            assignReal << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> >(systemPtr_->wFieldRGrid(i).cDField(),
+            assignReal <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (systemPtr_->wFieldRGrid(i).cDField(),
                wArrays_[i].cDField(), systemPtr_->mesh().size());
-            pointWiseAddScale << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> >(systemPtr_->wFieldRGrid(i).cDField(),
+            pointWiseAddScale <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (systemPtr_->wFieldRGrid(i).cDField(),
                dArrays_[i].cDField(), lambda_, systemPtr_->mesh().size());
          }
 
