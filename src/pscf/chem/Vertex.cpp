@@ -12,18 +12,31 @@
 namespace Pscf
 { 
 
+   /*
+   * Constructor.
+   */
    Vertex::Vertex()
     : inPropagatorIds_(),
       outPropagatorIds_(),
       id_(-1)
    {}
 
+   /*
+   * Destructor.
+   */
    Vertex::~Vertex()
    {}
 
+
+   /*
+   * Set integer id.
+   */
    void Vertex::setId(int id)
    {  id_ = id; }
 
+   /*
+   * Add this block to the list.
+   */
    void Vertex::addBlock(const BlockDescriptor& block)
    {
       // Preconditions
@@ -32,6 +45,12 @@ namespace Pscf
       }
       if (block.id() < 0) {
          UTIL_THROW("Negative block id");
+      }
+      if (block.vertexId(0) < 0) {
+         UTIL_THROW("Error: Negative block vertexId 0");
+      }
+      if (block.vertexId(1) < 0) {
+         UTIL_THROW("Error: Negative block vertexId 1");
       }
       if (block.vertexId(0) == block.vertexId(1)) {
          UTIL_THROW("Error: Equal vertex indices in block");

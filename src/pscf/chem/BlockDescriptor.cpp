@@ -8,56 +8,66 @@
 #include "BlockDescriptor.h"
 
 namespace Pscf
-{ 
+{
 
    /*
    * Constructor.
-   */ 
+   */
    BlockDescriptor::BlockDescriptor()
     : id_(-1),
       monomerId_(-1),
       length_(-1.0),
       vertexIds_(),
       polymerType_(PolymerType::Branched)
+   {
+      // Initialize vertex ids to null value -1.
+      vertexIds_[0] = -1;
+      vertexIds_[1] = -1;
+   }
+
+   /*
+   * Destructor (virtual)
+   */
+   BlockDescriptor::~BlockDescriptor()
    {}
 
    /*
    * Set the id for this block.
-   */ 
+   */
    void BlockDescriptor::setId(int id)
    {  id_ = id; }
-  
+
    /*
    * Set indices of associated vertices.
-   */ 
+   */
    void BlockDescriptor::setVertexIds(int vertexId0, int vertexId1)
-   { 
-      vertexIds_[0] = vertexId0; 
-      vertexIds_[1] = vertexId1; 
+   {
+      vertexIds_[0] = vertexId0;
+      vertexIds_[1] = vertexId1;
    }
-  
+
    /*
    * Set the monomer id.
-   */ 
+   */
    void BlockDescriptor::setMonomerId(int monomerId)
    {  monomerId_ = monomerId; }
-  
+
    /*
    * Set the length of this block.
-   */ 
+   */
    void BlockDescriptor::setLength(double length)
    {  length_ = length; }
-  
+
    /*
    * Set the type of the polymer containing this block.
-   */ 
+   */
    void BlockDescriptor::setPolymerType(PolymerType::Enum type)
    {  polymerType_ = type; }
-  
-   /* 
+
+   /*
    * Extract a BlockDescriptor from an istream.
    */
-   std::istream& operator>>(std::istream& in, BlockDescriptor &block)
+   std::istream& operator >> (std::istream& in, BlockDescriptor& block)
    {
       in >> block.monomerId_;
       in >> block.length_;
@@ -67,11 +77,12 @@ namespace Pscf
       }
       return in;
    }
-   
-   /* 
+
+   /*
    * Output a BlockDescriptor to an ostream, without line breaks.
    */
-   std::ostream& operator<<(std::ostream& out, const BlockDescriptor &block) 
+   std::ostream& operator  << (std::ostream& out, 
+                               BlockDescriptor const & block)
    {
       out << "  " << block.monomerId_;
       out << "  ";
@@ -86,4 +97,4 @@ namespace Pscf
       return out;
    }
 
-} 
+}

@@ -19,7 +19,14 @@ namespace Pscf
    using namespace Util;
 
    /**
-   * A linear homopolymer block within a block copolymer.
+   * Description of a linear homopolymer block within a block polymer.
+   *
+   * This class defines the blockId, monomerId, length and vertexIds of 
+   * a block within a block polymer. It serves as a base class for the
+   * BlockTmpl class template, which is a template for classes that solve 
+   * the modified diffusion equation for the two propagators associated 
+   * with a block. VertexIds should be set for all blocks in a block 
+   * polymer before the associated Vertex objects are initialized.
    *
    * \ingroup Pscf_Chem_Module
    */
@@ -31,6 +38,11 @@ namespace Pscf
       * Constructor.
       */ 
       BlockDescriptor();
+ 
+      /**
+      * Destructor.
+      */ 
+      virtual ~BlockDescriptor();
  
       /**
       * Serialize to/from archive.
@@ -77,6 +89,16 @@ namespace Pscf
   
       /**
       * Set the polymer type.
+      *
+      * By convention, if the polymer type of a block with block index id is
+      * PolymerType::Linear, then vertexId(0) = id and vertexId(1) = id + 1.
+      * The PolymerType enumeration value for the block is used by the
+      * inserter and extractor operators to define a shorter string
+      * representation for blocks in linear polymers, for which the string
+      * representation does not include values for vertex ids. Vertex id
+      * values for blocks in a linear poiymer must be set explicitly by 
+      * calling the setVertexIds function with consecutive values, as done 
+      * in the PolymerTmpl::readParameters function.
       *
       * \param type  type of polymer (branched or linear)
       */ 
