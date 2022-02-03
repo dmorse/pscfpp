@@ -21,6 +21,7 @@ clean-outputs:
 	rm -f log count 
 ifeq ($(SRC_DIR),$(BLD_DIR))
 	-cd system; $(MAKE) clean-outputs
+	-cd field; $(MAKE) clean-outputs
 endif
 
 clean:
@@ -29,6 +30,7 @@ clean:
 	rm -f log count 
 ifeq ($(SRC_DIR),$(BLD_DIR))
 	-cd system; $(MAKE) clean
+	-cd field; $(MAKE) clean
 	rm -f */Test */*.o */*.d 
 endif
 

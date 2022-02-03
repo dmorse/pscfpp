@@ -3,7 +3,6 @@
 */ 
 
 #include <util/global.h>
-//#include "RFieldTest.h"
 #include "FieldTestComposite.h"
 
 #include <test/TestRunner.h>

@@ -94,7 +94,7 @@ namespace Pspg
          UTIL_CHECK(rField.capacity() == rSize_);
          UTIL_CHECK(kField.capacity() == kSize_);
       } else {
-         //UTIL_CHECK(0);
+         UTIL_THROW("Reached the spot it should 'never reach'.");
          //should never reach here in a parallel block. breaks instantly
          setup(rField, kField);
       }
