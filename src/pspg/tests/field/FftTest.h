@@ -41,8 +41,10 @@ void FftTest::testConstructor()
 
 void FftTest::testTransform1D() {
    printMethod(TEST_FUNC);
-   //printEndl();
 
+   // GPU Resources
+   NUMBER_OF_BLOCKS = 32;
+   THREADS_PER_BLOCK = 32;
    int n = 10;
    IntVec<1> d;
    d[0] = n;
@@ -84,9 +86,7 @@ void FftTest::testTransform1D() {
             n*sizeof(cudaReal), cudaMemcpyDeviceToHost);
 
    for (int i = 0; i < n; ++i) {
-      std::cout << in[i] << std::endl;
-      std::cout << out[i] << std::endl;
-      
+      TEST_ASSERT( std::abs(in[i] - out[i]) < 1E-10 );
    }
 
 }
