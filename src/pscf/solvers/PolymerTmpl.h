@@ -213,7 +213,7 @@ namespace Pscf
       /// Number of propagators (two per block).
       int nPropagator_;
 
-      /// Polymer type (branched or linear)
+      /// Polymer type (Branched or Linear)
       PolymerType::Enum type_;
 
    };
