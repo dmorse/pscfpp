@@ -7,13 +7,13 @@
 #include <pspg/field/FFT.h>
 #include <pspg/field/RDField.h>
 #include <pspg/field/RDFieldDft.h>
-#include <pspg/field/RFieldComparison.h>
+//#include <pspg/field/RFieldComparison.h>
 
 #include <util/math/Constants.h>
 #include <util/format/Dbl.h>
 
 using namespace Util;
-using namespace Pscf::Pspc;
+using namespace Pscf::Pspg;
 
 class FftTest : public UnitTest 
 {
@@ -44,15 +44,18 @@ void FftTest::testTransform1D() {
    //printEndl();
 
    int n = 10;
+   IntVec<1> d;
+   d[0] = n;
+
    RDField<1> d_rField;
    RDFieldDft<1> d_kField;
-   rField.allocate(n);
-   kField.allocate(n)
+   d_rField.allocate(d);
+   d_kField.allocate(d);
 
    FFT<1> v;
    v.setup(d_rField, d_kField);
 
-   TEST_ASSERT(rField.capacity() == n);
+   TEST_ASSERT(d_rField.capacity() == n);
 
    // Initialize input data in a temporary array in host memory 
    cudaReal* in = new cudaReal[n];
@@ -60,29 +63,30 @@ void FftTest::testTransform1D() {
    double twoPi = 2.0*Constants::Pi;
    for (int i = 0; i < n; ++i) {
       x = twoPi*float(i)/float(n); 
-      *in[i] = cos(x);
+      in[i] = cos(x);
    }
 
    // Copy data to device
-   cudaMemcpy(d_rField.cDField(), temp, 
+   cudaMemcpy(d_rField.cDField(), in, 
             n*sizeof(cudaReal), cudaMemcpyHostToDevice);
 
    // Transform forward, r to k
-   out.allocate(d);
    v.forwardTransform(d_rField, d_kField);
 
-   // Inverse transform out -> inCopy
+   // Inverse transform, k to r
    RDField<1> d_rField_out;
-   rField_out.allocate(n)
+   d_rField_out.allocate(d);
    v.inverseTransform(d_kField, d_rField_out);
 
    // Copy to host memory
    cudaReal* out = new cudaReal[n];
-   cudaMemCpy(out, d_rField_out.cDField(), 
+   cudaMemcpy(out, d_rField_out.cDField(), 
             n*sizeof(cudaReal), cudaMemcpyDeviceToHost);
 
    for (int i = 0; i < n; ++i) {
-      TEST_ASSERT( *in[i] == *out[i] );
+      std::cout << in[i] << std::endl;
+      std::cout << out[i] << std::endl;
+      
    }
 
 }
