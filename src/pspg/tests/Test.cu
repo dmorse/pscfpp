@@ -5,9 +5,13 @@
 #include <test/CompositeTestRunner.h>
 
 #include "system/SystemTest.h"
+#include "field/FieldTestComposite.h"
+#include "solvers/SolverTestComposite.h"
 #include <util/global.h>
 
 TEST_COMPOSITE_BEGIN(PspgNsTestComposite)
+addChild(new FieldTestComposite, "field/");
+addChild(new SolverTestComposite, "solvers/");
 addChild(new TEST_RUNNER(SystemTest), "system/");
 TEST_COMPOSITE_END
 

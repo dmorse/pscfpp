@@ -322,7 +322,7 @@ public:
       system.fileMaster().setOutputPrefix(filePrefix());
 
       openLogFile("out/testIterate1D_lam_rigid.log");
-      system.setGpuResources(2, 16);
+      system.setGpuResources(1, 32);
 
       std::ifstream in;
       openInputFile("in/diblock/lam/param.rigid", in);
@@ -771,7 +771,7 @@ TEST_ADD(SystemTest, testConversion1D_lam)
 TEST_ADD(SystemTest, testConversion2D_hex)
 TEST_ADD(SystemTest, testConversion3D_bcc)
 // TEST_ADD(SystemTest, testCheckSymmetry3D_bcc)
-// TEST_ADD(SystemTest, testIterate1D_lam_rigid)
+TEST_ADD(SystemTest, testIterate1D_lam_rigid)
 // TEST_ADD(SystemTest, testIterate1D_lam_flex)
 // TEST_ADD(SystemTest, testIterate2D_hex_rigid)
 // TEST_ADD(SystemTest, testIterate2D_hex_flex)

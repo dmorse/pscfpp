@@ -302,7 +302,7 @@ namespace Pspg {
 		   cudaReal y = temp_[i] - c;
 		   cudaReal t = final + y;
 		   c = (t - final) - y;
-		  final = t;
+		   final = t;
 	   }
 	   
 	   return final;
