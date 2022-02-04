@@ -233,6 +233,9 @@ namespace Pspg
       mixture().setMesh(mesh());
       hasMesh_ = true;
 
+      // Setup FFT object.
+      fft_.setup(mesh_.dimensions());
+
       // Construct wavelist 
       wavelist().allocate(mesh(), unitCell());
       wavelist().computeMinimumImages(mesh(), unitCell());
