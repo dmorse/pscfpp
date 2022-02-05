@@ -196,6 +196,8 @@ static __global__ void scaleReal(cudaReal* result, int size, float scale) {
       ds_(0.0),
       ns_(0),
       temp_(0),
+      isAllocated_(false),
+      hasExpKsq_(false),
       expKsq_host(0),
       expKsq2_host(0)
    {
@@ -226,6 +228,7 @@ static __global__ void scaleReal(cudaReal* result, int size, float scale) {
    {
       UTIL_CHECK(mesh.size() > 1);
       UTIL_CHECK(ds > 0.0);
+      UTIL_CHECK(!isAllocated_);
 
       // Set association to mesh
       meshPtr_ = &mesh;
@@ -283,6 +286,33 @@ static __global__ void scaleReal(cudaReal* result, int size, float scale) {
 
       expKsq_host = new cudaReal[kSize_];
       expKsq2_host = new cudaReal[kSize_];
+
+      isAllocated_ = true;
+      hasExpKsq_ = false;
+   }
+
+   /*
+   * Set or reset the the block length.
+   */
+   template <int D>
+   void Block<D>::setLength(double length)
+   {
+      BlockDescriptor::setLength(length);
+      if (isAllocated_) {
+         UTIL_CHECK(ns_ > 1); 
+         ds_ = length/double(ns_ - 1);
+      }
+      hasExpKsq_ = false;
+   }
+
+   /*
+   * Set or reset the the block length.
+   */
+   template <int D>
+   void Block<D>::setKuhn(double kuhn)
+   {
+      BlockTmpl< Propagator<D> >::setKuhn(kuhn);
+      hasExpKsq_ = false;
    }
 
    /*
@@ -292,15 +322,26 @@ static __global__ void scaleReal(cudaReal* result, int size, float scale) {
    void
    Block<D>::setupUnitCell(const UnitCell<D>& unitCell, const WaveList<D>& wavelist)
    {
-      //what does this do?
+      // store number of parameters in unit cell. Needs to be delegated to UnitCell.
       nParams_ = unitCell.nParameter();
+
+      // store pointer to unit cell and wavelist
+      unitCellPtr_ = &unitCell;
+      waveListPtr_ = &wavelist;
+
+      hasExpKsq_ = false;
+   }
+
+   template <int D>
+   void Block<D>::computeExpKsq()
+   {
+      UTIL_CHECK(isAllocated_);
+
       MeshIterator<D> iter;
-      // std::cout << "kDimensions = " << kMeshDimensions_ << std::endl;
       iter.setDimensions(kMeshDimensions_);
       IntVec<D> G, Gmin;
       double Gsq;
       double factor = -1.0*kuhn()*kuhn()*ds_/6.0;
-      // std::cout << "factor      = " << factor << std::endl;
 
       //setup expKsq values on Host then transfer to device
       int kSize = 1;
@@ -321,7 +362,7 @@ static __global__ void scaleReal(cudaReal* result, int size, float scale) {
                std::cout<<"This is the bug\n";
             }
             }*/
-         Gsq = unitCell.ksq(wavelist.minImage(iter.rank()));
+         Gsq = unitCell().ksq(wavelist().minImage(iter.rank()));
          //expKsq_[i] = exp(Gsq*factor);
          expKsq_host[i] = exp(Gsq*factor);
          expKsq2_host[i] = exp(Gsq*factor / 2);
@@ -330,9 +371,11 @@ static __global__ void scaleReal(cudaReal* result, int size, float scale) {
                  //  << Gsq  << "  "
        // << temp[i] << std::endl;
       }
+
       cudaMemcpy(expKsq_.cDField(), expKsq_host, kSize * sizeof(cudaReal), cudaMemcpyHostToDevice);
       cudaMemcpy(expKsq2_.cDField(), expKsq2_host, kSize * sizeof(cudaReal), cudaMemcpyHostToDevice);
 
+      hasExpKsq_ = true;
    }
 
    /*
@@ -345,12 +388,18 @@ static __global__ void scaleReal(cudaReal* result, int size, float scale) {
       // Preconditions
       int nx = mesh().size();
       UTIL_CHECK(nx > 0);
+      UTIL_CHECK(isAllocated_);
 
       // Populate expW_
       // std::cout << std::endl;
       // expW_[i] = exp(-0.5*w[i]*ds_);
       assignExp<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(expW_.cDField(), w.cDField(), nx, (float)0.5* ds_);
       assignExp<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(expW2_.cDField(), w.cDField(), nx, (float)0.25 * ds_);
+
+      // Compute expKsq arrays if necessary
+      if (!hasExpKsq_) {
+         computeExpKsq();
+      }
 
    }
 
@@ -419,6 +468,10 @@ static __global__ void scaleReal(cudaReal* result, int size, float scale) {
    template <int D>
    void Block<D>::step(const cudaReal* q, cudaReal* qNew)
    {
+      // Preconditions
+      UTIL_CHECK(isAllocated_);
+      UTIL_CHECK(hasExpKsq_);
+
       // Check real-space mesh sizes
       int nx = mesh().size();
       UTIL_CHECK(nx > 0);
