@@ -194,7 +194,10 @@ static __global__ void scaleReal(cudaReal* result, int size, float scale) {
     : meshPtr_(0),
       kMeshDimensions_(0),
       ds_(0.0),
-      ns_(0)
+      ns_(0),
+      temp_(0),
+      expKsq_host(0),
+      expKsq2_host(0)
    {
       propagator(0).setBlock(*this);
       propagator(1).setBlock(*this);
@@ -206,11 +209,16 @@ static __global__ void scaleReal(cudaReal* result, int size, float scale) {
    template <int D>
    Block<D>::~Block()
    {
-      delete[] temp_;
-      cudaFree(d_temp_);
-
-      delete[] expKsq_host;
-      delete[] expKsq2_host;
+      if (temp_) {
+         delete[] temp_;
+         cudaFree(d_temp_);
+      }
+      
+      if (expKsq_host) {
+         delete[] expKsq_host;
+         delete[] expKsq2_host;
+      }
+      
    }
 
    template <int D>
@@ -222,11 +230,19 @@ static __global__ void scaleReal(cudaReal* result, int size, float scale) {
       // Set association to mesh
       meshPtr_ = &mesh;
 
-      // Set contour length discretization
-      ns_ = floor(length()/ds + 0.5) + 1;
-      if (ns_%2 == 0) {
-         ns_ += 1;
+      // Set contour length discretization (original pspg method)
+      // std::cout << length() << ds << std::endl;
+      // ns_ = floor(length()/ds + 0.5) + 1;
+      // if (ns_%2 == 0) {
+      //    ns_ += 1;
+      // }
+      // Method from PSPC 
+      int tempNs;
+      tempNs = floor( length()/(2.0 *ds) + 0.5 );
+      if (tempNs == 0) {
+         tempNs = 1;
       }
+      ns_ = 2*tempNs + 1;
 
       ds_ = length()/double(ns_ - 1);
 
