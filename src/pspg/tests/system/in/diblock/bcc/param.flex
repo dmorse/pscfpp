@@ -18,9 +18,11 @@ System{
          1   0    41.0
          1   1    0.0
   }
+  Domain{
      unitCell     cubic  1.7593562142
      mesh         32      32    32
      groupName    I_m_-3_m
+  }
   AmIterator{
      maxItr      1000
      epsilon     5.0e-7

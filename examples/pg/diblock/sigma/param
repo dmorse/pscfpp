@@ -18,9 +18,11 @@ System{
          1   0   25.0
          1   1   0.0
   }
-  unitCell    tetragonal   7.183E+00    3.8E+00
-  mesh        64    64    32
-  groupName P_42%m_n_m
+  Domain{
+    unitCell    tetragonal   7.183E+00    3.8E+00
+    mesh        64    64    32
+    groupName P_42%m_n_m
+  }
   AmIterator{
     maxItr   1000
     epsilon  1e-5

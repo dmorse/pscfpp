@@ -18,9 +18,11 @@ System{
          1   0   20.0
          1   1   0.0
   }
-  unitCell cubic 3.0E+00
-  mesh     32 32 32
-  groupName I_a_-3_d
+  Domain{
+    unitCell cubic 3.0E+00
+    mesh     32 32 32
+    groupName I_a_-3_d
+  }
   AmIterator{
     maxItr 500
     epsilon 1e-5
