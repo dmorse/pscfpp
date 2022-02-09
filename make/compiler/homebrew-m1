@@ -1,0 +1,82 @@
+# ---------------------------------------------------------------
+# Default compiler configuration file (gcc and nvcc)
+#
+# The definitions given below are designed for use on a Mac OS X
+# running on Mac silicon (e.g., the m1 ARM chip), using the 
+# homebrew package manager. 
+#
+#   - The command g++ is used to invoke the C++ compiler.
+#   - Header files and libraries for FFTW and other dependencies
+#     may be in the /opt/homebrew directory
+#   - The gsl-config command can be used to find the correct header
+#     and library paths for the Gnu Scientific Library (GSL)
+#
+# Note: The default compiler configuration file can be used to
+# compile on a Mac that uses an Intel CPU and the homebrew
+# package manager, because of  a difference in how homebrew is
+# configured machines that use intel and apple CPUss: Homebrew 
+# installs in /usr/local for intel silicon on in /opt/homebrew 
+# for apple silicon.
+# ---------------------------------------------------------------
+# C++ compiler and options (*.cpp files)
+
+# C++ compiler Command name
+CXX=g++
+
+# Compiler option to specify ANSI C++ 2011 standard (required)
+CXX_STD = --std=c++11
+
+# Flags always passed to compiler when debugging is enabled
+CXXFLAGS_DEBUG= -Wall $(CXX_STD)
+
+# Flags always passed to compiler when debugging is disabled (fast)
+CXXFLAGS_FAST= -Wall $(CXX_STD) -O3 -ffast-math -Winline
+
+# Compiler flags used in unit tests
+TESTFLAGS= -Wall $(CXX_STD)
+
+# ---------------------------------------------------------------
+# Cuda compiler and options (*.cu files)
+
+# Cuda compiler command
+NVXX=nvcc
+
+# Flags always passed to cuda compiler
+NVXXFLAGS= $(CXX_STD) -O3 -arch=sm_35
+
+# ---------------------------------------------------------------
+# Linker / Loader 
+
+# Flags passed to compiler for linking and loading
+LDFLAGS=
+
+# ---------------------------------------------------------------
+# Archiver
+
+# Library archiver command (for creating static libraries)
+AR=ar
+
+# Flags (command line options) passed to archiver
+ARFLAGS=rcs
+
+#-----------------------------------------------------------------------
+# Paths to header and library files for required external libraries
+
+# Gnu Scientific Library
+# Note: Paths may be automatically generated using gsl-config
+GSL_INC=GSL_INC_AUTO
+GSL_LIB=GSL_LIB_AUTO
+
+# FFTW Fast Fourier transform library
+#FFTW_INC=
+FFTW_INC=-I/opt/homebrew/include
+FFTW_LIB=-L/opt/homebrew/lib -lfftw3
+
+# CUDA libraries
+# PSSP_CUFFT_PREFIX=/usr/local/cuda
+# CUFFT_INC=-I$(PSSP_CUFFT_PREFIX)/include
+# CUFFT_LIB=-L$(PSSP_CUFFT_PREFIX)/lib -lcufft -lcudart
+# CUFFT_LIB=-lcufft -lcudart -lcuda -lcurand
+CUFFT_INC=
+CUFFT_LIB=-lcufft -lcudart
+
