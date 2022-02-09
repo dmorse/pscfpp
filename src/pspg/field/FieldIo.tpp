@@ -1027,6 +1027,30 @@ namespace Pspg
    }
 
    template <int D>
+   void 
+   FieldIo<D>::convertKGridToRGrid(DArray< RDFieldDft<D> > const & in,
+                                   DArray< RDField<D> >& out) const
+   {
+      UTIL_ASSERT(in.capacity() == out.capacity());
+      int n = in.capacity();
+      for (int i = 0; i < n; ++i) {
+         fft().inverseTransform(in[i], out[i]);
+      }
+   }
+
+   template <int D>
+   void 
+   FieldIo<D>::convertRGridToKGrid(DArray< RDField<D> > const & in,
+                                   DArray< RDFieldDft<D> >& out) const
+   {
+      UTIL_ASSERT(in.capacity() == out.capacity());
+      int n = in.capacity();
+      for (int i = 0; i < n; ++i) {
+         fft().forwardTransform(in[i], out[i]);
+      }
+   }
+
+   template <int D>
    void FieldIo<D>::checkWorkDft()
    {
       if (!workDft_.isAllocated()) {

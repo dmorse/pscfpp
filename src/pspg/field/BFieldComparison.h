@@ -47,6 +47,8 @@ namespace Pspg {
 
       double compare(DArray<cudaReal*> const& a, DArray<cudaReal*> const& b, int nStar);
 
+   private:
+
    };
 
 } // namespace Pspc

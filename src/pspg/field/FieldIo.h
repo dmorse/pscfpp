@@ -305,6 +305,28 @@ namespace Pspg
       void convertRGridToBasis(DArray< RDField<D> > & in,
                                DArray< RDField <D> > & out);
 
+      /**
+      * Convert fields from k-grid (DFT) to real space (rgrid) format.
+      * 
+      * This function simply calls the inverse FFT for an array of fields.
+      * The inverse FFT provided by the underlying FFTW library overwrites 
+      * its input, which is why argument "in" not a const reference.
+      *
+      * \param in  fields in discrete Fourier format (k-grid)
+      * \param out  fields defined on real-space grid (r-grid)
+      */
+      void convertKGridToRGrid(DArray< RDFieldDft<D> > const & in,
+                               DArray< RDField<D> > & out) const;
+
+      /**
+      * Convert fields from spatial grid (rgrid) to k-grid format.
+      * 
+      * \param in  fields defined on real-space grid (r-grid)
+      * \param out  fields in discrete Fourier format (k-grid)
+      */
+      void convertRGridToKGrid(DArray< RDField<D> > const & in,
+                               DArray< RDFieldDft<D> > & out) const;
+
       //@}
 
    private:
@@ -364,13 +386,6 @@ namespace Pspg
 
       /// Get FFT object by reference.
       FFT<D> const & fft() const
-      {
-         // UTIL_ASSERT(fftPtr_);  
-         return *fftPtr_; 
-      }
-
-      /// Get FFT object by reference.
-      FFT<D>& fft()
       {
          // UTIL_ASSERT(fftPtr_);  
          return *fftPtr_; 

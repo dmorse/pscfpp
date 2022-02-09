@@ -66,7 +66,7 @@ namespace Pspg {
       * \param in  array of real values on r-space grid (device mem)
       * \param out  array of complex values on k-space grid (device mem)
       */
-      void forwardTransform(RDField<D> const & rField, RDFieldDft<D>& kField);
+      void forwardTransform(RDField<D> const & rField, RDFieldDft<D>& kField) const;
 
       /**
       * Compute inverse (complex-to-real) Fourier transform.
@@ -74,7 +74,7 @@ namespace Pspg {
       * \param in  array of complex values on k-space grid (device mem)
       * \param out  array of real values on r-space grid (device mem)
       */
-      void inverseTransform(RDFieldDft<D> const & kField, RDField<D>& rField);
+      void inverseTransform(RDFieldDft<D> const & kField, RDField<D>& rField) const;
 
       /**
       * Return the dimensions of the grid for which this was allocated.

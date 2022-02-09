@@ -105,7 +105,7 @@ namespace Pspg
    * Execute forward transform.
    */
    template <int D>
-   void FFT<D>::forwardTransform(RDField<D> const & rField, RDFieldDft<D>& kField)
+   void FFT<D>::forwardTransform(RDField<D> const & rField, RDFieldDft<D>& kField) const
    {
       // Check dimensions or setup
       UTIL_CHECK(isSetup_);
@@ -136,7 +136,7 @@ namespace Pspg
    * Execute inverse (complex-to-real) transform.
    */
    template <int D>
-   void FFT<D>::inverseTransform(RDFieldDft<D> const & kField, RDField<D>& rField)
+   void FFT<D>::inverseTransform(RDFieldDft<D> const & kField, RDField<D>& rField) const
    {
       UTIL_CHECK(isSetup_);
       UTIL_CHECK(rField.capacity() == rSize_);
