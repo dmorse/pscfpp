@@ -3,6 +3,7 @@ pspg_field_= \
   pspg/field/FFTBatched.cu \
   pspg/field/FieldIo.cu \
   pspg/field/BFieldComparison.cu \
+  pspg/field/RFieldComparison.cu \
   pspg/field/KFieldComparison.cu \
   pspg/field/Domain.cu
 

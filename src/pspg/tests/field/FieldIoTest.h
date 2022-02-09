@@ -5,7 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <pspg/field/BFieldComparison.h>
-//#include <pspg/field/RFieldComparison.h>
+#include <pspg/field/RFieldComparison.h>
 #include <pspg/field/KFieldComparison.h>
 #include <pspg/field/Domain.h>
 #include <pspg/field/FieldIo.h>
@@ -284,6 +284,34 @@ public:
 
       testBasisIo3D("w_altG.rf", "w_altG.bf");
 
+   }
+
+   void testRGridIo_bcc() 
+   {
+      printMethod(TEST_FUNC);
+
+      Domain<3> domain;
+      domain.setFileMaster(fileMaster_);
+      readHeader("in/w_bcc.rf", domain);
+
+      DArray< RDField<3> > d_rf_0;
+      allocateFields(nMonomer_, domain.mesh().dimensions(), d_rf_0);
+      DArray< RDField<3> > d_rf_1;
+      allocateFields(nMonomer_, domain.mesh().dimensions(), d_rf_1);
+
+      readFields("in/w_bcc.rf", domain, d_rf_0);
+      writeFields("out/w_bcc.rf", domain, d_rf_0);
+      readFields("out/w_bcc.rf", domain, d_rf_1);
+
+      RFieldComparison<3> comparison;
+      comparison.compare(d_rf_0, d_rf_1);
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-12);
+
+      if (verbose() > 0) {
+         std::cout  << "\n";
+         std::cout  << Dbl(comparison.maxDiff(),21,13) << "\n";
+         std::cout  << Dbl(comparison.rmsDiff(),21,13) << "\n";
+      }
    }
 
    void testConvertBasisKGridBasis_bcc() 
@@ -643,6 +671,59 @@ public:
       }
    }
 
+   void testConvertBasisKGridRGridKGrid_c15_1() 
+   {
+      printMethod(TEST_FUNC);
+
+      Domain<3> domain;
+      domain.setFileMaster(fileMaster_);
+      readHeader("in/c_c15_1.rf", domain);
+
+      DArray< RDField<3> > d_bf_0;
+      allocateFields(nMonomer_, domain.basis().nStar(), d_bf_0);
+
+      DArray< RDField<3> > d_bf_1;
+      allocateFields(nMonomer_, domain.basis().nStar(), d_bf_1);
+
+      DArray< RDFieldDft<3> > d_kf_0;
+      allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_0);
+
+      DArray< RDFieldDft<3> > d_kf_1;
+      allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_1);
+
+      DArray< RDFieldDft<3> > d_kf_2;
+      allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_2);
+
+      DArray< RDField<3> > d_rf_0;
+      allocateFields(nMonomer_, domain.mesh().dimensions(), d_rf_0);
+
+      readFieldsBasis("in/w_c15_1.bf", domain, d_bf_0);
+      domain.fieldIo().convertBasisToKGrid(d_bf_0, d_kf_0);
+
+      d_kf_2 = d_kf_0;
+      domain.fieldIo().convertKGridToRGrid(d_kf_0, d_rf_0);
+
+      #if 0
+      // Demonstrate that input d_kf_0 is NOT modified by above
+      KFieldComparison<3> check;
+      check.compare(d_kf_2, d_kf_0);
+      std::cout  << std::endl;
+      std::cout  << Dbl(check.maxDiff(), 21, 13) << "\n";
+      std::cout  << Dbl(check.rmsDiff(), 21, 13) << "\n";
+      #endif
+
+      domain.fieldIo().convertRGridToKGrid(d_rf_0, d_kf_1);
+
+      KFieldComparison<3> comparison;
+      comparison.compare(d_kf_2, d_kf_1);
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
+      if (verbose() > 0) {
+        std::cout  << std::endl;
+        std::cout  << Dbl(comparison.maxDiff(), 21, 13) << "\n";
+        std::cout  << Dbl(comparison.rmsDiff(), 21, 13) << "\n";
+      }
+   }
+
    
 
 };
@@ -653,7 +734,7 @@ TEST_ADD(FieldIoTest, testBasisIo_bcc)
 TEST_ADD(FieldIoTest, testBasisIo_c15_1)
 TEST_ADD(FieldIoTest, testBasisIo_altG)
 // TEST_ADD(FieldIoTest, testBasisIo_altG_fort)
-// TEST_ADD(FieldIoTest, testRGridIo_bcc)
+TEST_ADD(FieldIoTest, testRGridIo_bcc)
 TEST_ADD(FieldIoTest, testConvertBasisKGridBasis_bcc)
 TEST_ADD(FieldIoTest, testConvertBasisRGridBasis_bcc)
 TEST_ADD(FieldIoTest, testConvertBasisKGridBasis_altG)
@@ -662,7 +743,7 @@ TEST_ADD(FieldIoTest, testKGridIo_bcc)
 TEST_ADD(FieldIoTest, testKGridIo_altG)
 TEST_ADD(FieldIoTest, testKGridIo_lam)
 TEST_ADD(FieldIoTest, testConvertBasisKGridRGridKGrid_bcc)
-// TEST_ADD(FieldIoTest, testConvertBasisKGridRGridKGrid_c15_1)
+TEST_ADD(FieldIoTest, testConvertBasisKGridRGridKGrid_c15_1)
 TEST_END(FieldIoTest)
 
 #endif
