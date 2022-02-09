@@ -132,11 +132,11 @@ static __global__ void scaleComplex(cudaComplex* a, cudaReal* scale, int size) {
    }
 }
 
-static __global__ void assignExp(cudaReal* expW, const cudaReal* w, int size, float cDs) {
+static __global__ void assignExp(cudaReal* expW, const cudaReal* w, int size, double cDs) {
    int nThreads = blockDim.x * gridDim.x;
    int startID = blockIdx.x * blockDim.x + threadIdx.x;
    for(int i = startID; i < size; i += nThreads) {
-      expW[i] = expf(-w[i]*cDs);
+      expW[i] = exp(-w[i]*cDs);
    }
 }
 
@@ -393,8 +393,8 @@ static __global__ void scaleReal(cudaReal* result, int size, float scale) {
       // Populate expW_
       // std::cout << std::endl;
       // expW_[i] = exp(-0.5*w[i]*ds_);
-      assignExp<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(expW_.cDField(), w.cDField(), nx, (float)0.5* ds_);
-      assignExp<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(expW2_.cDField(), w.cDField(), nx, (float)0.25 * ds_);
+      assignExp<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(expW_.cDField(), w.cDField(), nx, (double)0.5* ds_);
+      assignExp<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(expW2_.cDField(), w.cDField(), nx, (double)0.25 * ds_);
 
       // Compute expKsq arrays if necessary
       if (!hasExpKsq_) {
@@ -484,22 +484,22 @@ static __global__ void scaleReal(cudaReal* result, int size, float scale) {
 
       // Apply pseudo-spectral algorithm
 
-     pointwiseMulSameStart<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>
+      pointwiseMulSameStart<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>
                            (q, expW_.cDField(), expW2_.cDField(), qr_.cDField(), qr2_.cDField(), nx);
-     fft_.forwardTransform(qr_, qk_);
-     fft_.forwardTransform(qr2_, qk2_);
-     scaleComplexTwinned<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>
+      fft_.forwardTransform(qr_, qk_);
+      fft_.forwardTransform(qr2_, qk2_);
+      scaleComplexTwinned<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>
                            (qk_.cDField(), qk2_.cDField(), expKsq_.cDField(), expKsq2_.cDField(), nk);
-     fft_.inverseTransform(qk_, qr_);
-     fft_.inverseTransform(qk2_, q2_);
-     pointwiseMulTwinned<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>
+      fft_.inverseTransform(qk_, qr_);
+      fft_.inverseTransform(qk2_, q2_);
+      pointwiseMulTwinned<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>
                            (qr_.cDField(), q2_.cDField(), expW_.cDField(), q1_.cDField(), qr_.cDField(), nx);
-     fft_.forwardTransform(qr_, qk_);
-     scaleComplex<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(qk_.cDField(), expKsq2_.cDField(), nk);
-     fft_.inverseTransform(qk_, qr_);
-     richardsonExpTwinned<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(qNew, q1_.cDField(),
+      fft_.forwardTransform(qr_, qk_);
+      scaleComplex<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(qk_.cDField(), expKsq2_.cDField(), nk);
+      fft_.inverseTransform(qk_, qr_);
+      richardsonExpTwinned<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(qNew, q1_.cDField(),
                            qr_.cDField(), expW2_.cDField(), nx);
-     //remove the use of q2
+      //remove the use of q2
 
 
    }

@@ -208,7 +208,7 @@ namespace Pspc {
       UTIL_CHECK(ds_ > 0);
       UTIL_CHECK(propagator(0).isAllocated());
       UTIL_CHECK(propagator(1).isAllocated());
-      UTIL_CHECK(cField().capacity() == nx)
+      UTIL_CHECK(cField().capacity() == nx);
 
       // Initialize cField to zero at all points
       int i;
@@ -389,6 +389,7 @@ namespace Pspc {
          qr_[i] = q[i]*expW_[i];
          qr2_[i] = q[i]*expW2_[i];
       }
+
       fft_.forwardTransform(qr_, qk_);
       fft_.forwardTransform(qr2_, qk2_);
       for (i = 0; i < nk; ++i) {

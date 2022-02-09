@@ -15,6 +15,7 @@
 #include <pspg/GpuResources.h>
 #include <fstream>
 
+
 using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Pspg;
@@ -30,86 +31,41 @@ public:
    void tearDown()
    {}
 
+   template <int D> 
+   void setupBlock(Block<D>& block)
+   {
+      block.setId(0);
+      double length = 2.0;
+      block.setLength(length);
+      block.setMonomerId(1);
+      double step = sqrt(6.0);
+      block.setKuhn(step);
+      return;
+   }
+
+   template <int D>
+   void setupMesh(Mesh<D>& mesh) 
+   {
+      IntVec<D> d;
+      for (int i = 0; i < D; ++i) {
+         d[i] = 32;
+      }
+      mesh.setDimensions(d);
+   }
+
+   template <int D>
+   void setupUnitCell(UnitCell<D>& unitCell, std::string fname)
+   {
+      std::ifstream in;
+      openInputFile(fname, in);
+      in >> unitCell;
+      in.close();
+   }
+
    void testConstructor1D()
    {
       printMethod(TEST_FUNC);
       Block<1> block;
-   }
-
-   void setupBlock1D(Block<1>& block) 
-   {
-      block.setId(0);
-      double length = 2.0;
-      block.setLength(length);
-      block.setMonomerId(1);
-      double step = sqrt(6.0);
-      block.setKuhn(step);
-   }
-
-   void setupBlock2D(Block<2>& block)
-   {
-      block.setId(0);
-      double length = 2.0;
-      block.setLength(length);
-      block.setMonomerId(1);
-      double step = sqrt(6.0);
-      block.setKuhn(step);
-   }
-
-   void setupBlock3D(Block<3>& block) 
-   {
-      block.setId(0);
-      double length = 2.0;
-      block.setLength(length);
-      block.setMonomerId(1);
-      double step = sqrt(6.0);
-      //double step = 0;
-      block.setKuhn(step);
-   }
-
-   void setupMesh1D(Mesh<1>& mesh) {
-      IntVec<1> d;
-      d[0] = 10;
-      mesh.setDimensions(d);
-   }
-
-   void setupMesh2D(Mesh<2>& mesh) {
-      IntVec<2> d;
-      d[0] = 10;
-      d[1] = 10;
-      mesh.setDimensions(d);
-   }
-
-   void setupMesh3D(Mesh<3>& mesh) {
-      IntVec<3> d;
-      d[0] = 10;
-      d[1] = 10;
-      d[2] = 10;
-      mesh.setDimensions(d);
-   }
-
-   void setupUnitCell1D(UnitCell<1>& unitCell) 
-   {
-      std::ifstream in;
-      openInputFile("in/Lamellar", in);
-      in >> unitCell;
-      in.close();
-   }
-
-   void setupUnitCell2D(UnitCell<2>& unitCell)
-   {
-      std::ifstream in;
-      openInputFile("in/Rectangular", in);
-      in >> unitCell;
-      in.close();
-   }
-
-   void setupUnitCell3D(UnitCell<3>& unitCell) 
-   {
-      std::ifstream in;
-      openInputFile("in/Orthorhombic", in);
-      in >> unitCell;
-      in.close();
    }
 
    void testSetDiscretization1D()
@@ -118,23 +74,19 @@ public:
 
       // Create and initialize block
       Block<1> block;
-      setupBlock1D(block);
+      setupBlock<1>(block);
 
       // Create and initialize mesh
       Mesh<1> mesh;
-      setupMesh1D(mesh);
+      setupMesh<1>(mesh);
 
       double ds = 0.02;
       block.setDiscretization(ds, mesh);
       TEST_ASSERT(eq(block.length(), 2.0));
       TEST_ASSERT(eq(block.ds(), 0.02));
       TEST_ASSERT(block.ns() == 101);
-      TEST_ASSERT(block.mesh().dimensions()[0] == 10);
+      TEST_ASSERT(block.mesh().dimensions()[0] == 32);
 
-      // std::cout << std::endl;
-      // std::cout << "ns   = " << block.ns() << std::endl;
-      // std::cout << "mesh = " 
-      //          << block.mesh().dimensions() << std::endl;
    }
 
    void testSetDiscretization2D()
@@ -143,18 +95,18 @@ public:
 
       //Create and initialize block
       Block<2> block;
-      setupBlock2D(block);
+      setupBlock<2>(block);
 
       Mesh<2> mesh;
-      setupMesh2D(mesh);
+      setupMesh<2>(mesh);
 
       double ds = 0.26;
       block.setDiscretization(ds, mesh);
       TEST_ASSERT(eq(block.length(), 2.0));
       TEST_ASSERT(eq(block.ds(), 0.25));
       TEST_ASSERT(block.ns() == 9);
-      TEST_ASSERT(block.mesh().dimensions()[0] == 10);
-      TEST_ASSERT(block.mesh().dimensions()[1] == 10);
+      TEST_ASSERT(block.mesh().dimensions()[0] == 32);
+      TEST_ASSERT(block.mesh().dimensions()[1] == 32);
    }
 
    void testSetDiscretization3D()
@@ -163,23 +115,20 @@ public:
 
       //Create and initialize block
       Block<3> block;
-      setupBlock3D(block);
+      setupBlock<3>(block);
 
       Mesh<3> mesh;
-      setupMesh3D(mesh);
+      setupMesh<3>(mesh);
 
       double ds = 0.3;
       block.setDiscretization(ds, mesh);
-      // std::cout << "block len = " << block.length() << "\n";
-      // std::cout << "block ns  = " << block.ns() << "\n";
-      // std::cout << "block ds  = " << block.ds() << "\n";
 
       TEST_ASSERT(eq(block.length(), 2.0));
       TEST_ASSERT(block.ns() == 7);
       TEST_ASSERT(eq(block.ds(), 1.0/3.0));
-      TEST_ASSERT(block.mesh().dimensions()[0] == 10);
-      TEST_ASSERT(block.mesh().dimensions()[1] == 10);
-      TEST_ASSERT(block.mesh().dimensions()[2] == 10);
+      TEST_ASSERT(block.mesh().dimensions()[0] == 32);
+      TEST_ASSERT(block.mesh().dimensions()[1] == 32);
+      TEST_ASSERT(block.mesh().dimensions()[2] == 32);
    }
    
    void testSetupSolver1D()
@@ -188,19 +137,18 @@ public:
 
       // Create and initialize block
       Block<1> block;
-      setupBlock1D(block);
+      setupBlock<1>(block);
 
       // Create and initialize mesh
       Mesh<1> mesh;
-      setupMesh1D(mesh);
+      setupMesh<1>(mesh);
 
       double ds = 0.02;
       block.setDiscretization(ds, mesh);
 
       UnitCell<1> unitCell;
-      setupUnitCell1D(unitCell);
-      // std::cout << std::endl;
-      // std::cout << "unit cell = " << unitCell << std::endl;
+      setupUnitCell<1>(unitCell, "in/Lamellar");
+
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 4.0));
 
       // Setup chemical potential field
@@ -232,19 +180,18 @@ public:
 
       // Create and initialize block
       Block<2> block;
-      setupBlock2D(block);
+      setupBlock<2>(block);
 
       // Create and initialize mesh
       Mesh<2> mesh;
-      setupMesh2D(mesh);
+      setupMesh<2>(mesh);
 
       double ds = 0.02;
       block.setDiscretization(ds, mesh);
 
       UnitCell<2> unitCell;
-      setupUnitCell2D(unitCell);
-      // std::cout << std::endl;
-      // std::cout << "unit cell = " << unitCell << std::endl;
+      setupUnitCell<2>(unitCell, "in/Rectangular");
+
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 3.0));
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
 
@@ -277,19 +224,18 @@ public:
 
       // Create and initialize block
       Block<3> block;
-      setupBlock3D(block);
+      setupBlock<3>(block);
 
       // Create and initialize mesh
       Mesh<3> mesh;
-      setupMesh3D(mesh);
+      setupMesh<3>(mesh);
 
       double ds = 0.02;
       block.setDiscretization(ds, mesh);
 
       UnitCell<3> unitCell;
-      setupUnitCell3D(unitCell);
-      // std::cout << std::endl;
-      // std::cout << "unit cell = " << unitCell << std::endl;
+      setupUnitCell<3>(unitCell, "in/Orthorhombic");
+
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 3.0));
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
       TEST_ASSERT(eq(unitCell.rBasis(2)[2], 5.0));
@@ -327,19 +273,19 @@ public:
 
       // Create and initialize block
       Block<1> block;
-      setupBlock1D(block);
+      setupBlock<1>(block);
 
       // Create and initialize mesh
       Mesh<1> mesh;
-      setupMesh1D(mesh);
+      setupMesh<1>(mesh);
 
       double ds = 0.02;
       block.setDiscretization(ds, mesh);
 
       UnitCell<1> unitCell;
-      setupUnitCell1D(unitCell);
-      // std::cout << std::endl;
-      // std::cout << "unit cell = " << unitCell << std::endl;
+      setupUnitCell<1>(unitCell, "in/Lamellar");
+
+      TEST_ASSERT(eq(unitCell.rBasis(0)[0], 4.0));
 
       // Setup chemical potential field
       int nx = mesh.size();
@@ -363,13 +309,14 @@ public:
       block.setupUnitCell(unitCell, wavelist);
       block.setupSolver(d_w);
 
-      // Test step
+      // Setup fields on host and device
       Propagator<1>::QField d_qin, d_qout;
       cudaReal* qin = new cudaReal[nx];
       cudaReal* qout = new cudaReal[nx];
       d_qin.allocate(mesh.dimensions());
       d_qout.allocate(mesh.dimensions());
 
+      // Run block step
       double twoPi = 2.0*Constants::Pi;
       for (int i=0; i < nx; ++i) {
          qin[i] = cos(twoPi*double(i)/double(nx));
@@ -380,6 +327,7 @@ public:
       block.step(d_qin.cDField(), d_qout.cDField());
       cudaMemcpy(qout, d_qout.cDField(), nx*sizeof(cudaReal), cudaMemcpyDeviceToHost);
 
+      // Test block step output against expected output
       double a = 4.0;
       double b = block.kuhn();
       double Gb = twoPi*b/a;
@@ -387,90 +335,97 @@ public:
       ds = block.ds();
       double expected = exp(-(wc + r)*ds);
       for (int i = 0; i < nx; ++i) {
-         // std::cout << "  " << qout[i]
-         //           << "  " << qin[i]
-         //           << "  " << qin[i]*expected
-         //           << "  " << expected << std::endl;
-         std::cout << qout[i]-qin[i]*expected << std::endl;
          TEST_ASSERT(eq(qout[i], qin[i]*expected));
       }
-      // std::cout << "\n";
-      // std::cout << "expected ratio = " << expected << "\n";
-    
+
       // Test propagator solve 
       block.propagator(0).solve();
 
-      // std::cout << "\n Head:\n";
-      for (int i = 0; i < nx; ++i) {
-         // std::cout << "  " << block.propagator(0).head()[i];
-         TEST_ASSERT(eq(block.propagator(0).head()[i],1.0));
-      }
-      // std::cout << "\n";
-      
+      // Copy results from propagator solve
+      cudaReal* propHead = new cudaReal[nx*block.ns()];
+      cudaReal* propTail = new cudaReal[nx*block.ns()];
+      cudaMemcpy(propHead, block.propagator(0).head(), nx*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      cudaMemcpy(propTail, block.propagator(0).tail(), nx*sizeof(cudaReal), cudaMemcpyDeviceToHost);
 
-      // std::cout << "\n Tail:\n";
+      for (int i = 0; i < nx; ++i) {
+         TEST_ASSERT(eq(propHead[i],1.0));
+      }
+      
       expected = exp(-wc*block.length());
       for (int i = 0; i < nx; ++i) {
-         // std::cout << "  " << block.propagator(0).tail()[i];
-         TEST_ASSERT(eq(block.propagator(0).tail()[i], expected));
+         TEST_ASSERT(eq(propTail[i], expected));
       }
-      // std::cout << "\n";
-      // std::cout << exp(-wc*block.length()) << "\n";
-
    }
-#if 0
+
    void testSolver2D()
    {
-
       printMethod(TEST_FUNC);
+
+      // Set gpu resources
+      NUMBER_OF_BLOCKS = 1;
+      THREADS_PER_BLOCK = 32;
 
       // Create and initialize block
       Block<2> block;
-      setupBlock2D(block);
+      setupBlock<2>(block);
 
       // Create and initialize mesh
       Mesh<2> mesh;
-      setupMesh2D(mesh);
+      setupMesh<2>(mesh);
 
       double ds = 0.02;
       block.setDiscretization(ds, mesh);
 
       UnitCell<2> unitCell;
-      setupUnitCell2D(unitCell);
-      // std::cout << std::endl;
-      // std::cout << "unit cell = " << unitCell << std::endl;
+      setupUnitCell<2>(unitCell, "in/Rectangular");
+
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 3.0));
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
 
       // Setup chemical potential field
-      RField<2> w;
-      w.allocate(mesh.dimensions());
-      MeshIterator<2> iter(mesh.dimensions());
+      int nx = mesh.size();
+      RDField<2> d_w;
+      d_w.allocate(mesh.dimensions());
+      cudaReal* w = new cudaReal[nx];
 
-      TEST_ASSERT(w.capacity() == mesh.size());
+      TEST_ASSERT(d_w.capacity() == mesh.size());
       double wc = 0.3;
-      for (int i=0; i < w.capacity(); ++i) {
+      for (int i=0; i < nx; ++i) {
          w[i] = wc;
       }
 
-      block.setupUnitCell(unitCell);
-      block.setupSolver(w);
+      cudaMemcpy(d_w.cDField(), w, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
 
-      // Test step
-      Propagator<2>::QField qin;
-      Propagator<2>::QField qout;
-      qin.allocate(mesh.dimensions());
-      qout.allocate(mesh.dimensions());
+      // Construct wavelist 
+      WaveList<2> wavelist;
+      wavelist.allocate(mesh, unitCell);
+      wavelist.computeMinimumImages(mesh, unitCell);
 
+      block.setupUnitCell(unitCell, wavelist);
+      block.setupSolver(d_w);
+
+      // Setup fields on host and device
+      Propagator<2>::QField d_qin, d_qout;
+      cudaReal* qin = new cudaReal[nx];
+      cudaReal* qout = new cudaReal[nx];
+      d_qin.allocate(mesh.dimensions());
+      d_qout.allocate(mesh.dimensions());
+
+      // Run block step
+      MeshIterator<2> iter(mesh.dimensions());
       double twoPi = 2.0*Constants::Pi;
       for (iter.begin(); !iter.atEnd(); ++iter){
          qin[iter.rank()] = cos(twoPi * 
                         (double(iter.position(0))/double(mesh.dimension(0)) + 
                          double(iter.position(1))/double(mesh.dimension(1)) ) );
       }
-      
-      // std::cout<<std::endl;
-      block.step(qin, qout);
+
+      cudaMemcpy(d_qin.cDField(), qin, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      block.setupFFT();
+      block.step(d_qin.cDField(), d_qout.cDField());
+      cudaMemcpy(qout, d_qout.cDField(), nx*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+
+      // Test block step output against expected output
       double b = block.kuhn();
       double Gb;
       double expected;
@@ -484,81 +439,86 @@ public:
          double factor = b;
          double r = Gb*factor*factor/6.0;
          expected = exp(-(wc + r)*ds);
-
-         // std::cout << "  " << qout[iter.rank()]
-         //          << "  " << qin[iter.rank()]
-         //         << "  " << qin[iter.rank()]*expected
-         //          << "  " << expected << std::endl;
-         //TEST_ASSERT(eq(qout[iter.rank()], 
-         //               qin[iter.rank()]*expected));
+         TEST_ASSERT(eq(qout[iter.rank()], qin[iter.rank()]*expected));
       }
 
-      // std::cout << "\n";
-      // std::cout << "expected ratio = " << expected << "\n";
-    
       // Test propagator solve 
       block.propagator(0).solve();
 
-      // std::cout << "\n Head:\n";
+      // Copy results from propagator solve
+      cudaReal* propHead = new cudaReal[nx*block.ns()];
+      cudaReal* propTail = new cudaReal[nx*block.ns()];
+      cudaMemcpy(propHead, block.propagator(0).head(), nx*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      cudaMemcpy(propTail, block.propagator(0).tail(), nx*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+
       for (iter.begin(); !iter.atEnd(); ++iter){
-         TEST_ASSERT(eq(block.propagator(0).head()[iter.rank()], 1.0));
+         TEST_ASSERT(eq(propHead[iter.rank()], 1.0));
       }
-      // std::cout << "\n";
       
-      // std::cout << "\n Tail:\n";
       expected = exp(-wc*block.length());
       for (iter.begin(); !iter.atEnd(); ++iter){
-         TEST_ASSERT(eq(block.propagator(0).tail()[iter.rank()], expected));
+         TEST_ASSERT(eq(propTail[iter.rank()], expected));
       }
-      // std::cout << "\n";
-      // std::cout << exp(-wc*block.length()) << "\n";
-
+   
    }
 
    void testSolver3D()
    {
-
       printMethod(TEST_FUNC);
+
+      // Set gpu resources
+      NUMBER_OF_BLOCKS = 1;
+      THREADS_PER_BLOCK = 32;
 
       // Create and initialize block
       Block<3> block;
-      setupBlock3D(block);
+      setupBlock<3>(block);
 
       // Create and initialize mesh
       Mesh<3> mesh;
-      setupMesh3D(mesh);
+      setupMesh<3>(mesh);
 
       double ds = 0.02;
       block.setDiscretization(ds, mesh);
 
       UnitCell<3> unitCell;
-      setupUnitCell3D(unitCell);
-      // std::cout << std::endl;
-      // std::cout << "unit cell = " << unitCell << std::endl;
+      setupUnitCell<3>(unitCell, "in/Orthorhombic");
+
       TEST_ASSERT(eq(unitCell.rBasis(0)[0], 3.0));
       TEST_ASSERT(eq(unitCell.rBasis(1)[1], 4.0));
       TEST_ASSERT(eq(unitCell.rBasis(2)[2], 5.0));
 
       // Setup chemical potential field
-      RField<3> w;
-      w.allocate(mesh.dimensions());
-      MeshIterator<3> iter(mesh.dimensions());
+      int nx = mesh.size();
+      RDField<3> d_w;
+      d_w.allocate(mesh.dimensions());
+      cudaReal* w = new cudaReal[nx];
 
-      TEST_ASSERT(w.capacity() == mesh.size());
+      TEST_ASSERT(d_w.capacity() == mesh.size());
       double wc = 0.3;
-      for (int i=0; i < w.capacity(); ++i) {
+      for (int i=0; i < nx; ++i) {
          w[i] = wc;
       }
 
-      block.setupUnitCell(unitCell);
-      block.setupSolver(w);
+      cudaMemcpy(d_w.cDField(), w, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
 
-      // Test step
-      Propagator<3>::QField qin;
-      Propagator<3>::QField qout;
-      qin.allocate(mesh.dimensions());
-      qout.allocate(mesh.dimensions());
+      // Construct wavelist 
+      WaveList<3> wavelist;
+      wavelist.allocate(mesh, unitCell);
+      wavelist.computeMinimumImages(mesh, unitCell);
 
+      block.setupUnitCell(unitCell, wavelist);
+      block.setupSolver(d_w);
+
+      // Setup fields on host and device
+      Propagator<3>::QField d_qin, d_qout;
+      cudaReal* qin = new cudaReal[nx];
+      cudaReal* qout = new cudaReal[nx];
+      d_qin.allocate(mesh.dimensions());
+      d_qout.allocate(mesh.dimensions());
+
+      // Run block step
+      MeshIterator<3> iter(mesh.dimensions());
       double twoPi = 2.0*Constants::Pi;
       for (iter.begin(); !iter.atEnd(); ++iter){
          qin[iter.rank()] = cos(twoPi * 
@@ -566,9 +526,13 @@ public:
                          double(iter.position(1))/double(mesh.dimension(1)) + 
                          double(iter.position(2))/double(mesh.dimension(2)) ) );
       }
-      
-      // std::cout<<std::endl;
-      block.step(qin, qout);
+
+      cudaMemcpy(d_qin.cDField(), qin, nx*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      block.setupFFT();
+      block.step(d_qin.cDField(), d_qout.cDField());
+      cudaMemcpy(qout, d_qout.cDField(), nx*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+
+      // Test block step output against expected output
       double b = block.kuhn();
       double Gb;
       double expected;
@@ -577,43 +541,35 @@ public:
       temp[1] = 1;
       temp[2] = 1;
 
+
       ds = block.ds();
       for (iter.begin(); !iter.atEnd(); ++iter){
          Gb = unitCell.ksq(temp);
          double factor = b;
          double r = Gb*factor*factor/6.0;
          expected = exp(-(wc + r)*ds);
-
-         // std::cout << "  " << qout[iter.rank()]
-         //          << "  " << qin[iter.rank()]
-         //         << "  " << qin[iter.rank()]*expected
-         //          << "  " << expected << std::endl;
-         // TEST_ASSERT(eq(qout[iter.rank()], 
-         //               qin[iter.rank()]*expected));
+         TEST_ASSERT(eq(qout[iter.rank()], qin[iter.rank()]*expected));
       }
 
-      // std::cout << "\n";
-      // std::cout << "expected ratio = " << expected << "\n";
-    
       // Test propagator solve 
       block.propagator(0).solve();
 
-      // std::cout << "\n Head:\n";
+      // Copy results from propagator solve
+      cudaReal* propHead = new cudaReal[nx*block.ns()];
+      cudaReal* propTail = new cudaReal[nx*block.ns()];
+      cudaMemcpy(propHead, block.propagator(0).head(), nx*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      cudaMemcpy(propTail, block.propagator(0).tail(), nx*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+
       for (iter.begin(); !iter.atEnd(); ++iter){
-         TEST_ASSERT(eq(block.propagator(0).head()[iter.rank()], 1.0));
+         TEST_ASSERT(eq(propHead[iter.rank()], 1.0));
       }
-      // std::cout << "\n";
       
-      // std::cout << "\n Tail:\n";
       expected = exp(-wc*block.length());
       for (iter.begin(); !iter.atEnd(); ++iter){
-         TEST_ASSERT(eq(block.propagator(0).tail()[iter.rank()], expected));
+         TEST_ASSERT(eq(propTail[iter.rank()], expected));
       }
-      // std::cout << "\n";
-      // std::cout << exp(-wc*block.length()) << "\n";
-
+   
    }
-#endif 
 };
 
 TEST_BEGIN(PropagatorTest)
@@ -625,8 +581,8 @@ TEST_ADD(PropagatorTest, testSetupSolver1D)
 TEST_ADD(PropagatorTest, testSetupSolver2D)
 TEST_ADD(PropagatorTest, testSetupSolver3D)
 TEST_ADD(PropagatorTest, testSolver1D)
-// TEST_ADD(PropagatorTest, testSolver2D)
-// TEST_ADD(PropagatorTest, testSolver3D)
+TEST_ADD(PropagatorTest, testSolver2D)
+TEST_ADD(PropagatorTest, testSolver3D)
 TEST_END(PropagatorTest)
 
 #endif
