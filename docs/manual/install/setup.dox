@@ -26,11 +26,11 @@ for required external libraries. The copy of this file in pscfpp/bld
 is the main configuration file for a standard out-of-source build, in 
 which intermediate files are created in the bld/ directory tree. The 
 brief overview of directions for compilation given on a previous page 
-give contain instructions for an out-of-source build, which we 
-recommend for most users who are not working on modifications of the 
-source code.  The copy in the pscfpp/src directory is the main 
-configuration file for an in-source build, which is a useful 
-alternative for compilation during development.
+give contain instructions for an out-of-source build, which we recommend 
+for most users who are not working on modifications of the source code.  
+The copy in the pscfpp/src directory is the main configuration file 
+for an in-source build, which is a useful alternative for compilation 
+during development.
 
 \section install_setup_default_sec Default configuration 
 
@@ -45,6 +45,24 @@ must be included to tell the unix shell to look for a script named setup
 in the current working directory, rather than searching the directories 
 listed in the PATH environment variable for a command with this name.
 
+The default configuration should work for either linux or for Macs with 
+Intel CPUs in which homebrew was used to install GSL and FFTW. The 
+definitions used in a default configuration are defined in a file
+pscfpp/make/compiler/default. 
+
+\section install_setup_homebrewm1_sec Macs with Homebrew and Apple Silicon
+
+To create an environment that should work correctly for a newer Mac
+with Apple silicon (i.e., the new M1 chip) on which Homebrew has used 
+to install dependencies, enter:
+\code
+> ./setup homebrew-m1
+\endcode
+This will use a compiler setup file pscfpp/make/compiler/homebrew-m1 
+that was designed for such an environment. This setup file add paths
+to appropriate subdirectories of /opt/homebrew to search paths used
+by the compiler. 
+
 \section install_setup_local_file_sec Customized configuration
 
 To create the main config.mk files that are installed in pscfpp/bld 
@@ -52,30 +70,34 @@ and pscfpp/src, the setup script reads a compiler setup file from the
 pscfpp/make/compiler directory and concatenates it with other makefile 
 fragments.  The compiler configuration file is relatively short makefile 
 fragment that contains definitions of makefile variables that define 
-compiler names, compiler options and paths to external libraries. When 
-the "setup" script is invoked with no argument, as indicated above, the 
-setup script uses a file named pscfpp/make/compiler/default for this
+compiler names, compiler options and paths to external libraries. 
+
+When the "setup" script is invoked with no argument, as indicated above, 
+the setup script uses a file named pscfpp/make/compiler/default for this
 purpose. This file contains a default configuration appropriate for a 
 system in which the gnu g++ C++ compiler is used to compile C++ files, 
 the nVidia nvcc compiler is used to compile CUDA files, and paths to 
 the gsl and fftw libraries are in common locations.
 
-It is also possible to direct the the setup script to used a customized
-compiler configuration file that is created by the user in the
-pscfpp/make/compiler directory, by invoking the setup script with the 
-name of a customized setup file as an argument.  For example, a user 
-could create a file named pscfpp/make/compiler/local by copying the 
-default file and then editing the variable definitions in that file 
-as needed. Invoking the command
+When set "setup" script is invoked with one argument, the argument is
+interpreted as the name of a file in the pscfpp/make/compiler directory
+that should be used as the compiler configuration file. For example, 
+the command "./setup homebrew-m1" causes the script system to read
+and copy the contents of the file pscfpp/make/compiler/homebrew-m1.  
+The command "./setup", with no argument, is equivalent to 
+"./setup default". 
+
+Users can also create other customized compiler configuration files in 
+the same directory.  For example, suppose that a user created a file 
+named pscfpp/make/compiler/local by making a copy of default file with
+that new name and then edited the variable definitions in that file as 
+needed. Invoking the command
 \code
 \> ./setup local
 \endcode
-would then cause the setup script to create config.mk configuration 
-files that contain the contents of the file pscfpp/make/compiler/local. 
-When the setup script is invoked with one argument, the argument is 
-interpreted as the base name of a file in the pscfpp/make/compiler 
-directory. Invoking setup with no argument is thus equivalent to the 
-command "./setup default" 
+would then cause the setup script to create a config.mk configuration 
+files that contain the contents of the user-created file 
+pscfpp/make/compiler/local. 
 
 In order to understand the meanings of the variables defined in the 
 compiler setup files, we recommend that you first run the setup script 
@@ -96,7 +118,7 @@ directory, rather than just editing the file src/config.mk are that:
 
    - The files src/config.mk and bld/config.mk will be erased if you 
      invoke "make veryclean" to start over with a fresh configuration, 
-     but files in the make/compiler directory will not be erased by
+     but files in the make/compiler directory are not be erased by
      this makefile target. 
 
    - Changes made in customized compiler setup file will be copied
@@ -104,8 +126,8 @@ directory, rather than just editing the file src/config.mk are that:
      in both in-source and out-of-source builds.
 
 Once you have figured out what changes to the default configuration
-are required on your system, we thus recommend that you store them 
-in a new file in the pscfpp/make/compiler directory.
+are required in your environment, we thus recommend that you store 
+them in a new file in the pscfpp/make/compiler directory.
 
 <BR>
 \ref install_environment_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

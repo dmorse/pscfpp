@@ -35,33 +35,31 @@ CPU programs and GPU-enabled programs
 
 In order to compile all of the CPU programs in the PSCF package, the 
 system on which the code is compiled and run must have:
+   - a git version control client 
+   - a C++ compiler 
+   - a python interpreter 
+   - the GNU Scientific Library (GSL) (header and library)
+   - the FFTW fast Fourier transform library (header and library)
 
-   - a ``git" version control client
-   - a C++ compiler
-   - a python interpreter
-   - the GNU Scientific Library (GSL)
-   - the FFTW fast Fourier transform library.
-
-A git client is needed to obtain (clone) the source code, which is 
-maintained in a git repository on the github.com server. A python 
+A git client is needed to obtain the source code, by cloning the git
+repository in which it is maintained on the github.com site. A python 
 interpreter is needed during compilation because the build system 
-that compiles PSCF uses several python scripts that are provided with 
-the package. A git client, C++ compiler and python interpreter will
-will normally come pre-installed in either a linux distribution or 
-a MacIntosh on which command line tools have been installed.  The GNU 
-scientific library is used by several programs within the package for 
-linear algebra operations. The FFTW Fast Fourier transform library is 
-used by the CPU version of the pseudo-spectral algorithm for periodic 
-microstructures.
+that compiles PSCF uses several python scripts. The required scripts
+are provided as part of the package. A git client, C++ compiler and 
+python interpreter will will normally come pre-installed in either a 
+linux distribution or in a Mac OS operating system in which command 
+line tools have been installed.  The GNU scientific library is used 
+by several programs within the package for linear algebra operations. 
+The FFTW Fast Fourier transform library is used by the CPU version 
+of the pseudo-spectral algorithm for periodic microstructures.
 
 In order compile GPU-enabled programs, the system must also have:
 
-   - An NVidia graphics card
-   - The Nvidia NVCC CUDA compiler
+   - an NVidia graphics card
+   - the NVidia NVCC CUDA compiler
    - the CUFFT GPU-accelerated fast Fourier transform library.
 
-The CUFFT library is provided with recent versions of the CUDA 
-development environment. 
+The CUFFT library is provided with the CUDA development environment. 
 
 Users who wish to generate a local copy of this html documentation,
 as web pages that reside on their own computer, will also need to
@@ -153,7 +151,7 @@ g++ compiler, so we recommend using the GNU compiler to compile C++
 source files if you are planning to compile CUDA code for use on the 
 same machine.
 
-\section Packages: Ubuntu and other Debian-based Linux Systems
+\section install_require_ubuntu Packages: Ubuntu and other Debian-based Linux Systems
 
 The CPU-based programs in PSCF require access to development versions of the
 Gnu Scientific Library (GSL) and FFTW packages.  These may be installed on 
@@ -168,7 +166,7 @@ sudo apt install doxygen
 \endcode
 On older Debian-based systems, or as a lower level alternative, one get issue the same commands using the "apt-get" command rather than "apt". 
 
-\section Packages: Mac OS X 
+\section install_require_mac  Packages: Mac OS X 
 
 We recommend using a package manager to install GSL and FFTW on Mac OS X.
 If you are not already using a package manager for managing unix programs 
@@ -188,8 +186,14 @@ To also install doxygen, issue the command
 \code
 > brew install doxygen
 \endcode
-The default configuration of the PSCF makefile system works correctly with 
-the GSL and FFTW packages as installed by Homebrew.
+
+Users should be aware that homebrew installs files in different places on newer Macs that use Apple silicon than on macs that used Intel cpus.
+
+On Macs with Intel cpus, homebrew installed links to required header and library files in subdirectories of the /usr/local directory. 
+Because /usr/local is  one of the standard directories in which a unix shell normally looks for such files, pscfpp can be installed on such machines using a default configuration for makefile system that is the as the default used on linux machines.
+
+On Macs with Apple silicon, homebrew instead installs all files in /opt/homebrew.
+This requires users to add this directory to the shell command search path, and to add subdirectories of this path to the search paths used by the compiler for header and library files. 
 
 \section install_require_module Linux Software Modules 
 

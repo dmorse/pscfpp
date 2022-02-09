@@ -12,6 +12,9 @@ these files is incorporated into the main config.mk file in each build
 directory by the setup script. The file "make/compiler/default" is used 
 if no other choice is specified.  The name of a different file in the
 make compiler directory can be passed to the setup script as a command 
-line argument. For example, one would invoke "./setup intel" to use the 
-definitions given in a file make/compiler/intel. 
+line argument. For example, one would invoke "./setup homebrew-m1" to 
+use the definitions given in a file make/compiler/homebrew-m1, which
+are for a Mac with the homebrew package manager and an apple silicon 
+cpu. Users may create new files in this directory to save more 
+specialized settings required in their own environment. 
 
