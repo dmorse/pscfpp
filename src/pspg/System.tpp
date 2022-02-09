@@ -40,17 +40,12 @@ namespace Pspg
    template <int D>
    System<D>::System()
     : mixture_(),
-      mesh_(),
-      unitCell_(),
+      domain_(),
       fileMaster_(),
       homogeneous_(),
       interactionPtr_(0),
       iteratorPtr_(0),
-      basisPtr_(),
-      //fft_(),
-      //groupName_(),
       wavelistPtr_(0),
-      fieldIo_(),
       sweepPtr_(0),
       sweepFactoryPtr_(0),
       wFields_(),
@@ -60,19 +55,18 @@ namespace Pspg
       fHelmholtz_(0.0),
       pressure_(0.0),
       hasMixture_(false),
-      hasUnitCell_(false),
       isAllocated_(false),
       hasWFields_(false),
       hasCFields_(false)
       // hasSweep_(0)
    {  
-      setClassName("System"); 
+      setClassName("System");
+      domain_.setFileMaster(fileMaster_);
 
       interactionPtr_ = new ChiInteraction();
       iteratorPtr_ = new AmIterator<D>(this); 
       wavelistPtr_ = new WaveList<D>();
-      basisPtr_ = new Basis<D>();
-
+      
       // sweepFactoryPtr_ = new SweepFactory(*this);
    }
 
@@ -225,27 +219,14 @@ namespace Pspg
       interaction().setNMonomer(mixture().nMonomer());
       readParamComposite(in, interaction());
 
-      read(in, "unitCell", unitCell_);
-      hasUnitCell_ = true;
-     
-      // Read crystallographic unit cell (used only to create basis) 
-      read(in, "mesh", mesh_);
-      mixture().setMesh(mesh());
-      hasMesh_ = true;
+      readParamComposite(in, domain_);
 
-      // Setup FFT object.
-      fft_.setup(mesh_.dimensions());
+      mixture().setMesh(mesh());
 
       // Construct wavelist 
       wavelist().allocate(mesh(), unitCell());
       wavelist().computeMinimumImages(mesh(), unitCell());
       mixture().setupUnitCell(unitCell(), wavelist());
-
-      // Read group name, construct basis 
-      read(in, "groupName", groupName_);
-      basis().makeBasis(mesh(), unitCell(), groupName_);
-      fieldIo_.associate(unitCell_, mesh_, fft_, groupName_,
-                         basis(), fileMaster_);
 
       // Allocate memory for w and c fields
       allocate();
@@ -281,7 +262,6 @@ namespace Pspg
    {
       // Preconditions
       UTIL_CHECK(hasMixture_);
-      UTIL_CHECK(hasMesh_);
 
       // Allocate wFields and cFields
       int nMonomer = mixture().nMonomer();
@@ -656,6 +636,7 @@ namespace Pspg
    {   
       fieldIo().readFieldsBasis(filename, wFields());
       fieldIo().convertBasisToRGrid(wFields(), wFieldsRGrid());
+      domain_.basis().update();
       hasWFields_ = true;
       hasCFields_ = false;
    } 
