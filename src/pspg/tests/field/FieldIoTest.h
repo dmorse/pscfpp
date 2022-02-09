@@ -174,7 +174,7 @@ public:
       out.close();
    }
 
-      void testReadHeader() 
+   void testReadHeader() 
    {
       printMethod(TEST_FUNC);
 
@@ -267,7 +267,6 @@ public:
       printMethod(TEST_FUNC);
 
       testBasisIo3D("w_bcc.rf", "w_bcc.bf");
-
    }
 
    void testBasisIo_c15_1() 
@@ -275,7 +274,6 @@ public:
       printMethod(TEST_FUNC);
 
       testBasisIo3D("c_c15_1.rf","w_c15_1.bf");
-
    }
 
    void testBasisIo_altG() 
@@ -283,7 +281,13 @@ public:
       printMethod(TEST_FUNC);
 
       testBasisIo3D("w_altG.rf", "w_altG.bf");
+   }
 
+   void testBasisIo_altG_fort() 
+   {
+      printMethod(TEST_FUNC);
+
+      testBasisIo3D("w_altG.rf", "w_altG_fort.bf");
    }
 
    void testRGridIo_bcc() 
@@ -733,7 +737,7 @@ TEST_ADD(FieldIoTest, testReadHeader)
 TEST_ADD(FieldIoTest, testBasisIo_bcc)
 TEST_ADD(FieldIoTest, testBasisIo_c15_1)
 TEST_ADD(FieldIoTest, testBasisIo_altG)
-// TEST_ADD(FieldIoTest, testBasisIo_altG_fort)
+//TEST_ADD(FieldIoTest, testBasisIo_altG_fort)
 TEST_ADD(FieldIoTest, testRGridIo_bcc)
 TEST_ADD(FieldIoTest, testConvertBasisKGridBasis_bcc)
 TEST_ADD(FieldIoTest, testConvertBasisRGridBasis_bcc)
