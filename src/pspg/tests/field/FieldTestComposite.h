@@ -4,11 +4,13 @@
 #include <test/CompositeTestRunner.h>
 
 #include "FftTest.h"
-//#include "cuFFTTest.h"
+#include "FieldIoTest.h"
+#include "DomainTest.h"
 
 TEST_COMPOSITE_BEGIN(FieldTestComposite)
 TEST_COMPOSITE_ADD_UNIT(FftTest);
-//TEST_COMPOSITE_ADD_UNIT(cuFFTTest);
+TEST_COMPOSITE_ADD_UNIT(DomainTest);
+TEST_COMPOSITE_ADD_UNIT(FieldIoTest);
 TEST_COMPOSITE_END
 
 #endif
