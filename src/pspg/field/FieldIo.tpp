@@ -1028,7 +1028,7 @@ namespace Pspg
 
    template <int D>
    void 
-   FieldIo<D>::convertKGridToRGrid(DArray< RDFieldDft<D> > const & in,
+   FieldIo<D>::convertKGridToRGrid(DArray< RDFieldDft<D> > & in,
                                    DArray< RDField<D> >& out) const
    {
       UTIL_ASSERT(in.capacity() == out.capacity());
@@ -1040,7 +1040,7 @@ namespace Pspg
 
    template <int D>
    void 
-   FieldIo<D>::convertRGridToKGrid(DArray< RDField<D> > const & in,
+   FieldIo<D>::convertRGridToKGrid(DArray< RDField<D> > & in,
                                    DArray< RDFieldDft<D> >& out) const
    {
       UTIL_ASSERT(in.capacity() == out.capacity());

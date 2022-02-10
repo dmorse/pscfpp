@@ -315,7 +315,7 @@ namespace Pspg
       * \param in  fields in discrete Fourier format (k-grid)
       * \param out  fields defined on real-space grid (r-grid)
       */
-      void convertKGridToRGrid(DArray< RDFieldDft<D> > const & in,
+      void convertKGridToRGrid(DArray< RDFieldDft<D> > & in,
                                DArray< RDField<D> > & out) const;
 
       /**
@@ -324,7 +324,7 @@ namespace Pspg
       * \param in  fields defined on real-space grid (r-grid)
       * \param out  fields in discrete Fourier format (k-grid)
       */
-      void convertRGridToKGrid(DArray< RDField<D> > const & in,
+      void convertRGridToKGrid(DArray< RDField<D> > & in,
                                DArray< RDFieldDft<D> > & out) const;
 
       //@}
