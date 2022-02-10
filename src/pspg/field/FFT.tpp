@@ -105,26 +105,25 @@ namespace Pspg
    * Execute forward transform.
    */
    template <int D>
-   void FFT<D>::forwardTransform(RDField<D> const & rField, RDFieldDft<D>& kField) const
+   void FFT<D>::forwardTransform(RDField<D> & rField, RDFieldDft<D>& kField)
    {
       // Check dimensions or setup
       UTIL_CHECK(isSetup_);
       UTIL_CHECK(rField.capacity() == rSize_);
       UTIL_CHECK(kField.capacity() == kSize_);
 
-      // Copy rescaled input data into new array to enforce const input. 
-      RDField<D> rFieldCopy(rField);
+      // Rescale outputted data. 
       cudaReal scale = 1.0/cudaReal(rSize_);
-      scaleRealData<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(rFieldCopy.cDField(), scale, rSize_);
+      scaleRealData<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(rField.cDField(), scale, rSize_);
       
       //perform fft
       #ifdef SINGLE_PRECISION
-      if(cufftExecR2C(fPlan_, rFieldCopy.cDField(), kField.cDField()) != CUFFT_SUCCESS) {
+      if(cufftExecR2C(fPlan_, rField.cDField(), kField.cDField()) != CUFFT_SUCCESS) {
          std::cout<<"CUFFT error: forward"<<std::endl;
          return;
       }
       #else
-      if(cufftExecD2Z(fPlan_, rFieldCopy.cDField(), kField.cDField()) != CUFFT_SUCCESS) {
+      if(cufftExecD2Z(fPlan_, rField.cDField(), kField.cDField()) != CUFFT_SUCCESS) {
          std::cout<<"CUFFT error: forward"<<std::endl;
          return;
       }
@@ -136,7 +135,7 @@ namespace Pspg
    * Execute inverse (complex-to-real) transform.
    */
    template <int D>
-   void FFT<D>::inverseTransform(RDFieldDft<D> const & kField, RDField<D>& rField) const
+   void FFT<D>::inverseTransform(RDFieldDft<D> & kField, RDField<D>& rField)
    {
       UTIL_CHECK(isSetup_);
       UTIL_CHECK(rField.capacity() == rSize_);
@@ -144,15 +143,13 @@ namespace Pspg
       UTIL_CHECK(rField.meshDimensions() == meshDimensions_);
       UTIL_CHECK(kField.meshDimensions() == meshDimensions_);
 
-      RDFieldDft<D> kFieldCopy(kField);
-
       #ifdef SINGLE_PRECISION
-      if(cufftExecC2R(iPlan_, kFieldCopy.cDField(), rField.cDField()) != CUFFT_SUCCESS) {
+      if(cufftExecC2R(iPlan_, kField.cDField(), rField.cDField()) != CUFFT_SUCCESS) {
          std::cout<<"CUFFT error: inverse"<<std::endl;
          return;
       }
       #else
-      if(cufftExecZ2D(iPlan_, kFieldCopy.cDField(), rField.cDField()) != CUFFT_SUCCESS) {
+      if(cufftExecZ2D(iPlan_, kField.cDField(), rField.cDField()) != CUFFT_SUCCESS) {
          std::cout<<"CUFFT error: inverse"<<std::endl;
          return;
       }

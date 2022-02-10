@@ -70,7 +70,7 @@ namespace Pspc {
       * \param in  array of real values on r-space grid
       * \param out  array of complex values on k-space grid
       */
-      void forwardTransform(RField<D> const & rField, RFieldDft<D>& kField) const;
+      void forwardTransform(RField<D> & rField, RFieldDft<D>& kField);
 
       /**
       * Compute inverse (complex-to-real) Fourier transform.
@@ -88,7 +88,7 @@ namespace Pspc {
       * \param in  array of complex values on k-space grid
       * \param out  array of real values on r-space grid
       */
-      void inverseTransform(RFieldDft<D> const & kField, RField<D>& rField) const;
+      void inverseTransform(RFieldDft<D> & kField, RField<D>& rField);
 
       /**
       * Return the dimensions of the grid for which this was allocated.

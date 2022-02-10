@@ -655,7 +655,7 @@ public:
       domain.fieldIo().convertKGridToRGrid(d_kf_0, d_rf_0);
 
       #if 0
-      // Demonstrate that input d_kf_0 is NOT modified by above
+      // Demonstrate that input d_kf_0 is destroyed/overwritten by above
       KFieldComparison<3> check;
       check.compare(d_kf_2, d_kf_0);
       std::cout  << std::endl;
@@ -708,7 +708,7 @@ public:
       domain.fieldIo().convertKGridToRGrid(d_kf_0, d_rf_0);
 
       #if 0
-      // Demonstrate that input d_kf_0 is NOT modified by above
+      // Demonstrate that input d_kf_0 is destroyed/overwritten by above
       KFieldComparison<3> check;
       check.compare(d_kf_2, d_kf_0);
       std::cout  << std::endl;

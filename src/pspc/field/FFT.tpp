@@ -98,8 +98,7 @@ namespace Pspc
    * Execute forward transform.
    */
    template <int D>
-   void FFT<D>::forwardTransform(RField<D> const & rField, RFieldDft<D>& kField)
-   const
+   void FFT<D>::forwardTransform(RField<D> & rField, RFieldDft<D>& kField)
    {
       UTIL_CHECK(isSetup_)
 
@@ -108,15 +107,14 @@ namespace Pspc
       UTIL_CHECK(rField.meshDimensions() == meshDimensions_);
       UTIL_CHECK(kField.meshDimensions() == meshDimensions_);
 
-      // Copy rescaled input data prior to work array
-      RField<D> rFieldCopy = rField;
+      // Rescale input data
       double scale = 1.0/double(rSize_);
       for (int i = 0; i < rSize_; ++i) {
-         rFieldCopy[i] *= scale;
+         rField[i] *= scale;
       }
-     
+
       // Execute preplanned forward transform 
-      fftw_execute_dft_r2c(fPlan_, &rFieldCopy[0], &kField[0]);
+      fftw_execute_dft_r2c(fPlan_, &rField[0], &kField[0]);
    }
 
    /*
@@ -124,8 +122,7 @@ namespace Pspc
    */
    template <int D>
    void 
-   FFT<D>::inverseTransform(RFieldDft<D> const & kField, RField<D>& rField)
-   const
+   FFT<D>::inverseTransform(RFieldDft<D> & kField, RField<D>& rField)
    {
       UTIL_CHECK(isSetup_)
       UTIL_CHECK(rField.capacity() == rSize_);
@@ -133,9 +130,7 @@ namespace Pspc
       UTIL_CHECK(rField.meshDimensions() == meshDimensions_);
       UTIL_CHECK(kField.meshDimensions() == meshDimensions_);
       
-      // to enforce const input to wrapper, make copy
-      RFieldDft<D> kFieldCopy = kField;
-      fftw_execute_dft_c2r(iPlan_, &kFieldCopy[0], &rField[0]);
+      fftw_execute_dft_c2r(iPlan_, &kField[0], &rField[0]);
 
    }
 
