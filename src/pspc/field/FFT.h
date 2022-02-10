@@ -70,7 +70,7 @@ namespace Pspc {
       * \param in  array of real values on r-space grid
       * \param out  array of complex values on k-space grid
       */
-      void forwardTransform(RField<D> & rField, RFieldDft<D>& kField);
+      void forwardTransform(RField<D> const & in, RFieldDft<D>& out) const;
 
       /**
       * Compute inverse (complex-to-real) Fourier transform.
@@ -85,10 +85,10 @@ namespace Pspc {
       * "...the inverse transform (complex to real) has the side-effect of 
       * overwriting its input array, ..."
       *
-      * \param in  array of complex values on k-space grid
+      * \param in  array of complex values on k-space grid (overwritten)
       * \param out  array of real values on r-space grid
       */
-      void inverseTransform(RFieldDft<D> & kField, RField<D>& rField);
+      void inverseTransform(RFieldDft<D>& in, RField<D>& out) const;
 
       /**
       * Return the dimensions of the grid for which this was allocated.
@@ -101,6 +101,9 @@ namespace Pspc {
       bool isSetup() const;
 
    private:
+
+      /// Work array for real data.
+      mutable RField<D> work_;
 
       /// Vector containing number of grid points in each direction.
       IntVec<D> meshDimensions_;

@@ -368,7 +368,7 @@ namespace Pspc
       * \param in  fields in discrete Fourier format (k-grid)
       * \param out  fields defined on real-space grid (r-grid)
       */
-      void convertKGridToRGrid(DArray< RFieldDft<D> > const & in,
+      void convertKGridToRGrid(DArray< RFieldDft<D> > & in,
                                DArray< RField<D> > & out) const;
 
       /**

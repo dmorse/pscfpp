@@ -21,7 +21,8 @@ namespace Pspc
    */
    template <int D>
    FFT<D>::FFT()
-    : meshDimensions_(0),
+    : work_(),
+      meshDimensions_(0),
       rSize_(0),
       kSize_(0),
       fPlan_(0),
@@ -88,6 +89,17 @@ namespace Pspc
       UTIL_CHECK(rField.capacity() == rSize_);
       UTIL_CHECK(kField.capacity() == kSize_);
 
+      // Allocate work array if necessary
+      if (!work_.isAllocated()) {
+          work_.allocate(rDimensions);
+      } else {
+          if (work_.capacity() != rSize_) {
+             work_.deallocate();
+             work_.allocate(rDimensions);
+          }
+      }
+      UTIL_CHECK(work_.capacity() == rSize_);
+
       // Make FFTW plans (see explicit specializations FFT.cpp)
       makePlans(rField, kField);
 
@@ -98,23 +110,23 @@ namespace Pspc
    * Execute forward transform.
    */
    template <int D>
-   void FFT<D>::forwardTransform(RField<D> & rField, RFieldDft<D>& kField)
+   void FFT<D>::forwardTransform(RField<D> const & rField, RFieldDft<D>& kField)   const
    {
       UTIL_CHECK(isSetup_)
-
+      UTIL_CHECK(work_.capacity() == rSize_);
       UTIL_CHECK(rField.capacity() == rSize_);
       UTIL_CHECK(kField.capacity() == kSize_);
       UTIL_CHECK(rField.meshDimensions() == meshDimensions_);
       UTIL_CHECK(kField.meshDimensions() == meshDimensions_);
 
-      // Rescale input data
+      // Copy rescaled input data prior to work array
       double scale = 1.0/double(rSize_);
       for (int i = 0; i < rSize_; ++i) {
-         rField[i] *= scale;
+         work_[i] = rField[i]*scale;
       }
-
+     
       // Execute preplanned forward transform 
-      fftw_execute_dft_r2c(fPlan_, &rField[0], &kField[0]);
+      fftw_execute_dft_r2c(fPlan_, &work_[0], &kField[0]);
    }
 
    /*
@@ -123,13 +135,14 @@ namespace Pspc
    template <int D>
    void 
    FFT<D>::inverseTransform(RFieldDft<D> & kField, RField<D>& rField)
+   const
    {
       UTIL_CHECK(isSetup_)
       UTIL_CHECK(rField.capacity() == rSize_);
       UTIL_CHECK(kField.capacity() == kSize_);
       UTIL_CHECK(rField.meshDimensions() == meshDimensions_);
       UTIL_CHECK(kField.meshDimensions() == meshDimensions_);
-      
+
       fftw_execute_dft_c2r(iPlan_, &kField[0], &rField[0]);
 
    }
