@@ -78,10 +78,10 @@ namespace Pspc {
          }
       }
 
-      // Set number kSize_ of points in k-space mesh
-      int kSize_ = 1;
+      // Set number kSize of points in k-space mesh
+      int kSize = 1;
       for (int i = 0; i < D; ++i) {
-           kSize_ *= kMeshDimensions_[i];
+           kSize *= kMeshDimensions_[i];
       }
 
       // Allocate work arrays for MDE solution
@@ -96,7 +96,7 @@ namespace Pspc {
       qf_.allocate(mesh.dimensions());
 
       // Allocate work array for stress calculation
-      dGsq_.allocate(kSize_, 6);
+      dGsq_.allocate(kSize, 6);
 
       // Allocate block concentration field
       cField().allocate(mesh.dimensions());
@@ -208,7 +208,7 @@ namespace Pspc {
       UTIL_CHECK(ds_ > 0);
       UTIL_CHECK(propagator(0).isAllocated());
       UTIL_CHECK(propagator(1).isAllocated());
-      UTIL_CHECK(cField().capacity() == nx)
+      UTIL_CHECK(cField().capacity() == nx);
 
       // Initialize cField to zero at all points
       int i;
@@ -263,7 +263,7 @@ namespace Pspc {
       stress_.clear();
 
       double dels, normal, increment;
-      int r, c, m;
+      int nParam, c, m;
 
       normal = 3.0*6.0;
 
@@ -271,14 +271,14 @@ namespace Pspc {
       for (int i = 0; i < D; ++i) {
            kSize_ *= kMeshDimensions_[i];
       }
-      r = unitCell().nParameter();
+      nParam = unitCell().nParameter();
       c = kSize_;
 
       FSArray<double, 6> dQ;
 
       // Initialize work array and stress_ to zero at all points
       int i;
-      for (i = 0; i < r; ++i) {
+      for (i = 0; i < nParam; ++i) {
          dQ.append(0.0);
          stress_.append(0.0);
       }
@@ -307,7 +307,7 @@ namespace Pspc {
             }
          }
 
-         for (int n = 0; n < r ; ++n) {
+         for (int n = 0; n < nParam ; ++n) {
             increment = 0.0;
 
             for (m = 0; m < c ; ++m) {
@@ -322,7 +322,7 @@ namespace Pspc {
       }
 
       // Normalize
-      for (i = 0; i < r; ++i) {
+      for (i = 0; i < nParam; ++i) {
          stress_[i] = stress_[i] - (dQ[i] * prefactor);
       }
 
@@ -389,6 +389,7 @@ namespace Pspc {
          qr_[i] = q[i]*expW_[i];
          qr2_[i] = q[i]*expW2_[i];
       }
+
       fft_.forwardTransform(qr_, qk_);
       fft_.forwardTransform(qr2_, qk2_);
       for (i = 0; i < nk; ++i) {

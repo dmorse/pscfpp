@@ -62,32 +62,25 @@ namespace Pspc {
       if (buffer == "block" || buffer == "block_length") {
          type_ = Block;
          nID_ = 2; // polymer and block identifiers
-      } else 
-      if (buffer == "chi") {
+      } else if (buffer == "chi") {
          type_ = Chi;
          nID_ = 2; // two monomer type identifiers
-      } else 
-      if (buffer == "kuhn") {
+      } else if (buffer == "kuhn") {
          type_ = Kuhn;
          nID_ = 1; // monomer type identifier
-      } else 
-      if (buffer == "phi_polymer") {
+      } else if (buffer == "phi_polymer") {
          type_ = Phi_Polymer;
          nID_ = 1; //species identifier.
-      } else 
-      if (buffer == "phi_solvent") {
+      } else if (buffer == "phi_solvent") {
          type_ = Phi_Solvent;
          nID_ = 1; //species identifier.
-      } else 
-      if (buffer == "mu_polymer") {
+      } else if (buffer == "mu_polymer") {
          type_ = Mu_Polymer;
          nID_ = 1; //species identifier.
-      } else 
-      if (buffer == "mu_solvent") {
+      } else if (buffer == "mu_solvent") {
          type_ = Mu_Solvent;
          nID_ = 1; //species identifier.
-      } else 
-      if (buffer == "solvent" || buffer == "solvent_size") {
+      } else if (buffer == "solvent" || buffer == "solvent_size") {
          type_ = Solvent;
          nID_ = 1; //species identifier.
       } else {
@@ -134,26 +127,19 @@ namespace Pspc {
    {
       if (type_ == Block) {
          return "block_length";
-      } else 
-      if (type_ == Chi) {
+      } else if (type_ == Chi) {
          return "chi";
-      } else 
-      if (type_ == Kuhn) {
+      } else if (type_ == Kuhn) {
          return "kuhn";
-      } else 
-      if (type_ == Phi_Polymer) {
+      } else if (type_ == Phi_Polymer) {
          return "phi_polymer";
-      } else 
-      if (type_ == Phi_Solvent) {
+      } else if (type_ == Phi_Solvent) {
          return "phi_solvent";
-      } else  
-      if (type_ == Mu_Polymer) {
+      } else if (type_ == Mu_Polymer) {
          return "mu_polymer";
-      } else
-      if (type_ == Mu_Solvent) {
+      } else if (type_ == Mu_Solvent) {
          return "mu_solvent";
-      } else  
-      if (type_ == Solvent) {
+      } else if (type_ == Solvent) {
          return "solvent_size";
       } else {
          UTIL_THROW("This should never happen.");
@@ -165,26 +151,19 @@ namespace Pspc {
    {
       if (type_ == Block) {
          return systemPtr_->mixture().polymer(id(0)).block(id(1)).length();
-      } else 
-      if (type_ == Chi) {
+      } else if (type_ == Chi) {
          return systemPtr_->interaction().chi(id(0),id(1));
-      } else 
-      if (type_ == Kuhn) {
+      } else if (type_ == Kuhn) {
          return systemPtr_->mixture().monomer(id(0)).kuhn();
-      } else 
-      if (type_ == Phi_Polymer) {
+      } else if (type_ == Phi_Polymer) {
          return systemPtr_->mixture().polymer(id(0)).phi();
-      } else
-      if (type_ == Phi_Solvent) {
+      } else if (type_ == Phi_Solvent) {
          return systemPtr_->mixture().solvent(id(0)).phi();
-      } else 
-      if (type_ == Mu_Polymer) {
+      } else if (type_ == Mu_Polymer) {
          return systemPtr_->mixture().polymer(id(0)).mu();
-      } else
-      if (type_ == Mu_Solvent) {
+      } else if (type_ == Mu_Solvent) {
          return systemPtr_->mixture().solvent(id(0)).mu();
-      } else 
-      if (type_ == Solvent) {
+      } else if (type_ == Solvent) {
          return systemPtr_->mixture().solvent(id(0)).size();
       } else {
          UTIL_THROW("This should never happen.");
@@ -196,26 +175,19 @@ namespace Pspc {
    {
       if (type_ == Block) {
          systemPtr_->mixture().polymer(id(0)).block(id(1)).setLength(newVal);
-      } else 
-      if (type_ == Chi) {
+      } else if (type_ == Chi) {
          systemPtr_->interaction().setChi(id(0), id(1), newVal);
-      } else 
-      if (type_ == Kuhn) {
+      } else if (type_ == Kuhn) {
          systemPtr_->mixture().setKuhn(id(0), newVal);
-      } else
-      if (type_ == Phi_Polymer) {
+      } else if (type_ == Phi_Polymer) {
          systemPtr_->mixture().polymer(id(0)).setPhi(newVal);
-      } else
-      if (type_ == Phi_Solvent) {
+      } else if (type_ == Phi_Solvent) {
          systemPtr_->mixture().solvent(id(0)).setPhi(newVal);
-      } else 
-      if (type_ == Mu_Polymer) {
+      } else if (type_ == Mu_Polymer) {
          systemPtr_->mixture().polymer(id(0)).setMu(newVal);
-      } else
-      if (type_ == Mu_Solvent) {
+      } else if (type_ == Mu_Solvent) {
          systemPtr_->mixture().solvent(id(0)).setMu(newVal);
-      } else 
-      if (type_ == Solvent) {
+      } else if (type_ == Solvent) {
          systemPtr_->mixture().solvent(id(0)).setSize(newVal);
       } else {
          UTIL_THROW("This should never happen.");

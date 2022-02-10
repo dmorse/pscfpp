@@ -6,7 +6,7 @@ crystal_system
 N_cell_param
               1
 cell_param    
-          0.000000E+00
+          3.900000E+00
 group_name
           I_41_3_2
 N_monomer

@@ -168,6 +168,15 @@ namespace Pspg
       void writeFieldsRGrid(std::string filename,
                             DArray< RDField<D> > const& fields);
 
+
+      void readFieldRGrid(std::istream& in, RDField<D> &field);
+
+      void readFieldRGrid(std::string filename, RDField<D> &field);
+
+      void writeFieldRGrid(std::ostream& out, RDField<D> const & field);
+
+      void writeFieldRGrid(std::string filename, RDField<D> const & field);
+
       /**
       * Read array of RFieldDft objects (k-space fields) from file.
       *
@@ -296,6 +305,28 @@ namespace Pspg
       void convertRGridToBasis(DArray< RDField<D> > & in,
                                DArray< RDField <D> > & out);
 
+      /**
+      * Convert fields from k-grid (DFT) to real space (rgrid) format.
+      * 
+      * This function simply calls the inverse FFT for an array of fields.
+      * The inverse FFT provided by the underlying FFTW library overwrites 
+      * its input, which is why argument "in" not a const reference.
+      *
+      * \param in  fields in discrete Fourier format (k-grid)
+      * \param out  fields defined on real-space grid (r-grid)
+      */
+      // void convertKGridToRGrid(DArray< RDFieldDft<D> > & in,
+      //                          DArray< RDField<D> > & out) const;
+
+      /**
+      * Convert fields from spatial grid (rgrid) to k-grid format.
+      * 
+      * \param in  fields defined on real-space grid (r-grid)
+      * \param out  fields in discrete Fourier format (k-grid)
+      */
+      // void convertRGridToKGrid(DArray< RDField<D> > & in,
+      //                         DArray< RDFieldDft<D> > & out) const;
+
       //@}
 
    private:
@@ -355,13 +386,6 @@ namespace Pspg
 
       /// Get FFT object by reference.
       FFT<D> const & fft() const
-      {
-         // UTIL_ASSERT(fftPtr_);  
-         return *fftPtr_; 
-      }
-
-      /// Get FFT object by reference.
-      FFT<D>& fft()
       {
          // UTIL_ASSERT(fftPtr_);  
          return *fftPtr_; 

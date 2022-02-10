@@ -25,7 +25,9 @@
 #include <pscf/inter/Interaction.h>
 #include <pscf/inter/ChiInteraction.h>
 #include <pscf/homogeneous/Clump.h>
+
 #include <pspc/field/BFieldComparison.h>
+#include <pspc/field/RFieldComparison.h>
 
 #include <util/format/Str.h>
 #include <util/format/Int.h>
@@ -344,21 +346,37 @@ namespace Pspc
             // After iterating and converging, sweep.
             sweep();
          } else
-         if (command == "COMPARE_W_BASIS") {
+         if (command == "COMPARE_BASIS") {
+
             // Get two filenames for comparison
             std::string filecompare1, filecompare2;
             DArray< DArray<double> > Bfield1, Bfield2;
             readEcho(in, filecompare1);
             readEcho(in, filecompare2);
             
-            // Store fields
-            readWBasis(filecompare1);
-            Bfield1 = wFields();
-            readWBasis(filecompare2);
-            Bfield2 = wFields();
+            // Store fields. Bfield1 and Bfield2 are unallocated, and thus will be
+            // allocated by the readFieldsBasis function.
+            fieldIo().readFieldsBasis(filecompare1, Bfield1, domain_.unitCell());
+            fieldIo().readFieldsBasis(filecompare2, Bfield2, domain_.unitCell());
 
             // Compare and output
             compare(Bfield1, Bfield2);
+
+         } else
+         if (command == "COMPARE_RGRID") {
+            // Get two filenames for comparison
+            std::string filecompare1, filecompare2;
+            DArray< RField<D> > Rfield1, Rfield2;
+            readEcho(in, filecompare1);
+            readEcho(in, filecompare2);
+            
+            // Store fields. Rfield1 and Rfield2 are unallocated, but will be
+            // allocated by the readFieldsBasis function.
+            fieldIo().readFieldsRGrid(filecompare1, Rfield1, domain_.unitCell());
+            fieldIo().readFieldsRGrid(filecompare2, Rfield2, domain_.unitCell());
+
+            // Compare and output
+            compare(Rfield1, Rfield2);
 
          } else
          if (command == "WRITE_W_BASIS") {
@@ -376,6 +394,15 @@ namespace Pspc
          if (command == "WRITE_C_RGRID") {
             readEcho(in, filename);
             writeCRGrid(filename);
+         } else
+         if (command == "WRITE_PROPAGATOR") {
+            int polymerID, blockID;
+            readEcho(in, filename);
+            in >> polymerID;
+            in >> blockID;
+            Log::file() << Str("polymer ID   ", 21) << polymerID << "\n"
+                        << Str("block ID   ", 21) << blockID << std::endl;
+            writePropagatorRGrid(filename, polymerID, blockID);
          } else
          if (command == "BASIS_TO_RGRID") {
             readEcho(in, inFileName);
@@ -788,7 +815,7 @@ namespace Pspc
    }
    
    /*
-   * Compare two fields.
+   * Compare two fields in basis format.
    */ 
    template <int D>
    void System<D>::compare(const DArray< DArray<double> > field1, const DArray< DArray<double> > field2)
@@ -798,7 +825,25 @@ namespace Pspc
 
       // ADD UNIT CELL PARAMETER COMPARISON //
 
-      Log::file() << "\n Basis-format field comparison results" << std::endl;
+      Log::file() << "\n Basis expansion field comparison results" << std::endl;
+      Log::file() << "     Maximum Absolute Difference:   " 
+                  << comparison.maxDiff() << std::endl;
+      Log::file() << "     Root-Mean-Square Difference:   " 
+                  << comparison.rmsDiff() << "\n" << std::endl;
+   }
+
+   /*
+   * Compare two fields in coordinate grid format.
+   */ 
+   template <int D>
+   void System<D>::compare(const DArray< RField<D> > field1, const DArray< RField<D> > field2)
+   {
+      RFieldComparison<D> comparison;
+      comparison.compare(field1,field2);
+
+      // ADD UNIT CELL PARAMETER COMPARISON?? //
+
+      Log::file() << "\n Real-space field comparison results" << std::endl;
       Log::file() << "     Maximum Absolute Difference:   " 
                   << comparison.maxDiff() << std::endl;
       Log::file() << "     Root-Mean-Square Difference:   " 
@@ -843,6 +888,16 @@ namespace Pspc
    {
       UTIL_CHECK(hasCFields_);
       fieldIo().writeFieldsRGrid(filename, cFieldsRGrid_, unitCell());
+   }
+
+   /*
+   * Write the last time slice of the propagator.
+   */
+   template <int D>
+   void System<D>::writePropagatorRGrid(const std::string & filename, int polymerID, int blockID) const
+   {
+      RField<D> tailField = mixture_.polymer(polymerID).propagator(blockID, 1).tail();
+      fieldIo().writeFieldRGrid(filename, tailField, unitCell());
    }
 
    // Field conversion command functions

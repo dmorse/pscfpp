@@ -40,17 +40,12 @@ namespace Pspg
    template <int D>
    System<D>::System()
     : mixture_(),
-      mesh_(),
-      unitCell_(),
+      domain_(),
       fileMaster_(),
       homogeneous_(),
       interactionPtr_(0),
       iteratorPtr_(0),
-      basisPtr_(),
-      //fft_(),
-      //groupName_(),
       wavelistPtr_(0),
-      fieldIo_(),
       sweepPtr_(0),
       sweepFactoryPtr_(0),
       wFields_(),
@@ -60,19 +55,18 @@ namespace Pspg
       fHelmholtz_(0.0),
       pressure_(0.0),
       hasMixture_(false),
-      hasUnitCell_(false),
       isAllocated_(false),
       hasWFields_(false),
       hasCFields_(false)
       // hasSweep_(0)
    {  
-      setClassName("System"); 
+      setClassName("System");
+      domain_.setFileMaster(fileMaster_);
 
       interactionPtr_ = new ChiInteraction();
       iteratorPtr_ = new AmIterator<D>(this); 
       wavelistPtr_ = new WaveList<D>();
-      basisPtr_ = new Basis<D>();
-
+      
       // sweepFactoryPtr_ = new SweepFactory(*this);
    }
 
@@ -225,24 +219,14 @@ namespace Pspg
       interaction().setNMonomer(mixture().nMonomer());
       readParamComposite(in, interaction());
 
-      read(in, "unitCell", unitCell_);
-      hasUnitCell_ = true;
-     
-      // Read crystallographic unit cell (used only to create basis) 
-      read(in, "mesh", mesh_);
+      readParamComposite(in, domain_);
+
       mixture().setMesh(mesh());
-      hasMesh_ = true;
 
       // Construct wavelist 
       wavelist().allocate(mesh(), unitCell());
       wavelist().computeMinimumImages(mesh(), unitCell());
       mixture().setupUnitCell(unitCell(), wavelist());
-
-      // Read group name, construct basis 
-      read(in, "groupName", groupName_);
-      basis().makeBasis(mesh(), unitCell(), groupName_);
-      fieldIo_.associate(unitCell_, mesh_, fft_, groupName_,
-                         basis(), fileMaster_);
 
       // Allocate memory for w and c fields
       allocate();
@@ -278,7 +262,6 @@ namespace Pspg
    {
       // Preconditions
       UTIL_CHECK(hasMixture_);
-      UTIL_CHECK(hasMesh_);
 
       // Allocate wFields and cFields
       int nMonomer = mixture().nMonomer();
@@ -317,6 +300,16 @@ namespace Pspg
 
       isAllocated_ = true;
    }
+
+   /*
+   * Read a filename string and echo to log file (used in readCommands).
+   */
+   template <int D>
+   void System<D>::readEcho(std::istream& in, std::string& string) const
+   {
+      in >> string;
+      Log::file() << " " << Str(string, 20) << std::endl;
+   }
    
    /*
    * Read and execute commands from a specified command file.
@@ -325,8 +318,7 @@ namespace Pspg
    void System<D>::readCommands(std::istream &in) 
    {
       UTIL_CHECK(isAllocated_);
-      std::string command;
-      std::string filename;
+      std::string command, filename, inFileName, outFileName;
 
       bool readNext = true;
       while (readNext) {
@@ -339,17 +331,24 @@ namespace Pspg
             readNext = false;
          } else 
          if (command == "READ_W_BASIS") {
-            in >> filename;
-            Log::file() << " " << Str(filename, 20) <<std::endl;
+            readEcho(in, filename);
 
             fieldIo().readFieldsBasis(filename, wFields());
             fieldIo().convertBasisToRGrid(wFields(), wFieldsRGrid());
             hasWFields_ = true;
 
+         } else
+         if (command == "COMPUTE") {
+            // Read w (chemical potential fields) if not done previously 
+            if (!hasWFields_) {
+               readEcho(in, filename);
+               readWBasis(filename);
+            }
+            // Solve the modified diffusion equation, without iteration
+            compute();
          } else 
          if (command == "READ_W_RGRID") {
-            in >> filename;
-            Log::file() << " " << Str(filename, 20) <<std::endl;
+            readEcho(in, filename);
 
             fieldIo().readFieldsRGrid(filename, wFieldsRGrid());
             hasWFields_ = true;
@@ -360,9 +359,7 @@ namespace Pspg
 
             // Read w fields in grid format iff not already set.
             if (!hasWFields_) {
-               in >> filename;
-               Log::file() << "Reading w fields from file: " 
-                           << Str(filename, 20) <<std::endl;
+               readEcho(in, filename);
                fieldIo().readFieldsRGrid(filename, wFieldsRGrid());
                hasWFields_ = true;
             }
@@ -382,59 +379,51 @@ namespace Pspg
          } else 
          if (command == "WRITE_W_BASIS") {
             UTIL_CHECK(hasWFields_);
-            in >> filename;
-            Log::file() << "  " << Str(filename, 20) << std::endl;
+            readEcho(in, filename);
             fieldIo().convertRGridToBasis(wFieldsRGrid(), wFields());
             fieldIo().writeFieldsBasis(filename, wFields());
          } else 
          if (command == "WRITE_W_RGRID") {
             UTIL_CHECK(hasWFields_);
-            in >> filename;
-            Log::file() << "  " << Str(filename, 20) << std::endl;
+            readEcho(in, filename);
             fieldIo().writeFieldsRGrid(filename, wFieldsRGrid());
          } else 
          if (command == "WRITE_C_BASIS") {
             UTIL_CHECK(hasCFields_);
-            in >> filename;
-            Log::file() << "  " << Str(filename, 20) << std::endl;
+            readEcho(in, filename);
             fieldIo().convertRGridToBasis(cFieldsRGrid(), cFields());
             fieldIo().writeFieldsBasis(filename, cFields());
          } else 
          if (command == "WRITE_C_RGRID") {
             UTIL_CHECK(hasCFields_);
-            in >> filename;
-            Log::file() << "  " << Str(filename, 20) << std::endl;
+            readEcho(in, filename);
             fieldIo().writeFieldsRGrid(filename, cFieldsRGrid());
          } else 
+         if (command == "WRITE_PROPAGATOR") {
+            int polymerID, blockID;
+            readEcho(in, filename);
+            in >> polymerID;
+            in >> blockID;
+            Log::file() << Str("polymer ID   ", 21) << polymerID << "\n"
+                        << Str("block ID   ", 21) << blockID << std::endl;
+            writePropagatorRGrid(filename, polymerID, blockID);
+         } else
          if (command == "BASIS_TO_RGRID") {
             hasCFields_ = false;
-
-            std::string inFileName;
-            in >> inFileName;
-            Log::file() << " " << Str(inFileName, 20) <<std::endl;
+            readEcho(in, inFileName);
+            readEcho(in, outFileName);
 
             fieldIo().readFieldsBasis(inFileName, cFields());
             fieldIo().convertBasisToRGrid(cFields(), cFieldsRGrid());
-
-            std::string outFileName;
-            in >> outFileName;
-            Log::file() << " " << Str(outFileName, 20) <<std::endl;
             fieldIo().writeFieldsRGrid(outFileName, cFieldsRGrid());
          } else 
          if (command == "RGRID_TO_BASIS") {
             hasCFields_ = false;
+            readEcho(in, inFileName);
+            readEcho(in, outFileName);
 
-            std::string inFileName;
-
-            in >> inFileName;
-            Log::file() << " " << Str(inFileName, 20) <<std::endl;
             fieldIo().readFieldsRGrid(inFileName, cFieldsRGrid());
-
             fieldIo().convertRGridToBasis(cFieldsRGrid(), cFields());
-
-            std::string outFileName;
-            in >> outFileName;
-            Log::file() << " " << Str(outFileName, 20) <<std::endl;
             fieldIo().writeFieldsBasis(outFileName, cFields());
 
          } else 
@@ -442,47 +431,39 @@ namespace Pspg
             hasCFields_ = false;
 
             // Read from file in k-grid format
-            std::string inFileName;
-            in >> inFileName;
-            Log::file() << " " << Str(inFileName, 20) <<std::endl;
+            readEcho(in, inFileName);
+            readEcho(in, outFileName);
             fieldIo().readFieldsKGrid(inFileName, cFieldsKGrid());
 
             // Use FFT to convert k-grid r-grid
             for (int i = 0; i < mixture().nMonomer(); ++i) {
                fft().inverseTransform(cFieldKGrid(i), cFieldRGrid(i));
             }
-
             // Write to file in r-grid format
-            std::string outFileName;
-            in >> outFileName;
-            Log::file() << " " << Str(outFileName, 20) <<std::endl;
             fieldIo().writeFieldsRGrid(outFileName, cFieldsRGrid());
 
          } else 
          if (command == "RHO_TO_OMEGA") {
 
             // Read c field file in r-grid format
-            std::string inFileName;
-            in >> inFileName;
-            Log::file() << " " << Str(inFileName, 20) << std::endl;
+            readEcho(in, inFileName);
+            readEcho(in, outFileName);
+
             fieldIo().readFieldsRGrid(inFileName, cFieldsRGrid());
 
             // Compute w fields, excluding Lagrange multiplier contribution
             //code is bad here, `mangled' access of data in array
             for (int i = 0; i < mixture().nMonomer(); ++i) {
-               assignUniformReal << < NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (wFieldRGrid(i).cDField(), 0, mesh().size());
+               assignUniformReal <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (wFieldRGrid(i).cDField(), 0, mesh().size());
             }
             for (int i = 0; i < mixture().nMonomer(); ++i) {
                for (int j = 0; j < mixture().nMonomer(); ++j) {
-                  pointWiseAddScale << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (wFieldRGrid(i).cDField(), cFieldRGrid(j).cDField(), 
+                  pointWiseAddScale <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (wFieldRGrid(i).cDField(), cFieldRGrid(j).cDField(), 
                      interaction().chi(i,j), mesh().size());
                }
             }
 
             // Write w fields to file in r-grid format
-            std::string outFileName;
-            in >> outFileName;
-            Log::file() << " " << Str(outFileName, 20) << std::endl;
             fieldIo().writeFieldsRGrid(outFileName, wFieldsRGrid());
 
          } else {
@@ -600,14 +581,14 @@ namespace Pspg
       float temp = 0;
       for (int i = 0; i < nm; ++i) {
          for (int j = i + 1; j < nm; ++j) {
-           assignUniformReal << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> >(workArray.cDField(), interaction().chi(i, j), nx);
-           inPlacePointwiseMul << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (workArray.cDField(), cFieldsRGrid_[i].cDField(), nx);
-           inPlacePointwiseMul << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (workArray.cDField(), cFieldsRGrid_[j].cDField(), nx);
+           assignUniformReal <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (workArray.cDField(), interaction().chi(i, j), nx);
+           inPlacePointwiseMul <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (workArray.cDField(), cFieldsRGrid_[i].cDField(), nx);
+           inPlacePointwiseMul <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (workArray.cDField(), cFieldsRGrid_[j].cDField(), nx);
            fHelmholtz_ += (reductionH(workArray, nx) / nx);
          }
          
-         assignReal << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (workArray.cDField(), wFieldsRGrid_[i].cDField(), nx);
-         inPlacePointwiseMul << <NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >> > (workArray.cDField(), cFieldsRGrid_[i].cDField(), nx);
+         assignReal <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (workArray.cDField(), wFieldsRGrid_[i].cDField(), nx);
+         inPlacePointwiseMul <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK  >>> (workArray.cDField(), cFieldsRGrid_[i].cDField(), nx);
          temp += reductionH(workArray, nx);
       }
       fHelmholtz_ -= (temp / nx);
@@ -655,10 +636,30 @@ namespace Pspg
    {   
       fieldIo().readFieldsBasis(filename, wFields());
       fieldIo().convertBasisToRGrid(wFields(), wFieldsRGrid());
+      domain_.basis().update();
       hasWFields_ = true;
       hasCFields_ = false;
    } 
 
+   /*
+   * Solve MDE for current w-fields, without iteration.
+   */
+   template <int D>
+   void System<D>::compute(bool needStress)
+   {
+      UTIL_CHECK(hasWFields_);
+
+      // Solve the modified diffusion equation (without iteration)
+      mixture().compute(wFieldsRGrid(), cFieldsRGrid());
+
+      // Convert c fields from r-grid to basis
+      fieldIo().convertRGridToBasis(cFieldsRGrid_, cFields_);
+      hasCFields_ = true;
+
+      if (needStress) {
+         mixture().computeStress(wavelist());
+      }
+   }
 
    /*  
    * Iteratively solve a SCFT problem for specified parameters.
@@ -716,6 +717,19 @@ namespace Pspg
       fieldIo().writeFieldsBasis(filename, cFields());
    }
 
+   template <int D>
+   void System<D>::writePropagatorRGrid(const std::string & filename, int polymerID, int blockID)
+   {
+      const cudaReal* d_tailField = mixture_.polymer(polymerID).propagator(blockID, 1).tail();
+      
+      // convert this cudaReal pointer to an RDField. Yikes.
+      RDField<D> tailField;
+      tailField.allocate(mesh().size());
+      cudaMemcpy(tailField.cDField(), d_tailField, mesh().size() * sizeof(cudaReal), cudaMemcpyDeviceToDevice);
+      // output. 
+      fieldIo().writeFieldRGrid(filename, tailField);
+   }
+
    /*  
    * Convert fields from real-space grid to symmetry-adapted basis format.
    */  
@@ -733,34 +747,34 @@ namespace Pspg
 
      switch(THREADS_PER_BLOCK){
      case 512:
-       deviceInnerProduct<512><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
+       deviceInnerProduct<512> <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal) >>> (d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
        break;
      case 256:
-       deviceInnerProduct<256><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
+       deviceInnerProduct<256> <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal) >>> (d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
        break;
      case 128:
-       deviceInnerProduct<128><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
+       deviceInnerProduct<128> <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal) >>> (d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
        break;
      case 64:
-       deviceInnerProduct<64><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
+       deviceInnerProduct<64> <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal) >>> (d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
        break;
      case 32:
-       deviceInnerProduct<32><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
+       deviceInnerProduct<32> <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal) >>> (d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
        break;
      case 16:
-       deviceInnerProduct<16><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
+       deviceInnerProduct<16> <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal) >>> (d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
        break;
      case 8:
-       deviceInnerProduct<8><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
+       deviceInnerProduct<8> <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal) >>> (d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
        break;
      case 4:
-       deviceInnerProduct<4><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
+       deviceInnerProduct<4> <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal) >>> (d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
        break;
      case 2:
-       deviceInnerProduct<2><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
+       deviceInnerProduct<2> <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal) >>> (d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
        break;
      case 1:
-       deviceInnerProduct<1><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
+       deviceInnerProduct<1> <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal) >>> (d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
        break;
      }
       cudaMemcpy(kernelWorkSpace_, d_kernelWorkSpace_, NUMBER_OF_BLOCKS * sizeof(cudaReal), cudaMemcpyDeviceToHost);
@@ -780,7 +794,7 @@ namespace Pspg
 
    template<int D>
    cudaReal System<D>::reductionH(const RDField<D>& a, int size) {
-     reduction << < NUMBER_OF_BLOCKS / 2, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal) >> > (d_kernelWorkSpace_, a.cDField(), size);
+     reduction <<< NUMBER_OF_BLOCKS / 2, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal) >>> (d_kernelWorkSpace_, a.cDField(), size);
       cudaMemcpy(kernelWorkSpace_, d_kernelWorkSpace_, NUMBER_OF_BLOCKS / 2 * sizeof(cudaReal), cudaMemcpyDeviceToHost);
       cudaReal final = 0;
       cudaReal c = 0;

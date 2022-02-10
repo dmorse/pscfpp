@@ -1,6 +1,6 @@
 include src/config.mk
 # =========================================================================
-.PHONY:  html clean clean-tests clean-bin clean-html veryclean 
+.PHONY:  html html-graphs clean clean-tests clean-bin clean-html veryclean 
 
 # =========================================================================
 # Main targets 
@@ -26,6 +26,9 @@ pspg:
  
 html:
 	cd docs; $(MAKE) html
+
+html-graphs:
+	cd docs; $(MAKE) html-graphs
 
 # =========================================================================
 # Clean targets

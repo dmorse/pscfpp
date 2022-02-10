@@ -86,6 +86,20 @@ namespace Pspg {
                          const WaveList<D>& waveList);
 
       /**
+      * Set or reset block length.
+      * 
+      * \param length  new block length
+      */
+      void setLength(double length);
+
+      /**
+      * Set or reset monomer statistical segment length.
+      * 
+      * \param kuhn  new monomer statistical segment length.
+      */
+      void setKuhn(double kuhn);
+
+      /**
       * Set solver for this block.
       *
       * \param w  chemical potential field for this monomer type
@@ -214,6 +228,12 @@ namespace Pspg {
 
       /// Pointer to associated Mesh<D> object.
       Mesh<D> const * meshPtr_;
+
+      /// Pointer to associated UnitCell<D> object.
+      UnitCell<D> const* unitCellPtr_;
+
+      /// Pointer to associated WaveList<D> object.
+      WaveList<D> const * waveListPtr_;
       
       /// Dimensions of wavevector mesh in real-to-complex transform
       IntVec<D> kMeshDimensions_;
@@ -226,7 +246,27 @@ namespace Pspg {
       /// Number of contour length steps = # grid points - 1.
       int ns_;
 
+      /// Have arrays been allocated in setDiscretization ?
+      bool isAllocated_;
+
+      /// Are expKsq_ arrays up to date ? (initialize false)
+      bool hasExpKsq_;
+
+      /** 
+      * Access associated UnitCell<D> as reference.
+      */  
+      UnitCell<D> const & unitCell() const 
+      {  return *unitCellPtr_; }
+
+      WaveList<D> const & wavelist() const 
+      {  return *waveListPtr_; }
+
       int nParams_;
+
+      /**
+      * Compute expKSq_ arrays.
+      */
+      void computeExpKsq();
 
    };
 

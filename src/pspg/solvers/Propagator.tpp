@@ -121,6 +121,7 @@ namespace Pspg {
     : blockPtr_(0),
       meshPtr_(0),
       ns_(0),
+      temp_(0),
       isAllocated_(false)
    {
    }
@@ -131,9 +132,11 @@ namespace Pspg {
    template <int D>
    Propagator<D>::~Propagator()
    {
-	   delete[] temp_;
-	   cudaFree(d_temp_);
-   }
+      if (temp_) {
+	      delete[] temp_;
+	      cudaFree(d_temp_);
+      }
+   }  
 
    template <int D>
    void Propagator<D>::allocate(int ns, const Mesh<D>& mesh)
@@ -302,7 +305,7 @@ namespace Pspg {
 		   cudaReal y = temp_[i] - c;
 		   cudaReal t = final + y;
 		   c = (t - final) - y;
-		  final = t;
+		   final = t;
 	   }
 	   
 	   return final;

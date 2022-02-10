@@ -413,13 +413,20 @@ namespace Pspc
       void sweep();
 
       /**
-      * Compare two fields and output their maximum and root-mean-squared
-      * difference. Requires a parameter file to set up the system object. 
-      * 
+      * Compare two basis function format fields and output their maximum 
+      * and root-mean-squared difference. Requires a parameter file 
+      * to set up the system object. 
       */
-
       void compare(const DArray< DArray<double> > field1, 
                    const DArray< DArray<double> > field2);
+
+      /**
+      * Compare two real-space fields and output their maximum and
+      * root-mean-squared difference. Requires a parameter file
+      * to set up the system object. 
+      */
+      void compare(const DArray< RField<D> > field1, 
+                   const DArray< RField<D> > field2);
 
       /**
       * Write chemical potential fields in symmetry adapted basis format.
@@ -448,6 +455,13 @@ namespace Pspc
       * \param filename name of output file
       */
       void writeCRGrid(const std::string & filename) const;
+
+      /**
+      * Write last contour slice of the propagator in real space grid format.
+      *
+      * \param filename name of output file
+      */
+      void writePropagatorRGrid(const std::string & filename, int polymerID, int blockID) const;
    
       /**
       * Convert a field from symmetry-adapted basis to r-grid format.

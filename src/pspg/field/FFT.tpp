@@ -48,6 +48,24 @@ namespace Pspg
    }
 
    /*
+   * Setup mesh dimensions.
+   */
+   template <int D>
+   void FFT<D>::setup(IntVec<D> const& meshDimensions)
+   {
+      // Precondition
+      UTIL_CHECK(!isSetup_);
+
+      // Create local r-grid and k-grid field objects
+      RDField<D> rField;
+      rField.allocate(meshDimensions);
+      RDFieldDft<D> kField;
+      kField.allocate(meshDimensions);
+
+      setup(rField, kField);
+   }
+
+   /*
    * Check and (if necessary) setup mesh dimensions.
    */
    template <int D>
@@ -87,19 +105,15 @@ namespace Pspg
    * Execute forward transform.
    */
    template <int D>
-   void FFT<D>::forwardTransform(RDField<D>& rField, RDFieldDft<D>& kField)
+   void FFT<D>::forwardTransform(RDField<D> & rField, RDFieldDft<D>& kField)
+   const
    {
       // Check dimensions or setup
-      if (isSetup_) {
-         UTIL_CHECK(rField.capacity() == rSize_);
-         UTIL_CHECK(kField.capacity() == kSize_);
-      } else {
-         //UTIL_CHECK(0);
-         //should never reach here in a parallel block. breaks instantly
-         setup(rField, kField);
-      }
+      UTIL_CHECK(isSetup_);
+      UTIL_CHECK(rField.capacity() == rSize_);
+      UTIL_CHECK(kField.capacity() == kSize_);
 
-      // Copy rescaled input data prior to work array
+      // Rescale outputted data. 
       cudaReal scale = 1.0/cudaReal(rSize_);
       scaleRealData<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(rField.cDField(), scale, rSize_);
       
@@ -122,12 +136,14 @@ namespace Pspg
    * Execute inverse (complex-to-real) transform.
    */
    template <int D>
-   void FFT<D>::inverseTransform(RDFieldDft<D>& kField, RDField<D>& rField)
+   void FFT<D>::inverseTransform(RDFieldDft<D> & kField, RDField<D>& rField) 
+   const
    {
-      if (!isSetup_) {
-         //UTIL_CHECK(0);
-         setup(rField, kField);
-      }
+      UTIL_CHECK(isSetup_);
+      UTIL_CHECK(rField.capacity() == rSize_);
+      UTIL_CHECK(kField.capacity() == kSize_);
+      UTIL_CHECK(rField.meshDimensions() == meshDimensions_);
+      UTIL_CHECK(kField.meshDimensions() == meshDimensions_);
 
       #ifdef SINGLE_PRECISION
       if(cufftExecC2R(iPlan_, kField.cDField(), rField.cDField()) != CUFFT_SUCCESS) {

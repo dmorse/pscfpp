@@ -11,7 +11,6 @@
 
 int main(int argc, char* argv[])
 {
-   //TEST_RUNNER(RMeshFieldTest) runner;
    FieldTestComposite runner;
 
    #if 0

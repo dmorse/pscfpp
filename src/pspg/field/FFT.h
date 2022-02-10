@@ -46,6 +46,13 @@ namespace Pspg {
       virtual ~FFT();
 
       /**
+      * Setup grid dimensions, plans and work space.
+      *
+      * \param meshDimensions Dimensions of real-space grid.
+      */
+      void setup(IntVec<D> const & meshDimensions);
+
+      /**
       * Check and setup grid dimensions if necessary.
       *
       * \param rDField real data on r-space grid (device mem)
@@ -59,7 +66,7 @@ namespace Pspg {
       * \param in  array of real values on r-space grid (device mem)
       * \param out  array of complex values on k-space grid (device mem)
       */
-      void forwardTransform(RDField<D>& in, RDFieldDft<D>& out);
+      void forwardTransform(RDField<D> & rField, RDFieldDft<D>& kField) const;
 
       /**
       * Compute inverse (complex-to-real) Fourier transform.
@@ -67,7 +74,7 @@ namespace Pspg {
       * \param in  array of complex values on k-space grid (device mem)
       * \param out  array of real values on r-space grid (device mem)
       */
-      void inverseTransform(RDFieldDft<D>& in, RDField<D>& out);
+      void inverseTransform(RDFieldDft<D> & kField, RDField<D>& rField) const;
 
       /**
       * Return the dimensions of the grid for which this was allocated.

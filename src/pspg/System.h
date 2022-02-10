@@ -11,6 +11,7 @@
 #include <pspg/iterator/AmIterator.h>
 #include <pspg/field/FieldIo.h>            // member
 #include <pspg/solvers/Mixture.h>          // member
+#include <pspg/field/Domain.h>             // member
 #include <pspg/solvers/WaveList.h>        // member
 #include <pspg/field/RDField.h>            // typedef
 #include <pspg/field/RDFieldDft.h>         // typedef
@@ -256,12 +257,12 @@ namespace Pspg
       /**
       * Get spatial discretization mesh by reference.
       */
-      Mesh<D>& mesh();
+      Mesh<D> & mesh();
 
       /**
       * Get crystal unitCell (i.e., lattice type and parameters) by reference.
       */
-      UnitCell<D>& unitCell();
+      UnitCell<D> & unitCell();
 
       /**
       * Get interaction (i.e., excess free energy model) by reference.
@@ -277,7 +278,7 @@ namespace Pspg
       /**
       * Get basis object by reference.
       */
-      Basis<D>& basis();
+      Basis<D> & basis();
 
       /**
       * Get container for wavevector data.
@@ -287,12 +288,12 @@ namespace Pspg
       /**
       * Get associated FieldIo object.
       */
-      FieldIo<D>& fieldIo();
+      FieldIo<D> & fieldIo();
 
       /**
       * Get associated FFT objecti by reference.
       */
-      FFT<D>& fft();
+      FFT<D> & fft();
 
       /**
       * Get homogeneous mixture (for reference calculations).
@@ -362,6 +363,29 @@ namespace Pspg
       void readWBasis(const std::string & filename);
 
       /**
+      * Solve the modified diffusion equation once, without iteration.
+      *
+      * This function calls the Mixture::compute() function to solve
+      * the statistical mechanics problem for a non-interacting system
+      * subjected to the currrent chemical potential fields (wFields
+      * and wFieldRGrid). This requires solution of the modified 
+      * diffusion equation for all polymers, computation of Boltzmann
+      * weights for all solvents, computation of molecular partition
+      * functions for all species, and computation of concentration
+      * fields for blocks and solvents, and computation of overall 
+      * concentrations for all monomer types. This function does not 
+      * compute the canonical (Helmholtz) free energy or grand-canonical 
+      * free energy (i.e., pressure). Upon return, the flag hasCFields 
+      * is set true.
+      *
+      * If argument needStress == true, then this function also calls
+      * Mixture<D>::computeStress() to compute the stress.
+      *
+      * \param needStress true if stress is needed, false otherwise
+      */
+      void compute(bool needStress = false);
+
+      /**
       * Iteratively solve a SCFT problem.
       * 
       * This function calls the iterator to attempt to solve the SCFT
@@ -418,6 +442,13 @@ namespace Pspg
       */
       void writeCBasis(const std::string & filename);
 
+      /**
+      * Write last contour slice of the propagator in real space grid format.
+      *
+      * \param filename name of output file
+      */
+      void writePropagatorRGrid(const std::string & filename, int polymerID, int blockID);
+
       //@}
 
       #if 0
@@ -436,19 +467,9 @@ namespace Pspg
       Mixture<D> mixture_;
 
       /**
-      * Spatial discretization mesh.
+      * Domain object (crystallography and mesh).
       */
-      Mesh<D> mesh_;
-
-      /**
-      * group name.
-      */
-      std::string groupName_;
-
-      /**
-      * Crystallographic unit cell (type and dimensions).
-      */
-      UnitCell<D> unitCell_;
+      Domain<D> domain_;
 
       /**
       * Filemaster (holds paths to associated I/O files).
@@ -469,27 +490,11 @@ namespace Pspg
       * Pointer to an iterator.
       */
       AmIterator<D>* iteratorPtr_;
-
-      /**
-      * Pointer to a Basis object
-      */
-      Basis<D>* basisPtr_;
-      
      
       /**
       * Container for wavevector data.   
       */ 
       WaveList<D>* wavelistPtr_;
-
-      /** 
-      * FieldIo object for field input/output operations
-      */
-      FieldIo<D> fieldIo_;
-
-      /**
-      * FFT object to be used by iterator
-      */
-      FFT<D> fft_;
 
       /**
       * Pointer to an Sweep object
@@ -558,16 +563,6 @@ namespace Pspg
       bool hasMixture_; 
 
       /**
-      * Has the Mesh been initialized?
-      */
-      bool hasMesh_;
-
-      /**
-      * Has the UnitCell been initialized?
-      */
-      bool hasUnitCell_;
-
-      /**
       * Has memory been allocated for fields?
       */
       bool isAllocated_;
@@ -632,6 +627,16 @@ namespace Pspg
       void initHomogeneous();
 
       /**
+      * Read a filename string and echo to log file.
+      *
+      * Used to read filenames in readCommands.
+      *
+      * \param in  input stream (i.e., input file)
+      * \param string  string to read and echo
+      */
+      void readEcho(std::istream& in, std::string& string) const;
+
+      /**
       * Compute inner product of two RDField fields (private, on GPU).
       */
       cudaReal innerProduct(const RDField<D>& a, const RDField<D>& b, int size);
@@ -658,20 +663,40 @@ namespace Pspg
 
    // Inline member functions
 
+   // Get the associated UnitCell<D> object by const reference.
+   template <int D>
+   inline UnitCell<D> & System<D>::unitCell()
+   { return domain_.unitCell(); }
+
+   // Get the Mesh<D> object.
+   template <int D>
+   inline Mesh<D> & System<D>::mesh()
+   { return domain_.mesh(); }
+
+   // Get the Basis<D> object.
+   template <int D>
+   inline Basis<D> & System<D>::basis()
+   {  return domain_.basis(); }
+
+   // Get the FFT<D> object.
+   template <int D>
+   inline FFT<D> & System<D>::fft()
+   {  return domain_.fft(); }
+
+   // Get the FieldIo<D> object.
+   template <int D>
+   inline FieldIo<D> & System<D>::fieldIo()
+   {  return domain_.fieldIo(); }
+
+   // Get the groupName string.
+   template <int D>
+   inline std::string System<D>::groupName()
+   { return domain_.groupName(); }
+
    // Get the associated Mixture<D> object.
    template <int D>
    inline Mixture<D>& System<D>::mixture()
    { return mixture_; }
-
-   // Get the Mesh<D>
-   template <int D>
-   inline Mesh<D>& System<D>::mesh()
-   { return mesh_; }
-
-   // Get the UnitCell<D>.
-   template <int D>
-   inline UnitCell<D>& System<D>::unitCell()
-   { return unitCell_; }
 
    // Get the Interaction (excess free energy model).
    template <int D>
@@ -680,24 +705,6 @@ namespace Pspg
       UTIL_ASSERT(interactionPtr_);
       return *interactionPtr_;
    }
-
-   // Get the FFT<D> object.
-   template <int D>
-   inline FFT<D>& System<D>::fft()
-   {  return fft_; }
-
-   // Get the Basis<D> object.
-   template <int D>
-   inline Basis<D>& System<D>::basis()
-   {
-      UTIL_ASSERT(basisPtr_);
-      return *basisPtr_;
-   }
-
-   // Get the FieldIo<D> object.
-   template <int D>
-   inline FieldIo<D>& System<D>::fieldIo()
-   {  return fieldIo_; }
 
    // Get the Iterator.
    template <int D>
@@ -789,11 +796,6 @@ namespace Pspg
    inline
    RDFieldDft<D>& System<D>::cFieldKGrid(int id)
    {  return cFieldsKGrid_[id]; }
-
-   // Get group name string.
-   template <int D>
-   inline std::string System<D>::groupName()
-   { return groupName_; }
 
    // Get precomputed Helmoltz free energy per monomer / kT.
    template <int D>

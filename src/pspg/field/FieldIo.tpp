@@ -147,7 +147,7 @@ namespace Pspg
  
    template <int D>
    void FieldIo<D>::readFieldsBasis(std::string filename, 
-                              DArray<RDField<D> >& fields)
+                                    DArray<RDField<D> >& fields)
    {
        std::ifstream file;
        fileMaster().openInputFile(filename, file);
@@ -156,9 +156,8 @@ namespace Pspg
    }
 
    template <int D>
-   void 
-   FieldIo<D>::writeFieldsBasis(std::ostream &out, 
-                                DArray<RDField<D> > const &  fields)
+   void FieldIo<D>::writeFieldsBasis(std::ostream &out, 
+                                     DArray<RDField<D> > const &  fields)
    {
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
@@ -281,7 +280,7 @@ namespace Pspg
 
    template <int D>
    void FieldIo<D>::readFieldsRGrid(std::string filename, 
-                              DArray< RDField<D> >& fields)
+                                    DArray< RDField<D> >& fields)
    {
       std::ifstream file;
       fileMaster().openInputFile(filename, file);
@@ -356,6 +355,126 @@ namespace Pspg
       std::ofstream file;
       fileMaster().openOutputFile(filename, file);
       writeFieldsRGrid(file, fields);
+      file.close();
+   }
+
+   template <int D>
+   void FieldIo<D>::readFieldRGrid(std::istream &in, RDField<D> &field)
+   {
+      FieldIo<D>::readFieldHeader(in);
+
+      std::string label;
+      in >> label;
+      UTIL_CHECK(label == "ngrid");
+      IntVec<D> nGrid;
+      in >> nGrid;
+      UTIL_CHECK(nGrid == mesh().dimensions());
+
+
+      cudaReal* temp_out = new cudaReal[mesh().size()];
+      
+      IntVec<D> offsets;
+      offsets[D - 1] = 1;
+      for(int i = D - 1 ; i > 0; --i ) {
+         offsets[i - 1] = offsets[i] * mesh().dimension(i);
+      }
+      IntVec<D> position;
+      for(int i = 0; i < D; ++i) {
+         position[i] = 0;
+      }
+
+      int rank = 0;
+      int positionId;
+      for(int i = 0; i < mesh().size(); i++) {
+         rank = 0;
+         for(int dim = 0; dim < D; ++dim) {
+            rank += offsets[dim] * position[dim];
+         }
+         in >> std::setprecision(15) >> temp_out[rank];
+
+         //add position
+         positionId = 0;
+         while( positionId < D) {
+            position[positionId]++;
+            if ( position[positionId] == mesh().dimension(positionId) ) {
+               position[positionId] = 0;
+               positionId++;
+               continue;
+            }
+            break;
+         } 
+      }
+      
+      cudaMemcpy(field.cDField(), temp_out,
+            mesh().size() * sizeof(cudaReal), cudaMemcpyHostToDevice);
+      delete temp_out;
+      temp_out = nullptr;
+
+   }
+
+   template <int D>
+   void FieldIo<D>::readFieldRGrid(std::string filename, RDField<D> &field)
+   {
+      std::ifstream file;
+      fileMaster().openInputFile(filename, file);
+      readFieldRGrid(file, field);
+      file.close();
+   }
+
+   template <int D>
+   void FieldIo<D>::writeFieldRGrid(std::ostream &out, RDField<D> const & field)
+   {
+
+      writeFieldHeader(out, 1);
+      out << "ngrid" <<  std::endl
+          << "           " << mesh().dimensions() << std::endl;
+
+      cudaReal* temp_out = new cudaReal[mesh().size()];;
+      cudaMemcpy(temp_out, field.cDField(),
+                  mesh().size() * sizeof(cudaReal), cudaMemcpyDeviceToHost);
+
+      IntVec<D> offsets;
+      offsets[D - 1] = 1;
+      for(int i = D - 1 ; i > 0; --i ) {
+         offsets[i - 1] = offsets[i] * mesh().dimension(i);
+      }
+      IntVec<D> position;
+      for(int i = 0; i < D; ++i) {
+         position[i] = 0;
+      }
+
+      int rank = 0;
+      int positionId;
+      for(int i = 0; i < mesh().size(); i++) {
+         rank = 0;
+         for(int dim = 0; dim < D; ++dim) {
+            rank += offsets[dim] * position[dim];
+         }
+         out << "  " << Dbl(temp_out[rank], 18, 15);
+         out<<'\n';
+         //add position
+         positionId = 0;
+         while( positionId < D) {
+            position[positionId]++;
+            if ( position[positionId] == mesh().dimension(positionId) ) {
+               position[positionId] = 0;
+               positionId++;
+               continue;
+            }
+            break;
+         } 
+      }
+      
+      delete temp_out;
+      temp_out = nullptr;
+   }
+
+   template <int D>
+   void FieldIo<D>::writeFieldRGrid(std::string filename, RDField<D> const & field)
+   {
+      std::ofstream file;
+      fileMaster().openOutputFile(filename, file);
+      writeFieldRGrid(file, field);
       file.close();
    }
 
@@ -469,7 +588,7 @@ namespace Pspg
 
    template <int D>
    void FieldIo<D>::writeFieldsKGrid(std::string filename, 
-                                    DArray< RDFieldDft<D> > const& fields)
+                                     DArray< RDFieldDft<D> > const& fields)
    {
       std::ofstream file;
       fileMaster().openOutputFile(filename, file);
@@ -906,6 +1025,30 @@ namespace Pspg
          workDft[i].deallocate();
       }
    }
+
+   // template <int D>
+   // void 
+   // FieldIo<D>::convertKGridToRGrid(DArray< RDFieldDft<D> > & in,
+   //                                 DArray< RDField<D> >& out) const
+   // {
+   //    UTIL_ASSERT(in.capacity() == out.capacity());
+   //    int n = in.capacity();
+   //    for (int i = 0; i < n; ++i) {
+   //       fft().inverseTransform(in[i], out[i]);
+   //    }
+   // }
+
+   // template <int D>
+   // void 
+   // FieldIo<D>::convertRGridToKGrid(DArray< RDField<D> > & in,
+   //                                 DArray< RDFieldDft<D> >& out) const
+   // {
+   //    UTIL_ASSERT(in.capacity() == out.capacity());
+   //    int n = in.capacity();
+   //    for (int i = 0; i < n; ++i) {
+   //       fft().forwardTransform(in[i], out[i]);
+   //    }
+   // }
 
    template <int D>
    void FieldIo<D>::checkWorkDft()

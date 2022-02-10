@@ -183,6 +183,22 @@ namespace Pspc
                             DArray< RField<D> > const & fields, 
                             UnitCell<D> const & unitCell) const;
 
+      void readFieldRGrid(std::istream &in, 
+                           RField<D> & field, 
+                           UnitCell<D>& unitCell) const;
+
+      void readFieldRGrid(std::string filename, 
+                           RField<D> & field, 
+                           UnitCell<D>& unitCell) const;
+
+      void writeFieldRGrid(std::ostream &out, 
+                           RField<D> const & field, 
+                           UnitCell<D> const & unitCell) const;
+
+      void writeFieldRGrid(std::string filename, 
+                           RField<D> const & field, 
+                           UnitCell<D> const & unitCell) const;
+
       /**
       * Read array of RFieldDft objects (k-space fields) from file.
       *
@@ -263,8 +279,9 @@ namespace Pspc
       * \param in input stream (i.e., input file)
       * \param nMonomer expected value of nMonomer
       * \param unitCell associated crystallographic UnitCell<D>
+      * \param checkMonomer depending on field type, check monomer number or not
       */
-      void readFieldHeader(std::istream& in, int nMonomer, 
+      void readFieldHeader(std::istream& in, int& nMonomer, 
                            UnitCell<D> & unitCell) const;
 
       /**
@@ -351,7 +368,7 @@ namespace Pspc
       * \param in  fields in discrete Fourier format (k-grid)
       * \param out  fields defined on real-space grid (r-grid)
       */
-      void convertKGridToRGrid(DArray< RFieldDft<D> >& in,
+      void convertKGridToRGrid(DArray< RFieldDft<D> > & in,
                                DArray< RField<D> > & out) const;
 
       /**
