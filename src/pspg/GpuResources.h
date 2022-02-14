@@ -166,43 +166,85 @@ static __global__ void AmHelperVm(cudaReal* out, cudaReal* present, cudaReal* iP
 
 static __global__ void reduction(cudaReal* c, const cudaReal* a, int size) 
 {
-   //int nThreads = blockDim.x * gridDim.x;
-   int startID = blockIdx.x * (blockDim.x*2) + threadIdx.x;
+   // number of blocks used cut in two
+   int tid = threadIdx.x;
+   int bid = blockIdx.x;
+   int idx = bid * (blockDim.x*2) + tid;
    
    
-   volatile extern __shared__ cudaReal cache[];
-   //cudaReal temp = 0;
-   //no need for loop here will be wrong.
-   //for (int i = startID; i < size; i += nThreads) {
-   //temp += a[startID];
-   //}
-   cache[threadIdx.x] = a[startID] + a[startID + blockDim.x];
+   volatile extern __shared__ cudaReal sdata[];
+   // global mem load combined with first operation
+   sdata[tid] = a[idx] + a[idx + blockDim.x];
    
    __syncthreads();
    
-   //reduce operation
-   //256/2 -- needs to be power of two
-   for (int j = blockDim.x / 2; j > 32; j /= 2) {
-      if (threadIdx.x < j) {
-         cache[threadIdx.x] += cache[threadIdx.x + j];
+   // reduction
+   // data and block dimensions need to be a power of two
+   for (int stride = blockDim.x / 2; stride > 32; stride /= 2) {
+      if (tid < stride) {
+         sdata[tid] += sdata[tid + stride];
       }
       __syncthreads();
    }
    
-   if (threadIdx.x < 32) {
+   // unrolled. In final warp, synchronization is inherent 
+   if (tid < 32) {
       
-      cache[threadIdx.x] += cache[threadIdx.x + 32];
-      cache[threadIdx.x] += cache[threadIdx.x + 16];
-      cache[threadIdx.x] += cache[threadIdx.x + 8];
-      cache[threadIdx.x] += cache[threadIdx.x + 4];
-      cache[threadIdx.x] += cache[threadIdx.x + 2];
-      cache[threadIdx.x] += cache[threadIdx.x + 1];
+      sdata[tid] += sdata[tid + 32];
+      sdata[tid] += sdata[tid + 16];
+      sdata[tid] += sdata[tid + 8];
+      sdata[tid] += sdata[tid + 4];
+      sdata[tid] += sdata[tid + 2];
+      sdata[tid] += sdata[tid + 1];
       
    }
    
-   if (threadIdx.x == 0) {
-      c[blockIdx.x] = cache[0];
+   if (tid == 0) {
+      c[bid] = sdata[0];
    }
+}
+
+template <typename T>
+static __global__ void reduction(T* d_out, const T* d_in, T reduceFunc(T), int size) 
+{
+   // number of blocks cut in two to avoid inactive initial threads
+   int tid = threadIdx.x;
+   int bid = blockIdx.x;
+   int idx = bid * (blockDim.x*2) + tid;
+   
+   
+   volatile extern __shared__ T sdata[];
+   // global mem load combined with first operation
+   sdata[tid] = reduceFunc( d_in[idx], d_in[idx + blockDim.x] );
+   
+   __syncthreads();
+   
+   // reduction
+   // data and block dimensions need to be a power of two
+   for (int stride = blockDim.x / 2; stride > 32; stride /= 2) {
+      if (tid < stride) {
+         sdata[tid] = reduceFunc( sdata[tid], sdata[tid + stride] );
+      }
+      __syncthreads();
+   }
+   
+   // unrolled. In final warp, synchronization is inherent.
+   if (tid < 32) warpReduce(sdata, reduceFunc, tid);
+   
+   if (tid == 0) {
+      c[bid] = sdata[0];
+   }
+}
+
+template <typename T>
+static __device__ void warpReduce(volatile T* sdata, T reduceFunc(T), int tid)
+{
+   sdata[tid] = reduceFunc( sdata[tid], sdata[tid + 32] );
+   sdata[tid] = reduceFunc( sdata[tid], sdata[tid + 16] );
+   sdata[tid] = reduceFunc( sdata[tid], sdata[tid +  8]  );
+   sdata[tid] = reduceFunc( sdata[tid], sdata[tid +  4]  );
+   sdata[tid] = reduceFunc( sdata[tid], sdata[tid +  2]  );
+   sdata[tid] = reduceFunc( sdata[tid], sdata[tid +  1]  );
 }
 
 static __global__ void reductionMax(cudaReal* d_max, cudaReal* in, int size)
@@ -224,6 +266,41 @@ static __global__ void reductionMax(cudaReal* d_max, cudaReal* in, int size)
       for (int stride = blockDim.x/2; stride > 0; stride/=2) {
          if (threadIdx.x < stride) {
             if (sharedData[threadIdx.x+stride] > sharedData[threadIdx.x]) {
+               sharedData[threadIdx.x] = sharedData[threadIdx.x+stride];
+            }
+         }
+         
+
+         __syncthreads();
+      }
+
+      // Store the output of the threads in this block
+      if (threadIdx.x == 0) {
+         d_max[blockIdx.x] = sharedData[0];
+      }
+   }
+
+}
+
+static __global__ void reductionMin(cudaReal* d_min, cudaReal* in, int size)
+{
+   int idx = blockIdx.x * blockDim.x + threadIdx.x;
+   
+   if (idx < size) {
+      // Shared memory holding area
+      extern __shared__ cudaReal sharedData[];
+
+      // Copy data into shared, wait for all threads to finish
+      sharedData[threadIdx.x] = in[idx];
+      
+      __syncthreads();
+
+      // Make comparisons across the block of data, each thread handling 
+      // one comparison across two data points with strided indices before 
+      // syncing with each other and then making further comparisons.
+      for (int stride = blockDim.x/2; stride > 0; stride/=2) {
+         if (threadIdx.x < stride) {
+            if (sharedData[threadIdx.x+stride] < sharedData[threadIdx.x]) {
                sharedData[threadIdx.x] = sharedData[threadIdx.x+stride];
             }
          }
