@@ -1210,7 +1210,7 @@ namespace Pspc
       int n = in.capacity();
       for (int i = 0; i < n; ++i) {
          convertBasisToKGrid(in[i], workDft_);
-         fft().inverseTransform(workDft_, out[i]);
+         fft().inverseTransformSafe(workDft_, out[i]);
       }
    }
 
@@ -1237,7 +1237,7 @@ namespace Pspc
       UTIL_ASSERT(in.capacity() == out.capacity());
       int n = in.capacity();
       for (int i = 0; i < n; ++i) {
-         fft().inverseTransform(in[i], out[i]);
+         fft().inverseTransformSafe(in[i], out[i]);
       }
    }
 

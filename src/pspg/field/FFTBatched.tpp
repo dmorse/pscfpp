@@ -155,7 +155,7 @@ namespace Pspg
          
       }
 
-#ifdef SINGLE_PRECISION
+      #ifdef SINGLE_PRECISION
       if(cufftPlanMany(&fPlan_, D, n, //plan, rank, n
                        NULL, 1, rdist, //inembed, istride, idist
                        NULL, 1, kdist, //onembed, ostride, odist
@@ -170,7 +170,7 @@ namespace Pspg
          std::cout<<"plan creation failed "<<std::endl;
          exit(1);
       }
-#else
+      #else
       if(cufftPlanMany(&fPlan_, D, n, //plan, rank, n
                        NULL, 1, rdist, //inembed, istride, idist
                        NULL, 1, kdist, //onembed, ostride, odist
@@ -185,7 +185,7 @@ namespace Pspg
          std::cout<<"plan creation failed "<<std::endl;
          exit(1);
       }
-#endif      
+      #endif      
    }
 
    /*
@@ -209,7 +209,7 @@ namespace Pspg
          
       }
 
-#ifdef SINGLE_PRECISION
+      #ifdef SINGLE_PRECISION
       if(cufftPlanMany(&fPlan_, D, n, //plan, rank, n
                        NULL, 1, rdist, //inembed, istride, idist
                        NULL, 1, kdist, //onembed, ostride, odist
@@ -224,7 +224,7 @@ namespace Pspg
          std::cout<<"plan creation failed "<<std::endl;
          exit(1);
       }
-#else
+      #else
       if(cufftPlanMany(&fPlan_, D, n, //plan, rank, n
                        NULL, 1, rdist, //inembed, istride, idist
                        NULL, 1, kdist, //onembed, ostride, odist
@@ -239,7 +239,7 @@ namespace Pspg
          std::cout<<"plan creation failed "<<std::endl;
          exit(1);
       }
-#endif
+      #endif
    }
 
    /*
