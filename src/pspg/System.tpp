@@ -9,7 +9,7 @@
 */
 
 #include "System.h"
-#include <pspg/GpuResources.h>
+#include <pspg/math/GpuResources.h>
 
 #include <pscf/homogeneous/Clump.h>
 #include <pscf/crystal/shiftToMinimum.h>

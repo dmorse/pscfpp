@@ -9,7 +9,7 @@
 */
 
 #include "Polymer.h"
-#include <pspg/GpuResources.h>
+#include <pspg/math/GpuResources.h>
 
 namespace Pscf {
 namespace Pspg { 

@@ -11,7 +11,7 @@
 #include <pscf/math/FieldComparison.h>
 //#include <pspg/field/RDField.h>
 #include <util/containers/DArray.h>
-#include <pspg/GpuResources.h>
+#include <pspg/math/GpuResources.h>
 
 namespace Pscf {
 namespace Pspg {

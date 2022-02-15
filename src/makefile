@@ -72,6 +72,7 @@ clean:
 	cd pscf; $(MAKE) clean
 	cd fd1d; $(MAKE) clean
 	cd pspc; $(MAKE) clean
+	cd pspg; $(MAKE) clean
 
 # Clean unit tests
 clean-tests:
@@ -79,6 +80,7 @@ clean-tests:
 	cd pscf/tests; $(MAKE) clean
 	cd fd1d/tests; $(MAKE) clean
 	cd pspc/tests; $(MAKE) clean
+	cd pspg/tests; $(MAKE) clean
 
 # Remove all automatically generated files, recreate initial state
 veryclean:

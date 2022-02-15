@@ -7,7 +7,7 @@
 #include <pspg/System.h>
 #include <pspg/field/BFieldComparison.h>
 #include <pspg/field/RDField.h>
-#include <pspg/GpuResources.h>
+#include <pspg/math/GpuResources.h>
 
 //#include <pscf/mesh/MeshIterator.h>
 //#include <util/format/Dbl.h>

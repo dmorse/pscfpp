@@ -11,7 +11,7 @@
 
 #include "WaveList.h"
 #include "cuComplex.h"
-#include <pspg/GpuResources.h>
+#include <pspg/math/GpuResources.h>
 
 //need a reference table that maps index to a pair wavevector
 //ideally we can have a group of thread dealing with only

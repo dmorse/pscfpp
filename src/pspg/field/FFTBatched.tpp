@@ -9,7 +9,7 @@
 */
 
 #include "FFTBatched.h"
-#include <pspg/GpuResources.h>
+#include <pspg/math/GpuResources.h>
 
 static __global__ void scaleComplexData(cudaComplex* data, cudaReal scale, int size) {
    

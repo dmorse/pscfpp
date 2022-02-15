@@ -6,7 +6,7 @@
 
 #include <pspg/field/RDField.h>
 #include <util/math/Constants.h>
-#include <pspg/GpuResources.h>
+#include <pspg/math/GpuResources.h>
 
 #include <cstdlib>
 
@@ -91,11 +91,9 @@ public:
       }
 
       // Host find max
-      int maxCheckIdx;
       for (int i = 0; i < n; i++) {
          if (num[i] > maxCheck) {
             maxCheck = num[i];
-            maxCheckIdx = i;
          }
       }
 

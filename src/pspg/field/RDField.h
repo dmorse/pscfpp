@@ -11,7 +11,7 @@
 #include "DField.h"
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
-#include <pspg/GpuResources.h>
+#include <pspg/math/GpuResources.h>
 
 #include <cufft.h>
 

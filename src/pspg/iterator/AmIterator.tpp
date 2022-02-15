@@ -11,7 +11,7 @@
 #include "AmIterator.h"
 #include <pspg/System.h>
 #include <util/format/Dbl.h>
-#include <pspg/GpuResources.h>
+#include <pspg/math/GpuResources.h>
 #include <util/containers/FArray.h>
 #include <util/misc/Timer.h>
 #include <sys/time.h>
@@ -53,10 +53,18 @@ namespace Pspg {
    void AmIterator<D>::readParameters(std::istream& in)
    {   
       isFlexible_ = 0; //default value (fixed cell)
+      errorType_ = "normResid"; // default type of error
+      //scaleStress_ = 10.0; // default stress scaling
       read(in, "maxItr", maxItr_);
       read(in, "epsilon", epsilon_);
       read(in, "maxHist", maxHist_);
-      readOptional(in, "isFlexible", isFlexible_); 
+      readOptional(in, "isFlexible", isFlexible_);
+      readOptional(in, "errorType", errorType_);
+      // readOptional(in, "scaleStress", scaleStress_);
+
+      if (!(errorType_ == "normResid" || errorType_ == "maxResid")) {
+         UTIL_THROW("Invalid iterator error type in parameter file.");
+      }
    }
 
    template <int D>
@@ -347,6 +355,8 @@ namespace Pspg {
       else {
          return false;
       }
+
+      // Find max residuals. 
    }
 
    template <int D>

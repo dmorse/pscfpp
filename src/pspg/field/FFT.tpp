@@ -9,7 +9,7 @@
 */
 
 #include "FFT.h"
-#include <pspg/GpuResources.h>
+#include <pspg/math/GpuResources.h>
 
 //forward declaration
 //static __global__ void scaleRealData(cudaReal* data, rtype scale, int size);

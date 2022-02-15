@@ -15,7 +15,7 @@
 #include <cuda.h>
 //#include <device_functions.h>
 #include <thrust/count.h>
-#include <pspg/GpuResources.h>
+#include <pspg/math/GpuResources.h>
 #include <pscf/mesh/Mesh.h>
 //#include <Windows.h>
 

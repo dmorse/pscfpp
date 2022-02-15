@@ -205,6 +205,17 @@ static __global__ void reduction(cudaReal* c, const cudaReal* a, int size)
 }
 
 template <typename T>
+static __device__ void warpReduce(volatile T* sdata, T reduceFunc(T), int tid)
+{
+   sdata[tid] = reduceFunc( sdata[tid], sdata[tid + 32] );
+   sdata[tid] = reduceFunc( sdata[tid], sdata[tid + 16] );
+   sdata[tid] = reduceFunc( sdata[tid], sdata[tid +  8]  );
+   sdata[tid] = reduceFunc( sdata[tid], sdata[tid +  4]  );
+   sdata[tid] = reduceFunc( sdata[tid], sdata[tid +  2]  );
+   sdata[tid] = reduceFunc( sdata[tid], sdata[tid +  1]  );
+}
+
+template <typename T>
 static __global__ void reduction(T* d_out, const T* d_in, T reduceFunc(T), int size) 
 {
    // number of blocks cut in two to avoid inactive initial threads
@@ -229,22 +240,12 @@ static __global__ void reduction(T* d_out, const T* d_in, T reduceFunc(T), int s
    }
    
    // unrolled. In final warp, synchronization is inherent.
-   if (tid < 32) warpReduce(sdata, reduceFunc, tid);
-   
-   if (tid == 0) {
-      c[bid] = sdata[0];
-   }
-}
-
-template <typename T>
-static __device__ void warpReduce(volatile T* sdata, T reduceFunc(T), int tid)
-{
-   sdata[tid] = reduceFunc( sdata[tid], sdata[tid + 32] );
-   sdata[tid] = reduceFunc( sdata[tid], sdata[tid + 16] );
-   sdata[tid] = reduceFunc( sdata[tid], sdata[tid +  8]  );
-   sdata[tid] = reduceFunc( sdata[tid], sdata[tid +  4]  );
-   sdata[tid] = reduceFunc( sdata[tid], sdata[tid +  2]  );
-   sdata[tid] = reduceFunc( sdata[tid], sdata[tid +  1]  );
+   if (tid < 32) 
+      warpReduce<T>(sdata, reduceFunc, tid);
+      
+   // one thread for each block stores that block's results in global memory
+   if (tid == 0)
+      d_out[bid] = sdata[0];
 }
 
 static __global__ void reductionMax(cudaReal* d_max, cudaReal* in, int size)
@@ -311,7 +312,7 @@ static __global__ void reductionMin(cudaReal* d_min, cudaReal* in, int size)
 
       // Store the output of the threads in this block
       if (threadIdx.x == 0) {
-         d_max[blockIdx.x] = sharedData[0];
+         d_min[blockIdx.x] = sharedData[0];
       }
    }
 

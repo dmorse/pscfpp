@@ -28,195 +28,199 @@
 namespace Pscf {
 namespace Pspg {
 
-      using namespace Util;
+   using namespace Util;
+
+   /**
+   * Anderson mixing iterator for the pseudo spectral method
+   *
+   * \ingroup Pspg_Iterator_Module
+   */
+   template <int D>
+   class AmIterator : public Iterator<D>
+   {
+   public:
+
+      typedef RDField<D> WField;
+      typedef RDField<D> CField;
+      /**
+      * Default constructor
+      */
+      AmIterator();
 
       /**
-      * Anderson mixing iterator for the pseudo spectral method
+      * Constructor
       *
-      * \ingroup Pspg_Iterator_Module
+      * \param system pointer to a system object
       */
-      template <int D>
-      class AmIterator : public Iterator<D>
-      {
-      public:
+      AmIterator(System<D>* system);
 
-         typedef RDField<D> WField;
-         typedef RDField<D> CField;
-         /**
-         * Default constructor
-         */
-         AmIterator();
+      /**
+      * Destructor
+      */
+      ~AmIterator();
 
-         /**
-         * Constructor
-         *
-         * \param system pointer to a system object
-         */
-         AmIterator(System<D>* system);
+      /**
+      * Read all parameters and initialize.
+      *
+      * \param in input filestream
+      */
+      void readParameters(std::istream& in);
 
-         /**
-         * Destructor
-         */
-         ~AmIterator();
+      /**
+      * Allocate all arrays
+      *
+      */
+      void allocate();
 
-         /**
-         * Read all parameters and initialize.
-         *
-         * \param in input filestream
-         */
-         void readParameters(std::istream& in);
+      /**
+      * Iterate to a solution
+      *
+      */
+      int solve();
 
-         /**
-         * Allocate all arrays
-         *
-         */
-         void allocate();
+      /**
+      * Getter for epsilon
+      */
+      double epsilon();
 
-         /**
-         * Iterate to a solution
-         *
-         */
-         int solve();
+      /**
+      * Getter for the maximum number of field histories to
+      * convolute into a new field
+      */
+      int maxHist();
 
-         /**
-         * Getter for epsilon
-         */
-         double epsilon();
+      /**
+      * Getter for the maximum number of iteration before convergence
+      */
+      int maxItr();
 
-         /**
-         * Getter for the maximum number of field histories to
-         * convolute into a new field
-         */
-         int maxHist();
+      /**
+      * Compute the deviation of wFields from a mean field solution
+      */
+      void computeDeviation();
 
-         /**
-         * Getter for the maximum number of iteration before convergence
-         */
-         int maxItr();
+      /**
+      * Compute the error from deviations of wFields and compare with epsilon_
+      * \return true for error < epsilon and false for error >= epsilon
+      */
+      bool isConverged();
 
-         /**
-         * Compute the deviation of wFields from a mean field solution
-         */
-         void computeDeviation();
+      /**
+      * Determine the coefficients that would minimize invertMatrix_ Umn
+      * 
+      */
+      int minimizeCoeff(int itr);
 
-         /**
-         * Compute the error from deviations of wFields and compare with epsilon_
-         * \return true for error < epsilon and false for error >= epsilon
-         */
-         bool isConverged();
+      /**
+      * Rebuild wFields for the next iteration from minimized coefficients
+      */
+      void buildOmega(int itr);
 
-         /**
-         * Determine the coefficients that would minimize invertMatrix_ Umn
-         * 
-         */
-         int minimizeCoeff(int itr);
+   private:
 
-         /**
-         * Rebuild wFields for the next iteration from minimized coefficients
-         */
-         void buildOmega(int itr);
+      ///error tolerance
+      double epsilon_;
 
-      private:
+      /// Type of error checked for convergence.
+      /// Either maxResid or normResid.
+      std::string errorType_;
 
-         ///error tolerance
-         double epsilon_;
+      /// Flexible unit cell (1) or rigid cell (0), default value = 0
+      bool isFlexible_;
 
-         /// Flexible unit cell (1) or rigid cell (0), default value = 0
-         bool isFlexible_;
+      ///free parameter for minimization
+      double lambda_;
 
-         ///free parameter for minimization
-         double lambda_;
+      ///number of histories to convolute into a new solution [0,maxHist_]
+      int nHist_;
 
-         ///number of histories to convolute into a new solution [0,maxHist_]
-         int nHist_;
+      //maximum number of histories to convolute into a new solution
+      //AKA size of matrix
+      int maxHist_;
 
-         //maximum number of histories to convolute into a new solution
-         //AKA size of matrix
-         int maxHist_;
+      ///number of maximum iteration to perform
+      int maxItr_;
 
-         ///number of maximum iteration to perform
-         int maxItr_;
+      /// holds histories of deviation for each monomer
+      /// 1st index = history, 2nd index = monomer, 3rd index = ngrid
+      // The ringbuffer used is now slightly modified to return by reference
 
-         /// holds histories of deviation for each monomer
-         /// 1st index = history, 2nd index = monomer, 3rd index = ngrid
-         // The ringbuffer used is now slightly modified to return by reference
+      RingBuffer< DArray < RDField<D> > > devHists_;
+      RingBuffer< DArray < RDField<D> > > omHists_;
 
-         RingBuffer< DArray < RDField<D> > > devHists_;
-         RingBuffer< DArray < RDField<D> > > omHists_;
+      /// holds histories of deviation for each cell parameter
+      /// 1st index = history, 2nd index = cell parameter
+      // The ringbuffer used is now slightly modified to return by reference
+      RingBuffer< FArray <double, 6> > devCpHists_;
+      RingBuffer< FSArray<double, 6> > CpHists_;
 
-         /// holds histories of deviation for each cell parameter
-         /// 1st index = history, 2nd index = cell parameter
-         // The ringbuffer used is now slightly modified to return by reference
-         RingBuffer< FArray <double, 6> > devCpHists_;
-         RingBuffer< FSArray<double, 6> > CpHists_;
+      FSArray<double, 6> cellParameters_;
 
-         FSArray<double, 6> cellParameters_;
+      /// Umn, matrix to be minimized
+      DMatrix<double> invertMatrix_;
 
-         /// Umn, matrix to be minimized
-         DMatrix<double> invertMatrix_;
+      /// Cn, coefficient to convolute previous histories with
+      DArray<double> coeffs_;
 
-         /// Cn, coefficient to convolute previous histories with
-         DArray<double> coeffs_;
+      DArray<double> vM_;
 
-         DArray<double> vM_;
+      /// bigW, blended omega fields
+      DArray<RDField<D> > wArrays_;
 
-         /// bigW, blended omega fields
-         DArray<RDField<D> > wArrays_;
+      /// bigWcP, blended parameter
+      FArray <double, 6> wCpArrays_;
 
-         /// bigWcP, blended parameter
-         FArray <double, 6> wCpArrays_;
+      /// bigDCp, blened deviation parameter. new wParameter = bigWCp + lambda * bigDCp
+      FArray <double, 6> dCpArrays_;
 
-         /// bigDCp, blened deviation parameter. new wParameter = bigWCp + lambda * bigDCp
-         FArray <double, 6> dCpArrays_;
+      /// bigD, blened deviation fields. new wFields = bigW + lambda * bigD
+      DArray<RDField<D> > dArrays_;
 
-         /// bigD, blened deviation fields. new wFields = bigW + lambda * bigD
-         DArray<RDField<D> > dArrays_;
+      DArray<RDField<D> > tempDev;
 
-         DArray<RDField<D> > tempDev;
+      HistMat <cudaReal> histMat_;
 
-         HistMat <cudaReal> histMat_;
+      cudaReal innerProduct(const RDField<D>& a, const RDField<D>& b, int size);
+      cudaReal reductionH(const RDField<D>& a, int size);
+      cudaReal* d_temp_;
+      cudaReal* temp_;
 
-         cudaReal innerProduct(const RDField<D>& a, const RDField<D>& b, int size);
-         cudaReal reductionH(const RDField<D>& a, int size);
-         cudaReal* d_temp_;
-         cudaReal* temp_;
+      using Iterator<D>::setClassName;
+      using Iterator<D>::systemPtr_;
+      using ParamComposite::read;
+      using ParamComposite::readOptional;
 
-         using Iterator<D>::setClassName;
-         using Iterator<D>::systemPtr_;
-         using ParamComposite::read;
-         using ParamComposite::readOptional;
+      //friend:
+      //for testing purposes
 
-         //friend:
-         //for testing purposes
+   };
 
-      };
-
-      template<int D>
-      inline double AmIterator<D>::epsilon()
-      {
-         return epsilon_;
-      }
-
-      template<int D>
-      inline int AmIterator<D>::maxHist()
-      {
-         return maxHist_;
-      }
-
-      template<int D>
-      inline int AmIterator<D>::maxItr()
-      {
-         return maxItr_;
-      }
-
-      #ifndef PSPG_AM_ITERATOR_TPP
-      // Suppress implicit instantiation
-      extern template class AmIterator<1>;
-      extern template class AmIterator<2>;
-      extern template class AmIterator<3>;
-      #endif
-
+   template<int D>
+   inline double AmIterator<D>::epsilon()
+   {
+      return epsilon_;
    }
+
+   template<int D>
+   inline int AmIterator<D>::maxHist()
+   {
+      return maxHist_;
+   }
+
+   template<int D>
+   inline int AmIterator<D>::maxItr()
+   {
+      return maxItr_;
+   }
+
+   #ifndef PSPG_AM_ITERATOR_TPP
+   // Suppress implicit instantiation
+   extern template class AmIterator<1>;
+   extern template class AmIterator<2>;
+   extern template class AmIterator<3>;
+   #endif
+
+}
 }
 //#include "AmIterator.tpp"
 #endif
