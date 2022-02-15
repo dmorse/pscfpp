@@ -70,8 +70,8 @@ namespace Pspg {
    template <int D>
    void AmIterator<D>::allocate()
    {
-      devHists_.allocate(maxHist_ + 1);
-      omHists_.allocate(maxHist_ + 1);
+      d_resHists_.allocate(maxHist_ + 1);
+      d_omHists_.allocate(maxHist_ + 1);
 
       if (isFlexible_) {
          devCpHists_.allocate(maxHist_+1);
@@ -279,7 +279,7 @@ namespace Pspg {
          subtractUniform <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (systemPtr_->wFieldRGrid(i).cDField(), average, systemPtr_->mesh().size());
       }
 
-      omHists_.append(systemPtr_->wFieldsRGrid());
+      d_omHists_.append(systemPtr_->wFieldsRGrid());
 
       if (isFlexible_) {
          CpHists_.append(systemPtr_->unitCell().parameters());
@@ -314,7 +314,7 @@ namespace Pspg {
                                                                              systemPtr_->mesh().size());
       }
 
-      devHists_.append(tempDev);
+      d_resHists_.append(tempDev);
 
       if (isFlexible_) {
          FArray<double, 6> tempCp;
@@ -329,17 +329,21 @@ namespace Pspg {
    template <int D>
    bool AmIterator<D>::isConverged()
    {
-      double error;
+      const int nMonomer = systemPtr_->mixture().nMonomer();
+      const int nParameter = systemPtr_->unitCell().nParameter();
+      const int size = systemPtr_->mesh().size();
+
+      double matsenError;
       double dError = 0;
       double wError = 0;
-      //float temp = 0;
-      for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
-         dError += innerProduct(devHists_[0][i], devHists_[0][i], systemPtr_->mesh().size());
-         wError += innerProduct(systemPtr_->wFieldRGrid(i), systemPtr_->wFieldRGrid(i), systemPtr_->mesh().size());
+      
+      for (int i = 0; i < nMonomer; ++i) {
+         dError += innerProduct(d_resHists_[0][i], d_resHists_[0][i], size);
+         wError += innerProduct(systemPtr_->wFieldRGrid(i), systemPtr_->wFieldRGrid(i), size);
       }
 
       if (isFlexible_) {
-         for ( int i = 0; i < systemPtr_->unitCell().nParameter(); i++) {
+         for ( int i = 0; i < nParameter; i++) {
             dError +=  devCpHists_[0][i] *  devCpHists_[0][i];
             wError +=  systemPtr_->unitCell().parameter(i) * systemPtr_->unitCell().parameter(i);
          }
@@ -347,16 +351,42 @@ namespace Pspg {
 
       Log::file() << " dError :" << Dbl(dError) << '\n';
       Log::file() << " wError :" << Dbl(wError) << '\n';
-      error = sqrt(dError / wError);
-      Log::file() << "  Error :" << Dbl(error) << '\n';
-      if (error < epsilon_) {
-         return true;
+      matsenError = sqrt(dError / wError);
+      Log::file() << "  Error :" << Dbl(matsenError) << '\n';
+
+      // Find max residuals. 
+      cudaReal* tempRes = new cudaReal[nMonomer*size + nParameter];
+      double maxSCF=0.0, maxStress=0.0, maxRes=0.0;
+      for (int i = 0; i < nMonomer; i++ ) {
+         cudaMemcpy(&tempRes[i*size], d_resHists_[0][i].cDField(), size*sizeof(cudaReal), cudaMemcpyDeviceToHost);
       }
-      else {
+
+      for (int i = 0; i < nMonomer*size; i++ ) {
+         if (fabs(tempRes[i] > maxSCF)) maxSCF = tempRes[i]; 
+      }
+      maxRes = maxSCF;
+      Log::file() << "  Max SCF Residual :" << Dbl(maxRes) << '\n';
+
+      if (isFlexible_) {
+         for (int i = 0; i < nParameter; i++ ) {
+            if (fabs(devCpHists_[0][i]) > maxStress) maxStress = devCpHists_[0][i];
+         }
+         // compare SCF and stress residuals 
+         if (maxStress*10 > maxRes) maxRes = maxStress;
+         Log::file() << "  Max Stress Residual :" << Dbl(maxStress*10) << '\n';
+      }
+            
+      // return convergence boolean for chosen error type
+      if (errorType_ == "normResid") {
+         return matsenError < epsilon_;
+      } else if (errorType_ == "maxResid") {
+         return maxRes < epsilon_;
+      } else {
+         UTIL_THROW("Invalid iterator error type in parameter file.");
          return false;
       }
 
-      // Find max residuals. 
+            
    }
 
    template <int D>
@@ -379,7 +409,7 @@ namespace Pspg {
 
                elm = 0;
                for (int j = 0; j < systemPtr_->mixture().nMonomer(); ++j) {
-                  elm += AmIterator<D>::innerProduct(devHists_[0][j], devHists_[i][j], systemPtr_->mesh().size());
+                  elm += AmIterator<D>::innerProduct(d_resHists_[0][j], d_resHists_[i][j], systemPtr_->mesh().size());
                }
                histMat_.evaluate(elm, nHist_, i);
             }
@@ -515,9 +545,9 @@ namespace Pspg {
       if (itr == 1) {
          for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
             assignReal <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (systemPtr_->wFieldRGrid(i).cDField(),
-            omHists_[0][i].cDField(), systemPtr_->mesh().size());
+            d_omHists_[0][i].cDField(), systemPtr_->mesh().size());
             pointWiseAddScale <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (systemPtr_->wFieldRGrid(i).cDField(),
-            devHists_[0][i].cDField(), lambda_, systemPtr_->mesh().size());
+            d_resHists_[0][i].cDField(), lambda_, systemPtr_->mesh().size());
          }
 
          if (isFlexible_) {
@@ -535,23 +565,23 @@ namespace Pspg {
 
          for (int j = 0; j < systemPtr_->mixture().nMonomer(); ++j) {
             assignReal <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (wArrays_[j].cDField(),
-               omHists_[0][j].cDField(), systemPtr_->mesh().size());
+               d_omHists_[0][j].cDField(), systemPtr_->mesh().size());
             assignReal <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (dArrays_[j].cDField(),
-               devHists_[0][j].cDField(), systemPtr_->mesh().size());
+               d_resHists_[0][j].cDField(), systemPtr_->mesh().size());
          }
 
          for (int i = 0; i < nHist_; ++i) {
             for (int j = 0; j < systemPtr_->mixture().nMonomer(); ++j) {
                //wArrays
-               pointWiseBinarySubtract <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (omHists_[i + 1][j].cDField(),
-                  omHists_[0][j].cDField(), tempDev[0].cDField(),
+               pointWiseBinarySubtract <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (d_omHists_[i + 1][j].cDField(),
+                  d_omHists_[0][j].cDField(), tempDev[0].cDField(),
                   systemPtr_->mesh().size());
                pointWiseAddScale <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (wArrays_[j].cDField(),
                   tempDev[0].cDField(), coeffs_[i], systemPtr_->mesh().size());
 
                //dArrays
-               pointWiseBinarySubtract <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (devHists_[i + 1][j].cDField(),
-                  devHists_[0][j].cDField(), tempDev[0].cDField(),
+               pointWiseBinarySubtract <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (d_resHists_[i + 1][j].cDField(),
+                  d_resHists_[0][j].cDField(), tempDev[0].cDField(),
                   systemPtr_->mesh().size());
                pointWiseAddScale <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (dArrays_[j].cDField(),
                   tempDev[0].cDField(), coeffs_[i], systemPtr_->mesh().size());

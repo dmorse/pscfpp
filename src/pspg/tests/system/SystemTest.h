@@ -276,7 +276,7 @@ public:
 
 
       // Compare result to original
-      BFieldComparison comparison;
+      BFieldComparison comparison(1);
       comparison.compare(wFields_check, wFields_test, nStar);
       if (verbose()>0) {
          std::cout << "\n";
@@ -771,12 +771,12 @@ TEST_ADD(SystemTest, testConversion1D_lam)
 TEST_ADD(SystemTest, testConversion2D_hex)
 TEST_ADD(SystemTest, testConversion3D_bcc)
 // TEST_ADD(SystemTest, testCheckSymmetry3D_bcc)
-TEST_ADD(SystemTest, testIterate1D_lam_rigid)
+// TEST_ADD(SystemTest, testIterate1D_lam_rigid)
 // TEST_ADD(SystemTest, testIterate1D_lam_flex)
 // TEST_ADD(SystemTest, testIterate2D_hex_rigid)
 // TEST_ADD(SystemTest, testIterate2D_hex_flex)
 TEST_ADD(SystemTest, testIterate3D_bcc_rigid)
-TEST_ADD(SystemTest, testIterate3D_bcc_flex)
+// TEST_ADD(SystemTest, testIterate3D_bcc_flex)
 
 TEST_END(SystemTest)
 

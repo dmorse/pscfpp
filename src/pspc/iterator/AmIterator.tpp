@@ -393,8 +393,7 @@ namespace Pspc
       // Check if total error is below tolerance
       if (errorType_ == "normResid") {
          return normRes < epsilon_;
-      } else 
-      if (errorType_ == "maxResid") {
+      } else if (errorType_ == "maxResid") {
          return maxRes < epsilon_;
       } else {
          UTIL_THROW("Invalid iterator error type in parameter file.");

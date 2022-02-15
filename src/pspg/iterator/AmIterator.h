@@ -145,8 +145,8 @@ namespace Pspg {
       /// 1st index = history, 2nd index = monomer, 3rd index = ngrid
       // The ringbuffer used is now slightly modified to return by reference
 
-      RingBuffer< DArray < RDField<D> > > devHists_;
-      RingBuffer< DArray < RDField<D> > > omHists_;
+      RingBuffer< DArray < RDField<D> > > d_resHists_;
+      RingBuffer< DArray < RDField<D> > > d_omHists_;
 
       /// holds histories of deviation for each cell parameter
       /// 1st index = history, 2nd index = cell parameter
