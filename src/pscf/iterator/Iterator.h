@@ -9,11 +9,12 @@
 */
 
 #include <util/param/ParamComposite.h>    // base class
+#include "IteratorMediator.h"
 #include <util/global.h>                  
 
 namespace Pscf {
 
-   template <int T>
+   template <typename T>
    class IteratorMediator;
 
    using namespace Util;
@@ -24,6 +25,7 @@ namespace Pscf {
    * \ingroup Pscf_Iterator_Module
    */
 
+   template <typename T>
    class Iterator : public ParamComposite
    {
 
@@ -34,7 +36,7 @@ namespace Pscf {
       * 
       * \param system parent System object
       */
-      Iterator(IteratorMediator<T>& iterMed_);
+      Iterator(IteratorMediator<T>& iterMed);
 
       /**
       * Destructor.
@@ -56,7 +58,7 @@ namespace Pscf {
    protected:
 
       /**
-      * Get the parent system by reference.
+      * Get the iterator mediator by reference.
       */
       IteratorMediator<T>& iterMed();
 
@@ -77,8 +79,18 @@ namespace Pscf {
 
    };
 
-   inline IteratorMediator<T>& Iterator::iterMed() 
+   template <typename T>
+   inline IteratorMediator<T>& Iterator<T>::iterMed() 
    {  return *iterMed_; }
+
+   template <typename T>
+   Iterator<T>::Iterator(IteratorMediator<T>& iterMed)
+    : iterMed_(&iterMed)
+   {  setClassName("Iterator"); }
+
+   template <typename T>
+   Iterator<T>::~Iterator()
+   {}
 
 } // namespace Pscf
 #endif

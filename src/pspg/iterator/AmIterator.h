@@ -178,7 +178,7 @@ namespace Pspg {
 
       DArray<RDField<D> > tempDev;
 
-      HistMat <cudaReal> histMat_;
+      HistMat histMat_;
 
       cudaReal innerProduct(const RDField<D>& a, const RDField<D>& b, int size);
       cudaReal reductionH(const RDField<D>& a, int size);

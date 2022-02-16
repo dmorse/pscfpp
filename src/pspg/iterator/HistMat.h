@@ -7,10 +7,10 @@ namespace Pscf {
 namespace Pspg
 {
    using namespace Util;
-   template <typename Data>
 
    //upper triangular
-   class HistMat : public DMatrix<double> {
+   class HistMat : public DMatrix<double> 
+   {
    public:
       HistMat();
 
@@ -41,25 +41,20 @@ namespace Pspg
       bool filled_ = false;
    };
 
-   template<typename Data>
-   HistMat<Data>::HistMat() 
+   inline HistMat::HistMat() 
       : maxHist_(0){}
 
-   template<typename Data>
-   HistMat<Data>::HistMat(int n)
+   inline HistMat::HistMat(int n)
     : maxHist_(n){}
 
-   template<typename Data>
-   HistMat<Data>::~HistMat() {}
+   inline HistMat::~HistMat() {}
 
-   template<typename Data>
-   void HistMat<Data>::allocate(int capacity) {
+   inline void HistMat::allocate(int capacity) {
       maxHist_ = capacity - 1;
       DMatrix<double>::allocate(capacity, capacity);
    }
 
-   template<typename Data>
-   void HistMat<Data>::reset() {
+   inline void HistMat::reset() {
       filled_ = false;
       for (int i = 0; i < maxHist_ + 1; ++i) {
          for (int j = 0; j < maxHist_ + 1; ++j) {
@@ -68,8 +63,7 @@ namespace Pspg
       }
    }
 
-   template<typename Data>
-   void HistMat<Data>::clearColumn(int nHist) {
+   inline void HistMat::clearColumn(int nHist) {
       //if the matrix is not entirely filled
       if (nHist <= maxHist_ && !filled_) {
          //set to zero
@@ -92,8 +86,7 @@ namespace Pspg
       }
    }
 
-   template<typename Data>
-   void HistMat<Data>::evaluate(float elm, int nHist, int columnId) {
+   inline void HistMat::evaluate(float elm, int nHist, int columnId) {
       if (nHist < maxHist_) { //if matrix is not filled, something tricky
          (*this)(maxHist_ - nHist, columnId + maxHist_ - nHist) = (double)elm;
       }
@@ -102,8 +95,7 @@ namespace Pspg
       }
    }
 
-   template<typename Data>
-   double HistMat<Data>::makeUmn(int i, int j, int nHist) {
+   inline double HistMat::makeUmn(int i, int j, int nHist) {
       int offset;
       if (nHist < maxHist_) { //matrix is not filled, soemthing tricky
          offset = maxHist_ - nHist;
@@ -115,8 +107,7 @@ namespace Pspg
          (*this)(offset, offset + 1 + i) - (*this)(offset, offset + 1 + j);
    }
 
-   template<typename Data>
-   double HistMat<Data>::makeVm(int i, int nHist) {
+   inline double HistMat::makeVm(int i, int nHist) {
       int offset;
       if (nHist < maxHist_) {
          offset = maxHist_ - nHist;

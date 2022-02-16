@@ -1,5 +1,5 @@
-#ifndef PSPC_AM_ITERATOR_TPP
-#define PSPC_AM_ITERATOR_TPP
+#ifndef PSCF_AM_ITERATOR_CPP
+#define PSCF_AM_ITERATOR_CPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -9,7 +9,6 @@
 */
 
 #include "AmIterator.h"
-#include <pspc/System.h>
 #include <pscf/inter/ChiInteraction.h>
 #include <util/containers/FArray.h>
 #include <util/format/Dbl.h>
@@ -24,9 +23,10 @@ namespace Pscf
    /*
    * Constructor
    */
-   template <int D>
-   AmIterator<D>::AmIterator(System<D>& system)
-    : Iterator<D>(system),
+   template <typename T>
+   AmIterator<T>::AmIterator(IteratorMediator<T>& iterMed, AmStrategy<T>& strategy)
+    : Iterator(iterMed),
+      strategy_(strategy),
       epsilon_(0),
       lambda_(0),
       nHist_(0),
@@ -36,15 +36,15 @@ namespace Pscf
    /*
    * Destructor
    */
-   template <int D>
-   AmIterator<D>::~AmIterator()
+   template <typename T>
+   AmIterator<T>::~AmIterator()
    {}
 
    /*
    * Read parameter file block.
    */
-   template <int D>
-   void AmIterator<D>::readParameters(std::istream& in)
+   template <typename T>
+   void AmIterator<T>::readParameters(std::istream& in)
    {
       errorType_ = "normResid"; // default type of error
       read(in, "maxItr", maxItr_);
@@ -61,38 +61,20 @@ namespace Pscf
    /*
    * Setup and allocate memory required by iterator.
    */
-   template <int D>
-   void AmIterator<D>::setup()
+   template <typename T>
+   void AmIterator<T>::setup()
    {
       // Determine length of residual basis vectors
-      //nResid_ = IterMed....
+      nElem_ = iterMed().nElements();
 
       // Allocate ring buffers
       resHists_.allocate(maxHist_+1);
-      wHists_.allocate(maxHist_+1);
-
-      if (isFlexible_) {
-         stressHists_.allocate(maxHist_+1);
-         cellParamHists_.allocate(maxHist_+1);
-      }
+      fieldHists_.allocate(maxHist_+1);
 
       // Allocate outer arrays used in iteration
-      int nMonomer = system().mixture().nMonomer();
-      fieldTrial_.allocate(nMonomer);
-      dArrays_.allocate(nMonomer);
-      resArrays_.allocate(nResid_);
-      
-      // Allocate inner arrays with number of basis functions
-      int nBasis = system().basis().nBasis();
-      for (int i = 0; i < nMonomer; ++i) {
-         fieldTrial_[i].allocate(nBasis);
-         dArrays_[i].allocate(nBasis);
-      }
-
-      // Allocate inner residual arrays
-      for (int i = 0; i < nResid_; ++i) {
-         resArrays_[i].allocate(nElem(i));
-      }
+      fieldTrial_.allocate(nElem_);
+      resTrial_.allocate(nElem_);
+      resTemp_.allocate(nElem_);
 
       // Allocate arrays/matrices used in coefficient calculation
       U_.allocate(maxHist_,maxHist_);
@@ -103,8 +85,8 @@ namespace Pscf
    /*
    * Solve iteratively.
    */
-   template <int D>
-   int AmIterator<D>::solve()
+   template <typename T>
+   int AmIterator<T>::solve()
    {
 
       // Preconditions:
@@ -127,14 +109,15 @@ namespace Pscf
       
       // Solve MDE for initial state
       timerMDE.start();
-      // IterMed... somehow call system().compute() but with more general name.
-      // IterMed call will include isFlexible computeStress stuff. All in one timer. 
-      // Investigate Scotty's timing tree thing! 
+      iterMed().evaluate();
       timerMDE.stop();
 
       // Iterative loop
       bool done;
       for (int itr = 0; itr < maxItr_; ++itr) {
+
+         // Store current field in history ringbuffer 
+         fieldHists_.append(iterMed().getCurrent());
 
          timerAM.start();
 
@@ -149,7 +132,7 @@ namespace Pscf
             nHist_ = maxHist_;
          }
          timerResid.start();
-         computeResidual(); // Decide if this is general enough to AmIterator
+         computeResidual();
          timerResid.stop();
 
          // Test for convergence
@@ -191,16 +174,6 @@ namespace Pscf
             // Really, this is something that is outputted that is specific to a system
             // when the system has converged. AmIterator just does the iteration.
             // If the unit cell is rigid, compute and output final stress. 
-            // if (!isFlexible_) {
-            //    system().mixture().computeStress();
-            //    Log::file() << "Final stress:" << "\n";
-            //    for (int m=0; m < system().unitCell().nParameter(); ++m) {
-            //       Log::file() << "Stress  "<< m << "   = "
-            //                   << Dbl(system().mixture().stress(m)) 
-            //                   << "\n";
-            //    }
-            //    Log::file() << "\n";
-            // }
 
             // Successful completion (i.e., converged within tolerance)
             cleanUp();
@@ -210,26 +183,20 @@ namespace Pscf
             // Determine optimal linear combination coefficients for 
             // building the updated field guess
             timerCoeff.start();
-            minimizeCoeff();
+            findResidCoeff();
             timerCoeff.stop();
+
             // Build the updated field
             timerOmega.start();
-            buildOmega();
+            updateGuess();
             timerOmega.stop();
 
             timerAM.stop();
 
-            // Solve MDE
+            // Solve the fixed point equation
             timerMDE.start();
-            // 
+            iterMed.evaluate()
             timerMDE.stop();
-
-            // Compute stress if needed
-            if (isFlexible_) {
-               timerStress.start();
-               system().mixture().computeStress();
-               timerStress.stop();
-            }
 
          }
 
@@ -242,138 +209,42 @@ namespace Pscf
       return 1;
    }
 
-   template <int D>
-   void AmIterator<D>::computeResidual()
+   template <typename T>
+   void AmIterator<T>::computeResidual()
    {
-      // Relevant quantities
-      const int nMonomer = system().mixture().nMonomer();
-      const int nParameter = system().unitCell().nParameter();
-      const int nBasis = system().basis().nBasis();
-
-      // Store current w field in history ringbuffer 
-      wHists_.append(system().wFields());
-      
-      // If variable unit cell, store current unit cell parameters 
-      if (isFlexible_) {
-         cellParamHists_.append(system().unitCell().parameters());
-      }
-
-      // Initialize temporary residuals workspace 
-      for (int i = 0 ; i < nResid_; ++i) {
-         for (int k = 0; k < nElem(i); ++k) {
-            resArrays_[i][k] = 0.0;
-         }
-      }
-      
-      // Compute SCF residual vector elements
-      for (int i = 0; i < nMonomer; ++i) {
-         for (int j = 0; j < nMonomer; ++j) {
-            for (int k = shift_; k < nBasis; ++k) {
-               resArrays_[i][k] +=
-                  system().interaction().chi(i,j)*system().cField(j)[k] -
-                  system().interaction().idemp(i,j)*system().wField(j)[k];
-            }
-         }
-      }
-
-      // If not canonical, account for incompressibility 
-      if (!isCanonical_) {
-         for (int i = 0; i < nMonomer; ++i) {
-            resArrays_[i][0] -= 1.0/system().interaction().sum_inv();
-         }
-      }
-
-      // If variable unit cell, compute stress residuals
-      if (isFlexible_) {
-         FArray<double, 6 > tempCp;
-         for (int i = 0; i < nParameter ; i++) {
-            tempCp[i] = -((system().mixture()).stress(i));
-         }
-         stressHists_.append(tempCp);
-
-         for (int m=0, i = nMonomer; m < nParameter ; ++m, ++i) {
-            resArrays_[i][0] = scaleStress_ * fabs( stressHists_[0][m] );
-         }
-      }
+      // Get residuals
+      resTemp_ = iterMed().getResidual();
       
       // Store residuals in residual history ringbuffer
-      resHists_.append(resArrays_);
+      resHists_.append(resTemp_);
 
       return;
    }
 
-   template <int D>
-   bool AmIterator<D>::isConverged()
+   template <typename T>
+   bool AmIterator<T>::isConverged()
    {
-      const int nMonomer = system().mixture().nMonomer();
-      const int nParameter = system().unitCell().nParameter();
 
-      // Find max residual
-      double maxSCF = 0.0, maxStress = 0.0, maxRes = 0.0;
+      // Find max residual vector element
+      double maxRes  = strategy().findResMax(resHists_[0]);
+      Log::file() << "Max Residual  = " << maxRes << std::endl;
 
-      for (int i = 0; i < nResid_; ++i) {
-         for (int k = 0; k < nElem(i); ++k) {
-            double currRes = fabs(resHists_[0][i][k]);
-            if (i < nMonomer && maxSCF < currRes) {
-               maxSCF = currRes;
-            } else
-            if (i >= nMonomer && maxStress < currRes) {
-               maxStress = currRes;
-            }
-         }
-      }
-
-      Log::file() << "SCF Error   = " << Dbl(maxSCF) << std::endl;
-      maxRes = maxSCF;
-
-      // Error by max Stress residual
-      if (isFlexible_) { 
-         // Check if stress residual is greater than SCF
-         if (maxStress > maxRes) {
-            maxRes = maxStress;
-         }
-         // Output stress values
-         for (int m=0;  m < nParameter ; ++m) {
-            Log::file() << "Stress  "<< m << "   = "
-                        << Dbl(system().mixture().stress(m)) <<"\n";
-         }
-      }
-      Log::file() << "Max Residual = " << Dbl(maxRes) << std::endl;
-
-      // Output current unit cell parameter values
-      if (isFlexible_) {
-         for (int m=0; m < nParameter ; ++m) {
-               Log::file() << "Parameter " << m << " = "
-                           << Dbl(system().unitCell().parameters()[m])
-                           << "\n";
-         }
-      }
-
-      // Error by norm of residual vector
-      double normResSq = 0.0, normRes = 0.0;
-      for (int i = 0; i < nResid_; ++i) {
-         for (int k = 0; k < nElem(i); ++k) {
-            normResSq += resHists_[0][i][k] * resHists_[0][i][k];
-         }
-      }
-      normRes = sqrt(normResSq);
-
-      Log::file() << "Residual Norm = " << Dbl(normRes) << std::endl;
+      // Find norm of residual vector
+      double normRes = strategy().findResNorm(resHists_[0]);
+      Log::file() << "Residual Norm = " << normRes << std::endl;
 
       // Check if total error is below tolerance
-      if (errorType_ == "normResid") {
+      if (errorType_ == "normResid")
          return normRes < epsilon_;
-      } else if (errorType_ == "maxResid") {
+      else if (errorType_ == "maxResid")
          return maxRes < epsilon_;
-      } else {
+      else
          UTIL_THROW("Invalid iterator error type in parameter file.");
-         return false;
-      }
 
    }
 
-   template <int D>
-   void AmIterator<D>::findResidCoeff()
+   template <typename T>
+   void AmIterator<T>::findResidCoeff()
    {
       // Initialize matrix and vector of residual dot products
       // if this is the first iteration
@@ -396,29 +267,14 @@ namespace Pscf
       }
 
       // Compute U matrix's new row 0 and col 0
+      // Also, compute each element of v_ vector
       for (int m = 0; m < nHist_; ++m) {
-         // Compute basis vector dot product
-         double dotprod = 0;
-         for (int i = 0; i < nResid_; ++i) {
-            for (int k = 0; k < nElem(i); ++k) {
-               dotprod += (resHists_[m][i][k] - resHists_[m+1][i][k]) *
-                          (resHists_[0][i][k] - resHists_[1][i][k]);
-            }
-         }
+
+         double dotprod = strategy().computeUDotProd(resHists_,m);
          U_(m,0) = dotprod;
          U_(0,m) = dotprod;
-      }
-
-      // Compute v vector, as described in Arora 2017.
-      for (int m = 0; m < nHist_; ++m) {
-         v_[m] = 0;
-         // Dot product of residual vectors
-         for (int i = 0; i < nResid_; ++i) {
-            for (int k = 0; k < nElem(i); ++k) {
-               v_[m] += resHists_[0][i][k] * 
-                        (resHists_[m][i][k] - resHists_[m+1][i][k]);
-            }
-         }
+         v_[m] = strategy().computeVDotProd(resHists_,m);
+         
       }
       
       // Solve matrix equation problem to get coefficients to minimize
@@ -461,128 +317,35 @@ namespace Pscf
       return;
    }
 
-   template <int D>
-   void AmIterator<D>::updateGuess()
+   template <typename T>
+   void AmIterator<T>::updateGuess()
    {
-      const int nMonomer = system().mixture().nMonomer();
-      const int nParameter = system().unitCell().nParameter();
-      const int nBasis = system().basis().nBasis();
+      // Contribution of the last solution
+      strategy().setEqual(fieldTrial_,fieldHists_[0]);
+      strategy().setEqual(resTrial_, resHists_[0]);
 
-      if (nHist_ == 0) { // if 0 historical solutions
 
-         // Update omega field with SCF residuals
-         for (int i = 0; i < nMonomer; ++i) {
-            for (int k = shift_; k < nBasis; ++k) {
-               fieldTrial_[i][k]
-                      = wHists_[0][i][k] + lambda_*resHists_[0][i][k];
-            }
-         }
-         // If canonical, set the homogeneous components explicitly
-         if (isCanonical_) {
-            for (int i = 0; i < nMonomer; ++i) {
-               dArrays_[i][0] = 0.0;
-               fieldTrial_[i][0] = 0.0;
-               for (int j = 0; j < nMonomer; ++j) {
-                  fieldTrial_[i][0] += 
-                     system().interaction().chi(i,j) * system().cField(j)[0];
-               }
-            }
-         }
-         system().setWBasis(fieldTrial_);
-
-         // Update unit cell parameters with stress residuals
-         if (isFlexible_) {
-            parameters_.clear();
-            for (int m = 0; m < nParameter ; ++m) {
-               parameters_.append(cellParamHists_[0][m]
-                              + lambda_ * stressHists_[0][m]);
-
-            }
-            system().setUnitCell(parameters_);
-         }
-
-      } else { // if at least 1 historical result
-         // Contribution of the last solution
-         for (int j = 0; j < nMonomer; ++j) {
-            for (int k = shift_; k < nBasis; ++k) {
-               fieldTrial_[j][k] = wHists_[0][j][k];
-               dArrays_[j][k] = resHists_[0][j][k];
-            }
-         }
-         // Mixing in historical solutions
-         for (int i = 0; i < nHist_; ++i) {
-            for (int j = 0; j < nMonomer; ++j) {
-               for (int k = shift_; k < nBasis; ++k) {
-                  fieldTrial_[j][k] += coeffs_[i] * ( wHists_[i+1][j][k] -
-                                                   wHists_[i][j][k] );
-                  dArrays_[j][k] += coeffs_[i] * ( resHists_[i+1][j][k] -
-                                                   resHists_[i][j][k] );
-               }
-            }
-         }
-         // If canonical ensemble, set the homogeneous components explicitly
-         if (isCanonical_) {
-            for (int i = 0; i < nMonomer; ++i) {
-               dArrays_[i][0] = 0.0;
-               fieldTrial_[i][0] = 0.0;
-               for (int j = 0; j < nMonomer; ++j) {
-                  fieldTrial_[i][0] += 
-                     system().interaction().chi(i,j)*system().cField(j)[0];
-               }
-            }
-         }
-         // Adding in the estimated error of the predicted field
-         for (int i = 0; i < nMonomer; ++i) {
-            for (int k = 0; k < nBasis; ++k) {
-               fieldTrial_[i][k] += lambda_ * dArrays_[i][k];
-            }
-         }
-         // Updating the system
-         system().setWBasis(fieldTrial_);
-         
-         // If flexible, do mixing of histories for unit cell parameters
-         if (isFlexible_) {
-            for (int m = 0; m < nParameter ; ++m) {
-               wCpArrays_[m] = cellParamHists_[0][m];
-               dCpArrays_[m] = stressHists_[0][m];
-            }
-            for (int i = 0; i < nHist_; ++i) {
-               for (int m = 0; m < nParameter ; ++m) {
-                  wCpArrays_[m] += coeffs_[i] * ( cellParamHists_[i+1][m] -
-                                                  cellParamHists_[i][m] );
-                  dCpArrays_[m] += coeffs_[i] * ( stressHists_[i+1][m] -
-                                                  stressHists_[i][m] );
-               }
-            }
-            parameters_.clear();
-            for (int m = 0; m < nParameter ; ++m) {
-               parameters_.append(wCpArrays_[m] + lambda_ * dCpArrays_[m]);
-            }
-            system().setUnitCell(parameters_);
-         }
+      // Mixing in historical solutions, only if at least one history
+      if (nHist_ > 0) {
+         strategy().addHistories(fieldTrial_, fieldHists_, coeffs_, nHist_);
+         strategy().addHistories(resTrial_, resHists_, coeffs_, nHist_);
       }
+
+      // Correct for predicted error
+      strategy().addPredictedError(fieldTrial_,resTrial_,lambda_);
+
+      // Send out updated guess to the iterator mediator
+      iterMed().update(fieldTrial_);
+      
       return;
    }
 
-   template <int D>
-   int AmIterator<D>::nElem(int i)
-   {
-      const int nMonomer = system().mixture().nMonomer();
-      int nBasis = system().basis().nBasis();
-
-      if (i < nMonomer) {
-         return nBasis;
-      } else {
-         return 1;
-      }
-   }
-
-   template <int D>
-   void AmIterator<D>::cleanUp()
+   template <typename T>
+   void AmIterator<T>::cleanUp()
    {
       // Clear ring buffers
       resHists_.clear();
-      wHists_.clear();
+      fieldHists_.clear();
       stressHists_.clear();
       cellParamHists_.clear();
 

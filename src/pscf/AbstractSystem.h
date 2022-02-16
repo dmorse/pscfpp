@@ -11,8 +11,6 @@
 #include <util/param/ParamComposite.h>     // base class
 
 namespace Pscf {
-namespace Pspc
-{
 
    using namespace Util;
 
@@ -22,7 +20,7 @@ namespace Pspc
    *
    * \ingroup Pscf_Module
    */
-   template <int D>
+
    class AbstractSystem : public ParamComposite
    {
 

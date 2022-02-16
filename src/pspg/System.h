@@ -22,7 +22,7 @@
 #include <pscf/homogeneous/Mixture.h>      // member
 #include <pscf/inter/ChiInteraction.h>     // member
 
-#include <util/param/ParamComposite.h>     // base class
+#include <pscf/AbstractSystem.h>           // base class
 #include <util/misc/FileMaster.h>          // member
 #include <util/containers/DArray.h>        // member template
 #include <util/containers/Array.h>         // function parameter
@@ -41,7 +41,7 @@ namespace Pspg
    * \ingroup Pscf_Pspg_Module
    */
    template <int D>
-   class System : public ParamComposite
+   class System : public AbstractSystem
    {
 
    public:

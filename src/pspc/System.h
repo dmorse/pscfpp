@@ -9,6 +9,7 @@
 */
 
 #include <pscf/AbstractSystem.h>           // base class
+//#include <util/param/ParamComposite.h>
 
 #include <pspc/solvers/Mixture.h>          // member
 #include <pspc/field/Domain.h>             // member

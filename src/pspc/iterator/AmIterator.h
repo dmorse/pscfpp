@@ -33,9 +33,6 @@ namespace Pspc
    class AmIterator : public Iterator<D>
    {
    public:
-      
-      typedef RField<D> WField;
-      typedef RField<D> CField;
 
       /**
       * Constructor

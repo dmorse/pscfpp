@@ -32,14 +32,16 @@ class CpuAmStrategy
 class CudaAmStrategy
 
 abstract class IteratorMediator<T>
-IteratorMediator : Iterator* iter_
-IteratorMediator : System* sys_
-IteratorMediator : bool hasInitialGuess()
+IteratorMediator : - Iterator* iter_
+IteratorMediator : - System* sys_
+IteratorMediator : + bool hasInitialGuess()
 ' perhaps evaluate should actually return something? this might be more general. hmmm.
-IteratorMediator : virtual void evaluate()
-IteratorMediator : virtual DArray<T> getCurrent()
-IteratorMediator : virtual DArray<T> getResidual()
-IteratorMediator : virtual void update(DArray<T> )
+IteratorMediator : + virtual void evaluate()
+IteratorMediator : + virtual int nResid();
+IteratorMediator : + virtual DArray<T> getCurrent()
+IteratorMediator : + virtual DArray<T> getResidual()
+IteratorMediator : + virtual void update(DArray<T>)
+IteratorMediator : + virtual void output()
 
 class CpuIteratorMediator
 class CudaIteratorMediator

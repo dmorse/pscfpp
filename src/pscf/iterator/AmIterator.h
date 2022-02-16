@@ -1,5 +1,5 @@
-#ifndef PSPC_AM_ITERATOR_H
-#define PSPC_AM_ITERATOR_H
+#ifndef PSCF_AM_ITERATOR_H
+#define PSCF_AM_ITERATOR_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -8,15 +8,15 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pspc/iterator/Iterator.h> // base class
-#include <pspc/solvers/Mixture.h>
+#include "Iterator.h" // base class
+
 #include <pscf/math/LuSolver.h>
+#include "AmStrategy.h"
 #include <util/containers/DArray.h>
 #include <util/containers/FArray.h>
 #include <util/containers/FSArray.h>
 #include <util/containers/DMatrix.h>
 #include <util/containers/RingBuffer.h>
-#include <pspc/field/RField.h>
 
 namespace Pscf {
 
@@ -25,19 +25,19 @@ namespace Pscf {
    /**
    * Anderson mixing iterator for the pseudo spectral method.
    *
-   * \ingroup Pspc_Iterator_Module
+   * \ingroup Pscf_Iterator_Module
    */
-   template <int D>
-   class AmIterator : public Iterator<D>
+   template <typename T>
+   class AmIterator : public Iterator<T>
    {
    public:
 
       /**
       * Constructor
       *
-      * \param system pointer to a ???
+      * \param iterMed pointer to an iterator mediator
       */
-      AmIterator();
+      AmIterator(IteratorMediator<T>& iterMed, AmStrategy<T>& strategy);
 
       /**
       * Destructor
@@ -62,21 +62,14 @@ namespace Pscf {
       int solve();
 
       /**
-      * Get epsilon (error threshhold).
-      */
-      double epsilon();
-
-      /**
-      * Get the maximum number of field histories retained.
-      */
-      int maxHist();
-
-      /**
-      * Get the maximum number of iteration before convergence.
-      */
-      int maxItr();
+      * Return the strategy object to manage math execution.
+      */ 
+      AmStrategy<T> strategy();
 
    private:
+
+      /// Strategy object for math execution.
+      AmStrategy<T>* strategy_;
 
       /// Error tolerance
       double epsilon_;
@@ -97,21 +90,15 @@ namespace Pscf {
       /// Maximum number of iterations to attempt.
       int maxItr_;
 
-      /// Number of residual components.
-      int nResid_; 
+      /// Number of elements in the field.
+      int nElem_; 
 
       /// History of field residuals.
       /// 1st index = history, 2nd index = monomer, 3rd index = basis func.
-      RingBuffer< DArray < DArray<double> > > resHists_;
+      RingBuffer< T > resHists_;
 
-      /// History of previous w-fields
-      RingBuffer< DArray < DArray<double> > > wHists_;
-
-      /// History of previous stress values.
-      RingBuffer< FArray <double, 6> > stressHists_;
-
-      /// History of unit cell parameter values.
-      RingBuffer< FSArray<double, 6> > cellParamHists_;
+      /// History of previous fields
+      RingBuffer< T > fieldHists_;
 
       /// Matrix, the dot products of residual differences.
       DMatrix<double> U_;
@@ -122,36 +109,20 @@ namespace Pscf {
       /// Vector, dot products of residuals with differences from histories
       DArray<double> v_;
 
-      /// Work Array for iterating on parameters 
-      FSArray<double, 6> parameters_;
-
-      /// New trial w field (big W in Arora et al. 2017)
-      DArray<DArray <double> > fieldTrial_;
+      /// New trial field (big W in Arora et al. 2017)
+      T fieldTrial_;
 
       /// Predicted field residual for trial state (big D)
-      DArray<DArray <double> > dArrays_;
-
-      /// New trial vector of cell parameters.
-      FArray<double, 6> wCpArrays_;
-
-      /// Predicted stress residual.
-      FArray<double, 6> dCpArrays_;
+      T resTrial_;
 
       /// Workspace for residual calculation.
-      DArray< DArray<double> > resArrays_;
+      T resTemp_;
 
       /**
       * Check if ensemble is canonical. Returns false if grand-canonical 
       * or mixed ensemble.
       */
       bool isCanonical();
-
-      /**
-      * Return the number of components for a given residual. This is 
-      * either the number of spectral basis functions if the residual
-      * is an SCF residual, or 1 if the residual is a stress residual. 
-      */ 
-      int nElem(int i);
 
       /**
       * Compute the deviation of wFields from a mean field solution
@@ -181,28 +152,16 @@ namespace Pscf {
       void cleanUp();
 
       // Members of parent classes with non-dependent names
-      using Iterator<D>::setClassName;
-      using Iterator<D>::system;
+      using Iterator<T>::setClassName;
+      using Iterator<T>::iterMed;
       using ParamComposite::read;
       using ParamComposite::readOptional;
 
-   //friend:
-
    };
 
-   // Inline member functions
-
-   template<int D>
-   inline double AmIterator<D>::epsilon()
-   { return epsilon_; }
-
-   template<int D>
-   inline int AmIterator<D>::maxHist()
-   { return maxHist_; }
-
-   template<int D>
-   inline int AmIterator<D>::maxItr()
-   { return maxItr_; }
+   template <typename T>
+   inline AmStrategy<T>& AmIterator<T>::strategy() 
+   {  return *strategy_; }
 
 }
 #endif
