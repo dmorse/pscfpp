@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/param/ParamComposite.h>     // base class
+#include <pscf/AbstractSystem.h>           // base class
 
 #include <pspc/solvers/Mixture.h>          // member
 #include <pspc/field/Domain.h>             // member
@@ -47,7 +47,7 @@ namespace Pspc
    * \ingroup Pscf_Pspc_Module
    */
    template <int D>
-   class System : public ParamComposite
+   class System : public AbstractSystem
    {
 
    public:

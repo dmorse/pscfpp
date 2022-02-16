@@ -1,0 +1,1426 @@
+cd util; make all
+make[1]: Entering directory '/home/rpcoll/code/pscfpp/src/util'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '/home/rpcoll/code/pscfpp/src/util'
+cd pscf; make all
+make[1]: Entering directory '/home/rpcoll/code/pscfpp/src/pscf'
+make[1]: Nothing to be done for 'all'.
+make[1]: Leaving directory '/home/rpcoll/code/pscfpp/src/pscf'
+cd pspc; make all
+make[1]: Entering directory '/home/rpcoll/code/pscfpp/src/pspc'
+g++  -Wall --std=c++11 -O3 -ffast-math -Winline -I/home/rpcoll/code/pscfpp/src -I /home/linuxbrew/.linuxbrew/Cellar/gsl/2.7/include   -DUTIL_CXX11    -c -o /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.o /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp
+In file included from /home/rpcoll/code/pscfpp/src/pspc/field/Domain.h:13,
+                 from /home/rpcoll/code/pscfpp/src/pspc/System.h:14,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:60:22: error: ‘FFT’ has not been declared
+   60 |                      FFT<D> const & fft,
+      |                      ^~~
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:60:25: error: expected ‘,’ or ‘...’ before ‘<’ token
+   60 |                      FFT<D> const & fft,
+      |                         ^
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:139:54: error: ‘RField’ was not declared in this scope; did you mean ‘Pscf::Pspc::RField’?
+  139 |       void readFieldsRGrid(std::istream& in, DArray< RField<D> >& fields,
+      |                                                      ^~~~~~
+      |                                                      Pscf::Pspc::RField
+In file included from /home/rpcoll/code/pscfpp/src/pspc/solvers/Propagator.h:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/solvers/Block.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/solvers/Polymer.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/solvers/Mixture.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.h:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pspc/field/RField.h:28:10: note: ‘Pscf::Pspc::RField’ declared here
+   28 |    class RField : public Field<double>
+      |          ^~~~~~
+In file included from /home/rpcoll/code/pscfpp/src/pspc/field/Domain.h:13,
+                 from /home/rpcoll/code/pscfpp/src/pspc/System.h:14,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:139:62: error: template argument 1 is invalid
+  139 |       void readFieldsRGrid(std::istream& in, DArray< RField<D> >& fields,
+      |                                                              ^
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:139:64: error: expected ‘,’ or ‘...’ before ‘>’ token
+  139 |       void readFieldsRGrid(std::istream& in, DArray< RField<D> >& fields,
+      |                                                                ^
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:157:36: error: ‘RField’ was not declared in this scope; did you mean ‘Pscf::Pspc::RField’?
+  157 |                            DArray< RField<D> >& fields,
+      |                                    ^~~~~~
+      |                                    Pscf::Pspc::RField
+In file included from /home/rpcoll/code/pscfpp/src/pspc/solvers/Propagator.h:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/solvers/Block.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/solvers/Polymer.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/solvers/Mixture.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.h:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pspc/field/RField.h:28:10: note: ‘Pscf::Pspc::RField’ declared here
+   28 |    class RField : public Field<double>
+      |          ^~~~~~
+In file included from /home/rpcoll/code/pscfpp/src/pspc/field/Domain.h:13,
+                 from /home/rpcoll/code/pscfpp/src/pspc/System.h:14,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:157:44: error: template argument 1 is invalid
+  157 |                            DArray< RField<D> >& fields,
+      |                                            ^
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:157:46: error: expected ‘,’ or ‘...’ before ‘>’ token
+  157 |                            DArray< RField<D> >& fields,
+      |                                              ^
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:168:37: error: ‘RField’ was not declared in this scope; did you mean ‘Pscf::Pspc::RField’?
+  168 |                             DArray< RField<D> > const & fields,
+      |                                     ^~~~~~
+      |                                     Pscf::Pspc::RField
+In file included from /home/rpcoll/code/pscfpp/src/pspc/solvers/Propagator.h:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/solvers/Block.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/solvers/Polymer.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/solvers/Mixture.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.h:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pspc/field/RField.h:28:10: note: ‘Pscf::Pspc::RField’ declared here
+   28 |    class RField : public Field<double>
+      |          ^~~~~~
+In file included from /home/rpcoll/code/pscfpp/src/pspc/field/Domain.h:13,
+                 from /home/rpcoll/code/pscfpp/src/pspc/System.h:14,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:168:45: error: template argument 1 is invalid
+  168 |                             DArray< RField<D> > const & fields,
+      |                                             ^
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:168:47: error: expected ‘,’ or ‘...’ before ‘>’ token
+  168 |                             DArray< RField<D> > const & fields,
+      |                                               ^
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:183:37: error: ‘RField’ was not declared in this scope; did you mean ‘Pscf::Pspc::RField’?
+  183 |                             DArray< RField<D> > const & fields,
+      |                                     ^~~~~~
+      |                                     Pscf::Pspc::RField
+In file included from /home/rpcoll/code/pscfpp/src/pspc/solvers/Propagator.h:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/solvers/Block.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/solvers/Polymer.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/solvers/Mixture.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.h:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pspc/field/RField.h:28:10: note: ‘Pscf::Pspc::RField’ declared here
+   28 |    class RField : public Field<double>
+      |          ^~~~~~
+In file included from /home/rpcoll/code/pscfpp/src/pspc/field/Domain.h:13,
+                 from /home/rpcoll/code/pscfpp/src/pspc/System.h:14,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:183:45: error: template argument 1 is invalid
+  183 |                             DArray< RField<D> > const & fields,
+      |                                             ^
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:183:47: error: expected ‘,’ or ‘...’ before ‘>’ token
+  183 |                             DArray< RField<D> > const & fields,
+      |                                               ^
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:187:28: error: ‘RField’ has not been declared
+  187 |                            RField<D> & field,
+      |                            ^~~~~~
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:187:34: error: expected ‘,’ or ‘...’ before ‘<’ token
+  187 |                            RField<D> & field,
+      |                                  ^
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:191:28: error: ‘RField’ has not been declared
+  191 |                            RField<D> & field,
+      |                            ^~~~~~
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:191:34: error: expected ‘,’ or ‘...’ before ‘<’ token
+  191 |                            RField<D> & field,
+      |                                  ^
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:195:28: error: ‘RField’ has not been declared
+  195 |                            RField<D> const & field,
+      |                            ^~~~~~
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:195:34: error: expected ‘,’ or ‘...’ before ‘<’ token
+  195 |                            RField<D> const & field,
+      |                                  ^
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:199:28: error: ‘RField’ has not been declared
+  199 |                            RField<D> const & field,
+      |                            ^~~~~~
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:199:34: error: expected ‘,’ or ‘...’ before ‘<’ token
+  199 |                            RField<D> const & field,
+      |                                  ^
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:214:36: error: ‘RFieldDft’ was not declared in this scope; did you mean ‘Pscf::Pspc::RFieldDft’?
+  214 |                            DArray< RFieldDft<D> >& fields,
+      |                                    ^~~~~~~~~
+      |                                    Pscf::Pspc::RFieldDft
+In file included from /home/rpcoll/code/pscfpp/src/pspc/solvers/Block.h:16,
+                 from /home/rpcoll/code/pscfpp/src/pspc/solvers/Polymer.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/solvers/Mixture.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.h:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pspc/field/RFieldDft.h:30:10: note: ‘Pscf::Pspc::RFieldDft’ declared here
+   30 |    class RFieldDft : public Field<fftw_complex>
+      |          ^~~~~~~~~
+In file included from /home/rpcoll/code/pscfpp/src/pspc/field/Domain.h:13,
+                 from /home/rpcoll/code/pscfpp/src/pspc/System.h:14,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:214:47: error: template argument 1 is invalid
+  214 |                            DArray< RFieldDft<D> >& fields,
+      |                                               ^
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:214:49: error: expected ‘,’ or ‘...’ before ‘>’ token
+  214 |                            DArray< RFieldDft<D> >& fields,
+      |                                                 ^
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:233:36: error: ‘RFieldDft’ was not declared in this scope; did you mean ‘Pscf::Pspc::RFieldDft’?
+  233 |                            DArray< RFieldDft<D> >& fields,
+      |                                    ^~~~~~~~~
+      |                                    Pscf::Pspc::RFieldDft
+In file included from /home/rpcoll/code/pscfpp/src/pspc/solvers/Block.h:16,
+                 from /home/rpcoll/code/pscfpp/src/pspc/solvers/Polymer.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/solvers/Mixture.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.h:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pspc/field/RFieldDft.h:30:10: note: ‘Pscf::Pspc::RFieldDft’ declared here
+   30 |    class RFieldDft : public Field<fftw_complex>
+      |          ^~~~~~~~~
+In file included from /home/rpcoll/code/pscfpp/src/pspc/field/Domain.h:13,
+                 from /home/rpcoll/code/pscfpp/src/pspc/System.h:14,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:233:47: error: template argument 1 is invalid
+  233 |                            DArray< RFieldDft<D> >& fields,
+      |                                               ^
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:233:49: error: expected ‘,’ or ‘...’ before ‘>’ token
+  233 |                            DArray< RFieldDft<D> >& fields,
+      |                                                 ^
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:248:37: error: ‘RFieldDft’ was not declared in this scope; did you mean ‘Pscf::Pspc::RFieldDft’?
+  248 |                             DArray< RFieldDft<D> > const & fields,
+      |                                     ^~~~~~~~~
+      |                                     Pscf::Pspc::RFieldDft
+In file included from /home/rpcoll/code/pscfpp/src/pspc/solvers/Block.h:16,
+                 from /home/rpcoll/code/pscfpp/src/pspc/solvers/Polymer.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/solvers/Mixture.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.h:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pspc/field/RFieldDft.h:30:10: note: ‘Pscf::Pspc::RFieldDft’ declared here
+   30 |    class RFieldDft : public Field<fftw_complex>
+      |          ^~~~~~~~~
+In file included from /home/rpcoll/code/pscfpp/src/pspc/field/Domain.h:13,
+                 from /home/rpcoll/code/pscfpp/src/pspc/System.h:14,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:248:48: error: template argument 1 is invalid
+  248 |                             DArray< RFieldDft<D> > const & fields,
+      |                                                ^
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:248:50: error: expected ‘,’ or ‘...’ before ‘>’ token
+  248 |                             DArray< RFieldDft<D> > const & fields,
+      |                                                  ^
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:263:36: error: ‘RFieldDft’ was not declared in this scope; did you mean ‘Pscf::Pspc::RFieldDft’?
+  263 |                            DArray< RFieldDft<D> > const & fields,
+      |                                    ^~~~~~~~~
+      |                                    Pscf::Pspc::RFieldDft
+In file included from /home/rpcoll/code/pscfpp/src/pspc/solvers/Block.h:16,
+                 from /home/rpcoll/code/pscfpp/src/pspc/solvers/Polymer.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/solvers/Mixture.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.h:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pspc/field/RFieldDft.h:30:10: note: ‘Pscf::Pspc::RFieldDft’ declared here
+   30 |    class RFieldDft : public Field<fftw_complex>
+      |          ^~~~~~~~~
+In file included from /home/rpcoll/code/pscfpp/src/pspc/field/Domain.h:13,
+                 from /home/rpcoll/code/pscfpp/src/pspc/System.h:14,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:263:47: error: template argument 1 is invalid
+  263 |                            DArray< RFieldDft<D> > const & fields,
+      |                                               ^
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:263:49: error: expected ‘,’ or ‘...’ before ‘>’ token
+  263 |                            DArray< RFieldDft<D> > const & fields,
+      |                                                 ^
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:308:32: error: ‘RFieldDft’ has not been declared
+  308 |                                RFieldDft<D>& dft) const;
+      |                                ^~~~~~~~~
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:308:41: error: expected ‘,’ or ‘...’ before ‘<’ token
+  308 |                                RFieldDft<D>& dft) const;
+      |                                         ^
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:320:40: error: ‘RFieldDft’ was not declared in this scope; did you mean ‘Pscf::Pspc::RFieldDft’?
+  320 |                                DArray< RFieldDft<D> >& out) const;
+      |                                        ^~~~~~~~~
+      |                                        Pscf::Pspc::RFieldDft
+In file included from /home/rpcoll/code/pscfpp/src/pspc/solvers/Block.h:16,
+                 from /home/rpcoll/code/pscfpp/src/pspc/solvers/Polymer.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/solvers/Mixture.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.h:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pspc/field/RFieldDft.h:30:10: note: ‘Pscf::Pspc::RFieldDft’ declared here
+   30 |    class RFieldDft : public Field<fftw_complex>
+      |          ^~~~~~~~~
+In file included from /home/rpcoll/code/pscfpp/src/pspc/field/Domain.h:13,
+                 from /home/rpcoll/code/pscfpp/src/pspc/System.h:14,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:320:51: error: template argument 1 is invalid
+  320 |                                DArray< RFieldDft<D> >& out) const;
+      |                                                   ^
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:320:53: error: expected ‘,’ or ‘...’ before ‘>’ token
+  320 |                                DArray< RFieldDft<D> >& out) const;
+      |                                                     ^
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:328:32: error: ‘RFieldDft’ has not been declared
+  328 |       void convertKGridToBasis(RFieldDft<D> const & in,
+      |                                ^~~~~~~~~
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:328:41: error: expected ‘,’ or ‘...’ before ‘<’ token
+  328 |       void convertKGridToBasis(RFieldDft<D> const & in,
+      |                                         ^
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:340:40: error: ‘RFieldDft’ was not declared in this scope; did you mean ‘Pscf::Pspc::RFieldDft’?
+  340 |       void convertKGridToBasis(DArray< RFieldDft<D> > const & in,
+      |                                        ^~~~~~~~~
+      |                                        Pscf::Pspc::RFieldDft
+In file included from /home/rpcoll/code/pscfpp/src/pspc/solvers/Block.h:16,
+                 from /home/rpcoll/code/pscfpp/src/pspc/solvers/Polymer.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/solvers/Mixture.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.h:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pspc/field/RFieldDft.h:30:10: note: ‘Pscf::Pspc::RFieldDft’ declared here
+   30 |    class RFieldDft : public Field<fftw_complex>
+      |          ^~~~~~~~~
+In file included from /home/rpcoll/code/pscfpp/src/pspc/field/Domain.h:13,
+                 from /home/rpcoll/code/pscfpp/src/pspc/System.h:14,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:340:51: error: template argument 1 is invalid
+  340 |       void convertKGridToBasis(DArray< RFieldDft<D> > const & in,
+      |                                                   ^
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:340:53: error: expected ‘,’ or ‘...’ before ‘>’ token
+  340 |       void convertKGridToBasis(DArray< RFieldDft<D> > const & in,
+      |                                                     ^
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:340:12: error: ‘void Pscf::Pscf::Pspc::FieldIo<D>::convertKGridToBasis(int) const’ cannot be overloaded with ‘void Pscf::Pscf::Pspc::FieldIo<D>::convertKGridToBasis(int) const’
+  340 |       void convertKGridToBasis(DArray< RFieldDft<D> > const & in,
+      |            ^~~~~~~~~~~~~~~~~~~
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:328:12: note: previous declaration ‘void Pscf::Pscf::Pspc::FieldIo<D>::convertKGridToBasis(int) const’
+  328 |       void convertKGridToBasis(RFieldDft<D> const & in,
+      |            ^~~~~~~~~~~~~~~~~~~
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:350:40: error: ‘RField’ was not declared in this scope; did you mean ‘Pscf::Pspc::RField’?
+  350 |                                DArray< RField<D> > & out) const ;
+      |                                        ^~~~~~
+      |                                        Pscf::Pspc::RField
+In file included from /home/rpcoll/code/pscfpp/src/pspc/solvers/Propagator.h:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/solvers/Block.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/solvers/Polymer.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/solvers/Mixture.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.h:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pspc/field/RField.h:28:10: note: ‘Pscf::Pspc::RField’ declared here
+   28 |    class RField : public Field<double>
+      |          ^~~~~~
+In file included from /home/rpcoll/code/pscfpp/src/pspc/field/Domain.h:13,
+                 from /home/rpcoll/code/pscfpp/src/pspc/System.h:14,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:350:48: error: template argument 1 is invalid
+  350 |                                DArray< RField<D> > & out) const ;
+      |                                                ^
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:350:50: error: expected ‘,’ or ‘...’ before ‘>’ token
+  350 |                                DArray< RField<D> > & out) const ;
+      |                                                  ^
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:358:40: error: ‘RField’ was not declared in this scope; did you mean ‘Pscf::Pspc::RField’?
+  358 |       void convertRGridToBasis(DArray< RField<D> > const & in,
+      |                                        ^~~~~~
+      |                                        Pscf::Pspc::RField
+In file included from /home/rpcoll/code/pscfpp/src/pspc/solvers/Propagator.h:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/solvers/Block.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/solvers/Polymer.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/solvers/Mixture.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.h:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pspc/field/RField.h:28:10: note: ‘Pscf::Pspc::RField’ declared here
+   28 |    class RField : public Field<double>
+      |          ^~~~~~
+In file included from /home/rpcoll/code/pscfpp/src/pspc/field/Domain.h:13,
+                 from /home/rpcoll/code/pscfpp/src/pspc/System.h:14,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:358:48: error: template argument 1 is invalid
+  358 |       void convertRGridToBasis(DArray< RField<D> > const & in,
+      |                                                ^
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:358:50: error: expected ‘,’ or ‘...’ before ‘>’ token
+  358 |       void convertRGridToBasis(DArray< RField<D> > const & in,
+      |                                                  ^
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:371:40: error: ‘RFieldDft’ was not declared in this scope; did you mean ‘Pscf::Pspc::RFieldDft’?
+  371 |       void convertKGridToRGrid(DArray< RFieldDft<D> > & in,
+      |                                        ^~~~~~~~~
+      |                                        Pscf::Pspc::RFieldDft
+In file included from /home/rpcoll/code/pscfpp/src/pspc/solvers/Block.h:16,
+                 from /home/rpcoll/code/pscfpp/src/pspc/solvers/Polymer.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/solvers/Mixture.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.h:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pspc/field/RFieldDft.h:30:10: note: ‘Pscf::Pspc::RFieldDft’ declared here
+   30 |    class RFieldDft : public Field<fftw_complex>
+      |          ^~~~~~~~~
+In file included from /home/rpcoll/code/pscfpp/src/pspc/field/Domain.h:13,
+                 from /home/rpcoll/code/pscfpp/src/pspc/System.h:14,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:371:51: error: template argument 1 is invalid
+  371 |       void convertKGridToRGrid(DArray< RFieldDft<D> > & in,
+      |                                                   ^
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:371:53: error: expected ‘,’ or ‘...’ before ‘>’ token
+  371 |       void convertKGridToRGrid(DArray< RFieldDft<D> > & in,
+      |                                                     ^
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:380:40: error: ‘RField’ was not declared in this scope; did you mean ‘Pscf::Pspc::RField’?
+  380 |       void convertRGridToKGrid(DArray< RField<D> > const & in,
+      |                                        ^~~~~~
+      |                                        Pscf::Pspc::RField
+In file included from /home/rpcoll/code/pscfpp/src/pspc/solvers/Propagator.h:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/solvers/Block.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/solvers/Polymer.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/solvers/Mixture.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.h:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pspc/field/RField.h:28:10: note: ‘Pscf::Pspc::RField’ declared here
+   28 |    class RField : public Field<double>
+      |          ^~~~~~
+In file included from /home/rpcoll/code/pscfpp/src/pspc/field/Domain.h:13,
+                 from /home/rpcoll/code/pscfpp/src/pspc/System.h:14,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:380:48: error: template argument 1 is invalid
+  380 |       void convertRGridToKGrid(DArray< RField<D> > const & in,
+      |                                                ^
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:380:50: error: expected ‘,’ or ‘...’ before ‘>’ token
+  380 |       void convertRGridToKGrid(DArray< RField<D> > const & in,
+      |                                                  ^
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:393:24: error: ‘RField’ has not been declared
+  393 |       bool hasSymmetry(RField<D> const & in) const;
+      |                        ^~~~~~
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:393:30: error: expected ‘,’ or ‘...’ before ‘<’ token
+  393 |       bool hasSymmetry(RField<D> const & in) const;
+      |                              ^
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:401:24: error: ‘RFieldDft’ has not been declared
+  401 |       bool hasSymmetry(RFieldDft<D> const & in) const;
+      |                        ^~~~~~~~~
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:401:33: error: expected ‘,’ or ‘...’ before ‘<’ token
+  401 |       bool hasSymmetry(RFieldDft<D> const & in) const;
+      |                                 ^
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:401:12: error: ‘bool Pscf::Pscf::Pspc::FieldIo<D>::hasSymmetry(int) const’ cannot be overloaded with ‘bool Pscf::Pscf::Pspc::FieldIo<D>::hasSymmetry(int) const’
+  401 |       bool hasSymmetry(RFieldDft<D> const & in) const;
+      |            ^~~~~~~~~~~
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:393:12: note: previous declaration ‘bool Pscf::Pscf::Pspc::FieldIo<D>::hasSymmetry(int) const’
+  393 |       bool hasSymmetry(RField<D> const & in) const;
+      |            ^~~~~~~~~~~
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:408:15: error: ‘RFieldDft’ does not name a type
+  408 |       mutable RFieldDft<D> workDft_;
+      |               ^~~~~~~~~
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:416:7: error: ‘FFT’ does not name a type
+  416 |       FFT<D> const * fftPtr_;
+      |       ^~~
+/home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:437:7: error: ‘FFT’ does not name a type
+  437 |       FFT<D> const & fft() const
+      |       ^~~
+In file included from /home/rpcoll/code/pscfpp/src/pspc/System.h:14,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pspc/field/Domain.h:120:7: error: ‘FFT’ does not name a type
+  120 |       FFT<D>& fft();
+      |       ^~~
+/home/rpcoll/code/pscfpp/src/pspc/field/Domain.h:125:7: error: ‘FFT’ does not name a type
+  125 |       FFT<D> const & fft() const;
+      |       ^~~
+/home/rpcoll/code/pscfpp/src/pspc/field/Domain.h:166:7: error: ‘FFT’ does not name a type
+  166 |       FFT<D> fft_;
+      |       ^~~
+/home/rpcoll/code/pscfpp/src/pspc/field/Domain.h:224:11: error: ‘FFT’ does not name a type
+  224 |    inline FFT<D>& Domain<D>::fft()
+      |           ^~~
+/home/rpcoll/code/pscfpp/src/pspc/field/Domain.h:229:11: error: ‘FFT’ does not name a type
+  229 |    inline FFT<D> const & Domain<D>::fft() const
+      |           ^~~
+/home/rpcoll/code/pscfpp/src/pspc/field/Domain.h: In instantiation of ‘class Pscf::Pscf::Pspc::Domain<1>’:
+/home/rpcoll/code/pscfpp/src/pspc/field/Domain.h:249:26:   required from here
+/home/rpcoll/code/pscfpp/src/pspc/field/Domain.h:151:19: error: ‘Pscf::Pscf::Pspc::Domain<D>::unitCell_’ has incomplete type
+  151 |       UnitCell<D> unitCell_;
+      |                   ^~~~~~~~~
+In file included from /home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:15,
+                 from /home/rpcoll/code/pscfpp/src/pspc/field/Domain.h:13,
+                 from /home/rpcoll/code/pscfpp/src/pspc/System.h:14,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pscf/crystal/Basis.h:17:27: note: declaration of ‘class Pscf::Pscf::UnitCell<1>’
+   17 |    template <int D> class UnitCell;
+      |                           ^~~~~~~~
+In file included from /home/rpcoll/code/pscfpp/src/pspc/System.h:14,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pspc/field/Domain.h: In instantiation of ‘class Pscf::Pscf::Pspc::Domain<2>’:
+/home/rpcoll/code/pscfpp/src/pspc/field/Domain.h:250:26:   required from here
+/home/rpcoll/code/pscfpp/src/pspc/field/Domain.h:151:19: error: ‘Pscf::Pscf::Pspc::Domain<D>::unitCell_’ has incomplete type
+  151 |       UnitCell<D> unitCell_;
+      |                   ^~~~~~~~~
+In file included from /home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:15,
+                 from /home/rpcoll/code/pscfpp/src/pspc/field/Domain.h:13,
+                 from /home/rpcoll/code/pscfpp/src/pspc/System.h:14,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pscf/crystal/Basis.h:17:27: note: declaration of ‘class Pscf::Pscf::UnitCell<2>’
+   17 |    template <int D> class UnitCell;
+      |                           ^~~~~~~~
+In file included from /home/rpcoll/code/pscfpp/src/pspc/System.h:14,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pspc/field/Domain.h: In instantiation of ‘class Pscf::Pscf::Pspc::Domain<3>’:
+/home/rpcoll/code/pscfpp/src/pspc/field/Domain.h:251:26:   required from here
+/home/rpcoll/code/pscfpp/src/pspc/field/Domain.h:151:19: error: ‘Pscf::Pscf::Pspc::Domain<D>::unitCell_’ has incomplete type
+  151 |       UnitCell<D> unitCell_;
+      |                   ^~~~~~~~~
+In file included from /home/rpcoll/code/pscfpp/src/pspc/field/FieldIo.h:15,
+                 from /home/rpcoll/code/pscfpp/src/pspc/field/Domain.h:13,
+                 from /home/rpcoll/code/pscfpp/src/pspc/System.h:14,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pscf/crystal/Basis.h:17:27: note: declaration of ‘class Pscf::Pscf::UnitCell<3>’
+   17 |    template <int D> class UnitCell;
+      |                           ^~~~~~~~
+In file included from /home/rpcoll/code/pscfpp/src/pscf/homogeneous/Mixture.h:14,
+                 from /home/rpcoll/code/pscfpp/src/pspc/System.h:17,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pscf/homogeneous/Molecule.h:39:7: error: expected class-name before ‘{’ token
+   39 |       {
+      |       ^
+In file included from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pspc/System.h:51:4: error: expected class-name before ‘{’ token
+   51 |    {
+      |    ^
+/home/rpcoll/code/pscfpp/src/pspc/System.h:56:15: error: ‘RField’ does not name a type
+   56 |       typedef RField<D> Field;
+      |               ^~~~~~
+/home/rpcoll/code/pscfpp/src/pspc/System.h:59:24: error: expected nested-name-specifier before ‘Propagator’
+   59 |       typedef typename Propagator<D>::WField WField;
+      |                        ^~~~~~~~~~
+/home/rpcoll/code/pscfpp/src/pspc/System.h:59:24: error: expected ‘;’ at end of member declaration
+   59 |       typedef typename Propagator<D>::WField WField;
+      |                        ^~~~~~~~~~
+      |                                  ;
+/home/rpcoll/code/pscfpp/src/pspc/System.h:59:34: error: expected unqualified-id before ‘<’ token
+   59 |       typedef typename Propagator<D>::WField WField;
+      |                                  ^
+/home/rpcoll/code/pscfpp/src/pspc/System.h:62:24: error: expected nested-name-specifier before ‘Propagator’
+   62 |       typedef typename Propagator<D>::CField CField;
+      |                        ^~~~~~~~~~
+/home/rpcoll/code/pscfpp/src/pspc/System.h:62:24: error: expected ‘;’ at end of member declaration
+   62 |       typedef typename Propagator<D>::CField CField;
+      |                        ^~~~~~~~~~
+      |                                  ;
+/home/rpcoll/code/pscfpp/src/pspc/System.h:62:24: error: redeclaration of ‘typedef int Pscf::Pscf::Pspc::System<D>::Propagator’
+/home/rpcoll/code/pscfpp/src/pspc/System.h:59:24: note: previous declaration ‘typedef int Pscf::Pscf::Pspc::System<D>::Propagator’
+   59 |       typedef typename Propagator<D>::WField WField;
+      |                        ^~~~~~~~~~
+/home/rpcoll/code/pscfpp/src/pspc/System.h:62:34: error: expected unqualified-id before ‘<’ token
+   62 |       typedef typename Propagator<D>::CField CField;
+      |                                  ^
+/home/rpcoll/code/pscfpp/src/pspc/System.h:173:29: error: ‘WField’ was not declared in this scope
+  173 |       void setWRGrid(DArray<WField> const & fields);
+      |                             ^~~~~~
+/home/rpcoll/code/pscfpp/src/pspc/System.h:173:35: error: template argument 1 is invalid
+  173 |       void setWRGrid(DArray<WField> const & fields);
+      |                                   ^
+/home/rpcoll/code/pscfpp/src/pspc/System.h:212:14: error: ‘WField’ was not declared in this scope; did you mean ‘wField’?
+  212 |       DArray<WField> const & wFieldsRGrid() const;
+      |              ^~~~~~
+      |              wField
+/home/rpcoll/code/pscfpp/src/pspc/System.h:212:20: error: template argument 1 is invalid
+  212 |       DArray<WField> const & wFieldsRGrid() const;
+      |                    ^
+/home/rpcoll/code/pscfpp/src/pspc/System.h:219:7: error: ‘WField’ does not name a type
+  219 |       WField const & wFieldRGrid(int monomerId) const;
+      |       ^~~~~~
+/home/rpcoll/code/pscfpp/src/pspc/System.h:244:14: error: ‘CField’ was not declared in this scope; did you mean ‘cField’?
+  244 |       DArray<CField> const & cFieldsRGrid() const;
+      |              ^~~~~~
+      |              cField
+/home/rpcoll/code/pscfpp/src/pspc/System.h:244:20: error: template argument 1 is invalid
+  244 |       DArray<CField> const & cFieldsRGrid() const;
+      |                    ^
+/home/rpcoll/code/pscfpp/src/pspc/System.h:251:7: error: ‘CField’ does not name a type
+  251 |       CField const & cFieldRGrid(int monomerId) const;
+      |       ^~~~~~
+/home/rpcoll/code/pscfpp/src/pspc/System.h:281:7: error: ‘FFT’ does not name a type
+  281 |       FFT<D> const & fft() const;
+      |       ^~~
+/home/rpcoll/code/pscfpp/src/pspc/System.h:291:7: error: ‘Mixture’ does not name a type; did you mean ‘MixtureTmpl’?
+  291 |       Mixture<D>& mixture();
+      |       ^~~~~~~
+      |       MixtureTmpl
+/home/rpcoll/code/pscfpp/src/pspc/System.h:428:34: error: ‘RField’ was not declared in this scope; did you mean ‘Pscf::Pspc::RField’?
+  428 |       void compare(const DArray< RField<D> > field1,
+      |                                  ^~~~~~
+      |                                  Pscf::Pspc::RField
+In file included from /home/rpcoll/code/pscfpp/src/pspc/solvers/Propagator.h:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/solvers/Block.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/solvers/Polymer.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/solvers/Mixture.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.h:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pspc/field/RField.h:28:10: note: ‘Pscf::Pspc::RField’ declared here
+   28 |    class RField : public Field<double>
+      |          ^~~~~~
+In file included from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pspc/System.h:428:42: error: template argument 1 is invalid
+  428 |       void compare(const DArray< RField<D> > field1,
+      |                                          ^
+/home/rpcoll/code/pscfpp/src/pspc/System.h:428:44: error: expected ‘,’ or ‘...’ before ‘>’ token
+  428 |       void compare(const DArray< RField<D> > field1,
+      |                                            ^
+/home/rpcoll/code/pscfpp/src/pspc/System.h:556:7: error: ‘Mixture’ does not name a type; did you mean ‘MixtureTmpl’?
+  556 |       Mixture<D> mixture_;
+      |       ^~~~~~~
+      |       MixtureTmpl
+/home/rpcoll/code/pscfpp/src/pspc/System.h:610:14: error: ‘WField’ was not declared in this scope; did you mean ‘cField’?
+  610 |       DArray<WField> wFieldsRGrid_;
+      |              ^~~~~~
+      |              cField
+/home/rpcoll/code/pscfpp/src/pspc/System.h:610:20: error: template argument 1 is invalid
+  610 |       DArray<WField> wFieldsRGrid_;
+      |                    ^
+/home/rpcoll/code/pscfpp/src/pspc/System.h:624:14: error: ‘CField’ was not declared in this scope; did you mean ‘cField’?
+  624 |       DArray<CField> cFieldsRGrid_;
+      |              ^~~~~~
+      |              cField
+/home/rpcoll/code/pscfpp/src/pspc/System.h:624:20: error: template argument 1 is invalid
+  624 |       DArray<CField> cFieldsRGrid_;
+      |                    ^
+/home/rpcoll/code/pscfpp/src/pspc/System.h:638:22: error: ‘CField’ was not declared in this scope; did you mean ‘cField’?
+  638 |       mutable DArray<CField> tmpFieldsRGrid_;
+      |                      ^~~~~~
+      |                      cField
+/home/rpcoll/code/pscfpp/src/pspc/System.h:638:28: error: template argument 1 is invalid
+  638 |       mutable DArray<CField> tmpFieldsRGrid_;
+      |                            ^
+/home/rpcoll/code/pscfpp/src/pspc/System.h:645:22: error: ‘RFieldDft’ was not declared in this scope; did you mean ‘Pscf::Pspc::RFieldDft’?
+  645 |       mutable DArray<RFieldDft<D> > tmpFieldsKGrid_;
+      |                      ^~~~~~~~~
+      |                      Pscf::Pspc::RFieldDft
+In file included from /home/rpcoll/code/pscfpp/src/pspc/solvers/Block.h:16,
+                 from /home/rpcoll/code/pscfpp/src/pspc/solvers/Polymer.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/solvers/Mixture.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.h:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pspc/field/RFieldDft.h:30:10: note: ‘Pscf::Pspc::RFieldDft’ declared here
+   30 |    class RFieldDft : public Field<fftw_complex>
+      |          ^~~~~~~~~
+In file included from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pspc/System.h:645:33: error: template argument 1 is invalid
+  645 |       mutable DArray<RFieldDft<D> > tmpFieldsKGrid_;
+      |                                 ^
+/home/rpcoll/code/pscfpp/src/pspc/System.h:645:35: error: expected unqualified-id before ‘>’ token
+  645 |       mutable DArray<RFieldDft<D> > tmpFieldsKGrid_;
+      |                                   ^
+/home/rpcoll/code/pscfpp/src/pspc/System.h:754:11: error: ‘Mixture’ does not name a type; did you mean ‘MixtureTmpl’?
+  754 |    inline Mixture<D>& System<D>::mixture()
+      |           ^~~~~~~
+      |           MixtureTmpl
+/home/rpcoll/code/pscfpp/src/pspc/System.h:764:11: error: ‘FFT’ does not name a type
+  764 |    inline FFT<D> const & System<D>::fft() const
+      |           ^~~
+/home/rpcoll/code/pscfpp/src/pspc/System.h:816:49: error: no declaration matches ‘const Util::DArray<typename Pscf::Pscf::Pspc::System<D>::WField>& Pscf::Pscf::Pspc::System<D>::wFieldsRGrid() const’
+  816 |    DArray< typename System<D>::WField > const & System<D>::wFieldsRGrid()
+      |                                                 ^~~~~~~~~
+/home/rpcoll/code/pscfpp/src/pspc/System.h:212:30: note: candidate is: ‘const int& Pscf::Pscf::Pspc::System<D>::wFieldsRGrid() const’
+  212 |       DArray<WField> const & wFieldsRGrid() const;
+      |                              ^~~~~~~~~~~~
+/home/rpcoll/code/pscfpp/src/pspc/System.h:50:10: note: ‘class Pscf::Pscf::Pspc::System<D>’ defined here
+   50 |    class System : public AbstractSystem
+      |          ^~~~~~
+/home/rpcoll/code/pscfpp/src/pspc/System.h:823:39: error: no declaration matches ‘const typename Pscf::Pscf::Pspc::System<D>::WField& Pscf::Pscf::Pspc::System<D>::wFieldRGrid(int) const’
+  823 |    typename System<D>::WField const & System<D>::wFieldRGrid(int id) const
+      |                                       ^~~~~~~~~
+/home/rpcoll/code/pscfpp/src/pspc/System.h:823:39: note: no functions named ‘const typename Pscf::Pscf::Pspc::System<D>::WField& Pscf::Pscf::Pspc::System<D>::wFieldRGrid(int) const’
+/home/rpcoll/code/pscfpp/src/pspc/System.h:50:10: note: ‘class Pscf::Pscf::Pspc::System<D>’ defined here
+   50 |    class System : public AbstractSystem
+      |          ^~~~~~
+/home/rpcoll/code/pscfpp/src/pspc/System.h:839:49: error: no declaration matches ‘const Util::DArray<typename Pscf::Pscf::Pspc::System<D>::CField>& Pscf::Pscf::Pspc::System<D>::cFieldsRGrid() const’
+  839 |    DArray< typename System<D>::CField > const & System<D>::cFieldsRGrid()
+      |                                                 ^~~~~~~~~
+/home/rpcoll/code/pscfpp/src/pspc/System.h:244:30: note: candidate is: ‘const int& Pscf::Pscf::Pspc::System<D>::cFieldsRGrid() const’
+  244 |       DArray<CField> const & cFieldsRGrid() const;
+      |                              ^~~~~~~~~~~~
+/home/rpcoll/code/pscfpp/src/pspc/System.h:50:10: note: ‘class Pscf::Pscf::Pspc::System<D>’ defined here
+   50 |    class System : public AbstractSystem
+      |          ^~~~~~
+/home/rpcoll/code/pscfpp/src/pspc/System.h:845:46: error: no declaration matches ‘const typename Pscf::Pscf::Pspc::System<D>::CField& Pscf::Pscf::Pspc::System<D>::cFieldRGrid(int) const’
+  845 |    inline typename System<D>::CField const & System<D>::cFieldRGrid(int id)
+      |                                              ^~~~~~~~~
+/home/rpcoll/code/pscfpp/src/pspc/System.h:845:46: note: no functions named ‘const typename Pscf::Pscf::Pspc::System<D>::CField& Pscf::Pscf::Pspc::System<D>::cFieldRGrid(int) const’
+/home/rpcoll/code/pscfpp/src/pspc/System.h:50:10: note: ‘class Pscf::Pscf::Pspc::System<D>’ defined here
+   50 |    class System : public AbstractSystem
+      |          ^~~~~~
+In file included from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:13,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pscf/inter/ChiInteraction.h:23:35: error: invalid use of incomplete type ‘class Pscf::Pscf::Interaction’
+   23 |    class ChiInteraction : public  Interaction
+      |                                   ^~~~~~~~~~~
+In file included from /home/rpcoll/code/pscfpp/src/pspc/System.h:17,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pscf/homogeneous/Mixture.h:19:10: note: forward declaration of ‘class Pscf::Pscf::Interaction’
+   19 |    class Interaction;
+      |          ^~~~~~~~~~~
+In file included from /usr/include/c++/9/chrono:38,
+                 from /home/rpcoll/code/pscfpp/src/util/misc/Timer.h:14,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:16,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/usr/include/c++/9/ratio:55:24: error: expected template-name before ‘<’ token
+   55 |     : integral_constant<intmax_t, (_Pn < 0) ? -1 : 1>
+      |                        ^
+/usr/include/c++/9/ratio:55:24: error: expected ‘{’ before ‘<’ token
+/usr/include/c++/9/ratio:60:24: error: expected template-name before ‘<’ token
+   60 |     : integral_constant<intmax_t, _Pn * __static_sign<_Pn>::value>
+      |                        ^
+/usr/include/c++/9/ratio:60:24: error: expected ‘{’ before ‘<’ token
+/usr/include/c++/9/ratio:70:24: error: expected template-name before ‘<’ token
+   70 |     : integral_constant<intmax_t, __static_abs<_Pn>::value>
+      |                        ^
+/usr/include/c++/9/ratio:70:24: error: expected ‘{’ before ‘<’ token
+/usr/include/c++/9/ratio:75:24: error: expected template-name before ‘<’ token
+   75 |     : integral_constant<intmax_t, __static_abs<_Qn>::value>
+      |                        ^
+/usr/include/c++/9/ratio:75:24: error: expected ‘{’ before ‘<’ token
+/usr/include/c++/9/ratio:113:24: error: expected template-name before ‘<’ token
+  113 |     : integral_constant<bool, (__hi1 < __hi2
+      |                        ^
+/usr/include/c++/9/ratio:113:24: error: expected ‘{’ before ‘<’ token
+/usr/include/c++/9/ratio:339:24: error: expected template-name before ‘<’ token
+  339 |     : integral_constant<bool, _R1::num == _R2::num && _R1::den == _R2::den>
+      |                        ^
+/usr/include/c++/9/ratio:339:24: error: expected ‘{’ before ‘<’ token
+/usr/include/c++/9/ratio:345:24: error: expected template-name before ‘<’ token
+  345 |     : integral_constant<bool, !ratio_equal<_R1, _R2>::value>
+      |                        ^
+/usr/include/c++/9/ratio:345:24: error: expected ‘{’ before ‘<’ token
+/usr/include/c++/9/ratio:353:24: error: expected template-name before ‘<’ token
+  353 |     : integral_constant<bool, __big_less<_Left::__hi, _Left::__lo,
+      |                        ^
+/usr/include/c++/9/ratio:353:24: error: expected ‘{’ before ‘<’ token
+/usr/include/c++/9/ratio:369:24: error: expected template-name before ‘<’ token
+  369 |     : integral_constant<bool, _R1::num < _R2::num>
+      |                        ^
+/usr/include/c++/9/ratio:369:24: error: expected ‘{’ before ‘<’ token
+/usr/include/c++/9/ratio:387:24: error: expected template-name before ‘<’ token
+  387 |     : integral_constant<bool, !ratio_less<_R2, _R1>::value>
+      |                        ^
+/usr/include/c++/9/ratio:387:24: error: expected ‘{’ before ‘<’ token
+/usr/include/c++/9/ratio:393:24: error: expected template-name before ‘<’ token
+  393 |     : integral_constant<bool, ratio_less<_R2, _R1>::value>
+      |                        ^
+/usr/include/c++/9/ratio:393:24: error: expected ‘{’ before ‘<’ token
+/usr/include/c++/9/ratio:399:24: error: expected template-name before ‘<’ token
+  399 |     : integral_constant<bool, !ratio_less<_R1, _R2>::value>
+      |                        ^
+/usr/include/c++/9/ratio:399:24: error: expected ‘{’ before ‘<’ token
+In file included from /home/rpcoll/code/pscfpp/src/util/misc/Timer.h:14,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:16,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/usr/include/c++/9/chrono:80:15: error: ‘__success_type’ does not name a type
+   80 |       typedef __success_type<chrono::duration<__cr, __r>> type;
+      |               ^~~~~~~~~~~~~~
+/usr/include/c++/9/chrono:84:43: error: ‘__failure_type’ was not declared in this scope; did you mean ‘std::__failure_type’?
+   84 |     struct __duration_common_type_wrapper<__failure_type, _Period1, _Period2>
+      |                                           ^~~~~~~~~~~~~~
+      |                                           std::__failure_type
+In file included from /usr/include/c++/9/bits/move.h:55,
+                 from /usr/include/c++/9/bits/nested_exception.h:40,
+                 from /usr/include/c++/9/exception:144,
+                 from /usr/include/c++/9/ios:39,
+                 from /usr/include/c++/9/ostream:38,
+                 from /usr/include/c++/9/iostream:39,
+                 from /home/rpcoll/code/pscfpp/src/util/misc/Log.h:11,
+                 from /home/rpcoll/code/pscfpp/src/util/global.h:22,
+                 from /home/rpcoll/code/pscfpp/src/util/param/ParamComposite.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/Iterator.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/usr/include/c++/9/type_traits:189:10: note: ‘std::__failure_type’ declared here
+  189 |   struct __failure_type
+      |          ^~~~~~~~~~~~~~
+In file included from /home/rpcoll/code/pscfpp/src/util/misc/Timer.h:14,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:16,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/usr/include/c++/9/chrono:84:77: error: template argument 1 is invalid
+   84 |     struct __duration_common_type_wrapper<__failure_type, _Period1, _Period2>
+      |                                                                             ^
+/usr/include/c++/9/chrono:88:12: error: ‘common_type’ is not a class template
+   88 |     struct common_type<chrono::duration<_Rep1, _Period1>,
+      |            ^~~~~~~~~~~
+/usr/include/c++/9/chrono:91:66: error: wrong number of template arguments (1, should be 3)
+   91 |              common_type<_Rep1, _Rep2>>::type, _Period1, _Period2>::type
+      |                                                                  ^
+/usr/include/c++/9/chrono:71:12: note: provided for ‘template<class _CT, class _Period1, class _Period2> struct Pscf::std::__duration_common_type_wrapper’
+   71 |     struct __duration_common_type_wrapper
+      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/9/chrono:91:67: error: expected ‘{’ before ‘::’ token
+   91 |              common_type<_Rep1, _Rep2>>::type, _Period1, _Period2>::type
+      |                                                                   ^~
+/usr/include/c++/9/chrono:99:15: error: ‘__success_type’ does not name a type
+   99 |       typedef __success_type<chrono::time_point<_Clock, typename _CT::type>>
+      |               ^~~~~~~~~~~~~~
+/usr/include/c++/9/chrono:104:44: error: ‘__failure_type’ was not declared in this scope; did you mean ‘std::__failure_type’?
+  104 |     struct __timepoint_common_type_wrapper<__failure_type, _Clock>
+      |                                            ^~~~~~~~~~~~~~
+      |                                            std::__failure_type
+In file included from /usr/include/c++/9/bits/move.h:55,
+                 from /usr/include/c++/9/bits/nested_exception.h:40,
+                 from /usr/include/c++/9/exception:144,
+                 from /usr/include/c++/9/ios:39,
+                 from /usr/include/c++/9/ostream:38,
+                 from /usr/include/c++/9/iostream:39,
+                 from /home/rpcoll/code/pscfpp/src/util/misc/Log.h:11,
+                 from /home/rpcoll/code/pscfpp/src/util/global.h:22,
+                 from /home/rpcoll/code/pscfpp/src/util/param/ParamComposite.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/Iterator.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/usr/include/c++/9/type_traits:189:10: note: ‘std::__failure_type’ declared here
+  189 |   struct __failure_type
+      |          ^~~~~~~~~~~~~~
+In file included from /home/rpcoll/code/pscfpp/src/util/misc/Timer.h:14,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:16,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/usr/include/c++/9/chrono:104:66: error: template argument 1 is invalid
+  104 |     struct __timepoint_common_type_wrapper<__failure_type, _Clock>
+      |                                                                  ^
+/usr/include/c++/9/chrono:109:51: error: wrong number of template arguments (2, should be 4)
+  109 |              chrono::time_point<_Clock, _Duration2>>
+      |                                                   ^~
+/usr/include/c++/9/chrono:89:46: note: provided for ‘template<class _Rep1, class _Period1, class _Rep2, class _Period2> struct Pscf::std::common_type’
+   89 |              chrono::duration<_Rep2, _Period2>>
+      |                                              ^~
+/usr/include/c++/9/chrono:111:64: error: wrong number of template arguments (1, should be 2)
+  111 |              common_type<_Duration1, _Duration2>>::type, _Clock>::type
+      |                                                                ^
+/usr/include/c++/9/chrono:97:12: note: provided for ‘template<class _CT, class _Clock> struct Pscf::std::__timepoint_common_type_wrapper’
+   97 |     struct __timepoint_common_type_wrapper
+      |            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/9/chrono:173:7: error: expected class-name before ‘{’ token
+  173 |       { };
+      |       ^
+/usr/include/c++/9/chrono:178:7: error: expected class-name before ‘{’ token
+  178 |       { };
+      |       ^
+/usr/include/c++/9/chrono:182:13: error: expected nested-name-specifier before ‘enable_if’
+  182 |  = typename enable_if<__is_duration<_Tp>::value, _Tp>::type;
+      |             ^~~~~~~~~
+/usr/include/c++/9/chrono:186:13: error: expected nested-name-specifier before ‘enable_if’
+  186 |  = typename enable_if<!__is_duration<_Tp>::value, _Tp>::type;
+      |             ^~~~~~~~~
+/usr/include/c++/9/chrono:190:17: error: ‘__enable_if_is_duration’ does not name a type
+  190 |       constexpr __enable_if_is_duration<_ToDur>
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/9/chrono:206:26: error: expected template-name before ‘<’ token
+  206 |       : is_floating_point<_Rep>
+      |                          ^
+/usr/include/c++/9/chrono:206:26: error: expected ‘{’ before ‘<’ token
+/usr/include/c++/9/chrono:291:7: error: expected class-name before ‘{’ token
+  291 |       { };
+      |       ^
+/usr/include/c++/9/chrono:296:7: error: expected class-name before ‘{’ token
+  296 |       { };
+      |       ^
+/usr/include/c++/9/chrono:309:8: error: ‘__bool_constant’ does not name a type
+  309 |      = __bool_constant<ratio_divide<_Period2, _Period>::den == 1>;
+      |        ^~~~~~~~~~~~~~~
+/usr/include/c++/9/chrono:328:38: error: ‘_Require’ does not name a type
+  328 |  template<typename _Rep2, typename = _Require<
+      |                                      ^~~~~~~~
+/usr/include/c++/9/chrono:328:46: error: expected ‘>’ before ‘<’ token
+  328 |  template<typename _Rep2, typename = _Require<
+      |                                              ^
+/usr/include/c++/9/chrono:334:57: error: ‘_Require’ does not name a type
+  334 |  template<typename _Rep2, typename _Period2, typename = _Require<
+      |                                                         ^~~~~~~~
+/usr/include/c++/9/chrono:334:65: error: expected ‘>’ before ‘<’ token
+  334 |  template<typename _Rep2, typename _Period2, typename = _Require<
+      |                                                                 ^
+/usr/include/c++/9/chrono:411:13: error: expected nested-name-specifier before ‘enable_if’
+  411 |    typename enable_if<!treat_as_floating_point<_Rep2>::value,
+      |             ^~~~~~~~~
+/usr/include/c++/9/chrono:411:22: error: expected initializer before ‘<’ token
+  411 |    typename enable_if<!treat_as_floating_point<_Rep2>::value,
+      |                      ^
+/usr/include/c++/9/chrono:421:13: error: expected nested-name-specifier before ‘enable_if’
+  421 |    typename enable_if<!treat_as_floating_point<_Rep2>::value,
+      |             ^~~~~~~~~
+/usr/include/c++/9/chrono:421:22: error: expected initializer before ‘<’ token
+  421 |    typename enable_if<!treat_as_floating_point<_Rep2>::value,
+      |                      ^
+/usr/include/c++/9/chrono: In constructor ‘constexpr Pscf::std::chrono::duration<_Rep, _Period>::duration(const Pscf::std::chrono::duration<_Rep, _Period>&)’:
+/usr/include/c++/9/chrono:339:10: error: ‘duration_cast’ was not declared in this scope; did you mean ‘duration’?
+  339 |    : __r(duration_cast<duration>(__d).count()) { }
+      |          ^~~~~~~~~~~~~
+      |          duration
+/usr/include/c++/9/chrono:339:32: error: expected primary-expression before ‘>’ token
+  339 |    : __r(duration_cast<duration>(__d).count()) { }
+      |                                ^
+/usr/include/c++/9/chrono: At global scope:
+/usr/include/c++/9/chrono:449:34: error: wrong number of template arguments (2, should be 4)
+  449 |          duration<_Rep2, _Period2>>::type
+      |                                  ^~
+/usr/include/c++/9/chrono:89:46: note: provided for ‘template<class _Rep1, class _Period1, class _Rep2, class _Period2> struct Pscf::std::common_type’
+   89 |              chrono::duration<_Rep2, _Period2>>
+      |                                              ^~
+/usr/include/c++/9/chrono: In function ‘constexpr int Pscf::std::chrono::operator+(const Pscf::std::chrono::duration<_Rep1, _Period1>&, const Pscf::std::chrono::duration<_Rep2, _Period2>&)’:
+/usr/include/c++/9/chrono:455:44: error: wrong number of template arguments (2, should be 4)
+  455 |  typedef typename common_type<__dur1,__dur2>::type __cd;
+      |                                            ^
+/usr/include/c++/9/chrono:89:46: note: provided for ‘template<class _Rep1, class _Period1, class _Rep2, class _Period2> struct Pscf::std::common_type’
+   89 |              chrono::duration<_Rep2, _Period2>>
+      |                                              ^~
+/usr/include/c++/9/chrono:456:26: error: request for member ‘count’ in ‘(__cd)(__lhs)’, which is of non-class type ‘__cd’ {aka ‘int’}
+  456 |  return __cd(__cd(__lhs).count() + __cd(__rhs).count());
+      |                          ^~~~~
+/usr/include/c++/9/chrono:456:48: error: request for member ‘count’ in ‘(__cd)(__rhs)’, which is of non-class type ‘__cd’ {aka ‘int’}
+  456 |  return __cd(__cd(__lhs).count() + __cd(__rhs).count());
+      |                                                ^~~~~
+/usr/include/c++/9/chrono: At global scope:
+/usr/include/c++/9/chrono:462:34: error: wrong number of template arguments (2, should be 4)
+  462 |          duration<_Rep2, _Period2>>::type
+      |                                  ^~
+/usr/include/c++/9/chrono:89:46: note: provided for ‘template<class _Rep1, class _Period1, class _Rep2, class _Period2> struct Pscf::std::common_type’
+   89 |              chrono::duration<_Rep2, _Period2>>
+      |                                              ^~
+/usr/include/c++/9/chrono: In function ‘constexpr int Pscf::std::chrono::operator-(const Pscf::std::chrono::duration<_Rep1, _Period1>&, const Pscf::std::chrono::duration<_Rep2, _Period2>&)’:
+/usr/include/c++/9/chrono:468:44: error: wrong number of template arguments (2, should be 4)
+  468 |  typedef typename common_type<__dur1,__dur2>::type __cd;
+      |                                            ^
+/usr/include/c++/9/chrono:89:46: note: provided for ‘template<class _Rep1, class _Period1, class _Rep2, class _Period2> struct Pscf::std::common_type’
+   89 |              chrono::duration<_Rep2, _Period2>>
+      |                                              ^~
+/usr/include/c++/9/chrono:469:26: error: request for member ‘count’ in ‘(__cd)(__lhs)’, which is of non-class type ‘__cd’ {aka ‘int’}
+  469 |  return __cd(__cd(__lhs).count() - __cd(__rhs).count());
+      |                          ^~~~~
+/usr/include/c++/9/chrono:469:48: error: request for member ‘count’ in ‘(__cd)(__rhs)’, which is of non-class type ‘__cd’ {aka ‘int’}
+  469 |  return __cd(__cd(__lhs).count() - __cd(__rhs).count());
+      |                                                ^~~~~
+/usr/include/c++/9/chrono: At global scope:
+/usr/include/c++/9/chrono:477:57: error: wrong number of template arguments (2, should be 4)
+  477 |       typename _CRep = typename common_type<_Rep1, _Rep2>::type>
+      |                                                         ^
+/usr/include/c++/9/chrono:89:46: note: provided for ‘template<class _Rep1, class _Period1, class _Rep2, class _Period2> struct Pscf::std::common_type’
+   89 |              chrono::duration<_Rep2, _Period2>>
+      |                                              ^~
+/usr/include/c++/9/chrono:479:2: error: expected nested-name-specifier before ‘enable_if’
+  479 |  enable_if<is_convertible<const _Rep2&, _CRep>::value, _CRep>::type;
+      |  ^~~~~~~~~
+/usr/include/c++/9/chrono:482:26: error: ‘__common_rep_t’ was not declared in this scope
+  482 |       constexpr duration<__common_rep_t<_Rep1, _Rep2>, _Period>
+      |                          ^~~~~~~~~~~~~~
+/usr/include/c++/9/chrono:482:53: error: template argument 1 is invalid
+  482 |       constexpr duration<__common_rep_t<_Rep1, _Rep2>, _Period>
+      |                                                     ^
+/usr/include/c++/9/chrono:482:54: error: expected unqualified-id before ‘,’ token
+  482 |       constexpr duration<__common_rep_t<_Rep1, _Rep2>, _Period>
+      |                                                      ^
+/usr/include/c++/9/chrono:491:26: error: ‘__common_rep_t’ was not declared in this scope
+  491 |       constexpr duration<__common_rep_t<_Rep2, _Rep1>, _Period>
+      |                          ^~~~~~~~~~~~~~
+/usr/include/c++/9/chrono:491:53: error: template argument 1 is invalid
+  491 |       constexpr duration<__common_rep_t<_Rep2, _Rep1>, _Period>
+      |                                                     ^
+/usr/include/c++/9/chrono:491:54: error: expected unqualified-id before ‘,’ token
+  491 |       constexpr duration<__common_rep_t<_Rep2, _Rep1>, _Period>
+      |                                                      ^
+/usr/include/c++/9/chrono:497:16: error: ‘__common_rep_t’ was not declared in this scope
+  497 |       duration<__common_rep_t<_Rep1, __disable_if_is_duration<_Rep2>>, _Period>
+      |                ^~~~~~~~~~~~~~
+/usr/include/c++/9/chrono:497:38: error: ‘__disable_if_is_duration’ was not declared in this scope
+  497 |       duration<__common_rep_t<_Rep1, __disable_if_is_duration<_Rep2>>, _Period>
+      |                                      ^~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/9/chrono:497:68: error: template argument 1 is invalid
+  497 |       duration<__common_rep_t<_Rep1, __disable_if_is_duration<_Rep2>>, _Period>
+      |                                                                    ^~
+/usr/include/c++/9/chrono:497:68: error: template argument 2 is invalid
+/usr/include/c++/9/chrono:497:70: error: expected unqualified-id before ‘,’ token
+  497 |       duration<__common_rep_t<_Rep1, __disable_if_is_duration<_Rep2>>, _Period>
+      |                                                                      ^
+/usr/include/c++/9/chrono:507:50: error: wrong number of template arguments (2, should be 4)
+  507 |       constexpr typename common_type<_Rep1, _Rep2>::type
+      |                                                  ^
+/usr/include/c++/9/chrono:89:46: note: provided for ‘template<class _Rep1, class _Period1, class _Rep2, class _Period2> struct Pscf::std::common_type’
+   89 |              chrono::duration<_Rep2, _Period2>>
+      |                                              ^~
+/usr/include/c++/9/chrono: In function ‘constexpr int Pscf::std::chrono::operator/(const Pscf::std::chrono::duration<_Rep1, _Period1>&, const Pscf::std::chrono::duration<_Rep2, _Period2>&)’:
+/usr/include/c++/9/chrono:513:44: error: wrong number of template arguments (2, should be 4)
+  513 |  typedef typename common_type<__dur1,__dur2>::type __cd;
+      |                                            ^
+/usr/include/c++/9/chrono:89:46: note: provided for ‘template<class _Rep1, class _Period1, class _Rep2, class _Period2> struct Pscf::std::common_type’
+   89 |              chrono::duration<_Rep2, _Period2>>
+      |                                              ^~
+/usr/include/c++/9/chrono:514:21: error: request for member ‘count’ in ‘(__cd)(__lhs)’, which is of non-class type ‘__cd’ {aka ‘int’}
+  514 |  return __cd(__lhs).count() / __cd(__rhs).count();
+      |                     ^~~~~
+/usr/include/c++/9/chrono:514:43: error: request for member ‘count’ in ‘(__cd)(__rhs)’, which is of non-class type ‘__cd’ {aka ‘int’}
+  514 |  return __cd(__lhs).count() / __cd(__rhs).count();
+      |                                           ^~~~~
+/usr/include/c++/9/chrono: At global scope:
+/usr/include/c++/9/chrono:520:16: error: ‘__common_rep_t’ was not declared in this scope
+  520 |       duration<__common_rep_t<_Rep1, __disable_if_is_duration<_Rep2>>, _Period>
+      |                ^~~~~~~~~~~~~~
+/usr/include/c++/9/chrono:520:38: error: ‘__disable_if_is_duration’ was not declared in this scope
+  520 |       duration<__common_rep_t<_Rep1, __disable_if_is_duration<_Rep2>>, _Period>
+      |                                      ^~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/9/chrono:520:68: error: template argument 1 is invalid
+  520 |       duration<__common_rep_t<_Rep1, __disable_if_is_duration<_Rep2>>, _Period>
+      |                                                                    ^~
+/usr/include/c++/9/chrono:520:68: error: template argument 2 is invalid
+/usr/include/c++/9/chrono:520:70: error: expected unqualified-id before ‘,’ token
+  520 |       duration<__common_rep_t<_Rep1, __disable_if_is_duration<_Rep2>>, _Period>
+      |                                                                      ^
+/usr/include/c++/9/chrono:531:34: error: wrong number of template arguments (2, should be 4)
+  531 |          duration<_Rep2, _Period2>>::type
+      |                                  ^~
+/usr/include/c++/9/chrono:89:46: note: provided for ‘template<class _Rep1, class _Period1, class _Rep2, class _Period2> struct Pscf::std::common_type’
+   89 |              chrono::duration<_Rep2, _Period2>>
+      |                                              ^~
+/usr/include/c++/9/chrono: In function ‘constexpr int Pscf::std::chrono::operator%(const Pscf::std::chrono::duration<_Rep1, _Period1>&, const Pscf::std::chrono::duration<_Rep2, _Period2>&)’:
+/usr/include/c++/9/chrono:537:44: error: wrong number of template arguments (2, should be 4)
+  537 |  typedef typename common_type<__dur1,__dur2>::type __cd;
+      |                                            ^
+/usr/include/c++/9/chrono:89:46: note: provided for ‘template<class _Rep1, class _Period1, class _Rep2, class _Period2> struct Pscf::std::common_type’
+   89 |              chrono::duration<_Rep2, _Period2>>
+      |                                              ^~
+/usr/include/c++/9/chrono:538:26: error: request for member ‘count’ in ‘(__cd)(__lhs)’, which is of non-class type ‘__cd’ {aka ‘int’}
+  538 |  return __cd(__cd(__lhs).count() % __cd(__rhs).count());
+      |                          ^~~~~
+/usr/include/c++/9/chrono:538:48: error: request for member ‘count’ in ‘(__cd)(__rhs)’, which is of non-class type ‘__cd’ {aka ‘int’}
+  538 |  return __cd(__cd(__lhs).count() % __cd(__rhs).count());
+      |                                                ^~~~~
+/usr/include/c++/9/chrono: In function ‘constexpr bool Pscf::std::chrono::operator==(const Pscf::std::chrono::duration<_Rep1, _Period1>&, const Pscf::std::chrono::duration<_Rep2, _Period2>&)’:
+/usr/include/c++/9/chrono:550:44: error: wrong number of template arguments (2, should be 4)
+  550 |  typedef typename common_type<__dur1,__dur2>::type __ct;
+      |                                            ^
+/usr/include/c++/9/chrono:89:46: note: provided for ‘template<class _Rep1, class _Period1, class _Rep2, class _Period2> struct Pscf::std::common_type’
+   89 |              chrono::duration<_Rep2, _Period2>>
+      |                                              ^~
+/usr/include/c++/9/chrono:551:21: error: request for member ‘count’ in ‘(__ct)(__lhs)’, which is of non-class type ‘__ct’ {aka ‘int’}
+  551 |  return __ct(__lhs).count() == __ct(__rhs).count();
+      |                     ^~~~~
+/usr/include/c++/9/chrono:551:44: error: request for member ‘count’ in ‘(__ct)(__rhs)’, which is of non-class type ‘__ct’ {aka ‘int’}
+  551 |  return __ct(__lhs).count() == __ct(__rhs).count();
+      |                                            ^~~~~
+/usr/include/c++/9/chrono: In function ‘constexpr bool Pscf::std::chrono::operator<(const Pscf::std::chrono::duration<_Rep1, _Period1>&, const Pscf::std::chrono::duration<_Rep2, _Period2>&)’:
+/usr/include/c++/9/chrono:562:44: error: wrong number of template arguments (2, should be 4)
+  562 |  typedef typename common_type<__dur1,__dur2>::type __ct;
+      |                                            ^
+/usr/include/c++/9/chrono:89:46: note: provided for ‘template<class _Rep1, class _Period1, class _Rep2, class _Period2> struct Pscf::std::common_type’
+   89 |              chrono::duration<_Rep2, _Period2>>
+      |                                              ^~
+/usr/include/c++/9/chrono:563:21: error: request for member ‘count’ in ‘(__ct)(__lhs)’, which is of non-class type ‘__ct’ {aka ‘int’}
+  563 |  return __ct(__lhs).count() < __ct(__rhs).count();
+      |                     ^~~~~
+/usr/include/c++/9/chrono:563:43: error: request for member ‘count’ in ‘(__ct)(__rhs)’, which is of non-class type ‘__ct’ {aka ‘int’}
+  563 |  return __ct(__lhs).count() < __ct(__rhs).count();
+      |                                           ^~~~~
+/usr/include/c++/9/chrono: At global scope:
+/usr/include/c++/9/chrono:642:15: error: ‘_Require’ does not name a type
+  642 |    typename = _Require<is_convertible<_Dur2, _Dur>>>
+      |               ^~~~~~~~
+/usr/include/c++/9/chrono:642:23: error: expected ‘>’ before ‘<’ token
+  642 |    typename = _Require<is_convertible<_Dur2, _Dur>>>
+      |                       ^
+/usr/include/c++/9/chrono:682:26: error: expected nested-name-specifier before ‘enable_if’
+  682 |       constexpr typename enable_if<__is_duration<_ToDur>::value,
+      |                          ^~~~~~~~~
+/usr/include/c++/9/chrono:682:35: error: expected initializer before ‘<’ token
+  682 |       constexpr typename enable_if<__is_duration<_ToDur>::value,
+      |                                   ^
+/usr/include/c++/9/chrono:724:54: error: wrong number of template arguments (2, should be 4)
+  724 |  typename common_type<_Dur1, duration<_Rep2, _Period2>>::type>
+      |                                                      ^~
+/usr/include/c++/9/chrono:89:46: note: provided for ‘template<class _Rep1, class _Period1, class _Rep2, class _Period2> struct Pscf::std::common_type’
+   89 |              chrono::duration<_Rep2, _Period2>>
+      |                                              ^~
+/usr/include/c++/9/chrono:724:62: error: template argument 2 is invalid
+  724 |  typename common_type<_Dur1, duration<_Rep2, _Period2>>::type>
+      |                                                              ^
+/usr/include/c++/9/chrono: In function ‘constexpr int Pscf::std::chrono::operator+(const Pscf::std::chrono::time_point<_Clock, _Duration1>&, const Pscf::std::chrono::duration<_Rep2, _Period2>&)’:
+/usr/include/c++/9/chrono:729:43: error: wrong number of template arguments (2, should be 4)
+  729 |  typedef typename common_type<_Dur1,__dur2>::type __ct;
+      |                                           ^
+/usr/include/c++/9/chrono:89:46: note: provided for ‘template<class _Rep1, class _Period1, class _Rep2, class _Period2> struct Pscf::std::common_type’
+   89 |              chrono::duration<_Rep2, _Period2>>
+      |                                              ^~
+/usr/include/c++/9/chrono: At global scope:
+/usr/include/c++/9/chrono:737:55: error: wrong number of template arguments (2, should be 4)
+  737 |  typename common_type<duration<_Rep1, _Period1>, _Dur2>::type>
+      |                                                       ^
+/usr/include/c++/9/chrono:89:46: note: provided for ‘template<class _Rep1, class _Period1, class _Rep2, class _Period2> struct Pscf::std::common_type’
+   89 |              chrono::duration<_Rep2, _Period2>>
+      |                                              ^~
+/usr/include/c++/9/chrono:737:62: error: template argument 2 is invalid
+  737 |  typename common_type<duration<_Rep1, _Period1>, _Dur2>::type>
+      |                                                              ^
+/usr/include/c++/9/chrono: In function ‘constexpr int Pscf::std::chrono::operator+(const Pscf::std::chrono::duration<_Rep1, _Period1>&, const Pscf::std::chrono::time_point<_Clock, _Dur2>&)’:
+/usr/include/c++/9/chrono:742:43: error: wrong number of template arguments (2, should be 4)
+  742 |  typedef typename common_type<__dur1,_Dur2>::type __ct;
+      |                                           ^
+/usr/include/c++/9/chrono:89:46: note: provided for ‘template<class _Rep1, class _Period1, class _Rep2, class _Period2> struct Pscf::std::common_type’
+   89 |              chrono::duration<_Rep2, _Period2>>
+      |                                              ^~
+/usr/include/c++/9/chrono: At global scope:
+/usr/include/c++/9/chrono:750:54: error: wrong number of template arguments (2, should be 4)
+  750 |  typename common_type<_Dur1, duration<_Rep2, _Period2>>::type>
+      |                                                      ^~
+/usr/include/c++/9/chrono:89:46: note: provided for ‘template<class _Rep1, class _Period1, class _Rep2, class _Period2> struct Pscf::std::common_type’
+   89 |              chrono::duration<_Rep2, _Period2>>
+      |                                              ^~
+/usr/include/c++/9/chrono:750:62: error: template argument 2 is invalid
+  750 |  typename common_type<_Dur1, duration<_Rep2, _Period2>>::type>
+      |                                                              ^
+/usr/include/c++/9/chrono: In function ‘constexpr int Pscf::std::chrono::operator-(const Pscf::std::chrono::time_point<_Clock, _Duration1>&, const Pscf::std::chrono::duration<_Rep2, _Period2>&)’:
+/usr/include/c++/9/chrono:755:43: error: wrong number of template arguments (2, should be 4)
+  755 |  typedef typename common_type<_Dur1,__dur2>::type __ct;
+      |                                           ^
+/usr/include/c++/9/chrono:89:46: note: provided for ‘template<class _Rep1, class _Period1, class _Rep2, class _Period2> struct Pscf::std::common_type’
+   89 |              chrono::duration<_Rep2, _Period2>>
+      |                                              ^~
+/usr/include/c++/9/chrono: At global scope:
+/usr/include/c++/9/chrono:761:50: error: wrong number of template arguments (2, should be 4)
+  761 |       constexpr typename common_type<_Dur1, _Dur2>::type
+      |                                                  ^
+/usr/include/c++/9/chrono:89:46: note: provided for ‘template<class _Rep1, class _Period1, class _Rep2, class _Period2> struct Pscf::std::common_type’
+   89 |              chrono::duration<_Rep2, _Period2>>
+      |                                              ^~
+/usr/include/c++/9/chrono: In instantiation of ‘struct Pscf::std::chrono::duration<long int, Pscf::std::ratio<1, 1000000000> >’:
+/usr/include/c++/9/chrono:831:23:   required from here
+/usr/include/c++/9/chrono:316:16: error: ‘value’ is not a member of ‘Pscf::std::chrono::__is_duration<long int>’
+  316 |  static_assert(!__is_duration<_Rep>::value, "rep cannot be a duration");
+      |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/9/chrono:314:23: error: ‘value’ is not a member of ‘Pscf::std::chrono::__is_ratio<Pscf::std::ratio<1, 1000000000> >’
+  314 |  typedef _Period      period;
+      |                       ^~~~~~
+In file included from /usr/include/c++/9/chrono:38,
+                 from /home/rpcoll/code/pscfpp/src/util/misc/Timer.h:14,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:16,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/usr/include/c++/9/ratio: In instantiation of ‘constexpr const intmax_t Pscf::std::ratio<1, 1000000000>::num’:
+/usr/include/c++/9/ratio:274:31:   required from ‘struct Pscf::std::ratio<1, 1000000000>’
+/usr/include/c++/9/chrono:319:29:   required from ‘struct Pscf::std::chrono::duration<long int, Pscf::std::ratio<1, 1000000000> >’
+/usr/include/c++/9/chrono:831:23:   required from here
+/usr/include/c++/9/ratio:269:14: error: incomplete type ‘Pscf::std::__static_sign<1000000000>’ used in nested name specifier
+  269 |         _Num * __static_sign<_Den>::value / __static_gcd<_Num, _Den>::value;
+      |         ~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/9/ratio: In instantiation of ‘struct Pscf::std::__static_gcd<1000000000, 1>’:
+/usr/include/c++/9/ratio:64:12:   required from ‘struct Pscf::std::__static_gcd<1, 1000000000>’
+/usr/include/c++/9/ratio:269:43:   required from ‘constexpr const intmax_t Pscf::std::ratio<1, 1000000000>::num’
+/usr/include/c++/9/ratio:274:31:   required from ‘struct Pscf::std::ratio<1, 1000000000>’
+/usr/include/c++/9/chrono:319:29:   required from ‘struct Pscf::std::chrono::duration<long int, Pscf::std::ratio<1, 1000000000> >’
+/usr/include/c++/9/chrono:831:23:   required from here
+/usr/include/c++/9/ratio:64:12: error: invalid use of incomplete type ‘struct Pscf::std::__static_gcd<1, 0>’
+   64 |     struct __static_gcd
+      |            ^~~~~~~~~~~~
+/usr/include/c++/9/ratio:64:12: note: declaration of ‘struct Pscf::std::__static_gcd<1, 0>’
+/usr/include/c++/9/ratio: In instantiation of ‘constexpr const intmax_t Pscf::std::ratio<1, 1000000000>::num’:
+/usr/include/c++/9/ratio:274:31:   required from ‘struct Pscf::std::ratio<1, 1000000000>’
+/usr/include/c++/9/chrono:319:29:   required from ‘struct Pscf::std::chrono::duration<long int, Pscf::std::ratio<1, 1000000000> >’
+/usr/include/c++/9/chrono:831:23:   required from here
+/usr/include/c++/9/ratio:269:43: error: ‘value’ is not a member of ‘Pscf::std::__static_gcd<1, 1000000000>’
+  269 |         _Num * __static_sign<_Den>::value / __static_gcd<_Num, _Den>::value;
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/9/ratio: In instantiation of ‘constexpr const intmax_t Pscf::std::ratio<1, 1000000000>::den’:
+/usr/include/c++/9/ratio:274:31:   required from ‘struct Pscf::std::ratio<1, 1000000000>’
+/usr/include/c++/9/chrono:319:29:   required from ‘struct Pscf::std::chrono::duration<long int, Pscf::std::ratio<1, 1000000000> >’
+/usr/include/c++/9/chrono:831:23:   required from here
+/usr/include/c++/9/ratio:272:35: error: incomplete type ‘Pscf::std::__static_abs<1000000000>’ used in nested name specifier
+  272 |         __static_abs<_Den>::value / __static_gcd<_Num, _Den>::value;
+      |                             ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/9/ratio:272:35: error: ‘value’ is not a member of ‘Pscf::std::__static_gcd<1, 1000000000>’
+In file included from /home/rpcoll/code/pscfpp/src/util/misc/Timer.h:14,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:16,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/usr/include/c++/9/chrono: In instantiation of ‘constexpr bool Pscf::std::chrono::operator<(const Pscf::std::chrono::duration<_Rep1, _Period1>&, const Pscf::std::chrono::duration<_Rep2, _Period2>&) [with _Rep1 = long int; _Period1 = Pscf::std::ratio<1, 1000000000>; _Rep2 = long int; _Period2 = Pscf::std::ratio<1, 1000000000>]’:
+/usr/include/c++/9/chrono:836:7:   required from here
+/usr/include/c++/9/chrono:564:7: error: body of ‘constexpr’ function ‘constexpr bool Pscf::std::chrono::operator<(const Pscf::std::chrono::duration<_Rep1, _Period1>&, const Pscf::std::chrono::duration<_Rep2, _Period2>&) [with _Rep1 = long int; _Period1 = Pscf::std::ratio<1, 1000000000>; _Rep2 = long int; _Period2 = Pscf::std::ratio<1, 1000000000>]’ not a return-statement
+  564 |       }
+      |       ^
+/usr/include/c++/9/chrono: In instantiation of ‘static constexpr Pscf::std::chrono::duration<_Rep, _Period> Pscf::std::chrono::duration<_Rep, _Period>::min() [with _Rep = long int; _Period = Pscf::std::ratio<1, 1000000000>]’:
+/usr/include/c++/9/chrono:835:49:   required from here
+/usr/include/c++/9/chrono:436:11: error: no matching function for call to ‘Pscf::std::chrono::duration<long int, Pscf::std::ratio<1, 1000000000> >::duration(long int)’
+  436 |  { return duration(duration_values<rep>::min()); }
+      |           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/9/chrono:338:14: note: candidate: ‘template<class _Rep2, class _Period2, class> constexpr Pscf::std::chrono::duration<_Rep, _Period>::duration(const Pscf::std::chrono::duration<_Rep, _Period>&)’
+  338 |    constexpr duration(const duration<_Rep2, _Period2>& __d)
+      |              ^~~~~~~~
+/usr/include/c++/9/chrono:338:14: note:   template argument deduction/substitution failed:
+/usr/include/c++/9/chrono:436:11: note:   mismatched types ‘const Pscf::std::chrono::duration<_Rep1, _Period1>’ and ‘long int’
+  436 |  { return duration(duration_values<rep>::min()); }
+      |           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/9/chrono:331:23: note: candidate: ‘template<class _Rep2, class> constexpr Pscf::std::chrono::duration<_Rep, _Period>::duration(const _Rep2&)’
+  331 |    constexpr explicit duration(const _Rep2& __rep)
+      |                       ^~~~~~~~
+/usr/include/c++/9/chrono:331:23: note:   template argument deduction/substitution failed:
+/usr/include/c++/9/chrono:324:2: note: candidate: ‘constexpr Pscf::std::chrono::duration<_Rep, _Period>::duration(const Pscf::std::chrono::duration<_Rep, _Period>&) [with _Rep = long int; _Period = Pscf::std::ratio<1, 1000000000>]’
+  324 |  duration(const duration&) = default;
+      |  ^~~~~~~~
+/usr/include/c++/9/chrono:324:11: note:   no known conversion for argument 1 from ‘long int’ to ‘const Pscf::std::chrono::duration<long int, Pscf::std::ratio<1, 1000000000> >&’
+  324 |  duration(const duration&) = default;
+      |           ^~~~~~~~~~~~~~~
+/usr/include/c++/9/chrono:322:12: note: candidate: ‘Pscf::std::chrono::duration<_Rep, _Period>::duration() [with _Rep = long int; _Period = Pscf::std::ratio<1, 1000000000>]’
+  322 |  constexpr duration() = default;
+      |            ^~~~~~~~
+/usr/include/c++/9/chrono:322:12: note:   candidate expects 0 arguments, 1 provided
+/usr/include/c++/9/chrono:436:50: error: body of ‘constexpr’ function ‘static constexpr Pscf::std::chrono::duration<_Rep, _Period> Pscf::std::chrono::duration<_Rep, _Period>::min() [with _Rep = long int; _Period = Pscf::std::ratio<1, 1000000000>]’ not a return-statement
+  436 |  { return duration(duration_values<rep>::min()); }
+      |                                                  ^
+/usr/include/c++/9/chrono: In instantiation of ‘static constexpr Pscf::std::chrono::duration<_Rep, _Period> Pscf::std::chrono::duration<_Rep, _Period>::zero() [with _Rep = long int; _Period = Pscf::std::ratio<1, 1000000000>]’:
+/usr/include/c++/9/chrono:836:38:   required from here
+/usr/include/c++/9/chrono:432:11: error: no matching function for call to ‘Pscf::std::chrono::duration<long int, Pscf::std::ratio<1, 1000000000> >::duration(long int)’
+  432 |  { return duration(duration_values<rep>::zero()); }
+      |           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/9/chrono:338:14: note: candidate: ‘template<class _Rep2, class _Period2, class> constexpr Pscf::std::chrono::duration<_Rep, _Period>::duration(const Pscf::std::chrono::duration<_Rep, _Period>&)’
+  338 |    constexpr duration(const duration<_Rep2, _Period2>& __d)
+      |              ^~~~~~~~
+/usr/include/c++/9/chrono:338:14: note:   template argument deduction/substitution failed:
+/usr/include/c++/9/chrono:432:11: note:   mismatched types ‘const Pscf::std::chrono::duration<_Rep1, _Period1>’ and ‘long int’
+  432 |  { return duration(duration_values<rep>::zero()); }
+      |           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/9/chrono:331:23: note: candidate: ‘template<class _Rep2, class> constexpr Pscf::std::chrono::duration<_Rep, _Period>::duration(const _Rep2&)’
+  331 |    constexpr explicit duration(const _Rep2& __rep)
+      |                       ^~~~~~~~
+/usr/include/c++/9/chrono:331:23: note:   template argument deduction/substitution failed:
+/usr/include/c++/9/chrono:324:2: note: candidate: ‘constexpr Pscf::std::chrono::duration<_Rep, _Period>::duration(const Pscf::std::chrono::duration<_Rep, _Period>&) [with _Rep = long int; _Period = Pscf::std::ratio<1, 1000000000>]’
+  324 |  duration(const duration&) = default;
+      |  ^~~~~~~~
+/usr/include/c++/9/chrono:324:11: note:   no known conversion for argument 1 from ‘long int’ to ‘const Pscf::std::chrono::duration<long int, Pscf::std::ratio<1, 1000000000> >&’
+  324 |  duration(const duration&) = default;
+      |           ^~~~~~~~~~~~~~~
+/usr/include/c++/9/chrono:322:12: note: candidate: ‘Pscf::std::chrono::duration<_Rep, _Period>::duration() [with _Rep = long int; _Period = Pscf::std::ratio<1, 1000000000>]’
+  322 |  constexpr duration() = default;
+      |            ^~~~~~~~
+/usr/include/c++/9/chrono:322:12: note:   candidate expects 0 arguments, 1 provided
+/usr/include/c++/9/chrono:432:51: error: body of ‘constexpr’ function ‘static constexpr Pscf::std::chrono::duration<_Rep, _Period> Pscf::std::chrono::duration<_Rep, _Period>::zero() [with _Rep = long int; _Period = Pscf::std::ratio<1, 1000000000>]’ not a return-statement
+  432 |  { return duration(duration_values<rep>::zero()); }
+      |                                                   ^
+/usr/include/c++/9/chrono:836:7: error: non-constant condition for static assertion
+  835 |       static_assert(system_clock::duration::min()
+      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  836 |       < system_clock::duration::zero(),
+      |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/9/chrono:836:7: error: ‘constexpr bool Pscf::std::chrono::operator<(const Pscf::std::chrono::duration<_Rep1, _Period1>&, const Pscf::std::chrono::duration<_Rep2, _Period2>&) [with _Rep1 = long int; _Period1 = Pscf::std::ratio<1, 1000000000>; _Rep2 = long int; _Period2 = Pscf::std::ratio<1, 1000000000>]’ called in a constant expression
+/usr/include/c++/9/chrono:557:7: note: ‘constexpr bool Pscf::std::chrono::operator<(const Pscf::std::chrono::duration<_Rep1, _Period1>&, const Pscf::std::chrono::duration<_Rep2, _Period2>&) [with _Rep1 = long int; _Period1 = Pscf::std::ratio<1, 1000000000>; _Rep2 = long int; _Period2 = Pscf::std::ratio<1, 1000000000>]’ is not usable as a ‘constexpr’ function because:
+  557 |       operator<(const duration<_Rep1, _Period1>& __lhs,
+      |       ^~~~~~~~
+/usr/include/c++/9/chrono:845:19: error: ‘time_t’ in namespace ‘Pscf::std’ does not name a type
+  845 |       static std::time_t
+      |                   ^~~~~~
+/usr/include/c++/9/chrono:853:24: error: ‘Pscf::std::time_t’ has not been declared
+  853 |       from_time_t(std::time_t __t) noexcept
+      |                        ^~~~~~
+/usr/include/c++/9/chrono: In static member function ‘static Pscf::std::chrono::_V2::system_clock::time_point Pscf::std::chrono::_V2::system_clock::from_time_t(int)’:
+/usr/include/c++/9/chrono:856:9: error: ‘time_point_cast’ was not declared in this scope; did you mean ‘time_point’?
+  856 |  return time_point_cast<system_clock::duration>
+      |         ^~~~~~~~~~~~~~~
+      |         time_point
+/usr/include/c++/9/chrono:856:47: error: expected primary-expression before ‘>’ token
+  856 |  return time_point_cast<system_clock::duration>
+      |                                               ^
+/usr/include/c++/9/chrono: In instantiation of ‘struct Pscf::std::chrono::duration<long int>’:
+/usr/include/c++/9/chrono:857:36:   required from here
+/usr/include/c++/9/chrono:316:16: error: ‘value’ is not a member of ‘Pscf::std::chrono::__is_duration<long int>’
+  316 |  static_assert(!__is_duration<_Rep>::value, "rep cannot be a duration");
+      |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/9/chrono:314:23: error: ‘value’ is not a member of ‘Pscf::std::chrono::__is_ratio<Pscf::std::ratio<1> >’
+  314 |  typedef _Period      period;
+      |                       ^~~~~~
+In file included from /usr/include/c++/9/chrono:38,
+                 from /home/rpcoll/code/pscfpp/src/util/misc/Timer.h:14,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:16,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/usr/include/c++/9/ratio: In instantiation of ‘constexpr const intmax_t Pscf::std::ratio<1>::num’:
+/usr/include/c++/9/ratio:274:31:   required from ‘struct Pscf::std::ratio<1>’
+/usr/include/c++/9/chrono:319:29:   required from ‘struct Pscf::std::chrono::duration<long int>’
+/usr/include/c++/9/chrono:857:36:   required from here
+/usr/include/c++/9/ratio:269:14: error: incomplete type ‘Pscf::std::__static_sign<1>’ used in nested name specifier
+  269 |         _Num * __static_sign<_Den>::value / __static_gcd<_Num, _Den>::value;
+      |         ~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/9/ratio: In instantiation of ‘struct Pscf::std::__static_gcd<1, 1>’:
+/usr/include/c++/9/ratio:269:43:   required from ‘constexpr const intmax_t Pscf::std::ratio<1>::num’
+/usr/include/c++/9/ratio:274:31:   required from ‘struct Pscf::std::ratio<1>’
+/usr/include/c++/9/chrono:319:29:   required from ‘struct Pscf::std::chrono::duration<long int>’
+/usr/include/c++/9/chrono:857:36:   required from here
+/usr/include/c++/9/ratio:64:12: error: invalid use of incomplete type ‘struct Pscf::std::__static_gcd<1, 0>’
+   64 |     struct __static_gcd
+      |            ^~~~~~~~~~~~
+/usr/include/c++/9/ratio:64:12: note: declaration of ‘struct Pscf::std::__static_gcd<1, 0>’
+/usr/include/c++/9/ratio: In instantiation of ‘constexpr const intmax_t Pscf::std::ratio<1>::num’:
+/usr/include/c++/9/ratio:274:31:   required from ‘struct Pscf::std::ratio<1>’
+/usr/include/c++/9/chrono:319:29:   required from ‘struct Pscf::std::chrono::duration<long int>’
+/usr/include/c++/9/chrono:857:36:   required from here
+/usr/include/c++/9/ratio:269:43: error: ‘value’ is not a member of ‘Pscf::std::__static_gcd<1, 1>’
+  269 |         _Num * __static_sign<_Den>::value / __static_gcd<_Num, _Den>::value;
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/9/ratio: In instantiation of ‘constexpr const intmax_t Pscf::std::ratio<1>::den’:
+/usr/include/c++/9/ratio:274:31:   required from ‘struct Pscf::std::ratio<1>’
+/usr/include/c++/9/chrono:319:29:   required from ‘struct Pscf::std::chrono::duration<long int>’
+/usr/include/c++/9/chrono:857:36:   required from here
+/usr/include/c++/9/ratio:272:35: error: incomplete type ‘Pscf::std::__static_abs<1>’ used in nested name specifier
+  272 |         __static_abs<_Den>::value / __static_gcd<_Num, _Den>::value;
+      |                             ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/9/ratio:272:35: error: ‘value’ is not a member of ‘Pscf::std::__static_gcd<1, 1>’
+In file included from /home/rpcoll/code/pscfpp/src/util/misc/Timer.h:14,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:16,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/usr/include/c++/9/chrono:857:36: error: no matching function for call to ‘Pscf::std::chrono::duration<long int>::duration(int&)’
+  857 |         (__from(chrono::seconds(__t)));
+      |                                    ^
+/usr/include/c++/9/chrono:338:14: note: candidate: ‘template<class _Rep2, class _Period2, class> constexpr Pscf::std::chrono::duration<_Rep, _Period>::duration(const Pscf::std::chrono::duration<_Rep, _Period>&)’
+  338 |    constexpr duration(const duration<_Rep2, _Period2>& __d)
+      |              ^~~~~~~~
+/usr/include/c++/9/chrono:338:14: note:   template argument deduction/substitution failed:
+/usr/include/c++/9/chrono:857:36: note:   mismatched types ‘const Pscf::std::chrono::duration<_Rep1, _Period1>’ and ‘int’
+  857 |         (__from(chrono::seconds(__t)));
+      |                                    ^
+/usr/include/c++/9/chrono:331:23: note: candidate: ‘template<class _Rep2, class> constexpr Pscf::std::chrono::duration<_Rep, _Period>::duration(const _Rep2&)’
+  331 |    constexpr explicit duration(const _Rep2& __rep)
+      |                       ^~~~~~~~
+/usr/include/c++/9/chrono:331:23: note:   template argument deduction/substitution failed:
+/usr/include/c++/9/chrono:324:2: note: candidate: ‘constexpr Pscf::std::chrono::duration<_Rep, _Period>::duration(const Pscf::std::chrono::duration<_Rep, _Period>&) [with _Rep = long int; _Period = Pscf::std::ratio<1>]’
+  324 |  duration(const duration&) = default;
+      |  ^~~~~~~~
+/usr/include/c++/9/chrono:324:11: note:   no known conversion for argument 1 from ‘int’ to ‘const Pscf::std::chrono::duration<long int>&’
+  324 |  duration(const duration&) = default;
+      |           ^~~~~~~~~~~~~~~
+/usr/include/c++/9/chrono:322:12: note: candidate: ‘Pscf::std::chrono::duration<_Rep, _Period>::duration() [with _Rep = long int; _Period = Pscf::std::ratio<1>]’
+  322 |  constexpr duration() = default;
+      |            ^~~~~~~~
+/usr/include/c++/9/chrono:322:12: note:   candidate expects 0 arguments, 1 provided
+/usr/include/c++/9/chrono: In instantiation of ‘struct Pscf::std::chrono::duration<double>’:
+/home/rpcoll/code/pscfpp/src/util/misc/Timer.h:110:16:   required from here
+/usr/include/c++/9/chrono:316:16: error: ‘value’ is not a member of ‘Pscf::std::chrono::__is_duration<double>’
+  316 |  static_assert(!__is_duration<_Rep>::value, "rep cannot be a duration");
+      |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/9/chrono:314:23: error: ‘value’ is not a member of ‘Pscf::std::chrono::__is_ratio<Pscf::std::ratio<1> >’
+  314 |  typedef _Period      period;
+      |                       ^~~~~~
+In file included from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:16,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/util/misc/Timer.h: In member function ‘void Pscf::Util::Timer::stop(Pscf::Util::Timer::TimePoint)’:
+/home/rpcoll/code/pscfpp/src/util/misc/Timer.h:166:13: error: no match for ‘operator+=’ (operand types are ‘Pscf::Util::Timer::Duration’ {aka ‘Pscf::std::chrono::duration<double>’} and ‘int’)
+  166 |       time_ += end - begin_;
+      |       ~~~~~~^~~~~~~~~~~~~~~
+In file included from /home/rpcoll/code/pscfpp/src/util/misc/Timer.h:14,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:16,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/usr/include/c++/9/chrono:381:2: note: candidate: ‘Pscf::std::chrono::duration<_Rep, _Period>& Pscf::std::chrono::duration<_Rep, _Period>::operator+=(const Pscf::std::chrono::duration<_Rep, _Period>&) [with _Rep = double; _Period = Pscf::std::ratio<1>]’
+  381 |  operator+=(const duration& __d)
+      |  ^~~~~~~~
+/usr/include/c++/9/chrono:381:29: note:   no known conversion for argument 1 from ‘int’ to ‘const Pscf::std::chrono::duration<double>&’
+  381 |  operator+=(const duration& __d)
+      |             ~~~~~~~~~~~~~~~~^~~
+/usr/include/c++/9/chrono: In instantiation of ‘static constexpr Pscf::std::chrono::duration<_Rep, _Period> Pscf::std::chrono::duration<_Rep, _Period>::zero() [with _Rep = double; _Period = Pscf::std::ratio<1>]’:
+/home/rpcoll/code/pscfpp/src/util/misc/Timer.h:184:31:   required from here
+/usr/include/c++/9/chrono:432:11: error: no matching function for call to ‘Pscf::std::chrono::duration<double>::duration(double)’
+  432 |  { return duration(duration_values<rep>::zero()); }
+      |           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/9/chrono:338:14: note: candidate: ‘template<class _Rep2, class _Period2, class> constexpr Pscf::std::chrono::duration<_Rep, _Period>::duration(const Pscf::std::chrono::duration<_Rep, _Period>&)’
+  338 |    constexpr duration(const duration<_Rep2, _Period2>& __d)
+      |              ^~~~~~~~
+/usr/include/c++/9/chrono:338:14: note:   template argument deduction/substitution failed:
+/usr/include/c++/9/chrono:432:11: note:   mismatched types ‘const Pscf::std::chrono::duration<_Rep1, _Period1>’ and ‘double’
+  432 |  { return duration(duration_values<rep>::zero()); }
+      |           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/usr/include/c++/9/chrono:331:23: note: candidate: ‘template<class _Rep2, class> constexpr Pscf::std::chrono::duration<_Rep, _Period>::duration(const _Rep2&)’
+  331 |    constexpr explicit duration(const _Rep2& __rep)
+      |                       ^~~~~~~~
+/usr/include/c++/9/chrono:331:23: note:   template argument deduction/substitution failed:
+/usr/include/c++/9/chrono:324:2: note: candidate: ‘constexpr Pscf::std::chrono::duration<_Rep, _Period>::duration(const Pscf::std::chrono::duration<_Rep, _Period>&) [with _Rep = double; _Period = Pscf::std::ratio<1>]’
+  324 |  duration(const duration&) = default;
+      |  ^~~~~~~~
+/usr/include/c++/9/chrono:324:11: note:   no known conversion for argument 1 from ‘double’ to ‘const Pscf::std::chrono::duration<double>&’
+  324 |  duration(const duration&) = default;
+      |           ^~~~~~~~~~~~~~~
+/usr/include/c++/9/chrono:322:12: note: candidate: ‘Pscf::std::chrono::duration<_Rep, _Period>::duration() [with _Rep = double; _Period = Pscf::std::ratio<1>]’
+  322 |  constexpr duration() = default;
+      |            ^~~~~~~~
+/usr/include/c++/9/chrono:322:12: note:   candidate expects 0 arguments, 1 provided
+/usr/include/c++/9/chrono:432:51: error: body of ‘constexpr’ function ‘static constexpr Pscf::std::chrono::duration<_Rep, _Period> Pscf::std::chrono::duration<_Rep, _Period>::zero() [with _Rep = double; _Period = Pscf::std::ratio<1>]’ not a return-statement
+  432 |  { return duration(duration_values<rep>::zero()); }
+      |                                                   ^
+In file included from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp: At global scope:
+/home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:29:4: error: ‘AmIterator’ does not name a type; did you mean ‘Iterator’?
+   29 |    AmIterator<D>::AmIterator(System<D>& system)
+      |    ^~~~~~~~~~
+      |    Iterator
+/home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:41:4: error: ‘AmIterator’ does not name a type; did you mean ‘Iterator’?
+   41 |    AmIterator<D>::~AmIterator()
+      |    ^~~~~~~~~~
+      |    Iterator
+/home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:48:19: error: expected initializer before ‘<’ token
+   48 |    void AmIterator<D>::readParameters(std::istream& in)
+      |                   ^
+/home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:70:19: error: expected initializer before ‘<’ token
+   70 |    void AmIterator<D>::setup()
+      |                   ^
+/home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:126:18: error: expected initializer before ‘<’ token
+  126 |    int AmIterator<D>::solve()
+      |                  ^
+/home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:271:19: error: expected initializer before ‘<’ token
+  271 |    void AmIterator<D>::computeResidual()
+      |                   ^
+/home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:331:19: error: expected initializer before ‘<’ token
+  331 |    bool AmIterator<D>::isConverged()
+      |                   ^
+/home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:401:19: error: expected initializer before ‘<’ token
+  401 |    void AmIterator<D>::minimizeCoeff()
+      |                   ^
+/home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:490:19: error: expected initializer before ‘<’ token
+  490 |    void AmIterator<D>::buildOmega()
+      |                   ^
+/home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:593:19: error: expected initializer before ‘<’ token
+  593 |    bool AmIterator<D>::isCanonical()
+      |                   ^
+/home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:612:18: error: expected initializer before ‘<’ token
+  612 |    int AmIterator<D>::nElem(int i)
+      |                  ^
+/home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:625:19: error: expected initializer before ‘<’ token
+  625 |    void AmIterator<D>::cleanUp()
+      |                   ^
+/home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:12:19: error: ‘AmIterator’ is not a class template
+   12 |    template class AmIterator<1>;
+      |                   ^~~~~~~~~~
+/home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:12:19: error: explicit instantiation of non-template type ‘Pscf::Pscf::Pspc::AmIterator’
+/home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:13:19: error: ‘AmIterator’ is not a class template
+   13 |    template class AmIterator<2>;
+      |                   ^~~~~~~~~~
+/home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:13:19: error: explicit instantiation of non-template type ‘Pscf::Pscf::Pspc::AmIterator’
+/home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:14:19: error: ‘AmIterator’ is not a class template
+   14 |    template class AmIterator<3>;
+      |                   ^~~~~~~~~~
+/home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:14:19: error: explicit instantiation of non-template type ‘Pscf::Pscf::Pspc::AmIterator’
+/home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:16:1: error: expected ‘}’ at end of input
+   16 | }
+      | ^
+In file included from /home/rpcoll/code/pscfpp/src/pspc/System.h:11,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:12,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/home/rpcoll/code/pscfpp/src/pscf/AbstractSystem.h:13:16: note: to match this ‘{’
+   13 | namespace Pscf {
+      |                ^
+In file included from /home/rpcoll/code/pscfpp/src/util/misc/Timer.h:14,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.tpp:16,
+                 from /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.cpp:8:
+/usr/include/c++/9/chrono: In instantiation of ‘constexpr int Pscf::std::chrono::operator-(const Pscf::std::chrono::duration<_Rep1, _Period1>&, const Pscf::std::chrono::duration<_Rep2, _Period2>&) [with _Rep1 = long int; _Period1 = Pscf::std::ratio<1, 1000000000>; _Rep2 = long int; _Period2 = Pscf::std::ratio<1, 1000000000>]’:
+/usr/include/c++/9/chrono:764:41:   required from ‘constexpr int Pscf::std::chrono::operator-(const Pscf::std::chrono::time_point<_Clock, _Duration1>&, const Pscf::std::chrono::time_point<_Clock, _Duration2>&) [with _Clock = Pscf::std::chrono::_V2::steady_clock; _Dur1 = Pscf::std::chrono::duration<long int, Pscf::std::ratio<1, 1000000000> >; _Dur2 = Pscf::std::chrono::duration<long int, Pscf::std::ratio<1, 1000000000> >]’
+/home/rpcoll/code/pscfpp/src/util/misc/Timer.h:166:22:   required from here
+/usr/include/c++/9/chrono:470:7: error: body of ‘constexpr’ function ‘constexpr int Pscf::std::chrono::operator-(const Pscf::std::chrono::duration<_Rep1, _Period1>&, const Pscf::std::chrono::duration<_Rep2, _Period2>&) [with _Rep1 = long int; _Period1 = Pscf::std::ratio<1, 1000000000>; _Rep2 = long int; _Period2 = Pscf::std::ratio<1, 1000000000>]’ not a return-statement
+  470 |       }
+      |       ^
+make[1]: *** [/home/rpcoll/code/pscfpp/src/pspc/patterns.mk:42: /home/rpcoll/code/pscfpp/src/pspc/iterator/AmIterator.o] Error 1
+make[1]: Leaving directory '/home/rpcoll/code/pscfpp/src/pspc'
+make: *** [makefile:39: pspc] Error 2
