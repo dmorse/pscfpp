@@ -47,13 +47,13 @@ namespace Pspc
    template <int D>
    void AmIterator<D>::readParameters(std::istream& in)
    {
-      isFlexible_ = 0; // default value (fixed cell)
+      // NOT AM SPECIFIC. isFlexible_ = 0; // default value (fixed cell)
       scaleStress_ = 10.0; // default stress scaling
       errorType_ = "normResid"; // default type of error
       read(in, "maxItr", maxItr_);
       read(in, "epsilon", epsilon_);
       read(in, "maxHist", maxHist_);
-      readOptional(in, "isFlexible", isFlexible_);
+      // NOT AM SPECIFIC. readOptional(in, "isFlexible", isFlexible_);
       readOptional(in, "errorType", errorType_);
       readOptional(in, "scaleStress", scaleStress_);
 
@@ -70,21 +70,7 @@ namespace Pspc
    void AmIterator<D>::setup()
    {
       // Determine length of residual basis vectors
-      nResid_ = system().mixture().nMonomer();
-      if (isFlexible_) {
-         nResid_ += system().unitCell().nParameter(); 
-      }
-
-      // Determine how to treat homogeneous basis function coefficients
-      if (isCanonical()) {
-         // Directly calculate them
-         shift_ = 1;
-         isCanonical_ = true;
-      } else {
-         // Iteratively calculate them
-         shift_ = 0;
-         isCanonical_ = false;
-      }
+      //nResid_ = IterMed....
 
       // Allocate ring buffers
       resHists_.allocate(maxHist_+1);
@@ -97,14 +83,14 @@ namespace Pspc
 
       // Allocate outer arrays used in iteration
       int nMonomer = system().mixture().nMonomer();
-      wArrays_.allocate(nMonomer);
+      fieldTrial_.allocate(nMonomer);
       dArrays_.allocate(nMonomer);
       resArrays_.allocate(nResid_);
       
       // Allocate inner arrays with number of basis functions
       int nBasis = system().basis().nBasis();
       for (int i = 0; i < nMonomer; ++i) {
-         wArrays_[i].allocate(nBasis);
+         fieldTrial_[i].allocate(nBasis);
          dArrays_[i].allocate(nBasis);
       }
 
@@ -127,9 +113,10 @@ namespace Pspc
    {
 
       // Preconditions:
-      UTIL_CHECK(system().hasWFields());
+      // UTIL_CHECK(IterMed... check whether there is an initial guess);
 
       // Timers for timing iteration components
+
       Timer timerMDE;
       Timer timerStress;
       Timer timerAM;
@@ -145,15 +132,10 @@ namespace Pspc
       
       // Solve MDE for initial state
       timerMDE.start();
-      system().compute();
+      // IterMed... somehow call system().compute() but with more general name.
+      // IterMed call will include isFlexible computeStress stuff. All in one timer. 
+      // Investigate Scotty's timing tree thing! 
       timerMDE.stop();
-
-      // Compute initial stress if needed
-      if (isFlexible_) {
-         timerStress.start();
-         system().mixture().computeStress();
-         timerStress.stop();
-      }
 
       // Iterative loop
       bool done;
@@ -172,7 +154,7 @@ namespace Pspc
             nHist_ = maxHist_;
          }
          timerResid.start();
-         computeResidual();
+         computeResidual(); // Decide if this is general enough to AmIterator
          timerResid.stop();
 
          // Test for convergence
@@ -194,11 +176,6 @@ namespace Pspc
             Log::file() << "MDE solution:         " 
                         << timerMDE.time()  << " s,  "
                         << timerMDE.time()/timerTotal.time() << "\n";
-            if (isFlexible_) {
-               Log::file() << "stress computation:   " 
-                           << timerStress.time()  << " s,  "
-                           << timerStress.time()/timerTotal.time() << "\n";
-            }
             Log::file() << "residual computation: "  
                         << timerResid.time()  << " s,  "
                         << timerResid.time()/timerTotal.time() << "\n";
@@ -208,24 +185,27 @@ namespace Pspc
             Log::file() << "checking convergence: "  
                         << timerConverged.time()  << " s,  "
                         << timerConverged.time()/timerTotal.time() << "\n";
-            Log::file() << "updating field guess: "  
+            Log::file() << "updating guess: "  
                         << timerOmega.time()  << " s,  "
                         << timerOmega.time()/timerTotal.time() << "\n";
             Log::file() << "total time:           "  
                         << timerTotal.time()   << " s  ";
             Log::file() << "\n\n";
 
-            // If the unit cell is rigid, compute and output final stress 
-            if (!isFlexible_) {
-               system().mixture().computeStress();
-               Log::file() << "Final stress:" << "\n";
-               for (int m=0; m < system().unitCell().nParameter(); ++m) {
-                  Log::file() << "Stress  "<< m << "   = "
-                              << Dbl(system().mixture().stress(m)) 
-                              << "\n";
-               }
-               Log::file() << "\n";
-            }
+            // This is not an AmIterator thing. This needs to be done somewhere else.
+            // Really, this is something that is outputted that is specific to a system
+            // when the system has converged. AmIterator just does the iteration.
+            // If the unit cell is rigid, compute and output final stress. 
+            // if (!isFlexible_) {
+            //    system().mixture().computeStress();
+            //    Log::file() << "Final stress:" << "\n";
+            //    for (int m=0; m < system().unitCell().nParameter(); ++m) {
+            //       Log::file() << "Stress  "<< m << "   = "
+            //                   << Dbl(system().mixture().stress(m)) 
+            //                   << "\n";
+            //    }
+            //    Log::file() << "\n";
+            // }
 
             // Successful completion (i.e., converged within tolerance)
             cleanUp();
@@ -498,7 +478,7 @@ namespace Pspc
          // Update omega field with SCF residuals
          for (int i = 0; i < nMonomer; ++i) {
             for (int k = shift_; k < nBasis; ++k) {
-               wArrays_[i][k]
+               fieldTrial_[i][k]
                       = wHists_[0][i][k] + lambda_*resHists_[0][i][k];
             }
          }
@@ -506,14 +486,14 @@ namespace Pspc
          if (isCanonical_) {
             for (int i = 0; i < nMonomer; ++i) {
                dArrays_[i][0] = 0.0;
-               wArrays_[i][0] = 0.0;
+               fieldTrial_[i][0] = 0.0;
                for (int j = 0; j < nMonomer; ++j) {
-                  wArrays_[i][0] += 
+                  fieldTrial_[i][0] += 
                      system().interaction().chi(i,j) * system().cField(j)[0];
                }
             }
          }
-         system().setWBasis(wArrays_);
+         system().setWBasis(fieldTrial_);
 
          // Update unit cell parameters with stress residuals
          if (isFlexible_) {
@@ -530,7 +510,7 @@ namespace Pspc
          // Contribution of the last solution
          for (int j = 0; j < nMonomer; ++j) {
             for (int k = shift_; k < nBasis; ++k) {
-               wArrays_[j][k] = wHists_[0][j][k];
+               fieldTrial_[j][k] = wHists_[0][j][k];
                dArrays_[j][k] = resHists_[0][j][k];
             }
          }
@@ -538,7 +518,7 @@ namespace Pspc
          for (int i = 0; i < nHist_; ++i) {
             for (int j = 0; j < nMonomer; ++j) {
                for (int k = shift_; k < nBasis; ++k) {
-                  wArrays_[j][k] += coeffs_[i] * ( wHists_[i+1][j][k] -
+                  fieldTrial_[j][k] += coeffs_[i] * ( wHists_[i+1][j][k] -
                                                    wHists_[i][j][k] );
                   dArrays_[j][k] += coeffs_[i] * ( resHists_[i+1][j][k] -
                                                    resHists_[i][j][k] );
@@ -549,9 +529,9 @@ namespace Pspc
          if (isCanonical_) {
             for (int i = 0; i < nMonomer; ++i) {
                dArrays_[i][0] = 0.0;
-               wArrays_[i][0] = 0.0;
+               fieldTrial_[i][0] = 0.0;
                for (int j = 0; j < nMonomer; ++j) {
-                  wArrays_[i][0] += 
+                  fieldTrial_[i][0] += 
                      system().interaction().chi(i,j)*system().cField(j)[0];
                }
             }
@@ -559,11 +539,11 @@ namespace Pspc
          // Adding in the estimated error of the predicted field
          for (int i = 0; i < nMonomer; ++i) {
             for (int k = 0; k < nBasis; ++k) {
-               wArrays_[i][k] += lambda_ * dArrays_[i][k];
+               fieldTrial_[i][k] += lambda_ * dArrays_[i][k];
             }
          }
          // Updating the system
-         system().setWBasis(wArrays_);
+         system().setWBasis(fieldTrial_);
          
          // If flexible, do mixing of histories for unit cell parameters
          if (isFlexible_) {

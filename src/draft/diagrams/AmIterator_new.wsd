@@ -1,0 +1,119 @@
+@startuml
+
+class System
+System : IteratorMediator* iter_
+
+System : + bool hasWFields()
+System : + void compute()
+System : + DArray< DArray<double> > const & wFields() const
+System : + wField(int)
+System : + cField(int)
+System : + setWBasis(...)
+System : + setUnitCell(...)
+
+' class UnitCell
+' UnitCell : + int nParameter()
+' UnitCell : + FSArray<double, 6> parameters() const
+
+' class Mixture
+' Mixture : + int nMonomer()
+' Mixture : + void computeStress()
+' Mixture : + double stress(int nParameter)
+
+' class Basis
+' Basis : + int nBasis()
+
+' class Interaction
+' Interaction : + chi(int, int)
+' Interaction : + idemp(int, int)
+
+class AmStrategy 
+class CpuAmStrategy
+class CudaAmStrategy
+
+abstract class IteratorMediator<T>
+IteratorMediator : Iterator* iter_
+IteratorMediator : System* sys_
+IteratorMediator : bool hasInitialGuess()
+' perhaps evaluate should actually return something? this might be more general. hmmm.
+IteratorMediator : virtual void evaluate()
+IteratorMediator : virtual DArray<T> getCurrent()
+IteratorMediator : virtual DArray<T> getResidual()
+IteratorMediator : virtual void update(DArray<T> )
+
+class CpuIteratorMediator
+class CudaIteratorMediator
+
+class Iterator
+' Iterator public
+Iterator : + Iterator(IteratorMediator& iterMed)
+' Iterator : + virtual void setup() = 0
+' Iterator : + virtual int solve() = 0
+' Iterator : + bool isFlexible() const
+' ' Iterator protected 
+' Iterator : # bool isFlexible_
+Iterator : # IteratorMediator& system()
+' Iterator private
+Iterator : - IteratorMediator* iterMed_
+
+
+
+class AmIterator<T>
+AmIterator : + AmIterator(IteratorMediator& iterMed, AmStrategy& strategy)
+' AmIterator : + ~AmIterator()
+' AmIterator : + void readParameters(std::istream& in)
+' AmIterator : + void setup()
+' AmIterator : + int solve()
+' AmIterator : + double epsilon()
+' AmIterator : + int maxHist()
+' AmIterator : + int maxItr()
+' AmIterator : - double epsilon_
+' AmIterator : - std::string errorType_
+' AmIterator : - int shift_
+' AmIterator : - double lambda_
+' AmIterator : - int nHist_
+' AmIterator : - int maxHist_
+' AmIterator : - int maxItr_
+' AmIterator : - int nResid_ 
+' AmIterator : - RingBuffer< DArray < DArray<double> > > resHists_
+' AmIterator : - RingBuffer< DArray < DArray<double> > > fieldHists_
+' AmIterator : - DMatrix<double> U_
+' AmIterator : - DArray<double> coeffs_
+' AmIterator : - DArray<double> v_
+' AmIterator : - DArray<DArray <double> > fieldArrays_
+' AmIterator : - DArray<DArray <double> > dArrays_
+' AmIterator : - DArray< DArray<double> > resArrays_
+AmIterator : AmStrategy* strategy_
+AmIterator : - void computeResidual()
+AmIterator : - bool isConverged()
+AmIterator : - void findResidCoeff()
+AmIterator : - void updateGuess()
+AmIterator : - void cleanUp()
+
+' Inheritance and subclassing 
+Iterator <|-- AmIterator
+IteratorMediator <|-- CpuIteratorMediator : T = RField
+IteratorMediator <|-- CudaIteratorMediator : T = RDField
+AmStrategy <|-- CpuAmStrategy 
+AmStrategy <|-- CudaAmStrategy
+
+' References
+AmIterator *-> AmStrategy
+IteratorMediator --> Iterator
+Iterator --> IteratorMediator
+IteratorMediator --> System
+System --> IteratorMediator
+' Domain --> UnitCell
+' Domain --> Basis
+' System --> Interaction
+' System --> Polymer
+
+
+' Composition
+
+' System *-> Domain 
+' System *-> Mixture
+
+
+
+@enduml

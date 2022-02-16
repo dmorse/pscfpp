@@ -54,7 +54,7 @@ AmIterator : + ~AmIterator()
 ' AmIterator : - std::string errorType_
 ' AmIterator : - double scaleStress_
 ' AmIterator : - bool isFlexible_
-AmIterator : - bool isCanonical_
+' AmIterator : - bool isCanonical_
 ' AmIterator : - int shift_
 ' AmIterator : - double lambda_
 ' AmIterator : - int nHist_
@@ -74,13 +74,13 @@ AmIterator : - bool isCanonical_
 ' AmIterator : - FArray<double, 6> wCpArrays_
 ' AmIterator : - FArray<double, 6> dCpArrays_
 ' AmIterator : - DArray< DArray<double> > resArrays_
-AmIterator : - bool isCanonical()
+' AmIterator : - bool isCanonical()
 ' AmIterator : - int nElem(int i)
-' AmIterator : - void computeResidual()
-' AmIterator : - bool isConverged()
-' AmIterator : - void minimizeCoeff()
-' AmIterator : - void buildOmega()
-' AmIterator : - void cleanUp()
+AmIterator : - void computeResidual()
+AmIterator : - bool isConverged()
+AmIterator : - void minimizeCoeff()
+AmIterator : - void buildOmega()
+AmIterator : - void cleanUp()
 
 Iterator <|-- AmIterator
 AmIterator --> System
