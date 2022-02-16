@@ -19,7 +19,7 @@ namespace Pspc {
 
    typedef DArray<double> FieldCPU;
 
-   class IteratorMediatorCPU : IteratorMediator<FieldCPU>
+   class IteratorMediatorCPU : public IteratorMediator<FieldCPU>
    {
       /// Constructor
       IteratorMediatorCPU(AbstractSystem& sys, Iterator<FieldCPU>& iter);

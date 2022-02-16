@@ -20,30 +20,35 @@ namespace Pspc {
 
    typedef DArray<double> FieldCPU;
 
-   class AmStrategyCPU : AmStrategy<FieldCPU>
+   class AmStrategyCPU : public AmStrategy<FieldCPU>
    {
-      /// Constructor
+   public:
+         /// Constructor
       AmStrategyCPU();
 
       /// Destructor
-      ~AmStrategyGPU(); 
-
-   public:
+      ~AmStrategyCPU(); 
       
-      virtual double findResNorm(FieldCPU& resHist);
+      double findResNorm(FieldCPU const & resHist) 
+      const;
 
-      virtual double findResMax(FieldCPU& resHist);
+      double findResMax(FieldCPU const & resHist) 
+      const;
 
-      virtual double computeUDotProd(RingBuffer<FieldCPU>& resHists, int m);
+      double computeUDotProd(RingBuffer<FieldCPU> const & resHists, int m) 
+      const;
 
-      virtual double computeVDotProd(RingBuffer<FieldCPU>& resHists, int m);
+      double computeVDotProd(RingBuffer<FieldCPU> const & resHists, int m) 
+      const;
 
-      virtual void setEqual(FieldCPU& a, FieldCPU& b);
+      void setEqual(FieldCPU& a, FieldCPU const & b)
+      const;
 
-      virtual void addHistories(FieldCPU& trial, RingBuffer<FieldCPU>& hists, DArray<double> coeffs, int nHist_);
+      void addHistories(FieldCPU& trial, RingBuffer<FieldCPU> const & hists, DArray<double> coeffs, int nHist_) 
+      const;
 
-      virtual void addPredictedError(FieldCPU& trial, FieldCPU& resTrial, double lambda);
-
+      void addPredictedError(FieldCPU& fieldTrial, FieldCPU const & resTrial, double lambda)
+      const;
 
    };
 
