@@ -207,7 +207,7 @@ namespace Pspc{
          const double scaleStress = sys_->domain().scaleStress();
 
          for (int i = 0; i < nParam; i++) {
-            parameters[i] = 1/scaleStress * newGuess[nMonomer*nBasis + i];
+            parameters.append(1/scaleStress * newGuess[nMonomer*nBasis + i]);
          }
 
          sys_->setUnitCell(parameters);
