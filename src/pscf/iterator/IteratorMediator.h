@@ -26,10 +26,13 @@ namespace Pscf {
    public:
 
       /// Constructor
-      IteratorMediator();
+      IteratorMediator() {};
 
       /// Destructor
-      ~IteratorMediator(); 
+      virtual ~IteratorMediator() {}; 
+
+      /// Set iterator pointer
+      virtual void setIterator(Iterator<T>& iter) = 0;
       
       virtual void setup() = 0;
 

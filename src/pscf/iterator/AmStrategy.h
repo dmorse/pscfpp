@@ -22,10 +22,10 @@ namespace Pscf {
    public:
 
       /// Constructor
-      AmStrategy();
+      AmStrategy() {};
 
       /// Destructor
-      ~AmStrategy(); 
+      virtual ~AmStrategy() {}; 
       
       virtual double findResNorm(T const & resHist) const = 0;
       virtual double findResMax(T const & resHist) const = 0;

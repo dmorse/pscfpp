@@ -144,6 +144,11 @@ namespace Pspc
       */
       bool isFlexible() const;
 
+      /**
+      * Get stress error scaling, if unit cell is flexible.
+      */
+      double scaleStress() const;
+
       //@}
 
    private:
@@ -266,6 +271,11 @@ namespace Pspc
    template <int D>
    inline bool Domain<D>::isFlexible() const
    {  return isFlexible_; }
+
+   // Return stressScale_.
+   template <int D>
+   inline double Domain<D>::scaleStress() const
+   {  return scaleStress_; }
 
    #ifndef PSPC_DOMAIN_TPP
    // Suppress implicit instantiation

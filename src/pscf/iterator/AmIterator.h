@@ -169,4 +169,5 @@ namespace Pscf {
    {  return *strategy_; }
 
 }
+#include "AmIterator.cpp"
 #endif

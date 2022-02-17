@@ -8,7 +8,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "AmIterator.h"
 #include <pscf/inter/ChiInteraction.h>
 #include <util/containers/FArray.h>
 #include <util/format/Dbl.h>
@@ -25,8 +24,8 @@ namespace Pscf
    */
    template <typename T>
    AmIterator<T>::AmIterator(IteratorMediator<T>& iterMed, AmStrategy<T>& strategy)
-    : Iterator(iterMed),
-      strategy_(strategy),
+    : Iterator<T>(iterMed),
+      strategy_(&strategy),
       epsilon_(0),
       lambda_(0),
       nHist_(0),
@@ -38,7 +37,9 @@ namespace Pscf
    */
    template <typename T>
    AmIterator<T>::~AmIterator()
-   {}
+   {
+      delete strategy_;
+   }
 
    /*
    * Read parameter file block.
@@ -197,7 +198,7 @@ namespace Pscf
 
             // Solve the fixed point equation
             timerMDE.start();
-            iterMed().evaluate()
+            iterMed().evaluate();
             timerMDE.stop();
 
          }
@@ -348,9 +349,6 @@ namespace Pscf
       // Clear ring buffers
       resHists_.clear();
       fieldHists_.clear();
-      stressHists_.clear();
-      cellParamHists_.clear();
-
       return;
    }
 

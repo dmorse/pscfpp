@@ -67,6 +67,7 @@ namespace Pspc
       // if I move it up to line 62, it does not work.
       // Why.
       readOptional(in, "isFlexible", isFlexible_);
+      readOptional(in, "scaleStress", scaleStress_);
    }
    
  

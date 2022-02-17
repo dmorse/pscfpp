@@ -21,16 +21,26 @@ namespace Pspc{
 
    /// Constructor
    template <int D>
-   IteratorMediatorCPU<D>::IteratorMediatorCPU(System<D>& sys, Pscf::Iterator<FieldCPU>& iter)
+   IteratorMediatorCPU<D>::IteratorMediatorCPU(System<D>& sys)
     : sys_(&sys),
-      iter_(&iter),
-      scaleStress_(10.0)
+      iter_(0)
    {}
 
    /// Destructor
    template <int D>
    IteratorMediatorCPU<D>::~IteratorMediatorCPU()
-   {}
+   {
+      if (iter_)
+         delete iter_;
+   }
+
+   /// Set iterator pointer
+   template <int D>
+   void IteratorMediatorCPU<D>::setIterator(Iterator<FieldCPU>& iter)
+   {
+      iter_ = &iter;
+      return;
+   }
 
    template <int D>
    void IteratorMediatorCPU<D>::setup()
@@ -80,10 +90,11 @@ namespace Pspc{
 
       if (sys_->domain().isFlexible()) {
          const int nParam = sys_->unitCell().nParameter();
+         const double scaleStress = sys_->domain().scaleStress();
          const FSArray<double,6> currParam = sys_->unitCell().parameters();
 
          for (int i = 0; i < nParam; i++) {
-            curr[nMonomer*nBasis + i] = scaleStress_*currParam[i];
+            curr[nMonomer*nBasis + i] = scaleStress*currParam[i];
          }
       }
 
@@ -93,7 +104,9 @@ namespace Pspc{
    template <int D>
    void IteratorMediatorCPU<D>::evaluate()
    {
+      // Solve MDEs for current omega field
       sys_->compute();
+      // Compute stress if done
       if (sys_->domain().isFlexible()) {
          sys_->mixture().computeStress();
       }
@@ -130,6 +143,7 @@ namespace Pspc{
          }
       } else {
          // otherwise explicitly set the residual value for the homogeneous components
+         // the homogeneous field component is set explicitly as well in update 
          for (int i = 0; i < nMonomer; ++i) {
             resid[i*nBasis] = 0.0;
          }
@@ -138,9 +152,20 @@ namespace Pspc{
       // If variable unit cell, compute stress residuals
       if (sys_->domain().isFlexible()) {
          const int nParam = sys_->unitCell().nParameter();
+         const double scaleStress = sys_->domain().scaleStress();
          
+         // Combined -1 factor and stress scaling here. This is okay: 
+         // - residuals only show up as dot products (U, v, norm) 
+         //   or with their absolute value taken (max), so the 
+         //   sign on a given residual vector element is not relevant
+         //   as long as it is consistent across all vectors
+         // - The scaling is applied here and to the unit cell param
+         //   storage, so that updating is done on the same scale, 
+         //   and then undone right before passing to the unit cell.
+
          for (int i = 0; i < nParam ; i++) {
-            resid[nMonomer*nBasis + i] = scaleStress_ * -1 * sys_->mixture().stress(i);
+            resid[nMonomer*nBasis + i] = scaleStress * -1 
+                                       * sys_->mixture().stress(i);
          }
       }
 
@@ -179,9 +204,10 @@ namespace Pspc{
       if (sys_->domain().isFlexible()) {
          FSArray<double, 6> parameters;
          const int nParam = sys_->unitCell().nParameter();
+         const double scaleStress = sys_->domain().scaleStress();
 
          for (int i = 0; i < nParam; i++) {
-            parameters[i] = 1/scaleStress_ * newGuess[nMonomer*nBasis + i];
+            parameters[i] = 1/scaleStress * newGuess[nMonomer*nBasis + i];
          }
 
          sys_->setUnitCell(parameters);
@@ -189,7 +215,10 @@ namespace Pspc{
       
    }
 
-   /// Finalize????
+   // Finalize???? Could have the iterator call this, and have it be by default empty
+   // as a place to put things that may need to be done at the end of an iteration. Or could have the system
+   // take care of this since it doesn't have much to do with the iterator. For example, need to compute stress
+   // if not flexible. 
 
 }
 }

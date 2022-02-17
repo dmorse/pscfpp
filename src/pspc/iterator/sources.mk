@@ -1,8 +1,5 @@
 pspc_iterator_= \
-  pspc/iterator/Iterator.cpp \
   pspc/iterator/IteratorFactory.cpp \
-  pspc/iterator/AmIterator.cpp \
-  pspc/iterator/AmmIterator.cpp \
   pspc/iterator/IteratorMediatorCPU.cpp \
   pspc/iterator/AmStrategyCPU.cpp \
 

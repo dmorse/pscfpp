@@ -27,7 +27,7 @@ namespace Pscf {
 namespace Pspc
 {
 
-   template <int D> class Iterator;
+   template <int D> class IteratorMediatorCPU;
    template <int D> class IteratorFactory;
    template <int D> class Sweep;
    template <int D> class SweepFactory;
@@ -304,7 +304,7 @@ namespace Pspc
       /**
       * Get the Iterator by reference.
       */
-      Iterator<D>& iterator();
+      IteratorMediatorCPU<D>& iteratorMediator();
 
       /**
       * Get homogeneous mixture (for reference calculations).
@@ -584,7 +584,7 @@ namespace Pspc
       /**
       * Pointer to an iterator.
       */
-      Iterator<D>* iteratorPtr_;
+      IteratorMediatorCPU<D>* iteratorMediatorPtr_;
 
       /**
       * Pointer to iterator factory object
@@ -804,10 +804,10 @@ namespace Pspc
 
    // Get the Iterator.
    template <int D>
-   inline Iterator<D>& System<D>::iterator()
+   inline IteratorMediatorCPU<D>& System<D>::iteratorMediator()
    {
-      UTIL_ASSERT(iteratorPtr_);
-      return *iteratorPtr_;
+      UTIL_ASSERT(iteratorMediatorPtr_);
+      return *iteratorMediatorPtr_;
    }
 
    template <int D>

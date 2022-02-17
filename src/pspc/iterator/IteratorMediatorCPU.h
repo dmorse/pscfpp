@@ -26,10 +26,13 @@ namespace Pspc{
    public:
 
       /// Constructor
-      IteratorMediatorCPU(System<D>& sys, Pscf::Iterator<FieldCPU>& iter);
+      IteratorMediatorCPU(System<D>& sys);
 
       /// Destructor
       ~IteratorMediatorCPU(); 
+
+      /// Set iterator pointer
+      void setIterator(Iterator<FieldCPU>& iter); 
 
       /// Set up the iterator.
       void setup();
@@ -56,15 +59,16 @@ namespace Pspc{
       /// Updates the system with a passed in state of the iterator.
       void update(FieldCPU& newGuess);
 
+      
+
    private:
 
-      // Const pointer to non-const system
-      System<D> * sys_;
+      // pointer to system
+      System<D>* sys_;
 
-      // Const pointer to non-const iterator
-      Pscf::Iterator<FieldCPU> * iter_;
+      // pointer to iterator
+      Pscf::Iterator<FieldCPU>* iter_;
 
-      double scaleStress_;
    };
 
    #ifndef PSPC_ITERATOR_MEDIATOR_CPU_TPP
