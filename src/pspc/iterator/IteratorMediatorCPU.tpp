@@ -19,29 +19,23 @@ namespace Pspc{
    using namespace Util;
 
    /// Constructor
-   template <int D>
-   IteratorMediatorCPU<D>::IteratorMediatorCPU(AbstractSystem& sys, Iterator<FieldCPU>& iter)
+   IteratorMediatorCPU::IteratorMediatorCPU(AbstractSystem& sys, Iterator<FieldCPU>& iter)
     : IteratorMediator<FieldCPU>(sys, iter)
-   {
-      curr
-   }
+   {}
 
    /// Destructor
-   template <int D>
-   IteratorMediatorCPU<D>::~IteratorMediatorCPU()
+   IteratorMediatorCPU::~IteratorMediatorCPU()
    {} 
 
    /// Checks if the system has an initial guess
-   template <int D>
-   bool IteratorMediatorCPU<D>::hasInitialGuess()
+   bool IteratorMediatorCPU::hasInitialGuess()
    {
       return system().hasWFields();
    }
    
    /// Calculates and returns the number of elements in the
    /// array to be iterated 
-   template <int D>
-   int IteratorMediatorCPU<D>::nElements()
+   int IteratorMediatorCPU::nElements()
    {
       const int nMonomer = system().mixture().nMonomer();
       const int nBasis = system().basis().nBasis();
@@ -56,8 +50,7 @@ namespace Pspc{
    }
 
    /// Gets a reference to the current state of the system
-   template <int D>
-   void IteratorMediatorCPU<D>::getCurrent(FieldCPU& curr)
+   void IteratorMediatorCPU::getCurrent(FieldCPU& curr)
    {
       // Straighten out fields into linear arrays
 
@@ -79,7 +72,7 @@ namespace Pspc{
          const FSArray<double,6> currParam = system().unitCell().parameters();
 
          for (int i = 0; i < nParam; i++) {
-            curr[nMonomer*nBasis + i] = scaleStress_*system()currParam[i]
+            curr[nMonomer*nBasis + i] = scaleStress_*currParam[i];
          }
       }
 
@@ -87,8 +80,7 @@ namespace Pspc{
    }
 
    /// Runs calculation to evaluate function for fixed point.
-   template <int D>
-   void IteratorMediatorCPU<D>::evaluate()
+   void IteratorMediatorCPU::evaluate()
    {
       system().compute();
       if (system().domain().isFlexible()) {
@@ -97,8 +89,7 @@ namespace Pspc{
    }
 
    /// Gets residual values from system
-   template <int D>
-   void IteratorMediatorCPU<D>::getResidual(FieldCPU& resid)
+   void IteratorMediatorCPU::getResidual(FieldCPU& resid)
    {
       const int n = nElements();
       const int nMonomer = system().mixture().nMonomer();
@@ -127,8 +118,10 @@ namespace Pspc{
             resid[i*nBasis] -= 1.0/system().interaction().sum_inv();
          }
       } else {
-         // otherwise explicitly set the residual value for the homogeneous component
-         resid[i*nBasis] = 0.0;
+         // otherwise explicitly set the residual value for the homogeneous components
+         for (int i = 0; i < nMonomer; ++i) {
+            resid[i*nBasis] = 0.0;
+         }
       }
 
       // If variable unit cell, compute stress residuals
@@ -136,15 +129,14 @@ namespace Pspc{
          const int nParam = system().unitCell().nParameter();
          
          for (int i = 0; i < nParam ; i++) {
-            resid[nMonomer*nBasis + i][0] = scaleStress_ * -system().mixture().stress(i) );
+            resid[nMonomer*nBasis + i] = scaleStress_ * -1 * system().mixture().stress(i);
          }
       }
 
    }
 
    /// Updates the system with a passed in state of the iterator.
-   template <int D>
-   void IteratorMediatorCPU<D>::update(FieldCPU& newGuess)
+   void IteratorMediatorCPU::update(FieldCPU& newGuess)
    {
       // Convert back to field format
       const int nMonomer = system().mixture().nMonomer();
@@ -164,9 +156,9 @@ namespace Pspc{
       // Manually and explicitly set homogeneous components of field if canonical
       if (system().mixture().isCanonical()) {
          for (int i = 0; i < nMonomer; ++i) {
-            wField[i][0] = 0.0;
+            wField[i][0] = 0.0; // initialize to 0
             for (int j = 0; j < nMonomer; ++j) {
-               wArrays_[i][0] += 
+               wField[i][0] += 
                   system().interaction().chi(i,j) * system().cField(j)[0];
             }
          }
@@ -181,7 +173,7 @@ namespace Pspc{
             parameters[i] = 1/scaleStress_ * newGuess[nMonomer*nBasis + i];
          }
 
-         system.setUnitCell(parameters);
+         system().setUnitCell(parameters);
       }
       
    }

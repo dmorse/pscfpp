@@ -19,7 +19,6 @@ namespace Pspc{
 
    typedef DArray<double> FieldCPU;
 
-   template <int D>
    class IteratorMediatorCPU : public IteratorMediator<FieldCPU>
    {
    public:
@@ -50,8 +49,6 @@ namespace Pspc{
       void update(FieldCPU& newGuess);
 
    private:
-
-      using IteratorMediator<FieldCPU>::system;
 
       double scaleStress_ = 10.0;
 

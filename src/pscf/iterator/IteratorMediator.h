@@ -51,12 +51,10 @@ namespace Pscf {
 
    protected:
       // Get associated system
-      inline AbstractSystem& IteratorMediator<D>::system() 
-      {  return *sys_; }
+      inline AbstractSystem& system() { return *sys_; }
 
       // Get associated iterator
-      inline Iterator<T>& IteratorMediator<D>::iterator() 
-      {  return *iter_; }
+      inline Iterator<T>& iterator() { return *iter_; }
 
    private:
 
