@@ -38,17 +38,25 @@ namespace Pscf {
       virtual int nElements() = 0;
 
       /// Gets a reference to the current state of the system
-      virtual T& getCurrent() = 0;
+      virtual void getCurrent(T& curr) = 0;
 
       /// Runs calculation to evaluate function for fixed point.
       virtual void evaluate() = 0;
 
       /// Gets residual values from system
-      virtual T getResidual() = 0;
+      virtual void getResidual(T& resid) = 0;
 
       /// Updates the system with a passed in state of the iterator.
-      virtual void update(T& newField) = 0;
+      virtual void update(T& newGuess) = 0;
 
+   protected:
+      // Get associated system
+      inline AbstractSystem& IteratorMediator<D>::system() 
+      {  return *sys_; }
+
+      // Get associated iterator
+      inline Iterator<T>& IteratorMediator<D>::iterator() 
+      {  return *iter_; }
 
    private:
 
@@ -56,7 +64,7 @@ namespace Pscf {
       AbstractSystem * const sys_;
 
       // Const pointer to non-const iterator
-      Iterator * const iter_;
+      Iterator<T> * const iter_;
 
    };
 

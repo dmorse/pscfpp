@@ -260,6 +260,11 @@ namespace Pspc
       */
       UnitCell<D> const & unitCell() const;
 
+      /**
+      * Get Domain by const reference.
+      */
+      Domain<D> const & domain() const;
+
 
       /**
       * Get the spatial discretization mesh by const reference.
@@ -741,6 +746,10 @@ namespace Pspc
    // Inline member functions
 
    // Get the associated UnitCell<D> object by const reference.
+   template <int D>
+   inline Domain<D> const & System<D>::domain() const
+   { return domain_; }
+
    template <int D>
    inline UnitCell<D> const & System<D>::unitCell() const
    { return domain_.unitCell(); }

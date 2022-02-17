@@ -34,7 +34,7 @@ namespace Pscf {
       /**
       * Constructor.
       * 
-      * \param system parent System object
+      * \param iterMed iterator mediator object
       */
       Iterator(IteratorMediator<T>& iterMed);
 

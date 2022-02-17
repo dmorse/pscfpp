@@ -9,25 +9,26 @@
 */
 
 #include <util/global.h>
-#include <pscf/iterator/IteratorMediator.h>
 #include <util/containers/DArray.h>
+#include <pscf/iterator/IteratorMediator.h>
 
 namespace Pscf {
-namespace Pspc {
+namespace Pspc{
 
    using namespace Util;
 
    typedef DArray<double> FieldCPU;
 
+   template <int D>
    class IteratorMediatorCPU : public IteratorMediator<FieldCPU>
    {
+   public:
+
       /// Constructor
       IteratorMediatorCPU(AbstractSystem& sys, Iterator<FieldCPU>& iter);
 
       /// Destructor
       ~IteratorMediatorCPU(); 
-
-   public:
 
       /// Checks if the system has an initial guess
       bool hasInitialGuess();
@@ -37,13 +38,22 @@ namespace Pspc {
       int nElements();
 
       /// Gets a reference to the current state of the system
-      FieldCPU& getCurrent();
+      void getCurrent(FieldCPU& curr);
+
+      /// Runs calculation to evaluate function for fixed point.
+      void evaluate();
+
+      /// Gets residual values from system
+      void getResidual(FieldCPU& resid);
 
       /// Updates the system with a passed in state of the iterator.
-      void update(FieldCPU& newField);
-
+      void update(FieldCPU& newGuess);
 
    private:
+
+      using IteratorMediator<FieldCPU>::system;
+
+      double scaleStress_ = 10.0;
 
    };
 

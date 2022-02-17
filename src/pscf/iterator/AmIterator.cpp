@@ -73,9 +73,10 @@ namespace Pscf
 
       // Allocate outer arrays used in iteration
       fieldTrial_.allocate(nElem_);
+      fieldTemp_.allocate(nElem_);
       resTrial_.allocate(nElem_);
       resTemp_.allocate(nElem_);
-
+      
       // Allocate arrays/matrices used in coefficient calculation
       U_.allocate(maxHist_,maxHist_);
       v_.allocate(maxHist_);
@@ -116,8 +117,9 @@ namespace Pscf
       bool done;
       for (int itr = 0; itr < maxItr_; ++itr) {
 
-         // Store current field in history ringbuffer 
-         fieldHists_.append(iterMed().getCurrent());
+         // Store current field in history ringbuffer
+         iterMed().getCurrent(fieldTemp_);
+         fieldHists_.append(fieldTemp_);
 
          timerAM.start();
 
@@ -195,7 +197,7 @@ namespace Pscf
 
             // Solve the fixed point equation
             timerMDE.start();
-            iterMed.evaluate()
+            iterMed().evaluate()
             timerMDE.stop();
 
          }
@@ -213,7 +215,7 @@ namespace Pscf
    void AmIterator<T>::computeResidual()
    {
       // Get residuals
-      resTemp_ = iterMed().getResidual();
+      iterMed().getResidual(resTemp_);
       
       // Store residuals in residual history ringbuffer
       resHists_.append(resTemp_);

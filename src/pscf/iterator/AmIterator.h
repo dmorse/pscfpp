@@ -12,6 +12,8 @@
 
 #include <pscf/math/LuSolver.h>
 #include "AmStrategy.h"
+#include "IteratorMediator.h"
+
 #include <util/containers/DArray.h>
 #include <util/containers/FArray.h>
 #include <util/containers/FSArray.h>
@@ -64,7 +66,7 @@ namespace Pscf {
       /**
       * Return the strategy object to manage math execution.
       */ 
-      AmStrategy<T> strategy();
+      AmStrategy<T>& strategy();
 
    private:
 
@@ -114,6 +116,9 @@ namespace Pscf {
 
       /// Predicted field residual for trial state (big D)
       T resTrial_;
+
+      /// Workspace for extracting field.
+      T fieldTemp_;
 
       /// Workspace for residual calculation.
       T resTemp_;
