@@ -53,13 +53,20 @@ namespace Pspc
    {
       UTIL_CHECK(hasFileMaster_);
 
+      isFlexible_ = 0;
+      scaleStress_ = 10.0;
+
       read(in, "unitCell", unitCell_);
       read(in, "mesh", mesh_);
       read(in, "groupName", groupName_);
-
+      
       fft_.setup(mesh_.dimensions());
       basis().makeBasis(mesh(), unitCell(), groupName_);
       isInitialized_ = true;
+      // Strange bug: if I put this here, it works. 
+      // if I move it up to line 62, it does not work.
+      // Why.
+      readOptional(in, "isFlexible", isFlexible_);
    }
    
  

@@ -191,9 +191,17 @@ namespace Pspc
       bool isInitialized_;
 
       /**
-      * 
+      * Is the unit cell flexible?
       */
       bool isFlexible_;
+
+      /// Scale factor for importance of stress in
+      /// residual and error calculations.
+      double scaleStress_;
+
+      // members of parent class with non-dependent names
+      using ParamComposite::read;
+      using ParamComposite::readOptional;
 
    };
 
