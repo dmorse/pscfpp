@@ -163,12 +163,6 @@ namespace Pspc
       DArray< DArray<double> > resArrays_;
 
       /**
-      * Check if ensemble is canonical. Returns false if grand-canonical 
-      * or mixed ensemble.
-      */
-      bool isCanonical();
-
-      /**
       * Return the number of components for a given residual. This is 
       * either the number of spectral basis functions if the residual
       * is an SCF residual, or 1 if the residual is a stress residual. 

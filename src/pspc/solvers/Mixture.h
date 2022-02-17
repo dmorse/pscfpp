@@ -178,6 +178,12 @@ namespace Pspc
       */
       double vMonomer() const;
 
+      /**
+      * Determine if the mixture is canonical. Otherwise, it is
+      * mixed or open.
+      */
+      bool isCanonical();
+
       // Inherited public member functions with non-dependent names
       using MixtureTmpl< Polymer<D>, Solvent<D> >::nMonomer;
       using MixtureTmpl< Polymer<D>, Solvent<D> >::nPolymer;

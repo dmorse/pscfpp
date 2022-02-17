@@ -76,7 +76,7 @@ namespace Pspc
       }
 
       // Determine how to treat homogeneous basis function coefficients
-      if (isCanonical()) {
+      if (system().mixture().isCanonical()) {
          // Directly calculate them
          shift_ = 1;
          isCanonical_ = true;
@@ -587,25 +587,6 @@ namespace Pspc
          }
       }
       return;
-   }
-
-   template <int D>
-   bool AmIterator<D>::isCanonical()
-   {
-      // Check ensemble of all polymers
-      for (int i = 0; i < system().mixture().nPolymer(); ++i) {
-         if (system().mixture().polymer(i).ensemble() == Species::Open) {
-            return false;
-         }
-      }
-      // Check ensemble of all solvents
-      for (int i = 0; i < system().mixture().nSolvent(); ++i) {
-         if (system().mixture().solvent(i).ensemble() == Species::Open) {
-            return false;
-         }
-      }
-      // Returns true if false was never returned
-      return true;
    }
 
    template <int D>
