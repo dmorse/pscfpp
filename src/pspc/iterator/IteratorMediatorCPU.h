@@ -11,6 +11,7 @@
 #include <util/global.h>
 #include <util/containers/DArray.h>
 #include <pscf/iterator/IteratorMediator.h>
+#include <pspc/System.h>
 
 namespace Pscf {
 namespace Pspc{
@@ -19,21 +20,28 @@ namespace Pspc{
 
    typedef DArray<double> FieldCPU;
 
+   template <int D>
    class IteratorMediatorCPU : public IteratorMediator<FieldCPU>
    {
    public:
 
       /// Constructor
-      IteratorMediatorCPU(AbstractSystem& sys, Iterator<FieldCPU>& iter);
+      IteratorMediatorCPU(System<D>& sys, Pscf::Iterator<FieldCPU>& iter);
 
       /// Destructor
       ~IteratorMediatorCPU(); 
+
+      /// Set up the iterator.
+      void setup();
+
+      /// Instructor the iterator to solve the fixed point problem.
+      int solve();
 
       /// Checks if the system has an initial guess
       bool hasInitialGuess();
       
       /// Calculates and returns the number of elements in the
-      /// array to be iterated 
+      /// array to be iterated
       int nElements();
 
       /// Gets a reference to the current state of the system
@@ -50,9 +58,21 @@ namespace Pspc{
 
    private:
 
-      double scaleStress_ = 10.0;
+      // Const pointer to non-const system
+      System<D> * sys_;
 
+      // Const pointer to non-const iterator
+      Pscf::Iterator<FieldCPU> * iter_;
+
+      double scaleStress_;
    };
+
+   #ifndef PSPC_ITERATOR_MEDIATOR_CPU_TPP
+   // Suppress implicit instantiation
+   extern template class IteratorMediatorCPU<1>;
+   extern template class IteratorMediatorCPU<2>;
+   extern template class IteratorMediatorCPU<3>;
+   #endif
 
 }
 }

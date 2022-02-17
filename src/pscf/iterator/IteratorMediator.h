@@ -10,6 +10,7 @@
 
 #include <util/global.h>
 #include <pscf/AbstractSystem.h>
+#include <pscf/iterator/Iterator.h>
 
 namespace Pscf {
 
@@ -25,10 +26,14 @@ namespace Pscf {
    public:
 
       /// Constructor
-      IteratorMediator(AbstractSystem& sys, Iterator<T>& iter);
+      IteratorMediator();
 
       /// Destructor
       ~IteratorMediator(); 
+      
+      virtual void setup() = 0;
+
+      virtual int solve() = 0;
 
       /// Checks if the system has an initial guess
       virtual bool hasInitialGuess() = 0;
@@ -48,21 +53,6 @@ namespace Pscf {
 
       /// Updates the system with a passed in state of the iterator.
       virtual void update(T& newGuess) = 0;
-
-   protected:
-      // Get associated system
-      inline AbstractSystem& system() { return *sys_; }
-
-      // Get associated iterator
-      inline Iterator<T>& iterator() { return *iter_; }
-
-   private:
-
-      // Const pointer to non-const system
-      AbstractSystem * const sys_;
-
-      // Const pointer to non-const iterator
-      Iterator<T> * const iter_;
 
    };
 

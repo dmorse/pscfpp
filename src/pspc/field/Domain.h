@@ -139,6 +139,11 @@ namespace Pspc
       */  
       std::string groupName() const;
 
+      /**
+      * Get whether unit cell is flexible.
+      */
+      bool isFlexible() const;
+
       //@}
 
    private:
@@ -184,6 +189,11 @@ namespace Pspc
       * Has the domain been initialized?
       */
       bool isInitialized_;
+
+      /**
+      * 
+      */
+      bool isFlexible_;
 
    };
 
@@ -243,6 +253,11 @@ namespace Pspc
    template <int D>
    inline std::string Domain<D>::groupName() const
    {  return groupName_; }
+
+   // Return isFlexible_.
+   template <int D>
+   inline bool Domain<D>::isFlexible() const
+   {  return isFlexible_; }
 
    #ifndef PSPC_DOMAIN_TPP
    // Suppress implicit instantiation

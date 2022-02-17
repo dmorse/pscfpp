@@ -1,5 +1,5 @@
-#ifndef PSPC_ITERATOR_MEDIATOR_CPU_CPP
-#define PSPC_ITERATOR_MEDIATOR_CPU_CPP
+#ifndef PSPC_ITERATOR_MEDIATOR_CPU_TPP
+#define PSPC_ITERATOR_MEDIATOR_CPU_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -12,6 +12,7 @@
 #include <util/containers/DArray.h>
 #include <util/containers/FSArray.h>
 #include "IteratorMediatorCPU.h"
+#include <pscf/inter/ChiInteraction.h>
 
 namespace Pscf {
 namespace Pspc{
@@ -19,44 +20,55 @@ namespace Pspc{
    using namespace Util;
 
    /// Constructor
-   IteratorMediatorCPU::IteratorMediatorCPU(AbstractSystem& sys, Iterator<FieldCPU>& iter)
-    : IteratorMediator<FieldCPU>(sys, iter)
+   template <int D>
+   IteratorMediatorCPU<D>::IteratorMediatorCPU(System<D>& sys, Pscf::Iterator<FieldCPU>& iter)
+    : sys_(&sys),
+      iter_(&iter),
+      scaleStress_(10.0)
    {}
 
    /// Destructor
-   IteratorMediatorCPU::~IteratorMediatorCPU()
-   {} 
+   template <int D>
+   IteratorMediatorCPU<D>::~IteratorMediatorCPU()
+   {}
 
-   /// Checks if the system has an initial guess
-   bool IteratorMediatorCPU::hasInitialGuess()
+   template <int D>
+   void IteratorMediatorCPU<D>::setup()
+   { iter_->setup(); }
+
+   template <int D>
+   int IteratorMediatorCPU<D>::solve()
+   { return iter_->solve(); }
+
+   template <int D>
+   bool IteratorMediatorCPU<D>::hasInitialGuess()
    {
-      return system().hasWFields();
+      return sys_->hasWFields();
    }
    
-   /// Calculates and returns the number of elements in the
-   /// array to be iterated 
-   int IteratorMediatorCPU::nElements()
+   template <int D>
+   int IteratorMediatorCPU<D>::nElements()
    {
-      const int nMonomer = system().mixture().nMonomer();
-      const int nBasis = system().basis().nBasis();
+      const int nMonomer = sys_->mixture().nMonomer();
+      const int nBasis = sys_->basis().nBasis();
 
       int nEle = nMonomer*nBasis;
 
-      if (system().domain().isFlexible()) {
-         nEle += system().unitCell().nParameter();
+      if (sys_->domain().isFlexible()) {
+         nEle += sys_->unitCell().nParameter();
       }
 
       return nEle;
    }
 
-   /// Gets a reference to the current state of the system
-   void IteratorMediatorCPU::getCurrent(FieldCPU& curr)
+   template <int D>
+   void IteratorMediatorCPU<D>::getCurrent(FieldCPU& curr)
    {
       // Straighten out fields into linear arrays
 
-      const int nMonomer = system().mixture().nMonomer();
-      const int nBasis = system().basis().nBasis();
-      const DArray<DArray<double>> * currSys = &system().wFields(); 
+      const int nMonomer = sys_->mixture().nMonomer();
+      const int nBasis = sys_->basis().nBasis();
+      const DArray<DArray<double>> * currSys = &sys_->wFields(); 
       
       
       for (int i = 0; i < nMonomer; i++) {
@@ -66,10 +78,9 @@ namespace Pspc{
          }
       }
 
-      // If flexible unit cell, append them to the end of the current state
-      if (system().domain().isFlexible()) {
-         const int nParam = system().unitCell().nParameter();
-         const FSArray<double,6> currParam = system().unitCell().parameters();
+      if (sys_->domain().isFlexible()) {
+         const int nParam = sys_->unitCell().nParameter();
+         const FSArray<double,6> currParam = sys_->unitCell().parameters();
 
          for (int i = 0; i < nParam; i++) {
             curr[nMonomer*nBasis + i] = scaleStress_*currParam[i];
@@ -79,21 +90,21 @@ namespace Pspc{
       return;
    }
 
-   /// Runs calculation to evaluate function for fixed point.
-   void IteratorMediatorCPU::evaluate()
+   template <int D>
+   void IteratorMediatorCPU<D>::evaluate()
    {
-      system().compute();
-      if (system().domain().isFlexible()) {
-         system().mixture().computeStress();
+      sys_->compute();
+      if (sys_->domain().isFlexible()) {
+         sys_->mixture().computeStress();
       }
    }
 
-   /// Gets residual values from system
-   void IteratorMediatorCPU::getResidual(FieldCPU& resid)
+   template <int D>
+   void IteratorMediatorCPU<D>::getResidual(FieldCPU& resid)
    {
       const int n = nElements();
-      const int nMonomer = system().mixture().nMonomer();
-      const int nBasis = system().basis().nBasis();
+      const int nMonomer = sys_->mixture().nMonomer();
+      const int nBasis = sys_->basis().nBasis();
 
       // Initialize residuals 
       for (int i = 0 ; i < n; ++i) {
@@ -103,19 +114,19 @@ namespace Pspc{
       // Compute SCF residual vector elements
       for (int i = 0; i < nMonomer; ++i) {
          for (int j = 0; j < nMonomer; ++j) {
-            for (int k = shift_; k < nBasis; ++k) {
+            for (int k = 0; k < nBasis; ++k) {
                int idx = i*nBasis + k;
                resid[idx] +=
-                  system().interaction().chi(i,j)*system().cField(j)[k] -
-                  system().interaction().idemp(i,j)*system().wField(j)[k];
+                  sys_->interaction().chi(i,j)*sys_->cField(j)[k] -
+                  sys_->interaction().idemp(i,j)*sys_->wField(j)[k];
             }
          }
       }
 
       // If not canonical, account for incompressibility 
-      if (!system().mixture().isCanonical()) {
+      if (!sys_->mixture().isCanonical()) {
          for (int i = 0; i < nMonomer; ++i) {
-            resid[i*nBasis] -= 1.0/system().interaction().sum_inv();
+            resid[i*nBasis] -= 1.0/sys_->interaction().sum_inv();
          }
       } else {
          // otherwise explicitly set the residual value for the homogeneous components
@@ -125,22 +136,22 @@ namespace Pspc{
       }
 
       // If variable unit cell, compute stress residuals
-      if (system().domain().isFlexible()) {
-         const int nParam = system().unitCell().nParameter();
+      if (sys_->domain().isFlexible()) {
+         const int nParam = sys_->unitCell().nParameter();
          
          for (int i = 0; i < nParam ; i++) {
-            resid[nMonomer*nBasis + i] = scaleStress_ * -1 * system().mixture().stress(i);
+            resid[nMonomer*nBasis + i] = scaleStress_ * -1 * sys_->mixture().stress(i);
          }
       }
 
    }
 
-   /// Updates the system with a passed in state of the iterator.
-   void IteratorMediatorCPU::update(FieldCPU& newGuess)
+   template <int D>
+   void IteratorMediatorCPU<D>::update(FieldCPU& newGuess)
    {
       // Convert back to field format
-      const int nMonomer = system().mixture().nMonomer();
-      const int nBasis = system().basis().nBasis();
+      const int nMonomer = sys_->mixture().nMonomer();
+      const int nBasis = sys_->basis().nBasis();
       
       DArray< DArray<double> > wField;
       wField.allocate(nMonomer);
@@ -154,26 +165,26 @@ namespace Pspc{
          }
       }
       // Manually and explicitly set homogeneous components of field if canonical
-      if (system().mixture().isCanonical()) {
+      if (sys_->mixture().isCanonical()) {
          for (int i = 0; i < nMonomer; ++i) {
             wField[i][0] = 0.0; // initialize to 0
             for (int j = 0; j < nMonomer; ++j) {
                wField[i][0] += 
-                  system().interaction().chi(i,j) * system().cField(j)[0];
+                  sys_->interaction().chi(i,j) * sys_->cField(j)[0];
             }
          }
       }
-      system().setWBasis(wField);
+      sys_->setWBasis(wField);
 
-      if (system().domain().isFlexible()) {
+      if (sys_->domain().isFlexible()) {
          FSArray<double, 6> parameters;
-         const int nParam = system().unitCell().nParameter();
+         const int nParam = sys_->unitCell().nParameter();
 
          for (int i = 0; i < nParam; i++) {
             parameters[i] = 1/scaleStress_ * newGuess[nMonomer*nBasis + i];
          }
 
-         system().setUnitCell(parameters);
+         sys_->setUnitCell(parameters);
       }
       
    }
