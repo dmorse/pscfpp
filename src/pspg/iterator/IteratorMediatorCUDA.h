@@ -70,6 +70,10 @@ namespace Pspg{
       // pointer to iterator
       Pscf::Iterator<FieldCUDA>* iter_;
 
+      // actual number of elements, without adjustment to account for 
+      // power of two
+      int nData();
+
    };
 
    #ifndef PSPG_ITERATOR_MEDIATOR_CUDA_TPP

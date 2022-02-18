@@ -102,19 +102,16 @@ namespace Pspg {
       Timer solverTimer;
       Timer stressTimer;
       Timer updateTimer;
-      Timer::TimePoint now;
       bool done;
 
       // Solve MDE for initial state
       solverTimer.start();
-      systemPtr_->mixture().compute(systemPtr_->wFieldsRGrid(),
-         systemPtr_->cFieldsRGrid());
-      now = Timer::now();
-      solverTimer.stop(now);
+      systemPtr_->compute()
+      solverTimer.stop();
 
       // Compute stress for initial state
       if (isFlexible_) {
-         stressTimer.start(now);
+         stressTimer.start();
          systemPtr_->mixture().computeStress(systemPtr_->wavelist());
          for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){
             Log::file() << "Stress    " << m << " = "
@@ -124,14 +121,13 @@ namespace Pspg {
             Log::file() << "Parameter " << m << " = "
                         << (systemPtr_->unitCell()).parameter(m)<<"\n";
          }
-         now = Timer::now();
-         stressTimer.stop(now);
+         stressTimer.stop();
       }
 
       // Anderson-Mixing iterative loop
       int itr;
       for (itr = 1; itr <= maxItr_; ++itr) {
-         updateTimer.start(now);
+         updateTimer.start();
         
          Log::file() << "---------------------" << std::endl;
          Log::file() << " Iteration  " << itr << std::endl;
@@ -226,18 +222,15 @@ namespace Pspg {
                   vM_.deallocate();
                }
             }
-            now = Timer::now();
-            updateTimer.stop(now);
+            updateTimer.stop();
 
             // Solve MDE
-            solverTimer.start(now);
-            systemPtr_->mixture().compute(systemPtr_->wFieldsRGrid(),
-                                          systemPtr_->cFieldsRGrid());
-            now = Timer::now();
-            solverTimer.stop(now);
+            solverTimer.start();
+            systemPtr_->compute()
+            solverTimer.stop();
      
             if (isFlexible_) {
-               stressTimer.start(now);
+               stressTimer.start();
                systemPtr_->mixture().computeStress(systemPtr_->wavelist());
                for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){
                   Log::file() << "Stress    " << m << " = "
@@ -247,8 +240,7 @@ namespace Pspg {
                   Log::file() << "Parameter " << m << " = "
                               << (systemPtr_->unitCell()).parameter(m)<<"\n";
                }
-               now = Timer::now();
-               stressTimer.stop(now);
+               stressTimer.stop();
             }
             
          }
