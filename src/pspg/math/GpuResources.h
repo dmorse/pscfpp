@@ -272,6 +272,47 @@ __global__ void inPlacePointwiseMul(cudaReal* a, const cudaReal* b, int size) {
    }
 }
 
+static __global__ void reductionMaxAbs(cudaReal* d_out, const cudaReal* d_in, int size) 
+{
+   // number of blocks cut in two to avoid inactive initial threads
+   int tid = threadIdx.x;
+   int bid = blockIdx.x;
+   int idx = bid * (blockDim.x*2) + tid;
+   
+   
+   volatile extern __shared__ cudaReal sdata[];
+   // global mem load combined with first operation. load with fabs.
+   cudaReal in0 = fabs(d_in[idx]);
+   cudaReal in1 = fabs(d_in[idx + blockDim.x]);
+   sdata[tid] = (in0 > in1) ? in0 : in1;
+   
+   __syncthreads();
+   
+   // reduction
+   // data and block dimensions need to be a power of two
+   for (int stride = blockDim.x / 2; stride > 32; stride /= 2) {
+      if (tid < stride) {
+         if (sdata[tid+stride] > sdata[tid]) {
+               sdata[tid] = sdata[tid+stride];
+            }
+      }
+      __syncthreads();
+   }
+   
+   // unrolled. In final warp, synchronization is inherent.
+   if (tid < 32) 
+         sdata[tid] = (sdata[tid] > sdata[tid + 32]) ? sdata[tid] : sdata[tid + 32];
+         sdata[tid] = (sdata[tid] > sdata[tid + 16]) ? sdata[tid] : sdata[tid + 16];
+         sdata[tid] = (sdata[tid] > sdata[tid +  8]) ? sdata[tid] : sdata[tid +  8];
+         sdata[tid] = (sdata[tid] > sdata[tid +  4]) ? sdata[tid] : sdata[tid +  4];
+         sdata[tid] = (sdata[tid] > sdata[tid +  2]) ? sdata[tid] : sdata[tid +  2];
+         sdata[tid] = (sdata[tid] > sdata[tid +  1]) ? sdata[tid] : sdata[tid +  1];
+      
+   // one thread for each block stores that block's results in global memory
+   if (tid == 0)
+      d_out[bid] = sdata[0];
+}
+
 static __global__ void reductionMax(cudaReal* d_max, cudaReal* in, int size)
 {
    int idx = blockIdx.x * blockDim.x + threadIdx.x;
@@ -340,6 +381,54 @@ static __global__ void reductionMin(cudaReal* d_min, cudaReal* in, int size)
       }
    }
 
+}
+
+template<unsigned int blockSize>
+__global__ void deviceInnerProduct(cudaReal* c, const cudaReal* a,
+   const cudaReal* b, int size) 
+{
+   //int nThreads = blockDim.x * gridDim.x;
+   int startID = blockIdx.x * blockDim.x + threadIdx.x;
+
+   //do all pointwise multiplication
+   volatile extern __shared__ cudaReal cache[];
+   cudaReal temp = 0;
+   temp += a[startID] * b[startID];
+   cache[threadIdx.x] = temp;
+
+   __syncthreads();
+
+   if(blockSize >= 512) {
+      if (threadIdx.x < 256){
+         cache[threadIdx.x] += cache[threadIdx.x + 256];
+      }
+      __syncthreads();
+   }
+   if(blockSize >= 256) {
+      if (threadIdx.x < 128){
+         cache[threadIdx.x] += cache[threadIdx.x + 128];
+      }
+      __syncthreads();
+   }
+   if(blockSize >= 128) {
+      if (threadIdx.x < 64){
+         cache[threadIdx.x] += cache[threadIdx.x + 64];
+      }
+      __syncthreads();
+   }
+
+   if (threadIdx.x < 32) {
+      if(blockSize >= 64) cache[threadIdx.x] += cache[threadIdx.x + 32];
+      if(blockSize >= 32) cache[threadIdx.x] += cache[threadIdx.x + 16];
+      if(blockSize >= 16) cache[threadIdx.x] += cache[threadIdx.x + 8];
+      if(blockSize >= 8) cache[threadIdx.x] += cache[threadIdx.x + 4];
+      if(blockSize >= 4) cache[threadIdx.x] += cache[threadIdx.x + 2];
+      if(blockSize >= 2) cache[threadIdx.x] += cache[threadIdx.x + 1];
+   }
+
+   if (threadIdx.x == 0) {
+      c[blockIdx.x] = cache[0];
+   }
 }
 
 #endif

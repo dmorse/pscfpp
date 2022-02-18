@@ -9,6 +9,7 @@
 #include <pspg/math/GpuResources.h>
 
 #include <cstdlib>
+#include <cmath>
 
 using namespace Util;
 using namespace Pscf;
@@ -107,6 +108,49 @@ public:
 
    }
 
+   void testReductionMaxAbsLarge()
+   {
+      printMethod(TEST_FUNC);
+
+      // GPU Resources
+      NUMBER_OF_BLOCKS = 8; // parallel reduction into 32 blocks.
+      THREADS_PER_BLOCK = 32;
+
+      // Create device and host arrays
+      const int n = NUMBER_OF_BLOCKS*THREADS_PER_BLOCK;
+      cudaReal max = -1;
+      cudaReal maxCheck = -10;
+      cudaReal* num = new cudaReal[n];
+      cudaReal* d_temp;
+      cudaReal* d_max;
+      cudaReal* d_num;
+      cudaMalloc((void**) &d_num, n*sizeof(cudaReal));
+      cudaMalloc((void**) &d_temp, NUMBER_OF_BLOCKS*sizeof(cudaReal));
+      cudaMalloc((void**) &d_max, 1*sizeof(cudaReal));
+
+      // Test data
+      for (int i = 0; i < n; i++) {
+         num[i] = (cudaReal)(std::rand() % 10000 - 6000);
+      }
+
+      // Host find max
+      for (int i = 0; i < n; i++) {
+         if (fabs(num[i]) > maxCheck) {
+            maxCheck = fabs(num[i]);
+         }
+      }
+
+      // Launch kernel twice and get output
+      cudaMemcpy(d_num, num, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      reductionMaxAbs<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cudaReal)>>>(d_temp, d_num, n);
+      reductionMaxAbs<<<1, THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cudaReal)>>>(d_max, d_temp, NUMBER_OF_BLOCKS);
+      cudaMemcpy(&max, d_max, 1*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      std::cout << max << std::endl;
+      std::cout << maxCheck << std::endl;
+      TEST_ASSERT(max == maxCheck);
+
+   }
+
    void testReductionMinLarge()
    {
       printMethod(TEST_FUNC);
@@ -147,13 +191,14 @@ public:
 
       TEST_ASSERT(min == minCheck);
 
-   }   
+   }
 
 };
 
 TEST_BEGIN(CudaResourceTest)
 TEST_ADD(CudaResourceTest, testReductionMaxSmall)
 TEST_ADD(CudaResourceTest, testReductionMaxLarge)
+TEST_ADD(CudaResourceTest, testReductionMaxAbsLarge)
 TEST_ADD(CudaResourceTest, testReductionMinLarge)
 TEST_END(CudaResourceTest)
 
