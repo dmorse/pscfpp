@@ -30,25 +30,33 @@ namespace Pspg {
       /// Destructor
       ~AmStrategyCUDA(); 
       
-      double findResNorm(FieldCUDA const & resHist) 
+      double findNorm(FieldCUDA const & hist) 
       const;
 
-      double findResMax(FieldCUDA const & resHist) 
+      double findMaxAbs(FieldCUDA const & hist) 
       const;
 
-      double computeUDotProd(RingBuffer<FieldCUDA> const & resHists, int m) 
+      void updateBasis(RingBuffer<FieldCUDA> & basis, RingBuffer<FieldCUDA> const & hists)
       const;
 
-      double computeVDotProd(RingBuffer<FieldCUDA> const & resHists, int m) 
+      double computeUDotProd(RingBuffer<FieldCUDA> const & resBasis, int m) 
+      const;
+
+      double computeVDotProd(FieldCUDA const & resCurrent, RingBuffer<FieldCUDA> const & resBasis, int m) 
       const;
 
       void setEqual(FieldCUDA& a, FieldCUDA const & b)
       const;
 
-      void addHistories(FieldCUDA& trial, RingBuffer<FieldCUDA> const & hists, DArray<double> coeffs, int nHist_) 
+      void addHistories(FieldCUDA& trial, RingBuffer<FieldCUDA> const & basis, DArray<double> coeffs, int nHist) 
       const;
 
       void addPredictedError(FieldCUDA& fieldTrial, FieldCUDA const & resTrial, double lambda)
+      const;
+   
+   private:
+
+      cudaReal innerProduct(FieldCUDA const & a, FieldCUDA const & b)
       const;
 
    };

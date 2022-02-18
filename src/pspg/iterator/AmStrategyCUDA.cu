@@ -20,18 +20,19 @@ namespace Pspg {
    AmStrategyCUDA::~AmStrategyCUDA()
    {}
       
-   double AmStrategyCUDA::findResNorm(FieldCUDA const & resHist) const 
+   double AmStrategyCUDA::findNorm(FieldCUDA const & hist) const 
    {
-      const int n = resHist.capacity();
-      double normResSq = (double)innerProduct(resHist, resHist);
+      const int n = hist.capacity();
+      double normResSq = (double)innerProduct(hist, hist);
 
       return sqrt(normResSq);
    }
 
-   double AmStrategyCUDA::findResMax(FieldCUDA const & resHist) const
+   double AmStrategyCUDA::findMaxAbs(FieldCUDA const & hist) const
    {
       // use parallel reduction to find maximum 
-      const int n = resHist.capacity();
+      const int n = hist.capacity();
+      int outsize = NUMBER_OF_BLOCKS;
 
       // some loop that changes size of the output as you go, so that parallel reduction is done
       // first for each block, then across the outputs of all the blocks, then across all those outputs,
@@ -40,14 +41,14 @@ namespace Pspg {
       // need to modify somehow to find max magnitude, ignoring sign! 
    }
 
-   double AmStrategyCUDA::computeUDotProd(RingBuffer<FieldCUDA> const & resHists, int m) const
+   double AmStrategyCUDA::computeUDotProd(RingBuffer<FieldCUDA> const & resBasis, int m) const
    {      
-      return (double)innerProduct(resBasis[0],resBasis[m])
+      return (double)innerProduct(resBasis[0],resBasis[m]);
    }
 
-   double AmStrategyCUDA::computeVDotProd(RingBuffer<FieldCUDA> const & resHists, int m) const
+   double AmStrategyCUDA::computeVDotProd(FieldCUDA const & resCurrent, RingBuffer<FieldCUDA> const & resBasis, int m) const
    {
-      return (double)innerProduct(resHists[0], resBasis[m]);
+      return (double)innerProduct(resCurrent, resBasis[m]);
    }
 
    void AmStrategyCUDA::setEqual(FieldCUDA& a, FieldCUDA const & b) const
@@ -56,13 +57,12 @@ namespace Pspg {
       assignReal<<<NUMBER_OF_BLOCKS,THREADS_PER_BLOCK>>>(a.cDField(), b.cDField(), a.capacity())
    }
 
-   void AmStrategyCUDA::addHistories(FieldCUDA& trial, RingBuffer<FieldCUDA> const & hists, DArray<double> coeffs, int nHist) const
+   void AmStrategyCUDA::addHistories(FieldCUDA& trial, RingBuffer<FieldCUDA> const & basis, DArray<double> coeffs, int nHist) const
    {
       for (int i = 0; i < nHist; i++) {
          pointWiseAddScale <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> 
-               (trial.cDField(), resBasis[i].cDField(), coeffs_[i], trial.capacity());
+               (trial.cDField(), basis[i].cDField(), coeffs[i], trial.capacity());
       }
-
    }
 
    void AmStrategyCUDA::addPredictedError(FieldCUDA& fieldTrial, FieldCUDA const & resTrial, double lambda) const
@@ -71,7 +71,7 @@ namespace Pspg {
          (fieldTrial.cDField(), resTrial.cDField(), lambda, fieldTrial.capacity());
    }
 
-   cudaReal AmStrategyCUDA::innerProduct(const FieldCUDA& a, const FieldCUDA& b) 
+   cudaReal AmStrategyCUDA::innerProduct(FieldCUDA const & a, FieldCUDA const & b) const
    {
       UTIL_CHECK(b.capacity() == a.capacity());
       int size = a.capacity();
