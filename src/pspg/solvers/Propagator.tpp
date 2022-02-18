@@ -19,33 +19,6 @@
 #include <pscf/mesh/Mesh.h>
 //#include <Windows.h>
 
-__global__ 
-void assignUniformReal(cudaReal* result, cudaReal uniform, int size) {
-   int nThreads = blockDim.x * gridDim.x;
-   int startID = blockIdx.x * blockDim.x + threadIdx.x;
-   for(int i = startID; i < size; i += nThreads) {
-      result[i] = uniform;
-   }
-}
-
-__global__ 
-void assignReal(cudaReal* result, const cudaReal* rhs, int size) {
-   int nThreads = blockDim.x * gridDim.x;
-   int startID = blockIdx.x * blockDim.x + threadIdx.x;
-   for(int i = startID; i < size; i += nThreads) {
-      result[i] = rhs[i];
-   }
-}
-
-__global__ 
-void inPlacePointwiseMul(cudaReal* a, const cudaReal* b, int size) {
-   int nThreads = blockDim.x * gridDim.x;
-   int startID = blockIdx.x * blockDim.x + threadIdx.x;
-   for(int i = startID; i < size; i += nThreads) {
-      a[i] *= b[i];
-   }
-}
-
 #if 0
 template<unsigned int blockSize>
 __global__ void deviceInnerProduct(cudaReal* c, const cudaReal* a,

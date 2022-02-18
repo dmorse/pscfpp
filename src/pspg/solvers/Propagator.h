@@ -244,15 +244,6 @@ namespace Pspg
 }
 }
 
-__global__ 
-void assignUniformReal(cudaReal* result, cudaReal uniform, int size);
-
-__global__ 
-void assignReal(cudaReal* result, const cudaReal* rhs, int size);
-
-__global__ 
-void inPlacePointwiseMul(cudaReal* a, const cudaReal* b, int size);
-
 template<unsigned int blockSize>
 __global__ void deviceInnerProduct(cudaReal* c, const cudaReal* a,
    const cudaReal* b, int size) {
