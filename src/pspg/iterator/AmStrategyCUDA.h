@@ -56,8 +56,15 @@ namespace Pspg {
    
    private:
 
+      void allocatePrivateMembers(int n) const;
+
       cudaReal innerProduct(FieldCUDA const & a, FieldCUDA const & b)
       const;
+
+      // workspace members
+      mutable cudaReal* d_temp_;
+
+      mutable cudaReal* temp_;
 
    };
 

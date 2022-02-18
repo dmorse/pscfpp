@@ -248,7 +248,7 @@ static __global__ void reduction(T* d_out, const T* d_in, T reduceFunc(T), int s
       d_out[bid] = sdata[0];
 }
 
-__global__ void assignUniformReal(cudaReal* result, cudaReal uniform, int size) {
+static __global__ void assignUniformReal(cudaReal* result, cudaReal uniform, int size) {
    int nThreads = blockDim.x * gridDim.x;
    int startID = blockIdx.x * blockDim.x + threadIdx.x;
    for(int i = startID; i < size; i += nThreads) {
@@ -256,7 +256,7 @@ __global__ void assignUniformReal(cudaReal* result, cudaReal uniform, int size) 
    }
 }
 
-__global__ void assignReal(cudaReal* result, const cudaReal* rhs, int size) {
+static __global__ void assignReal(cudaReal* result, const cudaReal* rhs, int size) {
    int nThreads = blockDim.x * gridDim.x;
    int startID = blockIdx.x * blockDim.x + threadIdx.x;
    for(int i = startID; i < size; i += nThreads) {
@@ -264,7 +264,7 @@ __global__ void assignReal(cudaReal* result, const cudaReal* rhs, int size) {
    }
 }
 
-__global__ void inPlacePointwiseMul(cudaReal* a, const cudaReal* b, int size) {
+static __global__ void inPlacePointwiseMul(cudaReal* a, const cudaReal* b, int size) {
    int nThreads = blockDim.x * gridDim.x;
    int startID = blockIdx.x * blockDim.x + threadIdx.x;
    for(int i = startID; i < size; i += nThreads) {

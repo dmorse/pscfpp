@@ -145,8 +145,7 @@ public:
       reductionMaxAbs<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cudaReal)>>>(d_temp, d_num, n);
       reductionMaxAbs<<<1, THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cudaReal)>>>(d_max, d_temp, NUMBER_OF_BLOCKS);
       cudaMemcpy(&max, d_max, 1*sizeof(cudaReal), cudaMemcpyDeviceToHost);
-      std::cout << max << std::endl;
-      std::cout << maxCheck << std::endl;
+
       TEST_ASSERT(max == maxCheck);
 
    }

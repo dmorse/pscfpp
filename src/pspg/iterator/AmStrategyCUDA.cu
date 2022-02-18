@@ -18,7 +18,12 @@ namespace Pspg {
    {}
 
    AmStrategyCUDA::~AmStrategyCUDA()
-   {}
+   {
+      if (temp_) {
+         delete[] temp_;
+         cudaFree(d_temp_);
+      }
+   }
       
    double AmStrategyCUDA::findNorm(FieldCUDA const & hist) const 
    {
@@ -30,15 +35,51 @@ namespace Pspg {
 
    double AmStrategyCUDA::findMaxAbs(FieldCUDA const & hist) const
    {
-      // use parallel reduction to find maximum 
-      const int n = hist.capacity();
-      int outsize = NUMBER_OF_BLOCKS;
+      // use parallel reduction to find maximum.
 
-      // some loop that changes size of the output as you go, so that parallel reduction is done
-      // first for each block, then across the outputs of all the blocks, then across all those outputs,
-      // etc!! 
-      // use reductionMax 
-      // need to modify somehow to find max magnitude, ignoring sign! 
+      // number of data points, each step of the way.
+      int n = hist.capacity();
+
+      // CHECK IF POWER OF TWO. 
+      // bitwise trick from http://www.graphics.stanford.edu/~seander/bithacks.html
+      if ( (n & (n - 1)) != 0 )
+         UTIL_THROW("Dataset size must be a power of two.");
+
+      // Check to verify that private members are allocated
+      if (!temp_) allocatePrivateMembers(n);
+
+      // Do first reduction step
+      int nBlocks = NUMBER_OF_BLOCKS, nThreads=THREADS_PER_BLOCK;
+      reductionMaxAbs<<<nBlocks, nThreads, 
+                        nThreads*sizeof(cudaReal)>>>(d_temp_, hist.cDField(), n);
+      n = nBlocks;
+
+      // While loop to do further reduction steps
+      int itr = 0;
+      while (n > 1) {
+         // determine next compute size
+         if (nBlocks < nThreads) {
+            nThreads = n;
+            nBlocks = 1;
+         } else {
+            nBlocks = n / nThreads;
+         }
+         // perform reduction
+         reductionMaxAbs<<<nBlocks, nThreads, 
+                        nThreads*sizeof(cudaReal)>>>(d_temp_, d_temp_, n);
+         n = nBlocks;
+
+         // track number of iterations
+         itr+=1;
+         if (itr > 100) {
+            UTIL_THROW("Runaway parallel reduction while-loop.");
+         }
+      }
+
+      cudaReal max;
+      cudaMemcpy(&max, d_temp_, 1*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      return (double)max;
+
    }
 
    double AmStrategyCUDA::computeUDotProd(RingBuffer<FieldCUDA> const & resBasis, int m) const
@@ -54,7 +95,7 @@ namespace Pspg {
    void AmStrategyCUDA::setEqual(FieldCUDA& a, FieldCUDA const & b) const
    {
       UTIL_CHECK(b.capacity() == a.capacity());
-      assignReal<<<NUMBER_OF_BLOCKS,THREADS_PER_BLOCK>>>(a.cDField(), b.cDField(), a.capacity())
+      assignReal<<<NUMBER_OF_BLOCKS,THREADS_PER_BLOCK>>>(a.cDField(), b.cDField(), a.capacity());
    }
 
    void AmStrategyCUDA::addHistories(FieldCUDA& trial, RingBuffer<FieldCUDA> const & basis, DArray<double> coeffs, int nHist) const
@@ -71,10 +112,21 @@ namespace Pspg {
          (fieldTrial.cDField(), resTrial.cDField(), lambda, fieldTrial.capacity());
    }
 
+   // --- Private member functions that are specific to this implementation --- 
+
+   void AmStrategyCUDA::allocatePrivateMembers(int n) const
+   {
+      temp_ = new cudaReal[n];
+      cudaMalloc((void**) &d_temp_, n*sizeof(cudaReal));
+   }
+
    cudaReal AmStrategyCUDA::innerProduct(FieldCUDA const & a, FieldCUDA const & b) const
    {
       UTIL_CHECK(b.capacity() == a.capacity());
       int size = a.capacity();
+
+      // Check to verify that private members are allocated
+      if (!temp_) allocatePrivateMembers(size);
 
       switch(THREADS_PER_BLOCK) {
       case 512:
