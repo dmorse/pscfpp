@@ -76,10 +76,10 @@ namespace Pspc {
       a = b;
    }
 
-   void AmStrategyCPU::addHistories(FieldCPU& trial, RingBuffer<FieldCPU> const & hists, DArray<double> coeffs, int nHist_) const
+   void AmStrategyCPU::addHistories(FieldCPU& trial, RingBuffer<FieldCPU> const & hists, DArray<double> coeffs, int nHist) const
    {
       int n = trial.capacity();
-      for (int i = 0; i < nHist_; i++) {
+      for (int i = 0; i < nHist; i++) {
          for (int j = 0; j < n; j++) {
             trial[j] += coeffs[i] * ( hists[i+1][j] - hists[i][j] );
          }

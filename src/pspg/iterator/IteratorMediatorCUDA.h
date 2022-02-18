@@ -9,7 +9,8 @@
 */
 
 #include <util/global.h>
-#include <util/containers/DArray.h>
+#include <pspg/field/DField.h>
+#include <pspg/math/GpuResources.h>
 #include <pscf/iterator/IteratorMediator.h>
 #include <pspg/System.h>
 
@@ -18,7 +19,7 @@ namespace Pspg{
 
    using namespace Util;
 
-   // typedef DArray<double> FieldCUDA; WHAT IS THIS TYPE WOW IDK YET
+   typedef DField<cudaReal> FieldCUDA;
 
    template <int D>
    class IteratorMediatorCUDA : public IteratorMediator<FieldCUDA>

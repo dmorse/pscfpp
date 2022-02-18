@@ -10,7 +10,8 @@
 
 #include <pscf/iterator/AmStrategy.h>
 #include <util/global.h>
-#include <util/containers/DArray.h>
+#include <pspg/field/DField.h>
+#include <pspg/math/GpuResources.h>
 #include <util/containers/RingBuffer.h>
 
 namespace Pscf {
@@ -18,7 +19,7 @@ namespace Pspg {
 
    using namespace Util;
 
-   // typedef DArray<double> FieldCUDA; WHAT IS THIS TYPE WOW IDK YET
+   typedef DField<cudaReal> FieldCUDA;
 
    class AmStrategyCUDA : public AmStrategy<FieldCUDA>
    {

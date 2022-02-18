@@ -32,7 +32,7 @@ namespace Pscf {
       virtual double computeUDotProd(RingBuffer<T> const & resHists, int m) const = 0;
       virtual double computeVDotProd(RingBuffer<T> const & resHists, int m) const = 0;
       virtual void setEqual(T& a, T const & b) const = 0;
-      virtual void addHistories(T& trial, RingBuffer<T> const & hists, DArray<double> coeffs, int nHist_) const = 0;
+      virtual void addHistories(T& trial, RingBuffer<T> const & hists, DArray<double> coeffs, int nHist) const = 0;
       virtual void addPredictedError(T& fieldTrial, T const & resTrial, double lambda) const = 0;
 
    };

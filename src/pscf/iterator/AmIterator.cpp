@@ -72,7 +72,7 @@ namespace Pscf
       resHists_.allocate(maxHist_+1);
       fieldHists_.allocate(maxHist_+1);
 
-      // Allocate outer arrays used in iteration
+      // Allocate arrays used in iteration
       fieldTrial_.allocate(nElem_);
       fieldTemp_.allocate(nElem_);
       resTrial_.allocate(nElem_);
@@ -92,7 +92,7 @@ namespace Pscf
    {
 
       // Preconditions:
-      // UTIL_CHECK(IterMed... check whether there is an initial guess);
+      UTIL_CHECK(iterMed().hasInitialGuess());
 
       // Timers for timing iteration components
 

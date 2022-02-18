@@ -78,38 +78,6 @@ namespace Pspg
       */
       const Data* cDField() const;
 
-      /** 
-      * Get an element by non-const reference.
-      *
-      * Mimic C-array subscripting.
-      *
-      * \param  i array index
-      * \return non-const reference to element i
-      */
-      //Data& operator [] (int i); 
-
-     /**
-      * Get an element by const reference.
-      *
-      * Mimics C-array subscripting.
-      *
-      * \param i array index
-      * \return const reference to element i
-      */
-      //const Data& operator [] (int i) const;
-
-      //Removing this. Child class has this function
-      /**
-      * Serialize a Field to/from an Archive.
-      *
-      * \param ar       archive
-      * \param version  archive version id
-      */
-      /*
-      template <class Archive>
-      void serialize(Archive& ar, const unsigned int version);
-      */
-
    protected:
 
       /// Pointer to an array of Data elements.
