@@ -29,22 +29,25 @@ namespace Pspc {
       /// Destructor
       ~AmStrategyCPU(); 
       
-      double findResNorm(FieldCPU const & resHist) 
+      double findNorm(FieldCPU const & hist) 
       const;
 
-      double findResMax(FieldCPU const & resHist) 
+      double findMaxAbs(FieldCPU const & hist) 
       const;
 
-      double computeUDotProd(RingBuffer<FieldCPU> const & resHists, int m) 
+      void updateBasis(RingBuffer<FieldCPU> & basis, RingBuffer<FieldCPU> const & hists)
       const;
 
-      double computeVDotProd(RingBuffer<FieldCPU> const & resHists, int m) 
+      double computeUDotProd(RingBuffer<FieldCPU> const & resBasis, int m) 
+      const;
+
+      double computeVDotProd(FieldCPU const & resCurrent, RingBuffer<FieldCPU> const & resBasis, int m) 
       const;
 
       void setEqual(FieldCPU& a, FieldCPU const & b)
       const;
 
-      void addHistories(FieldCPU& trial, RingBuffer<FieldCPU> const & hists, DArray<double> coeffs, int nHist_) 
+      void addHistories(FieldCPU& trial, RingBuffer<FieldCPU> const & basis, DArray<double> coeffs, int nHist_) 
       const;
 
       void addPredictedError(FieldCPU& fieldTrial, FieldCPU const & resTrial, double lambda)

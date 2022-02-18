@@ -95,20 +95,27 @@ namespace Pscf {
       /// Number of elements in the field.
       int nElem_; 
 
-      /// History of field residuals.
-      /// 1st index = history, 2nd index = monomer, 3rd index = basis func.
-      RingBuffer< T > resHists_;
-
-      /// History of previous fields
+      /// Field histories
       RingBuffer< T > fieldHists_;
 
-      /// Matrix, the dot products of residual differences.
+      /// Basis vectors of field histories.
+      RingBuffer< T > fieldBasis_;
+
+      /// Residual histories
+      RingBuffer< T > resHists_;
+
+      /// Basis vectors of residual histories
+      RingBuffer< T > resBasis_;
+
+      /// Matrix containing the dot products of residual history
+      /// basis vectors in resBasis_.
       DMatrix<double> U_;
 
-      /// Cn, coefficients for mixing previous states.
+      /// Coefficients for mixing previous states.
       DArray<double> coeffs_;
 
-      /// Vector, dot products of residuals with differences from histories
+      /// Vector of dot products of current residual with residual history
+      /// basis vectors in resBasis_.
       DArray<double> v_;
 
       /// New trial field (big W in Arora et al. 2017)
@@ -117,11 +124,8 @@ namespace Pscf {
       /// Predicted field residual for trial state (big D)
       T resTrial_;
 
-      /// Workspace for extracting field.
-      T fieldTemp_;
-
-      /// Workspace for residual calculation.
-      T resTemp_;
+      /// Workspace for calculations.
+      T temp_;
 
       /**
       * Check if ensemble is canonical. Returns false if grand-canonical 

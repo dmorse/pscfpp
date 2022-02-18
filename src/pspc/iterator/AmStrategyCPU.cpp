@@ -20,51 +20,66 @@ namespace Pspc {
    AmStrategyCPU::~AmStrategyCPU()
    {}
       
-   double AmStrategyCPU::findResNorm(FieldCPU const & resHist) const 
+   double AmStrategyCPU::findNorm(FieldCPU const & hist) const 
    {
-      const int n = resHist.capacity();
+      const int n = hist.capacity();
       double normResSq = 0.0;
 
       for (int i = 0; i < n; i++) {
-         normResSq += resHist[i] * resHist[i];
+         normResSq += hist[i] * hist[i];
       }
 
       return sqrt(normResSq);
    }
 
-   double AmStrategyCPU::findResMax(FieldCPU const & resHist) const
+   double AmStrategyCPU::findMaxAbs(FieldCPU const & hist) const
    {
-      const int n = resHist.capacity();
+      const int n = hist.capacity();
       double maxRes = 0.0;
 
       for (int i = 0; i < n; i++) {
-         if (fabs(resHist[i]) > maxRes) 
-            maxRes = fabs(resHist[i]);
+         if (fabs(hist[i]) > maxRes) 
+            maxRes = fabs(hist[i]);
       }
 
       return maxRes;
    }
 
-   double AmStrategyCPU::computeUDotProd(RingBuffer<FieldCPU> const & resHists, int m) const
+   void AmStrategyCPU::updateBasis(RingBuffer<FieldCPU> & basis, RingBuffer<FieldCPU> const & hists) const
    {
-      const int n = resHists[0].capacity();
+      // Make sure at least two histories are stored
+      UTIL_CHECK(hists.size() >= 2);
+
+      const int n = hists[0].capacity();
+      FieldCPU newbasis;
+      newbasis.allocate(n);
+
+      for (int i = 0; i < n; i++) {
+         newbasis[i] = hists[0][i] - hists[1][i]; // sequential histories basis vectors
+      }
+
+      basis.append(newbasis);
+   }
+
+   double AmStrategyCPU::computeUDotProd(RingBuffer<FieldCPU> const & resBasis, int m) const
+   {
+      const int n = resBasis[0].capacity();
       
       double dotprod = 0.0;
       for(int i = 0; i < n; i++) {
-         dotprod += (resHists[m][i] - resHists[m+1][i]) *
-                     (resHists[0][i] - resHists[1][i]);
+         dotprod += resBasis[m][i] * resBasis[0][i];
       }
 
       return dotprod;
    }
 
-   double AmStrategyCPU::computeVDotProd(RingBuffer<FieldCPU> const & resHists, int m) const
+   double AmStrategyCPU::computeVDotProd(FieldCPU const & resCurrent, RingBuffer<FieldCPU> const & resBasis, int m) const
    {
-      const int n = resHists[0].capacity();
+      const int n = resBasis[0].capacity();
       
       double dotprod = 0.0;
       for(int i = 0; i < n; i++) {
-         dotprod += resHists[0][i] * (resHists[m][i] - resHists[m+1][i]);
+         dotprod += resCurrent[i] * resBasis[m][i];
       }
 
       return dotprod;
@@ -72,16 +87,17 @@ namespace Pspc {
 
    void AmStrategyCPU::setEqual(FieldCPU& a, FieldCPU const & b) const
    {
-      // This seems silly here, but in other implementations it may not be! 
+      // This seems silly here, but in other implementations it may not be! Goal: no explicit math in AmIterator.
       a = b;
    }
 
-   void AmStrategyCPU::addHistories(FieldCPU& trial, RingBuffer<FieldCPU> const & hists, DArray<double> coeffs, int nHist) const
+   void AmStrategyCPU::addHistories(FieldCPU& trial, RingBuffer<FieldCPU> const & basis, DArray<double> coeffs, int nHist) const
    {
       int n = trial.capacity();
       for (int i = 0; i < nHist; i++) {
          for (int j = 0; j < n; j++) {
-            trial[j] += coeffs[i] * ( hists[i+1][j] - hists[i][j] );
+            // Not clear on the origin of the -1 factor
+            trial[j] += coeffs[i] * -1 * basis[i][j]; 
          }
       }
    }

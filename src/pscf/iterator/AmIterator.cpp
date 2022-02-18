@@ -69,14 +69,15 @@ namespace Pscf
       nElem_ = iterMed().nElements();
 
       // Allocate ring buffers
-      resHists_.allocate(maxHist_+1);
       fieldHists_.allocate(maxHist_+1);
-
+      fieldBasis_.allocate(maxHist_+1);
+      resHists_.allocate(maxHist_+1);
+      resBasis_.allocate(maxHist_+1);
+      
       // Allocate arrays used in iteration
       fieldTrial_.allocate(nElem_);
-      fieldTemp_.allocate(nElem_);
       resTrial_.allocate(nElem_);
-      resTemp_.allocate(nElem_);
+      temp_.allocate(nElem_);
       
       // Allocate arrays/matrices used in coefficient calculation
       U_.allocate(maxHist_,maxHist_);
@@ -119,8 +120,8 @@ namespace Pscf
       for (int itr = 0; itr < maxItr_; ++itr) {
 
          // Store current field in history ringbuffer
-         iterMed().getCurrent(fieldTemp_);
-         fieldHists_.append(fieldTemp_);
+         iterMed().getCurrent(temp_);
+         fieldHists_.append(temp_);
 
          timerAM.start();
 
@@ -173,11 +174,6 @@ namespace Pscf
                         << timerTotal.time()   << " s  ";
             Log::file() << "\n\n";
 
-            // This is not an AmIterator thing. This needs to be done somewhere else.
-            // Really, this is something that is outputted that is specific to a system
-            // when the system has converged. AmIterator just does the iteration.
-            // If the unit cell is rigid, compute and output final stress. 
-
             // Successful completion (i.e., converged within tolerance)
             cleanUp();
             return 0;
@@ -216,10 +212,10 @@ namespace Pscf
    void AmIterator<T>::computeResidual()
    {
       // Get residuals
-      iterMed().getResidual(resTemp_);
+      iterMed().getResidual(temp_);
       
       // Store residuals in residual history ringbuffer
-      resHists_.append(resTemp_);
+      resHists_.append(temp_);
 
       return;
    }
@@ -229,11 +225,11 @@ namespace Pscf
    {
 
       // Find max residual vector element
-      double maxRes  = strategy().findResMax(resHists_[0]);
+      double maxRes  = strategy().findMaxAbs(resHists_[0]);
       Log::file() << "Max Residual  = " << maxRes << std::endl;
 
       // Find norm of residual vector
-      double normRes = strategy().findResNorm(resHists_[0]);
+      double normRes = strategy().findNorm(resHists_[0]);
       Log::file() << "Residual Norm = " << normRes << std::endl;
 
       // Check if total error is below tolerance
@@ -262,6 +258,9 @@ namespace Pscf
          return;
       }
 
+      // Update basis vectors of residuals histories
+      strategy().updateBasis(resBasis_, resHists_);
+
       // Update matrix U by shifting elements diagonally
       for (int m = maxHist_-1; m > 0; --m) {
          for (int n = maxHist_-1; n > 0; --n) {
@@ -273,10 +272,10 @@ namespace Pscf
       // Also, compute each element of v_ vector
       for (int m = 0; m < nHist_; ++m) {
 
-         double dotprod = strategy().computeUDotProd(resHists_,m);
+         double dotprod = strategy().computeUDotProd(resBasis_,m);
          U_(m,0) = dotprod;
          U_(0,m) = dotprod;
-         v_[m] = strategy().computeVDotProd(resHists_,m);
+         v_[m] = strategy().computeVDotProd(resHists_[0],resBasis_,m);
          
       }
       
@@ -323,15 +322,18 @@ namespace Pscf
    template <typename T>
    void AmIterator<T>::updateGuess()
    {
+
       // Contribution of the last solution
       strategy().setEqual(fieldTrial_,fieldHists_[0]);
       strategy().setEqual(resTrial_, resHists_[0]);
 
-
-      // Mixing in historical solutions, only if at least one history
+      // If at least two histories
       if (nHist_ > 0) {
-         strategy().addHistories(fieldTrial_, fieldHists_, coeffs_, nHist_);
-         strategy().addHistories(resTrial_, resHists_, coeffs_, nHist_);
+         // Update the basis vectors of field histories
+         strategy().updateBasis(fieldBasis_,fieldHists_);
+         // Combine histories into trial guess and predicted error
+         strategy().addHistories(fieldTrial_, fieldBasis_, coeffs_, nHist_);
+         strategy().addHistories(resTrial_, resBasis_, coeffs_, nHist_);
       }
 
       // Correct for predicted error
@@ -348,7 +350,9 @@ namespace Pscf
    {
       // Clear ring buffers
       resHists_.clear();
+      resBasis_.clear();
       fieldHists_.clear();
+      fieldBasis_.clear();
       return;
    }
 
