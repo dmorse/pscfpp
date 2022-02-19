@@ -114,7 +114,7 @@ namespace Pspg
       * Compute free energy density and pressure for current fields.
       *
       * This function should be called after a successful call of
-      * iterator().solve(). Resulting values are returned by the 
+      * iteratorMediator().solve(). Resulting values are returned by the 
       * freeEnergy() and pressure() accessor functions.
       */
       void computeFreeEnergy();

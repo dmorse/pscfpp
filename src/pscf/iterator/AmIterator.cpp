@@ -119,10 +119,11 @@ namespace Pscf
       bool done;
       for (int itr = 0; itr < maxItr_; ++itr) {
 
+
          // Store current field in history ringbuffer
          iterMed().getCurrent(temp_);
          fieldHists_.append(temp_);
-
+         
          timerAM.start();
 
          Log::file()<<"---------------------"<<std::endl;
@@ -135,6 +136,7 @@ namespace Pscf
             lambda_ = 1.0;
             nHist_ = maxHist_;
          }
+
          timerResid.start();
          computeResidual();
          timerResid.stop();

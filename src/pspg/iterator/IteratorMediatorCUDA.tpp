@@ -21,7 +21,8 @@ namespace Pspg{
    template <int D>
    IteratorMediatorCUDA<D>::IteratorMediatorCUDA(System<D>& sys)
     : sys_(&sys),
-      iter_(0)
+      iter_(0),
+      temp_(0)
    {}
 
    /// Destructor

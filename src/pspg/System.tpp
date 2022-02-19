@@ -47,7 +47,8 @@ namespace Pspg
       fileMaster_(),
       homogeneous_(),
       interactionPtr_(0),
-      iteratorPtr_(0),
+      iteratorMediatorPtr_(0),
+      iteratorFactoryPtr_(0),
       wavelistPtr_(0),
       sweepPtr_(0),
       sweepFactoryPtr_(0),
@@ -67,7 +68,8 @@ namespace Pspg
       domain_.setFileMaster(fileMaster_);
 
       interactionPtr_ = new ChiInteraction();
-      iteratorPtr_ = new AmIterator<D>(this); 
+      iteratorMediatorPtr_ = new IteratorMediatorCUDA<D>(*this);
+      iteratorFactoryPtr_ = new IteratorFactory<D>(*iteratorMediatorPtr_); 
       wavelistPtr_ = new WaveList<D>();
       
       // sweepFactoryPtr_ = new SweepFactory(*this);
@@ -82,8 +84,11 @@ namespace Pspg
       if (interactionPtr_) {
          delete interactionPtr_;
       }
-      if (iteratorPtr_) {
-         delete iteratorPtr_;
+      if (iteratorMediatorPtr_) {
+         delete iteratorMediatorPtr_;
+      }
+      if (iteratorFactoryPtr_) {
+         delete iteratorFactoryPtr_;
       }
       if (wavelistPtr_) {
          delete wavelistPtr_; 
@@ -234,9 +239,18 @@ namespace Pspg
       // Allocate memory for w and c fields
       allocate();
 
-      // Initialize iterator
-      readParamComposite(in, iterator());
-      iterator().allocate();
+      // Initialize iterator through the factory and mediator
+      std::string className;
+      bool isEnd;
+      Iterator<FieldCUDA>* iteratorPtr
+         = iteratorFactoryPtr_->readObject(in, *this, className, isEnd);
+      if (!iteratorPtr) {
+         std::string msg = "Unrecognized Iterator subclass name ";
+         msg += className;
+         UTIL_THROW(msg.c_str());
+      }
+      iteratorMediator().setIterator(*iteratorPtr);
+      iteratorMediator().setup();
    }
 
    /*
@@ -358,27 +372,16 @@ namespace Pspg
 
          } else 
          if (command == "ITERATE") {
-            Log::file() << std::endl;
-
-            // Read w fields in grid format iff not already set.
+            // Read w (chemical potential) fields if not done previously 
             if (!hasWFields_) {
                readEcho(in, filename);
-               fieldIo().readFieldsRGrid(filename, wFieldsRGrid());
-               hasWFields_ = true;
+               readWBasis(filename);
             }
-
-            // Attempt to iteratively solve SCFT equations
-            int fail = iterator().solve();
-            hasCFields_ = true;
-
-            // Final output
-            if (!fail) {
-               computeFreeEnergy();
-               outputThermo(Log::file());
-            } else {
-               Log::file() << "Iterate has failed. Exiting "<<std::endl;
+            // Attempt iteration to convergence
+            int fail = iterate();
+            if (fail) {
+               readNext = false;
             }
-
          } else 
          if (command == "WRITE_W_BASIS") {
             UTIL_CHECK(hasWFields_);
@@ -664,29 +667,32 @@ namespace Pspg
       }
    }
 
-   /*  
+   /*
    * Iteratively solve a SCFT problem for specified parameters.
-   */  
+   */
    template <int D>
    int System<D>::iterate()
-   {  
+   {
       UTIL_CHECK(hasWFields_);
       hasCFields_ = false;
 
       Log::file() << std::endl;
+      Log::file() << std::endl;
 
       // Call iterator
-      std::cout<<"\nStarting iterator"<<std::endl;
-      int error = iterator().solve();
+      int error = iteratorMediator().solve();
+      
       hasCFields_ = true;
 
-      if (error) {
-         Log::file() << "Iterator failed to converge\n";
-      } 
-      computeFreeEnergy();
-      outputThermo(Log::file());  
+      if (!error) {   
+         if (!domain().isFlexible()) {
+            mixture().computeStress(wavelist());
+         }
+         computeFreeEnergy();
+         outputThermo(Log::file());
+      }
       return error;
-   }  
+   }
 
    /*
    * Convert fields from symmetry-adpated basis to real-space grid format.

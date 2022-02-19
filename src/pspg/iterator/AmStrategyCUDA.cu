@@ -15,6 +15,7 @@ namespace Pscf {
 namespace Pspg {
 
    AmStrategyCUDA::AmStrategyCUDA()
+    : temp_(0)
    {}
 
    AmStrategyCUDA::~AmStrategyCUDA()
@@ -103,6 +104,21 @@ namespace Pspg {
 
       return (double)max;
 
+   }
+
+   void AmStrategyCUDA::updateBasis(RingBuffer<FieldCUDA> & basis, RingBuffer<FieldCUDA> const & hists) const
+   {
+      // Make sure at least two histories are stored
+      UTIL_CHECK(hists.size() >= 2);
+
+      const int n = hists[0].capacity();
+      FieldCUDA newbasis;
+      newbasis.allocate(n);
+
+      pointWiseBinarySubtract<<<NUMBER_OF_BLOCKS,THREADS_PER_BLOCK>>>
+            (hists[0].cDField(),hists[1].cDField(),newbasis.cDField(),n);
+
+      basis.append(newbasis);
    }
 
    double AmStrategyCUDA::computeUDotProd(RingBuffer<FieldCUDA> const & resBasis, int m) const
