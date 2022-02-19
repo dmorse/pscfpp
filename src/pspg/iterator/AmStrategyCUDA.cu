@@ -181,10 +181,10 @@ namespace Pspg {
       }
 
       // Parallel reduction (summation over all elements, up to the highest power of two)
-      reduction<<<NUMBER_OF_BLOCKS,THREADS_PER_BLOCK,THREADS_PER_BLOCK*sizeof(cudaReal)>>>(d_temp_,d_temp_,nPow2);
+      reductionSum<<<NUMBER_OF_BLOCKS/2,THREADS_PER_BLOCK,THREADS_PER_BLOCK*sizeof(cudaReal)>>>(d_temp_,d_temp_,nPow2);
       
       // Copy results and sum over output
-      cudaMemcpy(temp_, d_temp_, NUMBER_OF_BLOCKS * sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      cudaMemcpy(temp_, d_temp_, NUMBER_OF_BLOCKS/2 * sizeof(cudaReal), cudaMemcpyDeviceToHost);
       cudaReal sum = 0;
       cudaReal c = 0;
       //use kahan summation to reduce error

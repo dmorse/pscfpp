@@ -613,7 +613,7 @@ static __global__ void scaleReal(cudaReal* result, int size, float scale) {
 
    template<int D>
    cudaReal Block<D>::reductionH(const RDField<D>& a, int size) {
-      reduction <<< NUMBER_OF_BLOCKS/2 , THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cudaReal)>>>
+      reductionSum <<< NUMBER_OF_BLOCKS/2 , THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cudaReal)>>>
          (d_temp_, a.cDField(), size);
       cudaMemcpy(temp_, d_temp_, NUMBER_OF_BLOCKS/2  * sizeof(cudaReal), cudaMemcpyDeviceToHost);
       cudaReal final = 0;

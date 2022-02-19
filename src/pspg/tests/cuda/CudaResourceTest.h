@@ -26,6 +26,43 @@ public:
    void tearDown()
    {}
 
+   void testReductionSum() 
+   {
+      printMethod(TEST_FUNC);
+
+      // GPU Resources
+      NUMBER_OF_BLOCKS = 32; // parallel reduction into 32 blocks.
+      THREADS_PER_BLOCK = 32;
+
+      // Create device and host arrays
+      const int n = NUMBER_OF_BLOCKS*THREADS_PER_BLOCK;
+      cudaReal sum = 0;
+      cudaReal sumCheck = 0;
+      cudaReal* num = new cudaReal[n];
+      cudaReal* d_temp;
+      cudaReal* d_num;
+      cudaMalloc((void**) &d_num, n*sizeof(cudaReal));
+      cudaMalloc((void**) &d_temp, NUMBER_OF_BLOCKS*sizeof(cudaReal));
+
+      // Test data
+      for (int i = 0; i < n; i++) {
+         num[i] = (cudaReal)(std::rand() % 10000);
+      }
+
+      // Host find max
+      for (int i = 0; i < n; i++) {
+         sumCheck+=num[i];
+      }
+
+      // Launch kernel twice and get output
+      cudaMemcpy(d_num, num, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      reductionSum<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cudaReal)>>>(d_temp, d_num, n);
+      reductionSum<<<1, NUMBER_OF_BLOCKS, NUMBER_OF_BLOCKS*sizeof(cudaReal)>>>(d_temp, d_temp, NUMBER_OF_BLOCKS);
+      cudaMemcpy(&sum, d_temp, 1*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+
+      TEST_ASSERT(sum == sumCheck);
+   }
+
    void testReductionMaxSmall()
    {
       printMethod(TEST_FUNC);
@@ -195,6 +232,7 @@ public:
 };
 
 TEST_BEGIN(CudaResourceTest)
+TEST_ADD(CudaResourceTest, testReductionSum)
 TEST_ADD(CudaResourceTest, testReductionMaxSmall)
 TEST_ADD(CudaResourceTest, testReductionMaxLarge)
 TEST_ADD(CudaResourceTest, testReductionMaxAbsLarge)

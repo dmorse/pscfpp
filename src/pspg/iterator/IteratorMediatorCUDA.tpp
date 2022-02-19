@@ -82,16 +82,10 @@ namespace Pspg{
 
       // Initialize values to zeroes. This is important especially in the case of 
       // the number of elements being larger to make the system a power of
-      cudaMemset(curr.cDField(), 0, n*sizeof(cudaReal));
+      gpuErrchk( cudaMemset(curr.cDField(), 0, n*sizeof(cudaReal)) );
 
       // pointer to fields on system
-      DArray<RDField<D>> * currSys = &sys_->wFieldsRGrid();
-
-      // find average of omega fields and subtract it out
-      float average = findFieldsAverage(*currSys);
-      for (int i = 0; i < nMonomer; ++i) {
-         subtractUniform <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> ((*currSys)[i].cDField(), average, nMesh);
-      }
+      DArray<RDField<D>> * const currSys = &sys_->wFieldsRGrid();
 
       // loop to unfold the system fields and store them in one long array
       for (int i = 0; i < nMonomer; i++) {
@@ -133,12 +127,12 @@ namespace Pspg{
       const int nMesh = sys_->mesh().size();
       
       // Initialize residuals to zero
-      cudaMemset(resid.cDField(), 0, n*sizeof(cudaReal));
+      assignUniformReal <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (resid.cDField(), 0, n);
 
       // Compute SCF residuals
       for (int i = 0; i < nMonomer; i++) {
+         int startIdx = i*nMesh;
          for (int j = 0; j < nMonomer; j++) {
-            int startIdx = i*nMesh;
             pointWiseAddScale <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (resid.cDField() + startIdx,
                                                                             sys_->cFieldRGrid(j).cDField(),
                                                                             sys_->interaction().chi(i, j),
@@ -154,26 +148,40 @@ namespace Pspg{
       // If not canonical, account for incompressibility. 
       // I don't know if this should be done always in the r-grid representation, or only if not canonical.
       // Original GPU code does it always. Leave it as always for now.
-      float sum_chi_inv = (float) sys_->interaction().sum_inv();
-      for (int i = 0; i < sys_->mixture().nMonomer(); ++i) {
-         
-         pointWiseSubtractFloat <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (resid.cDField() + i*nMesh,
-                                                                             1/sum_chi_inv, 
-                                                                             nMesh);
-      }
-
-      // If variable unit cell, compute stress residuals
-      if (sys_->domain().isFlexible()) {
-         const int nParam = sys_->unitCell().nParameter();
-         const double scaleStress = sys_->domain().scaleStress();
-         cudaReal* stress = new cudaReal[nParam];
-
-         for (int i = 0; i < nParam; i++) {
-            stress[i] = (cudaReal)(-1*scaleStress*sys_->mixture().stress(i));
+      // CHANGE THIS, ONLY DO FOR NOT CANONICAL. OTHERWISE SET SPATIAL AVERAGE OF SCF RESIDUALS TO 0
+      if (!sys_->mixture().isCanonical()) {
+         float sum_chi_inv = (float) sys_->interaction().sum_inv();
+         for (int i = 0; i < nMonomer; ++i) {
+            
+            pointWiseSubtractFloat <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (resid.cDField() + i*nMesh,
+                                                                              1/sum_chi_inv, 
+                                                                              nMesh);
          }
-
-         cudaMemcpy(resid.cDField()+nMonomer*nMesh, stress, nParam*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      } else {
+         for (int i = 0; i < nMonomer; i++) {
+            // Find current average 
+            cudaReal average = findAverage(resid.cDField()+i*nMesh, nMesh);
+            std::cout << "average = " << average << std::endl;
+            // subtract out average to set residual average to zero
+            pointWiseSubtractFloat <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (resid.cDField() + i*nMesh,
+                                                                                 (float)average, 
+                                                                                 nMesh);
+         }
+         
       }
+
+      // // If variable unit cell, compute stress residuals
+      // if (sys_->domain().isFlexible()) {
+      //    const int nParam = sys_->unitCell().nParameter();
+      //    const double scaleStress = sys_->domain().scaleStress();
+      //    cudaReal* stress = new cudaReal[nParam];
+
+      //    for (int i = 0; i < nParam; i++) {
+      //       stress[i] = (cudaReal)(-1*scaleStress*sys_->mixture().stress(i));
+      //    }
+
+      //    cudaMemcpy(resid.cDField()+nMonomer*nMesh, stress, nParam*sizeof(cudaReal), cudaMemcpyHostToDevice);
+      // }
 
 
       
@@ -189,12 +197,21 @@ namespace Pspg{
 
       // pointer to fields on system
       DArray<RDField<D>> * sysfields = &sys_->wFieldsRGrid();
+
+      // SET THE HOMOGENEOUS COMPONENT (SPATIAL AVERAGE) HERE IF CANONICAL ONLY
+      // find average of omega fields and subtract it out
+      // float average = findFieldsAverage(*currSys);
+      // for (int i = 0; i < nMonomer; ++i) {
+      //    subtractUniform <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> ((*currSys)[i].cDField(), average, nMesh);
+      // }
       
       // copy over grid points
       for (int i = 0; i < nMonomer; i++) {
          assignReal<<<NUMBER_OF_BLOCKS,THREADS_PER_BLOCK>>>
                ((*sysfields)[i].cDField(), newGuess.cDField() + i*nMesh, nMesh);
       }
+
+      
 
       // if flexible unit cell, update parameters well
       if (sys_->domain().isFlexible()) {
@@ -219,27 +236,38 @@ namespace Pspg{
 
    // --- Private member functions that are specific to this implementation --- 
 
-   template<int D>
-   cudaReal IteratorMediatorCUDA<D>::findFieldsAverage(DArray<RDField<D>>& fields)
+   template<int D> 
+   cudaReal IteratorMediatorCUDA<D>::findAverage(cudaReal * const field, int n) 
    {
-      const int n = fields.capacity();
-      const int m = fields[0].capacity();
-      
+      // This function assumes that n = NUMBER_OF_BLOCKS * THREADS_PER_BLOCK
       // verify workspace is allocated
-      if (!temp_) {
-         temp_ = new cudaReal[n*m];
-         cudaMalloc((void**) &d_temp_, n*sizeof(cudaReal));
-      }
+      cudaReal* d_temp;
+      cudaReal* temp = new cudaReal[NUMBER_OF_BLOCKS/2];
 
-      cudaReal tempHost, average = 0;
-      for (int i = 0; i < n; i++) {
-         reduction<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(d_temp_,fields[i].cDField(),m);
-         reduction<<<1 , NUMBER_OF_BLOCKS>>>(d_temp_,d_temp_,NUMBER_OF_BLOCKS);
-         cudaMemcpy(&tempHost, d_temp_, 1*sizeof(cudaReal), cudaMemcpyDeviceToHost);
-         average+=tempHost;
+      cudaMalloc((void**) &d_temp, NUMBER_OF_BLOCKS/2*sizeof(cudaReal));
+
+      // Use parallel reduction to sum up first n elements in field
+      cudaReal average;
+      reductionSum<<<NUMBER_OF_BLOCKS/2, THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cudaReal)>>>(d_temp, field, n);
+      // Do last elements of sum on host using Kahan summation
+      cudaMemcpy(temp, d_temp, NUMBER_OF_BLOCKS/2  * sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      cudaReal sum = 0;
+      cudaReal c = 0;
+      for (int i = 0; i < NUMBER_OF_BLOCKS/2 ; ++i) {
+         cudaReal y = temp[i] - c;
+         cudaReal t = sum + y;
+         c = (t - sum) - y;
+         sum = t;
       }
-      average = average / (cudaReal)(n*m);
-      return (float)average;
+      delete[] temp;
+      cudaFree(d_temp);
+
+      // Divide by n. Use inputted n in case only part of the array is to be considered (i.e., 
+      // in the case of parameters being at the end of the array but only wanting the average
+      // of the field elements. )
+      average = sum/n;
+
+      return average;
    }
 
    
