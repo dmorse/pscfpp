@@ -40,34 +40,42 @@ namespace Pspg {
       // number of data points, each step of the way.
       int n = hist.capacity();
 
-      // CHECK IF POWER OF TWO. 
+      // CHECK IF POWER OF TWO.
       // bitwise trick from http://www.graphics.stanford.edu/~seander/bithacks.html
-      if ( (n & (n - 1)) != 0 )
-         UTIL_THROW("Dataset size must be a power of two.");
+      int nPow2 = n;
+      int nExcess = 0;
+      if ( (n & (n - 1)) != 0 ) {
+         // if not, handle only up to the nearest lower power of two with parallel reduction
+         // handle the rest with the CPU
+         nPow2 = pow(2,floor(log2(n)));
+         nExcess = n-nPow2;
+      }
 
       // Check to verify that private members are allocated
+      // Allocate up to n, because other kernels may potentially use these
+      // workspace arrays 
       if (!temp_) allocatePrivateMembers(n);
 
       // Do first reduction step
       int nBlocks = NUMBER_OF_BLOCKS, nThreads=THREADS_PER_BLOCK;
       reductionMaxAbs<<<nBlocks, nThreads, 
-                        nThreads*sizeof(cudaReal)>>>(d_temp_, hist.cDField(), n);
-      n = nBlocks;
+                        nThreads*sizeof(cudaReal)>>>(d_temp_, hist.cDField(), nPow2);
+      nPow2 = nBlocks;
 
       // While loop to do further reduction steps
       int itr = 0;
-      while (n > 1) {
+      while (nPow2 > 1) {
          // determine next compute size
          if (nBlocks < nThreads) {
-            nThreads = n;
+            nThreads = nPow2;
             nBlocks = 1;
          } else {
-            nBlocks = n / nThreads;
+            nBlocks = nPow2 / nThreads;
          }
          // perform reduction
          reductionMaxAbs<<<nBlocks, nThreads, 
-                        nThreads*sizeof(cudaReal)>>>(d_temp_, d_temp_, n);
-         n = nBlocks;
+                        nThreads*sizeof(cudaReal)>>>(d_temp_, d_temp_, nPow2);
+         nPow2 = nBlocks;
 
          // track number of iterations
          itr+=1;
@@ -78,6 +86,21 @@ namespace Pspg {
 
       cudaReal max;
       cudaMemcpy(&max, d_temp_, 1*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      
+      // If any left over above the power of two, handle with CPU.
+      if (nExcess > 0 ) {
+         // copy excess into host memory
+         cudaReal* excess = new cudaReal[nExcess];
+         cudaMemcpy(excess, hist.cDField() + nPow2, nExcess*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+         
+         for (int i = 0; i < nExcess; i++) {
+            if (fabs(excess[i]) > max) {
+               max = fabs(excess[i]);
+            }
+         }
+         delete[] excess;
+      }
+
       return (double)max;
 
    }
@@ -123,54 +146,52 @@ namespace Pspg {
    cudaReal AmStrategyCUDA::innerProduct(FieldCUDA const & a, FieldCUDA const & b) const
    {
       UTIL_CHECK(b.capacity() == a.capacity());
-      int size = a.capacity();
+      int n = a.capacity();
 
       // Check to verify that private members are allocated
-      if (!temp_) allocatePrivateMembers(size);
+      if (!temp_) allocatePrivateMembers(n);
 
-      switch(THREADS_PER_BLOCK) {
-      case 512:
-         deviceInnerProduct<512><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_temp_, a.cDField(), b.cDField(), size);
-         break;
-      case 256:
-         deviceInnerProduct<256><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_temp_, a.cDField(), b.cDField(), size);
-         break;
-      case 128:
-         deviceInnerProduct<128><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_temp_, a.cDField(), b.cDField(), size);
-         break;
-      case 64:
-         deviceInnerProduct<64><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_temp_, a.cDField(), b.cDField(), size);
-         break;
-      case 32:
-         deviceInnerProduct<32><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_temp_, a.cDField(), b.cDField(), size);
-         break;
-      case 16:
-         deviceInnerProduct<16><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_temp_, a.cDField(), b.cDField(), size);
-         break;
-      case 8:
-         deviceInnerProduct<8><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_temp_, a.cDField(), b.cDField(), size);
-         break;
-      case 4:
-         deviceInnerProduct<4><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_temp_, a.cDField(), b.cDField(), size);
-         break;
-      case 2:
-         deviceInnerProduct<2><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_temp_, a.cDField(), b.cDField(), size);
-         break;
-      case 1:
-         deviceInnerProduct<1><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_temp_, a.cDField(), b.cDField(), size);
-         break;
+      // Elementwise multiplication of a with b for all elements
+      pointWiseBinaryMultiply<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(a.cDField(),b.cDField(),d_temp_,n);
+
+      // Check to see if power of two
+      int nPow2 = n;
+      int nExcess = 0;
+      if ( (n & (n - 1)) != 0 ) {
+         // if not, handle only up to the nearest lower power of two with parallel reduction
+         // handle the rest with the CPU
+         nPow2 = pow(2,floor(log2(n)));
+         nExcess = n-nPow2;
       }
+
+      // Parallel reduction (summation over all elements, up to the highest power of two)
+      reduction<<<NUMBER_OF_BLOCKS,THREADS_PER_BLOCK,THREADS_PER_BLOCK*sizeof(cudaReal)>>>(d_temp_,d_temp_,nPow2);
+      
+      // Copy results and sum over output
       cudaMemcpy(temp_, d_temp_, NUMBER_OF_BLOCKS * sizeof(cudaReal), cudaMemcpyDeviceToHost);
-      cudaReal final = 0;
+      cudaReal sum = 0;
       cudaReal c = 0;
       //use kahan summation to reduce error
       for (int i = 0; i < NUMBER_OF_BLOCKS; ++i) {
          cudaReal y = temp_[i] - c;
-         cudaReal t = final + y;
-         c = (t - final) - y;
-         final = t;  
+         cudaReal t = sum + y;
+         c = (t - sum) - y;
+         sum = t;  
       }
-      return final;
+
+      // Include data points beyond the lowest power of two
+      if (nExcess > 0) {
+         // copy excess into host memory
+         cudaReal* excess = new cudaReal[nExcess];
+         cudaMemcpy(excess, d_temp_ + nPow2, nExcess*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+         
+         for (int i = 0; i < nExcess; i++) {
+            sum += excess[i];
+         }
+         delete[] excess;
+      }
+      
+      return sum;
    }
 
 }

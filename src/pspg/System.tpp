@@ -14,6 +14,9 @@
 #include <pscf/homogeneous/Clump.h>
 #include <pscf/crystal/shiftToMinimum.h>
 
+#include <pspg/iterator/IteratorMediatorCUDA.h>
+#include <pspg/iterator/IteratorFactory.h>
+
 #include <util/format/Str.h>
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>

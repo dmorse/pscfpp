@@ -149,7 +149,27 @@ namespace Pspg
             stress_[i] += polymer(j).stress(i);
          }   
       }   
-   }  
+   }
+
+   template <int D>
+   bool Mixture<D>::isCanonical()
+   {
+      // Check ensemble of all polymers
+      for (int i = 0; i < nPolymer(); ++i) {
+         if (polymer(i).ensemble() == Species::Open) {
+            return false;
+         }
+      }
+      // Currently no solvent in PSPG!
+      // // Check ensemble of all solvents
+      // for (int i = 0; i < nSolvent(); ++i) {
+      //    if (solvent(i).ensemble() == Species::Open) {
+      //       return false;
+      //    }
+      // }
+      // Returns true if false was never returned
+      return true;
+   }
 
 } // namespace Pspg
 } // namespace Pscf

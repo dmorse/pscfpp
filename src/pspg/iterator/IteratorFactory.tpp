@@ -1,14 +1,14 @@
-#ifndef PSPC_ITERATOR_FACTORY_TPP
-#define PSPC_ITERATOR_FACTORY_TPP
+#ifndef PSPG_ITERATOR_FACTORY_TPP
+#define PSPG_ITERATOR_FACTORY_TPP
 
 #include "IteratorFactory.h"  
 
 // Subclasses of Iterator 
 #include <pscf/iterator/AmIterator.h>
-#include <pspc/iterator/AmStrategyCUDA.h>
+#include <pspg/iterator/AmStrategyCUDA.h>
 
 namespace Pscf {
-namespace Pspc {
+namespace Pspg {
 
    using namespace Util;
 

@@ -142,6 +142,12 @@ namespace Pspg
       * Get monomer reference volume.
       */
       double vMonomer() const;
+
+      /**
+      * Determine if the mixture is canonical. Otherwise, it is
+      * mixed or open.
+      */
+      bool isCanonical();
 	  
       using MixtureTmpl< Pscf::Pspg::Polymer<D>, Pscf::Pspg::Solvent<D> >::nMonomer;
       using MixtureTmpl< Pscf::Pspg::Polymer<D>, Pscf::Pspg::Solvent<D> >::nPolymer;

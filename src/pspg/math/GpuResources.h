@@ -126,6 +126,15 @@ static __global__ void pointWiseBinaryAdd(const cudaReal* a, const cudaReal* b, 
    }
 }
 
+static __global__ void pointWiseBinaryMultiply(const cudaReal* a, const cudaReal* b, cudaReal* result, int size) 
+{
+   int nThreads = blockDim.x * gridDim.x;
+   int startID = blockIdx.x * blockDim.x + threadIdx.x;
+   for (int i = startID; i < size; i += nThreads) {
+      result[i] = a[i] * b[i];
+   }
+}
+
 static __global__ void pointWiseAddScale(cudaReal* result, const cudaReal* rhs, float scale, int size)
 {
    int nThreads = blockDim.x * gridDim.x;
@@ -392,9 +401,7 @@ __global__ void deviceInnerProduct(cudaReal* c, const cudaReal* a,
 
    //do all pointwise multiplication
    volatile extern __shared__ cudaReal cache[];
-   cudaReal temp = 0;
-   temp += a[startID] * b[startID];
-   cache[threadIdx.x] = temp;
+   cache[threadIdx.x] = a[startID] * b[startID];
 
    __syncthreads();
 

@@ -70,9 +70,14 @@ namespace Pspg{
       // pointer to iterator
       Pscf::Iterator<FieldCUDA>* iter_;
 
-      // actual number of elements, without adjustment to account for 
-      // power of two
-      int nData();
+      // workspace on device memory
+      mutable cudaReal* d_temp_;
+
+      // workspace on host memory
+      mutable cudaReal* temp_;
+      
+      // find average of field
+      cudaReal findFieldsAverage(DArray<RDField<D>>& fields);
 
    };
 
