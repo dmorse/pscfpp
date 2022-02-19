@@ -302,7 +302,7 @@ namespace Pspc
       ChiInteraction& interaction();
 
       /**
-      * Get the Iterator by reference.
+      * Get the IteratorMediator by reference.
       */
       IteratorMediatorCPU<D>& iteratorMediator();
 
@@ -745,7 +745,6 @@ namespace Pspc
 
    // Inline member functions
 
-   // Get the associated UnitCell<D> object by const reference.
    template <int D>
    inline Domain<D> const & System<D>::domain() const
    { return domain_; }
