@@ -75,6 +75,59 @@ namespace Pspg
       capacity_ = 0;
    }
 
+   /*
+   * Copy constructor.
+   *
+   * Allocates new memory and copies all elements by value.
+   *
+   *\param other the Field to be copied.
+   */
+   template <typename Data>
+   DField<Data>::DField(const DField<Data>& other)
+   {
+      if (!other.isAllocated()) {
+         UTIL_THROW("Other Field must be allocated.");
+      }
+
+      capacity_ = other.capacity_;
+      cudaMalloc((void**) &data_, capacity_ * sizeof(Data));
+
+      cudaMemcpy(data_, other.cDField(), capacity_ * sizeof(Data), cudaMemcpyDeviceToDevice);
+   }
+
+   /*
+   * Assignment.
+   *
+   * This operator will allocate memory if not allocated previously.
+   *
+   * \throw Exception if other Field is not allocated.
+   * \throw Exception if both Fields are allocated with unequal capacities.
+   *
+   * \param other the rhs Field
+   */
+   template <typename Data>
+   DField<Data>& DField<Data>::operator = (const DField<Data>& other)
+   {
+      // Check for self assignment
+      if (this == &other) return *this;
+
+      // Precondition
+      if (!other.isAllocated()) {
+         UTIL_THROW("Other Field must be allocated.");
+      }
+
+      if (!isAllocated()) {
+         allocate(other.capacity());
+      } else if (capacity_ != other.capacity_) {
+         UTIL_THROW("Cannot assign Fields of unequal capacity");
+      }
+
+      // Copy elements
+      cudaMemcpy(data_, other.cDField(), capacity_ * sizeof(Data), cudaMemcpyDeviceToDevice);
+
+      return *this;
+   }
+
 }
 }
 #endif

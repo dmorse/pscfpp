@@ -78,6 +78,16 @@ namespace Pspg
       */
       const Data* cDField() const;
 
+      /**
+      * Assignment operator.
+      */
+      virtual DField<Data>& operator = (const DField<Data>& other);
+
+      /**
+      * Copy constructor.
+      */
+      DField(const DField& other);
+
    protected:
 
       /// Pointer to an array of Data elements.
@@ -87,16 +97,7 @@ namespace Pspg
       int capacity_;
 
    private:
-
-      /**
-      * Copy constructor (private and not implemented to prohibit).
-      */
-      DField(const DField& other);
-
-      /**
-      * Assignment operator (private and non implemented to prohibit).
-      */
-      DField& operator = (const DField& other);
+      
 
    };
 

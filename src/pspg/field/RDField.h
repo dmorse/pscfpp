@@ -70,8 +70,6 @@ namespace Pspg
       */
       RDField& operator = (const RDField& other);
 
-      using DField<cudaReal>::allocate;
-
       /**
       * Allocate the underlying C array for an FFT grid.
       *
@@ -94,6 +92,10 @@ namespace Pspg
       */
       template <class Archive>
       void serialize(Archive& ar, const unsigned int version);
+
+      using DField<cudaReal>::allocate;
+      using DField<cudaReal>::operator=;
+      
 
    private:
 
