@@ -85,6 +85,33 @@ namespace Pspc {
       return dotprod;
    }
 
+   void AmStrategyCPU::updateU(DMatrix<double> & U, RingBuffer<FieldCPU> const & resBasis, int nHist) const
+   {
+      // Update matrix U by shifting elements diagonally
+      int maxHist = U.capacity1();
+      for (int m = maxHist-1; m > 0; --m) {
+         for (int n = maxHist-1; n > 0; --n) {
+            U(m,n) = U(m-1,n-1); 
+         }
+      }
+
+      // Compute U matrix's new row 0 and col 0
+      for (int m = 0; m < nHist; ++m) {
+         double dotprod = computeUDotProd(resBasis,m);
+         U(m,0) = dotprod;
+         U(0,m) = dotprod;
+      }
+   }
+
+   void AmStrategyCPU::updateV(DArray<double> & v, FieldCPU const & resCurrent, RingBuffer<FieldCPU> const & resBasis, int nHist) const
+   {
+      // Compute U matrix's new row 0 and col 0
+      // Also, compute each element of v_ vector
+      for (int m = 0; m < nHist; ++m) {
+         v[m] = computeVDotProd(resCurrent,resBasis,m);
+      }
+   }
+
    void AmStrategyCPU::setEqual(FieldCPU& a, FieldCPU const & b) const
    {
       // This seems silly here, but in other implementations it may not be! Goal: no explicit math in AmIterator.

@@ -47,7 +47,7 @@ namespace Pscf
    template <typename T>
    void AmIterator<T>::readParameters(std::istream& in)
    {
-      errorType_ = "relNormResid"; // default type of error
+      errorType_ = "normResid"; // default type of error
       read(in, "maxItr", maxItr_);
       read(in, "epsilon", epsilon_);
       read(in, "maxHist", maxHist_);
@@ -271,24 +271,10 @@ namespace Pscf
       // Update basis vectors of residuals histories
       strategy().updateBasis(resBasis_, resHists_);
 
-      // Update matrix U by shifting elements diagonally
-      for (int m = maxHist_-1; m > 0; --m) {
-         for (int n = maxHist_-1; n > 0; --n) {
-            U_(m,n) = U_(m-1,n-1); 
-         }
-      }
+      // Update the U matrix and v vectors
+      strategy().updateU(U_, resBasis_, nHist_);
+      strategy().updateV(v_, resHists_[0], resBasis_, nHist_);
 
-      // Compute U matrix's new row 0 and col 0
-      // Also, compute each element of v_ vector
-      for (int m = 0; m < nHist_; ++m) {
-
-         double dotprod = strategy().computeUDotProd(resBasis_,m);
-         U_(m,0) = dotprod;
-         U_(0,m) = dotprod;
-         v_[m] = strategy().computeVDotProd(resHists_[0],resBasis_,m);
-         
-      }
-      
       // Solve matrix equation problem to get coefficients to minimize
       // the norm of the residual vector
       if (nHist_ == 1) {

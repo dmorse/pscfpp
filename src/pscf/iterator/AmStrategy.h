@@ -36,19 +36,19 @@ namespace Pscf {
 
       /// Update the list of residual basis vectors used for combining histories.
       virtual void updateBasis(RingBuffer<T> & basis, RingBuffer<T> const & hists) const = 0;
-      
-      /// Update the U matrix containing dot products of residual histories basis vectors.
-      // virtual void updateU(DMatrix<double> & U, RingBuffer<T> const & resBasis, int nHist_) = 0;
-
-      /// Update the v vector containing dot products of current residuals with residual basis
-      /// vectors. 
-      // virtual void updateV(DArray<double> v, T const & resCurrent, RingBuffer<T> const & resBasis, int nHist_) = 0;
 
       /// Compute the dot product for constructing the U matrix. 
       virtual double computeUDotProd(RingBuffer<T> const & resBasis, int m) const = 0;
       
       /// Compute the dot product for constructing the v vector. 
       virtual double computeVDotProd(T const & resCurrent, RingBuffer<T> const & resBasis, int m) const = 0;
+      
+      /// Update the U matrix containing dot products of residual histories basis vectors.
+      virtual void updateU(DMatrix<double> & U, RingBuffer<T> const & resBasis, int nHist) const = 0;
+
+      /// Update the v vector containing dot products of current residuals with residual basis
+      /// vectors. 
+      virtual void updateV(DArray<double> & v, T const & resCurrent, RingBuffer<T> const & resBasis, int nHist) const = 0;
       
       /// Set two things equal to each other.
       virtual void setEqual(T& a, T const & b) const = 0;

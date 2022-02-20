@@ -44,6 +44,12 @@ namespace Pspc {
       double computeVDotProd(FieldCPU const & resCurrent, RingBuffer<FieldCPU> const & resBasis, int m) 
       const;
 
+      void updateU(DMatrix<double> & U, RingBuffer<FieldCPU> const & resBasis, int nHist)
+      const;
+
+      void updateV(DArray<double> & v, FieldCPU const & resCurrent, RingBuffer<FieldCPU> const & resBasis, int nHist)
+      const;
+
       void setEqual(FieldCPU& a, FieldCPU const & b)
       const;
 
