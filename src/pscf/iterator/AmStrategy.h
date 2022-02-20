@@ -11,6 +11,7 @@
 #include <util/global.h>
 #include <util/containers/DArray.h>
 #include <util/containers/RingBuffer.h>
+#include <util/containers/DMatrix.h>
 
 namespace Pscf {
 
@@ -36,6 +37,13 @@ namespace Pscf {
       /// Update the list of residual basis vectors used for combining histories.
       virtual void updateBasis(RingBuffer<T> & basis, RingBuffer<T> const & hists) const = 0;
       
+      /// Update the U matrix containing dot products of residual histories basis vectors.
+      // virtual void updateU(DMatrix<double> & U, RingBuffer<T> const & resBasis, int nHist_) = 0;
+
+      /// Update the v vector containing dot products of current residuals with residual basis
+      /// vectors. 
+      // virtual void updateV(DArray<double> v, T const & resCurrent, RingBuffer<T> const & resBasis, int nHist_) = 0;
+
       /// Compute the dot product for constructing the U matrix. 
       virtual double computeUDotProd(RingBuffer<T> const & resBasis, int m) const = 0;
       
