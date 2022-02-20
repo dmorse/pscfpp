@@ -131,6 +131,33 @@ namespace Pspg {
       return (double)innerProduct(resCurrent, resBasis[m]);
    }
 
+   void AmStrategyCUDA::updateU(DMatrix<double> & U, RingBuffer<FieldCUDA> const & resBasis, int nHist) const
+   {
+      // Update matrix U by shifting elements diagonally
+      int maxHist = U.capacity1();
+      for (int m = maxHist-1; m > 0; --m) {
+         for (int n = maxHist-1; n > 0; --n) {
+            U(m,n) = U(m-1,n-1); 
+         }
+      }
+
+      // Compute U matrix's new row 0 and col 0
+      for (int m = 0; m < nHist; ++m) {
+         double dotprod = computeUDotProd(resBasis,m);
+         U(m,0) = dotprod;
+         U(0,m) = dotprod;
+      }
+   }
+
+   void AmStrategyCUDA::updateV(DArray<double> & v, FieldCUDA const & resCurrent, RingBuffer<FieldCUDA> const & resBasis, int nHist) const
+   {
+      // Compute U matrix's new row 0 and col 0
+      // Also, compute each element of v_ vector
+      for (int m = 0; m < nHist; ++m) {
+         v[m] = computeVDotProd(resCurrent,resBasis,m);
+      }
+   }
+
    void AmStrategyCUDA::setEqual(FieldCUDA& a, FieldCUDA const & b) const
    {
       UTIL_CHECK(b.capacity() == a.capacity());

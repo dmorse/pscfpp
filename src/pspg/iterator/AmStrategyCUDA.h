@@ -48,6 +48,12 @@ namespace Pspg {
       double computeVDotProd(FieldCUDA const & resCurrent, RingBuffer<FieldCUDA> const & resBasis, int m) 
       const;
 
+      void updateU(DMatrix<double> & U, RingBuffer<FieldCUDA> const & resBasis, int nHist)
+      const;
+
+      void updateV(DArray<double> & v, FieldCUDA const & resCurrent, RingBuffer<FieldCUDA> const & resBasis, int nHist)
+      const;
+
       void setEqual(FieldCUDA& a, FieldCUDA const & b)
       const;
 
