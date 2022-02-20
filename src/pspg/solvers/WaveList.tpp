@@ -83,6 +83,20 @@ namespace Pspg
    }
 
    template <int D>
+   WaveList<D>::~WaveList() {
+      if (deviceIsAllocated_) {
+         cudaFree(minImage_d);
+         cudaFree(dkSq_);
+         cudaFree(partnerIdTable_d);
+         cudaFree(selfIdTable_d);
+         cudaFree(implicit_d);
+         cudaFree(dkkBasis_d);
+         delete[] kSq_;
+         delete implicit;
+      }
+   }
+
+   template <int D>
    void WaveList<D>::allocate(Mesh<D>& mesh, UnitCell<D>& unitCell) {
 
       kSize_ = 1;
@@ -115,6 +129,8 @@ namespace Pspg
 
       dkkBasis = new cudaReal[6 * D * D];
       gpuErrchk(cudaMalloc((void**) &dkkBasis_d, sizeof(cudaReal) * 6 * D * D));
+
+      deviceIsAllocated_ = true;
       
    }
 
