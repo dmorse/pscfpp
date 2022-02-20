@@ -203,8 +203,6 @@ namespace Pspg{
                cAverage = findAverage(sys_->cFieldRGrid(j).cDField(), nMesh);
                wAverage += sys_->interaction().chi(i,j) * cAverage;
             }
-            std::cout << "original w average for monomer " << i << ": " << wAverage << std::endl;
-            std::cout << "new w average for monomer " << i << ": " << average << std::endl;
             addUniform<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(newGuess.cDField() + i*nMesh, wAverage, nMesh); 
          }
       }

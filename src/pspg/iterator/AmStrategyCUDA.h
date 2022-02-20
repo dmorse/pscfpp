@@ -33,6 +33,9 @@ namespace Pspg {
       double findNorm(FieldCUDA const & hist) 
       const;
 
+      double findRelNorm(FieldCUDA const & hist) 
+      const;
+
       double findMaxAbs(FieldCUDA const & hist) 
       const;
 

@@ -53,7 +53,9 @@ namespace Pscf
       read(in, "maxHist", maxHist_);
       readOptional(in, "errorType", errorType_);
 
-      if (!(errorType_ == "normResid" || errorType_ == "maxResid")) {
+      if (!(errorType_ == "normResid" 
+         || errorType_ == "maxResid"
+         || errorType_ == "relNormResid")) {
          UTIL_THROW("Invalid iterator error type in parameter file.");
       }
       
@@ -169,7 +171,7 @@ namespace Pscf
             Log::file() << "checking convergence: "  
                         << timerConverged.time()  << " s,  "
                         << timerConverged.time()/timerTotal.time() << "\n";
-            Log::file() << "updating guess: "  
+            Log::file() << "updating guess:       "  
                         << timerOmega.time()  << " s,  "
                         << timerOmega.time()/timerTotal.time() << "\n";
             Log::file() << "total time:           "  
@@ -234,9 +236,15 @@ namespace Pscf
       double normRes = strategy().findNorm(resHists_[0]);
       Log::file() << "Residual Norm = " << normRes << std::endl;
 
+      // Find norm of residual vector relative to field
+      double relNormRes = normRes/strategy().findNorm(fieldHists_[0]);
+      Log::file() << "Relative Residual Norm = " << relNormRes << std::endl;
+
       // Check if total error is below tolerance
       if (errorType_ == "normResid")
          return normRes < epsilon_;
+      else if (errorType_ == "relNormResid")
+         return relNormRes < epsilon_;
       else if (errorType_ == "maxResid")
          return maxRes < epsilon_;
       else

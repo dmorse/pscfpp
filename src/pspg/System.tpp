@@ -658,8 +658,10 @@ namespace Pspg
       // Solve the modified diffusion equation (without iteration)
       mixture().compute(wFieldsRGrid(), cFieldsRGrid());
 
-      // Convert c fields from r-grid to basis
+      // Convert c and w fields from r-grid to basis
+      fieldIo().convertRGridToBasis(wFieldsRGrid(), wFields());
       fieldIo().convertRGridToBasis(cFieldsRGrid_, cFields_);
+
       hasCFields_ = true;
 
       if (needStress) {
@@ -683,6 +685,8 @@ namespace Pspg
       int error = iteratorMediator().solve();
       
       hasCFields_ = true;
+      fieldIo().convertRGridToBasis(wFieldsRGrid(), wFields());
+      fieldIo().convertRGridToBasis(cFieldsRGrid(), cFields());
 
       if (!error) {   
          if (!domain().isFlexible()) {

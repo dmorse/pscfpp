@@ -141,7 +141,7 @@ namespace Pspg {
    {
       for (int i = 0; i < nHist; i++) {
          pointWiseAddScale <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> 
-               (trial.cDField(), basis[i].cDField(), coeffs[i], trial.capacity());
+               (trial.cDField(), basis[i].cDField(), -1*coeffs[i], trial.capacity());
       }
    }
 
