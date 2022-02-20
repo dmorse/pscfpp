@@ -676,6 +676,8 @@ namespace Pspg
       std::cout<<"\nStarting iterator"<<std::endl;
       int error = iterator().solve();
       hasCFields_ = true;
+      fieldIo().convertRGridToBasis(wFieldsRGrid(), wFields());
+      fieldIo().convertRGridToBasis(cFieldsRGrid(), cFields());
 
       if (error) {
          Log::file() << "Iterator failed to converge\n";
