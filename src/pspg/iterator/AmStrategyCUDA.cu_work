@@ -121,7 +121,7 @@ namespace Pspg {
       basis.append(newbasis);
    }
 
-   double AmStrategyCUDA::computeUDotProd(RingBuffer<FieldCUDA> const & resBasis, int m) const
+   double AmStrategyCUDA::computeUDotProd(RingBuffer<FieldCUDA> const & resBasis, int m, int n) const
    {      
       return (double)innerProduct(resBasis[0],resBasis[m]);
    }

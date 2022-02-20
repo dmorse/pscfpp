@@ -38,7 +38,7 @@ namespace Pscf {
       virtual void updateBasis(RingBuffer<T> & basis, RingBuffer<T> const & hists) const = 0;
 
       /// Compute the dot product for constructing the U matrix. 
-      virtual double computeUDotProd(RingBuffer<T> const & resBasis, int m) const = 0;
+      virtual double computeUDotProd(RingBuffer<T> const & resBasis, int m, int n) const = 0;
       
       /// Compute the dot product for constructing the v vector. 
       virtual double computeVDotProd(T const & resCurrent, RingBuffer<T> const & resBasis, int m) const = 0;

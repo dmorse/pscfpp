@@ -42,7 +42,7 @@ namespace Pspg {
       void updateBasis(RingBuffer<FieldCUDA> & basis, RingBuffer<FieldCUDA> const & hists)
       const;
 
-      double computeUDotProd(RingBuffer<FieldCUDA> const & resBasis, int m) 
+      double computeUDotProd(RingBuffer<FieldCUDA> const & resBasis, int m, int n) 
       const;
 
       double computeVDotProd(FieldCUDA const & resCurrent, RingBuffer<FieldCUDA> const & resBasis, int m) 

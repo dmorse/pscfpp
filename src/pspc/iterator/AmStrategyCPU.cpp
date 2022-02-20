@@ -61,13 +61,13 @@ namespace Pspc {
       basis.append(newbasis);
    }
 
-   double AmStrategyCPU::computeUDotProd(RingBuffer<FieldCPU> const & resBasis, int m) const
+   double AmStrategyCPU::computeUDotProd(RingBuffer<FieldCPU> const & resBasis, int m, int n) const
    {
       const int n = resBasis[0].capacity();
       
       double dotprod = 0.0;
       for(int i = 0; i < n; i++) {
-         dotprod += resBasis[0][i] * resBasis[m][i];
+         dotprod += resBasis[m][i] * resBasis[n][i];
       }
 
       return dotprod;
@@ -97,7 +97,7 @@ namespace Pspc {
 
       // Compute U matrix's new row 0 and col 0
       for (int m = 0; m < nHist; ++m) {
-         double dotprod = computeUDotProd(resBasis,m);
+         double dotprod = computeUDotProd(resBasis,0,m);
          U(m,0) = dotprod;
          U(0,m) = dotprod;
       }

@@ -38,7 +38,7 @@ namespace Pspc {
       void updateBasis(RingBuffer<FieldCPU> & basis, RingBuffer<FieldCPU> const & hists)
       const;
 
-      double computeUDotProd(RingBuffer<FieldCPU> const & resBasis, int m) 
+      double computeUDotProd(RingBuffer<FieldCPU> const & resBasis, int m, int n) 
       const;
 
       double computeVDotProd(FieldCPU const & resCurrent, RingBuffer<FieldCPU> const & resBasis, int m) 

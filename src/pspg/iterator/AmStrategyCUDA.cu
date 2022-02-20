@@ -111,19 +111,28 @@ namespace Pspg {
       // Make sure at least two histories are stored
       UTIL_CHECK(hists.size() >= 2);
 
+      // Clear current basis vectors, determine number to compute
+      basis.clear();
+      const int nBasisVec = hists.size() - 1;
       const int n = hists[0].capacity();
+
+      // Holding area for new basis vectors
       FieldCUDA newbasis;
       newbasis.allocate(n);
 
-      pointWiseBinarySubtract<<<NUMBER_OF_BLOCKS,THREADS_PER_BLOCK>>>
-            (hists[0].cDField(),hists[1].cDField(),newbasis.cDField(),n);
-
-      basis.append(newbasis);
+      // Compute each basis vector
+      for (int i = 0; i < nBasisVec; i++)
+      {
+         pointWiseBinarySubtract<<<NUMBER_OF_BLOCKS,THREADS_PER_BLOCK>>>
+            (hists[0].cDField(),hists[i+1].cDField(),newbasis.cDField(),n);
+            basis.append(newbasis);
+      }
+      
    }
 
-   double AmStrategyCUDA::computeUDotProd(RingBuffer<FieldCUDA> const & resBasis, int m) const
+   double AmStrategyCUDA::computeUDotProd(RingBuffer<FieldCUDA> const & resBasis, int n, int m) const
    {      
-      return (double)innerProduct(resBasis[0],resBasis[m]);
+      return (double)innerProduct(resBasis[n],resBasis[m]);
    }
 
    double AmStrategyCUDA::computeVDotProd(FieldCUDA const & resCurrent, RingBuffer<FieldCUDA> const & resBasis, int m) const
@@ -133,19 +142,21 @@ namespace Pspg {
 
    void AmStrategyCUDA::updateU(DMatrix<double> & U, RingBuffer<FieldCUDA> const & resBasis, int nHist) const
    {
-      // Update matrix U by shifting elements diagonally
+      // Reset U values to 0
       int maxHist = U.capacity1();
-      for (int m = maxHist-1; m > 0; --m) {
-         for (int n = maxHist-1; n > 0; --n) {
-            U(m,n) = U(m-1,n-1); 
+      for (int m = 0; m < maxHist; m++) {
+         for (int n = 0; n < maxHist; n++) {
+            U(m,n) = 0;
          }
       }
 
-      // Compute U matrix's new row 0 and col 0
+      // Compute U matrix's new rows and columns and col 0
       for (int m = 0; m < nHist; ++m) {
-         double dotprod = computeUDotProd(resBasis,m);
-         U(m,0) = dotprod;
-         U(0,m) = dotprod;
+         for (int n = m; n < nHist; ++n) {
+            double dotprod = computeUDotProd(resBasis,m,n);
+            U(m,n) = dotprod;
+            U(n,m) = dotprod;
+         }
       }
    }
 
