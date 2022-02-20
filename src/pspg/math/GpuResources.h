@@ -90,6 +90,15 @@ static __global__ void subtractUniform(cudaReal* result, cudaReal rhs, int size)
    }
 }
 
+static __global__ void addUniform(cudaReal* result, cudaReal rhs, int size) 
+{
+   int nThreads = blockDim.x * gridDim.x;
+   int startID = blockIdx.x * blockDim.x + threadIdx.x;
+   for (int i = startID; i < size; i += nThreads) {
+      result[i] += rhs;
+   }
+}
+
 static __global__ void pointWiseSubtract(cudaReal* result, const cudaReal* rhs, int size) 
 {
    int nThreads = blockDim.x * gridDim.x;
@@ -135,7 +144,7 @@ static __global__ void pointWiseBinaryMultiply(const cudaReal* a, const cudaReal
    }
 }
 
-static __global__ void pointWiseAddScale(cudaReal* result, const cudaReal* rhs, float scale, int size)
+static __global__ void pointWiseAddScale(cudaReal* result, const cudaReal* rhs, double scale, int size)
 {
    int nThreads = blockDim.x * gridDim.x;
    int startID = blockIdx.x * blockDim.x + threadIdx.x;
@@ -143,79 +152,6 @@ static __global__ void pointWiseAddScale(cudaReal* result, const cudaReal* rhs, 
       result[i] += scale * rhs[i];
    }
 }
-
-//the 1 is a placeholder for dr
-static __global__ void AmIsConvergedHelper(cudaReal* out, int size) {
-   int nThreads = blockDim.x * gridDim.x;
-   int startID = blockIdx.x * blockDim.x + threadIdx.x;
-   cudaReal temp;
-   for (int i = startID; i < size; i += nThreads) {
-      temp = (out[i] - 1) * (out[i] - 1) * 1;
-      out[i] = temp;
-   }
-}
-
-static __global__ void AmHelper(cudaReal* out, cudaReal* present, cudaReal* iPast, cudaReal* jPast, int size) 
-{
-   int nThreads = blockDim.x * gridDim.x;
-   int startID = blockIdx.x * blockDim.x + threadIdx.x;
-   for (int i = startID; i < size; i += nThreads) {
-      out[i] += (present[i] - iPast[i]) * (present[i] - jPast[i]);
-   }
-}
-
-static __global__ void AmHelperVm(cudaReal* out, cudaReal* present, cudaReal* iPast, int size) 
-{
-   int nThreads = blockDim.x * gridDim.x;
-   int startID = blockIdx.x * blockDim.x + threadIdx.x;
-   for (int i = startID; i < size; i += nThreads) {
-      out[i] += (present[i] - iPast[i]) * (present[i]);
-   }
-}
-
-// template <typename T>
-// static __device__ void warpReduce(volatile T* sdata, T reduceFunc(T), int tid)
-// {
-//    sdata[tid] = reduceFunc( sdata[tid], sdata[tid + 32] );
-//    sdata[tid] = reduceFunc( sdata[tid], sdata[tid + 16] );
-//    sdata[tid] = reduceFunc( sdata[tid], sdata[tid +  8]  );
-//    sdata[tid] = reduceFunc( sdata[tid], sdata[tid +  4]  );
-//    sdata[tid] = reduceFunc( sdata[tid], sdata[tid +  2]  );
-//    sdata[tid] = reduceFunc( sdata[tid], sdata[tid +  1]  );
-// }
-
-// template <typename T>
-// static __global__ void reduction(T* d_out, const T* d_in, T reduceFunc(T), int size) 
-// {
-//    // number of blocks cut in two to avoid inactive initial threads
-//    int tid = threadIdx.x;
-//    int bid = blockIdx.x;
-//    int idx = bid * (blockDim.x*2) + tid;
-   
-   
-//    volatile extern __shared__ T sdata[];
-//    // global mem load combined with first operation
-//    sdata[tid] = reduceFunc( d_in[idx], d_in[idx + blockDim.x] );
-   
-//    __syncthreads();
-   
-//    // reduction
-//    // data and block dimensions need to be a power of two
-//    for (int stride = blockDim.x / 2; stride > 32; stride /= 2) {
-//       if (tid < stride) {
-//          sdata[tid] = reduceFunc( sdata[tid], sdata[tid + stride] );
-//       }
-//       __syncthreads();
-//    }
-   
-//    // unrolled. In final warp, synchronization is inherent.
-//    if (tid < 32) 
-//       warpReduce<T>(sdata, reduceFunc, tid);
-      
-//    // one thread for each block stores that block's results in global memory
-//    if (tid == 0)
-//       d_out[bid] = sdata[0];
-// }
 
 static __global__ void assignUniformReal(cudaReal* result, cudaReal uniform, int size) {
    int nThreads = blockDim.x * gridDim.x;

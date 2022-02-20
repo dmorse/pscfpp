@@ -29,11 +29,6 @@ public:
    void tearDown()
    {}
 
-   void testConstructor()
-   {
-
-   }
-
    void testNElements() 
    {
       printMethod(TEST_FUNC);
@@ -123,7 +118,6 @@ public:
 
       // Run IteratorMediator function
       itermed.evaluate();
-      // NOTE. SOME KIND OF ISSUE IS OCCURRING HERE LEADING TO SHITTY SITUATION FOR FUTURE TESTS.
       itermed.getResidual(d_resid);
       cudaMemcpy(resid, d_resid.cDField(), n*sizeof(cudaReal), cudaMemcpyDeviceToHost);
 
@@ -138,6 +132,7 @@ public:
 
    }
 
+   #if 0
    void testFindAverage()
    {
       printMethod(TEST_FUNC);
@@ -179,6 +174,7 @@ public:
 
       TEST_ASSERT(avg==avgTest);
    }
+   #endif
 
    void setupSystem3D(System<3> & system)
    {
@@ -198,11 +194,11 @@ public:
 };
 
 TEST_BEGIN(IteratorMediatorCUDATest)
-// TEST_ADD(CudaMemTest, testConstructor)
 TEST_ADD(IteratorMediatorCUDATest, testNElements)
 TEST_ADD(IteratorMediatorCUDATest, testGetCurrent)
-// TEST_ADD(IteratorMediatorCUDATest, testGetResidual)
-TEST_ADD(IteratorMediatorCUDATest, testFindAverage)
+TEST_ADD(IteratorMediatorCUDATest, testGetResidual)
+// This test is currently disabled because the findAverage member should be private.
+// TEST_ADD(IteratorMediatorCUDATest, testFindAverage)
 TEST_END(IteratorMediatorCUDATest)
 
 #endif

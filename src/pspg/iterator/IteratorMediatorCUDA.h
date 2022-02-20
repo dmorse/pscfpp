@@ -60,8 +60,7 @@ namespace Pspg{
       /// Updates the system with a passed in state of the iterator.
       void update(FieldCUDA& newGuess);
 
-      // find average of an array of cudaReals
-      cudaReal findAverage(cudaReal * const field, int n);
+      
       
    private:
 
@@ -76,6 +75,9 @@ namespace Pspg{
 
       // workspace on host memory
       mutable cudaReal* temp_;
+
+      // find average of an array of cudaReals
+      cudaReal findAverage(cudaReal * const field, int n);
       
       
 

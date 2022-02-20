@@ -53,13 +53,13 @@ namespace Pspg {
 
       void addPredictedError(FieldCUDA& fieldTrial, FieldCUDA const & resTrial, double lambda)
       const;
+
+      cudaReal innerProduct(FieldCUDA const & a, FieldCUDA const & b)
+      const;
    
    private:
 
       void allocatePrivateMembers(int n) const;
-
-      cudaReal innerProduct(FieldCUDA const & a, FieldCUDA const & b)
-      const;
 
       // workspace members
       mutable cudaReal* d_temp_;

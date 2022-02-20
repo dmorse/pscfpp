@@ -67,7 +67,7 @@ namespace Pspc {
       
       double dotprod = 0.0;
       for(int i = 0; i < n; i++) {
-         dotprod += resBasis[m][i] * resBasis[0][i];
+         dotprod += resBasis[0][i] * resBasis[m][i];
       }
 
       return dotprod;
