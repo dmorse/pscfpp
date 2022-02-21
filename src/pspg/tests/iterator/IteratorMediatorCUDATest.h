@@ -73,15 +73,16 @@ public:
       cudaReal* currCheck = new cudaReal[n];
       cudaReal* curr = new cudaReal[n];
 
+      // Run IteratorMediator function. Note that this, per the original pspg convention,
+      // modifies the field by subtracting out the average.
+      itermed.getCurrent(d_curr);
+      cudaMemcpy(curr, d_curr.cDField(), n*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+
       // Manually get current field
       for (int i = 0; i < nMonomer; i++) {
          cudaMemcpy(currCheck + i*nMesh, system.wFieldsRGrid()[i].cDField(), 
                               nMesh*sizeof(cudaReal), cudaMemcpyDeviceToHost);
       }
-
-      // Run IteratorMediator function
-      itermed.getCurrent(d_curr);
-      cudaMemcpy(curr, d_curr.cDField(), n*sizeof(cudaReal), cudaMemcpyDeviceToHost);
 
       // compare results
       for (int i = 0; i < n; i++) {

@@ -206,16 +206,19 @@ namespace Pspg {
          nPow2 = pow(2,floor(log2(n)));
          nExcess = n-nPow2;
       }
+      // In case we are using more data.. This is temporary and should be adjusted in the future with a better
+      // way for managing GPU resources.
+      int nBlocks = nPow2/THREADS_PER_BLOCK;
 
       // Parallel reduction (summation over all elements, up to the highest power of two)
-      reductionSum<<<NUMBER_OF_BLOCKS/2,THREADS_PER_BLOCK,THREADS_PER_BLOCK*sizeof(cudaReal)>>>(d_temp_,d_temp_,nPow2);
+      reductionSum<<<nBlocks/2,THREADS_PER_BLOCK,THREADS_PER_BLOCK*sizeof(cudaReal)>>>(d_temp_,d_temp_,nPow2);
       
       // Copy results and sum over output
-      cudaMemcpy(temp_, d_temp_, NUMBER_OF_BLOCKS/2 * sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      cudaMemcpy(temp_, d_temp_, nBlocks/2 * sizeof(cudaReal), cudaMemcpyDeviceToHost);
       cudaReal sum = 0;
       cudaReal c = 0;
       //use kahan summation to reduce error
-      for (int i = 0; i < NUMBER_OF_BLOCKS; ++i) {
+      for (int i = 0; i < nBlocks; ++i) {
          cudaReal y = temp_[i] - c;
          cudaReal t = sum + y;
          c = (t - sum) - y;

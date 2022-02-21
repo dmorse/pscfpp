@@ -38,7 +38,8 @@ public:
       
       AmStrategyCUDA strat;
       // Data size
-      int n = NUMBER_OF_BLOCKS*THREADS_PER_BLOCK+7;
+      // Non-power-of-two to check performance in weird situations
+      int n = NUMBER_OF_BLOCKS*THREADS_PER_BLOCK*2+7;
 
       // Device arrays
       FieldCUDA d_a, d_b;
