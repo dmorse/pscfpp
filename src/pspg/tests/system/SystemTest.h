@@ -468,7 +468,7 @@ public:
       system.fileMaster().setOutputPrefix(filePrefix());
 
       openLogFile("out/testIterate2D_hex_rigid.log");
-      system.setGpuResources(32, 32);
+      system.setGpuResources(8, 128);
 
       std::ifstream in;
       openInputFile("in/diblock/hex/param.rigid", in);
@@ -547,7 +547,7 @@ public:
       system.fileMaster().setOutputPrefix(filePrefix());
 
       openLogFile("out/testIterate2D_hex_flex.log");
-      system.setGpuResources(16, 64);
+      system.setGpuResources(8, 128);
 
       // Read parameter file
       std::ifstream in;
@@ -766,7 +766,7 @@ TEST_ADD(SystemTest, testConversion1D_lam)
 TEST_ADD(SystemTest, testConversion2D_hex)
 TEST_ADD(SystemTest, testConversion3D_bcc)
 // TEST_ADD(SystemTest, testCheckSymmetry3D_bcc)
-// TEST_ADD(SystemTest, testIterate1D_lam_rigid)
+TEST_ADD(SystemTest, testIterate1D_lam_rigid)
 TEST_ADD(SystemTest, testIterate1D_lam_flex)
 // TEST_ADD(SystemTest, testIterate2D_hex_rigid)
 // TEST_ADD(SystemTest, testIterate2D_hex_flex)
