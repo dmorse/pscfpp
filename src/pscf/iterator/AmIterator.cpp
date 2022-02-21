@@ -47,7 +47,7 @@ namespace Pscf
    template <typename T>
    void AmIterator<T>::readParameters(std::istream& in)
    {
-      errorType_ = "normResid"; // default type of error
+      errorType_ = "relNormResid"; // default type of error
       read(in, "maxItr", maxItr_);
       read(in, "epsilon", epsilon_);
       read(in, "maxHist", maxHist_);

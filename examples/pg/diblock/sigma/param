@@ -22,11 +22,11 @@ System{
     unitCell    tetragonal   7.183E+00    3.8E+00
     mesh        64    64    32
     groupName P_42%m_n_m
+    isFlexible   1
   }
   AmIterator{
     maxItr   1000
     epsilon  1e-5
     maxHist  20
-    isFlexible   1
   }
 }

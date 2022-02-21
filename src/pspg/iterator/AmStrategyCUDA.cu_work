@@ -143,7 +143,7 @@ namespace Pspg {
 
       // Compute U matrix's new row 0 and col 0
       for (int m = 0; m < nHist; ++m) {
-         double dotprod = computeUDotProd(resBasis,m);
+         double dotprod = computeUDotProd(resBasis,m,0);
          U(m,0) = dotprod;
          U(0,m) = dotprod;
       }

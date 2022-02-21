@@ -38,7 +38,7 @@ System{
   }
   AmIterator{
     maxItr       600
-    epsilon      1.0e-11
+    epsilon      5e-12
     maxHist      30
   }
 }

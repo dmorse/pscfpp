@@ -63,10 +63,10 @@ namespace Pspc {
 
    double AmStrategyCPU::computeUDotProd(RingBuffer<FieldCPU> const & resBasis, int m, int n) const
    {
-      const int n = resBasis[0].capacity();
+      const int length = resBasis[0].capacity();
       
       double dotprod = 0.0;
-      for(int i = 0; i < n; i++) {
+      for(int i = 0; i < length; i++) {
          dotprod += resBasis[m][i] * resBasis[n][i];
       }
 
@@ -75,10 +75,10 @@ namespace Pspc {
 
    double AmStrategyCPU::computeVDotProd(FieldCPU const & resCurrent, RingBuffer<FieldCPU> const & resBasis, int m) const
    {
-      const int n = resBasis[0].capacity();
+      const int length = resBasis[0].capacity();
       
       double dotprod = 0.0;
-      for(int i = 0; i < n; i++) {
+      for(int i = 0; i < length; i++) {
          dotprod += resCurrent[i] * resBasis[m][i];
       }
 
