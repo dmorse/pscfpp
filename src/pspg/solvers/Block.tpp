@@ -277,11 +277,11 @@ static __global__ void scaleReal(cudaReal* result, int size, float scale) {
 
       propagator(0).allocate(ns_, mesh);
       propagator(1).allocate(ns_, mesh);
-      cudaMalloc((void**)&qkBatched_, ns_ * kSize_ * sizeof(cudaComplex));
-      cudaMalloc((void**)&qk2Batched_, ns_ * kSize_ * sizeof(cudaComplex));
+      gpuErrchk(cudaMalloc((void**)&qkBatched_, ns_ * kSize_ * sizeof(cudaComplex)));
+      gpuErrchk(cudaMalloc((void**)&qk2Batched_, ns_ * kSize_ * sizeof(cudaComplex)));
       cField().allocate(mesh.dimensions());
 
-      cudaMalloc((void**)&d_temp_, NUMBER_OF_BLOCKS * sizeof(cudaReal));
+      gpuErrchk(cudaMalloc((void**)&d_temp_, NUMBER_OF_BLOCKS * sizeof(cudaReal)));
       temp_ = new cudaReal[NUMBER_OF_BLOCKS];
 
       expKsq_host = new cudaReal[kSize_];

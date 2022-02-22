@@ -55,9 +55,9 @@ namespace Pspg {
       ns_ = ns;
       meshPtr_ = &mesh;
 
-      cudaMalloc((void**)&qFields_d, sizeof(cudaReal)* mesh.size() *
-                 ns);
-	   cudaMalloc((void**)&d_temp_, NUMBER_OF_BLOCKS * sizeof(cudaReal));
+      gpuErrchk(cudaMalloc((void**)&qFields_d, sizeof(cudaReal)* mesh.size() *
+                 ns));
+	   gpuErrchk(cudaMalloc((void**)&d_temp_, NUMBER_OF_BLOCKS * sizeof(cudaReal)));
 	   temp_ = new cudaReal[NUMBER_OF_BLOCKS];
       isAllocated_ = true;
    }
@@ -208,7 +208,7 @@ namespace Pspg {
        break;
      }
      
-	   cudaMemcpy(temp_, d_temp_, NUMBER_OF_BLOCKS * sizeof(cudaReal), cudaMemcpyDeviceToHost);
+	   gpuErrchk(cudaMemcpy(temp_, d_temp_, NUMBER_OF_BLOCKS * sizeof(cudaReal), cudaMemcpyDeviceToHost));
 	   cudaReal final = 0;
 	   cudaReal c = 0;
 	   //use kahan summation

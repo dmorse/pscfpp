@@ -9,6 +9,7 @@
 */
 
 #include "DField.h"
+#include <pspg/math/GpuResources.h>
 #include <cuda_runtime.h>
 
 
@@ -56,7 +57,7 @@ namespace Pspg
       if (capacity <= 0) {
          UTIL_THROW("Attempt to allocate with capacity <= 0");
       }
-      cudaMalloc((void**) &data_, capacity * sizeof(Data));
+      gpuErrchk(cudaMalloc((void**) &data_, capacity * sizeof(Data)));
       capacity_ = capacity;
    }
 
@@ -89,9 +90,7 @@ namespace Pspg
          UTIL_THROW("Other Field must be allocated.");
       }
 
-      capacity_ = other.capacity_;
-      cudaMalloc((void**) &data_, capacity_ * sizeof(Data));
-
+      allocate(other.capacity_);
       cudaMemcpy(data_, other.cDField(), capacity_ * sizeof(Data), cudaMemcpyDeviceToDevice);
    }
 

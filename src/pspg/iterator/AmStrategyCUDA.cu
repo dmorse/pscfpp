@@ -86,13 +86,13 @@ namespace Pspg {
       }
 
       cudaReal max;
-      cudaMemcpy(&max, d_temp_, 1*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      gpuErrchk(cudaMemcpy(&max, d_temp_, 1*sizeof(cudaReal), cudaMemcpyDeviceToHost));
       
       // If any left over above the power of two, handle with CPU.
       if (nExcess > 0 ) {
          // copy excess into host memory
          cudaReal* excess = new cudaReal[nExcess];
-         cudaMemcpy(excess, hist.cDField() + nPow2, nExcess*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+         gpuErrchk(cudaMemcpy(excess, hist.cDField() + nPow2, nExcess*sizeof(cudaReal), cudaMemcpyDeviceToHost));
          
          for (int i = 0; i < nExcess; i++) {
             if (fabs(excess[i]) > max) {
@@ -194,7 +194,7 @@ namespace Pspg {
    void AmStrategyCUDA::allocatePrivateMembers(int n) const
    {
       temp_ = new cudaReal[n];
-      cudaMalloc((void**) &d_temp_, n*sizeof(cudaReal));
+      gpuErrchk(cudaMalloc((void**) &d_temp_, n*sizeof(cudaReal)));
    }
 
    cudaReal AmStrategyCUDA::innerProduct(FieldCUDA const & a, FieldCUDA const & b) const
@@ -225,7 +225,7 @@ namespace Pspg {
       reductionSum<<<nBlocks/2,THREADS_PER_BLOCK,THREADS_PER_BLOCK*sizeof(cudaReal)>>>(d_temp_,d_temp_,nPow2);
       
       // Copy results and sum over output
-      cudaMemcpy(temp_, d_temp_, nBlocks/2 * sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      gpuErrchk(cudaMemcpy(temp_, d_temp_, nBlocks/2 * sizeof(cudaReal), cudaMemcpyDeviceToHost));
       cudaReal sum = 0;
       cudaReal c = 0;
       //use kahan summation to reduce error
@@ -240,7 +240,7 @@ namespace Pspg {
       if (nExcess > 0) {
          // copy excess into host memory
          cudaReal* excess = new cudaReal[nExcess];
-         cudaMemcpy(excess, d_temp_ + nPow2, nExcess*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+         gpuErrchk(cudaMemcpy(excess, d_temp_ + nPow2, nExcess*sizeof(cudaReal), cudaMemcpyDeviceToHost));
          
          for (int i = 0; i < nExcess; i++) {
             sum += excess[i];
