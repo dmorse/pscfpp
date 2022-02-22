@@ -58,32 +58,34 @@ namespace Pspg {
       if (!temp_) allocatePrivateMembers(n);
 
       // Do first reduction step
-      int nBlocks = NUMBER_OF_BLOCKS, nThreads=THREADS_PER_BLOCK;
+      int nBlocks = nPow2/THREADS_PER_BLOCK/2, nThreads=THREADS_PER_BLOCK;
       reductionMaxAbs<<<nBlocks, nThreads, 
                         nThreads*sizeof(cudaReal)>>>(d_temp_, hist.cDField(), nPow2);
       nPow2 = nBlocks;
 
-      // While loop to do further reduction steps
-      int itr = 0;
-      while (nPow2 > 1) {
-         // determine next compute size
-         if (nBlocks < nThreads) {
-            nThreads = nPow2;
-            nBlocks = 1;
-         } else {
-            nBlocks = nPow2 / nThreads;
-         }
-         // perform reduction
-         reductionMaxAbs<<<nBlocks, nThreads, 
-                        nThreads*sizeof(cudaReal)>>>(d_temp_, d_temp_, nPow2);
-         nPow2 = nBlocks;
+         // While loop to do further reduction steps
+         int itr = 0;
+         while (nPow2 > 1) {
+            // determine next compute size
+            if (nBlocks < nThreads) {
+               // Divided by two to the satisify parallel reduction requirement that 
+               // the number of blocks * threads per block be half the number of data points, both a power of two
+               nThreads = nPow2/2; 
+               nBlocks = 1;
+            } else {
+               nBlocks = nPow2 / nThreads / 2;
+            }
+            // perform reduction
+            reductionMaxAbs<<<nBlocks, nThreads, 
+                           nThreads*sizeof(cudaReal)>>>(d_temp_, d_temp_, nPow2);
+            nPow2 = nBlocks;
 
-         // track number of iterations
-         itr+=1;
-         if (itr > 100) {
-            UTIL_THROW("Runaway parallel reduction while-loop.");
+            // track number of iterations
+            itr+=1;
+            if (itr > 100) {
+               UTIL_THROW("Runaway parallel reduction while-loop.");
+            }
          }
-      }
 
       cudaReal max;
       gpuErrchk(cudaMemcpy(&max, d_temp_, 1*sizeof(cudaReal), cudaMemcpyDeviceToHost));
