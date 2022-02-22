@@ -115,7 +115,7 @@ namespace Pspg{
                temp[k] = (cudaReal)scaleStress*currParam[k];
          
          // copy paramters to the end of the curr array
-         cudaMemcpy(curr.cDField() + nMonomer*nMesh, temp, nParam*sizeof(cudaReal), cudaMemcpyHostToDevice);
+         gpuErrchk(cudaMemcpy(curr.cDField() + nMonomer*nMesh, temp, nParam*sizeof(cudaReal), cudaMemcpyHostToDevice));
          delete[] temp;
       }
    }
@@ -176,7 +176,7 @@ namespace Pspg{
             stress[i] = (cudaReal)(-1*scaleStress*sys_->mixture().stress(i));
          }
 
-         cudaMemcpy(resid.cDField()+nMonomer*nMesh, stress, nParam*sizeof(cudaReal), cudaMemcpyHostToDevice);
+         gpuErrchk(cudaMemcpy(resid.cDField()+nMonomer*nMesh, stress, nParam*sizeof(cudaReal), cudaMemcpyHostToDevice));
       }
    }
 
@@ -202,7 +202,7 @@ namespace Pspg{
          const double scaleStress = sys_->domain().scaleStress();
          cudaReal* temp = new cudaReal[nParam];
 
-         cudaMemcpy(temp, newGuess.cDField() + nMonomer*nMesh, nParam*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+         gpuErrchk(cudaMemcpy(temp, newGuess.cDField() + nMonomer*nMesh, nParam*sizeof(cudaReal), cudaMemcpyDeviceToHost));
          for (int i = 0; i < nParam; i++) {
             parameters.append(1/scaleStress * (double)temp[i]);
          }
@@ -226,13 +226,13 @@ namespace Pspg{
       cudaReal* d_temp;
       cudaReal* temp = new cudaReal[NUMBER_OF_BLOCKS/2];
 
-      cudaMalloc((void**) &d_temp, NUMBER_OF_BLOCKS/2*sizeof(cudaReal));
+      gpuErrchk(cudaMalloc((void**) &d_temp, NUMBER_OF_BLOCKS/2*sizeof(cudaReal)));
 
       // Use parallel reduction to sum up first n elements in field
       cudaReal average;
       reductionSum<<<NUMBER_OF_BLOCKS/2, THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cudaReal)>>>(d_temp, field, n);
       // Do last elements of sum on host using Kahan summation
-      cudaMemcpy(temp, d_temp, NUMBER_OF_BLOCKS/2  * sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      gpuErrchk(cudaMemcpy(temp, d_temp, NUMBER_OF_BLOCKS/2  * sizeof(cudaReal), cudaMemcpyDeviceToHost));
       cudaReal sum = 0;
       cudaReal c = 0;
       for (int i = 0; i < NUMBER_OF_BLOCKS/2 ; ++i) {

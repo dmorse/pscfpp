@@ -758,43 +758,13 @@ namespace Pspg
    template <int D>
    cudaReal System<D>::innerProduct(const RDField<D>& a, const RDField<D>& b, int size) {
 
-     switch(THREADS_PER_BLOCK){
-     case 512:
-       deviceInnerProduct<512> <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal) >>> (d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
-       break;
-     case 256:
-       deviceInnerProduct<256> <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal) >>> (d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
-       break;
-     case 128:
-       deviceInnerProduct<128> <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal) >>> (d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
-       break;
-     case 64:
-       deviceInnerProduct<64> <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal) >>> (d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
-       break;
-     case 32:
-       deviceInnerProduct<32> <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal) >>> (d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
-       break;
-     case 16:
-       deviceInnerProduct<16> <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal) >>> (d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
-       break;
-     case 8:
-       deviceInnerProduct<8> <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal) >>> (d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
-       break;
-     case 4:
-       deviceInnerProduct<4> <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal) >>> (d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
-       break;
-     case 2:
-       deviceInnerProduct<2> <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal) >>> (d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
-       break;
-     case 1:
-       deviceInnerProduct<1> <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal) >>> (d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
-       break;
-     }
-      cudaMemcpy(kernelWorkSpace_, d_kernelWorkSpace_, NUMBER_OF_BLOCKS * sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      reductionInnerProduct<<< NUMBER_OF_BLOCKS/2, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal) >>> (d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
+
+      cudaMemcpy(kernelWorkSpace_, d_kernelWorkSpace_, NUMBER_OF_BLOCKS/2 * sizeof(cudaReal), cudaMemcpyDeviceToHost);
       cudaReal final = 0;
       cudaReal c = 0;
       //use kahan summation to reduce error
-      for (int i = 0; i < NUMBER_OF_BLOCKS; ++i) {
+      for (int i = 0; i < NUMBER_OF_BLOCKS/2; ++i) {
          cudaReal y = kernelWorkSpace_[i] - c;
          cudaReal t = final + y;
          c = (t - final) - y;

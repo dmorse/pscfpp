@@ -35,7 +35,7 @@ public:
       THREADS_PER_BLOCK = 32;
 
       // Create device and host arrays
-      const int n = NUMBER_OF_BLOCKS*THREADS_PER_BLOCK;
+      const int n = NUMBER_OF_BLOCKS*THREADS_PER_BLOCK*2;
       cudaReal sum = 0;
       cudaReal sumCheck = 0;
       cudaReal* num = new cudaReal[n];
@@ -57,9 +57,10 @@ public:
       // Launch kernel twice and get output
       cudaMemcpy(d_num, num, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
       reductionSum<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cudaReal)>>>(d_temp, d_num, n);
-      reductionSum<<<1, NUMBER_OF_BLOCKS, NUMBER_OF_BLOCKS*sizeof(cudaReal)>>>(d_temp, d_temp, NUMBER_OF_BLOCKS);
+      reductionSum<<<1, NUMBER_OF_BLOCKS/2, NUMBER_OF_BLOCKS/2*sizeof(cudaReal)>>>(d_temp, d_temp, NUMBER_OF_BLOCKS);
       cudaMemcpy(&sum, d_temp, 1*sizeof(cudaReal), cudaMemcpyDeviceToHost);
 
+      std::cout << sum << "   " << sumCheck << std::endl;
       TEST_ASSERT(sum == sumCheck);
    }
 
@@ -72,7 +73,7 @@ public:
       THREADS_PER_BLOCK = 32;
 
       // Create device and host arrays
-      const int n = 32;
+      const int n = 1*32*2;
       cudaReal max = -1;
       cudaReal maxCheck = -10;
       cudaReal* num = new cudaReal[n];
@@ -96,7 +97,8 @@ public:
       }
 
       // Launch kernel and get output
-      reductionMax<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(d_max, d_num, n);
+      reductionMax<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cudaReal)>>>(d_max, d_num, n);
+      reductionMax<<<1, NUMBER_OF_BLOCKS/2, NUMBER_OF_BLOCKS/2*sizeof(cudaReal)>>>(d_max,d_max, NUMBER_OF_BLOCKS);
       cudaMemcpy(&max, d_max, 1*sizeof(cudaReal), cudaMemcpyDeviceToHost);
 
       TEST_ASSERT(max == maxCheck);
@@ -112,7 +114,7 @@ public:
       THREADS_PER_BLOCK = 32;
 
       // Create device and host arrays
-      const int n = NUMBER_OF_BLOCKS*THREADS_PER_BLOCK;
+      const int n = NUMBER_OF_BLOCKS*THREADS_PER_BLOCK*2;
       cudaReal max = -1;
       cudaReal maxCheck = -10;
       cudaReal* num = new cudaReal[n];
@@ -138,7 +140,7 @@ public:
       // Launch kernel twice and get output
       cudaMemcpy(d_num, num, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
       reductionMax<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cudaReal)>>>(d_temp, d_num, n);
-      reductionMax<<<1, THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cudaReal)>>>(d_max, d_temp, NUMBER_OF_BLOCKS);
+      reductionMax<<<1, NUMBER_OF_BLOCKS/2, NUMBER_OF_BLOCKS/2*sizeof(cudaReal)>>>(d_max, d_temp, NUMBER_OF_BLOCKS);
       cudaMemcpy(&max, d_max, 1*sizeof(cudaReal), cudaMemcpyDeviceToHost);
 
       TEST_ASSERT(max == maxCheck);
@@ -154,7 +156,7 @@ public:
       THREADS_PER_BLOCK = 32;
 
       // Create device and host arrays
-      const int n = NUMBER_OF_BLOCKS*THREADS_PER_BLOCK;
+      const int n = NUMBER_OF_BLOCKS*THREADS_PER_BLOCK*2;
       cudaReal max = -1;
       cudaReal maxCheck = -10;
       cudaReal* num = new cudaReal[n];
@@ -180,7 +182,7 @@ public:
       // Launch kernel twice and get output
       cudaMemcpy(d_num, num, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
       reductionMaxAbs<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cudaReal)>>>(d_temp, d_num, n);
-      reductionMaxAbs<<<1, THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cudaReal)>>>(d_max, d_temp, NUMBER_OF_BLOCKS);
+      reductionMaxAbs<<<1, NUMBER_OF_BLOCKS/2, NUMBER_OF_BLOCKS/2*sizeof(cudaReal)>>>(d_max, d_temp, NUMBER_OF_BLOCKS);
       cudaMemcpy(&max, d_max, 1*sizeof(cudaReal), cudaMemcpyDeviceToHost);
 
       TEST_ASSERT(max == maxCheck);
@@ -196,7 +198,7 @@ public:
       THREADS_PER_BLOCK = 32;
 
       // Create device and host arrays
-      const int n = NUMBER_OF_BLOCKS*THREADS_PER_BLOCK;
+      const int n = NUMBER_OF_BLOCKS*THREADS_PER_BLOCK*2;
       cudaReal min = 100000;
       cudaReal minCheck = 100000;
       cudaReal* num = new cudaReal[n];
@@ -222,7 +224,7 @@ public:
       // Launch kernel twice and get output
       cudaMemcpy(d_num, num, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
       reductionMin<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cudaReal)>>>(d_temp, d_num, n);
-      reductionMin<<<1, THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cudaReal)>>>(d_min, d_temp, NUMBER_OF_BLOCKS);
+      reductionMin<<<1, NUMBER_OF_BLOCKS/2, NUMBER_OF_BLOCKS/2*sizeof(cudaReal)>>>(d_min, d_temp, NUMBER_OF_BLOCKS);
       cudaMemcpy(&min, d_min, 1*sizeof(cudaReal), cudaMemcpyDeviceToHost);
 
       TEST_ASSERT(min == minCheck);
