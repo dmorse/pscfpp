@@ -206,6 +206,9 @@ namespace Pspg {
 
       // Check to verify that private members are allocated
       if (!temp_) allocatePrivateMembers(n);
+
+      // Elementwise multiplication of a with b for all elements
+      pointWiseBinaryMultiply<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(a.cDField(),b.cDField(),d_temp_,n);
       
       // Check to see if power of two
       int nPow2 = n;
@@ -218,13 +221,13 @@ namespace Pspg {
       }
       // In case we are using more data.. This is temporary and should be adjusted in the future with a better
       // way for managing GPU resources.
-      int nBlocks = nPow2/THREADS_PER_BLOCK;
+      int nBlocks = nPow2/THREADS_PER_BLOCK/2;
 
       // Parallel reduction (summation over all elements, up to the highest power of two)
-      reductionInnerProduct<<<nBlocks/2,THREADS_PER_BLOCK,THREADS_PER_BLOCK*sizeof(cudaReal)>>>(d_temp_, a, b,nPow2);
+      reductionSum<<<nBlocks,THREADS_PER_BLOCK,THREADS_PER_BLOCK*sizeof(cudaReal)>>>(d_temp_, d_temp_, nPow2);
       
       // Copy results and sum over output
-      gpuErrchk(cudaMemcpy(temp_, d_temp_, nBlocks/2 * sizeof(cudaReal), cudaMemcpyDeviceToHost));
+      gpuErrchk(cudaMemcpy(temp_, d_temp_, nBlocks * sizeof(cudaReal), cudaMemcpyDeviceToHost));
       cudaReal sum = 0;
       cudaReal c = 0;
       //use kahan summation to reduce error
