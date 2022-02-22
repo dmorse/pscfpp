@@ -57,9 +57,10 @@ public:
       // Launch kernel twice and get output
       cudaMemcpy(d_num, num, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
       reductionSum<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cudaReal)>>>(d_temp, d_num, n);
-      reductionSum<<<1, NUMBER_OF_BLOCKS, NUMBER_OF_BLOCKS*sizeof(cudaReal)>>>(d_temp, d_temp, NUMBER_OF_BLOCKS);
+      reductionSum<<<1, NUMBER_OF_BLOCKS/2, NUMBER_OF_BLOCKS/2*sizeof(cudaReal)>>>(d_temp, d_temp, NUMBER_OF_BLOCKS);
       cudaMemcpy(&sum, d_temp, 1*sizeof(cudaReal), cudaMemcpyDeviceToHost);
 
+      std::cout << sum << "   " << sumCheck << std::endl;
       TEST_ASSERT(sum == sumCheck);
    }
 
@@ -97,6 +98,7 @@ public:
 
       // Launch kernel and get output
       reductionMax<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cudaReal)>>>(d_max, d_num, n);
+      reductionMax<<<1, NUMBER_OF_BLOCKS/2, NUMBER_OF_BLOCKS/2*sizeof(cudaReal)>>>(d_max,d_max, NUMBER_OF_BLOCKS);
       cudaMemcpy(&max, d_max, 1*sizeof(cudaReal), cudaMemcpyDeviceToHost);
 
       TEST_ASSERT(max == maxCheck);
@@ -138,7 +140,7 @@ public:
       // Launch kernel twice and get output
       cudaMemcpy(d_num, num, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
       reductionMax<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cudaReal)>>>(d_temp, d_num, n);
-      reductionMax<<<1, THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cudaReal)>>>(d_max, d_temp, NUMBER_OF_BLOCKS);
+      reductionMax<<<1, NUMBER_OF_BLOCKS/2, NUMBER_OF_BLOCKS/2*sizeof(cudaReal)>>>(d_max, d_temp, NUMBER_OF_BLOCKS);
       cudaMemcpy(&max, d_max, 1*sizeof(cudaReal), cudaMemcpyDeviceToHost);
 
       TEST_ASSERT(max == maxCheck);
@@ -180,7 +182,7 @@ public:
       // Launch kernel twice and get output
       cudaMemcpy(d_num, num, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
       reductionMaxAbs<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cudaReal)>>>(d_temp, d_num, n);
-      reductionMaxAbs<<<1, THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cudaReal)>>>(d_max, d_temp, NUMBER_OF_BLOCKS);
+      reductionMaxAbs<<<1, NUMBER_OF_BLOCKS/2, NUMBER_OF_BLOCKS/2*sizeof(cudaReal)>>>(d_max, d_temp, NUMBER_OF_BLOCKS);
       cudaMemcpy(&max, d_max, 1*sizeof(cudaReal), cudaMemcpyDeviceToHost);
 
       TEST_ASSERT(max == maxCheck);
@@ -222,7 +224,7 @@ public:
       // Launch kernel twice and get output
       cudaMemcpy(d_num, num, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
       reductionMin<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cudaReal)>>>(d_temp, d_num, n);
-      reductionMin<<<1, THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cudaReal)>>>(d_min, d_temp, NUMBER_OF_BLOCKS);
+      reductionMin<<<1, NUMBER_OF_BLOCKS/2, NUMBER_OF_BLOCKS/2*sizeof(cudaReal)>>>(d_min, d_temp, NUMBER_OF_BLOCKS);
       cudaMemcpy(&min, d_min, 1*sizeof(cudaReal), cudaMemcpyDeviceToHost);
 
       TEST_ASSERT(min == minCheck);

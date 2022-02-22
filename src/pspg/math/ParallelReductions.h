@@ -156,7 +156,7 @@ static __global__ void reductionInnerProduct(cudaReal* innerprod, const cudaReal
       // syncing with each other and then making further comparisons.
       for (int stride = blockDim.x/2; stride > 0; stride/=2) {
          if (tid < stride) {
-            sdata[tid] += sdata[tid+stride]
+            sdata[tid] += sdata[tid+stride];
          }
          __syncthreads();
       }
