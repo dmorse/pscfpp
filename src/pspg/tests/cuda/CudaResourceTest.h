@@ -35,7 +35,7 @@ public:
       THREADS_PER_BLOCK = 32;
 
       // Create device and host arrays
-      const int n = NUMBER_OF_BLOCKS*THREADS_PER_BLOCK;
+      const int n = NUMBER_OF_BLOCKS*THREADS_PER_BLOCK*2;
       cudaReal sum = 0;
       cudaReal sumCheck = 0;
       cudaReal* num = new cudaReal[n];
@@ -72,7 +72,7 @@ public:
       THREADS_PER_BLOCK = 32;
 
       // Create device and host arrays
-      const int n = 32;
+      const int n = 1*32*2;
       cudaReal max = -1;
       cudaReal maxCheck = -10;
       cudaReal* num = new cudaReal[n];
@@ -96,7 +96,7 @@ public:
       }
 
       // Launch kernel and get output
-      reductionMax<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(d_max, d_num, n);
+      reductionMax<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cudaReal)>>>(d_max, d_num, n);
       cudaMemcpy(&max, d_max, 1*sizeof(cudaReal), cudaMemcpyDeviceToHost);
 
       TEST_ASSERT(max == maxCheck);
@@ -112,7 +112,7 @@ public:
       THREADS_PER_BLOCK = 32;
 
       // Create device and host arrays
-      const int n = NUMBER_OF_BLOCKS*THREADS_PER_BLOCK;
+      const int n = NUMBER_OF_BLOCKS*THREADS_PER_BLOCK*2;
       cudaReal max = -1;
       cudaReal maxCheck = -10;
       cudaReal* num = new cudaReal[n];
@@ -154,7 +154,7 @@ public:
       THREADS_PER_BLOCK = 32;
 
       // Create device and host arrays
-      const int n = NUMBER_OF_BLOCKS*THREADS_PER_BLOCK;
+      const int n = NUMBER_OF_BLOCKS*THREADS_PER_BLOCK*2;
       cudaReal max = -1;
       cudaReal maxCheck = -10;
       cudaReal* num = new cudaReal[n];
@@ -196,7 +196,7 @@ public:
       THREADS_PER_BLOCK = 32;
 
       // Create device and host arrays
-      const int n = NUMBER_OF_BLOCKS*THREADS_PER_BLOCK;
+      const int n = NUMBER_OF_BLOCKS*THREADS_PER_BLOCK*2;
       cudaReal min = 100000;
       cudaReal minCheck = 100000;
       cudaReal* num = new cudaReal[n];
