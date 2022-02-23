@@ -21,7 +21,7 @@ static __global__ void accumulateConc(cudaReal* result, double uniform, cudaReal
    int nThreads = blockDim.x * gridDim.x;
    int startID = blockIdx.x * blockDim.x + threadIdx.x;
    for(int i = startID; i < size; i += nThreads) {
-      result[i] += (float)uniform * cField[i];
+      result[i] += uniform * cField[i];
    }
 }
 

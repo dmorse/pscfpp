@@ -151,7 +151,7 @@ namespace Pspg
       }
 
       if (isAllocated()) {
-         float* tempData = new float[capacity];
+         double* tempData = new double[capacity];
          cudaMemcpy(tempData, data_, capacity * sizeof(cudaReal), cudaMemcpyDeviceToHost);
          for (int i = 0; i < capacity_; ++i) {
             ar & tempData[i];

@@ -51,6 +51,7 @@ public:
    {
       printMethod(TEST_FUNC);
       System<1> system;
+      system.setGpuResources(1,32);
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
 

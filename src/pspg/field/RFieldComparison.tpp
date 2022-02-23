@@ -30,6 +30,7 @@ namespace Pspg {
       cudaMemcpy(temp_a, a.cDField(), nPoints*sizeof(cudaReal), cudaMemcpyDeviceToHost);
       cudaMemcpy(temp_b, b.cDField(), nPoints*sizeof(cudaReal), cudaMemcpyDeviceToHost);
 
+      // can't use cudaMemcpy directly into underlying C array in a DArray
       DArray< cudaReal > h_a, h_b;
       h_a.allocate(nPoints);
       h_b.allocate(nPoints);
@@ -38,6 +39,7 @@ namespace Pspg {
          h_b[j] = temp_b[j];
       }
 
+      // Fieldcomparison wants DArrays
       fieldComparison_.compare(h_a,h_b);
       compared_ = true;
 

@@ -584,7 +584,7 @@ namespace Pspg
       int nx = mesh().size();
       //RDField<D> workArray;
       //workArray.allocate(nx);
-      float temp = 0;
+      double temp = 0;
       for (int i = 0; i < nm; ++i) {
          for (int j = i + 1; j < nm; ++j) {
            assignUniformReal <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (workArray.cDField(), interaction().chi(i, j), nx);

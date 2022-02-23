@@ -36,7 +36,7 @@ inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=t
 }
 
 static __global__ void helmholtzHelper(cudaReal* result, const cudaReal* composition,
-   const cudaReal* pressure, float chi, int size) 
+   const cudaReal* pressure, double chi, int size) 
 {
    int nThreads = blockDim.x * gridDim.x;
    int startID = blockIdx.x * blockDim.x + threadIdx.x;

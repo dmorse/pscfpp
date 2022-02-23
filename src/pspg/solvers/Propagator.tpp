@@ -76,7 +76,7 @@ namespace Pspg {
       int nx = meshPtr_->size();
 
       //qh[ix] = 1.0;
-      //qFields_d points to the first float in gpu memory
+      //qFields_d points to the first element in gpu memory
       assignUniformReal<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(qFields_d, 1.0, nx);
       
 

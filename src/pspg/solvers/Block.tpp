@@ -50,7 +50,7 @@ static __global__ void mulDelKsq(cudaReal* result, const cudaComplex* q1,
    }
 }
 
-static __global__ void equalize ( const cudaReal* a, float* result, int size){  //try to add elements of array here itself
+static __global__ void equalize ( const cudaReal* a, double* result, int size){  //try to add elements of array here itself
 
     int nThreads = blockDim.x * gridDim.x;
     int startID = blockIdx.x * blockDim.x + threadIdx.x;
@@ -167,7 +167,7 @@ namespace Pspg {
 static __global__ void multiplyScaleQQ(cudaReal* result,
                            const cudaReal* p1,
                            const cudaReal* p2,
-                           int size, float scale) {
+                           int size, double scale) {
 
    int nThreads = blockDim.x * gridDim.x;
    int startID = blockIdx.x * blockDim.x + threadIdx.x;
@@ -178,7 +178,7 @@ static __global__ void multiplyScaleQQ(cudaReal* result,
 
 }
 
-static __global__ void scaleReal(cudaReal* result, int size, float scale) {
+static __global__ void scaleReal(cudaReal* result, int size, double scale) {
    int nThreads = blockDim.x * gridDim.x;
    int startID = blockIdx.x * blockDim.x + threadIdx.x;
 
@@ -445,7 +445,7 @@ static __global__ void scaleReal(cudaReal* result, int size, float scale) {
      //std::cout << "This is ds_ " << ds_ << std::endl;
      //delete tempVal;
 
-     scaleReal<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(cField().cDField(), nx, (float)(prefactor *ds_ / 3.0));
+     scaleReal<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(cField().cDField(), nx, (prefactor *ds_ / 3.0));
      //cudaDeviceSynchronize();
 
 

@@ -80,6 +80,7 @@ namespace Pspg
       kSize_ = 0;
       rSize_ = 0;
       nParams_ = 0;
+      deviceIsAllocated_ = false;
    }
 
    template <int D>
