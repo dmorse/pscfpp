@@ -175,14 +175,14 @@ namespace Pspg {
    template <int D>
    cudaReal Propagator<D>::innerProduct(const cudaReal* a, const cudaReal* b, int size) {
 	   
-      reductionInnerProduct<<< NUMBER_OF_BLOCKS/2, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal) >>> (d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
+      reductionInnerProduct<<< NUMBER_OF_BLOCKS/2, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal) >>> (d_temp_, a, b, size);
 
-      gpuErrchk(cudaMemcpy(temp_, d_temp_, NUMBER_OF_BLOCKS * sizeof(cudaReal), cudaMemcpyDeviceToHost));
+      gpuErrchk(cudaMemcpy(temp_, d_temp_, NUMBER_OF_BLOCKS/2 * sizeof(cudaReal), cudaMemcpyDeviceToHost));
       cudaReal final = 0;
       cudaReal c = 0;
       //use kahan summation to reduce error
       for (int i = 0; i < NUMBER_OF_BLOCKS/2; ++i) {
-         cudaReal y = kernelWorkSpace_[i] - c;
+         cudaReal y = temp_[i] - c;
          cudaReal t = final + y;
          c = (t - final) - y;
          final = t;
