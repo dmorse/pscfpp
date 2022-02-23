@@ -13,21 +13,18 @@
 
 #include <cmath>
 
-//in propagator.h
-//static __global__ void assignUniformReal(cudaReal* result, cudaReal uniform, int size);
-
-//theres a precision mismatch here. need to cast properly.
-static __global__ void accumulateConc(cudaReal* result, double uniform, cudaReal* cField, int size) {
-   int nThreads = blockDim.x * gridDim.x;
-   int startID = blockIdx.x * blockDim.x + threadIdx.x;
-   for(int i = startID; i < size; i += nThreads) {
-      result[i] += uniform * cField[i];
-   }
-}
-
 namespace Pscf { 
 namespace Pspg
 { 
+
+   //theres a precision mismatch here. need to cast properly.
+   static __global__ void accumulateConc(cudaReal* result, double uniform, cudaReal* cField, int size) {
+      int nThreads = blockDim.x * gridDim.x;
+      int startID = blockIdx.x * blockDim.x + threadIdx.x;
+      for(int i = startID; i < size; i += nThreads) {
+         result[i] += uniform * cField[i];
+      }
+   }
 
    template <int D>
    Mixture<D>::Mixture()

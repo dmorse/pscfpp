@@ -174,8 +174,6 @@ namespace Pspg {
    extern template class FFT<2>;
    extern template class FFT<3>;
    #endif
-}
-}
 
 static __global__ 
 void scaleRealData(cudaReal* data, cudaReal scale, int size) {
@@ -186,6 +184,11 @@ void scaleRealData(cudaReal* data, cudaReal scale, int size) {
       data[i] *= scale;
    }
 }
+
+}
+}
+
+
 
 //#include "FFT.tpp"
 #endif
