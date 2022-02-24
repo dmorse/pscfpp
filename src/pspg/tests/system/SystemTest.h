@@ -1,5 +1,5 @@
-#ifndef PSPC_SYSTEM_TEST_H
-#define PSPC_SYSTEM_TEST_H
+#ifndef PSPG_SYSTEM_TEST_H
+#define PSPG_SYSTEM_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
@@ -51,6 +51,7 @@ public:
    {
       printMethod(TEST_FUNC);
       System<1> system;
+      system.setGpuResources(1,32);
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
 
@@ -323,6 +324,7 @@ public:
 
       openLogFile("out/testIterate1D_lam_rigid.log");
       system.setGpuResources(1, 32);
+      MAX_THREADS_PER_BLOCK = 128;
 
       std::ifstream in;
       openInputFile("in/diblock/lam/param.rigid", in);
@@ -397,7 +399,8 @@ public:
       system.fileMaster().setOutputPrefix(filePrefix());
 
       openLogFile("out/testIterate1D_lam_flex.log");
-      system.setGpuResources(2, 16);
+      system.setGpuResources(1, 32);
+      MAX_THREADS_PER_BLOCK = 128;
 
       std::ifstream in;
       openInputFile("in/diblock/lam/param.flex", in);
@@ -468,7 +471,8 @@ public:
       system.fileMaster().setOutputPrefix(filePrefix());
 
       openLogFile("out/testIterate2D_hex_rigid.log");
-      system.setGpuResources(32, 32);
+      system.setGpuResources(8, 128);
+      MAX_THREADS_PER_BLOCK = 128;
 
       std::ifstream in;
       openInputFile("in/diblock/hex/param.rigid", in);
@@ -547,7 +551,8 @@ public:
       system.fileMaster().setOutputPrefix(filePrefix());
 
       openLogFile("out/testIterate2D_hex_flex.log");
-      system.setGpuResources(32, 32);
+      system.setGpuResources(8, 128);
+      MAX_THREADS_PER_BLOCK = 128;
 
       // Read parameter file
       std::ifstream in;
@@ -622,6 +627,7 @@ public:
 
       openLogFile("out/testIterate3D_bcc_rigid.log");
       system.setGpuResources(128, 256);
+      MAX_THREADS_PER_BLOCK = 128;
 
       std::ifstream in;
       openInputFile("in/diblock/bcc/param.rigid", in);
@@ -693,7 +699,8 @@ public:
 
       openLogFile("out/testIterate3D_bcc_flex.log");
       system.setGpuResources(128, 256);
-
+      MAX_THREADS_PER_BLOCK = 128;
+      
       std::ifstream in;
       openInputFile("in/diblock/bcc/param.flex", in);
       system.readParam(in);
@@ -764,12 +771,13 @@ TEST_ADD(SystemTest, testConversion1D_lam)
 TEST_ADD(SystemTest, testConversion2D_hex)
 TEST_ADD(SystemTest, testConversion3D_bcc)
 // TEST_ADD(SystemTest, testCheckSymmetry3D_bcc)
-// TEST_ADD(SystemTest, testIterate1D_lam_rigid)
-// TEST_ADD(SystemTest, testIterate1D_lam_flex)
-// TEST_ADD(SystemTest, testIterate2D_hex_rigid)
-// TEST_ADD(SystemTest, testIterate2D_hex_flex)
+TEST_ADD(SystemTest, testIterate1D_lam_rigid)
+TEST_ADD(SystemTest, testIterate1D_lam_flex)
+TEST_ADD(SystemTest, testIterate2D_hex_rigid)
+TEST_ADD(SystemTest, testIterate2D_hex_flex)
 TEST_ADD(SystemTest, testIterate3D_bcc_rigid)
-// TEST_ADD(SystemTest, testIterate3D_bcc_flex)
+TEST_ADD(SystemTest, testIterate3D_bcc_flex)
+
 
 TEST_END(SystemTest)
 

@@ -66,8 +66,6 @@ namespace Pspg
       */
       RDFieldDft<D>& operator = (const RDFieldDft<D>& other);
 
-      using DField<cudaComplex>::allocate;
-
       /**
       * Allocate the underlying C array for an FFT grid.
       *
@@ -99,6 +97,9 @@ namespace Pspg
       */
       template <class Archive>
       void serialize(Archive& ar, const unsigned int version);
+
+      using DField<cudaComplex>::allocate;
+      using DField<cudaComplex>::operator =;
 
    private:
 

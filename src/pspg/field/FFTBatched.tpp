@@ -11,6 +11,10 @@
 #include "FFTBatched.h"
 #include <pspg/math/GpuResources.h>
 
+namespace Pscf {
+namespace Pspg
+{
+
 static __global__ void scaleComplexData(cudaComplex* data, cudaReal scale, int size) {
    
    //write code that will scale
@@ -32,11 +36,6 @@ static __global__ void scaleRealData(cudaReal* data, cudaReal scale, int size) {
    }
    
 }
-
-
-namespace Pscf {
-namespace Pspg
-{
 
    using namespace Util;
 

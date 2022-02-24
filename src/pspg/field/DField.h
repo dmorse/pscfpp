@@ -78,37 +78,15 @@ namespace Pspg
       */
       const Data* cDField() const;
 
-      /** 
-      * Get an element by non-const reference.
-      *
-      * Mimic C-array subscripting.
-      *
-      * \param  i array index
-      * \return non-const reference to element i
-      */
-      //Data& operator [] (int i); 
-
-     /**
-      * Get an element by const reference.
-      *
-      * Mimics C-array subscripting.
-      *
-      * \param i array index
-      * \return const reference to element i
-      */
-      //const Data& operator [] (int i) const;
-
-      //Removing this. Child class has this function
       /**
-      * Serialize a Field to/from an Archive.
-      *
-      * \param ar       archive
-      * \param version  archive version id
+      * Assignment operator.
       */
-      /*
-      template <class Archive>
-      void serialize(Archive& ar, const unsigned int version);
+      virtual DField<Data>& operator = (const DField<Data>& other);
+
+      /**
+      * Copy constructor.
       */
+      DField(const DField& other);
 
    protected:
 
@@ -119,16 +97,7 @@ namespace Pspg
       int capacity_;
 
    private:
-
-      /**
-      * Copy constructor (private and not implemented to prohibit).
-      */
-      DField(const DField& other);
-
-      /**
-      * Assignment operator (private and non implemented to prohibit).
-      */
-      DField& operator = (const DField& other);
+      
 
    };
 

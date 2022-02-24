@@ -14,6 +14,9 @@
 #include <pscf/homogeneous/Clump.h>
 #include <pscf/crystal/shiftToMinimum.h>
 
+#include <pspg/iterator/IteratorMediatorCUDA.h>
+#include <pspg/iterator/IteratorFactory.h>
+
 #include <util/format/Str.h>
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
@@ -44,7 +47,8 @@ namespace Pspg
       fileMaster_(),
       homogeneous_(),
       interactionPtr_(0),
-      iteratorPtr_(0),
+      iteratorMediatorPtr_(0),
+      iteratorFactoryPtr_(0),
       wavelistPtr_(0),
       sweepPtr_(0),
       sweepFactoryPtr_(0),
@@ -64,8 +68,12 @@ namespace Pspg
       domain_.setFileMaster(fileMaster_);
 
       interactionPtr_ = new ChiInteraction();
-      iteratorPtr_ = new AmIterator<D>(this); 
+      iteratorMediatorPtr_ = new IteratorMediatorCUDA<D>(*this);
+      iteratorFactoryPtr_ = new IteratorFactory<D>(*iteratorMediatorPtr_); 
       wavelistPtr_ = new WaveList<D>();
+
+      // TEMPORARY. WILL REPLACE WITH GOOD WAY TO MANAGE GPU RESOURCE VARIABLES LATER. //
+      MAX_THREADS_PER_BLOCK = 256;
       
       // sweepFactoryPtr_ = new SweepFactory(*this);
    }
@@ -79,8 +87,11 @@ namespace Pspg
       if (interactionPtr_) {
          delete interactionPtr_;
       }
-      if (iteratorPtr_) {
-         delete iteratorPtr_;
+      if (iteratorMediatorPtr_) {
+         delete iteratorMediatorPtr_;
+      }
+      if (iteratorFactoryPtr_) {
+         delete iteratorFactoryPtr_;
       }
       if (wavelistPtr_) {
          delete wavelistPtr_; 
@@ -231,9 +242,18 @@ namespace Pspg
       // Allocate memory for w and c fields
       allocate();
 
-      // Initialize iterator
-      readParamComposite(in, iterator());
-      iterator().allocate();
+      // Initialize iterator through the factory and mediator
+      std::string className;
+      bool isEnd;
+      Iterator<FieldCUDA>* iteratorPtr
+         = iteratorFactoryPtr_->readObject(in, *this, className, isEnd);
+      if (!iteratorPtr) {
+         std::string msg = "Unrecognized Iterator subclass name ";
+         msg += className;
+         UTIL_THROW(msg.c_str());
+      }
+      iteratorMediator().setIterator(*iteratorPtr);
+      iteratorMediator().setup();
    }
 
    /*
@@ -355,27 +375,16 @@ namespace Pspg
 
          } else 
          if (command == "ITERATE") {
-            Log::file() << std::endl;
-
-            // Read w fields in grid format iff not already set.
+            // Read w (chemical potential) fields if not done previously 
             if (!hasWFields_) {
                readEcho(in, filename);
-               fieldIo().readFieldsRGrid(filename, wFieldsRGrid());
-               hasWFields_ = true;
+               readWBasis(filename);
             }
-
-            // Attempt to iteratively solve SCFT equations
-            int fail = iterator().solve();
-            hasCFields_ = true;
-
-            // Final output
-            if (!fail) {
-               computeFreeEnergy();
-               outputThermo(Log::file());
-            } else {
-               Log::file() << "Iterate has failed. Exiting "<<std::endl;
+            // Attempt iteration to convergence
+            int fail = iterate();
+            if (fail) {
+               readNext = false;
             }
-
          } else 
          if (command == "WRITE_W_BASIS") {
             UTIL_CHECK(hasWFields_);
@@ -578,18 +587,18 @@ namespace Pspg
       int nx = mesh().size();
       //RDField<D> workArray;
       //workArray.allocate(nx);
-      float temp = 0;
+      double temp = 0;
       for (int i = 0; i < nm; ++i) {
          for (int j = i + 1; j < nm; ++j) {
            assignUniformReal <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (workArray.cDField(), interaction().chi(i, j), nx);
            inPlacePointwiseMul <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (workArray.cDField(), cFieldsRGrid_[i].cDField(), nx);
            inPlacePointwiseMul <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (workArray.cDField(), cFieldsRGrid_[j].cDField(), nx);
-           fHelmholtz_ += (reductionH(workArray, nx) / nx);
+           fHelmholtz_ += (gpuSum(workArray.cDField(), nx) / nx);
          }
          
          assignReal <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (workArray.cDField(), wFieldsRGrid_[i].cDField(), nx);
          inPlacePointwiseMul <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK  >>> (workArray.cDField(), cFieldsRGrid_[i].cDField(), nx);
-         temp += reductionH(workArray, nx);
+         temp += gpuSum(workArray.cDField(), nx);
       }
       fHelmholtz_ -= (temp / nx);
       
@@ -652,8 +661,10 @@ namespace Pspg
       // Solve the modified diffusion equation (without iteration)
       mixture().compute(wFieldsRGrid(), cFieldsRGrid());
 
-      // Convert c fields from r-grid to basis
+      // Convert c and w fields from r-grid to basis
+      fieldIo().convertRGridToBasis(wFieldsRGrid(), wFields());
       fieldIo().convertRGridToBasis(cFieldsRGrid_, cFields_);
+
       hasCFields_ = true;
 
       if (needStress) {
@@ -661,31 +672,34 @@ namespace Pspg
       }
    }
 
-   /*  
+   /*
    * Iteratively solve a SCFT problem for specified parameters.
-   */  
+   */
    template <int D>
    int System<D>::iterate()
-   {  
+   {
       UTIL_CHECK(hasWFields_);
       hasCFields_ = false;
 
       Log::file() << std::endl;
+      Log::file() << std::endl;
 
       // Call iterator
-      std::cout<<"\nStarting iterator"<<std::endl;
-      int error = iterator().solve();
+      int error = iteratorMediator().solve();
+      
       hasCFields_ = true;
       fieldIo().convertRGridToBasis(wFieldsRGrid(), wFields());
       fieldIo().convertRGridToBasis(cFieldsRGrid(), cFields());
 
-      if (error) {
-         Log::file() << "Iterator failed to converge\n";
-      } 
-      computeFreeEnergy();
-      outputThermo(Log::file());  
+      if (!error) {   
+         if (!domain().isFlexible()) {
+            mixture().computeStress(wavelist());
+         }
+         computeFreeEnergy();
+         outputThermo(Log::file());
+      }
       return error;
-   }  
+   }
 
    /*
    * Convert fields from symmetry-adpated basis to real-space grid format.
@@ -742,71 +756,6 @@ namespace Pspg
       fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_);
       fieldIo().convertRGridToBasis(tmpFieldsRGrid_, tmpFields_);
       fieldIo().writeFieldsBasis(outFileName, tmpFields_);
-   }  
-
-   template <int D>
-   cudaReal System<D>::innerProduct(const RDField<D>& a, const RDField<D>& b, int size) {
-
-     switch(THREADS_PER_BLOCK){
-     case 512:
-       deviceInnerProduct<512> <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal) >>> (d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
-       break;
-     case 256:
-       deviceInnerProduct<256> <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal) >>> (d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
-       break;
-     case 128:
-       deviceInnerProduct<128> <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal) >>> (d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
-       break;
-     case 64:
-       deviceInnerProduct<64> <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal) >>> (d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
-       break;
-     case 32:
-       deviceInnerProduct<32> <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal) >>> (d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
-       break;
-     case 16:
-       deviceInnerProduct<16> <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal) >>> (d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
-       break;
-     case 8:
-       deviceInnerProduct<8> <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal) >>> (d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
-       break;
-     case 4:
-       deviceInnerProduct<4> <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal) >>> (d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
-       break;
-     case 2:
-       deviceInnerProduct<2> <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal) >>> (d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
-       break;
-     case 1:
-       deviceInnerProduct<1> <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal) >>> (d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
-       break;
-     }
-      cudaMemcpy(kernelWorkSpace_, d_kernelWorkSpace_, NUMBER_OF_BLOCKS * sizeof(cudaReal), cudaMemcpyDeviceToHost);
-      cudaReal final = 0;
-      cudaReal c = 0;
-      //use kahan summation to reduce error
-      for (int i = 0; i < NUMBER_OF_BLOCKS; ++i) {
-         cudaReal y = kernelWorkSpace_[i] - c;
-         cudaReal t = final + y;
-         c = (t - final) - y;
-         final = t;
-
-      }
-
-      return final;
-   }
-
-   template<int D>
-   cudaReal System<D>::reductionH(const RDField<D>& a, int size) {
-     reduction <<< NUMBER_OF_BLOCKS / 2, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal) >>> (d_kernelWorkSpace_, a.cDField(), size);
-      cudaMemcpy(kernelWorkSpace_, d_kernelWorkSpace_, NUMBER_OF_BLOCKS / 2 * sizeof(cudaReal), cudaMemcpyDeviceToHost);
-      cudaReal final = 0;
-      cudaReal c = 0;
-      for (int i = 0; i < NUMBER_OF_BLOCKS / 2; ++i) {
-         cudaReal y = kernelWorkSpace_[i] - c;
-         cudaReal t = final + y;
-         c = (t - final) - y;
-         final = t;
-         }
-      return final;
    }
 
 } // namespace Pspg

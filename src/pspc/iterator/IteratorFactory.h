@@ -9,7 +9,8 @@
 */
 
 #include <util/param/Factory.h>  
-#include <pspc/iterator/Iterator.h>
+#include <pscf/iterator/Iterator.h>
+#include <pspc/iterator/IteratorMediatorCPU.h>
 
 #include <string>
 
@@ -23,14 +24,15 @@ namespace Pspc {
    *
    * \ingroup Pspc_Iterator_Module
    */
+
    template <int D>
-   class IteratorFactory : public Factory< Iterator<D> > 
+   class IteratorFactory : public Factory< Iterator<FieldCPU> > 
    {
 
    public:
 
       /// Constructor
-      IteratorFactory(System<D>& system);
+      IteratorFactory(IteratorMediatorCPU<D>& iterMed);
 
       /**
       * Method to create any Iterator supplied with PSCF.
@@ -38,14 +40,14 @@ namespace Pspc {
       * \param className name of the Iterator subclass
       * \return Iterator* pointer to new instance of className
       */
-      Iterator<D>* factory(const std::string &className) const;
+      Iterator<FieldCPU>* factory(const std::string &className) const;
 
-      using Factory< Iterator<D> >::trySubfactories;
+      using Factory< Iterator<FieldCPU> >::trySubfactories;
 
    private:
 
-      /// Pointer to a parent System<D>.
-      System<D>* systemPtr_;
+      /// Pointer to an IteratorMediatorCPU object.
+      IteratorMediatorCPU<D>* iterMedPtr_;
 
    };
 

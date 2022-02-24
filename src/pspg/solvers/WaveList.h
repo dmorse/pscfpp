@@ -29,6 +29,7 @@ namespace Pspg
    public:
       
       WaveList();
+      ~WaveList();
 
       // Allocate memory for all arrays. Call in readParameters.
       void allocate(Mesh<D>& mesh, UnitCell<D>& unitCell);
@@ -84,6 +85,8 @@ namespace Pspg
       int nParams_;
 
       DArray< IntVec<D> > minImage_;
+
+      bool deviceIsAllocated_;
    };
 
    template <int D>

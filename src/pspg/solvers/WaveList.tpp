@@ -13,64 +13,66 @@
 #include "cuComplex.h"
 #include <pspg/math/GpuResources.h>
 
-//need a reference table that maps index to a pair wavevector
-//ideally we can have a group of thread dealing with only
-//the non-implicit part and the implicit part
-static __global__ void makeDksqHelperWave(cudaReal* dksq, const int* waveBz,
-                                          const cudaReal* dkkBasis,
-                                          const int* partnerId,
-                                          const int* selfId,
-                                          const bool* implicit,
-                                          int nParams, int kSize,
-                                          int size, int dim) {
-   //actual size is nStar*nParams
-   //each thread do nParams calculation
-   //big performance hit if thread >= 0.5dimension(n-1)
-   int nThreads = blockDim.x * gridDim.x;
-   int startID = blockIdx.x * blockDim.x + threadIdx.x;
-   
-   //loop through the entire array
-   int pId;
-   for(int param = 0; param < nParams; ++param) {
-      for (int i = startID; i < size; i += nThreads) {
-         for(int j = 0; j < dim; ++j) {
-            for(int k = 0; k < dim; ++k) {
-               if( !implicit[i] ) {
-                  //not = need += so still need memset
-                  dksq[(param * size) + i] += waveBz[selfId[i] * dim + j] 
-                     * waveBz[ selfId[i] * dim + k]
-                     * dkkBasis[k + (j * dim) + (param * dim * dim)];
-               } else {
-                  pId = partnerId[i];
-                  dksq[(param * size) + i] += waveBz[selfId[pId] * dim + j]
-                     * waveBz[selfId[pId] * dim + k]
-                     * dkkBasis[k + (j * dim) + (param * dim * dim)];
-               }
-            }//dim
-         }//dim
-      }//size
-   }//nParams
-}
-
-static __global__ void makeDksqReduction(cudaReal* dksq, const int* partnerId,
-                                         int nParams, int kSize, int rSize) {
-   int nThreads = blockDim.x * gridDim.x;
-   int startID = blockIdx.x * blockDim.x + threadIdx.x;
-
-   //add i in the implicit part into their partner's result
-   int pId;
-   for(int param = 0; param < nParams; ++param) {
-      for (int i = startID + kSize; i < rSize; i += nThreads) {
-         pId = partnerId[i];
-         dksq[(param * rSize) + pId] += dksq[(param * rSize) + i];
-      }
-   }
-}
-
-
 namespace Pscf {
 namespace Pspg
 {
+
+   //need a reference table that maps index to a pair wavevector
+   //ideally we can have a group of thread dealing with only
+   //the non-implicit part and the implicit part
+   static __global__ void makeDksqHelperWave(cudaReal* dksq, const int* waveBz,
+                                             const cudaReal* dkkBasis,
+                                             const int* partnerId,
+                                             const int* selfId,
+                                             const bool* implicit,
+                                             int nParams, int kSize,
+                                             int size, int dim) {
+      //actual size is nStar*nParams
+      //each thread do nParams calculation
+      //big performance hit if thread >= 0.5dimension(n-1)
+      int nThreads = blockDim.x * gridDim.x;
+      int startID = blockIdx.x * blockDim.x + threadIdx.x;
+      
+      //loop through the entire array
+      int pId;
+      for(int param = 0; param < nParams; ++param) {
+         for (int i = startID; i < size; i += nThreads) {
+            for(int j = 0; j < dim; ++j) {
+               for(int k = 0; k < dim; ++k) {
+                  if( !implicit[i] ) {
+                     //not = need += so still need memset
+                     dksq[(param * size) + i] += waveBz[selfId[i] * dim + j] 
+                        * waveBz[ selfId[i] * dim + k]
+                        * dkkBasis[k + (j * dim) + (param * dim * dim)];
+                  } else {
+                     pId = partnerId[i];
+                     dksq[(param * size) + i] += waveBz[selfId[pId] * dim + j]
+                        * waveBz[selfId[pId] * dim + k]
+                        * dkkBasis[k + (j * dim) + (param * dim * dim)];
+                  }
+               }//dim
+            }//dim
+         }//size
+      }//nParams
+   }
+
+   static __global__ void makeDksqReduction(cudaReal* dksq, const int* partnerId,
+                                          int nParams, int kSize, int rSize) {
+      int nThreads = blockDim.x * gridDim.x;
+      int startID = blockIdx.x * blockDim.x + threadIdx.x;
+
+      //add i in the implicit part into their partner's result
+      int pId;
+      for(int param = 0; param < nParams; ++param) {
+         for (int i = startID + kSize; i < rSize; i += nThreads) {
+            pId = partnerId[i];
+            dksq[(param * rSize) + pId] += dksq[(param * rSize) + i];
+         }
+      }
+   }
+
+
+
    template <int D>
    WaveList<D>::WaveList() {
       minImage_d = nullptr;
@@ -80,6 +82,21 @@ namespace Pspg
       kSize_ = 0;
       rSize_ = 0;
       nParams_ = 0;
+      deviceIsAllocated_ = false;
+   }
+
+   template <int D>
+   WaveList<D>::~WaveList() {
+      if (deviceIsAllocated_) {
+         cudaFree(minImage_d);
+         cudaFree(dkSq_);
+         cudaFree(partnerIdTable_d);
+         cudaFree(selfIdTable_d);
+         cudaFree(implicit_d);
+         cudaFree(dkkBasis_d);
+         delete[] kSq_;
+         delete implicit;
+      }
    }
 
    template <int D>
@@ -115,6 +132,8 @@ namespace Pspg
 
       dkkBasis = new cudaReal[6 * D * D];
       gpuErrchk(cudaMalloc((void**) &dkkBasis_d, sizeof(cudaReal) * 6 * D * D));
+
+      deviceIsAllocated_ = true;
       
    }
 

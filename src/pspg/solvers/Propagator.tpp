@@ -19,95 +19,6 @@
 #include <pscf/mesh/Mesh.h>
 //#include <Windows.h>
 
-__global__ 
-void assignUniformReal(cudaReal* result, cudaReal uniform, int size) {
-   int nThreads = blockDim.x * gridDim.x;
-   int startID = blockIdx.x * blockDim.x + threadIdx.x;
-   for(int i = startID; i < size; i += nThreads) {
-      result[i] = uniform;
-   }
-}
-
-__global__ 
-void assignReal(cudaReal* result, const cudaReal* rhs, int size) {
-   int nThreads = blockDim.x * gridDim.x;
-   int startID = blockIdx.x * blockDim.x + threadIdx.x;
-   for(int i = startID; i < size; i += nThreads) {
-      result[i] = rhs[i];
-   }
-}
-
-__global__ 
-void inPlacePointwiseMul(cudaReal* a, const cudaReal* b, int size) {
-   int nThreads = blockDim.x * gridDim.x;
-   int startID = blockIdx.x * blockDim.x + threadIdx.x;
-   for(int i = startID; i < size; i += nThreads) {
-      a[i] *= b[i];
-   }
-}
-
-#if 0
-template<unsigned int blockSize>
-__global__ void deviceInnerProduct(cudaReal* c, const cudaReal* a,
-	const cudaReal* b, int size) {
-        //int nThreads = blockDim.x * gridDim.x;
-	int startID = blockIdx.x * blockDim.x + threadIdx.x;
-
-	//do all pointwise multiplication
-	volatile extern __shared__ cudaReal cache[];
-	cudaReal temp = 0;
-	//no need for loop here will be wrong.
-	//for (int i = startID; i < size; i += nThreads) {
-	temp += a[startID] * b[startID];
-	//}
-	cache[threadIdx.x] = temp;
-
-	__syncthreads();
-
-	if(blockSize >= 512) {
-	  if (threadIdx.x < 256){
-	    cache[threadIdx.x] += cache[threadIdx.x + 256];
-	  }
-	  __syncthreads();
-	}
-	if(blockSize >= 256) {
-	  if (threadIdx.x < 128){
-	    cache[threadIdx.x] += cache[threadIdx.x + 128];
-	  }
-	  __syncthreads();
-	}
-	if(blockSize >= 128) {
-	  if (threadIdx.x < 64){
-	    cache[threadIdx.x] += cache[threadIdx.x + 64];
-	  }
-	  __syncthreads();
-	}
-	//reduce operation
-	//256/2 -- needs to be power of two
-	//for (int j = blockDim.x / 2; j > 32; j /= 2) {
-	//	if (threadIdx.x < j) {
-	//		cache[threadIdx.x] += cache[threadIdx.x + j];
-	//	}
-	//	__syncthreads();
-	//}
-	
-
-	if (threadIdx.x < 32) {
-	  if(blockSize >= 64) cache[threadIdx.x] += cache[threadIdx.x + 32];
-	  if(blockSize >= 32) cache[threadIdx.x] += cache[threadIdx.x + 16];
-	  if(blockSize >= 16) cache[threadIdx.x] += cache[threadIdx.x + 8];
-	  if(blockSize >= 8) cache[threadIdx.x] += cache[threadIdx.x + 4];
-	  if(blockSize >= 4) cache[threadIdx.x] += cache[threadIdx.x + 2];
-	  if(blockSize >= 2) cache[threadIdx.x] += cache[threadIdx.x + 1];
-
-	}
-
-	if (threadIdx.x == 0) {
-		c[blockIdx.x] = cache[0];
-	}
-}
-#endif
-
 namespace Pscf {
 namespace Pspg {
 
@@ -144,9 +55,9 @@ namespace Pspg {
       ns_ = ns;
       meshPtr_ = &mesh;
 
-      cudaMalloc((void**)&qFields_d, sizeof(cudaReal)* mesh.size() *
-                 ns);
-	   cudaMalloc((void**)&d_temp_, NUMBER_OF_BLOCKS * sizeof(cudaReal));
+      gpuErrchk(cudaMalloc((void**)&qFields_d, sizeof(cudaReal)* mesh.size() *
+                 ns));
+	   gpuErrchk(cudaMalloc((void**)&d_temp_, NUMBER_OF_BLOCKS * sizeof(cudaReal)));
 	   temp_ = new cudaReal[NUMBER_OF_BLOCKS];
       isAllocated_ = true;
    }
@@ -165,7 +76,7 @@ namespace Pspg {
       int nx = meshPtr_->size();
 
       //qh[ix] = 1.0;
-      //qFields_d points to the first float in gpu memory
+      //qFields_d points to the first element in gpu memory
       assignUniformReal<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(qFields_d, 1.0, nx);
       
 
@@ -256,59 +167,9 @@ namespace Pspg {
       // polymers are divided into blocks midway through
       double Q = 0; 
       
-      Q = innerProduct(qh, qt, nx);
+      Q = gpuInnerProduct(qh, qt, nx);
       Q /= double(nx);
       return Q;
-   }
-
-   template <int D>
-   cudaReal Propagator<D>::innerProduct(const cudaReal* a, const cudaReal* b, int size) {
-	   
-     switch(THREADS_PER_BLOCK){
-     case 512:
-       deviceInnerProduct<512><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_temp_, a, b, size);
-       break;
-     case 256:
-       deviceInnerProduct<256><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_temp_, a, b, size);
-       break;
-     case 128:
-       deviceInnerProduct<128><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_temp_, a, b, size);
-       break;
-     case 64:
-       deviceInnerProduct<64><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_temp_, a, b, size);
-       break;
-     case 32:
-       deviceInnerProduct<32><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_temp_, a, b, size);
-       break;
-     case 16:
-       deviceInnerProduct<16><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_temp_, a, b, size);
-       break;
-     case 8:
-       deviceInnerProduct<8><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_temp_, a, b, size);
-       break;
-     case 4:
-       deviceInnerProduct<4><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_temp_, a, b, size);
-       break;
-     case 2:
-       deviceInnerProduct<2><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_temp_, a, b, size);
-       break;
-     case 1:
-       deviceInnerProduct<1><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_temp_, a, b, size);
-       break;
-     }
-     
-	   cudaMemcpy(temp_, d_temp_, NUMBER_OF_BLOCKS * sizeof(cudaReal), cudaMemcpyDeviceToHost);
-	   cudaReal final = 0;
-	   cudaReal c = 0;
-	   //use kahan summation
-	   for(int i = 0; i < NUMBER_OF_BLOCKS; ++i) {
-		   cudaReal y = temp_[i] - c;
-		   cudaReal t = final + y;
-		   c = (t - final) - y;
-		   final = t;
-	   }
-	   
-	   return final;
    }
 
 }

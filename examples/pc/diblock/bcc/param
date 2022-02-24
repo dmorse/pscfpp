@@ -22,11 +22,11 @@ System{
      unitCell  cubic   1.923199
      mesh              32  32  32
      groupName         I_m_-3_m
+     isFlexible   1
   }
   AmIterator{
     maxItr   100
     epsilon  1e-10
-    maxHist  50
-    isFlexible   1
+    maxHist  50 
   }
 }

@@ -139,6 +139,16 @@ namespace Pspg
       */  
       std::string groupName() const;
 
+      /**
+      * Get whether unit cell is flexible.
+      */
+      bool isFlexible() const;
+
+      /**
+      * Get stress error scaling, if unit cell is flexible.
+      */
+      double scaleStress() const;
+
       //@}
 
    private:
@@ -184,6 +194,15 @@ namespace Pspg
       * Has the domain been initialized?
       */
       bool isInitialized_;
+
+      /**
+      * Is the unit cell flexible?
+      */
+      bool isFlexible_;
+
+      /// Scale factor for importance of stress in
+      /// residual and error calculations.
+      double scaleStress_;
 
    };
 
@@ -243,6 +262,16 @@ namespace Pspg
    template <int D>
    inline std::string Domain<D>::groupName() const
    {  return groupName_; }
+
+   // Return isFlexible_.
+   template <int D>
+   inline bool Domain<D>::isFlexible() const
+   {  return isFlexible_; }
+
+   // Return stressScale_.
+   template <int D>
+   inline double Domain<D>::scaleStress() const
+   {  return scaleStress_; }
 
    #ifndef PSPG_DOMAIN_TPP
    // Suppress implicit instantiation

@@ -9,6 +9,7 @@
 */
 
 #include "DField.h"
+#include <pspg/math/GpuResources.h>
 #include <cuda_runtime.h>
 
 
@@ -56,7 +57,7 @@ namespace Pspg
       if (capacity <= 0) {
          UTIL_THROW("Attempt to allocate with capacity <= 0");
       }
-      cudaMalloc((void**) &data_, capacity * sizeof(Data));
+      gpuErrchk(cudaMalloc((void**) &data_, capacity * sizeof(Data)));
       capacity_ = capacity;
    }
 
@@ -73,6 +74,57 @@ namespace Pspg
       }
       cudaFree(data_);
       capacity_ = 0;
+   }
+
+   /*
+   * Copy constructor.
+   *
+   * Allocates new memory and copies all elements by value.
+   *
+   *\param other the Field to be copied.
+   */
+   template <typename Data>
+   DField<Data>::DField(const DField<Data>& other)
+   {
+      if (!other.isAllocated()) {
+         UTIL_THROW("Other Field must be allocated.");
+      }
+
+      allocate(other.capacity_);
+      cudaMemcpy(data_, other.cDField(), capacity_ * sizeof(Data), cudaMemcpyDeviceToDevice);
+   }
+
+   /*
+   * Assignment.
+   *
+   * This operator will allocate memory if not allocated previously.
+   *
+   * \throw Exception if other Field is not allocated.
+   * \throw Exception if both Fields are allocated with unequal capacities.
+   *
+   * \param other the rhs Field
+   */
+   template <typename Data>
+   DField<Data>& DField<Data>::operator = (const DField<Data>& other)
+   {
+      // Check for self assignment
+      if (this == &other) return *this;
+
+      // Precondition
+      if (!other.isAllocated()) {
+         UTIL_THROW("Other Field must be allocated.");
+      }
+
+      if (!isAllocated()) {
+         allocate(other.capacity());
+      } else if (capacity_ != other.capacity_) {
+         UTIL_THROW("Cannot assign Fields of unequal capacity");
+      }
+
+      // Copy elements
+      cudaMemcpy(data_, other.cDField(), capacity_ * sizeof(Data), cudaMemcpyDeviceToDevice);
+
+      return *this;
    }
 
 }

@@ -8,7 +8,6 @@
 
 #include "Sweep.h"
 #include <pspc/System.h>
-#include <pspc/iterator/AmIterator.h>
 #include <pscf/inter/ChiInteraction.h>
 #include <pscf/sweep/SweepTmpl.tpp>
 #include <util/misc/FileMaster.h>
@@ -108,7 +107,7 @@ namespace Pspc {
          UTIL_CHECK(historySize() <= historyCapacity());
 
          // Does the iterator allow a flexible unit cell ?
-         bool isFlexible = system().iterator().isFlexible();
+         bool isFlexible = system().domain().isFlexible();
 
          // Compute coefficients of polynomial extrapolation to sNew
          setCoefficients(sNew);
@@ -193,7 +192,7 @@ namespace Pspc {
    template <int D>
    void Sweep<D>::reset()
    {  
-      bool isFlexible = system().iterator().isFlexible();
+      bool isFlexible = system().domain().isFlexible();
       state(0).setSystemState(isFlexible); 
    }
 
