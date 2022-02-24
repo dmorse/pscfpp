@@ -1,0 +1,88 @@
+
+class ThreadGrid 
+{
+
+public:
+
+   /**
+   * Initialize static values.
+   *
+   * Sets nBlock and nThreadLogical to 0 (null value).
+   * Call setNThreadPerBlock internally to set default initial value.
+   */
+   static void init();
+
+   /**
+   * Set default value for nThreadPerBlock.
+   *
+   * Queries GPU to obtain reasonable value, sets nBlock and 
+   * nThreadLogical zero (null).
+   */
+   static void setNThreadPerBlock();
+
+   /**
+   * Set user-specified value for number of threads per block.
+   *
+   * Resets nThreadPerBlock_ to input value and sets nBlock and
+   * nThreadLogical to 0 (null) values.
+   */
+   static void setNThreadPerBlock(int nThreadPerBlock);
+   
+   /**
+   * Set logical number of threads (number of elements).
+   *
+   * If the nThreadLogical is equal to the current value, do nothing 
+   * and return. Otherwise:
+   * If nThreadPerBlock is null, this function sets a default value. 
+   * Set nThreadLogical to the input value, and computes and set values
+   * for nBlock and the boolean hasUnusedThreads;
+   */
+   static void setNThreadLogical(int nThreadPerBlock);
+   
+   // Accessors:
+ 
+   /**
+   * Return number of threads per block.
+   */
+   static int nThreadPerBlock();
+
+   /**
+   * Return precalculated number of blocks.
+   *
+   * Returns 0 if not set (null value).
+   */
+   static int nBlock();
+
+   /**
+   * Return previously requested logical number of threads.
+   *
+   * This should less than or equal to nThread*nBlock. 
+   * Returns 0 as null value.
+   */
+   static int nThreadLogical();
+
+   /**
+   * Does the last block of this grid have unused threads?
+   */
+   static bool hasUnusedThreads();
+
+private:
+
+   /// Number of threads per block.
+   static int nThreadPerBlock_;  
+
+   /// Number of blocks.
+   static int nBlock_;
+
+   /// Requested number of threads per block.
+   static int nThreadLogical_;
+
+   /// Does the last block of this grid contain unused threads?
+   static bool hasUnusedThreads_; 
+
+   /**
+   * Constructor (private and not implemented).
+   */
+   ThreadGrid();
+
+}
