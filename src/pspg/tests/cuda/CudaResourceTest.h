@@ -97,7 +97,6 @@ public:
 
       // Launch kernel and get output
       reductionMax<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cudaReal)>>>(d_max, d_num, n);
-      reductionMax<<<1, NUMBER_OF_BLOCKS/2, NUMBER_OF_BLOCKS/2*sizeof(cudaReal)>>>(d_max,d_max, NUMBER_OF_BLOCKS);
       cudaMemcpy(&max, d_max, 1*sizeof(cudaReal), cudaMemcpyDeviceToHost);
 
       TEST_ASSERT(max == maxCheck);
@@ -238,7 +237,7 @@ public:
 
       // Data size
       // Non-power-of-two to check performance in weird situations
-      int n = 16*MAX_THREADS_PER_BLOCK;
+      int n = 14*MAX_THREADS_PER_BLOCK+77;
 
       // Device arrays
       DField<cudaReal> d_a, d_b;
@@ -266,11 +265,184 @@ public:
       // Inner product on device
       cudaReal prod = gpuInnerProduct(d_a.cDField(),d_b.cDField(),n);
 
-      std::cout << prodCheck << "   " << prod << std::endl;
       TEST_ASSERT(prodCheck==prod);
-
-
    }
+
+   void testGpuSum()
+   {
+      printMethod(TEST_FUNC);
+      // GPU Resources
+      MAX_THREADS_PER_BLOCK = 128;
+
+      // Data size
+      // Non-power-of-two to check performance in weird situations
+      int n = 14*MAX_THREADS_PER_BLOCK+77;
+
+      // Device arrays
+      DField<cudaReal> d_data;
+      d_data.allocate(n);
+
+      // Host arrays
+      cudaReal* data = new cudaReal[n];
+      
+      // Create random data, store on host and device
+      for (int i = 0; i < n; i++) {
+         data[i] = (cudaReal)(std::rand() % 10000);
+      }
+      cudaMemcpy(d_data.cDField(), data, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
+
+      // Inner product on host
+      cudaReal prodCheck = 0;
+      for (int i = 0; i < n; i++) {
+         prodCheck += data[i];
+      }
+
+      // Inner product on device
+      cudaReal prod = gpuSum(d_data.cDField(),n);
+
+      TEST_ASSERT(prodCheck==prod);
+   }
+
+   void testGpuMax()
+   {
+      printMethod(TEST_FUNC);
+      // GPU Resources
+      MAX_THREADS_PER_BLOCK = 128;
+
+      // Data size
+      // Non-power-of-two to check performance in weird situations
+      int n = 14*MAX_THREADS_PER_BLOCK+77;
+
+      // Device arrays
+      DField<cudaReal> d_data;
+      d_data.allocate(n);
+
+      // Host arrays
+      cudaReal* data = new cudaReal[n];
+      
+      // Create random data, store on host and device
+      for (int i = 0; i < n; i++) {
+         data[i] = (cudaReal)(std::rand() % 10000);
+      }
+      cudaMemcpy(d_data.cDField(), data, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
+
+      // Inner product on host
+      cudaReal maxCheck = 0;
+      for (int i = 0; i < n; i++) {
+         if (data[i] > maxCheck) maxCheck = data[i];
+      }
+
+      // Inner product on device
+      cudaReal max = gpuMax(d_data.cDField(),n);
+
+      TEST_ASSERT(max==maxCheck);
+   }
+
+   void testGpuMaxAbs()
+   {
+      printMethod(TEST_FUNC);
+      // GPU Resources
+      MAX_THREADS_PER_BLOCK = 128;
+
+      // Data size
+      // Non-power-of-two to check performance in weird situations
+      int n = 14*MAX_THREADS_PER_BLOCK+77;
+
+      // Device arrays
+      DField<cudaReal> d_data;
+      d_data.allocate(n);
+
+      // Host arrays
+      cudaReal* data = new cudaReal[n];
+      
+      // Create random data, store on host and device
+      for (int i = 0; i < n; i++) {
+         data[i] = (cudaReal)(std::rand() % 10000 - 6000);
+      }
+      cudaMemcpy(d_data.cDField(), data, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
+
+      // Inner product on host
+      cudaReal maxCheck = 0;
+      for (int i = 0; i < n; i++) {
+         if (fabs(data[i]) > maxCheck) maxCheck = fabs(data[i]);
+      }
+
+      // Inner product on device
+      cudaReal max = gpuMaxAbs(d_data.cDField(),n);
+
+      TEST_ASSERT(max==maxCheck);
+   }
+
+   void testGpuMin()
+   {
+      printMethod(TEST_FUNC);
+      // GPU Resources
+      MAX_THREADS_PER_BLOCK = 128;
+
+      // Data size
+      // Non-power-of-two to check performance in weird situations
+      int n = 14*MAX_THREADS_PER_BLOCK+77;
+
+      // Device arrays
+      DField<cudaReal> d_data;
+      d_data.allocate(n);
+
+      // Host arrays
+      cudaReal* data = new cudaReal[n];
+      
+      // Create random data, store on host and device
+      for (int i = 0; i < n; i++) {
+         data[i] = (cudaReal)(std::rand() % 10000);
+      }
+      cudaMemcpy(d_data.cDField(), data, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
+
+      // Inner product on host
+      cudaReal minCheck = 1000000;
+      for (int i = 0; i < n; i++) {
+         if (data[i] < minCheck) minCheck = data[i];
+      }
+
+      // Inner product on device
+      cudaReal min = gpuMin(d_data.cDField(),n);
+
+      TEST_ASSERT(min==minCheck);
+   }
+
+   void testGpuMinAbs()
+   {
+      printMethod(TEST_FUNC);
+      // GPU Resources
+      MAX_THREADS_PER_BLOCK = 128;
+
+      // Data size
+      // Non-power-of-two to check performance in weird situations
+      int n = 14*MAX_THREADS_PER_BLOCK+77;
+
+      // Device arrays
+      DField<cudaReal> d_data;
+      d_data.allocate(n);
+
+      // Host arrays
+      cudaReal* data = new cudaReal[n];
+      
+      // Create random data, store on host and device
+      for (int i = 0; i < n; i++) {
+         data[i] = (cudaReal)(std::rand() % 10000 - 6000);
+      }
+      cudaMemcpy(d_data.cDField(), data, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
+
+      // Inner product on host
+      cudaReal minCheck = 1E300;
+      for (int i = 0; i < n; i++) {
+         if (fabs(data[i]) < minCheck) minCheck = fabs(data[i]);
+      }
+
+      // Inner product on device
+      cudaReal min = gpuMinAbs(d_data.cDField(),n);
+
+      TEST_ASSERT(min==minCheck);
+   }
+
 };
 
 TEST_BEGIN(CudaResourceTest)
@@ -279,7 +451,12 @@ TEST_ADD(CudaResourceTest, testReductionMaxSmall)
 TEST_ADD(CudaResourceTest, testReductionMaxLarge)
 TEST_ADD(CudaResourceTest, testReductionMaxAbsLarge)
 TEST_ADD(CudaResourceTest, testReductionMinLarge)
-TEST_ADD(CudaResourceTest, testGpuInnerProduct);
+TEST_ADD(CudaResourceTest, testGpuInnerProduct)
+TEST_ADD(CudaResourceTest, testGpuSum)
+TEST_ADD(CudaResourceTest, testGpuMax)
+TEST_ADD(CudaResourceTest, testGpuMaxAbs)
+TEST_ADD(CudaResourceTest, testGpuMin)
+TEST_ADD(CudaResourceTest, testGpuMinAbs)
 TEST_END(CudaResourceTest)
 
 #endif

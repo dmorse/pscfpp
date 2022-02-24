@@ -157,8 +157,6 @@ namespace Pspg
 
    private:
 
-      cudaReal innerProduct(const cudaReal* a, const cudaReal* b, int size);
-
       // new array purely in device
       cudaReal* qFields_d;
       // Workspace

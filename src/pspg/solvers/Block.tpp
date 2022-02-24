@@ -601,7 +601,7 @@ namespace Pspg {
                }
                exit(1);
                }*/
-            increment = reductionH(qr2_, mesh().size());
+            increment = gpuSum(qr2_.cDField(), mesh().size());
             //            std::cout<<increment<<std::endl;
             increment = (increment * kuhn() * kuhn() * dels)/normal;
             dQ [n] = dQ[n]-increment;
@@ -611,22 +611,6 @@ namespace Pspg {
       for (i = 0; i < nParams_; ++i) {
          stress_[i] = stress_[i] - (dQ[i] * prefactor);
       }
-   }
-
-   template<int D>
-   cudaReal Block<D>::reductionH(const RDField<D>& a, int size) {
-      reductionSum <<< NUMBER_OF_BLOCKS/2 , THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cudaReal)>>>
-         (d_temp_, a.cDField(), size);
-      cudaMemcpy(temp_, d_temp_, NUMBER_OF_BLOCKS/2  * sizeof(cudaReal), cudaMemcpyDeviceToHost);
-      cudaReal final = 0;
-      cudaReal c = 0;
-      for (int i = 0; i < NUMBER_OF_BLOCKS/2 ; ++i) {
-         cudaReal y = temp_[i] - c;
-         cudaReal t = final + y;
-         c = (t - final) - y;
-         final = t;
-      }
-      return final;
    }
 
 }

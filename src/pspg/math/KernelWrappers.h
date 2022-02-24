@@ -8,17 +8,17 @@
 namespace Pscf {
 namespace Pspg {
 
-// __host__ cudaReal gpuSum(cudaReal* d_in, int size);
+__host__ cudaReal gpuSum(cudaReal const * d_in, int size);
 
-__host__ cudaReal gpuInnerProduct(cudaReal* d_a, cudaReal* d_b, int size);
+__host__ cudaReal gpuInnerProduct(cudaReal const * d_a, cudaReal const * d_b, int size);
 
-// __host__ cudaReal gpuMax(cudaReal* d_in, int size);
+__host__ cudaReal gpuMax(cudaReal const * d_in, int size);
 
-// __host__ cudaReal gpuMaxAbs(cudaReal* d_in, int size);
+__host__ cudaReal gpuMaxAbs(cudaReal const * d_in, int size);
 
-// __host__ cudaReal gpuMin(cudaReal* d_in, int size);
+__host__ cudaReal gpuMin(cudaReal const * d_in, int size);
 
-// __host__ cudaReal gpuMinAbs(cudaReal* d_in, int size);
+__host__ cudaReal gpuMinAbs(cudaReal const * d_in, int size);
 
 }
 }

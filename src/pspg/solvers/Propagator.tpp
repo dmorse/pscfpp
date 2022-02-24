@@ -167,29 +167,9 @@ namespace Pspg {
       // polymers are divided into blocks midway through
       double Q = 0; 
       
-      Q = innerProduct(qh, qt, nx);
+      Q = gpuInnerProduct(qh, qt, nx);
       Q /= double(nx);
       return Q;
-   }
-
-   template <int D>
-   cudaReal Propagator<D>::innerProduct(const cudaReal* a, const cudaReal* b, int size) {
-	   
-      reductionInnerProduct<<< NUMBER_OF_BLOCKS/2, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal) >>> (d_temp_, a, b, size);
-
-      gpuErrchk(cudaMemcpy(temp_, d_temp_, NUMBER_OF_BLOCKS/2 * sizeof(cudaReal), cudaMemcpyDeviceToHost));
-      cudaReal final = 0;
-      cudaReal c = 0;
-      //use kahan summation to reduce error
-      for (int i = 0; i < NUMBER_OF_BLOCKS/2; ++i) {
-         cudaReal y = temp_[i] - c;
-         cudaReal t = final + y;
-         c = (t - final) - y;
-         final = t;
-
-      }
-	   
-	   return final;
    }
 
 }

@@ -221,33 +221,7 @@ namespace Pspg{
    template<int D> 
    cudaReal IteratorMediatorCUDA<D>::findAverage(cudaReal * const field, int n) 
    {
-      // This function assumes that n = nMesh = NUMBER_OF_BLOCKS * THREADS_PER_BLOCK
-      // verify workspace is allocated
-      cudaReal* d_temp;
-      cudaReal* temp = new cudaReal[NUMBER_OF_BLOCKS/2];
-
-      gpuErrchk(cudaMalloc((void**) &d_temp, NUMBER_OF_BLOCKS/2*sizeof(cudaReal)));
-
-      // Use parallel reduction to sum up first n elements in field
-      cudaReal average;
-      reductionSum<<<NUMBER_OF_BLOCKS/2, THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cudaReal)>>>(d_temp, field, n);
-      // Do last elements of sum on host using Kahan summation
-      gpuErrchk(cudaMemcpy(temp, d_temp, NUMBER_OF_BLOCKS/2  * sizeof(cudaReal), cudaMemcpyDeviceToHost));
-      cudaReal sum = 0;
-      cudaReal c = 0;
-      for (int i = 0; i < NUMBER_OF_BLOCKS/2 ; ++i) {
-         cudaReal y = temp[i] - c;
-         cudaReal t = sum + y;
-         c = (t - sum) - y;
-         sum = t;
-      }
-      delete[] temp;
-      cudaFree(d_temp);
-
-      // Divide by n. Use inputted n in case only part of the array is to be considered (i.e., 
-      // in the case of parameters being at the end of the array but only wanting the average
-      // of the field elements. )
-      average = sum/n;
+      cudaReal average = gpuSum(field, n)/n;
 
       return average;
    }

@@ -29,7 +29,7 @@ namespace Pspg {
    double AmStrategyCUDA::findNorm(FieldCUDA const & hist) const 
    {
       const int n = hist.capacity();
-      double normResSq = (double)innerProduct(hist, hist);
+      double normResSq = (double)gpuInnerProduct(hist.cDField(), hist.cDField(), n);
 
       return sqrt(normResSq);
    }
@@ -40,69 +40,7 @@ namespace Pspg {
 
       // number of data points, each step of the way.
       int n = hist.capacity();
-
-      // CHECK IF POWER OF TWO.
-      // bitwise trick from http://www.graphics.stanford.edu/~seander/bithacks.html
-      int nPow2 = n;
-      int nExcess = 0;
-      if ( (n & (n - 1)) != 0 ) {
-         // if not, handle only up to the nearest lower power of two with parallel reduction
-         // handle the rest with the CPU
-         nPow2 = pow(2,floor(log2(n)));
-         nExcess = n-nPow2;
-      }
-
-      // Check to verify that private members are allocated
-      // Allocate up to n, because other kernels may potentially use these
-      // workspace arrays 
-      if (!temp_) allocatePrivateMembers(n);
-
-      // Do first reduction step
-      int nBlocks = nPow2/THREADS_PER_BLOCK/2, nThreads=THREADS_PER_BLOCK;
-      reductionMaxAbs<<<nBlocks, nThreads, 
-                        nThreads*sizeof(cudaReal)>>>(d_temp_, hist.cDField(), nPow2);
-      nPow2 = nBlocks;
-
-         // While loop to do further reduction steps
-         int itr = 0;
-         while (nPow2 > 1) {
-            // determine next compute size
-            if (nBlocks < nThreads) {
-               // Divided by two to the satisify parallel reduction requirement that 
-               // the number of blocks * threads per block be half the number of data points, both a power of two
-               nThreads = nPow2/2; 
-               nBlocks = 1;
-            } else {
-               nBlocks = nPow2 / nThreads / 2;
-            }
-            // perform reduction
-            reductionMaxAbs<<<nBlocks, nThreads, 
-                           nThreads*sizeof(cudaReal)>>>(d_temp_, d_temp_, nPow2);
-            nPow2 = nBlocks;
-
-            // track number of iterations
-            itr+=1;
-            if (itr > 100) {
-               UTIL_THROW("Runaway parallel reduction while-loop.");
-            }
-         }
-
-      cudaReal max;
-      gpuErrchk(cudaMemcpy(&max, d_temp_, 1*sizeof(cudaReal), cudaMemcpyDeviceToHost));
-      
-      // If any left over above the power of two, handle with CPU.
-      if (nExcess > 0 ) {
-         // copy excess into host memory
-         cudaReal* excess = new cudaReal[nExcess];
-         gpuErrchk(cudaMemcpy(excess, hist.cDField() + nPow2, nExcess*sizeof(cudaReal), cudaMemcpyDeviceToHost));
-         
-         for (int i = 0; i < nExcess; i++) {
-            if (fabs(excess[i]) > max) {
-               max = fabs(excess[i]);
-            }
-         }
-         delete[] excess;
-      }
+      cudaReal max = gpuMaxAbs(hist.cDField(), n);
 
       return (double)max;
 
@@ -134,12 +72,12 @@ namespace Pspg {
 
    double AmStrategyCUDA::computeUDotProd(RingBuffer<FieldCUDA> const & resBasis, int n, int m) const
    {      
-      return (double)innerProduct(resBasis[n],resBasis[m]);
+      return (double)gpuInnerProduct(resBasis[n].cDField(),resBasis[m].cDField(), resBasis[n].capacity());
    }
 
    double AmStrategyCUDA::computeVDotProd(FieldCUDA const & resCurrent, RingBuffer<FieldCUDA> const & resBasis, int m) const
    {
-      return (double)innerProduct(resCurrent, resBasis[m]);
+      return (double)gpuInnerProduct(resCurrent.cDField(), resBasis[m].cDField(), resCurrent.capacity());
    }
 
    void AmStrategyCUDA::updateU(DMatrix<double> & U, RingBuffer<FieldCUDA> const & resBasis, int nHist) const
@@ -197,60 +135,6 @@ namespace Pspg {
    {
       temp_ = new cudaReal[n];
       gpuErrchk(cudaMalloc((void**) &d_temp_, n*sizeof(cudaReal)));
-   }
-
-   cudaReal AmStrategyCUDA::innerProduct(FieldCUDA const & a, FieldCUDA const & b) const
-   {
-      UTIL_CHECK(b.capacity() == a.capacity());
-      int n = a.capacity();
-
-      // Check to verify that private members are allocated
-      if (!temp_) allocatePrivateMembers(n);
-
-      // Elementwise multiplication of a with b for all elements
-      pointWiseBinaryMultiply<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(a.cDField(),b.cDField(),d_temp_,n);
-      
-      // Check to see if power of two
-      int nPow2 = n;
-      int nExcess = 0;
-      if ( (n & (n - 1)) != 0 ) {
-         // if not, handle only up to the nearest lower power of two with parallel reduction
-         // handle the rest with the CPU
-         nPow2 = pow(2,floor(log2(n)));
-         nExcess = n-nPow2;
-      }
-      // In case we are using more data.. This is temporary and should be adjusted in the future with a better
-      // way for managing GPU resources.
-      int nBlocks = nPow2/THREADS_PER_BLOCK/2;
-
-      // Parallel reduction (summation over all elements, up to the highest power of two)
-      reductionSum<<<nBlocks,THREADS_PER_BLOCK,THREADS_PER_BLOCK*sizeof(cudaReal)>>>(d_temp_, d_temp_, nPow2);
-      
-      // Copy results and sum over output
-      gpuErrchk(cudaMemcpy(temp_, d_temp_, nBlocks * sizeof(cudaReal), cudaMemcpyDeviceToHost));
-      cudaReal sum = 0;
-      cudaReal c = 0;
-      //use kahan summation to reduce error
-      for (int i = 0; i < nBlocks; ++i) {
-         cudaReal y = temp_[i] - c;
-         cudaReal t = sum + y;
-         c = (t - sum) - y;
-         sum = t;  
-      }
-
-      // Include data points beyond the lowest power of two
-      if (nExcess > 0) {
-         // copy excess into host memory
-         cudaReal* excess = new cudaReal[nExcess];
-         gpuErrchk(cudaMemcpy(excess, d_temp_ + nPow2, nExcess*sizeof(cudaReal), cudaMemcpyDeviceToHost));
-         
-         for (int i = 0; i < nExcess; i++) {
-            sum += excess[i];
-         }
-         delete[] excess;
-      }
-      
-      return sum;
    }
 
 }

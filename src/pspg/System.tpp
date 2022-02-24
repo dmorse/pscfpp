@@ -71,6 +71,9 @@ namespace Pspg
       iteratorMediatorPtr_ = new IteratorMediatorCUDA<D>(*this);
       iteratorFactoryPtr_ = new IteratorFactory<D>(*iteratorMediatorPtr_); 
       wavelistPtr_ = new WaveList<D>();
+
+      // TEMPORARY. WILL REPLACE WITH GOOD WAY TO MANAGE GPU RESOURCE VARIABLES LATER. //
+      MAX_THREADS_PER_BLOCK = 256;
       
       // sweepFactoryPtr_ = new SweepFactory(*this);
    }
@@ -590,12 +593,12 @@ namespace Pspg
            assignUniformReal <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (workArray.cDField(), interaction().chi(i, j), nx);
            inPlacePointwiseMul <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (workArray.cDField(), cFieldsRGrid_[i].cDField(), nx);
            inPlacePointwiseMul <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (workArray.cDField(), cFieldsRGrid_[j].cDField(), nx);
-           fHelmholtz_ += (reductionH(workArray, nx) / nx);
+           fHelmholtz_ += (gpuSum(workArray.cDField(), nx) / nx);
          }
          
          assignReal <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (workArray.cDField(), wFieldsRGrid_[i].cDField(), nx);
          inPlacePointwiseMul <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK  >>> (workArray.cDField(), cFieldsRGrid_[i].cDField(), nx);
-         temp += reductionH(workArray, nx);
+         temp += gpuSum(workArray.cDField(), nx);
       }
       fHelmholtz_ -= (temp / nx);
       
@@ -753,43 +756,6 @@ namespace Pspg
       fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_);
       fieldIo().convertRGridToBasis(tmpFieldsRGrid_, tmpFields_);
       fieldIo().writeFieldsBasis(outFileName, tmpFields_);
-   }  
-
-   template <int D>
-   cudaReal System<D>::innerProduct(const RDField<D>& a, const RDField<D>& b, int size) {
-
-      reductionInnerProduct<<< NUMBER_OF_BLOCKS/2, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal) >>> (d_kernelWorkSpace_, a.cDField(), b.cDField(), size);
-
-      cudaMemcpy(kernelWorkSpace_, d_kernelWorkSpace_, NUMBER_OF_BLOCKS/2 * sizeof(cudaReal), cudaMemcpyDeviceToHost);
-      cudaReal final = 0;
-      cudaReal c = 0;
-      //use kahan summation to reduce error
-      for (int i = 0; i < NUMBER_OF_BLOCKS/2; ++i) {
-         cudaReal y = kernelWorkSpace_[i] - c;
-         cudaReal t = final + y;
-         c = (t - final) - y;
-         final = t;
-
-      }
-
-      return final;
-   }
-
-   template<int D>
-   cudaReal System<D>::reductionH(const RDField<D>& a, int size) {
-     reductionSum <<< NUMBER_OF_BLOCKS / 2, 
-                      THREADS_PER_BLOCK, 
-                      THREADS_PER_BLOCK * sizeof(cudaReal) >>> (d_kernelWorkSpace_, a.cDField(), size);
-      cudaMemcpy(kernelWorkSpace_, d_kernelWorkSpace_, NUMBER_OF_BLOCKS / 2 * sizeof(cudaReal), cudaMemcpyDeviceToHost);
-      cudaReal final = 0;
-      cudaReal c = 0;
-      for (int i = 0; i < NUMBER_OF_BLOCKS / 2; ++i) {
-         cudaReal y = kernelWorkSpace_[i] - c;
-         cudaReal t = final + y;
-         c = (t - final) - y;
-         final = t;
-         }
-      return final;
    }
 
 } // namespace Pspg

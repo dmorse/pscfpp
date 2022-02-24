@@ -62,9 +62,6 @@ namespace Pspg {
 
       void addPredictedError(FieldCUDA& fieldTrial, FieldCUDA const & resTrial, double lambda)
       const;
-
-      cudaReal innerProduct(FieldCUDA const & a, FieldCUDA const & b)
-      const;
    
    private:
 

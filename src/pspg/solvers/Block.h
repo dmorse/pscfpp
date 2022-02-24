@@ -182,8 +182,6 @@ namespace Pspg {
 
    private:
 
-      cudaReal reductionH(const RDField<D>& a, int size);
-
       // Fourier transform plan
       FFT<D> fft_;
 
