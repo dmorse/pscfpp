@@ -8,8 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/AbstractSystem.h>           // base class
-//#include <util/param/ParamComposite.h>
+#include <util/param/ParamComposite.h>           // base class
 
 #include <pspc/solvers/Mixture.h>          // member
 #include <pspc/field/Domain.h>             // member
@@ -27,7 +26,7 @@ namespace Pscf {
 namespace Pspc
 {
 
-   template <int D> class IteratorMediatorCPU;
+   template <int D> class Iterator;
    template <int D> class IteratorFactory;
    template <int D> class Sweep;
    template <int D> class SweepFactory;
@@ -48,7 +47,7 @@ namespace Pspc
    * \ingroup Pscf_Pspc_Module
    */
    template <int D>
-   class System : public AbstractSystem
+   class System : public ParamComposite
    {
 
    public:
@@ -302,9 +301,9 @@ namespace Pspc
       ChiInteraction& interaction();
 
       /**
-      * Get the IteratorMediator by reference.
+      * Get the iterator by reference.
       */
-      IteratorMediatorCPU<D>& iteratorMediator();
+      Iterator<D>& iterator();
 
       /**
       * Get homogeneous mixture (for reference calculations).
@@ -584,7 +583,7 @@ namespace Pspc
       /**
       * Pointer to an iterator.
       */
-      IteratorMediatorCPU<D>* iteratorMediatorPtr_;
+      Iterator<D>* iteratorPtr_;
 
       /**
       * Pointer to iterator factory object
@@ -803,10 +802,10 @@ namespace Pspc
 
    // Get the Iterator.
    template <int D>
-   inline IteratorMediatorCPU<D>& System<D>::iteratorMediator()
+   inline Iterator<D>& System<D>::iterator()
    {
-      UTIL_ASSERT(iteratorMediatorPtr_);
-      return *iteratorMediatorPtr_;
+      UTIL_ASSERT(iteratorPtr_);
+      return *iteratorPtr_;
    }
 
    template <int D>

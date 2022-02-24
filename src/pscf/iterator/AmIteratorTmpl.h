@@ -8,11 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Iterator.h" // base class
-
 #include <pscf/math/LuSolver.h>
-#include "AmStrategy.h"
-#include "IteratorMediator.h"
 
 #include <util/containers/DArray.h>
 #include <util/containers/FArray.h>
@@ -30,21 +26,19 @@ namespace Pscf {
    * \ingroup Pscf_Iterator_Module
    */
    template <typename T>
-   class AmIterator : public Iterator<T>
+   class AmIteratorTmpl : public ParamComposite 
    {
    public:
 
       /**
       * Constructor
-      *
-      * \param iterMed pointer to an iterator mediator
       */
-      AmIterator(IteratorMediator<T>& iterMed, AmStrategy<T>& strategy);
+      AmIteratorTmpl();
 
       /**
       * Destructor
       */
-      ~AmIterator();
+      ~AmIteratorTmpl();
 
       /**
       * Read all parameters and initialize.
@@ -63,15 +57,13 @@ namespace Pscf {
       */
       int solve();
 
-      /**
-      * Return the strategy object to manage math execution.
-      */ 
-      AmStrategy<T>& strategy();
+   protected:
+      
+      using ParamComposite::read;
+      using ParamComposite::readOptional;
+      using ParamComposite::setClassName;
 
    private:
-
-      /// Strategy object for math execution.
-      AmStrategy<T>* strategy_;
 
       /// Error tolerance
       double epsilon_;
@@ -160,18 +152,62 @@ namespace Pscf {
       */
       void cleanUp();
 
-      // Members of parent classes with non-dependent names
-      using Iterator<T>::setClassName;
-      using Iterator<T>::iterMed;
-      using ParamComposite::read;
-      using ParamComposite::readOptional;
+      // Pure virtual functions to be implemented by subclasses
+
+      // System/iterator mediation classes
+      /// Checks if the system has an initial guess
+      virtual bool hasInitialGuess() = 0;
+      
+      /// Calculates and returns the number of elements in the
+      /// array to be iterated 
+      virtual int nElements() = 0;
+
+      /// Gets a reference to the current state of the system
+      virtual void getCurrent(T& curr) = 0;
+
+      /// Runs calculation to evaluate function for fixed point.
+      virtual void evaluate() = 0;
+
+      /// Gets residual values from system
+      virtual void getResidual(T& resid) = 0;
+
+      /// Updates the system with a passed in state of the iterator.
+      virtual void update(T& newGuess) = 0;
+
+      // AmIterator mathematical operations
+      /// Find the norm of the residual vector.
+      virtual double findNorm(T const & hist) const = 0;
+
+      /// Find the element of the residual vector with the maximum magnitude.
+      virtual double findMaxAbs(T const & hist) const = 0;
+
+      /// Update the list of residual basis vectors used for combining histories.
+      virtual void updateBasis(RingBuffer<T> & basis, RingBuffer<T> const & hists) const = 0;
+
+      /// Compute the dot product for constructing the U matrix. 
+      virtual double computeUDotProd(RingBuffer<T> const & resBasis, int m, int n) const = 0;
+      
+      /// Compute the dot product for constructing the v vector. 
+      virtual double computeVDotProd(T const & resCurrent, RingBuffer<T> const & resBasis, int m) const = 0;
+      
+      /// Update the U matrix containing dot products of residual histories basis vectors.
+      virtual void updateU(DMatrix<double> & U, RingBuffer<T> const & resBasis, int nHist) const = 0;
+
+      /// Update the v vector containing dot products of current residuals with residual basis
+      /// vectors. 
+      virtual void updateV(DArray<double> & v, T const & resCurrent, RingBuffer<T> const & resBasis, int nHist) const = 0;
+      
+      /// Set two things equal to each other.
+      virtual void setEqual(T& a, T const & b) const = 0;
+
+      /// Mix histories, scaled by their respective coefficients, into the trial field.
+      virtual void addHistories(T& trial, RingBuffer<T> const & basis, DArray<double> coeffs, int nHist) const = 0;
+
+      /// Add predicted error into the trial guess to approximately correct for it.
+      virtual void addPredictedError(T& fieldTrial, T const & resTrial, double lambda) const = 0;
 
    };
 
-   template <typename T>
-   inline AmStrategy<T>& AmIterator<T>::strategy() 
-   {  return *strategy_; }
-
 }
-#include "AmIterator.cpp"
+#include "AmIteratorTmpl.cpp"
 #endif

@@ -1,5 +1,5 @@
-#ifndef PSCF_ITERATOR_H
-#define PSCF_ITERATOR_H
+#ifndef PSPC_ITERATOR_H
+#define PSPC_ITERATOR_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -9,24 +9,25 @@
 */
 
 #include <util/param/ParamComposite.h>    // base class
-#include "IteratorMediator.h"
+#include <pspc/System.h>
 #include <util/global.h>                  
 
 namespace Pscf {
+namespace Pspc {
 
-   template <typename T>
-   class IteratorMediator;
+   template <int D>
+   class System;
 
    using namespace Util;
 
    /**
    * Base class for iterative solvers for SCF equations.
    *
-   * \ingroup Pscf_Iterator_Module
+   * \ingroup Pspc_Iterator_Module
    */
 
-   template <typename T>
-   class Iterator : public ParamComposite
+   template <int D>
+   class Iterator : virtual public ParamComposite
    {
 
    public:
@@ -34,9 +35,9 @@ namespace Pscf {
       /**
       * Constructor.
       * 
-      * \param iterMed iterator mediator object
+      * \param system system object by reference
       */
-      Iterator(IteratorMediator<T>& iterMed);
+      Iterator(System<D>& system);
 
       /**
       * Destructor.
@@ -58,14 +59,14 @@ namespace Pscf {
    protected:
 
       /**
-      * Get the iterator mediator by reference.
+      * Get the system by reference.
       */
-      IteratorMediator<T>& iterMed();
+      System<D>& system();
+
+      /// Pointer to system object
+      System<D>* sys_;
 
    private:
-
-      /// Pointer to iterator mediator object
-      IteratorMediator<T>* iterMed_;
 
       /**
       * Default constructor (private and not implemented to prohibit)
@@ -79,18 +80,19 @@ namespace Pscf {
 
    };
 
-   template <typename T>
-   inline IteratorMediator<T>& Iterator<T>::iterMed() 
-   {  return *iterMed_; }
+   template <int D>
+   inline System<D>& Iterator<D>::system() 
+   {  return *sys_; }
 
-   template <typename T>
-   Iterator<T>::Iterator(IteratorMediator<T>& iterMed)
-    : iterMed_(&iterMed)
+   template <int D>
+   Iterator<D>::Iterator(System<D>& system)
+    : sys_(&system)
    {  setClassName("Iterator"); }
 
-   template <typename T>
-   Iterator<T>::~Iterator()
+   template <int D>
+   Iterator<D>::~Iterator()
    {}
 
+} // namespace Pspc
 } // namespace Pscf
 #endif

@@ -13,7 +13,6 @@
 #include <pspc/sweep/Sweep.h>
 #include <pspc/sweep/SweepFactory.h>
 
-#include <pspc/iterator/IteratorMediatorCPU.h>
 #include <pspc/iterator/IteratorFactory.h>
 
 #include <pspc/solvers/Mixture.h>
@@ -55,7 +54,7 @@ namespace Pspc
       fileMaster_(),
       homogeneous_(),
       interactionPtr_(0),
-      iteratorMediatorPtr_(0),
+      iteratorPtr_(0),
       iteratorFactoryPtr_(0),
       sweepPtr_(0),
       sweepFactoryPtr_(0),
@@ -75,8 +74,7 @@ namespace Pspc
       setClassName("System"); 
       domain_.setFileMaster(fileMaster_);
       interactionPtr_ = new ChiInteraction(); 
-      iteratorMediatorPtr_ = new IteratorMediatorCPU<D>(*this);
-      iteratorFactoryPtr_ = new IteratorFactory<D>(*iteratorMediatorPtr_); 
+      iteratorFactoryPtr_ = new IteratorFactory<D>(*this); 
       sweepFactoryPtr_ = new SweepFactory<D>(*this);
    }
 
@@ -89,8 +87,8 @@ namespace Pspc
       if (interactionPtr_) {
          delete interactionPtr_;
       }
-      if (iteratorMediatorPtr_) {
-         delete iteratorMediatorPtr_;
+      if (iteratorPtr_) {
+         delete iteratorPtr_;
       }
       if (iteratorFactoryPtr_) {
          delete iteratorFactoryPtr_;
@@ -207,15 +205,13 @@ namespace Pspc
       // Initialize iterator through the factory and mediator
       std::string className;
       bool isEnd;
-      Iterator<FieldCPU>* iteratorPtr
-         = iteratorFactoryPtr_->readObject(in, *this, className, isEnd);
-      if (!iteratorPtr) {
+      iteratorPtr_ = iteratorFactoryPtr_->readObject(in, *this, className, isEnd);
+      if (!iteratorPtr_) {
          std::string msg = "Unrecognized Iterator subclass name ";
          msg += className;
          UTIL_THROW(msg.c_str());
       }
-      iteratorMediator().setIterator(*iteratorPtr);
-      iteratorMediator().setup();
+      iterator().setup();
 
       // Optionally instantiate a Sweep object
       readOptional<bool>(in, "hasSweep", hasSweep_);
@@ -792,7 +788,7 @@ namespace Pspc
       Log::file() << std::endl;
 
       // Call iterator
-      int error = iteratorMediator().solve();
+      int error = iterator().solve();
       
       hasCFields_ = true;
 
