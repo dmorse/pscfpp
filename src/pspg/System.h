@@ -646,16 +646,6 @@ namespace Pspg
       */
       void readEcho(std::istream& in, std::string& string) const;
 
-      /**
-      * Compute inner product of two RDField fields (private, on GPU).
-      */
-      cudaReal innerProduct(const RDField<D>& a, const RDField<D>& b, int size);
-
-      /**
-      * Compute reduction of an RDField (private, on GPU).
-      */
-      cudaReal reductionH(const RDField<D>& a, int size);
-
       #if 0
       // Additional member variables for field-theoretic Monte Carlo
       
