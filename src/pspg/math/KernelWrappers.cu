@@ -2,6 +2,7 @@
 #define PSPG_KERNEL_WRAPPERS_CU
 
 #include "KernelWrappers.h"
+#include "ThreadGrid.h"
 
 namespace Pscf {
 namespace Pspg {
@@ -14,7 +15,7 @@ __host__ cudaReal gpuSum(cudaReal const * d_in, int size)
    int nBlocks, nThreads;
    int halvedsize = ceil((float)size/2);
 
-   setGpuBlocksThreads(nBlocks,nThreads,halvedsize);
+   ThreadGrid::setThreadsLogical(halvedsize,nBlocks,nThreads);
 
    // Set up temporary, small device and host arrays for storing reduced data
    // temp_ will handle excess and reduced and sum them up
@@ -49,7 +50,7 @@ __host__ cudaReal gpuInnerProduct(cudaReal const * d_a, cudaReal const * d_b, in
    int nBlocks, nThreads;
    int halvedsize = ceil((float)size/2);
 
-   setGpuBlocksThreads(nBlocks,nThreads,halvedsize);
+   ThreadGrid::setThreadsLogical(halvedsize,nBlocks,nThreads);
 
    // Set up temporary, small device and host arrays for storing reduced data
    // temp_ will handle excess and reduced and sum them up
@@ -83,7 +84,7 @@ __host__ cudaReal gpuMax(cudaReal const * d_in, int size)
    int nBlocks, nThreads;
    int halvedsize = ceil((float)size/2);
 
-   setGpuBlocksThreads(nBlocks,nThreads,halvedsize);
+   ThreadGrid::setThreadsLogical(halvedsize,nBlocks,nThreads);
 
    // Set up temporary, small device and host arrays for storing reduced data
    // temp_ will handle excess and reduced and sum them up
@@ -113,7 +114,7 @@ __host__ cudaReal gpuMaxAbs(cudaReal const * d_in, int size)
    int nBlocks, nThreads;
    int halvedsize = ceil((float)size/2);
 
-   setGpuBlocksThreads(nBlocks,nThreads,halvedsize);
+   ThreadGrid::setThreadsLogical(halvedsize,nBlocks,nThreads);
 
    // Set up temporary, small device and host arrays for storing reduced data
    // temp_ will handle excess and reduced and sum them up
@@ -144,7 +145,7 @@ __host__ cudaReal gpuMin(cudaReal const * d_in, int size)
    int nBlocks, nThreads;
    int halvedsize = ceil((float)size/2);
 
-   setGpuBlocksThreads(nBlocks,nThreads,halvedsize);
+   ThreadGrid::setThreadsLogical(halvedsize,nBlocks,nThreads);
 
    // Set up temporary, small device and host arrays for storing reduced data
    // temp_ will handle excess and reduced and sum them up
@@ -174,7 +175,7 @@ __host__ cudaReal gpuMinAbs(cudaReal const * d_in, int size)
    int nBlocks, nThreads;
    int halvedsize = ceil((float)size/2);
 
-   setGpuBlocksThreads(nBlocks,nThreads,halvedsize);
+   ThreadGrid::setThreadsLogical(halvedsize,nBlocks,nThreads);
 
    // Set up temporary, small device and host arrays for storing reduced data
    // temp_ will handle excess and reduced and sum them up

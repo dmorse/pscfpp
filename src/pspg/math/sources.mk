@@ -3,7 +3,7 @@ pspg_math_= \
      pspg/math/ParallelReductions.cu \
      pspg/math/Helpers.cu \
      pspg/math/KernelWrappers.cu \
-     pspg/math/GpuTypes.cu \
+     pspg/math/ThreadGrid.cu \
 
 pspg_math_SRCS=\
      $(addprefix $(SRC_DIR)/, $(pspg_math_))

@@ -8,13 +8,8 @@
 namespace Pscf {
 namespace Pspg {
 
-extern int THREADS_PER_BLOCK;
-extern int NUMBER_OF_BLOCKS;
-extern int MAX_THREADS_PER_BLOCK;
-
 //#define SINGLE_PRECISION
 #define DOUBLE_PRECISION
-
 
 #ifdef SINGLE_PRECISION
 typedef cufftReal cudaReal;
@@ -29,8 +24,6 @@ typedef cufftDoubleReal hostReal;
 typedef cufftDoubleComplex hostComplex;
 #endif
 #endif
-
-void setGpuBlocksThreads(int & nBlocks, int & nThreads, int const & datasize);
 
 #define gpuErrchk(ans) { gpuAssert((ans), __FILE__, __LINE__);}
 inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=true)

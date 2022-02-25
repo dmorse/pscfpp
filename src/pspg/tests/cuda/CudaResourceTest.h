@@ -31,18 +31,23 @@ public:
       printMethod(TEST_FUNC);
 
       // GPU Resources
-      NUMBER_OF_BLOCKS = 32; // parallel reduction into 32 blocks.
-      THREADS_PER_BLOCK = 32;
+      ThreadGrid::init();
+      const int nThreads = 32;
+      ThreadGrid::setThreadsPerBlock(nThreads);
+
+      // Data size and number of blocks
+      const int n = 32*nThreads*2;
+      int nBlocks;
+      ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
       // Create device and host arrays
-      const int n = NUMBER_OF_BLOCKS*THREADS_PER_BLOCK*2;
       cudaReal sum = 0;
       cudaReal sumCheck = 0;
       cudaReal* num = new cudaReal[n];
       cudaReal* d_temp;
       cudaReal* d_num;
       cudaMalloc((void**) &d_num, n*sizeof(cudaReal));
-      cudaMalloc((void**) &d_temp, NUMBER_OF_BLOCKS*sizeof(cudaReal));
+      cudaMalloc((void**) &d_temp, nBlocks*sizeof(cudaReal));
 
       // Test data
       for (int i = 0; i < n; i++) {
@@ -56,8 +61,8 @@ public:
 
       // Launch kernel twice and get output
       cudaMemcpy(d_num, num, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
-      reductionSum<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cudaReal)>>>(d_temp, d_num, n);
-      reductionSum<<<1, NUMBER_OF_BLOCKS/2, NUMBER_OF_BLOCKS/2*sizeof(cudaReal)>>>(d_temp, d_temp, NUMBER_OF_BLOCKS);
+      reductionSum<<<nBlocks, nThreads, nThreads*sizeof(cudaReal)>>>(d_temp, d_num, n);
+      reductionSum<<<1, nBlocks/2, nBlocks/2*sizeof(cudaReal)>>>(d_temp, d_temp, nBlocks);
       cudaMemcpy(&sum, d_temp, 1*sizeof(cudaReal), cudaMemcpyDeviceToHost);
 
       TEST_ASSERT(sum == sumCheck);
@@ -68,11 +73,16 @@ public:
       printMethod(TEST_FUNC);
 
       // GPU Resources
-      NUMBER_OF_BLOCKS = 1; // parallel reduction into 1 block.
-      THREADS_PER_BLOCK = 32;
+      ThreadGrid::init();
+      const int nThreads = 32;
+      ThreadGrid::setThreadsPerBlock(nThreads);
+
+      // Data size and number of blocks
+      const int n = 1*nThreads*2;
+      int nBlocks;
+      ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
       // Create device and host arrays
-      const int n = 1*32*2;
       cudaReal max = -1;
       cudaReal maxCheck = -10;
       cudaReal* num = new cudaReal[n];
@@ -96,7 +106,7 @@ public:
       }
 
       // Launch kernel and get output
-      reductionMax<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cudaReal)>>>(d_max, d_num, n);
+      reductionMax<<<nBlocks, nThreads, nThreads*sizeof(cudaReal)>>>(d_max, d_num, n);
       cudaMemcpy(&max, d_max, 1*sizeof(cudaReal), cudaMemcpyDeviceToHost);
 
       TEST_ASSERT(max == maxCheck);
@@ -108,11 +118,16 @@ public:
       printMethod(TEST_FUNC);
 
       // GPU Resources
-      NUMBER_OF_BLOCKS = 8; // parallel reduction into 32 blocks.
-      THREADS_PER_BLOCK = 32;
+      ThreadGrid::init();
+      const int nThreads = 32;
+      ThreadGrid::setThreadsPerBlock(nThreads);
+
+      // Data size and number of blocks
+      const int n = 8*nThreads*2;
+      int nBlocks;
+      ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
       // Create device and host arrays
-      const int n = NUMBER_OF_BLOCKS*THREADS_PER_BLOCK*2;
       cudaReal max = -1;
       cudaReal maxCheck = -10;
       cudaReal* num = new cudaReal[n];
@@ -120,7 +135,7 @@ public:
       cudaReal* d_max;
       cudaReal* d_num;
       cudaMalloc((void**) &d_num, n*sizeof(cudaReal));
-      cudaMalloc((void**) &d_temp, NUMBER_OF_BLOCKS*sizeof(cudaReal));
+      cudaMalloc((void**) &d_temp, nBlocks*sizeof(cudaReal));
       cudaMalloc((void**) &d_max, 1*sizeof(cudaReal));
 
       // Test data
@@ -137,8 +152,8 @@ public:
 
       // Launch kernel twice and get output
       cudaMemcpy(d_num, num, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
-      reductionMax<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cudaReal)>>>(d_temp, d_num, n);
-      reductionMax<<<1, NUMBER_OF_BLOCKS/2, NUMBER_OF_BLOCKS/2*sizeof(cudaReal)>>>(d_max, d_temp, NUMBER_OF_BLOCKS);
+      reductionMax<<<nBlocks, nThreads, nThreads*sizeof(cudaReal)>>>(d_temp, d_num, n);
+      reductionMax<<<1, nBlocks/2, nBlocks/2*sizeof(cudaReal)>>>(d_max, d_temp, nBlocks);
       cudaMemcpy(&max, d_max, 1*sizeof(cudaReal), cudaMemcpyDeviceToHost);
 
       TEST_ASSERT(max == maxCheck);
@@ -150,11 +165,16 @@ public:
       printMethod(TEST_FUNC);
 
       // GPU Resources
-      NUMBER_OF_BLOCKS = 8; // parallel reduction into 32 blocks.
-      THREADS_PER_BLOCK = 32;
+      ThreadGrid::init();
+      const int nThreads = 32;
+      ThreadGrid::setThreadsPerBlock(nThreads);
+
+      // Data size and number of blocks
+      const int n = 8*nThreads*2;
+      int nBlocks;
+      ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
       // Create device and host arrays
-      const int n = NUMBER_OF_BLOCKS*THREADS_PER_BLOCK*2;
       cudaReal max = -1;
       cudaReal maxCheck = -10;
       cudaReal* num = new cudaReal[n];
@@ -162,7 +182,7 @@ public:
       cudaReal* d_max;
       cudaReal* d_num;
       cudaMalloc((void**) &d_num, n*sizeof(cudaReal));
-      cudaMalloc((void**) &d_temp, NUMBER_OF_BLOCKS*sizeof(cudaReal));
+      cudaMalloc((void**) &d_temp, nBlocks*sizeof(cudaReal));
       cudaMalloc((void**) &d_max, 1*sizeof(cudaReal));
 
       // Test data
@@ -179,8 +199,8 @@ public:
 
       // Launch kernel twice and get output
       cudaMemcpy(d_num, num, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
-      reductionMaxAbs<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cudaReal)>>>(d_temp, d_num, n);
-      reductionMaxAbs<<<1, NUMBER_OF_BLOCKS/2, NUMBER_OF_BLOCKS/2*sizeof(cudaReal)>>>(d_max, d_temp, NUMBER_OF_BLOCKS);
+      reductionMaxAbs<<<nBlocks, nThreads, nThreads*sizeof(cudaReal)>>>(d_temp, d_num, n);
+      reductionMaxAbs<<<1, nBlocks/2, nBlocks/2*sizeof(cudaReal)>>>(d_max, d_temp, nBlocks);
       cudaMemcpy(&max, d_max, 1*sizeof(cudaReal), cudaMemcpyDeviceToHost);
 
       TEST_ASSERT(max == maxCheck);
@@ -192,11 +212,16 @@ public:
       printMethod(TEST_FUNC);
 
       // GPU Resources
-      NUMBER_OF_BLOCKS = 8; // parallel reduction into 32 blocks.
-      THREADS_PER_BLOCK = 32;
+      ThreadGrid::init();
+      const int nThreads = 32;
+      ThreadGrid::setThreadsPerBlock(nThreads);
+
+      // Data size and number of blocks
+      const int n = 8*nThreads*2;
+      int nBlocks;
+      ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
       // Create device and host arrays
-      const int n = NUMBER_OF_BLOCKS*THREADS_PER_BLOCK*2;
       cudaReal min = 100000;
       cudaReal minCheck = 100000;
       cudaReal* num = new cudaReal[n];
@@ -204,7 +229,7 @@ public:
       cudaReal* d_min;
       cudaReal* d_num;
       cudaMalloc((void**) &d_num, n*sizeof(cudaReal));
-      cudaMalloc((void**) &d_temp, NUMBER_OF_BLOCKS*sizeof(cudaReal));
+      cudaMalloc((void**) &d_temp, nBlocks*sizeof(cudaReal));
       cudaMalloc((void**) &d_min, 1*sizeof(cudaReal));
 
       // Test data
@@ -221,8 +246,8 @@ public:
 
       // Launch kernel twice and get output
       cudaMemcpy(d_num, num, n*sizeof(cudaReal), cudaMemcpyHostToDevice);
-      reductionMin<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cudaReal)>>>(d_temp, d_num, n);
-      reductionMin<<<1, NUMBER_OF_BLOCKS/2, NUMBER_OF_BLOCKS/2*sizeof(cudaReal)>>>(d_min, d_temp, NUMBER_OF_BLOCKS);
+      reductionMin<<<nBlocks, nThreads, nThreads*sizeof(cudaReal)>>>(d_temp, d_num, n);
+      reductionMin<<<1, nBlocks/2, nBlocks/2*sizeof(cudaReal)>>>(d_min, d_temp, nBlocks);
       cudaMemcpy(&min, d_min, 1*sizeof(cudaReal), cudaMemcpyDeviceToHost);
 
       TEST_ASSERT(min == minCheck);
@@ -232,12 +257,17 @@ public:
    void testGpuInnerProduct()
    {
       printMethod(TEST_FUNC);
+      
       // GPU Resources
-      MAX_THREADS_PER_BLOCK = 128;
+      ThreadGrid::init();
+      const int nThreads = 128;
+      ThreadGrid::setThreadsPerBlock(nThreads);
 
-      // Data size
+      // Data size and number of blocks.
       // Non-power-of-two to check performance in weird situations
-      int n = 14*MAX_THREADS_PER_BLOCK+77;
+      const int n = 14*nThreads + 77;
+      int nBlocks;
+      ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
       // Device arrays
       DField<cudaReal> d_a, d_b;
@@ -271,12 +301,17 @@ public:
    void testGpuSum()
    {
       printMethod(TEST_FUNC);
+      
       // GPU Resources
-      MAX_THREADS_PER_BLOCK = 128;
+      ThreadGrid::init();
+      const int nThreads = 128;
+      ThreadGrid::setThreadsPerBlock(nThreads);
 
-      // Data size
+      // Data size and number of blocks.
       // Non-power-of-two to check performance in weird situations
-      int n = 14*MAX_THREADS_PER_BLOCK+77;
+      const int n = 14*nThreads + 77;
+      int nBlocks;
+      ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
       // Device arrays
       DField<cudaReal> d_data;
@@ -306,12 +341,17 @@ public:
    void testGpuMax()
    {
       printMethod(TEST_FUNC);
+      
       // GPU Resources
-      MAX_THREADS_PER_BLOCK = 128;
+      ThreadGrid::init();
+      const int nThreads = 128;
+      ThreadGrid::setThreadsPerBlock(nThreads);
 
-      // Data size
+      // Data size and number of blocks.
       // Non-power-of-two to check performance in weird situations
-      int n = 14*MAX_THREADS_PER_BLOCK+77;
+      const int n = 14*nThreads + 77;
+      int nBlocks;
+      ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
       // Device arrays
       DField<cudaReal> d_data;
@@ -341,12 +381,17 @@ public:
    void testGpuMaxAbs()
    {
       printMethod(TEST_FUNC);
+      
       // GPU Resources
-      MAX_THREADS_PER_BLOCK = 128;
+      ThreadGrid::init();
+      const int nThreads = 128;
+      ThreadGrid::setThreadsPerBlock(nThreads);
 
-      // Data size
+      // Data size and number of blocks.
       // Non-power-of-two to check performance in weird situations
-      int n = 14*MAX_THREADS_PER_BLOCK+77;
+      const int n = 14*nThreads + 77;
+      int nBlocks;
+      ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
       // Device arrays
       DField<cudaReal> d_data;
@@ -376,12 +421,17 @@ public:
    void testGpuMin()
    {
       printMethod(TEST_FUNC);
+      
       // GPU Resources
-      MAX_THREADS_PER_BLOCK = 128;
+      ThreadGrid::init();
+      const int nThreads = 128;
+      ThreadGrid::setThreadsPerBlock(nThreads);
 
-      // Data size
+      // Data size and number of blocks.
       // Non-power-of-two to check performance in weird situations
-      int n = 14*MAX_THREADS_PER_BLOCK+77;
+      const int n = 14*nThreads + 77;
+      int nBlocks;
+      ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
       // Device arrays
       DField<cudaReal> d_data;
@@ -411,12 +461,17 @@ public:
    void testGpuMinAbs()
    {
       printMethod(TEST_FUNC);
+      
       // GPU Resources
-      MAX_THREADS_PER_BLOCK = 128;
+      ThreadGrid::init();
+      const int nThreads = 128;
+      ThreadGrid::setThreadsPerBlock(nThreads);
 
-      // Data size
+      // Data size and number of blocks.
       // Non-power-of-two to check performance in weird situations
-      int n = 14*MAX_THREADS_PER_BLOCK+77;
+      const int n = 14*nThreads + 77;
+      int nBlocks;
+      ThreadGrid::setThreadsLogical(n/2, nBlocks);
 
       // Device arrays
       DField<cudaReal> d_data;
