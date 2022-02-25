@@ -8,7 +8,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/iterator/AmIteratorTmpl.h>
 #include <pscf/inter/ChiInteraction.h>
 #include <util/containers/FArray.h>
 #include <util/format/Dbl.h>
@@ -24,8 +23,9 @@ namespace Pscf
    * Constructor
    */
    template <typename T>
-   AmIteratorTmpl<T>::AmIteratorTmpl()
-    : ParamComposite(),
+   AmIterator<T>::AmIterator(IteratorMediator<T>& iterMed, AmStrategy<T>& strategy)
+    : Iterator<T>(iterMed),
+      strategy_(&strategy),
       epsilon_(0),
       lambda_(0),
       nHist_(0),
@@ -36,13 +36,16 @@ namespace Pscf
    * Destructor
    */
    template <typename T>
-   AmIteratorTmpl<T>::~AmIteratorTmpl()
-   {}
+   AmIterator<T>::~AmIterator()
+   {
+      delete strategy_;
+   }
+
    /*
    * Read parameter file block.
    */
    template <typename T>
-   void AmIteratorTmpl<T>::readParameters(std::istream& in)
+   void AmIterator<T>::readParameters(std::istream& in)
    {
       errorType_ = "relNormResid"; // default type of error
       read(in, "maxItr", maxItr_);
@@ -62,10 +65,10 @@ namespace Pscf
    * Setup and allocate memory required by iterator.
    */
    template <typename T>
-   void AmIteratorTmpl<T>::setup()
+   void AmIterator<T>::setup()
    {
       // Determine length of residual basis vectors
-      nElem_ = nElements();
+      nElem_ = iterMed().nElements();
 
       // Allocate ring buffers
       fieldHists_.allocate(maxHist_+1);
@@ -88,11 +91,11 @@ namespace Pscf
    * Solve iteratively.
    */
    template <typename T>
-   int AmIteratorTmpl<T>::solve()
+   int AmIterator<T>::solve()
    {
 
       // Preconditions:
-      UTIL_CHECK(hasInitialGuess());
+      UTIL_CHECK(iterMed().hasInitialGuess());
 
       // Timers for timing iteration components
 
@@ -111,7 +114,7 @@ namespace Pscf
       
       // Solve MDE for initial state
       timerMDE.start();
-      evaluate();
+      iterMed().evaluate();
       timerMDE.stop();
 
       // Iterative loop
@@ -120,7 +123,7 @@ namespace Pscf
 
 
          // Store current field in history ringbuffer
-         getCurrent(temp_);
+         iterMed().getCurrent(temp_);
          fieldHists_.append(temp_);
          
          timerAM.start();
@@ -195,7 +198,7 @@ namespace Pscf
 
             // Solve the fixed point equation
             timerMDE.start();
-            evaluate();
+            iterMed().evaluate();
             timerMDE.stop();
 
          }
@@ -210,10 +213,10 @@ namespace Pscf
    }
 
    template <typename T>
-   void AmIteratorTmpl<T>::computeResidual()
+   void AmIterator<T>::computeResidual()
    {
       // Get residuals
-      getResidual(temp_);
+      iterMed().getResidual(temp_);
       
       // Store residuals in residual history ringbuffer
       resHists_.append(temp_);
@@ -222,19 +225,19 @@ namespace Pscf
    }
 
    template <typename T>
-   bool AmIteratorTmpl<T>::isConverged()
+   bool AmIterator<T>::isConverged()
    {
 
       // Find max residual vector element
-      double maxRes  = findMaxAbs(resHists_[0]);
+      double maxRes  = strategy().findMaxAbs(resHists_[0]);
       Log::file() << "Max Residual  = " << maxRes << std::endl;
 
       // Find norm of residual vector
-      double normRes = findNorm(resHists_[0]);
+      double normRes = strategy().findNorm(resHists_[0]);
       Log::file() << "Residual Norm = " << normRes << std::endl;
 
       // Find norm of residual vector relative to field
-      double relNormRes = normRes/findNorm(fieldHists_[0]);
+      double relNormRes = normRes/strategy().findNorm(fieldHists_[0]);
       Log::file() << "Relative Residual Norm = " << relNormRes << std::endl;
 
       // Check if total error is below tolerance
@@ -250,7 +253,7 @@ namespace Pscf
    }
 
    template <typename T>
-   void AmIteratorTmpl<T>::findResidCoeff()
+   void AmIterator<T>::findResidCoeff()
    {
       // Initialize matrix and vector of residual dot products
       // if this is the first iteration
@@ -266,11 +269,11 @@ namespace Pscf
       }
 
       // Update basis vectors of residuals histories
-      updateBasis(resBasis_, resHists_);
+      strategy().updateBasis(resBasis_, resHists_);
 
       // Update the U matrix and v vectors
-      updateU(U_, resBasis_, nHist_);
-      updateV(v_, resHists_[0], resBasis_, nHist_);
+      strategy().updateU(U_, resBasis_, nHist_);
+      strategy().updateV(v_, resHists_[0], resBasis_, nHist_);
 
       // Solve matrix equation problem to get coefficients to minimize
       // the norm of the residual vector
@@ -313,33 +316,33 @@ namespace Pscf
    }
 
    template <typename T>
-   void AmIteratorTmpl<T>::updateGuess()
+   void AmIterator<T>::updateGuess()
    {
 
       // Contribution of the last solution
-      setEqual(fieldTrial_,fieldHists_[0]);
-      setEqual(resTrial_, resHists_[0]);
+      strategy().setEqual(fieldTrial_,fieldHists_[0]);
+      strategy().setEqual(resTrial_, resHists_[0]);
 
       // If at least two histories
       if (nHist_ > 0) {
          // Update the basis vectors of field histories
-         updateBasis(fieldBasis_,fieldHists_);
+         strategy().updateBasis(fieldBasis_,fieldHists_);
          // Combine histories into trial guess and predicted error
-         addHistories(fieldTrial_, fieldBasis_, coeffs_, nHist_);
-         addHistories(resTrial_, resBasis_, coeffs_, nHist_);
+         strategy().addHistories(fieldTrial_, fieldBasis_, coeffs_, nHist_);
+         strategy().addHistories(resTrial_, resBasis_, coeffs_, nHist_);
       }
 
       // Correct for predicted error
-      addPredictedError(fieldTrial_,resTrial_,lambda_);
+      strategy().addPredictedError(fieldTrial_,resTrial_,lambda_);
 
       // Send out updated guess to the iterator mediator
-      update(fieldTrial_);
+      iterMed().update(fieldTrial_);
       
       return;
    }
 
    template <typename T>
-   void AmIteratorTmpl<T>::cleanUp()
+   void AmIterator<T>::cleanUp()
    {
       // Clear ring buffers
       resHists_.clear();

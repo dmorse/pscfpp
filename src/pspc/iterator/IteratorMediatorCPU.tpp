@@ -1,5 +1,5 @@
-#ifndef PSPC_AM_ITERATOR_CPP
-#define PSPC_AM_ITERATOR_CPP
+#ifndef PSPC_ITERATOR_MEDIATOR_CPU_TPP
+#define PSPC_ITERATOR_MEDIATOR_CPU_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -8,156 +8,56 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "AmIterator.h"
-#include <cmath>
+#include <util/global.h>
+#include <util/containers/DArray.h>
+#include <util/containers/FSArray.h>
+#include "IteratorMediatorCPU.h"
+#include <pscf/inter/ChiInteraction.h>
 
 namespace Pscf {
-namespace Pspc {
+namespace Pspc{
 
+   using namespace Util;
+
+   /// Constructor
    template <int D>
-   AmIterator<D>::AmIterator(System<D>& system)
-    : Iterator(system)
+   IteratorMediatorCPU<D>::IteratorMediatorCPU(System<D>& sys)
+    : sys_(&sys),
+      iter_(0)
    {}
 
+   /// Destructor
    template <int D>
-   AmIterator<D>::~AmIterator()
-   {}
-      
-   template <int D>
-   double AmIterator<D>::findNorm(DArray<double> const & hist) 
+   IteratorMediatorCPU<D>::~IteratorMediatorCPU()
    {
-      const int n = hist.capacity();
-      double normResSq = 0.0;
+      if (iter_)
+         delete iter_;
+   }
 
-      for (int i = 0; i < n; i++) {
-         normResSq += hist[i] * hist[i];
-      }
-
-      return sqrt(normResSq);
+   /// Set iterator pointer
+   template <int D>
+   void IteratorMediatorCPU<D>::setIterator(Iterator<FieldCPU>& iter)
+   {
+      iter_ = &iter;
+      return;
    }
 
    template <int D>
-   double AmIterator<D>::findMaxAbs(DArray<double> const & hist)
-   {
-      const int n = hist.capacity();
-      double maxRes = 0.0;
-
-      for (int i = 0; i < n; i++) {
-         if (fabs(hist[i]) > maxRes) 
-            maxRes = fabs(hist[i]);
-      }
-
-      return maxRes;
-   }
+   void IteratorMediatorCPU<D>::setup()
+   { iter_->setup(); }
 
    template <int D>
-   void AmIterator<D>::updateBasis(RingBuffer<DArray<double>> & basis, RingBuffer<DArray<double>> const & hists)
-   {
-      // Make sure at least two histories are stored
-      UTIL_CHECK(hists.size() >= 2);
-
-      const int n = hists[0].capacity();
-      DArray<double> newbasis;
-      newbasis.allocate(n);
-
-      for (int i = 0; i < n; i++) {
-         newbasis[i] = hists[0][i] - hists[1][i]; // sequential histories basis vectors
-      }
-
-      basis.append(newbasis);
-   }
+   int IteratorMediatorCPU<D>::solve()
+   { return iter_->solve(); }
 
    template <int D>
-   double AmIterator<D>::computeUDotProd(RingBuffer<DArray<double>> const & resBasis, int m, int n)
-   {
-      const int length = resBasis[0].capacity();
-      
-      double dotprod = 0.0;
-      for(int i = 0; i < length; i++) {
-         dotprod += resBasis[m][i] * resBasis[n][i];
-      }
-
-      return dotprod;
-   }
-
-   template <int D>
-   double AmIterator<D>::computeVDotProd(DArray<double> const & resCurrent, RingBuffer<DArray<double>> const & resBasis, int m)
-   {
-      const int length = resBasis[0].capacity();
-      
-      double dotprod = 0.0;
-      for(int i = 0; i < length; i++) {
-         dotprod += resCurrent[i] * resBasis[m][i];
-      }
-
-      return dotprod;
-   }
-
-   template <int D>
-   void AmIterator<D>::updateU(DMatrix<double> & U, RingBuffer<DArray<double>> const & resBasis, int nHist)
-   {
-      // Update matrix U by shifting elements diagonally
-      int maxHist = U.capacity1();
-      for (int m = maxHist-1; m > 0; --m) {
-         for (int n = maxHist-1; n > 0; --n) {
-            U(m,n) = U(m-1,n-1); 
-         }
-      }
-
-      // Compute U matrix's new row 0 and col 0
-      for (int m = 0; m < nHist; ++m) {
-         double dotprod = computeUDotProd(resBasis,0,m);
-         U(m,0) = dotprod;
-         U(0,m) = dotprod;
-      }
-   }
-
-   template <int D>
-   void AmIterator<D>::updateV(DArray<double> & v, DArray<double> const & resCurrent, RingBuffer<DArray<double>> const & resBasis, int nHist)
-   {
-      // Compute U matrix's new row 0 and col 0
-      // Also, compute each element of v_ vector
-      for (int m = 0; m < nHist; ++m) {
-         v[m] = computeVDotProd(resCurrent,resBasis,m);
-      }
-   }
-
-   template <int D>
-   void AmIterator<D>::setEqual(DArray<double>& a, DArray<double> const & b)
-   {
-      // This seems silly here, but in other implementations it may not be! Goal: no explicit math in AmIterator.
-      a = b;
-   }
-
-   template <int D>
-   void AmIterator<D>::addHistories(DArray<double>& trial, RingBuffer<DArray<double>> const & basis, DArray<double> coeffs, int nHist)
-   {
-      int n = trial.capacity();
-      for (int i = 0; i < nHist; i++) {
-         for (int j = 0; j < n; j++) {
-            // Not clear on the origin of the -1 factor
-            trial[j] += coeffs[i] * -1 * basis[i][j]; 
-         }
-      }
-   }
-
-   template <int D>
-   void AmIterator<D>::addPredictedError(DArray<double>& fieldTrial, DArray<double> const & resTrial, double lambda)
-   {
-      int n = fieldTrial.capacity();
-      for (int i = 0; i < n; i++) {
-         fieldTrial[i] += lambda * resTrial[i];
-      }
-   }
-
-   template <int D>
-   bool AmIterator<D>::hasInitialGuess()
+   bool IteratorMediatorCPU<D>::hasInitialGuess()
    {
       return sys_->hasWFields();
    }
    
    template <int D>
-   int AmIterator<D>::nElements()
+   int IteratorMediatorCPU<D>::nElements()
    {
       const int nMonomer = sys_->mixture().nMonomer();
       const int nBasis = sys_->basis().nBasis();
@@ -172,7 +72,7 @@ namespace Pspc {
    }
 
    template <int D>
-   void AmIterator<D>::getCurrent(DArray<double>& curr)
+   void IteratorMediatorCPU<D>::getCurrent(FieldCPU& curr)
    {
       // Straighten out fields into linear arrays
 
@@ -202,7 +102,7 @@ namespace Pspc {
    }
 
    template <int D>
-   void AmIterator<D>::evaluate()
+   void IteratorMediatorCPU<D>::evaluate()
    {
       // Solve MDEs for current omega field
       sys_->compute();
@@ -213,7 +113,7 @@ namespace Pspc {
    }
 
    template <int D>
-   void AmIterator<D>::getResidual(DArray<double>& resid)
+   void IteratorMediatorCPU<D>::getResidual(FieldCPU& resid)
    {
       const int n = nElements();
       const int nMonomer = sys_->mixture().nMonomer();
@@ -272,7 +172,7 @@ namespace Pspc {
    }
 
    template <int D>
-   void AmIterator<D>::update(DArray<double>& newGuess)
+   void IteratorMediatorCPU<D>::update(FieldCPU& newGuess)
    {
       // Convert back to field format
       const int nMonomer = sys_->mixture().nMonomer();
@@ -314,6 +214,11 @@ namespace Pspc {
       }
       
    }
+
+   // Finalize???? Could have the iterator call this, and have it be by default empty
+   // as a place to put things that may need to be done at the end of an iteration. Or could have the system
+   // take care of this since it doesn't have much to do with the iterator. For example, need to compute stress
+   // if not flexible. 
 
 }
 }
