@@ -145,14 +145,6 @@ namespace Pspg {
          (fieldTrial.cDField(), resTrial.cDField(), lambda, fieldTrial.capacity());
    }
 
-   // --- Private member functions that are specific to this implementation --- 
-
-   void AmStrategyCUDA::allocatePrivateMembers(int n) const
-   {
-      temp_ = new cudaReal[n];
-      gpuErrchk(cudaMalloc((void**) &d_temp_, n*sizeof(cudaReal)));
-   }
-
 }
 }
 

@@ -645,7 +645,7 @@ namespace Pspg
 
       // Convert c and w fields from r-grid to basis
       fieldIo().convertRGridToBasis(wFieldsRGrid(), wFields());
-      fieldIo().convertRGridToBasis(cFieldsRGrid_, cFields_);
+      fieldIo().convertRGridToBasis(cFieldsRGrid(), cFields());
 
       hasCFields_ = true;
 
@@ -670,6 +670,8 @@ namespace Pspg
       int error = iteratorMediator().solve();
       
       hasCFields_ = true;
+
+      // Is this actually necessary? Seemed like it from before. 
       fieldIo().convertRGridToBasis(wFieldsRGrid(), wFields());
       fieldIo().convertRGridToBasis(cFieldsRGrid(), cFields());
 
