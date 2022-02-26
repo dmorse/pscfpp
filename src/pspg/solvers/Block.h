@@ -182,6 +182,10 @@ namespace Pspg {
 
    private:
 
+      // Number of blocks and threads per block, set in setDiscretization
+      int nBlocks_;
+      int nThreads_;
+
       // Fourier transform plan
       FFT<D> fft_;
 

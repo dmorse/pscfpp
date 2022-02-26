@@ -51,9 +51,6 @@ public:
 
    void testSolver1D()
    {
-      // Set gpu resources
-      NUMBER_OF_BLOCKS = 1;
-      THREADS_PER_BLOCK = 32;
 
       printMethod(TEST_FUNC);
       Mixture<1> mixture;
@@ -129,10 +126,6 @@ public:
 
    void testSolver2D()
    {
-      // Set gpu resources
-      NUMBER_OF_BLOCKS = 8;
-      THREADS_PER_BLOCK = 32;
-
       printMethod(TEST_FUNC);
       Mixture<2> mixture;
 
@@ -218,10 +211,6 @@ public:
 
    void testSolver2D_hex()
    {
-      // Set gpu resources
-      NUMBER_OF_BLOCKS = 8;
-      THREADS_PER_BLOCK = 32;
-
       printMethod(TEST_FUNC);
       Mixture<2> mixture;
 
@@ -307,10 +296,6 @@ public:
 
    void testSolver3D()
    {
-      // Set gpu resources
-      NUMBER_OF_BLOCKS = 8;
-      THREADS_PER_BLOCK = 64;
-
       printMethod(TEST_FUNC);
       Mixture<3> mixture;
 

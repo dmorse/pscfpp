@@ -34,18 +34,14 @@ void FftTest::testConstructor()
    printMethod(TEST_FUNC);
    {
       FFT<1> v;
-      //TEST_ASSERT(v.capacity() == 0 );
-      //TEST_ASSERT(!v.isAllocated() );
    }
 } 
 
 void FftTest::testTransform1D() {
    printMethod(TEST_FUNC);
 
-   // GPU Resources
-   NUMBER_OF_BLOCKS = 32;
-   THREADS_PER_BLOCK = 32;
-   int n = 10;
+   // Data size
+   int n = 100;
    IntVec<1> d;
    d[0] = n;
 
@@ -93,10 +89,6 @@ void FftTest::testTransform1D() {
 
 void FftTest::testTransform2D() {
    printMethod(TEST_FUNC);
-
-   // GPU Resources
-   NUMBER_OF_BLOCKS = 32;
-   THREADS_PER_BLOCK = 32;
    
    int n1 = 3, n2 = 3;
    IntVec<2> d;
@@ -155,10 +147,6 @@ void FftTest::testTransform2D() {
 
 void FftTest::testTransform3D() {
    printMethod(TEST_FUNC);
-
-   // GPU Resources
-   NUMBER_OF_BLOCKS = 32;
-   THREADS_PER_BLOCK = 32;
    
    int n1 = 3, n2 = 3, n3 = 3;
    IntVec<3> d;

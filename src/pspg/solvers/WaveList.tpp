@@ -227,6 +227,11 @@ namespace Pspg
       //min image needs to be on device but okay since its only done once
       //second to last parameter is number of stars originally
 
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(rSize_, nBlocks, nThreads);
+
+
       int idx;
       for(int i = 0 ; i < unitCell.nParameter(); ++i) {
          for(int j = 0; j < D; ++j) {
@@ -242,12 +247,12 @@ namespace Pspg
                  cudaMemcpyHostToDevice);
 
       cudaMemset(dkSq_, 0, unitCell.nParameter() * rSize_ * sizeof(cudaReal));
-       makeDksqHelperWave<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>
+       makeDksqHelperWave<<<nBlocks, nThreads>>>
          (dkSq_, minImage_d, dkkBasis_d, partnerIdTable_d,
           selfIdTable_d, implicit_d, unitCell.nParameter(), 
           kSize_, rSize_, D);
        
-       makeDksqReduction<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>
+       makeDksqReduction<<<nBlocks, nThreads>>>
           (dkSq_, partnerIdTable_d, unitCell.nParameter(),
             kSize_, rSize_);
    }

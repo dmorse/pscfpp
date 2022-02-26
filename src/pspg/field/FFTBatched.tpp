@@ -247,6 +247,10 @@ static __global__ void scaleRealData(cudaReal* data, cudaReal scale, int size) {
    template <int D>
    void FFTBatched<D>::forwardTransform(RDField<D>& rField, RDFieldDft<D>& kField)
    {
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(rSize_*2, nBlocks, nThreads);
+
       // Check dimensions or setup
       if (isSetup_) {
          UTIL_CHECK(rField.capacity() == 2*rSize_);
@@ -260,7 +264,7 @@ static __global__ void scaleRealData(cudaReal* data, cudaReal scale, int size) {
       // Copy rescaled input data prior to work array
       cudaReal scale = 1.0/cudaReal(rSize_);
       //scale for every batch
-      scaleRealData<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(rField.cDField(), scale, rSize_ * 2);
+      scaleRealData<<<nBlocks, nThreads>>>(rField.cDField(), scale, rSize_ * 2);
       
       //perform fft
       #ifdef SINGLE_PRECISION
@@ -284,6 +288,10 @@ static __global__ void scaleRealData(cudaReal* data, cudaReal scale, int size) {
    void FFTBatched<D>::forwardTransform
    (cudaReal* rField, cudaComplex* kField, int batchSize)
    {
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(rSize_*batchSize, nBlocks, nThreads);
+
       // Check dimensions or setup
       if (isSetup_) {
       } else {
@@ -294,7 +302,7 @@ static __global__ void scaleRealData(cudaReal* data, cudaReal scale, int size) {
       // Copy rescaled input data prior to work array
       cudaReal scale = 1.0/cudaReal(rSize_);
       //scale for every batch
-      scaleRealData<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(rField, scale, rSize_ * batchSize);
+      scaleRealData<<<nBlocks, nThreads>>>(rField, scale, rSize_ * batchSize);
       
       //perform fft
       #ifdef SINGLE_PRECISION

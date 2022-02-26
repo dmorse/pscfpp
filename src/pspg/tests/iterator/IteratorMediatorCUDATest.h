@@ -32,9 +32,6 @@ public:
    void testNElements() 
    {
       printMethod(TEST_FUNC);
-      // GPU Resources
-      NUMBER_OF_BLOCKS = 128;
-      THREADS_PER_BLOCK = 256;
 
       System<3> system;
       setupSystem3D(system);
@@ -51,9 +48,6 @@ public:
    void testGetCurrent()
    {
       printMethod(TEST_FUNC);
-      // GPU Resources
-      NUMBER_OF_BLOCKS = 128;
-      THREADS_PER_BLOCK = 256;
 
       // Sample system
       System<3> system;
@@ -96,9 +90,6 @@ public:
    void testGetResidual()
    {
       printMethod(TEST_FUNC);
-      // GPU Resources
-      NUMBER_OF_BLOCKS = 128;
-      THREADS_PER_BLOCK = 256;
 
       // Sample system
       System<3> system;
@@ -129,7 +120,7 @@ public:
          if (fabs(resid[i]) > 1E-15) passed = true;
       }
       if (!passed)
-         TEST_THROW("All residual elements were zero. This is unlikey, and likely an error.");
+         TEST_THROW("All residual elements were zero. This is not correct, so something went wrong.");
 
    }
 
@@ -137,9 +128,6 @@ public:
    void testFindAverage()
    {
       printMethod(TEST_FUNC);
-      // GPU Resources
-      NUMBER_OF_BLOCKS = 32;
-      THREADS_PER_BLOCK = 32;
 
       // Sample system
       System<3> system;
@@ -147,7 +135,7 @@ public:
       IteratorMediatorCUDA<3> itermed(system);
 
       // create host and device data arrays
-      const int n = NUMBER_OF_BLOCKS*THREADS_PER_BLOCK;
+      const int n = 128*128;
       cudaReal* data = new cudaReal[n];
       FieldCUDA d_data;
       d_data.allocate(n);

@@ -56,6 +56,10 @@ namespace Pspg {
       const int nBasisVec = hists.size() - 1;
       const int n = hists[0].capacity();
 
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+
       // Holding area for new basis vectors
       FieldCUDA newbasis;
       newbasis.allocate(n);
@@ -63,7 +67,7 @@ namespace Pspg {
       // Compute each basis vector
       for (int i = 0; i < nBasisVec; i++)
       {
-         pointWiseBinarySubtract<<<NUMBER_OF_BLOCKS,THREADS_PER_BLOCK>>>
+         pointWiseBinarySubtract<<<nBlocks,nThreads>>>
             (hists[0].cDField(),hists[i+1].cDField(),newbasis.cDField(),n);
             basis.append(newbasis);
       }
@@ -111,21 +115,33 @@ namespace Pspg {
 
    void AmStrategyCUDA::setEqual(FieldCUDA& a, FieldCUDA const & b) const
    {
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(a.capacity(), nBlocks, nThreads);
+      
       UTIL_CHECK(b.capacity() == a.capacity());
-      assignReal<<<NUMBER_OF_BLOCKS,THREADS_PER_BLOCK>>>(a.cDField(), b.cDField(), a.capacity());
+      assignReal<<<nBlocks, nThreads>>>(a.cDField(), b.cDField(), a.capacity());
    }
 
    void AmStrategyCUDA::addHistories(FieldCUDA& trial, RingBuffer<FieldCUDA> const & basis, DArray<double> coeffs, int nHist) const
    {
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(trial.capacity(), nBlocks, nThreads);
+
       for (int i = 0; i < nHist; i++) {
-         pointWiseAddScale <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> 
+         pointWiseAddScale<<<nBlocks, nThreads>>>
                (trial.cDField(), basis[i].cDField(), -1*coeffs[i], trial.capacity());
       }
    }
 
    void AmStrategyCUDA::addPredictedError(FieldCUDA& fieldTrial, FieldCUDA const & resTrial, double lambda) const
    {
-      pointWiseAddScale <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> 
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(fieldTrial.capacity(), nBlocks, nThreads);
+
+      pointWiseAddScale<<<nBlocks, nThreads>>>
          (fieldTrial.cDField(), resTrial.cDField(), lambda, fieldTrial.capacity());
    }
 

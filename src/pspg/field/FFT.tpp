@@ -130,6 +130,10 @@ namespace Pspg
    void FFT<D>::forwardTransform(RDField<D> & rField, RDFieldDft<D>& kField)
    const
    {
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(rSize_, nBlocks, nThreads);
+
       // Check dimensions or setup
       UTIL_CHECK(isSetup_);
       UTIL_CHECK(rField.capacity() == rSize_);
@@ -137,7 +141,7 @@ namespace Pspg
 
       // Rescale outputted data. 
       cudaReal scale = 1.0/cudaReal(rSize_);
-      scaleRealData<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(rField.cDField(), scale, rSize_);
+      scaleRealData<<<nBlocks, nThreads>>>(rField.cDField(), scale, rSize_);
       
       //perform fft
       #ifdef SINGLE_PRECISION

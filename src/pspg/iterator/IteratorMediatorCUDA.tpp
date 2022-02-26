@@ -80,6 +80,10 @@ namespace Pspg{
       const int nMesh = sys_->mesh().size();
       const int n = nElements();
 
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(nMesh, nBlocks, nThreads);
+
       // pointer to fields on system
       DArray<RDField<D>> * const currSys = &sys_->wFieldsRGrid();
 
@@ -93,7 +97,7 @@ namespace Pspg{
       average /= nMonomer;
       // Subtract average from each field, setting average to zero
       for (int i = 0; i < nMonomer; i++) {
-         subtractUniform<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>((*currSys)[i].cDField(), average, nMesh);
+         subtractUniform<<<nBlocks, nThreads>>>((*currSys)[i].cDField(), average, nMesh);
       } 
       
       // Initialize current field values values to zeroes.
@@ -101,7 +105,7 @@ namespace Pspg{
 
       // loop to unfold the system fields and store them in one long array
       for (int i = 0; i < nMonomer; i++) {
-         assignReal<<<NUMBER_OF_BLOCKS,THREADS_PER_BLOCK>>>(curr.cDField() + i*nMesh, (*currSys)[i].cDField(), nMesh);
+         assignReal<<<nBlocks,nThreads>>>(curr.cDField() + i*nMesh, (*currSys)[i].cDField(), nMesh);
       }
 
       // if flexible unit cell, also store unit cell parameters
@@ -137,22 +141,27 @@ namespace Pspg{
       const int n = nElements();
       const int nMonomer = sys_->mixture().nMonomer();
       const int nMesh = sys_->mesh().size();
+
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(nMesh, nBlocks, nThreads);
       
-      // Initialize residuals to zero
-      assignUniformReal<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(resid.cDField(), 0, n);
+      // Initialize residuals to zero. Kernel will take care of potential
+      // additional elements (n vs nMesh).
+      assignUniformReal<<<nBlocks, nThreads>>>(resid.cDField(), 0, n);
 
       // Compute SCF residuals
       for (int i = 0; i < nMonomer; i++) {
          int startIdx = i*nMesh;
          for (int j = 0; j < nMonomer; j++) {
-            pointWiseAddScale<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(resid.cDField() + startIdx,
-                                                                            sys_->cFieldRGrid(j).cDField(),
-                                                                            sys_->interaction().chi(i, j),
-                                                                            nMesh);
-            pointWiseAddScale<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(resid.cDField() + startIdx,
-                                                                            sys_->wFieldRGrid(j).cDField(),
-                                                                            -sys_->interaction().idemp(i, j),
-                                                                            nMesh);
+            pointWiseAddScale<<<nBlocks, nThreads>>>(resid.cDField() + startIdx,
+                                                      sys_->cFieldRGrid(j).cDField(),
+                                                      sys_->interaction().chi(i, j),
+                                                      nMesh);
+            pointWiseAddScale<<<nBlocks, nThreads>>>(resid.cDField() + startIdx,
+                                                      sys_->wFieldRGrid(j).cDField(),
+                                                      -sys_->interaction().idemp(i, j),
+                                                      nMesh);
          }
       }
       
@@ -161,9 +170,8 @@ namespace Pspg{
       cudaReal factor = 1/(cudaReal)sys_->interaction().sum_inv();
       for (int i = 0; i < nMonomer; ++i) {
          
-         subtractUniform<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(resid.cDField() + i*nMesh,
-                                                                           factor, 
-                                                                           nMesh);
+         subtractUniform<<<nBlocks, nThreads>>>(resid.cDField() + i*nMesh,
+                                                            factor, nMesh);
       }
 
       // If variable unit cell, compute stress residuals
@@ -186,12 +194,16 @@ namespace Pspg{
       const int nMonomer = sys_->mixture().nMonomer();
       const int nMesh = sys_->mesh().size();
 
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(nMesh, nBlocks, nThreads);
+
       // pointer to fields on system
       DArray<RDField<D>> * sysfields = &sys_->wFieldsRGrid();
 
       // copy over grid points
       for (int i = 0; i < nMonomer; i++) {
-         assignReal<<<NUMBER_OF_BLOCKS,THREADS_PER_BLOCK>>>
+         assignReal<<<nBlocks, nThreads>>>
                ((*sysfields)[i].cDField(), newGuess.cDField() + i*nMesh, nMesh);
       }
 

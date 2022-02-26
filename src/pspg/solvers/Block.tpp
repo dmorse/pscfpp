@@ -47,11 +47,11 @@ namespace Pspg {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
       for (int i = startID; i < kSize; i += nThreads) {
-   #ifdef SINGLE_PRECISION
+         #ifdef SINGLE_PRECISION
          result[i] =  cuCmulf(q1[i], cuConjf(q2[i])).x * delKsq[paramN * rSize + i];
-   #else
+         #else
          result[i] =  cuCmul(q1[i], cuConj(q2[i])).x * delKsq[paramN * rSize + i];
-   #endif
+         #endif
       }
    }
 
@@ -137,7 +137,7 @@ namespace Pspg {
       }
    }
 
-   static __global__ void assignExp(cudaReal* expW, const cudaReal* w, int size, double cDs) {
+   static __global__ void assignExp(cudaReal* expW, const cudaReal* w, double cDs, int size) {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
       for(int i = startID; i < size; i += nThreads) {
@@ -169,7 +169,7 @@ namespace Pspg {
    static __global__ void multiplyScaleQQ(cudaReal* result,
                               const cudaReal* p1,
                               const cudaReal* p2,
-                              int size, double scale) {
+                              double scale, int size) {
 
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
@@ -180,7 +180,7 @@ namespace Pspg {
 
    }
 
-   static __global__ void scaleReal(cudaReal* result, int size, double scale) {
+   static __global__ void scaleReal(cudaReal* result, double scale, int size) {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
 
@@ -231,6 +231,9 @@ namespace Pspg {
       UTIL_CHECK(mesh.size() > 1);
       UTIL_CHECK(ds > 0.0);
       UTIL_CHECK(!isAllocated_);
+
+      // GPU Resources
+      ThreadGrid::setThreadsLogical(mesh.size(),nBlocks_,nThreads_);
 
       // Set association to mesh
       meshPtr_ = &mesh;
@@ -283,14 +286,16 @@ namespace Pspg {
       gpuErrchk(cudaMalloc((void**)&qk2Batched_, ns_ * kSize_ * sizeof(cudaComplex)));
       cField().allocate(mesh.dimensions());
 
-      gpuErrchk(cudaMalloc((void**)&d_temp_, NUMBER_OF_BLOCKS * sizeof(cudaReal)));
-      temp_ = new cudaReal[NUMBER_OF_BLOCKS];
+      gpuErrchk(cudaMalloc((void**)&d_temp_, nBlocks_ * sizeof(cudaReal)));
+      temp_ = new cudaReal[nBlocks_];
 
       expKsq_host = new cudaReal[kSize_];
       expKsq2_host = new cudaReal[kSize_];
 
       isAllocated_ = true;
       hasExpKsq_ = false;
+
+      
    }
 
    /*
@@ -395,8 +400,8 @@ namespace Pspg {
       // Populate expW_
       // std::cout << std::endl;
       // expW_[i] = exp(-0.5*w[i]*ds_);
-      assignExp<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(expW_.cDField(), w.cDField(), nx, (double)0.5* ds_);
-      assignExp<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(expW2_.cDField(), w.cDField(), nx, (double)0.25 * ds_);
+      assignExp<<<nBlocks_, nThreads_>>>(expW_.cDField(), w.cDField(), (double)0.5* ds_, nx);
+      assignExp<<<nBlocks_, nThreads_>>>(expW2_.cDField(), w.cDField(), (double)0.25 * ds_, nx);
 
       // Compute expKsq arrays if necessary
       if (!hasExpKsq_) {
@@ -422,22 +427,22 @@ namespace Pspg {
 
       // Initialize cField to zero at all points
       //cField()[i] = 0.0;
-      assignUniformReal<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(cField().cDField(), 0.0, nx);
+      assignUniformReal<<<nBlocks_, nThreads_>>>(cField().cDField(), 0.0, nx);
 
       Pscf::Pspg::Propagator<D> const & p0 = propagator(0);
       Pscf::Pspg::Propagator<D> const & p1 = propagator(1);
 
 
       //cudaDeviceSynchronize();
-      multiplyScaleQQ<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(cField().cDField(), p0.q(0), p1.q(ns_ - 1), nx, 1.0);
-      multiplyScaleQQ<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(cField().cDField(), p0.q(ns_-1), p1.q(0), nx, 1.0);
+      multiplyScaleQQ<<<nBlocks_, nThreads_>>>(cField().cDField(), p0.q(0), p1.q(ns_ - 1), 1.0, nx);
+      multiplyScaleQQ<<<nBlocks_, nThreads_>>>(cField().cDField(), p0.q(ns_-1), p1.q(0), 1.0, nx);
       for (int j = 1; j < ns_ - 1; j += 2) {
         //odd indices
-         multiplyScaleQQ<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(cField().cDField(), p0.q(j), p1.q(ns_ - 1 - j), nx, 4.0);
+         multiplyScaleQQ<<<nBlocks_, nThreads_>>>(cField().cDField(), p0.q(j), p1.q(ns_ - 1 - j), 4.0, nx);
       }
       for (int j = 2; j < ns_ - 2; j += 2) {
          //even indices
-         multiplyScaleQQ<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(cField().cDField(), p0.q(j), p1.q(ns_ - 1 - j), nx, 2.0);
+         multiplyScaleQQ<<<nBlocks_, nThreads_>>>(cField().cDField(), p0.q(j), p1.q(ns_ - 1 - j), 2.0, nx);
       }
 
     // cudaReal* tempVal = new cudaReal;
@@ -447,7 +452,7 @@ namespace Pspg {
      //std::cout << "This is ds_ " << ds_ << std::endl;
      //delete tempVal;
 
-     scaleReal<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(cField().cDField(), nx, (prefactor *ds_ / 3.0));
+     scaleReal<<<nBlocks_, nThreads_>>>(cField().cDField(), (prefactor *ds_ / 3.0), nx);
      //cudaDeviceSynchronize();
 
 
@@ -486,20 +491,20 @@ namespace Pspg {
 
       // Apply pseudo-spectral algorithm
 
-      pointwiseMulSameStart<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>
+      pointwiseMulSameStart<<<nBlocks_, nThreads_>>>
                            (q, expW_.cDField(), expW2_.cDField(), qr_.cDField(), qr2_.cDField(), nx);
       fft_.forwardTransform(qr_, qk_);
       fft_.forwardTransform(qr2_, qk2_);
-      scaleComplexTwinned<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>
+      scaleComplexTwinned<<<nBlocks_, nThreads_>>>
                            (qk_.cDField(), qk2_.cDField(), expKsq_.cDField(), expKsq2_.cDField(), nk);
       fft_.inverseTransform(qk_, qr_);
       fft_.inverseTransform(qk2_, q2_);
-      pointwiseMulTwinned<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>
+      pointwiseMulTwinned<<<nBlocks_, nThreads_>>>
                            (qr_.cDField(), q2_.cDField(), expW_.cDField(), q1_.cDField(), qr_.cDField(), nx);
       fft_.forwardTransform(qr_, qk_);
-      scaleComplex<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(qk_.cDField(), expKsq2_.cDField(), nk);
+      scaleComplex<<<nBlocks_, nThreads_>>>(qk_.cDField(), expKsq2_.cDField(), nk);
       fft_.inverseTransform(qk_, qr_);
-      richardsonExpTwinned<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(qNew, q1_.cDField(),
+      richardsonExpTwinned<<<nBlocks_, nThreads_>>>(qNew, q1_.cDField(),
                            qr_.cDField(), expW2_.cDField(), nx);
       //remove the use of q2
 
@@ -563,7 +568,7 @@ namespace Pspg {
 
          for (int n = 0; n < nParams_ ; ++n) {
             //do i need this?
-            mulDelKsq<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>>
+            mulDelKsq<<<nBlocks_, nThreads_ >>>
                (qr2_.cDField(), qkBatched_ + (j * kSize_), qk2Batched_ + (kSize_ * (ns_ -1 -j)),
                 wavelist.dkSq(), n , kSize_, nx);
             /*if(j == 0) {

@@ -96,12 +96,16 @@ namespace Pspg
       int nm = nMonomer();
       int i, j;
 
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(nx, nBlocks, nThreads);
+
       // Clear all monomer concentration fields
       for (i = 0; i < nm; ++i) {
          UTIL_CHECK(cFields[i].capacity() == nx);
          UTIL_CHECK(wFields[i].capacity() == nx);
          //cFields[i][j] = 0.0;
-         assignUniformReal<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(cFields[i].cDField(), 0.0, nx);
+         assignUniformReal<<<nBlocks, nThreads>>>(cFields[i].cDField(), 0.0, nx);
       }
 
       // Solve MDE for all polymers
@@ -118,7 +122,7 @@ namespace Pspg
             CField& monomerField = cFields[monomerId];
             CField& blockField = polymer(i).block(j).cField();
             //monomerField[k] += polymer(i).phi() * blockField[k];
-            accumulateConc<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(monomerField.cDField(), 
+            accumulateConc<<<nBlocks, nThreads>>>(monomerField.cDField(), 
                         polymer(i).phi(), blockField.cDField(), nx);
          }
       }

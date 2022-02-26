@@ -25,11 +25,6 @@
 #include <string>
 #include <getopt.h>
 
-//#include <Windows.h>
-
-// Global variable for kernels
-int THREADS_PER_BLOCK;
-int NUMBER_OF_BLOCKS;
 
 namespace Pscf {
 namespace Pspg
@@ -72,8 +67,7 @@ namespace Pspg
       iteratorFactoryPtr_ = new IteratorFactory<D>(*iteratorMediatorPtr_); 
       wavelistPtr_ = new WaveList<D>();
 
-      // TEMPORARY. WILL REPLACE WITH GOOD WAY TO MANAGE GPU RESOURCE VARIABLES LATER. //
-      MAX_THREADS_PER_BLOCK = 256;
+      ThreadGrid::init();
       
       // sweepFactoryPtr_ = new SweepFactory(*this);
    }
@@ -113,17 +107,17 @@ namespace Pspg
       bool cFlag = false;  // command file 
       bool iFlag = false;  // input prefix
       bool oFlag = false;  // output prefix
-      bool wFlag = false;  // GPU input 1 (# of blocks)
-      bool tFlag = false;  // GPU input 2 (threads per block)
+      bool tFlag = false;  // GPU input threads (maximum number of threads per block)
       char* pArg = 0;
       char* cArg = 0;
       char* iArg = 0;
       char* oArg = 0;
+      int tArg = 0;
    
       // Read program arguments
       int c;
       opterr = 0;
-      while ((c = getopt(argc, argv, "er:p:c:i:o:f1:2:")) != -1) {
+      while ((c = getopt(argc, argv, "er:p:c:i:o:threads:")) != -1) {
          switch (c) {
          case 'e':
             eflag = true;
@@ -144,14 +138,9 @@ namespace Pspg
             iFlag = true;
             oArg  = optarg;
             break;
-         case '1': //number of blocks
-            NUMBER_OF_BLOCKS = atoi(optarg);
-            wFlag = true;
-            break;
-         case '2': //threads per block
-            THREADS_PER_BLOCK = atoi(optarg);
+         case 'threads': //number of blocks
+            tArg = atoi(optarg);
             tFlag = true;
-            //something like this
             break;
          case '?':
            Log::file() << "Unknown option -" << optopt << std::endl;
@@ -184,26 +173,10 @@ namespace Pspg
          fileMaster().setOutputPrefix(std::string(oArg));
       }
 
-      if (!wFlag) {
-         std::cout<<"Number of blocks not set " <<std::endl;
-         exit(1);
+      if (tFlag) {
+         ThreadGrid::setThreadsPerBlock(tArg);
       }
 
-      if (!tFlag) {
-         std::cout<<"Threads per block not set " <<std::endl;
-         exit(1);
-      }
-
-   }
-
-   /** 
-   * Set number of blocks and number of threads
-   */
-   template <int D>
-   void System<D>::setGpuResources (int nBlocks, int nThreads)
-   {
-      NUMBER_OF_BLOCKS = nBlocks;
-      THREADS_PER_BLOCK = nThreads;
    }
 
    /*
@@ -454,6 +427,10 @@ namespace Pspg
          } else 
          if (command == "RHO_TO_OMEGA") {
 
+            // GPU resources
+            int nBlocks, nThreads;
+            ThreadGrid::setThreadsLogical(mesh().size(), nBlocks, nThreads);
+
             // Read c field file in r-grid format
             readEcho(in, inFileName);
             readEcho(in, outFileName);
@@ -463,12 +440,12 @@ namespace Pspg
             // Compute w fields, excluding Lagrange multiplier contribution
             //code is bad here, `mangled' access of data in array
             for (int i = 0; i < mixture().nMonomer(); ++i) {
-               assignUniformReal <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (wFieldRGrid(i).cDField(), 0, mesh().size());
+               assignUniformReal<<<nBlocks, nThreads>>>(wFieldRGrid(i).cDField(), 0, mesh().size());
             }
             for (int i = 0; i < mixture().nMonomer(); ++i) {
                for (int j = 0; j < mixture().nMonomer(); ++j) {
-                  pointWiseAddScale <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (wFieldRGrid(i).cDField(), cFieldRGrid(j).cDField(), 
-                     interaction().chi(i,j), mesh().size());
+                  pointWiseAddScale<<<nBlocks, nThreads>>>(wFieldRGrid(i).cDField(), cFieldRGrid(j).cDField(), 
+                                                            interaction().chi(i,j), mesh().size());
                }
             }
 
@@ -585,19 +562,22 @@ namespace Pspg
 
       int nm  = mixture().nMonomer();
       int nx = mesh().size();
-      //RDField<D> workArray;
-      //workArray.allocate(nx);
+      
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(nx, nBlocks, nThreads);
+      
       double temp = 0;
       for (int i = 0; i < nm; ++i) {
          for (int j = i + 1; j < nm; ++j) {
-           assignUniformReal <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (workArray.cDField(), interaction().chi(i, j), nx);
-           inPlacePointwiseMul <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (workArray.cDField(), cFieldsRGrid_[i].cDField(), nx);
-           inPlacePointwiseMul <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (workArray.cDField(), cFieldsRGrid_[j].cDField(), nx);
+           assignUniformReal<<<nBlocks, nThreads>>>(workArray.cDField(), interaction().chi(i, j), nx);
+           inPlacePointwiseMul<<<nBlocks, nThreads>>>(workArray.cDField(), cFieldsRGrid_[i].cDField(), nx);
+           inPlacePointwiseMul<<<nBlocks, nThreads>>>(workArray.cDField(), cFieldsRGrid_[j].cDField(), nx);
            fHelmholtz_ += (gpuSum(workArray.cDField(), nx) / nx);
          }
          
-         assignReal <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (workArray.cDField(), wFieldsRGrid_[i].cDField(), nx);
-         inPlacePointwiseMul <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK  >>> (workArray.cDField(), cFieldsRGrid_[i].cDField(), nx);
+         assignReal<<<nBlocks, nThreads>>>(workArray.cDField(), wFieldsRGrid_[i].cDField(), nx);
+         inPlacePointwiseMul<<<nBlocks, nThreads>>>(workArray.cDField(), cFieldsRGrid_[i].cDField(), nx);
          temp += gpuSum(workArray.cDField(), nx);
       }
       fHelmholtz_ -= (temp / nx);

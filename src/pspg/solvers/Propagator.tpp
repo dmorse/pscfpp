@@ -75,9 +75,13 @@ namespace Pspg {
       // Initialize qh field to 1.0 at all grid points
       int nx = meshPtr_->size();
 
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(nx, nBlocks, nThreads);
+
       //qh[ix] = 1.0;
       //qFields_d points to the first element in gpu memory
-      assignUniformReal<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(qFields_d, 1.0, nx);
+      assignUniformReal<<<nBlocks, nThreads>>>(qFields_d, 1.0, nx);
       
 
       // Pointwise multiply tail QFields of all sources
@@ -92,8 +96,7 @@ namespace Pspg {
          qt = source(is).tail();
 
          //qh[ix] *= qt[ix];
-         inPlacePointwiseMul<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>
-            (qFields_d, qt, nx);
+         inPlacePointwiseMul<<<nBlocks, nThreads>>>(qFields_d, qt, nx);
       }
    }
 
@@ -128,10 +131,14 @@ namespace Pspg {
    {
       int nx = meshPtr_->size();
 
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(nx, nBlocks, nThreads);
+
       // Initialize initial (head) field
       cudaReal* qh = qFields_d;
       // qh[i] = head[i];
-      assignReal<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(qh, head, nx);
+      assignReal<<<nBlocks, nThreads>>>(qh, head, nx);
 
       // Setup solver and solve
       int currentIdx;

@@ -267,10 +267,6 @@ public:
    {
       printMethod(TEST_FUNC);
 
-      // Set gpu resources
-      NUMBER_OF_BLOCKS = 1;
-      THREADS_PER_BLOCK = 32;
-
       // Create and initialize block
       Block<1> block;
       setupBlock<1>(block);
@@ -360,10 +356,6 @@ public:
    void testSolver2D()
    {
       printMethod(TEST_FUNC);
-
-      // Set gpu resources
-      NUMBER_OF_BLOCKS = 1;
-      THREADS_PER_BLOCK = 32;
 
       // Create and initialize block
       Block<2> block;
@@ -465,10 +457,6 @@ public:
    void testSolver3D()
    {
       printMethod(TEST_FUNC);
-
-      // Set gpu resources
-      NUMBER_OF_BLOCKS = 1;
-      THREADS_PER_BLOCK = 32;
 
       // Create and initialize block
       Block<3> block;
