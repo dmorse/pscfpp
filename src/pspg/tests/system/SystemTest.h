@@ -51,7 +51,6 @@ public:
    {
       printMethod(TEST_FUNC);
       System<1> system;
-      system.setGpuResources(1,32);
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
 
@@ -69,7 +68,6 @@ public:
       system.fileMaster().setOutputPrefix(filePrefix());
 
       openLogFile("out/testConversion1D_lam.log");
-      system.setGpuResources(2, 16);
 
       std::ifstream in;
       openInputFile("in/diblock/lam/param.flex", in);
@@ -140,7 +138,6 @@ public:
       system.fileMaster().setOutputPrefix(filePrefix());
 
       openLogFile("out/testConversion2D_hex.log");
-      system.setGpuResources(32, 32);
 
       // Read parameter file
       std::ifstream in;
@@ -218,7 +215,6 @@ public:
       system.fileMaster().setOutputPrefix(filePrefix());
 
       openLogFile("out/testConversion3D_bcc.log");
-      system.setGpuResources(32, 1024);
 
       // Read parameter file
       std::ifstream in;
@@ -294,7 +290,6 @@ public:
 *      system.fileMaster().setOutputPrefix(filePrefix());
 *
 *      openLogFile("out/testSymmetry3D_bcc.log");
-*      system.setGpuResources(32, 1024);
 *
 *      // Read system parameter file
 *      std::ifstream in;

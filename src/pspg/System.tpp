@@ -117,7 +117,7 @@ namespace Pspg
       // Read program arguments
       int c;
       opterr = 0;
-      while ((c = getopt(argc, argv, "er:p:c:i:o:threads:")) != -1) {
+      while ((c = getopt(argc, argv, "er:p:c:i:o:t:")) != -1) {
          switch (c) {
          case 'e':
             eflag = true;
@@ -138,7 +138,7 @@ namespace Pspg
             iFlag = true;
             oArg  = optarg;
             break;
-         case 'threads': //number of blocks
+         case 't': //number of threads per block, user set
             tArg = atoi(optarg);
             tFlag = true;
             break;
@@ -173,6 +173,7 @@ namespace Pspg
          fileMaster().setOutputPrefix(std::string(oArg));
       }
 
+      // If option -t, set the threads per block.
       if (tFlag) {
          ThreadGrid::setThreadsPerBlock(tArg);
       }
