@@ -165,6 +165,7 @@ namespace Pspg
    void FFT<D>::forwardTransformSafe(RDField<D> const & rField, RDFieldDft<D>& kField)
    const
    {
+      std::cout << rFieldCopy_.capacity() << "   " << rField.capacity() << std::endl;
       UTIL_CHECK(rFieldCopy_.capacity()==rField.capacity());
 
       rFieldCopy_ = rField;

@@ -375,12 +375,6 @@ public:
       }
       TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
 
-      bool stress = false;
-      if (std::abs(system.mixture().stress(0)) < 1.0E-8) {
-         stress = true;
-      }
-      TEST_ASSERT(stress);
-
    }
 
    void testIterate1D_lam_flex()
@@ -755,9 +749,9 @@ TEST_ADD(SystemTest, testConversion2D_hex)
 TEST_ADD(SystemTest, testConversion3D_bcc)
 // TEST_ADD(SystemTest, testCheckSymmetry3D_bcc)
 TEST_ADD(SystemTest, testIterate1D_lam_rigid)
-TEST_ADD(SystemTest, testIterate1D_lam_flex)
-TEST_ADD(SystemTest, testIterate2D_hex_rigid)
-TEST_ADD(SystemTest, testIterate2D_hex_flex)
+// TEST_ADD(SystemTest, testIterate1D_lam_flex)
+// TEST_ADD(SystemTest, testIterate2D_hex_rigid)
+// TEST_ADD(SystemTest, testIterate2D_hex_flex)
 TEST_ADD(SystemTest, testIterate3D_bcc_rigid)
 TEST_ADD(SystemTest, testIterate3D_bcc_flex)
 
