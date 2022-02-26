@@ -87,22 +87,6 @@ namespace Pspg{
       // pointer to fields on system
       DArray<RDField<D>> * const currSys = &sys_->wFieldsRGrid();
 
-      // Apply averaging convention from original GPU code -- set spatial average of
-      // omega fields to 0 in the actual system.
-      cudaReal average = 0;
-      for (int i = 0; i < nMonomer; i++) {
-         // Find current spatial average
-         average += findAverage((*currSys)[i].cDField(), nMesh);
-      } 
-      average /= nMonomer;
-      // Subtract average from each field, setting average to zero
-      for (int i = 0; i < nMonomer; i++) {
-         subtractUniform<<<nBlocks, nThreads>>>((*currSys)[i].cDField(), average, nMesh);
-      } 
-      
-      // Initialize current field values values to zeroes.
-      gpuErrchk( cudaMemset(curr.cDField(), 0, n*sizeof(cudaReal)) );
-
       // loop to unfold the system fields and store them in one long array
       for (int i = 0; i < nMonomer; i++) {
          assignReal<<<nBlocks,nThreads>>>(curr.cDField() + i*nMesh, (*currSys)[i].cDField(), nMesh);
@@ -119,7 +103,7 @@ namespace Pspg{
                temp[k] = (cudaReal)scaleStress*currParam[k];
          
          // copy paramters to the end of the curr array
-         gpuErrchk(cudaMemcpy(curr.cDField() + nMonomer*nMesh, temp, nParam*sizeof(cudaReal), cudaMemcpyHostToDevice));
+         cudaMemcpy(curr.cDField() + nMonomer*nMesh, temp, nParam*sizeof(cudaReal), cudaMemcpyHostToDevice);
          delete[] temp;
       }
    }
@@ -166,12 +150,22 @@ namespace Pspg{
       }
       
 
-      // Always do this subtraction, regardless of whether canonical. From original GPU code.
-      cudaReal factor = 1/(cudaReal)sys_->interaction().sum_inv();
-      for (int i = 0; i < nMonomer; ++i) {
-         
-         subtractUniform<<<nBlocks, nThreads>>>(resid.cDField() + i*nMesh,
-                                                            factor, nMesh);
+      // If not canonical, account for incompressibility. 
+      if (!sys_->mixture().isCanonical()) {
+         cudaReal factor = 1/(cudaReal)sys_->interaction().sum_inv();
+         for (int i = 0; i < nMonomer; ++i) {
+            
+            subtractUniform<<<nBlocks, nThreads>>>(resid.cDField() + i*nMesh,
+                                                               factor, nMesh);
+         }
+      } else {
+         for (int i = 0; i < nMonomer; i++) {
+            // Find current average 
+            cudaReal average = findAverage(resid.cDField()+i*nMesh, nMesh);
+            // subtract out average to set residual average to zero
+            subtractUniform<<<nBlocks, nThreads>>>(resid.cDField() + i*nMesh,
+                                                               average, nMesh);
+         }
       }
 
       // If variable unit cell, compute stress residuals
@@ -184,7 +178,7 @@ namespace Pspg{
             stress[i] = (cudaReal)(-1*scaleStress*sys_->mixture().stress(i));
          }
 
-         gpuErrchk(cudaMemcpy(resid.cDField()+nMonomer*nMesh, stress, nParam*sizeof(cudaReal), cudaMemcpyHostToDevice));
+         cudaMemcpy(resid.cDField()+nMonomer*nMesh, stress, nParam*sizeof(cudaReal), cudaMemcpyHostToDevice);
       }
    }
 
@@ -198,14 +192,37 @@ namespace Pspg{
       int nBlocks, nThreads;
       ThreadGrid::setThreadsLogical(nMesh, nBlocks, nThreads);
 
-      // pointer to fields on system
+      // pointer to field objects in system
       DArray<RDField<D>> * sysfields = &sys_->wFieldsRGrid();
+
+      // Manually and explicitly set homogeneous components of field if canonical
+      if (sys_->mixture().isCanonical()) {
+         cudaReal average, wAverage, cAverage;
+         for (int i = 0; i < nMonomer; i++) {
+            // Find current spatial average
+            average = findAverage(newGuess.cDField() + i*nMesh, nMesh);
+            
+            // Subtract average from field, setting average to zero
+            subtractUniform<<<nBlocks, nThreads>>>(newGuess.cDField() + i*nMesh, average, nMesh);
+            
+            // Compute the new average omega value, add it to all elements
+            wAverage = 0;
+            for (int j = 0; j < nMonomer; j++) {
+               // Find average concentration
+               cAverage = findAverage(sys_->cFieldRGrid(j).cDField(), nMesh);
+               wAverage += sys_->interaction().chi(i,j) * cAverage;
+            }
+            addUniform<<<nBlocks, nThreads>>>(newGuess.cDField() + i*nMesh, wAverage, nMesh); 
+         }
+      }
 
       // copy over grid points
       for (int i = 0; i < nMonomer; i++) {
          assignReal<<<nBlocks, nThreads>>>
                ((*sysfields)[i].cDField(), newGuess.cDField() + i*nMesh, nMesh);
       }
+
+      
 
       // if flexible unit cell, update parameters well
       if (sys_->domain().isFlexible()) {
@@ -214,7 +231,7 @@ namespace Pspg{
          const double scaleStress = sys_->domain().scaleStress();
          cudaReal* temp = new cudaReal[nParam];
 
-         gpuErrchk(cudaMemcpy(temp, newGuess.cDField() + nMonomer*nMesh, nParam*sizeof(cudaReal), cudaMemcpyDeviceToHost));
+         cudaMemcpy(temp, newGuess.cDField() + nMonomer*nMesh, nParam*sizeof(cudaReal), cudaMemcpyDeviceToHost);
          for (int i = 0; i < nParam; i++) {
             parameters.append(1/scaleStress * (double)temp[i]);
          }
@@ -238,10 +255,6 @@ namespace Pspg{
       return average;
    }
 
-   
-   // Finalize???? Could have the iterator call this, and have it be by default empty
-   // as a place to put things that may need to be done at the end of an iteration. Or could have the system
-   // take care of this since it doesn't have much to do with the iterator.
 }
 }
 #endif
