@@ -287,9 +287,10 @@ namespace Pspg
       //storageCFields_.allocate(mesh().dimensions());
       //compositionKField_.allocate(mesh().dimensions());
       workArray.allocate(mesh().size());
+      ThreadGrid::setThreadsLogical(mesh().size());
    
-      cudaMalloc((void**)&d_kernelWorkSpace_, NUMBER_OF_BLOCKS * sizeof(cudaReal));
-      kernelWorkSpace_ = new cudaReal[NUMBER_OF_BLOCKS];
+      cudaMalloc((void**)&d_kernelWorkSpace_, ThreadGrid::nBlocks() * sizeof(cudaReal));
+      kernelWorkSpace_ = new cudaReal[ThreadGrid::nBlocks()];
 
       isAllocated_ = true;
    }

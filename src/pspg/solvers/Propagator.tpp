@@ -55,10 +55,12 @@ namespace Pspg {
       ns_ = ns;
       meshPtr_ = &mesh;
 
+      ThreadGrid::setThreadsLogical(mesh.size());
+
       gpuErrchk(cudaMalloc((void**)&qFields_d, sizeof(cudaReal)* mesh.size() *
                  ns));
-	   gpuErrchk(cudaMalloc((void**)&d_temp_, NUMBER_OF_BLOCKS * sizeof(cudaReal)));
-	   temp_ = new cudaReal[NUMBER_OF_BLOCKS];
+	   gpuErrchk(cudaMalloc((void**)&d_temp_, ThreadGrid::nBlocks() * sizeof(cudaReal)));
+	   temp_ = new cudaReal[ThreadGrid::nBlocks()];
       isAllocated_ = true;
    }
 
