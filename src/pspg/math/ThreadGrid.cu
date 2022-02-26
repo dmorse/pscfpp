@@ -24,14 +24,15 @@ namespace ThreadGrid {
 
    void init()
    {
-      setThreadsPerBlock();
-
       // Check that a CUDA device is available.
       int count = 0;
       cudaGetDeviceCount(&count);
 
       if (count == 0) 
          UTIL_THROW("No CUDA devices found.");
+
+      // Set a default maximum threads per block by querying hardware.
+      setThreadsPerBlock();
    }
 
    void setThreadsPerBlock()
@@ -54,11 +55,11 @@ namespace ThreadGrid {
 
    void setThreadsLogical(int const nThreadsLogical)
    {
-      if (MAX_THREADS_PER_BLOCK == -1) 
-         UTIL_THROW("Number of threads per block not set before call to setThreadsLogical().");
-      
       // Verify that requested threads is valid (greater than 0).
       UTIL_ASSERT(nThreadsLogical > 0);
+      
+      if (MAX_THREADS_PER_BLOCK == -1) // if max_threads_per_block hasn't been set at all, initialize.
+         init();
 
       // Check if the number of requested threads matches the previous number of request threads
       if (THREADS_LOGICAL == nThreadsLogical) {
@@ -69,13 +70,12 @@ namespace ThreadGrid {
       // Set the number of total requested threads.
       THREADS_LOGICAL = nThreadsLogical;
 
-      // Compute the execution configuration, with number of blocks rounded up to the nearest integer.
+      // Compute the execution configuration. Number of blocks rounded up to the nearest integer.
       THREADS_PER_BLOCK = MAX_THREADS_PER_BLOCK;
       BLOCKS = ceil((float)nThreadsLogical/MAX_THREADS_PER_BLOCK);
 
       // Determine if there will be unused threads
-      if (BLOCKS*THREADS_PER_BLOCK > nThreadsLogical)
-         UNUSED_THREADS = true;
+      UNUSED_THREADS = (BLOCKS*THREADS_PER_BLOCK > THREADS_LOGICAL);
 
    }
 
