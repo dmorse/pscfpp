@@ -243,6 +243,12 @@ namespace Pspg{
          delete[] temp;
       }
 
+      // TEMPORARY. PASS THE INPUTS THROUGH A BASIS FILTER.
+      sys_->fieldIo().convertRGridToBasis(sys_->wFieldsRGrid(), sys_->wFields());
+      sys_->fieldIo().convertRGridToBasis(sys_->cFieldsRGrid(), sys_->cFields());
+      sys_->fieldIo().convertBasisToRGrid(sys_->wFields(), sys_->wFieldsRGrid());
+      sys_->fieldIo().convertBasisToRGrid(sys_->cFields(), sys_->cFieldsRGrid());
+
    }
 
    // --- Private member functions that are specific to this implementation --- 

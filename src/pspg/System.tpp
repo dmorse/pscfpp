@@ -640,12 +640,6 @@ namespace Pspg
    {
       UTIL_CHECK(hasWFields_);
 
-      // TEMPORARY. PASS THE INPUTS THROUGH A BASIS FILTER.
-      fieldIo().convertRGridToBasis(wFieldsRGrid(), wFields());
-      fieldIo().convertRGridToBasis(cFieldsRGrid(), cFields());
-      fieldIo().convertBasisToRGrid(wFields(), wFieldsRGrid());
-      fieldIo().convertRGridToBasis(cFields(), cFieldsRGrid());
-
       // Solve the modified diffusion equation (without iteration)
       mixture().compute(wFieldsRGrid(), cFieldsRGrid());
 

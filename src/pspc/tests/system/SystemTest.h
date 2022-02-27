@@ -416,7 +416,7 @@ public:
          std::cout << "\n";
          std::cout << "Max error = " << comparison.maxDiff() << "\n";
       }
-      TEST_ASSERT(comparison.maxDiff() < 5.0E-8);
+      TEST_ASSERT(comparison.maxDiff() < 5.0E-7);
    }
 
    void testIterate1D_lam_open_shift()
