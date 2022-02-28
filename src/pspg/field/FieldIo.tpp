@@ -827,7 +827,12 @@ namespace Pspg
             // Compute component value
             component = std::complex<double>(dft_in[rank].x, dft_in[rank].y);
             component /= wavePtr->coeff;
-            UTIL_CHECK(abs(component.imag()) < 1.0E-7); // Did not satisfy 1.0E-8 accuracy due to float point accuracy
+            // verify that imaginary component is approximately 0, or very small
+            #ifdef SINGLE_PRECISION
+            UTIL_CHECK(abs(component.imag()) < 1.0E-03);
+            #else
+            UTIL_CHECK(abs(component.imag()) < 1.0E-8);
+            #endif
             components_out[is] = component.real();
             ++is;
 

@@ -238,20 +238,14 @@ public:
       domain.fieldIo().readFieldsBasis(in, d_bf_1);
       in.close();
 
-      // Allocate host arrays for comparison
-      DArray< cudaReal* > bf_0, bf_1;
-      bf_0.allocate(nMonomer_);
-      bf_1.allocate(nMonomer_);
-      for (int i = 0; i < nMonomer_; ++i) {   
-         bf_0[i] = new cudaReal[nStar];
-         bf_1[i] = new cudaReal[nStar];
-         cudaMemcpy(bf_0[i], d_bf_0[i].cDField(), nStar*sizeof(cudaReal), cudaMemcpyDeviceToHost);
-         cudaMemcpy(bf_1[i], d_bf_1[i].cDField(), nStar*sizeof(cudaReal), cudaMemcpyDeviceToHost);
-      }
+      // Create arrays for comparison
+      DArray<DField<cudaReal>> bf_0, bf_1;
+      RDFieldToDField(bf_0,d_bf_0);
+      RDFieldToDField(bf_1,d_bf_1);
 
       // Perform comparison
       BFieldComparison comparison;
-      comparison.compare(bf_0, bf_1, nStar);
+      comparison.compare(bf_0, bf_1);
       TEST_ASSERT(comparison.maxDiff() < 1.0E-12);
 
       if (verbose() > 0) {
@@ -339,16 +333,10 @@ public:
       domain.fieldIo().convertBasisToKGrid(d_bf_0, d_kf_0);
       domain.fieldIo().convertKGridToBasis(d_kf_0, d_bf_1);
 
-      // Allocate host arrays and extract data
-      DArray< cudaReal* > bf_0, bf_1;
-      bf_0.allocate(nMonomer_);
-      bf_1.allocate(nMonomer_);
-      for (int i = 0; i < nMonomer_; ++i) {   
-         bf_0[i] = new cudaReal[nStar];
-         bf_1[i] = new cudaReal[nStar];
-         cudaMemcpy(bf_0[i], d_bf_0[i].cDField(), nStar*sizeof(cudaReal), cudaMemcpyDeviceToHost);
-         cudaMemcpy(bf_1[i], d_bf_1[i].cDField(), nStar*sizeof(cudaReal), cudaMemcpyDeviceToHost);
-      }
+      // Create arrays for comparison
+      DArray<DField<cudaReal>> bf_0, bf_1;
+      RDFieldToDField(bf_0,d_bf_0);
+      RDFieldToDField(bf_1,d_bf_1);
 
       std::ofstream  out;
       openOutputFile("out/w_bcc_convert.bf", out);
@@ -356,7 +344,7 @@ public:
       out.close();
 
       BFieldComparison comparison;
-      comparison.compare(bf_0, bf_1, nStar);
+      comparison.compare(bf_0, bf_1);
       TEST_ASSERT(comparison.maxDiff() < 1.0E-12);
 
       if (verbose() > 0) {
@@ -388,19 +376,13 @@ public:
       domain.fieldIo().convertBasisToRGrid(d_bf_0, d_rf_0);
       domain.fieldIo().convertRGridToBasis(d_rf_0, d_bf_1);
 
-      // Allocate host arrays and extract data
-      DArray< cudaReal* > bf_0, bf_1;
-      bf_0.allocate(nMonomer_);
-      bf_1.allocate(nMonomer_);
-      for (int i = 0; i < nMonomer_; ++i) {   
-         bf_0[i] = new cudaReal[nStar];
-         bf_1[i] = new cudaReal[nStar];
-         cudaMemcpy(bf_0[i], d_bf_0[i].cDField(), nStar*sizeof(cudaReal), cudaMemcpyDeviceToHost);
-         cudaMemcpy(bf_1[i], d_bf_1[i].cDField(), nStar*sizeof(cudaReal), cudaMemcpyDeviceToHost);
-      }
+      // Create arrays for comparison
+      DArray<DField<cudaReal>> bf_0, bf_1;
+      RDFieldToDField(bf_0,d_bf_0);
+      RDFieldToDField(bf_1,d_bf_1);
 
       BFieldComparison comparison;
-      comparison.compare(bf_0, bf_1, nStar);
+      comparison.compare(bf_0, bf_1);
       TEST_ASSERT(comparison.maxDiff() < 1.0E-12);
 
       if (verbose() > 0) {
@@ -441,25 +423,13 @@ public:
       domain.fieldIo().writeFieldsBasis(out, d_bf_1);
       out.close();
 
-      // Allocate host arrays and extract data
-      DArray< cudaReal* > bf_0, bf_1;
-      bf_0.allocate(nMonomer_);
-      bf_1.allocate(nMonomer_);
-      for (int i = 0; i < nMonomer_; ++i) {   
-         bf_0[i] = new cudaReal[nStar];
-         bf_1[i] = new cudaReal[nStar];
-         cudaMemcpy(bf_0[i], d_bf_0[i].cDField(), nStar*sizeof(cudaReal), cudaMemcpyDeviceToHost);
-         cudaMemcpy(bf_1[i], d_bf_1[i].cDField(), nStar*sizeof(cudaReal), cudaMemcpyDeviceToHost);
-      }
+      // Create arrays for comparison
+      DArray<DField<cudaReal>> bf_0, bf_1;
+      RDFieldToDField(bf_0,d_bf_0);
+      RDFieldToDField(bf_1,d_bf_1);
 
       BFieldComparison comparison;
-      comparison.compare(bf_0, bf_1, nStar);
-      
-      
-      // Exemplary bad location!! 
-      std::cout << "\nmaxDiff: " << comparison.maxDiff() << std::endl;
-      std::cout << std::setprecision(16) << "init: " << bf_0[2][31] << std::endl;
-      std::cout << std::setprecision(16) << "fin:  " << bf_1[2][31] << std::endl;
+      comparison.compare(bf_0, bf_1);
 
       TEST_ASSERT(comparison.maxDiff() < 1.0E-12);
 
@@ -492,16 +462,10 @@ public:
       domain.fieldIo().convertBasisToKGrid(d_bf_0, d_kf_0);
       domain.fieldIo().convertKGridToBasis(d_kf_0, d_bf_1);
 
-      // Allocate host arrays and extract data
-      DArray< cudaReal* > bf_0, bf_1;
-      bf_0.allocate(nMonomer_);
-      bf_1.allocate(nMonomer_);
-      for (int i = 0; i < nMonomer_; ++i) {   
-         bf_0[i] = new cudaReal[nStar];
-         bf_1[i] = new cudaReal[nStar];
-         cudaMemcpy(bf_0[i], d_bf_0[i].cDField(), nStar*sizeof(cudaReal), cudaMemcpyDeviceToHost);
-         cudaMemcpy(bf_1[i], d_bf_1[i].cDField(), nStar*sizeof(cudaReal), cudaMemcpyDeviceToHost);
-      }
+      // Create arrays for comparison
+      DArray<DField<cudaReal>> bf_0, bf_1;
+      RDFieldToDField(bf_0,d_bf_0);
+      RDFieldToDField(bf_1,d_bf_1);
 
       std::ofstream  out;
       openOutputFile("out/w_c15_1_convert.bf", out);
@@ -509,7 +473,7 @@ public:
       out.close();
 
       BFieldComparison comparison;
-      comparison.compare(bf_0, bf_1, nStar);
+      comparison.compare(bf_0, bf_1);
       TEST_ASSERT(comparison.maxDiff() < 1.0E-12);
 
       if (verbose() > 0) {
@@ -725,6 +689,25 @@ public:
         std::cout  << std::endl;
         std::cout  << Dbl(comparison.maxDiff(), 21, 13) << "\n";
         std::cout  << Dbl(comparison.rmsDiff(), 21, 13) << "\n";
+      }
+   }
+
+   template <int D>
+   void RDFieldToDField(DArray<DField<cudaReal>> & out, DArray<RDField<D>> const & in)
+   {
+      // if not allocated, allocate
+      int nField = in.capacity();
+      int nPoint = in[0].capacity();
+      if (!out.isAllocated()) {
+         out.allocate(nField);
+         for (int i = 0; i < nField; i++) {
+            out[i].allocate(nPoint);
+         }
+      }
+
+      // Copy
+      for (int i = 0; i < nField; i++) {
+         cudaMemcpy(out[i].cDField(), in[i].cDField(), nPoint*sizeof(cudaReal), cudaMemcpyDeviceToDevice);
       }
    }
 

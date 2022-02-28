@@ -560,7 +560,7 @@ public:
       DArray< DArray<double> > wFields_check;
       wFields_check = system.wFields();
 
-      //system.readWBasis("in/diblock/hex/omega.in");
+      system.readWBasis("in/diblock/hex/omega.in");
       int error = system.iterate();
       if (error) {
          TEST_THROW("Iterator failed to converge.");
@@ -649,7 +649,7 @@ public:
       DArray< DArray<double> > wFields_check;
       wFields_check = system.wFields();
 
-      // system.readWBasis("in/diblock/bcc/omega.in");
+      system.readWBasis("in/diblock/bcc/omega.in");
       int error = system.iterate();
       if (error) {
          TEST_THROW("Iterator failed to converge.");
