@@ -57,6 +57,9 @@ namespace Pscf {
       /// Updates the system with a passed in state of the iterator.
       virtual void update(T& newGuess) = 0;
 
+      /// Outputs relevant system details to the iteration log
+      virtual void outputToLog() = 0; 
+
    };
 
 }

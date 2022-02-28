@@ -148,6 +148,9 @@ namespace Pscf
          done = isConverged();
          timerConverged.stop();
 
+         // Output details of this iteration to the log file
+         iterMed().outputToLog();
+
          if (done) {
             // Stop timers
             timerAM.stop();

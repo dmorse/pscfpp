@@ -215,10 +215,18 @@ namespace Pspc{
       
    }
 
-   // Finalize???? Could have the iterator call this, and have it be by default empty
-   // as a place to put things that may need to be done at the end of an iteration. Or could have the system
-   // take care of this since it doesn't have much to do with the iterator. For example, need to compute stress
-   // if not flexible. 
+   template<int D>
+   void IteratorMediatorCPU<D>::outputToLog()
+   {
+      //if (sys_->domain().isFlexible()) {
+         const int nParam = sys_->unitCell().nParameter();
+         for (int i = 0; i < nParam; i++) {
+            Log::file() << "Parameter " << i << " = "
+                        << Dbl(sys_->unitCell().parameters()[i])
+                        << "\n";
+         }
+      //}
+   }
 
 }
 }

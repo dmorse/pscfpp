@@ -222,8 +222,6 @@ namespace Pspg{
                ((*sysfields)[i].cDField(), newGuess.cDField() + i*nMesh, nMesh);
       }
 
-      
-
       // if flexible unit cell, update parameters well
       if (sys_->domain().isFlexible()) {
          FSArray<double,6> parameters;
@@ -259,6 +257,19 @@ namespace Pspg{
       cudaReal average = gpuSum(field, n)/n;
 
       return average;
+   }
+
+   template<int D>
+   void IteratorMediatorCUDA<D>::outputToLog()
+   {
+      //if (sys_->domain().isFlexible()) {
+         const int nParam = sys_->unitCell().nParameter();
+         for (int i = 0; i < nParam; i++) {
+            Log::file() << "Parameter " << i << " = "
+                        << Dbl(sys_->unitCell().parameters()[i])
+                        << "\n";
+         }
+      //}
    }
 
 }

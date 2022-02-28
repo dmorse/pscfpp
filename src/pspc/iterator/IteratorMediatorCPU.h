@@ -59,7 +59,8 @@ namespace Pspc{
       /// Updates the system with a passed in state of the iterator.
       void update(FieldCPU& newGuess);
 
-      
+      /// Outputs relevant system details to the iteration log
+      void outputToLog();
 
    private:
 
@@ -67,7 +68,7 @@ namespace Pspc{
       System<D>* sys_;
 
       // pointer to iterator
-      Pscf::Iterator<FieldCPU>* iter_;
+      Pscf::Iterator<FieldCPU>* iter_; 
 
    };
 
