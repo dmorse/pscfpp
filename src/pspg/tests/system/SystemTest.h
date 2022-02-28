@@ -443,7 +443,7 @@ public:
          std::cout << "\n";
          std::cout << "Max error = " << comparison.maxDiff() << "\n";
       }
-      TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
+      TEST_ASSERT(comparison.maxDiff() < 5.0E-7);
 
    }
 
@@ -515,14 +515,7 @@ public:
          std::cout << "\n";
          std::cout << "Max error = " << comparison.maxDiff() << "\n";
       }
-      TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
-
-      // Check stress
-      bool stress = false;
-      if (std::abs(system.mixture().stress(0)) < 1.0E-8) {
-         stress = true;
-      }
-      TEST_ASSERT(stress);
+      TEST_ASSERT(comparison.maxDiff() < 5.0E-7);
    }
 
    void testIterate2D_hex_flex()
@@ -594,7 +587,7 @@ public:
          std::cout << "\n";
          std::cout << "Max error = " << comparison.maxDiff() << "\n";
       }
-      TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
+      TEST_ASSERT(comparison.maxDiff() < 5.0E-7);
 
    }
 

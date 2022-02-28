@@ -19,14 +19,14 @@ System{
          1   1   0.0
   }
   Domain{
-     unitCell    hexagonal   1.6651597308
-     mesh        32    32
-     groupName   p_6_m_m
-     isFlexible 1
+    unitCell    hexagonal   1.6908668724
+    mesh        32    32
+    groupName   p_6_m_m
+    isFlexible  1
   }
   AmIterator{
-    maxItr 100
-    epsilon 1e-10
-    maxHist 15
+    maxItr      100
+    epsilon     1e-08
+    maxHist     30
   }
 }
