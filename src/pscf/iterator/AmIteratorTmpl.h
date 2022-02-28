@@ -149,35 +149,87 @@ namespace Pscf {
 
       // ---- Methods for doing AM iterator math ---- //
 
-      /// Find the norm of the residual vector.
+      /**
+      * Find norm of a residual vector.
+      */
       virtual double findNorm(T const & hist) = 0;
 
-      /// Find the element of the residual vector with the maximum magnitude.
+      /**
+      * Find the maximum magnitude element of a residual vector.
+      */
       virtual double findMaxAbs(T const & hist) = 0;
 
-      /// Update the list of residual basis vectors used for combining histories.
+      /**
+      * Update the series of residual vectors.
+      * 
+      * \param basis RingBuffer object storing the list of residual or field basis vectors.
+      * \param hists RingBuffer object storing the histories of residual or field vectors.
+      */
       virtual void updateBasis(RingBuffer<T> & basis, RingBuffer<T> const & hists) = 0;
 
-      /// Compute the dot product for constructing the U matrix. 
+      /**
+      * Compute the dot product for an element of the U matrix.
+      * 
+      * \param resBasis RingBuffer object storing the list of residual basis vectors.
+      * \param m row of the U matrix
+      * \param n column of the U matrix
+      */
       virtual double computeUDotProd(RingBuffer<T> const & resBasis, int m, int n) = 0;
       
-      /// Compute the dot product for constructing the v vector. 
+      /**
+      * Compute the dot product for an element of the v vector.
+      * 
+      * \param resCurrent the residual vector calculated at the present iteration step
+      * \param resBasis RingBuffer object storing the list of residual basis vectors.
+      * \param m row of the v vector
+      */
       virtual double computeVDotProd(T const & resCurrent, RingBuffer<T> const & resBasis, int m) = 0;
       
-      /// Update the U matrix containing dot products of residual histories basis vectors.
+      /**
+      * Compute the series of necessary dot products and update the U matrix.
+      * 
+      * \param U U matrix
+      * \param resBasis RingBuffer object storing the list of residual basis vectors.
+      * \param nHist number of histories stored at this iteration
+      */      
       virtual void updateU(DMatrix<double> & U, RingBuffer<T> const & resBasis, int nHist) = 0;
 
-      /// Update the v vector containing dot products of current residuals with residual basis
-      /// vectors. 
+      /**
+      * Compute the series of necessary dot products and update the v vector.
+      * 
+      * \param v v vector
+      * \param resCurrent the residual vector calculated at the present iteration step
+      * \param resBasis RingBuffer object storing the list of residual basis vectors.
+      * \param nHist number of histories stored at this iteration
+      */
       virtual void updateV(DArray<double> & v, T const & resCurrent, RingBuffer<T> const & resBasis, int nHist) = 0;
       
-      /// Set two things equal to each other.
+      /**
+      * Set a field equal to another. Essentially a = b, but potentially more complex
+      * in certain implementations of the AmIterator.
+      * 
+      * \param a the field to be set
+      * \param b the field for it to be set to
+      */
       virtual void setEqual(T& a, T const & b) = 0;
 
-      /// Mix histories, scaled by their respective coefficients, into the trial field.
+      /**
+      * Mix histories, scaled by their respective coefficients, into the trial field.
+      * 
+      * \param trial object for calculation results to be stored in.
+      * \param basis list of history basis vectors.
+      * \param coeffs list of coefficients for each history.
+      * \param nHist number of histories stored at this iteration
+      */
       virtual void addHistories(T& trial, RingBuffer<T> const & basis, DArray<double> coeffs, int nHist) = 0;
 
-      /// Add predicted error into the trial guess to approximately correct for it.
+      /**
+      * Add predicted error into the field trial guess to attempt to correct for it.
+      * 
+      * \param fieldTrial field for calculation results to be stored in.
+      * \param resTrial predicted error for current mixing of histories.
+      * \param lambda Anderson-Mixing parameter for mixing in histories
+      */
       virtual void addPredictedError(T& fieldTrial, T const & resTrial, double lambda) = 0;
 
       // ---- Methods for getting data from and sending data to the system ---- //

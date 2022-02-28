@@ -27,8 +27,8 @@ pspg:
 html:
 	cd docs; $(MAKE) html
 
-html-graphs:
-	cd docs; $(MAKE) html-graphs
+html-dev:
+	cd docs; $(MAKE) html-dev
 
 # =========================================================================
 # Clean targets

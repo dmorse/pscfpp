@@ -4,8 +4,8 @@
 html:    
 	doxygen Doxyfile
 
-html-graphs:
-	doxygen Doxyfile_allgraphs
+html-dev:
+	doxygen Doxyfile_dev
 
 clean:
 	-rm -fr html/*
