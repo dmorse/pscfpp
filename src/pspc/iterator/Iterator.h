@@ -1,5 +1,5 @@
-#ifndef PSPG_ITERATOR_H
-#define PSPG_ITERATOR_H
+#ifndef PSPC_ITERATOR_H
+#define PSPC_ITERATOR_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -9,25 +9,24 @@
 */
 
 #include <util/param/ParamComposite.h>    // base class
-#include <pspg/field/DField.h>
+#include <util/containers/DArray.h>
 #include <util/global.h>                  
 
 namespace Pscf {
-namespace Pspg
+namespace Pspc
 {
 
    template <int D>
    class System;
 
-   typedef DField<cudaReal> FieldCUDA;
-
-
    using namespace Util;
+
+   typedef DArray<double> FieldCPU;
 
    /**
    * Base class for iterative solvers for SCF equations.
    *
-   * \ingroup Pspg_Iterator_Module
+   * \ingroup Pspc_Iterator_Module
    */
    template <int D>
    class Iterator : public ParamComposite
@@ -84,6 +83,6 @@ namespace Pspg
    inline Iterator<D>::~Iterator()
    {}
 
-} // namespace Pspg
+} // namespace Pspc
 } // namespace Pscf
 #endif

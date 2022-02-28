@@ -1,8 +1,0 @@
-@startuml
-
-
-AmIterator -> IteratorMediator: hasInitialGuess() 
-
-AmIterator -> IteratorMediator: getCurrent()
-
-@enduml

@@ -40,10 +40,9 @@ namespace Pspg
       using AmIteratorTmpl<Iterator<D>,FieldCUDA>::setup;
       using AmIteratorTmpl<Iterator<D>,FieldCUDA>::solve;
       using AmIteratorTmpl<Iterator<D>,FieldCUDA>::readParameters;
+      using Iterator<D>::sys_;
 
    private:
-
-      System<D>* sys_;
 
       double findNorm(FieldCUDA const & hist);
 

@@ -21,7 +21,7 @@ namespace Pspg{
 
    template <int D>
    AmIterator<D>::AmIterator(System<D>& system)
-   : sys_(&system)
+   : Iterator<D>(system)
    {}
 
    template <int D>

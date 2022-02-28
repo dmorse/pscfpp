@@ -5,12 +5,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "IteratorMediatorCPU.tpp"
+#include "AmIterator.tpp"
 
 namespace Pscf {
 namespace Pspc {
-   template class IteratorMediatorCPU<1>;
-   template class IteratorMediatorCPU<2>;
-   template class IteratorMediatorCPU<3>;
+   template class AmIterator<1>;
+   template class AmIterator<2>;
+   template class AmIterator<3>;
 }
 }
