@@ -11,35 +11,74 @@ namespace Pscf {
 namespace Pspg {
 
    BFieldComparison::BFieldComparison(int begin)
-    : FieldComparison< DArray<cudaReal*> > (begin)
+    : fieldComparison_(begin)
    {}; 
 
-   double BFieldComparison::compare(DArray<cudaReal*> const & a,
-                                    DArray<cudaReal*> const & b, int nStar)
-   {   
-      UTIL_CHECK(a.capacity() > 0); 
-      UTIL_CHECK(a.capacity() == b.capacity());
-      UTIL_CHECK(nStar > 0);
+   // Comparator for individual fields
+   double BFieldComparison::compare(DField<cudaReal> const& a, DField<cudaReal> const& b)
+   {
+      // Get data onto host memory
+      int nPoints = a.capacity();
+      cudaReal* temp_a = new cudaReal[nPoints];
+      cudaReal* temp_b = new cudaReal[nPoints];
 
-      int m = a.capacity();
-      double diff;
-      maxDiff_ = 0.0;
-      rmsDiff_ = 0.0;
-      int i, j;
-      for (i = 0; i < m; ++i) {
-          
-         for (j = begin_; j < nStar; ++j) {
-            diff = std::abs(a[i][j] - b[i][j]);
-            if (diff > maxDiff_) {
-               maxDiff_ = diff;
-            }   
-            rmsDiff_ += diff*diff;
-         }   
-      }   
-      rmsDiff_ = rmsDiff_/double(m*nStar);
-      rmsDiff_ = sqrt(rmsDiff_);
-      return maxDiff_;
-   }  
+      cudaMemcpy(temp_a, a.cDField(), nPoints*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      cudaMemcpy(temp_b, b.cDField(), nPoints*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+
+      // can't use cudaMemcpy directly into underlying C array in a DArray
+      DArray< cudaReal > h_a, h_b;
+      h_a.allocate(nPoints);
+      h_b.allocate(nPoints);
+      for (int j = 0; j < nPoints; j++) {
+         h_a[j] = temp_a[j];
+         h_b[j] = temp_b[j];
+      }
+
+      // Fieldcomparison wants DArrays
+      fieldComparison_.compare(h_a,h_b);
+      compared_ = true;
+
+      return fieldComparison_.maxDiff();
+      
+   }
+
+   // Comparator for arrays of fields
+   double BFieldComparison::compare(DArray<DField<cudaReal>> const& a, DArray<DField<cudaReal>> const& b)
+   {
+      // Get data onto host memory. Move into DArrays to be compatible with FieldComparison.
+      int nFields = a.capacity();
+      int nPoints = a[0].capacity();
+
+      DArray< cudaReal* > temp_a, temp_b;
+      temp_a.allocate(nFields);
+      temp_b.allocate(nFields);
+
+      DArray< DArray< cudaReal > > h_a, h_b;
+      h_a.allocate(nFields);
+      h_b.allocate(nFields);
+      
+      for (int i = 0; i < nFields; i++) {
+         temp_a[i] = new cudaReal[nPoints];
+         temp_b[i] = new cudaReal[nPoints];
+         cudaMemcpy(temp_a[i], a[i].cDField(), nPoints*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+         cudaMemcpy(temp_b[i], b[i].cDField(), nPoints*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+
+         h_a[i].allocate(nPoints);
+         h_b[i].allocate(nPoints);
+
+         for (int j = 0; j < nPoints; j++) {
+            h_a[i][j] = temp_a[i][j];
+            h_b[i][j] = temp_b[i][j];
+         }
+      }
+
+      // Run Field comparison
+      fieldComparison_.compare(h_a,h_b);
+      compared_ = true;
+
+      return fieldComparison_.maxDiff();
+      
+   }
 
 }
 }

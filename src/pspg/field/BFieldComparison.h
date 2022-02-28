@@ -11,6 +11,7 @@
 #include <pscf/math/FieldComparison.h>
 //#include <pspg/field/RDField.h>
 #include <util/containers/DArray.h>
+#include <pspg/field/DField.h>
 #include <pspg/math/GpuResources.h>
 
 namespace Pscf {
@@ -21,7 +22,7 @@ namespace Pspg {
    /**
    * Comparator for fields in symmetry-adapted basis format.
    */
-   class BFieldComparison : public FieldComparison< DArray <cudaReal*> >
+   class BFieldComparison
    {
 
    public:
@@ -45,9 +46,26 @@ namespace Pspg {
       */
       BFieldComparison(int begin = 0);
 
-      double compare(DArray<cudaReal*> const& a, DArray<cudaReal*> const& b, int nStar);
+      double compare(DField<cudaReal> const& a, DField<cudaReal> const& b);
+
+      double compare(DArray<DField<cudaReal>> const& a, DArray<DField<cudaReal>> const& b);
+
+      // Get maxDiff from FieldComparison
+      double maxDiff() const
+      {  return fieldComparison_.maxDiff(); }
+      
+      // Get rmsDiff from FieldComparison
+      double rmsDiff() const
+      {  return fieldComparison_.rmsDiff(); }
+      
 
    private:
+
+      // True if a comparison has been made, false otherwise.
+      bool compared_;
+
+      // Composition usage of FieldComparison, rather than inheritance.
+      FieldComparison< DArray< cudaReal > > fieldComparison_;
 
    };
 
