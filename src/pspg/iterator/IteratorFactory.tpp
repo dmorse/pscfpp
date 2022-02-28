@@ -4,8 +4,7 @@
 #include "IteratorFactory.h"  
 
 // Subclasses of Iterator 
-#include <pscf/iterator/AmIterator.h>
-#include <pspg/iterator/AmStrategyCUDA.h>
+#include <pspg/iterator/AmIterator.h>
 
 namespace Pscf {
 namespace Pspg {
@@ -16,18 +15,17 @@ namespace Pspg {
    * Constructor
    */
    template <int D>
-   IteratorFactory<D>::IteratorFactory(IteratorMediatorCUDA<D>& iterMed)
-    : iterMedPtr_(&iterMed)
+   IteratorFactory<D>::IteratorFactory(System<D>& system)
+    : sys_(&system)
    {}
 
    /* 
    * Return a pointer to a instance of Iterator subclass className.
    */
    template <int D>
-   Iterator<FieldCUDA>* 
-   IteratorFactory<D>::factory(const std::string &className) const
+   Iterator<D>* IteratorFactory<D>::factory(const std::string &className) const
    {
-      Iterator<FieldCUDA>* ptr = 0;
+      Iterator<D>* ptr = 0;
 
       // Try subfactories first
       ptr = trySubfactories(className);
@@ -35,8 +33,7 @@ namespace Pspg {
  
       // Try to match classname
       if (className == "AmIterator") {
-         AmStrategyCUDA* stratPtr= new AmStrategyCUDA();
-         ptr = new AmIterator<FieldCUDA>(*iterMedPtr_, *stratPtr);
+         ptr = new AmIterator<D>(*sys_);
       }
 
       return ptr;

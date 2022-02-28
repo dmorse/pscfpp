@@ -29,7 +29,7 @@
 namespace Pscf {
 namespace Pspg
 {
-   template <int D> class IteratorMediatorCUDA;
+   template <int D> class Iterator;
    template <int D> class IteratorFactory;
    template <int D> class Sweep;
    template <int D> class SweepFactory;
@@ -114,7 +114,7 @@ namespace Pspg
       * Compute free energy density and pressure for current fields.
       *
       * This function should be called after a successful call of
-      * iteratorMediator().solve(). Resulting values are returned by the 
+      * iterator().solve(). Resulting values are returned by the 
       * freeEnergy() and pressure() accessor functions.
       */
       void computeFreeEnergy();
@@ -276,9 +276,9 @@ namespace Pspg
       ChiInteraction& interaction();
 	  
       /**
-      * Get the IteratorMediator by reference.
+      * Get the iterator by reference.
       */
-      IteratorMediatorCUDA<D>& iteratorMediator();
+      Iterator<D>& iterator();
 
       /**
       * Get basis object by reference.
@@ -494,7 +494,7 @@ namespace Pspg
       /**
       * Pointer to an iterator.
       */
-      IteratorMediatorCUDA<D>* iteratorMediatorPtr_;
+      Iterator<D>* iteratorPtr_;
      
       /**
       * Pointer to iterator factory object
@@ -711,10 +711,10 @@ namespace Pspg
 
    // Get the Iterator.
    template <int D>
-   inline IteratorMediatorCUDA<D>& System<D>::iteratorMediator()
+   inline Iterator<D>& System<D>::iterator()
    {
-      UTIL_ASSERT(iteratorMediatorPtr_);
-      return *iteratorMediatorPtr_;
+      UTIL_ASSERT(iteratorPtr_);
+      return *iteratorPtr_;
    }
 
    // Get the FileMaster.

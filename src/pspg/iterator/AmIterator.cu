@@ -5,12 +5,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "IteratorMediatorCUDA.tpp"
+#include "AmIterator.tpp"
 
 namespace Pscf {
 namespace Pspg {
-   template class IteratorMediatorCUDA<1>;
-   template class IteratorMediatorCUDA<2>;
-   template class IteratorMediatorCUDA<3>;
+   template class AmIterator<1>;
+   template class AmIterator<2>;
+   template class AmIterator<3>;
 }
 }

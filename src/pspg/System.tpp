@@ -14,7 +14,7 @@
 #include <pscf/homogeneous/Clump.h>
 #include <pscf/crystal/shiftToMinimum.h>
 
-#include <pspg/iterator/IteratorMediatorCUDA.h>
+#include <pspg/iterator/Iterator.h>
 #include <pspg/iterator/IteratorFactory.h>
 
 #include <util/format/Str.h>
@@ -42,7 +42,7 @@ namespace Pspg
       fileMaster_(),
       homogeneous_(),
       interactionPtr_(0),
-      iteratorMediatorPtr_(0),
+      iteratorPtr_(0),
       iteratorFactoryPtr_(0),
       wavelistPtr_(0),
       sweepPtr_(0),
@@ -63,8 +63,7 @@ namespace Pspg
       domain_.setFileMaster(fileMaster_);
 
       interactionPtr_ = new ChiInteraction();
-      iteratorMediatorPtr_ = new IteratorMediatorCUDA<D>(*this);
-      iteratorFactoryPtr_ = new IteratorFactory<D>(*iteratorMediatorPtr_); 
+      iteratorFactoryPtr_ = new IteratorFactory<D>(*this); 
       wavelistPtr_ = new WaveList<D>();
 
       ThreadGrid::init();
@@ -81,8 +80,8 @@ namespace Pspg
       if (interactionPtr_) {
          delete interactionPtr_;
       }
-      if (iteratorMediatorPtr_) {
-         delete iteratorMediatorPtr_;
+      if (iteratorPtr_) {
+         delete iteratorPtr_;
       }
       if (iteratorFactoryPtr_) {
          delete iteratorFactoryPtr_;
@@ -219,15 +218,13 @@ namespace Pspg
       // Initialize iterator through the factory and mediator
       std::string className;
       bool isEnd;
-      Iterator<FieldCUDA>* iteratorPtr
-         = iteratorFactoryPtr_->readObject(in, *this, className, isEnd);
-      if (!iteratorPtr) {
+      iteratorPtr_= iteratorFactoryPtr_->readObject(in, *this, className, isEnd);
+      if (!iteratorPtr_) {
          std::string msg = "Unrecognized Iterator subclass name ";
          msg += className;
          UTIL_THROW(msg.c_str());
       }
-      iteratorMediator().setIterator(*iteratorPtr);
-      iteratorMediator().setup();
+      iterator().setup();
    }
 
    /*
@@ -667,7 +664,7 @@ namespace Pspg
       Log::file() << std::endl;
 
       // Call iterator
-      int error = iteratorMediator().solve();
+      int error = iterator().solve();
       
       hasCFields_ = true;
 

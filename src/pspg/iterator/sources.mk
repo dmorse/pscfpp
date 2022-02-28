@@ -1,7 +1,7 @@
 pspg_iterator_= \
-  pspg/iterator/AmStrategyCUDA.cu \
-  pspg/iterator/IteratorMediatorCUDA.cu \
   pspg/iterator/IteratorFactory.cu \
+  pspg/iterator/AmIterator.cu \
+
 
 pspg_iterator_SRCS=\
 	  $(addprefix $(SRC_DIR)/, $(pspg_iterator_))

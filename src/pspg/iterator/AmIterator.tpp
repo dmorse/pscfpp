@@ -1,5 +1,5 @@
-#ifndef PSPG_ITERATOR_MEDIATOR_CUDA_TPP
-#define PSPG_ITERATOR_MEDIATOR_CUDA_TPP
+#ifndef PSPG_AM_ITERATOR_TPP
+#define PSPG_AM_ITERATOR_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -9,7 +9,9 @@
 */
 
 #include <util/global.h>
-#include "IteratorMediatorCUDA.h"
+#include "AmIterator.h"
+#include <pspg/field/RDField.h>
+#include <pspg/System.h>
 #include <pscf/inter/ChiInteraction.h>
 
 namespace Pscf {
@@ -17,49 +19,139 @@ namespace Pspg{
 
    using namespace Util;
 
-   /// Constructor
    template <int D>
-   IteratorMediatorCUDA<D>::IteratorMediatorCUDA(System<D>& sys)
-    : sys_(&sys),
-      iter_(0),
-      temp_(0)
+   AmIterator<D>::AmIterator(System<D>& system)
+   : sys_(&system)
    {}
 
-   /// Destructor
    template <int D>
-   IteratorMediatorCUDA<D>::~IteratorMediatorCUDA()
-   {
-      if (iter_)
-         delete iter_;
+   AmIterator<D>::~AmIterator()
+   {}
 
-      if (temp_) {
-         delete[] temp_;
-         cudaFree(d_temp_);
+   template <int D>
+   double AmIterator<D>::findNorm(FieldCUDA const & hist) 
+   {
+      const int n = hist.capacity();
+      double normResSq = (double)gpuInnerProduct(hist.cDField(), hist.cDField(), n);
+
+      return sqrt(normResSq);
+   }
+
+   template <int D>
+   double AmIterator<D>::findMaxAbs(FieldCUDA const & hist)
+   {
+      // use parallel reduction to find maximum.
+
+      // number of data points, each step of the way.
+      int n = hist.capacity();
+      cudaReal max = gpuMaxAbs(hist.cDField(), n);
+
+      return (double)max;
+
+   }
+
+   template <int D>
+   void AmIterator<D>::updateBasis(RingBuffer<FieldCUDA> & basis, RingBuffer<FieldCUDA> const & hists)
+   {
+      // Make sure at least two histories are stored
+      UTIL_CHECK(hists.size() >= 2);
+
+      const int n = hists[0].capacity();
+      FieldCUDA newbasis;
+      newbasis.allocate(n);
+
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+
+      pointWiseBinarySubtract<<<nBlocks,nThreads>>>
+            (hists[0].cDField(),hists[1].cDField(),newbasis.cDField(),n);
+
+      basis.append(newbasis);
+   }
+
+   template <int D>
+   double AmIterator<D>::computeUDotProd(RingBuffer<FieldCUDA> const & resBasis, int n, int m)
+   {      
+      return (double)gpuInnerProduct(resBasis[n].cDField(),resBasis[m].cDField(), resBasis[n].capacity());
+   }
+
+   template <int D>
+   double AmIterator<D>::computeVDotProd(FieldCUDA const & resCurrent, RingBuffer<FieldCUDA> const & resBasis, int m)
+   {
+      return (double)gpuInnerProduct(resCurrent.cDField(), resBasis[m].cDField(), resCurrent.capacity());
+   }
+
+   template <int D>
+   void AmIterator<D>::updateU(DMatrix<double> & U, RingBuffer<FieldCUDA> const & resBasis, int nHist)
+   {
+      // Update matrix U by shifting elements diagonally
+      int maxHist = U.capacity1();
+      for (int m = maxHist-1; m > 0; --m) {
+         for (int n = maxHist-1; n > 0; --n) {
+            U(m,n) = U(m-1,n-1); 
+         }
+      }
+
+      // Compute U matrix's new row 0 and col 0
+      for (int m = 0; m < nHist; ++m) {
+         double dotprod = computeUDotProd(resBasis,m,0);
+         U(m,0) = dotprod;
+         U(0,m) = dotprod;
       }
    }
 
-   /// Set iterator pointer
    template <int D>
-   void IteratorMediatorCUDA<D>::setIterator(Iterator<FieldCUDA>& iter)
+   void AmIterator<D>::updateV(DArray<double> & v, FieldCUDA const & resCurrent, RingBuffer<FieldCUDA> const & resBasis, int nHist)
    {
-      iter_ = &iter;
-      return;
+      // Compute U matrix's new row 0 and col 0
+      // Also, compute each element of v_ vector
+      for (int m = 0; m < nHist; ++m) {
+         v[m] = computeVDotProd(resCurrent,resBasis,m);
+      }
    }
 
    template <int D>
-   void IteratorMediatorCUDA<D>::setup()
-   { iter_->setup(); }
+   void AmIterator<D>::setEqual(FieldCUDA& a, FieldCUDA const & b)
+   {
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(a.capacity(), nBlocks, nThreads);
+      
+      UTIL_CHECK(b.capacity() == a.capacity());
+      assignReal<<<nBlocks, nThreads>>>(a.cDField(), b.cDField(), a.capacity());
+   }
 
    template <int D>
-   int IteratorMediatorCUDA<D>::solve()
-   { return iter_->solve(); }
+   void AmIterator<D>::addHistories(FieldCUDA& trial, RingBuffer<FieldCUDA> const & basis, DArray<double> coeffs, int nHist)
+   {
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(trial.capacity(), nBlocks, nThreads);
+
+      for (int i = 0; i < nHist; i++) {
+         pointWiseAddScale<<<nBlocks, nThreads>>>
+               (trial.cDField(), basis[i].cDField(), -1*coeffs[i], trial.capacity());
+      }
+   }
 
    template <int D>
-   bool IteratorMediatorCUDA<D>::hasInitialGuess()
+   void AmIterator<D>::addPredictedError(FieldCUDA& fieldTrial, FieldCUDA const & resTrial, double lambda)
+   {
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(fieldTrial.capacity(), nBlocks, nThreads);
+
+      pointWiseAddScale<<<nBlocks, nThreads>>>
+         (fieldTrial.cDField(), resTrial.cDField(), lambda, fieldTrial.capacity());
+   }
+
+   template <int D>
+   bool AmIterator<D>::hasInitialGuess()
    { return sys_->hasWFields(); }
    
    template <int D>
-   int IteratorMediatorCUDA<D>::nElements()
+   int AmIterator<D>::nElements()
    {
       const int nMonomer = sys_->mixture().nMonomer();
       const int nMesh = sys_->mesh().size();
@@ -74,7 +166,7 @@ namespace Pspg{
    }
 
    template <int D>
-   void IteratorMediatorCUDA<D>::getCurrent(FieldCUDA& curr)
+   void AmIterator<D>::getCurrent(FieldCUDA& curr)
    {
       const int nMonomer = sys_->mixture().nMonomer();
       const int nMesh = sys_->mesh().size();
@@ -109,7 +201,7 @@ namespace Pspg{
    }
 
    template <int D>
-   void IteratorMediatorCUDA<D>::evaluate()
+   void AmIterator<D>::evaluate()
    {
       // Solve MDEs for current omega field
       sys_->compute();
@@ -120,7 +212,7 @@ namespace Pspg{
    }
 
    template <int D>
-   void IteratorMediatorCUDA<D>::getResidual(FieldCUDA& resid)
+   void AmIterator<D>::getResidual(FieldCUDA& resid)
    {
       const int n = nElements();
       const int nMonomer = sys_->mixture().nMonomer();
@@ -183,7 +275,7 @@ namespace Pspg{
    }
 
    template <int D>
-   void IteratorMediatorCUDA<D>::update(FieldCUDA& newGuess)
+   void AmIterator<D>::update(FieldCUDA& newGuess)
    {
       const int nMonomer = sys_->mixture().nMonomer();
       const int nMesh = sys_->mesh().size();
@@ -249,28 +341,30 @@ namespace Pspg{
 
    }
 
-   // --- Private member functions that are specific to this implementation --- 
-
-   template<int D> 
-   cudaReal IteratorMediatorCUDA<D>::findAverage(cudaReal * const field, int n) 
-   {
-      cudaReal average = gpuSum(field, n)/n;
-
-      return average;
-   }
-
    template<int D>
-   void IteratorMediatorCUDA<D>::outputToLog()
+   void AmIterator<D>::outputToLog()
    {
-      //if (sys_->domain().isFlexible()) {
+      if (sys_->domain().isFlexible()) {
          const int nParam = sys_->unitCell().nParameter();
          for (int i = 0; i < nParam; i++) {
             Log::file() << "Parameter " << i << " = "
                         << Dbl(sys_->unitCell().parameters()[i])
                         << "\n";
          }
-      //}
+      }
    }
+
+   // --- Private member functions that are specific to this implementation --- 
+
+   template<int D> 
+   cudaReal AmIterator<D>::findAverage(cudaReal * const field, int n) 
+   {
+      cudaReal average = gpuSum(field, n)/n;
+
+      return average;
+   }
+
+
 
 }
 }

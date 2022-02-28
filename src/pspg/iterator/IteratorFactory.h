@@ -9,8 +9,8 @@
 */
 
 #include <util/param/Factory.h>  
-#include <pscf/iterator/Iterator.h>
-#include <pspg/iterator/IteratorMediatorCUDA.h>
+#include <pspg/iterator/Iterator.h>
+#include <pspg/System.h>
 
 #include <string>
 
@@ -26,13 +26,13 @@ namespace Pspg {
    */
 
    template <int D>
-   class IteratorFactory : public Factory< Iterator<FieldCUDA> > 
+   class IteratorFactory : public Factory< Iterator<D> > 
    {
 
    public:
 
       /// Constructor
-      IteratorFactory(IteratorMediatorCUDA<D>& iterMed);
+      IteratorFactory(System<D>& system);
 
       /**
       * Method to create any Iterator supplied with PSCF.
@@ -40,14 +40,14 @@ namespace Pspg {
       * \param className name of the Iterator subclass
       * \return Iterator* pointer to new instance of className
       */
-      Iterator<FieldCUDA>* factory(const std::string &className) const;
+      Iterator<D>* factory(const std::string &className) const;
 
-      using Factory< Iterator<FieldCUDA> >::trySubfactories;
+      using Factory< Iterator<D> >::trySubfactories;
 
    private:
 
-      /// Pointer to an IteratorMediatorCUDA object.
-      IteratorMediatorCUDA<D>* iterMedPtr_;
+      /// Pointer to the system object.
+      System<D>* sys_;
 
    };
 
