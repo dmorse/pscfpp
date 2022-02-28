@@ -4,7 +4,7 @@
 #include "IteratorFactory.h"  
 
 // Subclasses of Iterator 
-#include <pspc/iterator/AmIterator.h>
+#include "AmIterator.h"
 
 namespace Pscf {
 namespace Pspc {
