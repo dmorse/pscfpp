@@ -5,15 +5,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Iterator.tpp"
+#include "IteratorFactory.tpp"
 
 namespace Pscf {
-namespace Pspc
-{
-
-   template class Iterator<3>;
-   template class Iterator<2>;
-   template class Iterator<1>;
-
-} // namespace Pspc
-} // namespace Pscf
+namespace Pspg {
+   template class IteratorFactory<1>;
+   template class IteratorFactory<2>;
+   template class IteratorFactory<3>;
+}
+}

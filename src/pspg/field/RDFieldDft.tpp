@@ -39,16 +39,8 @@ namespace Pspg {
    */
    template <int D>
    RDFieldDft<D>::RDFieldDft(const RDFieldDft<D>& other)
-    : DField<cudaComplex>()
+    : DField<cudaComplex>(other)
    {
-      if (!other.isAllocated()) {
-         UTIL_THROW("Other Field must be allocated.");
-      }
-
-      capacity_ = other.capacity_;
-      cudaMalloc((void**) &data_, capacity_ * sizeof(cudaComplex));
-      
-      cudaMemcpy(data_, other.cDField(), capacity_ * sizeof(cudaComplex), cudaMemcpyDeviceToDevice);
       meshDimensions_ = other.meshDimensions_;
    }
 
@@ -65,22 +57,8 @@ namespace Pspg {
    template <int D>
    RDFieldDft<D>& RDFieldDft<D>::operator = (const RDFieldDft<D>& other)
    {
-      // Check for self assignment
-      if (this == &other) return *this;
-
-      // Precondition
-      if (!other.isAllocated()) {
-         UTIL_THROW("Other Field must be allocated.");
-      }
-
-      if (!isAllocated()) {
-         allocate(other.capacity());
-      } else if (capacity_ != other.capacity_) {
-         UTIL_THROW("Cannot assign Fields of unequal capacity");
-      }
-
-      // Copy elements
-      cudaMemcpy(data_, other.cDField(), capacity_ * sizeof(cudaComplex), cudaMemcpyDeviceToDevice);
+      
+      DField<cudaComplex>::operator = (other);
       meshDimensions_ = other.meshDimensions_;
 
       return *this;

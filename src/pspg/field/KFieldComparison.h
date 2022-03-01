@@ -10,7 +10,7 @@
 
 #include <util/containers/DArray.h>
 #include <pspg/field/RDFieldDft.h>
-#include <pspg/GpuResources.h>
+#include <pspg/math/GpuResources.h>
 
 namespace Pscf {
 namespace Pspg {

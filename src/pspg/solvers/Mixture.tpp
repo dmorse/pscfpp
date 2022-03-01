@@ -9,25 +9,22 @@
 */
 
 #include "Mixture.h"
-#include <pspg/GpuResources.h>
+#include <pspg/math/GpuResources.h>
 
 #include <cmath>
-
-//in propagator.h
-//static __global__ void assignUniformReal(cudaReal* result, cudaReal uniform, int size);
-
-//theres a precision mismatch here. need to cast properly.
-static __global__ void accumulateConc(cudaReal* result, double uniform, cudaReal* cField, int size) {
-   int nThreads = blockDim.x * gridDim.x;
-   int startID = blockIdx.x * blockDim.x + threadIdx.x;
-   for(int i = startID; i < size; i += nThreads) {
-      result[i] += (float)uniform * cField[i];
-   }
-}
 
 namespace Pscf { 
 namespace Pspg
 { 
+
+   //theres a precision mismatch here. need to cast properly.
+   static __global__ void accumulateConc(cudaReal* result, double uniform, cudaReal* cField, int size) {
+      int nThreads = blockDim.x * gridDim.x;
+      int startID = blockIdx.x * blockDim.x + threadIdx.x;
+      for(int i = startID; i < size; i += nThreads) {
+         result[i] += uniform * cField[i];
+      }
+   }
 
    template <int D>
    Mixture<D>::Mixture()
@@ -99,12 +96,16 @@ namespace Pspg
       int nm = nMonomer();
       int i, j;
 
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(nx, nBlocks, nThreads);
+
       // Clear all monomer concentration fields
       for (i = 0; i < nm; ++i) {
          UTIL_CHECK(cFields[i].capacity() == nx);
          UTIL_CHECK(wFields[i].capacity() == nx);
          //cFields[i][j] = 0.0;
-         assignUniformReal<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(cFields[i].cDField(), 0.0, nx);
+         assignUniformReal<<<nBlocks, nThreads>>>(cFields[i].cDField(), 0.0, nx);
       }
 
       // Solve MDE for all polymers
@@ -121,7 +122,7 @@ namespace Pspg
             CField& monomerField = cFields[monomerId];
             CField& blockField = polymer(i).block(j).cField();
             //monomerField[k] += polymer(i).phi() * blockField[k];
-            accumulateConc<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(monomerField.cDField(), 
+            accumulateConc<<<nBlocks, nThreads>>>(monomerField.cDField(), 
                         polymer(i).phi(), blockField.cDField(), nx);
          }
       }
@@ -149,7 +150,27 @@ namespace Pspg
             stress_[i] += polymer(j).stress(i);
          }   
       }   
-   }  
+   }
+
+   template <int D>
+   bool Mixture<D>::isCanonical()
+   {
+      // Check ensemble of all polymers
+      for (int i = 0; i < nPolymer(); ++i) {
+         if (polymer(i).ensemble() == Species::Open) {
+            return false;
+         }
+      }
+      // Currently no solvent in PSPG!
+      // // Check ensemble of all solvents
+      // for (int i = 0; i < nSolvent(); ++i) {
+      //    if (solvent(i).ensemble() == Species::Open) {
+      //       return false;
+      //    }
+      // }
+      // Returns true if false was never returned
+      return true;
+   }
 
 } // namespace Pspg
 } // namespace Pscf

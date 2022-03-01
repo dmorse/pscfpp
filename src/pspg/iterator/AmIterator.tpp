@@ -8,582 +8,363 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
+#include <util/global.h>
 #include "AmIterator.h"
+#include <pspg/field/RDField.h>
 #include <pspg/System.h>
-#include <util/format/Dbl.h>
-#include <pspg/GpuResources.h>
-#include <util/containers/FArray.h>
-#include <util/misc/Timer.h>
-#include <sys/time.h>
-//#include <Windows.h>
+#include <pscf/inter/ChiInteraction.h>
 
 namespace Pscf {
-namespace Pspg {
+namespace Pspg{
 
    using namespace Util;
 
    template <int D>
-   AmIterator<D>::AmIterator()
-      : Iterator<D>(),
-        epsilon_(0),
-        lambda_(0),
-        nHist_(0),
-        maxHist_(0),
-        isFlexible_(0)
-   {  setClassName("AmIterator"); }
-
-   template <int D>
-   AmIterator<D>::AmIterator(System<D>* system)
-      : Iterator<D>(system),
-        epsilon_(0),
-        lambda_(0),
-        nHist_(0),
-        maxHist_(0),
-        isFlexible_(0)
-   { setClassName("AmIterator"); }
+   AmIterator<D>::AmIterator(System<D>& system)
+   : Iterator<D>(system)
+   {}
 
    template <int D>
    AmIterator<D>::~AmIterator()
+   {}
+
+   template <int D>
+   double AmIterator<D>::findNorm(FieldCUDA const & hist) 
    {
-      delete[] temp_;
-      cudaFree(d_temp_);
+      const int n = hist.capacity();
+      double normResSq = (double)gpuInnerProduct(hist.cDField(), hist.cDField(), n);
+
+      return sqrt(normResSq);
    }
 
    template <int D>
-   void AmIterator<D>::readParameters(std::istream& in)
-   {   
-      isFlexible_ = 0; //default value (fixed cell)
-      read(in, "maxItr", maxItr_);
-      read(in, "epsilon", epsilon_);
-      read(in, "maxHist", maxHist_);
-      readOptional(in, "isFlexible", isFlexible_); 
+   double AmIterator<D>::findMaxAbs(FieldCUDA const & hist)
+   {
+      // use parallel reduction to find maximum.
+
+      // number of data points, each step of the way.
+      int n = hist.capacity();
+      cudaReal max = gpuMaxAbs(hist.cDField(), n);
+
+      return (double)max;
+
    }
 
    template <int D>
-   void AmIterator<D>::allocate()
+   void AmIterator<D>::updateBasis(RingBuffer<FieldCUDA> & basis, RingBuffer<FieldCUDA> const & hists)
    {
-      devHists_.allocate(maxHist_ + 1);
-      omHists_.allocate(maxHist_ + 1);
+      // Make sure at least two histories are stored
+      UTIL_CHECK(hists.size() >= 2);
 
-      if (isFlexible_) {
-         devCpHists_.allocate(maxHist_+1);
-         CpHists_.allocate(maxHist_+1);
+      const int n = hists[0].capacity();
+      FieldCUDA newbasis;
+      newbasis.allocate(n);
+
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+
+      pointWiseBinarySubtract<<<nBlocks,nThreads>>>
+            (hists[0].cDField(),hists[1].cDField(),newbasis.cDField(),n);
+
+      basis.append(newbasis);
+   }
+
+   template <int D>
+   double AmIterator<D>::computeUDotProd(RingBuffer<FieldCUDA> const & resBasis, int n, int m)
+   {      
+      return (double)gpuInnerProduct(resBasis[n].cDField(),resBasis[m].cDField(), resBasis[n].capacity());
+   }
+
+   template <int D>
+   double AmIterator<D>::computeVDotProd(FieldCUDA const & resCurrent, RingBuffer<FieldCUDA> const & resBasis, int m)
+   {
+      return (double)gpuInnerProduct(resCurrent.cDField(), resBasis[m].cDField(), resCurrent.capacity());
+   }
+
+   template <int D>
+   void AmIterator<D>::updateU(DMatrix<double> & U, RingBuffer<FieldCUDA> const & resBasis, int nHist)
+   {
+      // Update matrix U by shifting elements diagonally
+      int maxHist = U.capacity1();
+      for (int m = maxHist-1; m > 0; --m) {
+         for (int n = maxHist-1; n > 0; --n) {
+            U(m,n) = U(m-1,n-1); 
+         }
       }
 
-      wArrays_.allocate(systemPtr_->mixture().nMonomer());
-      dArrays_.allocate(systemPtr_->mixture().nMonomer());
-      tempDev.allocate(systemPtr_->mixture().nMonomer());
+      // Compute U matrix's new row 0 and col 0
+      for (int m = 0; m < nHist; ++m) {
+         double dotprod = computeUDotProd(resBasis,m,0);
+         U(m,0) = dotprod;
+         U(0,m) = dotprod;
+      }
+   }
 
-      for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
-          wArrays_[i].allocate(systemPtr_->mesh().size());
-          dArrays_[i].allocate(systemPtr_->mesh().size());
-          tempDev[i].allocate(systemPtr_->mesh().size());
+   template <int D>
+   void AmIterator<D>::updateV(DArray<double> & v, FieldCUDA const & resCurrent, RingBuffer<FieldCUDA> const & resBasis, int nHist)
+   {
+      // Compute U matrix's new row 0 and col 0
+      // Also, compute each element of v_ vector
+      for (int m = 0; m < nHist; ++m) {
+         v[m] = computeVDotProd(resCurrent,resBasis,m);
+      }
+   }
+
+   template <int D>
+   void AmIterator<D>::setEqual(FieldCUDA& a, FieldCUDA const & b)
+   {
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(a.capacity(), nBlocks, nThreads);
+      
+      UTIL_CHECK(b.capacity() == a.capacity());
+      assignReal<<<nBlocks, nThreads>>>(a.cDField(), b.cDField(), a.capacity());
+   }
+
+   template <int D>
+   void AmIterator<D>::addHistories(FieldCUDA& trial, RingBuffer<FieldCUDA> const & basis, DArray<double> coeffs, int nHist)
+   {
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(trial.capacity(), nBlocks, nThreads);
+
+      for (int i = 0; i < nHist; i++) {
+         pointWiseAddScale<<<nBlocks, nThreads>>>
+               (trial.cDField(), basis[i].cDField(), -1*coeffs[i], trial.capacity());
+      }
+   }
+
+   template <int D>
+   void AmIterator<D>::addPredictedError(FieldCUDA& fieldTrial, FieldCUDA const & resTrial, double lambda)
+   {
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(fieldTrial.capacity(), nBlocks, nThreads);
+
+      pointWiseAddScale<<<nBlocks, nThreads>>>
+         (fieldTrial.cDField(), resTrial.cDField(), lambda, fieldTrial.capacity());
+   }
+
+   template <int D>
+   bool AmIterator<D>::hasInitialGuess()
+   { return sys_->hasWFields(); }
+   
+   template <int D>
+   int AmIterator<D>::nElements()
+   {
+      const int nMonomer = sys_->mixture().nMonomer();
+      const int nMesh = sys_->mesh().size();
+
+      int nEle = nMonomer*nMesh;
+
+      if (sys_->domain().isFlexible()) {
+         nEle += sys_->unitCell().nParameter();
+      }
+
+      return nEle;
+   }
+
+   template <int D>
+   void AmIterator<D>::getCurrent(FieldCUDA& curr)
+   {
+      const int nMonomer = sys_->mixture().nMonomer();
+      const int nMesh = sys_->mesh().size();
+      const int n = nElements();
+
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(nMesh, nBlocks, nThreads);
+
+      // pointer to fields on system
+      DArray<RDField<D>> * const currSys = &sys_->wFieldsRGrid();
+
+      // loop to unfold the system fields and store them in one long array
+      for (int i = 0; i < nMonomer; i++) {
+         assignReal<<<nBlocks,nThreads>>>(curr.cDField() + i*nMesh, (*currSys)[i].cDField(), nMesh);
+      }
+
+      // if flexible unit cell, also store unit cell parameters
+      if (sys_->domain().isFlexible()) {
+         const int nParam = sys_->unitCell().nParameter();
+         const double scaleStress = sys_->domain().scaleStress();
+         const FSArray<double,6> currParam = sys_->unitCell().parameters();
+         // convert into a cudaReal array
+         cudaReal* temp = new cudaReal[nParam];
+         for (int k = 0; k < nParam; k++) 
+               temp[k] = (cudaReal)scaleStress*currParam[k];
+         
+         // copy paramters to the end of the curr array
+         cudaMemcpy(curr.cDField() + nMonomer*nMesh, temp, nParam*sizeof(cudaReal), cudaMemcpyHostToDevice);
+         delete[] temp;
+      }
+   }
+
+   template <int D>
+   void AmIterator<D>::evaluate()
+   {
+      // Solve MDEs for current omega field
+      sys_->compute();
+      // Compute stress if done
+      if (sys_->domain().isFlexible()) {
+         sys_->mixture().computeStress(sys_->wavelist());
+      }
+   }
+
+   template <int D>
+   void AmIterator<D>::getResidual(FieldCUDA& resid)
+   {
+      const int n = nElements();
+      const int nMonomer = sys_->mixture().nMonomer();
+      const int nMesh = sys_->mesh().size();
+
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(nMesh, nBlocks, nThreads);
+      
+      // Initialize residuals to zero. Kernel will take care of potential
+      // additional elements (n vs nMesh).
+      assignUniformReal<<<nBlocks, nThreads>>>(resid.cDField(), 0, n);
+
+      // Compute SCF residuals
+      for (int i = 0; i < nMonomer; i++) {
+         int startIdx = i*nMesh;
+         for (int j = 0; j < nMonomer; j++) {
+            pointWiseAddScale<<<nBlocks, nThreads>>>(resid.cDField() + startIdx,
+                                                      sys_->cFieldRGrid(j).cDField(),
+                                                      sys_->interaction().chi(i, j),
+                                                      nMesh);
+            pointWiseAddScale<<<nBlocks, nThreads>>>(resid.cDField() + startIdx,
+                                                      sys_->wFieldRGrid(j).cDField(),
+                                                      -sys_->interaction().idemp(i, j),
+                                                      nMesh);
+         }
       }
       
-      histMat_.allocate(maxHist_ + 1);
-      //allocate d_temp_ here i suppose
-      cudaMalloc((void**)&d_temp_, NUMBER_OF_BLOCKS * sizeof(cudaReal));
-      temp_ = new cudaReal[NUMBER_OF_BLOCKS];
-   }
 
-   template <int D>
-   int AmIterator<D>::solve()
-   {
-      
-      // Define Timer objects
-      Timer solverTimer;
-      Timer stressTimer;
-      Timer updateTimer;
-      Timer::TimePoint now;
-      bool done;
-
-      // Solve MDE for initial state
-      solverTimer.start();
-      systemPtr_->mixture().compute(systemPtr_->wFieldsRGrid(),
-         systemPtr_->cFieldsRGrid());
-      now = Timer::now();
-      solverTimer.stop(now);
-
-      // Compute stress for initial state
-      if (isFlexible_) {
-         stressTimer.start(now);
-         systemPtr_->mixture().computeStress(systemPtr_->wavelist());
-         for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){
-            Log::file() << "Stress    " << m << " = "
-                        << systemPtr_->mixture().stress(m)<<"\n";
-         }
-         for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){
-            Log::file() << "Parameter " << m << " = "
-                        << (systemPtr_->unitCell()).parameter(m)<<"\n";
-         }
-         now = Timer::now();
-         stressTimer.stop(now);
-      }
-
-      // Anderson-Mixing iterative loop
-      int itr;
-      for (itr = 1; itr <= maxItr_; ++itr) {
-         updateTimer.start(now);
-        
-         Log::file() << "---------------------" << std::endl;
-         Log::file() << " Iteration  " << itr << std::endl;
-         if (itr <= maxHist_) {
-            lambda_ = 1.0 - pow(0.9, itr);
-            nHist_ = itr - 1;
-         } else {
-            lambda_ = 1.0;
-            nHist_ = maxHist_;
-         }
-
-         computeDeviation();
-         done = isConverged();
-
-         if (done) {
-            updateTimer.stop();
-
-            if (itr > maxHist_ + 1) {
-               invertMatrix_.deallocate();
-               coeffs_.deallocate();
-               vM_.deallocate();
-            }
-
-            Log::file() << "------- CONVERGED ---------"<< std::endl;
-
-            // Output final timing results
-            double updateTime = updateTimer.time();
-            double solverTime = solverTimer.time();
-            double stressTime = 0.0;
-            double totalTime = updateTime + solverTime;
-            if (isFlexible_) {
-               stressTime = stressTimer.time();
-               totalTime += stressTime;
-            }
-            Log::file() << "\n";
-            Log::file() << "Iterator times contributions:\n";
-            Log::file() << "\n";
-            Log::file() << "solver time  = " << solverTime  << " s,  "
-                        << solverTime/totalTime << "\n";
-            Log::file() << "stress time  = " << stressTime  << " s,  "
-                        << stressTime/totalTime << "\n";
-            Log::file() << "update time  = "  << updateTime  << " s,  "
-                        << updateTime/totalTime << "\n";
-            Log::file() << "total time   = "  << totalTime   << " s  ";
-            Log::file() << "\n\n";
-           
-            if (isFlexible_) {
-               Log::file() << "\n";
-               Log::file() << "Final stress values:" << "\n";
-               for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){
-                  Log::file() << "Stress    " << m << " = "
-                              << systemPtr_->mixture().stress(m)<<"\n";
-               }
-               Log::file() << "\n";
-               Log::file() << "Final unit cell parameter values:" << "\n";
-               for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){
-                  Log::file() << "Parameter " << m << " = "
-                              << (systemPtr_->unitCell()).parameter(m)<<"\n";
-               }
-               Log::file() << "\n";
-            }
-            return 0;
-
-         } else {
-
-            // Resize history based matrix appropriately
-            // consider making these working space local
-
-            if (itr <= maxHist_ + 1) {
-               if (nHist_ > 0) {
-                  invertMatrix_.allocate(nHist_, nHist_);
-                  coeffs_.allocate(nHist_);
-                  vM_.allocate(nHist_);
-               }
-            }
-            int status = minimizeCoeff(itr);
-
-            if (status == 1) {
-               //abort the calculations and treat as failure (time out)
-               //perform some clean up stuff
-               invertMatrix_.deallocate();
-               coeffs_.deallocate();
-               vM_.deallocate();
-               return 1;
-            }
-
-            buildOmega(itr);
-            if (itr <= maxHist_) {
-               if (nHist_ > 0) {
-                  invertMatrix_.deallocate();
-                  coeffs_.deallocate();
-                  vM_.deallocate();
-               }
-            }
-            now = Timer::now();
-            updateTimer.stop(now);
-
-            // Solve MDE
-            solverTimer.start(now);
-            systemPtr_->mixture().compute(systemPtr_->wFieldsRGrid(),
-                                          systemPtr_->cFieldsRGrid());
-            now = Timer::now();
-            solverTimer.stop(now);
-     
-            if (isFlexible_) {
-               stressTimer.start(now);
-               systemPtr_->mixture().computeStress(systemPtr_->wavelist());
-               for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){
-                  Log::file() << "Stress    " << m << " = "
-                              << systemPtr_->mixture().stress(m)<<"\n";
-               }
-               for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){
-                  Log::file() << "Parameter " << m << " = "
-                              << (systemPtr_->unitCell()).parameter(m)<<"\n";
-               }
-               now = Timer::now();
-               stressTimer.stop(now);
-            }
+      // If not canonical, account for incompressibility. 
+      if (!sys_->mixture().isCanonical()) {
+         cudaReal factor = 1/(cudaReal)sys_->interaction().sum_inv();
+         for (int i = 0; i < nMonomer; ++i) {
             
+            subtractUniform<<<nBlocks, nThreads>>>(resid.cDField() + i*nMesh,
+                                                               factor, nMesh);
          }
-         
+      } else {
+         for (int i = 0; i < nMonomer; i++) {
+            // Find current average 
+            cudaReal average = findAverage(resid.cDField()+i*nMesh, nMesh);
+            // subtract out average to set residual average to zero
+            subtractUniform<<<nBlocks, nThreads>>>(resid.cDField() + i*nMesh,
+                                                               average, nMesh);
+         }
       }
 
-      if (itr > maxHist_ + 1) {
-         invertMatrix_.deallocate();
-         coeffs_.deallocate();
-         vM_.deallocate();
+      // If variable unit cell, compute stress residuals
+      if (sys_->domain().isFlexible()) {
+         const int nParam = sys_->unitCell().nParameter();
+         const double scaleStress = sys_->domain().scaleStress();
+         cudaReal* stress = new cudaReal[nParam];
+
+         for (int i = 0; i < nParam; i++) {
+            stress[i] = (cudaReal)(-1*scaleStress*sys_->mixture().stress(i));
+         }
+
+         cudaMemcpy(resid.cDField()+nMonomer*nMesh, stress, nParam*sizeof(cudaReal), cudaMemcpyHostToDevice);
       }
- 
-      // Failure: Not converged after maxItr iterations.
-      return 1;
    }
 
    template <int D>
-   void AmIterator<D>::computeDeviation()
+   void AmIterator<D>::update(FieldCUDA& newGuess)
    {
+      const int nMonomer = sys_->mixture().nMonomer();
+      const int nMesh = sys_->mesh().size();
 
-      //need to average
-      float average = 0;
-      for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
-         average += reductionH(systemPtr_->wFieldRGrid(i), systemPtr_->mesh().size());
-      }
-      average /= (systemPtr_->mixture().nMonomer() * systemPtr_->mesh().size());
-      for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
-         subtractUniform <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (systemPtr_->wFieldRGrid(i).cDField(), average, systemPtr_->mesh().size());
-      }
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(nMesh, nBlocks, nThreads);
 
-      omHists_.append(systemPtr_->wFieldsRGrid());
+      // pointer to field objects in system
+      DArray<RDField<D>> * sysfields = &sys_->wFieldsRGrid();
 
-      if (isFlexible_) {
-         CpHists_.append(systemPtr_->unitCell().parameters());
-      }
-
-      for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
-         assignUniformReal <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (tempDev[i].cDField(), 0, systemPtr_->mesh().size());
-      }
-      
-      for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
-         for (int j = 0; j < systemPtr_->mixture().nMonomer(); ++j) {
-            pointWiseAddScale <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (tempDev[i].cDField(),
-                                                                            systemPtr_->cFieldRGrid(j).cDField(),
-                                                                            systemPtr_->interaction().chi(i, j),
-                                                                            systemPtr_->mesh().size());
-            //this is a good add but i dont necessarily know if its right
-            pointWiseAddScale <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (tempDev[i].cDField(),
-                                                                            systemPtr_->wFieldRGrid(j).cDField(),
-                                                                            -systemPtr_->interaction().idemp(i, j),
-                                                                            systemPtr_->mesh().size()); 
-
-         }
-         
-      }
-
-      float sum_chi_inv = (float) systemPtr_->interaction().sum_inv();
-
-      for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
-         
-         pointWiseSubtractFloat <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (tempDev[i].cDField(),
-                                                                             1/sum_chi_inv, 
-                                                                             systemPtr_->mesh().size());
-      }
-
-      devHists_.append(tempDev);
-
-      if (isFlexible_) {
-         FArray<double, 6> tempCp;
-         for (int i = 0; i<(systemPtr_->unitCell()).nParameter(); i++){
-            //format????
-            tempCp [i] = -((systemPtr_->mixture()).stress(i));
-         }
-         devCpHists_.append(tempCp);
-      }
-   }
-
-   template <int D>
-   bool AmIterator<D>::isConverged()
-   {
-      double error;
-      double dError = 0;
-      double wError = 0;
-      //float temp = 0;
-      for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
-         dError += innerProduct(devHists_[0][i], devHists_[0][i], systemPtr_->mesh().size());
-         wError += innerProduct(systemPtr_->wFieldRGrid(i), systemPtr_->wFieldRGrid(i), systemPtr_->mesh().size());
-      }
-
-      if (isFlexible_) {
-         for ( int i = 0; i < systemPtr_->unitCell().nParameter(); i++) {
-            dError +=  devCpHists_[0][i] *  devCpHists_[0][i];
-            wError +=  systemPtr_->unitCell().parameter(i) * systemPtr_->unitCell().parameter(i);
-         }
-      }
-
-      Log::file() << " dError :" << Dbl(dError) << '\n';
-      Log::file() << " wError :" << Dbl(wError) << '\n';
-      error = sqrt(dError / wError);
-      Log::file() << "  Error :" << Dbl(error) << '\n';
-      if (error < epsilon_) {
-         return true;
-      }
-      else {
-         return false;
-      }
-   }
-
-   template <int D>
-   int AmIterator<D>::minimizeCoeff(int itr)
-   {
-      if (itr == 1) {
-         //do nothing
-         histMat_.reset();
-         return 0;
-      }
-      else {
-
-
-         float elm, elm_cp;
-         //clear last column and shift everything downwards if necessary
-         histMat_.clearColumn(nHist_);
-         //calculate the new values for d(k)d(k') matrix
-         for (int i = 0; i < maxHist_ + 1; ++i) {
-            if (i < nHist_ + 1) {
-
-               elm = 0;
-               for (int j = 0; j < systemPtr_->mixture().nMonomer(); ++j) {
-                  elm += AmIterator<D>::innerProduct(devHists_[0][j], devHists_[i][j], systemPtr_->mesh().size());
-               }
-               histMat_.evaluate(elm, nHist_, i);
+      // Manually and explicitly set homogeneous components of field if canonical
+      if (sys_->mixture().isCanonical()) {
+         cudaReal average, wAverage, cAverage;
+         for (int i = 0; i < nMonomer; i++) {
+            // Find current spatial average
+            average = findAverage(newGuess.cDField() + i*nMesh, nMesh);
+            
+            // Subtract average from field, setting average to zero
+            subtractUniform<<<nBlocks, nThreads>>>(newGuess.cDField() + i*nMesh, average, nMesh);
+            
+            // Compute the new average omega value, add it to all elements
+            wAverage = 0;
+            for (int j = 0; j < nMonomer; j++) {
+               // Find average concentration
+               cAverage = findAverage(sys_->cFieldRGrid(j).cDField(), nMesh);
+               wAverage += sys_->interaction().chi(i,j) * cAverage;
             }
+            addUniform<<<nBlocks, nThreads>>>(newGuess.cDField() + i*nMesh, wAverage, nMesh); 
          }
-
-         //build new Umn array
-         for (int i = 0; i < nHist_; ++i) {
-            for (int j = i; j < nHist_; ++j) {
-               invertMatrix_(i, j) = histMat_.makeUmn(i, j, nHist_);
-
-               if (isFlexible_) {
-                  elm_cp = 0;
-                  for (int m = 0; m < systemPtr_->unitCell().nParameter(); ++m){
-                     elm_cp += ((devCpHists_[0][m] - devCpHists_[i+1][m]) * 
-                                (devCpHists_[0][m] - devCpHists_[j+1][m])); 
-                  }
-                  invertMatrix_(i,j) += elm_cp;
-               } 
-               
-               invertMatrix_(j, i) = invertMatrix_(i, j);
-            }
-         }
-
-         for (int i = 0; i < nHist_; ++i) {
-            vM_[i] = histMat_.makeVm(i, nHist_);
-
-            if (isFlexible_) {
-               elm_cp = 0;
-               for (int m = 0; m < systemPtr_->unitCell().nParameter(); ++m){
-                  vM_[i] += ((devCpHists_[0][m] - devCpHists_[i+1][m]) *
-                             (devCpHists_[0][m]));
-               }
-            }
-         }
-
-         if (itr == 2) {
-            coeffs_[0] = vM_[0] / invertMatrix_(0, 0);
-         }
-         else {
-
-            LuSolver solver;
-            solver.allocate(nHist_);
-            solver.computeLU(invertMatrix_);
-
-            /*
-            int status = solver.solve(vM_, coeffs_);
-            if (status) {
-               if (status == 1) {
-                  //matrix is singular do something
-                  return 1;
-               }
-               }*/
-            solver.solve(vM_, coeffs_);
-            //for the sake of simplicity during porting
-            //we leaves out checks for singular matrix here
-            //--GK 09 11 2019
-
-         }
-         return 0;
       }
-   }
 
-   template <int D>
-   cudaReal AmIterator<D>::innerProduct(const RDField<D>& a, const RDField<D>& b, int size) {
-
-     switch(THREADS_PER_BLOCK){
-     case 512:
-       deviceInnerProduct<512><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_temp_, a.cDField(), b.cDField(), size);
-       break;
-     case 256:
-       deviceInnerProduct<256><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_temp_, a.cDField(), b.cDField(), size);
-       break;
-     case 128:
-       deviceInnerProduct<128><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_temp_, a.cDField(), b.cDField(), size);
-       break;
-     case 64:
-       deviceInnerProduct<64><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_temp_, a.cDField(), b.cDField(), size);
-       break;
-     case 32:
-       deviceInnerProduct<32><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_temp_, a.cDField(), b.cDField(), size);
-       break;
-     case 16:
-       deviceInnerProduct<16><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_temp_, a.cDField(), b.cDField(), size);
-       break;
-     case 8:
-       deviceInnerProduct<8><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_temp_, a.cDField(), b.cDField(), size);
-       break;
-     case 4:
-       deviceInnerProduct<4><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_temp_, a.cDField(), b.cDField(), size);
-       break;
-     case 2:
-       deviceInnerProduct<2><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_temp_, a.cDField(), b.cDField(), size);
-       break;
-     case 1:
-       deviceInnerProduct<1><<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK, THREADS_PER_BLOCK * sizeof(cudaReal)>>>(d_temp_, a.cDField(), b.cDField(), size);
-       break;
-     }
-      cudaMemcpy(temp_, d_temp_, NUMBER_OF_BLOCKS * sizeof(cudaReal), cudaMemcpyDeviceToHost);
-      cudaReal final = 0;
-      cudaReal c = 0;
-      //use kahan summation to reduce error
-      for (int i = 0; i < NUMBER_OF_BLOCKS; ++i) {
-         cudaReal y = temp_[i] - c;
-         cudaReal t = final + y;
-         c = (t - final) - y;
-         final = t;
-         
+      // copy over grid points
+      for (int i = 0; i < nMonomer; i++) {
+         assignReal<<<nBlocks, nThreads>>>
+               ((*sysfields)[i].cDField(), newGuess.cDField() + i*nMesh, nMesh);
       }
-      
-      return final;
-   }
 
+      // if flexible unit cell, update parameters well
+      if (sys_->domain().isFlexible()) {
+         FSArray<double,6> parameters;
+         const int nParam = sys_->unitCell().nParameter();
+         const double scaleStress = sys_->domain().scaleStress();
+         cudaReal* temp = new cudaReal[nParam];
+
+         cudaMemcpy(temp, newGuess.cDField() + nMonomer*nMesh, nParam*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+         for (int i = 0; i < nParam; i++) {
+            parameters.append(1/scaleStress * (double)temp[i]);
+         }
+
+         sys_->unitCell().setParameters(parameters);            
+         sys_->mixture().setupUnitCell(sys_->unitCell(), sys_->wavelist());
+         sys_->wavelist().computedKSq(sys_->unitCell());
+
+         delete[] temp;
+      }
+
+      // TEMPORARY. PASS THE INPUTS THROUGH A BASIS FILTER.
+      sys_->fieldIo().convertRGridToBasis(sys_->wFieldsRGrid(), sys_->wFields());
+      sys_->fieldIo().convertRGridToBasis(sys_->cFieldsRGrid(), sys_->cFields());
+      sys_->fieldIo().convertBasisToRGrid(sys_->wFields(), sys_->wFieldsRGrid());
+      sys_->fieldIo().convertBasisToRGrid(sys_->cFields(), sys_->cFieldsRGrid());
+
+   }
 
    template<int D>
-   cudaReal AmIterator<D>::reductionH(const RDField<D>& a, int size) {
-     reduction <<< NUMBER_OF_BLOCKS/2 , THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cudaReal) >>> (d_temp_, a.cDField(), size);
-      cudaMemcpy(temp_, d_temp_, NUMBER_OF_BLOCKS/2  * sizeof(cudaReal), cudaMemcpyDeviceToHost);
-      cudaReal final = 0;
-      cudaReal c = 0;
-      for (int i = 0; i < NUMBER_OF_BLOCKS/2 ; ++i) {
-         cudaReal y = temp_[i] - c;
-         cudaReal t = final + y;
-         c = (t - final) - y;
-         final = t;
-      }
-      return final;
-   }
-
-   template <int D>
-   void AmIterator<D>::buildOmega(int itr)
+   void AmIterator<D>::outputToLog()
    {
-
-      if (itr == 1) {
-         for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
-            assignReal <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (systemPtr_->wFieldRGrid(i).cDField(),
-            omHists_[0][i].cDField(), systemPtr_->mesh().size());
-            pointWiseAddScale <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (systemPtr_->wFieldRGrid(i).cDField(),
-            devHists_[0][i].cDField(), lambda_, systemPtr_->mesh().size());
+      if (sys_->domain().isFlexible()) {
+         const int nParam = sys_->unitCell().nParameter();
+         for (int i = 0; i < nParam; i++) {
+            Log::file() << "Parameter " << i << " = "
+                        << Dbl(sys_->unitCell().parameters()[i])
+                        << "\n";
          }
-
-         if (isFlexible_) {
-            cellParameters_.clear();
-            for (int m = 0; m < (systemPtr_->unitCell()).nParameter() ; ++m){
-               cellParameters_.append(CpHists_[0][m] +lambda_* devCpHists_[0][m]);
-            }
-            systemPtr_->unitCell().setParameters(cellParameters_);            
-            systemPtr_->mixture().setupUnitCell(systemPtr_->unitCell(), systemPtr_->wavelist());
-            systemPtr_->wavelist().computedKSq(systemPtr_->unitCell());
-         }
-
-      } else {
-         //should be strictly correct. coeffs_ is a vector of size 1 if itr ==2
-
-         for (int j = 0; j < systemPtr_->mixture().nMonomer(); ++j) {
-            assignReal <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (wArrays_[j].cDField(),
-               omHists_[0][j].cDField(), systemPtr_->mesh().size());
-            assignReal <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (dArrays_[j].cDField(),
-               devHists_[0][j].cDField(), systemPtr_->mesh().size());
-         }
-
-         for (int i = 0; i < nHist_; ++i) {
-            for (int j = 0; j < systemPtr_->mixture().nMonomer(); ++j) {
-               //wArrays
-               pointWiseBinarySubtract <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (omHists_[i + 1][j].cDField(),
-                  omHists_[0][j].cDField(), tempDev[0].cDField(),
-                  systemPtr_->mesh().size());
-               pointWiseAddScale <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (wArrays_[j].cDField(),
-                  tempDev[0].cDField(), coeffs_[i], systemPtr_->mesh().size());
-
-               //dArrays
-               pointWiseBinarySubtract <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (devHists_[i + 1][j].cDField(),
-                  devHists_[0][j].cDField(), tempDev[0].cDField(),
-                  systemPtr_->mesh().size());
-               pointWiseAddScale <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (dArrays_[j].cDField(),
-                  tempDev[0].cDField(), coeffs_[i], systemPtr_->mesh().size());
-            }
-         }
-         
-         for (int i = 0; i < systemPtr_->mixture().nMonomer(); ++i) {
-            assignReal <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (systemPtr_->wFieldRGrid(i).cDField(),
-               wArrays_[i].cDField(), systemPtr_->mesh().size());
-            pointWiseAddScale <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (systemPtr_->wFieldRGrid(i).cDField(),
-               dArrays_[i].cDField(), lambda_, systemPtr_->mesh().size());
-         }
-
-         if (isFlexible_) {
-            
-            for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){
-               wCpArrays_[m] = CpHists_[0][m];
-               dCpArrays_[m] = devCpHists_[0][m];
-            }
-            for (int i = 0; i < nHist_; ++i) {
-               for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m) {
-                  wCpArrays_[m] += coeffs_[i] * ( CpHists_[i+1][m]-
-                                                  CpHists_[0][m]);
-                  dCpArrays_[m] += coeffs_[i] * ( devCpHists_[i+1][m]-
-                                                  devCpHists_[0][m]);
-               }
-            } 
-
-            cellParameters_.clear();
-            for (int m = 0; m < systemPtr_->unitCell().nParameter() ; ++m){               
-               cellParameters_.append(wCpArrays_[m] + lambda_* dCpArrays_[m]);
-            }
-            
-            systemPtr_->unitCell().setParameters(cellParameters_);            
-            systemPtr_->mixture().setupUnitCell(systemPtr_->unitCell(), systemPtr_->wavelist());
-            systemPtr_->wavelist().computedKSq(systemPtr_->unitCell());
-            
-         }
-
-
       }
    }
+
+   // --- Private member functions that are specific to this implementation --- 
+
+   template<int D> 
+   cudaReal AmIterator<D>::findAverage(cudaReal * const field, int n) 
+   {
+      cudaReal average = gpuSum(field, n)/n;
+
+      return average;
+   }
+
+
 
 }
 }

@@ -9,7 +9,7 @@
 */
 
 #include "Block.h"
-#include <pspg/GpuResources.h>
+#include <pspg/math/GpuResources.h>
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/crystal/shiftToMinimum.h>
@@ -18,174 +18,176 @@
 #include <util/containers/FArray.h>      // member template
 #include <sys/time.h>
 
-//not a bad idea to rewrite these as functors
-static __global__ void pointwiseMul(const cudaReal* a, const cudaReal* b, cudaReal* result, int size) {
-   int nThreads = blockDim.x * gridDim.x;
-   int startID = blockIdx.x * blockDim.x + threadIdx.x;
-   for (int i = startID; i < size; i += nThreads) {
-      result[i] = a[i] * b[i];
-   }
-}
 
-static __global__ void pointwiseFloatMul(const cudaReal* a, const float* b, cudaReal* result, int size) {
-   int nThreads = blockDim.x * gridDim.x;
-   int startID = blockIdx.x * blockDim.x + threadIdx.x;
-   for (int i = startID; i < size; i += nThreads) {
-      result[i] = a[i] * b[i];
-      // printf("result[%d], =  %d\n", i , result[i]);
-   }
-}
-
-static __global__ void mulDelKsq(cudaReal* result, const cudaComplex* q1,
-                                 const cudaComplex* q2, const cudaReal* delKsq,
-                                 int paramN, int kSize, int rSize) {
-   int nThreads = blockDim.x * gridDim.x;
-   int startID = blockIdx.x * blockDim.x + threadIdx.x;
-   for (int i = startID; i < kSize; i += nThreads) {
-#ifdef SINGLE_PRECISION
-      result[i] =  cuCmulf(q1[i], cuConjf(q2[i])).x * delKsq[paramN * rSize + i];
-#else
-      result[i] =  cuCmul(q1[i], cuConj(q2[i])).x * delKsq[paramN * rSize + i];
-#endif
-   }
-}
-
-static __global__ void equalize ( const cudaReal* a, float* result, int size){  //try to add elements of array here itself
-
-    int nThreads = blockDim.x * gridDim.x;
-    int startID = blockIdx.x * blockDim.x + threadIdx.x;
-    for (int i = startID; i < size; i += nThreads) {
-       result [i] = a [i];
-    }
-
-}
-
-static __global__ void pointwiseMulUnroll2(const cudaReal* a, const cudaReal* b, cudaReal* result, int size) {
-   int nThreads = blockDim.x * gridDim.x;
-   int startID = blockIdx.x * blockDim.x * 2 + threadIdx.x * 2;
-   cudaReal localResult[2];
-   for (int i = startID; i < size; i += nThreads * 2) {
-      localResult[0] = a[i] * b[i];
-      localResult[1] = a[i + 1] * b[i + 1];
-      result[i] = localResult[0];
-      result[i + 1] = localResult[1];
-      //result[i] = a[i] * b[i];
-      //result[i + 1] = a[i + 1] * b[i + 1];
-
-   }
-}
-
-static __global__ void pointwiseMulCombi(cudaReal* a,const cudaReal* b, cudaReal* c,const cudaReal* d,const cudaReal* e, int size) {
-   //c = a * b
-   //a = d * e
-   int nThreads = blockDim.x * gridDim.x;
-   int startID = blockIdx.x * blockDim.x + threadIdx.x;
-   cudaReal tempA;
-   for (int i = startID; i < size; i += nThreads) {
-      tempA = a[i];
-      c[i] = tempA * b[i];
-      a[i] = d[i] * e[i];
-
-   }
-}
-
-
-static __global__ void pointwiseMulSameStart(const cudaReal* a, const cudaReal* expW,const cudaReal* expW2,  cudaReal* q1, cudaReal* q2, int size) {
-   int nThreads = blockDim.x * gridDim.x;
-   int startID = blockIdx.x * blockDim.x + threadIdx.x;
-   cudaReal input;
-   for (int i = startID; i < size; i += nThreads) {
-      input = a[i];
-      q1[i] = expW[i] * input;
-      q2[i] = expW2[i] * input;
-   }
-}
-
-static __global__ void pointwiseMulTwinned(const cudaReal* qr1, const cudaReal* qr2, const cudaReal* expW, cudaReal* q1, cudaReal* q2, int size) {
-   int nThreads = blockDim.x * gridDim.x;
-   int startID = blockIdx.x * blockDim.x + threadIdx.x;
-   cudaReal scale;
-   for (int i = startID; i < size; i += nThreads) {
-      scale = expW[i];
-      q1[i] = qr1[i] * scale;
-      q2[i] = qr2[i] * scale;
-   }
-}
-
-static __global__ void scaleComplexTwinned(cudaComplex* qk1, cudaComplex* qk2, const cudaReal* expksq1, const cudaReal* expksq2, int size) {
-   int nThreads = blockDim.x * gridDim.x;
-   int startID = blockIdx.x * blockDim.x + threadIdx.x;
-   for (int i = startID; i < size; i += nThreads) {
-      qk1[i].x *= expksq1[i];
-      qk1[i].y *= expksq1[i];
-      qk2[i].x *= expksq2[i];
-      qk2[i].y *= expksq2[i];
-   }
-}
-
-static __global__ void scaleComplex(cudaComplex* a, cudaReal* scale, int size) {
-   int nThreads = blockDim.x * gridDim.x;
-   int startID = blockIdx.x * blockDim.x + threadIdx.x;
-   for(int i = startID; i < size; i += nThreads) {
-      a[i].x *= scale[i];
-      a[i].y *= scale[i];
-   }
-}
-
-static __global__ void assignExp(cudaReal* expW, const cudaReal* w, int size, double cDs) {
-   int nThreads = blockDim.x * gridDim.x;
-   int startID = blockIdx.x * blockDim.x + threadIdx.x;
-   for(int i = startID; i < size; i += nThreads) {
-      expW[i] = exp(-w[i]*cDs);
-   }
-}
-
-static __global__ void richardsonExp(cudaReal* qNew, const cudaReal* q1, const cudaReal* q2, int size) {
-   int nThreads = blockDim.x * gridDim.x;
-   int startID = blockIdx.x * blockDim.x + threadIdx.x;
-   for (int i = startID; i < size; i += nThreads) {
-      qNew[i] = (4.0 * q2[i] - q1[i]) / 3.0;
-   }
-}
-
-static __global__ void richardsonExpTwinned(cudaReal* qNew, const cudaReal* q1,
-   const cudaReal* qr, const cudaReal* expW2, int size) {
-   int nThreads = blockDim.x * gridDim.x;
-   int startID = blockIdx.x * blockDim.x + threadIdx.x;
-   cudaReal q2;
-   for (int i = startID; i < size; i += nThreads) {
-      q2 = qr[i] * expW2[i];
-      qNew[i] = (4.0 * q2 - q1[i]) / 3.0;
-   }
-}
 
 namespace Pscf {
 namespace Pspg {
 
-   using namespace Util;
-
-static __global__ void multiplyScaleQQ(cudaReal* result,
-                           const cudaReal* p1,
-                           const cudaReal* p2,
-                           int size, float scale) {
-
-   int nThreads = blockDim.x * gridDim.x;
-   int startID = blockIdx.x * blockDim.x + threadIdx.x;
-
-   for(int i = startID; i < size; i += nThreads) {
-      result[i] += scale * p1[i] * p2[i];
+   //not a bad idea to rewrite these as functors
+   static __global__ void pointwiseMul(const cudaReal* a, const cudaReal* b, cudaReal* result, int size) {
+      int nThreads = blockDim.x * gridDim.x;
+      int startID = blockIdx.x * blockDim.x + threadIdx.x;
+      for (int i = startID; i < size; i += nThreads) {
+         result[i] = a[i] * b[i];
+      }
    }
 
-}
-
-static __global__ void scaleReal(cudaReal* result, int size, float scale) {
-   int nThreads = blockDim.x * gridDim.x;
-   int startID = blockIdx.x * blockDim.x + threadIdx.x;
-
-   for (int i = startID; i < size; i += nThreads) {
-      result[i] *= scale;
+   static __global__ void pointwiseFloatMul(const cudaReal* a, const float* b, cudaReal* result, int size) {
+      int nThreads = blockDim.x * gridDim.x;
+      int startID = blockIdx.x * blockDim.x + threadIdx.x;
+      for (int i = startID; i < size; i += nThreads) {
+         result[i] = a[i] * b[i];
+         // printf("result[%d], =  %d\n", i , result[i]);
+      }
    }
-}
+
+   static __global__ void mulDelKsq(cudaReal* result, const cudaComplex* q1,
+                                    const cudaComplex* q2, const cudaReal* delKsq,
+                                    int paramN, int kSize, int rSize) {
+      int nThreads = blockDim.x * gridDim.x;
+      int startID = blockIdx.x * blockDim.x + threadIdx.x;
+      for (int i = startID; i < kSize; i += nThreads) {
+         #ifdef SINGLE_PRECISION
+         result[i] =  cuCmulf(q1[i], cuConjf(q2[i])).x * delKsq[paramN * rSize + i];
+         #else
+         result[i] =  cuCmul(q1[i], cuConj(q2[i])).x * delKsq[paramN * rSize + i];
+         #endif
+      }
+   }
+
+   static __global__ void equalize ( const cudaReal* a, double* result, int size){  //try to add elements of array here itself
+
+      int nThreads = blockDim.x * gridDim.x;
+      int startID = blockIdx.x * blockDim.x + threadIdx.x;
+      for (int i = startID; i < size; i += nThreads) {
+         result [i] = a [i];
+      }
+
+   }
+
+   static __global__ void pointwiseMulUnroll2(const cudaReal* a, const cudaReal* b, cudaReal* result, int size) {
+      int nThreads = blockDim.x * gridDim.x;
+      int startID = blockIdx.x * blockDim.x * 2 + threadIdx.x * 2;
+      cudaReal localResult[2];
+      for (int i = startID; i < size; i += nThreads * 2) {
+         localResult[0] = a[i] * b[i];
+         localResult[1] = a[i + 1] * b[i + 1];
+         result[i] = localResult[0];
+         result[i + 1] = localResult[1];
+         //result[i] = a[i] * b[i];
+         //result[i + 1] = a[i + 1] * b[i + 1];
+
+      }
+   }
+
+   static __global__ void pointwiseMulCombi(cudaReal* a,const cudaReal* b, cudaReal* c,const cudaReal* d,const cudaReal* e, int size) {
+      //c = a * b
+      //a = d * e
+      int nThreads = blockDim.x * gridDim.x;
+      int startID = blockIdx.x * blockDim.x + threadIdx.x;
+      cudaReal tempA;
+      for (int i = startID; i < size; i += nThreads) {
+         tempA = a[i];
+         c[i] = tempA * b[i];
+         a[i] = d[i] * e[i];
+
+      }
+   }
+
+
+   static __global__ void pointwiseMulSameStart(const cudaReal* a, const cudaReal* expW,const cudaReal* expW2,  cudaReal* q1, cudaReal* q2, int size) {
+      int nThreads = blockDim.x * gridDim.x;
+      int startID = blockIdx.x * blockDim.x + threadIdx.x;
+      cudaReal input;
+      for (int i = startID; i < size; i += nThreads) {
+         input = a[i];
+         q1[i] = expW[i] * input;
+         q2[i] = expW2[i] * input;
+      }
+   }
+
+   static __global__ void pointwiseMulTwinned(const cudaReal* qr1, const cudaReal* qr2, const cudaReal* expW, cudaReal* q1, cudaReal* q2, int size) {
+      int nThreads = blockDim.x * gridDim.x;
+      int startID = blockIdx.x * blockDim.x + threadIdx.x;
+      cudaReal scale;
+      for (int i = startID; i < size; i += nThreads) {
+         scale = expW[i];
+         q1[i] = qr1[i] * scale;
+         q2[i] = qr2[i] * scale;
+      }
+   }
+
+   static __global__ void scaleComplexTwinned(cudaComplex* qk1, cudaComplex* qk2, const cudaReal* expksq1, const cudaReal* expksq2, int size) {
+      int nThreads = blockDim.x * gridDim.x;
+      int startID = blockIdx.x * blockDim.x + threadIdx.x;
+      for (int i = startID; i < size; i += nThreads) {
+         qk1[i].x *= expksq1[i];
+         qk1[i].y *= expksq1[i];
+         qk2[i].x *= expksq2[i];
+         qk2[i].y *= expksq2[i];
+      }
+   }
+
+   static __global__ void scaleComplex(cudaComplex* a, cudaReal* scale, int size) {
+      int nThreads = blockDim.x * gridDim.x;
+      int startID = blockIdx.x * blockDim.x + threadIdx.x;
+      for(int i = startID; i < size; i += nThreads) {
+         a[i].x *= scale[i];
+         a[i].y *= scale[i];
+      }
+   }
+
+   static __global__ void assignExp(cudaReal* expW, const cudaReal* w, double cDs, int size) {
+      int nThreads = blockDim.x * gridDim.x;
+      int startID = blockIdx.x * blockDim.x + threadIdx.x;
+      for(int i = startID; i < size; i += nThreads) {
+         expW[i] = exp(-w[i]*cDs);
+      }
+   }
+
+   static __global__ void richardsonExp(cudaReal* qNew, const cudaReal* q1, const cudaReal* q2, int size) {
+      int nThreads = blockDim.x * gridDim.x;
+      int startID = blockIdx.x * blockDim.x + threadIdx.x;
+      for (int i = startID; i < size; i += nThreads) {
+         qNew[i] = (4.0 * q2[i] - q1[i]) / 3.0;
+      }
+   }
+
+   static __global__ void richardsonExpTwinned(cudaReal* qNew, const cudaReal* q1,
+      const cudaReal* qr, const cudaReal* expW2, int size) {
+      int nThreads = blockDim.x * gridDim.x;
+      int startID = blockIdx.x * blockDim.x + threadIdx.x;
+      cudaReal q2;
+      for (int i = startID; i < size; i += nThreads) {
+         q2 = qr[i] * expW2[i];
+         qNew[i] = (4.0 * q2 - q1[i]) / 3.0;
+      }
+   }
+
+      using namespace Util;
+
+   static __global__ void multiplyScaleQQ(cudaReal* result,
+                              const cudaReal* p1,
+                              const cudaReal* p2,
+                              double scale, int size) {
+
+      int nThreads = blockDim.x * gridDim.x;
+      int startID = blockIdx.x * blockDim.x + threadIdx.x;
+
+      for(int i = startID; i < size; i += nThreads) {
+         result[i] += scale * p1[i] * p2[i];
+      }
+
+   }
+
+   static __global__ void scaleReal(cudaReal* result, double scale, int size) {
+      int nThreads = blockDim.x * gridDim.x;
+      int startID = blockIdx.x * blockDim.x + threadIdx.x;
+
+      for (int i = startID; i < size; i += nThreads) {
+         result[i] *= scale;
+      }
+   }
    /*
    * Constructor.
    */
@@ -229,6 +231,9 @@ static __global__ void scaleReal(cudaReal* result, int size, float scale) {
       UTIL_CHECK(mesh.size() > 1);
       UTIL_CHECK(ds > 0.0);
       UTIL_CHECK(!isAllocated_);
+
+      // GPU Resources
+      ThreadGrid::setThreadsLogical(mesh.size(),nBlocks_,nThreads_);
 
       // Set association to mesh
       meshPtr_ = &mesh;
@@ -277,18 +282,20 @@ static __global__ void scaleReal(cudaReal* result, int size, float scale) {
 
       propagator(0).allocate(ns_, mesh);
       propagator(1).allocate(ns_, mesh);
-      cudaMalloc((void**)&qkBatched_, ns_ * kSize_ * sizeof(cudaComplex));
-      cudaMalloc((void**)&qk2Batched_, ns_ * kSize_ * sizeof(cudaComplex));
+      gpuErrchk(cudaMalloc((void**)&qkBatched_, ns_ * kSize_ * sizeof(cudaComplex)));
+      gpuErrchk(cudaMalloc((void**)&qk2Batched_, ns_ * kSize_ * sizeof(cudaComplex)));
       cField().allocate(mesh.dimensions());
 
-      cudaMalloc((void**)&d_temp_, NUMBER_OF_BLOCKS * sizeof(cudaReal));
-      temp_ = new cudaReal[NUMBER_OF_BLOCKS];
+      gpuErrchk(cudaMalloc((void**)&d_temp_, nBlocks_ * sizeof(cudaReal)));
+      temp_ = new cudaReal[nBlocks_];
 
       expKsq_host = new cudaReal[kSize_];
       expKsq2_host = new cudaReal[kSize_];
 
       isAllocated_ = true;
       hasExpKsq_ = false;
+
+      
    }
 
    /*
@@ -393,8 +400,8 @@ static __global__ void scaleReal(cudaReal* result, int size, float scale) {
       // Populate expW_
       // std::cout << std::endl;
       // expW_[i] = exp(-0.5*w[i]*ds_);
-      assignExp<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(expW_.cDField(), w.cDField(), nx, (double)0.5* ds_);
-      assignExp<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(expW2_.cDField(), w.cDField(), nx, (double)0.25 * ds_);
+      assignExp<<<nBlocks_, nThreads_>>>(expW_.cDField(), w.cDField(), (double)0.5* ds_, nx);
+      assignExp<<<nBlocks_, nThreads_>>>(expW2_.cDField(), w.cDField(), (double)0.25 * ds_, nx);
 
       // Compute expKsq arrays if necessary
       if (!hasExpKsq_) {
@@ -420,22 +427,22 @@ static __global__ void scaleReal(cudaReal* result, int size, float scale) {
 
       // Initialize cField to zero at all points
       //cField()[i] = 0.0;
-      assignUniformReal<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(cField().cDField(), 0.0, nx);
+      assignUniformReal<<<nBlocks_, nThreads_>>>(cField().cDField(), 0.0, nx);
 
       Pscf::Pspg::Propagator<D> const & p0 = propagator(0);
       Pscf::Pspg::Propagator<D> const & p1 = propagator(1);
 
 
       //cudaDeviceSynchronize();
-      multiplyScaleQQ<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(cField().cDField(), p0.q(0), p1.q(ns_ - 1), nx, 1.0);
-      multiplyScaleQQ<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(cField().cDField(), p0.q(ns_-1), p1.q(0), nx, 1.0);
+      multiplyScaleQQ<<<nBlocks_, nThreads_>>>(cField().cDField(), p0.q(0), p1.q(ns_ - 1), 1.0, nx);
+      multiplyScaleQQ<<<nBlocks_, nThreads_>>>(cField().cDField(), p0.q(ns_-1), p1.q(0), 1.0, nx);
       for (int j = 1; j < ns_ - 1; j += 2) {
         //odd indices
-         multiplyScaleQQ<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(cField().cDField(), p0.q(j), p1.q(ns_ - 1 - j), nx, 4.0);
+         multiplyScaleQQ<<<nBlocks_, nThreads_>>>(cField().cDField(), p0.q(j), p1.q(ns_ - 1 - j), 4.0, nx);
       }
       for (int j = 2; j < ns_ - 2; j += 2) {
          //even indices
-         multiplyScaleQQ<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(cField().cDField(), p0.q(j), p1.q(ns_ - 1 - j), nx, 2.0);
+         multiplyScaleQQ<<<nBlocks_, nThreads_>>>(cField().cDField(), p0.q(j), p1.q(ns_ - 1 - j), 2.0, nx);
       }
 
     // cudaReal* tempVal = new cudaReal;
@@ -445,7 +452,7 @@ static __global__ void scaleReal(cudaReal* result, int size, float scale) {
      //std::cout << "This is ds_ " << ds_ << std::endl;
      //delete tempVal;
 
-     scaleReal<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(cField().cDField(), nx, (float)(prefactor *ds_ / 3.0));
+     scaleReal<<<nBlocks_, nThreads_>>>(cField().cDField(), (prefactor *ds_ / 3.0), nx);
      //cudaDeviceSynchronize();
 
 
@@ -484,20 +491,20 @@ static __global__ void scaleReal(cudaReal* result, int size, float scale) {
 
       // Apply pseudo-spectral algorithm
 
-      pointwiseMulSameStart<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>
+      pointwiseMulSameStart<<<nBlocks_, nThreads_>>>
                            (q, expW_.cDField(), expW2_.cDField(), qr_.cDField(), qr2_.cDField(), nx);
       fft_.forwardTransform(qr_, qk_);
       fft_.forwardTransform(qr2_, qk2_);
-      scaleComplexTwinned<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>
+      scaleComplexTwinned<<<nBlocks_, nThreads_>>>
                            (qk_.cDField(), qk2_.cDField(), expKsq_.cDField(), expKsq2_.cDField(), nk);
       fft_.inverseTransform(qk_, qr_);
       fft_.inverseTransform(qk2_, q2_);
-      pointwiseMulTwinned<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>
+      pointwiseMulTwinned<<<nBlocks_, nThreads_>>>
                            (qr_.cDField(), q2_.cDField(), expW_.cDField(), q1_.cDField(), qr_.cDField(), nx);
       fft_.forwardTransform(qr_, qk_);
-      scaleComplex<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(qk_.cDField(), expKsq2_.cDField(), nk);
+      scaleComplex<<<nBlocks_, nThreads_>>>(qk_.cDField(), expKsq2_.cDField(), nk);
       fft_.inverseTransform(qk_, qr_);
-      richardsonExpTwinned<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(qNew, q1_.cDField(),
+      richardsonExpTwinned<<<nBlocks_, nThreads_>>>(qNew, q1_.cDField(),
                            qr_.cDField(), expW2_.cDField(), nx);
       //remove the use of q2
 
@@ -561,7 +568,7 @@ static __global__ void scaleReal(cudaReal* result, int size, float scale) {
 
          for (int n = 0; n < nParams_ ; ++n) {
             //do i need this?
-            mulDelKsq<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>>
+            mulDelKsq<<<nBlocks_, nThreads_ >>>
                (qr2_.cDField(), qkBatched_ + (j * kSize_), qk2Batched_ + (kSize_ * (ns_ -1 -j)),
                 wavelist.dkSq(), n , kSize_, nx);
             /*if(j == 0) {
@@ -599,7 +606,7 @@ static __global__ void scaleReal(cudaReal* result, int size, float scale) {
                }
                exit(1);
                }*/
-            increment = reductionH(qr2_, mesh().size());
+            increment = gpuSum(qr2_.cDField(), mesh().size());
             //            std::cout<<increment<<std::endl;
             increment = (increment * kuhn() * kuhn() * dels)/normal;
             dQ [n] = dQ[n]-increment;
@@ -609,22 +616,6 @@ static __global__ void scaleReal(cudaReal* result, int size, float scale) {
       for (i = 0; i < nParams_; ++i) {
          stress_[i] = stress_[i] - (dQ[i] * prefactor);
       }
-   }
-
-   template<int D>
-   cudaReal Block<D>::reductionH(const RDField<D>& a, int size) {
-      reduction <<< NUMBER_OF_BLOCKS/2 , THREADS_PER_BLOCK, THREADS_PER_BLOCK*sizeof(cudaReal)>>>
-         (d_temp_, a.cDField(), size);
-      cudaMemcpy(temp_, d_temp_, NUMBER_OF_BLOCKS/2  * sizeof(cudaReal), cudaMemcpyDeviceToHost);
-      cudaReal final = 0;
-      cudaReal c = 0;
-      for (int i = 0; i < NUMBER_OF_BLOCKS/2 ; ++i) {
-         cudaReal y = temp_[i] - c;
-         cudaReal t = final + y;
-         c = (t - final) - y;
-         final = t;
-      }
-      return final;
    }
 
 }

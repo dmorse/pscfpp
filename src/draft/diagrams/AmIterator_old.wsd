@@ -1,0 +1,95 @@
+@startuml
+
+class System
+System : + bool hasWFields()
+System : + void compute()
+System : + DArray< DArray<double> > const & wFields() const
+System : + wField(int)
+System : + cField(int)
+System : + setWBasis(...)
+System : + setUnitCell(...)
+
+class UnitCell
+UnitCell : + int nParameter()
+UnitCell : + FSArray<double, 6> parameters() const
+
+class Mixture
+Mixture : + int nMonomer()
+Mixture : + void computeStress()
+Mixture : + double stress(int nParameter)
+
+class Basis
+Basis : + int nBasis()
+
+class Interaction
+Interaction : + chi(int, int)
+Interaction : + idemp(int, int)
+
+
+class Iterator
+' ' Iterator public
+' Iterator : + Iterator(System<D>& system)
+' Iterator : + virtual void setup() = 0
+' Iterator : + virtual int solve() = 0
+' Iterator : + bool isFlexible() const
+' ' Iterator protected 
+' Iterator : # bool isFlexible_
+Iterator : # System<D>& system()
+' Iterator private
+Iterator : - System<D>* systemPtr_
+
+
+
+class AmIterator
+AmIterator : + AmIterator(System<D>& system)
+AmIterator : + ~AmIterator()
+' AmIterator : + void readParameters(std::istream& in)
+' AmIterator : + void setup()
+' AmIterator : + int solve()
+' AmIterator : + bool isFlexible()
+' AmIterator : + double epsilon()
+' AmIterator : + int maxHist()
+' AmIterator : + int maxItr()
+' AmIterator : - double epsilon_
+' AmIterator : - std::string errorType_
+' AmIterator : - double scaleStress_
+' AmIterator : - bool isFlexible_
+' AmIterator : - bool isCanonical_
+' AmIterator : - int shift_
+' AmIterator : - double lambda_
+' AmIterator : - int nHist_
+' AmIterator : - int maxHist_
+' AmIterator : - int maxItr_
+' AmIterator : - int nResid_ 
+' AmIterator : - RingBuffer< DArray < DArray<double> > > resHists_
+' AmIterator : - RingBuffer< DArray < DArray<double> > > wHists_
+' AmIterator : - RingBuffer< FArray <double, 6> > stressHists_
+' AmIterator : - RingBuffer< FSArray<double, 6> > cellParamHists_
+' AmIterator : - DMatrix<double> U_
+' AmIterator : - DArray<double> coeffs_
+' AmIterator : - DArray<double> v_
+' AmIterator : - FSArray<double, 6> parameters_
+' AmIterator : - DArray<DArray <double> > wArrays_
+' AmIterator : - DArray<DArray <double> > dArrays_
+' AmIterator : - FArray<double, 6> wCpArrays_
+' AmIterator : - FArray<double, 6> dCpArrays_
+' AmIterator : - DArray< DArray<double> > resArrays_
+' AmIterator : - bool isCanonical()
+' AmIterator : - int nElem(int i)
+AmIterator : - void computeResidual()
+AmIterator : - bool isConverged()
+AmIterator : - void minimizeCoeff()
+AmIterator : - void buildOmega()
+AmIterator : - void cleanUp()
+
+Iterator <|-- AmIterator
+AmIterator --> System
+System *-> Domain 
+System *-> Mixture
+Domain --> UnitCell
+Domain --> Basis
+System --> Interaction
+System --> Polymer
+
+
+@enduml

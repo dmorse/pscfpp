@@ -203,12 +203,10 @@ namespace Pspc
 
       allocate();
 
-      // Initialize iterator
+      // Initialize iterator through the factory and mediator
       std::string className;
       bool isEnd;
-      // readOptional<bool>(in, "hasIterator", hasIterator_);
-      iteratorPtr_ 
-         = iteratorFactoryPtr_->readObject(in, *this, className, isEnd);
+      iteratorPtr_ = iteratorFactoryPtr_->readObject(in, *this, className, isEnd);
       if (!iteratorPtr_) {
          std::string msg = "Unrecognized Iterator subclass name ";
          msg += className;
@@ -792,9 +790,13 @@ namespace Pspc
 
       // Call iterator
       int error = iterator().solve();
+      
       hasCFields_ = true;
 
       if (!error) {   
+         if (!domain().isFlexible()) {
+            mixture().computeStress();
+         }
          computeFreeEnergy();
          outputThermo(Log::file());
       }

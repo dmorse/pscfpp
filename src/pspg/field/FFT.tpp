@@ -9,7 +9,7 @@
 */
 
 #include "FFT.h"
-#include <pspg/GpuResources.h>
+#include <pspg/math/GpuResources.h>
 
 //forward declaration
 //static __global__ void scaleRealData(cudaReal* data, rtype scale, int size);
@@ -98,6 +98,28 @@ namespace Pspg
       // Make FFTW plans (explicit specializations)
       makePlans(rField, kField);
 
+      // Allocate rFieldCopy_ array if necessary
+      if (!rFieldCopy_.isAllocated()) {
+          rFieldCopy_.allocate(rDimensions);
+      } else {
+          if (rFieldCopy_.capacity() != rSize_) {
+             rFieldCopy_.deallocate();
+             rFieldCopy_.allocate(rDimensions);
+          }
+      }
+      UTIL_CHECK(rFieldCopy_.capacity() == rSize_);
+
+      // Allocate kFieldCopy_ array if necessary
+      if (!kFieldCopy_.isAllocated()) {
+          kFieldCopy_.allocate(kDimensions);
+      } else {
+          if (kFieldCopy_.capacity() != rSize_) {
+             kFieldCopy_.deallocate();
+             kFieldCopy_.allocate(kDimensions);
+          }
+      }
+      UTIL_CHECK(kFieldCopy_.capacity() == kSize_);
+
       isSetup_ = true;
    }
 
@@ -108,6 +130,10 @@ namespace Pspg
    void FFT<D>::forwardTransform(RDField<D> & rField, RDFieldDft<D>& kField)
    const
    {
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(rSize_, nBlocks, nThreads);
+
       // Check dimensions or setup
       UTIL_CHECK(isSetup_);
       UTIL_CHECK(rField.capacity() == rSize_);
@@ -115,7 +141,7 @@ namespace Pspg
 
       // Rescale outputted data. 
       cudaReal scale = 1.0/cudaReal(rSize_);
-      scaleRealData<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(rField.cDField(), scale, rSize_);
+      scaleRealData<<<nBlocks, nThreads>>>(rField.cDField(), scale, rSize_);
       
       //perform fft
       #ifdef SINGLE_PRECISION
@@ -130,6 +156,20 @@ namespace Pspg
       }
       #endif
 
+   }
+
+   /*
+   * Execute forward transform without destroying input.
+   */
+   template <int D>
+   void FFT<D>::forwardTransformSafe(RDField<D> const & rField, RDFieldDft<D>& kField)
+   const
+   {
+      UTIL_CHECK(rFieldCopy_.capacity()==rField.capacity());
+
+      rFieldCopy_ = rField;
+      forwardTransform(rFieldCopy_, kField);
+      
    }
 
    /*
@@ -157,6 +197,19 @@ namespace Pspg
       }
       #endif
    
+   }
+
+   /*
+   * Execute inverse (complex-to-real) transform without destroying input.
+   */
+   template <int D>
+   void FFT<D>::inverseTransformSafe(RDFieldDft<D> const & kField, RDField<D>& rField) 
+   const
+   {
+      UTIL_CHECK(kFieldCopy_.capacity()==kField.capacity());
+
+      kFieldCopy_ = kField;
+      inverseTransform(kFieldCopy_, rField);
    }
 
 }

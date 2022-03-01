@@ -827,7 +827,12 @@ namespace Pspg
             // Compute component value
             component = std::complex<double>(dft_in[rank].x, dft_in[rank].y);
             component /= wavePtr->coeff;
-            UTIL_CHECK(abs(component.imag()) < 1.0E-7); // Did not satisfy 1.0E-8 accuracy due to float point accuracy
+            // verify that imaginary component is approximately 0, or very small
+            #ifdef SINGLE_PRECISION
+            UTIL_CHECK(abs(component.imag()) < 1.0E-03);
+            #else
+            UTIL_CHECK(abs(component.imag()) < 1.0E-8);
+            #endif
             components_out[is] = component.real();
             ++is;
 
@@ -994,7 +999,7 @@ namespace Pspg
       convertBasisToKGrid(in, workDft);
 
       for (int i = 0; i < nMonomer; ++i) {
-         fft().inverseTransform(workDft[i], out[i]);
+         fft().inverseTransformSafe(workDft[i], out[i]);
          workDft[i].deallocate();
       }
    }
@@ -1016,7 +1021,7 @@ namespace Pspg
       }   
 
       for (int i = 0; i < nMonomer; ++i) {
-         fft().forwardTransform(in[i], workDft [i]);
+         fft().forwardTransformSafe(in[i], workDft [i]);
       }
 
       convertKGridToBasis(workDft, out);
@@ -1026,29 +1031,29 @@ namespace Pspg
       }
    }
 
-   // template <int D>
-   // void 
-   // FieldIo<D>::convertKGridToRGrid(DArray< RDFieldDft<D> > & in,
-   //                                 DArray< RDField<D> >& out) const
-   // {
-   //    UTIL_ASSERT(in.capacity() == out.capacity());
-   //    int n = in.capacity();
-   //    for (int i = 0; i < n; ++i) {
-   //       fft().inverseTransform(in[i], out[i]);
-   //    }
-   // }
+   template <int D>
+   void 
+   FieldIo<D>::convertKGridToRGrid(DArray< RDFieldDft<D> > & in,
+                                   DArray< RDField<D> >& out) const
+   {
+      UTIL_ASSERT(in.capacity() == out.capacity());
+      int n = in.capacity();
+      for (int i = 0; i < n; ++i) {
+         fft().inverseTransformSafe(in[i], out[i]);
+      }
+   }
 
-   // template <int D>
-   // void 
-   // FieldIo<D>::convertRGridToKGrid(DArray< RDField<D> > & in,
-   //                                 DArray< RDFieldDft<D> >& out) const
-   // {
-   //    UTIL_ASSERT(in.capacity() == out.capacity());
-   //    int n = in.capacity();
-   //    for (int i = 0; i < n; ++i) {
-   //       fft().forwardTransform(in[i], out[i]);
-   //    }
-   // }
+   template <int D>
+   void 
+   FieldIo<D>::convertRGridToKGrid(DArray< RDField<D> > & in,
+                                   DArray< RDFieldDft<D> >& out) const
+   {
+      UTIL_ASSERT(in.capacity() == out.capacity());
+      int n = in.capacity();
+      for (int i = 0; i < n; ++i) {
+         fft().forwardTransformSafe(in[i], out[i]);
+      }
+   }
 
    template <int D>
    void FieldIo<D>::checkWorkDft()

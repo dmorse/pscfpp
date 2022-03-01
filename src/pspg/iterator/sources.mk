@@ -1,7 +1,8 @@
 pspg_iterator_= \
-  pspg/iterator/AmIterator.cu 
+  pspg/iterator/IteratorFactory.cu \
+  pspg/iterator/AmIterator.cu \
+  pspg/iterator/AmIteratorOld.cu \
 
-  
 
 pspg_iterator_SRCS=\
 	  $(addprefix $(SRC_DIR)/, $(pspg_iterator_))

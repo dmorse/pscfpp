@@ -8,234 +8,156 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pspc/iterator/Iterator.h> // base class
-#include <pspc/solvers/Mixture.h>
-#include <pscf/math/LuSolver.h>
-#include <util/containers/DArray.h>
-#include <util/containers/FArray.h>
-#include <util/containers/FSArray.h>
-#include <util/containers/DMatrix.h>
-#include <util/containers/RingBuffer.h>
-#include <pspc/field/RField.h>
+#include "Iterator.h"
+#include <pscf/iterator/AmIteratorTmpl.h>                 
 
 namespace Pscf {
 namespace Pspc
 {
 
+   template <int D>
+   class System;
+
    using namespace Util;
-   
+
    /**
-   * Anderson mixing iterator for the pseudo spectral method.
+   * Pspc implementation of the Anderson Mixing iterator.
    *
    * \ingroup Pspc_Iterator_Module
    */
    template <int D>
-   class AmIterator : public Iterator<D>
+   class AmIterator : public AmIteratorTmpl<Iterator<D>, FieldCPU>
    {
+
    public:
-      
-      typedef RField<D> WField;
-      typedef RField<D> CField;
 
       /**
-      * Constructor
-      *
-      * \param system pointer to a parent System object
+      * Constructor.
+      * 
+      * \param system System object associated with this iterator.
       */
       AmIterator(System<D>& system);
 
       /**
-      * Destructor
+      * Destructor.
       */
       ~AmIterator();
 
-      /**
-      * Read all parameters and initialize.
-      *
-      * \param in input filestream
-      */
-      void readParameters(std::istream& in);
-
-      /**
-      * Setup and allocate required memory.
-      */
-      void setup();
-
-      /**
-      * Iterate to a solution
-      */
-      int solve();
-
-      /**
-      * Should the unit cell be adjusted to find a zero stress state?
-      */
-      bool isFlexible();
-
-      /**
-      * Get epsilon (error threshhold).
-      */
-      double epsilon();
-
-      /**
-      * Get the maximum number of field histories retained.
-      */
-      int maxHist();
-
-      /**
-      * Get the maximum number of iteration before convergence.
-      */
-      int maxItr();
+      using AmIteratorTmpl<Iterator<D>,FieldCPU>::setup;
+      using AmIteratorTmpl<Iterator<D>,FieldCPU>::solve;
+      using AmIteratorTmpl<Iterator<D>,FieldCPU>::readParameters;
+      using Iterator<D>::sys_;
 
    private:
 
-      /// Error tolerance
-      double epsilon_;
-
-      /// Type of error checked for convergence.
-      /// Either maxResid or normResid.
-      std::string errorType_;
-
-      /// Scale factor for importance of stress in
-      /// residual and error calculations.
-      double scaleStress_;
-
-      /// Flexible cell computation (1) or rigid (0), default value = 0
-      bool isFlexible_;
-
-      /// True if all species are closed ensembles, false otherwise.
-      bool isCanonical_;
-
-      /// Ensemble shift factor. Ignore spatially homogeneous basis
-      /// function coefficients if isCanonical_.
-      int shift_;  
-
-      /// Free parameter for minimization
-      double lambda_;
-
-      /// Number of previous steps to use to compute next state. [0,maxHist_]
-      int nHist_;
-
-      /// Number of histories to retain.
-      int maxHist_;
-
-      /// Maximum number of iterations to attempt.
-      int maxItr_;
-
-      /// Number of residual components. Either nMonomer if !isFlexible_
-      /// or nMonomer+nParameter if isFlexible_
-      int nResid_; 
-
-      /// History of field residuals.
-      /// 1st index = history, 2nd index = monomer, 3rd index = basis func.
-      RingBuffer< DArray < DArray<double> > > resHists_;
-
-      /// History of previous w-fields
-      RingBuffer< DArray < DArray<double> > > wHists_;
-
-      /// History of previous stress values.
-      RingBuffer< FArray <double, 6> > stressHists_;
-
-      /// History of unit cell parameter values.
-      RingBuffer< FSArray<double, 6> > cellParamHists_;
-
-      /// Matrix, the dot products of residual differences.
-      DMatrix<double> U_;
-
-      /// Cn, coefficients for mixing previous states.
-      DArray<double> coeffs_;
-
-      /// Vector, dot products of residuals with differences from histories
-      DArray<double> v_;
-
-      /// Work Array for iterating on parameters 
-      FSArray<double, 6> parameters_;
-
-      /// New trial w field (big W in Arora et al. 2017)
-      DArray<DArray <double> > wArrays_;
-
-      /// Predicted field residual for trial state (big D)
-      DArray<DArray <double> > dArrays_;
-
-      /// New trial vector of cell parameters.
-      FArray<double, 6> wCpArrays_;
-
-      /// Predicted stress residual.
-      FArray<double, 6> dCpArrays_;
-
-      /// Workspace for residual calculation.
-      DArray< DArray<double> > resArrays_;
-
       /**
-      * Check if ensemble is canonical. Returns false if grand-canonical 
-      * or mixed ensemble.
+      * Find norm of a residual vector.
       */
-      bool isCanonical();
+      double findNorm(FieldCPU const & hist);
 
       /**
-      * Return the number of components for a given residual. This is 
-      * either the number of spectral basis functions if the residual
-      * is an SCF residual, or 1 if the residual is a stress residual. 
-      */ 
-      int nElem(int i);
-
-      /**
-      * Compute the deviation of wFields from a mean field solution
+      * Find the maximum magnitude element of a residual vector.
       */
-      void computeResidual();
+      double findMaxAbs(FieldCPU const & hist);
 
       /**
-      * Check if solution is converge within specified tolerance.
-      *
-      * \return true for error < epsilon and false for error >= epsilon
+      * Update the series of residual vectors.
+      * 
+      * \param basis RingBuffer object storing the list of residual or field basis vectors.
+      * \param hists RingBuffer object storing the histories of residual or field vectors.
       */
-      bool isConverged();
+      void updateBasis(RingBuffer<FieldCPU> & basis, RingBuffer<FieldCPU> const & hists);
 
       /**
-      * Determine the coefficients that would minimize U_
+      * Compute the dot product for an element of the U matrix.
+      * 
+      * \param resBasis RingBuffer object storing the list of residual basis vectors.
+      * \param m row of the U matrix
+      * \param n column of the U matrix
       */
-      void minimizeCoeff();
+      double computeUDotProd(RingBuffer<FieldCPU> const & resBasis, int m, int n);
 
       /**
-      * Rebuild wFields for the next iteration from minimized coefficients
+      * Compute the dot product for an element of the v vector.
+      * 
+      * \param resCurrent the residual vector calculated at the present iteration step
+      * \param resBasis RingBuffer object storing the list of residual basis vectors.
+      * \param m row of the v vector
       */
-      void buildOmega();
+      double computeVDotProd(FieldCPU const & resCurrent, RingBuffer<FieldCPU> const & resBasis, int m);
 
       /**
-      * Clean up after a call to solve(), enabling future calls to solve.
+      * Compute the series of necessary dot products and update the U matrix.
+      * 
+      * \param U U matrix
+      * \param resBasis RingBuffer object storing the list of residual basis vectors.
+      * \param nHist number of histories stored at this iteration
       */
-      void cleanUp();
+      void updateU(DMatrix<double> & U, RingBuffer<FieldCPU> const & resBasis, int nHist);
 
-      // Members of parent classes with non-dependent names
-      using Iterator<D>::setClassName;
-      using Iterator<D>::system;
-      using ParamComposite::read;
-      using ParamComposite::readOptional;
+      /**
+      * Compute the series of necessary dot products and update the v vector.
+      * 
+      * \param v v vector
+      * \param resCurrent the residual vector calculated at the present iteration step
+      * \param resBasis RingBuffer object storing the list of residual basis vectors.
+      * \param nHist number of histories stored at this iteration
+      */
+      void updateV(DArray<double> & v, FieldCPU const & resCurrent, RingBuffer<FieldCPU> const & resBasis, int nHist);
 
-   //friend:
+      /**
+      * Set a field equal to another. Essentially a = b, but potentially more complex
+      * in certain implementations of the AmIterator.
+      * 
+      * \param a the field to be set
+      * \param b the field for it to be set to
+      */
+      void setEqual(FieldCPU& a, FieldCPU const & b);
+
+      /**
+      * Mix histories, scaled by their respective coefficients, into the trial field.
+      * 
+      * \param trial object for calculation results to be stored in.
+      * \param basis list of history basis vectors.
+      * \param coeffs list of coefficients for each history.
+      * \param nHist number of histories stored at this iteration
+      */
+      void addHistories(FieldCPU& trial, RingBuffer<FieldCPU> const & basis, DArray<double> coeffs, int nHist);
+
+      /**
+      * Add predicted error into the field trial guess to attempt to correct for it.
+      * 
+      * \param fieldTrial field for calculation results to be stored in.
+      * \param resTrial predicted error for current mixing of histories.
+      * \param lambda Anderson-Mixing parameter for mixing in histories
+      */
+      void addPredictedError(FieldCPU& fieldTrial, FieldCPU const & resTrial, double lambda);
+
+      /// Checks if the system has an initial guess
+      bool hasInitialGuess();
+      
+      /// Calculates and returns the number of elements in the
+      /// array to be iterated
+      int nElements();
+
+      /// Gets the current state of the system and processes it into 
+      /// format needed by AmIteratorTmpl.
+      void getCurrent(FieldCPU& curr);
+
+      /// Runs calculation to evaluate function for fixed point.
+      void evaluate();
+
+      /// Gets residual values from system
+      void getResidual(FieldCPU& resid);
+
+      /// Updates the system with a passed in state of the iterator.
+      void update(FieldCPU& newGuess);
+
+      /// Outputs relevant system details to the iteration log
+      void outputToLog();
 
    };
 
-   // Inline member functions
-
-   template<int D>
-   inline double AmIterator<D>::epsilon()
-   { return epsilon_; }
-
-   template<int D>
-   inline int AmIterator<D>::maxHist()
-   { return maxHist_; }
-
-   template<int D>
-   inline int AmIterator<D>::maxItr()
-   { return maxItr_; }
-
-   #ifndef PSPC_AM_ITERATOR_TPP
-   // Suppress implicit instantiation
-   extern template class AmIterator<1>;
-   extern template class AmIterator<2>;
-   extern template class AmIterator<3>;
-   #endif
-
-}
-}
+} // namespace Pspc
+} // namespace Pscf
 #endif

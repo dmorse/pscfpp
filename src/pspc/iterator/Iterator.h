@@ -9,6 +9,7 @@
 */
 
 #include <util/param/ParamComposite.h>    // base class
+#include <util/containers/DArray.h>
 #include <util/global.h>                  
 
 namespace Pscf {
@@ -20,6 +21,8 @@ namespace Pspc
 
    using namespace Util;
 
+   typedef DArray<double> FieldCPU;
+
    /**
    * Base class for iterative solvers for SCF equations.
    *
@@ -30,6 +33,11 @@ namespace Pspc
    {
 
    public:
+
+      /**
+      * Default constructor.
+      */
+      Iterator();
 
       /**
       * Constructor.
@@ -44,7 +52,7 @@ namespace Pspc
       ~Iterator();
 
       /**
-      * Setup and allocate memory before iteration.
+      * Setup iterator.
       */
       virtual void setup() = 0;
 
@@ -55,52 +63,25 @@ namespace Pspc
       */
       virtual int solve() = 0;
 
-      /**
-      * Is the unit cell adjusted to find a zero stress state?
-      */
-      bool isFlexible() const;
-
    protected:
 
-      /// Flexible cell (true) or rigid (false), default value = false
-      bool isFlexible_;
-
-      /**
-      * Get the parent system by reference.
-      */
-      System<D>& system();
-
-   private:
-
-      /// Pointer to parent System object
-      System<D>* systemPtr_;
-
-      /**
-      * Default constructor (private and not implemented to prohibit)
-      */
-      Iterator();
-
-      /**
-      * Copy constructor (private and not implemented to prohibit)
-      */
-      Iterator(Iterator<D>& other);
-
+      /// Pointer to the associated system object.
+      System<D>* sys_;
+      
    };
 
-   template <int D>
-   inline bool Iterator<D>::isFlexible() const
-   { return isFlexible_; }
+   template<int D>
+   inline Iterator<D>::Iterator()
+   {  setClassName("Iterator"); }
 
-   template <int D>
-   inline System<D>& Iterator<D>::system() 
-   {  return *systemPtr_; }
+   template<int D>
+   inline Iterator<D>::Iterator(System<D>& system)
+   : sys_(&system)
+   {  setClassName("Iterator"); }
 
-   #ifndef PSPC_ITERATOR_TPP
-   // Suppress implicit instantiation
-   extern template class Iterator<1>;
-   extern template class Iterator<2>;
-   extern template class Iterator<3>;
-   #endif
+   template<int D>
+   inline Iterator<D>::~Iterator()
+   {}
 
 } // namespace Pspc
 } // namespace Pscf

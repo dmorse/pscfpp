@@ -11,7 +11,7 @@
 #include "DField.h"
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
-#include <pspg/GpuResources.h>
+#include <pspg/math/GpuResources.h>
 
 #include <cufft.h>
 
@@ -70,8 +70,6 @@ namespace Pspg
       */
       RDField& operator = (const RDField& other);
 
-      using DField<cudaReal>::allocate;
-
       /**
       * Allocate the underlying C array for an FFT grid.
       *
@@ -94,6 +92,10 @@ namespace Pspg
       */
       template <class Archive>
       void serialize(Archive& ar, const unsigned int version);
+
+      using DField<cudaReal>::allocate;
+      using DField<cudaReal>::operator=;
+      
 
    private:
 
@@ -149,7 +151,7 @@ namespace Pspg
       }
 
       if (isAllocated()) {
-         float* tempData = new float[capacity];
+         double* tempData = new double[capacity];
          cudaMemcpy(tempData, data_, capacity * sizeof(cudaReal), cudaMemcpyDeviceToHost);
          for (int i = 0; i < capacity_; ++i) {
             ar & tempData[i];

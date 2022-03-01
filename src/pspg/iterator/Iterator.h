@@ -9,6 +9,7 @@
 */
 
 #include <util/param/ParamComposite.h>    // base class
+#include <pspg/field/DField.h>
 #include <util/global.h>                  
 
 namespace Pscf {
@@ -17,6 +18,9 @@ namespace Pspg
 
    template <int D>
    class System;
+
+   typedef DField<cudaReal> FieldCUDA;
+
 
    using namespace Util;
 
@@ -41,12 +45,17 @@ namespace Pspg
       * 
       * \param system parent System object
       */
-      Iterator(System<D>* system);
+      Iterator(System<D>& system);
 
       /**
       * Destructor.
       */
       ~Iterator();
+
+      /**
+      * Setup iterator.
+      */
+      virtual void setup() = 0;
 
       /**
       * Iterate to solution.
@@ -55,10 +64,26 @@ namespace Pspg
       */
       virtual int solve() = 0;
 
-      System<D>* systemPtr_;
+   protected:
+
+      /// Pointer to the associated system object.
+      System<D>* sys_;
+      
    };
+
+   template<int D>
+   inline Iterator<D>::Iterator()
+   {  setClassName("Iterator"); }
+
+   template<int D>
+   inline Iterator<D>::Iterator(System<D>& system)
+   : sys_(&system)
+   {  setClassName("Iterator"); }
+
+   template<int D>
+   inline Iterator<D>::~Iterator()
+   {}
 
 } // namespace Pspg
 } // namespace Pscf
-#include "Iterator.tpp"
 #endif

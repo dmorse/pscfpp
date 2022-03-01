@@ -91,6 +91,14 @@ namespace Pspc {
       void inverseTransform(RFieldDft<D>& in, RField<D>& out) const;
 
       /**
+      * Compute inverse (complex-to-real) Fourier transform without destroying input.
+      *
+      * \param in  array of complex values on k-space grid (device mem)
+      * \param out  array of real values on r-space grid (device mem)
+      */
+      void inverseTransformSafe(RFieldDft<D> const & kField, RField<D>& rField) const;
+
+      /**
       * Return the dimensions of the grid for which this was allocated.
       */
       IntVec<D> const & meshDimensions() const;
@@ -102,8 +110,11 @@ namespace Pspc {
 
    private:
 
-      /// Work array for real data.
-      mutable RField<D> work_;
+      /// Private r-space array for performing safe transforms.
+      mutable RField<D> rFieldCopy_;
+
+      /// Private k-space array for performing safe transforms.
+      mutable RFieldDft<D> kFieldCopy_;
 
       /// Vector containing number of grid points in each direction.
       IntVec<D> meshDimensions_;

@@ -1,12 +1,12 @@
-#ifndef PSPG_MIXTURE_TEST_H
-#define PSPG_MIXTURE_TEST_H
+#ifndef PSPG_CUDA_MEM_TEST_H
+#define PSPG_CUDA_MEM_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
 #include <pspg/field/RDField.h>
 #include <util/math/Constants.h>
-#include <pspg/GpuResources.h>
+#include <pspg/math/GpuResources.h>
 
 #include <fstream>
 #include <iomanip>

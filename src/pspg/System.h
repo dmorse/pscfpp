@@ -8,7 +8,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pspg/iterator/AmIterator.h>
 #include <pspg/field/FieldIo.h>            // member
 #include <pspg/solvers/Mixture.h>          // member
 #include <pspg/field/Domain.h>             // member
@@ -30,8 +29,10 @@
 namespace Pscf {
 namespace Pspg
 {
-   class Sweep;
-   class SweepFactory;
+   template <int D> class Iterator;
+   template <int D> class IteratorFactory;
+   template <int D> class Sweep;
+   template <int D> class SweepFactory;
 
    using namespace Util;
 
@@ -265,15 +266,19 @@ namespace Pspg
       UnitCell<D> & unitCell();
 
       /**
+      * Get Domain by const reference.
+      */
+      Domain<D> const & domain() const;
+
+      /**
       * Get interaction (i.e., excess free energy model) by reference.
       */
       ChiInteraction& interaction();
 	  
       /**
-      * Get the Iterator by reference.
+      * Get the iterator by reference.
       */
-      //temporarily changed to allow testing on member functions
-      AmIterator<D>& iterator();
+      Iterator<D>& iterator();
 
       /**
       * Get basis object by reference.
@@ -489,8 +494,13 @@ namespace Pspg
       /**
       * Pointer to an iterator.
       */
-      AmIterator<D>* iteratorPtr_;
+      Iterator<D>* iteratorPtr_;
      
+      /**
+      * Pointer to iterator factory object
+      */
+      IteratorFactory<D>* iteratorFactoryPtr_;
+
       /**
       * Container for wavevector data.   
       */ 
@@ -499,12 +509,12 @@ namespace Pspg
       /**
       * Pointer to an Sweep object
       */
-      Sweep* sweepPtr_;
+      Sweep<D>* sweepPtr_;
 
       /**
       * Pointer to SweepFactory object
       */
-      SweepFactory* sweepFactoryPtr_;
+      SweepFactory<D>* sweepFactoryPtr_;
 
       /**
       * Array of chemical potential fields for monomer types.
@@ -636,16 +646,6 @@ namespace Pspg
       */
       void readEcho(std::istream& in, std::string& string) const;
 
-      /**
-      * Compute inner product of two RDField fields (private, on GPU).
-      */
-      cudaReal innerProduct(const RDField<D>& a, const RDField<D>& b, int size);
-
-      /**
-      * Compute reduction of an RDField (private, on GPU).
-      */
-      cudaReal reductionH(const RDField<D>& a, int size);
-
       #if 0
       // Additional member variables for field-theoretic Monte Carlo
       
@@ -663,7 +663,10 @@ namespace Pspg
 
    // Inline member functions
 
-   // Get the associated UnitCell<D> object by const reference.
+   template <int D>
+   inline Domain<D> const & System<D>::domain() const
+   { return domain_; }
+
    template <int D>
    inline UnitCell<D> & System<D>::unitCell()
    { return domain_.unitCell(); }
@@ -708,7 +711,7 @@ namespace Pspg
 
    // Get the Iterator.
    template <int D>
-   inline AmIterator<D>& System<D>::iterator()
+   inline Iterator<D>& System<D>::iterator()
    {
       UTIL_ASSERT(iteratorPtr_);
       return *iteratorPtr_;

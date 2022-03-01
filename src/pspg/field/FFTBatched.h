@@ -16,7 +16,7 @@
 #include <cufft.h>
 #include <cuda.h>
 #include <cuda_runtime.h>
-#include <pspg/GpuResources.h>
+#include <pspg/math/GpuResources.h>
 
 //temporary for debugging
 #include <iostream>

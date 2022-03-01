@@ -9,7 +9,11 @@
 */
 
 #include "FFTBatched.h"
-#include <pspg/GpuResources.h>
+#include <pspg/math/GpuResources.h>
+
+namespace Pscf {
+namespace Pspg
+{
 
 static __global__ void scaleComplexData(cudaComplex* data, cudaReal scale, int size) {
    
@@ -32,11 +36,6 @@ static __global__ void scaleRealData(cudaReal* data, cudaReal scale, int size) {
    }
    
 }
-
-
-namespace Pscf {
-namespace Pspg
-{
 
    using namespace Util;
 
@@ -155,7 +154,7 @@ namespace Pspg
          
       }
 
-#ifdef SINGLE_PRECISION
+      #ifdef SINGLE_PRECISION
       if(cufftPlanMany(&fPlan_, D, n, //plan, rank, n
                        NULL, 1, rdist, //inembed, istride, idist
                        NULL, 1, kdist, //onembed, ostride, odist
@@ -170,7 +169,7 @@ namespace Pspg
          std::cout<<"plan creation failed "<<std::endl;
          exit(1);
       }
-#else
+      #else
       if(cufftPlanMany(&fPlan_, D, n, //plan, rank, n
                        NULL, 1, rdist, //inembed, istride, idist
                        NULL, 1, kdist, //onembed, ostride, odist
@@ -185,7 +184,7 @@ namespace Pspg
          std::cout<<"plan creation failed "<<std::endl;
          exit(1);
       }
-#endif      
+      #endif      
    }
 
    /*
@@ -209,7 +208,7 @@ namespace Pspg
          
       }
 
-#ifdef SINGLE_PRECISION
+      #ifdef SINGLE_PRECISION
       if(cufftPlanMany(&fPlan_, D, n, //plan, rank, n
                        NULL, 1, rdist, //inembed, istride, idist
                        NULL, 1, kdist, //onembed, ostride, odist
@@ -224,7 +223,7 @@ namespace Pspg
          std::cout<<"plan creation failed "<<std::endl;
          exit(1);
       }
-#else
+      #else
       if(cufftPlanMany(&fPlan_, D, n, //plan, rank, n
                        NULL, 1, rdist, //inembed, istride, idist
                        NULL, 1, kdist, //onembed, ostride, odist
@@ -239,7 +238,7 @@ namespace Pspg
          std::cout<<"plan creation failed "<<std::endl;
          exit(1);
       }
-#endif
+      #endif
    }
 
    /*
@@ -248,6 +247,10 @@ namespace Pspg
    template <int D>
    void FFTBatched<D>::forwardTransform(RDField<D>& rField, RDFieldDft<D>& kField)
    {
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(rSize_*2, nBlocks, nThreads);
+
       // Check dimensions or setup
       if (isSetup_) {
          UTIL_CHECK(rField.capacity() == 2*rSize_);
@@ -261,7 +264,7 @@ namespace Pspg
       // Copy rescaled input data prior to work array
       cudaReal scale = 1.0/cudaReal(rSize_);
       //scale for every batch
-      scaleRealData<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(rField.cDField(), scale, rSize_ * 2);
+      scaleRealData<<<nBlocks, nThreads>>>(rField.cDField(), scale, rSize_ * 2);
       
       //perform fft
       #ifdef SINGLE_PRECISION
@@ -285,6 +288,10 @@ namespace Pspg
    void FFTBatched<D>::forwardTransform
    (cudaReal* rField, cudaComplex* kField, int batchSize)
    {
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(rSize_*batchSize, nBlocks, nThreads);
+
       // Check dimensions or setup
       if (isSetup_) {
       } else {
@@ -295,7 +302,7 @@ namespace Pspg
       // Copy rescaled input data prior to work array
       cudaReal scale = 1.0/cudaReal(rSize_);
       //scale for every batch
-      scaleRealData<<<NUMBER_OF_BLOCKS, THREADS_PER_BLOCK>>>(rField, scale, rSize_ * batchSize);
+      scaleRealData<<<nBlocks, nThreads>>>(rField, scale, rSize_ * batchSize);
       
       //perform fft
       #ifdef SINGLE_PRECISION

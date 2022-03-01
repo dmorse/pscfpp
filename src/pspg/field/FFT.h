@@ -16,7 +16,7 @@
 #include <cufft.h>
 #include <cuda.h>
 #include <cuda_runtime.h>
-#include <pspg/GpuResources.h>
+#include <pspg/math/GpuResources.h>
 
 namespace Pscf {
 namespace Pspg {
@@ -69,12 +69,28 @@ namespace Pspg {
       void forwardTransform(RDField<D> & rField, RDFieldDft<D>& kField) const;
 
       /**
+      * Compute forward (real-to-complex) Fourier transform without destroying input.
+      *
+      * \param in  array of real values on r-space grid (device mem)
+      * \param out  array of complex values on k-space grid (device mem)
+      */
+      void forwardTransformSafe(RDField<D> const & rField, RDFieldDft<D>& kField) const;
+
+      /**
       * Compute inverse (complex-to-real) Fourier transform.
       *
       * \param in  array of complex values on k-space grid (device mem)
       * \param out  array of real values on r-space grid (device mem)
       */
       void inverseTransform(RDFieldDft<D> & kField, RDField<D>& rField) const;
+
+      /**
+      * Compute inverse (complex-to-real) Fourier transform without destroying input.
+      *
+      * \param in  array of complex values on k-space grid (device mem)
+      * \param out  array of real values on r-space grid (device mem)
+      */
+      void inverseTransformSafe(RDFieldDft<D> const & kField, RDField<D>& rField) const;
 
       /**
       * Return the dimensions of the grid for which this was allocated.
@@ -92,6 +108,12 @@ namespace Pspg {
 
       // Vector containing number of grid points in each direction.
       IntVec<D> meshDimensions_;
+
+      // Private r-space array for performing safe transforms.
+      mutable RDField<D> rFieldCopy_;
+
+      // Private k-space array for performing safe transforms.
+      mutable RDFieldDft<D> kFieldCopy_;
 
       // Number of points in r-space grid
       int rSize_;
@@ -152,8 +174,6 @@ namespace Pspg {
    extern template class FFT<2>;
    extern template class FFT<3>;
    #endif
-}
-}
 
 static __global__ 
 void scaleRealData(cudaReal* data, cudaReal scale, int size) {
@@ -164,6 +184,11 @@ void scaleRealData(cudaReal* data, cudaReal scale, int size) {
       data[i] *= scale;
    }
 }
+
+}
+}
+
+
 
 //#include "FFT.tpp"
 #endif

@@ -1,1 +1,1 @@
-pscf_pg3d -e -p param -c command -1 1024 -2 256
+pscf_pg3d -e -p param -c command

@@ -416,7 +416,7 @@ public:
          std::cout << "\n";
          std::cout << "Max error = " << comparison.maxDiff() << "\n";
       }
-      TEST_ASSERT(comparison.maxDiff() < 5.0E-8);
+      TEST_ASSERT(comparison.maxDiff() < 5.0E-7);
    }
 
    void testIterate1D_lam_open_shift()
@@ -560,7 +560,7 @@ public:
       DArray< DArray<double> > wFields_check;
       wFields_check = system.wFields();
 
-      //system.readWBasis("in/diblock/hex/omega.in");
+      system.readWBasis("in/diblock/hex/omega.in");
       int error = system.iterate();
       if (error) {
          TEST_THROW("Iterator failed to converge.");
@@ -649,7 +649,7 @@ public:
       DArray< DArray<double> > wFields_check;
       wFields_check = system.wFields();
 
-      // system.readWBasis("in/diblock/bcc/omega.in");
+      system.readWBasis("in/diblock/bcc/omega.in");
       int error = system.iterate();
       if (error) {
          TEST_THROW("Iterator failed to converge.");

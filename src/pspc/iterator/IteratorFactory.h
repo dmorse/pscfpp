@@ -10,6 +10,7 @@
 
 #include <util/param/Factory.h>  
 #include <pspc/iterator/Iterator.h>
+#include <pspc/System.h>
 
 #include <string>
 
@@ -23,6 +24,7 @@ namespace Pspc {
    *
    * \ingroup Pspc_Iterator_Module
    */
+
    template <int D>
    class IteratorFactory : public Factory< Iterator<D> > 
    {
@@ -44,8 +46,8 @@ namespace Pspc {
 
    private:
 
-      /// Pointer to a parent System<D>.
-      System<D>* systemPtr_;
+      /// Pointer to the system object.
+      System<D>* sys_;
 
    };
 

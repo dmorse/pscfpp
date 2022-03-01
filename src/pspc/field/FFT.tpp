@@ -21,7 +21,7 @@ namespace Pspc
    */
    template <int D>
    FFT<D>::FFT()
-    : work_(),
+    : rFieldCopy_(),
       meshDimensions_(0),
       rSize_(0),
       kSize_(0),
@@ -71,7 +71,8 @@ namespace Pspc
       // Preconditions
       UTIL_CHECK(!isSetup_);
       IntVec<D> rDimensions = rField.meshDimensions();
-      UTIL_CHECK(rDimensions == kField.meshDimensions());
+      IntVec<D> kDimensions = kField.meshDimensions();
+      UTIL_CHECK(rDimensions == kDimensions);
 
       // Set and check mesh dimensions
       rSize_ = 1;
@@ -89,16 +90,27 @@ namespace Pspc
       UTIL_CHECK(rField.capacity() == rSize_);
       UTIL_CHECK(kField.capacity() == kSize_);
 
-      // Allocate work array if necessary
-      if (!work_.isAllocated()) {
-          work_.allocate(rDimensions);
+      // Allocate rFieldCopy_ array if necessary
+      if (!rFieldCopy_.isAllocated()) {
+          rFieldCopy_.allocate(rDimensions);
       } else {
-          if (work_.capacity() != rSize_) {
-             work_.deallocate();
-             work_.allocate(rDimensions);
+          if (rFieldCopy_.capacity() != rSize_) {
+             rFieldCopy_.deallocate();
+             rFieldCopy_.allocate(rDimensions);
           }
       }
-      UTIL_CHECK(work_.capacity() == rSize_);
+      UTIL_CHECK(rFieldCopy_.capacity() == rSize_);
+
+      // Allocate kFieldCopy_ array if necessary
+      if (!kFieldCopy_.isAllocated()) {
+          kFieldCopy_.allocate(kDimensions);
+      } else {
+          if (kFieldCopy_.capacity() != rSize_) {
+             kFieldCopy_.deallocate();
+             kFieldCopy_.allocate(kDimensions);
+          }
+      }
+      UTIL_CHECK(kFieldCopy_.capacity() == kSize_);
 
       // Make FFTW plans (see explicit specializations FFT.cpp)
       makePlans(rField, kField);
@@ -113,7 +125,7 @@ namespace Pspc
    void FFT<D>::forwardTransform(RField<D> const & rField, RFieldDft<D>& kField)   const
    {
       UTIL_CHECK(isSetup_)
-      UTIL_CHECK(work_.capacity() == rSize_);
+      UTIL_CHECK(rFieldCopy_.capacity() == rSize_);
       UTIL_CHECK(rField.capacity() == rSize_);
       UTIL_CHECK(kField.capacity() == kSize_);
       UTIL_CHECK(rField.meshDimensions() == meshDimensions_);
@@ -122,11 +134,11 @@ namespace Pspc
       // Copy rescaled input data prior to work array
       double scale = 1.0/double(rSize_);
       for (int i = 0; i < rSize_; ++i) {
-         work_[i] = rField[i]*scale;
+         rFieldCopy_[i] = rField[i]*scale;
       }
      
       // Execute preplanned forward transform 
-      fftw_execute_dft_r2c(fPlan_, &work_[0], &kField[0]);
+      fftw_execute_dft_r2c(fPlan_, &rFieldCopy_[0], &kField[0]);
    }
 
    /*
@@ -145,6 +157,19 @@ namespace Pspc
 
       fftw_execute_dft_c2r(iPlan_, &kField[0], &rField[0]);
 
+   }
+
+   /*
+   * Execute inverse (complex-to-real) transform without destroying input.
+   */
+   template <int D>
+   void FFT<D>::inverseTransformSafe(RFieldDft<D> const & kField, RField<D>& rField) 
+   const
+   {
+      UTIL_CHECK(kFieldCopy_.capacity()==kField.capacity());
+
+      kFieldCopy_ = kField;
+      inverseTransform(kFieldCopy_, rField);
    }
 
 }

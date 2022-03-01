@@ -5,7 +5,6 @@
 
 // Subclasses of Iterator 
 #include "AmIterator.h"
-#include "AmmIterator.h"
 
 namespace Pscf {
 namespace Pspc {
@@ -17,15 +16,14 @@ namespace Pspc {
    */
    template <int D>
    IteratorFactory<D>::IteratorFactory(System<D>& system)
-    : systemPtr_(&system)
+    : sys_(&system)
    {}
 
    /* 
    * Return a pointer to a instance of Iterator subclass className.
    */
    template <int D>
-   Iterator<D>* 
-   IteratorFactory<D>::factory(const std::string &className) const
+   Iterator<D>* IteratorFactory<D>::factory(const std::string &className) const
    {
       Iterator<D>* ptr = 0;
 
@@ -35,10 +33,7 @@ namespace Pspc {
  
       // Try to match classname
       if (className == "AmIterator") {
-         ptr = new AmIterator<D>(*systemPtr_);
-      } else 
-      if (className == "AmmIterator") {
-         ptr = new AmmIterator<D>(*systemPtr_);
+         ptr = new AmIterator<D>(*sys_);
       }
 
       return ptr;

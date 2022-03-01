@@ -29,14 +29,15 @@ System{
           2   2   0.0
   }
   Domain{
-     unitCell    lamellar   1.6213247000E+01
-     mesh        100
-     groupName   P_-1
+    unitCell    lamellar   1.6213247000E+01
+    mesh        100
+    groupName   P_-1
+    isFlexible   1
   }
   AmIterator{
     maxItr       200
     epsilon      1.0e-11
     maxHist      30
-    isFlexible   1
+
   }
 }

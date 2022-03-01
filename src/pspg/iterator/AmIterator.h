@@ -8,215 +8,152 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pspg/iterator/Iterator.h> // base class
-#include <pspg/solvers/Mixture.h>
-#include <pscf/math/LuSolver.h>
-#include <util/containers/DArray.h>
-#include <util/containers/DMatrix.h>
-#include <util/containers/RingBuffer.h>
-#include <pspg/iterator/HistMat.h>
-#include <pspg/field/RDField.h>
-#include <util/containers/FArray.h>
-
-// Always defined. Locks out legacy code that does nothing. 
-// Eventually remove all legacy code that references memory in cpu
-//#define GPU_OUTER
-
-// Define this if you want to use scft
-//#define GPU_SCFT
+#include "Iterator.h"
+#include <pscf/iterator/AmIteratorTmpl.h>                 
 
 namespace Pscf {
-namespace Pspg {
+namespace Pspg
+{
 
-      using namespace Util;
+   template <int D>
+   class System;
+
+   using namespace Util;
+
+   /**
+   * Pspg implementation of the Anderson Mixing iterator.
+   *
+   * \ingroup Pspg_Iterator_Module
+   */
+   template <int D>
+   class AmIterator : public AmIteratorTmpl<Iterator<D>, FieldCUDA>
+   {
+
+   public:
+      /**
+      * Constructor.
+      */
+      AmIterator(System<D>& system);
+
+      ~AmIterator();
+
+      using AmIteratorTmpl<Iterator<D>,FieldCUDA>::setup;
+      using AmIteratorTmpl<Iterator<D>,FieldCUDA>::solve;
+      using AmIteratorTmpl<Iterator<D>,FieldCUDA>::readParameters;
+      using Iterator<D>::sys_;
+
+   private:
 
       /**
-      * Anderson mixing iterator for the pseudo spectral method
-      *
-      * \ingroup Pspg_Iterator_Module
+      * Find norm of a residual vector.
       */
-      template <int D>
-      class AmIterator : public Iterator<D>
-      {
-      public:
+      double findNorm(FieldCUDA const & hist);
 
-         typedef RDField<D> WField;
-         typedef RDField<D> CField;
-         /**
-         * Default constructor
-         */
-         AmIterator();
+      /**
+      * Find the maximum magnitude element of a residual vector.
+      */
+      double findMaxAbs(FieldCUDA const & hist);
 
-         /**
-         * Constructor
-         *
-         * \param system pointer to a system object
-         */
-         AmIterator(System<D>* system);
+      /**
+      * Update the series of residual vectors.
+      * 
+      * \param basis RingBuffer object storing the list of residual or field basis vectors.
+      * \param hists RingBuffer object storing the histories of residual or field vectors.
+      */
+      void updateBasis(RingBuffer<FieldCUDA> & basis, RingBuffer<FieldCUDA> const & hists);
 
-         /**
-         * Destructor
-         */
-         ~AmIterator();
+      /**
+      * Compute the dot product for an element of the U matrix.
+      * 
+      * \param resBasis RingBuffer object storing the list of residual basis vectors.
+      * \param m row of the U matrix
+      * \param n column of the U matrix
+      */
+      double computeUDotProd(RingBuffer<FieldCUDA> const & resBasis, int m, int n);
 
-         /**
-         * Read all parameters and initialize.
-         *
-         * \param in input filestream
-         */
-         void readParameters(std::istream& in);
+      /**
+      * Compute the dot product for an element of the v vector.
+      * 
+      * \param resCurrent the residual vector calculated at the present iteration step
+      * \param resBasis RingBuffer object storing the list of residual basis vectors.
+      * \param m row of the v vector
+      */
+      double computeVDotProd(FieldCUDA const & resCurrent, RingBuffer<FieldCUDA> const & resBasis, int m);
 
-         /**
-         * Allocate all arrays
-         *
-         */
-         void allocate();
+      /**
+      * Compute the series of necessary dot products and update the U matrix.
+      * 
+      * \param U U matrix
+      * \param resBasis RingBuffer object storing the list of residual basis vectors.
+      * \param nHist number of histories stored at this iteration
+      */
+      void updateU(DMatrix<double> & U, RingBuffer<FieldCUDA> const & resBasis, int nHist);
 
-         /**
-         * Iterate to a solution
-         *
-         */
-         int solve();
+      /**
+      * Compute the series of necessary dot products and update the v vector.
+      * 
+      * \param v v vector
+      * \param resCurrent the residual vector calculated at the present iteration step
+      * \param resBasis RingBuffer object storing the list of residual basis vectors.
+      * \param nHist number of histories stored at this iteration
+      */
+      void updateV(DArray<double> & v, FieldCUDA const & resCurrent, RingBuffer<FieldCUDA> const & resBasis, int nHist);
 
-         /**
-         * Getter for epsilon
-         */
-         double epsilon();
+      /**
+      * Set a field equal to another. Essentially a = b, but potentially more complex
+      * in certain implementations of the AmIterator.
+      * 
+      * \param a the field to be set
+      * \param b the field for it to be set to
+      */
+      void setEqual(FieldCUDA& a, FieldCUDA const & b);
 
-         /**
-         * Getter for the maximum number of field histories to
-         * convolute into a new field
-         */
-         int maxHist();
+      /**
+      * Mix histories, scaled by their respective coefficients, into the trial field.
+      * 
+      * \param trial object for calculation results to be stored in.
+      * \param basis list of history basis vectors.
+      * \param coeffs list of coefficients for each history.
+      * \param nHist number of histories stored at this iteration
+      */
+      void addHistories(FieldCUDA& trial, RingBuffer<FieldCUDA> const & basis, DArray<double> coeffs, int nHist);
 
-         /**
-         * Getter for the maximum number of iteration before convergence
-         */
-         int maxItr();
+      /**
+      * Add predicted error into the field trial guess to attempt to correct for it.
+      * 
+      * \param fieldTrial field for calculation results to be stored in.
+      * \param resTrial predicted error for current mixing of histories.
+      * \param lambda Anderson-Mixing parameter for mixing in histories
+      */
+      void addPredictedError(FieldCUDA& fieldTrial, FieldCUDA const & resTrial, double lambda);
 
-         /**
-         * Compute the deviation of wFields from a mean field solution
-         */
-         void computeDeviation();
+      /// Checks if the system has an initial guess
+      bool hasInitialGuess();
+      
+      /// Calculates and returns the number of elements in the
+      /// array to be iterated
+      int nElements();
 
-         /**
-         * Compute the error from deviations of wFields and compare with epsilon_
-         * \return true for error < epsilon and false for error >= epsilon
-         */
-         bool isConverged();
+      /// Gets a reference to the current state of the system
+      void getCurrent(FieldCUDA& curr);
 
-         /**
-         * Determine the coefficients that would minimize invertMatrix_ Umn
-         * 
-         */
-         int minimizeCoeff(int itr);
+      /// Runs calculation to evaluate function for fixed point.
+      void evaluate();
 
-         /**
-         * Rebuild wFields for the next iteration from minimized coefficients
-         */
-         void buildOmega(int itr);
+      /// Gets residual values from system
+      void getResidual(FieldCUDA& resid);
 
-      private:
+      /// Updates the system with a passed in state of the iterator.
+      void update(FieldCUDA& newGuess);
 
-         ///error tolerance
-         double epsilon_;
+      /// Outputs relevant system details to the iteration log
+      void outputToLog();
 
-         /// Flexible unit cell (1) or rigid cell (0), default value = 0
-         bool isFlexible_;
+      // --- Private member functions that are specific to this implementation --- 
+      cudaReal findAverage(cudaReal * const field, int n);
 
-         ///free parameter for minimization
-         double lambda_;
+   };
 
-         ///number of histories to convolute into a new solution [0,maxHist_]
-         int nHist_;
-
-         //maximum number of histories to convolute into a new solution
-         //AKA size of matrix
-         int maxHist_;
-
-         ///number of maximum iteration to perform
-         int maxItr_;
-
-         /// holds histories of deviation for each monomer
-         /// 1st index = history, 2nd index = monomer, 3rd index = ngrid
-         // The ringbuffer used is now slightly modified to return by reference
-
-         RingBuffer< DArray < RDField<D> > > devHists_;
-         RingBuffer< DArray < RDField<D> > > omHists_;
-
-         /// holds histories of deviation for each cell parameter
-         /// 1st index = history, 2nd index = cell parameter
-         // The ringbuffer used is now slightly modified to return by reference
-         RingBuffer< FArray <double, 6> > devCpHists_;
-         RingBuffer< FSArray<double, 6> > CpHists_;
-
-         FSArray<double, 6> cellParameters_;
-
-         /// Umn, matrix to be minimized
-         DMatrix<double> invertMatrix_;
-
-         /// Cn, coefficient to convolute previous histories with
-         DArray<double> coeffs_;
-
-         DArray<double> vM_;
-
-         /// bigW, blended omega fields
-         DArray<RDField<D> > wArrays_;
-
-         /// bigWcP, blended parameter
-         FArray <double, 6> wCpArrays_;
-
-         /// bigDCp, blened deviation parameter. new wParameter = bigWCp + lambda * bigDCp
-         FArray <double, 6> dCpArrays_;
-
-         /// bigD, blened deviation fields. new wFields = bigW + lambda * bigD
-         DArray<RDField<D> > dArrays_;
-
-         DArray<RDField<D> > tempDev;
-
-         HistMat <cudaReal> histMat_;
-
-         cudaReal innerProduct(const RDField<D>& a, const RDField<D>& b, int size);
-         cudaReal reductionH(const RDField<D>& a, int size);
-         cudaReal* d_temp_;
-         cudaReal* temp_;
-
-         using Iterator<D>::setClassName;
-         using Iterator<D>::systemPtr_;
-         using ParamComposite::read;
-         using ParamComposite::readOptional;
-
-         //friend:
-         //for testing purposes
-
-      };
-
-      template<int D>
-      inline double AmIterator<D>::epsilon()
-      {
-         return epsilon_;
-      }
-
-      template<int D>
-      inline int AmIterator<D>::maxHist()
-      {
-         return maxHist_;
-      }
-
-      template<int D>
-      inline int AmIterator<D>::maxItr()
-      {
-         return maxItr_;
-      }
-
-      #ifndef PSPG_AM_ITERATOR_TPP
-      // Suppress implicit instantiation
-      extern template class AmIterator<1>;
-      extern template class AmIterator<2>;
-      extern template class AmIterator<3>;
-      #endif
-
-   }
-}
-//#include "AmIterator.tpp"
+} // namespace Pspg
+} // namespace Pscf
 #endif
