@@ -6,6 +6,9 @@
 namespace Pscf {
 namespace Pspg {
 
+/** \ingroup Pspg_Math_Module 
+* @{
+*/
 __global__ void subtractUniform(cudaReal* result, cudaReal rhs, int size);
 
 __global__ void addUniform(cudaReal* result, cudaReal rhs, int size);
@@ -27,6 +30,8 @@ __global__ void assignUniformReal(cudaReal* result, cudaReal uniform, int size);
 __global__ void assignReal(cudaReal* result, const cudaReal* rhs, int size);
 
 __global__ void inPlacePointwiseMul(cudaReal* a, const cudaReal* b, int size);
+
+/** @} */
 
 }
 }

@@ -8,6 +8,15 @@ namespace Pscf {
 namespace Pspg {
 namespace ThreadGrid {
 
+  /**
+  * \defgroup Pspg_ThreadGrid_Module ThreadGrid
+  *
+  * Management of GPU resources and setting of execution configurations.
+  *
+  * \ingroup Pscf_Pspg_Module
+  * @{
+  */
+  
   void init();
 
   /**
@@ -73,6 +82,8 @@ namespace ThreadGrid {
   /// Indicates whether there will be unused threads. 
   /// This is the case if nThreads*nBlocks != nThreadsLogical.
   bool hasUnusedThreads();
+
+  /** @} */
 
 }
 }

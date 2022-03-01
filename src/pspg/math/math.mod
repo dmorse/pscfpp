@@ -2,7 +2,7 @@
 namespace Pscf{
 
    /**
-   * \defgroup Pscf_Math_Module GPU Mathematics
+   * \defgroup Pspg_Math_Module Mathematics
    *
    * Mathematical utility classes specific to the CUDA implementation.
    *
