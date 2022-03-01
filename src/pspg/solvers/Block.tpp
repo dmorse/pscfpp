@@ -426,14 +426,11 @@ namespace Pspg {
       UTIL_CHECK(cField().capacity() == nx)
 
       // Initialize cField to zero at all points
-      //cField()[i] = 0.0;
       assignUniformReal<<<nBlocks_, nThreads_>>>(cField().cDField(), 0.0, nx);
 
       Pscf::Pspg::Propagator<D> const & p0 = propagator(0);
       Pscf::Pspg::Propagator<D> const & p1 = propagator(1);
 
-
-      //cudaDeviceSynchronize();
       multiplyScaleQQ<<<nBlocks_, nThreads_>>>(cField().cDField(), p0.q(0), p1.q(ns_ - 1), 1.0, nx);
       multiplyScaleQQ<<<nBlocks_, nThreads_>>>(cField().cDField(), p0.q(ns_-1), p1.q(0), 1.0, nx);
       for (int j = 1; j < ns_ - 1; j += 2) {
@@ -452,9 +449,7 @@ namespace Pspg {
      //std::cout << "This is ds_ " << ds_ << std::endl;
      //delete tempVal;
 
-     scaleReal<<<nBlocks_, nThreads_>>>(cField().cDField(), (prefactor *ds_ / 3.0), nx);
-     //cudaDeviceSynchronize();
-
+     scaleReal<<<nBlocks_, nThreads_>>>(cField().cDField(), (prefactor * ds_/3.0), nx);
 
    }
 

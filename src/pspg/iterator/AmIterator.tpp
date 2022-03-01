@@ -246,7 +246,6 @@ namespace Pspg{
       if (!sys_->mixture().isCanonical()) {
          cudaReal factor = 1/(cudaReal)sys_->interaction().sum_inv();
          for (int i = 0; i < nMonomer; ++i) {
-            
             subtractUniform<<<nBlocks, nThreads>>>(resid.cDField() + i*nMesh,
                                                                factor, nMesh);
          }

@@ -15,16 +15,7 @@
 
 namespace Pscf { 
 namespace Pspg
-{ 
-
-   //theres a precision mismatch here. need to cast properly.
-   static __global__ void accumulateConc(cudaReal* result, double uniform, cudaReal* cField, int size) {
-      int nThreads = blockDim.x * gridDim.x;
-      int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < size; i += nThreads) {
-         result[i] += uniform * cField[i];
-      }
-   }
+{
 
    template <int D>
    Mixture<D>::Mixture()
@@ -104,7 +95,6 @@ namespace Pspg
       for (i = 0; i < nm; ++i) {
          UTIL_CHECK(cFields[i].capacity() == nx);
          UTIL_CHECK(wFields[i].capacity() == nx);
-         //cFields[i][j] = 0.0;
          assignUniformReal<<<nBlocks, nThreads>>>(cFields[i].cDField(), 0.0, nx);
       }
 
@@ -121,9 +111,8 @@ namespace Pspg
             UTIL_CHECK(monomerId < nm);
             CField& monomerField = cFields[monomerId];
             CField& blockField = polymer(i).block(j).cField();
-            //monomerField[k] += polymer(i).phi() * blockField[k];
-            accumulateConc<<<nBlocks, nThreads>>>(monomerField.cDField(), 
-                        polymer(i).phi(), blockField.cDField(), nx);
+            UTIL_CHECK(blockField.capacity()==nx);
+            pointWiseAdd<<<nBlocks, nThreads>>>(monomerField.cDField(), blockField.cDField(), nx);
          }
       }
       // To do: Add compute functions and accumulation for solvents.
