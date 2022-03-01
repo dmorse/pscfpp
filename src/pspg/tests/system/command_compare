@@ -1,3 +1,0 @@
-COMPARE_BASIS out/w_CPU.bf out/testIterate1D_lam_blend_w.bf
-FINISH
-
