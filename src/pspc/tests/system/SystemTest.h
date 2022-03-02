@@ -343,44 +343,6 @@ public:
       TEST_ASSERT(comparison.maxDiff() < 2.0E-6);
    }
 
-   void testIterate1D_lam_open_blend()
-   {
-      printMethod(TEST_FUNC);
-      openLogFile("out/testIterate1D_lam_open_blend.log");
-
-      System<1> system;
-      system.fileMaster().setInputPrefix(filePrefix());
-      system.fileMaster().setOutputPrefix(filePrefix());
-      
-      std::ifstream in;
-      openInputFile("in/blend/lam/param", in);
-      system.readParam(in);
-      in.close();
-
-      // Read in comparison result
-      system.readWBasis("in/blend/lam/w.ref");
-      DArray< DArray<double> > wFields_check;
-      wFields_check = system.wFields();
-
-      // Read input w-fields, iterate and output solution
-      system.readWBasis("in/blend/lam/w.bf");
-      int error = system.iterate();
-      if (error) {
-         TEST_THROW("Iterator failed to converge.");
-      }
-      system.writeWBasis("out/testIterate1D_lam_open_blend_w.bf");
-      system.writeCBasis("out/testIterate1D_lam_open_blend_c.bf");
-
-      // Compare result
-      BFieldComparison comparison(1);
-      comparison.compare(wFields_check, system.wFields());
-      if (verbose() > 0) {
-         std::cout << "\n";
-         std::cout << "Max error = " << comparison.maxDiff() << "\n";
-      }
-      TEST_ASSERT(comparison.maxDiff() < 5.0E-8);
-   }
-
    void testIterate1D_lam_open_soln()
    {
       printMethod(TEST_FUNC);
@@ -417,6 +379,44 @@ public:
          std::cout << "Max error = " << comparison.maxDiff() << "\n";
       }
       TEST_ASSERT(comparison.maxDiff() < 5.0E-7);
+   }
+
+   void testIterate1D_lam_open_blend()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testIterate1D_lam_open_blend.log");
+
+      System<1> system;
+      system.fileMaster().setInputPrefix(filePrefix());
+      system.fileMaster().setOutputPrefix(filePrefix());
+      
+      std::ifstream in;
+      openInputFile("in/blend/lam/param", in);
+      system.readParam(in);
+      in.close();
+
+      // Read in comparison result
+      system.readWBasis("in/blend/lam/w.ref");
+      DArray< DArray<double> > wFields_check;
+      wFields_check = system.wFields();
+
+      // Read input w-fields, iterate and output solution
+      system.readWBasis("in/blend/lam/w.bf");
+      int error = system.iterate();
+      if (error) {
+         TEST_THROW("Iterator failed to converge.");
+      }
+      system.writeWBasis("out/testIterate1D_lam_open_blend_w.bf");
+      system.writeCBasis("out/testIterate1D_lam_open_blend_c.bf");
+
+      // Compare result
+      BFieldComparison comparison(1);
+      comparison.compare(wFields_check, system.wFields());
+      if (verbose() > 0) {
+         std::cout << "\n";
+         std::cout << "Max error = " << comparison.maxDiff() << "\n";
+      }
+      TEST_ASSERT(comparison.maxDiff() < 5.0E-8);
    }
 
    void testIterate1D_lam_open_shift()
@@ -780,8 +780,8 @@ TEST_ADD(SystemTest, testCheckSymmetry3D_bcc)
 TEST_ADD(SystemTest, testIterate1D_lam_rigid)
 TEST_ADD(SystemTest, testIterate1D_lam_flex)
 TEST_ADD(SystemTest, testIterate1D_lam_soln)
-TEST_ADD(SystemTest, testIterate1D_lam_open_blend)
 TEST_ADD(SystemTest, testIterate1D_lam_open_soln)
+TEST_ADD(SystemTest, testIterate1D_lam_open_blend)
 TEST_ADD(SystemTest, testIterate1D_lam_open_shift)
 TEST_ADD(SystemTest, testIterate2D_hex_rigid)
 TEST_ADD(SystemTest, testIterate2D_hex_flex)

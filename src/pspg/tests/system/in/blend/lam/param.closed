@@ -34,11 +34,11 @@ System{
      unitCell Lamellar    1.5077084389 
      mesh                 40
      groupName P_-1
-     isFlexible 1
   }
   AmIterator{
     maxItr 500
     epsilon 1e-10
     maxHist 10
+    isFlexible 1
   }
 }

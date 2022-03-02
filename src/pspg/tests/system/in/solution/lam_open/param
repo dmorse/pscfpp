@@ -7,18 +7,18 @@ System{
      nPolymer  1
      nSolvent  1
      Polymer{
-        type    linear
-        nBlock  2
-        blocks  0   0.35
-                1   0.65
-        ensemble open
-        mu     28
+        type      linear
+        nBlock    2
+        blocks    0   0.35
+                  1   0.65
+        ensemble  Open
+        mu        2.74031671639e+01
      }
      Solvent{
         monomerId  2
         size       0.02
-        ensemble   open
-        mu         -0.35
+        ensemble   Open
+        mu         -3.51022037737e-01
      }
      ds   0.01
   }
@@ -34,11 +34,11 @@ System{
      unitCell    lamellar   1.6213247000E+01
      mesh        100
      groupName   P_-1
-     isFlexible   1
   }
   AmIterator{
-    maxItr       200
-    epsilon      1.0e-11
+    maxItr       600
+    epsilon      5e-11
     maxHist      30
+    isFlexible   1
   }
 }
