@@ -35,12 +35,24 @@ namespace Pspg
       */
       AmIterator(System<D>& system);
 
+      /**
+      * Destructor.
+      */ 
       ~AmIterator();
+
+      /**
+      * Read all parameters and initialize.
+      *
+      * \param in input filestream
+      */
+      void readParameters(std::istream& in);
 
       using AmIteratorTmpl<Iterator<D>,FieldCUDA>::setup;
       using AmIteratorTmpl<Iterator<D>,FieldCUDA>::solve;
-      using AmIteratorTmpl<Iterator<D>,FieldCUDA>::readParameters;
+      using ParamComposite::readOptional;
       using Iterator<D>::sys_;
+      using Iterator<D>::isFlexible_;
+      using Iterator<D>::isFlexible;
 
    private:
 

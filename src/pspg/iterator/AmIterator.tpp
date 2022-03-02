@@ -29,6 +29,22 @@ namespace Pspg{
    {}
 
    template <int D>
+   void AmIterator<D>::readParameters(std::istream& in)
+   {
+      // Call parent class readParameters 
+      AmIteratorTmpl<Iterator<D>,FieldCPU>::readParameters(in);
+
+      // Default parameter values
+      isFlexible_ = 0;
+      scaleStress_ = 10.0;
+
+      // Read in additional parameters
+      readOptional(in, "isFlexible", isFlexible_);
+      readOptional(in, "scaleStress", scaleStress_);
+   }
+
+
+   template <int D>
    double AmIterator<D>::findNorm(FieldCUDA const & hist) 
    {
       const int n = hist.capacity();

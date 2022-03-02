@@ -673,7 +673,7 @@ namespace Pspg
       fieldIo().convertRGridToBasis(cFieldsRGrid(), cFields());
 
       if (!error) {   
-         if (!domain().isFlexible()) {
+         if (!iterator().isFlexible()) {
             mixture().computeStress(wavelist());
          }
          computeFreeEnergy();

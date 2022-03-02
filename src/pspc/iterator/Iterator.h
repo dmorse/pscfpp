@@ -63,10 +63,16 @@ namespace Pspc
       */
       virtual int solve() = 0;
 
+      /// Return whether the unit cell is flexible during iteration.
+      inline const bool isFlexible() {return isFlexible_;}
+
    protected:
 
       /// Pointer to the associated system object.
       System<D>* sys_;
+
+      /// Is the unit cell flexible during iteration?
+      bool isFlexible_;
       
    };
 

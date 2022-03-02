@@ -139,16 +139,6 @@ namespace Pspg
       */  
       std::string groupName() const;
 
-      /**
-      * Get whether unit cell is flexible.
-      */
-      bool isFlexible() const;
-
-      /**
-      * Get stress error scaling, if unit cell is flexible.
-      */
-      double scaleStress() const;
-
       //@}
 
    private:
