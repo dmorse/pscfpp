@@ -1,0 +1,56 @@
+===================
+= Pscf++ History  =
+===================
+
+The following namespace names are used below to label changes that effect only 
+particular programs or sets of programs, each of which is defined in the specifiec 
+namespace:
+
+   Pspc - CPU pseudo-spectral code for periodic structures
+   Pspg - GPU pseudo-spectral code for periodic structures
+   Fd1d - Finite element code for one-dimension (1D) problems
+
+
+Pscf++ v0.8 
+===========
+
+Released planned for March 11, 2022
+
+User-visible features
+---------------------
+
+* Sweep feature (continuation of a family of solutions) (Pspc)
+* Point-particle solvent (Fd1d and Pspc)
+* General open ensembles (grand canonical or mixed) in AmIterator (Pspc and Pspg)
+* Allow grids with node counts that are not factors of 2 in Pspg
+
+User-visible changes
+--------------------
+* Modified parameter file format for monomers, blocks and polymer structure 
+* Added Domain{...} subblock in parameter file (Pspc and Pspg)
+* Automated calculation of number of threads and blocks in GPU code (Pspg)
+* Added make/compiler/homebrew-m1 config file for an m1 Mac make with homebrew
+
+Bug fixes
+---------
+* Fixed treatment of non-centrosymmetric groups (Pspc and Pspg)
+* Fixed calculation of monomer concentrations for mixtures (Pspc and Pspg)
+* Fixed various bugs in GPU code (Pspg)
+
+Developer-visible changes
+-------------------------
+* New github actions for testing of cpu code (after closure of travis site)
+* Removed cancelled stars from array storage of basis coefficients (Pspc)
+* Improved encapsulation of field data in interface of Pspc::System
+* Created unit tests for Pspg (GPU) code
+* Reorganization / clean-up of Cuda kernels (Pspg)
+* Class template for generic Anderson-mixing iterator algorithm (Pspc and Pspg)
+
+Pscf++ 0.7
+==========
+
+Released Nov. 11, 2021
+
+First tagged version that includes Pspg GPU code, as described in article:
+Cheong, Chawla, Morse, and Dorfman, European Physical Journal E. 43, 15 (2020).
+

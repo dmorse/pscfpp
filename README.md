@@ -285,4 +285,5 @@ created by running the example.
 - David Morse
 - Guo Kang Cheong
 - Anshul Chawla
+- Ryan Collanton
 
