@@ -55,10 +55,13 @@ namespace Pspc
 
       using AmIteratorTmpl<Iterator<D>,FieldCPU>::setup;
       using AmIteratorTmpl<Iterator<D>,FieldCPU>::solve;
+      using Iterator<D>::isFlexible;
+
+   protected:
+   
       using ParamComposite::readOptional;
       using Iterator<D>::sys_;
       using Iterator<D>::isFlexible_;
-      using Iterator<D>::isFlexible;
 
    private:
 

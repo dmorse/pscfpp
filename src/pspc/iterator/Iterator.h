@@ -64,7 +64,7 @@ namespace Pspc
       virtual int solve() = 0;
 
       /// Return whether the unit cell is flexible during iteration.
-      inline const bool isFlexible() {return isFlexible_;}
+      inline bool isFlexible() {return isFlexible_;}
 
    protected:
 

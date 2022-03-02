@@ -49,12 +49,18 @@ namespace Pspg
 
       using AmIteratorTmpl<Iterator<D>,FieldCUDA>::setup;
       using AmIteratorTmpl<Iterator<D>,FieldCUDA>::solve;
+      using Iterator<D>::isFlexible;
+
+   protected:
+
       using ParamComposite::readOptional;
       using Iterator<D>::sys_;
       using Iterator<D>::isFlexible_;
-      using Iterator<D>::isFlexible;
 
    private:
+
+      /// How are stress residuals scaled in error calculation?
+      double scaleStress_;
 
       /**
       * Find norm of a residual vector.

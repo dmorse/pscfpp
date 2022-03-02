@@ -41,12 +41,15 @@ namespace Pspg {
    template <int D>
    void AmIteratorOld<D>::readParameters(std::istream& in)
    {   
-      isFlexible_ = sys_->domain().isFlexible();
+      isFlexible_ = 0;
       errorType_ = "normResid"; // default type of error
       read(in, "maxItr", maxItr_);
       read(in, "epsilon", epsilon_);
       read(in, "maxHist", maxHist_);
       readOptional(in, "errorType", errorType_);
+
+      // Read in additional parameters
+      readOptional(in, "isFlexible", isFlexible_);
 
       if (!(errorType_ == "normResid" || errorType_ == "maxResid")) {
          UTIL_THROW("Invalid iterator error type in parameter file.");
