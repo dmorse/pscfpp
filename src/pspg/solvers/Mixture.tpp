@@ -58,6 +58,12 @@ namespace Pspg
          }
       }
 
+      // Set spatial discretization for solvents
+      if (nSolvent() > 0) {
+         for (int i = 0; i < nSolvent(); ++i) {
+            solvent(i).setDiscretization(mesh);
+         }
+      }
    }
 
    template <int D>
@@ -83,21 +89,23 @@ namespace Pspg
       UTIL_CHECK(wFields.capacity() == nMonomer());
       UTIL_CHECK(cFields.capacity() == nMonomer());
 
-      int nx = mesh().size();
+      int nMesh = mesh().size();
       int nm = nMonomer();
       int i, j;
 
       // GPU resources
       int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(nx, nBlocks, nThreads);
+      ThreadGrid::setThreadsLogical(nMesh, nBlocks, nThreads);
 
       // Clear all monomer concentration fields
       for (i = 0; i < nm; ++i) {
-         UTIL_CHECK(cFields[i].capacity() == nx);
-         UTIL_CHECK(wFields[i].capacity() == nx);
-         assignUniformReal<<<nBlocks, nThreads>>>(cFields[i].cDField(), 0.0, nx);
+         UTIL_CHECK(cFields[i].capacity() == nMesh);
+         UTIL_CHECK(wFields[i].capacity() == nMesh);
+         assignUniformReal<<<nBlocks, nThreads>>>(cFields[i].cDField(), 0.0, nMesh);
       }
 
+
+      int monomerId;
       // Solve MDE for all polymers
       for (i = 0; i < nPolymer(); ++i) {
          polymer(i).compute(wFields);
@@ -106,16 +114,34 @@ namespace Pspg
       // Accumulate monomer concentration fields
       for (i = 0; i < nPolymer(); ++i) {
          for (j = 0; j < polymer(i).nBlock(); ++j) {
-            int monomerId = polymer(i).block(j).monomerId();
+            monomerId = polymer(i).block(j).monomerId();
             UTIL_CHECK(monomerId >= 0);
             UTIL_CHECK(monomerId < nm);
             CField& monomerField = cFields[monomerId];
             CField& blockField = polymer(i).block(j).cField();
-            UTIL_CHECK(blockField.capacity()==nx);
-            pointWiseAdd<<<nBlocks, nThreads>>>(monomerField.cDField(), blockField.cDField(), nx);
+            UTIL_CHECK(blockField.capacity()==nMesh);
+            pointWiseAdd<<<nBlocks, nThreads>>>(monomerField.cDField(), blockField.cDField(), nMesh);
          }
       }
-      // To do: Add compute functions and accumulation for solvents.
+      
+      // Process solvent species
+      for (i = 0; i < nSolvent(); i++) {
+         monomerId = solvent(i).monomerId();
+         UTIL_CHECK(monomerId >= 0);
+         UTIL_CHECK(monomerId < nm);
+
+         // Compute solvent concentration
+         solvent(i).compute(wFields[monomerId]);
+
+         // Add solvent contribution to relevant monomer concentration
+         CField& monomerField = cFields[monomerId];
+         CField const & solventField = solvent(i).concField();
+         UTIL_CHECK(solventField.capacity() == nMesh);
+         pointWiseAdd<<<nBlocks, nThreads>>>(monomerField.cDField(), solventField.cDField(), nMesh);
+
+
+      }
+      
 
    }
 
@@ -138,7 +164,10 @@ namespace Pspg
          for (j = 0; j < nPolymer(); ++j) {
             stress_[i] += polymer(j).stress(i);
          }   
-      }   
+      }
+
+      // Note: Solvent does not contribute to derivatives of f_Helmholtz
+      // with respect to unit cell parameters at fixed volume fractions.
    }
 
    template <int D>
@@ -150,13 +179,12 @@ namespace Pspg
             return false;
          }
       }
-      // Currently no solvent in PSPG!
-      // // Check ensemble of all solvents
-      // for (int i = 0; i < nSolvent(); ++i) {
-      //    if (solvent(i).ensemble() == Species::Open) {
-      //       return false;
-      //    }
-      // }
+      // Check ensemble of all solvents
+      for (int i = 0; i < nSolvent(); ++i) {
+         if (solvent(i).ensemble() == Species::Open) {
+            return false;
+         }
+      }
       // Returns true if false was never returned
       return true;
    }

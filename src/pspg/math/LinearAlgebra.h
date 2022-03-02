@@ -35,6 +35,11 @@ __global__ void assignUniformReal(cudaReal* result, cudaReal uniform, int size);
 
 __global__ void assignReal(cudaReal* result, const cudaReal* rhs, int size);
 
+__global__ void assignExp(cudaReal* exp, const cudaReal* w, double constant, int size);
+
+__global__ void scaleReal(cudaReal* result, double scale, int size);
+
+
 /** @} */
 
 }

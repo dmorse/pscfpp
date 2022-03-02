@@ -29,6 +29,22 @@ namespace Pspg{
    {}
 
    template <int D>
+   void AmIterator<D>::readParameters(std::istream& in)
+   {
+      // Call parent class readParameters 
+      AmIteratorTmpl<Iterator<D>,FieldCUDA>::readParameters(in);
+
+      // Default parameter values
+      isFlexible_ = 0;
+      scaleStress_ = 10.0;
+
+      // Read in additional parameters
+      readOptional(in, "isFlexible", isFlexible_);
+      readOptional(in, "scaleStress", scaleStress_);
+   }
+
+
+   template <int D>
    double AmIterator<D>::findNorm(FieldCUDA const & hist) 
    {
       const int n = hist.capacity();
@@ -158,7 +174,7 @@ namespace Pspg{
 
       int nEle = nMonomer*nMesh;
 
-      if (sys_->domain().isFlexible()) {
+      if (isFlexible_) {
          nEle += sys_->unitCell().nParameter();
       }
 
@@ -185,14 +201,13 @@ namespace Pspg{
       }
 
       // if flexible unit cell, also store unit cell parameters
-      if (sys_->domain().isFlexible()) {
+      if (isFlexible_) {
          const int nParam = sys_->unitCell().nParameter();
-         const double scaleStress = sys_->domain().scaleStress();
          const FSArray<double,6> currParam = sys_->unitCell().parameters();
          // convert into a cudaReal array
          cudaReal* temp = new cudaReal[nParam];
          for (int k = 0; k < nParam; k++) 
-               temp[k] = (cudaReal)scaleStress*currParam[k];
+               temp[k] = (cudaReal)scaleStress_*currParam[k];
          
          // copy paramters to the end of the curr array
          cudaMemcpy(curr.cDField() + nMonomer*nMesh, temp, nParam*sizeof(cudaReal), cudaMemcpyHostToDevice);
@@ -206,7 +221,7 @@ namespace Pspg{
       // Solve MDEs for current omega field
       sys_->compute();
       // Compute stress if done
-      if (sys_->domain().isFlexible()) {
+      if (isFlexible_) {
          sys_->mixture().computeStress(sys_->wavelist());
       }
    }
@@ -260,13 +275,12 @@ namespace Pspg{
       }
 
       // If variable unit cell, compute stress residuals
-      if (sys_->domain().isFlexible()) {
+      if (isFlexible_) {
          const int nParam = sys_->unitCell().nParameter();
-         const double scaleStress = sys_->domain().scaleStress();
          cudaReal* stress = new cudaReal[nParam];
 
          for (int i = 0; i < nParam; i++) {
-            stress[i] = (cudaReal)(-1*scaleStress*sys_->mixture().stress(i));
+            stress[i] = (cudaReal)(-1*scaleStress_*sys_->mixture().stress(i));
          }
 
          cudaMemcpy(resid.cDField()+nMonomer*nMesh, stress, nParam*sizeof(cudaReal), cudaMemcpyHostToDevice);
@@ -314,15 +328,14 @@ namespace Pspg{
       }
 
       // if flexible unit cell, update parameters well
-      if (sys_->domain().isFlexible()) {
+      if (isFlexible_) {
          FSArray<double,6> parameters;
          const int nParam = sys_->unitCell().nParameter();
-         const double scaleStress = sys_->domain().scaleStress();
          cudaReal* temp = new cudaReal[nParam];
 
          cudaMemcpy(temp, newGuess.cDField() + nMonomer*nMesh, nParam*sizeof(cudaReal), cudaMemcpyDeviceToHost);
          for (int i = 0; i < nParam; i++) {
-            parameters.append(1/scaleStress * (double)temp[i]);
+            parameters.append(1/scaleStress_ * (double)temp[i]);
          }
 
          sys_->unitCell().setParameters(parameters);            
@@ -343,7 +356,7 @@ namespace Pspg{
    template<int D>
    void AmIterator<D>::outputToLog()
    {
-      if (sys_->domain().isFlexible()) {
+      if (isFlexible_) {
          const int nParam = sys_->unitCell().nParameter();
          for (int i = 0; i < nParam; i++) {
             Log::file() << "Parameter " << i << " = "

@@ -22,12 +22,11 @@ System{
      unitCell    hexagonal   1.6908668724
      mesh        32    32
      groupName   p_6_m_m
-     isFlexible 0
   }
   AmIterator{
      maxItr     100
      epsilon    1e-8
      maxHist    15
-
+     isFlexible   0
   }
 }

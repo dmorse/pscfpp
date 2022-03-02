@@ -114,6 +114,25 @@ __global__ void assignReal(cudaReal* result, const cudaReal* rhs, int size)
    }
 }
 
+__global__ void assignExp(cudaReal* out, const cudaReal* w, double constant, int size)
+{
+   int nThreads = blockDim.x * gridDim.x;
+   int startID = blockIdx.x * blockDim.x + threadIdx.x;
+   for(int i = startID; i < size; i += nThreads) {
+      out[i] = exp(-w[i]*constant);
+   }
+}
+
+__global__ void scaleReal(cudaReal* result, double scale, int size) 
+{
+   int nThreads = blockDim.x * gridDim.x;
+   int startID = blockIdx.x * blockDim.x + threadIdx.x;
+
+   for (int i = startID; i < size; i += nThreads) {
+      result[i] *= scale;
+   }
+}
+
 
 
 }

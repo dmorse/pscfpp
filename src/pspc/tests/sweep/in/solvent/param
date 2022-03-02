@@ -32,13 +32,12 @@ System{
     unitCell    lamellar   1.6213247000E+01
     mesh        100
     groupName   P_-1
-    isFlexible   1
   }
   AmIterator{
     maxItr       300
     epsilon      1.0e-11
     maxHist      30
-    
+    isFlexible   1
   }
   hasSweep  1
   LinearSweep{

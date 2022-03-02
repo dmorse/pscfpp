@@ -107,7 +107,7 @@ namespace Pspc {
          UTIL_CHECK(historySize() <= historyCapacity());
 
          // Does the iterator allow a flexible unit cell ?
-         bool isFlexible = system().domain().isFlexible();
+         bool isFlexible = system().iterator().isFlexible();
 
          // Compute coefficients of polynomial extrapolation to sNew
          setCoefficients(sNew);
@@ -192,7 +192,7 @@ namespace Pspc {
    template <int D>
    void Sweep<D>::reset()
    {  
-      bool isFlexible = system().domain().isFlexible();
+      bool isFlexible = system().iterator().isFlexible();
       state(0).setSystemState(isFlexible); 
    }
 

@@ -19,10 +19,9 @@ namespace Pspg
    template <int D>
    class System;
 
-   typedef DField<cudaReal> FieldCUDA;
-
-
    using namespace Util;
+
+   typedef DField<cudaReal> FieldCUDA;
 
    /**
    * Base class for iterative solvers for SCF equations.
@@ -64,10 +63,16 @@ namespace Pspg
       */
       virtual int solve() = 0;
 
+      /// Return whether the unit cell is flexible during iteration.
+      inline bool isFlexible() {return isFlexible_;}
+
    protected:
 
       /// Pointer to the associated system object.
       System<D>* sys_;
+
+      /// Is the unit cell flexible during iteration?
+      bool isFlexible_;
       
    };
 

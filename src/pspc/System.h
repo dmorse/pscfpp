@@ -15,6 +15,7 @@
 #include <pspc/field/Domain.h>             // member
 #include <pspc/field/RField.h>             // typedef
 
+#include <pspc/iterator/Iterator.h>        // member
 #include <pscf/homogeneous/Mixture.h>      // member
 
 #include <util/misc/FileMaster.h>          // member

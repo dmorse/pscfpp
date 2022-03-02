@@ -9,8 +9,6 @@
 */
 
 #include "Mixture.h"
-#include "Solvent.tpp"
-#include "Polymer.tpp"
 #include <pscf/mesh/Mesh.h>
 
 #include <cmath>
@@ -126,66 +124,57 @@ namespace Pspc
       UTIL_CHECK(wFields.capacity() == nMonomer());
       UTIL_CHECK(cFields.capacity() == nMonomer());
 
-      int nx = mesh().size();
+      int nMesh = mesh().size();
       int nm = nMonomer();
       int i, j, k;
 
       // Clear all monomer concentration fields, check capacities
       for (i = 0; i < nm; ++i) {
-         UTIL_CHECK(cFields[i].capacity() == nx);
-         UTIL_CHECK(wFields[i].capacity() == nx);
-         for (j = 0; j < nx; ++j) {
+         UTIL_CHECK(cFields[i].capacity() == nMesh);
+         UTIL_CHECK(wFields[i].capacity() == nMesh);
+         for (j = 0; j < nMesh; ++j) {
             cFields[i][j] = 0.0;
          }
       }
 
       // Process polymer species
-      if (nPolymer() > 0) {
+      // Solve MDE for all polymers
+      for (i = 0; i < nPolymer(); ++i) {
+         polymer(i).compute(wFields);
+      }
 
-         // Solve MDE for all polymers
-         for (i = 0; i < nPolymer(); ++i) {
-            polymer(i).compute(wFields);
-         }
-   
-         // Accumulate block contributions to monomer concentrations
-         int monomerId;
-         for (i = 0; i < nPolymer(); ++i) {
-            for (j = 0; j < polymer(i).nBlock(); ++j) {
-               monomerId = polymer(i).block(j).monomerId();
-               UTIL_CHECK(monomerId >= 0);
-               UTIL_CHECK(monomerId < nm);
-               CField& monomerField = cFields[monomerId];
-               CField const & blockField = polymer(i).block(j).cField();
-               UTIL_CHECK(blockField.capacity() == nx);
-               for (k = 0; k < nx; ++k) {
-                  monomerField[k] += blockField[k];
-               }
+      // Accumulate block contributions to monomer concentrations
+      int monomerId;
+      for (i = 0; i < nPolymer(); ++i) {
+         for (j = 0; j < polymer(i).nBlock(); ++j) {
+            monomerId = polymer(i).block(j).monomerId();
+            UTIL_CHECK(monomerId >= 0);
+            UTIL_CHECK(monomerId < nm);
+            CField& monomerField = cFields[monomerId];
+            CField const & blockField = polymer(i).block(j).cField();
+            UTIL_CHECK(blockField.capacity() == nMesh);
+            for (k = 0; k < nMesh; ++k) {
+               monomerField[k] += blockField[k];
             }
          }
-
       }
 
       // Process solvent species
-      if (nSolvent() > 0) {
+      // For each solvent, call compute and accumulate cFields
+      for (i = 0; i < nSolvent(); ++i) {
+         monomerId = solvent(i).monomerId();
+         UTIL_CHECK(monomerId >= 0);
+         UTIL_CHECK(monomerId < nm);
 
-         // For each solvent, call compute and accumulate cFields
-         int monomerId;
-         for (i = 0; i < nSolvent(); ++i) {
-            monomerId = solvent(i).monomerId();
-            UTIL_CHECK(monomerId >= 0);
-            UTIL_CHECK(monomerId < nm);
+         // Compute solvent concentration
+         solvent(i).compute(wFields[monomerId]);
 
-            // Compute solvent concentration
-            solvent(i).compute(wFields[monomerId]);
-
-            // Add solvent contribution to relevant monomer concentration
-            CField& monomerField = cFields[monomerId];
-            CField const & solventField = solvent(i).cField();
-            UTIL_CHECK(solventField.capacity() == nx);
-            for (k = 0; k < nx; ++k) {
-               monomerField[k] += solventField[k];
-            }
-
+         // Add solvent contribution to relevant monomer concentration
+         CField& monomerField = cFields[monomerId];
+         CField const & solventField = solvent(i).cField();
+         UTIL_CHECK(solventField.capacity() == nMesh);
+         for (k = 0; k < nMesh; ++k) {
+            monomerField[k] += solventField[k];
          }
 
       }

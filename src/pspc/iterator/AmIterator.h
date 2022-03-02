@@ -43,13 +43,31 @@ namespace Pspc
       */
       ~AmIterator();
 
+      /**
+      * Read all parameters and initialize.
+      *
+      * \param in input filestream
+      */
+      void readParameters(std::istream& in);
+
+      /// Return whether unit cell is flexible.
+      inline const bool isFlexible() {return isFlexible_;}
+
       using AmIteratorTmpl<Iterator<D>,FieldCPU>::setup;
       using AmIteratorTmpl<Iterator<D>,FieldCPU>::solve;
-      using AmIteratorTmpl<Iterator<D>,FieldCPU>::readParameters;
+      using Iterator<D>::isFlexible;
+
+   protected:
+   
+      using ParamComposite::readOptional;
       using Iterator<D>::sys_;
+      using Iterator<D>::isFlexible_;
 
    private:
 
+      /// How are stress residuals scaled in error calculation?
+      double scaleStress_;
+      
       /**
       * Find norm of a residual vector.
       */

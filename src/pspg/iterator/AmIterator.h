@@ -35,14 +35,32 @@ namespace Pspg
       */
       AmIterator(System<D>& system);
 
+      /**
+      * Destructor.
+      */ 
       ~AmIterator();
+
+      /**
+      * Read all parameters and initialize.
+      *
+      * \param in input filestream
+      */
+      void readParameters(std::istream& in);
 
       using AmIteratorTmpl<Iterator<D>,FieldCUDA>::setup;
       using AmIteratorTmpl<Iterator<D>,FieldCUDA>::solve;
-      using AmIteratorTmpl<Iterator<D>,FieldCUDA>::readParameters;
+      using Iterator<D>::isFlexible;
+
+   protected:
+
+      using ParamComposite::readOptional;
       using Iterator<D>::sys_;
+      using Iterator<D>::isFlexible_;
 
    private:
+
+      /// How are stress residuals scaled in error calculation?
+      double scaleStress_;
 
       /**
       * Find norm of a residual vector.

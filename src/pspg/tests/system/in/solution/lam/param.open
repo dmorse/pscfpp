@@ -11,12 +11,14 @@ System{
         nBlock  2
         blocks  0   0.35
                 1   0.65
-        phi     0.5
+        ensemble open
+        mu     28
      }
      Solvent{
         monomerId  2
         size       0.02
-        phi        0.5
+        ensemble   open
+        mu         -0.35
      }
      ds   0.01
   }
@@ -29,9 +31,9 @@ System{
           2   2   0.0
   }
   Domain{
-    unitCell    lamellar   1.6213247000E+01
-    mesh        100
-    groupName   P_-1
+     unitCell    lamellar   1.6213247000E+01
+     mesh        100
+     groupName   P_-1
   }
   AmIterator{
     maxItr       200

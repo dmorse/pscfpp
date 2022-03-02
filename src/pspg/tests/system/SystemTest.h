@@ -270,6 +270,41 @@ public:
       TEST_ASSERT(comparison.maxDiff() < 5.0E-7);
    }
 
+   void testIterate1D_lam_soln()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testIterate1D_lam_soln.log");
+
+      System<1> system;
+      setupSystem<1>(system,"in/solution/lam/param"); 
+
+      // Get reference field
+      system.readWBasis("in/solution/lam/w.bf");
+      DArray< DField<cudaReal> > d_wFields_check;
+      RDFieldToDField(d_wFields_check, system.wFields());
+
+      // iterate and output solution
+      int error = system.iterate();
+      if (error) {
+         TEST_THROW("Iterator failed to converge.");
+      };
+      system.writeWBasis("out/testIterate1D_lam_soln_w.bf");
+      system.writeCBasis("out/testIterate1D_lam_soln_c.bf");
+
+      // Get test result
+      DArray< DField<cudaReal> > d_wFields;
+      RDFieldToDField(d_wFields, system.wFields());
+
+      // Compare result to original
+      BFieldComparison comparison (1);
+      comparison.compare(d_wFields_check, d_wFields);
+      if (verbose()>0) {
+         std::cout << "\n";
+         std::cout << "Max error = " << comparison.maxDiff() << "\n";
+      }
+      TEST_ASSERT(comparison.maxDiff() < 2.0E-6);
+   }
+
    void testIterate1D_lam_blend()
    {
       printMethod(TEST_FUNC);
@@ -291,6 +326,42 @@ public:
       };
       system.writeWBasis("out/testIterate1D_lam_blend_w.bf");
       system.writeCBasis("out/testIterate1D_lam_blend_c.bf");
+
+      // Get test result
+      DArray< DField<cudaReal> > d_wFields;
+      RDFieldToDField(d_wFields, system.wFields());
+
+      // Compare result to original
+      BFieldComparison comparison (1);
+      comparison.compare(d_wFields_check, d_wFields);
+      if (verbose()>0) {
+         std::cout << "\n";
+         std::cout << "Max error = " << comparison.maxDiff() << "\n";
+      }
+      TEST_ASSERT(comparison.maxDiff() < 5.0E-7);
+   }
+
+   void testIterate1D_lam_open_soln()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testIterate1D_lam_open_soln.log");
+
+      System<1> system;
+      setupSystem<1>(system,"in/solution/lam_open/param"); 
+
+      // Get reference field
+      system.readWBasis("in/solution/lam_open/w.ref");
+      DArray< DField<cudaReal> > d_wFields_check;
+      RDFieldToDField(d_wFields_check, system.wFields());
+
+      // Read input w-fields, iterate and output solution
+      system.readWBasis("in/solution/lam_open/w.bf");
+      int error = system.iterate();
+      if (error) {
+         TEST_THROW("Iterator failed to converge.");
+      };
+      system.writeWBasis("out/testIterate1D_lam_open_soln_w.bf");
+      system.writeCBasis("out/testIterate1D_lam_open_soln_c.bf");
 
       // Get test result
       DArray< DField<cudaReal> > d_wFields;
@@ -536,7 +607,9 @@ TEST_ADD(SystemTest, testConversion3D_bcc)
 // TEST_ADD(SystemTest, testCheckSymmetry3D_bcc)
 TEST_ADD(SystemTest, testIterate1D_lam_rigid)
 TEST_ADD(SystemTest, testIterate1D_lam_flex)
+TEST_ADD(SystemTest, testIterate1D_lam_soln)
 TEST_ADD(SystemTest, testIterate1D_lam_blend)
+TEST_ADD(SystemTest, testIterate1D_lam_open_soln)
 TEST_ADD(SystemTest, testIterate1D_lam_open_blend)
 TEST_ADD(SystemTest, testIterate2D_hex_rigid)
 TEST_ADD(SystemTest, testIterate2D_hex_flex)

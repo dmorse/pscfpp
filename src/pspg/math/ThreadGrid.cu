@@ -40,9 +40,23 @@ namespace ThreadGrid {
       cudaDeviceProp dprop;
       // get properties, assuming one GPU.
       cudaGetDeviceProperties(&dprop, 0);
+      int maxThPerSM = dprop.maxThreadsPerMultiProcessor;
 
-      setThreadsPerBlock(dprop.maxThreadsPerBlock);
+      // Find the highest power of two that evenly divides into the
+      // maximum number of threads per streaming multiprocessor
+      // This will lead to the highest occupancy!
 
+      int threadsPerBlock = (maxThPerSM & (~(maxThPerSM - 1)));
+      
+      // Check for validity:
+      while (true) {
+         if (threadsPerBlock > dprop.maxThreadsPerBlock)
+            threadsPerBlock /= 2;
+         else
+            break;
+      }
+
+      setThreadsPerBlock(threadsPerBlock);
    }
 
    void setThreadsPerBlock(int const nThreadsPerBlock)
@@ -72,7 +86,7 @@ namespace ThreadGrid {
 
       // Compute the execution configuration. Number of blocks rounded up to the nearest integer.
       THREADS_PER_BLOCK = MAX_THREADS_PER_BLOCK;
-      BLOCKS = ceil((float)nThreadsLogical/MAX_THREADS_PER_BLOCK);
+      BLOCKS = ceil(double(nThreadsLogical)/double(THREADS_PER_BLOCK));
 
       // Determine if there will be unused threads
       UNUSED_THREADS = (BLOCKS*THREADS_PER_BLOCK > THREADS_LOGICAL);
@@ -101,6 +115,11 @@ namespace ThreadGrid {
       cudaGetDeviceProperties(&dprop, 0);
       int warpSize = dprop.warpSize;
       int maxThreadsPerMultiProcessor = dprop.maxThreadsPerMultiProcessor;
+
+      // Check that threads per block is a power of two. This is required for parallel reductions.
+      if ((MAX_THREADS_PER_BLOCK & (MAX_THREADS_PER_BLOCK - 1)) != 0) {
+         UTIL_THROW("Set number of threads per block must be a power of two.");
+      }
 
       // Check that threads per block is multiple of warpSize. This is required
       // because a warp is generally 32.

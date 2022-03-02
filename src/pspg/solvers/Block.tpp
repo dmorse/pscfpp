@@ -137,14 +137,6 @@ namespace Pspg {
       }
    }
 
-   static __global__ void assignExp(cudaReal* expW, const cudaReal* w, double cDs, int size) {
-      int nThreads = blockDim.x * gridDim.x;
-      int startID = blockIdx.x * blockDim.x + threadIdx.x;
-      for(int i = startID; i < size; i += nThreads) {
-         expW[i] = exp(-w[i]*cDs);
-      }
-   }
-
    static __global__ void richardsonExp(cudaReal* qNew, const cudaReal* q1, const cudaReal* q2, int size) {
       int nThreads = blockDim.x * gridDim.x;
       int startID = blockIdx.x * blockDim.x + threadIdx.x;
@@ -180,14 +172,6 @@ namespace Pspg {
 
    }
 
-   static __global__ void scaleReal(cudaReal* result, double scale, int size) {
-      int nThreads = blockDim.x * gridDim.x;
-      int startID = blockIdx.x * blockDim.x + threadIdx.x;
-
-      for (int i = startID; i < size; i += nThreads) {
-         result[i] *= scale;
-      }
-   }
    /*
    * Constructor.
    */
@@ -398,8 +382,6 @@ namespace Pspg {
       UTIL_CHECK(isAllocated_);
 
       // Populate expW_
-      // std::cout << std::endl;
-      // expW_[i] = exp(-0.5*w[i]*ds_);
       assignExp<<<nBlocks_, nThreads_>>>(expW_.cDField(), w.cDField(), (double)0.5* ds_, nx);
       assignExp<<<nBlocks_, nThreads_>>>(expW2_.cDField(), w.cDField(), (double)0.25 * ds_, nx);
 

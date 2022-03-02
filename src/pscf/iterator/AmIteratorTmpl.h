@@ -57,6 +57,13 @@ namespace Pscf {
       */
       int solve();
 
+   protected:
+
+      // Members of parent classes with non-dependent names
+      using Iterator::setClassName;
+      using ParamComposite::read;
+      using ParamComposite::readOptional;
+
    private:
 
       /// Error tolerance
@@ -262,11 +269,6 @@ namespace Pscf {
 
       /// Output relevant system details to the iteration log
       virtual void outputToLog() = 0;
-
-      // Members of parent classes with non-dependent names
-      using Iterator::setClassName;
-      using ParamComposite::read;
-      using ParamComposite::readOptional;
 
    };
 

@@ -13,7 +13,6 @@
 #include <pspc/sweep/Sweep.h>
 #include <pspc/sweep/SweepFactory.h>
 
-#include <pspc/iterator/Iterator.h>
 #include <pspc/iterator/IteratorFactory.h>
 
 #include <pspc/solvers/Mixture.h>
@@ -664,7 +663,7 @@ namespace Pspc
       }
 
       // Add solvent contributions
-      if (np > 0) {
+      if (ns > 0) {
          double size;
          int monomerId;
          for (int is = 0; is < ns; ++is) {
@@ -794,7 +793,7 @@ namespace Pspc
       hasCFields_ = true;
 
       if (!error) {   
-         if (!domain().isFlexible()) {
+         if (!iterator().isFlexible()) {
             mixture().computeStress();
          }
          computeFreeEnergy();

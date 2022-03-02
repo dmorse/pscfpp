@@ -28,6 +28,21 @@ namespace Pspc{
    {}
 
    template <int D>
+   void AmIterator<D>::readParameters(std::istream& in)
+   {
+      // Call parent class readParameters 
+      AmIteratorTmpl<Iterator<D>,FieldCPU>::readParameters(in);
+
+      // Default parameter values
+      isFlexible_ = 0;
+      scaleStress_ = 10.0;
+
+      // Read in additional parameters
+      readOptional(in, "isFlexible", isFlexible_);
+      readOptional(in, "scaleStress", scaleStress_);
+   }
+
+   template <int D>
    double AmIterator<D>::findNorm(FieldCPU const & hist) 
    {
       const int n = hist.capacity();
@@ -168,7 +183,7 @@ namespace Pspc{
 
       int nEle = nMonomer*nBasis;
 
-      if (sys_->domain().isFlexible()) {
+      if (isFlexible_) {
          nEle += sys_->unitCell().nParameter();
       }
 
@@ -192,13 +207,12 @@ namespace Pspc{
          }
       }
 
-      if (sys_->domain().isFlexible()) {
+      if (isFlexible_) {
          const int nParam = sys_->unitCell().nParameter();
-         const double scaleStress = sys_->domain().scaleStress();
          const FSArray<double,6> currParam = sys_->unitCell().parameters();
 
          for (int i = 0; i < nParam; i++) {
-            curr[nMonomer*nBasis + i] = scaleStress*currParam[i];
+            curr[nMonomer*nBasis + i] = scaleStress_*currParam[i];
          }
       }
 
@@ -211,7 +225,7 @@ namespace Pspc{
       // Solve MDEs for current omega field
       sys_->compute();
       // Compute stress if done
-      if (sys_->domain().isFlexible()) {
+      if (isFlexible_) {
          sys_->mixture().computeStress();
       }
    }
@@ -254,9 +268,8 @@ namespace Pspc{
       }
 
       // If variable unit cell, compute stress residuals
-      if (sys_->domain().isFlexible()) {
+      if (isFlexible_) {
          const int nParam = sys_->unitCell().nParameter();
-         const double scaleStress = sys_->domain().scaleStress();
          
          // Combined -1 factor and stress scaling here. This is okay: 
          // - residuals only show up as dot products (U, v, norm) 
@@ -268,7 +281,7 @@ namespace Pspc{
          //   and then undone right before passing to the unit cell.
 
          for (int i = 0; i < nParam ; i++) {
-            resid[nMonomer*nBasis + i] = scaleStress * -1 
+            resid[nMonomer*nBasis + i] = scaleStress_ * -1 
                                        * sys_->mixture().stress(i);
          }
       }
@@ -305,13 +318,12 @@ namespace Pspc{
       }
       sys_->setWBasis(wField);
 
-      if (sys_->domain().isFlexible()) {
+      if (isFlexible_) {
          FSArray<double, 6> parameters;
          const int nParam = sys_->unitCell().nParameter();
-         const double scaleStress = sys_->domain().scaleStress();
 
          for (int i = 0; i < nParam; i++) {
-            parameters.append(1/scaleStress * newGuess[nMonomer*nBasis + i]);
+            parameters.append(1/scaleStress_ * newGuess[nMonomer*nBasis + i]);
          }
 
          sys_->setUnitCell(parameters);
@@ -322,7 +334,7 @@ namespace Pspc{
    template<int D>
    void AmIterator<D>::outputToLog()
    {
-      if (sys_->domain().isFlexible()) {
+      if (isFlexible_) {
          const int nParam = sys_->unitCell().nParameter();
          for (int i = 0; i < nParam; i++) {
             Log::file() << "Parameter " << i << " = "
