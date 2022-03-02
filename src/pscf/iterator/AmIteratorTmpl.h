@@ -21,7 +21,7 @@ namespace Pscf {
    using namespace Util;
    
    /**
-   * Anderson mixing iterator for the pseudo spectral method.
+   * Template for Anderson mixing iterator algorithm.
    *
    * \ingroup Pscf_Iterator_Module
    */
@@ -32,7 +32,6 @@ namespace Pscf {
 
       /**
       * Constructor
-      *
       */
       AmIteratorTmpl();
 
@@ -63,8 +62,7 @@ namespace Pscf {
       /// Error tolerance
       double epsilon_;
 
-      /// Type of error checked for convergence.
-      /// Either maxResid or normResid.
+      /// Type of error checked for convergence (maxResid or normResid)
       std::string errorType_;
 
       /// Free parameter for minimization
@@ -73,36 +71,34 @@ namespace Pscf {
       /// Number of previous steps to use to compute next state. [0,maxHist_]
       int nHist_;
 
-      /// Number of histories to retain.
+      /// Number of histories to retain
       int maxHist_;
 
-      /// Maximum number of iterations to attempt.
+      /// Maximum number of iterations to attempt
       int maxItr_;
 
-      /// Number of elements in the field.
+      /// Number of elements in the field
       int nElem_; 
 
       /// Field histories
       RingBuffer< T > fieldHists_;
 
-      /// Basis vectors of field histories.
+      /// Basis vectors of field histories
       RingBuffer< T > fieldBasis_;
 
       /// Residual histories
       RingBuffer< T > resHists_;
 
-      /// Basis vectors of residual histories
+      /// Basis vectors of residual histories (differences of residuals)
       RingBuffer< T > resBasis_;
 
-      /// Matrix containing the dot products of residual history
-      /// basis vectors in resBasis_.
+      /// Matrix containing the dot products of vectors in resBasis_
       DMatrix<double> U_;
 
-      /// Coefficients for mixing previous states.
+      /// Coefficients for mixing previous states
       DArray<double> coeffs_;
 
-      /// Vector of dot products of current residual with residual history
-      /// basis vectors in resBasis_.
+      /// Dot products of current residual with residual basis vectors
       DArray<double> v_;
 
       /// New trial field (big W in Arora et al. 2017)
@@ -111,7 +107,7 @@ namespace Pscf {
       /// Predicted field residual for trial state (big D)
       T resTrial_;
 
-      /// Workspace for calculations.
+      /// Workspace for calculations
       T temp_;
 
       /**
@@ -122,17 +118,17 @@ namespace Pscf {
       /**
       * Check if solution is converge within specified tolerance.
       *
-      * \return true for error < epsilon and false for error >= epsilon
+      * \return true if error < epsilon and false if error >= epsilon
       */
       bool isConverged();
 
       /**
-      * Determine the coefficients that would minimize U_
+      * Compute the coefficients that would minimize residual norm.
       */
       void findResidCoeff();
 
       /**
-      * Rebuild wFields for the next iteration from minimized coefficients
+      * Rebuild predicted wFields from minimized coefficients
       */
       void updateGuess();
 
@@ -145,109 +141,126 @@ namespace Pscf {
 
       /**
       * Find norm of a residual vector.
+      *
+      * \param hist residual vector
       */
       virtual double findNorm(T const & hist) = 0;
 
       /**
       * Find the maximum magnitude element of a residual vector.
+      *
+      * \param hist residual vector
       */
       virtual double findMaxAbs(T const & hist) = 0;
 
       /**
       * Update the series of residual vectors.
       * 
-      * \param basis RingBuffer object storing the list of residual or field basis vectors.
-      * \param hists RingBuffer object storing the histories of residual or field vectors.
+      * \param basis RingBuffer storing the list of residual basis vectors
+      * \param hists RingBuffer storing the histories of residual vectors
       */
-      virtual void updateBasis(RingBuffer<T> & basis, RingBuffer<T> const & hists) = 0;
+      virtual 
+      void updateBasis(RingBuffer<T> & basis, 
+                       RingBuffer<T> const & hists) = 0;
 
       /**
       * Compute the dot product for an element of the U matrix.
       * 
-      * \param resBasis RingBuffer object storing the list of residual basis vectors.
-      * \param m row of the U matrix
-      * \param n column of the U matrix
+      * \param resBasis RingBuffer storing residual basis vectors.
+      * \param m row index for U matrix
+      * \param n column index of the U matrix
       */
-      virtual double computeUDotProd(RingBuffer<T> const & resBasis, int m, int n) = 0;
+      virtual 
+      double computeUDotProd(RingBuffer<T> const & resBasis, 
+                             int m, int n) = 0;
       
       /**
       * Compute the dot product for an element of the v vector.
       * 
-      * \param resCurrent the residual vector calculated at the present iteration step
-      * \param resBasis RingBuffer object storing the list of residual basis vectors.
-      * \param m row of the v vector
+      * \param resCurrent  current residual vector 
+      * \param resBasis RingBuffer of past residual basis vectors.
+      * \param m row index of element of v vector
       */
-      virtual double computeVDotProd(T const & resCurrent, RingBuffer<T> const & resBasis, int m) = 0;
+      virtual 
+      double computeVDotProd(T const & resCurrent, 
+                             RingBuffer<T> const & resBasis, int m) = 0;
       
       /**
-      * Compute the series of necessary dot products and update the U matrix.
+      * Compute required dot products and update the U matrix.
       * 
       * \param U U matrix
-      * \param resBasis RingBuffer object storing the list of residual basis vectors.
+      * \param resBasis RingBuffer of residual basis vectors.
       * \param nHist number of histories stored at this iteration
       */      
-      virtual void updateU(DMatrix<double> & U, RingBuffer<T> const & resBasis, int nHist) = 0;
+      virtual void updateU(DMatrix<double> & U, 
+                           RingBuffer<T> const & resBasis, int nHist) = 0;
 
       /**
-      * Compute the series of necessary dot products and update the v vector.
+      * Compute required dot products and update the v vector.
       * 
       * \param v v vector
-      * \param resCurrent the residual vector calculated at the present iteration step
-      * \param resBasis RingBuffer object storing the list of residual basis vectors.
+      * \param resCurrent  current residual vector 
+      * \param resBasis RingBuffer of residual basis vectors.
       * \param nHist number of histories stored at this iteration
       */
-      virtual void updateV(DArray<double> & v, T const & resCurrent, RingBuffer<T> const & resBasis, int nHist) = 0;
+      virtual void updateV(DArray<double> & v, T const & resCurrent, 
+                           RingBuffer<T> const & resBasis, int nHist) = 0;
       
       /**
-      * Set a field equal to another. Essentially a = b, but potentially more complex
-      * in certain implementations of the AmIterator.
+      * Set one field equal to another.
+      *
+      * Essentially a = b, but potentially more complex in some 
+      * implementations of the AmIterator.
       * 
-      * \param a the field to be set
-      * \param b the field for it to be set to
+      * \param a the field to be set (value)
+      * \param b the field value to assign (rhs)
       */
       virtual void setEqual(T& a, T const & b) = 0;
 
       /**
       * Mix histories, scaled by their respective coefficients, into the trial field.
       * 
-      * \param trial object for calculation results to be stored in.
-      * \param basis list of history basis vectors.
-      * \param coeffs list of coefficients for each history.
+      * \param trial object for calculation results to be stored in
+      * \param basis list of history basis vectors
+      * \param coeffs list of coefficients for each history
       * \param nHist number of histories stored at this iteration
       */
-      virtual void addHistories(T& trial, RingBuffer<T> const & basis, DArray<double> coeffs, int nHist) = 0;
+      virtual 
+      void addHistories(T& trial, RingBuffer<T> const & basis, 
+                        DArray<double> coeffs, int nHist) = 0;
 
       /**
-      * Add predicted error into the field trial guess to attempt to correct for it.
+      * Remove predicted from trial in attempt to correct for it.
       * 
-      * \param fieldTrial field for calculation results to be stored in.
-      * \param resTrial predicted error for current mixing of histories.
+      * \param fieldTrial field for calculation results to be stored in
+      * \param resTrial predicted error for current mixing of histories
       * \param lambda Anderson-Mixing parameter for mixing in histories
       */
-      virtual void addPredictedError(T& fieldTrial, T const & resTrial, double lambda) = 0;
+      virtual 
+      void addPredictedError(T& fieldTrial, T const & resTrial, 
+                             double lambda) = 0;
 
-      // ---- Methods for getting data from and sending data to the system ---- //
+      // -- Functions to exchange data with the parent system - //
       
       /// Checks if the system has an initial guess
       virtual bool hasInitialGuess() = 0;
       
-      /// Calculates and returns the number of elements in the
-      /// array to be iterated
+      /// Return the number of elements in the array or residual
       virtual int nElements() = 0;
 
-      /// Gets a reference to the current state of the system
+      /// Get a reference to the current state of the system
       virtual void getCurrent(T& curr) = 0;
 
-      /// Runs calculation to evaluate function for fixed point.
+      /// Run a calculation to evaluate function for current state.
       virtual void evaluate() = 0;
 
-      /// Gets residual values from system
+      /// Get a residual values from system
       virtual void getResidual(T& resid) = 0;
 
-      /// Updates the system with a passed in state of the iterator.
+      /// Update the system with a passed in state of the iterator.
       virtual void update(T& newGuess) = 0;
 
-      /// Outputs relevant system details to the iteration log
+      /// Output relevant system details to the iteration log
       virtual void outputToLog() = 0;
 
       // Members of parent classes with non-dependent names
