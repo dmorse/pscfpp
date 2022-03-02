@@ -1,7 +1,3 @@
-/*
-* This program runs all unit tests in the pspc/tests/fftw directory.
-*/ 
-
 #include <util/global.h>
 #include "CudaTestComposite.h"
 

@@ -663,7 +663,7 @@ namespace Pspc
       }
 
       // Add solvent contributions
-      if (np > 0) {
+      if (ns > 0) {
          double size;
          int monomerId;
          for (int is = 0; is < ns; ++is) {

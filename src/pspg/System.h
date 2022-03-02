@@ -9,8 +9,9 @@
 */
 
 #include <pspg/field/FieldIo.h>            // member
-#include <pspc/iterator/Iterator.h>        // member
+#include <pspg/iterator/Iterator.h>        // member
 #include <pspg/solvers/Mixture.h>          // member
+#include <pspg/solvers/Solvent.h>        // member
 #include <pspg/field/Domain.h>             // member
 #include <pspg/solvers/WaveList.h>         // member
 #include <pspg/field/RDField.h>            // typedef

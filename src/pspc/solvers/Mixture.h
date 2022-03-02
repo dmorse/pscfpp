@@ -188,8 +188,8 @@ namespace Pspc
       using MixtureTmpl< Polymer<D>, Solvent<D> >::nMonomer;
       using MixtureTmpl< Polymer<D>, Solvent<D> >::nPolymer;
       using MixtureTmpl< Polymer<D>, Solvent<D> >::nSolvent;
-      using MixtureTmpl< Polymer<D>, Solvent<D> >::monomer;
       using MixtureTmpl< Polymer<D>, Solvent<D> >::polymer;
+      using MixtureTmpl< Polymer<D>, Solvent<D> >::monomer;
       using MixtureTmpl< Polymer<D>, Solvent<D> >::solvent;
 
    protected:
