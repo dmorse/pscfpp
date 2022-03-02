@@ -1,0 +1,44 @@
+System{
+  Mixture{
+     nMonomer  2
+     monomers  A   1.0  
+               B   1.0 
+     nPolymer  3
+     Polymer{
+        type      linear
+        nBlock    2
+        blocks    0  0.56
+                  1  0.44
+        phi        0.50
+     }
+     Polymer{
+        type      linear
+        nBlock    1
+        blocks    0  0.20
+        phi        0.25
+     }
+     Polymer{
+        type      linear
+        nBlock    1
+        blocks    1  0.20
+        phi        0.25
+     }
+     ds   0.01
+  }
+  ChiInteraction{
+     chi  0   0   0.0
+          1   0   15.0
+          1   1   0.0
+  }
+  Domain{
+     unitCell Lamellar    1.5077084389 
+     mesh                 40
+     groupName P_-1
+     isFlexible 1
+  }
+  AmIterator{
+    maxItr 500
+    epsilon 1e-10
+    maxHist 10
+  }
+}

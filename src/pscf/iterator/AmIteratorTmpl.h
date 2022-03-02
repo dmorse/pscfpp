@@ -115,12 +115,6 @@ namespace Pscf {
       T temp_;
 
       /**
-      * Check if ensemble is canonical. Returns false if grand-canonical 
-      * or mixed ensemble.
-      */
-      bool isCanonical();
-
-      /**
       * Compute the deviation of wFields from a mean field solution
       */
       void computeResidual();

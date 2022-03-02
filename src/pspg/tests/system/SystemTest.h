@@ -270,15 +270,49 @@ public:
       TEST_ASSERT(comparison.maxDiff() < 5.0E-7);
    }
 
+   void testIterate1D_lam_blend()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/testIterate1D_lam_blend.log");
+
+      System<1> system;
+      setupSystem<1>(system,"in/blend/lam/param.closed"); 
+
+      // Get reference field
+      system.readWBasis("in/blend/lam/w.ref_closed");
+      DArray< DField<cudaReal> > d_wFields_check;
+      RDFieldToDField(d_wFields_check, system.wFields());
+
+      // Read input w-fields, iterate and output solution
+      system.readWBasis("in/blend/lam/w.bf");
+      int error = system.iterate();
+      if (error) {
+         TEST_THROW("Iterator failed to converge.");
+      };
+      system.writeWBasis("out/testIterate1D_lam_blend_w.bf");
+      system.writeCBasis("out/testIterate1D_lam_blend_c.bf");
+
+      // Get test result
+      DArray< DField<cudaReal> > d_wFields;
+      RDFieldToDField(d_wFields, system.wFields());
+
+      // Compare result to original
+      BFieldComparison comparison (1);
+      comparison.compare(d_wFields_check, d_wFields);
+      if (verbose()>0) {
+         std::cout << "\n";
+         std::cout << "Max error = " << comparison.maxDiff() << "\n";
+      }
+      TEST_ASSERT(comparison.maxDiff() < 5.0E-7);
+   }
+
    void testIterate1D_lam_open_blend()
    {
       printMethod(TEST_FUNC);
       openLogFile("out/testIterate1D_lam_open_blend.log");
 
       System<1> system;
-      setupSystem<1>(system,"in/blend/lam/param"); 
-
-      
+      setupSystem<1>(system,"in/blend/lam/param.open"); 
 
       // Get reference field
       system.readWBasis("in/blend/lam/w.ref");
@@ -502,7 +536,8 @@ TEST_ADD(SystemTest, testConversion3D_bcc)
 // TEST_ADD(SystemTest, testCheckSymmetry3D_bcc)
 TEST_ADD(SystemTest, testIterate1D_lam_rigid)
 TEST_ADD(SystemTest, testIterate1D_lam_flex)
-// TEST_ADD(SystemTest, testIterate1D_lam_open_blend)
+TEST_ADD(SystemTest, testIterate1D_lam_blend)
+TEST_ADD(SystemTest, testIterate1D_lam_open_blend)
 TEST_ADD(SystemTest, testIterate2D_hex_rigid)
 TEST_ADD(SystemTest, testIterate2D_hex_flex)
 TEST_ADD(SystemTest, testIterate3D_bcc_rigid)
