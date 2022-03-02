@@ -16,33 +16,35 @@ Pscf++ v0.8
 
 Released planned for March 11, 2022
 
-New user-visible features
--------------------------
+User-visible features
+---------------------
 
 * Sweep feature (continuation of a family of solutions) (Pspc)
 * Point-particle solvent (Fd1d and Pspc)
 * General open ensembles (grand canonical or mixed) in AmIterator (Pspc and Pspg)
-* Allow use of grids with node counts that are not factors of 2 in Pspg
+* Allow grids with node counts that are not factors of 2 in Pspg
 
 User-visible changes
 --------------------
 * Modified parameter file format for monomers, blocks and polymer structure 
+* Added Domain{...} subblock in parameter file (Pspc and Pspg)
 * Automated calculation of number of threads and blocks in GPU code (Pspg)
+* Added make/compiler/homebrew-m1 config file for an m1 Mac make with homebrew
 
-Bugs fixed
-----------
-* Fixed bugs in treatment of non-centrosymmetric groups (Pspc and Pspg)
-* Fixed bug in calculation of monomer concentrations for mixtures (Pspc and Pspg)
+Bug fixes
+---------
+* Fixed treatment of non-centrosymmetric groups (Pspc and Pspg)
+* Fixed calculation of monomer concentrations for mixtures (Pspc and Pspg)
 * Fixed various bugs in GPU code (Pspg)
 
 Developer-visible changes
 -------------------------
+* New github actions for testing of cpu code (after closure of travis site)
 * Removed cancelled stars from array storage of basis coefficients (Pspc)
-* Created unit tests for Pspg (GPU) code
-* Unified code for Anderson-mixing iterator in Pspc and Pspg codes as template
 * Improved encapsulation of field data in interface of Pspc::System
-* Significant reorganization of Cuda kernels (Pspg)
-
+* Created unit tests for Pspg (GPU) code
+* Reorganization / clean-up of Cuda kernels (Pspg)
+* Class template for generic Anderson-mixing iterator algorithm (Pspc and Pspg)
 
 Pscf++ 0.7
 ==========
