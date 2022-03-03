@@ -60,7 +60,7 @@ namespace Pspc
    protected:
    
       using ParamComposite::readOptional;
-      using Iterator<D>::sys_;
+      using Iterator<D>::system;
       using Iterator<D>::isFlexible_;
 
    private:

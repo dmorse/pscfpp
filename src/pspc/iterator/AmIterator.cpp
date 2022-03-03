@@ -9,8 +9,10 @@
 
 namespace Pscf {
 namespace Pspc {
+
    template class AmIterator<1>;
    template class AmIterator<2>;
    template class AmIterator<3>;
+
 }
 }

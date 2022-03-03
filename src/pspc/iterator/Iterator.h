@@ -63,16 +63,27 @@ namespace Pspc
       */
       virtual int solve() = 0;
 
-      /// Return whether the unit cell is flexible during iteration.
-      inline bool isFlexible() {return isFlexible_;}
+      /**
+      * Return true if unit cell is flexible, false if rigid.
+      */
+      bool isFlexible() 
+      {  return isFlexible_;}
+
+      /**
+      * Return reference to parent system.
+      */
+      System<D>& system() 
+      {  return *sysPtr_;}
 
    protected:
 
-      /// Pointer to the associated system object.
-      System<D>* sys_;
-
       /// Is the unit cell flexible during iteration?
       bool isFlexible_;
+
+   private:
+
+      /// Pointer to the associated system object.
+      System<D>* sysPtr_;
       
    };
 
@@ -82,7 +93,7 @@ namespace Pspc
 
    template<int D>
    inline Iterator<D>::Iterator(System<D>& system)
-   : sys_(&system)
+   : sysPtr_(&system)
    {  setClassName("Iterator"); }
 
    template<int D>

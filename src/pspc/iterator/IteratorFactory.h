@@ -46,8 +46,8 @@ namespace Pspc {
 
    private:
 
-      /// Pointer to the system object.
-      System<D>* sys_;
+      /// Pointer to the parent system.
+      System<D>* sysPtr_;
 
    };
 

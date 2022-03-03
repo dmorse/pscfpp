@@ -16,7 +16,7 @@ namespace Pspc {
    */
    template <int D>
    IteratorFactory<D>::IteratorFactory(System<D>& system)
-    : sys_(&system)
+    : sysPtr_(&system)
    {}
 
    /* 
@@ -33,7 +33,7 @@ namespace Pspc {
  
       // Try to match classname
       if (className == "AmIterator") {
-         ptr = new AmIterator<D>(*sys_);
+         ptr = new AmIterator<D>(*sysPtr_);
       }
 
       return ptr;

@@ -172,19 +172,19 @@ namespace Pspc{
    template <int D>
    bool AmIterator<D>::hasInitialGuess()
    {
-      return sys_->hasWFields();
+      return system().hasWFields();
    }
    
    template <int D>
    int AmIterator<D>::nElements()
    {
-      const int nMonomer = sys_->mixture().nMonomer();
-      const int nBasis = sys_->basis().nBasis();
+      const int nMonomer = system().mixture().nMonomer();
+      const int nBasis = system().basis().nBasis();
 
       int nEle = nMonomer*nBasis;
 
       if (isFlexible_) {
-         nEle += sys_->unitCell().nParameter();
+         nEle += system().unitCell().nParameter();
       }
 
       return nEle;
@@ -195,9 +195,9 @@ namespace Pspc{
    {
       // Straighten out fields into linear arrays
 
-      const int nMonomer = sys_->mixture().nMonomer();
-      const int nBasis = sys_->basis().nBasis();
-      const DArray<DArray<double>> * currSys = &sys_->wFields(); 
+      const int nMonomer = system().mixture().nMonomer();
+      const int nBasis = system().basis().nBasis();
+      const DArray<DArray<double>> * currSys = &system().wFields(); 
       
       
       for (int i = 0; i < nMonomer; i++) {
@@ -208,8 +208,8 @@ namespace Pspc{
       }
 
       if (isFlexible_) {
-         const int nParam = sys_->unitCell().nParameter();
-         const FSArray<double,6> currParam = sys_->unitCell().parameters();
+         const int nParam = system().unitCell().nParameter();
+         const FSArray<double,6> currParam = system().unitCell().parameters();
 
          for (int i = 0; i < nParam; i++) {
             curr[nMonomer*nBasis + i] = scaleStress_*currParam[i];
@@ -223,10 +223,10 @@ namespace Pspc{
    void AmIterator<D>::evaluate()
    {
       // Solve MDEs for current omega field
-      sys_->compute();
+      system().compute();
       // Compute stress if done
       if (isFlexible_) {
-         sys_->mixture().computeStress();
+         system().mixture().computeStress();
       }
    }
 
@@ -234,8 +234,8 @@ namespace Pspc{
    void AmIterator<D>::getResidual(FieldCPU& resid)
    {
       const int n = nElements();
-      const int nMonomer = sys_->mixture().nMonomer();
-      const int nBasis = sys_->basis().nBasis();
+      const int nMonomer = system().mixture().nMonomer();
+      const int nBasis = system().basis().nBasis();
 
       // Initialize residuals 
       for (int i = 0 ; i < n; ++i) {
@@ -248,16 +248,16 @@ namespace Pspc{
             for (int k = 0; k < nBasis; ++k) {
                int idx = i*nBasis + k;
                resid[idx] +=
-                  sys_->interaction().chi(i,j)*sys_->cField(j)[k] -
-                  sys_->interaction().idemp(i,j)*sys_->wField(j)[k];
+                  system().interaction().chi(i,j)*system().cField(j)[k] -
+                  system().interaction().idemp(i,j)*system().wField(j)[k];
             }
          }
       }
 
       // If not canonical, account for incompressibility 
-      if (!sys_->mixture().isCanonical()) {
+      if (!system().mixture().isCanonical()) {
          for (int i = 0; i < nMonomer; ++i) {
-            resid[i*nBasis] -= 1.0/sys_->interaction().sum_inv();
+            resid[i*nBasis] -= 1.0/system().interaction().sum_inv();
          }
       } else {
          // otherwise explicitly set the residual value for the homogeneous components
@@ -269,7 +269,7 @@ namespace Pspc{
 
       // If variable unit cell, compute stress residuals
       if (isFlexible_) {
-         const int nParam = sys_->unitCell().nParameter();
+         const int nParam = system().unitCell().nParameter();
          
          // Combined -1 factor and stress scaling here. This is okay: 
          // - residuals only show up as dot products (U, v, norm) 
@@ -282,7 +282,7 @@ namespace Pspc{
 
          for (int i = 0; i < nParam ; i++) {
             resid[nMonomer*nBasis + i] = scaleStress_ * -1 
-                                       * sys_->mixture().stress(i);
+                                       * system().mixture().stress(i);
          }
       }
 
@@ -292,8 +292,8 @@ namespace Pspc{
    void AmIterator<D>::update(FieldCPU& newGuess)
    {
       // Convert back to field format
-      const int nMonomer = sys_->mixture().nMonomer();
-      const int nBasis = sys_->basis().nBasis();
+      const int nMonomer = system().mixture().nMonomer();
+      const int nBasis = system().basis().nBasis();
       
       DArray< DArray<double> > wField;
       wField.allocate(nMonomer);
@@ -307,26 +307,26 @@ namespace Pspc{
          }
       }
       // Manually and explicitly set homogeneous components of field if canonical
-      if (sys_->mixture().isCanonical()) {
+      if (system().mixture().isCanonical()) {
          for (int i = 0; i < nMonomer; ++i) {
             wField[i][0] = 0.0; // initialize to 0
             for (int j = 0; j < nMonomer; ++j) {
                wField[i][0] += 
-                  sys_->interaction().chi(i,j) * sys_->cField(j)[0];
+                  system().interaction().chi(i,j) * system().cField(j)[0];
             }
          }
       }
-      sys_->setWBasis(wField);
+      system().setWBasis(wField);
 
       if (isFlexible_) {
          FSArray<double, 6> parameters;
-         const int nParam = sys_->unitCell().nParameter();
+         const int nParam = system().unitCell().nParameter();
 
          for (int i = 0; i < nParam; i++) {
             parameters.append(1/scaleStress_ * newGuess[nMonomer*nBasis + i]);
          }
 
-         sys_->setUnitCell(parameters);
+         system().setUnitCell(parameters);
       }
       
    }
@@ -335,16 +335,14 @@ namespace Pspc{
    void AmIterator<D>::outputToLog()
    {
       if (isFlexible_) {
-         const int nParam = sys_->unitCell().nParameter();
+         const int nParam = system().unitCell().nParameter();
          for (int i = 0; i < nParam; i++) {
             Log::file() << "Parameter " << i << " = "
-                        << Dbl(sys_->unitCell().parameters()[i])
+                        << Dbl(system().unitCell().parameters()[i])
                         << "\n";
          }
       }
    }
-
-
 
 }
 }
