@@ -1,5 +1,5 @@
-#ifndef PSCF_AM_ITERATOR_TMPL_CPP
-#define PSCF_AM_ITERATOR_TMPL_CPP
+#ifndef PSCF_AM_ITERATOR_TMPL_TPP
+#define PSCF_AM_ITERATOR_TMPL_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory

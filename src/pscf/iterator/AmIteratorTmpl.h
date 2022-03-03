@@ -273,5 +273,5 @@ namespace Pscf {
    };
 
 }
-#include "AmIteratorTmpl.cpp"
+#include "AmIteratorTmpl.tpp"
 #endif
