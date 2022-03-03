@@ -164,18 +164,18 @@ namespace Pspg{
 
    template <int D>
    bool AmIterator<D>::hasInitialGuess()
-   { return sys_->hasWFields(); }
+   { return system().hasWFields(); }
    
    template <int D>
    int AmIterator<D>::nElements()
    {
-      const int nMonomer = sys_->mixture().nMonomer();
-      const int nMesh = sys_->mesh().size();
+      const int nMonomer = system().mixture().nMonomer();
+      const int nMesh = system().mesh().size();
 
       int nEle = nMonomer*nMesh;
 
       if (isFlexible_) {
-         nEle += sys_->unitCell().nParameter();
+         nEle += system().unitCell().nParameter();
       }
 
       return nEle;
@@ -184,8 +184,8 @@ namespace Pspg{
    template <int D>
    void AmIterator<D>::getCurrent(FieldCUDA& curr)
    {
-      const int nMonomer = sys_->mixture().nMonomer();
-      const int nMesh = sys_->mesh().size();
+      const int nMonomer = system().mixture().nMonomer();
+      const int nMesh = system().mesh().size();
       const int n = nElements();
 
       // GPU resources
@@ -193,7 +193,7 @@ namespace Pspg{
       ThreadGrid::setThreadsLogical(nMesh, nBlocks, nThreads);
 
       // pointer to fields on system
-      DArray<RDField<D>> * const currSys = &sys_->wFieldsRGrid();
+      DArray<RDField<D>> * const currSys = &system().wFieldsRGrid();
 
       // loop to unfold the system fields and store them in one long array
       for (int i = 0; i < nMonomer; i++) {
@@ -202,8 +202,8 @@ namespace Pspg{
 
       // if flexible unit cell, also store unit cell parameters
       if (isFlexible_) {
-         const int nParam = sys_->unitCell().nParameter();
-         const FSArray<double,6> currParam = sys_->unitCell().parameters();
+         const int nParam = system().unitCell().nParameter();
+         const FSArray<double,6> currParam = system().unitCell().parameters();
          // convert into a cudaReal array
          cudaReal* temp = new cudaReal[nParam];
          for (int k = 0; k < nParam; k++) 
@@ -219,10 +219,10 @@ namespace Pspg{
    void AmIterator<D>::evaluate()
    {
       // Solve MDEs for current omega field
-      sys_->compute();
+      system().compute();
       // Compute stress if done
       if (isFlexible_) {
-         sys_->mixture().computeStress(sys_->wavelist());
+         system().mixture().computeStress(system().wavelist());
       }
    }
 
@@ -230,8 +230,8 @@ namespace Pspg{
    void AmIterator<D>::getResidual(FieldCUDA& resid)
    {
       const int n = nElements();
-      const int nMonomer = sys_->mixture().nMonomer();
-      const int nMesh = sys_->mesh().size();
+      const int nMonomer = system().mixture().nMonomer();
+      const int nMesh = system().mesh().size();
 
       // GPU resources
       int nBlocks, nThreads;
@@ -246,20 +246,20 @@ namespace Pspg{
          int startIdx = i*nMesh;
          for (int j = 0; j < nMonomer; j++) {
             pointWiseAddScale<<<nBlocks, nThreads>>>(resid.cDField() + startIdx,
-                                                      sys_->cFieldRGrid(j).cDField(),
-                                                      sys_->interaction().chi(i, j),
+                                                      system().cFieldRGrid(j).cDField(),
+                                                      system().interaction().chi(i, j),
                                                       nMesh);
             pointWiseAddScale<<<nBlocks, nThreads>>>(resid.cDField() + startIdx,
-                                                      sys_->wFieldRGrid(j).cDField(),
-                                                      -sys_->interaction().idemp(i, j),
+                                                      system().wFieldRGrid(j).cDField(),
+                                                      -system().interaction().idemp(i, j),
                                                       nMesh);
          }
       }
       
 
       // If not canonical, account for incompressibility. 
-      if (!sys_->mixture().isCanonical()) {
-         cudaReal factor = 1/(cudaReal)sys_->interaction().sum_inv();
+      if (!system().mixture().isCanonical()) {
+         cudaReal factor = 1/(cudaReal)system().interaction().sum_inv();
          for (int i = 0; i < nMonomer; ++i) {
             subtractUniform<<<nBlocks, nThreads>>>(resid.cDField() + i*nMesh,
                                                                factor, nMesh);
@@ -276,11 +276,11 @@ namespace Pspg{
 
       // If variable unit cell, compute stress residuals
       if (isFlexible_) {
-         const int nParam = sys_->unitCell().nParameter();
+         const int nParam = system().unitCell().nParameter();
          cudaReal* stress = new cudaReal[nParam];
 
          for (int i = 0; i < nParam; i++) {
-            stress[i] = (cudaReal)(-1*scaleStress_*sys_->mixture().stress(i));
+            stress[i] = (cudaReal)(-1*scaleStress_*system().mixture().stress(i));
          }
 
          cudaMemcpy(resid.cDField()+nMonomer*nMesh, stress, nParam*sizeof(cudaReal), cudaMemcpyHostToDevice);
@@ -290,18 +290,18 @@ namespace Pspg{
    template <int D>
    void AmIterator<D>::update(FieldCUDA& newGuess)
    {
-      const int nMonomer = sys_->mixture().nMonomer();
-      const int nMesh = sys_->mesh().size();
+      const int nMonomer = system().mixture().nMonomer();
+      const int nMesh = system().mesh().size();
 
       // GPU resources
       int nBlocks, nThreads;
       ThreadGrid::setThreadsLogical(nMesh, nBlocks, nThreads);
 
       // pointer to field objects in system
-      DArray<RDField<D>> * sysfields = &sys_->wFieldsRGrid();
+      DArray<RDField<D>> * sysfields = &system().wFieldsRGrid();
 
       // Manually and explicitly set homogeneous components of field if canonical
-      if (sys_->mixture().isCanonical()) {
+      if (system().mixture().isCanonical()) {
          cudaReal average, wAverage, cAverage;
          for (int i = 0; i < nMonomer; i++) {
             // Find current spatial average
@@ -314,8 +314,8 @@ namespace Pspg{
             wAverage = 0;
             for (int j = 0; j < nMonomer; j++) {
                // Find average concentration
-               cAverage = findAverage(sys_->cFieldRGrid(j).cDField(), nMesh);
-               wAverage += sys_->interaction().chi(i,j) * cAverage;
+               cAverage = findAverage(system().cFieldRGrid(j).cDField(), nMesh);
+               wAverage += system().interaction().chi(i,j) * cAverage;
             }
             addUniform<<<nBlocks, nThreads>>>(newGuess.cDField() + i*nMesh, wAverage, nMesh); 
          }
@@ -330,7 +330,7 @@ namespace Pspg{
       // if flexible unit cell, update parameters well
       if (isFlexible_) {
          FSArray<double,6> parameters;
-         const int nParam = sys_->unitCell().nParameter();
+         const int nParam = system().unitCell().nParameter();
          cudaReal* temp = new cudaReal[nParam];
 
          cudaMemcpy(temp, newGuess.cDField() + nMonomer*nMesh, nParam*sizeof(cudaReal), cudaMemcpyDeviceToHost);
@@ -338,18 +338,18 @@ namespace Pspg{
             parameters.append(1/scaleStress_ * (double)temp[i]);
          }
 
-         sys_->unitCell().setParameters(parameters);            
-         sys_->mixture().setupUnitCell(sys_->unitCell(), sys_->wavelist());
-         sys_->wavelist().computedKSq(sys_->unitCell());
+         system().unitCell().setParameters(parameters);            
+         system().mixture().setupUnitCell(system().unitCell(), system().wavelist());
+         system().wavelist().computedKSq(system().unitCell());
 
          delete[] temp;
       }
 
       // TEMPORARY. PASS THE INPUTS THROUGH A BASIS FILTER.
-      sys_->fieldIo().convertRGridToBasis(sys_->wFieldsRGrid(), sys_->wFields());
-      sys_->fieldIo().convertRGridToBasis(sys_->cFieldsRGrid(), sys_->cFields());
-      sys_->fieldIo().convertBasisToRGrid(sys_->wFields(), sys_->wFieldsRGrid());
-      sys_->fieldIo().convertBasisToRGrid(sys_->cFields(), sys_->cFieldsRGrid());
+      system().fieldIo().convertRGridToBasis(system().wFieldsRGrid(), system().wFields());
+      system().fieldIo().convertRGridToBasis(system().cFieldsRGrid(), system().cFields());
+      system().fieldIo().convertBasisToRGrid(system().wFields(), system().wFieldsRGrid());
+      system().fieldIo().convertBasisToRGrid(system().cFields(), system().cFieldsRGrid());
 
    }
 
@@ -357,10 +357,10 @@ namespace Pspg{
    void AmIterator<D>::outputToLog()
    {
       if (isFlexible_) {
-         const int nParam = sys_->unitCell().nParameter();
+         const int nParam = system().unitCell().nParameter();
          for (int i = 0; i < nParam; i++) {
             Log::file() << "Parameter " << i << " = "
-                        << Dbl(sys_->unitCell().parameters()[i])
+                        << Dbl(system().unitCell().parameters()[i])
                         << "\n";
          }
       }

@@ -180,7 +180,7 @@ namespace Pspg {
       cudaReal* temp_;
 
       using Iterator<D>::setClassName;
-      using Iterator<D>::sys_;
+      using Iterator<D>::system;
       using ParamComposite::read;
       using ParamComposite::readOptional;
 
