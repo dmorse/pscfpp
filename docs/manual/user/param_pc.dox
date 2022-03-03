@@ -118,6 +118,15 @@ crystal system used in the parameter file only requires one unit
 cell parameter, which is the length of each axis of a simple 
 cubic unit cell. 
 
+The unit cell parameter that is input in the parameter file is 
+actually used only within an algorithm that constructs a set of 
+symmetry adapted Fourier basis functions, and then discarded.
+Values for the initial unit cell dimensions of a system for which 
+we wish to solve a self-consistent field problem are are obtained 
+later by reading a file that contains an initial guess for the 
+monomer chemical potential fields (w-fields), which also contains 
+the corresponding unit cell dimensions.
+
 \subsection user_param_pc_Mesh_sub mesh 
 
 The line that begins with the label "mesh" specifies the number 
