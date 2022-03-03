@@ -60,7 +60,7 @@ namespace Pspg {
    void AmIteratorOld<D>::setup()
    {
       // GPU resources
-      const int size = sys_->mesh().size();
+      const int size = system().mesh().size();
       int NUMBER_OF_BLOCKS, THREADS_PER_BLOCK;
       ThreadGrid::setThreadsLogical(size, NUMBER_OF_BLOCKS, THREADS_PER_BLOCK);
 
@@ -72,14 +72,14 @@ namespace Pspg {
          CpHists_.allocate(maxHist_+1);
       }
 
-      wArrays_.allocate(sys_->mixture().nMonomer());
-      dArrays_.allocate(sys_->mixture().nMonomer());
-      tempDev.allocate(sys_->mixture().nMonomer());
+      wArrays_.allocate(system().mixture().nMonomer());
+      dArrays_.allocate(system().mixture().nMonomer());
+      tempDev.allocate(system().mixture().nMonomer());
 
-      for (int i = 0; i < sys_->mixture().nMonomer(); ++i) {
-          wArrays_[i].allocate(sys_->mesh().size());
-          dArrays_[i].allocate(sys_->mesh().size());
-          tempDev[i].allocate(sys_->mesh().size());
+      for (int i = 0; i < system().mixture().nMonomer(); ++i) {
+          wArrays_[i].allocate(system().mesh().size());
+          dArrays_[i].allocate(system().mesh().size());
+          tempDev[i].allocate(system().mesh().size());
       }
       
       histMat_.allocate(maxHist_ + 1);
@@ -101,22 +101,22 @@ namespace Pspg {
 
       // Solve MDE for initial state
       solverTimer.start();
-      sys_->mixture().compute(sys_->wFieldsRGrid(),
-         sys_->cFieldsRGrid());
+      system().mixture().compute(system().wFieldsRGrid(),
+         system().cFieldsRGrid());
       now = Timer::now();
       solverTimer.stop(now);
 
       // Compute stress for initial state
       if (isFlexible_) {
          stressTimer.start(now);
-         sys_->mixture().computeStress(sys_->wavelist());
-         for (int m = 0; m < sys_->unitCell().nParameter() ; ++m){
+         system().mixture().computeStress(system().wavelist());
+         for (int m = 0; m < system().unitCell().nParameter() ; ++m){
             Log::file() << "Stress    " << m << " = "
-                        << sys_->mixture().stress(m)<<"\n";
+                        << system().mixture().stress(m)<<"\n";
          }
-         for (int m = 0; m < sys_->unitCell().nParameter() ; ++m){
+         for (int m = 0; m < system().unitCell().nParameter() ; ++m){
             Log::file() << "Parameter " << m << " = "
-                        << (sys_->unitCell()).parameter(m)<<"\n";
+                        << (system().unitCell()).parameter(m)<<"\n";
          }
          now = Timer::now();
          stressTimer.stop(now);
@@ -175,15 +175,15 @@ namespace Pspg {
             if (isFlexible_) {
                Log::file() << "\n";
                Log::file() << "Final stress values:" << "\n";
-               for (int m = 0; m < sys_->unitCell().nParameter() ; ++m){
+               for (int m = 0; m < system().unitCell().nParameter() ; ++m){
                   Log::file() << "Stress    " << m << " = "
-                              << sys_->mixture().stress(m)<<"\n";
+                              << system().mixture().stress(m)<<"\n";
                }
                Log::file() << "\n";
                Log::file() << "Final unit cell parameter values:" << "\n";
-               for (int m = 0; m < sys_->unitCell().nParameter() ; ++m){
+               for (int m = 0; m < system().unitCell().nParameter() ; ++m){
                   Log::file() << "Parameter " << m << " = "
-                              << (sys_->unitCell()).parameter(m)<<"\n";
+                              << (system().unitCell()).parameter(m)<<"\n";
                }
                Log::file() << "\n";
             }
@@ -225,21 +225,21 @@ namespace Pspg {
 
             // Solve MDE
             solverTimer.start(now);
-            sys_->mixture().compute(sys_->wFieldsRGrid(),
-                                          sys_->cFieldsRGrid());
+            system().mixture().compute(system().wFieldsRGrid(),
+                                          system().cFieldsRGrid());
             now = Timer::now();
             solverTimer.stop(now);
      
             if (isFlexible_) {
                stressTimer.start(now);
-               sys_->mixture().computeStress(sys_->wavelist());
-               for (int m = 0; m < sys_->unitCell().nParameter() ; ++m){
+               system().mixture().computeStress(system().wavelist());
+               for (int m = 0; m < system().unitCell().nParameter() ; ++m){
                   Log::file() << "Stress    " << m << " = "
-                              << sys_->mixture().stress(m)<<"\n";
+                              << system().mixture().stress(m)<<"\n";
                }
-               for (int m = 0; m < sys_->unitCell().nParameter() ; ++m){
+               for (int m = 0; m < system().unitCell().nParameter() ; ++m){
                   Log::file() << "Parameter " << m << " = "
-                              << (sys_->unitCell()).parameter(m)<<"\n";
+                              << (system().unitCell()).parameter(m)<<"\n";
                }
                now = Timer::now();
                stressTimer.stop(now);
@@ -263,49 +263,49 @@ namespace Pspg {
    void AmIteratorOld<D>::computeDeviation()
    {
       // GPU resources
-      const int size = sys_->mesh().size();
+      const int size = system().mesh().size();
       int NUMBER_OF_BLOCKS, THREADS_PER_BLOCK;
       ThreadGrid::setThreadsLogical(size, NUMBER_OF_BLOCKS, THREADS_PER_BLOCK);
 
       //need to average
       float average = 0;
-      for (int i = 0; i < sys_->mixture().nMonomer(); ++i) {
-         average += gpuSum(sys_->wFieldRGrid(i).cDField(), size);
+      for (int i = 0; i < system().mixture().nMonomer(); ++i) {
+         average += gpuSum(system().wFieldRGrid(i).cDField(), size);
       }
-      average /= (sys_->mixture().nMonomer() * size);
-      for (int i = 0; i < sys_->mixture().nMonomer(); ++i) {
-         subtractUniform <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (sys_->wFieldRGrid(i).cDField(), average, size);
+      average /= (system().mixture().nMonomer() * size);
+      for (int i = 0; i < system().mixture().nMonomer(); ++i) {
+         subtractUniform <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (system().wFieldRGrid(i).cDField(), average, size);
       }
 
-      d_omHists_.append(sys_->wFieldsRGrid());
+      d_omHists_.append(system().wFieldsRGrid());
 
       if (isFlexible_) {
-         CpHists_.append(sys_->unitCell().parameters());
+         CpHists_.append(system().unitCell().parameters());
       }
 
-      for (int i = 0; i < sys_->mixture().nMonomer(); ++i) {
+      for (int i = 0; i < system().mixture().nMonomer(); ++i) {
          assignUniformReal <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (tempDev[i].cDField(), 0, size);
       }
       
-      for (int i = 0; i < sys_->mixture().nMonomer(); ++i) {
-         for (int j = 0; j < sys_->mixture().nMonomer(); ++j) {
+      for (int i = 0; i < system().mixture().nMonomer(); ++i) {
+         for (int j = 0; j < system().mixture().nMonomer(); ++j) {
             pointWiseAddScale <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (tempDev[i].cDField(),
-                                                                            sys_->cFieldRGrid(j).cDField(),
-                                                                            sys_->interaction().chi(i, j),
+                                                                            system().cFieldRGrid(j).cDField(),
+                                                                            system().interaction().chi(i, j),
                                                                             size);
             //this is a good add but i dont necessarily know if its right
             pointWiseAddScale <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (tempDev[i].cDField(),
-                                                                            sys_->wFieldRGrid(j).cDField(),
-                                                                            -sys_->interaction().idemp(i, j),
+                                                                            system().wFieldRGrid(j).cDField(),
+                                                                            -system().interaction().idemp(i, j),
                                                                             size); 
 
          }
          
       }
 
-      float sum_chi_inv = (float) sys_->interaction().sum_inv();
+      float sum_chi_inv = (float) system().interaction().sum_inv();
 
-      for (int i = 0; i < sys_->mixture().nMonomer(); ++i) {
+      for (int i = 0; i < system().mixture().nMonomer(); ++i) {
          
          pointWiseSubtractFloat <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (tempDev[i].cDField(),
                                                                              1/sum_chi_inv, 
@@ -316,9 +316,9 @@ namespace Pspg {
 
       if (isFlexible_) {
          FArray<double, 6> tempCp;
-         for (int i = 0; i<(sys_->unitCell()).nParameter(); i++){
+         for (int i = 0; i<(system().unitCell()).nParameter(); i++){
             //format????
-            tempCp [i] = -((sys_->mixture()).stress(i));
+            tempCp [i] = -((system().mixture()).stress(i));
          }
          devCpHists_.append(tempCp);
       }
@@ -327,9 +327,9 @@ namespace Pspg {
    template <int D>
    bool AmIteratorOld<D>::isConverged()
    {
-      const int nMonomer = sys_->mixture().nMonomer();
-      const int nParameter = sys_->unitCell().nParameter();
-      const int size = sys_->mesh().size();
+      const int nMonomer = system().mixture().nMonomer();
+      const int nParameter = system().unitCell().nParameter();
+      const int size = system().mesh().size();
 
       double matsenError;
       double dError = 0;
@@ -337,13 +337,13 @@ namespace Pspg {
       
       for (int i = 0; i < nMonomer; ++i) {
          dError += gpuInnerProduct(d_resHists_[0][i].cDField(), d_resHists_[0][i].cDField(), size);
-         wError += gpuInnerProduct(sys_->wFieldRGrid(i).cDField(), sys_->wFieldRGrid(i).cDField(), size);
+         wError += gpuInnerProduct(system().wFieldRGrid(i).cDField(), system().wFieldRGrid(i).cDField(), size);
       }
 
       if (isFlexible_) {
          for ( int i = 0; i < nParameter; i++) {
             dError +=  devCpHists_[0][i] *  devCpHists_[0][i];
-            wError +=  sys_->unitCell().parameter(i) * sys_->unitCell().parameter(i);
+            wError +=  system().unitCell().parameter(i) * system().unitCell().parameter(i);
          }
       }
 
@@ -406,8 +406,8 @@ namespace Pspg {
             if (i < nHist_ + 1) {
 
                elm = 0;
-               for (int j = 0; j < sys_->mixture().nMonomer(); ++j) {
-                  elm += gpuInnerProduct(d_resHists_[0][j].cDField(), d_resHists_[i][j].cDField(), sys_->mesh().size());
+               for (int j = 0; j < system().mixture().nMonomer(); ++j) {
+                  elm += gpuInnerProduct(d_resHists_[0][j].cDField(), d_resHists_[i][j].cDField(), system().mesh().size());
                }
                histMat_.evaluate(elm, nHist_, i);
             }
@@ -420,7 +420,7 @@ namespace Pspg {
 
                if (isFlexible_) {
                   elm_cp = 0;
-                  for (int m = 0; m < sys_->unitCell().nParameter(); ++m){
+                  for (int m = 0; m < system().unitCell().nParameter(); ++m){
                      elm_cp += ((devCpHists_[0][m] - devCpHists_[i+1][m]) * 
                                 (devCpHists_[0][m] - devCpHists_[j+1][m])); 
                   }
@@ -436,7 +436,7 @@ namespace Pspg {
 
             if (isFlexible_) {
                elm_cp = 0;
-               for (int m = 0; m < sys_->unitCell().nParameter(); ++m){
+               for (int m = 0; m < system().unitCell().nParameter(); ++m){
                   vM_[i] += ((devCpHists_[0][m] - devCpHists_[i+1][m]) *
                              (devCpHists_[0][m]));
                }
@@ -475,32 +475,32 @@ namespace Pspg {
    {
 
       // GPU resources
-      const int size = sys_->mesh().size();
+      const int size = system().mesh().size();
       int NUMBER_OF_BLOCKS, THREADS_PER_BLOCK;
       ThreadGrid::setThreadsLogical(size, NUMBER_OF_BLOCKS, THREADS_PER_BLOCK);
 
       if (itr == 1) {
-         for (int i = 0; i < sys_->mixture().nMonomer(); ++i) {
-            assignReal <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (sys_->wFieldRGrid(i).cDField(),
+         for (int i = 0; i < system().mixture().nMonomer(); ++i) {
+            assignReal <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (system().wFieldRGrid(i).cDField(),
             d_omHists_[0][i].cDField(), size);
-            pointWiseAddScale <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (sys_->wFieldRGrid(i).cDField(),
+            pointWiseAddScale <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (system().wFieldRGrid(i).cDField(),
             d_resHists_[0][i].cDField(), lambda_, size);
          }
 
          if (isFlexible_) {
             cellParameters_.clear();
-            for (int m = 0; m < (sys_->unitCell()).nParameter() ; ++m){
+            for (int m = 0; m < (system().unitCell()).nParameter() ; ++m){
                cellParameters_.append(CpHists_[0][m] +lambda_* devCpHists_[0][m]);
             }
-            sys_->unitCell().setParameters(cellParameters_);            
-            sys_->mixture().setupUnitCell(sys_->unitCell(), sys_->wavelist());
-            sys_->wavelist().computedKSq(sys_->unitCell());
+            system().unitCell().setParameters(cellParameters_);            
+            system().mixture().setupUnitCell(system().unitCell(), system().wavelist());
+            system().wavelist().computedKSq(system().unitCell());
          }
 
       } else {
          //should be strictly correct. coeffs_ is a vector of size 1 if itr ==2
 
-         for (int j = 0; j < sys_->mixture().nMonomer(); ++j) {
+         for (int j = 0; j < system().mixture().nMonomer(); ++j) {
             assignReal <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (wArrays_[j].cDField(),
                d_omHists_[0][j].cDField(), size);
             assignReal <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (dArrays_[j].cDField(),
@@ -508,7 +508,7 @@ namespace Pspg {
          }
 
          for (int i = 0; i < nHist_; ++i) {
-            for (int j = 0; j < sys_->mixture().nMonomer(); ++j) {
+            for (int j = 0; j < system().mixture().nMonomer(); ++j) {
                //wArrays
                pointWiseBinarySubtract <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (d_omHists_[i + 1][j].cDField(),
                   d_omHists_[0][j].cDField(), tempDev[0].cDField(),
@@ -525,21 +525,21 @@ namespace Pspg {
             }
          }
          
-         for (int i = 0; i < sys_->mixture().nMonomer(); ++i) {
-            assignReal <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (sys_->wFieldRGrid(i).cDField(),
+         for (int i = 0; i < system().mixture().nMonomer(); ++i) {
+            assignReal <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (system().wFieldRGrid(i).cDField(),
                wArrays_[i].cDField(), size);
-            pointWiseAddScale <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (sys_->wFieldRGrid(i).cDField(),
+            pointWiseAddScale <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (system().wFieldRGrid(i).cDField(),
                dArrays_[i].cDField(), lambda_, size);
          }
 
          if (isFlexible_) {
             
-            for (int m = 0; m < sys_->unitCell().nParameter() ; ++m){
+            for (int m = 0; m < system().unitCell().nParameter() ; ++m){
                wCpArrays_[m] = CpHists_[0][m];
                dCpArrays_[m] = devCpHists_[0][m];
             }
             for (int i = 0; i < nHist_; ++i) {
-               for (int m = 0; m < sys_->unitCell().nParameter() ; ++m) {
+               for (int m = 0; m < system().unitCell().nParameter() ; ++m) {
                   wCpArrays_[m] += coeffs_[i] * ( CpHists_[i+1][m]-
                                                   CpHists_[0][m]);
                   dCpArrays_[m] += coeffs_[i] * ( devCpHists_[i+1][m]-
@@ -548,13 +548,13 @@ namespace Pspg {
             } 
 
             cellParameters_.clear();
-            for (int m = 0; m < sys_->unitCell().nParameter() ; ++m){               
+            for (int m = 0; m < system().unitCell().nParameter() ; ++m){               
                cellParameters_.append(wCpArrays_[m] + lambda_* dCpArrays_[m]);
             }
             
-            sys_->unitCell().setParameters(cellParameters_);            
-            sys_->mixture().setupUnitCell(sys_->unitCell(), sys_->wavelist());
-            sys_->wavelist().computedKSq(sys_->unitCell());
+            system().unitCell().setParameters(cellParameters_);            
+            system().mixture().setupUnitCell(system().unitCell(), system().wavelist());
+            system().wavelist().computedKSq(system().unitCell());
             
          }
 

@@ -47,7 +47,7 @@ namespace Pspg {
    private:
 
       /// Pointer to the system object.
-      System<D>* sys_;
+      System<D>* sysPtr_;
 
    };
 

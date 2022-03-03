@@ -17,7 +17,7 @@ namespace Pspg {
    */
    template <int D>
    IteratorFactory<D>::IteratorFactory(System<D>& system)
-    : sys_(&system)
+    : sysPtr_(&system)
    {}
 
    /* 
@@ -34,9 +34,9 @@ namespace Pspg {
  
       // Try to match classname
       if (className == "AmIterator") {
-         ptr = new AmIterator<D>(*sys_);
+         ptr = new AmIterator<D>(*sysPtr_);
       } else if (className == "AmIteratorOld") {
-         ptr = new AmIteratorOld<D>(*sys_);
+         ptr = new AmIteratorOld<D>(*sysPtr_);
       }
 
       return ptr;

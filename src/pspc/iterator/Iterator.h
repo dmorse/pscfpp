@@ -69,13 +69,13 @@ namespace Pspc
       bool isFlexible() 
       {  return isFlexible_;}
 
+   protected:
+
       /**
       * Return reference to parent system.
       */
       System<D>& system() 
       {  return *sysPtr_;}
-
-   protected:
 
       /// Is the unit cell flexible during iteration?
       bool isFlexible_;

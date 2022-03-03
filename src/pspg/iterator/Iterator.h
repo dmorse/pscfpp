@@ -68,11 +68,19 @@ namespace Pspg
 
    protected:
 
-      /// Pointer to the associated system object.
-      System<D>* sys_;
+      /**
+      * Return reference to parent system.
+      */
+      System<D>& system() 
+      {  return *sysPtr_;}
 
       /// Is the unit cell flexible during iteration?
       bool isFlexible_;
+
+   private:
+
+      /// Pointer to the associated system object.
+      System<D>* sysPtr_;
       
    };
 
@@ -82,7 +90,7 @@ namespace Pspg
 
    template<int D>
    inline Iterator<D>::Iterator(System<D>& system)
-   : sys_(&system)
+   : sysPtr_(&system)
    {  setClassName("Iterator"); }
 
    template<int D>
