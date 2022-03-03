@@ -3,14 +3,38 @@ of SCFT for periodic structures.  All code in this directory is defined in
 the namespace Pscf::Pspc.  Algorithms are generally analogous to those used 
 in the older Fortran PSCF code.  
 
-Main Programs:
+Subdirectories:
+
+field/     - classes to represent or manipulate fields, including FFTs
+iterator/  - iterative SCF equation solvers
+solvers/   - modified diffusion equation solvers
+sweep/     - classes to implement continuation of solutions ("sweep")
+tests/     - unit cell tests for code
+
+C++ Files:
+
+pscf_pc1d.cpp  - Main program for 1D problems (e.g., lamellar)
+pscf_pc2d.cpp  - Main program for 2D problems (e.g., hex phase)
+pscf_pc3d.cpp  - Main program for 3D problems (e.g., BCC phase)
+System.(h,tpp) - Main system object
+
+Other files (makefiles and documentation):
+
+source.mk      - list of source files (makefile fragment)
+patterns.mk    - pattern rules for src/pspc (makefile fragment)
+include.mk     - header of makefile includes (makefile fragment)
+makefile       - main makefile for src/pspc directory tree
+config.mk      - configuration file (installed by setup script)
+pspc.mod       - definition of module for doxgen documentation
+
+Main Program Usage:
 
 Users must invoke different executable files for problems involving 
 structures that are periodic in different numbers of dimensions. 
 The executable programs for 1, 2 and 3 dimensionally periodic structures 
 are named pscf_pc1d, and pscf_pc2d and pscf_pc3d, respectively.  
 Examples of the usage of these programs are provided in the directory 
-pscfpp/examples/pspc/diblock.
+pscfpp/examples/pc/diblock.
 
 The usual command line usage for doing a 3D SCFT calculation (e.g., 
 the one in directory examples/pspc/diblock/bcc) is to invoke
@@ -27,24 +51,3 @@ instead invoke the executable pscf_ps2d or pscf_ps1d, respectively.
 See the html documentation for information about the format of the
 parameter and command files. 
 
-Subdirectories:
-
-field/     - classes to represent or manipulate fields, including FFTs
-iterator/  - iterative SCF equation solvers
-solvers/   - modified diffusion equation solvers
-sweep/     - classes to implement continuation of solutions ("sweep")
-tests/     - unit cell tests for code
-
-C++ Files:
-
-pscf_pc1d.cpp  - Main program for 1D problems (e.g., lamellar)
-pscf_pc2d.cpp  - Main program for 2D problems (e.g., hex phase)
-pscf_pc3d.cpp  - Main program for 3D problems (e.g., BCC phase)
-System.(h,tpp) - Main system object
-
-Makefiles:
-
-source.mk      - list of source files
-patterns.mk    - compilation pattern rules for src/pspc
-include.mk     - header of includes for other make files
-makefile       - main makefile for this directory tree
