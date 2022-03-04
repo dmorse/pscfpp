@@ -1,0 +1,147 @@
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+RYAN'S THOUGHTS ON TO-DO
+
+note -- since Pspc:: and Pspg:: essentially have the same classes and
+design at this point, I am mainly talking about both, and when I need to 
+distinguish from Fd1d:: or from Pscf:: I will use Pspx:: to denote both
+Pspc:: and Pspg::.
+
+1) It might be worth considering drawing clearer boundaries between data 
+   storage and operations on said data. For example, a FieldState can be 
+   an encapsulated way of storing the state of a system while not containing 
+   functionality for extracting or setting said state, or reading/writing
+   state from files. Why draw this distinction? There are many other 
+   situations where you want to do file IO, extract system state, or set 
+   system state, and all of these generally require the same safety measures
+   and encapsulation. There are currently read/write functions in Pspx::System 
+   to do this, and functions scattered throughout the code that essentially 
+   just wrap calls to said functions, or wrap calls to a FieldIo object. I 
+   think that gathering this functionality into one place would be a strong 
+   improvement that would facilitate quicker development and lead to more 
+   readable code.
+
+2) In the same vein as the previous note, I also think it might be worth
+   considering an attempt to unify the representations of state within
+   each implementation of the psuedo-spectral periodic SCFT code. For example,
+   in the CPU code, there is BasisFieldState, DArray<double>, RField, 
+   RFieldDft, WField, CField, etc. And while to some extent the distinctions
+   make sense (the first two are for basis format, then we have distinctions
+   between real-space and fourier space fields, and then typedefs for each 
+   physically different type of field, concentration and chemical potential),
+   I strongly feel that the sheer number of field representations leads to 
+   some confusion and a lack of interoperability between functions and 
+   classes. 
+   
+   I think that BasisFieldState is a strong step towards encapsulating
+   state. I would propose starting from there and embracing it. For example,
+   making system actually store its state in BasisFieldState, RFieldState,
+   and potentially KFieldState objects, rather than in field data types like
+   DArray<double>. Then, "saving" a copy the system's state would be as simple 
+   as making a copy of one of those objects. Plus, the entire state could be
+   in one place, including things like the UnitCell and whatever else. Then, 
+   it would be much easier to pass state around and keep consistent. 
+
+3) Loosen the connections between the System singleton "god" object and the
+   objects it owns and is responsible for.
+
+   As I have worked on development of pscfpp, one point that has tended to 
+   cause issues is the strength of the connection between System and everything
+   else. Generally, many things have a pointer to the system, and makes
+   modifications to the System object's state, in whatever order is dictated 
+   by the program. This fundamentally breaks encapsulation: the state of the 
+   System is not the sole responsibility of the System. In fact, managing the 
+   state of the System is everywhere. Plus, 
+
+   For example, consider the case of the iterator. Currently, the iterator 
+   knows about the System class and gets a lot of the information it needs
+   from the system class. However, this makes the iterator very very 
+   dependent on the state of the System. This makes sense for solving the
+   problem of course, also leads to potential side effects. What if the 
+   iterator does something besides iterate? As a developer coming into the 
+   project, can I trust that it won't? The answer right now is definitively
+   no, it can't be trusted to only iterate. And what does it mean to "only
+   iterate"? There are many operations done during iteration that could mess
+   up the state of the system if interrupted, or if they fail. If the program
+   needed to continue after a failed iteration for some reason, this would 
+   currently necessitate some way of reverting the system state, like the 
+   pattern seen in sweep where you have to decide whether to accept a change.
+
+   My proposition would be to adjust classes that make calls to the System
+   to instead take the data and functionality they require as parameters.
+   Though this leads to more complicated signatures for methods, it also leads
+   to far more predictable method and class behavior. Given a certain input, 
+   we can rest assured that we will get a certain output. 
+
+   As an example, I will give some very loose ideas about how one might do 
+   this for AmIterator. Currently, Pspx::AmIterator() takes as input a System
+   by reference. The member functions of AmIterator use the System to get data
+   from its associated Mixture, Basis (or mesh), Interaction, and UnitCell. 
+   
+   What are these used for? 
+      -- Mixture: used for getting the number of monomers, and in the flexible
+         case getting the stress or computing the stress.
+      -- UnitCell: used only in the flexible case, for getting the number of 
+         parameters, and getting/setting the parameters.
+      -- Basis/Mesh: used exclusive for getting the number of field elements.
+      -- Interaction: used for describing the strength of interaction between
+         monomers. 
+   
+   And what does the iterator really need? It needs an initial guess, a way of 
+   evaluating the "function", and a way of calculating the residuals, and a way
+   to output its result. This could all be accounted for by passing in "the 
+   function" which is defined in the Mixture object, "the initial guess" which
+   could be contained by a FieldState (along with the initial unit cell), 
+   and 
+
+   This could all be accounted for in the following way. The mixture could be 
+   passed in as it essentially defines "the function" to compute along with
+   providing the information required for SCF residual calculation, the 
+   FieldState object could be passed in as "the initial guess" (also containing
+   a UnitCell), and the output could then be returned in the form of a new 
+   FieldState object (or potentially by modifying a FieldState parameter
+   passed by reference). This leaves one sticking point -- what about the 
+   interaction class? My argument is that that is more closely associated with
+   the Mixture than anything else, and should be a part of Mixture rather than
+   a part of System. This would be consistent with the mixture "defining the
+   function." 
+
+   This pattern would lead to very little hard-coded dependency of the iterator
+   on anything outside of it. As a result, changing things outside of it would
+   be easier, and so would changing things inside of it. 
+   
+   By following this approach throughout the code, such that there are fewer
+   calls by objects "lower on the hierarchy" to objects "across and up the
+   hierarchy" (where I am thinking of the object hierarchy with System on top
+   and the objects it owns and objects each object owns as branches down the 
+   tree), we could achieve a more encapsulated and simultaneously more flexible
+   program that is really nicely set up for development, maintenance, and 
+   optimization. Plus, testing gets a lot easier!
+
+Okay, that is a lot, and some of it implies some major overhauls to how things
+work. My recommendation for an initial approach would be to start with cleaning
+up field and state setting/getting/reading/writing operations, as well as the 
+various field representations. This would be a major step forward and lead to 
+an easier environment to develop within. From there, changing how the program
+treats state such that everything is using one thing (like FieldState objects)
+would be another major step forward. From there, removing dependency of other 
+objects on a parent system should be actually a relatively small task, as 
+passing around state becomes far more agile. 
+
+Why do or consider this? Well, from my perspective, which has the potential
+to differ from other peoples' perspectives, these changes would drastically 
+improve a few key things: maintainability, readability, and flexibility of the 
+code. Maintenance would be easier because, in general, stricter encapsulation
+allows you to "move on" from something. Readability would be better because you
+would generally find all (or at least a higher percentage) of the behavior
+associated with a given object in that object's class, rather than scattered. 
+You wouldn't have to worry as much about how changing functions on one object
+could lead to tangential mutations of the state of other objects. Flexibility
+would also improve because you can trust certain things to "do exactly what it
+says on the box", i.e.: no side/tangential effects. Then, you can re-use code 
+with greater impunity! 
+
+There are likely other ways to accomplish these goals, and I think that
+any adjustments with the intention of creating more appropriate encapsulation 
+and reducing connections within the code will likely have a net positive
+effect, even when considering time required for implementation.
