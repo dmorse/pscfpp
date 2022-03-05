@@ -5,45 +5,11 @@
 <BR>
 
 \section user_param_pg_section Example
-An example of a parameter file for pscf_pg3D is shown below. 
+The format of the parameter file used by a pscf_pgNd GPU-accelerated program is almost identical to that used by a corresponding pscf_pcNd CPU-based program. 
 
-\code
-System{
-  Mixture{
-    nMonomer  2
-    monomers  A   1.0  
-              B   1.0 
-    nPolymer  1
-    Polymer{
-      nBlock  2
-      blocks  0   0.25
-              1   0.75
-      phi     1.0
-    }
-    ds   0.01
-  }
-  ChiInteraction{
-    chi    1   0    20.0
-           0   0     0.0
-           1   1     0.0
-  }
-  unitCell  cubic   1.9254998725
-  mesh              32  32  32
-  AmIterator{
-    maxItr   100
-    epsilon  1e-10
-    maxHist  50
-    domain   1
-  }
-}
-\endcode
-
-
-The structure of a pscf_pgNd parameter file is almost identical to that
-of a pscf_pcNd program except for the absence of the groupName parameter.
-This difference reflects the fact that the two programs are based on
-similar algorithms, but that pscf_pgNd does not yet allow the user to
-search for a solution of specified space-group symmetry.
+The few differences in allowed parameter file elements are results of differences in features available in the two programs. 
+Currently, the main relevant difference is that the pscf_pgNd programs do not yet provide the sweep or continuation feature provided by the pscf_pcNd programs. 
+As a result, a pscf_pgNd parameter file may thus not contain a Sweep{....} block, which is an optional element of a pcscf_pcNd parameter file.
 
 <BR>
 \ref user_param_pc_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

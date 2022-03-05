@@ -20,8 +20,8 @@ User-visible features
 ---------------------
 
 * Sweep feature (continuation of a family of solutions) (Pspc)
-* Point-particle solvent (Fd1d and Pspc)
-* General open ensembles (grand canonical or mixed) in AmIterator (Pspc and Pspg)
+* Point-particle solvent (Fd1d, Pspc, and Pspg)
+* Open ensembles (grand canonical or mixed) in AmIterator (Pspc and Pspg)
 * Allow grids with node counts that are not factors of 2 in Pspg
 
 User-visible changes
@@ -29,11 +29,11 @@ User-visible changes
 * Modified parameter file format for monomers, blocks and polymer structure 
 * Added Domain{...} subblock in parameter file (Pspc and Pspg)
 * Automated calculation of number of threads and blocks in GPU code (Pspg)
-* Added make/compiler/homebrew-m1 config file for an m1 Mac make with homebrew
+* Added make/compiler/homebrew-m1 config file for an m1 Mac using homebrew
 
 Bug fixes
 ---------
-* Fixed treatment of non-centrosymmetric groups (Pspc and Pspg)
+* Fixed treatment of non-centrosymmetric groups (Pspc)
 * Fixed calculation of monomer concentrations for mixtures (Pspc and Pspg)
 * Fixed various bugs in GPU code (Pspg)
 
@@ -41,10 +41,14 @@ Developer-visible changes
 -------------------------
 * New github actions for testing of cpu code (after closure of travis site)
 * Removed cancelled stars from array storage of basis coefficients (Pspc)
-* Improved encapsulation of field data in interface of Pspc::System
+* Improved encapsulation of field data in Pspc::System
 * Created unit tests for Pspg (GPU) code
 * Reorganization / clean-up of Cuda kernels (Pspg)
 * Class template for generic Anderson-mixing iterator algorithm (Pspc and Pspg)
+
+Remaining known bugs
+--------------------
+* Incorrect treatment of non-centrosymmetric groups in Pspg (GPU code)
 
 Pscf++ 0.7
 ==========
