@@ -237,7 +237,7 @@ namespace Pscf
 
       // Find norm of residual vector relative to field
       double relNormRes = normRes/findNorm(fieldHists_[0]);
-      Log::file() << "Relative Residual Norm = " << relNormRes << std::endl;
+      Log::file() << "Relative Norm = " << relNormRes << std::endl;
 
       // Check if total error is below tolerance
       if (errorType_ == "normResid")
