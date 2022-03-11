@@ -191,7 +191,9 @@ The AmIterator block provides parameters required by the Anderson-Mixing
     maxItr       100
     epsilon      1e-10
     maxHist      50
+    errorType    relNormResid
     isFlexible   1
+    scaleStress  10.0 
   }
 \endcode
 
@@ -215,14 +217,34 @@ AM algorithm uses knowledge of previous trials to guide the search for
 a solution, but only makes use of the previous maxHist trials when the
 total number of iterations exceeds maxHist.
 
+\subsection user_param_pc_errorType_sub errorType
+
+The optional errorType parameter specifies the error criterion used for
+determining termination. It can accept three different values: 
+"maxResid", "normResid", and "relNormResid". By default, it is set to
+to "relNormResid". The "maxResid" type uses the maximum element of the
+vector of residuals to assess error. The "normResid" type uses the 
+L2 norm of the vector of residuals to assess error. The "relNormResid"
+error type uses the L2 norm of the vector of residuals divided by the
+L2 norm of the vector of omega field elements, as in Stasiak and Matsen,
+EPJE, 2011. 
+
 \subsection user_param_pc_isFlexible_sub isFlexible
 
-The isFlexible parameter is a boolean variable that can be used to 
-enable or disable optimization of the unit cell. Setting isFlexible = 0 
+The optional isFlexible parameter is a boolean variable that can be used
+to enable or disable optimization of the unit cell. Setting isFlexible = 0 
 gives a rigid unit cell with dimensions that remain constant during
-iteration.  Setting isFlexible to 1 instructs the program to adjust 
+iteration. Setting isFlexible to 1 instructs the program to adjust 
 the unit cell parameters during iteration so as to minimize the free
-energy.
+energy. If not set, isFlexible is set to 0 by default.
+
+\subsection user_param_pc_scaleStress_sub scaleStress
+
+The optional scaleStress parameter is the degree to which stress 
+residuals should be weighted against self-consistent field residuals
+when calculating the error and updating the fields. The default 
+value of this parameter is scaleStress = 10.0. Setting scaleStress
+only has an impact of isFlexible is set to 1.
 
 <BR>
 \ref user_param_fd_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
