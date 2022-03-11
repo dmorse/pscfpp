@@ -1,0 +1,17 @@
+# File types used in examples
+*.bf linguist-documentation
+*.rf linguist-documentation
+*.kf linguist-documentation
+command linguist-documentation
+param linguist-documentation
+run linguist-documentation
+clean linguist-documentation
+script.* linguist-documentation
+
+# Files and file types used in examples
+*.dox linguist-documentation
+*.html linguist-documentation
+*.css linguist-documentation
+README linguist-documentation
+Doxyfile linguist-documentation
+docs/manual/** linguist-documentation
