@@ -19,9 +19,17 @@ script.* linguist-documentation
 *.html linguist-documentation
 *.css linguist-documentation
 README linguist-documentation
-Doxyfile linguist-documentation
 
+# Exclude directories
+docs/Doxyfile* linguist-documentation
 docs/** linguist-documentation
+docs/*/** linguist-documentation
+docs/*/*/** linguist-documentation
 examples/** linguist-documentation
+examples/*/** linguist-documentation
+examples/*/*/** linguist-documentation
+examples/*/*/*/** linguist-documentation
 make/** linguist-documentation
-lib/python/pscfpp/tests linguist-documentation
+make/*/** linguist-documentation
+make/*/*/** linguist-documentation
+lib/python/pscfpp/tests/** linguist-documentation
