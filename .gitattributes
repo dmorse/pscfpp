@@ -1,17 +1,27 @@
+# Header files
+*.h linguist-language=C++
+
 # File types used in examples
 *.bf linguist-documentation
 *.rf linguist-documentation
 *.kf linguist-documentation
+*.w linguist-documentation
 command linguist-documentation
 param linguist-documentation
+param.flex linguist-documentation
 run linguist-documentation
 clean linguist-documentation
 script.* linguist-documentation
 
 # Files and file types used in examples
 *.dox linguist-documentation
+*.mod linguist-documentation
 *.html linguist-documentation
 *.css linguist-documentation
 README linguist-documentation
 Doxyfile linguist-documentation
-docs/manual/** linguist-documentation
+
+docs/** linguist-documentation
+examples/** linguist-documentation
+make/** linguist-documentation
+lib/python/pscfpp/tests linguist-documentation
