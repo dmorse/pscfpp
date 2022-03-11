@@ -263,11 +263,17 @@ public:
       // Compare result to original
       BFieldComparison comparison (1);
       comparison.compare(d_wFields_check, d_wFields);
-      if (verbose()>0) {
+
+      // Compare difference to tolerance epsilon
+      double diff = comparison.maxDiff();
+      double epsilon = 5.0E-7;
+      if (verbose() > 0 || diff > epsilon) {
          std::cout << "\n";
-         std::cout << "Max error = " << comparison.maxDiff() << "\n";
+         std::cout << "Max diff = " << comparison.maxDiff() << "\n";
+         std::cout << "Rms diff = " << comparison.rmsDiff() << "\n";
+         std::cout << "epsilon  = " << epsilon << "\n";
       }
-      TEST_ASSERT(comparison.maxDiff() < 5.0E-7);
+      TEST_ASSERT(diff < epsilon);
    }
 
    void testIterate1D_lam_soln()
@@ -298,11 +304,17 @@ public:
       // Compare result to original
       BFieldComparison comparison (1);
       comparison.compare(d_wFields_check, d_wFields);
-      if (verbose()>0) {
+
+      // Compare difference to tolerance epsilon 
+      double diff = comparison.maxDiff();
+      double epsilon = 2.0E-6;
+      if (verbose() > 0 || diff > epsilon) {
          std::cout << "\n";
-         std::cout << "Max error = " << comparison.maxDiff() << "\n";
+         std::cout << "Max diff = " << comparison.maxDiff() << "\n";
+         std::cout << "Rms diff = " << comparison.rmsDiff() << "\n";
+         std::cout << "epsilon  = " << epsilon << "\n";
       }
-      TEST_ASSERT(comparison.maxDiff() < 2.0E-6);
+      TEST_ASSERT(diff < epsilon);
    }
 
    void testIterate1D_lam_blend()
@@ -334,11 +346,15 @@ public:
       // Compare result to original
       BFieldComparison comparison (1);
       comparison.compare(d_wFields_check, d_wFields);
-      if (verbose()>0) {
+      double diff = comparison.maxDiff();
+      double epsilon = 5.0E-7;
+      if (verbose() > 0 || diff > epsilon) {
          std::cout << "\n";
-         std::cout << "Max error = " << comparison.maxDiff() << "\n";
+         std::cout << "Max diff = " << comparison.maxDiff() << "\n";
+         std::cout << "Rms diff = " << comparison.rmsDiff() << "\n";
+         std::cout << "epsilon  = " << epsilon << "\n";
       }
-      TEST_ASSERT(comparison.maxDiff() < 5.0E-7);
+      TEST_ASSERT(diff < epsilon);
    }
 
    void testIterate1D_lam_open_soln()
@@ -370,11 +386,18 @@ public:
       // Compare result to original
       BFieldComparison comparison (1);
       comparison.compare(d_wFields_check, d_wFields);
-      if (verbose()>0) {
+
+      // Compare difference to tolerance epsilon
+      double diff = comparison.maxDiff();
+      //double epsilon = 5.0E-7;
+      double epsilon = 6.0E-6;
+      if (diff > epsilon) {
          std::cout << "\n";
-         std::cout << "Max error = " << comparison.maxDiff() << "\n";
+         std::cout << "Max diff = " << comparison.maxDiff() << "\n";
+         std::cout << "Rms diff = " << comparison.rmsDiff() << "\n";
+         std::cout << "epsilon  = " << epsilon << "\n";
       }
-      TEST_ASSERT(comparison.maxDiff() < 5.0E-7);
+      TEST_ASSERT(diff < epsilon);
    }
 
    void testIterate1D_lam_open_blend()
@@ -406,11 +429,17 @@ public:
       // Compare result to original
       BFieldComparison comparison (1);
       comparison.compare(d_wFields_check, d_wFields);
-      if (verbose()>0) {
+
+      // Compare difference to tolerance epsilon
+      double diff = comparison.maxDiff();
+      double epsilon = 5.0E-7;
+      if (diff > epsilon) {
          std::cout << "\n";
-         std::cout << "Max error = " << comparison.maxDiff() << "\n";
+         std::cout << "Max diff = " << comparison.maxDiff() << "\n";
+         std::cout << "Rms diff = " << comparison.rmsDiff() << "\n";
+         std::cout << "epsilon  = " << epsilon << "\n";
       }
-      TEST_ASSERT(comparison.maxDiff() < 5.0E-7);
+      TEST_ASSERT(diff < epsilon);
    }
 
    void testIterate2D_hex_rigid()
@@ -446,11 +475,17 @@ public:
       // Compare result to original
       BFieldComparison comparison (1);
       comparison.compare(d_wFields_check, d_wFields);
-      if (verbose()>0) {
+
+      // Compare difference to tolerance epsilon
+      double diff = comparison.maxDiff();
+      double epsilon = 5.0E-7;
+      if (diff > epsilon) {
          std::cout << "\n";
-         std::cout << "Max error = " << comparison.maxDiff() << "\n";
+         std::cout << "Max diff = " << comparison.maxDiff() << "\n";
+         std::cout << "Rms diff = " << comparison.rmsDiff() << "\n";
+         std::cout << "epsilon  = " << epsilon << "\n";
       }
-      TEST_ASSERT(comparison.maxDiff() < 5.0E-7);
+      TEST_ASSERT(diff < epsilon);
    }
 
    void testIterate2D_hex_flex()
@@ -483,11 +518,17 @@ public:
       // Compare result to original
       BFieldComparison comparison (1);
       comparison.compare(d_wFields_check, d_wFields);
-      if (verbose()>0) {
+
+      // Compare difference to tolerance epsilon
+      double diff = comparison.maxDiff();
+      double epsilon = 5.0E-7;
+      if (diff > epsilon) {
          std::cout << "\n";
-         std::cout << "Max error = " << comparison.maxDiff() << "\n";
+         std::cout << "Max diff = " << comparison.maxDiff() << "\n";
+         std::cout << "Rms diff = " << comparison.rmsDiff() << "\n";
+         std::cout << "epsilon  = " << epsilon << "\n";
       }
-      TEST_ASSERT(comparison.maxDiff() < 5.0E-7);
+      TEST_ASSERT(diff < epsilon);
 
    }
 
@@ -520,11 +561,17 @@ public:
       // Compare result to original
       BFieldComparison comparison (1);
       comparison.compare(d_wFields_check, d_wFields);
-      if (verbose()>0) {
+
+      // Compare difference to tolerance epsilon
+      double diff = comparison.maxDiff();
+      double epsilon = 7.0E-7;
+      if (diff > epsilon) {
          std::cout << "\n";
-         std::cout << "Max error = " << comparison.maxDiff() << "\n";
+         std::cout << "Max diff = " << comparison.maxDiff() << "\n";
+         std::cout << "Rms diff = " << comparison.rmsDiff() << "\n";
+         std::cout << "epsilon  = " << epsilon << "\n";
       }
-      TEST_ASSERT(comparison.maxDiff() < 7E-7);
+      TEST_ASSERT(diff < epsilon);
 
    }
 
@@ -557,11 +604,18 @@ public:
       // Compare result to original
       BFieldComparison comparison (1);
       comparison.compare(d_wFields_check, d_wFields);
-      if (verbose()>0) {
+
+      // Compare difference to tolerance epsilon
+      double diff = comparison.maxDiff();
+      double epsilon = 5.0E-7;
+      if (diff > epsilon) {
          std::cout << "\n";
-         std::cout << "Max error = " << comparison.maxDiff() << "\n";
+         std::cout << "Max diff = " << comparison.maxDiff() << "\n";
+         std::cout << "Rms diff = " << comparison.rmsDiff() << "\n";
+         std::cout << "epsilon  = " << epsilon << "\n";
       }
-      TEST_ASSERT(comparison.maxDiff() < 5.0E-7);
+      TEST_ASSERT(diff < epsilon);
+
 
    }
 
