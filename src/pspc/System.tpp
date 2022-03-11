@@ -340,7 +340,7 @@ namespace Pspc
             }
          } else
          if (command == "SWEEP") {
-            // After iterating and converging, sweep.
+            // Do a series of iterations.
             sweep();
          } else
          if (command == "COMPARE_BASIS") {
