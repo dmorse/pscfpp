@@ -82,7 +82,9 @@ AmIterator: Parameters required by the iterator
 
 The Mixture and ChiInteration subblocks are identical in structure to
 those used in the pscf_fd program, and so are not described separately 
-below. 
+below.  See the documentation of the parameter file format for that
+program (\ref user_param_fd_page) for discussions of the formats for
+these two blocks. 
 
 \section user_param_pc_Domain_section Domain Section
 The Domain block contains information required to describe both the
