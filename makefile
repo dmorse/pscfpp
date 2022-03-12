@@ -54,6 +54,6 @@ veryclean:
 	rm bld/makefile
 	cd src; $(MAKE) veryclean
 	cd docs; $(MAKE) clean
-	cd examples; $(MAKE) clean
+	cd examples; ./clean
 
 # ==========================================================================

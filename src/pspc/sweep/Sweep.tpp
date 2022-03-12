@@ -76,7 +76,7 @@ namespace Pspc {
 
       // Open log summary file
       std::string fileName = baseFileName_;
-      fileName += "log";
+      fileName += "sweep.log";
       system().fileMaster().openOutputFile(fileName, logFile_);
    };
 

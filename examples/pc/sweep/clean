@@ -1,0 +1,5 @@
+(cd block; ./clean)
+(cd chi; ./clean)
+(cd kuhn; ./clean)
+(cd phi; ./clean)
+(cd solvent; ./clean)

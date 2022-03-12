@@ -1,2 +1,9 @@
-rm */out/*
-rm */core.*
+(cd lam; ./clean)
+(cd hex; ./clean)
+(cd bcc; ./clean)
+(cd fcc; ./clean)
+(cd gyroid; ./clean)
+(cd a15; ./clean)
+(cd sigma; ./clean)
+rm -f */out/*
+rm -f */core.*
