@@ -1,0 +1,44 @@
+namespace Pscf{
+namespace Fd1d{
+/*! 
+\page fd1d_Domain_page Fd1d::Domain
+
+A Pscf::Fd1d::Domain<D> object represents a spatial domain and discretization
+in a simulation of a D-dimensional periodic structure.
+
+\sa Pscf::Fd1d::Domain
+
+The parameter file format for a Domain is:
+\code
+Domain{
+  geometryMode  GeometryMode
+  xmin          float
+  xmax          float
+  nx            int
+}
+\endcode
+Parameters and subblocks are described below:
+<table>
+  <tr>
+    <td> geomtryMode </td>
+    <td> 
+      Enumeration with allowed values "planar", "cylindrical" or "spherical" 
+    </td>
+  </tr>
+  <tr>
+    <td> xmin </td>
+    <td> Minimum coordinate value, at lower boundary of the domain </td>
+  </tr>
+  <tr>
+    <td> xmax </td>
+    <td> Maximum coordinate value, at upper boundary of the domain  </td>
+  </tr>
+  <tr>
+    <td> nx </td>
+    <td> Number of grid points, including endpoints at xmin and xmax </td>
+  </tr>
+</table>
+
+*/
+}
+}

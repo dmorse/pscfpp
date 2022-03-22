@@ -1,0 +1,53 @@
+namespace Pscf{
+namespace Fd1d{
+/*! 
+\page fd1d_System_page Fd1d::System
+
+A Pscf::Fd1d::System <D> object is the main object in SCFT computation using a finite difference algorithm to treat a one-dimensional problem.
+
+\sa Pscf::Fd1d::System
+
+The parameter file format is:
+\code
+System{
+   Mixture { ... }
+   ChiInteraction { ... }
+   Domain { ... }
+   < Iterator > { ... }
+   hasSweep*  bool (0).
+   < Sweep > { ... }
+}
+\endcode
+Here, as elsewhere, optional parameters or subblocks of a parameter file block are followed by an asterisk, and polymorphic elements (for which the label can correspond to the label of any of several subclasses) have the base class name enclosed in angle brackets.
+
+Links to documentation for individual elements:
+<table>
+  <tr>
+    <td> Mixture { .... } </td>
+    <td> See \ref fd1d_Mixture_page docs </td>
+  </tr>
+  <tr>
+    <td> ChiInteraction { .... } </td>
+    <td> See \ref pscf_ChiInteraction_page docs </td>
+  </tr>
+  <tr>
+    <td> Domain { .... } </td>
+    <td> See \ref fd1d_Domain_page docs </td>
+  </tr>
+  <tr>
+    <td> <Iterator>* { .... } </td>
+    <td> Any of several subclasses of \ref fd1d_iterator_page "Fd1d::Iterator" </td>
+  </tr>
+  <tr>
+    <td> hasSweep </td>
+    <td> boolean, equal to 1 if a followed by a Sweep, 0 otherwise </td>
+  </tr>
+  <tr>
+    <td> <Sweep> * { ... }</td>
+    <td> polymorphic Sweep block, present iff hasSweep == 1 </td>
+  </tr>
+</table>
+
+*/
+}
+}

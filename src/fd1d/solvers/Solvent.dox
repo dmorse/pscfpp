@@ -1,0 +1,55 @@
+namespace Pscf{
+namespace Fd1d{
+/*! 
+\page fd1d_Solvent_page Fd1d::Solvent
+
+A Pscf::Fd1d::Solvent < D > object represents a solvent species. 
+Each solvent molecule is a point-like particle that has an associated monomer type and a size. The size corresponds to the solvent volume, expressed as a ratio of the actual volume to a monomer reference volume.
+
+\sa Pscf::Fd1d::Solvent
+
+The parameter file block associated with such a Solvent has the format:
+
+\code
+Solvent{
+  monomerId  int
+  size       float
+  phi*       float 
+  mu*        float
+}
+\endcode
+Here, as elsewhere, labels followed by an asterisk (*) represent optional parameters or sub-blocks.
+Individual parameters that appear in this format are described below:
+<table>
+  <tr>
+    <td> monomerid </td>
+    <td> 
+    Integer monomer type index
+    Type of polymer topology, allowed values "linear" or "branched". 
+    This optional variable is set to "linear" by default. 
+    The underlying variable is an enumeration of type Pscf::SolventType::Enum.
+    </td>
+  </tr>
+  <tr>
+    <td> size </td>
+    <td> 
+    Solvent size, expressed as a ratio of the actual volume per molecule to the monomer referece volume. 
+    </td>
+  </tr>
+  <tr>
+    <td> phi* </td>
+    <td> Overall volume fraction for this solvent species.
+         A value of either phi or mu must be provided, but not both. 
+    </td> 
+  </tr>
+  <tr>
+    <td> mu* </td>
+    <td> Chemical potential for this solvent species.
+         A value of either phi or mu must be provided, but not both. 
+    </td> 
+  </tr>
+</table>
+
+*/
+}
+}

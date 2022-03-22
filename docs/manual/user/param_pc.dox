@@ -1,4 +1,4 @@
-/*! \page user_param_pc_page 3.2.3 Parameter files for pscf_pcNd 
+/*! \page user_param_pc_page 3.2.3 Parameter files: pscf_pcNd 
 
 \ref user_param_fd_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_param_pg_page (Next)
@@ -80,13 +80,41 @@ AmIterator: Parameters required by the iterator
 </li>
 </ul>
 
-The Mixture and ChiInteration subblocks are identical in structure to
-those used in the pscf_fd program, and so are not described separately 
-below.  See the documentation of the parameter file format for that
-program (\ref user_param_fd_page) for discussions of the formats for
-these two blocks. 
+\section user_param_pc_doxlinks_section Documentation Links
 
-\section user_param_pc_Domain_section Domain Section
+Links to documentation of the file format for parameter file blocks that 
+can appear a parameter file for a pscf_pcNd program are given below. Each 
+type of block is identified here by the label with which it appears in the 
+parameter file, nested in a form analogous to that used in the parameter
+file.
+
+<ul style="list-style: none;">
+  <li> \subpage pspc_System_page  </li>
+  <ul style="list-style: none;">
+    <li> \subpage pspc_Mixture_page  </li>
+    <ul style="list-style: none;">
+      <li> \subpage pspc_Polymer_page  </li>
+      <li> \subpage pspc_Solvent_page  </li>
+    </ul>
+  <li> \subpage pscf_ChiInteraction_page  </li>
+  <li> \subpage pspc_Domain_page  </li>
+  </ul>
+</ul>
+
+The following links provide documentation for the text format for 
+user-defined types that appear as parameter values:
+<ul style="list-style: none;">
+  <li> \ref pscf_Monomer_page  </li>
+  <li> \ref pscf_Block_page  </li>
+</ul>
+
+The remainder of this page provides informal discussions of the formats 
+for several blocks of the pscf_pcNd parameter file format.  The Mixture 
+and ChiInteration subblocks use formats identical those used in the
+\ref user_param_fd_page "parameter file for the pscf_fd program", and so 
+are not described separately below.  
+
+\section user_param_pc_Domain_section Domain Block
 The Domain block contains information required to describe both the
 unit cell of the periodic structure and the regular mesh that is used
 to discretize fields within each unit cell. 

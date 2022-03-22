@@ -1,0 +1,242 @@
+/*! \page user_param_syntax_page 3.2.1 Parameter Files: Syntax
+
+\ref user_param_page    (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_param_fd_page (Next) 
+<BR>
+
+A broadly similar syntax is used for the parameter files used by all programs 
+in the pscfpp package.  To illustrate common elements of parameter file syntax, 
+let's start with an example:
+
+\section user_param_syntax_fdexample_section Example 
+
+Below, we show an example of a complete parameter file for a simple 1D SCFT 
+calculation that can be performed with the program pscf_fd1d.
+We use this example here to explain syntactical features that are common to 
+the parameter files used by all pscfpp programs.
+Parameter file formats required by specific programs are discussed in greater 
+detail in subsequent pages.  Many examples of parameter files can be also 
+found in the examples/ directory. 
+
+\code
+System{
+  Mixture{
+     nMonomer   2
+     monomers   A   1.0  
+                B   1.0 
+     nPolymer   2
+     Polymer{
+        type    linear
+        nBlock  1
+        blocks  0   1.0
+        phi     0.4
+     }
+     Polymer{
+        type    linear
+        nBlock  1
+        blocks  1   1.0
+        phi     0.4
+     }
+     Polymer{
+        nBlock  2
+        blocks  0   0.5
+                1   0.5
+        phi     0.2
+     }
+     vMonomer   1.0
+     ds   0.01
+  }
+  ChiInteraction{
+     chi   0    1    10.0
+           0    0     0.0
+           1    1     0.0
+  }
+  Domain{
+     mode planar
+     xMin 0.0
+     xMax 8.0
+     nx   401
+  }
+  NrIterator{
+     epsilon   0.00000001
+  }
+}
+\endcode
+
+This particular example gives parameters for a calculation of a ternary 
+mixture of two hompolymers of monomer types A and B, and an AB diblock 
+copolymer in a one-dimensional planar geometry. The chemical composition 
+of the system of interest is described within the the Mixture block, which 
+begins with a line containing the string "Mixture{" and ends with a line 
+containing a vertically aligned matching closing curly bracket ("}") on 
+a line by itself. The system described here is a ternary mixture of three
+polymers comprised of two types of monomer, labelled by A and B. Each of 
+the three "Polymer" subblocks of the Mixture block specifies the data for 
+one polymer species.  The system described in this file contains 40% of 
+each of two hopolymer species (phi = 0.4) with monomers of types A and B,
+respectively, and 20% copopolymer (phi = 0.2) by volume.  All three polymer 
+species have overall chain length 1.0 in the system of units for block
+volumes used in this input file, and the diblock copolymer is symmetric 
+(each block has length 0.5). That block that begins with a line containing
+the string "ChiInteraction{" contains values for Flory-Huggins chi 
+parameters. Values for a elements of 2 x 2 symmetric matrix of chi
+parameters are given on three lines that start with the label "chi".
+The chi parameter for interaction of monomers of types 0 and 1 (or A and 
+B) has a value of 10.0, which is high enough to guarantee that homopolymers 
+will phase separate. The simulation uses a 1D planar geometry, in which 
+variation occurs only along one axis of a Cartesian coordinate system.  
+The block labelled Domain contains information about the spatial domain 
+and the number of grid points (801 grid points, including the end points).
+The block labelled NrIterator contains a parameter labelled "epsilon"
+used by a Newton-Raphson iterator to decide when the SCF equations are
+solved to within a user-specified tolerance.
+
+\section user_param_synatx_blocks_section Parameter Blocks
+
+Any PSCF parameter file, including the above example, contains a series 
+of nested parameter locks that are delimited by opening and closing curly 
+braces. The syntax is thus reminiscent of that of a C program (without 
+the semicolons).  Each block begins with a capitalized label for the 
+block followed immediately by an opening curly bracket on the same line 
+and ends with a closing bracket on a line by itself, as in
+\code
+  BlockName{
+     ....
+  }
+\endcode
+There may not be any whitespace space between the block label (e.g., 
+"BlockName", or "Mixture") and the opening curly bracket.
+
+Each such block may contain a combination of three types of elements:
+<ul>
+   <li> 
+     Nested sub-blocks, each of which is delimited by a label and matched 
+     curly brackets.
+   </li>
+   <li> 
+     Individual parameters, each of which appears on a single line that 
+     begins with a parameter label string followed by a parameter value.
+   </li>
+   <li> 
+     Arrays of parameters, each of which begins with a label string
+     followed by one or more lines of parameter values. 
+   </li>
+</ul>
+Each block within a parameter file has a fixed file format: The order of 
+elements within each block of a parameter file is generally predefined 
+by the code that reads the block. Some elements are optional, however, 
+and may be omitted.
+
+The name of each block in a parameter file generally correspond to the
+names of a class or class template in the underlying C++ code.  The 
+data contained within such a block contains the information required to
+initialize an object of the specified class. The code required to read 
+the parameter file block associated with a particular class is always
+defined in a member function of that class named "readParameters" or
+(less often) "readParam". This convention makes it easy for users who
+are comfortable with C++ to find the source code that reads a particular
+parameter file block if desired.
+
+Nesting of blocks reflects ownership or "has a" relationships among C++ 
+classes: Each subblock generally corresponds to an object that is either 
+a member of the parent object or a dynamically created object that the 
+parent object is responsible for creating and destroying.  The outermost 
+block in the above example is a "System" block, reflecting the fact that 
+main object in the underlying code for a 1D finite-difference program is 
+an instance of the class Pscf::Fd1d::System.
+
+\section user_param_synatx_parameter_section Individual Parameters
+
+A line that sets the value for an individual parameter always begins
+with a string that identifies the name of the parameter, followed by
+one or more spaces, and a text representation of the value.  The name
+of each parameter generally corresponds to a slightly modified version 
+of the name of a member variable of the relevant class, i.e., a member 
+variable of the class whose name is specfied by the name of the innermost 
+enclosing parameter file block.  
+
+The value of each parameter that is stored in a variable of a primitive 
+C data types (e.g., an integer or floating point number) or a string is 
+given by a string with no white spaces.
+
+Values of some parameters are instead stored as instances of non-primitive 
+data types, such as enumerations or small classes, that are defined 
+within the pscfpp source code.  In these cases, each parameter is given 
+on a single line containing a label followed by a text representation 
+of its value.  In these cases, however, the text representation of the 
+"value" of each such non-primitive variable is defined by iostream 
+extractor (>>) and insertor (<<) operators that are defined for that 
+data type.  
+
+For example, in the above file, the "type" parameter within each Polymer 
+subblock of the Mixture block in the above example is stored as an 
+enumeration for which the only allowed enumeration values have string 
+representations "linear" or "branched".
+
+\section user_param_synatx_array_section Array-Valued Parameters 
+
+Values of some parameters are stored as elements of a one-dimenstional 
+array.  Each such array of values is formatted in a multi-line format 
+in which the first row contains a label that generally gives the name 
+of the array) and the value of the first element, and each subsequent 
+contains a value of one further element of the array, listed in the 
+order in which the appear in the array. The number of expected elements 
+of such an array must generally be specified by the value of a 
+parameter that appears before the array in the parameter file.
+
+Variables that are stored internally in two-dimensional arrays or matrices 
+use a slightly different multi-line parameter file format.  In this case
+the first line contains a label (the name of the associated 2D array or 
+matrix variable), followed the data for one element, followed by data for
+other elements on subsequent lines. The data for each matrix element is 
+given as an integer row index, and integer column index, and an element
+value. This is the syntax used in the above example for elements of the
+matrix of chi parameters within the ChiInteraction block. Because the chi 
+matrix is symmetric, values must be given only for the diagonal elements 
+(which are usually taken to equal zero by convention) and half of the off 
+diagonal elements.
+
+\section user_param_syntax_optional_section Optional and Conditional Elements
+
+Each labelled element in a parameter file (i.e, each block or parameter)
+may be either required or optional. Most elements required. The label
+associated with a required element must appear at the expected position 
+in a file format, or execution will halt and the program will write a
+message explaining what label it expected to find. The entry for an 
+optional block or parameter may, however, be either included or omitted. 
+If the label associated with an optional block or parameter is not found 
+at the expected location in a parameter file, the program continues and
+tries to re-interpret the label that appears in that location as the
+label that identifies the next expected parameter. Optional parameters
+that are omitted from a parameter file are usually assigned default 
+values. 
+
+Some parameters or blocks in a parameter file may be required or allowed
+only if parameters that have been read previously take on specific values. 
+Generally, the format does not require or allow entry of parameters if 
+it is already known that their values would be meaningless or irrelevent 
+on the basis of parameter values that appear earlier in the parameter file. 
+
+\section user_param_syntax_polymorphic_section Polymorphic Blocks
+
+Some blocks in a pscfpp parameter file are "polymorphic".  A polymorphic 
+block is one that may contain the format appropriate to any of several 
+possible classes that serve analogous purposes, which are generally all
+subclasses of a particular base class. The name of the desired subclass 
+is identified by the class name label in the opening line of such a 
+block.  The use of polymorphic blocks allows a user to choose at run 
+time from among several possible alternative elements algorithms or 
+other elements of a computation.
+
+For example, the block that represents an iterator in a SCFT calculation 
+is usually a polymorphic block so that users can use the parameter file 
+to specify a choice from among several different iterator algorithms.
+The parameter file format may also be different for different iterator
+classes, allowing user to specify different sets of parameters required
+to initialize different iterator algorithms.
+ 
+<BR>
+\ref user_param_page  (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_param_fd_page (Next) 
+
+*/

@@ -12,14 +12,14 @@
 #include "GeometryMode.h"                  // member
 
 namespace Pscf {
-namespace Fd1d
-{
+namespace Fd1d {
 
    using namespace Util;
 
    /**
    * One-dimensional spatial domain and discretization grid.
    *
+   * \ref fd1d_Domain_page "Parameter File Format"
    * \ingroup Fd1d_Domain_Module
    */
    class Domain : public ParamComposite
