@@ -32,6 +32,8 @@ namespace Pspc {
    * in the most recent call of the compute function. These can be 
    * accessed using the Block<D>::cField() function.
    *
+   * \ref pspc_Polymer_page "Parameter File Format"
+   *
    * \ingroup Pspc_Solver_Module
    */
    template <int D>

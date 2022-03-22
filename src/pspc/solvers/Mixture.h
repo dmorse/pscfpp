@@ -51,8 +51,7 @@ namespace Pspc
    * once after every time the unit cell is initialized or modified, 
    * before the next call to Mixture::compute.
    *
-   * Note: Point-like solvents are not yet implemented. Currently, a 
-   * Mixture can only be a mixture of Polymer species.
+   * \ref pspc_Mixture_page "Parameter File Format" 
    *
    * \ingroup Pspc_Solver_Module
    */

@@ -1,0 +1,15 @@
+namespace Pscf{
+/*! 
+\page pscf_Mesh_page Mesh
+
+A Pscf::Mesh<D> object represents a regular spatial mesh for one unit cell of a D dimensional crystal.
+
+The data for a Mesh<D> can be read and written to C++ iostreams using overloaded insertion and extraction operators. The file format is simply a list of D non-negative numbers representing the dimensions of the mesh separated by spaces.
+For example, for a 3D orthorhombic unit cell cell, the text representation
+\code
+   32  48 64
+\endcode
+represents a mesh with 32 grid points along lines parallel to the first direction (direction 0), 48 grid points along direction 1, and 64 grid points along direction 2.  More generally, the value of element number i, with i in the range [0,D-1], represents the number of grid points along the direction parallel to Bravais lattice basis vector number i.
+
+*/
+}

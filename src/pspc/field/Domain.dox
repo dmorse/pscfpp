@@ -1,0 +1,37 @@
+namespace Pscf{
+namespace Pspc{
+/*! 
+\page pspc_Domain_page Domain
+
+A Pscf::Pspc::Domain<D> object represents a spatial domain and discretization.
+The parameter file format for a Domain is:
+\code
+Domain{
+  unitCell    UnitCell<D>
+  mesh        Mesh<D>
+  groupName   string
+}
+\endcode
+Parameters and subblocks are described below:
+<table>
+  <tr>
+    <td> unitCell </td>
+    <td> Description of a crystallographic unit cell, represented using the text file format for a UnitCell<D> object.
+    The text format for a UnitCell contains a string representing the lattice  system (e.g., cubic, orthorhombic, hexagonal, etc.) followed by a list of values for unit cell dimensions and, when needed, angles.
+   This format is described in more detail \ref pscf_UnitCell_page "here".
+  </tr>
+  <tr>
+    <td> mesh </td>
+    <td> 
+    A regular discretization mesh, represented as a list of D integers separated by spaces on a single line.
+    Component i of this list is the number of grid points along direction i.
+  </tr>
+  <tr>
+    <td> groupName </td>
+    <td> A string identifier for a crystallographic space group. </td> 
+  </tr>
+</table>
+
+*/
+}
+}

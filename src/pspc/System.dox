@@ -1,0 +1,58 @@
+namespace Pscf{
+namespace Pspc{
+/*! 
+\page pspc_System_page System
+
+\section pspc_System_synopsis_sec Synopsis
+
+A Pspc::System object is the main object a SCFT computation for a periodic structure using the pseudo-spectral MDE solver on CPU hardware.
+
+\sa Pscf::Pspc::System
+
+\section pspc_System_param_sec Parameter File Format
+
+The parameter file format is:
+
+\code
+System{
+   Mixture{ ... }
+   ChiInteraction{ ... }
+   Domain{ ... }
+   &Iterator{ ... }
+   hasSweep*  bool (0).
+   &Sweep*{ ... }
+}
+\endcode
+Here, as elsewhere, optional parameters or subblocks of a parameter file block are followed by an asterisk, and polymorphic elements (for which the label can correspond to the label of any of several subclasses) are preceded by an ampersand.
+
+in which
+<table>
+  <tr>
+    <td> Mixture{ .... } </td>
+    <td> See \ref pspc_Mixture_page Mixture </td>
+  </tr>
+  <tr>
+    <td> ChiInteraction{ .... } </td>
+    <td> See \ref pspc_ChiInteraction_page Mixture </td>
+  </tr>
+  <tr>
+    <td> Domain{ .... } </td>
+    <td> See \ref pspc_Domain_page Domain </td>
+  </tr>
+  <tr>
+    <td> &Iterator*{ .... } </td>
+    <td> Any of several subclasses of \ref pspc_iterator_page "Iterator" </td>
+  </tr>
+  <tr>
+    <td> hasSweep </td>
+    <td> boolean, equal to 1 if a followed by a Sweep, 0 otherwise </td>
+  </tr>
+  <tr>
+    <td> &Sweep </td>
+    <td> polymorphic Sweep block, must be present iff hasSweep==1 </td>
+  </tr>
+</table>
+
+*/
+}
+}

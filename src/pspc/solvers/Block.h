@@ -34,6 +34,8 @@ namespace Pspc {
    * Derived from BlockTmpl< Propagator<D> >. A BlockTmpl< Propagator<D> > 
    * has two Propagator<D> members and is derived from BlockDescriptor.
    *
+   * \ref pscf_Block_page "Parameter File Format"
+   *
    * \ingroup Pspc_Solver_Module
    */
    template <int D>

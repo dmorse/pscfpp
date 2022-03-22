@@ -23,11 +23,12 @@ mixtures.
  </li>
  <li> \subpage user_page "3. User Guide"
    <ul style="list-style: none;">
-   <li> \subpage user_usage_page     </li>
-   <li> \subpage user_param_page     </li>
-   <li> \subpage user_command_page  </li>
-   <li> \subpage user_example_page  </li>
-   <li> \subpage user_field_page  </li>
+   <li> \ref user_usage_page     </li>
+   <li> \ref user_param_page     </li>
+   <li> \ref user_command_page  </li>
+   <li> \ref user_example_page  </li>
+   <li> \ref user_field_page  </li>
+   <li> \ref user_blocks_page  </li>
    </ul>
  </li>
  <li> \subpage developer_page "4. Developer Information"

@@ -1,0 +1,30 @@
+/*! \page user_blocks_page 3.6 Parameter File Blocks
+
+ \ref user_field_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref developer_page  (Next) 
+<BR>
+
+This page provides an index to all of the blocks that can appear in a PSCF parameter file format, listed by the name that identifies the block.
+In the hierarchichal file format used by PSCF++, each block contains the data required to initialize an instance of a specfic class or class template.
+Parameter file blocks are listed below organized by the C++ namespace in which the corresponding class or class template is defined.
+This namespace in which the corresponding code element is defined determines the context in which the block can appear.
+
+<ul style="list-style: none;">
+  <li> \subpage pspc_System_page  </li>
+  <li> \subpage pspc_Mixture_page  </li>
+  <li> \subpage pspc_Polymer_page  </li>
+  <li> \subpage pspc_Solvent_page  </li>
+  <li> \subpage pscf_ChiInteraction_page  </li>
+  <li> \subpage pspc_Domain_page  </li>
+</ul>
+
+<ul style="list-style: none;">
+  <li> \subpage pscf_Monomer_page  </li>
+  <li> \subpage pscf_Block_page  </li>
+</ul>
+
+<BR>
+ \ref user_field_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref user_page        (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref developer_page   (Next) 
+*/

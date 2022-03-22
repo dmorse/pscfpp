@@ -1,0 +1,45 @@
+namespace Pscf{
+
+/*! 
+\page pscf_Block_page Block
+
+A class or class template with the name Block is defined in each namespace 
+of Pscf that defines an implementation of self-consistent field theory (e.g., 
+in the Fd1d, Pscf, and Pspg subnamespaces of the Pscf namespace). In each 
+such implementation-level namespace, the Block class or class template is 
+derived from a common base class Pscf::BlockDescriptor, which holds the data
+required to describe one block within a block polymer.  The base class
+Pscf::BlockDescriptor defines a common parameter file format for reading 
+and writing the data associated with one block.
+
+The data for one block can be read from or written to C++ iostreams using 
+overloaded insertion (<<) and extraction operators for a BlockDescriptor,
+using a syntax similar to that used to read and write primitive C types.
+Different formats are used depending on whether the associated block is 
+part of a linear or branched polymer.
+
+Linear polymers:
+The file format for a block within a linear polymer is:
+\code
+   monomerId (int)    length (float)
+\endcode
+Here, monomerId is the non-negative integer id of the associated monomer 
+type and length is the length of the block.  The length of a block is 
+defined as the ratio of the block volume to a monomer reference volume, 
+which need not be an integer.
+
+Branched polymers:
+The file format for a block within a branched polymer contains additional
+information necessary to describe the topology of such a polymer. A block
+can be described as a graph in which each block connects two vertices. 
+Each chain end and every junction that joins two or more blocks is a 
+vertex. The parameter file format for a block within such a branched 
+polymer is;
+\code
+   monomerId (int)  length (float)  vertexid0 (int) vertexid1 (int)
+\endcode
+where vertexid0 and vertexid1 are the integer indices of the two vertices 
+to which the block is attached. 
+
+*/
+}
