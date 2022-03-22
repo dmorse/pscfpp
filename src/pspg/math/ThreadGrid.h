@@ -6,6 +6,10 @@
 
 namespace Pscf {
 namespace Pspg {
+
+/**
+* Global functions and variables to control GPU thread and block counts.
+*/
 namespace ThreadGrid {
 
   /**
@@ -16,76 +20,97 @@ namespace ThreadGrid {
   * \ingroup Pscf_Pspg_Module
   * @{
   */
-  
+ 
+  /**
+  * Initialize static variables in Pspg::ThreadGrid namespace.
+  */ 
   void init();
 
   /**
-  * Set the number of threads per block by querying the 
-  * hardware to determine a reasonable number.
+  * Set the number of threads per block to a default value.
+  *
+  * Query the hardware to determine a reasonable number.
   */
   void setThreadsPerBlock();
 
   /**
-  * Set the number of threads per block via input from the
-  * program or user.
+  * Set the number of threads per block to a specified value.
   * 
-  * \param nThreadsPerBlock the number of threads per block 
+  * \param nThreadsPerBlock the number of threads per block (input)
   */
-  void setThreadsPerBlock(int const nThreadsPerBlock);
+  void setThreadsPerBlock(int nThreadsPerBlock);
 
   /**
-  * Set the total number of threads required for execution. Recalculate the
-  * number of blocks and threads per block if necessary.
+  * Set the total number of threads required for execution. 
   * 
-  * \param nThreadsLogical the total number of threads required for execution
+  * Calculate the number of blocks, and calculate threads per block if 
+  * necessary. Updates static variables.
+  * 
+  * \param nThreadsLogical total number of required threads (input)
   */
-  void setThreadsLogical(int const nThreadsLogical);
+  void setThreadsLogical(int nThreadsLogical);
 
   /**
-  * Set the total number of threads required for execution. Recalculate the
-  * number of blocks and threads per block if necessary. Also updates the 
-  * inputted nBlocks parameter with the corresponding value.
+  * Set the total number of threads required for execution. 
+  *
+  * Recalculate the number of blocks, and calculate threads per block if 
+  * necessary. Also updates the nBlocks output parameter.
   * 
-  * \param nThreadsLogical the total number of threads required for execution
-  * \param nBlocks passed by reference, updated with the number of blocks for execution
+  * \param nThreadsLogical total number of required threads (input)
+  * \param nBlocks  updated number of blocks (output)
   */
-  void setThreadsLogical(int const nThreadsLogical, int & nBlocks);
+  void setThreadsLogical(int nThreadsLogical, int& nBlocks);
 
   /**
-  * Set the total number of threads required for execution. Recalculate the
-  * number of blocks and threads per block if necessary. Also updates the 
-  * inputted nBlocks and nThreads parameters with the corresponding values.
+  * Set the total number of threads required for execution. 
+  *
+  * Computes and sets the number of blocks, and sets threads per block 
+  * if necessary.  Updates values of nBlocks and nThreads parameters in
+  * output parameters that are passed by value.
   * 
-  * \param nThreadsLogical the total number of threads required for execution
-  * \param nBlocks passed by reference, updated with the number of blocks for execution
-  * \param nThreads passed by referenced, updated with the threads per block for execution
+  * \param nThreadsLogical total number of required threads (input)
+  * \param nBlocks  updated number of blocks (output)
+  * \param nThreads  updated number threads per block (output)
   */
-  void setThreadsLogical(int const nThreadsLogical, int & nBlocks, int & nThreads);
+  void setThreadsLogical(int nThreadsLogical, int& nBlocks, int& nThreads);
 
   /**
-  * Check the execution configuration (number of threads and threads per block) for validity 
-  * and optimality, based on hardware warp size and streaming multiprocessor constraints. 
+  * Check the execution configuration (threads and block counts).
+  *
+  * Check for validity and optimality, based on hardware warp size and 
+  * streaming multiprocessor constraints. 
   */
   void checkExecutionConfig();
 
   // Accessors
 
-  /// Get the number of blocks for execution.
+  /**
+  * Get the current number of blocks for execution.
+  */
   int nBlocks();
 
-  /// Get the number of threads per block for execution.
+  /**
+  * Get the number of threads per block for execution.
+  */
   int nThreads();
 
-  /// Return previously requested total number of threads.
+  /**
+  * Return previously requested total number of threads.
+  */
   int nThreadsLogical();
 
-  /// Indicates whether there will be unused threads. 
-  /// This is the case if nThreads*nBlocks != nThreadsLogical.
+  /**
+  * Indicates whether there will be unused threads. 
+  *
+  * Returns true iff nThreads*nBlocks != nThreadsLogical.
+  * 
+  * \ingroup Pspg_ThreadGrid_Module 
+  */
   bool hasUnusedThreads();
 
   /** @} */
 
-}
-}
-}
+} // namespace ThreadGrid
+} // namespace Pspg
+} // namespace Pscf
 #endif
