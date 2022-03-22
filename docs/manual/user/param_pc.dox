@@ -106,6 +106,8 @@ user-defined types that appear as parameter values:
 <ul style="list-style: none;">
   <li> \ref pscf_Monomer_page  </li>
   <li> \ref pscf_Block_page  </li>
+  <li> \subpage pscf_Mesh_page  </li>
+  <li> \subpage pscf_UnitCell_page  </li>
 </ul>
 
 The remainder of this page provides informal discussions of the formats 

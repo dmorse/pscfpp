@@ -11,7 +11,7 @@ let's start with an example:
 \section user_param_syntax_fdexample_section Example 
 
 Below, we show an example of a complete parameter file for a simple 1D SCFT 
-calculation that can be performed with the program pscf_fd1d.
+calculation that can be performed with the program pscf_fd.
 We use this example here to explain syntactical features that are common to 
 the parameter files used by all pscfpp programs.
 Parameter file formats required by specific programs are discussed in greater 

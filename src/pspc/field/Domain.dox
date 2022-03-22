@@ -16,14 +16,15 @@ Parameters and subblocks are described below:
 <table>
   <tr>
     <td> unitCell </td>
-    <td> Description of a crystallographic unit cell, represented using the text file format for a UnitCell<D> object.
-    The text format for a UnitCell contains a string representing the lattice  system (e.g., cubic, orthorhombic, hexagonal, etc.) followed by a list of values for unit cell dimensions and, when needed, angles.
+    <td> Description of a crystallographic unit cell, represented using the text file format for a \ref pscf_UnitCell_page "UnitCell<D>" object.
+    The text format for a \ref pscf_UnitCell_page "UnitCell<D>" contains a string representing the lattice  system (e.g., cubic, orthorhombic, hexagonal, etc.) followed by a list of values for unit cell dimensions and, when needed, angles.
    This format is described in more detail \ref pscf_UnitCell_page "here".
   </tr>
   <tr>
     <td> mesh </td>
     <td> 
-    A regular discretization mesh, represented as a list of D integers separated by spaces on a single line.
+    A regular discretization mesh.
+    The text representation for a \ref pscf_Mesh_page "Mesh<D>" object is simply a list of D integers separated by spaces on a single line.
     Component i of this list is the number of grid points along direction i.
   </tr>
   <tr>

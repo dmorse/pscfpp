@@ -10,12 +10,12 @@ The documentation of the parameter file format for the pscf_fd 1D finite differe
 The discussion of the file format for pscf_pcNd focuses on parts of the file format that differ from that required for pscf_fd.
 The file formats for the pscf_pcNd and pscf_pgNd programs are almost identical, reflecting the fact that these are closely analogous programs designed to run on different hardware.
 
-<h2> Parameter files for specific programs:</h2>
+<h3> Contents:</h3>
    <ul style="list-style: none;">
    <li> \subpage user_param_syntax_page  "3.2.1 Syntax" </li>
-   <li> \subpage user_param_fd_page      "3.2.2 pscf_fd1d" </li>
-   <li> \subpage user_param_pc_page      "3.2.3 pscf_pcNd" </li>
-   <li> \subpage user_param_pg_page      "3.2.4 pscf_pgNd" </li>
+   <li> \subpage user_param_fd_page      "3.2.2 pscf_fd" </li>
+   <li> \subpage user_param_pc_page      "3.2.3 pscf_pcNd (CPU)" </li>
+   <li> \subpage user_param_pg_page      "3.2.4 pscf_pgNd (GPU)" </li>
    </ul>
 <BR>
 \ref user_usage_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

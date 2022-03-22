@@ -1,7 +1,7 @@
 /*! \page user_field_page 3.5 Field Files
 
  \ref user_example_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_blocks_page (Next) 
+ \ref developer_page (Next) 
 <BR>
 
 Each PSCF program can read and write files that contain chemical potential
@@ -12,18 +12,21 @@ pscf_pcNd and pscf_pgND CPU and GPU programs, which are both designed to
 treat periodic microstructures, both use file formats that were originally 
 created for the older Fortran PSCF program. The pscf_fd1d program for 
 one-dimensional programs uses a simpler file format in which values of
-fields specified at nodes of a regular one-dimensional grid. Different
-field file formats are described in the pages linked below.
+fields specified at nodes of a regular one-dimensional grid. 
 
-  <ul style="list-style: none;">
+
+<h3> Contents: </h3>
+Different field file formats are described in the pages linked below.
+
+<ul style="list-style: none;">
   <li> \subpage user_field_basis_page  </li>
   <li> \subpage user_field_rgrid_page  </li>
   <li> \subpage user_field_kgrid_page  </li>
   <li> \subpage user_field_fd1d_page   </li>
-  </ul>
+</ul>
 
  <BR>
  \ref user_example_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref user_page          (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_blocks_page   (Next) 
+ \ref developer_page   (Next) 
 */

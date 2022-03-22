@@ -1,10 +1,10 @@
-/*! \page user_param_fd_page 3.2.2 Parameter Files: pscf_fd1d
+/*! \page user_param_fd_page 3.2.2 Parameter Files: pscf_fd
 
 \ref user_param_syntax_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_param_pc_page (Next)
 <BR>
 
-An example of a parameter file for an pscf_fd1d program is given in the 
+An example of a parameter file for an pscf_fd program is given in the 
 \ref user_param_syntax_page "previous page" as an example of the syntax.
 Please consult this example when looking at this discussion of the file
 format.
@@ -58,7 +58,7 @@ blocks with identical syntax.
 
 \section user_param_fd_doxlinks_section Documentation Links
 
-The nest list shown below provides links to pages that document file formats for parameter file blocks that can appear in a parameter file for a pscf_fd1d program are given below. 
+The nest list shown below provides links to pages that document file formats for parameter file blocks that can appear in a parameter file for a pscf_fd program are given below. 
 Each type of block is identified here by the label with which it appears in the parameter file, and nested in its expected position:
 <ul style="list-style: none;">
   <li> \subpage fd1d_System_page  "System" </li>
