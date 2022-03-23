@@ -51,5 +51,5 @@ ifdef MAKEDEP_CUDA
 endif
 
 # Pattern rule to compile Test programs in src/pspg/tests
-$(BLD_DIR)/%Test: $(SRC_DIR)/%Test.o $(PSPG_LIBS)
+$(BLD_DIR)/%Test: $(BLD_DIR)/%Test.o $(PSPG_LIBS)
 	$(CXX) $(LDFLAGS) $(INCLUDES) $(DEFINES) -o $@ $< $(LIBS)
