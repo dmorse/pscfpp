@@ -20,9 +20,10 @@ Domain{
 Parameters and subblocks are described below:
 <table>
   <tr>
-    <td> geomtryMode </td>
+    <td> geometryMode </td>
     <td> 
-      Enumeration with allowed values "planar", "cylindrical" or "spherical" 
+      Enumeration value of type \ref fd1d_GeometryMode_page "GeometryMode".
+      Allowed values are "planar", "cylindrical" or "spherical" 
     </td>
   </tr>
   <tr>

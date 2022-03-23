@@ -25,24 +25,24 @@ in which
   <tr>
     <td> Mixture{ .... } </td>
     <td> 
-     Description of system composition. See \ref pspc_Mixture_page Mixture docs. 
+     Description of system composition. See \ref pspc_Mixture_page "Mixture" docs. 
     </td>
   </tr>
   <tr>
     <td> ChiInteraction{ .... } </td>
     <td> 
-     Flory-Huggins excess free energy. See \ref pspc_ChiInteraction_page docs. 
+     Flory-Huggins excess free energy. See \ref pscf_ChiInteraction_page "ChiInteraction" docs. 
     </td>
   </tr>
   <tr>
     <td> Domain{ .... } </td>
     <td> 
-     Discretization and unit cell. See \ref pspc_Domain_page Domain docs. 
+     Discretization and unit cell. See \ref pspc_Domain_page "Domain" docs. 
     </td>
   </tr>
   <tr>
     <td> < Iterator > { .... } </td>
-    <td> Polymorphic Iterator block, which can contain subblocks for any of several subclasses of \ref pspc_iterator_page. </td>
+    <td> Polymorphic Iterator block, for any one of several subclasses of \ref pspc_iterator_page "Pspc::Iterator". </td>
   </tr>
   <tr>
     <td> hasSweep* </td>
@@ -52,7 +52,7 @@ in which
      </td>
   </tr>
   <tr>
-    <td> &Sweep </td>
+    <td> < Sweep >& { ... } </td>
     <td> polymorphic Sweep block, must be present iff hasSweep==1 </td>
   </tr>
 </table>

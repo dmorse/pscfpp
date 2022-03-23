@@ -77,8 +77,9 @@ The following links provide documentation for text formats used for smaller
 user defined types whose values cam be read on a single line and treated as 
 individual parameters:
 <ul style="list-style: none;">
-  <li> \subpage pscf_Monomer_page  </li>
-  <li> \subpage pscf_Block_page  </li>
+  <li> \subpage pscf_Monomer_page  "Monomer" </li>
+  <li> \subpage pscf_Block_page  "Block" </li>
+  <li> \subpage fd1d_GeometryMode_page "GeometryMode"</li>
 </ul>
 Monomers appear in the Mixture block in elements of the "monomers" array.
 Block data for the blocks of each block polymer species appears in the 

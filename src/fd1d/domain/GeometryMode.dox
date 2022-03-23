@@ -1,0 +1,21 @@
+namespace Pscf{
+namespace Fd1d{
+/*! 
+\page fd1d_GeometryMode_page Fd1d::GeometryMode
+
+Pscf::Fd1d::GeometryMode is an enumeration type that is used to specify 
+the geometry of a 1D finite difference SCFT calculation. Allowed values 
+are Planar, Cylindrical, and Spherical. Planar mode is used for planar 
+or slit geometries in which all fields depend on a single Cartesian 
+coordinate. Cylindrical and spherical mode is used for problems with
+cylindrical or spherical symmetry, in which all fields depend on distance
+from the origin of a 2D (cylindrical) of 3D (spherical) space.
+
+Iostream inserter and extractor operators are defined to allow values of 
+this enumeration to be read and written using a syntax analogous to that 
+used for primitive C types. The ascii representations of the three allowed 
+values are "planar", "cylindrical" and "spherical", respectively.
+
+*/
+}
+}

@@ -20,6 +20,11 @@ namespace Fd1d
    *
    * Allowed values are: Planar, Cylindrical Spherical.
    *
+   * GeometryMode values can be read from or written to iostream using
+   * overloaded extractor (>>) and inserter (<<) operators. The text
+   * representations of the three values are "planar", "cylindrical" and
+   * "spherical", as also discussed \ref fd1d_GeometryMode_page "here" .
+   *
    * \ingroup Fd1d_Domain_Module
    */
    enum GeometryMode {Planar, Cylindrical, Spherical};
