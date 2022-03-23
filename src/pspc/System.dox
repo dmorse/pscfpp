@@ -1,51 +1,55 @@
 namespace Pscf{
 namespace Pspc{
 /*! 
-\page pspc_System_page System
+\page pspc_System_page Pspc::System<D>
 
-\section pspc_System_synopsis_sec Synopsis
-
-A Pspc::System object is the main object a SCFT computation for a periodic structure using the pseudo-spectral MDE solver on CPU hardware.
+A Pspc::System<D> object is the main object in a SCFT computation for a D dimensionally periodic structure using a pseudo-spectral algorithm on CPU hardware.
 
 \sa Pscf::Pspc::System
 
-\section pspc_System_param_sec Parameter File Format
-
 The parameter file format is:
-
 \code
 System{
    Mixture{ ... }
    ChiInteraction{ ... }
    Domain{ ... }
-   &Iterator{ ... }
-   hasSweep*  bool (0).
-   &Sweep*{ ... }
+   < Iterator >{ ... }
+   hasSweep*  bool (default 0).
+   < Sweep >@ { ... }
 }
 \endcode
-Here, as elsewhere, optional parameters or subblocks of a parameter file block are followed by an asterisk, and polymorphic elements (for which the label can correspond to the label of any of several subclasses) are preceded by an ampersand.
+Here, as elsewhere, optional or conditional parameters or subblocks are indicated by an asterisk, conditional elements by a dagger, and polymorphic elements (for which the label can correspond to the label of any of several subclasses) are indicated by enclosing the generic or base class name in angle brackets.
 
 in which
 <table>
   <tr>
     <td> Mixture{ .... } </td>
-    <td> See \ref pspc_Mixture_page Mixture </td>
+    <td> 
+     Description of system composition. See \ref pspc_Mixture_page Mixture docs. 
+    </td>
   </tr>
   <tr>
     <td> ChiInteraction{ .... } </td>
-    <td> See \ref pspc_ChiInteraction_page Mixture </td>
+    <td> 
+     Flory-Huggins excess free energy. See \ref pspc_ChiInteraction_page docs. 
+    </td>
   </tr>
   <tr>
     <td> Domain{ .... } </td>
-    <td> See \ref pspc_Domain_page Domain </td>
+    <td> 
+     Discretization and unit cell. See \ref pspc_Domain_page Domain docs. 
+    </td>
   </tr>
   <tr>
-    <td> &Iterator*{ .... } </td>
-    <td> Any of several subclasses of \ref pspc_iterator_page "Iterator" </td>
+    <td> < Iterator > { .... } </td>
+    <td> Polymorphic Iterator block, which can contain subblocks for any of several subclasses of \ref pspc_iterator_page. </td>
   </tr>
   <tr>
-    <td> hasSweep </td>
-    <td> boolean, equal to 1 if a followed by a Sweep, 0 otherwise </td>
+    <td> hasSweep* </td>
+    <td> 
+     Optional boolean, equal to 1 (true) if followed by a Sweep, 0 otherwise.
+     If omitted, set to 0 (false) by default.
+     </td>
   </tr>
   <tr>
     <td> &Sweep </td>

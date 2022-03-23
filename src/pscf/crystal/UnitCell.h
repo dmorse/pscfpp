@@ -20,10 +20,18 @@ namespace Pscf
    /**
    * Base template for UnitCell<D> classes, D=1, 2 or 3.
    *
-   * Explicit specializations are provided for D=1, 2, and 3. In
-   * each case, class UnitCell<D> is derived from UnitCellBase<D>,
-   * and defines an enumeration named LatticeSystem of the types
-   * of Bravais lattice systems in D-dimensional space.
+   * Explicit specializations are defined for D=1, 2, and 3. In each case,
+   * class UnitCell<D> is derived from UnitCellBase<D>, and defines an 
+   * enumeration UnitCell<D>::LatticeSystem of the possible types of 
+   * Bravais lattice systems in D-dimensional space.
+   *
+   * Iostream inserter (<<) and extractor (>>) operators are defined
+   * for all explicit specializations of UnitCell<D>, allowing a 
+   * UnitCell to be read from or written to file like a primitive 
+   * variable. The text representation for a UnitCell<D> contains a 
+   * text representation of the LatticeSystem enumeration (i.e., the
+   * unit cell type) and a list of one or more unit cell parameters 
+   * (lengths and angles), as described \ref pscf_UnitCell_page "here".
    *
    * \ingroup Pscf_Crystal_Module
    */

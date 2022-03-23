@@ -17,7 +17,15 @@ namespace Pscf
    /**
    * Descriptor for a monomer or particle type.
    *
-   * \ref pscf_Monomer_page "Parameter File Format"
+   * Iostream extractor (>>) and inserter (<<) operators are defined for 
+   * a Monomer, allowing the description of a monomer to be read from or
+   * written to file like a primitive variable. The text representation 
+   * contains a monomer name string and the value of the kuhn (statistical 
+   * segment) length, as described \ref pscf_Monomer_page "here".
+   *
+   * Data for all monomers in a system is normally read from a parameter
+   * file into an array-valued parameter named "monomers". 
+   *
    * \ingroup Pscf_Chem_Module
    */
    class Monomer

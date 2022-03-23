@@ -4,17 +4,27 @@ namespace Pscf{
 
 A Pscf::Monomer object represents a monomer type. 
 
-The data for a Monomer can be read and written to C++ iostreams using overloaded insertion and extraction operators, using a syntax similar to that used for primitive types. The file format is
+The data associated with a Monomer can be read and written to C++ iostreams 
+using overloaded insertion (<<) and extraction (>>) operators. This allows
+a Monomer to read or written using a syntax similar to that used for 
+primitive C types. The text representation of a Monomer has the form
 \code
      name (string)    kuhn (float)
 \endcode
-where "name" is a name string and "kuhn" is the value of the monomer statistical segment length. 
+where "name" is a name string and "kuhn" is the floating point value of 
+the monomer statistical segment length. 
 
-For example, the data
+Example: The text
 \code
    PS   6.0
 \endcode
-describes a monomer with a name "PS" and statistical segment length of 6.0 in the chosen system of units.
+describes a monomer with a name "PS" and statistical segment length of 
+6.0 in the chosen system of units.
+
+Note: This text representation does not contain information about the "id" 
+member variable, which associates an integer index with each monomer type.
+When Monomer objects are stored in an array, the id is set equal to the 
+array element index.
 
 */
 }

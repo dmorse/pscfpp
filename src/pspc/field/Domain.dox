@@ -16,20 +16,23 @@ Parameters and subblocks are described below:
 <table>
   <tr>
     <td> unitCell </td>
-    <td> Description of a crystallographic unit cell, represented using the text file format for a \ref pscf_UnitCell_page "UnitCell<D>" object.
-    The text format for a \ref pscf_UnitCell_page "UnitCell<D>" contains a string representing the lattice  system (e.g., cubic, orthorhombic, hexagonal, etc.) followed by a list of values for unit cell dimensions and, when needed, angles.
-   This format is described in more detail \ref pscf_UnitCell_page "here".
+    <td> 
+      Description of a crystallographic unit cell, given using the text representation for a \ref pscf_UnitCell_page "UnitCell<D>" object.
+      The format contains a string that identifies the lattice system (e.g., cubic, orthorhombic, hexagonal, etc.) followed by a list of values for unit cell dimensions and, when needed, angles, all on one line.
   </tr>
   <tr>
     <td> mesh </td>
     <td> 
-    A regular discretization mesh.
-    The text representation for a \ref pscf_Mesh_page "Mesh<D>" object is simply a list of D integers separated by spaces on a single line.
-    Component i of this list is the number of grid points along direction i.
+    A regular discretization mesh, given using the text representation for a \ref pscf_Mesh_page "Mesh<D>" object. 
+    The required data is simply list of D integers separated by spaces on a single line, in which component i of the list is the number of grid points along direction i.
   </tr>
   <tr>
     <td> groupName </td>
-    <td> A string identifier for a crystallographic space group. </td> 
+    <td> 
+      String identifier for a crystallographic space group. 
+      A list of valid space group identifiers is given 
+      \ref user_groups_page "here".
+    </td> 
   </tr>
 </table>
 

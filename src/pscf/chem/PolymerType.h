@@ -19,6 +19,9 @@ namespace Pscf
    /**
    * Struct containing an enumeration of polymer structure types.
    *
+   * The enumeration PolymerType::Enum has allowed values 
+   * PolymerType::Branched and PolymerType::Linear.
+   *
    * \ingroup Pscf_Chem_Module
    */
    struct PolymerType {
@@ -26,7 +29,7 @@ namespace Pscf
    };
 
    /**
-   * Input stream extractor for a PolymerType enumeration.
+   * Input stream extractor for a PolymerType::Enum enumeration.
    *
    * \param in input stream
    * \param type value of PolymerType to be read from file
@@ -34,7 +37,7 @@ namespace Pscf
    std::istream& operator >> (std::istream& in, PolymerType::Enum& type); 
 
    /**
-   * Input stream extractor for a PolymerType enumeration.
+   * Input stream extractor for a PolymerType::Enum enumeration.
    *
    * \param out  output stream
    * \param type  value of PolymerType to be written 
@@ -42,7 +45,7 @@ namespace Pscf
    std::ostream& operator << (std::ostream& out, PolymerType::Enum& type); 
 
    /**
-   * Input stream extractor for a PolymerType enumeration.
+   * Serialize a PolymerType::Enum enumeration.
    *
    * \param ar  archive
    * \param data  enumeration data to be serialized

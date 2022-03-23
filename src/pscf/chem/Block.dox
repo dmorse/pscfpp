@@ -8,15 +8,13 @@ of Pscf that defines an implementation of self-consistent field theory (e.g.,
 in the Fd1d, Pscf, and Pspg subnamespaces of the Pscf namespace). In each 
 such implementation-level namespace, the Block class or class template is 
 derived from a common base class Pscf::BlockDescriptor, which holds the data
-required to describe one block within a block polymer.  The base class
-Pscf::BlockDescriptor defines a common parameter file format for reading 
-and writing the data associated with one block.
+required to describe a single block within a block polymer.  
 
 The data for one block can be read from or written to C++ iostreams using 
-overloaded insertion (<<) and extraction operators for a BlockDescriptor,
+overloaded insertion (<<) and extraction (>>) operators for a BlockDescriptor,
 using a syntax similar to that used to read and write primitive C types.
-Different formats are used depending on whether the associated block is 
-part of a linear or branched polymer.
+Different text representations are used depending on whether the associated 
+block is part of a linear or branched polymer.
 
 Linear polymers:
 The file format for a block within a linear polymer is:
@@ -24,9 +22,9 @@ The file format for a block within a linear polymer is:
    monomerId (int)    length (float)
 \endcode
 Here, monomerId is the non-negative integer id of the associated monomer 
-type and length is the length of the block.  The length of a block is 
-defined as the ratio of the block volume to a monomer reference volume, 
-which need not be an integer.
+type and length is the length of the block.  The length of a block is a
+measure of steric volume, and is defined as the ratio of the block volume 
+to a monomer reference volume. The length thus need not be an integer.
 
 Branched polymers:
 The file format for a block within a branched polymer contains additional
@@ -40,6 +38,14 @@ polymer is;
 \endcode
 where vertexid0 and vertexid1 are the integer indices of the two vertices 
 to which the block is attached. 
+
+A branched block polymer can be described by an acyclic graph in which
+each edge or line represents a block and each chain end or junction
+represents a vertex, so that each block joins two vertices. An acyclic 
+graph with n edges (or blocks) always contains exactly n+1 vertices.
+The vertices in a branched block polymer with n blocks are always labelled 
+by integer indices in the range [0,n]. A linear polymer is a special case
+of a branched polymer in which block i connects vertex i and vertex i+1.
 
 */
 }
