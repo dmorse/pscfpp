@@ -52,7 +52,11 @@ namespace Pscf
    }
 
    /*
-   * Set the Bravais and reciprocal lattice parameters.
+   * Set Bravais and reciprocal lattice parameters, and drBasis.
+   * 
+   * Function UnitCellBase::initializeToZero() must be called before
+   * setBasis() to initialize all elements of vectors and tensors to
+   * zero. Only nonzero elements need to be set here.
    */
    void UnitCell<3>::setBasis()
    {
@@ -72,15 +76,27 @@ namespace Pscf
       } else 
       if (lattice_ == UnitCell<3>::Tetragonal) {
          UTIL_CHECK(nParameter_ == 2);
+
          rBasis_[0][0] = parameters_[0];
-         rBasis_[1][1] = rBasis_[0][0];
+         rBasis_[1][1] = parameters_[0];
          rBasis_[2][2] = parameters_[1];
-         kBasis_[0][0] = twoPi/parameters_[0];
-         kBasis_[1][1] = kBasis_[0][0];
-         kBasis_[2][2] = twoPi/parameters_[1];
+
          drBasis_[0](0,0) = 1.0;
          drBasis_[0](1,1) = 1.0;
          drBasis_[1](2,2) = 1.0;
+
+         kBasis_[0][0] = twoPi/parameters_[0];
+         kBasis_[1][1] = kBasis_[0][0];
+         kBasis_[2][2] = twoPi/parameters_[1];
+
+      }else 
+      if (lattice_ == UnitCell<3>::Orthorhombic) {
+         UTIL_CHECK(nParameter_ == 3);
+         for (i=0; i < 3; ++i) { 
+            rBasis_[i][i] = parameters_[i];
+            drBasis_[i](i,i) = 1.0;
+            kBasis_[i][i] = twoPi/parameters_[i];
+         }
       } else 
       if (lattice_ == UnitCell<3>::Hexagonal) {
          UTIL_CHECK(nParameter_ == 2);
@@ -89,13 +105,11 @@ namespace Pscf
          double rt3 = sqrt(3.0);
 
          rBasis_[0][0] = a;
-         rBasis_[0][1] = 0.0;
          rBasis_[1][0] = -0.5*a;
          rBasis_[1][1] = 0.5*rt3*a;
          rBasis_[2][2] = c;
 
          drBasis_[0](0, 0) = 1.0;
-         drBasis_[0](0, 1) = 0.0;
          drBasis_[0](1, 0) = -0.5;
          drBasis_[0](1, 1) = 0.5*rt3;
          drBasis_[1](2, 2) = 1.0;
@@ -105,15 +119,112 @@ namespace Pscf
          kBasis_[1][0] = 0.0;
          kBasis_[1][1] = twoPi/(0.5*rt3*a);
          kBasis_[2][2] = twoPi/(c);
- 
-      }else 
-      if (lattice_ == UnitCell<3>::Orthorhombic) {
-         UTIL_CHECK(nParameter_ == 3);
-         for (i=0; i < 3; ++i) { 
-            rBasis_[i][i] = parameters_[i];
-            kBasis_[i][i] = twoPi/parameters_[i];
-            drBasis_[i](i,i) = 1.0;
-         }
+
+      } else 
+      if (lattice_ == UnitCell<3>::Monoclinic) {
+         UTIL_CHECK(nParameter_ == 4);
+
+         /*
+         * Description: Bravais basis vectors A, B, and C
+         * A (vector 0) is along x axis
+         * B (vector 1) is along y axis
+         * C (vector 2) is in the x-z plane, an angle beta from A/x
+         * B is the unique axis (perpendicular to A and C)
+         * Angle beta is stored in radians.
+         */
+
+         // Parameters
+         double a = parameters_[0];     // length of A
+         double b = parameters_[1];     // length of B
+         double c = parameters_[2];     // length of C
+         double beta  = parameters_[3]; // angle between C and A/x
+
+         double cb = cos(beta);
+         double sb = sin(beta);
+
+         // Nonzero components of basis vectors
+         // For rBasis_[i][j], i:basis vector, j:Cartesian component
+         rBasis_[0][0] = a;
+         rBasis_[1][1] = b;
+         rBasis_[2][0] = c*cb;
+         rBasis_[2][2] = c*sb;
+
+         // Nonzero derivatives of basis vectors with respect to parameters
+         // For drBasis_[k](i,j), k:parameter, i:basis vector, j:Cartesian
+         drBasis_[0](0,0) = 1.0;
+         drBasis_[1](1,1) = 1.0;
+         drBasis_[2](2,0) = cb;
+         drBasis_[2](2,2) = sb;
+         drBasis_[3](2,0) = c*sb;
+         drBasis_[3](2,2) = -c*cb;
+
+         // Reciprocal lattice vectors
+         kBasis_[0][0] = twoPi/a;
+         kBasis_[0][2] = -twoPi*cb/(a*sb);
+         kBasis_[1][1] = twoPi / b;
+         kBasis_[2][2] = twoPi/(c*sb);
+
+      } else 
+      if (lattice_ == UnitCell<3>::Triclinic) {
+         UTIL_CHECK(nParameter_ == 6);
+
+         /*
+         * Description: Bravais basis vectors A, B, and C
+         * A (vector 0) is along x axis
+         * B (vector 1) is in the x-y plane, an angle gamma from x axis
+         * C (vector 2) is tilted by an angle theta from z axis
+         * phi is the angle beween c-z an x-z (or a-z) planes
+         * All three angles are stored in radians
+         */
+         double a = parameters_[0];      // length of A
+         double b = parameters_[1];      // length of B
+         double c = parameters_[2];      // length of C
+         double phi = parameters_[3];    // angle between c-z and a-z planes
+         double theta  = parameters_[4]; // angle between c and z axis
+         double gamma = parameters_[5];  // angle between a and b
+
+         // sine and cosine of all angles
+         double cosPhi = cos(phi);
+         double sinPhi = sin(phi);
+         double cosTheta = cos(theta);
+         double sinTheta = sin(theta);
+         double cosGamma = cos(gamma);
+         double sinGamma = sin(gamma);
+
+         // Nonzero components of Bravais basis vectors
+         rBasis_[0][0] = a;
+         rBasis_[1][0] = b * cosGamma;
+         rBasis_[1][1] = b * sinGamma;
+         rBasis_[2][0] = c * sinTheta * cosPhi;
+         rBasis_[2][1] = c * sinTheta * sinPhi;
+         rBasis_[2][2] = c * cosTheta;
+
+         // Nonzero derivatives of basis vectors with respect to parameters
+         drBasis_[0](0,0) = 1.0;
+         drBasis_[1](1,0) = cosGamma;
+         drBasis_[1](1,1) = sinGamma;
+         drBasis_[2](2,0) = sinTheta * cosPhi;
+         drBasis_[2](2,1) = sinTheta * sinPhi;
+         drBasis_[2](2,2) = cosTheta;
+         drBasis_[3](2,0) = -c * sinTheta * sinPhi;
+         drBasis_[3](2,1) =  c * sinTheta * cosPhi;
+         drBasis_[4](2,0) =  c * cosTheta * cosPhi;
+         drBasis_[4](2,1) =  c * cosTheta * sinPhi;
+         drBasis_[4](2,2) = -c * sinTheta;
+         drBasis_[5](1,0) = -b * sinGamma;
+         drBasis_[5](1,1) =  b * cosGamma;
+
+         // Reciprocal lattice vectors
+         kBasis_[0][0] = twoPi / a;
+         kBasis_[0][1] = -twoPi * cosGamma / (a * sinGamma);
+         kBasis_[0][2] = sinTheta * (cosGamma * sinPhi - sinGamma * cosPhi);
+         kBasis_[0][2] = twoPi * kBasis_[0][2] / (a * sinGamma * cosTheta);
+
+         kBasis_[1][1] = twoPi/(b*sinGamma);
+         kBasis_[1][2] = -twoPi*sinPhi*sinTheta/(b*cosTheta*sinGamma);
+
+         kBasis_[2][2] = twoPi/(c*cosTheta);
+
       } else {
          UTIL_THROW("Unimplemented 3D lattice type");
       }
