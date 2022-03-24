@@ -29,13 +29,13 @@ namespace Pscf
       if (lattice_ == UnitCell<2>::Square) {
          nParameter_ = 1;
       } else
-      if (lattice_ == UnitCell<2>::Rhombic) {
-         nParameter_ = 1;
-      } else
       if (lattice_ == UnitCell<2>::Hexagonal) {
          nParameter_ = 1;
       } else
       if (lattice_ == UnitCell<2>::Rectangular) {
+         nParameter_ = 2;
+      } else
+      if (lattice_ == UnitCell<2>::Rhombic) {
          nParameter_ = 2;
       } else
       if (lattice_ == UnitCell<2>::Oblique) {
@@ -90,6 +90,62 @@ namespace Pscf
          kBasis_[0][1] = twoPi/(rt3*a);
          kBasis_[1][0] = 0.0;
          kBasis_[1][1] = twoPi/(0.5*rt3*a);
+      } else 
+      if (lattice_ == UnitCell<2>::Rhombic) {
+         UTIL_CHECK(nParameter_ == 2);
+         double a = parameters_[0];
+         double gamma = parameters_[1];
+         // gamma is the angle between the two Bravais basis vectors
+
+         double cg = cos(gamma);
+         double sg = sin(gamma);
+
+         
+         rBasis_[0][0] = a;
+         rBasis_[0][1] = 0.0;
+         rBasis_[1][0] = cg*a;
+         rBasis_[1][1] = sg*a;
+
+         drBasis_[0](0, 0) = 1.0;
+         drBasis_[0](0, 1) = 0.0;
+         drBasis_[0](1, 0) = cg;
+         drBasis_[0](1, 1) = sg;
+         drBasis_[1](1, 0) = -sg*a;
+         drBasis_[1](1, 1) =  cg*a;
+
+         kBasis_[0][0] = twoPi/a;
+         kBasis_[0][1] = -twoPi*cg/(sg*a);
+         kBasis_[1][0] = 0.0;
+         kBasis_[1][1] = twoPi/(a*sg);
+
+      } else 
+      if (lattice_ == UnitCell<2>::Oblique) {
+         UTIL_CHECK(nParameter_ == 3);
+         double a = parameters_[0];
+         double b = parameters_[1];
+         double gamma = parameters_[2];
+         // gamma is the angle between the two Bravais basis vectors
+
+         double cg = cos(gamma);
+         double sg = sin(gamma);
+         
+         rBasis_[0][0] = a;
+         rBasis_[0][1] = 0.0;
+         rBasis_[1][0] = cg*b;
+         rBasis_[1][1] = sg*b;
+
+         drBasis_[0](0, 0) = 1.0;
+         drBasis_[0](0, 1) = 0.0;
+         drBasis_[1](1, 0) = cg;
+         drBasis_[1](1, 1) = sg;
+         drBasis_[1](1, 0) = -sg*b;
+         drBasis_[1](1, 1) =  cg*b;
+
+         kBasis_[0][0] = twoPi/a;
+         kBasis_[0][1] = -twoPi*cg/(sg*a);
+         kBasis_[1][0] = 0.0;
+         kBasis_[1][1] = twoPi/(b*sg);
+
       } else {
          UTIL_THROW("Unimplemented 2D lattice type");
       }

@@ -133,8 +133,6 @@ public:
 
    }
 
-
-
    void test2DSquare() 
    {
       printMethod(TEST_FUNC);
@@ -208,7 +206,7 @@ public:
 
       UnitCell<2> v;
       std::ifstream in;
-      openInputFile("in/Hexagonal", in);
+      openInputFile("in/Hexagonal2D", in);
 
       in >> v;
       TEST_ASSERT(v.nParameter() == 1);
@@ -250,6 +248,108 @@ public:
       TEST_ASSERT(u.lattice() == v.lattice());
       TEST_ASSERT(u.nParameter() == v.nParameter());
       TEST_ASSERT(u.nParameter() == 1);
+      for (int i = 0; i < u.nParameter(); ++i) {
+         TEST_ASSERT(eq(u.parameter(i), v.parameter(i)));
+      }
+      int i, j;
+      for (i = 0; i < 2; ++i) {
+         for (j = 0; j < 2; ++j) {
+            TEST_ASSERT(eq(u.rBasis(i)[j], v.rBasis(i)[j]));
+            TEST_ASSERT(eq(u.kBasis(i)[j], v.kBasis(i)[j]));
+            TEST_ASSERT(eq(u.drBasis(0, i, j), v.drBasis(0, i, j)));
+            TEST_ASSERT(eq(u.dkBasis(0, i, j), v.dkBasis(0, i, j)));
+         }
+      }
+      TEST_ASSERT(isValidReciprocal(u));
+      TEST_ASSERT(isValidDerivative(u));
+
+   }
+
+   void test2DRectangular() 
+   {
+      printMethod(TEST_FUNC);
+      // printEndl();
+
+      UnitCell<2> v;
+      std::ifstream in;
+      openInputFile("in/Rectangular", in);
+
+      in >> v;
+      TEST_ASSERT(v.nParameter() == 2);
+      TEST_ASSERT(isValidReciprocal(v));
+      TEST_ASSERT(isValidDerivative(v));
+
+      // Test assignment
+      UnitCell<2> u;
+      u = v;
+      TEST_ASSERT(u.lattice() == v.lattice());
+      TEST_ASSERT(u.nParameter() == v.nParameter());
+      TEST_ASSERT(u.nParameter() == 2);
+      for (int i = 0; i < u.nParameter(); ++i) {
+         TEST_ASSERT(eq(u.parameter(i), v.parameter(i)));
+      }
+      TEST_ASSERT(isValidReciprocal(u));
+      TEST_ASSERT(isValidDerivative(u));
+
+   }
+
+   void test2DRhombic() 
+   {
+      printMethod(TEST_FUNC);
+      printEndl();
+
+      UnitCell<2> v;
+      std::ifstream in;
+      openInputFile("in/Rhombic", in);
+
+      in >> v;
+      TEST_ASSERT(v.nParameter() == 2);
+      TEST_ASSERT(isValidReciprocal(v));
+      TEST_ASSERT(isValidDerivative(v));
+
+      // Test assignment
+      UnitCell<2> u;
+      u = v;
+      TEST_ASSERT(u.lattice() == v.lattice());
+      TEST_ASSERT(u.nParameter() == v.nParameter());
+      TEST_ASSERT(u.nParameter() == 2);
+      for (int i = 0; i < u.nParameter(); ++i) {
+         TEST_ASSERT(eq(u.parameter(i), v.parameter(i)));
+      }
+      int i, j;
+      for (i = 0; i < 2; ++i) {
+         for (j = 0; j < 2; ++j) {
+            TEST_ASSERT(eq(u.rBasis(i)[j], v.rBasis(i)[j]));
+            TEST_ASSERT(eq(u.kBasis(i)[j], v.kBasis(i)[j]));
+            TEST_ASSERT(eq(u.drBasis(0, i, j), v.drBasis(0, i, j)));
+            TEST_ASSERT(eq(u.dkBasis(0, i, j), v.dkBasis(0, i, j)));
+         }
+      }
+      TEST_ASSERT(isValidReciprocal(u));
+      TEST_ASSERT(isValidDerivative(u));
+
+   }
+
+   void test2DOblique() 
+   {
+      printMethod(TEST_FUNC);
+      printEndl();
+
+      UnitCell<2> v;
+      std::ifstream in;
+      openInputFile("in/Oblique", in);
+
+      in >> v;
+      TEST_ASSERT(v.nParameter() == 3);
+      TEST_ASSERT(isValidReciprocal(v));
+      TEST_ASSERT(isValidDerivative(v));
+
+      // Test assignment
+      UnitCell<2> u;
+      u = v;
+      TEST_ASSERT(u.lattice() == v.lattice());
+      TEST_ASSERT(u.nParameter() == v.nParameter());
+      TEST_ASSERT(u.nParameter() == 3);
       for (int i = 0; i < u.nParameter(); ++i) {
          TEST_ASSERT(eq(u.parameter(i), v.parameter(i)));
       }
@@ -357,6 +457,45 @@ public:
 
    }
 
+   void test3DTetragonal() 
+   {
+      printMethod(TEST_FUNC);
+      // printEndl();
+
+      UnitCell<3> v;
+      std::ifstream in;
+      openInputFile("in/Tetragonal", in);
+      in >> v;
+
+      TEST_ASSERT(v.nParameter() == 2);
+      TEST_ASSERT(isValidReciprocal(v));
+      TEST_ASSERT(isValidDerivative(v));
+
+      // Test assignment
+      UnitCell<3> u;
+      u = v;
+      TEST_ASSERT(u.lattice() == v.lattice());
+      TEST_ASSERT(u.nParameter() == v.nParameter());
+      TEST_ASSERT(u.nParameter() == 2);
+      for (int i = 0; i < u.nParameter(); ++i) {
+         TEST_ASSERT(eq(u.parameter(i), v.parameter(i)));
+      }
+      int i, j, k;
+      for (i = 0; i < 3; ++i) {
+         for (j = 0; j < 3; ++j) {
+            TEST_ASSERT(eq(u.rBasis(i)[j], v.rBasis(i)[j]));
+            TEST_ASSERT(eq(u.kBasis(i)[j], v.kBasis(i)[j]));
+            for (k = 0; k < 3; ++k) {
+               TEST_ASSERT(eq(u.drBasis(k,i,j), v.drBasis(k, i, j)));
+               TEST_ASSERT(eq(u.dkBasis(k,i,j), v.dkBasis(k, i, j)));
+            }
+         }
+      }
+      TEST_ASSERT(isValidReciprocal(u));
+      TEST_ASSERT(isValidDerivative(u));
+
+   }
+
    void test3DOrthorhombic() 
    {
       printMethod(TEST_FUNC);
@@ -435,6 +574,51 @@ public:
       TEST_ASSERT(isValidDerivative(u));
 
    }
+
+
+   void test3DHexagonal() 
+   {
+      printMethod(TEST_FUNC);
+      // printEndl();
+
+      UnitCell<3> v;
+      std::ifstream in;
+      openInputFile("in/Hexagonal3D", in);
+      in >> v;
+
+      TEST_ASSERT(v.nParameter() == 2);
+
+      bool isReciprocal = isValidReciprocal(v);          // Quiet test
+      //bool isReciprocal = isValidReciprocal(v, true);  // Verbose test
+      TEST_ASSERT(isReciprocal);
+
+      TEST_ASSERT(isValidDerivative(v));
+
+      // Test assignment
+      UnitCell<3> u;
+      u = v;
+      TEST_ASSERT(u.lattice() == v.lattice());
+      TEST_ASSERT(u.nParameter() == v.nParameter());
+      TEST_ASSERT(u.nParameter() == 2);
+      for (int i = 0; i < u.nParameter(); ++i) {
+         TEST_ASSERT(eq(u.parameter(i), v.parameter(i)));
+      }
+      int i, j, k;
+      for (i = 0; i < 3; ++i) {
+         for (j = 0; j < 3; ++j) {
+            TEST_ASSERT(eq(u.rBasis(i)[j], v.rBasis(i)[j]));
+            TEST_ASSERT(eq(u.kBasis(i)[j], v.kBasis(i)[j]));
+            for (k = 0; k < 3; ++k) {
+               TEST_ASSERT(eq(u.drBasis(k,i,j), v.drBasis(k, i, j)));
+               TEST_ASSERT(eq(u.dkBasis(k,i,j), v.dkBasis(k, i, j)));
+            }
+         }
+      }
+      TEST_ASSERT(isValidReciprocal(u));
+      TEST_ASSERT(isValidDerivative(u));
+
+   }
+
 
    void test3DRhombohedral() 
    {
@@ -592,8 +776,13 @@ TEST_BEGIN(UnitCellTest)
 TEST_ADD(UnitCellTest, test1DLamellar)
 TEST_ADD(UnitCellTest, test2DSquare)
 TEST_ADD(UnitCellTest, test2DHexagonal)
+TEST_ADD(UnitCellTest, test2DRectangular)
+TEST_ADD(UnitCellTest, test2DRhombic)
+TEST_ADD(UnitCellTest, test2DOblique)
 TEST_ADD(UnitCellTest, test3DCubic)
+TEST_ADD(UnitCellTest, test3DTetragonal)
 TEST_ADD(UnitCellTest, test3DOrthorhombic)
+TEST_ADD(UnitCellTest, test3DHexagonal)
 TEST_ADD(UnitCellTest, test3DRhombohedral)
 TEST_ADD(UnitCellTest, test3DMonoclinic)
 TEST_ADD(UnitCellTest, test3DTriclinic)
