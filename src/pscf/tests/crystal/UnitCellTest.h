@@ -436,6 +436,70 @@ public:
 
    }
 
+   void test3DRhombohedral() 
+   {
+      printMethod(TEST_FUNC);
+      // printEndl();
+
+      UnitCell<3> v;
+      std::ifstream in;
+      openInputFile("in/Rhombohedral", in);
+      in >> v;
+
+      TEST_ASSERT(v.nParameter() == 2);
+
+      // Check rBasis, and interpretation of parameter a and beta
+      double a = v.parameter(0);
+      double beta = v.parameter(1);
+      double sum00 = 0.0;
+      double sum11 = 0.0;
+      double sum22 = 0.0;
+      double sum01 = 0.0;
+      double sum12 = 0.0;
+      for (int i=0; i < 3; ++i) {
+          sum00 += v.rBasis(0)[i]*v.rBasis(0)[i];
+          sum11 += v.rBasis(1)[i]*v.rBasis(1)[i];
+          sum22 += v.rBasis(2)[i]*v.rBasis(2)[i];
+          sum01 += v.rBasis(0)[i]*v.rBasis(1)[i];
+          sum12 += v.rBasis(1)[i]*v.rBasis(2)[i];
+      }
+      TEST_ASSERT(eq(sum00, a*a));
+      TEST_ASSERT(eq(sum11, a*a));
+      TEST_ASSERT(eq(sum22, a*a));
+      TEST_ASSERT(eq(sum01, a*a*cos(beta)));
+      TEST_ASSERT(eq(sum12, a*a*cos(beta)));
+
+      bool isReciprocal = isValidReciprocal(v);          // Quiet test
+      //bool isReciprocal = isValidReciprocal(v, true);  // Verbose test
+      TEST_ASSERT(isReciprocal);
+
+      TEST_ASSERT(isValidDerivative(v));
+
+      // Test assignment
+      UnitCell<3> u;
+      u = v;
+      TEST_ASSERT(u.lattice() == v.lattice());
+      TEST_ASSERT(u.nParameter() == v.nParameter());
+      TEST_ASSERT(u.nParameter() == 2);
+      for (int i = 0; i < u.nParameter(); ++i) {
+         TEST_ASSERT(eq(u.parameter(i), v.parameter(i)));
+      }
+      int i, j, k;
+      for (i = 0; i < 3; ++i) {
+         for (j = 0; j < 3; ++j) {
+            TEST_ASSERT(eq(u.rBasis(i)[j], v.rBasis(i)[j]));
+            TEST_ASSERT(eq(u.kBasis(i)[j], v.kBasis(i)[j]));
+            for (k = 0; k < 3; ++k) {
+               TEST_ASSERT(eq(u.drBasis(k,i,j), v.drBasis(k, i, j)));
+               TEST_ASSERT(eq(u.dkBasis(k,i,j), v.dkBasis(k, i, j)));
+            }
+         }
+      }
+      TEST_ASSERT(isValidReciprocal(u));
+      TEST_ASSERT(isValidDerivative(u));
+
+   }
+
    void test3DMonoclinic() 
    {
       printMethod(TEST_FUNC);
@@ -530,6 +594,7 @@ TEST_ADD(UnitCellTest, test2DSquare)
 TEST_ADD(UnitCellTest, test2DHexagonal)
 TEST_ADD(UnitCellTest, test3DCubic)
 TEST_ADD(UnitCellTest, test3DOrthorhombic)
+TEST_ADD(UnitCellTest, test3DRhombohedral)
 TEST_ADD(UnitCellTest, test3DMonoclinic)
 TEST_ADD(UnitCellTest, test3DTriclinic)
 TEST_END(UnitCellTest)

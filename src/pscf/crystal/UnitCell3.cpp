@@ -121,6 +121,96 @@ namespace Pscf
          kBasis_[2][2] = twoPi/(c);
 
       } else 
+      if (lattice_ == UnitCell<3>::Rhombohedral) {
+         UTIL_CHECK(nParameter_ == 2);
+
+         // Set parameters
+         double a, beta, theta;
+         a = parameters_[0];    // magnitude of Bravais basis vectors
+         beta = parameters_[1]; // angle between basis vectors
+         theta = acos( sqrt( (2.0*cos(beta) + 1.0)/3.0 ) );
+         // theta is the angle of all basis vectors from the z axis
+
+         /*
+         * Bravais lattice vectora a_i with i=0, 1, or 2 have form:
+         *
+         *    a_i = a * (z * cos(theta) + u_i * sin(theta) )
+         * 
+         * where z denotes a unit vector parallel to the z axis, and 
+         * the u_i are three unit vectors in the x-y separated by 
+         * angles of 2 pi /3  (or 120 degrees), for which u_0 is
+         * parallel to the x axis. Note that u_i . u_j = -1/2 for any
+         * i not equal to j.
+         * 
+         * The angle between any two such Bravais basis vectors is easily
+         * computed from the dot product, a_i . a_j for unequal i and j.
+         * This gives:
+         * 
+         *    cos beta = cos^2(theta) - 0.5 sin^2 (theta)
+         *             = (3cos^{2}(theta) - 1)/2
+         *
+         * The angle theta is computed above by solving this equation
+         * for theta as a function of the input parameter beta.
+         *
+         * The corresponding reciprocal lattice vectors have the form
+         *
+         *   b_i = (2*pi/3*a)( z/cos(theta) + 2 * u_i / sin(theta) )
+         *
+         * It is straightforward to confirm that these reciprocal
+         * vectors satisfy the condition a_i . b_j = 2 pi delta_{ij}
+         */
+
+         // Trig function values
+         double cosT = cos(theta);
+         double sinT = sin(theta);
+         double sqrt3 = sqrt(3.0);
+         double sinPi3 = 0.5*sqrt3;
+         double cosPi3 = 0.5;
+
+         // Bravais basis vectors
+         rBasis_[0][0] = sinT * a;
+         rBasis_[0][2] = cosT * a;
+         rBasis_[1][0] = -cosPi3 * sinT * a;
+         rBasis_[1][1] = sinPi3 * sinT * a;
+         rBasis_[1][2] = cosT * a;
+         rBasis_[2][0] = -cosPi3 * sinT * a;
+         rBasis_[2][1] = -sinPi3 * sinT * a;
+         rBasis_[2][2] = cosT * a;
+
+         // Reciprocal lattice basis vectors 
+         kBasis_[0][0] = 2.0 * twoPi /( 3.0 * sinT * a);
+         kBasis_[0][2] = twoPi /( 3.0 * cosT * a);
+         kBasis_[1][0] = -2.0 * cosPi3 * twoPi /( 3.0 * sinT * a);
+         kBasis_[1][1] =  2.0 * sinPi3 * twoPi /( 3.0 * sinT * a);
+         kBasis_[1][2] = twoPi /( 3.0 * cosT * a);
+         kBasis_[2][0] = -2.0 * cosPi3 * twoPi /( 3.0 * sinT * a);
+         kBasis_[2][1] = -2.0 * sinPi3 * twoPi /( 3.0 * sinT * a);
+         kBasis_[2][2] = twoPi /( 3.0 * cosT * a);
+
+         // Derivatives with respect to length a
+         drBasis_[0](0,0) = sinT;
+         drBasis_[0](0,2) = cosT;
+         drBasis_[0](1,0) = -cosPi3 * sinT;
+         drBasis_[0](1,1) = sinPi3 * sinT;
+         drBasis_[0](1,2) = cosT;
+         drBasis_[0](2,0) = -cosPi3 * sinT;
+         drBasis_[0](2,1) = -sinPi3* sinT;
+         drBasis_[0](2,2) = cosT;
+
+         // Define alpha = d(theta)/d(beta)
+         double alpha = -sin(beta)/(3.0*cosT*sinT);
+
+         // Derivatives with respect to beta
+         drBasis_[1](0,0) = cosT * alpha * a;
+         drBasis_[1](0,2) = -sinT * alpha * a;
+         drBasis_[1](1,0) = -cosPi3 * cosT * alpha * a;
+         drBasis_[1](1,1) = sinPi3 * cosT * alpha * a;
+         drBasis_[1](1,2) = -sinT * alpha * a;
+         drBasis_[1](2,0) = -cosPi3 * cosT * alpha * a;
+         drBasis_[1](2,1) = -sinPi3* cosT * alpha * a;
+         drBasis_[1](2,2) = -sinT * alpha * a;
+      
+      } else 
       if (lattice_ == UnitCell<3>::Monoclinic) {
          UTIL_CHECK(nParameter_ == 4);
 
