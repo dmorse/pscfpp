@@ -1,7 +1,7 @@
 /*! \page user_field_page 3.5 Field Files
 
  \ref user_example_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_groups_page   (Next) 
+ \ref user_unitcell_page   (Next) 
 <BR>
 
 Each PSCF program can read and write files that contain chemical potential
@@ -28,5 +28,5 @@ Different field file formats are described in the pages linked below.
  <BR>
  \ref user_example_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref user_page          (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_groups_page   (Next) 
+ \ref user_unitcell_page   (Next) 
 */

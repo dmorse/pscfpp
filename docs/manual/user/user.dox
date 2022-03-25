@@ -12,6 +12,7 @@
    <li> \subpage user_command_page </li>
    <li> \subpage user_example_page </li>
    <li> \subpage user_field_page   </li>
+   <li> \subpage user_unitcell_page  </li>
    <li> \subpage user_groups_page  </li>
    </ul>
 

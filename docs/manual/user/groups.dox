@@ -1,6 +1,6 @@
-/*! \page user_groups_page 3.6 Space Groups
+/*! \page user_groups_page 3.7 Space Groups
 
- \ref user_field_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref user_unitcell_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref developer_page   (Next) 
 <BR>
 
@@ -344,7 +344,7 @@ Group identifiers:
 </ul>
 
 <BR>
- \ref user_field_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref user_unitcell_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref user_page          (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref developer_page   (Next) 
 */
