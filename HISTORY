@@ -2,14 +2,25 @@
 = Pscf++ History  =
 ===================
 
-The following namespace names are used below to label changes that effect only 
-particular programs or sets of programs, each of which is defined in the specifiec 
-namespace:
+The following namespace names are used below to indicate which corresponding program 
+or sets of programs are affected by specific changes.
 
    Pspc - CPU pseudo-spectral code for periodic structures
    Pspg - GPU pseudo-spectral code for periodic structures
    Fd1d - Finite element code for one-dimension (1D) problems
 
+
+Progress towards Pscf++ v0.9
+============================
+
+User-visible changes
+--------------------
+- Implementation of all crystal unit cell types (triclinic, etc) (Pspc, Pspg)
+
+Documentation
+--------------
+- Documentation of unit cell data format and space groups (Pspc, Pspg)
+- Improved documentation of parameter file formats (all programs)
 
 Pscf++ v0.8 
 ===========
