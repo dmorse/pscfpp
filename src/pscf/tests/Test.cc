@@ -27,6 +27,7 @@ using namespace Util;
 int main(int argc, char* argv[])
 {
 
+   Parameter::setBracketPolicy(Parameter::Optional);
    try {
    
       PscfNsTestComposite runner;

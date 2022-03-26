@@ -72,6 +72,7 @@ namespace Pspc
       // hasIterator_(true)
    {  
       setClassName("System"); 
+      Parameter::setBracketPolicy(Parameter::Optional);
       domain_.setFileMaster(fileMaster_);
       interactionPtr_ = new ChiInteraction(); 
       iteratorFactoryPtr_ = new IteratorFactory<D>(*this); 
