@@ -21,6 +21,7 @@
 #include <util/format/Str.h>
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
+#include <util/param/BracketPolicy.h>
 
 #include <string>
 #include <unistd.h>
@@ -59,6 +60,8 @@ namespace Fd1d
       interactionPtr_ = new ChiInteraction(); 
       iteratorPtr_ = new NrIterator(*this); 
       sweepFactoryPtr_ = new SweepFactory(*this);
+
+      BracketPolicy::set(BracketPolicy::Optional);
    }
 
    /*

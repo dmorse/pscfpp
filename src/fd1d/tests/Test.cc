@@ -3,6 +3,8 @@
 */ 
 
 #include <util/global.h>
+#include <util/param/BracketPolicy.h>
+
 #include "Fd1dTestComposite.h"
 
 #include <test/CompositeTestRunner.h>
@@ -12,6 +14,9 @@ using namespace Util;
 
 int main(int argc, char* argv[])
 {
+
+   BracketPolicy::set(BracketPolicy::Optional);
+
    try {
 
       Fd1dTestComposite runner;
