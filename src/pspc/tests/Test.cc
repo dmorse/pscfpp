@@ -8,6 +8,7 @@
 #include "solvers/SolverTestComposite.h"
 #include "system/SystemTest.h"
 #include "sweep/SweepTestComposite.h"
+#include <util/param/BracketPolicy.h>
 #include <util/global.h>
 
 TEST_COMPOSITE_BEGIN(PspcNsTestComposite)
@@ -23,7 +24,7 @@ using namespace Util;
 int main(int argc, char* argv[])
 {
 
-   Parameter::setBracketPolicy(Parameter::Optional);
+   BracketPolicy::set(BracketPolicy::Optional);
 
    try {
 

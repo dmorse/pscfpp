@@ -28,6 +28,7 @@
 #include <pspc/field/BFieldComparison.h>
 #include <pspc/field/RFieldComparison.h>
 
+#include <util/param/BracketPolicy.h>
 #include <util/format/Str.h>
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
@@ -72,11 +73,11 @@ namespace Pspc
       // hasIterator_(true)
    {  
       setClassName("System"); 
-      Parameter::setBracketPolicy(Parameter::Optional);
       domain_.setFileMaster(fileMaster_);
       interactionPtr_ = new ChiInteraction(); 
       iteratorFactoryPtr_ = new IteratorFactory<D>(*this); 
       sweepFactoryPtr_ = new SweepFactory<D>(*this);
+      BracketPolicy::set(BracketPolicy::Optional);
    }
 
    /*
