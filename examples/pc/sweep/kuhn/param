@@ -1,22 +1,26 @@
 System{
   Mixture{
-     nMonomer  2
-     monomers  A   1.0  
-               B   1.0 
-     nPolymer  1
-     Polymer{
-        type    linear
-        nBlock  2
-        blocks  0  0.56
-                1  0.44
-        phi     1.0
-     }
-     ds   0.01
+    nMonomer  2
+    monomers[
+              A   1.0  
+              B   1.0 
+    ]
+    nPolymer  1
+    Polymer{
+       type    linear
+       nBlock  2
+       blocks  0  0.56
+               1  0.44
+       phi     1.0
+    }
+    ds   0.01
   }
   ChiInteraction{
-    chi   0   0   0.0
+    chi(
+          0   0   0.0
           1   0   12.0
           1   1   0.0
+    )
   }
   Domain{
     unitCell Lamellar   1.3835952906
@@ -31,9 +35,11 @@ System{
   }
   hasSweep  1
   LinearSweep{
-     ns            4
-     baseFileName  out/
-     nParameter    1
-     parameters    kuhn  0 +0.80
+    ns            4
+    baseFileName  out/
+    nParameter    1
+    parameters[
+                  kuhn  0 +0.80
+    ]
   }
 }

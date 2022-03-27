@@ -11,27 +11,33 @@ An example of a parameter file for the program pscf_pc3D is shown below.
 System{
   Mixture{
     nMonomer  2
-    monomers  A   1.0  
+    monomers[
+              A   1.0  
               B   1.0 
+    ]
     nPolymer  1
     Polymer{
       type    linear
       nBlock  2
-      blocks  0  0.25
+      blocks[
+              0  0.25
               1  0.75
+      ]
       phi     1.0
     }
     ds   0.01
   }
   ChiInteraction{
-    chi   1   0   20.0
+    chi(
+          1   0   20.0
           0   0    0.0
           1   1    0.0
+    )
   }
   Domain{
-    unitCell  cubic   1.9254998725
-    mesh              32  32  32
-    groupName         I_m_-3_m
+    unitCell         cubic       1.9254998725
+    mesh             32  32  32
+    groupName        I_m_-3_m
   }
   AmIterator{
     maxItr       100
@@ -63,8 +69,7 @@ System{
   }
 }
 \endcode
-The purpose of each subblock and parameter in the main System block
-is as follows:
+The purpose of each subblock and parameter in the main System block is as follows:
 <ul>
 <li>
 Mixture: Description of molecular species and composition of the mixture. 
@@ -76,7 +81,7 @@ ChiInteraction: Values of Flory-Huggins (chi) interaction parameters
 Domain: Description of crystallographic unit cell and discretization mesh
 </li>
 <li> 
-AmIterator: Parameters required by the iterator
+AmIterator: Parameters required by the iteration algorithm
 </li>
 </ul>
 
