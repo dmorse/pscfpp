@@ -4,6 +4,15 @@
 \ref install_doc_page (Next) 
 <BR>
 
+The PSCF build system is designed to allow users to enable or disable 
+conditional compilation of some optional features during compilation.
+Thus far, the only such optional feature is the "debug" feature that
+is used to add additional run-time sanity checks (such as run-time 
+checking of array index bounds) at a slight cost in performance. The 
+system used to enable and disable this feature is, as described below, 
+is designed to be rather general, to allow later additional of other 
+optional features.
+
 \section install_configure_build_directories_section Build configuration files
 
 The directories src/ and bld/ contain similar directory structures, and 

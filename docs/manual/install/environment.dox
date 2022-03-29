@@ -26,15 +26,15 @@ Rationale:
     is used by the build system during compilation to generate information 
     about dependencies among C++ files. This directory must be added to 
     the PYTHONPATH variable in order to allow the python interpreter to
-    find this file. 
+    find this script for use during compilation.
 
 To make these changes using a bash shell, add some variant of the 
-following lines to your the .profile or .bash_profile file in your user 
+following lines to the .profile or .bash_profile file in your user 
 home directory:
 \code
 PSCFPP_DIR=${HOME}/pscfpp
 export PATH=${PATH}:/${PSCFPP_DIR}/bin
-export PYTHONPATH=${PYTHONPATH}:/${PSCFPP_DIR}/scripts/python
+export PYTHONPATH=${PYTHONPATH}:/${PSCFPP_DIR}/lib/python
 \endcode
 The value of PSCFPP_DIR should be set to the path to the pscfpp root 
 directory (i.e., the root of the directory tree created by cloning the 
@@ -42,7 +42,7 @@ pscfpp git repository).  In the above fragment, as an example, it is
 assumed that this is a subdirectory named pscfpp within the users 
 home directory. 
 
-After adding an appropriate variant of these lines to .profile or 
+After adding an appropriate variant of these lines to the .profile or
 .bash_profile, log out, log back in, and then enter "echo $PATH" and 
 "echo $PYTHONPATH" to make sure that these variables have been set 
 correctly. 
