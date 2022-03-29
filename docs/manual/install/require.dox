@@ -164,7 +164,7 @@ To also install doxygen documentation generator utility, use the command
 \code
 sudo apt install doxygen
 \endcode
-On older Debian-based systems, or as a lower level alternative, one get issue the same commands using the "apt-get" command rather than "apt". 
+On older Debian-based systems, or as a lower level alternative, one may use the "apt-get" command rather than "apt" with the same arguments.
 
 \section install_require_mac  Packages: Mac OS X 
 
@@ -187,13 +187,13 @@ To also install doxygen, issue the command
 > brew install doxygen
 \endcode
 
-Users should be aware that homebrew installs files in different places on newer Macs that use Apple silicon than on macs that used Intel cpus.
+Mac users should be aware that homebrew installs files in different locations on newer Macs that use Apple silicon than the locations used on macs that use Intel cpus:
 
 On Macs with Intel cpus, homebrew installed links to required header and library files in subdirectories of the /usr/local directory. 
 Because /usr/local is  one of the standard directories in which a unix shell normally looks for such files, pscfpp can be installed on such machines using a default configuration for the makefile system that is the same as the default used on linux machines.
 
 On Macs with Apple silicon, homebrew instead installs all files in /opt/homebrew.
-This requires users to paths to this directory and/or some of its subdirectories to the search paths used by the compiler for header and library files. 
+This requires users to add paths to this directory and/or some of its subdirectories to the search paths used by the compiler to find header and library files. 
 A compiler configuration file that modifies these search paths is provided as part of pscf, as discussed \ref install_setup_homebrewm1_sec "here".
 
 \section install_require_module Linux Software Modules 
@@ -227,14 +227,14 @@ environment by invoking
  > module load cuda
 \endcode
 before compiling PSCF. We use a version of fftw that was compiled with
-gcc version 7.2.0, rather than then most recent version, because the 
+gcc version 7.2.0, rather than the most recent version, because the 
 current version of CUDA (v10.0) isn't compatible with gcc versions with 
-primary version number greater than 7. 
+primary version numbers greater than 7. 
 
 These module load commands can be either be entered manually from the 
 command line by the user after logging in, or they can be configured to 
-be entered automatically on login by adding them to the users .bashrc 
-or .profile script.
+be entered automatically on login by adding them to the users .profile
+or .bash_profile script.
 
 <BR>
 \ref install_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

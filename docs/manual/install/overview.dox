@@ -6,9 +6,9 @@
 
 Below is a brief overview of instructions for compiling all of the PSCF
 programs using default settings. The directions given here and in
-subsequent pages assume that you have cloned the PSCF repository and
-installed all required dependencies, and that the root directory of the
-repository is named pscfpp/.
+subsequent pages assume that you have already cloned the pscfpp repository 
+and installed all required dependencies, and that the root directory of 
+the repository is named pscfpp/.
 
 Instructions:
 
@@ -26,8 +26,9 @@ Instructions:
      > ./setup
      \endcode
      to setup the build system with default compiler options. Alternatively,
-     invoke the setup script with a filename argument for non-default
-     compiler options (as discussed \ref install_setup_page "here").
+     invoke the setup script with a filename argument that is the name of a 
+     compiler configuration file that contains non-default compiler options, 
+     as discussed \ref install_setup_page "here").
 
    - **Compile all cpu programs:**
      From the pscfpp/ directory, enter
@@ -51,7 +52,7 @@ Instructions:
 The "make all-cpu" and "make pspg" commands will each also create a large
 number of intermediate object (*.o), dependency (*.d) and library (*.a)
 files in subdirectories of the pscfpp/bld directory (the default build
-directory), as well as the executables installed in pscfpp/bin.
+directory).
 
 Each of the above steps is discussed in more detail in the following pages.
 
