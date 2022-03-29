@@ -19,42 +19,58 @@ book as a tutorial and reference.
 \section compile_getcode_section Cloning the repository
 
 To obtain a working copy of the pscfpp git repository, you should first
-change directory (cd) to the directory you want to contain the pscfpp
-root directory. From there, then enter the command
+change directory (cd) to the directory you would like to contain a newly
+created pscfpp directory. From there, then enter the command
 \code
 > git clone --recursive https://github.com/dmorse/pscfpp.git
 \endcode
-This should create a complete working copy of the PSCF source code in a 
-new subdirectory named "pscfpp/" of the directory from which you invoked 
-the above command. See the discussion of the reason for use of the 
+This should create a complete copy of the PSCF source code in a new 
+subdirectory named "pscfpp/" of the working directory from which you 
+invoked this command. See the discussion of the reason for use of the 
 "--recursive" option \ref compile_submodules_section "below". 
 
-The above instructions are for users who simply want to get a copy of 
-PSCF their own use, but who are not (or not yet) interested in contributing
-to its development. Users that want to be able to contribute to the project 
-or share their extensions or improvements of PSCF with others should go 
-through a slightly more complicated procedure. Such user/developers should 
-instead:
+The above instructions are intended for users who simply want to get a 
+copy of PSCF their own use, but who are not (or not yet) interested in 
+contributing to its development. Users that want to be able to contribute 
+to the project or share their extensions or improvements of PSCF with 
+others should go through a slightly more complicated procedure. Such 
+user/developers should instead:
 <ul>
-<li> Create a user account on github.com, if they do not already have one.</li>
-<li> Create a fork (i.e., a personal version) of the pscfpp repository in 
-their github user account</li>
-<li> Clone their personal fork of the pscfpp repository to a computer on 
-which they can compile and edit the code, using the --recursive option as 
-described above. 
+<li> 
+  Create a user account on github.com, if they do not already have one.
+</li>
+<li> 
+  Create a fork (i.e., a personal version) of the pscfpp repository in 
+  their github user account</li>
+<li> 
+  Clone their personal fork of the pscfpp repository to a computer on 
+  which they can compile and edit the code, using the --recursive option 
+  as described above. 
 </li>
 </ul>
-The URL for pscfpp used in the command to clone user's github fork to a
-local computer should use the https (prefix https://github.com/) or ssh 
-(prefix git@github.com: ) communication protocol in order to allow the 
-user write access to their personal fork of pscfpp on github.  The https 
-protocol does not require any initial set up, but requires password 
-authentication every time a user pushes locally committed changes to 
-github. The ssh protocol instead uses public-key authentication. This 
-takes a bit longer to set up, but does not require password authentication 
-for every push command once it is enabled. See the github documentation on
+The URL for dmorse/pscfpp used in the command to clone user's github 
+fork to a local computer may use a prefix that selects either the https 
+(prefix https://github.com/) or ssh (prefix git@github.com: ) communication 
+protocol. Cloning with either of these protocols creates a connection with
+the github server that will allow the user write access to their personal 
+fork of pscfpp on github.  The https protocol was used in the above 
+instructions for general users who clone the main pscfpp directory 
+directly, in which the repository URL starts with "https://github.com/..." 
+The command to use ssh to clone a fork of pscfpp created by a user with 
+a github username JaneDoe would generally look like
+\code
+> git clone --recursive git@github.com:JaneDoe/pscfpp.git
+\endcode
+The https protocol does not require any initial set up, but requires 
+password authentication every time a user pushes locally committed 
+changes to github. The ssh protocol instead uses public-key 
+authentication, which requires the user to add a public key to their
+github account that identifies their local computer.  This takes a few
+minutes to set up, but thereafter avoids the need to use password 
+authentication for every push command. See the github documentation on 
 <a href="https://docs.github.com/en/authentication"> authentication </a>
-for further details about both authentication methods.
+for further details about how to set up public keys for use with ssh, 
+among other issues related to github account security.
 
 
 Herefafter, we assume that the root directory of the pscfpp working copy 

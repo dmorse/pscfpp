@@ -26,16 +26,16 @@ is the main configuration file for a standard out-of-source build, in
 which intermediate files are created in the bld/ directory tree. The 
 brief overview of directions for compilation given on a previous page 
 give contain instructions for an out-of-source build, which we recommend 
-for most users who are not working on modifications of the source code.  
-The copy in the pscfpp/src directory is the main configuration file 
-for an in-source build, which is a useful alternative for compilation 
+for most users who are not working on modifications of the source 
+code.  The copy in the pscfpp/src directory is the main configuration 
+file for an in-source build, which is a convenient alternative for use
 during development.
 
 \section install_setup_default_sec Default configuration 
 
 To create a default configuration appropriate for a generic unix-like 
-environment, change directory (cd) to the pscfpp/ root directory,
-and then enter:
+environment, change directory (cd) to the pscfpp/ root directory, and 
+then enter:
 \code
 > ./setup
 \endcode
@@ -44,23 +44,23 @@ must be included to tell the unix shell to look for a script named setup
 in the current working directory, rather than searching the directories 
 listed in the PATH environment variable for a command with this name.
 
-The default configuration should work for either linux or for Macs with 
-Intel CPUs in which homebrew was used to install GSL and FFTW. The 
-definitions used in a default configuration are defined in a file
+The default configuration should work for either linux or for a Mac with 
+an Intel CPU in which homebrew was used to install GSL and FFTW. The 
+definitions used in the default configuration are defined in a file
 pscfpp/make/compiler/default. 
 
 \section install_setup_homebrewm1_sec Macs with Homebrew and Apple Silicon
 
 To create an environment that should work correctly for a newer Mac
-with Apple silicon (i.e., the new M1 chip) on which Homebrew has used 
-to install dependencies, enter:
+with Apple silicon (i.e., the M1 chip) on which Homebrew has used to 
+install dependencies, enter:
 \code
 > ./setup homebrew-m1
 \endcode
 This will use a compiler setup file pscfpp/make/compiler/homebrew-m1 
 that was designed for such an environment. This setup file add paths
-to appropriate subdirectories of /opt/homebrew to search paths used
-by the compiler. 
+to appropriate subdirectories of /opt/homebrew to the search paths 
+used by the compiler. 
 
 \section install_setup_local_file_sec Customized configuration
 
@@ -78,51 +78,51 @@ system in which the gnu g++ C++ compiler is used to compile C++ files,
 the nVidia nvcc compiler is used to compile CUDA files, and paths to 
 the gsl and fftw libraries are in common locations.
 
-When set "setup" script is invoked with one argument, the argument is
+When the "setup" script is invoked with one argument, that argument is
 interpreted as the name of a file in the pscfpp/make/compiler directory
 that should be used as the compiler configuration file. For example, the 
 command "./setup homebrew-m1" causes the script system to read and copy 
 the contents of the file pscfpp/make/compiler/homebrew-m1.  The command 
 "./setup", with no argument, is equivalent to "./setup default". 
 
-Users can also create their own customized compiler configuration file,
-which should be place in the same directory.  For example, suppose that 
-a user created a file named pscfpp/make/compiler/local by making a copy 
-of default file with that new name and then editiing the variable 
-definitions in that file as needed. Invoking the command
+Users can create customized compiler configuration files to adapt 
+compiler options to their own computer. For example, suppose that a 
+user created a file named pscfpp/make/compiler/local by making a copy 
+of default file with that new name and then editing the variable 
+definitions in that file. Invoking the command
 \code
 \> ./setup local
 \endcode
-would then cause the setup script to create a config.mk configuration 
-files that contain the contents of the user-created file 
-pscfpp/make/compiler/local. 
+would then cause the setup script to create config.mk configuration 
+files in the src/ and bld/ directories that both include the contents 
+of the new file make/compiler/local. 
 
-In order to understand the meanings of the variables defined in the 
-compiler setup files, we recommend that you first run the setup script 
-with no argument or an argument homebrew-m1 and then read the comments 
-in the file bld/config.mk that is created by the setup script, which 
+In order to create a customized compiler configuration file, a user
+will need to understand the meanings of some of the variables defined 
+in such files. Toward this end, we recommend that you first run the 
+setup script with no argument and then read the comments in the file 
+bld/config.mk that is created by the setup script. These comments 
 briefly explain the meaning and use of each of the makefile variables. 
-If you compare the resulting file to the file make/compiler/default or
-make/compiler/homebrew-m1, you will see that the relevant compiler 
-setup file will have simply been copied into the middle part of the 
-bld/config.mk file. 
+If you compare the resulting file to the file make/compiler/default, 
+you will see that the "default" compiler setup file will have simply 
+been copied into the middle part of the bld/config.mk file. 
 
 Users may change values of variables defined in the main configuration 
 file either by creating a customized compiler setup file in the 
 make/compiler directory before running the setup script, as described 
-above, or by simply directly editing the files bld/config.mk and/or 
+above, or by directly editing the files bld/config.mk and/or 
 src/config.mk files after running the setup script. The advantages of 
 creating a custom compiler setup file in the make/compiler 
 directory are that:
+
+   - Changes made in customized compiler setup file will be copied
+     to both src/config.mk and bld/config.mk and will thus be used 
+     in both in-source and out-of-source builds.
 
    - The files src/config.mk and bld/config.mk will be erased if you 
      invoke "make veryclean" to start over with a fresh configuration, 
      but setup files in the make/compiler directory are not erased by 
      the "veryclean" target. 
-
-   - Changes made in a customized compiler setup file will be copied
-     to both src/config.mk and bld/config.mk during setup, and can
-     thus be used in both in-source and out-of-source builds.
 
 We thus recommend that users who need to customize the main config.mk
 file do so, if possible, by creating a customized compiler setup file.

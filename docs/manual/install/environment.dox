@@ -16,14 +16,14 @@ the user should modify the following unix environment variables:
 Rationale: 
 
   - By default, executables files created by the PSCF build system
-    are installed in the pscfpp/bin directory.  The directory in
-    which these files are located must be added to the users PATH
-    variable in order to allow the unix shell to find the executable 
-    files when they are invoked by name in a command executed from
-    any other directory. 
+    are installed in the pscfpp/bin directory.  The directory that
+    contains these files must be added to the user's PATH variable 
+    in order to allow the unix shell to find these executable files 
+    when they are invoked by name in a command executed from any 
+    other directory. 
 
-  - The pscfpp/scripts/python directory contains a python script that 
-    is used by the build system during compilation to generate information 
+  - The pscfpp/lib/python directory contains a python script that is 
+    used by the build system during compilation to generate information 
     about dependencies among C++ files. This directory must be added to 
     the PYTHONPATH variable in order to allow the python interpreter to
     find this script for use during compilation.
@@ -44,8 +44,8 @@ home directory.
 
 After adding an appropriate variant of these lines to the .profile or
 .bash_profile, log out, log back in, and then enter "echo $PATH" and 
-"echo $PYTHONPATH" to make sure that these variables have been set 
-correctly. 
+"echo $PYTHONPATH" to make sure that PATH and PYTHONPATH have been 
+set correctly. 
 
 <BR>
 \ref install_overview_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

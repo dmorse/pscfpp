@@ -14,22 +14,22 @@ where <target> represents a target name such as "all-cpu" or "pspg".
 
 The make utility may be invoked from either the pscfpp/src/ or pscfpp/bld/ 
 directories, or from the pscfpp/ root directory, using a common set of
-main target names in all three cases. Invoking make from either the 
-pscfpp/ root directory or the pscfpp/bld/ directory with a target that 
-causes compilation generally initiates out-of-source compilation that 
-creates intermediate files in the pscfpp/bld/ directory tree.  Invoking 
-make from within the pscfpp/src/ directory will instead initiate an 
-in-source compilation that creates intermediate files in the src/ 
-directory, alongside the source files. Invoking make from the pscfpp/ 
-or pscfpp/bld with a target that requires compilation always has the 
-same effect. Makefile targets that create executable scft programs all 
-install the resulting executable files in the pscfpp/bin directory.
+main target names in all three cases. Invoking make from the pscfpp/ root
+with a target that causes compilation generally has the same effect as 
+invoking it from the pscfpp/bld directory with the same target, and
+initiates out-of-source compilation that creates intermediate files in 
+the pscfpp/bld/ directory tree.  Invoking make from within the pscfpp/src/ 
+directory will instead initiate an in-source compilation that creates 
+intermediate files in the src/ directory, alongside the source files. 
+Makefile targets that create executable scft programs all install the 
+resulting executable files in the pscfpp/bin directory, no matter where
+the make command is invoked from.
 
 On this page, we explain the most important makefile targets in more detail 
 than was given in the \ref install_overview_page "overview of instructions".
 The following instructions assume that you have already made the required 
-changes to environment variables and run the setup script before invoking
-make.
+changes to environment variables and run the setup script before using
+make to compile. 
 
 \section install_targets_main_sec Compilation 
 
