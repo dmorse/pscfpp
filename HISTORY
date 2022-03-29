@@ -15,15 +15,23 @@ Progress towards Pscf++ v0.9
 
 User-visible changes
 --------------------
-- Implementation of all crystal unit cell types (triclinic, etc) (Pspc, Pspg)
+- Implemented all crystal systems (triclinic, etc) (Pspc, Pspg)
 
 Documentation
 --------------
 - Documentation of unit cell data format and space groups (Pspc, Pspg)
 - Improved documentation of parameter file formats (all programs)
 
-Pscf++ v0.8 
-===========
+
+Pscf++ v0.8.1
+==============
+
+- Fixed an error in manual instructions for modifying PYTHONPATH 
+  environment variable (github issue #64)
+
+
+Pscf++ v0.8.0
+==============
 
 Released March 11, 2022
 
