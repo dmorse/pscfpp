@@ -5,12 +5,16 @@
 <BR>
 
 
-The source code for the C++/CUDA version of PSCF is hosted on the github 
-server, at <a href=http://github.com>github</a>, as project dmorse/pscfpp.  
-The source code may be obtained by using a git version control manager to 
-clone the public <a href=https://github.com/dmorse/pscfpp>git repository</a>. 
+The source code for the C++/CUDA version of PSCF is hosted on 
+ <a href=http://github.com>github.com</a>, as project dmorse/pscfpp. The
+source code may be obtained by using a git version control manager to clone
+the public <a href=https://github.com/dmorse/pscfpp>git repository</a>. 
 The following instructions assume that a "git" client has been installed 
-on your computer.
+on your computer.  The instructions given below should allow you to clone 
+the source code whether or not you have any experience with git or github. 
+If you are unfamiliar with git or need to look up some details, we heartily 
+recommend the online <a href=https://git-scm.com/book/en/v2>Pro Git</a> 
+book as a tutorial and reference. 
 
 \section compile_getcode_section Cloning the repository
 
@@ -20,23 +24,38 @@ root directory. From there, then enter the command
 \code
 > git clone --recursive https://github.com/dmorse/pscfpp.git
 \endcode
-This should create a complete working copy of the PSCF source code 
-in a new subdirectory named "pscfpp/" of the directory from which you 
-invoked the above command.
+This should create a complete working copy of the PSCF source code in a 
+new subdirectory named "pscfpp/" of the directory from which you invoked 
+the above command. See the discussion of the reason for use of the 
+"--recursive" option \ref compile_submodules_section "below". 
 
 The above instructions are for users who simply want to get a copy of 
-PSCF their own use, but who are not (or not yet) interested in sharing 
-modifications of the code with others. Users that want to be able to 
-contribute to the project or share their extensions or improvements of 
-PSCF with others should go through a slightly more complicated 
-procedure. Such users should instead:
+PSCF their own use, but who are not (or not yet) interested in contributing
+to its development. Users that want to be able to contribute to the project 
+or share their extensions or improvements of PSCF with others should go 
+through a slightly more complicated procedure. Such user/developers should 
+instead:
 <ul>
 <li> Create a user account on github.com, if they do not already have one.</li>
-<li> Create a fork (i.e., a personal version) of the pscfpp repository in their github user account</li>
-<li> Clone their copy of pscfpp to a computer on which they can compile 
-and edit the code, using the --recursive option and using a communication 
-protocol that is set up to allow them write access. </li>
+<li> Create a fork (i.e., a personal version) of the pscfpp repository in 
+their github user account</li>
+<li> Clone their personal fork of the pscfpp repository to a computer on 
+which they can compile and edit the code, using the --recursive option as 
+described above. 
+</li>
 </ul>
+The URL for pscfpp used in the command to clone user's github fork to a
+local computer should use the https (prefix https://github.com/) or ssh 
+(prefix git@github.com: ) communication protocol in order to allow the 
+user write access to their personal fork of pscfpp on github.  The https 
+protocol does not require any initial set up, but requires password 
+authentication every time a user pushes locally committed changes to 
+github. The ssh protocol instead uses public-key authentication. This 
+takes a bit longer to set up, but does not require password authentication 
+for every push command once it is enabled. See the github documentation on
+<a href="https://docs.github.com/en/authentication"> authentication </a>
+for further details about both authentication methods.
+
 
 Herefafter, we assume that the root directory of the pscfpp working copy 
 is named pscfpp/.  References to paths that do not start explicitly with 
@@ -46,15 +65,15 @@ explained \ref developer_source_page "here".
 
 \section compile_submodules_section Use of git submodules
 
-Some subdirectories of the pscfpp/src directory are maintained in 
-separate github repositories and are imported into pscfpp as git
+Some subdirectories of the pscfpp/src directory are maintained in separate 
+github repositories and are imported into the pscfpp repository as git 
 "submodules". (See chapter 7.11 of the Pro Git online book). Specifically, 
 the src/util and src/tests directories are submodules that contain clones 
 of the dmorse/util and dmorse/test repositories on github, respectively. 
 
 The use of the "--recursive" option of the git clone command given above 
 should automatically create clones of these submodules in the appropriate 
-locations within the pscfpp source directory tree, creating a complete 
+locations within the pscfpp source directory tree, thus creating a complete 
 functional copy of the source code. Cloning a copy of pscfpp without 
 using the "--recursive" option, however, would create a version of the 
 pscfpp directory tree in which the src/util and src/tests directories 

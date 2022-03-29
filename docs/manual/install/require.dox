@@ -12,7 +12,7 @@ controlled by a system of unix makefiles.
 PSCF is distributed only as source code, and must be compiled by the 
 user.  All source code that is designed to run on a conventional CPU 
 is written in ANSI 2011 C++ language standard.  Code that is written 
-for an NVIDIA graphics processing unit (GPU) is written in a CUDA.
+for an NVIDIA graphics processing unit (GPU) is written in UDA.
 
 In order to compile in Mac OS X, the computer must be configured to 
 resemble a unix command-line development environment by installing 
@@ -190,10 +190,11 @@ To also install doxygen, issue the command
 Users should be aware that homebrew installs files in different places on newer Macs that use Apple silicon than on macs that used Intel cpus.
 
 On Macs with Intel cpus, homebrew installed links to required header and library files in subdirectories of the /usr/local directory. 
-Because /usr/local is  one of the standard directories in which a unix shell normally looks for such files, pscfpp can be installed on such machines using a default configuration for makefile system that is the as the default used on linux machines.
+Because /usr/local is  one of the standard directories in which a unix shell normally looks for such files, pscfpp can be installed on such machines using a default configuration for the makefile system that is the same as the default used on linux machines.
 
 On Macs with Apple silicon, homebrew instead installs all files in /opt/homebrew.
-This requires users to add this directory to the shell command search path, and to add subdirectories of this path to the search paths used by the compiler for header and library files. 
+This requires users to paths to this directory and/or some of its subdirectories to the search paths used by the compiler for header and library files. 
+A compiler configuration file that modifies these search paths is provided as part of pscf, as discussed \ref install_setup_homebrewm1_sec "here".
 
 \section install_require_module Linux Software Modules 
 

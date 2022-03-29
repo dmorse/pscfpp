@@ -7,14 +7,13 @@
 Users must run a bash script named "setup" before attempting to compile 
 any code.  This script is located in the pscfpp/ root directory, and 
 should be executed from this directory. The setup script installs several
-files that are needed to compile simpatico but that are not created by 
+files that are needed to compile pscfpp but that are not created by 
 cloning the github repository.  Most of the files installed by this script 
-are files that the user may need to modify in order to customize or
-extend the package. These include include configuration files that a 
-user may need to modify in order to adapt the simpatico build system 
-to a particular environment or to enable optional features. It is only 
-necessary to invoke the setup script once, before the first time you 
-compile any code.
+are files that the user may need to modify in order to customize or extend 
+the package. These include include configuration files that a user may need 
+to modify in order to adapt the simpatico build system to a particular 
+environment or to enable optional features. It is only necessary to invoke 
+the setup script once, before the first time you compile any code.
 
 The most important file created by the setup script is a file named 
 config.mk that is installed the root directory of both the pscfpp/bld 
