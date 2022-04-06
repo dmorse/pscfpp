@@ -1,29 +1,35 @@
 System{
   Mixture{
      nMonomer  2
-     monomers  A   1.0  
-               B   1.0 
+     monomers[
+          A   1.0  
+          B   1.0 
+     ]
      nPolymer  2
      Polymer{
         type    linear
         nBlock  2
-        blocks  0  0.125
-                1  0.875
+        blocks[
+           0   0.125
+           1   0.875
+        ]
         phi     0.018223
      }
      Polymer{
         type    linear
         nBlock  1
-        blocks  1  1.000
+        blocks[
+           1   1.000
+        ]
         phi     0.981777
      }
      vMonomer   0.045787
      ds         0.005
   }
   ChiInteraction{
-     chi   0  1    88.5
-           0  0     0.0
-           1  1     0.0
+     chi(
+         0  1    88.5
+     )
   }
   Domain{
      mode      Spherical

@@ -1,1 +1,1 @@
-pscf_fd -p param.cs1 -c command.s1
+pscf_fd -e -p param.cs1 -c command.s1
