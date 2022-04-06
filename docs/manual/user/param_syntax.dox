@@ -26,7 +26,17 @@ System{
                 A   1.0  
                 B   1.0 
      ]
-     nPolymer   2
+     nPolymer   3
+     Polymer{
+        nBlock  2
+        blocks[
+                0   0.5
+                1   0.5
+        ]
+        phi     0.6
+     }
+     vMonomer   1.0
+     ds   0.01
      Polymer{
         type    linear
         nBlock  1
@@ -35,30 +45,10 @@ System{
         ]
         phi     0.4
      }
-     Polymer{
-        type    linear
-        nBlock  1
-        blocks[
-                1   1.0
-        ]
-        phi     0.4
-     }
-     Polymer{
-        nBlock  2
-        blocks[
-                0   0.5
-                1   0.5
-        ]
-        phi     0.2
-     }
-     vMonomer   1.0
-     ds   0.01
   }
   ChiInteraction{
      chi(
            0    1    10.0
-           0    0     0.0
-           1    1     0.0
      )
   }
   Domain{
@@ -73,42 +63,52 @@ System{
 }
 \endcode
 
-This particular example gives parameters for a calculation of a ternary 
-mixture of two hompolymers of monomer types A and B, and an AB diblock 
-copolymer in a one-dimensional planar geometry. The chemical composition 
-of the system of interest is described within the the Mixture block, which 
-begins with a line containing the string "Mixture{" and ends with a line 
-containing a vertically aligned matching closing curly bracket ("}") on 
-a line by itself. The system described here is a ternary mixture of three
-polymers comprised of two types of monomer, labelled by A and B. Each of 
-the three "Polymer" subblocks of the Mixture block specifies the data for 
-one polymer species.  The system described in this file contains 40% of 
-each of two hopolymer species (phi = 0.4) with monomers of types A and B,
-respectively, and 20% copopolymer (phi = 0.2) by volume.  All three polymer 
-species have overall chain length 1.0 in the system of units for block
-volumes used in this input file, and the diblock copolymer is symmetric 
-(each block has length 0.5). That block that begins with a line containing
-the string "ChiInteraction{" contains values for Flory-Huggins chi 
-parameters. Values for a elements of 2 x 2 symmetric matrix of chi
-parameters are given on three lines that start with the label "chi".
-The chi parameter for interaction of monomers of types 0 and 1 (or A and 
-B) has a value of 10.0, which is high enough to guarantee that homopolymers 
-will phase separate. The simulation uses a 1D planar geometry, in which 
-variation occurs only along one axis of a Cartesian coordinate system.  
-The block labelled Domain contains information about the spatial domain 
-and the number of grid points (801 grid points, including the end points).
-The block labelled NrIterator contains a parameter labelled "epsilon"
-used by a Newton-Raphson iterator to decide when the SCF equations are
-solved to within a user-specified tolerance.
+This particular example gives parameters for a calculation of a binary
+mixture of an a symmetric AB diblock copolymer with a hompolymers of type
+A in a one-dimensional planar geometry. 
 
-\section user_param_synatx_blocks_section Parameter Blocks
+The chemical composition of the system of interest is described within the the 
+Mixture block, which begins with a line containing the string "Mixture{" and ends 
+with a line containing a vertically aligned matching closing curly bracket ("}") 
+on a line by itself.  The system described here contains a mixture of two types 
+of polymers comprised of two types of monomer, labelled by A and B. Each of the 
+two "Polymer" subblocks of the Mixture block specifies the data for one polymer 
+species.  The system described in this file contains 60% of diblock copolymer
+(phi = 0.6) and and 40% homopolymer (phi= 0.4) by volume.  Both polymer species 
+have overall chain length 1.0 in the system of units for block volumes used in 
+this input file, and the diblock copolymer is symmetric (each block has length 
+0.5). 
 
-Any PSCF parameter file, including the above example, contains a series 
-of nested parameter locks that are delimited by opening and closing curly 
-braces. The syntax is thus reminiscent of that of a C program (without 
-the semicolons).  Each block begins with a capitalized label for the 
-block followed immediately by an opening curly bracket on the same line 
-and ends with a closing bracket on a line by itself, as in
+That block that begins with a line containing the string "ChiInteraction{" 
+contains values for Flory-Huggins chi parameters.  In general, chi parameters 
+for a system with C types of monomer are stored in a symmetric C x C matrix
+named "chi", in which the value of an element with indices i and j gives the 
+interaction bewteen monomers of types i and j.  Values of diagonal elements 
+(i=j) are usually taken equal to zero by convention, though such elements can 
+be assigned non-zero values if desired. A values for the only non-zero element 
+of the 2 x 2 symmetric matrix of chi parameters required for this problem is
+given as a line containing the numbers "0   1   10.0" between the line 
+containing a label "chi(" and a line containing a closing parentheses ")".  
+This line assigns the chi parameter for interaction of monomers of types 0 
+and 1 (or A and B) a value of 10.0.
+
+The simulation uses a 1D planar geometry, in which variation occurs only along 
+one axis of a Cartesian coordinate system.  The block labelled Domain contains 
+information about the spatial domain and the number of grid points (801 grid 
+points, including the end points).
+
+The block labelled NrIterator contains a parameter labelled "epsilon" used by a 
+Newton-Raphson iterator to decide when the SCF equations are solved to within 
+a user-specified tolerance.
+
+\section user_param_synatx_blocks_section Parameter File Blocks
+
+Every PSCF parameter file, including the above example, contains a series of 
+nested parameter blocks that are delimited by opening and closing curly braces. 
+The syntax is thus reminiscent of that of a C program (without semicolons).  
+Each such block begins with a capitalized label for the block followed 
+immediately by an opening curly bracket on the same line and ends with a 
+closing bracket on a line by itself, as in 
 \code
   BlockName{
      ....
@@ -117,7 +117,8 @@ and ends with a closing bracket on a line by itself, as in
 There may not be any whitespace space between the block label (e.g., 
 "BlockName", or "Mixture") and the opening curly bracket.
 
-Each such parameter block may contain a combination of the following types of elements:
+Each such parameter block may contain a combination of the following types of 
+elements:
 <ul>
    <li> 
      Nested sub-blocks. Each subblock is delimited by a label that ends in
@@ -149,52 +150,57 @@ Each such parameter block may contain a combination of the following types of el
 </ul>
 Each block within a parameter file has a fixed file format: The allowed order 
 of elements within each block of a parameter file predefined by the code that 
-reads the block. Some elements are optional, however, and may be omitted.
+reads the block. Some elements, however, are optional elements that may be 
+omitted.
 
 The name of each parameter block in such a file generally corresponds to 
 the name of a class or class template in the underlying C++ code.  The data 
-contained within such a block contains the information required to initialize 
-an object of the specified class. The code required to read the parameter 
-file block associated with an instance of a particular class is almost 
-always defined in a member function of that class named "readParameters".
-This convention makes it easy for users who are comfortable with C++ to find 
-the source code that reads a particular parameter file block if desired.
+contained within such a block generally contains the information required to 
+initialize the internal state of an object (or instance) of the specified 
+class. The code required to read the parameter file block associated with 
+an instance of a particular class is almost always defined in a member 
+function of that class named "readParameters".  This convention makes it 
+easy for users who are comfortable with C++ to find the source code that 
+reads a particular parameter file block if desired.
 
-Nesting of blocks reflects a parent-child ownership relationships among C++ 
-classes: Each subblock generally corresponds to an object that is either 
-a member of the parent object or a dynamically created object that the 
-parent object is responsible for creating and destroying.  The outermost 
-block in the above example is a "System" block, reflecting the fact that 
-main object in the underlying code for a 1D finite-difference program is 
-an instance of the class Pscf::Fd1d::System.
+Nesting of blocks reflects parent-child ownership relationships among C++ 
+objects: Each subblock generally corresponds to an object that is either a 
+member of the parent object or a dynamically created object that the parent 
+object is responsible for creating and destroying.  The outermost block in 
+the above example is a "System" block. This reflects the fact that main 
+object in the underlying code for a 1D finite-difference program is an 
+instance of the class Pscf::Fd1d::System.
 
 \section user_param_synatx_parameter_section Individual Parameters
 
-A line that sets the value for an individual parameter always begins with 
-a string that identifies the name of the parameter, followed by one or more 
-spaces, and a text representation of the value.  The name of each parameter 
-generally corresponds to a slightly modified version of the name of a 
-member variable of the relevant class, i.e., a member variable of the class 
-whose name is specfied by the name of the innermost enclosing parameter file 
-block. 
+Some lines within a parameter file assign values to individual parameters.
+Each such line begins with a string that identifies the name of the parameter, 
+followed by one or more spaces, and then a text representation of the value.  
+The name of each parameter generally corresponds to a slightly modified 
+version of the name of a member variable of the relevant parent class, i.e., 
+a member variable of the class whose name is specfied on a line that 
+contains the opening curly bracket of the innermost enclosing parameter 
+file block. 
 
 The value of each parameter that is stored in a variable of a primitive C 
-data types (e.g., an integer or floating point number) or a string is given 
-by a string with no white spaces, using a standard text representation.
+data types (e.g., an integer or floating point number) or a string is 
+given by a string with no white spaces, using a standard C text 
+representation for the relevant data type.
 
-Values of some parameters are instead stored as instances of non-primitive 
-data types, such as classes or enumerations, that are defined within the 
-pscfpp source code.  In these cases, each parameter is given on a single 
-line containing a label followed by a text representation of its value. 
-The text representation of the "value" of each such non-primitive variable 
-is, however, defined by iostream extractor (>>) and insertor (<<) operators 
-that are defined for that data type. 
+Values of some parameters are stored as instances of non-primitive data 
+types, such as classes or enumerations, that are defined within the 
+pscfpp source code.  In these cases, as for primitive data types, each 
+parameter is given on a single line containing a label followed by a text 
+representation of the value.  The text representation of the "value" of 
+each such non-primitive variable is, however, must be defined by iostream 
+extractor (>>) and insertor (<<) operators that are defined for that 
+data type. 
 
 For example, in the above file, the "type" parameter within each Polymer 
 subblock of the Mixture block is stored as an enumeration with two possible
 values, for which the text representations are the strings "linear" or 
-"branched". The value of the "type" parameter must thus be a string with
-one of these two allowed values. 
+"branched". The value of the "type" parameter must thus given in the 
+parameter file by be a string with one of these two allowed values. 
 
 \section user_param_synatx_array_section 1D Arrays of Parameters 
 
@@ -221,20 +227,21 @@ lines that each contain a row index, column index and value of a single
 element. When used for square symmetric matrices, like the chi matrix,
 this format requires that one enter either the (i,j) or (j,i) element
 but not both, and the same value is assigned to both elements when either
-is encountered in the parameter file.
+is encountered in the parameter file. In this format, elements that are
+not assigned values are set to zero by default. 
 
-An alternative format, which can be used for some general 2D arrays or matrices, 
-starts with a line that contains a label that ends with an opening square 
-bracket, and ends with a line containing a matched closing square bracket, 
-exactly as for 1D arrays. These opening and closing lines are separated by 
-lines that each contain one row of the corresponding matrix, with values 
-of elements formatted exactly as in the standard representation of a matrix 
-as an array of number that is used in matrix linear algebra. 
+An alternative format, which can be used for some general 2D arrays or 
+matrices, starts with a line that contains a label that ends with an opening 
+square bracket, and ends with a line containing a matched closing square 
+bracket, exactly as for 1D arrays. These opening and closing lines are 
+separated by lines that each contain one row of the corresponding matrix, 
+with values of elements formatted exactly as in the standard representation 
+of a matrix as an array of number that is used in matrix linear algebra. 
 
 \section user_param_syntax_optional_section Optional and Conditional Elements
 
-Each labelled element in a parameter file (i.e, each block or parameter)
-may be either required or optional. Most elements required. 
+Each labelled element in a parameter file (i.e, each block or parameter) may 
+be either required or optional. Most elements required. 
 
 The label associated with a required element must appear at the expected 
 position in a file format, or execution will halt and the program will write 
