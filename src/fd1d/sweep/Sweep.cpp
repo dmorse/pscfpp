@@ -24,16 +24,9 @@ namespace Fd1d
    // Define maximum number of stored states = order of continuation + 1
    #define FD1D_HISTORY_CAPACITY 3
 
-   Sweep::Sweep()
-    : Base(FD1D_HISTORY_CAPACITY),
-      SystemAccess(),
-      homogeneousMode_(-1),
-      comparison_(),
-      fieldIo_()
-   {  
-      setClassName("Sweep"); 
-   }
-
+   /*
+   * Constructor.
+   */
    Sweep::Sweep(System& system)
     : Base(FD1D_HISTORY_CAPACITY),
       SystemAccess(system),
@@ -44,15 +37,11 @@ namespace Fd1d
       setClassName("Sweep"); 
    }
 
+   /*
+   * Destructor.
+   */
    Sweep::~Sweep()
    {}
-
-   void Sweep::setSystem(System& system)
-   {
-      SystemAccess::setSystem(system);
-      comparison_.setSystem(system);
-      fieldIo_.setSystem(system);
-   }
 
    /*
    * Read parameters.

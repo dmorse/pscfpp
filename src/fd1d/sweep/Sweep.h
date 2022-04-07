@@ -38,14 +38,6 @@ namespace Fd1d
       typedef SweepTmpl<State>  Base;
 
       /**
-      * Default Constructor.
-      * 
-      * Objects instantiated with this constructor must also call
-      * the setSystem() function.
-      */
-      Sweep();
-
-      /**
       * Constructor.
       * 
       * \param system parent System object.
@@ -56,11 +48,6 @@ namespace Fd1d
       * Destructor.
       */
       ~Sweep();
-
-      /**
-      * Set system if created with default constructor.
-      */
-      void setSystem(System& system);
 
       /**
       * Read ns and baseFileName parameters.

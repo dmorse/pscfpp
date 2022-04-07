@@ -19,14 +19,17 @@ namespace Fd1d
 
    using namespace Util;
 
-   CompositionSweep::CompositionSweep()
-    : Sweep()
-   {  setClassName("CompositionSweep"); }
 
+   /*
+   * Constructor.
+   */
    CompositionSweep::CompositionSweep(System& system)
     : Sweep(system)
    {  setClassName("CompositionSweep"); }
 
+   /*
+   * Destructor.
+   */
    CompositionSweep::~CompositionSweep()
    {}
 

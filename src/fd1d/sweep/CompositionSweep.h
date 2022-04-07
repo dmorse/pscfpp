@@ -29,11 +29,6 @@ namespace Fd1d
    public:
 
       /**
-      * Default constructor.
-      */
-      CompositionSweep();
-
-      /**
       * Constructor.
       */
       CompositionSweep(System& system);

@@ -28,12 +28,9 @@ namespace Fd1d {
       typedef System::Field Field;
 
       /**
-      * Default constructor.
-      */
-      FieldIo();
-
-      /**
       * Constructor.
+      *
+      * \param system  reference to parent System
       */
       FieldIo(System& system);
 
@@ -122,7 +119,8 @@ namespace Fd1d {
       * \param vertexId integer id of vertex (end or junction)
       * \param filename name of output file
       */
-      void writeVertexQ(int polymerId, int vertexId, std::string const & filename);
+      void writeVertexQ(int polymerId, int vertexId, 
+                        std::string const & filename);
 
       /**
       * Interpolate an array of fields onto a new mesh.

@@ -29,12 +29,9 @@ namespace Fd1d
    public:
 
       /**
-      * Default constructor.
-      */
-      MuSweep();
-
-      /**
       * Constructor.
+      *
+      * \param system  reference to parent System
       */
       MuSweep(System& system);
 

@@ -349,32 +349,30 @@ namespace Pspc
 
             // Get two filenames for comparison
             std::string filecompare1, filecompare2;
-            DArray< DArray<double> > Bfield1, Bfield2;
             readEcho(in, filecompare1);
             readEcho(in, filecompare2);
             
-            // Store fields. Bfield1 and Bfield2 are unallocated, and thus will be
-            // allocated by the readFieldsBasis function.
+            DArray< DArray<double> > Bfield1, Bfield2;
             fieldIo().readFieldsBasis(filecompare1, Bfield1, domain_.unitCell());
             fieldIo().readFieldsBasis(filecompare2, Bfield2, domain_.unitCell());
+            // Note: Bfield1 and Bfield2 will be allocated by readFieldsBasis
 
-            // Compare and output
+            // Compare and output report
             compare(Bfield1, Bfield2);
 
          } else
          if (command == "COMPARE_RGRID") {
             // Get two filenames for comparison
             std::string filecompare1, filecompare2;
-            DArray< RField<D> > Rfield1, Rfield2;
             readEcho(in, filecompare1);
             readEcho(in, filecompare2);
             
-            // Store fields. Rfield1 and Rfield2 are unallocated, but will be
-            // allocated by the readFieldsBasis function.
+            DArray< RField<D> > Rfield1, Rfield2;
             fieldIo().readFieldsRGrid(filecompare1, Rfield1, domain_.unitCell());
             fieldIo().readFieldsRGrid(filecompare2, Rfield2, domain_.unitCell());
+            // Note: Rfield1 and Rfield2 will be allocated by readFieldsRGrid
 
-            // Compare and output
+            // Compare and output report
             compare(Rfield1, Rfield2);
 
          } else
@@ -821,12 +819,11 @@ namespace Pspc
    * Compare two fields in basis format.
    */ 
    template <int D>
-   void System<D>::compare(const DArray< DArray<double> > field1, const DArray< DArray<double> > field2)
+   void System<D>::compare(const DArray< DArray<double> > field1, 
+                           const DArray< DArray<double> > field2)
    {
       BFieldComparison comparison(1);
       comparison.compare(field1,field2);
-
-      // ADD UNIT CELL PARAMETER COMPARISON //
 
       Log::file() << "\n Basis expansion field comparison results" << std::endl;
       Log::file() << "     Maximum Absolute Difference:   " 
@@ -839,12 +836,11 @@ namespace Pspc
    * Compare two fields in coordinate grid format.
    */ 
    template <int D>
-   void System<D>::compare(const DArray< RField<D> > field1, const DArray< RField<D> > field2)
+   void System<D>::compare(const DArray< RField<D> > field1, 
+                           const DArray< RField<D> > field2)
    {
       RFieldComparison<D> comparison;
       comparison.compare(field1,field2);
-
-      // ADD UNIT CELL PARAMETER COMPARISON?? //
 
       Log::file() << "\n Real-space field comparison results" << std::endl;
       Log::file() << "     Maximum Absolute Difference:   " 
@@ -897,9 +893,12 @@ namespace Pspc
    * Write the last time slice of the propagator.
    */
    template <int D>
-   void System<D>::writePropagatorRGrid(const std::string & filename, int polymerID, int blockID) const
+   void System<D>::writePropagatorRGrid(const std::string & filename, 
+                                        int polymerID, int blockID) 
+   const
    {
-      RField<D> tailField = mixture_.polymer(polymerID).propagator(blockID, 1).tail();
+      RField<D> tailField 
+              = mixture_.polymer(polymerID).propagator(blockID, 1).tail();
       fieldIo().writeFieldRGrid(filename, tailField, unitCell());
    }
 
@@ -969,7 +968,8 @@ namespace Pspc
    * Convert fields from real-space grid to symmetry-adapted basis format.
    */
    template <int D>
-   bool System<D>::checkRGridFieldSymmetry(const std::string & inFileName) const
+   bool System<D>::checkRGridFieldSymmetry(const std::string & inFileName) 
+   const
    {
       UnitCell<D> tmpUnitCell;
       fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_, tmpUnitCell);
@@ -1057,8 +1057,7 @@ namespace Pspc
    * Set parameters of the associated unit cell.
    */
    template <int D>
-   void 
-   System<D>::setUnitCell(FSArray<double, 6> const & parameters)
+   void System<D>::setUnitCell(FSArray<double, 6> const & parameters)
    {
       UTIL_CHECK(domain_.unitCell().nParameter() == parameters.size());
       domain_.unitCell().setParameters(parameters);
