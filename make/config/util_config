@@ -20,7 +20,7 @@
 # Flag to define preprocessor macros.
 
 # The variables UTIL_MPI, UTIL_DEBUG, and UTIL_CXX11 used in this file
-# must defined (or not not defined) in the file src/config.mk. 
+# must defined (or not not defined) in the main config.mk file.
 
 # Most users will not need to modify the rest of this file. 
 #-----------------------------------------------------------------------
@@ -39,12 +39,11 @@
 # enable the addition of suffixes to file names to indicate which 
 # compile-time features are enabled. For example, uncommenting the
 # line that adds the suffix "_g" when debugging is enabled will cause
-# the make system, in the absence of other options, to create a 
-# static library named utillib_g.a rather than utillib.a in the 
-# src/util directory.
+# the make system, in the absence of other options, to create a static
+# library named utillib_g.a rather than utillib.a in the util/ directory.
 #
 # The variable UTIL_DEFS is a recursive (normal) makefile variable, and
-# may be extended using the += operator, e.g., UTIL_DEFS+=-DUTIL_ANGLE.
+# may be extended using the += operator, e.g., UTIL_DEFS+=-DUTIL_DEBUG.
 # UTIL_SUFFIX is instead a non-recursive makefile variable, which may 
 # be extended using the := operator, as UTIL_SUFFIX:=$(UTIL_SUFFIX)_g. 
 # They are defined differently because the += operator for recursive
@@ -81,7 +80,7 @@ endif
 
 #-----------------------------------------------------------------------
 # Path to the util library 
-# Note: BLD_DIR is defined in config.mk
+# Note: BLD_DIR is defined in the main config.mk in bld/ or src/
 
 util_LIBNAME=util$(UTIL_MPI_SUFFIX)$(UTIL_SUFFIX)
 util_LIB=$(BLD_DIR)/util/lib$(util_LIBNAME).a

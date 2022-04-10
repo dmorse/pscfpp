@@ -2,12 +2,13 @@
 = Pscf++ History  =
 ===================
 
-The following namespace names are used below to indicate which corresponding program 
-or sets of programs are affected by specific changes.
+The following namespace names are used below to indicate which 
+corresponding program or sets of programs are affected by specific changes.
 
    Pspc - CPU pseudo-spectral code for periodic structures
    Pspg - GPU pseudo-spectral code for periodic structures
    Fd1d - Finite element code for one-dimension (1D) problems
+   all  - all programs (Fd1d, Pspc, and Pspg)
 
 
 Progress towards Pscf++ v0.9
@@ -15,18 +16,21 @@ Progress towards Pscf++ v0.9
 
 User-visible changes
 --------------------
+- Changed default param file format for arrays and matrices (all).
+  New format uses [] brackets or parentheses as delimiters for containers.
+  The old format is still readable (i.e., backwards compatible).
 - Implemented all crystal systems (triclinic, etc) (Pspc, Pspg)
 
 Documentation
 --------------
 - Documentation of unit cell data format and space groups (Pspc, Pspg)
-- Improved documentation of parameter file formats (all programs)
+- Improved documentation of parameter file formats (all)
 
 
 Pscf++ v0.8.1
 ==============
 
-- Fixed an error in manual instructions for modifying PYTHONPATH 
+- Bugfix: Fixed an error in manual instructions for modifying PYTHONPATH 
   environment variable (github issue #64)
 
 
@@ -45,7 +49,7 @@ User-visible features
 
 User-visible changes
 --------------------
-* Modified parameter file format for monomers, blocks and polymer structure 
+* Modified parameter file format for monomers, blocks and polymers (all)
 * Added Domain{...} subblock in parameter file (Pspc and Pspg)
 * Automated calculation of number of threads and blocks in GPU code (Pspg)
 * Added make/compiler/homebrew-m1 config file for an m1 Mac using homebrew
@@ -53,27 +57,29 @@ User-visible changes
 Bug fixes
 ---------
 * Fixed treatment of non-centrosymmetric groups (Pspc)
-* Fixed calculation of monomer concentrations for mixtures (Pspc and Pspg)
+* Fixed calculation of monomer concentrations for mixtures (Pspc, Pspg)
 * Fixed various bugs in GPU code (Pspg)
 
 Developer-visible changes
 -------------------------
 * New github actions for testing of cpu code (after closure of travis site)
 * Removed cancelled stars from array storage of basis coefficients (Pspc)
-* Improved encapsulation of field data in Pspc::System
-* Created unit tests for Pspg (GPU) code
+* Improved encapsulation of field data in Pspc::System (Pspc)
+* Created unit tests for Pspg (GPU) code (Pspg)
 * Reorganization / clean-up of Cuda kernels (Pspg)
-* Class template for generic Anderson-mixing iterator algorithm (Pspc and Pspg)
+* Class template for Anderson-mixing iterator algorithms (Pspc and Pspg)
 
 Remaining known bugs
 --------------------
-* Incorrect treatment of non-centrosymmetric groups in Pspg (GPU code)
+* Incorrect treatment of non-centrosymmetric groups in Pspg (Pspg)
 
 Pscf++ 0.7
 ==========
 
 Released Nov. 11, 2021
 
-First tagged version that includes Pspg GPU code, as described in article:
-Cheong, Chawla, Morse, and Dorfman, European Physical Journal E. 43, 15 (2020).
+First tagged version that includes Pspg GPU code, as described in:
+
+Cheong, Chawla, Morse, and Dorfman, 
+European Physical Journal E. 43, 15 (2020).
 

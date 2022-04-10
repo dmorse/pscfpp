@@ -30,7 +30,7 @@ PSPC_SUFFIX:=
 
 #-----------------------------------------------------------------------
 # Path to the pspc library 
-# Note: BLD_DIR is defined in config.mk
+# Note: BLD_DIR is defined in the main config.mk
 
 pspc_LIBNAME=pspc$(PSPC_SUFFIX)$(UTIL_SUFFIX)
 pspc_LIB=$(BLD_DIR)/pspc/lib$(pspc_LIBNAME).a

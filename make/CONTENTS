@@ -1,20 +1,33 @@
 The files in this directory contain fragments of the configuration files
 that are installed by the setup script in the src/, and bld/ directories.
 
-Files in the make/config directory contain source files for the main
-config.mk configuration file and the namespace level config.mk that 
-are installed in each build directory by the setup script. 
+Files in the make/config directory contain source files and source file
+fragments for files that are installed by the pscfpp/setup script. These
+include files that contain fragments of the main config.mk configuration 
+file that are installed in the bld/ and src/ directories and copies of 
+namespace level config.mk files that are installed in the util/, pscf/,
+fd1d/, pspc/ and pspg/ namespace level subdirectories of each build
+directory. Users should generally not modify files in this directory.
 
-Each file in the make/compiler directory contains a set of makefile
-definitions that are appropriate to a particular combination of compiler, 
-mpi library, and operating system environment. The contents of one of
-these files is incorporated into the main config.mk file in each build
-directory by the setup script. The file "make/compiler/default" is used 
-if no other choice is specified.  The name of a different file in the
-make compiler directory can be passed to the setup script as a command 
-line argument. For example, one would invoke "./setup homebrew-m1" to 
-use the definitions given in a file make/compiler/homebrew-m1, which
-are for a Mac with the homebrew package manager and an apple silicon 
-cpu. Users may create new files in this directory to save more 
-specialized settings required in their own environment. 
+The make/compiler directory contains a set of compiler configuration files
+that each contain a set of makefile definitions appropriate to a particular
+combination of compiler and operating system environment. The setup script
+incorporates the contents of one of these files into the main config.mk 
+file in each build directory (i.e., in bld/ and src/). The default file 
+"make/compiler/default" is the setup script is called with no argument.
+The name of a different file in the make compiler directory can be passed 
+to the setup script as a command line argument. For example, one would 
+invoke "./setup homebrew-m1" to use the definitions given in a file 
+make/compiler/homebrew-m1, which are for a Mac with the homebrew package 
+manager and an apple silicon cpu. 
 
+Users may create new files in the make/compiler directory to save 
+specialized settings required to compile in their own environment. Such a 
+file can be created by making a copy of one of the existing files (e.g., 
+make/compiler/default or make/compiler/homebrew-m1) and then modifying 
+values of makefile variables that specify paths or compiler options. For 
+example, a user could create a file named make/compiler/local, and then 
+use during setup by invoking "./setup local" from the pscfpp/ root
+directory.  Files created by users in the make/compiler directory are
+not erased when "make clean" or "make veryclean" is invoked from the
+root pscfpp/ directory.

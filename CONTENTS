@@ -5,14 +5,14 @@ Subdirectories:
   bin/       default installation directory for executables
   bld/       build directory for out-of-source builds 
   data/      read-only data files (i.e., space group description files)
-  doc/       documentation files
-  make/      makefiles and makefile fragments installed by setup script
-  src/       C++ and CUDA source code
-  lib/       modules written in python, matlab or other languages
+  docs/      documentation files
+  make/      makefiles & makefile fragments to be installed by setup script
+  src/       C++ and CUDA source code files
+  lib/       scripts written in python, matlab or other languages
 
 Files: 
   CONTENTS  - this file
-  README    - brief intro to package
+  README.md - brief intro to package (as displayed on github page)
   setup     - executable script to setup build system prior to compilation
-  makefile  - main makefile for global clean up (not used for compilation)
+  makefile  - main makefile for out-of-source compilation and cleanup
 

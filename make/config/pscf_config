@@ -34,7 +34,7 @@ PSCF_SUFFIX:=
 
 #-----------------------------------------------------------------------
 # Path to the pscf library 
-# Note: BLD_DIR is defined in config.mk in root of bld directory
+# Note: BLD_DIR is defined in the main config.mk file in bld/ or src/
 
 pscf_LIBNAME=pscf$(PSCF_SUFFIX)$(UTIL_SUFFIX)
 pscf_LIB=$(BLD_DIR)/pscf/lib$(pscf_LIBNAME).a

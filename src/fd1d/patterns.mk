@@ -14,7 +14,7 @@
 # Local pscf-specific libraries needed in src/fd1d
 PSCF_LIBS=$(fd1d_LIB) $(pscf_LIB) $(util_LIB)
 
-# List of all libraries needed by executables in src/pscf
+# List of all libraries needed by executables in src/fd1d
 LIBS=$(PSCF_LIBS)
 
 # Add paths to Gnu scientific library (GSL)

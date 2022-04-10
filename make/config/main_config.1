@@ -1,7 +1,7 @@
 #=========================================================================
 # file: $(BLD_DIR)/config.mk
 #
-# This makefile fragment is the main configuration file for the pscfpp
+# This makefile fragment is the main configuration file for the pscf
 # build system.  A copy of this file is included by all other makefiles. 
 # This file is created and installed by the "setup" script. One copy of 
 # this file is installed in the root directory of the src/ directory
@@ -13,7 +13,7 @@
 # makefile variables:
 # 
 #  - Variables ROOT_DIR, SRC_DIR, BLD_DIR, BIN_DIR and DAT_DIR that 
-#    contain absolute paths for the simpatico root directory and some 
+#    contain absolute paths for the pscfpp/ root directory and some 
 #    of its subdirectories.
 #
 #  - A variable UTIL_DEBUG that if defined, enables compilation of
@@ -31,11 +31,11 @@
 # values of these variables should have been set by the setup script,
 # and should not need to modified by the user.
 
-# Absolute path to the root simpatico directory
+# Absolute path to the pscfpp/ root directory
 ROOT_DIR=PWD
 
 # Path to the build directory (location for intermediate generated files)
-# This should also be the directory that contains this script.
+# This should be the directory that contains this config.mk file
 BLD_DIR=$(ROOT_DIR)/=OWD
 
 # Path to the source directory (contains C++ source code files)
