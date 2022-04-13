@@ -270,6 +270,9 @@ namespace Pscf {
       /// Coefficients for use during continuation
       DArray<double> c_;
 
+      /// Whether to write real space concentration field files. 
+      bool writeRhoRgrid_;
+
       /// Maximum number of stored previous states.
       int historyCapacity_;
 
