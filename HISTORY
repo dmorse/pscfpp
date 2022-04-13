@@ -11,8 +11,15 @@ namespace:
    Fd1d - Finite element code for one-dimension (1D) problems
 
 
-Pscf++ v0.8 
-===========
+Pscf++ v0.8.1
+==============
+
+- Fixed an error in instructions for modifying PYTHONPATH environment
+  variable (github issue #64)
+
+
+Pscf++ v0.8.0
+==============
 
 Released March 11, 2022
 
