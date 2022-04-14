@@ -115,6 +115,12 @@ namespace Pscf
       */
       int nSolvent() const;
 
+      /** 
+      * Get number of total pieces in the mixture (each block is
+      * its own piece, and each solvent is its own piece).
+      */
+      int nPieces() const;
+
       //@}
 
    protected:
@@ -162,6 +168,12 @@ namespace Pscf
       */
       int nSolvent_;
 
+      /**
+      * Number of pieces in the system (each block and
+      * each solvent is its own piece).
+      */
+      int nPieces_;
+
    };
 
    // Inline member functions
@@ -177,6 +189,10 @@ namespace Pscf
    template <class TP, class TS>
    inline int MixtureTmpl<TP,TS>::nSolvent() const
    {  return nSolvent_; }
+
+   template <class TP, class TS>
+   inline int MixtureTmpl<TP,TS>::nPieces() const
+   {  return nPieces_; }
 
    template <class TP, class TS>
    inline Monomer const & MixtureTmpl<TP,TS>::monomer(int id) const
@@ -233,7 +249,8 @@ namespace Pscf
       solvents_(),
       nMonomer_(0), 
       nPolymer_(0),
-      nSolvent_(0)
+      nSolvent_(0),
+      nPieces_(0)
    {}
 
    /*
@@ -273,12 +290,14 @@ namespace Pscf
       nSolvent_ = 0;
       readOptional<int>(in, "nSolvent", nSolvent_);
 
-      // Read polymers
+      // Read polymers and compute nPieces_
+      nPieces_ = nSolvent_;
       if (nPolymer_ > 0) {
 
          polymers_.allocate(nPolymer_);
          for (int i = 0; i < nPolymer_; ++i) {
             readParamComposite(in, polymer(i));
+            nPieces_ = nPieces_ + polymer(i).nBlock();
          }
    
          // Set statistical segment lengths for all blocks

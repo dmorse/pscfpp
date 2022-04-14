@@ -262,6 +262,23 @@ namespace Pspc
       //@{
 
       /**
+      * Get array of all block/solvent concentration fields on r-space 
+      * grid.
+      *
+      * The array capacity is equal to nPieces, the number of total 
+      * blocks in the system plus nSolvents.
+      */
+      DArray<CField>& cFieldsRGridLong();
+
+      /**
+      * Get concentration field for one block/solvent on r-space grid.
+      *
+      * \param sectionId integer piece (block or solvent) index
+      */
+      CField& cFieldRGridLong(int sectionId);
+
+
+      /**
       * Get UnitCell (i.e., type and parameters) by const reference.
       */
       UnitCell<D> const & unitCell() const;
@@ -469,6 +486,14 @@ namespace Pspc
       void writeCRGrid(const std::string & filename) const;
 
       /**
+      * Write concentration fields in real space (r-grid) format, for each
+      * "piece" (block or solvent) individually rather than for each species.
+      *
+      * \param filename name of output file
+      */
+      void writeCRGridLong(const std::string & filename);
+
+      /**
       * Write last contour slice of the propagator in real space grid format.
       *
       * \param filename name of output file
@@ -634,6 +659,18 @@ namespace Pspc
       * Indexed by monomer typeId, size = nMonomer.
       */
       DArray<CField> cFieldsRGrid_;
+
+      /**
+      * Array of concentration fields for each piece (a single 
+      * block or solvent) on real space grid.
+      *
+      * The order is determined by first looping through each 
+      * Polymer object in the Mixture & looping over each Block 
+      * in the Polymer object. Then, Solvent objects in the 
+      * Mixture are looped over at the end.
+      */
+      DArray<CField> cFieldsRGridLong_;
+
 
       /**
       * Work array of field coefficients for all monomer types.
@@ -860,6 +897,17 @@ namespace Pspc
    inline typename System<D>::CField const & System<D>::cFieldRGrid(int id)
    const
    {  return cFieldsRGrid_[id]; }
+
+   // Get array of all block/solvent concentration fields on grids.
+   template <int D>
+   inline
+   DArray< typename System<D>::CField >& System<D>::cFieldsRGridLong()
+   {  return cFieldsRGridLong_; }
+
+   // Get a single block/solvent concentration field on an r-space grid.
+   template <int D>
+   inline typename System<D>::CField& System<D>::cFieldRGridLong(int id)
+   {  return cFieldsRGridLong_[id]; }
 
    // Have the w fields been set?
    template <int D>

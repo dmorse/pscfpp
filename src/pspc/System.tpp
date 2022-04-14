@@ -257,11 +257,13 @@ namespace Pspc
 
       // Allocate wFields and cFields
       int nMonomer = mixture_.nMonomer();
+      int nPieces = mixture_.nPieces();
       wFields_.allocate(nMonomer);
       wFieldsRGrid_.allocate(nMonomer);
 
       cFields_.allocate(nMonomer);
       cFieldsRGrid_.allocate(nMonomer);
+      cFieldsRGridLong_.allocate(nPieces);
       
       tmpFields_.allocate(nMonomer);
       tmpFieldsRGrid_.allocate(nMonomer);
@@ -277,6 +279,10 @@ namespace Pspc
          tmpFields_[i].allocate(basis().nBasis());
          tmpFieldsRGrid_[i].allocate(mesh().dimensions());
          tmpFieldsKGrid_[i].allocate(mesh().dimensions());
+      }
+
+      for (int i = 0; i < nPieces; ++i) {
+         cFieldsRGridLong_[i].allocate(mesh().dimensions());
       }
 
       isAllocated_ = true;
@@ -393,6 +399,10 @@ namespace Pspc
          if (command == "WRITE_C_RGRID") {
             readEcho(in, filename);
             writeCRGrid(filename);
+         } else
+         if (command == "WRITE_C_RGRID_LONG") {
+            readEcho(in, filename);
+            writeCRGridLong(filename);
          } else
          if (command == "WRITE_PROPAGATOR") {
             int polymerID, blockID;
@@ -772,6 +782,9 @@ namespace Pspc
       fieldIo().convertRGridToBasis(cFieldsRGrid_, cFields_);
       hasCFields_ = true;
 
+      // Get c fields on r-grid for each block/solvent individually
+      mixture_.createRGridLong(cFieldsRGridLong_);
+
       if (needStress) {
          mixture_.computeStress();
       }
@@ -891,6 +904,17 @@ namespace Pspc
    {
       UTIL_CHECK(hasCFields_);
       fieldIo().writeFieldsRGrid(filename, cFieldsRGrid_, unitCell());
+   }
+
+   /*
+   * Write all concentration fields in real space (r-grid) format, for each
+   * "piece" (block or solvent) individually rather than for each species.
+   */
+   template <int D>
+   void System<D>::writeCRGridLong(const std::string & filename)
+   {
+      UTIL_CHECK(hasCFields_);
+      fieldIo().writeFieldsRGrid(filename, cFieldsRGridLong_, unitCell());
    }
 
    /*
