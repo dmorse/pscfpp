@@ -227,7 +227,7 @@ namespace Pspc {
       // Open parameter file, with thermodynamic properties at end
       outFileName = baseFileName_;
       outFileName += indexString;
-      outFileName += "_dat";
+      outFileName += ".dat";
       system().fileMaster().openOutputFile(outFileName, out);
 
       // Write data file, with thermodynamic properties at end
@@ -253,6 +253,15 @@ namespace Pspc {
       outFileName += "_c";
       outFileName += ".bf";
       system().writeCBasis(outFileName);
+
+      // Write c rgrid files
+      if (writeRhoRgrid_) {
+        outFileName = baseFileName_;
+        outFileName += indexString;
+        outFileName += "_c";
+        outFileName += ".rgrid";
+        system().writeCRGrid(outFileName);
+      }
 
    }
 
