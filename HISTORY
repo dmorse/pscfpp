@@ -1,12 +1,15 @@
-===================
-= Pscf++ History  =
-===================
+============================
+= Pscf (C++/Cuda) History  =
+============================
 
-The following namespace names are used below to indicate which 
-corresponding program or sets of programs are affected by specific changes.
+This file documents changes to the C++/Cuda version of PSCF. Source code for
+this project is in the dmorse/pscfpp github repository.
 
-   Pspc - CPU pseudo-spectral code for periodic structures
-   Pspg - GPU pseudo-spectral code for periodic structures
+The following labels are used below to indicate which programs or sets of
+programs are affected by specific changes:
+
+   Pspc - Pseudo-spectral CPU code for periodic structures
+   Pspg - Pseudo-spectral GPU code for periodic structures
    Fd1d - Finite element code for one-dimension (1D) problems
    all  - all programs (Fd1d, Pspc, and Pspg)
 
@@ -16,10 +19,10 @@ Progress towards Pscf++ v0.9
 
 User-visible changes
 --------------------
-- Changed default param file format for arrays and matrices (all).
+- New default parameter file format for arrays and matrices (all).
   New format uses [] brackets or parentheses as delimiters for containers.
   The old format is still readable (i.e., backwards compatible).
-- Implemented all crystal systems (triclinic, etc) (Pspc, Pspg)
+- All crystal systems have been implemented (triclinic, etc) (Pspc, Pspg)
 
 Documentation
 --------------
