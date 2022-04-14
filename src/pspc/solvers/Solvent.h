@@ -25,6 +25,7 @@ namespace Pspc {
    /**
    * Solver and descriptor for a solvent species.
    *
+   * \ref pspc_Solvent_page "Parameter File Format"
    * \ingroup Pspc_Solver_Module
    */
    template <int D>

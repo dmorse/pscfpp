@@ -19,10 +19,8 @@ namespace Pscf {
 
    using namespace Util;
 
-   /**
+   /*
    * Generates the file name from a group name.
-   *
-   * \param groupName standard name of space group
    */
    std::string makeGroupFileName(int D, std::string groupName)
    {

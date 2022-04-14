@@ -203,7 +203,7 @@ public:
       // Read UnitCell
       UnitCell<2> unitCell;
       std::ifstream in;
-      openInputFile("in/Hexagonal", in);
+      openInputFile("in/Hexagonal2D", in);
       in >> unitCell;
       in.close();
 

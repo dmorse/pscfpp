@@ -32,10 +32,10 @@ namespace Pspc
    *
    *    - a UnitCell
    *    - a Mesh
-   *    - a Basis
-   *    - an Fft 
-   *    - a FieldIo
    *    - a groupName string
+   *    - a Basis
+   *    - an FFT 
+   *    - a FieldIo
    *
    * \ingroup Pspc_Field_Module
    */

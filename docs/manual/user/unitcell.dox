@@ -1,0 +1,166 @@
+/*! \page user_unitcell_page 3.6 Crystal Unit Cells
+\ref user_field_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_groups_page  (Next) 
+<BR>
+
+The input files for pscf_pcNd and pscf_pgNd use a standard format to 
+specify crystal systems types and unit cell parameters for periodic
+structures. The data required to describe a Bravai lattice is input
+on a single line with the general format
+\code
+    latticeSystem   p[0] ... p[N-1]
+\endcode
+in which latticeSystem denotes a string that identifies a particular
+a crystallographic lattice system (e.g., cubic, orthorhombic, etc) 
+and p[0] .... p[N-1] indicates a list of N parameters required to 
+specify the lengths and relative angles of the basis vectors for a 
+lattice of that type.  The number N of parameters required to fully
+describe the unit cell is different for different lattice systems.
+For example, a 3D cubic lattice can be specified by giving a single
+parameter, which is the length of any of the three orthogonal basis
+vectors, whereas 6 parameters are required to describe a 3D triclinic
+lattice.  
+
+Because the pscf package requires the user to use different programs 
+to simulate systems of different dimensionality, it is not necessary 
+for this data format explicitly specify the dimensionality D of space. 
+The value of D is known from which program is being used. The list of 
+allowed lattice system identifiers is different for systems that are
+periodic in 1, 2, or 3 spatial dimensions.
+
+<h3> 1D Systems </h3>
+
+There is only possible Bravais lattice for a one dimensionally periodic
+system, which is referred to here as "lamellar". A 1D lamellar system
+only has one lattice parameter, which is the repeat distance along the
+direction in which the system is periodic, denoted here by d.
+The text representation of a unit cell for a lamellar phase with lattice 
+spacing of d = 5.6 in the chosen system of units would thus be
+\code
+    lamellar  5.6 
+\endcode
+
+<h3> 2D Systems </h3>
+There are 4 conventional 2D lattice systems (square, hexagonal, rectangular,
+and oblique). The pscf code also allows the user to specify a "rhombic"
+unit cell, which is an oblique unit cell in which the two basis vectors
+have equal magnitude. 
+
+The names of the lattice systems, and the list of parameter required by
+each is listed below. Throughout, let a and b denote the lengths of the
+lattice basis vectors, and let alpha denote the angle between these two
+vectors. When a value for the parameter alpha is required, it must be 
+provided in radians, and not in degrees.
+<table>
+  <tr> 
+    <td> <b>lattice system  </b> </td>
+    <td> <b>N </b> </td>
+    <td> <b>parameters </b> </td>
+    <td> <b>description </b> </td>
+  </tr>
+  <tr> 
+    <td> square </td>
+    <td> 1 </td>
+    <td> a </td>
+    <td> 2 orthogonal basis vectors of equal length a=b </td>
+  </tr> 
+  <tr> 
+    <td> hexagonal </td>
+    <td> 1 </td>
+    <td> a </tr>
+    <td> 2 basis vectors of length a=b separated by 120 degrees  </td>
+  </tr> 
+  <tr> 
+    <td> rectangular </td>
+    <td> 2 </td>
+    <td> a, b </tr>
+    <td> 2 orthogonal basis vectors of unequal lengths a and b </td>
+  </tr> 
+  <tr> 
+    <td> rhombic </td>
+    <td> 2 </td>
+    <td> a, alpha </tr>
+    <td> 
+     2 basis vectors of equal length a separated by an angle alpha (radians) 
+    </td>
+  </tr> 
+  <tr> 
+    <td> oblique </td>
+    <td> 3 </td>
+    <td> a, b, alpha </tr>
+    <td> 2 basis vectors of unequal lengths a and b separated by an angle alpha (radians) </td>
+  </tr> 
+</table>
+
+<h3> 3D Systems </h3>
+
+In what follows we use the letters a, b, c both to denote lengths of the three basis vectors and as labels to identify the actual vectors.
+Different definitions of angles are used for different lattice systems, as
+discussed below:
+<table>
+  <tr> 
+    <td> <b>lattice system  </b> </td>
+    <td> <b>N </b> </td>
+    <td> <b>parameters </b> </td>
+    <td> <b>description </b> </td>
+  </tr>
+  <tr> 
+    <td> cubic </td>
+    <td> 1 </td>
+    <td> a </td>
+    <td> 3 orthogonal basis vectors of equal length a=b=c. </td>
+  </tr> 
+  <tr> 
+    <td> tetragonal </td>
+    <td> 2 </td>
+    <td> a, c </td>
+    <td> 3 orthogonal basis vectors, with a=b but c unequal to a or b.</td>
+  </tr> 
+  <tr> 
+    <td> orthorhombic </td>
+    <td> 3 </td>
+    <td> a, b, c </td>
+    <td> 3 orthogonal basis vectors of generally unequal lengths a, b and c.
+  </tr> 
+  <tr> 
+    <td> hexagonal </td>
+    <td> 2 </td>
+    <td> a, c </td>
+    <td> Two lattice vectors of equal length a=b are separated by 120 degrees.
+         A third vector of length c is perpendicular to a and b.
+    </td> 
+  </tr> 
+  <tr> 
+    <td> rhombohedral </td>
+    <td> 2 </td>
+    <td> a, beta </td>
+    <td> 
+    3 lattice vectors of equal length a=b=c, with the same angle beta
+    between any two of these vectors.
+    </td>
+  </tr> 
+  <tr> 
+    <td> monoclinic </td>
+    <td> 3 </td>
+    <td> a, c, beta </td>
+    <td> 2 orthogonal basis vectors of equal lengths a=b.
+         A third vector of length c is orthogonal to vector b.
+         Angle beta is the angle between vectors a and c. </td>
+  </tr> 
+  <tr> 
+    <td> triclinic </td>
+    <td> 6 </td>
+    <td> a, b, c, phi, theta, gamma </td>
+    <td> 3 non-orthogonal basis vectors of uequal lengths a, b, and c.
+         Gamma is the angle between a and b.
+         Theta is the angle between c and a vector z that is perpendicular to a and b.
+         Phi is the angle between the a-z and c-z planes. </td>
+  </tr> 
+</table>
+
+
+<BR>
+\ref user_field_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_page        (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_groups_page (Next) 
+*/

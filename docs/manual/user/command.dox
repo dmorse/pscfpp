@@ -18,6 +18,7 @@ upper case label, separated by whitespace. The program stops execution
 and returns control to the operating system when it encounters the 
 command string 'FINISH' on a line by itself. 
 
+<h3> Contents: </h3>
 Each of the following subpages gives more detailed information about
 commands available for specific programs.
 

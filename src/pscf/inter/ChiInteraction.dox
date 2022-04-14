@@ -1,0 +1,36 @@
+namespace Pscf{
+/*! 
+\page pscf_ChiInteraction_page ChiInteraction
+
+A Pscf::ChiInteraction object represents Flory-Huggins excess free energy model for a mixture.
+The parameter file format for a ChiInteraction for a system with n monomer types is a subblock labelled ChiInteraction{ ... } that contains only one labelled parameter, named chi, which represents an n x n square symmetric matrix of Flory-Huggins chi parameters.
+
+The associated parameter file block has the form
+\code
+  ChiInteraction{
+    chi  int  int float
+         int  int float
+         ....
+  }
+\endcode
+in which integer values represent column and row indices and eaching floating point number represents the value of a specified element of the chi matrix.
+In this format, each element of the chi matrix is input on a separate line that contains an integer row index, an integer column index, and real value for the chi parameter.  
+For unequal indices i and j, only element (i,j) or (j,i) must be input, because the underlying matrix is symmetric.
+Diagonal elements must be included, even though these are often set to zero by convention. 
+The number of independent chi parameters that must be input for a system with n monomer types is thus equal to n(n+1)/2, the number of subdiagonal and diagonal elements.
+These required elements may be input in any order, but an exception will be thrown if values are not specified for all independent chi parameters.
+
+For example, for a system with three monomer types, the data
+\code
+  ChiInteraction{
+    chi  1   0   10.0
+         1   1    0.0
+         0   2    5.0
+         0   0    0.0
+         1   2   15.0
+         2   2    0.0 
+  }
+\endcode
+yields chi(1,0) = chi(0,1) = 10.0, chi(0,2)= chi(2,0) = 5.0 and chi(1,2)= chi(2,1) = 15.0, and vanishing diagonal elements.
+*/
+}

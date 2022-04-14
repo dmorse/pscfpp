@@ -80,23 +80,22 @@ the gsl and fftw libraries are in common locations.
 
 When the "setup" script is invoked with one argument, that argument is
 interpreted as the name of a file in the pscfpp/make/compiler directory
-that should be used as the compiler configuration file. For example, 
-the command "./setup homebrew-m1" causes the script system to read 
-and copy the contents of the file pscfpp/make/compiler/homebrew-m1.  
-The command "./setup", with no argument, is equivalent to 
-"./setup default". 
+that should be used as the compiler configuration file. For example, the 
+command "./setup homebrew-m1" causes the script system to read and copy 
+the contents of the file pscfpp/make/compiler/homebrew-m1.  The command 
+"./setup", with no argument, is equivalent to "./setup default". 
 
 Users can create customized compiler configuration files to adapt 
 compiler options to their own computer. For example, suppose that a 
 user created a file named pscfpp/make/compiler/local by making a copy 
-of default file with that new name and then edited the variable 
-definitions in that file as needed. Invoking the command
+of default file with that new name and then editing the variable 
+definitions in that file. Invoking the command
 \code
 \> ./setup local
 \endcode
-would then cause the setup script to create a config.mk configuration 
-files that include the contents of the user-created file 
-pscfpp/make/compiler/local. 
+would then cause the setup script to create config.mk configuration 
+files in the src/ and bld/ directories that both include the contents 
+of the new file make/compiler/local. 
 
 In order to create a customized compiler configuration file, a user
 will need to understand the meanings of some of the variables defined 
@@ -109,12 +108,12 @@ you will see that the "default" compiler setup file will have simply
 been copied into the middle part of the bld/config.mk file. 
 
 Users may change values of variables defined in the main configuration 
-file either by making a customized compiler setup file in the 
+file either by creating a customized compiler setup file in the 
 make/compiler directory before running the setup script, as described 
-above, or by directly editing the bld/config.mk and/or src/config.mk 
-files after running the setup script, or both. The advantages of 
-storing required customizations in a compiler setup file in the 
-make/compiler directory are that:
+above, or by directly editing the files bld/config.mk and/or 
+src/config.mk files after running the setup script. The advantages of 
+creating a custom compiler setup file in the make/compiler 
+directory are that:
 
    - Changes made in customized compiler setup file will be copied
      to both src/config.mk and bld/config.mk and will thus be used 
@@ -122,12 +121,11 @@ make/compiler directory are that:
 
    - The files src/config.mk and bld/config.mk will be erased if you 
      invoke "make veryclean" to start over with a fresh configuration, 
-     but files in the make/compiler directory are not be erased by
-     this makefile target. 
+     but setup files in the make/compiler directory are not erased by 
+     the "veryclean" target. 
 
-Once you have figured out what changes to the default configuration
-are required in your environment, we thus recommend that you store 
-them in a new file in the pscfpp/make/compiler directory.
+We thus recommend that users who need to customize the main config.mk
+file do so, if possible, by creating a customized compiler setup file.
 
 <BR>
 \ref install_environment_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

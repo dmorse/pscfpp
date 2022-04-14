@@ -1,0 +1,62 @@
+namespace Pscf{
+namespace Pspc{
+/*! 
+\page pspc_System_page Pspc::System<D>
+
+A Pspc::System<D> object is the main object in a SCFT computation for a D dimensionally periodic structure using a pseudo-spectral algorithm on CPU hardware.
+
+\sa Pscf::Pspc::System
+
+The parameter file format is:
+\code
+System{
+   Mixture{ ... }
+   ChiInteraction{ ... }
+   Domain{ ... }
+   < Iterator >{ ... }
+   hasSweep*  bool (default 0).
+   < Sweep >@ { ... }
+}
+\endcode
+Here, as elsewhere, optional or conditional parameters or subblocks are indicated by an asterisk, conditional elements by a dagger, and polymorphic elements (for which the label can correspond to the label of any of several subclasses) are indicated by enclosing the generic or base class name in angle brackets.
+
+in which
+<table>
+  <tr>
+    <td> Mixture{ .... } </td>
+    <td> 
+     Description of system composition. See \ref pspc_Mixture_page "Mixture" docs. 
+    </td>
+  </tr>
+  <tr>
+    <td> ChiInteraction{ .... } </td>
+    <td> 
+     Flory-Huggins excess free energy. See \ref pscf_ChiInteraction_page "ChiInteraction" docs. 
+    </td>
+  </tr>
+  <tr>
+    <td> Domain{ .... } </td>
+    <td> 
+     Discretization and unit cell. See \ref pspc_Domain_page "Domain" docs. 
+    </td>
+  </tr>
+  <tr>
+    <td> < Iterator > { .... } </td>
+    <td> Polymorphic Iterator block, for any one of several subclasses of \ref pspc_iterator_page "Pspc::Iterator". </td>
+  </tr>
+  <tr>
+    <td> hasSweep* </td>
+    <td> 
+     Optional boolean, equal to 1 (true) if followed by a Sweep, 0 otherwise.
+     If omitted, set to 0 (false) by default.
+     </td>
+  </tr>
+  <tr>
+    <td> < Sweep >& { ... } </td>
+    <td> polymorphic Sweep block, must be present iff hasSweep==1 </td>
+  </tr>
+</table>
+
+*/
+}
+}

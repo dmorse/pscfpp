@@ -1,0 +1,25 @@
+namespace Pscf{
+/*! 
+\page pscf_UnitCell_page UnitCell
+
+A Pscf::UnitCell<D> object represents a crystallographic unit cell in a D dimensional crystal.
+
+\sa Pscf::UnitCell
+\sa Pscf::UnitCell<1>
+\sa Pscf::UnitCell<2>
+\sa Pscf::UnitCell<3>
+
+The data required to describe a UnitCell<D> object can be read from and written to C++ iostreams using overloaded insertion and extraction operators. 
+The text representation generally contains a string that identifies a crystal lattice system (i.e., a unit cell type), followed by a list of unit cell parameters.
+The number and type of required parameters depends on the dimensionality of space D (which is a class template parameter) and the declared lattice system.
+
+For example, in a simulation of a 3D crystal, the text
+\code
+   cubic 3.68
+\endcode
+indicates that the Bravais lattice has a cubic unit cell with a single unit cell parameter with a value of 3.68, which represents the length of any edge of a simple-cubic unit cell along any of three orthogonal primary directions. 
+
+TODO: Document all lattice systems and parameters
+
+*/
+}

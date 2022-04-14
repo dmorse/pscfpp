@@ -28,6 +28,7 @@ namespace Pscf
    * with a block. VertexIds should be set for all blocks in a block 
    * polymer before the associated Vertex objects are initialized.
    *
+   * \ref pscf_Block_page "Parameter File Format"
    * \ingroup Pscf_Chem_Module
    */
    class BlockDescriptor

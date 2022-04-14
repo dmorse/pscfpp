@@ -1,1 +1,1 @@
-pscf_fd -p param.gs -c command.s2 
+pscf_fd -e -p param.gs -c command.s2 

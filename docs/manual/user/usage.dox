@@ -1,88 +1,63 @@
-/*! \page user_usage_page 3.1 Command Line Interface
+/*! \page user_usage_page 3.1 Running a Program
 
-\ref user_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_files_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_param_page (Next) 
 <BR>
 
+<h3> Command Line Interface </h3>
 
-\section user_usage_inputs Input files 
-Every PSCF executable requires at least two types of input file: 
-<ul>
-   <li> a \ref user_usage_parameter_section "parameter" file </li>
-   <li> a \ref user_usage_command_section "command" file </li>
-</ul>
-All PSCF programs use similar formats for the parameter and command files. 
-The contents and formats of these two types of file are discussed briefly below and in more detail in several separate pages (see \ref user_param_page , \ref user_command_page). 
+All of the pscf programs are designed to be run from a unix command line, 
+and all have a similar command line interface. The names of the parameter 
+and command files required to perform a PSCF computation are passed to the 
+the program as arguments of the "-p" and "-c" command line options, 
+respectively.  Names of other required input files are provided as 
+arguments to commands in the command file.
 
-When a program simulation is executed, the parameter file is read first. The parameter file is used to initialize the state of the program and allocate memory. The name of the parameter file is specified when a program is invoked as a argument of the "-p" command line option.
-
-The command file is read and interpreted after the parameter file. The command file is a script that contains a list of commands that are interpreted and executed in sequence. This script controls the program flow after initialization. The name of the command file is specified as the argument of the "-c" command line option.
-
-Some commands in a command file require data to be read from or written to specific data files. 
-For example, the the first step in solving a SCFT problem is usually to read an initial guess for the chemical potential fields from a file, while the last step may be to write the converged chemical potential and monomer concentration fields to an output file. The names of these data files are specified as parameters within the command file.
-
-\section user_usage_run_serial_section Command line usage
-
-All of the PSCF programs have a similar command line interface.
-The names of the parameter and command files required to perform a PSCF computation are passed to the program as arguments of the "-p" and "-c" command line options, respectively. 
-
-As an example, consider use of the program pscf_pc3d, which is used to treat three dimensionally periodic microstructures. 
-To run this program using a parameter file named "param" and command file named "commands" that are both in the current working directory, one would enter:
+As an example, consider use of the program pscf_pc3d, which is used to 
+model three-dimensional periodic microstructures.  To run this program 
+using a parameter file named "param" and command file named "commands" 
+that are both in the current working directory, one would enter:
 \code
    pscf_pc3d -p param -c commands
 \endcode
-The same command line options can be used to invoke any other PSCF program.
+Analogous command line options are used to invoke any other PSCF program.
 
-During execution, some log information is written to standard output (i.e., the screen). This log output can be directed to a file using, for example, 
+During execution, some log information is written to standard output, which
+outputs to a terminal by default. This log output can be re-directed to a 
+file by using the unix ">" output redirect operator. For example, the 
+command
 \code
   pscf_pc3d -p param -c commands > log
 \endcode
-Standard output should normally be redirected to a file when a job is run in background or in a queue. 
+would direct standard output to a file named "log" in the current working
+directory.  Standard output should normally be redirected to a file when 
+a job is run in background or in a queue. 
 
-\section user_usage_echo_section The echo option
+<h3> Echoing the Parameter File </h3>
 
-All PSCF programs accept a command line option "-e" that causes the contents of each line of the parameter file to be echoed as the file is being read. For example, to use "pscf_pc3d" with echoing to a log file, one could enter
+All pscf programs accept a command line option "-e" that causes the 
+contents of each line of the parameter file to be echoed to standard 
+output as the parameter file is being read. For example, to invoke 
+the program pscf_pc3d with echoing of the parameter file to a log file, 
+one could enter
 \code
    pscf_pc3d -e -p param -c commands > log
 \endcode
-This option is useful for locating errors in the parameter file, because the echoed output ends immediately before the line at which an error in the parameter file is detected, and is followed by an error message that explains the nature of the error. 
+This option is very useful for locating errors in the parameter file.
+When an error is detected while reading a parameter file, the echoed 
+output ends immediately before the line at which the error is detected, 
+and is followed by an error message that explains what the program 
+knows about the nature of the error. The parameter file is a fixed
+format file in which every element is preceded by a label string that 
+the program compares to an expected label. Error messages generated in 
+response to errors in a parameter file usually output both the expected
+label string and the string that was read from file. This is usually 
+enough to allow a user to identify the source of trouble.
 
-Other available command line options are discussed \ref user_usage_options_section "below".
+<h3> Command Line Options </h3>
 
-\section user_usage_parameter_section Parameter file
-
-The parameter file contains most of the data required to define initial physical parameters for a system of interest and initialize a calculation.  These data includes: 
-
-- Mixture: Specification of the structure of one or more molecular species within a mixture, and a value for either the volume fraction or chemical potential for each species.
-- Interaction: Flory-Huggins chi parameters 
-- Domain: Parameters that specify a spatial domain or unit cell, and a discretization mesh.
-- Iterator: Parameters to initialize an iterative solver
-
-\section user_usage_command_section Command file
-
-The command file contains a sequence of commands that are read and executed in the order they appear. Each line of the command file starts with a capitalized command name, followed by zero or more arguments. The minimal command file for an mcSim simulation looks like this:
-\code
-READ_W_BASIS      in/w.bf
-ITERATE           
-WRITE_W_BASIS     out/w.bf
-WRITE_C_RGRID     out/c.rf
-FINISH  
-\endcode
-This file instructs the program to:
-
-- READ_W_BASIS: Read in a chemical potential (w) field in symmetrized Fourier basis from a file named in/w.bf
-
-- ITERATE: Iteratively solve the SCFT equation, using the iterator initialized in the parameter file. 
-
-- WRITE_W_BASIS: Write the converged chemical potential fields (w-fields) in symmetrized Fourier basis format to a file out/w.bf
-
-- WRITE_C_RGRID: Write the corresponding monomer concentration fields (c-fields) in real-space grid (r-grid) format to a file out/c.rf
-
-- FINISH: finish execution and return from the main program
-
-\section user_usage_options_section Command line options
-
-All PSCF simulations of single systems can be invoked with any of the following command line options:
+All pscf programs can be invoked with any of the following command line 
+options:
 <ul>
   <li> -e: Activates echoing of the parameter file to standard output.</li>
   <li> -p filename: Specifies the name of a parameter file </li>
@@ -91,21 +66,21 @@ All PSCF simulations of single systems can be invoked with any of the following 
   <li> -o filename: Specifies a prefix string for output data files </li>
   </li>
 </ul>
+The -p and -c options are required, while others are optional.
 
 The -e (echo) option causes each parameter in the parameter file to be echoed to standard output immediately after it is read. This option takes no arguments.
 
-The -p (parameter) option takes a required string parameter, which is the name of a parameter file.  The -p and -r options are incompatible: The simulation must be initialized with either a parameter or a restart file, but not both.
+The -p (parameter) option takes a required string parameter, which is the name of a parameter file.  
 
 The -c (command) option takes a required string parameter, which is the name of a command file. 
 
-If this file name is not specified as a command line option, it can be specified as the first argument of the FileMaster parameter block in the parameter file. 
+The -i (input prefix) option takes a required string parameter, which is a prefix that will be prepended to the names (i.e., paths) for all input data files. 
 
-The -i (input prefix) option takes a required string parameter, which is a prefix that will be prepended to the names of all input data files. 
-
-The -o (output prefix) option takes a required string parameter, which is a prefix that will be prepended to the names of all output data files. 
+The -o (output prefix) option takes a required string parameter, which is a prefix that will be prepended to the names (paths) for all output data files. 
 
 
 <BR>
+\ref user_files_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_page (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_param_page (Next) 
 

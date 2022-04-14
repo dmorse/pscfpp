@@ -10,6 +10,7 @@
 #include "inter/InterTestComposite.h"
 #include "mesh/MeshTestComposite.h"
 #include "crystal/CrystalTestComposite.h"
+#include <util/param/BracketPolicy.h>
 #include <util/global.h>
 
 TEST_COMPOSITE_BEGIN(PscfNsTestComposite)
@@ -26,6 +27,8 @@ using namespace Util;
 
 int main(int argc, char* argv[])
 {
+
+   BracketPolicy::set(BracketPolicy::Optional);
 
    try {
    

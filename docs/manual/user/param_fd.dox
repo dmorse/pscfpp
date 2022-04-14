@@ -1,123 +1,13 @@
-/*! \page user_param_fd_page 3.2.2 Parameter Files for pscf_fd
+/*! \page user_param_fd_page 3.2.2 Parameter Files: pscf_fd
 
-\ref user_param_page (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_param_syntax_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_param_pc_page (Next)
 <BR>
 
-\section user_param_fd_section Example 
-An example of a parameter file for an pscf_fd program is shown below. 
-
-This example gives parameters for a calculation of a ternary mixture 
-of two hompolymers of types A and B, and an AB diblock copolymer in 
-a slit geometry. The system contains 40% of each hopolymer and 20% 
-copopolymer by volume.  All three chains are of length 1.0 in the system 
-of units used in this input file, and the diblock copolymer is symmetric 
-(each block has length 1/2). The AB interaction parameter has a value of 
-10, which is high enough to guarantee that homopolymer phase separate and 
-the copolymer will self-assemble along an interface between A and B. The 
-simulation uses a 1D planar geometry, in which variation occurs only along
-one axis of a Cartesian coordinate system. The natural equilibrium state 
-for this system would be a monolayer of AB diblock copolymer along an
-interface between regions of nearly pure A and B homopolymer, with the
-interface near the middle of the slit. The syntax for specifying polymer
-structures and other aspects of the parameter file is described in detail
-below.
-
-\code
-System{
-  Mixture{
-     nMonomer   2
-     monomers   A   1.0  
-                B   1.0 
-     nPolymer   2
-     Polymer{
-        type    linear
-        nBlock  1
-        blocks  0   1.0
-        phi     0.4
-     }
-     Polymer{
-        type    linear
-        nBlock  1
-        blocks  1   1.0
-        phi     0.4
-     }
-     Polymer{
-        nBlock  2
-        blocks  0   0.5
-                1   0.5
-        phi     0.2
-     }
-     vMonomer   1.0
-     ds   0.01
-  }
-  ChiInteraction{
-     chi   0    1    10.0
-           0    0     0.0
-           1    1     0.0
-  }
-  Domain{
-     mode planar
-     xMin 0.0
-     xMax 8.0
-     nx   401
-  }
-  NrIterator{
-     epsilon   0.00000001
-  }
-}
-\endcode
-
-\section user_param_fd_syntax_section Syntax
-
-Any PSCF parameter file, including the above example one, contains 
-a series of nested blocks that are delimited by opening and closing
-curly braces. The syntax is thus reminiscent of that of a C program 
-(without semicolons).  Each block begins with a capitalized label 
-for the block followed by an opening curly bracket on the same line
-and ends with a closing bracket on a line by itself, as in
-as in
-\code
-  BlockName{
-     ....
-  }
-\endcode
-Each block may contain a combination of parameter values and nested 
-subblocks. Most parameters are given on a single line containing the 
-parameter name followed by a value, or a list of several related 
-values. The order of elements within each block of a parameter file
-is generally predefined, though some elements may be optional.
-
-Names of blocks in a parameter file generally correspond to names 
-of classes or class templates in the underlying C++ code.  The 
-nesting of blocks reflects ownership or "has a" relationships among 
-C++ classes: Each subblock generally corresponds to an object of 
-is either a member of the parent class or a dynamically created
-object that the parent object is responsible for creating and 
-destroying. The outermost block in the above example is a "System" 
-block, reflecting the fact that main object in the underlying 
-code for a 1D finite-difference program is an instance of class 
-Pscf::Fd1d::System.
-
-Names of individual parameters within a parameter file block generally
-correspond to names of member variables in the relevant class, i.e., 
-member variables of the class whose name is specfied by the name of 
-the innermost enclosing parameter file block. Parameters that represent 
-primitive C data types (e.g., integers or floating point numbers) or
-strings are represented by a label (the variable name) followed by a 
-single value on the same line. Parameters that represent instances of 
-a user defined type that has an overloaded ">>" input operator are 
-displayed as a label followed by the text representation of that 
-type, as defined by the implementation of the ">>" input operator
-for that data type.  Parameters that represent arrays of values are 
-formatted in a multi-line format in which the first row contains a 
-label (the name of the array) and the value of the first element,
-and subsequent lines contain subsequent elements. Because this 
-format does not have a distinctive delimiter after the last element,
-it requires that the number of elements be known before such an 
-array is read. The number of elements in an array-valued parameter
-is thus always specified by the the value of a parameter that 
-appears before that array in the file format.
+An example of a parameter file for an pscf_fd program is given in the 
+\ref user_param_syntax_page "previous page" as an example of the syntax.
+Please consult this example when looking at this discussion of the file
+format.
 
 \section user_param_fd_overview_section File Structure
 
@@ -165,6 +55,36 @@ The parameter files for the pscf_pcNd and Pscf_pgNd programs have a
 similar structure, with analogous top level blocks. Parameter files 
 for all three types of program contain Mixture and ChiInteraction 
 blocks with identical syntax. 
+
+\section user_param_fd_doxlinks_section Documentation Links
+
+The nest list shown below provides links to pages that document file formats for parameter file blocks that can appear in a parameter file for a pscf_fd program are given below. 
+Each type of block is identified here by the label with which it appears in the parameter file, and nested in its expected position:
+<ul style="list-style: none;">
+  <li> \subpage fd1d_System_page  "System" </li>
+  <ul style="list-style: none;">
+    <li> \subpage fd1d_Mixture_page  "Mixture" </li>
+    <ul style="list-style: none;">
+      <li> \subpage fd1d_Polymer_page  "Polymer" </li>
+      <li> \subpage fd1d_Solvent_page  "Solvent" </li>
+    </ul>
+  <li> \subpage pscf_ChiInteraction_page  </li>
+  <li> \subpage fd1d_Domain_page  "Domain" </li>
+  </ul>
+</ul>
+
+The following links provide documentation for text formats used for smaller
+user defined types whose values cam be read on a single line and treated as 
+individual parameters:
+<ul style="list-style: none;">
+  <li> \subpage pscf_Monomer_page  "Monomer" </li>
+  <li> \subpage pscf_Block_page  "Block" </li>
+  <li> \subpage fd1d_GeometryMode_page "GeometryMode"</li>
+</ul>
+Monomers appear in the Mixture block in elements of the "monomers" array.
+Block data for the blocks of each block polymer species appears in the 
+corresponding Polymer subblock of the Mixture block, as elements of the
+"blocks" array.
 
 \section user_param_fd_mixture_section Mixture Block
 
@@ -393,7 +313,8 @@ the SCF equations.  The iterative loop stops when the maximum
 error drops below epsilon.
 
 <BR>
-\ref user_param_page (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_param_pc_page (Next)
+\ref user_param_syntax_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_param_page        (Up)   &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_param_pc_page     (Next)
 
 */

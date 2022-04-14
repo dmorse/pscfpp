@@ -8,6 +8,7 @@
 #include "System.h"
 
 #include <fd1d/iterator/Iterator.h>
+#include <fd1d/iterator/IteratorFactory.h>
 #include <fd1d/sweep/Sweep.h>
 #include <fd1d/sweep/SweepFactory.h>
 #include <fd1d/iterator/NrIterator.h>
@@ -21,6 +22,7 @@
 #include <util/format/Str.h>
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
+#include <util/param/BracketPolicy.h>
 
 #include <string>
 #include <unistd.h>
@@ -41,6 +43,7 @@ namespace Fd1d
       homogeneous_(),
       interactionPtr_(0),
       iteratorPtr_(0),
+      iteratorFactoryPtr_(0),
       sweepPtr_(0),
       sweepFactoryPtr_(0),
       wFields_(),
@@ -57,15 +60,33 @@ namespace Fd1d
       setClassName("System"); 
 
       interactionPtr_ = new ChiInteraction(); 
-      iteratorPtr_ = new NrIterator(*this); 
+      iteratorFactoryPtr_ = new IteratorFactory(*this); 
       sweepFactoryPtr_ = new SweepFactory(*this);
+
+      BracketPolicy::set(BracketPolicy::Optional);
    }
 
    /*
    * Destructor.
    */
    System::~System()
-   {}
+   {
+      if (interactionPtr_) {
+         delete interactionPtr_;
+      }
+      if (iteratorPtr_) {
+         delete iteratorPtr_;
+      }
+      if (iteratorFactoryPtr_) {
+         delete iteratorFactoryPtr_;
+      }
+      if (sweepPtr_) {
+         delete sweepPtr_;
+      }
+      if (sweepFactoryPtr_) {
+         delete sweepFactoryPtr_;
+      }
+   }
 
    /*
    * Process command line options.
@@ -163,7 +184,18 @@ namespace Fd1d
       allocateFields();
 
       // Initialize iterator
-      readParamComposite(in, iterator());
+      //readParamComposite(in, iterator());
+
+      // Instantiate and initialize an Iterator 
+      std::string className;
+      bool isEnd;
+      iteratorPtr_ = iteratorFactoryPtr_->readObject(in, *this, 
+                                                     className, isEnd);
+      if (!iteratorPtr_) {
+         std::string msg = "Unrecognized Iterator subclass name ";
+         msg += className;
+         UTIL_THROW(msg.c_str());
+      }
 
       // Optionally instantiate a Sweep object
       readOptional<bool>(in, "hasSweep", hasSweep_);

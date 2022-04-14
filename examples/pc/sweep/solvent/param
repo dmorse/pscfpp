@@ -1,16 +1,20 @@
 System{
   Mixture{
      nMonomer  3
-     monomers  A   6.07
+     monomers[
+               A   6.07
                B   6.07
                C   6.07
+     ]
      nPolymer  1
      nSolvent  1
      Polymer{
         type    linear
         nBlock  2
-        blocks  0   0.35
+        blocks[
+                0   0.35
                 1   0.65
+        ]
         phi     0.5
      }
      Solvent{
@@ -21,12 +25,11 @@ System{
      ds   0.01
   }
   ChiInteraction{
-     chi  0   0   0.0
+    chi(
           1   0   30.0
-          1   1   0.0
           2   0   30.0
           2   1   100.0
-          2   2   0.0
+    )
   }
   Domain{
     unitCell    lamellar   1.6213247000E+01
@@ -44,6 +47,8 @@ System{
      ns            4
      baseFileName  out/
      nParameter    1
-     parameters    solvent  0  +0.004
+     parameters[
+                   solvent  0  +0.004
+     ]
   }
 }
