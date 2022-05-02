@@ -257,26 +257,29 @@ namespace Pspc
       */
       CField const & cFieldRGrid(int monomerId) const;
 
-      //@}
-      /// \name Miscellaneous Accessors 
-      //@{
-
       /**
-      * Get array of all block/solvent concentration fields on r-space 
-      * grid.
+      * Get array of all individual block/solvent concentration fields
+      * on r-space grid.
       *
       * The array capacity is equal to nPieces, the number of total 
-      * blocks in the system plus nSolvents.
+      * blocks in the system plus nSolvents. The order of CFields is 
+      * determined by looping over each Polymer object in the Mixture,
+      * and storing the CField for each Block in that Polymer in order.
+      * Then, we loop over Solvent objects in the Mixture and store a 
+      * CField for each. 
       */
-      DArray<CField>& cFieldsRGridLong();
+      DArray<CField> const cFieldsRGridLong() const;
 
       /**
       * Get concentration field for one block/solvent on r-space grid.
       *
       * \param sectionId integer piece (block or solvent) index
       */
-      CField& cFieldRGridLong(int sectionId);
+      CField const cFieldRGridLong(int sectionId) const;
 
+      //@}
+      /// \name Miscellaneous Accessors 
+      //@{
 
       /**
       * Get UnitCell (i.e., type and parameters) by const reference.
@@ -491,7 +494,7 @@ namespace Pspc
       *
       * \param filename name of output file
       */
-      void writeCRGridLong(const std::string & filename);
+      void writeCRGridLong(const std::string & filename) const;
 
       /**
       * Write last contour slice of the propagator in real space grid format.
@@ -659,18 +662,6 @@ namespace Pspc
       * Indexed by monomer typeId, size = nMonomer.
       */
       DArray<CField> cFieldsRGrid_;
-
-      /**
-      * Array of concentration fields for each piece (a single 
-      * block or solvent) on real space grid.
-      *
-      * The order is determined by first looping through each 
-      * Polymer object in the Mixture & looping over each Block 
-      * in the Polymer object. Then, Solvent objects in the 
-      * Mixture are looped over at the end.
-      */
-      DArray<CField> cFieldsRGridLong_;
-
 
       /**
       * Work array of field coefficients for all monomer types.
@@ -901,13 +892,15 @@ namespace Pspc
    // Get array of all block/solvent concentration fields on grids.
    template <int D>
    inline
-   DArray< typename System<D>::CField >& System<D>::cFieldsRGridLong()
-   {  return cFieldsRGridLong_; }
+   DArray< typename System<D>::CField > const System<D>::cFieldsRGridLong()
+   const
+   {  return mixture_.createRGridLong(); }
 
    // Get a single block/solvent concentration field on an r-space grid.
    template <int D>
-   inline typename System<D>::CField& System<D>::cFieldRGridLong(int id)
-   {  return cFieldsRGridLong_[id]; }
+   inline typename System<D>::CField const System<D>::cFieldRGridLong(int id)
+   const
+   {  return mixture_.createRGridLong()[id]; }
 
    // Have the w fields been set?
    template <int D>

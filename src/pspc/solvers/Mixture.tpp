@@ -240,19 +240,26 @@ namespace Pspc
    * Combine cFields for each polymer/solvent into one DArray
    */
    template <int D>
-   void
-   Mixture<D>::createRGridLong(DArray<Mixture<D>::CField>& cFieldsLong)
+   DArray<typename Mixture<D>::CField> const 
+   Mixture<D>::createRGridLong() const
    {
       UTIL_CHECK(nMonomer() > 0);
       UTIL_CHECK(nPolymer() + nSolvent() > 0);
-      UTIL_CHECK(cFieldsLong.capacity() == nPieces());
 
+      int np = nPieces();
       int nx = mesh().size();
-      int ns = nPieces();
       int i, j;
 
+      DArray<CField> cFieldsLong;
+      cFieldsLong.allocate(np);
+      for (i = 0; i < np; ++i) {
+         cFieldsLong[i].allocate(mesh().dimensions());
+      }
+
+      UTIL_CHECK(cFieldsLong.capacity() == nPieces());
+
       // Clear all monomer concentration fields, check capacities
-      for (i = 0; i < ns; ++i) {
+      for (i = 0; i < np; ++i) {
          UTIL_CHECK(cFieldsLong[i].capacity() == nx);
          for (j = 0; j < nx; ++j) {
             cFieldsLong[i][j] = 0.0;
@@ -270,7 +277,7 @@ namespace Pspc
                sectionId++;
 
                UTIL_CHECK(sectionId >= 0);
-               UTIL_CHECK(sectionId < ns);
+               UTIL_CHECK(sectionId < np);
                UTIL_CHECK(cFieldsLong[sectionId].capacity() == nx);
 
                cFieldsLong[sectionId] = polymer(i).block(j).cField();
@@ -286,15 +293,13 @@ namespace Pspc
             sectionId++;
 
             UTIL_CHECK(sectionId >= 0);
-            UTIL_CHECK(sectionId < ns);
+            UTIL_CHECK(sectionId < np);
             UTIL_CHECK(cFieldsLong[sectionId].capacity() == nx);
 
             cFieldsLong[sectionId] = solvent(i).cField();
-
          }
-
       }
-
+   return cFieldsLong;
    }
 
 } // namespace Pspc

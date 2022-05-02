@@ -160,13 +160,13 @@ namespace Pspc
       void computeStress();
 
       /**
-       * Combine cFields for each polymer/solvent into one DArray, which 
+       * Combine cFields for each block/solvent into one DArray, which 
        * is used in System.tpp to print a more detailed r-grid file using
        * the command WRITE_C_RGRID_LONG.
        * 
        * \param cFieldsLong array of block/solvent concentration fields (output)
        */
-      void createRGridLong(DArray<CField>& cFieldsLong);
+      DArray<CField> const createRGridLong() const;
 
       /**
       * Get derivative of free energy w/ respect to a unit cell parameter.
