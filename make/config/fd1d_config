@@ -30,7 +30,7 @@ FD1D_SUFFIX:=
 
 #-----------------------------------------------------------------------
 # Path to the fd1d library 
-# Note: BLD_DIR is defined in config.mk
+# Note: BLD_DIR is defined in the main config.mk file in bld/ or src/
 
 fd1d_LIBNAME=fd1d$(FD1D_SUFFIX)$(UTIL_SUFFIX)
 fd1d_LIB=$(BLD_DIR)/fd1d/lib$(fd1d_LIBNAME).a

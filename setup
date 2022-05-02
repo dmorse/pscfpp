@@ -4,7 +4,7 @@
 # Setup script:
 #
 # This script should be run once before the first time the program is
-# compiled. It should be run from the root pscf++/ directory in which
+# compiled. It should be run from the root pscfpp/ directory in which
 # this script is located. 
 #
 # This script:
@@ -18,7 +18,14 @@
 #
 # - Copies the configure script from src/ into bld/
 #
-# - Installs makeDep dependency generation scripts in bld/
+# - Installs makeDep dependency generation scripts in bin/
+#
+# Clean-up:
+#
+# All files installed by this script, along with almost all other files
+# that are not in repository, can be removed by invoking "make veryclean"
+# from the pscfpp/ root directory.
+#
 #========================================================================
 # Set PWD to directory containing this script (to pscfpp root directory)
 
@@ -30,7 +37,7 @@ if [ "$SCRIPT_DIR" != "$PWD" ]; then
 fi
 
 #========================================================================
-# Set and export PSCFPP_DIR (path to pscfpp root directory)
+# Set and export PSCFPP_DIR (path to pscfpp root directory) shell variable
 
 PSCFPP_DIR=$PWD
 export PSCFPP_DIR
@@ -64,7 +71,7 @@ else
 fi
 
 #=======================================================================
-# Install config files in src/ directory tree for in-source builds
+# Install config.mk files in src/ directory tree for in-source builds
 
 # Note: Stream editor (sed) is used here to:
 #   - Set $(ROOT_DIR) to absolute path of pscfpp root directory
@@ -89,7 +96,7 @@ cp make/config/pspg_config src/pspg/config.mk
 sed -e "s|PWD|$PWD|" make/config/paths.h > src/pscf/paths.h
 
 #========================================================================
-# Install files in the bld/ directory for out-of-source builds
+# Install files in the bld/ directory for out-of-source builds.
 
 # Construct and install main config file in bld directory
 # Set $(ROOT_DIR) to absolute path of directory from which script is invoked

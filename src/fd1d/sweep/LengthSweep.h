@@ -29,12 +29,9 @@ namespace Fd1d
    public:
 
       /**
-      * Default constructor.
-      */
-      LengthSweep();
-
-      /**
       * Constructor.
+      *
+      * \param system  reference to parent system
       */
       LengthSweep(System& system);
 

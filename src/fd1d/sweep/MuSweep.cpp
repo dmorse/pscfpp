@@ -19,14 +19,16 @@ namespace Fd1d
 
    using namespace Util;
 
-   MuSweep::MuSweep()
-    : Sweep()
-   {  setClassName("MuSweep"); }
-
+   /*
+   * Constructor.
+   */
    MuSweep::MuSweep(System& system)
     : Sweep(system)
    {  setClassName("MuSweep"); }
 
+   /*
+   * Destructor.
+   */
    MuSweep::~MuSweep()
    {}
 

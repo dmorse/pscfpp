@@ -19,14 +19,16 @@ namespace Fd1d
 
    using namespace Util;
 
-   LengthSweep::LengthSweep()
-    : Sweep()
-   {  setClassName("LengthSweep"); }
-
+   /*
+   * Constructor.
+   */
    LengthSweep::LengthSweep(System& system)
     : Sweep(system)
    {  setClassName("LengthSweep"); }
 
+   /*
+   * Destructor.
+   */
    LengthSweep::~LengthSweep()
    {}
 

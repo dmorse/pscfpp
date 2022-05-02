@@ -32,18 +32,18 @@ UTIL_CXX11=1
 # Compiler Pattern Rules:
 #
 # The pattern rule for compiling and linking C++ files in a particular 
-# top-level subdirectory of the src/ directory is defined in a file
-# named patterns.mk in the relevant subdirectory.  For example, the rule 
-# for compiling C++ files in the src/fd1d/ directory tree, which contains 
+# top-level subdirectory of the src/ directory is defined in a file named
+# patterns.mk in the relevant subdirectory.  For example, the rule for
+# compiling C++ files in the src/fd1d/ directory tree, which contains 
 # all entities defined in the Pscf::Fd1d C++ namespace, is given in the 
-# file src/fd1d/patterns.mk. The rules for different subdirectories
-# of src/ are similar except for differences in which preprocessor 
-# variable definitions are passed to the compiler. For each subdirectory
-# of src/ namespace, the basic compiler pattern rule for C++ files is of 
-# the form:
+# file src/fd1d/patterns.mk. The rules for different namespace level
+# subdirectories of src/ are similar except for differences in which 
+# preprocessor variable definitions are passed to the compiler. For each 
+# such subdirectory of src/ namespace, the basic compiler pattern rule for 
+# C++ files is of the form:
 # 
-# $(BLD_DIR)%.o:$(SRC_DIR)/%.cpp
-#      $(CXX) $(INCLUDES) $(DEFINES) $(CXXFLAGS) -c -o $@ $<
+# $(BLD_DIR)/%.o:$(SRC_DIR)/%.cpp
+#      $(CXX) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES) $(DEFINES) -c -o $@ $<
 #
 # This pattern compiles a *.cpp file in a subdirectory of the source 
 # directory $(SRC_DIR) and creates a *.o object file in a corresponding
@@ -51,14 +51,15 @@ UTIL_CXX11=1
 # in this pattern are:
 #
 # CXX         - C++ compiler executable name 
+# CPPFLAGS    - preprocessor options used during compilation
+# CXXFLAGS    - compiler options used during compilation
 # INCLUDES    - Directories to search for included header files
 # DEFINES     - compiler options that define C preprocessor macros
-# CXXFLAGS    - compiler options used during compilation
 #
 # Comments:
 # 
 # 1) The variable INCLUDES is a string that must include the path 
-# $(SRC_DIR) to the simpatico/src directory, in order to allow the 
+# $(SRC_DIR) to the pscfpp/src directory, in order to allow the 
 # compiler to find header files that are part of the package.
 #
 # 2) The variable DEFINES in the above pattern is a stand-in for a 
@@ -85,44 +86,46 @@ UTIL_CXX11=1
 # as a substring, as well as options that specify the optimization 
 # level (e.g., -O3) and any desired compiler warnings (e.g., "-Wall").
 #
+# 5) The variable $(CPPFLAGS) is empty by default 
+#
 #-----------------------------------------------------------------------
 # Archiver Recipes:
 #
-# The simpatico build system creates a static library in each namespace
+# The pscfpp build system creates a static library in each namespace
 # level subdirectory of the build directory in which code is compiled.
 # The recipe used to compile this library is defined in the sources.mk
 # file in the appropriate namespace-level directory. The rule for the
-# McMd namespace, as an example, is of the form
+# Pscf::Fd1d namespace, as an example, is of the form
 #
-# $(AR) rcs $(mcMd_LIB) $(mcMd_OBJS)
+# $(AR) rcs $(fd1d_LIB) $(fd1d_OBJS)
 #
 # where $(AR) is the name of archiver command used to create a library,
-# $(mcMD_LIB) is an absolute path for the resulting library file and 
-# $(mcMd_OBJS) is a string that contains absolute paths for all of the
+# $(fd1d_LIB) is an absolute path for the resulting library file and 
+# $(fd1d_OBJS) is a string that contains absolute paths for all of the
 # *.o object files created by compiling source files in the directory
-# src/mcMd. Recipes for other namespaces are analogous.
+# src/pspc. Recipes for other namespaces are analogous.
 #
 #-----------------------------------------------------------------------
 # Linker recipes:
 # 
 # Executable files are created by linking the compiled main program to
-# the required set of static libraries. For example, recipe for creating 
-# the mdSim executable is of the form
+# the required set of static libraries. Reciples for creating executables
+# are defined in namespace level makefile files. For example, the recipe
+# for creating the fd1d executable is defined in the file fd1d/makefile
+# within the relevant build directory (bld/ or src/), and is of the form:
 #
-#	$(CXX) -o $(mdSim_EXE) $(mdSim).o $(LIBS) $(LDFLAGS)
+#	$(CXX) $(LDFLAGS) -o $(PSCF_FD_EXE) $(PSCF_FD).o $(LIBS)
 #
-# Here $(mdSim_EXE) is the path to the executable, which is installed 
-# in the bin/ directory by default, $(mdSim).o is the path to the 
-# object file created by compiling the src/mcMd/mdSim.cpp source 
-# file, $(LIBS) is a list of all required state libraries files, and
-# $(LDFLAGS) is a list of flags passed to the linker. 
+# Here $(PSCF_FD_EXE) is the path to the executable, which is installed 
+# in the bin/ directory by default, $(PSCF_FD).o is the path to the 
+# object file created by compiling the src/fd1d/pscf_fd.cpp source file,
+# which contains the main program, $(LIBS) is a list of all required 
+# static libraries files, and $(LDFLAGS) is a string containing flags 
+# passed to the linker. 
 #
-# The variable $(LDFLAGS) is empty by default, but can, if necessary, 
-# be used to specify a non-standard path to a directory containing 
-# the MPI library when compiling parallel programs. This should not 
-# be necessary if the compiler is invoked using the name of a wrapper
-# script that sets this path automatically.
- 
+# The variable $(LDFLAGS) is empty by default, but can, if necessary, be
+# used to specify non-standard paths to required external libraries.
+#
 #=======================================================================
 # Automatic dependency generation.
  
@@ -135,5 +138,5 @@ MAKEDEP_CUDA=$(BIN_DIR)/makeDepCuda
 # the setup script, and that is used during compilation to analyze 
 # dependencies among C++ files. Both script import a python module named 
 # pscfpp.makeDepend that is located in the $(ROOT_DIR)/lib/python/pscfpp
-# directory. For the python interpreter to find this $(ROOT_DIR)/lib/python
-# must be in your $PYTHON_PATH environment variable.
+# directory. For the python interpreter to find this, the directory
+# $(ROOT_DIR)/lib/python must be in the $PYTHON_PATH environment variable.

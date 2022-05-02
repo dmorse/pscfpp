@@ -1,21 +1,41 @@
-This directory contains repository versions of configuration files
-that are copied to appropriate locations in the standard build
-directories (src/, bld/serial and bld/parallel) by the setup script.
-Users may modify the copies that are installed in the src and bld
-directories, but should avoid modifying these default versions.
+This directory contains default versions of configuration files and
+fragments of configuration files that the pscfpp/setup script 
+concatenates and/or copies to appropriate locations in the standard 
+build directories (src/ and bld/) to create the config.mk files used 
+during compilation. Users may modify the resulting files that are 
+installed in the src/ and bld/ directories in order to adapt the 
+build system to a particular computer, but should avoid modifying 
+the files stored in this directory.
 
-Main makefile in src/, bld/serial and bld/parallel:
+Main makefile in src/ and bld/:
 
 The files main_config.1 and main_config.2 are fragments of the main
 configuration file. These two files are concatenated with a compiler 
-setup file from the make/compiler directory to create the main config.mk
-configuration file that is installed in the src/ directory and the 
-root of each build directory. 
+setup file from the make/compiler directory to create the main 
+config.mk configuration file that is installed in the src/ and bld/ 
+directories.
+
+The file main_config.1 contains placeholder values for the path ROOT_DIR 
+to the main pscfpp and a path BLD_DIR to a particular build directory 
+(i.e., to the bld/ or src/ directory). The setup script must be called 
+from the root pscfpp/ directory, and replaces these placeholders by the 
+actual absolute paths to the relevant directories.
 
 Namespace level makefiles:
 
-The files util_config, simp_config, mcMd_config, tools_config and 
-ddMd_config are repository versions of namespace level configuration 
-files, which are copied to create files named config.mk in each 
-corresponding namespace level subdirectory.
+The files util_config, pscf_config, fd1d_config, pspc_config and 
+pspg_config are repository versions of namespace level configuration 
+files. The setup script copies these files unalterted to create files 
+named config.mk in each corresponding namespace level subdirectory of
+the bld/ and src/ directories.
+
+File paths.h :
+
+The setup script copies a modified version of the file file paths.h 
+into the directory pscfpp/src/pscf . This file contains placeholders 
+for paths to pscfpp/data and pscfpp/examples directories that the setup 
+file replaces with corresponding absolute paths in the installed version.
+The path to the data directory is used by the function makeGroupFileName
+to construct appropriate paths for files that contain symmetry operations 
+for specific space groups.
 

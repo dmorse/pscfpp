@@ -313,6 +313,14 @@ namespace Fd1d
       */
       void initHomogeneous();
 
+      /**
+      * Read a string (e.g., a filename) and echo it to the log file.
+      *
+      * \param in  input stream from which to read
+      * \param string  string variable to read and echo
+      */
+      void readEcho(std::istream& in, std::string& string) const;
+
    };
 
    // Inline member functions

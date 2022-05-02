@@ -54,6 +54,7 @@ namespace Pspc {
       using SweepTmpl< BasisFieldState<D> >::state;
       using SweepTmpl< BasisFieldState<D> >::s;
       using SweepTmpl< BasisFieldState<D> >::c;
+      using SweepTmpl< BasisFieldState<D> >::writeRhoRgrid_;
 
    protected:
 

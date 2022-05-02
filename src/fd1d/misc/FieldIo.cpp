@@ -24,13 +24,6 @@ namespace Fd1d
    using namespace Util;
 
    /*
-   * Default constructor.
-   */
-   FieldIo::FieldIo()
-    : SystemAccess()
-   {}
-
-   /*
    * Constructor.
    */
    FieldIo::FieldIo(System& system)

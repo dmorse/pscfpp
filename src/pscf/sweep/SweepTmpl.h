@@ -52,6 +52,9 @@ namespace Pscf {
       /// Base name for output files
       std::string baseFileName_;
 
+      /// Whether to write real space concentration field files. 
+      bool writeRhoRgrid_;
+
       /**
       * Constructor (protected).
       *

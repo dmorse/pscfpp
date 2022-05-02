@@ -6,13 +6,13 @@
 
 The parameter files required by the different PSCF programs use a similar syntax, but contain somewhat different contents. 
 The following three sections document parameter file formats for different programs.
-The documentation of the parameter file format for the pscf_fd 1D finite difference program includes a discussion of elements that are used for all programs, and thus should be read first. 
-The discussion of the file format for pscf_pcNd focuses on parts of the file format that differ from that required for pscf_fd.
+The documentation of the parameter file format for the pscf_fd 1D finite difference program includes a discussion of elements that are used for all programs, and so should be read first. 
+The discussion of the file format for pscf_pcNd focuses on parts of the file format that differ from those required for pscf_fd.
 The file formats for the pscf_pcNd and pscf_pgNd programs are almost identical, reflecting the fact that these are closely analogous programs designed to run on different hardware.
 
 <h3> Contents:</h3>
    <ul style="list-style: none;">
-   <li> \subpage user_param_syntax_page  "3.2.1 Syntax" </li>
+   <li> \subpage user_param_syntax_page  "3.2.1 Parameter File Syntax" </li>
    <li> \subpage user_param_fd_page      "3.2.2 pscf_fd" </li>
    <li> \subpage user_param_pc_page      "3.2.3 pscf_pcNd (CPU)" </li>
    <li> \subpage user_param_pg_page      "3.2.4 pscf_pgNd (GPU)" </li>
