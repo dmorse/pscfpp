@@ -483,7 +483,9 @@ namespace Pspc
             mu = polymerPtr->mu();
             length = polymerPtr->length();
             // Recall: mu = ln(phi/q)
-            fHelmholtz_ += phi*( mu - 1.0 )/length;
+            if (phi > 1E-08) {
+               fHelmholtz_ += phi*( mu - 1.0 )/length;
+            }
          }
       }
 
@@ -496,7 +498,9 @@ namespace Pspc
             phi = solventPtr->phi();
             mu = solventPtr->mu();
             size = solventPtr->size();
-            fHelmholtz_ += phi*( mu - 1.0 )/size;
+            if (phi > 1E-08) {
+               fHelmholtz_ += phi*( mu - 1.0 )/size;
+            }
          }
       }
 
@@ -536,7 +540,9 @@ namespace Pspc
             phi = polymerPtr->phi();
             mu = polymerPtr->mu();
             length = polymerPtr->length();
-            pressure_ += mu * phi /length;
+            if (phi > 1E-08) {
+               pressure_ += mu * phi /length;
+            }
          }
       }
 
@@ -549,7 +555,9 @@ namespace Pspc
             phi = solventPtr->phi();
             mu = solventPtr->mu();
             size = solventPtr->size();
-            pressure_ += mu * phi /size;
+            if (phi > 1E-08) {
+               pressure_ += mu * phi /size;
+            }
          }
       }
 
