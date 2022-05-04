@@ -388,7 +388,9 @@ namespace Fd1d
             mu = polymerPtr->mu();
             // Recall: mu = ln(phi/q)
             length = polymerPtr->length();
-            fHelmholtz_ += phi*( mu - 1.0 )/length;
+            if (phi > 1E-08) {
+               fHelmholtz_ += phi*( mu - 1.0 )/length;
+            }
          }
       }
 
@@ -402,7 +404,9 @@ namespace Fd1d
             mu = solventPtr->mu();
             // Recall: mu = ln(phi/q)
             size = solventPtr->size();
-            fHelmholtz_ += phi*( mu - 1.0 )/size;
+            if (phi > 1E-08) {
+               fHelmholtz_ += phi*( mu - 1.0 )/size;
+            }
          }
       }
 
@@ -437,7 +441,9 @@ namespace Fd1d
             phi = polymerPtr->phi();
             mu = polymerPtr->mu();
             length = polymerPtr->length();
-            pressure_ += phi*mu/length;
+            if (phi > 1E-08) {
+               pressure_ += phi*mu/length;
+            }
          }
       }
       if (ns > 0) {
@@ -448,7 +454,9 @@ namespace Fd1d
             phi = solventPtr->phi();
             mu = solventPtr->mu();
             size = solventPtr->size();
-            pressure_ += phi*mu/size;
+            if (phi > 1E-08) {
+               pressure_ += phi*mu/size;
+            }
          }
       }
 
