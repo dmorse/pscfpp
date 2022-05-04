@@ -27,7 +27,13 @@ namespace Pspc
    using namespace Pscf;
 
    /**
-   * File input/output operations for fields in several file formats.
+   * File input/output operations and format conversions for fields.
+   *
+   * This class provides functions to read and write arrays that contain
+   * fields in any of three representations (symmetry-adapted basis, 
+   * r-space grid, or Fourier k-space grid), and to convert among these 
+   * representations. The functions that implement IO operations define
+   * file formats for these field representations.
    *
    * \ingroup Pspc_Field_Module
    */
@@ -62,7 +68,7 @@ namespace Pspc
                      Basis<D> const & basis,
                      FileMaster const & fileMaster);
 
-      /// \name Field File IO
+      /// \name Field File IO - Symmetry Adapted Basis Format
       //@{
 
       /**
@@ -75,9 +81,9 @@ namespace Pspc
       * fields[i] is a DArray containing components of the field 
       * associated with monomer type i.
       *
-      * \param in input stream (i.e., input file)
-      * \param fields array of fields (symmetry adapted basis components)
-      * \param unitCell associated crystallographic UnitCell<D>
+      * \param in  input stream (i.e., input file)
+      * \param fields  array of fields (symmetry adapted basis components)
+      * \param unitCell  associated crystallographic unit cell
       */
       void 
       readFieldsBasis(std::istream& in, DArray< DArray<double> > & fields, 
@@ -90,9 +96,9 @@ namespace Pspc
       * reads components in symmetry-adapted form from that file, and 
       * closes the file.
       *
-      * \param filename name of input file
-      * \param fields array of fields (symmetry adapted basis components)
-      * \param unitCell associated crystallographic UnitCell<D>
+      * \param filename  name of input file
+      * \param fields  array of fields (symmetry adapted basis components)
+      * \param unitCell  associated crystallographic unit cell
       */
       void readFieldsBasis(std::string filename, 
                            DArray< DArray<double> > & fields, 
@@ -103,9 +109,9 @@ namespace Pspc
       *
       * This function writes components in a symmetry adapted basis.
       *
-      * \param out output stream (i.e., output file)
-      * \param fields array of fields (symmetry adapted basis components)
-      * \param unitCell associated crystallographic UnitCell<D>
+      * \param out  output stream (i.e., output file)
+      * \param fields  array of fields (symmetry adapted basis components)
+      * \param unitCell  associated crystallographic unit cell
       */
       void writeFieldsBasis(std::ostream& out, 
                             DArray< DArray<double> > const & fields,
@@ -118,23 +124,53 @@ namespace Pspc
       * writes components in symmetry-adapted form to that file, and then
       * closes the file. 
       *
-      * \param filename name of input file
-      * \param fields array of fields (symmetry adapted basis components)
-      * \param unitCell associated crystallographic UnitCell<D>
+      * \param filename  name of input file
+      * \param fields  array of fields (symmetry adapted basis components)
+      * \param unitCell  associated crystallographic unit cell
       */
       void writeFieldsBasis(std::string filename, 
                             DArray< DArray<double> > const & fields,
                             UnitCell<D> const & unitCell) const;
 
+      //@}
+      /// \name Field File IO - Real Space Grid Format
+      //@{
+
       /**
-      * Read array of RField objects (fields on an r-space grid) from file.
+      * Read single RField (field on an r-space grid) from istream.
+      *
+      * \param in  input stream (i.e., input file)
+      * \param field  fields defined on r-space grid
+      * \param unitCell  associated crystallographic unit cell
+      */
+      void readFieldRGrid(std::istream &in, 
+                           RField<D> & field, 
+                           UnitCell<D>& unitCell) const;
+
+      /**
+      * Read single RField (field on an r-space grid) from named file.
+      *
+      * This function opens an input file with the specified filename, 
+      * reads a field in RField<D> real-space grid format, and closes
+      * the file.
+      *
+      * \param filename  name of input file
+      * \param field  fields defined on r-space grid
+      * \param unitCell  associated crystallographic unit cell
+      */
+      void readFieldRGrid(std::string filename, 
+                           RField<D> & field, 
+                           UnitCell<D>& unitCell) const;
+
+      /**
+      * Read array of RField objects (fields on r-space grid) from istream.
       *
       * The capacity of array fields is equal to nMonomer, and element
       * fields[i] is the RField<D> associated with monomer type i.
       * 
-      * \param in input stream (i.e., input file)
-      * \param fields array of RField fields (r-space grid)
-      * \param unitCell associated crystallographic UnitCell<D>
+      * \param in  input stream (i.e., input file)
+      * \param fields  array of RField fields (r-space grid)
+      * \param unitCell  associated crystallographic unit cell
       */
       void readFieldsRGrid(std::istream& in, DArray< RField<D> >& fields, 
                            UnitCell<D> & unitCell) const;
@@ -149,20 +185,46 @@ namespace Pspc
       * reads fields in RField<D> real-space grid format from that file, 
       * and then closes the file. 
       *
-      * \param filename name of input file
-      * \param fields array of RField fields (r-space grid)
-      * \param unitCell associated crystallographic UnitCell<D>
+      * \param filename  name of input file
+      * \param fields  array of RField fields (r-space grid)
+      * \param unitCell  associated crystallographic unit cell
       */
       void readFieldsRGrid(std::string filename, 
                            DArray< RField<D> >& fields, 
                            UnitCell<D> & unitCell) const;
 
       /**
-      * Write array of RField objects (fields on an r-space grid) to file.
+      * Write a single RField (field on an r-space grid) to ostream.
       *
-      * \param out output stream (i.e., output file)
-      * \param fields array of RField fields (r-space grid)
-      * \param unitCell associated crystallographic UnitCell<D>
+      * \param out  output stream 
+      * \param field  field defined on r-space grid
+      * \param unitCell  associated crystallographic unit cell
+      */
+      void writeFieldRGrid(std::ostream &out, 
+                           RField<D> const & field, 
+                           UnitCell<D> const & unitCell) const;
+
+      /**
+      * Write a single RField (fields on an r-space grid) to a file.
+      *
+      * This function opens an output file with the specified filename, 
+      * write a field in RField<D> real-space grid format to that file, 
+      * and then closes the file.
+      *
+      * \param filename  name of output file
+      * \param field  field defined on r-space grid
+      * \param unitCell  associated crystallographic unit cell
+      */
+      void writeFieldRGrid(std::string filename, 
+                           RField<D> const & field, 
+                           UnitCell<D> const & unitCell) const;
+
+      /**
+      * Write array of RField objects (fields on r-space grid) to ostream.
+      *
+      * \param out  output stream (i.e., output file)
+      * \param fields  array of RField fields (r-space grid)
+      * \param unitCell  associated crystallographic unit cell
       */
       void writeFieldsRGrid(std::ostream& out, 
                             DArray< RField<D> > const & fields, 
@@ -177,27 +239,15 @@ namespace Pspc
       *
       * \param filename  name of output file
       * \param fields  array of RField fields (r-space grid)
-      * \param unitCell associated crystallographic UnitCell<D>
+      * \param unitCell  associated crystallographic unit cell
       */
       void writeFieldsRGrid(std::string filename,
                             DArray< RField<D> > const & fields, 
                             UnitCell<D> const & unitCell) const;
 
-      void readFieldRGrid(std::istream &in, 
-                           RField<D> & field, 
-                           UnitCell<D>& unitCell) const;
-
-      void readFieldRGrid(std::string filename, 
-                           RField<D> & field, 
-                           UnitCell<D>& unitCell) const;
-
-      void writeFieldRGrid(std::ostream &out, 
-                           RField<D> const & field, 
-                           UnitCell<D> const & unitCell) const;
-
-      void writeFieldRGrid(std::string filename, 
-                           RField<D> const & field, 
-                           UnitCell<D> const & unitCell) const;
+      //@}
+      /// \name Field File IO - Fourier Space (K-Space) Grid Format
+      //@{
 
       /**
       * Read array of RFieldDft objects (k-space fields) from file.
@@ -208,7 +258,7 @@ namespace Pspc
       * 
       * \param in  input stream (i.e., input file)
       * \param fields  array of RFieldDft fields (k-space grid)
-      * \param unitCell associated crystallographic UnitCell<D>
+      * \param unitCell  associated crystallographic unit cell
       */
       void readFieldsKGrid(std::istream& in, 
                            DArray< RFieldDft<D> >& fields, 
@@ -227,7 +277,7 @@ namespace Pspc
       * 
       * \param filename  name of input file
       * \param fields  array of RFieldDft fields (k-space grid)
-      * \param unitCell associated crystallographic UnitCell<D>
+      * \param unitCell  associated crystallographic unit cell
       */
       void readFieldsKGrid(std::string filename, 
                            DArray< RFieldDft<D> >& fields, 
@@ -240,9 +290,9 @@ namespace Pspc
       * fields[i] is the discrete Fourier transform of the field for 
       * monomer type i.
       * 
-      * \param out output stream (i.e., output file)
-      * \param fields array of RFieldDft fields 
-      * \param unitCell associated crystallographic UnitCell<D>
+      * \param out  output stream (i.e., output file)
+      * \param fields  array of RFieldDft fields 
+      * \param unitCell  associated crystallographic unit cell
       */
       void writeFieldsKGrid(std::ostream& out, 
                             DArray< RFieldDft<D> > const & fields, 
@@ -257,11 +307,15 @@ namespace Pspc
       *
       * \param filename  name of output file.
       * \param fields  array of RFieldDft fields (k-space grid)
-      * \param unitCell associated crystallographic UnitCell<D>
+      * \param unitCell  associated crystallographic unit cell
       */
       void writeFieldsKGrid(std::string filename, 
                            DArray< RFieldDft<D> > const & fields, 
                            UnitCell<D> const & unitCell) const;
+
+      //@}
+      /// \name File IO Utilities
+      //@{
 
       /**
       * Reader header of field file (fortran pscf format)
@@ -276,10 +330,9 @@ namespace Pspc
       * input parameter nMonomer, respectively. The group name is not 
       * checked.
       * 
-      * \param in input stream (i.e., input file)
-      * \param nMonomer expected value of nMonomer
-      * \param unitCell associated crystallographic UnitCell<D>
-      * \param checkMonomer depending on field type, check monomer number or not
+      * \param in  input stream (i.e., input file)
+      * \param nMonomer  expected value of nMonomer
+      * \param unitCell  associated crystallographic unit cell
       */
       void readFieldHeader(std::istream& in, int& nMonomer, 
                            UnitCell<D> & unitCell) const;
@@ -287,9 +340,9 @@ namespace Pspc
       /**
       * Write header for field file (fortran pscf format)
       *
-      * \param out output stream (i.e., output file)
-      * \param nMonomer number of monomer types
-      * \param unitCell associated crystallographic UnitCell<D>
+      * \param out  output stream (i.e., output file)
+      * \param nMonomer  number of monomer types
+      * \param unitCell  associated crystallographic unit cell
       */
       void writeFieldHeader(std::ostream& out, int nMonomer,
                             UnitCell<D> const & unitCell) const;

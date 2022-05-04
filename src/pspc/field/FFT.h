@@ -93,10 +93,10 @@ namespace Pspc {
       /**
       * Compute inverse (complex-to-real) Fourier transform without destroying input.
       *
-      * \param in  array of complex values on k-space grid (device mem)
-      * \param out  array of real values on r-space grid (device mem)
+      * \param in  array of complex values on k-space grid 
+      * \param out  array of real values on r-space grid 
       */
-      void inverseTransformSafe(RFieldDft<D> const & kField, RField<D>& rField) const;
+      void inverseTransformSafe(RFieldDft<D> const & in, RField<D>& out) const;
 
       /**
       * Return the dimensions of the grid for which this was allocated.

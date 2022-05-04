@@ -393,13 +393,13 @@ namespace Pspc
             writeCRGrid(filename);
          } else
          if (command == "WRITE_PROPAGATOR") {
-            int polymerID, blockID;
+            int polymerId, blockId;
             readEcho(in, filename);
-            in >> polymerID;
-            in >> blockID;
-            Log::file() << Str("polymer ID   ", 21) << polymerID << "\n"
-                        << Str("block ID   ", 21) << blockID << std::endl;
-            writePropagatorRGrid(filename, polymerID, blockID);
+            in >> polymerId;
+            in >> blockId;
+            Log::file() << Str("polymer ID   ", 21) << polymerId << "\n"
+                        << Str("block ID   ", 21) << blockId << std::endl;
+            writePropagatorRGrid(filename, polymerId, blockId);
          } else
          if (command == "BASIS_TO_RGRID") {
             readEcho(in, inFileName);
@@ -902,11 +902,11 @@ namespace Pspc
    */
    template <int D>
    void System<D>::writePropagatorRGrid(const std::string & filename, 
-                                        int polymerID, int blockID) 
+                                        int polymerId, int blockId) 
    const
    {
       RField<D> tailField 
-              = mixture_.polymer(polymerID).propagator(blockID, 1).tail();
+              = mixture_.polymer(polymerId).propagator(blockId, 1).tail();
       fieldIo().writeFieldRGrid(filename, tailField, unitCell());
    }
 

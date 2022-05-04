@@ -471,9 +471,11 @@ namespace Pspc
       /**
       * Write last contour slice of the propagator in real space grid format.
       *
-      * \param filename name of output file
+      * \param filename  name of output file
+      * \param polymerId  integer id of the polymer
+      * \param blockId  integer id of the block with the polymer 
       */
-      void writePropagatorRGrid(const std::string & filename, int polymerID, int blockID) const;
+      void writePropagatorRGrid(const std::string & filename, int polymerId, int blockId) const;
    
       /**
       * Convert a field from symmetry-adapted basis to r-grid format.
