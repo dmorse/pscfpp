@@ -110,16 +110,15 @@ namespace Pscf
       */
       int nPolymer() const;
 
+      /** 
+      * Get number of total blocks in the mixture across all polymers.
+      */
+      int nBlock() const;
+
       /**
       * Get number of solvent (point particle) species.
       */
       int nSolvent() const;
-
-      /** 
-      * Get number of total pieces in the mixture (each block is
-      * its own piece, and each solvent is its own piece).
-      */
-      int nPieces() const;
 
       //@}
 
@@ -169,10 +168,9 @@ namespace Pscf
       int nSolvent_;
 
       /**
-      * Number of pieces in the system (each block and
-      * each solvent is its own piece).
+      * Number of blocks total, across all polymers.
       */
-      int nPieces_;
+      int nBlock_;
 
    };
 
@@ -191,8 +189,8 @@ namespace Pscf
    {  return nSolvent_; }
 
    template <class TP, class TS>
-   inline int MixtureTmpl<TP,TS>::nPieces() const
-   {  return nPieces_; }
+   inline int MixtureTmpl<TP,TS>::nBlock() const
+   {  return nBlock_; }
 
    template <class TP, class TS>
    inline Monomer const & MixtureTmpl<TP,TS>::monomer(int id) const
@@ -250,7 +248,7 @@ namespace Pscf
       nMonomer_(0), 
       nPolymer_(0),
       nSolvent_(0),
-      nPieces_(0)
+      nBlock_(0)
    {}
 
    /*
@@ -282,7 +280,7 @@ namespace Pscf
       * Monomer::kuhn on a single line.
       */
 
-      // Read nPolymer and (optionally) nSolvent, with nSolvent=0 by default
+      // Read nPolymer
       read<int>(in, "nPolymer", nPolymer_);
       UTIL_CHECK(nPolymer_ > 0);
 
@@ -290,14 +288,14 @@ namespace Pscf
       nSolvent_ = 0;
       readOptional<int>(in, "nSolvent", nSolvent_);
 
-      // Read polymers and compute nPieces_
-      nPieces_ = nSolvent_;
+      // Read polymers and compute nBlock
+      nBlock_ = 0;
       if (nPolymer_ > 0) {
 
          polymers_.allocate(nPolymer_);
          for (int i = 0; i < nPolymer_; ++i) {
             readParamComposite(in, polymer(i));
-            nPieces_ = nPieces_ + polymer(i).nBlock();
+            nBlock_ = nBlock_ + polymer(i).nBlock();
          }
    
          // Set statistical segment lengths for all blocks

@@ -379,6 +379,10 @@ namespace Pspg
             readEcho(in, filename);
             fieldIo().writeFieldsRGrid(filename, cFieldsRGrid());
          } else 
+         if (command == "WRITE_C_BLOCK_RGRID") {
+            readEcho(in, filename);
+            writeBlockCRGrid(filename);
+         } else
          if (command == "WRITE_PROPAGATOR") {
             int polymerID, blockID;
             readEcho(in, filename);
@@ -803,6 +807,28 @@ namespace Pspg
    {
       UTIL_CHECK(hasCFields_);
       fieldIo().writeFieldsBasis(filename, cFields());
+   }
+
+   /*
+   * Write all concentration fields in real space (r-grid) format, for each
+   * block (or solvent) individually rather than for each species.
+   */
+   template <int D>
+   void System<D>::writeBlockCRGrid(const std::string & filename) const
+   {
+      UTIL_CHECK(hasCFields_);
+
+      // Create and allocate the DArray of fields to be written
+      DArray<CField> blockCFields;
+      blockCFields.allocate(mixture_.nSolvent() + mixture_.nBlock());
+      int n = blockCFields.capacity();
+      for (int i = 0; i < n; i++) {
+         blockCFields[i].allocate(mesh().dimensions());
+      }
+
+      // Get data from Mixture and write to file
+      mixture_.createBlockCRGrid(blockCFields);
+      fieldIo().writeFieldsRGrid(filename, blockCFields, unitCell());
    }
 
    template <int D>

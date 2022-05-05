@@ -450,6 +450,14 @@ namespace Pspg
       void writeCBasis(const std::string & filename);
 
       /**
+      * Write concentration fields in real space (r-grid) format, for each
+      * block (or solvent) individually rather than for each species.
+      *
+      * \param filename name of output file
+      */
+      void writeBlockCRGrid(const std::string & filename) const;
+
+      /**
       * Write last contour slice of the propagator in real space grid format.
       *
       * \param filename name of output file
