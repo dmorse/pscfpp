@@ -828,7 +828,7 @@ namespace Pspg
 
       // Get data from Mixture and write to file
       mixture_.createBlockCRGrid(blockCFields);
-      fieldIo().writeFieldsRGrid(filename, blockCFields, unitCell());
+      fieldIo().writeFieldsRGrid(filename, blockCFields);
    }
 
    template <int D>

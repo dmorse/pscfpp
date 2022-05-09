@@ -44,8 +44,8 @@ namespace Pspg
       // into local data structures and implement the actual calculation
       // of kSq or dKSq for each wavevector on the GPU. 
       
-      void computeKSq(UnitCell<D>& unitCell);
-      void computedKSq(UnitCell<D>& unitCell);
+      void computeKSq(const UnitCell<D>& unitCell);
+      void computedKSq(const UnitCell<D>& unitCell);
 
       // Accessors: Return pointer to arrays, which are allocated in 
       // the allocate function(). I assume this is the form needed

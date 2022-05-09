@@ -263,6 +263,16 @@ namespace Pspg
       Mesh<D> & mesh();
 
       /**
+      * Get spatial discretization mesh by const reference.
+      */
+      Mesh<D> const & mesh() const;
+
+      /**
+      * Get crystal unitCell (i.e., lattice type and parameters) by const reference.
+      */
+      UnitCell<D> const & unitCell() const;
+
+      /**
       * Get crystal unitCell (i.e., lattice type and parameters) by reference.
       */
       UnitCell<D> & unitCell();
@@ -293,12 +303,12 @@ namespace Pspg
       WaveList<D>& wavelist();
 
       /**
-      * Get associated FieldIo object.
+      * Get associated const FieldIo object.
       */
-      FieldIo<D> & fieldIo();
+      FieldIo<D> const & fieldIo() const;
 
       /**
-      * Get associated FFT objecti by reference.
+      * Get associated FFT object by reference.
       */
       FFT<D> & fft();
 
@@ -681,9 +691,18 @@ namespace Pspg
    inline UnitCell<D> & System<D>::unitCell()
    { return domain_.unitCell(); }
 
-   // Get the Mesh<D> object.
+   template <int D>
+   inline UnitCell<D> const & System<D>::unitCell() const
+   { return domain_.unitCell(); }
+
+   // get the Mesh<D> object.
    template <int D>
    inline Mesh<D> & System<D>::mesh()
+   { return domain_.mesh(); }
+
+   // get the const Mesh<D> object.
+   template <int D>
+   inline Mesh<D> const & System<D>::mesh() const
    { return domain_.mesh(); }
 
    // Get the Basis<D> object.
@@ -696,9 +715,9 @@ namespace Pspg
    inline FFT<D> & System<D>::fft()
    {  return domain_.fft(); }
 
-   // Get the FieldIo<D> object.
+   // Get the const FieldIo<D> object.
    template <int D>
-   inline FieldIo<D> & System<D>::fieldIo()
+   inline FieldIo<D> const & System<D>::fieldIo() const
    {  return domain_.fieldIo(); }
 
    // Get the groupName string.

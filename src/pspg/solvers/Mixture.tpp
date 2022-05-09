@@ -206,12 +206,14 @@ namespace Pspg
 
       UTIL_CHECK(blockCFields.capacity() == nBlock() + nSolvent());
 
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(nx, nBlocks, nThreads);
+
       // Clear all monomer concentration fields, check capacities
       for (i = 0; i < np; ++i) {
          UTIL_CHECK(blockCFields[i].capacity() == nx);
-         for (j = 0; j < nx; ++j) {
-            blockCFields[i][j] = 0.0;
-         }
+         assignUniformReal<<<nBlocks, nThreads>>>(blockCFields[i].cDField(), 0.0, nx);
       }
 
       // Process polymer species
@@ -228,8 +230,8 @@ namespace Pspg
                UTIL_CHECK(sectionId < np);
                UTIL_CHECK(blockCFields[sectionId].capacity() == nx);
 
-               const cudaReal* blockField = polymer(i).block(j).cField();
-               cudaMemcpy(blockCFields[sectionID].cDField(), blockField, 
+               const cudaReal* blockField = polymer(i).block(j).cField().cDField();
+               cudaMemcpy(blockCFields[sectionId].cDField(), blockField, 
                           mesh().size() * sizeof(cudaReal), cudaMemcpyDeviceToDevice);
             }
          }
@@ -246,8 +248,8 @@ namespace Pspg
             UTIL_CHECK(sectionId < np);
             UTIL_CHECK(blockCFields[sectionId].capacity() == nx);
 
-            const cudaReal* solventField = solvent(i).cField();
-            cudaMemcpy(blockCFields[sectionID].cDField(), blockField, 
+            const cudaReal* solventField = solvent(i).concField().cDField();
+            cudaMemcpy(blockCFields[sectionId].cDField(), solventField, 
                        mesh().size() * sizeof(cudaReal), cudaMemcpyDeviceToDevice);
          }
       }
