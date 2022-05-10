@@ -257,26 +257,6 @@ namespace Pspc
       */
       CField const & cFieldRGrid(int monomerId) const;
 
-      /**
-      * Get array of all individual block/solvent concentration fields
-      * on r-space grid.
-      *
-      * The array capacity is equal to nPieces, the number of total 
-      * blocks in the system plus nSolvents. The order of CFields is 
-      * determined by looping over each Polymer object in the Mixture,
-      * and storing the CField for each Block in that Polymer in order.
-      * Then, we loop over Solvent objects in the Mixture and store a 
-      * CField for each. 
-      */
-      DArray<CField> const cFieldsRGridLong() const;
-
-      /**
-      * Get concentration field for one block/solvent on r-space grid.
-      *
-      * \param sectionId integer piece (block or solvent) index
-      */
-      CField const cFieldRGridLong(int sectionId) const;
-
       //@}
       /// \name Miscellaneous Accessors 
       //@{
@@ -490,11 +470,11 @@ namespace Pspc
 
       /**
       * Write concentration fields in real space (r-grid) format, for each
-      * "piece" (block or solvent) individually rather than for each species.
+      * block (or solvent) individually rather than for each species.
       *
       * \param filename name of output file
       */
-      void writeCRGridLong(const std::string & filename) const;
+      void writeBlockCRGrid(const std::string & filename) const;
 
       /**
       * Write last contour slice of the propagator in real space grid format.
@@ -888,19 +868,6 @@ namespace Pspc
    inline typename System<D>::CField const & System<D>::cFieldRGrid(int id)
    const
    {  return cFieldsRGrid_[id]; }
-
-   // Get array of all block/solvent concentration fields on grids.
-   template <int D>
-   inline
-   DArray< typename System<D>::CField > const System<D>::cFieldsRGridLong()
-   const
-   {  return mixture_.createRGridLong(); }
-
-   // Get a single block/solvent concentration field on an r-space grid.
-   template <int D>
-   inline typename System<D>::CField const System<D>::cFieldRGridLong(int id)
-   const
-   {  return mixture_.createRGridLong()[id]; }
 
    // Have the w fields been set?
    template <int D>

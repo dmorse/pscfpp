@@ -116,7 +116,14 @@ namespace Fd1d
       int nx = domain().nx();          // number grid points
       int np = mixture().nPolymer();   // number of polymer species
       int nb;                          // number of blocks per polymer
-      int i, j, k;
+      int nb_tot = mixture().nBlock(); // number of blocks in whole system
+      int ns = mixture().nSolvent();   // number of solvents
+
+      out << "nx          "  <<  nx              << std::endl;
+      out << "n_block     "  <<  nb_tot          << std::endl;
+      out << "n_solvent   "  <<  ns              << std::endl;
+
+      int i, j, k, l;
       double c;
       for (i = 0; i < nx; ++i) {
          out << Int(i, 5);
@@ -126,6 +133,10 @@ namespace Fd1d
                c = mixture().polymer(j).block(k).cField()[i];
                out << " " << Dbl(c, 15, 8);
             }
+         }
+         for (l = 0; l < ns; ++l) {
+               c = mixture().solvent(l).cField()[i];
+               out << " " << Dbl(c, 15, 8);
          }
          out << std::endl;
       }

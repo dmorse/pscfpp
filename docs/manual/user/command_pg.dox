@@ -81,6 +81,15 @@ pscf_pg2d, and pscf_pg3d).
          in r-grid format  </td>
   </tr>
   <tr> 
+    <td> WRITE_C_BLOCK_RGRID </td>
+    <td> filename [string] </td>
+    <td> Write individual block/solvent volume fraction fields (c fields) to
+         file filename, in r-grid format. The block c fields are given in
+         the order that the blocks appear in the param file, followed by the
+         solvent fields in the order that the solvents appear in the param 
+         file </td>
+  </tr>
+  <tr> 
     <td> RGRID_TO_BASIS </td>
     <td> inFile [string], outFile[string </td>
     <td> Read fields from file inFile in real-space grid (r-grid) format, 
