@@ -99,8 +99,9 @@ programs:
     <td> filename [string] </td>
     <td> Write individual block/solvent volume fraction fields (c fields) to
          file filename, in r-grid format. The block c fields are given in
-         the order they appear in the param file, followed by the solvents
-         in the order they appear in the param file </td>
+         the order that the blocks appear in the param file, followed by the
+         solvent fields in the order that the solvents appear in the param 
+         file </td>
   </tr>
   <tr> 
     <td> RGRID_TO_BASIS </td>
