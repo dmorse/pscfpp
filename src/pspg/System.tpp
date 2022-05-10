@@ -17,6 +17,7 @@
 #include <pspg/iterator/Iterator.h>
 #include <pspg/iterator/IteratorFactory.h>
 
+#include <util/param/BracketPolicy.h>
 #include <util/format/Str.h>
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
@@ -65,6 +66,8 @@ namespace Pspg
       interactionPtr_ = new ChiInteraction();
       iteratorFactoryPtr_ = new IteratorFactory<D>(*this); 
       wavelistPtr_ = new WaveList<D>();
+
+      BracketPolicy::set(BracketPolicy::Optional);
 
       ThreadGrid::init();
       
