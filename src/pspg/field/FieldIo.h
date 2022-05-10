@@ -81,7 +81,7 @@ namespace Pspg
       * \param fields array of fields (symmetry adapted basis components)
       */
       void 
-      readFieldsBasis(std::istream& in, DArray< RDField <D> >& fields);
+      readFieldsBasis(std::istream& in, DArray< RDField <D> >& fields) const;
 
       /**
       * Read concentration or chemical potential field components from file.
@@ -94,7 +94,7 @@ namespace Pspg
       * \param fields array of fields (symmetry adapted basis components)
       */
       void readFieldsBasis(std::string filename, 
-                           DArray< RDField <D> >& fields);
+                           DArray< RDField <D> >& fields) const;
 
       /**
       * Write concentration or chemical potential field components to file.
@@ -105,7 +105,7 @@ namespace Pspg
       * \param fields array of fields (symmetry adapted basis components)
       */
       void writeFieldsBasis(std::ostream& out, 
-                            DArray< RDField <D> > const & fields);
+                            DArray< RDField <D> > const & fields) const;
 
       /**
       * Write concentration or chemical potential field components to file.
@@ -118,7 +118,7 @@ namespace Pspg
       * \param fields array of fields (symmetry adapted basis components)
       */
       void writeFieldsBasis(std::string filename, 
-                            DArray< RDField <D> > const & fields);
+                            DArray< RDField <D> > const & fields) const;
 
       /**
       * Read array of RField objects (fields on an r-space grid) from file.
@@ -129,7 +129,7 @@ namespace Pspg
       * \param in input stream (i.e., input file)
       * \param fields array of RField fields (r-space grid)
       */
-      void readFieldsRGrid(std::istream& in, DArray< RDField<D> >& fields);
+      void readFieldsRGrid(std::istream& in, DArray< RDField<D> >& fields) const;
 
       /**
       * Read array of RField objects (fields on an r-space grid) from file.
@@ -144,7 +144,8 @@ namespace Pspg
       * \param filename name of input file
       * \param fields array of RField fields (r-space grid)
       */
-      void readFieldsRGrid(std::string filename, DArray< RDField<D> >& fields);
+      void readFieldsRGrid(std::string filename, DArray< RDField<D> >& fields)
+      const;
 
       /**
       * Write array of RField objects (fields on an r-space grid) to file.
@@ -153,7 +154,7 @@ namespace Pspg
       * \param fields array of RField fields (r-space grid)
       */
       void writeFieldsRGrid(std::ostream& out, 
-                            DArray< RDField<D> > const& fields);
+                            DArray< RDField<D> > const& fields) const;
 
       /**
       * Write array of RField objects (fields on an r-space grid) to file.
@@ -166,16 +167,16 @@ namespace Pspg
       * \param fields  array of RField fields (r-space grid)
       */
       void writeFieldsRGrid(std::string filename,
-                            DArray< RDField<D> > const& fields);
+                            DArray< RDField<D> > const& fields) const;
 
 
-      void readFieldRGrid(std::istream& in, RDField<D> &field);
+      void readFieldRGrid(std::istream& in, RDField<D> &field) const;
 
-      void readFieldRGrid(std::string filename, RDField<D> &field);
+      void readFieldRGrid(std::string filename, RDField<D> &field) const;
 
-      void writeFieldRGrid(std::ostream& out, RDField<D> const & field);
+      void writeFieldRGrid(std::ostream& out, RDField<D> const & field) const;
 
-      void writeFieldRGrid(std::string filename, RDField<D> const & field);
+      void writeFieldRGrid(std::string filename, RDField<D> const & field) const;
 
       /**
       * Read array of RFieldDft objects (k-space fields) from file.
@@ -188,7 +189,7 @@ namespace Pspg
       * \param fields  array of RFieldDft fields (k-space grid)
       */
       void readFieldsKGrid(std::istream& in, 
-                           DArray< RDFieldDft<D> >& fields);
+                           DArray< RDFieldDft<D> >& fields) const;
 
       /**
       * Read array of RFieldDft objects (k-space fields) from file.
@@ -205,7 +206,7 @@ namespace Pspg
       * \param fields  array of RFieldDft fields (k-space grid)
       */
       void readFieldsKGrid(std::string filename, 
-                           DArray< RDFieldDft<D> >& fields);
+                           DArray< RDFieldDft<D> >& fields) const;
 
       /**
       * Write array of RFieldDft objects (k-space fields) to file.
@@ -218,7 +219,7 @@ namespace Pspg
       * \param fields array of RFieldDft fields 
       */
       void writeFieldsKGrid(std::ostream& out, 
-                            DArray< RDFieldDft<D> > const& fields);
+                            DArray< RDFieldDft<D> > const& fields) const;
    
       /**
       * Write array of RFieldDft objects (k-space fields) to a file.
@@ -231,7 +232,7 @@ namespace Pspg
       * \param fields  array of RFieldDft fields (k-space grid)
       */
       void writeFieldsKGrid(std::string filename, 
-                           DArray< RDFieldDft<D> > const& fields);
+                           DArray< RDFieldDft<D> > const& fields) const;
 
       /**
       * Write header for field file (fortran pscf format)
@@ -252,7 +253,7 @@ namespace Pspg
       * \param dft discrete Fourier transform of a real field
       */
       void convertBasisToKGrid(RDField<D> const& components, 
-                               RDFieldDft<D>& dft);
+                               RDFieldDft<D>& dft) const;
    
       /**
       * Convert fields from symmetrized basis to Fourier transform (kgrid).
@@ -264,7 +265,7 @@ namespace Pspg
       * \param out fields defined as discrete Fourier transforms (k-grid)
       */
       void convertBasisToKGrid(DArray< RDField <D> > & in,
-                               DArray< RDFieldDft<D> >& out);
+                               DArray< RDFieldDft<D> >& out) const;
 
       /**
       * Convert field from Fourier transform (k-grid) to symmetrized basis.
@@ -273,7 +274,7 @@ namespace Pspg
       * \param components coefficients of symmetry-adapted basis functions.
       */
       void convertKGridToBasis(RDFieldDft<D> const& dft, 
-                               RDField<D>& components);
+                               RDField<D>& components) const;
 
       /**
       * Convert fields from Fourier transform (kgrid) to symmetrized basis.
@@ -285,7 +286,7 @@ namespace Pspg
       * \param out  components of fields in symmetry adapted basis 
       */
       void convertKGridToBasis(DArray< RDFieldDft<D> > & in,
-                               DArray< RDField <D> > & out);
+                               DArray< RDField <D> > & out) const;
 
       /**
       * Convert fields from symmetrized basis to spatial grid (rgrid).
@@ -294,7 +295,7 @@ namespace Pspg
       * \param out fields defined on real-space grid
       */
       void convertBasisToRGrid(DArray< RDField <D> > & in,
-                               DArray< RDField<D> >& out);
+                               DArray< RDField<D> >& out) const;
 
       /**
       * Convert fields from spatial grid (rgrid) to symmetrized basis.
@@ -303,7 +304,7 @@ namespace Pspg
       * \param out  fields in symmetry adapted basis form
       */
       void convertRGridToBasis(DArray< RDField<D> > & in,
-                               DArray< RDField <D> > & out);
+                               DArray< RDField <D> > & out) const;
 
       /**
       * Convert fields from k-grid (DFT) to real space (rgrid) format.
@@ -332,7 +333,7 @@ namespace Pspg
    private:
 
       // DFT work array for two-step conversion basis <-> kgrid <-> rgrid.
-      RDFieldDft<D> workDft_;
+      mutable RDFieldDft<D> workDft_;
 
       // Pointers to associated objects.
 
@@ -340,43 +341,29 @@ namespace Pspg
       UnitCell<D>* unitCellPtr_;
 
       /// Pointer to spatial discretization mesh.
-      Mesh<D>* meshPtr_;
+      Mesh<D> const * meshPtr_;
 
       /// Pointer to FFT object.
-      FFT<D>* fftPtr_;
+      FFT<D> const * fftPtr_;
 
       /// Pointer to group name string
-      std::string* groupNamePtr_;
+      std::string const * groupNamePtr_;
 
       /// Pointer to a Basis object
-      Basis<D>* basisPtr_;
+      Basis<D> const * basisPtr_;
 
       /// Pointer to Filemaster (holds paths to associated I/O files).
-      FileMaster* fileMasterPtr_;
+      FileMaster const * fileMasterPtr_;
 
       // Private accessor functions:
 
       /// Get UnitCell by reference.
-      UnitCell<D>& unitCell()
+      UnitCell<D>& unitCell() const
       {  
          // UTIL_ASSERT(unitCellPtr_);  
          return *unitCellPtr_; 
       }
-
-      /// Get UnitCell by const reference.
-      UnitCell<D> const & unitCell() const
-      {  
-         // UTIL_ASSERT(unitCellPtr_);  
-         return *unitCellPtr_; 
-      }
-
-      /// Get spatial discretization mesh by reference.
-      Mesh<D>& mesh()
-      {  
-         // UTIL_ASSERT(meshPtr_);  
-         return *meshPtr_; 
-      }
-
+      
       /// Get spatial discretization mesh by const reference.
       Mesh<D> const & mesh() const
       {  
@@ -384,30 +371,26 @@ namespace Pspg
          return *meshPtr_; 
       }
 
-      /// Get FFT object by reference.
+      /// Get FFT object by const reference.
       FFT<D> const & fft() const
       {
          // UTIL_ASSERT(fftPtr_);  
          return *fftPtr_; 
       }
 
-      /// Get group name string by reference.
-      std::string& groupName()
-      {  return *groupNamePtr_; }
-
       /// Get group name string by const reference.
       std::string const & groupName() const
       {  return *groupNamePtr_; }
 
-      /// Get Basis by reference.
-      Basis<D>& basis()
+      /// Get Basis by const reference.
+      Basis<D> const & basis() const
       {
          // UTIL_ASSERT(basisPtr_);  
          return *basisPtr_; 
       }
 
-      /// Get FileMaster by reference.
-      FileMaster& fileMaster()
+      /// Get FileMaster by const reference.
+      FileMaster const & fileMaster() const
       {  
          UTIL_ASSERT(fileMasterPtr_);  
          return *fileMasterPtr_; 
@@ -418,12 +401,12 @@ namespace Pspg
       *
       * \param in input stream (i.e., input file)
       */
-      void readFieldHeader(std::istream& in);
+      void readFieldHeader(std::istream& in) const;
 
       /**
       * Check state of work array, allocate if necessary.
       */
-      void checkWorkDft();
+      void checkWorkDft() const;
 
    };
 

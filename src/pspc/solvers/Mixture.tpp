@@ -236,6 +236,66 @@ namespace Pspc
       return true;
    }
 
+   /*
+   * Combine cFields for each block (and solvent) into one DArray
+   */
+   template <int D>
+   void
+   Mixture<D>::createBlockCRGrid(DArray<typename Mixture<D>::CField>& blockCFields) 
+   const
+   {
+      UTIL_CHECK(nMonomer() > 0);
+      UTIL_CHECK(nBlock() + nSolvent() > 0);
+
+      int np = nSolvent() + nBlock();
+      int nx = mesh().size();
+      int i, j;
+
+      UTIL_CHECK(blockCFields.capacity() == nBlock() + nSolvent());
+
+      // Clear all monomer concentration fields, check capacities
+      for (i = 0; i < np; ++i) {
+         UTIL_CHECK(blockCFields[i].capacity() == nx);
+         for (j = 0; j < nx; ++j) {
+            blockCFields[i][j] = 0.0;
+         }
+      }
+
+      // Process polymer species
+      int sectionId = -1;
+
+      if (nPolymer() > 0) {
+
+         // Write each block's r-grid data to blockCFields
+         for (i = 0; i < nPolymer(); ++i) {
+            for (j = 0; j < polymer(i).nBlock(); ++j) {
+               sectionId++;
+
+               UTIL_CHECK(sectionId >= 0);
+               UTIL_CHECK(sectionId < np);
+               UTIL_CHECK(blockCFields[sectionId].capacity() == nx);
+
+               blockCFields[sectionId] = polymer(i).block(j).cField();
+            }
+         }
+      }
+
+      // Process solvent species
+      if (nSolvent() > 0) {
+
+         // Write each solvent's r-grid data to blockCFields
+         for (i = 0; i < nSolvent(); ++i) {
+            sectionId++;
+
+            UTIL_CHECK(sectionId >= 0);
+            UTIL_CHECK(sectionId < np);
+            UTIL_CHECK(blockCFields[sectionId].capacity() == nx);
+
+            blockCFields[sectionId] = solvent(i).cField();
+         }
+      }
+   }
+
 } // namespace Pspc
 } // namespace Pscf
 #endif

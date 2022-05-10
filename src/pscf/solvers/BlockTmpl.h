@@ -140,6 +140,11 @@ namespace Pscf
       * Get the associated monomer concentration field.
       */
       typename TP::CField& cField();
+
+      /**
+      * Get the associated const monomer concentration field.
+      */
+      typename TP::CField const & cField() const;
    
       /**
       * Get monomer statistical segment length.
@@ -183,6 +188,14 @@ namespace Pscf
    template <class TP>
    inline
    typename TP::CField& BlockTmpl<TP>::cField()
+   {  return cField_; }
+
+   /*
+   * Get the const monomer concentration field.
+   */
+   template <class TP>
+   inline
+   typename TP::CField const & BlockTmpl<TP>::cField() const
    {  return cField_; }
 
    /*

@@ -217,12 +217,12 @@ namespace Pspg
    }
 
    template <int D>
-   void WaveList<D>::computeKSq(UnitCell<D>& unitCell){
+   void WaveList<D>::computeKSq(const UnitCell<D>& unitCell){
       //pass for now
    }
 
    template <int D>
-   void WaveList<D>::computedKSq(UnitCell<D>& unitCell){
+   void WaveList<D>::computedKSq(const UnitCell<D>& unitCell){
       //dkkbasis is something determined from unit cell size
       //min image needs to be on device but okay since its only done once
       //second to last parameter is number of stars originally

@@ -69,6 +69,7 @@ namespace Pspg
    template <int D>
    void FieldIo<D>::readFieldsBasis(std::istream& in, 
                                     DArray< RDField<D> >& fields)
+   const
    {
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
@@ -148,6 +149,7 @@ namespace Pspg
    template <int D>
    void FieldIo<D>::readFieldsBasis(std::string filename, 
                                     DArray<RDField<D> >& fields)
+   const
    {
        std::ifstream file;
        fileMaster().openInputFile(filename, file);
@@ -158,6 +160,7 @@ namespace Pspg
    template <int D>
    void FieldIo<D>::writeFieldsBasis(std::ostream &out, 
                                      DArray<RDField<D> > const &  fields)
+   const
    {
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
@@ -206,6 +209,7 @@ namespace Pspg
    template <int D>
    void FieldIo<D>::writeFieldsBasis(std::string filename, 
                                      DArray<RDField<D> > const & fields)
+   const
    {
        std::ofstream file;
        fileMaster().openOutputFile(filename, file);
@@ -216,6 +220,7 @@ namespace Pspg
    template <int D>
    void FieldIo<D>::readFieldsRGrid(std::istream &in,
                                     DArray<RDField<D> >& fields)
+   const
    {
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
@@ -281,6 +286,7 @@ namespace Pspg
    template <int D>
    void FieldIo<D>::readFieldsRGrid(std::string filename, 
                                     DArray< RDField<D> >& fields)
+   const
    {
       std::ifstream file;
       fileMaster().openInputFile(filename, file);
@@ -291,6 +297,7 @@ namespace Pspg
    template <int D>
    void FieldIo<D>::writeFieldsRGrid(std::ostream &out,
                                      DArray<RDField<D> > const& fields)
+   const
    {
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
@@ -351,6 +358,7 @@ namespace Pspg
    template <int D>
    void FieldIo<D>::writeFieldsRGrid(std::string filename, 
                                      DArray< RDField<D> > const & fields)
+   const
    {
       std::ofstream file;
       fileMaster().openOutputFile(filename, file);
@@ -360,6 +368,7 @@ namespace Pspg
 
    template <int D>
    void FieldIo<D>::readFieldRGrid(std::istream &in, RDField<D> &field)
+   const
    {
       FieldIo<D>::readFieldHeader(in);
 
@@ -414,6 +423,7 @@ namespace Pspg
 
    template <int D>
    void FieldIo<D>::readFieldRGrid(std::string filename, RDField<D> &field)
+   const
    {
       std::ifstream file;
       fileMaster().openInputFile(filename, file);
@@ -423,6 +433,7 @@ namespace Pspg
 
    template <int D>
    void FieldIo<D>::writeFieldRGrid(std::ostream &out, RDField<D> const & field)
+   const
    {
 
       writeFieldHeader(out, 1);
@@ -471,6 +482,7 @@ namespace Pspg
 
    template <int D>
    void FieldIo<D>::writeFieldRGrid(std::string filename, RDField<D> const & field)
+   const
    {
       std::ofstream file;
       fileMaster().openOutputFile(filename, file);
@@ -481,6 +493,7 @@ namespace Pspg
    template <int D>
    void FieldIo<D>::readFieldsKGrid(std::istream &in,
                                     DArray<RDFieldDft<D> >& fields)
+   const
    {
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
@@ -533,6 +546,7 @@ namespace Pspg
    template <int D>
    void FieldIo<D>::readFieldsKGrid(std::string filename, 
                                     DArray< RDFieldDft<D> >& fields)
+   const
    {
       std::ifstream file;
       fileMaster().openInputFile(filename, file);
@@ -543,6 +557,7 @@ namespace Pspg
    template <int D>
    void FieldIo<D>::writeFieldsKGrid(std::ostream &out,
                                      DArray<RDFieldDft<D> > const& fields)
+   const
    {
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
@@ -552,16 +567,16 @@ namespace Pspg
       out << "ngrid" << std::endl 
           << "               " << mesh().dimensions() << std::endl;
 
-     DArray<cudaComplex*> temp_out;
-     int kSize = 1;
-     for (int i = 0; i < D; i++) {
-        if (i == D - 1) {
-           kSize *= (mesh().dimension(i) / 2 + 1);
-        }
-        else {
-           kSize *= mesh().dimension(i);
-        }
-     }
+      DArray<cudaComplex*> temp_out;
+      int kSize = 1;
+      for (int i = 0; i < D; i++) {
+         if (i == D - 1) {
+            kSize *= (mesh().dimension(i) / 2 + 1);
+         }
+         else {
+            kSize *= mesh().dimension(i);
+         }
+      }
       temp_out.allocate(nMonomer);
       for(int i = 0; i < nMonomer; ++i) {
          temp_out[i] = new cudaComplex[kSize];
@@ -589,6 +604,7 @@ namespace Pspg
    template <int D>
    void FieldIo<D>::writeFieldsKGrid(std::string filename, 
                                      DArray< RDFieldDft<D> > const& fields)
+   const
    {
       std::ofstream file;
       fileMaster().openOutputFile(filename, file);
@@ -597,7 +613,7 @@ namespace Pspg
    }
 
    template <int D>
-   void FieldIo<D>::readFieldHeader(std::istream& in) 
+   void FieldIo<D>::readFieldHeader(std::istream& in) const
    {
       std::string label;
 
@@ -641,26 +657,26 @@ namespace Pspg
 
    template <int D>
    void FieldIo<D>::convertBasisToKGrid(RDField<D> const& components, 
-                                        RDFieldDft<D>& dft)
+                                        RDFieldDft<D>& dft) const
    {
-     cudaReal* components_in;
-     components_in = new cudaReal[basis().nStar()];
-     cudaMemcpy(components_in, components.cDField(),
-            basis().nStar() * sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      cudaReal* components_in;
+      components_in = new cudaReal[basis().nStar()];
+      cudaMemcpy(components_in, components.cDField(),
+             basis().nStar() * sizeof(cudaReal), cudaMemcpyDeviceToHost);
 
-     int kSize = 1;
-     for (int i = 0; i < D; i++) {
-        if (i == D - 1) {
-           kSize *= (mesh().dimension(i) / 2 + 1); 
-        }   
-        else {
-           kSize *= mesh().dimension(i);
-        }   
-     }   
-     cudaComplex* dft_out;
-     dft_out = new cudaComplex[kSize];
+      int kSize = 1;
+      for (int i = 0; i < D; i++) {
+         if (i == D - 1) {
+            kSize *= (mesh().dimension(i) / 2 + 1); 
+         }   
+         else {
+            kSize *= mesh().dimension(i);
+         }   
+      }   
+      cudaComplex* dft_out;
+      dft_out = new cudaComplex[kSize];
 
-   // Create Mesh<D> with dimensions of DFT Fourier grid.
+      // Create Mesh<D> with dimensions of DFT Fourier grid.
       Mesh<D> dftMesh(dft.dftDimensions());
 
       typename Basis<D>::Star const* starPtr; // pointer to current star
@@ -758,24 +774,24 @@ namespace Pspg
 
    template <int D>
    void FieldIo<D>::convertKGridToBasis(RDFieldDft<D> const& dft, 
-                                        RDField<D>& components)
+                                        RDField<D>& components) const
    {
-     cudaReal* components_out;
-     components_out = new cudaReal[basis().nStar()];
+      cudaReal* components_out;
+      components_out = new cudaReal[basis().nStar()];
 
-     int kSize = 1;
-     for (int i = 0; i < D; i++) {
-        if (i == D - 1) {
-           kSize *= (mesh().dimension(i) / 2 + 1); 
-        }   
-        else {
-           kSize *= mesh().dimension(i);
-        }   
-     }   
-     cudaComplex* dft_in;
-     dft_in = new cudaComplex[kSize];
-     cudaMemcpy(dft_in, dft.cDField(),
-            kSize * sizeof(cudaComplex), cudaMemcpyDeviceToHost);
+      int kSize = 1;
+      for (int i = 0; i < D; i++) {
+         if (i == D - 1) {
+            kSize *= (mesh().dimension(i) / 2 + 1); 
+         }   
+         else {
+            kSize *= mesh().dimension(i);
+         }   
+      }   
+      cudaComplex* dft_in;
+      dft_in = new cudaComplex[kSize];
+      cudaMemcpy(dft_in, dft.cDField(),
+             kSize * sizeof(cudaComplex), cudaMemcpyDeviceToHost);
 
       // Create Mesh<D> with dimensions of DFT Fourier grid.
       Mesh<D> dftMesh(dft.dftDimensions());
@@ -872,7 +888,7 @@ namespace Pspg
 
    template <int D>
    void FieldIo<D>::convertBasisToKGrid(DArray< RDField <D> >& in,
-                                        DArray< RDFieldDft<D> >& out)
+                                        DArray< RDFieldDft<D> >& out) const
    {
       UTIL_ASSERT(in.capacity() == out.capacity());
       int n = in.capacity();
@@ -968,7 +984,7 @@ namespace Pspg
 
    template <int D>
    void FieldIo<D>::convertKGridToBasis(DArray< RDFieldDft<D> >& in,
-                                        DArray< RDField <D> > & out)
+                                        DArray< RDField <D> > & out) const
    {
 
       UTIL_ASSERT(in.capacity() == out.capacity());
@@ -983,7 +999,7 @@ namespace Pspg
    template <int D>
    void 
    FieldIo<D>::convertBasisToRGrid(DArray< RDField<D> >& in,
-                                   DArray< RDField<D> >& out)
+                                   DArray< RDField<D> >& out) const
    {
       UTIL_ASSERT(in.capacity() == out.capacity());
       //checkWorkDft();
@@ -1007,7 +1023,7 @@ namespace Pspg
    template <int D>
    void 
    FieldIo<D>::convertRGridToBasis(DArray< RDField<D> >& in,
-                                   DArray< RDField<D> > & out)
+                                   DArray< RDField<D> > & out) const
    {
       UTIL_ASSERT(in.capacity() == out.capacity());
       //checkWorkDft();
@@ -1056,7 +1072,7 @@ namespace Pspg
    }
 
    template <int D>
-   void FieldIo<D>::checkWorkDft()
+   void FieldIo<D>::checkWorkDft() const
    {
       if (!workDft_.isAllocated()) {
          workDft_.allocate(mesh().dimensions());

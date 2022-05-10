@@ -128,6 +128,15 @@ namespace Pspg
       void computeStress(WaveList<D>& wavelist);
 
       /**
+      * Combine cFields for each block/solvent into one DArray, which 
+      * is used in System.tpp to print a more detailed r-grid file using
+      * the command WRITE_C_BLOCK_RGRID.
+      * 
+      * \param blockCFields empty but allocated DArray to store fields
+      */
+      void createBlockCRGrid(DArray<CField>& blockCFields) const;
+
+      /**
       * Get derivative of free energy w/ respect to cell parameter.
       *
       * Get precomputed value of derivative of free energy per monomer
@@ -152,6 +161,7 @@ namespace Pspg
       using MixtureTmpl< Pscf::Pspg::Polymer<D>, Pscf::Pspg::Solvent<D> >::nMonomer;
       using MixtureTmpl< Pscf::Pspg::Polymer<D>, Pscf::Pspg::Solvent<D> >::nPolymer;
       using MixtureTmpl< Pscf::Pspg::Polymer<D>, Pscf::Pspg::Solvent<D> >::nSolvent;
+      using MixtureTmpl< Pscf::Pspg::Polymer<D>, Pscf::Pspg::Solvent<D> >::nBlock;
       using MixtureTmpl< Pscf::Pspg::Polymer<D>, Pscf::Pspg::Solvent<D> >::polymer;
       using MixtureTmpl< Pscf::Pspg::Polymer<D>, Pscf::Pspg::Solvent<D> >::monomer;
       using MixtureTmpl< Pscf::Pspg::Polymer<D>, Pscf::Pspg::Solvent<D> >::solvent;

@@ -110,6 +110,11 @@ namespace Pscf
       */
       int nPolymer() const;
 
+      /** 
+      * Get number of total blocks in the mixture across all polymers.
+      */
+      int nBlock() const;
+
       /**
       * Get number of solvent (point particle) species.
       */
@@ -162,6 +167,11 @@ namespace Pscf
       */
       int nSolvent_;
 
+      /**
+      * Number of blocks total, across all polymers.
+      */
+      int nBlock_;
+
    };
 
    // Inline member functions
@@ -177,6 +187,10 @@ namespace Pscf
    template <class TP, class TS>
    inline int MixtureTmpl<TP,TS>::nSolvent() const
    {  return nSolvent_; }
+
+   template <class TP, class TS>
+   inline int MixtureTmpl<TP,TS>::nBlock() const
+   {  return nBlock_; }
 
    template <class TP, class TS>
    inline Monomer const & MixtureTmpl<TP,TS>::monomer(int id) const
@@ -233,7 +247,8 @@ namespace Pscf
       solvents_(),
       nMonomer_(0), 
       nPolymer_(0),
-      nSolvent_(0)
+      nSolvent_(0),
+      nBlock_(0)
    {}
 
    /*
@@ -265,7 +280,7 @@ namespace Pscf
       * Monomer::kuhn on a single line.
       */
 
-      // Read nPolymer and (optionally) nSolvent, with nSolvent=0 by default
+      // Read nPolymer
       read<int>(in, "nPolymer", nPolymer_);
       UTIL_CHECK(nPolymer_ > 0);
 
@@ -273,12 +288,14 @@ namespace Pscf
       nSolvent_ = 0;
       readOptional<int>(in, "nSolvent", nSolvent_);
 
-      // Read polymers
+      // Read polymers and compute nBlock
+      nBlock_ = 0;
       if (nPolymer_ > 0) {
 
          polymers_.allocate(nPolymer_);
          for (int i = 0; i < nPolymer_; ++i) {
             readParamComposite(in, polymer(i));
+            nBlock_ = nBlock_ + polymer(i).nBlock();
          }
    
          // Set statistical segment lengths for all blocks
