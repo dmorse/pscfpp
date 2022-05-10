@@ -50,11 +50,6 @@ The following table shows a list of available commands for pscf_fd:
          they appear in the param file </td>
   </tr>
   <tr> 
-    <td> WRITE_BLOCK_C </td>
-    <td> filename [string] </td>
-    <td> Write monomer volume fractions for each block to file filename  </td>
-  </tr>
-  <tr> 
     <td> COMPARE_HOMOGENEOUS </td>
     <td> mode [int] </td>
     <td> Compare solution to homogeneous solution(s)  </td>
