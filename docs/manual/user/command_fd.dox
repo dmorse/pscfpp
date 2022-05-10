@@ -44,6 +44,14 @@ The following table shows a list of available commands for pscf_fd:
   <tr> 
     <td> WRITE_BLOCK_C </td>
     <td> filename [string] </td>
+    <td> Write individual block/solvent volume fraction (c) fields to
+         file filename. The block c fields are given in the order they
+         appear in the param file, followed by the solvents in the order
+         they appear in the param file </td>
+  </tr>
+  <tr> 
+    <td> WRITE_BLOCK_C </td>
+    <td> filename [string] </td>
     <td> Write monomer volume fractions for each block to file filename  </td>
   </tr>
   <tr> 
