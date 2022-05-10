@@ -134,7 +134,7 @@ namespace Pspg
             iArg  = optarg;
             break;
          case 'o': // output prefix
-            iFlag = true;
+            oFlag = true;
             oArg  = optarg;
             break;
          case 't': //number of threads per block, user set
