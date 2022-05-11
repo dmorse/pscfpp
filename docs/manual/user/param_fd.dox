@@ -224,6 +224,8 @@ Each Solvent block contains the description of a small molecule solvent
 species. Solvents are treated as structureless particles that occupy a 
 specified volume. The first parameter in each Solvent block is "monomerId"
 parameter that specifies the monomer or chemical type of the solvent.
+The solvent does not have a "segment length," so its monomerId merely
+indicates which field and interaction parameters apply to this solvent.
 This is followed by "size" parameter that specifies the steric volume, 
 defined as a ratio of the solvent volume to the monomer reference volume.
 The next parameter must then be either volume fraction "phi" or chemical 

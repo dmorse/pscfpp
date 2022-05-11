@@ -4,7 +4,10 @@ namespace Fd1d{
 \page fd1d_Solvent_page Fd1d::Solvent
 
 A Pscf::Fd1d::Solvent < D > object represents a solvent species. 
-Each solvent molecule is a point-like particle that has an associated monomer type and a size. The size corresponds to the solvent volume, expressed as a ratio of the actual volume to a monomer reference volume.
+Each solvent molecule is a point-like particle that has an associated monomer type and a size.
+The solvent does not have a "segment length," so its monomer type merely indicates which field
+and interaction parameters apply to this solvent. The size corresponds to the solvent volume,
+expressed as a ratio of the actual volume to a monomer reference volume.
 
 \sa Pscf::Fd1d::Solvent
 
