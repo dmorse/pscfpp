@@ -91,8 +91,8 @@ corresponding Polymer subblock of the Mixture block, as elements of the
 The Mixture block describes the chemical constituents of the system of 
 interest, which is generally a mixture of one or more molecular species. 
 
-The first part of the Mixture block contains information about monomers 
-The parameter nMonomer and the array give information about monomer types. 
+The first part of the Mixture block contains information about monomers.
+The parameter nMonomer and the array give information about monomer types.
 The value of the parameter labelled "nMonomer" gives the number of 
 distinct types of monomer in the system.  Parameter "monomers" represents 
 an array in which each element corresponds to the statistical segment 
