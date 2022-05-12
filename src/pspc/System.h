@@ -271,14 +271,13 @@ namespace Pspc
       */
       Domain<D> const & domain() const;
 
-
       /**
       * Get the spatial discretization mesh by const reference.
       */
       Mesh<D> const & mesh() const;
 
       /** 
-      * Get group name.
+      * Get the group name string.
       */  
       std::string groupName() const;
 
@@ -469,21 +468,32 @@ namespace Pspc
       void writeCRGrid(const std::string & filename) const;
 
       /**
-      * Write concentration fields in real space (r-grid) format, for each
-      * block (or solvent) individually rather than for each species.
+      * Write c-fields for all blocks and solvents in r-grid format.
+      *
+      * This function writes a file in which volume fraction of each
+      * polymer block and solvent species is output separately, rather
+      * than combining results for blocks or solvents of the same
+      * monomer type into a single field. The file format is similar
+      * to that used by writeCGrid, except that each columns corresponds
+      * to a block or solvent rather than a monomer type. Columns
+      * associated with copolymer blocks appear first, in the order
+      * in which they appear in the parameter file, ordered by polymer 
+      * id and then by block id within each polymer, followed by solvent 
+      * species ordered by solvent id.
       *
       * \param filename name of output file
       */
       void writeBlockCRGrid(const std::string & filename) const;
 
       /**
-      * Write last contour slice of the propagator in real space grid format.
+      * Write last slice of a propagator in real space grid format.
       *
       * \param filename  name of output file
       * \param polymerId  integer id of the polymer
       * \param blockId  integer id of the block with the polymer 
       */
-      void writePropagatorRGrid(const std::string & filename, int polymerId, int blockId) const;
+      void writePropagatorRGrid(const std::string & filename, 
+                                int polymerId, int blockId) const;
    
       /**
       * Convert a field from symmetry-adapted basis to r-grid format.
