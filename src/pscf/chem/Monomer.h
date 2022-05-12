@@ -20,8 +20,8 @@ namespace Pscf
    * Iostream extractor (>>) and inserter (<<) operators are defined for 
    * a Monomer, allowing the description of a monomer to be read from or
    * written to file like a primitive variable. The text representation 
-   * contains a monomer name string and the value of the kuhn (statistical 
-   * segment) length, as described \ref pscf_Monomer_page "here".
+   * contains only the value of the kuhn (statistical segment) length,
+   * as described \ref pscf_Monomer_page "here".
    *
    * Data for all monomers in a system is normally read from a parameter
    * file into an array-valued parameter named "monomers". 
@@ -60,11 +60,6 @@ namespace Pscf
       void setKuhn(double kuhn);
 
       /**
-      * Monomer name string.
-      */
-      std::string name() const;
-
-      /**
       * Serialize to or from an archive.
       *
       * \param ar Archive object 
@@ -80,9 +75,6 @@ namespace Pscf
 
       // Statistical segment length / kuhn length
       double  kuhn_;
-
-      // Species name string
-      std::string  name_;
 
    //friends
 
@@ -135,12 +127,6 @@ namespace Pscf
    {  kuhn_ = kuhn; }
 
    /*
-   * Monomer name string.
-   */
-   inline std::string Monomer::name() const
-   {  return name_; }
-
-   /*
    * Serialize to or from an archive.
    */
    template <class Archive>
@@ -148,7 +134,6 @@ namespace Pscf
    {
       ar & id_;
       ar & kuhn_;
-      ar & name_;
    }
 
 }
