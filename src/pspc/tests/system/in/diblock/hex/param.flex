@@ -1,8 +1,8 @@
 System{
   Mixture{
     nMonomer  2
-    monomers  A   1.0  
-              B   1.0 
+    monomers  1.0  
+              1.0 
     nPolymer  1
     Polymer{
        type    linear

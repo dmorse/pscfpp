@@ -23,8 +23,8 @@ System{
   Mixture{
      nMonomer   2
      monomers[
-                A   1.0  
-                B   1.0 
+                1.0  
+                1.0 
      ]
      nPolymer   2
      Polymer{
@@ -63,7 +63,7 @@ System{
 \endcode
 
 This particular example gives parameters for a calculation of a binary
-mixture of an a symmetric AB diblock copolymer with a hompolymers of type
+mixture of a symmetric AB diblock copolymer with a homopolymer of type
 A in a one-dimensional planar geometry. 
 
 The chemical composition of the system of interest is described within the 
@@ -78,7 +78,7 @@ the data for one polymer species.  The system described in this file contains
 in the system of units for block volumes used in this input file, and the 
 diblock copolymer is symmetric (each block has length 0.5). 
 
-That block that begins with a line containing the string "ChiInteraction{" 
+The block that begins with a line containing the string "ChiInteraction{" 
 contains values for Flory-Huggins chi parameters.  In general, chi parameters 
 for a system with C types of monomer are stored internally in a symmetric 
 C x C matrix named "chi", in which the value of an element with indices i 
@@ -100,7 +100,7 @@ The block labelled NrIterator contains a parameter labelled "epsilon" used
 by a Newton-Raphson iterator to decide when the SCF equations are solved to 
 within a user-specified tolerance.
 
-\section user_param_synatx_blocks_section Parameter File Blocks
+\section user_param_syntax_blocks_section Parameter File Blocks
 
 Every PSCF parameter file, including the above example, contains a set of
 of nested parameter blocks that are delimited by opening and closing curly 
@@ -157,7 +157,7 @@ optional elements that may be omitted.
 
 The code that reads a block of a parameter field checks the syntax of
 the file format by checking that the label that begins each subblock
-and parameter matches an expectd value.  If an expected label is not
+and parameter matches an expected value.  If an expected label is not
 found, the program will halt execution after writing an error message 
 explaining what label it expected and what it actually found. When 
 combined with echoing of the parameter file (by using "-e" command 
@@ -183,7 +183,7 @@ above example is a "System" block. This reflects the fact that main
 object in the underlying code for a 1D finite-difference program is an 
 instance of the class Pscf::Fd1d::System.
 
-\section user_param_synatx_parameter_section Individual Parameters
+\section user_param_syntax_parameter_section Individual Parameters
 
 Each line that assigns a value to an an individual parameter begins with
 a label string that identifies the name of the parameter, followed by one 
@@ -214,9 +214,9 @@ two possible values, for which the text representations are the strings
 given in the parameter file by a string with one of these two allowed 
 values. 
 
-\section user_param_synatx_array_section 1D Arrays of Parameters 
+\section user_param_syntax_array_section 1D Arrays of Parameters 
 
-Values of some parameters are stored as elements of a one-dimenstional 
+Values of some parameters are stored as elements of a one-dimensional 
 array.  Each such array is formatted in a multi-line format in which 
 the first row contains a label that contains the name of the array 
 followed immediately by an opening square bracket, and the last line 
@@ -232,7 +232,7 @@ that appears before the array in the parameter file. For example, the
 number of monomer types is specified by parameter nMonomer that 
 appears just before the "monomers" array.
 
-\section user_param_synatx_matrix_section 2D Arrays of Parameters 
+\section user_param_syntax_matrix_section 2D Arrays of Parameters 
 
 Variables that are stored internally in two-dimensional arrays can 
 use one of two different multi-line parameter file formats. We will

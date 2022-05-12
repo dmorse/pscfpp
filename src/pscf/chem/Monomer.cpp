@@ -12,8 +12,7 @@ namespace Pscf
 
    Monomer::Monomer()
     : id_(-1),
-      kuhn_(0.0),
-      name_()
+      kuhn_(0.0)
    {}
 
    void Monomer::setId(int id)
@@ -25,7 +24,6 @@ namespace Pscf
    std::istream& operator >> (std::istream& in, Monomer& monomer)
    {
       // in >> monomer.id_;
-      in >> monomer.name_;
       in >> monomer.kuhn_;
       return in;
    }
@@ -36,8 +34,6 @@ namespace Pscf
    std::ostream& operator << (std::ostream& out, const Monomer& monomer) 
    {
       // out << monomer.id_;
-      out << monomer.name_;
-      out << "  ";
       out.setf(std::ios::scientific);
       out.width(15);
       out.precision(8);

@@ -74,7 +74,7 @@ Each type of block is identified here by the label with which it appears in the 
 </ul>
 
 The following links provide documentation for text formats used for smaller
-user defined types whose values cam be read on a single line and treated as 
+user defined types whose values can be read on a single line and treated as 
 individual parameters:
 <ul style="list-style: none;">
   <li> \subpage pscf_Monomer_page  "Monomer" </li>
@@ -91,18 +91,17 @@ corresponding Polymer subblock of the Mixture block, as elements of the
 The Mixture block describes the chemical constituents of the system of 
 interest, which is generally a mixture of one or more molecular species. 
 
-The first part of the Mixture block contains information about monomers
+The first part of the Mixture block contains information about monomers.
 The parameter nMonomer and the array give information about monomer types.
 The value of the parameter labelled "nMonomer" gives the number of 
 distinct types of monomer in the system.  Parameter "monomers" represents 
-an array in which each element corresponds to one monomer type. The file
-format for this array contains nMonomer rows, each of which contains a
-description of one monomer type.  Each such row (after the "monomers" 
-label in the first row) contains an integer monomer index, a monomer
-label string, and a statistical segment length, in that order. In the 
-above example, two monomer types with integer ids 0 and 1 are assigned 
-labels 'A' and 'B', and are both assigned a statistical segment length 
-of 1.0.
+an array in which each element corresponds to the statistical segment 
+length of one monomer type. The file format for this array contains 
+nMonomer elements, each on their own line of the file. In the above example, 
+two monomer types are created, both of which are assigned a statistical
+segment length of 1. Each monomer is internally assigned a unique integer 
+ID that is assigned in the order in which monomer segment lengths appear 
+in the parameter file, with an index 0 for the first monomer.
 
 After this monomer type information, the Mixture block contains 
 information about polymer species. The parameter nPolymer specifies the 
@@ -142,7 +141,7 @@ as a continuous Gaussian thread, however, neither block lengths nor
 values of ds need be integers, nor must they even approximately 
 correspond to any kind of chemical repeat unit. Thus, if ds = 0.01, 
 then a block of length 1.0 will thus be divided into 100 steps of 
-length 0.1.  The algorithm used in all of the pscf programs actually
+length 0.01. The algorithm used in all of the pscf programs actually
 require that each block be divided into even number of steps of equal 
 length. The number of steps for each block is thus chosen to give an 
 actual step size as close as possible to the value of ds input by the
@@ -217,13 +216,6 @@ fractions (phi values), the volume fractions must be less than or equal to
 to canonical ensemble, the specified volume fraction must add to exactly 
 1.0. 
 
-In the above example, nPolymer = 3, and so the mixture is a ternary mixture.  
-The first Polymer{...} block describes a homopolymer (nBlock = 1 and 
-nVertex = 2) of length 1.0 containing monomers of type 0 (or A). The second 
-describes a homopolymer of length 1.0 with monomers of type 1 (or B).  The 
-third block describes a symmetric AB diblock copolymer with blocks of equal
-length 0.5.
-
 \subsection user_param_fd_mixture_solvent_sub Solvent Block
 
 If nSolvent > 0, the Polymer{...} blocks are followed within a Mixture 
@@ -232,6 +224,8 @@ Each Solvent block contains the description of a small molecule solvent
 species. Solvents are treated as structureless particles that occupy a 
 specified volume. The first parameter in each Solvent block is "monomerId"
 parameter that specifies the monomer or chemical type of the solvent.
+The solvent does not have a "segment length," so its monomerId merely
+indicates which field and interaction parameters apply to this solvent.
 This is followed by "size" parameter that specifies the steric volume, 
 defined as a ratio of the solvent volume to the monomer reference volume.
 The next parameter must then be either volume fraction "phi" or chemical 

@@ -23,4 +23,4 @@ Each of these example directories contains an executable
 script named "run" that contains the appropriate form 
 of the above command, including the correct values for
 nblock and nthread. To run an example, you can thus just
-invoke "./run" from the directory containing the
+invoke "./run" from the directory containing the executable.

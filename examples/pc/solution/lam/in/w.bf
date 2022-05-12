@@ -8,7 +8,7 @@ N_cell_param
 cell_param          
     1.5574880593E+01
 group_name          
-                '-1'
+                P_-1
 N_monomer           
                    3
 N_star              
