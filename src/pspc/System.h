@@ -69,7 +69,7 @@ namespace Pspc
       typedef typename Propagator<D>::CField CField;
 
       /// \name Construction and Destruction
-      //@{
+      ///@{
 
       /**
       * Constructor.
@@ -81,9 +81,9 @@ namespace Pspc
       */
       ~System();
 
-      //@}
+      ///@}
       /// \name Lifetime (Primary Actions)
-      //@{
+      ///@{
 
       /**
       * Process command line options.
@@ -121,9 +121,9 @@ namespace Pspc
       */
       void readCommands();
 
-      //@}
+      ///@}
       /// \name Thermodynamic Properties
-      //@{
+      ///@{
 
       /**
       * Compute free energy density and pressure for current fields.
@@ -161,9 +161,9 @@ namespace Pspc
       */
       double pressure() const;
 
-      //@}
+      ///@}
       /// \name Setter functions
-      //@{
+      ///@{
 
       /**
       * Set new w fields, in symmetrized Fourier format.
@@ -193,9 +193,9 @@ namespace Pspc
       */
       void setUnitCell(FSArray<double, 6> const & parameters);
 
-      //@}
+      ///@}
       /// \name Chemical Potential Field (w-Field) Accessor Functions
-      //@{
+      ///@{
 
       /**
       * Get array of all chemical potential fields expanded in a basis.
@@ -225,9 +225,9 @@ namespace Pspc
       */
       WField const & wFieldRGrid(int monomerId) const;
 
-      //@}
+      ///@}
       /// \name Concentration Field (c-Field) Accessor Functions
-      //@{
+      ///@{
 
       /**
       * Get array of all concentration fields expanded in a basis.
@@ -257,9 +257,9 @@ namespace Pspc
       */
       CField const & cFieldRGrid(int monomerId) const;
 
-      //@}
+      ///@}
       /// \name Miscellaneous Accessors 
-      //@{
+      ///@{
 
       /**
       * Get UnitCell (i.e., type and parameters) by const reference.
@@ -335,9 +335,9 @@ namespace Pspc
       */  
       bool hasCFields() const;
 
-      //@}
+      ///@}
       /// \name Commands (correspond to command file commands)
-      //@{
+      ///@{
 
       /**
       * Read chemical potential fields in symmetry adapted basis format.
@@ -576,7 +576,7 @@ namespace Pspc
       */
       void outputWaves(const std::string & outFileName) const;
 
-      //@}
+      ///@}
 
    private:
 

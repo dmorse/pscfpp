@@ -43,7 +43,7 @@ namespace Fd1d {
       ~Domain();
 
       /// \name Initialize parameters
-      //@{
+      ///@{
 
       /**
       * Read all parameters and initialize.
@@ -70,9 +70,9 @@ namespace Fd1d {
       */
       void setSphereParameters(double xMax, int nx);
 
-      //@}
+      ///@}
       /// \name Accessors
-      //@{
+      ///@{
 
       /**
       * Get minimum spatial coordinate.
@@ -118,9 +118,9 @@ namespace Fd1d {
       */
       bool isShell() const;
 
-      //@}
+      ///@}
       /// \name Spatial integrals
-      //@{
+      ///@{
 
       /**
       * Compute spatial average of a field.
@@ -139,7 +139,7 @@ namespace Fd1d {
       */
       double innerProduct(Field const & f, Field const & g) const;
 
-      //@}
+      ///@}
 
    private:
 

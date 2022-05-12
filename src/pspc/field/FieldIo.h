@@ -69,7 +69,7 @@ namespace Pspc
                      FileMaster const & fileMaster);
 
       /// \name Field File IO - Symmetry Adapted Basis Format
-      //@{
+      ///@{
 
       /**
       * Read concentration or chemical potential field components from file.
@@ -132,9 +132,9 @@ namespace Pspc
                             DArray< DArray<double> > const & fields,
                             UnitCell<D> const & unitCell) const;
 
-      //@}
+      ///@}
       /// \name Field File IO - Real Space Grid Format
-      //@{
+      ///@{
 
       /**
       * Read single RField (field on an r-space grid) from istream.
@@ -245,9 +245,9 @@ namespace Pspc
                             DArray< RField<D> > const & fields, 
                             UnitCell<D> const & unitCell) const;
 
-      //@}
+      ///@}
       /// \name Field File IO - Fourier Space (K-Space) Grid Format
-      //@{
+      ///@{
 
       /**
       * Read array of RFieldDft objects (k-space fields) from file.
@@ -313,9 +313,9 @@ namespace Pspc
                            DArray< RFieldDft<D> > const & fields, 
                            UnitCell<D> const & unitCell) const;
 
-      //@}
+      ///@}
       /// \name File IO Utilities
-      //@{
+      ///@{
 
       /**
       * Reader header of field file (fortran pscf format)
@@ -347,9 +347,9 @@ namespace Pspc
       void writeFieldHeader(std::ostream& out, int nMonomer,
                             UnitCell<D> const & unitCell) const;
 
-      //@}
+      ///@}
       /// \name Field Format Conversion
-      //@{
+      ///@{
 
       /**
       * Convert field from symmetrized basis to Fourier transform (k-grid).
@@ -433,9 +433,9 @@ namespace Pspc
       void convertRGridToKGrid(DArray< RField<D> > const & in,
                                DArray< RFieldDft<D> > & out) const;
 
-      //@}
+      ///@}
       /// \name Test Space Group Symmetry
-      //@{
+      ///@{
 
       /**
       * Check if an r-grid field has the declared space group symmetry.
@@ -453,7 +453,7 @@ namespace Pspc
       */
       bool hasSymmetry(RFieldDft<D> const & in) const;
 
-      //@}
+      ///@}
 
    private:
 

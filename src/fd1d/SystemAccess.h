@@ -46,7 +46,7 @@ namespace Fd1d {
       virtual void setSystem(System& system);
 
       /// \name Accessors (get objects by reference)
-      //@{
+      ///@{
 
       /**
       * Get parent System by reference.
@@ -103,9 +103,9 @@ namespace Fd1d {
       */
       FileMaster& fileMaster();
 
-      //@}
+      ///@}
       /// \name Fields
-      //@{
+      ///@{
 
       /**
       * Get array of all chemical potential fields.
@@ -135,7 +135,7 @@ namespace Fd1d {
       */
       System::CField& cField(int monomerId);
 
-      //@}
+      ///@}
 
    private:
 

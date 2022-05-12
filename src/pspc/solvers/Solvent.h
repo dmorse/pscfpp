@@ -82,7 +82,7 @@ namespace Pspc {
       void compute(WField const & wField );
  
       /// \name Setters (set member data)
-      //@{
+      ///@{
 
       /**
       * Set value of phi (volume fraction), if ensemble is closed.
@@ -116,9 +116,9 @@ namespace Pspc {
       */ 
       void setSize(double size);
 
-      //@}
+      ///@}
       /// \name Accessors (getters)
-      //@{
+      ///@{
  
       /**
       * Get the monomer type id.
@@ -135,7 +135,7 @@ namespace Pspc {
       */
       CField const & cField() const;
   
-      //@}
+      ///@}
 
       // Inherited accessor functions 
       using Pscf::Species::phi;

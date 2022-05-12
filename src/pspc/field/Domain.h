@@ -46,7 +46,7 @@ namespace Pspc
    public:
 
       /// \name Construction, Initialization and Destruction
-      //@{
+      ///@{
 
       /**
       * Constructor.
@@ -80,9 +80,9 @@ namespace Pspc
       */
       void readFieldHeader(std::istream& in, int& nMonomer);
 
-      //@}
+      ///@}
       /// \name Accessors 
-      //@{
+      ///@{
 
       /**
       * Get UnitCell (i.e., lattice type and parameters) by reference.
@@ -139,7 +139,7 @@ namespace Pspc
       */  
       std::string groupName() const;
 
-      //@}
+      ///@}
 
    private:
 

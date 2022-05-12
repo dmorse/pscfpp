@@ -60,7 +60,7 @@ namespace Fd1d
       ~System();
 
       /// \name Lifetime (Actions)
-      //@{
+      ///@{
 
       /**
       * Process command line options.
@@ -118,9 +118,9 @@ namespace Fd1d
       */
       void outputThermo(std::ostream& out);
 
-      //@}
+      ///@}
       /// \name Fields
-      //@{
+      ///@{
 
       /**
       * Get array of all chemical potential fields.
@@ -150,9 +150,9 @@ namespace Fd1d
       */
       CField& cField(int monomerId);
 
-      //@}
+      ///@}
       /// \name Accessors (get objects by reference)
-      //@{
+      ///@{
 
       /**
       * Get Mixture by reference.
@@ -200,7 +200,7 @@ namespace Fd1d
       */
       double pressure() const;
 
-      //@}
+      ///@}
 
    private:
 

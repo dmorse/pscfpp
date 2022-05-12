@@ -73,7 +73,7 @@ namespace Fd1d {
       void compute(WField const & wField );
  
       /// \name Setters (set member data)
-      //@{
+      ///@{
 
       /**
       * Set value of phi (volume fraction), if ensemble is closed.
@@ -107,9 +107,9 @@ namespace Fd1d {
       */ 
       void setSize(double size);
 
-      //@}
+      ///@}
       /// \name Accessors (getters)
-      //@{
+      ///@{
  
       /**
       * Get the monomer type id.
@@ -131,7 +131,7 @@ namespace Fd1d {
       */
       const CField& cField() const;
   
-      //@}
+      ///@}
 
       // Inherited accessor functions 
       using Pscf::Species::phi;
