@@ -3,18 +3,78 @@ TODO (pspg GPU code):
 1) Complete doxygen documentation for all classes, functions and parameters 
    in src/pspg.
 
+2) Write unit tests or other self-contained, self-validating tests of the 
+   GPU classes and put them in the repository. 
+
 Intermediate term 
 -------------------------------------------------------------------------
 
-1) Add an iterator with imposed symmetry and output in symmetry adapted 
+1) Fix treatment of non-centrosymmetric space groups in FieldIo
+
+2) Compress storage of symmetry adapted basis functions in FieldIo and
+   System (stop storing zero coefficients)
+
+3) Add an iterator with imposed symmetry and output in symmetry adapted 
    format.
 
 Longer term  
 -------------------------------------------------------------------------
 
-1) Write unit tests or other self-contained, self-validating tests of the 
-   GPU classes and put them in the repository. 
-
 2) Add sweep functionality 
 
-3) Add point solvents
+Clean up of kernel functions
+-------------------------------------------------------------------------
+
+1) Comment out (first) then erase (second) unused kernels.
+   Some are found in solvers/Block.tpp and (possibly?) math/Helpers.cu
+
+2) Replace scaleRealData in fieldFFT.tpp by function from linearAlgebra
+
+3) Consider moving FFTBatched.tpp/scaleComplexData to linearAlgebra
+
+4) Consider moving some pointwise multiplication functions from Block
+   to LinearAlgebra, including those that operate on complex data.
+
+5) Move parallel reduction kernels to private namespace in implementation
+   of kernel wrappers, so not publically visible. 
+
+5) Establish more consistent function name conventions.
+
+   One possibile set of semantic units:
+
+       dev  -> implies device kernel function
+       host -> implies function that acts on gpu arrays, called from host
+       Sub  -> subtract
+       Add  -> add
+       Mul  -> add
+       Div  -> add
+       Eq   -> arithmetic assignment / in place
+       V    -> real vector (or array)
+       S    -> real scalar 
+       r    -> real
+       c    -> complex
+
+    Example kernels:
+
+       subtractUniform          -> devSubEqVrSr
+       addUniform               -> devAddEqVrSr
+       pointWiseSubtract        -> devSubEqVrVr
+       pointWiseAdd             -> devAddEqVrVr
+       pointWiseBinarySubtract  -> devSubVrVr
+       pointWiseBinaryAdd       -> devAddVrVr
+       scaleReal                -> devRMulEqVrSr
+       scaleComplex             -> devCMulEqVcSr
+
+    Example wrappers for reductions:
+
+       gpuSum                   -> hostSum
+       gpuMax                   -> hostMax
+       gpuMaxAbs                -> hostMaxAbs
+
+6) Rename files:
+
+      LinearAlgebra  -> GpuVectorOps
+      KernelWrappers -> GpuReductions
+
+      Move Helpers to draft/pspg ?
+      

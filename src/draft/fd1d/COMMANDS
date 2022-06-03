@@ -1,0 +1,15 @@
+In Fd1d::System, add commands / functions:
+
+   readW(filename)
+   writeW(filename);
+   writeC(filename);
+   iterate()  -> also calls outputThermo
+   compute();
+   sweep();
+   compare(field, field)
+
+Reconsider FieldIo functions.
+
+   What to do about functions that require information about
+   the Polymer or Mixture?
+

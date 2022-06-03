@@ -1,0 +1,68 @@
+field/FFT.tpp:
+   scaleRealData
+
+field/FFTBatched.tpp:
+   scaleComplexData
+
+field/FFTBatched.tpp:
+   scaleRealData
+
+solvers/Block.tpp:
+
+   pointwiseMul            -> unused ?
+   pointwiseFloatMul       -> unused ?
+   equalize                -> unused ?
+   pointwiseMulUnroll2     -> unused ?
+   pointwiseMulCombi       -> unused ?
+   richardsonExp           -> unused ?
+
+   mulDelKsq               -> used locally
+   pointwiseMulSameStart   -> used locally
+   pointwiseMulTwinned     -> used locally
+   scaleComplexTwinned     -> used locally
+   scaleComplex            -> used locally
+   richardsonExpTwinned    -> used locally
+   multiplyScaleQQ         -> used locally
+
+solvers/WaveList.tpp:
+   makeDksqHelperWave
+   makeDksqReduction
+
+math/Helpers.cu:
+   helmholtzHelper         -> unused ?
+   reformField             -> unused ?
+   mcftsStepHelper         -> unused ?
+   mcftsScale              -> unused ?
+
+math/LinearAlgebra.cu:
+   subtractUniform
+   addUniform
+   pointWiseSubtract
+   pointWiseSubtractFloat
+   pointWiseBinarySubtract
+   pointWiseAdd
+   pointWiseBinaryAdd
+   pointWiseAddScale
+   inPlacePointwiseMul
+   pointWiseBinaryMultiply
+   assignUniformReal
+   assignReal
+   assignExp
+   scaleReal
+
+math/ParallelReductions.cu:
+   reductionSum
+   reductionInnerProduct
+   reductionMax
+   reductionMaxAbs
+   reductionMin
+   reductionMinAbs
+
+math/kernelWrappers (these host code wrappers)
+   gpuSum
+   gpuInnerProduct
+   gpuMax
+   gpuMaxAbs
+   gpuMin
+   gpuMinAbs
+

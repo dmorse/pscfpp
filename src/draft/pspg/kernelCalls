@@ -1,0 +1,83 @@
+field/FFT.tpp:
+   scaleRealData            -> local (redundant?)
+   
+field/FFTBatched.tpp:
+   scaleRealData            -> local (redundant?)
+   
+solvers/Block.tpp:
+   assignExp                -> linearAlgebra
+   assignUniformReal        -> linearAlgebra
+   multiplyScaleQQ          -> local
+   scaleReal                -> linearAlgebra
+   pointwiseMulSameStart    -> local
+   scaleComplexTwinned      -> local (move to linear algebra?)
+   pointwiseMulTwinned      -> local
+   scaleComplex             -> local (move to linear algebra?)
+   richardsonExpTwinned     -> local
+   mulDelKsq                -> local
+   __host__ gpuSum          -> KernelWrappers
+   
+solvers/Solvent.tpp:
+   assignUniformReal        -> linearAlgebra
+   assignExp                -> linearAlgebra
+   scaleReal                -> linearAlgebra
+   __host__ gpuSum          -> KernelWrappers
+   
+solvers/Propagator.tpp:
+   assignUniformReal        -> linearAlgebra
+   inPlacePointwiseMul      -> linearAlgebra
+   assignReal               -> linearAlgebra
+   __host__ gpuInnerProduct -> kernelWrappers
+   
+solvers/Mixture.tpp:
+   assignUniformReal        -> linearAlgebra
+   pointWiseAdd             -> linearAlgebra
+   
+solvers/WaveList.tpp:
+   makeDksqHelperWave       -> local
+   makeDksqReduction        -> local
+   
+System.tpp:
+   assignUniformReal        -> linearAlgebra
+   pointWiseAddScale        -> linearAlgebra
+   pointWiseBinaryMultiply  -> linearAlgebra
+   assignUniformReal        -> linearAlgebra
+   inPlacePointwiseMul      -> linearAlgebra
+   
+iterator/AmIterator.tpp:
+   assignReal               -> linearAlgebra
+   assignUniformReal        -> linearAlgebra
+   pointWiseBinarySubtract  -> linearAlgebra
+   pointWiseAddScale        -> linearAlgebra
+   pointWiseAddScale        -> linearAlgebra
+   subtractUniform          -> linearAlgebra
+   addUniform               -> linearAlgebra
+   
+   __host__ gpuSum          -> kernelWrappers
+   __host__ gpuInnerProduct -> kernelWrappers
+   __host__ gpuMaxAbs       -> kernelWrappers
+   
+iterator/AmIteratorOld.tpp:
+   subtractUniform 
+   assignUniformReal 
+   pointWiseAddScale 
+   pointWiseAddScale 
+   pointWiseSubtractFloat   -> linearAlgebra (unique)
+   assignReal 
+   pointWiseAddScale 
+   assignReal
+   assignReal 
+   pointWiseBinarySubtract 
+   pointWiseAddScale 
+   pointWiseBinarySubtract 
+   pointWiseAddScale 
+   assignReal 
+   pointWiseAddScale 
+   
+math/KernelWrappers.cu:
+   reductionSum
+   reductionInnerProduct
+   reductionMax
+   reductionMaxAbs
+   reductionMin
+   reductionMinAbs
