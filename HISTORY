@@ -23,6 +23,7 @@ User-visible changes
   New format uses [] brackets or parentheses as delimiters for containers.
   The old format is still readable (i.e., backwards compatible).
 - All crystal systems have been implemented (triclinic, etc) (Pspc, Pspg)
+- Removed unused monomer name strings from parameter file format 
 
 Documentation
 --------------
