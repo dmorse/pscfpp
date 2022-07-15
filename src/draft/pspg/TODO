@@ -27,6 +27,7 @@ Clean up of kernel functions
 
 1) Comment out (first) then erase (second) unused kernels.
    Some are found in solvers/Block.tpp and (possibly?) math/Helpers.cu
+   (From Ryan: definitely some in math/Helpers.cu!)
 
 2) Replace scaleRealData in fieldFFT.tpp by function from linearAlgebra
 
