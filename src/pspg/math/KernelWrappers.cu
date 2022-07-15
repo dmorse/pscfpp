@@ -23,10 +23,10 @@ __host__ cudaReal gpuSum(cudaReal const * d_in, int size)
    cudaReal* d_temp_;
    gpuErrchk(cudaMalloc((void**) &d_temp_, nBlocks*sizeof(cudaReal)));
 
-   // Perform parallel reduction inner product
+   // Perform parallel reduction sum operation
    reductionSum<<<nBlocks, nThreads, nThreads*sizeof(cudaReal)>>>(d_temp_, d_in, size);
 
-   // Load the partially reduced inner product result to temp_
+   // Load the partially reduced sum result to temp_
    gpuErrchk(cudaMemcpy(temp_, d_temp_, nBlocks*sizeof(cudaReal), cudaMemcpyDeviceToHost));
 
    // Perform final sum on CPU using kahan summation to reduce accumulation of error
@@ -58,7 +58,7 @@ __host__ cudaReal gpuInnerProduct(cudaReal const * d_a, cudaReal const * d_b, in
    cudaReal* d_temp_;
    gpuErrchk(cudaMalloc((void**) &d_temp_, nBlocks*sizeof(cudaReal)));
 
-   // Perform parallel reduction inner product
+   // Perform parallel reduction inner product operation
    reductionInnerProduct<<<nBlocks, nThreads, nThreads*sizeof(cudaReal)>>>(d_temp_, d_a, d_b, size);
 
    // Load the partially reduced inner product result to temp_
@@ -92,10 +92,10 @@ __host__ cudaReal gpuMax(cudaReal const * d_in, int size)
    cudaReal* d_temp_;
    gpuErrchk(cudaMalloc((void**) &d_temp_, nBlocks*sizeof(cudaReal)));
 
-   // Perform parallel reduction inner product
+   // Perform parallel reduction maximum operation
    reductionMax<<<nBlocks, nThreads, nThreads*sizeof(cudaReal)>>>(d_temp_, d_in, size);
 
-   // Load the partially reduced inner product result to temp_
+   // Load the partially reduced maximum result to temp_
    gpuErrchk(cudaMemcpy(temp_, d_temp_, nBlocks*sizeof(cudaReal), cudaMemcpyDeviceToHost));
 
    // Perform final comparison on CPU
@@ -122,10 +122,10 @@ __host__ cudaReal gpuMaxAbs(cudaReal const * d_in, int size)
    cudaReal* d_temp_;
    gpuErrchk(cudaMalloc((void**) &d_temp_, nBlocks*sizeof(cudaReal)));
 
-   // Perform parallel reduction inner product
+   // Perform parallel reduction maximum of the absolute value
    reductionMaxAbs<<<nBlocks, nThreads, nThreads*sizeof(cudaReal)>>>(d_temp_, d_in, size);
 
-   // Load the partially reduced inner product result to temp_
+   // Load the partially reduced maximum of the absolute value result to temp_
    gpuErrchk(cudaMemcpy(temp_, d_temp_, nBlocks*sizeof(cudaReal), cudaMemcpyDeviceToHost));
 
    // Perform final comparison on CPU. Absolute values already taken in kernel, so 
@@ -153,10 +153,10 @@ __host__ cudaReal gpuMin(cudaReal const * d_in, int size)
    cudaReal* d_temp_;
    gpuErrchk(cudaMalloc((void**) &d_temp_, nBlocks*sizeof(cudaReal)));
 
-   // Perform parallel reduction inner product
+   // Perform parallel reduction minimum operation
    reductionMin<<<nBlocks, nThreads, nThreads*sizeof(cudaReal)>>>(d_temp_, d_in, size);
 
-   // Load the partially reduced inner product result to temp_
+   // Load the partially reduced minimum result to temp_
    gpuErrchk(cudaMemcpy(temp_, d_temp_, nBlocks*sizeof(cudaReal), cudaMemcpyDeviceToHost));
 
    // Perform final comparison on CPU
@@ -183,10 +183,10 @@ __host__ cudaReal gpuMinAbs(cudaReal const * d_in, int size)
    cudaReal* d_temp_;
    gpuErrchk(cudaMalloc((void**) &d_temp_, nBlocks*sizeof(cudaReal)));
 
-   // Perform parallel reduction inner product
+   // Perform parallel reduction minimum of the absolute value
    reductionMinAbs<<<nBlocks, nThreads, nThreads*sizeof(cudaReal)>>>(d_temp_, d_in, size);
 
-   // Load the partially reduced inner product result to temp_
+   // Load the partially reduced minimum of the absolute value result to temp_
    gpuErrchk(cudaMemcpy(temp_, d_temp_, nBlocks*sizeof(cudaReal), cudaMemcpyDeviceToHost));
 
    // Perform final comparison on CPU
