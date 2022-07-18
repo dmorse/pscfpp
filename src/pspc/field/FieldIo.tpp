@@ -922,8 +922,8 @@ namespace Pspc
          out << Int(itr.rank(), 5);
          for (int j = 0; j < nMonomer; ++j) {
                out << "  " 
-                   << Dbl(fields[j][itr.rank()][0], 19, 12)
-                   << Dbl(fields[j][itr.rank()][1], 19, 12);
+                   << Dbl(fields[j][itr.rank()][0], 20, 12)
+                   << Dbl(fields[j][itr.rank()][1], 20, 12);
          }
          out << std::endl;
          ++i;

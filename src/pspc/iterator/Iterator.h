@@ -10,6 +10,7 @@
 
 #include <util/param/ParamComposite.h>    // base class
 #include <util/containers/DArray.h>
+#include <util/containers/FSArray.h>
 #include <util/global.h>                  
 
 namespace Pscf {
@@ -64,10 +65,39 @@ namespace Pspc
       virtual int solve() = 0;
 
       /**
+      * Return const reference to parent system.
+      */
+      System<D> const & system() const
+      {  return *sysPtr_;}
+
+      /**
       * Return true if unit cell is flexible, false if rigid.
       */
-      bool isFlexible() 
+      bool const isFlexible() const 
       {  return isFlexible_;}
+
+      /**
+      * Sets the flexibleParams_ array.
+      * 
+      * \param flexParams array of indices of each flexible lattice parameter
+      */
+      void setFlexibleParams(FSArray<int, 6> const & flexParams)
+      {  
+         flexibleParams_ = flexParams; 
+         if (flexibleParams_.size() == 0) {
+            isFlexible_ = false;
+         } else {
+            isFlexible_ = true;
+         }
+      }
+
+      /**
+      * Return an array containing indices of each flexible lattice 
+      * parameter, e.g. [0,1,2] if there are 3 lattice parameters and
+      * all 3 are flexible.
+      */
+      FSArray<int, 6> const flexibleParams() const
+      {  return flexibleParams_; }
 
    protected:
 
@@ -79,6 +109,9 @@ namespace Pspc
 
       /// Is the unit cell flexible during iteration?
       bool isFlexible_;
+
+      /// Array of indices of the lattice parameters that are flexible
+      FSArray<int, 6> flexibleParams_;
 
    private:
 
