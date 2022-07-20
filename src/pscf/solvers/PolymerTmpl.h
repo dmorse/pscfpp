@@ -417,7 +417,16 @@ namespace Pscf
       // should be computed when solving the MDE.
       makePlan();
 
-      // Read the species ensemble, and either phi or mu
+      // Read phi or mu (but not both)
+      bool hasPhi = readOptional(in, "phi", phi_).isActive();
+      if (hasPhi) {
+         ensemble_ = Species::Closed;
+      } else {
+         ensemble_ = Species::Open;
+         read(in, "mu", mu_);
+      }
+
+      #if 0
       ensemble_ = Species::Closed;
       readOptional<Species::Ensemble>(in, "ensemble", ensemble_);
       if (ensemble_ == Species::Closed) {
@@ -425,6 +434,7 @@ namespace Pscf
       } else {
          read(in, "mu", mu_);
       }
+      #endif
 
       // Set sources for all propagators
       Vertex const * vertexPtr = 0;

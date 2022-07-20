@@ -15,14 +15,29 @@ using namespace Pscf::Fd1d;
 class MixtureTest : public UnitTest 
 {
 
+private:
+
+   std::ofstream logFile_;
+
 public:
 
    void setUp()
    {}
 
    void tearDown()
-   {}
+   {
+      if (logFile_.is_open()) {
+         logFile_.close();
+      }
+      ParamComponent::setEcho(false);
+   }
 
+   void openLogFile(char const * filename)
+   {
+      openOutputFile(filename, logFile_);
+      Log::setFile(logFile_);
+      ParamComponent::setEcho(true);
+   }
   
    void testConstructor()
    {
@@ -33,9 +48,30 @@ public:
    void testReadParameters()
    {
       printMethod(TEST_FUNC);
+      openLogFile("out/MixtureTestReadParameters.log");
 
       std::ifstream in;
       openInputFile("in/Mixture", in);
+
+      Mixture mix;
+      mix.readParam(in);
+
+      Domain domain;
+      domain.readParam(in);
+      mix.setDomain(domain);
+
+      std::cout << "\n";
+      mix.writeParam(std::cout);
+      domain.writeParam(std::cout);
+   }
+
+   void testReadParameters2()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/MixtureTestReadParameters2.log");
+
+      std::ifstream in;
+      openInputFile("in/Mixture2", in);
 
       Mixture mix;
       mix.readParam(in);
@@ -108,6 +144,7 @@ public:
 TEST_BEGIN(MixtureTest)
 TEST_ADD(MixtureTest, testConstructor)
 TEST_ADD(MixtureTest, testReadParameters)
+TEST_ADD(MixtureTest, testReadParameters2)
 TEST_ADD(MixtureTest, testSolve)
 TEST_END(MixtureTest)
 

@@ -1,0 +1,28 @@
+Mixture{
+   nMonomer  2
+   monomers  1.0  
+             1.0 
+   nPolymer  1
+   nSolvent  1
+   Polymer{
+      type    linear
+      nBlock  2
+      blocks  0   2.0
+              1   3.0
+      mu      -0.35
+   }
+   Solvent{
+      monomerId 0
+      size      0.05
+      mu       -0.035
+   }
+   ds   0.001
+}
+Domain{
+   mode Planar
+   xMin 0.0
+   xMax 1.0
+   nx   33
+}
+
+   nSolvent  0
