@@ -1,7 +1,7 @@
-/*! \page user_groups_page 3.7 Space Groups
+/*! \page user_groups_page 3.8 Space Groups
 
  \ref user_unitcell_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref developer_page   (Next) 
+ \ref user_thin_films_page   (Next) 
 <BR>
 
 The PSCF programs that are designed to simulate periodic structures use
@@ -76,7 +76,7 @@ Group identifiers:
 
 <h3> 3D Space Groups </h3>
 
-There are 230 possible 3D space groups. The international crystallogrphic tables lists 2 "settings" for some space groups, which differ in the convention for the placement of the origin. PSCF identifiers for space groups for which two or more settings are listed end in a colon followed by an integer id (1 or 2) for the setting.
+There are 230 possible 3D space groups. The international crystallographic tables lists 2 "settings" for some space groups, which differ in the convention for the placement of the origin. PSCF identifiers for space groups for which two or more settings are listed end in a colon followed by an integer id (1 or 2) for the setting.
 
 Group identifiers:
 <ul>
@@ -346,5 +346,5 @@ Group identifiers:
 <BR>
  \ref user_unitcell_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref user_page          (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref developer_page   (Next) 
+ \ref user_thin_films_page   (Next) 
 */

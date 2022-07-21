@@ -57,6 +57,7 @@ namespace Pspc
       using AmIteratorTmpl<Iterator<D>,FieldCPU>::externalField;
       using AmIteratorTmpl<Iterator<D>,FieldCPU>::hasMask;
       using AmIteratorTmpl<Iterator<D>,FieldCPU>::hasExternalField;
+      using AmIteratorTmpl<Iterator<D>,FieldCPU>::setClassName;
       using Iterator<D>::isFlexible;
       using Iterator<D>::flexibleParams;
 

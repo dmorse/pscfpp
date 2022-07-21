@@ -21,11 +21,11 @@ namespace Pspc{
    template <int D>
    AmIterator<D>::AmIterator(System<D>& system)
    : Iterator<D>(system)
-   {}
+   {  setClassName("AmIterator"); }
 
    template <int D>
    AmIterator<D>::~AmIterator()
-   {}
+   {  setClassName("AmIterator"); }
 
    template <int D>
    void AmIterator<D>::readParameters(std::istream& in)
@@ -282,7 +282,6 @@ namespace Pspc{
          for (int i = 0; i < nMonomer; ++i) {
             resid[i*nBasis] -= (1.0-phi)/system().interaction().sum_inv();
          }
-
       } else {
          // otherwise explicitly set the residual value for the homogeneous components
          // the homogeneous field component is set explicitly as well in update 

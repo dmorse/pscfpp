@@ -1,0 +1,373 @@
+/*! \page user_thin_films_page 3.9 Thin Films
+
+ \ref user_groups_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref developer_page   (Next) 
+<BR>
+
+# Overview
+
+An optional input can be added to the parameter file to impose a "thin film" constraint
+on the system. One can imagine such a system as a polymer melt confined between two parallel
+walls, with a fixed distance between them. The wall is incorporated into the self-consistent
+field equations by modifying the incompressibility constraint as follows:
+\f[
+   \sum_{\alpha=1}^{N_{\rm species}} \rho_\alpha({\bf r}) = 1-\rho_{\rm wall}({\bf r})
+\f]
+where the summation is over all distinct monomer species, <i>&rho;<sub>&alpha;</sub></i>(<b>r</b>)
+is the volume fraction of species <i>&alpha;</i> at position <b>r</b>, and 
+<i>&rho;</i><sub>wall</sub>(<b>r</b>) is defined as:
+\f[
+   \rho_{\rm wall}(z) = 0.5*\left( 1+ {\rm tanh} \left( 4*\frac{.5(T-L)+|z-\frac{L}{2}|}{t} \right) \right)
+\f]
+Here, we have defined the wall density as a function of *z*, which we define as the
+position along the direction normal to the wall. *L* is the length of the unit cell in
+this direction, and *T* is the total thickness of the wall in this direction. *t* defines
+the rate at which *&rho;*<sub>wall</sub>(*z*) decays from 1 to 0 when passing from the wall region 
+into the film. If *t* is small, the calculation will require high spatial resolution to converge, 
+which can be computationally prohibitive, but large *t* can affect the resulting solution. A 
+common compromise in literature is to choose 0.15<i>R</i><sub>g</sub> &le; *t* &le; 0.5<i>R</i><sub>g</sub>, 
+where *R*<sub>g</sub> is the radius of gyration of the polymer (for a one-component system). 
+
+The introduction of these walls has a significant effect on the symmetry of the unit cell, so the choice 
+of unit cell and space group in the parameter file must be made with care. This is explained in great
+detail in the Space Groups section below. Also, although it is not necessary, we impose an additional 
+constraint on the unit cells used for thin film calculations: one lattice basis vector must be oriented
+normal to the walls, and all other lattice basis vectors must be parallel to the walls.
+So, if one were to use a triclinic unit cell with the wall parallel to the **a** and **b** 
+lattice vectors, then **c** must be orthogonal to both **a** and **b** (or, in other words, 
+<i>&alpha;</i>=<i>&beta;</i>=90&deg;, and *&alpha;* and *&beta;* are fixed even if the unit cell parameters are 
+allowed to vary). Additionally, the length of the lattice vector that is normal to the walls is
+not allowed to vary, so the thickness that the user defines will be maintained throughout the
+calculation.
+
+# Parameter File Input
+
+In the parameter file, the thin film constraint is contained within its own section of the `System`
+block, which must come after the `Domain` block but before the `Iterator` block.
+An example is shown below:
+\code
+System{
+   Mixture{
+      nMonomer   2
+      monomers[
+                 1.0  
+                 1.0 
+      ]
+      nPolymer   1
+      Polymer{
+         nBlock  2
+         blocks[
+                 0   0.25
+                 1   0.75
+         ]
+         phi     1.0
+      }
+   }
+   ChiInteraction{
+      ...
+   }
+   Domain{
+      unitCell         tetragonal    2.0    4.2
+      mesh             32  32  68
+      groupName        P_4%m_m_m
+   }
+   hasWall     1
+   Wall{
+      normalVec            2
+      interfaceThickness   0.05     
+      wallThickness        0.2
+      chi[
+            2  10
+            0   0
+      ]
+   }
+   AmIterator{
+      ...
+   }
+   hasSweep    1
+   LinearSweep{
+      ...
+   }
+}
+\endcode
+
+In the example, we have constructed a parameter file that might be used to represent an AB diblock
+polymer self-assembled into a bcc structure confined to a thin film that is ~2 unit cells thick. 
+
+### Domain Block
+
+First, we draw your attention to the `Domain` block. Notice that this differs significantly from 
+the `Domain` block that would be expected for a bcc structure in a neat melt. The space group has been
+downgraded from the cubic `I_m_-3_m` group to tetragonal \c P_4\%m_m_m. See the Space Groups section below
+for more information about determining the appropriate space group symmetry for a thin film. Also
+notice that we have chosen specific and intentional values for the **c** lattice vector and the 
+mesh discretization in that direction, which will be discussed further in the paragraphs below.
+
+### Wall Block
+
+Now, we proceed to the `Wall` block. If a `Wall` block is present in the param file, it must be preceded
+by the line \"<tt>hasWall&nbsp;&nbsp;1</tt>.\" Then, within the `Wall` block, the first required variable is `normalVec`,
+indicating which of the 3 lattice basis vectors is oriented normal to the wall. The input should 
+be either 0, 1, or 2, corresponding to the **a**, **b**, or **c** lattice vectors, respectively. 
+In the example above, the **c** vector is normal to the wall. Importantly, the two vectors that are
+<i>not</i> normal to the wall (**a** and **b** in the example above) must be parallel to the wall. So, if
+<b>c</b> is normal to the wall, then the unit cell angles *&alpha;* and *&beta;* must both be 
+90&deg;. The software will throw an error if this condition is not met.
+
+The next required inputs in the `Wall` block are `interfaceThickness` and `wallThickness`, which correspond
+to *t* and *T* in the expression for *&rho;*<sub>wall</sub>(*z*) above. These values are defined in the same 
+units as other length inputs (unit cell parameters, segment lengths). In the example, we have chosen *t* to be
+0.05, or 0.3<i>R</i><sub>g</sub> based on information from the `Mixture` block. Let us also briefly consider
+the parameter *L* (the length of the unit cell in the direction normal to the wall) in the context of 
+the example parameter file above, now that we have defined *T*. Since we have declared that the **c** lattice 
+basis vector is orthogonal to the wall, the length of **c** is equivalent to *L*. The
+parameter *L* is thus defined in the `Domain` block to be 4.2. However, because of the presence of the wall,
+the thickness of the actual polymer/solvent film is instead equal to *L-T*, or 4.0. If we expect that the 
+bcc structure will have a cubic lattice parameter of ~2.0, then we are effectively targeting a film that is 
+two unit cells thick. 
+
+Finally, there is an optional input array `chi`. This allows the user to define a Flory-Huggins-like
+interaction parameter between each monomer species and the walls. If `chi` is not specified, then all values
+are set to zero (an athermal wall). For a system with `n` monomer species,
+the chi array will be `n` rows and two columns. Each row corresponds to a single monomer species, in
+the same order that they are listed in the `monomers[` block. The first column represents the chi
+parameter between wall 1 and each monomer species, while the second column represents the chi parameter
+between wall 2 and each monomer species (we define wall 1 to be the wall that intersects the origin).
+In the example above, we have two monomer species, with species indices 0 and 1. Wall 1 interacts slightly
+more favorably with the monomer species with index 1, while wall 2 interacts with a relatively strong 
+favorability for species 1. If the two columns in `chi` are identical, then the walls are said to be
+\"chemically identical.\"
+
+The additional contribution to the overall free energy (per monomer) of the system arising from wall-polymer 
+and wall-solvent interactions, which we will call *F*<sub>wall</sub>, are calculated based on the chi 
+values specified in the parameter file as follows:
+\f[
+   \frac{F_{\rm wall}}{k_{\rm B}T}\frac{\nu}{V}=\frac{1}{V}\sum_{w=1}^{2}
+   \sum_{\alpha=1}^{N_{\rm species}}\chi_{w\alpha}\int d{\bf r}\rho_w({\bf r})
+   \rho_\alpha({\bf r})
+\f]
+where the index *w* denotes the wall (either wall 1 or wall 2), *&nu;* is the monomer reference volume,
+<i>&chi;<sub>w&alpha;</sub></i> is the chi interaction parameter between wall *w* and species *&alpha;* 
+that is input from the parameter file, and <i>&rho;<sub>w</sub></i>(<b>r</b>) is the volume fraction of 
+wall *w* at position **r** (note that this differs from <i>&rho;</i><sub>wall</sub>(<b>r</b>) above,
+which represents the volume fraction of *both* walls).
+
+### The effect of *t* ###
+
+It is important to note that the equation for *F*<sub>wall</sub> above has an inherent linear dependence
+on *t*. For instance, consider a homopolymer melt where <i>&rho;</i><sub>polymer</sub> = 1 - <i>&rho;</i><sub>wall</sub>
+everywhere, and both walls are chemically identical. Then, 
+\f[
+   \frac{F_{\rm wall}}{k_{\rm B}T}\frac{\nu}{V}=
+   \frac{1}{V}\chi\int d{\bf r}\rho_{\rm wall}(1-\rho_{\rm wall})
+\f]
+Using the expression for <i>&rho;</i><sub>wall</sub> above, one can show that the integral of 
+<i>&rho;</i><sub>wall</sub>(1-<i>&rho;</i><sub>wall</sub>) is proportional to *t*. As such, the strength
+of the interactions between polymers/solvents and walls is dependent not only on &chi;<sub>&alpha;w</sub> 
+but also on *t*. Because of this, users are cautioned to use the same value of *t* for all calculations
+that are to be compared to one another.
+
+### Variable Lattice Parameters
+
+When a wall is added into the system, the user can still choose whether to fix the unit cell parameters 
+or allow them to vary, but the implementation is slightly different when a wall is present. Specifically,
+the length of the lattice basis vector that is orthogonal to the wall (4.2 in the example above) is fixed,
+which forces the thin film to maintain a constant thickness throughout the iteration process. Furthermore, 
+we require that the other lattice basis vector(s) remain parallel to the walls. This implies the following:
+- In 1D, the length of the unit cell is fixed.
+- In 2D, the lengths of the lattice basis vectors **a** and **b** may vary, but the angle *&gamma;* between
+them is fixed at 90&deg;.
+- In 3D, the lengths of the lattice basis vectors that are parallel to the walls may vary, as can the angle
+between them. The two vectors in question depend on the choice of `normalVec`. The length of the lattice basis
+vector that is normal to the wall (the vector indicated by 'normalVec') is held fixed, and the remaining two
+angles are fixed at 90&deg;. 
+This behavior is implemented automatically. If the user specifies that lattice parameters may vary, then the
+software will decide which lattice parameters are actually allowed to vary based on `normalVec` and `unitCell`.
+If the user tries to define a unit cell that is incompatible with the rules above (*e.g.,* a 2D unit cell with
+<i>&alpha;</i>&ne;90&deg;), the software will throw an error.
+
+#  Space Groups
+
+Although we are imposing a thin film constraint on the system, we still use periodic boundary 
+conditions in all directions so that the symmetry-adapted basis functions used for bulk 
+(non-thin film) calculations can be used without modification. However, the presence of two
+fixed walls in the system reduces the number of allowed symmetry operations for these unit
+cells, because the only allowed symmetry operations are those that leave the walls unchanged. Thus,
+the selection of the appropriate space group for a thin film requires more substantial thought
+than is the case for bulk systems. 
+
+### Identifying the Correct Space Group
+
+The appropriate space group for a desired system can be 
+identified by looking at the symmetry operations for the space group that describes the system 
+in the bulk, removing those operations that are not allowed in the thin film (which differ
+depending on whether the walls are identical or not), and then finding the space group that 
+contains only those symmetry operations that remain. 
+
+The expression for \f$\rho_{\rm wall}(z)\f$ above is symmetric about the *x-y* plane at *z*=0.5<i>L</i>.
+Thus, if we define the two walls to be chemically identical (*i.e.*, the interaction
+between the wall and the monomer species is the same at both walls), then a mirror plane parallel
+to the walls is an allowed symmetry operation, as is an inversion center. If the walls are 
+defined to be chemically different, however, then these operations are also forbidden, which 
+further reduces the allowed symmetry operations for our unit cell. 
+If, for example, the walls are in the *x-y* plane (param file contains \"<tt>normalVec&nbsp;&nbsp;2</tt>.\")
+and the two walls are chemically identical, then symmetry operations that change *z* to *-z* are allowed 
+because the walls are mirror images of each other. All other changes in *z* (*e.g.*, from *z* to *z*+1/2 
+in reduced coordinates) are forbidden, because these operations would result in the wall being moved to a 
+different location than where it started. If the walls are chemically dissimilar, then the only symmetry 
+operations that are permitted are those that leave *z* unchanged. The user is directed to online resources
+at <https://www.cryst.ehu.es/> and <http://img.chem.ucl.ac.uk/sgp/mainmenu.htm> which provide, in great
+detail, tabulations of the symmetry operations for all space groups. 
+
+### Relationship Between Unit Cell and Space Group
+
+An important detail to note is the difference between the space group and the unit cell. The unit cell shape 
+only defines the lattice vectors along which the system has translational symmetry. By contrast, the
+space group defines all of the other allowed symmetry operations in the system, some of which are only 
+allowed for unit cells of a certain shape. For example, a cubic space group (the highest possible symmetry)
+represents a set of symmetry operations that can only be applied to a cubic unit cell. However,
+this does not mean that a cubic _unit cell_ must have cubic _symmetry_---it can also have the symmetry
+of any of the space groups associated with crystal systems of lower symmetry (*e.g.*, tetragonal). 
+In the context of PSCF, this means that you can choose a unit cell and a space group that belong to
+different crystal systems, as long as the symmetry operations of that space group are all applicable to 
+that unit cell. For example, a tetragonal unit cell could be used with a monoclinic space group. As another
+example, the triclinic space group `P_1`, which has no symmetry operations other than the identity, can be
+used alongside all possible choices of unit cell.
+
+### Initial Guess
+
+We intend to develop a tool to generate an initial guess for thin film geometries using the form factor
+method and the level set method (see Arora, *et al.* (2016), *Macromolecules*, 49, 4675) for arbitrary 
+particle and network phases. However, in the meantime, the recommended technique for generating an initial
+guess is to first converge the desired morphology as a bulk calculation, and generate a converged solution 
+in rgrid format. Then, create a new rgrid with the desired mesh size/shape by duplicating the existing 
+data periodically along any of the lattice basis vectors. For our BCC example above, we could take a 
+32x32x32 BCC solution in rgrid format, duplicate the data along the *z* direction to generate a 32x32x64
+mesh of BCC data, and then add 4 more layers of data points in the *z* direction (2 on top and 2 on bottom)
+to represent the interior of the walls, all of which should have zero concentration for all species 
+(as an initial guess). This leaves us with a 32x32x68 initial guess in rgrid format for the BCC thin film,
+which can subsequently be converted into an initial guess for the omega field in symmetry-adapted basis
+format by using the RGRID_TO_FIELD and RHO_TO_OMEGA commands in the command file. 
+
+### Rules for Determining Allowed Space Groups
+
+The space groups that are compatible with the thin film constraints must obey the following rules:
+- One lattice basis vector must be normal to the walls, and all other lattice basis vectors must
+be parallel to the walls (discussed above). 
+   - This prohibits all 2D space groups in the oblique crystal system, and places restrictions on
+   the allowed angles for 3D space groups in the triclinic crystal system. It also imposes the 
+   requirement that the wall is oriented normal to the **b** vector for all space groups in the 
+   monoclinic crystal system, while the wall must be oriented normal to the **c** vector 
+- The only permitted Bravais lattice sites are on the faces/edges of the unit cell that are
+parallel to the walls.
+   - This prohibits all 3D space groups with a face-centered or body-centered Bravais lattice,
+   as well as all 2D space groups with a centered rectangular Bravais net.
+- Mirror planes and two-fold rotation axes must be either parallel or perpendicular to the walls.
+They may only be parallel to the walls if the two walls are chemically identical.
+- 3, 4, and 6-fold rotation axes are only permitted if they are perpendicular to the walls.
+   - This prohibits all 3D space groups in the cubic crystal system, as well as all 2D space groups
+   in the square and hexagonal crystal systems).
+- Glide planes and two-fold screw axes are permitted if they are parallel to the walls, and only if
+both walls are chemically identical. All other non-symmorphic symmetry operations (glides and screws) 
+are forbidden.
+- Inversion centers and rotoinversions are only permitted if the walls are chemically identical.
+- The only allowed space groups in the trigonal crystal system are those with a hexagonal
+Bravais lattice (space groups starting with "P"). Trigonal space groups with a rhombohedral Bravais
+lattice (starting with "R") do not have any lattice vector that is normal to the other two. One can
+represent a rhombohedral Bravais lattice in a non-primitive hexagonal unit cell, but there are two
+lattice sites in the middle of the unit cell. As such, neither representation of such a unit cell
+is compatible with thin film constraints. The distinction between crystal system, Bravais lattice, 
+and unit cell setting can be confusing for the trigonal crystal system, so the reader is directed to
+the very good summary at <https://en.wikipedia.org/wiki/Hexagonal_crystal_family> for more details.
+
+### List of Allowed Space Groups
+
+A comprehensive list of allowed space groups is given below. The entries that are listed in bold are
+those that are allowed for chemically dissimilar walls; all other entries are only allowed for 
+chemically identical walls. In constructing this list, we assumed that normalVec is set to 1 for
+monoclinic space groups, and is set to 2 for orthorhombic, tetragonal, trigonal, and hexagonal 
+space groups. For other choices of normalVec, the allowed space groups may differ.
+- 1D:
+   - Lamellar (only relevant for studying lamellae parallel to the walls)
+      - **P_1**
+      - P_-1
+- 2D:
+   - Oblique (*&gamma;* must be 90&deg;)
+      - **p_1**
+      - p_2
+   - Rectangular
+      - **p_m** (walls must be normal to **b** if they are chemically dissimilar)
+      - p_g (walls must be normal to **a**)
+      - p_2_m_m
+      - p_2_m_g (walls must be normal to **b**)
+- 3D:
+   - Triclinic
+      - **P_1**
+      - P_-1
+   - Monoclinic
+      - **P_2**
+      - P_1_m_1
+      - P_1_c_1
+      - P_1_2%m_1
+      - P_1_2%c_1
+   - Orthorhombic
+      - P_2_2_2
+      - P_21_21_2
+      - C_2_2_2
+      - **P_m_m_2**
+      - **P_m_a_2**
+      - **P_b_a_2**
+      - **C_m_m_2**
+      - P_m_m_m
+      - P_b_a_n:1
+      - P_b_a_n:2
+      - P_m_m_a
+      - P_b_a_m
+      - P_m_m_n:1
+      - P_m_m_n:2
+      - C_m_m_m
+      - C_m_m_a
+   - Tetragonal
+      - **P_4**
+      - P_-4
+      - P_4%m
+      - P_4%n:1
+      - P_4%n:2
+      - P_4_2_2
+      - P_4_21_2
+      - **P_4_m_m**
+      - **P_4_b_m**
+      - P_-4_2_m
+      - P_-4_21_m
+      - P_-4_m_2
+      - P_-4_b_2
+      - P_4%m_m_m
+      - P_4%n_b_m:1
+      - P_4%n_b_m:2
+      - P_4%m_b_m
+      - P_4%n_m_m:1
+      - P_4%n_m_m:2
+   - Trigonal
+      - **P_3**
+      - P_-3
+      - P_3_1_2
+      - P_3_2_1
+      - **P_3_m_1**
+      - **P_3_1_m**
+      - P_-3_1_m
+      - P_-3_m_1
+   - Hexagonal
+      - **P_6**
+      - P_-6
+      - P_6%m
+      - P_6_2_2
+      - **P_6_m_m**
+      - P_-6_m_2
+      - P_-6_2_m
+      - P_6%m_m_m
+
+<BR>
+ \ref user_groups_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref user_page          (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref developer_page   (Next) 
+*/

@@ -139,36 +139,48 @@ namespace Pspc {
             }
          }
 
-         // IfisFlexible, then extrapolate unit cell parameters
+         // Make sure unitCellParameters_ is up to date with system
+         // (if we are sweeping in a lattice parameter, then the system
+         // parameters will be up-to-date but unitCellParameters_ wont be)
+         FSArray<double, 6> oldParameters = unitCellParameters_;
+         unitCellParameters_ = system().unitCell().parameters();
+
+         // If isFlexible, then extrapolate the flexible unit cell parameters
          if (isFlexible) {
 
             double coeff;
             double parameter;
-            int nParameter = system().unitCell().nParameter();
+            
+            const FSArray<int,6> indices = system().iterator().flexibleParams();
+            const int nParameter = indices.size();
 
-            // Append contributions from k= 0 (most recent state)
-            coeff = c(0);
-            unitCellParameters_.clear();
-            for (int i = 0; i < nParameter; ++i) {
-               parameter = state(0).unitCell().parameter(i);
-               unitCellParameters_.append(coeff*parameter);
-            }
-
-            // Add contributions from k > 0 (older states)
-            for (k = 1; k < historySize(); ++k) {
+           // Add contributions from all previous states
+            for (k = 0; k < historySize(); ++k) {
                coeff = c(k);
                for (int i = 0; i < nParameter; ++i) {
-                  parameter = state(k).unitCell().parameter(i);
-                  unitCellParameters_[i] += coeff*parameter;
+                  if (k == 0) {
+                     unitCellParameters_[indices[i]] = 0;
+                  }
+                  parameter = state(k).unitCell().parameter(indices[i]);
+                  unitCellParameters_[indices[i]] += coeff*parameter;
                }
             }
-
-            // Reset trial_.unitCell() object
-            trial_.unitCell().setParameters(unitCellParameters_);
          }
 
-         // Transfer data from trial_ state to parent system
-         trial_.setSystemState(isFlexible);
+         // Reset trial_.unitCell() object
+         trial_.unitCell().setParameters(unitCellParameters_);
+
+         // Check if any unit cell parameters have changed
+         bool newCellParams(true);
+         for (int i = 0; i < oldParameters.size(); i++) {
+            if (fabs(oldParameters[i] - unitCellParameters_[i]) < 1e-10) {
+               newCellParams = false;
+               break;
+            }
+         }
+
+         // Transfer data from trial_ state to parent system         
+         trial_.setSystemState(newCellParams);
       }
 
     
@@ -259,7 +271,7 @@ namespace Pspc {
         outFileName = baseFileName_;
         outFileName += indexString;
         outFileName += "_c";
-        outFileName += ".rgrid";
+        outFileName += ".rf";
         system().writeCRGrid(outFileName);
       }
 

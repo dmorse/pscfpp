@@ -116,7 +116,7 @@ namespace Pspc
    * Set System state to current state of the BasisFieldState object.
    */
    template <int D>
-   void BasisFieldState<D>::setSystemState(bool isFlexible)
+   void BasisFieldState<D>::setSystemState(bool newCellParams)
    {
       system().setWBasis(fields());
 
@@ -138,7 +138,7 @@ namespace Pspc
                                              system().wFieldsRGrid());
       #endif
 
-      if (isFlexible) {
+      if (newCellParams) {
          system().setUnitCell(unitCell());
       }
 

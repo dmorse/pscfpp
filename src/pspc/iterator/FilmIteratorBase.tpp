@@ -109,10 +109,10 @@ namespace Pspc
       generateWallFields();
 
       // Write wall field to a file if requested in param file
-      if (writeBasis_.size() > 0) {
+      if (!writeBasis_.empty()) {
          writeWallField(writeBasis_);
       }
-      if (writeRGrid_.size() > 0) {
+      if (!writeRGrid_.empty()) {
          writeWallFieldRGrid(writeRGrid_);
       }
 
@@ -121,10 +121,6 @@ namespace Pspc
       if (isFlexible()) {
          iterator_.setFlexibleParams(flexibleParams());
       }
-      
-      // Adjust phi values for all species to account for 
-      // the volume that is occupied by the wall
-      adjustPhiVals();
    }
 
    /*
@@ -143,7 +139,9 @@ namespace Pspc
    }
 
    /*
-   * Generate the concentration field for the walls and store it in wallCField_
+   * Generate the concentration field for the walls and store it in wallCField_.
+   * Also, insert this wall as a mask in the iterator. Adjust phi values of 
+   * species in the system to accommodate the volume occupied by the wall.
    */
    template <int D, typename IteratorType>
    void FilmIteratorBase<D, IteratorType>::generateWallFields() 
@@ -220,6 +218,10 @@ namespace Pspc
 
       // Store lattice parameters associated with this wallCField_
       parameters_ = system().domain().unitCell().parameters();
+
+      // Adjust phi values for all species in the system to account for 
+      // the volume that is occupied by the wall
+      adjustPhiVals();
    }
 
    /*
@@ -234,7 +236,7 @@ namespace Pspc
       UTIL_CHECK(sysParams.size() == parameters_.size()); // ensure same size
       bool identical = true; // are the two arrays identical?
       for (int i = 0; i < parameters_.size(); i++) {
-         if (sysParams[i] != parameters_[i]) {
+         if (fabs(sysParams[i] - parameters_[i]) < 1e-10) {
             identical = false;
             break;
          }
@@ -264,8 +266,9 @@ namespace Pspc
 
       // Adjust phi for each species based on phi_walls and frac, if needed
       double multiplier = (1 - phi()) / frac;
-      if (multiplier - 1 > 1e-7) { // if multiplier != 1
-         Log::file() << "NOTE: phi values of all species are being scaled by a factor of"
+      if (fabs(multiplier - 1) > 1e-7) { // if multiplier != 1
+         Log::file() << std::endl
+                     << "NOTE: phi values of all species are being scaled by a factor of"
                      << std::endl << multiplier
                      << " due to the volume occupied by the wall." 
                      << std::endl;

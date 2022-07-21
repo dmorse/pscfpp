@@ -1,4 +1,4 @@
-/*! \page user_field_rgrid_page 3.5.2 R-Grid File Format
+/*! \page user_field_rgrid_page 3.6.2 R-Grid File Format
 
  \ref user_field_basis_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref user_field_kgrid_page   (Next) 
@@ -59,10 +59,8 @@ an angle of 60 degrees between them.
 The data section contains the values of fields associated with N_monomer 
 monomer types at grid points given by
 \f[
-
     \textbf{r}(n_1, \ldots, n_{D}) = \sum_{i=1}^{\textrm{D}}
     \frac{n_{i}}{N_{i}}\textbf{a}_{1}
-
 \f]
 where \f$D\f$ is the dimensionality of the crystal (denoted by "dim" 
 in the header file), \f$\textbf{a}_{i}\f$is a Bravais lattice vector, 
