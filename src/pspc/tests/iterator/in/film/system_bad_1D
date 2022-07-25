@@ -25,21 +25,12 @@ System{
   Domain{
     unitCell       lamellar    2.2
     mesh           64
-    groupName      P_1
+    groupName      P_-1
   }
-  AmIteratorFilm{
+  AmIterator{
     maxItr       1000
-    epsilon      1e-12
-    maxHist      50 
-    isFlexible   0
-    normalVec            0
-    interfaceThickness   0.08     
-    wallThickness        0.2
-    chi[
-          0   0
-          0   0
-    ]
-    writeWallBasis       out/wall.bf
-    writeWallRGrid       out/wall.rf
+    epsilon      1e-7
+    maxHist      50  
+    isFlexible   0   
   }
 }

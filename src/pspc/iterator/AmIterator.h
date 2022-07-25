@@ -60,6 +60,7 @@ namespace Pspc
       using AmIteratorTmpl<Iterator<D>,FieldCPU>::setClassName;
       using Iterator<D>::isFlexible;
       using Iterator<D>::flexibleParams;
+      using Iterator<D>::setFlexibleParams;
 
    protected:
    

@@ -30,16 +30,14 @@ System{
   AmIteratorFilm{
     maxItr       1000
     epsilon      1e-12
-    maxHist      50 
-    isFlexible   0
-    normalVec            0
-    interfaceThickness   0.08     
-    wallThickness        0.2
+    maxHist      50  
+    isFlexible   0   
+    normalVec            0   
+    interfaceThickness   0.08    
+    wallThickness        0.2 
     chi[
-          0   0
-          0   0
+          3   0   
+          0   4   
     ]
-    writeWallBasis       out/wall.bf
-    writeWallRGrid       out/wall.rf
   }
 }
