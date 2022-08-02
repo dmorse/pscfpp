@@ -7,38 +7,55 @@
 The PSCF programs that are designed to simulate periodic structures use
 algorithms that constrain the chemical potential fields to be symmetric
 under all operations of a specified crystallographic space group. Each
-possible space group is identified in PSCF by a unique string identifer.
+possible space group is identified in PSCF by a unique identifer string.
+
+<h3> Space Group Identifier Strings </h3>
 
 The space group identifiers used in PSCF are ASCII strings with no white
-space that are constructed as mangled forms of the name used for a group
-in the international crystallographic tables. The international symbols
-cannot be used because they contain typset elements that cannot be 
-represented using an ascii character set. In PSCF space group identifiers,
-logical elements are separated by underbars (_). Each overbar symbol in 
-the international table name is replaced by a "-" that appears as prefix 
-to the overbarred symbol. For example, PSCF identifier for the space group 
-of the double gyroid phase of a diblock copolymer is \c I_a_-3_d. Each symbol 
-that appear as subscripts in the international table symbols is preceded 
-by a "%" symbol. Different possible settings of a space group are indicated 
-by a a colon (":") followed by a setting number at the end of the space 
-group name. 
+space that are constructed as mangled forms of the Hermann Mauguin space
+group names that are used in the international tables of crystallography.
+Each PSCF space group identifier is also the name of a file that contain 
+a description of the space group.  The international symbols cannot be used 
+for this purpose because they contain typset elements such as subscripts 
+and overbars that cannot be represented using an ascii character set. The 
+following rules are used to convert Hermann Mauguin names into PSCF ascii 
+space group identifiers:
+<ul>
+<li>
+Logical elements of the Hermann Mauguin space group name are separated by underbars (_). For example, I_m_m_a is the PSCF identifier for space group \f$Imma\f$.
+</li>
+<li>
+Each overbar symbol in the Hermann Mauguin name is replaced by a "-" that appears as prefix to the overbarred symbol. 
+For example, I_a_-3_d is the PSCF identifier for space group \f$Ia\overline{3}d\f$, which is the space group of the double gyroid phase of a diblock copolymer.
+</li>
+<li>
+Elements in which a single digit number appears as a subcript to another such number are listed as pairs of numbers with no intervening space, in which the second number in the pair is the subcript. For example, P_43_2_2 is the PSCF identifier for space group \f$P4_{3}22\f$.
+</li>
+<li>
+Each slash ("/") in a Hermann Mauguin name is replaced by a percent sign ("%") symbol. For example P_4\%m_m_m is the PSCF identifier for space group \f$P4/mmm\f$.
+</li>
+<li>
+Different possible settings of a space group (i.e., different choices of origin) are indicated by a a colon (":") followed by a setting number at the end of the space group name. 
+For example F_d_-3_m:2 is the PSCF identifier for setting 2 of space group \f$Fd\overline{3}m\f$, which has two settings labelled "1" and "2". 
+Such setting labels are only used for space groups for which two or more setting are listed in the international tables.
+</li>
+</ul>
 
 Files that contain descriptions of all possible crystallographic space 
 groups are stored in the data/groups directory of the main pscfpp directory. 
 Descriptions of space groups for 1D, 2D and 3D crystals are stored in
-subdirectories named 1/, 2/ and 3/, respectively. The name of each such
-file is given by the PSCF identifier for the associated space group. One
-can thus search the file names in these directories to find identifiers 
-for all space groups.
+subdirectories named 1/, 2/ and 3/, respectively. 
+The name of each such file is given by the PSCF identifier for the associated space group. 
+One can thus scan through the names of files in these directories to find 
+identifiers for all standard space groups.
 
-Each file that describes a space group contains a set of descriptions
-for all the symmetry operations of the associated space group. Each 
-symmetry operation is represented by a matrix and a vector, in which
-a matrix with integer elements represents a point group operation  and 
-a vector with elements given by rational numbers (fractions) represents
-a translation by a fraction of a unit cell. 
+Each file that describes a space group contains a list of descriptions for 
+all the symmetry operations of the group. 
+Each symmetry operation is represented by a matrix and a vector. 
+A matrix with integer elements is used to represent a linear transformation of coordinates caused by a point group operation (e.g., a reflection, rotation, or inversion) in which coordinates are defined using a basis of Bravais lattice basis vectors.
+A vector with elements given by rational numbers (fractions) is used to represent a translation, in which each element represents a translation parallel to a Bravais lattice basis vector by some fraction of a unit cell.
 
-Identifiers for all possible 1D, 2D and 3D space groups are listed below:
+Identifier strings for all of the standard 1D, 2D and 3D space groups are listed below:
 
 <h3> 1D Space Groups </h3>
 There are only two possible symmetry groups for one-dimensionally periodic

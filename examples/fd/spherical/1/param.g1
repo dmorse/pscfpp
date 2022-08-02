@@ -13,7 +13,6 @@ System{
               0  0.125
               1  0.875
         ]
-        ensemble  open
         mu        5.74775182858
      }
      Polymer{
@@ -22,7 +21,6 @@ System{
         blocks[
              1  1.000
         ]
-        ensemble  open
         mu        -0.0042051012549
      }
      vMonomer   0.045787

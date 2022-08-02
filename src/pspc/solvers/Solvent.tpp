@@ -14,61 +14,20 @@
 namespace Pscf {
 namespace Pspc { 
 
+   /*
+   * Constructor
+   */
    template <int D>
    Solvent<D>::Solvent()
+    : SolventDescriptor()
    {  setClassName("Solvent"); }
 
+   /*
+   * Destructor
+   */
    template <int D>
    Solvent<D>::~Solvent()
    {}
-
-   template <int D>
-   void Solvent<D>::readParameters(std::istream& in)
-   {
-      read<int>(in, "monomerId", monomerId_);
-      read<double>(in, "size", size_);
-
-      // Read ensemble and phi or mu
-      ensemble_ = Species::Closed;
-      readOptional<Species::Ensemble>(in, "ensemble", ensemble_);
-      if (ensemble_ == Species::Closed) {
-         read(in, "phi", phi_);
-         UTIL_CHECK(phi_ >= 0.0);  
-         UTIL_CHECK(phi_ <= 1.0);  
-      } else {
-         read(in, "mu", mu_);
-      }
-   }
-
-   template <int D>
-   void Solvent<D>::setPhi(double phi)
-   {
-      UTIL_CHECK(ensemble() == Species::Closed);  
-      UTIL_CHECK(phi >= 0.0);  
-      UTIL_CHECK(phi <= 1.0);  
-      phi_ = phi;
-   }
-
-   template <int D>
-   void Solvent<D>::setMu(double mu)
-   {
-      UTIL_CHECK(ensemble() == Species::Open);  
-      mu_ = mu; 
-   }
-
-   /*
-   * Set the id for this solvent.
-   */ 
-   template <int D>
-   void Solvent<D>::setMonomerId(int monomerId)
-   {  monomerId_ = monomerId; }
-  
-   /*
-   * Set the molecule size (volume / reference volume) for this solvent.
-   */ 
-   template <int D>
-   void Solvent<D>::setSize(double size)
-   {  size_ = size; }
 
    /*
    * Create an association with a Mesh & allocate the concentration field.
@@ -81,7 +40,7 @@ namespace Pspc {
    }
 
    /*
-   * Compute concentration, q, phi or mu.
+   * Compute concentration, q, and phi or mu.
    */ 
    template <int D>
    void Solvent<D>::compute(WField const & wField)

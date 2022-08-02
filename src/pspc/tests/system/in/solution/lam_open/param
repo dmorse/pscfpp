@@ -11,13 +11,11 @@ System{
         nBlock    2
         blocks    0   0.35
                   1   0.65
-        ensemble  Open
         mu        2.74031671639e+01
      }
      Solvent{
         monomerId  2
         size       0.02
-        ensemble   Open
         mu         -3.51022037737e-01
      }
      ds   0.01
