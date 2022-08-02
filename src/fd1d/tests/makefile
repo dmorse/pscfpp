@@ -11,9 +11,11 @@ all: $(fd1d_tests_OBJS) $(BLD_DIR)/$(TEST)
 run: $(fd1d_tests_OBJS) $(BLD_DIR)/$(TEST)
 	$(BLD_DIR)/$(TEST) $(SRC_DIR)/fd1d/tests/ 
 
-#	@echo `grep failed log` ", "\
-#             `grep successful log` "in fd1d/tests/log" > count
-#	@cat count
+run-quiet: $(fd1d_tests_OBJS) $(BLD_DIR)/$(TEST)
+	@$(BLD_DIR)/$(TEST) $(SRC_DIR)/fd1d/tests/ > log
+	@echo `grep failed log` ", "\
+             `grep successful log` "in fd1d/tests/log" > count
+	@cat count
 
 clean-outputs:
 	rm -f log count 
