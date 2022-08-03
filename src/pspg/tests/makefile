@@ -13,9 +13,11 @@ includes:
 run: $(pspg_tests_OBJS) $(BLD_DIR)/$(TEST)
 	$(BLD_DIR)/$(TEST) $(SRC_DIR)/pspg/tests/ 
 
-#	@echo `grep failed log` ", "\
-#              `grep successful log` "in pspg/tests/log" > count
-#	@cat count
+run-quiet: $(pspg_tests_OBJS) $(BLD_DIR)/$(TEST)
+	@$(BLD_DIR)/$(TEST) $(SRC_DIR)/pspg/tests/  > log
+	@echo `grep failed log` ", "\
+              `grep successful log` "in pspg/tests/log" > count
+	@cat count
 
 clean-outputs:
 	rm -f log count 

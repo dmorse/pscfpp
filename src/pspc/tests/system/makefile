@@ -16,10 +16,11 @@ libs:
 run: $(pspc_tests_system_OBJS) $(BLD_DIR)/$(TEST)
 	$(BLD_DIR)/$(TEST) $(SRC_DIR)/pspc/tests/system/
 
-#	$(BLD_DIR)/$(TEST) $(SRC_DIR)/pspc/tests/ > log
-#	@echo `grep failed log` ", "\
-#             `grep successful log` "in pspc/tests/system/log" > count
-#	@cat count
+run-quiet: $(pspc_tests_system_OBJS) $(BLD_DIR)/$(TEST)
+	$(BLD_DIR)/$(TEST) $(SRC_DIR)/pspc/tests/system/ > log
+	@echo `grep failed log` ", "\
+             `grep successful log` "in pspc/tests/system/log" > count
+	@cat count
 
 clean-outputs:
 	rm -f log count 

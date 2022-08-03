@@ -43,11 +43,10 @@ public:
       openInputFile("in/BlockDescriptor", in);
 
       in >> v;
-      TEST_ASSERT(v.id() == 5);
-      TEST_ASSERT(v.monomerId() == 0);
+      TEST_ASSERT(v.monomerId() == 1);
+      TEST_ASSERT(eq(v.length(), 2.0));
       TEST_ASSERT(v.vertexId(0) == 3);
       TEST_ASSERT(v.vertexId(1) == 4);
-      TEST_ASSERT(eq(v.length(), 2.0));
       std::cout << v << std::endl ;
    }
 
