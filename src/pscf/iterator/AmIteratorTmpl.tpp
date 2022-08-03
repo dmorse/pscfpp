@@ -27,7 +27,11 @@ namespace Pscf
     : epsilon_(0),
       lambda_(0),
       nHist_(0),
-      maxHist_(0)
+      maxHist_(0),
+      maskField_(),
+      externalFields_(),
+      hasMask_(false),
+      hasExternalField_(false)
    {  setClassName("AmIteratorTmpl"); }
 
    /*

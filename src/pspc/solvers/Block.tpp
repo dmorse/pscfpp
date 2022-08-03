@@ -185,7 +185,7 @@ namespace Pspc {
          // First, check that w[i]*ds_ is not unreasonably large:
          // (if this condition is not met, solution will have large
          // error, and user should consider using a smaller ds_)
-         UTIL_CHECK(std::abs(w[i]*ds_) < 1.0);
+         //UTIL_CHECK(std::abs(w[i]*ds_) < 1.0);
 
          // Calculate values
          expW_[i] = exp(-0.5*w[i]*ds_);

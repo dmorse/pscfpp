@@ -21,11 +21,11 @@ namespace Pspc{
    template <int D>
    AmIterator<D>::AmIterator(System<D>& system)
    : Iterator<D>(system)
-   {}
+   {  setClassName("AmIterator"); }
 
    template <int D>
    AmIterator<D>::~AmIterator()
-   {}
+   {  setClassName("AmIterator"); }
 
    template <int D>
    void AmIterator<D>::readParameters(std::istream& in)
@@ -40,6 +40,15 @@ namespace Pspc{
       // Read in additional parameters
       readOptional(in, "isFlexible", isFlexible_);
       readOptional(in, "scaleStress", scaleStress_);
+
+      // If lattice parameters are flexible, update flexibleParams_
+      if (isFlexible_) {
+         // all parameters are flexible
+         int np = system().unitCell().nParameter();
+         for (int i = 0; i < np; i++) {
+            flexibleParams_.append(i);
+         }
+      }
    }
 
    template <int D>
@@ -183,9 +192,7 @@ namespace Pspc{
 
       int nEle = nMonomer*nBasis;
 
-      if (isFlexible_) {
-         nEle += system().unitCell().nParameter();
-      }
+      nEle += flexibleParams().size();
 
       return nEle;
    }
@@ -197,7 +204,7 @@ namespace Pspc{
 
       const int nMonomer = system().mixture().nMonomer();
       const int nBasis = system().basis().nBasis();
-      const DArray<DArray<double>> * currSys = &system().wFields(); 
+      const DArray<FieldCPU> * currSys = &system().wFields(); 
       
       
       for (int i = 0; i < nMonomer; i++) {
@@ -207,13 +214,12 @@ namespace Pspc{
          }
       }
 
-      if (isFlexible_) {
-         const int nParam = system().unitCell().nParameter();
-         const FSArray<double,6> currParam = system().unitCell().parameters();
-
-         for (int i = 0; i < nParam; i++) {
-            curr[nMonomer*nBasis + i] = scaleStress_*currParam[i];
-         }
+      const FSArray<int,6> indices = flexibleParams();
+      const int nParam = indices.size();
+      const FSArray<double,6> currParam = system().unitCell().parameters();
+      
+      for (int i = 0; i < nParam; i++) {
+         curr[nMonomer*nBasis + i] = scaleStress_*currParam[indices[i]];
       }
 
       return;
@@ -254,10 +260,27 @@ namespace Pspc{
          }
       }
 
+      // If iterator has a mask, account for the mask in the values of the residuals
+      if (hasMask()) {
+         for (int i = 0; i < nMonomer; ++i) {
+            for (int k = 0; k < nBasis; ++k) {
+               int idx = i*nBasis + k;
+               resid[idx] += maskField()[k] / system().interaction().sum_inv(); 
+            }
+         }
+      }
+
       // If not canonical, account for incompressibility 
       if (!system().mixture().isCanonical()) {
+         double phi; // volume fraction of mask, if a mask exists
+         if (hasMask()) {
+            phi = maskField()[0];
+         } else {
+            phi = 0.0;
+         }
+
          for (int i = 0; i < nMonomer; ++i) {
-            resid[i*nBasis] -= 1.0/system().interaction().sum_inv();
+            resid[i*nBasis] -= (1.0-phi)/system().interaction().sum_inv();
          }
       } else {
          // otherwise explicitly set the residual value for the homogeneous components
@@ -269,7 +292,8 @@ namespace Pspc{
 
       // If variable unit cell, compute stress residuals
       if (isFlexible_) {
-         const int nParam = system().unitCell().nParameter();
+         const FSArray<int,6> indices = flexibleParams();
+         const int nParam = indices.size();
          
          // Combined -1 factor and stress scaling here. This is okay: 
          // - residuals only show up as dot products (U, v, norm) 
@@ -282,7 +306,7 @@ namespace Pspc{
 
          for (int i = 0; i < nParam ; i++) {
             resid[nMonomer*nBasis + i] = scaleStress_ * -1 
-                                       * system().mixture().stress(i);
+                                       * system().mixture().stress(indices[i]);
          }
       }
 
@@ -295,7 +319,7 @@ namespace Pspc{
       const int nMonomer = system().mixture().nMonomer();
       const int nBasis = system().basis().nBasis();
       
-      DArray< DArray<double> > wField;
+      DArray<FieldCPU> wField;
       wField.allocate(nMonomer);
       
       // Restructure in format of monomers, basis functions
@@ -319,11 +343,14 @@ namespace Pspc{
       system().setWBasis(wField);
 
       if (isFlexible_) {
-         FSArray<double, 6> parameters;
-         const int nParam = system().unitCell().nParameter();
+         const FSArray<int,6> indices = flexibleParams();
+         const int nParam = indices.size();
+         FSArray<double,6> parameters = system().unitCell().parameters();
+         int ind, i;
 
-         for (int i = 0; i < nParam; i++) {
-            parameters.append(1/scaleStress_ * newGuess[nMonomer*nBasis + i]);
+         for (i = 0; i < nParam; i++) {
+            ind = indices[i];
+            parameters[ind] = 1/scaleStress_ * newGuess[nMonomer*nBasis + i];
          }
 
          system().setUnitCell(parameters);

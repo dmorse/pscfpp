@@ -50,18 +50,24 @@ namespace Pspc
       */
       void readParameters(std::istream& in);
 
-      /// Return whether unit cell is flexible.
-      inline const bool isFlexible() {return isFlexible_;}
-
       using AmIteratorTmpl<Iterator<D>,FieldCPU>::setup;
       using AmIteratorTmpl<Iterator<D>,FieldCPU>::solve;
+      using AmIteratorTmpl<Iterator<D>,FieldCPU>::maskField;
+      using AmIteratorTmpl<Iterator<D>,FieldCPU>::externalFields;
+      using AmIteratorTmpl<Iterator<D>,FieldCPU>::externalField;
+      using AmIteratorTmpl<Iterator<D>,FieldCPU>::hasMask;
+      using AmIteratorTmpl<Iterator<D>,FieldCPU>::hasExternalField;
+      using AmIteratorTmpl<Iterator<D>,FieldCPU>::setClassName;
       using Iterator<D>::isFlexible;
+      using Iterator<D>::flexibleParams;
+      using Iterator<D>::setFlexibleParams;
 
    protected:
    
       using ParamComposite::readOptional;
       using Iterator<D>::system;
       using Iterator<D>::isFlexible_;
+      using Iterator<D>::flexibleParams_;
 
    private:
 

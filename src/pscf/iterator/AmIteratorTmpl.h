@@ -57,6 +57,61 @@ namespace Pscf {
       */
       int solve();
 
+      /**
+       * Accepts a field array representing the concentration profile
+       * of the mask that will be imposed upon the unit cell, and stores 
+       * it for use during iteration.
+       * 
+       * \param field mask concentration profile, in basis format
+       */
+      void setMask(T const & field);
+
+      /**
+       * Accepts an array of fields representing the external potential
+       * field felt by each monomer species, and stores it for use 
+       * during iteration.
+       * 
+       * \param fields mask concentration profile, in basis format
+       */
+      void setExternalFields(DArray<T> const & fields);
+
+      /**
+      * Returns the field that represents the mask imposed upon the 
+      * unit cell, or returns an unallocated field if the iterator 
+      * does not have a mask. Field is in symmetry-adapted basis format.
+      */
+      T const & maskField() const;
+
+      /**
+      * Returns the array of fields that represents the external potential
+      * field felt by each monomer species, or returns an unallocated field
+      * if the iterator does not have an external field. Fields are in 
+      * symmetry-adapted basis format.
+      */
+      DArray<T> const & externalFields() const;
+
+      /**
+      * Returns the field that represents the external field imposed
+      * on the monomer species monomerId, or returns an unallocated
+      * field if the iterator does not have an external field. Field
+      * is in symmetry-adapted basis format.
+      * 
+      * \param monomerId integer monomer type index
+      */
+      T const & externalField(int monomerId) const;
+
+      /**
+      * Return true if this iterator imposes a mask within the unit cell,
+      * false if no mask is imposed.
+      */
+      bool const hasMask() const;
+
+      /**
+      * Return true if this iterator imposes an external field on any
+      * monomer species, returns false if no external field is present.
+      */
+      bool const hasExternalField() const;
+
    protected:
 
       // Members of parent classes with non-dependent names
@@ -116,6 +171,18 @@ namespace Pscf {
 
       /// Workspace for calculations
       T temp_;
+
+      /// Field representing the mask imposed on the unit cell
+      DArray<double> maskField_;
+
+      /// Array containing the external fields felt by each species
+      DArray<DArray<double> > externalFields_;
+
+      /// Does this iterator have a mask?
+      bool hasMask_;
+
+      /// Does this iterator have an external field?
+      bool hasExternalField_;
 
       /**
       * Compute the deviation of wFields from a mean field solution
@@ -271,6 +338,53 @@ namespace Pscf {
       virtual void outputToLog() = 0;
 
    };
+
+   // Inline member functions
+
+   // Store the concentration field for the mask imposed on the unit cell
+   template <typename Iterator, typename T>
+   inline void AmIteratorTmpl<Iterator,T>::setMask(T const & field)
+   {  
+      maskField_ = field; // copy field into maskField_
+      hasMask_ = true;
+   }
+
+   // Store the external fields imposed on each monomer species
+   template <typename Iterator, typename T>
+   inline 
+   void AmIteratorTmpl<Iterator,T>::setExternalFields(DArray<T> const & fields)
+   {  
+      externalFields_ = fields; // copy fields into externalFields_
+      hasExternalField_ = true;
+   }
+
+   // Get the concentration field for the mask imposed on the unit cell
+   template <typename Iterator, typename T>
+   inline T const & AmIteratorTmpl<Iterator,T>::maskField() const
+   {  return maskField_; }
+
+   // Get array of all external fields felt by monomer species
+   template <typename Iterator, typename T>
+   inline DArray<T> const & AmIteratorTmpl<Iterator,T>::externalFields() 
+   const
+   {  return externalFields_; }
+
+   // Get the external field felt by one monomer species
+   template <typename Iterator, typename T>
+   inline 
+   T const & AmIteratorTmpl<Iterator,T>::externalField(int monomerId) 
+   const
+   {  return externalFields_[monomerId]; }
+
+   // Does this iterator have a mask?
+   template <typename Iterator, typename T>
+   inline bool const AmIteratorTmpl<Iterator,T>::hasMask() const
+   {  return hasMask_; }
+
+   // Does this iterator have any external field?
+   template <typename Iterator, typename T>
+   inline bool const AmIteratorTmpl<Iterator,T>::hasExternalField() const
+   {  return hasExternalField_; }
 
 }
 #include "AmIteratorTmpl.tpp"

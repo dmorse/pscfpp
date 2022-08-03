@@ -302,9 +302,19 @@ namespace Pspc
       Mixture<D>& mixture();
 
       /**
+      * Get the Mixture by const reference.
+      */
+      Mixture<D> const & mixture() const;
+
+      /**
       * Get Interaction (i.e., excess free energy model) by reference.
       */
       ChiInteraction& interaction();
+
+      /**
+      * Get Interaction (i.e., excess free energy model) by const reference.
+      */
+      ChiInteraction const & interaction() const;
 
       /**
       * Get the iterator by reference.
@@ -312,14 +322,29 @@ namespace Pspc
       Iterator<D>& iterator();
 
       /**
+      * Get the iterator by const reference.
+      */
+      Iterator<D> const & iterator() const;
+
+      /**
       * Get homogeneous mixture (for reference calculations).
       */
       Homogeneous::Mixture& homogeneous();
 
       /**
+      * Get const homogeneous mixture (for reference calculations).
+      */
+      Homogeneous::Mixture const & homogeneous() const;
+
+      /**
       * Get FileMaster by reference.
       */
       FileMaster& fileMaster();
+
+      /**
+      * Get const FileMaster by reference.
+      */
+      FileMaster const & fileMaster() const;
 
       /** 
       * Have monomer chemical potential fields (w fields) been set?
@@ -771,10 +796,12 @@ namespace Pspc
 
    // Inline member functions
 
+   // Get the Domain<D> object.
    template <int D>
    inline Domain<D> const & System<D>::domain() const
    { return domain_; }
 
+   // Get the UnitCell<D> object.
    template <int D>
    inline UnitCell<D> const & System<D>::unitCell() const
    { return domain_.unitCell(); }
@@ -787,6 +814,11 @@ namespace Pspc
    // Get the associated Mixture object.
    template <int D>
    inline Mixture<D>& System<D>::mixture()
+   { return mixture_; }
+
+   // Get the associated const Mixture object.
+   template <int D>
+   inline Mixture<D> const & System<D>::mixture() const
    { return mixture_; }
 
    // Get the Basis<D> object.
@@ -814,14 +846,32 @@ namespace Pspc
    inline FileMaster& System<D>::fileMaster()
    {  return fileMaster_; }
 
+   // Get the const FileMaster.
+   template <int D>
+   inline FileMaster const & System<D>::fileMaster() const
+   {  return fileMaster_; }
+
    // Get the Homogeneous::Mixture object.
    template <int D>
    inline Homogeneous::Mixture& System<D>::homogeneous()
    {  return homogeneous_; }
 
+   // Get the const Homogeneous::Mixture object.
+   template <int D>
+   inline Homogeneous::Mixture const & System<D>::homogeneous() const
+   {  return homogeneous_; }
+
    // Get the Interaction (excess free energy model).
    template <int D>
    inline ChiInteraction& System<D>::interaction()
+   {
+      UTIL_ASSERT(interactionPtr_);
+      return *interactionPtr_;
+   }
+
+   // Get the const Interaction (excess free energy model).
+   template <int D>
+   inline ChiInteraction const & System<D>::interaction() const
    {
       UTIL_ASSERT(interactionPtr_);
       return *interactionPtr_;
@@ -835,11 +885,21 @@ namespace Pspc
       return *iteratorPtr_;
    }
 
+   // Get the const Iterator.
+   template <int D>
+   inline Iterator<D> const & System<D>::iterator() const
+   {
+      UTIL_ASSERT(iteratorPtr_);
+      return *iteratorPtr_;
+   }
+
+   // Get array of all monomer chemical potential fields.
    template <int D>
    inline
    DArray< DArray<double> > const & System<D>::wFields() const
    {  return wFields_; }
 
+   // Get one monomer chemical potential field.
    template <int D>
    inline
    DArray<double> const & System<D>::wField(int id) const
@@ -858,11 +918,13 @@ namespace Pspc
    typename System<D>::WField const & System<D>::wFieldRGrid(int id) const
    {  return wFieldsRGrid_[id]; }
 
+   // Get array of all monomer concentration fields.
    template <int D>
    inline
    DArray< DArray<double> > const & System<D>::cFields() const
    { return cFields_; }
 
+   // Get one monomer concentration field.
    template <int D>
    inline
    DArray<double> const & System<D>::cField(int id) const
