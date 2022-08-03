@@ -25,6 +25,12 @@ ifeq ($(SRC_DIR),$(BLD_DIR))
 	-cd field; $(MAKE) clean-outputs
 	-cd solvers; $(MAKE) clean-outputs
 	-cd system; $(MAKE) clean-outputs
+	-cd sweep; $(MAKE) clean-outputs
+else
+	-cd $(SRC_DIR)/pspc/tests/field; $(MAKE) clean-outputs
+	-cd $(SRC_DIR)/pspc/tests/solvers; $(MAKE) clean-outputs
+	-cd $(SRC_DIR)/pspc/tests/system; $(MAKE) clean-outputs
+	-cd $(SRC_DIR)/pspc/tests/sweep; $(MAKE) clean-outputs
 endif
 
 clean:
@@ -36,7 +42,12 @@ ifeq ($(SRC_DIR),$(BLD_DIR))
 	-cd solvers; $(MAKE) clean
 	-cd system; $(MAKE) clean
 	-cd sweep; $(MAKE) clean
-	rm -f */Test */*.o */*.d 
+	rm -f */Test */*.o */*.d
+else
+	-cd $(SRC_DIR)/pspc/tests/field; $(MAKE) clean
+	-cd $(SRC_DIR)/pspc/tests/solvers; $(MAKE) clean
+	-cd $(SRC_DIR)/pspc/tests/system; $(MAKE) clean
+	-cd $(SRC_DIR)/pspc/tests/sweep; $(MAKE) clean
 endif
 
 -include $(pspc_tests_OBJS:.o=.d)
