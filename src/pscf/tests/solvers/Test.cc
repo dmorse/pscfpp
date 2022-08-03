@@ -5,6 +5,7 @@
 #include <util/global.h>
 #include "SolversTestComposite.h"
 
+#include <util/param/BracketPolicy.h>
 #include <test/CompositeTestRunner.h>
 
 using namespace Pscf;
@@ -12,6 +13,8 @@ using namespace Util;
 
 int main(int argc, char* argv[])
 {
+
+   BracketPolicy::set(BracketPolicy::Optional);
    SolversTestComposite runner;
 
    if (argc > 2) {

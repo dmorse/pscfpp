@@ -21,6 +21,8 @@ clean-outputs:
 	rm -f log count 
 ifeq ($(BLD_DIR),$(SRC_DIR))
 	rm -f out/*
+else
+	rm -f $(SRC_DIR)/fd1d/tests/out/*
 endif
 
 clean:

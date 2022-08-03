@@ -14,7 +14,10 @@ libs:
 	@echo $(LIBS)
 
 run: $(pspg_tests_field_OBJS) $(BLD_DIR)/$(TEST)
-	$(BLD_DIR)/$(TEST) $(SRC_DIR)/pspg/tests/ > log
+	$(BLD_DIR)/$(TEST) $(SRC_DIR)/pspg/tests/ 
+
+run-quiet: $(pspg_tests_field_OBJS) $(BLD_DIR)/$(TEST)
+	@$(BLD_DIR)/$(TEST) $(SRC_DIR)/pspg/tests/ > log
 	@echo `grep failed log` ", "\
               `grep successful log` "in pspg/tests/field/log" > count
 	@cat count

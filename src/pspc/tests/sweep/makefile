@@ -19,6 +19,12 @@ run: $(pspc_tests_sweep_OBJS) $(BLD_DIR)/$(TEST)
 #              `grep successful log` "in pspc/tests/sweep/log" > count
 #	@cat count
 
+run-quiet: $(pspc_tests_sweep_OBJS) $(BLD_DIR)/$(TEST)
+	$(BLD_DIR)/$(TEST) $(SRC_DIR)/pspc/tests/  > log
+	@echo `grep failed log` ", "\
+              `grep successful log` "in pspc/tests/sweep/log" > count
+	@cat count
+
 clean-outputs:
 	rm -f log count 
 	find out -type f \( ! -iname ".*" \) -exec rm -f {} \;
