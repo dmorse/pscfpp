@@ -4,11 +4,9 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
+#include <pscf/tests/LogFileUnitTest.h>
 #include <pspc/System.h>
 #include <pspc/field/BFieldComparison.h>
-
-//#include <pscf/mesh/MeshIterator.h>
-//#include <util/format/Dbl.h>
 
 #include <fstream>
 
@@ -16,28 +14,18 @@ using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Pspc;
 
-class SystemTest : public UnitTest
+class SystemTest : public LogFileUnitTest
 {
 
 public:
 
-   std::ofstream logFile_;
-
    void setUp()
    {  setVerbose(0); }
 
+   #if 0
    void tearDown()
-   {
-      if (logFile_.is_open()) {
-         logFile_.close();
-      }
-   }
-
-   void openLogFile(char const * filename)
-   {
-      openOutputFile(filename, logFile_);
-      Log::setFile(logFile_);
-   }
+   {  closeLogFile(); }
+   #endif
 
    void testConstructor1D()
    {

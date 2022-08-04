@@ -1,10 +1,11 @@
-#-----------------------------------------------------------------------
-# The copy of this namespace-level makefile in the src/ directory is 
-# copied to the corresponding subdirectory of the bld/ directory by 
-# the setup script. Only the copy in the src/ directory is stored in 
-# the repository.
-#-----------------------------------------------------------------------
-# Include makefiles
+#------------------------------------------------------------------------
+# src/fd1d/makefile
+#
+# The repository copy of this namespace level makefile is in the src/fd1d
+# directory. This is copied verbatim by the setup script to create the 
+# copy in the bld/fd1d directory.
+#------------------------------------------------------------------------
+# Include makefile fragments
 
 SRC_DIR_REL =..
 include $(SRC_DIR_REL)/config.mk

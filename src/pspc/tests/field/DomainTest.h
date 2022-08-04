@@ -2,6 +2,7 @@
 #define PSPC_DOMAIN_TEST_H
 
 #include <test/UnitTest.h>
+#include <pscf/tests/LogFileUnitTest.h>
 #include <test/UnitTestRunner.h>
 
 #include <pspc/field/Domain.h>
@@ -24,10 +25,10 @@ using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Pspc;
 
-class DomainTest : public UnitTest 
+class DomainTest : public LogFileUnitTest 
 {
 
-   std::ofstream logFile_;
+   //std::ofstream logFile_;
    FileMaster fileMaster_;
    int nMonomer_;
 
@@ -36,19 +37,6 @@ public:
    void setUp()
    {
       setVerbose(0);
-   }
-
-   void tearDown()
-   {
-      if (logFile_.is_open()) {
-         logFile_.close();
-      }
-   }
-
-   void openLogFile(char const * filename)
-   {
-      openOutputFile(filename, logFile_);
-      Log::setFile(logFile_);
    }
 
    /*
@@ -98,11 +86,12 @@ public:
       TEST_ASSERT(nMonomer_ == 2);
 
       if (verbose() > 0) {
-         std::cout << "\n";
-         std::cout << "Cell  = " << domain.unitCell() << "\n";
-         std::cout << "Ngrid = " << domain.mesh().dimensions() << "\n";
+         // openLogFile("out/DomainTestReadHeader.log");
+         Log::file() << "\n";
+         Log::file() << "Cell  = " << domain.unitCell() << "\n";
+         Log::file() << "Ngrid = " << domain.mesh().dimensions() << "\n";
          if (verbose() > 1) {
-            domain.basis().outputStars(std::cout);
+            domain.basis().outputStars(Log::file());
          }
       }
 

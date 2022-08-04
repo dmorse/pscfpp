@@ -1,7 +1,8 @@
-#ifndef PSPC_BASISFIELDSTATE_TEST_H
-#define PSPC_BASISFIELDSTATE_TEST_H
+#ifndef PSPC_BASIS_FIELD_STATE_TEST_H
+#define PSPC_BASIS_FIELD_STATE_TEST_H
 
 #include <test/UnitTest.h>
+#include <pscf/tests/LogFileUnitTest.h>
 #include <test/UnitTestRunner.h>
 
 #include <pspc/System.h>
@@ -14,28 +15,13 @@ using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Pspc;
 
-class BasisFieldStateTest : public UnitTest
+class BasisFieldStateTest : public LogFileUnitTest
 {
 
 public:
 
-   std::ofstream logFile_;
-
    void setUp()
    {}
-
-   void tearDown()
-   {
-      if (logFile_.is_open()) {
-         logFile_.close();
-      }
-   }
-
-   void openLogFile(char const * filename)
-   {
-      openOutputFile(filename, logFile_);
-      Log::setFile(logFile_);
-   }
 
    void testConstructor()
    {
@@ -44,7 +30,6 @@ public:
       System<3> system;
       BasisFieldState<3> bfs1(system);
       BasisFieldState<3> bfs2;
-
    }
 
    void testRead()
@@ -162,14 +147,12 @@ public:
 
 
 TEST_BEGIN(BasisFieldStateTest)
-
 TEST_ADD(BasisFieldStateTest, testConstructor)
 TEST_ADD(BasisFieldStateTest, testRead)
 TEST_ADD(BasisFieldStateTest, testWrite)
 TEST_ADD(BasisFieldStateTest, testGetSystemState)
 TEST_ADD(BasisFieldStateTest, testSetSystemState)
 TEST_ADD(BasisFieldStateTest, testSetSystem)
-
 TEST_END(BasisFieldStateTest)
 
 #endif

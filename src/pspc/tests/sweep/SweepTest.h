@@ -2,6 +2,7 @@
 #define PSPC_SWEEP_TEST_H
 
 #include <test/UnitTest.h>
+#include <pscf/tests/LogFileUnitTest.h>
 #include <test/UnitTestRunner.h>
 
 #include <pspc/System.h>
@@ -13,20 +14,21 @@
 #include <fstream>
 #include <sstream>
 
-
 using namespace Util;
 using namespace Pscf;
 using namespace Pspc;
 
-class SweepTest : public UnitTest
+class SweepTest : public LogFileUnitTest
 {
 
 public:
 
-   std::ofstream logFile_;
 
    void setUp()
    {  setVerbose(0); }
+
+   #if 0
+   std::ofstream logFile_;
 
    void tearDown()
    {
@@ -40,6 +42,7 @@ public:
       openOutputFile(filename, logFile_);
       Log::setFile(logFile_);
    }
+   #endif
 
    void testConstructors()
    {
@@ -296,8 +299,8 @@ public:
       }
       //setVerbose(1);
       if (verbose() > 0) {
-         std::cout << std::endl;
-         std::cout << "maxDiff = " << Dbl(maxDiff, 14, 6) << std::endl;
+         Log::file() << std::endl;
+         Log::file() << "maxDiff = " << Dbl(maxDiff, 14, 6) << std::endl;
       }
 
       return maxDiff;
