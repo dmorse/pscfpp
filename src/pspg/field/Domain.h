@@ -68,12 +68,17 @@ namespace Pspg
       /**
       * Read body of parameter block (without opening and closing lines).
       *
+      * Reads unit cell, mesh dimensions and space group name.
+      *
       * \param in input parameter stream
       */
       virtual void readParameters(std::istream& in);
 
       /**
       * Read initialization data from header of an r-grid field file.
+      *  
+      * The header for an r-grid field file contains all data needed
+      * to initialize a domain, i.e., unit cell, mesh and group name.
       *
       * \param in input parameter stream
       * \param nMonomer number of monomers in field file (output)

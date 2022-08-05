@@ -96,8 +96,8 @@ namespace Pspg
 
       // Define nStar and nBasis
       int nStar = basis().nStar();
-      int nBasis = nStar;
-      // int nBasis = basis().nBasis();
+      // int nBasis = nStar;
+      int nBasis = basis().nBasis();
 
       // Allocate temp_out
       DArray<cudaReal*> temp_out;
@@ -164,8 +164,8 @@ namespace Pspg
             starId = basis().wave(waveId).starId;
             starPtr = &basis().star(starId);
             UTIL_CHECK(!(starPtr->cancel));
-            basisId = starId;
-            //basisId = starPtr->basisId;
+            // basisId = starId;
+            basisId = starPtr->basisId;
 
             if (starPtr->invertFlag == 0) {
 
@@ -207,8 +207,8 @@ namespace Pspg
                starId2 = basis().wave(waveId2).starId;
                starPtr2 = &basis().star(starId2);
                UTIL_CHECK(!(starPtr2->cancel));
-               basisId2 = starId2;
-               //basisId2 = starPtr2->basisId;
+               //basisId2 = starId2;
+               basisId2 = starPtr2->basisId;
 
                if (starPtr->invertFlag == 1) {
 
@@ -361,8 +361,8 @@ namespace Pspg
 
       // Define nStar and nBasis
       int nStar = basis().nStar();
-      int nBasis = nStar;
-      //int nBasis = basis().nBasis();
+      //int nBasis = nStar;
+      int nBasis = basis().nBasis();
 
       // Allocate temp_out
       DArray<cudaReal*> temp_out;
@@ -371,35 +371,34 @@ namespace Pspg
          temp_out[i] = new cudaReal[nBasis];
       }
 
-     // Copy fields (device) to temp_out (host)
-     for(int i = 0; i < nMonomer; i++) {
+      // Copy array fields (device) to temp_out (host)
+      for (int i = 0; i < nMonomer; i++) {
          cudaMemcpy(temp_out[i], fields[i].cDField(),
-            nBasis * sizeof(cudaReal), cudaMemcpyDeviceToHost);
-     }
-
+                    nBasis * sizeof(cudaReal), cudaMemcpyDeviceToHost);
+      }
 
       // Write fields
-      // int ib = 0;
+      int ib = 0;
       for (int i = 0; i < nStar; ++i) {
          if (!basis().star(i).cancel) {
-            // UTIL_CHECK(ib == basis().star(i).basisId);
+            UTIL_CHECK(ib == basis().star(i).basisId);
             for (int j = 0; j < nMonomer; ++j) {
-               out << Dbl(temp_out[j][i], 20, 10);
-               // out << Dbl(temp_out[j][ib], 20, 10);
+               // out << Dbl(temp_out[j][i], 20, 10);
+               out << Dbl(temp_out[j][ib], 20, 10);
             }
             out << "   ";
             for (int j = 0; j < D; ++j) {
                out << Int(basis().star(i).waveBz[j], 5);
             }
             out << Int(basis().star(i).size, 5) << std::endl;
-            // ++ib
+            ++ib;
          }
       }
 
       // De-allocate temp_out (clean up)
-      for(int i = 0; i < nMonomer; i++) {
+      for (int i = 0; i < nMonomer; i++) {
          delete[] temp_out[i];
-          temp_out[i] = nullptr;
+         temp_out[i] = nullptr;
       }
       temp_out.deallocate();
 
@@ -476,7 +475,7 @@ namespace Pspg
          }
       }
 
-      for(int i = 0; i < nMonomer; i++) {
+      for (int i = 0; i < nMonomer; i++) {
          cudaMemcpy(fields[i].cDField(), temp_out[i],
             mesh().size() * sizeof(cudaReal), cudaMemcpyHostToDevice);
          delete[] temp_out[i];
@@ -488,8 +487,7 @@ namespace Pspg
    template <int D>
    void FieldIo<D>::readFieldsRGrid(std::string filename,
                                     DArray< RDField<D> >& fields,
-                                    UnitCell<D>& unitCell)
-   const
+                                    UnitCell<D>& unitCell) const
    {
       std::ifstream file;
       fileMaster().openInputFile(filename, file);
@@ -625,7 +623,7 @@ namespace Pspg
 
       cudaMemcpy(field.cDField(), temp_out,
             mesh().size() * sizeof(cudaReal), cudaMemcpyHostToDevice);
-      delete temp_out;
+      delete[] temp_out;
       temp_out = nullptr;
 
    }
@@ -689,7 +687,7 @@ namespace Pspg
          }
       }
 
-      delete temp_out;
+      delete[] temp_out;
       temp_out = nullptr;
    }
 
@@ -851,31 +849,6 @@ namespace Pspg
              << "  Field file groupName :" << groupNameIn << "\n";
       }
 
-      #if 0
-      std::string label;
-      in >> label;
-      UTIL_CHECK(label == "format");
-      int ver1, ver2;
-      in >> ver1 >> ver2;
-
-      in >> label;
-      UTIL_CHECK(label == "dim");
-      int dim;
-      in >> dim;
-      UTIL_CHECK(dim == D);
-
-      readUnitCellHeader(in, unitCell);
-
-      in >> label;
-      UTIL_CHECK(label == "group_name");
-      std::string groupName;
-      in >> groupName;
-
-      in >> label;
-      UTIL_CHECK(label == "N_monomer");
-      in >> nMonomer;
-      UTIL_CHECK(nMonomer > 0);
-      #endif
    }
 
    template <int D>
@@ -898,8 +871,7 @@ namespace Pspg
                                         RDFieldDft<D>& dft) const
    {
       int nStar = basis().nStar();
-      int nBasis = nStar;
-      //int nBasis = basis().nBasis();
+      int nBasis = basis().nBasis();
 
       // Allocate components_in
       cudaReal* components_in;
@@ -953,8 +925,7 @@ namespace Pspg
          }
 
          // Set basis id for uncancelled star
-         // ib = startPtr->basisId;
-         ib = is;
+         ib = starPtr->basisId;
 
          if (starPtr->invertFlag == 0) {
 
@@ -1024,15 +995,22 @@ namespace Pspg
       cudaMemcpy(dft.cDField(), dft_out,
                  kSize * sizeof(cudaComplex), cudaMemcpyHostToDevice);
 
+      delete[] components_in;
+      delete[] dft_out;
+
    }
 
    template <int D>
    void FieldIo<D>::convertKGridToBasis(RDFieldDft<D> const& dft,
                                         RDField<D>& components) const
    {
+
+      int nStar = basis().nStar();       // Number of stars
+      int nBasis = basis().nBasis();     // Number of basis functions
+
       // Allocate components_out
       cudaReal* components_out;
-      components_out = new cudaReal[basis().nStar()];
+      components_out = new cudaReal[nBasis];
 
       // Allocate dft_in
       int kSize = 1;
@@ -1062,9 +1040,6 @@ namespace Pspg
       int is;                                  // star index
       int ib;                                  // basis index
       int iw;                                  // wave id, within star
-      int nStar = basis().nStar();             // Number of stars
-      int nBasis = nStar;                      // Number of basis functs
-      //int nBasis = basis().nBasis();         // Number of basis functs
       bool isImplicit;
 
       // Initialize all elements of components_out to zero
@@ -1072,19 +1047,19 @@ namespace Pspg
          components_out[is] = 0.0;
       }
 
-      // Loop over stars
+      // Loop over all stars 
       is = 0;
       while (is < nStar) {
          starPtr = &(basis().star(is));
 
+         // Skip if star is cancelled
          if (starPtr->cancel) {
             ++is;
             continue;
          }
 
          // Set basis id for uncancelled star
-         // ib = starPtr->basisId;
-         ib = is;
+         ib = starPtr->basisId;
 
          if (starPtr->invertFlag == 0) {
 
@@ -1125,7 +1100,6 @@ namespace Pspg
 
             // Store real part
             components_out[ib] = component.real();
-            // components_out[is] = component.real();
             ++is;
 
          } else
@@ -1152,15 +1126,11 @@ namespace Pspg
 
             // Compute basis function coefficient values
             if (starPtr->invertFlag == 1) {
-               // components_out [is] = component.real();
-               // components_out [is+1] = -component.imag();
-               components_out [ib] = component.real();
-               components_out [ib+1] = -component.imag();
+               components_out[ib] = component.real();
+               components_out[ib+1] = -component.imag();
             } else {
-               // components_out [is] = component.real();
-               // components_out [is+1] = component.imag();
-               components_out [ib] = component.real();
-               components_out [ib+1] = component.imag();
+               components_out[ib] = component.real();
+               components_out[ib+1] = component.imag();
              }
 
             // Increment star counter by 2 (two stars were processed)
@@ -1174,8 +1144,14 @@ namespace Pspg
 
       } //  loop over star index is
 
+     // Copy array components_out (host) to components (device)
      cudaMemcpy(components.cDField(), components_out,
-            basis().nStar() * sizeof(cudaReal), cudaMemcpyHostToDevice);
+                nBasis * sizeof(cudaReal), cudaMemcpyHostToDevice);
+
+     // Deallocate arrays (clean up)
+     delete[] components_out;
+     delete[] dft_in;
+
    }
 
    template <int D>

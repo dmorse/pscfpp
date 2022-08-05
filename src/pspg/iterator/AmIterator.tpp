@@ -67,7 +67,8 @@ namespace Pspg{
    }
 
    template <int D>
-   void AmIterator<D>::updateBasis(RingBuffer<FieldCUDA> & basis, RingBuffer<FieldCUDA> const & hists)
+   void AmIterator<D>::updateBasis(RingBuffer<FieldCUDA> & basis, 
+                                   RingBuffer<FieldCUDA> const & hists)
    {
       // Make sure at least two histories are stored
       UTIL_CHECK(hists.size() >= 2);
@@ -87,19 +88,29 @@ namespace Pspg{
    }
 
    template <int D>
-   double AmIterator<D>::computeUDotProd(RingBuffer<FieldCUDA> const & resBasis, int n, int m)
-   {      
-      return (double)gpuInnerProduct(resBasis[n].cDField(),resBasis[m].cDField(), resBasis[n].capacity());
-   }
-
-   template <int D>
-   double AmIterator<D>::computeVDotProd(FieldCUDA const & resCurrent, RingBuffer<FieldCUDA> const & resBasis, int m)
+   double 
+   AmIterator<D>::computeUDotProd(RingBuffer<FieldCUDA> const & resBasis, 
+                                  int n, int m)
    {
-      return (double)gpuInnerProduct(resCurrent.cDField(), resBasis[m].cDField(), resCurrent.capacity());
+      return (double)gpuInnerProduct(resBasis[n].cDField(),
+                                     resBasis[m].cDField(), 
+                                     resBasis[n].capacity());
    }
 
    template <int D>
-   void AmIterator<D>::updateU(DMatrix<double> & U, RingBuffer<FieldCUDA> const & resBasis, int nHist)
+   double AmIterator<D>::computeVDotProd(FieldCUDA const & resCurrent, 
+                                         RingBuffer<FieldCUDA> const & resBasis, 
+                                         int m)
+   {
+      return (double)gpuInnerProduct(resCurrent.cDField(), 
+                                     resBasis[m].cDField(), 
+                                     resCurrent.capacity());
+   }
+
+   template <int D>
+   void AmIterator<D>::updateU(DMatrix<double> & U, 
+                               RingBuffer<FieldCUDA> const & resBasis, 
+                               int nHist)
    {
       // Update matrix U by shifting elements diagonally
       int maxHist = U.capacity1();
@@ -118,7 +129,10 @@ namespace Pspg{
    }
 
    template <int D>
-   void AmIterator<D>::updateV(DArray<double> & v, FieldCUDA const & resCurrent, RingBuffer<FieldCUDA> const & resBasis, int nHist)
+   void AmIterator<D>::updateV(DArray<double> & v, 
+                               FieldCUDA const & resCurrent, 
+                               RingBuffer<FieldCUDA> const & resBasis, 
+                               int nHist)
    {
       // Compute U matrix's new row 0 and col 0
       // Also, compute each element of v_ vector
@@ -139,7 +153,9 @@ namespace Pspg{
    }
 
    template <int D>
-   void AmIterator<D>::addHistories(FieldCUDA& trial, RingBuffer<FieldCUDA> const & basis, DArray<double> coeffs, int nHist)
+   void AmIterator<D>::addHistories(FieldCUDA& trial, 
+                                    RingBuffer<FieldCUDA> const & basis, 
+                                    DArray<double> coeffs, int nHist)
    {
       // GPU resources
       int nBlocks, nThreads;
@@ -152,7 +168,8 @@ namespace Pspg{
    }
 
    template <int D>
-   void AmIterator<D>::addPredictedError(FieldCUDA& fieldTrial, FieldCUDA const & resTrial, double lambda)
+   void AmIterator<D>::addPredictedError(FieldCUDA& fieldTrial, 
+                                         FieldCUDA const & resTrial, double lambda)
    {
       // GPU resources
       int nBlocks, nThreads;
@@ -192,15 +209,16 @@ namespace Pspg{
       int nBlocks, nThreads;
       ThreadGrid::setThreadsLogical(nMesh, nBlocks, nThreads);
 
-      // pointer to fields on system
+      // Pointer to fields on system
       DArray<RDField<D>> * const currSys = &system().wFieldsRGrid();
 
-      // loop to unfold the system fields and store them in one long array
+      // Loop to unfold the system fields and store them in one long array
       for (int i = 0; i < nMonomer; i++) {
-         assignReal<<<nBlocks,nThreads>>>(curr.cDField() + i*nMesh, (*currSys)[i].cDField(), nMesh);
+         assignReal<<<nBlocks,nThreads>>>(curr.cDField() + i*nMesh, 
+                                          (*currSys)[i].cDField(), nMesh);
       }
 
-      // if flexible unit cell, also store unit cell parameters
+      // If flexible unit cell, also store unit cell parameters
       if (isFlexible_) {
          const int nParam = system().unitCell().nParameter();
          const FSArray<double,6> currParam = system().unitCell().parameters();
@@ -209,8 +227,9 @@ namespace Pspg{
          for (int k = 0; k < nParam; k++) 
                temp[k] = (cudaReal)scaleStress_*currParam[k];
          
-         // copy paramters to the end of the curr array
-         cudaMemcpy(curr.cDField() + nMonomer*nMesh, temp, nParam*sizeof(cudaReal), cudaMemcpyHostToDevice);
+         // Copy parameters to the end of the curr array
+         cudaMemcpy(curr.cDField() + nMonomer*nMesh, temp, 
+                    nParam*sizeof(cudaReal), cudaMemcpyHostToDevice);
          delete[] temp;
       }
    }
@@ -245,24 +264,25 @@ namespace Pspg{
       for (int i = 0; i < nMonomer; i++) {
          int startIdx = i*nMesh;
          for (int j = 0; j < nMonomer; j++) {
-            pointWiseAddScale<<<nBlocks, nThreads>>>(resid.cDField() + startIdx,
-                                                      system().cFieldRGrid(j).cDField(),
-                                                      system().interaction().chi(i, j),
-                                                      nMesh);
-            pointWiseAddScale<<<nBlocks, nThreads>>>(resid.cDField() + startIdx,
-                                                      system().wFieldRGrid(j).cDField(),
-                                                      -system().interaction().idemp(i, j),
-                                                      nMesh);
+            pointWiseAddScale<<<nBlocks, nThreads>>>
+                (resid.cDField() + startIdx,
+                 system().cFieldRGrid(j).cDField(),
+                 system().interaction().chi(i, j),
+                 nMesh);
+            pointWiseAddScale<<<nBlocks, nThreads>>>
+                (resid.cDField() + startIdx,
+                 system().wFieldRGrid(j).cDField(),
+                 -system().interaction().idemp(i, j),
+                 nMesh);
          }
       }
-      
 
-      // If not canonical, account for incompressibility. 
+      // If ensemble is not canonical, account for incompressibility. 
       if (!system().mixture().isCanonical()) {
          cudaReal factor = 1/(cudaReal)system().interaction().sum_inv();
          for (int i = 0; i < nMonomer; ++i) {
             subtractUniform<<<nBlocks, nThreads>>>(resid.cDField() + i*nMesh,
-                                                               factor, nMesh);
+                                                   factor, nMesh);
          }
       } else {
          for (int i = 0; i < nMonomer; i++) {
@@ -283,7 +303,8 @@ namespace Pspg{
             stress[i] = (cudaReal)(-1*scaleStress_*system().mixture().stress(i));
          }
 
-         cudaMemcpy(resid.cDField()+nMonomer*nMesh, stress, nParam*sizeof(cudaReal), cudaMemcpyHostToDevice);
+         cudaMemcpy(resid.cDField()+nMonomer*nMesh, stress, 
+                    nParam*sizeof(cudaReal), cudaMemcpyHostToDevice);
       }
    }
 
@@ -372,7 +393,6 @@ namespace Pspg{
    cudaReal AmIterator<D>::findAverage(cudaReal * const field, int n) 
    {
       cudaReal average = gpuSum(field, n)/n;
-
       return average;
    }
 

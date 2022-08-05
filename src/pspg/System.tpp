@@ -270,7 +270,7 @@ namespace Pspg
       tmpFieldsRGrid_.allocate(nMonomer);
       tmpFieldsKGrid_.allocate(nMonomer);
 
-      int nBasis = basis().nStar();
+      int nBasis = basis().nBasis();
       for (int i = 0; i < nMonomer; ++i) {
          wField(i).allocate(nBasis);
          wFieldRGrid(i).allocate(mesh().dimensions());

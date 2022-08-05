@@ -83,19 +83,19 @@ public:
 
    // Allocate an array of fields in symmetry adapated format
    template <int D>
-   void allocateFields(int nMonomer, int nStar,
+   void allocateFields(int nMonomer, int nBasis,
                             DArray< RDField<D> >& fields)
    {
       fields.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {   
-         fields[i].allocate(nStar);
+         fields[i].allocate(nBasis);
       }
    }
 
    // Allocate an array of r-grid fields
    template <int D>
    void allocateFields(int nMonomer, IntVec<D> dimensions,
-                            DArray< RDField<D> >& fields)
+                       DArray< RDField<D> >& fields)
    {
       fields.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {   
@@ -215,14 +215,13 @@ public:
       domain.setFileMaster(fileMaster_);
       readHeader("in/" + rf, domain);
 
-      // Question: nBasis vs nStar? Which should we use? They differ between PSPC/PSPG.
-      int nStar = domain.basis().nStar();
+      int nBasis = domain.basis().nBasis();
 
       DArray< RDField<3> > d_bf_0;
-      allocateFields(nMonomer_, nStar, d_bf_0);      
+      allocateFields(nMonomer_, nBasis, d_bf_0);      
 
       DArray< RDField<3> > d_bf_1;
-      allocateFields(nMonomer_, nStar, d_bf_1);
+      allocateFields(nMonomer_, nBasis, d_bf_1);
 
       std::ifstream in;
       openInputFile("in/" + bf, in);
@@ -321,12 +320,12 @@ public:
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
-      int nStar = domain.basis().nStar();
+      int nBasis = domain.basis().nBasis();
 
       DArray< RDField<3> > d_bf_0;
-      allocateFields(nMonomer_, nStar, d_bf_0);
+      allocateFields(nMonomer_, nBasis, d_bf_0);
       DArray< RDField<3> > d_bf_1;
-      allocateFields(nMonomer_, nStar, d_bf_1);
+      allocateFields(nMonomer_, nBasis, d_bf_1);
       DArray< RDFieldDft<3> > d_kf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_0);
 
@@ -335,7 +334,7 @@ public:
       domain.fieldIo().convertKGridToBasis(d_kf_0, d_bf_1);
 
       // Create arrays for comparison
-      DArray<DField<cudaReal>> bf_0, bf_1;
+      DArray<DField <cudaReal> > bf_0, bf_1;
       RDFieldToDField(bf_0,d_bf_0);
       RDFieldToDField(bf_1,d_bf_1);
 
@@ -346,13 +345,13 @@ public:
 
       BFieldComparison comparison;
       comparison.compare(bf_0, bf_1);
-      TEST_ASSERT(comparison.maxDiff() < 1.0E-12);
-
+      setVerbose(1);
       if (verbose() > 0) {
          std::cout  << "\n";
          std::cout  << Dbl(comparison.maxDiff(),21,13) << "\n";
          std::cout  << Dbl(comparison.rmsDiff(),21,13) << "\n";
       }
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-12);
 
    }
 
@@ -364,12 +363,12 @@ public:
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
-      int nStar = domain.basis().nStar();
+      int nBasis = domain.basis().nBasis();
 
       DArray< RDField<3> > d_bf_0;
-      allocateFields(nMonomer_, nStar, d_bf_0);
+      allocateFields(nMonomer_, nBasis, d_bf_0);
       DArray< RDField<3> > d_bf_1;
-      allocateFields(nMonomer_, nStar, d_bf_1);
+      allocateFields(nMonomer_, nBasis, d_bf_1);
       DArray< RDField<3> > d_rf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_rf_0);
 
@@ -407,12 +406,12 @@ public:
       domain.basis().outputStars(out);
       out.close();
 
-      int nStar = domain.basis().nStar();
+      int nBasis = domain.basis().nBasis();
 
       DArray< RDField<3> > d_bf_0;
-      allocateFields(nMonomer_, nStar, d_bf_0);
+      allocateFields(nMonomer_, nBasis, d_bf_0);
       DArray< RDField<3> > d_bf_1;
-      allocateFields(nMonomer_, nStar, d_bf_1);
+      allocateFields(nMonomer_, nBasis, d_bf_1);
       DArray< RDFieldDft<3> > d_kf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_0);
 
@@ -450,12 +449,12 @@ public:
       domain.setFileMaster(fileMaster_);
       readHeader("in/c_c15_1.rf", domain);
 
-      int nStar = domain.basis().nStar();
+      int nBasis = domain.basis().nBasis();
 
       DArray< RDField<3> > d_bf_0;
-      allocateFields(nMonomer_, nStar, d_bf_0);
+      allocateFields(nMonomer_, nBasis, d_bf_0);
       DArray< RDField<3> > d_bf_1;
-      allocateFields(nMonomer_, nStar, d_bf_1);
+      allocateFields(nMonomer_, nBasis, d_bf_1);
       DArray< RDFieldDft<3> > d_kf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_0);
 
@@ -494,7 +493,7 @@ public:
       readHeader("in/w_bcc.rf", domain);
 
       DArray< RDField<3> > d_bf_0;
-      allocateFields(nMonomer_, domain.basis().nStar(), d_bf_0);
+      allocateFields(nMonomer_, domain.basis().nBasis(), d_bf_0);
 
       DArray< RDFieldDft<3> > d_kf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_0);
@@ -528,7 +527,7 @@ public:
       readHeader("in/w_altG.rf", domain);
 
       DArray< RDField<3> > d_bf_0;
-      allocateFields(nMonomer_, domain.basis().nStar(), d_bf_0);
+      allocateFields(nMonomer_, domain.basis().nBasis(), d_bf_0);
 
       DArray< RDFieldDft<3> > d_kf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_0);
@@ -562,7 +561,7 @@ public:
       readHeader("in/w_lam.rf", domain);
 
       DArray< RDField<1> > d_bf_0;
-      allocateFields(nMonomer_, domain.basis().nStar(), d_bf_0);
+      allocateFields(nMonomer_, domain.basis().nBasis(), d_bf_0);
 
       DArray< RDFieldDft<1> > d_kf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_0);
@@ -596,10 +595,10 @@ public:
       readHeader("in/w_bcc.rf", domain);
 
       DArray< RDField<3> > d_bf_0;
-      allocateFields(nMonomer_, domain.basis().nStar(), d_bf_0);
+      allocateFields(nMonomer_, domain.basis().nBasis(), d_bf_0);
 
       DArray< RDField<3> > d_bf_1;
-      allocateFields(nMonomer_, domain.basis().nStar(), d_bf_1);
+      allocateFields(nMonomer_, domain.basis().nBasis(), d_bf_1);
 
       DArray< RDFieldDft<3> > d_kf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_0);
@@ -649,10 +648,10 @@ public:
       readHeader("in/c_c15_1.rf", domain);
 
       DArray< RDField<3> > d_bf_0;
-      allocateFields(nMonomer_, domain.basis().nStar(), d_bf_0);
+      allocateFields(nMonomer_, domain.basis().nBasis(), d_bf_0);
 
       DArray< RDField<3> > d_bf_1;
-      allocateFields(nMonomer_, domain.basis().nStar(), d_bf_1);
+      allocateFields(nMonomer_, domain.basis().nBasis(), d_bf_1);
 
       DArray< RDFieldDft<3> > d_kf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_0);
@@ -708,8 +707,10 @@ public:
 
       // Copy
       for (int i = 0; i < nField; i++) {
-         cudaMemcpy(out[i].cDField(), in[i].cDField(), nPoint*sizeof(cudaReal), cudaMemcpyDeviceToDevice);
+         cudaMemcpy(out[i].cDField(), in[i].cDField(), 
+                    nPoint*sizeof(cudaReal), cudaMemcpyDeviceToDevice);
       }
+
    }
 
    
@@ -721,7 +722,7 @@ TEST_ADD(FieldIoTest, testReadHeader)
 TEST_ADD(FieldIoTest, testBasisIo_bcc)
 TEST_ADD(FieldIoTest, testBasisIo_c15_1)
 TEST_ADD(FieldIoTest, testBasisIo_altG)
-TEST_ADD(FieldIoTest, testBasisIo_altG_fort) // Fails 
+TEST_ADD(FieldIoTest, testBasisIo_altG_fort)
 TEST_ADD(FieldIoTest, testRGridIo_bcc)
 TEST_ADD(FieldIoTest, testConvertBasisKGridBasis_bcc)
 TEST_ADD(FieldIoTest, testConvertBasisRGridBasis_bcc)
