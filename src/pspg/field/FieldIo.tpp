@@ -14,6 +14,7 @@
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/math/IntVec.h>
 
+#include <util/misc/Log.h>
 #include <util/format/Str.h>
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
@@ -32,8 +33,7 @@ namespace Pspg
    */
    template <int D>
    FieldIo<D>::FieldIo()
-    : unitCellPtr_(0),
-      meshPtr_(0),
+    : meshPtr_(0),
       fftPtr_(0),
       groupNamePtr_(0),
       basisPtr_(0),
@@ -51,14 +51,12 @@ namespace Pspg
    * Get and store addresses of associated objects.
    */
    template <int D>
-   void FieldIo<D>::associate(UnitCell<D>& unitCell,
-                             Mesh<D>& mesh,
-                             FFT<D>& fft,
-                             std::string& groupName,
-                             Basis<D>& basis,
-                             FileMaster& fileMaster)
+   void FieldIo<D>::associate(Mesh<D>& mesh,
+                              FFT<D>& fft,
+                              std::string& groupName,
+                              Basis<D>& basis,
+                              FileMaster& fileMaster)
    {
-      unitCellPtr_ = &unitCell;
       meshPtr_ = &mesh;
       groupNamePtr_ = &groupName;
       basisPtr_ = &basis;
@@ -68,7 +66,8 @@ namespace Pspg
   
    template <int D>
    void FieldIo<D>::readFieldsBasis(std::istream& in, 
-                                    DArray< RDField<D> >& fields)
+                                    DArray< RDField<D> >& fields,
+                                    UnitCell<D>& unitCell)
    const
    {
       int nMonomer = fields.capacity();
@@ -78,7 +77,7 @@ namespace Pspg
       temp_out.allocate(nMonomer);
 
       // Read header
-      FieldIo<D>::readFieldHeader(in);
+      FieldIo<D>::readFieldHeader(in, unitCell);
       std::string label;
       in >> label;
       UTIL_CHECK(label == "N_star");
@@ -117,7 +116,7 @@ namespace Pspg
          in >> nWaveVectors;
 
          // Check if waveIn is in first Brillouin zone (FBZ) for the mesh.
-         waveBz = shiftToMinimum(waveIn, mesh().dimensions(), unitCell());
+         waveBz = shiftToMinimum(waveIn, mesh().dimensions(), unitCell);
          bool waveExists = (waveIn == waveBz);
 
          // If wave is in FBZ, find in basis and set field components
@@ -148,18 +147,20 @@ namespace Pspg
  
    template <int D>
    void FieldIo<D>::readFieldsBasis(std::string filename, 
-                                    DArray<RDField<D> >& fields)
+                                    DArray<RDField<D> >& fields,
+                                    UnitCell<D>& unitCell)
    const
    {
        std::ifstream file;
        fileMaster().openInputFile(filename, file);
-       readFieldsBasis(file, fields);
+       readFieldsBasis(file, fields, unitCell);
        file.close();
    }
 
    template <int D>
    void FieldIo<D>::writeFieldsBasis(std::ostream &out, 
-                                     DArray<RDField<D> > const &  fields)
+                                     DArray<RDField<D> > const &  fields,
+                                     UnitCell<D> const & unitCell)
    const
    {
       int nMonomer = fields.capacity();
@@ -169,7 +170,7 @@ namespace Pspg
       temp_out.allocate(nMonomer);
 
       // Write header
-      writeFieldHeader(out, nMonomer);
+      writeFieldHeader(out, nMonomer, unitCell);
       int nStar = basis().nStar();
       int nBasis = basis().nBasis();
 
@@ -208,24 +209,26 @@ namespace Pspg
 
    template <int D>
    void FieldIo<D>::writeFieldsBasis(std::string filename, 
-                                     DArray<RDField<D> > const & fields)
+                                     DArray<RDField<D> > const & fields,
+                                     UnitCell<D> const & unitCell)
    const
    {
        std::ofstream file;
        fileMaster().openOutputFile(filename, file);
-       writeFieldsBasis(file, fields);
+       writeFieldsBasis(file, fields, unitCell);
        file.close();
    }
 
    template <int D>
    void FieldIo<D>::readFieldsRGrid(std::istream &in,
-                                    DArray<RDField<D> >& fields)
+                                    DArray<RDField<D> >& fields,
+                                    UnitCell<D>& unitCell)
    const
    {
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
 
-      FieldIo<D>::readFieldHeader(in);
+      FieldIo<D>::readFieldHeader(in, unitCell);
 
       std::string label;
       in >> label;
@@ -285,24 +288,26 @@ namespace Pspg
 
    template <int D>
    void FieldIo<D>::readFieldsRGrid(std::string filename, 
-                                    DArray< RDField<D> >& fields)
+                                    DArray< RDField<D> >& fields,
+                                    UnitCell<D>& unitCell)
    const
    {
       std::ifstream file;
       fileMaster().openInputFile(filename, file);
-      readFieldsRGrid(file, fields);
+      readFieldsRGrid(file, fields, unitCell);
       file.close();
    }
 
    template <int D>
    void FieldIo<D>::writeFieldsRGrid(std::ostream &out,
-                                     DArray<RDField<D> > const& fields)
+                                     DArray<RDField<D> > const& fields,
+                                     UnitCell<D> const & unitCell)
    const
    {
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
 
-      writeFieldHeader(out, nMonomer);
+      writeFieldHeader(out, nMonomer, unitCell);
       out << "ngrid" <<  std::endl
           << "           " << mesh().dimensions() << std::endl;
 
@@ -357,20 +362,23 @@ namespace Pspg
 
    template <int D>
    void FieldIo<D>::writeFieldsRGrid(std::string filename, 
-                                     DArray< RDField<D> > const & fields)
+                                     DArray< RDField<D> > const & fields,
+                                     UnitCell<D> const & unitCell)
    const
    {
       std::ofstream file;
       fileMaster().openOutputFile(filename, file);
-      writeFieldsRGrid(file, fields);
+      writeFieldsRGrid(file, fields, unitCell);
       file.close();
    }
 
    template <int D>
-   void FieldIo<D>::readFieldRGrid(std::istream &in, RDField<D> &field)
+   void FieldIo<D>::readFieldRGrid(std::istream &in, 
+                                   RDField<D> &field,
+                                   UnitCell<D>& unitCell)
    const
    {
-      FieldIo<D>::readFieldHeader(in);
+      FieldIo<D>::readFieldHeader(in, unitCell);
 
       std::string label;
       in >> label;
@@ -422,21 +430,25 @@ namespace Pspg
    }
 
    template <int D>
-   void FieldIo<D>::readFieldRGrid(std::string filename, RDField<D> &field)
+   void FieldIo<D>::readFieldRGrid(std::string filename, 
+                                   RDField<D> &field,
+                                   UnitCell<D>& unitCell)
    const
    {
       std::ifstream file;
       fileMaster().openInputFile(filename, file);
-      readFieldRGrid(file, field);
+      readFieldRGrid(file, field, unitCell);
       file.close();
    }
 
    template <int D>
-   void FieldIo<D>::writeFieldRGrid(std::ostream &out, RDField<D> const & field)
+   void FieldIo<D>::writeFieldRGrid(std::ostream &out, 
+                                    RDField<D> const & field,
+                                    UnitCell<D> const & unitCell)
    const
    {
 
-      writeFieldHeader(out, 1);
+      writeFieldHeader(out, 1, unitCell);
       out << "ngrid" <<  std::endl
           << "           " << mesh().dimensions() << std::endl;
 
@@ -481,18 +493,21 @@ namespace Pspg
    }
 
    template <int D>
-   void FieldIo<D>::writeFieldRGrid(std::string filename, RDField<D> const & field)
+   void FieldIo<D>::writeFieldRGrid(std::string filename, 
+                                    RDField<D> const & field,
+                                    UnitCell<D> const & unitCell)
    const
    {
       std::ofstream file;
       fileMaster().openOutputFile(filename, file);
-      writeFieldRGrid(file, field);
+      writeFieldRGrid(file, field, unitCell);
       file.close();
    }
 
    template <int D>
    void FieldIo<D>::readFieldsKGrid(std::istream &in,
-                                    DArray<RDFieldDft<D> >& fields)
+                                    DArray< RDFieldDft<D> >& fields,
+                                    UnitCell<D>& unitCell)
    const
    {
       int nMonomer = fields.capacity();
@@ -502,7 +517,7 @@ namespace Pspg
       temp_out.allocate(nMonomer);      
 
       // Read header
-      readFieldHeader(in);
+      readFieldHeader(in, unitCell);
       std::string label;
       in >> label;
       UTIL_CHECK(label == "ngrid");
@@ -545,25 +560,27 @@ namespace Pspg
 
    template <int D>
    void FieldIo<D>::readFieldsKGrid(std::string filename, 
-                                    DArray< RDFieldDft<D> >& fields)
+                                    DArray< RDFieldDft<D> >& fields,
+                                    UnitCell<D>& unitCell)
    const
    {
       std::ifstream file;
       fileMaster().openInputFile(filename, file);
-      readFieldsKGrid(file, fields);
+      readFieldsKGrid(file, fields, unitCell);
       file.close();
    }
 
    template <int D>
    void FieldIo<D>::writeFieldsKGrid(std::ostream &out,
-                                     DArray<RDFieldDft<D> > const& fields)
+                                     DArray<RDFieldDft<D> > const& fields,
+                                     UnitCell<D> const & unitCell)
    const
    {
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
 
       // Write header
-      writeFieldHeader(out, nMonomer);
+      writeFieldHeader(out, nMonomer, unitCell);
       out << "ngrid" << std::endl 
           << "               " << mesh().dimensions() << std::endl;
 
@@ -603,17 +620,19 @@ namespace Pspg
 
    template <int D>
    void FieldIo<D>::writeFieldsKGrid(std::string filename, 
-                                     DArray< RDFieldDft<D> > const& fields)
+                                     DArray< RDFieldDft<D> > const & fields,
+                                     UnitCell<D> const & unitCell)
    const
    {
       std::ofstream file;
       fileMaster().openOutputFile(filename, file);
-      writeFieldsKGrid(file, fields);
+      writeFieldsKGrid(file, fields, unitCell);
       file.close();
    }
 
    template <int D>
-   void FieldIo<D>::readFieldHeader(std::istream& in) const
+   void FieldIo<D>::readFieldHeader(std::istream& in,
+                                    UnitCell<D>& unitCell) const
    {
       std::string label;
 
@@ -628,7 +647,7 @@ namespace Pspg
       in >> dim;
       UTIL_CHECK(dim == D);
 
-      readUnitCellHeader(in, unitCell());
+      readUnitCellHeader(in, unitCell);
 
       in >> label;
       UTIL_CHECK(label == "group_name");
@@ -643,12 +662,14 @@ namespace Pspg
    }
 
    template <int D>
-   void FieldIo<D>::writeFieldHeader(std::ostream &out, int nMonomer) const
+   void FieldIo<D>::writeFieldHeader(std::ostream &out, 
+                                     int nMonomer,
+                                     UnitCell<D> const & unitCell) const
    {
       out << "format  1   0" <<  std::endl;
       out << "dim" <<  std::endl 
           << "          " << D << std::endl;
-      writeUnitCellHeader(out, unitCell()); 
+      writeUnitCellHeader(out, unitCell); 
       out << "group_name" << std::endl 
           << "          " << groupName() <<  std::endl;
       out << "N_monomer"  << std::endl 

@@ -326,12 +326,17 @@ namespace Pspg
          } else 
          if (command == "READ_W_BASIS") {
             readEcho(in, filename);
-
-            fieldIo().readFieldsBasis(filename, wFields());
+            fieldIo().readFieldsBasis(filename, wFields(), domain_.unitCell());
             fieldIo().convertBasisToRGrid(wFields(), wFieldsRGrid());
             hasWFields_ = true;
 
          } else
+         if (command == "READ_W_RGRID") {
+            readEcho(in, filename);
+            fieldIo().readFieldsRGrid(filename, wFieldsRGrid(), domain_.unitCell());
+            hasWFields_ = true;
+
+         } else 
          if (command == "COMPUTE") {
             // Read w (chemical potential fields) if not done previously 
             if (!hasWFields_) {
@@ -340,13 +345,6 @@ namespace Pspg
             }
             // Solve the modified diffusion equation, without iteration
             compute();
-         } else 
-         if (command == "READ_W_RGRID") {
-            readEcho(in, filename);
-
-            fieldIo().readFieldsRGrid(filename, wFieldsRGrid());
-            hasWFields_ = true;
-
          } else 
          if (command == "ITERATE") {
             // Read w (chemical potential) fields if not done previously 
@@ -364,23 +362,23 @@ namespace Pspg
             UTIL_CHECK(hasWFields_);
             readEcho(in, filename);
             fieldIo().convertRGridToBasis(wFieldsRGrid(), wFields());
-            fieldIo().writeFieldsBasis(filename, wFields());
+            fieldIo().writeFieldsBasis(filename, wFields(), unitCell());
          } else 
          if (command == "WRITE_W_RGRID") {
             UTIL_CHECK(hasWFields_);
             readEcho(in, filename);
-            fieldIo().writeFieldsRGrid(filename, wFieldsRGrid());
+            fieldIo().writeFieldsRGrid(filename, wFieldsRGrid(), unitCell());
          } else 
          if (command == "WRITE_C_BASIS") {
             UTIL_CHECK(hasCFields_);
             readEcho(in, filename);
             fieldIo().convertRGridToBasis(cFieldsRGrid(), cFields());
-            fieldIo().writeFieldsBasis(filename, cFields());
+            fieldIo().writeFieldsBasis(filename, cFields(), unitCell());
          } else 
          if (command == "WRITE_C_RGRID") {
             UTIL_CHECK(hasCFields_);
             readEcho(in, filename);
-            fieldIo().writeFieldsRGrid(filename, cFieldsRGrid());
+            fieldIo().writeFieldsRGrid(filename, cFieldsRGrid(), unitCell());
          } else 
          if (command == "WRITE_C_BLOCK_RGRID") {
             readEcho(in, filename);
@@ -400,18 +398,20 @@ namespace Pspg
             readEcho(in, inFileName);
             readEcho(in, outFileName);
 
-            fieldIo().readFieldsBasis(inFileName, cFields());
+            UnitCell<D> tmpUnitCell;
+            fieldIo().readFieldsBasis(inFileName, cFields(), tmpUnitCell);
             fieldIo().convertBasisToRGrid(cFields(), cFieldsRGrid());
-            fieldIo().writeFieldsRGrid(outFileName, cFieldsRGrid());
+            fieldIo().writeFieldsRGrid(outFileName, cFieldsRGrid(), tmpUnitCell);
          } else 
          if (command == "RGRID_TO_BASIS") {
             hasCFields_ = false;
             readEcho(in, inFileName);
             readEcho(in, outFileName);
 
-            fieldIo().readFieldsRGrid(inFileName, cFieldsRGrid());
+            UnitCell<D> tmpUnitCell;
+            fieldIo().readFieldsRGrid(inFileName, cFieldsRGrid(), tmpUnitCell);
             fieldIo().convertRGridToBasis(cFieldsRGrid(), cFields());
-            fieldIo().writeFieldsBasis(outFileName, cFields());
+            fieldIo().writeFieldsBasis(outFileName, cFields(), tmpUnitCell);
 
          } else 
          if (command == "KGRID_TO_RGRID") {
@@ -420,14 +420,14 @@ namespace Pspg
             // Read from file in k-grid format
             readEcho(in, inFileName);
             readEcho(in, outFileName);
-            fieldIo().readFieldsKGrid(inFileName, cFieldsKGrid());
-
+            UnitCell<D> tmpUnitCell;
+            fieldIo().readFieldsKGrid(inFileName, cFieldsKGrid(), tmpUnitCell);
             // Use FFT to convert k-grid r-grid
             for (int i = 0; i < mixture().nMonomer(); ++i) {
                fft().inverseTransform(cFieldKGrid(i), cFieldRGrid(i));
             }
             // Write to file in r-grid format
-            fieldIo().writeFieldsRGrid(outFileName, cFieldsRGrid());
+            fieldIo().writeFieldsRGrid(outFileName, cFieldsRGrid(), tmpUnitCell);
 
          } else 
          if (command == "RHO_TO_OMEGA") {
@@ -440,7 +440,7 @@ namespace Pspg
             readEcho(in, inFileName);
             readEcho(in, outFileName);
 
-            fieldIo().readFieldsRGrid(inFileName, cFieldsRGrid());
+            fieldIo().readFieldsRGrid(inFileName, cFieldsRGrid(), domain_.unitCell());
 
             // Compute w fields, excluding Lagrange multiplier contribution
             //code is bad here, `mangled' access of data in array
@@ -455,7 +455,7 @@ namespace Pspg
             }
 
             // Write w fields to file in r-grid format
-            fieldIo().writeFieldsRGrid(outFileName, wFieldsRGrid());
+            fieldIo().writeFieldsRGrid(outFileName, wFieldsRGrid(), unitCell());
 
          } else {
 
@@ -720,7 +720,7 @@ namespace Pspg
    template <int D>
    void System<D>::readWBasis(const std::string & filename)
    {   
-      fieldIo().readFieldsBasis(filename, wFields());
+      fieldIo().readFieldsBasis(filename, wFields(), domain_.unitCell());
       fieldIo().convertBasisToRGrid(wFields(), wFieldsRGrid());
       domain_.basis().update();
       hasWFields_ = true;
@@ -787,9 +787,10 @@ namespace Pspg
    void System<D>::basisToRGrid(const std::string & inFileName,
                                 const std::string & outFileName)
    {
-      fieldIo().readFieldsBasis(inFileName, tmpFields_);
+      UnitCell<D> tmpUnitCell;
+      fieldIo().readFieldsBasis(inFileName, tmpFields_, tmpUnitCell);
       fieldIo().convertBasisToRGrid(tmpFields_, tmpFieldsRGrid_);
-      fieldIo().writeFieldsRGrid(outFileName, tmpFieldsRGrid_);
+      fieldIo().writeFieldsRGrid(outFileName, tmpFieldsRGrid_, tmpUnitCell);
    }
 
    /*
@@ -799,7 +800,7 @@ namespace Pspg
    void System<D>::writeWBasis(const std::string & filename)
    {
       UTIL_CHECK(hasWFields_);
-      fieldIo().writeFieldsBasis(filename, wFields());
+      fieldIo().writeFieldsBasis(filename, wFields(), unitCell());
    }
 
    /*
@@ -809,7 +810,7 @@ namespace Pspg
    void System<D>::writeCBasis(const std::string & filename)
    {
       UTIL_CHECK(hasCFields_);
-      fieldIo().writeFieldsBasis(filename, cFields());
+      fieldIo().writeFieldsBasis(filename, cFields(), unitCell());
    }
 
    /*
@@ -831,7 +832,7 @@ namespace Pspg
 
       // Get data from Mixture and write to file
       mixture_.createBlockCRGrid(blockCFields);
-      fieldIo().writeFieldsRGrid(filename, blockCFields);
+      fieldIo().writeFieldsRGrid(filename, blockCFields, unitCell());
    }
 
    template <int D>
@@ -844,7 +845,7 @@ namespace Pspg
       tailField.allocate(mesh().size());
       cudaMemcpy(tailField.cDField(), d_tailField, mesh().size() * sizeof(cudaReal), cudaMemcpyDeviceToDevice);
       // output. 
-      fieldIo().writeFieldRGrid(filename, tailField);
+      fieldIo().writeFieldRGrid(filename, tailField, unitCell());
    }
 
    /*  
@@ -854,9 +855,10 @@ namespace Pspg
    void System<D>::rGridToBasis(const std::string & inFileName,
                                 const std::string & outFileName)
    {   
-      fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_);
+      UnitCell<D> tmpUnitCell;
+      fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_, tmpUnitCell);
       fieldIo().convertRGridToBasis(tmpFieldsRGrid_, tmpFields_);
-      fieldIo().writeFieldsBasis(outFileName, tmpFields_);
+      fieldIo().writeFieldsBasis(outFileName, tmpFields_, tmpUnitCell);
    }
 
 } // namespace Pspg

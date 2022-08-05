@@ -120,7 +120,7 @@ public:
    {
       std::ifstream in;
       openInputFile(filename, in);
-      domain.fieldIo().readFieldsBasis(in, fields);
+      domain.fieldIo().readFieldsBasis(in, fields, domain.unitCell());
       in.close();
    }
 
@@ -130,7 +130,7 @@ public:
    {
       std::ifstream in;
       openInputFile(filename, in);
-      domain.fieldIo().readFieldsRGrid(in, fields);
+      domain.fieldIo().readFieldsRGrid(in, fields, domain.unitCell());
       in.close();
    }
 
@@ -140,7 +140,7 @@ public:
    {
       std::ifstream in;
       openInputFile(filename, in);
-      domain.fieldIo().readFieldsKGrid(in, fields);
+      domain.fieldIo().readFieldsKGrid(in, fields, domain.unitCell());
       in.close();
    }
 
@@ -150,7 +150,7 @@ public:
    {
       std::ofstream out;
       openOutputFile(filename, out);
-      domain.fieldIo().writeFieldsBasis(out, fields);
+      domain.fieldIo().writeFieldsBasis(out, fields, domain.unitCell());
       out.close();
    }
 
@@ -160,7 +160,7 @@ public:
    {
       std::ofstream out;
       openOutputFile(filename, out);
-      domain.fieldIo().writeFieldsRGrid(out, fields);
+      domain.fieldIo().writeFieldsRGrid(out, fields, domain.unitCell());
       out.close();
    }
 
@@ -170,7 +170,7 @@ public:
    {
       std::ofstream out;
       openOutputFile(filename, out);
-      domain.fieldIo().writeFieldsKGrid(out, fields);
+      domain.fieldIo().writeFieldsKGrid(out, fields, domain.unitCell());
       out.close();
    }
 
@@ -226,16 +226,16 @@ public:
 
       std::ifstream in;
       openInputFile("in/" + bf, in);
-      domain.fieldIo().readFieldsBasis(in, d_bf_0);
+      domain.fieldIo().readFieldsBasis(in, d_bf_0, domain.unitCell());
       in.close();
 
       std::ofstream out;
       openOutputFile("out/" + bf, out);
-      domain.fieldIo().writeFieldsBasis(out, d_bf_0);
+      domain.fieldIo().writeFieldsBasis(out, d_bf_0, domain.unitCell());
       out.close();
 
       openInputFile("out/" + bf, in);
-      domain.fieldIo().readFieldsBasis(in, d_bf_1);
+      domain.fieldIo().readFieldsBasis(in, d_bf_1, domain.unitCell());
       in.close();
 
       // Create arrays for comparison
@@ -340,7 +340,7 @@ public:
 
       std::ofstream  out;
       openOutputFile("out/w_bcc_convert.bf", out);
-      domain.fieldIo().writeFieldsBasis(out, d_bf_1);
+      domain.fieldIo().writeFieldsBasis(out, d_bf_1, domain.unitCell());
       out.close();
 
       BFieldComparison comparison;
@@ -420,7 +420,7 @@ public:
       domain.fieldIo().convertKGridToBasis(d_kf_0, d_bf_1);
 
       openOutputFile("out/w_altG_convert.bf", out);
-      domain.fieldIo().writeFieldsBasis(out, d_bf_1);
+      domain.fieldIo().writeFieldsBasis(out, d_bf_1, domain.unitCell());
       out.close();
 
       // Create arrays for comparison
@@ -469,7 +469,7 @@ public:
 
       std::ofstream  out;
       openOutputFile("out/w_c15_1_convert.bf", out);
-      domain.fieldIo().writeFieldsBasis(out, d_bf_1);
+      domain.fieldIo().writeFieldsBasis(out, d_bf_1, domain.unitCell());
       out.close();
 
       BFieldComparison comparison;
