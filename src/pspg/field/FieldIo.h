@@ -77,7 +77,7 @@ namespace Pspg
       *
       * \param in input stream (i.e., input file)
       * \param fields array of fields (symmetry adapted basis components)
-      * \param unitCell  crystallographic unit cell (modified on return)
+      * \param unitCell  crystallographic unit cell (output)
       */
       void 
       readFieldsBasis(std::istream& in, DArray< RDField <D> >& fields,
@@ -92,7 +92,7 @@ namespace Pspg
       *
       * \param filename name of input file
       * \param fields array of fields (symmetry adapted basis components)
-      * \param unitCell  crystallographic unit cell (modified on return)
+      * \param unitCell  crystallographic unit cell (output)
       */
       void readFieldsBasis(std::string filename, 
                            DArray< RDField <D> >& fields,
@@ -134,7 +134,7 @@ namespace Pspg
       * 
       * \param in input stream (i.e., input file)
       * \param fields array of RField fields (r-space grid)
-      * \param unitCell  crystallographic unit cell (modified on return)
+      * \param unitCell  crystallographic unit cell (output)
       */
       void readFieldsRGrid(std::istream& in, 
                            DArray< RDField<D> >& fields,
@@ -152,7 +152,7 @@ namespace Pspg
       *
       * \param filename name of input file
       * \param fields array of RField fields (r-space grid)
-      * \param unitCell  crystallographic unit cell (modified on return)
+      * \param unitCell  crystallographic unit cell (output)
       */
       void readFieldsRGrid(std::string filename, 
                            DArray< RDField<D> >& fields,
@@ -235,7 +235,7 @@ namespace Pspg
       * 
       * \param in  input stream (i.e., input file)
       * \param fields  array of RFieldDft fields (k-space grid)
-      * \param unitCell  crystallographic unit cell (modified on return)
+      * \param unitCell  crystallographic unit cell (output)
       */
       void readFieldsKGrid(std::istream& in, 
                            DArray< RDFieldDft<D> >& fields,
@@ -254,7 +254,7 @@ namespace Pspg
       * 
       * \param filename  name of input file
       * \param fields  array of RFieldDft fields (k-space grid)
-      * \param unitCell  crystallographic unit cell (modified on return)
+      * \param unitCell  crystallographic unit cell (output)
       */
       void readFieldsKGrid(std::string filename, 
                            DArray< RDFieldDft<D> >& fields,
@@ -448,9 +448,11 @@ namespace Pspg
       * Reader header of field file (fortran pscf format)
       *
       * \param in input  stream (i.e., input file)
-      * \param unitCell  crystallographic unit cell (modified on return)
+      * \param nMonomer number of monomers read from file (output)
+      * \param unitCell  crystallographic unit cell (output)
       */
       void readFieldHeader(std::istream& in,
+                           int& nMonomer,
                            UnitCell<D>& unitCell) const;
 
       /**

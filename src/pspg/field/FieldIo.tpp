@@ -11,6 +11,7 @@
 #include "FieldIo.h"
 
 #include <pscf/crystal/shiftToMinimum.h>
+#include <pscf/crystal/UnitCell.h>
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/math/IntVec.h>
 
@@ -70,14 +71,12 @@ namespace Pspg
                                     UnitCell<D>& unitCell)
    const
    {
-      int nMonomer = fields.capacity();
+      // Read generic part of field file header
+      int nMonomer;
+      FieldIo<D>::readFieldHeader(in, nMonomer, unitCell);
       UTIL_CHECK(nMonomer > 0);
 
-      DArray<cudaReal*> temp_out;
-      temp_out.allocate(nMonomer);
-
-      // Read header
-      FieldIo<D>::readFieldHeader(in, unitCell);
+      // Read number of stars from field file into StarIn
       std::string label;
       in >> label;
       UTIL_CHECK(label == "N_star");
@@ -85,12 +84,24 @@ namespace Pspg
       in >> nStarIn;
       UTIL_CHECK(nStarIn > 0);
 
+      // Check dimensions of fields array
+      int nMonomerFields = fields.capacity();
+      UTIL_CHECK(nMonomer == nMonomerFields);
       int i, j;
+      int fieldCapacity = fields[0].capacity();
+      for (i = 0; i < nMonomer; ++i) {
+         UTIL_CHECK(fields[i].capacity() == fieldCapacity);
+      }
+
+      // Allocate temp_out
+      DArray<cudaReal*> temp_out;
+      temp_out.allocate(nMonomer);
       int nStar = basis().nStar();
-      for(int i = 0; i < nMonomer; ++i) {
+      for(i = 0; i < nMonomer; ++i) {
          temp_out[i] = new cudaReal[nStar];
       }   
 
+      // Initialize all elements of temp_out to zero
       for (j = 0; j < nMonomer; ++j) {
          UTIL_CHECK(fields[j].capacity() == nStar);
          for (i = 0; i < nStar; ++i) {
@@ -98,9 +109,12 @@ namespace Pspg
          }
       }
 
-      DArray<double> temp;
+      // Allocate buffer arrays used to read components
+      DArray<double> temp, temp2;
       temp.allocate(nMonomer);
+      temp2.allocate(nMonomer);
 
+      #if 0
       // Loop over stars to read field components
       IntVec<D> waveIn, waveBz, waveDft;
       int waveId, starId, nWaveVectors;
@@ -134,7 +148,205 @@ namespace Pspg
          }
 
       }
+      #endif
 
+      typename Basis<D>::Star const * starPtr;
+      typename Basis<D>::Star const * starPtr2;
+      IntVec<D> waveIn, waveIn2;
+      int starId, starId2;
+      int basisId, basisId2;
+      int waveId, waveId2;
+
+      std::complex<double> coeff, phasor;
+      IntVec<D> waveBz, waveDft;
+      int nWaveVector;
+      int nReversedPair = 0;
+      bool waveExists;
+
+      // Loop over stars in input file to read field components
+      i = 0;
+      while (i < nStarIn) {
+
+         // Read next line of data
+         for (int j = 0; j < nMonomer; ++j) {
+            in >> temp[j];               // field components
+         }
+         in >> waveIn;                   // wave of star
+         in >> nWaveVector;              // # of waves in star
+
+         // Check if waveIn is in first Brillouin zone (FBZ) for the mesh.
+         waveBz = shiftToMinimum(waveIn, mesh().dimensions(), unitCell);
+         waveExists = (waveIn == waveBz);
+
+         if (!waveExists) {
+
+            //  If wave is not in FBZ, ignore and continue 
+            ++i;
+
+         } else {
+
+            // If wave is in FBZ, process the line
+
+            // Find the star containing waveIn
+            waveDft = waveIn;
+            mesh().shift(waveDft);
+            waveId = basis().waveId(waveDft);
+            starId = basis().wave(waveId).starId;
+            starPtr = &basis().star(starId);
+            UTIL_CHECK(!(starPtr->cancel));
+            basisId = starId;
+            //basisId = starPtr->basisId;
+
+            if (starPtr->invertFlag == 0) {
+
+               if (starPtr->waveBz == waveIn) {
+
+                  // Copy components of closed star to temp_out array
+                  for (int j = 0; j < nMonomer; ++j) {
+                      temp_out[j][basisId] = temp[j];
+                  }
+
+               } else {
+                  Log::file() 
+                     <<  "Inconsistent wave of closed star on input\n"
+                     <<  "wave from file = " << waveIn  << "\n"
+                     <<  "starId of wave = " << starId  << "\n"
+                     <<  "waveBz of star = " << starPtr->waveBz  << "\n";
+               }
+               ++i;  // increment input line counter i
+
+            } else {
+
+               // Read the next line
+               for (int j = 0; j < nMonomer; ++j) {
+                  in >> temp2[j];               // components of field
+               }
+               in >> waveIn2;                   // wave of star
+               in >> nWaveVector;               // # of wavevectors in star
+
+               // Check that waveIn2 is also in the 1st BZ
+               waveBz = 
+                   shiftToMinimum(waveIn2, mesh().dimensions(), unitCell);
+               UTIL_CHECK(waveIn2 == waveBz);
+
+               // Identify the star containing waveIn2
+               waveDft = waveIn2;
+               mesh().shift(waveDft);
+               waveId2 = basis().waveId(waveDft);
+               starId2 = basis().wave(waveId2).starId;
+               starPtr2 = &basis().star(starId2);
+               UTIL_CHECK(!(starPtr2->cancel));
+               basisId2 = starId2;
+               //basisId2 = starPtr2->basisId;
+
+               if (starPtr->invertFlag == 1) {
+
+                  // This is a pair of open stars written in the same 
+                  // order as in this basis. Check preconditions:
+                  UTIL_CHECK(starPtr2->invertFlag == -1);
+                  UTIL_CHECK(starId2 = starId + 1);
+                  UTIL_CHECK(basisId2 = basisId + 1);
+                  UTIL_CHECK(starPtr->waveBz == waveIn);
+                  UTIL_CHECK(starPtr2->waveBz == waveIn2);
+
+                  // Copy components for both stars into temp_out array
+                  for (int j = 0; j < nMonomer; ++j) {
+                      temp_out[j][basisId] = temp[j];
+                      temp_out[j][basisId2] = temp2[j];
+                  }
+
+               } else
+               if (starPtr->invertFlag == -1) {
+
+                  // This is a pair of open stars written in opposite
+                  // order from in this basis. Check preconditions:
+                  UTIL_CHECK(starPtr2->invertFlag == 1);
+                  UTIL_CHECK(starId == starId2 + 1);
+                  UTIL_CHECK(basisId == basisId2 + 1);
+                  UTIL_CHECK(waveId == starPtr->beginId);
+
+                  // Check that waveIn2 is negation of waveIn
+                  IntVec<D> nVec;
+                  nVec.negate(waveIn);
+                  nVec = 
+                       shiftToMinimum(nVec, mesh().dimensions(), unitCell);
+                  UTIL_CHECK(waveIn2 == nVec);
+
+                  /*
+                  * Consider two related stars, C and D, that are listed in
+                  * the order (C,D) in the basis used in this code (the 
+                  * reading program), but that were listed in the opposite
+                  * order (D,C) in the program that wrote the file (the
+                  * writing program). In the basis of the reading program, 
+                  * star C has star index starId2, while star D has index
+                  * starId = starid2 + 1.
+                  *
+                  * Let f(r) and f^{*}(r) denote the basis functions used
+                  * by the reading program for stars C and D, respectively.
+                  * Let u(r) and u^{*}(r) denote the corresponding basis 
+                  * functions used by the writing program for stars C 
+                  * and D.  Let exp(i phi) denote the unit magnitude 
+                  * coefficient (i.e., phasor) within f(r) of the wave 
+                  * with wave index waveId2, which was the characteristic 
+                  * wave for star C in the writing program. The 
+                  * coefficient of this wave within the basis function
+                  * u(r) used by the writing program must instead be real
+                  * and positive. This implies that 
+                  * u(r) = exp(-i phi) f(r).
+                  *
+                  * Focus on the contribution to the field for a specific
+                  * monomer type j.  Let a and b denote the desired 
+                  * coefficients of stars C and D in the reading program, 
+                  * for which the total contribution of both stars to the 
+                  * field is:
+                  *
+                  *  (a - ib) f(r) + (a + ib) f^{*}(r)
+                  *
+                  * Let A = temp[j] and B = temp2[j] denote the 
+                  * coefficients read from file in order (A,B).  Noting 
+                  * that the stars were listed in the order (D,C) in the 
+                  * basis used by the writing program, the contribution 
+                  * of both stars must be (A-iB)u^{*}(r)+(A+iB)u(r), or:
+                  *
+                  *  (A+iB) exp(-i phi)f(r) + (A-iB) exp(i phi) f^{*}(r)
+                  *
+                  * Comparing coefficients of f^{*}(r), we find that
+                  * 
+                  *       (a + ib) = (A - iB) exp(i phi)
+                  * 
+                  * This equality is implemented below, where the 
+                  * variable "phasor" is set equal to exp(i phi).
+                  */
+                  phasor = basis().wave(waveId2).coeff;
+                  phasor = phasor/std::abs(phasor); 
+                  for (int j = 0; j < nMonomer; ++j) {
+                      coeff = std::complex<double>(temp[j],-temp2[j]);
+                      coeff *= phasor;
+                      temp_out[j][basisId2] = real(coeff);
+                      temp_out[j][basisId ] = imag(coeff);
+                  }
+
+                  // Increment count of number of reversed open pairs
+                  ++nReversedPair;
+ 
+               } else {
+                  UTIL_THROW("Invalid starInvert value");
+               } 
+
+               // Increment counter by 2 because two lines were read 
+               i = i + 2;
+
+            }   // if (wavePtr->invertFlag == 0) ... else ...
+         }   // if (!waveExists) ... else ...
+      }   // end while (i < nStarIn)
+
+      if (nReversedPair > 0) {
+         Log::file() << "\n";
+         Log::file() << nReversedPair << " reversed pairs of open stars"
+                   << " detected in FieldIo::readFieldsBasis\n";
+      }
+
+     // Copy data from temp_out (host) to fields (device)
      for(int i = 0; i < nMonomer; i++) {
          cudaMemcpy(fields[i].cDField(), temp_out[i],
             nStar * sizeof(cudaReal), cudaMemcpyHostToDevice);
@@ -222,21 +434,22 @@ namespace Pspg
    template <int D>
    void FieldIo<D>::readFieldsRGrid(std::istream &in,
                                     DArray<RDField<D> >& fields,
-                                    UnitCell<D>& unitCell)
-   const
+                                    UnitCell<D>& unitCell) const
    {
-      int nMonomer = fields.capacity();
+
+      // Read generic part of field header
+      int nMonomer;
+      FieldIo<D>::readFieldHeader(in, nMonomer, unitCell);
       UTIL_CHECK(nMonomer > 0);
+      UTIL_CHECK(nMonomer == fields.capacity());
 
-      FieldIo<D>::readFieldHeader(in, unitCell);
-
+      // Read grid dimensions
       std::string label;
       in >> label;
       UTIL_CHECK(label == "ngrid");
       IntVec<D> nGrid;
       in >> nGrid;
       UTIL_CHECK(nGrid == mesh().dimensions());
-
 
       DArray<cudaReal*> temp_out;
       temp_out.allocate(nMonomer);
@@ -378,7 +591,9 @@ namespace Pspg
                                    UnitCell<D>& unitCell)
    const
    {
-      FieldIo<D>::readFieldHeader(in, unitCell);
+      int nMonomer;
+      FieldIo<D>::readFieldHeader(in, nMonomer, unitCell);
+      UTIL_CHECK(nMonomer == 1);
 
       std::string label;
       in >> label;
@@ -510,20 +725,21 @@ namespace Pspg
                                     UnitCell<D>& unitCell)
    const
    {
-      int nMonomer = fields.capacity();
-      UTIL_CHECK(nMonomer > 0);
-
-      DArray<cudaComplex*> temp_out;
-      temp_out.allocate(nMonomer);      
 
       // Read header
-      readFieldHeader(in, unitCell);
+      int nMonomer;
+      readFieldHeader(in, nMonomer, unitCell);
+      UTIL_CHECK(nMonomer > 0);
+      UTIL_CHECK(nMonomer == fields.capacity());
       std::string label;
       in >> label;
       UTIL_CHECK(label == "ngrid");
       IntVec<D> nGrid;
       in >> nGrid;
       UTIL_CHECK(nGrid == mesh().dimensions());
+
+      DArray<cudaComplex*> temp_out;
+      temp_out.allocate(nMonomer);      
 
       int kSize = 1;
       for (int i = 0; i < D; i++) {
@@ -632,10 +848,25 @@ namespace Pspg
 
    template <int D>
    void FieldIo<D>::readFieldHeader(std::istream& in,
+                                    int& nMonomer,
                                     UnitCell<D>& unitCell) const
    {
-      std::string label;
+      int ver1, ver2;
+      std::string groupNameIn;
+      Pscf::readFieldHeader(in, ver1, ver2, unitCell, groupNameIn, nMonomer);
+      // Note:: Function definition in pscf/crystal/UnitCell.tpp
 
+      UTIL_CHECK(nMonomer > 0);
+      if (groupNameIn != groupName()) {
+         Log::file() << std::endl
+             << "Warning - "
+             << "Mismatched group names in FieldIo::readFieldHeader \n"
+             << "  FieldIo::groupName   :" << groupName() << "\n"
+             << "  Field file groupName :" << groupNameIn << "\n";
+      }
+
+      #if 0
+      std::string label;
       in >> label;
       UTIL_CHECK(label == "format");
       int ver1, ver2;
@@ -656,9 +887,9 @@ namespace Pspg
 
       in >> label;
       UTIL_CHECK(label == "N_monomer");
-      int nMonomer;
       in >> nMonomer;
       UTIL_CHECK(nMonomer > 0);
+      #endif
    }
 
    template <int D>
