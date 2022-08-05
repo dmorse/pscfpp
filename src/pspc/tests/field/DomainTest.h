@@ -2,7 +2,6 @@
 #define PSPC_DOMAIN_TEST_H
 
 #include <test/UnitTest.h>
-#include <pscf/tests/LogFileUnitTest.h>
 #include <test/UnitTestRunner.h>
 
 #include <pspc/field/Domain.h>
@@ -15,6 +14,7 @@
 #include <pscf/crystal/UnitCell.h>
 #include <pscf/mesh/Mesh.h>
 
+#include <util/tests/LogFileUnitTest.h>
 #include <util/containers/DArray.h>
 #include <util/misc/FileMaster.h>
 

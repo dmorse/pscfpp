@@ -2,13 +2,13 @@
 #define PSPC_SWEEP_TEST_H
 
 #include <test/UnitTest.h>
-#include <pscf/tests/LogFileUnitTest.h>
 #include <test/UnitTestRunner.h>
 
 #include <pspc/System.h>
 #include <pspc/sweep/SweepFactory.h>
 #include <pspc/sweep/LinearSweep.h>
 #include <pspc/field/BFieldComparison.h>
+#include <util/tests/LogFileUnitTest.h>
 #include <util/format/Dbl.h>
 
 #include <fstream>

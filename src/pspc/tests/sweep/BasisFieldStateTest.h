@@ -2,12 +2,12 @@
 #define PSPC_BASIS_FIELD_STATE_TEST_H
 
 #include <test/UnitTest.h>
-#include <pscf/tests/LogFileUnitTest.h>
 #include <test/UnitTestRunner.h>
 
 #include <pspc/System.h>
 #include <pspc/sweep/BasisFieldState.h>
 #include <pspc/field/BFieldComparison.h>
+#include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>
 

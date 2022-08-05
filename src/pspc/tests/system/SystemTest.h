@@ -4,9 +4,9 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pscf/tests/LogFileUnitTest.h>
 #include <pspc/System.h>
 #include <pspc/field/BFieldComparison.h>
+#include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>
 
