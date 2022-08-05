@@ -246,8 +246,9 @@ public:
       // Perform comparison
       BFieldComparison comparison;
       comparison.compare(bf_0, bf_1);
-      TEST_ASSERT(comparison.maxDiff() < 1.0E-12);
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
 
+      //setVerbose(1);
       if (verbose() > 0) {
          std::cout  << std::endl;
          std::cout  << Dbl(comparison.maxDiff(),21,13) << std::endl;
@@ -720,11 +721,11 @@ TEST_ADD(FieldIoTest, testReadHeader)
 TEST_ADD(FieldIoTest, testBasisIo_bcc)
 TEST_ADD(FieldIoTest, testBasisIo_c15_1)
 TEST_ADD(FieldIoTest, testBasisIo_altG)
-//TEST_ADD(FieldIoTest, testBasisIo_altG_fort) Fail because non-centrosymmetric?
+TEST_ADD(FieldIoTest, testBasisIo_altG_fort) // Fails 
 TEST_ADD(FieldIoTest, testRGridIo_bcc)
 TEST_ADD(FieldIoTest, testConvertBasisKGridBasis_bcc)
 TEST_ADD(FieldIoTest, testConvertBasisRGridBasis_bcc)
-//TEST_ADD(FieldIoTest, testConvertBasisKGridBasis_altG) Fail because non-centrosymmetric?
+TEST_ADD(FieldIoTest, testConvertBasisKGridBasis_altG) 
 TEST_ADD(FieldIoTest, testConvertBasisKGridBasis_c15_1)
 TEST_ADD(FieldIoTest, testKGridIo_bcc)
 TEST_ADD(FieldIoTest, testKGridIo_altG)
