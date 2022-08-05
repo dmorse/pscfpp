@@ -24,12 +24,6 @@ PSCF_PG_EXE=$(PSCF_PG3D_EXE) $(PSCF_PG2D_EXE) $(PSCF_PG1D_EXE)
 
 all: $(pspg_OBJS) $(pspg_LIB) $(PSCF_PG_EXE)
 
-move:
-	mv $(BIN_DIR)/pscf_pgsp $(BIN_DIR)/../../pscfpp_test/pscf_pgsp_openmp_for
-
-run1:
-	cd ../../../pscfpp_test && make run4
-
 clean:
 	rm -f $(pspg_OBJS) $(pspg_OBJS:.o=.d)
 	rm -f $(pspg_LIB)

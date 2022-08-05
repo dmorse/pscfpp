@@ -59,18 +59,18 @@ namespace Pspg
       hasWFields_(false),
       hasCFields_(false)
       // hasSweep_(0)
-   {  
+   {
       setClassName("System");
       domain_.setFileMaster(fileMaster_);
 
       interactionPtr_ = new ChiInteraction();
-      iteratorFactoryPtr_ = new IteratorFactory<D>(*this); 
+      iteratorFactoryPtr_ = new IteratorFactory<D>(*this);
       wavelistPtr_ = new WaveList<D>();
 
       BracketPolicy::set(BracketPolicy::Optional);
 
       ThreadGrid::init();
-      
+
       // sweepFactoryPtr_ = new SweepFactory(*this);
    }
 
@@ -90,7 +90,7 @@ namespace Pspg
          delete iteratorFactoryPtr_;
       }
       if (wavelistPtr_) {
-         delete wavelistPtr_; 
+         delete wavelistPtr_;
       }
       if (isAllocated_) {
          delete[] kernelWorkSpace_;
@@ -105,8 +105,8 @@ namespace Pspg
    void System<D>::setOptions(int argc, char **argv)
    {
       bool eflag = false;  // echo
-      bool pFlag = false;  // param file 
-      bool cFlag = false;  // command file 
+      bool pFlag = false;  // param file
+      bool cFlag = false;  // command file
       bool iFlag = false;  // input prefix
       bool oFlag = false;  // output prefix
       bool tFlag = false;  // GPU input threads (maximum number of threads per block)
@@ -115,7 +115,7 @@ namespace Pspg
       char* iArg = 0;
       char* oArg = 0;
       int tArg = 0;
-   
+
       // Read program arguments
       int c;
       opterr = 0;
@@ -149,7 +149,7 @@ namespace Pspg
            UTIL_THROW("Invalid command line option");
          }
       }
-   
+
       // Set flag to echo parameters as they are read.
       if (eflag) {
          Util::ParamComponent::setEcho(true);
@@ -192,9 +192,9 @@ namespace Pspg
       readParamComposite(in, mixture());
       hasMixture_ = true;
 
-      int nm = mixture().nMonomer(); 
-      int np = mixture().nPolymer(); 
-      int ns = mixture().nSolvent(); 
+      int nm = mixture().nMonomer();
+      int np = mixture().nPolymer();
+      int ns = mixture().nSolvent();
 
       // Initialize homogeneous object
       homogeneous_.setNMolecule(np+ns);
@@ -209,7 +209,7 @@ namespace Pspg
 
       mixture().setMesh(mesh());
 
-      // Construct wavelist 
+      // Construct wavelist
       wavelist().allocate(mesh(), unitCell());
       wavelist().computeMinimumImages(mesh(), unitCell());
       mixture().setupUnitCell(unitCell(), wavelist());
@@ -236,8 +236,8 @@ namespace Pspg
    void System<D>::readParam(std::istream& in)
    {
       readBegin(in, className().c_str());
-      readParameters(in);  
-      readEnd(in);  
+      readParameters(in);
+      readEnd(in);
    }
 
    /*
@@ -270,26 +270,26 @@ namespace Pspg
       tmpFieldsRGrid_.allocate(nMonomer);
       tmpFieldsKGrid_.allocate(nMonomer);
 
+      int nBasis = basis().nStar();
       for (int i = 0; i < nMonomer; ++i) {
-         wField(i).allocate(basis().nStar());
+         wField(i).allocate(nBasis);
          wFieldRGrid(i).allocate(mesh().dimensions());
          wFieldKGrid(i).allocate(mesh().dimensions());
 
-         cField(i).allocate(basis().nStar());
+         cField(i).allocate(nBasis);
          cFieldRGrid(i).allocate(mesh().dimensions());
          cFieldKGrid(i).allocate(mesh().dimensions());
 
-         tmpFields_[i].allocate(basis().nStar());
+         tmpFields_[i].allocate(nBasis);
          tmpFieldsRGrid_[i].allocate(mesh().dimensions());
          tmpFieldsKGrid_[i].allocate(mesh().dimensions());
       }
 
-      //storageCFields_.allocate(mesh().dimensions());
-      //compositionKField_.allocate(mesh().dimensions());
       workArray.allocate(mesh().size());
       ThreadGrid::setThreadsLogical(mesh().size());
-   
-      cudaMalloc((void**)&d_kernelWorkSpace_, ThreadGrid::nBlocks() * sizeof(cudaReal));
+
+      cudaMalloc((void**)&d_kernelWorkSpace_,
+                 ThreadGrid::nBlocks() * sizeof(cudaReal));
       kernelWorkSpace_ = new cudaReal[ThreadGrid::nBlocks()];
 
       isAllocated_ = true;
@@ -304,12 +304,12 @@ namespace Pspg
       in >> string;
       Log::file() << " " << Str(string, 20) << std::endl;
    }
-   
+
    /*
    * Read and execute commands from a specified command file.
    */
    template <int D>
-   void System<D>::readCommands(std::istream &in) 
+   void System<D>::readCommands(std::istream &in)
    {
       UTIL_CHECK(isAllocated_);
       std::string command, filename, inFileName, outFileName;
@@ -323,7 +323,7 @@ namespace Pspg
          if (command == "FINISH") {
             Log::file() << std::endl;
             readNext = false;
-         } else 
+         } else
          if (command == "READ_W_BASIS") {
             readEcho(in, filename);
             fieldIo().readFieldsBasis(filename, wFields(), domain_.unitCell());
@@ -336,18 +336,18 @@ namespace Pspg
             fieldIo().readFieldsRGrid(filename, wFieldsRGrid(), domain_.unitCell());
             hasWFields_ = true;
 
-         } else 
+         } else
          if (command == "COMPUTE") {
-            // Read w (chemical potential fields) if not done previously 
+            // Read w (chemical potential fields) if not done previously
             if (!hasWFields_) {
                readEcho(in, filename);
                readWBasis(filename);
             }
             // Solve the modified diffusion equation, without iteration
             compute();
-         } else 
+         } else
          if (command == "ITERATE") {
-            // Read w (chemical potential) fields if not done previously 
+            // Read w (chemical potential) fields if not done previously
             if (!hasWFields_) {
                readEcho(in, filename);
                readWBasis(filename);
@@ -357,29 +357,29 @@ namespace Pspg
             if (fail) {
                readNext = false;
             }
-         } else 
+         } else
          if (command == "WRITE_W_BASIS") {
             UTIL_CHECK(hasWFields_);
             readEcho(in, filename);
             fieldIo().convertRGridToBasis(wFieldsRGrid(), wFields());
             fieldIo().writeFieldsBasis(filename, wFields(), unitCell());
-         } else 
+         } else
          if (command == "WRITE_W_RGRID") {
             UTIL_CHECK(hasWFields_);
             readEcho(in, filename);
             fieldIo().writeFieldsRGrid(filename, wFieldsRGrid(), unitCell());
-         } else 
+         } else
          if (command == "WRITE_C_BASIS") {
             UTIL_CHECK(hasCFields_);
             readEcho(in, filename);
             fieldIo().convertRGridToBasis(cFieldsRGrid(), cFields());
             fieldIo().writeFieldsBasis(filename, cFields(), unitCell());
-         } else 
+         } else
          if (command == "WRITE_C_RGRID") {
             UTIL_CHECK(hasCFields_);
             readEcho(in, filename);
             fieldIo().writeFieldsRGrid(filename, cFieldsRGrid(), unitCell());
-         } else 
+         } else
          if (command == "WRITE_C_BLOCK_RGRID") {
             readEcho(in, filename);
             writeBlockCRGrid(filename);
@@ -402,7 +402,7 @@ namespace Pspg
             fieldIo().readFieldsBasis(inFileName, cFields(), tmpUnitCell);
             fieldIo().convertBasisToRGrid(cFields(), cFieldsRGrid());
             fieldIo().writeFieldsRGrid(outFileName, cFieldsRGrid(), tmpUnitCell);
-         } else 
+         } else
          if (command == "RGRID_TO_BASIS") {
             hasCFields_ = false;
             readEcho(in, inFileName);
@@ -413,7 +413,7 @@ namespace Pspg
             fieldIo().convertRGridToBasis(cFieldsRGrid(), cFields());
             fieldIo().writeFieldsBasis(outFileName, cFields(), tmpUnitCell);
 
-         } else 
+         } else
          if (command == "KGRID_TO_RGRID") {
             hasCFields_ = false;
 
@@ -429,7 +429,7 @@ namespace Pspg
             // Write to file in r-grid format
             fieldIo().writeFieldsRGrid(outFileName, cFieldsRGrid(), tmpUnitCell);
 
-         } else 
+         } else
          if (command == "RHO_TO_OMEGA") {
 
             // GPU resources
@@ -445,12 +445,14 @@ namespace Pspg
             // Compute w fields, excluding Lagrange multiplier contribution
             //code is bad here, `mangled' access of data in array
             for (int i = 0; i < mixture().nMonomer(); ++i) {
-               assignUniformReal<<<nBlocks, nThreads>>>(wFieldRGrid(i).cDField(), 0, mesh().size());
+               assignUniformReal<<<nBlocks, nThreads>>>
+                   (wFieldRGrid(i).cDField(), 0, mesh().size());
             }
             for (int i = 0; i < mixture().nMonomer(); ++i) {
                for (int j = 0; j < mixture().nMonomer(); ++j) {
-                  pointWiseAddScale<<<nBlocks, nThreads>>>(wFieldRGrid(i).cDField(), cFieldRGrid(j).cDField(), 
-                                                            interaction().chi(i,j), mesh().size());
+                  pointWiseAddScale<<<nBlocks, nThreads>>>
+                      (wFieldRGrid(i).cDField(), cFieldRGrid(j).cDField(),
+                       interaction().chi(i,j), mesh().size());
                }
             }
 
@@ -471,11 +473,11 @@ namespace Pspg
    */
    template <int D>
    void System<D>::readCommands()
-   {  
+   {
       if (fileMaster().commandFileName().empty()) {
          UTIL_THROW("Empty command file name");
       }
-      readCommands(fileMaster().commandFile()); 
+      readCommands(fileMaster().commandFile());
    }
 
    /*
@@ -486,9 +488,9 @@ namespace Pspg
    {
 
       // Set number of molecular species and monomers
-      int nm = mixture().nMonomer(); 
-      int np = mixture().nPolymer(); 
-      int ns = mixture().nSolvent(); 
+      int nm = mixture().nMonomer();
+      int np = mixture().nPolymer();
+      int ns = mixture().nSolvent();
 
       UTIL_CHECK(homogeneous_.nMolecule() == np + ns);
       UTIL_CHECK(homogeneous_.nMonomer() == nm);
@@ -505,24 +507,24 @@ namespace Pspg
       int k;   // block or clump index
       int nb;  // number of blocks
       int nc;  // number of clumps
- 
+
       // Loop over polymer molecule species
       if (np > 0) {
          for (i = 0; i < np; ++i) {
-   
-            // Initial array of clump sizes 
+
+            // Initial array of clump sizes
             for (j = 0; j < nm; ++j) {
                c_[j] = 0.0;
             }
-   
+
             // Compute clump sizes for all monomer types.
-            nb = mixture_.polymer(i).nBlock(); 
+            nb = mixture_.polymer(i).nBlock();
             for (k = 0; k < nb; ++k) {
                Block<D>& block = mixture_.polymer(i).block(k);
                j = block.monomerId();
                c_[j] += block.length();
             }
-    
+
             // Count the number of clumps of nonzero size
             nc = 0;
             for (j = 0; j < nm; ++j) {
@@ -531,7 +533,7 @@ namespace Pspg
                }
             }
             homogeneous_.molecule(i).setNClump(nc);
-    
+
             // Set clump properties for this Homogeneous::Molecule
             k = 0; // Clump index
             for (j = 0; j < nm; ++j) {
@@ -542,7 +544,7 @@ namespace Pspg
                }
             }
             homogeneous_.molecule(i).computeSize();
-   
+
          }
       }
 
@@ -573,11 +575,11 @@ namespace Pspg
 
       // Initialize to zero
       fHelmholtz_ = 0.0;
- 
+
       double phi, mu;
       int np = mixture_.nPolymer();
       int ns = mixture_.nSolvent();
- 
+
       // Compute polymer ideal gas contributions to fHelhmoltz_
       if (np > 0) {
          Polymer<D>* polymerPtr;
@@ -612,7 +614,7 @@ namespace Pspg
 
       int nm  = mixture().nMonomer();
       int nx = mesh().size();
-      
+
       // GPU resources
       int nBlocks, nThreads;
       ThreadGrid::setThreadsLogical(nx, nBlocks, nThreads);
@@ -621,7 +623,8 @@ namespace Pspg
       double temp = 0.0;
       for (int i = 0; i < nm; i++) {
          pointWiseBinaryMultiply<<<nBlocks,nThreads>>>
-                  (wFieldsRGrid_[i].cDField(), cFieldsRGrid_[i].cDField(), workArray.cDField(), nx);
+             (wFieldsRGrid_[i].cDField(), cFieldsRGrid_[i].cDField(),
+              workArray.cDField(), nx);
          temp += gpuSum(workArray.cDField(),nx) / double(nx);
       }
       fHelmholtz_ -= temp;
@@ -629,11 +632,14 @@ namespace Pspg
       // Compute excess interaction free energy
       for (int i = 0; i < nm; ++i) {
          for (int j = i + 1; j < nm; ++j) {
-           assignUniformReal<<<nBlocks, nThreads>>>(workArray.cDField(), interaction().chi(i, j), nx);
-           inPlacePointwiseMul<<<nBlocks, nThreads>>>(workArray.cDField(), cFieldsRGrid_[i].cDField(), nx);
-           inPlacePointwiseMul<<<nBlocks, nThreads>>>(workArray.cDField(), cFieldsRGrid_[j].cDField(), nx);
+           assignUniformReal<<<nBlocks, nThreads>>>
+               (workArray.cDField(), interaction().chi(i, j), nx);
+           inPlacePointwiseMul<<<nBlocks, nThreads>>>
+               (workArray.cDField(), cFieldsRGrid_[i].cDField(), nx);
+           inPlacePointwiseMul<<<nBlocks, nThreads>>>
+               (workArray.cDField(), cFieldsRGrid_[j].cDField(), nx);
            fHelmholtz_ += gpuSum(workArray.cDField(), nx) / double(nx);
-         }    
+         }
       }
 
       // Initialize pressure
@@ -687,12 +693,12 @@ namespace Pspg
          out << "Polymers:" << std::endl;
          out << "     "
              << "        phi         "
-             << "        mu          " 
+             << "        mu          "
              << std::endl;
          for (int i = 0; i < np; ++i) {
-            out << Int(i, 5) 
+            out << Int(i, 5)
                 << "  " << Dbl(mixture_.polymer(i).phi(),18, 11)
-                << "  " << Dbl(mixture_.polymer(i).mu(), 18, 11)  
+                << "  " << Dbl(mixture_.polymer(i).mu(), 18, 11)
                 << std::endl;
          }
          out << std::endl;
@@ -702,30 +708,30 @@ namespace Pspg
          out << "Solvents:" << std::endl;
          out << "     "
              << "        phi         "
-             << "        mu          " 
+             << "        mu          "
              << std::endl;
          for (int i = 0; i < ns; ++i) {
-            out << Int(i, 5) 
+            out << Int(i, 5)
                 << "  " << Dbl(mixture_.solvent(i).phi(),18, 11)
-                << "  " << Dbl(mixture_.solvent(i).mu(), 18, 11)  
+                << "  " << Dbl(mixture_.solvent(i).mu(), 18, 11)
                 << std::endl;
          }
          out << std::endl;
       }
    }
 
-   /*  
+   /*
    * Read w-field in symmetry adapted basis format.
-   */  
+   */
    template <int D>
    void System<D>::readWBasis(const std::string & filename)
-   {   
+   {
       fieldIo().readFieldsBasis(filename, wFields(), domain_.unitCell());
       fieldIo().convertBasisToRGrid(wFields(), wFieldsRGrid());
       domain_.basis().update();
       hasWFields_ = true;
       hasCFields_ = false;
-   } 
+   }
 
    /*
    * Solve MDE for current w-fields, without iteration.
@@ -763,14 +769,14 @@ namespace Pspg
 
       // Call iterator
       int error = iterator().solve();
-      
+
       hasCFields_ = true;
 
-      // Is this actually necessary? Seemed like it from before. 
+      // Is this actually necessary? Seemed like it from before.
       fieldIo().convertRGridToBasis(wFieldsRGrid(), wFields());
       fieldIo().convertRGridToBasis(cFieldsRGrid(), cFields());
 
-      if (!error) {   
+      if (!error) {
          if (!iterator().isFlexible()) {
             mixture().computeStress(wavelist());
          }
@@ -839,22 +845,22 @@ namespace Pspg
    void System<D>::writePropagatorRGrid(const std::string & filename, int polymerID, int blockID)
    {
       const cudaReal* d_tailField = mixture_.polymer(polymerID).propagator(blockID, 1).tail();
-      
+
       // convert this cudaReal pointer to an RDField. Yikes.
       RDField<D> tailField;
       tailField.allocate(mesh().size());
       cudaMemcpy(tailField.cDField(), d_tailField, mesh().size() * sizeof(cudaReal), cudaMemcpyDeviceToDevice);
-      // output. 
+      // output.
       fieldIo().writeFieldRGrid(filename, tailField, unitCell());
    }
 
-   /*  
+   /*
    * Convert fields from real-space grid to symmetry-adapted basis format.
-   */  
+   */
    template <int D>
    void System<D>::rGridToBasis(const std::string & inFileName,
                                 const std::string & outFileName)
-   {   
+   {
       UnitCell<D> tmpUnitCell;
       fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_, tmpUnitCell);
       fieldIo().convertRGridToBasis(tmpFieldsRGrid_, tmpFields_);
@@ -863,4 +869,4 @@ namespace Pspg
 
 } // namespace Pspg
 } // namespace Pscf
-#endif 
+#endif
