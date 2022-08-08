@@ -1,0 +1,47 @@
+System{
+  Mixture{
+    nMonomer  2
+    monomers[
+              1.0  
+              1.0 
+    ]
+    nPolymer  1
+    Polymer{
+      type    linear
+      nBlock  2
+      blocks[
+              0  0.25
+              1  0.75
+      ]
+      phi     1.0
+    }
+    ds   0.01
+  }
+  ChiInteraction{
+    chi(  
+         1   0   20.0
+    )
+  }
+  Domain{
+    unitCell       tetragonal    2.0    4.2
+    mesh           32    32    68
+    groupName      P_4%m_m_m
+  }
+  Wall{
+    normalVec            2
+    interfaceThickness   0.08     
+    wallThickness        0.2
+    chi[
+          0   0
+          0   0
+    ]
+    writeBasis           out/wall.bf
+    writeRGrid           out/wall.rf
+  }
+  AmIterator{
+    maxItr       2000
+    epsilon      1e-6
+    maxHist      50 
+    isFlexible   1
+  }
+}

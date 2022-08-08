@@ -12,8 +12,10 @@
 #include <pspc/solvers/Mixture.h>
 #include <pspc/solvers/Polymer.h>
 #include <pspc/System.h>
+#include <pscf/crystal/UnitCell.h>
 #include <pscf/inter/ChiInteraction.h>
 #include <util/global.h>
+#include <util/containers/FSArray.h>
 #include <algorithm>
 #include <iomanip>
 
@@ -83,6 +85,9 @@ namespace Pspc {
       } else if (buffer == "solvent" || buffer == "solvent_size") {
          type_ = Solvent;
          nID_ = 1; //species identifier.
+      } else if (buffer == "cell_param") {
+         type_ = Cell_Param;
+         nID_ = 1; //lattice parameter identifier.
       } else {
          UTIL_THROW("Invalid SweepParameter::ParamType value");
       }
@@ -141,6 +146,8 @@ namespace Pspc {
          return "mu_solvent";
       } else if (type_ == Solvent) {
          return "solvent_size";
+      } else if (type_ == Cell_Param) {
+         return "cell_param";
       } else {
          UTIL_THROW("This should never happen.");
          }
@@ -165,6 +172,8 @@ namespace Pspc {
          return systemPtr_->mixture().solvent(id(0)).mu();
       } else if (type_ == Solvent) {
          return systemPtr_->mixture().solvent(id(0)).size();
+      } else if (type_ == Cell_Param) {
+         return systemPtr_->unitCell().parameter(id(0));
       } else {
          UTIL_THROW("This should never happen.");
       }
@@ -189,6 +198,10 @@ namespace Pspc {
          systemPtr_->mixture().solvent(id(0)).setMu(newVal);
       } else if (type_ == Solvent) {
          systemPtr_->mixture().solvent(id(0)).setSize(newVal);
+      } else if (type_ == Cell_Param) {
+         FSArray<double,6> params = systemPtr_->unitCell().parameters();
+         params[id(0)] = newVal;
+         systemPtr_->setUnitCell(params);
       } else {
          UTIL_THROW("This should never happen.");
       }
