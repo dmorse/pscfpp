@@ -8,33 +8,29 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pspg/field/FieldIo.h>            // member
-#include <pspg/iterator/Iterator.h>        // member
+#include <util/param/ParamComposite.h>     // base class
+
 #include <pspg/solvers/Mixture.h>          // member
-#include <pspg/solvers/Solvent.h>        // member
 #include <pspg/field/Domain.h>             // member
+#include <pspg/field/FieldIo.h>            // member
 #include <pspg/solvers/WaveList.h>         // member
 #include <pspg/field/RDField.h>            // typedef
 #include <pspg/field/RDFieldDft.h>         // typedef
 
-#include <pscf/crystal/Basis.h>            // member
-#include <pscf/mesh/Mesh.h>                // member
-#include <pscf/crystal/UnitCell.h>         // member
 #include <pscf/homogeneous/Mixture.h>      // member
-#include <pscf/inter/ChiInteraction.h>     // member
 
-#include <util/param/ParamComposite.h>     // base class
 #include <util/misc/FileMaster.h>          // member
 #include <util/containers/DArray.h>        // member template
-#include <util/containers/Array.h>         // function parameter
+
+namespace Pscf { class ChiInteraction; }
 
 namespace Pscf {
 namespace Pspg
 {
    template <int D> class Iterator;
    template <int D> class IteratorFactory;
-   template <int D> class Sweep;
-   template <int D> class SweepFactory;
+   //template <int D> class Sweep;
+   //template <int D> class SweepFactory;
 
    using namespace Util;
 
@@ -112,6 +108,10 @@ namespace Pspg
       */
       void readCommands();
 
+      //@}
+      /// \name Thermodynamic Properties
+      //@{
+
       /**
       * Compute free energy density and pressure for current fields.
       *
@@ -131,6 +131,22 @@ namespace Pspg
       * \param out output stream 
       */
       void outputThermo(std::ostream& out);
+
+      /**
+      * Get precomputed Helmoltz free energy per monomer / kT.
+      *
+      * The value retrieved by this function is computed by the
+      * computeFreeEnergy() function.
+      */
+      double fHelmholtz() const;
+
+      /**
+      * Get precomputed pressure x monomer volume kT.
+      *
+      * The value retrieved by this function is computed by the
+      * computeFreeEnergy() function.
+      */
+      double pressure() const;
 
       //@}
       /// \name Chemical Potential Fields (W Fields)
@@ -331,22 +347,6 @@ namespace Pspg
       */  
       std::string groupName();
 
-      /**
-      * Get precomputed Helmoltz free energy per monomer / kT.
-      *
-      * The value retrieved by this function is computed by the
-      * computeFreeEnergy() function.
-      */
-      double fHelmholtz() const;
-
-      /**
-      * Get precomputed pressure x monomer volume kT.
-      *
-      * The value retrieved by this function is computed by the
-      * computeFreeEnergy() function.
-      */
-      double pressure() const;
-
       /** 
       * Have monomer chemical potential fields (w fields) been set?
       *
@@ -529,12 +529,12 @@ namespace Pspg
       /**
       * Pointer to an Sweep object
       */
-      Sweep<D>* sweepPtr_;
+      //Sweep<D>* sweepPtr_;
 
       /**
       * Pointer to SweepFactory object
       */
-      SweepFactory<D>* sweepFactoryPtr_;
+      //SweepFactory<D>* sweepFactoryPtr_;
 
       /**
       * Array of chemical potential fields for monomer types.

@@ -10,8 +10,9 @@
 
 #include "AmIteratorOld.h"
 #include <pspg/System.h>
-#include <util/format/Dbl.h>
 #include <pspg/math/GpuResources.h>
+#include <pscf/inter/ChiInteraction.h>
+#include <util/format/Dbl.h>
 #include <util/containers/FArray.h>
 #include <util/misc/Timer.h>
 #include <sys/time.h>
@@ -289,10 +290,11 @@ namespace Pspg {
       
       for (int i = 0; i < system().mixture().nMonomer(); ++i) {
          for (int j = 0; j < system().mixture().nMonomer(); ++j) {
-            pointWiseAddScale <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (tempDev[i].cDField(),
-                                                                            system().cFieldRGrid(j).cDField(),
-                                                                            system().interaction().chi(i, j),
-                                                                            size);
+            pointWiseAddScale <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> 
+               (tempDev[i].cDField(),
+                system().cFieldRGrid(j).cDField(),
+                system().interaction().chi(i, j),
+                size);
             //this is a good add but i dont necessarily know if its right
             pointWiseAddScale <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (tempDev[i].cDField(),
                                                                             system().wFieldRGrid(j).cDField(),
