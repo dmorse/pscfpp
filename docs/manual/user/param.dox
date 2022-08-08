@@ -1,4 +1,4 @@
-/*! \page user_param_page 3.2 Parameter Files
+/*! \page user_param_page 3.3 Parameter Files
 
 \ref user_usage_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_command_page (Next) 
@@ -12,10 +12,10 @@ The file formats for the pscf_pcNd and pscf_pgNd programs are almost identical, 
 
 <h3> Contents:</h3>
    <ul style="list-style: none;">
-   <li> \subpage user_param_syntax_page  "3.2.1 Parameter File Syntax" </li>
-   <li> \subpage user_param_fd_page      "3.2.2 pscf_fd" </li>
-   <li> \subpage user_param_pc_page      "3.2.3 pscf_pcNd (CPU)" </li>
-   <li> \subpage user_param_pg_page      "3.2.4 pscf_pgNd (GPU)" </li>
+   <li> \subpage user_param_syntax_page  "3.3.1 Parameter File Syntax" </li>
+   <li> \subpage user_param_fd_page      "3.3.2 pscf_fd" </li>
+   <li> \subpage user_param_pc_page      "3.3.3 pscf_pcNd (CPU)" </li>
+   <li> \subpage user_param_pg_page      "3.3.4 pscf_pgNd (GPU)" </li>
    </ul>
 <BR>
 \ref user_usage_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
