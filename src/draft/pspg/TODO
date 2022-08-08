@@ -9,12 +9,7 @@ TODO (pspg GPU code):
 Intermediate term 
 -------------------------------------------------------------------------
 
-1) Fix treatment of non-centrosymmetric space groups in FieldIo
-
-2) Compress storage of symmetry adapted basis functions in FieldIo and
-   System (stop storing zero coefficients)
-
-3) Add an iterator with imposed symmetry and output in symmetry adapted 
+1) Add an iterator with imposed symmetry and output in symmetry adapted 
    format.
 
 Longer term  
@@ -39,43 +34,87 @@ Clean up of kernel functions
 5) Move parallel reduction kernels to private namespace in implementation
    of kernel wrappers, so not publically visible. 
 
-5) Establish more consistent function name conventions.
+6) Establish more consistent function name conventions.
 
-   One possibile set of semantic units:
+   One possibile set of semantic units for vector operations:
 
-       dev  -> implies device kernel function
-       host -> implies function that acts on gpu arrays, called from host
-       Sub  -> subtract
-       Add  -> add
-       Mul  -> add
-       Div  -> add
-       Eq   -> arithmetic assignment / in place
-       V    -> real vector (or array)
-       S    -> real scalar 
-       r    -> real
-       c    -> complex
+       LHS (result):
+        vr - real vector
+        vc - complex vector
 
-    Example kernels:
+       Operations:
+       Sub   -> subtract
+       Add   -> add
+       Mul   -> add
+       Div   -> divide 
+       Eq    -> assignment
 
-       subtractUniform          -> devSubEqVrSr
-       addUniform               -> devAddEqVrSr
-       pointWiseSubtract        -> devSubEqVrVr
-       pointWiseAdd             -> devAddEqVrVr
-       pointWiseBinarySubtract  -> devSubVrVr
-       pointWiseBinaryAdd       -> devAddVrVr
-       scaleReal                -> devRMulEqVrSr
-       scaleComplex             -> devCMulEqVcSr
+       RHS operands:
+       V     -> vector on rhs (same as LHS by default)
+       Vr    -> real vector (when not same as lhs type)
+       Vc    -> complex vector (when not same as lhs type)
+       R     -> real scalar 
+       C     -> complex scalar 
 
-    Example wrappers for reductions:
+   Example kernel names (called with CUDA <<< ... >>> ) syntax
 
-       gpuSum                   -> hostSum
-       gpuMax                   -> hostMax
-       gpuMaxAbs                -> hostMaxAbs
+       // Unary operations (vrOpA => v = v Op A)
+       subtractUniform          -> vrSubR
+       addUniform               -> vrAddR
+       pointWiseSubtract        -> vrSubV
+       pointWiseAdd             -> vrAddV
+       scaleReal                -> vrMulR
+       scaleComplex             -> vcMulR
+
+       // Binary operations (vrAOpB => v = A Op B)
+       pointWiseBinarySubtract  -> vrSubVV
+       pointWiseBinaryAdd       -> vrAddVV
+
+       // Assignment operations (LHS = 
+       assign uniform           -> vrEqR
+       assign vector            -> vrEqV
+       assign exp of vector     -> vrExpV
+
+       Corresponding functions that return a complex-valued vector
+       will start with vc. Arguments on the RHS side will use C for
+       complex scalar, R for real scalar, V for complex vector and
+       Vr for real vector.
+
+       Corresponding C++ wrapper functions start with gpuVr or gpuVc.
+       These are called using conventional C++ syntax, and compute 
+       the thread grid internally. 
+
+       Overloaded versions of wrapper functions will be provided for
+       pointers, for which size must be provided as a parameter, and 
+       for field containers, for which size is provided by container.
+
+       Rationale for "gpu" prefix on cpu functions rather than kernels: 
+       You don't need a "gpu" prefix on a kernel because the syntax 
+       makes it clear that it's a kernel in declaration, definition, 
+       and calling.  The prefix gpu on a wrapper declares that the 
+       computation is actually done on a gpu, which isn't otherwise
+       clear from the syntax.
+
+       Parameter order same as in order of equation (lhs first).
+
+    Example wrapper function for reductions:
+
+       gpuReduceSum
+       gpuReduceAbMax
+
+       Corresponding kernel names have prefix reduce rather than gpuReduce
+
+       Overloaded versions of wrappers for pointers and containers,
+       in which thread grid is computed internally.
+       Versions for pointers take the size as a parameter.
 
 6) Rename files:
 
-      LinearAlgebra  -> GpuVectorOps
-      KernelWrappers -> GpuReductions
+       LinearAlgebra  -> VectorOps
+       KernelWrappers -> Reductions (both kernels and C++ wrappers)
 
-      Move Helpers to draft/pspg ?
+       Provide overloaded operations for containers in files that
+       define containers
+
+       Move Helpers to draft/pspg ?
       
