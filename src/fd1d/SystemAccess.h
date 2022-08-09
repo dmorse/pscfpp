@@ -81,12 +81,12 @@ namespace Fd1d {
       /**
       * Get interaction (i.e., excess free energy model) by reference.
       */
-      const Interaction& interaction() const;
+      const ChiInteraction& interaction() const;
 
       /**
       * Get interaction (i.e., excess free energy model) by reference.
       */
-      Interaction& interaction();
+      ChiInteraction& interaction();
 
       /**
       * Get homogeneous mixture (for reference calculations).
@@ -205,16 +205,16 @@ namespace Fd1d {
    /*
    * Get the Interaction (excess free energy model).
    */
-   inline const Interaction& SystemAccess::interaction() const
+   inline const ChiInteraction& SystemAccess::interaction() const
    {  
       UTIL_ASSERT(systemPtr_);
       return systemPtr_->interaction(); 
    }
 
    /*
-   * Get the Interaction (excess free energy model).
+   * Get the ChiInteraction (excess free energy model).
    */
-   inline Interaction& SystemAccess::interaction()
+   inline ChiInteraction& SystemAccess::interaction()
    {  
       UTIL_ASSERT(systemPtr_);
       return systemPtr_->interaction(); 

@@ -91,6 +91,18 @@ namespace Fd1d
       void setDomain(Domain const & domain);
 
       /**
+      * Reset statistical segment length for one monomer type.
+      * 
+      * This function resets the kuhn or statistical segment length value
+      * for a monomer type, and updates the associcated value in every 
+      * block of that monomer type.
+      *
+      * \param monomerId  monomer type id
+      * \param kuhn  new value for the statistical segment length
+      */
+      void setKuhn(int monomerId, double kuhn);
+
+      /**
       * Compute concentrations.
       *
       * This function calls the compute function of every molecular
@@ -116,6 +128,22 @@ namespace Fd1d
       * Get monomer reference volume.
       */
       double vMonomer() const;
+
+      // Inherited public member functions with non-dependent names
+      using MixtureTmpl< Polymer, Solvent >::nMonomer;
+      using MixtureTmpl< Polymer, Solvent >::nPolymer;
+      using MixtureTmpl< Polymer, Solvent >::nSolvent;
+      using MixtureTmpl< Polymer, Solvent >::nBlock;
+      using MixtureTmpl< Polymer, Solvent >::polymer;
+      using MixtureTmpl< Polymer, Solvent >::monomer;
+      using MixtureTmpl< Polymer, Solvent >::solvent;
+
+   protected:
+
+      // Inherited protected member functions with non-dependent names
+      using MixtureTmpl< Polymer, Solvent >::setClassName;
+      using ParamComposite::read;
+      using ParamComposite::readOptional;
 
    private:
 
