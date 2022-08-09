@@ -27,7 +27,6 @@ System{
   NrIterator{
      epsilon   0.00000001
   }
-  hasSweep    1
   LengthSweep{
      ns            10
      baseFileName  sweep/

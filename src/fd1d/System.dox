@@ -17,7 +17,7 @@ System{
    < Sweep >* { ... }
 }
 \endcode
-Here, as elsewhere, optional parameters or subblocks of a parameter file block are followed by an asterisk, elements whose presence is conditional on the value of previous variables are indicated by an ampersand, and polymorphic elements (for which the label can correspond to the label of any of several subclasses) are indicated with the generic or base class name enclosed in angle brackets.
+Here, as elsewhere, optional parameters or subblocks of a parameter file block are followed by an asterisk, and polymorphic elements (for which the label can correspond to the label of any of several subclasses) are indicated with the generic or base class name enclosed in angle brackets.
 
 Explanations and links to documentation for enclosed subblocks and parameters:
 <table>
