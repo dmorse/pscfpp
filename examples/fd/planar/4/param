@@ -27,13 +27,16 @@ System{
   NrIterator{
      epsilon   0.00000001
   }
-  LengthSweep{
+  LinearSweep{
      ns            10
      baseFileName  sweep/
-     polymerId     0
-     blockId       0
-     dLength       0.1
+     nParameter    4
+     parameters[
+       block   0   0    0.1
+       block   0   1   -0.1
+       chi     0   1    2.0
+       kuhn    0        0.1
+     ]
   }
 }
 
-   nSolvent  0
