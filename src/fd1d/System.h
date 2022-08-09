@@ -18,7 +18,7 @@
 
 namespace Pscf {
 
-   class Interaction;
+   class ChiInteraction;
 
 namespace Fd1d
 {
@@ -167,7 +167,7 @@ namespace Fd1d
       /**
       * Get interaction (i.e., excess free energy model) by reference.
       */
-      Interaction& interaction();
+      ChiInteraction& interaction();
 
       /**
       * Get the Iterator by reference.
@@ -227,7 +227,7 @@ namespace Fd1d
       /**
       * Pointer to Interaction (excess free energy model).
       */
-      Interaction* interactionPtr_;
+      ChiInteraction* interactionPtr_;
 
       /**
       * Pointer to associated iterator.
@@ -353,7 +353,7 @@ namespace Fd1d
    /*
    * Get the Interaction (excess free energy model).
    */
-   inline Interaction& System::interaction()
+   inline ChiInteraction& System::interaction()
    {
       UTIL_ASSERT(interactionPtr_);
       return *interactionPtr_;
