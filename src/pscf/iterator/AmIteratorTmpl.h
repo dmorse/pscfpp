@@ -246,6 +246,7 @@ namespace Pscf {
       void updateBasis(RingBuffer<T> & basis, 
                        RingBuffer<T> const & hists) = 0;
 
+      #if 0
       /**
       * Compute one element of the U matrix.
       * 
@@ -267,6 +268,7 @@ namespace Pscf {
       virtual 
       double computeVDotProd(T const & resCurrent, 
                              RingBuffer<T> const & resBasis, int m) = 0;
+      #endif
       
       /**
       * Update the U matrix.
