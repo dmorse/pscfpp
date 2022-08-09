@@ -9,8 +9,7 @@
 #include <pspg/field/RDField.h>
 #include <pspg/math/GpuResources.h>
 
-//#include <pscf/mesh/MeshIterator.h>
-//#include <util/format/Dbl.h>
+#include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>
 
@@ -18,28 +17,13 @@ using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Pspg;
 
-class SystemTest : public UnitTest
+class SystemTest : public LogFileUnitTest
 {
 
 public:
 
-   std::ofstream logFile_;
-
    void setUp()
    {  setVerbose(0); }
-
-   void tearDown()
-   {
-      if (logFile_.is_open()) {
-         logFile_.close();
-      }
-   }
-
-   void openLogFile(char const * filename)
-   {
-      openOutputFile(filename, logFile_);
-      Log::setFile(logFile_);
-   }
 
    void testConstructor1D()
    {

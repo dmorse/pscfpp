@@ -18,6 +18,7 @@
 #include <pscf/mesh/Mesh.h>
 #include <pscf/mesh/MeshIterator.h>
 
+#include <util/tests/LogFileUnitTest.h>
 #include <util/containers/DArray.h>
 #include <util/misc/FileMaster.h>
 #include <util/format/Dbl.h>
@@ -29,10 +30,9 @@ using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Pspg;
 
-class FieldIoTest : public UnitTest 
+class FieldIoTest : public LogFileUnitTest 
 {
 
-   std::ofstream logFile_;
    FileMaster fileMaster_;
    int nMonomer_;
 
@@ -42,19 +42,6 @@ public:
    {
       setVerbose(0);
       nMonomer_ = 2;
-   }
-
-   void tearDown()
-   {
-      if (logFile_.is_open()) {
-         logFile_.close();
-      }
-   }
-
-   void openLogFile(char const * filename)
-   {
-      openOutputFile(filename, logFile_);
-      Log::setFile(logFile_);
    }
 
    /*
@@ -345,7 +332,7 @@ public:
 
       BFieldComparison comparison;
       comparison.compare(bf_0, bf_1);
-      setVerbose(1);
+      //setVerbose(1);
       if (verbose() > 0) {
          std::cout  << "\n";
          std::cout  << Dbl(comparison.maxDiff(),21,13) << "\n";

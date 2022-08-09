@@ -10,12 +10,12 @@
 
 #include "System.h"
 #include <pspg/math/GpuResources.h>
-
-#include <pscf/homogeneous/Clump.h>
-#include <pscf/crystal/shiftToMinimum.h>
-
 #include <pspg/iterator/Iterator.h>
 #include <pspg/iterator/IteratorFactory.h>
+
+#include <pscf/inter/ChiInteraction.h>
+#include <pscf/crystal/shiftToMinimum.h>
+#include <pscf/homogeneous/Clump.h>
 
 #include <util/param/BracketPolicy.h>
 #include <util/format/Str.h>
@@ -25,7 +25,6 @@
 //#include <iomanip>
 #include <string>
 #include <getopt.h>
-
 
 namespace Pscf {
 namespace Pspg
@@ -46,8 +45,8 @@ namespace Pspg
       iteratorPtr_(0),
       iteratorFactoryPtr_(0),
       wavelistPtr_(0),
-      sweepPtr_(0),
-      sweepFactoryPtr_(0),
+      //sweepPtr_(0),
+      //sweepFactoryPtr_(0),
       wFields_(),
       cFields_(),
       f_(),
