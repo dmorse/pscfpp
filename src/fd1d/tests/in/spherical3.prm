@@ -33,7 +33,6 @@ System{
   NrIterator{
      epsilon   0.0000001
   }
-  hasSweep 1
   CompositionSweep{
      ns                5
      baseFileName      out/spherical

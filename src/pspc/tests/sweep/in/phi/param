@@ -39,7 +39,6 @@ System{
     maxHist      30
     isFlexible   1
   }
-  hasSweep  1
   LinearSweep{
      ns            4
      baseFileName  out/phi/
