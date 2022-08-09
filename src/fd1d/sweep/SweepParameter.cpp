@@ -14,7 +14,7 @@
 #include <util/containers/FSArray.h>
 #include <util/global.h>
 
-//#include <algorithm>
+#include <algorithm>
 #include <iomanip>
 
 namespace Pscf {
