@@ -113,13 +113,13 @@ namespace Pscf {
       * Return true if this iterator imposes a mask within the unit cell,
       * false if no mask is imposed.
       */
-      bool const hasMask() const;
+      bool hasMask() const;
 
       /**
       * Return true if this iterator imposes an external field on any
       * monomer species, returns false if no external field is present.
       */
-      bool const hasExternalField() const;
+      bool hasExternalField() const;
 
    protected:
 
@@ -246,30 +246,6 @@ namespace Pscf {
       void updateBasis(RingBuffer<T> & basis, 
                        RingBuffer<T> const & hists) = 0;
 
-      #if 0
-      /**
-      * Compute one element of the U matrix.
-      * 
-      * \param resBasis RingBuffer storing residual basis vectors.
-      * \param m row index for U matrix
-      * \param n column index of the U matrix
-      */
-      virtual 
-      double computeUDotProd(RingBuffer<T> const & resBasis, 
-                             int m, int n) = 0;
-      
-      /**
-      * Compute one element of the v vector.
-      * 
-      * \param resCurrent  current residual vector 
-      * \param resBasis RingBuffer of past residual basis vectors.
-      * \param m row index of element of v vector
-      */
-      virtual 
-      double computeVDotProd(T const & resCurrent, 
-                             RingBuffer<T> const & resBasis, int m) = 0;
-      #endif
-      
       /**
       * Update the U matrix.
       * 
@@ -381,8 +357,8 @@ namespace Pscf {
 
    // Store the external fields imposed on each monomer species
    template <typename Iterator, typename T>
-   inline 
-   void AmIteratorTmpl<Iterator,T>::setExternalFields(DArray<T> const & fields)
+   inline void 
+   AmIteratorTmpl<Iterator,T>::setExternalFields(DArray<T> const & fields)
    {  
       externalFields_ = fields; // copy fields into externalFields_
       hasExternalField_ = true;
@@ -408,12 +384,12 @@ namespace Pscf {
 
    // Does this iterator have a mask?
    template <typename Iterator, typename T>
-   inline bool const AmIteratorTmpl<Iterator,T>::hasMask() const
+   inline bool AmIteratorTmpl<Iterator,T>::hasMask() const
    {  return hasMask_; }
 
    // Does this iterator have any external field?
    template <typename Iterator, typename T>
-   inline bool const AmIteratorTmpl<Iterator,T>::hasExternalField() const
+   inline bool AmIteratorTmpl<Iterator,T>::hasExternalField() const
    {  return hasExternalField_; }
 
 }

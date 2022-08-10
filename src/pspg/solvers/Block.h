@@ -18,12 +18,13 @@
 #include <pscf/crystal/UnitCell.h>
 #include <pspg/solvers/WaveList.h>
 
-namespace Pscf { 
-   template <int D> class Mesh; 
-}
 
 namespace Pscf { 
+
+   template <int D> class Mesh; 
+
 namespace Pspg { 
+
 
    using namespace Util;
 
@@ -182,43 +183,46 @@ namespace Pspg {
 
    private:
 
-      // Number of blocks and threads per block, set in setDiscretization
+      /// Number of GPU blocks, set in setDiscretization.
       int nBlocks_;
+
+      /// Number of GPU threads per block, set in setDiscretization.
       int nThreads_;
 
-      // Fourier transform plan
+      /// Fourier transform plan.
       FFT<D> fft_;
 
+      /// Batched FFT, used in computeStress.
       FFTBatched<D> fftBatched_;
       
-      /// Stress exerted by a polymer chain of a block.
+      /// Stress conntribution from this block.
       FArray<double, 6> stress_;
       
-      // Array of elements containing exp(-K^2 b^2 ds/6)
+      // Array of elements containing exp(-K^2 b^2 ds/6) on k-grid.
       RDField<D> expKsq_;
       
-      // Array of elements containing exp(-K^2 b^2 ds/12)
+      // Array of elements containing exp(-K^2 b^2 ds/12) on k-grid.
       RDField<D> expKsq2_;
 
-      // Array of elements containing exp(-W[i] ds/2)
+      // Array of elements containing exp(-W[i] ds/2) on r-grid.
       RDField<D> expW_;
 
-      // Array of elements containing exp(-W[i] ds/4)
+      // Array of elements containing exp(-W[i] ds/4) on r-grid.
       RDField<D> expW2_; 
 
-      // Work array for real-space field.
+      // Work arrays for r-grid field.
       RDField<D> qr_;
-
       RDField<D> qr2_;
 
-      // Work array for wavevector space field.
+      // Work arrays for wavevector space (k-grid) field.
       RDFieldDft<D> qk_;
-
       RDFieldDft<D> qk2_;
 
+      // Batched FFTs of q
       cudaComplex* qkBatched_;
       cudaComplex* qk2Batched_;
 
+      // Propagators on r-grid
       RDField<D> q1_;
       RDField<D> q2_;
 
@@ -240,12 +244,13 @@ namespace Pspg {
       /// Dimensions of wavevector mesh in real-to-complex transform
       IntVec<D> kMeshDimensions_;
 
+      /// Number of wavevectors in discrete Fourier transform (DFT) k-grid
       int kSize_;
 
       /// Contour length step size.
       double ds_;
 
-      /// Number of contour length steps = # grid points - 1.
+      /// Number of contour length steps = # s nodes - 1.
       int ns_;
 
       /// Have arrays been allocated in setDiscretization ?
@@ -254,15 +259,15 @@ namespace Pspg {
       /// Are expKsq_ arrays up to date ? (initialize false)
       bool hasExpKsq_;
 
-      /** 
-      * Access associated UnitCell<D> as reference.
-      */  
+      /// Get associated UnitCell<D> as const reference.
       UnitCell<D> const & unitCell() const 
       {  return *unitCellPtr_; }
 
+      /// Get the Wavelist as const reference
       WaveList<D> const & wavelist() const 
       {  return *waveListPtr_; }
 
+      /// Number of unit cell parameters
       int nParams_;
 
       /**

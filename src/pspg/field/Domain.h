@@ -90,37 +90,37 @@ namespace Pspg
       //@{
 
       /**
-      * Get UnitCell (i.e., lattice type and parameters) by reference.
+      * Get UnitCell by reference.
       */
       UnitCell<D>& unitCell();
 
       /**
-      * Get UnitCell (i.e., lattice type and parameters) by reference.
+      * Get UnitCell by const reference.
       */
       UnitCell<D> const & unitCell() const;
 
       /**
-      * Get spatial discretization mesh by reference.
+      * Get the spatial Mesh by reference.
       */
       Mesh<D>& mesh();
 
       /**
-      * Get spatial discretization mesh by const reference.
+      * Get the spatial Mesh by const reference.
       */
       Mesh<D> const & mesh() const;
 
       /**
-      * Get associated Basis object by reference.
+      * Get the Basis by reference.
       */
       Basis<D>& basis();
 
       /**
-      * Get associated Basis object by const reference.
+      * Get the Basis by const reference.
       */
       Basis<D> const & basis() const ;
 
       /**
-      * Get associated FFT object.
+      * Get the FFT object by reference.
       */
       FFT<D>& fft();
 
