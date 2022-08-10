@@ -569,7 +569,7 @@ namespace Pspg
       *
       * Indexed by monomer typeId, size = nMonomer.
       */
-      DArray<RDField<D> > wFields_;
+      DArray< DArray<double> > wFields_;
 
       /**
       * Array of chemical potential fields for monomer types.
@@ -803,13 +803,13 @@ namespace Pspg
    // Get all monomer chemical potential (w field), in a basis.
    template <int D>
    inline
-   DArray<RDField<D> >& System<D>::wFields()
+   DArray< DArray<double> >& System<D>::wFields()
    {  return wFields_; }
 
    // Get a single monomer chemical potential (w field), in a basis.
    template <int D>
    inline
-   RDField<D>& System<D>::wField(int id)
+   DArray<double>& System<D>::wField(int id)
    {  return wFields_[id]; }
 
    // Get all monomer excess chemical potential fields, on a grid.

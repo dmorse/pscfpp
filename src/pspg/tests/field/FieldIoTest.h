@@ -69,9 +69,8 @@ public:
    }
 
    // Allocate an array of fields in symmetry adapated format
-   template <int D>
    void allocateFields(int nMonomer, int nBasis,
-                            DArray< RDField<D> >& fields)
+                       DArray< DArray<double> >& fields)
    {
       fields.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {   
@@ -103,7 +102,7 @@ public:
 
    template <int D>
    void readFieldsBasis(std::string filename, Domain<D>& domain,
-                   DArray< RDField<D> >& fields)
+                   DArray< DArray<double> >& fields)
    {
       std::ifstream in;
       openInputFile(filename, in);
@@ -185,7 +184,7 @@ public:
          }
       }
 
-      DArray< RDField<3> > fb;
+      DArray< DArray<double> > fb;
       allocateFields(nMonomer_, domain.basis().nBasis(), fb);
 
       DArray< RDField<3> >  fr;
@@ -204,10 +203,10 @@ public:
 
       int nBasis = domain.basis().nBasis();
 
-      DArray< RDField<3> > d_bf_0;
+      DArray< DArray<double> > d_bf_0;
       allocateFields(nMonomer_, nBasis, d_bf_0);      
 
-      DArray< RDField<3> > d_bf_1;
+      DArray< DArray<double> > d_bf_1;
       allocateFields(nMonomer_, nBasis, d_bf_1);
 
       std::ifstream in;
@@ -226,8 +225,8 @@ public:
 
       // Create arrays for comparison
       DArray<DField<cudaReal>> bf_0, bf_1;
-      RDFieldToDField(bf_0,d_bf_0);
-      RDFieldToDField(bf_1,d_bf_1);
+      RDFieldToDField(bf_0, d_bf_0);
+      RDFieldToDField(bf_1, d_bf_1);
 
       // Perform comparison
       BFieldComparison comparison;
@@ -309,9 +308,9 @@ public:
 
       int nBasis = domain.basis().nBasis();
 
-      DArray< RDField<3> > d_bf_0;
+      DArray< DArray<double> > d_bf_0;
       allocateFields(nMonomer_, nBasis, d_bf_0);
-      DArray< RDField<3> > d_bf_1;
+      DArray< DArray<double> > d_bf_1;
       allocateFields(nMonomer_, nBasis, d_bf_1);
       DArray< RDFieldDft<3> > d_kf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_0);
@@ -352,9 +351,9 @@ public:
 
       int nBasis = domain.basis().nBasis();
 
-      DArray< RDField<3> > d_bf_0;
+      DArray< DArray<double> > d_bf_0;
       allocateFields(nMonomer_, nBasis, d_bf_0);
-      DArray< RDField<3> > d_bf_1;
+      DArray< DArray<double> > d_bf_1;
       allocateFields(nMonomer_, nBasis, d_bf_1);
       DArray< RDField<3> > d_rf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_rf_0);
@@ -395,9 +394,9 @@ public:
 
       int nBasis = domain.basis().nBasis();
 
-      DArray< RDField<3> > d_bf_0;
+      DArray< DArray<double> > d_bf_0;
       allocateFields(nMonomer_, nBasis, d_bf_0);
-      DArray< RDField<3> > d_bf_1;
+      DArray< DArray<double> > d_bf_1;
       allocateFields(nMonomer_, nBasis, d_bf_1);
       DArray< RDFieldDft<3> > d_kf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_0);
@@ -438,9 +437,9 @@ public:
 
       int nBasis = domain.basis().nBasis();
 
-      DArray< RDField<3> > d_bf_0;
+      DArray< DArray<double> > d_bf_0;
       allocateFields(nMonomer_, nBasis, d_bf_0);
-      DArray< RDField<3> > d_bf_1;
+      DArray< DArray<double> > d_bf_1;
       allocateFields(nMonomer_, nBasis, d_bf_1);
       DArray< RDFieldDft<3> > d_kf_0;
       allocateFields(nMonomer_, domain.mesh().dimensions(), d_kf_0);
@@ -450,7 +449,7 @@ public:
       domain.fieldIo().convertKGridToBasis(d_kf_0, d_bf_1);
 
       // Create arrays for comparison
-      DArray<DField<cudaReal>> bf_0, bf_1;
+      DArray< DArray<double> > bf_0, bf_1;
       RDFieldToDField(bf_0,d_bf_0);
       RDFieldToDField(bf_1,d_bf_1);
 
@@ -479,7 +478,7 @@ public:
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
-      DArray< RDField<3> > d_bf_0;
+      DArray< DArray<double> > d_bf_0;
       allocateFields(nMonomer_, domain.basis().nBasis(), d_bf_0);
 
       DArray< RDFieldDft<3> > d_kf_0;
@@ -513,7 +512,7 @@ public:
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_altG.rf", domain);
 
-      DArray< RDField<3> > d_bf_0;
+      DArray< DArray<double> > d_bf_0;
       allocateFields(nMonomer_, domain.basis().nBasis(), d_bf_0);
 
       DArray< RDFieldDft<3> > d_kf_0;
@@ -547,7 +546,7 @@ public:
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_lam.rf", domain);
 
-      DArray< RDField<1> > d_bf_0;
+      DArray< DArray<double> > d_bf_0;
       allocateFields(nMonomer_, domain.basis().nBasis(), d_bf_0);
 
       DArray< RDFieldDft<1> > d_kf_0;
@@ -581,10 +580,10 @@ public:
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
 
-      DArray< RDField<3> > d_bf_0;
+      DArray< DArray<double> > d_bf_0;
       allocateFields(nMonomer_, domain.basis().nBasis(), d_bf_0);
 
-      DArray< RDField<3> > d_bf_1;
+      DArray< DArray<double> > d_bf_1;
       allocateFields(nMonomer_, domain.basis().nBasis(), d_bf_1);
 
       DArray< RDFieldDft<3> > d_kf_0;
@@ -634,10 +633,10 @@ public:
       domain.setFileMaster(fileMaster_);
       readHeader("in/c_c15_1.rf", domain);
 
-      DArray< RDField<3> > d_bf_0;
+      DArray< DArray<double> > d_bf_0;
       allocateFields(nMonomer_, domain.basis().nBasis(), d_bf_0);
 
-      DArray< RDField<3> > d_bf_1;
+      DArray< DArray<double> > d_bf_1;
       allocateFields(nMonomer_, domain.basis().nBasis(), d_bf_1);
 
       DArray< RDFieldDft<3> > d_kf_0;
@@ -700,6 +699,26 @@ public:
 
    }
 
+   template <int D>
+   void RDFieldToDArray(DArray< DArray<double> > & out, DArray<RDField<D>> const & in)
+   {
+      // if not allocated, allocate
+      int nField = in.capacity();
+      int nPoint = in[0].capacity();
+      if (!out.isAllocated()) {
+         out.allocate(nField);
+         for (int i = 0; i < nField; i++) {
+            out[i].allocate(nPoint);
+         }
+      }
+
+      // Copy
+      for (int i = 0; i < nField; i++) {
+         cudaMemcpy(out[i].get(), in[i].cDField(), 
+                    nPoint*sizeof(cudaReal), cudaMemcpyDeviceToDevice);
+      }
+
+   }
    
 
 };
