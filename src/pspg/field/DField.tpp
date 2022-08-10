@@ -91,7 +91,9 @@ namespace Pspg
       }
 
       allocate(other.capacity_);
-      cudaMemcpy(data_, other.cDField(), capacity_ * sizeof(Data), cudaMemcpyDeviceToDevice);
+      cudaMemcpy(data_, other.cDField(), 
+                 capacity_ * sizeof(Data), cudaMemcpyDeviceToDevice);
+
    }
 
    /*

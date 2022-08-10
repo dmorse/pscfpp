@@ -9,10 +9,9 @@
 */
 
 #include "DField.h"
+#include <pspg/math/GpuResources.h>
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
-#include <pspg/math/GpuResources.h>
-
 #include <cufft.h>
 
 namespace Pscf {
@@ -23,7 +22,11 @@ namespace Pspg
    using namespace Pscf;
 
    /**
-   * Fourier transform of a real field on an FFT mesh.
+   * Discrete Fourier Transform (DFT) of a real field on an FFT mesh.
+   *
+   * The DFT is stored internally as a C array of cudaComplex elements 
+   * located in global GPU memory. All member functions are C++ functions 
+   * that can be called from the host CPU. 
    *
    * \ingroup Pspg_Field_Module
    */
