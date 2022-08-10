@@ -41,7 +41,7 @@ namespace Pspg {
 
    template <int D>
    void AmIteratorOld<D>::readParameters(std::istream& in)
-   {   
+   {
       isFlexible_ = 0;
       errorType_ = "normResid"; // default type of error
       read(in, "maxItr", maxItr_);
@@ -82,7 +82,7 @@ namespace Pspg {
           dArrays_[i].allocate(system().mesh().size());
           tempDev[i].allocate(system().mesh().size());
       }
-      
+
       histMat_.allocate(maxHist_ + 1);
       //allocate d_temp_ here i suppose
       cudaMalloc((void**)&d_temp_, NUMBER_OF_BLOCKS * sizeof(cudaReal));
@@ -92,7 +92,7 @@ namespace Pspg {
    template <int D>
    int AmIteratorOld<D>::solve()
    {
-      
+
       // Define Timer objects
       Timer solverTimer;
       Timer stressTimer;
@@ -127,7 +127,7 @@ namespace Pspg {
       int itr;
       for (itr = 1; itr <= maxItr_; ++itr) {
          updateTimer.start(now);
-        
+
          Log::file() << "---------------------" << std::endl;
          Log::file() << " Iteration  " << itr << std::endl;
          if (itr <= maxHist_) {
@@ -172,7 +172,7 @@ namespace Pspg {
                         << updateTime/totalTime << "\n";
             Log::file() << "total time   = "  << totalTime   << " s  ";
             Log::file() << "\n\n";
-           
+
             if (isFlexible_) {
                Log::file() << "\n";
                Log::file() << "Final stress values:" << "\n";
@@ -230,7 +230,7 @@ namespace Pspg {
                                           system().cFieldsRGrid());
             now = Timer::now();
             solverTimer.stop(now);
-     
+
             if (isFlexible_) {
                stressTimer.start(now);
                system().mixture().computeStress(system().wavelist());
@@ -245,9 +245,9 @@ namespace Pspg {
                now = Timer::now();
                stressTimer.stop(now);
             }
-            
+
          }
-         
+
       }
 
       if (itr > maxHist_ + 1) {
@@ -255,7 +255,7 @@ namespace Pspg {
          coeffs_.deallocate();
          vM_.deallocate();
       }
- 
+
       // Failure: Not converged after maxItr iterations.
       return 1;
    }
@@ -287,10 +287,10 @@ namespace Pspg {
       for (int i = 0; i < system().mixture().nMonomer(); ++i) {
          assignUniformReal <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (tempDev[i].cDField(), 0, size);
       }
-      
+
       for (int i = 0; i < system().mixture().nMonomer(); ++i) {
          for (int j = 0; j < system().mixture().nMonomer(); ++j) {
-            pointWiseAddScale <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> 
+            pointWiseAddScale <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>>
                (tempDev[i].cDField(),
                 system().cFieldRGrid(j).cDField(),
                 system().interaction().chi(i, j),
@@ -299,18 +299,18 @@ namespace Pspg {
             pointWiseAddScale <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (tempDev[i].cDField(),
                                                                             system().wFieldRGrid(j).cDField(),
                                                                             -system().interaction().idemp(i, j),
-                                                                            size); 
+                                                                            size);
 
          }
-         
+
       }
 
       float sum_chi_inv = (float) system().interaction().sum_inv();
 
       for (int i = 0; i < system().mixture().nMonomer(); ++i) {
-         
+
          pointWiseSubtractFloat <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (tempDev[i].cDField(),
-                                                                             1/sum_chi_inv, 
+                                                                             1/sum_chi_inv,
                                                                              size);
       }
 
@@ -336,7 +336,7 @@ namespace Pspg {
       double matsenError;
       double dError = 0;
       double wError = 0;
-      
+
       for (int i = 0; i < nMonomer; ++i) {
          dError += gpuInnerProduct(d_resHists_[0][i].cDField(), d_resHists_[0][i].cDField(), size);
          wError += gpuInnerProduct(system().wFieldRGrid(i).cDField(), system().wFieldRGrid(i).cDField(), size);
@@ -354,7 +354,7 @@ namespace Pspg {
       matsenError = sqrt(dError / wError);
       Log::file() << "  Error :" << Dbl(matsenError) << '\n';
 
-      // Find max residuals. 
+      // Find max residuals.
       cudaReal* tempRes = new cudaReal[nMonomer*size + nParameter];
       double maxSCF=0.0, maxStress=0.0, maxRes=0.0;
       for (int i = 0; i < nMonomer; i++ ) {
@@ -362,7 +362,7 @@ namespace Pspg {
       }
 
       for (int i = 0; i < nMonomer*size; i++ ) {
-         if (fabs(tempRes[i] > maxSCF)) maxSCF = tempRes[i]; 
+         if (fabs(tempRes[i] > maxSCF)) maxSCF = tempRes[i];
       }
       maxRes = maxSCF;
       Log::file() << "  Max SCF Residual :" << Dbl(maxRes) << '\n';
@@ -371,22 +371,20 @@ namespace Pspg {
          for (int i = 0; i < nParameter; i++ ) {
             if (fabs(devCpHists_[0][i]) > maxStress) maxStress = devCpHists_[0][i];
          }
-         // compare SCF and stress residuals 
+         // Compare SCF and stress residuals
          if (maxStress*10 > maxRes) maxRes = maxStress;
          Log::file() << "  Max Stress Residual :" << Dbl(maxStress*10) << '\n';
       }
-            
-      // return convergence boolean for chosen error type
+
+      // Return convergence boolean for chosen error type
       if (errorType_ == "normResid") {
          return matsenError < epsilon_;
       } else if (errorType_ == "maxResid") {
          return maxRes < epsilon_;
       } else {
          UTIL_THROW("Invalid iterator error type in parameter file.");
-         return false;
       }
 
-            
    }
 
    template <int D>
@@ -423,12 +421,12 @@ namespace Pspg {
                if (isFlexible_) {
                   elm_cp = 0;
                   for (int m = 0; m < system().unitCell().nParameter(); ++m){
-                     elm_cp += ((devCpHists_[0][m] - devCpHists_[i+1][m]) * 
-                                (devCpHists_[0][m] - devCpHists_[j+1][m])); 
+                     elm_cp += ((devCpHists_[0][m] - devCpHists_[i+1][m]) *
+                                (devCpHists_[0][m] - devCpHists_[j+1][m]));
                   }
                   invertMatrix_(i,j) += elm_cp;
-               } 
-               
+               }
+
                invertMatrix_(j, i) = invertMatrix_(i, j);
             }
          }
@@ -494,7 +492,7 @@ namespace Pspg {
             for (int m = 0; m < (system().unitCell()).nParameter() ; ++m){
                cellParameters_.append(CpHists_[0][m] +lambda_* devCpHists_[0][m]);
             }
-            system().unitCell().setParameters(cellParameters_);            
+            system().unitCell().setParameters(cellParameters_);
             system().mixture().setupUnitCell(system().unitCell(), system().wavelist());
             system().wavelist().computedKSq(system().unitCell());
          }
@@ -526,7 +524,7 @@ namespace Pspg {
                   tempDev[0].cDField(), coeffs_[i], size);
             }
          }
-         
+
          for (int i = 0; i < system().mixture().nMonomer(); ++i) {
             assignReal <<< NUMBER_OF_BLOCKS, THREADS_PER_BLOCK >>> (system().wFieldRGrid(i).cDField(),
                wArrays_[i].cDField(), size);
@@ -535,7 +533,7 @@ namespace Pspg {
          }
 
          if (isFlexible_) {
-            
+
             for (int m = 0; m < system().unitCell().nParameter() ; ++m){
                wCpArrays_[m] = CpHists_[0][m];
                dCpArrays_[m] = devCpHists_[0][m];
@@ -547,17 +545,17 @@ namespace Pspg {
                   dCpArrays_[m] += coeffs_[i] * ( devCpHists_[i+1][m]-
                                                   devCpHists_[0][m]);
                }
-            } 
+            }
 
             cellParameters_.clear();
-            for (int m = 0; m < system().unitCell().nParameter() ; ++m){               
+            for (int m = 0; m < system().unitCell().nParameter() ; ++m){
                cellParameters_.append(wCpArrays_[m] + lambda_* dCpArrays_[m]);
             }
-            
-            system().unitCell().setParameters(cellParameters_);            
+
+            system().unitCell().setParameters(cellParameters_);
             system().mixture().setupUnitCell(system().unitCell(), system().wavelist());
             system().wavelist().computedKSq(system().unitCell());
-            
+
          }
 
 

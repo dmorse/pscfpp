@@ -23,6 +23,8 @@ using namespace Util;
 namespace Pscf {
 namespace Pspg {
 
+   // CUDA kernels (only used in this file)
+
    static __global__ 
    void mulDelKsq(cudaReal* result, const cudaComplex* q1,
                   const cudaComplex* q2, const cudaReal* delKsq,
@@ -128,6 +130,8 @@ namespace Pspg {
       }
 
    }
+
+   // Block<D> member functions
 
    /*
    * Constructor.

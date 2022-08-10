@@ -18,49 +18,93 @@
 #include <util/containers/GArray.h>
 #include <util/containers/DMatrix.h>
 
-namespace Pscf { 
+namespace Pscf {
 namespace Pspg
-{ 
+{
 
    using namespace Util;
 
+   /**
+   * Container for wavevector data.
+   */
    template <int D>
    class WaveList{
    public:
-      
+
+      /**
+      *
+      */
       WaveList();
+
+      /**
+      *
+      */
       ~WaveList();
 
-      // Allocate memory for all arrays. Call in readParameters.
+      /**
+      * Allocate memory for all arrays. Call in readParameters.
+      */
       void allocate(Mesh<D>& mesh, UnitCell<D>& unitCell);
-         
-      // Compute minimum images - only done once, at beginning,
-      // using mesh and the initial unit cell. This can also be
-      // called in the readParameters function.
+
+      /**
+      * Compute minimum images of wavevectors.
+      *
+      * This is only done once, at beginning, using mesh and the initial 
+      * unit cell. This can also be called in the readParameters function.
+      *
+      * \param mesh  spatial discretization Mesh<D> object
+      * \param unitCell  crystallographic UnitCell<D> object
+      */
       void computeMinimumImages(Mesh<D>& mesh, UnitCell<D>& unitCell);
 
-      // These are called once per iteration with unit cell relaxation
-      // Implementation can copy geometric data (rBasis, kBasis, etc.)
-      // into local data structures and implement the actual calculation
-      // of kSq or dKSq for each wavevector on the GPU. 
-      
+      /**
+      * Compute square norm |k|^2 for all wavevectors.
+      *
+      * Called once per iteration with unit cell relaxation.
+      * Implementation can copy geometric data (rBasis, kBasis, etc.)
+      * into local data structures and implement the actual calculation
+      * of kSq or dKSq for each wavevector on the GPU.
+      *
+      * \param unitCell crystallographic UnitCell<D>
+      */
       void computeKSq(const UnitCell<D>& unitCell);
+
+      /**
+      * Compute derivatives of |k|^2 w/ respect to unit cell parameters.
+      *
+      * Called once per iteration with unit cell relaxation.
+      *
+      * \param unitCell crystallographic UnitCell<D>
+      */
       void computedKSq(const UnitCell<D>& unitCell);
 
-      // Accessors: Return pointer to arrays, which are allocated in 
-      // the allocate function(). I assume this is the form needed
-      // to allow fast use in GPU kernels. 
-      
+      /**
+      * Get the minimum image vector for a specified wavevector.
+      *
+      * \param i index for wavevector
+      */
       const IntVec<D>& minImage(int i) const;
+
+      /**
+      * Get a pointer to the kSq array on device.
+      */
       cudaReal* kSq() const;
+
+      /**
+      * Get a pointer to the dkSq array on device.
+      */
       cudaReal* dkSq() const;
+
+      /**
+      * Get size of k-grid (number of wavewavectors).
+      */
       int kSize() const;
 
    private:
 
       // Bare C array holding precomputed minimum images
-      //int* minImage_;
       int* minImage_d;
+
       // Bare C array holding values of kSq_
       cudaReal*  kSq_;
 
@@ -87,19 +131,20 @@ namespace Pspg
       DArray< IntVec<D> > minImage_;
 
       bool deviceIsAllocated_;
+
    };
 
    template <int D>
    inline const IntVec<D>& WaveList<D>::minImage(int i) const
-   { return minImage_[i]; }
+   {  return minImage_[i]; }
 
    template <int D>
    inline cudaReal* WaveList<D>::kSq() const
-   { return kSq_; }
+   {  return kSq_; }
 
    template <int D>
    inline cudaReal* WaveList<D>::dkSq() const
-   { return dkSq_; }
+   {  return dkSq_; }
 
    template <int D>
    inline int WaveList<D>::kSize() const

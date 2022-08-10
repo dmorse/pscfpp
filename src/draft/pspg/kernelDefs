@@ -7,13 +7,6 @@ field/FFTBatched.tpp:
 
 solvers/Block.tpp:
 
-   pointwiseMul             ->  unused
-   pointwiseFloatMul        ->  unused
-   equalize                 ->  unused
-   pointwiseMulUnroll2      ->  unused
-   pointwiseMulCombi        ->  unused
-   richardsonExp            ->  unused
-
    mulDelKsq                -> used locally
    pointwiseMulSameStart    -> used locally
    pointwiseMulTwinned      -> used locally
@@ -25,12 +18,6 @@ solvers/Block.tpp:
 solvers/WaveList.tpp:
    makeDksqHelperWave
    makeDksqReduction
-
-math/Helpers.cu:
-   helmholtzHelper          -> (unused)
-   reformField              -> (unused)
-   mcftsStepHelper          -> (unused)
-   mcftsScale               -> (unused)
 
 math/LinearAlgebra.cu:
    subtractUniform          -> AmIterator, AmIteratorOld
