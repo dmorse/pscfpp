@@ -256,7 +256,7 @@ namespace Pscf {
       *       }
       *
       *       Initialize a Star object named newStar, assign values
-      *       to members beginId, endId, size, eigen, cancel
+      *       to members beginId, endId, size, cancel
       *
       *       // Assign values of newStar.invertFlag, rootItr, nextInvert
       *       if (nextInvert == -1) { 
@@ -518,7 +518,7 @@ namespace Pscf {
                }
 
                // Initialize a Star object 
-               newStar.eigen = Gsq;
+               // newStar.eigen = Gsq;
                newStar.beginId = starBegin;
                newStar.endId = newStar.beginId + star.size();
                newStar.size = star.size();
@@ -867,29 +867,6 @@ namespace Pscf {
 
    }
 
- 
-   /*
-   *  Update wave norms after change in unit cell dimensions.
-   */
-   template <int D>
-   void Basis<D>::update()
-   {
-      IntVec<D> vec;
-
-      // Process stars
-      for (int i = 0; i < nStar_; ++i) {
-         vec = stars_[i].waveBz;
-         stars_[i].eigen = unitCell().ksq(vec);
-      }
-
-      // Process waves
-      for (int i = 0; i < nWave_; ++i) {
-         vec = waves_[i].indicesBz;
-         waves_[i].sqNorm = unitCell().ksq(vec);
-      }
-
-   }
-
    // Return value of nBasis
    template <int D>
    int Basis<D>::nBasis() const
@@ -911,11 +888,6 @@ namespace Pscf {
          starId = waves_[i].starId;
          if (outputAll || (!stars_[starId].cancel)) {
             out << Int(k, 8);
-            // out << " |";
-            // for (j = 0; j < D; ++j) {
-            //   out << Int(waves_[i].indicesDft[j], 4);
-            // }
-            // out << " |";
             for (j = 0; j < D; ++j) {
                out << Int(waves_[i].indicesBz[j], 5);
             }
@@ -923,7 +895,7 @@ namespace Pscf {
             out << Int(waves_[i].starId, 6);
             out << "  " << Dbl(waves_[i].coeff.real(), 15);
             out << "  " << Dbl(waves_[i].coeff.imag(), 15);
-            out << Dbl(waves_[i].sqNorm, 20);
+            //out << Dbl(waves_[i].sqNorm, 20);
             out << std::endl;
             k++;
          }
@@ -956,12 +928,10 @@ namespace Pscf {
             if (outputAll) {
                out << Int(stars_[i].cancel, 4);
             }
-            //out << " |";
             for (j = 0; j < D; ++j) {
                out << Int(stars_[i].waveBz[j], 6);
             }
-            //out << " | " 
-            out << Dbl(stars_[i].eigen, 15);
+            //out << Dbl(stars_[i].eigen, 15);
             out << std::endl;
             ++k;
          }

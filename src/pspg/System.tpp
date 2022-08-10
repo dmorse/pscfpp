@@ -729,7 +729,6 @@ namespace Pspg
       domain_.unitCell() = unitCell;
       mixture_.setupUnitCell(unitCell, wavelist());
       wavelist().computedKSq(domain_.unitCell());
-      // domain_.basis().update();
    }
 
    /*
@@ -742,7 +741,6 @@ namespace Pspg
       domain_.unitCell().setParameters(parameters);
       mixture_.setupUnitCell(domain_.unitCell(), wavelist());
       wavelist().computedKSq(domain_.unitCell());
-      // domain_.basis().update();
    }
 
    /*
@@ -753,7 +751,6 @@ namespace Pspg
    {
       fieldIo().readFieldsBasis(filename, wFields(), domain_.unitCell());
       fieldIo().convertBasisToRGrid(wFields(), wFieldsRGrid());
-      domain_.basis().update();
       hasWFields_ = true;
       hasCFields_ = false;
    }
