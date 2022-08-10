@@ -21,6 +21,7 @@
 
 #include <util/misc/FileMaster.h>          // member
 #include <util/containers/DArray.h>        // member template
+#include <util/containers/FSArray.h>       // member template
 
 namespace Pscf {
 
@@ -157,6 +158,24 @@ namespace Pspg
       double pressure() const;
 
       //@}
+      /// \name UnitCell setter functions
+      ///@{
+
+      /**
+      * Set parameters of the associated unit cell.
+      *
+      * \param unitCell  new UnitCell<D> (i.e., new parameters)
+      */
+      void setUnitCell(UnitCell<D> const & unitCell);
+
+      /**
+      * Set parameters of the associated unit cell.
+      *
+      * \param parameters  array of new unit cell parameters.
+      */
+      void setUnitCell(FSArray<double, 6> const & parameters);
+
+      ///@}
       /// \name Chemical Potential Fields (W Fields)
       //@{
 

@@ -720,6 +720,32 @@ namespace Pspg
    }
 
    /*
+   * Set parameters of the associated unit cell.
+   */
+   template <int D>
+   void System<D>::setUnitCell(UnitCell<D> const & unitCell)
+   {
+      UTIL_CHECK(domain_.unitCell().lattice() == unitCell.lattice());
+      domain_.unitCell() = unitCell;
+      mixture_.setupUnitCell(unitCell, wavelist());
+      wavelist().computedKSq(domain_.unitCell());
+      // domain_.basis().update();
+   }
+
+   /*
+   * Set parameters of the associated unit cell.
+   */
+   template <int D>
+   void System<D>::setUnitCell(FSArray<double, 6> const & parameters)
+   {
+      UTIL_CHECK(domain_.unitCell().nParameter() == parameters.size());
+      domain_.unitCell().setParameters(parameters);
+      mixture_.setupUnitCell(domain_.unitCell(), wavelist());
+      wavelist().computedKSq(domain_.unitCell());
+      // domain_.basis().update();
+   }
+
+   /*
    * Read w-field in symmetry adapted basis format.
    */
    template <int D>
