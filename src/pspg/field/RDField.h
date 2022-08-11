@@ -25,7 +25,7 @@ namespace Pspg
    /**
    * Field of real single precision values on an FFT mesh on a device.
    *
-   * cudaReal = float
+   * cudaReal = float or double, depending on preprocessor macro.
    *
    * \ingroup Pspg_Field_Module 
    */
@@ -45,7 +45,6 @@ namespace Pspg
       *
       * Allocates new memory and copies all elements by value.
       *
-      *uses memcpy! slow!
       *\param other the RField to be copied.
       */
       RDField(const RDField& other);
@@ -65,7 +64,6 @@ namespace Pspg
       * If this and the other Field are both allocated, the capacities must
       * be exactly equal. If so, this method copies all elements.
       * 
-      * uses memcpy! slow!
       * \param other the RHS RField
       */
       RDField& operator = (const RDField& other);
@@ -75,7 +73,7 @@ namespace Pspg
       *
       * \throw Exception if the RField is already allocated.
       *
-      * \param meshDimensions vector containing number of grid points in each direction
+      * \param meshDimensions number of grid points in each direction
       */
       void allocate(const IntVec<D>& meshDimensions);
 
@@ -86,7 +84,7 @@ namespace Pspg
 
       /**
       * Serialize a Field to/from an Archive.
-      * Temporarily uses a memcpy
+      *
       * \param ar       archive
       * \param version  archive version id
       */
@@ -95,7 +93,6 @@ namespace Pspg
 
       using DField<cudaReal>::allocate;
       using DField<cudaReal>::operator=;
-      
 
    private:
 
@@ -152,7 +149,8 @@ namespace Pspg
 
       if (isAllocated()) {
          double* tempData = new double[capacity];
-         cudaMemcpy(tempData, data_, capacity * sizeof(cudaReal), cudaMemcpyDeviceToHost);
+         cudaMemcpy(tempData, data_, capacity * sizeof(cudaReal), 
+                    cudaMemcpyDeviceToHost);
          for (int i = 0; i < capacity_; ++i) {
             ar & tempData[i];
          }

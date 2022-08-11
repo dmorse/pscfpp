@@ -731,7 +731,6 @@ namespace Pspc
    {
       fieldIo().readFieldsBasis(filename, wFields_, domain_.unitCell());
       fieldIo().convertBasisToRGrid(wFields_, wFieldsRGrid_);
-      domain_.basis().update();
       hasWFields_ = true;
       hasCFields_ = false;
    }
@@ -744,7 +743,6 @@ namespace Pspc
    {
       fieldIo().readFieldsRGrid(filename, wFieldsRGrid_, domain_.unitCell());
       fieldIo().convertRGridToBasis(wFieldsRGrid_, wFields_);
-      domain_.basis().update();
       hasWFields_ = true;
       hasCFields_ = false;
    }
@@ -1127,7 +1125,6 @@ namespace Pspc
       UTIL_CHECK(domain_.unitCell().lattice() == unitCell.lattice());
       domain_.unitCell() = unitCell;
       mixture_.setupUnitCell(unitCell);
-      domain_.basis().update();
    }
 
    /*
@@ -1139,7 +1136,6 @@ namespace Pspc
       UTIL_CHECK(domain_.unitCell().nParameter() == parameters.size());
       domain_.unitCell().setParameters(parameters);
       mixture_.setupUnitCell(domain_.unitCell());
-      domain_.basis().update();
    }
 
 } // namespace Pspc

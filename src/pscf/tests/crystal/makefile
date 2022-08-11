@@ -15,7 +15,10 @@ includes:
 	echo $(INCLUDES)
 
 run: $(pscf_tests_crystal_OBJS) $(BLD_DIR)/$(TEST)
-	$(BLD_DIR)/$(TEST) $(SRC_DIR)/pscf/tests/ > log
+	$(BLD_DIR)/$(TEST) $(SRC_DIR)/pscf/tests/crystal/
+
+run-quiet: $(pscf_tests_crystal_OBJS) $(BLD_DIR)/$(TEST)
+	@$(BLD_DIR)/$(TEST) $(SRC_DIR)/pscf/tests/crystal/ > log
 	@echo `grep failed log` ", "\
               `grep successful log` "in pscf/tests/log" > count
 	@cat count

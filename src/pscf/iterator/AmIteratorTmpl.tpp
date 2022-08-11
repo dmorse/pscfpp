@@ -43,10 +43,11 @@ namespace Pscf
    template <typename Iterator, typename T>
    void AmIteratorTmpl<Iterator,T>::readParameters(std::istream& in)
    {
-      errorType_ = "relNormResid"; // default type of error
       read(in, "maxItr", maxItr_);
       read(in, "epsilon", epsilon_);
       read(in, "maxHist", maxHist_);
+
+      errorType_ = "relNormResid"; // default type of error
       readOptional(in, "errorType", errorType_);
 
       if (!(errorType_ == "normResid" 
@@ -78,7 +79,7 @@ namespace Pscf
       temp_.allocate(nElem_);
       
       // Allocate arrays/matrices used in coefficient calculation
-      U_.allocate(maxHist_,maxHist_);
+      U_.allocate(maxHist_, maxHist_);
       v_.allocate(maxHist_);
       coeffs_.allocate(maxHist_);
    }
@@ -103,7 +104,6 @@ namespace Pscf
       Timer timerCoeff;
       Timer timerOmega;
       Timer timerTotal;
-      
 
       // Start overall timer 
       timerTotal.start();
@@ -118,7 +118,7 @@ namespace Pscf
       for (int itr = 0; itr < maxItr_; ++itr) {
 
 
-         // Store current field in history ringbuffer
+         // Append current field to fieldHists_ ringbuffer
          getCurrent(temp_);
          fieldHists_.append(temp_);
          
@@ -182,7 +182,8 @@ namespace Pscf
             return 0;
 
          } else {
-            // Determine optimal linear combination coefficients for 
+
+            // Compute optimal linear combination coefficients for 
             // building the updated field guess
             timerCoeff.start();
             findResidCoeff();
@@ -206,11 +207,12 @@ namespace Pscf
       // Failure: iteration counter itr reached maxItr without converging
       timerTotal.stop();
       
-      Log::file() << "Iterator failed to converge before the maximum number of iterations.\n";
+      Log::file() << "Iterator failed to converge.\n";
       cleanUp();
       return 1;
    }
 
+   // Compute residual and append to history.
    template <typename Iterator, typename T>
    void AmIteratorTmpl<Iterator,T>::computeResidual()
    {
@@ -251,6 +253,7 @@ namespace Pscf
 
    }
 
+   // Compute coefficients of basis vectors.
    template <typename Iterator, typename T>
    void AmIteratorTmpl<Iterator,T>::findResidCoeff()
    {
@@ -258,31 +261,33 @@ namespace Pscf
       // if this is the first iteration
       if (nHist_ == 0) {
          for (int m = 0; m < maxHist_; ++m) {
-            v_[m] = 0;
-            coeffs_[m] = 0;
+            v_[m] = 0.0;
+            coeffs_[m] = 0.0;
             for (int n = 0; n < maxHist_; ++n) {
-               U_(m,n) = 0;
+               U_(m, n) = 0.0;
             }
          }
          return;
       }
 
-      // Update basis vectors of residuals histories
+      // Update basis vectors spanning differences of past residual vectors
       updateBasis(resBasis_, resHists_);
 
-      // Update the U matrix and v vectors
+      // Update the U matrix and v vector.
       updateU(U_, resBasis_, nHist_);
       updateV(v_, resHists_[0], resBasis_, nHist_);
+      // Note: resHists_[0] is the current residual vector
 
-      // Solve matrix equation problem to get coefficients to minimize
-      // the norm of the residual vector
+      // Solve matrix equation problem to compute coefficients 
+      // that minmize the L2 norm of the residual vector.
       if (nHist_ == 1) {
          // Solve explicitly for coefficient
          coeffs_[0] = v_[0] / U_(0,0);
       } else
       if (nHist_ < maxHist_) { 
-         // Create temporary smaller version of U_, v_, coeffs_
-         // this is done to avoid reallocating U_ with each iteration.
+
+         // Create temporary smaller version of U_, v_, coeffs_ .
+         // This is done to avoid reallocating U_ with each iteration.
          DMatrix<double> tempU;
          DArray<double> tempv,tempcoeffs;
          tempU.allocate(nHist_,nHist_);
@@ -294,11 +299,13 @@ namespace Pscf
                tempU(i,j) = U_(i,j);
             }
          }
+
          // Solve matrix equation
          LuSolver solver;
          solver.allocate(nHist_);
          solver.computeLU(tempU);
          solver.solve(tempv,tempcoeffs);
+
          // Transfer solution to full-sized member variable
          for (int i = 0; i < nHist_; ++i) {
             coeffs_[i] = tempcoeffs[i];
@@ -319,7 +326,7 @@ namespace Pscf
    {
 
       // Contribution of the last solution
-      setEqual(fieldTrial_,fieldHists_[0]);
+      setEqual(fieldTrial_, fieldHists_[0]);
       setEqual(resTrial_, resHists_[0]);
 
       // If at least two histories
@@ -332,9 +339,9 @@ namespace Pscf
       }
 
       // Correct for predicted error
-      addPredictedError(fieldTrial_,resTrial_,lambda_);
+      addPredictedError(fieldTrial_, resTrial_,lambda_);
 
-      // Send out updated guess to the iterator mediator
+      // Update system using new trial field
       update(fieldTrial_);
       
       return;

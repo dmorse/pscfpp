@@ -12,6 +12,7 @@
 #include <pscf/crystal/UnitCell.h>
 #include <pscf/mesh/Mesh.h>
 
+#include <util/tests/LogFileUnitTest.h>
 #include <util/containers/DArray.h>
 #include <util/misc/FileMaster.h>
 
@@ -22,32 +23,16 @@ using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Pspg;
 
-class DomainTest : public UnitTest 
+class DomainTest : public LogFileUnitTest 
 {
 
-   std::ofstream logFile_;
    FileMaster fileMaster_;
    int nMonomer_;
 
 public:
 
    void setUp()
-   {
-      setVerbose(0);
-   }
-
-   void tearDown()
-   {
-      if (logFile_.is_open()) {
-         logFile_.close();
-      }
-   }
-
-   void openLogFile(char const * filename)
-   {
-      openOutputFile(filename, logFile_);
-      Log::setFile(logFile_);
-   }
+   { setVerbose(0); }
 
    /*
    * Open and read file header to initialize Domain<D> system.

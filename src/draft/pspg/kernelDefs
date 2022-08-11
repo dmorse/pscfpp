@@ -1,54 +1,39 @@
 field/FFT.tpp:
-   scaleRealData
+   scaleRealData            -> used locally 
 
 field/FFTBatched.tpp:
-   scaleComplexData
-
-field/FFTBatched.tpp:
-   scaleRealData
+   scaleRealData            -> used locally 
+   scaleComplexData         -> unused
 
 solvers/Block.tpp:
 
-   pointwiseMul            -> unused ?
-   pointwiseFloatMul       -> unused ?
-   equalize                -> unused ?
-   pointwiseMulUnroll2     -> unused ?
-   pointwiseMulCombi       -> unused ?
-   richardsonExp           -> unused ?
-
-   mulDelKsq               -> used locally
-   pointwiseMulSameStart   -> used locally
-   pointwiseMulTwinned     -> used locally
-   scaleComplexTwinned     -> used locally
-   scaleComplex            -> used locally
-   richardsonExpTwinned    -> used locally
-   multiplyScaleQQ         -> used locally
+   mulDelKsq                -> used locally
+   pointwiseMulSameStart    -> used locally
+   pointwiseMulTwinned      -> used locally
+   scaleComplexTwinned      -> used locally
+   scaleComplex             -> used locally
+   richardsonExpTwinned     -> used locally
+   multiplyScaleQQ          -> used locally
 
 solvers/WaveList.tpp:
    makeDksqHelperWave
    makeDksqReduction
 
-math/Helpers.cu:
-   helmholtzHelper         -> unused ?
-   reformField             -> unused ?
-   mcftsStepHelper         -> unused ?
-   mcftsScale              -> unused ?
-
 math/LinearAlgebra.cu:
-   subtractUniform
-   addUniform
-   pointWiseSubtract
-   pointWiseSubtractFloat
-   pointWiseBinarySubtract
-   pointWiseAdd
-   pointWiseBinaryAdd
-   pointWiseAddScale
-   inPlacePointwiseMul
-   pointWiseBinaryMultiply
-   assignUniformReal
-   assignReal
-   assignExp
-   scaleReal
+   subtractUniform          -> AmIterator, AmIteratorOld
+   addUniform               -> AmIterator
+   pointWiseSubtract        -> (unused)
+   pointWiseSubtractFloat   -> AmIteratorOld
+   pointWiseBinarySubtract  -> AmIteratorOld
+   pointWiseAdd             -> Mixture
+   pointWiseBinaryAdd       -> (unused)
+   pointWiseAddScale        -> AmIterator, AmIteratorOld
+   inPlacePointwiseMul      -> Propagator
+   pointWiseBinaryMultiply  -> (unused)
+   assignUniformReal        -> Block, Solvent, Propagator, Mixture
+   assignReal               -> Block and Propagator
+   assignExp                -> Block and Solvent
+   scaleReal                -> Block, Solvent, Propagator
 
 math/ParallelReductions.cu:
    reductionSum
@@ -58,11 +43,11 @@ math/ParallelReductions.cu:
    reductionMin
    reductionMinAbs
 
-math/kernelWrappers (these host code wrappers)
-   gpuSum
-   gpuInnerProduct
+math/kernelWrappers (these are host code wrappers)
+   gpuSum                   -> Block, Solvent
+   gpuInnerProduct          -> Propagator, AmIterator
    gpuMax
-   gpuMaxAbs
+   gpuMaxAbs                -> AmIterator
    gpuMin
    gpuMinAbs
 

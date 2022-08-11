@@ -68,12 +68,17 @@ namespace Pspg
       /**
       * Read body of parameter block (without opening and closing lines).
       *
+      * Reads unit cell, mesh dimensions and space group name.
+      *
       * \param in input parameter stream
       */
       virtual void readParameters(std::istream& in);
 
       /**
       * Read initialization data from header of an r-grid field file.
+      *  
+      * The header for an r-grid field file contains all data needed
+      * to initialize a domain, i.e., unit cell, mesh and group name.
       *
       * \param in input parameter stream
       * \param nMonomer number of monomers in field file (output)
@@ -85,37 +90,37 @@ namespace Pspg
       //@{
 
       /**
-      * Get UnitCell (i.e., lattice type and parameters) by reference.
+      * Get UnitCell by reference.
       */
       UnitCell<D>& unitCell();
 
       /**
-      * Get UnitCell (i.e., lattice type and parameters) by reference.
+      * Get UnitCell by const reference.
       */
       UnitCell<D> const & unitCell() const;
 
       /**
-      * Get spatial discretization mesh by reference.
+      * Get the spatial Mesh by reference.
       */
       Mesh<D>& mesh();
 
       /**
-      * Get spatial discretization mesh by const reference.
+      * Get the spatial Mesh by const reference.
       */
       Mesh<D> const & mesh() const;
 
       /**
-      * Get associated Basis object by reference.
+      * Get the Basis by reference.
       */
       Basis<D>& basis();
 
       /**
-      * Get associated Basis object by const reference.
+      * Get the Basis by const reference.
       */
       Basis<D> const & basis() const ;
 
       /**
-      * Get associated FFT object.
+      * Get the FFT object by reference.
       */
       FFT<D>& fft();
 

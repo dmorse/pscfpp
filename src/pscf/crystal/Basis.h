@@ -361,11 +361,6 @@ namespace Pscf {
          std::complex<double> coeff;
 
          /**
-         * Square magnitude of associated wavevector
-         */
-         double sqNorm;
-
-         /**
          * Integer indices of wave, on a discrete Fourier transform mesh.
          *
          * Components of this IntVec<D> are non-negative. Component i lies
@@ -414,12 +409,21 @@ namespace Pscf {
          */
          Wave()
           : coeff(0.0),
-            sqNorm(0.0),
             indicesDft(0),
             indicesBz(0),
             starId(0),
-            implicit(false)
+            implicit(false),
+            sqNorm(0.0)
          {}
+
+      private:
+
+         /**
+         * Square magnitude of associated wavevector
+         */
+         double sqNorm;
+
+         friend class Basis<D>;
 
       };
 
@@ -435,14 +439,6 @@ namespace Pscf {
       {
 
       public:
-
-         /**
-         * Square magnitude of any wavevector in this star.
-         *
-         * Equal to the negative of the eigenvalue of the Laplacian for
-         * the basis function associated with this star.
-         */
-         double eigen;
 
          /**
          * Number of wavevectors in this star.
@@ -539,8 +535,7 @@ namespace Pscf {
          * Default constructor.   
          */
          Star()
-          : eigen(0.0),
-            size(0),
+          : size(0),
             beginId(0),
             endId(0),
             invertFlag(0),
@@ -552,7 +547,7 @@ namespace Pscf {
 
       };
 
-      // Public member functions
+      // Public member functions of Basis<D>
 
       /**
       * Default constructor.
@@ -610,11 +605,6 @@ namespace Pscf {
                      std::string groupName);
 
       /**
-      * Update values after change in unit cell parameters.
-      */
-      void update();
-
-      /**
       * Print a list of all waves to an output stream.
       *
       * \param out output stream to which to write
@@ -665,7 +655,9 @@ namespace Pscf {
       Wave const & wave(int i) const;
 
       /** 
-      * Get a Star, accessed by integer index.
+      * Get a Star, accessed by integer star index.
+      *
+      * This function return both cancelled and un-cancelled stars.
       *
       * \int id  index for a star
       */

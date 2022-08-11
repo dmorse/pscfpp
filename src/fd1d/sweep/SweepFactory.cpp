@@ -8,6 +8,7 @@
 #include "SweepFactory.h"  
 
 // Subclasses of Sweep 
+#include "LinearSweep.h"
 #include "CompositionSweep.h"
 #include "MuSweep.h"
 #include "LengthSweep.h"
@@ -33,6 +34,9 @@ namespace Fd1d {
       if (ptr) return ptr;     
 
       // Explicit class names
+      if (className == "LinearSweep") {
+         ptr = new LinearSweep(*systemPtr_);
+      } else
       if (className == "CompositionSweep") {
          ptr = new CompositionSweep(*systemPtr_);
       } else

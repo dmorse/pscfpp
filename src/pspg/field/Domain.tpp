@@ -41,7 +41,7 @@ namespace Pspg
    template <int D>
    void Domain<D>::setFileMaster(FileMaster& fileMaster)
    {
-      fieldIo_.associate(unitCell_, mesh_, fft_, groupName_, basis_, fileMaster);
+      fieldIo_.associate(mesh_, fft_, groupName_, basis_, fileMaster);
       hasFileMaster_ = true;
    }
 

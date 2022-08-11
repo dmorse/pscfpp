@@ -30,8 +30,11 @@ namespace Pspg
    {
 
    public:
+
       /**
       * Constructor.
+      *   
+      * \param system parent system object
       */
       AmIterator(System<D>& system);
 
@@ -75,99 +78,129 @@ namespace Pspg
       /**
       * Update the series of residual vectors.
       * 
-      * \param basis RingBuffer object storing the list of residual or field basis vectors.
-      * \param hists RingBuffer object storing the histories of residual or field vectors.
+      * \param basis RingBuffer of basis vectors.
+      * \param hists RingBuffer of previous vectors.
       */
-      void updateBasis(RingBuffer<FieldCUDA> & basis, RingBuffer<FieldCUDA> const & hists);
+      void updateBasis(RingBuffer<FieldCUDA> & basis, 
+                       RingBuffer<FieldCUDA> const & hists);
 
       /**
       * Compute the dot product for an element of the U matrix.
       * 
-      * \param resBasis RingBuffer object storing the list of residual basis vectors.
+      * \param resBasis RingBuffer of residual basis vectors.
       * \param m row of the U matrix
       * \param n column of the U matrix
       */
-      double computeUDotProd(RingBuffer<FieldCUDA> const & resBasis, int m, int n);
+      double computeUDotProd(RingBuffer<FieldCUDA> const & resBasis, 
+                             int m, int n);
 
       /**
       * Compute the dot product for an element of the v vector.
       * 
-      * \param resCurrent the residual vector calculated at the present iteration step
-      * \param resBasis RingBuffer object storing the list of residual basis vectors.
-      * \param m row of the v vector
+      * \param resCurrent current residual vector
+      * \param resBasis RingBuffer of residual basis vectors
+      * \param m row index for element of the v vector
       */
-      double computeVDotProd(FieldCUDA const & resCurrent, RingBuffer<FieldCUDA> const & resBasis, int m);
+      double computeVDotProd(FieldCUDA const & resCurrent, 
+                             RingBuffer<FieldCUDA> const & resBasis, 
+                             int m);
 
       /**
-      * Compute the series of necessary dot products and update the U matrix.
+      * Update the U matrix.
       * 
-      * \param U U matrix
-      * \param resBasis RingBuffer object storing the list of residual basis vectors.
-      * \param nHist number of histories stored at this iteration
+      * \param U U matrix (dot products of residual basis vectors)
+      * \param resBasis RingBuffer residual basis vectors
+      * \param nHist current number of previous states
       */
-      void updateU(DMatrix<double> & U, RingBuffer<FieldCUDA> const & resBasis, int nHist);
+      void updateU(DMatrix<double> & U, 
+                   RingBuffer<FieldCUDA> const & resBasis, 
+                   int nHist);
 
       /**
-      * Compute the series of necessary dot products and update the v vector.
+      * Update the v vector.
       * 
       * \param v v vector
-      * \param resCurrent the residual vector calculated at the present iteration step
-      * \param resBasis RingBuffer object storing the list of residual basis vectors.
+      * \param resCurrent current residual vector 
+      * \param resBasis RingBuffer of residual basis vectors
       * \param nHist number of histories stored at this iteration
       */
-      void updateV(DArray<double> & v, FieldCUDA const & resCurrent, RingBuffer<FieldCUDA> const & resBasis, int nHist);
+      void updateV(DArray<double> & v, 
+                   FieldCUDA const & resCurrent, 
+                   RingBuffer<FieldCUDA> const & resBasis, 
+                   int nHist);
 
       /**
-      * Set a field equal to another. Essentially a = b, but potentially more complex
-      * in certain implementations of the AmIterator.
+      * Set a vector equal to another. 
       * 
-      * \param a the field to be set
-      * \param b the field for it to be set to
+      * \param a the field to be set (LHS, result)
+      * \param b the field for it to be set to (RHS, input)
       */
       void setEqual(FieldCUDA& a, FieldCUDA const & b);
 
       /**
-      * Mix histories, scaled by their respective coefficients, into the trial field.
+      * Compute trial field so as to minimize L2 norm of residual.
       * 
-      * \param trial object for calculation results to be stored in.
-      * \param basis list of history basis vectors.
-      * \param coeffs list of coefficients for each history.
-      * \param nHist number of histories stored at this iteration
+      * \param trial resulting trial field (output)
+      * \param basis RingBuffer of residual basis vectors.
+      * \param coeffs coefficients of basis vectors
+      * \param nHist number of prior states stored
       */
-      void addHistories(FieldCUDA& trial, RingBuffer<FieldCUDA> const & basis, DArray<double> coeffs, int nHist);
+      void addHistories(FieldCUDA& trial, 
+                        RingBuffer<FieldCUDA> const & basis, 
+                        DArray<double> coeffs, int nHist);
 
       /**
-      * Add predicted error into the field trial guess to attempt to correct for it.
+      * Add predicted error to the trial field.
       * 
-      * \param fieldTrial field for calculation results to be stored in.
-      * \param resTrial predicted error for current mixing of histories.
-      * \param lambda Anderson-Mixing parameter for mixing in histories
+      * \param fieldTrial trial field (input/output)
+      * \param resTrial predicted error for current trial field
+      * \param lambda Anderson-Mixing mixing parameter 
       */
-      void addPredictedError(FieldCUDA& fieldTrial, FieldCUDA const & resTrial, double lambda);
+      void addPredictedError(FieldCUDA& fieldTrial, 
+                             FieldCUDA const & resTrial, 
+                             double lambda);
 
       /// Checks if the system has an initial guess
       bool hasInitialGuess();
-      
-      /// Calculates and returns the number of elements in the
-      /// array to be iterated
+     
+      /** 
+      * Compute the number of elements in field or residual.
+      */
       int nElements();
 
-      /// Gets a reference to the current state of the system
+      /*
+      * Get the current state of the system.
+      *
+      * \param curr current field vector (output)
+      */
       void getCurrent(FieldCUDA& curr);
 
-      /// Runs calculation to evaluate function for fixed point.
+      /**
+      * Solve MDE for current state of system.
+      */
       void evaluate();
 
-      /// Gets residual values from system
+      /**
+      * Gets the residual vector from system.
+      *  
+      * \param curr current residual vector (output)
+      */
       void getResidual(FieldCUDA& resid);
 
-      /// Updates the system with a passed in state of the iterator.
+      /**
+      * Update the system with a new trial field vector.
+      *
+      * \param newGuess trial field configuration
+      */
       void update(FieldCUDA& newGuess);
 
-      /// Outputs relevant system details to the iteration log
+      /**
+      * Output relevant system details to the iteration log file.
+      */
       void outputToLog();
 
-      // --- Private member functions that are specific to this implementation --- 
+      // --- Private member functions specific to this implementation --- 
+      
       cudaReal findAverage(cudaReal * const field, int n);
 
    };

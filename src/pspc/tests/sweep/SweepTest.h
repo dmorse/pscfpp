@@ -8,25 +8,27 @@
 #include <pspc/sweep/SweepFactory.h>
 #include <pspc/sweep/LinearSweep.h>
 #include <pspc/field/BFieldComparison.h>
+#include <util/tests/LogFileUnitTest.h>
 #include <util/format/Dbl.h>
 
 #include <fstream>
 #include <sstream>
 
-
 using namespace Util;
 using namespace Pscf;
 using namespace Pspc;
 
-class SweepTest : public UnitTest
+class SweepTest : public LogFileUnitTest
 {
 
 public:
 
-   std::ofstream logFile_;
 
    void setUp()
    {  setVerbose(0); }
+
+   #if 0
+   std::ofstream logFile_;
 
    void tearDown()
    {
@@ -40,6 +42,7 @@ public:
       openOutputFile(filename, logFile_);
       Log::setFile(logFile_);
    }
+   #endif
 
    void testConstructors()
    {
@@ -296,8 +299,8 @@ public:
       }
       //setVerbose(1);
       if (verbose() > 0) {
-         std::cout << std::endl;
-         std::cout << "maxDiff = " << Dbl(maxDiff, 14, 6) << std::endl;
+         Log::file() << std::endl;
+         Log::file() << "maxDiff = " << Dbl(maxDiff, 14, 6) << std::endl;
       }
 
       return maxDiff;

@@ -359,7 +359,7 @@ namespace Pscf
       void setBasis();
 
       // Private and unimplemented to prevent copy construction.
-      UnitCell(UnitCell<2> const &);
+      UnitCell(UnitCell<3> const &);
 
    // friends:
 

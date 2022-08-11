@@ -1,6 +1,6 @@
-/*! \page user_param_fd_page 3.3.2 Parameter Files: pscf_fd
+/*! \page user_param_fd_page 3.3.5 Parameter Files: pscf_fd
 
-\ref user_param_syntax_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_param_sweep_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_param_pc_page (Next)
 <BR>
 
@@ -307,7 +307,7 @@ the SCF equations.  The iterative loop stops when the maximum
 error drops below epsilon.
 
 <BR>
-\ref user_param_syntax_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_param_sweep_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_param_page        (Up)   &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_param_pc_page     (Next)
 

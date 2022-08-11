@@ -14,6 +14,7 @@
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/math/IntVec.h>
 
+#include <util/misc/Log.h>
 #include <util/format/Str.h>
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
@@ -188,7 +189,7 @@ namespace Pspc
                   }
 
                } else {
-                  std::cout 
+                  Log::file() 
                      <<  "Inconsistent wave of closed star on input\n"
                      <<  "wave from file = " << waveIn  << "\n"
                      <<  "starId of wave = " << starId  << "\n"
@@ -321,8 +322,8 @@ namespace Pspc
       }   // end while (i < nStarIn)
 
       if (nReversedPair > 0) {
-         std::cout << "\n";
-         std::cout << nReversedPair << " reversed pairs of open stars"
+         Log::file() << "\n";
+         Log::file() << nReversedPair << " reversed pairs of open stars"
                    << " detected in FieldIo::readFieldsBasis\n";
       }
 
@@ -505,7 +506,7 @@ namespace Pspc
       } 
 
       else{
-         std::cout << "Invalid Dimensions";
+         Log::file() << "Invalid Dimensions";
       }
 
    }
@@ -597,7 +598,7 @@ namespace Pspc
             ++n1;
          }
       } else {
-         std::cout << "Invalid Dimensions";
+         Log::file() << "Invalid Dimensions";
       }
 
       // Write fields
@@ -721,7 +722,7 @@ namespace Pspc
       } 
 
       else{
-         std::cout << "Invalid Dimensions";
+         Log::file() << "Invalid Dimensions";
       }
    }
 
@@ -800,7 +801,7 @@ namespace Pspc
             ++n1;
          }
       } else {
-         std::cout << "Invalid Dimensions";
+         Log::file() << "Invalid Dimensions";
       }
 
       // Write field
@@ -958,7 +959,7 @@ namespace Pspc
                             groupNameIn, nMonomer);
       // Note: Function definition in pscf/crystal/UnitCell.tpp
       if (groupNameIn != groupName()) {
-         std::cout << std::endl 
+         Log::file() << std::endl 
              << "Warning - "
              << "Mismatched group names in FieldIo::readFieldHeader: \n" 
              << "  FieldIo::groupName :" << groupName() << "\n"

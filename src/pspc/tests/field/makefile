@@ -14,6 +14,9 @@ libs:
 	@echo $(LIBS)
 
 run: $(pspc_tests_field_OBJS) $(BLD_DIR)/$(TEST)
+	$(BLD_DIR)/$(TEST) $(SRC_DIR)/pspc/tests/ 
+
+run-quiet: $(pspc_tests_field_OBJS) $(BLD_DIR)/$(TEST)
 	$(BLD_DIR)/$(TEST) $(SRC_DIR)/pspc/tests/ > log
 	@echo `grep failed log` ", "\
               `grep successful log` "in pspc/tests/log" > count

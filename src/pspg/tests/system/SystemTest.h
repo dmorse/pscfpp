@@ -9,8 +9,7 @@
 #include <pspg/field/RDField.h>
 #include <pspg/math/GpuResources.h>
 
-//#include <pscf/mesh/MeshIterator.h>
-//#include <util/format/Dbl.h>
+#include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>
 
@@ -18,28 +17,13 @@ using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Pspg;
 
-class SystemTest : public UnitTest
+class SystemTest : public LogFileUnitTest
 {
 
 public:
 
-   std::ofstream logFile_;
-
    void setUp()
    {  setVerbose(0); }
-
-   void tearDown()
-   {
-      if (logFile_.is_open()) {
-         logFile_.close();
-      }
-   }
-
-   void openLogFile(char const * filename)
-   {
-      openOutputFile(filename, logFile_);
-      Log::setFile(logFile_);
-   }
 
    void testConstructor1D()
    {
@@ -85,8 +69,8 @@ public:
       BFieldComparison comparison (1);
       comparison.compare(d_wFields_check, d_wFields);
       if (verbose()>0) {
-         std::cout << "\n";
-         std::cout << "Max error = " << comparison.maxDiff() << "\n";
+         Log::file() << "\n";
+         Log::file() << "Max error = " << comparison.maxDiff() << "\n";
       }
       TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
    }
@@ -122,8 +106,8 @@ public:
       BFieldComparison comparison (1);
       comparison.compare(d_wFields_check, d_wFields);
       if (verbose()>0) {
-         std::cout << "\n";
-         std::cout << "Max error = " << comparison.maxDiff() << "\n";
+         Log::file() << "\n";
+         Log::file() << "Max error = " << comparison.maxDiff() << "\n";
       }
       TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
    }
@@ -159,8 +143,8 @@ public:
       BFieldComparison comparison (1);
       comparison.compare(d_wFields_check, d_wFields);
       if (verbose()>0) {
-         std::cout << "\n";
-         std::cout << "Max error = " << comparison.maxDiff() << "\n";
+         Log::file() << "\n";
+         Log::file() << "Max error = " << comparison.maxDiff() << "\n";
       }
       TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
    }
@@ -226,8 +210,8 @@ public:
       BFieldComparison comparison (1);
       comparison.compare(d_wFields_check, d_wFields);
       if (verbose()>0) {
-         std::cout << "\n";
-         std::cout << "Max error = " << comparison.maxDiff() << "\n";
+         Log::file() << "\n";
+         Log::file() << "Max error = " << comparison.maxDiff() << "\n";
       }
       TEST_ASSERT(comparison.maxDiff() < 5.0E-7);
 
@@ -268,10 +252,10 @@ public:
       double diff = comparison.maxDiff();
       double epsilon = 5.0E-7;
       if (verbose() > 0 || diff > epsilon) {
-         std::cout << "\n";
-         std::cout << "Max diff = " << comparison.maxDiff() << "\n";
-         std::cout << "Rms diff = " << comparison.rmsDiff() << "\n";
-         std::cout << "epsilon  = " << epsilon << "\n";
+         Log::file() << "\n";
+         Log::file() << "Max diff = " << comparison.maxDiff() << "\n";
+         Log::file() << "Rms diff = " << comparison.rmsDiff() << "\n";
+         Log::file() << "epsilon  = " << epsilon << "\n";
       }
       TEST_ASSERT(diff < epsilon);
    }
@@ -309,10 +293,10 @@ public:
       double diff = comparison.maxDiff();
       double epsilon = 2.0E-6;
       if (verbose() > 0 || diff > epsilon) {
-         std::cout << "\n";
-         std::cout << "Max diff = " << comparison.maxDiff() << "\n";
-         std::cout << "Rms diff = " << comparison.rmsDiff() << "\n";
-         std::cout << "epsilon  = " << epsilon << "\n";
+         Log::file() << "\n";
+         Log::file() << "Max diff = " << comparison.maxDiff() << "\n";
+         Log::file() << "Rms diff = " << comparison.rmsDiff() << "\n";
+         Log::file() << "epsilon  = " << epsilon << "\n";
       }
       TEST_ASSERT(diff < epsilon);
    }
@@ -349,10 +333,10 @@ public:
       double diff = comparison.maxDiff();
       double epsilon = 5.0E-7;
       if (verbose() > 0 || diff > epsilon) {
-         std::cout << "\n";
-         std::cout << "Max diff = " << comparison.maxDiff() << "\n";
-         std::cout << "Rms diff = " << comparison.rmsDiff() << "\n";
-         std::cout << "epsilon  = " << epsilon << "\n";
+         Log::file() << "\n";
+         Log::file() << "Max diff = " << comparison.maxDiff() << "\n";
+         Log::file() << "Rms diff = " << comparison.rmsDiff() << "\n";
+         Log::file() << "epsilon  = " << epsilon << "\n";
       }
       TEST_ASSERT(diff < epsilon);
    }
@@ -372,6 +356,7 @@ public:
 
       // Read input w-fields, iterate and output solution
       system.readWBasis("in/solution/lam_open/w.bf");
+
       int error = system.iterate();
       if (error) {
          TEST_THROW("Iterator failed to converge.");
@@ -392,10 +377,10 @@ public:
       //double epsilon = 5.0E-7;
       double epsilon = 6.0E-6;
       if (diff > epsilon) {
-         std::cout << "\n";
-         std::cout << "Max diff = " << comparison.maxDiff() << "\n";
-         std::cout << "Rms diff = " << comparison.rmsDiff() << "\n";
-         std::cout << "epsilon  = " << epsilon << "\n";
+         Log::file() << "\n";
+         Log::file() << "Max diff = " << comparison.maxDiff() << "\n";
+         Log::file() << "Rms diff = " << comparison.rmsDiff() << "\n";
+         Log::file() << "epsilon  = " << epsilon << "\n";
       }
       TEST_ASSERT(diff < epsilon);
    }
@@ -434,10 +419,10 @@ public:
       double diff = comparison.maxDiff();
       double epsilon = 5.0E-7;
       if (diff > epsilon) {
-         std::cout << "\n";
-         std::cout << "Max diff = " << comparison.maxDiff() << "\n";
-         std::cout << "Rms diff = " << comparison.rmsDiff() << "\n";
-         std::cout << "epsilon  = " << epsilon << "\n";
+         Log::file() << "\n";
+         Log::file() << "Max diff = " << comparison.maxDiff() << "\n";
+         Log::file() << "Rms diff = " << comparison.rmsDiff() << "\n";
+         Log::file() << "epsilon  = " << epsilon << "\n";
       }
       TEST_ASSERT(diff < epsilon);
    }
@@ -480,10 +465,10 @@ public:
       double diff = comparison.maxDiff();
       double epsilon = 5.0E-7;
       if (diff > epsilon) {
-         std::cout << "\n";
-         std::cout << "Max diff = " << comparison.maxDiff() << "\n";
-         std::cout << "Rms diff = " << comparison.rmsDiff() << "\n";
-         std::cout << "epsilon  = " << epsilon << "\n";
+         Log::file() << "\n";
+         Log::file() << "Max diff = " << comparison.maxDiff() << "\n";
+         Log::file() << "Rms diff = " << comparison.rmsDiff() << "\n";
+         Log::file() << "epsilon  = " << epsilon << "\n";
       }
       TEST_ASSERT(diff < epsilon);
    }
@@ -523,10 +508,10 @@ public:
       double diff = comparison.maxDiff();
       double epsilon = 5.0E-7;
       if (diff > epsilon) {
-         std::cout << "\n";
-         std::cout << "Max diff = " << comparison.maxDiff() << "\n";
-         std::cout << "Rms diff = " << comparison.rmsDiff() << "\n";
-         std::cout << "epsilon  = " << epsilon << "\n";
+         Log::file() << "\n";
+         Log::file() << "Max diff = " << comparison.maxDiff() << "\n";
+         Log::file() << "Rms diff = " << comparison.rmsDiff() << "\n";
+         Log::file() << "epsilon  = " << epsilon << "\n";
       }
       TEST_ASSERT(diff < epsilon);
 
@@ -566,10 +551,10 @@ public:
       double diff = comparison.maxDiff();
       double epsilon = 7.0E-7;
       if (diff > epsilon) {
-         std::cout << "\n";
-         std::cout << "Max diff = " << comparison.maxDiff() << "\n";
-         std::cout << "Rms diff = " << comparison.rmsDiff() << "\n";
-         std::cout << "epsilon  = " << epsilon << "\n";
+         Log::file() << "\n";
+         Log::file() << "Max diff = " << comparison.maxDiff() << "\n";
+         Log::file() << "Rms diff = " << comparison.rmsDiff() << "\n";
+         Log::file() << "epsilon  = " << epsilon << "\n";
       }
       TEST_ASSERT(diff < epsilon);
 
@@ -609,10 +594,10 @@ public:
       double diff = comparison.maxDiff();
       double epsilon = 5.0E-7;
       if (diff > epsilon) {
-         std::cout << "\n";
-         std::cout << "Max diff = " << comparison.maxDiff() << "\n";
-         std::cout << "Rms diff = " << comparison.rmsDiff() << "\n";
-         std::cout << "epsilon  = " << epsilon << "\n";
+         Log::file() << "\n";
+         Log::file() << "Max diff = " << comparison.maxDiff() << "\n";
+         Log::file() << "Rms diff = " << comparison.rmsDiff() << "\n";
+         Log::file() << "epsilon  = " << epsilon << "\n";
       }
       TEST_ASSERT(diff < epsilon);
 
@@ -663,8 +648,8 @@ TEST_ADD(SystemTest, testIterate1D_lam_rigid)
 TEST_ADD(SystemTest, testIterate1D_lam_flex)
 TEST_ADD(SystemTest, testIterate1D_lam_soln)
 TEST_ADD(SystemTest, testIterate1D_lam_blend)
-TEST_ADD(SystemTest, testIterate1D_lam_open_soln)
 TEST_ADD(SystemTest, testIterate1D_lam_open_blend)
+TEST_ADD(SystemTest, testIterate1D_lam_open_soln)
 TEST_ADD(SystemTest, testIterate2D_hex_rigid)
 TEST_ADD(SystemTest, testIterate2D_hex_flex)
 TEST_ADD(SystemTest, testIterate3D_bcc_rigid)

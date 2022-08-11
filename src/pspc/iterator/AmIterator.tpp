@@ -18,15 +18,18 @@ namespace Pspc{
 
    using namespace Util;
 
+   // Constructor
    template <int D>
    AmIterator<D>::AmIterator(System<D>& system)
    : Iterator<D>(system)
    {  setClassName("AmIterator"); }
 
+   // Destructor
    template <int D>
    AmIterator<D>::~AmIterator()
    {  setClassName("AmIterator"); }
 
+   // Read parameters from file
    template <int D>
    void AmIterator<D>::readParameters(std::istream& in)
    {
@@ -51,6 +54,7 @@ namespace Pspc{
       }
    }
 
+   // Compute and return L2 norm of residual vector
    template <int D>
    double AmIterator<D>::findNorm(FieldCPU const & hist) 
    {
@@ -64,6 +68,7 @@ namespace Pspc{
       return sqrt(normResSq);
    }
 
+   // Compute and return maximum element of residual vector.
    template <int D>
    double AmIterator<D>::findMaxAbs(FieldCPU const & hist)
    {
@@ -77,9 +82,11 @@ namespace Pspc{
 
       return maxRes;
    }
-   
+  
+   // Update basis 
    template <int D>
-   void AmIterator<D>::updateBasis(RingBuffer<FieldCPU> & basis, RingBuffer<FieldCPU> const & hists)
+   void AmIterator<D>::updateBasis(RingBuffer<FieldCPU> & basis, 
+                                   RingBuffer<FieldCPU> const & hists)
    {
       // Make sure at least two histories are stored
       UTIL_CHECK(hists.size() >= 2);
@@ -95,8 +102,11 @@ namespace Pspc{
       basis.append(newbasis);
    }
 
+   // Compute one element of U matrix of by computing a dot product
    template <int D>
-   double AmIterator<D>::computeUDotProd(RingBuffer<FieldCPU> const & resBasis, int m, int n)
+   double 
+   AmIterator<D>::computeUDotProd(RingBuffer<FieldCPU> const & resBasis, 
+                                  int m, int n)
    {
       const int length = resBasis[0].capacity();
       
@@ -108,8 +118,12 @@ namespace Pspc{
       return dotprod;
    }
 
+   // Compute one element of V vector by computing a dot product
    template <int D>
-   double AmIterator<D>::computeVDotProd(FieldCPU const & resCurrent, RingBuffer<FieldCPU> const & resBasis, int m)
+   double 
+   AmIterator<D>::computeVDotProd(FieldCPU const & resCurrent, 
+                                  RingBuffer<FieldCPU> const & resBasis, 
+                                  int m)
    {
       const int length = resBasis[0].capacity();
       
@@ -121,8 +135,11 @@ namespace Pspc{
       return dotprod;
    }
 
+   // Update entire U matrix
    template <int D>
-   void AmIterator<D>::updateU(DMatrix<double> & U, RingBuffer<FieldCPU> const & resBasis, int nHist)
+   void AmIterator<D>::updateU(DMatrix<double> & U, 
+                               RingBuffer<FieldCPU> const & resBasis, 
+                               int nHist)
    {
       // Update matrix U by shifting elements diagonally
       int maxHist = U.capacity1();
@@ -141,7 +158,10 @@ namespace Pspc{
    }
 
    template <int D>
-   void AmIterator<D>::updateV(DArray<double> & v, FieldCPU const & resCurrent, RingBuffer<FieldCPU> const & resBasis, int nHist)
+   void AmIterator<D>::updateV(DArray<double> & v, 
+                               FieldCPU const & resCurrent, 
+                               RingBuffer<FieldCPU> const & resBasis, 
+                               int nHist)
    {
       // Compute U matrix's new row 0 and col 0
       // Also, compute each element of v_ vector
@@ -152,13 +172,14 @@ namespace Pspc{
 
    template <int D>
    void AmIterator<D>::setEqual(FieldCPU& a, FieldCPU const & b)
-   {
-      // This seems silly here, but in other implementations it may not be! Goal: no explicit math in AmIteratorTmpl.
-      a = b;
-   }
+   {  a = b; }
 
    template <int D>
-   void AmIterator<D>::addHistories(FieldCPU& trial, RingBuffer<FieldCPU> const & basis, DArray<double> coeffs, int nHist)
+   void 
+   AmIterator<D>::addHistories(FieldCPU& trial, 
+                               RingBuffer<FieldCPU> const & basis, 
+                               DArray<double> coeffs, 
+                               int nHist)
    {
       int n = trial.capacity();
       for (int i = 0; i < nHist; i++) {
@@ -170,20 +191,24 @@ namespace Pspc{
    }
 
    template <int D>
-   void AmIterator<D>::addPredictedError(FieldCPU& fieldTrial, FieldCPU const & resTrial, double lambda)
+   void AmIterator<D>::addPredictedError(FieldCPU& fieldTrial, 
+                                         FieldCPU const & resTrial, 
+                                         double lambda)
    {
       int n = fieldTrial.capacity();
       for (int i = 0; i < n; i++) {
          fieldTrial[i] += lambda * resTrial[i];
       }
    }
-   
+  
+   // Does the system have an initial field guess? 
    template <int D>
    bool AmIterator<D>::hasInitialGuess()
    {
       return system().hasWFields();
    }
-   
+  
+   // Compute and return the number of elements in a field vector 
    template <int D>
    int AmIterator<D>::nElements()
    {
@@ -197,6 +222,7 @@ namespace Pspc{
       return nEle;
    }
 
+   // Get the current field from the system
    template <int D>
    void AmIterator<D>::getCurrent(FieldCPU& curr)
    {
@@ -225,6 +251,7 @@ namespace Pspc{
       return;
    }
 
+   // Perform the main system computation (solve the MDE)
    template <int D>
    void AmIterator<D>::evaluate()
    {
@@ -236,6 +263,7 @@ namespace Pspc{
       }
    }
 
+   // Compute the residual for the current system state
    template <int D>
    void AmIterator<D>::getResidual(FieldCPU& resid)
    {
@@ -295,8 +323,7 @@ namespace Pspc{
             resid[i*nBasis] -= (1.0-phi)/system().interaction().sum_inv();
          }
       } else {
-         // otherwise explicitly set the residual value for the homogeneous components
-         // the homogeneous field component is set explicitly as well in update 
+         // Explicitly set homogeneous residual components
          for (int i = 0; i < nMonomer; ++i) {
             resid[i*nBasis] = 0.0;
          }
@@ -324,6 +351,7 @@ namespace Pspc{
 
    }
 
+   // Update the current system field coordinates
    template <int D>
    void AmIterator<D>::update(FieldCPU& newGuess)
    {
@@ -342,7 +370,7 @@ namespace Pspc{
             wField[i][k] = newGuess[i*nBasis + k];
          }
       }
-      // Manually and explicitly set homogeneous components of field if canonical
+      // If canonical, explicitly set homogeneous field components
       if (system().mixture().isCanonical()) {
          for (int i = 0; i < nMonomer; ++i) {
             wField[i][0] = 0.0; // initialize to 0
@@ -367,7 +395,7 @@ namespace Pspc{
 
          system().setUnitCell(parameters);
       }
-      
+
    }
 
    template<int D>
