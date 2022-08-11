@@ -1,0 +1,98 @@
+/*! \page user_param_mixture_page 3.3.3 Mixture Block
+
+\ref user_param_syntax_page (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_param_sweep_page    (Next) 
+<BR>
+
+The first subblock of the main System block in every parameter file is labell Mixture.  
+The Mixture block describes the chemical composition of the system that is being simulated. 
+
+PSCF programs are designed to treat a mixture that may contain one or more polymer species and zero or more solvent point-particle species.
+Each polymer may be either a linear or acyclic branched block polymer.
+Polymers and solvents are both built from a palette of a nMonomer monomer types. 
+Each monomer is assigned a statistical segment length.
+Each copolymer block and each solvent species is assigned an index in the 
+range [0,..,nMonomer-1] that specifies the type of monomer from which it 
+is constructed.
+The Mixture block contains information that specifies the structure of
+each polymer species within the mixture, the monomer type and volume of
+each solvent species, and the composition of the mixture.
+
+All pscf programs use the same format for the Mixture parameter file block. 
+The Mixture block has the format
+\code
+Mixture{
+  nMonomer   int
+  monomers   Array [ Monomer ]
+  nPolymer   int
+  Polymer{ ... } 
+    ...
+  nSolvent*  int (0 by default)
+  Solvent*{ ... }
+    ...
+  vMonomer*  float (1.0 by default)
+  ds         float
+}
+\endcode
+Here and in other descriptions of parameter file formats, labels followed by an asterisk (*) indicate optional parameters or subblocks.
+The nSolvent parameter is an optional parameter that is set to zero by default, i.e., it is set to 0 if the parameter is omitted from the parameter file.
+The number of Polymer subblocks must equal nPolymer, and the number of Solvent subblocks must equal nSolvent (i.e., no Solvent subblocks if nSolvent is ommitted).
+
+Parameters and subblocks are described below:
+<table>
+  <tr>
+    <td> nMonomer </td>
+    <td> Number of distinct monomer types in the mixture </td>
+  </tr>
+  <tr>
+    <td> monomers </td>
+    <td> 
+    An array of nMonomer elements in which the value of each element gives the statistical segment length of the associated monomer type.
+  </tr>
+  <tr>
+    <td> nPolymer </td>
+    <td> The number of polymer species. This is a required positive integer.    </td> 
+  </tr>
+  <td> nSolvent* </td>
+  <tr>
+    <td> The number of solvent (point-particle) species. 
+         This is an optional non-negative parameter that is set to a 
+         default value of 0 if omitted.
+    </td>
+  <tr>
+    <td> Polymer{ ... } </td>
+    <td> 
+       Each Polymer{ ... } subblock contain data for one Polymer species.  
+       The Mixture block must contain exactly nPolymer such subblocks 
+       immediately after the nPolymer and nSolvent parameters.
+    </td>
+  </tr>
+  </tr>
+  <tr>
+    <td> Solvent{ ... } </td>
+    <td> Each Solvent{ ... } subblock contains data for one point-like 
+         Solvent species.  The number of solvent subblocks must equal
+         nSolvent, or zero if nSolvent is omitted.
+    </td>
+  </tr>
+  <tr>
+     <td> ds </td>
+     <td> Preferred value for the block length step size used to 
+          integrate the modified diffusion equation within each block.
+          </td>
+  </tr>
+  </tr>
+</table>
+
+Monomer types are implicitly assigned integer identifiers in the order in which they appear in the monomers array. We thus assign an index 0 to the first monomer type, and index 1 to the second, and so on.  
+These integer monomer type indices are used to identify the monomer types associated with each blocks of a block polymer and each solvent type.
+
+Polymer and Solvent species are also assigned integer labels in the order in which object of a particular type appear in the parameter file.
+The the first polymer is thus assigned an index 0, the second index 1, etc.
+Similarly, the first solvent (if any) is assigned an index 0.
+ 
+<BR>
+\ref user_syntax_page  (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_param_sweep_page (Next) 
+
+*/
