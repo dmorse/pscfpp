@@ -7,6 +7,7 @@ pscf_crystal_= \
   pscf/crystal/SymmetryGroup.cpp \
   pscf/crystal/SpaceGroup.cpp \
   pscf/crystal/Basis.cpp \
+  pscf/crystal/BFieldComparison.cpp \
   pscf/crystal/groupFile.cpp
 
 pscf_crystal_SRCS=\

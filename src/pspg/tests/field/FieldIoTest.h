@@ -4,7 +4,6 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pspg/field/BFieldComparison.h>
 #include <pspg/field/RFieldComparison.h>
 #include <pspg/field/KFieldComparison.h>
 #include <pspg/field/Domain.h>
@@ -13,6 +12,7 @@
 #include <pspg/field/RDFieldDft.h>
 #include <pspg/field/FFT.h>
 
+#include <pscf/crystal/BFieldComparison.h>
 #include <pscf/crystal/Basis.h>
 #include <pscf/crystal/UnitCell.h>
 #include <pscf/mesh/Mesh.h>
@@ -223,14 +223,9 @@ public:
       domain.fieldIo().readFieldsBasis(in, d_bf_1, domain.unitCell());
       in.close();
 
-      // Create arrays for comparison
-      DArray<DField<cudaReal>> bf_0, bf_1;
-      RDFieldToDField(bf_0, d_bf_0);
-      RDFieldToDField(bf_1, d_bf_1);
-
       // Perform comparison
       BFieldComparison comparison;
-      comparison.compare(bf_0, bf_1);
+      comparison.compare(d_bf_0, d_bf_1);
       TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
 
       //setVerbose(1);
@@ -319,18 +314,13 @@ public:
       domain.fieldIo().convertBasisToKGrid(d_bf_0, d_kf_0);
       domain.fieldIo().convertKGridToBasis(d_kf_0, d_bf_1);
 
-      // Create arrays for comparison
-      DArray<DField <cudaReal> > bf_0, bf_1;
-      RDFieldToDField(bf_0,d_bf_0);
-      RDFieldToDField(bf_1,d_bf_1);
-
       std::ofstream  out;
       openOutputFile("out/w_bcc_convert.bf", out);
       domain.fieldIo().writeFieldsBasis(out, d_bf_1, domain.unitCell());
       out.close();
 
       BFieldComparison comparison;
-      comparison.compare(bf_0, bf_1);
+      comparison.compare(d_bf_0, d_bf_1);
       //setVerbose(1);
       if (verbose() > 0) {
          std::cout  << "\n";
@@ -362,19 +352,14 @@ public:
       domain.fieldIo().convertBasisToRGrid(d_bf_0, d_rf_0);
       domain.fieldIo().convertRGridToBasis(d_rf_0, d_bf_1);
 
-      // Create arrays for comparison
-      DArray<DField<cudaReal>> bf_0, bf_1;
-      RDFieldToDField(bf_0,d_bf_0);
-      RDFieldToDField(bf_1,d_bf_1);
-
       BFieldComparison comparison;
-      comparison.compare(bf_0, bf_1);
+      comparison.compare(d_bf_0, d_bf_1);
       TEST_ASSERT(comparison.maxDiff() < 1.0E-12);
 
       if (verbose() > 0) {
          std::cout  << "\n";
-         std::cout  << Dbl(comparison.maxDiff(),21,13) << "\n";
-         std::cout  << Dbl(comparison.rmsDiff(),21,13) << "\n";
+         std::cout  << Dbl(comparison.maxDiff(), 21, 13) << "\n";
+         std::cout  << Dbl(comparison.rmsDiff(), 21, 13) << "\n";
       }
    }
 
@@ -409,13 +394,8 @@ public:
       domain.fieldIo().writeFieldsBasis(out, d_bf_1, domain.unitCell());
       out.close();
 
-      // Create arrays for comparison
-      DArray<DField<cudaReal>> bf_0, bf_1;
-      RDFieldToDField(bf_0,d_bf_0);
-      RDFieldToDField(bf_1,d_bf_1);
-
       BFieldComparison comparison;
-      comparison.compare(bf_0, bf_1);
+      comparison.compare(d_bf_0, d_bf_1);
 
       TEST_ASSERT(comparison.maxDiff() < 1.0E-12);
 
@@ -448,18 +428,13 @@ public:
       domain.fieldIo().convertBasisToKGrid(d_bf_0, d_kf_0);
       domain.fieldIo().convertKGridToBasis(d_kf_0, d_bf_1);
 
-      // Create arrays for comparison
-      DArray< DArray<double> > bf_0, bf_1;
-      RDFieldToDField(bf_0,d_bf_0);
-      RDFieldToDField(bf_1,d_bf_1);
-
       std::ofstream  out;
       openOutputFile("out/w_c15_1_convert.bf", out);
       domain.fieldIo().writeFieldsBasis(out, d_bf_1, domain.unitCell());
       out.close();
 
       BFieldComparison comparison;
-      comparison.compare(bf_0, bf_1);
+      comparison.compare(d_bf_0, d_bf_1);
       TEST_ASSERT(comparison.maxDiff() < 1.0E-12);
 
       if (verbose() > 0) {
@@ -677,49 +652,6 @@ public:
         std::cout  << Dbl(comparison.rmsDiff(), 21, 13) << "\n";
       }
    }
-
-   template <int D>
-   void RDFieldToDField(DArray<DField<cudaReal>> & out, DArray<RDField<D>> const & in)
-   {
-      // if not allocated, allocate
-      int nField = in.capacity();
-      int nPoint = in[0].capacity();
-      if (!out.isAllocated()) {
-         out.allocate(nField);
-         for (int i = 0; i < nField; i++) {
-            out[i].allocate(nPoint);
-         }
-      }
-
-      // Copy
-      for (int i = 0; i < nField; i++) {
-         cudaMemcpy(out[i].cDField(), in[i].cDField(), 
-                    nPoint*sizeof(cudaReal), cudaMemcpyDeviceToDevice);
-      }
-
-   }
-
-   template <int D>
-   void RDFieldToDArray(DArray< DArray<double> > & out, DArray<RDField<D>> const & in)
-   {
-      // if not allocated, allocate
-      int nField = in.capacity();
-      int nPoint = in[0].capacity();
-      if (!out.isAllocated()) {
-         out.allocate(nField);
-         for (int i = 0; i < nField; i++) {
-            out[i].allocate(nPoint);
-         }
-      }
-
-      // Copy
-      for (int i = 0; i < nField; i++) {
-         cudaMemcpy(out[i].get(), in[i].cDField(), 
-                    nPoint*sizeof(cudaReal), cudaMemcpyDeviceToDevice);
-      }
-
-   }
-   
 
 };
 

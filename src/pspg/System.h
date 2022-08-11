@@ -187,7 +187,7 @@ namespace Pspg
       * field (w field) in a symmetry-adapted basis for one monomer
       * type. The array capacity is the number of monomer types.
       */
-      DArray<RDField <D> >& wFields();
+      DArray< DArray<double> >& wFields();
 
       /**
       * Get chemical potential field for one monomer type, in a basis.
@@ -198,7 +198,7 @@ namespace Pspg
       *
       * \param monomerId integer monomer type index
       */
-      RDField<D>& wField(int monomerId);
+      DArray<double>& wField(int monomerId);
 
       /**
       * Get array of chemical potential fields, on an r-space grid.
@@ -243,7 +243,7 @@ namespace Pspg
       * field (cfield) for one monomer type in a symmetry-adapted basis.
       * The array capacity is equal to the number of monomer types.
       */
-      DArray<RDField <D> >& cFields();
+      DArray< DArray<double> >& cFields();
 
       /**
       * Get the concentration field for one monomer type, in a basis.
@@ -254,7 +254,7 @@ namespace Pspg
       *
       * \param monomerId integer monomer type index
       */
-      RDField<D>& cField(int monomerId);
+      DArray<double>& cField(int monomerId);
 
       /**
       * Get array of all concentration fields (c fields), on a grid.
@@ -588,7 +588,7 @@ namespace Pspg
       *
       * Indexed by monomer typeId, size = nMonomer.
       */
-      DArray< RDField<D> > cFields_;
+      DArray< DArray<double> > cFields_;
 
       /**
       * Array of concentration fields for monomer types, r-grid format.
@@ -654,7 +654,7 @@ namespace Pspg
       *
       * Indexed by monomer typeId, size = nMonomer.
       */
-      DArray<RDField<D> > tmpFields_;
+      DArray< DArray<double> > tmpFields_;
 
       /**
       * Work array of fields on real space grid.
@@ -837,13 +837,13 @@ namespace Pspg
    // Get all monomer concentration fields, in a basis.
    template <int D>
    inline
-   DArray<RDField<D> >& System<D>::cFields()
+   DArray< DArray<double> >& System<D>::cFields()
    {  return cFields_; }
 
    // Get a single monomer concentration field, in a basis.
    template <int D>
    inline
-   RDField<D>& System<D>::cField(int id)
+   DArray<double>& System<D>::cField(int id)
    {  return cFields_[id]; }
 
    // Get all monomer concentration fields, on a grid.

@@ -5,7 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <pspc/System.h>
-#include <pspc/field/BFieldComparison.h>
+#include <pscf/crystal/BFieldComparison.h>
 #include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>
