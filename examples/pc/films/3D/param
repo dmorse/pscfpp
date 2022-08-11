@@ -23,25 +23,23 @@ System{
     )
   }
   Domain{
-    unitCell       tetragonal    2.0    4.2
+    unitCell       tetragonal    2.0    4.3
     mesh           32    32    68
     groupName      P_4%m_m_m
   }
-  Wall{
-    normalVec            2
-    interfaceThickness   0.08     
-    wallThickness        0.2
-    chi[
-          0   0
-          0   0
-    ]
-    writeBasis           out/wall.bf
-    writeRGrid           out/wall.rf
-  }
-  AmIterator{
+  AmIteratorFilm{
     maxItr       2000
     epsilon      1e-6
     maxHist      50 
     isFlexible   1
+    normalVec            2
+    interfaceThickness   0.15     
+    wallThickness        0.3
+    chi[
+          0   0
+          0   0
+    ]
+    wallBasisOutFile     out/wall.bf
+    wallRGridOutFile     out/wall.rf
   }
 }

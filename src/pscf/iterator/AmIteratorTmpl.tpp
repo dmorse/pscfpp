@@ -27,11 +27,7 @@ namespace Pscf
     : epsilon_(0),
       lambda_(0),
       nHist_(0),
-      maxHist_(0),
-      maskField_(),
-      externalFields_(),
-      hasMask_(false),
-      hasExternalField_(false)
+      maxHist_(0)
    {  setClassName("AmIteratorTmpl"); }
 
    /*
@@ -233,15 +229,15 @@ namespace Pscf
 
       // Find max residual vector element
       double maxRes  = findMaxAbs(resHists_[0]);
-      Log::file() << "Max Residual  = " << maxRes << std::endl;
+      Log::file() << "Max Residual  = " << Dbl(maxRes,13) << std::endl;
 
       // Find norm of residual vector
       double normRes = findNorm(resHists_[0]);
-      Log::file() << "Residual Norm = " << normRes << std::endl;
+      Log::file() << "Residual Norm = " << Dbl(normRes,13) << std::endl;
 
       // Find norm of residual vector relative to field
       double relNormRes = normRes/findNorm(fieldHists_[0]);
-      Log::file() << "Relative Norm = " << relNormRes << std::endl;
+      Log::file() << "Relative Norm = " << Dbl(relNormRes,13) << std::endl;
 
       // Check if total error is below tolerance
       if (errorType_ == "normResid")

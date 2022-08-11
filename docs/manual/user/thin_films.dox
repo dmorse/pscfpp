@@ -174,7 +174,9 @@ where the index *w* denotes the wall (either wall 1 or wall 2), *&nu;* is the mo
 <i>&chi;<sub>w&alpha;</sub></i> is the chi interaction parameter between wall *w* and species *&alpha;* 
 that is input from the parameter file, and <i>&rho;<sub>w</sub></i>(<b>r</b>) is the volume fraction of 
 wall *w* at position **r** (note that this differs from <i>&rho;</i><sub>mask</sub>(<b>r</b>) above,
-which represents the volume fraction of *both* walls).
+which represents the volume fraction of *both* walls). It is important to note that the volume *V* in
+this expression is not the volume of the full unit cell, but rather the volume of space that is accessible
+to the polymers/solvents.
 
 From an implementation standpoint, we actually model the chemical interactions between walls and polymers
 as an external field that is imposed on the system, affecting each monomer species differently. The shape

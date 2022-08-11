@@ -521,6 +521,15 @@ namespace Pspc
                                 int polymerId, int blockId) const;
    
       /**
+      * Write all data associated with the converged solution. This
+      * includes the full param file, as well as the thermodynamic
+      * data (free energy, pressure, phi and mu for each species).
+      * 
+      * \param filename name of output file
+      */
+      void writeData(const std::string & filename);
+
+      /**
       * Convert a field from symmetry-adapted basis to r-grid format.
       *
       * \param inFileName name of input file

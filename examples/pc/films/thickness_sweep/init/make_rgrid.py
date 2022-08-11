@@ -3,7 +3,7 @@
 import math
 import numpy as np
 
-n_interfaces = 2
+n_interfaces = 3
 
 rgrid = open('preamble','r')
 lines = list(rgrid)

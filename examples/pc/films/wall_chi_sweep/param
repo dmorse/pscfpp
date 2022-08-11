@@ -10,8 +10,8 @@ System{
       type    linear
       nBlock  2
       blocks[
-              0  0.4
-              1  0.6
+              0  0.5
+              1  0.5
       ]
       phi     1.0
     }
@@ -23,9 +23,9 @@ System{
     )
   }
   Domain{
-    unitCell       rectangular    2.0    2.0
-    mesh           64    64
-    groupName      p_1
+    unitCell       rectangular    1.6    3.0
+    mesh           64    96
+    groupName      p_m
   }
   AmIteratorFilm{
     maxItr       1000
@@ -33,13 +33,21 @@ System{
     maxHist      50 
     isFlexible   1
     normalVec            1
-    interfaceThickness   0.08     
-    wallThickness        0.25
+    interfaceThickness   0.15     
+    wallThickness        0.3
     chi[
-          20   20
-          0    0
+          0   0
+          0   0
     ]
-    wallBasisOutFile     out/wall.bf
-    wallRGridOutFile     out/wall.rf
+  }
+  LinearSweep{
+    ns            40
+    baseFileName  out/
+    writeRhoRgrid 1
+    nParameter    2
+    parameters[
+                  wall_chi  0  0  +20.0
+                  wall_chi  0  1  +20.0
+    ]
   }
 }

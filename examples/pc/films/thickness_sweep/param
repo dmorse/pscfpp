@@ -10,8 +10,8 @@ System{
       type    linear
       nBlock  2
       blocks[
-              0  0.4
-              1  0.6
+              0  0.5
+              1  0.5
       ]
       phi     1.0
     }
@@ -23,33 +23,30 @@ System{
     )
   }
   Domain{
-    unitCell       lamellar    3.0
-    mesh           64
+    unitCell       lamellar    2.5
+    mesh           96
     groupName      P_1
   }
-  Wall{
-    normalVec            0
-    interfaceThickness   0.08     
-    wallThickness        0.2
-    chi[
-          0   0
-          0   0
-    ]
-  }
-  AmIterator{
+  AmIteratorFilm{
     maxItr       2000
-    epsilon      1e-7
+    epsilon      1e-9
     maxHist      50 
     isFlexible   0
+    normalVec            0
+    interfaceThickness   0.15     
+    wallThickness        0.3
+    chi[
+         20   20
+          0    0
+    ]
   }
-  hasSweep 1
   LinearSweep{
-    ns            80  
-    baseFileName  out_up/
-    writeRhoRgrid 1
+    ns            40  
+    baseFileName  out/
+    writeRhoRGrid 1
     nParameter    1   
     parameters[
-                  cell_param  0  2.0
+                  cell_param  0  1.0
     ]   
   }
 }

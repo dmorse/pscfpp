@@ -33,7 +33,7 @@ namespace Pspc
    * normalVec and unitCell definitions in param file
    */
    template <typename IteratorType>
-   FSArray<int, 6> FilmIterator<1, IteratorType>::flexibleParams() const 
+   void FilmIterator<1, IteratorType>::setFlexibleParams()
    {
       FSArray<int, 6> params; // empty FSArray, no flexible parameters
 
@@ -42,7 +42,11 @@ namespace Pspc
          << "to be flexible for a 1D system that contains walls.\n"
          << std::endl;
 
-      return params;
+      // Store params in flexibleParams_ member of this object
+      setFlexibleParams(params);
+
+      // Pass params into the iterator member of this object
+      iterator().setFlexibleParams(params);
    }
 
    /*
@@ -70,7 +74,7 @@ namespace Pspc
    * normalVec and unitCell definitions in param file
    */
    template <typename IteratorType>
-   FSArray<int, 6> FilmIterator<2, IteratorType>::flexibleParams() const 
+   void FilmIterator<2, IteratorType>::setFlexibleParams() 
    {
       FSArray<int, 6> params;
 
@@ -93,7 +97,11 @@ namespace Pspc
             << std::endl;
       }
 
-      return params;
+      // Store params in flexibleParams_ member of this object
+      setFlexibleParams(params);
+
+      // Pass params into the iterator member of this object
+      iterator().setFlexibleParams(params);
    }
 
    /*
@@ -129,7 +137,7 @@ namespace Pspc
    * normalVec and unitCell definitions in param file
    */
    template <typename IteratorType>
-   FSArray<int, 6> FilmIterator<3, IteratorType>::flexibleParams() const 
+   void FilmIterator<3, IteratorType>::setFlexibleParams()
    {
       FSArray<int, 6> params;
       UnitCell<3>::LatticeSystem lattice = system().domain().unitCell().lattice();
@@ -170,7 +178,11 @@ namespace Pspc
             << std::endl;
       }
 
-      return params;
+      // Store params in flexibleParams_ member of this object
+      setFlexibleParams(params);
+
+      // Pass params into the iterator member of this object
+      iterator().setFlexibleParams(params);
    }
 
    /*

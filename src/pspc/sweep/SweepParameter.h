@@ -177,7 +177,8 @@ namespace Pspc {
 
       /// Enumeration of allowed parameter types.
       enum ParamType { Block, Chi, Kuhn, Phi_Polymer, Phi_Solvent,
-                       Mu_Polymer, Mu_Solvent, Solvent, Cell_Param, Null};
+                       Mu_Polymer, Mu_Solvent, Solvent, Cell_Param, 
+                       Wall_Chi, Null};
 
       /// Type of parameter associated with an object of this class.
       ParamType type_;
@@ -215,6 +216,11 @@ namespace Pspc {
       * \param newVal  new value for this parameter.
       */
       void set_(double newVal);
+
+      /**
+      * Check if the system iterator is a thin film iterator. 
+      */
+      bool isFilmIterator() const;
 
    // friends:
 

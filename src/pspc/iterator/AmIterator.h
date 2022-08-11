@@ -52,12 +52,11 @@ namespace Pspc
 
       using AmIteratorTmpl<Iterator<D>,FieldCPU>::setup;
       using AmIteratorTmpl<Iterator<D>,FieldCPU>::solve;
-      using AmIteratorTmpl<Iterator<D>,FieldCPU>::maskField;
-      using AmIteratorTmpl<Iterator<D>,FieldCPU>::externalFields;
-      using AmIteratorTmpl<Iterator<D>,FieldCPU>::externalField;
-      using AmIteratorTmpl<Iterator<D>,FieldCPU>::hasMask;
-      using AmIteratorTmpl<Iterator<D>,FieldCPU>::hasExternalField;
       using AmIteratorTmpl<Iterator<D>,FieldCPU>::setClassName;
+      using Iterator<D>::maskField;
+      using Iterator<D>::externalField;
+      using Iterator<D>::hasMask;
+      using Iterator<D>::hasExternalField;
       using Iterator<D>::isFlexible;
       using Iterator<D>::flexibleParams;
       using Iterator<D>::setFlexibleParams;

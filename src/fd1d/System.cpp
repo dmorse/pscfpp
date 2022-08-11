@@ -311,6 +311,14 @@ namespace Fd1d
             readEcho(inBuffer, filename);
             fieldIo.writeBlockCFields(filename);  
          } else
+         if (command == "WRITE_DATA") {
+            readEcho(inBuffer, filename);
+            std::ofstream file;
+            fileMaster().openOutputFile(filename, file);
+            writeParam(file);
+            outputThermo(file);
+            file.close();
+         } else
          if (command == "WRITE_VERTEX_Q") {
             readEcho(inBuffer, filename);
             int polymerId, vertexId;

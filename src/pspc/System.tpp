@@ -216,15 +216,12 @@ namespace Pspc
       iterator().setup();
 
       // Optionally instantiate a Sweep object
-      readOptional<bool>(in, "hasSweep", hasSweep_);
-      if (hasSweep_) {
-         bool isEnd;
-         sweepPtr_ = 
-            sweepFactoryPtr_->readObject(in, *this, className, isEnd);
-         if (!sweepPtr_) {
-            UTIL_THROW("Unrecognized Sweep subclass name");
-         }
+      sweepPtr_ = sweepFactoryPtr_->readObjectOptional(in, *this, className, isEnd);
+      if (sweepPtr_) {
+         hasSweep_ = true;
          sweepPtr_->setSystem(*this);
+      } else {
+         hasSweep_ = false;
       }
    }
 
@@ -405,6 +402,10 @@ namespace Pspc
                         << Str("block ID   ", 21) << blockId << std::endl;
             writePropagatorRGrid(filename, polymerId, blockId);
          } else
+         if (command == "WRITE_DATA") {
+            readEcho(in, filename);
+            writeData(filename);
+         } else
          if (command == "BASIS_TO_RGRID") {
             readEcho(in, inFileName);
             readEcho(in, outFileName);
@@ -427,7 +428,15 @@ namespace Pspc
          } else
          if (command == "CHECK_RGRID_SYMMETRY") {
             readEcho(in, inFileName);
-            checkRGridFieldSymmetry(inFileName);
+            bool hasSymmetry;
+            hasSymmetry = checkRGridFieldSymmetry(inFileName);
+            if (hasSymmetry) {
+               Log::file() << "Symmetry of r-grid file matches this space group." 
+                           << std::endl;
+            } else {
+               Log::file() << "Symmetry of r-grid file does not match this space group." 
+                           << std::endl;
+            }
          } else
          if (command == "RHO_TO_OMEGA") {
             readEcho(in, inFileName);
@@ -519,6 +528,16 @@ namespace Pspc
             temp += wFields_[i][k] * cFields_[i][k];
          }
       }
+
+      // Compute contribution from external fields, if fields exist
+      if (iterator().hasExternalField()) {
+         for (int i = 0; i < nm; ++i) {
+            for (int k = 0; k < nBasis; ++k) {
+               temp -= iterator().externalField(i)[k] * cFields_[i][k];
+            }
+         }
+      }
+
       fHelmholtz_ -= temp;
 
       // Compute excess interaction free energy [ phi^{T}*chi*phi ]
@@ -563,6 +582,17 @@ namespace Pspc
                pressure_ += mu * phi /size;
             }
          }
+      }
+
+      // If the iterator has a mask, then the volume that should be
+      // used to calculate free energy/pressure is the volume available
+      // to the polymers, not the total unit cell volume. We thus divide
+      // the free energy and pressure by (1 - maskField()[0]), the 
+      // volume fraction of the unit cell that is occupied by the 
+      // polymers. This properly scales them to the correct value.
+      if (iterator().hasMask()) {
+         fHelmholtz_ /= 1 - iterator().maskField()[0];
+         pressure_ /= 1 - iterator().maskField()[0];
       }
 
    }
@@ -736,7 +766,7 @@ namespace Pspc
          }
       }
 
-      // Update system wFieldsRgrid
+      // Update system wFieldsRGrid
       domain_.fieldIo().convertBasisToRGrid(wFields_, wFieldsRGrid_);
 
       hasWFields_ = true;
@@ -760,7 +790,7 @@ namespace Pspc
          }
       }
 
-      // Update system wFieldsRgrid
+      // Update system wFieldsRGrid
       domain_.fieldIo().convertRGridToBasis(wFieldsRGrid_, wFields_);
 
       hasWFields_ = true;
@@ -934,6 +964,19 @@ namespace Pspc
       RField<D> tailField 
               = mixture_.polymer(polymerId).propagator(blockId, 1).tail();
       fieldIo().writeFieldRGrid(filename, tailField, unitCell());
+   }
+
+   /*
+   * Write all data associated with the converged solution.
+   */
+   template <int D>
+   void System<D>::writeData(const std::string & filename)
+   {
+      std::ofstream file;
+      fileMaster().openOutputFile(filename, file);
+      writeParam(file);
+      outputThermo(file);
+      file.close();
    }
 
    // Field conversion command functions

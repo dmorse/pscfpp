@@ -23,7 +23,7 @@ System{
     )
   }
   Domain{
-    unitCell       lamellar    2.2
+    unitCell       lamellar    1.9
     mesh           64
     groupName      P_1
   }
@@ -39,7 +39,7 @@ System{
           0   0
           0   0
     ]
-    writeWallBasis       out/wall.bf
-    writeWallRGrid       out/wall.rf
+    wallBasisOutFile     out/wall.bf
+    wallRGridOutFile     out/wall.rf
   }
 }

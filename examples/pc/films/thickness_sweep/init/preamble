@@ -6,10 +6,10 @@ crystal_system
 N_cell_param                            
                    1
 cell_param                              
-    1.9000000000E+00
+    2.5000000000E+00
 group_name                              
                  P_1
 N_monomer                               
                    2
 ngrid                                   
-                  64
+                  96
