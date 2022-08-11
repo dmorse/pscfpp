@@ -50,8 +50,9 @@ public:
       system.readWBasis("in/diblock/lam/omega.in");
 
       // Get reference field
-      DArray< DField<cudaReal> > d_wFields_check;
-      RDFieldToDField(d_wFields_check, system.wFields());
+      DArray< DArray<double> > d_wFields_check;
+      //RDFieldToDField(d_wFields_check, system.wFields());
+      d_wFields_check = system.wFields();
 
       // Round trip conversion basis -> rgrid -> basis, read result
       system.basisToRGrid("in/diblock/lam/omega.in",
@@ -61,8 +62,9 @@ public:
       system.readWBasis("out/testConversion1D_lam_w.bf");
 
       // Get test result
-      DArray< DField<cudaReal> > d_wFields;
-      RDFieldToDField(d_wFields, system.wFields());
+      DArray< DArray<double> > d_wFields;
+      //RDFieldToDField(d_wFields, system.wFields());
+      d_wFields = system.wFields();
 
       // Compare result to original
       BFieldComparison comparison (1);
@@ -86,8 +88,9 @@ public:
       system.readWBasis("in/diblock/hex/omega.in");
 
       // Get reference field
-      DArray< DField<cudaReal> > d_wFields_check;
-      RDFieldToDField(d_wFields_check, system.wFields());
+      DArray< DArray<double> > d_wFields_check;
+      //RDFieldToDField(d_wFields_check, system.wFields());
+      d_wFields_check = system.wFields();
 
       // Round trip basis -> rgrid -> basis, read resulting wField
       system.basisToRGrid("in/diblock/hex/omega.in",
@@ -98,8 +101,9 @@ public:
       system.readWBasis("out/testConversion2D_hex_w.bf");
 
       // Get test result
-      DArray< DField<cudaReal> > d_wFields;
-      RDFieldToDField(d_wFields, system.wFields());
+      DArray< DArray<double> > d_wFields;
+      //RDFieldToDField(d_wFields, system.wFields());
+      d_wFields = system.wFields();
 
       // Compare result to original
       BFieldComparison comparison (1);
@@ -124,7 +128,7 @@ public:
       system.readWBasis("in/diblock/bcc/omega.in");
 
       // Get reference field
-      DArray< DField<cudaReal> > d_wFields_check;
+      DArray< DArray<double> > d_wFields_check;
       RDFieldToDField(d_wFields_check, system.wFields());
 
       // Complete round trip basis -> rgrid -> basis
@@ -135,7 +139,7 @@ public:
       system.readWBasis("out/testConversion3D_bcc_w.bf");
 
       // Get test result
-      DArray< DField<cudaReal> > d_wFields;
+      DArray< DArray<double> > d_wFields;
       RDFieldToDField(d_wFields, system.wFields());
 
       // Compare result to original
@@ -187,7 +191,7 @@ public:
       system.readWBasis("in/diblock/lam/omega.ref");
 
       // Get reference field
-      DArray< DField<cudaReal> > d_wFields_check;
+      DArray< DArray<double> > d_wFields_check;
       RDFieldToDField(d_wFields_check, system.wFields());
      
       // PSPC tests start from the reference solution, 
@@ -202,7 +206,7 @@ public:
       system.writeCBasis("out/testIterate1D_lam_rigid_c.bf");
 
       // Get test result
-      DArray< DField<cudaReal> > d_wFields;
+      DArray< DArray<double> > d_wFields;
       RDFieldToDField(d_wFields, system.wFields());
 
       // Compare result to original
@@ -227,7 +231,7 @@ public:
       system.readWBasis("in/diblock/lam/omega.ref");
 
       // Get reference field
-      DArray< DField<cudaReal> > d_wFields_check;
+      DArray< DArray<double> > d_wFields_check;
       RDFieldToDField(d_wFields_check, system.wFields());
 
       // Read input w-fields, iterate and output solution
@@ -240,7 +244,7 @@ public:
       system.writeCBasis("out/testIterate1D_lam_flex_c.bf");
 
       // Get test result
-      DArray< DField<cudaReal> > d_wFields;
+      DArray< DArray<double> > d_wFields;
       RDFieldToDField(d_wFields, system.wFields());
 
       // Compare result to original
@@ -269,7 +273,7 @@ public:
 
       // Get reference field
       system.readWBasis("in/solution/lam/w.bf");
-      DArray< DField<cudaReal> > d_wFields_check;
+      DArray< DArray<double> > d_wFields_check;
       RDFieldToDField(d_wFields_check, system.wFields());
 
       // iterate and output solution
@@ -281,7 +285,7 @@ public:
       system.writeCBasis("out/testIterate1D_lam_soln_c.bf");
 
       // Get test result
-      DArray< DField<cudaReal> > d_wFields;
+      DArray< DArray<double> > d_wFields;
       RDFieldToDField(d_wFields, system.wFields());
 
       // Compare result to original
@@ -310,7 +314,7 @@ public:
 
       // Get reference field
       system.readWBasis("in/blend/lam/w.ref_closed");
-      DArray< DField<cudaReal> > d_wFields_check;
+      DArray< DArray<double> > d_wFields_check;
       RDFieldToDField(d_wFields_check, system.wFields());
 
       // Read input w-fields, iterate and output solution
@@ -323,7 +327,7 @@ public:
       system.writeCBasis("out/testIterate1D_lam_blend_c.bf");
 
       // Get test result
-      DArray< DField<cudaReal> > d_wFields;
+      DArray< DArray<double> > d_wFields;
       RDFieldToDField(d_wFields, system.wFields());
 
       // Compare result to original
@@ -350,7 +354,7 @@ public:
 
       // Get reference field
       system.readWBasis("in/solution/lam_open/w.ref");
-      DArray< DField<cudaReal> > d_wFields_check;
+      DArray< DArray<double> > d_wFields_check;
       RDFieldToDField(d_wFields_check, system.wFields());
 
       // Read input w-fields, iterate and output solution
@@ -364,7 +368,7 @@ public:
       system.writeCBasis("out/testIterate1D_lam_open_soln_c.bf");
 
       // Get test result
-      DArray< DField<cudaReal> > d_wFields;
+      DArray< DArray<double> > d_wFields;
       RDFieldToDField(d_wFields, system.wFields());
 
       // Compare result to original
@@ -394,7 +398,7 @@ public:
 
       // Get reference field
       system.readWBasis("in/blend/lam/w.ref");
-      DArray< DField<cudaReal> > d_wFields_check;
+      DArray< DArray<double> > d_wFields_check;
       RDFieldToDField(d_wFields_check, system.wFields());
 
       // Read input w-fields, iterate and output solution
@@ -407,7 +411,7 @@ public:
       system.writeCBasis("out/testIterate1D_lam_open_blend_c.bf");
 
       // Get test result
-      DArray< DField<cudaReal> > d_wFields;
+      DArray< DArray<double> > d_wFields;
       RDFieldToDField(d_wFields, system.wFields());
 
       // Compare result to original
@@ -438,7 +442,7 @@ public:
       system.readWBasis("in/diblock/hex/omega.ref");
 
       // Get reference field
-      DArray< DField<cudaReal> > d_wFields_check;
+      DArray< DArray<double> > d_wFields_check;
       RDFieldToDField(d_wFields_check, system.wFields());
 
       // Read initial guess, iterate, output solution
@@ -453,7 +457,7 @@ public:
       system.writeCBasis("out/testIterate2D_hex_rigid_c.bf");
 
       // Get test result
-      DArray< DField<cudaReal> > d_wFields;
+      DArray< DArray<double> > d_wFields;
       RDFieldToDField(d_wFields, system.wFields());
 
       // Compare result to original
@@ -484,7 +488,7 @@ public:
       system.readWBasis("in/diblock/hex/omega.ref");
 
       // Get reference field
-      DArray< DField<cudaReal> > d_wFields_check;
+      DArray< DArray<double> > d_wFields_check;
       RDFieldToDField(d_wFields_check, system.wFields());
 
       system.readWBasis("in/diblock/hex/omega.in");
@@ -496,7 +500,7 @@ public:
       system.writeCBasis("out/testIterate2D_hex_flex_c.bf");
 
       // Get test result
-      DArray< DField<cudaReal> > d_wFields;
+      DArray< DArray<double> > d_wFields;
       RDFieldToDField(d_wFields, system.wFields());
 
       // Compare result to original
@@ -527,7 +531,7 @@ public:
       system.readWBasis("in/diblock/bcc/omega.ref");
 
       // Get reference field
-      DArray< DField<cudaReal> > d_wFields_check;
+      DArray< DArray<double> > d_wFields_check;
       RDFieldToDField(d_wFields_check, system.wFields());
 
       system.readWBasis("in/diblock/bcc/omega.in");
@@ -539,7 +543,7 @@ public:
       system.writeCBasis("out/testIterate3D_bcc_rigid_c.bf");
 
       // Get test result
-      DArray< DField<cudaReal> > d_wFields;
+      DArray< DArray<double> > d_wFields;
       RDFieldToDField(d_wFields, system.wFields());
 
       // Compare result to original
@@ -570,7 +574,7 @@ public:
       system.readWBasis("in/diblock/bcc/omega.ref");
 
       // Get reference field
-      DArray< DField<cudaReal> > d_wFields_check;
+      DArray< DArray<double> > d_wFields_check;
       RDFieldToDField(d_wFields_check, system.wFields());
 
       system.readWBasis("in/diblock/bcc/omega.in");
@@ -582,7 +586,7 @@ public:
       system.writeCBasis("out/testIterate3D_bcc_flex_c.bf");
 
       // Get test result
-      DArray< DField<cudaReal> > d_wFields;
+      DArray< DArray<double> > d_wFields;
       RDFieldToDField(d_wFields, system.wFields());
 
       // Compare result to original
@@ -615,22 +619,28 @@ public:
       in.close();
    }
 
-   template <int D>
-   void RDFieldToDField(DArray<DField<cudaReal>> & out, DArray<RDField<D>> const & in)
+   void RDFieldToDField(DArray< DArray<double> > & out, 
+                        DArray< DArray<double> > const & in)
    {
-      // if not allocated, allocate
+      // if out array is not allocated, allocate
       int nField = in.capacity();
-      int nPoint = in[0].capacity();
       if (!out.isAllocated()) {
          out.allocate(nField);
-         for (int i = 0; i < nField; i++) {
+      }
+      int nPoint = in[0].capacity();
+      for (int i = 0; i < nField; i++) {
+         UTIL_CHECK(in[i].capacity() == nPoint);
+         if (!out[i].isAllocated()) {
             out[i].allocate(nPoint);
+         } else {
+            UTIL_CHECK(out[i].capacity() == nPoint);
          }
       }
 
       // Copy
       for (int i = 0; i < nField; i++) {
-         cudaMemcpy(out[i].cDField(), in[i].cDField(), nPoint*sizeof(cudaReal), cudaMemcpyDeviceToDevice);
+         UTIL_CHECK(out[i].capacity() == in[i].capacity());
+         out[i] = in[i];
       }
    }
 
@@ -642,7 +652,7 @@ TEST_ADD(SystemTest, testReadParameters1D)
 TEST_ADD(SystemTest, testConversion1D_lam)
 TEST_ADD(SystemTest, testConversion2D_hex)
 TEST_ADD(SystemTest, testConversion3D_bcc)
-// TEST_ADD(SystemTest, testCheckSymmetry3D_bcc)
+//// TEST_ADD(SystemTest, testCheckSymmetry3D_bcc)
 TEST_ADD(SystemTest, testIterate1D_lam_rigid)
 TEST_ADD(SystemTest, testIterate1D_lam_flex)
 TEST_ADD(SystemTest, testIterate1D_lam_soln)
@@ -653,7 +663,6 @@ TEST_ADD(SystemTest, testIterate2D_hex_rigid)
 TEST_ADD(SystemTest, testIterate2D_hex_flex)
 TEST_ADD(SystemTest, testIterate3D_bcc_rigid)
 TEST_ADD(SystemTest, testIterate3D_bcc_flex)
-
 
 TEST_END(SystemTest)
 
