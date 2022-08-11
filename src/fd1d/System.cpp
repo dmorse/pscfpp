@@ -198,16 +198,13 @@ namespace Fd1d
       }
 
       // Optionally instantiate a Sweep object
-      readOptional<bool>(in, "hasSweep", hasSweep_);
-      if (hasSweep_) {
-         std::string className;
-         bool isEnd;
-         sweepPtr_ = 
-            sweepFactoryPtr_->readObject(in, *this, className, isEnd);
-         if (!sweepPtr_) {
-            UTIL_THROW("Unrecognized Sweep subclass name");
-         }
+      sweepPtr_ = 
+         sweepFactoryPtr_->readObjectOptional(in, *this, className, isEnd);
+      if (sweepPtr_) {
+         hasSweep_ = true;
          sweepPtr_->setSystem(*this);
+      } else {
+         hasSweep_ = false;
       }
    }
 

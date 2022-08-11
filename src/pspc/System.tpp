@@ -216,7 +216,12 @@ namespace Pspc
       iterator().setup();
 
       // Optionally instantiate a Sweep object
+<<<<<<< HEAD
       sweepPtr_ = sweepFactoryPtr_->readObjectOptional(in, *this, className, isEnd);
+=======
+      sweepPtr_ = 
+         sweepFactoryPtr_->readObjectOptional(in, *this, className, isEnd);
+>>>>>>> upstream/feature-pull
       if (sweepPtr_) {
          hasSweep_ = true;
          sweepPtr_->setSystem(*this);
