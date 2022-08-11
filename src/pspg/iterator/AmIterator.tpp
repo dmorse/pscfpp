@@ -359,9 +359,13 @@ namespace Pspg{
             parameters.append(1/scaleStress_ * (double)temp[i]);
          }
 
+         #if 0
          system().unitCell().setParameters(parameters);            
          system().mixture().setupUnitCell(system().unitCell(), system().wavelist());
          system().wavelist().computedKSq(system().unitCell());
+         #endif
+   
+         system().setUnitCell(parameters);
 
          delete[] temp;
       }
