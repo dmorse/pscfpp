@@ -4,19 +4,20 @@
 \ref user_param_mixture_page (Next) 
 <BR>
 
-This page gives a slightly more formal description of the syntactical
-conventions used in all parameter files. The discussion repeats some 
-aspects of the discussion of the example on the previous page, but also 
-introduces some ideas.
+This page gives a more complete discussion of syntactical conventions
+used in all PSCF parameter files. The discussion expands on some aspects 
+introduced in the discussion of the example shown on the previous page, 
+and introduces some aspects that were not discussed there.
 
 PSCF parameter files are fixed format files, in which each element can
 only appear at a specific location within the file. Some flexibility
 can be introduced, however, by allowing some elements to be optional or 
 polymorphic, as discussed greater detail below.  The format requires
 that the user provide a label at the beginning of each element that 
-can be checked against an expected value or an expected set of allowed
-values in order to allow the program to check the validity the file 
-format while it is being read.
+identifies the element, and that can be checked against an expected
+label or a set of possible allowed values. This allows the code that
+reads a parameter file to confirm its validity while it is being read,
+and to provide informative error messages when an error is found.
 
 \section user_param_syntax_blocks_section Parameter File Blocks
 
@@ -84,50 +85,57 @@ parameter file syntax errors.
 The name of each block within a parameter file generally corresponds to 
 the name of a class or class template in the underlying C++ code.  The 
 data contained within such a block generally contains the information 
-required to initialize the internal state of a corresponding instance
-of the specified class. The code required to read the parameter file 
-block associated for a particular class is almost always defined in a 
-member function of that class named "readParameters". Users who are
-comfortable with C++ can thus use knowledge of this convention to 
-easily find the source code that reads a particular parameter file 
-block.
+required to initialize the internal state of an instance of the specified 
+class. The code required to read the parameter file block associated for 
+a particular class is almost always defined in a member function of that 
+class named "readParameters". Users who are comfortable with C++ can thus 
+use knowledge of this convention to easily find the source code that reads 
+a particular parameter file block.
 
-Nesting of blocks within a parameter file reflects parent-child ownership 
-relationships among C++ objects: Each subblock generally corresponds to 
-an object that the parent object "owns", i.e., either either a member of 
-the parent object or a dynamically created object that the parent object 
-is responsible for creating and destroying.  The outermost block in the 
-above example is a "System" block. This reflects the fact that main 
-object in the underlying code for a 1D finite-difference program is an 
-instance of the class Pscf::Fd1d::System.
+Nesting of blocks within a parameter file generally reflects parent-child 
+ownership relationships among objects in the corresponding C++ code: 
+Each subblock generally corresponds to an object that the parent object 
+"owns", i.e., an object that is either a member of the parent object or 
+a dynamically created object that the parent object is responsible for 
+creating and destroying.  The outermost block in the each parameter file
+a "System" block. This reflects the fact that main object in each PSCF
+program is an instance of a class named System.
 
 \section user_param_syntax_parameter_section Individual Parameters
 
-Each line that assigns a value to an an individual parameter begins with
-a label string that identifies the name of the parameter, followed by one 
-or more spaces, and then a text representation of the parameter value.  
-The name of each parameter generally corresponds to a slightly modified 
-version of the name of a member variable of the relevant parent class,
-i.e., a member variable of the class whose name is specfied in the
-first line of the innermost enclosing parameter file block. 
+Each entry that assigns a value to an an individual parameter is given
+on a single line that contains a label string that identifies the name 
+of the parameter, followed by one or more spaces, and then a text 
+representation of the parameter value.
+For example, the entry associated with the nMonomer integer parameter 
+within the Mixture block of a system that contains two distinct types 
+of monomer (nMonomer == 2) would look like
+\code
+   nMonomer      2
+\endcode
+The label for each parameter generally corresponds to a slightly 
+modified version of the name of a member variable of the relevant 
+parent class, i.e., a member variable of the class whose name is 
+specfied in the first line of the innermost enclosing parameter 
+file block.  
 
-Values of individual parameters are read from an input stream using the 
-C++ ">>" operator. The value of each parameter that is stored in a 
-variable of a primitive C data types (e.g., an integer or floating point 
-number) or a string may thus be given using a standard C text 
-representation for the relevant data type.
+Values of individual parameters are always read from an input stream 
+using the C++ ">>" operator. The value of any parameter that is stored 
+in a variable of a primitive C data types (e.g., an integer or floating 
+point number) or a string may thus be given using a standard C text 
+representation for that data type.
 
-Values of some parameters are stored as instances of non-primitive data 
-types, such as classes or enumerations, that are defined within the 
-pscf source code.  Values for such variables are also read from file
-using the ">>" operator.  In these cases, the text representation of 
-the "value" of each such non-primitive variable must defined by 
-overloaded iostream extractor (>>) and insertor (<<) operators that 
+Values of some parameters are stored as instances of non-primitive 
+data types, such as classes or enumerations, that are defined within 
+the PSCF source code.  Values for such variables are also read from 
+file using the ">>" operator.  In these cases, the text representation 
+of the "value" of each such non-primitive variable must be defined by 
+an overloaded iostream extractor (>>) and insertor (<<) operators that 
 are defined for that data type. 
 
-For example, in the example, the "type" parameter within each 
-Polymer subblock of the Mixture block is stored as an enumeration with 
-two possible values, for which the text representations are the strings 
+For example, in the example, the "type" parameter within each Polymer 
+subblock of the Mixture block is stored as an enumeration with two 
+possible values, for which the text representations are the strings 
 "linear" or "branched". The value of the "type" parameter must thus be
 given in the parameter file by a string with one of these two allowed 
 values. 
@@ -140,15 +148,26 @@ the first row contains a label that contains the name of the array
 followed immediately by an opening square bracket, and the last line 
 contains a matching closing square bracket on a line by itself. 
 Between these delimiters are values of elements of the array, with 
-one element per line. 
+one element per line.  The parameter file entry for the contents of
+an array named A with N elements is thus of the form
+\code
+     A[
+        A[0]
+        A[1]
+         :
+        A[N-1]
+     ]
+\endcode
+where A[0], ... A[N-1] denote values for the elements, with zero-based
+indices.  In the example given in the previous page, this syntax is used 
+for the "monomers" array within the Mixture block, and the "blocks" 
+arrays within each Polymer subblock of the Mixture block.  
 
-Examples of this syntax in the above example are the "monomers" array 
-within the Mixture block, and the "blocks" arrays within each Polymer 
-subblock of the Mixture block.  The number of expected elements of 
-such an array must generally be specified by the value of a parameter 
-that appears before the array in the parameter file. For example, the
-number of monomer types is specified by parameter nMonomer that 
-appears just before the "monomers" array. 
+The number of expected elements of such an array must generally be 
+specified by the value of a parameter that appears before the array 
+in the parameter file. For example, the number of monomer types is 
+specified by parameter nMonomer that appears just before the 
+"monomers" array. 
 
 \section user_param_syntax_matrix_section 2D Arrays of Parameters 
 
@@ -231,14 +250,14 @@ was omitted.
 
 Some parameters or blocks in a parameter file may also be required or 
 allowed only if parameters that have been read previously take on 
-specific values.  Generally, the pscfpp parameter file format does not 
+specific values.  Generally, the PSCF parameter file format does not 
 require or allow entry of parameters that are known to be meaningless 
 or irrelevent on the basis of parameter values that appear earlier in 
 the parameter file.
 
 \section user_param_syntax_polymorphic_section Polymorphic Blocks
 
-Some blocks in a pscfpp parameter file are "polymorphic".  A polymorphic 
+Some blocks in a PSCF parameter file are "polymorphic".  A polymorphic 
 block is one that may contain the initial label and format appropriate 
 to any of several possible classes that are subclasses of a particular 
 base class, and that that serve analogous purposes. In a polymorphic 
@@ -258,8 +277,9 @@ which implement different iterator algorithms. The appearance of a block
 that begins with the name "NRIterator" tells the program that the user 
 has selected a Newton-Raphsom iterator that is implemented by the class 
 Fd1d::NRIterator, which is a subclass of Fd1d::Iterator. Different 
-Iterator subclasses generally require different parameters, and so 
-define different parameter file block formats.
+subclasses of Fd1d::Iterator implement different iteration algorithms,
+and generally require different input parameters, define different 
+parameter file block formats.
  
 <BR>
 \ref user_param_example_page  (Up) &nbsp; &nbsp; &nbsp; &nbsp; 

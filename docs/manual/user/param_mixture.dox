@@ -18,12 +18,72 @@ The Mixture block contains information that specifies the structure of
 each polymer species within the mixture, the monomer type and volume of
 each solvent species, and the composition of the mixture.
 
-All pscf programs use the same format for the Mixture parameter file block. 
-The Mixture block has the format
+\section Parameter File Formats Descriptions
+
+The descriptions of the Mixture block and its subblocks given below
+introduces several conventions that are used throughout these notes 
+to describe formats a parameter file block:
+
+ - Subblocks are indicated using the syntax Label{ ... }, where Label
+   is the Label string for the subblock, and where ... is used to 
+   indicated the omitted contents of a subblock.
+
+ - Individual parameters are indicated using the syntax 
+   \code
+       label   type
+   \endcode
+   where label is the name (or label string) of the parameter and type 
+   is a string that identifies the data type of the parameter value (e.g., 
+   int, real, string, etc.). For example, the required integer parameter
+   nPolymer is indicated by a line
+   \code
+       nPolymer  int
+   \endcode
+   within a description of the format of the Mixture block. 
+
+ - Optional subblocks and parameters are indicated by adding an asterisk 
+   immediately after the subblock or parameter label. Thus for example,
+   the optional integer parameter nSolvent within the Mixture block is 
+   indicated in by a line
+   \code
+      nSolvent*   int
+   \endcode
+   within a description of the block format.
+
+ - Parameters that represent one-dimensional arrays are indicated using
+   the syntax
+   \code
+       label  Array[ type ]
+   \endcode
+   where label is the name of the array, and type is a string that
+   identifies the data type of an element value as given in the 
+   parameter file. The monomers array is thus indicated by a entry
+   \code
+       monomers Array [ int ]
+   \endcode
+   When several values are required as input for each element of an
+   array. See the description of the blocks array of a Polymer block
+   for an example of this.
+
+ - Parameters that represent two-dimensional arrays or matrices that 
+   must be input in element format are indicated using the syntax
+   \code
+       label Matrix ( type )
+   \endcode
+   where type is the data type for a single element.
+
+ - Default values for optional parameters may be indicated in parentheses
+   after the label and data type. The default value is the value assigned
+   to the associated variable if the entry is omitted from the parameter
+   file. 
+
+\section user_param_mixture_sec Mixture Block
+
+The Mixture block in the parameter file for any pscf program has the format
 \code
 Mixture{
   nMonomer   int
-  monomers   Array [ Monomer ]
+  monomers   Array [ real ]
   nPolymer   int
   Polymer{ ... } 
     ...
@@ -34,31 +94,37 @@ Mixture{
   ds         float
 }
 \endcode
-Here and in other descriptions of parameter file formats, labels followed by an asterisk (*) indicate optional parameters or subblocks.
-The nSolvent parameter is an optional parameter that is set to zero by default, i.e., it is set to 0 if the parameter is omitted from the parameter file.
-The number of Polymer subblocks must equal nPolymer, and the number of Solvent subblocks must equal nSolvent (i.e., no Solvent subblocks if nSolvent is ommitted).
+The asterisk after nSolvent indicates that it is a optional parameter,
+which is set to 0 by default.
+The number of Polymer subblocks must equal nPolymer, and the number of Solvent subblocks must equal nSolvent (i.e., so Solvent subblocks may be included if 
+the nSolvent parameter entry is ommitted).
 
-Parameters and subblocks are described below:
+The meaning of parameters and subblocks are described in the table shown below. 
 <table>
+  <tr>
+    <td> <b> Label </b>  </td>
+    <td> <b> Description </b>  </td>
+  </tr>
   <tr>
     <td> nMonomer </td>
     <td> Number of distinct monomer types in the mixture </td>
   </tr>
+    <td>  </td>
   <tr>
     <td> monomers </td>
     <td> 
-    An array of nMonomer elements in which the value of each element gives the statistical segment length of the associated monomer type.
+    A 1D array of nMonomer elements in which the value of each element is the statistical segment length of the associated monomer type.
   </tr>
   <tr>
     <td> nPolymer </td>
     <td> The number of polymer species. This is a required positive integer.    </td> 
   </tr>
-  <td> nSolvent* </td>
   <tr>
+    <td> nSolvent* </td>
     <td> The number of solvent (point-particle) species. 
-         This is an optional non-negative parameter that is set to a 
-         default value of 0 if omitted.
-    </td>
+         This is an optional non-negative parameter, which is set to zero
+         by default. </td>
+  </tr>
   <tr>
     <td> Polymer{ ... } </td>
     <td> 
@@ -67,12 +133,11 @@ Parameters and subblocks are described below:
        immediately after the nPolymer and nSolvent parameters.
     </td>
   </tr>
-  </tr>
   <tr>
     <td> Solvent{ ... } </td>
     <td> Each Solvent{ ... } subblock contains data for one point-like 
          Solvent species.  The number of solvent subblocks must equal
-         nSolvent, or zero if nSolvent is omitted.
+         nSolvent.
     </td>
   </tr>
   <tr>
@@ -88,9 +153,109 @@ Monomer types are implicitly assigned integer identifiers in the order in which 
 These integer monomer type indices are used to identify the monomer types associated with each blocks of a block polymer and each solvent type.
 
 Polymer and Solvent species are also assigned integer labels in the order in which object of a particular type appear in the parameter file.
-The the first polymer is thus assigned an index 0, the second index 1, etc.
-Similarly, the first solvent (if any) is assigned an index 0.
+The the first polymer is thus assigned an index 0, the second an index 1, etc.
+Similarly, the first solvent species (if any) is assigned an index 0, etc.
  
+\section Polymer Blocks
+
+Each Mixture block contains one or more Polymer sublocks, each of which
+contains information about a specific polymer molecules species. The format
+for a polymer block is
+\code
+      Polymer{
+          type*  string  ("linear" or "branched", linear by default)
+          nBlock int
+          blocks Array [ Block ] (nBlock elements)
+          phi*  real  (in range [0,1])
+          mu    real  (required iff phi is omitted)
+      }
+\endcode
+Last entry in must be either a value for phi, which is the volume fraction
+occupied by the polymer species, or mu, which is the chemical potential for
+that species.
+
+Each line of data within the "blocks" contains a description of one block
+of a block polymer. The required format is different depending on whether
+the value of the type parameter is "linear" or "branched".
+
+If the polymer type is linear, then blocks are listed in the order in 
+which they appear along the polymer, starting from one end. In this 
+case the data required in each line of the blocks array is of the form
+\code
+      monomerTypeId  length
+\endcode
+where monomerTypeId is an integer and length is a real number.
+Here, monomerTypeId is monomer type index for monomers in the block, 
+while length is the length of the block. The "length" of a block is
+defined in PSCF to be the ratio of the steric volume of the block to 
+a monomer reference volume. 
+
+The format of the blocks array for a branched polymer is discussed
+below, after the discussion of Solvent blocks
+
+\section user_param_mixture_solvent_sec Solvent block
+
+The format for a solvent block is
+\code
+    Solvent{
+       monomerId   int
+       size        real
+       phi*        real
+       mu          real (required iff phi is omitted)
+    }
+\endcode
+The monomerId is a monomer type index that identifies the solvent
+as containing a specified monomer type. The size parameter gives
+the volume occupied a solvent molecule, in units in which the 
+monomer reference volume is equal to unity. For each solvent, a
+value must be specified for either the volume fraction phi occupied
+by the species, or its chemical potential mu. It is an error to 
+specify both phi and mu or to omit both variables.
+
+\section user_param_mixture_branched_sec Branched Polymers
+
+If the polymer type id branched, then the information in the blocks
+array of a Polymer block must specify the topology of the polymer 
+as well the monomer type and length of each block. A branched block 
+polymer is described in PSCF as a acyclic graph consisting of nBlock 
+lines or edges (each of which corresponds to a block) that each 
+terminate at two vertices.  In this description, each free chain 
+end and each junction at which two or more blocks meet is described 
+as a "vertex".  For example, a linear block polymer with nBlock blocks 
+contains two chain ends and nBlock - 1 junctions, giving nBlock + 1 
+vertices. A standard theorem of graph theory tells us that an acyclic 
+graph with N edges always has exactly N+1 vertices. As a result, we 
+know that any acyclic branched block polymer with nBlock blocks has 
+exactly nBlock + 1 vertices. In the description of polymer structure 
+used by PSCF, each vertex is implicitly assigned a unique integer 
+vertex index in the range [0, nBlock], and each block is connected 
+to two such labelled vertices.
+
+The data format for a block in a branched polymer is thus of the
+form
+\code
+    monomerTypeId  length   vertexId0   vertexId1
+\endcode
+vertexId0 and vertexId1 are the indices for the two vertices that
+terminate the block, while monomerTypeId and length have the same
+meanings as for a linear polymer.
+
+As a simple example of a branched polymer, consider an ABC star 
+terpolymer consisting of three chemically distinct blocks with 
+monomer types connected, for which nBlocks = 3. For simplicity,
+assume that the three blocks have monomer types indices 0, 1 
+and 2, and the all three blocks are of length 1.0. The blocks
+array for such a polymer might look like
+\code
+    blocks[
+             0   1.0    0   3
+             1   1.0    1   3
+             2   1.0    2   3
+    ]
+\endcode
+In this example vertex 3 is the central junction, and vertices
+0, 1, and 2 are chain ends.
+
 <BR>
 \ref user_syntax_page  (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_param_sweep_page (Next) 
