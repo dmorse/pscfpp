@@ -65,7 +65,7 @@ namespace Pspc
 
       /**
       * Determine the indices of each flexible lattice parameter, based on
-      * normalVec and unitCell definitions in param file. Assumes that
+      * normalVecId and unitCell definitions in param file. Assumes that
       * isFlexible == true, and gives a warning if none of the parameters
       * are actually able to be varied given the thin film constraints. 
       * Stores resulting array in flexibleParams_ member of this object,
@@ -82,7 +82,7 @@ namespace Pspc
       void checkLatticeVectors() const;
 
       using FilmIteratorBase<1,IteratorType>::setClassName;
-      using FilmIteratorBase<1,IteratorType>::normalVec;
+      using FilmIteratorBase<1,IteratorType>::normalVecId;
 
    protected:
 
@@ -105,7 +105,7 @@ namespace Pspc
 
       /**
       * Determine the indices of each flexible lattice parameter, based on
-      * normalVec and unitCell definitions in param file. Assumes that
+      * normalVecId and unitCell definitions in param file. Assumes that
       * isFlexible == true, and gives a warning if none of the parameters
       * are actually able to be varied given the thin film constraints. 
       * Stores resulting array in flexibleParams_ member of this object,
@@ -122,7 +122,7 @@ namespace Pspc
       void checkLatticeVectors() const;
 
       using FilmIteratorBase<2,IteratorType>::setClassName;
-      using FilmIteratorBase<2,IteratorType>::normalVec;
+      using FilmIteratorBase<2,IteratorType>::normalVecId;
 
    protected:
 
@@ -145,7 +145,7 @@ namespace Pspc
 
       /**
       * Determine the indices of each flexible lattice parameter, based on
-      * normalVec and unitCell definitions in param file. Assumes that
+      * normalVecId and unitCell definitions in param file. Assumes that
       * isFlexible == true, and gives a warning if none of the parameters
       * are actually able to be varied given the thin film constraints. 
       * Stores resulting array in flexibleParams_ member of this object,
@@ -162,7 +162,7 @@ namespace Pspc
       void checkLatticeVectors() const;
       
       using FilmIteratorBase<3,IteratorType>::setClassName;
-      using FilmIteratorBase<3,IteratorType>::normalVec;
+      using FilmIteratorBase<3,IteratorType>::normalVecId;
 
    protected:
 

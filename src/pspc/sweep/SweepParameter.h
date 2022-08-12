@@ -31,20 +31,21 @@ namespace Pspc {
    * To indicate the meaning of index values, we use mId to denote 
    * a monomer type index, pId to denote a polymer species index, 
    * bId to denote the index of a block within a polymer, sId to
-   * denote a solvent species index, and lId to denote a lattice 
-   * parameter index:
+   * denote a solvent species index, lId to denote a lattice parameter
+   * index, and wId to denote a wall index:
    * \code
-   *  | Type        | Meaning                     | id(0) | id(1)
-   *  | ----------- | --------------------------- | ----- | -----
-   *  | kuhn        | monomer segment length      | mId   |
-   *  | chi         | Flory-Huggins parameter     | mId   | mId
-   *  | block       | block length                | pId   | bId
-   *  | solvent     | solvent size                | sId   |
-   *  | phi_polymer | polymer volume fraction     | pId   |
-   *  | mu_polymer  | polymer chemical potential  | pId   |
-   *  | phi_solvent | solvent volume fraction     | sId   |
-   *  | mu_solvent  | solvent chemical potential  | sId   |
-   *  | cell_param  | lattice parameter           | lId   |
+   *  | Type        | Meaning                            | id(0) | id(1)
+   *  | ----------- | ---------------------------------- | ----- | -----
+   *  | kuhn        | monomer segment length             | mId   |
+   *  | chi         | Flory-Huggins parameter            | mId   | mId
+   *  | block       | block length                       | pId   | bId
+   *  | solvent     | solvent size                       | sId   |
+   *  | phi_polymer | polymer volume fraction            | pId   |
+   *  | mu_polymer  | polymer chemical potential         | pId   |
+   *  | phi_solvent | solvent volume fraction            | sId   |
+   *  | mu_solvent  | solvent chemical potential         | sId   |
+   *  | cell_param  | lattice parameter                  | lId   |
+   *  | wall_chi    | Wall/monomer interaction parameter | mId   | wId
    * \endcode
    * The two indices for a Flory-Huggins chi parameter refer to indices
    * in the chi matrix maintained by ChiInteraction. Changes to element

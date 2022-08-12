@@ -1,0 +1,69 @@
+namespace Pscf{
+namespace Pspc{
+/*! 
+\page pspc_AmIterator_page AmIterator
+
+A Pscf::Pspc::AmIterator<D> object is an iterator that solves the SCFT equations 
+using the Anderson Mixing algorithm. 
+
+The parameter file format for an AmIteratorFilm object is:
+\code
+AmIteratorFilm{
+  AmIterator{
+   maxItr              int
+   epsilon             float
+   maxHist             int  
+   errorType*          enumeration ("normResid", "maxResid", or "relNormResid", "relNormResid" by default)
+   isFlexible*         bool (0 or 1, 0 by default)   
+   scaleStress*        float (10 by default)
+}
+\endcode
+Here, as elsewhere, labels followed by an asterisk (*) represent optional 
+elements.
+
+Parameters and subblocks are described below:
+<table>
+  <tr>
+    <td> maxItr </td>
+    <td> Maximum number of iterations attempted. If calculation has not converged
+         after this many iterations, the calculation will be terminated. </td>
+  </tr>
+  <tr>
+    <td> epsilon </td>
+    <td> Error tolerance. Once the max, norm, or relative norm of the residual
+         vector (depending on choice of errorType) has shrunk below this value,
+         the calculation is considered to be converged. </td>
+  </tr>
+  <tr>
+    <td> maxHist </td>
+    <td> The number of histories (previous state space points) to use to calculate
+         the fields at the next iteration. </td>
+  </tr>
+  <tr>
+    <td> errorType* </td>
+    <td> Error type to use to determine whether the calculation has converged.
+         If "maxResid", will use the maximum component of the residual vector.
+         If "normResid", will use the L2 norm of the residual vector. 
+         If "relNormResid", will use the L2 norm of the vector of residuals 
+         divided by the L2 norm of the vector of omega field elements, as in 
+         Stasiak and Matsen, EPJE, 2011. </td>
+  </tr>
+  <tr>
+    <td> isFlexible* </td>
+    <td> Boolean (0 or 1, default 0) indicating whether the lattice parameters
+         of the unit cell should be treated as flexible. If true (1), the 
+         iterator will optimize the lattice parameters to minimize the stress.
+         </td>
+  </tr>
+  <tr>
+    <td> scaleStress* </td>
+    <td> If isFlexible = true, the components of the residual that quantify the
+         stress will be multiplied by scaleStress, allowing the user to vary the
+         relative importance of the stress compared to the error in the potential
+         fields. Default value is 10. </td>
+  </tr>
+</table>
+
+*/
+}
+}

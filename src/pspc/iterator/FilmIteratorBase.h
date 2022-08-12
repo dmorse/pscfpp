@@ -94,7 +94,7 @@ namespace Pspc
 
       /**
       * Determine the indices of each flexible lattice parameter, based on
-      * normalVec and unitCell definitions in param file. Assumes that
+      * normalVecId and unitCell definitions in param file. Assumes that
       * isFlexible == true, and gives a warning if none of the parameters
       * are actually able to be varied given the thin film constraints. 
       * Stores resulting array in flexibleParams_ member of this object,
@@ -239,9 +239,9 @@ namespace Pspc
       bool hasExternalField() const;
 
       /**
-      * Get const value of normalVec
+      * Get const value of normalVecId
       */
-      int normalVec() const;
+      int normalVecId() const;
 
       /**
       * Get const value of interfaceThickness
@@ -300,7 +300,7 @@ namespace Pspc
       DMatrix<double> chiFields_;
 
       /// Lattice basis vector that is normal to the walls
-      int normalVec_;
+      int normalVecId_;
 
       /// Interface thickness
       double t_;
@@ -360,10 +360,10 @@ namespace Pspc
    const
    {  return iterator_.externalField(monomerId); }
 
-   // Get value of normalVec
+   // Get value of normalVecId
    template <int D, typename IteratorType>
-   inline int FilmIteratorBase<D, IteratorType>::normalVec() const
-   {  return normalVec_; }
+   inline int FilmIteratorBase<D, IteratorType>::normalVecId() const
+   {  return normalVecId_; }
 
    // Get value of interfaceThickness
    template <int D, typename IteratorType>

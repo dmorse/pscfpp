@@ -1,7 +1,7 @@
 namespace Pscf{
 namespace Pspc{
 /*! 
-\page pspc_System_page Pspc::System<D>
+\page pspc_System_page System
 
 A Pspc::System<D> object is the main object in a SCFT computation for a D dimensionally periodic structure using a pseudo-spectral algorithm on CPU hardware.
 

@@ -30,7 +30,7 @@ namespace Pspc
 
    /*
    * Output the indices of each flexible lattice parameter, based on
-   * normalVec and unitCell definitions in param file
+   * normalVecId and unitCell definitions in param file
    */
    template <typename IteratorType>
    void FilmIterator<1, IteratorType>::setFlexibleParams()
@@ -71,7 +71,7 @@ namespace Pspc
 
    /*
    * Output the indices of each flexible lattice parameter, based on
-   * normalVec and unitCell definitions in param file
+   * normalVecId and unitCell definitions in param file
    */
    template <typename IteratorType>
    void FilmIterator<2, IteratorType>::setFlexibleParams() 
@@ -80,11 +80,11 @@ namespace Pspc
 
       // If the lattice system is square, params should be empty. Otherwise,
       // params should contain only the length of the vector that is not 
-      // normalVec. The length of normalVec is fixed, and gamma = 90 degrees.
+      // normalVecId. The length of normalVecId is fixed, and gamma = 90 degrees.
       if (system().domain().unitCell().lattice() != UnitCell<2>::Square) {
-         if (normalVec() == 0) {
+         if (normalVecId() == 0) {
             params.append(1);
-         } else { // normalVec() == 1
+         } else { // normalVecId() == 1
             params.append(0);
          }
       }
@@ -134,7 +134,7 @@ namespace Pspc
 
    /*
    * Output the indices of each flexible lattice parameter, based on
-   * normalVec and unitCell definitions in param file
+   * normalVecId and unitCell definitions in param file
    */
    template <typename IteratorType>
    void FilmIterator<3, IteratorType>::setFlexibleParams()
@@ -143,15 +143,15 @@ namespace Pspc
       UnitCell<3>::LatticeSystem lattice = system().domain().unitCell().lattice();
 
       // params can contain up to 3 lattice parameters: the length of the two 
-      // lattice vectors that are not normalVec, and the angle between them.
-      // The other two angles must be 90 degrees, and the length of normalVec
+      // lattice vectors that are not normalVecId, and the angle between them.
+      // The other two angles must be 90 degrees, and the length of normalVecId
       // is fixed. The crystal system determines which parameters are flexible.
       if (lattice == UnitCell<3>::Hexagonal || 
          lattice == UnitCell<3>::Rhombohedral) {
-         UTIL_CHECK(normalVec() == 2); // this is required for hex/rhombohedral
+         UTIL_CHECK(normalVecId() == 2); // this is required for hex/rhombohedral
          params.append(0);
       } else if (lattice == UnitCell<3>::Tetragonal) {
-         if (normalVec() == 2) {
+         if (normalVecId() == 2) {
             params.append(0);
          } else {
             params.append(1);
@@ -159,14 +159,14 @@ namespace Pspc
       } else if (lattice != UnitCell<3>::Cubic) {
          // The for-loop below applies to orthorhombic, monoclinic, & triclinic
          for (int i = 0; i < 3; i++) {
-            if (normalVec() != i) {
+            if (normalVecId() != i) {
                params.append(i);
             }
          }
-         if (lattice == UnitCell<3>::Monoclinic && normalVec() == 1) {
-            params.append(3); // beta is flexible if normalVec == 1
+         if (lattice == UnitCell<3>::Monoclinic && normalVecId() == 1) {
+            params.append(3); // beta is flexible if normalVecId == 1
          } else if (lattice == UnitCell<3>::Triclinic) {
-            params.append(normalVec() + 3);
+            params.append(normalVecId() + 3);
          }
       }
 
@@ -189,7 +189,7 @@ namespace Pspc
    * Check that user-defined lattice basis vectors are compatible with 
    * the thin film constraint (in 3D, we require that there be one 
    * lattice basis vector that is orthogonal to the walls, and two that
-   * are parallel to the walls; the orthogonal vector is normalVec).
+   * are parallel to the walls; the orthogonal vector is normalVecId).
    */
    template <typename IteratorType>
    void FilmIterator<3, IteratorType>::checkLatticeVectors() const 
@@ -203,17 +203,17 @@ namespace Pspc
       beta = dot(a,c);
       alpha = dot(b,c);
 
-      if (normalVec() == 0) {
+      if (normalVecId() == 0) {
          if (beta > 1e-8 || gamma > 1e-8) {
-            UTIL_THROW("ERROR: If normalVec = 0, beta and gamma must be 90 degrees");
+            UTIL_THROW("ERROR: If normalVecId = 0, beta and gamma must be 90 degrees");
          }
-      } else if (normalVec() == 1) {
+      } else if (normalVecId() == 1) {
          if (alpha > 1e-8 || gamma > 1e-8) {
-            UTIL_THROW("ERROR: If normalVec = 1, alpha and gamma must be 90 degrees");
+            UTIL_THROW("ERROR: If normalVecId = 1, alpha and gamma must be 90 degrees");
          }
-      } else { // normalVec == 2
+      } else { // normalVecId == 2
          if (alpha > 1e-8 || beta > 1e-8) {
-            UTIL_THROW("ERROR: If normalVec = 2, alpha and beta must be 90 degrees");
+            UTIL_THROW("ERROR: If normalVecId = 2, alpha and beta must be 90 degrees");
          }
       }
    }

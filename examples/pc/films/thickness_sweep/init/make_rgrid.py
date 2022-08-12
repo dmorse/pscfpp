@@ -14,10 +14,10 @@ params = list(map(float,lines[8].split()))
 paramfile = open('../param','r')
 paramlines = list(paramfile)
 paramfile.close()
-normalVec = int(paramlines[34].split()[1])
+normalVecId = int(paramlines[34].split()[1])
 t = float(paramlines[35].split()[1])
 T = float(paramlines[36].split()[1])
-L = params[normalVec]
+L = params[normalVecId]
 
 linenum = 15
 line = '    {:.9f}    {:.9f}\n'

@@ -62,7 +62,10 @@ System{
   Domain{
     ...
   }
-  AmIterator{
+  Iterator{
+    ...
+  }
+  Sweep{
     ...
   }
 }
@@ -79,7 +82,10 @@ ChiInteraction: Values of Flory-Huggins (chi) interaction parameters
 Domain: Description of crystallographic unit cell and discretization mesh
 </li>
 <li> 
-AmIterator: Parameters required by the iteration algorithm
+Iterator: Parameters required by the iteration algorithm
+</li>
+<li> 
+Sweep: Optional description of a parameter sweep to be performed
 </li>
 </ul>
 
@@ -101,6 +107,8 @@ file.
     </ul>
   <li> \subpage pscf_ChiInteraction_page "ChiInteraction" </li>
   <li> \subpage pspc_Domain_page "Domain" </li>
+  <li> \subpage pspc_Iterator_page "Iterator" </li>
+  <li> \subpage pspc_Sweep_page "Sweep" </li>
   </ul>
 </ul>
 
@@ -145,7 +153,7 @@ The data on this line contains a string that specifies the desired
 crystal system followed by one or more unit cell parameters. The
 format is thus
 \code
-   unitCell   crystalSystem  parmam[0] ..... param[m]
+   unitCell   crystalSystem  param[0] ..... param[m]
 \endcode
 where m denotes the number of independent parameters required to
 describe a unit cell of the specified crystal system. The allowed 
@@ -197,7 +205,7 @@ listed \ref user_groups_page "here".
 
 \section user_param_pc_AmIterator_section AmIterator Block
 
-The AmIterator block provides parameters required by the Anderson-Mixing 
+The \ref pspc_AmIteratorPage block provides parameters required by the Anderson-Mixing 
 (AM) iterator that is used to solve the nonlinear self-consistent field 
 (SCFT) equations.  An example of the format is shown below:
 \code

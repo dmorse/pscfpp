@@ -84,20 +84,20 @@ System{
       mesh             32  32  68
       groupName        P_4%m_m_m
    }
-   AmIterator{
+   AmIteratorFilm{
       maxItr              1000
       epsilon             1e-6
       maxHist             50 
       isFlexible          1
-      normalVec           2
+      normalVecId         2
       interfaceThickness  0.05     
       wallThickness       0.2
       chi[
            10  10
             0   0
       ]
-      writeWallBasis      out/wall.bf
-      writeWallRGrid      out/wall.rf
+      wallBasisOutFile    out/wall.bf
+      wallRGridOutFile    out/wall.rf
    }
    LinearSweep{
       ns            20  
@@ -113,7 +113,8 @@ System{
 
 In the example, we have constructed a parameter file that might be used to represent an AB diblock
 polymer self-assembled into a bcc structure confined to a thin film that is ~2 unit cells thick. 
-This will be explained in more detail below.
+This will be explained in more detail below. Also, see our parameter-level breakdown of the components
+of an \ref pspc_AmIteratorFilm_page block.
 
 ### Domain Block
 
@@ -128,7 +129,7 @@ the mesh discretization in that direction, which will be discussed further below
 
 Now, we proceed to the `AmIteratorFilm` block. The first four parameters in this block define the
 AmIterator object and do not pertain to the thin film constraint (from `maxItr` to `isFlexible`).
-Then we get to the variables that define the mask. The first required variable is `normalVec`,
+Then we get to the variables that define the mask. The first required variable is `normalVecId`,
 indicating which of the 3 lattice basis vectors is oriented normal to the walls. The input should 
 be either 0, 1, or 2, corresponding to the **a**, **b**, or **c** lattice vectors, respectively. 
 In the example above, the **c** vector is normal to the wall. Importantly, the two vectors that are
@@ -183,7 +184,7 @@ of the external field in real space is identical to the density field of the wal
 dictated by the chi array defined by the user.
 
 Finally, there are two optional inputs that can be used to write the mask field to a file. 
-`writeWallBasis` and `writeWallRGrid` specify the path/filename to which to write the mask field in 
+`wallBasisOutFile` and `wallRGridOutFile` specify the path/filename to which to write the mask field in 
 symmetry-adapted basis format or real-space grid format, respectively. This can be useful if, for example,
 the user wishes to plot/visualize the shape of the wall in addition to the shape of the density profiles
 for each monomer species.
@@ -235,11 +236,11 @@ we require that the other lattice basis vector(s) remain parallel to the walls. 
 - In 2D, the length of the lattice basis vector parallel to the walls (either **a** or **b**) may vary, 
 but the angle *&gamma;* between **a** and **b** is fixed at 90&deg;.
 - In 3D, the lengths of the lattice basis vectors that are parallel to the walls may vary, as can the angle
-between them. The two vectors in question depend on the choice of `normalVec`. The length of the lattice basis
-vector that is normal to the wall (the vector indicated by `normalVec`) is held fixed, and the remaining two
+between them. The two vectors in question depend on the choice of `normalVecId`. The length of the lattice basis
+vector that is normal to the wall (the vector indicated by `normalVecId`) is held fixed, and the remaining two
 angles are fixed at 90&deg;. 
 This behavior is implemented automatically. If the user specifies that lattice parameters may vary, then the
-software will decide which lattice parameters are actually allowed to vary based on `normalVec` and `unitCell`.
+software will decide which lattice parameters are actually allowed to vary based on `normalVecId` and `unitCell`.
 If the user tries to define a unit cell that is incompatible with the rules above (*e.g.,* a 2D unit cell with
 <i>&alpha;</i> &ne; 90&deg;), the software will throw an error.
 
@@ -261,7 +262,7 @@ in the bulk, removing those operations that are not allowed in the thin film (wh
 depending on whether the walls are identical or not), and then finding the space group that 
 contains only those symmetry operations that remain. 
 
-If, for example, the walls are in the *x-y* plane (param file contains \"<tt>normalVec&nbsp;&nbsp;2</tt>.\")
+If, for example, the walls are in the *x-y* plane (param file contains \"<tt>normalVecId&nbsp;&nbsp;2</tt>.\")
 and the two walls are chemically identical, then symmetry operations that change *z* to *-z* are allowed 
 because the walls are mirror images of each other. All other changes in *z* (*e.g.*, from *z* to *z*+1/2 
 in reduced coordinates) are forbidden, because these operations would result in the wall being moved to a 
@@ -307,14 +308,14 @@ group; <i>P</i>4/<i>mmm</i> requires that **a** and **b** are the same length.
 
 This brings up a final important consideration when setting up a PSCF system: the space group contains 
 inherent choices of which lattice parameters are allowed to vary independently and which are not, which
-should be considered when choosing `normalVec`. Tetragonal unit cells must have |<b>a</b>|=|<b>b</b>|, so the
-natural choice of `normalVec` is 2, so that the lattice basis vector that is perpendicular to the film 
+should be considered when choosing `normalVecId`. Tetragonal unit cells must have |<b>a</b>|=|<b>b</b>|, so the
+natural choice of `normalVecId` is 2, so that the lattice basis vector that is perpendicular to the film 
 (**c**) is allowed to vary independently. In fact, the space group <i>P</i>4/<i>mmm</i> is not compatible with a 
-`normalVec` value of 0 or 1.
+`normalVecId` value of 0 or 1.
 
-In 3D systems, it is recommended to choose 2 for `normalVec`, except in the case of a monoclinic unit cell,
-which is more compatible with a `normalVec` value of 1. This is because &beta; is the only angle allowed to
-vary in a monoclinic unit cell, but a choice of 0 or 2 for `normalVec` would force &beta; to be 90&deg; and
+In 3D systems, it is recommended to choose 2 for `normalVecId`, except in the case of a monoclinic unit cell,
+which is more compatible with a `normalVecId` value of 1. This is because &beta; is the only angle allowed to
+vary in a monoclinic unit cell, but a choice of 0 or 2 for `normalVecId` would force &beta; to be 90&deg; and
 thus force the unit cell to be stuck in an orthorhombic shape.
 
 
@@ -344,10 +345,10 @@ be parallel to the walls (discussed above).
    - This forces all 2D oblique unit cells to assume a rectangular shape, all 3D trigonal unit cells
    to assume a cubic shape, and all 3D triclinic unit cells to assume a monoclinic shape, so it is
    pointless to use oblique, trigonal, or triclinic unit cells.
-   - If normalVec = 0 or 2 for a monoclinic unit cell, then &beta; (the only flexible angle) is forced
-   to be 90&deg;, forcing the unit cell to assume an orthorhombic shape, so normalVec = 1 is the 
+   - If normalVecId = 0 or 2 for a monoclinic unit cell, then &beta; (the only flexible angle) is forced
+   to be 90&deg;, forcing the unit cell to assume an orthorhombic shape, so normalVecId = 1 is the 
    recommended choice for monoclinic unit cells.
-   - Setting normalVec = 0 or 1 for a hexagonal unit cell is not allowed, since &gamma;=120&deg;.
+   - Setting normalVecId = 0 or 1 for a hexagonal unit cell is not allowed, since &gamma;=120&deg;.
 - The only permitted Bravais lattice sites are on the faces/edges of the unit cell that are
 parallel to the walls.
    - This prohibits all 3D space groups with a face-centered or body-centered Bravais lattice,
@@ -379,8 +380,8 @@ chemically identical walls. Note that, in 3D, every bolded space group correspon
 group symmetry; there are exactly 17 space group symmetries for chemically dissimilar walls in 3D, 
 just as there are 17 plane group symmetries for 2D unit cells.
 
-In constructing this list, we assumed that normalVec is set to 2 for orthorhombic, tetragonal, 
-trigonal, and hexagonal space groups. For other choices of normalVec, the allowed space groups 
+In constructing this list, we assumed that normalVecId is set to 2 for orthorhombic, tetragonal, 
+trigonal, and hexagonal space groups. For other choices of normalVecId, the allowed space groups 
 will likely differ.
 
 - 1D:
@@ -392,31 +393,31 @@ will likely differ.
       - <tt> <b>p_1</b> </tt>
       - <tt> p_2 </tt>
    - Rectangular
-      - <tt> <b>p_m</b> </tt> (normalVec must be 1 if walls are chemically dissimilar)
-      - <tt> p_g </tt> (normalVec must be 0)
+      - <tt> <b>p_m</b> </tt> (normalVecId must be 1 if walls are chemically dissimilar)
+      - <tt> p_g </tt> (normalVecId must be 0)
       - <tt> p_2_m_m </tt>
-      - <tt> p_2_m_g </tt> (normalVec must be 1)
+      - <tt> p_2_m_g </tt> (normalVecId must be 1)
 - 3D:
    - Triclinic
       - <tt> <b>P_1</b> </tt>
       - <tt> P_-1 </tt>
-   - Monoclinic (normalVec = 1, &beta; &ne; 90&deg;)
+   - Monoclinic (normalVecId = 1, &beta; &ne; 90&deg;)
       - <tt> <b>P_2</b> </tt>
       - <tt> P_1_m_1 </tt>
       - <tt> P_1_c_1 </tt>
       - <tt> P_1_2\%m_1 </tt>
       - <tt> P_1_2\%c_1 </tt>
    - Monoclinic space group, orthorhombic unit cell (&beta; = 90&deg;)
-      - <tt> P_1_21_1 </tt> (normalVec must be 0 or 2)
-      - <tt> C_1_2_1 </tt> (normalVec must be 2)
-      - <tt> <b>P_1_m_1</b> </tt> (normalVec must be 0 or 2)
-      - <tt> <b>P_1_c_1</b> </tt> (normalVec must be 0)
-      - <tt> <b>C_1_m_1</b> </tt> (normalVec must be 2)
-      - <tt> P_1_2\%m_1 </tt> (normalVec can be 0, 1, or 2)
-      - <tt> P_1_21\%m_1 </tt> (normalVec must be 0 or 2)
-      - <tt> C_1_2\%m_1 </tt> (normalVec must be 2)
-      - <tt> P_1_2\%c_1 </tt> (normalVec must be 0 or 1)
-      - <tt> P_1_21\%c_1 </tt> (normalVec must be 0)
+      - <tt> P_1_21_1 </tt> (normalVecId must be 0 or 2)
+      - <tt> C_1_2_1 </tt> (normalVecId must be 2)
+      - <tt> <b>P_1_m_1</b> </tt> (normalVecId must be 0 or 2)
+      - <tt> <b>P_1_c_1</b> </tt> (normalVecId must be 0)
+      - <tt> <b>C_1_m_1</b> </tt> (normalVecId must be 2)
+      - <tt> P_1_2\%m_1 </tt> (normalVecId can be 0, 1, or 2)
+      - <tt> P_1_21\%m_1 </tt> (normalVecId must be 0 or 2)
+      - <tt> C_1_2\%m_1 </tt> (normalVecId must be 2)
+      - <tt> P_1_2\%c_1 </tt> (normalVecId must be 0 or 1)
+      - <tt> P_1_21\%c_1 </tt> (normalVecId must be 0)
    - Orthorhombic
       - <tt> P_2_2_2 </tt>
       - <tt> P_21_21_2 </tt>

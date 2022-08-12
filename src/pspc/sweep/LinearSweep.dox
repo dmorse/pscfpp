@@ -1,0 +1,67 @@
+namespace Pscf{
+namespace Pspc{
+/*! 
+\page pspc_LinearSweep_page LinearSweep
+
+A Pscf::Pspc::LinearSweep<D> object allows the user to optionally perform
+a linear parameter sweep, in which one or more parameters in the system (e.g.
+chi, phi, segment length values) is linearly varied and a solution is found
+at each linear step along the sweep.
+
+The parameter file format for a LinearSweep object is:
+\code
+LinearSweep{
+  ns                int
+  baseFileName*     string
+  historyCapacity*  int (3 by default)
+  writeRhoRGrid*    boolean (0 or 1, 0 by default)
+  nParameter        int
+  parameters        Array[ SweepParameter ]
+}
+\endcode
+Here, as elsewhere, labels followed by an asterisk (*) represent optional 
+elements.
+
+Parameters and subblocks are described below:
+<table>
+  <tr>
+    <td> ns </td>
+    <td> Number of steps to be taken along the linear sweep. </td>
+  </tr>
+  <tr>
+    <td> baseFileName* </td>
+    <td> String to prepend to the filenames of all output files written
+         during this sweep. E.g., if set to "out/", all files will be 
+         written to the out/ subdirectory. </td>
+  </tr>
+  <tr>
+    <td> historyCapacity* </td>
+    <td> Number of previous states along the sweep that are to be stored
+         and used to generate the initial guess for the next step along
+         the sweep (via extrapolation). </td>
+  </tr>
+  <tr>
+    <td> writeRhoRGrid* </td>
+    <td> Boolean indicating whether or not to write the concentration
+         fields in r-grid format at each step along the sweep. Default 
+         is no (data are written only in symmetry-adapted basis format).
+    </td>
+  </tr>
+  <tr>
+    <td> nParameters </td>
+    <td> Number of parameters to vary in the sweep. </td>
+  </tr>
+  <tr>
+    <td> parameters </td>
+    <td> Array of SweepParameters, specifying the parameter to be swept
+         and the amount by which to change the parameter. See the detailed
+         description on the SweepParameter page for a summary of how to write
+         each different type of sweep parameter. Options are kuhn, chi, 
+         block, solvent, phi_polymer, mu_polymer, phi_solvent, mu_solvent,
+         cell_param, and wall_chi. </td>
+  </tr>
+</table>
+
+*/
+}
+}

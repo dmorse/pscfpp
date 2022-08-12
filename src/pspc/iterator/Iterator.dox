@@ -1,0 +1,30 @@
+namespace Pscf{
+namespace Pspc{
+/*! 
+\page pspc_Iterator_page Iterator
+
+A Pscf::Pspc::Iterator<D> object is a base class that defines the general 
+behavior that is expected of any SCFT iterator. In the param file, a subclass
+of Iterator must be included as a subblock of \ref pspc_System_page. 
+
+In this version of the software, there are two different types of iterators
+that can be used, described briefly in the tables below. For a description 
+of the parameters within these iterator blocks, follow the links in the table.
+<table>
+  <tr>
+    <td> \ref pspc_AmIterator_page </td>
+    <td> Anderson Mixing iterator. Uses the Anderson Mixing algorithm to solve
+         the SCFT equations. </td>
+  </tr>
+  <tr>
+    <td> \ref pspc_AmIteratorFilm_page </td>
+    <td> Thin Film Anderson Mixing iterator. Uses the Anderson Mixing algorithm 
+         to solve the SCFT equations, while imposing a mask (geometric confinement)
+         and an external field (wall/polymer chemical interactions) that simulate
+         a polymer system that is confined to a thin film geometry. </td>
+  </tr>
+</table>
+
+*/
+}
+}

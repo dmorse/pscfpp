@@ -32,7 +32,7 @@ System{
     epsilon      1e-6
     maxHist      50 
     isFlexible   1
-    normalVec            1
+    normalVecId          1
     interfaceThickness   0.15     
     wallThickness        0.3
     chi[

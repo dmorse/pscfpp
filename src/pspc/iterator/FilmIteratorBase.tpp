@@ -35,7 +35,7 @@ namespace Pspc
     : Iterator<D>(system),
       iterator_(system),
       parameters_(),
-      normalVec_(-1),
+      normalVecId_(-1),
       t_(-1.0),
       T_(-1.0),
       chi_(),
@@ -68,13 +68,13 @@ namespace Pspc
       iterator_.readParameters(in);
 
       // Then, read required data defining the walls
-      read(in, "normalVec", normalVec_);
+      read(in, "normalVecId", normalVecId_);
       read(in, "interfaceThickness", t_);
       read(in, "wallThickness", T_);
 
       // Make sure inputs are valid
-      if (normalVec_ > D || normalVec_ < 0) {
-         UTIL_THROW("bad value for normalVec, must be in [0,D)");
+      if (normalVecId_ > D || normalVecId_ < 0) {
+         UTIL_THROW("bad value for normalVecId, must be in [0,D)");
       }
       if (t_ > T_) {
          UTIL_THROW("wallThickness must be larger than interfaceThickness");
@@ -88,7 +88,7 @@ namespace Pspc
       chi_.allocate(nm,2);
       for (int i = 0; i < nm; i++) {
          for (int j = 0; j < 2; j++) {
-            chi_(i,j) = 0;
+            chi_(i,j) = 0.0;
          }
       }
       readOptionalDMatrix(in, "chi", chi_, nm, 2);
@@ -166,7 +166,7 @@ namespace Pspc
 
       // Get the length L of the lattice basis vector orthogonal to the walls
       RealVec<D> a;
-      a = system().domain().unitCell().rBasis(normalVec_);
+      a = system().domain().unitCell().rBasis(normalVecId_);
       double norm_sqd; // norm squared
       for (int i = 0; i < D; i++) {
          norm_sqd = a[i]*a[i];
@@ -202,7 +202,7 @@ namespace Pspc
 
                // Get the distance 'd' traveled along the lattice basis vector 
                // that is orthogonal to the walls
-               d = coords[normalVec_] * L / dim[normalVec_];
+               d = coords[normalVecId_] * L / dim[normalVecId_];
 
                // Calculate volume fraction of wall (rho) at gridpoint (x,y,z)
                rho = 0.5*(1+tanh(4*(((.5*(T_-L))+fabs(d-(L/2)))/t_)));
@@ -302,7 +302,7 @@ namespace Pspc
 
          // Get the length L of the lattice basis vector orthogonal to the walls
          RealVec<D> a;
-         a = system().domain().unitCell().rBasis(normalVec_);
+         a = system().domain().unitCell().rBasis(normalVecId_);
          double norm_sqd; // norm squared
          for (int i = 0; i < D; i++) {
             norm_sqd = a[i]*a[i];
@@ -342,7 +342,7 @@ namespace Pspc
 
                      // Get the distance 'd' traveled along the lattice basis vector 
                      // that is orthogonal to the walls
-                     d = coords[normalVec_] * L / dim[normalVec_];
+                     d = coords[normalVecId_] * L / dim[normalVecId_];
 
                      // Calculate volume fraction of wall (rho) at gridpoint (x,y,z)
                      rho = 0.5*(1+tanh(4*(((.5*(T_-L))+fabs(d-(L/2)))/t_)));
@@ -429,7 +429,7 @@ namespace Pspc
       }
 
       // Make sure all symmetry operations are allowed
-      int nv = normalVec();
+      int nv = normalVecId();
       bool symmetric = isSymmetric();
       for (int i = 0; i < group.size(); i++) {
          for (int j = 0; j < D; j++) {
