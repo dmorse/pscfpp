@@ -7,6 +7,9 @@
 The different programs in the pscf package use parameter files with 
 similar structure and syntax, with slight differences in some elements. 
 It is useful to illustrate common elements by showing an example.
+
+\section user_param_example_file Example File
+
 Below, we show an example of a complete parameter file for a simple 
 1D SCFT calculation performed using a finite-difference discretization
 using program pscf_fd.  
@@ -58,9 +61,11 @@ System{
 This particular example gives parameters for a calculation of a binary
 mixture of a symmetric AB diblock copolymer with a homopolymer of type
 A in a one-dimensional planar geometry. 
-Before getting into details of the format for particular elements of
-this file, note the overall structure of the file:
 
+\section user_param_example_structure_sec Block Structure
+
+Before getting into details of the format for particular elements of this 
+file, note the overall structure of the file:
 This parameter file consists of a set of nested blocks that begin and
 end with lines containing matching curly brackets, using a syntax similar
 to that of a C program. Each such parameter file block begins with a 
@@ -196,7 +201,7 @@ accuracy. The Newton-Raphson iterator does not require any other input
 parameters.
 
 <BR>
-\ref user_param_page  (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_param_page         (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_param_syntax_page (Next) 
 
 */

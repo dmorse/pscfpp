@@ -24,12 +24,12 @@ namespace Fd1d {
       Sweep::readParameters(in);
       
       // Read in the number of sweep parameters and allocate.
-      this->read(in, "nParameter", nParameter_);
+      read(in, "nParameter", nParameter_);
       parameters_.allocate(nParameter_);
       
       // Read in array of SweepParameters, calling << for each
-      this->template readDArray< SweepParameter >(in, "parameters", 
-                                                  parameters_, nParameter_);
+      readDArray< SweepParameter >(in, "parameters", 
+                                   parameters_, nParameter_);
 
       // Verify net zero change in volume fractions if being swept
       double sum = 0.0;

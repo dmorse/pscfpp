@@ -1,6 +1,6 @@
 /*! \page user_param_mixture_page 3.3.3 Mixture Block
 
-\ref user_param_syntax_page (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_param_syntax_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_param_sweep_page    (Next) 
 <BR>
 
@@ -18,7 +18,7 @@ The Mixture block contains information that specifies the structure of
 each polymer species within the mixture, the monomer type and volume of
 each solvent species, and the composition of the mixture.
 
-\section Parameter File Formats Descriptions
+\section usr_param_descriptor_sec Parameter Block Descriptions
 
 The descriptions of the Mixture block and its subblocks given below
 introduces several conventions that are used throughout these notes 
@@ -109,7 +109,6 @@ The meaning of parameters and subblocks are described in the table shown below.
     <td> nMonomer </td>
     <td> Number of distinct monomer types in the mixture </td>
   </tr>
-    <td>  </td>
   <tr>
     <td> monomers </td>
     <td> 
@@ -191,26 +190,7 @@ defined in PSCF to be the ratio of the steric volume of the block to
 a monomer reference volume. 
 
 The format of the blocks array for a branched polymer is discussed
-below, after the discussion of Solvent blocks
-
-\section user_param_mixture_solvent_sec Solvent block
-
-The format for a solvent block is
-\code
-    Solvent{
-       monomerId   int
-       size        real
-       phi*        real
-       mu          real (required iff phi is omitted)
-    }
-\endcode
-The monomerId is a monomer type index that identifies the solvent
-as containing a specified monomer type. The size parameter gives
-the volume occupied a solvent molecule, in units in which the 
-monomer reference volume is equal to unity. For each solvent, a
-value must be specified for either the volume fraction phi occupied
-by the species, or its chemical potential mu. It is an error to 
-specify both phi and mu or to omit both variables.
+below.
 
 \section user_param_mixture_branched_sec Branched Polymers
 
@@ -256,8 +236,28 @@ array for such a polymer might look like
 In this example vertex 3 is the central junction, and vertices
 0, 1, and 2 are chain ends.
 
+\section user_param_mixture_solvent_sec Solvent block
+
+The format for a solvent block is
+\code
+    Solvent{
+       monomerId   int
+       size        real
+       phi*        real
+       mu          real (required iff phi is omitted)
+    }
+\endcode
+The monomerId is a monomer type index that identifies the solvent
+as containing a specified monomer type. The size parameter gives
+the volume occupied a solvent molecule, in units in which the 
+monomer reference volume is equal to unity. For each solvent, a
+value must be specified for either the volume fraction phi occupied
+by the species, or its chemical potential mu. It is an error to 
+specify both phi and mu or to omit both variables.
+
 <BR>
-\ref user_syntax_page  (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_param_sweep_page (Next) 
+\ref user_param_syntax_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_param_page        (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_param_sweep_page  (Next) 
 
 */

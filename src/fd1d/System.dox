@@ -13,9 +13,8 @@ System{
    Mixture { ... }
    ChiInteraction { ... }
    Domain { ... }
-   < Iterator > { ... }
-   hasSweep*  bool (0).
-   < Sweep >& { ... }
+   < Iterator >* { ... }
+   < Sweep >* { ... }
 }
 \endcode
 Here, as elsewhere, optional parameters or subblocks of a parameter file block are followed by an asterisk, elements whose presence is conditional on the value of previous variables are indicated by an ampersand, and polymorphic elements (for which the label can correspond to the label of any of several subclasses) are indicated with the generic or base class name enclosed in angle brackets.
@@ -24,37 +23,37 @@ Explanations and links to documentation for enclosed subblocks and parameters:
 <table>
   <tr>
     <td> Mixture { .... } </td>
-    <td> Description of mixture composition. See \ref fd1d_Mixture_page docs </td>
+    <td> Description of mixture composition. 
+         See \ref user_param_mixture_page docs 
+    </td>
   </tr>
   <tr>
     <td> ChiInteraction { .... } </td>
     <td> 
-      Flory-Huggins excess free eenrgy. See \ref pscf_ChiInteraction_page docs 
+      Flory-Huggins excess free eenrgy. 
+      See \ref pscf_ChiInteraction_page docs 
     </td>
   </tr>
   <tr>
     <td> Domain { .... } </td>
-    <td> Spatial domain and discretization. See \ref fd1d_Domain_page docs </td>
+    <td> Spatial domain and discretization. 
+         See \ref fd1d_Domain_page docs 
+    </td>
   </tr>
   <tr>
     <td> < Iterator > { .... } </td>
     <td> 
-    Polymorphic block for any of several subclasses of \ref fd1d_iterator_page "Fd1d::Iterator" 
+    Polymorphic block for any of several subclasses of 
+    \ref fd1d_iterator_page "Fd1d::Iterator" 
     </td>
   </tr>
   <tr>
-    <td> hasSweep* </td>
+    <td> < Sweep > * { ... }</td>
     <td> 
-      Optional boolean parameter. Equal to 1 if a Sweep block will follow, 0 otherwise. 
-      If omitted, hasSweep is set to 0 (false) by default.
-    </td>
-  </tr>
-  <tr>
-    <td> < Sweep > & { ... }</td>
-    <td> 
-      Polymorphic \ref fd1d_iterator_page "Fd1d::Sweep" block. 
-      This block  present if and only if hasSweep == 1 (true).
-      If present, define a sequence of states along a line through parameter space, which can be solved using continuation to construct initial guesses.
+      Optional polymorphic \ref fd1d_iterator_page "Fd1d::Sweep" block. 
+      If present, define a sequence of states along a line through parameter 
+      space, which can be solved using continuation to construct initial 
+      guesses.
     </td>
   </tr>
 </table>
