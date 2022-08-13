@@ -67,7 +67,7 @@ namespace Pspg
 
    template <int D>
    void FieldIo<D>::readFieldsBasis(std::istream& in,
-                                    DArray< DArray<cudaReal> >& fields,
+                                    DArray< DArray<double> >& fields,
                                     UnitCell<D>& unitCell)
    const
    {
@@ -98,16 +98,7 @@ namespace Pspg
       int nStar = basis().nStar();
       int nBasis = basis().nBasis();
 
-      #if 0
-      // Allocate temp_out
-      DArray<cudaReal*> temp_out;
-      temp_out.allocate(nMonomer);
-      for(i = 0; i < nMonomer; ++i) {
-         temp_out[i] = new cudaReal[nBasis];
-      }
-      #endif
-
-      // Initialize all elements of fields to zero
+      // Initialize all elements of field components to zero
       for (j = 0; j < nMonomer; ++j) {
          UTIL_CHECK(fields[j].capacity() == nBasis);
          for (i = 0; i < nBasis; ++i) {
@@ -116,7 +107,7 @@ namespace Pspg
       }
 
       // Allocate buffer arrays used to read components
-      DArray<cudaReal> temp, temp2;
+      DArray<double> temp, temp2;
       temp.allocate(nMonomer);
       temp2.allocate(nMonomer);
 
@@ -318,27 +309,12 @@ namespace Pspg
                      << " detected in FieldIo::readFieldsBasis\n";
       }
 
-      #if 0
-      // Copy data from array temp_out (host) to array fields (device)
-      for (int i = 0; i < nMonomer; i++) {
-         cudaMemcpy(fields[i].cDField(), temp_out[i],
-            nBasis * sizeof(cudaReal), cudaMemcpyHostToDevice);
-      }
-
-      // Deallocate temp_out
-      for (int i = 0; i < nMonomer; i++) {
-         delete[] temp_out[i];
-         temp_out[i] = nullptr;
-      }
-      temp_out.deallocate();
-      #endif
-
    }
 
 
    template <int D>
    void FieldIo<D>::readFieldsBasis(std::string filename,
-                                    DArray< DArray<cudaReal> >& fields,
+                                    DArray< DArray<double> >& fields,
                                     UnitCell<D>& unitCell)
    const
    {
@@ -351,7 +327,7 @@ namespace Pspg
    template <int D>
    void 
    FieldIo<D>::writeFieldsBasis(std::ostream &out,
-                                DArray< DArray<cudaReal> > const&  fields,
+                                DArray< DArray<double> > const&  fields,
                                 UnitCell<D> const & unitCell)
    const
    {
@@ -367,21 +343,6 @@ namespace Pspg
       int nStar = basis().nStar();
       //int nBasis = nStar;
       int nBasis = basis().nBasis();
-
-      #if 0
-      // Allocate temp_out
-      DArray<cudaReal*> temp_out;
-      temp_out.allocate(nMonomer);
-      for(int i = 0; i < nMonomer; ++i) {
-         temp_out[i] = new cudaReal[nBasis];
-      }
-
-      // Copy array fields (device) to temp_out (host)
-      for (int i = 0; i < nMonomer; i++) {
-         cudaMemcpy(temp_out[i], fields[i].cDField(),
-                    nBasis * sizeof(cudaReal), cudaMemcpyDeviceToHost);
-      }
-      #endif
 
       // Write fields
       int ib = 0;
@@ -400,21 +361,12 @@ namespace Pspg
          }
       }
 
-      #if 0
-      // De-allocate temp_out (clean up)
-      for (int i = 0; i < nMonomer; i++) {
-         delete[] temp_out[i];
-         temp_out[i] = nullptr;
-      }
-      temp_out.deallocate();
-      #endif
-
    }
 
    template <int D>
    void 
    FieldIo<D>::writeFieldsBasis(std::string filename,
-                                DArray< DArray<cudaReal> > const& fields,
+                                DArray< DArray<double> > const& fields,
                                 UnitCell<D> const & unitCell)
    const
    {
@@ -876,7 +828,7 @@ namespace Pspg
 
    template <int D>
    void 
-   FieldIo<D>::convertBasisToKGrid(DArray<cudaReal> const& components,
+   FieldIo<D>::convertBasisToKGrid(DArray<double> const& components,
                                    RDFieldDft<D>& dft) const
    {
       int nStar = basis().nStar();
@@ -1016,7 +968,7 @@ namespace Pspg
 
    template <int D>
    void FieldIo<D>::convertKGridToBasis(RDFieldDft<D> const& dft,
-                                        DArray<cudaReal>& components) 
+                                        DArray<double>& components) 
    const
    {
 
@@ -1175,7 +1127,7 @@ namespace Pspg
    }
 
    template <int D>
-   void FieldIo<D>::convertBasisToKGrid(DArray< DArray<cudaReal> >& in,
+   void FieldIo<D>::convertBasisToKGrid(DArray< DArray<double> >& in,
                                         DArray< RDFieldDft<D> >& out) 
    const
    {
@@ -1190,7 +1142,7 @@ namespace Pspg
 
    template <int D>
    void FieldIo<D>::convertKGridToBasis(DArray< RDFieldDft<D> >& in,
-                                        DArray< DArray<cudaReal>> & out) 
+                                        DArray< DArray<double>> & out) 
    const
    {
 
@@ -1205,7 +1157,7 @@ namespace Pspg
 
    template <int D>
    void
-   FieldIo<D>::convertBasisToRGrid(DArray< DArray<cudaReal> >& in,
+   FieldIo<D>::convertBasisToRGrid(DArray< DArray<double> >& in,
                                    DArray< RDField<D> >& out) const
    {
       UTIL_ASSERT(in.capacity() == out.capacity());
@@ -1228,7 +1180,7 @@ namespace Pspg
 
    template <int D>
    void FieldIo<D>::convertRGridToBasis(DArray< RDField<D> >& in,
-                                        DArray< DArray<cudaReal> > & out) 
+                                        DArray< DArray<double> > & out) 
    const
    {
       UTIL_ASSERT(in.capacity() == out.capacity());
