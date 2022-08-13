@@ -1,0 +1,207 @@
+/*! \page user_param_example_page 3.3.1 Example SCFT Parameter File
+
+\ref user_param_page    (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_param_syntax_page (Next) 
+<BR>
+
+The different programs in the pscf package use parameter files with 
+similar structure and syntax, with slight differences in some elements. 
+It is useful to illustrate common elements by showing an example.
+
+\section user_param_example_file Example File
+
+Below, we show an example of a complete parameter file for a simple 
+1D SCFT calculation performed using a finite-difference discretization
+using program pscf_fd.  
+
+\code
+System{
+  Mixture{
+     nMonomer   2
+     monomers[
+                1.0  
+                1.0 
+     ]
+     nPolymer   2
+     Polymer{
+        nBlock  2
+        blocks[
+                0   0.5
+                1   0.5
+        ]
+        phi     0.6
+     }
+     Polymer{
+        type    linear
+        nBlock  1
+        blocks[
+                0   1.0
+        ]
+        phi     0.4
+     }
+     ds   0.01
+  }
+  ChiInteraction{
+     chi(
+           0    1    10.0
+     )
+  }
+  Domain{
+     mode     planar
+     xMin     0.0
+     xMax     8.0
+     nx       401
+  }
+  NrIterator{
+     epsilon   0.00000001
+  }
+}
+\endcode
+
+This particular example gives parameters for a calculation of a binary
+mixture of a symmetric AB diblock copolymer with a homopolymer of type
+A in a one-dimensional planar geometry. 
+
+\section user_param_example_structure_sec Block Structure
+
+Before getting into details of the format for particular elements of this 
+file, note the overall structure of the file:
+This parameter file consists of a set of nested blocks that begin and
+end with lines containing matching curly brackets, using a syntax similar
+to that of a C program. Each such parameter file block begins with a 
+line that contains a label for the Block (System, Mixture, etc.) followed 
+immediately by an opening curly bracket "{". Each block ends with a 
+matching closing curly bracket on a line by itself.  The skeleton 
+structure of the main blocks within this example is show below:
+\code
+System{
+  Mixture{
+     ...
+  }
+  ChiInteraction{
+     ...
+  }
+  Domain{
+     ...
+  }
+  NrIterator{
+     ...
+  }
+}
+\endcode
+The main block of a parameter file, which encloses all the data in 
+the file, is always labelled "System". The purposes of each main 
+subblock block of the main "System" block is briefly described below.
+<ul>
+<li>
+Mixture: The Mixture block contains a description of the chemical
+composition of mixture of containing one or more polymer and solvent
+molecular species. This includes a description of the structure of 
+each molecular species and a specification of either the volume 
+fraction phi or chemical mu of each species.  In this example, 
+the Mixture block contains two Polymer{ ... } subblocks, each of
+which contains information about one of the polymer species in the
+mixture.
+</li>
+<li>
+ChiInteraction: This block contains values for the Flory-Huggins chi 
+parameters between all pairs of monomers types.
+</li>
+<li>
+Domain: The domain block contains geometrical information about the 
+domain of space over which the SCFT equations should be solved and 
+a description of the spatial discretization used to numerically solve 
+the field equations.
+</li>
+<li>
+NrIterator: The NrIterator block in this example gives parameters 
+required by a Newton-Raphson iteration algorithm used to solve the 
+nonlinear SCFT equations. This particular block may be replaced in
+other examples by a block that gives information for some other
+iteration algorithm, where the choice of iteration algorithm is
+specified by the label in the first line of the block. For example,
+the appearance of an "NRIterator" block specifies that the user
+wants to use a Newton-Raphson iterator, but the appearance of a
+"AMIterator" block in the same location might specify the use of
+an Anderson-Mixing algorithm. 
+</li>
+</ul>
+The parameter files required to initialize a simple SCFT calculations 
+performed using pscf_pcNd or Pscf_pgNd programs have a similar structure, 
+with analogous top level blocks that appear in the same order. Parameter 
+files for all three types of program use the same for Mixture and 
+ChiInteraction blocks, but syntax, but differ in details of the 
+structure of the Domain block and the block that initializes and
+iteration algorithm. The skeleton structure shown in this example is 
+specfic to simple SCFT calculations - other types of blocks may be 
+required to initialize more complicated types of calculation, such
+as simulations of a sequence of SCFT calculations along a line 
+through parameter space (a "sweep"), or a stochastic field theoretic 
+simulations.
+
+Each block in a parameter file may contain a sequence of subblocks 
+(each delmited by matching curly braces) and parameter entries. Each 
+parameter entry starts with a label indicating the name of a parameter 
+followed by information about the parameter value. 
+
+Each parameter entry for a simple parameter, for which the value can 
+be represented by a single number or string, appears on a single line
+containing a label that gives the parameter name followed by the 
+parameter value. For examples of this, look for the nMonomer and 
+nPolymer parameters within the Mixture block. 
+
+Labels for some other parameters refer to 1D arrays of 2D matrices 
+of values. In these cases, lists of elements of the array or matrix
+are delimited by either matched square brackets (for one-dimensional 
+arrays) or parentheses (as one syntax for specifying nonzero values 
+of a matrix). Names of array-valued parameters are often given as 
+plural nouns. For examples of this, look for the "monomers" 
+parameter in the Mixture block, and the "blocks" parameter in each
+"Polymer" subblock of the Mixture block, each of which denotes a 
+one dimensional array with values delimited by square brackets. The 
+value of the "chi" parameter within the ChiInteraction block is a 
+symmetric matrix. The distinct nonzero elements of the chi matrix 
+are given in the parameter file using a syntax in which each such
+element is given on a line contain row and column indices (defined
+using a zero-based convention) followed by a value for the matrix 
+element, and in which the list of nonzero elements is enclosed by
+parentheses.
+
+The system described in the above example contains a mixture of two 
+types of polymers (nPolymer=2) that are constructed by two types of 
+monomer (nMonomer=2).  The value of each array element in the "monomers"
+array-valued parameter give monomer statistical segment lengths for
+monomers of type 0 and 1.  Each of the two "Polymer" subblocks of 
+the Mixture block specifies the data for one polymer species.  The 
+system described in this file contains 60% of diblock copolymer by 
+volume (phi = 0.6) and and 40% homopolymer (phi= 0.4) by volume.  
+Both polymer species have overall chain length 1.0 in the system 
+of units for block lengths used in this input file, and the diblock 
+copolymer is symmetric (each block has length 0.5). 
+
+The chi matrix for this problem has a nonzero value of 10.0 for 
+interactions between monomers of types 0 and 1.  The chi matrix is
+represented internally as a symmetric square matrix with nMonomer rows
+and columes. Values of diagonal elements (i=j) are usually taken equal 
+to zero by convention, though this is not required.  In a system with 
+two types of monomer and zero diagonal elements, with this convention,
+only one nonzero chi parameter value is required.  The value of this 
+parameter is given here as a line containing "0  1  10.0".
+
+The simulation uses a 1D planar geometry, in which variation occurs 
+only along one axis of a Cartesian coordinate system.  The block labelled 
+Domain contains information about the spatial domain (minimum and 
+maximum coordinate values xmin and xmax) and the number of grid points 
+(401 grid points, including both end points).
+
+The block labelled NrIterator contains a parameter labelled "epsilon" 
+which is a tolerance parameter that is used by a Newton-Raphson iterator 
+to decide when the SCF equations are solved to within a user-specified 
+accuracy. The Newton-Raphson iterator does not require any other input
+parameters.
+
+<BR>
+\ref user_param_page         (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_param_syntax_page (Next) 
+
+*/
