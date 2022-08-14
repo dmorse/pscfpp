@@ -1,11 +1,11 @@
 namespace Pscf{
-namespace Pspc{
+namespace Fd1d{
 /*! 
-\page pspc_Sweep_page Sweep
+\page fd1d_Sweep_page Sweep
 
-A Pscf::Pspc::Sweep<D> object is a base class that defines the general 
-behavior that is expected of any SCFT parameter sweep. In the param file, a subclass
-of Sweep<D> may optionally be included as a subblock of \ref pspc_System_page. 
+Pscf::Fd1d::Sweep<D> is a base class that defines the general behavior
+that is expected of any SCFT parameter sweep. In the param file, a subclass
+of Sweep<D> may optionally be included as a subblock of \ref fd1d_System_page. 
 
 In this version of the software, there is only one type of Sweep that can
 be used in Pspc: a LinearSweep. For a description of the parameters within 

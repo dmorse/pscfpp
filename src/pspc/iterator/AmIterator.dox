@@ -6,10 +6,9 @@ namespace Pspc{
 A Pscf::Pspc::AmIterator<D> object is an iterator that solves the SCFT equations 
 using the Anderson Mixing algorithm. 
 
-The parameter file format for an AmIteratorFilm object is:
+The parameter file format for an AmIterator object is:
 \code
-AmIteratorFilm{
-  AmIterator{
+AmIterator{
    maxItr              int
    epsilon             float
    maxHist             int  

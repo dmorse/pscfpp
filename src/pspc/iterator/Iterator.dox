@@ -3,7 +3,7 @@ namespace Pspc{
 /*! 
 \page pspc_Iterator_page Iterator
 
-A Pscf::Pspc::Iterator<D> object is a base class that defines the general 
+Pscf::Pspc::Iterator<D> is a base class that defines the general 
 behavior that is expected of any SCFT iterator. In the param file, a subclass
 of Iterator must be included as a subblock of \ref pspc_System_page. 
 

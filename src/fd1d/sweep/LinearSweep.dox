@@ -1,9 +1,9 @@
 namespace Pscf{
-namespace Pspc{
+namespace Fd1d{
 /*! 
-\page pspc_LinearSweep_page LinearSweep
+\page fd1d_LinearSweep_page LinearSweep
 
-A Pscf::Pspc::LinearSweep<D> object allows the user to optionally perform
+A Pscf::Fd1d::LinearSweep<D> object allows the user to optionally perform
 a linear parameter sweep, in which one or more parameters in the system (e.g.
 chi, phi, segment length values) are linearly varied and a solution is found
 at each linear step along the sweep.
@@ -14,7 +14,6 @@ LinearSweep{
   ns                int
   baseFileName*     string
   historyCapacity*  int (3 by default)
-  writeRhoRGrid*    boolean (0 or 1, 0 by default)
   nParameter        int
   parameters        Array[ SweepParameter ]
 }
@@ -41,13 +40,6 @@ Parameters and subblocks are described below:
          the sweep (via extrapolation). </td>
   </tr>
   <tr>
-    <td> writeRhoRGrid* </td>
-    <td> Boolean indicating whether or not to write the concentration
-         fields in r-grid format at each step along the sweep. Default 
-         is no (data are written only in symmetry-adapted basis format).
-    </td>
-  </tr>
-  <tr>
     <td> nParameters </td>
     <td> Number of parameters to vary in the sweep. </td>
   </tr>
@@ -57,8 +49,8 @@ Parameters and subblocks are described below:
          and the amount by which to change the parameter. See the detailed
          description on the SweepParameter page for a summary of how to write
          each different type of sweep parameter. Options are kuhn, chi, 
-         block, solvent, phi_polymer, mu_polymer, phi_solvent, mu_solvent,
-         cell_param, and wall_chi. </td>
+         block, solvent, phi_polymer, mu_polymer, phi_solvent, and mu_solvent. 
+    </td>
   </tr>
 </table>
 

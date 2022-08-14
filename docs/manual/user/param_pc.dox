@@ -65,7 +65,7 @@ System{
   Iterator{
     ...
   }
-  Sweep{
+  LinearSweep{
     ...
   }
 }
@@ -85,7 +85,7 @@ Domain: Description of crystallographic unit cell and discretization mesh
 Iterator: Parameters required by the iteration algorithm
 </li>
 <li> 
-Sweep: Optional description of a parameter sweep to be performed
+LinearSweep: Optional description of a linear parameter sweep to be performed
 </li>
 </ul>
 
@@ -107,8 +107,8 @@ file.
     </ul>
   <li> \subpage pscf_ChiInteraction_page "ChiInteraction" </li>
   <li> \subpage pspc_Domain_page "Domain" </li>
-  <li> \subpage pspc_Iterator_page "Iterator" </li>
-  <li> \subpage pspc_Sweep_page "Sweep" </li>
+  <li> \subpage pspc_AmIterator_page "AmIterator" or \subpage pspc_AmIteratorFilm_page "AmIteratorFilm" </li>
+  <li> \subpage pspc_LinearSweep_page "LinearSweep" </li>
   </ul>
 </ul>
 

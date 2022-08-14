@@ -70,6 +70,8 @@ Each type of block is identified here by the label with which it appears in the 
     </ul>
   <li> \subpage pscf_ChiInteraction_page  </li>
   <li> \subpage fd1d_Domain_page  "Domain" </li>
+  <li> \subpage fd1d_NrIterator_page  "NrIterator" </li>
+  <li> \subpage fd1d_LinearSweep_page  "LinearSweep" </li>
   </ul>
 </ul>
 
