@@ -40,7 +40,6 @@ System{
   NrIterator{
      epsilon   0.0000001
   }
-  hasSweep     1
   MuSweep{
      ns                    200
      baseFileName          gs/

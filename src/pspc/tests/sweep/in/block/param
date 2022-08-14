@@ -29,7 +29,6 @@ System{
     maxHist 10
     isFlexible   1
   }
-  hasSweep  1
   LinearSweep{
     ns            4
     baseFileName  out/block/

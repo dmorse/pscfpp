@@ -43,6 +43,13 @@ The purpose of each of the main subblocks is discussed below.
   </tr>
   <tr>
     <td> < Iterator > { .... } </td>
+<<<<<<< HEAD
+    <td> Polymorphic Iterator block, for any one of several subclasses of \ref pspc_iterator_page "Pspc::Iterator". </td>
+  </tr>
+  <tr>
+    <td> < Sweep > * { ... } </td>
+    <td> Optional polymorphic Sweep block. </td>
+=======
     <td> 
     Polymorphic Iterator block, for any one of several subclasses of 
     \ref pspc_iterator_page "Pspc::Iterator". 
@@ -54,6 +61,7 @@ The purpose of each of the main subblocks is discussed below.
     <td> Optional polymorphic Sweep block, for any one of several subclasses
          of Pspc::Sweep 
     </td>
+>>>>>>> devel
   </tr>
 </table>
 

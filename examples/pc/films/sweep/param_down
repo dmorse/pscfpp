@@ -42,7 +42,6 @@ System{
     maxHist      50 
     isFlexible   0
   }
-  hasSweep 1
   LinearSweep{
     ns            40  
     baseFileName  out_down/
