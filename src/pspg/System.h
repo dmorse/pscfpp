@@ -392,6 +392,13 @@ namespace Pspg
       */
       bool hasCFields() const;
 
+      /** 
+      * Are w-fields symmetric under all elements of the space group?
+      *
+      * This is true iff the fields were originally input in basis format.
+      */
+      bool hasSymmetricFields() const;
+
       /**
       * Read chemical potential fields in symmetry adapted basis format.
       *
@@ -643,6 +650,15 @@ namespace Pspg
       * True iff cFieldsRGrid_ has been set.
       */
       bool hasCFields_;
+
+      /**
+      * Does this system have symmetric fields ?
+      * 
+      * Set true iff WFields are set and were input using the symmetry
+      * adapated basis format, and are thus invariant under all elements 
+      * of the specified space group. 
+      */
+      bool hasSymmetricFields_;
 
       /**
       * Does this system have a Sweep object?
