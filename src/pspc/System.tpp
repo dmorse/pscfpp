@@ -69,6 +69,7 @@ namespace Pspc
       isAllocated_(false),
       hasWFields_(false),
       hasCFields_(false),
+      hasSymmetricFields_(false),
       hasSweep_(false)
       // hasIterator_(true)
    {  
@@ -469,6 +470,7 @@ namespace Pspc
    {
       UTIL_CHECK(hasWFields_);
       UTIL_CHECK(hasCFields_);
+      UTIL_CHECK(hasSymmetricFields_);
 
       // Initialize to zero
       fHelmholtz_ = 0.0;
@@ -702,6 +704,7 @@ namespace Pspc
       fieldIo().readFieldsBasis(filename, wFields_, domain_.unitCell());
       fieldIo().convertBasisToRGrid(wFields_, wFieldsRGrid_);
       hasWFields_ = true;
+      hasSymmetricFields_ = true;
       hasCFields_ = false;
    }
 
@@ -712,8 +715,9 @@ namespace Pspc
    void System<D>::readWRGrid(const std::string & filename)
    {
       fieldIo().readFieldsRGrid(filename, wFieldsRGrid_, domain_.unitCell());
-      fieldIo().convertRGridToBasis(wFieldsRGrid_, wFields_);
+      //fieldIo().convertRGridToBasis(wFieldsRGrid_, wFields_);
       hasWFields_ = true;
+      hasSymmetricFields_ = false;
       hasCFields_ = false;
    }
 
@@ -738,6 +742,7 @@ namespace Pspc
       domain_.fieldIo().convertBasisToRGrid(wFields_, wFieldsRGrid_);
 
       hasWFields_ = true;
+      hasSymmetricFields_ = true;
       hasCFields_ = false;
    }
 
@@ -759,9 +764,10 @@ namespace Pspc
       }
 
       // Update system wFieldsRgrid
-      domain_.fieldIo().convertRGridToBasis(wFieldsRGrid_, wFields_);
+      // domain_.fieldIo().convertRGridToBasis(wFieldsRGrid_, wFields_);
 
       hasWFields_ = true;
+      hasSymmetricFields_ = false;
       hasCFields_ = false;
    }
 
@@ -775,14 +781,18 @@ namespace Pspc
 
       // Solve the modified diffusion equation (without iteration)
       mixture_.compute(wFieldsRGrid(), cFieldsRGrid_);
-
-      // Convert c fields from r-grid to basis
-      fieldIo().convertRGridToBasis(cFieldsRGrid_, cFields_);
       hasCFields_ = true;
 
-      if (needStress) {
-         mixture_.computeStress();
+      if (hasSymmetricFields_) {
+
+         // Convert c fields from r-grid to basis
+         fieldIo().convertRGridToBasis(cFieldsRGrid_, cFields_);
+
+         if (needStress) {
+            mixture_.computeStress();
+         }
       }
+
    }
 
    /*
@@ -792,6 +802,7 @@ namespace Pspc
    int System<D>::iterate()
    {
       UTIL_CHECK(hasWFields_);
+      UTIL_CHECK(hasSymmetricFields_);
       hasCFields_ = false;
 
       Log::file() << std::endl;
@@ -819,6 +830,7 @@ namespace Pspc
    void System<D>::sweep()
    {
       UTIL_CHECK(hasWFields_);
+      UTIL_CHECK(hasSymmetricFields_);
       Log::file() << std::endl;
       Log::file() << std::endl;
       // Call sweep
@@ -1041,6 +1053,7 @@ namespace Pspc
       // Convert to r-grid format
       fieldIo().convertBasisToRGrid(wFields_, wFieldsRGrid_);
       hasWFields_ = true;
+      hasSymmetricFields_ = true;
       hasCFields_ = false;
 
       // Write w field in basis format
