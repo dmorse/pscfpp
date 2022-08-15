@@ -401,6 +401,8 @@ namespace Pspc
             readEcho(in, filename);
             in >> polymerId;
             in >> blockId;
+            in >> directionId;
+            in >> segmentId;
             Log::file() << Str("polymer ID   ", 21) << polymerId << "\n"
                         << Str("block ID   ", 21) << blockId << "\n"
                         << Str("direction ID ", 21) << directionId << "\n"
