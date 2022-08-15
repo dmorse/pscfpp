@@ -198,21 +198,24 @@ namespace Pspc
       ///@{
 
       /**
-      * Get array of all chemical potential fields expanded in a basis.
+      * Get array of all chemical potential fields in basis format.
       *
       * The array capacity is equal to the number of monomer types.
+      * An Exception is thrown if hasSymmetricFields is false.
       */
       DArray< DArray<double> > const & wFields() const;
 
       /**
-      * Get chemical potential field for a specific monomer type.
+      * Get chemical potential field for one monomer type in basis format.
       *
+      * An Exception is thrown if hasSymmetricFields is false.
+      * 
       * \param monomerId integer monomer type index
       */
       DArray<double> const & wField(int monomerId) const;
       
       /**
-      * Get array of all chemical potential fields on an r-space grid.
+      * Get array of all chemical potential fields in r-space grid format.
       *
       * The array capacity is equal to the number of monomer types.
       */
@@ -233,25 +236,33 @@ namespace Pspc
       * Get array of all concentration fields expanded in a basis.
       *
       * The array capacity is equal to the number of monomer types.
+      * An Exception is thrown if either hasCFields or hasSymmetricFields 
+      * is false.
       */
       DArray< DArray<double> > const & cFields() const;
 
       /**
       * Get concentration field for one monomer type expanded in a basis.
       *
+      * An Exception is thrown if either hasCFields or hasSymmetricFields 
+      * is false.
+      *
       * \param monomerId integer monomer type index
       */
       DArray<double> const & cField(int monomerId) const;
 
       /**
-      * Get array of all concentration fields on r-space grid.
+      * Get array of all concentration fields in r-space grid format.
       *
       * The array capacity is equal to the number of monomer types.
+      * An Exception is thrown if hasCFields is false.
       */
       DArray<CField> const & cFieldsRGrid() const;
 
       /**
-      * Get concentration field for one monomer type on r-space grid.
+      * Get concentration field for one monomer type on an r-grid.
+      *
+      * An Exception is thrown if hasCFields is false.
       *
       * \param monomerId integer monomer type index
       */
@@ -307,12 +318,12 @@ namespace Pspc
       Mixture<D> const & mixture() const;
 
       /**
-      * Get Interaction (i.e., excess free energy model) by reference.
+      * Get Interaction (excess free energy model) by reference.
       */
       ChiInteraction& interaction();
 
       /**
-      * Get Interaction (i.e., excess free energy model) by const reference.
+      * Get Interaction (excess free energy model) by const reference.
       */
       ChiInteraction const & interaction() const;
 
@@ -360,6 +371,13 @@ namespace Pspc
       */  
       bool hasCFields() const;
 
+      /** 
+      * Are w-fields symmetric under all elements of the space group?
+      *
+      * This is true iff the fields were originally input in basis format.
+      */
+      bool hasSymmetricFields() const;
+
       ///@}
       /// \name Commands (correspond to command file commands)
       ///@{
@@ -371,8 +389,8 @@ namespace Pspc
       * which must contain chemical potential fields in symmetry-adapted 
       * basis format, stores these fields in the system wFields array,
       * converts these fields to real-space grid format and stores the
-      * result in the wFieldsRGrid array. On exit hasWFields is set true 
-      * and hasCFields is false.
+      * result in the wFieldsRGrid array. On exit hasWFields and
+      * hasSymmetricFields are set true and hasCFields is false.
       *
       * \param filename name of input w-field basis file
       */
@@ -386,7 +404,7 @@ namespace Pspc
       * (r-grid) format, stores these fields in the system wFieldsGrid
       * array, converts these fields to symmetrized basis format and
       * stores the result in the wFields array. On exit hasWFields is
-      * true and hasCFields is false. 
+      * true and hasSymmetricFields and hasCFields are false. 
       *
       * \param filename name of input w-field file in r-grid format
       */
@@ -622,7 +640,7 @@ namespace Pspc
       Mixture<D> mixture_;
 
       /**
-      * Domain object (crystallography and mesh).
+      * Domain object (unit cell, space group, mesh, and basis).
       */
       Domain<D> domain_;
 
@@ -754,6 +772,15 @@ namespace Pspc
       * unit cell are reset.
       */
       bool hasCFields_;
+
+      /**
+      * Does the system have symmetric fields ?
+      * 
+      * Set true iff WFields are set and were input using the symmetry
+      * adapated basis format, and are thus invariant under all elements 
+      * of the specified space group. 
+      */
+      bool hasSymmetricFields_;
 
       /**
       * Does this system have a Sweep object?
@@ -906,51 +933,79 @@ namespace Pspc
    template <int D>
    inline
    DArray< DArray<double> > const & System<D>::wFields() const
-   {  return wFields_; }
+   {  
+      UTIL_ASSERT(hasWFields_);
+      UTIL_ASSERT(hasSymmetricFields_);
+      return wFields_; 
+   }
 
    // Get one monomer chemical potential field.
    template <int D>
    inline
    DArray<double> const & System<D>::wField(int id) const
-   {  return wFields_[id]; }
+   {  
+      UTIL_ASSERT(hasWFields_);
+      UTIL_ASSERT(hasSymmetricFields_);
+      return wFields_[id]; 
+   }
 
    // Get an array of monomer chemical potential fields on r-space grids.
    template <int D>
    inline 
    DArray< typename System<D>::WField > const & System<D>::wFieldsRGrid() 
    const
-   {  return wFieldsRGrid_; }
+   {  
+      UTIL_ASSERT(hasWFields_);
+      return wFieldsRGrid_; 
+   }
 
    // Get a single monomer chemical potential field on an r-space grid.
    template <int D>
    inline 
    typename System<D>::WField const & System<D>::wFieldRGrid(int id) const
-   {  return wFieldsRGrid_[id]; }
+   {  
+      UTIL_ASSERT(hasWFields_);
+      return wFieldsRGrid_[id]; 
+   }
 
    // Get array of all monomer concentration fields.
    template <int D>
    inline
    DArray< DArray<double> > const & System<D>::cFields() const
-   { return cFields_; }
+   { 
+      UTIL_ASSERT(hasCFields_);
+      UTIL_ASSERT(hasSymmetricFields_);
+      return cFields_; 
+   }
 
    // Get one monomer concentration field.
    template <int D>
    inline
    DArray<double> const & System<D>::cField(int id) const
-   { return cFields_[id]; }
+   { 
+      UTIL_ASSERT(hasCFields_);
+      UTIL_ASSERT(hasSymmetricFields_);
+      return cFields_[id]; 
+   }
 
    // Get array of all monomer concentration fields on grids.
    template <int D>
    inline
    DArray< typename System<D>::CField > const & System<D>::cFieldsRGrid() 
    const
-   {  return cFieldsRGrid_; }
+   {  
+      UTIL_ASSERT(hasCFields_);
+      return cFieldsRGrid_; 
+   }
 
    // Get a single monomer concentration field on an r-space grid.
    template <int D>
    inline typename System<D>::CField const & System<D>::cFieldRGrid(int id)
    const
-   {  return cFieldsRGrid_[id]; }
+   {  
+      UTIL_ASSERT(hasCFields_);
+      return cFieldsRGrid_[id]; 
+   }
 
    // Have the w fields been set?
    template <int D>
@@ -961,6 +1016,11 @@ namespace Pspc
    template <int D>
    inline bool System<D>::hasCFields() const
    {  return hasCFields_; }
+
+   // Does the system have symmetric w fields?
+   template <int D>
+   inline bool System<D>::hasSymmetricFields() const
+   {  return hasSymmetricFields_; }
 
    // Get the precomputed Helmoltz free energy per monomer / kT.
    template <int D>

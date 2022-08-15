@@ -756,6 +756,7 @@ namespace Pspg
       fieldIo().readFieldsBasis(filename, wFields(), domain_.unitCell());
       fieldIo().convertBasisToRGrid(wFields(), wFieldsRGrid());
       hasWFields_ = true;
+      hasSymmetricFields_ = true;
       hasCFields_ = false;
    }
 
@@ -769,12 +770,13 @@ namespace Pspg
 
       // Solve the modified diffusion equation (without iteration)
       mixture().compute(wFieldsRGrid(), cFieldsRGrid());
+      hasCFields_ = true;
 
       // Convert c and w fields from r-grid to basis
-      fieldIo().convertRGridToBasis(wFieldsRGrid(), wFields());
-      fieldIo().convertRGridToBasis(cFieldsRGrid(), cFields());
-
-      hasCFields_ = true;
+      if (hasSymmetricFields_) {
+         fieldIo().convertRGridToBasis(wFieldsRGrid(), wFields());
+         fieldIo().convertRGridToBasis(cFieldsRGrid(), cFields());
+      }
 
       if (needStress) {
          mixture().computeStress(wavelist());
@@ -798,9 +800,10 @@ namespace Pspg
 
       hasCFields_ = true;
 
-      // Is this actually necessary? Seemed like it from before.
-      fieldIo().convertRGridToBasis(wFieldsRGrid(), wFields());
-      fieldIo().convertRGridToBasis(cFieldsRGrid(), cFields());
+      if (hasSymmetricFields_) {
+         fieldIo().convertRGridToBasis(wFieldsRGrid(), wFields());
+         fieldIo().convertRGridToBasis(cFieldsRGrid(), cFields());
+      }
 
       if (!error) {
          if (!iterator().isFlexible()) {
@@ -832,6 +835,7 @@ namespace Pspg
    void System<D>::writeWBasis(const std::string & filename)
    {
       UTIL_CHECK(hasWFields_);
+      UTIL_CHECK(hasSymmetricFields_);
       fieldIo().writeFieldsBasis(filename, wFields(), unitCell());
    }
 
@@ -842,6 +846,7 @@ namespace Pspg
    void System<D>::writeCBasis(const std::string & filename)
    {
       UTIL_CHECK(hasCFields_);
+      UTIL_CHECK(hasSymmetricFields_);
       fieldIo().writeFieldsBasis(filename, cFields(), unitCell());
    }
 
@@ -871,7 +876,8 @@ namespace Pspg
    * Write the last time slice of the propagator.
    */
    template <int D>
-   void System<D>::writePropagatorRGrid(const std::string & filename, int polymerID, int blockID)
+   void System<D>::writePropagatorRGrid(const std::string & filename, 
+                                        int polymerID, int blockID)
    {
       const cudaReal* d_tailField = mixture_.polymer(polymerID).propagator(blockID, 1).tail();
 

@@ -23,29 +23,37 @@ Explanations and links to documentation for enclosed subblocks and parameters:
 <table>
   <tr>
     <td> Mixture { .... } </td>
-    <td> Description of mixture composition. See \ref fd1d_Mixture_page docs </td>
+    <td> Description of mixture composition. 
+         See \ref user_param_mixture_page docs 
+    </td>
   </tr>
   <tr>
     <td> ChiInteraction { .... } </td>
     <td> 
-      Flory-Huggins excess free eenrgy. See \ref pscf_ChiInteraction_page docs 
+      Flory-Huggins excess free eenrgy. 
+      See \ref pscf_ChiInteraction_page docs 
     </td>
   </tr>
   <tr>
     <td> Domain { .... } </td>
-    <td> Spatial domain and discretization. See \ref fd1d_Domain_page docs </td>
+    <td> Spatial domain and discretization. 
+         See \ref fd1d_Domain_page docs 
+    </td>
   </tr>
   <tr>
     <td> < Iterator > { .... } </td>
     <td> 
-    Polymorphic block for any of several subclasses of \ref fd1d_iterator_page "Fd1d::Iterator" 
+    Polymorphic block for any of several subclasses of 
+    \ref fd1d_iterator_page "Fd1d::Iterator" 
     </td>
   </tr>
   <tr>
     <td> < Sweep > * { ... }</td>
     <td> 
-      Optional polymorphic \ref fd1d_iterator_page "Fd1d::Sweep" block. 
-      If present, define a sequence of states along a line through parameter space, which can be solved using continuation to construct initial guesses.
+      Optional polymorphic \ref fd1d_sweep_page "Fd1d::Sweep" block. 
+      If present, define a sequence of states along a line through parameter 
+      space, which can be solved using continuation to construct initial 
+      guesses.
     </td>
   </tr>
 </table>
