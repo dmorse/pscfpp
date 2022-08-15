@@ -32,14 +32,14 @@ System{
     epsilon      1e-6
     maxHist      50 
     isFlexible   1
-    normalVec            1
+    normalVecId          1
     interfaceThickness   0.08     
     wallThickness        0.25
     chi[
-          0   0
-          0   0
+          20   20
+          0    0
     ]
-    writeWallBasis           out/wall.bf
-    writeWallRGrid           out/wall.rf
+    wallBasisOutFile     out/wall.bf
+    wallRGridOutFile     out/wall.rf
   }
 }

@@ -3,13 +3,13 @@ AmIteratorFilm{
   epsilon      1e-12
   maxHist      50 
   isFlexible   1
-  normalVec            0
+  normalVecId          0
   interfaceThickness   0.08     
   wallThickness        0.2
   chi[
         3   0
         0   4
   ]
-  writeWallBasis       out/wall.bf
-  writeWallRGrid       out/wall.rf
+  wallBasisOutFile     out/wall.bf
+  wallRGridOutFile     out/wall.rf
 }

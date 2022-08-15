@@ -1,0 +1,7 @@
+cd init
+./make_rgrid.py
+cd ..
+cp init/c.rf in/c.rf
+pscf_pc1d -p param -c command -e > out/log
+pscf_pc1d -p param_down -c command -e > out/-log
+rm -f out/-0*

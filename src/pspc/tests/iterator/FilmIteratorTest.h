@@ -60,8 +60,8 @@ public:
       FilmIteratorTest::SetUpFilmIterator(iterator, "in/film/film1D");
 
       // Check that everything was read in correctly
-      TEST_ASSERT(eq(iterator.normalVec(),0));
-      TEST_ASSERT(eq(iterator.normalVec(),0));
+      TEST_ASSERT(eq(iterator.normalVecId(),0));
+      TEST_ASSERT(eq(iterator.normalVecId(),0));
       TEST_ASSERT(eq(iterator.interfaceThickness(),0.08));
       TEST_ASSERT(eq(iterator.wallThickness(),0.2));
       TEST_ASSERT(eq(iterator.chi(0,0),3.0));
@@ -244,7 +244,7 @@ public:
       FilmIteratorTest::SetUpSystem(system4, "in/film/system_bad_3D_2");
       FilmIterator<3, AmIterator<3> > iterator4(system4);
       FilmIteratorTest::SetUpFilmIterator(iterator4, "in/film/film2D");
-      // Using film2D here because it has normalVec=1 which we want for this example
+      // Using film2D here because it has normalVecId=1 which we want for this example
       TEST_ASSERT(iterator4.flexibleParams().size() == 3);
       TEST_ASSERT(iterator4.flexibleParams()[0] == 0);
       TEST_ASSERT(iterator4.flexibleParams()[1] == 2);

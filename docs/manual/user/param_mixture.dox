@@ -4,7 +4,7 @@
 \ref user_param_sweep_page    (Next) 
 <BR>
 
-The first subblock of the main System block in every parameter file is labell Mixture.  
+The first subblock of the main System block in every parameter file is labelled Mixture.  
 The Mixture block describes the chemical composition of the system that is being simulated. 
 
 PSCF programs are designed to treat a mixture that may contain one or more polymer species and zero or more solvent point-particle species.

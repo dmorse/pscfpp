@@ -297,6 +297,18 @@ namespace Pspc{
             }
          }
       }
+      
+      // If iterator has external fields, account for them in the values of the residuals
+      if (hasExternalField()) {
+         for (int i = 0; i < nMonomer; ++i) {
+            for (int j = 0; j < nMonomer; ++j) {
+               for (int k = 0; k < nBasis; ++k) {
+                  int idx = i*nBasis + k;
+                  resid[idx] += system().interaction().idemp(i,j) * externalField(j)[k];
+               }
+            }
+         }
+      }
 
       // If not canonical, account for incompressibility 
       if (!system().mixture().isCanonical()) {

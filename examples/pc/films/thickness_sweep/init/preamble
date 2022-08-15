@@ -1,0 +1,15 @@
+ format  1  0
+dim                                     
+                   1
+crystal_system                          
+            lamellar
+N_cell_param                            
+                   1
+cell_param                              
+    2.5000000000E+00
+group_name                              
+                 P_1
+N_monomer                               
+                   2
+ngrid                                   
+                  96

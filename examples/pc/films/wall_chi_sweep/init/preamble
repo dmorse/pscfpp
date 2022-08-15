@@ -1,15 +1,15 @@
  format  1  0
 dim                                     
-                   1
+                   2
 crystal_system                          
-            lamellar
+         rectangular
 N_cell_param                            
-                   1
+                   2
 cell_param                              
-    3.0000000000E+00
+    1.6000000000E+00    3.0000000000E+00
 group_name                              
-                 P_1
+                 p_m
 N_monomer                               
                    2
 ngrid                                   
-                  64
+                  64                   96

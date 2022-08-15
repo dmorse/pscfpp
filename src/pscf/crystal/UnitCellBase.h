@@ -48,14 +48,6 @@ namespace Pscf
       void setParameters(FSArray<double, 6> const & parameters);
 
       /**
-      * Set one parameter of unit cell.
-      *
-      * \param i index indicating which parameter to change
-      * \param parameter unit cell parameter
-      */
-      void setParameter(int const i, double const parameter);
-
-      /**
       * Compute square magnitude of reciprocal lattice vector.
       *
       * \param k  vector of components of a reciprocal lattice vector
@@ -335,18 +327,6 @@ namespace Pscf
       for (int i = 0; i < nParameter_; ++i) {
          parameters_[i] = parameters[i];
       }
-      setLattice();
-   }
-
-   /*
-   * Set one parameter of unit cell.
-   */
-   template <int D>
-   void UnitCellBase<D>::setParameter(int const i, double const parameter)
-   {
-      UTIL_CHECK(i < nParameter_);
-      UTIL_CHECK(0 < parameter);
-      parameters_[i] = parameter;
       setLattice();
    }
    

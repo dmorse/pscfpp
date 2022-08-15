@@ -27,21 +27,19 @@ System{
     mesh           32    32    68
     groupName      P_4%m_m_m
   }
-  Wall{
-    normalVec            2
+  AmIteratorFilm{
+    maxItr       2000
+    epsilon      1e-6
+    maxHist      50 
+    isFlexible   1
+    normalVecId          2
     interfaceThickness   0.08     
     wallThickness        0.2
     chi[
           0   0
           0   0
     ]
-    writeBasis           out/wall.bf
-    writeRGrid           out/wall.rf
-  }
-  AmIterator{
-    maxItr       2000
-    epsilon      1e-6
-    maxHist      50 
-    isFlexible   1
+    wallBasisOutFile     out/wall.bf
+    wallRGridOutFile     out/wall.rf
   }
 }

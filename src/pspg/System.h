@@ -509,6 +509,15 @@ namespace Pspg
       void writePropagatorRGrid(const std::string & filename,
                                 int polymerID, int blockID);
 
+      /**
+      * Write all data associated with the converged solution. This
+      * includes the full param file, as well as the thermodynamic
+      * data (free energy, pressure, phi and mu for each species).
+      * 
+      * \param filename name of output file
+      */
+      void writeData(const std::string & filename);
+
       //@}
 
       #if 0
