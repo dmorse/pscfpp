@@ -748,14 +748,14 @@ namespace Pspc
    * Set new w-field values, using r-grid fields as inputs.
    */
    template <int D>
-   void System<D>::setWRGrid(DArray<WField> const & fields)
+   void System<D>::setWRGrid(DArray<Field> const & fields)
    {
       // Update system wFieldsRGrid
       int nMonomer = mixture_.nMonomer();
       int meshSize = domain_.mesh().size();
       for (int i = 0; i < nMonomer; ++i) {
-         WField const & f = fields[i];
-         WField& w = wFieldsRGrid_[i];
+         Field const & f = fields[i];
+         Field& w = wFieldsRGrid_[i];
          for (int j = 0; j < meshSize; ++j) {
             w[j] = f[j];
          }
@@ -822,7 +822,7 @@ namespace Pspc
    }
 
    /*
-   * Sweep in parameter space.
+   * Perform sweep along a line in parameter space.
    */
    template <int D>
    void System<D>::sweep()
@@ -831,7 +831,8 @@ namespace Pspc
       UTIL_CHECK(hasSymmetricFields_);
       Log::file() << std::endl;
       Log::file() << std::endl;
-      // Call sweep
+
+      // Perform sweep
       sweepPtr_->sweep();
    }
    
@@ -860,7 +861,7 @@ namespace Pspc
                            const DArray< RField<D> > field2)
    {
       RFieldComparison<D> comparison;
-      comparison.compare(field1,field2);
+      comparison.compare(field1, field2);
 
       Log::file() << "\n Real-space field comparison results" << std::endl;
       Log::file() << "     Maximum Absolute Difference:   " 
@@ -880,7 +881,7 @@ namespace Pspc
    }
 
    /*
-   * Write w-fields to real space grid.
+   * Write w-fields in real space grid file format.
    */
    template <int D>
    void System<D>::writeWRGrid(const std::string & filename) const
@@ -919,7 +920,7 @@ namespace Pspc
       UTIL_CHECK(hasCFields_);
 
       // Create and allocate the DArray of fields to be written
-      DArray<CField> blockCFields;
+      DArray<Field> blockCFields;
       blockCFields.allocate(mixture_.nSolvent() + mixture_.nBlock());
       int n = blockCFields.capacity();
       for (int i = 0; i < n; i++) {
