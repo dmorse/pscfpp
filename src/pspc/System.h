@@ -195,9 +195,8 @@ namespace Pspc
       * Get array of all chemical potential fields in basis format.
       *
       * The array capacity is equal to the number of monomer types.
-      * An Exception is thrown if hasSymmetricFields is false.
       */
-      DArray< DArray<double> > const & wFields() const;
+      DArray< DArray<double> > const & wFieldsBasis() const;
 
       /**
       * Get chemical potential field for one monomer type in basis format.
@@ -206,7 +205,7 @@ namespace Pspc
       * 
       * \param monomerId integer monomer type index
       */
-      DArray<double> const & wField(int monomerId) const;
+      DArray<double> const & wFieldBasis(int monomerId) const;
       
       /**
       * Get array of all chemical potential fields in r-space grid format.
@@ -230,33 +229,25 @@ namespace Pspc
       * Get array of all concentration fields expanded in a basis.
       *
       * The array capacity is equal to the number of monomer types.
-      * An Exception is thrown if either hasCFields or hasSymmetricFields 
-      * is false.
       */
-      DArray< DArray<double> > const & cFields() const;
+      DArray< DArray<double> > const & cFieldsBasis() const;
 
       /**
       * Get concentration field for one monomer type expanded in a basis.
       *
-      * An Exception is thrown if either hasCFields or hasSymmetricFields 
-      * is false.
-      *
       * \param monomerId integer monomer type index
       */
-      DArray<double> const & cField(int monomerId) const;
+      DArray<double> const & cFieldBasis(int monomerId) const;
 
       /**
       * Get array of all concentration fields in r-space grid format.
       *
       * The array capacity is equal to the number of monomer types.
-      * An Exception is thrown if hasCFields is false.
       */
       DArray<Field> const & cFieldsRGrid() const;
 
       /**
       * Get concentration field for one monomer type on an r-grid.
-      *
-      * An Exception is thrown if hasCFields is false.
       *
       * \param monomerId integer monomer type index
       */
@@ -678,7 +669,7 @@ namespace Pspc
       *
       * Indexed by monomer typeId, size = nMonomer.
       */
-      DArray< DArray<double> > wFields_;
+      DArray< DArray<double> > wFieldsBasis_;
 
       /**
       * Array of chemical potential fields for monomer types.
@@ -692,7 +683,7 @@ namespace Pspc
       *
       * Indexed by monomer typeId, size = nMonomer.
       */
-      DArray< DArray<double> > cFields_;
+      DArray< DArray<double> > cFieldsBasis_;
 
       /**
       * Array of concentration fields on real space grid.
@@ -755,7 +746,7 @@ namespace Pspc
       /**
       * Have W fields been set?
       *
-      * True iff both wFields_ and wFieldsRGrid_ are set and consistent.
+      * True iff both wFieldsBasis_ and wFieldsRGrid_ are set and consistent.
       */
       bool hasWFields_;
 
@@ -926,21 +917,21 @@ namespace Pspc
    // Get array of all monomer chemical potential fields.
    template <int D>
    inline
-   DArray< DArray<double> > const & System<D>::wFields() const
+   DArray< DArray<double> > const & System<D>::wFieldsBasis() const
    {  
       UTIL_ASSERT(hasWFields_);
       UTIL_ASSERT(hasSymmetricFields_);
-      return wFields_; 
+      return wFieldsBasis_; 
    }
 
    // Get one monomer chemical potential field.
    template <int D>
    inline
-   DArray<double> const & System<D>::wField(int id) const
+   DArray<double> const & System<D>::wFieldBasis(int id) const
    {  
       UTIL_ASSERT(hasWFields_);
       UTIL_ASSERT(hasSymmetricFields_);
-      return wFields_[id]; 
+      return wFieldsBasis_[id]; 
    }
 
    // Get an array of monomer chemical potential fields on r-space grids.
@@ -965,21 +956,21 @@ namespace Pspc
    // Get array of all monomer concentration fields.
    template <int D>
    inline
-   DArray< DArray<double> > const & System<D>::cFields() const
+   DArray< DArray<double> > const & System<D>::cFieldsBasis() const
    { 
       UTIL_ASSERT(hasCFields_);
       UTIL_ASSERT(hasSymmetricFields_);
-      return cFields_; 
+      return cFieldsBasis_; 
    }
 
    // Get one monomer concentration field.
    template <int D>
    inline
-   DArray<double> const & System<D>::cField(int id) const
+   DArray<double> const & System<D>::cFieldBasis(int id) const
    { 
       UTIL_ASSERT(hasCFields_);
       UTIL_ASSERT(hasSymmetricFields_);
-      return cFields_[id]; 
+      return cFieldsBasis_[id]; 
    }
 
    // Get array of all monomer concentration fields on grids.

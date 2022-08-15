@@ -48,7 +48,7 @@ public:
       // Read in file another way
       bfs.read("in/bcc/omega.ref");
       // Compare
-      comparison.compare(bfs.fields(), system.wFields());
+      comparison.compare(bfs.fields(), system.wFieldsBasis());
       // Assert small difference
       TEST_ASSERT(comparison.maxDiff() < 5.0e-7);
 
@@ -93,7 +93,7 @@ public:
       // get it using bfs
       bfs.getSystemState();
       // compare
-      comparison.compare(bfs.fields(),system.wFields());
+      comparison.compare(bfs.fields(),system.wFieldsBasis());
       // Assert small difference
       TEST_ASSERT(comparison.maxDiff() < 5.0e-7);
    }
@@ -114,7 +114,7 @@ public:
       // set system state
       bfs.setSystemState(true);
       // compare
-      comparison.compare(bfs.fields(),system.wFields());
+      comparison.compare(bfs.fields(),system.wFieldsBasis());
       // Assert small difference
       TEST_ASSERT(comparison.maxDiff() < 5.0e-7);
    }

@@ -59,8 +59,10 @@ namespace Pspc
       iteratorFactoryPtr_(0),
       sweepPtr_(0),
       sweepFactoryPtr_(0),
-      wFields_(),
-      cFields_(),
+      wFieldsBasis_(),
+      wFieldsRGrid_(),
+      cFieldsBasis_(),
+      cFieldsRGrid_(),
       f_(),
       c_(),
       fHelmholtz_(0.0),
@@ -256,10 +258,10 @@ namespace Pspc
 
       // Allocate wFields and cFields
       int nMonomer = mixture_.nMonomer();
-      wFields_.allocate(nMonomer);
+      wFieldsBasis_.allocate(nMonomer);
       wFieldsRGrid_.allocate(nMonomer);
 
-      cFields_.allocate(nMonomer);
+      cFieldsBasis_.allocate(nMonomer);
       cFieldsRGrid_.allocate(nMonomer);
       
       tmpFields_.allocate(nMonomer);
@@ -267,10 +269,10 @@ namespace Pspc
       tmpFieldsKGrid_.allocate(nMonomer);
 
       for (int i = 0; i < nMonomer; ++i) {
-         wFields_[i].allocate(basis().nBasis());
+         wFieldsBasis_[i].allocate(basis().nBasis());
          wFieldsRGrid_[i].allocate(mesh().dimensions());
 
-         cFields_[i].allocate(basis().nBasis());
+         cFieldsBasis_[i].allocate(basis().nBasis());
          cFieldsRGrid_[i].allocate(mesh().dimensions());
 
          tmpFields_[i].allocate(basis().nBasis());
@@ -528,7 +530,7 @@ namespace Pspc
       double temp = 0.0;
       for (int i = 0; i < nm; ++i) {
          for (int k = 0; k < nBasis; ++k) {
-            temp += wFields_[i][k] * cFields_[i][k];
+            temp += wFieldsBasis_[i][k] * cFieldsBasis_[i][k];
          }
       }
 
@@ -536,7 +538,7 @@ namespace Pspc
       if (iterator().hasExternalField()) {
          for (int i = 0; i < nm; ++i) {
             for (int k = 0; k < nBasis; ++k) {
-               temp -= iterator().externalField(i)[k] * cFields_[i][k];
+               temp -= iterator().externalField(i)[k] * cFieldsBasis_[i][k];
             }
          }
       }
@@ -549,7 +551,7 @@ namespace Pspc
          for (int j = i + 1; j < nm; ++j) {
             chi = interaction().chi(i,j);
             for (int k = 0; k < nBasis; ++k) {
-               fHelmholtz_+= chi * cFields_[i][k] * cFields_[j][k];
+               fHelmholtz_+= chi * cFieldsBasis_[i][k] * cFieldsBasis_[j][k];
             }
          }
       }
@@ -732,8 +734,8 @@ namespace Pspc
    template <int D>
    void System<D>::readWBasis(const std::string & filename)
    {
-      fieldIo().readFieldsBasis(filename, wFields_, domain_.unitCell());
-      fieldIo().convertBasisToRGrid(wFields_, wFieldsRGrid_);
+      fieldIo().readFieldsBasis(filename, wFieldsBasis_, domain_.unitCell());
+      fieldIo().convertBasisToRGrid(wFieldsBasis_, wFieldsRGrid_);
       hasWFields_ = true;
       hasSymmetricFields_ = true;
       hasCFields_ = false;
@@ -746,7 +748,7 @@ namespace Pspc
    void System<D>::readWRGrid(const std::string & filename)
    {
       fieldIo().readFieldsRGrid(filename, wFieldsRGrid_, domain_.unitCell());
-      //fieldIo().convertRGridToBasis(wFieldsRGrid_, wFields_);
+      //fieldIo().convertRGridToBasis(wFieldsRGrid_, wFieldsBasis_);
       hasWFields_ = true;
       hasSymmetricFields_ = false;
       hasCFields_ = false;
@@ -763,14 +765,14 @@ namespace Pspc
       int nBasis = domain_.basis().nBasis();
       for (int i = 0; i < nMonomer; ++i) {
          DArray<double> const & f = fields[i];
-         DArray<double> &       w = wFields_[i];
+         DArray<double> &       w = wFieldsBasis_[i];
          for (int j = 0; j < nBasis; ++j) {
             w[j] = f[j];
          }
       }
 
       // Update system wFieldsRGrid
-      domain_.fieldIo().convertBasisToRGrid(wFields_, wFieldsRGrid_);
+      domain_.fieldIo().convertBasisToRGrid(wFieldsBasis_, wFieldsRGrid_);
 
       hasWFields_ = true;
       hasSymmetricFields_ = true;
@@ -795,7 +797,7 @@ namespace Pspc
       }
 
       // Update system wFieldsRgrid
-      // domain_.fieldIo().convertRGridToBasis(wFieldsRGrid_, wFields_);
+      // domain_.fieldIo().convertRGridToBasis(wFieldsRGrid_, wFieldsBasis_);
 
       hasWFields_ = true;
       hasSymmetricFields_ = false;
@@ -817,7 +819,7 @@ namespace Pspc
       if (hasSymmetricFields_) {
 
          // Convert c fields from r-grid to basis
-         fieldIo().convertRGridToBasis(cFieldsRGrid_, cFields_);
+         fieldIo().convertRGridToBasis(cFieldsRGrid_, cFieldsBasis_);
 
          if (needStress) {
             mixture_.computeStress();
@@ -910,7 +912,7 @@ namespace Pspc
    void System<D>::writeWBasis(const std::string & filename) const
    {
       UTIL_CHECK(hasWFields_);
-      fieldIo().writeFieldsBasis(filename, wFields(), unitCell());
+      fieldIo().writeFieldsBasis(filename, wFieldsBasis(), unitCell());
    }
 
    /*
@@ -930,7 +932,7 @@ namespace Pspc
    void System<D>::writeCBasis(const std::string & filename) const
    {
       UTIL_CHECK(hasCFields_);
-      fieldIo().writeFieldsBasis(filename, cFields_, unitCell());
+      fieldIo().writeFieldsBasis(filename, cFieldsBasis_, unitCell());
    }
 
    /*
@@ -944,8 +946,8 @@ namespace Pspc
    }
 
    /*
-   * Write all concentration fields in real space (r-grid) format, for each
-   * block (or solvent) individually rather than for each species.
+   * Write all concentration fields in real space (r-grid) format, for 
+   * each block (or solvent) individually rather than for each species.
    */
    template <int D>
    void System<D>::writeBlockCRGrid(const std::string & filename) const
@@ -1088,21 +1090,21 @@ namespace Pspc
       // Compute w fields from c fields
       for (int i = 0; i < basis().nBasis(); ++i) {
          for (int j = 0; j < mixture_.nMonomer(); ++j) {
-            wFields_[j][i] = 0.0;
+            wFieldsBasis_[j][i] = 0.0;
             for (int k = 0; k < mixture_.nMonomer(); ++k) {
-               wFields_[j][i] += interaction().chi(j,k) * tmpFields_[k][i];
+               wFieldsBasis_[j][i] += interaction().chi(j,k) * tmpFields_[k][i];
             }
          }
       }
 
       // Convert to r-grid format
-      fieldIo().convertBasisToRGrid(wFields_, wFieldsRGrid_);
+      fieldIo().convertBasisToRGrid(wFieldsBasis_, wFieldsRGrid_);
       hasWFields_ = true;
       hasSymmetricFields_ = true;
       hasCFields_ = false;
 
       // Write w field in basis format
-      fieldIo().writeFieldsBasis(outFileName, wFields(), unitCell());
+      fieldIo().writeFieldsBasis(outFileName, wFieldsBasis(), unitCell());
    }
 
    /*

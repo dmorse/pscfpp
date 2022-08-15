@@ -90,26 +90,26 @@ namespace Pspc
    }
 
    /*
-   * Get current state of associated System.
+   * Gjt current state of associated System.
    */
    template <int D>
    void BasisFieldState<D>::getSystemState()
    {
-      // Get system unit cell
-      unitCell() = system().unitCell();
       // Get system wFields
       allocate();
       int nMonomer = system().mixture().nMonomer();
-      int nBasis    = system().basis().nBasis();
+      int nBasis = system().basis().nBasis();
       int i, j;
       for (i = 0; i < nMonomer; ++i) {
          DArray<double>& stateField = field(i);
-         const DArray<double>& systemField = system().wField(i);
+         const DArray<double>& systemField = system().wFieldBasis(i);
          for (j = 0; j < nBasis; ++j) {
             stateField[j] = systemField[j];
          }
       }
 
+      // Get system unit cell
+      unitCell() = system().unitCell();
    }
 
    /*
@@ -119,29 +119,9 @@ namespace Pspc
    void BasisFieldState<D>::setSystemState(bool newCellParams)
    {
       system().setWBasis(fields());
-
-      #if 0
-      // Update system  wFields
-      int nMonomer = system().mixture().nMonomer();
-      int nBasis = system().basis().nBasis();
-      int i, j;
-      for (i = 0; i < nMonomer; ++i) {
-         const DArray<double>& stateField = field(i);
-         DArray<double>& systemField = system().wField(i);
-         for (j = 0; j < nBasis; ++j) {
-            systemField[j] = stateField[j];
-         }
-      }
-
-      // Update system wFieldsRgrid
-      system().fieldIo().convertBasisToRGrid(system().wFields(),
-                                             system().wFieldsRGrid());
-      #endif
-
       if (newCellParams) {
          system().setUnitCell(unitCell());
       }
-
    }
 
 } // namespace Pspc
