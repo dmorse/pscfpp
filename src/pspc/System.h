@@ -493,7 +493,7 @@ namespace Pspc
       * \param blockId  integer id of the block with the polymer 
       */
       void writePropagatorRGrid(const std::string & filename, 
-                                int polymerId, int blockId) const;
+                                int polymerId, int blockId, int directionId, int segmentId)  const;
    
       /**
       * Convert a field from symmetry-adapted basis to r-grid format.
