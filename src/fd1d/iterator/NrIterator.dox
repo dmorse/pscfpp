@@ -1,0 +1,30 @@
+namespace Pscf{
+namespace Fd1d{
+/*! 
+\page fd1d_NrIterator_page NrIterator
+
+A Pscf::Fd1d::NrIterator<D> object is an iterator that solves the SCFT equations 
+using the quasi-Newton method. The maximum number of iteration steps is 100, and
+the lattice parameters are held constant during iteration. The only user-defined
+parameter is the error tolerance.
+
+The parameter file format for an NrIterator object is:
+\code
+NrIterator{
+   epsilon        float
+}
+\endcode
+
+Parameters are described below:
+<table>
+  <tr>
+    <td> epsilon </td>
+    <td> Error tolerance. Once the maximum component of the residual vector
+         (the L-&infin; norm) has shrunk below this value, the calculation is 
+         considered to be converged. </td>
+  </tr>
+</table>
+
+*/
+}
+}

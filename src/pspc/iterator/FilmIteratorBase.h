@@ -90,20 +90,31 @@ namespace Pspc
       /** 
       * Return whether unit cell is flexible.
       */ 
-      const bool isFlexible();
+      bool isFlexible() const;
 
       /**
-      * Output the indices of each flexible lattice parameter, based on
-      * normalVec and unitCell definitions in param file. Assumes that
+      * Determine the indices of each flexible lattice parameter, based on
+      * normalVecId and unitCell definitions in param file. Assumes that
       * isFlexible == true, and gives a warning if none of the parameters
-      * are actually able to be varied given the thin film constraints
+      * are actually able to be varied given the thin film constraints. 
+      * Stores resulting array in flexibleParams_ member of this object,
+      * as well as the flexibleParams_ member of the iterator within this
+      * object.
+      * 
+      * This function varies depending on D, the dimensionality of the
+      * system. Therefore, it is implemented in the partial class 
+      * specializations in FilmIterator, rather than in this base class.
       */
-      virtual FSArray<int, 6> flexibleParams() const = 0;
+      virtual void setFlexibleParams() = 0;
 
       /**
       * Check that user-defined lattice basis vectors (stored in the
       * Domain<D> object associated with this FilmIterator class)
       * are compatible with the thin film constraint
+      * 
+      * This function varies depending on D, the dimensionality of the
+      * system. Therefore, it is implemented in the partial class 
+      * specializations in FilmIterator, rather than in this base class.
       */
       virtual void checkLatticeVectors() const = 0;
 
@@ -165,7 +176,7 @@ namespace Pspc
       * 
       * Assumes that wall is well-defined (t_<T_, T_<L where L is unit cell length)
       */
-      double const phi() const;
+      double phi() const;
 
       /**
       * Write the concentration field of the walls to an output stream, in basis format.
@@ -198,46 +209,49 @@ namespace Pspc
       void writeWallFieldRGrid(std::string filename) const;
 
       /**
-      * Get the const DArray containing the concentration field for the walls by 
-      * const reference
+      * Returns the field that describes the mask imposed upon the unit cell,
+      * which represents the wall. Field is in symmetry-adapted basis format.
       */
-      DArray<double> const & wallCField() const;
+      FieldCPU const & maskField() const;
 
       /**
-      * Get value of normalVec, the lattice basis vector that is
-      * normal to the walls (either 0, 1, or 2 in 3D)
+      * Returns the array of fields that describes the external potential field
+      * felt by each monomer species, which is a result of chemical interactions
+      * between the wall and the monomer species. Fields are in symmetry-adapted 
+      * basis format.
       */
-      int normalVec();
+      DArray<FieldCPU > const & externalFields() const;
 
       /**
-      * Get const value of normalVec
+      * Returns the field that describes the external potential field felt by
+      * monomer species monomerId, which is a result of chemical interactions
+      * between the wall and the monomer species. Fields are in symmetry-adapted 
+      * basis format.
+      *
+      * \param monomerId integer monomer type index
       */
-      int const normalVec() const;
+      FieldCPU const & externalField(int monomerId) const;
 
       /**
-      * Get value of interfaceThickness
+      * Return true if this iterator imposes an external field on any
+      * monomer species, returns false if no external field is present.
       */
-      double interfaceThickness();
+      bool hasExternalField() const;
+
+      /**
+      * Get const value of normalVecId
+      */
+      int normalVecId() const;
 
       /**
       * Get const value of interfaceThickness
       */
-      double const interfaceThickness() const;
-
-      /**
-      * Get value of wallThickness
-      */
-      double wallThickness();
+      double interfaceThickness() const;
 
       /**
       * Get const value of wallThickness
       */
-      double const wallThickness() const;
-
-      /**
-      * Get chi matrix by reference
-      */
-      DMatrix<double>& chi();
+      double wallThickness() const;
 
       /**
       * Get const chi matrix by reference
@@ -245,20 +259,12 @@ namespace Pspc
       DMatrix<double> const & chi() const;
 
       /**
-      * Get the chi parameter between wall w and species s by reference
-      * 
-      * \param s  species index, 0 <= id < nVertex
-      * \param w  wall index, 0 or 1
-      */
-      double& chi(int s, int w);
-
-      /**
       * Get the const chi parameter between wall w and species s by reference
       * 
       * \param s  species index, 0 <= id < nVertex
       * \param w  wall index, 0 or 1
       */
-      double const & chi(int s, int w) const;
+      double chi(int s, int w) const;
 
    protected:
 
@@ -267,26 +273,34 @@ namespace Pspc
       */
       IteratorType& iterator();
 
+      /**
+      * Generate external fields only, and pass them into iterator object for
+      * use during calculation. This is called by generateWallFields(). 
+      */
+      void generateExternalFields();
+
       using Iterator<D>::system;
       using Iterator<D>::setClassName;
       using Iterator<D>::isFlexible_;
       using ParamComposite::read;
       using ParamComposite::readOptional;
       using ParamComposite::readOptionalDMatrix;
+      using ParamComposite::setParent;
+      using ParamComposite::addComponent;
 
    private:
 
       /// The actual iterator that does all the work
       IteratorType iterator_;
 
-      /// Concentration field for the walls
-      DArray<double> wallCField_;
-
-      /// Lattice parameters associated with the current wallCField_
+      /// Lattice parameters associated with the current maskField
       FSArray<double, 6> parameters_;
 
+      /// Wall chi array associated with the current externalFields
+      DMatrix<double> chiFields_;
+
       /// Lattice basis vector that is normal to the walls
-      int normalVec_;
+      int normalVecId_;
 
       /// Interface thickness
       double t_;
@@ -298,10 +312,10 @@ namespace Pspc
       DMatrix<double> chi_;
 
       /// Name of file to which to write wall field in basis format
-      std::string writeBasis_;
+      std::string wallBasisOutFile_;
 
       /// Name of file to which to write wall field in r-grid format
-      std::string writeRGrid_;
+      std::string wallRGridOutFile_;
 
    };
 
@@ -310,77 +324,71 @@ namespace Pspc
    // Return reference to iterator within this FilmIterator
    template <int D, typename IteratorType>
    inline IteratorType& FilmIteratorBase<D, IteratorType>::iterator()
-   { return iterator_; }
+   {  return iterator_; }
 
    // Return const reference to iterator within this FilmIterator
    template <int D, typename IteratorType>
    inline IteratorType const & FilmIteratorBase<D, IteratorType>::iterator() const
-   { return iterator_; }
+   {  return iterator_; }
 
    // Return whether unit cell is flexible.
    template <int D, typename IteratorType>
-   inline const bool FilmIteratorBase<D, IteratorType>::isFlexible() 
-   { return iterator().isFlexible(); }
+   inline bool FilmIteratorBase<D, IteratorType>::isFlexible() const
+   {  return iterator_.isFlexible(); }
 
    // Set value of chi between species s and wall w
    template <int D, typename IteratorType>
    inline void FilmIteratorBase<D, IteratorType>::setChi(int s, int w, double chi)
-   { chi_(s,w) =  chi; }
+   {  chi_(s,w) = chi; }
 
-   // Get const wall cField by reference
+   // Get const mask (wall) field by reference
    template <int D, typename IteratorType>
-   inline DArray<double> const & FilmIteratorBase<D, IteratorType>::wallCField() const
-   { return wallCField_; }
+   inline FieldCPU const & FilmIteratorBase<D, IteratorType>::maskField() const
+   {  return iterator_.maskField(); }
 
-   // Get value of normalVec
+   // Get const array of external fields by reference
    template <int D, typename IteratorType>
-   inline int FilmIteratorBase<D, IteratorType>::normalVec()
-   { return normalVec_; }
+   inline 
+   DArray<FieldCPU > const & FilmIteratorBase<D, IteratorType>::externalFields()
+   const
+   {  return iterator_.externalFields(); }
 
-   // Get const value of normalVec
+   // Get const external field for species monomerId by reference
    template <int D, typename IteratorType>
-   inline int const FilmIteratorBase<D, IteratorType>::normalVec() const
-   { return normalVec_; }
+   inline 
+   FieldCPU const & FilmIteratorBase<D, IteratorType>::externalField(int monomerId)
+   const
+   {  return iterator_.externalField(monomerId); }
+
+   // Get value of normalVecId
+   template <int D, typename IteratorType>
+   inline int FilmIteratorBase<D, IteratorType>::normalVecId() const
+   {  return normalVecId_; }
 
    // Get value of interfaceThickness
    template <int D, typename IteratorType>
-   inline double FilmIteratorBase<D, IteratorType>::interfaceThickness()
-   { return t_; }
-
-   // Get const value of interfaceThickness
-   template <int D, typename IteratorType>
-   inline double const FilmIteratorBase<D, IteratorType>::interfaceThickness() const
-   { return t_; }
+   inline double FilmIteratorBase<D, IteratorType>::interfaceThickness() const
+   {  return t_; }
 
    // Get value of wallThickness
    template <int D, typename IteratorType>
-   inline double FilmIteratorBase<D, IteratorType>::wallThickness()
-   { return T_; }
-
-   // Get const value of wallThickness
-   template <int D, typename IteratorType>
-   inline double const FilmIteratorBase<D, IteratorType>::wallThickness() const
-   { return T_; }
-
-   // Get chi matrix by reference
-   template <int D, typename IteratorType>
-   inline DMatrix<double>& FilmIteratorBase<D, IteratorType>::chi()
-   { return chi_; }
+   inline double FilmIteratorBase<D, IteratorType>::wallThickness() const
+   {  return T_; }
 
    // Get chi matrix by const reference
    template <int D, typename IteratorType>
    inline DMatrix<double> const & FilmIteratorBase<D, IteratorType>::chi() const
-   { return chi_; }
+   {  return chi_; }
 
    // Get the chi parameter between wall w and species s by reference
    template <int D, typename IteratorType>
-   inline double& FilmIteratorBase<D, IteratorType>::chi(int s, int w)
-   { return chi_(s, w); }
+   inline double FilmIteratorBase<D, IteratorType>::chi(int s, int w) const
+   {  return chi_(s, w); }
 
-   // Get the const chi parameter between wall w and species s by reference
+   // Does this iterator have any external field?
    template <int D, typename IteratorType>
-   inline double const & FilmIteratorBase<D, IteratorType>::chi(int s, int w) const
-   { return chi_(s, w); }
+   inline bool FilmIteratorBase<D, IteratorType>::hasExternalField() const
+   {  return (!isAthermal()); }
 
 } // namespace Pspc
 } // namespace Pscf

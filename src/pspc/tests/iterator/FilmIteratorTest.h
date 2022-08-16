@@ -64,8 +64,8 @@ public:
       FilmIteratorTest::SetUpFilmIterator(iterator, "in/film/film1D");
 
       // Check that everything was read in correctly
-      TEST_ASSERT(eq(iterator.normalVec(),0));
-      TEST_ASSERT(eq(iterator.normalVec(),0));
+      TEST_ASSERT(eq(iterator.normalVecId(),0));
+      TEST_ASSERT(eq(iterator.normalVecId(),0));
       TEST_ASSERT(eq(iterator.interfaceThickness(),0.08));
       TEST_ASSERT(eq(iterator.wallThickness(),0.2));
       TEST_ASSERT(eq(iterator.chi(0,0),3.0));
@@ -99,8 +99,9 @@ public:
       // Check that the wall field files were output correctly by 
       // comparing them to the reference files in in/film
       UnitCell<1> unitCell; // UnitCell object to pass into FieldIo functions
-      DArray< DArray<double> > cFieldsCheck; // Array to store reference field
-      system.fieldIo().readFieldsBasis("in/film/wall_ref.bf", cFieldsCheck, unitCell);
+      DArray< DArray<double> > cFieldsCheck; // Copy of reference field
+      system.fieldIo().readFieldsBasis("in/film/wall_ref.bf", 
+                                       cFieldsCheck, unitCell);
       BFieldComparison bComparison(0); // object to compare fields
       bComparison.compare(iterator.wallCField(), cFieldsCheck[0]);
       if (verbose() > 0) {
@@ -110,14 +111,16 @@ public:
       TEST_ASSERT(bComparison.maxDiff() < 1.0E-7);
 
       RField<1> cRGridCheck; // Array to store reference field
-      system.fieldIo().readFieldRGrid("in/film/wall_ref.rf", cRGridCheck, unitCell);
+      system.fieldIo().readFieldRGrid("in/film/wall_ref.rf", 
+                                      cRGridCheck, unitCell);
       DArray<RField<1> > cRGridFromIterator;
       cRGridFromIterator.allocate(1);
       cRGridFromIterator[0].allocate(system.domain().mesh().dimensions());
       DArray< DArray<double> > cFieldFromIterator;   // Put iterator cField inside a
       cFieldFromIterator.allocate(1);                // DArray so it can be passed 
       cFieldFromIterator[0] = iterator.wallCField(); // into convertBasisToRGrid
-      system.fieldIo().convertBasisToRGrid(cFieldFromIterator,cRGridFromIterator);
+      system.fieldIo().convertBasisToRGrid(cFieldFromIterator,
+                                          cRGridFromIterator);
       RFieldComparison<1> rComparison; // object to compare fields
       rComparison.compare(cRGridFromIterator[0], cRGridCheck);
       if (verbose() > 0) {
@@ -188,10 +191,11 @@ public:
       FilmIteratorTest::SetUpFilmIterator(iterator1, "in/film/film2D");
       try {
          iterator1.checkLatticeVectors();
-         // If checkLatticeVectors doesn't throw an error, then it failed this test
+         // If above does not throw an error, then it failed this test
          TEST_ASSERT(1 == 2);
       } catch (Exception e) {
-         Log::file() << "EXCEPTION CAUGHT, expected behavior occurred" << std::endl;
+         Log::file() << "EXCEPTION CAUGHT, expected behavior occurred" 
+                     << std::endl;
       }
 
       // Set up 3D system with correct lattice vectors and check it
@@ -208,10 +212,11 @@ public:
       FilmIteratorTest::SetUpFilmIterator(iterator3, "in/film/film3D");
       try {
          iterator3.checkLatticeVectors();
-         // If checkLatticeVectors doesn't throw an error, then it failed this test
+         // If above doesn't throw an error, then it failed this test
          TEST_ASSERT(1 == 2);
       } catch (Exception e) {
-         Log::file() << "EXCEPTION CAUGHT, expected behavior occurred" << std::endl;
+         Log::file() << "EXCEPTION CAUGHT, expected behavior occurred" 
+                     << std::endl;
       }
    }
    
@@ -235,7 +240,7 @@ public:
       TEST_ASSERT(iterator2.flexibleParams().size() == 1);
       TEST_ASSERT(iterator2.flexibleParams()[0] == 0);
 
-      // Set up 3D system (tetragonal) and make sure flexibleParams is correct
+      // Set up 3D tetragonal system, validate flexibleParams 
       System<3> system3;
       FilmIteratorTest::SetUpSystem(system3, "in/film/system3D");
       FilmIterator<3, AmIterator<3> > iterator3(system3);
@@ -243,12 +248,13 @@ public:
       TEST_ASSERT(iterator3.flexibleParams().size() == 1);
       TEST_ASSERT(iterator3.flexibleParams()[0] == 0);
 
-      // Set up another 3D system (monoclinic) and make sure flexibleParams is correct
+      // Set up 3D monoclinic system (monoclinic), validate flexibleParams 
       System<3> system4;
       FilmIteratorTest::SetUpSystem(system4, "in/film/system_bad_3D_2");
       FilmIterator<3, AmIterator<3> > iterator4(system4);
       FilmIteratorTest::SetUpFilmIterator(iterator4, "in/film/film2D");
-      // Using film2D here because it has normalVec=1 which we want for this example
+      // Using film2D here because it has normalVecId=1 which 
+      // we want for this example
       TEST_ASSERT(iterator4.flexibleParams().size() == 3);
       TEST_ASSERT(iterator4.flexibleParams()[0] == 0);
       TEST_ASSERT(iterator4.flexibleParams()[1] == 2);
@@ -276,12 +282,13 @@ public:
       // Run the solve function
       iterator.solve();
 
-      // Check that the converged field is correct by comparing it to the reference files in in/film
-      UnitCell<1> unitCell; // UnitCell object to pass into FieldIo functions
-      DArray< DArray<double> > wFieldsCheck; // Array to store reference field
-      system.fieldIo().readFieldsBasis("in/film/w_ref.bf", wFieldsCheck, unitCell);
+      // Check converged field is correct by comparing to files in in/film
+      UnitCell<1> unitCell; // UnitCell object to pass to FieldIo functions
+      DArray< DArray<double> > wFieldsCheck; // Copy of reference field
+      system.fieldIo().readFieldsBasis("in/film/w_ref.bf", 
+                                       wFieldsCheck, unitCell);
       BFieldComparison bComparison(0); // object to compare fields
-      bComparison.compare(system.wFields(), wFieldsCheck);
+      bComparison.compare(system.wFieldsBasis(), wFieldsCheck);
       if (verbose() > 0) {
          std::cout << "\n";
          std::cout << "Max error = " << bComparison.maxDiff() << "\n";
@@ -304,7 +311,8 @@ public:
 
    // Read parameter file section to create a FilmIterator object
    template <int D>
-   void SetUpFilmIterator(FilmIterator<D, AmIterator<D>>& iterator, std::string fname)
+   void SetUpFilmIterator(FilmIterator<D, AmIterator<D>>& iterator, 
+                          std::string fname)
    {
       std::ifstream in;
       openInputFile(fname, in);
@@ -312,28 +320,28 @@ public:
       in.close();
    }
 
-   // Determine whether we get the expected result when running checkSpaceGroup.
-   // Function accepts a boolean indicating whether we expect it to throw an error
-   // or not, and returns a boolean indicating whether the function demonstrated the
-   // expected behavior.
+   // Determine if we get expected result when running checkSpaceGroup.
+   // Function accepts a boolean indicating whether we expect it to throw 
+   // an error or not, and returns a boolean indicating whether the 
+   // function demonstrated the expected behavior.
    template <int D>
-   bool checkCheckSpaceGroup(FilmIterator<D, AmIterator<D>>& iterator, bool expectError)
+   bool checkCheckSpaceGroup(FilmIterator<D, AmIterator<D>>& iterator, 
+                             bool expectError)
    {
       bool pass = true;
       if (expectError) {
          try {
             iterator.checkSpaceGroup();
-
-            // The above is expected to fail. If it instead succeeds, we run the
-            // line below, and checkSpaceGroup has not passed the test
+            // This is expected to fail. If it succeeds, the test fails.
             pass = false;
          } catch (Exception e) {
-            Log::file() << "EXCEPTION CAUGHT, expected behavior occurred" << std::endl;
+            Log::file() << "EXCEPTION CAUGHT, expected behavior occurred" 
+                        << std::endl;
          }
       } else {
          try {
             iterator.checkSpaceGroup();
-            // This should succeed. If it doesn't, checkSpaceGroup has not passed the test
+            // This should succeed. If not, the test fails. 
          } catch (Exception e) {
             pass = false;
          }

@@ -5,4 +5,5 @@ ITERATE
 WRITE_W_BASIS    out/w.bf
 WRITE_W_RGRID    out/w.rf
 WRITE_C_BASIS    out/c.bf
+WRITE_DATA       out/data
 FINISH

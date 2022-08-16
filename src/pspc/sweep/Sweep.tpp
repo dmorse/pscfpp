@@ -78,6 +78,8 @@ namespace Pspc {
       std::string fileName = baseFileName_;
       fileName += "sweep.log";
       system().fileMaster().openOutputFile(fileName, logFile_);
+      logFile_ << " step             ds     free_energy        pressure"
+               << std::endl;
    };
 
    /*
@@ -243,12 +245,8 @@ namespace Pspc {
       system().fileMaster().openOutputFile(outFileName, out);
 
       // Write data file, with thermodynamic properties at end
-      out << "System{" << std::endl;
-      system().mixture().writeParam(out);
-      system().interaction().writeParam(out);
-      out << "}" << std::endl;
+      system().writeParam(out);
       out << std::endl;
-      out << "unitCell       " << system().unitCell();
       system().outputThermo(out);
       out.close();
 
@@ -267,7 +265,7 @@ namespace Pspc {
       system().writeCBasis(outFileName);
 
       // Write c rgrid files
-      if (writeRhoRgrid_) {
+      if (writeRhoRGrid_) {
         outFileName = baseFileName_;
         outFileName += indexString;
         outFileName += "_c";

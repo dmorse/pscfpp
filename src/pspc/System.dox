@@ -1,7 +1,7 @@
 namespace Pscf{
 namespace Pspc{
 /*! 
-\page pspc_System_page Pspc::System<D>
+\page pspc_System_page System
 
 A Pspc::System<D> object is the main object in a SCFT computation for a D dimensionally periodic structure using a pseudo-spectral algorithm on CPU hardware.
 
@@ -43,25 +43,16 @@ The purpose of each of the main subblocks is discussed below.
   </tr>
   <tr>
     <td> < Iterator > { .... } </td>
-<<<<<<< HEAD
-    <td> Polymorphic Iterator block, for any one of several subclasses of \ref pspc_iterator_page "Pspc::Iterator". </td>
-  </tr>
-  <tr>
-    <td> < Sweep > * { ... } </td>
-    <td> Optional polymorphic Sweep block. </td>
-=======
     <td> 
     Polymorphic Iterator block, for any one of several subclasses of 
     \ref pspc_iterator_page "Pspc::Iterator". 
     </td>
   </tr>
   <tr>
-  <tr>
     <td> < Sweep >* { ... } </td>
     <td> Optional polymorphic Sweep block, for any one of several subclasses
-         of Pspc::Sweep 
+         of \ref fd1d_sweep_page "Pspc::Sweep"
     </td>
->>>>>>> devel
   </tr>
 </table>
 

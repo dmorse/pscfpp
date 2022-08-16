@@ -23,7 +23,7 @@ System{
     )
   }
   Domain{
-    unitCell       lamellar    2.2
+    unitCell       lamellar    1.9
     mesh           64
     groupName      P_1
   }
@@ -32,14 +32,14 @@ System{
     epsilon      1e-12
     maxHist      50 
     isFlexible   0
-    normalVec            0
+    normalVecId          0
     interfaceThickness   0.08     
     wallThickness        0.2
     chi[
           0   0
           0   0
     ]
-    writeWallBasis       out/wall.bf
-    writeWallRGrid       out/wall.rf
+    wallBasisOutFile     out/wall.bf
+    wallRGridOutFile     out/wall.rf
   }
 }

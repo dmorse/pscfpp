@@ -38,22 +38,17 @@ namespace Fd1d {
    */ 
    void Solvent::compute(WField const & wField)
    {
-      int nx = domainPtr_->nx();
-      int i;
+      UTIL_CHECK(cField_.isAllocated());
 
-      // Initialize to zero
-      for (i = 0; i < nx; ++i) {
-          cField_[i] = 0.0;
-      }
-
-      // Evaluate unnormalized integral and q_
+      // Evaluate unnormalized concentration, Boltzmann weight
+      int nx = domain().nx();
       double s = size();
-      q_ = 0.0;
-      for (i = 0; i < nx; ++i) {
+      for (int i = 0; i < nx; ++i) {
           cField_[i] = exp(-s*wField[i]);
-          q_ += cField_[i];
       }
-      q_ = q_/double(nx);
+
+      // Compute spatial average q_
+      q_ = domain().spatialAverage(cField_);
 
       // Compute mu_ or phi_ and prefactor
       double prefactor;
@@ -66,7 +61,7 @@ namespace Fd1d {
       }
 
       // Normalize concentration 
-      for (i = 0; i < nx; ++i) {
+      for (int i = 0; i < nx; ++i) {
           cField_[i] *= prefactor;
       }
     

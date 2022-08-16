@@ -402,6 +402,10 @@ namespace Pspg
                         << Str("block ID   ", 21) << blockID << std::endl;
             writePropagatorRGrid(filename, polymerID, blockID);
          } else
+         if (command == "WRITE_DATA") {
+            readEcho(in, filename);
+            writeData(filename);
+         } else
          if (command == "BASIS_TO_RGRID") {
             hasCFields_ = false;
             readEcho(in, inFileName);
@@ -925,6 +929,9 @@ namespace Pspg
       fieldIo().writeFieldsRGrid(filename, blockCFields, unitCell());
    }
 
+   /*
+   * Write the last time slice of the propagator.
+   */
    template <int D>
    void System<D>::writePropagatorRGrid(const std::string & filename, 
                                         int polymerID, int blockID)
@@ -940,6 +947,19 @@ namespace Pspg
    }
 
    /*
+   * Write all data associated with the converged solution.
+   */
+   template <int D>
+   void System<D>::writeData(const std::string & filename)
+   {
+      std::ofstream file;
+      fileMaster().openOutputFile(filename, file);
+      writeParam(file);
+      outputThermo(file);
+      file.close();
+   }
+
+   /*  
    * Convert fields from real-space grid to symmetry-adapted basis format.
    */
    template <int D>

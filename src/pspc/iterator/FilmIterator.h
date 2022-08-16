@@ -64,12 +64,15 @@ namespace Pspc
       FilmIterator(System<1>& system);
 
       /**
-      * Output the indices of each flexible lattice parameter, based on
-      * normalVec and unitCell definitions in param file. Assumes that
+      * Determine the indices of each flexible lattice parameter, based on
+      * normalVecId and unitCell definitions in param file. Assumes that
       * isFlexible == true, and gives a warning if none of the parameters
-      * are actually able to be varied given the thin film constraints
+      * are actually able to be varied given the thin film constraints. 
+      * Stores resulting array in flexibleParams_ member of this object,
+      * as well as the flexibleParams_ member of the iterator within this
+      * object.
       */
-      FSArray<int, 6> flexibleParams() const;
+      void setFlexibleParams();
 
       /**
       * Check that user-defined lattice basis vectors (stored in the
@@ -79,12 +82,13 @@ namespace Pspc
       void checkLatticeVectors() const;
 
       using FilmIteratorBase<1,IteratorType>::setClassName;
-      using FilmIteratorBase<1,IteratorType>::normalVec;
+      using FilmIteratorBase<1,IteratorType>::normalVecId;
 
    protected:
 
       using FilmIteratorBase<1,IteratorType>::system;
       using FilmIteratorBase<1,IteratorType>::iterator;
+      using Iterator<1>::setFlexibleParams;
       
    };
 
@@ -100,12 +104,15 @@ namespace Pspc
       FilmIterator(System<2>& system);
 
       /**
-      * Output the indices of each flexible lattice parameter, based on
-      * normalVec and unitCell definitions in param file. Assumes that
+      * Determine the indices of each flexible lattice parameter, based on
+      * normalVecId and unitCell definitions in param file. Assumes that
       * isFlexible == true, and gives a warning if none of the parameters
-      * are actually able to be varied given the thin film constraints
+      * are actually able to be varied given the thin film constraints. 
+      * Stores resulting array in flexibleParams_ member of this object,
+      * as well as the flexibleParams_ member of the iterator within this
+      * object.
       */
-      FSArray<int, 6> flexibleParams() const;
+      void setFlexibleParams();
 
       /**
       * Check that user-defined lattice basis vectors (stored in the
@@ -115,12 +122,13 @@ namespace Pspc
       void checkLatticeVectors() const;
 
       using FilmIteratorBase<2,IteratorType>::setClassName;
-      using FilmIteratorBase<2,IteratorType>::normalVec;
+      using FilmIteratorBase<2,IteratorType>::normalVecId;
 
    protected:
 
       using FilmIteratorBase<2,IteratorType>::system;
       using FilmIteratorBase<2,IteratorType>::iterator;
+      using Iterator<2>::setFlexibleParams;
       
    };
 
@@ -136,12 +144,15 @@ namespace Pspc
       FilmIterator(System<3>& system);
 
       /**
-      * Output the indices of each flexible lattice parameter, based on
-      * normalVec and unitCell definitions in param file. Assumes that
+      * Determine the indices of each flexible lattice parameter, based on
+      * normalVecId and unitCell definitions in param file. Assumes that
       * isFlexible == true, and gives a warning if none of the parameters
-      * are actually able to be varied given the thin film constraints
+      * are actually able to be varied given the thin film constraints. 
+      * Stores resulting array in flexibleParams_ member of this object,
+      * as well as the flexibleParams_ member of the iterator within this
+      * object.
       */
-      FSArray<int, 6> flexibleParams() const;
+      void setFlexibleParams();
 
       /**
       * Check that user-defined lattice basis vectors (stored in the
@@ -151,12 +162,13 @@ namespace Pspc
       void checkLatticeVectors() const;
       
       using FilmIteratorBase<3,IteratorType>::setClassName;
-      using FilmIteratorBase<3,IteratorType>::normalVec;
+      using FilmIteratorBase<3,IteratorType>::normalVecId;
 
    protected:
 
       using FilmIteratorBase<3,IteratorType>::system;
       using FilmIteratorBase<3,IteratorType>::iterator;
+      using Iterator<3>::setFlexibleParams;
       
    };
 

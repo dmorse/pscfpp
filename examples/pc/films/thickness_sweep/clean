@@ -1,5 +1,4 @@
-rm -f out_up/*
-rm -f out_down/*
+rm -f out/*
 rm -f in/w.bf
 rm -f in/c.bf
 rm -f in/c.kf

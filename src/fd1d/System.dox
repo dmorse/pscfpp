@@ -41,12 +41,6 @@ Explanations and links to documentation for enclosed subblocks and parameters:
     </td>
   </tr>
   <tr>
-<<<<<<< HEAD
-    <td> < Sweep > * { ... }</td>
-    <td> 
-      Optional polymorphic \ref fd1d_iterator_page "Fd1d::Sweep" block. 
-      If present, define a sequence of states along a line through parameter space, which can be solved using continuation to construct initial guesses.
-=======
     <td> < Iterator > { .... } </td>
     <td> 
     Polymorphic block for any of several subclasses of 
@@ -56,11 +50,10 @@ Explanations and links to documentation for enclosed subblocks and parameters:
   <tr>
     <td> < Sweep > * { ... }</td>
     <td> 
-      Optional polymorphic \ref fd1d_iterator_page "Fd1d::Sweep" block. 
+      Optional polymorphic \ref fd1d_sweep_page "Fd1d::Sweep" block. 
       If present, define a sequence of states along a line through parameter 
       space, which can be solved using continuation to construct initial 
       guesses.
->>>>>>> devel
     </td>
   </tr>
 </table>

@@ -63,16 +63,17 @@ namespace Pspg {
       /**
       * Compute forward (real-to-complex) discrete Fourier transform.
       *
-      * \param in  array of real values on r-space grid (device mem)
-      * \param out  array of complex values on k-space grid (device mem)
+      * \param rField  real values on r-space grid (input, gpu mem)
+      * \param kField  complex values on k-space grid (output, gpu mem)
       */
-      void forwardTransform(RDField<D> & rField, RDFieldDft<D>& kField) const;
+      void forwardTransform(RDField<D> & rField, RDFieldDft<D>& kField) 
+      const;
 
       /**
       * Compute forward Fourier transform without destroying input.
       *
-      * \param in  array of real values on r-space grid (device mem)
-      * \param out  array of complex values on k-space grid (device mem)
+      * \param rField  real values on r-space grid (input, gpu mem)
+      * \param kField  complex values on k-space grid (output, gpu mem)
       */
       void forwardTransformSafe(RDField<D> const & rField, 
                                 RDFieldDft<D>& kField) const;
@@ -80,16 +81,17 @@ namespace Pspg {
       /**
       * Compute inverse (complex-to-real) discrete Fourier transform.
       *
-      * \param in  array of complex values on k-space grid (device mem)
-      * \param out  array of real values on r-space grid (device mem)
+      * \param kField  complex values on k-space grid (input, gpu mem)
+      * \param rField  real values on r-space grid (output, gpu mem)
       */
-      void inverseTransform(RDFieldDft<D> & kField, RDField<D>& rField) const;
+      void inverseTransform(RDFieldDft<D> & kField, RDField<D>& rField) 
+      const;
 
       /**
       * Compute inverse (complex to real) DFT without destroying input.
       *
-      * \param in  array of complex values on k-space grid (device mem)
-      * \param out  array of real values on r-space grid (device mem)
+      * \param kField  complex values on k-space grid (input, gpu mem)
+      * \param rField  real values on r-space grid (output, gpu mem)
       */
       void inverseTransformSafe(RDFieldDft<D> const & kField, 
                                 RDField<D>& rField) const;
@@ -113,7 +115,6 @@ namespace Pspg {
       *  Get the plan for the inverse DFT.
       */
       cufftHandle& iPlan();
-
 
    private:
 

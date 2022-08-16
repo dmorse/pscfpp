@@ -27,23 +27,6 @@ public:
    void setUp()
    {  setVerbose(0); }
 
-   #if 0
-   std::ofstream logFile_;
-
-   void tearDown()
-   {
-      if (logFile_.is_open()) {
-         logFile_.close();
-      }
-   }
-
-   void openLogFile(char const * filename)
-   {
-      openOutputFile(filename, logFile_);
-      Log::setFile(logFile_);
-   }
-   #endif
-
    void testConstructors()
    {
       printMethod(TEST_FUNC);
