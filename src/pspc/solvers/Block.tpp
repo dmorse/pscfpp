@@ -179,9 +179,8 @@ namespace Pspc {
       UTIL_CHECK(isAllocated_);
 
       // Compute expW arrays
-      // double factor  = -0.5*ds_;
-      // double factor2 = 0.5*factor;
       for (int i = 0; i < nx; ++i) {
+
          // First, check that w[i]*ds_ is not unreasonably large:
          // (if this condition is not met, solution will have large
          // error, and user should consider using a smaller ds_)

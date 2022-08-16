@@ -63,46 +63,58 @@ namespace Pspg {
       /**
       * Compute forward (real-to-complex) Fourier transform.
       *
-      * \param in  array of real values on r-space grid (device mem)
-      * \param out  array of complex values on k-space grid (device mem)
+      * \param rField  real values on r-space grid (input, gpu mem)
+      * \param kField  complex values on k-space grid (output, gpu mem)
       */
-      void forwardTransform(RDField<D> & rField, RDFieldDft<D>& kField) const;
+      void forwardTransform(RDField<D> & rField, RDFieldDft<D>& kField) 
+      const;
 
       /**
-      * Compute forward (real-to-complex) Fourier transform without destroying input.
+      * Compute forward (real-to-complex) transform while preserving input.
       *
-      * \param in  array of real values on r-space grid (device mem)
-      * \param out  array of complex values on k-space grid (device mem)
+      * \param rField  real values on r-space grid (input, gpu mem)
+      * \param kField  complex values on k-space grid (output, gpu mem)
       */
-      void forwardTransformSafe(RDField<D> const & rField, RDFieldDft<D>& kField) const;
+      void forwardTransformSafe(RDField<D> const & rField, 
+                                RDFieldDft<D>& kField) const;
 
       /**
       * Compute inverse (complex-to-real) Fourier transform.
       *
-      * \param in  array of complex values on k-space grid (device mem)
-      * \param out  array of real values on r-space grid (device mem)
+      * \param kField  complex values on k-space grid (input, gpu mem)
+      * \param rField  real values on r-space grid (output, gpu mem)
       */
-      void inverseTransform(RDFieldDft<D> & kField, RDField<D>& rField) const;
+      void inverseTransform(RDFieldDft<D> & kField, RDField<D>& rField) 
+      const;
 
       /**
-      * Compute inverse (complex-to-real) Fourier transform without destroying input.
+      * Compute inverse (complex-to-real) transform while preserving input.
       *
-      * \param in  array of complex values on k-space grid (device mem)
-      * \param out  array of real values on r-space grid (device mem)
+      * \param kField  complex values on k-space grid (input, gpu mem)
+      * \param rField  real values on r-space grid (output, gpu mem)
       */
-      void inverseTransformSafe(RDFieldDft<D> const & kField, RDField<D>& rField) const;
+      void inverseTransformSafe(RDFieldDft<D> const & kField, 
+                                RDField<D>& rField) const;
 
       /**
       * Return the dimensions of the grid for which this was allocated.
       */
       const IntVec<D>& meshDimensions() const;
 
+      /**
+      * Is the FFT object setup?
+      */
       bool isSetup() const;
 
+      /**
+      * Get the plan for the forward transformation.
+      */
       cufftHandle& fPlan();
 
+      /**
+      * Get the plan for the inverse transformation.
+      */
       cufftHandle& iPlan();
-
 
    private:
 

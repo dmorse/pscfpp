@@ -504,7 +504,9 @@ namespace Pspg
       /**
       * Write last contour slice of the propagator in real space grid format.
       *
-      * \param filename name of output file
+      * \param filename  name of output file
+      * \param polymerID  integer index of polymer species
+      * \param blockID  integer index of block within polymer
       */
       void writePropagatorRGrid(const std::string & filename,
                                 int polymerID, int blockID);
