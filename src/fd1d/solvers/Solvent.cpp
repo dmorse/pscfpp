@@ -38,8 +38,9 @@ namespace Fd1d {
    */ 
    void Solvent::compute(WField const & wField)
    {
+      UTIL_CHECK(cField_.isAllocated());
 
-      // Evaluate unnormalized concentration
+      // Evaluate unnormalized concentration, Boltzmann weight
       int nx = domain().nx();
       double s = size();
       for (int i = 0; i < nx; ++i) {

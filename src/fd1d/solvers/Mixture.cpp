@@ -53,7 +53,7 @@ namespace Fd1d
          }
       }
 
-      // Process solvents 
+      // Process solvents - set discretization for all solvents
       if (nSolvent() > 0) {
          for (int i = 0; i < nSolvent(); ++i) {
             solvent(i).setDiscretization(domain);
