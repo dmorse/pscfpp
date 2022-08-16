@@ -74,7 +74,7 @@ namespace Pspg
       *
       * \throw Exception if the RFieldDft is already allocated.
       *
-      * \param meshDimensions vector containing number of grid points in each direction
+      * \param meshDimensions vector of mesh dimensions
       */
       void allocate(const IntVec<D>& meshDimensions);
 
@@ -84,7 +84,7 @@ namespace Pspg
       const IntVec<D>& meshDimensions() const;
 
       /**
-      * Return vector of dft (Fourier) grid dimensions by constant reference.
+      * Return vector of dft (Fourier) grid dimensions by const reference.
       *  
       * The last element of dftDimensions() and meshDimensions() differ by
       * about a factor of two: dftDimension()[D-1] = meshDimensions()/2 + 1.

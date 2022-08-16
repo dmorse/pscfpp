@@ -83,11 +83,15 @@ namespace Pspg
 
       /**
       * Assignment operator.
+      *
+      * \param other DField<Data> on rhs of assignent (input)
       */
       virtual DField<Data>& operator = (const DField<Data>& other);
 
       /**
       * Copy constructor.
+      * 
+      * \param other DField<Data> to be copied (input)
       */
       DField(const DField& other);
 

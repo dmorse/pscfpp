@@ -124,7 +124,8 @@ namespace Pspg
       }
 
       // Copy elements
-      cudaMemcpy(data_, other.cDField(), capacity_ * sizeof(Data), cudaMemcpyDeviceToDevice);
+      cudaMemcpy(data_, other.cDField(), 
+                 capacity_ * sizeof(Data), cudaMemcpyDeviceToDevice);
 
       return *this;
    }
