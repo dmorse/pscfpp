@@ -34,7 +34,7 @@ namespace Pspc{
    void AmIterator<D>::readParameters(std::istream& in)
    {
       // Call parent class readParameters
-      AmIteratorTmpl<Iterator<D>,FieldCPU>::readParameters(in);
+      AmIteratorTmpl<Iterator<D>, DArray<double> >::readParameters(in);
 
       // Default parameter values
       isFlexible_ = 0;
@@ -56,7 +56,7 @@ namespace Pspc{
 
    // Compute and return L2 norm of residual vector
    template <int D>
-   double AmIterator<D>::findNorm(FieldCPU const & hist)
+   double AmIterator<D>::findNorm(DArray<double> const & hist)
    {
       const int n = hist.capacity();
       double normResSq = 0.0;
@@ -70,7 +70,7 @@ namespace Pspc{
 
    // Compute and return maximum element of residual vector.
    template <int D>
-   double AmIterator<D>::findMaxAbs(FieldCPU const & hist)
+   double AmIterator<D>::findMaxAbs(DArray<double> const & hist)
    {
       const int n = hist.capacity();
       double maxRes = 0.0;
@@ -85,18 +85,19 @@ namespace Pspc{
 
    // Update basis
    template <int D>
-   void AmIterator<D>::updateBasis(RingBuffer<FieldCPU> & basis,
-                                   RingBuffer<FieldCPU> const & hists)
+   void AmIterator<D>::updateBasis(RingBuffer<DArray<double> > & basis,
+                                   RingBuffer<DArray<double> > const & hists)
    {
       // Make sure at least two histories are stored
       UTIL_CHECK(hists.size() >= 2);
 
       const int n = hists[0].capacity();
-      FieldCPU newbasis;
+      DArray<double> newbasis;
       newbasis.allocate(n);
 
       for (int i = 0; i < n; i++) {
-         newbasis[i] = hists[0][i] - hists[1][i]; // sequential histories basis vectors
+         // sequential histories basis vectors
+         newbasis[i] = hists[0][i] - hists[1][i]; 
       }
 
       basis.append(newbasis);
@@ -105,7 +106,7 @@ namespace Pspc{
    // Compute one element of U matrix of by computing a dot product
    template <int D>
    double
-   AmIterator<D>::computeUDotProd(RingBuffer<FieldCPU> const & resBasis,
+   AmIterator<D>::computeUDotProd(RingBuffer<DArray<double> > const & resBasis,
                                   int m, int n)
    {
       const int length = resBasis[0].capacity();
@@ -121,8 +122,8 @@ namespace Pspc{
    // Compute one element of V vector by computing a dot product
    template <int D>
    double
-   AmIterator<D>::computeVDotProd(FieldCPU const & resCurrent,
-                                  RingBuffer<FieldCPU> const & resBasis,
+   AmIterator<D>::computeVDotProd(DArray<double> const & resCurrent,
+                                  RingBuffer<DArray<double> > const & resBasis,
                                   int m)
    {
       const int length = resBasis[0].capacity();
@@ -138,7 +139,7 @@ namespace Pspc{
    // Update entire U matrix
    template <int D>
    void AmIterator<D>::updateU(DMatrix<double> & U,
-                               RingBuffer<FieldCPU> const & resBasis,
+                               RingBuffer<DArray<double> > const & resBasis,
                                int nHist)
    {
       // Update matrix U by shifting elements diagonally
@@ -159,8 +160,8 @@ namespace Pspc{
 
    template <int D>
    void AmIterator<D>::updateV(DArray<double> & v,
-                               FieldCPU const & resCurrent,
-                               RingBuffer<FieldCPU> const & resBasis,
+                               DArray<double> const & resCurrent,
+                               RingBuffer<DArray<double> > const & resBasis,
                                int nHist)
    {
       // Compute U matrix's new row 0 and col 0
@@ -171,13 +172,13 @@ namespace Pspc{
    }
 
    template <int D>
-   void AmIterator<D>::setEqual(FieldCPU& a, FieldCPU const & b)
+   void AmIterator<D>::setEqual(DArray<double>& a, DArray<double> const & b)
    {  a = b; }
 
    template <int D>
    void
-   AmIterator<D>::addHistories(FieldCPU& trial,
-                               RingBuffer<FieldCPU> const & basis,
+   AmIterator<D>::addHistories(DArray<double>& trial,
+                               RingBuffer<DArray<double> > const & basis,
                                DArray<double> coeffs,
                                int nHist)
    {
@@ -191,8 +192,8 @@ namespace Pspc{
    }
 
    template <int D>
-   void AmIterator<D>::addPredictedError(FieldCPU& fieldTrial,
-                                         FieldCPU const & resTrial,
+   void AmIterator<D>::addPredictedError(DArray<double>& fieldTrial,
+                                         DArray<double> const & resTrial,
                                          double lambda)
    {
       int n = fieldTrial.capacity();
@@ -224,13 +225,13 @@ namespace Pspc{
 
    // Get the current field from the system
    template <int D>
-   void AmIterator<D>::getCurrent(FieldCPU& curr)
+   void AmIterator<D>::getCurrent(DArray<double>& curr)
    {
       // Straighten out fields into linear arrays
 
       const int nMonomer = system().mixture().nMonomer();
       const int nBasis = system().basis().nBasis();
-      const DArray<FieldCPU> * currSys = &system().wFieldsBasis();
+      const DArray< DArray<double> > * currSys = &system().wFieldsBasis();
 
       for (int i = 0; i < nMonomer; i++) {
          for (int k = 0; k < nBasis; k++)
@@ -264,7 +265,7 @@ namespace Pspc{
 
    // Compute the residual for the current system state
    template <int D>
-   void AmIterator<D>::getResidual(FieldCPU& resid)
+   void AmIterator<D>::getResidual(DArray<double>& resid)
    {
       const int n = nElements();
       const int nMonomer = system().mixture().nMonomer();
@@ -292,18 +293,20 @@ namespace Pspc{
          for (int i = 0; i < nMonomer; ++i) {
             for (int k = 0; k < nBasis; ++k) {
                int idx = i*nBasis + k;
-               resid[idx] += maskField()[k] / system().interaction().sum_inv();
+               resid[idx] += maskBasis()[k] / system().interaction().sum_inv();
             }
          }
       }
 
-      // If iterator has external fields, account for them in the values of the residuals
-      if (hasExternalField()) {
+      // If iterator has external fields, account for them in the values 
+      // of the residuals
+      if (hasExternalFields()) {
          for (int i = 0; i < nMonomer; ++i) {
             for (int j = 0; j < nMonomer; ++j) {
                for (int k = 0; k < nBasis; ++k) {
                   int idx = i*nBasis + k;
-                  resid[idx] += system().interaction().idemp(i,j) * externalField(j)[k];
+                  resid[idx] += system().interaction().idemp(i,j) * 
+                                externalField(j)[k];
                }
             }
          }
@@ -313,7 +316,7 @@ namespace Pspc{
       if (!system().mixture().isCanonical()) {
          double phi; // volume fraction of mask, if a mask exists
          if (hasMask()) {
-            phi = maskField()[0];
+            phi = maskBasis()[0];
          } else {
             phi = 0.0;
          }
@@ -352,13 +355,13 @@ namespace Pspc{
 
    // Update the current system field coordinates
    template <int D>
-   void AmIterator<D>::update(FieldCPU& newGuess)
+   void AmIterator<D>::update(DArray<double>& newGuess)
    {
       // Convert back to field format
       const int nMonomer = system().mixture().nMonomer();
       const int nBasis = system().basis().nBasis();
 
-      DArray<FieldCPU> wField;
+      DArray< DArray<double> > wField;
       wField.allocate(nMonomer);
 
       // Restructure in format of monomers, basis functions

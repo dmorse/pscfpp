@@ -30,7 +30,8 @@ Rationale:
 
 To make these changes using a bash shell, add some variant of the 
 following lines to the .profile or .bash_profile file in your user 
-home directory:
+home directory (these files are run each time a new terminal window
+is opened):
 \code
 PSCFPP_DIR=${HOME}/pscfpp
 export PATH=${PATH}:/${PSCFPP_DIR}/bin
@@ -45,7 +46,25 @@ home directory.
 After adding an appropriate variant of these lines to the .profile or
 .bash_profile, log out, log back in, and then enter "echo $PATH" and 
 "echo $PYTHONPATH" to make sure that PATH and PYTHONPATH have been 
-set correctly. 
+set correctly (they should contain full paths to the bin/ and python/
+directories, respectively). 
+
+NOTE FOR MAC USERS: The default terminal on a Mac is a zsh terminal,
+not a bash terminal. The distinction should not cause problems with
+pscfpp usage, but zsh terminal users may need to perform an 
+additional step to set up the environment. The zsh terminal may not
+run .bash_profile or .profile upon opening a new terminal window. 
+If you followed the steps above but the correct paths do not appear
+in your $PATH and $PYTHONPATH variables, you can add the following
+to the file titled .zshrc in your home directory:
+\code
+if [ -f ~/.bash_profile ]; then 
+    . ~/.bash_profile;
+fi
+\endcode
+This will ensure that .bash_profile is run each time a new terminal
+window is opened, and your $PATH and $PYTHONPATH variables should
+then be correct.
 
 <BR>
 \ref install_overview_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

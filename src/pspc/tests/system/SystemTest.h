@@ -6,6 +6,7 @@
 
 #include <pspc/System.h>
 #include <pspc/field/BFieldComparison.h>
+#include <pspc/field/RFieldComparison.h>
 #include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>
@@ -75,13 +76,49 @@ public:
       system.readWBasis("out/testConversion1D_lam_w.bf");
 
       // Compare result to original
-      BFieldComparison comparison;
-      comparison.compare(wFields_check, system.wFieldsBasis());
+      BFieldComparison comparison1;
+      comparison1.compare(wFields_check, system.wFieldsBasis());
       if (verbose()>0) {
          std::cout << "\n";
-         std::cout << "Max error = " << comparison.maxDiff() << "\n";
+         std::cout << "Max error = " << comparison1.maxDiff() << "\n";
       }
-      TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
+      TEST_ASSERT(comparison1.maxDiff() < 1.0E-10);
+
+      // Round trip conversion basis -> kgrid -> basis, read result
+      system.basisToKGrid("in/diblock/lam/omega.in",
+                          "out/testConversion1D_lam_w.kf");
+      system.kGridToBasis("out/testConversion1D_lam_w.kf",
+                          "out/testConversion1D_lam_w_2.bf");
+      system.readWBasis("out/testConversion1D_lam_w_2.bf");
+
+      // Compare result to original
+      BFieldComparison comparison2;
+      comparison2.compare(wFields_check, system.wFieldsBasis());
+      if (verbose()>0) {
+         std::cout << "\n";
+         std::cout << "Max error = " << comparison2.maxDiff() << "\n";
+      }
+      TEST_ASSERT(comparison2.maxDiff() < 1.0E-10);
+
+      // Round trip conversion rgrid -> kgrid -> rgrid, read result
+      system.readWRGrid("out/testConversion1D_lam_w.rf");
+      DArray< RField<1> > wFieldsRGrid_check;
+      wFieldsRGrid_check = system.wFieldsRGrid();
+
+      system.rGridToKGrid("out/testConversion1D_lam_w.rf",
+                          "out/testConversion1D_lam_w_2.kf");
+      system.kGridToRGrid("out/testConversion1D_lam_w_2.kf",
+                          "out/testConversion1D_lam_w_2.rf");
+      system.readWRGrid("out/testConversion1D_lam_w_2.rf");
+
+      // Compare result to original
+      RFieldComparison<1> comparison3;
+      comparison3.compare(wFieldsRGrid_check, system.wFieldsRGrid());
+      if (verbose()>0) {
+         std::cout << "\n";
+         std::cout << "Max error = " << comparison3.maxDiff() << "\n";
+      }
+      TEST_ASSERT(comparison3.maxDiff() < 1.0E-10);
 
    }
 
@@ -121,13 +158,50 @@ public:
       TEST_ASSERT(hasSymmetry);
 
       // Compare result to original
-      BFieldComparison comparison;
-      comparison.compare(wFields_check, system.wFieldsBasis());
+      BFieldComparison comparison1;
+      comparison1.compare(wFields_check, system.wFieldsBasis());
       if (verbose() > 0) {
          std::cout << "\n";
-         std::cout << "Max error = " << comparison.maxDiff() << "\n";
+         std::cout << "Max error = " << comparison1.maxDiff() << "\n";
       }
-      TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
+      TEST_ASSERT(comparison1.maxDiff() < 1.0E-10);
+
+      // Round trip conversion basis -> kgrid -> basis, read result
+      system.basisToKGrid("in/diblock/hex/omega.in",
+                          "out/testConversion2D_hex_w.kf");
+      system.kGridToBasis("out/testConversion2D_hex_w.kf",
+                          "out/testConversion2D_hex_w_2.bf");
+      system.readWBasis("out/testConversion2D_hex_w_2.bf");
+
+      // Compare result to original
+      BFieldComparison comparison2;
+      comparison2.compare(wFields_check, system.wFieldsBasis());
+      if (verbose()>0) {
+         std::cout << "\n";
+         std::cout << "Max error = " << comparison2.maxDiff() << "\n";
+      }
+      TEST_ASSERT(comparison2.maxDiff() < 1.0E-10);
+
+      // Round trip conversion rgrid -> kgrid -> rgrid, read result
+      system.readWRGrid("out/testConversion2D_hex_w.rf");
+      DArray< RField<2> > wFieldsRGrid_check;
+      wFieldsRGrid_check = system.wFieldsRGrid();
+
+      system.rGridToKGrid("out/testConversion2D_hex_w.rf",
+                          "out/testConversion2D_hex_w_2.kf");
+      system.kGridToRGrid("out/testConversion2D_hex_w_2.kf",
+                          "out/testConversion2D_hex_w_2.rf");
+      system.readWRGrid("out/testConversion2D_hex_w_2.rf");
+
+      // Compare result to original
+      RFieldComparison<2> comparison3;
+      comparison3.compare(wFieldsRGrid_check, system.wFieldsRGrid());
+      if (verbose()>0) {
+         std::cout << "\n";
+         std::cout << "Max error = " << comparison3.maxDiff() << "\n";
+      }
+      TEST_ASSERT(comparison3.maxDiff() < 1.0E-10);
+
    }
 
    void testConversion3D_bcc()
@@ -164,13 +238,50 @@ public:
       TEST_ASSERT(hasSymmetry);
 
       // Compare result to original
-      BFieldComparison comparison;
-      comparison.compare(wFields_check, system.wFieldsBasis());
+      BFieldComparison comparison1;
+      comparison1.compare(wFields_check, system.wFieldsBasis());
       if (verbose() > 0) {
          std::cout << "\n";
-         std::cout << "Max error = " << comparison.maxDiff() << "\n";
+         std::cout << "Max error = " << comparison1.maxDiff() << "\n";
       }
-      TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
+      TEST_ASSERT(comparison1.maxDiff() < 1.0E-10);
+
+      // Round trip conversion basis -> kgrid -> basis, read result
+      system.basisToKGrid("in/diblock/bcc/omega.in",
+                          "out/testConversion3D_bcc_w.kf");
+      system.kGridToBasis("out/testConversion3D_bcc_w.kf",
+                          "out/testConversion3D_bcc_w_2.bf");
+      system.readWBasis("out/testConversion3D_bcc_w_2.bf");
+
+      // Compare result to original
+      BFieldComparison comparison2;
+      comparison2.compare(wFields_check, system.wFieldsBasis());
+      if (verbose()>0) {
+         std::cout << "\n";
+         std::cout << "Max error = " << comparison2.maxDiff() << "\n";
+      }
+      TEST_ASSERT(comparison2.maxDiff() < 1.0E-10);
+
+      // Round trip conversion rgrid -> kgrid -> rgrid, read result
+      system.readWRGrid("out/testConversion3D_bcc_w.rf");
+      DArray< RField<3> > wFieldsRGrid_check;
+      wFieldsRGrid_check = system.wFieldsRGrid();
+
+      system.rGridToKGrid("out/testConversion3D_bcc_w.rf",
+                          "out/testConversion3D_bcc_w_2.kf");
+      system.kGridToRGrid("out/testConversion3D_bcc_w_2.kf",
+                          "out/testConversion3D_bcc_w_2.rf");
+      system.readWRGrid("out/testConversion3D_bcc_w_2.rf");
+
+      // Compare result to original
+      RFieldComparison<3> comparison3;
+      comparison3.compare(wFieldsRGrid_check, system.wFieldsRGrid());
+      if (verbose()>0) {
+         std::cout << "\n";
+         std::cout << "Max error = " << comparison3.maxDiff() << "\n";
+      }
+      TEST_ASSERT(comparison3.maxDiff() < 1.0E-10);
+
    }
 
    void testCheckSymmetry3D_bcc()

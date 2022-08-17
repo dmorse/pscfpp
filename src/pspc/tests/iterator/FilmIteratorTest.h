@@ -52,16 +52,15 @@ public:
       openLogFile("out/filmTestReadParameters.log");
 
       // Set up system with some data
-      System<1> system;
-      FilmIteratorTest::SetUpSystem(system, "in/film/system1D");
+      System<2> system;
+      FilmIteratorTest::setUpSystem(system, "in/film/system2D");
 
       // Set up iterator from file
-      FilmIterator<1, AmIterator<1> > iterator(system);
-      FilmIteratorTest::SetUpFilmIterator(iterator, "in/film/film1D");
+      FilmIterator<2, AmIterator<2> > iterator(system);
+      FilmIteratorTest::setUpFilmIterator(iterator, "in/film/film2D");
 
       // Check that everything was read in correctly
-      TEST_ASSERT(eq(iterator.normalVecId(),0));
-      TEST_ASSERT(eq(iterator.normalVecId(),0));
+      TEST_ASSERT(eq(iterator.normalVecId(),1));
       TEST_ASSERT(eq(iterator.interfaceThickness(),0.08));
       TEST_ASSERT(eq(iterator.wallThickness(),0.2));
       TEST_ASSERT(eq(iterator.chi(0,0),3.0));
@@ -78,18 +77,18 @@ public:
       
       // Set up system with some data
       System<1> system;
-      FilmIteratorTest::SetUpSystem(system, "in/film/system1D");
+      FilmIteratorTest::setUpSystem(system, "in/film/system1D");
 
       // Set up iterator from file
       FilmIterator<1, AmIterator<1> > iterator(system);
-      FilmIteratorTest::SetUpFilmIterator(iterator, "in/film/film1D");
+      FilmIteratorTest::setUpFilmIterator(iterator, "in/film/film1D");
 
       // Run the setup function
       iterator.setup();
       
       // Check that the homogeneous components of the wall
       // and the blocks were adjusted correctly
-      TEST_ASSERT(eq(iterator.phi(),9.0710679136e-02));
+      TEST_ASSERT(eq(iterator.maskPhi(),9.0710679136e-02));
       TEST_ASSERT(eq(system.mixture().polymer(0).phi(),9.092893209e-01));
 
       // Check that the wall field files were output correctly by 
@@ -99,7 +98,7 @@ public:
       system.fieldIo().readFieldsBasis("in/film/wall_ref.bf", 
                                        cFieldsCheck, unitCell);
       BFieldComparison bComparison(0); // object to compare fields
-      bComparison.compare(iterator.wallCField(), cFieldsCheck[0]);
+      bComparison.compare(iterator.maskBasis(), cFieldsCheck[0]);
       if (verbose() > 0) {
          std::cout << "\n";
          std::cout << "Max error = " << bComparison.maxDiff() << "\n";
@@ -112,9 +111,14 @@ public:
       DArray<RField<1> > cRGridFromIterator;
       cRGridFromIterator.allocate(1);
       cRGridFromIterator[0].allocate(system.domain().mesh().dimensions());
-      DArray< DArray<double> > cFieldFromIterator;   // Put iterator cField inside a
-      cFieldFromIterator.allocate(1);                // DArray so it can be passed 
-      cFieldFromIterator[0] = iterator.wallCField(); // into convertBasisToRGrid
+
+      // Put iterator cField inside a DArray so it can be passed into 
+      // convertBasisToRGrid
+      DArray< DArray<double> > cFieldFromIterator;   
+      cFieldFromIterator.allocate(1); 
+      cFieldFromIterator[0] = iterator.maskBasis(); 
+
+      
       system.fieldIo().convertBasisToRGrid(cFieldFromIterator,
                                           cRGridFromIterator);
       RFieldComparison<1> rComparison; // object to compare fields
@@ -133,45 +137,45 @@ public:
 
       // Set up 1D system with a correct space group and check it
       System<1> system1;
-      FilmIteratorTest::SetUpSystem(system1, "in/film/system1D");
+      FilmIteratorTest::setUpSystem(system1, "in/film/system1D");
       FilmIterator<1, AmIterator<1> > iterator1(system1);
-      FilmIteratorTest::SetUpFilmIterator(iterator1, "in/film/film1D");
+      FilmIteratorTest::setUpFilmIterator(iterator1, "in/film/film1D");
       TEST_ASSERT(FilmIteratorTest::checkCheckSpaceGroup(iterator1,false));
 
       // Set up 1D system with an incorrect space group and check it
       System<1> system2;
-      FilmIteratorTest::SetUpSystem(system2, "in/film/system_bad_1D");
+      FilmIteratorTest::setUpSystem(system2, "in/film/system_bad_1D");
       FilmIterator<1, AmIterator<1> > iterator2(system2);
-      FilmIteratorTest::SetUpFilmIterator(iterator2, "in/film/film1D");
+      FilmIteratorTest::setUpFilmIterator(iterator2, "in/film/film1D");
       TEST_ASSERT(FilmIteratorTest::checkCheckSpaceGroup(iterator2,true));
 
       // Set up 2D system with an incorrect space group and check it
       System<2> system3;
-      FilmIteratorTest::SetUpSystem(system3, "in/film/system_bad_2D_2");
+      FilmIteratorTest::setUpSystem(system3, "in/film/system_bad_2D_2");
       FilmIterator<2, AmIterator<2> > iterator3(system3);
-      FilmIteratorTest::SetUpFilmIterator(iterator3, "in/film/film2D");
+      FilmIteratorTest::setUpFilmIterator(iterator3, "in/film/film2D");
       TEST_ASSERT(FilmIteratorTest::checkCheckSpaceGroup(iterator3,true));
 
       // Set up 3D system with a correct space group and check it
       System<3> system4;
-      FilmIteratorTest::SetUpSystem(system4, "in/film/system3D");
+      FilmIteratorTest::setUpSystem(system4, "in/film/system3D");
       FilmIterator<3, AmIterator<3> > iterator4(system4);
-      FilmIteratorTest::SetUpFilmIterator(iterator4, "in/film/film3D");
+      FilmIteratorTest::setUpFilmIterator(iterator4, "in/film/film3D");
       TEST_ASSERT(FilmIteratorTest::checkCheckSpaceGroup(iterator4,false));
       TEST_ASSERT(iterator4.isFlexible()); // check that isFlexible works
 
       // Set up 3D system with an incorrect space group and check it
       System<3> system5;
-      FilmIteratorTest::SetUpSystem(system5, "in/film/system_bad_3D_1");
+      FilmIteratorTest::setUpSystem(system5, "in/film/system_bad_3D_1");
       FilmIterator<3, AmIterator<3> > iterator5(system5);
-      FilmIteratorTest::SetUpFilmIterator(iterator5, "in/film/film3D");
+      FilmIteratorTest::setUpFilmIterator(iterator5, "in/film/film3D");
       TEST_ASSERT(FilmIteratorTest::checkCheckSpaceGroup(iterator5,true));
 
       // Set up another 3D system with an incorrect space group and check it
       System<3> system6;
-      FilmIteratorTest::SetUpSystem(system6, "in/film/system_bad_3D_2");
+      FilmIteratorTest::setUpSystem(system6, "in/film/system_bad_3D_2");
       FilmIterator<3, AmIterator<3> > iterator6(system6);
-      FilmIteratorTest::SetUpFilmIterator(iterator6, "in/film/film3D");
+      FilmIteratorTest::setUpFilmIterator(iterator6, "in/film/film3D");
       TEST_ASSERT(FilmIteratorTest::checkCheckSpaceGroup(iterator6,true));
    }
 
@@ -182,9 +186,9 @@ public:
       
       // Set up 2D system with incorrect lattice vectors and check it
       System<2> system1;
-      FilmIteratorTest::SetUpSystem(system1, "in/film/system_bad_2D_1");
+      FilmIteratorTest::setUpSystem(system1, "in/film/system_bad_2D_1");
       FilmIterator<2, AmIterator<2> > iterator1(system1);
-      FilmIteratorTest::SetUpFilmIterator(iterator1, "in/film/film2D");
+      FilmIteratorTest::setUpFilmIterator(iterator1, "in/film/film2D");
       try {
          iterator1.checkLatticeVectors();
          // If above does not throw an error, then it failed this test
@@ -196,16 +200,16 @@ public:
 
       // Set up 3D system with correct lattice vectors and check it
       System<3> system2;
-      FilmIteratorTest::SetUpSystem(system2, "in/film/system_bad_3D_1");
+      FilmIteratorTest::setUpSystem(system2, "in/film/system_bad_3D_1");
       FilmIterator<3, AmIterator<3> > iterator2(system2);
-      FilmIteratorTest::SetUpFilmIterator(iterator2, "in/film/film3D");
+      FilmIteratorTest::setUpFilmIterator(iterator2, "in/film/film3D");
       iterator2.checkLatticeVectors(); // this should not throw an error
 
       // Set up 3D system with incorrect lattice vectors and check it
       System<3> system3;
-      FilmIteratorTest::SetUpSystem(system3, "in/film/system_bad_3D_2");
+      FilmIteratorTest::setUpSystem(system3, "in/film/system_bad_3D_2");
       FilmIterator<3, AmIterator<3> > iterator3(system3);
-      FilmIteratorTest::SetUpFilmIterator(iterator3, "in/film/film3D");
+      FilmIteratorTest::setUpFilmIterator(iterator3, "in/film/film3D");
       try {
          iterator3.checkLatticeVectors();
          // If above doesn't throw an error, then it failed this test
@@ -223,34 +227,38 @@ public:
       
       // Set up 1D system and make sure flexibleParams is empty
       System<1> system1;
-      FilmIteratorTest::SetUpSystem(system1, "in/film/system1D");
+      FilmIteratorTest::setUpSystem(system1, "in/film/system1D");
       FilmIterator<1, AmIterator<1> > iterator1(system1);
-      FilmIteratorTest::SetUpFilmIterator(iterator1, "in/film/film1D");
+      FilmIteratorTest::setUpFilmIterator(iterator1, "in/film/film1D");
+      iterator1.setFlexibleParams();
       TEST_ASSERT(iterator1.flexibleParams().size() == 0);
 
       // Set up 2D system and make sure flexibleParams is correct
       System<2> system2;
-      FilmIteratorTest::SetUpSystem(system2, "in/film/system2D");
+      FilmIteratorTest::setUpSystem(system2, "in/film/system2D");
       FilmIterator<2, AmIterator<2> > iterator2(system2);
-      FilmIteratorTest::SetUpFilmIterator(iterator2, "in/film/film2D");
+      FilmIteratorTest::setUpFilmIterator(iterator2, "in/film/film2D");
+      iterator2.setFlexibleParams();
       TEST_ASSERT(iterator2.flexibleParams().size() == 1);
       TEST_ASSERT(iterator2.flexibleParams()[0] == 0);
 
       // Set up 3D tetragonal system, validate flexibleParams 
       System<3> system3;
-      FilmIteratorTest::SetUpSystem(system3, "in/film/system3D");
+      FilmIteratorTest::setUpSystem(system3, "in/film/system3D");
       FilmIterator<3, AmIterator<3> > iterator3(system3);
-      FilmIteratorTest::SetUpFilmIterator(iterator3, "in/film/film3D");
+      FilmIteratorTest::setUpFilmIterator(iterator3, "in/film/film3D");
+      iterator3.setFlexibleParams();
       TEST_ASSERT(iterator3.flexibleParams().size() == 1);
       TEST_ASSERT(iterator3.flexibleParams()[0] == 0);
 
       // Set up 3D monoclinic system (monoclinic), validate flexibleParams 
       System<3> system4;
-      FilmIteratorTest::SetUpSystem(system4, "in/film/system_bad_3D_2");
+      FilmIteratorTest::setUpSystem(system4, "in/film/system_bad_3D_2");
       FilmIterator<3, AmIterator<3> > iterator4(system4);
-      FilmIteratorTest::SetUpFilmIterator(iterator4, "in/film/film2D");
+      FilmIteratorTest::setUpFilmIterator(iterator4, "in/film/film2D");
       // Using film2D here because it has normalVecId=1 which 
       // we want for this example
+      iterator4.setFlexibleParams();
       TEST_ASSERT(iterator4.flexibleParams().size() == 3);
       TEST_ASSERT(iterator4.flexibleParams()[0] == 0);
       TEST_ASSERT(iterator4.flexibleParams()[1] == 2);
@@ -265,15 +273,17 @@ public:
       
       // Set up system with some data
       System<1> system;
-      FilmIteratorTest::SetUpSystem(system, "in/film/system1D");
-      system.readWBasis("in/film/w_in.bf");
+      FilmIteratorTest::setUpSystem(system, "in/film/system1D");
 
       // Set up iterator from file
       FilmIterator<1, AmIterator<1> > iterator(system);
-      FilmIteratorTest::SetUpFilmIterator(iterator, "in/film/film1D");
+      FilmIteratorTest::setUpFilmIterator(iterator, "in/film/film1D");
 
       // Run the setup function (has already been tested above)
       iterator.setup();
+
+      // Read initial guess
+      system.readWBasis("in/film/w_in.bf");
 
       // Run the solve function
       iterator.solve();
@@ -295,7 +305,7 @@ public:
 
    // Read parameter file to create a System object
    template <int D>
-   void SetUpSystem(System<D>& system, std::string fname)
+   void setUpSystem(System<D>& system, std::string fname)
    {
       system.fileMaster().setInputPrefix(filePrefix());
       system.fileMaster().setOutputPrefix(filePrefix());
@@ -307,7 +317,7 @@ public:
 
    // Read parameter file section to create a FilmIterator object
    template <int D>
-   void SetUpFilmIterator(FilmIterator<D, AmIterator<D>>& iterator, 
+   void setUpFilmIterator(FilmIterator<D, AmIterator<D>>& iterator, 
                           std::string fname)
    {
       std::ifstream in;

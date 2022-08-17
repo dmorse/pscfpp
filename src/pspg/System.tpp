@@ -108,7 +108,7 @@ namespace Pspg
       bool cFlag = false;  // command file
       bool iFlag = false;  // input prefix
       bool oFlag = false;  // output prefix
-      bool tFlag = false;  // GPU input threads (maximum number of threads per block)
+      bool tFlag = false;  // GPU input threads (maximum # of threads/block)
       char* pArg = 0;
       char* cArg = 0;
       char* iArg = 0;
@@ -219,7 +219,8 @@ namespace Pspg
       // Initialize iterator through the factory and mediator
       std::string className;
       bool isEnd;
-      iteratorPtr_= iteratorFactoryPtr_->readObject(in, *this, className, isEnd);
+      iteratorPtr_= iteratorFactoryPtr_->readObject(in, *this, 
+                                                   className, isEnd);
       if (!iteratorPtr_) {
          std::string msg = "Unrecognized Iterator subclass name ";
          msg += className;
@@ -245,6 +246,20 @@ namespace Pspg
    template <int D>
    void System<D>::readParam()
    {  readParam(fileMaster().paramFile()); }
+
+   /*
+   * Write parameter file, omitting the sweep block.
+   */
+   template <int D>
+   void System<D>::writeParam(std::ostream& out)
+   {
+      out << "System{" << std::endl;
+      mixture_.writeParam(out);
+      interaction().writeParam(out);
+      domain_.writeParam(out);
+      iterator().writeParam(out);
+      out << "}" << std::endl;
+   }
 
    /*
    * Allocate memory for fields.
@@ -392,9 +407,19 @@ namespace Pspg
                         << Str("block ID   ", 21) << blockID << std::endl;
             writePropagatorRGrid(filename, polymerID, blockID);
          } else
-         if (command == "WRITE_DATA") {
+         if (command == "WRITE_PARAM") {
             readEcho(in, filename);
-            writeData(filename);
+            std::ofstream file;
+            fileMaster().openOutputFile(filename, file);
+            writeParam(file);
+            file.close();
+         } else
+         if (command == "WRITE_THERMO") {
+            readEcho(in, filename);
+            std::ofstream file;
+            fileMaster().openOutputFile(filename, file, std::ios_base::app);
+            outputThermo(file);
+            file.close();
          } else
          if (command == "BASIS_TO_RGRID") {
             hasCFields_ = false;

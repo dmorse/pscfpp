@@ -26,7 +26,7 @@ namespace Pspc
    * \ingroup Pspc_Iterator_Module
    */
    template <int D>
-   class AmIterator : public AmIteratorTmpl<Iterator<D>, FieldCPU>
+   class AmIterator : public AmIteratorTmpl<Iterator<D>, DArray<double> >
    {
 
    public:
@@ -51,13 +51,13 @@ namespace Pspc
       void readParameters(std::istream& in);
 
       // Inherited public member functions
-      using AmIteratorTmpl<Iterator<D>,FieldCPU>::setup;
-      using AmIteratorTmpl<Iterator<D>,FieldCPU>::solve;
-      using AmIteratorTmpl<Iterator<D>,FieldCPU>::setClassName;
-      using Iterator<D>::maskField;
+      using AmIteratorTmpl<Iterator<D>,DArray<double> >::setup;
+      using AmIteratorTmpl<Iterator<D>,DArray<double> >::solve;
+      using AmIteratorTmpl<Iterator<D>,DArray<double> >::setClassName;
+      using Iterator<D>::maskBasis;
       using Iterator<D>::externalField;
       using Iterator<D>::hasMask;
-      using Iterator<D>::hasExternalField;
+      using Iterator<D>::hasExternalFields;
       using Iterator<D>::isFlexible;
       using Iterator<D>::flexibleParams;
       using Iterator<D>::setFlexibleParams;
@@ -78,12 +78,12 @@ namespace Pspc
       /**
       * Find L2 norm of a residual vector.
       */
-      double findNorm(FieldCPU const & hist);
+      double findNorm(DArray<double> const & hist);
 
       /**
       * Find the maximum magnitude element of a residual vector.
       */
-      double findMaxAbs(FieldCPU const & hist);
+      double findMaxAbs(DArray<double> const & hist);
 
       /**
       * Update the basis for residual or field vectors.
@@ -91,8 +91,8 @@ namespace Pspc
       * \param basis RingBuffer of residual or field basis vectors
       * \param hists RingBuffer of past residual or field vectors
       */
-      void updateBasis(RingBuffer<FieldCPU> & basis, 
-                       RingBuffer<FieldCPU> const & hists);
+      void updateBasis(RingBuffer<DArray<double> > & basis, 
+                       RingBuffer<DArray<double> > const & hists);
 
       /**
       * Compute the dot product for one element of the U matrix.
@@ -101,7 +101,7 @@ namespace Pspc
       * \param m row of the U matrix
       * \param n column of the U matrix
       */
-      double computeUDotProd(RingBuffer<FieldCPU> const & resBasis, 
+      double computeUDotProd(RingBuffer<DArray<double> > const & resBasis, 
                              int m, int n);
 
       /**
@@ -111,8 +111,8 @@ namespace Pspc
       * \param resBasis RingBuffer of residual basis vectors
       * \param m row index of the v vector
       */
-      double computeVDotProd(FieldCPU const & resCurrent, 
-                             RingBuffer<FieldCPU> const & resBasis, 
+      double computeVDotProd(DArray<double> const & resCurrent, 
+                             RingBuffer<DArray<double> > const & resBasis, 
                              int m);
 
       /**
@@ -123,7 +123,7 @@ namespace Pspc
       * \param nHist number of past states
       */
       void updateU(DMatrix<double> & U, 
-                   RingBuffer<FieldCPU> const & resBasis, 
+                   RingBuffer<DArray<double> > const & resBasis, 
                    int nHist);
 
       /**
@@ -135,8 +135,8 @@ namespace Pspc
       * \param nHist number of past states 
       */
       void updateV(DArray<double> & v, 
-                   FieldCPU const & resCurrent, 
-                   RingBuffer<FieldCPU> const & resBasis, 
+                   DArray<double> const & resCurrent, 
+                   RingBuffer<DArray<double> > const & resBasis, 
                    int nHist);
 
       /**
@@ -145,7 +145,7 @@ namespace Pspc
       * \param a the field to be set (lhs of assignment)
       * \param b the field for it to be set to (rhs of assigment)
       */
-      void setEqual(FieldCPU& a, FieldCPU const & b);
+      void setEqual(DArray<double>& a, DArray<double> const & b);
 
       /**
       * Add linear combination of basis vectors to trial field.
@@ -155,8 +155,8 @@ namespace Pspc
       * \param coeffs array of coefficients of basis vectors
       * \param nHist number of histories stored at this iteration
       */
-      void addHistories(FieldCPU& trial, 
-                        RingBuffer<FieldCPU> const & basis, 
+      void addHistories(DArray<double>& trial, 
+                        RingBuffer<DArray<double> > const & basis, 
                         DArray<double> coeffs, 
                         int nHist);
 
@@ -167,8 +167,8 @@ namespace Pspc
       * \param resTrial predicted error for current trial
       * \param lambda Anderson-Mixing mixing 
       */
-      void addPredictedError(FieldCPU& fieldTrial, 
-                             FieldCPU const & resTrial, 
+      void addPredictedError(DArray<double>& fieldTrial, 
+                             DArray<double> const & resTrial, 
                              double lambda);
 
       /**
@@ -188,7 +188,7 @@ namespace Pspc
       * 
       * \param curr current field vector
       */ 
-      void getCurrent(FieldCPU& curr);
+      void getCurrent(DArray<double>& curr);
 
       /**
       * Have the system perform a computation using new field.
@@ -203,14 +203,14 @@ namespace Pspc
       *
       * \param resid current residual vector value
       */
-      void getResidual(FieldCPU& resid);
+      void getResidual(DArray<double>& resid);
 
       /**
       * Updates the system field with the new trial field.
       *
       * \param newGuess trial field vector
       */
-      void update(FieldCPU& newGuess);
+      void update(DArray<double>& newGuess);
 
       /**
       * Outputs relevant system details to the iteration log.

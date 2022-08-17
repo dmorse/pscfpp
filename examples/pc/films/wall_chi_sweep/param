@@ -43,11 +43,10 @@ System{
   LinearSweep{
     ns            40
     baseFileName  out/
-    writeRhoRgrid 1
-    nParameter    2
+    writeRhoRGrid 1
+    nParameter    1
     parameters[
                   wall_chi  0  0  +20.0
-                  wall_chi  0  1  +20.0
     ]
   }
 }
