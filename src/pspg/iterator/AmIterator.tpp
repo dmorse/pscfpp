@@ -371,10 +371,14 @@ namespace Pspg{
       }
 
       // TEMPORARY. PASS THE INPUTS THROUGH A BASIS FILTER.
-      system().fieldIo().convertRGridToBasis(system().wFieldsRGrid(), system().wFields());
-      system().fieldIo().convertRGridToBasis(system().cFieldsRGrid(), system().cFields());
-      system().fieldIo().convertBasisToRGrid(system().wFields(), system().wFieldsRGrid());
-      system().fieldIo().convertBasisToRGrid(system().cFields(), system().cFieldsRGrid());
+      system().fieldIo().convertRGridToBasis(system().wFieldsRGrid(), 
+                                             system().wFieldsBasis());
+      system().fieldIo().convertRGridToBasis(system().cFieldsRGrid(), 
+                                             system().cFieldsBasis());
+      system().fieldIo().convertBasisToRGrid(system().wFieldsBasis(), 
+                                             system().wFieldsRGrid());
+      system().fieldIo().convertBasisToRGrid(system().cFieldsBasis(), 
+                                             system().cFieldsRGrid());
 
    }
 

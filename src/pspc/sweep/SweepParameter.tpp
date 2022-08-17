@@ -264,11 +264,8 @@ namespace Pspc {
 
    // Definitions of operators, with no explicit instantiations. 
 
-   /**
+   /*
    * Inserter for reading a SweepParameter from an istream.
-   *
-   * \param in  input stream
-   * \param param  SweepParameter<D> object to read
    */
    template <int D>
    std::istream& operator >> (std::istream& in, 
@@ -286,11 +283,8 @@ namespace Pspc {
       return in;
    }
 
-   /**
+   /*
    * Extractor for writing a SweepParameter to ostream.
-   *
-   * \param out  output stream
-   * \param param  SweepParameter<D> object to write
    */
    template <int D>
    std::ostream& operator << (std::ostream& out, 

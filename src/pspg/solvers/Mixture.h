@@ -164,17 +164,17 @@ namespace Pspg
       */
       bool isCanonical();
 	  
-      using MixtureTmpl<Pscf::Pspg::Polymer<D>, Pscf::Pspg::Solvent<D> >::nMonomer;
-      using MixtureTmpl<Pscf::Pspg::Polymer<D>, Pscf::Pspg::Solvent<D> >::nPolymer;
-      using MixtureTmpl<Pscf::Pspg::Polymer<D>, Pscf::Pspg::Solvent<D> >::nSolvent;
-      using MixtureTmpl<Pscf::Pspg::Polymer<D>, Pscf::Pspg::Solvent<D> >::nBlock;
-      using MixtureTmpl<Pscf::Pspg::Polymer<D>, Pscf::Pspg::Solvent<D> >::polymer;
-      using MixtureTmpl< Pscf::Pspg::Polymer<D>, Pscf::Pspg::Solvent<D> >::monomer;
-      using MixtureTmpl< Pscf::Pspg::Polymer<D>, Pscf::Pspg::Solvent<D> >::solvent;
+      using MixtureTmpl< Polymer<D>, Solvent<D> >::nMonomer;
+      using MixtureTmpl< Polymer<D>, Solvent<D> >::nPolymer;
+      using MixtureTmpl< Polymer<D>, Solvent<D> >::nSolvent;
+      using MixtureTmpl< Polymer<D>, Solvent<D> >::nBlock;
+      using MixtureTmpl< Polymer<D>, Solvent<D> >::polymer;
+      using MixtureTmpl< Polymer<D>, Solvent<D> >::monomer;
+      using MixtureTmpl< Polymer<D>, Solvent<D> >::solvent;
 
    protected:
 
-      using MixtureTmpl< Pscf::Pspg::Polymer<D>, Pscf::Pspg::Solvent<D> >::setClassName;
+      using MixtureTmpl< Polymer<D>, Solvent<D> >::setClassName;
       using ParamComposite::read;
       using ParamComposite::readOptional;
 

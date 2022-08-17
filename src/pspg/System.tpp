@@ -47,8 +47,8 @@ namespace Pspg
       wavelistPtr_(0),
       //sweepPtr_(0),
       //sweepFactoryPtr_(0),
-      wFields_(),
-      cFields_(),
+      wFieldsBasis_(),
+      cFieldsBasis_(),
       f_(),
       c_(),
       fHelmholtz_(0.0),
@@ -262,11 +262,11 @@ namespace Pspg
 
       // Allocate wFields and cFields
       int nMonomer = mixture().nMonomer();
-      wFields_.allocate(nMonomer);
+      wFieldsBasis_.allocate(nMonomer);
       wFieldsRGrid_.allocate(nMonomer);
       wFieldsKGrid_.allocate(nMonomer);
 
-      cFields_.allocate(nMonomer);
+      cFieldsBasis_.allocate(nMonomer);
       cFieldsRGrid_.allocate(nMonomer);
       cFieldsKGrid_.allocate(nMonomer);
 
@@ -276,11 +276,11 @@ namespace Pspg
 
       int nBasis = basis().nBasis();
       for (int i = 0; i < nMonomer; ++i) {
-         wField(i).allocate(nBasis);
+         wFieldBasis(i).allocate(nBasis);
          wFieldRGrid(i).allocate(mesh().dimensions());
          wFieldKGrid(i).allocate(mesh().dimensions());
 
-         cField(i).allocate(nBasis);
+         cFieldBasis(i).allocate(nBasis);
          cFieldRGrid(i).allocate(mesh().dimensions());
          cFieldKGrid(i).allocate(mesh().dimensions());
 
@@ -330,8 +330,9 @@ namespace Pspg
          } else
          if (command == "READ_W_BASIS") {
             readEcho(in, filename);
-            fieldIo().readFieldsBasis(filename, wFields(), domain_.unitCell());
-            fieldIo().convertBasisToRGrid(wFields(), wFieldsRGrid());
+            fieldIo().readFieldsBasis(filename, wFieldsBasis(),
+                                      domain_.unitCell());
+            fieldIo().convertBasisToRGrid(wFieldsBasis(), wFieldsRGrid());
             hasWFields_ = true;
             hasSymmetricFields_ = true;
 
@@ -369,20 +370,22 @@ namespace Pspg
             UTIL_CHECK(hasWFields_);
             UTIL_CHECK(hasSymmetricFields_);
             readEcho(in, filename);
-            fieldIo().convertRGridToBasis(wFieldsRGrid(), wFields());
-            fieldIo().writeFieldsBasis(filename, wFields(), unitCell());
+            fieldIo().convertRGridToBasis(wFieldsRGrid(), wFieldsBasis());
+            fieldIo().writeFieldsBasis(filename, wFieldsBasis(), 
+                                       unitCell());
          } else
          if (command == "WRITE_W_RGRID") {
             UTIL_CHECK(hasWFields_);
             readEcho(in, filename);
-            fieldIo().writeFieldsRGrid(filename, wFieldsRGrid(), unitCell());
+            fieldIo().writeFieldsRGrid(filename, wFieldsRGrid(), 
+                                       unitCell());
          } else
          if (command == "WRITE_C_BASIS") {
             readEcho(in, filename);
             UTIL_CHECK(hasCFields_);
             UTIL_CHECK(hasSymmetricFields_);
-            fieldIo().convertRGridToBasis(cFieldsRGrid(), cFields());
-            fieldIo().writeFieldsBasis(filename, cFields(), unitCell());
+            fieldIo().convertRGridToBasis(cFieldsRGrid(), cFieldsBasis());
+            fieldIo().writeFieldsBasis(filename, cFieldsBasis(), unitCell());
          } else
          if (command == "WRITE_C_RGRID") {
             UTIL_CHECK(hasCFields_);
@@ -412,8 +415,8 @@ namespace Pspg
             readEcho(in, outFileName);
 
             UnitCell<D> tmpUnitCell;
-            fieldIo().readFieldsBasis(inFileName, cFields(), tmpUnitCell);
-            fieldIo().convertBasisToRGrid(cFields(), cFieldsRGrid());
+            fieldIo().readFieldsBasis(inFileName, cFieldsBasis(), tmpUnitCell);
+            fieldIo().convertBasisToRGrid(cFieldsBasis(), cFieldsRGrid());
             fieldIo().writeFieldsRGrid(outFileName, cFieldsRGrid(), tmpUnitCell);
          } else
          if (command == "RGRID_TO_BASIS") {
@@ -423,8 +426,8 @@ namespace Pspg
 
             UnitCell<D> tmpUnitCell;
             fieldIo().readFieldsRGrid(inFileName, cFieldsRGrid(), tmpUnitCell);
-            fieldIo().convertRGridToBasis(cFieldsRGrid(), cFields());
-            fieldIo().writeFieldsBasis(outFileName, cFields(), tmpUnitCell);
+            fieldIo().convertRGridToBasis(cFieldsRGrid(), cFieldsBasis());
+            fieldIo().writeFieldsBasis(outFileName, cFieldsBasis(), tmpUnitCell);
 
          } else
          if (command == "KGRID_TO_RGRID") {
@@ -746,14 +749,14 @@ namespace Pspg
       int nBasis = domain_.basis().nBasis();
       for (int i = 0; i < nMonomer; ++i) {
          DArray<double> const & f = fields[i];
-         DArray<double> & w = wFields_[i];
+         DArray<double> & w = wFieldsBasis_[i];
          for (int j = 0; j < nBasis; ++j) {
             w[j] = f[j];
          }
       }
 
       // Update system wFieldsRgrid
-      domain_.fieldIo().convertBasisToRGrid(wFields_, wFieldsRGrid_);
+      domain_.fieldIo().convertBasisToRGrid(wFieldsBasis_, wFieldsRGrid_);
 
       hasWFields_ = true;
       hasSymmetricFields_ = true;
@@ -810,8 +813,9 @@ namespace Pspg
    template <int D>
    void System<D>::readWBasis(const std::string & filename)
    {
-      fieldIo().readFieldsBasis(filename, wFields(), domain_.unitCell());
-      fieldIo().convertBasisToRGrid(wFields(), wFieldsRGrid());
+      fieldIo().readFieldsBasis(filename, wFieldsBasis(), 
+                                domain_.unitCell());
+      fieldIo().convertBasisToRGrid(wFieldsBasis(), wFieldsRGrid());
       hasWFields_ = true;
       hasSymmetricFields_ = true;
       hasCFields_ = false;
@@ -831,8 +835,8 @@ namespace Pspg
 
       // Convert c and w fields from r-grid to basis
       if (hasSymmetricFields_) {
-         fieldIo().convertRGridToBasis(wFieldsRGrid(), wFields());
-         fieldIo().convertRGridToBasis(cFieldsRGrid(), cFields());
+         fieldIo().convertRGridToBasis(wFieldsRGrid(), wFieldsBasis());
+         fieldIo().convertRGridToBasis(cFieldsRGrid(), cFieldsBasis());
       }
 
       if (needStress) {
@@ -858,8 +862,8 @@ namespace Pspg
       hasCFields_ = true;
 
       if (hasSymmetricFields_) {
-         fieldIo().convertRGridToBasis(wFieldsRGrid(), wFields());
-         fieldIo().convertRGridToBasis(cFieldsRGrid(), cFields());
+         fieldIo().convertRGridToBasis(wFieldsRGrid(), wFieldsBasis());
+         fieldIo().convertRGridToBasis(cFieldsRGrid(), cFieldsBasis());
       }
 
       if (!error) {
@@ -893,7 +897,7 @@ namespace Pspg
    {
       UTIL_CHECK(hasWFields_);
       UTIL_CHECK(hasSymmetricFields_);
-      fieldIo().writeFieldsBasis(filename, wFields(), unitCell());
+      fieldIo().writeFieldsBasis(filename, wFieldsBasis(), unitCell());
    }
 
    /*
@@ -904,7 +908,7 @@ namespace Pspg
    {
       UTIL_CHECK(hasCFields_);
       UTIL_CHECK(hasSymmetricFields_);
-      fieldIo().writeFieldsBasis(filename, cFields(), unitCell());
+      fieldIo().writeFieldsBasis(filename, cFieldsBasis(), unitCell());
    }
 
    /*

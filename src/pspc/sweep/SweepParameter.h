@@ -236,6 +236,26 @@ namespace Pspc {
 
    };
 
+   /**
+   * Inserter for reading a SweepParameter from an istream.
+   *
+   * \param in  input stream
+   * \param param  SweepParameter<D> object to read
+   */
+   template <int D>
+   std::istream& operator >> (std::istream& in, 
+                              SweepParameter<D>& param);
+
+   /**
+   * Extractor for writing a SweepParameter to ostream.
+   *
+   * \param out  output stream
+   * \param param  SweepParameter<D> object to write
+   */
+   template <int D>
+   std::ostream& operator << (std::ostream& out, 
+                              SweepParameter<D> const & param);
+
 }
 }
 #include "SweepParameter.tpp"

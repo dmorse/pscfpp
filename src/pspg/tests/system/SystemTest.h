@@ -51,8 +51,8 @@ public:
 
       // Get reference field
       DArray< DArray<double> > d_wFields_check;
-      //RDFieldToDField(d_wFields_check, system.wFields());
-      d_wFields_check = system.wFields();
+      //RDFieldToDField(d_wFields_check, system.wFieldsBasis());
+      d_wFields_check = system.wFieldsBasis();
 
       // Round trip conversion basis -> rgrid -> basis, read result
       system.basisToRGrid("in/diblock/lam/omega.in",
@@ -63,8 +63,8 @@ public:
 
       // Get test result
       DArray< DArray<double> > d_wFields;
-      //RDFieldToDField(d_wFields, system.wFields());
-      d_wFields = system.wFields();
+      //RDFieldToDField(d_wFields, system.wFieldsBasis());
+      d_wFields = system.wFieldsBasis();
 
       // Compare result to original
       BFieldComparison comparison (1);
@@ -89,8 +89,8 @@ public:
 
       // Get reference field
       DArray< DArray<double> > d_wFields_check;
-      //RDFieldToDField(d_wFields_check, system.wFields());
-      d_wFields_check = system.wFields();
+      //RDFieldToDField(d_wFields_check, system.wFieldsBasis());
+      d_wFields_check = system.wFieldsBasis();
 
       // Round trip basis -> rgrid -> basis, read resulting wField
       system.basisToRGrid("in/diblock/hex/omega.in",
@@ -102,8 +102,8 @@ public:
 
       // Get test result
       DArray< DArray<double> > d_wFields;
-      //RDFieldToDField(d_wFields, system.wFields());
-      d_wFields = system.wFields();
+      //RDFieldToDField(d_wFields, system.wFieldsBasis());
+      d_wFields = system.wFieldsBasis();
 
       // Compare result to original
       BFieldComparison comparison (1);
@@ -129,7 +129,7 @@ public:
 
       // Get reference field
       DArray< DArray<double> > d_wFields_check;
-      RDFieldToDField(d_wFields_check, system.wFields());
+      RDFieldToDField(d_wFields_check, system.wFieldsBasis());
 
       // Complete round trip basis -> rgrid -> basis
       system.basisToRGrid("in/diblock/bcc/omega.in",
@@ -140,7 +140,7 @@ public:
 
       // Get test result
       DArray< DArray<double> > d_wFields;
-      RDFieldToDField(d_wFields, system.wFields());
+      RDFieldToDField(d_wFields, system.wFieldsBasis());
 
       // Compare result to original
       BFieldComparison comparison (1);
@@ -192,7 +192,7 @@ public:
 
       // Get reference field
       DArray< DArray<double> > d_wFields_check;
-      RDFieldToDField(d_wFields_check, system.wFields());
+      RDFieldToDField(d_wFields_check, system.wFieldsBasis());
      
       // PSPC tests start from the reference solution, 
       // rather than a nearby solution, so I guess do that here too?
@@ -207,7 +207,7 @@ public:
 
       // Get test result
       DArray< DArray<double> > d_wFields;
-      RDFieldToDField(d_wFields, system.wFields());
+      RDFieldToDField(d_wFields, system.wFieldsBasis());
 
       // Compare result to original
       BFieldComparison comparison (1);
@@ -232,7 +232,7 @@ public:
 
       // Get reference field
       DArray< DArray<double> > d_wFields_check;
-      RDFieldToDField(d_wFields_check, system.wFields());
+      RDFieldToDField(d_wFields_check, system.wFieldsBasis());
 
       // Read input w-fields, iterate and output solution
       system.readWBasis("in/diblock/lam/omega.in");
@@ -245,7 +245,7 @@ public:
 
       // Get test result
       DArray< DArray<double> > d_wFields;
-      RDFieldToDField(d_wFields, system.wFields());
+      RDFieldToDField(d_wFields, system.wFieldsBasis());
 
       // Compare result to original
       BFieldComparison comparison (1);
@@ -274,7 +274,7 @@ public:
       // Get reference field
       system.readWBasis("in/solution/lam/w.bf");
       DArray< DArray<double> > d_wFields_check;
-      RDFieldToDField(d_wFields_check, system.wFields());
+      RDFieldToDField(d_wFields_check, system.wFieldsBasis());
 
       // iterate and output solution
       int error = system.iterate();
@@ -286,7 +286,7 @@ public:
 
       // Get test result
       DArray< DArray<double> > d_wFields;
-      RDFieldToDField(d_wFields, system.wFields());
+      RDFieldToDField(d_wFields, system.wFieldsBasis());
 
       // Compare result to original
       BFieldComparison comparison (1);
@@ -315,7 +315,7 @@ public:
       // Get reference field
       system.readWBasis("in/blend/lam/w.ref_closed");
       DArray< DArray<double> > d_wFields_check;
-      RDFieldToDField(d_wFields_check, system.wFields());
+      RDFieldToDField(d_wFields_check, system.wFieldsBasis());
 
       // Read input w-fields, iterate and output solution
       system.readWBasis("in/blend/lam/w.bf");
@@ -328,7 +328,7 @@ public:
 
       // Get test result
       DArray< DArray<double> > d_wFields;
-      RDFieldToDField(d_wFields, system.wFields());
+      RDFieldToDField(d_wFields, system.wFieldsBasis());
 
       // Compare result to original
       BFieldComparison comparison (1);
@@ -355,7 +355,7 @@ public:
       // Get reference field
       system.readWBasis("in/solution/lam_open/w.ref");
       DArray< DArray<double> > d_wFields_check;
-      RDFieldToDField(d_wFields_check, system.wFields());
+      RDFieldToDField(d_wFields_check, system.wFieldsBasis());
 
       // Read input w-fields, iterate and output solution
       system.readWBasis("in/solution/lam_open/w.bf");
@@ -369,7 +369,7 @@ public:
 
       // Get test result
       DArray< DArray<double> > d_wFields;
-      RDFieldToDField(d_wFields, system.wFields());
+      RDFieldToDField(d_wFields, system.wFieldsBasis());
 
       // Compare result to original
       BFieldComparison comparison (1);
@@ -399,7 +399,7 @@ public:
       // Get reference field
       system.readWBasis("in/blend/lam/w.ref");
       DArray< DArray<double> > d_wFields_check;
-      RDFieldToDField(d_wFields_check, system.wFields());
+      RDFieldToDField(d_wFields_check, system.wFieldsBasis());
 
       // Read input w-fields, iterate and output solution
       system.readWBasis("in/blend/lam/w.bf");
@@ -412,7 +412,7 @@ public:
 
       // Get test result
       DArray< DArray<double> > d_wFields;
-      RDFieldToDField(d_wFields, system.wFields());
+      RDFieldToDField(d_wFields, system.wFieldsBasis());
 
       // Compare result to original
       BFieldComparison comparison (1);
@@ -443,7 +443,7 @@ public:
 
       // Get reference field
       DArray< DArray<double> > d_wFields_check;
-      RDFieldToDField(d_wFields_check, system.wFields());
+      RDFieldToDField(d_wFields_check, system.wFieldsBasis());
 
       // Read initial guess, iterate, output solution
       // PSPC tests start from the reference solution, 
@@ -458,7 +458,7 @@ public:
 
       // Get test result
       DArray< DArray<double> > d_wFields;
-      RDFieldToDField(d_wFields, system.wFields());
+      RDFieldToDField(d_wFields, system.wFieldsBasis());
 
       // Compare result to original
       BFieldComparison comparison (1);
@@ -489,7 +489,7 @@ public:
 
       // Get reference field
       DArray< DArray<double> > d_wFields_check;
-      RDFieldToDField(d_wFields_check, system.wFields());
+      RDFieldToDField(d_wFields_check, system.wFieldsBasis());
 
       system.readWBasis("in/diblock/hex/omega.in");
       int error = system.iterate();
@@ -501,7 +501,7 @@ public:
 
       // Get test result
       DArray< DArray<double> > d_wFields;
-      RDFieldToDField(d_wFields, system.wFields());
+      RDFieldToDField(d_wFields, system.wFieldsBasis());
 
       // Compare result to original
       BFieldComparison comparison (1);
@@ -532,7 +532,7 @@ public:
 
       // Get reference field
       DArray< DArray<double> > d_wFields_check;
-      RDFieldToDField(d_wFields_check, system.wFields());
+      RDFieldToDField(d_wFields_check, system.wFieldsBasis());
 
       system.readWBasis("in/diblock/bcc/omega.in");
       int error = system.iterate();
@@ -544,7 +544,7 @@ public:
 
       // Get test result
       DArray< DArray<double> > d_wFields;
-      RDFieldToDField(d_wFields, system.wFields());
+      RDFieldToDField(d_wFields, system.wFieldsBasis());
 
       // Compare result to original
       BFieldComparison comparison (1);
@@ -575,7 +575,7 @@ public:
 
       // Get reference field
       DArray< DArray<double> > d_wFields_check;
-      RDFieldToDField(d_wFields_check, system.wFields());
+      RDFieldToDField(d_wFields_check, system.wFieldsBasis());
 
       system.readWBasis("in/diblock/bcc/omega.in");
       int error = system.iterate();
@@ -587,7 +587,7 @@ public:
 
       // Get test result
       DArray< DArray<double> > d_wFields;
-      RDFieldToDField(d_wFields, system.wFields());
+      RDFieldToDField(d_wFields, system.wFieldsBasis());
 
       // Compare result to original
       BFieldComparison comparison (1);

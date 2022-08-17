@@ -70,7 +70,7 @@ namespace Pspc
 
    }
  
-   /**
+   /*
    * Read fields in symmetry-adapted basis format. 
    */
    template <int D>
