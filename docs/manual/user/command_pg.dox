@@ -95,12 +95,20 @@ pscf_pg2d, and pscf_pg3d).
          file </td>
   </tr>
   <tr> 
-    <td> WRITE_DATA </td>
+    <td> WRITE_PARAM </td>
     <td> filename [string] </td>
-    <td> Write all data associated with the converged solution. This
-         includes the full param file, as well as the thermodynamic
-         data (free energy, pressure, phi and mu for each species).
+    <td> Write param file associated with the current system. Sweep blocks
+         are omitted. </td>
   </tr>
+  <tr>
+    <td> WRITE_THERMO </td>
+    <td> filename [string] </td>
+    <td> Write thermodynamic data (free energy, pressure, phi, and 
+         mu for each species) to a file. If file already exists, this
+         command will append thermodynamic data to the end of the 
+         file, rather than overwriting what is currently stored there.
+         </td>
+  <tr> 
   <tr> 
     <td> RGRID_TO_BASIS </td>
     <td> inFile [string], outFile [string] </td>

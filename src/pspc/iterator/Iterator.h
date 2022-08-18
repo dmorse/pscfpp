@@ -22,8 +22,6 @@ namespace Pspc
 
    using namespace Util;
 
-   typedef DArray<double> FieldCPU;
-
    /**
    * Base class for iterative solvers for SCF equations.
    *
@@ -79,7 +77,8 @@ namespace Pspc
       /**
       * Sets the flexibleParams_ array.
       * 
-      * \param flexParams array of indices of each flexible lattice parameter
+      * \param flexParams array of indices of each flexible lattice 
+      *                   parameter
       */
       void setFlexibleParams(FSArray<int, 6> const & flexParams)
       {  
@@ -106,7 +105,7 @@ namespace Pspc
       * 
       * \param field mask concentration profile, in basis format
       */
-      void setMask(FieldCPU const & field);
+      void setMask(DArray<double> const & field);
 
       /**
       * Accepts an array of fields representing the external potential
@@ -115,14 +114,14 @@ namespace Pspc
       * 
       * \param fields external fields for each species, in basis format
       */
-      void setExternalFields(DArray<FieldCPU> const & fields);
+      void setExternalFields(DArray< DArray<double> > const & fields);
 
       /**
       * Returns the field that represents the mask imposed upon the 
       * unit cell, or returns an unallocated field if the iterator 
       * does not have a mask. Field is in symmetry-adapted basis format.
       */
-      virtual FieldCPU const & maskField() const;
+      virtual DArray<double> const & maskBasis() const;
 
       /**
       * Returns the array of fields that represents the external potential
@@ -130,7 +129,7 @@ namespace Pspc
       * if the iterator does not have an external field. Fields are in 
       * symmetry-adapted basis format.
       */
-      virtual DArray<FieldCPU> const & externalFields() const;
+      virtual DArray< DArray<double> > const & externalFields() const;
 
       /**
       * Returns the field that represents the external field imposed
@@ -140,19 +139,24 @@ namespace Pspc
       * 
       * \param monomerId integer monomer type index
       */
-      virtual FieldCPU const & externalField(int monomerId) const;
+      virtual DArray<double> const & externalField(int monomerId) const;
 
       /**
       * Return true if this iterator imposes a mask within the unit cell,
       * false if no mask is imposed.
       */
-      virtual bool hasMask() const;
+      bool hasMask() const;
 
       /**
       * Return true if this iterator imposes an external field on any
       * monomer species, returns false if no external field is present.
       */
-      virtual bool hasExternalField() const;
+      bool hasExternalFields() const;
+
+      /**
+      * Return the volume fraction of the unit cell occupied by the mask.
+      */
+      double maskPhi() const;
 
    protected:
 
@@ -172,7 +176,7 @@ namespace Pspc
       bool hasMask_;
 
       /// Does this iterator have an external field?
-      bool hasExternalField_;
+      bool hasExternalFields_;
 
    private:
 
@@ -180,10 +184,10 @@ namespace Pspc
       System<D>* sysPtr_;
 
       /// Field representing the mask imposed on the unit cell
-      DArray<double> maskField_;
+      DArray<double> maskBasis_;
 
       /// Array containing the external fields felt by each species
-      DArray<DArray<double> > externalFields_;
+      DArray< DArray<double> > externalFields_;
       
    };
 
@@ -193,8 +197,8 @@ namespace Pspc
    template <int D>
    inline Iterator<D>::Iterator()
     : hasMask_(false),
-      hasExternalField_(false),
-      maskField_(),
+      hasExternalFields_(false),
+      maskBasis_(),
       externalFields_()
    {  setClassName("Iterator"); }
 
@@ -202,9 +206,9 @@ namespace Pspc
    template <int D>
    inline Iterator<D>::Iterator(System<D>& system)
     : hasMask_(false),
-      hasExternalField_(false),
+      hasExternalFields_(false),
       sysPtr_(&system),
-      maskField_(),
+      maskBasis_(),
       externalFields_()
    {  setClassName("Iterator"); }
 
@@ -215,36 +219,47 @@ namespace Pspc
 
    // Store the concentration field for the mask imposed on the unit cell
    template <int D>
-   inline void Iterator<D>::setMask(FieldCPU const & field)
+   inline void Iterator<D>::setMask(DArray<double> const & field)
    {  
-      maskField_ = field; // copy field into maskField_
+      maskBasis_ = field; // copy field into maskBasis_
       hasMask_ = true;
    }
 
    // Store the external fields imposed on each monomer species
    template <int D> 
-   inline void Iterator<D>::setExternalFields(DArray<FieldCPU> const & fields)
+   inline 
+   void 
+   Iterator<D>::setExternalFields(DArray< DArray<double> > const & fields)
    {  
       externalFields_ = fields; // copy fields into externalFields_
-      hasExternalField_ = true;
+      hasExternalFields_ = true;
    }
 
    // Get the concentration field for the mask imposed on the unit cell
    template <int D>
-   inline FieldCPU const & Iterator<D>::maskField() const
-   {  return maskField_; }
+   inline DArray<double> const & Iterator<D>::maskBasis() const
+   {  
+      UTIL_CHECK(hasMask_);
+      return maskBasis_; 
+   }
 
    // Get array of all external fields felt by monomer species
    template <int D>
-   inline DArray<FieldCPU> const & Iterator<D>::externalFields() 
+   inline DArray< DArray<double> > const & Iterator<D>::externalFields() 
    const
-   {  return externalFields_; }
+   {  
+      UTIL_CHECK(hasExternalFields_);
+      return externalFields_; 
+   }
 
    // Get the external field felt by one monomer species
    template <int D>
-   inline FieldCPU const & Iterator<D>::externalField(int monomerId) 
+   inline DArray<double> const & Iterator<D>::externalField(int monomerId) 
    const
-   {  return externalFields_[monomerId]; }
+   {  
+      UTIL_CHECK(hasExternalFields_);
+      return externalFields_[monomerId]; 
+   }
 
    // Does this iterator have a mask?
    template <int D>
@@ -253,8 +268,16 @@ namespace Pspc
 
    // Does this iterator have any external field?
    template <int D>
-   inline bool Iterator<D>::hasExternalField() const
-   {  return hasExternalField_; }
+   inline bool Iterator<D>::hasExternalFields() const
+   {  return hasExternalFields_; }
+
+   // Return the volume fraction of the unit cell occupied by the mask
+   template <int D>
+   inline double Iterator<D>::maskPhi() const
+   {
+      UTIL_CHECK(hasMask_);
+      return maskBasis()[0];
+   }
 
 } // namespace Pspc
 } // namespace Pscf

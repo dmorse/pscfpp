@@ -225,7 +225,20 @@ namespace Fd1d
    {  readParam(fileMaster().paramFile()); }
 
    /*
-   * Read parameters and initialize.
+   * Write parameter file, omitting the sweep block.
+   */
+   void System::writeParam(std::ostream& out)
+   {
+      out << "System{" << std::endl;
+      mixture().writeParam(out);
+      interaction().writeParam(out);
+      domain().writeParam(out);
+      iterator().writeParam(out);
+      out << "}" << std::endl;
+   }
+
+   /*
+   * Allocate memory for fields.
    */
    void System::allocateFields()
    {
@@ -308,11 +321,17 @@ namespace Fd1d
             readEcho(inBuffer, filename);
             fieldIo.writeBlockCFields(filename);  
          } else
-         if (command == "WRITE_DATA") {
+         if (command == "WRITE_PARAM") {
             readEcho(inBuffer, filename);
             std::ofstream file;
             fileMaster().openOutputFile(filename, file);
             writeParam(file);
+            file.close();
+         } else
+         if (command == "WRITE_THERMO") {
+            readEcho(inBuffer, filename);
+            std::ofstream file;
+            fileMaster().openOutputFile(filename, file, std::ios_base::app);
             outputThermo(file);
             file.close();
          } else

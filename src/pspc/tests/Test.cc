@@ -8,11 +8,13 @@
 #include "solvers/SolverTestComposite.h"
 #include "system/SystemTest.h"
 #include "sweep/SweepTestComposite.h"
+#include "iterator/IteratorTestComposite.h"
 #include <util/param/BracketPolicy.h>
 #include <util/global.h>
 
 TEST_COMPOSITE_BEGIN(PspcNsTestComposite)
 addChild(new FieldTestComposite, "field/");
+addChild(new IteratorTestComposite, "iterator/");
 addChild(new SolverTestComposite, "solvers/");
 addChild(new TEST_RUNNER(SystemTest), "system/");
 addChild(new SweepTestComposite, "sweep/");

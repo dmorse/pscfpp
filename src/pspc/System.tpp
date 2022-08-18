@@ -210,7 +210,8 @@ namespace Pspc
       // Initialize iterator through the factory and mediator
       std::string className;
       bool isEnd;
-      iteratorPtr_ = iteratorFactoryPtr_->readObject(in, *this, className, isEnd);
+      iteratorPtr_ = iteratorFactoryPtr_->readObject(in, *this, 
+                                                     className, isEnd);
       if (!iteratorPtr_) {
          std::string msg = "Unrecognized Iterator subclass name ";
          msg += className;
@@ -248,6 +249,20 @@ namespace Pspc
    {  readParam(fileMaster_.paramFile()); }
 
    /*
+   * Write parameter file, omitting the sweep block.
+   */
+   template <int D>
+   void System<D>::writeParam(std::ostream& out)
+   {
+      out << "System{" << std::endl;
+      mixture_.writeParam(out);
+      interaction().writeParam(out);
+      domain_.writeParam(out);
+      iterator().writeParam(out);
+      out << "}" << std::endl;
+   }
+
+   /*
    * Allocate memory for fields.
    */
    template <int D>
@@ -264,7 +279,7 @@ namespace Pspc
       cFieldsBasis_.allocate(nMonomer);
       cFieldsRGrid_.allocate(nMonomer);
       
-      tmpFields_.allocate(nMonomer);
+      tmpFieldsBasis_.allocate(nMonomer);
       tmpFieldsRGrid_.allocate(nMonomer);
       tmpFieldsKGrid_.allocate(nMonomer);
 
@@ -275,7 +290,7 @@ namespace Pspc
          cFieldsBasis_[i].allocate(basis().nBasis());
          cFieldsRGrid_[i].allocate(mesh().dimensions());
 
-         tmpFields_[i].allocate(basis().nBasis());
+         tmpFieldsBasis_[i].allocate(basis().nBasis());
          tmpFieldsRGrid_[i].allocate(mesh().dimensions());
          tmpFieldsKGrid_[i].allocate(mesh().dimensions());
       }
@@ -410,9 +425,19 @@ namespace Pspc
                         << Str("segment ID ", 21) << segmentId << std::endl;
             writePropagatorRGrid(filename, polymerId, blockId, directionId, segmentId);
          } else
-         if (command == "WRITE_DATA") {
+         if (command == "WRITE_PARAM") {
             readEcho(in, filename);
-            writeData(filename);
+            std::ofstream file;
+            fileMaster().openOutputFile(filename, file);
+            writeParam(file);
+            file.close();
+         } else
+         if (command == "WRITE_THERMO") {
+            readEcho(in, filename);
+            std::ofstream file;
+            fileMaster().openOutputFile(filename, file, std::ios_base::app);
+            outputThermo(file);
+            file.close();
          } else
          if (command == "BASIS_TO_RGRID") {
             readEcho(in, inFileName);
@@ -430,6 +455,16 @@ namespace Pspc
             kGridToRGrid(inFileName, outFileName);
          } else
          if (command == "RGRID_TO_KGRID") {
+            readEcho(in, inFileName);
+            readEcho(in, outFileName);
+            rGridToKGrid(inFileName, outFileName);
+         } else
+         if (command == "BASIS_TO_KGRID") {
+            readEcho(in, inFileName);
+            readEcho(in, outFileName);
+            rGridToKGrid(inFileName, outFileName);
+         } else
+         if (command == "KGRID_TO_BASIS") {
             readEcho(in, inFileName);
             readEcho(in, outFileName);
             rGridToKGrid(inFileName, outFileName);
@@ -539,7 +574,7 @@ namespace Pspc
       }
 
       // Compute contribution from external fields, if fields exist
-      if (iterator().hasExternalField()) {
+      if (iterator().hasExternalFields()) {
          for (int i = 0; i < nm; ++i) {
             for (int k = 0; k < nBasis; ++k) {
                temp -= iterator().externalField(i)[k] * cFieldsBasis_[i][k];
@@ -596,12 +631,12 @@ namespace Pspc
       // If the iterator has a mask, then the volume that should be
       // used to calculate free energy/pressure is the volume available
       // to the polymers, not the total unit cell volume. We thus divide
-      // the free energy and pressure by (1 - maskField()[0]), the 
+      // the free energy and pressure by (1 - iterator().maskPhi()), the 
       // volume fraction of the unit cell that is occupied by the 
       // polymers. This properly scales them to the correct value.
       if (iterator().hasMask()) {
-         fHelmholtz_ /= 1 - iterator().maskField()[0];
-         pressure_ /= 1 - iterator().maskField()[0];
+         fHelmholtz_ /= 1 - iterator().maskPhi();
+         pressure_ /= 1 - iterator().maskPhi();
       }
 
    }
@@ -984,19 +1019,6 @@ namespace Pspc
       fieldIo().writeFieldRGrid(filename, propField, unitCell());
    }
 
-   /*
-   * Write all data associated with the converged solution.
-   */
-   template <int D>
-   void System<D>::writeData(const std::string & filename)
-   {
-      std::ofstream file;
-      fileMaster().openOutputFile(filename, file);
-      writeParam(file);
-      outputThermo(file);
-      file.close();
-   }
-
    // Field conversion command functions
 
    /*
@@ -1007,8 +1029,8 @@ namespace Pspc
                                 const std::string & outFileName) const
    {
       UnitCell<D> tmpUnitCell;
-      fieldIo().readFieldsBasis(inFileName, tmpFields_, tmpUnitCell);
-      fieldIo().convertBasisToRGrid(tmpFields_, tmpFieldsRGrid_);
+      fieldIo().readFieldsBasis(inFileName, tmpFieldsBasis_, tmpUnitCell);
+      fieldIo().convertBasisToRGrid(tmpFieldsBasis_, tmpFieldsRGrid_);
       fieldIo().writeFieldsRGrid(outFileName, tmpFieldsRGrid_, 
                                  tmpUnitCell);
    }
@@ -1022,8 +1044,8 @@ namespace Pspc
    {
       UnitCell<D> tmpUnitCell;
       fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_, tmpUnitCell);
-      fieldIo().convertRGridToBasis(tmpFieldsRGrid_, tmpFields_);
-      fieldIo().writeFieldsBasis(outFileName, tmpFields_, tmpUnitCell);
+      fieldIo().convertRGridToBasis(tmpFieldsRGrid_, tmpFieldsBasis_);
+      fieldIo().writeFieldsBasis(outFileName, tmpFieldsBasis_, tmpUnitCell);
    }
 
    /*
@@ -1060,6 +1082,32 @@ namespace Pspc
    }
 
    /*
+   * Convert fields from Fourier (k-grid) to symmetry-adapted basis format.
+   */
+   template <int D>
+   void System<D>::kGridToBasis(const std::string & inFileName,
+                                const std::string& outFileName) const
+   {
+      UnitCell<D> tmpUnitCell;
+      fieldIo().readFieldsKGrid(inFileName, tmpFieldsKGrid_, tmpUnitCell);
+      fieldIo().convertKGridToBasis(tmpFieldsKGrid_, tmpFieldsBasis_);
+      fieldIo().writeFieldsBasis(outFileName, tmpFieldsBasis_, tmpUnitCell);
+   }
+
+   /*
+   * Convert fields from symmetry-adapted basis to Fourier (k-grid) format.
+   */
+   template <int D>
+   void System<D>::basisToKGrid(const std::string & inFileName,
+                                const std::string & outFileName) const
+   {
+      UnitCell<D> tmpUnitCell;
+      fieldIo().readFieldsBasis(inFileName, tmpFieldsBasis_, tmpUnitCell);
+      fieldIo().convertBasisToKGrid(tmpFieldsBasis_, tmpFieldsKGrid_);
+      fieldIo().writeFieldsKGrid(outFileName, tmpFieldsKGrid_, tmpUnitCell);
+   }
+
+   /*
    * Convert fields from real-space grid to symmetry-adapted basis format.
    */
    template <int D>
@@ -1089,14 +1137,15 @@ namespace Pspc
       hasCFields_ = false;
       hasWFields_ = false;
 
-      fieldIo().readFieldsBasis(inFileName, tmpFields_, domain_.unitCell());
+      fieldIo().readFieldsBasis(inFileName, tmpFieldsBasis_, domain_.unitCell());
 
       // Compute w fields from c fields
       for (int i = 0; i < basis().nBasis(); ++i) {
          for (int j = 0; j < mixture_.nMonomer(); ++j) {
             wFieldsBasis_[j][i] = 0.0;
             for (int k = 0; k < mixture_.nMonomer(); ++k) {
-               wFieldsBasis_[j][i] += interaction().chi(j,k) * tmpFields_[k][i];
+               wFieldsBasis_[j][i] += interaction().chi(j,k) 
+                                      * tmpFieldsBasis_[k][i];
             }
          }
       }

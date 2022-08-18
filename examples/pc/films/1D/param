@@ -28,7 +28,7 @@ System{
     groupName      P_1
   }
   AmIteratorFilm{
-    maxItr       1000
+    maxItr       1500
     epsilon      1e-12
     maxHist      50 
     isFlexible   0
@@ -36,8 +36,8 @@ System{
     interfaceThickness   0.08     
     wallThickness        0.2
     chi[
-          0   0
-          0   0
+         10   0
+         10   0
     ]
     wallBasisOutFile     out/wall.bf
     wallRGridOutFile     out/wall.rf

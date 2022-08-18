@@ -5,10 +5,11 @@
 
 Here is a example of a minimal command file for pscf_fd:
 \code
-ITERATE     in/w
-WRITE_W     out/w
-WRITE_C     out/c
-WRITE_DATA  out/data
+ITERATE       in/w
+WRITE_W       out/w
+WRITE_C       out/c
+WRITE_PARAM   out/data
+WRITE_THERMO  out/data
 FINISH
 \endcode
 The command "ITERATE in/w" instructs the program to read the file 
@@ -18,9 +19,10 @@ start from this initial guess.  The command "WRITE_W out/w"
 writes the resulting converged set of chemical potential fields to 
 the file out/w. The command "WRITE_C out/c" writes the 
 corresponding monomer volume fraction fields to the file out/c.
-The command WRITE_DATA creates a summary file of the parameters
-and thermodynamic properties of the converged solution. The script
-stops execution when it encounters the FINISH ommand.
+The command WRITE_PARAM writes the parameter file for this solution
+to the file out/data, and the subsequent command WRITE_THERMO appends
+thermodynamic data of the converged solution to the end of out/data.
+The script stops execution when it encounters the FINISH ommand.
 
 The following table shows a list of available commands for pscf_fd:
 <table>
@@ -65,12 +67,19 @@ The following table shows a list of available commands for pscf_fd:
          order that the solvents appear in the param file </td>
   </tr>
   <tr> 
-    <td> WRITE_DATA </td>
+    <td> WRITE_PARAM </td>
     <td> filename [string] </td>
-    <td> Write all data associated with the converged solution. This
-         includes the full param file, as well as the thermodynamic
-         data (free energy, pressure, phi and mu for each species).
+    <td> Write param file associated with the current system. Sweep blocks
+         are omitted. </td>
   </tr>
+  <tr>
+    <td> WRITE_THERMO </td>
+    <td> filename [string] </td>
+    <td> Write thermodynamic data (free energy, pressure, phi, and 
+         mu for each species) to a file. If file already exists, this
+         command will append thermodynamic data to the end of the 
+         file, rather than overwriting what is currently stored there.
+         </td>
   <tr> 
     <td> COMPARE_HOMOGENEOUS </td>
     <td> mode [int] </td>

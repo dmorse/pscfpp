@@ -87,6 +87,11 @@ namespace Fd1d
       virtual void readParameters(std::istream& in);
 
       /**
+      * Write parameter file to an ostream, omitting the sweep block. 
+      */
+      void writeParam(std::ostream& out);
+
+      /**
       * Read command script.
       * 
       * \param in command script file.
