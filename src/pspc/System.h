@@ -521,7 +521,7 @@ namespace Pspc
       * \param blockId  integer id of the block with the polymer 
       */
       void writePropagatorRGrid(const std::string & filename, 
-                                int polymerId, int blockId) const;
+                                int polymerId, int blockId, int directionId, int segmentId)  const;
    
       /**
       * Write all data associated with the converged solution. This
