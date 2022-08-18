@@ -7,8 +7,8 @@ AmIteratorFilm{
   interfaceThickness   0.08     
   wallThickness        0.2
   chi[
-        3   0
-        0   4
+        10   0
+        10   0
   ]
   wallBasisOutFile     out/wall.bf
   wallRGridOutFile     out/wall.rf

@@ -88,8 +88,8 @@ public:
       
       // Check that the homogeneous components of the wall
       // and the blocks were adjusted correctly
-      TEST_ASSERT(eq(iterator.maskPhi(),9.0710679136e-02));
-      TEST_ASSERT(eq(system.mixture().polymer(0).phi(),9.092893209e-01));
+      TEST_ASSERT(eq(iterator.maskPhi(),1.0538978363e-01));
+      TEST_ASSERT(eq(system.mixture().polymer(0).phi(),8.946102164e-01));
 
       // Check that the wall field files were output correctly by 
       // comparing them to the reference files in in/film
