@@ -1,9 +1,10 @@
-#-----------------------------------------------------------------------
-# The copy of this namespace-level makefile in the src/ directory is 
-# copied to the bld/ directory by the setup script to create the copy 
-# in that directories. Only the copy in the src/ directory is stored in 
-# the repository.
-#-----------------------------------------------------------------------
+#------------------------------------------------------------------------
+# src/pspg/makefile
+#
+# The repository copy of this namespace level makefile is in the src/pspg
+# directory. This is copied verbatim by the setup to create the copy in
+# in the bld/pspg directory.
+#------------------------------------------------------------------------
 # Include makefiles
 
 SRC_DIR_REL =..
@@ -22,12 +23,6 @@ PSCF_PG_EXE=$(PSCF_PG3D_EXE) $(PSCF_PG2D_EXE) $(PSCF_PG1D_EXE)
 # Main targets 
 
 all: $(pspg_OBJS) $(pspg_LIB) $(PSCF_PG_EXE)
-
-move:
-	mv $(BIN_DIR)/pscf_pgsp $(BIN_DIR)/../../pscfpp_test/pscf_pgsp_openmp_for
-
-run1:
-	cd ../../../pscfpp_test && make run4
 
 clean:
 	rm -f $(pspg_OBJS) $(pspg_OBJS:.o=.d)

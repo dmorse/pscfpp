@@ -30,19 +30,22 @@ namespace Pspc {
    * meaning of any associated index value or pair of values.
    * To indicate the meaning of index values, we use mId to denote 
    * a monomer type index, pId to denote a polymer species index, 
-   * bId to denote the index of a block within a polymer, and sId 
-   * to denote a solvent species index:
+   * bId to denote the index of a block within a polymer, sId to
+   * denote a solvent species index, lId to denote a lattice parameter
+   * index, and wId to denote a wall index:
    * \code
-   *  | Type        | Meaning                     | id(0) | id(1)
-   *  | ----------- | --------------------------- | ----- | -----
-   *  | kuhn        | monomer segment length      | mId   |
-   *  | chi         | Flory-Huggins parameter     | mId   | mId
-   *  | block       | block length                | pId   | bId
-   *  | solvent     | solvent size                | sId   |
-   *  | phi_polymer | polymer volume fraction     | pId   |
-   *  | mu_polymer  | polymer chemical potential  | pId   |
-   *  | phi_solvent | solvent volume fraction     | sId   |
-   *  | mu_solvent  | solvent chemical potential  | sId   |
+   *  | Type        | Meaning                            | id(0) | id(1)
+   *  | ----------- | ---------------------------------- | ----- | -----
+   *  | kuhn        | monomer segment length             | mId   |
+   *  | chi         | Flory-Huggins parameter            | mId   | mId
+   *  | block       | block length                       | pId   | bId
+   *  | solvent     | solvent size                       | sId   |
+   *  | phi_polymer | polymer volume fraction            | pId   |
+   *  | mu_polymer  | polymer chemical potential         | pId   |
+   *  | phi_solvent | solvent volume fraction            | sId   |
+   *  | mu_solvent  | solvent chemical potential         | sId   |
+   *  | cell_param  | lattice parameter                  | lId   |
+   *  | wall_chi    | Wall/monomer interaction parameter | mId   | wId
    * \endcode
    * The two indices for a Flory-Huggins chi parameter refer to indices
    * in the chi matrix maintained by ChiInteraction. Changes to element
@@ -175,7 +178,8 @@ namespace Pspc {
 
       /// Enumeration of allowed parameter types.
       enum ParamType { Block, Chi, Kuhn, Phi_Polymer, Phi_Solvent,
-                       Mu_Polymer, Mu_Solvent, Solvent, Null};
+                       Mu_Polymer, Mu_Solvent, Solvent, Cell_Param, 
+                       Wall_Chi, Null};
 
       /// Type of parameter associated with an object of this class.
       ParamType type_;
@@ -213,6 +217,11 @@ namespace Pspc {
       * \param newVal  new value for this parameter.
       */
       void set_(double newVal);
+
+      /**
+      * Check if the system iterator is a thin film iterator. 
+      */
+      bool isFilmIterator() const;
 
    // friends:
 

@@ -1,23 +1,26 @@
-/*! \page user_command_fd_page 3.3.1 Commands for pscf_fd
+/*! \page user_command_fd_page 3.4.1 Commands for pscf_fd
 \ref user_command_page    (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_command_pc_page (Next) 
 <BR>
 
 Here is a example of a minimal command file for pscf_fd:
 \code
-ITERATE          in/w
-WRITE_W    out/w.bf
-WRITE_C    out/c.bf
+ITERATE     in/w
+WRITE_W     out/w
+WRITE_C     out/c
+WRITE_DATA  out/data
 FINISH
 \endcode
-The command "ITERATE in/w.bf" instructs the program to read the file 
-in/w.bf, which contains an initial guess for the chemical potential 
+The command "ITERATE in/w" instructs the program to read the file 
+in/w, which contains an initial guess for the chemical potential 
 field, then iteratively solve the self-consistent field equations 
-start from this initial guess.  The command "WRITE_W out/w.bf" 
+start from this initial guess.  The command "WRITE_W out/w" 
 writes the resulting converged set of chemical potential fields to 
-the file out/w.bf. The command "WRITE_C out/c.bf" writes the 
-corresponding monomer volume fraction fields to the file out/c.bf.
-The script stops execution when it encounters the FINISH command.
+the file out/w. The command "WRITE_C out/c" writes the 
+corresponding monomer volume fraction fields to the file out/c.
+The command WRITE_DATA creates a summary file of the parameters
+and thermodynamic properties of the converged solution. The script
+stops execution when it encounters the FINISH ommand.
 
 The following table shows a list of available commands for pscf_fd:
 <table>
@@ -27,9 +30,21 @@ The following table shows a list of available commands for pscf_fd:
     <td> <b>description </b> </td>
   </tr>
   <tr> 
-    <td> ITERATE </td>
+    <td> READ_W </td>
     <td> filename [string] </td>
-    <td> Read initial w field from file filename, iterate to convergence  </td>
+    <td> Read w fields from file filename
+         </td>
+  </tr>
+  <tr> 
+    <td> ITERATE </td>
+    <td> filename [string] (conditional) </td>
+    <td> Iteratively solve SCFT equations (after reading initial w fields) </td>
+  </tr>
+  <tr> 
+    <td> SWEEP </td>
+    <td> </td>
+    <td> Perform a sweep, as specified by the Sweep object in the param 
+         file. </td>
   </tr>
   <tr> 
     <td> WRITE_W </td>
@@ -50,14 +65,22 @@ The following table shows a list of available commands for pscf_fd:
          order that the solvents appear in the param file </td>
   </tr>
   <tr> 
+    <td> WRITE_DATA </td>
+    <td> filename [string] </td>
+    <td> Write all data associated with the converged solution. This
+         includes the full param file, as well as the thermodynamic
+         data (free energy, pressure, phi and mu for each species).
+  </tr>
+  <tr> 
     <td> COMPARE_HOMOGENEOUS </td>
     <td> mode [int] </td>
     <td> Compare solution to homogeneous solution(s)  </td>
   </tr>
   <tr> 
     <td> WRITE_VERTEX_Q </td>
-    <td> filename [string], polymerId[int], vertex[Id] </td>
-    <td> Compare solution to homogeneous solution(s)  </td>
+    <td> filename [string], polymerId [int], vertexId [int] </td>
+    <td> Write propagator (q) field to a file for a specified vertex
+         (vertexId) in a specified polymer (polymerId). </td>
   </tr>
 </table>
 

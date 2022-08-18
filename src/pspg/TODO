@@ -1,9 +1,0 @@
-TODO:
------
-
-1) Fix non-centrosymmetric phases in FieldIo
-2) Compress storage of symmetry adapted basis functions in FieldIo and System
-   (stop storing zero coefficients)
-3) Modify AMIterator to use symmetry adapted representation internally
-   (rename AMIteratorSymmetric ?)
-

@@ -8,13 +8,7 @@
 
 SRC_DIR_REL =../..
 include $(SRC_DIR_REL)/config.mk
-include $(BLD_DIR)/util/config.mk
-include $(BLD_DIR)/pscf/config.mk
-include $(BLD_DIR)/pspc/config.mk
-include $(SRC_DIR)/pspc/patterns.mk
-include $(SRC_DIR)/util/sources.mk
-include $(SRC_DIR)/pscf/sources.mk
-include $(SRC_DIR)/pspc/sources.mk
+include $(SRC_DIR)/pspc/include.mk
 
 #-----------------------------------------------------------------------
 # Main targets 
@@ -35,4 +29,3 @@ veryclean:
 -include $(pspc_OBJS:.o=.d)
 -include $(pscf_OBJS:.o=.d)
 -include $(util_OBJS:.o=.d)
--include $(PSCF_FD).d 

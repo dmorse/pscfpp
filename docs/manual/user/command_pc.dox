@@ -1,4 +1,4 @@
-/*! \page user_command_pc_page 3.3.2 Commands for pscf_pcNd (CPU)
+/*! \page user_command_pc_page 3.4.2 Commands for pscf_pcNd (CPU)
 
  \ref user_command_fd_page     (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref user_command_pg_page (Next) 
@@ -8,10 +8,12 @@ Here is a example of a simple command file for any of pscf_pcNd programs
 for N-dimensionally periodic microstructures (i.e., for pscf_pc1d, 
 pscf_pc2d, or pscf_pc3d):
 \code
-READ_W_BASIS  out/w.bf
-ITERATE       in/w
-WRITE_W       out/w.bf
-WRITE_C       out/c.bf
+READ_W_BASIS    in/w.bf
+ITERATE         
+WRITE_W_BASIS   out/w.bf
+WRITE_C_BASIS   out/c.bf
+WRITE_C_RGRID   out/c.rf
+WRITE_DATA      out/data
 FINISH
 \endcode
 The command "READ_W_BASIS in/w.bf" instructs the program to read an 
@@ -21,10 +23,13 @@ a symmetry-adapted Fourier basis. The ITERATE command instructs the
 program to iteratively solve the SCFT equations starting from this initial 
 guess.  The command "WRITE_W_BASIS out/w.bf" writes the resulting 
 converged set of chemical potential fields to file out/w.bf in 
-symmetry-adapted basis format. The command "WRITE_C out/c.bf" writes the 
-corresponding monomer volume fraction fields to the file out/c.bf in the 
-same format. The script stops execution when it encounters the FINISH 
-command.
+symmetry-adapted basis format. The command "WRITE_C_BASIS out/c.bf" writes 
+the corresponding monomer volume fraction fields to the file out/c.bf in 
+the same format, while "WRITE_C_RGRID out/c.rf" writes the volume fraction
+fields in r-grid format. "The command WRITE_DATA out/data" writes a 
+file summarizing the parameters and thermodynamic properties of the 
+converged solution. The script stops execution when it encounters the 
+FINISH command.
 
 Many of the available commands for the pscf_pcNd programs cause the 
 program to read and/or write a set of chemical potential (w) fields or 
@@ -57,18 +62,24 @@ programs:
   <tr> 
     <td> READ_W_RGRID </td>
     <td> filename [string] </td>
-    <td> Read w fields from file filename, in real-space grid (r-grid) format.
+    <td> Read w fields from file filename, in real-space grid (r-grid) format
          </td>
   </tr>
   <tr> 
-    <td> SOLVE_MDE </td>
-    <td> inFile [string], outFile[string </td>
+    <td> COMPUTE </td>
+    <td> inFile [string], outFile [string] </td>
     <td> Solve modified diffusion equation for the current w fields </td>
   </tr>
   <tr> 
     <td> ITERATE </td>
     <td> filename [string] (conditional) </td>
     <td> Iteratively solve SCFT equations (after reading initial w fields) </td>
+  </tr>
+  <tr> 
+    <td> SWEEP </td>
+    <td> </td>
+    <td> Perform a sweep, as specified by the Sweep object in the param 
+         file. </td>
   </tr>
   <tr> 
     <td> WRITE_W_BASIS </td>
@@ -104,28 +115,60 @@ programs:
          file </td>
   </tr>
   <tr> 
+    <td> WRITE_DATA </td>
+    <td> filename [string] </td>
+    <td> Write all data associated with the converged solution. This
+         includes the full param file, as well as the thermodynamic
+         data (free energy, pressure, phi and mu for each species)
+  </tr>
+  <tr> 
+    <td> WRITE_PROPAGATOR </td>
+    <td> filename [string], blockId [int], polymerId [int] </td>
+    <td> Write last slice of a propagator in r-grid grid format for
+         block indexed by blockId of polymer indexed by polymerId </td>
+  </tr>
+  <tr> 
     <td> RGRID_TO_BASIS </td>
-    <td> inFile [string], outFile[string </td>
+    <td> inFile [string], outFile [string] </td>
     <td> Read fields from file inFile in real-space grid (r-grid) format, 
          write to file outFile in symmetry-adapted basis format </td>
   </tr>
   <tr> 
     <td> BASIS_TO_RGRID </td>
-    <td> inFile [string], outFile[string </td>
+    <td> inFile [string], outFile [string] </td>
     <td> Read fields from file inFile in symmetry-adapted basis format,
          write to file outFile in real-space grid (r-grid) format </td>
   </tr>
   <tr> 
     <td> KGRID_TO_RGRID </td>
-    <td> inFile [string], outFile[string </td>
+    <td> inFile [string], outFile [string] </td>
     <td> Read fields from file inFile in discrete Fourier expansion 
          (k-grid) format, write to file outFile in r-grid format </td>
   </tr>
   <tr> 
     <td> RGRID_TO_KGRID </td>
-    <td> inFile [string], outFile[string </td>
+    <td> inFile [string], outFile [string] </td>
     <td> Read fields from file inFile in real-space (r-grid) format,
          write to outFile in discrete Fourier expansion (k-grid) format
+         </td>
+  </tr>
+  <tr> 
+    <td> RHO_TO_OMEGA </td>
+    <td> inFile [string], outFile [string] </td>
+    <td> Read monomer concentration fields in symmetry-adapted basis 
+         format from file inFile, generate chemical potential fields 
+         using the concentration fields and chi values, and write the 
+         potential fields to outFile in symmetry-adapted basis format.
+         Also stores potential fields to be used by future commands
+         (e.g., ITERATE or SWEEP).
+         </td>
+  </tr>
+  <tr> 
+    <td> CHECK_RGRID_SYMMETRY </td>
+    <td> inFile [string] </td>
+    <td> Read fields from file inFile in real-space (r-grid) format,
+         check whether the fields have symmetry that matches the
+         space group specified in the param file. 
          </td>
   </tr>
 </table>

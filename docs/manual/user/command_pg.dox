@@ -1,4 +1,4 @@
-/*! \page user_command_pg_page 3.3.3 Commands for pscf_pgNd (CPU)
+/*! \page user_command_pg_page 3.4.3 Commands for pscf_pgNd (CPU)
 
  \ref user_command_pc_page     (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref user_example_page (Next) 
@@ -51,6 +51,11 @@ pscf_pg2d, and pscf_pg3d).
     <td> Read w fields from file filename, in real-space grid (r-grid) format.
          </td>
   </tr>
+  <tr>
+    <td> COMPUTE </td>
+    <td> inFile [string], outFile [string] </td>
+    <td> Solve modified diffusion equation for the current w fields </td>
+  </tr>
   <tr> 
     <td> ITERATE </td>
     <td> filename [string] (conditional) </td>
@@ -90,28 +95,37 @@ pscf_pg2d, and pscf_pg3d).
          file </td>
   </tr>
   <tr> 
+    <td> WRITE_DATA </td>
+    <td> filename [string] </td>
+    <td> Write all data associated with the converged solution. This
+         includes the full param file, as well as the thermodynamic
+         data (free energy, pressure, phi and mu for each species).
+  </tr>
+  <tr> 
     <td> RGRID_TO_BASIS </td>
-    <td> inFile [string], outFile[string </td>
+    <td> inFile [string], outFile [string] </td>
     <td> Read fields from file inFile in real-space grid (r-grid) format, 
          write to file outFile in symmetry-adapted basis format </td>
   </tr>
   <tr> 
     <td> BASIS_TO_RGRID </td>
-    <td> inFile [string], outFile[string </td>
+    <td> inFile [string], outFile [string] </td>
     <td> Read fields from file inFile in symmetry-adapted basis format,
          write to file outFile in real-space grid (r-grid) format </td>
   </tr>
   <tr> 
     <td> KGRID_TO_RGRID </td>
-    <td> inFile [string], outFile[string </td>
+    <td> inFile [string], outFile [string] </td>
     <td> Read fields from file inFile in discrete Fourier expansion 
          (k-grid) format, write to file outFile in r-grid format </td>
   </tr>
   <tr> 
-    <td> RGRID_TO_KGRID </td>
-    <td> inFile [string], outFile[string </td>
-    <td> Read fields from file inFile in real-space (r-grid) format,
-         write to outFile in discrete Fourier expansion (k-grid) format
+    <td> RHO_TO_OMEGA </td>
+    <td> inFile [string], outFile [string] </td>
+    <td> Read monomer concentration fields in symmetry-adapted basis 
+         format from file inFile, generate chemical potential fields 
+         using the concentration fields and chi values, and write the 
+         potential fields to outFile in symmetry-adapted basis format.
          </td>
   </tr>
 </table>

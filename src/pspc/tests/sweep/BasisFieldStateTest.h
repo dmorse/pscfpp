@@ -1,12 +1,13 @@
-#ifndef PSPC_BASISFIELDSTATE_TEST_H
-#define PSPC_BASISFIELDSTATE_TEST_H
+#ifndef PSPC_BASIS_FIELD_STATE_TEST_H
+#define PSPC_BASIS_FIELD_STATE_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
 #include <pspc/System.h>
 #include <pspc/sweep/BasisFieldState.h>
-#include <pspc/field/BFieldComparison.h>
+#include <pscf/crystal/BFieldComparison.h>
+#include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>
 
@@ -14,28 +15,13 @@ using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Pspc;
 
-class BasisFieldStateTest : public UnitTest
+class BasisFieldStateTest : public LogFileUnitTest
 {
 
 public:
 
-   std::ofstream logFile_;
-
    void setUp()
    {}
-
-   void tearDown()
-   {
-      if (logFile_.is_open()) {
-         logFile_.close();
-      }
-   }
-
-   void openLogFile(char const * filename)
-   {
-      openOutputFile(filename, logFile_);
-      Log::setFile(logFile_);
-   }
 
    void testConstructor()
    {
@@ -44,7 +30,6 @@ public:
       System<3> system;
       BasisFieldState<3> bfs1(system);
       BasisFieldState<3> bfs2;
-
    }
 
    void testRead()
@@ -63,7 +48,7 @@ public:
       // Read in file another way
       bfs.read("in/bcc/omega.ref");
       // Compare
-      comparison.compare(bfs.fields(), system.wFields());
+      comparison.compare(bfs.fields(), system.wFieldsBasis());
       // Assert small difference
       TEST_ASSERT(comparison.maxDiff() < 5.0e-7);
 
@@ -108,7 +93,7 @@ public:
       // get it using bfs
       bfs.getSystemState();
       // compare
-      comparison.compare(bfs.fields(),system.wFields());
+      comparison.compare(bfs.fields(),system.wFieldsBasis());
       // Assert small difference
       TEST_ASSERT(comparison.maxDiff() < 5.0e-7);
    }
@@ -129,7 +114,7 @@ public:
       // set system state
       bfs.setSystemState(true);
       // compare
-      comparison.compare(bfs.fields(),system.wFields());
+      comparison.compare(bfs.fields(),system.wFieldsBasis());
       // Assert small difference
       TEST_ASSERT(comparison.maxDiff() < 5.0e-7);
    }
@@ -162,14 +147,12 @@ public:
 
 
 TEST_BEGIN(BasisFieldStateTest)
-
 TEST_ADD(BasisFieldStateTest, testConstructor)
 TEST_ADD(BasisFieldStateTest, testRead)
 TEST_ADD(BasisFieldStateTest, testWrite)
 TEST_ADD(BasisFieldStateTest, testGetSystemState)
 TEST_ADD(BasisFieldStateTest, testSetSystemState)
 TEST_ADD(BasisFieldStateTest, testSetSystem)
-
 TEST_END(BasisFieldStateTest)
 
 #endif

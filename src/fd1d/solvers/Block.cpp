@@ -246,7 +246,8 @@ namespace Fd1d
       Propagator const & p0 = propagator(0);
       Propagator const & p1 = propagator(1);
 
-      // Evaluate unnormalized integral
+      // Evaluate unnormalized integral with respect to s
+      // Uses trapezoidal rule for integration
       for (i = 0; i < nx; ++i) {
          cField()[i] += 0.5*p0.q(0)[i]*p1.q(ns_ - 1)[i];
       }

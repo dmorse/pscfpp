@@ -22,6 +22,7 @@ namespace Pscf {
    SweepTmpl<State>::SweepTmpl(int historyCapacity)
     : ns_(0),
       baseFileName_(),
+      writeRhoRGrid_(false),
       historyCapacity_(historyCapacity)
    {  setClassName("SweepTmpl"); }
 
@@ -38,13 +39,14 @@ namespace Pscf {
    template <class State>
    void SweepTmpl<State>::readParameters(std::istream& in)
    {
-      // Default file prefix
+      // Default values
       baseFileName_ = "";
+
       // Read
       read<int>(in, "ns", ns_);
       readOptional<std::string>(in, "baseFileName", baseFileName_);
       readOptional<int>(in, "historyCapacity", historyCapacity_);
-      readOptional<bool>(in, "writeRhoRgrid", writeRhoRgrid_);
+      readOptional<bool>(in, "writeRhoRGrid", writeRhoRGrid_);
       UTIL_CHECK(historyCapacity_ > 0);
 
       // Allocate required arrays

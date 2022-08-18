@@ -36,12 +36,12 @@ namespace Pspg
 
       /**
       * Generic field (function of position).
-      */ //where is these two used?
+      */ 
       typedef RDField<D> Field;
 
       /**
       * Chemical potential field type.
-      */ //where is these two used?
+      */ 
       typedef RDField<D> WField;
 
       /**

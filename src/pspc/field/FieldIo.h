@@ -496,7 +496,7 @@ namespace Pspc
       /// Get group name string by const reference.
       std::string const & groupName() const
       {  
-         UTIL_ASSERT(fftPtr_);  
+         UTIL_ASSERT(groupNamePtr_);  
          return *groupNamePtr_; 
       }
 

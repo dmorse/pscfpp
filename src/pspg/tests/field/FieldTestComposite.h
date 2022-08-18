@@ -4,8 +4,8 @@
 #include <test/CompositeTestRunner.h>
 
 #include "FftTest.h"
-#include "FieldIoTest.h"
 #include "DomainTest.h"
+#include "FieldIoTest.h"
 
 TEST_COMPOSITE_BEGIN(FieldTestComposite)
 TEST_COMPOSITE_ADD_UNIT(FftTest);

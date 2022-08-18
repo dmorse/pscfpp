@@ -13,19 +13,28 @@ includes:
 run: $(pscf_tests_OBJS) $(BLD_DIR)/$(TEST)
 	$(BLD_DIR)/$(TEST) $(SRC_DIR)/pscf/tests/ 
 
-#	@echo `grep failed log` ", "\
-#              `grep successful log` "in pscf/tests/log" > count
-#	@cat count
+run-quiet: $(pscf_tests_OBJS) $(BLD_DIR)/$(TEST)
+	@$(BLD_DIR)/$(TEST) $(SRC_DIR)/pscf/tests/ > log
+	@echo `grep failed log` ", "\
+              `grep successful log` "in pscf/tests/log" > count
+	@cat count
 
 clean-outputs:
 	rm -f log count 
 ifeq ($(BLD_DIR),$(SRC_DIR))
-	cd chem; $(MAKE) clean-outputs
-	cd crystal; $(MAKE) clean-outputs
-	cd inter; $(MAKE) clean-outputs
-	cd math; $(MAKE) clean-outputs
-	cd mesh; $(MAKE) clean-outputs
-	cd solvers; $(MAKE) clean-outputs
+	-cd chem; $(MAKE) clean-outputs
+	-cd crystal; $(MAKE) clean-outputs
+	-cd inter; $(MAKE) clean-outputs
+	-cd math; $(MAKE) clean-outputs
+	-cd mesh; $(MAKE) clean-outputs
+	-cd solvers; $(MAKE) clean-outputs
+else
+	-cd $(SRC_DIR)/pscf/tests/chem; $(MAKE) clean-outputs
+	-cd $(SRC_DIR)/pscf/tests/crystal; $(MAKE) clean-outputs
+	-cd $(SRC_DIR)/pscf/tests/inter; $(MAKE) clean-outputs
+	-cd $(SRC_DIR)/pscf/tests/math; $(MAKE) clean-outputs
+	-cd $(SRC_DIR)/pscf/tests/mesh; $(MAKE) clean-outputs
+	-cd $(SRC_DIR)/pscf/tests/solvers; $(MAKE) clean-outputs
 endif
 
 clean:
@@ -38,6 +47,13 @@ ifeq ($(BLD_DIR),$(SRC_DIR))
 	rm -f math/Test math/Test.o math/Test.d
 	rm -f mesh/Test mesh/Test.o mesh/Test.d
 	rm -f solvers/Test solvers/Test.o solvers/Test.d
+else
+	-cd $(SRC_DIR)/pscf/tests/chem; $(MAKE) clean
+	-cd $(SRC_DIR)/pscf/tests/crystal; $(MAKE) clean
+	-cd $(SRC_DIR)/pscf/tests/inter; $(MAKE) clean
+	-cd $(SRC_DIR)/pscf/tests/math; $(MAKE) clean
+	-cd $(SRC_DIR)/pscf/tests/mesh; $(MAKE) clean
+	-cd $(SRC_DIR)/pscf/tests/solvers; $(MAKE) clean
 endif
 	$(MAKE) clean-outputs
 

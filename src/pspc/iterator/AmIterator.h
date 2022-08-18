@@ -50,18 +50,25 @@ namespace Pspc
       */
       void readParameters(std::istream& in);
 
-      /// Return whether unit cell is flexible.
-      inline const bool isFlexible() {return isFlexible_;}
-
+      // Inherited public member functions
       using AmIteratorTmpl<Iterator<D>,FieldCPU>::setup;
       using AmIteratorTmpl<Iterator<D>,FieldCPU>::solve;
+      using AmIteratorTmpl<Iterator<D>,FieldCPU>::setClassName;
+      using Iterator<D>::maskField;
+      using Iterator<D>::externalField;
+      using Iterator<D>::hasMask;
+      using Iterator<D>::hasExternalField;
       using Iterator<D>::isFlexible;
+      using Iterator<D>::flexibleParams;
+      using Iterator<D>::setFlexibleParams;
 
    protected:
-   
+  
+      // Inherited protected members 
       using ParamComposite::readOptional;
       using Iterator<D>::system;
       using Iterator<D>::isFlexible_;
+      using Iterator<D>::flexibleParams_;
 
    private:
 
@@ -69,7 +76,7 @@ namespace Pspc
       double scaleStress_;
       
       /**
-      * Find norm of a residual vector.
+      * Find L2 norm of a residual vector.
       */
       double findNorm(FieldCPU const & hist);
 
@@ -79,99 +86,135 @@ namespace Pspc
       double findMaxAbs(FieldCPU const & hist);
 
       /**
-      * Update the series of residual vectors.
+      * Update the basis for residual or field vectors.
       * 
-      * \param basis RingBuffer object storing the list of residual or field basis vectors.
-      * \param hists RingBuffer object storing the histories of residual or field vectors.
+      * \param basis RingBuffer of residual or field basis vectors
+      * \param hists RingBuffer of past residual or field vectors
       */
-      void updateBasis(RingBuffer<FieldCPU> & basis, RingBuffer<FieldCPU> const & hists);
+      void updateBasis(RingBuffer<FieldCPU> & basis, 
+                       RingBuffer<FieldCPU> const & hists);
 
       /**
-      * Compute the dot product for an element of the U matrix.
+      * Compute the dot product for one element of the U matrix.
       * 
-      * \param resBasis RingBuffer object storing the list of residual basis vectors.
+      * \param resBasis RingBuffer of residual basis vectors.
       * \param m row of the U matrix
       * \param n column of the U matrix
       */
-      double computeUDotProd(RingBuffer<FieldCPU> const & resBasis, int m, int n);
+      double computeUDotProd(RingBuffer<FieldCPU> const & resBasis, 
+                             int m, int n);
 
       /**
-      * Compute the dot product for an element of the v vector.
+      * Compute the dot product for one element of the v vector.
       * 
-      * \param resCurrent the residual vector calculated at the present iteration step
-      * \param resBasis RingBuffer object storing the list of residual basis vectors.
-      * \param m row of the v vector
+      * \param resCurrent current residual vector 
+      * \param resBasis RingBuffer of residual basis vectors
+      * \param m row index of the v vector
       */
-      double computeVDotProd(FieldCPU const & resCurrent, RingBuffer<FieldCPU> const & resBasis, int m);
+      double computeVDotProd(FieldCPU const & resCurrent, 
+                             RingBuffer<FieldCPU> const & resBasis, 
+                             int m);
 
       /**
-      * Compute the series of necessary dot products and update the U matrix.
+      * Update the U matrix.
       * 
       * \param U U matrix
-      * \param resBasis RingBuffer object storing the list of residual basis vectors.
-      * \param nHist number of histories stored at this iteration
+      * \param resBasis RingBuffer of residual basis vectors.
+      * \param nHist number of past states
       */
-      void updateU(DMatrix<double> & U, RingBuffer<FieldCPU> const & resBasis, int nHist);
+      void updateU(DMatrix<double> & U, 
+                   RingBuffer<FieldCPU> const & resBasis, 
+                   int nHist);
 
       /**
-      * Compute the series of necessary dot products and update the v vector.
+      * Update the v vector.
       * 
       * \param v v vector
-      * \param resCurrent the residual vector calculated at the present iteration step
-      * \param resBasis RingBuffer object storing the list of residual basis vectors.
-      * \param nHist number of histories stored at this iteration
+      * \param resCurrent current residual vector 
+      * \param resBasis RingBuffer of residual basis vectors.
+      * \param nHist number of past states 
       */
-      void updateV(DArray<double> & v, FieldCPU const & resCurrent, RingBuffer<FieldCPU> const & resBasis, int nHist);
+      void updateV(DArray<double> & v, 
+                   FieldCPU const & resCurrent, 
+                   RingBuffer<FieldCPU> const & resBasis, 
+                   int nHist);
 
       /**
-      * Set a field equal to another. Essentially a = b, but potentially more complex
-      * in certain implementations of the AmIterator.
+      * Assign one field to another.
       * 
-      * \param a the field to be set
-      * \param b the field for it to be set to
+      * \param a the field to be set (lhs of assignment)
+      * \param b the field for it to be set to (rhs of assigment)
       */
       void setEqual(FieldCPU& a, FieldCPU const & b);
 
       /**
-      * Mix histories, scaled by their respective coefficients, into the trial field.
+      * Add linear combination of basis vectors to trial field.
       * 
-      * \param trial object for calculation results to be stored in.
-      * \param basis list of history basis vectors.
-      * \param coeffs list of coefficients for each history.
+      * \param trial trial vector (input-output)
+      * \param basis RingBuffer of basis vectors
+      * \param coeffs array of coefficients of basis vectors
       * \param nHist number of histories stored at this iteration
       */
-      void addHistories(FieldCPU& trial, RingBuffer<FieldCPU> const & basis, DArray<double> coeffs, int nHist);
+      void addHistories(FieldCPU& trial, 
+                        RingBuffer<FieldCPU> const & basis, 
+                        DArray<double> coeffs, 
+                        int nHist);
 
       /**
-      * Add predicted error into the field trial guess to attempt to correct for it.
+      * Add predicted error to field trial.
       * 
-      * \param fieldTrial field for calculation results to be stored in.
-      * \param resTrial predicted error for current mixing of histories.
-      * \param lambda Anderson-Mixing parameter for mixing in histories
+      * \param fieldTrial trial field (in-out)
+      * \param resTrial predicted error for current trial
+      * \param lambda Anderson-Mixing mixing 
       */
-      void addPredictedError(FieldCPU& fieldTrial, FieldCPU const & resTrial, double lambda);
+      void addPredictedError(FieldCPU& fieldTrial, 
+                             FieldCPU const & resTrial, 
+                             double lambda);
 
-      /// Checks if the system has an initial guess
+      /**
+      * Does the system has an initial guess for the field?
+      */
       bool hasInitialGuess();
-      
-      /// Calculates and returns the number of elements in the
-      /// array to be iterated
+     
+      /** 
+      * Compute and returns the number of elements in field vector.
+      *
+      * Called during allocation and then stored.
+      */
       int nElements();
 
-      /// Gets the current state of the system and processes it into 
-      /// format needed by AmIteratorTmpl.
+      /**
+      * Gets the current field vector from the system.
+      * 
+      * \param curr current field vector
+      */ 
       void getCurrent(FieldCPU& curr);
 
-      /// Runs calculation to evaluate function for fixed point.
+      /**
+      * Have the system perform a computation using new field.
+      *
+      * Solves the modified diffusion equations, computes concentrations,
+      * and optionally computes stress components.
+      */
       void evaluate();
 
-      /// Gets residual values from system
+      /**
+      * Compute the residual vector.
+      *
+      * \param resid current residual vector value
+      */
       void getResidual(FieldCPU& resid);
 
-      /// Updates the system with a passed in state of the iterator.
+      /**
+      * Updates the system field with the new trial field.
+      *
+      * \param newGuess trial field vector
+      */
       void update(FieldCPU& newGuess);
 
-      /// Outputs relevant system details to the iteration log
+      /**
+      * Outputs relevant system details to the iteration log.
+      */
       void outputToLog();
 
    };

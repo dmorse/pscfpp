@@ -3,11 +3,13 @@
 
 #include <test/CompositeTestRunner.h>
 
+#include "DomainTest.h"
 #include "PropagatorTest.h"
 #include "MixtureTest.h"
 #include "SystemTest.h"
 
 TEST_COMPOSITE_BEGIN(Fd1dTestComposite)
+TEST_COMPOSITE_ADD_UNIT(DomainTest);
 TEST_COMPOSITE_ADD_UNIT(PropagatorTest);
 TEST_COMPOSITE_ADD_UNIT(MixtureTest);
 TEST_COMPOSITE_ADD_UNIT(SystemTest);

@@ -1,4 +1,4 @@
-/*! \page user_example_page 3.4 Examples
+/*! \page user_example_page 3.5 Examples
 
 \ref user_command_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_field_page (Next)
@@ -21,14 +21,14 @@ Generally, the parameter file is named "param" and the command file is named "co
 A typical example directory contains files and subdirectories with the following names:
 \code
     param
-    commands
+    command
     run
     clean
     in/
-       omega
+       w.bf
     out/
 \endcode
-Here, in/ and out/ are names of subdirectories. The file in/omega is the input chemical potential field.
+Here, in/ and out/ are names of subdirectories. The file in/w.bf is the input chemical potential field.
 The out/ subdirectory is initially empty. The files named "run" and "clean" are unix shell scripts
 that users may execute to run the simulation and clean up afterwards, respectively.
 

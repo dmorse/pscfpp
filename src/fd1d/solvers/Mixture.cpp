@@ -53,13 +53,31 @@ namespace Fd1d
          }
       }
 
-      // Process solvents 
+      // Process solvents - set discretization for all solvents
       if (nSolvent() > 0) {
          for (int i = 0; i < nSolvent(); ++i) {
             solvent(i).setDiscretization(domain);
          }
       }
 
+   }
+
+   /*
+   * Reset statistical segment length for one monomer type.
+   */
+   void Mixture::setKuhn(int monomerId, double kuhn)
+   {
+      // Set new Kuhn length for relevant Monomer object
+      monomer(monomerId).setKuhn(kuhn);
+
+      // Update kuhn length for all blocks of this monomer type
+      for (int i = 0; i < nPolymer(); ++i) {
+         for (int j =  0; j < polymer(i).nBlock(); ++j) {
+            if (monomerId == polymer(i).block(j).monomerId()) {
+               polymer(i).block(j).setKuhn(kuhn);
+            }
+         }
+      }
    }
 
    /*

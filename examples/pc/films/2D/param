@@ -1,0 +1,45 @@
+System{
+  Mixture{
+    nMonomer  2
+    monomers[
+              1.0  
+              1.0 
+    ]
+    nPolymer  1
+    Polymer{
+      type    linear
+      nBlock  2
+      blocks[
+              0  0.4
+              1  0.6
+      ]
+      phi     1.0
+    }
+    ds   0.01
+  }
+  ChiInteraction{
+    chi(  
+         1   0   20.0
+    )
+  }
+  Domain{
+    unitCell       rectangular    2.0    2.0
+    mesh           64    64
+    groupName      p_1
+  }
+  AmIteratorFilm{
+    maxItr       1000
+    epsilon      1e-6
+    maxHist      50 
+    isFlexible   1
+    normalVecId          1
+    interfaceThickness   0.08     
+    wallThickness        0.25
+    chi[
+          20   20
+          0    0
+    ]
+    wallBasisOutFile     out/wall.bf
+    wallRGridOutFile     out/wall.rf
+  }
+}

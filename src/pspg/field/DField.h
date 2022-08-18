@@ -17,8 +17,11 @@ namespace Pspg
    using namespace Util;
 
    /**
-   * Dynamic array with aligned data, for use with cufftw library/device code.
-   * This class does not offer memory access via operator[]
+   * Dynamic array on the GPU with alligned data.
+   *
+   * This class wraps an aligned C array with elements of type Data on the 
+   * device. All member functions may be called from the host. As a result,
+   * the class does not offer access to individual elements via operator[]
    *
    * \ingroup Pspg_Field_Module
    */
@@ -41,7 +44,7 @@ namespace Pspg
       virtual ~DField();
 
       /**
-      * Allocate the underlying C array.
+      * Allocate the underlying C array on the device.
       *
       * \throw Exception if the Field is already allocated.
       *
@@ -80,24 +83,25 @@ namespace Pspg
 
       /**
       * Assignment operator.
+      *
+      * \param other DField<Data> on rhs of assignent (input)
       */
       virtual DField<Data>& operator = (const DField<Data>& other);
 
       /**
       * Copy constructor.
+      * 
+      * \param other DField<Data> to be copied (input)
       */
       DField(const DField& other);
 
    protected:
 
-      /// Pointer to an array of Data elements.
+      /// Pointer to an array of Data elements on the device / GPU.
       Data* data_;
 
       /// Allocated size of the data_ array.
       int capacity_;
-
-   private:
-      
 
    };
 
@@ -128,60 +132,6 @@ namespace Pspg
    template <typename Data>
    inline bool DField<Data>::isAllocated() const
    {  return (bool)data_; }
-
-   /*  
-   * Get an element by reference (C-array subscripting)
-   */
-   //template <typename Data>
-   //inline Data& DField<Data>::operator [] (int i)
-   //{   
-   //   assert(data_ != 0); 
-   //   assert(i >= 0); 
-   //   assert(i < capacity_);
-   //   return *(data_ + i); 
-   //}  
-
-   /*  
-   * Get an element by const reference (C-array subscripting)
-   */
-   //template <typename Data>
-   //inline const Data& DField<Data>::operator [] (int i) const
-   //{   
-   //   assert(data_ != 0); 
-   //   assert(i >= 0 );
-   //   assert(i < capacity_);
-   //   return *(data_ + i); 
-   //}   
-
-   /*
-   * Serialize a Field to/from an Archive.
-   */
-   /*template <typename Data>
-   template <class Archive>
-   void Field<Data>::serialize(Archive& ar, const unsigned int version)
-   {
-      int capacity;
-      if (Archive::is_saving()) {
-         capacity = capacity_;
-      }
-      ar & capacity;
-      if (Archive::is_loading()) {
-         if (!isAllocated()) {
-            if (capacity > 0) {
-               allocate(capacity);
-            }
-         } else {
-            if (capacity != capacity_) {
-               UTIL_THROW("Inconsistent Field capacities");
-            }
-         }
-      }
-      if (isAllocated()) {
-         for (int i = 0; i < capacity_; ++i) {
-            ar & data_[i];
-         }
-      }
-   }*/
 
 }
 }

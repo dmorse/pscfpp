@@ -52,21 +52,38 @@ namespace Fd1d {
 
       /**
       * Set grid parameters for a planar domain.
+      *
+      * \param xMin  minimum normal coordinate value
+      * \param xMax  maximum normal coordinate value
+      * \param nx  number of grid points, including endpoints
       */
       void setPlanarParameters(double xMin, double xMax, int nx);
 
       /**
       * Set grid parameters for a cylindrical or spherical shell.
+      *
+      * \param mode  enumeration (Llamellar, Cylindrical or Spherical)
+      * \param xMin  minimum radius
+      * \param xMax  maximum radius
+      * \param nx  number of grid points, including endpoints
       */
-      void setShellParameters(GeometryMode mode, double xMin, double xMax, int nx);
+      void setShellParameters(GeometryMode mode, 
+                              double xMin, double xMax, 
+                              int nx);
 
       /**
       * Set grid parameters for a cylinder.
+      * 
+      * \param xMax  maximum radius
+      * \param nx  number of grid points, including endpoints
       */
       void setCylinderParameters(double xMax, int nx);
 
       /**
-      * Set grid parameters for a cylinder.
+      * Set grid parameters for a sphere.
+      *
+      * \param xMax  maximum radius
+      * \param nx  number of grid points, including endpoints
       */
       void setSphereParameters(double xMax, int nx);
 
@@ -87,9 +104,8 @@ namespace Fd1d {
       /**
       * Get generalized volume of domain.
       *
-      * Returns volume of spherical domain, area of
-      * cylindrical domain, or a length of a planar
-      * domain.
+      * Returns volume of spherical domain, area of cylindrical 
+      * domain, or a length of a planar domain.
       */
       double volume() const;
 
@@ -99,7 +115,7 @@ namespace Fd1d {
       double dx() const;
 
       /**
-      * Get number of spatial grid points.
+      * Get number of spatial grid points, including both endpoints.
       */
       int nx() const;
 

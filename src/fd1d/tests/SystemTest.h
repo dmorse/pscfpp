@@ -33,12 +33,14 @@ public:
       if (logFile_.is_open()) {
          logFile_.close();
       }
+      ParamComponent::setEcho(false);
    }
 
    void openLogFile(char const * filename)
    {
       openOutputFile(filename, logFile_);
       Log::setFile(logFile_);
+      ParamComponent::setEcho(true);
    }
 
   
@@ -51,7 +53,7 @@ public:
    void testReadParameters()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/testReadParameters.log");
+      openLogFile("out/SystemTestReadParameters.log");
 
       std::ifstream in;
       openInputFile("in/planar1.prm", in);
@@ -68,7 +70,7 @@ public:
    void testSolveMdePlanar()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/testSolveMdePlanar.log");
+      openLogFile("out/SystemTestSolveMdePlanar.log");
 
       std::ifstream in;
       openInputFile("in/planar1.prm", in);
@@ -110,7 +112,7 @@ public:
    void testSolveMdeSpherical()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/testSolveMdeSpherical.log");
+      openLogFile("out/SystemTestSolveMdeSpherical.log");
 
       std::ifstream in;
       openInputFile("in/spherical1.prm", in);
@@ -149,7 +151,7 @@ public:
    void testIteratorPlanar()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/testIteratorPlanar.log");
+      openLogFile("out/SystemTestIteratorPlanar.log");
 
       std::ifstream in;
       openInputFile("in/planar2.prm", in);
@@ -205,7 +207,7 @@ public:
    void testIteratorSpherical()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/testIteratorSpherical.log");
+      openLogFile("out/SystemTestIteratorSpherical.log");
 
       std::ifstream in;
       openInputFile("in/spherical1.prm", in);
@@ -267,7 +269,7 @@ public:
    void testFieldInput()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/testFieldInput.log");
+      openLogFile("out/SystemTestFieldInput.log");
 
       std::ifstream in;
       openInputFile("in/planar2.prm", in);
@@ -297,7 +299,7 @@ public:
    void testReadCommandsPlanar()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/testReadCommandsPlanar.log");
+      openLogFile("out/SystemTestReadCommandsPlanar.log");
 
       System sys;
       std::ifstream in;
@@ -321,7 +323,7 @@ public:
    void testReadCommandsSpherical()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/testReadCommandsSpherical.log");
+      openLogFile("out/SystemTestReadCommandsSpherical.log");
 
       System sys;
       std::ifstream in;
@@ -345,7 +347,7 @@ public:
    void testReadCommandsSphericalSweep()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/testReadCommandsSphericalSweep.log");
+      openLogFile("out/SystemTestReadCommandsSphericalSweep.log");
 
       System sys;
       std::ifstream in;

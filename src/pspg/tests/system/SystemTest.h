@@ -5,12 +5,10 @@
 #include <test/UnitTestRunner.h>
 
 #include <pspg/System.h>
-#include <pspg/field/BFieldComparison.h>
 #include <pspg/field/RDField.h>
 #include <pspg/math/GpuResources.h>
-
-//#include <pscf/mesh/MeshIterator.h>
-//#include <util/format/Dbl.h>
+#include <pscf/crystal/BFieldComparison.h>
+#include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>
 
@@ -18,28 +16,13 @@ using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Pspg;
 
-class SystemTest : public UnitTest
+class SystemTest : public LogFileUnitTest
 {
 
 public:
 
-   std::ofstream logFile_;
-
    void setUp()
    {  setVerbose(0); }
-
-   void tearDown()
-   {
-      if (logFile_.is_open()) {
-         logFile_.close();
-      }
-   }
-
-   void openLogFile(char const * filename)
-   {
-      openOutputFile(filename, logFile_);
-      Log::setFile(logFile_);
-   }
 
    void testConstructor1D()
    {
@@ -67,8 +50,9 @@ public:
       system.readWBasis("in/diblock/lam/omega.in");
 
       // Get reference field
-      DArray< DField<cudaReal> > d_wFields_check;
-      RDFieldToDField(d_wFields_check, system.wFields());
+      DArray< DArray<double> > d_wFields_check;
+      //RDFieldToDField(d_wFields_check, system.wFields());
+      d_wFields_check = system.wFields();
 
       // Round trip conversion basis -> rgrid -> basis, read result
       system.basisToRGrid("in/diblock/lam/omega.in",
@@ -78,15 +62,16 @@ public:
       system.readWBasis("out/testConversion1D_lam_w.bf");
 
       // Get test result
-      DArray< DField<cudaReal> > d_wFields;
-      RDFieldToDField(d_wFields, system.wFields());
+      DArray< DArray<double> > d_wFields;
+      //RDFieldToDField(d_wFields, system.wFields());
+      d_wFields = system.wFields();
 
       // Compare result to original
       BFieldComparison comparison (1);
       comparison.compare(d_wFields_check, d_wFields);
       if (verbose()>0) {
-         std::cout << "\n";
-         std::cout << "Max error = " << comparison.maxDiff() << "\n";
+         Log::file() << "\n";
+         Log::file() << "Max error = " << comparison.maxDiff() << "\n";
       }
       TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
    }
@@ -103,8 +88,9 @@ public:
       system.readWBasis("in/diblock/hex/omega.in");
 
       // Get reference field
-      DArray< DField<cudaReal> > d_wFields_check;
-      RDFieldToDField(d_wFields_check, system.wFields());
+      DArray< DArray<double> > d_wFields_check;
+      //RDFieldToDField(d_wFields_check, system.wFields());
+      d_wFields_check = system.wFields();
 
       // Round trip basis -> rgrid -> basis, read resulting wField
       system.basisToRGrid("in/diblock/hex/omega.in",
@@ -115,15 +101,16 @@ public:
       system.readWBasis("out/testConversion2D_hex_w.bf");
 
       // Get test result
-      DArray< DField<cudaReal> > d_wFields;
-      RDFieldToDField(d_wFields, system.wFields());
+      DArray< DArray<double> > d_wFields;
+      //RDFieldToDField(d_wFields, system.wFields());
+      d_wFields = system.wFields();
 
       // Compare result to original
       BFieldComparison comparison (1);
       comparison.compare(d_wFields_check, d_wFields);
       if (verbose()>0) {
-         std::cout << "\n";
-         std::cout << "Max error = " << comparison.maxDiff() << "\n";
+         Log::file() << "\n";
+         Log::file() << "Max error = " << comparison.maxDiff() << "\n";
       }
       TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
    }
@@ -141,7 +128,7 @@ public:
       system.readWBasis("in/diblock/bcc/omega.in");
 
       // Get reference field
-      DArray< DField<cudaReal> > d_wFields_check;
+      DArray< DArray<double> > d_wFields_check;
       RDFieldToDField(d_wFields_check, system.wFields());
 
       // Complete round trip basis -> rgrid -> basis
@@ -152,15 +139,15 @@ public:
       system.readWBasis("out/testConversion3D_bcc_w.bf");
 
       // Get test result
-      DArray< DField<cudaReal> > d_wFields;
+      DArray< DArray<double> > d_wFields;
       RDFieldToDField(d_wFields, system.wFields());
 
       // Compare result to original
       BFieldComparison comparison (1);
       comparison.compare(d_wFields_check, d_wFields);
       if (verbose()>0) {
-         std::cout << "\n";
-         std::cout << "Max error = " << comparison.maxDiff() << "\n";
+         Log::file() << "\n";
+         Log::file() << "Max error = " << comparison.maxDiff() << "\n";
       }
       TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
    }
@@ -204,7 +191,7 @@ public:
       system.readWBasis("in/diblock/lam/omega.ref");
 
       // Get reference field
-      DArray< DField<cudaReal> > d_wFields_check;
+      DArray< DArray<double> > d_wFields_check;
       RDFieldToDField(d_wFields_check, system.wFields());
      
       // PSPC tests start from the reference solution, 
@@ -219,15 +206,15 @@ public:
       system.writeCBasis("out/testIterate1D_lam_rigid_c.bf");
 
       // Get test result
-      DArray< DField<cudaReal> > d_wFields;
+      DArray< DArray<double> > d_wFields;
       RDFieldToDField(d_wFields, system.wFields());
 
       // Compare result to original
       BFieldComparison comparison (1);
       comparison.compare(d_wFields_check, d_wFields);
       if (verbose()>0) {
-         std::cout << "\n";
-         std::cout << "Max error = " << comparison.maxDiff() << "\n";
+         Log::file() << "\n";
+         Log::file() << "Max error = " << comparison.maxDiff() << "\n";
       }
       TEST_ASSERT(comparison.maxDiff() < 5.0E-7);
 
@@ -244,7 +231,7 @@ public:
       system.readWBasis("in/diblock/lam/omega.ref");
 
       // Get reference field
-      DArray< DField<cudaReal> > d_wFields_check;
+      DArray< DArray<double> > d_wFields_check;
       RDFieldToDField(d_wFields_check, system.wFields());
 
       // Read input w-fields, iterate and output solution
@@ -257,7 +244,7 @@ public:
       system.writeCBasis("out/testIterate1D_lam_flex_c.bf");
 
       // Get test result
-      DArray< DField<cudaReal> > d_wFields;
+      DArray< DArray<double> > d_wFields;
       RDFieldToDField(d_wFields, system.wFields());
 
       // Compare result to original
@@ -268,10 +255,10 @@ public:
       double diff = comparison.maxDiff();
       double epsilon = 5.0E-7;
       if (verbose() > 0 || diff > epsilon) {
-         std::cout << "\n";
-         std::cout << "Max diff = " << comparison.maxDiff() << "\n";
-         std::cout << "Rms diff = " << comparison.rmsDiff() << "\n";
-         std::cout << "epsilon  = " << epsilon << "\n";
+         Log::file() << "\n";
+         Log::file() << "Max diff = " << comparison.maxDiff() << "\n";
+         Log::file() << "Rms diff = " << comparison.rmsDiff() << "\n";
+         Log::file() << "epsilon  = " << epsilon << "\n";
       }
       TEST_ASSERT(diff < epsilon);
    }
@@ -286,7 +273,7 @@ public:
 
       // Get reference field
       system.readWBasis("in/solution/lam/w.bf");
-      DArray< DField<cudaReal> > d_wFields_check;
+      DArray< DArray<double> > d_wFields_check;
       RDFieldToDField(d_wFields_check, system.wFields());
 
       // iterate and output solution
@@ -298,7 +285,7 @@ public:
       system.writeCBasis("out/testIterate1D_lam_soln_c.bf");
 
       // Get test result
-      DArray< DField<cudaReal> > d_wFields;
+      DArray< DArray<double> > d_wFields;
       RDFieldToDField(d_wFields, system.wFields());
 
       // Compare result to original
@@ -309,10 +296,10 @@ public:
       double diff = comparison.maxDiff();
       double epsilon = 2.0E-6;
       if (verbose() > 0 || diff > epsilon) {
-         std::cout << "\n";
-         std::cout << "Max diff = " << comparison.maxDiff() << "\n";
-         std::cout << "Rms diff = " << comparison.rmsDiff() << "\n";
-         std::cout << "epsilon  = " << epsilon << "\n";
+         Log::file() << "\n";
+         Log::file() << "Max diff = " << comparison.maxDiff() << "\n";
+         Log::file() << "Rms diff = " << comparison.rmsDiff() << "\n";
+         Log::file() << "epsilon  = " << epsilon << "\n";
       }
       TEST_ASSERT(diff < epsilon);
    }
@@ -327,7 +314,7 @@ public:
 
       // Get reference field
       system.readWBasis("in/blend/lam/w.ref_closed");
-      DArray< DField<cudaReal> > d_wFields_check;
+      DArray< DArray<double> > d_wFields_check;
       RDFieldToDField(d_wFields_check, system.wFields());
 
       // Read input w-fields, iterate and output solution
@@ -340,7 +327,7 @@ public:
       system.writeCBasis("out/testIterate1D_lam_blend_c.bf");
 
       // Get test result
-      DArray< DField<cudaReal> > d_wFields;
+      DArray< DArray<double> > d_wFields;
       RDFieldToDField(d_wFields, system.wFields());
 
       // Compare result to original
@@ -349,10 +336,10 @@ public:
       double diff = comparison.maxDiff();
       double epsilon = 5.0E-7;
       if (verbose() > 0 || diff > epsilon) {
-         std::cout << "\n";
-         std::cout << "Max diff = " << comparison.maxDiff() << "\n";
-         std::cout << "Rms diff = " << comparison.rmsDiff() << "\n";
-         std::cout << "epsilon  = " << epsilon << "\n";
+         Log::file() << "\n";
+         Log::file() << "Max diff = " << comparison.maxDiff() << "\n";
+         Log::file() << "Rms diff = " << comparison.rmsDiff() << "\n";
+         Log::file() << "epsilon  = " << epsilon << "\n";
       }
       TEST_ASSERT(diff < epsilon);
    }
@@ -367,11 +354,12 @@ public:
 
       // Get reference field
       system.readWBasis("in/solution/lam_open/w.ref");
-      DArray< DField<cudaReal> > d_wFields_check;
+      DArray< DArray<double> > d_wFields_check;
       RDFieldToDField(d_wFields_check, system.wFields());
 
       // Read input w-fields, iterate and output solution
       system.readWBasis("in/solution/lam_open/w.bf");
+
       int error = system.iterate();
       if (error) {
          TEST_THROW("Iterator failed to converge.");
@@ -380,7 +368,7 @@ public:
       system.writeCBasis("out/testIterate1D_lam_open_soln_c.bf");
 
       // Get test result
-      DArray< DField<cudaReal> > d_wFields;
+      DArray< DArray<double> > d_wFields;
       RDFieldToDField(d_wFields, system.wFields());
 
       // Compare result to original
@@ -392,10 +380,10 @@ public:
       //double epsilon = 5.0E-7;
       double epsilon = 6.0E-6;
       if (diff > epsilon) {
-         std::cout << "\n";
-         std::cout << "Max diff = " << comparison.maxDiff() << "\n";
-         std::cout << "Rms diff = " << comparison.rmsDiff() << "\n";
-         std::cout << "epsilon  = " << epsilon << "\n";
+         Log::file() << "\n";
+         Log::file() << "Max diff = " << comparison.maxDiff() << "\n";
+         Log::file() << "Rms diff = " << comparison.rmsDiff() << "\n";
+         Log::file() << "epsilon  = " << epsilon << "\n";
       }
       TEST_ASSERT(diff < epsilon);
    }
@@ -410,7 +398,7 @@ public:
 
       // Get reference field
       system.readWBasis("in/blend/lam/w.ref");
-      DArray< DField<cudaReal> > d_wFields_check;
+      DArray< DArray<double> > d_wFields_check;
       RDFieldToDField(d_wFields_check, system.wFields());
 
       // Read input w-fields, iterate and output solution
@@ -423,7 +411,7 @@ public:
       system.writeCBasis("out/testIterate1D_lam_open_blend_c.bf");
 
       // Get test result
-      DArray< DField<cudaReal> > d_wFields;
+      DArray< DArray<double> > d_wFields;
       RDFieldToDField(d_wFields, system.wFields());
 
       // Compare result to original
@@ -434,10 +422,10 @@ public:
       double diff = comparison.maxDiff();
       double epsilon = 5.0E-7;
       if (diff > epsilon) {
-         std::cout << "\n";
-         std::cout << "Max diff = " << comparison.maxDiff() << "\n";
-         std::cout << "Rms diff = " << comparison.rmsDiff() << "\n";
-         std::cout << "epsilon  = " << epsilon << "\n";
+         Log::file() << "\n";
+         Log::file() << "Max diff = " << comparison.maxDiff() << "\n";
+         Log::file() << "Rms diff = " << comparison.rmsDiff() << "\n";
+         Log::file() << "epsilon  = " << epsilon << "\n";
       }
       TEST_ASSERT(diff < epsilon);
    }
@@ -454,7 +442,7 @@ public:
       system.readWBasis("in/diblock/hex/omega.ref");
 
       // Get reference field
-      DArray< DField<cudaReal> > d_wFields_check;
+      DArray< DArray<double> > d_wFields_check;
       RDFieldToDField(d_wFields_check, system.wFields());
 
       // Read initial guess, iterate, output solution
@@ -469,7 +457,7 @@ public:
       system.writeCBasis("out/testIterate2D_hex_rigid_c.bf");
 
       // Get test result
-      DArray< DField<cudaReal> > d_wFields;
+      DArray< DArray<double> > d_wFields;
       RDFieldToDField(d_wFields, system.wFields());
 
       // Compare result to original
@@ -480,10 +468,10 @@ public:
       double diff = comparison.maxDiff();
       double epsilon = 5.0E-7;
       if (diff > epsilon) {
-         std::cout << "\n";
-         std::cout << "Max diff = " << comparison.maxDiff() << "\n";
-         std::cout << "Rms diff = " << comparison.rmsDiff() << "\n";
-         std::cout << "epsilon  = " << epsilon << "\n";
+         Log::file() << "\n";
+         Log::file() << "Max diff = " << comparison.maxDiff() << "\n";
+         Log::file() << "Rms diff = " << comparison.rmsDiff() << "\n";
+         Log::file() << "epsilon  = " << epsilon << "\n";
       }
       TEST_ASSERT(diff < epsilon);
    }
@@ -500,7 +488,7 @@ public:
       system.readWBasis("in/diblock/hex/omega.ref");
 
       // Get reference field
-      DArray< DField<cudaReal> > d_wFields_check;
+      DArray< DArray<double> > d_wFields_check;
       RDFieldToDField(d_wFields_check, system.wFields());
 
       system.readWBasis("in/diblock/hex/omega.in");
@@ -512,7 +500,7 @@ public:
       system.writeCBasis("out/testIterate2D_hex_flex_c.bf");
 
       // Get test result
-      DArray< DField<cudaReal> > d_wFields;
+      DArray< DArray<double> > d_wFields;
       RDFieldToDField(d_wFields, system.wFields());
 
       // Compare result to original
@@ -523,10 +511,10 @@ public:
       double diff = comparison.maxDiff();
       double epsilon = 5.0E-7;
       if (diff > epsilon) {
-         std::cout << "\n";
-         std::cout << "Max diff = " << comparison.maxDiff() << "\n";
-         std::cout << "Rms diff = " << comparison.rmsDiff() << "\n";
-         std::cout << "epsilon  = " << epsilon << "\n";
+         Log::file() << "\n";
+         Log::file() << "Max diff = " << comparison.maxDiff() << "\n";
+         Log::file() << "Rms diff = " << comparison.rmsDiff() << "\n";
+         Log::file() << "epsilon  = " << epsilon << "\n";
       }
       TEST_ASSERT(diff < epsilon);
 
@@ -543,7 +531,7 @@ public:
       system.readWBasis("in/diblock/bcc/omega.ref");
 
       // Get reference field
-      DArray< DField<cudaReal> > d_wFields_check;
+      DArray< DArray<double> > d_wFields_check;
       RDFieldToDField(d_wFields_check, system.wFields());
 
       system.readWBasis("in/diblock/bcc/omega.in");
@@ -555,7 +543,7 @@ public:
       system.writeCBasis("out/testIterate3D_bcc_rigid_c.bf");
 
       // Get test result
-      DArray< DField<cudaReal> > d_wFields;
+      DArray< DArray<double> > d_wFields;
       RDFieldToDField(d_wFields, system.wFields());
 
       // Compare result to original
@@ -566,10 +554,10 @@ public:
       double diff = comparison.maxDiff();
       double epsilon = 7.0E-7;
       if (diff > epsilon) {
-         std::cout << "\n";
-         std::cout << "Max diff = " << comparison.maxDiff() << "\n";
-         std::cout << "Rms diff = " << comparison.rmsDiff() << "\n";
-         std::cout << "epsilon  = " << epsilon << "\n";
+         Log::file() << "\n";
+         Log::file() << "Max diff = " << comparison.maxDiff() << "\n";
+         Log::file() << "Rms diff = " << comparison.rmsDiff() << "\n";
+         Log::file() << "epsilon  = " << epsilon << "\n";
       }
       TEST_ASSERT(diff < epsilon);
 
@@ -586,7 +574,7 @@ public:
       system.readWBasis("in/diblock/bcc/omega.ref");
 
       // Get reference field
-      DArray< DField<cudaReal> > d_wFields_check;
+      DArray< DArray<double> > d_wFields_check;
       RDFieldToDField(d_wFields_check, system.wFields());
 
       system.readWBasis("in/diblock/bcc/omega.in");
@@ -598,7 +586,7 @@ public:
       system.writeCBasis("out/testIterate3D_bcc_flex_c.bf");
 
       // Get test result
-      DArray< DField<cudaReal> > d_wFields;
+      DArray< DArray<double> > d_wFields;
       RDFieldToDField(d_wFields, system.wFields());
 
       // Compare result to original
@@ -609,10 +597,10 @@ public:
       double diff = comparison.maxDiff();
       double epsilon = 5.0E-7;
       if (diff > epsilon) {
-         std::cout << "\n";
-         std::cout << "Max diff = " << comparison.maxDiff() << "\n";
-         std::cout << "Rms diff = " << comparison.rmsDiff() << "\n";
-         std::cout << "epsilon  = " << epsilon << "\n";
+         Log::file() << "\n";
+         Log::file() << "Max diff = " << comparison.maxDiff() << "\n";
+         Log::file() << "Rms diff = " << comparison.rmsDiff() << "\n";
+         Log::file() << "epsilon  = " << epsilon << "\n";
       }
       TEST_ASSERT(diff < epsilon);
 
@@ -631,22 +619,28 @@ public:
       in.close();
    }
 
-   template <int D>
-   void RDFieldToDField(DArray<DField<cudaReal>> & out, DArray<RDField<D>> const & in)
+   void RDFieldToDField(DArray< DArray<double> > & out, 
+                        DArray< DArray<double> > const & in)
    {
-      // if not allocated, allocate
+      // if out array is not allocated, allocate
       int nField = in.capacity();
-      int nPoint = in[0].capacity();
       if (!out.isAllocated()) {
          out.allocate(nField);
-         for (int i = 0; i < nField; i++) {
+      }
+      int nPoint = in[0].capacity();
+      for (int i = 0; i < nField; i++) {
+         UTIL_CHECK(in[i].capacity() == nPoint);
+         if (!out[i].isAllocated()) {
             out[i].allocate(nPoint);
+         } else {
+            UTIL_CHECK(out[i].capacity() == nPoint);
          }
       }
 
       // Copy
       for (int i = 0; i < nField; i++) {
-         cudaMemcpy(out[i].cDField(), in[i].cDField(), nPoint*sizeof(cudaReal), cudaMemcpyDeviceToDevice);
+         UTIL_CHECK(out[i].capacity() == in[i].capacity());
+         out[i] = in[i];
       }
    }
 
@@ -658,18 +652,17 @@ TEST_ADD(SystemTest, testReadParameters1D)
 TEST_ADD(SystemTest, testConversion1D_lam)
 TEST_ADD(SystemTest, testConversion2D_hex)
 TEST_ADD(SystemTest, testConversion3D_bcc)
-// TEST_ADD(SystemTest, testCheckSymmetry3D_bcc)
+//// TEST_ADD(SystemTest, testCheckSymmetry3D_bcc)
 TEST_ADD(SystemTest, testIterate1D_lam_rigid)
 TEST_ADD(SystemTest, testIterate1D_lam_flex)
 TEST_ADD(SystemTest, testIterate1D_lam_soln)
 TEST_ADD(SystemTest, testIterate1D_lam_blend)
-TEST_ADD(SystemTest, testIterate1D_lam_open_soln)
 TEST_ADD(SystemTest, testIterate1D_lam_open_blend)
+TEST_ADD(SystemTest, testIterate1D_lam_open_soln)
 TEST_ADD(SystemTest, testIterate2D_hex_rigid)
 TEST_ADD(SystemTest, testIterate2D_hex_flex)
 TEST_ADD(SystemTest, testIterate3D_bcc_rigid)
 TEST_ADD(SystemTest, testIterate3D_bcc_flex)
-
 
 TEST_END(SystemTest)
 

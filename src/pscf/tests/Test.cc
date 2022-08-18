@@ -6,7 +6,7 @@
 
 #include "math/MathTestComposite.h"
 #include "chem/ChemTestComposite.h"
-//#include "solvers/SolversTestComposite.h"
+#include "solvers/SolversTestComposite.h"
 #include "inter/InterTestComposite.h"
 #include "mesh/MeshTestComposite.h"
 #include "crystal/CrystalTestComposite.h"
@@ -16,7 +16,7 @@
 TEST_COMPOSITE_BEGIN(PscfNsTestComposite)
 addChild(new MathTestComposite, "math/");
 addChild(new ChemTestComposite, "chem/");
-//addChild(new SolversTestComposite, "solvers/");
+addChild(new SolversTestComposite, "solvers/");
 addChild(new InterTestComposite, "inter/");
 addChild(new MeshTestComposite, "mesh/");
 addChild(new CrystalTestComposite, "crystal/");

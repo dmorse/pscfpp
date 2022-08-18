@@ -8,8 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/chem/Species.h>             // base class
-#include <util/param/ParamComposite.h>     // base class
+#include <pscf/chem/SolventDescriptor.h>   // base class
+//#include <pscf/chem/Species.h>             // base class
+//#include <util/param/ParamComposite.h>     // base class
 #include <fd1d/solvers/Propagator.h>
 #include <fd1d/domain/Domain.h>
 
@@ -24,7 +25,8 @@ namespace Fd1d {
    * \ref fd1d_Solvent_page "Parameter File Format"
    * \ingroup Fd1d_Solver_Module
    */
-   class Solvent : public Species, public ParamComposite
+   //class Solvent : public Species, public ParamComposite
+   class Solvent : public SolventDescriptor
    {
 
    public:
@@ -48,14 +50,7 @@ namespace Fd1d {
       * Constructor.
       */
       ~Solvent();
-   
-      /**
-      * Read and initialize.
-      *
-      * \param in input parameter stream
-      */
-      virtual void readParameters(std::istream& in);
-
+  
       /**
       * Set association with Domain and allocate concentration field array.
       *
@@ -71,55 +66,9 @@ namespace Fd1d {
       * \param wField monomer chemical potential field of relevant type.
       */
       void compute(WField const & wField );
- 
-      /// \name Setters (set member data)
-      ///@{
 
-      /**
-      * Set value of phi (volume fraction), if ensemble is closed.
-      *
-      * \throw Exception if ensemble is open
-      * \param phi desired volume fraction for this species
-      */
-      void setPhi(double phi);
-
-      /**
-      * Set value of mu (chemical potential), if ensemble is closed.
-      *
-      * \throw Exception if ensemble is closed
-      * \param mu  desired chemical potential for this species
-      */
-      void setMu(double mu);
-
-      /**
-      * Set the monomer id for this solvent.
-      *
-      * \param monomerId  integer id of monomer type, in [0,nMonomer-1]
-      */ 
-      void setMonomerId(int monomerId);
-  
-      /**
-      * Set the size or volume of this solvent species.
-      *
-      * The ``size" is steric volume / reference volume.
-      *
-      * \param size volume of solvent
-      */ 
-      void setSize(double size);
-
-      ///@}
       /// \name Accessors (getters)
       ///@{
- 
-      /**
-      * Get the monomer type id.
-      */ 
-      int monomerId() const;
-  
-      /**
-      * Get the size (number of monomers) in this solvent.
-      */
-      double size() const;
 
       /**
       * Return associated domain by reference.
@@ -146,18 +95,14 @@ namespace Fd1d {
       using Pscf::Species::mu_;
       using Pscf::Species::q_;
       using Pscf::Species::ensemble_;
+      using Pscf::SolventDescriptor::monomerId_;
+      using Pscf::SolventDescriptor::size_;
 
    private:
 
       // Concentration field for this solvent
       CField cField_;
-  
-      /// Identifier for the associated monomer type.
-      int monomerId_;
-
-      /// Size of this block = volume / monomer reference volume. 
-      double size_;
-
+ 
       // Pointer to associated domain
       Domain const *  domainPtr_;
 
@@ -165,27 +110,11 @@ namespace Fd1d {
    
    // Inline member functions
 
-   /*
-   * Get the monomer type id.
-   */ 
-   inline int Solvent::monomerId() const
-   {  return monomerId_; }
-
-   /*
-   * Get the size (number of monomers) in this block.
-   */
-   inline double Solvent::size() const
-   {  return size_; }
-    
-   /**
-   * Get monomer concentration field for this solvent.
-   */
+   /// Get monomer concentration field for this solvent.
    inline const typename Solvent::CField& Solvent::cField() const
    {  return cField_;  }
 
-   // Inline member functions
-
-   /// Get Domain by reference.
+   /// Get associated Domain by reference.
    inline Domain const & Solvent::domain() const
    {   
       UTIL_ASSERT(domainPtr_);

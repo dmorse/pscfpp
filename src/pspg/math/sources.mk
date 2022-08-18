@@ -1,7 +1,6 @@
 pspg_math_= \
      pspg/math/LinearAlgebra.cu \
      pspg/math/ParallelReductions.cu \
-     pspg/math/Helpers.cu \
      pspg/math/KernelWrappers.cu \
      pspg/math/ThreadGrid.cu \
 

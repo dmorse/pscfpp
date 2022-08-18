@@ -13,9 +13,11 @@ includes:
 run: $(pspc_tests_OBJS) $(BLD_DIR)/$(TEST)
 	$(BLD_DIR)/$(TEST) $(SRC_DIR)/pspc/tests/ 
 
-#	@echo `grep failed log` ", "\
-#              `grep successful log` "in pspc/tests/log" > count
-#	@cat count
+run-quiet: $(pspc_tests_OBJS) $(BLD_DIR)/$(TEST)
+	@$(BLD_DIR)/$(TEST) $(SRC_DIR)/pspc/tests/  > log
+	@echo `grep failed log` ", "\
+              `grep successful log` "in pspc/tests/log" > count
+	@cat count
 
 clean-outputs:
 	rm -f log count 
@@ -23,6 +25,12 @@ ifeq ($(SRC_DIR),$(BLD_DIR))
 	-cd field; $(MAKE) clean-outputs
 	-cd solvers; $(MAKE) clean-outputs
 	-cd system; $(MAKE) clean-outputs
+	-cd sweep; $(MAKE) clean-outputs
+else
+	-cd $(SRC_DIR)/pspc/tests/field; $(MAKE) clean-outputs
+	-cd $(SRC_DIR)/pspc/tests/solvers; $(MAKE) clean-outputs
+	-cd $(SRC_DIR)/pspc/tests/system; $(MAKE) clean-outputs
+	-cd $(SRC_DIR)/pspc/tests/sweep; $(MAKE) clean-outputs
 endif
 
 clean:
@@ -34,7 +42,12 @@ ifeq ($(SRC_DIR),$(BLD_DIR))
 	-cd solvers; $(MAKE) clean
 	-cd system; $(MAKE) clean
 	-cd sweep; $(MAKE) clean
-	rm -f */Test */*.o */*.d 
+	rm -f */Test */*.o */*.d
+else
+	-cd $(SRC_DIR)/pspc/tests/field; $(MAKE) clean
+	-cd $(SRC_DIR)/pspc/tests/solvers; $(MAKE) clean
+	-cd $(SRC_DIR)/pspc/tests/system; $(MAKE) clean
+	-cd $(SRC_DIR)/pspc/tests/sweep; $(MAKE) clean
 endif
 
 -include $(pspc_tests_OBJS:.o=.d)

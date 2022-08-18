@@ -1,21 +1,22 @@
-/*! \page user_param_page 3.2 Parameter Files
+/*! \page user_param_page 3.3 Parameter Files
 
 \ref user_usage_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_command_page (Next) 
 <BR>
 
-The parameter files required by the different PSCF programs use a similar syntax, but contain somewhat different contents. 
-The following three sections document parameter file formats for different programs.
-The documentation of the parameter file format for the pscf_fd 1D finite difference program includes a discussion of elements that are used for all programs, and so should be read first. 
-The discussion of the file format for pscf_pcNd focuses on parts of the file format that differ from those required for pscf_fd.
-The file formats for the pscf_pcNd and pscf_pgNd programs are almost identical, reflecting the fact that these are closely analogous programs designed to run on different hardware.
+This section describes the format and contents of the parameter files used by all of the PSCF programs.
+The parameter files required by the different PSCF programs use a similar syntax, but differ in some details. 
+In the following pages, we first describe elements that are common to the parameter file formats for all programs, starting with a simple example, and then describes the formats for particular programs in greater detail. 
 
 <h3> Contents:</h3>
    <ul style="list-style: none;">
-   <li> \subpage user_param_syntax_page  "3.2.1 Parameter File Syntax" </li>
-   <li> \subpage user_param_fd_page      "3.2.2 pscf_fd" </li>
-   <li> \subpage user_param_pc_page      "3.2.3 pscf_pcNd (CPU)" </li>
-   <li> \subpage user_param_pg_page      "3.2.4 pscf_pgNd (GPU)" </li>
+   <li> \subpage user_param_example_page  "3.3.1 Example" </li>
+   <li> \subpage user_param_syntax_page   "3.3.2 Syntax" </li>
+   <li> \subpage user_param_mixture_page  "3.3.3 Mixture Block" </li>
+   <li> \subpage user_param_sweep_page    "3.3.4 Parameter Sweeps" </li>
+   <li> \subpage user_param_fd_page       "3.3.5 pscf_fd" </li>
+   <li> \subpage user_param_pc_page       "3.3.6 pscf_pcNd (CPU)" </li>
+   <li> \subpage user_param_pg_page       "3.3.7 pscf_pgNd (GPU)" </li>
    </ul>
 <BR>
 \ref user_usage_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
