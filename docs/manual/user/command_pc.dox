@@ -65,7 +65,18 @@ programs:
   <tr> 
     <td> READ_W_RGRID </td>
     <td> filename [string] </td>
-    <td> Read w fields from file filename, in real-space grid (r-grid) format
+    <td> Read w fields from file filename, in real-space grid (r-grid) 
+         format </td>
+  </tr>
+  <tr> 
+    <td> READ_C_GUESS_W </td>
+    <td> inFile [string], outFile [string] </td>
+    <td> Read monomer concentration fields in symmetry-adapted basis 
+         format from file inFile, generate chemical potential fields 
+         using the concentration fields and chi values, and write the 
+         potential fields to outFile in symmetry-adapted basis format.
+         Also stores potential fields to be used by future commands
+         (e.g., ITERATE or SWEEP).
          </td>
   </tr>
   <tr> 
@@ -76,7 +87,8 @@ programs:
   <tr> 
     <td> ITERATE </td>
     <td> filename [string] (conditional) </td>
-    <td> Iteratively solve SCFT equations (after reading initial w fields) </td>
+    <td> Iteratively solve SCFT equations (after initializing 
+         w fields) </td>
   </tr>
   <tr> 
     <td> SWEEP </td>
@@ -111,16 +123,17 @@ programs:
   <tr> 
     <td> WRITE_C_BLOCK_RGRID </td>
     <td> filename [string] </td>
-    <td> Write individual block/solvent volume fraction fields (c fields) to
-         file filename, in r-grid format. The block c fields are given in
-         the order that the blocks appear in the param file, followed by the
-         solvent fields in the order that the solvents appear in the param 
-         file </td>
+    <td> Write all individual block and solvent volume fraction fields 
+         (c fields) to file filename, in r-grid format. The block c fields 
+         are given in the order that the blocks appear in the param file, 
+         followed by the solvent fields in the order that the solvents 
+         appear in the param file </td>
   </tr>
   <tr> 
     <td> WRITE_PARAM </td>
     <td> filename [string] </td>
-    <td> Write param file associated with the current system. Sweep blocks
+    <td> Write minimal version of the param file associated with the 
+         current system. Sweep blocks
          are omitted. </td>
   </tr>
   <tr>
@@ -178,17 +191,6 @@ programs:
          </td>
   </tr>
   <tr> 
-    <td> RHO_TO_OMEGA </td>
-    <td> inFile [string], outFile [string] </td>
-    <td> Read monomer concentration fields in symmetry-adapted basis 
-         format from file inFile, generate chemical potential fields 
-         using the concentration fields and chi values, and write the 
-         potential fields to outFile in symmetry-adapted basis format.
-         Also stores potential fields to be used by future commands
-         (e.g., ITERATE or SWEEP).
-         </td>
-  </tr>
-  <tr> 
     <td> CHECK_RGRID_SYMMETRY </td>
     <td> inFile [string] </td>
     <td> Read fields from file inFile in real-space (r-grid) format,
@@ -197,12 +199,12 @@ programs:
          </td>
   </tr>
   <tr> 
-    <td> OUTPUT_STARS </td>
+    <td> WRITE_STARS </td>
     <td> filename [string] </td>
     <td> Write a list of all stars to file filename. </td>
   </tr>
   <tr> 
-    <td> OUTPUT_WAVES </td>
+    <td> WRITE_WAVES </td>
     <td> filename [string] </td>
     <td> Write a list of all waves to file filename. </td>
   </tr>

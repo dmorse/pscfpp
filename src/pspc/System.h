@@ -106,7 +106,7 @@ namespace Pspc
       /**
       * Write parameter file to an ostream, omitting the sweep block. 
       */
-      void writeParam(std::ostream& out);
+      void writeBasicParam(std::ostream& out);
 
       /**
       * Read command script from a file.
@@ -604,8 +604,8 @@ namespace Pspc
       * \param inFileName name of input file
       * \param outFileName name of output file
       */
-      void rhoToOmega(const std::string& inFileName, 
-                      const std::string& outFileName);
+      void readCguessW(const std::string& inFileName, 
+                       const std::string& outFileName);
    
       /**
       * Output information about stars and symmetrized basis functions.

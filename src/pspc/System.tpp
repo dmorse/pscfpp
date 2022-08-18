@@ -252,7 +252,7 @@ namespace Pspc
    * Write parameter file, omitting the sweep block.
    */
    template <int D>
-   void System<D>::writeParam(std::ostream& out)
+   void System<D>::writeBasicParam(std::ostream& out)
    {
       out << "System{" << std::endl;
       mixture_.writeParam(out);
@@ -429,7 +429,7 @@ namespace Pspc
             readEcho(in, filename);
             std::ofstream file;
             fileMaster().openOutputFile(filename, file);
-            writeParam(file);
+            writeBasicParam(file);
             file.close();
          } else
          if (command == "WRITE_THERMO") {
@@ -481,16 +481,16 @@ namespace Pspc
                            << std::endl;
             }
          } else
-         if (command == "RHO_TO_OMEGA") {
+         if (command == "READ_C_GUESS_W") {
             readEcho(in, inFileName);
             readEcho(in, outFileName);
-            rhoToOmega(inFileName, outFileName);
+            readCguessW(inFileName, outFileName);
          } else
-         if (command == "OUTPUT_STARS") {
+         if (command == "WRITE_STARS") {
             readEcho(in, outFileName);
             outputStars(outFileName);
          } else
-         if (command == "OUTPUT_WAVES") {
+         if (command == "WRITE_WAVES") {
             readEcho(in, outFileName);
             outputWaves(outFileName);
          } else {
@@ -1131,13 +1131,14 @@ namespace Pspc
    * Modifies wFields and wFieldsRGrid and outputs wFields.
    */
    template <int D>
-   void System<D>::rhoToOmega(const std::string & inFileName, 
-                              const std::string & outFileName)
+   void System<D>::readCguessW(std::string const & inFileName, 
+                               std::string const & outFileName)
    {
       hasCFields_ = false;
       hasWFields_ = false;
 
-      fieldIo().readFieldsBasis(inFileName, tmpFieldsBasis_, domain_.unitCell());
+      fieldIo().readFieldsBasis(inFileName, tmpFieldsBasis_, 
+                                domain_.unitCell());
 
       // Compute w fields from c fields
       for (int i = 0; i < basis().nBasis(); ++i) {
