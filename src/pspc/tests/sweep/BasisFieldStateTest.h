@@ -6,7 +6,7 @@
 
 #include <pspc/System.h>
 #include <pspc/sweep/BasisFieldState.h>
-#include <pspc/field/BFieldComparison.h>
+#include <pscf/crystal/BFieldComparison.h>
 #include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>

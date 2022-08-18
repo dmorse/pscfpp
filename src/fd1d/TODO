@@ -1,6 +1,5 @@
 TODO (1D finite difference code):
 
-1) Write a general linear sweep class
-2) Write an Anderson-Mixing iterator
-3) Write one or more relaxation iterators
+1) Write an Anderson-Mixing iterator
+2) Write one or more relaxation iterators
 

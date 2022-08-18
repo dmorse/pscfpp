@@ -80,7 +80,8 @@ namespace Pspg
       * \param unitCell  crystallographic unit cell (output)
       */
       void 
-      readFieldsBasis(std::istream& in, DArray< RDField <D> >& fields,
+      readFieldsBasis(std::istream& in, 
+                      DArray< DArray<double> >& fields,
                       UnitCell<D>& unitCell) const;
 
       /**
@@ -95,7 +96,7 @@ namespace Pspg
       * \param unitCell  crystallographic unit cell (output)
       */
       void readFieldsBasis(std::string filename, 
-                           DArray< RDField <D> >& fields,
+                           DArray< DArray<double> >& fields,
                            UnitCell<D>& unitCell) const;
 
       /**
@@ -108,7 +109,7 @@ namespace Pspg
       * \param unitCell  crystallographic unit cell 
       */
       void writeFieldsBasis(std::ostream& out, 
-                            DArray< RDField <D> > const & fields,
+                            DArray< DArray<double> > const & fields,
                             UnitCell<D> const & unitCell) const;
 
       /**
@@ -123,7 +124,7 @@ namespace Pspg
       * \param unitCell  crystallographic unit cell 
       */
       void writeFieldsBasis(std::string filename, 
-                            DArray< RDField <D> > const & fields,
+                            DArray< DArray<double> > const & fields,
                             UnitCell<D> const & unitCell) const;
 
       /**
@@ -156,8 +157,7 @@ namespace Pspg
       */
       void readFieldsRGrid(std::string filename, 
                            DArray< RDField<D> >& fields,
-                           UnitCell<D>& unitCell)
-      const;
+                           UnitCell<D>& unitCell) const;
 
       /**
       * Write array of RField objects (fields on an r-space grid) to file.
@@ -310,7 +310,7 @@ namespace Pspg
       * \param components coefficients of symmetry-adapted basis functions
       * \param dft discrete Fourier transform of a real field
       */
-      void convertBasisToKGrid(RDField<D> const& components, 
+      void convertBasisToKGrid(DArray<double> const& components, 
                                RDFieldDft<D>& dft) const;
    
       /**
@@ -322,7 +322,7 @@ namespace Pspg
       * \param in  components of fields in symmetry adapted basis 
       * \param out fields defined as discrete Fourier transforms (k-grid)
       */
-      void convertBasisToKGrid(DArray< RDField <D> > & in,
+      void convertBasisToKGrid(DArray< DArray<double> > & in,
                                DArray< RDFieldDft<D> >& out) const;
 
       /**
@@ -332,7 +332,7 @@ namespace Pspg
       * \param components coefficients of symmetry-adapted basis functions.
       */
       void convertKGridToBasis(RDFieldDft<D> const& dft, 
-                               RDField<D>& components) const;
+                               DArray<double>& components) const;
 
       /**
       * Convert fields from Fourier transform (kgrid) to symmetrized basis.
@@ -344,7 +344,7 @@ namespace Pspg
       * \param out  components of fields in symmetry adapted basis 
       */
       void convertKGridToBasis(DArray< RDFieldDft<D> > & in,
-                               DArray< RDField <D> > & out) const;
+                               DArray< DArray<double> > & out) const;
 
       /**
       * Convert fields from symmetrized basis to spatial grid (rgrid).
@@ -352,7 +352,7 @@ namespace Pspg
       * \param in  fields in symmetry adapted basis form
       * \param out fields defined on real-space grid
       */
-      void convertBasisToRGrid(DArray< RDField <D> > & in,
+      void convertBasisToRGrid(DArray< DArray<double> >& in,
                                DArray< RDField<D> >& out) const;
 
       /**
@@ -362,7 +362,7 @@ namespace Pspg
       * \param out  fields in symmetry adapted basis form
       */
       void convertRGridToBasis(DArray< RDField<D> > & in,
-                               DArray< RDField <D> > & out) const;
+                               DArray< DArray<double> > & out) const;
 
       /**
       * Convert fields from k-grid (DFT) to real space (rgrid) format.

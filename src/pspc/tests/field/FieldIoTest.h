@@ -4,7 +4,6 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pspc/field/BFieldComparison.h>
 #include <pspc/field/RFieldComparison.h>
 #include <pspc/field/KFieldComparison.h>
 #include <pspc/field/Domain.h>
@@ -13,6 +12,7 @@
 #include <pspc/field/RFieldDft.h>
 #include <pspc/field/FFT.h>
 
+#include <pscf/crystal/BFieldComparison.h>
 #include <pscf/crystal/Basis.h>
 #include <pscf/crystal/UnitCell.h>
 #include <pscf/mesh/Mesh.h>

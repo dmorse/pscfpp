@@ -94,11 +94,11 @@ namespace Pspg
       /**
       * Set unit cell parameters used in solver.
       * 
-      * \param unitCell UnitCell<D> object that contains Bravais lattice.
-      * \param waveList WaveList<D> object that contains wavevector data
+      * \param unitCell crystallographic unit cell
+      * \param waveList container for wavevector data
       */
       void setupUnitCell(UnitCell<D> const & unitCell, 
-                         WaveList<D> const & wavelist);
+                         WaveList<D> const & waveList);
 
       /**
       * Compute concentrations.
@@ -124,13 +124,17 @@ namespace Pspg
 
       /**
       * Get monomer reference volume.
+      *
+      * \param waveList container for wavevector data
       */
-      void computeStress(WaveList<D>& wavelist);
+      void computeStress(WaveList<D>& waveList);
 
       /**
-      * Combine cFields for each block/solvent into one DArray, which 
-      * is used in System.tpp to print a more detailed r-grid file using
-      * the command WRITE_C_BLOCK_RGRID.
+      * Combine cFields for each block/solvent into one DArray.
+      *
+      * The array created by this function is used by the command
+      * WRITE_C_BLOCK_RGRID to write c-fields for all blocks and 
+      * species.
       * 
       * \param blockCFields empty but allocated DArray to store fields
       */
@@ -142,10 +146,10 @@ namespace Pspg
       * Get precomputed value of derivative of free energy per monomer
       * with respect to unit cell parameter number n.
       *
-      * \int n unit cell parameter id
+      * \int parameterId  unit cell parameter index
       */
-      double stress(int n)
-      {  return stress_[n]; }
+      double stress(int parameterId)
+      {  return stress_[parameterId]; }
 
       /**
       * Get monomer reference volume.
@@ -153,16 +157,18 @@ namespace Pspg
       double vMonomer() const;
 
       /**
-      * Determine if the mixture is canonical. Otherwise, it is
-      * mixed or open.
+      * Is the ensemble canonical (i.e, closed for all species)?
+      *
+      * Return true if and only if the ensemble is closed for all polymer 
+      * and solvent species.
       */
       bool isCanonical();
 	  
-      using MixtureTmpl< Pscf::Pspg::Polymer<D>, Pscf::Pspg::Solvent<D> >::nMonomer;
-      using MixtureTmpl< Pscf::Pspg::Polymer<D>, Pscf::Pspg::Solvent<D> >::nPolymer;
-      using MixtureTmpl< Pscf::Pspg::Polymer<D>, Pscf::Pspg::Solvent<D> >::nSolvent;
-      using MixtureTmpl< Pscf::Pspg::Polymer<D>, Pscf::Pspg::Solvent<D> >::nBlock;
-      using MixtureTmpl< Pscf::Pspg::Polymer<D>, Pscf::Pspg::Solvent<D> >::polymer;
+      using MixtureTmpl<Pscf::Pspg::Polymer<D>, Pscf::Pspg::Solvent<D> >::nMonomer;
+      using MixtureTmpl<Pscf::Pspg::Polymer<D>, Pscf::Pspg::Solvent<D> >::nPolymer;
+      using MixtureTmpl<Pscf::Pspg::Polymer<D>, Pscf::Pspg::Solvent<D> >::nSolvent;
+      using MixtureTmpl<Pscf::Pspg::Polymer<D>, Pscf::Pspg::Solvent<D> >::nBlock;
+      using MixtureTmpl<Pscf::Pspg::Polymer<D>, Pscf::Pspg::Solvent<D> >::polymer;
       using MixtureTmpl< Pscf::Pspg::Polymer<D>, Pscf::Pspg::Solvent<D> >::monomer;
       using MixtureTmpl< Pscf::Pspg::Polymer<D>, Pscf::Pspg::Solvent<D> >::solvent;
 

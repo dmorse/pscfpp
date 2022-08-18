@@ -103,12 +103,12 @@ namespace Pspg
    template <int D>
    void System<D>::setOptions(int argc, char **argv)
    {
-      bool eflag = false;  // echo
-      bool pFlag = false;  // param file
-      bool cFlag = false;  // command file
-      bool iFlag = false;  // input prefix
-      bool oFlag = false;  // output prefix
-      bool tFlag = false;  // GPU input threads (maximum # of threads/block)
+      bool eflag = false; // echo
+      bool pFlag = false; // param file
+      bool cFlag = false; // command file
+      bool iFlag = false; // input prefix
+      bool oFlag = false; // output prefix
+      bool tFlag = false; // GPU input threads (max. # of threads per block)
       char* pArg = 0;
       char* cArg = 0;
       char* iArg = 0;
@@ -216,17 +216,21 @@ namespace Pspg
       // Allocate memory for w and c fields
       allocate();
 
-      // Initialize iterator through the factory and mediator
+      // Initialize iterator
       std::string className;
       bool isEnd;
-      iteratorPtr_= iteratorFactoryPtr_->readObject(in, *this, 
-                                                   className, isEnd);
+      iteratorPtr_
+            = iteratorFactoryPtr_->readObject(in, *this, className, isEnd);
       if (!iteratorPtr_) {
          std::string msg = "Unrecognized Iterator subclass name ";
          msg += className;
          UTIL_THROW(msg.c_str());
       }
       iterator().setup();
+
+      // Optionally initialize a sweep
+      // To be added
+
    }
 
    /*
@@ -343,12 +347,15 @@ namespace Pspg
             fieldIo().readFieldsBasis(filename, wFields(), domain_.unitCell());
             fieldIo().convertBasisToRGrid(wFields(), wFieldsRGrid());
             hasWFields_ = true;
+            hasSymmetricFields_ = true;
 
          } else
          if (command == "READ_W_RGRID") {
             readEcho(in, filename);
-            fieldIo().readFieldsRGrid(filename, wFieldsRGrid(), domain_.unitCell());
+            fieldIo().readFieldsRGrid(filename, wFieldsRGrid(), 
+                                      domain_.unitCell());
             hasWFields_ = true;
+            hasSymmetricFields_ = false;
 
          } else
          if (command == "COMPUTE") {
@@ -374,6 +381,7 @@ namespace Pspg
          } else
          if (command == "WRITE_W_BASIS") {
             UTIL_CHECK(hasWFields_);
+            UTIL_CHECK(hasSymmetricFields_);
             readEcho(in, filename);
             fieldIo().convertRGridToBasis(wFieldsRGrid(), wFields());
             fieldIo().writeFieldsBasis(filename, wFields(), unitCell());
@@ -384,8 +392,9 @@ namespace Pspg
             fieldIo().writeFieldsRGrid(filename, wFieldsRGrid(), unitCell());
          } else
          if (command == "WRITE_C_BASIS") {
-            UTIL_CHECK(hasCFields_);
             readEcho(in, filename);
+            UTIL_CHECK(hasCFields_);
+            UTIL_CHECK(hasSymmetricFields_);
             fieldIo().convertRGridToBasis(cFieldsRGrid(), cFields());
             fieldIo().writeFieldsBasis(filename, cFields(), unitCell());
          } else
@@ -468,7 +477,8 @@ namespace Pspg
             readEcho(in, inFileName);
             readEcho(in, outFileName);
 
-            fieldIo().readFieldsRGrid(inFileName, cFieldsRGrid(), domain_.unitCell());
+            fieldIo().readFieldsRGrid(inFileName, cFieldsRGrid(), 
+                                      domain_.unitCell());
 
             // Compute w fields, excluding Lagrange multiplier contribution
             //code is bad here, `mangled' access of data in array
@@ -485,7 +495,8 @@ namespace Pspg
             }
 
             // Write w fields to file in r-grid format
-            fieldIo().writeFieldsRGrid(outFileName, wFieldsRGrid(), unitCell());
+            fieldIo().writeFieldsRGrid(outFileName, wFieldsRGrid(), 
+                                       unitCell());
 
          } else {
 
@@ -749,6 +760,49 @@ namespace Pspg
    }
 
    /*
+   * Set new w-field values.
+   */
+   template <int D>
+   void System<D>::setWBasis(DArray< DArray<double> > const & fields)
+   {
+      // Update system wFields
+      int nMonomer = mixture_.nMonomer();
+      int nBasis = domain_.basis().nBasis();
+      for (int i = 0; i < nMonomer; ++i) {
+         DArray<double> const & f = fields[i];
+         DArray<double> & w = wFields_[i];
+         for (int j = 0; j < nBasis; ++j) {
+            w[j] = f[j];
+         }
+      }
+
+      // Update system wFieldsRgrid
+      domain_.fieldIo().convertBasisToRGrid(wFields_, wFieldsRGrid_);
+
+      hasWFields_ = true;
+      hasSymmetricFields_ = true;
+      hasCFields_ = false;
+   }
+
+   /*
+   * Set new w-field values, using r-grid fields as inputs.
+   */
+   template <int D>
+   void System<D>::setWRGrid(DArray<Field> const & fields)
+   {
+      // Update system wFieldsRGrid
+      int nMonomer = mixture_.nMonomer();
+      int meshSize = domain_.mesh().size();
+      for (int i = 0; i < nMonomer; ++i) {
+         wFieldsRGrid_[i] = fields[i];
+      }
+
+      hasWFields_ = true;
+      hasSymmetricFields_ = false;
+      hasCFields_ = false;
+   }
+
+   /*
    * Set parameters of the associated unit cell.
    */
    template <int D>
@@ -771,6 +825,8 @@ namespace Pspg
       mixture_.setupUnitCell(domain_.unitCell(), wavelist());
       wavelist().computedKSq(domain_.unitCell());
    }
+
+   // Commands (functions that implement to command file commands)
 
    /*
    * Read w-field in symmetry adapted basis format.
@@ -885,7 +941,7 @@ namespace Pspg
       UTIL_CHECK(hasCFields_);
 
       // Create and allocate the DArray of fields to be written
-      DArray<CField> blockCFields;
+      DArray<Field> blockCFields;
       blockCFields.allocate(mixture_.nSolvent() + mixture_.nBlock());
       int n = blockCFields.capacity();
       for (int i = 0; i < n; i++) {

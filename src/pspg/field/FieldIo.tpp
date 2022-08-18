@@ -67,7 +67,7 @@ namespace Pspg
 
    template <int D>
    void FieldIo<D>::readFieldsBasis(std::istream& in,
-                                    DArray< RDField<D> >& fields,
+                                    DArray< DArray<double> >& fields,
                                     UnitCell<D>& unitCell)
    const
    {
@@ -96,21 +96,13 @@ namespace Pspg
 
       // Define nStar and nBasis
       int nStar = basis().nStar();
-      // int nBasis = nStar;
       int nBasis = basis().nBasis();
 
-      // Allocate temp_out
-      DArray<cudaReal*> temp_out;
-      temp_out.allocate(nMonomer);
-      for(i = 0; i < nMonomer; ++i) {
-         temp_out[i] = new cudaReal[nBasis];
-      }
-
-      // Initialize all elements of temp_out to zero
+      // Initialize all elements of field components to zero
       for (j = 0; j < nMonomer; ++j) {
          UTIL_CHECK(fields[j].capacity() == nBasis);
          for (i = 0; i < nBasis; ++i) {
-            temp_out[j][i] = 0.0;
+            fields[j][i] = 0.0;
          }
       }
 
@@ -171,9 +163,9 @@ namespace Pspg
 
                if (starPtr->waveBz == waveIn) {
 
-                  // Copy components of closed star to temp_out array
+                  // Copy components of closed star to fields array
                   for (int j = 0; j < nMonomer; ++j) {
-                      temp_out[j][basisId] = temp[j];
+                      fields[j][basisId] = temp[j];
                   }
 
                } else {
@@ -220,10 +212,10 @@ namespace Pspg
                   UTIL_CHECK(starPtr->waveBz == waveIn);
                   UTIL_CHECK(starPtr2->waveBz == waveIn2);
 
-                  // Copy components for both stars into temp_out array
+                  // Copy components for both stars into fields array
                   for (int j = 0; j < nMonomer; ++j) {
-                      temp_out[j][basisId] = temp[j];
-                      temp_out[j][basisId2] = temp2[j];
+                      fields[j][basisId] = temp[j];
+                      fields[j][basisId2] = temp2[j];
                   }
 
                } else
@@ -293,8 +285,8 @@ namespace Pspg
                   for (int j = 0; j < nMonomer; ++j) {
                       coeff = std::complex<double>(temp[j],-temp2[j]);
                       coeff *= phasor;
-                      temp_out[j][basisId2] = real(coeff);
-                      temp_out[j][basisId ] = imag(coeff);
+                      fields[j][basisId2] = real(coeff);
+                      fields[j][basisId ] = imag(coeff);
                   }
 
                   // Increment count of number of reversed open pairs
@@ -317,25 +309,12 @@ namespace Pspg
                      << " detected in FieldIo::readFieldsBasis\n";
       }
 
-      // Copy data from array temp_out (host) to array fields (device)
-      for (int i = 0; i < nMonomer; i++) {
-         cudaMemcpy(fields[i].cDField(), temp_out[i],
-            nBasis * sizeof(cudaReal), cudaMemcpyHostToDevice);
-      }
-
-      // Deallocate temp_out
-      for (int i = 0; i < nMonomer; i++) {
-         delete[] temp_out[i];
-         temp_out[i] = nullptr;
-      }
-      temp_out.deallocate();
-
    }
 
 
    template <int D>
    void FieldIo<D>::readFieldsBasis(std::string filename,
-                                    DArray<RDField<D> >& fields,
+                                    DArray< DArray<double> >& fields,
                                     UnitCell<D>& unitCell)
    const
    {
@@ -346,9 +325,10 @@ namespace Pspg
    }
 
    template <int D>
-   void FieldIo<D>::writeFieldsBasis(std::ostream &out,
-                                     DArray<RDField<D> > const &  fields,
-                                     UnitCell<D> const & unitCell)
+   void 
+   FieldIo<D>::writeFieldsBasis(std::ostream &out,
+                                DArray< DArray<double> > const&  fields,
+                                UnitCell<D> const & unitCell)
    const
    {
       int nMonomer = fields.capacity();
@@ -364,27 +344,13 @@ namespace Pspg
       //int nBasis = nStar;
       int nBasis = basis().nBasis();
 
-      // Allocate temp_out
-      DArray<cudaReal*> temp_out;
-      temp_out.allocate(nMonomer);
-      for(int i = 0; i < nMonomer; ++i) {
-         temp_out[i] = new cudaReal[nBasis];
-      }
-
-      // Copy array fields (device) to temp_out (host)
-      for (int i = 0; i < nMonomer; i++) {
-         cudaMemcpy(temp_out[i], fields[i].cDField(),
-                    nBasis * sizeof(cudaReal), cudaMemcpyDeviceToHost);
-      }
-
       // Write fields
       int ib = 0;
       for (int i = 0; i < nStar; ++i) {
          if (!basis().star(i).cancel) {
             UTIL_CHECK(ib == basis().star(i).basisId);
             for (int j = 0; j < nMonomer; ++j) {
-               // out << Dbl(temp_out[j][i], 20, 10);
-               out << Dbl(temp_out[j][ib], 20, 10);
+               out << Dbl(fields[j][ib], 20, 10);
             }
             out << "   ";
             for (int j = 0; j < D; ++j) {
@@ -395,19 +361,13 @@ namespace Pspg
          }
       }
 
-      // De-allocate temp_out (clean up)
-      for (int i = 0; i < nMonomer; i++) {
-         delete[] temp_out[i];
-         temp_out[i] = nullptr;
-      }
-      temp_out.deallocate();
-
    }
 
    template <int D>
-   void FieldIo<D>::writeFieldsBasis(std::string filename,
-                                     DArray<RDField<D> > const & fields,
-                                     UnitCell<D> const & unitCell)
+   void 
+   FieldIo<D>::writeFieldsBasis(std::string filename,
+                                DArray< DArray<double> > const& fields,
+                                UnitCell<D> const & unitCell)
    const
    {
        std::ofstream file;
@@ -867,15 +827,23 @@ namespace Pspg
    }
 
    template <int D>
-   void FieldIo<D>::convertBasisToKGrid(RDField<D> const& components,
-                                        RDFieldDft<D>& dft) const
+   void 
+   FieldIo<D>::convertBasisToKGrid(DArray<double> const& components,
+                                   RDFieldDft<D>& dft) const
    {
       int nStar = basis().nStar();
       int nBasis = basis().nBasis();
 
+      #if 0
       // Allocate components_in
       cudaReal* components_in;
       components_in = new cudaReal[nBasis];
+
+      // Copy array components (device) to components_in (host)
+      cudaMemcpy(components_in, components.cDField(),
+                 nBasis * sizeof(cudaReal), cudaMemcpyDeviceToHost);
+
+      #endif
 
       // Allocate dft_out
       int kSize = 1;
@@ -889,10 +857,6 @@ namespace Pspg
       }
       cudaComplex* dft_out;
       dft_out = new cudaComplex[kSize];
-
-      // Copy array components (device) to components_in (host)
-      cudaMemcpy(components_in, components.cDField(),
-                 nBasis * sizeof(cudaReal), cudaMemcpyDeviceToHost);
 
 
       // Create Mesh<D> with dimensions of DFT Fourier grid.
@@ -930,7 +894,7 @@ namespace Pspg
          if (starPtr->invertFlag == 0) {
 
             // Make complex coefficient for star basis function
-            component = std::complex<double>(components_in[ib], 0.0);
+            component = std::complex<double>(components[ib], 0.0);
 
             // Loop over waves in closed star
             for (iw = starPtr->beginId; iw < starPtr->endId; ++iw) {
@@ -949,8 +913,8 @@ namespace Pspg
          if (starPtr->invertFlag == 1) {
 
             // Loop over waves in first star
-            component = std::complex<double>(components_in[ib],
-                                             -components_in[ib+1]);
+            component = std::complex<double>(components[ib],
+                                             -components[ib+1]);
             component /= sqrt(2.0);
             starPtr = &(basis().star(is));
             for (iw = starPtr->beginId; iw < starPtr->endId; ++iw) {
@@ -967,8 +931,8 @@ namespace Pspg
             // Loop over waves in second star
             starPtr = &(basis().star(is+1));
             UTIL_CHECK(starPtr->invertFlag == -1);
-            component = std::complex<double>(components_in[ib],
-                                             +components_in[ib+1]);
+            component = std::complex<double>(components[ib],
+                                             +components[ib+1]);
             component /= sqrt(2.0);
             for (iw = starPtr->beginId; iw < starPtr->endId; ++iw) {
                wavePtr = &basis().wave(iw);
@@ -995,22 +959,27 @@ namespace Pspg
       cudaMemcpy(dft.cDField(), dft_out,
                  kSize * sizeof(cudaComplex), cudaMemcpyHostToDevice);
 
-      delete[] components_in;
       delete[] dft_out;
 
+      #if 0
+      delete[] components_in;
+      #endif
    }
 
    template <int D>
    void FieldIo<D>::convertKGridToBasis(RDFieldDft<D> const& dft,
-                                        RDField<D>& components) const
+                                        DArray<double>& components) 
+   const
    {
 
       int nStar = basis().nStar();       // Number of stars
       int nBasis = basis().nBasis();     // Number of basis functions
 
+      #if 0
       // Allocate components_out
       cudaReal* components_out;
       components_out = new cudaReal[nBasis];
+      #endif
 
       // Allocate dft_in
       int kSize = 1;
@@ -1042,9 +1011,9 @@ namespace Pspg
       int iw;                                  // wave id, within star
       bool isImplicit;
 
-      // Initialize all elements of components_out to zero
+      // Initialize all elements of components to zero
       for (is = 0; is < nBasis; ++is) {
-         components_out[is] = 0.0;
+         components[is] = 0.0;
       }
 
       // Loop over all stars 
@@ -1099,7 +1068,7 @@ namespace Pspg
             #endif
 
             // Store real part
-            components_out[ib] = component.real();
+            components[ib] = component.real();
             ++is;
 
          } else
@@ -1126,11 +1095,11 @@ namespace Pspg
 
             // Compute basis function coefficient values
             if (starPtr->invertFlag == 1) {
-               components_out[ib] = component.real();
-               components_out[ib+1] = -component.imag();
+               components[ib] = component.real();
+               components[ib+1] = -component.imag();
             } else {
-               components_out[ib] = component.real();
-               components_out[ib+1] = component.imag();
+               components[ib] = component.real();
+               components[ib+1] = component.imag();
              }
 
             // Increment star counter by 2 (two stars were processed)
@@ -1144,19 +1113,23 @@ namespace Pspg
 
       } //  loop over star index is
 
-     // Copy array components_out (host) to components (device)
-     cudaMemcpy(components.cDField(), components_out,
+      #if 0
+      // Copy array components_out (host) to components (device)
+      cudaMemcpy(components.cDField(), components_out,
                 nBasis * sizeof(cudaReal), cudaMemcpyHostToDevice);
 
-     // Deallocate arrays (clean up)
-     delete[] components_out;
-     delete[] dft_in;
+      delete[] components_out;
+      #endif
+
+      // Deallocate arrays (clean up)
+      delete[] dft_in;
 
    }
 
    template <int D>
-   void FieldIo<D>::convertBasisToKGrid(DArray< RDField <D> >& in,
-                                        DArray< RDFieldDft<D> >& out) const
+   void FieldIo<D>::convertBasisToKGrid(DArray< DArray<double> >& in,
+                                        DArray< RDFieldDft<D> >& out) 
+   const
    {
       UTIL_ASSERT(in.capacity() == out.capacity());
       int n = in.capacity();
@@ -1169,7 +1142,8 @@ namespace Pspg
 
    template <int D>
    void FieldIo<D>::convertKGridToBasis(DArray< RDFieldDft<D> >& in,
-                                        DArray< RDField <D> > & out) const
+                                        DArray< DArray<double>> & out) 
+   const
    {
 
       UTIL_ASSERT(in.capacity() == out.capacity());
@@ -1183,11 +1157,10 @@ namespace Pspg
 
    template <int D>
    void
-   FieldIo<D>::convertBasisToRGrid(DArray< RDField<D> >& in,
+   FieldIo<D>::convertBasisToRGrid(DArray< DArray<double> >& in,
                                    DArray< RDField<D> >& out) const
    {
       UTIL_ASSERT(in.capacity() == out.capacity());
-      //checkWorkDft();
 
       int nMonomer = in.capacity();
 
@@ -1206,12 +1179,11 @@ namespace Pspg
    }
 
    template <int D>
-   void
-   FieldIo<D>::convertRGridToBasis(DArray< RDField<D> >& in,
-                                   DArray< RDField<D> > & out) const
+   void FieldIo<D>::convertRGridToBasis(DArray< RDField<D> >& in,
+                                        DArray< DArray<double> > & out) 
+   const
    {
       UTIL_ASSERT(in.capacity() == out.capacity());
-      //checkWorkDft();
 
       int nMonomer = in.capacity();
 

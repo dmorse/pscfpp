@@ -1,16 +1,20 @@
 #ifndef PSPC_FILM_ITERATOR_TEST_H
 #define PSPC_FILM_ITERATOR_TEST_H
 
-#include "test/UnitTest.h"
-#include "test/UnitTestRunner.h"
-#include "util/misc/Exception.h"
-#include "pscf/crystal/UnitCell.h"
-#include "pspc/iterator/FilmIterator.h"
-#include "pspc/iterator/AmIterator.h"
-#include "pspc/field/BFieldComparison.h"
-#include "pspc/field/RFieldComparison.h"
-#include "pspc/field/FieldIo.h"
-#include "pspc/System.h"
+#include <test/UnitTest.h>
+#include <test/UnitTestRunner.h>
+
+#include <pspc/iterator/FilmIterator.h>
+#include <pspc/iterator/AmIterator.h>
+#include <pspc/field/RFieldComparison.h>
+#include <pspc/field/FieldIo.h>
+#include <pspc/System.h>
+
+#include <pscf/crystal/BFieldComparison.h>
+#include <pscf/crystal/UnitCell.h>
+
+#include <util/misc/Exception.h>
+
 #include <fstream>
 
 using namespace Util;
@@ -193,7 +197,7 @@ public:
          iterator1.checkLatticeVectors();
          // If above does not throw an error, then it failed this test
          TEST_ASSERT(1 == 2);
-      } catch (Exception e) {
+      } catch (Exception& e) {
          Log::file() << "EXCEPTION CAUGHT, expected behavior occurred" 
                      << std::endl;
       }
@@ -214,7 +218,7 @@ public:
          iterator3.checkLatticeVectors();
          // If above doesn't throw an error, then it failed this test
          TEST_ASSERT(1 == 2);
-      } catch (Exception e) {
+      } catch (Exception& e) {
          Log::file() << "EXCEPTION CAUGHT, expected behavior occurred" 
                      << std::endl;
       }
@@ -340,7 +344,7 @@ public:
             iterator.checkSpaceGroup();
             // This is expected to fail. If it succeeds, the test fails.
             pass = false;
-         } catch (Exception e) {
+         } catch (Exception& e) {
             Log::file() << "EXCEPTION CAUGHT, expected behavior occurred" 
                         << std::endl;
          }
@@ -348,7 +352,7 @@ public:
          try {
             iterator.checkSpaceGroup();
             // This should succeed. If not, the test fails. 
-         } catch (Exception e) {
+         } catch (Exception& e) {
             pass = false;
          }
       }

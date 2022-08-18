@@ -48,14 +48,8 @@ namespace Pspg
 
    public:
 
-      /// Base class for WField and CField
+      // Field on a real-space grid (r-grid)
       typedef RDField<D> Field;
-
-      /// Monomer chemical potential field type.
-      typedef typename Propagator<D>::WField WField;
-
-      /// Monomer concentration / volume fraction field type.
-      typedef typename Propagator<D>::CField CField;
 
       /**
       * Constructor.
@@ -163,9 +157,29 @@ namespace Pspg
       double pressure() const;
 
       //@}
-      /// \name UnitCell setter functions
+      /// \name Setter functions that modify state (fields and unit cell)
       ///@{
 
+      /**
+      * Set new w fields, in symmetrized Fourier format.
+      *
+      * On exit hasWFields and hasSymmetric fields are set true, while
+      * hasCFields is set false.
+      *
+      * \param fields  array of new w (chemical potential) fields
+      */  
+      void setWBasis(DArray< DArray<double> > const & fields);
+ 
+      /**
+      * Set new w fields, in real-space (r-grid) format.
+      *
+      * On exit hasWFields is set true while hasSymmetricFields and 
+      * hasCFields are both false.
+      *
+      * \param fields  array of new w (chemical potential) fields
+      */  
+      void setWRGrid(DArray<Field> const & fields);
+ 
       /**
       * Set parameters of the associated unit cell.
       *
@@ -192,7 +206,7 @@ namespace Pspg
       * field (w field) in a symmetry-adapted basis for one monomer
       * type. The array capacity is the number of monomer types.
       */
-      DArray<RDField <D> >& wFields();
+      DArray< DArray<double> >& wFields();
 
       /**
       * Get chemical potential field for one monomer type, in a basis.
@@ -203,7 +217,7 @@ namespace Pspg
       *
       * \param monomerId integer monomer type index
       */
-      RDField<D>& wField(int monomerId);
+      DArray<double>& wField(int monomerId);
 
       /**
       * Get array of chemical potential fields, on an r-space grid.
@@ -213,14 +227,14 @@ namespace Pspg
       * (w field) on a regular grid for one monomer type. The array
       * capacity is the number of monomer types.
       */
-      DArray<WField>& wFieldsRGrid();
+      DArray<Field>& wFieldsRGrid();
 
       /**
       * Get the chemical potential field for one monomer type, on a grid.
       *
       * \param monomerId integer monomer type index
       */
-      WField& wFieldRGrid(int monomerId);
+      Field& wFieldRGrid(int monomerId);
 
       /**
       * Get array of chemical potential fields, in Fourier space.
@@ -248,7 +262,7 @@ namespace Pspg
       * field (cfield) for one monomer type in a symmetry-adapted basis.
       * The array capacity is equal to the number of monomer types.
       */
-      DArray<RDField <D> >& cFields();
+      DArray< DArray<double> >& cFields();
 
       /**
       * Get the concentration field for one monomer type, in a basis.
@@ -259,7 +273,7 @@ namespace Pspg
       *
       * \param monomerId integer monomer type index
       */
-      RDField<D>& cField(int monomerId);
+      DArray<double>& cField(int monomerId);
 
       /**
       * Get array of all concentration fields (c fields), on a grid.
@@ -268,14 +282,14 @@ namespace Pspg
       * monomer concentration field for one monomer type on a regular
       * grid (an r-grid).
       */
-      DArray<CField>& cFieldsRGrid();
+      DArray<Field>& cFieldsRGrid();
 
       /**
       * Get the concentration (c field) for one monomer type, on a grid.
       *
       * \param monomerId integer monomer type index
       */
-      CField& cFieldRGrid(int monomerId);
+      Field& cFieldRGrid(int monomerId);
 
       /**
       * Get all monomer concentration fields, in Fourier space (k-grid).
@@ -509,7 +523,9 @@ namespace Pspg
       /**
       * Write last contour slice of the propagator in real space grid format.
       *
-      * \param filename name of output file
+      * \param filename  name of output file
+      * \param polymerID  integer index of polymer species
+      * \param blockID  integer index of block within polymer
       */
       void writePropagatorRGrid(const std::string & filename,
                                 int polymerID, int blockID);
@@ -590,14 +606,14 @@ namespace Pspg
       *
       * Indexed by monomer typeId, size = nMonomer.
       */
-      DArray<RDField<D> > wFields_;
+      DArray< DArray<double> > wFields_;
 
       /**
       * Array of chemical potential fields for monomer types.
       *
       * Indexed by monomer typeId, size = nMonomer.
       */
-      DArray<WField> wFieldsRGrid_;
+      DArray<Field> wFieldsRGrid_;
 
       /**
       * Work space for chemical potential fields
@@ -609,12 +625,12 @@ namespace Pspg
       *
       * Indexed by monomer typeId, size = nMonomer.
       */
-      DArray< RDField<D> > cFields_;
+      DArray< DArray<double> > cFields_;
 
       /**
       * Array of concentration fields for monomer types, r-grid format.
       */
-      DArray<CField> cFieldsRGrid_;
+      DArray<Field> cFieldsRGrid_;
 
       /**
       * Array of concentration fields for monomer types, k-grid format.
@@ -684,14 +700,14 @@ namespace Pspg
       *
       * Indexed by monomer typeId, size = nMonomer.
       */
-      DArray<RDField<D> > tmpFields_;
+      DArray< DArray<double> > tmpFields_;
 
       /**
       * Work array of fields on real space grid.
       *
       * Indexed by monomer typeId, size = nMonomer.
       */
-       DArray<CField> tmpFieldsRGrid_;
+       DArray<Field> tmpFieldsRGrid_;
 
       /**
       * Work array of fields on Fourier grid (k-grid).
@@ -833,25 +849,25 @@ namespace Pspg
    // Get all monomer chemical potential (w field), in a basis.
    template <int D>
    inline
-   DArray<RDField<D> >& System<D>::wFields()
+   DArray< DArray<double> >& System<D>::wFields()
    {  return wFields_; }
 
    // Get a single monomer chemical potential (w field), in a basis.
    template <int D>
    inline
-   RDField<D>& System<D>::wField(int id)
+   DArray<double>& System<D>::wField(int id)
    {  return wFields_[id]; }
 
    // Get all monomer excess chemical potential fields, on a grid.
    template <int D>
    inline
-   DArray< typename System<D>::WField >& System<D>::wFieldsRGrid()
+   DArray< typename System<D>::Field >& System<D>::wFieldsRGrid()
    {  return wFieldsRGrid_; }
 
    // Get a single monomer hemical potential field, on a grid.
    template <int D>
    inline
-   typename System<D>::WField& System<D>::wFieldRGrid(int id)
+   typename System<D>::Field& System<D>::wFieldRGrid(int id)
    {  return wFieldsRGrid_[id]; }
 
    template <int D>
@@ -867,24 +883,24 @@ namespace Pspg
    // Get all monomer concentration fields, in a basis.
    template <int D>
    inline
-   DArray<RDField<D> >& System<D>::cFields()
+   DArray< DArray<double> >& System<D>::cFields()
    {  return cFields_; }
 
    // Get a single monomer concentration field, in a basis.
    template <int D>
    inline
-   RDField<D>& System<D>::cField(int id)
+   DArray<double>& System<D>::cField(int id)
    {  return cFields_[id]; }
 
    // Get all monomer concentration fields, on a grid.
    template <int D>
    inline
-   DArray< typename System<D>::CField >& System<D>::cFieldsRGrid()
+   DArray< typename System<D>::Field >& System<D>::cFieldsRGrid()
    {  return cFieldsRGrid_; }
 
    // Get a single monomer concentration field, on a grid.
    template <int D>
-   inline typename System<D>::CField& System<D>::cFieldRGrid(int id)
+   inline typename System<D>::Field& System<D>::cFieldRGrid(int id)
    {  return cFieldsRGrid_[id]; }
 
    template <int D>
