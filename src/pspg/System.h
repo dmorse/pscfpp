@@ -32,8 +32,8 @@ namespace Pspg
 
    template <int D> class Iterator;
    template <int D> class IteratorFactory;
-   //template <int D> class Sweep;
-   //template <int D> class SweepFactory;
+   template <int D> class Sweep;
+   template <int D> class SweepFactory;
 
    using namespace Util;
 
@@ -220,7 +220,7 @@ namespace Pspg
       DArray<double>& wFieldBasis(int monomerId);
 
       /**
-      * Get array of chemical potential fields, on an r-space grid.
+      * Get array of all w fields, in r-space format.
       *
       * This function returns an array in which each element is a
       * WField object containing values of the chemical potential field
@@ -230,11 +230,28 @@ namespace Pspg
       DArray<Field>& wFieldsRGrid();
 
       /**
-      * Get the chemical potential field for one monomer type, on a grid.
+      * Get array of all w fields, in r-space format, by const ref.
+      *
+      * This function returns an array in which each element is a
+      * WField object containing values of the chemical potential field
+      * (w field) on a regular grid for one monomer type. The array
+      * capacity is the number of monomer types.
+      */
+      DArray<Field> const & wFieldsRGrid() const;
+
+      /**
+      * Get the w field for one monomer type, in r-space format.
       *
       * \param monomerId integer monomer type index
       */
       Field& wFieldRGrid(int monomerId);
+
+      /**
+      * Get w field for one monomer type in r-space format by const ref.
+      *
+      * \param monomerId integer monomer type index
+      */
+      Field const & wFieldRGrid(int monomerId) const;
 
       /**
       * Get array of chemical potential fields, in Fourier space.
@@ -477,6 +494,23 @@ namespace Pspg
       int iterate();
 
       /**
+      * Sweep in parameter space, solving an SCF problem at each point.
+      *
+      * This function uses a Sweep object that was initialized in the 
+      * parameter file to solve the SCF problem at a sequence of points
+      * along a line in parameter space. The nature of this sequence of
+      * points is determined by implementation of a subclass of Sweep
+      * and the parameters passed to the sweep object in the parameter 
+      * file.  The Iterator that is initialized in the parameter file 
+      * is called at each state point.
+      *
+      * An Exception is thrown if this is called when no Sweep has been 
+      * created (i.e., if hasSweep_ == false).
+      */
+      void sweep();
+
+
+      /**
       * Write chemical potential fields in symmetry adapted basis format.
       *
       * \param filename name of output file
@@ -612,12 +646,12 @@ namespace Pspg
       /**
       * Pointer to an Sweep object
       */
-      //Sweep<D>* sweepPtr_;
+      Sweep<D>* sweepPtr_;
 
       /**
       * Pointer to SweepFactory object
       */
-      //SweepFactory<D>* sweepFactoryPtr_;
+      SweepFactory<D>* sweepFactoryPtr_;
 
       /**
       * Array of chemical potential fields for monomer types.
@@ -864,28 +898,41 @@ namespace Pspg
    inline WaveList<D>& System<D>::wavelist()
    {  return *wavelistPtr_; }
 
-   // Get all monomer chemical potential (w field), in a basis.
+   // Get all w field, in a basis.
    template <int D>
    inline
    DArray< DArray<double> >& System<D>::wFieldsBasis()
    {  return wFieldsBasis_; }
 
-   // Get a single monomer chemical potential (w field), in a basis.
+   // Get a single monomer w field in basis format.
    template <int D>
    inline
    DArray<double>& System<D>::wFieldBasis(int id)
    {  return wFieldsBasis_[id]; }
 
-   // Get all monomer excess chemical potential fields, on a grid.
+   // Get all w fields in r-grid format
    template <int D>
    inline
    DArray< typename System<D>::Field >& System<D>::wFieldsRGrid()
    {  return wFieldsRGrid_; }
 
-   // Get a single monomer hemical potential field, on a grid.
+   // Get all w fields in r-grid format, by const reference.
+   template <int D>
+   inline
+   DArray<typename System<D>::Field> const & System<D>::wFieldsRGrid() 
+   const
+   {  return wFieldsRGrid_; }
+
+   // Get a single w field in r-grid format.
    template <int D>
    inline
    typename System<D>::Field& System<D>::wFieldRGrid(int id)
+   {  return wFieldsRGrid_[id]; }
+
+   // Get a single w field in r-grid format, by const reference.
+   template <int D>
+   inline
+   typename System<D>::Field const & System<D>::wFieldRGrid(int id) const
    {  return wFieldsRGrid_[id]; }
 
    template <int D>

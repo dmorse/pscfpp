@@ -9,9 +9,11 @@
 */
 
 #include "System.h"
-#include <pspg/math/GpuResources.h>
+#include <pspg/sweep/Sweep.h>
+#include <pspg/sweep/SweepFactory.h>
 #include <pspg/iterator/Iterator.h>
 #include <pspg/iterator/IteratorFactory.h>
+#include <pspg/math/GpuResources.h>
 
 #include <pscf/inter/ChiInteraction.h>
 #include <pscf/crystal/shiftToMinimum.h>
@@ -45,8 +47,8 @@ namespace Pspg
       iteratorPtr_(0),
       iteratorFactoryPtr_(0),
       wavelistPtr_(0),
-      //sweepPtr_(0),
-      //sweepFactoryPtr_(0),
+      sweepPtr_(0),
+      sweepFactoryPtr_(0),
       wFieldsBasis_(),
       cFieldsBasis_(),
       f_(),
@@ -56,21 +58,19 @@ namespace Pspg
       hasMixture_(false),
       isAllocated_(false),
       hasWFields_(false),
-      hasCFields_(false)
-      // hasSweep_(0)
+      hasCFields_(false),
+      hasSweep_(0)
    {
       setClassName("System");
       domain_.setFileMaster(fileMaster_);
 
       interactionPtr_ = new ChiInteraction();
-      iteratorFactoryPtr_ = new IteratorFactory<D>(*this);
       wavelistPtr_ = new WaveList<D>();
+      iteratorFactoryPtr_ = new IteratorFactory<D>(*this);
+      sweepFactoryPtr_ = new SweepFactory<D>(*this);
 
       BracketPolicy::set(BracketPolicy::Optional);
-
       ThreadGrid::init();
-
-      // sweepFactoryPtr_ = new SweepFactory(*this);
    }
 
    /*
@@ -82,18 +82,24 @@ namespace Pspg
       if (interactionPtr_) {
          delete interactionPtr_;
       }
-      if (iteratorPtr_) {
-         delete iteratorPtr_;
-      }
-      if (iteratorFactoryPtr_) {
-         delete iteratorFactoryPtr_;
-      }
       if (wavelistPtr_) {
          delete wavelistPtr_;
       }
       if (isAllocated_) {
          delete[] kernelWorkSpace_;
          cudaFree(d_kernelWorkSpace_);
+      }
+      if (iteratorPtr_) {
+         delete iteratorPtr_;
+      }
+      if (iteratorFactoryPtr_) {
+         delete iteratorFactoryPtr_;
+      }
+      if (sweepPtr_) {
+         delete sweepPtr_;
+      }
+      if (sweepFactoryPtr_) {
+         delete sweepFactoryPtr_;
       }
    }
 
@@ -228,8 +234,15 @@ namespace Pspg
       }
       iterator().setup();
 
-      // Optionally initialize a sweep
-      // To be added
+      // Optionally instantiate a Sweep object
+      sweepPtr_ =
+         sweepFactoryPtr_->readObjectOptional(in, *this, className, isEnd);
+      if (sweepPtr_) {
+         hasSweep_ = true;
+         sweepPtr_->setSystem(*this);
+      } else {
+         hasSweep_ = false;
+      }
 
    }
 
@@ -353,7 +366,7 @@ namespace Pspg
          } else
          if (command == "READ_W_RGRID") {
             readEcho(in, filename);
-            fieldIo().readFieldsRGrid(filename, wFieldsRGrid(), 
+            fieldIo().readFieldsRGrid(filename, wFieldsRGrid(),
                                       domain_.unitCell());
             hasWFields_ = true;
             hasSymmetricFields_ = false;
@@ -385,13 +398,13 @@ namespace Pspg
             UTIL_CHECK(hasSymmetricFields_);
             readEcho(in, filename);
             fieldIo().convertRGridToBasis(wFieldsRGrid(), wFieldsBasis());
-            fieldIo().writeFieldsBasis(filename, wFieldsBasis(), 
+            fieldIo().writeFieldsBasis(filename, wFieldsBasis(),
                                        unitCell());
          } else
          if (command == "WRITE_W_RGRID") {
             UTIL_CHECK(hasWFields_);
             readEcho(in, filename);
-            fieldIo().writeFieldsRGrid(filename, wFieldsRGrid(), 
+            fieldIo().writeFieldsRGrid(filename, wFieldsRGrid(),
                                        unitCell());
          } else
          if (command == "WRITE_C_BASIS") {
@@ -480,7 +493,7 @@ namespace Pspg
             readEcho(in, inFileName);
             readEcho(in, outFileName);
 
-            fieldIo().readFieldsRGrid(inFileName, cFieldsRGrid(), 
+            fieldIo().readFieldsRGrid(inFileName, cFieldsRGrid(),
                                       domain_.unitCell());
 
             // Compute w fields, excluding Lagrange multiplier contribution
@@ -498,7 +511,7 @@ namespace Pspg
             }
 
             // Write w fields to file in r-grid format
-            fieldIo().writeFieldsRGrid(outFileName, wFieldsRGrid(), 
+            fieldIo().writeFieldsRGrid(outFileName, wFieldsRGrid(),
                                        unitCell());
 
          } else {
@@ -837,7 +850,7 @@ namespace Pspg
    template <int D>
    void System<D>::readWBasis(const std::string & filename)
    {
-      fieldIo().readFieldsBasis(filename, wFieldsBasis(), 
+      fieldIo().readFieldsBasis(filename, wFieldsBasis(),
                                 domain_.unitCell());
       fieldIo().convertBasisToRGrid(wFieldsBasis(), wFieldsRGrid());
       hasWFields_ = true;
@@ -898,6 +911,21 @@ namespace Pspg
          outputThermo(Log::file());
       }
       return error;
+   }
+
+   /*
+   * Perform sweep along a line in parameter space.
+   */
+   template <int D>
+   void System<D>::sweep()
+   {
+      UTIL_CHECK(hasWFields_);
+      UTIL_CHECK(hasSymmetricFields_);
+      Log::file() << std::endl;
+      Log::file() << std::endl;
+
+      // Perform sweep
+      sweepPtr_->sweep();
    }
 
    /*
@@ -981,7 +1009,7 @@ namespace Pspg
    * Write the last time slice of the propagator.
    */
    template <int D>
-   void System<D>::writePropagatorRGrid(const std::string & filename, 
+   void System<D>::writePropagatorRGrid(const std::string & filename,
                                         int polymerID, int blockID)
    {
       const cudaReal* d_tailField = mixture_.polymer(polymerID).propagator(blockID, 1).tail();
@@ -989,7 +1017,8 @@ namespace Pspg
       // convert this cudaReal pointer to an RDField. Yikes.
       RDField<D> tailField;
       tailField.allocate(mesh().size());
-      cudaMemcpy(tailField.cDField(), d_tailField, mesh().size() * sizeof(cudaReal), cudaMemcpyDeviceToDevice);
+      cudaMemcpy(tailField.cDField(), d_tailField,
+               mesh().size() * sizeof(cudaReal), cudaMemcpyDeviceToDevice);
       // output.
       fieldIo().writeFieldRGrid(filename, tailField, unitCell());
    }
@@ -1007,7 +1036,7 @@ namespace Pspg
       file.close();
    }
 
-   /*  
+   /*
    * Convert fields from real-space grid to symmetry-adapted basis format.
    */
    template <int D>
