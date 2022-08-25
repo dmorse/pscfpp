@@ -21,7 +21,9 @@ namespace Pspg
    Mixture<D>::Mixture()
     : vMonomer_(1.0),
       ds_(-1.0),
-      meshPtr_(0)
+      nUnitCellParams_(0),
+      meshPtr_(0),
+      hasStress_(false)
    {  setClassName("Mixture"); }
 
    template <int D>
@@ -31,7 +33,7 @@ namespace Pspg
    template <int D>
    void Mixture<D>::readParameters(std::istream& in)
    {
-      MixtureTmpl< Pscf::Pspg::Polymer<D>, Pscf::Pspg::Solvent<D> >::readParameters(in);
+      MixtureTmpl< Polymer<D>, Solvent<D> >::readParameters(in);
       vMonomer_ = 1.0; // Default value
       readOptional(in, "vMonomer", vMonomer_);
       read(in, "ds", ds_);
@@ -67,13 +69,36 @@ namespace Pspg
    }
 
    template <int D>
-   void Mixture<D>::setupUnitCell(const UnitCell<D>& unitCell, const WaveList<D>& wavelist)
+   void Mixture<D>::setupUnitCell(UnitCell<D> const & unitCell, 
+                                  WaveList<D> const& wavelist)
    {
-      nParams_ = unitCell.nParameter();
+      nUnitCellParams_ = unitCell.nParameter();
       for (int i = 0; i < nPolymer(); ++i) {
          polymer(i).setupUnitCell(unitCell, wavelist);
       }
+      hasStress_ = false;
    }
+
+   /*
+   * Reset statistical segment length for one monomer type.
+   */
+   template <int D>
+   void Mixture<D>::setKuhn(int monomerId, double kuhn)
+   {
+      // Set new Kuhn length for relevant Monomer object
+      monomer(monomerId).setKuhn(kuhn);
+
+      // Update kuhn length for all blocks of this monomer type
+      for (int i = 0; i < nPolymer(); ++i) {
+         for (int j =  0; j < polymer(i).nBlock(); ++j) {
+            if (monomerId == polymer(i).block(j).monomerId()) {
+               polymer(i).block(j).setKuhn(kuhn);
+            }
+         }
+      }
+      hasStress_ = false;
+   }
+
 
    /*
    * Compute concentrations (but not total free energy).
@@ -101,17 +126,17 @@ namespace Pspg
       for (i = 0; i < nm; ++i) {
          UTIL_CHECK(cFields[i].capacity() == nMesh);
          UTIL_CHECK(wFields[i].capacity() == nMesh);
-         assignUniformReal<<<nBlocks, nThreads>>>(cFields[i].cDField(), 0.0, nMesh);
+         assignUniformReal<<<nBlocks, nThreads>>>(cFields[i].cDField(), 
+                                                  0.0, nMesh);
       }
 
-
-      int monomerId;
       // Solve MDE for all polymers
       for (i = 0; i < nPolymer(); ++i) {
          polymer(i).compute(wFields);
       }
 
       // Accumulate monomer concentration fields
+      int monomerId;
       for (i = 0; i < nPolymer(); ++i) {
          for (j = 0; j < polymer(i).nBlock(); ++j) {
             monomerId = polymer(i).block(j).monomerId();
@@ -120,7 +145,8 @@ namespace Pspg
             CField& monomerField = cFields[monomerId];
             CField& blockField = polymer(i).block(j).cField();
             UTIL_CHECK(blockField.capacity()==nMesh);
-            pointWiseAdd<<<nBlocks, nThreads>>>(monomerField.cDField(), blockField.cDField(), nMesh);
+            pointWiseAdd<<<nBlocks, nThreads>>>(monomerField.cDField(), 
+                                                blockField.cDField(), nMesh);
          }
       }
       
@@ -137,12 +163,14 @@ namespace Pspg
          CField& monomerField = cFields[monomerId];
          CField const & solventField = solvent(i).concField();
          UTIL_CHECK(solventField.capacity() == nMesh);
-         pointWiseAdd<<<nBlocks, nThreads>>>(monomerField.cDField(), solventField.cDField(), nMesh);
+         pointWiseAdd<<<nBlocks, nThreads>>>(monomerField.cDField(), 
+                                             solventField.cDField(), 
+                                             nMesh);
 
 
       }
       
-
+      hasStress_ = false;
    }
 
    /*  
@@ -159,15 +187,16 @@ namespace Pspg
       } 
 
       // Accumulate total stress 
-      for (i = 0; i < nParams_; ++i) {
+      for (i = 0; i < nUnitCellParams_; ++i) {
          stress_[i] = 0.0;
          for (j = 0; j < nPolymer(); ++j) {
             stress_[i] += polymer(j).stress(i);
          }   
       }
-
       // Note: Solvent does not contribute to derivatives of f_Helmholtz
       // with respect to unit cell parameters at fixed volume fractions.
+
+      hasStress_ = true;
    }
 
    template <int D>

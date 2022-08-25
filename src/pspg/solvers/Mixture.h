@@ -101,6 +101,18 @@ namespace Pspg
                          WaveList<D> const & waveList);
 
       /**
+      * Reset statistical segment length for one monomer type.
+      * 
+      * This function resets the kuhn or statistical segment length value
+      * for a monomer type, and updates the associcated value in every 
+      * block of that monomer type.
+      *
+      * \param monomerId  monomer type id
+      * \param kuhn  new value for the statistical segment length
+      */
+      void setKuhn(int monomerId, double kuhn);
+
+      /**
       * Compute concentrations.
       *
       * This function calls the compute function of every molecular
@@ -149,7 +161,10 @@ namespace Pspg
       * \int parameterId  unit cell parameter index
       */
       double stress(int parameterId)
-      {  return stress_[parameterId]; }
+      {
+         UTIL_CHECK(hasStress_);  
+         return stress_[parameterId]; 
+      }
 
       /**
       * Get monomer reference volume.
@@ -190,10 +205,13 @@ namespace Pspg
       double ds_;
 
       /// Number of unit cell parameters.
-      int nParams_;
+      int nUnitCellParams_;
 
       /// Pointer to associated Mesh<D> object.
       Mesh<D> const * meshPtr_;
+
+      /// Has the stress been computed?
+      bool hasStress_;
 
       /// Return associated domain by reference.
       Mesh<D> const & mesh() const;

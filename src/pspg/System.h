@@ -380,7 +380,7 @@ namespace Pspg
       FileMaster& fileMaster();
 
       //@}
-      /// \name Accessors (return values)
+      /// \name Accessors (return by value)
       //@{
 
       /**
@@ -413,6 +413,10 @@ namespace Pspg
       */
       bool hasSymmetricFields() const;
 
+      ///@}
+      /// \name Commands (each corresponds to a command file command)
+      ///@{
+      
       /**
       * Read chemical potential fields in symmetry adapted basis format.
       *
@@ -468,32 +472,6 @@ namespace Pspg
       int iterate();
 
       /**
-      * Convert a field from symmetry-adapted basis to r-grid format.
-      *
-      * This function uses the arrays that stored monomer concentration
-      * fields for temporary storage, and thus corrupts any previously
-      * stored values. As a result, flag hasCFields is false on output.
-      *
-      * \param inFileName name of input file
-      * \param outFileName name of output file
-      */
-      void basisToRGrid(const std::string & inFileName,
-                        const std::string & outFileName);
-
-      /**
-      * Convert a field from real-space grid to symmetrized basis format.
-      *
-      * This function uses the arrays that stored monomer concentration
-      * fields for temporary storage, and thus corrupts any previously
-      * stored values. As a result, flag hasCFields is false on return.
-      *
-      * \param inFileName name of input file
-      * \param outFileName name of output file
-      */
-      void rGridToBasis(const std::string & inFileName,
-                        const std::string & outFileName);
-
-      /**
       * Write chemical potential fields in symmetry adapted basis format.
       *
       * \param filename name of output file
@@ -534,7 +512,33 @@ namespace Pspg
       */
       void writeData(const std::string & filename);
 
-      //@}
+      /**
+      * Convert a field from symmetry-adapted basis to r-grid format.
+      *
+      * This function uses the arrays that stored monomer concentration
+      * fields for temporary storage, and thus corrupts any previously
+      * stored values. As a result, flag hasCFields is false on output.
+      *
+      * \param inFileName name of input file
+      * \param outFileName name of output file
+      */
+      void basisToRGrid(const std::string & inFileName,
+                        const std::string & outFileName);
+
+      /**
+      * Convert a field from real-space grid to symmetrized basis format.
+      *
+      * This function uses the arrays that stored monomer concentration
+      * fields for temporary storage, and thus corrupts any previously
+      * stored values. As a result, flag hasCFields is false on return.
+      *
+      * \param inFileName name of input file
+      * \param outFileName name of output file
+      */
+      void rGridToBasis(const std::string & inFileName,
+                        const std::string & outFileName);
+
+      ///@}
 
       #if 0
       // Additional functions for field-theoretic Monte-Carlo
