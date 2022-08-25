@@ -925,6 +925,16 @@ namespace Pspg
    }
 
    /*
+   * Write w-fields in real space grid file format.
+   */
+   template <int D>
+   void System<D>::writeWRGrid(const std::string & filename) const
+   {
+      UTIL_CHECK(hasWFields_);
+      fieldIo().writeFieldsRGrid(filename, wFieldsRGrid(), unitCell());
+   }
+
+   /*
    * Write all concentration fields in symmetry-adapted basis format.
    */
    template <int D>
@@ -933,6 +943,16 @@ namespace Pspg
       UTIL_CHECK(hasCFields_);
       UTIL_CHECK(hasSymmetricFields_);
       fieldIo().writeFieldsBasis(filename, cFieldsBasis(), unitCell());
+   }
+
+   /*
+   * Write all concentration fields in real space (r-grid) format.
+   */
+   template <int D>
+   void System<D>::writeCRGrid(const std::string & filename) const
+   {
+      UTIL_CHECK(hasCFields_);
+      fieldIo().writeFieldsRGrid(filename, cFieldsRGrid_, unitCell());
    }
 
    /*

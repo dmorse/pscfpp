@@ -55,7 +55,6 @@ namespace Pspg {
       using SweepTmpl< BasisFieldState<D> >::state;
       using SweepTmpl< BasisFieldState<D> >::s;
       using SweepTmpl< BasisFieldState<D> >::c;
-      //using SweepTmpl< BasisFieldState<D> >::writeRhoRgrid_;
 
    protected:
 
@@ -129,6 +128,7 @@ namespace Pspg {
       // Protected members inherited from base class template SweepTmpl
       using SweepTmpl< BasisFieldState<D> >::ns_;
       using SweepTmpl< BasisFieldState<D> >::baseFileName_;
+      using SweepTmpl< BasisFieldState<D> >::writeRhoRGrid_;
       using SweepTmpl< BasisFieldState<D> >::initialize;
       using SweepTmpl< BasisFieldState<D> >::setCoefficients;
 

@@ -484,11 +484,25 @@ namespace Pspg
       void writeWBasis(const std::string & filename);
 
       /**
+      * Write chemical potential fields in real space grid (r-grid) format.
+      *
+      * \param filename name of output file
+      */
+      void writeWRGrid(const std::string & filename) const;
+   
+      /**
       * Write concentrations in symmetry-adapted basis format.
       *
       * \param filename name of output file
       */
       void writeCBasis(const std::string & filename);
+
+      /**
+      * Write concentration fields in real space grid (r-grid) format.
+      *
+      * \param filename name of output file
+      */
+      void writeCRGrid(const std::string & filename) const;
 
       /**
       * Write concentration fields in real space (r-grid) format, for each

@@ -283,16 +283,14 @@ namespace Pspg {
       outFileName += ".bf";
       system().writeCBasis(outFileName);
 
-      #if 0
       // Write c rgrid files
-      if (writeRhoRgrid_) {
+      if (writeRhoRGrid_) {
         outFileName = baseFileName_;
         outFileName += indexString;
         outFileName += "_c";
         outFileName += ".rf";
         system().writeCRGrid(outFileName);
       }
-      #endif
 
    }
 
