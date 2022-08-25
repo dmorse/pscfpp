@@ -104,6 +104,11 @@ namespace Pspc
       virtual void readParameters(std::istream& in);
 
       /**
+      * Write parameter file to an ostream, omitting the sweep block. 
+      */
+      void writeBasicParam(std::ostream& out);
+
+      /**
       * Read command script from a file.
       * 
       * \param in command script file.
@@ -521,16 +526,7 @@ namespace Pspc
       * \param blockId  integer id of the block with the polymer 
       */
       void writePropagatorRGrid(const std::string & filename, 
-                                int polymerId, int blockId) const;
-   
-      /**
-      * Write all data associated with the converged solution. This
-      * includes the full param file, as well as the thermodynamic
-      * data (free energy, pressure, phi and mu for each species).
-      * 
-      * \param filename name of output file
-      */
-      void writeData(const std::string & filename);
+                                int polymerId, int blockId, int directionId, int segmentId)  const;
 
       /**
       * Convert a field from symmetry-adapted basis to r-grid format.
@@ -567,6 +563,24 @@ namespace Pspc
       */
       void rGridToKGrid(const std::string & inFileName, 
                         const std::string & outFileName) const;
+
+      /**
+      * Convert fields from Fourier (k-grid) to symmetry-adapted basis format.
+      *
+      * \param inFileName name of input file
+      * \param outFileName name of output file
+      */
+      void kGridToBasis(const std::string& inFileName, 
+                        const std::string& outFileName) const;
+   
+      /**
+      * Convert fields from symmetry-adapted basis to Fourier (k-grid) format.
+      *
+      * \param inFileName name of input file
+      * \param outFileName name of output file
+      */
+      void basisToKGrid(const std::string & inFileName, 
+                        const std::string & outFileName) const;
   
       /** 
       * Check if r-grid fields have the declared space group symmetry.
@@ -590,8 +604,8 @@ namespace Pspc
       * \param inFileName name of input file
       * \param outFileName name of output file
       */
-      void rhoToOmega(const std::string& inFileName, 
-                      const std::string& outFileName);
+      void readCguessW(const std::string& inFileName, 
+                       const std::string& outFileName);
    
       /**
       * Output information about stars and symmetrized basis functions.
@@ -697,7 +711,7 @@ namespace Pspc
       *
       * Indexed by monomer typeId, size = nMonomer.
       */
-      mutable DArray< DArray<double> > tmpFields_;
+      mutable DArray< DArray<double> > tmpFieldsBasis_;
 
       /**
       * Work array of fields on real space grid.

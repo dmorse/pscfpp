@@ -252,6 +252,20 @@ namespace Pspg
    {  readParam(fileMaster().paramFile()); }
 
    /*
+   * Write parameter file, omitting the sweep block.
+   */
+   template <int D>
+   void System<D>::writeParam(std::ostream& out)
+   {
+      out << "System{" << std::endl;
+      mixture_.writeParam(out);
+      interaction().writeParam(out);
+      domain_.writeParam(out);
+      iterator().writeParam(out);
+      out << "}" << std::endl;
+   }
+
+   /*
    * Allocate memory for fields.
    */
    template <int D>
@@ -405,9 +419,19 @@ namespace Pspg
                         << Str("block ID   ", 21) << blockID << std::endl;
             writePropagatorRGrid(filename, polymerID, blockID);
          } else
-         if (command == "WRITE_DATA") {
+         if (command == "WRITE_PARAM") {
             readEcho(in, filename);
-            writeData(filename);
+            std::ofstream file;
+            fileMaster().openOutputFile(filename, file);
+            writeParam(file);
+            file.close();
+         } else
+         if (command == "WRITE_THERMO") {
+            readEcho(in, filename);
+            std::ofstream file;
+            fileMaster().openOutputFile(filename, file, std::ios_base::app);
+            outputThermo(file);
+            file.close();
          } else
          if (command == "BASIS_TO_RGRID") {
             hasCFields_ = false;

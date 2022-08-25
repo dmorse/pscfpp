@@ -13,7 +13,8 @@ ITERATE
 WRITE_W_BASIS   out/w.bf
 WRITE_C_BASIS   out/c.bf
 WRITE_C_RGRID   out/c.rf
-WRITE_DATA      out/data
+WRITE_PARAM     out/data
+WRITE_THERMO    out/data
 FINISH
 \endcode
 The command "READ_W_BASIS in/w.bf" instructs the program to read an 
@@ -26,9 +27,11 @@ converged set of chemical potential fields to file out/w.bf in
 symmetry-adapted basis format. The command "WRITE_C_BASIS out/c.bf" writes 
 the corresponding monomer volume fraction fields to the file out/c.bf in 
 the same format, while "WRITE_C_RGRID out/c.rf" writes the volume fraction
-fields in r-grid format. "The command WRITE_DATA out/data" writes a 
-file summarizing the parameters and thermodynamic properties of the 
-converged solution. The script stops execution when it encounters the 
+fields in r-grid format. The command "WRITE_PARAM out/data" writes the 
+param file for the current system to a file. The following command, 
+"WRITE_THERMO out/data", appends the thermodynamic properties of the 
+converged solution to the end of out/data, which already contains the 
+param file. The script stops execution when it encounters the 
 FINISH command.
 
 Many of the available commands for the pscf_pcNd programs cause the 
@@ -62,7 +65,18 @@ programs:
   <tr> 
     <td> READ_W_RGRID </td>
     <td> filename [string] </td>
-    <td> Read w fields from file filename, in real-space grid (r-grid) format
+    <td> Read w fields from file filename, in real-space grid (r-grid) 
+         format </td>
+  </tr>
+  <tr> 
+    <td> READ_C_GUESS_W </td>
+    <td> inFile [string], outFile [string] </td>
+    <td> Read monomer concentration fields in symmetry-adapted basis 
+         format from file inFile, generate chemical potential fields 
+         using the concentration fields and chi values, and write the 
+         potential fields to outFile in symmetry-adapted basis format.
+         Also stores potential fields to be used by future commands
+         (e.g., ITERATE or SWEEP).
          </td>
   </tr>
   <tr> 
@@ -73,7 +87,8 @@ programs:
   <tr> 
     <td> ITERATE </td>
     <td> filename [string] (conditional) </td>
-    <td> Iteratively solve SCFT equations (after reading initial w fields) </td>
+    <td> Iteratively solve SCFT equations (after initializing 
+         w fields) </td>
   </tr>
   <tr> 
     <td> SWEEP </td>
@@ -108,19 +123,28 @@ programs:
   <tr> 
     <td> WRITE_C_BLOCK_RGRID </td>
     <td> filename [string] </td>
-    <td> Write individual block/solvent volume fraction fields (c fields) to
-         file filename, in r-grid format. The block c fields are given in
-         the order that the blocks appear in the param file, followed by the
-         solvent fields in the order that the solvents appear in the param 
-         file </td>
+    <td> Write all individual block and solvent volume fraction fields 
+         (c fields) to file filename, in r-grid format. The block c fields 
+         are given in the order that the blocks appear in the param file, 
+         followed by the solvent fields in the order that the solvents 
+         appear in the param file </td>
   </tr>
   <tr> 
-    <td> WRITE_DATA </td>
+    <td> WRITE_PARAM </td>
     <td> filename [string] </td>
-    <td> Write all data associated with the converged solution. This
-         includes the full param file, as well as the thermodynamic
-         data (free energy, pressure, phi and mu for each species)
+    <td> Write minimal version of the param file associated with the 
+         current system. Sweep blocks
+         are omitted. </td>
   </tr>
+  <tr>
+    <td> WRITE_THERMO </td>
+    <td> filename [string] </td>
+    <td> Write thermodynamic data (free energy, pressure, phi, and 
+         mu for each species) to a file. If file already exists, this
+         command will append thermodynamic data to the end of the 
+         file, rather than overwriting what is currently stored there.
+         </td>
+  <tr> 
   <tr> 
     <td> WRITE_PROPAGATOR </td>
     <td> filename [string], blockId [int], polymerId [int] </td>
@@ -153,14 +177,17 @@ programs:
          </td>
   </tr>
   <tr> 
-    <td> RHO_TO_OMEGA </td>
+    <td> KGRID_TO_BASIS </td>
     <td> inFile [string], outFile [string] </td>
-    <td> Read monomer concentration fields in symmetry-adapted basis 
-         format from file inFile, generate chemical potential fields 
-         using the concentration fields and chi values, and write the 
-         potential fields to outFile in symmetry-adapted basis format.
-         Also stores potential fields to be used by future commands
-         (e.g., ITERATE or SWEEP).
+    <td> Read fields from file inFile in discrete Fourier expansion 
+         (k-grid) format, write to file outFile in symmetry-adapted
+         basis format </td>
+  </tr>
+  <tr> 
+    <td> BASIS_TO_KGRID </td>
+    <td> inFile [string], outFile [string] </td>
+    <td> Read fields from file inFile in symmetry-adapted basis format,
+         write to outFile in discrete Fourier expansion (k-grid) format
          </td>
   </tr>
   <tr> 
@@ -170,6 +197,16 @@ programs:
          check whether the fields have symmetry that matches the
          space group specified in the param file. 
          </td>
+  </tr>
+  <tr> 
+    <td> WRITE_STARS </td>
+    <td> filename [string] </td>
+    <td> Write a list of all stars to file filename. </td>
+  </tr>
+  <tr> 
+    <td> WRITE_WAVES </td>
+    <td> filename [string] </td>
+    <td> Write a list of all waves to file filename. </td>
   </tr>
 </table>
 
