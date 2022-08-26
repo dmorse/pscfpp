@@ -176,7 +176,8 @@ namespace Pspg{
       ThreadGrid::setThreadsLogical(fieldTrial.capacity(), nBlocks, nThreads);
 
       pointWiseAddScale<<<nBlocks, nThreads>>>
-         (fieldTrial.cDField(), resTrial.cDField(), lambda, fieldTrial.capacity());
+         (fieldTrial.cDField(), resTrial.cDField(), lambda, 
+          fieldTrial.capacity());
    }
 
    template <int D>
@@ -210,7 +211,7 @@ namespace Pspg{
       ThreadGrid::setThreadsLogical(nMesh, nBlocks, nThreads);
 
       // Pointer to fields on system
-      DArray<RDField<D>> * const currSys = &system().wFieldsRGrid();
+      DArray<RDField<D>> const * currSys = &system().wFieldsRGrid();
 
       // Loop to unfold the system fields and store them in one long array
       for (int i = 0; i < nMonomer; i++) {
@@ -318,10 +319,7 @@ namespace Pspg{
       int nBlocks, nThreads;
       ThreadGrid::setThreadsLogical(nMesh, nBlocks, nThreads);
 
-      // pointer to field objects in system
-      DArray<RDField<D>> * sysfields = &system().wFieldsRGrid();
-
-      // Manually and explicitly set homogeneous components of field if canonical
+      // If canonical, explicitly set homogeneous field components 
       if (system().mixture().isCanonical()) {
          cudaReal average, wAverage, cAverage;
          for (int i = 0; i < nMonomer; i++) {
@@ -329,56 +327,39 @@ namespace Pspg{
             average = findAverage(newGuess.cDField() + i*nMesh, nMesh);
             
             // Subtract average from field, setting average to zero
-            subtractUniform<<<nBlocks, nThreads>>>(newGuess.cDField() + i*nMesh, average, nMesh);
+            subtractUniform<<<nBlocks, nThreads>>>(newGuess.cDField() + i*nMesh,
+                                                   average, nMesh);
             
             // Compute the new average omega value, add it to all elements
             wAverage = 0;
             for (int j = 0; j < nMonomer; j++) {
-               // Find average concentration
+               // Find average concentration for j monomers
                cAverage = findAverage(system().cFieldRGrid(j).cDField(), nMesh);
                wAverage += system().interaction().chi(i,j) * cAverage;
             }
-            addUniform<<<nBlocks, nThreads>>>(newGuess.cDField() + i*nMesh, wAverage, nMesh); 
+            addUniform<<<nBlocks, nThreads>>>(newGuess.cDField() + i*nMesh, 
+                                              wAverage, nMesh); 
          }
       }
 
-      // copy over grid points
-      for (int i = 0; i < nMonomer; i++) {
-         assignReal<<<nBlocks, nThreads>>>
-               ((*sysfields)[i].cDField(), newGuess.cDField() + i*nMesh, nMesh);
-      }
+      system().setWRGrid(newGuess);
+      system().symmetrizeWFields();
 
-      // if flexible unit cell, update parameters well
+      // If flexible unit cell, update cell parameters 
       if (isFlexible_) {
          FSArray<double,6> parameters;
          const int nParam = system().unitCell().nParameter();
          cudaReal* temp = new cudaReal[nParam];
 
-         cudaMemcpy(temp, newGuess.cDField() + nMonomer*nMesh, nParam*sizeof(cudaReal), cudaMemcpyDeviceToHost);
+         cudaMemcpy(temp, newGuess.cDField() + nMonomer*nMesh, 
+                    nParam*sizeof(cudaReal), cudaMemcpyDeviceToHost);
          for (int i = 0; i < nParam; i++) {
             parameters.append(1/scaleStress_ * (double)temp[i]);
          }
-
-         #if 0
-         system().unitCell().setParameters(parameters);            
-         system().mixture().setupUnitCell(system().unitCell(), system().wavelist());
-         system().wavelist().computedKSq(system().unitCell());
-         #endif
-   
          system().setUnitCell(parameters);
 
          delete[] temp;
       }
-
-      // TEMPORARY. PASS THE INPUTS THROUGH A BASIS FILTER.
-      system().fieldIo().convertRGridToBasis(system().wFieldsRGrid(), 
-                                             system().wFieldsBasis());
-      system().fieldIo().convertRGridToBasis(system().cFieldsRGrid(), 
-                                             system().cFieldsBasis());
-      system().fieldIo().convertBasisToRGrid(system().wFieldsBasis(), 
-                                             system().wFieldsRGrid());
-      system().fieldIo().convertBasisToRGrid(system().cFieldsBasis(), 
-                                             system().cFieldsRGrid());
 
    }
 

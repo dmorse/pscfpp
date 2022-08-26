@@ -50,9 +50,9 @@ public:
       system.readWBasis("in/diblock/lam/omega.in");
 
       // Get reference field
-      DArray< DArray<double> > d_wFields_check;
-      //RDFieldToDField(d_wFields_check, system.wFieldsBasis());
-      d_wFields_check = system.wFieldsBasis();
+      DArray< DArray<double> > b_wFields_check;
+      //copyFieldsBasis(b_wFields_check, system.wFieldsBasis());
+      b_wFields_check = system.wFieldsBasis();
 
       // Round trip conversion basis -> rgrid -> basis, read result
       system.basisToRGrid("in/diblock/lam/omega.in",
@@ -62,13 +62,13 @@ public:
       system.readWBasis("out/testConversion1D_lam_w.bf");
 
       // Get test result
-      DArray< DArray<double> > d_wFields;
-      //RDFieldToDField(d_wFields, system.wFieldsBasis());
-      d_wFields = system.wFieldsBasis();
+      DArray< DArray<double> > b_wFields;
+      //copyFieldsBasis(b_wFields, system.wFieldsBasis());
+      b_wFields = system.wFieldsBasis();
 
       // Compare result to original
       BFieldComparison comparison (1);
-      comparison.compare(d_wFields_check, d_wFields);
+      comparison.compare(b_wFields_check, b_wFields);
       if (verbose()>0) {
          Log::file() << "\n";
          Log::file() << "Max error = " << comparison.maxDiff() << "\n";
@@ -88,9 +88,9 @@ public:
       system.readWBasis("in/diblock/hex/omega.in");
 
       // Get reference field
-      DArray< DArray<double> > d_wFields_check;
-      //RDFieldToDField(d_wFields_check, system.wFieldsBasis());
-      d_wFields_check = system.wFieldsBasis();
+      DArray< DArray<double> > b_wFields_check;
+      //copyFieldsBasis(b_wFields_check, system.wFieldsBasis());
+      b_wFields_check = system.wFieldsBasis();
 
       // Round trip basis -> rgrid -> basis, read resulting wField
       system.basisToRGrid("in/diblock/hex/omega.in",
@@ -101,13 +101,13 @@ public:
       system.readWBasis("out/testConversion2D_hex_w.bf");
 
       // Get test result
-      DArray< DArray<double> > d_wFields;
-      //RDFieldToDField(d_wFields, system.wFieldsBasis());
-      d_wFields = system.wFieldsBasis();
+      DArray< DArray<double> > b_wFields;
+      //copyFieldsBasis(b_wFields, system.wFieldsBasis());
+      b_wFields = system.wFieldsBasis();
 
       // Compare result to original
       BFieldComparison comparison (1);
-      comparison.compare(d_wFields_check, d_wFields);
+      comparison.compare(b_wFields_check, b_wFields);
       if (verbose()>0) {
          Log::file() << "\n";
          Log::file() << "Max error = " << comparison.maxDiff() << "\n";
@@ -128,8 +128,8 @@ public:
       system.readWBasis("in/diblock/bcc/omega.in");
 
       // Get reference field
-      DArray< DArray<double> > d_wFields_check;
-      RDFieldToDField(d_wFields_check, system.wFieldsBasis());
+      DArray< DArray<double> > b_wFields_check;
+      copyFieldsBasis(b_wFields_check, system.wFieldsBasis());
 
       // Complete round trip basis -> rgrid -> basis
       system.basisToRGrid("in/diblock/bcc/omega.in",
@@ -139,12 +139,12 @@ public:
       system.readWBasis("out/testConversion3D_bcc_w.bf");
 
       // Get test result
-      DArray< DArray<double> > d_wFields;
-      RDFieldToDField(d_wFields, system.wFieldsBasis());
+      DArray< DArray<double> > b_wFields;
+      copyFieldsBasis(b_wFields, system.wFieldsBasis());
 
       // Compare result to original
       BFieldComparison comparison (1);
-      comparison.compare(d_wFields_check, d_wFields);
+      comparison.compare(b_wFields_check, b_wFields);
       if (verbose()>0) {
          Log::file() << "\n";
          Log::file() << "Max error = " << comparison.maxDiff() << "\n";
@@ -190,13 +190,11 @@ public:
       // Read w fields
       system.readWBasis("in/diblock/lam/omega.ref");
 
-      // Get reference field
-      DArray< DArray<double> > d_wFields_check;
-      RDFieldToDField(d_wFields_check, system.wFieldsBasis());
+      // Get reference field in basis format
+      DArray< DArray<double> > b_wFields_check;
+      copyFieldsBasis(b_wFields_check, system.wFieldsBasis());
+    
      
-      // PSPC tests start from the reference solution, 
-      // rather than a nearby solution, so I guess do that here too?
-      //system.readWBasis("in/diblock/lam/omega.in");
       // Iterate and output solution
       int error = system.iterate();
       if (error) {
@@ -205,18 +203,33 @@ public:
       system.writeWBasis("out/testIterate1D_lam_rigid_w.bf");
       system.writeCBasis("out/testIterate1D_lam_rigid_c.bf");
 
-      // Get test result
-      DArray< DArray<double> > d_wFields;
-      RDFieldToDField(d_wFields, system.wFieldsBasis());
-
-      // Compare result to original
-      BFieldComparison comparison (1);
-      comparison.compare(d_wFields_check, d_wFields);
-      if (verbose()>0) {
+      // Compare result to original in basis format
+      DArray< DArray<double> > b_wFields;
+      copyFieldsBasis(b_wFields, system.wFieldsBasis());
+      BFieldComparison comparison(1);
+      comparison.compare(b_wFields_check, b_wFields);
+      if (verbose() > 0) {
          Log::file() << "\n";
          Log::file() << "Max error = " << comparison.maxDiff() << "\n";
       }
       TEST_ASSERT(comparison.maxDiff() < 5.0E-7);
+
+      #if 0 
+      // Get reference field in r-grid format
+      DArray< RDField<1> > r_wFields_check;
+      copyFieldsRGrid(r_wFields_check, system.wFieldsRGrid());
+
+      // Compare result to original in rgrid format
+      DArray< RDField<1> > r_wFields;
+      copyFieldsBasis(b_wFields, system.wFieldsBasis());
+      BFieldComparison comparison(1);
+      comparison.compare(b_wFields_check, b_wFields);
+      if (verbose() > 0) {
+         Log::file() << "\n";
+         Log::file() << "Max error = " << comparison.maxDiff() << "\n";
+      }
+      TEST_ASSERT(comparison.maxDiff() < 5.0E-7);
+      #endif
 
    }
 
@@ -231,8 +244,8 @@ public:
       system.readWBasis("in/diblock/lam/omega.ref");
 
       // Get reference field
-      DArray< DArray<double> > d_wFields_check;
-      RDFieldToDField(d_wFields_check, system.wFieldsBasis());
+      DArray< DArray<double> > b_wFields_check;
+      copyFieldsBasis(b_wFields_check, system.wFieldsBasis());
 
       // Read input w-fields, iterate and output solution
       system.readWBasis("in/diblock/lam/omega.in");
@@ -244,12 +257,12 @@ public:
       system.writeCBasis("out/testIterate1D_lam_flex_c.bf");
 
       // Get test result
-      DArray< DArray<double> > d_wFields;
-      RDFieldToDField(d_wFields, system.wFieldsBasis());
+      DArray< DArray<double> > b_wFields;
+      copyFieldsBasis(b_wFields, system.wFieldsBasis());
 
       // Compare result to original
       BFieldComparison comparison (1);
-      comparison.compare(d_wFields_check, d_wFields);
+      comparison.compare(b_wFields_check, b_wFields);
 
       // Compare difference to tolerance epsilon
       double diff = comparison.maxDiff();
@@ -273,8 +286,8 @@ public:
 
       // Get reference field
       system.readWBasis("in/solution/lam/w.bf");
-      DArray< DArray<double> > d_wFields_check;
-      RDFieldToDField(d_wFields_check, system.wFieldsBasis());
+      DArray< DArray<double> > b_wFields_check;
+      copyFieldsBasis(b_wFields_check, system.wFieldsBasis());
 
       // iterate and output solution
       int error = system.iterate();
@@ -285,12 +298,12 @@ public:
       system.writeCBasis("out/testIterate1D_lam_soln_c.bf");
 
       // Get test result
-      DArray< DArray<double> > d_wFields;
-      RDFieldToDField(d_wFields, system.wFieldsBasis());
+      DArray< DArray<double> > b_wFields;
+      copyFieldsBasis(b_wFields, system.wFieldsBasis());
 
       // Compare result to original
       BFieldComparison comparison (1);
-      comparison.compare(d_wFields_check, d_wFields);
+      comparison.compare(b_wFields_check, b_wFields);
 
       // Compare difference to tolerance epsilon 
       double diff = comparison.maxDiff();
@@ -314,8 +327,8 @@ public:
 
       // Get reference field
       system.readWBasis("in/blend/lam/w.ref_closed");
-      DArray< DArray<double> > d_wFields_check;
-      RDFieldToDField(d_wFields_check, system.wFieldsBasis());
+      DArray< DArray<double> > b_wFields_check;
+      copyFieldsBasis(b_wFields_check, system.wFieldsBasis());
 
       // Read input w-fields, iterate and output solution
       system.readWBasis("in/blend/lam/w.bf");
@@ -327,12 +340,12 @@ public:
       system.writeCBasis("out/testIterate1D_lam_blend_c.bf");
 
       // Get test result
-      DArray< DArray<double> > d_wFields;
-      RDFieldToDField(d_wFields, system.wFieldsBasis());
+      DArray< DArray<double> > b_wFields;
+      copyFieldsBasis(b_wFields, system.wFieldsBasis());
 
       // Compare result to original
       BFieldComparison comparison (1);
-      comparison.compare(d_wFields_check, d_wFields);
+      comparison.compare(b_wFields_check, b_wFields);
       double diff = comparison.maxDiff();
       double epsilon = 5.0E-7;
       if (verbose() > 0 || diff > epsilon) {
@@ -354,8 +367,8 @@ public:
 
       // Get reference field
       system.readWBasis("in/solution/lam_open/w.ref");
-      DArray< DArray<double> > d_wFields_check;
-      RDFieldToDField(d_wFields_check, system.wFieldsBasis());
+      DArray< DArray<double> > b_wFields_check;
+      copyFieldsBasis(b_wFields_check, system.wFieldsBasis());
 
       // Read input w-fields, iterate and output solution
       system.readWBasis("in/solution/lam_open/w.bf");
@@ -368,12 +381,12 @@ public:
       system.writeCBasis("out/testIterate1D_lam_open_soln_c.bf");
 
       // Get test result
-      DArray< DArray<double> > d_wFields;
-      RDFieldToDField(d_wFields, system.wFieldsBasis());
+      DArray< DArray<double> > b_wFields;
+      copyFieldsBasis(b_wFields, system.wFieldsBasis());
 
       // Compare result to original
       BFieldComparison comparison (1);
-      comparison.compare(d_wFields_check, d_wFields);
+      comparison.compare(b_wFields_check, b_wFields);
 
       // Compare difference to tolerance epsilon
       double diff = comparison.maxDiff();
@@ -398,8 +411,8 @@ public:
 
       // Get reference field
       system.readWBasis("in/blend/lam/w.ref");
-      DArray< DArray<double> > d_wFields_check;
-      RDFieldToDField(d_wFields_check, system.wFieldsBasis());
+      DArray< DArray<double> > b_wFields_check;
+      copyFieldsBasis(b_wFields_check, system.wFieldsBasis());
 
       // Read input w-fields, iterate and output solution
       system.readWBasis("in/blend/lam/w.bf");
@@ -411,12 +424,12 @@ public:
       system.writeCBasis("out/testIterate1D_lam_open_blend_c.bf");
 
       // Get test result
-      DArray< DArray<double> > d_wFields;
-      RDFieldToDField(d_wFields, system.wFieldsBasis());
+      DArray< DArray<double> > b_wFields;
+      copyFieldsBasis(b_wFields, system.wFieldsBasis());
 
       // Compare result to original
       BFieldComparison comparison (1);
-      comparison.compare(d_wFields_check, d_wFields);
+      comparison.compare(b_wFields_check, b_wFields);
 
       // Compare difference to tolerance epsilon
       double diff = comparison.maxDiff();
@@ -442,8 +455,8 @@ public:
       system.readWBasis("in/diblock/hex/omega.ref");
 
       // Get reference field
-      DArray< DArray<double> > d_wFields_check;
-      RDFieldToDField(d_wFields_check, system.wFieldsBasis());
+      DArray< DArray<double> > b_wFields_check;
+      copyFieldsBasis(b_wFields_check, system.wFieldsBasis());
 
       // Read initial guess, iterate, output solution
       // PSPC tests start from the reference solution, 
@@ -457,12 +470,12 @@ public:
       system.writeCBasis("out/testIterate2D_hex_rigid_c.bf");
 
       // Get test result
-      DArray< DArray<double> > d_wFields;
-      RDFieldToDField(d_wFields, system.wFieldsBasis());
+      DArray< DArray<double> > b_wFields;
+      copyFieldsBasis(b_wFields, system.wFieldsBasis());
 
       // Compare result to original
       BFieldComparison comparison (1);
-      comparison.compare(d_wFields_check, d_wFields);
+      comparison.compare(b_wFields_check, b_wFields);
 
       // Compare difference to tolerance epsilon
       double diff = comparison.maxDiff();
@@ -488,8 +501,8 @@ public:
       system.readWBasis("in/diblock/hex/omega.ref");
 
       // Get reference field
-      DArray< DArray<double> > d_wFields_check;
-      RDFieldToDField(d_wFields_check, system.wFieldsBasis());
+      DArray< DArray<double> > b_wFields_check;
+      copyFieldsBasis(b_wFields_check, system.wFieldsBasis());
 
       system.readWBasis("in/diblock/hex/omega.in");
       int error = system.iterate();
@@ -500,12 +513,12 @@ public:
       system.writeCBasis("out/testIterate2D_hex_flex_c.bf");
 
       // Get test result
-      DArray< DArray<double> > d_wFields;
-      RDFieldToDField(d_wFields, system.wFieldsBasis());
+      DArray< DArray<double> > b_wFields;
+      copyFieldsBasis(b_wFields, system.wFieldsBasis());
 
       // Compare result to original
       BFieldComparison comparison (1);
-      comparison.compare(d_wFields_check, d_wFields);
+      comparison.compare(b_wFields_check, b_wFields);
 
       // Compare difference to tolerance epsilon
       double diff = comparison.maxDiff();
@@ -531,8 +544,8 @@ public:
       system.readWBasis("in/diblock/bcc/omega.ref");
 
       // Get reference field
-      DArray< DArray<double> > d_wFields_check;
-      RDFieldToDField(d_wFields_check, system.wFieldsBasis());
+      DArray< DArray<double> > b_wFields_check;
+      copyFieldsBasis(b_wFields_check, system.wFieldsBasis());
 
       system.readWBasis("in/diblock/bcc/omega.in");
       int error = system.iterate();
@@ -543,12 +556,12 @@ public:
       system.writeCBasis("out/testIterate3D_bcc_rigid_c.bf");
 
       // Get test result
-      DArray< DArray<double> > d_wFields;
-      RDFieldToDField(d_wFields, system.wFieldsBasis());
+      DArray< DArray<double> > b_wFields;
+      copyFieldsBasis(b_wFields, system.wFieldsBasis());
 
       // Compare result to original
       BFieldComparison comparison (1);
-      comparison.compare(d_wFields_check, d_wFields);
+      comparison.compare(b_wFields_check, b_wFields);
 
       // Compare difference to tolerance epsilon
       double diff = comparison.maxDiff();
@@ -574,8 +587,8 @@ public:
       system.readWBasis("in/diblock/bcc/omega.ref");
 
       // Get reference field
-      DArray< DArray<double> > d_wFields_check;
-      RDFieldToDField(d_wFields_check, system.wFieldsBasis());
+      DArray< DArray<double> > b_wFields_check;
+      copyFieldsBasis(b_wFields_check, system.wFieldsBasis());
 
       system.readWBasis("in/diblock/bcc/omega.in");
       int error = system.iterate();
@@ -586,12 +599,12 @@ public:
       system.writeCBasis("out/testIterate3D_bcc_flex_c.bf");
 
       // Get test result
-      DArray< DArray<double> > d_wFields;
-      RDFieldToDField(d_wFields, system.wFieldsBasis());
+      DArray< DArray<double> > b_wFields;
+      copyFieldsBasis(b_wFields, system.wFieldsBasis());
 
       // Compare result to original
       BFieldComparison comparison (1);
-      comparison.compare(d_wFields_check, d_wFields);
+      comparison.compare(b_wFields_check, b_wFields);
 
       // Compare difference to tolerance epsilon
       double diff = comparison.maxDiff();
@@ -603,7 +616,6 @@ public:
          Log::file() << "epsilon  = " << epsilon << "\n";
       }
       TEST_ASSERT(diff < epsilon);
-
 
    }
 
@@ -619,11 +631,14 @@ public:
       in.close();
    }
 
-   void RDFieldToDField(DArray< DArray<double> > & out, 
+   void copyFieldsBasis(DArray< DArray<double> > & out, 
                         DArray< DArray<double> > const & in)
    {
-      // if out array is not allocated, allocate
+      UTIL_CHECK(in.isAllocated());
       int nField = in.capacity();
+      UTIL_CHECK(nField > 0);
+
+      // If array out is not allocated, allocate
       if (!out.isAllocated()) {
          out.allocate(nField);
       }
@@ -637,12 +652,45 @@ public:
          }
       }
 
-      // Copy
+      // Copy arrays
       for (int i = 0; i < nField; i++) {
          UTIL_CHECK(out[i].capacity() == in[i].capacity());
          out[i] = in[i];
       }
    }
+
+   #if 0
+   template <int D>
+   void copyFieldsRGrid(DArray< RDField<D> > & out, 
+                        DArray< RDField<D> > const & in)
+   {
+      UTIL_CHECK(in.isAllocated());
+      int nField = in.capacity();
+      UTIL_CHECK(nField > 0);
+
+      // If array out is not allocated, allocate
+      if (!out.isAllocated()) {
+         out.allocate(nField);
+      }
+      IntVec<D> dim = in[0].meshDimensions();
+      for (int i = 0; i < nField; i++) {
+         UTIL_CHECK(in[i].meshDimensions() == dim);
+         if (!out[i].isAllocated()) {
+            out[i].allocate(dim);
+         } else {
+            UTIL_CHECK(out[i].meshDimensions() == dim);
+         }
+      }
+
+      // Copy arrays
+      for (int i = 0; i < nField; i++) {
+         UTIL_CHECK(out[i].capacity() == in[i].capacity());
+         UTIL_CHECK(out[i].meshDimensions() == in[i].meshDimensions());
+         out[i] = in[i];
+      }
+
+   }
+   #endif
 
 };
 

@@ -42,6 +42,7 @@ namespace Pspg {
     : DField<cudaComplex>(other)
    {
       meshDimensions_ = other.meshDimensions_;
+      dftDimensions_ = other.dftDimensions_;
    }
 
    /*
@@ -60,6 +61,7 @@ namespace Pspg {
       
       DField<cudaComplex>::operator = (other);
       meshDimensions_ = other.meshDimensions_;
+      dftDimensions_ = other.dftDimensions_;
 
       return *this;
    }

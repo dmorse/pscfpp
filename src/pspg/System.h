@@ -14,6 +14,7 @@
 #include <pspg/field/Domain.h>             // member
 #include <pspg/field/FieldIo.h>            // member
 #include <pspg/solvers/WaveList.h>         // member
+#include <pspg/field/DField.h>             // typedef
 #include <pspg/field/RDField.h>            // typedef
 #include <pspg/field/RDFieldDft.h>         // typedef
 
@@ -157,8 +158,22 @@ namespace Pspg
       double pressure() const;
 
       //@}
-      /// \name Setter functions that modify state (fields and unit cell)
+      /// \name State Modification Functions (Modify w Fields and Unit Cell)
       ///@{
+
+      /**
+      * Read chemical potential fields in symmetry adapted basis format.
+      *
+      * This function opens and reads the file with name "filename",
+      * which must contain chemical potential fields in symmetry-adapted
+      * basis format, stores these fields in the system wFields array,
+      * converts these fields to real-space grid format and stores the
+      * result in the wFieldsRGrid array. On exit hasWFields is set true
+      * and hasCFields is false.
+      *
+      * \param filename name of input w-field basis file
+      */
+      void readWBasis(const std::string & filename);
 
       /**
       * Set new w fields, in symmetrized Fourier format.
@@ -173,12 +188,39 @@ namespace Pspg
       /**
       * Set new w fields, in real-space (r-grid) format.
       *
-      * On exit hasWFields is set true while hasSymmetricFields and 
+      * On exit, hasWFields is set true while hasSymmetricFields and 
       * hasCFields are both false.
       *
       * \param fields  array of new w (chemical potential) fields
       */  
       void setWRGrid(DArray<Field> const & fields);
+ 
+      /**
+      * Set new w fields, in unfoled real-space (r-grid) format.
+      *
+      * The array fields is an unfolded array that contains fields for
+      * all monomer types, with the field for monomer 0 first, etc. 
+      *
+      * On exit hasWFields is set true while hasSymmetricFields and 
+      * hasCFields are both false.
+      *
+      * \param fields  unfolded array of new w (chemical potential) fields
+      */  
+      void setWRGrid(DField<cudaReal> & fields);
+ 
+      /**
+      * Symmetrize r-grid w-fields, compute basis components.
+      *
+      * Use this function after setting or reading symmetric w fields 
+      * in r-grid format to set corresponding symmetrized fields. The 
+      * function assumes that the user knows that the wFieldsRgrid 
+      * fields are symmetric, and does not check this.
+      *
+      * On entry hasWFields must be true.
+      * On exit, hasWFields and hasSymmetricFields are true, and 
+      * hasCFields is false.
+      */  
+      void symmetrizeWFields();
  
       /**
       * Set parameters of the associated unit cell.
@@ -195,7 +237,7 @@ namespace Pspg
       void setUnitCell(FSArray<double, 6> const & parameters);
 
       ///@}
-      /// \name Chemical Potential Fields (W Fields)
+      /// \name Chemical Potential Field (W Field) Accessors
       //@{
 
       /**
@@ -440,20 +482,6 @@ namespace Pspg
       ///@{
       
       /**
-      * Read chemical potential fields in symmetry adapted basis format.
-      *
-      * This function opens and reads the file with name "filename",
-      * which must contain chemical potential fields in symmetry-adapted
-      * basis format, stores these fields in the system wFields array,
-      * converts these fields to real-space grid format and stores the
-      * result in the wFieldsRGrid array. On exit hasWFields is set true
-      * and hasCFields is false.
-      *
-      * \param filename name of input w-field basis file
-      */
-      void readWBasis(const std::string & filename);
-
-      /**
       * Solve the modified diffusion equation once, without iteration.
       *
       * This function calls the Mixture::compute() function to solve
@@ -498,17 +526,14 @@ namespace Pspg
       *
       * This function uses a Sweep object that was initialized in the 
       * parameter file to solve the SCF problem at a sequence of points
-      * along a line in parameter space. The nature of this sequence of
-      * points is determined by implementation of a subclass of Sweep
-      * and the parameters passed to the sweep object in the parameter 
-      * file.  The Iterator that is initialized in the parameter file 
-      * is called at each state point.
+      * along a line in parameter space. The nature of this sequence 
+      * is determined by implementation of a subclass of Sweep and the
+      * parameters passed to the sweep object in the parameter file.
       *
-      * An Exception is thrown if this is called when no Sweep has been 
-      * created (i.e., if hasSweep_ == false).
+      * An Exception is thrown if sweep() is called when no Sweep has 
+      * been created.
       */
       void sweep();
-
 
       /**
       * Write chemical potential fields in symmetry adapted basis format.

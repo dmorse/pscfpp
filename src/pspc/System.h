@@ -161,7 +161,7 @@ namespace Pspc
       double pressure() const;
 
       ///@}
-      /// \name Setter functions
+      /// \name State Modifier Functions (Set w Fields and Unit Cell)
       ///@{
 
       /**
@@ -193,7 +193,7 @@ namespace Pspc
       void setUnitCell(FSArray<double, 6> const & parameters);
 
       ///@}
-      /// \name Chemical Potential Field (w-Field) Accessor Functions
+      /// \name Chemical Potential Field (w Field) Accessor Functions
       ///@{
 
       /**
@@ -227,7 +227,7 @@ namespace Pspc
       Field const & wFieldRGrid(int monomerId) const;
 
       ///@}
-      /// \name Concentration Field (c-Field) Accessor Functions
+      /// \name Concentration Field (c Field) Accessor Functions
       ///@{
 
       /**
@@ -456,24 +456,12 @@ namespace Pspc
       */
       void sweep();
 
+      ///@}
+      /// \name Output Commands (correspond to command file commands)
+      ///@{
+      
       /**
-      * Compare two basis function format fields and output their maximum 
-      * and root-mean-squared difference. Requires a parameter file 
-      * to set up the system object. 
-      */
-      void compare(const DArray< DArray<double> > field1, 
-                   const DArray< DArray<double> > field2);
-
-      /**
-      * Compare two real-space fields and output their maximum and
-      * root-mean-squared difference. Requires a parameter file
-      * to set up the system object. 
-      */
-      void compare(const DArray< RField<D> > field1, 
-                   const DArray< RField<D> > field2);
-
-      /**
-      * Write chemical potential fields in symmetry adapted basis format.
+      * Write chemical potential fields in symmetrized basis format.
       *
       * \param filename name of output file
       */
@@ -487,7 +475,7 @@ namespace Pspc
       void writeWRGrid(const std::string & filename) const;
    
       /**
-      * Write concentration fields in symmetry-adapted basis format.
+      * Write concentration fields in symmetrized basis format.
       *
       * \param filename name of output file
       */
@@ -523,13 +511,40 @@ namespace Pspc
       *
       * \param filename  name of output file
       * \param polymerId  integer id of the polymer
-      * \param blockId  integer id of the block with the polymer 
+      * \param blockId  integer id of the block within the polymer 
+      * \param directionId  integer id of the direction (0 or 1)
+      * \param segmentId  integer integration step index
       */
       void writePropagatorRGrid(const std::string & filename, 
-                                int polymerId, int blockId, int directionId, int segmentId)  const;
+                                int polymerId, int blockId, 
+                                int directionId, int segmentId)  const;
 
       /**
-      * Convert a field from symmetry-adapted basis to r-grid format.
+      * Output information about stars and symmetrized basis functions.
+      *
+      * This function opens a file with the specified filename and then
+      * calls Basis::outputStars.
+      *
+      * \param outFileName name of output file
+      */
+      void outputStars(const std::string & outFileName) const;
+   
+      /**
+      * Output information about waves.
+      *
+      * This function opens a file with the specified filename and then
+      * calls Basis::outputWaves.
+      *
+      * \param outFileName name of output file for wave data
+      */
+      void outputWaves(const std::string & outFileName) const;
+
+      ///@}
+      /// \name Field Conversion and Inspection Commands 
+      ///@{
+      
+      /**
+      * Convert a field from symmetrized basis format to r-grid format.
       *
       * \param inFileName name of input file
       * \param outFileName name of output file
@@ -565,7 +580,7 @@ namespace Pspc
                         const std::string & outFileName) const;
 
       /**
-      * Convert fields from Fourier (k-grid) to symmetry-adapted basis format.
+      * Convert fields from Fourier (k-grid) to symmetrized basis format.
       *
       * \param inFileName name of input file
       * \param outFileName name of output file
@@ -574,14 +589,55 @@ namespace Pspc
                         const std::string& outFileName) const;
    
       /**
-      * Convert fields from symmetry-adapted basis to Fourier (k-grid) format.
+      * Convert fields from symmetrized basis to Fourier (k-grid) format.
       *
-      * \param inFileName name of input file
-      * \param outFileName name of output file
+      * \param inFileName name of input file (basis format)
+      * \param outFileName name of output file (k-grid format)
       */
       void basisToKGrid(const std::string & inFileName, 
                         const std::string & outFileName) const;
   
+      /**
+      * Construct trial w-fields from c-fields.
+      *
+      * This function reads concentration fields in symmetrized basis 
+      * format and constructs an initial guess for corresponding chemical 
+      * potential fields by setting the Lagrange multiplier field xi to 
+      * zero. The resulting guess is stored in the System wFields arrays 
+      * in basis and r-grid formats and is also output to a file in basis 
+      * format.
+      *
+      * Upon return, hasWFields and hasSymmetricFields are set true and 
+      * hasCFields is set false. 
+      *
+      * \param inFileName  name of input c-field file (in, basis format)
+      * \param outFileName  name of output w-field file (out, basis format)
+      */
+      void readCguessW(const std::string& inFileName, 
+                       const std::string& outFileName);
+   
+      /**
+      * Compare two field files in symmetrized basis format.
+      *
+      * Outputs maximum and root-mean-squared differences.
+      *
+      * \param field1  first array of fields (basis format)
+      * \param field1  second array of fields (basis format)
+      */
+      void compare(const DArray< DArray<double> > field1, 
+                   const DArray< DArray<double> > field2);
+
+      /**
+      * Compare two field files in symmetrized basis format.
+      *
+      * Outputs maximum and root-mean-squared differences.
+      *
+      * \param field1  first array of fields (r-grid format)
+      * \param field1  second array of fields (r-grid format)
+      */
+      void compare(const DArray< RField<D> > field1, 
+                   const DArray< RField<D> > field2);
+
       /** 
       * Check if r-grid fields have the declared space group symmetry.
       *
@@ -589,43 +645,6 @@ namespace Pspc
       * \return true if fields all have symmetry, false otherwise
       */ 
       bool checkRGridFieldSymmetry(const std::string & inFileName) const;
-
-      /**
-      * Construct trial w-fields from c-fields.
-      *
-      * This function reads concentration fields in symmetrized basis format
-      * from a file named inFileName, and constructs an initial guess for 
-      * corresponding chemical potential fields by setting the Lagrange 
-      * multiplier field xi to zero. The resulting guess is stored in the 
-      * internal System wFields array and is also output to a file named 
-      * outFileName. Upon return, hasWFields and hasSymmetricFields are set 
-      * true and hasCFields is set false. 
-      *
-      * \param inFileName name of input file
-      * \param outFileName name of output file
-      */
-      void readCguessW(const std::string& inFileName, 
-                       const std::string& outFileName);
-   
-      /**
-      * Output information about stars and symmetrized basis functions.
-      *
-      * This function opens a file with the specified filename and then
-      * calls Basis::outputStars.
-      *
-      * \param outFileName name of output file
-      */
-      void outputStars(const std::string & outFileName) const;
-   
-      /**
-      * Output information about waves.
-      *
-      * This function opens a file with the specified filename and then
-      * calls Basis::outputWaves.
-      *
-      * \param outFileName name of output file
-      */
-      void outputWaves(const std::string & outFileName) const;
 
       ///@}
 

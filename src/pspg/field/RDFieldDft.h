@@ -46,7 +46,7 @@ namespace Pspg
       *
       * Allocates new memory and copies all elements by value.
       *
-      *\param other the RFieldDft to be copied.
+      *\param other the RDFieldDft to be copied.
       */
       RDFieldDft(const RDFieldDft<D>& other);
 
@@ -72,7 +72,7 @@ namespace Pspg
       /**
       * Allocate the underlying C array for an FFT grid.
       *
-      * \throw Exception if the RFieldDft is already allocated.
+      * \throw Exception if the RDFieldDft is already allocated.
       *
       * \param meshDimensions vector of mesh dimensions
       */
@@ -175,7 +175,8 @@ namespace Pspg
 
       if (isAllocated()) {
          cudaComplex* tempData = new cudaComplex[capacity];
-         cudaMemcpy(tempData, data_, capacity * sizeof(cudaComplex), cudaMemcpyDeviceToHost);
+         cudaMemcpy(tempData, data_, capacity * sizeof(cudaComplex), 
+                    cudaMemcpyDeviceToHost);
          for (int i = 0; i < capacity_; ++i) {
             ar & tempData[i].x;
             ar & tempData[i].y;

@@ -13,6 +13,7 @@
 #include <pspg/sweep/SweepFactory.h>
 #include <pspg/iterator/Iterator.h>
 #include <pspg/iterator/IteratorFactory.h>
+#include <pspg/field/RDField.h>
 #include <pspg/math/GpuResources.h>
 
 #include <pscf/inter/ChiInteraction.h>
@@ -24,7 +25,6 @@
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
 
-//#include <iomanip>
 #include <string>
 #include <getopt.h>
 
@@ -806,15 +806,57 @@ namespace Pspg
    template <int D>
    void System<D>::setWRGrid(DArray<Field> const & fields)
    {
-      // Update system wFieldsRGrid
       int nMonomer = mixture_.nMonomer();
-      int meshSize = domain_.mesh().size();
+      int nMesh = domain_.mesh().size();
       for (int i = 0; i < nMonomer; ++i) {
          wFieldsRGrid_[i] = fields[i];
+      }
+      hasWFields_ = true;
+      hasSymmetricFields_ = false;
+      hasCFields_ = false;
+   }
+
+   /*
+   * Set new w-field values, using array of r-grid fields as input.
+   */
+   template <int D>
+   void System<D>::setWRGrid(DField<cudaReal> & fields)
+   {
+      const int nMonomer = mixture_.nMonomer();
+      const int nMesh = domain_.mesh().size();
+
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(nMesh, nBlocks, nThreads);
+
+      //cudaReal const * src;
+      //cudaReal* dst;
+      for (int i = 0; i < nMonomer; i++) {
+         //dst = wFieldsRGrid_[i].cDField();
+         //src = fields.cDField() + i*nMesh;
+         //assignReal<<<nBlocks, nThreads>>>(dst, src, nMesh);
+         assignReal<<<nBlocks, nThreads>>>(wFieldsRGrid_[i].cDField(), 
+                                           fields.cDField() + i*nMesh, 
+                                           nMesh);
+         //cudaMemcpy(dst, src, nMesh*sizeof(cudaReal),
+         //           cudaMemcpyDeviceToDevice);
       }
 
       hasWFields_ = true;
       hasSymmetricFields_ = false;
+      hasCFields_ = false;
+   }
+
+   /*
+   * Set new w-field values, using array of r-grid fields as input.
+   */
+   template <int D>
+   void System<D>::symmetrizeWFields()
+   {
+      UTIL_CHECK(hasWFields_);
+      fieldIo().convertRGridToBasis(wFieldsRGrid_, wFieldsBasis_);
+      fieldIo().convertBasisToRGrid(wFieldsBasis_, wFieldsRGrid_);
+      hasSymmetricFields_ = true;
       hasCFields_ = false;
    }
 

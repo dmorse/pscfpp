@@ -227,14 +227,14 @@ namespace Pspg
                            UnitCell<D> const & unitCell) const;
 
       /**
-      * Read array of RFieldDft objects (k-space fields) from file.
+      * Read array of RDFieldDft objects (k-space fields) from file.
       *
       * The capacity of the array is equal to nMonomer, and element
       * fields[i] is the discrete Fourier transform of the field for 
       * monomer type i.
       * 
       * \param in  input stream (i.e., input file)
-      * \param fields  array of RFieldDft fields (k-space grid)
+      * \param fields  array of RDFieldDft fields (k-space grid)
       * \param unitCell  crystallographic unit cell (output)
       */
       void readFieldsKGrid(std::istream& in, 
@@ -242,7 +242,7 @@ namespace Pspg
                            UnitCell<D>& unitCell) const;
 
       /**
-      * Read array of RFieldDft objects (k-space fields) from file.
+      * Read array of RDFieldDft objects (k-space fields) from file.
       *
       * This function opens a file with name filename, reads discrete
       * Fourier components (Dft) of fields from that file, and closes 
@@ -253,7 +253,7 @@ namespace Pspg
       * monomer type i.
       * 
       * \param filename  name of input file
-      * \param fields  array of RFieldDft fields (k-space grid)
+      * \param fields  array of RDFieldDft fields (k-space grid)
       * \param unitCell  crystallographic unit cell (output)
       */
       void readFieldsKGrid(std::string filename, 
@@ -261,14 +261,14 @@ namespace Pspg
                            UnitCell<D>& unitCell) const;
 
       /**
-      * Write array of RFieldDft objects (k-space fields) to file.
+      * Write array of RDFieldDft objects (k-space fields) to file.
       *
       * The capacity of the array fields is equal to nMonomer. Element
       * fields[i] is the discrete Fourier transform of the field for 
       * monomer type i.
       * 
       * \param out output stream (i.e., output file)
-      * \param fields array of RFieldDft fields 
+      * \param fields array of RDFieldDft fields 
       * \param unitCell  crystallographic unit cell 
       */
       void writeFieldsKGrid(std::ostream& out, 
@@ -276,14 +276,14 @@ namespace Pspg
                             UnitCell<D> const & unitCell) const;
    
       /**
-      * Write array of RFieldDft objects (k-space fields) to a file.
+      * Write array of RDFieldDft objects (k-space fields) to a file.
       *
       * This function opens a file with name filename, writes discrete
       * Fourier transform components (DFT) components of fields to that 
       * file, and closes the file. 
       *
       * \param filename  name of output file.
-      * \param fields  array of RFieldDft fields (k-space grid)
+      * \param fields  array of RDFieldDft fields (k-space grid)
       * \param unitCell  crystallographic unit cell 
       */
       void writeFieldsKGrid(std::string filename, 

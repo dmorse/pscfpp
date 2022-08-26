@@ -25,23 +25,40 @@ namespace Pspg {
    class RFieldComparison
    {
    public:
-      // Constructor
+
+      /**
+      * Constructor.
+      */
       RFieldComparison();
 
-      // Comparator for individual fields. Note:challenging,because
+      /**
+      * Comparator for individual fields. 
+      *  
+      * \param a first array of fields
+      * \param b second array of fields
+      */
       double compare(RDField<D> const& a, RDField<D> const& b);
 
-      // Comparator for array of fields
-      double compare(DArray<RDField<D>> const& a, DArray<RDField<D>> const& b);
+      /**
+      * Comparator for array of fields.
+      *
+      * \param a first array of fields
+      * \param b second array of fields
+      */
+      double 
+      compare(DArray<RDField<D>> const& a, DArray<RDField<D>> const& b);
 
-      // Get maxDiff from FieldComparison
+      /**
+      * Get precomputed maximum element-by-element difference.
+      */
       double maxDiff() const
       {  return fieldComparison_.maxDiff(); }
       
-      // Get rmsDiff from FieldComparison
+      /**
+      * Get precomputed rms difference.
+      */
       double rmsDiff() const
       {  return fieldComparison_.rmsDiff(); }
-      
 
    private:
 
@@ -52,7 +69,6 @@ namespace Pspg {
       FieldComparison< DArray< cudaReal > > fieldComparison_;
 
    };
-
 
    #ifndef PSPG_R_FIELD_COMPARISON_TPP
    extern template class RFieldComparison<1>;

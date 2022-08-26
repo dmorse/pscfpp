@@ -18,7 +18,7 @@ namespace Pspg {
    using namespace Util;
 
    /**
-   * Comparator for RFieldDft (k-grid) arrays.
+   * Comparator for RDFieldDft (k-grid) arrays.
    *
    * \ingroup Pspg_Field_Module
    */
