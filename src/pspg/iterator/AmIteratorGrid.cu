@@ -5,12 +5,12 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "AmIterator.tpp"
+#include "AmIteratorGrid.tpp"
 
 namespace Pscf {
 namespace Pspg {
-   template class AmIterator<1>;
-   template class AmIterator<2>;
-   template class AmIterator<3>;
+   template class AmIteratorGrid<1>;
+   template class AmIteratorGrid<2>;
+   template class AmIteratorGrid<3>;
 }
 }

@@ -1,5 +1,5 @@
-#ifndef PSPG_AM_ITERATOR_TPP
-#define PSPG_AM_ITERATOR_TPP
+#ifndef PSPG_AM_ITERATOR_GRID_TPP
+#define PSPG_AM_ITERATOR_GRID_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -9,7 +9,7 @@
 */
 
 #include <util/global.h>
-#include "AmIterator.h"
+#include "AmIteratorGrid.h"
 #include <pspg/field/RDField.h>
 #include <pspg/System.h>
 #include <pscf/inter/ChiInteraction.h>
@@ -20,16 +20,16 @@ namespace Pspg{
    using namespace Util;
 
    template <int D>
-   AmIterator<D>::AmIterator(System<D>& system)
+   AmIteratorGrid<D>::AmIteratorGrid(System<D>& system)
    : Iterator<D>(system)
    {}
 
    template <int D>
-   AmIterator<D>::~AmIterator()
+   AmIteratorGrid<D>::~AmIteratorGrid()
    {}
 
    template <int D>
-   void AmIterator<D>::readParameters(std::istream& in)
+   void AmIteratorGrid<D>::readParameters(std::istream& in)
    {
       // Call parent class readParameters 
       AmIteratorTmpl<Iterator<D>,FieldCUDA>::readParameters(in);
@@ -45,7 +45,7 @@ namespace Pspg{
 
 
    template <int D>
-   double AmIterator<D>::findNorm(FieldCUDA const & hist) 
+   double AmIteratorGrid<D>::findNorm(FieldCUDA const & hist) 
    {
       const int n = hist.capacity();
       double normResSq = (double)gpuInnerProduct(hist.cDField(), hist.cDField(), n);
@@ -54,7 +54,7 @@ namespace Pspg{
    }
 
    template <int D>
-   double AmIterator<D>::findMaxAbs(FieldCUDA const & hist)
+   double AmIteratorGrid<D>::findMaxAbs(FieldCUDA const & hist)
    {
       // use parallel reduction to find maximum.
 
@@ -67,7 +67,7 @@ namespace Pspg{
    }
 
    template <int D>
-   void AmIterator<D>::updateBasis(RingBuffer<FieldCUDA> & basis, 
+   void AmIteratorGrid<D>::updateBasis(RingBuffer<FieldCUDA> & basis, 
                                    RingBuffer<FieldCUDA> const & hists)
    {
       // Make sure at least two histories are stored
@@ -89,7 +89,7 @@ namespace Pspg{
 
    template <int D>
    double 
-   AmIterator<D>::computeUDotProd(RingBuffer<FieldCUDA> const & resBasis, 
+   AmIteratorGrid<D>::computeUDotProd(RingBuffer<FieldCUDA> const & resBasis, 
                                   int n, int m)
    {
       return (double)gpuInnerProduct(resBasis[n].cDField(),
@@ -98,7 +98,7 @@ namespace Pspg{
    }
 
    template <int D>
-   double AmIterator<D>::computeVDotProd(FieldCUDA const & resCurrent, 
+   double AmIteratorGrid<D>::computeVDotProd(FieldCUDA const & resCurrent, 
                                          RingBuffer<FieldCUDA> const & resBasis, 
                                          int m)
    {
@@ -108,7 +108,7 @@ namespace Pspg{
    }
 
    template <int D>
-   void AmIterator<D>::updateU(DMatrix<double> & U, 
+   void AmIteratorGrid<D>::updateU(DMatrix<double> & U, 
                                RingBuffer<FieldCUDA> const & resBasis, 
                                int nHist)
    {
@@ -129,7 +129,7 @@ namespace Pspg{
    }
 
    template <int D>
-   void AmIterator<D>::updateV(DArray<double> & v, 
+   void AmIteratorGrid<D>::updateV(DArray<double> & v, 
                                FieldCUDA const & resCurrent, 
                                RingBuffer<FieldCUDA> const & resBasis, 
                                int nHist)
@@ -142,7 +142,7 @@ namespace Pspg{
    }
 
    template <int D>
-   void AmIterator<D>::setEqual(FieldCUDA& a, FieldCUDA const & b)
+   void AmIteratorGrid<D>::setEqual(FieldCUDA& a, FieldCUDA const & b)
    {
       // GPU resources
       int nBlocks, nThreads;
@@ -153,7 +153,7 @@ namespace Pspg{
    }
 
    template <int D>
-   void AmIterator<D>::addHistories(FieldCUDA& trial, 
+   void AmIteratorGrid<D>::addHistories(FieldCUDA& trial, 
                                     RingBuffer<FieldCUDA> const & basis, 
                                     DArray<double> coeffs, int nHist)
    {
@@ -168,7 +168,7 @@ namespace Pspg{
    }
 
    template <int D>
-   void AmIterator<D>::addPredictedError(FieldCUDA& fieldTrial, 
+   void AmIteratorGrid<D>::addPredictedError(FieldCUDA& fieldTrial, 
                                          FieldCUDA const & resTrial, double lambda)
    {
       // GPU resources
@@ -181,11 +181,11 @@ namespace Pspg{
    }
 
    template <int D>
-   bool AmIterator<D>::hasInitialGuess()
+   bool AmIteratorGrid<D>::hasInitialGuess()
    { return system().hasWFields(); }
    
    template <int D>
-   int AmIterator<D>::nElements()
+   int AmIteratorGrid<D>::nElements()
    {
       const int nMonomer = system().mixture().nMonomer();
       const int nMesh = system().mesh().size();
@@ -200,7 +200,7 @@ namespace Pspg{
    }
 
    template <int D>
-   void AmIterator<D>::getCurrent(FieldCUDA& curr)
+   void AmIteratorGrid<D>::getCurrent(FieldCUDA& curr)
    {
       const int nMonomer = system().mixture().nMonomer();
       const int nMesh = system().mesh().size();
@@ -236,7 +236,7 @@ namespace Pspg{
    }
 
    template <int D>
-   void AmIterator<D>::evaluate()
+   void AmIteratorGrid<D>::evaluate()
    {
       // Solve MDEs for current omega field
       system().compute();
@@ -247,7 +247,7 @@ namespace Pspg{
    }
 
    template <int D>
-   void AmIterator<D>::getResidual(FieldCUDA& resid)
+   void AmIteratorGrid<D>::getResidual(FieldCUDA& resid)
    {
       const int n = nElements();
       const int nMonomer = system().mixture().nMonomer();
@@ -310,7 +310,7 @@ namespace Pspg{
    }
 
    template <int D>
-   void AmIterator<D>::update(FieldCUDA& newGuess)
+   void AmIteratorGrid<D>::update(FieldCUDA& newGuess)
    {
       const int nMonomer = system().mixture().nMonomer();
       const int nMesh = system().mesh().size();
@@ -364,7 +364,7 @@ namespace Pspg{
    }
 
    template<int D>
-   void AmIterator<D>::outputToLog()
+   void AmIteratorGrid<D>::outputToLog()
    {
       if (isFlexible_) {
          const int nParam = system().unitCell().nParameter();
@@ -379,7 +379,7 @@ namespace Pspg{
    // --- Private member functions that are specific to this implementation --- 
 
    template<int D> 
-   cudaReal AmIterator<D>::findAverage(cudaReal * const field, int n) 
+   cudaReal AmIteratorGrid<D>::findAverage(cudaReal * const field, int n) 
    {
       cudaReal average = gpuSum(field, n)/n;
       return average;

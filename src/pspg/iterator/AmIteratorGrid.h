@@ -1,5 +1,5 @@
-#ifndef PSPG_AM_ITERATOR_H
-#define PSPG_AM_ITERATOR_H
+#ifndef PSPG_AM_ITERATOR_GRID_H
+#define PSPG_AM_ITERATOR_GRID_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -26,7 +26,7 @@ namespace Pspg
    * \ingroup Pspg_Iterator_Module
    */
    template <int D>
-   class AmIterator : public AmIteratorTmpl<Iterator<D>, FieldCUDA>
+   class AmIteratorGrid : public AmIteratorTmpl<Iterator<D>, FieldCUDA>
    {
 
    public:
@@ -36,12 +36,12 @@ namespace Pspg
       *   
       * \param system parent system object
       */
-      AmIterator(System<D>& system);
+      AmIteratorGrid(System<D>& system);
 
       /**
       * Destructor.
       */ 
-      ~AmIterator();
+      ~AmIteratorGrid();
 
       /**
       * Read all parameters and initialize.

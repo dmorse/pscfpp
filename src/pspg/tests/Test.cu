@@ -7,7 +7,7 @@
 #include "cuda/CudaTestComposite.h"
 #include "field/FieldTestComposite.h"
 #include "solvers/SolverTestComposite.h"
-#include "system/SystemTest.h"
+#include "system/SystemTestComposite.h"
 #include "sweep/SweepTestComposite.h"
 #include <util/global.h>
 
@@ -15,7 +15,7 @@ TEST_COMPOSITE_BEGIN(PspgNsTestComposite)
 addChild(new CudaTestComposite, "cuda/");
 addChild(new FieldTestComposite, "field/");
 addChild(new SolverTestComposite, "solvers/");
-addChild(new TEST_RUNNER(SystemTest), "system/");
+addChild(new SystemTestComposite, "system/");
 addChild(new SweepTestComposite, "sweep/");
 TEST_COMPOSITE_END
 

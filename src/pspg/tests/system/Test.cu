@@ -1,5 +1,5 @@
 #include <util/global.h>
-#include "SystemTest.h"
+#include "SystemTestComposite.h"
 
 #include <util/param/BracketPolicy.h>
 #include <test/TestRunner.h>
@@ -8,7 +8,7 @@
 int main(int argc, char* argv[])
 {
    BracketPolicy::set(BracketPolicy::Optional);
-   TEST_RUNNER(SystemTest) runner;
+   SystemTestComposite runner;
 
    if (argc > 2) {
       UTIL_THROW("Too many arguments");

@@ -4,8 +4,8 @@
 #include "IteratorFactory.h"  
 
 // Subclasses of Iterator 
-#include "AmIterator.h"
 #include "AmIteratorBasis.h"
+#include "AmIteratorGrid.h"
 #include "AmIteratorOld.h"
 
 namespace Pscf {
@@ -34,11 +34,13 @@ namespace Pspg {
       if (ptr) return ptr;
  
       // Try to match classname
-      if (className == "AmIterator") {
-         ptr = new AmIterator<D>(*sysPtr_);
-      } else if (className == "AmIteratorBasis") {
+      if (className == "AmIterator" || className == "AmIteratorBasis") {
          ptr = new AmIteratorBasis<D>(*sysPtr_);
-      } else if (className == "AmIteratorOld") {
+      } else 
+      if (className == "AmIteratorGrid") {
+         ptr = new AmIteratorGrid<D>(*sysPtr_);
+      } else 
+      if (className == "AmIteratorOld") {
          ptr = new AmIteratorOld<D>(*sysPtr_);
       }
 
