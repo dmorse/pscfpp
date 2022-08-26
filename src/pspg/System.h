@@ -128,16 +128,29 @@ namespace Pspg
       /**
       * Read chemical potential fields in symmetry adapted basis format.
       *
-      * This function opens and reads the file with name "filename",
-      * which must contain chemical potential fields in symmetry-adapted
-      * basis format, stores these fields in the system wFields array,
-      * converts these fields to real-space grid format and stores the
-      * result in the wFieldsRGrid array. On exit hasWFields is set true
-      * and hasCFields is false.
+      * This function opens and reads the file named "filename", which
+      * contains chemical potential fields in symmetry-adapted basis
+      * format, stores these fields in the system wFieldsBasis array, 
+      * computes corresponding real-space grid format and stores that in
+      * the wFieldsRGrid array. On exit, hasWFields and hasSymmetricFields 
+      * are set true and hasCFields is false.
       *
       * \param filename name of input w-field basis file
       */
       void readWBasis(const std::string & filename);
+
+      /**
+      * Read chemical potential fields in real space grid (r-grid) format.
+      *
+      * This function opens and reads the file named "filename", which
+      * contains chemical potential fields in real space grid format, and
+      * copies these fields to the system wFieldsRGrid array.  On exit, 
+      * hasWFields is true, while hasSymmetricFields and hasCFields are
+      * false. 
+      *
+      * \param filename name of input w-field basis file
+      */
+      void readWRGrid(const std::string & filename);
 
       /**
       * Set new w fields, in symmetrized Fourier format.
@@ -175,14 +188,19 @@ namespace Pspg
       /**
       * Symmetrize r-grid w-fields, compute basis components.
       *
-      * Use this function after setting or reading symmetric w fields
-      * in r-grid format to set corresponding symmetrized fields. The
-      * function assumes that the user knows that the wFieldsRgrid
-      * fields are symmetric, and does not check this.
+      * Use this function after setting or reading w fields in r-grid
+      * format that are known to be symmetric under the space group.
+      * The function computes corresponding components in symmetrized 
+      * basis format, which are stored in the wFieldsBasis array, and
+      * then recomputes the r-grid format for the fields from the 
+      * resulting components. This yields fields that are symmetric and
+      * that are equal to the original fields only if those field were
+      * symmetric.  The function assumes that the current wFieldsRGrid 
+      * fields are known to be symmetric, and does NOT check this.
       *
-      * On entry hasWFields must be true.
-      * On exit, hasWFields and hasSymmetricFields are true, and
-      * hasCFields is false.
+      * Precondition: On entry hasWFields must be true.
+      * Postcondition: On exit, hasWFields and hasSymmetricFields are 
+      * true, and hasCFields is false.
       */
       void symmetrizeWFields();
 

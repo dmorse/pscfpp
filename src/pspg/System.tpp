@@ -357,20 +357,18 @@ namespace Pspg
          } else
          if (command == "READ_W_BASIS") {
             readEcho(in, filename);
+            readWBasis(filename);
+            #if 0
             fieldIo().readFieldsBasis(filename, wFieldsBasis(),
                                       domain_.unitCell());
             fieldIo().convertBasisToRGrid(wFieldsBasis(), wFieldsRGrid());
             hasWFields_ = true;
             hasSymmetricFields_ = true;
-
+            #endif
          } else
          if (command == "READ_W_RGRID") {
             readEcho(in, filename);
-            fieldIo().readFieldsRGrid(filename, wFieldsRGrid(),
-                                      domain_.unitCell());
-            hasWFields_ = true;
-            hasSymmetricFields_ = false;
-
+            readWRGrid(filename);
          } else
          if (command == "COMPUTE") {
             // Read w (chemical potential fields) if not done previously
@@ -392,6 +390,9 @@ namespace Pspg
             if (fail) {
                readNext = false;
             }
+         } else
+         if (command == "SWEEP") {
+            sweep();
          } else
          if (command == "WRITE_W_BASIS") {
             UTIL_CHECK(hasWFields_);
@@ -516,7 +517,8 @@ namespace Pspg
 
          } else {
 
-            Log::file() << "  Error: Unknown command  " << command << std::endl;
+            Log::file() << "  Error: Unknown command  " 
+                        << command << std::endl;
             readNext = false;
 
          }
@@ -775,6 +777,25 @@ namespace Pspg
       }
    }
 
+   // W-Field Modifier Functions
+
+   /*
+   * Read w-field in symmetry adapted basis format.
+   */
+   template <int D>
+   void System<D>::readWBasis(const std::string & filename)
+   {
+      fieldIo().readFieldsBasis(filename, wFieldsBasis(),
+                                domain_.unitCell());
+      fieldIo().convertBasisToRGrid(wFieldsBasis(), wFieldsRGrid());
+      hasWFields_ = true;
+      hasSymmetricFields_ = true;
+      hasCFields_ = false;
+   }
+
+   /*
+   * Read w-field in real space grid (r-grid) format.
+   */
    /*
    * Set new w-field values.
    */
@@ -884,19 +905,15 @@ namespace Pspg
       wavelist().computedKSq(domain_.unitCell());
    }
 
-   // Commands (functions that implement to command file commands)
+   // Primary SCFT Computations
 
-   /*
-   * Read w-field in symmetry adapted basis format.
-   */
    template <int D>
-   void System<D>::readWBasis(const std::string & filename)
+   void System<D>::readWRGrid(const std::string & filename)
    {
-      fieldIo().readFieldsBasis(filename, wFieldsBasis(),
-                                domain_.unitCell());
-      fieldIo().convertBasisToRGrid(wFieldsBasis(), wFieldsRGrid());
+      fieldIo().readFieldsRGrid(filename, wFieldsRGrid(),
+                                 domain_.unitCell());
       hasWFields_ = true;
-      hasSymmetricFields_ = true;
+      hasSymmetricFields_ = false;
       hasCFields_ = false;
    }
 
@@ -963,6 +980,8 @@ namespace Pspg
    {
       UTIL_CHECK(hasWFields_);
       UTIL_CHECK(hasSymmetricFields_);
+      UTIL_CHECK(sweepPtr_);
+      UTIL_CHECK(hasSweep_);
       Log::file() << std::endl;
       Log::file() << std::endl;
 
