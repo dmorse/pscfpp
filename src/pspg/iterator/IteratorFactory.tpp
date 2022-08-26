@@ -5,6 +5,7 @@
 
 // Subclasses of Iterator 
 #include "AmIterator.h"
+#include "AmIteratorBasis.h"
 #include "AmIteratorOld.h"
 
 namespace Pscf {
@@ -35,6 +36,8 @@ namespace Pspg {
       // Try to match classname
       if (className == "AmIterator") {
          ptr = new AmIterator<D>(*sysPtr_);
+      } else if (className == "AmIteratorBasis") {
+         ptr = new AmIteratorBasis<D>(*sysPtr_);
       } else if (className == "AmIteratorOld") {
          ptr = new AmIteratorOld<D>(*sysPtr_);
       }
