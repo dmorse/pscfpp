@@ -49,8 +49,11 @@ namespace Pspg
 
    public:
 
-      // Field on a real-space grid (r-grid)
+      /// Field on a real-space grid (r-grid)
       typedef RDField<D> Field;
+
+      /// \name Construction and Destruction
+      //@{
 
       /**
       * Constructor.
@@ -62,6 +65,7 @@ namespace Pspg
       */
       ~System();
 
+      //@}
       /// \name Lifetime (Actions)
       //@{
 
@@ -74,7 +78,7 @@ namespace Pspg
       void setOptions(int argc, char **argv);
 
       /**
-      * Set number of blocks and number of threads
+      * Explicitly set number of blocks and number of threads.
       *
       * \param nBlocks number of blocks
       * \param nThreads number of threads per block
@@ -94,14 +98,14 @@ namespace Pspg
       void readParam();
 
       /**
-      * Read body of input parameters block (without opening and closing lines).
+      * Read body of parameter file (without opening, closing lines).
       *
       * \param in input parameter stream
       */
       virtual void readParameters(std::istream& in);
 
       /**
-      * Write parameter file to an ostream, omitting the sweep block. 
+      * Write parameter file to an ostream, omitting the sweep block.
       */
       void writeParam(std::ostream& out);
 
@@ -116,6 +120,143 @@ namespace Pspg
       * Read commands from default command file.
       */
       void readCommands();
+
+      //@}
+      /// \name State Modifiers (Modify w Fields & Unit Cell)
+      //@{
+
+      /**
+      * Read chemical potential fields in symmetry adapted basis format.
+      *
+      * This function opens and reads the file with name "filename",
+      * which must contain chemical potential fields in symmetry-adapted
+      * basis format, stores these fields in the system wFields array,
+      * converts these fields to real-space grid format and stores the
+      * result in the wFieldsRGrid array. On exit hasWFields is set true
+      * and hasCFields is false.
+      *
+      * \param filename name of input w-field basis file
+      */
+      void readWBasis(const std::string & filename);
+
+      /**
+      * Set new w fields, in symmetrized Fourier format.
+      *
+      * On exit hasWFields and hasSymmetric fields are set true, while
+      * hasCFields is set false.
+      *
+      * \param fields  array of new w (chemical potential) fields
+      */
+      void setWBasis(DArray< DArray<double> > const & fields);
+
+      /**
+      * Set new w fields, in real-space (r-grid) format.
+      *
+      * On exit, hasWFields is set true while hasSymmetricFields and
+      * hasCFields are both false.
+      *
+      * \param fields  array of new w (chemical potential) fields
+      */
+      void setWRGrid(DArray<Field> const & fields);
+
+      /**
+      * Set new w fields, in unfoled real-space (r-grid) format.
+      *
+      * The array fields is an unfolded array that contains fields for
+      * all monomer types, with the field for monomer 0 first, etc.
+      *
+      * On exit hasWFields is set true while hasSymmetricFields and
+      * hasCFields are both false.
+      *
+      * \param fields  unfolded array of new w (chemical potential) fields
+      */
+      void setWRGrid(DField<cudaReal> & fields);
+
+      /**
+      * Symmetrize r-grid w-fields, compute basis components.
+      *
+      * Use this function after setting or reading symmetric w fields
+      * in r-grid format to set corresponding symmetrized fields. The
+      * function assumes that the user knows that the wFieldsRgrid
+      * fields are symmetric, and does not check this.
+      *
+      * On entry hasWFields must be true.
+      * On exit, hasWFields and hasSymmetricFields are true, and
+      * hasCFields is false.
+      */
+      void symmetrizeWFields();
+
+      /**
+      * Set parameters of the associated unit cell.
+      *
+      * \param unitCell  new UnitCell<D> (i.e., new parameters)
+      */
+      void setUnitCell(UnitCell<D> const & unitCell);
+
+      /**
+      * Set parameters of the associated unit cell.
+      *
+      * \param parameters  array of new unit cell parameters.
+      */
+      void setUnitCell(FSArray<double, 6> const & parameters);
+
+      //@}
+      /// \name Primary SCFT Computations
+      //@{
+
+      /**
+      * Solve the modified diffusion equation once, without iteration.
+      *
+      * This function calls the Mixture::compute() function to solve
+      * the statistical mechanics problem for a non-interacting system
+      * subjected to the currrent chemical potential fields (wFields
+      * and wFieldRGrid). This requires solution of the modified
+      * diffusion equation for all polymers, computation of Boltzmann
+      * weights for all solvents, computation of molecular partition
+      * functions for all species, and computation of concentration
+      * fields for blocks and solvents, and computation of overall
+      * concentrations for all monomer types. This function does not
+      * compute the canonical (Helmholtz) free energy or grand-canonical
+      * free energy (i.e., pressure). Upon return, the flag hasCFields
+      * is set true.
+      *
+      * If argument needStress == true, then this function also calls
+      * Mixture<D>::computeStress() to compute the stress.
+      *
+      * \param needStress true if stress is needed, false otherwise
+      */
+      void compute(bool needStress = false);
+
+      /**
+      * Iteratively solve a SCFT problem.
+      *
+      * This function calls the iterator to attempt to solve the SCFT
+      * problem for the current mixture and system parameters, using
+      * the current chemical potential fields (wFields and wFieldRGrid)
+      * and current unit cell parameter values as initial guesses.
+      * Upon exist, hasCFields is set true whether or not convergence
+      * is obtained to within the desired tolerance.  The Helmholtz free
+      * energy and pressure are computed if and only if convergence is
+      * obtained.
+      *
+      * \pre The hasWFields flag must be true on entry.
+      * \return returns 0 for successful convergence, 1 for failure.
+      */
+      int iterate();
+
+      /**
+      * Sweep in parameter space, solving an SCF problem at each point.
+      *
+      * This function uses a Sweep object that was initialized in the
+      * parameter file to solve the SCF problem at a sequence of points
+      * along a line in parameter space. The nature of this sequence
+      * is determined by implementation of a subclass of Sweep and the
+      * parameters passed to the sweep object in the parameter file.
+      *
+      * An Exception is thrown if sweep() is called when no Sweep has
+      * been created.
+      */
+      void sweep();
 
       //@}
       /// \name Thermodynamic Properties
@@ -158,85 +299,95 @@ namespace Pspg
       double pressure() const;
 
       //@}
-      /// \name State Modification Functions (Modify w Fields and Unit Cell)
-      ///@{
+      /// \name Output Operations (correspond to command file commands)
+      //@{
 
       /**
-      * Read chemical potential fields in symmetry adapted basis format.
+      * Write chemical potential fields in symmetry adapted basis format.
       *
-      * This function opens and reads the file with name "filename",
-      * which must contain chemical potential fields in symmetry-adapted
-      * basis format, stores these fields in the system wFields array,
-      * converts these fields to real-space grid format and stores the
-      * result in the wFieldsRGrid array. On exit hasWFields is set true
-      * and hasCFields is false.
-      *
-      * \param filename name of input w-field basis file
+      * \param filename name of output file
       */
-      void readWBasis(const std::string & filename);
+      void writeWBasis(const std::string & filename);
 
       /**
-      * Set new w fields, in symmetrized Fourier format.
+      * Write chemical potential fields in real space grid (r-grid) format.
       *
-      * On exit hasWFields and hasSymmetric fields are set true, while
-      * hasCFields is set false.
-      *
-      * \param fields  array of new w (chemical potential) fields
-      */  
-      void setWBasis(DArray< DArray<double> > const & fields);
- 
-      /**
-      * Set new w fields, in real-space (r-grid) format.
-      *
-      * On exit, hasWFields is set true while hasSymmetricFields and 
-      * hasCFields are both false.
-      *
-      * \param fields  array of new w (chemical potential) fields
-      */  
-      void setWRGrid(DArray<Field> const & fields);
- 
-      /**
-      * Set new w fields, in unfoled real-space (r-grid) format.
-      *
-      * The array fields is an unfolded array that contains fields for
-      * all monomer types, with the field for monomer 0 first, etc. 
-      *
-      * On exit hasWFields is set true while hasSymmetricFields and 
-      * hasCFields are both false.
-      *
-      * \param fields  unfolded array of new w (chemical potential) fields
-      */  
-      void setWRGrid(DField<cudaReal> & fields);
- 
-      /**
-      * Symmetrize r-grid w-fields, compute basis components.
-      *
-      * Use this function after setting or reading symmetric w fields 
-      * in r-grid format to set corresponding symmetrized fields. The 
-      * function assumes that the user knows that the wFieldsRgrid 
-      * fields are symmetric, and does not check this.
-      *
-      * On entry hasWFields must be true.
-      * On exit, hasWFields and hasSymmetricFields are true, and 
-      * hasCFields is false.
-      */  
-      void symmetrizeWFields();
- 
-      /**
-      * Set parameters of the associated unit cell.
-      *
-      * \param unitCell  new UnitCell<D> (i.e., new parameters)
+      * \param filename name of output file
       */
-      void setUnitCell(UnitCell<D> const & unitCell);
+      void writeWRGrid(const std::string & filename) const;
 
       /**
-      * Set parameters of the associated unit cell.
+      * Write concentrations in symmetry-adapted basis format.
       *
-      * \param parameters  array of new unit cell parameters.
+      * \param filename name of output file
       */
-      void setUnitCell(FSArray<double, 6> const & parameters);
+      void writeCBasis(const std::string & filename);
 
-      ///@}
+      /**
+      * Write concentration fields in real space grid (r-grid) format.
+      *
+      * \param filename name of output file
+      */
+      void writeCRGrid(const std::string & filename) const;
+
+      /**
+      * Write concentration fields in real space (r-grid) format, for each
+      * block (or solvent) individually rather than for each species.
+      *
+      * \param filename name of output file
+      */
+      void writeBlockCRGrid(const std::string & filename) const;
+
+      /**
+      * Write last slice of the propagator in r-grid format.
+      *
+      * \param filename  name of output file
+      * \param polymerID  integer index of polymer species
+      * \param blockID  integer index of block within polymer
+      */
+      void writePropagatorRGrid(const std::string & filename,
+                                int polymerID, int blockID);
+
+      /**
+      * Write all data associated with the converged solution. This
+      * includes the full param file, as well as the thermodynamic
+      * data (free energy, pressure, phi and mu for each species).
+      *
+      * \param filename name of output file
+      */
+      void writeData(const std::string & filename);
+
+      //@}
+      /// \name Field Operations (correspond to command file commands)
+      //@{
+
+      /**
+      * Convert a field from symmetry-adapted basis to r-grid format.
+      *
+      * This function uses the arrays that stored monomer concentration
+      * fields for temporary storage, and thus corrupts any previously
+      * stored values. As a result, flag hasCFields is false on output.
+      *
+      * \param inFileName name of input file
+      * \param outFileName name of output file
+      */
+      void basisToRGrid(const std::string & inFileName,
+                        const std::string & outFileName);
+
+      /**
+      * Convert a field from real-space grid to symmetrized basis format.
+      *
+      * This function uses the arrays that stored monomer concentration
+      * fields for temporary storage, and thus corrupts any previously
+      * stored values. As a result, flag hasCFields is false on return.
+      *
+      * \param inFileName name of input file
+      * \param outFileName name of output file
+      */
+      void rGridToBasis(const std::string & inFileName,
+                        const std::string & outFileName);
+
+      //@}
       /// \name Chemical Potential Field (W Field) Accessors
       //@{
 
@@ -309,8 +460,8 @@ namespace Pspg
       */
       RDFieldDft<D>& wFieldKGrid(int monomerId);
 
-      //@{
-      /// \name Monomer Concentration / Volume Fraction Fields (C Fields)
+      //@}
+      /// \name Concentration / Volume Fraction Fields (C Fields) Accessors
       //@{
 
       /**
@@ -370,7 +521,7 @@ namespace Pspg
       RDFieldDft<D>& cFieldKGrid(int monomerId);
 
       //@}
-      /// \name Accessors (access objects by reference)
+      /// \name Accessors (return sub-objects by reference)
       //@{
 
       /**
@@ -464,157 +615,20 @@ namespace Pspg
       /**
       * Have monomer concentration fields (c fields) been computed?
       *
-      * A true value is returned if and only if monomer concentration fields
-      * have been computed by solving the modified diffusion equation for the
+      * Returns  true if and only if monomer concentration fields have
+      * been computed by solving the modified diffusion equation for the
       * current w fields, and values are known on a grid (cFieldsRGrid).
       */
       bool hasCFields() const;
 
-      /** 
+      /**
       * Are w-fields symmetric under all elements of the space group?
       *
-      * This is true iff the fields were originally input in basis format.
+      * Returns true if the system contains valid fields in basis format.
+      * This will be so if w fields were input in basis format, or have
+      * been explicitly symmetrized by calling symmetrizeWFields().
       */
       bool hasSymmetricFields() const;
-
-      ///@}
-      /// \name Commands (each corresponds to a command file command)
-      ///@{
-      
-      /**
-      * Solve the modified diffusion equation once, without iteration.
-      *
-      * This function calls the Mixture::compute() function to solve
-      * the statistical mechanics problem for a non-interacting system
-      * subjected to the currrent chemical potential fields (wFields
-      * and wFieldRGrid). This requires solution of the modified
-      * diffusion equation for all polymers, computation of Boltzmann
-      * weights for all solvents, computation of molecular partition
-      * functions for all species, and computation of concentration
-      * fields for blocks and solvents, and computation of overall
-      * concentrations for all monomer types. This function does not
-      * compute the canonical (Helmholtz) free energy or grand-canonical
-      * free energy (i.e., pressure). Upon return, the flag hasCFields
-      * is set true.
-      *
-      * If argument needStress == true, then this function also calls
-      * Mixture<D>::computeStress() to compute the stress.
-      *
-      * \param needStress true if stress is needed, false otherwise
-      */
-      void compute(bool needStress = false);
-
-      /**
-      * Iteratively solve a SCFT problem.
-      *
-      * This function calls the iterator to attempt to solve the SCFT
-      * problem for the current mixture and system parameters, using
-      * the current chemical potential fields (wFields and wFieldRGrid)
-      * and current unit cell parameter values as initial guesses.
-      * Upon exist, hasCFields is set true whether or not convergence
-      * is obtained to within the desired tolerance.  The Helmholtz free
-      * energy and pressure are computed if and only if convergence is
-      * obtained.
-      *
-      * \pre The hasWFields flag must be true on entry.
-      * \return returns 0 for successful convergence, 1 for failure.
-      */
-      int iterate();
-
-      /**
-      * Sweep in parameter space, solving an SCF problem at each point.
-      *
-      * This function uses a Sweep object that was initialized in the 
-      * parameter file to solve the SCF problem at a sequence of points
-      * along a line in parameter space. The nature of this sequence 
-      * is determined by implementation of a subclass of Sweep and the
-      * parameters passed to the sweep object in the parameter file.
-      *
-      * An Exception is thrown if sweep() is called when no Sweep has 
-      * been created.
-      */
-      void sweep();
-
-      /**
-      * Write chemical potential fields in symmetry adapted basis format.
-      *
-      * \param filename name of output file
-      */
-      void writeWBasis(const std::string & filename);
-
-      /**
-      * Write chemical potential fields in real space grid (r-grid) format.
-      *
-      * \param filename name of output file
-      */
-      void writeWRGrid(const std::string & filename) const;
-   
-      /**
-      * Write concentrations in symmetry-adapted basis format.
-      *
-      * \param filename name of output file
-      */
-      void writeCBasis(const std::string & filename);
-
-      /**
-      * Write concentration fields in real space grid (r-grid) format.
-      *
-      * \param filename name of output file
-      */
-      void writeCRGrid(const std::string & filename) const;
-
-      /**
-      * Write concentration fields in real space (r-grid) format, for each
-      * block (or solvent) individually rather than for each species.
-      *
-      * \param filename name of output file
-      */
-      void writeBlockCRGrid(const std::string & filename) const;
-
-      /**
-      * Write last contour slice of the propagator in real space grid format.
-      *
-      * \param filename  name of output file
-      * \param polymerID  integer index of polymer species
-      * \param blockID  integer index of block within polymer
-      */
-      void writePropagatorRGrid(const std::string & filename,
-                                int polymerID, int blockID);
-
-      /**
-      * Write all data associated with the converged solution. This
-      * includes the full param file, as well as the thermodynamic
-      * data (free energy, pressure, phi and mu for each species).
-      * 
-      * \param filename name of output file
-      */
-      void writeData(const std::string & filename);
-
-      /**
-      * Convert a field from symmetry-adapted basis to r-grid format.
-      *
-      * This function uses the arrays that stored monomer concentration
-      * fields for temporary storage, and thus corrupts any previously
-      * stored values. As a result, flag hasCFields is false on output.
-      *
-      * \param inFileName name of input file
-      * \param outFileName name of output file
-      */
-      void basisToRGrid(const std::string & inFileName,
-                        const std::string & outFileName);
-
-      /**
-      * Convert a field from real-space grid to symmetrized basis format.
-      *
-      * This function uses the arrays that stored monomer concentration
-      * fields for temporary storage, and thus corrupts any previously
-      * stored values. As a result, flag hasCFields is false on return.
-      *
-      * \param inFileName name of input file
-      * \param outFileName name of output file
-      */
-      void rGridToBasis(const std::string & inFileName,
-                        const std::string & outFileName);
 
       ///@}
 
@@ -760,10 +774,10 @@ namespace Pspg
 
       /**
       * Does this system have symmetric fields ?
-      * 
+      *
       * Set true iff WFields are set and were input using the symmetry
-      * adapated basis format, and are thus invariant under all elements 
-      * of the specified space group. 
+      * adapated basis format, and are thus invariant under all elements
+      * of the specified space group.
       */
       bool hasSymmetricFields_;
 
@@ -944,7 +958,7 @@ namespace Pspg
    // Get all w fields in r-grid format, by const reference.
    template <int D>
    inline
-   DArray<typename System<D>::Field> const & System<D>::wFieldsRGrid() 
+   DArray<typename System<D>::Field> const & System<D>::wFieldsRGrid()
    const
    {  return wFieldsRGrid_; }
 
