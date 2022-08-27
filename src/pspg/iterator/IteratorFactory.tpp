@@ -6,7 +6,6 @@
 // Subclasses of Iterator 
 #include "AmIteratorBasis.h"
 #include "AmIteratorGrid.h"
-#include "AmIteratorOld.h"
 
 namespace Pscf {
 namespace Pspg {
@@ -39,10 +38,7 @@ namespace Pspg {
       } else 
       if (className == "AmIteratorGrid") {
          ptr = new AmIteratorGrid<D>(*sysPtr_);
-      } else 
-      if (className == "AmIteratorOld") {
-         ptr = new AmIteratorOld<D>(*sysPtr_);
-      }
+      } 
 
       return ptr;
    }

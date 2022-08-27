@@ -834,17 +834,6 @@ namespace Pspg
       int nStar = basis().nStar();
       int nBasis = basis().nBasis();
 
-      #if 0
-      // Allocate components_in
-      cudaReal* components_in;
-      components_in = new cudaReal[nBasis];
-
-      // Copy array components (device) to components_in (host)
-      cudaMemcpy(components_in, components.cDField(),
-                 nBasis * sizeof(cudaReal), cudaMemcpyDeviceToHost);
-
-      #endif
-
       // Allocate dft_out
       int kSize = 1;
       for (int i = 0; i < D; i++) {
@@ -961,9 +950,6 @@ namespace Pspg
 
       delete[] dft_out;
 
-      #if 0
-      delete[] components_in;
-      #endif
    }
 
    template <int D>
@@ -974,12 +960,6 @@ namespace Pspg
 
       int nStar = basis().nStar();       // Number of stars
       int nBasis = basis().nBasis();     // Number of basis functions
-
-      #if 0
-      // Allocate components_out
-      cudaReal* components_out;
-      components_out = new cudaReal[nBasis];
-      #endif
 
       // Allocate dft_in
       int kSize = 1;
@@ -1113,21 +1093,13 @@ namespace Pspg
 
       } //  loop over star index is
 
-      #if 0
-      // Copy array components_out (host) to components (device)
-      cudaMemcpy(components.cDField(), components_out,
-                nBasis * sizeof(cudaReal), cudaMemcpyHostToDevice);
-
-      delete[] components_out;
-      #endif
-
       // Deallocate arrays (clean up)
       delete[] dft_in;
 
    }
 
    template <int D>
-   void FieldIo<D>::convertBasisToKGrid(DArray< DArray<double> >& in,
+   void FieldIo<D>::convertBasisToKGrid(DArray< DArray<double> > const & in,
                                         DArray< RDFieldDft<D> >& out) 
    const
    {
@@ -1141,7 +1113,7 @@ namespace Pspg
    }
 
    template <int D>
-   void FieldIo<D>::convertKGridToBasis(DArray< RDFieldDft<D> >& in,
+   void FieldIo<D>::convertKGridToBasis(DArray< RDFieldDft<D> > const & in,
                                         DArray< DArray<double>> & out) 
    const
    {
@@ -1157,7 +1129,7 @@ namespace Pspg
 
    template <int D>
    void
-   FieldIo<D>::convertBasisToRGrid(DArray< DArray<double> >& in,
+   FieldIo<D>::convertBasisToRGrid(DArray< DArray<double> > const & in,
                                    DArray< RDField<D> >& out) const
    {
       UTIL_ASSERT(in.capacity() == out.capacity());
@@ -1179,7 +1151,7 @@ namespace Pspg
    }
 
    template <int D>
-   void FieldIo<D>::convertRGridToBasis(DArray< RDField<D> >& in,
+   void FieldIo<D>::convertRGridToBasis(DArray< RDField<D> > const & in,
                                         DArray< DArray<double> > & out) 
    const
    {
@@ -1206,7 +1178,7 @@ namespace Pspg
 
    template <int D>
    void
-   FieldIo<D>::convertKGridToRGrid(DArray< RDFieldDft<D> > & in,
+   FieldIo<D>::convertKGridToRGrid(DArray< RDFieldDft<D> > const & in,
                                    DArray< RDField<D> >& out) const
    {
       UTIL_ASSERT(in.capacity() == out.capacity());
@@ -1218,7 +1190,7 @@ namespace Pspg
 
    template <int D>
    void
-   FieldIo<D>::convertRGridToKGrid(DArray< RDField<D> > & in,
+   FieldIo<D>::convertRGridToKGrid(DArray< RDField<D> > const & in,
                                    DArray< RDFieldDft<D> >& out) const
    {
       UTIL_ASSERT(in.capacity() == out.capacity());

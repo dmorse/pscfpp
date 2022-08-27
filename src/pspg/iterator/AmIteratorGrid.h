@@ -201,7 +201,7 @@ namespace Pspg
 
       // --- Private member functions specific to this implementation --- 
       
-      cudaReal findAverage(cudaReal * const field, int n);
+      cudaReal findAverage(cudaReal const * field, int n);
 
    };
 

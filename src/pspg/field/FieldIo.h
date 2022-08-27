@@ -322,7 +322,7 @@ namespace Pspg
       * \param in  components of fields in symmetry adapted basis 
       * \param out fields defined as discrete Fourier transforms (k-grid)
       */
-      void convertBasisToKGrid(DArray< DArray<double> > & in,
+      void convertBasisToKGrid(DArray< DArray<double> > const & in,
                                DArray< RDFieldDft<D> >& out) const;
 
       /**
@@ -343,7 +343,7 @@ namespace Pspg
       * \param in  fields defined as discrete Fourier transforms (k-grid)
       * \param out  components of fields in symmetry adapted basis 
       */
-      void convertKGridToBasis(DArray< RDFieldDft<D> > & in,
+      void convertKGridToBasis(DArray< RDFieldDft<D> > const & in,
                                DArray< DArray<double> > & out) const;
 
       /**
@@ -352,7 +352,7 @@ namespace Pspg
       * \param in  fields in symmetry adapted basis form
       * \param out fields defined on real-space grid
       */
-      void convertBasisToRGrid(DArray< DArray<double> >& in,
+      void convertBasisToRGrid(DArray< DArray<double> > const & in,
                                DArray< RDField<D> >& out) const;
 
       /**
@@ -361,20 +361,16 @@ namespace Pspg
       * \param in  fields defined on real-space grid
       * \param out  fields in symmetry adapted basis form
       */
-      void convertRGridToBasis(DArray< RDField<D> > & in,
+      void convertRGridToBasis(DArray< RDField<D> > const & in,
                                DArray< DArray<double> > & out) const;
 
       /**
       * Convert fields from k-grid (DFT) to real space (rgrid) format.
       * 
-      * This function simply calls the inverse FFT for an array of fields.
-      * The inverse FFT provided by the underlying FFTW library overwrites 
-      * its input, which is why argument "in" not a const reference.
-      *
       * \param in  fields in discrete Fourier format (k-grid)
       * \param out  fields defined on real-space grid (r-grid)
       */
-      void convertKGridToRGrid(DArray< RDFieldDft<D> > & in,
+      void convertKGridToRGrid(DArray< RDFieldDft<D> > const & in,
                                DArray< RDField<D> > & out) const;
 
       /**
@@ -383,7 +379,7 @@ namespace Pspg
       * \param in  fields defined on real-space grid (r-grid)
       * \param out  fields in discrete Fourier format (k-grid)
       */
-      void convertRGridToKGrid(DArray< RDField<D> > & in,
+      void convertRGridToKGrid(DArray< RDField<D> > const & in,
                               DArray< RDFieldDft<D> > & out) const;
 
       //@}

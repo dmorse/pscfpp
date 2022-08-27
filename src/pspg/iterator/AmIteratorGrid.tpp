@@ -379,7 +379,7 @@ namespace Pspg{
    // --- Private member functions that are specific to this implementation --- 
 
    template<int D> 
-   cudaReal AmIteratorGrid<D>::findAverage(cudaReal * const field, int n) 
+   cudaReal AmIteratorGrid<D>::findAverage(cudaReal const * field, int n) 
    {
       cudaReal average = gpuSum(field, n)/n;
       return average;

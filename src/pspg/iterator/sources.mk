@@ -1,8 +1,7 @@
 pspg_iterator_= \
   pspg/iterator/IteratorFactory.cu \
   pspg/iterator/AmIteratorBasis.cu \
-  pspg/iterator/AmIteratorGrid.cu \
-  pspg/iterator/AmIteratorOld.cu 
+  pspg/iterator/AmIteratorGrid.cu 
 
 
 pspg_iterator_SRCS=\

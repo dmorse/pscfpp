@@ -35,7 +35,7 @@ public:
       // Read w fields
       system.readWBasis("in/diblock/lam/omega.ref");
 
-      // Get reference field in basis format
+      // Make reference copy of w fields in basis format
       DArray< DArray<double> > b_wFields_check;
       copyFieldsBasis(b_wFields_check, system.wFieldsBasis());
     
@@ -49,32 +49,16 @@ public:
       system.writeCBasis("out/testIterate1D_lam_rigid_c.bf");
 
       // Compare result to original in basis format
-      DArray< DArray<double> > b_wFields;
-      copyFieldsBasis(b_wFields, system.wFieldsBasis());
+      // DArray< DArray<double> > b_wFields;
+      // copyFieldsBasis(b_wFields, system.wFieldsBasis());
       BFieldComparison comparison(1);
-      comparison.compare(b_wFields_check, b_wFields);
+      // comparison.compare(b_wFields_check, b_wFields);
+      comparison.compare(b_wFields_check, system.wFieldsBasis());
       if (verbose() > 0) {
          Log::file() << "\n";
          Log::file() << "Max error = " << comparison.maxDiff() << "\n";
       }
       TEST_ASSERT(comparison.maxDiff() < 5.0E-7);
-
-      #if 0 
-      // Get reference field in r-grid format
-      DArray< RDField<1> > r_wFields_check;
-      copyFieldsRGrid(r_wFields_check, system.wFieldsRGrid());
-
-      // Compare result to original in rgrid format
-      DArray< RDField<1> > r_wFields;
-      copyFieldsBasis(b_wFields, system.wFieldsBasis());
-      BFieldComparison comparison(1);
-      comparison.compare(b_wFields_check, b_wFields);
-      if (verbose() > 0) {
-         Log::file() << "\n";
-         Log::file() << "Max error = " << comparison.maxDiff() << "\n";
-      }
-      TEST_ASSERT(comparison.maxDiff() < 5.0E-7);
-      #endif
 
    }
 
@@ -88,7 +72,7 @@ public:
 
       system.readWBasis("in/diblock/lam/omega.ref");
 
-      // Get reference field
+      // Make reference copy of w fields
       DArray< DArray<double> > b_wFields_check;
       copyFieldsBasis(b_wFields_check, system.wFieldsBasis());
 
@@ -129,7 +113,7 @@ public:
       System<1> system;
       setupSystem<1>(system,"in/solution/lam/param"); 
 
-      // Get reference field
+      // Make reference copy of w fields
       system.readWBasis("in/solution/lam/w.bf");
       DArray< DArray<double> > b_wFields_check;
       copyFieldsBasis(b_wFields_check, system.wFieldsBasis());
@@ -170,7 +154,7 @@ public:
       System<1> system;
       setupSystem<1>(system,"in/blend/lam/param.closed"); 
 
-      // Get reference field
+      // Make reference copy of w fields
       system.readWBasis("in/blend/lam/w.ref_closed");
       DArray< DArray<double> > b_wFields_check;
       copyFieldsBasis(b_wFields_check, system.wFieldsBasis());
@@ -210,7 +194,7 @@ public:
       System<1> system;
       setupSystem<1>(system,"in/solution/lam_open/param"); 
 
-      // Get reference field
+      // Make reference copy of w fields
       system.readWBasis("in/solution/lam_open/w.ref");
       DArray< DArray<double> > b_wFields_check;
       copyFieldsBasis(b_wFields_check, system.wFieldsBasis());
@@ -254,7 +238,7 @@ public:
       System<1> system;
       setupSystem<1>(system,"in/blend/lam/param.open"); 
 
-      // Get reference field
+      // Make reference copy of w fields
       system.readWBasis("in/blend/lam/w.ref");
       DArray< DArray<double> > b_wFields_check;
       copyFieldsBasis(b_wFields_check, system.wFieldsBasis());
@@ -299,7 +283,7 @@ public:
       // Read reference solution
       system.readWBasis("in/diblock/hex/omega.ref");
 
-      // Get reference field
+      // Make reference copy of w fields
       DArray< DArray<double> > b_wFields_check;
       copyFieldsBasis(b_wFields_check, system.wFieldsBasis());
 
@@ -345,7 +329,7 @@ public:
       // Read reference solution (produced by Fortran code)
       system.readWBasis("in/diblock/hex/omega.ref");
 
-      // Get reference field
+      // Make reference copy of w fields
       DArray< DArray<double> > b_wFields_check;
       copyFieldsBasis(b_wFields_check, system.wFieldsBasis());
 
@@ -388,7 +372,7 @@ public:
 
       system.readWBasis("in/diblock/bcc/omega.ref");
 
-      // Get reference field
+      // Make reference copy of w fields
       DArray< DArray<double> > b_wFields_check;
       copyFieldsBasis(b_wFields_check, system.wFieldsBasis());
 
@@ -431,7 +415,7 @@ public:
 
       system.readWBasis("in/diblock/bcc/omega.ref");
 
-      // Get reference field
+      // Make reference copy of w fields
       DArray< DArray<double> > b_wFields_check;
       copyFieldsBasis(b_wFields_check, system.wFieldsBasis());
 

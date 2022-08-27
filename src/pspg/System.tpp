@@ -291,27 +291,23 @@ namespace Pspg
       int nMonomer = mixture().nMonomer();
       wFieldsBasis_.allocate(nMonomer);
       wFieldsRGrid_.allocate(nMonomer);
-      wFieldsKGrid_.allocate(nMonomer);
 
       cFieldsBasis_.allocate(nMonomer);
       cFieldsRGrid_.allocate(nMonomer);
-      cFieldsKGrid_.allocate(nMonomer);
 
-      tmpFields_.allocate(nMonomer);
+      tmpFieldsBasis_.allocate(nMonomer);
       tmpFieldsRGrid_.allocate(nMonomer);
       tmpFieldsKGrid_.allocate(nMonomer);
 
       int nBasis = basis().nBasis();
       for (int i = 0; i < nMonomer; ++i) {
-         wFieldBasis(i).allocate(nBasis);
-         wFieldRGrid(i).allocate(mesh().dimensions());
-         wFieldKGrid(i).allocate(mesh().dimensions());
+         wFieldsBasis_[i].allocate(nBasis);
+         wFieldsRGrid_[i].allocate(mesh().dimensions());
 
-         cFieldBasis(i).allocate(nBasis);
-         cFieldRGrid(i).allocate(mesh().dimensions());
-         cFieldKGrid(i).allocate(mesh().dimensions());
+         cFieldsBasis_[i].allocate(nBasis);
+         cFieldsRGrid_[i].allocate(mesh().dimensions());
 
-         tmpFields_[i].allocate(nBasis);
+         tmpFieldsBasis_[i].allocate(nBasis);
          tmpFieldsRGrid_[i].allocate(mesh().dimensions());
          tmpFieldsKGrid_[i].allocate(mesh().dimensions());
       }
@@ -398,7 +394,6 @@ namespace Pspg
             UTIL_CHECK(hasWFields_);
             UTIL_CHECK(hasSymmetricFields_);
             readEcho(in, filename);
-            fieldIo().convertRGridToBasis(wFieldsRGrid(), wFieldsBasis());
             fieldIo().writeFieldsBasis(filename, wFieldsBasis(),
                                        unitCell());
          } else
@@ -412,7 +407,6 @@ namespace Pspg
             readEcho(in, filename);
             UTIL_CHECK(hasCFields_);
             UTIL_CHECK(hasSymmetricFields_);
-            fieldIo().convertRGridToBasis(cFieldsRGrid(), cFieldsBasis());
             fieldIo().writeFieldsBasis(filename, cFieldsBasis(), unitCell());
          } else
          if (command == "WRITE_C_RGRID") {
@@ -443,7 +437,8 @@ namespace Pspg
          if (command == "WRITE_THERMO") {
             readEcho(in, filename);
             std::ofstream file;
-            fileMaster().openOutputFile(filename, file, std::ios_base::app);
+            fileMaster().openOutputFile(filename, file, 
+                                        std::ios_base::app);
             outputThermo(file);
             file.close();
          } else
@@ -453,9 +448,11 @@ namespace Pspg
             readEcho(in, outFileName);
 
             UnitCell<D> tmpUnitCell;
-            fieldIo().readFieldsBasis(inFileName, cFieldsBasis(), tmpUnitCell);
-            fieldIo().convertBasisToRGrid(cFieldsBasis(), cFieldsRGrid());
-            fieldIo().writeFieldsRGrid(outFileName, cFieldsRGrid(), tmpUnitCell);
+            fieldIo().readFieldsBasis(inFileName, tmpFieldsBasis_,
+                                      tmpUnitCell);
+            fieldIo().convertBasisToRGrid(tmpFieldsBasis_, tmpFieldsRGrid_);
+            fieldIo().writeFieldsRGrid(outFileName, tmpFieldsRGrid_, 
+                                       tmpUnitCell);
          } else
          if (command == "RGRID_TO_BASIS") {
             hasCFields_ = false;
@@ -463,9 +460,11 @@ namespace Pspg
             readEcho(in, outFileName);
 
             UnitCell<D> tmpUnitCell;
-            fieldIo().readFieldsRGrid(inFileName, cFieldsRGrid(), tmpUnitCell);
-            fieldIo().convertRGridToBasis(cFieldsRGrid(), cFieldsBasis());
-            fieldIo().writeFieldsBasis(outFileName, cFieldsBasis(), tmpUnitCell);
+            fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_, 
+                                      tmpUnitCell);
+            fieldIo().convertRGridToBasis(tmpFieldsRGrid_, tmpFieldsBasis_);
+            fieldIo().writeFieldsBasis(outFileName, tmpFieldsBasis_, 
+                                       tmpUnitCell);
 
          } else
          if (command == "KGRID_TO_RGRID") {
@@ -475,13 +474,15 @@ namespace Pspg
             readEcho(in, inFileName);
             readEcho(in, outFileName);
             UnitCell<D> tmpUnitCell;
-            fieldIo().readFieldsKGrid(inFileName, cFieldsKGrid(), tmpUnitCell);
+            fieldIo().readFieldsKGrid(inFileName, tmpFieldsKGrid_, 
+                                      tmpUnitCell);
             // Use FFT to convert k-grid r-grid
             for (int i = 0; i < mixture().nMonomer(); ++i) {
-               fft().inverseTransform(cFieldKGrid(i), cFieldRGrid(i));
+               fft().inverseTransform(tmpFieldsKGrid_[i], tmpFieldsRGrid_[i]);
             }
             // Write to file in r-grid format
-            fieldIo().writeFieldsRGrid(outFileName, cFieldsRGrid(), tmpUnitCell);
+            fieldIo().writeFieldsRGrid(outFileName, tmpFieldsRGrid_, 
+                                       tmpUnitCell);
 
          } else
          if (command == "RHO_TO_OMEGA") {
@@ -494,19 +495,19 @@ namespace Pspg
             readEcho(in, inFileName);
             readEcho(in, outFileName);
 
-            fieldIo().readFieldsRGrid(inFileName, cFieldsRGrid(),
+            fieldIo().readFieldsRGrid(inFileName, cFieldsRGrid_,
                                       domain_.unitCell());
 
             // Compute w fields, excluding Lagrange multiplier contribution
             //code is bad here, `mangled' access of data in array
             for (int i = 0; i < mixture().nMonomer(); ++i) {
                assignUniformReal<<<nBlocks, nThreads>>>
-                   (wFieldRGrid(i).cDField(), 0, mesh().size());
+                   (wFieldsRGrid_[i].cDField(), 0, mesh().size());
             }
             for (int i = 0; i < mixture().nMonomer(); ++i) {
                for (int j = 0; j < mixture().nMonomer(); ++j) {
                   pointWiseAddScale<<<nBlocks, nThreads>>>
-                      (wFieldRGrid(i).cDField(), cFieldRGrid(j).cDField(),
+                      (wFieldsRGrid_[i].cDField(), cFieldsRGrid_[j].cDField(),
                        interaction().chi(i,j), mesh().size());
                }
             }
@@ -785,9 +786,9 @@ namespace Pspg
    template <int D>
    void System<D>::readWBasis(const std::string & filename)
    {
-      fieldIo().readFieldsBasis(filename, wFieldsBasis(),
+      fieldIo().readFieldsBasis(filename, wFieldsBasis_,
                                 domain_.unitCell());
-      fieldIo().convertBasisToRGrid(wFieldsBasis(), wFieldsRGrid());
+      fieldIo().convertBasisToRGrid(wFieldsBasis(), wFieldsRGrid_);
       hasWFields_ = true;
       hasSymmetricFields_ = true;
       hasCFields_ = false;
@@ -875,8 +876,8 @@ namespace Pspg
    void System<D>::symmetrizeWFields()
    {
       UTIL_CHECK(hasWFields_);
-      fieldIo().convertRGridToBasis(wFieldsRGrid_, wFieldsBasis_);
-      fieldIo().convertBasisToRGrid(wFieldsBasis_, wFieldsRGrid_);
+      fieldIo().convertRGridToBasis(wFieldsRGrid(), wFieldsBasis_);
+      fieldIo().convertBasisToRGrid(wFieldsBasis(), wFieldsRGrid_);
       hasSymmetricFields_ = true;
       hasCFields_ = false;
    }
@@ -910,7 +911,7 @@ namespace Pspg
    template <int D>
    void System<D>::readWRGrid(const std::string & filename)
    {
-      fieldIo().readFieldsRGrid(filename, wFieldsRGrid(),
+      fieldIo().readFieldsRGrid(filename, wFieldsRGrid_,
                                  domain_.unitCell());
       hasWFields_ = true;
       hasSymmetricFields_ = false;
@@ -926,13 +927,12 @@ namespace Pspg
       UTIL_CHECK(hasWFields_);
 
       // Solve the modified diffusion equation (without iteration)
-      mixture().compute(wFieldsRGrid(), cFieldsRGrid());
+      mixture().compute(wFieldsRGrid(), cFieldsRGrid_);
       hasCFields_ = true;
 
-      // Convert c and w fields from r-grid to basis
+      // Convert c fields from r-grid to basis format
       if (hasSymmetricFields_) {
-         fieldIo().convertRGridToBasis(wFieldsRGrid(), wFieldsBasis());
-         fieldIo().convertRGridToBasis(cFieldsRGrid(), cFieldsBasis());
+         fieldIo().convertRGridToBasis(cFieldsRGrid(), cFieldsBasis_);
       }
 
       if (needStress) {
@@ -958,8 +958,7 @@ namespace Pspg
       hasCFields_ = true;
 
       if (hasSymmetricFields_) {
-         fieldIo().convertRGridToBasis(wFieldsRGrid(), wFieldsBasis());
-         fieldIo().convertRGridToBasis(cFieldsRGrid(), cFieldsBasis());
+         fieldIo().convertRGridToBasis(cFieldsRGrid(), cFieldsBasis_);
       }
 
       if (!error) {
@@ -997,8 +996,8 @@ namespace Pspg
                                 const std::string & outFileName)
    {
       UnitCell<D> tmpUnitCell;
-      fieldIo().readFieldsBasis(inFileName, tmpFields_, tmpUnitCell);
-      fieldIo().convertBasisToRGrid(tmpFields_, tmpFieldsRGrid_);
+      fieldIo().readFieldsBasis(inFileName, tmpFieldsBasis_, tmpUnitCell);
+      fieldIo().convertBasisToRGrid(tmpFieldsBasis_, tmpFieldsRGrid_);
       fieldIo().writeFieldsRGrid(outFileName, tmpFieldsRGrid_, tmpUnitCell);
    }
 
@@ -1075,12 +1074,10 @@ namespace Pspg
    {
       const cudaReal* d_tailField = mixture_.polymer(polymerID).propagator(blockID, 1).tail();
 
-      // convert this cudaReal pointer to an RDField. Yikes.
       RDField<D> tailField;
       tailField.allocate(mesh().size());
       cudaMemcpy(tailField.cDField(), d_tailField,
-               mesh().size() * sizeof(cudaReal), cudaMemcpyDeviceToDevice);
-      // output.
+                 mesh().size() * sizeof(cudaReal), cudaMemcpyDeviceToDevice);
       fieldIo().writeFieldRGrid(filename, tailField, unitCell());
    }
 
@@ -1106,8 +1103,8 @@ namespace Pspg
    {
       UnitCell<D> tmpUnitCell;
       fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_, tmpUnitCell);
-      fieldIo().convertRGridToBasis(tmpFieldsRGrid_, tmpFields_);
-      fieldIo().writeFieldsBasis(outFileName, tmpFields_, tmpUnitCell);
+      fieldIo().convertRGridToBasis(tmpFieldsRGrid_, tmpFieldsBasis_);
+      fieldIo().writeFieldsBasis(outFileName, tmpFieldsBasis_, tmpUnitCell);
    }
 
 } // namespace Pspg

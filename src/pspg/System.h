@@ -409,6 +409,7 @@ namespace Pspg
       /// \name Chemical Potential Field (W Field) Accessors
       //@{
 
+      #if 0
       /**
       * Get array of chemical potential fields, in a basis.
       *
@@ -418,6 +419,17 @@ namespace Pspg
       * type. The array capacity is the number of monomer types.
       */
       DArray< DArray<double> >& wFieldsBasis();
+      #endif
+
+      /**
+      * Get array of chemical potential fields, in a basis.
+      *
+      * This function returns an array in which each element is an
+      * array containing the coefficients of the chemical potential
+      * field (w field) in a symmetry-adapted basis for one monomer
+      * type. The array capacity is the number of monomer types.
+      */
+      DArray< DArray<double> > const & wFieldsBasis() const;
 
       /**
       * Get chemical potential field for one monomer type, in a basis.
@@ -428,17 +440,7 @@ namespace Pspg
       *
       * \param monomerId integer monomer type index
       */
-      DArray<double>& wFieldBasis(int monomerId);
-
-      /**
-      * Get array of all w fields, in r-space format.
-      *
-      * This function returns an array in which each element is a
-      * WField object containing values of the chemical potential field
-      * (w field) on a regular grid for one monomer type. The array
-      * capacity is the number of monomer types.
-      */
-      DArray<Field>& wFieldsRGrid();
+      DArray<double> const & wFieldBasis(int monomerId) const;
 
       /**
       * Get array of all w fields, in r-space format, by const ref.
@@ -451,32 +453,11 @@ namespace Pspg
       DArray<Field> const & wFieldsRGrid() const;
 
       /**
-      * Get the w field for one monomer type, in r-space format.
-      *
-      * \param monomerId integer monomer type index
-      */
-      Field& wFieldRGrid(int monomerId);
-
-      /**
       * Get w field for one monomer type in r-space format by const ref.
       *
       * \param monomerId integer monomer type index
       */
       Field const & wFieldRGrid(int monomerId) const;
-
-      /**
-      * Get array of chemical potential fields, in Fourier space.
-      *
-      * The array capacity is equal to the number of monomer types.
-      */
-      DArray<RDFieldDft<D> >& wFieldsKGrid();
-
-      /**
-      * Get the chemical potential field for one monomer, in Fourier space.
-      *
-      * \param monomerId integer monomer type index
-      */
-      RDFieldDft<D>& wFieldKGrid(int monomerId);
 
       //@}
       /// \name Concentration / Volume Fraction Fields (C Fields) Accessors
@@ -490,7 +471,7 @@ namespace Pspg
       * field (cfield) for one monomer type in a symmetry-adapted basis.
       * The array capacity is equal to the number of monomer types.
       */
-      DArray< DArray<double> >& cFieldsBasis();
+      DArray< DArray<double> > const & cFieldsBasis() const;
 
       /**
       * Get the concentration field for one monomer type, in a basis.
@@ -501,7 +482,7 @@ namespace Pspg
       *
       * \param monomerId integer monomer type index
       */
-      DArray<double>& cFieldBasis(int monomerId);
+      DArray<double> const & cFieldBasis(int monomerId) const;
 
       /**
       * Get array of all concentration fields (c fields), on a grid.
@@ -510,33 +491,14 @@ namespace Pspg
       * monomer concentration field for one monomer type on a regular
       * grid (an r-grid).
       */
-      DArray<Field>& cFieldsRGrid();
+      DArray<Field> const & cFieldsRGrid() const;
 
       /**
       * Get the concentration (c field) for one monomer type, on a grid.
       *
       * \param monomerId integer monomer type index
       */
-      Field& cFieldRGrid(int monomerId);
-
-      /**
-      * Get all monomer concentration fields, in Fourier space (k-grid).
-      *
-      * This function returns an arrray in which each element is the
-      * discrete Fourier transform (DFT) of the concentration field
-      * (c field) for on monomer type.
-      */
-      DArray<RDFieldDft<D> >& cFieldsKGrid();
-
-      /**
-      * Get the c field for one monomer type, in Fourier space (k-grid).
-      *
-      * This function returns the discrete Fourier transform (DFT) of the
-      * concentration field (c field) for monomer type index monomerId.
-      *
-      * \param monomerId integer monomer type index
-      */
-      RDFieldDft<D>& cFieldKGrid(int monomerId);
+      Field const & cFieldRGrid(int monomerId) const;
 
       //@}
       /// \name Accessors (return sub-objects by reference)
@@ -725,11 +687,6 @@ namespace Pspg
       DArray<Field> wFieldsRGrid_;
 
       /**
-      * Work space for chemical potential fields
-      */
-      DArray<RDFieldDft<D> > wFieldsKGrid_;
-
-      /**
       * Array of concentration fields for monomer types, basis format.
       *
       * Indexed by monomer typeId, size = nMonomer.
@@ -745,6 +702,27 @@ namespace Pspg
       * Array of concentration fields for monomer types, k-grid format.
       */
       DArray<RDFieldDft<D> > cFieldsKGrid_;
+
+      /**
+      * Work array of field coefficients for all monomer types.
+      *
+      * Indexed by monomer typeId, size = nMonomer.
+      */
+      DArray< DArray<double> > tmpFieldsBasis_;
+
+      /**
+      * Work array of fields on real space grid.
+      *
+      * Indexed by monomer typeId, size = nMonomer.
+      */
+       DArray<Field> tmpFieldsRGrid_;
+
+      /**
+      * Work array of fields on Fourier grid (k-grid).
+      *
+      * Indexed by monomer typeId, size = nMonomer.
+      */
+      DArray<RDFieldDft<D> > tmpFieldsKGrid_;
 
       /**
       * Work array (size = # of grid points).
@@ -803,27 +781,6 @@ namespace Pspg
       * Does this system have a Sweep object?
       */
       bool hasSweep_;
-
-      /**
-      * Work array of field coefficients for all monomer types.
-      *
-      * Indexed by monomer typeId, size = nMonomer.
-      */
-      DArray< DArray<double> > tmpFields_;
-
-      /**
-      * Work array of fields on real space grid.
-      *
-      * Indexed by monomer typeId, size = nMonomer.
-      */
-       DArray<Field> tmpFieldsRGrid_;
-
-      /**
-      * Work array of fields on Fourier grid (k-grid).
-      *
-      * Indexed by monomer typeId, size = nMonomer.
-      */
-      DArray<RDFieldDft<D> > tmpFieldsKGrid_;
 
       /**
       * Dimemsions of the k-grid (discrete Fourier transform grid).
@@ -955,25 +912,19 @@ namespace Pspg
    inline WaveList<D>& System<D>::wavelist()
    {  return *wavelistPtr_; }
 
-   // Get all w field, in a basis.
+   // Get all w fields, in basis format.
    template <int D>
    inline
-   DArray< DArray<double> >& System<D>::wFieldsBasis()
+   DArray< DArray<double> > const & System<D>::wFieldsBasis() const
    {  return wFieldsBasis_; }
 
    // Get a single monomer w field in basis format.
    template <int D>
    inline
-   DArray<double>& System<D>::wFieldBasis(int id)
+   DArray<double> const & System<D>::wFieldBasis(int id) const
    {  return wFieldsBasis_[id]; }
 
-   // Get all w fields in r-grid format
-   template <int D>
-   inline
-   DArray< typename System<D>::Field >& System<D>::wFieldsRGrid()
-   {  return wFieldsRGrid_; }
-
-   // Get all w fields in r-grid format, by const reference.
+   // Get all w fields in r-grid format.
    template <int D>
    inline
    DArray<typename System<D>::Field> const & System<D>::wFieldsRGrid()
@@ -983,57 +934,33 @@ namespace Pspg
    // Get a single w field in r-grid format.
    template <int D>
    inline
-   typename System<D>::Field& System<D>::wFieldRGrid(int id)
-   {  return wFieldsRGrid_[id]; }
-
-   // Get a single w field in r-grid format, by const reference.
-   template <int D>
-   inline
    typename System<D>::Field const & System<D>::wFieldRGrid(int id) const
    {  return wFieldsRGrid_[id]; }
 
+   // Get all monomer concentration fields, in basis format.
    template <int D>
    inline
-   DArray<RDFieldDft<D> >& System<D>::wFieldsKGrid()
-   {  return wFieldsKGrid_; }
-
-   template <int D>
-   inline
-   RDFieldDft<D>& System<D>::wFieldKGrid(int id)
-   {  return wFieldsKGrid_[id]; }
-
-   // Get all monomer concentration fields, in a basis.
-   template <int D>
-   inline
-   DArray< DArray<double> >& System<D>::cFieldsBasis()
+   DArray< DArray<double> > const & System<D>::cFieldsBasis() const
    {  return cFieldsBasis_; }
 
-   // Get a single monomer concentration field, in a basis.
+   // Get a single monomer concentration field, in basis format.
    template <int D>
    inline
-   DArray<double>& System<D>::cFieldBasis(int monomerId)
+   DArray<double> const & System<D>::cFieldBasis(int monomerId) const
    {  return cFieldsBasis_[monomerId]; }
 
-   // Get all monomer concentration fields, on a grid.
+   // Get all monomer concentration fields, in r-grid format.
    template <int D>
    inline
-   DArray< typename System<D>::Field >& System<D>::cFieldsRGrid()
+   DArray< typename System<D>::Field > const & System<D>::cFieldsRGrid() 
+   const
    {  return cFieldsRGrid_; }
 
-   // Get a single monomer concentration field, on a grid.
+   // Get a single monomer concentration field, in r-grid format.
    template <int D>
-   inline typename System<D>::Field& System<D>::cFieldRGrid(int id)
+   inline 
+   typename System<D>::Field const & System<D>::cFieldRGrid(int id) const
    {  return cFieldsRGrid_[id]; }
-
-   template <int D>
-   inline
-   DArray<RDFieldDft<D> >& System<D>::cFieldsKGrid()
-   {  return cFieldsKGrid_; }
-
-   template <int D>
-   inline
-   RDFieldDft<D>& System<D>::cFieldKGrid(int id)
-   {  return cFieldsKGrid_[id]; }
 
    // Get precomputed Helmoltz free energy per monomer / kT.
    template <int D>
