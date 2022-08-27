@@ -8,7 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Interaction.h"             // base class
+#include <util/param/ParamComposite.h>    // base class
+#include <util/containers/Array.h>        // argument (template)
+#include <util/containers/Matrix.h>       // argument (template)
 #include <util/global.h>                  
 
 namespace Pscf {
@@ -20,7 +22,7 @@ namespace Pscf {
    *
    * \ingroup Pscf_Inter_Module
    */
-   class ChiInteraction : public  Interaction
+   class ChiInteraction : public ParamComposite
    {
 
    public:
@@ -34,6 +36,13 @@ namespace Pscf {
       * Destructor.
       */
       virtual ~ChiInteraction();
+
+      /**
+      * Set the number of monomer types.
+      *
+      * \param nMonomer number of monomer types.
+      */
+      void setNMonomer(int nMonomer);
 
       /**
       * Read chi parameters.
@@ -135,6 +144,11 @@ namespace Pscf {
       */  
       double sum_inv() const;
 
+      /**
+      * Get number of monomer types.
+      */
+      int nMonomer() const;
+
    private:
 
       // Symmetric matrix of interaction parameters.
@@ -150,6 +164,9 @@ namespace Pscf {
       // Sum of elements of matrix chiInverse_
       double sum_inv_;
 
+      /// Number of monomers
+      int nMonomer_;
+
       /**
       * Compute the inverse of the chi matrix, along with the
       * corresponding idempotent matrix and sum of all elements.
@@ -160,6 +177,9 @@ namespace Pscf {
    };
 
    // Inline function
+
+   inline int ChiInteraction::nMonomer() const
+   {  return nMonomer_; }
 
    inline double ChiInteraction::chi(int i, int j) const
    {  return chi_(i, j); }

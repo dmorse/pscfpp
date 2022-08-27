@@ -16,7 +16,7 @@ namespace Pscf {
    * Constructor.
    */
    ChiInteraction::ChiInteraction()
-    : Interaction()
+    : nMonomer_(0)
    {  setClassName("ChiInteraction"); }
 
    /*
@@ -24,6 +24,12 @@ namespace Pscf {
    */
    ChiInteraction::~ChiInteraction()
    {}
+
+   /*
+   * Set the number of monomer types.
+   */
+   void ChiInteraction::setNMonomer(int nMonomer)
+   {  nMonomer_ = nMonomer; }
 
    /*
    * Read chi matrix from file.
@@ -38,7 +44,6 @@ namespace Pscf {
 
       // Compute relevant AM iterator quantities.
       updateMembers();
-
    }
 
    void ChiInteraction::updateMembers()
