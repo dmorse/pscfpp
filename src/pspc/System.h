@@ -446,7 +446,7 @@ namespace Pspc
       * Outputs maximum and root-mean-squared differences.
       *
       * \param field1  first array of fields (basis format)
-      * \param field1  second array of fields (basis format)
+      * \param field2  second array of fields (basis format)
       */
       void compare(const DArray< DArray<double> > field1, 
                    const DArray< DArray<double> > field2);
@@ -457,7 +457,7 @@ namespace Pspc
       * Outputs maximum and root-mean-squared differences.
       *
       * \param field1  first array of fields (r-grid format)
-      * \param field1  second array of fields (r-grid format)
+      * \param field2  second array of fields (r-grid format)
       */
       void compare(const DArray< RField<D> > field1, 
                    const DArray< RField<D> > field2);

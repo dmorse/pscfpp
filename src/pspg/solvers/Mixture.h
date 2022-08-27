@@ -158,13 +158,9 @@ namespace Pspg
       * Get precomputed value of derivative of free energy per monomer
       * with respect to unit cell parameter number n.
       *
-      * \int parameterId  unit cell parameter index
+      * \param parameterId  unit cell parameter index
       */
-      double stress(int parameterId)
-      {
-         UTIL_CHECK(hasStress_);  
-         return stress_[parameterId]; 
-      }
+      double stress(int parameterId) const;
 
       /**
       * Get monomer reference volume.
@@ -235,6 +231,16 @@ namespace Pspg
    {   
       UTIL_ASSERT(meshPtr_);
       return *meshPtr_;
+   }
+
+   /*
+   * Get derivative of free energy w/ respect to cell parameter.
+   */
+   template <int D>
+   inline double Mixture<D>::stress(int parameterId) const
+   {
+      UTIL_CHECK(hasStress_);  
+      return stress_[parameterId]; 
    }
 
    #ifndef PSPG_MIXTURE_TPP

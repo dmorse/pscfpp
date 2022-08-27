@@ -14,24 +14,28 @@ namespace Pscf {
 namespace Pspc
 {
 
+   template <int D>
+   class System;
+
    using namespace Util;
 
    /**
-   * Descriptor for a FilmIterator object. The parent FilmIteratorBase 
-   * class template defines all traits of a FilmIterator that do not 
-   * depend on D, the dimension of the system. This FilmIterator class 
-   * defines only the partial specializations of FilmIterator for 1D, 
-   * 2D, and 3D.
+   * Iterator for a thin film (empty base template).
+   *
+   * The parent FilmIteratorBase class template defines all traits of a 
+   * FilmIterator that do not depend on D, the dimension of space. This 
+   * FilmIterator class template is an empty template that is replaced
+   * by partial specializations for D=1, 2 and 3.
    * 
    * If the user chooses a FilmIterator as their iterator, then the 
    * system will contain two parallel hard surfaces ("walls"), confining
    * the polymers/solvents to a "thin film" region of the unit cell.
    * This only affects the iterator, not the rest of SCFT, so we isolate
    * the imposition of the thin film constraint to this subclass of 
-   * iterator. This is essentially a wrapper for any other type of iterator
-   * (e.g., AmIterator), that adds the additional functionality required
-   * to impose the thin film constraint properly.
-   * 
+   * iterator. This is essentially a wrapper for any other type of 
+   * iterator (e.g., AmIterator), that adds the additional functionality 
+   * required to impose the thin film constraint properly.
+   *
    * FilmIterator is generalized to be compatible with any iterator within
    * it, as long as the iterator can impose 1) a mask that confines the 
    * polymers/solvents to a certain region of space, and 2) an external 
@@ -42,19 +46,18 @@ namespace Pspc
    *
    * \ingroup Pspc_Iterator_Module
    */
-
-   template <int D>
-   class System;
-
    template <int D, typename IteratorType>
    class FilmIterator : public FilmIteratorBase<D,IteratorType>
    {};
 
    // Partial Specializations
 
-   // 1D
+   /**
+   * FilmIterator specialization for 1D problems.
+   */
    template <typename IteratorType>
-   class FilmIterator<1,IteratorType> : public FilmIteratorBase<1,IteratorType>
+   class FilmIterator<1, IteratorType> 
+      : public FilmIteratorBase<1, IteratorType>
    {
    public:
 
@@ -75,9 +78,11 @@ namespace Pspc
       void setFlexibleParams();
 
       /**
-      * Check that user-defined lattice basis vectors (stored in the
-      * Domain<D> object associated with this FilmIterator class)
-      * are compatible with the thin film constraint
+      * Check compatibility of lattice with thin film constraint.
+      *
+      * Check that the user-defined lattice basis vectors in the
+      * associated Domain<D> object are compatible with the thin 
+      * film constraint
       */
       void checkLatticeVectors() const;
 
@@ -92,9 +97,12 @@ namespace Pspc
       
    };
 
-   // 2D
+   /**
+   * FilmIterator specialization for 2D problems (confined to strip).
+   */
    template <typename IteratorType>
-   class FilmIterator<2,IteratorType> : public FilmIteratorBase<2,IteratorType>
+   class FilmIterator<2,IteratorType> 
+      : public FilmIteratorBase<2,IteratorType>
    {
    public:
 
@@ -104,20 +112,23 @@ namespace Pspc
       FilmIterator(System<2>& system);
 
       /**
-      * Determine the indices of each flexible lattice parameter, based on
-      * normalVecId and unitCell definitions in param file. Assumes that
-      * isFlexible == true, and gives a warning if none of the parameters
-      * are actually able to be varied given the thin film constraints. 
-      * Stores resulting array in flexibleParams_ member of this object,
-      * as well as the flexibleParams_ member of the iterator within this
-      * object.
+      * Determine the indices of each flexible lattice parameter.
+      *
+      * Calculation is based on normalVecId and unitCell definitions in 
+      * param file. Assumes that isFlexible == true, and gives a warning 
+      * if none of the parameters are actually able to be varied given 
+      * the thin film constraints.  Stores resulting array in 
+      * flexibleParams_ member of this object, as well as the 
+      * flexibleParams_ member of the enclosed iterator.
       */
       void setFlexibleParams();
 
       /**
-      * Check that user-defined lattice basis vectors (stored in the
-      * Domain<D> object associated with this FilmIterator class)
-      * are compatible with the thin film constraint
+      * Check compatibility of lattice with thin film constraint.
+      *
+      * Check that the user-defined lattice basis vectors in the
+      * associated Domain<D> object are compatible with the thin 
+      * film constraint
       */
       void checkLatticeVectors() const;
 
@@ -132,9 +143,12 @@ namespace Pspc
       
    };
 
-   // 3D
+   /**
+   * FilmIterator specialization for 3D problems (confined to slit).
+   */
    template <typename IteratorType>
-   class FilmIterator<3,IteratorType> : public FilmIteratorBase<3,IteratorType>
+   class FilmIterator<3,IteratorType> 
+      : public FilmIteratorBase<3,IteratorType>
    {
    public:
 
@@ -144,20 +158,23 @@ namespace Pspc
       FilmIterator(System<3>& system);
 
       /**
-      * Determine the indices of each flexible lattice parameter, based on
-      * normalVecId and unitCell definitions in param file. Assumes that
-      * isFlexible == true, and gives a warning if none of the parameters
-      * are actually able to be varied given the thin film constraints. 
-      * Stores resulting array in flexibleParams_ member of this object,
-      * as well as the flexibleParams_ member of the iterator within this
-      * object.
+      * Determine the indices of each flexible lattice parameter.
+      *
+      * Calculation is based on normalVecId and unitCell definitions in 
+      * param file. Assumes that isFlexible == true, and gives a warning 
+      * if none of the parameters are actually able to be varied given 
+      * the thin film constraints.  Stores resulting array in 
+      * flexibleParams_ member of this object, as well as the 
+      * flexibleParams_ member of the enclosed iterator.
       */
       void setFlexibleParams();
 
       /**
-      * Check that user-defined lattice basis vectors (stored in the
-      * Domain<D> object associated with this FilmIterator class)
-      * are compatible with the thin film constraint
+      * Check compatibility of lattice with thin film constraint.
+      *
+      * Check that the user-defined lattice basis vectors in the
+      * associated Domain<D> object are compatible with the thin 
+      * film constraint
       */
       void checkLatticeVectors() const;
       
