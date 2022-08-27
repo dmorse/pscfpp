@@ -59,7 +59,7 @@ namespace Pspg
       isAllocated_(false),
       hasWFields_(false),
       hasCFields_(false),
-      hasSweep_(0)
+      hasSymmetricFields_(false)
    {
       setClassName("System");
       domain_.setFileMaster(fileMaster_);
@@ -238,10 +238,7 @@ namespace Pspg
       sweepPtr_ =
          sweepFactoryPtr_->readObjectOptional(in, *this, className, isEnd);
       if (sweepPtr_) {
-         hasSweep_ = true;
          sweepPtr_->setSystem(*this);
-      } else {
-         hasSweep_ = false;
       }
 
    }
@@ -354,36 +351,17 @@ namespace Pspg
          if (command == "READ_W_BASIS") {
             readEcho(in, filename);
             readWBasis(filename);
-            #if 0
-            fieldIo().readFieldsBasis(filename, wFieldsBasis(),
-                                      domain_.unitCell());
-            fieldIo().convertBasisToRGrid(wFieldsBasis(), wFieldsRGrid());
-            hasWFields_ = true;
-            hasSymmetricFields_ = true;
-            #endif
          } else
          if (command == "READ_W_RGRID") {
             readEcho(in, filename);
             readWRGrid(filename);
          } else
          if (command == "COMPUTE") {
-            // Read w (chemical potential fields) if not done previously
-            if (!hasWFields_) {
-               readEcho(in, filename);
-               readWBasis(filename);
-            }
-            // Solve the modified diffusion equation, without iteration
             compute();
          } else
          if (command == "ITERATE") {
-            // Read w (chemical potential) fields if not done previously
-            if (!hasWFields_) {
-               readEcho(in, filename);
-               readWBasis(filename);
-            }
-            // Attempt iteration to convergence
-            int fail = iterate();
-            if (fail) {
+            int error = iterate();
+            if (error) {
                readNext = false;
             }
          } else
@@ -980,7 +958,7 @@ namespace Pspg
       UTIL_CHECK(hasWFields_);
       UTIL_CHECK(hasSymmetricFields_);
       UTIL_CHECK(sweepPtr_);
-      UTIL_CHECK(hasSweep_);
+      UTIL_CHECK(hasSweep());
       Log::file() << std::endl;
       Log::file() << std::endl;
 

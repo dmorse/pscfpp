@@ -236,7 +236,7 @@ namespace Pspc
       * is called at each state point.
       *
       * An Exception is thrown if this is called when no Sweep has been 
-      * created (i.e., if hasSweep_ == false).
+      * created (i.e., if hasSweep() == false).
       */
       void sweep();
 
@@ -646,6 +646,11 @@ namespace Pspc
       */
       bool hasSymmetricFields() const;
 
+      /** 
+      * Does this system have a Sweep object?
+      */
+      bool hasSweep() const;
+
       ///@}
 
    private:
@@ -800,11 +805,6 @@ namespace Pspc
       */
       bool hasSymmetricFields_;
 
-      /**
-      * Does this system have a Sweep object?
-      */
-      bool hasSweep_;
-      
       /**
       * Does this system have an iterator object?
       */
@@ -1039,6 +1039,11 @@ namespace Pspc
    template <int D>
    inline bool System<D>::hasSymmetricFields() const
    {  return hasSymmetricFields_; }
+
+   // Does the system have a Sweep object?
+   template <int D>
+   inline bool System<D>::hasSweep() const
+   {  return (sweepPtr_ != 0); }
 
    // Get the precomputed Helmoltz free energy per monomer / kT.
    template <int D>

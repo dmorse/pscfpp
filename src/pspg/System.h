@@ -610,6 +610,11 @@ namespace Pspg
       */
       bool hasSymmetricFields() const;
 
+      /**
+      * Does this system have an associated Sweep object?
+      */
+      bool hasSweep() const;
+
       ///@}
 
       #if 0
@@ -981,6 +986,16 @@ namespace Pspg
    template <int D>
    inline bool System<D>::hasCFields() const
    {  return hasCFields_; }
+
+   // Are the fields symmetric under the declared space group?
+   template <int D>
+   inline bool System<D>::hasSymmetricFields() const
+   {  return hasSymmetricFields_; }
+
+   // Does this system have an associated Sweep object?
+   template <int D>
+   inline bool System<D>::hasSweep() const
+   {  return (sweepPtr_ != 0); }
 
    #if 0
    // Additional functions for field-theoretic Monte-Carlo

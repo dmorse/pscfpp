@@ -71,8 +71,7 @@ namespace Pspc
       isAllocated_(false),
       hasWFields_(false),
       hasCFields_(false),
-      hasSymmetricFields_(false),
-      hasSweep_(false)
+      hasSymmetricFields_(false)
       // hasIterator_(true)
    {  
       setClassName("System"); 
@@ -223,10 +222,7 @@ namespace Pspc
       sweepPtr_ = 
          sweepFactoryPtr_->readObjectOptional(in, *this, className, isEnd);
       if (sweepPtr_) {
-         hasSweep_ = true;
          sweepPtr_->setSystem(*this);
-      } else {
-         hasSweep_ = false;
       }
    }
 
@@ -903,6 +899,7 @@ namespace Pspc
    {
       UTIL_CHECK(hasWFields_);
       UTIL_CHECK(hasSymmetricFields_);
+      UTIL_CHECK(hasSweep());
       Log::file() << std::endl;
       Log::file() << std::endl;
 
