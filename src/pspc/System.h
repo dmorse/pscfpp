@@ -13,18 +13,20 @@
 
 #include <pspc/solvers/Mixture.h>          // member
 #include <pspc/field/Domain.h>             // member
+#include <pspc/field/FieldIo.h>            // member
 #include <pspc/field/RField.h>             // typedef
+#include <pspc/field/RFieldDft.h>          // typedef
 
-#include <pspc/iterator/Iterator.h>        // member
 #include <pscf/homogeneous/Mixture.h>      // member
 
 #include <util/misc/FileMaster.h>          // member
 #include <util/containers/DArray.h>        // member template
-#include <util/containers/Array.h>         // function parameter
-
-namespace Pscf { class ChiInteraction; }
+#include <util/containers/FSArray.h>       // member template
 
 namespace Pscf {
+
+   class ChiInteraction;
+
 namespace Pspc
 {
 
@@ -76,7 +78,7 @@ namespace Pspc
       ~System();
 
       //@}
-      /// \name Lifetime (Primary Actions)
+      /// \name Lifetime (Actions)
       //@{
 
       /**
@@ -121,7 +123,7 @@ namespace Pspc
       void readCommands();
 
       //@}
-      /// \name State Modifiers (Set W Fields and Unit Cell)
+      /// \name State Modifiers (Modify W Fields and Unit Cell)
       //@{
 
       /**
@@ -315,16 +317,10 @@ namespace Pspc
       /**
       * Write c-fields for all blocks and solvents in r-grid format.
       *
-      * This function writes a file in which volume fraction of each
-      * polymer block and solvent species is output separately, rather
-      * than combining results for blocks or solvents of the same
-      * monomer type into a single field. The file format is similar
-      * to that used by writeCGrid, except that each columns corresponds
-      * to a block or solvent rather than a monomer type. Columns
-      * associated with copolymer blocks appear first, in the order
-      * in which they appear in the parameter file, ordered by polymer 
-      * id and then by block id within each polymer, followed by solvent 
-      * species ordered by solvent id.
+      * Writes concentrations for all blocks of all polymers and all
+      * solvent species in r-grid format. Columns associated with blocks
+      * appear ordered by polymer id and then by block id, followed by
+      * solvent species ordered by solvent id. 
       *
       * \param filename name of output file
       */
@@ -370,8 +366,8 @@ namespace Pspc
       /**
       * Convert a field from symmetrized basis format to r-grid format.
       *
-      * \param inFileName name of input file
-      * \param outFileName name of output file
+      * \param inFileName name of input file (basis format)
+      * \param outFileName name of output file (r-grid format)
       */
       void basisToRGrid(const std::string & inFileName, 
                         const std::string & outFileName) const;
@@ -379,8 +375,8 @@ namespace Pspc
       /**
       * Convert a field from real-space grid to symmetrized basis format.
       *
-      * \param inFileName name of input file
-      * \param outFileName name of output file
+      * \param inFileName name of input file (r-grid format)
+      * \param outFileName name of output file (basis format)
       */
       void rGridToBasis(const std::string & inFileName,
                         const std::string & outFileName) const;
@@ -388,8 +384,8 @@ namespace Pspc
       /**
       * Convert fields from Fourier (k-grid) to real-space (r-grid) format.
       *
-      * \param inFileName name of input file
-      * \param outFileName name of output file
+      * \param inFileName name of input file (k-grid format)
+      * \param outFileName name of output file (r-grid format)
       */
       void kGridToRGrid(const std::string& inFileName, 
                         const std::string& outFileName) const;
@@ -397,8 +393,8 @@ namespace Pspc
       /**
       * Convert fields from real-space (r-grid) to Fourier (k-grid) format.
       *
-      * \param inFileName name of input file
-      * \param outFileName name of output file
+      * \param inFileName name of input file (r-grid format)
+      * \param outFileName name of output file (k-grid format)
       */
       void rGridToKGrid(const std::string & inFileName, 
                         const std::string & outFileName) const;
@@ -406,8 +402,8 @@ namespace Pspc
       /**
       * Convert fields from Fourier (k-grid) to symmetrized basis format.
       *
-      * \param inFileName name of input file
-      * \param outFileName name of output file
+      * \param inFileName name of input file (k-grid format)
+      * \param outFileName name of output file (basis format)
       */
       void kGridToBasis(const std::string& inFileName, 
                         const std::string& outFileName) const;
@@ -541,9 +537,19 @@ namespace Pspc
       //@{
 
       /**
-      * Get UnitCell (i.e., type and parameters) by const reference.
+      * Get the Mixture by reference.
       */
-      UnitCell<D> const & unitCell() const;
+      Mixture<D>& mixture();
+
+      /**
+      * Get Interaction (excess free energy model) by reference.
+      */
+      ChiInteraction& interaction();
+
+      /**
+      * Get Interaction (excess free energy model) by const reference.
+      */
+      ChiInteraction const & interaction() const;
 
       /**
       * Get Domain by const reference.
@@ -551,14 +557,14 @@ namespace Pspc
       Domain<D> const & domain() const;
 
       /**
+      * Get UnitCell (i.e., type and parameters) by const reference.
+      */
+      UnitCell<D> const & unitCell() const;
+
+      /**
       * Get the spatial discretization mesh by const reference.
       */
       Mesh<D> const & mesh() const;
-
-      /** 
-      * Get the group name string.
-      */  
-      std::string groupName() const;
 
       /**
       * Get associated Basis object by reference.
@@ -576,24 +582,9 @@ namespace Pspc
       FieldIo<D> const & fieldIo() const;
 
       /**
-      * Get the Mixture by reference.
-      */
-      Mixture<D>& mixture();
-
-      /**
       * Get the Mixture by const reference.
       */
       Mixture<D> const & mixture() const;
-
-      /**
-      * Get Interaction (excess free energy model) by reference.
-      */
-      ChiInteraction& interaction();
-
-      /**
-      * Get Interaction (excess free energy model) by const reference.
-      */
-      ChiInteraction const & interaction() const;
 
       /**
       * Get the iterator by reference.
@@ -624,6 +615,15 @@ namespace Pspc
       * Get const FileMaster by reference.
       */
       FileMaster const & fileMaster() const;
+
+      //@}
+      /// \name Accessors (return by value)
+      //@{
+
+      /** 
+      * Get the group name string.
+      */  
+      std::string groupName() const;
 
       /** 
       * Have monomer chemical potential fields (w fields) been set?
