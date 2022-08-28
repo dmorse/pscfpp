@@ -359,7 +359,7 @@ namespace Pspc
       *
       * \param outFileName name of output file for wave data
       */
-      void writetWaves(const std::string & outFileName) const;
+      void writeWaves(const std::string & outFileName) const;
 
       //@}
       /// \name Field Operations (correspond to command file commands)
