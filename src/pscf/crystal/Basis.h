@@ -650,23 +650,23 @@ namespace Pscf {
       /** 
       * Get a specific Wave, access by integer index.
       *
-      * \int id  index for a wave vector.
+      * \param id  index for a wave vector.
       */
-      Wave const & wave(int i) const;
+      Wave const & wave(int id) const;
 
       /** 
       * Get a Star, accessed by integer star index.
       *
       * This function return both cancelled and un-cancelled stars.
       *
-      * \int id  index for a star
+      * \param id  index for a star
       */
       Star const & star(int id) const;
 
       /** 
       * Get an uncancelled Star, accessed by basis function index.
       *
-      * \int id  index for a basis function, or an uncancelled star.
+      * \param id  index for a basis function, or an uncancelled star.
       */
       Star const & basisFunction(int id) const;
 

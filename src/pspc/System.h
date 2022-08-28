@@ -13,18 +13,20 @@
 
 #include <pspc/solvers/Mixture.h>          // member
 #include <pspc/field/Domain.h>             // member
+#include <pspc/field/FieldIo.h>            // member
 #include <pspc/field/RField.h>             // typedef
+#include <pspc/field/RFieldDft.h>          // typedef
 
-#include <pspc/iterator/Iterator.h>        // member
 #include <pscf/homogeneous/Mixture.h>      // member
 
 #include <util/misc/FileMaster.h>          // member
 #include <util/containers/DArray.h>        // member template
-#include <util/containers/Array.h>         // function parameter
-
-namespace Pscf { class ChiInteraction; }
+#include <util/containers/FSArray.h>       // member template
 
 namespace Pscf {
+
+   class ChiInteraction;
+
 namespace Pspc
 {
 
@@ -76,7 +78,7 @@ namespace Pspc
       ~System();
 
       //@}
-      /// \name Lifetime (Primary Actions)
+      /// \name Lifetime (Actions)
       //@{
 
       /**
@@ -104,11 +106,6 @@ namespace Pspc
       virtual void readParameters(std::istream& in);
 
       /**
-      * Write parameter file to an ostream, omitting the sweep block. 
-      */
-      void writeBasicParam(std::ostream& out);
-
-      /**
       * Read command script from a file.
       * 
       * \param in command script file.
@@ -121,7 +118,7 @@ namespace Pspc
       void readCommands();
 
       //@}
-      /// \name State Modifiers (Set W Fields and Unit Cell)
+      /// \name State Modifiers (Modify W Fields and Unit Cell)
       //@{
 
       /**
@@ -236,7 +233,7 @@ namespace Pspc
       * is called at each state point.
       *
       * An Exception is thrown if this is called when no Sweep has been 
-      * created (i.e., if hasSweep_ == false).
+      * created (i.e., if hasSweep() == false).
       */
       void sweep();
 
@@ -252,17 +249,6 @@ namespace Pspc
       * accessed by the fHelmholtz() and pressure() functions.
       */
       void computeFreeEnergy();
-
-      /**
-      * Output thermodynamic properties to a file. 
-      *
-      * This function outputs Helmholtz free energy per monomer,
-      * pressure (in units of kT per monomer volume), and the
-      * volume fraction and chemical potential of each species.
-      *
-      * \param out output stream 
-      */
-      void outputThermo(std::ostream& out) const;
 
       /**
       * Get precomputed Helmoltz free energy per monomer / kT.
@@ -315,23 +301,17 @@ namespace Pspc
       /**
       * Write c-fields for all blocks and solvents in r-grid format.
       *
-      * This function writes a file in which volume fraction of each
-      * polymer block and solvent species is output separately, rather
-      * than combining results for blocks or solvents of the same
-      * monomer type into a single field. The file format is similar
-      * to that used by writeCGrid, except that each columns corresponds
-      * to a block or solvent rather than a monomer type. Columns
-      * associated with copolymer blocks appear first, in the order
-      * in which they appear in the parameter file, ordered by polymer 
-      * id and then by block id within each polymer, followed by solvent 
-      * species ordered by solvent id.
+      * Writes concentrations for all blocks of all polymers and all
+      * solvent species in r-grid format. Columns associated with blocks
+      * appear ordered by polymer id and then by block id, followed by
+      * solvent species ordered by solvent id. 
       *
       * \param filename name of output file
       */
       void writeBlockCRGrid(const std::string & filename) const;
 
       /**
-      * Write last slice of a propagator in real space grid format.
+      * Write slice of a propagator at fixed s in r-grid format.
       *
       * \param filename  name of output file
       * \param polymerId  integer id of the polymer
@@ -339,9 +319,27 @@ namespace Pspc
       * \param directionId  integer id of the direction (0 or 1)
       * \param segmentId  integer integration step index
       */
-      void writePropagatorRGrid(const std::string & filename, 
+      void writePropagatorSlice(const std::string & filename, 
                                 int polymerId, int blockId, 
                                 int directionId, int segmentId)  const;
+
+      /**
+      * Write parameter file to an ostream, omitting any sweep block. 
+      *
+      * \param out output stream 
+      */
+      void writeParamNoSweep(std::ostream& out) const;
+
+      /**
+      * Write thermodynamic properties to a file. 
+      *
+      * This function outputs Helmholtz free energy per monomer,
+      * pressure (in units of kT per monomer volume), and the
+      * volume fraction and chemical potential of each species.
+      *
+      * \param out output stream 
+      */
+      void writeThermo(std::ostream& out) const;
 
       /**
       * Output information about stars and symmetrized basis functions.
@@ -351,7 +349,7 @@ namespace Pspc
       *
       * \param outFileName name of output file
       */
-      void outputStars(const std::string & outFileName) const;
+      void writeStars(const std::string & outFileName) const;
    
       /**
       * Output information about waves.
@@ -361,7 +359,7 @@ namespace Pspc
       *
       * \param outFileName name of output file for wave data
       */
-      void outputWaves(const std::string & outFileName) const;
+      void writeWaves(const std::string & outFileName) const;
 
       //@}
       /// \name Field Operations (correspond to command file commands)
@@ -370,8 +368,8 @@ namespace Pspc
       /**
       * Convert a field from symmetrized basis format to r-grid format.
       *
-      * \param inFileName name of input file
-      * \param outFileName name of output file
+      * \param inFileName name of input file (basis format)
+      * \param outFileName name of output file (r-grid format)
       */
       void basisToRGrid(const std::string & inFileName, 
                         const std::string & outFileName) const;
@@ -379,8 +377,8 @@ namespace Pspc
       /**
       * Convert a field from real-space grid to symmetrized basis format.
       *
-      * \param inFileName name of input file
-      * \param outFileName name of output file
+      * \param inFileName name of input file (r-grid format)
+      * \param outFileName name of output file (basis format)
       */
       void rGridToBasis(const std::string & inFileName,
                         const std::string & outFileName) const;
@@ -388,8 +386,8 @@ namespace Pspc
       /**
       * Convert fields from Fourier (k-grid) to real-space (r-grid) format.
       *
-      * \param inFileName name of input file
-      * \param outFileName name of output file
+      * \param inFileName name of input file (k-grid format)
+      * \param outFileName name of output file (r-grid format)
       */
       void kGridToRGrid(const std::string& inFileName, 
                         const std::string& outFileName) const;
@@ -397,8 +395,8 @@ namespace Pspc
       /**
       * Convert fields from real-space (r-grid) to Fourier (k-grid) format.
       *
-      * \param inFileName name of input file
-      * \param outFileName name of output file
+      * \param inFileName name of input file (r-grid format)
+      * \param outFileName name of output file (k-grid format)
       */
       void rGridToKGrid(const std::string & inFileName, 
                         const std::string & outFileName) const;
@@ -406,8 +404,8 @@ namespace Pspc
       /**
       * Convert fields from Fourier (k-grid) to symmetrized basis format.
       *
-      * \param inFileName name of input file
-      * \param outFileName name of output file
+      * \param inFileName name of input file (k-grid format)
+      * \param outFileName name of output file (basis format)
       */
       void kGridToBasis(const std::string& inFileName, 
                         const std::string& outFileName) const;
@@ -446,7 +444,7 @@ namespace Pspc
       * Outputs maximum and root-mean-squared differences.
       *
       * \param field1  first array of fields (basis format)
-      * \param field1  second array of fields (basis format)
+      * \param field2  second array of fields (basis format)
       */
       void compare(const DArray< DArray<double> > field1, 
                    const DArray< DArray<double> > field2);
@@ -457,7 +455,7 @@ namespace Pspc
       * Outputs maximum and root-mean-squared differences.
       *
       * \param field1  first array of fields (r-grid format)
-      * \param field1  second array of fields (r-grid format)
+      * \param field2  second array of fields (r-grid format)
       */
       void compare(const DArray< RField<D> > field1, 
                    const DArray< RField<D> > field2);
@@ -541,9 +539,19 @@ namespace Pspc
       //@{
 
       /**
-      * Get UnitCell (i.e., type and parameters) by const reference.
+      * Get the Mixture by reference.
       */
-      UnitCell<D> const & unitCell() const;
+      Mixture<D>& mixture();
+
+      /**
+      * Get Interaction (excess free energy model) by reference.
+      */
+      ChiInteraction& interaction();
+
+      /**
+      * Get Interaction (excess free energy model) by const reference.
+      */
+      ChiInteraction const & interaction() const;
 
       /**
       * Get Domain by const reference.
@@ -551,14 +559,14 @@ namespace Pspc
       Domain<D> const & domain() const;
 
       /**
+      * Get UnitCell (i.e., type and parameters) by const reference.
+      */
+      UnitCell<D> const & unitCell() const;
+
+      /**
       * Get the spatial discretization mesh by const reference.
       */
       Mesh<D> const & mesh() const;
-
-      /** 
-      * Get the group name string.
-      */  
-      std::string groupName() const;
 
       /**
       * Get associated Basis object by reference.
@@ -576,24 +584,9 @@ namespace Pspc
       FieldIo<D> const & fieldIo() const;
 
       /**
-      * Get the Mixture by reference.
-      */
-      Mixture<D>& mixture();
-
-      /**
       * Get the Mixture by const reference.
       */
       Mixture<D> const & mixture() const;
-
-      /**
-      * Get Interaction (excess free energy model) by reference.
-      */
-      ChiInteraction& interaction();
-
-      /**
-      * Get Interaction (excess free energy model) by const reference.
-      */
-      ChiInteraction const & interaction() const;
 
       /**
       * Get the iterator by reference.
@@ -625,6 +618,15 @@ namespace Pspc
       */
       FileMaster const & fileMaster() const;
 
+      //@}
+      /// \name Accessors (return by value)
+      //@{
+
+      /** 
+      * Get the group name string.
+      */  
+      std::string groupName() const;
+
       /** 
       * Have monomer chemical potential fields (w fields) been set?
       */
@@ -645,6 +647,11 @@ namespace Pspc
       * This is true iff the fields were originally input in basis format.
       */
       bool hasSymmetricFields() const;
+
+      /** 
+      * Does this system have a Sweep object?
+      */
+      bool hasSweep() const;
 
       ///@}
 
@@ -800,11 +807,6 @@ namespace Pspc
       */
       bool hasSymmetricFields_;
 
-      /**
-      * Does this system have a Sweep object?
-      */
-      bool hasSweep_;
-      
       /**
       * Does this system have an iterator object?
       */
@@ -1039,6 +1041,11 @@ namespace Pspc
    template <int D>
    inline bool System<D>::hasSymmetricFields() const
    {  return hasSymmetricFields_; }
+
+   // Does the system have a Sweep object?
+   template <int D>
+   inline bool System<D>::hasSweep() const
+   {  return (sweepPtr_ != 0); }
 
    // Get the precomputed Helmoltz free energy per monomer / kT.
    template <int D>

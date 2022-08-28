@@ -227,13 +227,13 @@ namespace Fd1d
    /*
    * Write parameter file, omitting the sweep block.
    */
-   void System::writeParam(std::ostream& out)
+   void System::writeParamNoSweep(std::ostream& out) const
    {
       out << "System{" << std::endl;
-      mixture().writeParam(out);
-      interaction().writeParam(out);
-      domain().writeParam(out);
-      iterator().writeParam(out);
+      mixture_.writeParam(out);
+      interactionPtr_->writeParam(out);
+      domain_.writeParam(out);
+      iteratorPtr_->writeParam(out);
       out << "}" << std::endl;
    }
 

@@ -266,7 +266,7 @@ namespace Pspg {
       out << "}" << std::endl;
       out << std::endl;
       out << "unitCell       " << system().unitCell();
-      system().outputThermo(out);
+      system().writeThermo(out);
       out.close();
 
       // Write w fields

@@ -105,7 +105,8 @@ namespace Pspg
    }
 
    template <int D>
-   void WaveList<D>::allocate(Mesh<D>& mesh, UnitCell<D>& unitCell) {
+   void WaveList<D>::allocate(Mesh<D> const & mesh, 
+                              UnitCell<D> const & unitCell) {
 
       kSize_ = 1;
       rSize_ = mesh.size();
@@ -143,7 +144,8 @@ namespace Pspg
    }
 
    template <int D>
-   void WaveList<D>::computeMinimumImages(Mesh<D>& mesh, UnitCell<D>& unitCell) {
+   void WaveList<D>::computeMinimumImages(Mesh<D> const & mesh, 
+                                          UnitCell<D> const & unitCell) {
       MeshIterator<D> itr(mesh.dimensions());
       IntVec<D> waveId;
       IntVec<D> G2;
@@ -177,14 +179,14 @@ namespace Pspg
       for (itr.begin(); !itr.atEnd(); ++itr) {
          kSq_[itr.rank()] = unitCell.ksq(itr.position());
 
-#if 0
+         #if 0
          //we get position but set mesh dim to be larger, should be okay
          shiftToMinimum(itr.position(), mesh.dimensions(), minImage_ + (itr.rank() * D));
-#endif
+         #endif
 
-         //we get position but set mesh dim to be larger, should be okay
-         //not the most elegant code with repeated copying but reduces repeated code
-         //from pscf
+         // We get position but set mesh dim to be larger, should be okay
+         // not the most elegant code with repeated copying but reduces 
+         // repeated code from pscf
          waveId = itr.position();
          tempIntVec = shiftToMinimum(waveId, mesh.dimensions(), unitCell);
          for(int i = 0; i < D; i++) {
@@ -222,12 +224,12 @@ namespace Pspg
    }
 
    template <int D>
-   void WaveList<D>::computeKSq(const UnitCell<D>& unitCell){
+   void WaveList<D>::computeKSq(UnitCell<D> const & unitCell){
       //pass for now
    }
 
    template <int D>
-   void WaveList<D>::computedKSq(const UnitCell<D>& unitCell){
+   void WaveList<D>::computedKSq(UnitCell<D> const & unitCell){
       //dkkbasis is something determined from unit cell size
       //min image needs to be on device but okay since its only done once
       //second to last parameter is number of stars originally
