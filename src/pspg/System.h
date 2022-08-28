@@ -25,7 +25,7 @@
 
 namespace Pscf {
 
-   class ChiInteraction;
+   class Interaction;
 
 namespace Pspg
 {
@@ -580,12 +580,12 @@ namespace Pspg
       /**
       * Get interaction (i.e., excess free energy model) by reference.
       */
-      ChiInteraction & interaction();
+      Interaction & interaction();
 	
       /**
       * Get interaction (i.e., excess free energy model) by const ref.
       */
-      ChiInteraction const & interaction() const;
+      Interaction const & interaction() const;
 	
       /**
       * Get Domain by const reference.
@@ -713,7 +713,7 @@ namespace Pspg
       /**
       * Pointer to Interaction (excess free energy model).
       */
-      ChiInteraction* interactionPtr_;
+      Interaction* interactionPtr_;
 	
       /**
       * Pointer to an iterator.
@@ -904,7 +904,7 @@ namespace Pspg
 
    // Get the Interaction (excess free energy model).
    template <int D>
-   inline ChiInteraction & System<D>::interaction()
+   inline Interaction & System<D>::interaction()
    {
       UTIL_ASSERT(interactionPtr_);
       return *interactionPtr_;
@@ -912,7 +912,7 @@ namespace Pspg
 
    // Get the Interaction (excess free energy model).
    template <int D>
-   inline ChiInteraction const & System<D>::interaction() const
+   inline Interaction const & System<D>::interaction() const
    {
       UTIL_ASSERT(interactionPtr_);
       return *interactionPtr_;

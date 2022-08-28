@@ -18,7 +18,7 @@ System{
   Mixture{
      ...
   }
-  ChiInteraction{
+  Interaction{
      ...
   }
   Domain{
@@ -37,7 +37,7 @@ of containing one or more polymer species. This includes a description of
 the structure of each molecular species and a specification of either the 
 volume fraction phi or chemical mu of each species. </li>
 <li>
-ChiInteraction: This block contains values for the Flory-Huggins chi 
+Interaction: This block contains values for the Flory-Huggins chi 
 parameters between all pairs of monomers types.
 </li>
 <li>
@@ -53,7 +53,7 @@ equations.
 </ul>
 The parameter files for the pscf_pcNd and Pscf_pgNd programs have a
 similar structure, with analogous top level blocks. Parameter files 
-for all three types of program contain Mixture and ChiInteraction 
+for all three types of program contain Mixture and Interaction 
 blocks with identical syntax. 
 
 \section user_param_fd_doxlinks_section Documentation Links
@@ -68,7 +68,7 @@ Each type of block is identified here by the label with which it appears in the 
       <li> \subpage fd1d_Polymer_page  "Polymer" </li>
       <li> \subpage fd1d_Solvent_page  "Solvent" </li>
     </ul>
-  <li> \subpage pscf_ChiInteraction_page  </li>
+  <li> \subpage pscf_Interaction_page  </li>
   <li> \subpage fd1d_Domain_page  "Domain" </li>
   <li> \subpage fd1d_NrIterator_page  "NrIterator" </li>
   <li> \subpage fd1d_LinearSweep_page  "LinearSweep" </li>
@@ -248,9 +248,9 @@ See the file pscfpp/examples/pc/solution/lam/param for an example parameter
 file for a simulation of a periodic lamellar phase containing an AB block 
 copolymer dissolved in a selective solvent of type C.
 
-\section user_param_fd_ChiInteraction_section ChiInteraction Block
+\section user_param_fd_Interaction_section Interaction Block
 
-The ChiInteraction block specifies chi interaction parameters between
+The Interaction block specifies chi interaction parameters between
 all distinct monomer types. The "chi" parameter is an array in which
 each row contains a pair of monomer type labels followed by the
 value of the Flory-Huggins interaction parameter for interactions 

@@ -26,7 +26,7 @@ System{
      vMonomer     0.045787
      ds           0.005
   }
-  ChiInteraction{
+  Interaction{
      chi(
          0  1    88.5
      )

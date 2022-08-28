@@ -49,7 +49,7 @@ namespace Fd1d {
    *  | mu_solvent  | solvent chemical potential  | sId   |
    * \endcode
    * The two indices for a Flory-Huggins chi parameter refer to indices
-   * in the chi matrix maintained by ChiInteraction. Changes to element
+   * in the chi matrix maintained by Interaction. Changes to element
    * chi(i, j) automatically also update chi(j, i) for i !\ j, thus
    * maintaining the symmetry of the matrix.
    *

@@ -19,7 +19,7 @@ System{
      }
      ds   0.005
   }
-  ChiInteraction{
+  Interaction{
      chi   0  1    80.0
            0  0     0.0
            1  1     0.0

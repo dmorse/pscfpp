@@ -27,7 +27,7 @@ System{
     }
     ds   0.01
   }
-  ChiInteraction{
+  Interaction{
     chi(
           1   0   20.0
     )
@@ -56,7 +56,7 @@ System{
   Mixture{
      ...
   }
-  ChiInteraction{
+  Interaction{
     ...
   }
   Domain{
@@ -76,7 +76,7 @@ The purpose of each subblock and parameter in the main System block is as follow
 Mixture: Description of molecular species and composition of the mixture. 
 </li>
 <li>
-ChiInteraction: Values of Flory-Huggins (chi) interaction parameters
+Interaction: Values of Flory-Huggins (chi) interaction parameters
 </li>
 <li>
 Domain: Description of crystallographic unit cell and discretization mesh
@@ -105,7 +105,7 @@ file.
       <li> \subpage pspc_Polymer_page "Polymer"  </li>
       <li> \subpage pspc_Solvent_page "Solvent" </li>
     </ul>
-  <li> \subpage pscf_ChiInteraction_page "ChiInteraction" </li>
+  <li> \subpage pscf_Interaction_page "Interaction" </li>
   <li> \subpage pspc_Domain_page "Domain" </li>
   <li> \subpage pspc_AmIterator_page "AmIterator" or \subpage pspc_AmIteratorFilm_page "AmIteratorFilm" </li>
   <li> \subpage pspc_LinearSweep_page "LinearSweep" </li>

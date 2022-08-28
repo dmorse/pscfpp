@@ -1,6 +1,5 @@
 pscf_inter_= \
-  pscf/inter/Interaction.cpp \
-  pscf/inter/ChiInteraction.cpp 
+  pscf/inter/Interaction.cpp 
 
 pscf_inter_SRCS=\
      $(addprefix $(SRC_DIR)/, $(pscf_inter_))

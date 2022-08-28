@@ -19,7 +19,7 @@ System{
      vMonomer   1.0
      ds   0.01
   }
-  ChiInteraction{
+  Interaction{
      chi( 
          0  1     6.0
      )

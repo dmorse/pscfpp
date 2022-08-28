@@ -10,7 +10,7 @@
 #include <fd1d/solvers/Mixture.h>
 #include <fd1d/solvers/Polymer.h>
 #include <fd1d/System.h>
-#include <pscf/inter/ChiInteraction.h>
+#include <pscf/inter/Interaction.h>
 #include <util/containers/FSArray.h>
 #include <util/global.h>
 

@@ -54,7 +54,7 @@ System{
   Mixture{
      ...
   }
-  ChiInteraction{
+  Interaction{
      ...
   }
   Domain{
@@ -125,7 +125,7 @@ System{
      }
      ds   0.01
   }
-  ChiInteraction{
+  Interaction{
      chi(
            0    1    10.0
      )
@@ -200,7 +200,7 @@ Each SweepParameter object contains an identifier for a specific input
 parameter and amoung by which the values of that parameter should change 
 over the course of the sweep.  The initial values of all parameters in 
 the sweep are given by the values specified before the sweep is run
-(e.g., values specified in the Mixture and ChiInteraction blocks).
+(e.g., values specified in the Mixture and Interaction blocks).
 The parameter identifier in each line in the parameters array block
 contains a name string that identifies the type of variable, such as 
 "block" for a block length or "chi" for an interaction parameter. This 
@@ -273,7 +273,7 @@ parameter type, then no meaning is is given for the the second index.
   </tr>
 </table>
 The two indices for a Flory-Huggins chi parameter refer to indices in 
-the chi matrix maintained by ChiInteraction. Changes to element chi(i, j) 
+the chi matrix maintained by Interaction. Changes to element chi(i, j) 
 automatically also update chi(j, i) for i !\ j, thus maintaining the 
 symmetry of the matrix.
 

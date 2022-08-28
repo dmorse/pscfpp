@@ -76,7 +76,7 @@ System{
          phi     1.0
       }
    }
-   ChiInteraction{
+   Interaction{
       ...
    }
    Domain{

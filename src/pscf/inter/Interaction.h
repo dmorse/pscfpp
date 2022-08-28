@@ -10,7 +10,7 @@
 
 #include <util/param/ParamComposite.h>    // base class
 #include <util/containers/Array.h>        // argument (template)
-#include <util/containers/Matrix.h>        // argument (template)
+#include <util/containers/Matrix.h>       // argument (template)
 #include <util/global.h>                  
 
 namespace Pscf {
@@ -18,7 +18,7 @@ namespace Pscf {
    using namespace Util;
 
    /**
-   * Base class for excess free energy models.
+   * Flory-Huggins excess free energy model.
    *
    * \ingroup Pscf_Inter_Module
    */
@@ -45,59 +45,104 @@ namespace Pscf {
       void setNMonomer(int nMonomer);
 
       /**
+      * Read chi parameters.
+      *
+      * Must be called after setNMonomer.
+      */
+      virtual void readParameters(std::istream& in);
+
+      /**
+      * Change one element of the chi matrix.
+      *
+      * \param i row index
+      * \param j column index
+      * \param chi  input value of chi
+      */
+      void setChi(int i, int j, double chi);
+
+      /**
       * Compute excess Helmholtz free energy per monomer.
       *
       * \param c array of concentrations, for each type (input)
       */
       virtual 
-      double fHelmholtz(Array<double> const & c) const = 0;
+      double fHelmholtz(Array<double> const & c) const;
 
       /**
-      * Compute interaction contributions to chemical potentials.
-      *
-      * The resulting chemical potential fields are those obtained
-      * with a vanishing Lagrange multiplier / pressure field, xi = 0.
+      * Compute chemical potential from concentration.
       *
       * \param c array of concentrations, for each type (input)
-      * \param w array of chemical potentials, for each type (output)
+      * \param w array of chemical potentials for types (ouptut) 
       */
       virtual 
       void computeW(Array<double> const & c, Array<double>& w) 
-      const = 0;
+      const;
 
       /**
-      * Compute concentration and xi from chemical potentials.
+      * Compute concentration from chemical potential fields.
       *
-      * \param w  array of chemical potentials, for each type (input)
-      * \param c  array of concentrations, for each type (output)
-      * \param xi  Lagrange multiplier pressure (output)
+      * \param w array of chemical potentials for types (inut) 
+      * \param c array of vol. fractions, for each type (output)
+      * \param xi Langrange multiplier pressure (output)
       */
       virtual 
-      void computeC(Array<double> const & w, 
-                    Array<double>& c, double& xi) const = 0;
+      void computeC(Array<double> const & w, Array<double>& c, double& xi)
+      const;
 
       /**
-      * Compute Langrange multiplier xi from chemical potentials.
+      * Compute Langrange multiplier xi from chemical potential fields.
       *
-      * \param w  array of chemical potentials, for each type (input)
-      * \param xi  Lagrange multiplier pressure (output)
+      * \param w array of chemical potentials for types (inut) 
+      * \param xi Langrange multiplier pressure (output)
       */
       virtual 
-      void computeXi(Array<double> const & w, double& xi) const = 0;
+      void computeXi(Array<double> const & w, double& xi)
+      const;
 
       /**
-      * Compute matrix of derivatives of w fields w/ respect to c fields.
+      * Compute second derivatives of free energy.
       *
-      * Upon return, the elements of the matrix dWdC are given by 
-      * derivatives elements dWdC(i,j) = dW(i)/dC(j), which are also
-      * second derivatives of fHelmholtz with respect to concentrations.
+      * Upon return, the elements of the square matrix dWdC, are
+      * given by derivatives dWdC(i,j) = dW(i)/dC(j), which are
+      * also second derivatives of the interaction free energy. 
+      * For this Flory-Huggins chi parameter model, this is simply 
+      * given by the chi matrix dWdC(i,j) = chi(i, j).
       *
-      * \param c array of concentrations, for each type (input)
-      * \param dWdC square symmetric matrix of derivatives (output)
+      * \param c  array of concentrations, for each type (input)
+      * \param dWdC  matrix of derivatives (output) 
       */
       virtual 
       void computeDwDc(Array<double> const & c, Matrix<double>& dWdC)
-      const = 0;
+      const;
+
+      /**
+      * Return one element of the chi matrix.
+      *
+      * \param i row index
+      * \param j column index
+      */
+      double chi(int i, int j) const;
+
+      /**
+      * Return one element of the inverse chi matrix.
+      *
+      * \param i row index
+      * \param j column index
+      */
+      double chiInverse(int i, int j) const;
+
+      /** 
+      * Return one element of the idempotent matrix.
+      *   
+      * \param i row index
+      * \param j column index
+      */  
+      double idemp(int i, int j) const; 
+
+      /** 
+      * Return sum of elements of chiInverse.
+      */  
+      double sum_inv() const;
 
       /**
       * Get number of monomer types.
@@ -106,17 +151,47 @@ namespace Pscf {
 
    private:
 
+      // Symmetric matrix of interaction parameters.
+      DMatrix<double> chi_;
+
+      // Inverse of matrix chi_.
+      DMatrix<double> chiInverse_;
+
+      // Idempotent matrix used in residual in formulation
+      // of Arora et al. 
+      DMatrix<double> idemp_;
+
+      // Sum of elements of matrix chiInverse_
+      double sum_inv_;
+
       /// Number of monomers
       int nMonomer_;
 
+      /**
+      * Compute the inverse of the chi matrix, along with the
+      * corresponding idempotent matrix and sum of all elements.
+      * Must be called after making any changes to the chi matrix.
+      */
+      void updateMembers();
+
    };
 
-   /**
-   * Get number of monomer types.
-   */
-   inline 
-   int Interaction::nMonomer() const
+   // Inline function
+
+   inline int Interaction::nMonomer() const
    {  return nMonomer_; }
+
+   inline double Interaction::chi(int i, int j) const
+   {  return chi_(i, j); }
+
+   inline double Interaction::chiInverse(int i, int j) const
+   {  return chiInverse_(i, j); }
+
+   inline double Interaction::idemp(int i, int j) const
+   {  return idemp_(i, j); }
+
+   inline double Interaction::sum_inv() const
+   {  return sum_inv_; }
 
 } // namespace Pscf
 #endif

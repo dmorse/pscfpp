@@ -15,7 +15,7 @@
 #include <pspc/iterator/FilmIterator.h>
 #include <pspc/System.h>
 #include <pscf/crystal/UnitCell.h>
-#include <pscf/inter/ChiInteraction.h>
+#include <pscf/inter/Interaction.h>
 #include <util/global.h>
 #include <util/containers/FSArray.h>
 #include <algorithm>

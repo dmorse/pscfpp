@@ -41,7 +41,7 @@ System{
      }
      ds   0.01
   }
-  ChiInteraction{
+  Interaction{
      chi(
            0    1    10.0
      )
@@ -78,7 +78,7 @@ System{
   Mixture{
      ...
   }
-  ChiInteraction{
+  Interaction{
      ...
   }
   Domain{
@@ -104,7 +104,7 @@ which contains information about one of the polymer species in the
 mixture.
 </li>
 <li>
-ChiInteraction: This block contains values for the Flory-Huggins chi 
+Interaction: This block contains values for the Flory-Huggins chi 
 parameters between all pairs of monomers types.
 </li>
 <li>
@@ -130,7 +130,7 @@ The parameter files required to initialize a simple SCFT calculations
 performed using pscf_pcNd or Pscf_pgNd programs have a similar structure, 
 with analogous top level blocks that appear in the same order. Parameter 
 files for all three types of program use the same for Mixture and 
-ChiInteraction blocks, but syntax, but differ in details of the 
+Interaction blocks, but syntax, but differ in details of the 
 structure of the Domain block and the block that initializes and
 iteration algorithm. The skeleton structure shown in this example is 
 specfic to simple SCFT calculations - other types of blocks may be 
@@ -159,7 +159,7 @@ plural nouns. For examples of this, look for the "monomers"
 parameter in the Mixture block, and the "blocks" parameter in each
 "Polymer" subblock of the Mixture block, each of which denotes a 
 one dimensional array with values delimited by square brackets. The 
-value of the "chi" parameter within the ChiInteraction block is a 
+value of the "chi" parameter within the Interaction block is a 
 symmetric matrix. The distinct nonzero elements of the chi matrix 
 are given in the parameter file using a syntax in which each such
 element is given on a line contain row and column indices (defined

@@ -22,7 +22,7 @@
 #include <pscf/mesh/MeshIterator.h>
 #include <pscf/crystal/shiftToMinimum.h>
 #include <pscf/inter/Interaction.h>
-#include <pscf/inter/ChiInteraction.h>
+#include <pscf/inter/Interaction.h>
 #include <pscf/homogeneous/Clump.h>
 
 #include <pspc/field/BFieldComparison.h>
@@ -76,7 +76,7 @@ namespace Pspc
    {  
       setClassName("System"); 
       domain_.setFileMaster(fileMaster_);
-      interactionPtr_ = new ChiInteraction(); 
+      interactionPtr_ = new Interaction(); 
       iteratorFactoryPtr_ = new IteratorFactory<D>(*this); 
       sweepFactoryPtr_ = new SweepFactory<D>(*this);
       BracketPolicy::set(BracketPolicy::Optional);

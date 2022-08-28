@@ -6,7 +6,7 @@
 
 #include <pscf/homogeneous/Mixture.h>
 #include <pscf/homogeneous/Molecule.h>
-#include <pscf/inter/ChiInteraction.h>
+#include <pscf/inter/Interaction.h>
 #include <util/containers/DArray.h>
 
 #include <fstream>
@@ -89,9 +89,9 @@ public:
       mixture.readParam(in);
       in.close();
 
-      ChiInteraction interaction;
+      Interaction interaction;
       interaction.setNMonomer(mixture.nMonomer());
-      openInputFile("in/ChiInteraction", in);
+      openInputFile("in/Interaction", in);
       interaction.readParam(in);
       in.close();
 
@@ -134,9 +134,9 @@ public:
       mixture.readParam(in);
       in.close();
 
-      ChiInteraction interaction;
+      Interaction interaction;
       interaction.setNMonomer(mixture.nMonomer());
-      openInputFile("in/ChiInteraction", in);
+      openInputFile("in/Interaction", in);
       interaction.readParam(in);
       in.close();
 

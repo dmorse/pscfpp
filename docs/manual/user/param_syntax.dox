@@ -63,7 +63,7 @@ types of elements:
      2D Arrays of Parameters:  Each 2D array or matrix of parameters 
      begins with a label and an opening delimiter, and ends with a 
      corresponding closing delimiter.  An example is the chi( .... ) 
-     array of the ChiInteraction block, which uses a syntax in which
+     array of the Interaction block, which uses a syntax in which
      the list of elements is delimited by opening and closing 
      parentheses.
    </li>

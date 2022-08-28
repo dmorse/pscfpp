@@ -4,14 +4,14 @@
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
 
-#include <pscf/inter/ChiInteraction.h>
+#include <pscf/inter/Interaction.h>
 
 #include <fstream>
 
 using namespace Pscf;
 //using namespace Util;
 
-class ChiInteractionTest : public UnitTest 
+class InteractionTest : public UnitTest 
 {
 
 public:
@@ -26,7 +26,7 @@ public:
    void testConstructor()
    {
       printMethod(TEST_FUNC);
-      ChiInteraction v;
+      Interaction v;
       v.setNMonomer(2);
    } 
 
@@ -35,10 +35,10 @@ public:
       printMethod(TEST_FUNC);
       printEndl();
 
-      ChiInteraction v;
+      Interaction v;
       v.setNMonomer(2);
       std::ifstream in;
-      openInputFile("in/ChiInteraction", in);
+      openInputFile("in/Interaction", in);
 
       v.readParam(in);
       TEST_ASSERT(eq(v.chi(1,0), v.chi(0,1)));
@@ -56,10 +56,10 @@ public:
       printMethod(TEST_FUNC);
       printEndl();
 
-      ChiInteraction v;
+      Interaction v;
       v.setNMonomer(2);
       std::ifstream in;
-      openInputFile("in/ChiInteraction", in);
+      openInputFile("in/Interaction", in);
       v.readParam(in);
 
       // Test computeW
@@ -85,10 +85,10 @@ public:
 
 };
 
-TEST_BEGIN(ChiInteractionTest)
-TEST_ADD(ChiInteractionTest, testConstructor)
-TEST_ADD(ChiInteractionTest, testReadWrite)
-TEST_ADD(ChiInteractionTest, testComputeW)
-TEST_END(ChiInteractionTest)
+TEST_BEGIN(InteractionTest)
+TEST_ADD(InteractionTest, testConstructor)
+TEST_ADD(InteractionTest, testReadWrite)
+TEST_ADD(InteractionTest, testComputeW)
+TEST_END(InteractionTest)
 
 #endif

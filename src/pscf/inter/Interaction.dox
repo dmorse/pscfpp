@@ -1,13 +1,13 @@
 namespace Pscf{
 /*! 
-\page pscf_ChiInteraction_page ChiInteraction
+\page pscf_Interaction_page Interaction
 
-A Pscf::ChiInteraction object represents Flory-Huggins excess free energy model for a mixture.
-The parameter file format for a ChiInteraction for a system with n monomer types is a subblock labelled ChiInteraction{ ... } that contains only one labelled parameter, named chi, which represents an n x n square symmetric matrix of Flory-Huggins chi parameters.
+A Pscf::Interaction object represents Flory-Huggins excess free energy model for a mixture.
+The parameter file format for a Interaction for a system with n monomer types is a subblock labelled Interaction{ ... } that contains only one labelled parameter, named chi, which represents an n x n square symmetric matrix of Flory-Huggins chi parameters.
 
 The associated parameter file block has the form
 \code
-  ChiInteraction{
+  Interaction{
     chi  int  int float
          int  int float
          ....
@@ -22,7 +22,7 @@ These required elements may be input in any order, but an exception will be thro
 
 For example, for a system with three monomer types, the data
 \code
-  ChiInteraction{
+  Interaction{
     chi  1   0   10.0
          1   1    0.0
          0   2    5.0

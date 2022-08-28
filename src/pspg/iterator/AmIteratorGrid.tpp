@@ -12,7 +12,7 @@
 #include "AmIteratorGrid.h"
 #include <pspg/field/RDField.h>
 #include <pspg/System.h>
-#include <pscf/inter/ChiInteraction.h>
+#include <pscf/inter/Interaction.h>
 
 namespace Pscf {
 namespace Pspg{

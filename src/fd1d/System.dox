@@ -11,7 +11,7 @@ The parameter file format is:
 \code
 System{
    Mixture { ... }
-   ChiInteraction { ... }
+   Interaction { ... }
    Domain { ... }
    < Iterator > { ... }
    < Sweep >* { ... }
@@ -28,10 +28,10 @@ Explanations and links to documentation for enclosed subblocks and parameters:
     </td>
   </tr>
   <tr>
-    <td> ChiInteraction { .... } </td>
+    <td> Interaction { .... } </td>
     <td> 
       Flory-Huggins excess free eenrgy. 
-      See \ref pscf_ChiInteraction_page docs 
+      See \ref pscf_Interaction_page docs 
     </td>
   </tr>
   <tr>
