@@ -2,4 +2,5 @@ TODO (1D finite difference code):
 
 1) Write an Anderson-Mixing iterator
 2) Write one or more relaxation iterators
+3) Write command functions (correspond to command file commands)
 

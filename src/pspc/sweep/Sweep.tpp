@@ -247,7 +247,7 @@ namespace Pspc {
       // Write data file, with thermodynamic properties at end
       system().writeParam(out);
       out << std::endl;
-      system().outputThermo(out);
+      system().writeThermo(out);
       out.close();
 
       // Write w fields

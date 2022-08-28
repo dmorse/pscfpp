@@ -245,15 +245,15 @@ namespace Pspc
    {  readParam(fileMaster_.paramFile()); }
 
    /*
-   * Write parameter file, omitting the sweep block.
+   * Write parameter file, omitting any sweep block.
    */
    template <int D>
-   void System<D>::writeBasicParam(std::ostream& out)
+   void System<D>::writeParamNoSweep(std::ostream& out) const
    {
       out << "System{" << std::endl;
-      mixture_.writeParam(out);
+      mixture().writeParam(out);
       interaction().writeParam(out);
-      domain_.writeParam(out);
+      domain().writeParam(out);
       iterator().writeParam(out);
       out << "}" << std::endl;
    }
@@ -425,14 +425,14 @@ namespace Pspc
             readEcho(in, filename);
             std::ofstream file;
             fileMaster().openOutputFile(filename, file);
-            writeBasicParam(file);
+            writeParamNoSweep(file);
             file.close();
          } else
          if (command == "WRITE_THERMO") {
             readEcho(in, filename);
             std::ofstream file;
             fileMaster().openOutputFile(filename, file, std::ios_base::app);
-            outputThermo(file);
+            writeThermo(file);
             file.close();
          } else
          if (command == "BASIS_TO_RGRID") {
@@ -484,11 +484,11 @@ namespace Pspc
          } else
          if (command == "WRITE_STARS") {
             readEcho(in, outFileName);
-            outputStars(outFileName);
+            writeStars(outFileName);
          } else
          if (command == "WRITE_WAVES") {
             readEcho(in, outFileName);
-            outputWaves(outFileName);
+            writeWaves(outFileName);
          } else {
             Log::file() << "Error: Unknown command  " 
                         << command << std::endl;
@@ -658,7 +658,7 @@ namespace Pspc
             mixture().computeStress();
          }
          computeFreeEnergy();
-         outputThermo(Log::file());
+         writeThermo(Log::file());
       }
       return error;
    }
@@ -809,8 +809,11 @@ namespace Pspc
 
    }
 
+   /*
+   * Write thermodynamic properties to file.
+   */
    template <int D>
-   void System<D>::outputThermo(std::ostream& out) const
+   void System<D>::writeThermo(std::ostream& out) const
    {
       out << std::endl;
       out << "fHelmholtz    " << Dbl(fHelmholtz(), 18, 11) << std::endl;
@@ -1017,7 +1020,7 @@ namespace Pspc
    * Write description of symmetry-adapted stars and basis to file.
    */
    template <int D>
-   void System<D>::outputStars(const std::string & outFileName) const
+   void System<D>::writeStars(const std::string & outFileName) const
    {
       std::ofstream outFile;
       fileMaster_.openOutputFile(outFileName, outFile);
@@ -1030,7 +1033,7 @@ namespace Pspc
    * Write a list of waves and associated stars to file.
    */
    template <int D>
-   void System<D>::outputWaves(const std::string & outFileName) const
+   void System<D>::writeWaves(const std::string & outFileName) const
    {
       std::ofstream outFile;
       fileMaster_.openOutputFile(outFileName, outFile);

@@ -49,6 +49,9 @@ namespace Fd1d
       /// Monomer concentration / volume fraction field type.
       typedef Propagator::CField CField;
 
+      /// \name Construction and Destruction
+      ///@{
+
       /**
       * Constructor.
       */
@@ -59,6 +62,7 @@ namespace Fd1d
       */
       ~System();
 
+      ///@}
       /// \name Lifetime (Actions)
       ///@{
 
@@ -89,7 +93,7 @@ namespace Fd1d
       /**
       * Write parameter file to an ostream, omitting the sweep block. 
       */
-      void writeParam(std::ostream& out);
+      void writeParamNoSweep(std::ostream& out) const;
 
       /**
       * Read command script.
@@ -103,6 +107,10 @@ namespace Fd1d
       */
       void readCommands();
 
+      ///@}
+      /// \name Thermodynamic Properties
+      ///@{
+
       /**
       * Compute free energy density and pressure for current fields.
       *
@@ -111,6 +119,22 @@ namespace Fd1d
       * freeEnergy() and pressure() accessor functions.
       */
       void computeFreeEnergy();
+
+      /**
+      * Get precomputed Helmoltz free energy per monomer / kT.
+      *
+      * The value retrieved by this function is computed by the
+      * computeFreeEnergy() function.
+      */
+      double fHelmholtz() const;
+
+      /**
+      * Get precomputed pressure x monomer volume kT.
+      *
+      * The value retrieved by this function is computed by the
+      * computeFreeEnergy() function.
+      */
+      double pressure() const;
 
       /**
       * Output thermodynamic properties to a file. 
@@ -124,7 +148,7 @@ namespace Fd1d
       void outputThermo(std::ostream& out);
 
       ///@}
-      /// \name Fields
+      /// \name Field Accessors
       ///@{
 
       /**
@@ -156,7 +180,7 @@ namespace Fd1d
       CField& cField(int monomerId);
 
       ///@}
-      /// \name Accessors (get objects by reference)
+      /// \name Accessors (get sub-objects by reference)
       ///@{
 
       /**
@@ -172,7 +196,7 @@ namespace Fd1d
       /**
       * Get interaction (i.e., excess free energy model) by reference.
       */
-      ChiInteraction& interaction();
+      ChiInteraction & interaction();
 
       /**
       * Get the Iterator by reference.
@@ -188,22 +212,6 @@ namespace Fd1d
       * Get FileMaster by reference.
       */
       FileMaster& fileMaster();
-
-      /**
-      * Get precomputed Helmoltz free energy per monomer / kT.
-      *
-      * The value retrieved by this function is computed by the
-      * computeFreeEnergy() function.
-      */
-      double fHelmholtz() const;
-
-      /**
-      * Get precomputed pressure x monomer volume kT.
-      *
-      * The value retrieved by this function is computed by the
-      * computeFreeEnergy() function.
-      */
-      double pressure() const;
 
       ///@}
 
@@ -271,12 +279,12 @@ namespace Fd1d
       /**
       * Work array (size = # of grid points).
       */
-      DArray<double> f_;
+      mutable DArray<double> f_;
 
       /**
       * Work array (size = # of monomer types).
       */
-      DArray<double> c_;
+      mutable DArray<double> c_;
 
       /**
       * Helmholtz free energy per monomer / kT.
@@ -307,6 +315,8 @@ namespace Fd1d
       * Does this system have a Sweep object?
       */
       bool hasSweep_;
+
+      // Private member functions
 
       /**
       * Allocate memory for fields (private)
@@ -358,7 +368,7 @@ namespace Fd1d
    /*
    * Get the Interaction (excess free energy model).
    */
-   inline ChiInteraction& System::interaction()
+   inline ChiInteraction & System::interaction()
    {
       UTIL_ASSERT(interactionPtr_);
       return *interactionPtr_;

@@ -106,11 +106,6 @@ namespace Pspc
       virtual void readParameters(std::istream& in);
 
       /**
-      * Write parameter file to an ostream, omitting the sweep block. 
-      */
-      void writeBasicParam(std::ostream& out);
-
-      /**
       * Read command script from a file.
       * 
       * \param in command script file.
@@ -256,17 +251,6 @@ namespace Pspc
       void computeFreeEnergy();
 
       /**
-      * Output thermodynamic properties to a file. 
-      *
-      * This function outputs Helmholtz free energy per monomer,
-      * pressure (in units of kT per monomer volume), and the
-      * volume fraction and chemical potential of each species.
-      *
-      * \param out output stream 
-      */
-      void outputThermo(std::ostream& out) const;
-
-      /**
       * Get precomputed Helmoltz free energy per monomer / kT.
       *
       * The value retrieved by this function is computed by the
@@ -340,6 +324,24 @@ namespace Pspc
                                 int directionId, int segmentId)  const;
 
       /**
+      * Write parameter file to an ostream, omitting any sweep block. 
+      *
+      * \param out output stream 
+      */
+      void writeParamNoSweep(std::ostream& out) const;
+
+      /**
+      * Write thermodynamic properties to a file. 
+      *
+      * This function outputs Helmholtz free energy per monomer,
+      * pressure (in units of kT per monomer volume), and the
+      * volume fraction and chemical potential of each species.
+      *
+      * \param out output stream 
+      */
+      void writeThermo(std::ostream& out) const;
+
+      /**
       * Output information about stars and symmetrized basis functions.
       *
       * This function opens a file with the specified filename and then
@@ -347,7 +349,7 @@ namespace Pspc
       *
       * \param outFileName name of output file
       */
-      void outputStars(const std::string & outFileName) const;
+      void writeStars(const std::string & outFileName) const;
    
       /**
       * Output information about waves.
@@ -357,7 +359,7 @@ namespace Pspc
       *
       * \param outFileName name of output file for wave data
       */
-      void outputWaves(const std::string & outFileName) const;
+      void writetWaves(const std::string & outFileName) const;
 
       //@}
       /// \name Field Operations (correspond to command file commands)
