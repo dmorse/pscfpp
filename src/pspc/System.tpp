@@ -408,7 +408,7 @@ namespace Pspc
             readEcho(in, filename);
             writeBlockCRGrid(filename);
          } else
-         if (command == "WRITE_PROPAGATOR") {
+         if (command == "WRITE_PROPAGATOR_SLICE") {
             int polymerId, blockId, directionId, segmentId;
             readEcho(in, filename);
             in >> polymerId;
@@ -419,7 +419,8 @@ namespace Pspc
                         << Str("block ID   ", 21) << blockId << "\n"
                         << Str("direction ID ", 21) << directionId << "\n"
                         << Str("segment ID ", 21) << segmentId << std::endl;
-            writePropagatorRGrid(filename, polymerId, blockId, directionId, segmentId);
+            writePropagatorSlice(filename, polymerId, blockId, directionId, 
+                                 segmentId);
          } else
          if (command == "WRITE_PARAM") {
             readEcho(in, filename);
@@ -470,11 +471,13 @@ namespace Pspc
             bool hasSymmetry;
             hasSymmetry = checkRGridFieldSymmetry(inFileName);
             if (hasSymmetry) {
-               Log::file() << "Symmetry of r-grid file matches this space group." 
-                           << std::endl;
+               Log::file() 
+                   << "Symmetry of r-grid file matches this space group." 
+                   << std::endl;
             } else {
-               Log::file() << "Symmetry of r-grid file does not match this space group." 
-                           << std::endl;
+               Log::file() 
+                   << "Symmetry of r-grid file does not match this space group." 
+                   << std::endl;
             }
          } else
          if (command == "READ_C_GUESS_W") {
@@ -1007,12 +1010,13 @@ namespace Pspc
    * Write the last time slice of the propagator.
    */
    template <int D>
-   void System<D>::writePropagatorRGrid(const std::string & filename, 
-                                        int polymerId, int blockId, int directionId, int segmentId) 
+   void System<D>::writePropagatorSlice(const std::string & filename, 
+                                        int polymerId, int blockId, 
+                                        int directionId, int segmentId) 
    const
    {
       RField<D> propField 
-              = mixture_.polymer(polymerId).propagator(blockId, directionId).q(segmentId);
+      = mixture_.polymer(polymerId).propagator(blockId, directionId).q(segmentId);
       fieldIo().writeFieldRGrid(filename, propField, unitCell());
    }
 

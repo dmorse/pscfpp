@@ -106,7 +106,7 @@ namespace Pspg
       /**
       * Write parameter file to an ostream, omitting the sweep block.
       */
-      void writeParam(std::ostream& out);
+      void writeParamNoSweep(std::ostream& out) const;
 
       /**
       * Read command script.
@@ -297,7 +297,7 @@ namespace Pspg
       *
       * \param out output stream
       */
-      void outputThermo(std::ostream& out);
+      void writeThermo(std::ostream& out);
 
       /**
       * Get precomputed Helmoltz free energy per monomer / kT.
@@ -360,15 +360,16 @@ namespace Pspg
       void writeBlockCRGrid(const std::string & filename) const;
 
       /**
-      * Write last slice of the propagator in r-grid format.
+      * Write tail (last slice) of a propagator in r-grid format.
       *
       * \param filename  name of output file
       * \param polymerID  integer index of polymer species
       * \param blockID  integer index of block within polymer
       */
-      void writePropagatorRGrid(const std::string & filename,
-                                int polymerID, int blockID);
+      void writePropagatorTail(const std::string & filename,
+                               int polymerID, int blockID);
 
+      #if 0
       /**
       * Write all data associated with the converged solution. This
       * includes the full param file, as well as the thermodynamic
@@ -377,6 +378,7 @@ namespace Pspg
       * \param filename name of output file
       */
       void writeData(const std::string & filename);
+      #endif
 
       /**
       * Output information about stars and symmetrized basis functions.
@@ -386,7 +388,7 @@ namespace Pspg
       *
       * \param outFileName name of output file
       */
-      void outputStars(const std::string & outFileName) const;
+      void writeStars(const std::string & outFileName) const;
    
       /**
       * Output information about waves.
@@ -396,7 +398,7 @@ namespace Pspg
       *
       * \param outFileName name of output file for wave data
       */
-      void outputWaves(const std::string & outFileName) const;
+      void writeWaves(const std::string & outFileName) const;
    
       //@}
       /// \name Field Operations (correspond to command file commands)
@@ -857,10 +859,6 @@ namespace Pspg
       * Work array for r-grid field.
       */
       RDField<D> workArray;
-
-      cudaReal* d_kernelWorkSpace_;
-
-      cudaReal* kernelWorkSpace_;
 
       /**
       * Allocate memory for fields (private)

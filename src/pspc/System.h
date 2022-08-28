@@ -311,7 +311,7 @@ namespace Pspc
       void writeBlockCRGrid(const std::string & filename) const;
 
       /**
-      * Write last slice of a propagator in real space grid format.
+      * Write slice of a propagator at fixed s in r-grid format.
       *
       * \param filename  name of output file
       * \param polymerId  integer id of the polymer
@@ -319,7 +319,7 @@ namespace Pspc
       * \param directionId  integer id of the direction (0 or 1)
       * \param segmentId  integer integration step index
       */
-      void writePropagatorRGrid(const std::string & filename, 
+      void writePropagatorSlice(const std::string & filename, 
                                 int polymerId, int blockId, 
                                 int directionId, int segmentId)  const;
 
