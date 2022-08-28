@@ -44,7 +44,7 @@ namespace Pspg
       /**
       * Allocate memory for all arrays. Call in readParameters.
       */
-      void allocate(Mesh<D>& mesh, UnitCell<D>& unitCell);
+      void allocate(Mesh<D> const & mesh, UnitCell<D> const & unitCell);
 
       /**
       * Compute minimum images of wavevectors.
@@ -55,7 +55,8 @@ namespace Pspg
       * \param mesh  spatial discretization Mesh<D> object
       * \param unitCell  crystallographic UnitCell<D> object
       */
-      void computeMinimumImages(Mesh<D>& mesh, UnitCell<D>& unitCell);
+      void computeMinimumImages(Mesh<D> const & mesh, 
+                                UnitCell<D> const & unitCell);
 
       /**
       * Compute square norm |k|^2 for all wavevectors.
@@ -67,7 +68,7 @@ namespace Pspg
       *
       * \param unitCell crystallographic UnitCell<D>
       */
-      void computeKSq(const UnitCell<D>& unitCell);
+      void computeKSq(UnitCell<D> const & unitCell);
 
       /**
       * Compute derivatives of |k|^2 w/ respect to unit cell parameters.
@@ -76,7 +77,7 @@ namespace Pspg
       *
       * \param unitCell crystallographic UnitCell<D>
       */
-      void computedKSq(const UnitCell<D>& unitCell);
+      void computedKSq(UnitCell<D> const & unitCell);
 
       /**
       * Get the minimum image vector for a specified wavevector.

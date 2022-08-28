@@ -14,7 +14,6 @@
 #include <pspg/field/Domain.h>             // member
 #include <pspg/field/FieldIo.h>            // member
 #include <pspg/solvers/WaveList.h>         // member
-#include <pspg/field/DField.h>             // typedef
 #include <pspg/field/RDField.h>            // typedef
 #include <pspg/field/RDFieldDft.h>         // typedef
 
@@ -122,7 +121,7 @@ namespace Pspg
       void readCommands();
 
       //@}
-      /// \name State Modifiers (Modify w Fields & Unit Cell)
+      /// \name State Modifiers (Modify W Fields & Unit Cell)
       //@{
 
       /**
@@ -349,8 +348,12 @@ namespace Pspg
       void writeCRGrid(const std::string & filename) const;
 
       /**
-      * Write concentration fields in real space (r-grid) format, for each
-      * block (or solvent) individually rather than for each species.
+      * Write c-fields for all blocks and solvents in r-grid format.
+      *
+      * Writes concentrations for all blocks of all polymers and all
+      * solvent species in r-grid format. Columns associated with blocks
+      * appear ordered by polymer id and then by block id, followed by
+      * solvent species ordered by solvent id. 
       *
       * \param filename name of output file
       */
@@ -375,6 +378,26 @@ namespace Pspg
       */
       void writeData(const std::string & filename);
 
+      /**
+      * Output information about stars and symmetrized basis functions.
+      *
+      * This function opens a file with the specified filename and then
+      * calls Basis::outputStars.
+      *
+      * \param outFileName name of output file
+      */
+      void outputStars(const std::string & outFileName) const;
+   
+      /**
+      * Output information about waves.
+      *
+      * This function opens a file with the specified filename and then
+      * calls Basis::outputWaves.
+      *
+      * \param outFileName name of output file for wave data
+      */
+      void outputWaves(const std::string & outFileName) const;
+   
       //@}
       /// \name Field Operations (correspond to command file commands)
       //@{
@@ -405,21 +428,64 @@ namespace Pspg
       void rGridToBasis(const std::string & inFileName,
                         const std::string & outFileName);
 
+      /**
+      * Convert fields from Fourier (k-grid) to real-space (r-grid) format.
+      *
+      * \param inFileName name of input file
+      * \param outFileName name of output file
+      */
+      void kGridToRGrid(const std::string& inFileName, 
+                        const std::string& outFileName) const;
+   
+      /**
+      * Convert fields from real-space (r-grid) to Fourier (k-grid) format.
+      *
+      * \param inFileName name of input file
+      * \param outFileName name of output file
+      */
+      void rGridToKGrid(const std::string & inFileName, 
+                        const std::string & outFileName) const;
+
+      /**
+      * Convert fields from Fourier (k-grid) to symmetrized basis format.
+      *
+      * \param inFileName name of input file
+      * \param outFileName name of output file
+      */
+      void kGridToBasis(const std::string& inFileName, 
+                        const std::string& outFileName) const;
+   
+      /**
+      * Convert fields from symmetrized basis to Fourier (k-grid) format.
+      *
+      * \param inFileName name of input file (basis format)
+      * \param outFileName name of output file (k-grid format)
+      */
+      void basisToKGrid(const std::string & inFileName, 
+                        const std::string & outFileName) const;
+  
+      /**
+      * Construct trial w-fields from c-fields.
+      *
+      * This function reads concentration fields in symmetrized basis 
+      * format and constructs an initial guess for corresponding chemical 
+      * potential fields by setting the Lagrange multiplier field xi to 
+      * zero. The resulting guess is stored in the System wFields arrays 
+      * in basis and r-grid formats and is also output to a file in basis 
+      * format.
+      *
+      * Upon return, hasWFields and hasSymmetricFields are set true and 
+      * hasCFields is set false. 
+      *
+      * \param inFileName  name of input c-field file (in, basis format)
+      * \param outFileName  name of output w-field file (out, basis format)
+      */
+      void guessWfromC(const std::string& inFileName, 
+                       const std::string& outFileName);
+   
       //@}
       /// \name Chemical Potential Field (W Field) Accessors
       //@{
-
-      #if 0
-      /**
-      * Get array of chemical potential fields, in a basis.
-      *
-      * This function returns an array in which each element is an
-      * array containing the coefficients of the chemical potential
-      * field (w field) in a symmetry-adapted basis for one monomer
-      * type. The array capacity is the number of monomer types.
-      */
-      DArray< DArray<double> >& wFieldsBasis();
-      #endif
 
       /**
       * Get array of chemical potential fields, in a basis.
@@ -460,7 +526,7 @@ namespace Pspg
       Field const & wFieldRGrid(int monomerId) const;
 
       //@}
-      /// \name Concentration / Volume Fraction Fields (C Fields) Accessors
+      /// \name Concentration / Volume Fraction Field (C Fields) Accessors
       //@{
 
       /**
@@ -510,19 +576,19 @@ namespace Pspg
       Mixture<D>& mixture();
 
       /**
-      * Get spatial discretization Mesh by reference.
+      * Get interaction (i.e., excess free energy model) by reference.
       */
-      Mesh<D> & mesh();
-
+      ChiInteraction & interaction();
+	
       /**
-      * Get spatial discretization Mesh by const reference.
+      * Get interaction (i.e., excess free energy model) by const ref.
       */
-      Mesh<D> const & mesh() const;
-
+      ChiInteraction const & interaction() const;
+	
       /**
-      * Get crystal UnitCell by reference.
+      * Get Domain by const reference.
       */
-      UnitCell<D> & unitCell();
+      Domain<D> const & domain() const;
 
       /**
       * Get crystal UnitCell by const reference.
@@ -530,29 +596,24 @@ namespace Pspg
       UnitCell<D> const & unitCell() const;
 
       /**
-      * Get Domain by const reference.
+      * Get spatial discretization Mesh by const reference.
       */
-      Domain<D> const & domain() const;
-
-      /**
-      * Get interaction (i.e., excess free energy model) by reference.
-      */
-      ChiInteraction& interaction();
-	
-      /**
-      * Get the iterator by reference.
-      */
-      Iterator<D>& iterator();
+      Mesh<D> const & mesh() const;
 
       /**
       * Get the Basis by reference.
       */
-      Basis<D> & basis();
+      Basis<D> const & basis() const;
 
       /**
       * Get container for wavevector data.
       */
-      WaveList<D>& wavelist();
+      WaveList<D> & wavelist();
+
+      /**
+      * Get the iterator by reference.
+      */
+      Iterator<D>& iterator();
 
       /**
       * Get the FieldIo by const reference.
@@ -562,7 +623,7 @@ namespace Pspg
       /**
       * Get the FFT object by reference.
       */
-      FFT<D> & fft();
+      FFT<D> const & fft() const ;
 
       /**
       * Get homogeneous mixture (for reference calculations).
@@ -597,7 +658,7 @@ namespace Pspg
       *
       * Returns  true if and only if monomer concentration fields have
       * been computed by solving the modified diffusion equation for the
-      * current w fields, and values are known on a grid (cFieldsRGrid).
+      * current w fields.
       */
       bool hasCFields() const;
 
@@ -713,31 +774,31 @@ namespace Pspg
       *
       * Indexed by monomer typeId, size = nMonomer.
       */
-      DArray< DArray<double> > tmpFieldsBasis_;
+      mutable DArray< DArray<double> > tmpFieldsBasis_;
 
       /**
       * Work array of fields on real space grid.
       *
       * Indexed by monomer typeId, size = nMonomer.
       */
-       DArray<Field> tmpFieldsRGrid_;
+      mutable DArray<Field> tmpFieldsRGrid_;
 
       /**
       * Work array of fields on Fourier grid (k-grid).
       *
       * Indexed by monomer typeId, size = nMonomer.
       */
-      DArray<RDFieldDft<D> > tmpFieldsKGrid_;
+      mutable DArray<RDFieldDft<D> > tmpFieldsKGrid_;
 
       /**
       * Work array (size = # of grid points).
       */
-      DArray<double> f_;
+      mutable DArray<double> f_;
 
       /**
       * Work array (size = # of monomer types).
       */
-      DArray<double> c_;
+      mutable DArray<double> c_;
 
       /**
       * Helmholtz free energy per monomer / kT.
@@ -838,22 +899,34 @@ namespace Pspg
 
    // Inline member functions
 
+   // Get the associated Mixture<D> object.
+   template <int D>
+   inline Mixture<D>& System<D>::mixture()
+   { return mixture_; }
+
+   // Get the Interaction (excess free energy model).
+   template <int D>
+   inline ChiInteraction & System<D>::interaction()
+   {
+      UTIL_ASSERT(interactionPtr_);
+      return *interactionPtr_;
+   }
+
+   // Get the Interaction (excess free energy model).
+   template <int D>
+   inline ChiInteraction const & System<D>::interaction() const
+   {
+      UTIL_ASSERT(interactionPtr_);
+      return *interactionPtr_;
+   }
+
    template <int D>
    inline Domain<D> const & System<D>::domain() const
    { return domain_; }
 
    template <int D>
-   inline UnitCell<D> & System<D>::unitCell()
-   { return domain_.unitCell(); }
-
-   template <int D>
    inline UnitCell<D> const & System<D>::unitCell() const
    { return domain_.unitCell(); }
-
-   // get the Mesh<D> object.
-   template <int D>
-   inline Mesh<D> & System<D>::mesh()
-   { return domain_.mesh(); }
 
    // get the const Mesh<D> object.
    template <int D>
@@ -862,12 +935,12 @@ namespace Pspg
 
    // Get the Basis<D> object.
    template <int D>
-   inline Basis<D> & System<D>::basis()
+   inline Basis<D> const & System<D>::basis() const
    {  return domain_.basis(); }
 
    // Get the FFT<D> object.
    template <int D>
-   inline FFT<D> & System<D>::fft()
+   inline FFT<D> const & System<D>::fft() const
    {  return domain_.fft(); }
 
    // Get the const FieldIo<D> object.
@@ -879,19 +952,6 @@ namespace Pspg
    template <int D>
    inline std::string System<D>::groupName()
    { return domain_.groupName(); }
-
-   // Get the associated Mixture<D> object.
-   template <int D>
-   inline Mixture<D>& System<D>::mixture()
-   { return mixture_; }
-
-   // Get the Interaction (excess free energy model).
-   template <int D>
-   inline ChiInteraction& System<D>::interaction()
-   {
-      UTIL_ASSERT(interactionPtr_);
-      return *interactionPtr_;
-   }
 
    // Get the Iterator.
    template <int D>

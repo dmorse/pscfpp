@@ -215,8 +215,8 @@ namespace Pspg
       mixture().setMesh(mesh());
 
       // Construct wavelist
-      wavelist().allocate(mesh(), unitCell());
-      wavelist().computeMinimumImages(mesh(), unitCell());
+      wavelist().allocate(domain_.mesh(), unitCell());
+      wavelist().computeMinimumImages(domain_.mesh(), unitCell());
       mixture().setupUnitCell(unitCell(), wavelist());
 
       // Allocate memory for w and c fields
@@ -782,8 +782,8 @@ namespace Pspg
    void System<D>::setWBasis(DArray< DArray<double> > const & fields)
    {
       // Update system wFields
-      int nMonomer = mixture_.nMonomer();
-      int nBasis = domain_.basis().nBasis();
+      int nMonomer = mixture().nMonomer();
+      int nBasis = basis().nBasis();
       for (int i = 0; i < nMonomer; ++i) {
          DArray<double> const & f = fields[i];
          DArray<double> & w = wFieldsBasis_[i];
@@ -967,19 +967,6 @@ namespace Pspg
    }
 
    /*
-   * Convert fields from symmetry-adpated basis to real-space grid format.
-   */
-   template <int D>
-   void System<D>::basisToRGrid(const std::string & inFileName,
-                                const std::string & outFileName)
-   {
-      UnitCell<D> tmpUnitCell;
-      fieldIo().readFieldsBasis(inFileName, tmpFieldsBasis_, tmpUnitCell);
-      fieldIo().convertBasisToRGrid(tmpFieldsBasis_, tmpFieldsRGrid_);
-      fieldIo().writeFieldsRGrid(outFileName, tmpFieldsRGrid_, tmpUnitCell);
-   }
-
-   /*
    * Write w-fields in symmetry-adapted basis format.
    */
    template <int D>
@@ -1073,6 +1060,47 @@ namespace Pspg
    }
 
    /*
+   * Write description of symmetry-adapted stars and basis to file.
+   */
+   template <int D>
+   void System<D>::outputStars(const std::string & outFileName) const
+   {
+      std::ofstream outFile;
+      fileMaster_.openOutputFile(outFileName, outFile);
+      fieldIo().writeFieldHeader(outFile, mixture_.nMonomer(),
+                                 unitCell());
+      basis().outputStars(outFile);
+   }
+
+   /*
+   * Write a list of waves and associated stars to file.
+   */
+   template <int D>
+   void System<D>::outputWaves(const std::string & outFileName) const
+   {
+      std::ofstream outFile;
+      fileMaster_.openOutputFile(outFileName, outFile);
+      fieldIo().writeFieldHeader(outFile, mixture_.nMonomer(), 
+                                 unitCell());
+      basis().outputWaves(outFile);
+   }
+
+   // Field Conversion Operations
+
+   /*
+   * Convert fields from symmetry-adpated basis to real-space grid format.
+   */
+   template <int D>
+   void System<D>::basisToRGrid(const std::string & inFileName,
+                                const std::string & outFileName)
+   {
+      UnitCell<D> tmpUnitCell;
+      fieldIo().readFieldsBasis(inFileName, tmpFieldsBasis_, tmpUnitCell);
+      fieldIo().convertBasisToRGrid(tmpFieldsBasis_, tmpFieldsRGrid_);
+      fieldIo().writeFieldsRGrid(outFileName, tmpFieldsRGrid_, tmpUnitCell);
+   }
+
+   /*
    * Convert fields from real-space grid to symmetry-adapted basis format.
    */
    template <int D>
@@ -1083,6 +1111,121 @@ namespace Pspg
       fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_, tmpUnitCell);
       fieldIo().convertRGridToBasis(tmpFieldsRGrid_, tmpFieldsBasis_);
       fieldIo().writeFieldsBasis(outFileName, tmpFieldsBasis_, tmpUnitCell);
+   }
+
+   /*
+   * Convert fields from Fourier (k-grid) to real-space (r-grid) format.
+   */
+   template <int D>
+   void System<D>::kGridToRGrid(const std::string & inFileName,
+                                const std::string& outFileName) const
+   {
+      UnitCell<D> tmpUnitCell;
+      fieldIo().readFieldsKGrid(inFileName, tmpFieldsKGrid_, tmpUnitCell);
+      for (int i = 0; i < mixture_.nMonomer(); ++i) {
+         fft().inverseTransform(tmpFieldsKGrid_[i], tmpFieldsRGrid_[i]);
+      }
+      fieldIo().writeFieldsRGrid(outFileName, tmpFieldsRGrid_, 
+                                 tmpUnitCell);
+   }
+
+   /*
+   * Convert fields from real-space (r-grid) to Fourier (k-grid) format.
+   */
+   template <int D>
+   void System<D>::rGridToKGrid(const std::string & inFileName,
+                                const std::string & outFileName) const
+   {
+      UnitCell<D> tmpUnitCell;
+      fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_, 
+                                tmpUnitCell);
+      for (int i = 0; i < mixture_.nMonomer(); ++i) {
+         fft().forwardTransform(tmpFieldsRGrid_[i], tmpFieldsKGrid_[i]);
+      }
+      fieldIo().writeFieldsKGrid(outFileName, tmpFieldsKGrid_, 
+                                 tmpUnitCell);
+   }
+
+   /*
+   * Convert fields from Fourier (k-grid) to symmetry-adapted basis format.
+   */
+   template <int D>
+   void System<D>::kGridToBasis(const std::string & inFileName,
+                                const std::string& outFileName) const
+   {
+      UnitCell<D> tmpUnitCell;
+      fieldIo().readFieldsKGrid(inFileName, tmpFieldsKGrid_, tmpUnitCell);
+      fieldIo().convertKGridToBasis(tmpFieldsKGrid_, tmpFieldsBasis_);
+      fieldIo().writeFieldsBasis(outFileName, tmpFieldsBasis_, tmpUnitCell);
+   }
+
+   /*
+   * Convert fields from symmetry-adapted basis to Fourier (k-grid) format.
+   */
+   template <int D>
+   void System<D>::basisToKGrid(const std::string & inFileName,
+                                const std::string & outFileName) const
+   {
+      UnitCell<D> tmpUnitCell;
+      fieldIo().readFieldsBasis(inFileName, tmpFieldsBasis_, tmpUnitCell);
+      fieldIo().convertBasisToKGrid(tmpFieldsBasis_, tmpFieldsKGrid_);
+      fieldIo().writeFieldsKGrid(outFileName, tmpFieldsKGrid_, tmpUnitCell);
+   }
+
+   #if 0
+   /*
+   * Convert fields from real-space grid to symmetry-adapted basis format.
+   */
+   template <int D>
+   bool System<D>::checkRGridFieldSymmetry(const std::string & inFileName) 
+   const
+   {
+      UnitCell<D> tmpUnitCell;
+      fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_, tmpUnitCell);
+      for (int i = 0; i < mixture_.nMonomer(); ++i) {
+         bool symmetric = fieldIo().hasSymmetry(tmpFieldsRGrid_[i]);
+         if (!symmetric) {
+            return false;
+         }
+      }
+      return true;
+   }
+   #endif
+
+   /*
+   * Construct guess for omega (w-field) from rho (c-field).
+   *
+   * Modifies wFields and wFieldsRGrid and outputs wFields.
+   */
+   template <int D>
+   void System<D>::guessWfromC(std::string const & inFileName, 
+                               std::string const & outFileName)
+   {
+      hasCFields_ = false;
+      hasWFields_ = false;
+
+      fieldIo().readFieldsBasis(inFileName, tmpFieldsBasis_, 
+                                domain_.unitCell());
+
+      // Compute w fields from c fields
+      for (int i = 0; i < basis().nBasis(); ++i) {
+         for (int j = 0; j < mixture_.nMonomer(); ++j) {
+            wFieldsBasis_[j][i] = 0.0;
+            for (int k = 0; k < mixture_.nMonomer(); ++k) {
+               wFieldsBasis_[j][i] += interaction().chi(j,k) 
+                                      * tmpFieldsBasis_[k][i];
+            }
+         }
+      }
+
+      // Convert to r-grid format
+      fieldIo().convertBasisToRGrid(wFieldsBasis_, wFieldsRGrid_);
+      hasWFields_ = true;
+      hasSymmetricFields_ = true;
+      hasCFields_ = false;
+
+      // Write w field in basis format
+      fieldIo().writeFieldsBasis(outFileName, wFieldsBasis(), unitCell());
    }
 
 } // namespace Pspg

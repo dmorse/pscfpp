@@ -509,6 +509,178 @@ namespace Pspc
       readCommands(fileMaster_.commandFile()); 
    }
 
+   // Chemical Potential Field Modifier Functions
+
+   /*
+   * Read w-field in symmetry adapted basis format.
+   */
+   template <int D>
+   void System<D>::readWBasis(const std::string & filename)
+   {
+      fieldIo().readFieldsBasis(filename, wFieldsBasis_, domain_.unitCell());
+      fieldIo().convertBasisToRGrid(wFieldsBasis_, wFieldsRGrid_);
+      hasWFields_ = true;
+      hasSymmetricFields_ = true;
+      hasCFields_ = false;
+   }
+
+   /*
+   * Read w-fields in real-space grid (r-grid) format.
+   */
+   template <int D>
+   void System<D>::readWRGrid(const std::string & filename)
+   {
+      fieldIo().readFieldsRGrid(filename, wFieldsRGrid_, domain_.unitCell());
+      //fieldIo().convertRGridToBasis(wFieldsRGrid_, wFieldsBasis_);
+      hasWFields_ = true;
+      hasSymmetricFields_ = false;
+      hasCFields_ = false;
+   }
+
+   /*
+   * Set new w-field values.
+   */
+   template <int D>
+   void System<D>::setWBasis(DArray< DArray<double> > const & fields)
+   {
+      // Update system wFields
+      int nMonomer = mixture_.nMonomer();
+      int nBasis = domain_.basis().nBasis();
+      for (int i = 0; i < nMonomer; ++i) {
+         DArray<double> const & f = fields[i];
+         DArray<double> &       w = wFieldsBasis_[i];
+         for (int j = 0; j < nBasis; ++j) {
+            w[j] = f[j];
+         }
+      }
+
+      // Update system wFieldsRGrid
+      domain_.fieldIo().convertBasisToRGrid(wFieldsBasis_, wFieldsRGrid_);
+
+      hasWFields_ = true;
+      hasSymmetricFields_ = true;
+      hasCFields_ = false;
+   }
+
+   /*
+   * Set new w-field values, using r-grid fields as inputs.
+   */
+   template <int D>
+   void System<D>::setWRGrid(DArray<Field> const & fields)
+   {
+      // Update system wFieldsRGrid
+      int nMonomer = mixture_.nMonomer();
+      int meshSize = domain_.mesh().size();
+      for (int i = 0; i < nMonomer; ++i) {
+         Field const & f = fields[i];
+         Field& w = wFieldsRGrid_[i];
+         for (int j = 0; j < meshSize; ++j) {
+            w[j] = f[j];
+         }
+      }
+
+      // Update system wFieldsRgrid
+      // domain_.fieldIo().convertRGridToBasis(wFieldsRGrid_, wFieldsBasis_);
+
+      hasWFields_ = true;
+      hasSymmetricFields_ = false;
+      hasCFields_ = false;
+   }
+
+   // Unit Cell Modifier / Setter 
+
+   /*
+   * Set parameters of the associated unit cell.
+   */
+   template <int D>
+   void System<D>::setUnitCell(UnitCell<D> const & unitCell)
+   {
+      UTIL_CHECK(domain_.unitCell().lattice() == unitCell.lattice());
+      domain_.unitCell() = unitCell;
+      mixture_.setupUnitCell(unitCell);
+   }
+
+   /*
+   * Set parameters of the associated unit cell.
+   */
+   template <int D>
+   void System<D>::setUnitCell(FSArray<double, 6> const & parameters)
+   {
+      UTIL_CHECK(domain_.unitCell().nParameter() == parameters.size());
+      domain_.unitCell().setParameters(parameters);
+      mixture_.setupUnitCell(domain_.unitCell());
+   }
+
+   // Primary SCFT Computations
+
+   /*
+   * Solve MDE for current w-fields, without iteration.
+   */
+   template <int D>
+   void System<D>::compute(bool needStress)
+   {
+      UTIL_CHECK(hasWFields_);
+
+      // Solve the modified diffusion equation (without iteration)
+      mixture_.compute(wFieldsRGrid(), cFieldsRGrid_);
+      hasCFields_ = true;
+
+      if (hasSymmetricFields_) {
+         // Convert c fields from r-grid to basis
+         fieldIo().convertRGridToBasis(cFieldsRGrid_, cFieldsBasis_);
+         if (needStress) {
+            mixture_.computeStress();
+         }
+      }
+
+   }
+
+   /*
+   * Iteratively solve a SCFT problem for specified parameters.
+   */
+   template <int D>
+   int System<D>::iterate()
+   {
+      UTIL_CHECK(hasWFields_);
+      UTIL_CHECK(hasSymmetricFields_);
+      hasCFields_ = false;
+
+      Log::file() << std::endl;
+      Log::file() << std::endl;
+
+      // Call iterator
+      int error = iterator().solve();
+      
+      hasCFields_ = true;
+
+      if (!error) {   
+         if (!iterator().isFlexible()) {
+            mixture().computeStress();
+         }
+         computeFreeEnergy();
+         outputThermo(Log::file());
+      }
+      return error;
+   }
+
+   /*
+   * Perform sweep along a line in parameter space.
+   */
+   template <int D>
+   void System<D>::sweep()
+   {
+      UTIL_CHECK(hasWFields_);
+      UTIL_CHECK(hasSymmetricFields_);
+      UTIL_CHECK(hasSweep());
+      Log::file() << std::endl;
+      Log::file() << std::endl;
+
+      // Perform sweep
+      sweepPtr_->sweep();
+   }
+   
+   // Thermodynamic Properties
+
    /*
    * Compute Helmoltz free energy and pressure
    */
@@ -763,183 +935,8 @@ namespace Pspc
 
    // Command functions
 
-   /*
-   * Read w-field in symmetry adapted basis format.
-   */
-   template <int D>
-   void System<D>::readWBasis(const std::string & filename)
-   {
-      fieldIo().readFieldsBasis(filename, wFieldsBasis_, domain_.unitCell());
-      fieldIo().convertBasisToRGrid(wFieldsBasis_, wFieldsRGrid_);
-      hasWFields_ = true;
-      hasSymmetricFields_ = true;
-      hasCFields_ = false;
-   }
 
-   /*
-   * Read w-fields in real-space grid (r-grid) format.
-   */
-   template <int D>
-   void System<D>::readWRGrid(const std::string & filename)
-   {
-      fieldIo().readFieldsRGrid(filename, wFieldsRGrid_, domain_.unitCell());
-      //fieldIo().convertRGridToBasis(wFieldsRGrid_, wFieldsBasis_);
-      hasWFields_ = true;
-      hasSymmetricFields_ = false;
-      hasCFields_ = false;
-   }
 
-   /*
-   * Set new w-field values.
-   */
-   template <int D>
-   void System<D>::setWBasis(DArray< DArray<double> > const & fields)
-   {
-      // Update system wFields
-      int nMonomer = mixture_.nMonomer();
-      int nBasis = domain_.basis().nBasis();
-      for (int i = 0; i < nMonomer; ++i) {
-         DArray<double> const & f = fields[i];
-         DArray<double> &       w = wFieldsBasis_[i];
-         for (int j = 0; j < nBasis; ++j) {
-            w[j] = f[j];
-         }
-      }
-
-      // Update system wFieldsRGrid
-      domain_.fieldIo().convertBasisToRGrid(wFieldsBasis_, wFieldsRGrid_);
-
-      hasWFields_ = true;
-      hasSymmetricFields_ = true;
-      hasCFields_ = false;
-   }
-
-   /*
-   * Set new w-field values, using r-grid fields as inputs.
-   */
-   template <int D>
-   void System<D>::setWRGrid(DArray<Field> const & fields)
-   {
-      // Update system wFieldsRGrid
-      int nMonomer = mixture_.nMonomer();
-      int meshSize = domain_.mesh().size();
-      for (int i = 0; i < nMonomer; ++i) {
-         Field const & f = fields[i];
-         Field& w = wFieldsRGrid_[i];
-         for (int j = 0; j < meshSize; ++j) {
-            w[j] = f[j];
-         }
-      }
-
-      // Update system wFieldsRgrid
-      // domain_.fieldIo().convertRGridToBasis(wFieldsRGrid_, wFieldsBasis_);
-
-      hasWFields_ = true;
-      hasSymmetricFields_ = false;
-      hasCFields_ = false;
-   }
-
-   /*
-   * Solve MDE for current w-fields, without iteration.
-   */
-   template <int D>
-   void System<D>::compute(bool needStress)
-   {
-      UTIL_CHECK(hasWFields_);
-
-      // Solve the modified diffusion equation (without iteration)
-      mixture_.compute(wFieldsRGrid(), cFieldsRGrid_);
-      hasCFields_ = true;
-
-      if (hasSymmetricFields_) {
-
-         // Convert c fields from r-grid to basis
-         fieldIo().convertRGridToBasis(cFieldsRGrid_, cFieldsBasis_);
-
-         if (needStress) {
-            mixture_.computeStress();
-         }
-      }
-
-   }
-
-   /*
-   * Iteratively solve a SCFT problem for specified parameters.
-   */
-   template <int D>
-   int System<D>::iterate()
-   {
-      UTIL_CHECK(hasWFields_);
-      UTIL_CHECK(hasSymmetricFields_);
-      hasCFields_ = false;
-
-      Log::file() << std::endl;
-      Log::file() << std::endl;
-
-      // Call iterator
-      int error = iterator().solve();
-      
-      hasCFields_ = true;
-
-      if (!error) {   
-         if (!iterator().isFlexible()) {
-            mixture().computeStress();
-         }
-         computeFreeEnergy();
-         outputThermo(Log::file());
-      }
-      return error;
-   }
-
-   /*
-   * Perform sweep along a line in parameter space.
-   */
-   template <int D>
-   void System<D>::sweep()
-   {
-      UTIL_CHECK(hasWFields_);
-      UTIL_CHECK(hasSymmetricFields_);
-      UTIL_CHECK(hasSweep());
-      Log::file() << std::endl;
-      Log::file() << std::endl;
-
-      // Perform sweep
-      sweepPtr_->sweep();
-   }
-   
-   /*
-   * Compare two fields in basis format.
-   */ 
-   template <int D>
-   void System<D>::compare(const DArray< DArray<double> > field1, 
-                           const DArray< DArray<double> > field2)
-   {
-      BFieldComparison comparison(1);
-      comparison.compare(field1,field2);
-
-      Log::file() << "\n Basis expansion field comparison results" << std::endl;
-      Log::file() << "     Maximum Absolute Difference:   " 
-                  << comparison.maxDiff() << std::endl;
-      Log::file() << "     Root-Mean-Square Difference:   " 
-                  << comparison.rmsDiff() << "\n" << std::endl;
-   }
-
-   /*
-   * Compare two fields in coordinate grid format.
-   */ 
-   template <int D>
-   void System<D>::compare(const DArray< RField<D> > field1, 
-                           const DArray< RField<D> > field2)
-   {
-      RFieldComparison<D> comparison;
-      comparison.compare(field1, field2);
-
-      Log::file() << "\n Real-space field comparison results" << std::endl;
-      Log::file() << "     Maximum Absolute Difference:   " 
-                  << comparison.maxDiff() << std::endl;
-      Log::file() << "     Root-Mean-Square Difference:   " 
-                  << comparison.rmsDiff() << "\n" << std::endl;
-   }
 
    /*
    * Write w-fields in symmetry-adapted basis format. 
@@ -1014,6 +1011,32 @@ namespace Pspc
       RField<D> propField 
               = mixture_.polymer(polymerId).propagator(blockId, directionId).q(segmentId);
       fieldIo().writeFieldRGrid(filename, propField, unitCell());
+   }
+
+   /*
+   * Write description of symmetry-adapted stars and basis to file.
+   */
+   template <int D>
+   void System<D>::outputStars(const std::string & outFileName) const
+   {
+      std::ofstream outFile;
+      fileMaster_.openOutputFile(outFileName, outFile);
+      fieldIo().writeFieldHeader(outFile, mixture_.nMonomer(),
+                                 unitCell());
+      basis().outputStars(outFile);
+   }
+
+   /*
+   * Write a list of waves and associated stars to file.
+   */
+   template <int D>
+   void System<D>::outputWaves(const std::string & outFileName) const
+   {
+      std::ofstream outFile;
+      fileMaster_.openOutputFile(outFileName, outFile);
+      fieldIo().writeFieldHeader(outFile, mixture_.nMonomer(), 
+                                 unitCell());
+      basis().outputWaves(outFile);
    }
 
    // Field conversion command functions
@@ -1123,6 +1146,40 @@ namespace Pspc
    }
 
    /*
+   * Compare two fields in basis format.
+   */ 
+   template <int D>
+   void System<D>::compare(const DArray< DArray<double> > field1, 
+                           const DArray< DArray<double> > field2)
+   {
+      BFieldComparison comparison(1);
+      comparison.compare(field1,field2);
+
+      Log::file() << "\n Basis expansion field comparison results" << std::endl;
+      Log::file() << "     Maximum Absolute Difference:   " 
+                  << comparison.maxDiff() << std::endl;
+      Log::file() << "     Root-Mean-Square Difference:   " 
+                  << comparison.rmsDiff() << "\n" << std::endl;
+   }
+
+   /*
+   * Compare two fields in coordinate grid format.
+   */ 
+   template <int D>
+   void System<D>::compare(const DArray< RField<D> > field1, 
+                           const DArray< RField<D> > field2)
+   {
+      RFieldComparison<D> comparison;
+      comparison.compare(field1, field2);
+
+      Log::file() << "\n Real-space field comparison results" << std::endl;
+      Log::file() << "     Maximum Absolute Difference:   " 
+                  << comparison.maxDiff() << std::endl;
+      Log::file() << "     Root-Mean-Square Difference:   " 
+                  << comparison.rmsDiff() << "\n" << std::endl;
+   }
+
+   /*
    * Construct guess for omega (w-field) from rho (c-field).
    *
    * Modifies wFields and wFieldsRGrid and outputs wFields.
@@ -1156,54 +1213,6 @@ namespace Pspc
 
       // Write w field in basis format
       fieldIo().writeFieldsBasis(outFileName, wFieldsBasis(), unitCell());
-   }
-
-   /*
-   * Write description of symmetry-adapted stars and basis to file.
-   */
-   template <int D>
-   void System<D>::outputStars(const std::string & outFileName) const
-   {
-      std::ofstream outFile;
-      fileMaster_.openOutputFile(outFileName, outFile);
-      fieldIo().writeFieldHeader(outFile, mixture_.nMonomer(),
-                                 unitCell());
-      basis().outputStars(outFile);
-   }
-
-   /*
-   * Write a list of waves and associated stars to file.
-   */
-   template <int D>
-   void System<D>::outputWaves(const std::string & outFileName) const
-   {
-      std::ofstream outFile;
-      fileMaster_.openOutputFile(outFileName, outFile);
-      fieldIo().writeFieldHeader(outFile, mixture_.nMonomer(), 
-                                 unitCell());
-      basis().outputWaves(outFile);
-   }
-
-   /*
-   * Set parameters of the associated unit cell.
-   */
-   template <int D>
-   void System<D>::setUnitCell(UnitCell<D> const & unitCell)
-   {
-      UTIL_CHECK(domain_.unitCell().lattice() == unitCell.lattice());
-      domain_.unitCell() = unitCell;
-      mixture_.setupUnitCell(unitCell);
-   }
-
-   /*
-   * Set parameters of the associated unit cell.
-   */
-   template <int D>
-   void System<D>::setUnitCell(FSArray<double, 6> const & parameters)
-   {
-      UTIL_CHECK(domain_.unitCell().nParameter() == parameters.size());
-      domain_.unitCell().setParameters(parameters);
-      mixture_.setupUnitCell(domain_.unitCell());
    }
 
 } // namespace Pspc
