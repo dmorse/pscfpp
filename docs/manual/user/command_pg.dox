@@ -48,18 +48,25 @@ pscf_pg2d, and pscf_pg3d).
   <tr> 
     <td> READ_W_RGRID </td>
     <td> filename [string] </td>
-    <td> Read w fields from file filename, in real-space grid (r-grid) format.
-         </td>
+    <td> Read w fields from file filename, in real-space grid (r-grid) 
+         format </td>
   </tr>
-  <tr>
+  <tr> 
     <td> COMPUTE </td>
-    <td> inFile [string], outFile [string] </td>
+    <td> </td>
     <td> Solve modified diffusion equation for the current w fields </td>
   </tr>
   <tr> 
     <td> ITERATE </td>
-    <td> filename [string] (conditional) </td>
-    <td> Iteratively solve SCFT equations (after reading initial w fields) </td>
+    <td> </td>
+    <td> Iteratively solve SCFT equations (after initializing 
+         w fields) </td>
+  </tr>
+  <tr> 
+    <td> SWEEP </td>
+    <td> </td>
+    <td> Perform a sweep, as specified by the Sweep object in the param 
+         file. </td>
   </tr>
   <tr> 
     <td> WRITE_W_BASIS </td>
@@ -88,17 +95,54 @@ pscf_pg2d, and pscf_pg3d).
   <tr> 
     <td> WRITE_C_BLOCK_RGRID </td>
     <td> filename [string] </td>
-    <td> Write individual block/solvent volume fraction fields (c fields) to
-         file filename, in r-grid format. The block c fields are given in
-         the order that the blocks appear in the param file, followed by the
-         solvent fields in the order that the solvents appear in the param 
-         file </td>
+    <td> Write all individual block and solvent volume fraction fields 
+         (c fields) to file filename, in r-grid format. The block c fields 
+         are given in the order that the blocks appear in the param file, 
+         followed by the solvent fields in the order that the solvents 
+         appear in the param file </td>
+  </tr>
+  <tr> 
+    <td> WRITE_Q_SLICE </td>
+    <td> filename [string], ip[int], ib[int], id[int], is[int] </td>
+    <td> Write a "slice" of a propagator at fixed contour variable to file, 
+         in real-space grid (r-grid) format. This command writes the slice
+         at contour step is, for direction id (id=0 or 1), of block ib of
+         polymer ip to file named filename.
+         </td>
+  </tr>
+  <tr> 
+    <td> WRITE_Q_TAIL </td>
+    <td> filename [string], ip[int], ib[int], id[int] </td>
+    <td> Write the final "slice" (or tail) of a propagator to a file, 
+         in real-space grid (r-grid) format. This command writes the final
+         slice of a propagor for direction id (id=0 or 1), of block ib of
+         polymer ip to file named filename.
+         </td>
+  </tr>
+  <tr> 
+    <td> WRITE_Q </td>
+    <td> filename [string], ip[int], ib[int], id[int] </td>
+    <td> Write all "slice" of a specific propagator to a file, in 
+         real-space grid (r-grid) format. This command writes a single
+         file containing all slices for direction id (id=0 or 1), of 
+         block ib of polymer ip to file named filename.
+         </td>
+  </tr>
+  <tr> 
+    <td> WRITE_Q_ALL </td>
+    <td> basename [string] </td>
+    <td> Write all propagators for both directions of all blocks of 
+         all propagators to file, with each propagator in a different
+         file, in real-space grid (r-grid) format. This file containing
+         the propagator for polymer ip, block ib, and direction id has
+         a name of the form (basename)_ip_ib_id.rf.
+         </td>
   </tr>
   <tr> 
     <td> WRITE_PARAM </td>
     <td> filename [string] </td>
-    <td> Write param file associated with the current system. Sweep blocks
-         are omitted. </td>
+    <td> Write version of the param file associated with the current 
+         that omits any Sweep block.  </td>
   </tr>
   <tr>
     <td> WRITE_THERMO </td>
@@ -106,9 +150,19 @@ pscf_pg2d, and pscf_pg3d).
     <td> Write thermodynamic data (free energy, pressure, phi, and 
          mu for each species) to a file. If file already exists, this
          command will append thermodynamic data to the end of the 
-         file, rather than overwriting what is currently stored there.
+         file, rather than overwriting the file. 
          </td>
+  </tr> 
   <tr> 
+    <td> WRITE_STARS </td>
+    <td> filename [string] </td>
+    <td> Write a list of all stars to file filename. </td>
+  </tr>
+  <tr> 
+    <td> WRITE_WAVES </td>
+    <td> filename [string] </td>
+    <td> Write a list of all waves to file filename. </td>
+  </tr>
   <tr> 
     <td> RGRID_TO_BASIS </td>
     <td> inFile [string], outFile [string] </td>
@@ -128,16 +182,46 @@ pscf_pg2d, and pscf_pg3d).
          (k-grid) format, write to file outFile in r-grid format </td>
   </tr>
   <tr> 
-    <td> RHO_TO_OMEGA </td>
+    <td> RGRID_TO_KGRID </td>
+    <td> inFile [string], outFile [string] </td>
+    <td> Read fields from file inFile in real-space (r-grid) format,
+         write to outFile in discrete Fourier expansion (k-grid) format
+         </td>
+  </tr>
+  <tr> 
+    <td> KGRID_TO_BASIS </td>
+    <td> inFile [string], outFile [string] </td>
+    <td> Read fields from file inFile in discrete Fourier expansion 
+         (k-grid) format, write to file outFile in symmetry-adapted
+         basis format </td>
+  </tr>
+  <tr> 
+    <td> BASIS_TO_KGRID </td>
+    <td> inFile [string], outFile [string] </td>
+    <td> Read fields from file inFile in symmetry-adapted basis format,
+         write to outFile in discrete Fourier expansion (k-grid) format
+         </td>
+  </tr>
+  <tr> 
+    <td> CHECK_RGRID_SYMMETRY </td>
+    <td> inFile [string] </td>
+    <td> Read fields from file inFile in real-space (r-grid) format,
+         check whether the fields have symmetry that matches the
+         space group specified in the param file. 
+         </td>
+  </tr>
+  <tr> 
+    <td> GUESS_W_FROM_C </td>
     <td> inFile [string], outFile [string] </td>
     <td> Read monomer concentration fields in symmetry-adapted basis 
          format from file inFile, generate chemical potential fields 
          using the concentration fields and chi values, and write the 
          potential fields to outFile in symmetry-adapted basis format.
+         Also stores potential fields to be used by future commands
+         (e.g., ITERATE or SWEEP).
          </td>
   </tr>
 </table>
-
 
  <BR>
  \ref user_command_pc_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

@@ -199,6 +199,7 @@ namespace Pspc
       * \param out  output stream 
       * \param field  field defined on r-space grid
       * \param unitCell  associated crystallographic unit cell
+      * \param writeHeader  should a file header be written?
       */
       void writeFieldRGrid(std::ostream &out, 
                            RField<D> const & field, 
