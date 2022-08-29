@@ -477,7 +477,7 @@ namespace Pspc
       * \param inFileName  name of input c-field file (in, basis format)
       * \param outFileName  name of output w-field file (out, basis format)
       */
-      void readCguessW(const std::string& inFileName, 
+      void guessWfromC(const std::string& inFileName, 
                        const std::string& outFileName);
    
       /**

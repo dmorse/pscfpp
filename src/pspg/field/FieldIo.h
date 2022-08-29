@@ -212,9 +212,12 @@ namespace Pspg
       * \param out  output stream
       * \param field   RField field (r-space grid)
       * \param unitCell  crystallographic unit cell 
+      * \param writeHeader  should a file header be written?
       */
-      void writeFieldRGrid(std::ostream& out, RDField<D> const & field,
-                            UnitCell<D> const & unitCell) const;
+      void writeFieldRGrid(std::ostream& out, 
+                           RDField<D> const & field,
+                           UnitCell<D> const & unitCell,
+                           bool writeHeader = true) const;
 
       /**
       * Write a single RField objects (field on an r-space grid) to file.

@@ -334,20 +334,10 @@ namespace Pspc
             readWRGrid(filename);
          } else
          if (command == "COMPUTE") {
-            // Read w (chemical potential fields) if not done previously 
-            if (!hasWFields_) {
-               readEcho(in, filename);
-               readWBasis(filename);
-            }
             // Solve the modified diffusion equation, without iteration
             compute();
          } else
          if (command == "ITERATE") {
-            // Read w (chemical potential) fields if not done previously 
-            if (!hasWFields_) {
-               readEcho(in, filename);
-               readWBasis(filename);
-            }
             // Attempt iteration to convergence
             int fail = iterate();
             if (fail) {
@@ -357,37 +347,6 @@ namespace Pspc
          if (command == "SWEEP") {
             // Do a series of iterations.
             sweep();
-         } else
-         if (command == "COMPARE_BASIS") {
-
-            // Get two filenames for comparison
-            std::string filecompare1, filecompare2;
-            readEcho(in, filecompare1);
-            readEcho(in, filecompare2);
-            
-            DArray< DArray<double> > Bfield1, Bfield2;
-            fieldIo().readFieldsBasis(filecompare1, Bfield1, domain_.unitCell());
-            fieldIo().readFieldsBasis(filecompare2, Bfield2, domain_.unitCell());
-            // Note: Bfield1 and Bfield2 will be allocated by readFieldsBasis
-
-            // Compare and output report
-            compare(Bfield1, Bfield2);
-
-         } else
-         if (command == "COMPARE_RGRID") {
-            // Get two filenames for comparison
-            std::string filecompare1, filecompare2;
-            readEcho(in, filecompare1);
-            readEcho(in, filecompare2);
-            
-            DArray< RField<D> > Rfield1, Rfield2;
-            fieldIo().readFieldsRGrid(filecompare1, Rfield1, domain_.unitCell());
-            fieldIo().readFieldsRGrid(filecompare2, Rfield2, domain_.unitCell());
-            // Note: Rfield1 and Rfield2 will be allocated by readFieldsRGrid
-
-            // Compare and output report
-            compare(Rfield1, Rfield2);
-
          } else
          if (command == "WRITE_W_BASIS") {
             readEcho(in, filename);
@@ -459,10 +418,19 @@ namespace Pspc
          if (command == "WRITE_THERMO") {
             readEcho(in, filename);
             std::ofstream file;
-            fileMaster().openOutputFile(filename, file, std::ios_base::app);
+            fileMaster().openOutputFile(filename, file, 
+                                        std::ios_base::app);
             writeThermo(file);
             file.close();
          } else
+         if (command == "WRITE_STARS") {
+            readEcho(in, outFileName);
+            writeStars(outFileName);
+         } else
+         if (command == "WRITE_WAVES") {
+            readEcho(in, outFileName);
+            writeWaves(outFileName);
+         } else 
          if (command == "BASIS_TO_RGRID") {
             readEcho(in, inFileName);
             readEcho(in, outFileName);
@@ -507,19 +475,43 @@ namespace Pspc
                    << std::endl;
             }
          } else
-         if (command == "READ_C_GUESS_W") {
+         if (command == "GUESS_W_FROM_C") {
             readEcho(in, inFileName);
             readEcho(in, outFileName);
-            readCguessW(inFileName, outFileName);
+            guessWfromC(inFileName, outFileName);
          } else
-         if (command == "WRITE_STARS") {
-            readEcho(in, outFileName);
-            writeStars(outFileName);
+         if (command == "COMPARE_BASIS") {
+
+            // Get two filenames for comparison
+            std::string filecompare1, filecompare2;
+            readEcho(in, filecompare1);
+            readEcho(in, filecompare2);
+            
+            DArray< DArray<double> > Bfield1, Bfield2;
+            fieldIo().readFieldsBasis(filecompare1, Bfield1, domain_.unitCell());
+            fieldIo().readFieldsBasis(filecompare2, Bfield2, domain_.unitCell());
+            // Note: Bfield1 and Bfield2 will be allocated by readFieldsBasis
+
+            // Compare and output report
+            compare(Bfield1, Bfield2);
+
          } else
-         if (command == "WRITE_WAVES") {
-            readEcho(in, outFileName);
-            writeWaves(outFileName);
-         } else {
+         if (command == "COMPARE_RGRID") {
+            // Get two filenames for comparison
+            std::string filecompare1, filecompare2;
+            readEcho(in, filecompare1);
+            readEcho(in, filecompare2);
+            
+            DArray< RField<D> > Rfield1, Rfield2;
+            fieldIo().readFieldsRGrid(filecompare1, Rfield1, domain_.unitCell());
+            fieldIo().readFieldsRGrid(filecompare2, Rfield2, domain_.unitCell());
+            // Note: Rfield1 and Rfield2 will be allocated by readFieldsRGrid
+
+            // Compare and output report
+            compare(Rfield1, Rfield2);
+
+         } else
+         {
             Log::file() << "Error: Unknown command  " 
                         << command << std::endl;
             readNext = false;
@@ -1315,7 +1307,7 @@ namespace Pspc
    * Modifies wFields and wFieldsRGrid and outputs wFields.
    */
    template <int D>
-   void System<D>::readCguessW(std::string const & inFileName, 
+   void System<D>::guessWfromC(std::string const & inFileName, 
                                std::string const & outFileName)
    {
       hasCFields_ = false;

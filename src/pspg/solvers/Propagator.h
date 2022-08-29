@@ -137,6 +137,16 @@ namespace Pspg
       Block<D>& block();
 
       /**
+      * Get the associated Block object by reference.
+      */
+      Block<D> const & block() const;
+
+      /**
+      * Get the number of contour grid points.
+      */
+      int ns() const;
+
+      /**
       * Has memory been allocated for this propagator?
       */
       bool isAllocated() const;
@@ -208,7 +218,7 @@ namespace Pspg
    {  return qFields_d + (i * meshPtr_->size()); }
 
    /*
-   * Get the associated Block object.
+   * Get the associated Block object (non-const reference)
    */
    template <int D>
    inline 
@@ -217,6 +227,25 @@ namespace Pspg
       assert(blockPtr_);  
       return *blockPtr_; 
    }
+
+   /*
+   * Get the associated Block object (non-const reference)
+   */
+   template <int D>
+   inline 
+   Block<D> const & Propagator<D>::block() const
+   {
+      assert(blockPtr_);  
+      return *blockPtr_; 
+   }
+
+   /*
+   * Get the number ns of contour grid points.
+   */
+   template <int D>
+   inline 
+   int Propagator<D>::ns() const
+   {  return ns_; }
 
    template <int D>
    inline 
