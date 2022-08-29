@@ -37,7 +37,7 @@ System{
      mesh        100
      groupName   P_-1
   }
-  AmIterator{
+  AmIteratorBasis{
     maxItr       600
     epsilon      5e-11
     maxHist      30
