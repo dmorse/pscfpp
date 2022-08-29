@@ -23,13 +23,13 @@ System{
      mesh                 40
      groupName P_-1
   }
-  AmIterator{
+  AmIteratorBasis{
     maxItr 100
     epsilon 1e-12
     maxHist 10
     isFlexible   1
   }
-  LinearSweep{
+  Sweep{
      ns            4
      baseFileName  out/chi/
      nParameter    1

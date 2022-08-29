@@ -23,7 +23,7 @@ System{
     mesh         32      32    32
     groupName    I_m_-3_m
   }
-  AmIterator{
+  Iterator{
     maxItr      1000
     epsilon     1.0e-7
     maxHist     40

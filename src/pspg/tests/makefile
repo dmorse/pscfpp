@@ -11,7 +11,7 @@ includes:
 	echo $(INCLUDES)
 
 run: $(pspg_tests_OBJS) $(BLD_DIR)/$(TEST)
-	$(BLD_DIR)/$(TEST) $(SRC_DIR)/pspg/tests/ 
+	@$(BLD_DIR)/$(TEST) $(SRC_DIR)/pspg/tests/ 
 
 run-quiet: $(pspg_tests_OBJS) $(BLD_DIR)/$(TEST)
 	@$(BLD_DIR)/$(TEST) $(SRC_DIR)/pspg/tests/  > log
