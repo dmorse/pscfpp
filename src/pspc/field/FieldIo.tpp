@@ -741,12 +741,15 @@ namespace Pspc
    template <int D>
    void FieldIo<D>::writeFieldRGrid(std::ostream &out, 
                                     RField<D> const & field, 
-                                    UnitCell<D> const & unitCell)
+                                    UnitCell<D> const & unitCell,
+                                    bool writeHeader)
    const
    {
-      writeFieldHeader(out, 1, unitCell);
-      out << "ngrid" <<  std::endl
-          << "           " << mesh().dimensions() << std::endl;
+      if (writeHeader) {
+         writeFieldHeader(out, 1, unitCell);
+         out << "ngrid" <<  std::endl
+             << "           " << mesh().dimensions() << std::endl;
+      }
 
       RField<D> temp;
       temp.allocate(mesh().dimensions());

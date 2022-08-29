@@ -1,4 +1,4 @@
-OUTPUT_STARS     out/stars
+WRITE_WAVES     out/stars
 OUTPUT_WAVES     out/waves
 READ_W_BASIS     in/w.bf
 ITERATE

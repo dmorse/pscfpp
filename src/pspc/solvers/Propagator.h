@@ -137,6 +137,11 @@ namespace Pspc
       Block<D>& block();
 
       /**
+      * Number of contour steps.
+      */
+      int ns() const;
+
+      /**
       * Has memory been allocated for this propagator?
       */
       bool isAllocated() const;
@@ -171,7 +176,7 @@ namespace Pspc
       /// Pointer to associated Mesh
       Mesh<D> const * meshPtr_;
 
-      /// Number of contour length steps = # grid points - 1.
+      /// Number of grid points = # of contour length steps + 1
       int ns_;
 
       /// Is this propagator allocated?
@@ -216,17 +221,22 @@ namespace Pspc
       return *blockPtr_; 
    }
 
+   /*
+   * Get the number of counter grid points.
+   */
    template <int D>
-   inline 
-   bool Propagator<D>::isAllocated() const
+   inline int Propagator<D>::ns() const
+   {  return ns_; }
+
+   template <int D>
+   inline bool Propagator<D>::isAllocated() const
    {  return isAllocated_; }
 
    /*
-   * Associate this propagator with a block and direction
+   * Associate this propagator with a unique block.
    */
    template <int D>
-   inline 
-   void Propagator<D>::setBlock(Block<D>& block)
+   inline void Propagator<D>::setBlock(Block<D>& block)
    {  blockPtr_ = &block; }
 
    #ifndef PSPC_PROPAGATOR_TPP

@@ -319,9 +319,20 @@ namespace Pspc
       * \param directionId  integer id of the direction (0 or 1)
       * \param segmentId  integer integration step index
       */
-      void writePropagatorSlice(const std::string & filename, 
-                                int polymerId, int blockId, 
-                                int directionId, int segmentId)  const;
+      void writeQSlice(std::string const & filename, 
+                       int polymerId, int blockId, 
+                       int directionId, int segmentId)  const;
+
+      /**
+      * Write one propagator for one block, in r-grid format.
+      *
+      * \param filename  name of output file
+      * \param polymerId  integer id of the polymer
+      * \param blockId  integer id of the block within the polymer 
+      * \param directionId  integer id of the direction (0 or 1)
+      */
+      void writeQ(std::string const & filename, int polymerId, 
+                  int blockId, int directionId)  const;
 
       /**
       * Write parameter file to an ostream, omitting any sweep block. 
