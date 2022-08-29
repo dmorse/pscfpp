@@ -1,4 +1,4 @@
-OUTPUT_STARS     out/stars
+WRITE_WAVES     out/stars
 OUTPUT_WAVES     out/waves
 BASIS_TO_RGRID   in/omega        out/omega.rf
 RGRID_TO_BASIS   out/omega.rf    out/omega.bf

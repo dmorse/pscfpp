@@ -202,7 +202,9 @@ namespace Pspc
       */
       void writeFieldRGrid(std::ostream &out, 
                            RField<D> const & field, 
-                           UnitCell<D> const & unitCell) const;
+                           UnitCell<D> const & unitCell,
+                           bool writeHeader = true) 
+      const;
 
       /**
       * Write a single RField (fields on an r-space grid) to a file.

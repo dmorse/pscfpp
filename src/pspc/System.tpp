@@ -408,19 +408,30 @@ namespace Pspc
             readEcho(in, filename);
             writeBlockCRGrid(filename);
          } else
-         if (command == "WRITE_PROPAGATOR_SLICE") {
+         if (command == "WRITE_Q_SLICE") {
             int polymerId, blockId, directionId, segmentId;
             readEcho(in, filename);
             in >> polymerId;
             in >> blockId;
             in >> directionId;
             in >> segmentId;
-            Log::file() << Str("polymer ID   ", 21) << polymerId << "\n"
-                        << Str("block ID   ", 21) << blockId << "\n"
-                        << Str("direction ID ", 21) << directionId << "\n"
-                        << Str("segment ID ", 21) << segmentId << std::endl;
-            writePropagatorSlice(filename, polymerId, blockId, directionId, 
-                                 segmentId);
+            Log::file() << Str("polymer ID  ", 21) << polymerId << "\n"
+                        << Str("block ID  ", 21) << blockId << "\n"
+                        << Str("direction ID  ", 21) << directionId << "\n"
+                        << Str("segment ID  ", 21) << segmentId << std::endl;
+            writeQSlice(filename, polymerId, blockId, directionId, 
+                                  segmentId);
+         } else
+         if (command == "WRITE_Q") {
+            int polymerId, blockId, directionId;
+            readEcho(in, filename);
+            in >> polymerId;
+            in >> blockId;
+            in >> directionId;
+            Log::file() << Str("polymer ID  ", 21) << polymerId << "\n"
+                        << Str("block ID  ", 21) << blockId << "\n"
+                        << Str("direction ID  ", 21) << directionId << "\n";
+            writeQ(filename, polymerId, blockId, directionId);
          } else
          if (command == "WRITE_PARAM") {
             readEcho(in, filename);
@@ -1010,14 +1021,55 @@ namespace Pspc
    * Write the last time slice of the propagator.
    */
    template <int D>
-   void System<D>::writePropagatorSlice(const std::string & filename, 
-                                        int polymerId, int blockId, 
-                                        int directionId, int segmentId) 
+   void System<D>::writeQSlice(const std::string & filename, 
+                               int polymerId, int blockId, 
+                               int directionId, int segmentId) 
    const
    {
-      RField<D> propField 
-      = mixture_.polymer(polymerId).propagator(blockId, directionId).q(segmentId);
-      fieldIo().writeFieldRGrid(filename, propField, unitCell());
+      Polymer<D> const& polymer = mixture_.polymer(polymerId);
+      Propagator<D> const& propagator 
+                               = polymer.propagator(blockId, directionId);
+      RField<D> const& field = propagator.q(segmentId);
+      fieldIo().writeFieldRGrid(filename, field, unitCell());
+   }
+
+   /*
+   * Write the propagator for a block and direction.
+   */
+   template <int D>
+   void System<D>::writeQ(const std::string & filename, 
+                          int polymerId, int blockId, int directionId)
+   const
+   {
+      UTIL_CHECK(polymerId >= 0);
+      UTIL_CHECK(polymerId < mixture_.nPolymer());
+      Polymer<D> const& polymer = mixture_.polymer(polymerId);
+      UTIL_CHECK(blockId >= 0);
+      UTIL_CHECK(blockId < polymer.nBlock());
+      UTIL_CHECK(directionId >= 0);
+      UTIL_CHECK(directionId <= 1);
+      Propagator<D> const& propagator 
+                              = polymer.propagator(blockId, directionId);
+      int ns = propagator.ns();
+
+      // Open file
+      std::ofstream file;
+      fileMaster_.openOutputFile(filename, file);
+
+      // Write header
+      fieldIo().writeFieldHeader(file, 1, unitCell());
+      file << "ngrid" << std::endl
+           << "          " << mesh().dimensions() << std::endl
+           << "ns"    << std::endl
+           << "          " << ns << std::endl;
+
+      // Write data
+      bool hasHeader = false;
+      for (int i = 0; i < ns; ++i) {
+          file << i << std::endl;
+          fieldIo().writeFieldRGrid(file, propagator.q(i), unitCell(), 
+                                    hasHeader);
+      }
    }
 
    /*
