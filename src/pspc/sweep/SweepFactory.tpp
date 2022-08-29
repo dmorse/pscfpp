@@ -37,7 +37,7 @@ namespace Pscf{
             if (ptr) return ptr;
 
             // Explicit class names
-            if (className == "LinearSweep") {
+            if (className == "Sweep" || className == "LinearSweep") {
                 ptr = new LinearSweep<D>(*systemPtr_);
             }
 

@@ -34,7 +34,7 @@ namespace Fd1d {
       if (ptr) return ptr;     
 
       // Explicit class names
-      if (className == "LinearSweep") {
+      if (className == "Sweep" || className == "LinearSweep") {
          ptr = new LinearSweep(*systemPtr_);
       } else
       if (className == "CompositionSweep") {

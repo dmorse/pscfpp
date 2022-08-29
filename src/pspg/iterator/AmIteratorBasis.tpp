@@ -8,11 +8,11 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <util/global.h>
 #include "AmIteratorBasis.h"
-#include <pspg/field/RDField.h>
 #include <pspg/System.h>
 #include <pscf/inter/Interaction.h>
+#include <pspg/field/RDField.h>
+#include <util/global.h>
 
 namespace Pscf {
 namespace Pspg{

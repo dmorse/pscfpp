@@ -33,7 +33,7 @@ namespace Pspc {
       if (ptr) return ptr;
  
       // Try to match classname
-      if (className == "AmIterator") {
+      if (className == "Iterator" || className == "AmIterator") {
          ptr = new AmIterator<D>(*sysPtr_);
       } else if (className == "AmIteratorFilm") {
          ptr = new FilmIterator<D, AmIterator<D> >(*sysPtr_);

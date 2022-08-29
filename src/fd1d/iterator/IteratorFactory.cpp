@@ -27,7 +27,7 @@ namespace Fd1d {
       if (ptr) return ptr;
  
       // Try to match classname
-      if (className == "NrIterator") {
+      if (className == "Iterator" || className == "NrIterator") {
          ptr = new NrIterator(*sysPtr_);
       }
 

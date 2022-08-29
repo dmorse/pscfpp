@@ -33,7 +33,7 @@ namespace Pspg {
       if (ptr) return ptr;
  
       // Try to match classname
-      if (className == "AmIterator" || className == "AmIteratorBasis") {
+      if (className == "Iterator" || className == "AmIteratorBasis") {
          ptr = new AmIteratorBasis<D>(*sysPtr_);
       } else 
       if (className == "AmIteratorGrid") {

@@ -30,7 +30,7 @@ System{
      xMax          2.700 
      nx              201
   }
-  NrIterator{
+  Iterator{
      epsilon   0.0000001
   }
 }

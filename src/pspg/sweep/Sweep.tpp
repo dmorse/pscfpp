@@ -8,9 +8,9 @@
 
 #include "Sweep.h"
 #include <pscf/sweep/SweepTmpl.tpp>
-#include <pscf/inter/Interaction.h>
-#include <pspg/iterator/Iterator.h>
 #include <pspg/System.h>
+#include <pspg/iterator/Iterator.h>
+#include <pscf/inter/Interaction.h>
 
 #include <util/misc/FileMaster.h>
 #include <util/misc/ioUtil.h>
