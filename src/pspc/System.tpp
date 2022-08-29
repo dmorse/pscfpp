@@ -29,6 +29,7 @@
 #include <pspc/field/RFieldComparison.h>
 
 #include <util/param/BracketPolicy.h>
+#include <util/misc/ioUtil.h>
 #include <util/format/Str.h>
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
@@ -422,6 +423,17 @@ namespace Pspc
             writeQSlice(filename, polymerId, blockId, directionId, 
                                   segmentId);
          } else
+         if (command == "WRITE_Q_TAIL") {
+            int polymerId, blockId, directionId;
+            readEcho(in, filename);
+            in >> polymerId;
+            in >> blockId;
+            in >> directionId;
+            Log::file() << Str("polymer ID  ", 21) << polymerId << "\n"
+                        << Str("block ID  ", 21) << blockId << "\n"
+                        << Str("direction ID  ", 21) << directionId << "\n";
+            writeQTail(filename, polymerId, blockId, directionId);
+         } else
          if (command == "WRITE_Q") {
             int polymerId, blockId, directionId;
             readEcho(in, filename);
@@ -432,6 +444,10 @@ namespace Pspc
                         << Str("block ID  ", 21) << blockId << "\n"
                         << Str("direction ID  ", 21) << directionId << "\n";
             writeQ(filename, polymerId, blockId, directionId);
+         } else
+         if (command == "WRITE_Q_ALL") {
+            readEcho(in, filename);
+            writeQAll(filename);
          } else
          if (command == "WRITE_PARAM") {
             readEcho(in, filename);
@@ -1018,7 +1034,7 @@ namespace Pspc
    }
 
    /*
-   * Write the last time slice of the propagator.
+   * Write the last time slice of the propagator in r-grid format.
    */
    template <int D>
    void System<D>::writeQSlice(const std::string & filename, 
@@ -1026,10 +1042,36 @@ namespace Pspc
                                int directionId, int segmentId) 
    const
    {
+      UTIL_CHECK(polymerId >= 0);
+      UTIL_CHECK(polymerId < mixture_.nPolymer());
       Polymer<D> const& polymer = mixture_.polymer(polymerId);
+      UTIL_CHECK(blockId >= 0);
+      UTIL_CHECK(blockId < polymer.nBlock());
+      UTIL_CHECK(directionId >= 0);
+      UTIL_CHECK(directionId <= 1);
       Propagator<D> const& propagator 
                                = polymer.propagator(blockId, directionId);
       RField<D> const& field = propagator.q(segmentId);
+      fieldIo().writeFieldRGrid(filename, field, unitCell());
+   }
+
+   /*
+   * Write the last time slice of the propagator in r-grid format.
+   */
+   template <int D>
+   void System<D>::writeQTail(const std::string & filename, 
+                              int polymerId, int blockId, int directionId)
+   const
+   {
+      UTIL_CHECK(polymerId >= 0);
+      UTIL_CHECK(polymerId < mixture_.nPolymer());
+      Polymer<D> const& polymer = mixture_.polymer(polymerId);
+      UTIL_CHECK(blockId >= 0);
+      UTIL_CHECK(blockId < polymer.nBlock());
+      UTIL_CHECK(directionId >= 0);
+      UTIL_CHECK(directionId <= 1);
+      RField<D> const& 
+            field = polymer.propagator(blockId, directionId).tail();
       fieldIo().writeFieldRGrid(filename, field, unitCell());
    }
 
@@ -1060,15 +1102,44 @@ namespace Pspc
       fieldIo().writeFieldHeader(file, 1, unitCell());
       file << "ngrid" << std::endl
            << "          " << mesh().dimensions() << std::endl
-           << "ns"    << std::endl
+           << "nslice"    << std::endl
            << "          " << ns << std::endl;
 
       // Write data
       bool hasHeader = false;
       for (int i = 0; i < ns; ++i) {
-          file << i << std::endl;
+          file << "slice " << i << std::endl;
           fieldIo().writeFieldRGrid(file, propagator.q(i), unitCell(), 
                                     hasHeader);
+      }
+   }
+
+   /*
+   * Write propagators for all blocks of all polymers to files.
+   */
+   template <int D>
+   void System<D>::writeQAll(std::string const & basename)
+   {
+      std::string filename;
+      int np, nb, ip, ib, id;
+      np = mixture_.nPolymer();
+      for (ip = 0; ip < np; ++ip) {
+         //Polymer<D> const * polymerPtr = &mixture_.polymer(ip);
+         //nb = polymerPtr->nBlock();
+         nb = mixture_.polymer(ip).nBlock();
+         for (ib = 0; ib < nb; ++ib) {
+            for (id = 0; id < 2; ++id) {
+               filename = basename;
+               filename += "_";
+               filename += toString(ip);
+               filename += "_";
+               filename += toString(ib);
+               filename += "_";
+               filename += toString(id);
+               filename += ".rf";
+               writeQ(filename, ip, ib, id);
+            }
+         }
       }
    }
 

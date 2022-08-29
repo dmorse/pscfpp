@@ -1,6 +1,7 @@
 READ_W_BASIS     in/w.bf
 ITERATE          
 WRITE_W_BASIS    out/w.bf
-WRITE_Q          out/q.rf   0   1   0
+WRITE_Q          out/q010   0   1   0
+WRITE_Q_ALL      out/q
 FINISH
 
