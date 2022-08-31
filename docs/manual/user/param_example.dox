@@ -10,9 +10,9 @@ It is useful to illustrate common elements by showing an example.
 
 \section user_param_example_file Example File
 
-Below, we show an example of a complete parameter file for a simple 
-1D SCFT calculation performed using a finite-difference discretization
-using program pscf_fd.  
+Below, we show an example of a complete parameter file for a simple 1D 
+SCFT calculation performed using a finite-difference discretization by
+program pscf_fd:
 
 \code
 System{
@@ -32,7 +32,6 @@ System{
         phi     0.6
      }
      Polymer{
-        type    linear
         nBlock  1
         blocks[
                 0   1.0
@@ -52,7 +51,7 @@ System{
      xMax     8.0
      nx       401
   }
-  NrIterator{
+  Iterator{
      epsilon   0.00000001
   }
 }
@@ -64,14 +63,14 @@ A in a one-dimensional planar geometry.
 
 \section user_param_example_structure_sec Block Structure
 
-Before getting into details of the format for particular elements of this 
+Before discussing details of the format for particular elements of this 
 file, note the overall structure of the file:
-This parameter file consists of a set of nested blocks that begin and
-end with lines containing matching curly brackets, using a syntax similar
-to that of a C program. Each such parameter file block begins with a 
-line that contains a label for the Block (System, Mixture, etc.) followed 
-immediately by an opening curly bracket "{". Each block ends with a 
-matching closing curly bracket on a line by itself.  The skeleton 
+This parameter file consists of a set of nested blocks that each begin 
+and end with lines containing matching curly brackets, using a syntax 
+similar to that of a C program. Each such parameter file block begins 
+with a line that contains a label for the block (System, Mixture, etc.) 
+followed immediately by an opening curly bracket "{". Each block ends 
+with a matching closing curly bracket on a line by itself.  The skeleton 
 structure of the main blocks within this example is show below:
 \code
 System{
@@ -84,7 +83,7 @@ System{
   Domain{
      ...
   }
-  NrIterator{
+  Iterator{
      ...
   }
 }
@@ -95,49 +94,43 @@ subblock block of the main "System" block is briefly described below.
 <ul>
 <li>
 Mixture: The Mixture block contains a description of the chemical
-composition of mixture of containing one or more polymer and solvent
+composition of a mixture of containing one or more polymer and solvent
 molecular species. This includes a description of the structure of 
-each molecular species and a specification of either the volume 
-fraction phi or chemical mu of each species.  In this example, 
-the Mixture block contains two Polymer{ ... } subblocks, each of
-which contains information about one of the polymer species in the
-mixture.
+each polymer species and a specification of either the volume fraction 
+phi or chemical mu of every species.  In this example, the Mixture 
+block contains two Polymer{ ... } subblocks, each of which contains 
+information about one of the two polymer species in the mixture.
 </li>
 <li>
 Interaction: This block contains values for the Flory-Huggins chi 
-parameters between all pairs of monomers types.
+parameters that describe interactions between different possible pairs 
+of monomer types.
 </li>
 <li>
 Domain: The domain block contains geometrical information about the 
-domain of space over which the SCFT equations should be solved and 
+spatial domain over which the SCFT equations should be solved and 
 a description of the spatial discretization used to numerically solve 
 the field equations.
 </li>
 <li>
-NrIterator: The NrIterator block in this example gives parameters 
-required by a Newton-Raphson iteration algorithm used to solve the 
-nonlinear SCFT equations. This particular block may be replaced in
-other examples by a block that gives information for some other
-iteration algorithm, where the choice of iteration algorithm is
-specified by the label in the first line of the block. For example,
-the appearance of an "NRIterator" block specifies that the user
-wants to use a Newton-Raphson iterator, but the appearance of a
-"AMIterator" block in the same location might specify the use of
-an Anderson-Mixing algorithm. 
+Iterator: The Iterator block contains parameters required by an 
+iteration algorithm that is used to iteratively solve the nonlinear 
+SCFT equations. 
 </li>
 </ul>
+
 The parameter files required to initialize a simple SCFT calculations 
-performed using pscf_pcNd or Pscf_pgNd programs have a similar structure, 
-with analogous top level blocks that appear in the same order. Parameter 
-files for all three types of program use the same for Mixture and 
-Interaction blocks, but syntax, but differ in details of the 
-structure of the Domain block and the block that initializes and
-iteration algorithm. The skeleton structure shown in this example is 
-specfic to simple SCFT calculations - other types of blocks may be 
-required to initialize more complicated types of calculation, such
-as simulations of a sequence of SCFT calculations along a line 
-through parameter space (a "sweep"), or a stochastic field theoretic 
-simulations.
+performed using pscf_pcNd or Pscf_pgNd for periodic microstructures
+programs have a similar structure to that shown above, with analogous 
+top level blocks that appear in the same order. Parameter files for 
+all three types of program use exactly the same format for the Mixture 
+and Interaction blocks, but differ in details of the format of the Domain 
+block and the Iterator block.  The skeleton structure shown in this 
+example is specfic to simple SCFT calculations - a somewhat different 
+sequence of primary blocks may be required to initialize more 
+complicated calculations, such as a simulation of a sequence of SCFT 
+calculations along a line through parameter space (known as a "sweep"), 
+or a stochastic field theoretic simulation.
 
 Each block in a parameter file may contain a sequence of subblocks 
 (each delmited by matching curly braces) and parameter entries. Each 
@@ -150,55 +143,119 @@ containing a label that gives the parameter name followed by the
 parameter value. For examples of this, look for the nMonomer and 
 nPolymer parameters within the Mixture block. 
 
-Labels for some other parameters refer to 1D arrays of 2D matrices 
-of values. In these cases, lists of elements of the array or matrix
-are delimited by either matched square brackets (for one-dimensional 
-arrays) or parentheses (as one syntax for specifying nonzero values 
-of a matrix). Names of array-valued parameters are often given as 
-plural nouns. For examples of this, look for the "monomers" 
-parameter in the Mixture block, and the "blocks" parameter in each
-"Polymer" subblock of the Mixture block, each of which denotes a 
-one dimensional array with values delimited by square brackets. The 
-value of the "chi" parameter within the Interaction block is a 
-symmetric matrix. The distinct nonzero elements of the chi matrix 
-are given in the parameter file using a syntax in which each such
-element is given on a line contain row and column indices (defined
-using a zero-based convention) followed by a value for the matrix 
-element, and in which the list of nonzero elements is enclosed by
-parentheses.
+Labels for some other parameters refer to names of 1D arrays of 2D 
+matrices of values. In these cases, lists of elements of the array 
+or matrix are delimited by either matched square brackets (for 
+one-dimensional arrays) or by parentheses (as a syntax for specifying 
+nonzero values of a matrix). Names of array-valued parameters are 
+usually given as plural nouns. 
+
+As an examples of a one-dimensional array-valued parameters, see the 
+"monomers" parameter in the Mixture block. The value of each element 
+in this array is a floating point number that is given on a line by
+itself, which gives the statistical segment length of a particular 
+type of monomer.
+
+The value of the "chi" parameter within the Interaction block is a 
+symmetric matrix or two-dimensional array. The distinct nonzero 
+elements of the chi matrix are given in the parameter file using a 
+syntax in which each such element is given on a line contain row 
+index and a column index (defined using a zero-based convention), 
+followed by the value of the matrix element. The resulting list 
+of nonzero elements is enclosed by parentheses.
+
+\section user_param_example_discussion_sec Contents of Example
 
 The system described in the above example contains a mixture of two 
 types of polymers (nPolymer=2) that are constructed by two types of 
-monomer (nMonomer=2).  The value of each array element in the "monomers"
-array-valued parameter give monomer statistical segment lengths for
-monomers of type 0 and 1.  Each of the two "Polymer" subblocks of 
-the Mixture block specifies the data for one polymer species.  The 
-system described in this file contains 60% of diblock copolymer by 
-volume (phi = 0.6) and and 40% homopolymer (phi= 0.4) by volume.  
-Both polymer species have overall chain length 1.0 in the system 
-of units for block lengths used in this input file, and the diblock 
-copolymer is symmetric (each block has length 0.5). 
+monomer (nMonomer=2).  Different types of monomer are labelled by
+integer indices in the range 0,...,nMonomer-1. The value of each 
+element in the "monomers" array-valued parameter gives the monomer 
+statistical segment lengths for a monomer type, listed in order of 
+increasing monomer type index.  
+
+Each of the two "Polymer" subblocks of the Mixture block contains
+data required to describe one of the two polymer species.  The
+first species in this system is a diblock copolymer (nBlock=2)
+containing blocks with monomers of types 0 and 1, while the second 
+is a homopolymer (nBlock=1) with monomers of type 0.  The system 
+described in this file contains 60% of diblock copolymer by volume 
+(phi = 0.6 in the first Polymer block) and 40% homopolymer by 
+volume (phi= 0.4 for the second such block).  Both polymer species 
+have overall chain length 1.0 in the system of units for block lengths 
+used in this input file. The diblock copolymer is is symmetric (each 
+block has length 0.5). 
+
+The syntax used here for each "Polymer" block is designed for linear
+block polymers, which is the default polymer topology. A somewhat
+different syntax is used to describe a branched polymer, as described
+\ref param_polymer_sec "elsewhere". The syntax for a linear block 
+polymer contains a "blocks" array in which each element contains
+the mononer typeId for a block followed by the length of the block.
 
 The chi matrix for this problem has a nonzero value of 10.0 for 
 interactions between monomers of types 0 and 1.  The chi matrix is
-represented internally as a symmetric square matrix with nMonomer rows
+represented internally as a symmetric square matrix with nMonomer rows 
 and columes. Values of diagonal elements (i=j) are usually taken equal 
 to zero by convention, though this is not required.  In a system with 
-two types of monomer and zero diagonal elements, with this convention,
+two types of monomer and zero diagonal elements, with this convention, 
 only one nonzero chi parameter value is required.  The value of this 
 parameter is given here as a line containing "0  1  10.0".
 
 The simulation uses a 1D planar geometry, in which variation occurs 
-only along one axis of a Cartesian coordinate system.  The block labelled 
-Domain contains information about the spatial domain (minimum and 
-maximum coordinate values xmin and xmax) and the number of grid points 
-(401 grid points, including both end points).
+only along one axis of a Cartesian coordinate system.  The block 
+labelled Domain contains information about the spatial domain (minimum 
+and maximum coordinate values xmin and xmax) and the number of grid 
+points (nx = 401 indicates 401 grid points, including both end points).
 
-The block labelled NrIterator contains a parameter labelled "epsilon" 
-which is a tolerance parameter that is used by a Newton-Raphson iterator 
-to decide when the SCF equations are solved to within a user-specified 
-accuracy. The Newton-Raphson iterator does not require any other input
-parameters.
+The block labelled Iterator contains a single parameter labelled 
+"epsilon". This is a tolerance parameter that is used to decide 
+when the SCF equations are solved to within a user-specified accuracy. 
+The iterator algorithm used in this example does not require any 
+other input parameters.
+
+\section user_param_example_iterator_sec Choice of Iterator Algorithm
+
+All PSCF programs are designed to allow a user to select from a list of 
+available iteration algorithms, or to use a default choice.
+The default iterator algorithm may always be invoked by including a 
+block that starts with the generic label "Iterator" before an opening 
+bracket, as done here.  The default algorithm for the pscf_fd1d program, 
+which is used in the above example, is a Newton-Raphson algorithm that 
+is actually implemented by a C++ class named NrIterator.  
+
+When two or more iteration algorithms are available, a non-default 
+iteration algorithm may be chosen by replacing the generic "Iterator" 
+block label by a label that specifies the name of the class that 
+implements the desired algorithm as the first line of the iterator 
+block. The rest block that starts with such a line must contain the 
+parameters required by the specified class or algorithm, in the
+format required for that algorithm, which is generally different 
+for different algorithms. 
+
+The default choice of iteration algorithm may be invoked either by 
+using the generic label "Iterator" or the name of the class that 
+implements the default algorithm.  For program pscf_fd1d, the 
+Newton-Raphson iterator may thus be invoked by either using the 
+generic name "Iterator" or the specific class name "NRIterator" in 
+the iterator block label string.  
+
+The Iterator block is an example of what we will refer to more 
+generally as a "choosable" block in a parameter file. A choosable block 
+is one that may contain any of several alternative types of blocks that 
+contain parameters required for different algorithms that perform 
+analogous calculations.  Here, thus use of a choosable block allows the 
+user to choose from among one or more available iteration algorithms.  
+The choice of a specific algorithm is given by the label given in the 
+first name of the subblock. A default choice is defined for each 
+choosable block, which may be invoked by using a generic name
+(e.g., Iterator) rather than the name of a class that implements
+a specific algorithm (e.g., NrIterator). 
+
+For simplicity, almost all of the examples shown in this user manual 
+use the default iterator algorithm for each program. Most examples in
+this manual thus contain an iterator block that starts with the string 
+"Iterator{"  on a line by itself. 
 
 <BR>
 \ref user_param_page         (Up) &nbsp; &nbsp; &nbsp; &nbsp; 

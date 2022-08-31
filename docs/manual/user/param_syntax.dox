@@ -1,4 +1,4 @@
-/*! \page user_param_syntax_page 3.3.2 Parameter File Syntax
+/*! \page user_param_syntax_page 3.3.2 Syntax
 
 \ref user_param_example_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_param_mixture_page (Next) 
@@ -12,7 +12,7 @@ and introduces some aspects that were not discussed there.
 PSCF parameter files are fixed format files, in which each element can
 only appear at a specific location within the file. Some flexibility
 can be introduced, however, by allowing some elements to be optional or 
-polymorphic, as discussed greater detail below.  The format requires
+selectable, as discussed greater detail below.  The format requires 
 that the user provide a label at the beginning of each element that 
 identifies the element, and that can be checked against an expected
 label or a set of possible allowed values. This allows the code that
@@ -27,103 +27,144 @@ block begins with a capitalized label for the block followed immediately
 by an opening curly bracket on the same line.  Each block ends with a 
 closing bracket on a line by itself, as in 
 \code
-  BlockName{
+  Label{
      ....
   }
 \endcode
-Note that there may not be any whitespace space between the block 
-label (e.g., "BlockName", or "Mixture") and the opening curly bracket.
+Here, the string "Label" is used to denote a capitalized label string 
+for the block, such as "System", "Mixture", "Polymer", or "Domain". 
+Note that there may not be any whitespace space between the block label 
+(e.g., "BlockName", or "Mixture") and the opening curly bracket.
 
-Each such parameter block may contain a sequence of the following 
-types of elements:
+Each such parameter block may contain a sequence of the following types 
+of sub-elements:
 <ul>
    <li> 
-     Nested Subblocks: Each nested subblock is delimited by a label
-     and matched opening and closing curly brackets, as described
+     <b> Nested Subblocks </b> : Each nested subblock is delimited by a 
+     label and matched opening and closing curly brackets, as described
      above. 
    </li>
    <li> 
-     Individual Parameters:
-     Each individual parameter value appears on a single line that 
-     contains a parameter label followed by a text representation 
-     of the parameter value. Examples in the above parameter file 
-     include the integer nMonomer parameter in the Mixture block, 
-     and the nBlock and phi parameters within each Polymer subblock
-     of the Mixture block. 
+     <b> Individual Parameters </b>:
+     Each individual parameter entry appears on a single line that 
+     contains a parameter label followed by a text representation of the 
+     parameter value. Examples in the example parameter file shown on the
+     previous page include the integer parameter nMonomer in the Mixture 
+     block, and the floating point parameter phi within each Polymer 
+     subblock of the Mixture block. 
    </li>
    <li> 
-     1D Arrays of Parameters: Each such array begins with a parameter 
-     label that ends with a left square bracket ("[") and ends with line 
-     containing a matching right square bracket ("]"). Between these 
-     delimiters are lines containing values of array elements, with 
-     one value per line, listed in the order of increasing array 
-     element index. 
+     <b> Array-valued Parameters </b>: The entry for each one-dimensional
+     array parameters is given in a multiline format that begins with a 
+     line containing an array label followed immediately by an opening 
+     square bracket ("[") and ends with line containing only a matching 
+     closing square bracket ("]").  Between these delimiting lines are 
+     lines containing values of array elements, with one value per line, 
+     listed in the order of increasing array element index. The "mononers"
+     array in the Mixture block of the example file is an example of such
+     an array.
    </li>
    <li> 
-     2D Arrays of Parameters:  Each 2D array or matrix of parameters 
-     begins with a label and an opening delimiter, and ends with a 
-     corresponding closing delimiter.  An example is the chi( .... ) 
-     array of the Interaction block, which uses a syntax in which
-     the list of elements is delimited by opening and closing 
-     parentheses.
+     <b> Matrix-valued Parameters </b>:  Each 2D array or matrix of 
+     parameters begins with a line containing label and an opening 
+     delimiter, and ends with a corresponding closing delimiter. The 
+     only matrix-valued parameter in the example parameter file is
+     the chi matrix given in the Interaction block. The parameter 
+     file format for the chi matrix uses a syntax in which opening
+     and closing parentheses are used as delimiters, and in which each
+     distinct nonzero element is given on a separate line containing
+     row and column indices followed by the value of the matrix element.
    </li>
 </ul>
 Each block within a parameter file has a fixed file format: The order 
 in which elements may appear within each block of a parameter file is 
 predefined by the code that reads the block. 
 
-The code that reads a block of a parameter field checks the syntax of
-the file format by checking that the label that begins each subblock
-and parameter matches an expected value.  If the label does not match
-the expected label for a required element, the program will halt 
-execution after writing an error message explaining what label it 
-expected and what it actually found. When combined with echoing of 
-the parameter file (by using "-e" command line option) these error 
+By convention, labels for blocks begin with a capital letter, while 
+parameter labels begin with a lower case letter.  Both types of label 
+use upper- or lower-cased camel convention for labels that are 
+constructed by concatenating two or more words, in which the first 
+letter of each word after the first is capitalize.
+
+<i> Technical comments (for users familiar with C++): </i>
+
+The name of each block within a parameter file generally corresponds to 
+the name of a class or class template in the underlying C++ code.  The
+data contained within each such block contains all of the information 
+required to initialize the internal state of an instance of the specified 
+C++ class. 
+
+The code required to read the parameter file block associated with a 
+particular class is almost always defined in a member function of that 
+class named "readParameters". Users who are comfortable with C++ can 
+thus use knowledge of this convention to easily find the source code 
+that reads a particular parameter file block.
+
+The nesting of parameter file blocks in PSCF parameter files is designed 
+to directly reflect the structure of the underlying C++ code.  Nesting of 
+blocks within a parameter file generally reflects parent-child ownership 
+relationships among objects in the corresponding source code: Each 
+subblock corresponds to an object that the parent object "owns", i.e., 
+an object that is either a member of the parent object or a dynamically 
+created object that the parent object is responsible for creating and 
+destroying.  The top level object in any PSCF program is an instance of 
+a class named "System" (i.e., an object of type "System"), as reflected
+in the parameter file by the fact that the outermost block in the 
+parameter file is labelled "System". 
+
+The code that reads a block of a parameter field checks the syntax of 
+the file format by checking that the label that begins each subblock and 
+parameter matches an expected value or list of possible values.  If the 
+label does not match an expected label for a required element, the 
+program halts execution after writing an error message explaining what 
+label it expected and what it actually found. When combined with echoing 
+of the parameter file (by using "-e" command line option) these error 
 messages make it relatively easy for users identify and correct most 
 parameter file syntax errors.
 
-The name of each block within a parameter file generally corresponds to 
-the name of a class or class template in the underlying C++ code.  The 
-data contained within such a block generally contains the information 
-required to initialize the internal state of an instance of the specified 
-class. The code required to read the parameter file block associated for 
-a particular class is almost always defined in a member function of that 
-class named "readParameters". Users who are comfortable with C++ can thus 
-use knowledge of this convention to easily find the source code that reads 
-a particular parameter file block.
-
-Nesting of blocks within a parameter file generally reflects parent-child 
-ownership relationships among objects in the corresponding C++ code: 
-Each subblock generally corresponds to an object that the parent object 
-"owns", i.e., an object that is either a member of the parent object or 
-a dynamically created object that the parent object is responsible for 
-creating and destroying.  The outermost block in the each parameter file
-a "System" block. This reflects the fact that main object in each PSCF
-program is an instance of a class named System.
-
 \section user_param_syntax_parameter_section Individual Parameters
 
-Each entry that assigns a value to an an individual parameter is given
-on a single line that contains a label string that identifies the name 
-of the parameter, followed by one or more spaces, and then a text 
-representation of the parameter value.
-For example, the entry associated with the nMonomer integer parameter 
-within the Mixture block of a system that contains two distinct types 
-of monomer (nMonomer == 2) would look like
+The simplest type of element within a parameter file block is an entry
+that represents a value for an individual parameter.  Each such entry 
+is given on single line that contains a label string that identifies 
+the name of the parameter, followed by one or more spaces, and then a 
+text representation of the parameter value.
+
+As an example, consider the entry for the nMonomer integer parameter
+within the Mixture block. The value of nMonomer gives the number of
+distinct monomer types present within the system. The entry for a
+system with two distinct types of monomer would look like
 \code
    nMonomer      2
 \endcode
-The label for each parameter generally corresponds to a slightly 
-modified version of the name of a member variable of the relevant 
-parent class, i.e., a member variable of the class whose name is 
-specfied in the first line of the innermost enclosing parameter 
-file block.  
+The label for each such parameter generally corresponds to a slightly 
+modified version of the name of the member variable of the relevant 
+parent class, i.e., the name of the member variable that stores the 
+parameter value. 
+
+The value of any parameter that is stored in a variable of a primitive 
+C data types (e.g., an integer or floating point number) or a string 
+may be given using any standard C text representation for that data 
+type. String values are given without surrounding quotation marks, but 
+must be separated from the label by one or more spaces. Values of 
+string variables may not contain any spaces or other whitespace 
+characters.
+
+Technical comments (for users familiar with C++):
+
+Parameter values are usually stored in private member variables of
+the enclosing class. By convention, private variables are assigned 
+variable names that with an underscore, such as "nMonomer_".  The 
+corresponding parameter file label is usually given by the variable 
+name without the underscore, such as "nMonomer".
 
 Values of individual parameters are always read from an input stream 
-using the C++ ">>" operator. The value of any parameter that is stored 
-in a variable of a primitive C data types (e.g., an integer or floating 
-point number) or a string may thus be given using a standard C text 
-representation for that data type.
+using the C++ ">>" operator. This guarantees that a standard C text 
+representation will work for any parameter that is stored in a 
+variable of standard C type, such as int or double. It also means
+that std::string variables cannot contain internal whitespace
+characters, since the ">>" operator stops reading when it encounters
+a whitespace character.
 
 Values of some parameters are stored as instances of non-primitive 
 data types, such as classes or enumerations, that are defined within 
@@ -135,21 +176,24 @@ are defined for that data type.
 
 For example, in the example, the "type" parameter within each Polymer 
 subblock of the Mixture block is stored as an enumeration with two 
-possible values, for which the text representations are the strings 
-"linear" or "branched". The value of the "type" parameter must thus be
-given in the parameter file by a string with one of these two allowed 
-values. 
+possible values. The text representations of these values, as defined
+by overloaded ">>" and "<<" are the strings "linear" or "branched". 
+The value of the "type" parameter must thus be given in the parameter 
+file by a string that must have one of these two allowed values. 
 
-\section user_param_syntax_array_section 1D Arrays of Parameters 
+\section user_param_syntax_array_section Array-Valued Parameters
 
 Values of some parameters are stored as elements of a one-dimensional 
-array.  Each such array is formatted in a multi-line format in which 
-the first row contains a label that contains the name of the array 
-followed immediately by an opening square bracket, and the last line 
-contains a matching closing square bracket on a line by itself. 
-Between these delimiters are values of elements of the array, with 
-one element per line.  The parameter file entry for the contents of
-an array named A with N elements is thus of the form
+array.  The parameter file entry for such array is given in a multi-line 
+format in which the first row contains a label that contains the name 
+of the array followed immediately by an opening square bracket (i.e., [), 
+and the last line contains a matching closing square bracket (]) on a 
+line by itself.  Between these delimiters are lines that contain values 
+of elements of the array, with one element per line.  Elements appear
+in the parameter file in order of increasing array index.
+
+For example, the parameter file entry for the contents of an array 
+named A with N elements would thus be of the form
 \code
      A[
         A[0]
@@ -158,43 +202,53 @@ an array named A with N elements is thus of the form
         A[N-1]
      ]
 \endcode
-where A[0], ... A[N-1] denote values for the elements, with zero-based
-indices.  In the example given in the previous page, this syntax is used 
-for the "monomers" array within the Mixture block, and the "blocks" 
-arrays within each Polymer subblock of the Mixture block.  
+Here, A[0], ... A[N-1] denote array element values, with zero-based
+indices.  In the example given in the previous page, this syntax is 
+used for the "monomers" array within the Mixture block, and the 
+"blocks" arrays within each Polymer subblock of the Mixture block.  
 
-The number of expected elements of such an array must generally be 
+The number of expected elements of such an array must always be 
 specified by the value of a parameter that appears before the array 
-in the parameter file. For example, the number of monomer types is 
-specified by parameter nMonomer that appears just before the 
-"monomers" array. 
+in the parameter file. The function that reads such an array thus
+always knows how many elements it should contain, which is passed 
+to this function as a parameter.  For example, the number of monomer 
+types is specified by parameter nMonomer that appears just before 
+the "monomers" array, so that "nMonomer" can be passed to the C++
+function that reads the "monomers" array.
 
-\section user_param_syntax_matrix_section 2D Arrays of Parameters 
+\section user_param_syntax_matrix_section Matrix-Valued Parameters 
 
-Variables that are stored internally in two-dimensional arrays can 
-use one of two different multi-line parameter file formats. We will
-refer to these in what follows as "element format" and "row format".
-In either format, dimensions of 2D arrays must be provided by 
-parameters that appear in the parameter file before the array. 
+Variables that are stored internally in matrices or two-dimensional 
+arrays can use one of two different multi-line parameter file formats. 
+We will refer to these in what follows as "element format" and "row 
+format".  Only the "element format" is actually used in the current 
+PSCF code.  In either format, the dimensions of a 2D array must be 
+calculable from parameters that appear in the parameter file before 
+the array. 
 
 <b> Element Format: </b>
 In element format, the value of each nonzero element appears on separate
 line. This is the format used in above example for the chi matrix.
 The element format for an array starts with a line that contains a 
 name label followed immediately by an opening parenthesis, and ends 
-with a line containing a closing parenthesis. Between these are lines 
-that each contain a row index, column index and value of a single
-element. When used for square symmetric matrices, like the chi matrix,
-this format requires that one enter either the (i,j) or (j,i) element
-but not both. The same value is then assigned to both of these 
-equivalent elements when either is encountered in the parameter file. 
-In this format, elements that are not assigned values are set to zero 
-by default, and distinct nonzero elements can appear in any order.
+with a line containing a closing parenthesis on a line by itself. 
+Between these delimiters are lines that each contain a row index, 
+a column index and value of a single element of the array.  In this 
+format, elements that are not assigned values are set to zero by 
+default.  Distinct nonzero elements can appear in any order, but
+should not be repeated.
 
-For example, values for elements of a symmetric matrix of chi 
-parameters in a system of 3 monomers (nmonomer = 3) with nonzero 
-off-diagonal elements and vanishing diagonal elements might look 
-something like this
+When used for a square symmetric matrix, such as the chi matrix, this 
+format requires that the user enter either the (i,j) or (j,i) element
+for unequal i and j, but not both. The same value is then assigned to 
+both of these equivalent elements when an entry for either is encountered 
+in the parameter file. 
+
+As an example, consider the syntax for a symmetric chi matrix for 
+a system with 3 monomer types (nMonomer = 3), vanishing diagonal
+elements, and nonzero values for all off-diagonal elements.  A 
+valid parameter file format for such a matrix might look something 
+like this
 \code
    chi(
        2   0   30.0
@@ -203,28 +257,34 @@ something like this
    )
 \endcode
 In this example, zero values are assigned to all diagonal elements
-by default.  Nonzero values could be assigned to diagonal elements
-by including them in the parameter file format.
+by default.  If desired, nonzero values also could be assigned to 
+diagonal elements by including them in the parameter file format. 
+Entries for nonzero elements may appear in any order.
 
 <b> Row Format: </b>
-In row format, each line of parameter values contains the values for
-all of the elements of one row of a corresponding matrix. The row
-format for a 2D array begins with a line that contains a label string
-followed immediately by an opening square bracket, and ends with a
-line containing a closing square bracket on a line by itself, exactly
-as for a 1D array. Between these opening and closing lines are lines 
-that each contain one row of the corresponding matrix, with values 
-of elements formatted exactly as in the standard representation of 
-a matrix as an array of number as used in matrix linear algebra. 
+In the row format for a matrix-valued parameter, elements values are 
+entered using a format very similar to the standard representation of 
+a matrix as an array of numbers, as used in matrix linear algebra.
+This format is currently not used in the parameter file format for 
+any PSCF program, but is available for future use.
+
+The row format for the elements of a 2D array begins with a line that 
+contains a label string followed immediately by an opening square 
+bracket, and ends with a line containing a closing square bracket on 
+a line by itself, exactly as for a 1D array.  Between these opening 
+and closing lines are lines that each contain the values of all of 
+the elements of one row of the corresponding matrix. 
 
 For example, the row format for elements of 2 x 3 matrix named 
 "matrix" would use a format something like this:
 \code
    matrix[
        -15.3   23.0   1.9
-         4.8   -9.7  23.3
+         4.8   -9.7  21.3
    ]
 \endcode
+In this example, the value of the matrix element in row 0 and column 
+1 is 23.0, while the value in row 1 and column 2 is 21.3.
 
 \section user_param_syntax_optional_section Optional Elements
 
@@ -235,18 +295,18 @@ The label associated with a required element must appear at the expected
 position in a file format, or the program will halt after writing a
 error message to standard output that explains the nature of the error. 
 
-The entry for an optional block or parameter may be either included or 
-omitted.  If the label associated with an optional block or parameter is 
-not found at the expected location in a parameter file, the program will
-continue on and try to instead match the label that was found at that
-local with the label that identifies the next expected element.
+The entry for an optional block or parameter may be either be present
+or absent.  If the label associated with an optional block or parameter 
+is not found at the expected location in a parameter file, the program 
+will continue on and try to instead match the label that was found at 
+that local with the label that identifies the next expected element.
 Optional parameters that are omitted from a parameter file are assigned 
 default values. 
 
 When echoing of a parameter file is enabled, by invoking a program with
-the -e option, the name of each omitted optional parameters is echoed to
-standard output followed by the string "[absent]" to indicate that it
-was omitted.
+the -e option, the name of each omitted optional parameters is echoed 
+to standard output followed by the string "[absent]" to indicate that 
+it was omitted.
 
 Some parameters or blocks in a parameter file may also be required or 
 allowed only if parameters that have been read previously take on 
@@ -255,22 +315,42 @@ require or allow entry of parameters that are known to be meaningless
 or irrelevent on the basis of parameter values that appear earlier in 
 the parameter file.
 
-\section user_param_syntax_polymorphic_section Polymorphic Blocks
+\section user_param_syntax_selectable_section Selectable Blocks
 
-Some blocks in a PSCF parameter file are "polymorphic".  A polymorphic 
+Some blocks in a PSCF parameter file are "selectable".  A selectable 
 block is one that may contain the initial label and format appropriate 
-to any of several possible classes that are subclasses of a particular 
-base class, and that that serve analogous purposes. In a polymorphic 
-parameter file block, the name of the desired subclass is identified 
-by the class name label that appears in the opening line of the block. 
-The use of polymorphic blocks allows a user to choose at run time from 
-among several possible alternative algorithms or other elements of a 
-computation.
+to any of several blocks that are associated with C++ classes that 
+serve analogous functions but that are based on somewhat different 
+algorithms. 
 
-For example, the block that represents an iterator in a SCFT calculation 
-is usually a polymorphic block. The use of a polymorphic block for 
-iterators allows users to specify a choice from among several different 
-available iterator algorithms. In the above example, the NRIterator 
+The users choice of one of several valid options for a selectable block 
+is specified by the label used in the opening line for the block, which 
+contains a label for the block immediately followed by an opening curly 
+bracket. That block label is compared to a list of label strings for
+available options.  If the label in the parameter files matches one such
+string, the option corresponding to that label is selected. Different
+options for a selectable block may require different parameter file 
+formats and may require different parameters. The format of the body 
+of a selectable block must be consistent with the label in the first
+line. 
+
+As already noted, the block that represents an iterator in a PSCF 
+program is always a selectable block. The use of a selectable block 
+for iterators allows users to specify a choice from among several 
+different available iterator algorithms. A selectable block is also
+for "sweep" algorithms that perform continuation of solutions along 
+a sequence of points along a line through parameter space, as 
+discussed \ref param_sweep_page "here". 
+
+In a selectable parameter file block, the name of the desired subclass 
+is identified by the class name label that appears in the opening line 
+of the block.  The use of selectable blocks allows a user to choose at 
+run time from among several possible alternative algorithms or other 
+elements of a computation.
+
+
+
+In the above example, the NRIterator 
 block appears at a location at the program expects to find the name 
 of one of several possible subclasses of the Fd1d::Iterator base class, 
 which implement different iterator algorithms. The appearance of a block 
@@ -281,6 +361,33 @@ subclasses of Fd1d::Iterator implement different iteration algorithms,
 and generally require different input parameters, define different 
 parameter file block formats.
  
+<i> Technical comments (for users familiar with C++): </i>
+
+The implementation of selectable parameter file blocks in PSCF is
+based on C++ inheritance and polymorphism. The different options for 
+a selectable block are always implemented by different subclasses of 
+a common base class. The base class defines a common interface for 
+objects of the relevant type.  The generic name of the block in the
+parameter file (i.e., the name that can also be used as a label to 
+select the default option) is simply the name of the relevant base 
+class.  The parent object has a member variable which is a pointer
+to an instance of the base class.
+
+For example, different iteration algorithms for a particular PSCF
+program are subclasses of a base class named "Iterator", which defines
+a common interface for iteration algorithms. The parent System object 
+has a private member variable of type Iterator* that can point to an
+object of class Iterator.
+
+If the block label input for a selectable block matches the name of 
+an available subclass of the relevant base class (e.g., a subclass
+of Iterator), then an instance of the selected subclass is constructed.
+The address of that new object is also assigned to the base class pointer 
+owned by the parent class (i.e., the Iterator* pointer). 
+The "readParameters" member function of the new object is then invoked 
+to read the body of the selectable block, using a block format 
+appropriate to the chosen subclass. 
+
 <BR>
 \ref user_param_example_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_param_page          (Up) &nbsp; &nbsp; &nbsp; &nbsp; 

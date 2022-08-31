@@ -1,265 +1,34 @@
-/*! \page user_param_fd_page 3.3.5 Parameter Files: pscf_fd
+/*! \page user_param_fd_page 3.3.6 One-dimensional Problems (pscf_fd)
 
-\ref user_param_sweep_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_param_pc_page    (Next)
+\ref user_param_sweep_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_param_pc_page     (Next)
 <BR>
 
-An example of a parameter file for an pscf_fd program is given in the 
-\ref user_param_syntax_page "previous page" as an example of the syntax.
+An example of a parameter file for an pscf_fd program was given 
+\ref user_param_example_page "previously" as an example of the syntax.
 Please consult this example when looking at this discussion of the file
 format.
 
-\section user_param_fd_overview_section File Structure
+\section user_param_fd_overview_sec Overview
 
-The structure of the main required blocks of a pscf_fd parameter file is 
-shown below in skeleton form.
+The overall format for a pscf_fd parameter file is shown below in 
+skeleton form:
 \code
 System{
-  Mixture{
-     ...
-  }
-  Interaction{
-     ...
-  }
-  Domain{
-     ...
-  }
-  NrIterator{
-     ...
-  }
+  Mixture{ ...  }
+  Interaction{ ...  }
+  Domain{ ...  }
+  Iterator#{ ... }
+  Sweepr#*{ ... }
 }
 \endcode
-The purposes of each main block is discussed below.
-<ul>
-<li>
-Mixture: The Mixture block contains a description of the desired mixture 
-of containing one or more polymer species. This includes a description of 
-the structure of each molecular species and a specification of either the 
-volume fraction phi or chemical mu of each species. </li>
-<li>
-Interaction: This block contains values for the Flory-Huggins chi 
-parameters between all pairs of monomers types.
-</li>
-<li>
-Domain: The domain block specifies the coordinate system and domain over 
-which the SCFT equations should be solved, and the number of grid points 
-used for spatial discretization.
-</li>
-<li>
-NrIterator: The NrIterator block gives parameters required by the 
-Newton-Raphson iteration algorithm used to solve the nonlinear SCFT 
-equations.
-</li>
-</ul>
-The parameter files for the pscf_pcNd and Pscf_pgNd programs have a
-similar structure, with analogous top level blocks. Parameter files 
-for all three types of program contain Mixture and Interaction 
-blocks with identical syntax. 
+The purposes of each of these top-level blocks have been discussed 
+previously. Formats of the Mixture and Interaction blocks are the 
+same for all PSCF programs, and have also been discussed previously. 
+We thus focus below on the contents of the Domain, Iterator, and 
+Sweep blocks.
 
-\section user_param_fd_doxlinks_section Documentation Links
-
-The nest list shown below provides links to pages that document file formats for parameter file blocks that can appear in a parameter file for a pscf_fd program are given below. 
-Each type of block is identified here by the label with which it appears in the parameter file, and nested in its expected position:
-<ul style="list-style: none;">
-  <li> \subpage fd1d_System_page  "System" </li>
-  <ul style="list-style: none;">
-    <li> \subpage fd1d_Mixture_page  "Mixture" </li>
-    <ul style="list-style: none;">
-      <li> \subpage fd1d_Polymer_page  "Polymer" </li>
-      <li> \subpage fd1d_Solvent_page  "Solvent" </li>
-    </ul>
-  <li> \subpage pscf_Interaction_page  </li>
-  <li> \subpage fd1d_Domain_page  "Domain" </li>
-  <li> \subpage fd1d_NrIterator_page  "NrIterator" </li>
-  <li> \subpage fd1d_LinearSweep_page  "LinearSweep" </li>
-  </ul>
-</ul>
-
-The following links provide documentation for text formats used for smaller
-user defined types whose values can be read on a single line and treated as 
-individual parameters:
-<ul style="list-style: none;">
-  <li> \subpage pscf_Monomer_page  "Monomer" </li>
-  <li> \subpage pscf_Block_page  "Block" </li>
-  <li> \subpage fd1d_GeometryMode_page "GeometryMode"</li>
-</ul>
-Monomers appear in the Mixture block in elements of the "monomers" array.
-Block data for the blocks of each block polymer species appears in the 
-corresponding Polymer subblock of the Mixture block, as elements of the
-"blocks" array.
-
-\section user_param_fd_mixture_section Mixture Block
-
-The Mixture block describes the chemical constituents of the system of 
-interest, which is generally a mixture of one or more molecular species. 
-
-The first part of the Mixture block contains information about monomers.
-The parameter nMonomer and the array give information about monomer types.
-The value of the parameter labelled "nMonomer" gives the number of 
-distinct types of monomer in the system.  Parameter "monomers" represents 
-an array in which each element corresponds to the statistical segment 
-length of one monomer type. The file format for this array contains 
-nMonomer elements, each on their own line of the file. In the above example, 
-two monomer types are created, both of which are assigned a statistical
-segment length of 1. Each monomer is internally assigned a unique integer 
-ID that is assigned in the order in which monomer segment lengths appear 
-in the parameter file, with an index 0 for the first monomer.
-
-After this monomer type information, the Mixture block contains 
-information about polymer species. The parameter nPolymer specifies the 
-number of distinct polymer species in the mixture.  This may be followed 
-by an optional parameter nSolvent that specifies the number of small 
-molecule solvent species. If nSolvent is absent, it is set zero by 
-default, corresponding to a system with no small molecule solvent. 
-The optional nSolvent parameter is absent in the above example. 
-
-The nPolymer and (optional) nSolvent parameters are always followed by
-nPolymer subblocks that each begin with a label Polymer{ ...}. Each
-such Polymer block describes a species of block polymer that is present 
-in the system of interest.  Homopolymer species are treated for this 
-purpose as a block polymer that contain only one block.  If the nSolvent
-parameter is present and greater than zero, the Polymer{...} blocks
-must be followed nSolvent sublocks labelled Solvent{...}, each of
-which describes a solvent species.
-
-The Polymer and (if present) Solvent blocks may be followed by an optional 
-parameter vMonomer that gives a value for the monomer reference volume. 
-This optional parameter is absent in the above example.  The value of 
-vMonomer is not needed or used in the solution of the modified diffusion 
-equations or self-consistent field equations. It can, however, be used 
-in calculations of some physical quantities whose definition require 
-knowledge of the total volume or total number of molecules in some 
-aggregate, such as the total excess free energy of a micelle. If this 
-optional parameter is absent, vMonomer is assigned a value of 1.0 by 
-default. 
-
-The last entry in the Mixture block gives the value of a parameter ds.
-Parameter ds is the desired value of the contour length step used to 
-discretize the length of each block during numerical solution of the 
-modified diffusion equation. Both the contour step length ds and 
-the block lengths for each polymer are specified in the same units, 
-as numbers of monomers. Because PSCF is based on a model of a polymer 
-as a continuous Gaussian thread, however, neither block lengths nor
-values of ds need be integers, nor must they even approximately 
-correspond to any kind of chemical repeat unit. Thus, if ds = 0.01, 
-then a block of length 1.0 will thus be divided into 100 steps of 
-length 0.01. The algorithm used in all of the pscf programs actually
-require that each block be divided into even number of steps of equal 
-length. The number of steps for each block is thus chosen to give an 
-actual step size as close as possible to the value of ds input by the
-user, subject to this constraint. The actual step size may thus also
-be slightly different for different blocks.
-
-\subsection user_param_fd_mixture_polymer_sub Polymer Block
-
-Each Polymer subblock within the Mixture block describes a single block
-polymer species. Each polymer is internally assigned a unique integer
-id that is assigned in the order in which polymer blocks appear in the
-parameter file, with an index 0 for the first polymer.
-
-The first parameter that may appear within a Polymer block is an 
-optional "type" variable. This may be assigned string values "linear" 
-or "branched".  If the type variable is omitted, the polymer is assumed 
-to be linear by default.  Setting the type to "linear" declares that the
-polymer is a linear block polymer. Setting the type to "branched" 
-declares that the polymer is an acyclic branched block copolymer. The 
-set of possible acyclic branched architectures includes all linear block 
-polymers as a subset, and the set of linear block polymer architectures 
-includes homopolymers as a subset. Pscf cannot treat polymers 
-architectures that contain closed loops or cycles, but allows arbitrarily 
-complex acylic branched block polymers.
-
-After the optional "type" parameter, each Polymer block must contain an
-parameter "nBlock" with a positive integer value that gives the total 
-number of blocks in the polymer. 
-
-The nBlock parameter is followed by an array parameter "blocks" that
-contains nBlock rows of data, each of which contains a description of
-one block. The data associated with the first block is given in the
-same line as the label "blocks", with the remaining blocks on subsequent
-lines.  Different file formats are used for the data associated with
-each block for linear and branched polymers. A more compact form is
-possible in the common case of a linear polymer.
-
-For a linear polymer, the data for each block is of the form
-\code
-   monomerId length
-\endcode
-where monomerId is the integer id for the monomer type, and length is
-the length of the block. For either a linear or branched polymer, the 
-length parameter for each block is a real number defined as the ratio 
-of the steric volume of the block to a reference monomer volume.
-
-A longer description must be used for each block in a branched polymer in 
-order to specify the connectivity of the blocks. A branched polymer is
-described as an acyclic graph containing edges (corresponding to blocks)
-that terminate at vertices. Each vertex is either a junction at which two 
-or more blocks meet or a chain ends. Each vertex is assigned a unique
-integer vertex index. The number of vertices in any acyclic graph is
-always exactly one greater than the number of edges (or blocks). The
-blocks are thus internally assigned integer ids [0,nBlock-1] while the 
-edges are assigned indices [0,nBlock].  In the description of a branched
-polymer, the data for each block is of the form
-\code
-   monomerId length vertexId1 vertexId2
-\endcode
-where vertexId1 and vertexId2 are the integer ids of the two vertices to 
-which the block is attached. 
-
-The last parameter in the Polymer{...} block associated with each species 
-specifies either a volume fraction for that species, given by a line "phi" 
-followed by a value for the volume fraction, or a value of the chemical 
-potential for the species, given by a label "mu" followed by a chemical 
-potential label. The code allows the user to independently choose whether 
-to specify a volume fraction (a closed ensemble) or chemical potential 
-(an ensemble) for each species. If one or more species are assigned volume 
-fractions (phi values), the volume fractions must be less than or equal to 
-1.0.  If all of the species are assigned volume fractions, corresponding
-to canonical ensemble, the specified volume fraction must add to exactly 
-1.0. 
-
-\subsection user_param_fd_mixture_solvent_sub Solvent Block
-
-If nSolvent > 0, the Polymer{...} blocks are followed within a Mixture 
-block by nSolvent blocks labelled Solvent{...}. 
-Each Solvent block contains the description of a small molecule solvent
-species. Solvents are treated as structureless particles that occupy a 
-specified volume. The first parameter in each Solvent block is "monomerId"
-parameter that specifies the monomer or chemical type of the solvent.
-The solvent does not have a "segment length," so its monomerId merely
-indicates which field and interaction parameters apply to this solvent.
-This is followed by "size" parameter that specifies the steric volume, 
-defined as a ratio of the solvent volume to the monomer reference volume.
-The next parameter must then be either volume fraction "phi" or chemical 
-potential "mu".  The parameter file block for a solvent of type 0 (or A) 
-with a size 0.1 and a specified volume fraction 0.4 would thus be
-\code
-     Solvent{
-        monomerId  0
-        size       0.1
-        phi        0.4
-     }
-\endcode
-As for polymers, the volume fraction parameter phi for a solvent species
-can be replaced by a chemical potential parameter "mu" to specify an open 
-ensemble for this species. 
-
-See the file pscfpp/examples/pc/solution/lam/param for an example parameter 
-file for a simulation of a periodic lamellar phase containing an AB block 
-copolymer dissolved in a selective solvent of type C.
-
-\section user_param_fd_Interaction_section Interaction Block
-
-The Interaction block specifies chi interaction parameters between
-all distinct monomer types. The "chi" parameter is an array in which
-each row contains a pair of monomer type labels followed by the
-value of the Flory-Huggins interaction parameter for interactions 
-between monomers of those two types. In the above example, chi is
-set to 10.0 for interactions between monomers of type 0 and 1 (or
-A and B), and is set to zero for interactions between monomers of
-the same type. 
-
-\section user_param_fd_Domain_section Domain Block
+\section user_param_fd_domain_section Domain Block
 
 The domain block describes the spatial domain over which the SCFT
 equations should be solved. 
@@ -291,22 +60,22 @@ annulus.
 
 The pscf_fd program solves the modified diffusion equation subject 
 to von Neumann boundary conditions that require derivatives with 
-respect to the relevant Cartesian or radial normal coordinate 
-must vanish at the lower and upper bounds, xMin and xMax. In the 
-special case of a cylindrical or spherical geometry with xMin = 0.0, 
-this is equivalent to a requirement that the corresponding 
-three dimensional solution be differentiable at the origin. 
+respect to the relevant Cartesian or radial normal coordinate must 
+vanish at the lower and upper bounds, xMin and xMax. In the special 
+case of a cylindrical or spherical geometry with xMin = 0.0, this 
+is equivalent to a requirement that the corresponding three 
+dimensional solution be differentiable at the origin. 
 
-\section user_param_fd_NrIterator_section NrIterator Block
+\section user_param_fd_iterator_sec Iterator Block
 
-The NrIterator block provides data required by the iterator used 
-to solve the nonlinear self-consistent field (SCF) equations. 
-The only iteration algorithm that is currently available is 
-Newton-Raphson iteration, implemented by the NrIterator class. 
-This class requires only one input parameter, the parameter
-epsilon, which gives the desired tolerance in the solution of 
-the SCF equations.  The iterative loop stops when the maximum 
-error drops below epsilon.
+The Iterator block provides data required by the iterator used to 
+solve the nonlinear self-consistent field (SCF) equations.  The only 
+iteration algorithm that is currently available is Newton-Raphson 
+iteration, implemented by the NrIterator class, which is also the default 
+choice.  This class requires only one input parameter, the parameter 
+epsilon, which gives the desired tolerance in the solution of the SCF 
+equations.  The iterative loop stops when the maximum error drops below 
+epsilon.
 
 <BR>
 \ref user_param_sweep_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

@@ -1,0 +1,147 @@
+/*! \page user_param_format_page 3.3.3 Format Descriptions
+
+\ref user_param_syntax_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_param_mixture_page  (Next) 
+<BR>
+
+Users of PSCF require precise documentation of the required format for 
+each block that can appear with a parameter file of a PSCF program. 
+In order to describe these formats concisely, in what follows we will 
+use a representation in which the allowed format for each type of block 
+is summarized using a form similar to that of the actual block, 
+supplemented by notation to indicate the types of parameters and special 
+symbols to indicate the existence of other syntactical elements such as
+array-valued parameters, optional elements and selectable subblocks.
+
+\section user_format_examples_sec Examples
+
+As a simple first example of this sort of description, the overall syntax 
+for a pscf_fd1d parameter file is shown below:
+\code
+System{
+   Mixture{ ... }
+   Interaction{ .... }
+   Domain{ ... }
+   Iterator#{ ... }
+   Sweep#*{ ... }
+}
+\endcode
+This description should look familiar, except for the inclusion of a 
+Sweep{...} block, which is an optional element that was omitted from our 
+example file.  In such a description, the syntax Label{...} is used to 
+indicate a nested subblock, for which the format of the subblock must be 
+described separately elsewherre.  The appearance of an asterisk (*) symbol 
+after any block or parameter label is used to indicate that the element 
+is optional (i.e., omittable).  Subblocks and parameters that do not 
+contain an asterisk are thus all required.  The appearance of a "\#" 
+symbol after a subblock label is used to indicate that the block is 
+selectable. The above description thus indicates that the Iterator 
+block is thus a required selectable element, while the Sweep block is 
+an optional selectable element.
+
+As a second example, the format for a Mixture block in any PSCF parameter
+file can be depicted compactly as follows:
+\code
+Mixture{
+  nMonomer   int
+  monomers   Array [ real ]
+  nPolymer   int
+  Polymer{ ... } 
+    ...
+  nSolvent*  int (0 by default)
+  Solvent*{ ... }
+    ...
+  vMonomer*  real (1.0 by default)
+  ds         float
+}
+\endcode
+
+In this example, we see that the locations at which values of individual 
+parameters would appear in an actual parameter file have been replaced
+by labels that specify the type of parameter value, such as int or real.
+The word Array followed by opening a closing square brackets enclosing
+a type descriptor is describe an array-value parameter.  Note that default 
+values for some optional elements (nSolvent and vMonomer) are given as 
+comments enclosed in parentheses.
+
+
+This sort of compact format description must be generally supplemented by 
+a table and/or text that contains an explanation of the the meaning of 
+each parameters, comments about allowed values for particular parameters, 
+values for dimensions of arrays or matrices, relationships among choices 
+of parameter values, and any other required supplementary information. 
+
+
+\section user_format_conventions_sec Conventions
+
+The following conventions, most of which are illustrated in the above
+examples, are used in this type of parameter file format summary:
+
+ - <b> Parameters </b>: Individual parameters are indicated using the syntax 
+   \code
+       label   type
+   \endcode
+   where "label" denotes the name (or label string) of the parameter and 
+   "type" is a string that identifies the data type of the parameter 
+   value (e.g., int, real, string, etc.). 
+
+ - <b> Subblocks </b>: The presence of a nested subblock is indicated using 
+   the syntax 
+   \code
+       Label{ ... }
+   \endcode
+   where "Label" denote the label string for the subblock. 
+
+ - <b> Selectable blocks </b>: Selectable subblocks are indicated by 
+   adding a "\#" symbol after the subblock label and before the opening 
+   curly bracket, using the syntax
+   \code
+       Label#{ ... }
+   \endcode
+   for a required but selectable subblock.  The label for a selectable 
+   subblock in a format description should be the generic name for the 
+   subblock (e.g., "Iterator", rather than the name for a specific 
+   iteration algorithm).  This generic name is also the block label that 
+   can be used to select the default choice for this block. 
+
+ - <b> Optional elements </b>: Optional subblocks and parameters (i.e., 
+   elements that may be ommitted from the file) are indicated by an
+   asterisk after the subblock or parameter label. The label for an
+   optional simple parameter is thus
+   \code
+      label*   type
+   \endcode
+   where "label" denotes the actual label string. The label for an
+   optional selectable subblock places the asterisk after the # symbol,
+   giving Label#*{ .... }.
+
+ - <b> Default values </b>: Default values for optional parameters may be 
+   indicated by a comment enclosed in parentheses after the label and data 
+   type. The comment is often of the form "( ... by default)", where 
+   ... denotes the actual default value.  The default value is the value 
+   assigned to the associated variable if the parameter is omitted from 
+   the parameter file. 
+
+ - <b> Arrays </b>: Parameters that represent one-dimensional arrays are 
+  indicated using the syntax
+   \code
+       label  Array[ type ]
+   \endcode
+   where "label" is the name of the array, and "type" is a string that
+   identifies the data type of an element value as given in the 
+   parameter file.
+
+ - <b> Matrices </b>: Parameters that represent two-dimensional arrays 
+   or matrices that must be input in element format are indicated using 
+   the syntax
+   \code
+       label Matrix ( type )
+   \endcode
+   where "type" is the data type for a single element. 
+
+<BR>
+\ref user_param_syntax_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_param_page        (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_param_mixture_page  (Next) 
+
+*/

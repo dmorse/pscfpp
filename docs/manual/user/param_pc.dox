@@ -1,10 +1,34 @@
-/*! \page user_param_pc_page 3.3.6 Parameter files: pscf_pcNd 
+/*! \page user_param_pc_page 3.3.7 Periodic Problems (pscf_fd)
 
-\ref user_param_fd_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_param_pg_page (Next)
+\ref user_param_fd_page       (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_command_page  (Next)
 <BR>
 
-\section user_param_pc_section Example
+An example of a parameter file for an pscf_fd program was given 
+\ref user_param_example_page "previously" as an example of the syntax.
+Please consult this example when looking at this discussion of the file
+format.
+
+\section user_param_fd_overview_sec Overview
+
+The overall format for a pscf_fd parameter file is shown below in 
+skeleton form:
+\code
+System{
+  Mixture{ ...  }
+  Interaction{ ...  }
+  Domain{ ...  }
+  Iterator#{ ... }
+  Sweepr#*{ ... }
+}
+\endcode
+The purposes of each of these top-level blocks have been discussed 
+previously. Formats of the Mixture and Interaction blocks are the 
+same for all PSCF programs, and have also been discussed previously. 
+We thus focus below on the contents of the Domain, Iterator, and 
+Sweep blocks.
+
+\section user_param_pc_example_sec Example
 An example of a parameter file for the program pscf_pc3D is shown below. 
 
 \code
@@ -46,90 +70,7 @@ System{
 }
 \endcode
 
-
-\section user_param_pc_overview_section File Structure
-
-The structure of a pscf_pcNd parameter file is shown below in skeleton 
-form below.
-\code
-System{
-  Mixture{
-     ...
-  }
-  Interaction{
-    ...
-  }
-  Domain{
-    ...
-  }
-  Iterator{
-    ...
-  }
-  LinearSweep{
-    ...
-  }
-}
-\endcode
-The purpose of each subblock and parameter in the main System block is as follows:
-<ul>
-<li>
-Mixture: Description of molecular species and composition of the mixture. 
-</li>
-<li>
-Interaction: Values of Flory-Huggins (chi) interaction parameters
-</li>
-<li>
-Domain: Description of crystallographic unit cell and discretization mesh
-</li>
-<li> 
-Iterator: Parameters required by the iteration algorithm
-</li>
-<li> 
-LinearSweep: Optional description of a linear parameter sweep to be performed
-</li>
-</ul>
-
-\section user_param_pc_doxlinks_section Documentation Links
-
-Links to documentation of the file format for parameter file blocks that 
-can appear a parameter file for a pscf_pcNd program are given below. Each 
-type of block is identified here by the label with which it appears in the 
-parameter file, nested in a form analogous to that used in the parameter
-file.
-
-<ul style="list-style: none;">
-  <li> \subpage pspc_System_page "System" </li>
-  <ul style="list-style: none;">
-    <li> \subpage pspc_Mixture_page "Mixture" </li>
-    <ul style="list-style: none;">
-      <li> \subpage pspc_Polymer_page "Polymer"  </li>
-      <li> \subpage pspc_Solvent_page "Solvent" </li>
-    </ul>
-  <li> \subpage pscf_Interaction_page "Interaction" </li>
-  <li> \subpage pspc_Domain_page "Domain" </li>
-  <li> \subpage pspc_AmIterator_page "AmIterator" or \subpage pspc_AmIteratorFilm_page "AmIteratorFilm" </li>
-  <li> \subpage pspc_LinearSweep_page "LinearSweep" </li>
-  </ul>
-</ul>
-
-The following links provide documentation for the text format for 
-user-defined types that appear as parameter values:
-<ul style="list-style: none;">
-  <li> \ref pscf_Monomer_page  </li>
-  <li> \ref pscf_Block_page  </li>
-  <li> \subpage pscf_Mesh_page  </li>
-  <li> \subpage pscf_UnitCell_page  </li>
-</ul>
-
-The remainder of this page discusses the formats for several blocks of 
-the pscf_pcNd parameter file format that are different from analogous
-blocks of the format for pscf_fd.  The Mixture and ChiInteration subblocks 
-use formats identical those used in the parameter file format for the
-pscf_fd program, which was discussed in the 
-\ref user_param_fd_page "previous page", and so are not described 
-separately below.  
-
-\section user_param_pc_Domain_section Domain Block
+\section user_param_pc_domain_sec Domain Block
 The Domain block contains information required to describe both the
 unit cell of the periodic structure and the regular mesh that is used
 to discretize fields within each unit cell. 
@@ -268,9 +209,10 @@ when calculating the error and updating the fields. The default
 value of this parameter is scaleStress = 10.0. Setting scaleStress
 only has an impact of isFlexible is set to 1.
 
+
 <BR>
-\ref user_param_fd_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_param_page (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_param_pg_page (Next)
+\ref user_param_fd_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_param_page     (Up)   &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_command_page   (Next)
 
 */

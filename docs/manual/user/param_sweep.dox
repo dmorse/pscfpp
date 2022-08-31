@@ -1,4 +1,4 @@
-/*! \page user_param_sweep_page 3.3.4 Parameter Sweeps
+/*! \page user_param_sweep_page 3.3.5 Parameter Sweeps
 
 \ref user_param_mixture_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_param_fd_page       (Next) 
@@ -69,35 +69,18 @@ System{
 }
 \endcode
 In this description, the Iterator and Sweep blocks include a # suffix
-to indicate that these are both polymorphic blocks, each of which can 
-contain the parameter file formats for any of several classes that 
-implement an iteration algorithm or a sweep, respectively. The Iterator
-and Sweep block are also both followed by an asterisk (*) to indicate 
-that it is optional block that may be omitted if not needed (i.e., if 
-the user does not intend to perform a Sweep). Both the Iterator and
-Sweep block must be included for a calculation that peforms a Sweep.
-The Iterator block would be required but the Sweep block would not 
-for a calculation that performs only a single SCFT calculation.
-The Iterator and Sweep blocks could both be omitted for a calculation
-in which PSCF is used only to perform utility operations such as 
-converting field files between different formats, but in which no
-SCFT calculations are required.
+to indicate that these are both selectable blocks. Different options
+for the Sweep block can define different types of paths through 
+parameter space. 
 
 A sweep is actually performed by including a command name "SWEEP" in
 the command file. The SWEEP command does not take any parameters, and
 performs the sequence of calculations described in the Sweep block of 
 the parameter file. 
  
-\section user_param_sweep_linear_sec LinearSweep
-
-The most commonly used implementation of sweep is a general linear 
-sweep.  This is implemented in both the pscf_fd and pscf_pcNd programs 
-by a class named LinearSweep, which can be initialized by including a
-LinearSweep block in the parameter file after the Iterator block. 
-
 Below, we show an example of a pscf_fd parameter file that extends the
-example parameter file previously by appending a LinearSweep parameter 
-file block to the end of the main System block. 
+example parameter file previously by appending a Sweep parameter file 
+block to the end of the main System block, using the default algorithm.
 \code
 System{
   Mixture{
@@ -139,7 +122,7 @@ System{
   NrIterator{
      epsilon   0.00000001
   }
-  LinearSweep{
+  Sweep{
      ns               10
      baseFileName     out/
      nParameters      2
@@ -150,68 +133,114 @@ System{
   }
 }
 \endcode
-The only new element in this example is the LinearSweep. 
-The purpose of the parameters in this block are discussed below:
+The only new element in this example is the Sweep block, which is discussed
+below.
 
-   - ns is an integer that gives the number of step changes in parameter 
-     values, which is one less than the number of required SCFT calculations. 
-     In this example, the sweep involves 10 steps or 11 SCFT calculations.
+\section user_param_sweep_linear_sec LinearSweep
 
-   - baseFileName is a string that is added as a prefix to 
-     the names of all files that are output during the calculation. 
+The default implementation of sweep for all PSCF programs is a general 
+linear sweep algorithm. This algorithm may be selected by using the 
+label "Sweep" preceding a curly bracket in the first line of a sweep
+block, as done in the above example. A version of this algorithm is 
+implemented for each PSCF program by a class named LinearSweep. This
+algorithm can be selected by including a Sweep block with the appropriate
+format that starts either with a line containing the generic name Sweep
+(to select the default algorithm) or LinearSweep (to explicitly select
+this algorithm). 
 
-   - nParameters is an integer that specifies the number of input parameters 
-     that will be changed simultaneously. 
+<i> 
+Technical note: Source code files that are specific to different PSCF 
+programs are defined in different C++ namespaces. This allows classes 
+that play analogous roles in different programs but that differ in some 
+details to be given the the same name. The LinearSweep classes for the 
+pscf_fd1d, pscf_pcNd and pscf_pgNd programs are actually different 
+classes defined in different namespaces that have identical or nearly 
+identical user interfaces and implement completely analogous algorithms. 
+The common user interface for these classes is described here. </i>
 
-   - parameters is an array, in which element in the array identifies a 
-     parameter that should be changed during the sweep and specifies
-     a value for the total change in that parameter over the course of 
-     the sweep. The change parameter is a real number given as the last 
-     entry in each line of the parameter block for this array.
-
-In this, example ns = 10, so the sweep involves 10 steps or 11 SCFT
-calculations. The use of a basefilename "out" that ends in a directory
-directory separator "/" symbol indicates that all of the files produced 
-by the sweep will be written to a directory named "out/" of the working 
-directory.  In this example, the elements of the parameters array tell 
-the program to increase the the initial value of chi(0,1) by 5.0 in 10 
-increments, to also increase the length of block 0 of polymer 1 (the 
-homopolymer) by 0.3.
-
-Here is a slightly more formal description of the required parameters
-for a LinearSweep:
+Here parameter file format for a LinearSweep is summarized below:
 \code
    LinearSweep{
-       ns               int
-       baseFileName     string
-       nParameters      int
-       nParameters      Array [ SweepParameter ]
+       ns              int
+       baseFileName    string
+       nParameter      int
+       parameters      Array [ SweepParameter ]
    }
 \endcode
-This format which shows the parameters used in the above example but 
-excludes some optional parameters for which default values are often
-used. The meaning of the ns, baseFileName and nParameters parameters
-has already been discussed.  The block associated with the parameters 
-array must must contain exactly elements, each on a separate line, 
-in which each element contains the data for an object of type 
-SweepParameter. 
+The purpose of the parameters in this block are explained below:
+<table>
+  <tr>
+    <td> <b> Label </b>  </td>
+    <td> <b> Description </b>  </td>
+  </tr>
+  <tr>
+    <td> ns </td>
+    <td> number of step changes in the parameter values </td>
+  </tr>
+  <tr>
+    <td> baseFileName </td>
+    <td> 
+    string that is added as a prefix to the names of all files 
+    output during the sweep. </td>
+  </tr>
+  <tr>
+    <td> nParameter </td>
+    <td> number of parameters that are modified during the sweep </td> 
+  </tr>
+  <tr>
+    <td> parameter </td>
+    <td> array in which each element specifies the magnitude of
+         the change in one modified parameter over the course of 
+         the sweep. </td>
+  </tr>
+</table>
+Comments:
 
-Each SweepParameter object contains an identifier for a specific input 
-parameter and amoung by which the values of that parameter should change 
-over the course of the sweep.  The initial values of all parameters in 
-the sweep are given by the values specified before the sweep is run
-(e.g., values specified in the Mixture and Interaction blocks).
-The parameter identifier in each line in the parameters array block
-contains a name string that identifies the type of variable, such as 
-"block" for a block length or "chi" for an interaction parameter. This 
-string is followed by either one or two integer indices that specify 
-which variable of that type should be changed.  For example, the 
-string "block" must be followed by two integers, the first being an
+   - The parameter ns is one less than the number of SCFT calculations 
+     that must be performed including the initial and final state.
+     Because ns = 10 in the above example, SCFT calculations will be
+     performed at 11 state points, including both end points.
+
+   - Several output files are output at the end of each SCFT calculation
+     that contain information about the parameters, thermodynamic 
+     properties and converged chemical potential fields obtained at
+     each state point. The names of these files are automatically
+     generated using the value of the string parameter baseFileName
+     as a common prefix to all of these file names. The use of a
+     baseFileName = "out/" in the example would cause all of these 
+     output files to be written to a subdirectory of the current
+     working directory named "out". 
+
+   - The array parameters contains nParameter entries, each of which
+     corresponds to one parameter that should be modified during the
+     sweep. Parameters that are not listed in this array are unmodified.
+
+In this example, the elements of the parameters array tell the program 
+to increase the the initial value of chi(0,1) by 5.0 in 10 increments, 
+to also increase the length of block 0 of polymer 1 (the homopolymer) 
+by 0.3. Values of all parameters at the initial state (corresponding
+to s=0) are given by the values that were set before the sweep began.
+
+The "parameters" array must contain exactly nParameter entries, each
+on a separate line. Each entry in this array contains the data required
+to a create an object of type SweepParameter that described how one
+input parameter should be modified. 
+
+The file format each line of the "parameters" array (corresponding to
+a single parameter) contains an identifier for a specific input 
+parameter followed by amount by which the value of that parameter 
+should change over the course of the sweep.  The parameter identifier 
+in each such entry contains a name string that identifies the type of 
+variable, such as "block" for a block length or "chi" for an interaction 
+parameter. This string is followed by either one or two integer indices 
+that specify which variable of that type should be changed.  For example, 
+the string "block" must be followed by two integers, the first being an
 index for the polymer species the block belongs to, and the second  
-being an index for that block within that polymer. Some other types 
-of parameter require only a single index. For example the description
-of a parameter that specifies a volume fraction or chemical potential 
-requires a single index to identify the polymer or solvent species of
+being an index for that block within that polymer. Some other types of 
+parameter can be uniqued identified using only a single index. For 
+example the description of a parameter that specifies a volume 
+fraction or chemical potential of a polymer or solvent molecular species 
+requires a single index to identify the polymer or solvent species of 
 interest.
 
 The general format for a line in the parameters array for a parameter
@@ -227,14 +256,22 @@ that has only one associated index (such as a molecular volume fraction)
 simply omits the second integer index.
 
 The table shown below gives all allowed values for the parameter type 
-string identifer for a LinearSweep performed by pscf_ fd program along 
-with the number and meaning of associated index or indices. 
-The parameters allows by the pscf_psNd include those allowed by the
-pscf_fd as a subset. To indicate the meaning of an index, we use mId 
-to denote a monomer type index, pId to denote a polymer species index, 
-bId to denote the index of a block within a polymer, sId to denote a 
-solvent species index. If only one index is required for a particular 
-parameter type, then no meaning is is given for the the second index.
+string identifer for a LinearSweep for a periodic microstructure with
+with the number and meaning of any associated index or indices. All 
+but one of these types of parameter are also valid in a linear sweep
+performed by pscf_fd1d one-dimensional finite difference program, as
+discussed below.  To indicate the meaning of each index in this table, 
+we use the following notation:
+
+   - mId denote a monomer type index
+   - pId denotes a polymer species index
+   - bId denote the index of a block within a polymer
+   - sId denotes a solvent species index
+   - uId denotes an index for a unit cell parameter for a periodic
+     structure.
+
+If only one index is required for a particular parameter type, then no 
+entry is is given for the the second index.
 <table>
   <tr>
     <td> Type         </td><td> Meaning                    </td>
@@ -271,11 +308,31 @@ parameter type, then no meaning is is given for the the second index.
     <td> mu_solvent  </td><td> solvent chemical potential  </td>
     <td> sId         </td><td>        </td>
   </tr>
+  <tr>
+    <td> unit_cell   </td><td> unit cell parameter  </td>
+    <td> uId         </td><td>        </td>
+  </tr>
 </table>
 The two indices for a Flory-Huggins chi parameter refer to indices in 
 the chi matrix maintained by Interaction. Changes to element chi(i, j) 
 automatically also update chi(j, i) for i !\ j, thus maintaining the 
 symmetry of the matrix.
+
+The only type of parameter change listed above that is not applicable
+to one-dimensional simulations performed by pscf_fd1d is the unit_cell
+type. In a calculation for a periodic structure performed using a
+pscf_pc or pscf_pg program, a "unit_cell" parameter is one of the 
+parameters that determine the the size and shape of the crystal unit 
+for a system of specified latttice type, such as the length of each
+edge of a cubic unit cell, or the lengths of the three edges of an
+orthorhombic crystal, or the value of the angle between two edges for
+a non-orthogonal crystal type.  PSCF uses a set of standard conventions 
+for a list of parameters required to describe each unit cell type for 
+1, 2 and 3 dimensional structures, as described here.
+A unit_cell parameter can only be changed explicitly in calculations 
+in which each SCFT calculation is carried out in a rigid unit cell,
+rather than a calculation using a flexible unit cell in which the
+unit cell parameters are adjusted to minimize the free energy density.
 
 <BR>
 \ref user_param_mixture_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
