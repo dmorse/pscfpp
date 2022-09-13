@@ -217,9 +217,10 @@ namespace Pspc
       * obtained. 
       *
       * \pre The hasWFields flag must be true on entry.
+      * \param isContinuation true if continuation within a sweep.
       * \return returns 0 for successful convergence, 1 for failure.
       */
-      int iterate();
+      int iterate(bool isContinuation = false);
    
       /**
       * Sweep in parameter space, solving an SCF problem at each point.

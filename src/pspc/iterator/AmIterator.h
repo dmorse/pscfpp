@@ -51,8 +51,8 @@ namespace Pspc
       void readParameters(std::istream& in);
 
       // Inherited public member functions
-      using AmIteratorTmpl<Iterator<D>,DArray<double> >::setup;
-      using AmIteratorTmpl<Iterator<D>,DArray<double> >::solve;
+      using AmIteratorTmpl<Iterator<D>, DArray<double> >::setup;
+      using AmIteratorTmpl<Iterator<D>, DArray<double> >::solve;
       using AmIteratorTmpl<Iterator<D>,DArray<double> >::setClassName;
       using Iterator<D>::maskBasis;
       using Iterator<D>::externalField;

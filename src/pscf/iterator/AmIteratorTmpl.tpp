@@ -88,9 +88,11 @@ namespace Pscf
    * Solve iteratively.
    */
    template <typename Iterator, typename T>
-   int AmIteratorTmpl<Iterator,T>::solve()
+   int AmIteratorTmpl<Iterator,T>::solve(bool isContinuation)
    {
 
+      // Note: Parameter isContinuation is currently unused in AM algorithm
+      
       // Preconditions:
       UTIL_CHECK(hasInitialGuess());
 

@@ -63,8 +63,11 @@ namespace Pscf {
 
       /**
       * Iterate to a solution
+      *
+      * \param isContinuation true iff continuation within a sweep
+      * \return 0 for convergence, 1 for failure
       */
-      int solve();
+      int solve(bool isContinuation = false);
 
    protected:
 

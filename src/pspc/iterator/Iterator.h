@@ -58,9 +58,10 @@ namespace Pspc
       /**
       * Iterate to solution.
       *
+      * \param isContinuation true iff  continuation within a sweep
       * \return error code: 0 for success, 1 for failure.
       */
-      virtual int solve() = 0;
+      virtual int solve(bool isContinuation) = 0;
 
       /**
       * Return const reference to parent system.
@@ -204,7 +205,7 @@ namespace Pspc
 
    // Constructor
    template <int D>
-   inline Iterator<D>::Iterator(System<D>& system)
+   Iterator<D>::Iterator(System<D>& system)
     : hasMask_(false),
       hasExternalFields_(false),
       sysPtr_(&system),
@@ -214,12 +215,12 @@ namespace Pspc
 
    // Destructor
    template <int D>
-   inline Iterator<D>::~Iterator()
+   Iterator<D>::~Iterator()
    {}
 
    // Store the concentration field for the mask imposed on the unit cell
    template <int D>
-   inline void Iterator<D>::setMask(DArray<double> const & field)
+   void Iterator<D>::setMask(DArray<double> const & field)
    {  
       maskBasis_ = field; // copy field into maskBasis_
       hasMask_ = true;
@@ -227,7 +228,6 @@ namespace Pspc
 
    // Store the external fields imposed on each monomer species
    template <int D> 
-   inline 
    void 
    Iterator<D>::setExternalFields(DArray< DArray<double> > const & fields)
    {  

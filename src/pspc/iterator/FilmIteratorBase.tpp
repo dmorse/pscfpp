@@ -140,7 +140,7 @@ namespace Pspc
    * Iterate to a solution
    */
    template <int D, typename IteratorType>
-   int FilmIteratorBase<D, IteratorType>::solve()
+   int FilmIteratorBase<D, IteratorType>::solve(bool isContinuation)
    {
       // Update the concentration field of the walls based on the current
       // state of Domain<D> and provide it to iterator_, as well as the 
@@ -148,7 +148,7 @@ namespace Pspc
       updateWallFields(); 
 
       // solve
-      return iterator_.solve();
+      return iterator_.solve(isContinuation);
    }
 
    /*

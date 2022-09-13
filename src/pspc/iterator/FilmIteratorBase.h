@@ -80,8 +80,10 @@ namespace Pspc
 
       /**
       * Iterate to a solution
+      *
+      * \param isContinuation true iff continuation within a sweep
       */
-      int solve();
+      int solve(bool isContinuation = false);
 
       /**
       * Return const reference to the real iterator within this FilmIterator

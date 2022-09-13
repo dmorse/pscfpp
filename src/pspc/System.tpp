@@ -661,7 +661,7 @@ namespace Pspc
    * Iteratively solve a SCFT problem for specified parameters.
    */
    template <int D>
-   int System<D>::iterate()
+   int System<D>::iterate(bool isContinuation)
    {
       UTIL_CHECK(hasWFields_);
       UTIL_CHECK(hasSymmetricFields_);
@@ -671,7 +671,7 @@ namespace Pspc
       Log::file() << std::endl;
 
       // Call iterator
-      int error = iterator().solve();
+      int error = iterator().solve(isContinuation);
       
       hasCFields_ = true;
 
