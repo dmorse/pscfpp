@@ -339,7 +339,8 @@ namespace Pspc
          } else
          if (command == "ITERATE") {
             // Attempt iteration to convergence
-            int fail = iterate();
+            bool isContinuation = false;
+            int fail = iterate(isContinuation);
             if (fail) {
                readNext = false;
             }
@@ -670,11 +671,12 @@ namespace Pspc
       Log::file() << std::endl;
       Log::file() << std::endl;
 
-      // Call iterator
+      // Call iterator (return 0 for convergence, 1 for failure)
       int error = iterator().solve(isContinuation);
       
       hasCFields_ = true;
 
+      // If converged, compute related properties
       if (!error) {   
          if (!iterator().isFlexible()) {
             mixture().computeStress();

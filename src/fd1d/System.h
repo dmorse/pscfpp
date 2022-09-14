@@ -9,8 +9,8 @@
 */
 
 #include <util/param/ParamComposite.h>     // base class
-#include <fd1d/domain/Domain.h>            // member
 #include <fd1d/solvers/Mixture.h>          // member
+#include <fd1d/domain/Domain.h>            // member
 #include <pscf/homogeneous/Mixture.h>      // member
 #include <util/misc/FileMaster.h>          // member
 #include <util/containers/DArray.h>        // member template
@@ -108,6 +108,53 @@ namespace Fd1d
       void readCommands();
 
       ///@}
+      /// \name Primary SCFT Computations 
+      //@{
+
+      /**
+      * Solve the modified diffusion equation once, without iteration.
+      *
+      * This function calls the Mixture::compute() function to solve
+      * the statistical mechanics problem for a non-interacting system
+      * subjected to the currrent chemical potential fields (wFields).
+      * This requires solution of the modified diffusion equation for 
+      * all polymers, computation of Boltzmann weights for all solvents, 
+      * computation of molecular partition functions for all species, 
+      * computation of concentration fields for blocks and solvents, and 
+      * computation of overall concentrations for all monomer types. 
+      * This function does not compute the canonical (Helmholtz) free 
+      * energy or grand-canonical free energy (i.e., pressure). 
+      * Upon return, the flag hasCFields is set true.
+      */
+      void compute();
+   
+      /**
+      * Iteratively solve a SCFT problem.
+      * 
+      * This function calls the iterator to attempt to solve the SCFT
+      * problem for the current mixture and system parameters, using
+      * the current chemical potential fields (wFields) as initial 
+      * guesses.
+      * 
+      * \param isContinuation true if continuation within a sweep.
+      * \return returns 0 for successful convergence, 1 for failure.
+      */
+      int iterate(bool isContinuation = false);
+   
+      /**
+      * Sweep in parameter space, solving an SCF problem at each point.
+      *
+      * This function uses a Sweep object that was initialized in the 
+      * parameter file to solve the SCF problem at a sequence of points
+      * along a line in parameter space. The nature of this sequence of
+      * points is determined by implementation of a subclass of Sweep
+      * and the parameters passed to the sweep object in the parameter 
+      * file.  The Iterator that is initialized in the parameter file 
+      * is called at each state point.
+      */
+      void sweep();
+
+      //@}
       /// \name Thermodynamic Properties
       ///@{
 
@@ -137,7 +184,7 @@ namespace Fd1d
       double pressure() const;
 
       /**
-      * Output thermodynamic properties to a file. 
+      * Write thermodynamic properties to a file. 
       *
       * This function outputs Helmholtz free energy per monomer,
       * pressure (in units of kT per monomer volume), and the
@@ -145,9 +192,48 @@ namespace Fd1d
       *
       * \param out output stream 
       */
-      void outputThermo(std::ostream& out);
+      void writeThermo(std::ostream& out);
 
       ///@}
+      /// \name Output Operations (correspond to command file commands)
+      //@{
+      
+      /**
+      * Write chemical potential fields in symmetrized basis format.
+      *
+      * \param filename name of output file
+      */
+      void writeW(std::string const & filename);
+   
+      /**
+      * Write concentration fields in symmetrized basis format.
+      *
+      * \param filename name of output file
+      */
+      void writeC(std::string const & filename);
+   
+      /**
+      * Write c-fields for all blocks and solvents in r-grid format.
+      *
+      * Writes concentrations for all blocks of all polymers and all
+      * solvent species in r-grid format. Columns associated with blocks
+      * appear ordered by polymer id and then by block id, followed by
+      * solvent species ordered by solvent id. 
+      *
+      * \param filename name of output file
+      */
+      void writeBlockC(std::string  const & filename);
+
+      #if 0
+      /**
+      * Write parameter file to an ostream, omitting any sweep block. 
+      *
+      * \param out output stream 
+      */
+      void writeParamNoSweep(std::ostream& out) const;
+      #endif
+
+      //@}
       /// \name Field Accessors
       ///@{
 
@@ -180,7 +266,7 @@ namespace Fd1d
       CField& cField(int monomerId);
 
       ///@}
-      /// \name Accessors (get sub-objects by reference)
+      /// \name Member object accessors (get sub-objects by reference)
       ///@{
 
       /**
@@ -189,14 +275,14 @@ namespace Fd1d
       Mixture& mixture();
 
       /**
-      * Get spatial domain (including grid info) by reference.
-      */
-      Domain& domain();
-
-      /**
       * Get interaction (i.e., excess free energy model) by reference.
       */
       Interaction & interaction();
+
+      /**
+      * Get spatial domain (including grid info) by reference.
+      */
+      Domain& domain();
 
       /**
       * Get the Iterator by reference.

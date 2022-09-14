@@ -119,7 +119,7 @@ namespace Pscf {
                // Decrease ds by half
                ds *= 0.50;
                if (ds < 0.1*ds0) {
-                  UTIL_THROW("Sweep backtracked due to failed iterations too many times.");
+                  UTIL_THROW("Sweep decreased ds too many times.");
                }
 
             } else {

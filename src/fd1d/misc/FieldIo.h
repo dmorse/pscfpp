@@ -25,7 +25,7 @@ namespace Fd1d {
 
    public:
 
-      typedef System::Field Field;
+      typedef DArray<double> Field;
 
       /**
       * Constructor.

@@ -145,7 +145,7 @@ namespace Fd1d
    * Return 0 for sucessful solution, 1 on failure to converge.
    */
    int Sweep::solve(bool isContinuation) 
-   {  return system().iterator().solve(isContinuation); };
+   {  return system().iterate(isContinuation); };
 
    /**
    * Reset system to previous solution after iterature failure.
@@ -193,7 +193,7 @@ namespace Fd1d
       fileMaster().openOutputFile(outFileName, out);
       system().writeParam(out);
       out << std::endl;
-      system().outputThermo(out);
+      system().writeThermo(out);
 
       if (homogeneousMode_ >= 0) {
          comparison_.output(homogeneousMode_, out);

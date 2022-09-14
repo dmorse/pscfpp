@@ -289,11 +289,18 @@ namespace Fd1d
             readEcho(inBuffer, filename);
             fieldIo.readFields(wFields(), filename);  
          } else
+         if (command == "COMPUTE") {
+            // Solve the modified diffusion equation, without iteration
+            compute();
+         } else
          if (command == "ITERATE") {
-            Log::file() << std::endl;
-            iterator().solve();
-            outputThermo(Log::file());
-         } else 
+            // Attempt iteration to convergence
+            bool isContinuation = false;
+            int fail = iterate(isContinuation);
+            if (fail) {
+               readNext = false;
+            }
+         } else
          if (command == "COMPARE_HOMOGENEOUS") {
             int mode;
             inBuffer >> mode;
@@ -305,10 +312,9 @@ namespace Fd1d
             comparison.output(mode, Log::file());
          } else 
          if (command == "SWEEP") {
-            UTIL_CHECK(hasSweep_);
-            UTIL_CHECK(sweepPtr_);
-            sweepPtr_->sweep();
-         } else 
+            // Do a series of iterations.
+            sweep();
+         } else
          if (command == "WRITE_W") {
             readEcho(inBuffer, filename);
             fieldIo.writeFields(wFields(), filename);  
@@ -332,7 +338,7 @@ namespace Fd1d
             readEcho(inBuffer, filename);
             std::ofstream file;
             fileMaster().openOutputFile(filename, file, std::ios_base::app);
-            outputThermo(file);
+            writeThermo(file);
             file.close();
          } else
          if (command == "WRITE_VERTEX_Q") {
@@ -391,6 +397,59 @@ namespace Fd1d
       Log::file() << "  " << Str(string, 20) << std::endl;
    }
 
+   // Primary SCFT Computations
+
+   /*
+   * Solve MDE for current w-fields, without iteration.
+   */
+   void System::compute()
+   {
+      //UTIL_CHECK(hasWFields_);
+
+      // Solve the modified diffusion equation (without iteration)
+      mixture_.compute(wFields(), cFields_);
+
+      //hasCFields_ = true;
+   }
+
+   /*
+   * Iteratively solve a SCFT problem for specified parameters.
+   */
+   int System::iterate(bool isContinuation)
+   {
+      // UTIL_CHECK(hasWFields_);
+      // hasCFields_ = false;
+
+      Log::file() << std::endl;
+
+      // Call iterator (return 0 for convergence, 1 for failure)
+      int error = iterator().solve(isContinuation);
+      
+      //hasCFields_ = true;
+
+      // If converged, compute related properties
+      if (!error) {   
+         computeFreeEnergy();
+         writeThermo(Log::file());
+      }
+      return error;
+   }
+
+   /*
+   * Perform sweep along a line in parameter space.
+   */
+   void System::sweep()
+   {
+      //UTIL_CHECK(hasWFields_);
+      UTIL_CHECK(sweepPtr_);
+      Log::file() << std::endl;
+      Log::file() << std::endl;
+
+      sweepPtr_->sweep();
+   }
+  
+   // Thermodynamic properties
+ 
    /*
    * Compute Helmoltz free energy and pressure
    */
@@ -566,7 +625,7 @@ namespace Fd1d
 
    }
 
-   void System::outputThermo(std::ostream& out)
+   void System::writeThermo(std::ostream& out)
    {
       out << std::endl;
       out << "fHelmholtz = " << Dbl(fHelmholtz(), 18, 11) << std::endl;
@@ -607,6 +666,39 @@ namespace Fd1d
          out << std::endl;
       }
 
+   }
+
+   // Output operations (correspond to command file commands)
+
+   /*
+   * Write w-fields in symmetry-adapted basis format. 
+   */
+   void System::writeW(std::string const & filename)
+   {
+      //UTIL_CHECK(hasWFields_);
+      FieldIo fieldIo(*this);
+      fieldIo.writeFields(wFields(), filename);
+   }
+
+   /*
+   * Write all concentration fields in symmetry-adapted basis format.
+   */
+   void System::writeC(std::string const & filename)
+   {
+      //UTIL_CHECK(hasCFields_);
+      FieldIo fieldIo(*this);
+      fieldIo.writeFields(cFields(), filename);
+   }
+
+   /*
+   * Write all concentration fields in real space (r-grid) format, for 
+   * each block (or solvent) individually rather than for each species.
+   */
+   void System::writeBlockC(std::string const & filename) 
+   {
+      //UTIL_CHECK(hasCFields_);
+      FieldIo fieldIo(*this);
+      fieldIo.writeBlockCFields(filename);
    }
 
 } // namespace Fd1d
