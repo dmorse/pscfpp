@@ -210,7 +210,7 @@ namespace Pspg {
    */
    template <int D>
    int Sweep<D>::solve(bool isContinuation)
-   {  return system().iterate(); };
+   {  return system().iterate(isContinuation); };
 
    /*
    * Reset system to previous solution after iterature failure.

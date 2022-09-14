@@ -566,6 +566,7 @@ namespace Pspg
             homogeneous_.molecule(i).computeSize();
          }
       }
+
    }
 
    /*
@@ -889,7 +890,7 @@ namespace Pspg
    * Iteratively solve a SCFT problem for specified parameters.
    */
    template <int D>
-   int System<D>::iterate()
+   int System<D>::iterate(bool isContinuation)
    {
       UTIL_CHECK(hasWFields_);
       hasCFields_ = false;
@@ -898,7 +899,7 @@ namespace Pspg
       Log::file() << std::endl;
 
       // Call iterator
-      int error = iterator().solve();
+      int error = iterator().solve(isContinuation);
 
       hasCFields_ = true;
 

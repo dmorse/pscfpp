@@ -59,9 +59,10 @@ namespace Pspg
       /**
       * Iterate to solution.
       *
+      * \param isContinuation  true iff continuation within a sweep
       * \return error code: 0 for success, 1 for failure.
       */
-      virtual int solve() = 0;
+      virtual int solve(bool isContinuation) = 0;
 
       /// Return whether the unit cell is flexible during iteration.
       inline bool isFlexible() {return isFlexible_;}

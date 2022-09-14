@@ -87,7 +87,8 @@ namespace Pspg {
       /**
       * Call current iterator to solve SCFT problem.
       *
-      * Return 0 for sucessful solution, 1 on failure to converge.
+      * \param isContinuation true iff is continuation in a sweep
+      * \return 0 for sucessful solution, 1 on failure to converge
       */
       virtual int solve(bool isContinuation);
 
@@ -95,7 +96,8 @@ namespace Pspg {
       * Reset system to previous solution after iterature failure.
       *
       * The implementation of this function should reset the system state
-      * to correspond to that stored in state(0).
+      * to correspond to that stored in state(0), i.e., the previous
+      * converged solution.
       */
       virtual void reset();
 

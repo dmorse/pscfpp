@@ -247,14 +247,15 @@ namespace Pspg
       * the current chemical potential fields (wFields and wFieldRGrid)
       * and current unit cell parameter values as initial guesses.
       * Upon exist, hasCFields is set true whether or not convergence
-      * is obtained to within the desired tolerance.  The Helmholtz free
+      * is obtained to within the desired tolerance. The Helmholtz free
       * energy and pressure are computed if and only if convergence is
       * obtained.
       *
-      * \pre The hasWFields flag must be true on entry.
-      * \return returns 0 for successful convergence, 1 for failure.
+      * \pre The hasWFields flag must be true on entry
+      * \param isContinuation  true iff continuation within a sweep
+      * \return returns 0 for successful convergence, 1 for failure
       */
-      int iterate();
+      int iterate(bool isContinuation = false);
 
       /**
       * Sweep in parameter space, solving an SCF problem at each point.
