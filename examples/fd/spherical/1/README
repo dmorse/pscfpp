@@ -86,3 +86,15 @@ Output files are placed in the gs/ output subdirectory. The file
 gs/log is a summary file with one line of basic thermodynamic 
 information per state point. 
 
+-------------------------------------------------------------------
+Simulation #5: Canonical, near CMC, FdIterator
+
+The parameter and command files param.c_fd and command solve the canonical
+ensemble SCFT equations for a micelle at conditions very near its cmc as Simulation #1, using Fredrickson relaxation iterator (FdIterator)
+To run this simulation enter
+
+>   pscf_fd -e -p param.c1_fd -c command.1
+
+Output concentration and chemical potential files and other output
+files are again written to directory out, with the same file names
+as in simulation example 1.
