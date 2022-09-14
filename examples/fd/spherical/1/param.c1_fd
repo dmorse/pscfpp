@@ -1,0 +1,47 @@
+System{
+  Mixture{
+     nMonomer  2
+     monomers[
+          1.0  
+          1.0 
+     ]
+     nPolymer  2
+     Polymer{
+        type    linear
+        nBlock  2
+        blocks[
+           0   0.125
+           1   0.875
+        ]
+        phi     0.018223
+     }
+     Polymer{
+        type    linear
+        nBlock  1
+        blocks[
+           1   1.000
+        ]
+        phi     0.981777
+     }
+     vMonomer   0.045787
+     ds         0.005
+  }
+  Interaction{
+     chi(
+         0  1    88.5
+     )
+  }
+  Domain{
+     mode      Spherical
+     isShell           0
+     xMax           4.00
+     nx              401
+  }
+  FdIterator{
+     epsilon   1e-9
+     lambdaPlus 1
+     lambdaMinus 1
+     maxIterations 100000
+  }
+}
+
