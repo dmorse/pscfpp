@@ -185,7 +185,7 @@ namespace Fd1d
       }
       
       
-      // Compute initial dWNorm 
+      // Compute initial dWNorm.
       mixture().compute(system().wFields(), system().cFields());
       computeDW(system().wFields(), system().cFields(), dW_, dWNorm_);
     
