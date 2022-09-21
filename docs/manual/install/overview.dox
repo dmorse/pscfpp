@@ -36,7 +36,7 @@ Instructions:
      > make all-cpu
      \endcode
      If successful, this will install executables named "pscf_fd",
-     "pscf_pc1d", "pscf_pc2d" and "pscf_pc3d" in the pscfpp/bin directory.
+     "pscf_pc1", "pscf_pc2" and "pscf_pc3" in the pscfpp/bin directory.
 
    - **Compile GPU accelerated programs:**
      To compile the GPU accelerated executables on a machine with an
@@ -45,7 +45,7 @@ Instructions:
      > make pspg
      \endcode
      from within the pscfpp/ root directory.  If successful, this will
-     install executables named "pscf_pg1d", "pscf_pg2d" and "pscf_pg3d"
+     install executables named "pscf_pg1", "pscf_pg2" and "pscf_pg3"
      in the pscfpp/bin directory.
 
 

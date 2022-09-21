@@ -68,7 +68,7 @@ relevant configuration files, and will recompile any file that might
 be effected by such changes.
 
 <h2> pspc: </h2>
-The pspc makefile target compiles the pscf_pc1d, pscf_pc2d, and pscf_ps3d
+The pspc makefile target compiles the pscf_pc1, pscf_pc2, and pscf_pc3
 pseudo-spectral programs for periodic microstructures on a CPU. These
 programs depend on both the GSL library and the FFTW fast Fourier 
 transform libraries.  To compile these programs, enter:
@@ -85,13 +85,13 @@ This command will cause the system to:
   - Compile all of the *.cpp files in the src/pspc/ directory, and create
     create a corresponding static library file there.
     
-  - Install executable program file named pscf_pc1d, pscf_pc2d, and 
-    pscf_pc3d in the pscfpp/bin directory. 
+  - Install executable program file named pscf_pc1, pscf_pc2, and 
+    pscf_pc3 in the pscfpp/bin directory. 
 
 The three resulting three programs are used for problems structures that 
 are periodic in 1, 2 and 3 dimensions, respectively. One would thus use 
-pscf_pc1d to simulate a lamellar (one-dimensional) structure, pscf_pc2d 
-to simulate a hexagonal cylinder (two-dimension structure), or pscf_pc3d 
+pscf_pc1 to simulate a lamellar (one-dimensional) structure, pscf_pc2 
+to simulate a hexagonal cylinder (two-dimension structure), or pscf_pc3 
 to simulate a fully three-dimensional structure such a BCC or gyroid 
 structure.
 
@@ -105,7 +105,7 @@ This is equivalent to entering "make fd1d" followed by "make pspc".
 
 <h2> pspg: </h2>
 
-The pspg makefile target compiles the pscf_pg1d, pscf_pg2d, and pscf_pg3d
+The pspg makefile target compiles the pscf_pg1, pscf_pg2, and pscf_pg3
 GPU-enabled pseudo-spectral programs for periodic microstructures. To
 compile these programs on a computer with an appropriate NVIDIA GPU and
 the NVCC Cuda compiler, enter
@@ -116,7 +116,7 @@ from either the pscfpp root directory or the desired build directory. If
 successful, this will compile code from the pspg/ subdirectory of the 
 src/ directory, place object, dependency and library files in subdirectories
 of the chosen build tree, and install executables for 1, 2, and 3 
-dimensional problems named pscf_pg1d, pscf_pg2d and pscf_pg3d in the 
+dimensional problems named pscf_pg1, pscf_pg2 and pscf_pg3 in the 
 pscfpp/bin directory.
 
 <h2> all: </h2>

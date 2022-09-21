@@ -226,8 +226,8 @@ file.  For example, one might enter
 pscf_pc3 -e -p param -c command
 ```
 to run the pscf_pc3 CPU program for three dimensional periodic structures. 
-The "-e" command line option causes the program the parameter file to 
-standard output as this file is read, which is generally a good idea.
+The "-e" command line option causes the program to echo the parameter file 
+to standard output as this file is read, which is generally a good idea.
 
 The above form of the command would write log output to the screen.  
 Output produced during a computation may also be redirected to a log file 
