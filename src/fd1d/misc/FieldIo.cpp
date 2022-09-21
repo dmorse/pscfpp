@@ -7,9 +7,14 @@
 
 #include "FieldIo.h"
 
-//#include <pscf/inter/Interaction.h>
-#include <pscf/homogeneous/Clump.h>
+#include <fd1d/domain/Domain.h>
+#include <fd1d/solvers/Mixture.h>
+#include <fd1d/solvers/Polymer.h>
 
+#include <pscf/homogeneous/Clump.h>
+//#include <pscf/inter/Interaction.h>
+
+#include <util/misc/FileMaster.h>
 #include <util/format/Str.h>
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
@@ -25,8 +30,7 @@ namespace Fd1d
    /*
    * Constructor.
    */
-   FieldIo::FieldIo(System& system)
-    : SystemAccess(system)
+   FieldIo::FieldIo()
    {}
 
    /*
@@ -36,7 +40,14 @@ namespace Fd1d
    {}
 
  
-   void FieldIo::readFields(Array<Field> &  fields, 
+   void FieldIo::associate(Domain const &  domain, 
+                           FileMaster const &  fileMaster)
+   {
+      domainPtr_ = &domain;
+      fileMasterPtr_ = &fileMaster;
+   }
+
+   void FieldIo::readFields(DArray<Field> &  fields, 
                             std::string const & filename)
    {
       std::ifstream in;
@@ -45,7 +56,7 @@ namespace Fd1d
       in.close();
    }
 
-   void FieldIo::readFields(Array<Field>& fields, std::istream& in)
+   void FieldIo::readFields(DArray<Field>& fields, std::istream& in)
    {
       // Read grid dimensions
       std::string label;
@@ -54,15 +65,19 @@ namespace Fd1d
       UTIL_CHECK(label == "nx");
       in >> nx;
       UTIL_CHECK(nx > 0);
-      UTIL_CHECK(nx == domain().nx());
       in >> label;
       UTIL_CHECK (label == "nm");
       in >> nm;
       UTIL_CHECK(nm > 0);
-      UTIL_CHECK(nm == mixture().nMonomer());
+
+      // Check dimensions of fields array
+      UTIL_CHECK(nm == fields.capacity());
+      for (int i = 0; i < nm; ++i) {
+         UTIL_CHECK(nx == fields[i].capacity());
+      }
 
       // Read fields
-      int i,j, idum;
+      int i, j, idum;
       for (i = 0; i < nx; ++i) {
          in >> idum;
          UTIL_CHECK(idum == i);
@@ -72,7 +87,7 @@ namespace Fd1d
       }
    }
 
-   void FieldIo::writeFields(Array<Field> const &  fields, 
+   void FieldIo::writeFields(DArray<Field> const &  fields, 
                              std::string const & filename)
    {
       std::ofstream out;
@@ -81,10 +96,16 @@ namespace Fd1d
       out.close();
    }
 
-   void FieldIo::writeFields(Array<Field> const & fields, std::ostream& out)
+   void FieldIo::writeFields(DArray<Field> const & fields, std::ostream& out)
    {
-      int nx = domain().nx();
-      int nm = mixture().nMonomer();
+      int nm = fields.capacity();
+      UTIL_CHECK(nm > 0);
+      int nx = fields[0].capacity();
+      if (nm > 1) {
+         for (int i = 0; i < nm; ++i) {
+            UTIL_CHECK(nx == fields[i].capacity());
+         }
+      }
       out << "nx     "  <<  nx              << std::endl;
       out << "nm     "  <<  nm              << std::endl;
 
@@ -99,43 +120,44 @@ namespace Fd1d
       }
    }
 
-   void FieldIo::writeBlockCFields(std::string const & filename)
+   void FieldIo::writeBlockCFields(Mixture const & mixture, 
+                                   std::string const & filename)
    {
       std::ofstream out;
       fileMaster().openOutputFile(filename, out);
-      writeBlockCFields(out);
+      writeBlockCFields(mixture, out);
       out.close();
    }
 
    /*
    * Write the concentrations associated with all blocks.
    */
-   void FieldIo::writeBlockCFields(std::ostream& out)
+   void FieldIo::writeBlockCFields(Mixture const & mixture, std::ostream& out)
    {
-      int nx = domain().nx();          // number grid points
-      int np = mixture().nPolymer();   // number of polymer species
-      int nb;                          // number of blocks per polymer
-      int nb_tot = mixture().nBlock(); // number of blocks in whole system
-      int ns = mixture().nSolvent();   // number of solvents
+      int nx = domain().nx();         // number grid points
+      int np = mixture.nPolymer();    // number of polymer species
+      int nb_tot = mixture.nBlock();  // number of blocks in whole system
+      int ns = mixture.nSolvent();    // number of solvents
 
       out << "nx          "  <<  nx              << std::endl;
       out << "n_block     "  <<  nb_tot          << std::endl;
       out << "n_solvent   "  <<  ns              << std::endl;
 
-      int i, j, k, l;
+      int nb;                         // number of blocks per polymer
+      int i, j, k, l;                 // dummy indices
       double c;
       for (i = 0; i < nx; ++i) {
          out << Int(i, 5);
          for (j = 0; j < np; ++j) {
-            nb = mixture().polymer(j).nBlock();
+            nb = mixture.polymer(j).nBlock();
             for (k = 0; k < nb; ++k) {
-               c = mixture().polymer(j).block(k).cField()[i];
+               c = mixture.polymer(j).block(k).cField()[i];
                out << " " << Dbl(c, 15, 8);
             }
          }
          for (l = 0; l < ns; ++l) {
-               c = mixture().solvent(l).cField()[i];
-               out << " " << Dbl(c, 15, 8);
+            c = mixture.solvent(l).cField()[i];
+            out << " " << Dbl(c, 15, 8);
          }
          out << std::endl;
       }
@@ -144,22 +166,24 @@ namespace Fd1d
    /*
    * Write incoming q fields for a specified vertex.
    */
-   void FieldIo::writeVertexQ(int polymerId, int vertexId, 
+   void FieldIo::writeVertexQ(Mixture const & mixture,
+                              int polymerId, int vertexId, 
                               std::string const & filename)
    {
       std::ofstream out;
       fileMaster().openOutputFile(filename, out);
-      writeVertexQ(polymerId, vertexId, out);
+      writeVertexQ(mixture, polymerId, vertexId, out);
       out.close();
    }
 
    /*
    * Write incoming q fields for a specified vertex.
    */
-   void FieldIo::writeVertexQ(int polymerId, int vertexId, 
+   void FieldIo::writeVertexQ(Mixture const & mixture,
+                              int polymerId, int vertexId, 
                               std::ostream& out)
    {
-      Polymer const & polymer = mixture().polymer(polymerId);
+      Polymer const & polymer = mixture.polymer(polymerId);
       Vertex const & vertex = polymer.vertex(vertexId);
       Pair<int> pId;
       int bId;
@@ -184,7 +208,7 @@ namespace Fd1d
      
    }
 
-   void FieldIo::remesh(Array<Field> const &  fields, int nx, 
+   void FieldIo::remesh(DArray<Field> const &  fields, int nx, 
                         std::string const & filename)
    {
       std::ofstream out;
@@ -197,9 +221,16 @@ namespace Fd1d
    * Interpolate fields onto new mesh.
    */
    void 
-   FieldIo::remesh(Array<Field> const & fields, int nx, std::ostream& out)
+   FieldIo::remesh(DArray<Field> const & fields, int nx, std::ostream& out)
    {
-      int nm = mixture().nMonomer();
+      // Query and check dimensions of fields array
+      int nm = fields.capacity();
+      UTIL_CHECK(nm > 0);
+      for (int i = 0; i < nm; ++i) {
+         UTIL_CHECK(fields[i].capacity() == domain().nx());
+      }
+
+      // Output new grid dimensions
       out << "nx     "  <<  nx              << std::endl;
       out << "nm     "  <<  nm              << std::endl;
 
@@ -225,6 +256,8 @@ namespace Fd1d
       for (i = 1; i < nx -1; ++i) {
          y = dx*double(i)/domain().dx();
          yi = y;
+         UTIL_CHECK(yi >= 0);
+         UTIL_CHECK(yi + 1 < domain().nx());
          fu = y - double(yi);
          fl = 1.0 - fu;
 
@@ -247,7 +280,7 @@ namespace Fd1d
    }
 
    void 
-   FieldIo::extend(Array<Field> const & fields, int m, 
+   FieldIo::extend(DArray<Field> const & fields, int m, 
                    std::string const & filename)
    {
       std::ofstream out;
@@ -260,16 +293,24 @@ namespace Fd1d
    * Interpolate fields onto new mesh.
    */
    void 
-   FieldIo::extend(Array<Field> const & fields, int m, std::ostream& out)
+   FieldIo::extend(DArray<Field> const & fields, int m, std::ostream& out)
    {
-      int nm = mixture().nMonomer();
-      int nx = domain().nx();
+      // Query and check dimensions of fields array
+      int nm = fields.capacity();
+      UTIL_CHECK(nm > 0);
+      int nx = fields[0].capacity();
+      if (nm > 1) {
+         for (int i = 0; i < nm; ++i) {
+            UTIL_CHECK(nx == fields[i].capacity());
+         }
+      }
 
+      // Output new grid dimensions
       out << "nx     "  <<  nx + m << std::endl;
       out << "nm     "  <<  nm              << std::endl;
-      int i, j;
 
       // Loop over existing points;
+      int i, j;
       for (i = 0; i < nx; ++i) {
          out << Int(i, 5);
          for (j = 0; j < nm; ++j) {

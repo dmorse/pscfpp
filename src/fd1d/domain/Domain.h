@@ -10,6 +10,7 @@
 
 #include <util/param/ParamComposite.h>     // base class
 #include "GeometryMode.h"                  // member
+#include <util/containers/DArray.h>        // function parameter
 
 namespace Pscf {
 namespace Fd1d {
@@ -30,7 +31,7 @@ namespace Fd1d {
       /**
       * Generic field type (base class)
       */
-      typedef Array<double> Field;
+      typedef DArray<double> Field;
 
       /**
       * Constructor.

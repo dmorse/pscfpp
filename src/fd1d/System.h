@@ -41,13 +41,13 @@ namespace Fd1d
    public:
 
       /// Generic Field type.
-      typedef Propagator::Field Field;
+      typedef DArray<double> Field;
 
       /// Monomer chemical potential field type.
-      typedef Propagator::WField WField;
+      typedef DArray<double> WField;
 
       /// Monomer concentration / volume fraction field type.
-      typedef Propagator::CField CField;
+      typedef DArray<double> CField;
 
       /// \name Construction and Destruction
       ///@{

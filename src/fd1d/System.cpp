@@ -271,7 +271,8 @@ namespace Fd1d
 
       std::string command;
       std::string filename;
-      FieldIo fieldIo(*this);
+      FieldIo fieldIo;
+      fieldIo.associate(domain_, fileMaster_);
 
       std::istream& inBuffer = in;
 
@@ -325,7 +326,7 @@ namespace Fd1d
          } else
          if (command == "WRITE_BLOCK_C") {
             readEcho(inBuffer, filename);
-            fieldIo.writeBlockCFields(filename);  
+            fieldIo.writeBlockCFields(mixture_, filename);  
          } else
          if (command == "WRITE_PARAM") {
             readEcho(inBuffer, filename);
@@ -350,7 +351,7 @@ namespace Fd1d
             inBuffer >> vertexId;
             Log::file() << "vertexId  = " 
                         << Int(vertexId, 5) << std::endl;
-            fieldIo.writeVertexQ(polymerId, vertexId, filename);  
+            fieldIo.writeVertexQ(mixture_, polymerId, vertexId, filename);  
          } else
          if (command == "REMESH_W") {
             int nx;
@@ -676,7 +677,8 @@ namespace Fd1d
    void System::writeW(std::string const & filename)
    {
       //UTIL_CHECK(hasWFields_);
-      FieldIo fieldIo(*this);
+      FieldIo fieldIo;
+      fieldIo.associate(domain_, fileMaster_);
       fieldIo.writeFields(wFields(), filename);
    }
 
@@ -686,7 +688,8 @@ namespace Fd1d
    void System::writeC(std::string const & filename)
    {
       //UTIL_CHECK(hasCFields_);
-      FieldIo fieldIo(*this);
+      FieldIo fieldIo;
+      fieldIo.associate(domain_, fileMaster_);
       fieldIo.writeFields(cFields(), filename);
    }
 
@@ -697,8 +700,9 @@ namespace Fd1d
    void System::writeBlockC(std::string const & filename) 
    {
       //UTIL_CHECK(hasCFields_);
-      FieldIo fieldIo(*this);
-      fieldIo.writeBlockCFields(filename);
+      FieldIo fieldIo;
+      fieldIo.associate(domain_, fileMaster_);
+      fieldIo.writeBlockCFields(mixture_, filename);
    }
 
 } // namespace Fd1d

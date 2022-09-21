@@ -158,7 +158,8 @@ public:
 
       System sys;
       sys.readParam(in);
-      FieldIo fieldIo(sys);
+      FieldIo fieldIo;
+      fieldIo.associate(sys.domain(), sys.fileMaster());
 
       Log::file() << "\n";
       sys.writeParam(Log::file());
@@ -220,7 +221,8 @@ public:
 
       Mixture& mix = sys.mixture();
       Domain& domain = sys.domain();
-      FieldIo fieldIo(sys);
+      FieldIo fieldIo;
+      fieldIo.associate(sys.domain(), sys.fileMaster());
 
       // Create initial chemical potential fields
       double nx = (double)domain.nx();
@@ -278,7 +280,8 @@ public:
       sys.readParam(in);
       in.close();
 
-      FieldIo fieldIo(sys);
+      FieldIo fieldIo;
+      fieldIo.associate(sys.domain(), sys.fileMaster());
 
       Log::file() << "\n";
       // sys.writeParam(Log::file());

@@ -32,9 +32,10 @@ namespace Fd1d
       SystemAccess(system),
       homogeneousMode_(-1),
       comparison_(system),
-      fieldIo_(system)
+      fieldIo_()
    {
       setClassName("Sweep"); 
+      fieldIo_.associate(system.domain(), system.fileMaster());
    }
 
    /*
