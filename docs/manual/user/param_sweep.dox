@@ -8,9 +8,9 @@ Some of the PSCF programs provide capability to run a sequence of SCFT
 simulations at slightly different conditions corresponding to points on
 a line through parameter space. We refer to this kind of calculation as
 a "sweep".  The ability to perform a sweep is currently provided in the
-pscf_fd1d program for one-dimensional problems and in the pscf_pcNd
-CPU programs for periodic structures, and is currently under developement
-for the pscf_pgNd GPU-accelerated programs.
+pscf_fd program for one-dimensional problems and in the pscf_pc CPU 
+programs for periodic structures, and is currently under developement
+for the pscf_pg GPU-accelerated programs.
 
 \section user_param_sweep_definition Sweep Definition
 
@@ -153,7 +153,7 @@ Technical note: Source code files that are specific to different PSCF
 programs are defined in different C++ namespaces. This allows classes 
 that play analogous roles in different programs but that differ in some 
 details to be given the the same name. The LinearSweep classes for the 
-pscf_fd1d, pscf_pcNd and pscf_pgNd programs are actually different 
+pscf_fd, pscf_pc and pscf_pg programs are actually different 
 classes defined in different namespaces that have identical or nearly 
 identical user interfaces and implement completely analogous algorithms. 
 The common user interface for these classes is described here. </i>
@@ -259,7 +259,7 @@ The table shown below gives all allowed values for the parameter type
 string identifer for a LinearSweep for a periodic microstructure with
 with the number and meaning of any associated index or indices. All 
 but one of these types of parameter are also valid in a linear sweep
-performed by pscf_fd1d one-dimensional finite difference program, as
+performed by pscf_fd one-dimensional finite difference program, as
 discussed below.  To indicate the meaning of each index in this table, 
 we use the following notation:
 
@@ -319,7 +319,7 @@ automatically also update chi(j, i) for i !\ j, thus maintaining the
 symmetry of the matrix.
 
 The only type of parameter change listed above that is not applicable
-to one-dimensional simulations performed by pscf_fd1d is the unit_cell
+to one-dimensional simulations performed by pscf_fd is the unit_cell
 type. In a calculation for a periodic structure performed using a
 pscf_pc or pscf_pg program, a "unit_cell" parameter is one of the 
 parameters that determine the the size and shape of the crystal unit 

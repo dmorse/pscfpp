@@ -37,7 +37,7 @@ pspc_LIB=$(BLD_DIR)/pspc/lib$(pspc_LIBNAME).a
 #-----------------------------------------------------------------------
 # Paths to executable main program files
 
-PSCF_PC1D_EXE=$(BIN_DIR)/pscf_pc1d
-PSCF_PC2D_EXE=$(BIN_DIR)/pscf_pc2d
-PSCF_PC3D_EXE=$(BIN_DIR)/pscf_pc3d
+PSCF_PC1_EXE=$(BIN_DIR)/pscf_pc1
+PSCF_PC2_EXE=$(BIN_DIR)/pscf_pc2
+PSCF_PC3_EXE=$(BIN_DIR)/pscf_pc3
 #-----------------------------------------------------------------------

@@ -13,12 +13,12 @@ program as arguments of the "-p" and "-c" command line options, respectively.
 Names of other input and output files are provided as arguments to commands 
 in the command file.
 
-As an example, consider use of the program pscf_pc3d, which is used to 
+As an example, consider use of the program pscf_pc3, which is used to 
 model three-dimensional periodic microstructures.  To run this program 
 using a parameter file named "param" and command file named "commands" 
 that are both in the current working directory, one would enter:
 \code
-   pscf_pc3d -p param -c commands
+   pscf_pc3 -p param -c commands
 \endcode
 The analagous command to invoke a different PSCF program would use a 
 different executable name (e.g., pscf_fd1d for the program for 
@@ -30,7 +30,7 @@ which outputs to a terminal by default. This log output can be re-directed
 to a file by using the unix ">" output redirect operator. For example, 
 the command
 \code
-  pscf_pc3d -p param -c commands > log
+  pscf_pc3 -p param -c commands > log
 \endcode
 would direct standard output to a file named "log" in the current working
 directory.  Standard output should normally be redirected to a file when 
@@ -41,10 +41,10 @@ a job is run in background or in a queue.
 All PSCF programs accept a command line option "-e" that causes the 
 contents of each line of the parameter file to be echoed to standard 
 output as the parameter file is being read. For example, to invoke 
-the program pscf_pc3d with echoing of the parameter file to a log file, 
+the program pscf_pc3 with echoing of the parameter file to a log file, 
 one could enter
 \code
-   pscf_pc3d -e -p param -c commands > log
+   pscf_pc3 -e -p param -c commands > log
 \endcode
 This option is very useful for locating errors in the parameter file.
 When an error is detected while reading a parameter file, the echoed 

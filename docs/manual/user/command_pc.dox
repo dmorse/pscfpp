@@ -1,12 +1,12 @@
-/*! \page user_command_pc_page 3.4.2 Commands for pscf_pcNd (CPU)
+/*! \page user_command_pc_page 3.4.2 Commands for pscf_pcD (CPU)
 
  \ref user_command_fd_page     (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref user_command_pg_page (Next) 
 <BR>
 
-Here is a example of a simple command file for any of pscf_pcNd programs 
-for N-dimensionally periodic microstructures (i.e., for pscf_pc1d, 
-pscf_pc2d, or pscf_pc3d):
+Here is a example of a simple command file for any of pscf_pcD programs for
+D-dimensionally periodic microstructures (i.e., for pscf_pc1, pscf_pc2, or 
+pscf_pc3):
 \code
 READ_W_BASIS    in/w.bf
 ITERATE         
@@ -20,35 +20,39 @@ FINISH
 The command "READ_W_BASIS in/w.bf" instructs the program to read an 
 initial guess for the chemical potentials fields from the file in/w.bf, 
 which should use contain the components of the fields as an expansion in 
-a symmetry-adapted Fourier basis. The ITERATE command instructs the 
-program to iteratively solve the SCFT equations starting from this initial 
-guess.  The command "WRITE_W_BASIS out/w.bf" writes the resulting 
-converged set of chemical potential fields to file out/w.bf in 
-symmetry-adapted basis format. The command "WRITE_C_BASIS out/c.bf" writes 
-the corresponding monomer volume fraction fields to the file out/c.bf in 
-the same format, while "WRITE_C_RGRID out/c.rf" writes the volume fraction
-fields in r-grid format. The command "WRITE_PARAM out/data" writes the 
-param file for the current system to a file. The following command, 
-"WRITE_THERMO out/data", appends the thermodynamic properties of the 
-converged solution to the end of out/data, which already contains the 
-param file. The script stops execution when it encounters the 
-FINISH command.
+a symmetry-adapted Fourier basis. The ITERATE command instructs the program
+to iteratively solve the SCFT equations starting from this initial guess.  
+The command "WRITE_W_BASIS out/w.bf" writes the resulting converged set of 
+chemical potential fields to file out/w.bf in symmetry-adapted basis 
+format. The command "WRITE_C_BASIS out/c.bf" writes the corresponding 
+monomer volume fraction fields to the file out/c.bf in the same format, 
+while "WRITE_C_RGRID out/c.rf" writes the volume fraction fields in r-grid 
+format. The command "WRITE_PARAM out/data" writes a param file for the 
+current system to a file. The following command, "WRITE_THERMO out/data", 
+appends the thermodynamic properties of the converged solution to the end 
+of out/data, which already contains the param file. The script stops 
+execution when it encounters the FINISH command.
 
-Many of the available commands for the pscf_pcNd programs cause the 
+Many of the available commands for the pscf_pcD programs cause the 
 program to read and/or write a set of chemical potential (w) fields or 
 monomer concentration (c) fields to or from file.  These program can 
 read and write fields in any of three formats:
 
- - "basis" format contains components in a symmetry-adapted Fourier basis
+ - "basis" format contains real components of an expansion of the
+    field using a real symmetry-adapted Fourier basis
 
- - "r-grid" format contains field values on nodes of a regular real-space grid
+ - "r-grid" format contains real field values on nodes of a regular 
+    real-sapace grid
 
- - "k-grid" format contains components of a discrete Fourier transform (DFT)
+ - "k-grid" format contains complex components of a discrete Fourier 
+   transform (DFT) of a real field
 
 The "basis" and "r-grid" fromats are identical to corresponding formats
-used by the Fortran PSCF program. 
+used by the Fortran PSCF program.  The k-grid format is not conpatible
+with that used by the Fortran program, because of differences in the 
+way that FFTs are stored and indexed internally.
 
-The following table shows a list of available commands for the pscf_pcNd 
+The following table shows a list of available commands for the pscf_pcD
 programs:
 <table>
   <tr> 
@@ -59,8 +63,9 @@ programs:
   <tr> 
     <td> READ_W_BASIS </td>
     <td> filename [string] </td>
-    <td> Read w fields from file filename, in symmetry-adapted basis format
-         </td>
+    <td> 
+         Read w fields from file filename, in symmetry-adapted basis format
+    </td>
   </tr>
   <tr> 
     <td> READ_W_RGRID </td>
@@ -224,19 +229,17 @@ programs:
     <td> inFile [string] </td>
     <td> Read fields from file inFile in real-space (r-grid) format,
          check whether the fields have symmetry that matches the
-         space group specified in the param file. 
-         </td>
+         space group specified in the param file.  </td>
   </tr>
   <tr> 
     <td> GUESS_W_FROM_C </td>
     <td> inFile [string], outFile [string] </td>
-    <td> Read monomer concentration fields in symmetry-adapted basis 
-         format from file inFile, generate chemical potential fields 
-         using the concentration fields and chi values, and write the 
-         potential fields to outFile in symmetry-adapted basis format.
-         Also stores potential fields to be used by future commands
-         (e.g., ITERATE or SWEEP).
-         </td>
+    <td> Read monomer concentration fields (c fields) in symmetry-adapted 
+         basis format from file inFile, generate chemical potential 
+         fields (w fields) using the concentration fields and chi values, 
+         and write the potential fields to outFile in symmetry-adapted 
+         basis format.  Also stores potential fields to be used by future 
+         commands (e.g., ITERATE or SWEEP). </td>
   </tr>
 </table>
 

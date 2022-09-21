@@ -51,9 +51,9 @@ System{
 
 \section user_param_pc_system_sec File Format
 
-The main System block of a parameter file for any of the pscf_pc and pscf_pg programs for 
-has the same overall structure as that used by pscf_fd1d program, and is described by the
-same format skeleton:
+The main System block of a parameter file for any of the pscf_pc and 
+pscf_pg programs for has the same overall structure as that used by 
+pscf_fd program, and is described by the same format skeleton:
 \code
 System{
   Mixture{ ...  }
@@ -63,10 +63,10 @@ System{
   Sweepr#*{ ... }
 }
 \endcode
-As for pscf_fd1d, the Sweep block is optional, and Iterator and Sweep blocks (if present)
-are both selectable blocks.  The purposes of these top-level blocks have all been 
-discussed previously in the discussion of pscf_fd, and will not be repeated here. 
-
+As for pscf_fd, the Sweep block is optional, and Iterator and Sweep 
+blocks (if present) are both selectable blocks.  The purposes of these 
+top-level blocks have all been discussed previously in the discussion of 
+pscf_fd, and will not be repeated here. 
 Formats of the Mixture and Interaction blocks are the same for all PSCF programs, and 
 so have also been discussed previously. Below, we discuss the contents of the Domain, 
 Iterator, and Sweep blocks.

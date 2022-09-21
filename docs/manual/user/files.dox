@@ -1,4 +1,4 @@
-/*! \page user_files_page 3.1 Input File Types
+/*! \page user_files_page 3.1 Input Files
 
 \ref user_page (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_usage_page (Next) 
@@ -17,37 +17,38 @@ below and in more detail in several subsequent pages. Programs that are
 designed to treat periodic microstructue use formats for field files that 
 are backwards compatible with those used by the older Fortran PSCF program.
 
-When any pscf program is executed, the parameter file is processes first. 
-The parameter file contains basic physical information about the chemical 
-composition of the system of interest (e.g., molecular structures),
-parameters that describe interactions among the constituents, and some
-algorithmic parameters.  The information contained in the param file is 
-needed to allocate memory and initialize the state of the program. The
-name of the parameter file must be specified when a program is invoked 
-as a command line argument (the argument of the "-p" command line option).
+When any pscf program is executed, the parameter file is processes first.
+This file defines the basic parameters of a physical problem of interest, 
+and is used to initialize the state of the program.
+The parameter file contains basic physical information about chemical 
+structures (e.g., monomer properties and block polymer structures), the 
+composition of the system of interest, interactions among the constituents 
+(Flory-Huggins chi parameters), a description of the spatial domain of 
+interest (e.g., a unit cell of a periodic structure) and a spatial 
+discretization of that domain, and some other algorithmic parameters. 
+The name of the parameter file is specified as command line argument when 
+a pscf program is invoked, as the argument of the "-p" command line option.
 
-The command file is processed after the parameter file.  The command file 
-is a script that contains a list of commands that are interpreted and 
-executed in the order they appear within the file. The command file thus 
-controls program flow after initialization. The name of the command file 
-is specified by a command line argument (the argument of the "-c" command 
-line option).
+The command file is processed after the parameter file, and controls 
+program flow after initialization.  The command file is a script that 
+contains a list of commands that are interpreted and executed in the 
+order they appear within the file.  The name of the command file is 
+also specified by a command line argument (the argument of the "-c" 
+command line option).
 
 Many commands in a command file require field data to be read from or 
 written to specific data files.  For example, the first step in solving 
 a SCFT problem is usually to read an initial guess for the chemical 
-potential fields from a field file. The last steps of such a computation 
-may then include writing the converged chemical potential and monomer 
-concentration fields to output files.  The names of these input and 
-output data files are specified as parameters of commands within the 
-command file.
+potential fields from an input field file. The last steps of such a 
+computation may then include writing the converged chemical potential 
+and monomer concentration fields to output files.  The names of these 
+input and output field files and various other data files are specified 
+as parameters of commands within the command file.
 
 \section user_files_parameter_section Parameter file
 
-The parameter file contains most of the data required to define initial 
-physical parameters for a system of interest and initialize a calculation. 
-The parameter file format required to initialize a single SCFT calculation 
-generally contains the following 4 sections:
+The parameter file for a simple SCFT calculation generally contains the 
+following 4 sections:
 
 - Mixture: Molecular structure and volume fraction or chemical potential of each molecular species within a mixture.
 - Interaction: Flory-Huggins chi parameters 

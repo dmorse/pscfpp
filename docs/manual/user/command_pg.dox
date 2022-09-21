@@ -1,37 +1,16 @@
-/*! \page user_command_pg_page 3.4.3 Commands for pscf_pgNd (CPU)
+/*! \page user_command_pg_page 3.4.3 Commands for pscf_pg (CPU)
 
  \ref user_command_pc_page     (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref user_example_page (Next) 
 <BR>
 
-Most of the available commands for the pscf_pgNd programs GPU programs
-are similar to those used by the pscf_pcNd CPU programs. Both GPU and
+Most of the available commands for the pscf_pg programs GPU programs
+are similar to those used by the pscf_pc CPU programs. The GPU and
 CPU programs for periodic structures use the same set of file formats.
 
-The most important difference in functionality of the GPU and CPU 
-codes is a difference in the treatment of space group symmetry. The 
-pscf_pgNd GPU can read and write fields in symmetry-adapted basis
-format, but uses an algorithm to solve the SCFT equations that does
-not explicitly enforce a specified space group symmetry during the
-search for a solution. By specifying a space group in the parameter 
-file and then using the READ_W_BASIS command to read in a w field
-with that symmetry in a symmetry adapted basis format, users may 
-start from an initial guess with a known space group symmetry. If 
-such an initial guess is near a stable or metastable solution with 
-the desired symmetry, the iterator will generally preserve that 
-space group symmetry during iteration and converge to a solution
-with the same space group. It is also possible, however, for the 
-iterator to produce a solution that does not have the assumed symmetry. 
-Using the WRITE_W_BASIS or WRITE_C_BASIS commands to write out w or 
-c files in symmetry-adapted basis format after obtaining a converged 
-solution is thus somewhat dangerous, since it will yield output 
-files that are equivalent to the files obtained by outputting these 
-fields in r-grid format only if the solution does in fact have the 
-assumed space group symmetry. 
-
-The following table shows a list of available commands for the pscf_pgNd 
-GPU accelerated programs periodic microstructures (i.e., pscf_pg1d,
-pscf_pg2d, and pscf_pg3d). 
+The following table shows a list of available commands for the pscf_pg
+GPU accelerated programs periodic microstructures (i.e., pscf_pg1,
+pscf_pg2, and pscf_pg3). 
 
 <table>
   <tr> 
