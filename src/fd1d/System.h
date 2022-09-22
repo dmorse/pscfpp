@@ -9,6 +9,7 @@
 */
 
 #include <util/param/ParamComposite.h>     // base class
+#include <fd1d/misc/FieldIo.h>             // member
 #include <fd1d/solvers/Mixture.h>          // member
 #include <fd1d/domain/Domain.h>            // member
 #include <pscf/homogeneous/Mixture.h>      // member
@@ -317,6 +318,11 @@ namespace Fd1d
       * Filemaster (holds paths to associated I/O files).
       */
       FileMaster fileMaster_;
+
+      /**
+      * FieldIo (field input-output operations).
+      */
+      FieldIo fieldIo_;
 
       /**
       * Homogeneous mixture, for reference.

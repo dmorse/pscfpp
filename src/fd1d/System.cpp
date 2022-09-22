@@ -40,6 +40,7 @@ namespace Fd1d
     : mixture_(),
       domain_(),
       fileMaster_(),
+      fieldIo_(),
       homogeneous_(),
       interactionPtr_(0),
       iteratorPtr_(0),
@@ -59,6 +60,7 @@ namespace Fd1d
    {  
       setClassName("System"); 
 
+      fieldIo_.associate(domain_, fileMaster_);
       interactionPtr_ = new Interaction(); 
       iteratorFactoryPtr_ = new IteratorFactory(*this); 
       sweepFactoryPtr_ = new SweepFactory(*this);
@@ -271,8 +273,6 @@ namespace Fd1d
 
       std::string command;
       std::string filename;
-      FieldIo fieldIo;
-      fieldIo.associate(domain_, fileMaster_);
 
       std::istream& inBuffer = in;
 
@@ -288,7 +288,7 @@ namespace Fd1d
          } else
          if (command == "READ_W") {
             readEcho(inBuffer, filename);
-            fieldIo.readFields(wFields(), filename);  
+            fieldIo_.readFields(wFields(), filename);  
          } else
          if (command == "COMPUTE") {
             // Solve the modified diffusion equation, without iteration
@@ -318,15 +318,15 @@ namespace Fd1d
          } else
          if (command == "WRITE_W") {
             readEcho(inBuffer, filename);
-            fieldIo.writeFields(wFields(), filename);  
+            fieldIo_.writeFields(wFields(), filename);  
          } else
          if (command == "WRITE_C") {
             readEcho(inBuffer, filename);
-            fieldIo.writeFields(cFields(), filename);  
+            fieldIo_.writeFields(cFields(), filename);  
          } else
          if (command == "WRITE_BLOCK_C") {
             readEcho(inBuffer, filename);
-            fieldIo.writeBlockCFields(mixture_, filename);  
+            fieldIo_.writeBlockCFields(mixture_, filename);  
          } else
          if (command == "WRITE_PARAM") {
             readEcho(inBuffer, filename);
@@ -343,15 +343,17 @@ namespace Fd1d
             file.close();
          } else
          if (command == "WRITE_VERTEX_Q") {
-            readEcho(inBuffer, filename);
             int polymerId, vertexId;
             inBuffer >> polymerId;
+            Log::file() << std::endl;
             Log::file() << "polymerId = " 
                         << Int(polymerId, 5) << std::endl;
             inBuffer >> vertexId;
             Log::file() << "vertexId  = " 
                         << Int(vertexId, 5) << std::endl;
-            fieldIo.writeVertexQ(mixture_, polymerId, vertexId, filename);  
+            inBuffer >> filename;
+            Log::file() << "outfile   = " << Str(filename, 20) << std::endl;
+            fieldIo_.writeVertexQ(mixture_, polymerId, vertexId, filename);  
          } else
          if (command == "REMESH_W") {
             int nx;
@@ -360,7 +362,7 @@ namespace Fd1d
             Log::file() << "nx      = " << Int(nx, 20) << std::endl;
             inBuffer >> filename;
             Log::file() << "outfile = " << Str(filename, 20) << std::endl;
-            fieldIo.remesh(wFields(), nx, filename);
+            fieldIo_.remesh(wFields(), nx, filename);
          } else
          if (command == "EXTEND_W") {
             int m;
@@ -369,7 +371,7 @@ namespace Fd1d
             Log::file() << "m       = " << Int(m, 20) << std::endl;
             inBuffer >> filename;
             Log::file() << "outfile = " << Str(filename, 20) << std::endl;
-            fieldIo.extend(wFields(), m, filename);
+            fieldIo_.extend(wFields(), m, filename);
          } else {
             Log::file() << "  Error: Unknown command  " << command << std::endl;
             readNext = false;
@@ -677,9 +679,7 @@ namespace Fd1d
    void System::writeW(std::string const & filename)
    {
       //UTIL_CHECK(hasWFields_);
-      FieldIo fieldIo;
-      fieldIo.associate(domain_, fileMaster_);
-      fieldIo.writeFields(wFields(), filename);
+      fieldIo_.writeFields(wFields(), filename);
    }
 
    /*
@@ -688,9 +688,7 @@ namespace Fd1d
    void System::writeC(std::string const & filename)
    {
       //UTIL_CHECK(hasCFields_);
-      FieldIo fieldIo;
-      fieldIo.associate(domain_, fileMaster_);
-      fieldIo.writeFields(cFields(), filename);
+      fieldIo_.writeFields(cFields(), filename);
    }
 
    /*
@@ -700,9 +698,7 @@ namespace Fd1d
    void System::writeBlockC(std::string const & filename) 
    {
       //UTIL_CHECK(hasCFields_);
-      FieldIo fieldIo;
-      fieldIo.associate(domain_, fileMaster_);
-      fieldIo.writeBlockCFields(mixture_, filename);
+      fieldIo_.writeBlockCFields(mixture_, filename);
    }
 
 } // namespace Fd1d

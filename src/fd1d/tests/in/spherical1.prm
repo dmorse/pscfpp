@@ -14,9 +14,9 @@ System{
      ds   0.005
   }
   Interaction{
-     chi   0  1    80.0
-           0  0     0.0
-           1  1     0.0
+     chi(
+         0   1   80.0
+     )
   }
   Domain{
      mode      Spherical

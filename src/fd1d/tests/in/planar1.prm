@@ -1,23 +1,27 @@
 System{
   Mixture{
      nMonomer  2
-     monomers  1.0  
-               1.0 
+     monomers[
+                1.0  
+                1.0 
+     ]
      nPolymer  1
      nSolvent  0
      Polymer{
         type    linear
         nBlock  2
-        blocks  0   2.0
+        blocks[
+                0   2.0
                 1   3.0
+        ]
         phi     1.0
      }
      ds   0.001
   }
   Interaction{
-     chi   0  1    4.0
-           0  0    0.0
-           1  1    0.0
+     chi(
+         0    1   4.0
+     )
   }
   Domain{
      mode   Planar

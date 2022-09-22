@@ -11,6 +11,7 @@
 #include <fd1d/solvers/Mixture.h>
 #include <fd1d/solvers/Polymer.h>
 
+#include <pscf/chem/Vertex.h>
 #include <pscf/homogeneous/Clump.h>
 //#include <pscf/inter/Interaction.h>
 
@@ -60,13 +61,15 @@ namespace Fd1d
    {
       // Read grid dimensions
       std::string label;
-      int nx, nm;
       in >> label;
       UTIL_CHECK(label == "nx");
+      int nx;
       in >> nx;
       UTIL_CHECK(nx > 0);
+      UTIL_CHECK(nx == domain().nx());
       in >> label;
       UTIL_CHECK (label == "nm");
+      int nm;
       in >> nm;
       UTIL_CHECK(nm > 0);
 
@@ -101,6 +104,7 @@ namespace Fd1d
       int nm = fields.capacity();
       UTIL_CHECK(nm > 0);
       int nx = fields[0].capacity();
+      UTIL_CHECK(nx == domain().nx());
       if (nm > 1) {
          for (int i = 0; i < nm; ++i) {
             UTIL_CHECK(nx == fields[i].capacity());
@@ -136,15 +140,15 @@ namespace Fd1d
    {
       int nx = domain().nx();         // number grid points
       int np = mixture.nPolymer();    // number of polymer species
-      int nb_tot = mixture.nBlock();  // number of blocks in whole system
+      int nb_tot = mixture.nBlock();  // number of blocks in all polymers
       int ns = mixture.nSolvent();    // number of solvents
 
-      out << "nx          "  <<  nx              << std::endl;
-      out << "n_block     "  <<  nb_tot          << std::endl;
-      out << "n_solvent   "  <<  ns              << std::endl;
+      out << "nx          "  <<  nx       << std::endl;
+      out << "n_block     "  <<  nb_tot   << std::endl;
+      out << "n_solvent   "  <<  ns       << std::endl;
 
-      int nb;                         // number of blocks per polymer
-      int i, j, k, l;                 // dummy indices
+      int nb;                   // number of blocks per polymer
+      int i, j, k, l;           // loop indices
       double c;
       for (i = 0; i < nx; ++i) {
          out << Int(i, 5);
@@ -185,11 +189,12 @@ namespace Fd1d
    {
       Polymer const & polymer = mixture.polymer(polymerId);
       Vertex const & vertex = polymer.vertex(vertexId);
+      int nb = vertex.size();   // number of attached blocks
+      int nx = domain().nx();   // number grid points
+
       Pair<int> pId;
       int bId;
       int dId;
-      int nb = vertex.size();
-      int nx = domain().nx();          // number grid points
       int i, j;
       double c, product;
       for (i = 0; i < nx; ++i) {
@@ -208,7 +213,10 @@ namespace Fd1d
      
    }
 
-   void FieldIo::remesh(DArray<Field> const &  fields, int nx, 
+   /*
+   * Interpolate fields onto new mesh, write result to output file
+   */
+   void FieldIo::remesh(DArray<Field> const & fields, int nx, 
                         std::string const & filename)
    {
       std::ofstream out;
@@ -218,7 +226,7 @@ namespace Fd1d
    }
 
    /*
-   * Interpolate fields onto new mesh.
+   * Interpolate fields onto new mesh, write result to outputstream
    */
    void 
    FieldIo::remesh(DArray<Field> const & fields, int nx, std::ostream& out)
@@ -246,6 +254,7 @@ namespace Fd1d
       // Spacing for new grid
       double dx = (domain().xMax() - domain().xMin())/double(nx-1);
 
+      // Variables used for interpolation
       double y;  // Grid coordinate in old grid
       double fu; // fractional part of y
       double fl; // 1.0 - fl
@@ -299,6 +308,7 @@ namespace Fd1d
       int nm = fields.capacity();
       UTIL_CHECK(nm > 0);
       int nx = fields[0].capacity();
+      UTIL_CHECK(nx == domain().nx());
       if (nm > 1) {
          for (int i = 0; i < nm; ++i) {
             UTIL_CHECK(nx == fields[i].capacity());
@@ -319,7 +329,7 @@ namespace Fd1d
          out << std::endl;
       }
 
-      // Add m new points
+      // Add m new points, assign each the last value
       for (i = nx; i < nx + m; ++i) {
          out << Int(i, 5);
          for (j = 0; j < nm; ++j) {
