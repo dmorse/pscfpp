@@ -14,22 +14,33 @@ programs are affected by specific changes:
    all  - all programs (Fd1d, Pspc, and Pspg)
 
 
-Progress towards Pscf++ v0.9
-============================
+Pscf++ v0.9.0
+==============
+
+User-visible features
+---------------------
+* Sweep feature implemented in Pspg
+* Symmetry preserving iterator in Pspg
+* FilmIterator for simulating ordering in thin films (Pspc)
+* Commands to write full MDE solutions to file (Pspc)
 
 User-visible changes
 --------------------
-- New default parameter file format for arrays and matrices (all).
-  New format uses [] brackets or parentheses as delimiters for containers.
-  The old format is still readable (i.e., backwards compatible).
-- All crystal systems have been implemented (triclinic, etc) (Pspc, Pspg)
-- Removed unused monomer name strings from parameter file format 
+* New default parameter file format for arrays and matrices (all).
+  New format uses [] brackets or () parentheses as delimiters for containers.
+* All crystal systems have been implemented (triclinic, etc) (Pspc, Pspg)
+* Removed unused monomer name strings from parameter file format 
 
 Documentation
 --------------
-- Documentation of unit cell data format and space groups (Pspc, Pspg)
-- Improved documentation of parameter file formats (all)
+* Documented sweep concept and interface for LinearSweep (all)
+* Improved documentation of parameter file formats (all)
+* Documentation of unit cell data format and space groups (Pspc, Pspg)
 
+Bug fixes
+---------
+* Fixed treatment of non-centrosymmetric groups in Pspg
+* Fixed bug in calculation of spatial integral for solvent in Fd1d
 
 Pscf++ v0.8.1
 ==============
@@ -45,7 +56,6 @@ Released March 11, 2022
 
 User-visible features
 ---------------------
-
 * Sweep feature (continuation of a family of solutions) (Pspc)
 * Point-particle solvent (Fd1d, Pspc, and Pspg)
 * Open ensembles (grand canonical or mixed) in AmIterator (Pspc and Pspg)
