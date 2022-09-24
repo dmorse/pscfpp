@@ -1,7 +1,7 @@
 namespace Pscf{
 namespace Pspc{
 /*! 
-\page pspc_Domain_page Domain
+\page pspc_Domain_page Pspc::Domain
 
 A Pscf::Pspc::Domain<D> object represents a spatial domain and discretization.
 The parameter file format for a Domain is:

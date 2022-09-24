@@ -1,7 +1,7 @@
 namespace Pscf{
 namespace Fd1d{
 /*! 
-\page fd1d_LinearSweep_page LinearSweep
+\page fd1d_LinearSweep_page Fd1d::LinearSweep
 
 A Pscf::Fd1d::LinearSweep<D> object allows the user to optionally perform
 a linear parameter sweep, in which one or more parameters in the system (e.g.

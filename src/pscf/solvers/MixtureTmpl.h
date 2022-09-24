@@ -120,6 +120,11 @@ namespace Pscf
       */
       int nSolvent() const;
 
+      /**
+      * Get monomer reference volume (set to 1.0 by default).
+      */
+      double vMonomer() const;
+
       //@}
 
    protected:
@@ -171,6 +176,11 @@ namespace Pscf
       * Number of blocks total, across all polymers.
       */
       int nBlock_;
+
+      /**
+      * Monomer reference volume (set to 1.0 by default).
+      */
+      double vMonomer_;
 
    };
 
@@ -234,6 +244,10 @@ namespace Pscf
       return solvents_[id]; 
    }
 
+   template <class TP, class TS>
+   inline double MixtureTmpl<TP,TS>::vMonomer() const
+   {  return vMonomer_; }
+
    // Non-inline member functions
 
    /*
@@ -248,7 +262,8 @@ namespace Pscf
       nMonomer_(0), 
       nPolymer_(0),
       nSolvent_(0),
-      nBlock_(0)
+      nBlock_(0),
+      vMonomer_(1.0)
    {}
 
    /*
@@ -264,7 +279,7 @@ namespace Pscf
    template <class TP, class TS>
    void MixtureTmpl<TP,TS>::readParameters(std::istream& in)
    {
-      // Read monomers
+      // Read nMonomer and monomers array
       read<int>(in, "nMonomer", nMonomer_);
       monomers_.allocate(nMonomer_);
       for (int i = 0; i < nMonomer_; ++i) {
@@ -275,9 +290,8 @@ namespace Pscf
       /*
       * The input format for a single monomer is defined in the istream
       * extraction operation (operator >>) for a Pscf::Monomer, in file
-      * pscf/chem/Monomer.cpp. The format consists of the monomer name
-      * string Monomer::name followed by monomer statistical segment 
-      * Monomer::kuhn on a single line.
+      * pscf/chem/Monomer.cpp. The text representation contains only the
+      * value for the monomer statistical segment Monomer::kuhn.
       */
 
       // Read nPolymer
@@ -320,6 +334,10 @@ namespace Pscf
          }
 
       }
+
+      // Optionally read monomer reference value
+      vMonomer_ = 1.0; // Default value
+      readOptional(in, "vMonomer", vMonomer_);
 
    }
 

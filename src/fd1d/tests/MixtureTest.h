@@ -80,6 +80,8 @@ public:
       domain.readParam(in);
       mix.setDomain(domain);
 
+      TEST_ASSERT(eq(mix.vMonomer(), 0.05));
+
       std::cout << "\n";
       mix.writeParam(std::cout);
       domain.writeParam(std::cout);

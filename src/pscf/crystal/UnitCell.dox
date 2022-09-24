@@ -19,7 +19,8 @@ For example, in a simulation of a 3D crystal, the text
 \endcode
 indicates that the Bravais lattice has a cubic unit cell with a single unit cell parameter with a value of 3.68, which represents the length of any edge of a simple-cubic unit cell along any of three orthogonal primary directions. 
 
-TODO: Document all lattice systems and parameters
+Detailed information about all of the different possible types of 1, 2, and 3 
+dimensional unit cells is given \ref user_unitcell_page "here" . 
 
 */
 }

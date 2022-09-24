@@ -1,4 +1,4 @@
-/*! \page user_command_pg_page 3.4.3 Commands for pscf_pg (CPU)
+/*! \page user_command_pg_page 3.4.3 Commands for pscf_pg (GPU)
 
  \ref user_command_pc_page     (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref user_example_page (Next) 
@@ -8,9 +8,12 @@ Most of the available commands for the pscf_pg programs GPU programs
 are similar to those used by the pscf_pc CPU programs. The GPU and
 CPU programs for periodic structures use the same set of file formats.
 
+\section user_command_pg_commands_section Commands
+
 The following table shows a list of available commands for the pscf_pg
 GPU accelerated programs periodic microstructures (i.e., pscf_pg1,
-pscf_pg2, and pscf_pg3). 
+pscf_pg2, and pscf_pg3). Almost all of the commands are identical to 
+those available for the pscf_pc CPU-based programs.
 
 <table>
   <tr> 

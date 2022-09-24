@@ -6,43 +6,41 @@
 
 Some of the PSCF programs provide capability to run a sequence of SCFT
 simulations at slightly different conditions corresponding to points on
-a line through parameter space. We refer to this kind of calculation as
-a "sweep".  The ability to perform a sweep is currently provided in the
-pscf_fd program for one-dimensional problems and in the pscf_pc CPU 
-programs for periodic structures, and is currently under developement
-for the pscf_pg GPU-accelerated programs.
+a line through the space of possible input parameter values. We refer 
+to this kind of calculation as a "sweep".  All of the PSCF programs can 
+perform sweep operations.
 
-\section user_param_sweep_definition Sweep Definition
+\section user_param_sweep_definition Sweep Concept
 
-To perform a sweep, the program solves a sequence of SCFT problems for
-choices of input parameters (e.g., block lengths, chi parameters, species
-volume fractions, etc.) that lie along a line through the space possible
-values for these parameters. During a sweep, the resulting SCFT problems 
-are solved in the sequence that they appear along this line. An initial
-guess for the vector of unknown variables for every point after the first
-one is obtained by extrapolating from solutions obtained at one or more
+To perform a sweep, the program attempts to solve a sequence of SCFT problems 
+for choices of input parameters (e.g., block lengths, chi parameters, species
+volume fractions, etc.) that are spaced lie along a line through the space of 
+possible values for these parameters. During a sweep, the resulting SCFT 
+problems are solved in the sequence that they appear along this line. An 
+initial guess for the vector of unknown variables for every point after the 
+first one is obtained by extrapolating from solutions obtained at one or more
 immediately preceding points along this line.
 
 To define a sweep, a path through parameter space is defined by defining
 how one or more input parameters vary as a function of a contour variable 
-s that, by convention, varies from 0 to 1. The number of SCFT calculations
-performed along that line are determined by an integer input parameter ns.
-SCFT calculations are performed at ns+1 evenly spaced values of s given 
-by s = i/ns, for integer i = 0, ..., ns + 1.
+denoted by s. By convention, s is taken to vary from 0 to 1 over the length
+of a sweep. The number of SCFT calculations performed along that line is 
+determined by an integer parameter denoted by ns.  SCFT calculations are 
+performed at ns+1 evenly spaced values of s given by s = i/ns, for integer 
+i = 0, ..., ns + 1.
 
-The simplest type of sweep is a linear sweep in which only one input 
-parameter varies, and in which that parameter is a linear function of
-s. For example, one might do a linear sweep of a single element of the
+The simplest possible type of sweep is a linear sweep in which only one 
+input parameter varies, and in which that parameter is a linear function 
+of s. For example, one might do a linear sweep of a single element of the
 chi parameter matrix over a set of evenly spaced values between an 
 initial and final value. 
 
-A general linear sweep is one in which several input parameters may 
-be varied simultaneously, and all of the affected parameters are linear
-functions of s.  The pscfp programs that provide sweep function all
-provide a general LinearSweep class that can implement a general linear
+A general linear sweep is one in which several input parameters may be 
+varied simultaneously, and in which each of the affected parameters is a 
+linear functions of s.  Every pscfp program can perform a general linear
 sweep of this type. 
 
-\section user_param_sweep_param_sec Parameter and Command Files
+\section user_param_sweep_param_sec Parameter File 
 
 The parameter file for a calculation in which a sweep will be performed
 must include an optional block that describes the nature of the sweep. 
@@ -60,10 +58,10 @@ System{
   Domain{
      ...
   }
-  Iterator#*{
+  Iterator#{
      ...
   }
-  Sweep#*{
+  Sweep#{
      ...
   }
 }
@@ -73,14 +71,10 @@ to indicate that these are both selectable blocks. Different options
 for the Sweep block can define different types of paths through 
 parameter space. 
 
-A sweep is actually performed by including a command name "SWEEP" in
-the command file. The SWEEP command does not take any parameters, and
-performs the sequence of calculations described in the Sweep block of 
-the parameter file. 
- 
 Below, we show an example of a pscf_fd parameter file that extends the
-example parameter file previously by appending a Sweep parameter file 
-block to the end of the main System block, using the default algorithm.
+example parameter file shown \ref user_param_example "previously" by 
+appending a Sweep parameter file block to the end of the main System 
+block, using the default algorithm.
 \code
 System{
   Mixture{
@@ -136,6 +130,15 @@ System{
 The only new element in this example is the Sweep block, which is discussed
 below.
 
+\section user_param_sweep_command_sec SWEEP Command
+
+A sweep is actually performed by including a command name "SWEEP" in
+the command file. The SWEEP command does not take any parameters, and
+performs the sequence of calculations described in the Sweep block of 
+the parameter file. The SWEEP block must appear after a command that
+initializes the w files with an initial guess for the solution of the
+first point of the sweep.
+ 
 \section user_param_sweep_linear_sec LinearSweep
 
 The default implementation of sweep for all PSCF programs is a general 

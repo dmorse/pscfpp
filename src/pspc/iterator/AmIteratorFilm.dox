@@ -1,13 +1,9 @@
 namespace Pscf{
 namespace Pspc{
 /*! 
-\page pspc_AmIteratorFilm_page AmIteratorFilm
+\page pspc_AmIteratorFilm_page Pspc::AmIteratorFilm
 
-A Pscf::Pspc::FilmIterator<D,AmIterator<D>> object, which has the class name
-"AmIteratorFilm," is an iterator that solves the SCFT equations using the 
-Anderson Mixing algorithm, while also imposing a mask and an external field 
-on the system that simulate thin film confinement. For more information, see 
-the detailed summary at \ref user_thin_films_page .
+The AmIteratorFilm block in a parameter file initializes an iterator that solves the SCFT equations using the Anderson Mixing algorithm, while also imposing a mask and an external field on a system so as to simulate a thin film.  For more information, see the detailed summary at \ref user_thin_films_page .
 
 The parameter file format for an AmIteratorFilm object is:
 \code
@@ -17,7 +13,7 @@ AmIteratorFilm{
    maxHist             int  
    errorType*          enumeration ("normResid", "maxResid", or "relNormResid", "relNormResid" by default)
    isFlexible*         bool (0 or 1, 0 by default)   
-   scaleStress*        float (10 by default)
+   scaleStress*        float (10.0 by default)
    normalVecId         int (0, 1, or 2)   
    interfaceThickness  float  
    wallThickness       float 
@@ -33,78 +29,72 @@ Parameters and subblocks are described below:
 <table>
   <tr>
     <td> maxItr </td>
-    <td> Maximum number of iterations attempted. If calculation has not converged
-         after this many iterations, the calculation will be terminated. </td>
+    <td> Maximum number of iterations that will be attempted </td>
   </tr>
   <tr>
     <td> epsilon </td>
-    <td> Error tolerance. Once the max, norm, or relative norm of the residual
-         vector (depending on choice of errorType) has shrunk below this value,
-         the calculation is considered to be converged. </td>
+    <td> Error tolerance. Iteration stops if the scalar error drops below this 
+         value. </td>
   </tr>
   <tr>
     <td> maxHist </td>
-    <td> The number of histories (previous state space points) to use to calculate
-         the fields at the next iteration. </td>
+    <td> The number of histories (previous state space points) to use to 
+         construct a new trial state during each iteration. </td>
   </tr>
   <tr>
     <td> errorType* </td>
-    <td> Error type to use to determine whether the calculation has converged.
-         If "maxResid", will use the maximum component of the residual vector.
-         If "normResid", will use the L2 norm of the residual vector. 
-         If "relNormResid", will use the L2 norm of the vector of residuals 
+    <td> Error type to use to define the scalar error that is compared
+         to epsilon to test for convergence.
+         If "maxResid", use the maximum component of the residual vector.
+         If "normResid", use the L2 norm of the residual vector. 
+         If "relNormResid", use the L2 norm of the vector of residuals 
          divided by the L2 norm of the vector of omega field elements, as in 
          Stasiak and Matsen, EPJE, 2011. </td>
   </tr>
   <tr>
     <td> isFlexible* </td>
-    <td> Boolean (0 or 1, default 0) indicating whether the lattice parameters
-         of the unit cell should be treated as flexible. If true (1), the 
-         iterator will optimize the lattice parameters to minimize the stress.
+    <td> Boolean (0 or 1, default 0) indicating whether the unit cell is
+         flexible.  If isFlexible is true (1), the iterator will optimize 
+         the flexible lattice parameters to minimize the free energy.
          </td>
   </tr>
   <tr>
     <td> scaleStress* </td>
-    <td> If isFlexible = true, the components of the residual that quantify the
-         stress will be multiplied by scaleStress, allowing the user to vary the
-         relative importance of the stress compared to the error in the potential
-         fields. Default value is 10. </td>
+    <td> If isFlexible = true, the components of the residual that correspond
+         to stress components are multiplied by scaleStress (real, optional,
+         10.0 by default).  Allows users to control the relative importance 
+         of the stress vs. residuals in the SCF equations.  </td>
   </tr>
   <tr>
     <td> normalVecId </td>
-    <td> Index (either 0, 1, or 2) specifying which lattice basis vector (**a**, 
-         **b**, or **c**, respectively) is oriented normal to the walls confining 
-         the thin film. E.g., if normalVecId = 1, then the **b** lattice basis
-         vector is normal to the walls, and we require that the walls must thus
-         thus be parallel to the plane shared by **a** and **c**. </td>
+    <td> Index (either 0, 1, or 2) of the Bravais lattice basis vector 
+         that is oriented normal to the walls confining the thin film. </td>
   </tr>
   <tr>
     <td> interfaceThickness </td>
-    <td> Number representing the thickness of the wall/polymer interface. As 
-         interfaceThickness shrinks, the volume fraction of the wall increases
-         more rapidly from 0 to 1 at this interface, which can require higher
-         resolution calculations to perform. Recommendation is to use 
-         0.5R<sub>g</sub> or less, where R<sub>g</sub> is the radius of gyration
-         of the majority species in the SCFT system. Value is defined in the same 
-         units as the lattice parameters and statistical segment lengths. </td>
+    <td> Thickness of the wall/polymer interface. As interfaceThickness 
+         decrease, the volume fraction of the wall increases more rapidly 
+         from 0 to 1 with changes in normal coordinate.  Recommendation is 
+         to use 0.5R<sub>g</sub> or less, where R<sub>g</sub> is the radius 
+         of gyration of the majority species in the SCFT system. </td>
   </tr>
   <tr>
     <td> wallThickness </td>
-    <td> Number representing the thickness of the wall itself within the unit
-         cell. Value is defined in the same units as the lattice parameters and 
-         statistical segment lengths. Recommendation is to use twice the 
-         interfaceThickness value, or higher. </td>
+    <td> thickness of the wall (i.e., the region from which the mixture is
+         excluded). Recommendation is to use at least twice the 
+         interfaceThickness value. </td>
   </tr>
   <tr>
     <td> chi* </td>
-    <td> Array of values representing the relative strength of chemical interactions
-         between the walls and the monomer species in the system, in the form of 
-         a Flory-Huggins-like chi value. Each row of the array corresponds to one
-         monomer species in the system, and contains two values: the first 
-         represents the interaction between wall 1 and the monomer species (where 
-         wall 1 is the wall that contains the origin), and the second represents
-         the interaction with wall 2. This array will have n_monomer rows and 2
-         columns. Large values represent unfavorable interactions. </td>
+    <td> Array of values representing the relative strength of chemical 
+         interactions between the walls and the monomer species in the 
+         system, in the form of a Flory-Huggins-like chi value. Each row 
+         of the array corresponds to one monomer species in the system, 
+         and contains two values: the first represents the interaction 
+         between wall 1 and the monomer species (where wall 1 is the wall 
+         that contains the origin), and the second represents the interaction 
+         with wall 2. This array will have n_monomer rows and 2 columns. 
+         Large values represent unfavorable interactions. </td>
   </tr>
   <tr>
     <td> wallBasisOutFile* </td>

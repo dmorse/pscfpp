@@ -28,14 +28,16 @@ namespace Fd1d
    void Domain::readParameters(std::istream& in)
    {
       mode_ = Planar;
+      isShell_ = false;
+      xMin_ = 0.0;
       read(in, "mode", mode_);
-      if (mode_ != Planar) {
-         read(in, "isShell", isShell_); 
-      } 
-      if (mode_ == Planar || isShell_) { 
-         read(in, "xMin", xMin_);
+      if (mode_ == Planar) {
+         readOptional(in, "xMin", xMin_);
       } else {
-         xMin_ = 0.0;
+         isShell_ = readOptional(in, "xMin", xMin_).isActive();
+         if (isShell_) {
+            UTIL_CHECK(xMin_ > 0.0);
+         }
       }
       read(in, "xMax", xMax_);
       read(in, "nx", nx_);

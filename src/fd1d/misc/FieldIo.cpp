@@ -187,7 +187,11 @@ namespace Fd1d
                               int polymerId, int vertexId, 
                               std::ostream& out)
    {
+      UTIL_CHECK(polymerId >= 0);
+      UTIL_CHECK(polymerId < mixture.nPolymer());
       Polymer const & polymer = mixture.polymer(polymerId);
+      UTIL_CHECK(vertexId >= 0);
+      UTIL_CHECK(vertexId <= polymer.nBlock());
       Vertex const & vertex = polymer.vertex(vertexId);
       int nb = vertex.size();   // number of attached blocks
       int nx = domain().nx();   // number grid points
@@ -203,10 +207,13 @@ namespace Fd1d
          for (j = 0; j < nb; ++j) {
             pId = vertex.inPropagatorId(j);
             bId = pId[0];  // blockId
+            UTIL_CHECK(bId >= 0);
             dId = pId[1];  // directionId
+            UTIL_CHECK(dId >= 0);
+            UTIL_CHECK(dId <= 1);
             c = polymer.propagator(bId, dId).tail()[i];
-            product *= c;
             out << " " << Dbl(c, 15, 8);
+            product *= c;
          }
          out << " " << Dbl(product, 15, 8) << std::endl;
       }

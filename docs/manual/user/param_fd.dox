@@ -1,15 +1,20 @@
-/*! \page user_param_fd_page 3.3.6 One-dimensional Problems (pscf_fd)
+/*! \page user_param_fd_page 3.3.6 1D Problems (pscf_fd)
 
 \ref user_param_sweep_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_param_pc_page     (Next)
 <BR>
 
+The pscf_fd program allows the solution of the SCFT field equations for 
+problems in which all fields depend only on a single coordinate in a 
+planar planar (Cartesian), cylindrical or spherical geometry.  This
+program may be used to treat a flat interface or thin film by using
+a planar geometry, or can treat curved interfaces and a cylindrical or 
+spherical micelles by using a cylindrical or spherical coordinate by
+using a cylindrical or spherical geometry.
 An example of a parameter file for an pscf_fd program was given 
 \ref user_param_example_page "previously" as an example of the syntax.
 Please consult this example when looking at this discussion of the file
 format.
-
-\section user_param_fd_overview_sec Overview
 
 The overall format for a pscf_fd parameter file is shown below in 
 skeleton form:
@@ -23,59 +28,80 @@ System{
 }
 \endcode
 The purposes of each of these top-level blocks have been discussed 
-previously. Formats of the Mixture and Interaction blocks are the 
-same for all PSCF programs, and have also been discussed previously. 
+previously. The Mixture and Interaction blocks use the same format
+for all PSCF programs, and have also been discussed previously. 
 We thus focus below on the contents of the Domain, Iterator, and 
 Sweep blocks.
 
 \section user_param_fd_domain_section Domain Block
 
-The domain block describes the spatial domain over which the SCFT
-equations should be solved. 
+The domain block describes the spatial domain over which the SCFT equations 
+should be solved. The parameter file syntax is described in detail 
+\subpage fd1d_Domain_page "here", and also discussed below.
 
-The pscf_fd program allows the solution of the SCFT field equations 
-for a problem in which all fields depend only on a single coordinate 
-in either planar (Cartesian), cylindrical or spherical geometry. 
-The mode parameter specifies the coordinate system, and may have
-values "planar", "cylindrical" or "spherical". 
+The example parameter file shown \ref user_param_example_page "previously" 
+was designed to describe a planar geometry. As another example, here is
+the Domain block for a simulation of a spherical micelle
 
-The parameters xMin and xMax specify the minimum and maximum values
-of the relevant spatial coordinate. In "planar" mode, these are the
-minimum and maximum values of a Cartesian coordinate, defining a
-slit bounded by constant values of this coordinate. In "cylindrical"
-and "spherical" mode, these are minimum and maximum values of a 
-radial coordinate. In general, the domain for a computation in
-cylindrical or spherical mode can be a cylindrical or spherical 
-annulus, but a complete cylindrical or spherical region can be
-simulated by setting the value of xMin to 0.0. 
+\code
+  Domain{
+    mode   spherical
+    xMax   8.0
+    nx     201
+  }
+\endcode
+This example omits an optional parameter xMin that, when present, would
+appear immediately before xMax.
 
-The parameter nx specifies the number of equally spaced grid points
-to use to discretize the spatial domain. Because this includes both
-end-points, this is one greater than the number of spatial steps.
-In cylindrical and spherical mode, the program interprets any value
-xMin that is less than the step size (xMax - xMin/(nx-1) as equivalent
-to zero, and interprets that as a cylindrical or spherical domain
-that includes the origin rather than cylindrical or spherical 
-annulus. 
+The value of the mode parameter is an enumuration that specifies the 
+coordinate system. The allowed values for the value of this parameter
+"planar", "cylindrical" or "spherical". 
 
-The pscf_fd program solves the modified diffusion equation subject 
-to von Neumann boundary conditions that require derivatives with 
-respect to the relevant Cartesian or radial normal coordinate must 
-vanish at the lower and upper bounds, xMin and xMax. In the special 
-case of a cylindrical or spherical geometry with xMin = 0.0, this 
-is equivalent to a requirement that the corresponding three 
-dimensional solution be differentiable at the origin. 
+The parameters xMin and xMax specify the minimum and maximum values of
+the relevant spatial coordinate. The parameter xMin is optional, and is
+set to 0.0 default when the parameter is omitted.  In "planar" mode, 
+xMin and xMax are the minimum and maximum values of a Cartesian 
+coordinate, defining a slit bounded bounded by constant values of this 
+coordinate. In "cylindrical" and "spherical" mode, these are minimum 
+and maximum values of a radial coordinate. In cylindrical or spherical
+mode, xMin can be omitted to define a simply connected circular or 
+spherical domain of radius equal to xMax, or included and assigned a
+positive value to define a cylindrical or spherical annular region of
+inner radius xMin and outer radius xMax.
+
+The parameter nx specifies the number of equally spaced grid points 
+that will be used to discretize the spatial domain. Because this 
+includes both end-points, the number of grid points is is one greater 
+than the number of spatial steps. The distance between grid points in
+the underlying finite difference discretization, denoteed by dx, is 
+thus given by dx = (xMax - xMin)/(nx-1). 
+
+The pscf_fd program solves the modified diffusion equation subject to 
+von Neumann boundary conditions that require derivatives with respect 
+to the relevant Cartesian or radial normal coordinate must vanish at 
+the lower and upper bounds, xMin and xMax. In the special case of a 
+cylindrical or spherical geometry, for which xMin = 0.0, the requirement
+of a vanishing radial derivative at x=0 is necessary to guarantee that
+the solution is differential at the origin. 
 
 \section user_param_fd_iterator_sec Iterator Block
 
-The Iterator block provides data required by the iterator used to 
-solve the nonlinear self-consistent field (SCF) equations.  The only 
-iteration algorithm that is currently available is Newton-Raphson 
-iteration, implemented by the NrIterator class, which is also the default 
-choice.  This class requires only one input parameter, the parameter 
-epsilon, which gives the desired tolerance in the solution of the SCF 
-equations.  The iterative loop stops when the maximum error drops below 
-epsilon.
+The Iterator block provides data required by the iterator used to solve 
+the nonlinear self-consistent field (SCF) equations.  The default choice
+of iterator is a Newton-Raphson iteration is implemented by a class named
+NrIterator. Because this is the default iterator, it may be chosen by
+including a block in which the first line contains either the generic
+label "Iterator" or the specific class name "NrIterator".  
+
+This Newton-Raphson iterator requires only one input parameter, the real
+parameter epsilon, which gives the desired tolerance in the solution of 
+the SCF equations.  The iterative loop stops when the scalar error 
+(computed as the maximum absolute value of an element of the residual 
+vector) becomes less then epsilon. 
+
+The NrIterator parameter block is also described 
+\subpage fd1d_NrIterator_page
+"here". 
 
 <BR>
 \ref user_param_sweep_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

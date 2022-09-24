@@ -1,12 +1,36 @@
-/*! \page user_command_pc_page 3.4.2 Commands for pscf_pcD (CPU)
+/*! \page user_command_pc_page 3.4.2 Commands for pscf_pc (CPU)
 
  \ref user_command_fd_page     (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref user_command_pg_page (Next) 
 <BR>
 
-Here is a example of a simple command file for any of pscf_pcD programs for
+\section user_command_pc_field_sec Field File Formats
+
+Many of the available commands for the pscf_pc programs cause the 
+program to read and/or write a set of chemical potential (w) fields or 
+monomer concentration (c) fields to or from file. Different commands 
+read or write files in different formats.  These programs can read and 
+write fields in any of the following three formats:
+
+ - "basis" format contains real components of an expansion of the
+    field using a real symmetry-adapted Fourier basis
+
+ - "r-grid" format contains real field values on nodes of a regular 
+    real-sapace grid
+
+ - "k-grid" format contains complex components of a discrete Fourier 
+   transform (DFT) of a real field
+
+The "basis" and "r-grid" fromats are identical to corresponding formats
+used by the Fortran PSCF program.  The k-grid format is not conpatible
+with that used by the Fortran program, because of differences in the 
+way that FFTs are stored and indexed internally.
+
+\section user_command_pc_scft_sec Example: SCFT Calculation
+
+Here is a example of a simple command file for any of pscf_pc programs for
 D-dimensionally periodic microstructures (i.e., for pscf_pc1, pscf_pc2, or 
-pscf_pc3):
+pscf_pc3) for a calculation the performs a single SCFT calculation:
 \code
 READ_W_BASIS    in/w.bf
 ITERATE         
@@ -33,26 +57,31 @@ appends the thermodynamic properties of the converged solution to the end
 of out/data, which already contains the param file. The script stops 
 execution when it encounters the FINISH command.
 
-Many of the available commands for the pscf_pcD programs cause the 
-program to read and/or write a set of chemical potential (w) fields or 
-monomer concentration (c) fields to or from file.  These program can 
-read and write fields in any of three formats:
+\section user_command_pc_sweep_sec Example: A Sweep
 
- - "basis" format contains real components of an expansion of the
-    field using a real symmetry-adapted Fourier basis
+Here is an example of a command file to instead perform a sweep.
+\code
+READ_W_BASIS    in/w.bf
+SWEEP
+FINISH
+\endcode
+The command "READ_W_BASIS in/w.bf" instructs the program to read 
+an initial guess for the chemical potentials fields at the initial 
+state of the sweep (the state s=0) rom the file in/w.bf. 
+The SWEEP command actually executes a sweep operation, and is only
+valid if the corresponding parameter file contains a Sweep block.
 
- - "r-grid" format contains real field values on nodes of a regular 
-    real-sapace grid
+Note that this example does not contain any of the explicit output 
+commands that were included in the example for a single SCFT 
+calculation.  Adding an output command after a sweep would only 
+output information about the last state in the sweep (i.e., the 
+state s=1). This is unnecessary because information about the 
+solution at each step in the sweep is instead normally output as 
+part of the implementation of the sweep operation.
 
- - "k-grid" format contains complex components of a discrete Fourier 
-   transform (DFT) of a real field
+\section user_command_pc_commands_sec Commands
 
-The "basis" and "r-grid" fromats are identical to corresponding formats
-used by the Fortran PSCF program.  The k-grid format is not conpatible
-with that used by the Fortran program, because of differences in the 
-way that FFTs are stored and indexed internally.
-
-The following table shows a list of available commands for the pscf_pcD
+The following table shows a list of available commands for the pscf_pc
 programs:
 <table>
   <tr> 

@@ -426,16 +426,6 @@ namespace Pscf
          read(in, "mu", mu_);
       }
 
-      #if 0
-      ensemble_ = Species::Closed;
-      readOptional<Species::Ensemble>(in, "ensemble", ensemble_);
-      if (ensemble_ == Species::Closed) {
-         read(in, "phi", phi_);
-      } else {
-         read(in, "mu", mu_);
-      }
-      #endif
-
       // Set sources for all propagators
       Vertex const * vertexPtr = 0;
       Propagator const * sourcePtr = 0;

@@ -16,7 +16,8 @@ System{
         ]
         phi     1.0
      }
-     ds   0.001
+     vMonomer   0.05
+     ds         0.001
   }
   Interaction{
      chi(

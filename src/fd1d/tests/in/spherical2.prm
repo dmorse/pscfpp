@@ -32,7 +32,6 @@ System{
   }
   Domain{
      mode      Spherical
-     isShell           0
      xMax          2.700 
      nx              201
   }

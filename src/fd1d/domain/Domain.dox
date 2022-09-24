@@ -11,9 +11,9 @@ in a simulation of a D-dimensional periodic structure.
 The parameter file format for a Domain is:
 \code
 Domain{
-  geometryMode  GeometryMode
-  xmin          float
-  xmax          float
+  geometryMode  enumeration
+  xmin*         real (0.0 by default)
+  xmax          real
   nx            int
 }
 \endcode
@@ -23,12 +23,15 @@ Parameters and subblocks are described below:
     <td> geometryMode </td>
     <td> 
       Enumeration value of type \ref fd1d_GeometryMode_page "GeometryMode".
-      Allowed values are "planar", "cylindrical" or "spherical" 
+      String representations of  allowed values are "planar", "cylindrical" 
+      or "spherical" 
     </td>
   </tr>
   <tr>
-    <td> xmin </td>
-    <td> Minimum coordinate value, at lower boundary of the domain </td>
+    <td> xmin* </td>
+    <td> Minimum coordinate value, at lower boundary of the domain.
+         (real, optional, 0.0 by default)
+    </td>
   </tr>
   <tr>
     <td> xmax </td>
@@ -39,6 +42,14 @@ Parameters and subblocks are described below:
     <td> Number of grid points, including endpoints at xmin and xmax </td>
   </tr>
 </table>
+Comments:
+
+     - For cylindrical and spherical modes, omit xmin to simulate a 
+       simply connected cylindrical or spherical region, or include
+       to simulate an annular shell. 
+
+     - For cylindrical and spherical modes, if xmin is present, it 
+       must be assigned a value xMin > 0.
 
 */
 }

@@ -15,7 +15,7 @@ In the following pages, we first describe elements that are common to the parame
    <li> \subpage user_param_format_page   "3.3.3 Format Descriptions" </li>
    <li> \subpage user_param_mixture_page  "3.3.4 Mixture Block" </li>
    <li> \subpage user_param_sweep_page    "3.3.5 Parameter Sweeps" </li>
-   <li> \subpage user_param_fd_page       "3.3.6 One-Dimensional Problems (pscf_fd1d) </li>
+   <li> \subpage user_param_fd_page       "3.3.6 1D Problems (pscf_fd)" </li>
    <li> \subpage user_param_pc_page       "3.3.7 Periodic Structures (pscf_pc and pscf_pg)" </li>
    </ul>
 <BR>

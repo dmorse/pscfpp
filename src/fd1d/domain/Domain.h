@@ -128,10 +128,11 @@ namespace Fd1d {
       /**
       * Is this a cylindrical or spherical shell?
       *
-      * This value is relevant only if the geometry mode is spherical
-      * or cylindrical. If so and isShell is true, then xMin > 0, 
-      * giving a cylindrical or spherical shell. If isShell is false,
-      * then xMin = 0, giving a cylinder or sphere.
+      * This value is relevant only if the geometry mode is spherical or
+      * cylindrical. If so, isShell is set true if the optional parameter
+      * xMin is present and assigned a positive value in the parameter
+      * file. If geometryMode is planar or xMin is absent, then isShell
+      * is false.
       */
       bool isShell() const;
 

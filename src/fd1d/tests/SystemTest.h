@@ -120,6 +120,8 @@ public:
       System sys;
       sys.readParam(in);
 
+      TEST_ASSERT( !sys.domain().isShell() );
+
       Log::file() << "\n";
       sys.writeParam(Log::file());
 
@@ -336,6 +338,8 @@ public:
       sys.readParam(in);
       in.close();
 
+      TEST_ASSERT( !sys.domain().isShell() );
+
       // Set System filemaster prefixes to unit test file prefix
       Log::file() << "Test file prefix = |" 
                 << filePrefix() << "|" << std::endl;
@@ -359,12 +363,14 @@ public:
       openInputFile("in/spherical3.prm", in);
       sys.readParam(in);
       in.close();
-      Log::file() << "Finished reading param file" << std::endl;
+      // Log::file() << "Finished reading param file" << std::endl;
       sys.writeParam(Log::file());
 
+      TEST_ASSERT( !sys.domain().isShell() );
+
       // Set System filemaster prefixes to unit test file prefix
-      Log::file() << "Test file prefix = |" 
-                  << filePrefix() << "|" << std::endl;
+      //Log::file() << "Test file prefix = |" 
+      //            << filePrefix() << "|" << std::endl;
       sys.fileMaster().setInputPrefix(filePrefix());
       sys.fileMaster().setOutputPrefix(filePrefix());
 

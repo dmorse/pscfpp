@@ -16,7 +16,8 @@ Mixture{
       size      0.05
       mu       -0.035
    }
-   ds   0.001
+   vMonomer  0.05
+   ds        0.001
 }
 Domain{
    mode Planar

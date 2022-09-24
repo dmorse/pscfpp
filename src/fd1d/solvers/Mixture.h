@@ -124,10 +124,6 @@ namespace Fd1d
       void 
       compute(DArray<WField> const & wFields, DArray<CField>& cFields);
 
-      /**
-      * Get monomer reference volume.
-      */
-      double vMonomer() const;
 
       // Inherited public member functions with non-dependent names
       using MixtureTmpl< Polymer, Solvent >::nMonomer;
@@ -137,6 +133,7 @@ namespace Fd1d
       using MixtureTmpl< Polymer, Solvent >::polymer;
       using MixtureTmpl< Polymer, Solvent >::monomer;
       using MixtureTmpl< Polymer, Solvent >::solvent;
+      using MixtureTmpl< Polymer, Solvent >::vMonomer;
 
    protected:
 
@@ -146,9 +143,6 @@ namespace Fd1d
       using ParamComposite::readOptional;
 
    private:
-
-      /// Monomer reference volume (set to 1.0 by default).
-      double vMonomer_;
 
       /// Optimal contour length step size.
       double ds_;
@@ -162,12 +156,6 @@ namespace Fd1d
    };
 
    // Inline member function
-
-   /*
-   * Get monomer reference volume (public).
-   */
-   inline double Mixture::vMonomer() const
-   {  return vMonomer_; }
 
    /*
    * Get Domain by constant reference (private).

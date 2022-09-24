@@ -1,10 +1,9 @@
 namespace Pscf{
 namespace Pspc{
 /*! 
-\page pspc_AmIterator_page AmIterator
+\page pspc_AmIterator_page Pspc::AmIterator
 
-A Pscf::Pspc::AmIterator<D> object is an iterator that solves the SCFT equations 
-using the Anderson Mixing algorithm. 
+A Pscf::Pspc::AmIterator<D> object is an iterator that solves the SCFT equations using the Anderson Mixing algorithm. 
 
 The parameter file format for an AmIterator object is:
 \code
