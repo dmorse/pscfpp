@@ -1,7 +1,7 @@
-/*! \page user_param_pc_page 3.3.7 Periodic Problems (pscf_fd)
+/*! \page user_param_pc_page 3.3.7 pscf_pc (Periodic Problems, CPU)
 
-\ref user_param_fd_page       (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_command_page  (Next)
+\ref user_param_fd_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_param_pg_page  (Next)
 <BR>
 
 The pscf_pc and pscf_pg programs for periodic systems use nearly identical
@@ -63,18 +63,22 @@ System{
   Sweepr#*{ ... }
 }
 \endcode
-As for pscf_fd, the Sweep block is optional, and Iterator and Sweep 
-blocks (if present) are both selectable blocks.  The purposes of these 
-top-level blocks have all been discussed previously in the discussion of 
-pscf_fd, and will not be repeated here. 
-Formats of the Mixture and Interaction blocks are the same for all PSCF programs, and 
-so have also been discussed previously. Below, we discuss the contents of the Domain, 
-Iterator, and Sweep blocks.
+As for pscf_fd, the Sweep block is optional, and Iterator and Sweep blocks 
+(if present) are both selectable blocks.  The purposes of these top-level 
+blocks have all been discussed previously in the discussion of pscf_fd, and 
+will not be repeated here.  Formats of the Mixture and Interaction blocks 
+are the same for all PSCF programs, and so have also been discussed 
+previously. Below, we discuss the contents of the Domain, Iterator, and 
+Sweep blocks.
 
 \section user_param_pc_domain_sec Domain Block
-The Domain block contains information required to describe both unit cell of 
-the periodic structure, the regular mesh that is used to discretize fields 
-within each unit cell, and the space group of the desired solution.
+
+The Domain block contains information required to describe both unit 
+cell of the periodic structure, the regular mesh that is used to 
+discretize fields within each unit cell, and the space group of the 
+desired solution.
+The parameter file format is discussed below, as well as in separate
+page \subpage pspc_Domain_page "here". 
 
 An example of the format of this block is shown below:
 \code
@@ -89,10 +93,10 @@ below.
 
 <b> unitCell </b>
 
-The line that begins with the label unitCell contains information required 
-to specify an initial value of the crystal unit cell.  The data on this 
-line contains a string that specifies the desired crystal system followed 
-by one or more unit cell parameters. The format is thus
+The line that begins with the label unitCell contains information 
+required to specify an initial value of the crystal unit cell.  The data 
+on this line contains a string that specifies the desired crystal system 
+followed by one or more unit cell parameters. The format is thus
 \code
    unitCell   crystalSystem  param[0] ..... param[m]
 \endcode
@@ -138,117 +142,37 @@ groupName string I_m_-3_m is a modified form of the name
 Identifiers for crystallographic space groups are discussed and
 listed \ref user_groups_page "here". 
 
-\section user_param_pc_Iterator_section Iterator Block (default iterator)
+\section user_param_pc_Iterator_section Iterators
 
 The default Iterator for the pscf_pc and pscf_pg programs uses an 
-Anderson-Mixing (AM) iterator algorithm.  The variant of this algorithm 
-used here is almost identical to that described by Arora et al., which 
-is also implemented in the Fortran version of PSCF.  Both CPU and GPU 
-programs for period structure use a default algorithm in which the 
-iterator varies the fields by adjusting the compoments of the field 
-in a basis of symmetry adapated basis functions, thus preserving the 
-space-group symmetry of the fields throughout the iteration process. 
-This algorithm can be used to either solve the SCFT equations for a 
-rigid unit cell or to solve the SCFT equations and also optimize the 
-unit cell parameters of a flexible unit cell so as to minimze the 
-free energy density, depending on the value of a boolean flag. This 
-algorithm is implemented for the pscf_pc CPU-based programs by a class 
-named AmIterator, and is implemented for the pscf_pg GPU-based programs 
-by a class named AmIteratorBasis.
+Anderson-Mixing (AM) iterator algorithm. This can be invoked using 
+either the generic label "Iterator" or the specific label "AmIterator".  
+The only iterator currently available is an Anderson-Mixing iterator 
+designed specifically for problems in which a polymer melt or mixture
+is confined to a thin film. 
 
-An example of the parameter file format for this iterator is shown
-below. An example of the Iterator block format used by both pscf_pc
-and pscf_pg for the default algorithm is given below:
-\code
-  Iterator{
-    maxItr       100
-    epsilon      1e-8
-    maxHist      50
-    errorType    relNormResid
-    isFlexible   1
-  }
-\endcode
-The full format is summarized as
-\code
-  Iterator{
-    maxItr        int
-    epsilon       real
-    maxHist       int
-    errorType     string (relNormResid by default)
-    isFlexible*   bool (false by default)
-    scaleStress*  real (10.0 by default)
-  }
-\endcode
-The meaning of each parameter is briefly summarized below.
+Descriptions of the parameter file formats for the available iterators
+can be found by following the links in the table below:
 <table>
   <tr>
-    <td> <b> Label </b>  </td>
-    <td> <b> Description </b>  </td>
+    <td> Label </td>
+    <td> Description  </td>
   </tr>
   <tr>
-    <td>  maxIter </td>
-    <td> Maximum number of iterations that will be attempted </td>
+    <td> \subpage pspc_AmIterator_page "AmIterator" </td>
+    <td> Anderson Mixing iterator for periodic structures.  </td>
   </tr>
   <tr>
-    <td>  epsilon </td>
-    <td> Desired tolerance for convergence - iteration stops if 
-         the magnitude of the error drops below epsilon.  </td>
-  </tr>
-  <tr>
-    <td> maxHist  </td>
-    <td> Maximum number of previous trial solultions that will be 
-         retained in memory for used by the AM algorithm. </td>
-  </tr>
-  <tr>
-    <td> errorType </td>
-    <td> Identifer for the type of variable used to define scalar
-         error . The only allowed values are "maxResid", "normResid", 
-         and "relNormResid", as discussed below. Optional, and equal
-         to "relNormResid" by default. </td>
-  </tr>
-  <tr>
-    <td>  isFlexible </td>
-    <td> Set isFlexible true to enable or false to disable iterative 
-         optimization of the unit cell parameters so as to minimize the 
-         free energy.  
-         Optional and false by default.  </td>
-  </tr>
-  <tr>
-    <td>  scaleStress </td>
-    <td> Constant factor by which stress components are multipled in
-         the definition of the residual  attempted if isFlexible is
-         true (optional). </td>
+    <td> \subpage pspc_AmIteratorFilm_page "AmIteratorFilm" </td>
+    <td> Thin Film Anderson Mixing iterator. Uses the Anderson Mixing 
+         algorithm to solve the SCFT equations for a system that is
+         confined to a thin film. </td>
   </tr>
 </table>
-The iterative loop exits if the number of iterations has reached maxItr 
-or if the magnitude of the scalar error drops below epsilon. 
-
-<b> errorType </b>: Several different definitions may be used for the 
-scalar error, depending on the value of the identifier errorType. 
-
-  - If errorType == maxResid, then the scalar error is take to be
-    the maximum of the absolute magnitude of the elements of the 
-    residual vector (the L infinity norm of the residual vector).
-
-  - If errorType == normResid, then the scalar error is take to be
-    the L2 norm of the residual vector.
-
-  - If errorType == normResid, then the scalar error is take to be
-    the ratio of the L2 norm of the residual vector to the L2 norm of 
-    the w field, as in Stasiak and Matsen, Eur. Phys, Journel E, 2012. 
-
-<b> scaleStress </b>: If isFlexible is true, the choice of a value for 
-the parameter scaleStress determines how strongly the definition of the 
-scalar error weights errors that arise from nonzero derivatives of the 
-free energy with respect to the unit cell parameters, relative to errors 
-arising from errors in the SCFT equations for the w fields in a fixed
-unit cell. This variable is irrelevant if isFlexible is false, and should 
-normally be ommitted in this case. 
-
 
 <BR>
 \ref user_param_fd_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_param_page     (Up)   &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_command_page   (Next)
+\ref user_param_pg_page  (Next)
 
 */

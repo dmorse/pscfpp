@@ -1,9 +1,9 @@
-namespace Pscf{
-namespace Pspc{
 /*! 
 \page pspc_AmIteratorFilm_page Pspc::AmIteratorFilm
 
-The AmIteratorFilm block in a parameter file initializes an iterator that solves the SCFT equations using the Anderson Mixing algorithm, while also imposing a mask and an external field on a system so as to simulate a thin film.  For more information, see the detailed summary at \ref user_thin_films_page .
+An AmIteratorFilm is an iterator that uses an Anderson Mixing (AM) algorithm
+to solve the SCFT equations for a thin film.  For more information, see the 
+detailed summary at \ref user_thin_films_page .
 
 The parameter file format for an AmIteratorFilm object is:
 \code
@@ -33,8 +33,8 @@ Parameters and subblocks are described below:
   </tr>
   <tr>
     <td> epsilon </td>
-    <td> Error tolerance. Iteration stops if the scalar error drops below this 
-         value. </td>
+    <td> Error tolerance. Iteration stops if the scalar error drops below 
+         this value. </td>
   </tr>
   <tr>
     <td> maxHist </td>
@@ -48,8 +48,8 @@ Parameters and subblocks are described below:
          If "maxResid", use the maximum component of the residual vector.
          If "normResid", use the L2 norm of the residual vector. 
          If "relNormResid", use the L2 norm of the vector of residuals 
-         divided by the L2 norm of the vector of omega field elements, as in 
-         Stasiak and Matsen, EPJE, 2011. </td>
+         divided by the L2 norm of the vector of omega field elements, 
+         as in Stasiak and Matsen, EPJE, 2011. </td>
   </tr>
   <tr>
     <td> isFlexible* </td>
@@ -80,8 +80,8 @@ Parameters and subblocks are described below:
   </tr>
   <tr>
     <td> wallThickness </td>
-    <td> thickness of the wall (i.e., the region from which the mixture is
-         excluded). Recommendation is to use at least twice the 
+    <td> thickness of the wall (i.e., the region from which the mixture 
+         is excluded). Recommendation is to use at least twice the 
          interfaceThickness value. </td>
   </tr>
   <tr>
@@ -91,16 +91,18 @@ Parameters and subblocks are described below:
          system, in the form of a Flory-Huggins-like chi value. Each row 
          of the array corresponds to one monomer species in the system, 
          and contains two values: the first represents the interaction 
-         between wall 1 and the monomer species (where wall 1 is the wall 
-         that contains the origin), and the second represents the interaction 
-         with wall 2. This array will have n_monomer rows and 2 columns. 
-         Large values represent unfavorable interactions. </td>
+         between wall 1 and the monomer species (where wall 1 is the 
+         wall that contains the origin), and the second represents the 
+         interaction with wall 2. This array will have n_monomer rows 
+         and 2 columns.  Large values represent unfavorable interactions. 
+    </td>
   </tr>
   <tr>
     <td> wallBasisOutFile* </td>
-    <td> Optional filename to which a field file in symmetry-adapted basis 
-         format will be written representing the volume fraction of the wall 
-         (the mask imposed upon the iterator) throughout the unit cell. </td>
+    <td> Optional filename to which a field file in symmetry-adapted 
+         basis format will be written representing the volume fraction 
+         of the wall (the mask imposed upon the iterator) throughout 
+         the unit cell. </td>
   </tr>
   <tr>
     <td> wallRGridOutFile* </td>
@@ -111,5 +113,3 @@ Parameters and subblocks are described below:
 </table>
 
 */
-}
-}

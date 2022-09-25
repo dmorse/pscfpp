@@ -1,0 +1,72 @@
+/*! 
+\page pspg_AmIteratorGrid_page Pspg::AmIteratorGrid
+
+The AmIteratorGrid iterator used by the pscf_pg programs uses an 
+Anderson mixing algorithm in which residual equations and field updates
+are formulated using values defined on the nodes of a regular spatial
+grid. The algorithm can be used to either solve the SCFT equations for 
+a rigid unit cell or to solve the SCFT equations and also optimize the 
+unit cell parameters of a flexible unit cell so as to minimize the free 
+energy density.
+
+The format of the associated parameter block is identical to that used
+by AmIteratorBasis, as described below:
+\code
+AmIterator{
+   maxItr         int
+   epsilon        real 
+   maxHist        int  
+   errorType*     enumeration ("normResid", "maxResid", or "relNormResid", "relNormResid" by default)
+   isFlexible*    bool (0 or 1, 0/false by default)   
+   scaleStress*   real (10.0 by default)
+}
+\endcode
+Here, as elsewhere, labels followed by an asterisk (*) represent optional 
+parameters. The meaning of the various parameters are described below:
+<table>
+  <tr>
+    <td> <b> Label </b>  </td>
+    <td> <b> Description </b>  </td>
+  </tr>
+  <tr>
+    <td>  maxIter </td>
+    <td> Maximum number of iterations that will be attempted </td>
+  </tr>
+  <tr>
+    <td>  epsilon </td>
+    <td> Desired tolerance for convergence - iteration stops if 
+         the magnitude of the error drops below epsilon.  </td>
+  </tr>
+  <tr>
+    <td> maxHist  </td>
+    <td> Maximum number of previous trial solultions that will be 
+         retained in memory for used by the AM algorithm. </td>
+  </tr>
+  <tr>
+    <td> errorType </td>
+    <td> Identifer for the type of variable used to define scalar
+         error . The only allowed values are "maxResid", "normResid", 
+         and "relNormResid", as discussed below. Optional, and equal
+         to "relNormResid" by default. </td>
+  </tr>
+  <tr>
+    <td>  isFlexible </td>
+    <td> Set isFlexible true to enable or false to disable iterative 
+         optimization of the unit cell parameters so as to minimize the 
+         free energy.  
+         Optional and false by default.  </td>
+  </tr>
+  <tr>
+    <td>  scaleStress </td>
+    <td> Constant factor by which stress components are multipled in
+         the definition of the residual  attempted if isFlexible is
+         true (optional). </td>
+  </tr>
+</table>
+The iterative loop exits if the number of iterations has reaches
+maxItr or if the magnitude of the scalar error drops below epsilon. 
+
+Further details are given in the documentation for the Pspc 
+\ref pspc_AmIterator_page "AmIterator" algorithm.
+
+*/

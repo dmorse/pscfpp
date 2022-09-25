@@ -42,20 +42,20 @@ namespace Fd1d
 
    void FdIterator::readParameters(std::istream& in)
    {
+      UTIL_CHECK(domain().nx() > 0);
       read(in, "epsilon", epsilon_);
       read(in, "lambdaPlus", lambdaPlus_);
       read(in, "lambdaMinus", lambdaMinus_);
       read(in, "maxIterations", maxIterations_);
-      if (domain().nx() > 0) {
-          allocate();
-      }
+
+      allocate();
    }
 
    void FdIterator::allocate()
    {
-      int nm = mixture().nMonomer();   // number of monomer types
-      int nx = domain().nx(); // number of grid points
-      UTIL_CHECK(nm > 0);
+      int nm = mixture().nMonomer();  // number of monomer types
+      UTIL_CHECK(nm == 2);
+      int nx = domain().nx();         // number of grid points
       UTIL_CHECK(nx > 0);
       if (isAllocated_) {
          UTIL_CHECK(cArray_.capacity() == nm);
@@ -83,8 +83,6 @@ namespace Fd1d
    
    {
       double dWm, dWp, c0, c1, w0, w1, wm;
-      //double dWpNorm_test = 0.0;
-      //double dWmNorm_test = 0.0;
       double dWmNorm = 0.0;
       double dWpNorm = 0.0;
       double chi = system().interaction().chi(0,1);
@@ -103,21 +101,16 @@ namespace Fd1d
          dW[0][i] = dWp -  dWm;
          dW[1][i] = dWp + dWm;
       }
-      //dWpNorm_test = sqrt(dWpNorm/double(nx));
-      //Log::file() << "dWNorm_plus is " << dWpNorm_test << std::endl;
-      //dWmNorm_test = sqrt(dWmNorm/double(nx));
-      //Log::file() << "dWNorm_minus is " << dWmNorm_test << std::endl;
       dWNorm = (dWpNorm + dWmNorm)/double(nx);
       dWNorm = sqrt(dWNorm);
    }
-   
 
    void FdIterator::updateWFields(Array<WField> const & wOld,
                                   Array<WField> const & dW,
                                   Array<WField> & wNew)
    {
-      //AB diblock
       int nm = mixture().nMonomer();  // number of monomer types
+      UTIL_CHECK(nm == 2);
       int nx = domain().nx();        // number of grid points
       int i;                         // monomer index
       int j;                         // grid point index
@@ -150,6 +143,7 @@ namespace Fd1d
       Timer timerTotal;
       
       int nm = mixture().nMonomer();  // number of monomer types
+      UTIL_CHECK(nm == 2);
       int np = mixture().nPolymer();  // number of polymer species
       int nx = domain().nx();         // number of grid points
       
@@ -183,7 +177,6 @@ namespace Fd1d
             }
          }
       }
-      
       
       // Compute initial dWNorm.
       mixture().compute(system().wFields(), system().cFields());
@@ -232,7 +225,8 @@ namespace Fd1d
                         << lambdaPlus_ << std::endl;
             Log::file() << "      lambdaMinus = " 
                         << lambdaMinus_<< std::endl;                        
-            computeDW(system().wFields(),system().cFields(), dWNew_, dWNormNew_);
+            computeDW(system().wFields(),system().cFields(), dWNew_, 
+                      dWNormNew_);
             updateWFields(system().wFields(), dWNew_, wFieldsNew_);
             mixture().compute(wFieldsNew_, cFieldsNew_);
             ++j;
@@ -256,7 +250,7 @@ namespace Fd1d
           }
         
       }
-    // Failure
+      // Failure
       return 1;
    }
 

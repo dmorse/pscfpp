@@ -1,4 +1,4 @@
-/*! \page user_param_fd_page 3.3.6 1D Problems (pscf_fd)
+/*! \page user_param_fd_page 3.3.6 pscf_fd (1D Problems)
 
 \ref user_param_sweep_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_param_pc_page     (Next)
@@ -31,7 +31,7 @@ The purposes of each of these top-level blocks have been discussed
 previously. The Mixture and Interaction blocks use the same format
 for all PSCF programs, and have also been discussed previously. 
 We thus focus below on the contents of the Domain, Iterator, and 
-Sweep blocks.
+Sweep blocks. 
 
 \section user_param_fd_domain_section Domain Block
 
@@ -84,15 +84,41 @@ cylindrical or spherical geometry, for which xMin = 0.0, the requirement
 of a vanishing radial derivative at x=0 is necessary to guarantee that
 the solution is differential at the origin. 
 
-\section user_param_fd_iterator_sec Iterator Block
+\section user_param_fd_iterator_sec Iterators
 
 The Iterator block provides data required by the iterator used to solve 
-the nonlinear self-consistent field (SCF) equations.  The default choice
-of iterator is a Newton-Raphson iteration is implemented by a class named
-NrIterator. Because this is the default iterator, it may be chosen by
-including a block in which the first line contains either the generic
-label "Iterator" or the specific class name "NrIterator".  
+the nonlinear self-consistent field (SCF) equations.  
 
+The default iterator for pscf_fd is a Newton-Raphson iterator that is 
+implemented by a class named NrIterator. Because this is the default 
+iterator, it may be chosen by including an iterator block in which the 
+first line contains either the generic label "Iterator" or the specific 
+class name "NrIterator".  
+
+The only other iterator currently provided for us in pscf_fd is a simple
+relaxation iterator for systems with only two types of monomer. This
+iterator uses the algorithm presented by F. Drolet and G.H. Fredrickson
+and is implemented by a class named FdIterator.
+
+More detailed documentation of the input format for each available iterator
+is given in the links in the table below:
+
+<table>
+<tr>
+<td> Class </td>
+<td> Description </td>
+</tr>
+<tr>
+<td> \subpage fd1d_NrIterator_page "NrIterator" </td>
+<td> Newton-Raphson iterator </td>
+</tr>
+<tr>
+<td> \subpage fd1d_FdIterator_page "FdIterator" </td>
+<td> Relaxation algorithm for AB (two monomer) systems, as described
+     by Fredrickson and Drolet </td>
+</tr>
+</table>
+</table>
 This Newton-Raphson iterator requires only one input parameter, the real
 parameter epsilon, which gives the desired tolerance in the solution of 
 the SCF equations.  The iterative loop stops when the scalar error 

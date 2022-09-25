@@ -1,0 +1,57 @@
+/*! \page user_param_pg_page 3.3.8 pscf_pg (Periodic Problems, GPU)
+
+\ref user_param_pc_page       (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_command_page  (Next)
+<BR>
+
+The parameter file format for SCFT calculations using the pscf_pg
+GPU-accelerated programs is almost identical to that for the pscf_pc 
+programs. The Mixture and Interaction blocks use the same format as
+the other PSCF programs, and the Domain block has the same format as
+that used by the pscf_pc programs. The only differences are differences
+in the available iterators.
+
+\section user_param_pc_Iterator_section Iterators
+
+The default iterator for pscf_pg programs uses an Anderson-Mixing (AM)
+algorithm closely analogous to that used by the default AM iterator 
+for pscf_pc programs. Like the pscf_pc AmIterator, this algorithm 
+applies the AmIterator to a residual that is defined using an 
+expansion in symmetry-adapted basis functins, and updates the chemical
+potential fields by modifying the coefficients in this expansion. This
+algorithm may be invoked in the parameter file for a pscf_pg program
+using either the generic block label "Iterator" or a specific label
+"AmIteratorBasis". 
+
+The only other iterator currently provided for use with the pscf_pg
+programs is an Anderson mixing in which the residual vector and 
+changes in the w fields are instead formulated using vectors whose 
+elements represent values of fields on the nodes of a regular spatial 
+grid, rather than coefficients in a symmetry-adapated expansion. This
+iterator is invoked using the label AmIteratorGrid.
+
+Descriptions of the parameter file formats for the available iterators
+can be found by following the links in the table below:
+<table>
+  <tr>
+    <td> Label </td>
+    <td> Description  </td>
+  </tr>
+  <tr>
+    <td> \subpage pspg_AmIteratorBasis_page "AmIteratorBasis" </td>
+    <td> Anderson Mixing iterator for periodic structures, 
+         formulated using a symmetry-adapted basis.  </td>
+  </tr>
+  <tr>
+    <td> \subpage pspg_AmIteratorGrid_page "AmIteratorGrid" </td>
+    <td> Anderson Mixing iterator for periodic structures, 
+         formulated using values defined a spatial grid.  </td>
+  </tr>
+</table>
+
+<BR>
+\ref user_param_pc_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_param_page     (Up)   &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_command_page   (Next)
+
+*/

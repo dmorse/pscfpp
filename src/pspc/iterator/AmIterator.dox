@@ -1,67 +1,107 @@
-namespace Pscf{
-namespace Pspc{
 /*! 
 \page pspc_AmIterator_page Pspc::AmIterator
 
-A Pscf::Pspc::AmIterator<D> object is an iterator that solves the SCFT equations using the Anderson Mixing algorithm. 
+The AmIterator algorithm used by the pscf_pc programs solves the SCFT 
+equations for a periodic system using the Anderson Mixing algorithm. 
+The variant of this algorithm used here is almost identical to that 
+described by Arora et al., which is also implemented in the Fortran 
+version of PSCF.  This algorithm varies the fields by adjusting the
+compoments of the field in a basis of symmetry adapated basis functions, 
+thus preserving the space-group symmetry of the fields throughout the 
+iteration process.  The algorithm can be used to either solve the SCFT 
+equations for a rigid unit cell or to solve the SCFT equations and also 
+optimize the unit cell parameters of a flexible unit cell so as to 
+minimize the free energy density, depending on the value of a boolean 
+flag named "isFlexible". 
 
-The parameter file format for an AmIterator object is:
+An example of the parameter file format for this iterator is shown
+below:
+\code
+  AmIterator{
+    maxItr       100
+    epsilon      1e-8
+    maxHist      50
+    errorType    relNormResid
+    isFlexible   1
+  }
+\endcode
+The format of this block is described more formally below:
 \code
 AmIterator{
-   maxItr              int
-   epsilon             float
-   maxHist             int  
-   errorType*          enumeration ("normResid", "maxResid", or "relNormResid", "relNormResid" by default)
-   isFlexible*         bool (0 or 1, 0 by default)   
-   scaleStress*        float (10 by default)
+   maxItr         int
+   epsilon        real 
+   maxHist        int  
+   errorType*     enumeration ("normResid", "maxResid", or "relNormResid", "relNormResid" by default)
+   isFlexible*    bool (0 or 1, 0/false by default)   
+   scaleStress*   real (10.0 by default)
 }
 \endcode
 Here, as elsewhere, labels followed by an asterisk (*) represent optional 
-elements.
-
-Parameters and subblocks are described below:
+parameters. The meaning of the various parameters are described below:
 <table>
   <tr>
-    <td> maxItr </td>
-    <td> Maximum number of iterations attempted. If calculation has not converged
-         after this many iterations, the calculation will be terminated. </td>
+    <td> <b> Label </b>  </td>
+    <td> <b> Description </b>  </td>
   </tr>
   <tr>
-    <td> epsilon </td>
-    <td> Error tolerance. Once the max, norm, or relative norm of the residual
-         vector (depending on choice of errorType) has shrunk below this value,
-         the calculation is considered to be converged. </td>
+    <td>  maxIter </td>
+    <td> Maximum number of iterations that will be attempted </td>
   </tr>
   <tr>
-    <td> maxHist </td>
-    <td> The number of histories (previous state space points) to use to calculate
-         the fields at the next iteration. </td>
+    <td>  epsilon </td>
+    <td> Desired tolerance for convergence - iteration stops if 
+         the magnitude of the error drops below epsilon.  </td>
   </tr>
   <tr>
-    <td> errorType* </td>
-    <td> Error type to use to determine whether the calculation has converged.
-         If "maxResid", will use the maximum component of the residual vector.
-         If "normResid", will use the L2 norm of the residual vector. 
-         If "relNormResid", will use the L2 norm of the vector of residuals 
-         divided by the L2 norm of the vector of omega field elements, as in 
-         Stasiak and Matsen, EPJE, 2011. </td>
+    <td> maxHist  </td>
+    <td> Maximum number of previous trial solultions that will be 
+         retained in memory for used by the AM algorithm. </td>
   </tr>
   <tr>
-    <td> isFlexible* </td>
-    <td> Boolean (0 or 1, default 0) indicating whether the lattice parameters
-         of the unit cell should be treated as flexible. If true (1), the 
-         iterator will optimize the lattice parameters to minimize the stress.
-         </td>
+    <td> errorType </td>
+    <td> Identifer for the type of variable used to define scalar
+         error . The only allowed values are "maxResid", "normResid", 
+         and "relNormResid", as discussed below. Optional, and equal
+         to "relNormResid" by default. </td>
   </tr>
   <tr>
-    <td> scaleStress* </td>
-    <td> If isFlexible = true, the components of the residual that quantify the
-         stress will be multiplied by scaleStress, allowing the user to vary the
-         relative importance of the stress compared to the error in the potential
-         fields. Default value is 10. </td>
+    <td>  isFlexible </td>
+    <td> Set isFlexible true to enable or false to disable iterative 
+         optimization of the unit cell parameters so as to minimize the 
+         free energy.  
+         Optional and false by default.  </td>
+  </tr>
+  <tr>
+    <td>  scaleStress </td>
+    <td> Constant factor by which stress components are multipled in
+         the definition of the residual  attempted if isFlexible is
+         true (optional). </td>
   </tr>
 </table>
+The iterative loop exits if the number of iterations has reaches
+maxItr or if the magnitude of the scalar error drops below epsilon. 
+
+<b> errorType </b>: Several different definitions may be used for 
+the scalar error, depending on the value of the identifier errorType. 
+
+  - If errorType == maxResid, then the scalar error is take to be
+    the maximum of the absolute magnitude of the elements of the 
+    residual vector (the L infinity norm of the residual vector).
+
+  - If errorType == normResid, then the scalar error is take to be
+    the L2 norm of the residual vector.
+
+  - If errorType == normResid, then the scalar error is take to be
+    the ratio of the L2 norm of the residual vector to the L2 norm of 
+    the w field, as in Stasiak and Matsen, Eur. Phys, Journel E, 2012. 
+
+<b> scaleStress </b>: If isFlexible is true, the choice of a value for 
+the parameter scaleStress determines how strongly the definition of the 
+scalar error weights errors that arise from nonzero derivatives of the 
+free energy with respect to the unit cell parameters, relative to errors 
+arising from errors in the SCFT equations for the w fields in a fixed
+unit cell. This variable is irrelevant if isFlexible is false, and should 
+normally be ommitted in this case. 
+
 
 */
-}
-}

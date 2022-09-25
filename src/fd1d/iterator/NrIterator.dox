@@ -17,11 +17,13 @@ Parameters are described below:
 <table>
   <tr>
     <td> epsilon </td>
-    <td> Error tolerance. Once the maximum component of the residual vector
-         (the L-&infin; norm) has shrunk below this value, the calculation is 
-         considered to be converged. </td>
+    <td> Error tolerance. 
   </tr>
 </table>
+Iteration stops when the scalar error is less than epsilon.
+The total error is defined in NrIterator as the maximum component of a
+residual vector (the L-&infin; norm), in which each element of the vector
+represents a residual define on a node of the spatial grid. </td>
 
 */
 }
