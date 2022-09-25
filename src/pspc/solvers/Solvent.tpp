@@ -43,7 +43,7 @@ namespace Pspc {
    * Compute concentration, q, and phi or mu.
    */ 
    template <int D>
-   void Solvent<D>::compute(WField const & wField)
+   void Solvent<D>::compute(RField<D> const & wField)
    {
       int nx = meshPtr_->size(); // Number of grid points
 

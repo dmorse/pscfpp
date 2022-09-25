@@ -345,7 +345,7 @@ for iterators allows users to specify a choice from among several
 different available iterator algorithms. A selectable block is also
 for "sweep" algorithms that perform continuation of solutions along 
 a sequence of points along a line through parameter space, as 
-discussed \ref param_sweep_page "here". 
+discussed \ref user_param_sweep_page "here". 
 
 In a selectable parameter file block, the name of the desired subclass 
 is identified by the class name label that appears in the opening line 

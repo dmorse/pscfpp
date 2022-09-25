@@ -55,7 +55,7 @@ namespace Pspc {
    * Compute solution to MDE and block concentrations.
    */ 
    template <int D>
-   void Polymer<D>::compute(DArray<WField> const & wFields)
+   void Polymer<D>::compute(DArray< RField<D> > const & wFields)
    {
       // Setup solvers for all blocks
       int monomerId;

@@ -278,7 +278,7 @@ because the type is set to linear by default.  We have set phi = 1.0 in
 this example on the assumption that this is a one-component terpolymer 
 melt, for which the volume fraction of this species must equal unity.
 
-\section user_param_mixture_solvent_sec Solvent Block
+\section user_param_solvent_sec Solvent Block
 
 A mixture block may contain zero or more Solvent blocks, each of 
 which contains data about a small-molecule solvent species. Solvent

@@ -22,7 +22,7 @@ Different field file formats are described in the pages linked below.
   <li> \subpage user_field_basis_page  </li>
   <li> \subpage user_field_rgrid_page  </li>
   <li> \subpage user_field_kgrid_page  </li>
-  <li> \subpage user_field_fd_page   </li>
+  <li> \subpage user_field_fd1d_page   </li>
 </ul>
 
  <BR>

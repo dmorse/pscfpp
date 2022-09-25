@@ -114,8 +114,8 @@ namespace Pspc
    * Compute concentrations (but not total free energy).
    */
    template <int D>
-   void Mixture<D>::compute(DArray<Mixture<D>::WField> const & wFields,
-                            DArray<Mixture<D>::CField>& cFields)
+   void Mixture<D>::compute(DArray< RField<D> > const & wFields,
+                            DArray< RField<D> > & cFields)
    {
       UTIL_CHECK(meshPtr_);
       UTIL_CHECK(mesh().size() > 0);
@@ -150,8 +150,8 @@ namespace Pspc
             monomerId = polymer(i).block(j).monomerId();
             UTIL_CHECK(monomerId >= 0);
             UTIL_CHECK(monomerId < nm);
-            CField& monomerField = cFields[monomerId];
-            CField const & blockField = polymer(i).block(j).cField();
+            RField<D>& monomerField = cFields[monomerId];
+            RField<D> const & blockField = polymer(i).block(j).cField();
             UTIL_CHECK(blockField.capacity() == nMesh);
             for (k = 0; k < nMesh; ++k) {
                monomerField[k] += blockField[k];
@@ -170,8 +170,8 @@ namespace Pspc
          solvent(i).compute(wFields[monomerId]);
 
          // Add solvent contribution to relevant monomer concentration
-         CField& monomerField = cFields[monomerId];
-         CField const & solventField = solvent(i).cField();
+         RField<D>& monomerField = cFields[monomerId];
+         RField<D> const & solventField = solvent(i).cField();
          UTIL_CHECK(solventField.capacity() == nMesh);
          for (k = 0; k < nMesh; ++k) {
             monomerField[k] += solventField[k];
@@ -241,7 +241,7 @@ namespace Pspc
    */
    template <int D>
    void
-   Mixture<D>::createBlockCRGrid(DArray<typename Mixture<D>::CField>& blockCFields) 
+   Mixture<D>::createBlockCRGrid(DArray< RField<D> >& blockCFields) 
    const
    {
       UTIL_CHECK(nMonomer() > 0);

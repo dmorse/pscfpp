@@ -23,25 +23,14 @@ namespace Pspc {
    /**
    * Solver and descriptor for a solvent species.
    *
-   * \ref pspc_Solvent_page "Parameter File Format"
+   * \ref user_param_solvent_sec "Parameter File Format"
    * \ingroup Pspc_Solver_Module
    */
    template <int D>
-   //class Solvent : public Species, public ParamComposite
    class Solvent : public SolventDescriptor
    {
 
    public:
-
-      /**
-      * Monomer concentration field type.
-      */
-      typedef typename Propagator<D>::CField CField;
-
-      /** 
-      * Monomer chemical potential field type.
-      */
-      typedef typename Propagator<D>::WField WField;
 
       /**
       * Constructor.
@@ -71,12 +60,12 @@ namespace Pspc {
       *
       * \param wField  monomer chemical potential field of relevant type.
       */
-      void compute(WField const & wField );
+      void compute(RField<D> const & wField );
 
       /**
       * Get the monomer concentration field for this solvent.
       */
-      CField const & cField() const;
+      RField<D> const & cField() const;
  
       // Inherited accessor functions 
       using Pscf::Species::phi;
@@ -99,7 +88,7 @@ namespace Pspc {
    private:
 
       /// Concentration field for this solvent
-      CField cField_;
+      RField<D> cField_;
  
       /// Pointer to associated mesh
       Mesh<D> const *  meshPtr_;
@@ -112,7 +101,7 @@ namespace Pspc {
    * Get monomer concentration field for this solvent.
    */
    template <int D>
-   inline const typename Solvent<D>::CField& Solvent<D>::cField() const
+   inline RField<D> const & Solvent<D>::cField() const
    {  return cField_;  }
   
    #ifndef PSPC_SOLVENT_TPP

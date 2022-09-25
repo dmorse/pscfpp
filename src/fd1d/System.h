@@ -33,7 +33,7 @@ namespace Fd1d
    /**
    * Main class in SCFT simulation of one system.
    *
-   * \ref fd1d_System_page "Parameter File Format"
+   * \ref user_param_fd_page "Parameter File Format"
    * \ingroup Pscf_Fd1d_Module
    */
    class System : public ParamComposite

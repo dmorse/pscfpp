@@ -34,23 +34,6 @@ namespace Fd1d
    public:
 
       /**
-      * Generic field (base class)
-      */
-      typedef Propagator::Field Field;
-
-      /**
-      * Monomer chemical potential field.
-      */
-      typedef Propagator::WField WField;
-
-      /**
-      * Constrained partition function q(r,s) for fixed s.
-      */
-      typedef Propagator::QField QField;
-
-      // Member functions
-
-      /**
       * Constructor.
       */
       Block();
@@ -80,7 +63,7 @@ namespace Fd1d
       *
       * \param w  Chemical potential field (input)
       */
-      void setupSolver(WField const & w);
+      void setupSolver(DArray<double> const & w);
 
       /**
       * Compute concentration for block by integration.
@@ -99,10 +82,10 @@ namespace Fd1d
       /**
       * Compute one step of integration loop, from i to i+1.
       *
-      * \param q  QField at step i (input)
-      * \param qNew  QField at step i + 1 (output)
+      * \param q  propagator slice at step i (input)
+      * \param qNew  propagator slice at step i + 1 (output)
       */
-      void step(QField const & q, QField& qNew);
+      void step(DArray<double> const & q, DArray<double>& qNew);
 
       /**
       * Return associated domain by reference.

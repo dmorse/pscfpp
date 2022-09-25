@@ -186,8 +186,8 @@ copolymer is is symmetric (each block has length 0.5).
 The syntax used here for each "Polymer" block is designed for linear
 block polymers, which is the default polymer topology. A somewhat
 different syntax is used to describe a branched polymer, as described
-\ref param_polymer_sec "elsewhere". The syntax for a linear block 
-polymer contains a "blocks" array in which each element contains
+\ref user_param_polymer_sec "elsewhere". The syntax for a linear 
+block polymer contains a "blocks" array in which each element contains
 the mononer typeId for a block followed by the length of the block.
 
 The chi matrix for this problem has a nonzero value of 10.0 for 

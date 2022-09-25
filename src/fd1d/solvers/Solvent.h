@@ -22,7 +22,7 @@ namespace Fd1d {
    /**
    * Solver and descriptor for a solvent species.
    *
-   * \ref fd1d_Solvent_page "Parameter File Format"
+   * \ref user_param_solvent_sec "Parameter File Format"
    * \ingroup Fd1d_Solver_Module
    */
    //class Solvent : public Species, public ParamComposite

@@ -51,8 +51,7 @@ namespace Pspc
    * once after every time the unit cell is initialized or modified, 
    * before the next call to Mixture::compute.
    *
-   * \ref pspc_Mixture_page "Parameter File Format" 
-   *
+   * \ref user_param_mixture_page "Parameter File Format" 
    * \ingroup Pspc_Solver_Module
    */
    template <int D>
@@ -63,15 +62,17 @@ namespace Pspc
 
       // Public typedefs
 
+      #if 0
       /**
       * Monomer chemical potential field type.
       */
-      typedef typename Propagator<D>::WField WField;
+      typedef RField<D> WField;
 
       /**
       * Monomer concentration or volume fraction field type.
       */
-      typedef typename Propagator<D>::CField CField;
+      typedef RField<D> CField;
+      #endif
 
       // Public member functions
 
@@ -152,7 +153,7 @@ namespace Pspc
       * \param cFields array of monomer concentration fields (output)
       */
       void 
-      compute(DArray<WField> const & wFields, DArray<CField>& cFields);
+      compute(DArray< RField<D> > const & wFields, DArray< RField<D> >& cFields);
       
       /**
       * Compute derivatives of free energy w/ respect to cell parameters.
@@ -166,7 +167,7 @@ namespace Pspc
       * 
       * \param blockCFields empty but allocated DArray to store fields
       */
-      void createBlockCRGrid(DArray<CField>& blockCFields) const;
+      void createBlockCRGrid(DArray< RField<D> >& blockCFields) const;
 
       /**
       * Get derivative of free energy w/ respect to a unit cell parameter.

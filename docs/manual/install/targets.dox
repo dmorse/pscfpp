@@ -8,9 +8,9 @@ The build system for PSCF is based on unix makefiles. Individual programs
 or groups of programs may be compiled by invoking the "make" command with
 an appropriate target name, using the syntax
 \code
-> make <target>
+> make target
 \endcode
-where <target> represents a target name such as "all-cpu" or "pspg".
+where "target" represents a target name such as "all-cpu" or "pspg".
 
 The make utility may be invoked from either the pscfpp/src/ or pscfpp/bld/ 
 directories, or from the pscfpp/ root directory, using a common set of

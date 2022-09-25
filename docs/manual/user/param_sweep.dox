@@ -72,8 +72,8 @@ for the Sweep block can define different types of paths through
 parameter space. 
 
 Below, we show an example of a pscf_fd parameter file that extends the
-example parameter file shown \ref user_param_example "previously" by 
-appending a Sweep parameter file block to the end of the main System 
+example parameter file shown \ref user_param_example_page "previously" 
+by appending a Sweep parameter file block to the end of the main System 
 block, using the default algorithm.
 \code
 System{

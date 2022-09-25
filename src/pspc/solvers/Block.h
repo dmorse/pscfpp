@@ -44,23 +44,6 @@ namespace Pspc {
 
    public:
 
-      // Typedefs
-
-      /**
-      * Generic field (r-grid format).
-      */
-      typedef typename Propagator<D>::Field Field;
-
-      /**
-      * Monomer chemical potential field (r-grid format).
-      */
-      typedef typename Propagator<D>::WField WField;
-
-      /**
-      * Constrained partition function q(r,s) for fixed s.
-      */
-      typedef typename Propagator<D>::QField QField;
-
       // Member functions
 
       /**
@@ -119,7 +102,7 @@ namespace Pspc {
       *
       * \param w chemical potential field for this monomer type
       */
-      void setupSolver(WField const & w);
+      void setupSolver(RField<D> const & w);
 
       /**
       * Compute one step of solution of MDE, from i to i+1.
@@ -129,10 +112,10 @@ namespace Pspc {
       * Block class because the same private data structures are needed
       * for the two propagators associated with a Block.
       *
-      * \param q  input value of QField, from step i
-      * \param qNew  ouput value of QField, from step i+1
+      * \param q  input slic of q, from step i
+      * \param qNew  ouput slice of q, from step i+1
       */
-      void step(QField const& q, QField& qNew);
+      void step(RField<D> const & q, RField<D>& qNew);
 
       /**
       * Compute concentration (volume fraction) for block by integration.

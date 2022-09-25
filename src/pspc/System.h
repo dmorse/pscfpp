@@ -49,10 +49,9 @@ namespace Pspc
    *    - Monomer concentration fields in both basis and grid formats
    *
    * In a parameter file format, the main block is a System{...} block that
-   * contains subblocks for sub-objects.  See \ref pspc_System_page "here" 
-   * for a skeleton of the parameter file format with references to formats 
-   * for subblocks.
+   * contains subblocks for sub-objects.  
    *
+   * \ref user_param_pc_page "Parameter File Format"
    * \ingroup Pscf_Pspc_Module
    */
    template <int D>

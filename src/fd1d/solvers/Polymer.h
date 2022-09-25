@@ -31,7 +31,7 @@ namespace Fd1d
    * the parameter file and mu is computed. If the ensemble is
    * open, mu is read from the parameter file and phi is computed.
    *
-   * \ref fd1d_Polymer_page "Parameter File Format"
+   * \ref user_param_polymer_sec "Parameter File Format"
    * \ingroup Fd1d_Solver_Module
    */
    class Polymer : public PolymerTmpl<Block>

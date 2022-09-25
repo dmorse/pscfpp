@@ -32,7 +32,7 @@ namespace Pspc {
    * in the most recent call of the compute function. These can be 
    * accessed using the Block<D>::cField() function.
    *
-   * \ref pspc_Polymer_page "Parameter File Format"
+   * \ref user_param_polymer_sec "Parameter File Format"
    *
    * \ingroup Pspc_Solver_Module
    */
@@ -46,11 +46,6 @@ namespace Pspc {
       * Base class typedef (PolymerTmpl instance)
       */
       typedef PolymerTmpl< Block<D> > Base;
-
-      /**
-      * Chemical potential field typedef
-      */
-      typedef typename Block<D>::WField  WField;
 
       /**
       * Default constructor.
@@ -113,7 +108,7 @@ namespace Pspc {
       *
       * \param wFields array of chemical potential fields.
       */ 
-      void compute(DArray<WField> const & wFields);
+      void compute(DArray< RField<D> > const & wFields);
 
       /**
       * Compute stress contribution from this species.

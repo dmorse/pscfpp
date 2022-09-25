@@ -171,7 +171,7 @@ namespace Pspc {
    */
    template <int D>
    void
-   Block<D>::setupSolver(Block<D>::WField const& w)
+   Block<D>::setupSolver(RField<D> const& w)
    {
       // Preconditions
       int nx = mesh().size();
@@ -367,7 +367,7 @@ namespace Pspc {
    * Propagate solution by one step.
    */
    template <int D>
-   void Block<D>::step(QField const & q, QField& qNew)
+   void Block<D>::step(RField<D> const & q, RField<D>& qNew)
    {
       // Preconditions
       UTIL_CHECK(isAllocated_);
