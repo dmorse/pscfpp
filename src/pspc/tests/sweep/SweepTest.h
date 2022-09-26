@@ -71,7 +71,7 @@ public:
       }
 
       // Assert that it is read correctly
-      TEST_ASSERT(ps[0].type()=="block_length");
+      TEST_ASSERT(ps[0].type()=="block");
       TEST_ASSERT(ps[0].id(0)==0);
       TEST_ASSERT(ps[0].id(1)==0);
       TEST_ASSERT(ps[0].change()==0.25);
