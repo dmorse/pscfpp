@@ -121,7 +121,7 @@ namespace Fd1d {
    std::string SweepParameter::type() const
    {
       if (type_ == Block) {
-         return "block_length";
+         return "block";
       } else if (type_ == Chi) {
          return "chi";
       } else if (type_ == Kuhn) {

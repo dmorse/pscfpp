@@ -24,16 +24,15 @@ System{
      xMax 1.7
      nx   101
   }
-  NrIterator{
+  Iterator{
      epsilon   0.00000001
   }
-  LengthSweep{
+  Sweep{
      ns            10
      baseFileName  sweep/
-     polymerId     0
-     blockId       0
-     dLength       0.1
+     nParameter    1
+     parameters[
+        block   0   0   0.1
+     ]
   }
 }
-
-   nSolvent  0

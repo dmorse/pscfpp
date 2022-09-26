@@ -24,10 +24,10 @@ System{
      xMax 1.7
      nx   101
   }
-  NrIterator{
+  Iterator{
      epsilon   0.00000001
   }
-  LinearSweep{
+  Sweep{
      ns            10
      baseFileName  sweep/
      nParameter    4

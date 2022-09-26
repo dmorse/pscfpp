@@ -137,7 +137,7 @@ namespace Pspc {
    std::string SweepParameter<D>::type() const
    {
       if (type_ == Block) {
-         return "block_length";
+         return "block";
       } else if (type_ == Chi) {
          return "chi";
       } else if (type_ == Kuhn) {

@@ -36,9 +36,22 @@ System{
      xMax           4.00
      nx              401
   }
-  NrIterator{
+  Iterator{
      epsilon   0.0000001
   }
+  Sweep{
+     ns                    200
+     baseFileName         csl/
+     homogeneousMode         1
+     nParameter              2
+     parameters[
+        phi_polymer    0     -0.01222
+        phi_polymer    1      0.01222
+     ]
+  }
+}
+
+
   CompositionSweep{
      ns                    200
      baseFileName         csl/
@@ -46,6 +59,4 @@ System{
      dPhi             -0.01222
                        0.01222
   }
-}
-
 

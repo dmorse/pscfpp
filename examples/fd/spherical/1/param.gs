@@ -36,9 +36,20 @@ System{
      xMax           4.00
      nx              401
   }
-  NrIterator{
+  Iterator{
      epsilon   0.0000001
   }
+  Sweep{
+     ns                    200
+     baseFileName          gs/
+     homogeneousMode         1
+     nParameter              1
+     parameters[
+        mu_polymer  0    +0.40000
+     ]
+  }
+}
+
   MuSweep{
      ns                    200
      baseFileName          gs/
@@ -46,5 +57,4 @@ System{
      dMu              +0.40000
                        0.00000
   }
-}
 

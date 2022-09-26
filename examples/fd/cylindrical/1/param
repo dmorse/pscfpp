@@ -27,11 +27,10 @@ System{
   }
   Domain{
      mode     Cylindrical
-     isShell            0
      xMax            4.00
      nx               401
   }
-  NrIterator{
+  Iterator{
      epsilon   0.0000001
   }
 }
