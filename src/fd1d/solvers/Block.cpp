@@ -101,7 +101,7 @@ namespace Fd1d
    * domain().nx() - 1 upper and lower off-diagonal elements of A and B
    * are denoted by uA_, lA_, uB_, and lB_, respectively
    */
-   void Block::setupSolver(Block::WField const& w)
+   void Block::setupSolver(DArray<double> const& w)
    {
       // Preconditions
       UTIL_CHECK(domainPtr_);

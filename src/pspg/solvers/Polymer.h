@@ -73,7 +73,7 @@ namespace Pspg {
       * Compute solution to MDE and concentrations.
       *
       * \param unitCell crystallographic unit cell (input)
-      * \param waveList precomputed wavevector data (input)
+      * \param wavelist precomputed wavevector data (input)
       */ 
       void setupUnitCell(UnitCell<D> const & unitCell, 
                          WaveList<D> const & wavelist);
@@ -88,7 +88,7 @@ namespace Pspg {
       /**
       * Compute stress from a polymer chain, needs a pointer to basis
       *
-      * \param waveList precomputed wavevector data (input)
+      * \param wavelist precomputed wavevector data (input)
       */
       void computeStress(WaveList<D> const & wavelist);
 

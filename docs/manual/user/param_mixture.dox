@@ -229,6 +229,11 @@ of these Polymer classes is a subclass of an instances of a common class
 template named Pscf::PolymerTmpl. The readParameters function of this 
 template defines the common file format.  
 
+\section user_param_block_sec  Block
+
+The text representation of a block within the "blocks" array in a Polymer
+parameter file block is different for linear and branched polymers. 
+
 \subsection user_param_block_linear_sub Linear Polymers
 
 If the polymer type is linear, then blocks must be listed in the "blocks"

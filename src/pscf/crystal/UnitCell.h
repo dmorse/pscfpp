@@ -25,13 +25,13 @@ namespace Pscf
    * enumeration UnitCell<D>::LatticeSystem of the possible types of 
    * Bravais lattice systems in D-dimensional space.
    *
-   * Iostream inserter (<<) and extractor (>>) operators are defined
-   * for all explicit specializations of UnitCell<D>, allowing a 
-   * UnitCell to be read from or written to file like a primitive 
-   * variable. The text representation for a UnitCell<D> contains a 
-   * text representation of the LatticeSystem enumeration (i.e., the
+   * Iostream inserter (<<) and extractor (>>) operators are defined for
+   * all explicit specializations of UnitCell<D>, allowing a UnitCell
+   * to be read from or written to file like a primitive variable.
+   * The text representation for a UnitCell<D> contains a text 
+   * representation of the LatticeSystem<D> enumeration (i.e., the
    * unit cell type) and a list of one or more unit cell parameters 
-   * (lengths and angles), as described \ref pscf_UnitCell_page "here".
+   * (lengths and angles), as described \ref user_unitcell_page "here".
    *
    * \ingroup Pscf_Crystal_Module
    */

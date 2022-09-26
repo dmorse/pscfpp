@@ -11,17 +11,17 @@ the other PSCF programs, and the Domain block has the same format as
 that used by the pscf_pc programs. The only differences are differences
 in the available iterators.
 
-\section user_param_pc_Iterator_section Iterators
+\section user_param_pg_iterator_sec Iterators
 
 The default iterator for pscf_pg programs uses an Anderson-Mixing (AM)
-algorithm closely analogous to that used by the default AM iterator 
-for pscf_pc programs. Like the pscf_pc AmIterator, this algorithm 
-applies the AmIterator to a residual that is defined using an 
-expansion in symmetry-adapted basis functins, and updates the chemical
-potential fields by modifying the coefficients in this expansion. This
-algorithm may be invoked in the parameter file for a pscf_pg program
-using either the generic block label "Iterator" or a specific label
-"AmIteratorBasis". 
+algorithm closely analogous to that used by the default AM iterator for 
+pscf_pc programs, \ref pspc_AmIterator_page "Pspc::AmIterator". 
+Like the pscf_pc AmIterator, this algorithm applies the Anderson mixing
+algorithm to a residual that is defined using an expansion in 
+symmetry-adapted basis functins, and updates the chemical potential 
+fields by modifying the coefficients in this expansion. This algorithm 
+may be invoked in the parameter file for a pscf_pg program using either 
+the generic block label "Iterator" or a specific label "AmIteratorBasis". 
 
 The only other iterator currently provided for use with the pscf_pg
 programs is an Anderson mixing in which the residual vector and 
