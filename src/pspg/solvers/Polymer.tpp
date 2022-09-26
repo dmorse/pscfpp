@@ -54,7 +54,7 @@ namespace Pspg {
    * Compute solution to MDE and concentrations.
    */ 
    template <int D>
-   void Polymer<D>::compute(DArray<WField> const & wFields)
+   void Polymer<D>::compute(DArray< RDField<D> > const & wFields)
    {
       // Setup solvers for all blocks
       int monomerId;
@@ -72,7 +72,7 @@ namespace Pspg {
    */
 
    template <int D>
-   void Polymer<D>::computeStress(WaveList<D>& wavelist)
+   void Polymer<D>::computeStress(WaveList<D> const & wavelist)
    {
       double prefactor;
       prefactor = 0;

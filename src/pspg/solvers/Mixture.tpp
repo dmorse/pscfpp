@@ -104,8 +104,8 @@ namespace Pspg
    * Compute concentrations (but not total free energy).
    */
    template <int D>
-   void Mixture<D>::compute(DArray<Mixture<D>::WField> const & wFields, 
-                            DArray<Mixture<D>::CField>& cFields)
+   void Mixture<D>::compute(DArray< RDField<D> > const & wFields, 
+                            DArray< RDField<D> > & cFields)
    {
       UTIL_CHECK(meshPtr_);
       UTIL_CHECK(mesh().size() > 0);
@@ -142,8 +142,8 @@ namespace Pspg
             monomerId = polymer(i).block(j).monomerId();
             UTIL_CHECK(monomerId >= 0);
             UTIL_CHECK(monomerId < nm);
-            CField& monomerField = cFields[monomerId];
-            CField& blockField = polymer(i).block(j).cField();
+            RDField<D>& monomerField = cFields[monomerId];
+            RDField<D>& blockField = polymer(i).block(j).cField();
             UTIL_CHECK(blockField.capacity()==nMesh);
             pointWiseAdd<<<nBlocks, nThreads>>>(monomerField.cDField(), 
                                                 blockField.cDField(), nMesh);
@@ -160,8 +160,8 @@ namespace Pspg
          solvent(i).compute(wFields[monomerId]);
 
          // Add solvent contribution to relevant monomer concentration
-         CField& monomerField = cFields[monomerId];
-         CField const & solventField = solvent(i).concField();
+         RDField<D>& monomerField = cFields[monomerId];
+         RDField<D> const & solventField = solvent(i).concField();
          UTIL_CHECK(solventField.capacity() == nMesh);
          pointWiseAdd<<<nBlocks, nThreads>>>(monomerField.cDField(), 
                                              solventField.cDField(), 
@@ -177,7 +177,7 @@ namespace Pspg
    * Compute Total Stress.
    */  
    template <int D>
-   void Mixture<D>::computeStress(WaveList<D>& wavelist)
+   void Mixture<D>::computeStress(WaveList<D> const & wavelist)
    {   
       int i, j;
 
@@ -222,8 +222,7 @@ namespace Pspg
    * Combine cFields for each block (and solvent) into one DArray
    */
    template <int D>
-   void
-   Mixture<D>::createBlockCRGrid(DArray<typename Mixture<D>::CField>& blockCFields) 
+   void Mixture<D>::createBlockCRGrid(DArray< RDField<D> > & blockCFields) 
    const
    {
       UTIL_CHECK(nMonomer() > 0);

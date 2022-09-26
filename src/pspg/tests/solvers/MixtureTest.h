@@ -79,8 +79,8 @@ public:
       mixture.setupUnitCell(unitCell, wavelist);
 
       int nMonomer = mixture.nMonomer();
-      DArray<Mixture<1>::WField> d_wFields;
-      DArray<Mixture<1>::CField> d_cFields;
+      DArray< RDField<1> > d_wFields;
+      DArray< RDField<1> > d_cFields;
       d_wFields.allocate(nMonomer);
       d_cFields.allocate(nMonomer);
       int nx = mesh.size();
@@ -153,8 +153,8 @@ public:
       mixture.setupUnitCell(unitCell, wavelist);
 
       int nMonomer = mixture.nMonomer();
-      DArray<Mixture<2>::WField> d_wFields;
-      DArray<Mixture<2>::CField> d_cFields;
+      DArray< RDField<2> > d_wFields;
+      DArray< RDField<2> > d_cFields;
       d_wFields.allocate(nMonomer);
       d_cFields.allocate(nMonomer);
       int nx = mesh.size();
@@ -238,8 +238,8 @@ public:
       mixture.setupUnitCell(unitCell, wavelist);
 
       int nMonomer = mixture.nMonomer();
-      DArray<Mixture<2>::WField> d_wFields;
-      DArray<Mixture<2>::CField> d_cFields;
+      DArray< RDField<2> > d_wFields;
+      DArray< RDField<2> > d_cFields;
       d_wFields.allocate(nMonomer);
       d_cFields.allocate(nMonomer);
       int nx = mesh.size();
@@ -323,8 +323,8 @@ public:
       mixture.setupUnitCell(unitCell, wavelist);
 
       int nMonomer = mixture.nMonomer();
-      DArray<Mixture<3>::WField> d_wFields;
-      DArray<Mixture<3>::CField> d_cFields;
+      DArray< RDField<3> > d_wFields;
+      DArray< RDField<3> > d_cFields;
       d_wFields.allocate(nMonomer);
       d_cFields.allocate(nMonomer);
       int nx = mesh.size();

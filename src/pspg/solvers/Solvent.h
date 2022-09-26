@@ -32,16 +32,6 @@ namespace Pspg {
    public:
 
       /**
-      * Monomer concentration field type.
-      */
-      typedef typename Propagator<D>::CField CField;
-
-      /** 
-      * Monomer chemical potential field type.
-      */
-      typedef typename Propagator<D>::WField WField;
-
-      /**
       * Constructor.
       */
       Solvent();
@@ -52,28 +42,27 @@ namespace Pspg {
       ~Solvent();
 
       /**
-      * Set association with Mesh and allocate concentration field array.
+      * Set association with Mesh, allocate memory.
       *
-      * \param mesh associated Mesh<D> object
+      * \param mesh associated Mesh<D> object (input)
       */
       void setDiscretization(Mesh<D> const & mesh);
    
       /**
       * Compute monomer concentration field and phi and/or mu.
       *
-      * Pure virtual function: Must be implemented by subclasses.
       * Upon return, concentration field, phi and mu are all set.
       *
-      * \param wField monomer chemical potential field.
+      * \param wField monomer chemical potential field
       */
-      virtual void compute(WField const & wField );
+      void compute(RDField<D> const & wField );
 
       /**
       * Get the monomer concentration field for this solvent.
       */
-      CField const & concField() const;
+      RDField<D> const & concField() const;
   
-      // Inherited accessor functions 
+      // Inherited public accessor functions 
       using Pscf::Species::phi;
       using Pscf::Species::mu;
       using Pscf::Species::q;
@@ -94,7 +83,7 @@ namespace Pspg {
    private:
 
       /// Concentration field for this solvent
-      CField concField_;
+      RDField<D> concField_;
  
       /// Pointer to associated mesh
       Mesh<D> const *  meshPtr_;
@@ -105,7 +94,7 @@ namespace Pspg {
    * Get monomer concentration field for this solvent.
    */
    template <int D>
-   inline const typename Solvent<D>::CField& Solvent<D>::concField() const
+   inline RDField<D> const & Solvent<D>::concField() const
    {  return concField_;  }
 
 }

@@ -772,7 +772,7 @@ namespace Pspg
    * Set new w-field values, using r-grid fields as inputs.
    */
    template <int D>
-   void System<D>::setWRGrid(DArray<Field> const & fields)
+   void System<D>::setWRGrid(DArray< RDField<D> > const & fields)
    {
       int nMonomer = mixture_.nMonomer();
       int nMesh = domain_.mesh().size();
@@ -986,7 +986,7 @@ namespace Pspg
       UTIL_CHECK(hasCFields_);
 
       // Create and allocate the DArray of fields to be written
-      DArray<Field> blockCFields;
+      DArray< RDField<D> > blockCFields;
       blockCFields.allocate(mixture_.nSolvent() + mixture_.nBlock());
       int n = blockCFields.capacity();
       for (int i = 0; i < n; i++) {

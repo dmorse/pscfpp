@@ -45,20 +45,6 @@ namespace Pspg
 
    public:
 
-      // Public typedefs
-
-      /**
-      * Monomer chemical potential field type.
-      */
-      typedef typename Propagator<D>::WField WField;
-
-      /**
-      * Monomer concentration or volume fraction field type.
-      */
-      typedef typename Propagator<D>::CField CField;
-
-      // Public member functions
-
       /**
       * Constructor.
       */
@@ -132,14 +118,15 @@ namespace Pspg
       * \param cFields array of monomer concentration fields (output)
       */
       void 
-      compute(DArray<WField> const & wFields, DArray<CField>& cFields);
+      compute(DArray< RDField<D> > const & wFields, 
+              DArray< RDField<D> > & cFields);
 
       /**
       * Get monomer reference volume.
       *
       * \param waveList container for wavevector data
       */
-      void computeStress(WaveList<D>& waveList);
+      void computeStress(WaveList<D> const & waveList);
 
       /**
       * Combine cFields for each block/solvent into one DArray.
@@ -150,7 +137,7 @@ namespace Pspg
       * 
       * \param blockCFields empty but allocated DArray to store fields
       */
-      void createBlockCRGrid(DArray<CField>& blockCFields) const;
+      void createBlockCRGrid(DArray< RDField<D> >& blockCFields) const;
 
       /**
       * Get derivative of free energy w/ respect to cell parameter.
@@ -174,7 +161,8 @@ namespace Pspg
       * and solvent species.
       */
       bool isCanonical();
-	  
+	 
+      // Public members from MixtureTmpl with non-dependent names 
       using MixtureTmpl< Polymer<D>, Solvent<D> >::nMonomer;
       using MixtureTmpl< Polymer<D>, Solvent<D> >::nPolymer;
       using MixtureTmpl< Polymer<D>, Solvent<D> >::nSolvent;
@@ -185,6 +173,7 @@ namespace Pspg
 
    protected:
 
+      // Public members from MixtureTmpl with non-dependent names 
       using MixtureTmpl< Polymer<D>, Solvent<D> >::setClassName;
       using ParamComposite::read;
       using ParamComposite::readOptional;

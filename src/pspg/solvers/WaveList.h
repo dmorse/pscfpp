@@ -32,19 +32,23 @@ namespace Pspg
    public:
 
       /**
-      *
+      * Constructor.
       */
       WaveList();
 
       /**
-      *
+      * Destructor
       */
       ~WaveList();
 
       /**
       * Allocate memory for all arrays. Call in readParameters.
+      *
+      * \param mesh  spatial discretization mesh (input)
+      * \param unitCell  crystallographic unit cell (input)
       */
-      void allocate(Mesh<D> const & mesh, UnitCell<D> const & unitCell);
+      void allocate(Mesh<D> const & mesh, 
+                    UnitCell<D> const & unitCell);
 
       /**
       * Compute minimum images of wavevectors.
@@ -63,8 +67,8 @@ namespace Pspg
       *
       * Called once per iteration with unit cell relaxation.
       * Implementation can copy geometric data (rBasis, kBasis, etc.)
-      * into local data structures and implement the actual calculation
-      * of kSq or dKSq for each wavevector on the GPU.
+      * into local data structures and implement the actual 
+      * calculation of kSq or dKSq for each wavevector on the GPU.
       *
       * \param unitCell crystallographic UnitCell<D>
       */

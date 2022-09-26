@@ -36,7 +36,7 @@ namespace Pspg {
    * Compute concentration, q, phi or mu.
    */ 
    template <int D>
-   void Solvent<D>::compute(WField const & wField)
+   void Solvent<D>::compute(RDField<D> const & wField)
    {
       int nx = meshPtr_->size(); // Number of grid points
 

@@ -22,7 +22,7 @@ Parameters and subblocks are described below:
   <tr>
     <td> geometryMode </td>
     <td> 
-      Enumeration value of type \ref fd1d_GeometryMode_page "GeometryMode".
+      Enumeration value of type "Fd1d::GeometryMode".
       String representations of  allowed values are "planar", "cylindrical" 
       or "spherical" 
     </td>

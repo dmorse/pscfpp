@@ -40,32 +40,57 @@ namespace Pspg {
 
    public:
 
+      /**
+      * Alias for base class.
+      */
       typedef PolymerTmpl< Block<D> > Base;
 
-      typedef typename Block<D>::WField  WField;
-
+      /*
+      * Constructor. 
+      */
       Polymer();
 
+      /*
+      * Destructor. 
+      */
       ~Polymer();
 
+      /*
+      * Set the phi (volume fraction) for this species.
+      *
+      * \param phi volume fraction (input)
+      */
       void setPhi(double phi);
 
+      /*
+      * Set the mu (chemical potential) for this species.
+      * 
+      * \param mu chemical potential (input)
+      */
       void setMu(double mu);
 
       /**
       * Compute solution to MDE and concentrations.
+      *
+      * \param unitCell crystallographic unit cell (input)
+      * \param waveList precomputed wavevector data (input)
       */ 
-      void setupUnitCell(UnitCell<D> const & unitCell, const WaveList<D>& wavelist);
+      void setupUnitCell(UnitCell<D> const & unitCell, 
+                         WaveList<D> const & wavelist);
 
       /**
       * Compute solution to MDE and concentrations.
+      *
+      * \param wFields chemical potential fields for all monomers (input)
       */ 
-      void compute(DArray<WField> const & wFields);
+      void compute(DArray< RDField<D> > const & wFields);
 
       /**
       * Compute stress from a polymer chain, needs a pointer to basis
+      *
+      * \param waveList precomputed wavevector data (input)
       */
-      void computeStress(WaveList<D>& wavelist);
+      void computeStress(WaveList<D> const & wavelist);
 
       /**
       * Get derivative of free energy w/ respect to a unit cell parameter.

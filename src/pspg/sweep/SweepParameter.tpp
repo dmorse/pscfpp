@@ -91,7 +91,10 @@ namespace Pspg {
          type_ = Cell_Param;
          nID_ = 1; //lattice parameter identifier.
       } else {
-         UTIL_THROW("Invalid SweepParameter::ParamType value");
+         std::string msg = "Invalid SweepParameter::ParamType value: ";
+         msg += buffer;
+         //UTIL_THROW("Invalid SweepParameter::ParamType value");
+         UTIL_THROW(msg.c_str());
       }
 
       if (id_.isAllocated()) id_.deallocate();
@@ -133,7 +136,7 @@ namespace Pspg {
    std::string SweepParameter<D>::type() const
    {
       if (type_ == Block) {
-         return "block_length";
+         return "block";
       } else if (type_ == Chi) {
          return "chi";
       } else if (type_ == Kuhn) {
@@ -152,7 +155,7 @@ namespace Pspg {
          return "cell_param";
       } else {
          UTIL_THROW("This should never happen.");
-         }
+      }
    }
 
    template <int D>

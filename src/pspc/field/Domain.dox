@@ -17,14 +17,21 @@ Parameters and subblocks are described below:
   <tr>
     <td> unitCell </td>
     <td> 
-      Description of a crystallographic unit cell, given using the text representation for a \ref pscf_UnitCell_page "UnitCell<D>" object.
-      The format contains a string that identifies the lattice system (e.g., cubic, orthorhombic, hexagonal, etc.) followed by a list of values for unit cell dimensions and, when needed, angles, all on one line.
-  </tr>
+      Description of a crystallographic unit cell, given using the text 
+      representation for a Pscf::UnitCell<D> object.  The format contains a 
+      string that identifies the lattice system (e.g., cubic, orthorhombic, 
+      hexagonal, etc.) followed by a list of values for unit cell dimensions 
+      and, when needed, angles, all on one line.  A discussion of crystal
+      system names and unit cell parameters is given \ref user_unitcell_page
+      "here". 
+      </tr>
   <tr>
     <td> mesh </td>
     <td> 
-    A regular discretization mesh, given using the text representation for a \ref pscf_Mesh_page "Mesh<D>" object. 
-    The required data is simply list of D integers separated by spaces on a single line, in which component i of the list is the number of grid points along direction i.
+    A regular discretization mesh, given using the text representation for a 
+    Mesh<D> object.  The required data is simply list of D integers separated 
+    by spaces on a single line, in which component i of the list is the number 
+    of grid points along direction i.
   </tr>
   <tr>
     <td> groupName </td>

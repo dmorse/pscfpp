@@ -170,7 +170,7 @@ namespace Pspg {
    }
 
    template <int D>
-   void Block<D>::setDiscretization(double ds, const Mesh<D>& mesh)
+   void Block<D>::setDiscretization(double ds, Mesh<D> const & mesh)
    {
       UTIL_CHECK(mesh.size() > 1);
       UTIL_CHECK(ds > 0.0);
@@ -317,7 +317,7 @@ namespace Pspg {
    */
    template <int D>
    void
-   Block<D>::setupSolver(Block<D>::WField const& w)
+   Block<D>::setupSolver(RDField<D> const & w)
    {
       // Preconditions
       int nx = mesh().size();
@@ -437,7 +437,8 @@ namespace Pspg {
    * Compute stress contribution from this block. 
    */
    template <int D>
-   void Block<D>::computeStress(WaveList<D>& wavelist, double prefactor)
+   void Block<D>::computeStress(WaveList<D> const & wavelist, 
+                                double prefactor)
    {
       int nx = mesh().size();
 

@@ -25,13 +25,12 @@ namespace Pscf {
 
 namespace Pspg { 
 
-
    using namespace Util;
 
    /**
    * Block within a branched polymer.
    *
-   * Derived from BlockTmpl< Propagator<D> >. A BlockTmpl< Propagator<D> > 
+   * Derived from BlockTmpl<Propagator<D>>. A BlockTmpl<Propagator<D>> 
    * has two Propagator<D> members and is derived from BlockDescriptor.
    *
    * \ingroup Pspg_Solvers_Module
@@ -41,23 +40,6 @@ namespace Pspg {
    {
 
    public:
-
-      /**
-      * Generic field (base class)
-      */
-      typedef typename Pscf::Pspg::Propagator<D>::Field Field;
-
-      /**
-      * Monomer chemical potential field.
-      */
-      typedef typename Pscf::Pspg::Propagator<D>::WField WField;
-
-      /**
-      * Constrained partition function q(r,s) for fixed s.
-      */
-      typedef typename Pscf::Pspg::Propagator<D>::QField QField;
-
-      // Member functions
 
       /**
       * Constructor.
@@ -72,19 +54,19 @@ namespace Pspg {
       /**
       * Initialize discretization and allocate required memory.
       *
-      * \param ds desired (optimal) value for contour length step
-      * \param mesh spatial discretization mesh
+      * \param ds  desired (optimal) value for contour length step
+      * \param mesh  spatial discretization mesh
       */
       void setDiscretization(double ds, const Mesh<D>& mesh);
 
       /**
       * Setup parameters that depend on the unit cell.
       *
-      * \param unitCell unit cell, defining cell dimensions
-      * \param waveList container for properties of recip wavevectors
+      * \param unitCell  unit cell, defining cell dimensions (input)
+      * \param waveList  container for properties of wavevectors (input)
       */
-      void setupUnitCell(const UnitCell<D>& unitCell, 
-                         const WaveList<D>& waveList);
+      void setupUnitCell(UnitCell<D> const & unitCell, 
+                         WaveList<D> const & waveList);
 
       /**
       * Set or reset block length.
@@ -105,7 +87,7 @@ namespace Pspg {
       *
       * \param w  chemical potential field for this monomer type
       */
-      void setupSolver(WField const & w);
+      void setupSolver(RDField<D> const & w);
 
       /**
       * Initialize FFT and batch FFT classes.
@@ -114,8 +96,11 @@ namespace Pspg {
 
       /**
       * Compute step of integration loop, from i to i+1.
+      *
+      * \param q  pointer to current slice of propagator q (input)
+      * \param qNew pointer to current slice of propagator q (output)
       */
-      void step(const cudaReal* q, cudaReal* qNew);
+      void step(cudaReal const * q, cudaReal* qNew);
 
       /**
       * Compute unnormalized concentration for block by integration.
@@ -127,29 +112,29 @@ namespace Pspg {
       * a contour variable that is integrated over the domain 
       * 0 < s < length(), where length() is the block length.
       *
-      * \param prefactor constant prefactor multiplying integral
+      * \param prefactor  constant prefactor multiplying integral
       */ 
       void computeConcentration(double prefactor);
 
       /**
-      * Compute derivatives of free energy with respect to cell parameters.
+      * Compute derivatives of free energy w/ respect to cell parameters.
       *
       * The prefactor is the same as that used in computeConcentration.
       *
-      * \param waveList  container for properties of recip. latt. wavevectors.
+      * \param waveList  container for properties of wavevectors
       * \param prefactor  constant prefactor multiplying integral
       */
-      void computeStress(WaveList<D>& waveList, double prefactor);
+      void computeStress(WaveList<D> const & waveList, double prefactor);
 
       /**
-      * Get derivative of free energy with respect to a unit cell parameter.
+      * Get derivative of free energy w/ respect to a unit cell parameter.
       *
-      * \param n  unit cell parameter index   
+      * \param n  unit cell parameter index
       */
       double stress(int n);
 
       /**
-      * Return associated spatial Mesh by reference.
+      * Return associated spatial Mesh by const reference.
       */
       Mesh<D> const & mesh() const;
 
@@ -163,7 +148,7 @@ namespace Pspg {
       */
       int ns() const;
 
-      // Functions with non-dependent names from BlockTmpl< Propagator<D> >
+      // Functions with non-dependent names from BlockTmpl<Propagator<D>>
       using BlockTmpl< Pscf::Pspg::Propagator<D> >::setKuhn;
       using BlockTmpl< Pscf::Pspg::Propagator<D> >::propagator;
       using BlockTmpl< Pscf::Pspg::Propagator<D> >::cField;
@@ -183,38 +168,38 @@ namespace Pspg {
 
    private:
 
-      /// Number of GPU blocks, set in setDiscretization.
+      /// Number of GPU blocks, set in setDiscretization
       int nBlocks_;
 
-      /// Number of GPU threads per block, set in setDiscretization.
+      /// Number of GPU threads per block, set in setDiscretization
       int nThreads_;
 
-      /// Fourier transform plan.
+      /// Fourier transform plan
       FFT<D> fft_;
 
-      /// Batched FFT, used in computeStress.
+      /// Batched FFT, used in computeStress
       FFTBatched<D> fftBatched_;
       
-      /// Stress conntribution from this block.
+      /// Stress conntribution from this block
       FArray<double, 6> stress_;
       
-      // Array of elements containing exp(-K^2 b^2 ds/6) on k-grid.
+      // Array of elements containing exp(-K^2 b^2 ds/6) on k-grid
       RDField<D> expKsq_;
       
-      // Array of elements containing exp(-K^2 b^2 ds/12) on k-grid.
+      // Array of elements containing exp(-K^2 b^2 ds/12) on k-grid
       RDField<D> expKsq2_;
 
-      // Array of elements containing exp(-W[i] ds/2) on r-grid.
+      // Array of elements containing exp(-W[i] ds/2) on r-grid
       RDField<D> expW_;
 
-      // Array of elements containing exp(-W[i] ds/4) on r-grid.
+      // Array of elements containing exp(-W[i] ds/4) on r-grid
       RDField<D> expW2_; 
 
-      // Work arrays for r-grid field.
+      // Work arrays for r-grid fields
       RDField<D> qr_;
       RDField<D> qr2_;
 
-      // Work arrays for wavevector space (k-grid) field.
+      // Work arrays for wavevector space (k-grid) field
       RDFieldDft<D> qk_;
       RDFieldDft<D> qk2_;
 
