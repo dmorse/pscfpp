@@ -4,21 +4,28 @@
 \ref user_param_sweep_page    (Next) 
 <BR>
 
-The the first subblock of the main System block in every PSCF parameter file is a Mixture block.
-The Mixture block describes the chemical composition of the system that is being simulated. 
+The first subblock of the main System block in every PSCF parameter file 
+starts with a label "Mixture", and is referred to as the Mixture block.  
+The Mixture block describes the chemical composition of the system that 
+is being simulated, and includes a description of the chemical structure 
+of each species in the mixture.
 
-PSCF programs are designed to treat a mixture that may contain one or more polymer species and zero or more solvent point-particle species.
+PSCF programs are designed to treat a mixture that may contain one or 
+more polymer species and zero or more solvent point-particle species. 
 Each polymer may be either a linear or acyclic branched block polymer.
-Polymers and solvents are both built from a palette of a nMonomer monomer types. 
-Each monomer is assigned a statistical segment length.
-Each copolymer block and each solvent species is assigned an index in the 
-range [0,..,nMonomer-1] that specifies the type of monomer from which it 
-is constructed.
-The Mixture block contains information that specifies the structure of
-each polymer species within the mixture, the monomer type and volume of
-each solvent species, and the composition of the mixture.
+Polymers and solvents are both constructed from a palette of several 
+types of monomer.
 
-The Mixture block in the parameter file for any pscf program has the format
+Each monomer type is assigned an integer index and a statistical segment 
+length.  Each copolymer block and each solvent species is assigned an 
+integer parameter named monomerId that specifies the type of monomer from 
+which it is constructed.  The Mixture block contains information that 
+specifies the structure of each polymer species within the mixture (
+including information about the length and connectivity of the blocks), 
+the monomer type and volume of each solvent species, and the composition 
+of the mixture.
+
+The Mixture block in a parameter file for any PSCF program has the format
 \code
 Mixture{
   nMonomer   int
@@ -33,11 +40,14 @@ Mixture{
   ds         real
 }
 \endcode
-The asterisk after nSolvent and vMonomer indicates that thse are optional parameters. Note that nSolvent is set to 0 by default. 
-The number of Polymer subblocks must equal nPolymer, and the number of Solvent subblocks must equal nSolvent.
-This implies that no Solvent subblocks may appear if the optional nSolvent parameter entry is absent.
+The asterisk after nSolvent and vMonomer indicates that thse are optional 
+parameters. Note that nSolvent is set to 0 by default.  The number of 
+Polymer subblocks must equal nPolymer, and the number of Solvent subblocks 
+must equal nSolvent.  There may thus not be any Solvent subblocks if the 
+optional nSolvent parameter entry is absent.
 
-The meanings of parameters and subblocks are described in the table shown below.
+The meanings of parameters and subblocks are described in the following
+table:
 <table>
   <tr>
     <td> <b> Label </b>  </td>
@@ -50,7 +60,8 @@ The meanings of parameters and subblocks are described in the table shown below.
   <tr>
     <td> monomers </td>
     <td> 
-    A 1D array of nMonomer elements in which the value of each element is the statistical segment length of the associated monomer type.
+    A 1D array of nMonomer elements in which the value of each element is 
+    the statistical segment length of the associated monomer type.
   </tr>
   <tr>
     <td> nPolymer </td>
@@ -58,7 +69,8 @@ The meanings of parameters and subblocks are described in the table shown below.
   </tr>
   <tr>
     <td> nSolvent* </td>
-    <td> The number of solvent (point-particle) species (non-negative int, optional, 0 by default). </td>
+    <td> The number of solvent (point-particle) species (non-negative int, 
+    optional, 0 by default). </td>
   </tr>
   <tr>
     <td> Polymer{ ... } </td>
@@ -88,22 +100,54 @@ The meanings of parameters and subblocks are described in the table shown below.
   </tr>
 </table>
 
-Monomer types are implicitly assigned integer identifiers in the order 
-in which they appear in the monomers array. We thus assign an index 0 to 
-the first monomer type, and index 1 to the second, and so on.  These 
-integer monomer type indices are used to identify the monomer types 
-associated with each blocks of a block polymer and each solvent type.
+Comments:
 
-Polymer and Solvent species are also assigned integer labels in the 
-order in which object of a particular type appear in the parameter file.
-The polymer species associated with the first Polymer in block in the
-parameter file is thus assigned an index 0, the second an index 1, etc.  
-Similarly, the first solvent species associated with the first Solvent
-block (if any) is assigned an index 0, etc.
+  - Monomer types are implicitly assigned integer type identifiers in the 
+    order in which they appear in the monomers array. We thus assign an 
+    index 0 to the monomer type whose statistical segment length is given
+    as the first element in this array, and index 1 to the second, and so 
+    on.  These integer monomer type indices are used to elsewhere in the
+    parameter file identify the monomer types associated with each block 
+    of a block polymer and each solvent type.
+
+  - Polymer and Solvent species are also assigned integer labels in the 
+    order in which Polymer and Solvent objects appear in the parameter 
+    file.  The polymer species associated with the first Polymer in block 
+    in the parameter file is thus assigned an index 0, the second is 
+    assigned an index 1, etc.  Similarly, the first solvent species 
+    associated with the first Solvent block (if any) is assigned an 
+    index 0, etc.
+
+<i> Technical comments (for users who examine the source code) </i>: 
+
+The source code for PCSF is defined within a C++ namespace named Pscf. 
+This top-level namespace contains several enclosed sub-namespaces named 
+Fd1d, Pspc, and Pspg that each contain code specific to a specific 
+implementation of SCFT (i.e., a specific program or family of programs). 
+We refer to these as implementation level namespaces. The segregation of
+code associated with different implementations allows the same name to 
+be used for analogous classes in different implementations without name
+classes. When possible, the identical or very similar file formats are
+used for the parameter blocks associated with analogous classes used 
+in different implementations.
+
+Each implementation-level namespace contain code for a class or class
+template instances named Mixture. This is a class named Mixture in the 
+Fd1d namespace, and a class template instances named Mixture<D>, in 
+the Pspc and Pspg namespaces, where D is the integer dimensionality of 
+space. All of these Mixture classes are derived from an instance of a 
+class template named Pscf::MixtureTmpl. All of these Mixture classes 
+use the same parameter file format, which is described above. Most of 
+that format is defined in the readParameters member function of the 
+Pscf::MixtureTmpl class template.
+
+The array "monomers" is implemented internally as an array of instances 
+of the class Pscf::Monomer, as discussed \subpage pscf_Monomer_page "here". 
  
-\section user_param_polymer_sec Polymer Block
+\section user_param_polymer_sec Polymer
 
-The Mixture block always contains one or more Polymer blocks, each of which contains information about a specific polymer molecules species. 
+The Mixture block always contains one or more Polymer blocks, each of 
+which contains information about a specific polymer molecules species. 
 The format for a polymer block is
 \code
     Polymer{
@@ -159,10 +203,10 @@ Comments:
     stored internally in an object of type "Block", as indicated by the
     notation "Array [ Block ]" in the above format description. 
 
-  - The required text representation for each Block in the "blocks"
-    array is different depending on whether the value of the type 
-    parameter for the polymer is "linear" (the default) or "branched",
-    as discussed below.
+  - The required text representation for each Block in the "blocks" array
+    is different depending on whether the value of the type parameter for 
+    the polymer is \ref user_param_block_linear_sub "linear" (the default) 
+    or \ref user_param_block_branched_sub "branched", as discussed below.
 
   - The last parameter in a Polymer block must be either a value for 
     phi, which is the volume fraction occupied by the polymer species, 
@@ -173,8 +217,17 @@ Comments:
   - When the parameter phi is present, its value must lie in the range
     [0,1]. 
 
-Descriptions of linear and branched polymers are discussed separately 
-below:
+Descriptions of parameter file formats for individual blocks of linear and 
+branched polymers are discussed separately below.
+
+<i> Technical comment (for users who examine the source code)</i>: 
+A Class or class template named Polymer is defined in each 
+implementation-level namespace of the top-level Pscf namespace (i.e., in 
+the Fd1d, Pspc and Pspg sub-namespaces of Pscf). These Polymer classes
+all use the same parameter file format, which is described above. Each
+of these Polymer classes is a subclass of an instances of a common class 
+template named Pscf::PolymerTmpl. The readParameters function of this 
+template defines the common file format.  
 
 \subsection user_param_block_linear_sub Linear Polymers
 
@@ -185,8 +238,8 @@ is of the form
 \code
       monomerId  length
 \endcode
-where monomerId is an integer and length is a real number. The meaning
-of these two variable values is given in the following table:
+where monomerId is an integer and length is a real number. The meanings 
+of these variable values are described in the following table:
 <table>
   <tr>
     <td> <b> Variable </b>  </td>
@@ -196,7 +249,7 @@ of these two variable values is given in the following table:
   <tr>
     <td> monomerId </td>
     <td> int </td>
-    <td> monomer type index for monomers in this block </td>
+    <td> monomer type index for all monomers in this block </td>
   </tr>
   <tr>
     <td> length </td>
@@ -212,7 +265,7 @@ length of a block is defined to be the ratio of the volume occupied by
 the block to the monomer reference volume.  This block length is thus 
 also equal to the number of monomers in the block.
 
-\subsection user_param_mixture_block_branched_sub Branched Polymers
+\subsection user_param_block_branched_sub Branched Polymers
 
 If the polymer type id branched, then the information in the "blocks" 
 array of a Polymer block must contain a description of the topology of 
@@ -278,7 +331,15 @@ because the type is set to linear by default.  We have set phi = 1.0 in
 this example on the assumption that this is a one-component terpolymer 
 melt, for which the volume fraction of this species must equal unity.
 
-\section user_param_solvent_sec Solvent Block
+<i> Technical comment (for users who examine the source code)</i>: 
+A class or class template named Block is also defined in every
+implementation-level namespace. All of the Block classes are subclasses 
+of a base class named Pscf::BlockDescriptor. The data for each line of
+the "blocks" array is read in using an overloaded insertion (>>) 
+operator for a BlockDescriptor, which defines the text representation
+of the data required in a single line of the "blocks" array.
+ 
+\section user_param_solvent_sec Solvent
 
 A mixture block may contain zero or more Solvent blocks, each of 
 which contains data about a small-molecule solvent species. Solvent
@@ -309,6 +370,14 @@ monomer reference volume is equal to unity. For each solvent, a
 value must be specified for either the volume fraction phi occupied
 by the species, or its chemical potential mu. It is an error to 
 specify both phi and mu or to omit both variables.
+
+<i> Technical comment (for users who examine the source code)</i>: 
+A Class or class template named Solvent is defined in each 
+implementation-level namespace (i.e., in the Fd1d, Pspc and Pspg 
+sub-namespaces of Pscf). These classes are all use the same parameter
+file format, which is described above, and are all subclasses of a 
+common base class named Pscf::SolventDescriptor. The function
+Pscf::SolventDescriptor::readParameters defines this file format.
 
 <BR>
 \ref user_param_format_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

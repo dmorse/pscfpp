@@ -60,22 +60,6 @@ namespace Pspc
 
    public:
 
-      // Public typedefs
-
-      #if 0
-      /**
-      * Monomer chemical potential field type.
-      */
-      typedef RField<D> WField;
-
-      /**
-      * Monomer concentration or volume fraction field type.
-      */
-      typedef RField<D> CField;
-      #endif
-
-      // Public member functions
-
       /**
       * Constructor.
       */

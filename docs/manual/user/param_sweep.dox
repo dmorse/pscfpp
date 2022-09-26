@@ -10,7 +10,7 @@ a line through the space of possible input parameter values. We refer
 to this kind of calculation as a "sweep".  All of the PSCF programs can 
 perform sweep operations.
 
-\section user_param_sweep_definition Sweep Concept
+\section user_param_sweep_definition Concept
 
 To perform a sweep, the program attempts to solve a sequence of SCFT problems 
 for choices of input parameters (e.g., block lengths, chi parameters, species
@@ -130,9 +130,9 @@ System{
 The only new element in this example is the Sweep block, which is discussed
 below.
 
-\section user_param_sweep_command_sec SWEEP Command
+\section user_param_sweep_command_sec Command
 
-A sweep is actually performed by including a command name "SWEEP" in
+A sweep is actually performed by including a command named "SWEEP" in
 the command file. The SWEEP command does not take any parameters, and
 performs the sequence of calculations described in the Sweep block of 
 the parameter file. The SWEEP block must appear after a command that

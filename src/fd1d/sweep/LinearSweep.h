@@ -25,6 +25,7 @@ namespace Fd1d {
    * Base class for a sweep in parameter space where parameters change
    * linearly with the sweep variable. 
    * 
+   * \ref user_param_sweep_linear_sec "Parameter File Format"
    * \ingroup Fd1d_Sweep_Module
    */
    class LinearSweep : public Sweep

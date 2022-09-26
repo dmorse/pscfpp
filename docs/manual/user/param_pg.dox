@@ -49,6 +49,15 @@ can be found by following the links in the table below:
   </tr>
 </table>
 
+\section user_param_pg_sweep_sec Sweep
+
+The default sweep algorithm for the pscf_pg programs is a general linear 
+sweep that can be invoked using a block that starts either with the 
+generic label Sweep or the specific label LinearSweep. The required 
+parameter file format has been described \ref user_param_sweep_linear_sec 
+"here". 
+
+
 <BR>
 \ref user_param_pc_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_param_page     (Up)   &nbsp; &nbsp; &nbsp; &nbsp; 

@@ -129,6 +129,13 @@ The NrIterator parameter block is also described
 \subpage fd1d_NrIterator_page
 "here". 
 
+\section user_param_fd_sweep_sec Sweep
+
+The default sweep for pscf_fd is a linear sweep algorithm that can be
+invoked using a block that starts either with the generic label Sweep
+or the specific label LinearSweep. The required parameter file format
+has been described \ref user_param_sweep_linear_sec "here". 
+
 <BR>
 \ref user_param_sweep_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_param_page        (Up)   &nbsp; &nbsp; &nbsp; &nbsp; 

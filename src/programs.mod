@@ -11,9 +11,9 @@
 *  
 *   <ul style="list-style: none;">
 *   <li> \subpage pscf_fd_page </li>
-*   <li> \subpage pscf_pc1d_page </li>
-*   <li> \subpage pscf_pc2d_page </li>
-*   <li> \subpage pscf_pc3d_page </li>
+*   <li> \subpage pscf_pc1_page </li>
+*   <li> \subpage pscf_pc2_page </li>
+*   <li> \subpage pscf_pc3_page </li>
 *   <li> \subpage pscf_pg1d_page </li>
 *   <li> \subpage pscf_pg2d_page </li>
 *   <li> \subpage pscf_pg3d_page </li>

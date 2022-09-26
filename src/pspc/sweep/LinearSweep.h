@@ -21,9 +21,10 @@ namespace Pspc {
    using namespace Util;
 
    /**
-   * Base class for a sweep in parameter space where parameters change
+   * A sweep in parameter space where one or more parameters change
    * linearly with the sweep variable. 
    * 
+   * \ref user_param_sweep_linear_sec "Parameter File Format"
    * \ingroup Pspc_Sweep_Module
    */
    template <int D>
