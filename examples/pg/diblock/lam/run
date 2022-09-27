@@ -1,1 +1,1 @@
-pscf_pg1d -e -p param -c command
+pscf_pg1 -e -p param -c command

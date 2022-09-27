@@ -1,3 +1,3 @@
 Enter:
 
-pscf_pc2d -e -p param -c command
+pscf_pc2 -e -p param -c command
