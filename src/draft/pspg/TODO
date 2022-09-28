@@ -1,22 +1,5 @@
 TODO (pspg GPU code):
 
-1) Complete doxygen documentation for all classes, functions and parameters 
-   in src/pspg.
-
-2) Write unit tests or other self-contained, self-validating tests of the 
-   GPU classes and put them in the repository. 
-
-Intermediate term 
--------------------------------------------------------------------------
-
-1) Add an iterator with imposed symmetry and output in symmetry adapted 
-   format.
-
-Longer term  
--------------------------------------------------------------------------
-
-2) Add sweep functionality 
-
 Clean up of kernel functions
 -------------------------------------------------------------------------
 

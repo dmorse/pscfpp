@@ -1,0 +1,161 @@
+
+
+Idea: Modify Solvers to allow for inhomogeneous constraint on density
+-------------------------------------------------------------------------
+
+Monomer concentrations (physics)
+
+    Let phi_{tot} be the volume fraction occupied by material
+
+    Let p be a polymer type index
+
+    M_{p} = total number of chains of type p
+
+    Possible convention 1:
+    ----------------------
+
+      Q_{p} = \int dr q(r,N) / V
+  
+          [ expression for Q is unchanged, but value goes to roughly Q phi_{tot} ]
+
+      phi(r) = v c (r) 
+             = v M_{p} \int ds q(r,s) q^{\dagger}(r,s) / (V Q)
+  
+      M_{p} N_{p} v = phi_{p} phi_{tot} V 
+  
+      ->  v M_{p}/V = phi_{p} phi_{tot}/N_{p}
+  
+      ->  prefactor = phi_{p} phi_{tot} / (N_{p} Q_{p})
+  
+         [ expression for the prefactor changes ]
+
+      phi(r) = prefactor \int ds q(r,s) q^{\dagger}(r,s)
+
+      mu = \ln( phi_{p} phi_{tot}/ Q)
+
+        [ mu defined such that value of mu is unchanged, but expression changes ]
+
+      ln Z = M_{p} ln (Q V /vN_{p} ) - \ln M_{p}! ]
+           = M_{p} [  ln(Q V /vN_{p} ) - ln M_p + 1 ]
+           = M_{p} [  ln( V /(M_{p}vN_{p}) + ln Q + 1 ]
+
+      -ln Z = M_{p} [  ln(M_{p} v N_{p} /V ) - ln Q - 1 ]
+            = M_{p} [  ln( phi_p ) - ln (Q / phi_tot) - 1 ]
+
+      -ln Z = M_{p} [ mu - 1 ]
+
+       A/(M_{p}N_{p}) = [ mu - 1 ]/N_p
+
+      
+    Possible Convention 2: 
+    ----------------------
+
+      Q_{p} = \int dr q(r,N) / (phi_{tot}V)
+  
+      [ Expression for Q is changed, but value is unchanged. ]
+
+      phi(r) = v M_{p} \int ds q q^{dagger} / (\phi_tot V Q)
+  
+      M_{p} N_p v = phi_{p} phi_{tot} V
+  
+      prefactor = v M_{p} / (V phi_{tot} Q} = phi_{p}/(N_{p} Q)
+  
+      [ Expression for prefactor is unchanged. ]
+
+      mu = ln (phi_p / Q)
+
+      [ Both the expression for mu and its value are unchanged. ]
+      
+      ln Z = M_{p} ln (Q V phi_{tot} /vN_{p} ) - \ln M_{p}! ]
+           = M_{p} [  ln(Q V phi_tot / vN_{p} ) - ln M_p + 1 ]
+           = M_{p} [  ln( V phi_tot /(M_{p}vN_{p}) + ln Q + 1 ]
+
+      
+      -ln Z = M_{p} [ ln( M_{p} v N_{p} /V phi_tot ) - ln Q - 1 ]
+            = M_{p} [ ln( phi_p ) - ln (Q) - 1 ]
+      -ln Z = M_{p} [ mu - 1 ]
+
+       Total is sum of over p
+
+       A = sum_p M_p [ mu - 1 ]
+
+     
+       Av/(V phi_tot) = sum_p [ mu - 1 ] (M_p v / V phi_tot )
+                      = sum_p phi_p [ mu - 1 ] / N_p
+
+      [ Both the expression for A = -ln Z and its value are unchanged ]
+
+      Note: With convention 2, you change the definition of Q, and other
+      expressions are unchanged.
+
+-------------------------------------------------------------------------
+Problem: Prefactors in computations of concentrations and stress
+
+Solver Templates:
+
+  PropagatorTmpl::solve() - solves MDE for one block, requires no prefactor
+
+  PolymerTmpl::compute()
+ 
+       - solves MDE & computes c for all blocks
+       - implicitly assumes phi_{tot} = 1.0 (no mask):
+
+           q_ = block(0).propagator(0).computeQ();
+           mu_ = log(phi_/q)
+
+Solvers:
+
+  Propagator::solve( ) - solves MDE for one block, unchanged
+
+  Propagator::computeQ() - computes spatial average of q head and tail of partner
+
+  Block::computeConcentration(double prefactor) - computes c for one block
+
+  Block::computeStress(double prefactor) - computes stress for one block
+
+
+Proposal
+========
+
+  * Use convention 2 to define q in Polymer class (change definition of q_)
+
+  * Modify PolymerTmpl::solve 
+
+      - Modify interface to take argument double phiTot, set to 1.0 by default
+
+            [ void PolymerTmpl::solve(double phiTot = 1.0); ]
+
+      - Set q_ = phiTot * block(0).propagator(0).computeQ();
+
+      Note: We do not change function Propagator::computeQ, so that parameter
+      is not passed further down than necessary.
+
+  * Modify Polymer::compute interface
+
+       - Modify interface to take additional optional argument phiTot, 1.0 by default
+
+            [ void compute(wFields, double phiTot = 1.0); ]
+
+  * Modify Pspc::Mixture::compute
+
+       - Modify interface to take an optional argument double phiTot = 1.0.
+
+  * Add function Pspc::Mixture::computeFreeEnergy that computes the ideal gas
+    contribution to the Helmholtz free energy and grand-canonical free energies
+    per monomer. Add accessors to return fHelhmoltzIdeal and pressureIdeal.
+
+  * Add functions System::computeInteractionFreeEnergy, System::computeExternalFreeEnergy.
+
+  * Have System::computeFreeEnergy call Mixture::computeFreeEnergy and accessors, along
+    with functions to compute and access interaction and external free energies.
+
+  Comments: 
+
+    - Use of optional phiTot parameters with default values phiTot = 1.0 will allow 
+      use of unmodified functions by SCFT implementations in which masks are not 
+      (or not yet) implemented.
+
+    - Calculation of ideal gas properties in mixture on a grid will allow free
+      energies to be calculated even when using iterators that do not use 
+      symmetry adapted functions.
+

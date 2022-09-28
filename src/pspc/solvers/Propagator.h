@@ -4,7 +4,7 @@
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
-* Copyright 2016 - 2019, The Regents of the University of Minnesota
+* Copyright 2016 - 2022, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.
 */
 
@@ -77,7 +77,12 @@ namespace Pspc
       /**
       * Allocate memory used by this propagator.
       * 
-      * \param ns number of contour length steps
+      * The parameter ns is the number of values of s at which
+      * q(r,s) is calculated, including the end values at the
+      * terminating vertices. This is one more than the number 
+      * of contour variable steps. 
+      * 
+      * \param ns number of slices (including end points)
       * \param mesh spatial discretization mesh
       */ 
       void allocate(int ns, const Mesh<D>& mesh);
@@ -111,13 +116,15 @@ namespace Pspc
       * molecule as a spatial average of pointwise product of the 
       * initial/head Qfield for this propagator and the final/tail 
       * Qfield of its partner. 
+      *
+      * \return value of Q (spatial average of q*q^{+} at head)
       */ 
       double computeQ();
 
       /**
       * Return q-field at specified step.
       *
-      * \param i step index
+      * \param i step index, 0 <= i < ns
       */
       const QField& q(int i) const;
 
@@ -137,7 +144,7 @@ namespace Pspc
       Block<D>& block();
 
       /**
-      * Number of contour steps.
+      * Number of contour slices, including head and tail.
       */
       int ns() const;
 

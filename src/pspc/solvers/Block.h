@@ -4,7 +4,7 @@
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
-* Copyright 2016 - 2019, The Regents of the University of Minnesota
+* Copyright 2016 - 2022, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.
 */
 
@@ -56,6 +56,14 @@ namespace Pspc {
       /**
       * Initialize discretization and allocate required memory.
       *
+      * This function chooses a value for the number ns of contour
+      * variable grid points for this block so as to yield a value 
+      * for the the actual step size length/(ns-1) as close as possible 
+      * to the input parameter ds (the desired step size) consistent 
+      * with the requirements that ns be odd and ns > 1. These
+      * requirements allow use of Simpson's rule for integration with
+      * respect to the contour variable s. 
+      *
       * \param ds desired (optimal) value for contour length step
       * \param mesh spatial discretization mesh
       */
@@ -65,14 +73,15 @@ namespace Pspc {
       * Setup parameters that depend on the unit cell.
       *
       * This should be called once after every change in unit cell
-      * parameters. Internal variables that depend on the unit cell
-      * parameters are actually reset later, in in the setupSolver 
-      * function just before solving the MDE, using a pointer to 
-      * the unit cell that is set in this function. The associated
-      * UnitCell<D> object should thus not be modified after calling
-      * this function and before the MDEs are solved. 
+      * parameters. Doing so marks internal variables that depends on the
+      * unit cell parameters as being "dirty" or outdated. These internal
+      * variables are actually recomputed later, in the setupSolver 
+      * function, which is called within Polymer<D>::compute function before 
+      * solving the modified diffusion equation (MDE) for all propagators
+      * associated with the polymer, using a pointer to the unit cell that 
+      * is set in this function. 
       *
-      * \param unitCell unit cell, defining cell dimensions
+      * \param unitCell  crystallographic unit cell, defines cell dimensions
       */
       void setupUnitCell(const UnitCell<D>& unitCell);
 
@@ -94,15 +103,16 @@ namespace Pspc {
       * Set solver for this block.
       *
       * This should be called once after every change in w fields, the
-      * unit cell parameters, block length or kuhn lenght, before
+      * unit cell parameters, block length or kuhn length, before
       * entering the loop used to solve the MDE for either propagator.
+      * This function is called by Polymer<D>::compute.
       *
       * \param w chemical potential field for this monomer type
       */
       void setupSolver(RField<D> const & w);
 
       /**
-      * Compute one step of solution of MDE, from i to i+1.
+      * Compute one step of solution of MDE, from step i to i+1.
       *
       * This function is called internally by the PropagatorTmpl solve
       * function within a loop over steps. It is implemented in the
@@ -123,12 +133,12 @@ namespace Pspc {
       * q(r,s) is the solution obtained from propagator(0), q^{*}(r,s) is
       * the solution of propagator(1),  and s is a contour variable that 
       * is integrated over the domain 0 < s < length(), where length() 
-      * is the block length. The "prefactor" parameter should be set to 
-      * prefactor = phi/(L q), where phi is the overall volume fraction 
-      * for this molecular species, L is the total number of monomers in 
-      * the species, and q is the species partition function, i.e., the 
-      * spatial average of q(r,L). This function is called by 
-      * Polymer<D>::compute().
+      * is the block length. The "prefactor" parameter for a system with
+      * a constant total density should be set to prefactor = phi/(L q), 
+      * where phi is the overall volume fraction for this molecular species, 
+      * L is the total number of monomers in the polymer species, and q is 
+      * the species partition function, i.e., the spatial average of q(r,L). 
+      * This function is called by Polymer<D>::compute().
       *
       * \param prefactor  constant multiplying integral over s
       */ 
@@ -137,9 +147,9 @@ namespace Pspc {
       /** 
       * Compute stress contribution for this block.
       *
-      * This function is called by Polymer<D>::computeStress. The
-      * prefactor parameter should be the same as that passed to 
-      * function computeConcentration.   
+      * This function is called by Polymer<D>::computeStress. The parameter
+      * prefactor should be the same as that passed to the function 
+      * computeConcentration.   
       *   
       * \param prefactor  constant multiplying integral over s
       */  
@@ -190,10 +200,10 @@ namespace Pspc {
 
    private:
 
-      /// Matrix to store derivatives of plane waves 
+      // Matrix to store derivatives of plane waves 
       DMatrix<double> dGsq_;
 
-      /// Stress arising from this block
+      // Stress arising from this block
       FSArray<double, 6> stress_;
 
       // Fourier transform plan
@@ -211,40 +221,37 @@ namespace Pspc {
       // Array of elements containing exp(-W[i] (ds/2)*0.5)
       RField<D> expW2_;
 
-      // Work array for real-space field.
-      RField<D> qf_;
-
-      // Work array for real-space field.
+      // Work array for real-space field (step size ds)
       RField<D> qr_;
 
-      // Work array for real-space field.
+      // Work array for real-space field (step size ds/2)
       RField<D> qr2_;
 
-      // Work array for wavevector space field.
+      // Work array for wavevector space field (step size ds)
       RFieldDft<D> qk_;
 
-      // Work array for wavevector space field.
+      // Work array for wavevector space field (step size ds/2)
       RFieldDft<D> qk2_;
 
-      /// Pointer to associated Mesh<D> object.
+      // Pointer to associated Mesh<D> object
       Mesh<D> const* meshPtr_;
 
-      /// Pointer to associated UnitCell<D> object.
+      // Pointer to associated UnitCell<D> object
       UnitCell<D> const* unitCellPtr_;
 
-      /// Dimensions of wavevector mesh in real-to-complex transform.
+      // Dimensions of wavevector mesh in real-to-complex transform
       IntVec<D> kMeshDimensions_;
 
-      /// Contour length step size.
+      // Contour length step size (actual step size for this block)
       double ds_;
 
-      /// Number of contour length steps = # grid points - 1.
+      // Number of contour grid points = # of contour steps + 1
       int ns_;
 
-      /// Have arrays been allocated in setDiscretization ?
+      // Have arrays been allocated in setDiscretization ?
       bool isAllocated_;
 
-      /// Are expKsq_ arrays up to date ? (initialize false)
+      // Are expKsq_ arrays up to date ? (initialize false)
       bool hasExpKsq_;
 
       /** 

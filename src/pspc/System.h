@@ -4,7 +4,7 @@
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
-* Copyright 2016 - 2019, The Regents of the University of Minnesota
+* Copyright 2016 - 2022, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.
 */
 
@@ -49,7 +49,7 @@ namespace Pspc
    *    - Monomer concentration fields in both basis and grid formats
    *
    * In a parameter file format, the main block is a System{...} block that
-   * contains subblocks for sub-objects.  
+   * contains subblocks for sub-objects.
    *
    * \ref user_param_pc_page "Parameter File Format"
    * \ingroup Pscf_Pspc_Module
@@ -106,7 +106,7 @@ namespace Pspc
 
       /**
       * Read command script from a file.
-      * 
+      *
       * \param in command script file.
       */
       void readCommands(std::istream& in);
@@ -124,7 +124,7 @@ namespace Pspc
       * Read chemical potential fields in symmetry adapted basis format.
       *
       * This function opens and reads the file with name "filename",
-      * which must contain chemical potential fields in symmetry-adapted 
+      * which must contain chemical potential fields in symmetry-adapted
       * basis format, stores these fields in the system wFields array,
       * converts these fields to real-space grid format and stores the
       * result in the wFieldsRGrid array. On exit hasWFields and
@@ -133,16 +133,16 @@ namespace Pspc
       * \param filename name of input w-field basis file
       */
       void readWBasis(const std::string & filename);
-   
+
       /**
       * Read chemical potential fields in real-space grid (r-grid) format.
       *
-      * This function opens and reads the file with name filename, 
+      * This function opens and reads the file with name filename,
       * which must contain chemical potential fields in real space grid
       * (r-grid) format, stores these fields in the system wFieldsGrid
       * array, converts these fields to symmetrized basis format and
       * stores the result in the wFields array. On exit hasWFields is
-      * true and hasSymmetricFields and hasCFields are false. 
+      * true and hasSymmetricFields and hasCFields are false.
       *
       * \param filename name of input w-field file in r-grid format
       */
@@ -152,16 +152,16 @@ namespace Pspc
       * Set new w fields, in symmetrized Fourier format.
       *
       * \param fields  array of new w (chemical potential) fields
-      */  
+      */
       void setWBasis(DArray< DArray<double> > const & fields);
- 
+
       /**
       * Set new w fields, in real-space (r-grid) format.
       *
       * \param fields  array of new w (chemical potential) fields
-      */  
+      */
       void setWRGrid(DArray<Field> const & fields);
- 
+
       /**
       * Set parameters of the associated unit cell.
       *
@@ -177,7 +177,7 @@ namespace Pspc
       void setUnitCell(FSArray<double, 6> const & parameters);
 
       //@}
-      /// \name Primary SCFT Computations 
+      /// \name Primary SCFT Computations
       //@{
 
       /**
@@ -186,14 +186,14 @@ namespace Pspc
       * This function calls the Mixture::compute() function to solve
       * the statistical mechanics problem for a non-interacting system
       * subjected to the currrent chemical potential fields (wFields
-      * and wFieldRGrid). This requires solution of the modified 
+      * and wFieldRGrid). This requires solution of the modified
       * diffusion equation for all polymers, computation of Boltzmann
       * weights for all solvents, computation of molecular partition
       * functions for all species, and computation of concentration
-      * fields for blocks and solvents, and computation of overall 
-      * concentrations for all monomer types. This function does not 
-      * compute the canonical (Helmholtz) free energy or grand-canonical 
-      * free energy (i.e., pressure). Upon return, the flag hasCFields 
+      * fields for blocks and solvents, and computation of overall
+      * concentrations for all monomer types. This function does not
+      * compute the canonical (Helmholtz) free energy or grand-canonical
+      * free energy (i.e., pressure). Upon return, the flag hasCFields
       * is set true.
       *
       * If argument needStress == true, then this function also calls
@@ -202,37 +202,37 @@ namespace Pspc
       * \param needStress true if stress is needed, false otherwise
       */
       void compute(bool needStress = false);
-   
+
       /**
       * Iteratively solve a SCFT problem.
-      * 
+      *
       * This function calls the iterator to attempt to solve the SCFT
       * problem for the current mixture and system parameters, using
-      * the current chemical potential fields (wFields and wFieldRGrid) 
-      * and current unit cell parameter values as initial guesses.  
+      * the current chemical potential fields (wFields and wFieldRGrid)
+      * and current unit cell parameter values as initial guesses.
       * On exit, hasCFields is set true whether or not convergence is
-      * obtained to within the desired tolerance.  The Helmholtz free 
+      * obtained to within the desired tolerance.  The Helmholtz free
       * energy and pressure are computed if and only if convergence is
-      * obtained. 
+      * obtained.
       *
       * \pre The hasWFields flag must be true on entry.
       * \param isContinuation true if continuation within a sweep.
       * \return returns 0 for successful convergence, 1 for failure.
       */
       int iterate(bool isContinuation = false);
-   
+
       /**
       * Sweep in parameter space, solving an SCF problem at each point.
       *
-      * This function uses a Sweep object that was initialized in the 
+      * This function uses a Sweep object that was initialized in the
       * parameter file to solve the SCF problem at a sequence of points
       * along a line in parameter space. The nature of this sequence of
       * points is determined by implementation of a subclass of Sweep
-      * and the parameters passed to the sweep object in the parameter 
-      * file.  The Iterator that is initialized in the parameter file 
+      * and the parameters passed to the sweep object in the parameter
+      * file.  The Iterator that is initialized in the parameter file
       * is called at each state point.
       *
-      * An Exception is thrown if this is called when no Sweep has been 
+      * An Exception is thrown if this is called when no Sweep has been
       * created (i.e., if hasSweep() == false).
       */
       void sweep();
@@ -269,28 +269,28 @@ namespace Pspc
       //@}
       /// \name Output Operations (correspond to command file commands)
       //@{
-      
+
       /**
       * Write chemical potential fields in symmetrized basis format.
       *
       * \param filename name of output file
       */
       void writeWBasis(const std::string & filename) const;
-   
+
       /**
       * Write chemical potential fields in real space grid (r-grid) format.
       *
       * \param filename name of output file
       */
       void writeWRGrid(const std::string & filename) const;
-   
+
       /**
       * Write concentration fields in symmetrized basis format.
       *
       * \param filename name of output file
       */
       void writeCBasis(const std::string & filename) const;
-   
+
       /**
       * Write concentration fields in real space grid (r-grid) format.
       *
@@ -304,7 +304,7 @@ namespace Pspc
       * Writes concentrations for all blocks of all polymers and all
       * solvent species in r-grid format. Columns associated with blocks
       * appear ordered by polymer id and then by block id, followed by
-      * solvent species ordered by solvent id. 
+      * solvent species ordered by solvent id.
       *
       * \param filename name of output file
       */
@@ -315,12 +315,12 @@ namespace Pspc
       *
       * \param filename  name of output file
       * \param polymerId  integer id of the polymer
-      * \param blockId  integer id of the block within the polymer 
+      * \param blockId  integer id of the block within the polymer
       * \param directionId  integer id of the direction (0 or 1)
       * \param segmentId  integer integration step index
       */
-      void writeQSlice(std::string const & filename, 
-                       int polymerId, int blockId, 
+      void writeQSlice(std::string const & filename,
+                       int polymerId, int blockId,
                        int directionId, int segmentId)  const;
 
       /**
@@ -328,10 +328,10 @@ namespace Pspc
       *
       * \param filename  name of output file
       * \param polymerId  integer id of the polymer
-      * \param blockId  integer id of the block within the polymer 
+      * \param blockId  integer id of the block within the polymer
       * \param directionId  integer id of the direction (0 or 1)
       */
-      void writeQTail(std::string const & filename, int polymerId, 
+      void writeQTail(std::string const & filename, int polymerId,
                       int blockId, int directionId)  const;
 
       /**
@@ -339,26 +339,26 @@ namespace Pspc
       *
       * \param filename  name of output file
       * \param polymerId  integer id of the polymer
-      * \param blockId  integer id of the block within the polymer 
+      * \param blockId  integer id of the block within the polymer
       * \param directionId  integer id of the direction (0 or 1)
       */
-      void writeQ(std::string const & filename, int polymerId, 
+      void writeQ(std::string const & filename, int polymerId,
                   int blockId, int directionId)  const;
 
       /**
       * Write all propagators of all blocks, each to a separate file.
       *
-      * Write all propagators for both directions for all blocks 
+      * Write all propagators for both directions for all blocks
       * of all polymers, with each propagator in a separate file.
-      * The function writeQ is called internally for each propagator, 
-      * and is passed an automatically generated file name.  The file 
-      * name for each propagator is given by a string of the form 
-      * (basename)_(ip)_(ib)_(id), where (basename) denotes the value 
-      * of the std::string function parameter basename, and where 
+      * The function writeQ is called internally for each propagator,
+      * and is passed an automatically generated file name.  The file
+      * name for each propagator is given by a string of the form
+      * (basename)_(ip)_(ib)_(id), where (basename) denotes the value
+      * of the std::string function parameter basename, and where
       * (ip), (ib), and (id) denote the string representations of
       * a polymer indiex ip, a block index ib, and direction index id,
-      * with id = 0 or 1. For example, if basename == "out/q", then 
-      * the file name of the propagator for direction 1 of block 2 
+      * with id = 0 or 1. For example, if basename == "out/q", then
+      * the file name of the propagator for direction 1 of block 2
       * of polymer 0 would be "out/q_0_2_1".
       *
       * \param basename  common prefix for output file names
@@ -366,20 +366,20 @@ namespace Pspc
       void writeQAll(std::string const & basename);
 
       /**
-      * Write parameter file to an ostream, omitting any sweep block. 
+      * Write parameter file to an ostream, omitting any sweep block.
       *
-      * \param out output stream 
+      * \param out output stream
       */
       void writeParamNoSweep(std::ostream& out) const;
 
       /**
-      * Write thermodynamic properties to a file. 
+      * Write thermodynamic properties to a file.
       *
       * This function outputs Helmholtz free energy per monomer,
       * pressure (in units of kT per monomer volume), and the
       * volume fraction and chemical potential of each species.
       *
-      * \param out output stream 
+      * \param out output stream
       */
       void writeThermo(std::ostream& out) const;
 
@@ -392,7 +392,7 @@ namespace Pspc
       * \param outFileName name of output file
       */
       void writeStars(const std::string & outFileName) const;
-   
+
       /**
       * Output information about waves.
       *
@@ -406,16 +406,16 @@ namespace Pspc
       //@}
       /// \name Field Operations (correspond to command file commands)
       //@{
-      
+
       /**
       * Convert a field from symmetrized basis format to r-grid format.
       *
       * \param inFileName name of input file (basis format)
       * \param outFileName name of output file (r-grid format)
       */
-      void basisToRGrid(const std::string & inFileName, 
+      void basisToRGrid(const std::string & inFileName,
                         const std::string & outFileName) const;
-   
+
       /**
       * Convert a field from real-space grid to symmetrized basis format.
       *
@@ -424,23 +424,23 @@ namespace Pspc
       */
       void rGridToBasis(const std::string & inFileName,
                         const std::string & outFileName) const;
-   
+
       /**
       * Convert fields from Fourier (k-grid) to real-space (r-grid) format.
       *
       * \param inFileName name of input file (k-grid format)
       * \param outFileName name of output file (r-grid format)
       */
-      void kGridToRGrid(const std::string& inFileName, 
+      void kGridToRGrid(const std::string& inFileName,
                         const std::string& outFileName) const;
-   
+
       /**
       * Convert fields from real-space (r-grid) to Fourier (k-grid) format.
       *
       * \param inFileName name of input file (r-grid format)
       * \param outFileName name of output file (k-grid format)
       */
-      void rGridToKGrid(const std::string & inFileName, 
+      void rGridToKGrid(const std::string & inFileName,
                         const std::string & outFileName) const;
 
       /**
@@ -449,37 +449,37 @@ namespace Pspc
       * \param inFileName name of input file (k-grid format)
       * \param outFileName name of output file (basis format)
       */
-      void kGridToBasis(const std::string& inFileName, 
+      void kGridToBasis(const std::string& inFileName,
                         const std::string& outFileName) const;
-   
+
       /**
       * Convert fields from symmetrized basis to Fourier (k-grid) format.
       *
       * \param inFileName name of input file (basis format)
       * \param outFileName name of output file (k-grid format)
       */
-      void basisToKGrid(const std::string & inFileName, 
+      void basisToKGrid(const std::string & inFileName,
                         const std::string & outFileName) const;
-  
+
       /**
       * Construct trial w-fields from c-fields.
       *
-      * This function reads concentration fields in symmetrized basis 
-      * format and constructs an initial guess for corresponding chemical 
-      * potential fields by setting the Lagrange multiplier field xi to 
-      * zero. The resulting guess is stored in the System wFields arrays 
-      * in basis and r-grid formats and is also output to a file in basis 
+      * This function reads concentration fields in symmetrized basis
+      * format and constructs an initial guess for corresponding chemical
+      * potential fields by setting the Lagrange multiplier field xi to
+      * zero. The resulting guess is stored in the System wFields arrays
+      * in basis and r-grid formats and is also output to a file in basis
       * format.
       *
-      * Upon return, hasWFields and hasSymmetricFields are set true and 
-      * hasCFields is set false. 
+      * Upon return, hasWFields and hasSymmetricFields are set true and
+      * hasCFields is set false.
       *
       * \param inFileName  name of input c-field file (in, basis format)
       * \param outFileName  name of output w-field file (out, basis format)
       */
-      void guessWfromC(const std::string& inFileName, 
+      void guessWfromC(const std::string& inFileName,
                        const std::string& outFileName);
-   
+
       /**
       * Compare two field files in symmetrized basis format.
       *
@@ -488,7 +488,7 @@ namespace Pspc
       * \param field1  first array of fields (basis format)
       * \param field2  second array of fields (basis format)
       */
-      void compare(const DArray< DArray<double> > field1, 
+      void compare(const DArray< DArray<double> > field1,
                    const DArray< DArray<double> > field2);
 
       /**
@@ -499,15 +499,15 @@ namespace Pspc
       * \param field1  first array of fields (r-grid format)
       * \param field2  second array of fields (r-grid format)
       */
-      void compare(const DArray< RField<D> > field1, 
+      void compare(const DArray< RField<D> > field1,
                    const DArray< RField<D> > field2);
 
-      /** 
+      /**
       * Check if r-grid fields have the declared space group symmetry.
       *
       * \param inFileName name of input file
       * \return true if fields all have symmetry, false otherwise
-      */ 
+      */
       bool checkRGridFieldSymmetry(const std::string & inFileName) const;
 
       //@}
@@ -525,11 +525,11 @@ namespace Pspc
       * Get chemical potential field for one monomer type in basis format.
       *
       * An Exception is thrown if hasSymmetricFields is false.
-      * 
+      *
       * \param monomerId integer monomer type index
       */
       DArray<double> const & wFieldBasis(int monomerId) const;
-      
+
       /**
       * Get array of all chemical potential fields in r-space grid format.
       *
@@ -577,7 +577,7 @@ namespace Pspc
       Field const & cFieldRGrid(int monomerId) const;
 
       //@}
-      /// \name Miscellaneous Accessors 
+      /// \name Miscellaneous Accessors
       //@{
 
       /**
@@ -664,33 +664,33 @@ namespace Pspc
       /// \name Accessors (return by value)
       //@{
 
-      /** 
+      /**
       * Get the group name string.
-      */  
+      */
       std::string groupName() const;
 
-      /** 
+      /**
       * Have monomer chemical potential fields (w fields) been set?
       */
       bool hasWFields() const;
 
-      /** 
+      /**
       * Have monomer concentration fields (c fields) been computed?
       *
       * A true value is returned iff monomer concentration fields have
       * been computed by solving the modified diffusion equation for the
       * current w fields.
-      */  
+      */
       bool hasCFields() const;
 
-      /** 
+      /**
       * Are w-fields symmetric under all elements of the space group?
       *
       * This is true iff the fields were originally input in basis format.
       */
       bool hasSymmetricFields() const;
 
-      /** 
+      /**
       * Does this system have a Sweep object?
       */
       bool hasSweep() const;
@@ -842,10 +842,10 @@ namespace Pspc
 
       /**
       * Does the system have symmetric fields ?
-      * 
+      *
       * Set true iff WFields are set and were input using the symmetry
-      * adapated basis format, and are thus invariant under all elements 
-      * of the specified space group. 
+      * adapated basis format, and are thus invariant under all elements
+      * of the specified space group.
       */
       bool hasSymmetricFields_;
 
@@ -995,78 +995,78 @@ namespace Pspc
    template <int D>
    inline
    DArray< DArray<double> > const & System<D>::wFieldsBasis() const
-   {  
+   {
       UTIL_ASSERT(hasWFields_);
       UTIL_ASSERT(hasSymmetricFields_);
-      return wFieldsBasis_; 
+      return wFieldsBasis_;
    }
 
    // Get one monomer chemical potential field.
    template <int D>
    inline
    DArray<double> const & System<D>::wFieldBasis(int id) const
-   {  
+   {
       UTIL_ASSERT(hasWFields_);
       UTIL_ASSERT(hasSymmetricFields_);
-      return wFieldsBasis_[id]; 
+      return wFieldsBasis_[id];
    }
 
    // Get an array of monomer chemical potential fields on r-space grids.
    template <int D>
-   inline 
-   DArray< typename System<D>::Field > const & 
+   inline
+   DArray< typename System<D>::Field > const &
    System<D>::wFieldsRGrid() const
-   {  
+   {
       UTIL_ASSERT(hasWFields_);
-      return wFieldsRGrid_; 
+      return wFieldsRGrid_;
    }
 
    // Get a single monomer chemical potential field on an r-space grid.
    template <int D>
-   inline 
+   inline
    typename System<D>::Field const & System<D>::wFieldRGrid(int id) const
-   {  
+   {
       UTIL_ASSERT(hasWFields_);
-      return wFieldsRGrid_[id]; 
+      return wFieldsRGrid_[id];
    }
 
    // Get array of all monomer concentration fields.
    template <int D>
    inline
    DArray< DArray<double> > const & System<D>::cFieldsBasis() const
-   { 
+   {
       UTIL_ASSERT(hasCFields_);
       UTIL_ASSERT(hasSymmetricFields_);
-      return cFieldsBasis_; 
+      return cFieldsBasis_;
    }
 
    // Get one monomer concentration field.
    template <int D>
    inline
    DArray<double> const & System<D>::cFieldBasis(int id) const
-   { 
+   {
       UTIL_ASSERT(hasCFields_);
       UTIL_ASSERT(hasSymmetricFields_);
-      return cFieldsBasis_[id]; 
+      return cFieldsBasis_[id];
    }
 
    // Get array of all monomer concentration fields on grids.
    template <int D>
    inline
-   DArray< typename System<D>::Field > const & System<D>::cFieldsRGrid() 
+   DArray< typename System<D>::Field > const & System<D>::cFieldsRGrid()
    const
-   {  
+   {
       UTIL_ASSERT(hasCFields_);
-      return cFieldsRGrid_; 
+      return cFieldsRGrid_;
    }
 
    // Get a single monomer concentration field on an r-space grid.
    template <int D>
    inline typename System<D>::Field const & System<D>::cFieldRGrid(int id)
    const
-   {  
+   {
       UTIL_ASSERT(hasCFields_);
-      return cFieldsRGrid_[id]; 
+      return cFieldsRGrid_[id];
    }
 
    // Have the w fields been set?

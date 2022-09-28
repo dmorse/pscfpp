@@ -4,7 +4,7 @@
 /*
 * PSCF - Polymer Self-Consistent Field Theory
 *
-* Copyright 2016 - 2019, The Regents of the University of Minnesota
+* Copyright 2016 - 2022, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.
 */
 
@@ -93,7 +93,6 @@ namespace Pspc {
       qk_.allocate(mesh.dimensions());
       qr2_.allocate(mesh.dimensions());
       qk2_.allocate(mesh.dimensions());
-      qf_.allocate(mesh.dimensions());
 
       // Allocate work array for stress calculation
       dGsq_.allocate(kSize, 6);
@@ -224,25 +223,29 @@ namespace Pspc {
       Propagator<D> const & p1 = propagator(1);
 
       // Evaluate unnormalized integral
-      for(i = 0; i < nx; ++i) {
+
+      // Endpoint contributions
+      for (i = 0; i < nx; ++i) {
          cField()[i] += p0.q(0)[i]*p1.q(ns_ - 1)[i];
          cField()[i] += p0.q(ns_ -1)[i]*p1.q(0)[i];
       }
 
-      //odd indices
-      for(int j = 1; j < (ns_ -1); j += 2) {
-         for(int i = 0; i < nx; ++i) {
+      // Odd indices
+      int j;
+      for (j = 1; j < (ns_ -1); j += 2) {
+         for (i = 0; i < nx; ++i) {
             cField()[i] += p0.q(j)[i] * p1.q(ns_ - 1 - j)[i] * 4.0;
          }
       }
 
-      //even indices
-      for(int j = 2; j < (ns_ -2); j += 2) {
-         for(int i = 0; i < nx; ++i) {
+      // Even indices
+      for (j = 2; j < (ns_ -2); j += 2) {
+         for (i = 0; i < nx; ++i) {
             cField()[i] += p0.q(j)[i] * p1.q(ns_ - 1 - j)[i] * 2.0;
          }
       }
 
+      // Normalize the integral
       prefactor *= ds_ / 3.0;
       for (i = 0; i < nx; ++i) {
          cField()[i] *= prefactor;
@@ -369,31 +372,31 @@ namespace Pspc {
    template <int D>
    void Block<D>::step(RField<D> const & q, RField<D>& qNew)
    {
-      // Preconditions
+      // Internal prereconditions
       UTIL_CHECK(isAllocated_);
+      int nx = mesh().size();
+      int nk = qk_.capacity();
+      UTIL_CHECK(nx > 0);
+      UTIL_CHECK(nk > 0);
+      UTIL_CHECK(qr_.capacity() == nx);
+      UTIL_CHECK(expW_.capacity() == nx);
+      UTIL_CHECK(expKsq_.capacity() == nk);
       UTIL_CHECK(hasExpKsq_);
 
-      // Check real space mesh sizes
-      int nx = mesh().size();
-      UTIL_CHECK(nx > 0);
+      // Preconditions on parameters
       UTIL_CHECK(q.isAllocated());
       UTIL_CHECK(q.capacity() == nx);
       UTIL_CHECK(qNew.isAllocated());
       UTIL_CHECK(qNew.capacity() == nx);
-      UTIL_CHECK(qr_.capacity() == nx);
-      UTIL_CHECK(expW_.capacity() == nx);
-
-      // Check Fourier-space mesh sizes
-      int nk = qk_.capacity();
-      UTIL_CHECK(expKsq_.capacity() == nk);
 
       // Apply pseudo-spectral algorithm
+
+      // Full step for ds, half-step for ds/2
       int i;
       for (i = 0; i < nx; ++i) {
          qr_[i] = q[i]*expW_[i];
          qr2_[i] = q[i]*expW2_[i];
       }
-
       fft_.forwardTransform(qr_, qk_);
       fft_.forwardTransform(qr2_, qk2_);
       for (i = 0; i < nk; ++i) {
@@ -405,10 +408,11 @@ namespace Pspc {
       fft_.inverseTransform(qk_, qr_);
       fft_.inverseTransform(qk2_, qr2_);
       for (i = 0; i < nx; ++i) {
-         qf_[i] = qr_[i]*expW_[i];
+         qr_[i] = qr_[i]*expW_[i];
          qr2_[i] = qr2_[i]*expW_[i];
       }
 
+      // Finish second half-step for ds/2
       fft_.forwardTransform(qr2_, qk2_);
       for (i = 0; i < nk; ++i) {
          qk2_[i][0] *= expKsq2_[i];
@@ -418,8 +422,10 @@ namespace Pspc {
       for (i = 0; i < nx; ++i) {
          qr2_[i] = qr2_[i]*expW2_[i];
       }
+
+      // Richardson extrapolation
       for (i = 0; i < nx; ++i) {
-         qNew[i] = (4.0*qr2_[i] - qf_[i])/3.0;
+         qNew[i] = (4.0*qr2_[i] - qr_[i])/3.0;
       }
    }
 
