@@ -12,6 +12,8 @@ class FieldContainer {
 
 public:
 
+   allocate(int nMonomer, int nBasis, IntVec<D> meshDimensions);
+
    associate(FieldIo const & fieldIo);
 
    // Accessors
@@ -61,7 +63,12 @@ public:
 };
 
 -----------------------------------------------------
-class Mask : public WFieldContainer {
+class Mask {
+
+   Similar to WFieldContainer, but with only one field, 
+   rather than an array of nMonomer fields. 
+
+   // Most of the same functions as WFieldContainer.
 
    double phiMask() const;
 
