@@ -66,7 +66,7 @@ public:
 
       // Copy w field components to wFields_check after reading
       DArray< DArray<double> > wFields_check;
-      wFields_check = system.wFieldsBasis();
+      wFields_check = system.w().basis();
 
       // Round trip conversion basis -> rgrid -> basis, read result
       system.basisToRGrid("in/diblock/lam/omega.in",
@@ -77,7 +77,7 @@ public:
 
       // Compare result to original
       BFieldComparison comparison1;
-      comparison1.compare(wFields_check, system.wFieldsBasis());
+      comparison1.compare(wFields_check, system.w().basis());
       if (verbose()>0) {
          std::cout << "\n";
          std::cout << "Max error = " << comparison1.maxDiff() << "\n";
@@ -93,7 +93,7 @@ public:
 
       // Compare result to original
       BFieldComparison comparison2;
-      comparison2.compare(wFields_check, system.wFieldsBasis());
+      comparison2.compare(wFields_check, system.w().basis());
       if (verbose()>0) {
          std::cout << "\n";
          std::cout << "Max error = " << comparison2.maxDiff() << "\n";
@@ -103,7 +103,7 @@ public:
       // Round trip conversion rgrid -> kgrid -> rgrid, read result
       system.readWRGrid("out/testConversion1D_lam_w.rf");
       DArray< RField<1> > wFieldsRGrid_check;
-      wFieldsRGrid_check = system.wFieldsRGrid();
+      wFieldsRGrid_check = system.w().rgrid();
 
       system.rGridToKGrid("out/testConversion1D_lam_w.rf",
                           "out/testConversion1D_lam_w_2.kf");
@@ -113,7 +113,7 @@ public:
 
       // Compare result to original
       RFieldComparison<1> comparison3;
-      comparison3.compare(wFieldsRGrid_check, system.wFieldsRGrid());
+      comparison3.compare(wFieldsRGrid_check, system.w().rgrid());
       if (verbose()>0) {
          std::cout << "\n";
          std::cout << "Max error = " << comparison3.maxDiff() << "\n";
@@ -142,7 +142,7 @@ public:
 
       // Store components in wFields_check for later comparison
       DArray< DArray<double> > wFields_check;
-      wFields_check = system.wFieldsBasis();
+      wFields_check = system.w().basis();
 
       // Round trip basis -> rgrid -> basis, read resulting wField
       system.basisToRGrid("in/diblock/hex/omega.in",
@@ -159,7 +159,7 @@ public:
 
       // Compare result to original
       BFieldComparison comparison1;
-      comparison1.compare(wFields_check, system.wFieldsBasis());
+      comparison1.compare(wFields_check, system.w().basis());
       if (verbose() > 0) {
          std::cout << "\n";
          std::cout << "Max error = " << comparison1.maxDiff() << "\n";
@@ -175,7 +175,7 @@ public:
 
       // Compare result to original
       BFieldComparison comparison2;
-      comparison2.compare(wFields_check, system.wFieldsBasis());
+      comparison2.compare(wFields_check, system.w().basis());
       if (verbose()>0) {
          std::cout << "\n";
          std::cout << "Max error = " << comparison2.maxDiff() << "\n";
@@ -185,7 +185,7 @@ public:
       // Round trip conversion rgrid -> kgrid -> rgrid, read result
       system.readWRGrid("out/testConversion2D_hex_w.rf");
       DArray< RField<2> > wFieldsRGrid_check;
-      wFieldsRGrid_check = system.wFieldsRGrid();
+      wFieldsRGrid_check = system.w().rgrid();
 
       system.rGridToKGrid("out/testConversion2D_hex_w.rf",
                           "out/testConversion2D_hex_w_2.kf");
@@ -195,7 +195,7 @@ public:
 
       // Compare result to original
       RFieldComparison<2> comparison3;
-      comparison3.compare(wFieldsRGrid_check, system.wFieldsRGrid());
+      comparison3.compare(wFieldsRGrid_check, system.w().rgrid());
       if (verbose()>0) {
          std::cout << "\n";
          std::cout << "Max error = " << comparison3.maxDiff() << "\n";
@@ -223,7 +223,7 @@ public:
 
       // Store components of field as input
       DArray< DArray<double> > wFields_check;
-      wFields_check = system.wFieldsBasis();
+      wFields_check = system.w().basis();
 
       // Complete round trip basis -> rgrid -> basis
       system.basisToRGrid("in/diblock/bcc/omega.in",
@@ -239,7 +239,7 @@ public:
 
       // Compare result to original
       BFieldComparison comparison1;
-      comparison1.compare(wFields_check, system.wFieldsBasis());
+      comparison1.compare(wFields_check, system.w().basis());
       if (verbose() > 0) {
          std::cout << "\n";
          std::cout << "Max error = " << comparison1.maxDiff() << "\n";
@@ -255,7 +255,7 @@ public:
 
       // Compare result to original
       BFieldComparison comparison2;
-      comparison2.compare(wFields_check, system.wFieldsBasis());
+      comparison2.compare(wFields_check, system.w().basis());
       if (verbose()>0) {
          std::cout << "\n";
          std::cout << "Max error = " << comparison2.maxDiff() << "\n";
@@ -265,7 +265,7 @@ public:
       // Round trip conversion rgrid -> kgrid -> rgrid, read result
       system.readWRGrid("out/testConversion3D_bcc_w.rf");
       DArray< RField<3> > wFieldsRGrid_check;
-      wFieldsRGrid_check = system.wFieldsRGrid();
+      wFieldsRGrid_check = system.w().rgrid();
 
       system.rGridToKGrid("out/testConversion3D_bcc_w.rf",
                           "out/testConversion3D_bcc_w_2.kf");
@@ -275,7 +275,7 @@ public:
 
       // Compare result to original
       RFieldComparison<3> comparison3;
-      comparison3.compare(wFieldsRGrid_check, system.wFieldsRGrid());
+      comparison3.compare(wFieldsRGrid_check, system.w().rgrid());
       if (verbose()>0) {
          std::cout << "\n";
          std::cout << "Max error = " << comparison3.maxDiff() << "\n";
@@ -300,7 +300,7 @@ public:
       in.close();
 
       system.readWBasis("in/diblock/bcc/omega.in");
-      bool hasSymmetry = system.fieldIo().hasSymmetry(system.wFieldRGrid(0));
+      bool hasSymmetry = system.fieldIo().hasSymmetry(system.w().rgrid(0));
       TEST_ASSERT(hasSymmetry);
 
       // Copy the wFieldsRGrid to a temporary container
@@ -308,7 +308,7 @@ public:
       field.allocate(system.mesh().dimensions());
       int meshSize = system.mesh().size();
       for (int j = 0; j < meshSize; ++j) {
-         field[j] = system.wFieldRGrid(0)[j];
+         field[j] = system.w().rgrid(0)[j];
       }
       hasSymmetry = system.fieldIo().hasSymmetry(field);
       TEST_ASSERT(hasSymmetry);
@@ -339,7 +339,7 @@ public:
 
       // Make a copy of the original field
       DArray< DArray<double> > wFields_check;
-      wFields_check = system.wFieldsBasis();
+      wFields_check = system.w().basis();
 
       // Iterate and output solution
       int error = system.iterate();
@@ -351,7 +351,7 @@ public:
 
       // Compare solution to original fields
       BFieldComparison comparison(1);
-      comparison.compare(wFields_check, system.wFieldsBasis());
+      comparison.compare(wFields_check, system.w().basis());
       //setVerbose(1);
       if (verbose() > 0) {
          std::cout << "\n";
@@ -386,7 +386,7 @@ public:
       system.readWBasis("in/diblock/lam/omega.ref");
 
       DArray< DArray<double> > wFields_check;
-      wFields_check = system.wFieldsBasis();
+      wFields_check = system.w().basis();
 
       // Read input w-fields, iterate and output solution
       system.readWBasis("in/diblock/lam/omega.in");
@@ -398,7 +398,7 @@ public:
       system.writeCBasis("out/testIterate1D_lam_flex_c.bf");
 
       BFieldComparison comparison(1);
-      comparison.compare(wFields_check, system.wFieldsBasis());
+      comparison.compare(wFields_check, system.w().basis());
       if (verbose() > 0) {
          std::cout << "\n";
          std::cout << "Max error = " << comparison.maxDiff() << "\n";
@@ -422,7 +422,7 @@ public:
 
       system.readWBasis("in/solution/lam/w.bf");
       DArray< DArray<double> > wFields_check;
-      wFields_check = system.wFieldsBasis();
+      wFields_check = system.w().basis();
 
       // Read input w-fields, iterate and output solution
       int error = system.iterate();
@@ -433,7 +433,7 @@ public:
       system.writeCBasis("out/testIterate1D_lam_soln_c.bf");
 
       BFieldComparison comparison(1);
-      comparison.compare(wFields_check, system.wFieldsBasis());
+      comparison.compare(wFields_check, system.w().basis());
       // setVerbose(1);
       if (verbose() > 0) {
          std::cout << "\n";
@@ -459,7 +459,7 @@ public:
       // Read in comparison result
       system.readWBasis("in/solution/lam_open/w.ref");
       DArray< DArray<double> > wFields_check;
-      wFields_check = system.wFieldsBasis();
+      wFields_check = system.w().basis();
 
       // Read input w-fields, iterate and output solution
       system.readWBasis("in/solution/lam_open/w.bf");
@@ -472,7 +472,7 @@ public:
 
       // Compare result
       BFieldComparison comparison(1);
-      comparison.compare(wFields_check, system.wFieldsBasis());
+      comparison.compare(wFields_check, system.w().basis());
       if (verbose() > 0) {
          std::cout << "\n";
          std::cout << "Max error = " << comparison.maxDiff() << "\n";
@@ -497,7 +497,7 @@ public:
       // Read in comparison result
       system.readWBasis("in/blend/lam/w.ref");
       DArray< DArray<double> > wFields_check;
-      wFields_check = system.wFieldsBasis();
+      wFields_check = system.w().basis();
 
       // Read input w-fields, iterate and output solution
       system.readWBasis("in/blend/lam/w.bf");
@@ -510,7 +510,7 @@ public:
 
       // Compare result
       BFieldComparison comparison(1);
-      comparison.compare(wFields_check, system.wFieldsBasis());
+      comparison.compare(wFields_check, system.w().basis());
       if (verbose() > 0) {
          std::cout << "\n";
          std::cout << "Max error = " << comparison.maxDiff() << "\n";
@@ -539,7 +539,7 @@ public:
       // Read in comparison result
       system.readWBasis("in/solution/lam_open/w.ref");
       DArray< DArray<double> > wFields_check;
-      wFields_check = system.wFieldsBasis();
+      wFields_check = system.w().basis();
 
       // Read input w-fields, iterate and output solution
       system.readWBasis("in/solution/lam_open/w.bf");
@@ -547,11 +547,11 @@ public:
 
       // Apply shift to input fields.
       double shift = 2;
-      DArray<DArray <double> > wFields_ = systemShift.wFieldsBasis();
+      DArray<DArray <double> > wFields_ = systemShift.w().basis();
       for (int i = 0; i < systemShift.mixture().nMonomer(); ++i) {
          wFields_[i][0] += shift;
       }
-      systemShift.setWBasis(wFields_);
+      systemShift.w().setBasis(wFields_);
 
       // Apply shift to polymer and solvent chemical potentials.
       for (int i = 0; i < systemShift.mixture().nSolvent(); ++i) {
@@ -608,7 +608,7 @@ public:
       system.readWBasis("in/diblock/hex/omega.ref");
 
       DArray< DArray<double> > wFields_check;
-      wFields_check = system.wFieldsBasis();
+      wFields_check = system.w().basis();
 
       // Iterate, output solution
       int error = system.iterate();
@@ -620,7 +620,7 @@ public:
 
       // Compare current solution to reference solution
       BFieldComparison comparison(1);
-      comparison.compare(wFields_check, system.wFieldsBasis());
+      comparison.compare(wFields_check, system.w().basis());
       // setVerbose(1);
       if (verbose() > 0) {
          std::cout << "\n";
@@ -658,7 +658,7 @@ public:
 
       // Save reference solution to wFields_check array
       DArray< DArray<double> > wFields_check;
-      wFields_check = system.wFieldsBasis();
+      wFields_check = system.w().basis();
 
       system.readWBasis("in/diblock/hex/omega.in");
       int error = system.iterate();
@@ -671,7 +671,7 @@ public:
       // Compare solution to reference solution
       BFieldComparison comparison(1);
       // setVerbose(1);
-      comparison.compare(wFields_check, system.wFieldsBasis());
+      comparison.compare(wFields_check, system.w().basis());
       if (verbose() > 0) {
          std::cout << "\n";
          std::cout << "Max error = " << comparison.maxDiff() << "\n";
@@ -700,7 +700,7 @@ public:
 
       // Save copy of initial fields
       DArray< DArray<double> > wFields_check;
-      wFields_check = system.wFieldsBasis();
+      wFields_check = system.w().basis();
 
       // Iterate and output solution
       int error = system.iterate();
@@ -712,7 +712,7 @@ public:
 
       // Compare solution to reference solution
       BFieldComparison comparison(1); // Constructor argument 1 skips star 0
-      comparison.compare(wFields_check, system.wFieldsBasis());
+      comparison.compare(wFields_check, system.w().basis());
       // setVerbose(1);
       if (verbose() > 0) {
          std::cout << "\n";
@@ -747,7 +747,7 @@ public:
 
       system.readWBasis("in/diblock/bcc/omega.ref");
       DArray< DArray<double> > wFields_check;
-      wFields_check = system.wFieldsBasis();
+      wFields_check = system.w().basis();
 
       system.readWBasis("in/diblock/bcc/omega.in");
       int error = system.iterate();
@@ -758,7 +758,7 @@ public:
       system.writeCBasis("out/testIterate3D_bcc_flex_c.bf");
 
       BFieldComparison comparison(1);
-      comparison.compare(wFields_check, system.wFieldsBasis());
+      comparison.compare(wFields_check, system.w().basis());
       // setVerbose(1);
       if (verbose() > 0) {
          std::cout << "\n";
@@ -789,7 +789,7 @@ public:
 
       // Make copy of input fields for later comparison
       DArray< DArray<double> > wFields_check;
-      wFields_check = system.wFieldsBasis();
+      wFields_check = system.w().basis();
 
       int error = system.iterate();
       if (error) {
@@ -800,7 +800,7 @@ public:
 
       // Compare w fields
       BFieldComparison comparison(1);
-      comparison.compare(wFields_check, system.wFieldsBasis());
+      comparison.compare(wFields_check, system.w().basis());
       // setVerbose(1);
       if (verbose() > 0) {
          std::cout << "\n";
@@ -844,7 +844,7 @@ public:
       system.readWBasis("in/diblock/c15_1/w_ref.bf");
 
       DArray< DArray<double> > wFields_check;
-      wFields_check = system.wFieldsBasis();
+      wFields_check = system.w().basis();
 
       system.readWBasis("in/diblock/c15_1/w_in.bf");
       int error = system.iterate();
@@ -857,7 +857,7 @@ public:
       //system.writeCRGrid("out/testIterate3D_c15_1_flex_c.rf");
 
       BFieldComparison comparison(1);
-      comparison.compare(wFields_check, system.wFieldsBasis());
+      comparison.compare(wFields_check, system.w().basis());
       // setVerbose(1);
       if (verbose() > 0) {
          std::cout << "\n";

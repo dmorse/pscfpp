@@ -1,6 +1,6 @@
 RGRID_TO_KGRID   in/c.rf   in/c.kf
 RGRID_TO_BASIS   in/c.rf   in/c.bf
-RHO_TO_OMEGA     in/c.bf   in/w.bf
+GUESS_W_FROM_C   in/c.bf   in/w.bf
 READ_W_BASIS     in/w.bf
 SWEEP
 FINISH

@@ -206,7 +206,7 @@ namespace Pspc{
    template <int D>
    bool AmIterator<D>::hasInitialGuess()
    {
-      return system().hasWFields();
+      return system().w().hasData();
    }
 
    // Compute and return the number of elements in a field vector
@@ -231,7 +231,7 @@ namespace Pspc{
 
       const int nMonomer = system().mixture().nMonomer();
       const int nBasis = system().basis().nBasis();
-      const DArray< DArray<double> > * currSys = &system().wFieldsBasis();
+      const DArray< DArray<double> > * currSys = &system().w().basis();
 
       for (int i = 0; i < nMonomer; i++) {
          for (int k = 0; k < nBasis; k++)
@@ -283,7 +283,7 @@ namespace Pspc{
                int idx = i*nBasis + k;
                resid[idx] +=
                   system().interaction().chi(i,j)*system().cFieldBasis(j)[k] -
-                  system().interaction().idemp(i,j)*system().wFieldBasis(j)[k];
+                  system().interaction().idemp(i,j)*system().w().basis(j)[k];
             }
          }
       }
@@ -382,7 +382,7 @@ namespace Pspc{
             }
          }
       }
-      system().setWBasis(wField);
+      system().w().setBasis(wField);
 
       if (isFlexible_) {
          const FSArray<int,6> indices = flexibleParams();

@@ -298,7 +298,7 @@ public:
       system.fieldIo().readFieldsBasis("in/film/w_ref.bf", 
                                        wFieldsCheck, unitCell);
       BFieldComparison bComparison(0); // object to compare fields
-      bComparison.compare(system.wFieldsBasis(), wFieldsCheck);
+      bComparison.compare(system.w().basis(), wFieldsCheck);
       if (verbose() > 0) {
          std::cout << "\n";
          std::cout << "Max error = " << bComparison.maxDiff() << "\n";

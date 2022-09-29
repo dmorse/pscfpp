@@ -14,16 +14,13 @@ libs:
 	@echo $(LIBS)
 
 run: $(pspc_tests_iterator_OBJS) $(BLD_DIR)/$(TEST)
+	$(BLD_DIR)/$(TEST) $(SRC_DIR)/pspc/tests/ 
+
+run-quiet: $(pspc_tests_iterator_OBJS) $(BLD_DIR)/$(TEST)
 	$(BLD_DIR)/$(TEST) $(SRC_DIR)/pspc/tests/ > log
 	@echo `grep failed log` ", "\
                `grep successful log` "in pspc/tests/iterator/log" > count
 	@cat count
-
-run-quiet: $(pspc_tests_iterator_OBJS) $(BLD_DIR)/$(TEST)
-	$(BLD_DIR)/$(TEST) $(SRC_DIR)/pspc/tests/ 
-#	@echo `grep failed log` ", "\
-#              `grep successful log` "in pspc/tests/iterator/log" > count
-#	@cat count
 
 clean-outputs:
 	rm -f log count 
