@@ -54,8 +54,11 @@ namespace Pspc
    void FieldContainer<D>::allocate(int nMonomer, int nBasis, 
                                     IntVec<D> const & meshDimensions)
    {
+      UTIL_CHECK(!isAllocated_);
+
       // Set mesh and basis dimensions
       nMonomer_ = nMonomer;
+      nBasis_ = nBasis;
       meshDimensions_ = meshDimensions;
       meshSize_ = 1;
       for (int i = 0; i < D; ++i) {
@@ -80,10 +83,14 @@ namespace Pspc
    template <int D>
    void FieldContainer<D>::setBasis(DArray< DArray<double> > const & fields)
    {
+      UTIL_CHECK(fields.capacity() == nMonomer_);
+
       // Update system wFields
       for (int i = 0; i < nMonomer_; ++i) {
          DArray<double> const & f = fields[i];
          DArray<double> &  w = basis_[i];
+         UTIL_CHECK(f.capacity() == nBasis_);
+         UTIL_CHECK(w.capacity() == nBasis_);
          for (int j = 0; j < nBasis_; ++j) {
             w[j] = f[j];
          }
@@ -97,7 +104,7 @@ namespace Pspc
    }
 
    /*
-   * Set new w-field values, using r-grid fields as inputs.
+   * Set new field values, using r-grid fields as inputs.
    */
    template <int D>
    void FieldContainer<D>::setRGrid(DArray< RField<D> > const & fields,

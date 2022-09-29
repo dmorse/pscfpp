@@ -11,8 +11,8 @@
 
 #include <util/param/ParamComposite.h>     // base class
 
-#include <pspc/field/RField.h>             // member template parameter
 #include <pscf/math/IntVec.h>              // function parameter
+#include <pspc/field/RField.h>             // member template parameter
 #include <util/containers/DArray.h>        // member template
 
 namespace Pscf {
@@ -24,6 +24,32 @@ namespace Pspc {
 
    /**
    * A list of fields stored in both basis and r-grid format.
+   *
+   * A FieldContainer<D> contains representations of a list of nMonomer
+   * fields that are associated with different monomer types in two 
+   * different related formats:
+   * 
+   *  - A DArray of DArray<double> containers holds components of each
+   *    field in a symmetry-adapted Fourier expansion (i.e., in basis 
+   *    format). This is accessed by the basis() and basis(int) 
+   *    member functions.
+   *
+   *  - A DArray of RField<D> containers holds valus of each field on
+   *    the nodes of a regular grid. This is accessed by the rgrid()
+   *    and rgrid(int) member functions.
+   *
+   * A FieldContainer is designed to automatically update one of these
+   * representations when the other is modified, when appropriate. 
+   * A pointer to an associated FieldIo<D> is used for these conversions.
+   * The setBasis function allows the user to input new components in
+   * basis format and internally recomputes the values in r-grid format.
+   * The setRgrid function allows the user to reset the fields in 
+   * r-grid format, but recomputes the components in basis format if 
+   * and only if the user declares that the fields are known to be
+   * invariant under all symmetries of the space group. A boolean
+   * flag named isSymmetric is used to keep track of whether the 
+   * current field is symmetric, and thus whether the basis format 
+   * exists.
    *
    * \ingroup Pspc_Field_Module
    */
@@ -50,6 +76,13 @@ namespace Pspc {
 
       /**
       * Allocate memory for fields.
+      *
+      * A FieldContainer<D> may only be allocated once. An Exception will
+      * be thrown if this function is called more than once.
+      *
+      * \param nMonomer  number of monomer types
+      * \param nMonomer  number of basis functions 
+      * \param dimensions  dimensions of spatial mesh
       */
       void allocate(int nMonomer, int nBasis, IntVec<D> const & dimensions);
 
@@ -60,7 +93,7 @@ namespace Pspc {
       * r-grid representation. On return, hasData and isSymmetric
       * are both true.
       *
-      * \param fields  array of new w (chemical potential) fields
+      * \param fields  array of new fields in basis format
       */
       void setBasis(DArray< DArray<double> > const & fields);
 
@@ -69,10 +102,15 @@ namespace Pspc {
       *
       * If the isSymmetric parameter is true, this function assumes that 
       * the fields are known to be symmetric and so computes and stores
-      * the corresponding basis components.
+      * the corresponding basis components. If isSymmetric is false, it
+      * only sets the values in the r-grid format.
       * 
-      * \param fields  array of new w (chemical potential) fields
-      * \param isSymmetric if true, attempt to compute basis format
+      * On return, hasData is true and the persistent isSymmetric flag 
+      * defined by the class is set to the value of the isSymmetric 
+      * input parameter.
+      * 
+      * \param fields  array of new fields in r-grid format
+      * \param isSymmetric is this field symmetric under the space group?
       */
       void setRGrid(DArray< RField<D> > const & fields, 
                     bool isSymmetric = false);
@@ -89,7 +127,7 @@ namespace Pspc {
       *
       * An Exception is thrown if isSymmetric is false.
       *
-      * \param monomerId integer monomer type index
+      * \param monomerId integer monomer type index (0,...,nMonomer-1)
       */
       DArray<double> const & basis(int monomerId) const;
 
@@ -101,23 +139,29 @@ namespace Pspc {
       DArray< RField<D> > const & rgrid() const;
 
       /**
-      * Get the field for one monomer type on r-space grid.
+      * Get the field for one monomer type in r-space grid format.
       *
-      * \param monomerId integer monomer type index
+      * \param monomerId integer monomer type index (0,..,nMonomer-1)
       */
       RField<D> const & rgrid(int monomerId) const;
 
       /**
-      * Have the fields been set?
+      * Has memory been allocated?
+      */
+      bool isAllocated() const;
+
+      /**
+      * Has field data been set in either format?
       *
       * This flag is set true in setBasis and setRGrid.
       */
       bool hasData() const;
 
       /**
-      * Arefields symmetric under all elements of the space group?
+      * Are fields symmetric under all elements of the space group?
       *
-      * This is set true if the fields were input in basis format 
+      * A valid basis format exists if and only if isSymmetric is true.
+      * This flat is set true if the fields were input in basis format 
       * by the function setBasis, or if they were set in grid format
       * by the function setRGrid but isSymmetric was set true.
       */
@@ -128,14 +172,17 @@ namespace Pspc {
       /*
       * Array of fields in symmetry-adapted basis format
       *
-      * Indexed by monomer typeId, size = nMonomer.
+      * Element basis_[i] is an array that contains the components
+      * of the field associated with monomer i, in a symmetry-adapted
+      * Fourier expansion. 
       */
       DArray< DArray<double> > basis_;
 
       /*
       * Array of fields in real-space grid (r-grid) format
       *
-      * Indexed by monomer typeId, size = nMonomer.
+      * Element basis_[i] is an RField<D> that contains values of the 
+      * field associated with monomer i on the nodes of a regular mesh.
       */
       DArray< RField<D> > rgrid_;
 
@@ -226,6 +273,11 @@ namespace Pspc {
       UTIL_ASSERT(hasData_);
       return rgrid_[id];
    }
+
+   // Has memory been allocated?
+   template <int D>
+   inline bool FieldContainer<D>::isAllocated() const
+   {  return isAllocated_; }
 
    // Have the field data been set?
    template <int D>
