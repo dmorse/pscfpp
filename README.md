@@ -281,3 +281,9 @@ are created by running the example.
 - Ryan Collanton
 - Ben Magruder
 
+## Support 
+
+Development of PSCF is supported by the National Science Foundation 
+program for Cyberinfrastructure for Sustained Scientific Development 
+(CSSI) under Grant No. 2103627.
+
