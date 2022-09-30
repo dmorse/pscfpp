@@ -72,24 +72,30 @@ namespace Pscf
       /**
       * Solve modified diffusion equation.
       *
-      * Upon return, propagators for all blocks, molecular 
-      * partitition function q, phi and mu, and the block 
-      * concentration fields for all blocks are set. 
+      * Upon return, propagators for all blocks, molecular partition
+      * function q, phi and mu, and the block concentration fields for
+      * all blocks are set. 
       *
-      * This function should be called within a member
-      * function named compute() of each concrete subclass.
-      * This compute function must take an array of chemical
-      * potential fields (w-fields) as an argument. Before 
-      * calling this solve() function is invoked, the compute() 
-      * function of each such subclass must store information 
-      * required to solve the MDE within each block within
-      * a set of implementation dependent private members of 
-      * the class of objects that represents blocks. The 
-      * implementation of PolymerTmpl::solve() the calls 
-      * the solve() functions for all of propagators in a 
-      * molecule a predetermined order.
+      * This function should be called within a member function named
+      * "compute" of each concrete subclass.  This compute function must 
+      * take an array of chemical potential fields (w-fields) as an 
+      * argument. Before calling the solve() function declared here, 
+      * the compute() function of each such subclass must store 
+      * information required to solve the MDE within each block within
+      * a set of implementation dependent private members of the class 
+      * class that represents a block of a block polymer. The 
+      * implementation of PolymerTmpl::solve() the calls the solve()
+      * function for all propagators in the molecule in a predeternined
+      * order.
+      *
+      * The optional parameter phiTot is only relevant to problems 
+      * such as thin films in which the material is excluded from part 
+      * of the unit cell by an inhogeneous constraint on the sum of 
+      * monomer concentration (i.e., a "mask"). 
+      *
+      * \param phiTot  fraction of volume occupied by material
       */ 
-      virtual void solve();
+      virtual void solve(double phiTot = 1.0);
  
       /// \name Accessors (objects, by reference)
       //@{
@@ -164,16 +170,19 @@ namespace Pscf
 
       /**
       * Number of vertices (junctions and chain ends).
+      *
+      * A theorem of graph theory tells us that, for any linear or 
+      * acyclic branched polymer, nVertex = nBlock + 1.
       */
       int nVertex() const;
 
       /**
-      * Number of propagators (twice nBlock).
+      * Number of propagators (nBlock*2).
       */
       int nPropagator() const;  //
 
       /**
-      * Total length of all blocks = volume / reference volume.
+      * Sum of the lengths of all blocks in the polymer.
       */
       double length() const;
 
@@ -510,7 +519,7 @@ namespace Pscf
    * Compute a solution to the MDE and block concentrations.
    */ 
    template <class Block>
-   void PolymerTmpl<Block>::solve()
+   void PolymerTmpl<Block>::solve(double phiTot)
    {
 
       // Clear all propagators
@@ -526,7 +535,11 @@ namespace Pscf
       }
 
       // Compute molecular partition function q_
-      q_ = block(0).propagator(0).computeQ();
+      q_ = block(0).propagator(0).computeQ(); 
+  
+      // The Propagator::computeQ function returns a spatial average.
+      // Correct for partial occupation of the unit cell.k
+      q_ = q_/phiTot;
 
       // Compute mu_ or phi_, depending on ensemble
       if (ensemble() == Species::Closed) {

@@ -115,7 +115,8 @@ namespace Pspc
    */
    template <int D>
    void Mixture<D>::compute(DArray< RField<D> > const & wFields,
-                            DArray< RField<D> > & cFields)
+                            DArray< RField<D> > & cFields,
+                            double phiTot)
    {
       UTIL_CHECK(meshPtr_);
       UTIL_CHECK(mesh().size() > 0);
@@ -140,7 +141,7 @@ namespace Pspc
       // Process polymer species
       // Solve MDE for all polymers
       for (i = 0; i < nPolymer(); ++i) {
-         polymer(i).compute(wFields);
+         polymer(i).compute(wFields, phiTot);
       }
 
       // Accumulate block contributions to monomer concentrations
@@ -167,7 +168,7 @@ namespace Pspc
          UTIL_CHECK(monomerId < nm);
 
          // Compute solvent concentration
-         solvent(i).compute(wFields[monomerId]);
+         solvent(i).compute(wFields[monomerId], phiTot);
 
          // Add solvent contribution to relevant monomer concentration
          RField<D>& monomerField = cFields[monomerId];

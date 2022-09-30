@@ -106,9 +106,16 @@ namespace Pspc {
       * is called, the associated Block objects store pre-computed 
       * propagator solutions and block volume fraction fields. 
       *
+      * The parameter phiTot is only relevant to problems such as thin
+      * films in which the material is excluded from part of the unit
+      * cell by imposing an inhogeneous constraint on the sum of the
+      * monomer concentrations (i.e., a "mask"). 
+      *
       * \param wFields array of chemical potential fields.
+      * \param phiTot  volume fraction of unit cell occupied by material
       */ 
-      void compute(DArray< RField<D> > const & wFields);
+      void compute(DArray< RField<D> > const & wFields, 
+                   double phiTot = 1.0);
 
       /**
       * Compute stress contribution from this species.

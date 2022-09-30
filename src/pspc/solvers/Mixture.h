@@ -133,11 +133,18 @@ namespace Pspc
       * The arrays wFields and cFields must each have capacity nMonomer(),
       * and contain fields that are indexed by monomer type index. 
       *
+      * The optional parameter phiTot is only relevant to problems such as 
+      * thin films in which the material is excluded from part of the unit
+      * cell by imposing an inhomogeneous constrain on the sum of mononer 
+      * concentrations, (i.e., a "mask"). 
+      *
       * \param wFields array of chemical potential fields (input)
       * \param cFields array of monomer concentration fields (output)
+      * \param phiTot  volume fraction of unit cell occupied by material
       */
-      void 
-      compute(DArray< RField<D> > const & wFields, DArray< RField<D> >& cFields);
+      void compute(DArray< RField<D> > const & wFields, 
+                   DArray< RField<D> >& cFields, 
+                   double phiTot = 1.0);
       
       /**
       * Compute derivatives of free energy w/ respect to cell parameters.
@@ -172,8 +179,11 @@ namespace Pspc
       double vMonomer() const;
 
       /**
-      * Determine if the mixture is canonical. Otherwise, it is
-      * mixed or open.
+      * Is this mixture being treated in canonical ensemble?
+      *
+      * Returns true iff an closed ensemble is used for every polymer
+      * and solve species, by specifying a volume fraction phi rather
+      * than a chemical potential mu for every species.
       */
       bool isCanonical();
 

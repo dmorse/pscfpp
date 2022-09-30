@@ -58,9 +58,15 @@ namespace Pspc {
       * chemical potential field wField for the relevant monomer type as 
       * its only input argument.
       *
+      * The optional parameter phiTot is only relevant to problems such 
+      * as thin films in which the material is excluded from part of the 
+      * unit cell by imposing an inhomogeneous constraint on the sum of 
+      * monomer concentrations (i.e., a "mask"). 
+      *
       * \param wField  monomer chemical potential field of relevant type.
+      * \param phiTot  volume fraction of unit cell occupied by material
       */
-      void compute(RField<D> const & wField );
+      void compute(RField<D> const & wField, double phiTot = 1.0);
 
       /**
       * Get the monomer concentration field for this solvent.

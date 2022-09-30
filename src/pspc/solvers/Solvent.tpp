@@ -43,7 +43,7 @@ namespace Pspc {
    * Compute concentration, q, and phi or mu.
    */ 
    template <int D>
-   void Solvent<D>::compute(RField<D> const & wField)
+   void Solvent<D>::compute(RField<D> const & wField, double phiTot)
    {
       int nx = meshPtr_->size(); // Number of grid points
 
@@ -59,7 +59,11 @@ namespace Pspc {
           cField_[i] = exp(-s*wField[i]);
           q_ += cField_[i];
       }
-      q_ = q_/double(nx);
+      q_ = q_/double(nx);  // spatial average
+      q_ = q_/phiTot;      // correct for partial occupation
+
+      // Note: phiTot = 1.0 except in the case of a mask that confines
+      // material to a fraction of the unit cell. 
 
       // Compute mu_ or phi_ and prefactor
       double prefactor;
