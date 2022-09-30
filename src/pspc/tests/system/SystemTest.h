@@ -580,7 +580,7 @@ public:
 
       // Verify concentration fields, thermo, and pressure
       BFieldComparison comparison(1);
-      comparison.compare(system.cFieldsBasis(),systemShift.cFieldsBasis());
+      comparison.compare(system.c().basis(),systemShift.c().basis());
       double fDiff, pDiff;
       fDiff = std::abs(system.fHelmholtz() - systemShift.fHelmholtz());
       pDiff = std::abs(system.pressure() - systemShift.pressure() + shift);

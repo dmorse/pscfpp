@@ -81,7 +81,7 @@ namespace Pspc {
       * be thrown if this function is called more than once.
       *
       * \param nMonomer  number of monomer types
-      * \param nMonomer  number of basis functions 
+      * \param nBasis  number of basis functions 
       * \param dimensions  dimensions of spatial mesh
       */
       void allocate(int nMonomer, int nBasis, IntVec<D> const & dimensions);
@@ -235,7 +235,7 @@ namespace Pspc {
 
    // Inline member functions
 
-   // Get array of all monomer chemical potential fields.
+   // Get array of all fields in basis format (const)
    template <int D>
    inline
    DArray< DArray<double> > const & FieldContainer<D>::basis() const
@@ -245,7 +245,7 @@ namespace Pspc {
       return basis_;
    }
 
-   // Get one monomer chemical potential field.
+   // Get one field in basis format (const)
    template <int D>
    inline
    DArray<double> const & FieldContainer<D>::basis(int id) const
@@ -255,7 +255,7 @@ namespace Pspc {
       return basis_[id];
    }
 
-   // Get an array of monomer chemical potential fields on r-space grids.
+   // Get all fields in r-grid format (const)
    template <int D>
    inline
    DArray< RField<D> > const &
@@ -265,7 +265,7 @@ namespace Pspc {
       return rgrid_;
    }
 
-   // Get a single monomer chemical potential field on an r-space grid.
+   // Get one field in r-grid format (const)
    template <int D>
    inline
    RField<D> const & FieldContainer<D>::rgrid(int id) const

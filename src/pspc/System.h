@@ -15,6 +15,7 @@
 #include <pspc/field/Domain.h>             // member
 #include <pspc/field/FieldIo.h>            // member
 #include <pspc/field/FieldContainer.h>     // member
+#include <pspc/field/CFieldContainer.h>    // member
 #include <pspc/field/RField.h>             // member
 #include <pspc/field/RFieldDft.h>          // member
 
@@ -127,8 +128,8 @@ namespace Pspc
       * This function opens and reads the file with name "filename",
       * which must contain chemical potential fields in symmetry-adapted
       * basis format and stores these fields in the system w fields 
-      * container. On exit w().hasData() and w().isSymmetric() are 
-      * set true and hasCFields is set false.
+      * container. On exit w().hasData() and w().isSymmetric() are set 
+      * true and hasCFields is set false.
       *
       * \param filename name of input w-field basis file
       */
@@ -199,6 +200,7 @@ namespace Pspc
       * computed if and only if convergence is obtained.
       *
       * \pre The w().hasData() flag must be true on entry.
+      *
       * \param isContinuation true if continuation within a sweep.
       * \return returns 0 for successful convergence, 1 for failure.
       */
@@ -493,52 +495,23 @@ namespace Pspc
       bool checkRGridFieldSymmetry(const std::string & inFileName) const;
 
       //@}
-      /// \name Chemical Potential Field (W Field) Accessors
+      /// \name Field Accessors
       //@{
 
       /**
-      * Get the chemical potential field container.
+      * Get the chemical potential fields (non const reference).
       */
-      FieldContainer<D> & w()
-      {  return w_; }
+      FieldContainer<D> & w();
 
       /**
-      * Get the chemical potential field container (const ref).
+      * Get the chemical potential fields (const reference).
       */
-      FieldContainer<D> const & w() const
-      {  return w_; }
-
-      //@}
-      /// \name Concentration / Volume Fraction Field (C Field) Accessors
-      //@{
+      FieldContainer<D> const & w() const;
 
       /**
-      * Get array of all concentration fields expanded in a basis.
-      *
-      * The array capacity is equal to the number of monomer types.
+      * Get the monomer concentration fields (const reference).
       */
-      DArray< DArray<double> > const & cFieldsBasis() const;
-
-      /**
-      * Get concentration field for one monomer type expanded in a basis.
-      *
-      * \param monomerId integer monomer type index
-      */
-      DArray<double> const & cFieldBasis(int monomerId) const;
-
-      /**
-      * Get array of all concentration fields in r-space grid format.
-      *
-      * The array capacity is equal to the number of monomer types.
-      */
-      DArray<Field> const & cFieldsRGrid() const;
-
-      /**
-      * Get concentration field for one monomer type on an r-grid.
-      *
-      * \param monomerId integer monomer type index
-      */
-      Field const & cFieldRGrid(int monomerId) const;
+      CFieldContainer<D> const & c() const;
 
       //@}
       /// \name Miscellaneous Accessors
@@ -634,11 +607,7 @@ namespace Pspc
       std::string groupName() const;
 
       /**
-      * Have monomer concentration fields (c fields) been computed?
-      *
-      * A true value is returned iff monomer concentration fields have
-      * been computed by solving the modified diffusion equation for the
-      * current w fields.
+      * Have c fields been computed from the current w field?
       */
       bool hasCFields() const;
 
@@ -698,21 +667,15 @@ namespace Pspc
       */
       SweepFactory<D>* sweepFactoryPtr_;
 
+      /**
+      * Chemical potential fields.
+      */
       FieldContainer<D> w_;
 
       /**
-      * Array of concentration fields for monomer types.
-      *
-      * Indexed by monomer typeId, size = nMonomer.
+      * Monomer concentration / volume fraction fields.
       */
-      DArray< DArray<double> > cFieldsBasis_;
-
-      /**
-      * Array of concentration fields on real space grid.
-      *
-      * Indexed by monomer typeId, size = nMonomer.
-      */
-      DArray<Field> cFieldsRGrid_;
+      CFieldContainer<D> c_;
 
       /**
       * Work array of field coefficients for all monomer types.
@@ -726,7 +689,7 @@ namespace Pspc
       *
       * Indexed by monomer typeId, size = nMonomer.
       */
-      mutable DArray<Field> tmpFieldsRGrid_;
+      mutable DArray< RField<D> > tmpFieldsRGrid_;
 
       /**
       * Work array of fields on Fourier grid (k-grid).
@@ -743,7 +706,7 @@ namespace Pspc
       /**
       * Work array (size = # of monomer types).
       */
-      mutable DArray<double> c_;
+      mutable DArray<double> e_;
 
       /**
       * Helmholtz free energy per monomer / kT.
@@ -915,44 +878,23 @@ namespace Pspc
       return *iteratorPtr_;
    }
 
-   // Get array of all monomer concentration fields.
+   // Get container of chemical potential fields (non const reference)
    template <int D>
    inline
-   DArray< DArray<double> > const & System<D>::cFieldsBasis() const
-   {
-      UTIL_ASSERT(hasCFields_);
-      UTIL_ASSERT(w().isSymmetric());
-      return cFieldsBasis_;
-   }
+   FieldContainer<D> & System<D>::w() 
+   {  return w_; }
 
-   // Get one monomer concentration field.
+   // Get container of chemical potential fields (const reference)
    template <int D>
    inline
-   DArray<double> const & System<D>::cFieldBasis(int id) const
-   {
-      UTIL_ASSERT(hasCFields_);
-      UTIL_ASSERT(w().isSymmetric());
-      return cFieldsBasis_[id];
-   }
+   FieldContainer<D> const & System<D>::w() const
+   {  return w_; }
 
-   // Get array of all monomer concentration fields on grids.
+   // Get container of monomer concentration fields (const reference)
    template <int D>
    inline
-   DArray< typename System<D>::Field > const & System<D>::cFieldsRGrid()
-   const
-   {
-      UTIL_ASSERT(hasCFields_);
-      return cFieldsRGrid_;
-   }
-
-   // Get a single monomer concentration field on an r-space grid.
-   template <int D>
-   inline typename System<D>::Field const & System<D>::cFieldRGrid(int id)
-   const
-   {
-      UTIL_ASSERT(hasCFields_);
-      return cFieldsRGrid_[id];
-   }
+   CFieldContainer<D> const & System<D>::c() const
+   {  return c_; }
 
    // Have the c fields been computed for the current w fields?
    template <int D>

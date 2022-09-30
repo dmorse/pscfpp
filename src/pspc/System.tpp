@@ -61,15 +61,13 @@ namespace Pspc
       sweepPtr_(0),
       sweepFactoryPtr_(0),
       w_(),
-      cFieldsBasis_(),
-      cFieldsRGrid_(),
-      f_(),
       c_(),
+      f_(),
+      e_(),
       fHelmholtz_(0.0),
       pressure_(0.0),
       hasMixture_(false),
-      isAllocated_(false),
-      hasCFields_(false)
+      isAllocated_(false)
       // hasIterator_(true)
    {  
       setClassName("System"); 
@@ -269,24 +267,17 @@ namespace Pspc
       int nMonomer = mixture_.nMonomer();
 
       w_.allocate(nMonomer, basis().nBasis(), mesh().dimensions());
+      c_.allocate(nMonomer, basis().nBasis(), mesh().dimensions());
 
-      // Allocate cFields
-      cFieldsBasis_.allocate(nMonomer);
-      cFieldsRGrid_.allocate(nMonomer);
-      
+      // Allocate temporary work fields 
       tmpFieldsBasis_.allocate(nMonomer);
       tmpFieldsRGrid_.allocate(nMonomer);
       tmpFieldsKGrid_.allocate(nMonomer);
-
       for (int i = 0; i < nMonomer; ++i) {
-         cFieldsBasis_[i].allocate(basis().nBasis());
-         cFieldsRGrid_[i].allocate(mesh().dimensions());
-
          tmpFieldsBasis_[i].allocate(basis().nBasis());
          tmpFieldsRGrid_[i].allocate(mesh().dimensions());
          tmpFieldsKGrid_[i].allocate(mesh().dimensions());
       }
-
       isAllocated_ = true;
    }
 
@@ -584,12 +575,10 @@ namespace Pspc
       UTIL_CHECK(w_.hasData());
 
       // Solve the modified diffusion equation (without iteration)
-      mixture_.compute(w_.rgrid(), cFieldsRGrid_);
-      hasCFields_ = true;
+      mixture_.compute(w_.rgrid(), c_.rgrid());
 
       if (w_.isSymmetric()) {
-         // Convert c fields from r-grid to basis
-         fieldIo().convertRGridToBasis(cFieldsRGrid_, cFieldsBasis_);
+         domain_.fieldIo().convertRGridToBasis(c_.rgrid(), c_.basis());
          if (needStress) {
             mixture_.computeStress();
          }
@@ -671,7 +660,7 @@ namespace Pspc
             mu = polymerPtr->mu();
             length = polymerPtr->length();
             // Recall: mu = ln(phi/q)
-            if (phi > 1E-08) {
+            if (phi > 1.0E-08) {
                fHelmholtz_ += phi*( mu - 1.0 )/length;
             }
          }
@@ -686,7 +675,7 @@ namespace Pspc
             phi = solventPtr->phi();
             mu = solventPtr->mu();
             size = solventPtr->size();
-            if (phi > 1E-08) {
+            if (phi > 1.0E-08) {
                fHelmholtz_ += phi*( mu - 1.0 )/size;
             }
          }
@@ -700,7 +689,7 @@ namespace Pspc
       double temp = 0.0;
       for (int i = 0; i < nm; ++i) {
          for (int k = 0; k < nBasis; ++k) {
-            temp += w_.basis()[i][k] * cFieldsBasis_[i][k];
+            temp += w_.basis()[i][k] * c_.basis()[i][k];
          }
       }
 
@@ -708,7 +697,7 @@ namespace Pspc
       if (iterator().hasExternalFields()) {
          for (int i = 0; i < nm; ++i) {
             for (int k = 0; k < nBasis; ++k) {
-               temp -= iterator().externalField(i)[k] * cFieldsBasis_[i][k];
+               temp -= iterator().externalField(i)[k] * c_.basis()[i][k];
             }
          }
       }
@@ -721,7 +710,7 @@ namespace Pspc
          for (int j = i + 1; j < nm; ++j) {
             chi = interaction().chi(i,j);
             for (int k = 0; k < nBasis; ++k) {
-               fHelmholtz_+= chi * cFieldsBasis_[i][k] * cFieldsBasis_[j][k];
+               fHelmholtz_+= chi * c_.basis()[i][k] * c_.basis()[j][k];
             }
          }
       }
@@ -829,11 +818,11 @@ namespace Pspc
       UTIL_CHECK(homogeneous_.nMolecule() == np + ns);
       UTIL_CHECK(homogeneous_.nMonomer() == nm);
 
-      // Allocate c_ work array, if necessary
-      if (c_.isAllocated()) {
-         UTIL_CHECK(c_.capacity() == nm);
+      // Allocate e_ work array, if necessary
+      if (e_.isAllocated()) {
+         UTIL_CHECK(e_.capacity() == nm);
       } else {
-         c_.allocate(nm);
+         e_.allocate(nm);
       }
 
       int i;   // molecule index
@@ -848,7 +837,7 @@ namespace Pspc
    
             // Initial array of clump sizes 
             for (j = 0; j < nm; ++j) {
-               c_[j] = 0.0;
+               e_[j] = 0.0;
             }
    
             // Compute clump sizes for all monomer types.
@@ -856,13 +845,13 @@ namespace Pspc
             for (k = 0; k < nb; ++k) {
                Block<D>& block = mixture_.polymer(i).block(k);
                j = block.monomerId();
-               c_[j] += block.length();
+               e_[j] += block.length();
             }
     
             // Count the number of clumps of nonzero size
             nc = 0;
             for (j = 0; j < nm; ++j) {
-               if (c_[j] > 1.0E-8) {
+               if (e_[j] > 1.0E-8) {
                   ++nc;
                }
             }
@@ -871,9 +860,9 @@ namespace Pspc
             // Set clump properties for this Homogeneous::Molecule
             k = 0; // Clump index
             for (j = 0; j < nm; ++j) {
-               if (c_[j] > 1.0E-8) {
+               if (e_[j] > 1.0E-8) {
                   homogeneous_.molecule(i).clump(k).setMonomerId(j);
-                  homogeneous_.molecule(i).clump(k).setSize(c_[j]);
+                  homogeneous_.molecule(i).clump(k).setSize(e_[j]);
                   ++k;
                }
             }
@@ -931,7 +920,7 @@ namespace Pspc
    void System<D>::writeCBasis(const std::string & filename) const
    {
       UTIL_CHECK(hasCFields_);
-      fieldIo().writeFieldsBasis(filename, cFieldsBasis_, unitCell());
+      fieldIo().writeFieldsBasis(filename, c_.basis(), unitCell());
    }
 
    /*
@@ -941,7 +930,7 @@ namespace Pspc
    void System<D>::writeCRGrid(const std::string & filename) const
    {
       UTIL_CHECK(hasCFields_);
-      fieldIo().writeFieldsRGrid(filename, cFieldsRGrid_, unitCell());
+      fieldIo().writeFieldsRGrid(filename, c_.rgrid(), unitCell());
    }
 
    /*
