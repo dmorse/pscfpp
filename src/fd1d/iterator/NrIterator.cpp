@@ -21,6 +21,7 @@ namespace Fd1d
    NrIterator::NrIterator()
     : Iterator(),
       epsilon_(0.0),
+      maxItr_(0),
       isAllocated_(false),
       newJacobian_(false),
       needsJacobian_(true),
@@ -30,6 +31,7 @@ namespace Fd1d
    NrIterator::NrIterator(System& system)
     : Iterator(system),
       epsilon_(0.0),
+      maxItr_(0),
       isAllocated_(false),
       newJacobian_(false),
       needsJacobian_(true),
@@ -41,6 +43,8 @@ namespace Fd1d
 
    void NrIterator::readParameters(std::istream& in)
    {
+      maxItr_ = 100;
+      readOptional(in, "maxItr", maxItr_);
       read(in, "epsilon", epsilon_);
       if (domain().nx() > 0) {
          allocate();
@@ -75,8 +79,8 @@ namespace Fd1d
       }
    }
 
-   void NrIterator::computeResidual(Array<WField> const & wFields, 
-                                    Array<CField> const & cFields, 
+   void NrIterator::computeResidual(Array<WField> const & wFields,
+                                    Array<CField> const & cFields,
                                     Array<double>& residual)
    {
       int nm = mixture().nMonomer();  // number of monomer types
@@ -116,13 +120,13 @@ namespace Fd1d
       }
 
       /*
-      * Note: In canonical ensemble, the spatial integral of the 
-      * incompressiblity residual is guaranteed to be zero, as a result of how 
-      * volume fractions are computed in SCFT. One of the nx incompressibility 
-      * constraints is thus redundant. To avoid this redundancy, replace the 
-      * incompressibility residual at the last grid point by a residual that 
-      * requires the w field for the last monomer type at the last grid point 
-      * to equal zero. 
+      * Note: In canonical ensemble, the spatial integral of the
+      * incompressiblity residual is guaranteed to be zero, as a result of how
+      * volume fractions are computed in SCFT. One of the nx incompressibility
+      * constraints is thus redundant. To avoid this redundancy, replace the
+      * incompressibility residual at the last grid point by a residual that
+      * requires the w field for the last monomer type at the last grid point
+      * to equal zero.
       */
 
       if (isCanonical_) {
@@ -161,7 +165,7 @@ namespace Fd1d
             mixture().compute(wFieldsNew_, cFieldsNew_);
             computeResidual(wFieldsNew_, cFieldsNew_, residualNew_);
             for (jr = 0; jr < nr; ++jr) {
-               jacobian_(jr, jc) = 
+               jacobian_(jr, jc) =
                     (residualNew_[jr] - residual_[jr])/delta;
             }
             wFieldsNew_[i][j] = system().wField(i)[j];
@@ -174,8 +178,8 @@ namespace Fd1d
 
    }
 
-   void NrIterator::incrementWFields(Array<WField> const & wOld, 
-                                     Array<double> const & dW, 
+   void NrIterator::incrementWFields(Array<WField> const & wOld,
+                                     Array<double> const & dW,
                                      Array<WField> & wNew)
    {
       int nm = mixture().nMonomer(); // number of monomers types
@@ -203,7 +207,7 @@ namespace Fd1d
       }
 
    }
-   
+
    double NrIterator::residualNorm(Array<double> const & residual) const
    {
       int nm = mixture().nMonomer();  // number of monomer types
@@ -223,7 +227,7 @@ namespace Fd1d
    int NrIterator::solve(bool isContinuation)
    {
       int nm = mixture().nMonomer();  // number of monomer types
-      int np = mixture().nPolymer();  // number of polymer species 
+      int np = mixture().nPolymer();  // number of polymer species
       int nx = domain().nx();         // number of grid points
       int nr = nm*nx;                 // number of residual elements
 
@@ -269,7 +273,7 @@ namespace Fd1d
       // Iterative loop
       double normNew;
       int i, j, k;
-      for (i = 0; i < 100; ++i) {
+      for (i = 0; i < maxItr_; ++i) {
          Log::file() << "iteration " << i
                      << " , error = " << norm
                      << std::endl;
@@ -279,7 +283,7 @@ namespace Fd1d
             system().computeFreeEnergy();
             // Success
             return 0;
-         } 
+         }
 
          if (needsJacobian_) {
             Log::file() << "Computing jacobian" << std::endl;;
@@ -300,7 +304,7 @@ namespace Fd1d
          // Decrease increment if necessary
          j = 0;
          while (normNew > norm && j < 3) {
-            Log::file() << "      decreasing increment,  error = " 
+            Log::file() << "      decreasing increment,  error = "
                         << normNew << std::endl;
             needsJacobian_ = true;
             for (k = 0; k < nr; ++k) {
@@ -315,7 +319,7 @@ namespace Fd1d
 
          // If necessary, try reversing direction
          if (normNew > norm) {
-            Log::file() << "      reversing increment,  norm = " 
+            Log::file() << "      reversing increment,  norm = "
                         << normNew << std::endl;
             needsJacobian_ = true;
             for (k = 0; k < nr; ++k) {
@@ -348,7 +352,7 @@ namespace Fd1d
             }
             norm = normNew;
          } else {
-            Log::file() << "Iteration failed, norm = " 
+            Log::file() << "Iteration failed, norm = "
                       << normNew << std::endl;
             if (newJacobian_) {
                return 1;
@@ -361,7 +365,7 @@ namespace Fd1d
 
       }
 
-      // Failure 
+      // Failure
       return 1;
    }
 

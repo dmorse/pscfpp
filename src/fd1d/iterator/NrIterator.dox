@@ -9,12 +9,18 @@ using the Newton-Raphson method. The maximum number of iteration steps is 100, a
 The parameter file format for an NrIterator object is:
 \code
 NrIterator{
-   epsilon        real
+   maxItr*       int (100 by default)
+   epsilon       real
 }
 \endcode
-
+Note that maxItr is an optional parameter, which is set to 100 by default. 
 Parameters are described below:
 <table>
+  <tr>
+    <td> maxItr* </td>
+    <td> maximum number of iterations attempted (optional, 100 by default) 
+         </td>
+  </tr>
   <tr>
     <td> epsilon </td>
     <td> Error tolerance. 

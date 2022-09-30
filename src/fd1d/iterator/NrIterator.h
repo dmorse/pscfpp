@@ -133,6 +133,9 @@ namespace Fd1d
       /// Error tolerance.
       double epsilon_;
 
+      /// Maximum number of iterations
+      int maxItr_;
+
       /// Have arrays been allocated?
       bool isAllocated_;
 
