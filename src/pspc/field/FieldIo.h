@@ -355,7 +355,7 @@ namespace Pspc
       ///@{
 
       /**
-      * Convert field from symmetrized basis to Fourier transform (k-grid).
+      * Convert a field from symmetrized basis to Fourier transform (k-grid).
       *
       * \param components coefficients of symmetry-adapted basis functions
       * \param dft discrete Fourier transform of a real field
@@ -376,7 +376,7 @@ namespace Pspc
                                DArray< RFieldDft<D> >& out) const;
 
       /**
-      * Convert field from Fourier transform (k-grid) to symmetrized basis.
+      * Convert a field from Fourier transform (k-grid) to symmetrized basis.
       *
       * \param in  complex DFT (k-grid) representation of a field.
       * \param out  coefficients of symmetry-adapted basis functions.
@@ -397,7 +397,16 @@ namespace Pspc
                                DArray< DArray<double> > & out) const;
 
       /**
-      * Convert fields from symmetrized basis to spatial grid (rgrid).
+      * Convert a field from symmetrized basis to spatial grid (r-grid).
+      * 
+      * \param in  field in symmetry adapted basis form
+      * \param out field defined on real-space grid
+      */
+      void convertBasisToRGrid(DArray<double> const & in,
+                               RField<D> & out) const;
+
+      /**
+      * Convert fields from symmetrized basis to spatial grid (r-grid).
       * 
       * \param in  fields in symmetry adapted basis form
       * \param out fields defined on real-space grid
@@ -406,7 +415,16 @@ namespace Pspc
                                DArray< RField<D> > & out) const ;
 
       /**
-      * Convert fields from spatial grid (rgrid) to symmetrized basis.
+      * Convert a field from spatial grid (r-grid) to symmetrized basis.
+      * 
+      * \param in  field defined on real-space grid
+      * \param out  field in symmetry adapted basis form
+      */
+      void convertRGridToBasis(RField<D> const & in,
+                               DArray<double> & out) const;
+
+      /**
+      * Convert fields from spatial grid (r-grid) to symmetrized basis.
       * 
       * \param in  fields defined on real-space grid
       * \param out  fields in symmetry adapted basis form
@@ -415,7 +433,7 @@ namespace Pspc
                                DArray< DArray<double> > & out) const;
 
       /**
-      * Convert fields from k-grid (DFT) to real space (rgrid) format.
+      * Convert fields from k-grid (DFT) to real space (r-grid) format.
       * 
       * This function simply calls the inverse FFT for an array of fields.
       * The inverse FFT provided by the underlying FFTW library overwrites 
@@ -428,7 +446,7 @@ namespace Pspc
                                DArray< RField<D> > & out) const;
 
       /**
-      * Convert fields from spatial grid (rgrid) to k-grid format.
+      * Convert fields from spatial grid (r-grid) to k-grid format.
       * 
       * \param in  fields defined on real-space grid (r-grid)
       * \param out  fields in discrete Fourier format (k-grid)
@@ -460,7 +478,7 @@ namespace Pspc
 
    private:
 
-      // DFT work array for two-step conversion basis <-> kgrid <-> rgrid.
+      // DFT work array for two-step conversion basis <-> kgrid <-> r-grid.
       mutable RFieldDft<D> workDft_;
 
       // Pointers to associated objects.

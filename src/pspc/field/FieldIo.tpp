@@ -1205,6 +1205,16 @@ namespace Pspc
 
    template <int D>
    void 
+   FieldIo<D>::convertBasisToRGrid(DArray<double> const & in, 
+                                   RField<D>& out) const
+   {
+      checkWorkDft();
+      convertBasisToKGrid(in, workDft_);
+      fft().inverseTransformSafe(workDft_, out);
+   }
+
+   template <int D>
+   void 
    FieldIo<D>::convertBasisToRGrid(DArray< DArray <double> > const & in,
                                    DArray< RField<D> >& out) const
    {
@@ -1216,6 +1226,16 @@ namespace Pspc
          convertBasisToKGrid(in[i], workDft_);
          fft().inverseTransformSafe(workDft_, out[i]);
       }
+   }
+
+   template <int D>
+   void 
+   FieldIo<D>::convertRGridToBasis(RField<D> const & in,
+                                   DArray<double> & out) const
+   {
+      checkWorkDft();
+      fft().forwardTransform(in, workDft_);
+      convertKGridToBasis(workDft_, out);
    }
 
    template <int D>

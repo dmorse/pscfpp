@@ -9,7 +9,8 @@ pspc_field_= \
   pspc/field/RFieldComparison.cpp \
   pspc/field/KFieldComparison.cpp \
   pspc/field/WFieldContainer.cpp \
-  pspc/field/CFieldContainer.cpp 
+  pspc/field/CFieldContainer.cpp \
+  pspc/field/Mask.cpp 
 
 
 pspc_field_SRCS=\
