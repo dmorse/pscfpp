@@ -14,7 +14,7 @@
 #include <pspc/solvers/Mixture.h>          // member
 #include <pspc/field/Domain.h>             // member
 #include <pspc/field/FieldIo.h>            // member
-#include <pspc/field/FieldContainer.h>     // member
+#include <pspc/field/WFieldContainer.h>    // member
 #include <pspc/field/CFieldContainer.h>    // member
 #include <pspc/field/RField.h>             // member
 #include <pspc/field/RFieldDft.h>          // member
@@ -521,7 +521,7 @@ namespace Pspc
       /**
       * Get all of the chemical potential fields (const reference).
       */
-      FieldContainer<D> const & w() const;
+      WFieldContainer<D> const & w() const;
 
       /**
       * Get all of the monomer concentration fields (const reference).
@@ -677,7 +677,7 @@ namespace Pspc
       /**
       * Chemical potential fields.
       */
-      FieldContainer<D> w_;
+      WFieldContainer<D> w_;
 
       /**
       * Monomer concentration / volume fraction fields.
@@ -888,7 +888,7 @@ namespace Pspc
    // Get container of chemical potential fields (const reference)
    template <int D>
    inline
-   FieldContainer<D> const & System<D>::w() const
+   WFieldContainer<D> const & System<D>::w() const
    {  return w_; }
 
    // Get container of monomer concentration fields (const reference)

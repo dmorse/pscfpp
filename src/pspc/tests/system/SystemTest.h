@@ -551,7 +551,7 @@ public:
       for (int i = 0; i < systemShift.mixture().nMonomer(); ++i) {
          wFields_[i][0] += shift;
       }
-      systemShift.w().setBasis(wFields_);
+      systemShift.setWBasis(wFields_);
 
       // Apply shift to polymer and solvent chemical potentials.
       for (int i = 0; i < systemShift.mixture().nSolvent(); ++i) {

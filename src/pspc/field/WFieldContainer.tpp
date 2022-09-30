@@ -1,5 +1,5 @@
-#ifndef PSPC_FIELD_CONTAINER_TPP
-#define PSPC_FIELD_CONTAINER_TPP
+#ifndef PSPC_W_FIELD_CONTAINER_TPP
+#define PSPC_W_FIELD_CONTAINER_TPP
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -8,7 +8,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "FieldContainer.h"
+#include "WFieldContainer.h"
 #include <pspc/field/FieldIo.h>
 
 namespace Pscf {
@@ -21,7 +21,7 @@ namespace Pspc
    * Constructor.
    */
    template <int D>
-   FieldContainer<D>::FieldContainer()
+   WFieldContainer<D>::WFieldContainer()
     : basis_(),
       rgrid_(),
       fieldIoPtr_(0),
@@ -37,21 +37,21 @@ namespace Pspc
    * Destructor.
    */
    template <int D>
-   FieldContainer<D>::~FieldContainer()
+   WFieldContainer<D>::~WFieldContainer()
    {}
 
    /*
    * Create an association with a FieldIo object.
    */
    template <int D>
-   void FieldContainer<D>::setFieldIo(FieldIo<D> const & fieldIo)
+   void WFieldContainer<D>::setFieldIo(FieldIo<D> const & fieldIo)
    {  fieldIoPtr_ = &fieldIo; }
 
    /*
    * Allocate memory for fields.
    */
    template <int D>
-   void FieldContainer<D>::allocate(int nMonomer, int nBasis, 
+   void WFieldContainer<D>::allocate(int nMonomer, int nBasis, 
                                     IntVec<D> const & meshDimensions)
    {
       UTIL_CHECK(!isAllocated_);
@@ -81,7 +81,7 @@ namespace Pspc
    * Set new w-field values.
    */
    template <int D>
-   void FieldContainer<D>::setBasis(DArray< DArray<double> > const & fields)
+   void WFieldContainer<D>::setBasis(DArray< DArray<double> > const & fields)
    {
       UTIL_CHECK(fields.capacity() == nMonomer_);
 
@@ -107,7 +107,7 @@ namespace Pspc
    * Set new field values, using r-grid fields as inputs.
    */
    template <int D>
-   void FieldContainer<D>::setRGrid(DArray< RField<D> > const & fields,
+   void WFieldContainer<D>::setRGrid(DArray< RField<D> > const & fields,
                                     bool isSymmetric)
    {
       // Update system wFieldsRGrid

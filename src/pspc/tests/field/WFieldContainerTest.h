@@ -6,7 +6,7 @@
 
 #include <pspc/field/RFieldComparison.h>
 
-#include <pspc/field/FieldContainer.h>
+#include <pspc/field/WFieldContainer.h>
 #include <pspc/field/Domain.h>
 #include <pspc/field/FieldIo.h>
 #include <pspc/field/RField.h>
@@ -30,7 +30,7 @@ using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Pspc;
 
-class FieldContainerTest : public UnitTest 
+class WFieldContainerTest : public UnitTest 
 {
 
    std::ofstream logFile_;
@@ -165,7 +165,7 @@ public:
       TEST_ASSERT(bf.capacity() == nMonomer_);
       readFields("in/w_bcc.bf", domain, bf);
 
-      FieldContainer<3> fields;
+      WFieldContainer<3> fields;
       fields.setFieldIo(domain.fieldIo());
       fields.allocate(nMonomer_, domain.basis().nBasis(),
                       domain.mesh().dimensions());
@@ -204,7 +204,7 @@ public:
       TEST_ASSERT(rf.capacity() == nMonomer_);
       readFields("in/w_bcc.rf", domain, rf);
 
-      FieldContainer<3> fields;
+      WFieldContainer<3> fields;
       fields.setFieldIo(domain.fieldIo());
       fields.allocate(nMonomer_, domain.basis().nBasis(),
                       domain.mesh().dimensions());
@@ -241,7 +241,7 @@ public:
       TEST_ASSERT(rf.capacity() == nMonomer_);
       domain.fieldIo().convertBasisToRGrid(bf, rf);
 
-      FieldContainer<3> fields;
+      WFieldContainer<3> fields;
       fields.setFieldIo(domain.fieldIo());
       fields.allocate(nMonomer_, domain.basis().nBasis(),
                       domain.mesh().dimensions());
@@ -262,10 +262,10 @@ public:
    }
 };
 
-TEST_BEGIN(FieldContainerTest)
-TEST_ADD(FieldContainerTest, testSetBasis_bcc)
-TEST_ADD(FieldContainerTest, testSetRGrid_1_bcc)
-TEST_ADD(FieldContainerTest, testSetRGrid_2_bcc)
-TEST_END(FieldContainerTest)
+TEST_BEGIN(WFieldContainerTest)
+TEST_ADD(WFieldContainerTest, testSetBasis_bcc)
+TEST_ADD(WFieldContainerTest, testSetRGrid_1_bcc)
+TEST_ADD(WFieldContainerTest, testSetRGrid_2_bcc)
+TEST_END(WFieldContainerTest)
 
 #endif

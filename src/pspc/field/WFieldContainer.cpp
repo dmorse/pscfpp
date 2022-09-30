@@ -5,15 +5,15 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "FieldContainer.tpp"
+#include "WFieldContainer.tpp"
 
 namespace Pscf {
 namespace Pspc
 {
 
-   template class FieldContainer<1>;
-   template class FieldContainer<2>;
-   template class FieldContainer<3>;
+   template class WFieldContainer<1>;
+   template class WFieldContainer<2>;
+   template class WFieldContainer<3>;
 
 } // namespace Pspc
 } // namespace Pscf

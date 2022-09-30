@@ -1,5 +1,5 @@
-#ifndef PSPC_FIELD_CONTAINER_H
-#define PSPC_FIELD_CONTAINER_H
+#ifndef PSPC_W_FIELD_CONTAINER_H
+#define PSPC_W_FIELD_CONTAINER_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -25,7 +25,7 @@ namespace Pspc {
    /**
    * A list of fields stored in both basis and r-grid format.
    *
-   * A FieldContainer<D> contains representations of a list of nMonomer
+   * A WFieldContainer<D> contains representations of a list of nMonomer
    * fields that are associated with different monomer types in two 
    * different related formats:
    * 
@@ -38,7 +38,7 @@ namespace Pspc {
    *    the nodes of a regular grid. This is accessed by the rgrid()
    *    and rgrid(int) member functions.
    *
-   * A FieldContainer is designed to automatically update one of these
+   * A WFieldContainer is designed to automatically update one of these
    * representations when the other is modified, when appropriate. 
    * A pointer to an associated FieldIo<D> is used for these conversions.
    * The setBasis function allows the user to input new components in
@@ -54,7 +54,7 @@ namespace Pspc {
    * \ingroup Pspc_Field_Module
    */
    template <int D>
-   class FieldContainer : public ParamComposite
+   class WFieldContainer : public ParamComposite
    {
 
    public:
@@ -62,12 +62,12 @@ namespace Pspc {
       /**
       * Constructor.
       */
-      FieldContainer();
+      WFieldContainer();
 
       /**
       * Destructor.
       */
-      ~FieldContainer();
+      ~WFieldContainer();
 
       /**
       * Create association with FieldIo (store pointer).
@@ -77,7 +77,7 @@ namespace Pspc {
       /**
       * Allocate memory for fields.
       *
-      * A FieldContainer<D> may only be allocated once. An Exception will
+      * A WFieldContainer<D> may only be allocated once. An Exception will
       * be thrown if this function is called more than once.
       *
       * \param nMonomer  number of monomer types
@@ -238,7 +238,7 @@ namespace Pspc {
    // Get array of all fields in basis format (const)
    template <int D>
    inline
-   DArray< DArray<double> > const & FieldContainer<D>::basis() const
+   DArray< DArray<double> > const & WFieldContainer<D>::basis() const
    {
       UTIL_ASSERT(hasData_);
       UTIL_ASSERT(isSymmetric_);
@@ -248,7 +248,7 @@ namespace Pspc {
    // Get one field in basis format (const)
    template <int D>
    inline
-   DArray<double> const & FieldContainer<D>::basis(int id) const
+   DArray<double> const & WFieldContainer<D>::basis(int id) const
    {
       UTIL_ASSERT(hasData_);
       UTIL_ASSERT(isSymmetric_);
@@ -259,7 +259,7 @@ namespace Pspc {
    template <int D>
    inline
    DArray< RField<D> > const &
-   FieldContainer<D>::rgrid() const
+   WFieldContainer<D>::rgrid() const
    {
       UTIL_ASSERT(hasData_);
       return rgrid_;
@@ -268,7 +268,7 @@ namespace Pspc {
    // Get one field in r-grid format (const)
    template <int D>
    inline
-   RField<D> const & FieldContainer<D>::rgrid(int id) const
+   RField<D> const & WFieldContainer<D>::rgrid(int id) const
    {
       UTIL_ASSERT(hasData_);
       return rgrid_[id];
@@ -276,24 +276,24 @@ namespace Pspc {
 
    // Has memory been allocated?
    template <int D>
-   inline bool FieldContainer<D>::isAllocated() const
+   inline bool WFieldContainer<D>::isAllocated() const
    {  return isAllocated_; }
 
    // Have the field data been set?
    template <int D>
-   inline bool FieldContainer<D>::hasData() const
+   inline bool WFieldContainer<D>::hasData() const
    {  return hasData_; }
 
    // Are the fields symmetric under space group operations?
    template <int D>
-   inline bool FieldContainer<D>::isSymmetric() const
+   inline bool WFieldContainer<D>::isSymmetric() const
    {  return isSymmetric_; }
 
-   #ifndef PSPC_FIELD_CONTAINER_TPP
+   #ifndef PSPC_W_FIELD_CONTAINER_TPP
    // Suppress implicit instantiation
-   extern template class FieldContainer<1>;
-   extern template class FieldContainer<2>;
-   extern template class FieldContainer<3>;
+   extern template class WFieldContainer<1>;
+   extern template class WFieldContainer<2>;
+   extern template class WFieldContainer<3>;
    #endif
 
 } // namespace Pspc
