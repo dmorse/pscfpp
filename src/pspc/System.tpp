@@ -536,8 +536,29 @@ namespace Pspc
    template <int D>
    void System<D>::readWRGrid(const std::string & filename)
    {
-      fieldIo().readFieldsRGrid(filename, tmpFieldsRGrid_, domain_.unitCell());
+      fieldIo().readFieldsRGrid(filename, tmpFieldsRGrid_, 
+                                domain_.unitCell());
       w_.setRGrid(tmpFieldsRGrid_);
+   }
+
+   /*
+   * Set new w-field values.
+   */
+   template <int D>
+   void System<D>::setWBasis(DArray< DArray<double> > const & fields)
+   {
+      w_.setBasis(fields);
+      hasCFields_ = false;
+   }
+
+   /*
+   * Set new w-field values, using r-grid fields as inputs.
+   */
+   template <int D>
+   void System<D>::setWRGrid(DArray<Field> const & fields)
+   {
+      w_.setRGrid(fields);
+      hasCFields_ = false;
    }
 
    // Unit Cell Modifier / Setter 
@@ -576,6 +597,7 @@ namespace Pspc
 
       // Solve the modified diffusion equation (without iteration)
       mixture_.compute(w_.rgrid(), c_.rgrid());
+      hasCFields_ = true;
 
       if (w_.isSymmetric()) {
          domain_.fieldIo().convertRGridToBasis(c_.rgrid(), c_.basis());
@@ -601,7 +623,6 @@ namespace Pspc
 
       // Call iterator (return 0 for convergence, 1 for failure)
       int error = iterator().solve(isContinuation);
-      
       hasCFields_ = true;
 
       // If converged, compute related properties

@@ -149,6 +149,26 @@ namespace Pspc
       void readWRGrid(const std::string & filename);
 
       /**
+      * Set new w fields, in symmetrized-adapted Fourier basis format.
+      *
+      * On exit, both w().basis() and w().rgrid() are reset, w().hasData()
+      * and w().isSymmetric() are true and hasCFields() is false.
+      *
+      * \param fields  array of new w (chemical potential) fields
+      */
+      void setWBasis(DArray< DArray<double> > const & fields);
+
+      /**
+      * Set new w fields, in real-space (r-grid) format.
+      *
+      * On exit, w().rgrid() is reset, w().hasData() is true but 
+      * w().isSymmetric() is false and hasCFields() is false.
+      *
+      * \param fields  array of new w (chemical potential) fields
+      */
+      void setWRGrid(DArray<Field> const & fields);
+
+      /**
       * Set parameters of the associated unit cell.
       *
       * \param unitCell  new UnitCell<D> (i.e., new parameters)
@@ -495,27 +515,18 @@ namespace Pspc
       bool checkRGridFieldSymmetry(const std::string & inFileName) const;
 
       //@}
-      /// \name Field Accessors
+      /// \name Member Accessors
       //@{
 
       /**
-      * Get the chemical potential fields (non const reference).
-      */
-      FieldContainer<D> & w();
-
-      /**
-      * Get the chemical potential fields (const reference).
+      * Get all of the chemical potential fields (const reference).
       */
       FieldContainer<D> const & w() const;
 
       /**
-      * Get the monomer concentration fields (const reference).
+      * Get all of the monomer concentration fields (const reference).
       */
       CFieldContainer<D> const & c() const;
-
-      //@}
-      /// \name Miscellaneous Accessors
-      //@{
 
       /**
       * Get the Mixture by reference.
@@ -596,10 +607,6 @@ namespace Pspc
       * Get const FileMaster by reference.
       */
       FileMaster const & fileMaster() const;
-
-      //@}
-      /// \name Accessors (return by value)
-      //@{
 
       /**
       * Get the group name string.
@@ -877,12 +884,6 @@ namespace Pspc
       UTIL_ASSERT(iteratorPtr_);
       return *iteratorPtr_;
    }
-
-   // Get container of chemical potential fields (non const reference)
-   template <int D>
-   inline
-   FieldContainer<D> & System<D>::w() 
-   {  return w_; }
 
    // Get container of chemical potential fields (const reference)
    template <int D>

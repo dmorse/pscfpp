@@ -118,7 +118,7 @@ namespace Pspc
    template <int D>
    void BasisFieldState<D>::setSystemState(bool newCellParams)
    {
-      system().w().setBasis(fields());
+      system().setWBasis(fields());
       if (newCellParams) {
          system().setUnitCell(unitCell());
       }

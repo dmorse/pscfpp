@@ -382,7 +382,7 @@ namespace Pspc{
             }
          }
       }
-      system().w().setBasis(wField);
+      system().setWBasis(wField);
 
       if (isFlexible_) {
          const FSArray<int,6> indices = flexibleParams();
