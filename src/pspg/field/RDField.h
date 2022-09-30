@@ -2,9 +2,9 @@
 #define PSPG_R_DFIELD_H
 
 /*
-* PSCF++ Package 
+* PSCF Package 
 *
-* Copyright 2010 - 2017, The Regents of the University of Minnesota
+* Copyright 2016 - 2022, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.
 */
 
