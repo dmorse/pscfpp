@@ -12,10 +12,10 @@
 
 namespace Pscf {
 namespace Fd1d{
-   
+
    using namespace Util;
 
-   // Constructor   
+   // Constructor
    AmIterator::AmIterator(System& system)
    : Iterator(system)
    {  setClassName("AmIterator"); }
@@ -23,7 +23,7 @@ namespace Fd1d{
    // Destructor
    AmIterator::~AmIterator()
    {}
-   
+
    // Read parameters from file
    void AmIterator::readParameters(std::istream& in)
    {
@@ -44,7 +44,7 @@ namespace Fd1d{
       }
       return sqrt(normResSq);
    }
-   
+
    // Compute and return maximum element of residual vector.
    double AmIterator::findMaxAbs(DArray<double> const & hist)
    {
@@ -56,7 +56,7 @@ namespace Fd1d{
       }
       return maxRes;
    }
-   
+
    // Update basis
    void AmIterator::updateBasis(RingBuffer<DArray<double> > & basis,
                                 RingBuffer<DArray<double> > const & hists)
@@ -70,14 +70,14 @@ namespace Fd1d{
 
       for (int i = 0; i < n; i++) {
          // sequential histories basis vectors
-         newbasis[i] = hists[0][i] - hists[1][i]; 
+         newbasis[i] = hists[0][i] - hists[1][i];
       }
 
       basis.append(newbasis);
    }
 
    // Compute one element of U matrix of by computing a dot product
-   double 
+   double
    AmIterator::computeUDotProd(RingBuffer< DArray<double> > const& resBasis,
                                int m, int n)
    {
@@ -88,9 +88,9 @@ namespace Fd1d{
       }
       return dotprod;
    }
-   
+
    // Compute one element of V vector by computing a dot product
-   double 
+   double
    AmIterator::computeVDotProd(DArray<double> const & resCurrent,
                                RingBuffer<DArray<double> > const& resBasis,
                                int m)
@@ -102,7 +102,7 @@ namespace Fd1d{
       }
       return dotprod;
    }
-   
+
    // Update entire U matrix
    void AmIterator::updateU(DMatrix<double> & U,
                             RingBuffer<DArray<double> > const & resBasis,
@@ -123,7 +123,7 @@ namespace Fd1d{
          U(0,m) = dotprod;
       }
    }
-   
+
    void AmIterator::updateV(DArray<double> & v,
                             DArray<double> const & resCurrent,
                             RingBuffer<DArray<double> > const & resBasis,
@@ -133,7 +133,7 @@ namespace Fd1d{
          v[m] = computeVDotProd(resCurrent,resBasis,m);
       }
    }
-   
+
    void AmIterator::setEqual(DArray<double>& a, DArray<double> const & b)
    {  a = b; }
 
@@ -159,13 +159,13 @@ namespace Fd1d{
          fieldTrial[i] += lambda * resTrial[i];
       }
    }
-   
+
    bool AmIterator::hasInitialGuess()
    {
       // Fd1d::System doesn't hav a hasFields() function
       return true;
    }
-   
+
    // Compute and return the number of elements in a field vector
    int AmIterator::nElements()
    {
@@ -173,7 +173,7 @@ namespace Fd1d{
       const int nx = domain().nx();                 // # of grid points
       return nm*nx;
    }
-   
+
    // Get the current fields from the system as a 1D array
    void AmIterator::getCurrent(DArray<double>& curr)
    {
@@ -183,21 +183,21 @@ namespace Fd1d{
 
       // Straighten out fields into linear arrays
       for (int i = 0; i < nm; i++) {
-         for (int k = 0; k < nx; k++) {  
+         for (int k = 0; k < nx; k++) {
             curr[i*nx+k] = (*currSys)[i][k];
          }
       }
    }
-   
+
    // Solve the MDEs for the current system w fields
    void AmIterator::evaluate()
    {
       mixture().compute(system().wFields(), system().cFields());
    }
-   
-   
+
+
    // Check whether Canonical ensemble
-   bool AmIterator::isCanonical() 
+   bool AmIterator::isCanonical()
    {
       Species::Ensemble ensemble;
 
@@ -226,7 +226,7 @@ namespace Fd1d{
       // Return true if no species had an open ensemble
       return true;
    }
-   
+
    // Compute the residual for the current system state
    void AmIterator::getResidual(DArray<double>& resid)
    {
@@ -239,7 +239,7 @@ namespace Fd1d{
       for (int i = 0 ; i < nr; ++i) {
          resid[i] = shift;
       }
-      
+
       // Compute SCF residual vector elements
       double chi, p;
       int i, j, k;
@@ -257,47 +257,31 @@ namespace Fd1d{
       }
 
    }
-    
+
    // Update the current system field coordinates
    void AmIterator::update(DArray<double>& newGuess)
    {
       const int nm = mixture().nMonomer();  // # of monomers
       const int nx = domain().nx();         // # of grid points
-      const int nr = nm*nx;                 // # of residual elements
 
-      DArray< DArray<double> > wField;
-      wField.allocate(nm);
-
-      // Restructure in format of monomers, basis functions
+      // Set current w fields in system
       // If canonical, shift to as to set last element to zero
-      const double shift = newGuess[nr - 1];
+      const double shift = newGuess[nm*nx - 1];
       for (int i = 0; i < nm; i++) {
-         wField[i].allocate(nx);
+         DArray<double>& wField = system().wField(i);
          if (isCanonical()) {
             for (int k = 0; k < nx; k++) {
-               wField[i][k] = newGuess[i*nx + k] - shift;
-            } 
+               wField[k] = newGuess[i*nx + k] - shift;
+            }
          } else {
             for (int k = 0; k < nx; k++) {
-               wField[i][k] = newGuess[i*nx + k];
-            } 
+               wField[k] = newGuess[i*nx + k];
+            }
          }
       }
 
-      // Update system wField
-      for (int j = 0; j < nm; j++){
-         for (int k = 0; k < nx; k++ ){
-            system().wField(j)[k] = wField[j][k];
-         }
-      }
-
-      // Comment / todo item:
-      // It appears that the allocation of wField is unnecessary:
-      // Because system().wFields(j) is a non-const reference, we 
-      // could modify it directly.
-      
    }
-   
+
    void AmIterator::outputToLog()
    {}
 

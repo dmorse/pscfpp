@@ -1,0 +1,2 @@
+./run_nr : perform sweep with Newton-Raphson iterator  (NrIterator)
+./run_am : perform sweep with Anderson-Mixing iterator (AmIterator)

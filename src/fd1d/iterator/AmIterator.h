@@ -21,11 +21,10 @@ namespace Fd1d
    using namespace Util;
 
    /**
-   * Pspc implementation of the Anderson Mixing iterator.
+   * Anderson-Mixing iterator.
    *
-   * \ingroup Pspc_Iterator_Module
+   * \ingroup Fd1d_Iterator_Module
    */
-   
    class AmIterator : public AmIteratorTmpl<Iterator, DArray<double> >
    {
 
@@ -202,7 +201,10 @@ namespace Fd1d
       */
       void outputToLog();
       
-      
+   
+      /**
+      * Return true iff all species are treated in closed ensemble.
+      */   
       bool isCanonical();
 
    };
