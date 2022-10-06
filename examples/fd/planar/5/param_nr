@@ -6,10 +6,10 @@ System{
      nPolymer  1
      nSolvent  1
      Polymer{
-        type    branched
+        type    linear
         nBlock  2
-        blocks  0   0.5   0   1 
-                1   0.5   1   2 
+        blocks  0   0.5   
+                1   0.5  
         phi     0.95
      }
      Solvent{
@@ -33,6 +33,14 @@ System{
   NrIterator{
      epsilon   0.00000001
   }
+  Sweep{
+     ns            20
+     baseFileName  out/
+     nParameter    2
+     parameters[
+       phi_solvent 0   0.55
+       phi_polymer 0  -0.55
+     ]
+  }
 }
 
-   nSolvent  0

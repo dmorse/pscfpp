@@ -2,6 +2,7 @@ fd1d_iterator_=\
   fd1d/iterator/Iterator.cpp \
   fd1d/iterator/NrIterator.cpp \
   fd1d/iterator/FdIterator.cpp \
+  fd1d/iterator/AmIterator.cpp \
   fd1d/iterator/IteratorFactory.cpp
 
 fd1d_iterator_SRCS=\

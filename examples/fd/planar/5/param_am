@@ -1,0 +1,48 @@
+System{
+  Mixture{
+     nMonomer  2
+     monomers  1.0  
+               1.0 
+     nPolymer  1
+     nSolvent  1
+     Polymer{
+        type    linear
+        nBlock  2
+        blocks  0   0.5   
+                1   0.5  
+        phi     0.95
+     }
+     Solvent{
+        monomerId  0
+        size       0.1
+        phi        0.05
+     }
+     ds   0.01
+  }
+  Interaction{
+     chi(
+         0  1    20.0
+     ) 
+  }
+  Domain{
+     mode planar
+     xMin 0.0
+     xMax 1.7
+     nx   101
+  }
+  AmIterator{
+     maxItr    200
+     epsilon   1.0E-8
+     maxHist   50
+  }
+  Sweep{
+     ns            20
+     baseFileName  out/
+     nParameter    2
+     parameters[
+       phi_solvent 0   0.55
+       phi_polymer 0  -0.55
+     ]
+  }
+}
+

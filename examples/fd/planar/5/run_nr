@@ -1,0 +1,1 @@
+pscf_fd -e -p param_nr -c command > log_nr
