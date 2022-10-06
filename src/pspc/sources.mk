@@ -2,12 +2,14 @@ include $(SRC_DIR)/pspc/field/sources.mk
 include $(SRC_DIR)/pspc/solvers/sources.mk
 include $(SRC_DIR)/pspc/iterator/sources.mk
 include $(SRC_DIR)/pspc/sweep/sources.mk
+include $(SRC_DIR)/pspc/compressor/sources.mk
 
 pspc_= \
   $(pspc_field_) \
   $(pspc_solvers_) \
   $(pspc_iterator_) \
   $(pspc_sweep_) \
+  $(pspc_compressor_) \
   pspc/System.cpp 
 
 pspc_SRCS=\

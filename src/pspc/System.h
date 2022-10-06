@@ -36,6 +36,8 @@ namespace Pspc
    template <int D> class IteratorFactory;
    template <int D> class Sweep;
    template <int D> class SweepFactory;
+   template <int D> class Compressor;
+   template <int D> class CompressorFactory;
 
    using namespace Util;
 
@@ -673,6 +675,16 @@ namespace Pspc
       * Pointer to SweepFactory object
       */
       SweepFactory<D>* sweepFactoryPtr_;
+
+      /**
+      * Pointer to an compressor.
+      */
+      Compressor<D>* compressorPtr_;
+
+      /**
+      * Pointer to compressor factory object
+      */
+      CompressorFactory<D>* compressorFactoryPtr_;
 
       /**
       * Chemical potential fields.
