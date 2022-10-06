@@ -75,6 +75,15 @@ namespace Pscf {
       using Iterator::setClassName;
       using ParamComposite::read;
       using ParamComposite::readOptional;
+     
+      /**
+      * Initialize just before entry to iterative loop.
+      *
+      * This function is called by the solve method just before entering
+      * the loop over iterations.  The default implementation is empty.
+      */ 
+      virtual void setupIteration() 
+      {};
 
    private:
 

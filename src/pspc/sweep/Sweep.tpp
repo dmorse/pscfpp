@@ -22,7 +22,7 @@ namespace Pspc {
    # define PSPC_HISTORY_CAPACITY 3
 
    /*
-   * Default constructor.
+   * Default constructor (for unit testing).
    */
    template <int D>
    Sweep<D>::Sweep() 
@@ -47,7 +47,7 @@ namespace Pspc {
    {}
 
    /*
-   * Set association with a parent system.
+   * Set association with a parent system (for unit testing).
    */
    template <int D>
    void Sweep<D>::setSystem(System<D>& system) 

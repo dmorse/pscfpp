@@ -206,10 +206,10 @@ namespace Pspc
       // Initialize iterator through the factory and mediator
       std::string className;
       bool isEnd;
-      iteratorPtr_ = iteratorFactoryPtr_->readObject(in, *this, 
-                                                     className, isEnd);
+      iteratorPtr_ = 
+         iteratorFactoryPtr_->readObject(in, *this, className, isEnd);
       if (!iteratorPtr_) {
-         std::string msg = "Unrecognized Iterator subclass name ";
+         std::string msg = "Unrecognized Iterator label string ";
          msg += className;
          UTIL_THROW(msg.c_str());
       }
@@ -217,10 +217,7 @@ namespace Pspc
 
       // Optionally instantiate a Sweep object
       sweepPtr_ = 
-         sweepFactoryPtr_->readObjectOptional(in, *this, className, isEnd);
-      if (sweepPtr_) {
-         sweepPtr_->setSystem(*this);
-      }
+        sweepFactoryPtr_->readObjectOptional(in, *this, className, isEnd);
    }
 
    /*
