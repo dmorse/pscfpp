@@ -49,11 +49,6 @@ namespace Pspc
       ~Compressor();
 
       /**
-      * Setup compressor.
-      */
-      virtual void setup() = 0;
-
-      /**
       * Iterate Langrange multiplier field.
       *
       * \return error code: 0 for success, 1 for failure.
