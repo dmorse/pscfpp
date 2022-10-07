@@ -96,8 +96,7 @@ namespace Pscf
       // Preconditions:
       UTIL_CHECK(hasInitialGuess());
 
-      // Timers for timing iteration components
-
+      // Timers for analyzing performance
       Timer timerMDE;
       Timer timerStress;
       Timer timerAM;
@@ -114,6 +113,10 @@ namespace Pscf
       timerMDE.start();
       evaluate();
       timerMDE.stop();
+
+      // Initialization operations on entry to loop (if any)
+      // The default implementation of this function is empty.
+      setupIteration();
 
       // Iterative loop
       bool done;

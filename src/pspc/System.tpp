@@ -10,10 +10,11 @@
 
 #include "System.h"
 
-#include <pspc/iterator/IteratorFactory.h>
 #include <pspc/sweep/Sweep.h>
-#include <pspc/sweep/SweepFactory.h>
 #include <pspc/compressor/Compressor.h>
+
+#include <pspc/iterator/IteratorFactory.h>
+#include <pspc/sweep/SweepFactory.h>
 #include <pspc/compressor/CompressorFactory.h>
 
 #include <pspc/solvers/Mixture.h>
@@ -61,6 +62,8 @@ namespace Pspc
       iteratorFactoryPtr_(0),
       sweepPtr_(0),
       sweepFactoryPtr_(0),
+      compressorPtr_(0),
+      compressorFactoryPtr_(0),
       w_(),
       c_(),
       f_(),
@@ -69,7 +72,6 @@ namespace Pspc
       pressure_(0.0),
       hasMixture_(false),
       isAllocated_(false)
-      // hasIterator_(true)
    {  
       setClassName("System"); 
       domain_.setFileMaster(fileMaster_);
@@ -77,6 +79,7 @@ namespace Pspc
       interactionPtr_ = new Interaction(); 
       iteratorFactoryPtr_ = new IteratorFactory<D>(*this); 
       sweepFactoryPtr_ = new SweepFactory<D>(*this);
+      compressorFactoryPtr_ = new CompressorFactory<D>(*this);
       BracketPolicy::set(BracketPolicy::Optional);
    }
 
@@ -100,6 +103,12 @@ namespace Pspc
       }
       if (sweepFactoryPtr_) {
          delete sweepFactoryPtr_;
+      }
+      if (compressorPtr_) {
+         delete compressorPtr_;
+      }
+      if (compressorFactoryPtr_) {
+         delete compressorFactoryPtr_;
       }
    }
 
@@ -207,10 +216,10 @@ namespace Pspc
       // Initialize iterator through the factory and mediator
       std::string className;
       bool isEnd;
-      iteratorPtr_ = iteratorFactoryPtr_->readObject(in, *this, 
-                                                     className, isEnd);
+      iteratorPtr_ = 
+         iteratorFactoryPtr_->readObject(in, *this, className, isEnd);
       if (!iteratorPtr_) {
-         std::string msg = "Unrecognized Iterator subclass name ";
+         std::string msg = "Unrecognized Iterator label string ";
          msg += className;
          UTIL_THROW(msg.c_str());
       }
@@ -219,9 +228,6 @@ namespace Pspc
       // Optionally instantiate a Sweep object
       sweepPtr_ = 
          sweepFactoryPtr_->readObjectOptional(in, *this, className, isEnd);
-      if (sweepPtr_) {
-         sweepPtr_->setSystem(*this);
-      }
 
       // Optionally instantiate a Compressor object
       compressorPtr_ = 
