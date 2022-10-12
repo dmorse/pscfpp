@@ -1,0 +1,56 @@
+
+Goals
+------
+
+1) Make it possible to delay construction of a basis until the first time a field file 
+   is read.
+
+2) Avoid unnecessary reconstruction of the basis when the same space group and unit
+   cell type appear in multiple field files. 
+
+Comments
+--------
+
+1) The number of basis functions is not known until we construct a basis, and may change
+   if we change the basis. Delaying the construction of basis thus requires us to delay
+   allocating all arrays that hold field components in symmetry-adapted basis format.
+   We may also have to make provisions for re-allocating them if necessary.
+
+2) This may require that we construct a basis withn the read functions of Pspc::FieldIo,
+   since the existence of an appropriate basis is used in some of the read functions.
+
+3) In order to check validity of an existing basis, and avoid unnecessary 
+   reconstruction of a valid basis, the functions that decide whether to construct a
+   basis must have access to the space group name string and CrystalSystem enumeration
+   value.
+
+Proposals
+---------
+
+1) Modify WFieldContainer and CFieldContainer to allow allocation and de-allocation
+   of basis and r-grid fields separately (allocateBasis, delllocateBasis, allocateRGrid,
+   allocateRGrid, and setNmonomer). Continue to require that nMonomer is set once and 
+   never changed.
+
+2) Modify basis so as to internally store the space group name string and a copy of
+   the unit cell that was used to create it.  Make both of these publically accessible
+   as const references for read access. Read access to  the space group string and 
+   crystal system enumeration can be used to check if the basis is suitable for a new
+   field or crystal. The parameters of the unit cell stored in the Basis simply record 
+   are less important, but record which unit cell was used to create the current basis, 
+   which can effect the ordering of basis functions.
+
+3) In FieldIo, remove the groupNamePtr_ and instead use the name stored in the basis
+   as the relevant identifier.
+
+4) In FieldIo, make the basisPtr_ non-const in order to allow it to be reconstructed
+   if necessary.
+
+5) Check that it is possible to clear and reconstruct the Basis.
+
+6) Modify the FieldIo read functions to check the characteristics of the basis, 
+   and construct / reconstruct the basis only if necessary, re-use if appropriate.
+
+7) Provide some method for the read functions of FieldIo to inform the calling function
+   when they have constructed a new basis, so that the system can re-allocate other 
+   arrays with dimensions that depend on nBasis.
