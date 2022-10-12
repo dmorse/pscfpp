@@ -62,13 +62,11 @@ namespace Pspc
       sweepFactoryPtr_(0),
       w_(),
       c_(),
-      f_(),
       e_(),
       fHelmholtz_(0.0),
       pressure_(0.0),
       hasMixture_(false),
       isAllocated_(false)
-      // hasIterator_(true)
    {  
       setClassName("System"); 
       domain_.setFileMaster(fileMaster_);
@@ -201,7 +199,9 @@ namespace Pspc
       mixture_.setMesh(mesh());
       mixture_.setupUnitCell(unitCell());
 
-      allocate();
+      allocateFieldsGrid();
+      allocateFieldsBasis();
+      isAllocated_ = true;
 
       // Initialize iterator through the factory and mediator
       std::string className;
@@ -256,26 +256,49 @@ namespace Pspc
    * Allocate memory for fields.
    */
    template <int D>
-   void System<D>::allocate()
+   void System<D>::allocateFieldsGrid()
    {
-      // Preconditions
+      // Constants and preconditions
       UTIL_CHECK(hasMixture_);
-
       int nMonomer = mixture_.nMonomer();
+      UTIL_CHECK(nMonomer > 0);
 
-      w_.allocate(nMonomer, basis().nBasis(), mesh().dimensions());
-      c_.allocate(nMonomer, basis().nBasis(), mesh().dimensions());
+      w_.setNMonomer(nMonomer);
+      w_.allocateRGrid(mesh().dimensions());
 
-      // Allocate temporary work fields 
-      tmpFieldsBasis_.allocate(nMonomer);
+      c_.setNMonomer(nMonomer);
+      c_.allocateRGrid(mesh().dimensions());
+
+      // Temporary work fields 
       tmpFieldsRGrid_.allocate(nMonomer);
       tmpFieldsKGrid_.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
-         tmpFieldsBasis_[i].allocate(basis().nBasis());
          tmpFieldsRGrid_[i].allocate(mesh().dimensions());
          tmpFieldsKGrid_[i].allocate(mesh().dimensions());
       }
-      isAllocated_ = true;
+   }
+
+   /*
+   * Allocate memory for fields.
+   */
+   template <int D>
+   void System<D>::allocateFieldsBasis()
+   {
+      // Constants and preconditions
+      UTIL_CHECK(hasMixture_);
+      const int nMonomer = mixture_.nMonomer();
+      UTIL_CHECK(nMonomer > 0);
+      const int nBasis = basis().nBasis();
+      UTIL_CHECK(nBasis > 0);
+
+      w_.allocateBasis(nBasis);
+      c_.allocateBasis(nBasis);
+
+      // Temporary work fields 
+      tmpFieldsBasis_.allocate(nMonomer);
+      for (int i = 0; i < nMonomer; ++i) {
+         tmpFieldsBasis_[i].allocate(nBasis);
+      }
    }
 
    /*
@@ -907,9 +930,6 @@ namespace Pspc
    }
 
    // Command functions
-
-
-
 
    /*
    * Write w-fields in symmetry-adapted basis format. 

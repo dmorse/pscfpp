@@ -705,10 +705,12 @@ namespace Pspc
       */
       mutable DArray<RFieldDft<D> > tmpFieldsKGrid_;
 
+      #if 0
       /**
       * Work array (size = # of grid points).
       */
       mutable DArray<double> f_;
+      #endif
 
       /**
       * Work array (size = # of monomer types).
@@ -751,9 +753,14 @@ namespace Pspc
       // Private member functions
 
       /**
-      * Allocate memory for fields (private)
+      * Allocate memory for fields in grid formats (private)
       */
-      void allocate();
+      void allocateFieldsGrid();
+
+      /**
+      * Allocate memory for fields in basis format (private)
+      */
+      void allocateFieldsBasis();
 
       /**
       * Initialize Homogeneous::Mixture object.

@@ -142,9 +142,6 @@ public:
                       domain.mesh().dimensions());
       TEST_ASSERT(fields.isAllocatedRGrid());
       TEST_ASSERT(fields.isAllocatedBasis());
-      std::cout << "\n nMonomer_      = " << nMonomer_ << "\n";
-      std::cout << "\n rgrid capacity = " << fields.rgrid().capacity() << "\n";
-      std::cout << "\n basis capacity = " << fields.rgrid().capacity() << "\n";
       TEST_ASSERT(fields.rgrid().capacity() == nMonomer_);
       TEST_ASSERT(fields.basis().capacity() == nMonomer_);
    }
