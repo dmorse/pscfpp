@@ -51,10 +51,42 @@ namespace Pspc {
       ~CFieldContainer();
 
       /**
-      * Allocate memory for fields.
+      * Set stored value of nMonomer.
+      * 
+      * May only be called once.
       *
-      * A CFieldContainer<D> may only be allocated once. An Exception will
-      * be thrown if this function is called more than once.
+      * \param nMonomer number of monomer types.
+      */
+      void setNMonomer(int nMonomer);
+
+      /**
+      * Allocate or re-allocate memory for fields in rgrid format.
+      *
+      * \param dimensions  dimensions of spatial mesh
+      */
+      void allocateRGrid(IntVec<D> const & dimensions);
+
+      /**
+      * De-allocate fields in rgrid format.
+      */
+      void deallocateRGrid();
+
+      /**
+      * Allocate or re-allocate memory for fields in basis format.
+      *
+      * \param nBasis  number of basis functions 
+      */
+      void allocateBasis(int nBasis);
+
+      /**
+      * De-allocate fields in basis format.
+      */
+      void deallocateBasis();
+
+      /**
+      * Allocate memory for both r-grid and basis field formats.
+      *
+      * This function may only be called once.
       *
       * \param nMonomer  number of monomer types
       * \param nBasis  number of basis functions 
@@ -121,10 +153,16 @@ namespace Pspc {
       {  return rgrid_[monomerId]; }
 
       /**
-      * Has memory been allocated?
+      * Has memory been allocated for fields in r-grid format?
       */
-      bool isAllocated() const
-      {  return isAllocated_; }
+      bool isAllocatedRGrid() const
+      {  return isAllocatedRGrid_; }
+
+      /**
+      * Has memory been allocated for fields in basis format?
+      */
+      bool isAllocatedBasis() const
+      {  return isAllocatedBasis_; }
 
    private:
 
@@ -133,7 +171,7 @@ namespace Pspc {
       *
       * Element basis_[i] is an array that contains the components
       * of the field associated with monomer i, in a symmetry-adapted
-      * Fourier expansion. 
+      * Fourier basis expansion. 
       */
       DArray< DArray<double> > basis_;
 
@@ -146,9 +184,19 @@ namespace Pspc {
       DArray< RField<D> > rgrid_;
 
       /*
-      * Has memory been allocated for fields?
+      * Number of monomer types.
       */
-      bool isAllocated_;
+      int nMonomer_;
+
+      /*
+      * Has memory been allocated for fields in r-grid format?
+      */
+      bool isAllocatedRGrid_;
+
+      /*
+      * Has memory been allocated for fields in basis format?
+      */
+      bool isAllocatedBasis_;
 
    };
 

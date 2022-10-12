@@ -11,6 +11,7 @@
 #include "DomainTest.h"
 #include "FieldIoTest.h"
 #include "WFieldContainerTest.h"
+#include "CFieldContainerTest.h"
 #include "MaskTest.h"
 
 TEST_COMPOSITE_BEGIN(FieldTestComposite)
@@ -22,6 +23,7 @@ TEST_COMPOSITE_ADD_UNIT(FieldComparisonTest);
 TEST_COMPOSITE_ADD_UNIT(DomainTest);
 TEST_COMPOSITE_ADD_UNIT(FieldIoTest);
 TEST_COMPOSITE_ADD_UNIT(WFieldContainerTest);
+TEST_COMPOSITE_ADD_UNIT(CFieldContainerTest);
 TEST_COMPOSITE_ADD_UNIT(MaskTest);
 TEST_COMPOSITE_END
 

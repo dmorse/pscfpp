@@ -28,7 +28,9 @@ namespace Pspc
       meshDimensions_(),
       meshSize_(0),
       nBasis_(0),
-      isAllocated_(false),
+      nMonomer_(0),
+      isAllocatedRGrid_(false),
+      isAllocatedBasis_(false),
       hasData_(false),
       isSymmetric_(false)
    {}
@@ -48,17 +50,31 @@ namespace Pspc
    {  fieldIoPtr_ = &fieldIo; }
 
    /*
-   * Allocate memory for fields.
+   * Set the stored value of nMonomer (this may only be called once).
    */
    template <int D>
-   void WFieldContainer<D>::allocate(int nMonomer, int nBasis, 
-                                    IntVec<D> const & meshDimensions)
+   void WFieldContainer<D>::setNMonomer(int nMonomer)
    {
-      UTIL_CHECK(!isAllocated_);
-
-      // Set mesh and basis dimensions
+      UTIL_CHECK(nMonomer_ == 0);
+      UTIL_CHECK(nMonomer > 0);
       nMonomer_ = nMonomer;
-      nBasis_ = nBasis;
+   }
+
+   /*
+   * Allocate memory for fields in r-grid format.
+   */
+   template <int D>
+   void 
+   WFieldContainer<D>::allocateRGrid(IntVec<D> const & meshDimensions)
+   {
+      UTIL_CHECK(nMonomer_ > 0);
+
+      // If already allocated, deallocate.
+      if (isAllocatedRGrid_) {
+         deallocateRGrid();
+      }
+  
+      // Store mesh dimensions
       meshDimensions_ = meshDimensions;
       meshSize_ = 1;
       for (int i = 0; i < D; ++i) {
@@ -66,22 +82,90 @@ namespace Pspc
          meshSize_ *= meshDimensions[i];
       }
   
-      // Allocate field arrays 
-      basis_.allocate(nMonomer);
-      rgrid_.allocate(nMonomer);
-      for (int i = 0; i < nMonomer; ++i) {
-         basis_[i].allocate(nBasis);
+      // Allocate arrays 
+      rgrid_.allocate(nMonomer_);
+      for (int i = 0; i < nMonomer_; ++i) {
          rgrid_[i].allocate(meshDimensions);
       }
+      isAllocatedRGrid_ = true;
 
-      isAllocated_ = true;
+   }
+
+   /*
+   * De-allocate memory for fields in r-grid format
+   */
+   template <int D>
+   void WFieldContainer<D>::deallocateRGrid()
+   {
+      UTIL_CHECK(isAllocatedRGrid_);
+      UTIL_CHECK(nMonomer_ > 0);
+      for (int i = 0; i < nMonomer_; ++i) {
+         rgrid_[i].deallocate();
+      }
+      rgrid_.deallocate();
+      meshDimensions_ = 0;
+      meshSize_ = 0;
+      isAllocatedRGrid_ = false;
+   }
+  
+   /*
+   * Allocate memory for fields in basis format.
+   */
+   template <int D>
+   void WFieldContainer<D>::allocateBasis(int nBasis)
+   {
+      UTIL_CHECK(nMonomer_ > 0);
+      UTIL_CHECK(nBasis > 0);
+
+      // If already allocated, deallocate.
+      if (isAllocatedBasis_) {
+         deallocateBasis();
+      }
+ 
+      // Allocate 
+      nBasis_ = nBasis;
+      basis_.allocate(nMonomer_);
+      for (int i = 0; i < nMonomer_; ++i) {
+         basis_[i].allocate(nBasis);
+      }
+      isAllocatedBasis_ = true;
+
+   }
+
+   /*
+   * De-allocate memory for fields in basis format.
+   */
+   template <int D>
+   void WFieldContainer<D>::deallocateBasis()
+   {
+      UTIL_CHECK(isAllocatedBasis_);
+      UTIL_CHECK(nMonomer_ > 0);
+      for (int i = 0; i < nMonomer_; ++i) {
+         basis_[i].deallocate();
+      }
+      basis_.deallocate();
+      nBasis_ = 0;
+      isAllocatedBasis_ = false;
+   }
+  
+   /*
+   * Allocate memory for all fields.
+   */
+   template <int D>
+   void WFieldContainer<D>::allocate(int nMonomer, int nBasis, 
+                                    IntVec<D> const & meshDimensions)
+   {
+      setNMonomer(nMonomer);
+      allocateRGrid(meshDimensions);
+      allocateBasis(nBasis);
    }
 
    /*
    * Set new w-field values.
    */
    template <int D>
-   void WFieldContainer<D>::setBasis(DArray< DArray<double> > const & fields)
+   void 
+   WFieldContainer<D>::setBasis(DArray< DArray<double> > const & fields)
    {
       UTIL_CHECK(fields.capacity() == nMonomer_);
 

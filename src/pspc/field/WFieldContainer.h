@@ -75,10 +75,42 @@ namespace Pspc {
       void setFieldIo(FieldIo<D> const & fieldIo);
 
       /**
-      * Allocate memory for fields.
+      * Set stored value of nMonomer.
+      * 
+      * May only be called once.
       *
-      * A WFieldContainer<D> may only be allocated once. An Exception will
-      * be thrown if this function is called more than once.
+      * \param nMonomer number of monomer types.
+      */
+      void setNMonomer(int nMonomer);
+
+      /**
+      * Allocate or re-allocate memory for fields in rgrid format.
+      *
+      * \param dimensions  dimensions of spatial mesh
+      */
+      void allocateRGrid(IntVec<D> const & dimensions);
+
+      /**
+      * De-allocate fields in rgrid format.
+      */
+      void deallocateRGrid();
+
+      /**
+      * Allocate or re-allocate memory for fields in basis format.
+      *
+      * \param nBasis  number of basis functions 
+      */
+      void allocateBasis(int nBasis);
+
+      /**
+      * De-allocate fields in basis format.
+      */
+      void deallocateBasis();
+
+      /**
+      * Allocate memory for all fields.
+      *
+      * This function may only be called once.
       *
       * \param nMonomer  number of monomer types
       * \param nBasis  number of basis functions 
@@ -146,9 +178,14 @@ namespace Pspc {
       RField<D> const & rgrid(int monomerId) const;
 
       /**
-      * Has memory been allocated?
+      * Has memory been allocated for fields in r-grid format?
       */
-      bool isAllocated() const;
+      bool isAllocatedRGrid() const;
+
+      /**
+      * Has memory been allocated for fields in basis format?
+      */
+      bool isAllocatedBasis() const;
 
       /**
       * Has field data been set in either format?
@@ -214,9 +251,14 @@ namespace Pspc {
       int nMonomer_;
 
       /*
-      * Has memory been allocated for fields?
+      * Has memory been allocated for fields in r-grid format?
       */
-      bool isAllocated_;
+      bool isAllocatedRGrid_;
+
+      /*
+      * Has memory been allocated for fields in basis format?
+      */
+      bool isAllocatedBasis_;
 
       /*
       * Has field data been initialized ?
@@ -274,12 +316,17 @@ namespace Pspc {
       return rgrid_[id];
    }
 
-   // Has memory been allocated?
+   // Has memory been allocated for fields in r-grid format?
    template <int D>
-   inline bool WFieldContainer<D>::isAllocated() const
-   {  return isAllocated_; }
+   inline bool WFieldContainer<D>::isAllocatedRGrid() const
+   {  return isAllocatedRGrid_; }
 
-   // Have the field data been set?
+   // Has memory been allocated for fields in basis format?
+   template <int D>
+   inline bool WFieldContainer<D>::isAllocatedBasis() const
+   {  return isAllocatedBasis_; }
+
+   // Has field data been initialized ?
    template <int D>
    inline bool WFieldContainer<D>::hasData() const
    {  return hasData_; }

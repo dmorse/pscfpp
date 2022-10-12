@@ -2,55 +2,165 @@
 Goals
 ------
 
-1) Make it possible to delay construction of a basis until the first time a field file 
-   is read.
+1) Avoid forcing a user to enter unit cell parameter data that is then
+overwritten, because that is confusing.
 
-2) Avoid unnecessary reconstruction of the basis when the same space group and unit
-   cell type appear in multiple field files. 
+2) To accomplish 1, Make it possible to delay construction of a basis 
+until the first time a field file is read.
 
-Comments
---------
+Possible Policies / Conventions
+-------------------------------
 
-1) The number of basis functions is not known until we construct a basis, and may change
-   if we change the basis. Delaying the construction of basis thus requires us to delay
-   allocating all arrays that hold field components in symmetry-adapted basis format.
-   We may also have to make provisions for re-allocating them if necessary.
+We could consider several possible policies / conventions:
 
-2) This may require that we construct a basis withn the read functions of Pspc::FieldIo,
-   since the existence of an appropriate basis is used in some of the read functions.
+A - A single space group and basis is used throughout the lifetime of
+a system. The basis could normally be constructed when the first field 
+file is read, while the basis is unitialized, using the unit cell 
+parameters that are provided in that file. All files read by the System 
+are expected to describe a field with the same space group symmetry, and 
+this assumption can be enforced with a error or warning when a field file
+header is read.
 
-3) In order to check validity of an existing basis, and avoid unnecessary 
-   reconstruction of a valid basis, the functions that decide whether to construct a
-   basis must have access to the space group name string and CrystalSystem enumeration
-   value.
+B - We could allow the basis can be constructed more than once if we 
+encounter a new space group name in a field file, but regard the mesh
+dimensions as permanent after they are entered in the parameter file. 
+This is somewhat more complicated than A, but doesn't make a lot of 
+sense in terms of usability - why allow construction of a basis for 
+an entirely different crystal but not allow the user to adjust the mesh 
+dimensions?
 
-Proposals
----------
+C - We could allow more complete mutability by allowing the user to 
+reconstruct the space group and mesh at any time, thus changing the
+phase or type of crystal that the program is dealing with during the
+course of a calculation.
+     
+Comments:
 
-1) Modify WFieldContainer and CFieldContainer to allow allocation and de-allocation
-   of basis and r-grid fields separately (allocateBasis, delllocateBasis, allocateRGrid,
-   allocateRGrid, and setNmonomer). Continue to require that nMonomer is set once and 
-   never changed.
+Option B seems like a conceptually incoherent compromise, and 
+unattractive as a result. Policy C would move the program towards much 
+more flexibility, but is would consequently involve larger changes in 
+the program design.  Policy A gets rid of the confusing redundant 
+unit cell parameters, but leaves most aspects of the program design 
+unchanged.  
 
-2) Modify basis so as to internally store the space group name string and a copy of
-   the unit cell that was used to create it.  Make both of these publically accessible
-   as const references for read access. Read access to  the space group string and 
-   crystal system enumeration can be used to check if the basis is suitable for a new
-   field or crystal. The parameters of the unit cell stored in the Basis simply record 
-   are less important, but record which unit cell was used to create the current basis, 
-   which can effect the ordering of basis functions.
+Choice:  I recommend that we implement policy A.
 
-3) In FieldIo, remove the groupNamePtr_ and instead use the name stored in the basis
-   as the relevant identifier.
+User Interface
+--------------
 
-4) In FieldIo, make the basisPtr_ non-const in order to allow it to be reconstructed
-   if necessary.
+These proposals assume that we go with policy A from above:
 
-5) Check that it is possible to clear and reconstruct the Basis.
+Proposals:
 
-6) Modify the FieldIo read functions to check the characteristics of the basis, 
-   and construct / reconstruct the basis only if necessary, re-use if appropriate.
+1) Require the user to enter a crystal system (unit cell type) and 
+space group name in the parameter file as an explicit declaration of 
+the type of crystal that the program will deal with, as in the fortran 
+file the type of crystal. 
 
-7) Provide some method for the read functions of FieldIo to inform the calling function
-   when they have constructed a new basis, so that the system can re-allocate other 
-   arrays with dimensions that depend on nBasis.
+Rationale: If we don't require an explicit declaration, then the
+lattice system and space group types in the first field file that is
+read provide an implicit declaration that the user never sees unless
+they read the header of that field file. I think that requiring an 
+explicit declaration will make the interface clearer and less error 
+prone. Explicit is better than implicit.
+
+Rationale: The LatticeSystem is part of the unit cell type, along 
+with the space group. For clarity it makes more sense to ask the 
+user to declare both than to declare only the space group.
+
+Note: The inclusion of the LatticeSystem as a required parameter would
+break backwards compatibility.
+
+2) We could provide the user a SET_UNIT_CELL command which reads in 
+a UnitCell (including the lattice system string, which can be checked),
+and a MAKE_BASIS command that constructs a basis using that unit cell.
+The MAKE_BASIS command is valid only if called before any field file 
+is read, since the basis can only constructed once.
+
+Rationale: The user may several reasons to adjust the unit cell from 
+the command file after reading in a field. This allows this to be done 
+without manually editing the field file. 
+
+Rationale: The user may have some reason to want to control the ordering
+of basis functions by explicitly controlling the unit cell parameters 
+used to construct a basis. 
+
+Note: These commands would be introduced as an alternative to allowing
+the user to optionally enter a unit cell. This would break backwards
+compatibility of param file formats, but that would already be broken 
+by adding a required latticeSystem parameter.
+
+Technical details (under the hood):
+
+1) The crystal system name can be read directly into a 
+UnitCell<D>::LatticeSystem enumeration in order to confirm its 
+validity. 
+
+2) The space group name could be used to immediately construct a
+SpaceGroup<D> member of the Domain, in order to confirm the validity
+of the space group name. The resulting space group could then be 
+passed to Basis:makeBasis(...) when information about the unit cell
+is provided the first time one reads in a field file, or when the
+commands SET_UNIT_CELL and makeBasis are read.
+
+Implementation Comments
+-----------------------
+
+1) The number of basis functions is not known until we construct a basis, 
+and may change if we change the basis. Delaying the construction of the
+basis thus requires us to delay allocating all arrays that hold field 
+components in symmetry-adapted basis format.  
+
+2) We may have to allow the FieldIo to construct a basis within the read 
+functions of Pspc::FieldIo, since the existence of an appropriate basis 
+is used in some of the read functions. To implement policy A, we would
+allow a basis to be constructed if and only if the basis is not 
+initialized.
+
+Proposed Plan:
+--------------
+
+1) Modify WFieldContainer and CFieldContainer to allow allocation and 
+de-allocation of basis and r-grid fields separately (new functions
+allocateBasis, delllocateBasis, allocateRGrid, allocateRGrid, and 
+setNmonomer). Continue to require that nMonomer is set once and never 
+changed. (Done)
+
+2) Add isInitialized() member function to Basis so we can tell when a 
+basis exists. Consider adding clear() function to allow de-allocation 
+and return to the initial as-constructed state. (Can be done without
+effecting any existing code).
+
+3) In Domain, add a member of the Domain to stored the declared lattice 
+system type. 
+
+Note: I am proposing to make this a separate member of domain, in 
+addition to the value stored in the UnitCell, because I can't see any 
+other good way to treat it as a parameter file parameter using the 
+existing code for reading and writing parameters. The system requires
+access to a non-const pointer to the address of a parameter. The 
+lattice_ member of a unit cell is private. The UnitCell is currently
+treated as a data type that is read from file using an overloaded >>
+operator, not as a ParamComposite. I don't want to also make it a 
+ParamComposite to solve this problem.
+
+4) In FieldIo, add  const pointer to a UnitCell::LatticeSystem<D> as
+a private member.  In FieldIo::associate, pass and store a pointer to 
+the LatticeSystem in addition to the space group name.
+
+5) In FieldIo, make the basisPtr_ non-const in order to allow it to be 
+initialized if necessary.
+
+6) Modify the FieldIo read functions to construct an unitialized basis
+if necessary.
+
+7) Provide some method for the read functions of FieldIo to inform the 
+calling function when they have constructed a new basis, so that the 
+system can re-allocate other arrays with dimensions that depend on 
+nBasis. (This could be an addition parameter that is passed by reference
+or a return value).
+
+8) Write private functions System::allocateFieldsRGrid() and 
+System::allocateFieldsBasis(), the latter of which is called immediately
+after a basis is constructed.
+

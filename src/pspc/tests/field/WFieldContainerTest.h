@@ -1,5 +1,5 @@
-#ifndef PSPC_FIELD_CONTAINER_TEST_H
-#define PSPC_FIELD_CONTAINER_TEST_H
+#ifndef PSPC_W_FIELD_CONTAINER_TEST_H
+#define PSPC_W_FIELD_CONTAINER_TEST_H
 
 #include <test/UnitTest.h>
 #include <test/UnitTestRunner.h>
@@ -149,6 +149,26 @@ public:
       out.close();
    }
 
+   void testAllocate_bcc() 
+   {
+      printMethod(TEST_FUNC);
+
+      Domain<3> domain;
+      domain.setFileMaster(fileMaster_);
+      readHeader("in/w_bcc.rf", domain);
+
+      WFieldContainer<3> fields;
+      fields.setFieldIo(domain.fieldIo());
+      fields.allocate(nMonomer_, domain.basis().nBasis(),
+                      domain.mesh().dimensions());
+      TEST_ASSERT(fields.isAllocatedRGrid());
+      TEST_ASSERT(fields.isAllocatedBasis());
+      TEST_ASSERT(!fields.hasData());
+      TEST_ASSERT(!fields.isSymmetric());
+      TEST_ASSERT(fields.basis().capacity() == nMonomer_);
+      TEST_ASSERT(fields.rgrid().capacity() == nMonomer_);
+   }
+
    void testSetBasis_bcc() 
    {
       printMethod(TEST_FUNC);
@@ -169,7 +189,8 @@ public:
       fields.setFieldIo(domain.fieldIo());
       fields.allocate(nMonomer_, domain.basis().nBasis(),
                       domain.mesh().dimensions());
-      TEST_ASSERT(fields.isAllocated());
+      TEST_ASSERT(fields.isAllocatedRGrid());
+      TEST_ASSERT(fields.isAllocatedBasis());
       TEST_ASSERT(!fields.hasData());
       TEST_ASSERT(!fields.isSymmetric());
       TEST_ASSERT(fields.basis().capacity() == nMonomer_);
@@ -208,7 +229,8 @@ public:
       fields.setFieldIo(domain.fieldIo());
       fields.allocate(nMonomer_, domain.basis().nBasis(),
                       domain.mesh().dimensions());
-      TEST_ASSERT(fields.isAllocated());
+      TEST_ASSERT(fields.isAllocatedRGrid());
+      TEST_ASSERT(fields.isAllocatedBasis());
       TEST_ASSERT(!fields.hasData());
       TEST_ASSERT(!fields.isSymmetric());
       TEST_ASSERT(fields.basis().capacity() == nMonomer_);
@@ -245,7 +267,8 @@ public:
       fields.setFieldIo(domain.fieldIo());
       fields.allocate(nMonomer_, domain.basis().nBasis(),
                       domain.mesh().dimensions());
-      TEST_ASSERT(fields.isAllocated());
+      TEST_ASSERT(fields.isAllocatedRGrid());
+      TEST_ASSERT(fields.isAllocatedBasis());
       TEST_ASSERT(!fields.hasData());
       TEST_ASSERT(!fields.isSymmetric());
       TEST_ASSERT(fields.basis().capacity() == nMonomer_);
@@ -260,9 +283,11 @@ public:
       comparison.compare(bf, fields.basis());
       TEST_ASSERT(comparison.maxDiff() < 1.0E-8);
    }
+
 };
 
 TEST_BEGIN(WFieldContainerTest)
+TEST_ADD(WFieldContainerTest, testAllocate_bcc)
 TEST_ADD(WFieldContainerTest, testSetBasis_bcc)
 TEST_ADD(WFieldContainerTest, testSetRGrid_1_bcc)
 TEST_ADD(WFieldContainerTest, testSetRGrid_2_bcc)
