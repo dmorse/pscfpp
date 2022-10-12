@@ -126,41 +126,65 @@ allocateBasis, delllocateBasis, allocateRGrid, allocateRGrid, and
 setNmonomer). Continue to require that nMonomer is set once and never 
 changed. (Done)
 
-2) Add isInitialized() member function to Basis so we can tell when a 
+2) Create separate functions in System to allocate rgrid and basis
+format arrays. Initially call both during parameter file processing,
+but make it easy to later delay allocation of basis format arrays. 
+(No change in function yet)
+
+3) Add isInitialized() member function to Basis so we can tell when a 
 basis exists. Consider adding clear() function to allow de-allocation 
-and return to the initial as-constructed state. (Can be done without
-effecting any existing code).
+and return to the initial as-constructed state. 
+(No change in function yet)
 
-3) In Domain, add a member of the Domain to stored the declared lattice 
-system type. 
+4) Add code to Domain create a SpaceGroup<D> group_ member, and to 
+read a file to create a group immediately after reading the group name.
+Then change the code that creates a basis so as use the Basis::makeBasis
+function that takes a group as a parameter rather than a group name
+string.
+(No change in function yet)
 
-Note: I am proposing to make this a separate member of domain, in 
-addition to the value stored in the UnitCell, because I can't see any 
-other good way to treat it as a parameter file parameter using the 
-existing code for reading and writing parameters. The system requires
-access to a non-const pointer to the address of a parameter. The 
-lattice_ member of a unit cell is private. The UnitCell is currently
-treated as a data type that is read from file using an overloaded >>
-operator, not as a ParamComposite. I don't want to also make it a 
-ParamComposite to solve this problem.
+5) In Domain, add a member of the Domain to stored the declared lattice 
+system type, as member variable lattice_ of type UnitCell<D>::LatticeSystem.
+(No change in function until we actually read this)
 
-4) In FieldIo, add  const pointer to a UnitCell::LatticeSystem<D> as
+Rationale: I am proposing to make this a separate member of Domain, in 
+addition to the lattice_ member of the UnitCell<D>, because I can't 
+see any other good way to treat it as a parameter file parameter using 
+the existing system for reading and writing parameters. That system 
+requires access to a non-const pointer to the address of a parameter 
+variable.  The lattice_ is a private member of a unit cell. The UnitCell 
+is currently treated as a data type that is read from file using an 
+overloaded >> operator, not as a ParamComposite. We could provide 
+access to the address of UnitCell<D>::lattice_ by making UnitCell a
+nested ParamComposite, but the syntax would involve another nested
+UnitCell{ .... } block, which seems ugly and unnecessary.
+
+Rationale: The groupName_ and lattice_ members of Domain would both 
+document the values as declared in the parameter file. Both declared
+values can be used to check values that appear in field files, to
+require that the same values are used in all field files that are 
+read by the program. After the UnitCell_ is initialized, we would
+require that its lattice_ member always be equal to the Domain::lattice_ 
+parameter.
+
+6) Change Domain::readParameters so as to actually read the lattice_ 
+string. 
+(First unavoidable change in parameter file syntax and code function).
+
+7) In FieldIo, add a const pointer to a UnitCell::LatticeSystem<D> as
 a private member.  In FieldIo::associate, pass and store a pointer to 
-the LatticeSystem in addition to the space group name.
+the Domain::lattice_ in addition to the space group name.
 
-5) In FieldIo, make the basisPtr_ non-const in order to allow it to be 
-initialized if necessary.
+8) In FieldIo, make the basisPtr_ non-const in order to allow it to be 
+initialized within a FieldIo member function if necessary.
 
-6) Modify the FieldIo read functions to construct an unitialized basis
-if necessary.
+9) Modify the FieldIo read functions to construct an unitialized basis
+if the basis is not initialized when the header is read.
 
-7) Provide some method for the read functions of FieldIo to inform the 
-calling function when they have constructed a new basis, so that the 
-system can re-allocate other arrays with dimensions that depend on 
-nBasis. (This could be an addition parameter that is passed by reference
-or a return value).
-
-8) Write private functions System::allocateFieldsRGrid() and 
-System::allocateFieldsBasis(), the latter of which is called immediately
-after a basis is constructed.
+10) Have the functions of System that read files test the initialization
+state of basis before reading a file, and then compare the initialization 
+status of basis_ before and after reading a field in order to determine if 
+the basis was just initialized. Immediately after it is initialized, call 
+the function System::allocateFieldsBasis to allocate all arrays with 
+dimensions that depend on nBasis. 
 
