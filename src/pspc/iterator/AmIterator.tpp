@@ -37,17 +37,30 @@ namespace Pspc{
       AmIteratorTmpl<Iterator<D>, DArray<double> >::readParameters(in);
 
       // Default parameter values
-      isFlexible_ = 0;
+      bool isFlexible = 0; 
       scaleStress_ = 10.0;
 
-      // Read in additional parameters
-      readOptional(in, "isFlexible", isFlexible_);
+      // Setup to read optional flexibleParams boolean array
+      DArray<int> flexParamBools;
+      int np = system().unitCell().nParameter();
+      flexParamBools.allocate(np);
+      flexParamBools[0] = -1; // Flag to determine if array has been set
+
+      // Read in additional optional parameters
+      readOptional(in, "isFlexible", isFlexible);
+      readOptionalDArray(in, "flexibleParams", flexParamBools, np);
       readOptional(in, "scaleStress", scaleStress_);
 
-      // If lattice parameters are flexible, update flexibleParams_
-      if (isFlexible_) {
+      // Set flexibleParams_ array based on user input
+      if (flexParamBools[0] != -1) { 
+         // user declared flexibleParams explicitly
+         for (int i = 0; i < np; i++) {
+            if (flexParamBools[i]) {
+               flexibleParams_.append(i);
+            }
+         }
+      } else if (isFlexible) {
          // all parameters are flexible
-         int np = system().unitCell().nParameter();
          for (int i = 0; i < np; i++) {
             flexibleParams_.append(i);
          }
@@ -258,7 +271,7 @@ namespace Pspc{
       // Solve MDEs for current omega field
       system().compute();
       // Compute stress if done
-      if (isFlexible_) {
+      if (isFlexible()) {
          system().mixture().computeStress();
       }
    }
@@ -289,24 +302,25 @@ namespace Pspc{
       }
 
       // If iterator has mask, account for it in residual values
-      if (hasMask()) {
+      if (system().hasMask()) {
          for (int i = 0; i < nMonomer; ++i) {
             for (int k = 0; k < nBasis; ++k) {
                int idx = i*nBasis + k;
-               resid[idx] += maskBasis()[k] / system().interaction().sum_inv();
+               resid[idx] -= system().mask().basis()[k] / 
+                             system().interaction().sum_inv();
             }
          }
       }
 
       // If iterator has external fields, account for them in the values 
       // of the residuals
-      if (hasExternalFields()) {
+      if (system().hasExternalFields()) {
          for (int i = 0; i < nMonomer; ++i) {
             for (int j = 0; j < nMonomer; ++j) {
                for (int k = 0; k < nBasis; ++k) {
                   int idx = i*nBasis + k;
                   resid[idx] += system().interaction().idemp(i,j) * 
-                                externalField(j)[k];
+                                system().h().basis(j)[k];
                }
             }
          }
@@ -314,15 +328,11 @@ namespace Pspc{
 
       // If not canonical, account for incompressibility
       if (!system().mixture().isCanonical()) {
-         double phi; // volume fraction of mask, if a mask exists
-         if (hasMask()) {
-            phi = maskBasis()[0];
-         } else {
-            phi = 0.0;
-         }
+         // Fraction of unit cell occupied by polymers (1 if no mask present)
+         double phiTot = system().mask().phiTot();
 
          for (int i = 0; i < nMonomer; ++i) {
-            resid[i*nBasis] -= (1.0-phi)/system().interaction().sum_inv();
+            resid[i*nBasis] -= phiTot / system().interaction().sum_inv();
          }
       } else {
          // Explicitly set homogeneous residual components
@@ -332,7 +342,7 @@ namespace Pspc{
       }
 
       // If variable unit cell, compute stress residuals
-      if (isFlexible_) {
+      if (isFlexible()) {
          const FSArray<int,6> indices = flexibleParams();
          const int nParam = indices.size();
 
@@ -384,7 +394,7 @@ namespace Pspc{
       }
       system().setWBasis(wField);
 
-      if (isFlexible_) {
+      if (isFlexible()) {
          const FSArray<int,6> indices = flexibleParams();
          const int nParam = indices.size();
          FSArray<double,6> parameters = system().unitCell().parameters();
@@ -403,7 +413,7 @@ namespace Pspc{
    template<int D>
    void AmIterator<D>::outputToLog()
    {
-      if (isFlexible_) {
+      if (isFlexible()) {
          const int nParam = system().unitCell().nParameter();
          for (int i = 0; i < nParam; i++) {
             Log::file() << "Parameter " << i << " = "

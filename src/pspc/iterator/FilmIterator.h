@@ -67,13 +67,14 @@ namespace Pspc
       FilmIterator(System<1>& system);
 
       /**
-      * Determine the indices of each flexible lattice parameter, based on
-      * normalVecId and unitCell definitions in param file. Assumes that
-      * isFlexible == true, and gives a warning if none of the parameters
-      * are actually able to be varied given the thin film constraints. 
-      * Stores resulting array in flexibleParams_ member of this object,
-      * as well as the flexibleParams_ member of the iterator within this
-      * object.
+      * Construct an array containing the indices of each flexible lattice 
+      * parameter, based on normalVecId and unitCell definitions in param 
+      * file as well as the optional user input flexibleParams. Store this
+      * array in flexibleParams_ member of this object, as well the 
+      * flexibleParams_ member of the iterator within this object.
+      * 
+      * In 1D, a thin film can not have flexible lattice parameters, so this
+      * will always set flexibleParams_ to an empty array.
       */
       void setFlexibleParams();
 
@@ -112,14 +113,11 @@ namespace Pspc
       FilmIterator(System<2>& system);
 
       /**
-      * Determine the indices of each flexible lattice parameter.
-      *
-      * Calculation is based on normalVecId and unitCell definitions in 
-      * param file. Assumes that isFlexible == true, and gives a warning 
-      * if none of the parameters are actually able to be varied given 
-      * the thin film constraints.  Stores resulting array in 
-      * flexibleParams_ member of this object, as well as the 
-      * flexibleParams_ member of the enclosed iterator.
+      * Construct an array containing the indices of each flexible lattice 
+      * parameter, based on normalVecId and unitCell definitions in param 
+      * file as well as the optional user input flexibleParams. Store this
+      * array in flexibleParams_ member of this object, as well the 
+      * flexibleParams_ member of the iterator within this object.
       */
       void setFlexibleParams();
 
@@ -158,14 +156,11 @@ namespace Pspc
       FilmIterator(System<3>& system);
 
       /**
-      * Determine the indices of each flexible lattice parameter.
-      *
-      * Calculation is based on normalVecId and unitCell definitions in 
-      * param file. Assumes that isFlexible == true, and gives a warning 
-      * if none of the parameters are actually able to be varied given 
-      * the thin film constraints.  Stores resulting array in 
-      * flexibleParams_ member of this object, as well as the 
-      * flexibleParams_ member of the enclosed iterator.
+      * Construct an array containing the indices of each flexible lattice 
+      * parameter, based on normalVecId and unitCell definitions in param 
+      * file as well as the optional user input flexibleParams. Store this
+      * array in flexibleParams_ member of this object, as well the 
+      * flexibleParams_ member of the iterator within this object.
       */
       void setFlexibleParams();
 

@@ -38,12 +38,12 @@ namespace Pspc
       normalVecId_(-1),
       t_(-1.0),
       T_(-1.0),
-      chi_(),
-      wallBasisOutFile_(),
-      wallRGridOutFile_()
+      chiBottom_(),
+      chiTop_(),
+      chiBottomCurrent_(),
+      chiTopCurrent_()
    {  
       setClassName(iterator_.className().append("FilmBase").c_str());
-      hasMask_ = true;
    }
 
    /*
@@ -68,7 +68,15 @@ namespace Pspc
       // Read the Iterator parameters
       iterator_.readParameters(in);
 
-      // Then, read required data defining the walls
+      // If lattice parameters are flexible, determine which parameters
+      // are allowed to vary, store them in this object, and pass them
+      // into iterator_. The flexibleParams_ member of the iterator_
+      // should always be matched to that of this class.
+      if (iterator_.isFlexible()) {
+         setFlexibleParams();
+      }
+
+      // Read required data defining the walls
       read(in, "normalVecId", normalVecId_);
       read(in, "interfaceThickness", t_);
       read(in, "wallThickness", T_);
@@ -84,20 +92,17 @@ namespace Pspc
          UTIL_THROW("wallThickness and interfaceThickness must be >0");
       }
 
-      // Allocate chi_ and set it to zero before optionally reading it in
+      // Allocate chiBottom_ and chiTop_ and set to zero before optionally 
+      // reading them in
       int nm = system().mixture().nMonomer();
-      chi_.allocate(nm,2);
+      chiBottom_.allocate(nm);
+      chiTop_.allocate(nm);
       for (int i = 0; i < nm; i++) {
-         for (int j = 0; j < 2; j++) {
-            chi_(i,j) = 0.0;
-         }
+         chiBottom_[i] = 0.0;
+         chiTop_[i] = 0.0;
       }
-      readOptionalDMatrix(in, "chi", chi_, nm, 2);
-
-      // Read optional filenames if user wants to write wall basis / rgrid 
-      // files
-      readOptional(in, "wallBasisOutFile", wallBasisOutFile_);
-      readOptional(in, "wallRGridOutFile", wallRGridOutFile_);
+      readOptionalDArray(in, "chiBottom", chiBottom_, nm);
+      readOptionalDArray(in, "chiTop", chiTop_, nm);
    }
 
    /*
@@ -112,6 +117,17 @@ namespace Pspc
       // Set up the iterator
       iterator_.setup();
 
+      // Allocate the mask and external field containers if needed
+      if (!system().mask().isAllocated()) {
+         system().mask().allocate(system().basis().nBasis(), 
+                                  system().mesh().dimensions());
+      }
+      if (!system().h().isAllocated()) {
+         system().h().allocate(system().mixture().nMonomer(), 
+                               system().basis().nBasis(), 
+                               system().mesh().dimensions());
+      }
+
       // Ensure that the space group symmetry is compatible with the wall
       checkSpaceGroup();
       
@@ -119,21 +135,6 @@ namespace Pspc
       // fields if needed) and provide them to iterator_ to use during 
       // iteration
       generateWallFields();
-
-      // Write wall field to a file if requested in param file
-      if (!wallBasisOutFile_.empty()) {
-         writeWallField(wallBasisOutFile_);
-      }
-      if (!wallRGridOutFile_.empty()) {
-         writeWallFieldRGrid(wallRGridOutFile_);
-      }
-
-      // If lattice parameters are flexible, determine which parameters
-      // are allowed to vary, store them in this object, and pass them
-      // into iterator_.
-      if (isFlexible()) {
-         setFlexibleParams();
-      }
    }
 
    /*
@@ -167,8 +168,6 @@ namespace Pspc
       // Ensure that unit cell is compatible with wall
       checkLatticeVectors();
 
-      int nb = system().domain().basis().nBasis();
-
       // Get the length L of the lattice basis vector normal to the walls
       RealVec<D> a;
       a = system().domain().unitCell().rBasis(normalVecId_);
@@ -190,13 +189,12 @@ namespace Pspc
       }
 
       // Generate an r-grid representation of the walls
-      DArray< RField<D> > rGrid;
-      rGrid.allocate(1);
-      rGrid[0].allocate(system().domain().mesh().dimensions());
+      RField<D> rGrid;
+      rGrid.allocate(system().domain().mesh().dimensions());
       int x, y, z;
       int counter = 0;
       FArray<int,3> coords;
-      double d, rho;
+      double d, rho_w;
 
       for (x = 0; x < dim[0]; x++) {
          coords[0] = x;
@@ -209,39 +207,31 @@ namespace Pspc
                // vector that is normal to the walls
                d = coords[normalVecId_] * L / dim[normalVecId_];
 
-               // Calculate wall volume fraction (rho) at gridpoint (x,y,z)
-               rho = 0.5*(1+tanh(4*(((.5*(T_-L))+fabs(d-(L/2)))/t_)));
-               rGrid[0][counter++] = rho;
+               // Calculate wall volume fraction (rho_w) at gridpoint (x,y,z)
+               rho_w = 0.5*(1+tanh(4*(((.5*(T_-L))+fabs(d-(L/2)))/t_)));
+               rGrid[counter++] = 1-rho_w;
             }
          }
       }
 
-      // Convert r-grid representation of walls to basis format, pass into 
-      // iterator
-      DArray< DArray <double> > cField;
-      cField.allocate(1);
-      cField[0].allocate(nb);
-      system().domain().fieldIo().convertRGridToBasis(rGrid, cField);
-      iterator_.setMask(cField[0]);
+      // Store this mask in System
+      system().mask().setRGrid(rGrid,true);
 
       // Store lattice parameters associated with this maskBasis
       parameters_ = system().domain().unitCell().parameters();
-
-      // Adjust phi values for all species in the system to account for 
-      // the volume that is occupied by the wall
-      adjustPhiVals();
 
       // Generate external fields if needed
       generateExternalFields();
    }
 
    /*
-   * Update the concentration field for the walls (the mask in the 
-   * iterator) if the lattice parameters have been updated since mask was 
-   * last generated.
+   * Update the mask in the iterator (the region in which the polymers are
+   * confined) if the lattice parameters have been updated since mask was 
+   * last generated. Also update external fields.
    * 
-   * Update the external fields if the wall/polymer chi parameters have 
-   * been updated since external fields were last generated.
+   * If the lattice parameters have not changed but the wall/polymer chi 
+   * parameters have been updated since external fields were last generated,
+   * update the external fields (but not the mask).
    */
    template <int D, typename IteratorType>
    void FilmIteratorBase<D, IteratorType>::updateWallFields() 
@@ -268,9 +258,9 @@ namespace Pspc
          // If we did not regenerate wall fields, check if we need to
          // regenerate external field (if chi array has changed)
          bool newExternalFields = false; // Do we need new external fields?
-         for (int i = 0; i < chi_.capacity1(); i++) {
-            if ((chi_(i,0) != chiFields_(i,0)) || 
-                (chi_(i,1) != chiFields_(i,1))) {
+         for (int i = 0; i < chiBottom_.capacity(); i++) {
+            if ((chiBottom_[i] != chiBottomCurrent_[i]) || 
+                (chiTop_[i] != chiTopCurrent_[i])) {
                newExternalFields = true;
                break;
             }
@@ -288,33 +278,40 @@ namespace Pspc
    template <int D, typename IteratorType>
    void FilmIteratorBase<D, IteratorType>::generateExternalFields() 
    {
-      // Set chiFields_ equal to the current chi array associated with 
-      // these fields
-      chiFields_ = chi_;
+      // Set chiBottomCurrent_ and chiTopCurrent_ equal to the current chi 
+      // arrays associated with the external fields that are about to be set
+      chiBottomCurrent_ = chiBottom_;
+      chiTopCurrent_ = chiTop_;
 
-      if (isAthermal()) return; // no external field if walls are athermal
+      // If walls are athermal then there is no external field needed.
+      // If an external field already exists in the System, we need to
+      // overwrite it with a field of all zeros, otherwise do nothing
+      if ((isAthermal()) && (!system().h().hasData())) { 
+         return; 
+      }
 
-      // Otherwise, external field must be generated
-      hasExternalFields_ = true;
-
+      // If this point is reached, external field must be generated
       int nm = system().mixture().nMonomer();
       int nb = system().domain().basis().nBasis();
 
-      DArray< DArray <double> > eField;
-      eField.allocate(nm);
-      for (int i = 0; i < nm; i++) {
-         eField[i].allocate(nb);
-      }
-
       if (isSymmetric()) {
-         // If walls are identical, external field is just maskBasis*chi
+         // If walls are identical, external field is just mask * chi
+
+         DArray< DArray <double> > hBasis;
+         hBasis.allocate(nm);
+         for (int i = 0; i < nm; i++) {
+            hBasis[i].allocate(nb);
+         }
 
          for (int i = 0; i < nm; i++) {
-            UTIL_CHECK(fabs(chi(i,0)-chi(i,1) < 1e-7));
+            UTIL_CHECK(fabs(chiBottom_[i]-chiTop_[i] < 1e-7));
             for (int j = 0; j < nb; j++) {
-               eField[i][j] = maskBasis()[j] * chi(i,0);
+               hBasis[i][j] = system().mask().basis()[j] * chiBottom_[i];
             }
          }
+
+         // Pass h into the System
+         system().h().setBasis(hBasis);
 
       } else {
          // Need to generate a whole new field, walls are not identical
@@ -341,16 +338,16 @@ namespace Pspc
          }
 
          // Generate an r-grid representation of the external fields
-         DArray< RField<D> > rGrid;
-         rGrid.allocate(nm);
+         DArray< RField<D> > hRGrid;
+         hRGrid.allocate(nm);
          for (int i = 0; i < nm; i++) {
-            rGrid[i].allocate(system().domain().mesh().dimensions());
+            hRGrid[i].allocate(system().domain().mesh().dimensions());
          }
 
          int i, x, y, z;
          int counter = 0;
          FArray<int,3> coords;
-         double d, rho;
+         double d, rho_w;
 
          for (i = 0; i < nm; i++) {
             for (x = 0; x < dim[0]; x++) {
@@ -364,13 +361,13 @@ namespace Pspc
                      // basis vector that is orthogonal to the walls
                      d = coords[normalVecId_] * L / dim[normalVecId_];
 
-                     // Calculate wall volume fraction (rho) at gridpoint 
+                     // Calculate wall volume fraction (rho_w) at gridpoint 
                      // (x,y,z)
-                     rho = 0.5*(1+tanh(4*(((.5*(T_-L))+fabs(d-(L/2)))/t_)));
+                     rho_w = 0.5*(1+tanh(4*(((.5*(T_-L))+fabs(d-(L/2)))/t_)));
                      if (d < (L/2)) {
-                        rGrid[i][counter++] = rho * chi(i,0);
+                        hRGrid[i][counter++] = rho_w * chiBottom_[i];
                      } else {
-                        rGrid[i][counter++] = rho * chi(i,1);
+                        hRGrid[i][counter++] = rho_w * chiTop_[i];
                      }
                   }
                }
@@ -378,50 +375,9 @@ namespace Pspc
             counter = 0;
          } 
 
-         // Convert r-grid representation of walls to basis format
-         system().domain().fieldIo().convertRGridToBasis(rGrid, eField);
-      }
+         // Pass h into the System
+         system().h().setRGrid(hRGrid,true);
 
-      // Pass eField into the iterator
-      iterator_.setExternalFields(eField);
-
-      // Store chi array associated with these externalFields
-      chiFields_ = chi();
-   }
-
-   template <int D, typename IteratorType>
-   void FilmIteratorBase<D, IteratorType>::adjustPhiVals()
-   {
-      int np = system().mixture().nPolymer(); 
-      int ns = system().mixture().nSolvent(); 
-      UTIL_CHECK(np + ns > 0);
-
-      // Get the sum of the current values of phi of each species
-      double frac = 0;
-      for (int i = 0; i < np; i++) {
-         frac += system().mixture().polymer(i).phi();
-      }
-      for (int j = 0; j < ns; j++) {
-         frac += system().mixture().solvent(j).phi();
-      }
-
-      // Adjust phi for each species based on phi_walls and frac, if needed
-      double multiplier = (1 - maskPhi()) / frac;
-      if (fabs(multiplier - 1) > 1e-7) { // if multiplier != 1
-         Log::file() << "NOTE: phi values of all species are being scaled"
-                     << " by a factor of" << std::endl << Dbl(multiplier)
-                     << ". This is to correct for the volume occupied"
-                     << " by the wall." << std::endl;
-
-         double phi;
-         for (int i = 0; i < np; i++) {
-            phi = system().mixture().polymer(i).phi();
-            system().mixture().polymer(i).setPhi(phi * multiplier);
-         }
-         for (int j = 0; j < ns; j++) {
-            phi = system().mixture().solvent(j).phi();
-            system().mixture().solvent(j).setPhi(phi * multiplier);
-         }
       }
    }
 
@@ -485,11 +441,11 @@ namespace Pspc
       int nm = system().mixture().nMonomer();
 
       UTIL_CHECK(nm > 0);
-      UTIL_CHECK(chi().capacity1() == nm);
-      UTIL_CHECK(chi().capacity2() == 2);
+      UTIL_CHECK(chiBottom_.capacity() == nm);
+      UTIL_CHECK(chiTop_.capacity() == nm);
 
       for (int i = 0; i < nm; i++) {
-         if (fabs(chi(i,0)-chi(i,1)) > 1e-7) {
+         if (fabs(chiBottom_[i]-chiTop_[i]) > 1e-7) {
             return false;
          }
       }
@@ -506,98 +462,15 @@ namespace Pspc
       int nm = system().mixture().nMonomer();
 
       UTIL_CHECK(nm > 0);
-      UTIL_CHECK(chi().capacity1() == nm);
-      UTIL_CHECK(chi().capacity2() == 2);
+      UTIL_CHECK(chiBottom_.capacity() == nm);
+      UTIL_CHECK(chiTop_.capacity() == nm);
 
       for (int i = 0; i < nm; i++) {
-         if ((chi(i,0) != 0) || (chi(i,1) != 0)) {
+         if ((fabs(chiBottom_[i]) >= 1e-7) || (fabs(chiTop_[i]) >= 1e-7)) {
             return false;
          }
       }
       return true;
-   }
-
-   /*
-   * Write the concentration field of the walls to an output stream, in 
-   * basis format.
-   */
-   template <int D, typename IteratorType>
-   void FilmIteratorBase<D, IteratorType>::writeWallField(std::ostream &out) 
-   const 
-   {
-      UTIL_CHECK(maskBasis().isAllocated());
-
-      DArray< DArray <double> > cField;
-      cField.allocate(1);
-      cField[0] = maskBasis();
-      system().domain().fieldIo().writeFieldsBasis(out, cField, 
-                                             system().domain().unitCell());
-   }
-
-   /*
-   * Write the concentration field of the walls to a file specified by 
-   * 'filename', in basis format.
-   */
-   template <int D, typename IteratorType>
-   void 
-   FilmIteratorBase<D, IteratorType>::writeWallField(std::string filename) 
-   const 
-   {
-      UTIL_CHECK(maskBasis().isAllocated());
-
-      DArray< DArray <double> > cField;
-      cField.allocate(1);
-      cField[0] = maskBasis();
-      system().domain().fieldIo().writeFieldsBasis(filename, cField, 
-                                             system().domain().unitCell());
-   }
-
-   /*
-   * Write the concentration field of the walls to an output stream, in 
-   * r-grid format.
-   */
-   template <int D, typename IteratorType>
-   void 
-   FilmIteratorBase<D, IteratorType>::writeWallFieldRGrid(std::ostream &out) 
-   const 
-   {
-      UTIL_CHECK(maskBasis().isAllocated());
-
-      DArray< DArray <double> > cField;
-      cField.allocate(1);
-      cField[0] = maskBasis();
-
-      DArray< RField<D> > rGrid;
-      rGrid.allocate(1);
-      rGrid[0].allocate(system().domain().mesh().dimensions());
-
-      system().domain().fieldIo().convertBasisToRGrid(cField, rGrid);
-      system().domain().fieldIo().writeFieldsRGrid(out, rGrid, 
-                                             system().domain().unitCell());
-   }
-
-   /*
-   * Write the concentration field of the walls to a file specified by 
-   * 'filename', in r-grid format.
-   */
-   template <int D, typename IteratorType>
-   void 
-   FilmIteratorBase<D, IteratorType>::writeWallFieldRGrid(std::string filename) 
-   const 
-   {
-      UTIL_CHECK(maskBasis().isAllocated());
-
-      DArray< DArray <double> > cField;
-      cField.allocate(1);
-      cField[0] = maskBasis();
-
-      DArray< RField<D> > rGrid;
-      rGrid.allocate(1);
-      rGrid[0].allocate(system().domain().mesh().dimensions());
-
-      system().domain().fieldIo().convertBasisToRGrid(cField, rGrid);
-      system().domain().fieldIo().writeFieldsRGrid(filename, rGrid, 
-                                             system().domain().unitCell());
    }
 
 } // namespace Pspc

@@ -16,6 +16,7 @@
 #include <pspc/field/FieldIo.h>            // member
 #include <pspc/field/WFieldContainer.h>    // member
 #include <pspc/field/CFieldContainer.h>    // member
+#include <pspc/field/Mask.h>               // member
 #include <pspc/field/RField.h>             // member
 #include <pspc/field/RFieldDft.h>          // member
 
@@ -121,32 +122,6 @@ namespace Pspc
       //@}
       /// \name State Modifiers (Modify W Fields and Unit Cell)
       //@{
-
-      /**
-      * Read chemical potential fields in symmetry adapted basis format.
-      *
-      * This function opens and reads the file with name "filename",
-      * which must contain chemical potential fields in symmetry-adapted
-      * basis format and stores these fields in the system w fields 
-      * container. On exit w().hasData() and w().isSymmetric() are set 
-      * true and hasCFields is set false.
-      *
-      * \param filename name of input w-field basis file
-      */
-      void readWBasis(const std::string & filename);
-
-      /**
-      * Read chemical potential fields in real-space grid (r-grid) format.
-      *
-      * This function opens and reads the file with name filename,
-      * which must contain chemical potential fields in real space grid
-      * (r-grid) format, stores these fields in the system w fields
-      * container.  On exit w().hasData() is true and w().isSymmetric() 
-      * is false.
-      *
-      * \param filename name of input w-field file in r-grid format
-      */
-      void readWRGrid(const std::string & filename);
 
       /**
       * Set new w fields, in symmetrized-adapted Fourier basis format.
@@ -386,7 +361,7 @@ namespace Pspc
       *
       * \param out output stream
       */
-      void writeThermo(std::ostream& out) const;
+      void writeThermo(std::ostream& out, bool verbose = false) const;
 
       /**
       * Output information about stars and symmetrized basis functions.
@@ -529,6 +504,17 @@ namespace Pspc
       CFieldContainer<D> const & c() const;
 
       /**
+      * Get all of the external potential fields (reference).
+      */
+      WFieldContainer<D>& h();
+
+      /**
+      * Get the mask (the field to which the total density is constrained) 
+      * (reference).
+      */
+      Mask<D>& mask();
+
+      /**
       * Get the Mixture by reference.
       */
       Mixture<D>& mixture();
@@ -623,6 +609,17 @@ namespace Pspc
       */
       bool hasSweep() const;
 
+      /**
+      * Does this system have external potential fields?
+      */
+      bool hasExternalFields() const;
+
+      /**
+       * Does this system have a mask (field to which the total density 
+       * is constrained)?
+       */
+      bool hasMask() const;
+
       ///@}
 
    private:
@@ -685,6 +682,16 @@ namespace Pspc
       CFieldContainer<D> c_;
 
       /**
+      * External potential fields.
+      */
+      WFieldContainer<D> h_;
+
+      /**
+      * Field to which the total density is constrained.
+      */
+      Mask<D> mask_;
+
+      /**
       * Work array of field coefficients for all monomer types.
       *
       * Indexed by monomer typeId, size = nMonomer.
@@ -719,6 +726,25 @@ namespace Pspc
       * Helmholtz free energy per monomer / kT.
       */
       double fHelmholtz_;
+
+      /**
+      * Ideal gas contribution to fHelmholtz_. 
+      * 
+      * This encompasses the internal energy and entropy of 
+      * non-interacting free chains in their corresponding 
+      * potential fields defined by w_.
+      */
+      double fIdeal_;
+
+      /**
+      * Multi-chain interaction contribution to fHelmholtz_.
+      */
+      double fInter_;
+
+      /**
+      * External field contribution to fHelmholtz_.
+      */
+      double fExt_;
 
       /**
       * Pressure times monomer volume / kT.
@@ -897,6 +923,16 @@ namespace Pspc
    CFieldContainer<D> const & System<D>::c() const
    {  return c_; }
 
+   // Get container of external potential fields (reference)
+   template <int D>
+   inline WFieldContainer<D>& System<D>::h()
+   {  return h_; }
+
+   // Get mask field (reference)
+   template <int D>
+   inline Mask<D>& System<D>::mask()
+   {  return mask_; }
+
    // Have the c fields been computed for the current w fields?
    template <int D>
    inline bool System<D>::hasCFields() const
@@ -906,6 +942,16 @@ namespace Pspc
    template <int D>
    inline bool System<D>::hasSweep() const
    {  return (sweepPtr_ != 0); }
+
+   // Does this system have external potential fields? 
+   template <int D>
+   inline bool System<D>::hasExternalFields() const
+   {  return h_.hasData(); }
+
+   // Does this system have a mask?
+   template <int D>
+   inline bool System<D>::hasMask() const
+   {  return mask_.hasData(); }
 
    // Get the precomputed Helmoltz free energy per monomer / kT.
    template <int D>

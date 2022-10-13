@@ -54,10 +54,6 @@ namespace Pspc
       using AmIteratorTmpl<Iterator<D>, DArray<double> >::setup;
       using AmIteratorTmpl<Iterator<D>, DArray<double> >::solve;
       using AmIteratorTmpl<Iterator<D>,DArray<double> >::setClassName;
-      using Iterator<D>::maskBasis;
-      using Iterator<D>::externalField;
-      using Iterator<D>::hasMask;
-      using Iterator<D>::hasExternalFields;
       using Iterator<D>::isFlexible;
       using Iterator<D>::flexibleParams;
       using Iterator<D>::setFlexibleParams;
@@ -66,8 +62,8 @@ namespace Pspc
   
       // Inherited protected members 
       using ParamComposite::readOptional;
+      using ParamComposite::readOptionalDArray;
       using Iterator<D>::system;
-      using Iterator<D>::isFlexible_;
       using Iterator<D>::flexibleParams_;
 
    private:

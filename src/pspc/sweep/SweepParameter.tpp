@@ -90,10 +90,14 @@ namespace Pspc {
       } else if (buffer == "cell_param") {
          type_ = Cell_Param;
          nID_ = 1; // lattice parameter identifier.
-      } else if (buffer == "wall_chi") {
+      } else if (buffer == "chi_bottom") {
          // Note: this option is only relevant for thin film systems
-         type_ = Wall_Chi;
-         nID_ = 2; // monomer type and wall identifier
+         type_ = Chi_Bottom;
+         nID_ = 1; // monomer type
+      } else if (buffer == "chi_top") {
+         // Note: this option is only relevant for thin film systems
+         type_ = Chi_Top;
+         nID_ = 1; // monomer type
       } else {
          UTIL_THROW("Invalid SweepParameter::ParamType value");
       }
@@ -154,8 +158,10 @@ namespace Pspc {
          return "solvent_size";
       } else if (type_ == Cell_Param) {
          return "cell_param";
-      } else if (type_ == Wall_Chi) {
-         return "wall_chi";
+      } else if (type_ == Chi_Bottom) {
+         return "chi_bottom";
+      } else if (type_ == Chi_Top) {
+         return "chi_top";
       } else {
          UTIL_THROW("This should never happen.");
       }
@@ -182,13 +188,23 @@ namespace Pspc {
          return systemPtr_->mixture().solvent(id(0)).size();
       } else if (type_ == Cell_Param) {
          return systemPtr_->unitCell().parameter(id(0));
-      } else if (type_ == Wall_Chi) {
+      } else if (type_ == Chi_Bottom) {
          // Note: this option is only relevant for thin film systems
          UTIL_CHECK(isFilmIterator()); 
          if (systemPtr_->iterator().className() == "AmIteratorFilm") {
             FilmIterator<D, AmIterator<D> >* itrPtr_(0);
             itrPtr_ = static_cast<FilmIterator<D, AmIterator<D> >* >(&(systemPtr_->iterator()));
-            return itrPtr_->chi(id(0), id(1));
+            return itrPtr_->chiBottom(id(0));
+         } else {
+            UTIL_THROW("Iterator type is not compatible with this sweep parameter.");
+         }
+      } else if (type_ == Chi_Top) {
+         // Note: this option is only relevant for thin film systems
+         UTIL_CHECK(isFilmIterator()); 
+         if (systemPtr_->iterator().className() == "AmIteratorFilm") {
+            FilmIterator<D, AmIterator<D> >* itrPtr_(0);
+            itrPtr_ = static_cast<FilmIterator<D, AmIterator<D> >* >(&(systemPtr_->iterator()));
+            return itrPtr_->chiTop(id(0));
          } else {
             UTIL_THROW("Iterator type is not compatible with this sweep parameter.");
          }
@@ -220,13 +236,23 @@ namespace Pspc {
          FSArray<double,6> params = systemPtr_->unitCell().parameters();
          params[id(0)] = newVal;
          systemPtr_->setUnitCell(params);
-      } else if (type_ == Wall_Chi) {
+      } else if (type_ == Chi_Bottom) {
          // Note: this option is only relevant for thin film systems
          UTIL_CHECK(isFilmIterator()); 
          if (systemPtr_->iterator().className() == "AmIteratorFilm") {
             FilmIterator<D, AmIterator<D> >* itrPtr_(0);
             itrPtr_ = static_cast<FilmIterator<D, AmIterator<D> >* >(&(systemPtr_->iterator()));
-            itrPtr_->setChi(id(0), id(1), newVal);
+            itrPtr_->setChiBottom(id(0), newVal);
+         } else {
+            UTIL_THROW("Iterator type is not compatible with this sweep parameter.");
+         }
+      } else if (type_ == Chi_Top) {
+         // Note: this option is only relevant for thin film systems
+         UTIL_CHECK(isFilmIterator()); 
+         if (systemPtr_->iterator().className() == "AmIteratorFilm") {
+            FilmIterator<D, AmIterator<D> >* itrPtr_(0);
+            itrPtr_ = static_cast<FilmIterator<D, AmIterator<D> >* >(&(systemPtr_->iterator()));
+            itrPtr_->setChiTop(id(0), newVal);
          } else {
             UTIL_THROW("Iterator type is not compatible with this sweep parameter.");
          }

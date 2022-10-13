@@ -65,6 +65,57 @@ namespace Pspc
    }
   
    template <int D>
+   void FieldIo<D>::readFieldBasis(std::istream& in, DArray<double>& field,
+                                   UnitCell<D>& unitCell) 
+   const
+   {
+      DArray<DArray<double> > fields;
+      fields.allocate(1);
+      fields[0].allocate(field.capacity());
+      readFieldsBasis(in, fields, unitCell);
+      field = fields[0];
+   }
+
+   template <int D>
+   void FieldIo<D>::readFieldBasis(std::string filename, 
+                                   DArray<double>& field,
+                                   UnitCell<D>& unitCell) 
+   const
+   {
+      DArray<DArray<double> > fields;
+      fields.allocate(1);
+      fields[0].allocate(field.capacity());
+      readFieldsBasis(filename, fields, unitCell);
+      field = fields[0];
+   }
+
+   template <int D>
+   void FieldIo<D>::writeFieldBasis(std::ostream& out, 
+                                    DArray<double> const & field,
+                                    UnitCell<D> const & unitCell) 
+   const
+   {
+      DArray<DArray<double> > fields;
+      fields.allocate(1);
+      fields[0].allocate(field.capacity());
+      fields[0] = field;
+      writeFieldsBasis(out, fields, unitCell);
+   }
+
+   template <int D>
+   void FieldIo<D>::writeFieldBasis(std::string filename, 
+                                    DArray<double> const & field,
+                                    UnitCell<D> const & unitCell) 
+   const
+   {
+      DArray<DArray<double> > fields;
+      fields.allocate(1);
+      fields[0].allocate(field.capacity());
+      fields[0] = field;
+      writeFieldsBasis(filename, fields, unitCell);
+   }
+
+   template <int D>
    void FieldIo<D>::readFieldsBasis(std::istream& in, 
                                     DArray< DArray<double> >& fields,
                                     UnitCell<D>& unitCell) 
@@ -958,15 +1009,54 @@ namespace Pspc
    {
       int ver1, ver2;
       std::string groupNameIn;
+      UnitCell<D> tempUnitCell;
+      tempUnitCell = unitCell; // make duplicate unit cell
       Pscf::readFieldHeader(in, ver1, ver2, unitCell, 
                             groupNameIn, nMonomer);
       // Note: Function definition in pscf/crystal/UnitCell.tpp
-      if (groupNameIn != groupName()) {
-         Log::file() << std::endl 
-             << "Warning - "
-             << "Mismatched group names in FieldIo::readFieldHeader: \n" 
-             << "  FieldIo::groupName :" << groupName() << "\n"
-             << "  Field file header  :" << groupNameIn << "\n";
+
+      // if the unit cell that was passed into this function was set 
+      // (if nParameter > 0), then check that the field header data
+      // matches the data that was originally in the unitCell
+      if (tempUnitCell.nParameter() > 0) {
+
+         // Check whether crystal system matches expectation
+         if (unitCell.lattice() != tempUnitCell.lattice()) {
+            Log::file() << std::endl 
+               << "Mismatched crystal systems in FieldIo::readFieldHeader: \n" 
+               << "  Expected crystal system : " << tempUnitCell.lattice() 
+               << "\n  Field file header       : " << unitCell.lattice() 
+               << std::endl;
+            UTIL_THROW("Mismatched crystal system in field file header");
+         }
+
+         // Check whether lattice parameters match expectation
+         if (unitCell.nParameter() != tempUnitCell.nParameter()) {
+            // Check if nParameters is matched
+            Log::file() << std::endl 
+               << "Mismatched number of lattice parameters in "
+               << "FieldIo::readFieldHeader: \n" 
+               << "  Expected N_cell_param : " << tempUnitCell.nParameter()
+               << "\n  Field file header     : " << unitCell.nParameter() 
+               << std::endl;
+            UTIL_THROW("Mismatched N_cell_param value in field file header");
+         } else {
+            // Print notice that lattice parameters are being overwritten
+            Log::file() << std::endl
+               << "Using lattice parameters from field file header.\n"
+               << "Discarding previous lattice parameters." << std::endl;
+         }
+
+         // Check whether space group matches expectation
+         if (groupNameIn != groupName()) {
+            Log::file() << std::endl 
+               << "Mismatched group names in FieldIo::readFieldHeader: \n" 
+               << "  Expected group name : " << groupName() << "\n"
+               << "  Field file header   : " << groupNameIn << "\n"
+               << std::endl;
+            UTIL_THROW("Mismatched space group name in field file header");
+         }
+
       }
    }
 
@@ -1096,6 +1186,20 @@ namespace Pspc
       int is;                                  // star index
       int ib;                                  // basis index
 
+      // Check if kgrid has symmetry, and print a warning if it does not
+      bool symmetric;
+      symmetric = hasSymmetry(in, true);
+      if (!symmetric) {
+         Log::file() << "WARNING: non-negligible error in conversion to "
+                     << "symmetry-adapted basis format." 
+                     << std::endl
+                     << "See error values printed above."
+                     << "The field output by this operation will be "
+                     << std::endl
+                     << "a symmetrized version of the input field."
+                     << std::endl;
+      }
+
       // Initialize all components to zero 
       for (is = 0; is < basis().nBasis(); ++is) {
          out[is] = 0.0;
@@ -1140,7 +1244,6 @@ namespace Pspc
             rank = dftMesh.rank(wavePtr->indicesDft);
             component = std::complex<double>(in[rank][0], in[rank][1]);
             component /= wavePtr->coeff;
-            UTIL_CHECK(std::abs(component.imag()) < 1.0E-8);
             out[ib] = component.real();
             ++is;
 
@@ -1267,6 +1370,13 @@ namespace Pspc
 
    template <int D>
    void 
+   FieldIo<D>::convertKGridToRGrid(RFieldDft<D>& in, RField<D>& out) const
+   {
+      fft().inverseTransformSafe(in, out);
+   }
+
+   template <int D>
+   void 
    FieldIo<D>::convertRGridToKGrid(DArray< RField<D> > const & in,
                                    DArray< RFieldDft<D> >& out) const
    {
@@ -1277,23 +1387,33 @@ namespace Pspc
       }
    }
 
+   template <int D>
+   void 
+   FieldIo<D>::convertRGridToKGrid(RField<D> const & in,
+                                   RFieldDft<D>& out) const
+   {
+      fft().forwardTransform(in, out);
+   }
+
    /*
    * Test if an RField<D> has declared space group symmetry.
-   * Return true if symmetric, false otherwise.
+   * Return true if symmetric, false otherwise. Print error values
+   * if verbose == true and hasSymmetry == false.
    */
    template <int D>
-   bool FieldIo<D>::hasSymmetry(RField<D> const & in) const
+   bool FieldIo<D>::hasSymmetry(RField<D> const & in, bool verbose) const
    {
       fft().forwardTransform(in, workDft_);
-      return hasSymmetry(workDft_);
+      return hasSymmetry(workDft_, verbose);
    }
 
    /*
    * Test if an RFieldDft has the declared space group symmetry.
-   * Return true if symmetric, false otherwise.
+   * Return true if symmetric, false otherwise. Print error values
+   * if verbose == true and hasSymmetry == false.
    */
    template <int D>
-   bool FieldIo<D>::hasSymmetry(RFieldDft<D> const & in) const
+   bool FieldIo<D>::hasSymmetry(RFieldDft<D> const & in, bool verbose) const
    {
       typename Basis<D>::Star const* starPtr; // pointer to current star
       typename Basis<D>::Wave const* wavePtr; // pointer to current wave
@@ -1304,6 +1424,9 @@ namespace Pspc
       int iw;                                 // wave index
       int beginId, endId;                     // star begin, end ids
       int rank;                               // dft grid rank of wave
+
+      double cancelledError(0.0);   // max error from cancelled stars
+      double uncancelledError(0.0); // max error from uncancelled stars
 
       // Create Mesh<D> with dimensions of DFT Fourier grid.
       Mesh<D> dftMesh(in.dftDimensions());
@@ -1321,8 +1444,11 @@ namespace Pspc
                wavePtr = &basis().wave(iw);
                if (!wavePtr->implicit) {
                   rank = dftMesh.rank(wavePtr->indicesDft);
-                  if (std::abs(in[rank][0]) > 1.0E-9) return false;
-                  if (std::abs(in[rank][1]) > 1.0E-9) return false;
+                  waveCoeff = std::complex<double>(in[rank][0], in[rank][1]);
+                  if (std::abs(waveCoeff) > cancelledError) {
+                     cancelledError = std::abs(waveCoeff);
+                     if ((!verbose) && (cancelledError > 1e-8)) return false;
+                  }
                }
             }
 
@@ -1340,7 +1466,12 @@ namespace Pspc
                   waveCoeff /= wavePtr->coeff;
                   if (hasRoot) {
                      diff = waveCoeff - rootCoeff;
-                     if (std::abs(diff) > 1.0E-8) return false;
+                     if (std::abs(diff) > uncancelledError) {
+                        uncancelledError = std::abs(diff);
+                        if ((!verbose) && (uncancelledError > 1e-8)) {
+                           return false;
+                        }
+                     }
                   } else {
                      rootCoeff = waveCoeff;
                      hasRoot = true;
@@ -1352,8 +1483,15 @@ namespace Pspc
 
       } //  end loop over star index is
 
-      // If the code reaches this point, the field is symmetric
-      return true;
+      if ((cancelledError < 1e-8) && (uncancelledError < 1e-8)) {
+         return true;
+      } else if (verbose) {
+         Log::file() << "Maximum coefficient of a cancelled star: "
+                     << cancelledError << std::endl
+                     << "Maximum error of coefficient for uncancelled star: "
+                     << uncancelledError << std::endl;
+      }
+      return false;
    }
 
    template <int D>

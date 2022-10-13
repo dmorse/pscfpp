@@ -12,6 +12,7 @@
 #include <util/param/ParamComposite.h>     // base class
 
 #include <pscf/math/IntVec.h>              // function parameter
+#include <pscf/crystal/UnitCell.h>         // function parameter
 #include <pspc/field/RField.h>             // member template parameter
 #include <util/containers/DArray.h>        // member template
 
@@ -114,6 +115,82 @@ namespace Pspc {
       */
       void setRGrid(DArray< RField<D> > const & fields, 
                     bool isSymmetric = false);
+
+      /**
+      * Read field component values from input stream, in symmetrized 
+      * Fourier format.
+      *
+      * This function also computes and stores the corresponding
+      * r-grid representation. On return, hasData and isSymmetric
+      * are both true.
+      * 
+      * This object must already be allocated and associated with
+      * a FieldIo object to run this function.
+      *
+      * \param in  input stream from which to read fields
+      * \param unitCell  associated crystallographic unit cell
+      */
+      void readBasis(std::istream& in, UnitCell<D>& unitCell);
+
+      /**
+      * Read field component values from file, in symmetrized 
+      * Fourier format.
+      *
+      * This function also computes and stores the corresponding
+      * r-grid representation. On return, hasData and isSymmetric
+      * are both true.
+      * 
+      * This object must already be allocated and associated with
+      * a FieldIo object to run this function.
+      *
+      * \param filename  file from which to read fields
+      * \param unitCell  associated crystallographic unit cell
+      */
+      void readBasis(std::string filename, UnitCell<D>& unitCell);
+
+      /**
+      * Reads fields from an input stream in real-space (r-grid) format.
+      *
+      * If the isSymmetric parameter is true, this function assumes that 
+      * the fields are known to be symmetric and so computes and stores
+      * the corresponding basis components. If isSymmetric is false, it
+      * only sets the values in the r-grid format.
+      * 
+      * On return, hasData is true and the persistent isSymmetric flag 
+      * defined by the class is set to the value of the isSymmetric 
+      * input parameter.
+      * 
+      * This object must already be allocated and associated with
+      * a FieldIo object to run this function.
+      * 
+      * \param in  input stream from which to read fields
+      * \param unitCell  associated crystallographic unit cell
+      * \param isSymmetric  is this field symmetric under the space group?
+      */
+      void readRGrid(std::istream& in, UnitCell<D>& unitCell,
+                     bool isSymmetric = false);
+
+      /**
+      * Reads fields from a file in real-space (r-grid) format.
+      *
+      * If the isSymmetric parameter is true, this function assumes that 
+      * the fields are known to be symmetric and so computes and stores
+      * the corresponding basis components. If isSymmetric is false, it
+      * only sets the values in the r-grid format.
+      * 
+      * On return, hasData is true and the persistent isSymmetric flag 
+      * defined by the class is set to the value of the isSymmetric 
+      * input parameter.
+      * 
+      * This object must already be allocated and associated with
+      * a FieldIo object to run this function.
+      * 
+      * \param filename  file from which to read fields
+      * \param unitCell  associated crystallographic unit cell
+      * \param isSymmetric  is this field symmetric under the space group?
+      */
+      void readRGrid(std::string filename, UnitCell<D>& unitCell,
+                     bool isSymmetric = false);
 
       /**
       * Get array of all fields in basis format.

@@ -90,19 +90,13 @@ namespace Pspc
       */
       IteratorType const & iterator() const;
 
-      /** 
-      * Return whether unit cell is flexible.
-      */ 
-      bool isFlexible() const;
-
       /**
       * Determine the indices of each flexible lattice parameter, based on
-      * normalVecId and unitCell definitions in param file. Assumes that
-      * isFlexible == true, and gives a warning if none of the parameters
-      * are actually able to be varied given the thin film constraints. 
-      * Stores resulting array in flexibleParams_ member of this object,
-      * as well as the flexibleParams_ member of the iterator within this
-      * object.
+      * normalVecId and unitCell definitions in param file. Gives a warning 
+      * if none of the parameters are actually able to be varied given the 
+      * thin film constraints. Stores resulting array in flexibleParams_ 
+      * member of this object, as well as the flexibleParams_ member of the 
+      * iterator within this object.
       * 
       * This function varies depending on D, the dimensionality of the
       * system. Therefore, it is implemented in the partial class 
@@ -124,9 +118,9 @@ namespace Pspc
       /**
       * Generates the field representation of the walls, based on the values
       * of wallThickness and interfaceThickness that were input by the user.
-      * Then, passes this wall field into the iterator_ object to be used
+      * Then, stores this wall field in system().mask() to be used
       * as a mask during iteration, and also passes the corresponding
-      * external potential fields into iterator_ if isAthermal() == false.
+      * external potential fields into system().h() if isAthermal() == false.
       */
       void generateWallFields();
 
@@ -141,15 +135,6 @@ namespace Pspc
      void updateWallFields();
 
       /**
-      * Iterates over all polymers and solvents in the Mixture, and 
-      * multiplies their volume fractions (phi values) by (1-phi_w), where 
-      * phi_w is the volume fraction occupied by the walls. This correction 
-      * ensures that the system will still be able to converge to a 
-      * solution that satisfies the incompressibility constraint. 
-      */
-      void adjustPhiVals();
-
-      /**
       * Check that user-defined space group is compatible with the
       * thin film constraint
       */
@@ -157,112 +142,72 @@ namespace Pspc
 
       /**
       * Check whether or not the walls are chemically identical using
-      * the chi array.
+      * the values in chiBottom and chiTop.
       */
       bool isSymmetric() const;
 
       /**
       * Check whether or not the walls are athermal (this is only true
-      * if all of the values in the chi array are zero)
+      * if all of the values in chiBottom and chiTop are zero)
       */
       bool isAthermal() const;
 
       /**
-      * Set the value of chi between species s and wall w
+      * Set the value of chi between species s and the bottom wall.
       * 
-      * \param w  wall index, 0 or 1
       * \param s  species index, 0 <= id < nVertex
       * \param chi  value of chi(s,w)
       */
-      void setChi(int s, int w, double chi);
+      void setChiBottom(int s, double chi);
 
       /**
-      * Write the concentration field of the walls to an output stream, 
-      * in basis format.
+      * Set the value of chi between species s and the top wall.
       * 
-      * \param out  output stream
+      * \param s  species index, 0 <= id < nVertex
+      * \param chi  value of chi(s,w)
       */
-      void writeWallField(std::ostream &out) const;
+      void setChiTop(int s, double chi);
 
       /**
-      * Write the concentration field of the walls to a file specified 
-      * by 'filename', in basis format.
-      * 
-      * \param filename  name of file to which data will be written
-      */
-      void writeWallField(std::string filename) const;
-
-      /**
-      * Write the concentration field of the walls to an output stream, in 
-      * r-grid format.
-      * 
-      * \param out  output stream
-      */
-      void writeWallFieldRGrid(std::ostream &out) const;
-
-      /**
-      * Write the concentration field of the walls to a file specified by 
-      * 'filename', in r-grid format.
-      * 
-      * \param filename  name of file to which data will be written
-      */
-      void writeWallFieldRGrid(std::string filename) const;
-
-      /**
-      * Returns the field that describes the mask imposed upon the unit 
-      * cell, which represents the wall. Field is in symmetry-adapted 
-      * basis format.
-      */
-      DArray<double> const & maskBasis() const;
-
-      /**
-      * Returns the array of fields that describes the external potential 
-      * field felt by each monomer species, which is a result of chemical 
-      * interactions between the wall and the monomer species. Fields are 
-      * in symmetry-adapted basis format.
-      */
-      DArray< DArray<double> > const & externalFields() const;
-
-      /**
-      * Returns the field that describes the external potential field felt 
-      * by monomer species monomerId, which is a result of chemical 
-      * interactions between the wall and the monomer species. Fields are 
-      * in symmetry-adapted basis format.
-      *
-      * \param monomerId integer monomer type index
-      */
-      DArray<double> const & externalField(int monomerId) const;
-
-      /**
-      * Get const value of normalVecId
+      * Get value of normalVecId
       */
       int normalVecId() const;
 
       /**
-      * Get const value of interfaceThickness
+      * Get value of interfaceThickness
       */
       double interfaceThickness() const;
 
       /**
-      * Get const value of wallThickness
+      * Get value of wallThickness
       */
       double wallThickness() const;
 
       /**
-      * Get const chi matrix by reference
+      * Get const chiBottom matrix by reference
       */
-      DMatrix<double> const & chi() const;
+      DArray<double> const & chiTop() const;
 
       /**
-      * Get the const chi parameter between wall w and species s by 
-      * reference
+      * Get const chiTop array by reference
+      */
+      DArray<double> const & chiBottom() const;
+
+      /**
+      * Get the chi parameter between the bottom wall and species s
       * 
       * \param s  species index, 0 <= id < nVertex
-      * \param w  wall index, 0 or 1
       */
-      double chi(int s, int w) const;
+      double chiBottom(int s) const;
 
-      using Iterator<D>::maskPhi;
+      /**
+      * Get the chi parameter between the top wall and species s
+      * 
+      * \param s  species index, 0 <= id < nVertex
+      */
+      double chiTop(int s) const;
+
+      using Iterator<D>::isFlexible;
 
    protected:
 
@@ -279,12 +224,9 @@ namespace Pspc
 
       using Iterator<D>::system;
       using Iterator<D>::setClassName;
-      using Iterator<D>::isFlexible_;
-      using Iterator<D>::hasMask_;
-      using Iterator<D>::hasExternalFields_;
       using ParamComposite::read;
       using ParamComposite::readOptional;
-      using ParamComposite::readOptionalDMatrix;
+      using ParamComposite::readOptionalDArray;
       using ParamComposite::setParent;
       using ParamComposite::addComponent;
 
@@ -296,9 +238,6 @@ namespace Pspc
       /// Lattice parameters associated with the current maskBasis
       FSArray<double, 6> parameters_;
 
-      /// Wall chi array associated with the current externalFields
-      DMatrix<double> chiFields_;
-
       /// Lattice basis vector that is normal to the walls
       int normalVecId_;
 
@@ -308,15 +247,17 @@ namespace Pspc
       /// Wall thickness
       double T_;
 
-      /// Chi matrix
-      DMatrix<double> chi_;
+      /// chiBottom array
+      DArray<double> chiBottom_;
 
-      /// Name of file to which to write wall field in basis format
-      std::string wallBasisOutFile_;
+      /// chiTop array
+      DArray<double> chiTop_;
 
-      /// Name of file to which to write wall field in r-grid format
-      std::string wallRGridOutFile_;
+      /// Wall chiBottom array associated with the current system().h() field
+      DArray<double> chiBottomCurrent_;
 
+      /// Wall chiTop array associated with the current system().h() field
+      DArray<double> chiTopCurrent_;
    };
 
    // Inline member functions
@@ -332,38 +273,17 @@ namespace Pspc
    IteratorType const & FilmIteratorBase<D, IteratorType>::iterator() const
    {  return iterator_; }
 
-   // Return whether unit cell is flexible.
-   template <int D, typename IteratorType>
-   inline bool FilmIteratorBase<D, IteratorType>::isFlexible() const
-   {  return iterator_.isFlexible(); }
-
-   // Set value of chi between species s and wall w
+   // Set value of chi between species s and the bottom wall
    template <int D, typename IteratorType>
    inline 
-   void FilmIteratorBase<D, IteratorType>::setChi(int s, int w, double chi)
-   {  chi_(s,w) = chi; }
+   void FilmIteratorBase<D, IteratorType>::setChiBottom(int s, double chi)
+   {  chiBottom_[s] = chi; }
 
-   // Get const mask (wall) field by reference
+   // Set value of chi between species s and the top wall
    template <int D, typename IteratorType>
    inline 
-   DArray<double> const & FilmIteratorBase<D, IteratorType>::maskBasis() 
-   const
-   {  return iterator_.maskBasis(); }
-
-   // Get const array of external fields by reference
-   template <int D, typename IteratorType>
-   inline 
-   DArray< DArray<double> > const & 
-   FilmIteratorBase<D, IteratorType>::externalFields() const
-   {  return iterator_.externalFields(); }
-
-   // Get const external field for species monomerId by reference
-   template <int D, typename IteratorType>
-   inline 
-   DArray<double> const & 
-   FilmIteratorBase<D, IteratorType>::externalField(int monomerId)
-   const
-   {  return iterator_.externalField(monomerId); }
+   void FilmIteratorBase<D, IteratorType>::setChiTop(int s, double chi)
+   {  chiTop_[s] = chi; }
 
    // Get value of normalVecId
    template <int D, typename IteratorType>
@@ -381,17 +301,31 @@ namespace Pspc
    inline double FilmIteratorBase<D, IteratorType>::wallThickness() const
    {  return T_; }
 
-   // Get chi matrix by const reference
+   // Get chiBottom array by const reference
    template <int D, typename IteratorType>
-   inline DMatrix<double> const & FilmIteratorBase<D, IteratorType>::chi() 
+   inline 
+   DArray<double> const & FilmIteratorBase<D, IteratorType>::chiBottom() 
    const
-   {  return chi_; }
+   {  return chiBottom_; }
 
-   // Get the chi parameter between wall w and species s by reference
+   // Get chiTop array by const reference
    template <int D, typename IteratorType>
-   inline double FilmIteratorBase<D, IteratorType>::chi(int s, int w) 
+   inline 
+   DArray<double> const & FilmIteratorBase<D, IteratorType>::chiTop() 
    const
-   {  return chi_(s, w); }
+   {  return chiTop_; }
+
+   // Get the chi parameter between the bottom wall and species s
+   template <int D, typename IteratorType>
+   inline double FilmIteratorBase<D, IteratorType>::chiBottom(int s) 
+   const
+   {  return chiBottom_[s]; }
+
+   // Get the chi parameter between the top wall and species s
+   template <int D, typename IteratorType>
+   inline double FilmIteratorBase<D, IteratorType>::chiTop(int s) 
+   const
+   {  return chiTop_[s]; }
 
 } // namespace Pspc
 } // namespace Pscf
