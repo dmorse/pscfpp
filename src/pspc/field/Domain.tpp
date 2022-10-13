@@ -23,6 +23,7 @@ namespace Pspc
    Domain<D>::Domain()
     : unitCell_(),
       mesh_(),
+      group_(),
       basis_(),
       fft_(),
       fieldIo_(),
@@ -58,7 +59,8 @@ namespace Pspc
       read(in, "groupName", groupName_);
       
       fft_.setup(mesh_.dimensions());
-      basis().makeBasis(mesh(), unitCell(), groupName_);
+      readGroup(groupName_, group_);
+      basis().makeBasis(mesh(), unitCell(), group_);
       isInitialized_ = true;
    }
    

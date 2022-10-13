@@ -14,8 +14,9 @@
 #include <pspc/field/FFT.h>                // member
 
 #include <pscf/crystal/Basis.h>            // member
-#include <pscf/mesh/Mesh.h>                // member
+#include <pscf/crystal/SpaceGroup.h>       // member
 #include <pscf/crystal/UnitCell.h>         // member
+#include <pscf/mesh/Mesh.h>                // member
 
 #include <string>
 
@@ -30,12 +31,13 @@ namespace Pspc
    *
    * A Domain has (among other components):
    *
-   *    - a UnitCell
    *    - a Mesh
-   *    - a groupName string
+   *    - a UnitCell
+   *    - a SpaceGroup 
    *    - a Basis
    *    - an FFT 
    *    - a FieldIo
+   *    - a groupName string
    *
    * \ingroup Pspc_Field_Module
    */
@@ -105,6 +107,11 @@ namespace Pspc
       Mesh<D> const & mesh() const;
 
       /**
+      * Get associated SpaceGroup object by const reference.
+      */
+      SpaceGroup<D> const & group() const ;
+
+      /**
       * Get associated Basis object by reference.
       */
       Basis<D>& basis();
@@ -156,7 +163,12 @@ namespace Pspc
       Mesh<D> mesh_;
 
       /**
-      * Pointer to a Basis object
+      * SpaceGroup object
+      */
+      SpaceGroup<D> group_;
+
+      /**
+      * Basis object
       */
       Basis<D> basis_;
 
@@ -212,6 +224,11 @@ namespace Pspc
    template <int D>
    inline Mesh<D> const & Domain<D>::mesh() const
    {  return mesh_; }
+
+   // Get the SpaceGroup<D> object by const reference.
+   template <int D>
+   inline SpaceGroup<D> const & Domain<D>::group() const
+   {  return group_; }
 
    // Get the Basis<D> object by non-const reference.
    template <int D>

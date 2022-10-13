@@ -1,4 +1,3 @@
-
 Goals
 ------
 
@@ -12,14 +11,15 @@ Comments on current design / history
 ------------------------------------
 
 The current code is designed to allow allow a clean initialization phase
-during the reading of a (mostly) fixed format parameter file during which 
-all essential variables are set and all large blocks of memory for fields 
-and propagators are allocated, in which most heap memory is allocated only 
-once. This was motivated by a combination of simplicity and safety - more 
-flexible policies regarding the variables are defined and allocation occurs
-require much more thorough checking of preconditions throughout the code
-in order to avoid mysterious errors.  Delaying construction of a basis is
-is a step away from that design strategy.
+during the reading of a (mostly) fixed format parameter file. The ideas
+as that all essential variables are set and all large blocks of memory 
+for fields and propagators are allocated in this process, and that most 
+heap memory is allocated only once. This was motivated by a combination 
+of simplicity and safety. More flexible policies regarding the variables 
+are defined and allocation occurs require much more thorough checking of 
+preconditions throughout the code in order to avoid mysterious errors.  
+Delaying construction of a basis is one a step away from that design 
+strategy.
 
 
 Possible Policies / Conventions
@@ -42,19 +42,18 @@ dimensions as permanent after they are entered in the parameter file.
 This is somewhat more complicated than A, but doesn't make a lot of 
 sense in terms of usability - why allow construction of a basis for 
 an entirely different crystal but not allow the user to adjust the mesh 
-dimensions? If you consider an entirely different structure, you may 
-want to adjust the mesh dimensions.
+dimensions? If you consider two entirely different structures, you may 
+want to adjust the mesh dimensions accordingly.
 
 C - We could allow more complete mutability by allowing the user to 
-reconstruct the space group and mesh at any time, thus changing the
-phase or type of crystal that the program is dealing with during the
-course of a calculation.
+reconstruct all aspects of the Domain, including the mesh, at any time
+during a calculation.
      
 Comments:
 
 Option B seems like a conceptually incoherent compromise, and 
 unattractive as a result. Policy C would move the program towards much 
-more flexibility, but is would consequently involve larger changes in 
+more flexibility, but would consequently involve larger changes in 
 the program design.  Policy A gets rid of the confusing redundant 
 unit cell parameters, but leaves most aspects of the current design 
 unchanged.  
@@ -64,44 +63,65 @@ Choice:  I propose that we implement policy A.
 User Interface
 --------------
 
-Proposals (assuming policy A):
+Proposed changes (assuming policy A):
 
 1) Require the user to enter both a crystal system (unit cell type) and 
-space group name in the parameter file, as an explicit declaration of 
-the type of crystal that the program will deal with throughout its 
-lifetime. 
+space group name in the parameter file. These two parameters act as an 
+explicit declaration of the type of crystal that the program will deal 
+with throughout its lifetime.  Do NOT require or allow a UnitCell
+parameter in the parameter file.
 
-Rationale: If we don't require an explicit declaration, then the
-lattice system and space group types in the first field file that is
-read provide an implicit declaration that the user never sees unless
-they read the header of that field file. I think that requiring an 
-explicit declaration will make the interface clearer and less error 
-prone: Explicit is clearer than implicit.
+Rationale: If we don't require an explicit declaration, then the lattice 
+system and space group types in the first field file that is read provide 
+an implicit declaration that the user never sees unless they read the 
+header of that field file. I think that requiring an explicit declaration 
+will make the interface clearer and less error prone: Explicit is clearer 
+than implicit.
 
 Rationale: The LatticeSystem is part of the unit cell type, along with 
 the space group. For clarity it makes more sense to ask the user to 
 declare both than to declare only the space group.
 
-Note: The inclusion of the LatticeSystem string as a required parameter 
+Rationale: In policy A, the lattice system and space group are permanent
+for the lifetime of the system. Immutable parameters should be input in 
+the parameter file. Unit cell parameters of a system with a flexible unit 
+are mutable unknown variables that are changed during iteration that are
+provided in the field file as part of the solution, and so should usualy
+be read from a field file. 
+
+Note: The inclusion of the lattice string as a required parameter 
 would break backwards compatibility, but now is the time to consider
 such changes.
 
-2) We could provide the user a SET_UNIT_CELL command which reads in 
-a UnitCell (including the lattice system string, which can be checked),
-and a MAKE_BASIS command that constructs a basis using that unit cell.
-The MAKE_BASIS command is valid only if called before any field file 
-is read, since the basis can only constructed once.
+Proposed Domain parameter file format:
 
-Rationale: The user may several reasons to adjust the unit cell from 
-the command file after reading in a field. This allows this to be done 
-without manually editing the field file. 
+Domain{
+   mesh          32   32    32
+   lattice       orthorhombic
+   groupName     F_d_d_d
+}
+
+2) Provide a SET_UNIT_CELL command which reads in and resets unit cell 
+parameters. 
+
+Rationale: The user may have several reasons to set or adjust the unit 
+cell from the command file after reading in a field (rather than manually
+editing the field file header) or to provide parameters before constructing 
+a basis (see below). This command would provide an alternative to the 
+use of an optional parameter.
+
+3) Provide a MAKE_BASIS command that constructs a basis using that unit 
+cell.  The MAKE_BASIS command is valid only if called after SET_UNIT_CELL
+but before any field file is read, since the basis can only constructed 
+once.
 
 Rationale: The user may have some reason to want to control the ordering
 of basis functions by explicitly controlling the unit cell parameters 
-used to construct a basis. 
+used to construct a basis, rather than using whatever parameters are in
+the first field file to be read.
 
-Note: These commands would be introduced as an alternative to allowing
-the user to optionally enter a unit cell. Prohibiting the input of 
+Note: Users who want to enter unit cell dimensions would do so with a
+command rather than in the parameter file. Prohibiting the input of 
 unit cell parameter in the parameter file would further break backwards
 compatibility of param file formats, but that would already be broken 
 by adding a required latticeSystem parameter.
@@ -110,7 +130,7 @@ Technical details (under the hood):
 
 1) The crystal system name can be read directly into a 
 UnitCell<D>::LatticeSystem enumeration in order to confirm its 
-validity. 
+validity and store its meaning as an enumeration value.
 
 2) The space group name could be used to immediately construct a
 SpaceGroup<D> member of the Domain, in order to confirm the validity
@@ -151,36 +171,39 @@ easy to later delay allocation of basis format arrays.
 
 3) Add code to Domain create a SpaceGroup<D> group_ member, and to 
 read a file to create a group immediately after reading the group name.
-Then change the code that creates a basis so as use the Basis::makeBasis
-function that takes a group as a parameter rather than a group name
-string.
-(No change in external behavior).
+Then change the code that creates a basis so as use the overloaded
+Basis::makeBasis function that takes a group as a parameter rather 
+than a group name string.
+(Done, no change in external behavior).
 
 4) Temporarily make the unit cell parameter of the Domain block optional.
 I'm proposing that we later remove this parameter - see below.
-(Still backwards compatible at this point, but won't function if absent).
+(Still backwards compatible at this point, but won't function correctly
+if unitCell is absent).
 
 5) Modify the FieldIo read functions to construct an unitialized basis
-if the basis is not initialized when the header is read. As part of 
+if the basis is not initialized when the header is read.  As part of 
 this, make the FieldIo::basisPtr_ a non-const pointer to allow the
 basis to be modified.
-(Still backwards compatible at this point).
+(Still backwards compatible at this point, but still not functional).
 
 6) Have the functions of System that read files test the initialization
 state of basis before reading a file, and then compare the initialization 
 status of basis_ before and after reading a field in order to determine if 
 the basis was just initialized. Immediately after it is initialized, call 
 the function System::allocateFieldsBasis to allocate all arrays with 
-dimensions that depend on nBasis. 
-(Optional delayed construction of a basis now actually functions).
+dimensions that depend on nBasis. Initialization status can be tested 
+using the nBasis value: nBasis == 0 means it is not initialized.
+(At this point, optional delayed construction of a basis functions).
 
 7) In Domain, add a member of the Domain to stored the declared 
 lattice system type, as member variable lattice_ of type 
 UnitCell<D>::LatticeSystem. Add code to Domain::readParameters to
-read this.
-(This finally breaks backwards compatibility)
+read this, and remove code to read unitCell from the param file.
+Change all of the unit tests.
+(This finally breaks backwards compatibility).
 
-Rationale: I am proposing to make this a separate member of Domain, in 
+Rationale: I propose to make lattice_ a separate member of Domain, in 
 addition to the lattice_ member of the UnitCell<D>, because I can't 
 see any other good way to treat it as a parameter file parameter using 
 the existing system for reading and writing parameters. That system 
@@ -190,7 +213,7 @@ is currently treated as a data type that is read from file using an
 overloaded >> operator, not as a ParamComposite. We could provide 
 access to the address of UnitCell<D>::lattice_ by making UnitCell a
 nested ParamComposite, but the syntax would involve another nested
-UnitCell{ .... } block, which seems ugly and unnecessary.
+UnitCell{ .... } block, which seems ugly and unnecessarily complex.
 
 Rationale: The groupName_ and lattice_ members of Domain would both 
 document the values as declared in the parameter file. Both declared
@@ -205,3 +228,4 @@ as a private member.  In FieldIo::associate, pass and store a pointer
 to the Domain::lattice_ in addition to the space group name. Add
 code to check this against values declared in field files.
 
+9) Change all of the examples to use the new format.
