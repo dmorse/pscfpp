@@ -625,6 +625,11 @@ namespace Pscf {
       */
       bool isValid() const;
 
+      /**
+      * Returns true iff this basis is fully initialized.
+      */
+      bool isInitialized() const;
+
       // Accessors
 
       /**
@@ -757,6 +762,11 @@ namespace Pscf {
       Mesh<D> const * meshPtr_;
 
       /**
+      * Has this basis been fully initialized?
+      */
+      bool isInitialized_;
+
+      /**
       * Construct an array of ordered waves.
       */
       void makeWaves();
@@ -816,6 +826,10 @@ namespace Pscf {
       int rank = mesh().rank(vector);
       return waveIds_[rank];
    }
+
+   template <int D>
+   inline bool Basis<D>::isInitialized() const
+   {  return isInitialized_; }
 
    #ifndef PSCF_BASIS_TPP
    extern template class Basis<1>;

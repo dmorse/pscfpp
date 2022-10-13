@@ -211,6 +211,7 @@ namespace Pscf
    */
    UnitCell<2>& UnitCell<2>::operator = (const UnitCell<2>& other)
    {
+      isInitialized_ = false;
       lattice_ = other.lattice_;
       setNParameter();
       UTIL_CHECK(nParameter_ == other.nParameter_);

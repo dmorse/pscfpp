@@ -176,16 +176,16 @@ Basis::makeBasis function that takes a group as a parameter rather
 than a group name string.
 (Done, no change in external behavior).
 
-4) Temporarily make the unit cell parameter of the Domain block optional.
-I'm proposing that we later remove this parameter - see below.
-(Still backwards compatible at this point, but won't function correctly
-if unitCell is absent).
+4) Modify the FieldIo read functions to construct an unitialized basis
+if the basis is not initialized when the header is read.  As part of this, 
+make the FieldIo::basisPtr_ a non-const pointer to allow the basis to be 
+modified, and allow storage of a const pointer to a SpaceGroup.
+(Done, no change in external behavior).
 
-5) Modify the FieldIo read functions to construct an unitialized basis
-if the basis is not initialized when the header is read.  As part of 
-this, make the FieldIo::basisPtr_ a non-const pointer to allow the
-basis to be modified.
-(Still backwards compatible at this point, but still not functional).
+5) Temporarily make the unit cell parameter of the Domain block optional.
+I'm proposing that we later remove this parameter - see below.
+(Backwards compatible at this point, but won't function correctly if 
+unitCell is absent).
 
 6) Have the functions of System that read files test the initialization
 state of basis before reading a file, and then compare the initialization 
@@ -228,4 +228,4 @@ as a private member.  In FieldIo::associate, pass and store a pointer
 to the Domain::lattice_ in addition to the space group name. Add
 code to check this against values declared in field files.
 
-9) Change all of the examples to use the new format.
+9) Change all of the examples to use the new param file format.

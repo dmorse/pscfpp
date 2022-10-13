@@ -168,6 +168,8 @@ namespace Pscf
       LatticeSystem lattice() const
       {  return lattice_; }
 
+      using UnitCellBase<1>::isInitialized;
+
    private:
 
       // Lattice type
@@ -264,8 +266,10 @@ namespace Pscf
       */
       LatticeSystem lattice_;
 
+      // Set number of parameters required to describe current lattice type
       void setNParameter();
 
+      // Set all internal data after setting parameter values
       void setBasis();
 
       // Private and unimplemented to prevent copy construction.
@@ -354,8 +358,10 @@ namespace Pscf
 
       LatticeSystem lattice_;
 
+      // Set number of parameters required to describe current lattice type
       void setNParameter();
 
+      // Set all internal data after setting parameter values
       void setBasis();
 
       // Private and unimplemented to prevent copy construction.

@@ -13,6 +13,7 @@
 #include <pspc/field/RFieldDft.h>          // function parameter
 
 #include <pscf/crystal/Basis.h>            // member
+#include <pscf/crystal/SpaceGroup.h>       // member
 #include <pscf/crystal/UnitCell.h>         // member
 #include <pscf/mesh/Mesh.h>                // member
 
@@ -65,7 +66,24 @@ namespace Pspc
       void associate(Mesh<D> const & mesh,
                      FFT<D> const & fft,
                      std::string const & groupName,
-                     Basis<D> const & basis,
+                     Basis<D> & basis,
+                     FileMaster const & fileMaster);
+
+      /**
+      * Get and store addresses of associated objects.
+      *
+      * \param mesh  associated spatial discretization Mesh<D>
+      * \param fft   associated FFT object for fast transforms
+      * \param groupName space group name string
+      * \param group  associated SpaceGroup object
+      * \param basis  associated Basis object
+      * \param fileMaster  associated FileMaster (for file paths)
+      */
+      void associate(Mesh<D> const & mesh,
+                     FFT<D> const & fft,
+                     std::string const & groupName,
+                     SpaceGroup<D> const & group,
+                     Basis<D> & basis,
                      FileMaster const & fileMaster);
 
       /// \name Field File IO - Symmetry Adapted Basis Format
@@ -327,6 +345,10 @@ namespace Pspc
       * formats. This contains the dimension of space, the unit cell, the 
       * group name and the the number of monomers. The unit cell data is
       * read into the associated UnitCell<D>, which is thus updated.
+      *
+      * If the associated basis is not initialized, this function will
+      * attempt to initialize it using the unit cell read from file and
+      * the associated group (if available) or group name. 
       * 
       * This function throws an exception if the values of "dim" and 
       * "N_monomer" read from file do not match values of D and the 
@@ -492,8 +514,11 @@ namespace Pspc
       /// Pointer to group name string
       std::string const * groupNamePtr_;
 
+      /// Pointer to a SpaceGroup object
+      SpaceGroup<D> const * groupPtr_;
+
       /// Pointer to a Basis object
-      Basis<D> const * basisPtr_;
+      Basis<D> * basisPtr_;
 
       /// Pointer to Filemaster (holds paths to associated I/O files).
       FileMaster const * fileMasterPtr_;
@@ -519,6 +544,13 @@ namespace Pspc
       {  
          UTIL_ASSERT(groupNamePtr_);  
          return *groupNamePtr_; 
+      }
+
+      /// Get SpaceGroup by const reference.
+      SpaceGroup<D> const & group() const
+      {
+         UTIL_ASSERT(groupPtr_);  
+         return *groupPtr_; 
       }
 
       /// Get Basis by const reference.

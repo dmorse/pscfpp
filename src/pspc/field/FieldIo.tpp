@@ -36,6 +36,7 @@ namespace Pspc
     : meshPtr_(0),
       fftPtr_(0),
       groupNamePtr_(0),
+      groupPtr_(0),
       basisPtr_(0),
       fileMasterPtr_()
    {}
@@ -54,11 +55,30 @@ namespace Pspc
    void FieldIo<D>::associate(Mesh<D> const & mesh,
                               FFT<D> const & fft,
                               std::string const & groupName,
-                              Basis<D> const & basis,
+                              Basis<D> & basis,
                               FileMaster const & fileMaster)
    {
       meshPtr_ = &mesh;
       groupNamePtr_ = &groupName;
+      basisPtr_ = &basis;
+      fftPtr_ = &fft;
+      fileMasterPtr_ = &fileMaster;
+   }
+  
+   /*
+   * Get and store addresses of associated objects.
+   */
+   template <int D>
+   void FieldIo<D>::associate(Mesh<D> const & mesh,
+                              FFT<D> const & fft,
+                              std::string const & groupName,
+                              SpaceGroup<D> const & group,
+                              Basis<D> & basis,
+                              FileMaster const & fileMaster)
+   {
+      meshPtr_ = &mesh;
+      groupNamePtr_ = &groupName;
+      groupPtr_ = &group;
       basisPtr_ = &basis;
       fftPtr_ = &fft;
       fileMasterPtr_ = &fileMaster;
@@ -838,10 +858,9 @@ namespace Pspc
       int nMonomer;
       FieldIo<D>::readFieldHeader(in, nMonomer, unitCell);
 
-      // If "fields" passed by reference is already allocated, check it is allocated
-      // to match the system's mesh. 
-      
-      // Otherwise, allocate fields parameter to match the system's mesh.
+      // If "fields" passed by reference is already allocated, check 
+      // that dimensions match those of the system's mesh.
+      // If fields is not allocated, allocate.
       
       if (fields.isAllocated()) {
 
@@ -961,6 +980,7 @@ namespace Pspc
       Pscf::readFieldHeader(in, ver1, ver2, unitCell, 
                             groupNameIn, nMonomer);
       // Note: Function definition in pscf/crystal/UnitCell.tpp
+      UTIL_CHECK(unitCell.isInitialized());
       if (groupNameIn != groupName()) {
          Log::file() << std::endl 
              << "Warning - "
@@ -968,6 +988,19 @@ namespace Pspc
              << "  FieldIo::groupName :" << groupName() << "\n"
              << "  Field file header  :" << groupNameIn << "\n";
       }
+
+      // Initialize Basis if not already initialized
+      if (!basis().isInitialized()) {
+         if (groupPtr_) {
+            basisPtr_->makeBasis(mesh(), unitCell, group());
+         } else {
+            SpaceGroup<D> group;
+            readGroup(groupName(), group);
+            basisPtr_->makeBasis(mesh(), unitCell, group);
+         }
+      }
+      UTIL_CHECK(basis().isInitialized());
+      
    }
 
    template <int D>

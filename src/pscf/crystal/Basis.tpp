@@ -37,7 +37,8 @@ namespace Pscf {
       nStar_(0), 
       nBasis_(0), 
       unitCellPtr_(0), 
-      meshPtr_(0)
+      meshPtr_(0),
+      isInitialized_(false)
    {}
 
    /*
@@ -89,6 +90,7 @@ namespace Pscf {
          UTIL_THROW("Basis failed validity check");
       }
 
+      isInitialized_ = true;
    }
 
    /*
