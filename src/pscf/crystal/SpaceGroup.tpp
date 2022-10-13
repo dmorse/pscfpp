@@ -9,6 +9,7 @@
 */
 
 #include <pscf/crystal/SpaceGroup.h>
+#include <pscf/crystal/groupFile.h>
 
 namespace Pscf
 {
@@ -48,11 +49,50 @@ namespace Pscf
    }
 
    template <int D>
-   void 
-   SpaceGroup<D>::shiftOrigin(typename SpaceSymmetry<D>::Translation const & origin)
+   void SpaceGroup<D>::shiftOrigin(
+                    typename SpaceSymmetry<D>::Translation const & origin)
    {
       for (int i = 0; i < size(); ++i) {
          (*this)[i].shiftOrigin(origin);
+      }
+   }
+
+   /*
+   * Read a group from file
+   */
+   template <int D>
+   void readGroup(std::string groupName, SpaceGroup<D>& group)
+   {
+      if (groupName == "I") {
+         // Create identity group by default
+         group.makeCompleteGroup();
+      } else {
+         bool foundFile = false;
+         {
+            // Search first in this directory
+            std::ifstream in;
+            in.open(groupName);
+            if (in.is_open()) {
+               in >> group;
+               UTIL_CHECK(group.isValid());
+               foundFile = true;
+            }
+         }
+         if (!foundFile) {
+            // Search in the data directory containing standard space groups
+            std::string fileName = makeGroupFileName(D, groupName);
+            std::ifstream in;
+            in.open(fileName);
+            if (in.is_open()) {
+               in >> group;
+               UTIL_CHECK(group.isValid());
+            } else {
+               Log::file() << "\nFailed to open group file: " 
+                           << fileName << "\n";
+               Log::file() << "\n Error: Unknown space group\n";
+               UTIL_THROW("Unknown space group");
+            }
+         } 
       }
    }
 

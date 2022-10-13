@@ -14,4 +14,8 @@ namespace Pscf
    template class SpaceGroup<2>;
    template class SpaceGroup<3>;
 
+   template void readGroup(std::string, SpaceGroup<1>& );
+   template void readGroup(std::string, SpaceGroup<2>& );
+   template void readGroup(std::string, SpaceGroup<3>& );
+
 }

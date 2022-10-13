@@ -41,8 +41,8 @@ namespace Pscf
       * \param center location of inversion center, if any (output)
       */
       bool 
-      hasInversionCenter(typename SpaceSymmetry<D>::Translation& center) const;
-
+      hasInversionCenter(typename SpaceSymmetry<D>::Translation& center) 
+      const;
 
       /**
       * Shift the origin of space used in the coordinate system.
@@ -55,7 +55,8 @@ namespace Pscf
       *
       * \param origin  location of origin of the new coordinate system
       */
-      void shiftOrigin(typename SpaceSymmetry<D>::Translation const & origin);
+      void 
+      shiftOrigin(typename SpaceSymmetry<D>::Translation const & origin);
 
       // Using declarations for some inherited functions
       using SymmetryGroup< SpaceSymmetry <D> >::size;
@@ -72,7 +73,7 @@ namespace Pscf
    * \ingroup Pscf_Crystal_Module
    */ 
    template <int D>
-   std::ostream& operator << (std::ostream& out, const SpaceGroup<D>& g)
+   std::ostream& operator << (std::ostream& out, SpaceGroup<D> const & g)
    {
       int size = g.size();
       out << "dim  " << D << std::endl;
@@ -109,10 +110,25 @@ namespace Pscf
       return in;
    }
 
+   /**
+   * Open and read a group file.
+   * 
+   * \param groupName  name of group, or group file (input)
+   * \param group  space group (output)
+   *
+   * \ingroup Pscf_Crystal_Module
+   */
+   template <int D>
+   void readGroup(std::string groupName, SpaceGroup<D>& group);
+
+
    #ifndef PSCF_SPACE_GROUP_TPP
    extern template class SpaceGroup<1>;
    extern template class SpaceGroup<2>;
    extern template class SpaceGroup<3>;
+   extern template void readGroup(std::string, SpaceGroup<1>& );
+   extern template void readGroup(std::string, SpaceGroup<2>& );
+   extern template void readGroup(std::string, SpaceGroup<3>& );
    #endif
 
 }

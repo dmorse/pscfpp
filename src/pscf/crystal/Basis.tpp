@@ -28,7 +28,11 @@ namespace Pscf {
    */
    template <int D>
    Basis<D>::Basis()
-    : nWave_(0), 
+    : waves_(),
+      stars_(),
+      waveIds_(),
+      starIds_(),
+      nWave_(0), 
       nBasisWave_(0), 
       nStar_(0), 
       nBasis_(0), 
@@ -52,37 +56,7 @@ namespace Pscf {
                             std::string groupName)
    {
       SpaceGroup<D> group;
-      if (groupName == "I") {
-         // Create identity group by default
-         group.makeCompleteGroup();
-      } else {
-         bool foundFile = false;
-         {
-            // Search first in this directory
-            std::ifstream in;
-            in.open(groupName);
-            if (in.is_open()) {
-               in >> group;
-               UTIL_CHECK(group.isValid());
-               foundFile = true;
-            }
-         }
-         if (!foundFile) {
-            // Search in the data directory containing standard space groups
-            std::string fileName = makeGroupFileName(D, groupName);
-            std::ifstream in;
-            in.open(fileName);
-            if (in.is_open()) {
-               in >> group;
-               UTIL_CHECK(group.isValid());
-            } else {
-               Log::file() << "\nFailed to open group file: " 
-                           << fileName << "\n";
-               Log::file() << "\n Error: Unknown space group\n";
-               UTIL_THROW("Unknown space group");
-            }
-         } 
-      }
+      readGroup(groupName, group);
       makeBasis(mesh, unitCell, group);
    }
 

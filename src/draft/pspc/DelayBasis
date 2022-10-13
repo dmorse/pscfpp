@@ -2,24 +2,39 @@
 Goals
 ------
 
-1) Avoid forcing a user to enter unit cell parameter data that is then
-overwritten, because that is confusing.
+1) Avoid forcing a user to enter unit cell parameter data in the parameter
+file that is then overwritten, because that is confusing.
 
-2) To accomplish 1, Make it possible to delay construction of a basis 
+2) To accomplish goal 1, make it possible to delay construction of a basis 
 until the first time a field file is read.
+
+Comments on current design / history
+------------------------------------
+
+The current code is designed to allow allow a clean initialization phase
+during the reading of a (mostly) fixed format parameter file during which 
+all essential variables are set and all large blocks of memory for fields 
+and propagators are allocated, in which most heap memory is allocated only 
+once. This was motivated by a combination of simplicity and safety - more 
+flexible policies regarding the variables are defined and allocation occurs
+require much more thorough checking of preconditions throughout the code
+in order to avoid mysterious errors.  Delaying construction of a basis is
+is a step away from that design strategy.
+
 
 Possible Policies / Conventions
 -------------------------------
 
 We could consider several possible policies / conventions:
 
-A - A single space group and basis is used throughout the lifetime of
-a system. The basis could normally be constructed when the first field 
-file is read, while the basis is unitialized, using the unit cell 
+A - We could maintain the requirement that a single space group and basis
+be used throughout the lifetime of a system, but delay construction of that
+basis. In this case, the basis could normally be constructed when the first 
+field file is read, while the basis is unitialized, using the unit cell 
 parameters that are provided in that file. All files read by the System 
-are expected to describe a field with the same space group symmetry, and 
-this assumption can be enforced with a error or warning when a field file
-header is read.
+are expected to describe a field with the same space group symmetry. This
+assumption can be enforced with an Exception or warning when a field file
+header with inconsistent data is read.
 
 B - We could allow the basis can be constructed more than once if we 
 encounter a new space group name in a field file, but regard the mesh
@@ -27,7 +42,8 @@ dimensions as permanent after they are entered in the parameter file.
 This is somewhat more complicated than A, but doesn't make a lot of 
 sense in terms of usability - why allow construction of a basis for 
 an entirely different crystal but not allow the user to adjust the mesh 
-dimensions?
+dimensions? If you consider an entirely different structure, you may 
+want to adjust the mesh dimensions.
 
 C - We could allow more complete mutability by allowing the user to 
 reconstruct the space group and mesh at any time, thus changing the
@@ -40,36 +56,35 @@ Option B seems like a conceptually incoherent compromise, and
 unattractive as a result. Policy C would move the program towards much 
 more flexibility, but is would consequently involve larger changes in 
 the program design.  Policy A gets rid of the confusing redundant 
-unit cell parameters, but leaves most aspects of the program design 
+unit cell parameters, but leaves most aspects of the current design 
 unchanged.  
 
-Choice:  I recommend that we implement policy A.
+Choice:  I propose that we implement policy A.
 
 User Interface
 --------------
 
-These proposals assume that we go with policy A from above:
+Proposals (assuming policy A):
 
-Proposals:
-
-1) Require the user to enter a crystal system (unit cell type) and 
-space group name in the parameter file as an explicit declaration of 
-the type of crystal that the program will deal with, as in the fortran 
-file the type of crystal. 
+1) Require the user to enter both a crystal system (unit cell type) and 
+space group name in the parameter file, as an explicit declaration of 
+the type of crystal that the program will deal with throughout its 
+lifetime. 
 
 Rationale: If we don't require an explicit declaration, then the
 lattice system and space group types in the first field file that is
 read provide an implicit declaration that the user never sees unless
 they read the header of that field file. I think that requiring an 
 explicit declaration will make the interface clearer and less error 
-prone. Explicit is better than implicit.
+prone: Explicit is clearer than implicit.
 
-Rationale: The LatticeSystem is part of the unit cell type, along 
-with the space group. For clarity it makes more sense to ask the 
-user to declare both than to declare only the space group.
+Rationale: The LatticeSystem is part of the unit cell type, along with 
+the space group. For clarity it makes more sense to ask the user to 
+declare both than to declare only the space group.
 
-Note: The inclusion of the LatticeSystem as a required parameter would
-break backwards compatibility.
+Note: The inclusion of the LatticeSystem string as a required parameter 
+would break backwards compatibility, but now is the time to consider
+such changes.
 
 2) We could provide the user a SET_UNIT_CELL command which reads in 
 a UnitCell (including the lattice system string, which can be checked),
@@ -86,7 +101,8 @@ of basis functions by explicitly controlling the unit cell parameters
 used to construct a basis. 
 
 Note: These commands would be introduced as an alternative to allowing
-the user to optionally enter a unit cell. This would break backwards
+the user to optionally enter a unit cell. Prohibiting the input of 
+unit cell parameter in the parameter file would further break backwards
 compatibility of param file formats, but that would already be broken 
 by adding a required latticeSystem parameter.
 
@@ -98,12 +114,13 @@ validity.
 
 2) The space group name could be used to immediately construct a
 SpaceGroup<D> member of the Domain, in order to confirm the validity
-of the space group name. The resulting space group could then be 
+of the space group name. The resulting space group could later be 
 passed to Basis:makeBasis(...) when information about the unit cell
 is provided the first time one reads in a field file, or when the
-commands SET_UNIT_CELL and makeBasis are read.
+commands SET_UNIT_CELL and makeBasis are read. The Domain would 
+thus have a SpaceGroup<D> member as well as a Basis<D>.
 
-Implementation Comments
+Expected Complications
 -----------------------
 
 1) The number of basis functions is not known until we construct a basis, 
@@ -124,28 +141,44 @@ Proposed Plan:
 de-allocation of basis and r-grid fields separately (new functions
 allocateBasis, delllocateBasis, allocateRGrid, allocateRGrid, and 
 setNmonomer). Continue to require that nMonomer is set once and never 
-changed. (Done)
+changed. (Done, no change in external behavior).
 
-2) Create separate functions in System to allocate rgrid and basis
-format arrays. Initially call both during parameter file processing,
-but make it easy to later delay allocation of basis format arrays. 
-(No change in function yet)
+2) Create separate private functions in System to allocate grid and 
+basis format, called allocateFieldsGrid() and allocateFieldsBasis().
+Initially call both during parameter file processing, but make it 
+easy to later delay allocation of basis format arrays. 
+(Done, no change in external behavior).
 
-3) Add isInitialized() member function to Basis so we can tell when a 
-basis exists. Consider adding clear() function to allow de-allocation 
-and return to the initial as-constructed state. 
-(No change in function yet)
-
-4) Add code to Domain create a SpaceGroup<D> group_ member, and to 
+3) Add code to Domain create a SpaceGroup<D> group_ member, and to 
 read a file to create a group immediately after reading the group name.
 Then change the code that creates a basis so as use the Basis::makeBasis
 function that takes a group as a parameter rather than a group name
 string.
-(No change in function yet)
+(No change in external behavior).
 
-5) In Domain, add a member of the Domain to stored the declared lattice 
-system type, as member variable lattice_ of type UnitCell<D>::LatticeSystem.
-(No change in function until we actually read this)
+4) Temporarily make the unit cell parameter of the Domain block optional.
+I'm proposing that we later remove this parameter - see below.
+(Still backwards compatible at this point, but won't function if absent).
+
+5) Modify the FieldIo read functions to construct an unitialized basis
+if the basis is not initialized when the header is read. As part of 
+this, make the FieldIo::basisPtr_ a non-const pointer to allow the
+basis to be modified.
+(Still backwards compatible at this point).
+
+6) Have the functions of System that read files test the initialization
+state of basis before reading a file, and then compare the initialization 
+status of basis_ before and after reading a field in order to determine if 
+the basis was just initialized. Immediately after it is initialized, call 
+the function System::allocateFieldsBasis to allocate all arrays with 
+dimensions that depend on nBasis. 
+(Optional delayed construction of a basis now actually functions).
+
+7) In Domain, add a member of the Domain to stored the declared 
+lattice system type, as member variable lattice_ of type 
+UnitCell<D>::LatticeSystem. Add code to Domain::readParameters to
+read this.
+(This finally breaks backwards compatibility)
 
 Rationale: I am proposing to make this a separate member of Domain, in 
 addition to the lattice_ member of the UnitCell<D>, because I can't 
@@ -167,24 +200,8 @@ read by the program. After the UnitCell_ is initialized, we would
 require that its lattice_ member always be equal to the Domain::lattice_ 
 parameter.
 
-6) Change Domain::readParameters so as to actually read the lattice_ 
-string. 
-(First unavoidable change in parameter file syntax and code function).
-
-7) In FieldIo, add a const pointer to a UnitCell::LatticeSystem<D> as
-a private member.  In FieldIo::associate, pass and store a pointer to 
-the Domain::lattice_ in addition to the space group name.
-
-8) In FieldIo, make the basisPtr_ non-const in order to allow it to be 
-initialized within a FieldIo member function if necessary.
-
-9) Modify the FieldIo read functions to construct an unitialized basis
-if the basis is not initialized when the header is read.
-
-10) Have the functions of System that read files test the initialization
-state of basis before reading a file, and then compare the initialization 
-status of basis_ before and after reading a field in order to determine if 
-the basis was just initialized. Immediately after it is initialized, call 
-the function System::allocateFieldsBasis to allocate all arrays with 
-dimensions that depend on nBasis. 
+8) In FieldIo, add a const pointer to a UnitCell::LatticeSystem<D> 
+as a private member.  In FieldIo::associate, pass and store a pointer 
+to the Domain::lattice_ in addition to the space group name. Add
+code to check this against values declared in field files.
 
