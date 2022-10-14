@@ -370,9 +370,6 @@ namespace Pspc
             in >> unitCell;
             domain_.setUnitCell(unitCell);
          } else
-         if (command == "MAKE_BASIS") {
-            domain_.makeBasis();
-         } else
          if (command == "COMPUTE") {
             // Solve the modified diffusion equation, without iteration
             compute();

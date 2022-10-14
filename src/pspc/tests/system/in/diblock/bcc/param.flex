@@ -20,6 +20,7 @@ System{
   }
   Domain{
      mesh         32      32    32
+     lattice      cubic
      groupName    I_m_-3_m
   }
   Iterator{

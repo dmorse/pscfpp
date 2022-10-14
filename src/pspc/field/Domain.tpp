@@ -57,6 +57,7 @@ namespace Pspc
    {
       UTIL_CHECK(hasFileMaster_);
 
+      // Optionally read unit cell
       readOptional(in, "unitCell", unitCell_);
       bool hasUnitCell = false; 
       if (unitCell_.lattice() != UnitCell<D>::Null) { 
@@ -67,8 +68,9 @@ namespace Pspc
       read(in, "mesh", mesh_);
       fft_.setup(mesh_.dimensions());
 
+      // If no unit cell was read, read lattice system
       if (lattice_ == UnitCell<D>::Null) { 
-         readOptional(in, "lattice", lattice_);
+         read(in, "lattice", lattice_);
       }
 
       read(in, "groupName", groupName_);
@@ -118,6 +120,9 @@ namespace Pspc
          UTIL_CHECK(lattice_ = unitCell.lattice());
       }
       unitCell_ = unitCell;
+      if (!basis_.isInitialized()) {
+         makeBasis();
+      }
    }
 
    /*
@@ -129,6 +134,9 @@ namespace Pspc
       UTIL_CHECK(unitCell_.lattice() != UnitCell<D>::Null);
       UTIL_CHECK(unitCell_.nParameter() == parameters.size());
       unitCell_.setParameters(parameters);
+      if (!basis_.isInitialized()) {
+         makeBasis();
+      }
    }
 
    template <int D>
