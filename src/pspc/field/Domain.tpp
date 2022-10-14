@@ -105,6 +105,49 @@ namespace Pspc
       isInitialized_ = true;
    }
 
+   template <int D>
+   void Domain<D>::setUnitCell(UnitCell<D> const & unitCell)
+   {
+      if (lattice_ != UnitCell<D>::Null) {
+         lattice_ = unitCell.lattice();
+      } else {
+         UTIL_CHECK(lattice_ = unitCell.lattice());
+      }
+      unitCell_ = unitCell;
+   }
+
+   /*
+   * Set parameters of the associated unit cell.
+   */
+   template <int D>
+   void Domain<D>::setUnitCell(FSArray<double, 6> const & parameters)
+   {
+      UTIL_CHECK(unitCell_.lattice() != UnitCell<D>::Null);
+      UTIL_CHECK(unitCell_.nParameter() == parameters.size());
+      unitCell_.setParameters(parameters);
+   }
+
+   template <int D>
+   void Domain<D>::makeBasis() 
+   {
+      UTIL_CHECK(mesh_.size() > 0);
+      UTIL_CHECK(unitCell_.lattice() != UnitCell<D>::Null);
+
+      // Check group, read from file if necessary
+      if (group_.size() == 1) {
+         if (groupName_ != "I") {
+            UTIL_CHECK(groupName_ != "");
+            readGroup(groupName_, group_);
+         }
+      }
+
+      // Check basis, construct if not initialized
+      if (!basis().isInitialized()) {
+         basis_.makeBasis(mesh_, unitCell_, group_);
+      }
+      UTIL_CHECK(basis().isInitialized());
+   }
+
 } // namespace Pspc
 } // namespace Pscf
 #endif

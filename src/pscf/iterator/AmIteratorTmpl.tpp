@@ -85,6 +85,8 @@ namespace Pscf
       U_.allocate(maxHist_, maxHist_);
       v_.allocate(maxHist_);
       coeffs_.allocate(maxHist_);
+
+      isAllocated_ = true;
    }
 
    /*

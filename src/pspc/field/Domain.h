@@ -83,6 +83,25 @@ namespace Pspc
       */
       void readFieldHeader(std::istream& in, int& nMonomer);
 
+      /**
+      * Set unit cell. 
+      *
+      * \param unitCell new unit cell
+      */
+      void setUnitCell(UnitCell<D> const & unitCell);
+
+      /**
+      * Set unit cell parameters.
+      *
+      * \param parameters array of unit cell parameters
+      */
+      void setUnitCell(FSArray<double, 6> const & parameters);
+
+      /**
+      * Construct group and basis if not done already.
+      */
+      void makeBasis();
+
       ///@}
       /// \name Accessors 
       ///@{

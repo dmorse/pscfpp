@@ -365,6 +365,14 @@ namespace Pspc
             readEcho(in, filename);
             readWRGrid(filename);
          } else
+         if (command == "SET_UNIT_CELL") {
+            UnitCell<D> unitCell;
+            in >> unitCell;
+            domain_.setUnitCell(unitCell);
+         } else
+         if (command == "MAKE_BASIS") {
+            domain_.makeBasis();
+         } else
          if (command == "COMPUTE") {
             // Solve the modified diffusion equation, without iteration
             compute();
@@ -628,8 +636,7 @@ namespace Pspc
    template <int D>
    void System<D>::setUnitCell(UnitCell<D> const & unitCell)
    {
-      UTIL_CHECK(domain_.unitCell().lattice() == unitCell.lattice());
-      domain_.unitCell() = unitCell;
+      domain_.setUnitCell(unitCell);
       mixture_.setupUnitCell(domain_.unitCell());
    }
 
@@ -639,8 +646,7 @@ namespace Pspc
    template <int D>
    void System<D>::setUnitCell(FSArray<double, 6> const & parameters)
    {
-      UTIL_CHECK(domain_.unitCell().nParameter() == parameters.size());
-      domain_.unitCell().setParameters(parameters);
+      domain_.setUnitCell(parameters);
       mixture_.setupUnitCell(domain_.unitCell());
    }
 
