@@ -67,6 +67,10 @@ namespace Pspc
       read(in, "mesh", mesh_);
       fft_.setup(mesh_.dimensions());
 
+      if (lattice_ == UnitCell<D>::Null) { 
+         readOptional(in, "lattice", lattice_);
+      }
+
       read(in, "groupName", groupName_);
       readGroup(groupName_, group_);
 

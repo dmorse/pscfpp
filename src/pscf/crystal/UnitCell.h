@@ -232,6 +232,22 @@ namespace Pscf
                               UnitCell<1>::LatticeSystem lattice);
 
    /**
+   * Serialize a UnitCell<1>::LatticeSystem enumeration value
+   *
+   * \param ar  archive
+   * \param lattice  enumeration data to be serialized
+   * \param version  version id
+   */ 
+   template <class Archive>
+   inline 
+   void serialize(Archive& ar, UnitCell<1>::LatticeSystem& lattice, 
+                  const unsigned int version)
+   {  serializeEnum(ar, lattice, version); }
+
+
+   // 2D Unit Cell
+
+   /**
    * 2D crystal unit cell.
    *
    * \ingroup Pscf_Crystal_Module
@@ -322,6 +338,20 @@ namespace Pscf
    */
    std::ostream& operator << (std::ostream& out,
                               UnitCell<2>::LatticeSystem lattice);
+
+   /**
+   * Serialize a UnitCell<2>::LatticeSystem enumeration value
+   *
+   * \param ar  archive
+   * \param lattice  enumeration data to be serialized
+   * \param version  version id
+   */ 
+   template <class Archive>
+   inline 
+   void serialize(Archive& ar, UnitCell<2>::LatticeSystem& lattice, 
+                  const unsigned int version)
+   {  serializeEnum(ar, lattice, version); }
+
 
    // 3D crystal unit cell
 
@@ -417,6 +447,19 @@ namespace Pscf
    */
    std::ostream& operator << (std::ostream& out,
                               UnitCell<3>::LatticeSystem lattice);
+
+   /**
+   * Serialize a UnitCell<3>::LatticeSystem enumeration value
+   *
+   * \param ar  archive
+   * \param lattice  enumeration data to be serialized
+   * \param version  version id
+   */ 
+   template <class Archive>
+   inline 
+   void serialize(Archive& ar, UnitCell<3>::LatticeSystem& lattice, 
+                  const unsigned int version)
+   {  serializeEnum(ar, lattice, version); }
 
 }
 
