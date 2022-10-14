@@ -29,9 +29,6 @@ namespace Fd1d{
    {
       // Call parent class readParameters
       AmIteratorTmpl<Iterator, DArray<double> >::readParameters(in);
-
-      // Allocate memory defined by AmIteratorTmpl
-      setup();
    }
 
    // Compute and return L2 norm of residual vector

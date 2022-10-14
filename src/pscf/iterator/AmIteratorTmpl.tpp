@@ -27,7 +27,8 @@ namespace Pscf
     : epsilon_(0),
       lambda_(0),
       nHist_(0),
-      maxHist_(0)
+      maxHist_(0),
+      isAllocated_(false)
    {  setClassName("AmIteratorTmpl"); }
 
    /*
@@ -62,8 +63,10 @@ namespace Pscf
    * Setup and allocate memory required by iterator.
    */
    template <typename Iterator, typename T>
-   void AmIteratorTmpl<Iterator,T>::setup()
+   void AmIteratorTmpl<Iterator,T>::allocate()
    {
+      UTIL_CHECK(!isAllocated_);
+
       // Determine length of residual basis vectors
       nElem_ = nElements();
 
@@ -90,11 +93,17 @@ namespace Pscf
    template <typename Iterator, typename T>
    int AmIteratorTmpl<Iterator,T>::solve(bool isContinuation)
    {
-
       // Note: Parameter isContinuation is currently unused in AM algorithm
       
       // Preconditions:
       UTIL_CHECK(hasInitialGuess());
+
+      // Allocate memory required by AM algorithm, if not done previously
+      if (!isAllocated_) allocate();
+
+      // Additional initialization operations on entry to loop (if any)
+      // The default implementation is empty
+      setup();
 
       // Timers for analyzing performance
       Timer timerMDE;
@@ -113,10 +122,6 @@ namespace Pscf
       timerMDE.start();
       evaluate();
       timerMDE.stop();
-
-      // Initialization operations on entry to loop (if any)
-      // The default implementation of this function is empty.
-      setupIteration();
 
       // Iterative loop
       bool done;

@@ -19,7 +19,6 @@ System{
          1   1    0.0
   }
   Domain{
-     unitCell     cubic  1.7593562142
      mesh         32      32    32
      groupName    I_m_-3_m
   }
@@ -30,3 +29,5 @@ System{
      isFlexible   1
   }
 }
+
+     unitCell     cubic  1.7593562142

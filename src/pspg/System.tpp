@@ -235,7 +235,6 @@ namespace Pspg
          msg += className;
          UTIL_THROW(msg.c_str());
       }
-      iterator().setup();
 
       // Optionally instantiate a Sweep object
       sweepPtr_ =

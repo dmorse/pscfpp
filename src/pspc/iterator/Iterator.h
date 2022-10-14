@@ -51,11 +51,6 @@ namespace Pspc
       ~Iterator();
 
       /**
-      * Setup iterator.
-      */
-      virtual void setup() = 0;
-
-      /**
       * Iterate to solution.
       *
       * \param isContinuation true iff  continuation within a sweep

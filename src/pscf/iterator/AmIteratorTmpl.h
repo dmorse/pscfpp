@@ -57,11 +57,6 @@ namespace Pscf {
       void readParameters(std::istream& in);
 
       /**
-      * Setup and allocate required memory.
-      */
-      void setup();
-
-      /**
       * Iterate to a solution
       *
       * \param isContinuation true iff continuation within a sweep
@@ -80,9 +75,9 @@ namespace Pscf {
       * Initialize just before entry to iterative loop.
       *
       * This function is called by the solve method just before entering
-      * the loop over iterations.  The default implementation is empty.
+      * the loop over iterations. The default implementation is empty.
       */ 
-      virtual void setupIteration() 
+      virtual void setup()
       {};
 
    private:
@@ -137,6 +132,14 @@ namespace Pscf {
 
       /// Workspace for calculations
       T temp_;
+
+      /// Has the allocate function been called.
+      bool isAllocated_;
+
+      /**
+      * Allocate memory required by AM algorithm.
+      */
+      void allocate();
 
       /**
       * Compute a vector of residuals, add to history.

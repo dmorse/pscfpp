@@ -216,7 +216,6 @@ namespace Pspc
          msg += className;
          UTIL_THROW(msg.c_str());
       }
-      iterator().setup();
 
       // Optionally instantiate a Sweep object
       sweepPtr_ = 
@@ -346,7 +345,6 @@ namespace Pspc
    void System<D>::readCommands(std::istream &in) 
    {
       UTIL_CHECK(gridFieldsAreAllocated_);
-      UTIL_CHECK(basisFieldsAreAllocated_);
       std::string command, filename, inFileName, outFileName;
 
       bool readNext = true;
@@ -1157,6 +1155,7 @@ namespace Pspc
    template <int D>
    void System<D>::writeStars(const std::string & outFileName) const
    {
+      UTIL_CHECK(domain_.basis().isInitialized());
       std::ofstream outFile;
       fileMaster_.openOutputFile(outFileName, outFile);
       fieldIo().writeFieldHeader(outFile, mixture_.nMonomer(),
@@ -1170,6 +1169,7 @@ namespace Pspc
    template <int D>
    void System<D>::writeWaves(const std::string & outFileName) const
    {
+      UTIL_CHECK(domain_.basis().isInitialized());
       std::ofstream outFile;
       fileMaster_.openOutputFile(outFileName, outFile);
       fieldIo().writeFieldHeader(outFile, mixture_.nMonomer(), 
