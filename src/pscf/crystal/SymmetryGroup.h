@@ -148,9 +148,6 @@ namespace Pscf
       // Identity element
       Symmetry identity_;
 
-   //friends:
-
-
    };
 
 
@@ -196,5 +193,4 @@ namespace Pscf
    #endif 
 
 }
-// #include "SymmetryGroup.tpp"
 #endif

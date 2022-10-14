@@ -20,10 +20,14 @@ namespace Pscf
    /**
    * Base template for UnitCell<D> classes, D=1, 2 or 3.
    *
-   * Explicit specializations are defined for D=1, 2, and 3. In each case,
-   * class UnitCell<D> is derived from UnitCellBase<D>, and defines an 
-   * enumeration UnitCell<D>::LatticeSystem of the possible types of 
-   * Bravais lattice systems in D-dimensional space.
+   * Explicit specializations are defined for D=1, 2, and 3. In each 
+   * case, class UnitCell<D> is derived from UnitCellBase<D> and defines 
+   * an enumeration UnitCell<D>::LatticeSystem of the possible types of 
+   * Bravais lattice systems in D-dimensional space. Each explicit
+   * specialization UnitCell<D> has a member variable of this type that
+   * is returned by a function named lattice(). The value of the lattice
+   * variable is initialized to an enumeration value named Null, which 
+   * denotes unknown or unitialized.
    *
    * Iostream inserter (<<) and extractor (>>) operators are defined for
    * all explicit specializations of UnitCell<D>, allowing a UnitCell
@@ -164,6 +168,8 @@ namespace Pscf
 
       /**
       * Return lattice system enumeration value.
+      *
+      * This value is initialized to Null during construction.
       */
       LatticeSystem lattice() const
       {  return lattice_; }
@@ -255,6 +261,8 @@ namespace Pscf
 
       /**
       * Return lattice system enumeration value.
+      *
+      * This value is initialized to Null during construction.
       */
       LatticeSystem lattice() const
       {  return lattice_; }
@@ -350,6 +358,8 @@ namespace Pscf
 
       /**
       * Return lattice system enumeration value.
+      *
+      * This value is initialized to Null during construction.
       */
       LatticeSystem lattice() const
       {  return lattice_; }

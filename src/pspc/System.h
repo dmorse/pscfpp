@@ -419,7 +419,7 @@ namespace Pspc
       * \param outFileName name of output file (r-grid format)
       */
       void basisToRGrid(const std::string & inFileName,
-                        const std::string & outFileName) const;
+                        const std::string & outFileName);
 
       /**
       * Convert a field from real-space grid to symmetrized basis format.
@@ -428,7 +428,7 @@ namespace Pspc
       * \param outFileName name of output file (basis format)
       */
       void rGridToBasis(const std::string & inFileName,
-                        const std::string & outFileName) const;
+                        const std::string & outFileName);
 
       /**
       * Convert fields from Fourier (k-grid) to real-space (r-grid) format.
@@ -437,7 +437,7 @@ namespace Pspc
       * \param outFileName name of output file (r-grid format)
       */
       void kGridToRGrid(const std::string& inFileName,
-                        const std::string& outFileName) const;
+                        const std::string& outFileName);
 
       /**
       * Convert fields from real-space (r-grid) to Fourier (k-grid) format.
@@ -446,7 +446,7 @@ namespace Pspc
       * \param outFileName name of output file (k-grid format)
       */
       void rGridToKGrid(const std::string & inFileName,
-                        const std::string & outFileName) const;
+                        const std::string & outFileName);
 
       /**
       * Convert fields from Fourier (k-grid) to symmetrized basis format.
@@ -455,7 +455,7 @@ namespace Pspc
       * \param outFileName name of output file (basis format)
       */
       void kGridToBasis(const std::string& inFileName,
-                        const std::string& outFileName) const;
+                        const std::string& outFileName);
 
       /**
       * Convert fields from symmetrized basis to Fourier (k-grid) format.
@@ -464,7 +464,7 @@ namespace Pspc
       * \param outFileName name of output file (k-grid format)
       */
       void basisToKGrid(const std::string & inFileName,
-                        const std::string & outFileName) const;
+                        const std::string & outFileName);
 
       /**
       * Construct trial w-fields from c-fields.
@@ -512,7 +512,7 @@ namespace Pspc
       * \param inFileName name of input file
       * \return true if fields all have symmetry, false otherwise
       */
-      bool checkRGridFieldSymmetry(const std::string & inFileName) const;
+      bool checkRGridFieldSymmetry(const std::string & inFileName);
 
       //@}
       /// \name Member Accessors
@@ -733,9 +733,14 @@ namespace Pspc
       bool hasMixture_;
 
       /**
-      * Has memory been allocated for fields?
+      * Has memory been allocated for fields in grid format?
       */
-      bool isAllocated_;
+      bool gridFieldsAreAllocated_;
+
+      /**
+      * Has memory been allocated for fields in grid format?
+      */
+      bool basisFieldsAreAllocated_;
 
       /**
       * Have C fields been computed by solving MDEs for current w fields?
@@ -744,11 +749,6 @@ namespace Pspc
       * unit cell are reset.
       */
       bool hasCFields_;
-
-      /**
-      * Does this system have an iterator object?
-      */
-      // bool hasIterator_;
 
       // Private member functions
 
@@ -761,6 +761,13 @@ namespace Pspc
       * Allocate memory for fields in basis format (private)
       */
       void allocateFieldsBasis();
+
+      /**
+      * Read field file header and allocate memory for basis fields.
+      *
+      * \param filename name of field file
+      */
+      void allocateFieldsBasis(std::string filename);
 
       /**
       * Initialize Homogeneous::Mixture object.

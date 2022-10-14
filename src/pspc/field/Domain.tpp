@@ -27,6 +27,7 @@ namespace Pspc
       basis_(),
       fft_(),
       fieldIo_(),
+      lattice_(UnitCell<D>::Null),
       groupName_(),
       hasFileMaster_(false),
       isInitialized_(false)
@@ -42,7 +43,9 @@ namespace Pspc
    template <int D>
    void Domain<D>::setFileMaster(FileMaster& fileMaster)
    {
-      fieldIo_.associate(mesh_, fft_, groupName_, basis_, fileMaster);
+      fieldIo_.associate(mesh_, fft_, 
+                         lattice_, groupName_, group_, basis_, 
+                         fileMaster);
       hasFileMaster_ = true;
    }
 
@@ -54,13 +57,22 @@ namespace Pspc
    {
       UTIL_CHECK(hasFileMaster_);
 
-      read(in, "unitCell", unitCell_);
+      readOptional(in, "unitCell", unitCell_);
+      bool hasUnitCell = false; 
+      if (unitCell_.lattice() != UnitCell<D>::Null) { 
+         lattice_ = unitCell_.lattice();
+         hasUnitCell = true; 
+      }
+
       read(in, "mesh", mesh_);
-      read(in, "groupName", groupName_);
-      
       fft_.setup(mesh_.dimensions());
+
+      read(in, "groupName", groupName_);
       readGroup(groupName_, group_);
-      basis().makeBasis(mesh(), unitCell(), group_);
+
+      if (hasUnitCell) { 
+         basis().makeBasis(mesh(), unitCell(), group_);
+      }
       isInitialized_ = true;
    }
    
@@ -71,7 +83,9 @@ namespace Pspc
       // Read common section of standard field header
       int ver1, ver2;
       Pscf::readFieldHeader(in, ver1, ver2, 
-                            unitCell_, groupName_, nMonomer);
+                           unitCell_, groupName_, nMonomer);
+
+      lattice_ = unitCell_.lattice();
  
       // Read grid dimensions
       std::string label;
@@ -80,10 +94,13 @@ namespace Pspc
       IntVec<D> nGrid;
       in >> nGrid;
 
-      // Initialize mesh, fft and basis
+      // Initialize mesh, fft 
       mesh_.setDimensions(nGrid);
       fft_.setup(mesh_.dimensions());
-      basis_.makeBasis(mesh_, unitCell_, groupName_);
+
+      // Initialize group and basis
+      readGroup(groupName_, group_);
+      basis_.makeBasis(mesh_, unitCell_, group_);
       
       isInitialized_ = true;
    }

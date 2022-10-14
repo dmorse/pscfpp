@@ -37,6 +37,7 @@ namespace Pspc
    *    - a Basis
    *    - an FFT 
    *    - a FieldIo
+   *    - a lattice system enum value
    *    - a groupName string
    *
    * \ingroup Pspc_Field_Module
@@ -142,6 +143,11 @@ namespace Pspc
       FieldIo<D> const & fieldIo() const;
 
       /** 
+      * Get lattice system.
+      */  
+      typename UnitCell<D>::LatticeSystem lattice() const;
+
+      /** 
       * Get group name.
       */  
       std::string groupName() const;
@@ -181,6 +187,11 @@ namespace Pspc
       * FieldIo object for field input/output operations
       */
       FieldIo<D> fieldIo_;
+
+      /**
+      * Lattice system (enumeration value).
+      */
+      typename UnitCell<D>::LatticeSystem lattice_;
 
       /**
       * Group name.
@@ -259,6 +270,13 @@ namespace Pspc
    template <int D>
    inline FieldIo<D> const & Domain<D>::fieldIo() const
    {  return fieldIo_; }
+
+   // Get the lattice system enumeration value
+   template <int D>
+   inline 
+   typename UnitCell<D>::LatticeSystem Domain<D>::lattice() 
+   const
+   {  return lattice_; }
 
    // Get the groupName string.
    template <int D>

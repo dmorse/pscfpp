@@ -52,35 +52,21 @@ namespace Pspc
    * Get and store addresses of associated objects.
    */
    template <int D>
-   void FieldIo<D>::associate(Mesh<D> const & mesh,
-                              FFT<D> const & fft,
-                              std::string const & groupName,
-                              Basis<D> & basis,
-                              FileMaster const & fileMaster)
+   void 
+   FieldIo<D>::associate(Mesh<D> const & mesh,
+                         FFT<D> const & fft,
+                         typename UnitCell<D>::LatticeSystem & lattice,
+                         std::string & groupName,
+                         SpaceGroup<D> & group,
+                         Basis<D> & basis,
+                         FileMaster const & fileMaster)
    {
       meshPtr_ = &mesh;
-      groupNamePtr_ = &groupName;
-      basisPtr_ = &basis;
       fftPtr_ = &fft;
-      fileMasterPtr_ = &fileMaster;
-   }
-  
-   /*
-   * Get and store addresses of associated objects.
-   */
-   template <int D>
-   void FieldIo<D>::associate(Mesh<D> const & mesh,
-                              FFT<D> const & fft,
-                              std::string const & groupName,
-                              SpaceGroup<D> const & group,
-                              Basis<D> & basis,
-                              FileMaster const & fileMaster)
-   {
-      meshPtr_ = &mesh;
+      latticePtr_ = &lattice;
       groupNamePtr_ = &groupName;
       groupPtr_ = &group;
       basisPtr_ = &basis;
-      fftPtr_ = &fft;
       fileMasterPtr_ = &fileMaster;
    }
   
@@ -91,10 +77,7 @@ namespace Pspc
    const
    {
 
-      // Read in the field header and get the "number of monomers", 
-      // equivalent to the number of fields in the file.
       int nMonomer;
-      int fieldCapacity;
       FieldIo<D>::readFieldHeader(in, nMonomer, unitCell);
 
       // Read the number of stars into nStarIn
@@ -105,11 +88,10 @@ namespace Pspc
       in >> nStarIn;
       UTIL_CHECK(nStarIn > 0);
 
-      // If "fields" passed by reference is already allocated, check that the
-      // input stream field dimensions match the fields parameter. 
+      // If "fields" parameter is allocated, check if dimensions 
+      // match those of the system's mesh.  Otherwise, allocate.
       
-      // Otherwise, allocate fields parameter to match the input stream.
-      
+      int fieldCapacity;
       if (fields.isAllocated()) {
          // If outer DArray is allocated, require that it matches the 
          // number of inputted fields and that internal DArrays are also
@@ -415,16 +397,12 @@ namespace Pspc
                                     UnitCell<D>& unitCell)
    const
    {
-      // Read in the field header and get the "number of monomers", 
-      // equivalent to the number of fields in the file.
       int nMonomer;
       FieldIo<D>::readFieldHeader(in, nMonomer, unitCell);
 
 
-      // If "fields" passed by reference is already allocated, check it is allocated
-      // to match the system's mesh. 
-      
-      // Otherwise, allocate fields parameter to match the system's mesh.
+      // If "fields" parameter is allocated, check if dimensions match
+      // those of the system's mesh.  Otherwise, allocate.
       
       if (fields.isAllocated()) {
          int nMonomerFields = fields.capacity();
@@ -650,18 +628,14 @@ namespace Pspc
                                     UnitCell<D>& unitCell)
    const
    {
-      // Read in the field header and get the "number of monomers", 
-      // equivalent to the number of fields in the file.
       int nMonomer;
       FieldIo<D>::readFieldHeader(in, nMonomer, unitCell);
 
       // Only reading in a file with a single field.
       UTIL_CHECK(nMonomer == 1);
 
-      // If "fields" passed by reference is already allocated, check it is allocated
-      // to match the system's mesh. 
-      
-      // Otherwise, allocate fields parameter to match the system's mesh.
+      // If "field" parameter is allocated, check if dimensions match
+      // those of the system's mesh.  Otherwise, allocate.
 
       if (field.isAllocated()) {
          UTIL_CHECK(field.meshDimensions() == mesh().dimensions());
@@ -853,14 +827,11 @@ namespace Pspc
                                     UnitCell<D>& unitCell)
    const
    {
-      // Read in the field header and get the "number of monomers", 
-      // equivalent to the number of fields in the file.
       int nMonomer;
       FieldIo<D>::readFieldHeader(in, nMonomer, unitCell);
 
-      // If "fields" passed by reference is already allocated, check 
-      // that dimensions match those of the system's mesh.
-      // If fields is not allocated, allocate.
+      // If "fields" parameter is allocated, check if dimensions match
+      // those of the system's mesh.  Otherwise, allocate.
       
       if (fields.isAllocated()) {
 
@@ -975,29 +946,61 @@ namespace Pspc
                                     UnitCell<D>& unitCell) 
    const
    {
+
+      // Read field header to set unitCell, groupNameIn, nMonomer
       int ver1, ver2;
       std::string groupNameIn;
       Pscf::readFieldHeader(in, ver1, ver2, unitCell, 
                             groupNameIn, nMonomer);
-      // Note: Function definition in pscf/crystal/UnitCell.tpp
+      // Note: Function defined in pscf/crystal/UnitCell.tpp
+      UTIL_CHECK(ver1 == 1);
+      UTIL_CHECK(ver2 == 0);
       UTIL_CHECK(unitCell.isInitialized());
-      if (groupNameIn != groupName()) {
-         Log::file() << std::endl 
-             << "Warning - "
-             << "Mismatched group names in FieldIo::readFieldHeader: \n" 
-             << "  FieldIo::groupName :" << groupName() << "\n"
-             << "  Field file header  :" << groupNameIn << "\n";
+      UTIL_CHECK(unitCell.lattice() != UnitCell<D>::Null);
+
+      // Validate or initialize lattice type
+      UTIL_CHECK(latticePtr_);
+      if (lattice() == UnitCell<D>::Null) {
+         lattice() = unitCell.lattice();
+      } else {
+         if (lattice() != unitCell.lattice()) {
+            Log::file() << std::endl 
+               << "Error - "
+               << "Mismatched lattice types, FieldIo::readFieldHeader:\n" 
+               << "  FieldIo::lattice  :" << lattice() << "\n"
+               << "  Unit cell lattice :" << unitCell.lattice() 
+               << "\n";
+            UTIL_THROW("Mismatched lattice types");
+         }
       }
 
-      // Initialize Basis if not already initialized
-      if (!basis().isInitialized()) {
-         if (groupPtr_) {
-            basisPtr_->makeBasis(mesh(), unitCell, group());
-         } else {
-            SpaceGroup<D> group;
-            readGroup(groupName(), group);
-            basisPtr_->makeBasis(mesh(), unitCell, group);
+      // Validate or initialize group name
+      UTIL_CHECK(groupNamePtr_);
+      if (groupName() == "") {
+         groupName() = groupNameIn;
+      } else {
+         if (groupNameIn != groupName()) {
+            Log::file() << std::endl 
+               << "Error - "
+               << "Mismatched group names in FieldIo::readFieldHeader:\n" 
+               << "  FieldIo::groupName :" << groupName() << "\n"
+               << "  Field file header  :" << groupNameIn << "\n";
+            UTIL_THROW("Mismatched group names");
          }
+      }
+
+      // Check group, read from file if necessary
+      UTIL_CHECK(groupPtr_);
+      if (group().size() == 1) {
+         if (groupName() != "I") {
+            readGroup(groupName(), group());
+         }
+      }
+
+      // Check basis, construct if not initialized
+      UTIL_CHECK(basisPtr_);
+      if (!basis().isInitialized()) {
+         basisPtr_->makeBasis(mesh(), unitCell, group());
       }
       UTIL_CHECK(basis().isInitialized());
       
@@ -1011,7 +1014,7 @@ namespace Pspc
       int ver2 = 0;
       Pscf::writeFieldHeader(out, ver1, ver2, unitCell, 
                              groupName(), nMonomer);
-      // Note: This is defined in pscf/crystal/UnitCell.tpp
+      // Note: This function is defined in pscf/crystal/UnitCell.tpp
    }
 
    template <int D>

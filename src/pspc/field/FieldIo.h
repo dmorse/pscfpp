@@ -60,29 +60,15 @@ namespace Pspc
       * \param mesh  associated spatial discretization Mesh<D>
       * \param fft   associated FFT object for fast transforms
       * \param groupName space group name string
-      * \param basis  associated Basis object
-      * \param fileMaster  associated FileMaster (for file paths)
-      */
-      void associate(Mesh<D> const & mesh,
-                     FFT<D> const & fft,
-                     std::string const & groupName,
-                     Basis<D> & basis,
-                     FileMaster const & fileMaster);
-
-      /**
-      * Get and store addresses of associated objects.
-      *
-      * \param mesh  associated spatial discretization Mesh<D>
-      * \param fft   associated FFT object for fast transforms
-      * \param groupName space group name string
       * \param group  associated SpaceGroup object
       * \param basis  associated Basis object
       * \param fileMaster  associated FileMaster (for file paths)
       */
       void associate(Mesh<D> const & mesh,
                      FFT<D> const & fft,
-                     std::string const & groupName,
-                     SpaceGroup<D> const & group,
+                     typename UnitCell<D>::LatticeSystem & lattice,
+                     std::string & groupName,
+                     SpaceGroup<D> & group,
                      Basis<D> & basis,
                      FileMaster const & fileMaster);
 
@@ -511,11 +497,14 @@ namespace Pspc
       /// Pointer to FFT object.
       FFT<D> const * fftPtr_;
 
+      /// Pointer to lattice system.
+      typename UnitCell<D>::LatticeSystem * latticePtr_;
+
       /// Pointer to group name string
-      std::string const * groupNamePtr_;
+      std::string * groupNamePtr_;
 
       /// Pointer to a SpaceGroup object
-      SpaceGroup<D> const * groupPtr_;
+      SpaceGroup<D> * groupPtr_;
 
       /// Pointer to a Basis object
       Basis<D> * basisPtr_;
@@ -540,21 +529,28 @@ namespace Pspc
       }
 
       /// Get group name string by const reference.
-      std::string const & groupName() const
+      typename UnitCell<D>::LatticeSystem & lattice() const
+      {  
+         UTIL_ASSERT(latticePtr_);  
+         return *latticePtr_; 
+      }
+
+      /// Get group name string by const reference.
+      std::string & groupName() const
       {  
          UTIL_ASSERT(groupNamePtr_);  
          return *groupNamePtr_; 
       }
 
       /// Get SpaceGroup by const reference.
-      SpaceGroup<D> const & group() const
+      SpaceGroup<D> & group() const
       {
          UTIL_ASSERT(groupPtr_);  
          return *groupPtr_; 
       }
 
       /// Get Basis by const reference.
-      Basis<D> const & basis() const
+      Basis<D> & basis() const
       {
          UTIL_ASSERT(basisPtr_);  
          return *basisPtr_; 
