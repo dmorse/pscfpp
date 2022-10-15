@@ -27,8 +27,8 @@ System{
     )
   }
   Domain{
-    unitCell          cubic  2.234870152E+00
     mesh              36  36  36
+    lattice           cubic 
     groupName         I_41_3_2
   }
   AmIterator{
@@ -38,3 +38,5 @@ System{
     isFlexible   1
   }
 }
+
+    unitCell          cubic  2.234870152E+00

@@ -21,9 +21,9 @@ System{
     ) 
   }
   Domain{
-    unitCell Lamellar   1.3835952906
-    mesh                 40
-    groupName P_-1
+    mesh        40
+    lattice     lamellar  
+    groupName   P_-1
   }
   AmIterator{
     maxItr 150
@@ -41,3 +41,5 @@ System{
     ]
   }
 }
+
+    unitCell Lamellar   1.3835952906

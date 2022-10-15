@@ -2,8 +2,8 @@ System{
   Mixture{
     nMonomer  2
     monomers[
-              2.0  
-              1.0 
+              2.0
+              1.0
     ]
     nPolymer  1
     Polymer{
@@ -23,9 +23,9 @@ System{
     )
   }
   Domain{
-     unitCell  Cubic   6.9947873
      mesh              32  32  32
-     groupName         F_d_-3_m:1 
+     lattice           cubic
+     groupName         F_d_-3_m:1
   }
   AmIterator{
     maxItr   800
@@ -34,3 +34,5 @@ System{
     isFlexible   1
   }
 }
+
+     unitCell  Cubic   6.9947873
