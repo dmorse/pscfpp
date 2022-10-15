@@ -641,6 +641,20 @@ namespace Pspc
    * Set parameters of the associated unit cell.
    */
    template <int D>
+   void 
+   System<D>::setUnitCell(typename UnitCell<D>::LatticeSystem lattice,
+                          FSArray<double, 6> const & parameters)
+   {
+      domain_.setUnitCell(lattice, parameters);
+      mixture_.setupUnitCell(domain_.unitCell());
+   }
+
+   // Primary SCFT Computations
+
+   /*
+   * Set parameters of the associated unit cell.
+   */
+   template <int D>
    void System<D>::setUnitCell(FSArray<double, 6> const & parameters)
    {
       domain_.setUnitCell(parameters);

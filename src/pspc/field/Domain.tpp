@@ -114,12 +114,30 @@ namespace Pspc
    template <int D>
    void Domain<D>::setUnitCell(UnitCell<D> const & unitCell)
    {
-      if (lattice_ != UnitCell<D>::Null) {
+      if (lattice_ == UnitCell<D>::Null) {
          lattice_ = unitCell.lattice();
       } else {
          UTIL_CHECK(lattice_ == unitCell.lattice());
       }
       unitCell_ = unitCell;
+      if (!basis_.isInitialized()) {
+         makeBasis();
+      }
+   }
+
+   /*
+   * Set parameters of the associated unit cell.
+   */
+   template <int D>
+   void Domain<D>::setUnitCell(typename UnitCell<D>::LatticeSystem lattice,
+                               FSArray<double, 6> const & parameters)
+   {
+      if (lattice_ == UnitCell<D>::Null) {
+         lattice_ = lattice;
+      } else {
+         UTIL_CHECK(lattice_ == lattice);
+      }
+      unitCell_.set(lattice, parameters);
       if (!basis_.isInitialized()) {
          makeBasis();
       }

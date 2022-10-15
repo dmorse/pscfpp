@@ -63,10 +63,10 @@ namespace Pscf
    }
 
    /*
-   * Setup and allocate memory required by iterator.
+   * Allocate memory required by the Anderson-Mixing algorithm.
    */
    template <typename Iterator, typename T>
-   void AmIteratorTmpl<Iterator,T>::allocate()
+   void AmIteratorTmpl<Iterator,T>::allocateAM()
    {
       UTIL_CHECK(!isAllocated_);
 
@@ -100,15 +100,14 @@ namespace Pscf
    {
       // Note: Parameter isContinuation is currently unused in AM algorithm
 
-      // Preconditions:
-      UTIL_CHECK(hasInitialGuess());
-
-      // Additional initialization operations on entry to loop (if any)
-      // The default implementation is empty
+      // Initialization and allocate operations on entry to loop.
       setup();
 
-      // Allocate memory required by AM algorithm, if not done previously
-      if (!isAllocated_) allocate();
+      // Preconditions for generic algorithm.
+      UTIL_CHECK(hasInitialGuess());
+
+      // Allocate memory required by AM algorithm
+      if (!isAllocated_) allocateAM();
 
       // Timers for analyzing performance
       Timer timerMDE;

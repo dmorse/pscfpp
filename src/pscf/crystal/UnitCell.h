@@ -167,6 +167,15 @@ namespace Pscf
       UnitCell<1>& operator = (const UnitCell<1>& other);
 
       /**
+      * Set the unit cell state.
+      *
+      * \param lattice  lattice system enumeration value
+      * \param parameters  array of unit cell parameters
+      */
+      void set(UnitCell<1>::LatticeSystem lattice, 
+               FSArray<double, 6> const & parameters);
+
+      /**
       * Return lattice system enumeration value.
       *
       * This value is initialized to Null during construction.
@@ -274,6 +283,15 @@ namespace Pscf
       * \param other UnitCell<2> object to be cloned.
       */
       UnitCell<2>& operator = (const UnitCell<2>& other);
+
+      /**
+      * Set the unit cell state.
+      *
+      * \param lattice  lattice system enumeration value
+      * \param parameters  array of unit cell parameters
+      */
+      void set(UnitCell<2>::LatticeSystem lattice, 
+               FSArray<double, 6> const & parameters);
 
       /**
       * Return lattice system enumeration value.
@@ -385,6 +403,15 @@ namespace Pscf
       * \param other UnitCell<3> object to be cloned.
       */
       UnitCell<3>& operator = (const UnitCell<3>& other);
+
+      /**
+      * Set the unit cell state.
+      *
+      * \param lattice  lattice system enumeration value
+      * \param parameters  array of unit cell parameters
+      */
+      void set(UnitCell<3>::LatticeSystem lattice, 
+               FSArray<double, 6> const & parameters);
 
       /**
       * Return lattice system enumeration value.

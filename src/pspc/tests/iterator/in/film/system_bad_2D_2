@@ -23,8 +23,8 @@ System{
     )
   }
   Domain{
-    unitCell       rectangular  2.0  2.0
     mesh           32 32
+    lattice        rectangular
     groupName      p_g
   }
   AmIterator{
@@ -34,3 +34,5 @@ System{
     isFlexible   0   
   }
 }
+
+    unitCell       rectangular  2.0  2.1

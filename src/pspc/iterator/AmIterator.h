@@ -51,12 +51,11 @@ namespace Pspc
       void readParameters(std::istream& in);
 
       /**
-      * Initialize at the beginning of iteration.
+      * Initialize and allocate memory (called on entry to solve).
       */
       void setup();
 
       // Inherited public member functions
-      using AmIteratorTmpl<Iterator<D>, DArray<double> >::setup;
       using AmIteratorTmpl<Iterator<D>, DArray<double> >::solve;
       using AmIteratorTmpl<Iterator<D>,DArray<double> >::setClassName;
       using Iterator<D>::maskBasis;

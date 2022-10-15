@@ -41,7 +41,9 @@ namespace Pscf
       ~UnitCellBase();
 
       /**
-      * Set all the parameters of unit cell (new version).
+      * Set all the parameters of unit cell.
+      *
+      * The lattice system must already be set to a non-null value.
       *
       * \param parameters array of unit cell parameters
       */

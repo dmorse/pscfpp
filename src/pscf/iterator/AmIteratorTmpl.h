@@ -64,6 +64,15 @@ namespace Pscf {
       */
       int solve(bool isContinuation = false);
 
+      /**
+      * Initialize just before entry to iterative loop.
+      *
+      * This function is called by the solve method just before entering
+      * the loop over iterations. It must call the protected allocateAM()
+      * to allocate memory required by the AM algorithm.
+      */ 
+      virtual void setup() = 0;
+
    protected:
 
       // Members of parent classes with non-dependent names
@@ -72,13 +81,9 @@ namespace Pscf {
       using ParamComposite::readOptional;
      
       /**
-      * Initialize just before entry to iterative loop.
-      *
-      * This function is called by the solve method just before entering
-      * the loop over iterations. The default implementation is empty.
-      */ 
-      virtual void setup()
-      {};
+      * Allocate memory required by AM algorithm.
+      */
+      void allocateAM();
 
    private:
 
@@ -135,11 +140,6 @@ namespace Pscf {
 
       /// Workspace for calculations
       T temp_;
-
-      /**
-      * Allocate memory required by AM algorithm.
-      */
-      void allocate();
 
       /**
       * Compute a vector of residuals, add to history.

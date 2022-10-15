@@ -59,6 +59,14 @@ namespace Pspc
       virtual int solve(bool isContinuation) = 0;
 
       /**
+      * Initialize state and allocate any required memory.
+      *
+      * This function may be called within the readParameters() function
+      * or on entry to the solve function. 
+      */
+      virtual void setup() = 0;
+
+      /**
       * Return const reference to parent system.
       */
       System<D> const & system() const

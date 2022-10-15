@@ -176,6 +176,15 @@ namespace Pspc
       void setUnitCell(UnitCell<D> const & unitCell);
 
       /**
+      * Set state of the associated unit cell.
+      *
+      * \param lattice  lattice system
+      * \param parameters  array of new unit cell parameters.
+      */
+      void setUnitCell(typename UnitCell<D>::LatticeSystem lattice,
+                       FSArray<double, 6> const & parameters);
+
+      /**
       * Set parameters of the associated unit cell.
       *
       * \param parameters  array of new unit cell parameters.

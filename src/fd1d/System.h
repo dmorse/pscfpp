@@ -276,9 +276,19 @@ namespace Fd1d
       Mixture& mixture();
 
       /**
-      * Get interaction (i.e., excess free energy model) by reference.
+      * Get Mixture by reference.
+      */
+      Mixture const & mixture() const;
+
+      /**
+      * Get interaction (i.e., excess free energy) by reference.
       */
       Interaction & interaction();
+
+      /**
+      * Get interaction (i.e., excess free energy) by const reference.
+      */
+      Interaction const & interaction() const;
 
       /**
       * Get spatial domain (including grid info) by reference.
@@ -433,29 +443,16 @@ namespace Fd1d
    // Inline member functions
 
    /*
-   * Get the associated Mixture object.
+   * Get the associated Mixture object by reference.
    */
    inline Mixture& System::mixture()
    { return mixture_; }
 
    /*
-   * Get the spatial Domain.
+   * Get the associated Mixture object by const reference.
    */
-   inline Domain& System::domain()
-   { return domain_; }
-
-   /*
-   * Get the FileMaster.
-   */
-   inline FileMaster& System::fileMaster()
-   {  return fileMaster_; }
-
-   /*
-   * Get the Homogeneous::Mixture object.
-   */
-   inline 
-   Homogeneous::Mixture& System::homogeneous()
-   {  return homogeneous_; }
+   inline Mixture const & System::mixture() const
+   { return mixture_; }
 
    /*
    * Get the Interaction (excess free energy model).
@@ -467,13 +464,41 @@ namespace Fd1d
    }
 
    /*
-   * Get the Iterator (excess free energy model).
+   * Get the Interaction (excess free energy) by const reference.
+   */
+   inline Interaction const & System::interaction() const
+   {
+      UTIL_ASSERT(interactionPtr_);
+      return *interactionPtr_;
+   }
+
+   /*
+   * Get the spatial Domain.
+   */
+   inline Domain& System::domain()
+   { return domain_; }
+
+   /*
+   * Get the Homogeneous::Mixture object.
+   */
+   inline 
+   Homogeneous::Mixture& System::homogeneous()
+   {  return homogeneous_; }
+
+   /*
+   * Get the Iterator.
    */
    inline Iterator& System::iterator()
    {
       UTIL_ASSERT(iteratorPtr_);
       return *iteratorPtr_;
    }
+
+   /*
+   * Get the FileMaster.
+   */
+   inline FileMaster& System::fileMaster()
+   {  return fileMaster_; }
 
    /*
    * Get an array of all monomer excess chemical potential fields.

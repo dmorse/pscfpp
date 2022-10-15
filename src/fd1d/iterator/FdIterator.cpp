@@ -17,6 +17,7 @@ namespace Fd1d
 {
    using namespace Util;
 
+   // Default constructor
    FdIterator::FdIterator()
     : Iterator(),
       epsilon_(0.0),
@@ -27,6 +28,7 @@ namespace Fd1d
       isCanonical_(true)
    {  setClassName("FdIterator"); }
 
+   // Constructor
    FdIterator::FdIterator(System& system)
     : Iterator(system),
       epsilon_(0.0),
@@ -37,9 +39,11 @@ namespace Fd1d
       isCanonical_(true)
    {  setClassName("FdIterator"); }
 
+   // Destructor
    FdIterator::~FdIterator()
    {}
 
+   // Read parameter file block and allocate memory
    void FdIterator::readParameters(std::istream& in)
    {
       UTIL_CHECK(domain().nx() > 0);
@@ -48,34 +52,32 @@ namespace Fd1d
       read(in, "lambdaMinus", lambdaMinus_);
       read(in, "maxIterations", maxIterations_);
 
-      allocate();
+      setup();
    }
 
-   void FdIterator::allocate()
+   // Allocate required memory (called by readParameters)
+   void FdIterator::setup()
    {
+      if (isAllocated_) return;
       int nm = mixture().nMonomer();  // number of monomer types
       UTIL_CHECK(nm == 2);
       int nx = domain().nx();         // number of grid points
       UTIL_CHECK(nx > 0);
-      if (isAllocated_) {
-         UTIL_CHECK(cArray_.capacity() == nm);
-      } else {
-         cArray_.allocate(nm);
-         wArray_.allocate(nm);
-         dW_.allocate(nm);
-         dWNew_.allocate(nm);
-         wFieldsNew_.allocate(nm);
-         cFieldsNew_.allocate(nm);
-         for (int i = 0; i < nm; ++i) {
-            wFieldsNew_[i].allocate(nx);
-            cFieldsNew_[i].allocate(nx);
-            dW_[i].allocate(nx);
-            dWNew_[i].allocate(nx);
-         }
-         isAllocated_ = true;
+      cArray_.allocate(nm);
+      wArray_.allocate(nm);
+      dW_.allocate(nm);
+      dWNew_.allocate(nm);
+      wFieldsNew_.allocate(nm);
+      cFieldsNew_.allocate(nm);
+      for (int i = 0; i < nm; ++i) {
+         wFieldsNew_[i].allocate(nx);
+         cFieldsNew_[i].allocate(nx);
+         dW_[i].allocate(nx);
+         dWNew_[i].allocate(nx);
       }
+      isAllocated_ = true;
    }
-   
+ 
    void FdIterator::computeDW(Array<WField> const & wOld, 
                               Array<CField> const & cFields,
                               Array<WField> & dW,
@@ -150,9 +152,6 @@ namespace Fd1d
       // Start overall timer 
       timerTotal.start();
       
-      // Allocate memory if needed or, if allocated, check array sizes.
-      allocate();
-    
       // Determine if isCanonical (iff all species ensembles are closed)
       isCanonical_ = true;
       Species::Ensemble ensemble;
