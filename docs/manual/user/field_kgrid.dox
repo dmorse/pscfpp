@@ -1,18 +1,17 @@
-/*! \page user_field_kgrid_page 3.6.3 K-Grid File Format
+/*! \page user_field_kgrid_page 3.6.3 K-Grid File Format (Periodic)
 
  \ref user_field_rgrid_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref user_field_fd1d_page   (Next) 
 <BR>
 
-The PSCF CPU and GPU programs for periodic systems can also read 
+The pscf_pc and pscf_gp programs for periodic systems can also read 
 and write files in format that gives the unsymmetrized discrete
 Fourier transform of the field associated with each monomer type.
 The required file format is very similar to that used for the 
-coordinate space grid. The file consists of a header and a
-data section. The format of the header is identical to that
-used for the coordinate grid format, and includes a list of
-the number of grid points used in each direction, denoted by
-ngrid.
+coordinate space grid. The file consists of a header and a data 
+section. The format of the header is identical to that used for 
+the coordinate grid format, and includes a list of the number of 
+grid points used in each direction, denoted by ngrid.
 
 The data section contains the Fourier coefficients obtained by a 
 discrete Fourier transform of each field at wavevectors given by

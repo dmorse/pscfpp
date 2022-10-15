@@ -1,13 +1,15 @@
-/*! \page user_field_rgrid_page 3.6.2 R-Grid File Format
+/*! \page user_field_rgrid_page 3.6.2 R-Grid File Format (Periodic)
 
  \ref user_field_basis_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref user_field_kgrid_page   (Next) 
 <BR>
 
-PSCF can also output the values of set of fields in a format
-that gives values on the nodes of the regular grid that is 
-used by the pseudo-spectral algorithm for solving the modified 
-diffusion equation.
+The R-Grid file format is used by the pscf_pc and pscf_pg programs 
+to describe fields in a spatially periodic microstructure. This 
+format outputs the values of set of fields on the nodes of a regular 
+mesh that covers one unit cell of a periodic structure. This mesh 
+is the same one as that used by the pseudo-spectral algorithm for 
+solving the modified diffusion equation. 
 
 <h3> Example: 2D Hex Phase </h3>
 

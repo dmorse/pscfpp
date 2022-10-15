@@ -7,12 +7,16 @@
 Each PSCF program can read and write files that contain chemical potential
 and monomer volume fraction fields. Several different file formats are used
 to represent these fields and other quantities that can be expressed
-mathematically as functions of one or more spatial coordinates.  The 
-pscf_pcNd and pscf_pgND CPU and GPU programs, which are both designed to 
-treat periodic microstructures, both use file formats that were originally 
-created for the older Fortran PSCF program. The pscf_fd program for 
-one-dimensional programs uses a simpler file format in which values of
-fields specified at nodes of a regular one-dimensional grid. 
+mathematically as functions of one or more spatial coordinates.  
+
+The pscf_pcN and pscf_pgN, which are both designed to treat periodic 
+microstructures, both use file formats similar to those that were originally 
+created for the older Fortran PSCF program. These formats are described 
+in the first three subsection listed below.
+
+The pscf_fd program for one-dimensional problems uses a simpler 
+\ref user_field_fd1d_page "file format" in which values of fields 
+specified at nodes of a regular one-dimensional grid. 
 
 
 <h3> Contents: </h3>
@@ -26,7 +30,7 @@ Different field file formats are described in the pages linked below.
 </ul>
 
  <BR>
- \ref user_example_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_page          (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref user_example_page    (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref user_page            (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref user_unitcell_page   (Next) 
 */

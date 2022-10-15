@@ -1,8 +1,12 @@
-/*! \page user_field_basis_page 3.6.1 Basis File Format
+/*! \page user_field_basis_page 3.6.1 Basis File Format (Periodic)
 
  \ref user_field_page       (Prev / Up) &nbsp; &nbsp; &nbsp; &nbsp;
  \ref user_field_rgrid_page (Next)
 <BR>
+
+The basis file format is one of three formats used by the pscf_pc and
+pscf_pg programs to describe spatially periodic fields in systems with
+a specified crystal lattice type and space group symmetry. 
 
 The symmetry-adapted basis file format for a systen with N_monomer 
 different types of monomer contains a description of a N_monomer fields 
