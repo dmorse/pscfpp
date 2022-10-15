@@ -117,7 +117,7 @@ namespace Pspc
       if (lattice_ != UnitCell<D>::Null) {
          lattice_ = unitCell.lattice();
       } else {
-         UTIL_CHECK(lattice_ = unitCell.lattice());
+         UTIL_CHECK(lattice_ == unitCell.lattice());
       }
       unitCell_ = unitCell;
       if (!basis_.isInitialized()) {

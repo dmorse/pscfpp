@@ -187,7 +187,8 @@ namespace Pspc
       int np = mixture_.nPolymer(); 
       int ns = mixture_.nSolvent(); 
 
-      // Initialize homogeneous object NOTE: THIS OBJECT IS NOT USED AT ALL.
+      // Initialize homogeneous object 
+      // NOTE: THIS OBJECT IS NOT USED AT ALL.
       homogeneous_.setNMolecule(np+ns);
       homogeneous_.setNMonomer(nm);
       initHomogeneous();
@@ -201,7 +202,6 @@ namespace Pspc
       mixture_.setupUnitCell(unitCell());
 
       allocateFieldsGrid();
-
       if (domain_.basis().isInitialized()) {
          allocateFieldsBasis();
       }
@@ -368,7 +368,7 @@ namespace Pspc
          if (command == "SET_UNIT_CELL") {
             UnitCell<D> unitCell;
             in >> unitCell;
-            domain_.setUnitCell(unitCell);
+            setUnitCell(unitCell);
          } else
          if (command == "COMPUTE") {
             // Solve the modified diffusion equation, without iteration

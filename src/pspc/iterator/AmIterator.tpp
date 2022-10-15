@@ -13,7 +13,7 @@
 #include <pscf/inter/Interaction.h>
 #include <util/global.h>
 
-namespace Pscf {
+namespace Pscf{
 namespace Pspc{
 
    using namespace Util;
@@ -44,9 +44,15 @@ namespace Pspc{
       readOptional(in, "isFlexible", isFlexible_);
       readOptional(in, "scaleStress", scaleStress_);
 
+   }
+
+   // Initialize parameters at beginning of 
+   template <int D>
+   void AmIterator<D>::setup()
+   {
       // If lattice parameters are flexible, update flexibleParams_
       if (isFlexible_) {
-         // all parameters are flexible
+         flexibleParams_.clear();
          int np = system().unitCell().nParameter();
          for (int i = 0; i < np; i++) {
             flexibleParams_.append(i);
@@ -219,6 +225,13 @@ namespace Pspc{
       int nEle = nMonomer*nBasis;
 
       nEle += flexibleParams().size();
+
+      #if 0
+      Log::file() << "nMonomer    = " << nMonomer << "\n";
+      Log::file() << "nBasis      = " << nMonomer << "\n";
+      Log::file() << "flex params = " << flexibleParams().size() << "\n";
+      Log::file() << "nEle        = " << nEle << "\n";
+      #endif
 
       return nEle;
    }
@@ -406,8 +419,10 @@ namespace Pspc{
       if (isFlexible_) {
          const int nParam = system().unitCell().nParameter();
          for (int i = 0; i < nParam; i++) {
-            Log::file() << "Parameter " << i << " = "
-                        << Dbl(system().unitCell().parameters()[i])
+            Log::file() << "Cell Param  " << i << " = "
+                        << Dbl(system().unitCell().parameters()[i], 15)
+                        << "  " 
+                        << Dbl(system().mixture().stress(i), 15)
                         << "\n";
          }
       }

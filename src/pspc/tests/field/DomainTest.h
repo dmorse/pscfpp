@@ -50,7 +50,7 @@ public:
       in.close();
    }
 
-   void testReadParam1() 
+   void testReadParam() 
    {
       printMethod(TEST_FUNC);
 
@@ -58,7 +58,7 @@ public:
       domain.setFileMaster(fileMaster_);
 
       std::ifstream in;
-      openInputFile("in/Domain", in);
+      openInputFile("in/Domain_old.prm", in);
       domain.readParam(in);
       in.close();
 
@@ -69,15 +69,16 @@ public:
       TEST_ASSERT(domain.basis().nBasis() == 489);
    }
 
-   void testReadParam2() 
+   void testReadParamHeader() 
    {
       printMethod(TEST_FUNC);
 
       Domain<3> domain;
       domain.setFileMaster(fileMaster_);
 
+      // Read parameter file
       std::ifstream in;
-      openInputFile("in/Domain_2", in);
+      openInputFile("in/Domain.prm", in);
       domain.readParam(in);
       in.close();
 
@@ -89,7 +90,7 @@ public:
       TEST_ASSERT(domain.group().size() == 96);
       TEST_ASSERT(domain.basis().nBasis() == 0);
 
-
+      // Read header and construct basis
       openInputFile("in/w_bcc.rf", in);
       domain.fieldIo().readFieldHeader(in, nMonomer_, domain.unitCell());
       in.close();
@@ -130,8 +131,8 @@ public:
 };
 
 TEST_BEGIN(DomainTest)
-TEST_ADD(DomainTest, testReadParam1)
-TEST_ADD(DomainTest, testReadParam2)
+TEST_ADD(DomainTest, testReadParam)
+TEST_ADD(DomainTest, testReadParamHeader)
 TEST_ADD(DomainTest, testReadHeader)
 TEST_END(DomainTest)
 

@@ -103,6 +103,9 @@ namespace Pscf {
       /// Number of elements in field or residual vectors.
       int nElem_; 
 
+      /// Has the allocate function been called.
+      bool isAllocated_;
+
       /// History of previous field vectors.
       RingBuffer< T > fieldHists_;
 
@@ -132,9 +135,6 @@ namespace Pscf {
 
       /// Workspace for calculations
       T temp_;
-
-      /// Has the allocate function been called.
-      bool isAllocated_;
 
       /**
       * Allocate memory required by AM algorithm.

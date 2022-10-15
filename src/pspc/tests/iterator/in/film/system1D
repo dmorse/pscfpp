@@ -34,3 +34,5 @@ System{
     isFlexible   0   
   }
 }
+
+    lattice        lamellar 
