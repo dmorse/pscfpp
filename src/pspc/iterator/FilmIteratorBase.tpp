@@ -44,6 +44,8 @@ namespace Pspc
       chiTopCurrent_()
    {  
       setClassName(iterator_.className().append("FilmBase").c_str());
+      system.mask().setFieldIo(system.fieldIo());
+      system.h().setFieldIo(system.fieldIo());
    }
 
    /*
@@ -67,14 +69,6 @@ namespace Pspc
       
       // Read the Iterator parameters
       iterator_.readParameters(in);
-
-      // If lattice parameters are flexible, determine which parameters
-      // are allowed to vary, store them in this object, and pass them
-      // into iterator_. The flexibleParams_ member of the iterator_
-      // should always be matched to that of this class.
-      if (iterator_.isFlexible()) {
-         setFlexibleParams();
-      }
 
       // Read required data defining the walls
       read(in, "normalVecId", normalVecId_);
@@ -103,6 +97,14 @@ namespace Pspc
       }
       readOptionalDArray(in, "chiBottom", chiBottom_, nm);
       readOptionalDArray(in, "chiTop", chiTop_, nm);
+
+      // If lattice parameters are flexible, determine which parameters
+      // are allowed to vary, store them in this object, and pass them
+      // into iterator_. The flexibleParams_ member of the iterator_
+      // should always be matched to that of this class.
+      if (iterator_.isFlexible()) {
+         setFlexibleParams();
+      }
    }
 
    /*

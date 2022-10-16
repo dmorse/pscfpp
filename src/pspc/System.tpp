@@ -313,11 +313,11 @@ namespace Pspc
          } else
          if (command == "READ_W_BASIS") {
             readEcho(in, filename);
-            w_.readBasis(filename, domain_.unitCell());
+            readWBasis(filename);
          } else
          if (command == "READ_W_RGRID") {
             readEcho(in, filename);
-            w_.readRGrid(filename, domain_.unitCell());
+            readWRGrid(filename);
          } else
          if (command == "READ_H_BASIS") {
             readEcho(in, filename);
@@ -592,6 +592,26 @@ namespace Pspc
    // Chemical Potential Field Modifier Functions
 
    /*
+   * Read w-field in symmetry adapted basis format.
+   */
+   template <int D>
+   void System<D>::readWBasis(const std::string & filename)
+   {
+      w_.readBasis(filename, domain_.unitCell());
+      hasCFields_ = false;
+   }
+
+   /*
+   * Read w-fields in real-space grid (r-grid) format.
+   */
+   template <int D>
+   void System<D>::readWRGrid(const std::string & filename)
+   {
+      w_.readRGrid(filename, domain_.unitCell());
+      hasCFields_ = false;
+   }
+
+   /*
    * Set new w-field values.
    */
    template <int D>
@@ -646,7 +666,7 @@ namespace Pspc
       UTIL_CHECK(w_.hasData());
 
       // Solve the modified diffusion equation (without iteration)
-      mixture_.compute(w_.rgrid(), c_.rgrid());
+      mixture_.compute(w_.rgrid(), c_.rgrid(), mask_.phiTot());
       hasCFields_ = true;
 
       if (w_.isSymmetric()) {
@@ -753,6 +773,7 @@ namespace Pspc
             }
          }
       }
+      Log::file() << fIdeal_ << std::endl;
 
       int nm  = mixture_.nMonomer();
       int nBasis = basis().nBasis();
@@ -778,6 +799,7 @@ namespace Pspc
       temp /= mask().phiTot(); 
       fIdeal_ += temp;
       fHelmholtz_ += fIdeal_;
+      Log::file() << fHelmholtz_ << std::endl;
 
       // Compute contribution from external fields, if fields exist
       if (hasExternalFields()) {
@@ -790,6 +812,7 @@ namespace Pspc
          fExt_ /= mask().phiTot();
          fHelmholtz_ += fExt_;
       }
+      Log::file() << fHelmholtz_ << std::endl;
 
       // Compute excess interaction free energy [ phi^{T}*chi*phi ]
       double chi;
@@ -803,6 +826,7 @@ namespace Pspc
       }
       fInter_ /= mask().phiTot();
       fHelmholtz_ += fInter_;
+      Log::file() << fHelmholtz_ << std::endl;
 
       // Initialize pressure
       pressure_ = -fHelmholtz_;

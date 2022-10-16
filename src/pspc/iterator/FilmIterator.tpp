@@ -43,7 +43,7 @@ namespace Pspc
       if (iterator().flexibleParams().size() != 0) {
          Log::file() << std::endl 
             << "Warning - The lattice parameter is not allowed "
-            << "to be flexible for a 1D thin film system.\n"
+            << "to be flexible for a 1D thin film system."
             << std::endl;
       }
 
@@ -98,17 +98,16 @@ namespace Pspc
       //and gamma = 90 degrees for all 2D thin film calculations.
       if (system().domain().unitCell().lattice() != UnitCell<2>::Square) {
          for (int i = 0; i < current.size(); i++) {
-            if (current[i] != normalVecId()) {
+            if ((current[i] != normalVecId()) && (current[i] < 2)) {
                params.append(current[i]);
             }
          }
       }
 
-      if ((params.size() == 0) && (iterator().flexibleParams().size() != 0)) {
+      if (params.size() < current.size()) {
          Log::file() << std::endl 
-            << "Warning - None of the lattice parameters are allowed\n"
-            << "to be flexible for this choice of lattice system\n"
-            << "when the system is confined in a thin film."
+            << "Notice - Some lattice parameters will be held constant\n"
+            << "to comply with the thin film constraint."
             << std::endl;
       }
 

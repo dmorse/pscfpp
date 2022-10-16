@@ -110,10 +110,14 @@ namespace Pspc
    void WFieldContainer<D>::setRGrid(DArray< RField<D> > const & fields,
                                     bool isSymmetric)
    {
+      UTIL_CHECK(fields.capacity() == nMonomer_);
+
       // Update system wFieldsRGrid
       for (int i = 0; i < nMonomer_; ++i) {
          RField<D> const & f = fields[i];
          RField<D>& w = rgrid_[i];
+         UTIL_CHECK(f.capacity() == meshSize_);
+         UTIL_CHECK(w.capacity() == meshSize_);
          for (int j = 0; j < meshSize_; ++j) {
             w[j] = f[j];
          }
@@ -139,6 +143,7 @@ namespace Pspc
    void WFieldContainer<D>::readBasis(std::istream& in, 
                                       UnitCell<D>& unitCell)
    {
+      UTIL_CHECK(isAllocated());
       fieldIoPtr_->readFieldsBasis(in, basis_, unitCell);
 
       // Update system wFieldsRGrid
@@ -160,6 +165,7 @@ namespace Pspc
    void WFieldContainer<D>::readBasis(std::string filename, 
                                       UnitCell<D>& unitCell)
    {
+      UTIL_CHECK(isAllocated());
       fieldIoPtr_->readFieldsBasis(filename, basis_, unitCell);
 
       // Update system wFieldsRGrid
@@ -186,6 +192,7 @@ namespace Pspc
                                       UnitCell<D>& unitCell, 
                                       bool isSymmetric)
    {
+      UTIL_CHECK(isAllocated());
       fieldIoPtr_->readFieldsRGrid(in, rgrid_, unitCell);
 
       if (isSymmetric) {
@@ -213,6 +220,7 @@ namespace Pspc
                                       UnitCell<D>& unitCell, 
                                       bool isSymmetric)
    {
+      UTIL_CHECK(isAllocated());
       fieldIoPtr_->readFieldsRGrid(filename, rgrid_, unitCell);
 
       if (isSymmetric) {

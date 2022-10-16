@@ -129,6 +129,9 @@ namespace Pscf {
       /// Workspace for calculations
       T temp_;
 
+      /// Boolean indicating whether the calculation has diverged to NaN
+      bool diverged_;
+
       /**
       * Compute a vector of residuals, add to history.
       */

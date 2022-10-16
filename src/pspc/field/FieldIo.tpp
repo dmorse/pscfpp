@@ -70,9 +70,13 @@ namespace Pspc
    const
    {
       DArray<DArray<double> > fields;
-      fields.allocate(1);
-      fields[0].allocate(field.capacity());
+      if (field.isAllocated()) { 
+         fields.allocate(1);
+         fields[0].allocate(field.capacity());
+      } // otherwise pass unallocated field into readFieldsBasis
+
       readFieldsBasis(in, fields, unitCell);
+      UTIL_CHECK(fields.capacity() == 1); // Check that it only read 1 field
       field = fields[0];
    }
 
@@ -83,9 +87,12 @@ namespace Pspc
    const
    {
       DArray<DArray<double> > fields;
-      fields.allocate(1);
-      fields[0].allocate(field.capacity());
+      if (field.isAllocated()) { 
+         fields.allocate(1);
+         fields[0].allocate(field.capacity());
+      } // otherwise pass unallocated field into readFieldsBasis
       readFieldsBasis(filename, fields, unitCell);
+      UTIL_CHECK(fields.capacity() == 1); // Check that it only read 1 field
       field = fields[0];
    }
 
@@ -386,10 +393,11 @@ namespace Pspc
                                     UnitCell<D>& unitCell) 
    const
    {
-       std::ifstream file;
-       fileMaster().openInputFile(filename, file);
-       readFieldsBasis(file, fields, unitCell);
-       file.close();
+
+      std::ifstream file;
+      fileMaster().openInputFile(filename, file);
+      readFieldsBasis(file, fields, unitCell);
+      file.close();
    }
 
    template <int D>
@@ -1009,16 +1017,22 @@ namespace Pspc
    {
       int ver1, ver2;
       std::string groupNameIn;
+
+      // if the unit cell that was passed into this function was set 
+      // (if nParameter > 0), then we will check that the field header
+      // data matches the data that was originally in the unitCell
+      bool checkHeader(false);
       UnitCell<D> tempUnitCell;
-      tempUnitCell = unitCell; // make duplicate unit cell
+      if (unitCell.nParameter() > 0) { // if unitCell input has been set
+         tempUnitCell = unitCell;      // make duplicate unit cell
+         checkHeader = true;
+      }
+
       Pscf::readFieldHeader(in, ver1, ver2, unitCell, 
                             groupNameIn, nMonomer);
       // Note: Function definition in pscf/crystal/UnitCell.tpp
 
-      // if the unit cell that was passed into this function was set 
-      // (if nParameter > 0), then check that the field header data
-      // matches the data that was originally in the unitCell
-      if (tempUnitCell.nParameter() > 0) {
+      if (checkHeader) {
 
          // Check whether crystal system matches expectation
          if (unitCell.lattice() != tempUnitCell.lattice()) {

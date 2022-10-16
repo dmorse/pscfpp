@@ -124,6 +124,33 @@ namespace Pspc
       //@{
 
       /**
+      * Read chemical potential fields in symmetry adapted basis format.
+      *
+      * This function calls the member function readBasis of the system
+      * wFieldContainer w_. The w_ object opens and reads the file with
+      * name "filename", which must contain chemical potential fields in 
+      * symmetry-adapted basis format, stores these fields in w_.basis(),
+      * converts these fields to real-space grid format, and stores
+      * the result in w_.rgrid(). On exit, hasCFields is false.
+      *
+      * \param filename name of input w-field basis file
+      */
+      void readWBasis(const std::string & filename);
+   
+      /**
+      * Read chemical potential fields in real-space grid (r-grid) format.
+      *
+      * This function calls the member function readRGrid of the system
+      * wFieldContainer w_. The w_ object opens and reads the file with
+      * name "filename", which must contain chemical potential fields in 
+      * real space grid (r-grid) format, and stores these fields in
+      * w_.rgrid(). On exit, hasCFields and w_.isSymmetric() are false.
+      *
+      * \param filename name of input w-field file in r-grid format
+      */
+      void readWRGrid(const std::string & filename);
+
+      /**
       * Set new w fields, in symmetrized-adapted Fourier basis format.
       *
       * On exit, both w().basis() and w().rgrid() are reset, w().hasData()

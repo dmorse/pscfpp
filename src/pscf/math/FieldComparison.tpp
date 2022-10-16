@@ -35,7 +35,13 @@ namespace Pscf {
       rmsDiff_ = 0.0;
       for (int i = begin_; i < n; ++i) {
          diff = std::abs(a[i] - b[i]);
-         if (diff > maxDiff_) {
+         if (std::isnan(diff)) {
+            // If either field has a NaN component, set error to very
+            // high value and exit the function
+            maxDiff_ = 1e8;
+            rmsDiff_ = 1e8;
+            return maxDiff_;
+         } else if (diff > maxDiff_) {
             maxDiff_ = diff;
          }
          rmsDiff_ += diff*diff;
@@ -64,7 +70,13 @@ namespace Pscf {
          UTIL_CHECK(n == b[i].capacity());
          for (j = begin_; j < n; ++j) {
             diff = std::abs(a[i][j] - b[i][j]);
-            if (diff > maxDiff_) {
+            if (std::isnan(diff)) {
+               // If either field has a NaN component, set error to very
+               // high value and exit the function
+               maxDiff_ = 1e8;
+               rmsDiff_ = 1e8;
+               return maxDiff_;
+            } else if (diff > maxDiff_) {
                maxDiff_ = diff;
             }
             rmsDiff_ += diff*diff;
