@@ -1,11 +1,71 @@
-/*! \page user_field_fd1d_page 3.6.4 Fd1d File Format
+/*! \page user_field_fd1d_page 3.6.4 pscf_fd File Format
 
  \ref user_field_kgrid_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref developer_page (Next) 
 <BR>
 
+The pscf_fd program is designed for problems in which fields depend on 
+only a single variable, and uses a a regular one-dimensional mesh to 
+discretize the solutions.  This program uses a simple file format for
+w and c fields that contains a header and data section. 
 
-Fd file format ...
+The header provides values for the number of number of grid points, 
+denoted by nx, and the number of monomer types, denoted by nm.
+
+Each row in the data section starts with the index associated with a 
+grid point, followed by values of all fields at that grid point. Each
+column after the first gives the values of the field associated with 
+a specific monomer type, listed in order of increasing monomer type
+index.
+
+<h3> Example: </h3>
+An example of a w (chemical potential) is shown below, with a large 
+section of the data section omitted:
+
+\code
+nx     401
+nm     2
+    0  -5.96942303323e+00   6.85191697162e-11
+    1  -5.96942323364e+00  -5.38187402422e-07
+    2  -5.96942383533e+00  -2.15872253218e-06
+    3  -5.96942483954e+00  -4.87886942524e-06
+    4  -5.96942624815e+00  -8.72758497848e-06
+    5  -5.96942806338e+00  -1.37455598333e-05
+    6  -5.96943028740e+00  -1.99853784445e-05
+    7  -5.96943292171e+00  -2.75117227864e-05
+    8  -5.96943596656e+00  -3.64016335715e-05
+    9  -5.96943942006e+00  -4.67448371504e-05
+   10  -5.96944327724e+00  -5.86441323650e-05
+   11  -5.96944752894e+00  -7.22158673119e-05
+              .                  .
+              .                  .
+              .                  .
+  390  -5.96944327722e+00  -5.86440492859e-05
+  391  -5.96943942004e+00  -4.67447613751e-05
+  392  -5.96943596654e+00  -3.64015646109e-05
+  393  -5.96943292169e+00  -2.75116589759e-05
+  394  -5.96943028738e+00  -1.99853197974e-05
+  395  -5.96942806337e+00  -1.37455050264e-05
+  396  -5.96942624813e+00  -8.72753318994e-06
+  397  -5.96942483952e+00  -4.87882055732e-06
+  398  -5.96942383532e+00  -2.15867540140e-06
+  399  -5.96942323357e+00  -5.38083020152e-07
+  400  -5.96942303333e+00   0.00000000000e+00
+\endcode
+
+<h3> Boundary conditions: </h3>
+
+The pscf_fd program solves the underlying modified diffusion equation
+using a boundary condition that requires the 1D spatial derivative of 
+the propagator to vanish at both endpoints. 
+
+An additional constraint is applied when a problem is solved in 
+canonical ensemble, in which values of volume fraction phi (rather 
+than chemical potential mu) are specified for all polymer and 
+solvent species. In this case, by convention, the value of the
+chemical potential is taken to zero for the last monomer type 
+at the last grid point. This convention is why a value of 0.0000 
+is visible for the last column of the last row in the above example.
 
 <BR>
  \ref user_field_kgrid_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
