@@ -68,6 +68,8 @@ public:
 
       // Test assignment
       Mesh<3> b;
+      TEST_ASSERT(b.size() == 0);
+      TEST_ASSERT(b.dimension(1) == 0);
       b = a;
       TEST_ASSERT(a.dimensions() == b.dimensions());
       TEST_ASSERT(a.size() == b.size());
