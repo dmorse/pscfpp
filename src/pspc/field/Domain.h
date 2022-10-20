@@ -86,12 +86,16 @@ namespace Pspc
       /**
       * Set unit cell. 
       *
+      * Initializes basis if not done previously.
+      *
       * \param unitCell new unit cell
       */
       void setUnitCell(UnitCell<D> const & unitCell);
 
       /**
       * Set unit cell state.
+      *
+      * Initializes basis if not done previously.
       *
       * \param lattice  lattice system
       * \param parameters array of unit cell parameters
@@ -102,14 +106,15 @@ namespace Pspc
       /**
       * Set unit cell parameters.
       *
-      * Lattice system must already be set on entry.
+      * Initializes basis if not done previously.
+      * Lattice system must already be set to non-null value on entry.
       *
       * \param parameters array of unit cell parameters
       */
       void setUnitCell(FSArray<double, 6> const & parameters);
 
       /**
-      * Construct group and basis if not done already.
+      * Construct basis if not done already.
       */
       void makeBasis();
 

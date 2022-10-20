@@ -22,10 +22,7 @@ namespace Pscf
     : dimensions_(0),
       offsets_(0),
       size_(0)
-   {
-      IntVec<D> dimensions(1);
-      setDimensions(dimensions);
-   }
+   {}
 
    // Copy constructor
    template <int D>

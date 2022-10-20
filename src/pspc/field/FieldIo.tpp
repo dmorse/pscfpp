@@ -76,9 +76,9 @@ namespace Pspc
                                     UnitCell<D>& unitCell) 
    const
    {
-
       int nMonomer;
       FieldIo<D>::readFieldHeader(in, nMonomer, unitCell);
+      UTIL_CHECK(basis().isInitialized());
 
       // Read the number of stars into nStarIn
       std::string label;
@@ -352,6 +352,7 @@ namespace Pspc
    {
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
+      UTIL_CHECK(basis().isInitialized());
 
       // Write header
       writeFieldHeader(out, nMonomer, unitCell);
@@ -1021,6 +1022,8 @@ namespace Pspc
    void FieldIo<D>::convertBasisToKGrid(DArray<double> const & in, 
                                         RFieldDft<D>& out) const
    {
+      UTIL_CHECK(basis().isInitialized());
+
       // Create Mesh<D> with dimensions of DFT Fourier grid.
       Mesh<D> dftMesh(out.dftDimensions());
 
@@ -1122,6 +1125,8 @@ namespace Pspc
    void FieldIo<D>::convertKGridToBasis(RFieldDft<D> const & in, 
                                         DArray<double>& out) const
    {
+      UTIL_CHECK(basis().isInitialized());
+
       // Create Mesh<D> with dimensions of DFT Fourier grid.
       Mesh<D> dftMesh(in.dftDimensions());
 
@@ -1331,6 +1336,8 @@ namespace Pspc
    template <int D>
    bool FieldIo<D>::hasSymmetry(RFieldDft<D> const & in) const
    {
+      UTIL_CHECK(basis().isInitialized());
+
       typename Basis<D>::Star const* starPtr; // pointer to current star
       typename Basis<D>::Wave const* wavePtr; // pointer to current wave
       std::complex<double> waveCoeff;         // coefficient from wave

@@ -31,7 +31,7 @@ namespace Pscf
    std::istream& operator >> (std::istream& in, Mesh<D>& mesh);
 
    /**
-   * Output stream inserter for writing a Mesh<D>::LatticeSystem.
+   * Output stream inserter for writing a Mesh<D> object.
    *
    * \param out  output stream
    * \param mesh  Mesh<D> to be written
@@ -64,6 +64,10 @@ namespace Pscf
 
       /**
       * Default constructor
+      *
+      * Grid dimensions and size are initialized to zero. All functions
+      * that set the dimensions and size after construction require that
+      * all dimensions are positive, yielding a positive size.
       */
       Mesh();
 
@@ -109,6 +113,10 @@ namespace Pscf
 
       /**
       * Get total number of grid points.
+      *
+      * Value size() == 0 will be obtained iff the mesh was default
+      * constructed and has not yet been given meaningful initial 
+      * values.
       */
       int size() const;
 

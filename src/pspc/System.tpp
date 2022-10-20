@@ -206,20 +206,22 @@ namespace Pspc
          allocateFieldsBasis();
       }
 
-      // Initialize iterator through the factory and mediator
+      // Optionally instantiate an Iterator object
       std::string className;
       bool isEnd;
       iteratorPtr_ = 
-         iteratorFactoryPtr_->readObject(in, *this, className, isEnd);
+         iteratorFactoryPtr_->readObjectOptional(in, *this, className, 
+                                                 isEnd);
       if (!iteratorPtr_) {
-         std::string msg = "Unrecognized Iterator label string ";
-         msg += className;
-         UTIL_THROW(msg.c_str());
+         Log::file() << "Notification: No iterator was constructed\n";
       }
 
       // Optionally instantiate a Sweep object
-      sweepPtr_ = 
-        sweepFactoryPtr_->readObjectOptional(in, *this, className, isEnd);
+      if (iteratorPtr_) {
+         sweepPtr_ = 
+            sweepFactoryPtr_->readObjectOptional(in, *this, className, 
+                                                 isEnd);
+      }
    }
 
    /*
@@ -250,7 +252,9 @@ namespace Pspc
       mixture().writeParam(out);
       interaction().writeParam(out);
       domain_.writeParam(out);
-      iterator().writeParam(out);
+      if (iteratorPtr_) {
+         iterator().writeParam(out);
+      }
       out << "}" << std::endl;
    }
 
@@ -260,10 +264,12 @@ namespace Pspc
    template <int D>
    void System<D>::allocateFieldsGrid()
    {
-      // Constants and preconditions
+      // Preconditions and constants
       UTIL_CHECK(hasMixture_);
       int nMonomer = mixture_.nMonomer();
       UTIL_CHECK(nMonomer > 0);
+      UTIL_CHECK(domain_.mesh().size() > 0);
+      UTIL_CHECK(!gridFieldsAreAllocated_);
 
       w_.setNMonomer(nMonomer);
       w_.allocateRGrid(domain_.mesh().dimensions());
@@ -287,10 +293,11 @@ namespace Pspc
    template <int D>
    void System<D>::allocateFieldsBasis()
    {
-      // Constants and preconditions
+      // Preconditions and constants
       UTIL_CHECK(hasMixture_);
       const int nMonomer = mixture_.nMonomer();
       UTIL_CHECK(nMonomer > 0);
+      UTIL_CHECK(gridFieldsAreAllocated_);
       UTIL_CHECK(domain_.basis().isInitialized());
       const int nBasis = domain_.basis().nBasis();
       UTIL_CHECK(nBasis > 0);
@@ -312,18 +319,24 @@ namespace Pspc
    template <int D>
    void System<D>::allocateFieldsBasis(std::string filename)
    {
-      // Open file
+      UTIL_CHECK(hasMixture_);
+      UTIL_CHECK(mixture_.nMonomer() > 0);
+
+      // Open field file
       std::ifstream file;
       fileMaster_.openInputFile(filename, file);
 
-      // Read header
+      // Read field file header, and initialize basis if needed
       int nMonomer;
       UnitCell<D> unitCell;
       domain_.fieldIo().readFieldHeader(file, nMonomer, unitCell);
+      // The above function initializes a basis if not done previously
       file.close();
+      UTIL_CHECK(mixture_.nMonomer() == nMonomer);
       UTIL_CHECK(domain_.basis().isInitialized());
       UTIL_CHECK(domain_.basis().nBasis() > 0);
 
+      // Allocate memory for fields
       allocateFieldsBasis(); 
    }
 
@@ -368,6 +381,7 @@ namespace Pspc
          if (command == "SET_UNIT_CELL") {
             UnitCell<D> unitCell;
             in >> unitCell;
+            Log::file() << "   " << unitCell << std::endl;
             setUnitCell(unitCell);
          } else
          if (command == "COMPUTE") {
@@ -581,9 +595,13 @@ namespace Pspc
    template <int D>
    void System<D>::readWBasis(const std::string & filename)
    {
+      // If basis fields are not allocated, peek at field file header to 
+      // get unit cell parameters, initialize basis and allocate fields.
       if (!basisFieldsAreAllocated_) {
          allocateFieldsBasis(filename); 
       }
+
+      // Read w fields
       domain_.fieldIo().readFieldsBasis(filename, tmpFieldsBasis_, 
                                         domain_.unitCell());
       w_.setBasis(tmpFieldsBasis_);
@@ -596,9 +614,13 @@ namespace Pspc
    template <int D>
    void System<D>::readWRGrid(const std::string & filename)
    {
+      // If basis fields are not allocated, peek at field file header to 
+      // get unit cell parameters, initialize basis and allocate fields.
       if (!basisFieldsAreAllocated_) {
          allocateFieldsBasis(filename); 
       }
+
+      // Read w fields
       domain_.fieldIo().readFieldsRGrid(filename, tmpFieldsRGrid_, 
                                         domain_.unitCell());
       w_.setRGrid(tmpFieldsRGrid_);
@@ -611,6 +633,8 @@ namespace Pspc
    template <int D>
    void System<D>::setWBasis(DArray< DArray<double> > const & fields)
    {
+      UTIL_CHECK(domain_.basis().isInitialized());
+      UTIL_CHECK(basisFieldsAreAllocated_);
       w_.setBasis(fields);
       hasCFields_ = false;
    }
@@ -621,6 +645,7 @@ namespace Pspc
    template <int D>
    void System<D>::setWRGrid(DArray<Field> const & fields)
    {
+      UTIL_CHECK(gridFieldsAreAllocated_);
       w_.setRGrid(fields);
       hasCFields_ = false;
    }
@@ -648,8 +673,6 @@ namespace Pspc
       domain_.setUnitCell(lattice, parameters);
       mixture_.setupUnitCell(domain_.unitCell());
    }
-
-   // Primary SCFT Computations
 
    /*
    * Set parameters of the associated unit cell.
@@ -690,6 +713,7 @@ namespace Pspc
    template <int D>
    int System<D>::iterate(bool isContinuation)
    {
+      UTIL_CHECK(iteratorPtr_);
       UTIL_CHECK(w_.hasData());
       UTIL_CHECK(w_.isSymmetric());
       hasCFields_ = false;
@@ -736,6 +760,7 @@ namespace Pspc
    template <int D>
    void System<D>::computeFreeEnergy()
    {
+      UTIL_CHECK(domain_.basis().isInitialized());
       UTIL_CHECK(hasCFields_);
       UTIL_CHECK(w_.hasData());
       UTIL_CHECK(w_.isSymmetric());
@@ -993,6 +1018,8 @@ namespace Pspc
    template <int D>
    void System<D>::writeWBasis(const std::string & filename) const
    {
+      UTIL_CHECK(domain_.basis().isInitialized());
+      UTIL_CHECK(basisFieldsAreAllocated_);
       UTIL_CHECK(w_.hasData());
       domain_.fieldIo().writeFieldsBasis(filename, w_.basis(), 
                                          domain_.unitCell());
@@ -1004,6 +1031,7 @@ namespace Pspc
    template <int D>
    void System<D>::writeWRGrid(const std::string & filename) const
    {
+      UTIL_CHECK(gridFieldsAreAllocated_);
       UTIL_CHECK(w_.hasData());
       domain_.fieldIo().writeFieldsRGrid(filename, w_.rgrid(), 
                                          domain_.unitCell());
@@ -1015,7 +1043,10 @@ namespace Pspc
    template <int D>
    void System<D>::writeCBasis(const std::string & filename) const
    {
+      UTIL_CHECK(domain_.basis().isInitialized());
+      UTIL_CHECK(basisFieldsAreAllocated_);
       UTIL_CHECK(hasCFields_);
+
       domain_.fieldIo().writeFieldsBasis(filename, c_.basis(), 
                                          domain_.unitCell());
    }
@@ -1026,6 +1057,7 @@ namespace Pspc
    template <int D>
    void System<D>::writeCRGrid(const std::string & filename) const
    {
+      UTIL_CHECK(gridFieldsAreAllocated_);
       UTIL_CHECK(hasCFields_);
       domain_.fieldIo().writeFieldsRGrid(filename, c_.rgrid(), 
                                          domain_.unitCell());
@@ -1038,6 +1070,7 @@ namespace Pspc
    template <int D>
    void System<D>::writeBlockCRGrid(const std::string & filename) const
    {
+      UTIL_CHECK(gridFieldsAreAllocated_);
       UTIL_CHECK(hasCFields_);
 
       // Create and allocate the DArray of fields to be written
@@ -1203,9 +1236,13 @@ namespace Pspc
    void System<D>::basisToRGrid(const std::string & inFileName,
                                 const std::string & outFileName)
    {
+      // If basis fields are not allocated, peek at field file header to 
+      // get unit cell parameters, initialize basis and allocate fields.
       if (!basisFieldsAreAllocated_) {
          allocateFieldsBasis(inFileName); 
       }
+
+      // Read, convert, and write fields
       UnitCell<D> tmpUnitCell;
       fieldIo().readFieldsBasis(inFileName, tmpFieldsBasis_, tmpUnitCell);
       fieldIo().convertBasisToRGrid(tmpFieldsBasis_, tmpFieldsRGrid_);
@@ -1220,9 +1257,13 @@ namespace Pspc
    void System<D>::rGridToBasis(const std::string & inFileName,
                                 const std::string & outFileName) 
    {
+      // If basis fields are not allocated, peek at field file header to 
+      // get unit cell parameters, initialize basis and allocate fields.
       if (!basisFieldsAreAllocated_) {
          allocateFieldsBasis(inFileName); 
       }
+
+      // Read, convert and write fields
       UnitCell<D> tmpUnitCell;
       fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_, tmpUnitCell);
       fieldIo().convertRGridToBasis(tmpFieldsRGrid_, tmpFieldsBasis_);
@@ -1236,9 +1277,13 @@ namespace Pspc
    void System<D>::kGridToRGrid(const std::string & inFileName,
                                 const std::string& outFileName)
    {
+      // If basis fields are not allocated, peek at field file header to 
+      // get unit cell parameters, initialize basis and allocate fields.
       if (!basisFieldsAreAllocated_) {
          allocateFieldsBasis(inFileName); 
       }
+
+      // Read, convert and write fields
       UnitCell<D> tmpUnitCell;
       fieldIo().readFieldsKGrid(inFileName, tmpFieldsKGrid_, tmpUnitCell);
       for (int i = 0; i < mixture_.nMonomer(); ++i) {
@@ -1256,9 +1301,13 @@ namespace Pspc
    void System<D>::rGridToKGrid(const std::string & inFileName,
                                 const std::string & outFileName)
    {
+      // If basis fields are not allocated, peek at field file header to 
+      // get unit cell parameters, initialize basis and allocate fields.
       if (!basisFieldsAreAllocated_) {
          allocateFieldsBasis(inFileName); 
       }
+
+      // Read, convert and write fields
       UnitCell<D> tmpUnitCell;
       fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_, 
                                 tmpUnitCell);
@@ -1277,9 +1326,13 @@ namespace Pspc
    void System<D>::kGridToBasis(const std::string & inFileName,
                                 const std::string& outFileName)
    {
+      // If basis fields are not allocated, peek at field file header to 
+      // get unit cell parameters, initialize basis and allocate fields.
       if (!basisFieldsAreAllocated_) {
          allocateFieldsBasis(inFileName); 
       }
+
+      // Read, convert and write fields
       UnitCell<D> tmpUnitCell;
       domain_.fieldIo().readFieldsKGrid(inFileName, tmpFieldsKGrid_, 
                                         tmpUnitCell);
@@ -1296,9 +1349,13 @@ namespace Pspc
    void System<D>::basisToKGrid(const std::string & inFileName,
                                 const std::string & outFileName) 
    {
+      // If basis fields are not allocated, peek at field file header to 
+      // get unit cell parameters, initialize basis and allocate fields.
       if (!basisFieldsAreAllocated_) {
          allocateFieldsBasis(inFileName); 
       }
+
+      // Read, convert and write fields
       UnitCell<D> tmpUnitCell;
       domain_.fieldIo().readFieldsBasis(inFileName, 
                                         tmpFieldsBasis_, tmpUnitCell);
@@ -1314,12 +1371,18 @@ namespace Pspc
    template <int D>
    bool System<D>::checkRGridFieldSymmetry(const std::string & inFileName) 
    {
+      // If basis fields are not allocated, peek at field file header to 
+      // get unit cell parameters, initialize basis and allocate fields.
       if (!basisFieldsAreAllocated_) {
          allocateFieldsBasis(inFileName); 
       }
+
+      // Read fields
       UnitCell<D> tmpUnitCell;
       domain_.fieldIo().readFieldsRGrid(inFileName, 
                                         tmpFieldsRGrid_, tmpUnitCell);
+
+      // Check symmetry for all fields
       for (int i = 0; i < mixture_.nMonomer(); ++i) {
          bool symmetric;
          symmetric = domain_.fieldIo().hasSymmetry(tmpFieldsRGrid_[i]);
@@ -1328,6 +1391,7 @@ namespace Pspc
          }
       }
       return true;
+
    }
 
    /*
@@ -1340,7 +1404,8 @@ namespace Pspc
       BFieldComparison comparison(1);
       comparison.compare(field1,field2);
 
-      Log::file() << "\n Basis expansion field comparison results" << std::endl;
+      Log::file() << "\n Basis expansion field comparison results" 
+                  << std::endl;
       Log::file() << "     Maximum Absolute Difference:   " 
                   << comparison.maxDiff() << std::endl;
       Log::file() << "     Root-Mean-Square Difference:   " 
@@ -1357,7 +1422,8 @@ namespace Pspc
       RFieldComparison<D> comparison;
       comparison.compare(field1, field2);
 
-      Log::file() << "\n Real-space field comparison results" << std::endl;
+      Log::file() << "\n Real-space field comparison results" 
+                  << std::endl;
       Log::file() << "     Maximum Absolute Difference:   " 
                   << comparison.maxDiff() << std::endl;
       Log::file() << "     Root-Mean-Square Difference:   " 
@@ -1373,9 +1439,13 @@ namespace Pspc
    void System<D>::guessWfromC(std::string const & inFileName, 
                                std::string const & outFileName)
    {
+      // If basis fields are not allocated, peek at field file header to 
+      // get unit cell parameters, initialize basis and allocate fields.
       if (!basisFieldsAreAllocated_) {
          allocateFieldsBasis(inFileName); 
       }
+
+      // Read c fields and set unit cell
       domain_.fieldIo().readFieldsBasis(inFileName, tmpFieldsBasis_, 
                                         domain_.unitCell());
 
@@ -1389,8 +1459,9 @@ namespace Pspc
             }
          }
       }
-      w_.setBasis(tmpFieldsBasis_);
 
+      // Set initial guess, and write to file
+      w_.setBasis(tmpFieldsBasis_);
       domain_.fieldIo().writeFieldsBasis(outFileName, w_.basis(), 
                                          domain_.unitCell());
 
