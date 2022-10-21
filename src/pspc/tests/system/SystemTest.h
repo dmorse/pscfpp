@@ -346,8 +346,12 @@ public:
       if (error) {
          TEST_THROW("Iterator failed to converge.");
       }
-      system.writeWBasis("out/testIterate1D_lam_rigid_w.bf");
-      system.writeCBasis("out/testIterate1D_lam_rigid_c.bf");
+      system.fieldIo().writeFieldsBasis("out/testIterate1D_lam_rigid_w.bf", 
+                                        system.w().basis(), 
+                                        system.unitCell());
+      system.fieldIo().writeFieldsBasis("out/testIterate1D_lam_rigid_c.bf", 
+                                        system.c().basis(), 
+                                        system.unitCell());
 
       // Compare solution to original fields
       BFieldComparison comparison(1);
@@ -394,8 +398,12 @@ public:
       if (error) {
          TEST_THROW("Iterator failed to converge.");
       }
-      system.writeWBasis("out/testIterate1D_lam_flex_w.bf");
-      system.writeCBasis("out/testIterate1D_lam_flex_c.bf");
+      system.fieldIo().writeFieldsBasis("out/testIterate1D_lam_flex_w.bf", 
+                                        system.w().basis(), 
+                                        system.unitCell());
+      system.fieldIo().writeFieldsBasis("out/testIterate1D_lam_flex_c.bf", 
+                                        system.c().basis(), 
+                                        system.unitCell());
 
       BFieldComparison comparison(1);
       comparison.compare(wFields_check, system.w().basis());
@@ -429,8 +437,12 @@ public:
       if (error) {
          TEST_THROW("Iterator failed to converge.");
       }
-      system.writeWBasis("out/testIterate1D_lam_soln_w.bf");
-      system.writeCBasis("out/testIterate1D_lam_soln_c.bf");
+      system.fieldIo().writeFieldsBasis("out/testIterate1D_lam_soln_w.bf", 
+                                        system.w().basis(), 
+                                        system.unitCell());
+      system.fieldIo().writeFieldsBasis("out/testIterate1D_lam_soln_c.bf", 
+                                        system.c().basis(), 
+                                        system.unitCell());
 
       BFieldComparison comparison(1);
       comparison.compare(wFields_check, system.w().basis());
@@ -467,8 +479,12 @@ public:
       if (error) {
          TEST_THROW("Iterator failed to converge.");
       }
-      system.writeWBasis("out/testIterate1D_lam_open_soln_w.bf");
-      system.writeCBasis("out/testIterate1D_lam_open_soln_c.bf");
+      system.fieldIo().writeFieldsBasis("out/testIterate1D_lam_open_soln_w.bf", 
+                                        system.w().basis(), 
+                                        system.unitCell());
+      system.fieldIo().writeFieldsBasis("out/testIterate1D_lam_open_soln_c.bf", 
+                                        system.c().basis(), 
+                                        system.unitCell());
 
       // Compare result
       BFieldComparison comparison(1);
@@ -505,8 +521,12 @@ public:
       if (error) {
          TEST_THROW("Iterator failed to converge.");
       }
-      system.writeWBasis("out/testIterate1D_lam_open_blend_w.bf");
-      system.writeCBasis("out/testIterate1D_lam_open_blend_c.bf");
+      system.fieldIo().writeFieldsBasis("out/testIterate1D_lam_open_blend_w.bf", 
+                                        system.w().basis(), 
+                                        system.unitCell());
+      system.fieldIo().writeFieldsBasis("out/testIterate1D_lam_open_blend_c.bf", 
+                                        system.c().basis(), 
+                                        system.unitCell());
 
       // Compare result
       BFieldComparison comparison(1);
@@ -615,8 +635,12 @@ public:
       if (error) {
          TEST_THROW("Iterator failed to converge.");
       }
-      system.writeWBasis("out/testIterate2D_hex_rigid_w.bf");
-      system.writeCBasis("out/testIterate2D_hex_rigid_c.bf");
+      system.fieldIo().writeFieldsBasis("out/testIterate2D_hex_rigid_w.bf", 
+                                        system.w().basis(), 
+                                        system.unitCell());
+      system.fieldIo().writeFieldsBasis("out/testIterate2D_hex_rigid_c.bf", 
+                                        system.c().basis(), 
+                                        system.unitCell());
 
       // Compare current solution to reference solution
       BFieldComparison comparison(1);
@@ -665,8 +689,12 @@ public:
       if (error) {
          TEST_THROW("Iterator failed to converge.");
       }
-      system.writeWBasis("out/testIterate2D_hex_flex_w.bf");
-      system.writeCBasis("out/testIterate2D_hex_flex_c.bf");
+      system.fieldIo().writeFieldsBasis("out/testIterate2D_hex_flex_w.bf", 
+                                        system.w().basis(), 
+                                        system.unitCell());
+      system.fieldIo().writeFieldsBasis("out/testIterate2D_hex_flex_c.bf", 
+                                        system.c().basis(), 
+                                        system.unitCell());
 
       // Compare solution to reference solution
       BFieldComparison comparison(1);
@@ -707,8 +735,12 @@ public:
       if (error) {
          TEST_THROW("Iterator failed to converge.");
       }
-      system.writeWBasis("out/testIterate3D_bcc_rigid_w.bf");
-      system.writeCBasis("out/testIterate3D_bcc_rigid_c.bf");
+      system.fieldIo().writeFieldsBasis("out/testIterate3D_bcc_rigid_w.bf", 
+                                        system.w().basis(), 
+                                        system.unitCell());
+      system.fieldIo().writeFieldsBasis("out/testIterate3D_bcc_rigid_c.bf", 
+                                        system.c().basis(), 
+                                        system.unitCell());
 
       // Compare solution to reference solution
       BFieldComparison comparison(1); // Constructor argument 1 skips star 0
@@ -754,8 +786,12 @@ public:
       if (error) {
          TEST_THROW("Iterator failed to converge.");
       }
-      system.writeWBasis("out/testIterate3D_bcc_flex_w.bf");
-      system.writeCBasis("out/testIterate3D_bcc_flex_c.bf");
+      system.fieldIo().writeFieldsBasis("out/testIterate3D_bcc_flex_w.bf", 
+                                        system.w().basis(), 
+                                        system.unitCell());
+      system.fieldIo().writeFieldsBasis("out/testIterate3D_bcc_flex_c.bf", 
+                                        system.c().basis(), 
+                                        system.unitCell());
 
       BFieldComparison comparison(1);
       comparison.compare(wFields_check, system.w().basis());
@@ -795,8 +831,12 @@ public:
       if (error) {
          TEST_THROW("Iterator failed to converge.");
       }
-      system.writeWBasis("out/testIterate3D_altGyr_flex_w.bf");
-      system.writeCBasis("out/testIterate3D_altGyr_flex_c.bf");
+      system.fieldIo().writeFieldsBasis("out/testIterate3D_altGyr_flex_w.bf", 
+                                        system.w().basis(), 
+                                        system.unitCell());
+      system.fieldIo().writeFieldsBasis("out/testIterate3D_altGyr_flex_c.bf", 
+                                        system.c().basis(), 
+                                        system.unitCell());
 
       // Compare w fields
       BFieldComparison comparison(1);
@@ -851,10 +891,12 @@ public:
       if (error) {
          TEST_THROW("Iterator failed to converge.");
       }
-      system.writeWBasis("out/testIterate3D_c15_1_flex_w.bf");
-      system.writeWRGrid("out/testIterate3D_c15_1_flex_w.rf");
-      //system.writeCBasis("out/testIterate3D_c15_1_flex_c.bf");
-      //system.writeCRGrid("out/testIterate3D_c15_1_flex_c.rf");
+      system.fieldIo().writeFieldsBasis("out/testIterate3D_c15_1_flex_w.bf", 
+                                        system.w().basis(), 
+                                        system.unitCell());
+      system.fieldIo().writeFieldsRGrid("out/testIterate3D_c15_1_flex_w.rf", 
+                                        system.c().rgrid(), 
+                                        system.unitCell());
 
       BFieldComparison comparison(1);
       comparison.compare(wFields_check, system.w().basis());

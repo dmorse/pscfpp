@@ -35,9 +35,7 @@ System{
     normalVecId          2
     interfaceThickness   0.08     
     wallThickness        0.2
-    chi[
-          3   3
-          0   0
-    ]
+    chiBottom[ 3 0 ]
+    chiTop[ 3 0 ]
   }
 }

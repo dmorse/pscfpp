@@ -67,10 +67,10 @@ public:
       TEST_ASSERT(eq(iterator.normalVecId(),1));
       TEST_ASSERT(eq(iterator.interfaceThickness(),0.08));
       TEST_ASSERT(eq(iterator.wallThickness(),0.2));
-      TEST_ASSERT(eq(iterator.chi(0,0),3.0));
-      TEST_ASSERT(eq(iterator.chi(1,0),0.0));
-      TEST_ASSERT(eq(iterator.chi(0,1),0.0));
-      TEST_ASSERT(eq(iterator.chi(1,1),4.0));
+      TEST_ASSERT(eq(iterator.chiBottom(0),3.0));
+      TEST_ASSERT(eq(iterator.chiBottom(1),0.0));
+      TEST_ASSERT(eq(iterator.chiTop(0),0.0));
+      TEST_ASSERT(eq(iterator.chiTop(1),4.0));
       TEST_ASSERT(iterator.isFlexible());
    }
 
@@ -90,46 +90,50 @@ public:
       // Run the setup function
       iterator.setup();
       
-      // Check that the homogeneous components of the wall
+      // Check that the homogeneous components of the mask
       // and the blocks were adjusted correctly
-      TEST_ASSERT(eq(iterator.maskPhi(),1.0538978363e-01));
-      TEST_ASSERT(eq(system.mixture().polymer(0).phi(),8.946102164e-01));
+      TEST_ASSERT(eq(system.mask().phiTot(),8.9461021637e-01));
 
-      // Check that the wall field files were output correctly by 
+      // output mask field files for reference
+      system.fieldIo().writeFieldBasis("out/mask.bf", system.mask().basis(),
+                                       system.unitCell());
+      system.fieldIo().writeFieldRGrid("out/mask.rf", system.mask().rgrid(),
+                                       system.unitCell());
+      
+      // output external field for reference
+      system.fieldIo().writeFieldsBasis("out/h.bf", system.h().basis(),
+                                       system.unitCell());
+
+      // Check that the mask field files were generated correctly by 
       // comparing them to the reference files in in/film
       UnitCell<1> unitCell; // UnitCell object to pass into FieldIo functions
-      DArray< DArray<double> > cFieldsCheck; // Copy of reference field
-      system.fieldIo().readFieldsBasis("in/film/wall_ref.bf", 
+      DArray<double> cFieldsCheck; // Copy of reference field
+      system.fieldIo().readFieldBasis("in/film/mask_ref.bf", 
                                        cFieldsCheck, unitCell);
       BFieldComparison bComparison(0); // object to compare fields
-      bComparison.compare(iterator.maskBasis(), cFieldsCheck[0]);
+      bComparison.compare(system.mask().basis(), cFieldsCheck);
       if (verbose() > 0) {
-         std::cout << "\n";
-         std::cout << "Max error = " << bComparison.maxDiff() << "\n";
+         std::cout << "\nMax error = " << bComparison.maxDiff() << "\n";
       }
       TEST_ASSERT(bComparison.maxDiff() < 1.0E-7);
 
       RField<1> cRGridCheck; // Array to store reference field
-      system.fieldIo().readFieldRGrid("in/film/wall_ref.rf", 
+      system.fieldIo().readFieldRGrid("in/film/mask_ref.rf", 
                                       cRGridCheck, unitCell);
-      DArray<RField<1> > cRGridFromIterator;
-      cRGridFromIterator.allocate(1);
-      cRGridFromIterator[0].allocate(system.domain().mesh().dimensions());
+      RField<1> cRGridFromIterator;
+      cRGridFromIterator.allocate(system.domain().mesh().dimensions());
 
       // Put iterator cField inside a DArray so it can be passed into 
       // convertBasisToRGrid
-      DArray< DArray<double> > cFieldFromIterator;   
-      cFieldFromIterator.allocate(1); 
-      cFieldFromIterator[0] = iterator.maskBasis(); 
-
+      DArray<double> cFieldFromIterator;   
+      cFieldFromIterator = system.mask().basis(); 
       
       system.fieldIo().convertBasisToRGrid(cFieldFromIterator,
-                                          cRGridFromIterator);
+                                           cRGridFromIterator);
       RFieldComparison<1> rComparison; // object to compare fields
-      rComparison.compare(cRGridFromIterator[0], cRGridCheck);
+      rComparison.compare(cRGridFromIterator, cRGridCheck);
       if (verbose() > 0) {
-         std::cout << "\n";
-         std::cout << "Max error = " << rComparison.maxDiff() << "\n";
+         std::cout << "\nMax error = " << rComparison.maxDiff() << "\n";
       }
       TEST_ASSERT(rComparison.maxDiff() < 1.0E-7);
    }
@@ -234,7 +238,6 @@ public:
       FilmIteratorTest::setUpSystem(system1, "in/film/system1D");
       FilmIterator<1, AmIterator<1> > iterator1(system1);
       FilmIteratorTest::setUpFilmIterator(iterator1, "in/film/film1D");
-      iterator1.setFlexibleParams();
       TEST_ASSERT(iterator1.flexibleParams().size() == 0);
 
       // Set up 2D system and make sure flexibleParams is correct
@@ -242,7 +245,6 @@ public:
       FilmIteratorTest::setUpSystem(system2, "in/film/system2D");
       FilmIterator<2, AmIterator<2> > iterator2(system2);
       FilmIteratorTest::setUpFilmIterator(iterator2, "in/film/film2D");
-      iterator2.setFlexibleParams();
       TEST_ASSERT(iterator2.flexibleParams().size() == 1);
       TEST_ASSERT(iterator2.flexibleParams()[0] == 0);
 
@@ -251,7 +253,7 @@ public:
       FilmIteratorTest::setUpSystem(system3, "in/film/system3D");
       FilmIterator<3, AmIterator<3> > iterator3(system3);
       FilmIteratorTest::setUpFilmIterator(iterator3, "in/film/film3D");
-      iterator3.setFlexibleParams();
+      Log::file() << iterator3.flexibleParams().size() << std::endl;
       TEST_ASSERT(iterator3.flexibleParams().size() == 1);
       TEST_ASSERT(iterator3.flexibleParams()[0] == 0);
 
@@ -262,11 +264,36 @@ public:
       FilmIteratorTest::setUpFilmIterator(iterator4, "in/film/film2D");
       // Using film2D here because it has normalVecId=1 which 
       // we want for this example
-      iterator4.setFlexibleParams();
       TEST_ASSERT(iterator4.flexibleParams().size() == 3);
       TEST_ASSERT(iterator4.flexibleParams()[0] == 0);
       TEST_ASSERT(iterator4.flexibleParams()[1] == 2);
       TEST_ASSERT(iterator4.flexibleParams()[2] == 3);
+   }
+
+   void testReadFlexibleParams() // test manual entry of flexibleParams
+   {
+      printMethod(TEST_FUNC);
+      
+      openLogFile("out/filmTestReadFlexibleParams.log");
+      
+      // Set up system
+      System<2> system;
+      FilmIteratorTest::setUpSystem(system, "in/film/system_bad_2D_1");
+
+      // Check flexibleParams array
+      TEST_ASSERT(system.iterator().flexibleParams().size() == 2);
+      TEST_ASSERT(system.iterator().flexibleParams()[0] == 0);
+      TEST_ASSERT(system.iterator().flexibleParams()[1] == 2);
+
+      // Set up another system
+      System<3> system2;
+      FilmIteratorTest::setUpSystem(system2, "in/film/system_bad_3D_2");
+
+      // Check flexibleParams array
+      TEST_ASSERT(system2.iterator().flexibleParams().size() == 3);
+      TEST_ASSERT(system2.iterator().flexibleParams()[0] == 0);
+      TEST_ASSERT(system2.iterator().flexibleParams()[1] == 2);
+      TEST_ASSERT(system2.iterator().flexibleParams()[2] == 3);
    }
 
    void testSolve() // test FilmIterator::solve
@@ -285,6 +312,7 @@ public:
 
       // Run the setup function (has already been tested above)
       iterator.setup();
+      TEST_ASSERT(eq(system.mask().phiTot(), 8.94610216368e-01));
 
       // Read initial guess
       system.readWBasis("in/film/w_in.bf");
@@ -300,10 +328,114 @@ public:
       BFieldComparison bComparison(0); // object to compare fields
       bComparison.compare(system.w().basis(), wFieldsCheck);
       if (verbose() > 0) {
-         std::cout << "\n";
-         std::cout << "Max error = " << bComparison.maxDiff() << "\n";
+         std::cout << "\nMax error = " << bComparison.maxDiff() << "\n";
       }
-      system.writeWBasis("out/w.bf");
+      system.fieldIo().writeFieldsBasis("out/w.bf", system.w().basis(), 
+                                        system.unitCell());
+      TEST_ASSERT(bComparison.maxDiff() < 1.0E-5);
+   }
+
+   void testSweep() // test sweep along chiBottom and lattice parameter
+   {
+      printMethod(TEST_FUNC);
+      
+      openLogFile("out/filmTestSweep.log");
+      
+      // Set up system
+      System<1> system;
+      FilmIteratorTest::setUpSystem(system, "in/film/system1D");
+
+      // Read initial guess
+      system.readWBasis("out/w.bf");
+
+      // Run the sweep function
+      system.sweep();
+
+      // Check converged field is correct by comparing to reference
+      UnitCell<1> unitCell; // UnitCell object to pass to FieldIo functions
+      DArray< DArray<double> > wFieldsCheck; // Copy of reference field
+      system.fieldIo().readFieldsBasis("in/film/w_ref_sweep.bf", 
+                                       wFieldsCheck, unitCell);
+      BFieldComparison bComparison(0); // object to compare fields
+      bComparison.compare(system.w().basis(), wFieldsCheck);
+      if (verbose() > 0) {
+         std::cout << "\nMax error = " << bComparison.maxDiff() << "\n";
+      }
+      TEST_ASSERT(bComparison.maxDiff() < 1.0E-5);
+   }
+
+   void testFreeEnergy() // test System::computeFreeEnergy with mask/h fields
+   {
+      printMethod(TEST_FUNC);
+      
+      openLogFile("out/filmTestFreeEnergy.log");
+      
+      // Set up system
+      System<1> system;
+      FilmIteratorTest::setUpSystem(system, "in/film/system1D");
+
+      // Set up iterator
+      FilmIterator<1, AmIterator<1> > iterator(system);
+      FilmIteratorTest::setUpFilmIterator(iterator, "in/film/film1D");
+
+      // Run the setup function (has already been tested above)
+      iterator.setup();
+
+      // Read a converged solution, solve (should only take a few iterations)
+      system.readWBasis("out/w.bf");
+      iterator.solve();
+
+      // Compute free energy
+      system.computeFreeEnergy();
+      system.writeThermo(Log::file());
+
+      if (verbose() > 0) {
+         std::cout << "\nFree energy error = " 
+                   << (system.fHelmholtz() - 5.24891827297e+00) << "\n";
+      }
+      TEST_ASSERT(system.fHelmholtz() - 5.24891827297e+00 < 1e-6);
+      TEST_ASSERT(system.pressure() + 4.37632791825e+01 < 1e-5);
+   }
+
+   void testMaskAndH() // test manual entry of mask and h fields
+   {
+      printMethod(TEST_FUNC);
+      
+      openLogFile("out/filmTestMaskAndH.log");
+      
+      // Set up system
+      System<1> system;
+      FilmIteratorTest::setUpSystem(system, "in/film/system1D_noFilm");
+
+      // Read the same initial guess as testSolve
+      system.readWBasis("in/film/w_in.bf");
+
+      // Read in the mask and external fields from file
+      UnitCell<1> unitCell; // UnitCell object to pass to FieldIo functions
+      unitCell = system.unitCell();
+      system.mask().setFieldIo(system.fieldIo());
+      system.mask().allocate(system.basis().nBasis(), 
+                             system.mesh().dimensions());
+      system.mask().readBasis("out/mask.bf", unitCell);
+      TEST_ASSERT(eq(system.mask().phiTot(), 8.94610216368e-01));
+      system.h().setFieldIo(system.fieldIo());
+      system.h().allocateBasis(system.basis().nBasis());
+      system.h().allocateRGrid(system.mesh().dimensions());
+      system.h().readBasis("out/h.bf", unitCell);
+
+      // Run the solve function
+      system.iterate();
+
+      // Check converged field is correct by comparing to files in in/film
+      DArray< DArray<double> > wFieldsCheck; // Copy of reference field
+      system.fieldIo().readFieldsBasis("in/film/w_ref.bf", wFieldsCheck, unitCell);
+      BFieldComparison bComparison(0); // object to compare fields
+      bComparison.compare(system.w().basis(), wFieldsCheck);
+      if (verbose() > 0) {
+         std::cout << "\nMax error = " << bComparison.maxDiff() << "\n";
+      }
+      system.fieldIo().writeFieldsBasis("out/w2.bf", system.w().basis(), 
+                                        system.unitCell());
       TEST_ASSERT(bComparison.maxDiff() < 1.0E-5);
    }
 
@@ -367,7 +499,11 @@ TEST_ADD(FilmIteratorTest, testSetup)
 TEST_ADD(FilmIteratorTest, testCheckSpaceGroup)
 TEST_ADD(FilmIteratorTest, testCheckLatticeVectors)
 TEST_ADD(FilmIteratorTest, testFlexibleParams)
+TEST_ADD(FilmIteratorTest, testReadFlexibleParams)
 TEST_ADD(FilmIteratorTest, testSolve)
+TEST_ADD(FilmIteratorTest, testSweep)
+TEST_ADD(FilmIteratorTest, testFreeEnergy)
+TEST_ADD(FilmIteratorTest, testMaskAndH)
 TEST_END(FilmIteratorTest)
 
 #endif

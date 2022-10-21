@@ -16,6 +16,7 @@
 #include <pspc/field/FieldIo.h>            // member
 #include <pspc/field/WFieldContainer.h>    // member
 #include <pspc/field/CFieldContainer.h>    // member
+#include <pspc/field/Mask.h>               // member
 #include <pspc/field/RField.h>             // member
 #include <pspc/field/RFieldDft.h>          // member
 
@@ -125,24 +126,25 @@ namespace Pspc
       /**
       * Read chemical potential fields in symmetry adapted basis format.
       *
-      * This function opens and reads the file with name "filename",
-      * which must contain chemical potential fields in symmetry-adapted
-      * basis format and stores these fields in the system w fields 
-      * container. On exit w().hasData() and w().isSymmetric() are set 
-      * true and hasCFields is set false.
+      * This function calls the member function readBasis of the system
+      * wFieldContainer w_. The w_ object opens and reads the file with
+      * name "filename", which must contain chemical potential fields in 
+      * symmetry-adapted basis format, stores these fields in w_.basis(),
+      * converts these fields to real-space grid format, and stores
+      * the result in w_.rgrid(). On exit, hasCFields is false.
       *
       * \param filename name of input w-field basis file
       */
       void readWBasis(const std::string & filename);
-
+   
       /**
       * Read chemical potential fields in real-space grid (r-grid) format.
       *
-      * This function opens and reads the file with name filename,
-      * which must contain chemical potential fields in real space grid
-      * (r-grid) format, stores these fields in the system w fields
-      * container.  On exit w().hasData() is true and w().isSymmetric() 
-      * is false.
+      * This function calls the member function readRGrid of the system
+      * wFieldContainer w_. The w_ object opens and reads the file with
+      * name "filename", which must contain chemical potential fields in 
+      * real space grid (r-grid) format, and stores these fields in
+      * w_.rgrid(). On exit, hasCFields and w_.isSymmetric() are false.
       *
       * \param filename name of input w-field file in r-grid format
       */
@@ -274,34 +276,6 @@ namespace Pspc
       //@}
       /// \name Output Operations (correspond to command file commands)
       //@{
-
-      /**
-      * Write chemical potential fields in symmetrized basis format.
-      *
-      * \param filename name of output file
-      */
-      void writeWBasis(const std::string & filename) const;
-
-      /**
-      * Write chemical potential fields in real space grid (r-grid) format.
-      *
-      * \param filename name of output file
-      */
-      void writeWRGrid(const std::string & filename) const;
-
-      /**
-      * Write concentration fields in symmetrized basis format.
-      *
-      * \param filename name of output file
-      */
-      void writeCBasis(const std::string & filename) const;
-
-      /**
-      * Write concentration fields in real space grid (r-grid) format.
-      *
-      * \param filename name of output file
-      */
-      void writeCRGrid(const std::string & filename) const;
 
       /**
       * Write c-fields for all blocks and solvents in r-grid format.
@@ -529,6 +503,17 @@ namespace Pspc
       CFieldContainer<D> const & c() const;
 
       /**
+      * Get all of the external potential fields (reference).
+      */
+      WFieldContainer<D>& h();
+
+      /**
+      * Get the mask (the field to which the total density is constrained) 
+      * (reference).
+      */
+      Mask<D>& mask();
+
+      /**
       * Get the Mixture by reference.
       */
       Mixture<D>& mixture();
@@ -623,6 +608,17 @@ namespace Pspc
       */
       bool hasSweep() const;
 
+      /**
+      * Does this system have external potential fields?
+      */
+      bool hasExternalFields() const;
+
+      /**
+       * Does this system have a mask (field to which the total density 
+       * is constrained)?
+       */
+      bool hasMask() const;
+
       ///@}
 
    private:
@@ -685,6 +681,16 @@ namespace Pspc
       CFieldContainer<D> c_;
 
       /**
+      * External potential fields.
+      */
+      WFieldContainer<D> h_;
+
+      /**
+      * Field to which the total density is constrained.
+      */
+      Mask<D> mask_;
+
+      /**
       * Work array of field coefficients for all monomer types.
       *
       * Indexed by monomer typeId, size = nMonomer.
@@ -721,6 +727,25 @@ namespace Pspc
       * Helmholtz free energy per monomer / kT.
       */
       double fHelmholtz_;
+
+      /**
+      * Ideal gas contribution to fHelmholtz_. 
+      * 
+      * This encompasses the internal energy and entropy of 
+      * non-interacting free chains in their corresponding 
+      * potential fields defined by w_.
+      */
+      double fIdeal_;
+
+      /**
+      * Multi-chain interaction contribution to fHelmholtz_.
+      */
+      double fInter_;
+
+      /**
+      * External field contribution to fHelmholtz_.
+      */
+      double fExt_;
 
       /**
       * Pressure times monomer volume / kT.
@@ -904,6 +929,16 @@ namespace Pspc
    CFieldContainer<D> const & System<D>::c() const
    {  return c_; }
 
+   // Get container of external potential fields (reference)
+   template <int D>
+   inline WFieldContainer<D>& System<D>::h()
+   {  return h_; }
+
+   // Get mask field (reference)
+   template <int D>
+   inline Mask<D>& System<D>::mask()
+   {  return mask_; }
+
    // Have the c fields been computed for the current w fields?
    template <int D>
    inline bool System<D>::hasCFields() const
@@ -913,6 +948,16 @@ namespace Pspc
    template <int D>
    inline bool System<D>::hasSweep() const
    {  return (sweepPtr_ != 0); }
+
+   // Does this system have external potential fields? 
+   template <int D>
+   inline bool System<D>::hasExternalFields() const
+   {  return h_.hasData(); }
+
+   // Does this system have a mask?
+   template <int D>
+   inline bool System<D>::hasMask() const
+   {  return mask_.hasData(); }
 
    // Get the precomputed Helmoltz free energy per monomer / kT.
    template <int D>

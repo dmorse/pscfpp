@@ -35,10 +35,8 @@ System{
     normalVecId          0
     interfaceThickness   0.15     
     wallThickness        0.3
-    chi[
-         20   20
-          0    0
-    ]
+    chiBottom[ 20 0 ]
+    chiTop[    20 0 ]
   }
   LinearSweep{
     ns            40  

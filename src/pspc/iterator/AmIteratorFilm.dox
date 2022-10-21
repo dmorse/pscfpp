@@ -13,6 +13,7 @@ AmIteratorFilm{
    maxHist             int  
    errorType*          enumeration ("normResid", "maxResid", or "relNormResid", "relNormResid" by default)
    isFlexible*         bool (0 or 1, 0 by default)   
+   flexibleParams*     Array [ bool ] (nParameters elements, each element 0 or 1)
    scaleStress*        float (10.0 by default)
    normalVecId         int (0, 1, or 2)   
    interfaceThickness  float  
@@ -57,6 +58,19 @@ Parameters and subblocks are described below:
          flexible.  If isFlexible is true (1), the iterator will optimize 
          the flexible lattice parameters to minimize the free energy.
          </td>
+  </tr>
+  <tr>
+    <td> flexibleParams* </td>
+    <td> Use flexibleParams to declare only *some* lattice parameters
+         as flexible. This array should contain one entry for each 
+         lattice parameter, and each entry should be either 1 (true,
+         parameter is flexible) or 0 (false, parameter is fixed). 
+         For example, `flexibleParams[ 0 1 0 1 ]` will set the second
+         and fourth lattice parameters as flexible, and fix the other 
+         two. If this array is not provided, then isFlexible is used
+         to determine whether parameters are flexible (either all are 
+         flexible or none are). This array will override the behavior
+         of isFlexible if provided. </td>
   </tr>
   <tr>
     <td> scaleStress* </td>

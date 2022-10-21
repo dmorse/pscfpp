@@ -54,10 +54,6 @@ namespace Pspc
       using AmIteratorTmpl<Iterator<D>, DArray<double> >::setup;
       using AmIteratorTmpl<Iterator<D>, DArray<double> >::solve;
       using AmIteratorTmpl<Iterator<D>,DArray<double> >::setClassName;
-      using Iterator<D>::maskBasis;
-      using Iterator<D>::externalField;
-      using Iterator<D>::hasMask;
-      using Iterator<D>::hasExternalFields;
       using Iterator<D>::isFlexible;
       using Iterator<D>::flexibleParams;
       using Iterator<D>::setFlexibleParams;
@@ -66,14 +62,23 @@ namespace Pspc
   
       // Inherited protected members 
       using ParamComposite::readOptional;
+      using ParamComposite::readOptionalDArray;
       using Iterator<D>::system;
-      using Iterator<D>::isFlexible_;
       using Iterator<D>::flexibleParams_;
 
    private:
 
+      /// Are any lattice parameters flexible? (used only for param file IO)
+      bool isFlexible_;
+      
       /// How are stress residuals scaled in error calculation?
       double scaleStress_;
+
+      /**
+      * Array of 0s and 1s indicating which lattice parameters are flexible.
+      * (used only for param file IO)  
+      */
+      DArray<int> flexParamBools_;
       
       /**
       * Find L2 norm of a residual vector.

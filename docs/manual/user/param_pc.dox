@@ -60,7 +60,7 @@ System{
   Interaction{ ...  }
   Domain{ ...  }
   Iterator#{ ... }
-  Sweepr#*{ ... }
+  Sweep#*{ ... }
 }
 \endcode
 As for pscf_fd, the Sweep block is optional, and Iterator and Sweep blocks 
@@ -147,9 +147,9 @@ listed \ref user_groups_page "here".
 The default Iterator for the pscf_pc and pscf_pg programs uses an 
 Anderson-Mixing (AM) iterator algorithm. This can be invoked using 
 either the generic label "Iterator" or the specific label "AmIterator".  
-The only iterator currently available is an Anderson-Mixing iterator 
-designed specifically for problems in which a polymer melt or mixture
-is confined to a thin film. 
+The only other iterator currently available is an Anderson-Mixing 
+iterator designed specifically for problems in which a polymer melt or 
+mixture is confined to a thin film (see \ref user_thin_films_page ). 
 
 Descriptions of the parameter file formats for the available iterators
 can be found by following the links in the table below:

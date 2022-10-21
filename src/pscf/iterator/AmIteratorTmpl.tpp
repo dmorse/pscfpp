@@ -27,7 +27,8 @@ namespace Pscf
     : epsilon_(0),
       lambda_(0),
       nHist_(0),
-      maxHist_(0)
+      maxHist_(0),
+      diverged_(false)
    {  setClassName("AmIteratorTmpl"); }
 
    /*
@@ -152,7 +153,15 @@ namespace Pscf
          // Output details of this iteration to the log file
          outputToLog();
 
-         if (done) {
+         if (diverged_) {
+
+            // If calculation diverged, some residual values are
+            // NaN. In this case, the calculation failed, and there
+            // is no need to continue to the next iteration.
+            break;
+            
+         }else if (done) {
+
             // Stop timers
             timerAM.stop();
             timerTotal.stop();
@@ -245,6 +254,12 @@ namespace Pscf
       // Find norm of residual vector relative to field
       double relNormRes = normRes/findNorm(fieldHists_[0]);
       Log::file() << "Relative Norm = " << Dbl(relNormRes,13) << std::endl;
+
+      // Check if calculation has diverged (normRes will be NaN)
+      if (std::isnan(normRes)) {
+         diverged_ = true;
+         return false;
+      }
 
       // Check if total error is below tolerance
       if (errorType_ == "normResid")

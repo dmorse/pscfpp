@@ -22,7 +22,7 @@ write fields in any of the following three formats:
    transform (DFT) of a real field
 
 The "basis" and "r-grid" fromats are identical to corresponding formats
-used by the Fortran PSCF program.  The k-grid format is not conpatible
+used by the Fortran PSCF program.  The k-grid format is not compatible
 with that used by the Fortran program, because of differences in the 
 way that FFTs are stored and indexed internally.
 
@@ -43,7 +43,7 @@ FINISH
 \endcode
 The command "READ_W_BASIS in/w.bf" instructs the program to read an 
 initial guess for the chemical potentials fields from the file in/w.bf, 
-which should use contain the components of the fields as an expansion in 
+which should contain the components of the fields as an expansion in 
 a symmetry-adapted Fourier basis. The ITERATE command instructs the program
 to iteratively solve the SCFT equations starting from this initial guess.  
 The command "WRITE_W_BASIS out/w.bf" writes the resulting converged set of 
@@ -67,7 +67,7 @@ FINISH
 \endcode
 The command "READ_W_BASIS in/w.bf" instructs the program to read 
 an initial guess for the chemical potentials fields at the initial 
-state of the sweep (the state s=0) rom the file in/w.bf. 
+state of the sweep (the state s=0) from the file in/w.bf. 
 The SWEEP command actually executes a sweep operation, and is only
 valid if the corresponding parameter file contains a Sweep block.
 
@@ -78,6 +78,48 @@ output information about the last state in the sweep (i.e., the
 state s=1). This is unnecessary because information about the 
 solution at each step in the sweep is instead normally output as 
 part of the implementation of the sweep operation.
+
+\section user_command_pc_h_mask_fields_sec External Fields and Masks
+
+In pspc, users are also able to impose external (h) fields and masks 
+on the unit cell of their calculation. Users can read in a set of 
+external fields (one field per monomer species) from a file using 
+the READ_H_BASIS and READ_H_RGRID commands, and can read in a mask 
+field using READ_MASK_BASIS and READ_MASK_RGRID. 
+
+An external field introduces an additional potential energy that 
+either favors or disfavors the presence of a particular species at
+each point in space. The external field contribution to free 
+energy is merely the volume-normalized overlap integral of each 
+species' concentration profile with its corresponding external 
+field. The fields can be positive or negative.
+
+A mask field imposes geometric confinement upon the system by 
+modifying the incompressibility constraint. Incompressibility in a 
+system with a mask is defined by the following equation:
+\f[
+   \sum_{\alpha=1}^{N_{\rm species}} \rho_\alpha({\bf r}) = 
+   \rho_{\rm mask}({\bf r}) 
+\f]
+where the summation is over all distinct monomer species, 
+<i>&rho;<sub>&alpha;</sub></i>(<b>r</b>) is the volume fraction of 
+species <i>&alpha;</i> at position <b>r</b>, and 
+<i>&rho;</i><sub>mask</sub>(<b>r</b>) is the mask field. So, if 
+<i>&rho;</i><sub>mask</sub>(<b>r</b>) = 1, then position <b>r</b>
+is occupied entirely by polymers, but if 
+<i>&rho;</i><sub>mask</sub>(<b>r</b>) = 0 then there are no 
+polymers at position <b>r</b>. This can be used, for example, to 
+impose confinement between walls, in a cylindrical cavity, in a 
+spherical pore, etc. Masks are the preferred method for geometric
+confinement in our SCFT software because their use doesn't require  
+any modifications of the boundary conditions; the unit cell is still
+periodic in all directions, and the only modifications required to
+impose a mask are applied to the iterator.
+
+External fields and masks are both generated internally by the 
+thin film feature described at \ref user_thin_films_page , and
+the fields can be written to a file at any time using the 
+additional mask and h field commands below.
 
 \section user_command_pc_commands_sec Commands
 
@@ -101,6 +143,30 @@ programs:
     <td> filename [string] </td>
     <td> Read w fields from file filename, in real-space grid (r-grid) 
          format </td>
+  </tr>
+  <tr> 
+    <td> READ_H_BASIS </td>
+    <td> filename [string] </td>
+    <td> Read external (h) fields from file filename, in symmetry-adapted
+         basis format </td>
+  </tr>
+  <tr> 
+    <td> READ_H_RGRID </td>
+    <td> filename [string] </td>
+    <td> Read external (h) fields from file filename, in real-space grid 
+         (r-grid) format </td>
+  </tr>
+  <tr> 
+    <td> READ_MASK_BASIS </td>
+    <td> filename [string] </td>
+    <td> Read a mask field from file filename, in symmetry-adapted
+         basis format </td>
+  </tr>
+  <tr> 
+    <td> READ_MASK_RGRID </td>
+    <td> filename [string] </td>
+    <td> Read a mask field from file filename, in real-space grid 
+         (r-grid) format </td>
   </tr>
   <tr> 
     <td> COMPUTE </td>
@@ -151,6 +217,29 @@ programs:
          are given in the order that the blocks appear in the param file, 
          followed by the solvent fields in the order that the solvents 
          appear in the param file </td>
+  </tr>
+  <tr> 
+    <td> WRITE_H_BASIS </td>
+    <td> filename [string] </td>
+    <td> Write external potential fields (h fields) to file filename,
+         in symmetry adapted basis format  </td>
+  </tr>
+  <tr> 
+    <td> WRITE_H_RGRID </td>
+    <td> filename [string] </td>
+    <td> Write external potential fields (h fields) to file filename,
+         in r-grid format  </td>
+  </tr>
+  <tr> 
+    <td> WRITE_MASK_BASIS </td>
+    <td> filename [string] </td>
+    <td> Write mask field to file filename, in symmetry adapted basis 
+         format  </td>
+  </tr>
+  <tr> 
+    <td> WRITE_MASK_RGRID </td>
+    <td> filename [string] </td>
+    <td> Write mask field to file filename, in r-grid format  </td>
   </tr>
   <tr> 
     <td> WRITE_Q_SLICE </td>
