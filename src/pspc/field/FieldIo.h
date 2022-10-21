@@ -72,10 +72,66 @@ namespace Pspc
       ///@{
 
       /**
+      * Read single concentration or chemical potential field from file.
+      *
+      * This function reads the field in symmetry adapted basis format
+      * from input stream in.
+      *
+      * \param in  input stream (i.e., input file)
+      * \param field  array to store the field (basis format)
+      * \param unitCell  associated crystallographic unit cell
+      */
+      void readFieldBasis(std::istream& in, DArray<double>& field, 
+                          UnitCell<D> & unitCell) const;
+
+      /**
+      * Read single concentration or chemical potential field from file.
+      *
+      * This function opens an input file with the specified filename, 
+      * reads field in symmetry adapted basis format from that file, and 
+      * closes the file.
+      *
+      * \param filename  name of input file
+      * \param field  array to store the field (basis format)
+      * \param unitCell  associated crystallographic unit cell
+      */
+      void readFieldBasis(std::string filename, DArray<double>& field, 
+                          UnitCell<D> & unitCell) const;
+
+      /**
+      * Write single concentration or chemical potential field to output
+      * stream out.
+      *
+      * This function writes the field in symmetry adapted basis format.
+      *
+      * \param out  output stream (i.e., output file)
+      * \param field  field to be written (symmetry adapted basis format)
+      * \param unitCell  associated crystallographic unit cell
+      */
+      void writeFieldBasis(std::ostream& out, 
+                           DArray<double> const & field,
+                           UnitCell<D> const & unitCell) const;
+
+      /**
+      * Write single concentration or chemical potential field to file.
+      *
+      * This function opens an output file with the specified filename, 
+      * writes the field in symmetry adapted basis format to that file, 
+      * and closes the file. 
+      *
+      * \param filename  name of output file
+      * \param fields  field to be written (symmetry adapted basis format)
+      * \param unitCell  associated crystallographic unit cell
+      */
+      void writeFieldBasis(std::string filename, 
+                           DArray<double> const & field,
+                           UnitCell<D> const & unitCell) const;
+      
+      /**
       * Read concentration or chemical potential field components from file.
       *
-      * This function reads components in a symmetry adapted basis from 
-      * file in.
+      * This function reads fields in a symmetry adapted basis from 
+      * input stream in.
       *
       * The capacity of DArray fields is equal to nMonomer, and element
       * fields[i] is a DArray containing components of the field 
@@ -328,13 +384,27 @@ namespace Pspc
       * group name and the the number of monomers. The unit cell data is
       * read into the associated UnitCell<D>, which is thus updated.
       * 
-      * This function throws an exception if the values of "dim" and 
-      * "N_monomer" read from file do not match values of D and the 
-      * input parameter nMonomer, respectively. The group name is not 
-      * checked.
+      * This function throws an exception if the values of "dim" read 
+      * from file do not match the FieldIo template parameter D. 
+      * 
+      * The function does not impose any requirements on the value
+      * of the input parameter nMonomer; it is overwritten and will
+      * contain the value of "N_monomer" from the field file header 
+      * at termination of the function.
+      * 
+      * If the UnitCell object passed to this function already
+      * contains unit cell data, the function will check to ensure
+      * that the crystal system and space group in the field file 
+      * header match the data already stored. A warning will also 
+      * be printed if the lattice parameters do not match. If, 
+      * instead, the function is passed an empty UnitCell object, 
+      * we assume that the UnitCell data is unknown or that the 
+      * field file header does not need to be cross-checked with 
+      * existing data. In this case, the field file header data is 
+      * stored directly in the UnitCell object that was passed in.
       * 
       * \param in  input stream (i.e., input file)
-      * \param nMonomer  expected value of nMonomer
+      * \param nMonomer  number of fields contained in the field file
       * \param unitCell  associated crystallographic unit cell
       */
       void readFieldHeader(std::istream& in, int& nMonomer, 
@@ -344,7 +414,7 @@ namespace Pspc
       * Write header for field file (fortran pscf format)
       *
       * \param out  output stream (i.e., output file)
-      * \param nMonomer  number of monomer types
+      * \param nMonomer  number of monomer types or fields
       * \param unitCell  associated crystallographic unit cell
       */
       void writeFieldHeader(std::ostream& out, int nMonomer,
@@ -446,6 +516,19 @@ namespace Pspc
                                DArray< RField<D> > & out) const;
 
       /**
+      * Convert a field from k-grid (DFT) to real space (r-grid) format.
+      * 
+      * This function simply calls the inverse FFT for a single field.
+      * The inverse FFT provided by the underlying FFTW library overwrites 
+      * its input, which is why argument "in" not a const reference.
+      *
+      * \param in  field in discrete Fourier format (k-grid)
+      * \param out  field defined on real-space grid (r-grid)
+      */
+      void convertKGridToRGrid(RFieldDft<D> & in,
+                               RField<D> & out) const;
+
+      /**
       * Convert fields from spatial grid (r-grid) to k-grid format.
       * 
       * \param in  fields defined on real-space grid (r-grid)
@@ -453,6 +536,15 @@ namespace Pspc
       */
       void convertRGridToKGrid(DArray< RField<D> > const & in,
                                DArray< RFieldDft<D> > & out) const;
+
+      /**
+      * Convert a field from spatial grid (r-grid) to k-grid format.
+      * 
+      * \param in  field defined on real-space grid (r-grid)
+      * \param out  field in discrete Fourier format (k-grid)
+      */
+      void convertRGridToKGrid(RField<D> const & in,
+                               RFieldDft<D> & out) const;
 
       ///@}
       /// \name Test Space Group Symmetry
@@ -462,17 +554,21 @@ namespace Pspc
       * Check if an r-grid field has the declared space group symmetry.
       *
       * \param in field in real space grid (r-grid) format
+      * \param verbose if field does not have symmetry and verbose = true,
+      * function will write error values to Log::file().
       * \return true if the field is symmetric, false otherwise
       */
-      bool hasSymmetry(RField<D> const & in) const;
+      bool hasSymmetry(RField<D> const & in, bool verbose = true) const;
 
       /**
       * Check if a k-grid field has declared space group symmetry.
       *
       * \param in field in real space grid (r-grid) format
+      * \param verbose if field does not have symmetry and verbose = true,
+      * function will write error values to Log::file().
       * \return true if the field is symmetric, false otherwise
       */
-      bool hasSymmetry(RFieldDft<D> const & in) const;
+      bool hasSymmetry(RFieldDft<D> const & in, bool verbose = true) const;
 
       ///@}
 

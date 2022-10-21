@@ -269,6 +269,8 @@ namespace Pspc
       c_.setNMonomer(nMonomer);
       c_.allocateRGrid(mesh().dimensions());
 
+      h_.setNMonomer(nMonomer);
+
       // Temporary work fields 
       tmpFieldsRGrid_.allocate(nMonomer);
       tmpFieldsKGrid_.allocate(nMonomer);
@@ -339,6 +341,41 @@ namespace Pspc
             readEcho(in, filename);
             readWRGrid(filename);
          } else
+         if (command == "READ_H_BASIS") {
+            readEcho(in, filename);
+            if (!h_.isAllocatedBasis()) {
+               h_.allocateBasis(basis().nBasis());
+            }
+            if (!h_.isAllocatedRGrid()) {
+               h_.allocateRGrid(mesh().dimensions());
+            }
+            h_.setFieldIo(domain_.fieldIo());
+            h_.readBasis(filename, domain_.unitCell());
+         } else
+         if (command == "READ_H_RGRID") {
+            readEcho(in, filename);
+            if (!h_.isAllocatedRGrid()) {
+               h_.allocateRGrid(mesh().dimensions());
+            }
+            h_.setFieldIo(domain_.fieldIo());
+            h_.readRGrid(filename, domain_.unitCell());
+         } else
+         if (command == "READ_MASK_BASIS") {
+            readEcho(in, filename);
+            if (!mask_.isAllocated()) {
+               mask_.allocate(basis().nBasis(), mesh().dimensions());
+            }
+            mask_.setFieldIo(domain_.fieldIo());
+            mask_.readBasis(filename, domain_.unitCell());
+         } else
+         if (command == "READ_MASK_RGRID") {
+            readEcho(in, filename);
+            if (!mask_.isAllocated()) {
+               mask_.allocate(basis().nBasis(), mesh().dimensions());
+            }
+            mask_.setFieldIo(domain_.fieldIo());
+            mask_.readBasis(filename, domain_.unitCell());
+         } else
          if (command == "COMPUTE") {
             // Solve the modified diffusion equation, without iteration
             compute();
@@ -357,19 +394,24 @@ namespace Pspc
          } else
          if (command == "WRITE_W_BASIS") {
             readEcho(in, filename);
-            writeWBasis(filename);
+            UTIL_CHECK(w_.hasData());
+            UTIL_CHECK(w_.isSymmetric());
+            fieldIo().writeFieldsBasis(filename, w_.basis(), unitCell());
          } else 
          if (command == "WRITE_W_RGRID") {
             readEcho(in, filename);
-            writeWRGrid(filename);
+            UTIL_CHECK(w_.hasData());
+            fieldIo().writeFieldsRGrid(filename, w_.rgrid(), unitCell());
          } else 
          if (command == "WRITE_C_BASIS") {
             readEcho(in, filename);
-            writeCBasis(filename);
+            UTIL_CHECK(hasCFields_);
+            fieldIo().writeFieldsBasis(filename, c_.basis(), unitCell());
          } else
          if (command == "WRITE_C_RGRID") {
             readEcho(in, filename);
-            writeCRGrid(filename);
+            UTIL_CHECK(hasCFields_);
+            fieldIo().writeFieldsRGrid(filename, c_.rgrid(), unitCell());
          } else
          if (command == "WRITE_C_BLOCK_RGRID") {
             readEcho(in, filename);
@@ -431,12 +473,34 @@ namespace Pspc
             file.close();
          } else
          if (command == "WRITE_STARS") {
-            readEcho(in, outFileName);
-            writeStars(outFileName);
+            readEcho(in, filename);
+            writeStars(filename);
          } else
          if (command == "WRITE_WAVES") {
-            readEcho(in, outFileName);
-            writeWaves(outFileName);
+            readEcho(in, filename);
+            writeWaves(filename);
+         } else 
+         if (command == "WRITE_MASK_BASIS") {
+            readEcho(in, filename);
+            UTIL_CHECK(mask_.hasData());
+            UTIL_CHECK(mask_.isSymmetric());
+            fieldIo().writeFieldBasis(filename, mask_.basis(), unitCell());
+         } else 
+         if (command == "WRITE_MASK_RGRID") {
+            readEcho(in, filename);
+            UTIL_CHECK(mask_.hasData());
+            fieldIo().writeFieldRGrid(filename, mask_.rgrid(), unitCell());
+         } else 
+         if (command == "WRITE_H_BASIS") {
+            readEcho(in, filename);
+            UTIL_CHECK(h_.hasData());
+            UTIL_CHECK(h_.isSymmetric());
+            fieldIo().writeFieldsBasis(filename, h_.basis(), unitCell());
+         } else 
+         if (command == "WRITE_H_RGRID") {
+            readEcho(in, filename);
+            UTIL_CHECK(h_.hasData());
+            fieldIo().writeFieldsRGrid(filename, h_.rgrid(), unitCell());
          } else 
          if (command == "BASIS_TO_RGRID") {
             readEcho(in, inFileName);
@@ -461,12 +525,12 @@ namespace Pspc
          if (command == "BASIS_TO_KGRID") {
             readEcho(in, inFileName);
             readEcho(in, outFileName);
-            rGridToKGrid(inFileName, outFileName);
+            basisToKGrid(inFileName, outFileName);
          } else
          if (command == "KGRID_TO_BASIS") {
             readEcho(in, inFileName);
             readEcho(in, outFileName);
-            rGridToKGrid(inFileName, outFileName);
+            kGridToBasis(inFileName, outFileName);
          } else
          if (command == "CHECK_RGRID_SYMMETRY") {
             readEcho(in, inFileName);
@@ -478,7 +542,9 @@ namespace Pspc
                    << std::endl;
             } else {
                Log::file() 
-                   << "Symmetry of r-grid file does not match this space group." 
+                   << "Symmetry of r-grid file does not match this space group" 
+                   << std::endl
+                   << "to within our error threshold of 1E-8."
                    << std::endl;
             }
          } else
@@ -546,8 +612,8 @@ namespace Pspc
    template <int D>
    void System<D>::readWBasis(const std::string & filename)
    {
-      fieldIo().readFieldsBasis(filename, tmpFieldsBasis_, domain_.unitCell());
-      w_.setBasis(tmpFieldsBasis_);
+      w_.readBasis(filename, domain_.unitCell());
+      hasCFields_ = false;
    }
 
    /*
@@ -556,9 +622,8 @@ namespace Pspc
    template <int D>
    void System<D>::readWRGrid(const std::string & filename)
    {
-      fieldIo().readFieldsRGrid(filename, tmpFieldsRGrid_, 
-                                domain_.unitCell());
-      w_.setRGrid(tmpFieldsRGrid_);
+      w_.readRGrid(filename, domain_.unitCell());
+      hasCFields_ = false;
    }
 
    /*
@@ -616,7 +681,7 @@ namespace Pspc
       UTIL_CHECK(w_.hasData());
 
       // Solve the modified diffusion equation (without iteration)
-      mixture_.compute(w_.rgrid(), c_.rgrid());
+      mixture_.compute(w_.rgrid(), c_.rgrid(), mask_.phiTot());
       hasCFields_ = true;
 
       if (w_.isSymmetric()) {
@@ -686,6 +751,8 @@ namespace Pspc
 
       // Initialize to zero
       fHelmholtz_ = 0.0;
+      fIdeal_ = 0.0;
+      fInter_ = 0.0;
  
       double phi, mu;
       int np = mixture_.nPolymer();
@@ -702,7 +769,7 @@ namespace Pspc
             length = polymerPtr->length();
             // Recall: mu = ln(phi/q)
             if (phi > 1.0E-08) {
-               fHelmholtz_ += phi*( mu - 1.0 )/length;
+               fIdeal_ += phi*( mu - 1.0 )/length;
             }
          }
       }
@@ -717,7 +784,7 @@ namespace Pspc
             mu = solventPtr->mu();
             size = solventPtr->size();
             if (phi > 1.0E-08) {
-               fHelmholtz_ += phi*( mu - 1.0 )/size;
+               fIdeal_ += phi*( mu - 1.0 )/size;
             }
          }
       }
@@ -725,25 +792,39 @@ namespace Pspc
       int nm  = mixture_.nMonomer();
       int nBasis = basis().nBasis();
 
+      double temp(0.0);
       // Compute Legendre transform subtraction
       // Use expansion in symmetry-adapted orthonormal basis
-      double temp = 0.0;
       for (int i = 0; i < nm; ++i) {
          for (int k = 0; k < nBasis; ++k) {
-            temp += w_.basis()[i][k] * c_.basis()[i][k];
+            temp -= w_.basis(i)[k] * c_.basis(i)[k];
          }
       }
+
+      // If the system has a mask, then the volume that should be used
+      // in calculating free energy/pressure is the volume available to
+      // the polymers, not the total unit cell volume. We thus divide
+      // all terms that involve integrating over the unit cell volume by
+      // mask().phiTot(), the volume fraction of the unit cell that is 
+      // occupied by the polymers. This properly scales them to the 
+      // correct value. fExt_, fInter_, and the Legendre transform 
+      // component of fIdeal_ all require this scaling. If no mask is 
+      // present, mask.phiTot() = 1 and no scaling occurs.
+      temp /= mask().phiTot(); 
+      fIdeal_ += temp;
+      fHelmholtz_ += fIdeal_;
 
       // Compute contribution from external fields, if fields exist
-      if (iterator().hasExternalFields()) {
+      if (hasExternalFields()) {
+         fExt_ = 0.0;
          for (int i = 0; i < nm; ++i) {
             for (int k = 0; k < nBasis; ++k) {
-               temp -= iterator().externalField(i)[k] * c_.basis()[i][k];
+               fExt_ += h_.basis(i)[k] * c_.basis(i)[k];
             }
          }
+         fExt_ /= mask().phiTot();
+         fHelmholtz_ += fExt_;
       }
-
-      fHelmholtz_ -= temp;
 
       // Compute excess interaction free energy [ phi^{T}*chi*phi ]
       double chi;
@@ -751,10 +832,12 @@ namespace Pspc
          for (int j = i + 1; j < nm; ++j) {
             chi = interaction().chi(i,j);
             for (int k = 0; k < nBasis; ++k) {
-               fHelmholtz_+= chi * c_.basis()[i][k] * c_.basis()[j][k];
+               fInter_ += chi * c_.basis(i)[k] * c_.basis(j)[k];
             }
          }
       }
+      fInter_ /= mask().phiTot();
+      fHelmholtz_ += fInter_;
 
       // Initialize pressure
       pressure_ = -fHelmholtz_;
@@ -789,17 +872,6 @@ namespace Pspc
          }
       }
 
-      // If the iterator has a mask, then the volume that should be
-      // used to calculate free energy/pressure is the volume available
-      // to the polymers, not the total unit cell volume. We thus divide
-      // the free energy and pressure by (1 - iterator().maskPhi()), the 
-      // volume fraction of the unit cell that is occupied by the 
-      // polymers. This properly scales them to the correct value.
-      if (iterator().hasMask()) {
-         fHelmholtz_ /= 1 - iterator().maskPhi();
-         pressure_ /= 1 - iterator().maskPhi();
-      }
-
    }
 
    /*
@@ -811,6 +883,14 @@ namespace Pspc
       out << std::endl;
       out << "fHelmholtz    " << Dbl(fHelmholtz(), 18, 11) << std::endl;
       out << "pressure      " << Dbl(pressure(), 18, 11) << std::endl;
+      out << std::endl;
+      
+      out << "Free energy components:" << std::endl;
+      out << "fIdeal        " << Dbl(fIdeal_, 18, 11) << std::endl;
+      out << "fInter        " << Dbl(fInter_, 18, 11) << std::endl;
+      if (hasExternalFields()) {
+         out << "fExt          " << Dbl(fExt_, 18, 11) << std::endl;
+      }
       out << std::endl;
 
       int np = mixture_.nPolymer();
@@ -931,45 +1011,6 @@ namespace Pspc
 
    // Command functions
 
-   /*
-   * Write w-fields in symmetry-adapted basis format. 
-   */
-   template <int D>
-   void System<D>::writeWBasis(const std::string & filename) const
-   {
-      UTIL_CHECK(w_.hasData());
-      fieldIo().writeFieldsBasis(filename, w_.basis(), unitCell());
-   }
-
-   /*
-   * Write w-fields in real space grid file format.
-   */
-   template <int D>
-   void System<D>::writeWRGrid(const std::string & filename) const
-   {
-      UTIL_CHECK(w_.hasData());
-      fieldIo().writeFieldsRGrid(filename, w_.rgrid(), unitCell());
-   }
-
-   /*
-   * Write all concentration fields in symmetry-adapted basis format.
-   */
-   template <int D>
-   void System<D>::writeCBasis(const std::string & filename) const
-   {
-      UTIL_CHECK(hasCFields_);
-      fieldIo().writeFieldsBasis(filename, c_.basis(), unitCell());
-   }
-
-   /*
-   * Write all concentration fields in real space (r-grid) format.
-   */
-   template <int D>
-   void System<D>::writeCRGrid(const std::string & filename) const
-   {
-      UTIL_CHECK(hasCFields_);
-      fieldIo().writeFieldsRGrid(filename, c_.rgrid(), unitCell());
-   }
 
    /*
    * Write all concentration fields in real space (r-grid) format, for 
@@ -1227,7 +1268,7 @@ namespace Pspc
       UnitCell<D> tmpUnitCell;
       fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_, tmpUnitCell);
       for (int i = 0; i < mixture_.nMonomer(); ++i) {
-         bool symmetric = fieldIo().hasSymmetry(tmpFieldsRGrid_[i]);
+         bool symmetric = fieldIo().hasSymmetry(tmpFieldsRGrid_[i],true);
          if (!symmetric) {
             return false;
          }
@@ -1278,16 +1319,23 @@ namespace Pspc
    void System<D>::guessWfromC(std::string const & inFileName, 
                                std::string const & outFileName)
    {
-      fieldIo().readFieldsBasis(inFileName, tmpFieldsBasis_, 
+      int nm = mixture_.nMonomer();
+      DArray< DArray<double> > tmpCFieldsBasis;
+      tmpCFieldsBasis.allocate(nm);
+      for (int i = 0; i < nm; ++i) {
+         tmpCFieldsBasis[i].allocate(basis().nBasis());
+      }
+
+      fieldIo().readFieldsBasis(inFileName, tmpCFieldsBasis, 
                                 domain_.unitCell());
 
       // Compute w fields from c fields
       for (int i = 0; i < basis().nBasis(); ++i) {
-         for (int j = 0; j < mixture_.nMonomer(); ++j) {
+         for (int j = 0; j < nm; ++j) {
             tmpFieldsBasis_[j][i] = 0.0;
-            for (int k = 0; k < mixture_.nMonomer(); ++k) {
+            for (int k = 0; k < nm; ++k) {
                tmpFieldsBasis_[j][i] += interaction().chi(j,k) 
-                                      * tmpFieldsBasis_[k][i];
+                                      * tmpCFieldsBasis[k][i];
             }
          }
       }

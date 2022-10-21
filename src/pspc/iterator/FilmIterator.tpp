@@ -29,18 +29,23 @@ namespace Pspc
    {  setClassName(iterator().className().append("Film").c_str()); }
 
    /*
-   * Output the indices of each flexible lattice parameter, based on
-   * normalVecId and unitCell definitions in param file
+   * Construct an array containing the indices of each flexible lattice 
+   * parameter, based on normalVecId and unitCell definitions in param 
+   * file as well as the optional user input flexibleParams. Store this
+   * array in flexibleParams_ member of this object, as well the 
+   * flexibleParams_ member of the iterator within this object.
    */
    template <typename IteratorType>
    void FilmIterator<1, IteratorType>::setFlexibleParams()
    {
       FSArray<int, 6> params; // empty FSArray, no flexible parameters
 
-      Log::file() << std::endl 
-         << "Warning - The lattice parameter is not allowed "
-         << "to be flexible for a 1D system that contains walls.\n"
-         << std::endl;
+      if (iterator().flexibleParams().size() != 0) {
+         Log::file() << std::endl 
+            << "Warning - The lattice parameter is not allowed "
+            << "to be flexible for a 1D thin film system."
+            << std::endl;
+      }
 
       // Store params in flexibleParams_ member of this object
       setFlexibleParams(params);
@@ -70,30 +75,39 @@ namespace Pspc
    {  setClassName(iterator().className().append("Film").c_str()); }
 
    /*
-   * Output the indices of each flexible lattice parameter, based on
-   * normalVecId and unitCell definitions in param file
+   * Construct an array containing the indices of each flexible lattice 
+   * parameter, based on normalVecId and unitCell definitions in param 
+   * file as well as the optional user input flexibleParams. Store this
+   * array in flexibleParams_ member of this object, as well the 
+   * flexibleParams_ member of the iterator within this object.
    */
    template <typename IteratorType>
    void FilmIterator<2, IteratorType>::setFlexibleParams() 
    {
       FSArray<int, 6> params;
+      FSArray<int, 6> current = iterator().flexibleParams();
+
+      if (current.size() == 0) { // lattice is already rigid
+         setFlexibleParams(params);
+         return;
+      }
 
       // If the lattice system is square, params should be empty. Otherwise,
-      // params should contain only the length of the vector that is not 
-      // normalVecId. The length of normalVecId is fixed, and gamma = 90 degrees.
+      // params should, at most, contain only the index of the lattice basis
+      // vector that is not normalVecId. The length of normalVecId is fixed
+      //and gamma = 90 degrees for all 2D thin film calculations.
       if (system().domain().unitCell().lattice() != UnitCell<2>::Square) {
-         if (normalVecId() == 0) {
-            params.append(1);
-         } else { // normalVecId() == 1
-            params.append(0);
+         for (int i = 0; i < current.size(); i++) {
+            if ((current[i] != normalVecId()) && (current[i] < 2)) {
+               params.append(current[i]);
+            }
          }
       }
 
-      if (params.size() == 0) {
+      if (params.size() < current.size()) {
          Log::file() << std::endl 
-            << "Warning - None of the lattice parameters are allowed\n"
-            << "to be flexible for this choice of lattice system\n"
-            << "when the system is confined in a thin film."
+            << "Notice - Some lattice parameters will be held constant\n"
+            << "to comply with the thin film constraint."
             << std::endl;
       }
 
@@ -133,48 +147,85 @@ namespace Pspc
    {  setClassName(iterator().className().append("Film").c_str()); }
 
    /*
-   * Output the indices of each flexible lattice parameter, based on
-   * normalVecId and unitCell definitions in param file
+   * Construct an array containing the indices of each flexible lattice 
+   * parameter, based on normalVecId and unitCell definitions in param 
+   * file as well as the optional user input flexibleParams. Store this
+   * array in flexibleParams_ member of this object, as well the 
+   * flexibleParams_ member of the iterator within this object.
    */
    template <typename IteratorType>
    void FilmIterator<3, IteratorType>::setFlexibleParams()
    {
       FSArray<int, 6> params;
+      FSArray<int, 6> current = iterator().flexibleParams();
       UnitCell<3>::LatticeSystem lattice = system().domain().unitCell().lattice();
+
+      if (current.size() == 0) { // lattice is already rigid
+         setFlexibleParams(params);
+         return;
+      }
 
       // params can contain up to 3 lattice parameters: the length of the two 
       // lattice vectors that are not normalVecId, and the angle between them.
       // The other two angles must be 90 degrees, and the length of normalVecId
       // is fixed. The crystal system determines which parameters are flexible.
-      if (lattice == UnitCell<3>::Hexagonal || 
-         lattice == UnitCell<3>::Rhombohedral) {
-         UTIL_CHECK(normalVecId() == 2); // this is required for hex/rhombohedral
-         params.append(0);
-      } else if (lattice == UnitCell<3>::Tetragonal) {
-         if (normalVecId() == 2) {
-            params.append(0);
-         } else {
-            params.append(1);
-         }
-      } else if (lattice != UnitCell<3>::Cubic) {
-         // The for-loop below applies to orthorhombic, monoclinic, & triclinic
-         for (int i = 0; i < 3; i++) {
-            if (normalVecId() != i) {
-               params.append(i);
+      if (lattice == UnitCell<3>::Rhombohedral) {
+
+         Log::file() << "Rhombohedral lattice systems are not compatible with"
+                     << "a thin film constraint.\n"
+                     << "See thin film documentation page for more details.\n";
+         UTIL_THROW("Cannot use rhombohedral lattice with a thin film system.");
+
+      } else if (lattice == UnitCell<3>::Hexagonal) {
+
+         UTIL_CHECK(normalVecId() == 2); // this is required for hexagonal
+         for (int i = 0; i < current.size(); i++) {
+            if (current[i] == 0) { // 0 is the only allowed flexibleParam
+               params.append(current[i]);
             }
          }
-         if (lattice == UnitCell<3>::Monoclinic && normalVecId() == 1) {
-            params.append(3); // beta is flexible if normalVecId == 1
-         } else if (lattice == UnitCell<3>::Triclinic) {
-            params.append(normalVecId() + 3);
+
+      } else if (lattice == UnitCell<3>::Tetragonal) {
+
+         // if normalVecId = 2, the only allowed flexibleParam is 0
+         // if normalVecId < 2, the only allowed flexibleParam is 1
+         for (int i = 0; i < current.size(); i++) {
+            if (current[i] == 0 && normalVecId() == 2) {
+               params.append(current[i]);
+            } else if (current[i] == 1 && normalVecId() < 2) {
+               params.append(current[i]);
+            }
+         }
+
+      } else if (lattice != UnitCell<3>::Cubic) {
+         
+         // Loop through current and determine which of the params within it
+         // are allowed to be flexible
+         for (int i = 0; i < current.size(); i++) {
+            // This if-statement applies for orthorhombic/monoclinic/triclinic
+            if (current[i] < 3 && current[i] != normalVecId()) { 
+               params.append(current[i]);
+            }
+
+            // beta can be flexible in a monoclinic lattice if normalVecId == 1
+            if (lattice == UnitCell<3>::Monoclinic && normalVecId() == 1
+                && current[i] == 3) {
+               params.append(current[i]);
+            }
+
+            // The angle between the two lattice basis vectors that are not
+            // normalVecId can be flexible in a triclinic lattice
+            if (lattice == UnitCell<3>::Triclinic
+                && current[i] == (normalVecId() + 3)) {
+               params.append(current[i]);
+            }
          }
       }
 
-      if (params.size() == 0) {
+      if (params.size() < current.size()) {
          Log::file() << std::endl 
-            << "Warning - None of the lattice parameters are allowed\n"
-            << "to be flexible for this choice of lattice system\n"
-            << "when the system is confined in a thin film."
+            << "Notice - Some lattice parameters will be held constant\n"
+            << "to comply with the thin film constraint."
             << std::endl;
       }
 

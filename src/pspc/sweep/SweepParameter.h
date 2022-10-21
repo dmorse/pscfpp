@@ -45,7 +45,8 @@ namespace Pspc {
    *  | phi_solvent | solvent volume fraction            | sId   |
    *  | mu_solvent  | solvent chemical potential         | sId   |
    *  | cell_param  | lattice parameter                  | lId   |
-   *  | wall_chi    | Wall/monomer interaction parameter | mId   | wId
+   *  | chi_bottom  | thin film wall/monomer interaction | mId   | 
+   *  | chi_top     | thin film wall/monomer interaction | mId   | 
    * \endcode
    * The two indices for a Flory-Huggins chi parameter refer to indices
    * in the chi matrix maintained by Interaction. Changes to element
@@ -179,7 +180,7 @@ namespace Pspc {
       /// Enumeration of allowed parameter types.
       enum ParamType { Block, Chi, Kuhn, Phi_Polymer, Phi_Solvent,
                        Mu_Polymer, Mu_Solvent, Solvent, Cell_Param, 
-                       Wall_Chi, Null};
+                       Chi_Bottom, Chi_Top, Null};
 
       /// Type of parameter associated with an object of this class.
       ParamType type_;

@@ -6,10 +6,6 @@ AmIteratorFilm{
   normalVecId          0
   interfaceThickness   0.08     
   wallThickness        0.2
-  chi[
-        10   0
-        10   0
-  ]
-  wallBasisOutFile     out/wall.bf
-  wallRGridOutFile     out/wall.rf
+  chiBottom[ 10 10 ]
+  chiTop[ 0 0 ]
 }

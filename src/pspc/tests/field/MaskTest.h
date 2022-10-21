@@ -43,6 +43,7 @@ public:
    {
       setVerbose(0);
       nMonomer_ = 2;
+      openLogFile("out/maskTestLogFile");
    }
 
    void tearDown()
@@ -149,21 +150,21 @@ public:
       out.close();
    }
 
-   void testSetBasis_bcc() 
+   void testSetBasis() 
    {
       printMethod(TEST_FUNC);
 
-      Domain<3> domain;
+      Domain<1> domain;
       domain.setFileMaster(fileMaster_);
-      readHeader("in/w_bcc.rf", domain);
+      readHeader("in/mask.rf", domain);
       int nBasis = domain.basis().nBasis();
-      IntVec<3> dimensions = domain.mesh().dimensions();
+      IntVec<1> dimensions = domain.mesh().dimensions();
 
       DArray< DArray<double> > bf;
       allocateFields(nMonomer_, nBasis, bf);
-      readFields("in/w_bcc.bf", domain, bf);
+      readFields("in/mask.bf", domain, bf);
 
-      Mask<3> mask;
+      Mask<1> mask;
       mask.setFieldIo(domain.fieldIo());
       mask.allocate(nBasis, dimensions);
       TEST_ASSERT(mask.isAllocated());
@@ -185,22 +186,22 @@ public:
       TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
    }
 
-   void testSetRGrid_1_bcc() 
+   void testSetRGrid_1() 
    {
       printMethod(TEST_FUNC);
 
-      Domain<3> domain;
+      Domain<1> domain;
       domain.setFileMaster(fileMaster_);
-      readHeader("in/w_bcc.rf", domain);
+      readHeader("in/mask.rf", domain);
       int nBasis = domain.basis().nBasis();
-      IntVec<3> dimensions = domain.mesh().dimensions();
+      IntVec<1> dimensions = domain.mesh().dimensions();
 
-      DArray< RField<3> > rf;
+      DArray< RField<1> > rf;
       allocateFields(nMonomer_, dimensions, rf);
       TEST_ASSERT(rf.capacity() == nMonomer_);
-      readFields("in/w_bcc.rf", domain, rf);
+      readFields("in/mask.rf", domain, rf);
 
-      Mask<3> mask;
+      Mask<1> mask;
       mask.setFieldIo(domain.fieldIo());
       mask.allocate(nBasis, dimensions);
       TEST_ASSERT(mask.isAllocated());
@@ -211,31 +212,31 @@ public:
       TEST_ASSERT(mask.hasData());
       TEST_ASSERT(!mask.isSymmetric());
 
-      RFieldComparison<3> comparison;
+      RFieldComparison<1> comparison;
       comparison.compare(rf[0], mask.rgrid());
       TEST_ASSERT(comparison.maxDiff() < 1.0E-8);
    }
 
-   void testSetRGrid_2_bcc() 
+   void testSetRGrid_2() 
    {
       printMethod(TEST_FUNC);
 
-      Domain<3> domain;
+      Domain<1> domain;
       domain.setFileMaster(fileMaster_);
-      readHeader("in/w_bcc.rf", domain);
+      readHeader("in/mask.rf", domain);
       int nBasis = domain.basis().nBasis();
-      IntVec<3> dimensions = domain.mesh().dimensions();
+      IntVec<1> dimensions = domain.mesh().dimensions();
 
       DArray< DArray<double> > bf;
       allocateFields(nMonomer_, nBasis, bf);
       TEST_ASSERT(bf.capacity() == nMonomer_);
-      readFields("in/w_bcc.bf", domain, bf);
+      readFields("in/mask.bf", domain, bf);
 
-      RField<3> rf;
+      RField<1> rf;
       rf.allocate(dimensions);
       domain.fieldIo().convertBasisToRGrid(bf[0], rf);
 
-      Mask<3> mask;
+      Mask<1> mask;
       mask.setFieldIo(domain.fieldIo());
       mask.allocate(nBasis, dimensions);
       TEST_ASSERT(mask.isAllocated());
@@ -252,12 +253,157 @@ public:
       TEST_ASSERT(comparison.maxDiff() < 1.0E-8);
    }
 
+   void testReadBasis()
+   {
+      printMethod(TEST_FUNC);
+
+      Domain<1> domain;
+      domain.setFileMaster(fileMaster_);
+      readHeader("in/mask.rf", domain);
+      int nBasis = domain.basis().nBasis();
+      IntVec<1> dimensions = domain.mesh().dimensions();
+
+      DArray< DArray<double> > bf;
+      allocateFields(nMonomer_, nBasis, bf);
+      readFields("in/mask.bf", domain, bf);
+
+      Mask<1> mask;
+      mask.setFieldIo(domain.fieldIo());
+      mask.allocate(nBasis, dimensions);
+      TEST_ASSERT(mask.isAllocated());
+      TEST_ASSERT(!mask.hasData());
+      TEST_ASSERT(!mask.isSymmetric());
+
+      std::ifstream in;
+      openInputFile("in/mask.bf", in);
+      mask.readBasis(in, domain.unitCell());
+      TEST_ASSERT(mask.hasData());
+      TEST_ASSERT(mask.isSymmetric());
+
+      BFieldComparison comparison;
+      comparison.compare(bf[0], mask.basis());
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
+
+      DArray<double> bf_1;
+      bf_1.allocate(nBasis);
+      domain.fieldIo().convertRGridToBasis(mask.rgrid(), bf_1);
+      comparison.compare(bf_1, mask.basis());
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
+   }
+
+   void testReadRGrid_1()
+   {
+      printMethod(TEST_FUNC);
+
+      Domain<1> domain;
+      domain.setFileMaster(fileMaster_);
+      readHeader("in/mask.rf", domain);
+      int nBasis = domain.basis().nBasis();
+      IntVec<1> dimensions = domain.mesh().dimensions();
+
+      DArray< RField<1> > rf;
+      allocateFields(nMonomer_, dimensions, rf);
+      TEST_ASSERT(rf.capacity() == nMonomer_);
+      readFields("in/mask.rf", domain, rf);
+
+      Mask<1> mask;
+      mask.setFieldIo(domain.fieldIo());
+      mask.allocate(nBasis, dimensions);
+      TEST_ASSERT(mask.isAllocated());
+      TEST_ASSERT(!mask.hasData());
+      TEST_ASSERT(!mask.isSymmetric());
+
+      std::ifstream in;
+      openInputFile("in/mask.rf", in);
+      mask.readRGrid(in, domain.unitCell());
+      TEST_ASSERT(mask.hasData());
+      TEST_ASSERT(!mask.isSymmetric());
+
+      RFieldComparison<1> comparison;
+      comparison.compare(rf[0], mask.rgrid());
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-8);
+   }
+
+   void testReadRGrid_2()
+   {
+      printMethod(TEST_FUNC);
+
+      Domain<1> domain;
+      domain.setFileMaster(fileMaster_);
+      readHeader("in/mask.rf", domain);
+      int nBasis = domain.basis().nBasis();
+      IntVec<1> dimensions = domain.mesh().dimensions();
+
+      DArray< RField<1> > rf;
+      allocateFields(nMonomer_, dimensions, rf);
+      TEST_ASSERT(rf.capacity() == nMonomer_);
+      readFields("in/mask.rf", domain, rf);
+
+      Mask<1> mask;
+      mask.setFieldIo(domain.fieldIo());
+      mask.allocate(nBasis, dimensions);
+      TEST_ASSERT(mask.isAllocated());
+      TEST_ASSERT(!mask.hasData());
+      TEST_ASSERT(!mask.isSymmetric());
+
+      std::ifstream in;
+      openInputFile("in/mask.rf", in);
+      mask.readRGrid(in, domain.unitCell(), true);
+      TEST_ASSERT(mask.hasData());
+      TEST_ASSERT(mask.isSymmetric());
+
+      RFieldComparison<1> comparison;
+      comparison.compare(rf[0], mask.rgrid());
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-8);
+   }
+
+   void testPhiTot()
+   {
+      printMethod(TEST_FUNC);
+
+      Domain<1> domain;
+      domain.setFileMaster(fileMaster_);
+      readHeader("in/mask.rf", domain);
+      int nBasis = domain.basis().nBasis();
+      IntVec<1> dimensions = domain.mesh().dimensions();
+
+      // Create empty mask object, check phiTot
+      Mask<1> mask;
+      mask.setFieldIo(domain.fieldIo());
+      mask.allocate(nBasis, dimensions);
+      TEST_ASSERT(mask.isAllocated());
+      TEST_ASSERT(!mask.hasData());
+      TEST_ASSERT(!mask.isSymmetric());
+      TEST_ASSERT(eq(mask.phiTot(), 1.0));
+
+      // Read unsymmetrized r-grid, check phiTot
+      std::ifstream in;
+      openInputFile("in/mask.rf", in);
+      mask.readRGrid(in, domain.unitCell());
+      TEST_ASSERT(mask.hasData());
+      TEST_ASSERT(!mask.isSymmetric());
+      TEST_ASSERT(eq(mask.phiTot(), 8.9461021637e-01));
+
+      // Read basis, check phiTot
+      std::ifstream in2;
+      openInputFile("in/mask.bf", in2);
+      mask.readBasis(in2, domain.unitCell());
+      TEST_ASSERT(mask.hasData());
+      TEST_ASSERT(mask.isSymmetric());
+      TEST_ASSERT(eq(mask.phiTot(), mask.basis()[0]));
+      TEST_ASSERT(eq(mask.phiTot(), 8.9461021637e-01));
+   }
+
 };
 
 TEST_BEGIN(MaskTest)
-TEST_ADD(MaskTest, testSetBasis_bcc)
-TEST_ADD(MaskTest, testSetRGrid_1_bcc)
-TEST_ADD(MaskTest, testSetRGrid_2_bcc)
+TEST_ADD(MaskTest, testSetBasis)
+TEST_ADD(MaskTest, testSetRGrid_1)
+TEST_ADD(MaskTest, testSetRGrid_2)
+TEST_ADD(MaskTest, testReadBasis)
+TEST_ADD(MaskTest, testReadRGrid_1)
+TEST_ADD(MaskTest, testReadRGrid_2)
+TEST_ADD(MaskTest, testPhiTot)
 TEST_END(MaskTest)
 
 #endif

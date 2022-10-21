@@ -245,7 +245,7 @@ namespace Pspc {
       system().fileMaster().openOutputFile(outFileName, out);
 
       // Write data file, with thermodynamic properties at end
-      system().writeParam(out);
+      system().writeParamNoSweep(out);
       out << std::endl;
       system().writeThermo(out);
       out.close();
@@ -255,22 +255,31 @@ namespace Pspc {
       outFileName += indexString;
       outFileName += "_w";
       outFileName += ".bf";
-      system().writeWBasis(outFileName);
+      UTIL_CHECK(system().w().hasData());
+      UTIL_CHECK(system().w().isSymmetric());
+      system().fieldIo().writeFieldsBasis(outFileName, 
+                                          system().w().basis(), 
+                                          system().unitCell());
 
       // Write c fields
       outFileName = baseFileName_;
       outFileName += indexString;
       outFileName += "_c";
       outFileName += ".bf";
-      system().writeCBasis(outFileName);
+      UTIL_CHECK(system().hasCFields());
+      system().fieldIo().writeFieldsBasis(outFileName, 
+                                          system().c().basis(), 
+                                          system().unitCell());
 
       // Write c rgrid files
       if (writeRhoRGrid_) {
-        outFileName = baseFileName_;
-        outFileName += indexString;
-        outFileName += "_c";
-        outFileName += ".rf";
-        system().writeCRGrid(outFileName);
+         outFileName = baseFileName_;
+         outFileName += indexString;
+         outFileName += "_c";
+         outFileName += ".rf";
+         system().fieldIo().writeFieldsRGrid(outFileName, 
+                                             system().c().rgrid(), 
+                                             system().unitCell());
       }
 
    }

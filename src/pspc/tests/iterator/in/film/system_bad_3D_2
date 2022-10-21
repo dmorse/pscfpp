@@ -28,9 +28,9 @@ System{
     groupName      P_1_2%c_1
   }
   AmIterator{
-    maxItr       1000
-    epsilon      1e-7
-    maxHist      50  
-    isFlexible   1   
+    maxItr          1000
+    epsilon         1e-7
+    maxHist         50  
+    flexibleParams  1 0 1 1  
   }
 }

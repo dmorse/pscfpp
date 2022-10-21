@@ -36,7 +36,13 @@ namespace Pspc {
          d1 = a[i][1] - b[i][1];
          diffSq = d0*d0 + d1*d1;
          diff = sqrt(diffSq);
-         if (diff > maxDiff_) {
+         if (std::isnan(diff)) {
+            // If either field has a NaN component, set error to very
+            // high value and exit the function
+            maxDiff_ = 1e8;
+            rmsDiff_ = 1e8;
+            return maxDiff_;
+         } else if (diff > maxDiff_) {
             maxDiff_ = diff;
          }
          rmsDiff_ += diffSq;
@@ -72,7 +78,13 @@ namespace Pspc {
             d1 = a[i][j][1] - b[i][j][1];
             diffSq = d0*d0 + d1*d1;
             diff = sqrt(diffSq);
-            if (diff > maxDiff_) {
+            if (std::isnan(diff)) {
+               // If either field has a NaN component, set error to very
+               // high value and exit the function
+               maxDiff_ = 1e8;
+               rmsDiff_ = 1e8;
+               return maxDiff_;
+            } else if (diff > maxDiff_) {
                maxDiff_ = diff;
             }
             rmsDiff_ += diffSq;

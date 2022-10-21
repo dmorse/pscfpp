@@ -194,10 +194,14 @@ namespace Pspc
    void WFieldContainer<D>::setRGrid(DArray< RField<D> > const & fields,
                                     bool isSymmetric)
    {
+      UTIL_CHECK(fields.capacity() == nMonomer_);
+
       // Update system wFieldsRGrid
       for (int i = 0; i < nMonomer_; ++i) {
          RField<D> const & f = fields[i];
          RField<D>& w = rgrid_[i];
+         UTIL_CHECK(f.capacity() == meshSize_);
+         UTIL_CHECK(w.capacity() == meshSize_);
          for (int j = 0; j < meshSize_; ++j) {
             w[j] = f[j];
          }
@@ -209,6 +213,106 @@ namespace Pspc
 
       hasData_ = true;
       isSymmetric_ =  isSymmetric;
+   }
+
+   /*
+   * Read field component values from input stream, in symmetrized 
+   * Fourier format.
+   *
+   * This function also computes and stores the corresponding
+   * r-grid representation. On return, hasData and isSymmetric
+   * are both true.
+   */
+   template <int D>
+   void WFieldContainer<D>::readBasis(std::istream& in, 
+                                      UnitCell<D>& unitCell)
+   {
+      UTIL_CHECK(isAllocatedBasis());
+      fieldIoPtr_->readFieldsBasis(in, basis_, unitCell);
+
+      // Update system wFieldsRGrid
+      fieldIoPtr_->convertBasisToRGrid(basis_, rgrid_);
+
+      hasData_ = true;
+      isSymmetric_ = true;
+   }
+
+   /*
+   * Read field component values from file, in symmetrized 
+   * Fourier format.
+   *
+   * This function also computes and stores the corresponding
+   * r-grid representation. On return, hasData and isSymmetric
+   * are both true.
+   */
+   template <int D>
+   void WFieldContainer<D>::readBasis(std::string filename, 
+                                      UnitCell<D>& unitCell)
+   {
+      UTIL_CHECK(isAllocatedBasis());
+      fieldIoPtr_->readFieldsBasis(filename, basis_, unitCell);
+
+      // Update system wFieldsRGrid
+      fieldIoPtr_->convertBasisToRGrid(basis_, rgrid_);
+
+      hasData_ = true;
+      isSymmetric_ = true;
+   }
+
+   /*
+   * Reads fields from an input stream in real-space (r-grid) format.
+   *
+   * If the isSymmetric parameter is true, this function assumes that 
+   * the fields are known to be symmetric and so computes and stores
+   * the corresponding basis components. If isSymmetric is false, it
+   * only sets the values in the r-grid format.
+   * 
+   * On return, hasData is true and the persistent isSymmetric flag 
+   * defined by the class is set to the value of the isSymmetric 
+   * input parameter.
+   */
+   template <int D>
+   void WFieldContainer<D>::readRGrid(std::istream& in, 
+                                      UnitCell<D>& unitCell, 
+                                      bool isSymmetric)
+   {
+      UTIL_CHECK(isAllocatedRGrid());
+      fieldIoPtr_->readFieldsRGrid(in, rgrid_, unitCell);
+
+      if (isSymmetric) {
+         fieldIoPtr_->convertRGridToBasis(rgrid_, basis_);
+      }
+
+      hasData_ = true;
+      isSymmetric_ = isSymmetric;
+   }
+
+   /*
+   * Reads fields from a file in real-space (r-grid) format.
+   *
+   * If the isSymmetric parameter is true, this function assumes that 
+   * the fields are known to be symmetric and so computes and stores
+   * the corresponding basis components. If isSymmetric is false, it
+   * only sets the values in the r-grid format.
+   * 
+   * On return, hasData is true and the persistent isSymmetric flag 
+   * defined by the class is set to the value of the isSymmetric 
+   * input parameter.
+   */
+   template <int D>
+   void WFieldContainer<D>::readRGrid(std::string filename, 
+                                      UnitCell<D>& unitCell, 
+                                      bool isSymmetric)
+   {
+      UTIL_CHECK(isAllocatedRGrid());
+      fieldIoPtr_->readFieldsRGrid(filename, rgrid_, unitCell);
+
+      if (isSymmetric) {
+         fieldIoPtr_->convertRGridToBasis(rgrid_, basis_);
+      }
+
+      hasData_ = true;
+      isSymmetric_ = isSymmetric;
    }
 
 } // namespace Pspc
