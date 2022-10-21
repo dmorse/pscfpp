@@ -43,6 +43,7 @@ public:
    {
       setVerbose(0);
       nMonomer_ = 2;
+      openLogFile("out/wFieldContainerTestLogFile");
    }
 
    void tearDown()
@@ -260,12 +261,129 @@ public:
       comparison.compare(bf, fields.basis());
       TEST_ASSERT(comparison.maxDiff() < 1.0E-8);
    }
+
+   void testReadBasis_bcc() 
+   {
+      printMethod(TEST_FUNC);
+
+      Domain<3> domain;
+      domain.setFileMaster(fileMaster_);
+      readHeader("in/w_bcc.rf", domain);
+
+      DArray< DArray<double> > bf;
+      allocateFields(nMonomer_, domain.basis().nBasis(), bf);
+      TEST_ASSERT(bf.capacity() == nMonomer_);
+      readFields("in/w_bcc.bf", domain, bf);
+
+      WFieldContainer<3> fields;
+      fields.setFieldIo(domain.fieldIo());
+      fields.allocate(nMonomer_, domain.basis().nBasis(),
+                      domain.mesh().dimensions());
+      TEST_ASSERT(fields.isAllocated());
+      TEST_ASSERT(!fields.hasData());
+      TEST_ASSERT(!fields.isSymmetric());
+      TEST_ASSERT(fields.basis().capacity() == nMonomer_);
+      TEST_ASSERT(fields.rgrid().capacity() == nMonomer_);
+
+      std::ifstream in;
+      openInputFile("in/w_bcc.bf", in);
+      fields.readBasis(in, domain.unitCell());
+      TEST_ASSERT(fields.hasData());
+      TEST_ASSERT(fields.isSymmetric());
+
+      BFieldComparison comparison;
+      comparison.compare(bf, fields.basis());
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
+
+      DArray< DArray<double> > bf_1;
+      allocateFields(nMonomer_, domain.basis().nBasis(), bf_1);
+      domain.fieldIo().convertRGridToBasis(fields.rgrid(), bf_1);
+      comparison.compare(bf, fields.basis());
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-10);
+   }
+
+   void testReadRGrid_1_bcc() 
+   {
+      printMethod(TEST_FUNC);
+
+      Domain<3> domain;
+      domain.setFileMaster(fileMaster_);
+      readHeader("in/w_bcc.rf", domain);
+
+      DArray< RField<3> > rf;
+      allocateFields(nMonomer_, domain.mesh().dimensions(), rf);
+      TEST_ASSERT(rf.capacity() == nMonomer_);
+      readFields("in/w_bcc.rf", domain, rf);
+
+      WFieldContainer<3> fields;
+      fields.setFieldIo(domain.fieldIo());
+      fields.allocate(nMonomer_, domain.basis().nBasis(),
+                      domain.mesh().dimensions());
+      TEST_ASSERT(fields.isAllocated());
+      TEST_ASSERT(!fields.hasData());
+      TEST_ASSERT(!fields.isSymmetric());
+      TEST_ASSERT(fields.basis().capacity() == nMonomer_);
+      TEST_ASSERT(fields.rgrid().capacity() == nMonomer_);
+
+      std::ifstream in;
+      openInputFile("in/w_bcc.rf", in);
+      fields.readRGrid(in, domain.unitCell());
+      TEST_ASSERT(fields.hasData());
+      TEST_ASSERT(!fields.isSymmetric());
+
+      RFieldComparison<3> comparison;
+      comparison.compare(rf, fields.rgrid());
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-8);
+   }
+
+   void testReadRGrid_2_bcc() 
+   {
+      printMethod(TEST_FUNC);
+
+      Domain<3> domain;
+      domain.setFileMaster(fileMaster_);
+      readHeader("in/w_bcc.rf", domain);
+
+      DArray< DArray<double> > bf;
+      allocateFields(nMonomer_, domain.basis().nBasis(), bf);
+      TEST_ASSERT(bf.capacity() == nMonomer_);
+      readFields("in/w_bcc.bf", domain, bf);
+
+      DArray< RField<3> > rf;
+      allocateFields(nMonomer_, domain.mesh().dimensions(), rf);
+      TEST_ASSERT(rf.capacity() == nMonomer_);
+      domain.fieldIo().convertBasisToRGrid(bf, rf);
+
+      WFieldContainer<3> fields;
+      fields.setFieldIo(domain.fieldIo());
+      fields.allocate(nMonomer_, domain.basis().nBasis(),
+                      domain.mesh().dimensions());
+      TEST_ASSERT(fields.isAllocated());
+      TEST_ASSERT(!fields.hasData());
+      TEST_ASSERT(!fields.isSymmetric());
+      TEST_ASSERT(fields.basis().capacity() == nMonomer_);
+      TEST_ASSERT(fields.rgrid().capacity() == nMonomer_);
+
+      std::ifstream in;
+      openInputFile("in/w_bcc.rf", in);
+      bool isSymmetric = true;
+      fields.readRGrid(in, domain.unitCell(), isSymmetric);
+      TEST_ASSERT(fields.hasData());
+      TEST_ASSERT(fields.isSymmetric());
+
+      BFieldComparison comparison;
+      comparison.compare(bf, fields.basis());
+      TEST_ASSERT(comparison.maxDiff() < 1.0E-8);
+   }
 };
 
 TEST_BEGIN(WFieldContainerTest)
 TEST_ADD(WFieldContainerTest, testSetBasis_bcc)
 TEST_ADD(WFieldContainerTest, testSetRGrid_1_bcc)
 TEST_ADD(WFieldContainerTest, testSetRGrid_2_bcc)
+TEST_ADD(WFieldContainerTest, testReadBasis_bcc)
+TEST_ADD(WFieldContainerTest, testReadRGrid_1_bcc)
+TEST_ADD(WFieldContainerTest, testReadRGrid_2_bcc)
 TEST_END(WFieldContainerTest)
 
 #endif

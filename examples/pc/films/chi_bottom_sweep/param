@@ -35,10 +35,6 @@ System{
     normalVecId          1
     interfaceThickness   0.15     
     wallThickness        0.3
-    chi[
-          0   0
-          0   0
-    ]
   }
   LinearSweep{
     ns            40
@@ -46,7 +42,7 @@ System{
     writeRhoRGrid 1
     nParameter    1
     parameters[
-                  wall_chi  0  0  +20.0
+                  chi_bottom  0  +20.0
     ]
   }
 }

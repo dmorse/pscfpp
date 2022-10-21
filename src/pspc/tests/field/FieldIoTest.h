@@ -42,6 +42,7 @@ public:
    {
       setVerbose(0);
       nMonomer_ = 2;
+      openLogFile("out/fieldIoTestLogFile");
    }
 
    void tearDown()

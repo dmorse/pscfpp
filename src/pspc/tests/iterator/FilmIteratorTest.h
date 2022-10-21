@@ -90,25 +90,25 @@ public:
       // Run the setup function
       iterator.setup();
       
-      // Check that the homogeneous components of the wall
+      // Check that the homogeneous components of the mask
       // and the blocks were adjusted correctly
       TEST_ASSERT(eq(system.mask().phiTot(),8.9461021637e-01));
 
-      // output wall field files for reference
-      system.fieldIo().writeFieldBasis("out/wall.bf", system.mask().basis(),
+      // output mask field files for reference
+      system.fieldIo().writeFieldBasis("out/mask.bf", system.mask().basis(),
                                        system.unitCell());
-      system.fieldIo().writeFieldRGrid("out/wall.rf", system.mask().rgrid(),
+      system.fieldIo().writeFieldRGrid("out/mask.rf", system.mask().rgrid(),
                                        system.unitCell());
       
       // output external field for reference
       system.fieldIo().writeFieldsBasis("out/h.bf", system.h().basis(),
                                        system.unitCell());
 
-      // Check that the wall field files were generated correctly by 
+      // Check that the mask field files were generated correctly by 
       // comparing them to the reference files in in/film
       UnitCell<1> unitCell; // UnitCell object to pass into FieldIo functions
       DArray<double> cFieldsCheck; // Copy of reference field
-      system.fieldIo().readFieldBasis("in/film/wall_ref.bf", 
+      system.fieldIo().readFieldBasis("in/film/mask_ref.bf", 
                                        cFieldsCheck, unitCell);
       BFieldComparison bComparison(0); // object to compare fields
       bComparison.compare(system.mask().basis(), cFieldsCheck);
@@ -118,7 +118,7 @@ public:
       TEST_ASSERT(bComparison.maxDiff() < 1.0E-7);
 
       RField<1> cRGridCheck; // Array to store reference field
-      system.fieldIo().readFieldRGrid("in/film/wall_ref.rf", 
+      system.fieldIo().readFieldRGrid("in/film/mask_ref.rf", 
                                       cRGridCheck, unitCell);
       RField<1> cRGridFromIterator;
       cRGridFromIterator.allocate(system.domain().mesh().dimensions());
@@ -416,7 +416,7 @@ public:
       system.mask().setFieldIo(system.fieldIo());
       system.mask().allocate(system.basis().nBasis(), 
                              system.mesh().dimensions());
-      system.mask().readBasis("out/wall.bf", unitCell);
+      system.mask().readBasis("out/mask.bf", unitCell);
       TEST_ASSERT(eq(system.mask().phiTot(), 8.94610216368e-01));
       system.h().setFieldIo(system.fieldIo());
       system.h().allocate(system.mixture().nMonomer(), 

@@ -294,93 +294,68 @@ namespace Pspc
 
       // If this point is reached, external field must be generated
       int nm = system().mixture().nMonomer();
-      int nb = system().domain().basis().nBasis();
 
-      if (isSymmetric()) {
-         // If walls are identical, external field is just mask * chi
+      // Get length L of the lattice basis vector normal to the walls
+      RealVec<D> a;
+      a = system().domain().unitCell().rBasis(normalVecId_);
+      double norm_sqd; // norm squared
+      for (int i = 0; i < D; i++) {
+         norm_sqd = a[i]*a[i];
+      }
+      double L(sqrt(norm_sqd));
 
-         DArray< DArray <double> > hBasis;
-         hBasis.allocate(nm);
-         for (int i = 0; i < nm; i++) {
-            hBasis[i].allocate(nb);
+      // Create a 3 element vector 'dim' that contains the grid 
+      // dimensions. If system is 2D (1D), then the z (y and z) 
+      // dimensions are set to 1.
+      IntVec<3> dim;
+      for (int ind = 0; ind < 3; ind++) {
+         if (ind < D) {
+            dim[ind] = system().domain().mesh().dimensions()[ind];
+         } else {
+            dim[ind] = 1;
          }
+      }
 
-         for (int i = 0; i < nm; i++) {
-            UTIL_CHECK(fabs(chiBottom_[i]-chiTop_[i] < 1e-7));
-            for (int j = 0; j < nb; j++) {
-               hBasis[i][j] = system().mask().basis()[j] * chiBottom_[i];
-            }
-         }
+      // Generate an r-grid representation of the external fields
+      DArray< RField<D> > hRGrid;
+      hRGrid.allocate(nm);
+      for (int i = 0; i < nm; i++) {
+         hRGrid[i].allocate(system().domain().mesh().dimensions());
+      }
 
-         // Pass h into the System
-         system().h().setBasis(hBasis);
+      int i, x, y, z;
+      int counter = 0;
+      FArray<int,3> coords;
+      double d, rho_w;
 
-      } else {
-         // Need to generate a whole new field, walls are not identical
+      for (i = 0; i < nm; i++) {
+         for (x = 0; x < dim[0]; x++) {
+            coords[0] = x;
+            for (y = 0; y < dim[1]; y++) {
+               coords[1] = y;
+               for (z = 0; z < dim[2]; z++) {
+                  coords[2] = z;
 
-         // Get length L of the lattice basis vector normal to the walls
-         RealVec<D> a;
-         a = system().domain().unitCell().rBasis(normalVecId_);
-         double norm_sqd; // norm squared
-         for (int i = 0; i < D; i++) {
-            norm_sqd = a[i]*a[i];
-         }
-         double L(sqrt(norm_sqd));
+                  // Get the distance 'd' traveled along the lattice 
+                  // basis vector that is orthogonal to the walls
+                  d = coords[normalVecId_] * L / dim[normalVecId_];
 
-         // Create a 3 element vector 'dim' that contains the grid 
-         // dimensions. If system is 2D (1D), then the z (y and z) 
-         // dimensions are set to 1.
-         IntVec<3> dim;
-         for (int ind = 0; ind < 3; ind++) {
-            if (ind < D) {
-               dim[ind] = system().domain().mesh().dimensions()[ind];
-            } else {
-               dim[ind] = 1;
-            }
-         }
-
-         // Generate an r-grid representation of the external fields
-         DArray< RField<D> > hRGrid;
-         hRGrid.allocate(nm);
-         for (int i = 0; i < nm; i++) {
-            hRGrid[i].allocate(system().domain().mesh().dimensions());
-         }
-
-         int i, x, y, z;
-         int counter = 0;
-         FArray<int,3> coords;
-         double d, rho_w;
-
-         for (i = 0; i < nm; i++) {
-            for (x = 0; x < dim[0]; x++) {
-               coords[0] = x;
-               for (y = 0; y < dim[1]; y++) {
-                  coords[1] = y;
-                  for (z = 0; z < dim[2]; z++) {
-                     coords[2] = z;
-
-                     // Get the distance 'd' traveled along the lattice 
-                     // basis vector that is orthogonal to the walls
-                     d = coords[normalVecId_] * L / dim[normalVecId_];
-
-                     // Calculate wall volume fraction (rho_w) at gridpoint 
-                     // (x,y,z)
-                     rho_w = 0.5*(1+tanh(4*(((.5*(T_-L))+fabs(d-(L/2)))/t_)));
-                     if (d < (L/2)) {
-                        hRGrid[i][counter++] = rho_w * chiBottom_[i];
-                     } else {
-                        hRGrid[i][counter++] = rho_w * chiTop_[i];
-                     }
+                  // Calculate wall volume fraction (rho_w) at gridpoint 
+                  // (x,y,z)
+                  rho_w = 0.5*(1+tanh(4*(((.5*(T_-L))+fabs(d-(L/2)))/t_)));
+                  if (d < (L/2)) {
+                     hRGrid[i][counter++] = rho_w * chiBottom_[i];
+                  } else {
+                     hRGrid[i][counter++] = rho_w * chiTop_[i];
                   }
                }
             }
-            counter = 0;
-         } 
+         }
+         counter = 0;
+      } 
 
-         // Pass h into the System
-         system().h().setRGrid(hRGrid,true);
-
-      }
+      // Pass h into the System
+      system().h().setRGrid(hRGrid,true);
    }
 
    /*
@@ -393,19 +368,37 @@ namespace Pspc
       // Setup
       std::string groupName = system().groupName();
       SpaceGroup<D> group;
-      std::string fileName = makeGroupFileName(D, groupName);
       std::ifstream in;
 
       // Open and read file containing space group's symmetry operations
-      in.open(fileName);
-      if (in.is_open()) {
-         in >> group;
-         UTIL_CHECK(group.isValid());
+      if (groupName == "I") {
+         // Create identity group by default
+         group.makeCompleteGroup();
       } else {
-         Log::file() << "\nFailed to open group file: " 
-                     << fileName << "\n";
-         Log::file() << "\n Error: Unknown space group\n";
-         UTIL_THROW("Unknown space group");
+         bool foundFile = false;
+         {
+            // Search first in this directory
+            in.open(groupName);
+            if (in.is_open()) {
+               in >> group;
+               UTIL_CHECK(group.isValid());
+               foundFile = true;
+            }
+         }
+         if (!foundFile) {
+            // Search in the data directory containing standard space groups
+            std::string fileName = makeGroupFileName(D, groupName);
+            in.open(fileName);
+            if (in.is_open()) {
+               in >> group;
+               UTIL_CHECK(group.isValid());
+            } else {
+               Log::file() << "\nFailed to open group file: " 
+                           << fileName << "\n";
+               Log::file() << "\n Error: Unknown space group\n";
+               UTIL_THROW("Unknown space group");
+            }
+         } 
       }
 
       // Make sure all symmetry operations are allowed

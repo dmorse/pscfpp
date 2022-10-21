@@ -312,8 +312,18 @@ entry is is given for the the second index.
     <td> sId         </td><td>        </td>
   </tr>
   <tr>
-    <td> unit_cell   </td><td> unit cell parameter  </td>
+    <td> cell_param  </td><td> unit cell lattice parameter  </td>
     <td> uId         </td><td>        </td>
+  </tr>
+  <tr>
+    <td> chi_bottom  </td><td> thin film only, see \ref
+                                      user_thin_films_page  </td>
+    <td> mId         </td><td>        </td>
+  </tr>
+  <tr>
+    <td> chi_top     </td><td> thin film only, see \ref
+                                      user_thin_films_page  </td>
+    <td> mId         </td><td>        </td>
   </tr>
 </table>
 The two indices for a Flory-Huggins chi parameter refer to indices in 

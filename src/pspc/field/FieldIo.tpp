@@ -1032,6 +1032,9 @@ namespace Pspc
                             groupNameIn, nMonomer);
       // Note: Function definition in pscf/crystal/UnitCell.tpp
 
+      // Check that field header data matches data that was originally
+      // in the unit cell. Print a warning if lattice parameters were
+      // updated.
       if (checkHeader) {
 
          // Check whether crystal system matches expectation
@@ -1046,6 +1049,7 @@ namespace Pspc
 
          // Check whether lattice parameters match expectation
          if (unitCell.nParameter() != tempUnitCell.nParameter()) {
+
             // Check if nParameters is matched
             Log::file() << std::endl 
                << "Mismatched number of lattice parameters in "
@@ -1054,11 +1058,25 @@ namespace Pspc
                << "\n  Field file header     : " << unitCell.nParameter() 
                << std::endl;
             UTIL_THROW("Mismatched N_cell_param value in field file header");
+         
          } else {
-            // Print notice that lattice parameters are being overwritten
-            Log::file() << std::endl
-               << "Using lattice parameters from field file header.\n"
-               << "Discarding previous lattice parameters." << std::endl;
+            
+            // Check whether lattice parameters have been updated
+            bool changed = false;
+            for (int i = 0; i < unitCell.nParameter(); i++) {
+               if (unitCell.parameter(i) - tempUnitCell.parameter(i) > 1e-6) {
+                  changed = true;
+                  break;
+               }
+            }
+
+            if (changed) {
+               // Print notice that lattice parameters are being overwritten
+               Log::file() << std::endl
+                  << "Using lattice parameters from field file header.\n"
+                  << "Discarding previous lattice parameters." << std::endl;
+            }
+
          }
 
          // Check whether space group matches expectation

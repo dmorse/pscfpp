@@ -388,7 +388,7 @@ namespace Pspc
       *
       * \param out output stream
       */
-      void writeThermo(std::ostream& out, bool verbose = false) const;
+      void writeThermo(std::ostream& out) const;
 
       /**
       * Output information about stars and symmetrized basis functions.

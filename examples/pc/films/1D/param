@@ -36,6 +36,6 @@ System{
     interfaceThickness   0.08     
     wallThickness        0.2
     chiBottom[ 10 10 ]
-    chiTop[ 0 0 ]
+    chiTop[    0 0 ]
   }
 }

@@ -10,9 +10,9 @@ compoments of the field in a basis of symmetry adapated basis functions,
 thus preserving the space-group symmetry of the fields throughout the 
 iteration process.  The algorithm can be used to either solve the SCFT 
 equations for a rigid unit cell or to solve the SCFT equations and also 
-optimize the unit cell parameters of a flexible unit cell so as to 
-minimize the free energy density, depending on the value of a boolean 
-flag named "isFlexible". 
+optimize some or all of the unit cell parameters of a flexible unit cell 
+so as to minimize the free energy density, depending on the value of 
+"isFlexible" or "flexibleParams", as described below. 
 
 An example of the parameter file format for this iterator is shown
 below:
@@ -28,12 +28,13 @@ below:
 The format of this block is described more formally below:
 \code
 AmIterator{
-   maxItr         int
-   epsilon        real 
-   maxHist        int  
-   errorType*     enumeration ("normResid", "maxResid", or "relNormResid", "relNormResid" by default)
-   isFlexible*    bool (0 or 1, 0/false by default)   
-   scaleStress*   real (10.0 by default)
+   maxItr          int
+   epsilon         real 
+   maxHist         int  
+   errorType*      enumeration ("normResid", "maxResid", or "relNormResid", "relNormResid" by default)
+   isFlexible*     bool (0 or 1, 0/false by default)
+   flexibleParams* Array [ bool ] (nParameters elements, each element 0 or 1)  
+   scaleStress*    real (10.0 by default)
 }
 \endcode
 Here, as elsewhere, labels followed by an asterisk (*) represent optional 
@@ -65,20 +66,33 @@ parameters. The meaning of the various parameters are described below:
          to "relNormResid" by default. </td>
   </tr>
   <tr>
-    <td>  isFlexible </td>
+    <td> isFlexible </td>
     <td> Set isFlexible true to enable or false to disable iterative 
          optimization of the unit cell parameters so as to minimize the 
          free energy.  
          Optional and false by default.  </td>
   </tr>
   <tr>
-    <td>  scaleStress </td>
+    <td> flexibleParams </td>
+    <td> Use flexibleParams to declare only *some* lattice parameters
+         as flexible. This array should contain one entry for each 
+         lattice parameter, and each entry should be either 1 (true,
+         parameter is flexible) or 0 (false, parameter is fixed). 
+         For example, `flexibleParams[ 0 1 0 1 ]` will set the second
+         and fourth lattice parameters as flexible, and fix the other 
+         two. If this array is not provided, then isFlexible is used
+         to determine whether parameters are flexible (either all are
+         flexible or none are). This array will override the behavior
+         of isFlexible if provided. </td>
+  </tr>
+  <tr>
+    <td> scaleStress </td>
     <td> Constant factor by which stress components are multipled in
-         the definition of the residual  attempted if isFlexible is
+         the definition of the residual attempted if isFlexible is
          true (optional). </td>
   </tr>
 </table>
-The iterative loop exits if the number of iterations has reaches
+The iterative loop exits if the number of iterations has reached
 maxItr or if the magnitude of the scalar error drops below epsilon. 
 
 <b> errorType </b>: Several different definitions may be used for 

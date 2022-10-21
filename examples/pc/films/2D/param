@@ -31,15 +31,11 @@ System{
     maxItr       1000
     epsilon      1e-6
     maxHist      50 
-    isFlexible   1
+    flexibleParams       1    0
     normalVecId          1
     interfaceThickness   0.08     
     wallThickness        0.25
-    chi[
-          20   20
-          0    0
-    ]
-    wallBasisOutFile     out/wall.bf
-    wallRGridOutFile     out/wall.rf
+    chiBottom[ 20 0 ]
+    chiTop[ 20 0 ]
   }
 }

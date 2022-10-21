@@ -37,33 +37,37 @@ namespace Pspc{
       AmIteratorTmpl<Iterator<D>, DArray<double> >::readParameters(in);
 
       // Default parameter values
-      bool isFlexible = 0; 
+      isFlexible_ = 0; 
       scaleStress_ = 10.0;
 
       // Setup to read optional flexibleParams boolean array
-      DArray<int> flexParamBools;
       int np = system().unitCell().nParameter();
-      flexParamBools.allocate(np);
-      flexParamBools[0] = -1; // Flag to determine if array has been set
+      flexParamBools_.allocate(np);
+      flexParamBools_[0] = -1; // Flag to determine if array has been set
 
       // Read in additional optional parameters
-      readOptional(in, "isFlexible", isFlexible);
-      readOptionalDArray(in, "flexibleParams", flexParamBools, np);
+      readOptional(in, "isFlexible", isFlexible_);
+      readOptionalDArray(in, "flexibleParams", flexParamBools_, np);
       readOptional(in, "scaleStress", scaleStress_);
 
       // Set flexibleParams_ array based on user input
-      if (flexParamBools[0] != -1) { 
+      if (flexParamBools_[0] != -1) { 
          // user declared flexibleParams explicitly
          for (int i = 0; i < np; i++) {
-            if (flexParamBools[i]) {
+            if (flexParamBools_[i] == 1) {
                flexibleParams_.append(i);
+            } else if (flexParamBools_[i] != 0) {
+               UTIL_THROW("flexibleParams can only contain values of 0 or 1");
             }
          }
-      } else if (isFlexible) {
+      } else if (isFlexible_) {
          // all parameters are flexible
          for (int i = 0; i < np; i++) {
             flexibleParams_.append(i);
          }
+      } else {
+         // no flexible params, clear flexParamBools_
+         flexParamBools_.deallocate(); 
       }
    }
 

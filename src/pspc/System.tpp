@@ -449,14 +449,6 @@ namespace Pspc
             writeThermo(file);
             file.close();
          } else
-         if (command == "WRITE_THERMO_VERBOSE") {
-            readEcho(in, filename);
-            std::ofstream file;
-            fileMaster().openOutputFile(filename, file, 
-                                        std::ios_base::app);
-            writeThermo(file,true);
-            file.close();
-         } else
          if (command == "WRITE_STARS") {
             readEcho(in, filename);
             writeStars(filename);
@@ -773,7 +765,6 @@ namespace Pspc
             }
          }
       }
-      Log::file() << fIdeal_ << std::endl;
 
       int nm  = mixture_.nMonomer();
       int nBasis = basis().nBasis();
@@ -799,7 +790,6 @@ namespace Pspc
       temp /= mask().phiTot(); 
       fIdeal_ += temp;
       fHelmholtz_ += fIdeal_;
-      Log::file() << fHelmholtz_ << std::endl;
 
       // Compute contribution from external fields, if fields exist
       if (hasExternalFields()) {
@@ -812,7 +802,6 @@ namespace Pspc
          fExt_ /= mask().phiTot();
          fHelmholtz_ += fExt_;
       }
-      Log::file() << fHelmholtz_ << std::endl;
 
       // Compute excess interaction free energy [ phi^{T}*chi*phi ]
       double chi;
@@ -826,7 +815,6 @@ namespace Pspc
       }
       fInter_ /= mask().phiTot();
       fHelmholtz_ += fInter_;
-      Log::file() << fHelmholtz_ << std::endl;
 
       // Initialize pressure
       pressure_ = -fHelmholtz_;
@@ -867,22 +855,20 @@ namespace Pspc
    * Write thermodynamic properties to file.
    */
    template <int D>
-   void System<D>::writeThermo(std::ostream& out, bool verbose) const
+   void System<D>::writeThermo(std::ostream& out) const
    {
       out << std::endl;
       out << "fHelmholtz    " << Dbl(fHelmholtz(), 18, 11) << std::endl;
       out << "pressure      " << Dbl(pressure(), 18, 11) << std::endl;
       out << std::endl;
-
-      if (verbose) {
-         out << "Free energy components:" << std::endl;
-         out << "fIdeal        " << Dbl(fIdeal_, 18, 11) << std::endl;
-         out << "fInter        " << Dbl(fInter_, 18, 11) << std::endl;
-         if (hasExternalFields()) {
-            out << "fExt          " << Dbl(fExt_, 18, 11) << std::endl;
-         }
-         out << std::endl;
+      
+      out << "Free energy components:" << std::endl;
+      out << "fIdeal        " << Dbl(fIdeal_, 18, 11) << std::endl;
+      out << "fInter        " << Dbl(fInter_, 18, 11) << std::endl;
+      if (hasExternalFields()) {
+         out << "fExt          " << Dbl(fExt_, 18, 11) << std::endl;
       }
+      out << std::endl;
 
       int np = mixture_.nPolymer();
       int ns = mixture_.nSolvent();
@@ -1309,16 +1295,23 @@ namespace Pspc
    void System<D>::guessWfromC(std::string const & inFileName, 
                                std::string const & outFileName)
    {
-      fieldIo().readFieldsBasis(inFileName, tmpFieldsBasis_, 
+      int nm = mixture_.nMonomer();
+      DArray< DArray<double> > tmpCFieldsBasis;
+      tmpCFieldsBasis.allocate(nm);
+      for (int i = 0; i < nm; ++i) {
+         tmpCFieldsBasis[i].allocate(basis().nBasis());
+      }
+
+      fieldIo().readFieldsBasis(inFileName, tmpCFieldsBasis, 
                                 domain_.unitCell());
 
       // Compute w fields from c fields
       for (int i = 0; i < basis().nBasis(); ++i) {
-         for (int j = 0; j < mixture_.nMonomer(); ++j) {
+         for (int j = 0; j < nm; ++j) {
             tmpFieldsBasis_[j][i] = 0.0;
-            for (int k = 0; k < mixture_.nMonomer(); ++k) {
+            for (int k = 0; k < nm; ++k) {
                tmpFieldsBasis_[j][i] += interaction().chi(j,k) 
-                                      * tmpFieldsBasis_[k][i];
+                                      * tmpCFieldsBasis[k][i];
             }
          }
       }

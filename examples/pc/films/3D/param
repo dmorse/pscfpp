@@ -35,11 +35,13 @@ System{
     normalVecId          2
     interfaceThickness   0.08     
     wallThickness        0.2
-    chi[
-          0   0
-          0   0
+    chiBottom[  
+                 0
+                 0
     ]
-    wallBasisOutFile     out/wall.bf
-    wallRGridOutFile     out/wall.rf
+    chiTop[
+                 0
+                 0
+    ]
   }
 }

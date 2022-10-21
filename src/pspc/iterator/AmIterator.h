@@ -68,8 +68,17 @@ namespace Pspc
 
    private:
 
+      /// Are any lattice parameters flexible? (used only for param file IO)
+      bool isFlexible_;
+      
       /// How are stress residuals scaled in error calculation?
       double scaleStress_;
+
+      /**
+      * Array of 0s and 1s indicating which lattice parameters are flexible.
+      * (used only for param file IO)  
+      */
+      DArray<int> flexParamBools_;
       
       /**
       * Find L2 norm of a residual vector.

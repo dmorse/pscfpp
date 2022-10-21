@@ -1,3 +1,5 @@
 (cd 1D; ./clean)
 (cd 2D; ./clean)
 (cd 3D; ./clean)
+(cd thickness_sweep; ./clean)
+(cd chi_bottom_sweep; ./clean)
