@@ -1,6 +1,8 @@
 include src/config.mk
 # =========================================================================
-.PHONY:  html html-graphs clean clean-tests clean-bin clean-html veryclean 
+.PHONY:  all-cpu  all fd1d pspc pspg \
+         html html-dev \
+         clean clean-tests clean-bin clean-html veryclean 
 
 # =========================================================================
 # Main targets 

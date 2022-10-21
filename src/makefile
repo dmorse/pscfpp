@@ -1,6 +1,7 @@
 include config.mk
 
-.PHONY: all-cpu util pscf fd1d pspc pspg test test-cpu test-gpu\
+.PHONY: all all-cpu util pscf fd1d pspc pspg \
+        test test-cpu test-gpu \
         clean clean-tests veryclean
 # ======================================================================
 # Main build targets
@@ -49,7 +50,7 @@ pspg:
 
 # Run all CPU and GPU unit tests
 test:
-	@cd util/tests; $(MAKE) all; $(MAKE) quiet
+	@cd util/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cd pscf/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cd fd1d/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cd pspc/tests; $(MAKE) all; $(MAKE) run-quiet
@@ -66,7 +67,7 @@ test:
 
 # Run all CPU unit tests
 test-cpu:
-	@cd util/tests; $(MAKE) all; $(MAKE) quiet
+	@cd util/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cd pscf/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cd fd1d/tests; $(MAKE) all; $(MAKE) run-quiet
 	@cd pspc/tests; $(MAKE) all; $(MAKE) run-quiet
