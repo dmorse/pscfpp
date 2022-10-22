@@ -200,6 +200,9 @@ namespace Pscf
       } else
       if (lattice == UnitCell<2>::Oblique) {
          out << "oblique";
+      } else
+      if (lattice == UnitCell<2>::Null) {
+         out << "Null";
       } else {
          UTIL_THROW("This should never happen");
       }
@@ -223,7 +226,17 @@ namespace Pscf
    }
 
    /*
-   * Set state of the unit cell. 
+   * Set state of the unit cell (lattice system and parameters)
+   */
+   void UnitCell<2>::set(UnitCell<2>::LatticeSystem lattice)
+   {
+      isInitialized_ = false;
+      lattice_ = lattice;
+      setNParameter();
+   }
+
+   /*
+   * Set state of the unit cell (lattice system and parameters)
    */
    void UnitCell<2>::set(UnitCell<2>::LatticeSystem lattice,
                          FSArray<double, 6> const & parameters)

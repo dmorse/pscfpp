@@ -381,6 +381,9 @@ namespace Pscf
       } else
       if (lattice == UnitCell<3>::Hexagonal) {
          out << "hexagonal";
+      } else
+      if (lattice == UnitCell<3>::Null) {
+         out << "Null";
       } else {
          UTIL_THROW("This should never happen");
       }
@@ -404,6 +407,16 @@ namespace Pscf
    }
 
    /*
+   * Set lattice system of the unit cell (but not the parameters).
+   */
+   void UnitCell<3>::set(UnitCell<3>::LatticeSystem lattice)
+   {
+      isInitialized_ = false;
+      lattice_ = lattice;
+      setNParameter();
+   }
+
+   /*
    * Set state of the unit cell. 
    */
    void UnitCell<3>::set(UnitCell<3>::LatticeSystem lattice,
@@ -417,6 +430,5 @@ namespace Pscf
       }   
       setLattice();
    }
-
 
 }

@@ -167,7 +167,16 @@ namespace Pscf
       UnitCell<1>& operator = (const UnitCell<1>& other);
 
       /**
-      * Set the unit cell state.
+      * Set the lattice system, but not unit cell parameters.
+      *
+      * Upon return, values of lattice and nParameter are set. 
+      *
+      * \param lattice  lattice system enumeration value
+      */
+      void set(UnitCell<1>::LatticeSystem lattice);
+
+      /**
+      * Set the unit cell state (lattice system and parameters).
       *
       * \param lattice  lattice system enumeration value
       * \param parameters  array of unit cell parameters
@@ -187,7 +196,7 @@ namespace Pscf
 
    private:
 
-      // Lattice type
+      // Lattice type (lamellar or Null)
       LatticeSystem lattice_;
 
       // Set number of parameters required to describe current lattice type
@@ -285,7 +294,16 @@ namespace Pscf
       UnitCell<2>& operator = (const UnitCell<2>& other);
 
       /**
-      * Set the unit cell state.
+      * Set the lattice system, but not unit cell parameters.
+      *
+      * Upon return, values of lattice and nParameter are set. 
+      *
+      * \param lattice  lattice system enumeration value
+      */
+      void set(UnitCell<2>::LatticeSystem lattice);
+
+      /**
+      * Set the unit cell state (lattice system and parameters).
       *
       * \param lattice  lattice system enumeration value
       * \param parameters  array of unit cell parameters
@@ -303,9 +321,7 @@ namespace Pscf
 
    private:
 
-      /**
-      * Lattice system (square, rectangular, etc.)
-      */
+      // Lattice system (square, rectangular, etc.)
       LatticeSystem lattice_;
 
       // Set number of parameters required to describe current lattice type
@@ -403,6 +419,15 @@ namespace Pscf
       * \param other UnitCell<3> object to be cloned.
       */
       UnitCell<3>& operator = (const UnitCell<3>& other);
+
+      /**
+      * Set the lattice system, but not unit cell parameters.
+      *
+      * Upon return, values of lattice and nParameter are set. 
+      *
+      * \param lattice  lattice system enumeration value
+      */
+      void set(UnitCell<3>::LatticeSystem lattice);
 
       /**
       * Set the unit cell state.
