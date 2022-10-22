@@ -1009,12 +1009,14 @@ namespace Pspc
       // Preconditions
       UTIL_CHECK(latticePtr_);
       UTIL_CHECK(groupNamePtr_);
-      if (lattice() == UnitCell<D>::Null) {
+      if (unitCell.lattice() == UnitCell<D>::Null) {
          UTIL_CHECK(unitCell.nParameter() == 0);
       } else {
-         UTIL_CHECK(unitCell.lattice() == lattice());
          UTIL_CHECK(unitCell.nParameter() > 0);
-      } 
+         if (lattice() != UnitCell<D>::Null) {
+            UTIL_CHECK(unitCell.lattice() == lattice());
+         }
+      }
 
       // Read field header to set unitCell, groupNameIn, nMonomer
       int ver1, ver2;
