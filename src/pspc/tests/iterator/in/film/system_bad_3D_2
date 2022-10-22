@@ -23,8 +23,8 @@ System{
     )
   }
   Domain{
-    unitCell       monoclinic  2.0  2.0  2.0  1.0
     mesh           32 32 32
+    lattice        monoclinic  
     groupName      P_1_2%c_1
   }
   AmIterator{
@@ -34,3 +34,5 @@ System{
     flexibleParams  1 0 1 1  
   }
 }
+
+    unitCell       monoclinic  2.0  2.0  2.0  1.0

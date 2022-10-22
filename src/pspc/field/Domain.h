@@ -37,6 +37,7 @@ namespace Pspc
    *    - a Basis
    *    - an FFT 
    *    - a FieldIo
+   *    - a lattice system enum value
    *    - a groupName string
    *
    * \ingroup Pspc_Field_Module
@@ -81,6 +82,41 @@ namespace Pspc
       * \param nMonomer number of monomers in field file (output)
       */
       void readFieldHeader(std::istream& in, int& nMonomer);
+
+      /**
+      * Set unit cell. 
+      *
+      * Initializes basis if not done previously.
+      *
+      * \param unitCell new unit cell
+      */
+      void setUnitCell(UnitCell<D> const & unitCell);
+
+      /**
+      * Set unit cell state.
+      *
+      * Initializes basis if not done previously.
+      *
+      * \param lattice  lattice system
+      * \param parameters array of unit cell parameters
+      */
+      void setUnitCell(typename UnitCell<D>::LatticeSystem lattice,
+                       FSArray<double, 6> const & parameters);
+
+      /**
+      * Set unit cell parameters.
+      *
+      * Initializes basis if not done previously.
+      * Lattice system must already be set to non-null value on entry.
+      *
+      * \param parameters array of unit cell parameters
+      */
+      void setUnitCell(FSArray<double, 6> const & parameters);
+
+      /**
+      * Construct basis if not done already.
+      */
+      void makeBasis();
 
       ///@}
       /// \name Accessors 
@@ -142,6 +178,11 @@ namespace Pspc
       FieldIo<D> const & fieldIo() const;
 
       /** 
+      * Get lattice system.
+      */  
+      typename UnitCell<D>::LatticeSystem lattice() const;
+
+      /** 
       * Get group name.
       */  
       std::string groupName() const;
@@ -181,6 +222,11 @@ namespace Pspc
       * FieldIo object for field input/output operations
       */
       FieldIo<D> fieldIo_;
+
+      /**
+      * Lattice system (enumeration value).
+      */
+      typename UnitCell<D>::LatticeSystem lattice_;
 
       /**
       * Group name.
@@ -259,6 +305,13 @@ namespace Pspc
    template <int D>
    inline FieldIo<D> const & Domain<D>::fieldIo() const
    {  return fieldIo_; }
+
+   // Get the lattice system enumeration value
+   template <int D>
+   inline 
+   typename UnitCell<D>::LatticeSystem Domain<D>::lattice() 
+   const
+   {  return lattice_; }
 
    // Get the groupName string.
    template <int D>

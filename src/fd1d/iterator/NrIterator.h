@@ -74,6 +74,11 @@ namespace Fd1d
       int solve(bool isContinuation = false);
 
       /**
+      * Allocate required memory (called in readParameters).
+      */
+      void setup();
+
+      /**
       * Get error tolerance.
       */
       double epsilon();
@@ -147,11 +152,6 @@ namespace Fd1d
 
       /// Is the ensemble canonical for all species ?
       bool isCanonical_;
-
-      /**
-      * Allocate memory if needed. If isAllocated, check array sizes.
-      */
-      void allocate();
 
       /**
       * Increment the chemical potential fields

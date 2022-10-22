@@ -181,7 +181,6 @@ public:
       Domain<3> domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
-      // readParam("in/Domain", domain);
 
       TEST_ASSERT(domain.mesh().dimension(0) == 32);
       TEST_ASSERT(domain.mesh().dimension(1) == 32);
@@ -217,7 +216,6 @@ public:
       Domain<3> domain;
       domain.setFileMaster(fileMaster_);
       readHeader("in/w_bcc.rf", domain);
-      // readParam("in/Domain", domain);
 
       DArray< DArray<double> > bf_0;
       allocateFields(nMonomer_, domain.basis().nBasis(), bf_0);

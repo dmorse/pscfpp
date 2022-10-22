@@ -23,9 +23,9 @@ System{
     )
   }
   Domain{
-    unitCell       oblique  2.0  2.0  1.0
-    mesh           32 32
-    groupName      p_2
+    mesh          32 32
+    lattice       oblique 
+    groupName     p_2
   }
   AmIterator{
     maxItr          1000
@@ -34,3 +34,5 @@ System{
     flexibleParams  1 0 1
   }
 }
+
+    unitCell       oblique  2.0  1.0

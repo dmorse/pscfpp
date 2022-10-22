@@ -13,6 +13,7 @@
 #include <pspc/field/RFieldDft.h>          // function parameter
 
 #include <pscf/crystal/Basis.h>            // member
+#include <pscf/crystal/SpaceGroup.h>       // member
 #include <pscf/crystal/UnitCell.h>         // member
 #include <pscf/mesh/Mesh.h>                // member
 
@@ -59,13 +60,16 @@ namespace Pspc
       * \param mesh  associated spatial discretization Mesh<D>
       * \param fft   associated FFT object for fast transforms
       * \param groupName space group name string
+      * \param group  associated SpaceGroup object
       * \param basis  associated Basis object
       * \param fileMaster  associated FileMaster (for file paths)
       */
       void associate(Mesh<D> const & mesh,
                      FFT<D> const & fft,
-                     std::string const & groupName,
-                     Basis<D> const & basis,
+                     typename UnitCell<D>::LatticeSystem & lattice,
+                     std::string & groupName,
+                     SpaceGroup<D> & group,
+                     Basis<D> & basis,
                      FileMaster const & fileMaster);
 
       /// \name Field File IO - Symmetry Adapted Basis Format
@@ -383,6 +387,10 @@ namespace Pspc
       * formats. This contains the dimension of space, the unit cell, the 
       * group name and the the number of monomers. The unit cell data is
       * read into the associated UnitCell<D>, which is thus updated.
+      *
+      * If the associated basis is not initialized, this function will
+      * attempt to initialize it using the unit cell read from file and
+      * the associated group (if available) or group name. 
       * 
       * This function throws an exception if the values of "dim" read 
       * from file do not match the FieldIo template parameter D. 
@@ -585,11 +593,17 @@ namespace Pspc
       /// Pointer to FFT object.
       FFT<D> const * fftPtr_;
 
+      /// Pointer to lattice system.
+      typename UnitCell<D>::LatticeSystem * latticePtr_;
+
       /// Pointer to group name string
-      std::string const * groupNamePtr_;
+      std::string * groupNamePtr_;
+
+      /// Pointer to a SpaceGroup object
+      SpaceGroup<D> * groupPtr_;
 
       /// Pointer to a Basis object
-      Basis<D> const * basisPtr_;
+      Basis<D> * basisPtr_;
 
       /// Pointer to Filemaster (holds paths to associated I/O files).
       FileMaster const * fileMasterPtr_;
@@ -611,14 +625,28 @@ namespace Pspc
       }
 
       /// Get group name string by const reference.
-      std::string const & groupName() const
+      typename UnitCell<D>::LatticeSystem & lattice() const
+      {  
+         UTIL_ASSERT(latticePtr_);  
+         return *latticePtr_; 
+      }
+
+      /// Get group name string by const reference.
+      std::string & groupName() const
       {  
          UTIL_ASSERT(groupNamePtr_);  
          return *groupNamePtr_; 
       }
 
+      /// Get SpaceGroup by const reference.
+      SpaceGroup<D> & group() const
+      {
+         UTIL_ASSERT(groupPtr_);  
+         return *groupPtr_; 
+      }
+
       /// Get Basis by const reference.
-      Basis<D> const & basis() const
+      Basis<D> & basis() const
       {
          UTIL_ASSERT(basisPtr_);  
          return *basisPtr_; 

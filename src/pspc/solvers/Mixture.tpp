@@ -34,8 +34,6 @@ namespace Pspc
    void Mixture<D>::readParameters(std::istream& in)
    {
       MixtureTmpl< Polymer<D>, Solvent<D> >::readParameters(in);
-      vMonomer_ = 1.0; // Default value
-      readOptional(in, "vMonomer", vMonomer_);
       read(in, "ds", ds_);
 
       UTIL_CHECK(nMonomer() > 0);

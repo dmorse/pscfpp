@@ -22,6 +22,7 @@ namespace Pscf
    std::istream& operator >> (std::istream& in,
                               UnitCell<D>& cell)
    {
+      cell.isInitialized_ = false;
       in >> cell.lattice_;
       cell.setNParameter();
       for (int i = 0; i < cell.nParameter_; ++i) {
@@ -59,6 +60,7 @@ namespace Pscf
    template <int D>
    void readUnitCellHeader(std::istream& in, UnitCell<D>& cell)
    {
+      cell.isInitialized_ = false;
       std::string label;
       in >> label;
       UTIL_CHECK(label == "crystal_system");

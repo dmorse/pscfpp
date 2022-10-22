@@ -28,7 +28,9 @@ namespace Pscf
       lambda_(0),
       nHist_(0),
       maxHist_(0),
-      diverged_(false)
+      nElem_(0),
+      diverged_(false),
+      isAllocated_(false)
    {  setClassName("AmIteratorTmpl"); }
 
    /*
@@ -46,25 +48,29 @@ namespace Pscf
    {
       read(in, "maxItr", maxItr_);
       read(in, "epsilon", epsilon_);
-      read(in, "maxHist", maxHist_);
+
+      maxHist_ = 50;
+      readOptional(in, "maxHist", maxHist_);
 
       errorType_ = "relNormResid"; // default type of error
       readOptional(in, "errorType", errorType_);
 
-      if (!(errorType_ == "normResid" 
+      if (!(errorType_ == "normResid"
          || errorType_ == "maxResid"
          || errorType_ == "relNormResid")) {
          UTIL_THROW("Invalid iterator error type in parameter file.");
       }
-      
+
    }
 
    /*
-   * Setup and allocate memory required by iterator.
+   * Allocate memory required by the Anderson-Mixing algorithm.
    */
    template <typename Iterator, typename T>
-   void AmIteratorTmpl<Iterator,T>::setup()
+   void AmIteratorTmpl<Iterator,T>::allocateAM()
    {
+      UTIL_CHECK(!isAllocated_);
+
       // Determine length of residual basis vectors
       nElem_ = nElements();
 
@@ -73,16 +79,18 @@ namespace Pscf
       fieldBasis_.allocate(maxHist_+1);
       resHists_.allocate(maxHist_+1);
       resBasis_.allocate(maxHist_+1);
-      
+
       // Allocate arrays used in iteration
       fieldTrial_.allocate(nElem_);
       resTrial_.allocate(nElem_);
       temp_.allocate(nElem_);
-      
+
       // Allocate arrays/matrices used in coefficient calculation
       U_.allocate(maxHist_, maxHist_);
       v_.allocate(maxHist_);
       coeffs_.allocate(maxHist_);
+
+      isAllocated_ = true;
    }
 
    /*
@@ -91,11 +99,16 @@ namespace Pscf
    template <typename Iterator, typename T>
    int AmIteratorTmpl<Iterator,T>::solve(bool isContinuation)
    {
-
       // Note: Parameter isContinuation is currently unused in AM algorithm
-      
-      // Preconditions:
+
+      // Initialization and allocate operations on entry to loop.
+      setup();
+
+      // Preconditions for generic algorithm.
       UTIL_CHECK(hasInitialGuess());
+
+      // Allocate memory required by AM algorithm
+      if (!isAllocated_) allocateAM();
 
       // Timers for analyzing performance
       Timer timerMDE;
@@ -107,17 +120,13 @@ namespace Pscf
       Timer timerOmega;
       Timer timerTotal;
 
-      // Start overall timer 
+      // Start overall timer
       timerTotal.start();
-      
+
       // Solve MDE for initial state
       timerMDE.start();
       evaluate();
       timerMDE.stop();
-
-      // Initialization operations on entry to loop (if any)
-      // The default implementation of this function is empty.
-      setupIteration();
 
       // Iterative loop
       bool done;
@@ -127,7 +136,7 @@ namespace Pscf
          // Append current field to fieldHists_ ringbuffer
          getCurrent(temp_);
          fieldHists_.append(temp_);
-         
+
          timerAM.start();
 
          Log::file()<<"---------------------"<<std::endl;
@@ -145,12 +154,13 @@ namespace Pscf
          computeResidual();
          timerResid.stop();
 
-         // Test for convergence
+         // Test for convergence.
+         // Also outputs error measures to Log::file()
          timerConverged.start();
          done = isConverged();
          timerConverged.stop();
 
-         // Output details of this iteration to the log file
+         // Output additional details of this iteration to the log file
          outputToLog();
 
          if (diverged_) {
@@ -172,22 +182,22 @@ namespace Pscf
             Log::file() << "\n";
             Log::file() << "Iterator times contributions:\n";
             Log::file() << "\n";
-            Log::file() << "MDE solution:         " 
+            Log::file() << "MDE solution:         "
                         << timerMDE.time()  << " s,  "
                         << timerMDE.time()/timerTotal.time() << "\n";
-            Log::file() << "residual computation: "  
+            Log::file() << "residual computation: "
                         << timerResid.time()  << " s,  "
                         << timerResid.time()/timerTotal.time() << "\n";
-            Log::file() << "mixing coefficients:  "  
+            Log::file() << "mixing coefficients:  "
                         << timerCoeff.time()  << " s,  "
                         << timerCoeff.time()/timerTotal.time() << "\n";
-            Log::file() << "checking convergence: "  
+            Log::file() << "checking convergence: "
                         << timerConverged.time()  << " s,  "
                         << timerConverged.time()/timerTotal.time() << "\n";
-            Log::file() << "updating guess:       "  
+            Log::file() << "updating guess:       "
                         << timerOmega.time()  << " s,  "
                         << timerOmega.time()/timerTotal.time() << "\n";
-            Log::file() << "total time:           "  
+            Log::file() << "total time:           "
                         << timerTotal.time()   << " s  ";
             Log::file() << "\n\n";
 
@@ -197,7 +207,7 @@ namespace Pscf
 
          } else {
 
-            // Compute optimal linear combination coefficients for 
+            // Compute optimal linear combination coefficients for
             // building the updated field guess
             timerCoeff.start();
             findResidCoeff();
@@ -220,7 +230,7 @@ namespace Pscf
       }
       // Failure: iteration counter itr reached maxItr without converging
       timerTotal.stop();
-      
+
       Log::file() << "Iterator failed to converge.\n";
       cleanUp();
       return 1;
@@ -232,7 +242,7 @@ namespace Pscf
    {
       // Get residuals
       getResidual(temp_);
-      
+
       // Store residuals in residual history ringbuffer
       resHists_.append(temp_);
 
@@ -245,15 +255,15 @@ namespace Pscf
 
       // Find max residual vector element
       double maxRes  = findMaxAbs(resHists_[0]);
-      Log::file() << "Max Residual  = " << Dbl(maxRes,13) << std::endl;
+      Log::file() << "Max Residual  = " << Dbl(maxRes,15) << std::endl;
 
       // Find norm of residual vector
       double normRes = findNorm(resHists_[0]);
-      Log::file() << "Residual Norm = " << Dbl(normRes,13) << std::endl;
+      Log::file() << "Residual Norm = " << Dbl(normRes,15) << std::endl;
 
       // Find norm of residual vector relative to field
       double relNormRes = normRes/findNorm(fieldHists_[0]);
-      Log::file() << "Relative Norm = " << Dbl(relNormRes,13) << std::endl;
+      Log::file() << "Relative Norm = " << Dbl(relNormRes,15) << std::endl;
 
       // Check if calculation has diverged (normRes will be NaN)
       if (std::isnan(normRes)) {
@@ -298,13 +308,13 @@ namespace Pscf
       updateV(v_, resHists_[0], resBasis_, nHist_);
       // Note: resHists_[0] is the current residual vector
 
-      // Solve matrix equation problem to compute coefficients 
+      // Solve matrix equation problem to compute coefficients
       // that minmize the L2 norm of the residual vector.
       if (nHist_ == 1) {
          // Solve explicitly for coefficient
          coeffs_[0] = v_[0] / U_(0,0);
       } else
-      if (nHist_ < maxHist_) { 
+      if (nHist_ < maxHist_) {
 
          // Create temporary smaller version of U_, v_, coeffs_ .
          // This is done to avoid reallocating U_ with each iteration.
@@ -330,7 +340,7 @@ namespace Pscf
          for (int i = 0; i < nHist_; ++i) {
             coeffs_[i] = tempcoeffs[i];
          }
-      } else 
+      } else
       if (nHist_ == maxHist_) {
          LuSolver solver;
          solver.allocate(maxHist_);
@@ -363,7 +373,7 @@ namespace Pscf
 
       // Update system using new trial field
       update(fieldTrial_);
-      
+
       return;
    }
 

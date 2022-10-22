@@ -51,17 +51,20 @@ namespace Pspc
       ~Iterator();
 
       /**
-      * Setup iterator.
-      */
-      virtual void setup() = 0;
-
-      /**
       * Iterate to solution.
       *
       * \param isContinuation true iff  continuation within a sweep
       * \return error code: 0 for success, 1 for failure.
       */
       virtual int solve(bool isContinuation) = 0;
+
+      /**
+      * Initialize state and allocate any required memory.
+      *
+      * This function may be called within the readParameters() function
+      * or on entry to the solve function. 
+      */
+      virtual void setup() = 0;
 
       /**
       * Return const reference to parent system.

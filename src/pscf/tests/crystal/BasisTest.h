@@ -67,9 +67,11 @@ public:
 
       // Construct basis object using identity space group
       Basis<1> basis;
+      TEST_ASSERT(!basis.isInitialized());
       std::string spaceGroup = "I";
       basis.makeBasis(mesh, unitCell, spaceGroup);
 
+      TEST_ASSERT(basis.isInitialized());
       TEST_ASSERT(eq(basis.nWave(), 8));
       TEST_ASSERT(eq(basis.nStar(), 8));
       TEST_ASSERT(eq(basis.nBasis(),8));
@@ -107,6 +109,7 @@ public:
       Basis<1> basis;
       basis.makeBasis(mesh, unitCell, group);
 
+      TEST_ASSERT(basis.isInitialized());
       TEST_ASSERT(eq(basis.nWave(), 8));
       TEST_ASSERT(eq(basis.nStar(), 5));
       TEST_ASSERT(eq(basis.nBasis(), 5));
@@ -143,6 +146,7 @@ public:
       std::string spaceGroup = "I";
       basis.makeBasis(mesh, unitCell, spaceGroup);
    
+      TEST_ASSERT(basis.isInitialized());
       TEST_ASSERT(eq(basis.nWave(), 9));
       TEST_ASSERT(eq(basis.nStar(),9));
 
@@ -180,6 +184,7 @@ public:
       Basis<2> basis;
       basis.makeBasis(mesh, unitCell, group);
      
+      TEST_ASSERT(basis.isInitialized());
       TEST_ASSERT(eq(basis.nWave(), 16));
       TEST_ASSERT(eq(basis.nStar(), 6));
       TEST_ASSERT(eq(basis.nBasis(), 4));
@@ -223,6 +228,7 @@ public:
       Basis<2> basis;
       basis.makeBasis(mesh, unitCell, group);
      
+      TEST_ASSERT(basis.isInitialized());
       TEST_ASSERT(basis.isValid());
       //TEST_ASSERT(eq(basis.nWave(), 16));
       //TEST_ASSERT(eq(basis.nStar(), 6));
@@ -262,6 +268,7 @@ public:
       std::string spaceGroup = "I";
       basis.makeBasis(mesh, unitCell, spaceGroup);
       
+      TEST_ASSERT(basis.isInitialized());
       TEST_ASSERT(eq(basis.nWave(), 27));
       TEST_ASSERT(eq(basis.nStar(), 27));
       TEST_ASSERT(basis.isValid());
@@ -296,6 +303,7 @@ public:
       Basis<3> basis;
       basis.makeBasis(mesh, unitCell, group);
       
+      TEST_ASSERT(basis.isInitialized());
       TEST_ASSERT(basis.isValid());
       TEST_ASSERT(eq(basis.nWave(), 512));
 
@@ -349,6 +357,7 @@ public:
       Basis<3> basis;
       basis.makeBasis(mesh, unitCell, group);
       
+      TEST_ASSERT(basis.isInitialized());
       TEST_ASSERT(basis.isValid());
       TEST_ASSERT(eq(basis.nWave(), 512));
 
@@ -404,6 +413,7 @@ public:
       Basis<3> basis;
       basis.makeBasis(mesh, unitCell, group);
       
+      TEST_ASSERT(basis.isInitialized());
       TEST_ASSERT(basis.isValid());
       TEST_ASSERT(eq(basis.nWave(), 512));
 
@@ -459,6 +469,7 @@ public:
       Basis<3> basis;
       basis.makeBasis(mesh, unitCell, group);
   
+      TEST_ASSERT(basis.isInitialized());
       TEST_ASSERT(basis.isValid());
       TEST_ASSERT(eq(basis.nWave(), 512));
 
@@ -503,6 +514,7 @@ public:
       Basis<3> basis;
       basis.makeBasis(mesh, unitCell, group);
   
+      TEST_ASSERT(basis.isInitialized());
       TEST_ASSERT(basis.isValid());
       TEST_ASSERT(eq(basis.nWave(), 4096));
 

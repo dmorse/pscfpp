@@ -53,6 +53,14 @@ namespace Fd1d
       */
       virtual int solve(bool isContinuation = false) = 0;
 
+      /**
+      * Setup operation.  
+      *
+      * This function should be called internally by either the function
+      * readParameters() before exit or by solve() on entry. 
+      */
+      virtual void setup() = 0;
+
    };
 
 } // namespace Fd1d

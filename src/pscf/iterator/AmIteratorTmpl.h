@@ -57,17 +57,21 @@ namespace Pscf {
       void readParameters(std::istream& in);
 
       /**
-      * Setup and allocate required memory.
-      */
-      void setup();
-
-      /**
       * Iterate to a solution
       *
       * \param isContinuation true iff continuation within a sweep
       * \return 0 for convergence, 1 for failure
       */
       int solve(bool isContinuation = false);
+
+      /**
+      * Initialize just before entry to iterative loop.
+      *
+      * This function is called by the solve method just before entering
+      * the loop over iterations. It must call the protected allocateAM()
+      * to allocate memory required by the AM algorithm.
+      */ 
+      virtual void setup() = 0;
 
    protected:
 
@@ -77,13 +81,9 @@ namespace Pscf {
       using ParamComposite::readOptional;
      
       /**
-      * Initialize just before entry to iterative loop.
-      *
-      * This function is called by the solve method just before entering
-      * the loop over iterations.  The default implementation is empty.
-      */ 
-      virtual void setupIteration() 
-      {};
+      * Allocate memory required by AM algorithm.
+      */
+      void allocateAM();
 
    private:
 
@@ -107,6 +107,12 @@ namespace Pscf {
 
       /// Number of elements in field or residual vectors.
       int nElem_; 
+
+      /// Boolean indicating whether the calculation has diverged to NaN.
+      bool diverged_;
+
+      /// Has the allocate function been called.
+      bool isAllocated_;
 
       /// History of previous field vectors.
       RingBuffer< T > fieldHists_;
@@ -137,9 +143,6 @@ namespace Pscf {
 
       /// Workspace for calculations
       T temp_;
-
-      /// Boolean indicating whether the calculation has diverged to NaN
-      bool diverged_;
 
       /**
       * Compute a vector of residuals, add to history.

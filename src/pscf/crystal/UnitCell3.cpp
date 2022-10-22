@@ -392,14 +392,31 @@ namespace Pscf
    */
    UnitCell<3>& UnitCell<3>::operator = (UnitCell<3> const & other)
    {
+      isInitialized_ = false;
       lattice_ = other.lattice_;
       setNParameter();
       UTIL_CHECK(nParameter_ == other.nParameter_);
       for (int i = 0; i < nParameter_; ++i) {
          parameters_[i] = other.parameters_[i];
-      }   
+      }
       setLattice();
       return *this;
    }
+
+   /*
+   * Set state of the unit cell. 
+   */
+   void UnitCell<3>::set(UnitCell<3>::LatticeSystem lattice,
+                         FSArray<double, 6> const & parameters)
+   {
+      isInitialized_ = false;
+      lattice_ = lattice;
+      setNParameter();
+      for (int i = 0; i < nParameter_; ++i) {
+         parameters_[i] = parameters[i];
+      }   
+      setLattice();
+   }
+
 
 }

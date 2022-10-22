@@ -49,8 +49,12 @@ namespace Fd1d
       */
       void readParameters(std::istream& in);
       
+      /**
+      * Setup operations, called by solve on entry.
+      */
+      virtual void setup();
+      
       // Inherited public member functions
-      using AmIteratorTmpl<Iterator,DArray<double> >::setup;
       using AmIteratorTmpl<Iterator,DArray<double> >::solve;
       using AmIteratorTmpl<Iterator,DArray<double> >::setClassName;
       
@@ -156,12 +160,14 @@ namespace Fd1d
       void addPredictedError(DArray<double>& fieldTrial, 
                              DArray<double> const & resTrial, 
                              double lambda);
-                             
-      /// Checks if the system has an initial guess
+      
+      /**                       
+      * Checks if the system has an initial guess.
+      */
       bool hasInitialGuess();
       
       /** 
-      * Compute and returns the number of elements in field vector.
+      * Compute and returns the number residuals and unknowns.
       *
       * Called during allocation and then stored.
       */
@@ -200,7 +206,6 @@ namespace Fd1d
       * Outputs relevant system details to the iteration log.
       */
       void outputToLog();
-      
    
       /**
       * Return true iff all species are treated in closed ensemble.

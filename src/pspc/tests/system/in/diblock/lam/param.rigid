@@ -1,26 +1,30 @@
 System{
   Mixture{
      nMonomer  2
-     monomers  1.0  
+     monomers[
+               1.0  
                1.0 
+     ]
      nPolymer  1
      Polymer{
         type    branched
         nBlock  2
-        blocks  0  0.5  0  1 
+        blocks[
+                0  0.5  0  1 
                 1  0.5  1  2 
+        ]
         phi     1.0
      }
      ds   0.01
   }
   Interaction{
-     chi  0   0   0.0
+     chi(  
           1   0   15.0
-          1   1   0.0
+     )
   }
   Domain{
-     unitCell   Lamellar    1.5161093077
-     mesh     32
+     mesh      32
+     lattice   lamellar    
      groupName P_-1
   }
   AmIterator{
@@ -30,3 +34,5 @@ System{
      isFlexible   0
   }
 }
+
+     unitCell   Lamellar    1.5161093077

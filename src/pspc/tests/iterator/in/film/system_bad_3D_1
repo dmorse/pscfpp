@@ -23,8 +23,8 @@ System{
     )
   }
   Domain{
-    unitCell       tetragonal  2.0  4.2
     mesh           32 32 68
+    lattice        tetragonal 
     groupName      P_4%m_c_c
   }
   AmIterator{
@@ -34,3 +34,5 @@ System{
     isFlexible   1   
   }
 }
+
+    unitCell       tetragonal  2.0  4.2

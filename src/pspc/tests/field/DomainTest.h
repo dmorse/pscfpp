@@ -28,7 +28,6 @@ using namespace Pscf::Pspc;
 class DomainTest : public LogFileUnitTest 
 {
 
-   //std::ofstream logFile_;
    FileMaster fileMaster_;
    int nMonomer_;
 
@@ -59,7 +58,7 @@ public:
       domain.setFileMaster(fileMaster_);
 
       std::ifstream in;
-      openInputFile("in/Domain", in);
+      openInputFile("in/Domain_old.prm", in);
       domain.readParam(in);
       in.close();
 
@@ -67,6 +66,38 @@ public:
       TEST_ASSERT(domain.mesh().dimension(1) == 32);
       TEST_ASSERT(domain.mesh().dimension(2) == 32);
       TEST_ASSERT(domain.unitCell().lattice() == UnitCell<3>::Cubic);
+      TEST_ASSERT(domain.basis().nBasis() == 489);
+   }
+
+   void testReadParamHeader() 
+   {
+      printMethod(TEST_FUNC);
+
+      Domain<3> domain;
+      domain.setFileMaster(fileMaster_);
+
+      // Read parameter file
+      std::ifstream in;
+      openInputFile("in/Domain.prm", in);
+      domain.readParam(in);
+      in.close();
+
+      TEST_ASSERT(domain.mesh().dimension(0) == 32);
+      TEST_ASSERT(domain.mesh().dimension(1) == 32);
+      TEST_ASSERT(domain.mesh().dimension(2) == 32);
+      TEST_ASSERT(domain.unitCell().lattice() == UnitCell<3>::Null);
+      TEST_ASSERT(domain.lattice() == UnitCell<3>::Cubic);
+      TEST_ASSERT(domain.group().size() == 96);
+      TEST_ASSERT(domain.basis().nBasis() == 0);
+
+      // Read header and construct basis
+      openInputFile("in/w_bcc.rf", in);
+      domain.fieldIo().readFieldHeader(in, nMonomer_, domain.unitCell());
+      in.close();
+
+      TEST_ASSERT(domain.unitCell().lattice() == UnitCell<3>::Cubic);
+      TEST_ASSERT(domain.lattice() == UnitCell<3>::Cubic);
+      TEST_ASSERT(domain.group().size() > 1);
       TEST_ASSERT(domain.basis().nBasis() == 489);
    }
 
@@ -101,6 +132,7 @@ public:
 
 TEST_BEGIN(DomainTest)
 TEST_ADD(DomainTest, testReadParam)
+TEST_ADD(DomainTest, testReadParamHeader)
 TEST_ADD(DomainTest, testReadHeader)
 TEST_END(DomainTest)
 

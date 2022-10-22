@@ -43,17 +43,15 @@ namespace Fd1d
 
    void NrIterator::readParameters(std::istream& in)
    {
-      maxItr_ = 100;
+      maxItr_ = 400;
       readOptional(in, "maxItr", maxItr_);
       read(in, "epsilon", epsilon_);
-      if (domain().nx() > 0) {
-         allocate();
-      }
+      setup();
    }
 
-   void NrIterator::allocate()
+   void NrIterator::setup()
    {
-      int nm = mixture().nMonomer();   // number of monomer types
+      int nm = system().mixture().nMonomer();   // number of monomer types
       int nx = domain().nx(); // number of grid points
       UTIL_CHECK(nm > 0);
       UTIL_CHECK(nx > 0);
@@ -83,7 +81,7 @@ namespace Fd1d
                                     Array<CField> const & cFields,
                                     Array<double>& residual)
    {
-      int nm = mixture().nMonomer();  // number of monomer types
+      int nm = system().mixture().nMonomer();  // number of monomer types
       int nx = domain().nx();         // number of grid points
       int i;                          // grid point index
       int j;                          // monomer indices
@@ -140,7 +138,7 @@ namespace Fd1d
    */
    void NrIterator::computeJacobian()
    {
-      int nm = mixture().nMonomer();   // number of monomer types
+      int nm = system().mixture().nMonomer();   // number of monomer types
       int nx = domain().nx();          // number of grid points
       int i;                           // monomer index
       int j;                           // grid point index
@@ -162,7 +160,7 @@ namespace Fd1d
       for (i = 0; i < nm; ++i) {
          for (j = 0; j < nx; ++j) {
             wFieldsNew_[i][j] += delta;
-            mixture().compute(wFieldsNew_, cFieldsNew_);
+            system().mixture().compute(wFieldsNew_, cFieldsNew_);
             computeResidual(wFieldsNew_, cFieldsNew_, residualNew_);
             for (jr = 0; jr < nr; ++jr) {
                jacobian_(jr, jc) =
@@ -182,7 +180,7 @@ namespace Fd1d
                                      Array<double> const & dW,
                                      Array<WField> & wNew)
    {
-      int nm = mixture().nMonomer(); // number of monomers types
+      int nm = system().mixture().nMonomer(); // number of monomers types
       int nx = domain().nx();        // number of grid points
       int i;                         // monomer index
       int j;                         // grid point index
@@ -210,7 +208,7 @@ namespace Fd1d
 
    double NrIterator::residualNorm(Array<double> const & residual) const
    {
-      int nm = mixture().nMonomer();  // number of monomer types
+      int nm = system().mixture().nMonomer();  // number of monomer types
       int nx = domain().nx();         // number of grid points
       int nr = nm*nx;                 // number of residual components
       double value, norm;
@@ -226,19 +224,16 @@ namespace Fd1d
 
    int NrIterator::solve(bool isContinuation)
    {
-      int nm = mixture().nMonomer();  // number of monomer types
-      int np = mixture().nPolymer();  // number of polymer species
+      int nm = system().mixture().nMonomer();  // number of monomer types
+      int np = system().mixture().nPolymer();  // number of polymer species
       int nx = domain().nx();         // number of grid points
       int nr = nm*nx;                 // number of residual elements
-
-      // Allocate memory if needed or, if allocated, check array sizes.
-      allocate();
 
       // Determine if isCanonical (iff all species ensembles are closed)
       isCanonical_ = true;
       Species::Ensemble ensemble;
       for (int i = 0; i < np; ++i) {
-         ensemble = mixture().polymer(i).ensemble();
+         ensemble = system().mixture().polymer(i).ensemble();
          if (ensemble == Species::Unknown) {
             UTIL_THROW("Unknown species ensemble");
          }
@@ -260,7 +255,7 @@ namespace Fd1d
       }
 
       // Compute initial residual vector and norm
-      mixture().compute(system().wFields(), system().cFields());
+      system().mixture().compute(system().wFields(), system().cFields());
       computeResidual(system().wFields(), system().cFields(), residual_);
       double norm = residualNorm(residual_);
 
@@ -297,7 +292,7 @@ namespace Fd1d
 
          // Try full Newton-Raphson update
          incrementWFields(system().wFields(), dOmega_, wFieldsNew_);
-         mixture().compute(wFieldsNew_, cFieldsNew_);
+         system().mixture().compute(wFieldsNew_, cFieldsNew_);
          computeResidual(wFieldsNew_, cFieldsNew_, residualNew_);
          normNew = residualNorm(residualNew_);
 
@@ -311,7 +306,7 @@ namespace Fd1d
                dOmega_[k] *= 0.66666666;
             }
             incrementWFields(system().wFields(), dOmega_, wFieldsNew_);
-            mixture().compute(wFieldsNew_, cFieldsNew_);
+            system().mixture().compute(wFieldsNew_, cFieldsNew_);
             computeResidual(wFieldsNew_, cFieldsNew_, residualNew_);
             normNew = residualNorm(residualNew_);
             ++j;
@@ -326,7 +321,7 @@ namespace Fd1d
                dOmega_[k] *= -1.000;
             }
             incrementWFields(system().wFields(), dOmega_, wFieldsNew_);
-            mixture().compute(wFieldsNew_, cFieldsNew_);
+            system().mixture().compute(wFieldsNew_, cFieldsNew_);
             computeResidual(wFieldsNew_, cFieldsNew_, residualNew_);
             normNew = residualNorm(residualNew_);
          }

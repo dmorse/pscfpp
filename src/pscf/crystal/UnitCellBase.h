@@ -41,7 +41,9 @@ namespace Pscf
       ~UnitCellBase();
 
       /**
-      * Set all the parameters of unit cell (new version).
+      * Set all the parameters of unit cell.
+      *
+      * The lattice system must already be set to a non-null value.
       *
       * \param parameters array of unit cell parameters
       */
@@ -133,6 +135,12 @@ namespace Pscf
       */
       double dkkBasis(int k, int i, int j) const;
 
+      /**
+      * Has this unit cell been initialized?
+      */
+      bool isInitialized() const
+      {  return isInitialized_; }
+
    protected:
 
       /**
@@ -188,6 +196,11 @@ namespace Pscf
       * Number of parameters required to specify unit cell.
       */
       int nParameter_;
+
+      /**
+      * Has this unit cell been fully initialized?
+      */
+      bool isInitialized_;
 
       /**
       * Compute all private data, given latticeSystem and parameters.
@@ -307,7 +320,8 @@ namespace Pscf
    */
    template <int D>
    UnitCellBase<D>::UnitCellBase()
-    : nParameter_(0)
+    : nParameter_(0),
+      isInitialized_(false)
    {}
 
    /*
@@ -324,6 +338,7 @@ namespace Pscf
    void UnitCellBase<D>::setParameters(FSArray<double, 6> const& parameters)
    {
       UTIL_CHECK(parameters.size() == nParameter_);
+      isInitialized_ = false;
       for (int i = 0; i < nParameter_; ++i) {
          parameters_[i] = parameters[i];
       }
@@ -447,6 +462,7 @@ namespace Pscf
       initializeToZero();
       setBasis();
       computeDerivatives();
+      isInitialized_ = true;
    }
 
 }

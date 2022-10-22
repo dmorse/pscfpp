@@ -49,7 +49,7 @@ namespace Pspc {
       * Setup operation at the beginning of a sweep. Gets initial 
       * values of individual parameters.
       */
-       void setup();
+      void setup();
 
       /**
       * Set the state before an iteration. Called with each new iteration 

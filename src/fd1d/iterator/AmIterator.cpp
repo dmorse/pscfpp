@@ -29,10 +29,11 @@ namespace Fd1d{
    {
       // Call parent class readParameters
       AmIteratorTmpl<Iterator, DArray<double> >::readParameters(in);
-
-      // Allocate memory defined by AmIteratorTmpl
-      setup();
    }
+
+   // Empty setup function (all required memory setup by allocateAM)
+   void AmIterator::setup()
+   {}
 
    // Compute and return L2 norm of residual vector
    double AmIterator::findNorm(DArray<double> const & hist)

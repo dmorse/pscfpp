@@ -1,32 +1,38 @@
 System{
   Mixture{
     nMonomer  3
-    monomers  1.0
+    monomers[
               1.0
               1.0
+              1.0
+    ]
     nPolymer  1
     Polymer{
       type      linear
       nBlock    3
-      blocks    0   0.23700000
-                1   0.52600000
-                2   0.23700000
+      blocks[
+               0    0.23700000
+               1    0.52600000
+               2    0.23700000
+      ]
       phi     1.0
     }
     ds   0.01
   }
   Interaction{
-    chi  0   0   0.0
+    chi(
+         0   0   0.0
          1   0  13.00000000
          1   1   0.0
          2   0  35.00000000
          2   1  13.00000000
          2   2   0.0
+    )
   }
   Domain{
-    unitCell  cubic  2.234870152E+00
-    mesh              36  36  36
-    groupName         I_41_3_2
+    mesh            36  36  36
+    lattice         cubic
+    groupName       I_41_3_2
   }
   AmIterator{
     maxItr       1000
@@ -35,3 +41,5 @@ System{
     isFlexible   1
   }
 }
+
+    unitCell  cubic  2.234870152E+00

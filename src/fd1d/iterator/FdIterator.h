@@ -137,9 +137,9 @@ namespace Fd1d
       bool isCanonical_;
     
       /**
-      * Allocate memory if needed. If isAllocated, check array sizes.
+      * Allocate required memory.
       */
-      void allocate();
+      void setup();
     
       /**
       * Compute the increment of chemical potential field

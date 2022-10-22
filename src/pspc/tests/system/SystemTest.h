@@ -23,11 +23,6 @@ public:
    void setUp()
    {  setVerbose(0); }
 
-   #if 0
-   void tearDown()
-   {  closeLogFile(); }
-   #endif
-
    void testConstructor1D()
    {
       printMethod(TEST_FUNC);
@@ -387,11 +382,6 @@ public:
       system.readParam(in);
       in.close();
 
-      system.readWBasis("in/diblock/lam/omega.ref");
-
-      DArray< DArray<double> > wFields_check;
-      wFields_check = system.w().basis();
-
       // Read input w-fields, iterate and output solution
       system.readWBasis("in/diblock/lam/omega.in");
       int error = system.iterate();
@@ -404,6 +394,12 @@ public:
       system.fieldIo().writeFieldsBasis("out/testIterate1D_lam_flex_c.bf", 
                                         system.c().basis(), 
                                         system.unitCell());
+
+      DArray< DArray<double> > wFields_check;
+      wFields_check = system.w().basis();
+
+      system.readWBasis("in/diblock/lam/omega.ref");
+      //wFields_check = system.w().basis();
 
       BFieldComparison comparison(1);
       comparison.compare(wFields_check, system.w().basis());
