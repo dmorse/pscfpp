@@ -720,18 +720,6 @@ namespace Pspc
       */
       mutable DArray<RFieldDft<D> > tmpFieldsKGrid_;
 
-      #if 0
-      /**
-      * Work array (size = # of grid points).
-      */
-      mutable DArray<double> f_;
-      #endif
-
-      /**
-      * Work array (size = # of monomer types).
-      */
-      mutable DArray<double> e_;
-
       /**
       * Helmholtz free energy per monomer / kT.
       */
@@ -769,18 +757,23 @@ namespace Pspc
       /**
       * Has memory been allocated for fields in grid format?
       */
-      bool gridFieldsAreAllocated_;
+      bool isAllocatedRGrid_;
 
       /**
       * Has memory been allocated for fields in grid format?
       */
-      bool basisFieldsAreAllocated_;
+      bool isAllocatedBasis_;
 
       /**
-      * Have C fields been computed by solving MDEs for current w fields?
+      * Have c fields been computed for the current w fields?
       *
-      * Set true when c fields are computed, set false when w fields or
-      * unit cell are reset.
+      * Set true when c fields are computed by solving the MDEs for
+      * all blocks, and set false whenever w fields or the unit cell
+      * parameters are reset. When hasCFields_ is true, both the 
+      * c fields for individual blocks and solvent species in the
+      * Mixture and the fields for different monomer types the 
+      * System::c_ container are those obtained from the current w 
+      * fields in System::w_ container.
       */
       bool hasCFields_;
 
@@ -807,20 +800,6 @@ namespace Pspc
       * Initialize Homogeneous::Mixture object.
       */
       void initHomogeneous();
-
-      /**
-      * Reader header of field file (fortran pscf format)
-      *
-      * \param in input stream (i.e., input file)
-      */
-      void readFieldHeader(std::istream& in);
-
-      /**
-      * Write header for field file (fortran pscf format)
-      *
-      * \param out output stream (i.e., output file)
-      */
-      void writeFieldHeader(std::ostream& out) const;
 
       /**
       * Read a filename string and echo to log file.
