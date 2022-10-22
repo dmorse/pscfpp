@@ -67,14 +67,16 @@ namespace Pspc
       FilmIterator(System<1>& system);
 
       /**
+      * Construct array containing indices of flexible lattice parameters.
+      *
       * Construct an array containing the indices of each flexible lattice 
       * parameter, based on normalVecId and unitCell definitions in param 
-      * file as well as the optional user input flexibleParams. Store this
-      * array in flexibleParams_ member of this object, as well the 
+      * file as well as the optional user input flexibleParams. Store 
+      * this array in flexibleParams_ member of this object, as well the 
       * flexibleParams_ member of the iterator within this object.
       * 
-      * In 1D, a thin film can not have flexible lattice parameters, so this
-      * will always set flexibleParams_ to an empty array.
+      * In 1D, a thin film can not have flexible lattice parameters, so 
+      * this will always set flexibleParams_ to an empty array.
       */
       void setFlexibleParams();
 

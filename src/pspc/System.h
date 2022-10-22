@@ -287,6 +287,34 @@ namespace Pspc
       //@{
 
       /**
+      * Write chemical potential fields in symmetrized basis format.
+      *
+      * \param filename name of output file
+      */
+      void writeWBasis(const std::string & filename) const;
+
+      /**
+      * Write chemical potential fields in real space grid (r-grid) format.
+      *
+      * \param filename name of output file
+      */
+      void writeWRGrid(const std::string & filename) const;
+
+      /**
+      * Write concentration fields in symmetrized basis format.
+      *
+      * \param filename name of output file
+      */
+      void writeCBasis(const std::string & filename) const;
+
+      /**
+      * Write concentration fields in real space grid (r-grid) format.
+      *
+      * \param filename name of output file
+      */
+      void writeCRGrid(const std::string & filename) const;
+
+      /**
       * Write c-fields for all blocks and solvents in r-grid format.
       *
       * Writes concentrations for all blocks of all polymers and all

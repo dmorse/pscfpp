@@ -453,24 +453,19 @@ namespace Pspc
          } else
          if (command == "WRITE_W_BASIS") {
             readEcho(in, filename);
-            UTIL_CHECK(w_.hasData());
-            UTIL_CHECK(w_.isSymmetric());
-            fieldIo().writeFieldsBasis(filename, w_.basis(), unitCell());
+            writeWBasis(filename);
          } else 
          if (command == "WRITE_W_RGRID") {
             readEcho(in, filename);
-            UTIL_CHECK(w_.hasData());
-            fieldIo().writeFieldsRGrid(filename, w_.rgrid(), unitCell());
+            writeWRGrid(filename);
          } else 
          if (command == "WRITE_C_BASIS") {
             readEcho(in, filename);
-            UTIL_CHECK(hasCFields_);
-            fieldIo().writeFieldsBasis(filename, c_.basis(), unitCell());
+            writeCBasis(filename);
          } else
          if (command == "WRITE_C_RGRID") {
             readEcho(in, filename);
-            UTIL_CHECK(hasCFields_);
-            fieldIo().writeFieldsRGrid(filename, c_.rgrid(), unitCell());
+            writeCRGrid(filename);
          } else
          if (command == "WRITE_C_BLOCK_RGRID") {
             readEcho(in, filename);
@@ -491,8 +486,8 @@ namespace Pspc
                                   segmentId);
          } else
          if (command == "WRITE_Q_TAIL") {
-            int polymerId, blockId, directionId;
             readEcho(in, filename);
+            int polymerId, blockId, directionId;
             in >> polymerId;
             in >> blockId;
             in >> directionId;
@@ -502,8 +497,8 @@ namespace Pspc
             writeQTail(filename, polymerId, blockId, directionId);
          } else
          if (command == "WRITE_Q") {
-            int polymerId, blockId, directionId;
             readEcho(in, filename);
+            int polymerId, blockId, directionId;
             in >> polymerId;
             in >> blockId;
             in >> directionId;
@@ -771,19 +766,22 @@ namespace Pspc
    template <int D>
    void System<D>::compute(bool needStress)
    {
-      UTIL_CHECK(w_.hasData());
+      UTIL_CHECK(w_.isAllocatedRGrid());
       UTIL_CHECK(c_.isAllocatedRGrid());
+      UTIL_CHECK(w_.hasData());
 
       // Solve the modified diffusion equation (without iteration)
       mixture_.compute(w_.rgrid(), c_.rgrid(), mask_.phiTot());
       hasCFields_ = true;
 
+      // Compute stress if requested
       if (needStress) {
          mixture_.computeStress();
       }
 
       // If w fields are symmetric, compute basis componens for c-fields
       if (w_.isSymmetric()) {
+         UTIL_CHECK(c_.isAllocatedBasis());
          domain_.fieldIo().convertRGridToBasis(c_.rgrid(), c_.basis());
       }
 
@@ -1114,7 +1112,6 @@ namespace Pspc
 
    // Output functions
 
-   #if 0
    /*
    * Write w-fields in symmetry-adapted basis format. 
    */
@@ -1124,6 +1121,7 @@ namespace Pspc
       UTIL_CHECK(domain_.basis().isInitialized());
       UTIL_CHECK(isAllocatedBasis_);
       UTIL_CHECK(w_.hasData());
+      UTIL_CHECK(w_.isSymmetric());
       domain_.fieldIo().writeFieldsBasis(filename, w_.basis(), 
                                          domain_.unitCell());
    }
@@ -1149,7 +1147,7 @@ namespace Pspc
       UTIL_CHECK(domain_.basis().isInitialized());
       UTIL_CHECK(isAllocatedBasis_);
       UTIL_CHECK(hasCFields_);
-
+      UTIL_CHECK(w_.isSymmetric());
       domain_.fieldIo().writeFieldsBasis(filename, c_.basis(), 
                                          domain_.unitCell());
    }
@@ -1165,7 +1163,6 @@ namespace Pspc
       domain_.fieldIo().writeFieldsRGrid(filename, c_.rgrid(), 
                                          domain_.unitCell());
    }
-   #endif
 
    /*
    * Write all concentration fields in real space (r-grid) format, for 

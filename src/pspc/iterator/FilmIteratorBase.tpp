@@ -116,6 +116,8 @@ namespace Pspc
    template <int D, typename IteratorType>
    void FilmIteratorBase<D, IteratorType>::setup()
    {
+      UTIL_CHECK(system().basis().isInitialized());
+
       // Set up the iterator
       iterator_.setup();
 

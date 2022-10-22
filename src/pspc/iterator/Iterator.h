@@ -53,7 +53,7 @@ namespace Pspc
       /**
       * Iterate to solution.
       *
-      * \param isContinuation true iff  continuation within a sweep
+      * \param isContinuation true iff a continuation within a sweep
       * \return error code: 0 for success, 1 for failure.
       */
       virtual int solve(bool isContinuation) = 0;
@@ -67,31 +67,26 @@ namespace Pspc
       virtual void setup() = 0;
 
       /**
-      * Return const reference to parent system.
-      */
-      System<D> const & system() const
-      {  return *sysPtr_; }
+      * Set the array containing indices of flexible lattice parameters.
+      *
+      * \param flexParams array of indices of flexible lattice parameters
+      */ 
+      void setFlexibleParams(FSArray<int, 6> const & flexParams)
+      {  flexibleParams_ = flexParams; }
 
       /**
-      * Return true if unit cell has any flexible lattice parameters,
-      * false if rigid.
+      * Return true iff unit cell has any flexible lattice parameters.
       */
       bool isFlexible() const 
       {  return (flexibleParams_.size() != 0); }
 
       /**
-      * Sets the flexibleParams_ array.
-      * 
-      * \param flexParams array of indices of each flexible lattice 
-      *                   parameter
-      */
-      void setFlexibleParams(FSArray<int, 6> const & flexParams)
-      {  flexibleParams_ = flexParams; }
-
-      /**
-      * Return an array containing indices of each flexible lattice 
-      * parameter, e.g. [0,1,2] if there are 3 lattice parameters and
-      * all 3 are flexible.
+      * Get the array containing indices of flexible lattice parameters.
+      *
+      * For example, for a crystal system with 3 lattice parameters, 
+      * return an FSArray<double> of size 3 containing [0,1,2] if all
+      * 3 are flexible, or an array [0,2] of size 2 if only the first
+      * and last are flexible. 
       */
       FSArray<int, 6> flexibleParams() const
       {  return flexibleParams_; }
@@ -99,12 +94,20 @@ namespace Pspc
    protected:
 
       /**
-      * Return reference to parent system.
+      * Get parent system by const reference.
+      */
+      System<D> const & system() const
+      {  return *sysPtr_; }
+
+      /**
+      * Get parent system by non-const reference.
       */
       System<D>& system() 
       {  return *sysPtr_; }
 
-      /// Array of indices of the lattice parameters that are flexible
+      /**
+      * Array of indices of the lattice parameters that are flexible.
+      */
       FSArray<int, 6> flexibleParams_;
 
    private:

@@ -21,13 +21,13 @@ namespace Pspc{
    // Constructor
    template <int D>
    AmIterator<D>::AmIterator(System<D>& system)
-   : Iterator<D>(system)
+    : Iterator<D>(system)
    {  setClassName("AmIterator"); }
 
    // Destructor
    template <int D>
    AmIterator<D>::~AmIterator()
-   {  setClassName("AmIterator"); }
+   {  }
 
    // Read parameters from file
    template <int D>
