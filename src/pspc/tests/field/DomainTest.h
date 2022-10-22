@@ -85,8 +85,8 @@ public:
       TEST_ASSERT(domain.mesh().dimension(0) == 32);
       TEST_ASSERT(domain.mesh().dimension(1) == 32);
       TEST_ASSERT(domain.mesh().dimension(2) == 32);
-      TEST_ASSERT(domain.unitCell().lattice() == UnitCell<3>::Null);
       TEST_ASSERT(domain.lattice() == UnitCell<3>::Cubic);
+      TEST_ASSERT(domain.unitCell().lattice() == domain.lattice());
       TEST_ASSERT(domain.group().size() == 96);
       TEST_ASSERT(domain.basis().nBasis() == 0);
 

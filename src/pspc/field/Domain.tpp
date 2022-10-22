@@ -71,17 +71,19 @@ namespace Pspc
       // If no unit cell was read, read lattice system
       if (lattice_ == UnitCell<D>::Null) { 
          read(in, "lattice", lattice_);
+         unitCell_.set(lattice_);
       }
 
+      // Read group name and initialized space group
       read(in, "groupName", groupName_);
       readGroup(groupName_, group_);
 
+      // Initialize unit cell if unit cell parameters are known
       if (hasUnitCell) { 
          basis().makeBasis(mesh(), unitCell(), group_);
       }
       isInitialized_ = true;
    }
-   
  
    template <int D> 
    void Domain<D>::readFieldHeader(std::istream& in, int& nMonomer)

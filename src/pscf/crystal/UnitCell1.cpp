@@ -71,6 +71,9 @@ namespace Pscf
    {
       if (lattice == UnitCell<1>::Lamellar) {
          out << "lamellar";
+      } else 
+      if (lattice == UnitCell<1>::Null) {
+         out << "Null";
       } else {
          UTIL_THROW("Invalid value of UnitCell<1>::Lamellar");
       }
@@ -94,7 +97,17 @@ namespace Pscf
    }
 
    /*
-   * Set state of the unit cell. 
+   * Set the lattice system, but not unit cell parameters.
+   */
+   void UnitCell<1>::set(UnitCell<1>::LatticeSystem lattice)
+   {
+      isInitialized_ = false;
+      lattice_ = lattice;
+      setNParameter();
+   }
+
+   /*
+   * Set state of the unit cell (lattice system and parameters).
    */
    void UnitCell<1>::set(UnitCell<1>::LatticeSystem lattice,
                          FSArray<double, 6> const & parameters)
