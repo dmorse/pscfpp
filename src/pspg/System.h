@@ -49,11 +49,6 @@ namespace Pspg
 
    public:
 
-      #if 0
-      /// Field on a real-space grid (r-grid)
-      //typedef RDField<D> Field;
-      #endif
-
       /// \name Construction and Destruction
       //@{
 
@@ -538,44 +533,6 @@ namespace Pspg
       */
       WFieldContainer<D> const & w() const;
 
-      /**
-      * Get array of chemical potential fields, in a basis.
-      *
-      * This function returns an array in which each element is an
-      * array containing the coefficients of the chemical potential
-      * field (w field) in a symmetry-adapted basis for one monomer
-      * type. The array capacity is the number of monomer types.
-      */
-      DArray< DArray<double> > const & wFieldsBasis() const;
-
-      /**
-      * Get chemical potential field for one monomer type, in a basis.
-      *
-      * This function returns an array containing coefficients of the
-      * chemical potential field (w field) in a symmetry-adapted basis
-      * for a specified monomer type.
-      *
-      * \param monomerId integer monomer type index
-      */
-      DArray<double> const & wFieldBasis(int monomerId) const;
-
-      /**
-      * Get array of all w fields, in r-space format, by const ref.
-      *
-      * This function returns an array in which each element is a
-      * WField object containing values of the chemical potential field
-      * (w field) on a regular grid for one monomer type. The array
-      * capacity is the number of monomer types.
-      */
-      DArray< RDField<D> > const & wFieldsRGrid() const;
-
-      /**
-      * Get w field for one monomer type in r-space format by const ref.
-      *
-      * \param monomerId integer monomer type index
-      */
-      RDField<D> const & wFieldRGrid(int monomerId) const;
-
       //@}
       /// \name Concentration / Volume Fraction Field (C Fields) Accessors
       //@{
@@ -694,24 +651,6 @@ namespace Pspg
       * Get the group name string.
       */
       std::string groupName();
-
-      /**
-      * Have monomer chemical potential fields (w fields) been set?
-      *
-      * A true value is returned if and only if values have been set on a
-      * real space grid. The READ_W_BASIS command must immediately convert
-      * from a basis to a grid to satisfy this requirement.
-      */
-      bool hasWFields() const;
-
-      /**
-      * Are w-fields symmetric under all elements of the space group?
-      *
-      * Returns true if the system contains valid fields in basis format.
-      * This will be so if w fields were input in basis format, or have
-      * been explicitly symmetrized by calling symmetrizeWFields().
-      */
-      bool hasSymmetricFields() const;
 
       /**
       * Have monomer concentration fields (c fields) been computed?
@@ -891,19 +830,6 @@ namespace Pspg
       */
       void readEcho(std::istream& in, std::string& string) const;
 
-      #if 0
-      // Additional member variables for field-theoretic Monte Carlo
-
-      RDField<D> compositionField_; //rField version
-
-      RDFieldDft<D> compositionKField_; //kField
-
-      RDField<D> pressureField_;
-
-      // Free energy of the new configuration due to random change
-      double fHelmholtzOld_;
-      #endif
-
    };
 
    // Inline member functions
@@ -992,31 +918,6 @@ namespace Pspg
    WFieldContainer<D> const & System<D>::w() const
    {  return w_; }
 
-   // Get all w fields, in basis format.
-   template <int D>
-   inline
-   DArray< DArray<double> > const & System<D>::wFieldsBasis() const
-   {  return w_.basis(); }
-
-   // Get a single monomer w field in basis format.
-   template <int D>
-   inline
-   DArray<double> const & System<D>::wFieldBasis(int id) const
-   {  return w_.basis(id); }
-
-   // Get all w fields in r-grid format.
-   template <int D>
-   inline
-   DArray< RDField<D> > const & System<D>::wFieldsRGrid()
-   const
-   {  return w_.rgrid(); }
-
-   // Get a single w field in r-grid format.
-   template <int D>
-   inline
-   RDField<D> const & System<D>::wFieldRGrid(int id) const
-   {  return w_.rgrid(id); }
-
    // Get all monomer concentration fields, in basis format.
    template <int D>
    inline
@@ -1052,16 +953,6 @@ namespace Pspg
    inline double System<D>::pressure() const
    {  return pressure_; }
 
-   // Have the w fields been set?
-   template <int D>
-   inline bool System<D>::hasWFields() const
-   {  return w_.hasData(); }
-
-   // Are the fields symmetric under the declared space group?
-   template <int D>
-   inline bool System<D>::hasSymmetricFields() const
-   {  return w_.isSymmetric(); }
-
    // Have the c fields been computed for the current w fields?
    template <int D>
    inline bool System<D>::hasCFields() const
@@ -1071,18 +962,6 @@ namespace Pspg
    template <int D>
    inline bool System<D>::hasSweep() const
    {  return (sweepPtr_ != 0); }
-
-   #if 0
-   // Additional functions for field-theoretic Monte-Carlo
-
-   template <int D>
-   inline RDField<D>& System<D>::pressureField()
-   { return pressureField_;}
-
-   template <int D>
-   inline RDField<D>& System<D>::compositionField()
-   { return compositionField_;}
-   #endif
 
    #ifndef PSPG_SYSTEM_TPP
    // Suppress implicit instantiation

@@ -196,7 +196,7 @@ namespace Pspg{
    template <int D>
    bool AmIteratorBasis<D>::hasInitialGuess()
    {
-      return system().hasWFields();
+      return system().w().hasData();
    }
 
    // Compute and return the number of elements in a field vector
@@ -223,7 +223,7 @@ namespace Pspg{
 
       const int nMonomer = system().mixture().nMonomer();
       const int nBasis = system().basis().nBasis();
-      const DArray< DArray<double> > * currSys = &system().wFieldsBasis();
+      const DArray< DArray<double> > * currSys = &system().w().basis();
 
       for (int i = 0; i < nMonomer; i++) {
          for (int k = 0; k < nBasis; k++) {
@@ -276,7 +276,7 @@ namespace Pspg{
                int idx = i*nBasis + k;
                resid[idx] +=
                   system().interaction().chi(i,j)*system().cFieldBasis(j)[k] -
-                  system().interaction().idemp(i,j)*system().wFieldBasis(j)[k];
+                  system().interaction().idemp(i,j)*system().w().basis(j)[k];
             }
          }
       }

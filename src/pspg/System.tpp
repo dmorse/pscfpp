@@ -86,12 +86,6 @@ namespace Pspg
       if (wavelistPtr_) {
          delete wavelistPtr_;
       }
-      #if 0
-      if (isAllocated_) {
-         delete[] kernelWorkSpace_;
-         cudaFree(d_kernelWorkSpace_);
-      }
-      #endif
       if (iteratorPtr_) {
          delete iteratorPtr_;
       }

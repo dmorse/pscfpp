@@ -51,8 +51,8 @@ public:
 
       // Get reference field
       DArray< DArray<double> > b_wFields_check;
-      //copyFieldsBasis(b_wFields_check, system.wFieldsBasis());
-      b_wFields_check = system.wFieldsBasis();
+      //copyFieldsBasis(b_wFields_check, system.w().basis());
+      b_wFields_check = system.w().basis();
 
       // Round trip conversion basis -> rgrid -> basis, read result
       system.basisToRGrid("in/diblock/lam/omega.in",
@@ -63,8 +63,8 @@ public:
 
       // Get test result
       DArray< DArray<double> > b_wFields;
-      //copyFieldsBasis(b_wFields, system.wFieldsBasis());
-      b_wFields = system.wFieldsBasis();
+      //copyFieldsBasis(b_wFields, system.w().basis());
+      b_wFields = system.w().basis();
 
       // Compare result to original
       BFieldComparison comparison (1);
@@ -89,8 +89,8 @@ public:
 
       // Get reference field
       DArray< DArray<double> > b_wFields_check;
-      //copyFieldsBasis(b_wFields_check, system.wFieldsBasis());
-      b_wFields_check = system.wFieldsBasis();
+      //copyFieldsBasis(b_wFields_check, system.w().basis());
+      b_wFields_check = system.w().basis();
 
       // Round trip basis -> rgrid -> basis, read resulting wField
       system.basisToRGrid("in/diblock/hex/omega.in",
@@ -102,8 +102,8 @@ public:
 
       // Get test result
       DArray< DArray<double> > b_wFields;
-      //copyFieldsBasis(b_wFields, system.wFieldsBasis());
-      b_wFields = system.wFieldsBasis();
+      //copyFieldsBasis(b_wFields, system.w().basis());
+      b_wFields = system.w().basis();
 
       // Compare result to original
       BFieldComparison comparison (1);
@@ -129,7 +129,7 @@ public:
 
       // Get reference field
       DArray< DArray<double> > b_wFields_check;
-      copyFieldsBasis(b_wFields_check, system.wFieldsBasis());
+      copyFieldsBasis(b_wFields_check, system.w().basis());
 
       // Complete round trip basis -> rgrid -> basis
       system.basisToRGrid("in/diblock/bcc/omega.in",
@@ -140,7 +140,7 @@ public:
 
       // Get test result
       DArray< DArray<double> > b_wFields;
-      copyFieldsBasis(b_wFields, system.wFieldsBasis());
+      copyFieldsBasis(b_wFields, system.w().basis());
 
       // Compare result to original
       BFieldComparison comparison (1);
@@ -168,12 +168,12 @@ public:
 *      in.close();
 *
 *      system.readWBasis("in/diblock/bcc/omega.in");
-*      bool hasSymmetry = system.fieldIo().hasSymmetry(system.wFieldRGrid(0));
+*      bool hasSymmetry = system.fieldIo().hasSymmetry(system.w().rgrid(0));
 *      TEST_ASSERT(hasSymmetry);
 *
 *      // Intentionally mess up the field, check that symmetry is destroyed
-*      system.wFieldRGrid(0)[23] += 0.1;
-*      hasSymmetry = system.fieldIo().hasSymmetry(system.wFieldRGrid(0));
+*      system.w().rgrid(0)[23] += 0.1;
+*      hasSymmetry = system.fieldIo().hasSymmetry(system.w().rgrid(0));
 *      TEST_ASSERT(!hasSymmetry);
 *
 *   }

@@ -182,7 +182,7 @@ namespace Pspg{
 
    template <int D>
    bool AmIteratorGrid<D>::hasInitialGuess()
-   { return system().hasWFields(); }
+   { return system().w().hasData(); }
    
    template <int D>
    int AmIteratorGrid<D>::nElements()
@@ -211,7 +211,7 @@ namespace Pspg{
       ThreadGrid::setThreadsLogical(nMesh, nBlocks, nThreads);
 
       // Pointer to fields on system
-      DArray<RDField<D>> const * currSys = &system().wFieldsRGrid();
+      DArray<RDField<D>> const * currSys = &system().w().rgrid();
 
       // Loop to unfold the system fields and store them in one long array
       for (int i = 0; i < nMonomer; i++) {
@@ -272,7 +272,7 @@ namespace Pspg{
                  nMesh);
             pointWiseAddScale<<<nBlocks, nThreads>>>
                 (resid.cDField() + startIdx,
-                 system().wFieldRGrid(j).cDField(),
+                 system().w().rgrid(j).cDField(),
                  -system().interaction().idemp(i, j),
                  nMesh);
          }

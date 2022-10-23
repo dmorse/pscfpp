@@ -37,7 +37,7 @@ public:
 
       // Make reference copy of w fields in basis format
       DArray< DArray<double> > b_wFields_check;
-      copyFieldsBasis(b_wFields_check, system.wFieldsBasis());
+      copyFieldsBasis(b_wFields_check, system.w().basis());
     
      
       // Iterate and output solution
@@ -50,10 +50,10 @@ public:
 
       // Compare result to original in basis format
       // DArray< DArray<double> > b_wFields;
-      // copyFieldsBasis(b_wFields, system.wFieldsBasis());
+      // copyFieldsBasis(b_wFields, system.w().basis());
       BFieldComparison comparison(1);
       // comparison.compare(b_wFields_check, b_wFields);
-      comparison.compare(b_wFields_check, system.wFieldsBasis());
+      comparison.compare(b_wFields_check, system.w().basis());
       if (verbose() > 0) {
          Log::file() << "\n";
          Log::file() << "Max error = " << comparison.maxDiff() << "\n";
@@ -74,7 +74,7 @@ public:
 
       // Make reference copy of w fields
       DArray< DArray<double> > b_wFields_check;
-      copyFieldsBasis(b_wFields_check, system.wFieldsBasis());
+      copyFieldsBasis(b_wFields_check, system.w().basis());
 
       // Read input w-fields, iterate and output solution
       system.readWBasis("in/diblock/lam/omega.in");
@@ -87,7 +87,7 @@ public:
 
       // Get test result
       DArray< DArray<double> > b_wFields;
-      copyFieldsBasis(b_wFields, system.wFieldsBasis());
+      copyFieldsBasis(b_wFields, system.w().basis());
 
       // Compare result to original
       BFieldComparison comparison (1);
@@ -116,7 +116,7 @@ public:
       // Make reference copy of w fields
       system.readWBasis("in/solution/lam/w.bf");
       DArray< DArray<double> > b_wFields_check;
-      copyFieldsBasis(b_wFields_check, system.wFieldsBasis());
+      copyFieldsBasis(b_wFields_check, system.w().basis());
 
       // iterate and output solution
       int error = system.iterate();
@@ -128,7 +128,7 @@ public:
 
       // Get test result
       DArray< DArray<double> > b_wFields;
-      copyFieldsBasis(b_wFields, system.wFieldsBasis());
+      copyFieldsBasis(b_wFields, system.w().basis());
 
       // Compare result to original
       BFieldComparison comparison (1);
@@ -157,7 +157,7 @@ public:
       // Make reference copy of w fields
       system.readWBasis("in/blend/lam/w.ref_closed");
       DArray< DArray<double> > b_wFields_check;
-      copyFieldsBasis(b_wFields_check, system.wFieldsBasis());
+      copyFieldsBasis(b_wFields_check, system.w().basis());
 
       // Read input w-fields, iterate and output solution
       system.readWBasis("in/blend/lam/w.bf");
@@ -170,7 +170,7 @@ public:
 
       // Get test result
       DArray< DArray<double> > b_wFields;
-      copyFieldsBasis(b_wFields, system.wFieldsBasis());
+      copyFieldsBasis(b_wFields, system.w().basis());
 
       // Compare result to original
       BFieldComparison comparison (1);
@@ -197,7 +197,7 @@ public:
       // Make reference copy of w fields
       system.readWBasis("in/solution/lam_open/w.ref");
       DArray< DArray<double> > b_wFields_check;
-      copyFieldsBasis(b_wFields_check, system.wFieldsBasis());
+      copyFieldsBasis(b_wFields_check, system.w().basis());
 
       // Read input w-fields, iterate and output solution
       system.readWBasis("in/solution/lam_open/w.bf");
@@ -211,7 +211,7 @@ public:
 
       // Get test result
       DArray< DArray<double> > b_wFields;
-      copyFieldsBasis(b_wFields, system.wFieldsBasis());
+      copyFieldsBasis(b_wFields, system.w().basis());
 
       // Compare result to original
       BFieldComparison comparison (1);
@@ -241,7 +241,7 @@ public:
       // Make reference copy of w fields
       system.readWBasis("in/blend/lam/w.ref");
       DArray< DArray<double> > b_wFields_check;
-      copyFieldsBasis(b_wFields_check, system.wFieldsBasis());
+      copyFieldsBasis(b_wFields_check, system.w().basis());
 
       // Read input w-fields, iterate and output solution
       system.readWBasis("in/blend/lam/w.bf");
@@ -254,7 +254,7 @@ public:
 
       // Get test result
       DArray< DArray<double> > b_wFields;
-      copyFieldsBasis(b_wFields, system.wFieldsBasis());
+      copyFieldsBasis(b_wFields, system.w().basis());
 
       // Compare result to original
       BFieldComparison comparison (1);
@@ -285,7 +285,7 @@ public:
 
       // Make reference copy of w fields
       DArray< DArray<double> > b_wFields_check;
-      copyFieldsBasis(b_wFields_check, system.wFieldsBasis());
+      copyFieldsBasis(b_wFields_check, system.w().basis());
 
       // Read initial guess, iterate, output solution
       // PSPC tests start from the reference solution, 
@@ -300,7 +300,7 @@ public:
 
       // Get test result
       DArray< DArray<double> > b_wFields;
-      copyFieldsBasis(b_wFields, system.wFieldsBasis());
+      copyFieldsBasis(b_wFields, system.w().basis());
 
       // Compare result to original
       BFieldComparison comparison (1);
@@ -331,7 +331,7 @@ public:
 
       // Make reference copy of w fields
       DArray< DArray<double> > b_wFields_check;
-      copyFieldsBasis(b_wFields_check, system.wFieldsBasis());
+      copyFieldsBasis(b_wFields_check, system.w().basis());
 
       system.readWBasis("in/diblock/hex/omega.in");
       int error = system.iterate();
@@ -343,7 +343,7 @@ public:
 
       // Get test result
       DArray< DArray<double> > b_wFields;
-      copyFieldsBasis(b_wFields, system.wFieldsBasis());
+      copyFieldsBasis(b_wFields, system.w().basis());
 
       // Compare result to original
       BFieldComparison comparison (1);
@@ -374,7 +374,7 @@ public:
 
       // Make reference copy of w fields
       DArray< DArray<double> > b_wFields_check;
-      copyFieldsBasis(b_wFields_check, system.wFieldsBasis());
+      copyFieldsBasis(b_wFields_check, system.w().basis());
 
       system.readWBasis("in/diblock/bcc/omega.in");
       int error = system.iterate();
@@ -386,7 +386,7 @@ public:
 
       // Get test result
       DArray< DArray<double> > b_wFields;
-      copyFieldsBasis(b_wFields, system.wFieldsBasis());
+      copyFieldsBasis(b_wFields, system.w().basis());
 
       // Compare result to original
       BFieldComparison comparison (1);
@@ -417,7 +417,7 @@ public:
 
       // Make reference copy of w fields
       DArray< DArray<double> > b_wFields_check;
-      copyFieldsBasis(b_wFields_check, system.wFieldsBasis());
+      copyFieldsBasis(b_wFields_check, system.w().basis());
 
       system.readWBasis("in/diblock/bcc/omega.in");
       int error = system.iterate();
@@ -429,7 +429,7 @@ public:
 
       // Get test result
       DArray< DArray<double> > b_wFields;
-      copyFieldsBasis(b_wFields, system.wFieldsBasis());
+      copyFieldsBasis(b_wFields, system.w().basis());
 
       // Compare result to original
       BFieldComparison comparison (1);
