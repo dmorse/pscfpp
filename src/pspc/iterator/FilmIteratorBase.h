@@ -258,6 +258,9 @@ namespace Pspc
 
       /// Wall chiTop array associated with the current system().h() field
       DArray<double> chiTopCurrent_;
+
+      /// Flag indicating whether the wall fields are currently ungenerated
+      bool ungenerated_;
    };
 
    // Inline member functions

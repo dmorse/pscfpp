@@ -41,7 +41,8 @@ namespace Pspc
       chiBottom_(),
       chiTop_(),
       chiBottomCurrent_(),
-      chiTopCurrent_()
+      chiTopCurrent_(),
+      ungenerated_(true)
    {  
       setClassName(iterator_.className().append("FilmBase").c_str());
       system.mask().setFieldIo(system.fieldIo());
@@ -102,9 +103,7 @@ namespace Pspc
       // are allowed to vary, store them in this object, and pass them
       // into iterator_. The flexibleParams_ member of the iterator_
       // should always be matched to that of this class.
-      if (iterator_.isFlexible()) {
-         setFlexibleParams();
-      }
+      setFlexibleParams();
    }
 
    /*
@@ -117,9 +116,6 @@ namespace Pspc
    void FilmIteratorBase<D, IteratorType>::setup()
    {
       UTIL_CHECK(system().basis().isInitialized());
-
-      // Set up the iterator
-      iterator_.setup();
 
       // Allocate the mask and external field containers if needed
       if (!system().mask().isAllocated()) {
@@ -135,11 +131,6 @@ namespace Pspc
 
       // Ensure that the space group symmetry is compatible with the wall
       checkSpaceGroup();
-      
-      // Generate the field representation of the walls (and external
-      // fields if needed) and provide them to iterator_ to use during 
-      // iteration
-      generateWallFields();
    }
 
    /*
@@ -148,10 +139,32 @@ namespace Pspc
    template <int D, typename IteratorType>
    int FilmIteratorBase<D, IteratorType>::solve(bool isContinuation)
    {
-      // Update the concentration field of the walls based on the current
-      // state of Domain<D> and provide it to iterator_, as well as the 
-      // external fields for each monomer species, if needed
-      updateWallFields(); 
+
+      if (ungenerated_) {
+         
+         // Setup the filmIterator object
+         setup();
+
+         // Generate the field representation of the walls (and external
+         // fields if needed) and provide them to iterator_ to use during 
+         // iteration
+         UTIL_CHECK(system().unitCell().isInitialized());
+         generateWallFields();
+
+      } else {
+
+         // Update the concentration field of the walls based on the
+         // current state of Domain<D> and provide it to iterator_, as
+         // well as the external fields for each species if needed
+         updateWallFields(); 
+
+      }
+
+      // In case flexibleParams has been reset, we re-call this function
+      // to ensure that flexibleParams remains compatible with thin film 
+      // constraint, and that the flexibleParams array in iterator_
+      // matches the array in this object
+      setFlexibleParams();
 
       // solve
       return iterator_.solve(isContinuation);
@@ -169,6 +182,8 @@ namespace Pspc
    {
       UTIL_CHECK(interfaceThickness() > 0);
       UTIL_CHECK(wallThickness() > interfaceThickness());
+
+      if (ungenerated_) ungenerated_ = false;
 
       // Ensure that unit cell is compatible with wall
       checkLatticeVectors();
