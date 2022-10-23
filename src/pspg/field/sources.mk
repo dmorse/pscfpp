@@ -4,7 +4,8 @@ pspg_field_= \
   pspg/field/FieldIo.cu \
   pspg/field/RFieldComparison.cu \
   pspg/field/KFieldComparison.cu \
-  pspg/field/Domain.cu
+  pspg/field/Domain.cu \
+  pspg/field/WFieldContainer.cu \
 
 pspg_field_SRCS=\
 	  $(addprefix $(SRC_DIR)/, $(pspg_field_))

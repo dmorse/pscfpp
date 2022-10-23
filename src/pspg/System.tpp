@@ -774,7 +774,6 @@ namespace Pspg
    void System<D>::setWRGrid(DArray< RDField<D> > const & fields)
    {
       int nMonomer = mixture_.nMonomer();
-      int nMesh = domain_.mesh().size();
       for (int i = 0; i < nMonomer; ++i) {
          wFieldsRGrid_[i] = fields[i];
       }
@@ -784,7 +783,7 @@ namespace Pspg
    }
 
    /*
-   * Set new w-field values, using array of r-grid fields as input.
+   * Set new w-field values, using unfoldeded array of r-grid fields.
    */
    template <int D>
    void System<D>::setWRGrid(DField<cudaReal> & fields)
@@ -796,17 +795,10 @@ namespace Pspg
       int nBlocks, nThreads;
       ThreadGrid::setThreadsLogical(nMesh, nBlocks, nThreads);
 
-      //cudaReal const * src;
-      //cudaReal* dst;
       for (int i = 0; i < nMonomer; i++) {
-         //dst = wFieldsRGrid_[i].cDField();
-         //src = fields.cDField() + i*nMesh;
-         //assignReal<<<nBlocks, nThreads>>>(dst, src, nMesh);
          assignReal<<<nBlocks, nThreads>>>(wFieldsRGrid_[i].cDField(), 
                                            fields.cDField() + i*nMesh, 
                                            nMesh);
-         //cudaMemcpy(dst, src, nMesh*sizeof(cudaReal),
-         //           cudaMemcpyDeviceToDevice);
       }
 
       hasWFields_ = true;
