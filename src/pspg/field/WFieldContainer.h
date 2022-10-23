@@ -235,6 +235,28 @@ namespace Pspg {
                      bool isSymmetric = false);
 
       /**
+      * Symmetrize r-grid fields, compute corresponding basis components.
+      *
+      * This function may be used after setting or reading w fields in 
+      * r-grid format that are known to be symmetric under the space 
+      * group to remove small deviations from symmetry and generate
+      * basis components.
+      *
+      * The function symmetrizes the fields by converting from r-grid
+      * to basis format and then back again, while also storing the
+      * resulting basis components and setting isSymmetric() true.
+      * 
+      * This function assumes that the current wFieldsRGrid fields
+      * are known by the user to be symmetric, and does NOT check this.
+      * Applying this function to fields that are not symmetric will 
+      * silently corrupt the fields. 
+      *
+      * On entry, hasData() must be true and isSymmetric() must be false.
+      * On exit, isSymmetric() is true.
+      */
+      void symmetrize();
+
+      /**
       * Get array of all fields in basis format.
       *
       * The array capacity is equal to the number of monomer types.

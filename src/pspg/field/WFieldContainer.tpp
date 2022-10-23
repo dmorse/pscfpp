@@ -167,6 +167,7 @@ namespace Pspg
    void 
    WFieldContainer<D>::setBasis(DArray< DArray<double> > const & fields)
    {
+      UTIL_CHECK(isAllocatedBasis_);
       UTIL_CHECK(fields.capacity() == nMonomer_);
 
       // Update system wFields
@@ -194,10 +195,12 @@ namespace Pspg
    void WFieldContainer<D>::setRGrid(DArray< RDField<D> > const & fields,
                                     bool isSymmetric)
    {
+      UTIL_CHECK(isAllocatedRGrid_);
       UTIL_CHECK(fields.capacity() == nMonomer_);
 
       // Update system wFieldsRGrid
       for (int i = 0; i < nMonomer_; ++i) {
+         UTIL_CHECK(fields[i].capacity() == nBasis_)
          rgrid_[i] = fields[i];
       }
 
@@ -215,17 +218,16 @@ namespace Pspg
    template <int D>
    void WFieldContainer<D>::setRGrid(DField<cudaReal> & fields)
    {
-      UTIL_CHECK( fields.capacity() % nMonomer_ == 0);
-      int nMesh = fields.capacity() / nMonomer_; 
+      UTIL_CHECK(isAllocatedRGrid_);
 
       // GPU resources
       int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(nMesh, nBlocks, nThreads);
+      ThreadGrid::setThreadsLogical(meshSize_, nBlocks, nThreads);
 
       for (int i = 0; i < nMonomer_; i++) {
          assignReal<<<nBlocks, nThreads>>>(rgrid_[i].cDField(), 
-                                           fields.cDField() + i*nMesh, 
-                                           nMesh);
+                                           fields.cDField() + i*meshSize_, 
+                                           meshSize_);
       }
 
       hasData_ = true;
@@ -330,6 +332,18 @@ namespace Pspg
 
       hasData_ = true;
       isSymmetric_ = isSymmetric;
+   }
+
+   /*
+   * Set new w-field values, using array of r-grid fields as input.
+   */
+   template <int D>
+   void WFieldContainer<D>::symmetrize()
+   {
+      UTIL_CHECK(hasData_);
+      fieldIoPtr_->convertRGridToBasis(rgrid_, basis_);
+      fieldIoPtr_->convertBasisToRGrid(basis_, rgrid_);
+      isSymmetric_ = true;
    }
 
 } // namespace Pspg

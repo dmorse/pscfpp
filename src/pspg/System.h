@@ -14,8 +14,9 @@
 #include <pspg/field/Domain.h>             // member
 #include <pspg/field/FieldIo.h>            // member
 #include <pspg/solvers/WaveList.h>         // member
-#include <pspg/field/RDField.h>            // typedef
-#include <pspg/field/RDFieldDft.h>         // typedef
+#include <pspg/field/WFieldContainer.h>    // member
+#include <pspg/field/RDField.h>            // member
+#include <pspg/field/RDFieldDft.h>         // member
 
 #include <pscf/homogeneous/Mixture.h>      // member
 
@@ -124,12 +125,18 @@ namespace Pspg
       /**
       * Read chemical potential fields in symmetry adapted basis format.
       *
-      * This function opens and reads the file named "filename", which
-      * contains chemical potential fields in symmetry-adapted basis
-      * format, stores these fields in the system wFieldsBasis array, 
-      * computes corresponding real-space grid format and stores that in
-      * the wFieldsRGrid array. On exit, hasWFields and hasSymmetricFields 
-      * are set true and hasCFields is false.
+      * This function opens and reads the file with the name given by
+      * the "filename" string, which must contains chemical potential 
+      * fields in symmetry-adapted basis format. The function stores 
+      * these components fields in a container owned by the system,
+      * and also computes and stores the corresponding real-space grid
+      * format. After exit, w().basis() and w().rgrid() have been reset,
+      * w().hasData and w().isSymmetric() are true, and hasCFields()
+      * is false.
+      *
+      * This implementation of this function calls the member function
+      * readBasis of the WFieldContainer<D> that is returned by the 
+      * w() accessor.
       *
       * \param filename name of input w-field basis file
       */
@@ -138,21 +145,23 @@ namespace Pspg
       /**
       * Read chemical potential fields in real space grid (r-grid) format.
       *
-      * This function opens and reads the file named "filename", which
-      * contains chemical potential fields in real space grid format, and
-      * copies these fields to the system wFieldsRGrid array.  On exit, 
-      * hasWFields is true, while hasSymmetricFields and hasCFields are
-      * false. 
+      * This function opens and reads the file with the name given by
+      * the "filename" string, which must contains chemical potential 
+      * fields in real space grid (r-grid) format. The function stores 
+      * these components fields in a container owned by the system.
+      * After exit, w().hasData() is true, while w().isSymmetric() and
+      * hasCFields() are false.
       *
       * \param filename name of input w-field basis file
       */
       void readWRGrid(const std::string & filename);
 
       /**
-      * Set new w fields, in symmetrized Fourier format.
+      * Set new w fields, in symmetry-adapted basis format.
       *
-      * On exit hasWFields and hasSymmetric fields are set true, while
-      * hasCFields is set false.
+      * On exit, values of both w().basis() and w().rgrid() are reset,
+      * w().hasData() and w().isSymmetric() are true and hasCFields()
+      * are false. 
       *
       * \param fields  array of new w (chemical potential) fields
       */
@@ -161,8 +170,8 @@ namespace Pspg
       /**
       * Set new w fields, in real-space (r-grid) format.
       *
-      * On exit, hasWFields is set true while hasSymmetricFields and
-      * hasCFields are both false.
+      * On exit, w.rgrid() is reset, w().hasData() is true, but
+      * w().isSymmetric() is false and hasCFields() is false.
       *
       * \param fields  array of new w (chemical potential) fields
       */
@@ -174,8 +183,8 @@ namespace Pspg
       * The array fields is an unfolded array that contains fields for
       * all monomer types, with the field for monomer 0 first, etc.
       *
-      * On exit hasWFields is set true while hasSymmetricFields and
-      * hasCFields are both false.
+      * On exit, w().hasData is set true while w().isSymmetric() and
+      * hasCFields() are both false.
       *
       * \param fields  unfolded array of new w (chemical potential) fields
       */
@@ -184,19 +193,8 @@ namespace Pspg
       /**
       * Symmetrize r-grid w-fields, compute basis components.
       *
-      * Use this function after setting or reading w fields in r-grid
-      * format that are known to be symmetric under the space group.
-      * The function computes corresponding components in symmetrized 
-      * basis format, which are stored in the wFieldsBasis array, and
-      * then recomputes the r-grid format for the fields from the 
-      * resulting components. This yields fields that are symmetric and
-      * that are equal to the original fields only if those field were
-      * symmetric.  The function assumes that the current wFieldsRGrid 
-      * fields are known to be symmetric, and does NOT check this.
-      *
-      * Precondition: On entry hasWFields must be true.
-      * Postcondition: On exit, hasWFields and hasSymmetricFields are 
-      * true, and hasCFields is false.
+      * On exit, w().hasData() and w().isSymmetric() are true, while
+      * hasCFields() is false.
       */
       void symmetrizeWFields();
 
@@ -253,7 +251,7 @@ namespace Pspg
       * energy and pressure are computed if and only if convergence is
       * obtained.
       *
-      * \pre The hasWFields flag must be true on entry
+      * \pre The w().hasData() flag must be true on entry
       * \param isContinuation  true iff continuation within a sweep
       * \return returns 0 for successful convergence, 1 for failure
       */
@@ -427,17 +425,6 @@ namespace Pspg
       */
       void writeThermo(std::ostream& out);
 
-      #if 0
-      /**
-      * Write all data associated with the converged solution. This
-      * includes the full param file, as well as the thermodynamic
-      * data (free energy, pressure, phi and mu for each species).
-      *
-      * \param filename name of output file
-      */
-      void writeData(const std::string & filename);
-      #endif
-
       /**
       * Output information about stars and symmetrized basis functions.
       *
@@ -530,12 +517,11 @@ namespace Pspg
       * This function reads concentration fields in symmetrized basis 
       * format and constructs an initial guess for corresponding chemical 
       * potential fields by setting the Lagrange multiplier field xi to 
-      * zero. The resulting guess is stored in the System wFields arrays 
-      * in basis and r-grid formats and is also output to a file in basis 
-      * format.
+      * zero. The resulting guess is stored in in basis and r-grid 
+      * formats and is also output to a file in basis format.
       *
-      * Upon return, hasWFields and hasSymmetricFields are set true and 
-      * hasCFields is set false. 
+      * Upon return, w().hasData() and w().isSymmetric() are true and 
+      * hasCFields() is false. 
       *
       * \param inFileName  name of input c-field file (in, basis format)
       * \param outFileName  name of output w-field file (out, basis format)
@@ -546,6 +532,11 @@ namespace Pspg
       //@}
       /// \name Chemical Potential Field (W Field) Accessors
       //@{
+
+      /**
+      * Get container of chemical potential fields.
+      */
+      WFieldContainer<D> const & w() const;
 
       /**
       * Get array of chemical potential fields, in a basis.
@@ -714,15 +705,6 @@ namespace Pspg
       bool hasWFields() const;
 
       /**
-      * Have monomer concentration fields (c fields) been computed?
-      *
-      * Returns  true if and only if monomer concentration fields have
-      * been computed by solving the modified diffusion equation for the
-      * current w fields.
-      */
-      bool hasCFields() const;
-
-      /**
       * Are w-fields symmetric under all elements of the space group?
       *
       * Returns true if the system contains valid fields in basis format.
@@ -732,19 +714,20 @@ namespace Pspg
       bool hasSymmetricFields() const;
 
       /**
+      * Have monomer concentration fields (c fields) been computed?
+      *
+      * Returns  true if and only if monomer concentration fields have
+      * been computed by solving the modified diffusion equation for the
+      * current w fields.
+      */
+      bool hasCFields() const;
+
+      /**
       * Does this system have an associated Sweep object?
       */
       bool hasSweep() const;
 
       ///@}
-
-      #if 0
-      // Additional functions for field-theoretic Monte-Carlo
-
-      RDField<D>& pressureField();
-
-      RDField<D>& compositionField();
-      #endif
 
    private:
 
@@ -799,18 +782,9 @@ namespace Pspg
       SweepFactory<D>* sweepFactoryPtr_;
 
       /**
-      * Array of chemical potential fields for monomer types.
-      *
-      * Indexed by monomer typeId, size = nMonomer.
+      * Chemical potential fields.
       */
-      DArray< DArray<double> > wFieldsBasis_;
-
-      /**
-      * Array of chemical potential fields for monomer types.
-      *
-      * Indexed by monomer typeId, size = nMonomer.
-      */
-      DArray< RDField<D> > wFieldsRGrid_;
+      WFieldContainer<D> w_;
 
       /**
       * Array of concentration fields for monomer types, basis format.
@@ -881,32 +855,11 @@ namespace Pspg
       bool isAllocated_;
 
       /**
-      * Have W fields been set?
-      *
-      * True iff wFieldsRGrid_ has been set.
-      */
-      bool hasWFields_;
-
-      /**
       * Have C fields been computed by solving the MDE ?
       *
       * True iff cFieldsRGrid_ has been set.
       */
       bool hasCFields_;
-
-      /**
-      * Does this system have symmetric fields ?
-      *
-      * Set true iff WFields are set and were input using the symmetry
-      * adapated basis format, and are thus invariant under all elements
-      * of the specified space group.
-      */
-      bool hasSymmetricFields_;
-
-      /**
-      * Does this system have a Sweep object?
-      */
-      bool hasSweep_;
 
       /**
       * Dimemsions of the k-grid (discrete Fourier transform grid).
@@ -1033,30 +986,36 @@ namespace Pspg
    inline WaveList<D>& System<D>::wavelist()
    {  return *wavelistPtr_; }
 
+   // Get container of w fields (const reference)
+   template <int D>
+   inline
+   WFieldContainer<D> const & System<D>::w() const
+   {  return w_; }
+
    // Get all w fields, in basis format.
    template <int D>
    inline
    DArray< DArray<double> > const & System<D>::wFieldsBasis() const
-   {  return wFieldsBasis_; }
+   {  return w_.basis(); }
 
    // Get a single monomer w field in basis format.
    template <int D>
    inline
    DArray<double> const & System<D>::wFieldBasis(int id) const
-   {  return wFieldsBasis_[id]; }
+   {  return w_.basis(id); }
 
    // Get all w fields in r-grid format.
    template <int D>
    inline
    DArray< RDField<D> > const & System<D>::wFieldsRGrid()
    const
-   {  return wFieldsRGrid_; }
+   {  return w_.rgrid(); }
 
    // Get a single w field in r-grid format.
    template <int D>
    inline
    RDField<D> const & System<D>::wFieldRGrid(int id) const
-   {  return wFieldsRGrid_[id]; }
+   {  return w_.rgrid(id); }
 
    // Get all monomer concentration fields, in basis format.
    template <int D>
@@ -1096,17 +1055,17 @@ namespace Pspg
    // Have the w fields been set?
    template <int D>
    inline bool System<D>::hasWFields() const
-   {  return hasWFields_; }
+   {  return w_.hasData(); }
+
+   // Are the fields symmetric under the declared space group?
+   template <int D>
+   inline bool System<D>::hasSymmetricFields() const
+   {  return w_.isSymmetric(); }
 
    // Have the c fields been computed for the current w fields?
    template <int D>
    inline bool System<D>::hasCFields() const
    {  return hasCFields_; }
-
-   // Are the fields symmetric under the declared space group?
-   template <int D>
-   inline bool System<D>::hasSymmetricFields() const
-   {  return hasSymmetricFields_; }
 
    // Does this system have an associated Sweep object?
    template <int D>
