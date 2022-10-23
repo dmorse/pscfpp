@@ -50,6 +50,12 @@ namespace Pspg
       */
       void readParameters(std::istream& in);
 
+      /**
+      * Initialization called at the beginning of solve.
+      */
+      void setup()
+      {}
+
       using AmIteratorTmpl<Iterator<D>, DArray<double> >::setup;
       using AmIteratorTmpl<Iterator<D>, DArray<double> >::solve;
       using AmIteratorTmpl<Iterator<D>, DArray<double> >::setClassName;
