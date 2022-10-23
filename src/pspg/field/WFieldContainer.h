@@ -149,6 +149,16 @@ namespace Pspg {
                     bool isSymmetric = false);
 
       /**
+      * Set new w fields, in unfolded real-space (r-grid) format.
+      *
+      * The array fields is an unfolded array that contains fields for
+      * all monomer types, with the field for monomer 0 first, etc.
+      *
+      * \param fields  unfolded array of new w (chemical potential) fields
+      */
+      void setRGrid(DField<cudaReal> & fields);
+
+      /**
       * Read field component values from input stream, in symmetrized 
       * Fourier format.
       *

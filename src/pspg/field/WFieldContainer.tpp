@@ -210,6 +210,29 @@ namespace Pspg
    }
 
    /*
+   * Set new w-field values, using unfoldeded array of r-grid fields.
+   */
+   template <int D>
+   void WFieldContainer<D>::setRGrid(DField<cudaReal> & fields)
+   {
+      UTIL_CHECK( fields.capacity() % nMonomer_ == 0);
+      int nMesh = fields.capacity() / nMonomer_; 
+
+      // GPU resources
+      int nBlocks, nThreads;
+      ThreadGrid::setThreadsLogical(nMesh, nBlocks, nThreads);
+
+      for (int i = 0; i < nMonomer_; i++) {
+         assignReal<<<nBlocks, nThreads>>>(rgrid_[i].cDField(), 
+                                           fields.cDField() + i*nMesh, 
+                                           nMesh);
+      }
+
+      hasData_ = true;
+      isSymmetric_ =  false;
+   }
+
+   /*
    * Read field component values from input stream, in symmetrized 
    * Fourier format.
    *
