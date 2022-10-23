@@ -15,6 +15,7 @@
 #include <pspg/field/FieldIo.h>            // member
 #include <pspg/solvers/WaveList.h>         // member
 #include <pspg/field/WFieldContainer.h>    // member
+#include <pspg/field/CFieldContainer.h>    // member
 #include <pspg/field/RDField.h>            // member
 #include <pspg/field/RDFieldDft.h>         // member
 
@@ -726,21 +727,9 @@ namespace Pspg
       WFieldContainer<D> w_;
 
       /**
-      * Array of concentration fields for monomer types, basis format.
-      *
-      * Indexed by monomer typeId, size = nMonomer.
+      * Monomer concentration / volume fraction fields.
       */
-      DArray< DArray<double> > cFieldsBasis_;
-
-      /**
-      * Array of concentration fields for monomer types, r-grid format.
-      */
-      DArray< RDField<D> > cFieldsRGrid_;
-
-      /**
-      * Array of concentration fields for monomer types, k-grid format.
-      */
-      DArray<RDFieldDft<D> > cFieldsKGrid_;
+      CFieldContainer<D> c_;
 
       /**
       * Work array of field coefficients for all monomer types.
@@ -767,11 +756,6 @@ namespace Pspg
       * Work array (size = # of grid points).
       */
       mutable DArray<double> f_;
-
-      /**
-      * Work array (size = # of monomer types).
-      */
-      mutable DArray<double> c_;
 
       /**
       * Helmholtz free energy per monomer / kT.
@@ -922,26 +906,26 @@ namespace Pspg
    template <int D>
    inline
    DArray< DArray<double> > const & System<D>::cFieldsBasis() const
-   {  return cFieldsBasis_; }
+   {  return c_.basis(); }
 
    // Get a single monomer concentration field, in basis format.
    template <int D>
    inline
    DArray<double> const & System<D>::cFieldBasis(int monomerId) const
-   {  return cFieldsBasis_[monomerId]; }
+   {  return c_.basis(monomerId); }
 
    // Get all monomer concentration fields, in r-grid format.
    template <int D>
    inline
    DArray< RDField<D> > const & System<D>::cFieldsRGrid() 
    const
-   {  return cFieldsRGrid_; }
+   {  return c_.rgrid(); }
 
    // Get a single monomer concentration field, in r-grid format.
    template <int D>
    inline 
    RDField<D> const & System<D>::cFieldRGrid(int id) const
-   {  return cFieldsRGrid_[id]; }
+   {  return c_.rgrid(id); }
 
    // Get precomputed Helmoltz free energy per monomer / kT.
    template <int D>

@@ -51,10 +51,8 @@ namespace Pspg
       sweepPtr_(0),
       sweepFactoryPtr_(0),
       w_(),
-      cFieldsBasis_(),
-      cFieldsRGrid_(),
-      f_(),
       c_(),
+      f_(),
       fHelmholtz_(0.0),
       pressure_(0.0),
       hasMixture_(false),
@@ -290,13 +288,10 @@ namespace Pspg
       w_.allocateRGrid(mesh().dimensions());
       w_.allocateBasis(nBasis);
 
-      // Allocate cFields and temporary fields
-      cFieldsBasis_.allocate(nMonomer);
-      cFieldsRGrid_.allocate(nMonomer);
-      for (int i = 0; i < nMonomer; ++i) {
-         cFieldsBasis_[i].allocate(nBasis);
-         cFieldsRGrid_[i].allocate(mesh().dimensions());
-      }
+      // Allocate C Fields
+      c_.setNMonomer(nMonomer);
+      c_.allocateRGrid(mesh().dimensions());
+      c_.allocateBasis(nBasis);
 
       // Allocate temporary work space
       tmpFieldsBasis_.allocate(nMonomer);
@@ -380,13 +375,13 @@ namespace Pspg
             readEcho(in, filename);
             UTIL_CHECK(hasCFields_);
             UTIL_CHECK(w_.isSymmetric());
-            fieldIo().writeFieldsBasis(filename, cFieldsBasis(), 
+            fieldIo().writeFieldsBasis(filename, c_.basis(), 
                                        unitCell());
          } else
          if (command == "WRITE_C_RGRID") {
             UTIL_CHECK(hasCFields_);
             readEcho(in, filename);
-            fieldIo().writeFieldsRGrid(filename, cFieldsRGrid(), 
+            fieldIo().writeFieldsRGrid(filename, c_.rgrid(), 
                                        unitCell());
          } else
          if (command == "WRITE_C_BLOCK_RGRID") {
@@ -535,26 +530,23 @@ namespace Pspg
       UTIL_CHECK(homogeneous_.nMolecule() == np + ns);
       UTIL_CHECK(homogeneous_.nMonomer() == nm);
 
-      // Allocate c_ work array, if necessary
-      if (c_.isAllocated()) {
-         UTIL_CHECK(c_.capacity() == nm);
-      } else {
-         c_.allocate(nm);
-      }
-
       int i;   // molecule index
       int j;   // monomer index
-      int k;   // block or clump index
-      int nb;  // number of blocks
-      int nc;  // number of clumps
 
       // Loop over polymer molecule species
       if (np > 0) {
+
+         DArray<double> cTmp;
+         cTmp.allocate(nm);
+
+         int k;   // block or clump index
+         int nb;  // number of blocks
+         int nc;  // number of clumps
          for (i = 0; i < np; ++i) {
 
             // Initial array of clump sizes
             for (j = 0; j < nm; ++j) {
-               c_[j] = 0.0;
+               cTmp[j] = 0.0;
             }
 
             // Compute clump sizes for all monomer types.
@@ -562,13 +554,13 @@ namespace Pspg
             for (k = 0; k < nb; ++k) {
                Block<D>& block = mixture_.polymer(i).block(k);
                j = block.monomerId();
-               c_[j] += block.length();
+               cTmp[j] += block.length();
             }
 
             // Count the number of clumps of nonzero size
             nc = 0;
             for (j = 0; j < nm; ++j) {
-               if (c_[j] > 1.0E-8) {
+               if (cTmp[j] > 1.0E-8) {
                   ++nc;
                }
             }
@@ -577,9 +569,9 @@ namespace Pspg
             // Set clump properties for this Homogeneous::Molecule
             k = 0; // Clump index
             for (j = 0; j < nm; ++j) {
-               if (c_[j] > 1.0E-8) {
+               if (cTmp[j] > 1.0E-8) {
                   homogeneous_.molecule(i).clump(k).setMonomerId(j);
-                  homogeneous_.molecule(i).clump(k).setSize(c_[j]);
+                  homogeneous_.molecule(i).clump(k).setSize(cTmp[j]);
                   ++k;
                }
             }
@@ -664,7 +656,7 @@ namespace Pspg
       double temp = 0.0;
       for (int i = 0; i < nm; i++) {
          pointWiseBinaryMultiply<<<nBlocks,nThreads>>>
-             (w_.rgrid(i).cDField(), cFieldsRGrid_[i].cDField(),
+             (w_.rgrid(i).cDField(), c_.rgrid()[i].cDField(),
               workArray.cDField(), nx);
          temp += gpuSum(workArray.cDField(),nx) / double(nx);
       }
@@ -676,9 +668,9 @@ namespace Pspg
            assignUniformReal<<<nBlocks, nThreads>>>
                (workArray.cDField(), interaction().chi(i, j), nx);
            inPlacePointwiseMul<<<nBlocks, nThreads>>>
-               (workArray.cDField(), cFieldsRGrid_[i].cDField(), nx);
+               (workArray.cDField(), c_.rgrid()[i].cDField(), nx);
            inPlacePointwiseMul<<<nBlocks, nThreads>>>
-               (workArray.cDField(), cFieldsRGrid_[j].cDField(), nx);
+               (workArray.cDField(), c_.rgrid()[j].cDField(), nx);
            fHelmholtz_ += gpuSum(workArray.cDField(), nx) / double(nx);
          }
       }
@@ -844,12 +836,12 @@ namespace Pspg
       UTIL_CHECK(w_.hasData());
 
       // Solve the modified diffusion equation (without iteration)
-      mixture().compute(w_.rgrid(), cFieldsRGrid_);
+      mixture().compute(w_.rgrid(), c_.rgrid());
       hasCFields_ = true;
 
       // Convert c fields from r-grid to basis format
       if (w_.isSymmetric()) {
-         fieldIo().convertRGridToBasis(cFieldsRGrid(), cFieldsBasis_);
+         fieldIo().convertRGridToBasis(c_.rgrid(), c_.basis());
       }
 
       if (needStress) {
@@ -875,7 +867,7 @@ namespace Pspg
       hasCFields_ = true;
 
       if (w_.isSymmetric()) {
-         fieldIo().convertRGridToBasis(cFieldsRGrid(), cFieldsBasis_);
+         fieldIo().convertRGridToBasis(c_.rgrid(), c_.basis());
       }
 
       if (!error) {
@@ -934,7 +926,7 @@ namespace Pspg
    {
       UTIL_CHECK(hasCFields_);
       UTIL_CHECK(w_.isSymmetric());
-      fieldIo().writeFieldsBasis(filename, cFieldsBasis(), unitCell());
+      fieldIo().writeFieldsBasis(filename, c_.basis(), unitCell());
    }
 
    /*
@@ -944,7 +936,7 @@ namespace Pspg
    void System<D>::writeCRGrid(const std::string & filename) const
    {
       UTIL_CHECK(hasCFields_);
-      fieldIo().writeFieldsRGrid(filename, cFieldsRGrid_, unitCell());
+      fieldIo().writeFieldsRGrid(filename, c_.rgrid(), unitCell());
    }
 
    /*
