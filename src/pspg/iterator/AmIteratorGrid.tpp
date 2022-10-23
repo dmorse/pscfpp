@@ -267,7 +267,7 @@ namespace Pspg{
          for (int j = 0; j < nMonomer; j++) {
             pointWiseAddScale<<<nBlocks, nThreads>>>
                 (resid.cDField() + startIdx,
-                 system().cFieldRGrid(j).cDField(),
+                 system().c().rgrid(j).cDField(),
                  system().interaction().chi(i, j),
                  nMesh);
             pointWiseAddScale<<<nBlocks, nThreads>>>
@@ -334,7 +334,7 @@ namespace Pspg{
             wAverage = 0;
             for (int j = 0; j < nMonomer; j++) {
                // Find average concentration for j monomers
-               cAverage = findAverage(system().cFieldRGrid(j).cDField(), nMesh);
+               cAverage = findAverage(system().c().rgrid(j).cDField(), nMesh);
                wAverage += system().interaction().chi(i,j) * cAverage;
             }
             addUniform<<<nBlocks, nThreads>>>(newGuess.cDField() + i*nMesh, 

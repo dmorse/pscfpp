@@ -526,7 +526,7 @@ namespace Pspg
                        const std::string& outFileName);
    
       //@}
-      /// \name Chemical Potential Field (W Field) Accessors
+      /// \name Member Accessors
       //@{
 
       /**
@@ -534,50 +534,10 @@ namespace Pspg
       */
       WFieldContainer<D> const & w() const;
 
-      //@}
-      /// \name Concentration / Volume Fraction Field (C Fields) Accessors
-      //@{
-
       /**
-      * Get an array of all monomer concentration fields, in a basis
-      *
-      * This function returns an array in which each element is an
-      * array containing the coefficients of the monomer concentration
-      * field (cfield) for one monomer type in a symmetry-adapted basis.
-      * The array capacity is equal to the number of monomer types.
+      * Get container of monomer concentration / volume fration fields.
       */
-      DArray< DArray<double> > const & cFieldsBasis() const;
-
-      /**
-      * Get the concentration field for one monomer type, in a basis.
-      *
-      * This function returns an array containing the coefficients of
-      * the monomer concentration / volume fraction field (c field)
-      * for a specific monomer type.
-      *
-      * \param monomerId integer monomer type index
-      */
-      DArray<double> const & cFieldBasis(int monomerId) const;
-
-      /**
-      * Get array of all concentration fields (c fields), on a grid.
-      *
-      * This function returns an array in which each element is the
-      * monomer concentration field for one monomer type on a regular
-      * grid (an r-grid).
-      */
-      DArray< RDField<D> > const & cFieldsRGrid() const;
-
-      /**
-      * Get the concentration (c field) for one monomer type, on a grid.
-      *
-      * \param monomerId integer monomer type index
-      */
-      RDField<D> const & cFieldRGrid(int monomerId) const;
-
-      //@}
-      /// \name Accessors (return sub-objects by reference)
-      //@{
+      CFieldContainer<D> const & c() const;
 
       /**
       * Get Mixture by reference.
@@ -600,6 +560,16 @@ namespace Pspg
       Domain<D> const & domain() const;
 
       /**
+      * Get container for wavevector data.
+      */
+      WaveList<D> & wavelist();
+
+      /**
+      * Get the iterator by reference.
+      */
+      Iterator<D>& iterator();
+
+      /**
       * Get crystal UnitCell by const reference.
       */
       UnitCell<D> const & unitCell() const;
@@ -613,16 +583,6 @@ namespace Pspg
       * Get the Basis by reference.
       */
       Basis<D> const & basis() const;
-
-      /**
-      * Get container for wavevector data.
-      */
-      WaveList<D> & wavelist();
-
-      /**
-      * Get the iterator by reference.
-      */
-      Iterator<D>& iterator();
 
       /**
       * Get the FieldIo by const reference.
@@ -778,9 +738,7 @@ namespace Pspg
       bool isAllocated_;
 
       /**
-      * Have C fields been computed by solving the MDE ?
-      *
-      * True iff cFieldsRGrid_ has been set.
+      * Have C fields been computed for the current w fields?
       */
       bool hasCFields_;
 
@@ -902,30 +860,11 @@ namespace Pspg
    WFieldContainer<D> const & System<D>::w() const
    {  return w_; }
 
-   // Get all monomer concentration fields, in basis format.
+   // Get container of c fields (const reference)
    template <int D>
    inline
-   DArray< DArray<double> > const & System<D>::cFieldsBasis() const
-   {  return c_.basis(); }
-
-   // Get a single monomer concentration field, in basis format.
-   template <int D>
-   inline
-   DArray<double> const & System<D>::cFieldBasis(int monomerId) const
-   {  return c_.basis(monomerId); }
-
-   // Get all monomer concentration fields, in r-grid format.
-   template <int D>
-   inline
-   DArray< RDField<D> > const & System<D>::cFieldsRGrid() 
-   const
-   {  return c_.rgrid(); }
-
-   // Get a single monomer concentration field, in r-grid format.
-   template <int D>
-   inline 
-   RDField<D> const & System<D>::cFieldRGrid(int id) const
-   {  return c_.rgrid(id); }
+   CFieldContainer<D> const & System<D>::c() const
+   {  return c_; }
 
    // Get precomputed Helmoltz free energy per monomer / kT.
    template <int D>

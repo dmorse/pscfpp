@@ -275,7 +275,7 @@ namespace Pspg{
             for (int k = 0; k < nBasis; ++k) {
                int idx = i*nBasis + k;
                resid[idx] +=
-                  system().interaction().chi(i,j)*system().cFieldBasis(j)[k] -
+                  system().interaction().chi(i,j)*system().c().basis(j)[k] -
                   system().interaction().idemp(i,j)*system().w().basis(j)[k];
             }
          }
@@ -339,7 +339,7 @@ namespace Pspg{
             wField[i][0] = 0.0; // initialize to 0
             for (int j = 0; j < nMonomer; ++j) {
                wField[i][0] +=
-                 system().interaction().chi(i,j) * system().cFieldBasis(j)[0];
+                 system().interaction().chi(i,j) * system().c().basis(j)[0];
             }
          }
       }

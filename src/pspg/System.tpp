@@ -210,9 +210,9 @@ namespace Pspg
       mixture().setMesh(mesh());
 
       // Construct wavelist
-      wavelist().allocate(domain_.mesh(), unitCell());
-      wavelist().computeMinimumImages(domain_.mesh(), unitCell());
-      mixture().setupUnitCell(unitCell(), wavelist());
+      wavelist().allocate(domain_.mesh(), domain_.unitCell());
+      wavelist().computeMinimumImages(domain_.mesh(), domain_.unitCell());
+      mixture().setupUnitCell(domain_.unitCell(), wavelist());
 
       // Allocate memory for w and c fields
       allocate();
@@ -363,26 +363,26 @@ namespace Pspg
             UTIL_CHECK(w_.isSymmetric());
             readEcho(in, filename);
             fieldIo().writeFieldsBasis(filename, w_.basis(),
-                                       unitCell());
+                                       domain_.unitCell());
          } else
          if (command == "WRITE_W_RGRID") {
             UTIL_CHECK(w_.hasData());
             readEcho(in, filename);
             fieldIo().writeFieldsRGrid(filename, w_.rgrid(),
-                                       unitCell());
+                                       domain_.unitCell());
          } else
          if (command == "WRITE_C_BASIS") {
             readEcho(in, filename);
             UTIL_CHECK(hasCFields_);
             UTIL_CHECK(w_.isSymmetric());
             fieldIo().writeFieldsBasis(filename, c_.basis(), 
-                                       unitCell());
+                                       domain_.unitCell());
          } else
          if (command == "WRITE_C_RGRID") {
             UTIL_CHECK(hasCFields_);
             readEcho(in, filename);
             fieldIo().writeFieldsRGrid(filename, c_.rgrid(), 
-                                       unitCell());
+                                       domain_.unitCell());
          } else
          if (command == "WRITE_C_BLOCK_RGRID") {
             readEcho(in, filename);
