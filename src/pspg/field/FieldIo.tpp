@@ -799,6 +799,7 @@ namespace Pspg
       file.close();
    }
 
+   #if 0
    template <int D>
    void FieldIo<D>::readFieldHeader(std::istream& in,
                                     int& nMonomer,
@@ -830,6 +831,91 @@ namespace Pspg
       }
 
    }
+   #endif
+
+   /*
+   * Read common part of field header and extract 
+   * the number of monomers (number of fields) in the file.
+   */
+   template <int D>
+   void FieldIo<D>::readFieldHeader(std::istream& in, 
+                                    int& nMonomer,
+                                    UnitCell<D>& unitCell) 
+   const
+   {
+      // Preconditions
+      UTIL_CHECK(latticePtr_);
+      UTIL_CHECK(groupNamePtr_);
+      if (unitCell.lattice() == UnitCell<D>::Null) {
+         UTIL_CHECK(unitCell.nParameter() == 0);
+      } else {
+         UTIL_CHECK(unitCell.nParameter() > 0);
+         if (lattice() != UnitCell<D>::Null) {
+            UTIL_CHECK(unitCell.lattice() == lattice());
+         }
+      }
+
+      // Read field header to set unitCell, groupNameIn, nMonomer
+      int ver1, ver2;
+      std::string groupNameIn;
+
+      Pscf::readFieldHeader(in, ver1, ver2, unitCell, 
+                            groupNameIn, nMonomer);
+      // Note: Function definition in pscf/crystal/UnitCell.tpp
+
+      // Checks of data from header
+      UTIL_CHECK(ver1 == 1);
+      UTIL_CHECK(ver2 == 0);
+      UTIL_CHECK(unitCell.isInitialized());
+      UTIL_CHECK(unitCell.lattice() != UnitCell<D>::Null);
+      UTIL_CHECK(unitCell.nParameter() > 0);
+
+      // Validate or initialize lattice type
+      if (lattice() == UnitCell<D>::Null) {
+         lattice() = unitCell.lattice();
+      } else {
+         if (lattice() != unitCell.lattice()) {
+            Log::file() << std::endl 
+               << "Error - "
+               << "Mismatched lattice types, FieldIo::readFieldHeader:\n" 
+               << "  FieldIo::lattice  :" << lattice() << "\n"
+               << "  Unit cell lattice :" << unitCell.lattice() 
+               << "\n";
+            UTIL_THROW("Mismatched lattice types");
+         }
+      }
+
+      // Validate or initialize group name
+      if (groupName() == "") {
+         groupName() = groupNameIn;
+      } else {
+         if (groupNameIn != groupName()) {
+            Log::file() << std::endl 
+               << "Error - "
+               << "Mismatched group names in FieldIo::readFieldHeader:\n" 
+               << "  FieldIo::groupName :" << groupName() << "\n"
+               << "  Field file header  :" << groupNameIn << "\n";
+            UTIL_THROW("Mismatched group names");
+         }
+      }
+
+      // Check group, read from file if necessary
+      UTIL_CHECK(groupPtr_);
+      if (group().size() == 1) {
+         if (groupName() != "I") {
+            readGroup(groupName(), group());
+         }
+      }
+
+      // Check basis, construct if not initialized
+      UTIL_CHECK(basisPtr_);
+      if (!basis().isInitialized()) {
+         basisPtr_->makeBasis(mesh(), unitCell, group());
+      }
+      UTIL_CHECK(basis().isInitialized());
+      
+   }
+
 
    template <int D>
    void FieldIo<D>::writeFieldHeader(std::ostream &out,

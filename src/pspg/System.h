@@ -490,7 +490,7 @@ namespace Pspg
       * \param outFileName name of output file
       */
       void kGridToRGrid(const std::string& inFileName, 
-                        const std::string& outFileName) const;
+                        const std::string& outFileName);
    
       /**
       * Convert fields from real-space (r-grid) to Fourier (k-grid) format.
@@ -499,7 +499,7 @@ namespace Pspg
       * \param outFileName name of output file
       */
       void rGridToKGrid(const std::string & inFileName, 
-                        const std::string & outFileName) const;
+                        const std::string & outFileName);
 
       /**
       * Convert fields from Fourier (k-grid) to symmetrized basis format.
@@ -508,7 +508,7 @@ namespace Pspg
       * \param outFileName name of output file
       */
       void kGridToBasis(const std::string& inFileName, 
-                        const std::string& outFileName) const;
+                        const std::string& outFileName);
    
       /**
       * Convert fields from symmetrized basis to Fourier (k-grid) format.
@@ -517,7 +517,7 @@ namespace Pspg
       * \param outFileName name of output file (k-grid format)
       */
       void basisToKGrid(const std::string & inFileName, 
-                        const std::string & outFileName) const;
+                        const std::string & outFileName);
   
       /**
       * Construct trial w-fields from c-fields.
@@ -777,6 +777,13 @@ namespace Pspg
       * Can be called only after the basis is initialized.
       */
       void allocateFieldsBasis();
+
+      /**
+      * Read field file header and allocate memory for basis fields.
+      *
+      * \param filename name of field file
+      */
+      void allocateFieldsBasis(std::string filename);
 
       /**
       * Initialize Homogeneous::Mixture object (private).

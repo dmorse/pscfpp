@@ -229,7 +229,8 @@ namespace Pspg
    }
 
    template <int D>
-   void WaveList<D>::computedKSq(UnitCell<D> const & unitCell){
+   void WaveList<D>::computedKSq(UnitCell<D> const & unitCell)
+   {
       //dkkbasis is something determined from unit cell size
       //min image needs to be on device but okay since its only done once
       //second to last parameter is number of stars originally
@@ -237,7 +238,6 @@ namespace Pspg
       // GPU resources
       int nBlocks, nThreads;
       ThreadGrid::setThreadsLogical(rSize_, nBlocks, nThreads);
-
 
       int idx;
       for(int i = 0 ; i < unitCell.nParameter(); ++i) {
@@ -254,12 +254,12 @@ namespace Pspg
                  cudaMemcpyHostToDevice);
 
       cudaMemset(dkSq_, 0, unitCell.nParameter() * rSize_ * sizeof(cudaReal));
-       makeDksqHelperWave<<<nBlocks, nThreads>>>
+      makeDksqHelperWave<<<nBlocks, nThreads>>>
          (dkSq_, minImage_d, dkkBasis_d, partnerIdTable_d,
           selfIdTable_d, implicit_d, unitCell.nParameter(), 
           kSize_, rSize_, D);
        
-       makeDksqReduction<<<nBlocks, nThreads>>>
+      makeDksqReduction<<<nBlocks, nThreads>>>
           (dkSq_, partnerIdTable_d, unitCell.nParameter(),
             kSize_, rSize_);
    }
@@ -267,5 +267,4 @@ namespace Pspg
 
 }
 }
-
 #endif

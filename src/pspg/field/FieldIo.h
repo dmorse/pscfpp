@@ -8,17 +8,18 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pspg/field/FFT.h>                // member
+#include <pspg/field/FFT.h>                 // member
 #include <pspg/field/RDField.h>             // function parameter
 #include <pspg/field/RDFieldDft.h>          // function parameter
 
-#include <pscf/crystal/Basis.h>            // member
-#include <pscf/crystal/UnitCell.h>         // member
-#include <pscf/mesh/Mesh.h>                // member
+#include <pscf/crystal/Basis.h>             // member
+#include <pscf/crystal/SpaceGroup.h>        // member
+#include <pscf/crystal/UnitCell.h>          // member
+#include <pscf/mesh/Mesh.h>                 // member
 
-#include <util/misc/FileMaster.h>          // member
-#include <util/containers/DArray.h>        // function parameter
-#include <util/containers/Array.h>         // function parameter
+#include <util/misc/FileMaster.h>           // member
+#include <util/containers/DArray.h>         // function parameter
+#include <util/containers/Array.h>          // function parameter
 
 namespace Pscf {
 namespace Pspg
@@ -296,6 +297,17 @@ namespace Pspg
                            UnitCell<D> const & unitCell) const;
 
       /**
+      * Reader header of field file (fortran pscf format)
+      *
+      * \param in input  stream (i.e., input file)
+      * \param nMonomer number of monomers read from file (output)
+      * \param unitCell  crystallographic unit cell (output)
+      */
+      void readFieldHeader(std::istream& in,
+                           int& nMonomer,
+                           UnitCell<D>& unitCell) const;
+
+      /**
       * Write header for field file (fortran pscf format)
       *
       * \param out output stream (i.e., output file)
@@ -406,13 +418,13 @@ namespace Pspg
       typename UnitCell<D>::LatticeSystem * latticePtr_;
 
       /// Pointer to group name string
-      std::string const * groupNamePtr_;
+      std::string * groupNamePtr_;
 
       /// Pointer to a SpaceGroup object
       SpaceGroup<D> * groupPtr_;
 
       /// Pointer to a Basis object
-      Basis<D> const * basisPtr_;
+      Basis<D> * basisPtr_;
 
       /// Pointer to Filemaster (holds paths to associated I/O files).
       FileMaster const * fileMasterPtr_;
@@ -422,25 +434,42 @@ namespace Pspg
       /// Get spatial discretization mesh by const reference.
       Mesh<D> const & mesh() const
       {  
-         // UTIL_ASSERT(meshPtr_);  
+         UTIL_ASSERT(meshPtr_);  
          return *meshPtr_; 
       }
 
       /// Get FFT object by const reference.
       FFT<D> const & fft() const
       {
-         // UTIL_ASSERT(fftPtr_);  
+         UTIL_ASSERT(fftPtr_);  
          return *fftPtr_; 
       }
 
-      /// Get group name string by const reference.
-      std::string const & groupName() const
-      {  return *groupNamePtr_; }
-
-      /// Get Basis by const reference.
-      Basis<D> const & basis() const
+      /// Get lattice system enumeration value by reference.
+      typename UnitCell<D>::LatticeSystem & lattice() const
       {
-         // UTIL_ASSERT(basisPtr_);  
+         UTIL_ASSERT(latticePtr_);  
+         return *latticePtr_; 
+      }
+
+      /// Get group name string 
+      std::string & groupName() const
+      {  
+         UTIL_ASSERT(groupNamePtr_);  
+         return *groupNamePtr_; 
+      }
+
+      /// Get Basis by reference.
+      SpaceGroup<D> & group() const
+      {
+         UTIL_ASSERT(basisPtr_);  
+         return *groupPtr_; 
+      }
+
+      /// Get Basis by reference.
+      Basis<D> & basis() const
+      {
+         UTIL_ASSERT(basisPtr_);  
          return *basisPtr_; 
       }
 
@@ -450,17 +479,6 @@ namespace Pspg
          UTIL_ASSERT(fileMasterPtr_);  
          return *fileMasterPtr_; 
       }
-
-      /**
-      * Reader header of field file (fortran pscf format)
-      *
-      * \param in input  stream (i.e., input file)
-      * \param nMonomer number of monomers read from file (output)
-      * \param unitCell  crystallographic unit cell (output)
-      */
-      void readFieldHeader(std::istream& in,
-                           int& nMonomer,
-                           UnitCell<D>& unitCell) const;
 
       /**
       * Check state of work array, allocate if necessary.

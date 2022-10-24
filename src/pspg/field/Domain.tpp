@@ -56,19 +56,31 @@ namespace Pspg
    {
       UTIL_CHECK(hasFileMaster_);
 
+      // Optionally read unit cell
       read(in, "unitCell", unitCell_);
+      bool hasUnitCell = false;
+      if (unitCell_.lattice() != UnitCell<D>::Null) {
+         lattice_ = unitCell_.lattice();
+         hasUnitCell = true;
+      }
+
       read(in, "mesh", mesh_);
-      read(in, "groupName", groupName_);
-
-      lattice_ = unitCell_.lattice();
-
       fft_.setup(mesh_.dimensions());
 
-      // Initialize space group
+      // If no unit cell was read, read lattice system 
+      if (!hasUnitCell) {
+         read(in, "lattice", lattice_);
+         unitCell_.set(lattice_);
+      }
+
+      // Read group name and initialize space group
+      read(in, "groupName", groupName_);
       readGroup(groupName_, group_);
 
       // Make symmetry-adapted basis
-      basis().makeBasis(mesh(), unitCell(), group_);
+      if (hasUnitCell) {
+          basis().makeBasis(mesh(), unitCell(), group_);
+      }
 
       isInitialized_ = true;
    }
