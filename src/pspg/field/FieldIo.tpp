@@ -36,9 +36,11 @@ namespace Pspg
    FieldIo<D>::FieldIo()
     : meshPtr_(0),
       fftPtr_(0),
+      latticePtr_(0),
       groupNamePtr_(0),
+      groupPtr_(0),
       basisPtr_(0),
-      fileMasterPtr_()
+      fileMasterPtr_(0)
    {}
 
    /*
@@ -52,16 +54,20 @@ namespace Pspg
    * Get and store addresses of associated objects.
    */
    template <int D>
-   void FieldIo<D>::associate(Mesh<D>& mesh,
-                              FFT<D>& fft,
+   void FieldIo<D>::associate(Mesh<D> const & mesh,
+                              FFT<D> const & fft,
+                              typename UnitCell<D>::LatticeSystem & lattice,
                               std::string& groupName,
+                              SpaceGroup<D>& group,
                               Basis<D>& basis,
-                              FileMaster& fileMaster)
+                              FileMaster const & fileMaster)
    {
       meshPtr_ = &mesh;
-      groupNamePtr_ = &groupName;
-      basisPtr_ = &basis;
       fftPtr_ = &fft;
+      latticePtr_ = &lattice;
+      groupNamePtr_ = &groupName;
+      groupPtr_ = &group;
+      basisPtr_ = &basis;
       fileMasterPtr_ = &fileMaster;
    }
 
@@ -798,10 +804,21 @@ namespace Pspg
                                     int& nMonomer,
                                     UnitCell<D>& unitCell) const
    {
+      // Preconditions
+      UTIL_CHECK(latticePtr_);
+      UTIL_CHECK(groupNamePtr_);
+
       int ver1, ver2;
       std::string groupNameIn;
       Pscf::readFieldHeader(in, ver1, ver2, unitCell, groupNameIn, nMonomer);
       // Note:: Function definition in pscf/crystal/UnitCell.tpp
+
+      // Check data from header
+      UTIL_CHECK(ver1 == 1);
+      UTIL_CHECK(ver2 == 0);
+      UTIL_CHECK(unitCell.isInitialized());
+      UTIL_CHECK(unitCell.lattice() != UnitCell<D>::Null);
+      UTIL_CHECK(unitCell.nParameter() > 0);
 
       UTIL_CHECK(nMonomer > 0);
       if (groupNameIn != groupName()) {

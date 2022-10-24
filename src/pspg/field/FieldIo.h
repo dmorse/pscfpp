@@ -56,11 +56,13 @@ namespace Pspg
       * \param basis  associated Basis object
       * \param fileMaster  associated FileMaster (for file paths)
       */
-      void associate(Mesh<D>& mesh,
-                     FFT<D>& fft,
+      void associate(Mesh<D> const & mesh,
+                     FFT<D> const & fft,
+                     typename UnitCell<D>::LatticeSystem& lattice,
                      std::string& groupName,
+                     SpaceGroup<D>& group,
                      Basis<D>& basis,
-                     FileMaster& fileMaster);
+                     FileMaster const & fileMaster);
 
       /// \name Field File IO
       //@{
@@ -400,8 +402,14 @@ namespace Pspg
       /// Pointer to FFT object.
       FFT<D> const * fftPtr_;
 
+      /// Pointer to lattice system
+      typename UnitCell<D>::LatticeSystem * latticePtr_;
+
       /// Pointer to group name string
       std::string const * groupNamePtr_;
+
+      /// Pointer to a SpaceGroup object
+      SpaceGroup<D> * groupPtr_;
 
       /// Pointer to a Basis object
       Basis<D> const * basisPtr_;

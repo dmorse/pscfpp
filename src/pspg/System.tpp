@@ -52,11 +52,11 @@ namespace Pspg
       sweepFactoryPtr_(0),
       w_(),
       c_(),
-      f_(),
       fHelmholtz_(0.0),
       pressure_(0.0),
       hasMixture_(false),
-      isAllocated_(false),
+      isAllocatedGrid_(false),
+      isAllocatedBasis_(false),
       hasCFields_(false)
    {
       setClassName("System");
@@ -215,7 +215,8 @@ namespace Pspg
       mixture().setupUnitCell(domain_.unitCell(), wavelist());
 
       // Allocate memory for w and c fields
-      allocate();
+      allocateFieldsGrid();
+      allocateFieldsBasis();
 
       // Initialize iterator
       std::string className;
@@ -273,40 +274,65 @@ namespace Pspg
    * Allocate memory for fields.
    */
    template <int D>
-   void System<D>::allocate()
+   void System<D>::allocateFieldsGrid()
    {
       // Preconditions
       UTIL_CHECK(hasMixture_);
-
       int nMonomer = mixture().nMonomer();
-      int nBasis = basis().nBasis();
       UTIL_CHECK(nMonomer > 0);
-      UTIL_CHECK(nBasis > 0);
+      UTIL_CHECK(domain_.mesh().size() > 0);
+      UTIL_CHECK(!isAllocatedGrid_);
+
+      // Alias for mesh dimensions
+      IntVec<D> const & dimensions = domain_.mesh().dimensions();
 
       // Allocate W Fields
       w_.setNMonomer(nMonomer);
-      w_.allocateRGrid(mesh().dimensions());
-      w_.allocateBasis(nBasis);
+      w_.allocateRGrid(dimensions);
 
       // Allocate C Fields
       c_.setNMonomer(nMonomer);
-      c_.allocateRGrid(mesh().dimensions());
-      c_.allocateBasis(nBasis);
+      c_.allocateRGrid(dimensions);
 
       // Allocate temporary work space
-      tmpFieldsBasis_.allocate(nMonomer);
       tmpFieldsRGrid_.allocate(nMonomer);
       tmpFieldsKGrid_.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
-         tmpFieldsBasis_[i].allocate(nBasis);
-         tmpFieldsRGrid_[i].allocate(mesh().dimensions());
-         tmpFieldsKGrid_[i].allocate(mesh().dimensions());
+         tmpFieldsRGrid_[i].allocate(dimensions);
+         tmpFieldsKGrid_[i].allocate(dimensions);
       }
 
-      workArray.allocate(mesh().size());
+      workArray_.allocate(mesh().size());
       ThreadGrid::setThreadsLogical(mesh().size());
 
-      isAllocated_ = true;
+      isAllocatedGrid_ = true;
+   }
+
+   /*
+   * Allocate memory for fields.
+   */
+   template <int D>
+   void System<D>::allocateFieldsBasis()
+   {
+      // Preconditions and constants
+      UTIL_CHECK(hasMixture_);
+      const int nMonomer = mixture().nMonomer();
+      UTIL_CHECK(nMonomer > 0);
+      UTIL_CHECK(isAllocatedGrid_);
+      UTIL_CHECK(!isAllocatedBasis_);
+      UTIL_CHECK(domain_.basis().isInitialized());
+      const int nBasis = basis().nBasis();
+      UTIL_CHECK(nBasis > 0);
+
+      w_.allocateBasis(nBasis);
+      c_.allocateBasis(nBasis);
+
+      // Temporary work space
+      tmpFieldsBasis_.allocate(nMonomer);
+      for (int i = 0; i < nMonomer; ++i) {
+         tmpFieldsBasis_[i].allocate(nBasis);
+      }
+      isAllocatedBasis_ = true;
    }
 
    /*
@@ -325,7 +351,7 @@ namespace Pspg
    template <int D>
    void System<D>::readCommands(std::istream &in)
    {
-      UTIL_CHECK(isAllocated_);
+      UTIL_CHECK(isAllocatedGrid_);
       std::string command, filename, inFileName, outFileName;
 
       bool readNext = true;
@@ -657,8 +683,8 @@ namespace Pspg
       for (int i = 0; i < nm; i++) {
          pointWiseBinaryMultiply<<<nBlocks,nThreads>>>
              (w_.rgrid(i).cDField(), c_.rgrid()[i].cDField(),
-              workArray.cDField(), nx);
-         temp += gpuSum(workArray.cDField(),nx) / double(nx);
+              workArray_.cDField(), nx);
+         temp += gpuSum(workArray_.cDField(),nx) / double(nx);
       }
       fHelmholtz_ -= temp;
 
@@ -666,12 +692,12 @@ namespace Pspg
       for (int i = 0; i < nm; ++i) {
          for (int j = i + 1; j < nm; ++j) {
            assignUniformReal<<<nBlocks, nThreads>>>
-               (workArray.cDField(), interaction().chi(i, j), nx);
+               (workArray_.cDField(), interaction().chi(i, j), nx);
            inPlacePointwiseMul<<<nBlocks, nThreads>>>
-               (workArray.cDField(), c_.rgrid()[i].cDField(), nx);
+               (workArray_.cDField(), c_.rgrid()[i].cDField(), nx);
            inPlacePointwiseMul<<<nBlocks, nThreads>>>
-               (workArray.cDField(), c_.rgrid()[j].cDField(), nx);
-           fHelmholtz_ += gpuSum(workArray.cDField(), nx) / double(nx);
+               (workArray_.cDField(), c_.rgrid()[j].cDField(), nx);
+           fHelmholtz_ += gpuSum(workArray_.cDField(), nx) / double(nx);
          }
       }
 

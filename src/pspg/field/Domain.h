@@ -14,6 +14,7 @@
 #include <pspg/field/FFT.h>                // member
 
 #include <pscf/crystal/Basis.h>            // member
+#include <pscf/crystal/SpaceGroup.h>       // member
 #include <pscf/mesh/Mesh.h>                // member
 #include <pscf/crystal/UnitCell.h>         // member
 
@@ -30,11 +31,13 @@ namespace Pspg
    *
    * A Domain has (among other components):
    *
-   *    - a UnitCell
    *    - a Mesh
+   *    - a UnitCell
+   *    - a SpaceGroup
    *    - a Basis
    *    - an Fft 
    *    - a FieldIo
+   *    - a lattice system enumeration value
    *    - a groupName string
    *
    * \ingroup Pspg_Field_Module
@@ -110,6 +113,11 @@ namespace Pspg
       Mesh<D> const & mesh() const;
 
       /**
+      * Get the SpaceGroup object by const reference.
+      */
+      SpaceGroup<D> const & group() const;
+
+      /**
       * Get the Basis by reference.
       */
       Basis<D>& basis();
@@ -139,6 +147,11 @@ namespace Pspg
       */
       FieldIo<D> const & fieldIo() const;
 
+      /**
+      * Get the lattice system (enumeration value).
+      */
+      typename UnitCell<D>::LatticeSystem lattice() const;
+  
       /** 
       * Get group name.
       */  
@@ -161,6 +174,11 @@ namespace Pspg
       Mesh<D> mesh_;
 
       /**
+      * SpaceGroup object.
+      */
+      SpaceGroup<D> group_;
+
+      /**
       * Pointer to a Basis object
       */
       Basis<D> basis_;
@@ -174,6 +192,11 @@ namespace Pspg
       * FieldIo object for field input/output operations
       */
       FieldIo<D> fieldIo_;
+
+      /**
+      * Lattice system (enumeration value).
+      */
+      typename UnitCell<D>::LatticeSystem lattice_;
 
       /**
       * Group name.
@@ -214,6 +237,11 @@ namespace Pspg
    inline Mesh<D> const & Domain<D>::mesh() const
    {  return mesh_; }
 
+   // Get the SpaceGroup<D> object by const reference.
+   template <int D>
+   inline SpaceGroup<D> const & Domain<D>::group() const
+   {  return group_; }
+
    // Get the Basis<D> object by non-const reference.
    template <int D>
    inline Basis<D>& Domain<D>::basis()
@@ -243,6 +271,12 @@ namespace Pspg
    template <int D>
    inline FieldIo<D> const & Domain<D>::fieldIo() const
    {  return fieldIo_; }
+
+   // Get the lattice system enumeration value.
+   template <int D>
+   inline 
+   typename UnitCell<D>::LatticeSystem Domain<D>::lattice() const
+   {  return lattice_; }
 
    // Get the groupName string.
    template <int D>

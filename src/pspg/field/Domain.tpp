@@ -26,6 +26,7 @@ namespace Pspg
       basis_(),
       fft_(),
       fieldIo_(),
+      lattice_(UnitCell<D>::Null),
       groupName_(),
       hasFileMaster_(false),
       isInitialized_(false)
@@ -41,7 +42,9 @@ namespace Pspg
    template <int D>
    void Domain<D>::setFileMaster(FileMaster& fileMaster)
    {
-      fieldIo_.associate(mesh_, fft_, groupName_, basis_, fileMaster);
+      fieldIo_.associate(mesh_, fft_, 
+                         lattice_, groupName_, group_, basis_, 
+                         fileMaster);
       hasFileMaster_ = true;
    }
 
@@ -57,8 +60,16 @@ namespace Pspg
       read(in, "mesh", mesh_);
       read(in, "groupName", groupName_);
 
+      lattice_ = unitCell_.lattice();
+
       fft_.setup(mesh_.dimensions());
-      basis().makeBasis(mesh(), unitCell(), groupName_);
+
+      // Initialize space group
+      readGroup(groupName_, group_);
+
+      // Make symmetry-adapted basis
+      basis().makeBasis(mesh(), unitCell(), group_);
+
       isInitialized_ = true;
    }
    

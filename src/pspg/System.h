@@ -42,6 +42,17 @@ namespace Pspg
    /**
    * Main class in SCFT simulation of one system.
    *
+   * A System has (among other components):
+   *
+   *    - a Mixture (a container for polymer and solvent solvers)
+   *    - a Domain (a description of the crystal domain and discretization)
+   *    - an Iterator
+   *    - a container of monomer chemical potential fields (w fields)
+   *    - a container of monomer concentration fields (c fields)
+   *
+   * In a parameter file format, the main block is a System{ ... } block
+   * that contains subblocks for sub-objects.
+   *
    * \ingroup Pscf_Pspg_Module
    */
    template <int D>
@@ -248,6 +259,7 @@ namespace Pspg
       * obtained.
       *
       * \pre The w().hasData() flag must be true on entry
+      *
       * \param isContinuation  true iff continuation within a sweep
       * \return returns 0 for successful convergence, 1 for failure
       */
@@ -263,7 +275,7 @@ namespace Pspg
       * parameters passed to the sweep object in the parameter file.
       *
       * An Exception is thrown if sweep() is called when no Sweep has
-      * been created.
+      * been created (i.e., if hasSweep() returns false).
       */
       void sweep();
 
@@ -609,11 +621,6 @@ namespace Pspg
       //@{
 
       /**
-      * Get the group name string.
-      */
-      std::string groupName();
-
-      /**
       * Have monomer concentration fields (c fields) been computed?
       *
       * Returns  true if and only if monomer concentration fields have
@@ -733,9 +740,14 @@ namespace Pspg
       bool hasMixture_;
 
       /**
-      * Has memory been allocated for fields?
+      * Has memory been allocated for fields in FFT grid formats?
       */
-      bool isAllocated_;
+      bool isAllocatedGrid_;
+
+      /**
+      * Has memory been allocated for fields in basis format?
+      */
+      bool isAllocatedBasis_;
 
       /**
       * Have C fields been computed for the current w fields?
@@ -750,12 +762,21 @@ namespace Pspg
       /**
       * Work array for r-grid field.
       */
-      RDField<D> workArray;
+      RDField<D> workArray_;
 
       /**
-      * Allocate memory for fields (private)
+      * Allocate memory for fields in grid formats (private).
+      *
+      * Can be called when mesh is known.
       */
-      void allocate();
+      void allocateFieldsGrid();
+
+      /**
+      * Allocate memory for fields in basis formats (private).
+      *
+      * Can be called only after the basis is initialized.
+      */
+      void allocateFieldsBasis();
 
       /**
       * Initialize Homogeneous::Mixture object (private).
@@ -824,11 +845,6 @@ namespace Pspg
    template <int D>
    inline FieldIo<D> const & System<D>::fieldIo() const
    {  return domain_.fieldIo(); }
-
-   // Get the groupName string.
-   template <int D>
-   inline std::string System<D>::groupName()
-   { return domain_.groupName(); }
 
    // Get the Iterator.
    template <int D>
