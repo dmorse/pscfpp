@@ -91,7 +91,50 @@ public:
 
       // Run the setup function
       iterator.setup();
+
+      TEST_ASSERT(system.mask().isAllocated());
+      TEST_ASSERT(!system.mask().hasData());
+
+      TEST_ASSERT(system.h().isAllocatedBasis());
+      TEST_ASSERT(system.h().isAllocatedRGrid());
+      TEST_ASSERT(!system.h().hasData());
+      TEST_ASSERT(system.h().basis().capacity() == 
+                  system.mixture().nMonomer());
+      TEST_ASSERT(system.h().basis()[0].capacity() == 
+                  system.basis().nBasis());
+      TEST_ASSERT(system.h().rgrid().capacity() == 
+                  system.mixture().nMonomer());
+      TEST_ASSERT(system.h().rgrid()[0].capacity() == 
+                  system.mesh().size());
+   }
+
+   void testGenerateWallFields() // testFilmIterator::generateWallFields()
+   {      
+
+      printMethod(TEST_FUNC);
+      openLogFile("out/filmTestSetup.log");
       
+      // Set up system with some data
+      System<1> system;
+      FilmIteratorTest::setUpSystem(system, "in/film/system1D");
+
+      // Set up iterator from file
+      FilmIterator<1, AmIterator<1> > iterator(system);
+      FilmIteratorTest::setUpFilmIterator(iterator, "in/film/film1D");
+
+      system.readWBasis("in/film/w_ref.bf");
+
+      // Run the setup function
+      iterator.setup();
+
+      // Set unit cell parameter
+      FSArray<double, 6> parameters;
+      parameters.append(1.9);
+      system.setUnitCell(UnitCell<1>::Lamellar, parameters);
+
+      // Run the generateWallFields function
+      iterator.generateWallFields();
+
       // Check that the homogeneous components of the mask
       // and the blocks were adjusted correctly
       TEST_ASSERT(eq(system.mask().phiTot(),8.9461021637e-01));
@@ -250,7 +293,6 @@ public:
       TEST_ASSERT(FilmIteratorTest::checkCheckSpaceGroup(iterator6,true));
    }
 
-   #if 0
    void testCheckLatticeVectors() // test FilmIterator::checkLatticeVectors()
    {
       printMethod(TEST_FUNC);
@@ -259,6 +301,14 @@ public:
       // Set up 2D system with incorrect lattice vectors and check it
       System<2> system1;
       FilmIteratorTest::setUpSystem(system1, "in/film/system_bad_2D_1");
+
+      // Set unit cell parameter
+      FSArray<double, 6> parameters;
+      parameters.append(2.0);
+      parameters.append(2.0);
+      parameters.append(1.0);
+      system1.setUnitCell(UnitCell<2>::Oblique, parameters);
+
       FilmIterator<2, AmIterator<2> > iterator1(system1);
       FilmIteratorTest::setUpFilmIterator(iterator1, "in/film/film2D");
       try {
@@ -273,6 +323,10 @@ public:
       // Set up 3D system with correct lattice vectors and check it
       System<3> system2;
       FilmIteratorTest::setUpSystem(system2, "in/film/system_bad_3D_1");
+      parameters.clear();
+      parameters.append(2.0);
+      parameters.append(4.2);
+      system2.setUnitCell(UnitCell<3>::Tetragonal, parameters);
       FilmIterator<3, AmIterator<3> > iterator2(system2);
       FilmIteratorTest::setUpFilmIterator(iterator2, "in/film/film3D");
       iterator2.checkLatticeVectors(); // this should not throw an error
@@ -280,6 +334,10 @@ public:
       // Set up 3D system with incorrect lattice vectors and check it
       System<3> system3;
       FilmIteratorTest::setUpSystem(system3, "in/film/system_bad_3D_2");
+      parameters[1] = 2.0;
+      parameters.append(2.0); 
+      parameters.append(1.0);
+      system3.setUnitCell(UnitCell<3>::Monoclinic, parameters);
       FilmIterator<3, AmIterator<3> > iterator3(system3);
       FilmIteratorTest::setUpFilmIterator(iterator3, "in/film/film3D");
       try {
@@ -291,7 +349,6 @@ public:
                      << std::endl;
       }
    }
-   #endif
    
    void testFlexibleParams() // test FilmIterator::flexibleParams
    {
@@ -371,12 +428,13 @@ public:
       System<1> system;
       FilmIteratorTest::setUpSystem(system, "in/film/system1D");
 
+      // Read initial guess
+      system.readWBasis("in/film/w_in.bf");
+
       // Set up iterator from file
       FilmIterator<1, AmIterator<1> > iterator(system);
       FilmIteratorTest::setUpFilmIterator(iterator, "in/film/film1D");
-
-      // Read initial guess
-      system.readWBasis("in/film/w_in.bf");
+      iterator.setup();
 
       // Run the solve function
       iterator.solve();
@@ -436,6 +494,9 @@ public:
       System<1> system;
       FilmIteratorTest::setUpSystem(system, "in/film/system1D");
 
+      // Read a converged solution as initial guess
+      system.readWBasis("out/w.bf");
+
       // Set up iterator
       FilmIterator<1, AmIterator<1> > iterator(system);
       FilmIteratorTest::setUpFilmIterator(iterator, "in/film/film1D");
@@ -443,8 +504,7 @@ public:
       // Run the setup function (has already been tested above)
       iterator.setup();
 
-      // Read a converged solution, solve (should only take a few iterations)
-      system.readWBasis("out/w.bf");
+      // Solve (should only take a few iterations)
       iterator.solve();
 
       // Compute free energy
@@ -559,6 +619,7 @@ TEST_BEGIN(FilmIteratorTest)
 TEST_ADD(FilmIteratorTest, testConstructor)
 TEST_ADD(FilmIteratorTest, testReadParameters)
 TEST_ADD(FilmIteratorTest, testSetup)
+TEST_ADD(FilmIteratorTest, testGenerateWallFields)
 TEST_ADD(FilmIteratorTest, testCheckSpaceGroup1DA)
 TEST_ADD(FilmIteratorTest, testCheckSpaceGroup1DB)
 TEST_ADD(FilmIteratorTest, testCheckSpaceGroup2D)
@@ -566,11 +627,11 @@ TEST_ADD(FilmIteratorTest, testCheckSpaceGroup3DA)
 TEST_ADD(FilmIteratorTest, testCheckSpaceGroup3DB)
 TEST_ADD(FilmIteratorTest, testFlexibleParams)
 TEST_ADD(FilmIteratorTest, testReadFlexibleParams)
-//TEST_ADD(FilmIteratorTest, testCheckLatticeVectors)
-//TEST_ADD(FilmIteratorTest, testSolve)
-//TEST_ADD(FilmIteratorTest, testSweep)
-//TEST_ADD(FilmIteratorTest, testFreeEnergy)
-//TEST_ADD(FilmIteratorTest, testMaskAndH)
+TEST_ADD(FilmIteratorTest, testCheckLatticeVectors)
+TEST_ADD(FilmIteratorTest, testSolve)
+TEST_ADD(FilmIteratorTest, testSweep)
+TEST_ADD(FilmIteratorTest, testFreeEnergy)
+TEST_ADD(FilmIteratorTest, testMaskAndH)
 TEST_END(FilmIteratorTest)
 
 #endif
