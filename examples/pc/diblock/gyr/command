@@ -1,0 +1,8 @@
+READ_W_BASIS  in/w.bf
+ITERATE
+WRITE_PARAM   out/prm
+WRITE_THERMO  out/dat
+WRITE_W_BASIS out/w.bf
+WRITE_W_RGRID out/w.rf
+WRITE_C_RGRID out/c.rf
+FINISH
