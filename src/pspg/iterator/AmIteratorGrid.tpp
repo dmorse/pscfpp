@@ -182,7 +182,7 @@ namespace Pspg{
 
    template <int D>
    bool AmIteratorGrid<D>::hasInitialGuess()
-   { return system().hasWFields(); }
+   { return system().w().hasData(); }
    
    template <int D>
    int AmIteratorGrid<D>::nElements()
@@ -211,7 +211,7 @@ namespace Pspg{
       ThreadGrid::setThreadsLogical(nMesh, nBlocks, nThreads);
 
       // Pointer to fields on system
-      DArray<RDField<D>> const * currSys = &system().wFieldsRGrid();
+      DArray<RDField<D>> const * currSys = &system().w().rgrid();
 
       // Loop to unfold the system fields and store them in one long array
       for (int i = 0; i < nMonomer; i++) {
@@ -267,12 +267,12 @@ namespace Pspg{
          for (int j = 0; j < nMonomer; j++) {
             pointWiseAddScale<<<nBlocks, nThreads>>>
                 (resid.cDField() + startIdx,
-                 system().cFieldRGrid(j).cDField(),
+                 system().c().rgrid(j).cDField(),
                  system().interaction().chi(i, j),
                  nMesh);
             pointWiseAddScale<<<nBlocks, nThreads>>>
                 (resid.cDField() + startIdx,
-                 system().wFieldRGrid(j).cDField(),
+                 system().w().rgrid(j).cDField(),
                  -system().interaction().idemp(i, j),
                  nMesh);
          }
@@ -334,7 +334,7 @@ namespace Pspg{
             wAverage = 0;
             for (int j = 0; j < nMonomer; j++) {
                // Find average concentration for j monomers
-               cAverage = findAverage(system().cFieldRGrid(j).cDField(), nMesh);
+               cAverage = findAverage(system().c().rgrid(j).cDField(), nMesh);
                wAverage += system().interaction().chi(i,j) * cAverage;
             }
             addUniform<<<nBlocks, nThreads>>>(newGuess.cDField() + i*nMesh, 

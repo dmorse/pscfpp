@@ -106,7 +106,7 @@ namespace Pspg
       int i, j;
       for (i = 0; i < nMonomer; ++i) {
          DArray<double>& stateField = field(i);
-         const DArray<double>& systemField = system().wFieldBasis(i);
+         const DArray<double>& systemField = system().w().basis(i);
          for (j = 0; j < nBasis; ++j) {
             stateField[j] = systemField[j];
          }

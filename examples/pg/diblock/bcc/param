@@ -23,14 +23,16 @@ System{
     )
   }
   Domain{
-    unitCell cubic 2.0E+00
-    mesh     32 32 32
-    groupName         I_m_-3_m
+    unitCell       cubic     3.0E+00
+    mesh           32   32    32
+    groupName      I_m_-3_m
   }
-  AmIterator{
-    maxItr 1000
-    epsilon 1e-5
+  Iterator{
+    maxItr  400
+    epsilon 1e-8
     maxHist 30
     isFlexible   1
   }
 }
+
+    lattice        cubic 
