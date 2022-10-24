@@ -57,7 +57,7 @@ namespace Pspg
       UTIL_CHECK(hasFileMaster_);
 
       // Optionally read unit cell
-      read(in, "unitCell", unitCell_);
+      readOptional(in, "unitCell", unitCell_);
       bool hasUnitCell = false;
       if (unitCell_.lattice() != UnitCell<D>::Null) {
          lattice_ = unitCell_.lattice();

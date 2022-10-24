@@ -1,29 +1,33 @@
 System{
   Mixture{
     nMonomer    2
-    monomers    1.0  
+    monomers[
+                1.0  
                 1.0 
+    ]
     nPolymer  1
     Polymer{
       type    linear
       nBlock  2
-      blocks  0   0.35
+      blocks[
+              0   0.35
               1   0.65
+       ]
        phi     1.0
     }
     ds   0.01
   }
   Interaction{
-    chi  0   0   0.0
+    chi( 
          1   0   20.0
-         1   1   0.0
+    }
   }
   Domain{
     unitCell cubic 3.0E+00
     mesh     32 32 32
     groupName I_a_-3_d
   }
-  AmIterator{
+  AmIteratorBasis{
     maxItr 500
     epsilon 1e-5
     maxHist 30
