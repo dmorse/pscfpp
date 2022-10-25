@@ -448,15 +448,6 @@ namespace Pspg
             readEcho(in, filename);
             writeBlockCRGrid(filename);
          } else
-         if (command == "WRITE_PROPAGATOR_TAIL") {
-            readEcho(in, filename);
-            int polymerID, blockID;
-            in >> polymerID;
-            in >> blockID;
-            Log::file() << Str("polymer ID   ", 21) << polymerID << "\n"
-                        << Str("block ID   ", 21) << blockID << std::endl;
-            writePropagatorTail(filename, polymerID, blockID);
-         } else
          if (command == "WRITE_Q_SLICE") {
             int polymerId, blockId, directionId, segmentId;
             readEcho(in, filename);
@@ -1040,23 +1031,6 @@ namespace Pspg
    }
 
    /*
-   * Write the last time slice of the propagator.
-   */
-   template <int D>
-   void System<D>::writePropagatorTail(const std::string & filename,
-                                       int polymerID, int blockID)
-   {
-      const cudaReal* d_tailField = 
-                      mixture_.polymer(polymerID).propagator(blockID, 1).tail();
-
-      RDField<D> tailField;
-      tailField.allocate(mesh().size());
-      cudaMemcpy(tailField.cDField(), d_tailField,
-                 mesh().size() * sizeof(cudaReal), cudaMemcpyDeviceToDevice);
-      fieldIo().writeFieldRGrid(filename, tailField, unitCell());
-   }
-
-   /*
    * Write the last time slice of the propagator in r-grid format.
    */
    template <int D>
@@ -1101,7 +1075,8 @@ namespace Pspg
       RDField<D> field;
       field.allocate(mesh().size());
       cudaMemcpy(field.cDField(), propagator.tail(),
-                 mesh().size() * sizeof(cudaReal), cudaMemcpyDeviceToDevice);
+                 mesh().size()*sizeof(cudaReal), 
+                 cudaMemcpyDeviceToDevice);
       fieldIo().writeFieldRGrid(filename, field, unitCell());
    }
 
