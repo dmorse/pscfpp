@@ -74,45 +74,11 @@ public:
       TEST_ASSERT(iterator.isFlexible());
    }
 
-   void testSetup() // test FilmIterator::setup()
-   {
-      printMethod(TEST_FUNC);
-      openLogFile("out/filmTestSetup.log");
-      
-      // Set up system with some data
-      System<1> system;
-      FilmIteratorTest::setUpSystem(system, "in/film/system1D");
-
-      // Set up iterator from file
-      FilmIterator<1, AmIterator<1> > iterator(system);
-      FilmIteratorTest::setUpFilmIterator(iterator, "in/film/film1D");
-
-      system.readWBasis("in/film/w_ref.bf");
-
-      // Run the setup function
-      iterator.setup();
-
-      TEST_ASSERT(system.mask().isAllocated());
-      TEST_ASSERT(!system.mask().hasData());
-
-      TEST_ASSERT(system.h().isAllocatedBasis());
-      TEST_ASSERT(system.h().isAllocatedRGrid());
-      TEST_ASSERT(!system.h().hasData());
-      TEST_ASSERT(system.h().basis().capacity() == 
-                  system.mixture().nMonomer());
-      TEST_ASSERT(system.h().basis()[0].capacity() == 
-                  system.basis().nBasis());
-      TEST_ASSERT(system.h().rgrid().capacity() == 
-                  system.mixture().nMonomer());
-      TEST_ASSERT(system.h().rgrid()[0].capacity() == 
-                  system.mesh().size());
-   }
-
    void testGenerateWallFields() // testFilmIterator::generateWallFields()
    {      
 
       printMethod(TEST_FUNC);
-      openLogFile("out/filmTestSetup.log");
+      openLogFile("out/filmTestGenerateWallFields.log");
       
       // Set up system with some data
       System<1> system;
@@ -123,14 +89,17 @@ public:
       FilmIteratorTest::setUpFilmIterator(iterator, "in/film/film1D");
 
       system.readWBasis("in/film/w_ref.bf");
-
-      // Run the setup function
-      iterator.setup();
 
       // Set unit cell parameter
       FSArray<double, 6> parameters;
       parameters.append(1.9);
       system.setUnitCell(UnitCell<1>::Lamellar, parameters);
+
+      // Allocate mask and external field containers
+      system.mask().allocate(system.basis().nBasis(), 
+                             system.mesh().dimensions());
+      system.h().allocateRGrid(system.mesh().dimensions());
+      system.h().allocateBasis(system.basis().nBasis());
 
       // Run the generateWallFields function
       iterator.generateWallFields();
@@ -360,24 +329,23 @@ public:
       FilmIteratorTest::setUpSystem(system1, "in/film/system1D");
       FilmIterator<1, AmIterator<1> > iterator1(system1);
       FilmIteratorTest::setUpFilmIterator(iterator1, "in/film/film1D");
-      TEST_ASSERT(iterator1.flexibleParams().size() == 0);
+      TEST_ASSERT(iterator1.nFlexibleParams() == 0);
 
       // Set up 2D system and make sure flexibleParams is correct
       System<2> system2;
       FilmIteratorTest::setUpSystem(system2, "in/film/system2D");
       FilmIterator<2, AmIterator<2> > iterator2(system2);
       FilmIteratorTest::setUpFilmIterator(iterator2, "in/film/film2D");
-      TEST_ASSERT(iterator2.flexibleParams().size() == 1);
-      TEST_ASSERT(iterator2.flexibleParams()[0] == 0);
+      TEST_ASSERT(iterator2.nFlexibleParams() == 1);
+      TEST_ASSERT(iterator2.flexibleParams()[0]);
 
       // Set up 3D tetragonal system, validate flexibleParams 
       System<3> system3;
       FilmIteratorTest::setUpSystem(system3, "in/film/system3D");
       FilmIterator<3, AmIterator<3> > iterator3(system3);
       FilmIteratorTest::setUpFilmIterator(iterator3, "in/film/film3D");
-      Log::file() << iterator3.flexibleParams().size() << std::endl;
-      TEST_ASSERT(iterator3.flexibleParams().size() == 1);
-      TEST_ASSERT(iterator3.flexibleParams()[0] == 0);
+      TEST_ASSERT(iterator3.nFlexibleParams() == 1);
+      TEST_ASSERT(iterator3.flexibleParams()[0]);
 
       // Set up 3D monoclinic system (monoclinic), validate flexibleParams 
       System<3> system4;
@@ -386,10 +354,10 @@ public:
       FilmIteratorTest::setUpFilmIterator(iterator4, "in/film/film2D");
       // Using film2D here because it has normalVecId=1 which 
       // we want for this example
-      TEST_ASSERT(iterator4.flexibleParams().size() == 3);
-      TEST_ASSERT(iterator4.flexibleParams()[0] == 0);
-      TEST_ASSERT(iterator4.flexibleParams()[1] == 2);
-      TEST_ASSERT(iterator4.flexibleParams()[2] == 3);
+      TEST_ASSERT(iterator4.nFlexibleParams() == 3);
+      TEST_ASSERT(iterator4.flexibleParams()[0]);
+      TEST_ASSERT(iterator4.flexibleParams()[2]);
+      TEST_ASSERT(iterator4.flexibleParams()[3]);
    }
 
    void testReadFlexibleParams() // test manual entry of flexibleParams
@@ -403,26 +371,26 @@ public:
       FilmIteratorTest::setUpSystem(system, "in/film/system_bad_2D_1");
 
       // Check flexibleParams array
-      TEST_ASSERT(system.iterator().flexibleParams().size() == 2);
-      TEST_ASSERT(system.iterator().flexibleParams()[0] == 0);
-      TEST_ASSERT(system.iterator().flexibleParams()[1] == 2);
+      TEST_ASSERT(system.iterator().nFlexibleParams() == 2);
+      TEST_ASSERT(system.iterator().flexibleParams()[0]);
+      TEST_ASSERT(system.iterator().flexibleParams()[2]);
 
       // Set up another system
       System<3> system2;
       FilmIteratorTest::setUpSystem(system2, "in/film/system_bad_3D_2");
 
       // Check flexibleParams array
-      TEST_ASSERT(system2.iterator().flexibleParams().size() == 3);
-      TEST_ASSERT(system2.iterator().flexibleParams()[0] == 0);
-      TEST_ASSERT(system2.iterator().flexibleParams()[1] == 2);
-      TEST_ASSERT(system2.iterator().flexibleParams()[2] == 3);
+      TEST_ASSERT(system2.iterator().nFlexibleParams() == 3);
+      TEST_ASSERT(system2.iterator().flexibleParams()[0]);
+      TEST_ASSERT(system2.iterator().flexibleParams()[2]);
+      TEST_ASSERT(system2.iterator().flexibleParams()[3]);
    }
 
-   void testSolve() // test FilmIterator::solve
+   void testSolve1D() // test FilmIterator::solve
    {
       printMethod(TEST_FUNC);
       
-      openLogFile("out/filmTestSolve.log");
+      openLogFile("out/filmTestSolve1D.log");
       
       // Set up system with some data
       System<1> system;
@@ -434,7 +402,6 @@ public:
       // Set up iterator from file
       FilmIterator<1, AmIterator<1> > iterator(system);
       FilmIteratorTest::setUpFilmIterator(iterator, "in/film/film1D");
-      iterator.setup();
 
       // Run the solve function
       iterator.solve();
@@ -452,6 +419,41 @@ public:
       }
       system.fieldIo().writeFieldsBasis("out/w.bf", system.w().basis(), 
                                         system.unitCell());
+      TEST_ASSERT(bComparison.maxDiff() < 1.0E-5);
+   }
+
+   void testSolve2D() // test FilmIterator::solve
+   {
+      printMethod(TEST_FUNC);
+      
+      openLogFile("out/filmTestSolve2D.log");
+      
+      // Set up system with some data
+      System<2> system;
+      FilmIteratorTest::setUpSystem(system, "in/film/param_2D_lam");
+
+      // Read initial guess
+      system.readWBasis("in/film/w_2D_lam.bf");
+
+      // Solve
+      system.iterate();
+      TEST_ASSERT(eq(system.mask().phiTot(), 8.999959528399e-01));
+      
+      // Check that lattice parameters are correct
+      TEST_ASSERT((system.unitCell().parameter(0) - 1.6448756523) < 1e-6);
+      TEST_ASSERT(eq(system.unitCell().parameter(1),3.0));
+
+      // Check converged field is correct by comparing to reference
+      UnitCell<2> unitCell; // UnitCell object to pass to FieldIo functions
+      DArray< DArray<double> > wFieldsCheck; // Copy of reference field
+      system.fieldIo().readFieldsBasis("in/film/w_2D_lam_ref.bf", 
+                                       wFieldsCheck, unitCell);
+      BFieldComparison bComparison(0); // object to compare fields
+      bComparison.compare(system.w().basis(), wFieldsCheck);
+      if (verbose() > 0) {
+         std::cout << "\nMax error = " << bComparison.maxDiff() << "\n";
+      }
+      system.writeWBasis("out/w_2D.bf");
       TEST_ASSERT(bComparison.maxDiff() < 1.0E-5);
    }
 
@@ -500,9 +502,6 @@ public:
       // Set up iterator
       FilmIterator<1, AmIterator<1> > iterator(system);
       FilmIteratorTest::setUpFilmIterator(iterator, "in/film/film1D");
-
-      // Run the setup function (has already been tested above)
-      iterator.setup();
 
       // Solve (should only take a few iterations)
       iterator.solve();
@@ -618,7 +617,6 @@ public:
 TEST_BEGIN(FilmIteratorTest)
 TEST_ADD(FilmIteratorTest, testConstructor)
 TEST_ADD(FilmIteratorTest, testReadParameters)
-TEST_ADD(FilmIteratorTest, testSetup)
 TEST_ADD(FilmIteratorTest, testGenerateWallFields)
 TEST_ADD(FilmIteratorTest, testCheckSpaceGroup1DA)
 TEST_ADD(FilmIteratorTest, testCheckSpaceGroup1DB)
@@ -628,7 +626,8 @@ TEST_ADD(FilmIteratorTest, testCheckSpaceGroup3DB)
 TEST_ADD(FilmIteratorTest, testFlexibleParams)
 TEST_ADD(FilmIteratorTest, testReadFlexibleParams)
 TEST_ADD(FilmIteratorTest, testCheckLatticeVectors)
-TEST_ADD(FilmIteratorTest, testSolve)
+TEST_ADD(FilmIteratorTest, testSolve1D)
+TEST_ADD(FilmIteratorTest, testSolve2D)
 TEST_ADD(FilmIteratorTest, testSweep)
 TEST_ADD(FilmIteratorTest, testFreeEnergy)
 TEST_ADD(FilmIteratorTest, testMaskAndH)

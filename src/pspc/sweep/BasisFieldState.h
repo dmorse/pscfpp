@@ -73,9 +73,9 @@ namespace Pspc
       /**
       * Set the state of the associated system to this state.
       *
-      * \param newCellParams update system unit cell iff newCellParams == true.
+      * \param isFlexible update system unit cell iff isFlexible == true.
       */
-      void setSystemState(bool newCellParams);
+      void setSystemState(bool isFlexible);
 
       // Inherited member functions
       using FieldState<D, DArray<double> >::fields;

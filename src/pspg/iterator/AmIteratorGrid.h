@@ -50,12 +50,6 @@ namespace Pspg
       */
       void readParameters(std::istream& in);
 
-      /**
-      * Initialization on entry to solve.
-      */ 
-      void setup()
-      {}
-
       using AmIteratorTmpl<Iterator<D>,FieldCUDA>::setup;
       using AmIteratorTmpl<Iterator<D>,FieldCUDA>::solve;
       using Iterator<D>::isFlexible;

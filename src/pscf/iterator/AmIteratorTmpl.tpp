@@ -106,9 +106,7 @@ namespace Pscf
 
       // Preconditions for generic algorithm.
       UTIL_CHECK(hasInitialGuess());
-
-      // Allocate memory required by AM algorithm
-      if (!isAllocated_) allocateAM();
+      UTIL_CHECK(isAllocated_);
 
       // Timers for analyzing performance
       Timer timerMDE;
@@ -234,6 +232,17 @@ namespace Pscf
       Log::file() << "Iterator failed to converge.\n";
       cleanUp();
       return 1;
+   }
+
+   /*
+   * Initialize just before entry to iterative loop.
+   */
+   template <typename Iterator, typename T>
+   void AmIteratorTmpl<Iterator,T>::setup()
+   {
+      if (!isAllocated_) {
+         allocateAM();
+      }
    }
 
    // Compute residual and append to history.

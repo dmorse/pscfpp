@@ -49,11 +49,6 @@ namespace Fd1d
       */
       void readParameters(std::istream& in);
       
-      /**
-      * Setup operations, called by solve on entry.
-      */
-      virtual void setup();
-      
       // Inherited public member functions
       using AmIteratorTmpl<Iterator,DArray<double> >::solve;
       using AmIteratorTmpl<Iterator,DArray<double> >::setClassName;

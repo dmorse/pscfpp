@@ -50,39 +50,27 @@ namespace Pspc
       */
       void readParameters(std::istream& in);
 
-      /**
-      * Initialize and allocate memory (called on entry to solve).
-      */
-      void setup();
-
       // Inherited public member functions
       using AmIteratorTmpl<Iterator<D>, DArray<double> >::solve;
       using Iterator<D>::isFlexible;
       using Iterator<D>::flexibleParams;
       using Iterator<D>::setFlexibleParams;
+      using Iterator<D>::nFlexibleParams;
 
    protected:
   
       // Inherited protected members 
       using ParamComposite::readOptional;
-      using ParamComposite::readOptionalDArray;
+      using ParamComposite::readOptionalFSArray;
       using ParamComposite::setClassName;
       using Iterator<D>::system;
+      using Iterator<D>::isFlexible_;
       using Iterator<D>::flexibleParams_;
 
    private:
-
-      /// Are any lattice parameters flexible? (used only for param file IO)
-      bool isFlexible_;
       
       /// How are stress residuals scaled in error calculation?
       double scaleStress_;
-
-      /**
-      * Array of 0s and 1s indicating which lattice parameters are flexible.
-      * (used only for param file IO)  
-      */
-      DArray<int> flexParamBools_;
       
       /**
       * Find L2 norm of a residual vector.
