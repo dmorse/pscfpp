@@ -125,11 +125,13 @@ namespace Pspc
             system().mask().allocate(system().basis().nBasis(), 
                                     system().mesh().dimensions());
          }
-         if (!system().h().isAllocatedRGrid()) {
-            system().h().allocateRGrid(system().mesh().dimensions());
-         }
-         if (!system().h().isAllocatedBasis()) {
-            system().h().allocateBasis(system().basis().nBasis());
+         if (!isAthermal()) {
+            if (!system().h().isAllocatedRGrid()) {
+               system().h().allocateRGrid(system().mesh().dimensions());
+            }
+            if (!system().h().isAllocatedBasis()) {
+               system().h().allocateBasis(system().basis().nBasis());
+            }
          }
 
          // Ensure that space group symmetry is compatible with the wall
