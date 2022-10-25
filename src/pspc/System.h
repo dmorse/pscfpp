@@ -37,6 +37,8 @@ namespace Pspc
    template <int D> class IteratorFactory;
    template <int D> class Sweep;
    template <int D> class SweepFactory;
+   template <int D> class Compressor;
+   template <int D> class CompressorFactory;
 
    using namespace Util;
 
@@ -624,6 +626,11 @@ namespace Pspc
       Iterator<D> const & iterator() const;
 
       /**
+      * Get the compressor by reference.
+      */
+      Compressor<D>& compressor();
+
+      /**
       * Get homogeneous mixture (for reference calculations).
       */
       Homogeneous::Mixture& homogeneous();
@@ -668,6 +675,11 @@ namespace Pspc
        * is constrained)?
        */
       bool hasMask() const;
+
+      /**
+      * Does this system have a Compressor object?
+      */
+      bool hasCompressor() const;
 
       ///@}
 
@@ -719,6 +731,16 @@ namespace Pspc
       * Pointer to SweepFactory object
       */
       SweepFactory<D>* sweepFactoryPtr_;
+
+      /**
+      * Pointer to an compressor.
+      */
+      Compressor<D>* compressorPtr_;
+
+      /**
+      * Pointer to compressor factory object
+      */
+      CompressorFactory<D>* compressorFactoryPtr_;
 
       /**
       * Chemical potential fields.
@@ -953,6 +975,14 @@ namespace Pspc
       return *iteratorPtr_;
    }
 
+   // Get the Compressor
+   template <int D>
+   inline Compressor<D>& System<D>::compressor()
+   {
+      UTIL_ASSERT(compressorPtr_);
+      return *compressorPtr_;
+   }
+
    // Get container of chemical potential fields (const reference)
    template <int D>
    inline
@@ -994,6 +1024,11 @@ namespace Pspc
    template <int D>
    inline bool System<D>::hasMask() const
    {  return mask_.hasData(); }
+
+   // Does the system have a Compressor object?
+   template <int D>
+   inline bool System<D>::hasCompressor() const
+   {  return (compressorPtr_ != 0); }
 
    // Get the precomputed Helmoltz free energy per monomer / kT.
    template <int D>

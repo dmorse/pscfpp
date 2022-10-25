@@ -1,0 +1,32 @@
+
+Issue:
+
+1) The AmCompressorTmpl assumes the existence of residual vector and a vector
+of unknowns (a field vector) of the same dimension. The number of unknowns
+associated with incompressibility for any mixed ensemble is equal to the 
+number of basis functions, nBasis [There is a separate subtlety for canonical 
+ensemble that we will discuss separately, and later]. The field that we are
+adjusting must thus be a Langrange multiplier field with nBasis components.
+
+2) The template requires that we be able to get the current values of the fields 
+from the system and reset the system so as to implement the current values of 
+the fields.  Unfortunately, the system does not explicitly store a Lagrange
+multiplier field. Instead, it stores nMonomer w fields, one for each monomer 
+type.
+
+Proposal:
+
+1) At the beginning of iteration, in the Compressor::setup function, store
+the current values of the fields.
+
+2) Make the fields stored by the iterator correspond to Lagrange multiplier
+fields, in a container DArray< DArray<double> > w0;
+
+3) In the update function, set the w field to the sum of the w field for 
+each monomer type to be the sum of the corresponding component of w0 and 
+the newGuess for the Lagrange multiplier field. 
+
+4) In the function that gets the current values of the field, take them to
+be the difference between w and w0 for the first monomer (any monomer should
+give the same answer. 
+

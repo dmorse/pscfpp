@@ -11,9 +11,11 @@
 #include "System.h"
 
 #include <pspc/sweep/Sweep.h>
-#include <pspc/sweep/SweepFactory.h>
+#include <pspc/compressor/Compressor.h>
 
 #include <pspc/iterator/IteratorFactory.h>
+#include <pspc/sweep/SweepFactory.h>
+#include <pspc/compressor/CompressorFactory.h>
 
 #include <pspc/solvers/Mixture.h>
 #include <pspc/solvers/Polymer.h>
@@ -60,6 +62,8 @@ namespace Pspc
       iteratorFactoryPtr_(0),
       sweepPtr_(0),
       sweepFactoryPtr_(0),
+      compressorPtr_(0),
+      compressorFactoryPtr_(0),
       w_(),
       c_(),
       h_(),
@@ -78,6 +82,7 @@ namespace Pspc
       interactionPtr_ = new Interaction(); 
       iteratorFactoryPtr_ = new IteratorFactory<D>(*this); 
       sweepFactoryPtr_ = new SweepFactory<D>(*this);
+      compressorFactoryPtr_ = new CompressorFactory<D>(*this);
       BracketPolicy::set(BracketPolicy::Optional);
    }
 
@@ -101,6 +106,12 @@ namespace Pspc
       }
       if (sweepFactoryPtr_) {
          delete sweepFactoryPtr_;
+      }
+      if (compressorPtr_) {
+         delete compressorPtr_;
+      }
+      if (compressorFactoryPtr_) {
+         delete compressorFactoryPtr_;
       }
    }
 
@@ -233,6 +244,10 @@ namespace Pspc
             sweepFactoryPtr_->readObjectOptional(in, *this, className, 
                                                  isEnd);
       }
+
+      // Optionally instantiate a Compressor object
+      compressorPtr_ = 
+         compressorFactoryPtr_->readObjectOptional(in, *this, className, isEnd);
 
    }
 
@@ -450,6 +465,11 @@ namespace Pspc
          if (command == "SWEEP") {
             // Do a series of iterations.
             sweep();
+         } else
+         if (command == "COMPRESS") {
+            // Impose incompressibility
+            UTIL_CHECK(hasCompressor());
+            compressor().compress();
          } else
          if (command == "WRITE_W_BASIS") {
             readEcho(in, filename);
