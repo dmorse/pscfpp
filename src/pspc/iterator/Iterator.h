@@ -9,7 +9,6 @@
 */
 
 #include <util/param/ParamComposite.h>    // base class
-#include <util/containers/DArray.h>
 #include <util/containers/FSArray.h>
 #include <util/global.h>                  
 
@@ -59,37 +58,24 @@ namespace Pspc
       virtual int solve(bool isContinuation) = 0;
 
       /**
-      * Initialize state and allocate any required memory.
-      *
-      * This function may be called within the readParameters() function
-      * or on entry to the solve function. 
-      */
-      virtual void setup() = 0;
-
-      /**
-      * Set the array containing indices of flexible lattice parameters.
-      *
-      * \param flexParams array of indices of flexible lattice parameters
-      */ 
-      void setFlexibleParams(FSArray<int, 6> const & flexParams)
-      {  flexibleParams_ = flexParams; }
-
-      /**
       * Return true iff unit cell has any flexible lattice parameters.
       */
-      bool isFlexible() const 
-      {  return (flexibleParams_.size() != 0); }
+      bool isFlexible() const
+      {  return (isFlexible_); }
 
       /**
-      * Get the array containing indices of flexible lattice parameters.
+      * Get the array indicating which lattice parameters are flexible.
       *
-      * For example, for a crystal system with 3 lattice parameters, 
-      * return an FSArray<double> of size 3 containing [0,1,2] if all
-      * 3 are flexible, or an array [0,2] of size 2 if only the first
-      * and last are flexible. 
+      * This array should be nParameters long, where the i-th entry is a 
+      * boolean indicating whether parameter i is flexible. 
       */
-      FSArray<int, 6> flexibleParams() const
+      FSArray<bool,6> flexibleParams() const
       {  return flexibleParams_; }
+
+      /**
+      * Get the number of flexible lattice parameters.
+      */
+      int nFlexibleParams() const;
 
    protected:
 
@@ -105,10 +91,20 @@ namespace Pspc
       System<D>& system() 
       {  return *sysPtr_; }
 
+      /// Are any lattice parameters flexible during iteration?
+      bool isFlexible_;
+
+      /**
+      * Set the array indicating which lattice parameters are flexible.
+      *
+      * \param flexParams array of indices of flexible lattice parameters
+      */ 
+      void setFlexibleParams(FSArray<bool,6> const & flexParams);
+
       /**
       * Array of indices of the lattice parameters that are flexible.
       */
-      FSArray<int, 6> flexibleParams_;
+      FSArray<bool,6> flexibleParams_;
 
    private:
 
@@ -134,6 +130,30 @@ namespace Pspc
    template <int D>
    Iterator<D>::~Iterator()
    {}
+
+   // Get the number of flexible lattice parameters
+   template <int D>
+   int Iterator<D>::nFlexibleParams() const
+   {
+      UTIL_CHECK(flexibleParams_.size() == system().unitCell().nParameter());
+      int nFlexParams = 0;
+      for (int i = 0; i < flexibleParams_.size(); i++) {
+         if (flexibleParams_[i]) nFlexParams++;
+      }
+      return nFlexParams;
+   }
+
+   // Set the array indicating which lattice parameters are flexible.
+   template <int D>
+   void Iterator<D>::setFlexibleParams(FSArray<bool,6> const & flexParams)
+   {  
+      flexibleParams_ = flexParams; 
+      if (nFlexibleParams() == 0) {
+         isFlexible_ = false;
+      } else {
+         isFlexible_ = true;
+      }
+   }
 
 } // namespace Pspc
 } // namespace Pscf

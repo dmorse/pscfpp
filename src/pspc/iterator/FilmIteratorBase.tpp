@@ -115,40 +115,31 @@ namespace Pspc
    template <int D, typename IteratorType>
    void FilmIteratorBase<D, IteratorType>::setup()
    {
-      UTIL_CHECK(system().basis().isInitialized());
-
-      // Allocate the mask and external field containers if needed
-      if (!system().mask().isAllocated()) {
-         system().mask().allocate(system().basis().nBasis(), 
-                                  system().mesh().dimensions());
-      }
-      if (!system().h().isAllocatedRGrid()) {
-         system().h().allocateRGrid(system().mesh().dimensions());
-      }
-      if (!system().h().isAllocatedBasis()) {
-         system().h().allocateBasis(system().basis().nBasis());
-      }
-
-      // Ensure that the space group symmetry is compatible with the wall
-      checkSpaceGroup();
-   }
-
-   /*
-   * Iterate to a solution
-   */
-   template <int D, typename IteratorType>
-   int FilmIteratorBase<D, IteratorType>::solve(bool isContinuation)
-   {
-
       if (ungenerated_) {
-         
-         // Setup the filmIterator object
-         setup();
+
+         UTIL_CHECK(system().basis().isInitialized());
+         UTIL_CHECK(system().unitCell().isInitialized());
+
+         // Allocate the mask and external field containers if needed
+         if (!system().mask().isAllocated()) {
+            system().mask().allocate(system().basis().nBasis(), 
+                                    system().mesh().dimensions());
+         }
+         if (!isAthermal()) {
+            if (!system().h().isAllocatedRGrid()) {
+               system().h().allocateRGrid(system().mesh().dimensions());
+            }
+            if (!system().h().isAllocatedBasis()) {
+               system().h().allocateBasis(system().basis().nBasis());
+            }
+         }
+
+         // Ensure that space group symmetry is compatible with the wall
+         checkSpaceGroup();
 
          // Generate the field representation of the walls (and external
          // fields if needed) and provide them to iterator_ to use during 
-         // iteration
-         UTIL_CHECK(system().unitCell().isInitialized());
+         // iteration. This sets ungenerated_ = false.
          generateWallFields();
 
       } else {
@@ -159,12 +150,17 @@ namespace Pspc
          updateWallFields(); 
 
       }
+   }
 
-      // In case flexibleParams has been reset, we re-call this function
-      // to ensure that flexibleParams remains compatible with thin film 
-      // constraint, and that the flexibleParams array in iterator_
-      // matches the array in this object
-      setFlexibleParams();
+   /*
+   * Iterate to a solution
+   */
+   template <int D, typename IteratorType>
+   int FilmIteratorBase<D, IteratorType>::solve(bool isContinuation)
+   {
+
+      // Setup the filmIterator object
+      setup();
 
       // solve
       return iterator_.solve(isContinuation);

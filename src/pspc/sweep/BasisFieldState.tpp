@@ -116,10 +116,10 @@ namespace Pspc
    * Set System state to current state of the BasisFieldState object.
    */
    template <int D>
-   void BasisFieldState<D>::setSystemState(bool newCellParams)
+   void BasisFieldState<D>::setSystemState(bool isFlexible)
    {
       system().setWBasis(fields());
-      if (newCellParams) {
+      if (isFlexible) {
          system().setUnitCell(unitCell());
       }
    }

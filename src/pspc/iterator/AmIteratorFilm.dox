@@ -62,15 +62,14 @@ Parameters and subblocks are described below:
   <tr>
     <td> flexibleParams* </td>
     <td> Use flexibleParams to declare only *some* lattice parameters
-         as flexible. This array should contain one entry for each 
+         as flexible. **This entry is only allowed if isFlexible is set
+         set to true.** This array should contain one entry for each 
          lattice parameter, and each entry should be either 1 (true,
          parameter is flexible) or 0 (false, parameter is fixed). 
          For example, `flexibleParams[ 0 1 0 1 ]` will set the second
          and fourth lattice parameters as flexible, and fix the other 
-         two. If this array is not provided, then isFlexible is used
-         to determine whether parameters are flexible (either all are 
-         flexible or none are). This array will override the behavior
-         of isFlexible if provided. </td>
+         two. If isFlexible is true but flexibleParams is not provided, 
+         then all lattice parameters will be flexible. </td>
   </tr>
   <tr>
     <td> scaleStress* </td>

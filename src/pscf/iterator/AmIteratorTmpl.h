@@ -64,6 +64,13 @@ namespace Pscf {
       */
       int solve(bool isContinuation = false);
 
+   protected:
+
+      // Members of parent classes with non-dependent names
+      using Iterator::setClassName;
+      using ParamComposite::read;
+      using ParamComposite::readOptional;
+
       /**
       * Initialize just before entry to iterative loop.
       *
@@ -71,14 +78,7 @@ namespace Pscf {
       * the loop over iterations. It must call the protected allocateAM()
       * to allocate memory required by the AM algorithm.
       */ 
-      virtual void setup() = 0;
-
-   protected:
-
-      // Members of parent classes with non-dependent names
-      using Iterator::setClassName;
-      using ParamComposite::read;
-      using ParamComposite::readOptional;
+      virtual void setup();
      
       /**
       * Allocate memory required by AM algorithm.

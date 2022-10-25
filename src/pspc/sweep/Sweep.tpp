@@ -153,18 +153,22 @@ namespace Pspc {
             double coeff;
             double parameter;
             
-            const FSArray<int,6> indices = system().iterator().flexibleParams();
-            const int nParameter = indices.size();
+            const FSArray<bool,6> flexParams = 
+                              system().iterator().flexibleParams();
+            const int nParameter = system().unitCell().nParameter();
+            UTIL_CHECK(flexParams.size() == nParameter);
 
            // Add contributions from all previous states
             for (k = 0; k < historySize(); ++k) {
                coeff = c(k);
                for (int i = 0; i < nParameter; ++i) {
-                  if (k == 0) {
-                     unitCellParameters_[indices[i]] = 0;
+                  if (flexParams[i]) {
+                     if (k == 0) {
+                        unitCellParameters_[i] = 0;
+                     }
+                     parameter = state(k).unitCell().parameter(i);
+                     unitCellParameters_[i] += coeff*parameter;
                   }
-                  parameter = state(k).unitCell().parameter(indices[i]);
-                  unitCellParameters_[indices[i]] += coeff*parameter;
                }
             }
          }

@@ -40,41 +40,31 @@ namespace Pspc{
       isFlexible_ = 0; 
       scaleStress_ = 10.0;
 
-      // Setup to read optional flexibleParams boolean array
       int np = system().unitCell().nParameter();
-      flexParamBools_.allocate(np);
-      flexParamBools_[0] = -1; // Flag to determine if array has been set
 
-      // Read in additional optional parameters
+      // Read optional isFlexible boolean
       readOptional(in, "isFlexible", isFlexible_);
-      readOptionalDArray(in, "flexibleParams", flexParamBools_, np);
-      readOptional(in, "scaleStress", scaleStress_);
 
-      // Set flexibleParams_ array based on user input
-      if (flexParamBools_[0] != -1) { 
-         // user declared flexibleParams explicitly
+      // Populate flexibleParams_ based on isFlexible_ (all 0s or all 1s),
+      // then optionally overwrite with user input from param file
+      if (isFlexible_) {
+         flexibleParams_.clear();
          for (int i = 0; i < np; i++) {
-            if (flexParamBools_[i] == 1) {
-               flexibleParams_.append(i);
-            } else if (flexParamBools_[i] != 0) {
-               UTIL_THROW("flexibleParams can only contain values of 0 or 1");
-            }
+            flexibleParams_.append(true); // Set all values to true
          }
-      } else if (isFlexible_) {
-         // all parameters are flexible
+         // Read optional flexibleParams_ array to overwrite current array
+         readOptionalFSArray(in, "flexibleParams", flexibleParams_, np);
+         if (nFlexibleParams() == 0) isFlexible_ = false;
+      } else { // isFlexible_ = false
+         flexibleParams_.clear();
          for (int i = 0; i < np; i++) {
-            flexibleParams_.append(i);
+            flexibleParams_.append(false); // Set all values to false
          }
-      } else {
-         // no flexible params, clear flexParamBools_
-         flexParamBools_.deallocate(); 
       }
-   }
 
-   // Initialize parameters at beginning of iteration
-   template <int D>
-   void AmIterator<D>::setup()
-   {}
+      // Read optional scaleStress value
+      readOptional(in, "scaleStress", scaleStress_);
+   }
 
    // Compute and return L2 norm of residual vector
    template <int D>
@@ -240,12 +230,12 @@ namespace Pspc{
 
       int nEle = nMonomer*nBasis;
 
-      nEle += flexibleParams().size();
+      nEle += nFlexibleParams();
 
       #if 0
       Log::file() << "nMonomer    = " << nMonomer << "\n";
       Log::file() << "nBasis      = " << nMonomer << "\n";
-      Log::file() << "flex params = " << flexibleParams().size() << "\n";
+      Log::file() << "flex params = " << nFlexibleParams() << "\n";
       Log::file() << "nEle        = " << nEle << "\n";
       #endif
 
@@ -269,13 +259,17 @@ namespace Pspc{
          }
       }
 
-      const FSArray<int,6> indices = flexibleParams();
-      const int nParam = indices.size();
+      const int nParam = system().unitCell().nParameter();
       const FSArray<double,6> currParam = system().unitCell().parameters();
 
+      int counter = 0;
       for (int i = 0; i < nParam; i++) {
-         curr[nMonomer*nBasis + i] = scaleStress_*currParam[indices[i]];
+         if (flexibleParams_[i]) {
+            curr[nMonomer*nBasis + counter] = scaleStress_*currParam[i];
+            counter++;
+         }
       }
+      UTIL_CHECK(counter == nFlexibleParams());
 
       return;
    }
@@ -359,8 +353,7 @@ namespace Pspc{
 
       // If variable unit cell, compute stress residuals
       if (isFlexible()) {
-         const FSArray<int,6> indices = flexibleParams();
-         const int nParam = indices.size();
+         const int nParam = system().unitCell().nParameter();
 
          // Combined -1 factor and stress scaling here. This is okay:
          // - residuals only show up as dot products (U, v, norm)
@@ -371,10 +364,15 @@ namespace Pspc{
          //   storage, so that updating is done on the same scale,
          //   and then undone right before passing to the unit cell.
 
+         int counter = 0;
          for (int i = 0; i < nParam ; i++) {
-            resid[nMonomer*nBasis + i] = scaleStress_ * -1
-                                       * system().mixture().stress(indices[i]);
+            if (flexibleParams_[i]) {
+               resid[nMonomer*nBasis + counter] = scaleStress_ * -1
+                                    * system().mixture().stress(i);
+               counter++;
+            }
          }
+         UTIL_CHECK(counter == nFlexibleParams());
       }
 
    }
@@ -411,15 +409,18 @@ namespace Pspc{
       system().setWBasis(wField);
 
       if (isFlexible()) {
-         const FSArray<int,6> indices = flexibleParams();
-         const int nParam = indices.size();
+         const int nParam = system().unitCell().nParameter();
          FSArray<double,6> parameters = system().unitCell().parameters();
-         int ind, i;
+         int counter = 0;
 
-         for (i = 0; i < nParam; i++) {
-            ind = indices[i];
-            parameters[ind] = 1/scaleStress_ * newGuess[nMonomer*nBasis + i];
+         for (int i = 0; i < nParam; i++) {
+            if (flexibleParams_[i]) {
+               parameters[i] = 1/scaleStress_ * 
+                               newGuess[nMonomer*nBasis + counter];
+               counter++;
+            }
          }
+         UTIL_CHECK(counter == nFlexibleParams());
 
          system().setUnitCell(parameters);
       }

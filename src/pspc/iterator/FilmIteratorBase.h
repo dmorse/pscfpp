@@ -71,14 +71,6 @@ namespace Pspc
       void readParameters(std::istream& in);
 
       /**
-      * Allocate required memory, perform necessary checks to ensure user 
-      * input is compatible with a film constraint, and create the mask / 
-      * external fields that will be used to represent the walls during 
-      * iteration.
-      */
-      void setup();
-
-      /**
       * Iterate to a solution
       *
       * \param isContinuation true iff continuation within a sweep
@@ -91,11 +83,11 @@ namespace Pspc
       IteratorType const & iterator() const;
 
       /**
-      * Determine the indices of each flexible lattice parameter, based on
-      * normalVecId and unitCell definitions in param file. Gives a warning 
-      * if none of the parameters are actually able to be varied given the 
-      * thin film constraints. Stores resulting array in flexibleParams_ 
-      * member of this object, as well as the flexibleParams_ member of the 
+      * Modifies flexibleParams_ to be compatible with thin film constraint.
+      * 
+      * Modifies the flexibleParams_ array to be compatible with the thin
+      * film constraint. Stores resulting array in flexibleParams_ member
+      * of this object, as well as the flexibleParams_ member of the
       * iterator within this object.
       * 
       * This function varies depending on D, the dimensionality of the
@@ -105,9 +97,12 @@ namespace Pspc
       virtual void setFlexibleParams() = 0;
 
       /**
+      * Check that lattice vectors are compatible with thin film constraint.
+      * 
       * Check that user-defined lattice basis vectors (stored in the
       * Domain<D> object associated with this FilmIterator class)
-      * are compatible with the thin film constraint
+      * are compatible with the thin film constraint. All lattice basis
+      * vectors must be either parallel or perpendicular to the walls.
       * 
       * This function varies depending on D, the dimensionality of the
       * system. Therefore, it is implemented in the partial class 
@@ -116,15 +111,19 @@ namespace Pspc
       virtual void checkLatticeVectors() const = 0;
 
       /**
+      * Generates mask and external field for the walls and stores in System.
+      * 
       * Generates the field representation of the walls, based on the values
       * of wallThickness and interfaceThickness that were input by the user.
       * Then, stores this wall field in system().mask() to be used
       * as a mask during iteration, and also passes the corresponding
-      * external potential fields into system().h() if isAthermal() == false.
+      * external potential fields into system().h() if isAthermal() = false.
       */
       void generateWallFields();
 
       /**
+      * Updates the mask and external fields for the walls if needed.
+      * 
       * Checks whether the lattice parameters have been updated since the
       * last call of generateWallFields(), and if the parameters have
       * changed then calls generateWallFields() again to update them. 
@@ -132,23 +131,24 @@ namespace Pspc
       * Also updates the external fields if the wall/polymer chi parameters
       * have been updated since external fields were last generated.
       */
-     void updateWallFields();
+      void updateWallFields();
 
       /**
-      * Check that user-defined space group is compatible with the
-      * thin film constraint
+      * Check that space group is compatible with the thin film constraint.
       */
       void checkSpaceGroup() const;
 
       /**
-      * Check whether or not the walls are chemically identical using
-      * the values in chiBottom and chiTop.
+      * Are the walls chemically identical?
+      * 
+      * This is the case when chiBottom is equal to chiTop.
       */
       bool isSymmetric() const;
 
       /**
-      * Check whether or not the walls are athermal (this is only true
-      * if all of the values in chiBottom and chiTop are zero)
+      * Are the walls athermal?
+      * 
+      * This is only true if all values in chiBottom and chiTop are zero.
       */
       bool isAthermal() const;
 
@@ -212,18 +212,31 @@ namespace Pspc
    protected:
 
       /**
+      * Initialize just before entry to iterative loop.
+      * 
+      * Allocate required memory, perform necessary checks to ensure user 
+      * input is compatible with a film constraint, and create the mask / 
+      * external fields that will be used to represent the walls during 
+      * iteration.
+      */
+      void setup();
+      
+      /**
       * Return reference to the real iterator within this FilmIterator
       */
       IteratorType& iterator();
 
       /**
-      * Generate external fields only, and pass them into iterator object 
-      * for use during calculation. This is called by generateWallFields().
+      * Generate external fields for the walls.
+      * 
+      * Generate external fields only, and pass them into System for use
+      * during calculation. This is called by generateWallFields().
       */
       void generateExternalFields();
 
       using Iterator<D>::system;
       using Iterator<D>::setClassName;
+      using Iterator<D>::isFlexible_;
       using ParamComposite::read;
       using ParamComposite::readOptional;
       using ParamComposite::readOptionalDArray;
