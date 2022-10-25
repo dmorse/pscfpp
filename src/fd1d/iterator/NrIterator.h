@@ -73,39 +73,6 @@ namespace Fd1d
       */
       int solve(bool isContinuation = false);
 
-      /**
-      * Allocate required memory (called in readParameters).
-      */
-      void setup();
-
-      /**
-      * Get error tolerance.
-      */
-      double epsilon();
-
-      /**
-      * Compute the residual vector.
-      *
-      * \param wFields monomer chemical potential fields (input)
-      * \param cFields monomer concentration fields (input)
-      * \param residual vector of residuals (errors) (output)
-      */
-      void computeResidual(Array<WField> const & wFields, 
-                           Array<WField> const & cFields, 
-                           Array<double>& residual);
-
-      /**
-      * Compute and return norm of a residual vector.
-      *
-      * \param residual vector of residuals (errors) (input)
-      */
-      double residualNorm(Array<double> const & residual) const;
-
-      /**
-      * Compute the Jacobian matrix (stored in class member).
-      */
-      void computeJacobian();
-
    private:
 
       /// Solver for linear system Ax = b.
@@ -153,6 +120,36 @@ namespace Fd1d
       /// Is the ensemble canonical for all species ?
       bool isCanonical_;
 
+      // Private member functions
+
+      /**
+      * Allocate required memory (called in readParameters).
+      */
+      void setup();
+
+      /**
+      * Compute the residual vector.
+      *
+      * \param wFields monomer chemical potential fields (input)
+      * \param cFields monomer concentration fields (input)
+      * \param residual vector of residuals (errors) (output)
+      */
+      void computeResidual(Array<WField> const & wFields, 
+                           Array<WField> const & cFields, 
+                           Array<double>& residual);
+
+      /**
+      * Compute and return norm of a residual vector.
+      *
+      * \param residual vector of residuals (errors) (input)
+      */
+      double residualNorm(Array<double> const & residual) const;
+
+      /**
+      * Compute the Jacobian matrix (stored in class member).
+      */
+      void computeJacobian();
+
       /**
       * Increment the chemical potential fields
       *
@@ -165,11 +162,6 @@ namespace Fd1d
                             Array<WField>& wNew);
 
    };
-
-   // Inline function
-
-   inline double NrIterator::epsilon()
-   {  return epsilon_; }
 
 } // namespace Fd1d
 } // namespace Pscf

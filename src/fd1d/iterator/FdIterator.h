@@ -73,19 +73,7 @@ namespace Fd1d
       * \return error code: 0 for success, 1 for failure.
       */
       int solve(bool isContinuation = false);
-    
-      /**
-      * Get error tolerance.
-      */
-      double epsilon();
-      
-      /**
-      * Get lambda learning rate.
-      */
-      double lambdaPlus();
-      double lambdaMinus();
-    
-    
+   
    private:
     
     
@@ -121,10 +109,10 @@ namespace Fd1d
       /// Error tolerance.
       double epsilon_;
       
-      
-      /// learning rate
+      /// Mixing parameter for Wplus 
       double lambdaPlus_;
       
+      /// Mixing parameter for Wminus
       double lambdaMinus_;
       
       /// Max iteration
@@ -165,20 +153,6 @@ namespace Fd1d
                          Array<WField> & wNew);
                          
    };
-      
- 
-      
-
-   // Inline function
-
-   inline double FdIterator::epsilon()
-   {  return epsilon_; }
-
-   inline double FdIterator::lambdaPlus()
-   {  return lambdaPlus_; }
-
-   inline double FdIterator::lambdaMinus()
-   {  return lambdaMinus_; }
 
 } // namespace Fd1d
 } // namespace Pscf

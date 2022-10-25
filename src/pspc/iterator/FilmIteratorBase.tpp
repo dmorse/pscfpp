@@ -159,7 +159,7 @@ namespace Pspc
    int FilmIteratorBase<D, IteratorType>::solve(bool isContinuation)
    {
 
-      // Setup the filmIterator object
+      // Setup the FilmIteratorBase object, set external fields and mask
       setup();
 
       // solve

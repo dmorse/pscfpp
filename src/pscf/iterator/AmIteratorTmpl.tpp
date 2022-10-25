@@ -64,14 +64,15 @@ namespace Pscf
    }
 
    /*
-   * Allocate memory required by the Anderson-Mixing algorithm.
+   * Allocate memory required by the Anderson-Mixing algorithm, if needed.
    */
    template <typename Iterator, typename T>
    void AmIteratorTmpl<Iterator,T>::allocateAM()
    {
-      UTIL_CHECK(!isAllocated_);
+      // If already allocated, do nothing and return
+      if (isAllocated_) return;
 
-      // Determine length of residual basis vectors
+      // Determine number of elements in a residual vector
       nElem_ = nElements();
 
       // Allocate ring buffers
@@ -99,7 +100,7 @@ namespace Pscf
    template <typename Iterator, typename T>
    int AmIteratorTmpl<Iterator,T>::solve(bool isContinuation)
    {
-      // Note: Parameter isContinuation is currently unused in AM algorithm
+      // Note: Parameter isContinuation is currently unused 
 
       // Initialization and allocate operations on entry to loop.
       setup();
@@ -240,9 +241,9 @@ namespace Pscf
    template <typename Iterator, typename T>
    void AmIteratorTmpl<Iterator,T>::setup()
    {
-      if (!isAllocated_) {
-         allocateAM();
-      }
+      // Allocate memory required by AM algorithm if not done earlier.
+      // If already allocated, do nothing and return.
+      allocateAM();
    }
 
    // Compute residual and append to history.

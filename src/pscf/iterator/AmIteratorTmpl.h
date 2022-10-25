@@ -76,12 +76,17 @@ namespace Pscf {
       *
       * This function is called by the solve method just before entering
       * the loop over iterations. It must call the protected allocateAM()
-      * to allocate memory required by the AM algorithm.
+      * to allocate memory required by the AM algorithm. The default
+      * implementation just calls allocateAM(). Re-implementations by
+      * subclasses may add additional operations.
       */ 
       virtual void setup();
      
       /**
-      * Allocate memory required by AM algorithm.
+      * Allocate memory required by AM algorithm, if necessary.
+      *
+      * If the required memory has been allocated previously, this 
+      * function does nothing and returns.
       */
       void allocateAM();
 
