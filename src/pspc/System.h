@@ -120,41 +120,48 @@ namespace Pspc
       void readCommands();
 
       //@}
-      /// \name State Modifiers (Modify W Fields and Unit Cell)
+      /// \name W Field Modifiers
       //@{
 
       /**
       * Read chemical potential fields in symmetry adapted basis format.
       *
-      * This function calls the member function readBasis of the system
-      * wFieldContainer w_. The w_ object opens and reads the file with
-      * name "filename", which must contain chemical potential fields in 
-      * symmetry-adapted basis format, stores these fields in w_.basis(),
-      * converts these fields to real-space grid format, and stores
-      * the result in w_.rgrid(). On exit, hasCFields is false.
+      * This function opens and reads the file with the name given by the
+      * "filename" string, which must contain chemical potential fields
+      * in symmetry-adapted basis format. The function copies these
+      * fields to set new values for the system w fields in basis format, 
+      * and also computes and resets the system w fields in r-space 
+      * format. On exit, both w().basis() and w().rgrid() have been 
+      * reset, w().hasData and w().isSymmetric() are true, and 
+      * hasCFields() is false.
       *
       * \param filename name of input w-field basis file
       */
       void readWBasis(const std::string & filename);
-   
+
       /**
-      * Read chemical potential fields in real-space grid (r-grid) format.
+      * Read chemical potential fields in real space grid (r-grid) format.
       *
-      * This function calls the member function readRGrid of the system
-      * wFieldContainer w_. The w_ object opens and reads the file with
-      * name "filename", which must contain chemical potential fields in 
-      * real space grid (r-grid) format, and stores these fields in
-      * w_.rgrid(). On exit, hasCFields and w_.isSymmetric() are false.
+      * This function opens and reads the file with the name given by the
+      * "filename" string, which must contains chemical potential fields
+      * in real space grid (r-grid) format. The function sets values for 
+      * system w fields in r-grid format. It does not set attempt to set
+      * field values in symmetry-adapted basis format, because it cannot
+      * be known whether the r-grid field exhibits the declared space
+      * group symmetry.  On exit, w().rgrid() is reset and w().hasData() 
+      * is true, while w().isSymmetric() and hasCFields() are false.
       *
-      * \param filename name of input w-field file in r-grid format
+      * \param filename  name of input w-field basis file
       */
       void readWRGrid(const std::string & filename);
 
       /**
-      * Set new w fields, in symmetrized-adapted Fourier basis format.
+      * Set chemical potential fields, in symmetry-adapted basis format.
       *
-      * On exit, both w().basis() and w().rgrid() are reset, w().hasData()
-      * and w().isSymmetric() are true and hasCFields() is false.
+      * This function sets values for w fields in both symmetry adapted 
+      * and r-grid format.  On exit, values of both w().basis() and 
+      * w().rgrid() are reset, w().hasData() and w().isSymmetric() are 
+      * true, and hasCFields() is false. 
       *
       * \param fields  array of new w (chemical potential) fields
       */
@@ -163,12 +170,18 @@ namespace Pspc
       /**
       * Set new w fields, in real-space (r-grid) format.
       *
-      * On exit, w().rgrid() is reset, w().hasData() is true but 
-      * w().isSymmetric() is false and hasCFields() is false.
+      * This function set values for w fields in r-grid format, but does
+      * not set components the symmetry-adapted basis format.  On exit, 
+      * w.rgrid() is reset, w().hasData() is true, hasCFields() is false 
+      * and w().isSymmetric() is false.
       *
       * \param fields  array of new w (chemical potential) fields
       */
-      void setWRGrid(DArray<Field> const & fields);
+      void setWRGrid(DArray< RField<D> > const & fields);
+
+      //@}
+      /// \name Unit Cell Modifiers
+      //@{
 
       /**
       * Set parameters of the associated unit cell.
@@ -788,7 +801,7 @@ namespace Pspc
       bool isAllocatedRGrid_;
 
       /**
-      * Has memory been allocated for fields in grid format?
+      * Has memory been allocated for fields in symmetrized basis format?
       */
       bool isAllocatedBasis_;
 

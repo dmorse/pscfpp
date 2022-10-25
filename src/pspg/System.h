@@ -132,18 +132,14 @@ namespace Pspg
       /**
       * Read chemical potential fields in symmetry adapted basis format.
       *
-      * This function opens and reads the file with the name given by
-      * the "filename" string, which must contains chemical potential 
-      * fields in symmetry-adapted basis format. The function stores 
-      * these components fields in a container owned by the system,
-      * and also computes and stores the corresponding real-space grid
-      * format. After exit, w().basis() and w().rgrid() have been reset,
-      * w().hasData and w().isSymmetric() are true, and hasCFields()
-      * is false.
-      *
-      * This implementation of this function calls the member function
-      * readBasis of the WFieldContainer<D> that is returned by the 
-      * w() accessor.
+      * This function opens and reads the file with the name given by the
+      * "filename" string, which must contain chemical potential fields
+      * in symmetry-adapted basis format. The function copies these
+      * fields to set new values for the system w fields in basis format, 
+      * and also computes and resets the system w fields in r-space 
+      * format. On exit, both w().basis() and w().rgrid() have been 
+      * reset, w().hasData and w().isSymmetric() are true, and 
+      * hasCFields() is false.
       *
       * \param filename name of input w-field basis file
       */
@@ -152,23 +148,26 @@ namespace Pspg
       /**
       * Read chemical potential fields in real space grid (r-grid) format.
       *
-      * This function opens and reads the file with the name given by
-      * the "filename" string, which must contains chemical potential 
-      * fields in real space grid (r-grid) format. The function stores 
-      * these components fields in a container owned by the system.
-      * After exit, w().hasData() is true, while w().isSymmetric() and
-      * hasCFields() are false.
+      * This function opens and reads the file with the name given by the
+      * "filename" string, which must contains chemical potential fields
+      * in real space grid (r-grid) format. The function sets values for 
+      * system w fields in r-grid format. It does not set attempt to set
+      * field values in symmetry-adapted basis format, because it cannot
+      * be known whether the r-grid field exhibits the declared space
+      * group symmetry.  On exit, w().rgrid() is reset and w().hasData() 
+      * is true, while w().isSymmetric() and hasCFields() are false.
       *
-      * \param filename name of input w-field basis file
+      * \param filename  name of input w-field basis file
       */
       void readWRGrid(const std::string & filename);
 
       /**
-      * Set new w fields, in symmetry-adapted basis format.
+      * Set chemical potential fields, in symmetry-adapted basis format.
       *
-      * On exit, values of both w().basis() and w().rgrid() are reset,
-      * w().hasData() and w().isSymmetric() are true and hasCFields()
-      * are false. 
+      * This function sets values for w fields in both symmetry adapted 
+      * and r-grid format.  On exit, values of both w().basis() and 
+      * w().rgrid() are reset, w().hasData() and w().isSymmetric() are 
+      * true, and hasCFields() is false. 
       *
       * \param fields  array of new w (chemical potential) fields
       */
@@ -177,23 +176,26 @@ namespace Pspg
       /**
       * Set new w fields, in real-space (r-grid) format.
       *
-      * On exit, w.rgrid() is reset, w().hasData() is true, but
-      * w().isSymmetric() is false and hasCFields() is false.
+      * This function set values for w fields in r-grid format, but does
+      * not set components the symmetry-adapted basis format.  On exit, 
+      * w.rgrid() is reset, w().hasData() is true, hasCFields() is false 
+      * and w().isSymmetric() is false.
       *
       * \param fields  array of new w (chemical potential) fields
       */
       void setWRGrid(DArray< RDField<D> > const & fields);
 
       /**
-      * Set new w fields, in unfoled real-space (r-grid) format.
+      * Set new w fields, in unfolded real-space (r-grid) format.
       *
-      * The array fields is an unfolded array that contains fields for
-      * all monomer types, with the field for monomer 0 first, etc.
-      *
-      * On exit, w().hasData is set true while w().isSymmetric() and
+      * The function parameter "fields" is an unfolded array containing
+      * r-grid fields for all monomer types in a single array, with the
+      * field for monomer 0 first, followed by the field for monomer 1, 
+      * etc. This function sets w().rgrid() but does not set w().basis().
+      * On exit, w().hasData is true, while w().isSymmetric() and
       * hasCFields() are both false.
       *
-      * \param fields  unfolded array of new w (chemical potential) fields
+      * \param fields  unfolded array of new chemical potential fields
       */
       void setWRGrid(DField<cudaReal> & fields);
 
@@ -207,6 +209,11 @@ namespace Pspg
 
       /**
       * Set parameters of the associated unit cell.
+      *
+      * The lattice system declared within the input unitCell must agree 
+      * with Domain::lattice() on input if Domain::lattice() is not null. 
+      * The value returned by Domain::lattice() is normally set in the
+      * Domain block of the parameter file, and does not change thereafter.
       *
       * \param unitCell  new UnitCell<D> (i.e., new parameters)
       */
@@ -239,10 +246,13 @@ namespace Pspg
       * free energy (i.e., pressure). Upon return, the flag hasCFields
       * is set true.
       *
+      * \pre The boolean w().hasData() must be true on entry
+      * \post hasCFields is true on exit
+      *
       * If argument needStress == true, then this function also calls
       * Mixture<D>::computeStress() to compute the stress.
       *
-      * \param needStress true if stress is needed, false otherwise
+      * \param needStress  true if stress is needed, false otherwise
       */
       void compute(bool needStress = false);
 
@@ -258,7 +268,7 @@ namespace Pspg
       * energy and pressure are computed if and only if convergence is
       * obtained.
       *
-      * \pre The w().hasData() flag must be true on entry
+      * \pre The w().hasData() flag must be true on entry.
       *
       * \param isContinuation  true iff continuation within a sweep
       * \return returns 0 for successful convergence, 1 for failure
@@ -274,8 +284,8 @@ namespace Pspg
       * is determined by implementation of a subclass of Sweep and the
       * parameters passed to the sweep object in the parameter file.
       *
-      * An Exception is thrown if sweep() is called when no Sweep has
-      * been created (i.e., if hasSweep() returns false).
+      * \pre The w().hasData() flag must be true on entry.
+      * \pre A sweep object must have been created in the parameter file.
       */
       void sweep();
 
@@ -289,21 +299,24 @@ namespace Pspg
       * This function should be called after a successful call of
       * iterator().solve(). Resulting values are returned by the
       * freeEnergy() and pressure() accessor functions.
+      *
+      * \pre w().hasData must be true.
+      * \pre hasCFields must be true.
       */
       void computeFreeEnergy();
 
       /**
       * Get precomputed Helmoltz free energy per monomer / kT.
       *
-      * The value retrieved by this function is computed by the
+      * The value retrieved by this function is pre-computed by the
       * computeFreeEnergy() function.
       */
       double fHelmholtz() const;
 
       /**
-      * Get precomputed pressure x monomer volume kT.
+      * Get precomputed pressure times monomer volume / kT.
       *
-      * The value retrieved by this function is computed by the
+      * The value retrieved by this function is pre-computed by the
       * computeFreeEnergy() function.
       */
       double pressure() const;
@@ -341,7 +354,7 @@ namespace Pspg
       void writeCRGrid(const std::string & filename) const;
 
       /**
-      * Write c-fields for all blocks and solvents in r-grid format.
+      * Write c fields for all blocks and solvents in r-grid format.
       *
       * Writes concentrations for all blocks of all polymers and all
       * solvent species in r-grid format. Columns associated with blocks
@@ -353,17 +366,7 @@ namespace Pspg
       void writeBlockCRGrid(const std::string & filename) const;
 
       /**
-      * Write tail (last slice) of a propagator in r-grid format.
-      *
-      * \param filename  name of output file
-      * \param polymerID  integer index of polymer species
-      * \param blockID  integer index of block within polymer
-      */
-      void writePropagatorTail(const std::string & filename,
-                               int polymerID, int blockID);
-
-      /**
-      * Write slice of a propagator at fixed s in r-grid format.
+      * Write specified slice of a propagator at fixed s in r-grid format.
       *
       * \param filename  name of output file
       * \param polymerId  integer id of the polymer
