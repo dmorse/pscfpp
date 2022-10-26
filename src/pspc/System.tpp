@@ -55,6 +55,7 @@ namespace Pspc
    System<D>::System()
     : mixture_(),
       domain_(),
+      mcMoveManager_(*this),
       fileMaster_(),
       homogeneous_(),
       interactionPtr_(0),
@@ -852,6 +853,114 @@ namespace Pspc
       sweepPtr_->sweep();
    }
    
+   /*
+   * Perform a MC simulation.
+   */
+   template <int D>
+   void System<D>::simulate(int endStep, bool isContinuation)
+   {
+
+      #if 0
+      // Setup before main loop
+      if (isContinuation) {
+         Log::file() << "Continuing from iStep = "
+                     << iStep_ << std::endl;
+      } else {
+         // analyzerManager().setup();
+      }
+      #endif
+
+      int iStep_ = 0;
+      int beginStep = iStep_;
+      int nStep = endStep - beginStep;
+      Log::file() << std::endl;
+
+      // Main Monte Carlo loop
+      Timer timer;
+      timer.start();
+      for ( ; iStep_ < endStep; ++iStep_) {
+
+         #if 0
+         // Call analyzers
+         if (Analyzer::baseInterval != 0) {
+            if (iStep_ % Analyzer::baseInterval == 0) {
+               if (analyzerManager().size() > 0) {
+                  system().positionSignal().notify();
+                  analyzerManager().sample(iStep_);
+                  system().positionSignal().notify();
+               }
+            }
+         }
+         #endif
+
+         // Choose and attempt an McMove
+         mcMoveManager().chooseMove().move();
+
+      }
+      timer.stop();
+      double time = timer.time();
+
+      #if 0
+      // Final analyzers
+      assert(iStep_ == endStep);
+      if (Analyzer::baseInterval > 0) {
+         if (iStep_ % Analyzer::baseInterval == 0) {
+            if (analyzerManager().size() != 0) {
+               system().positionSignal().notify();
+               analyzerManager().sample(iStep_);
+               system().positionSignal().notify();
+            }
+         }
+      }
+      #endif
+
+      #if 0
+      // Output results of all analyzers to output files
+      if (Analyzer::baseInterval > 0) {
+         analyzerManager().output();
+      }
+      #endif
+
+      // Output results of move statistics to files
+      mcMoveManager().output();
+
+      // Output time for the run
+      Log::file() << std::endl;
+      Log::file() << "endStep       " << endStep << std::endl;
+      Log::file() << "nStep         " << nStep << std::endl;
+      Log::file() << "run time      " << time
+                  << " sec" << std::endl;
+      double rStep = double(nStep);
+      Log::file() << "time / nStep  " <<  time / rStep
+                  << " sec" << std::endl;
+      Log::file() << std::endl;
+
+      // Print McMove acceptance statistics
+      long attempt;
+      long accept;
+      using namespace std;
+      Log::file() << "Move Statistics:" << endl << endl;
+      Log::file() << setw(32) << left <<  "Move Name"
+           << setw(12) << right << "Attempted"
+           << setw(12) << right << "Accepted"
+           << setw(15) << right << "AcceptRate"
+           << endl;
+      int nMove = mcMoveManager().size();
+      for (int iMove = 0; iMove < nMove; ++iMove) {
+         attempt = mcMoveManager()[iMove].nAttempt();
+         accept  = mcMoveManager()[iMove].nAccept();
+         Log::file() << setw(32) << left
+              << mcMoveManager().className(iMove)
+              << setw(12) << right << attempt
+              << setw(12) << accept
+              << setw(15) << fixed << setprecision(6)
+              << ( attempt == 0 ? 0.0 : double(accept)/double(attempt) )
+              << endl;
+      }
+      Log::file() << endl;
+
+   }
+
    // Thermodynamic Properties
 
    /*

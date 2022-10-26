@@ -11,6 +11,7 @@
 
 #include <util/param/ParamComposite.h>     // base class
 
+#include <pspc/mcmove/McMoveManager.h>     // member
 #include <pspc/solvers/Mixture.h>          // member
 #include <pspc/field/Domain.h>             // member
 #include <pspc/field/FieldIo.h>            // member
@@ -40,6 +41,8 @@ namespace Pspc
    template <int D> class SweepFactory;
    template <int D> class Compressor;
    template <int D> class CompressorFactory;
+   template <int D> class McMove;
+   template <int D> class McMoveFactory;
 
    using namespace Util;
 
@@ -268,6 +271,14 @@ namespace Pspc
       * created (i.e., if hasSweep() == false).
       */
       void sweep();
+
+      /**
+      * Run a field theoretic Monte-Carlo simulation.
+      *
+      * \param endStep  index of final step
+      * \param isContinuation  is this a continuation of an earlier simulation
+      */
+      void simulate(int endStep, bool isContinuation);
 
       //@}
       /// \name Thermodynamic Properties
@@ -642,6 +653,11 @@ namespace Pspc
       Homogeneous::Mixture const & homogeneous() const;
 
       /**
+      * Get McMoveManager container for Monte Carlo moves.
+      */
+      McMoveManager<D>& mcMoveManager();
+
+      /**
       * Get FileMaster by reference.
       */
       FileMaster& fileMaster();
@@ -702,6 +718,11 @@ namespace Pspc
       * Domain object (unit cell, space group, mesh, and basis).
       */
       Domain<D> domain_;
+
+      /**
+      * Container for McMove objects (Monte Carlo Moves).
+      */
+      McMoveManager<D> mcMoveManager_;
 
       /**
       * Filemaster (holds paths to associated I/O files).
@@ -933,6 +954,11 @@ namespace Pspc
    template <int D>
    inline std::string System<D>::groupName() const
    { return domain_.groupName(); }
+
+   // Get the McMoveManager.
+   template <int D>
+   inline McMoveManager<D>& System<D>::mcMoveManager()
+   {  return mcMoveManager_; }
 
    // Get the FileMaster.
    template <int D>

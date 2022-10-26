@@ -95,12 +95,11 @@ namespace Pspc {
       */
       void output();
 
+      using Manager< McMove<D> >::size;
+
    protected:
 
-      //using ParamComposite::setClassName;
-
       using Manager< McMove<D> >::setClassName;
-      using Manager< McMove<D> >::size;
        
    private:
 
