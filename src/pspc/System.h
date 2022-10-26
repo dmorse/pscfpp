@@ -22,6 +22,7 @@
 
 #include <pscf/homogeneous/Mixture.h>      // member
 
+#include <util/random/Random.h>            // member
 #include <util/misc/FileMaster.h>          // member
 #include <util/containers/DArray.h>        // member template
 #include <util/containers/FSArray.h>       // member template
@@ -646,9 +647,14 @@ namespace Pspc
       FileMaster& fileMaster();
 
       /**
-      * Get const FileMaster by reference.
+      * Get FileMaster by const reference.
       */
       FileMaster const & fileMaster() const;
+
+      /**
+      * Get Random object by reference.
+      */
+      Random& random();
 
       /**
       * Get the group name string.
@@ -701,6 +707,11 @@ namespace Pspc
       * Filemaster (holds paths to associated I/O files).
       */
       FileMaster fileMaster_;
+
+      /**
+      * Random number generator.
+      */
+      Random random_;
 
       /**
       * Homogeneous mixture, for reference.
@@ -932,6 +943,11 @@ namespace Pspc
    template <int D>
    inline FileMaster const & System<D>::fileMaster() const
    {  return fileMaster_; }
+
+   // Get the Random object.
+   template <int D>
+   inline Random& System<D>::random()
+   {  return random_; }
 
    // Get the Homogeneous::Mixture object.
    template <int D>
