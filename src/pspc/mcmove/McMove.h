@@ -139,6 +139,18 @@ namespace Pspc
       */
       void readProbability(std::istream& in);
 
+      /**
+      *  Attempt unconstrained move.
+      *
+      *  This function should modify the system w fields in r-grid 
+      *  format, as returned by system().w().rgrid(), in order apply 
+      *  an unconstrained attempted move. The compressor will then be
+      *  applied in order to restore the density constraint.
+      *
+      *  The default implementation is empty.
+      */
+      virtual void attemptMove() {};
+
    private:
 
       /// Pointer to parent System object

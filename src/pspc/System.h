@@ -12,6 +12,8 @@
 #include <util/param/ParamComposite.h>     // base class
 
 #include <pspc/mcmove/McMoveManager.h>     // member
+#include <pspc/mcmove/McState.h>           // member
+
 #include <pspc/solvers/Mixture.h>          // member
 #include <pspc/field/Domain.h>             // member
 #include <pspc/field/FieldIo.h>            // member
@@ -273,43 +275,6 @@ namespace Pspc
       void sweep();
 
       //@}
-      /// \name Field Theoretic Monte Carlo Simulation
-      //@{
-
-      /**
-      * Perform a field theoretic Monte-Carlo simulation.
-      *
-      * Perform a field theoretic Monte-Carlo simulation using the 
-      * partial saddle-point approximation. 
-      * 
-      * \param nStep  number of Monte-Carlo steps
-      */
-      void simulate(int nStep);
-
-      /**
-      * Save a copy of the current w fields in r-grid format.
-      *
-      * This function and restoreWRGrid() are intended for use in 
-      * the implementation of field theoretic Monte Carlo moves.
-      * This function stores the current w fields to a work array.
-      * This is normally the first step of a MC move, prior to an
-      * attempted modification of the fields stored in the w()
-      * container.
-      */
-      void saveWRGrid();
-
-      /**
-      * Restore the saved copy of the w fields in r-grid format.
-      *
-      * This function  and saveWGrid() are intended to be used 
-      * together in the implementation of Monte-Carlo moves. If an 
-      * attempted move is rejected, restoreWRGrid() should be called
-      * to restore the fields that were saved by a previous call to 
-      * saveWGrid() function.
-      */
-      void restoreWRGrid();
-
-      //@}
       /// \name Thermodynamic Properties
       //@{
 
@@ -337,6 +302,53 @@ namespace Pspc
       * computeFreeEnergy() function.
       */
       double pressure() const;
+
+      //@}
+      /// \name Field Theoretic Monte Carlo Simulation
+      //@{
+
+      /**
+      * Perform a field theoretic Monte-Carlo simulation.
+      *
+      * Perform a field theoretic Monte-Carlo simulation using the 
+      * partial saddle-point approximation. 
+      * 
+      * \param nStep  number of Monte-Carlo steps
+      */
+      void simulate(int nStep);
+
+      /**
+      * Compute the Hamiltonian used in Monte-Carlo simulations.
+      */
+      void computeMcHamiltonian();
+
+      /**
+      * Get the Hamiltonian used in Monte-Carlo simulations.
+      */
+      double mcHamiltonian() const;
+
+      /**
+      * Save a copy of the Monte-Carlo state.
+      *
+      * This function and restoreMcState() are intended for use in 
+      * the implementation of field theoretic Monte Carlo moves. This
+      * function stores the current w fields and the corresponding 
+      * Hamiltonian value.  This is normally the first step of a MC 
+      * move, prior to an attempted modification of the fields stored
+      * in the system w field container.
+      */
+      void saveMcState();
+
+      /**
+      * Restore the saved copy of the Monte-Carlo state.
+      *
+      * This function  and saveMcState() are intended to be used 
+      * together in the implementation of Monte-Carlo moves. If an 
+      * attempted move is rejected, restoreMcState() is called to
+      * restore the fields ahd Hamiltonian value that were saved 
+      * by a previous call to the function saveMcState().
+      */
+      void restoreMcState();
 
       //@}
       /// \name Output Operations (correspond to command file commands)
@@ -845,6 +857,11 @@ namespace Pspc
       mutable DArray<RFieldDft<D> > tmpFieldsKGrid_;
 
       /**
+      * State saved during MC simulation.
+      */
+      mutable McState<D> mcState_;
+
+      /**
       * Helmholtz free energy per monomer / kT.
       */
       double fHelmholtz_;
@@ -874,9 +891,19 @@ namespace Pspc
       double pressure_;
 
       /**
+      * Monte-Carlo System Hamiltonian (extensive value).
+      */
+      double mcHamiltonian_;
+
+      /**
       * Has the mixture been initialized?
       */
       bool hasMixture_;
+
+      /**
+      * Has an McMoveManager been initialized?
+      */
+      bool hasMcMoves_;
 
       /**
       * Has memory been allocated for fields in grid format?
@@ -900,6 +927,16 @@ namespace Pspc
       * fields in System::w_ container.
       */
       bool hasCFields_;
+
+      /**
+      * Has the free energy been computed for the current w and c fields?
+      */ 
+      bool hasFreeEnergy_;
+
+      /**
+      * Has the MC Hamiltonian been computed for the current w and c fields?
+      */ 
+      bool hasMcHamiltonian_;
 
       // Private member functions
 
@@ -1101,15 +1138,29 @@ namespace Pspc
    inline bool System<D>::hasCompressor() const
    {  return (compressorPtr_ != 0); }
 
-   // Get the precomputed Helmoltz free energy per monomer / kT.
+   // Get the precomputed Helmholtz free energy per monomer / kT.
    template <int D>
    inline double System<D>::fHelmholtz() const
-   {  return fHelmholtz_; }
+   {
+      UTIL_CHECK(hasFreeEnergy_);
+      return fHelmholtz_; 
+   }
 
    // Get the precomputed pressure (units of kT / monomer volume).
    template <int D>
    inline double System<D>::pressure() const
-   {  return pressure_; }
+   {  
+      UTIL_CHECK(hasFreeEnergy_);
+      return pressure_; 
+   }
+
+   // Get the precomputed MC Hamiltonian
+   template <int D>
+   inline double System<D>::mcHamiltonian() const
+   {  
+      UTIL_CHECK(hasMcHamiltonian_);
+      return mcHamiltonian_; 
+   }
 
    #ifndef PSPC_SYSTEM_TPP
    // Suppress implicit instantiation

@@ -10,12 +10,13 @@
 
 #include "System.h"
 
-#include <pspc/sweep/Sweep.h>
 #include <pspc/compressor/Compressor.h>
+#include <pspc/compressor/CompressorFactory.h>
+
+#include <pspc/sweep/Sweep.h>
+#include <pspc/sweep/SweepFactory.h>
 
 #include <pspc/iterator/IteratorFactory.h>
-#include <pspc/sweep/SweepFactory.h>
-#include <pspc/compressor/CompressorFactory.h>
 
 #include <pspc/solvers/Mixture.h>
 #include <pspc/solvers/Polymer.h>
@@ -71,9 +72,14 @@ namespace Pspc
       mask_(),
       fHelmholtz_(0.0),
       pressure_(0.0),
+      mcHamiltonian_(0.0),
       hasMixture_(false),
+      hasMcMoves_(false),
       isAllocatedRGrid_(false),
-      isAllocatedBasis_(false)
+      isAllocatedBasis_(false),
+      hasCFields_(false),
+      hasFreeEnergy_(false),
+      hasMcHamiltonian_(false)
    {  
       setClassName("System"); 
       domain_.setFileMaster(fileMaster_);
@@ -249,6 +255,19 @@ namespace Pspc
       // Optionally instantiate a Compressor object
       compressorPtr_ = 
          compressorFactoryPtr_->readObjectOptional(in, *this, className, isEnd);
+
+      // Optionally read an McMoveManager
+      if (compressorPtr_) {
+
+         readParamComposite(in, mcMoveManager_);
+
+         if (mcMoveManager_.isActive()) {
+            hasMcMoves_ = true;
+            mcState_.allocate(mixture_.nMonomer(), 
+                              domain_.mesh().dimensions());
+         }
+
+      }
 
    }
 
@@ -466,6 +485,13 @@ namespace Pspc
          if (command == "SWEEP") {
             // Do a series of iterations.
             sweep();
+         } else
+         if (command == "SIMULATE") {
+            // Perform a field theoretic MC simulation
+            int nStep;
+            in >> nStep;
+            Log::file() << "   "  << nStep << "\n";
+            simulate(nStep);
          } else
          if (command == "COMPRESS") {
             // Impose incompressibility
@@ -701,6 +727,8 @@ namespace Pspc
       w_.readBasis(filename, domain_.unitCell());
       mixture_.setupUnitCell(domain_.unitCell());
       hasCFields_ = false;
+      hasFreeEnergy_ = false;
+      hasMcHamiltonian_ = false;
    }
 
    /*
@@ -720,6 +748,8 @@ namespace Pspc
       w_.readRGrid(filename, domain_.unitCell());
       mixture_.setupUnitCell(domain_.unitCell());
       hasCFields_ = false;
+      hasFreeEnergy_ = false;
+      hasMcHamiltonian_ = false;
    }
 
    /*
@@ -732,6 +762,8 @@ namespace Pspc
       UTIL_CHECK(isAllocatedBasis_);
       w_.setBasis(fields);
       hasCFields_ = false;
+      hasFreeEnergy_ = false;
+      hasMcHamiltonian_ = false;
    }
 
    /*
@@ -743,6 +775,8 @@ namespace Pspc
       UTIL_CHECK(isAllocatedRGrid_);
       w_.setRGrid(fields);
       hasCFields_ = false;
+      hasFreeEnergy_ = false;
+      hasMcHamiltonian_ = false;
    }
 
    // Unit Cell Modifier / Setter 
@@ -800,7 +834,7 @@ namespace Pspc
          mixture_.computeStress();
       }
 
-      // If w fields are symmetric, compute basis componens for c-fields
+      // If w fields are symmetric, compute basis components for c-fields
       if (w_.isSymmetric()) {
          UTIL_CHECK(c_.isAllocatedBasis());
          domain_.fieldIo().convertRGridToBasis(c_.rgrid(), c_.basis());
@@ -817,14 +851,12 @@ namespace Pspc
       UTIL_CHECK(iteratorPtr_);
       UTIL_CHECK(w_.hasData());
       UTIL_CHECK(w_.isSymmetric());
-      hasCFields_ = false;
 
       Log::file() << std::endl;
       Log::file() << std::endl;
 
       // Call iterator (return 0 for convergence, 1 for failure)
       int error = iterator().solve(isContinuation);
-      hasCFields_ = true;
 
       // If converged, compute related properties
       if (!error) {   
@@ -834,6 +866,10 @@ namespace Pspc
          computeFreeEnergy();
          writeThermo(Log::file());
       }
+
+      hasCFields_ = true;
+      hasFreeEnergy_ = false;
+      hasMcHamiltonian_ = false;
       return error;
    }
 
@@ -949,31 +985,39 @@ namespace Pspc
    }
 
    /*
-   * Save the current r-grid w fields to temporary storage. 
+   * Save the current Monte-Carlo state.
    *
    * Used before attempting a Monte-Carlo move.
    */
    template <int D>
-   void System<D>::saveWRGrid()
+   void System<D>::saveMcState()
    {
       UTIL_CHECK(hasMixture_);
       UTIL_CHECK(isAllocatedRGrid_);
       UTIL_CHECK(w_.hasData());
+      UTIL_CHECK(!mcState_.hasData);
 
       int nMonomer = mixture_.nMonomer();
       for (int i = 0; i < nMonomer; ++i) {
-         tmpFieldsRGrid_[i] = w_.rgrid(i);
+         mcState_.w[i] = w_.rgrid(i);
       }
+      mcState_.mcHamiltonian  = mcHamiltonian_;
+      mcState_.hasData = true;
    }
 
    /*
-   * Restore save r-grid fields. 
+   * Restore a saved Monte-Carlo state.
    *
    * Used when an attempted Monte-Carlo move is rejected.
    */
    template <int D>
-   void System<D>::restoreWRGrid()
-   {  setWRGrid(tmpFieldsRGrid_); }
+   void System<D>::restoreMcState()
+   {
+      setWRGrid(mcState_.w); 
+      mcHamiltonian_ = mcState_.mcHamiltonian;
+      mcState_.hasData = false;
+      hasMcHamiltonian_ = true;
+   }
 
    // Thermodynamic Properties
 
@@ -984,9 +1028,10 @@ namespace Pspc
    void System<D>::computeFreeEnergy()
    {
       UTIL_CHECK(domain_.basis().isInitialized());
-      UTIL_CHECK(hasCFields_);
       UTIL_CHECK(w_.hasData());
       UTIL_CHECK(w_.isSymmetric());
+      UTIL_CHECK(hasCFields_);
+      UTIL_CHECK(!hasFreeEnergy_);
 
       // Initialize to zero
       fHelmholtz_ = 0.0;
@@ -1111,6 +1156,27 @@ namespace Pspc
          }
       }
 
+      hasFreeEnergy_ = true;
+   }
+
+   /*
+   * Compute Monte Carlo Hamiltonian.
+   */
+   template <int D>
+   void System<D>::computeMcHamiltonian()
+   {
+      UTIL_CHECK(domain_.basis().isInitialized());
+      UTIL_CHECK(w_.hasData());
+      UTIL_CHECK(w_.isSymmetric());
+      UTIL_CHECK(hasCFields_);
+
+      if (!hasFreeEnergy_) {
+         computeFreeEnergy();
+      }
+
+      /// Computation, sets mcHamiltonian_
+
+      hasMcHamiltonian_ = true;
    }
 
    /*
@@ -1721,6 +1787,8 @@ namespace Pspc
                                          domain_.unitCell());
 
       hasCFields_ = false;
+      hasFreeEnergy_ = false;
+      hasMcHamiltonian_ = false;
    }
 
 } // namespace Pspc

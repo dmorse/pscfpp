@@ -68,21 +68,33 @@ namespace Pspc {
    template <int D>
    bool McMove<D>::move()
    { 
-      // Get free energy
-      // Compute and store old Hamiltonian
-      // Save old state
+      incrementNAttempt();
+
+      // Get current Hamiltonian
+      double oldHamiltonian = system().mcHamiltonian();
+
+      // Save current state 
+      system().saveMcState();
+
       // Attempt modification
+      attemptMove();
+
       // Call compressor
+      // system().compressor().compress(system.w()));
+
       // Evaluate new Hamiltonian
+      double newHamiltonian = system().mcHamiltonian();
+
+      // Accept or reject move
       bool accept = false;
-      // Call Random::metropolis
-      // if (accept) {
-      //    ++nAccept_;
-      // } else {
-      //    ++nReject
-      //    Restore old state
-      // }
-      ++nAttempt_;
+      double weight = exp(-(newHamiltonian - oldHamiltonian));
+      accept = random().metropolis(weight);
+      if (accept) {
+          incrementNAccept();
+      } else {
+          system().restoreMcState();
+      }
+
       return accept;
    }
 
