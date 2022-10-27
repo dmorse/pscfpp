@@ -213,7 +213,7 @@ namespace Pspc
       void setUnitCell(FSArray<double, 6> const & parameters);
 
       //@}
-      /// \name Primary SCFT Computations
+      /// \name Primary Field Theory Computations
       //@{
 
       /**
@@ -272,13 +272,42 @@ namespace Pspc
       */
       void sweep();
 
+      //@}
+      /// \name Field Theoretic Monte Carlo Simulation
+      //@{
+
       /**
-      * Run a field theoretic Monte-Carlo simulation.
+      * Perform a field theoretic Monte-Carlo simulation.
       *
-      * \param endStep  index of final step
-      * \param isContinuation  is this a continuation of an earlier simulation
+      * Perform a field theoretic Monte-Carlo simulation using the 
+      * partial saddle-point approximation. 
+      * 
+      * \param nStep  number of Monte-Carlo steps
       */
-      void simulate(int endStep, bool isContinuation);
+      void simulate(int nStep);
+
+      /**
+      * Save a copy of the current w fields in r-grid format.
+      *
+      * This function and restoreWRGrid() are intended for use in 
+      * the implementation of field theoretic Monte Carlo moves.
+      * This function stores the current w fields to a work array.
+      * This is normally the first step of a MC move, prior to an
+      * attempted modification of the fields stored in the w()
+      * container.
+      */
+      void saveWRGrid();
+
+      /**
+      * Restore the saved copy of the w fields in r-grid format.
+      *
+      * This function  and saveWGrid() are intended to be used 
+      * together in the implementation of Monte-Carlo moves. If an 
+      * attempted move is rejected, restoreWRGrid() should be called
+      * to restore the fields that were saved by a previous call to 
+      * saveWGrid() function.
+      */
+      void restoreWRGrid();
 
       //@}
       /// \name Thermodynamic Properties

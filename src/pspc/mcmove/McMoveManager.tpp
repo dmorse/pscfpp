@@ -69,26 +69,6 @@ namespace Pspc {
    }
 
    /*
-   * Load internal state from an archive.
-   */
-   template <int D>
-   void McMoveManager<D>::loadParameters(Serializable::IArchive &ar)
-   {
-      Manager< McMove<D> >::loadParameters(ar);
-      ar & probabilities_;
-   }
-
-   /*
-   * Load internal state from an archive.
-   */
-   template <int D>
-   void McMoveManager<D>::save(Serializable::OArchive &ar)
-   {
-      Manager< McMove<D> >::save(ar);
-      ar & probabilities_;
-   }
-
-   /*
    * Initialize all moves just prior to a run.
    */
    template <int D>

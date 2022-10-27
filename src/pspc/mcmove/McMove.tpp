@@ -49,31 +49,11 @@ namespace Pspc {
    template <int D>
    void McMove<D>::readProbability(std::istream &in)
    {  read<double>(in, "probability", probability_); }
-   
+  
    /*
-   * Load internal state from an archive.
-   */
-   template <int D>
-   void McMove<D>::loadParameters(Serializable::IArchive &ar)
-   {
-      loadParameter<double>(ar, "probability", probability_); 
-      ar & nAttempt_;
-      ar & nAccept_;
-   }
-
-   /*
-   * Save internal state to an archive.
-   */
-   template <int D>
-   void McMove<D>::save(Serializable::OArchive &ar)
-   {  
-      ar & probability_;
-      ar & nAttempt_;
-      ar & nAccept_;
-   }
-
-   /*
-   * Trivial implementation - initializes counters.
+   * Setup at beginning of loop.
+   *
+   * Trivial default implementation - initializes counters.
    */
    template <int D>
    void McMove<D>::setup()
@@ -88,8 +68,22 @@ namespace Pspc {
    template <int D>
    bool McMove<D>::move()
    { 
+      // Get free energy
+      // Compute and store old Hamiltonian
+      // Save old state
+      // Attempt modification
+      // Call compressor
+      // Evaluate new Hamiltonian
+      bool accept = false;
+      // Call Random::metropolis
+      // if (accept) {
+      //    ++nAccept_;
+      // } else {
+      //    ++nReject
+      //    Restore old state
+      // }
       ++nAttempt_;
-      return false; 
+      return accept;
    }
 
    /*

@@ -779,7 +779,7 @@ namespace Pspc
       mixture_.setupUnitCell(domain_.unitCell());
    }
 
-   // Primary SCFT Computations
+   // Primary Field Theory Computations
 
    /*
    * Solve MDE for current w-fields, without iteration.
@@ -852,41 +852,31 @@ namespace Pspc
       // Perform sweep
       sweepPtr_->sweep();
    }
-   
+  
+   // Field Theoretic Monte-Carlo Simulation
+ 
    /*
-   * Perform a MC simulation.
+   * Perform a field theoretic MC simulation of nStep steps.
    */
    template <int D>
-   void System<D>::simulate(int endStep, bool isContinuation)
+   void System<D>::simulate(int nStep)
    {
 
-      #if 0
-      // Setup before main loop
-      if (isContinuation) {
-         Log::file() << "Continuing from iStep = "
-                     << iStep_ << std::endl;
-      } else {
-         // analyzerManager().setup();
-      }
-      #endif
-
-      int iStep_ = 0;
-      int beginStep = iStep_;
-      int nStep = endStep - beginStep;
+      mcMoveManager().setup();
       Log::file() << std::endl;
 
       // Main Monte Carlo loop
       Timer timer;
       timer.start();
-      for ( ; iStep_ < endStep; ++iStep_) {
+      for (int iStep = 0; iStep < nStep; ++iStep) {
 
          #if 0
          // Call analyzers
          if (Analyzer::baseInterval != 0) {
-            if (iStep_ % Analyzer::baseInterval == 0) {
+            if (iStep % Analyzer::baseInterval == 0) {
                if (analyzerManager().size() > 0) {
                   system().positionSignal().notify();
-                  analyzerManager().sample(iStep_);
+                  analyzerManager().sample(iStep);
                   system().positionSignal().notify();
                }
             }
@@ -902,19 +892,17 @@ namespace Pspc
 
       #if 0
       // Final analyzers
-      assert(iStep_ == endStep);
+      assert(iStep == nStep);
       if (Analyzer::baseInterval > 0) {
-         if (iStep_ % Analyzer::baseInterval == 0) {
+         if (iStep % Analyzer::baseInterval == 0) {
             if (analyzerManager().size() != 0) {
                system().positionSignal().notify();
-               analyzerManager().sample(iStep_);
+               analyzerManager().sample(iStep);
                system().positionSignal().notify();
             }
          }
       }
-      #endif
 
-      #if 0
       // Output results of all analyzers to output files
       if (Analyzer::baseInterval > 0) {
          analyzerManager().output();
@@ -924,9 +912,8 @@ namespace Pspc
       // Output results of move statistics to files
       mcMoveManager().output();
 
-      // Output time for the run
+      // Output time for the simulation run
       Log::file() << std::endl;
-      Log::file() << "endStep       " << endStep << std::endl;
       Log::file() << "nStep         " << nStep << std::endl;
       Log::file() << "run time      " << time
                   << " sec" << std::endl;
@@ -960,6 +947,33 @@ namespace Pspc
       Log::file() << endl;
 
    }
+
+   /*
+   * Save the current r-grid w fields to temporary storage. 
+   *
+   * Used before attempting a Monte-Carlo move.
+   */
+   template <int D>
+   void System<D>::saveWRGrid()
+   {
+      UTIL_CHECK(hasMixture_);
+      UTIL_CHECK(isAllocatedRGrid_);
+      UTIL_CHECK(w_.hasData());
+
+      int nMonomer = mixture_.nMonomer();
+      for (int i = 0; i < nMonomer; ++i) {
+         tmpFieldsRGrid_[i] = w_.rgrid(i);
+      }
+   }
+
+   /*
+   * Restore save r-grid fields. 
+   *
+   * Used when an attempted Monte-Carlo move is rejected.
+   */
+   template <int D>
+   void System<D>::restoreWRGrid()
+   {  setWRGrid(tmpFieldsRGrid_); }
 
    // Thermodynamic Properties
 
