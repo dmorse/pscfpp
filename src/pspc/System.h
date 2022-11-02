@@ -11,8 +11,7 @@
 
 #include <util/param/ParamComposite.h>     // base class
 
-#include <pspc/mcmove/McMoveManager.h>     // member
-#include <pspc/mcmove/McState.h>           // member
+#include <pspc/mcmove/McSimulator.h>     // member
 
 #include <pspc/solvers/Mixture.h>          // member
 #include <pspc/field/Domain.h>             // member
@@ -274,6 +273,16 @@ namespace Pspc
       */
       void sweep();
 
+      /**
+      * Perform a field theoretic Monte-Carlo simulation.
+      *
+      * Perform a field theoretic Monte-Carlo simulation using the 
+      * partial saddle-point approximation. 
+      * 
+      * \param nStep  number of Monte-Carlo steps
+      */
+      void simulate(int nStep);
+
       //@}
       /// \name Thermodynamic Properties
       //@{
@@ -302,53 +311,6 @@ namespace Pspc
       * computeFreeEnergy() function.
       */
       double pressure() const;
-
-      //@}
-      /// \name Field Theoretic Monte Carlo Simulation
-      //@{
-
-      /**
-      * Perform a field theoretic Monte-Carlo simulation.
-      *
-      * Perform a field theoretic Monte-Carlo simulation using the 
-      * partial saddle-point approximation. 
-      * 
-      * \param nStep  number of Monte-Carlo steps
-      */
-      void simulate(int nStep);
-
-      /**
-      * Compute the Hamiltonian used in Monte-Carlo simulations.
-      */
-      void computeMcHamiltonian();
-
-      /**
-      * Get the Hamiltonian used in Monte-Carlo simulations.
-      */
-      double mcHamiltonian() const;
-
-      /**
-      * Save a copy of the Monte-Carlo state.
-      *
-      * This function and restoreMcState() are intended for use in 
-      * the implementation of field theoretic Monte Carlo moves. This
-      * function stores the current w fields and the corresponding 
-      * Hamiltonian value.  This is normally the first step of a MC 
-      * move, prior to an attempted modification of the fields stored
-      * in the system w field container.
-      */
-      void saveMcState();
-
-      /**
-      * Restore the saved copy of the Monte-Carlo state.
-      *
-      * This function  and saveMcState() are intended to be used 
-      * together in the implementation of Monte-Carlo moves. If an 
-      * attempted move is rejected, restoreMcState() is called to
-      * restore the fields ahd Hamiltonian value that were saved 
-      * by a previous call to the function saveMcState().
-      */
-      void restoreMcState();
 
       //@}
       /// \name Output Operations (correspond to command file commands)
@@ -694,9 +656,9 @@ namespace Pspc
       Homogeneous::Mixture const & homogeneous() const;
 
       /**
-      * Get McMoveManager container for Monte Carlo moves.
+      * Get McSimulator container for Monte Carlo moves.
       */
-      McMoveManager<D>& mcMoveManager();
+      McSimulator<D>& mcSimulator();
 
       /**
       * Get FileMaster by reference.
@@ -763,7 +725,7 @@ namespace Pspc
       /**
       * Container for McMove objects (Monte Carlo Moves).
       */
-      McMoveManager<D> mcMoveManager_;
+      McSimulator<D> mcSimulator_;
 
       /**
       * Filemaster (holds paths to associated I/O files).
@@ -857,11 +819,6 @@ namespace Pspc
       mutable DArray<RFieldDft<D> > tmpFieldsKGrid_;
 
       /**
-      * State saved during MC simulation.
-      */
-      mutable McState<D> mcState_;
-
-      /**
       * Helmholtz free energy per monomer / kT.
       */
       double fHelmholtz_;
@@ -891,17 +848,12 @@ namespace Pspc
       double pressure_;
 
       /**
-      * Monte-Carlo System Hamiltonian (extensive value).
-      */
-      double mcHamiltonian_;
-
-      /**
       * Has the mixture been initialized?
       */
       bool hasMixture_;
 
       /**
-      * Has an McMoveManager been initialized?
+      * Has an McSimulator been initialized?
       */
       bool hasMcMoves_;
 
@@ -1021,10 +973,10 @@ namespace Pspc
    inline std::string System<D>::groupName() const
    { return domain_.groupName(); }
 
-   // Get the McMoveManager.
+   // Get the McSimulator.
    template <int D>
-   inline McMoveManager<D>& System<D>::mcMoveManager()
-   {  return mcMoveManager_; }
+   inline McSimulator<D>& System<D>::mcSimulator()
+   {  return mcSimulator_; }
 
    // Get the FileMaster.
    template <int D>
@@ -1152,14 +1104,6 @@ namespace Pspc
    {  
       UTIL_CHECK(hasFreeEnergy_);
       return pressure_; 
-   }
-
-   // Get the precomputed MC Hamiltonian
-   template <int D>
-   inline double System<D>::mcHamiltonian() const
-   {  
-      UTIL_CHECK(hasMcHamiltonian_);
-      return mcHamiltonian_; 
    }
 
    #ifndef PSPC_SYSTEM_TPP

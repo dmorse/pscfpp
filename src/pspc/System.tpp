@@ -57,7 +57,7 @@ namespace Pspc
    System<D>::System()
     : mixture_(),
       domain_(),
-      mcMoveManager_(*this),
+      mcSimulator_(*this),
       fileMaster_(),
       homogeneous_(),
       interactionPtr_(0),
@@ -73,14 +73,12 @@ namespace Pspc
       mask_(),
       fHelmholtz_(0.0),
       pressure_(0.0),
-      mcHamiltonian_(0.0),
       hasMixture_(false),
       hasMcMoves_(false),
       isAllocatedRGrid_(false),
       isAllocatedBasis_(false),
       hasCFields_(false),
-      hasFreeEnergy_(false),
-      hasMcHamiltonian_(false)
+      hasFreeEnergy_(false)
    {  
       setClassName("System"); 
       domain_.setFileMaster(fileMaster_);
@@ -264,18 +262,18 @@ namespace Pspc
          Log::file() << indent() << "  Compressor{ [absent] }\n";
       }
 
-      // Optionally read an McMoveManager
+      // Optionally read an McSimulator
       if (compressorPtr_) {
 
-         readParamCompositeOptional(in, mcMoveManager_);
+         readParamCompositeOptional(in, mcSimulator_);
 
-         if (mcMoveManager_.isActive()) {
+         if (mcSimulator_.isActive()) {
             hasMcMoves_ = true;
-            mcState_.allocate(mixture_.nMonomer(), 
-                              domain_.mesh().dimensions());
+            //mcState_.allocate(mixture_.nMonomer(), 
+            //                  domain_.mesh().dimensions());
          } else 
          if (ParamComponent::echo()) {
-            Log::file() << indent() << "  McMoveManager{ [absent] }\n";
+            Log::file() << indent() << "  McSimulator{ [absent] }\n";
          }
 
       }
@@ -900,134 +898,14 @@ namespace Pspc
       sweepPtr_->sweep();
    }
   
-   // Field Theoretic Monte-Carlo Simulation
- 
    /*
    * Perform a field theoretic MC simulation of nStep steps.
    */
    template <int D>
    void System<D>::simulate(int nStep)
    {
-
-      mcMoveManager().setup();
-      Log::file() << std::endl;
-
-      // Main Monte Carlo loop
-      Timer timer;
-      timer.start();
-      for (int iStep = 0; iStep < nStep; ++iStep) {
-
-         #if 0
-         // Call analyzers
-         if (Analyzer::baseInterval != 0) {
-            if (iStep % Analyzer::baseInterval == 0) {
-               if (analyzerManager().size() > 0) {
-                  system().positionSignal().notify();
-                  analyzerManager().sample(iStep);
-                  system().positionSignal().notify();
-               }
-            }
-         }
-         #endif
-
-         // Choose and attempt an McMove
-         mcMoveManager().chooseMove().move();
-
-      }
-      timer.stop();
-      double time = timer.time();
-
-      #if 0
-      // Final analyzers
-      assert(iStep == nStep);
-      if (Analyzer::baseInterval > 0) {
-         if (iStep % Analyzer::baseInterval == 0) {
-            if (analyzerManager().size() != 0) {
-               system().positionSignal().notify();
-               analyzerManager().sample(iStep);
-               system().positionSignal().notify();
-            }
-         }
-      }
-
-      // Output results of all analyzers to output files
-      if (Analyzer::baseInterval > 0) {
-         analyzerManager().output();
-      }
-      #endif
-
-      // Output results of move statistics to files
-      mcMoveManager().output();
-
-      // Output time for the simulation run
-      Log::file() << std::endl;
-      Log::file() << "nStep         " << nStep << std::endl;
-      Log::file() << "run time      " << time
-                  << " sec" << std::endl;
-      double rStep = double(nStep);
-      Log::file() << "time / nStep  " <<  time / rStep
-                  << " sec" << std::endl;
-      Log::file() << std::endl;
-
-      // Print McMove acceptance statistics
-      long attempt;
-      long accept;
-      using namespace std;
-      Log::file() << "Move Statistics:" << endl << endl;
-      Log::file() << setw(32) << left <<  "Move Name"
-           << setw(12) << right << "Attempted"
-           << setw(12) << right << "Accepted"
-           << setw(15) << right << "AcceptRate"
-           << endl;
-      int nMove = mcMoveManager().size();
-      for (int iMove = 0; iMove < nMove; ++iMove) {
-         attempt = mcMoveManager()[iMove].nAttempt();
-         accept  = mcMoveManager()[iMove].nAccept();
-         Log::file() << setw(32) << left
-              << mcMoveManager().className(iMove)
-              << setw(12) << right << attempt
-              << setw(12) << accept
-              << setw(15) << fixed << setprecision(6)
-              << ( attempt == 0 ? 0.0 : double(accept)/double(attempt) )
-              << endl;
-      }
-      Log::file() << endl;
-
-   }
-
-   /*
-   * Save the current Monte-Carlo state.
-   *
-   * Used before attempting a Monte-Carlo move.
-   */
-   template <int D>
-   void System<D>::saveMcState()
-   {
-      UTIL_CHECK(hasMixture_);
-      UTIL_CHECK(isAllocatedRGrid_);
-      UTIL_CHECK(w_.hasData());
-      UTIL_CHECK(!mcState_.hasData);
-
-      int nMonomer = mixture_.nMonomer();
-      for (int i = 0; i < nMonomer; ++i) {
-         mcState_.w[i] = w_.rgrid(i);
-      }
-      mcState_.mcHamiltonian  = mcHamiltonian_;
-      mcState_.hasData = true;
-   }
-
-   /*
-   * Restore a saved Monte-Carlo state.
-   *
-   * Used when an attempted Monte-Carlo move is rejected.
-   */
-   template <int D>
-   void System<D>::restoreMcState()
-   {
-      setWRGrid(mcState_.w); 
-      mcHamiltonian_ = mcState_.mcHamiltonian;
-      mcState_.hasData = false;
-      hasMcHamiltonian_ = true;
+      UTIL_CHECK(hasMcMoves_);
+      mcSimulator_.simulate(nStep);
    }
 
    // Thermodynamic Properties
@@ -1085,15 +963,26 @@ namespace Pspc
       }
 
       int nm  = mixture_.nMonomer();
-      int nBasis = domain_.basis().nBasis();
 
-      double temp(0.0);
       // Compute Legendre transform subtraction
-      // Use expansion in symmetry-adapted orthonormal basis
-      for (int i = 0; i < nm; ++i) {
-         for (int k = 0; k < nBasis; ++k) {
-            temp -= w_.basis(i)[k] * c_.basis(i)[k];
+      double temp = 0.0;
+      if (w_.isSymmetric()) {
+         // Use expansion in symmetry-adapted orthonormal basis
+         const int nBasis = domain_.basis().nBasis();
+         for (int i = 0; i < nm; ++i) {
+            for (int k = 0; k < nBasis; ++k) {
+               temp -= w_.basis(i)[k] * c_.basis(i)[k];
+            }
          }
+      } else {
+         // Use summation over grid points 
+         const int meshSize = domain_.mesh().size();
+         for (int i = 0; i < nm; ++i) {
+            for (int k = 0; k < meshSize; ++k) {
+               temp -= w_.rgrid(i)[k] * c_.rgrid(i)[k];
+            }
+         }
+         temp /= double(meshSize);
       }
 
       // If the system has a mask, then the volume that should be used
@@ -1109,25 +998,50 @@ namespace Pspc
       fIdeal_ += temp;
       fHelmholtz_ += fIdeal_;
 
-      // Compute contribution from external fields, if fields exist
+      // Compute contribution from external fields, if such fields exist
       if (hasExternalFields()) {
          fExt_ = 0.0;
-         for (int i = 0; i < nm; ++i) {
-            for (int k = 0; k < nBasis; ++k) {
-               fExt_ += h_.basis(i)[k] * c_.basis(i)[k];
+         if (w_.isSymmetric()) {
+            // Use expansion in symmetry-adapted orthonormal basis
+            const int nBasis = domain_.basis().nBasis();
+            for (int i = 0; i < nm; ++i) {
+               for (int k = 0; k < nBasis; ++k) {
+                  fExt_ += h_.basis(i)[k] * c_.basis(i)[k];
+               }
             }
+         } else {
+            // Use summation over grid points 
+            const int meshSize = domain_.mesh().size();
+            for (int i = 0; i < nm; ++i) {
+               for (int k = 0; k < meshSize; ++k) {
+                  fExt_ += h_.rgrid(i)[k] * c_.rgrid(i)[k];
+               }
+            }
+            fExt_ /= double(meshSize);
          }
          fExt_ /= mask().phiTot();
          fHelmholtz_ += fExt_;
       }
 
-      // Compute excess interaction free energy [ phi^{T}*chi*phi ]
-      double chi;
-      for (int i = 0; i < nm; ++i) {
-         for (int j = i + 1; j < nm; ++j) {
-            chi = interaction().chi(i,j);
-            for (int k = 0; k < nBasis; ++k) {
-               fInter_ += chi * c_.basis(i)[k] * c_.basis(j)[k];
+      // Compute excess interaction free energy [ phi^{T}*chi*phi/2 ]
+      if (w_.isSymmetric()) {
+         const int nBasis = domain_.basis().nBasis();
+         for (int i = 0; i < nm; ++i) {
+            for (int j = i + 1; j < nm; ++j) {
+               const double chi = interaction().chi(i,j);
+               for (int k = 0; k < nBasis; ++k) {
+                  fInter_ += chi * c_.basis(i)[k] * c_.basis(j)[k];
+               }
+            }
+         }
+      } else {
+         const int meshSize = domain_.mesh().size();
+         for (int i = 0; i < nm; ++i) {
+            for (int j = i + 1; j < nm; ++j) {
+               const double chi = interaction().chi(i,j);
+               for (int k = 0; k < meshSize; ++k) {
+                  fInter_ += chi * c_.rgrid(i)[k] * c_.rgrid(j)[k];
+               }
             }
          }
       }
@@ -1168,26 +1082,6 @@ namespace Pspc
       }
 
       hasFreeEnergy_ = true;
-   }
-
-   /*
-   * Compute Monte Carlo Hamiltonian.
-   */
-   template <int D>
-   void System<D>::computeMcHamiltonian()
-   {
-      UTIL_CHECK(domain_.basis().isInitialized());
-      UTIL_CHECK(w_.hasData());
-      UTIL_CHECK(w_.isSymmetric());
-      UTIL_CHECK(hasCFields_);
-
-      if (!hasFreeEnergy_) {
-         computeFreeEnergy();
-      }
-
-      /// Computation, sets mcHamiltonian_
-
-      hasMcHamiltonian_ = true;
    }
 
    /*

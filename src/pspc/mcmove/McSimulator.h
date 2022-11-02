@@ -76,6 +76,43 @@ namespace Pspc {
       double mcHamiltonian() const;
 
       /**
+      * Initialize at beginning of system run.
+      *
+      * This method calls the initialize method for every McMove.
+      */
+      void setup();
+
+      /**
+      * Choose an McMove at random, using specified probabilities.
+      *
+      * \return chosen McMove
+      */
+      McMove<D>& chooseMove();
+
+      /**
+      * Save a copy of the Monte-Carlo state.
+      *
+      * This function and restoreMcState() are intended for use in 
+      * the implementation of field theoretic Monte Carlo moves. This
+      * function stores the current w fields and the corresponding 
+      * Hamiltonian value.  This is normally the first step of a MC 
+      * move, prior to an attempted modification of the fields stored
+      * in the system w field container.
+      */
+      void saveMcState();
+
+      /**
+      * Restore the saved copy of the Monte-Carlo state.
+      *
+      * This function  and saveMcState() are intended to be used 
+      * together in the implementation of Monte-Carlo moves. If an 
+      * attempted move is rejected, restoreMcState() is called to
+      * restore the fields ahd Hamiltonian value that were saved 
+      * by a previous call to the function saveMcState().
+      */
+      void restoreMcState();
+
+      /**
       * Return probability of move i.
       *
       * \param i index for McMove
@@ -87,6 +124,16 @@ namespace Pspc {
       * Output statistics for all moves.
       */
       void output();
+
+      /**
+      * Get parent system by reference.
+      */
+      System<D>& system();
+
+      /**
+      * Get random number generator by reference.
+      */
+      Random& random();
 
       using Manager< McMove<D> >::size;
 
@@ -128,53 +175,6 @@ namespace Pspc {
 
       /// Return pointer to a new McMoveFactory.
       virtual Factory< McMove<D> >* newDefaultFactory() const;
-
-      /**
-      * Initialize at beginning of system run.
-      *
-      * This method calls the initialize method for every McMove.
-      */
-      void setup();
-
-      /**
-      * Choose an McMove at random, using specified probabilities.
-      *
-      * \return chosen McMove
-      */
-      McMove<D>& chooseMove();
-
-      /**
-      * Save a copy of the Monte-Carlo state.
-      *
-      * This function and restoreMcState() are intended for use in 
-      * the implementation of field theoretic Monte Carlo moves. This
-      * function stores the current w fields and the corresponding 
-      * Hamiltonian value.  This is normally the first step of a MC 
-      * move, prior to an attempted modification of the fields stored
-      * in the system w field container.
-      */
-      void saveMcState();
-
-      /**
-      * Restore the saved copy of the Monte-Carlo state.
-      *
-      * This function  and saveMcState() are intended to be used 
-      * together in the implementation of Monte-Carlo moves. If an 
-      * attempted move is rejected, restoreMcState() is called to
-      * restore the fields ahd Hamiltonian value that were saved 
-      * by a previous call to the function saveMcState().
-      */
-      void restoreMcState();
-
-      /**
-      * Get parent system by reference.
-      */
-      System<D>& system();
-
-      /**
-      * Get random number generator by reference.
-      */
-      Random& random();
 
    };
 

@@ -20,6 +20,7 @@ namespace Pspc
    using namespace Util;
 
    template <int D> class System;
+   template <int D> class McSimulator;
 
    /**
    * McMove is an abstract base class for Monte Carlo moves.
@@ -41,7 +42,7 @@ namespace Pspc
       *
       * \param system parent System object.
       */
-      McMove(System<D>& system);
+      McMove(McSimulator<D>& simulator);
 
       /**
       * Destructor.
@@ -130,6 +131,11 @@ namespace Pspc
       System<D>& system();
 
       /**
+      * Get parent McSimulator object.
+      */
+      McSimulator<D>& simulator();
+
+      /**
       * Get Random number generator of parent System.
       */
       Random& random();
@@ -152,6 +158,9 @@ namespace Pspc
       virtual void attemptMove() {};
 
    private:
+
+      /// Pointer to parent McSimulator object
+      McSimulator<D>* simulatorPtr_;
 
       /// Pointer to parent System object
       System<D>* systemPtr_;
@@ -208,6 +217,13 @@ namespace Pspc
    template <int D>
    inline System<D>& McMove<D>::system()
    {  return *systemPtr_; }
+
+   /*
+   * Get parent McSimulator object.
+   */
+   template <int D>
+   inline McSimulator<D>& McMove<D>::simulator()
+   {  return *simulatorPtr_; }
 
    /*
    * Get Random number generator.
