@@ -32,6 +32,7 @@
 #include <pspc/field/RFieldComparison.h>
 
 #include <util/param/BracketPolicy.h>
+#include <util/param/ParamComponent.h>
 #include <util/misc/ioUtil.h>
 #include <util/format/Str.h>
 #include <util/format/Int.h>
@@ -242,7 +243,7 @@ namespace Pspc
          iteratorFactoryPtr_->readObjectOptional(in, *this, className, 
                                                  isEnd);
       if (!iteratorPtr_) {
-         Log::file() << "Notification: No iterator was constructed\n";
+         Log::file() << indent() << "  [Iterator{} absent]\n";
       }
 
       // Optionally instantiate a Sweep object
@@ -250,21 +251,31 @@ namespace Pspc
          sweepPtr_ = 
             sweepFactoryPtr_->readObjectOptional(in, *this, className, 
                                                  isEnd);
+         if (!sweepPtr_ && ParamComponent::echo()) {
+            Log::file() << indent() << "  Sweep{ [absent] }\n";
+         }
       }
 
       // Optionally instantiate a Compressor object
       compressorPtr_ = 
-         compressorFactoryPtr_->readObjectOptional(in, *this, className, isEnd);
+         compressorFactoryPtr_->readObjectOptional(in, *this, className, 
+                                                   isEnd);
+      if (!compressorPtr_ && ParamComponent::echo()) {
+         Log::file() << indent() << "  Compressor{ [absent] }\n";
+      }
 
       // Optionally read an McMoveManager
       if (compressorPtr_) {
 
-         readParamComposite(in, mcMoveManager_);
+         readParamCompositeOptional(in, mcMoveManager_);
 
          if (mcMoveManager_.isActive()) {
             hasMcMoves_ = true;
             mcState_.allocate(mixture_.nMonomer(), 
                               domain_.mesh().dimensions());
+         } else 
+         if (ParamComponent::echo()) {
+            Log::file() << indent() << "  McMoveManager{ [absent] }\n";
          }
 
       }
