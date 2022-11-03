@@ -102,6 +102,8 @@ namespace Pspc {
          (*this)[iMove].setup();
       }
 
+      // Eigenanalysis of the projected chi matrix.
+      // analyzeChi();
    }
 
    /*
@@ -232,13 +234,32 @@ namespace Pspc {
    {
       UTIL_CHECK(system().w().hasData());
       UTIL_CHECK(system().hasCFields());
+      const int nMonomer = system().mixture().nMonomer();
+      const int meshSize = system().domain().mesh().size();
 
       // Compute free energy if necessary
       if (!system().hasFreeEnergy()) {
          system().computeFreeEnergy();
       }
 
-      //double h = system().fHelmholtz();
+      double h = system().fHelmholtz();
+
+      // Compute quadratic contribution from field components
+      int i, j;
+      double sum = 0.0;
+      double prefactor, w;
+      for (j = 0; j < nMonomer - 1; ++j) {
+         RField<D> const & wc = wRGridComponents_[j];
+         prefactor = -0.5/chiEvals_[j];
+         for (i = 0; i < meshSize; ++i) {
+            w = wc[i];
+            sum += prefactor*w*w;
+         }
+      }
+      sum /= double(meshSize);
+      h += sum;
+
+      // Multiply by (system volume)/(monomer volume)
 
       hasMcHamiltonian_ = true;
    }
@@ -340,6 +361,29 @@ namespace Pspc {
          Log::file() << "]\n";
       }
       #endif
+
+   }
+
+   template <int D>
+   void McSimulator<D>::computeWComponents()
+   {
+      const int nMonomer = system().mixture().nMonomer();
+      const int meshSize = system().domain().mesh().size();
+      int i, j, k;
+
+      for (j = 0; j < nMonomer; ++j) {
+         RField<D>& wc = wRGridComponents_[j];
+         for (i = 0; i < meshSize; ++i) {
+            wc[i] = 0.0;
+         }
+         for (k = 0; k < nMonomer; ++k) {
+            double vec = chiEvecs_(j, k);
+            RField<D> const & w = system().w().rgrid(k);
+            for (i = 0; i < meshSize; ++i) {
+                wc[i] += vec*w[i];
+            }
+         }
+      }
 
    }
 }
