@@ -77,11 +77,8 @@ namespace Pspc {
       // Allocate projected chi matrix chiP_ and associated arrays
       const int nMonomer = system().mixture().nMonomer();
       chiP_.allocate(nMonomer, nMonomer);
-      chiPvalues_.allocate(nMonomer);
-      chiPvectors_.allocate(nMonomer);
-      for (int i=0; i < nMonomer; ++i) {
-         chiPvectors_[i].allocate(nMonomer);
-      }
+      chiEvals_.allocate(nMonomer);
+      chiEvecs_.allocate(nMonomer, nMonomer);
 
       analyzeChi();
    }
@@ -241,7 +238,7 @@ namespace Pspc {
          system().computeFreeEnergy();
       }
 
-      double h = system().fHelmholtz();
+      //double h = system().fHelmholtz();
 
       hasMcHamiltonian_ = true;
    }
@@ -310,14 +307,13 @@ namespace Pspc {
             ++nNull;
             iNull = i;
          } else {
-            chiPvalues_[k] = val;
+            chiEvals_[k] = val;
             for (j = 0; j < nMonomer; ++j) {
-               UTIL_CHECK(chiPvectors_[k].capacity() == nMonomer);
-               chiPvectors_[k][j] = gsl_matrix_get(Avecs, j, i);
+               chiEvecs_(k, j) = gsl_matrix_get(Avecs, j, i);
             }
-            if (chiPvectors_[k][0] < 0.0) {
+            if (chiEvecs_(k, 0) < 0.0) {
                for (j = 0; j < nMonomer; ++j) {
-                  chiPvectors_[k][j] = -chiPvectors_[k][j];
+                  chiEvecs_(k, j) = -chiEvecs_(k, j);
                }
             }
             ++k;
@@ -327,19 +323,19 @@ namespace Pspc {
       UTIL_CHECK(iNull >= 0);
     
       // Copy eigenpair with null eigenvalue 
-      chiPvalues_[nMonomer-1] = 0.0;
+      chiEvals_[nMonomer-1] = 0.0;
       for (i = 0; i < nMonomer; ++i) {
-         chiPvectors_[nMonomer-1][i] = gsl_matrix_get(Avecs, i, iNull);
+         chiEvecs_(nMonomer-1, i) = gsl_matrix_get(Avecs, i, iNull);
       }
 
       #if 0
       // Debugging 
       for (i = 0; i < nMonomer; ++i) {
          Log::file() << "Eigenpair " << i << "\n";
-         Log::file() << "value  =  " << chiPvalues_[i] << "\n";
+         Log::file() << "value  =  " << chiEvals_[i] << "\n";
          Log::file() << "vector = [ "; 
          for (j = 0; j < nMonomer; ++j) {
-            Log::file() << chiPvectors_[i][j] << "   ";
+            Log::file() << chiEvecs_(i, j) << "   ";
          }
          Log::file() << "]\n";
       }

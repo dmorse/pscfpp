@@ -125,11 +125,38 @@ namespace Pspc {
       */
       double probability(int i) const;
 
-      double chiPvalue(int i) const
-      {  return chiPvalues_[i]; }
+      /**
+      * Get an array of the eigenvalues of the projected chi matrix.
+      *
+      * The projected chi matrix is given by the matrix product P*chi*P,
+      * where P is the symmetric projection matrix that projects onto the
+      * subspace perpendicular to the vector (1,1,...,1). The projected
+      * chi matrix is singular, and always has one zero eigenvalue, with 
+      * eigenvector (1,1, ... ,1). By convention, this zero value is the 
+      * last eigenvalue, with index nMonomer -  1, is zero.
+      */
+      DArray<double> const & chiEvals() const
+      {  return chiEvals_; }
 
-      DArray<double> const & chiPvector(int i) const
-      {  return chiPvectors_[i]; }
+      /**
+      * Get an single eigenvalue of the projected chi matrix.
+      *
+      * \int i index of eigenvalue (0, ... , nMonomer - 1)
+      */
+      double chiEval(int i ) const
+      {  return chiEvals_[i]; }
+
+      /**
+      * Get a matrix of eigenvectors of the projected chi matrix.
+      *
+      * The first index of the matrix indexes the eigenvector, while 
+      * the second index indexes vector components. All eigenvectors
+      * have a Euclidean norm of unity. The sign of each vector is 
+      * chosen so as to make the first (0) component of each vector
+      * positive.
+      */
+      DMatrix<double> const & chiEvecs() const
+      {  return chiEvecs_; }
 
       /**
       * Get parent system by reference.
@@ -167,12 +194,12 @@ namespace Pspc {
       /**
       * Eigenvalues of the projected chi matrix.
       */
-      DArray<double>  chiPvalues_;
+      DArray<double>  chiEvals_;
 
       /**
       * Eigenvectors of the projected chi matrix.
       */
-      DArray< DArray<double> >  chiPvectors_;
+      DMatrix<double> chiEvecs_;
 
       /**
       * State saved during MC simulation.
