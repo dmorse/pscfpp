@@ -84,6 +84,8 @@ namespace Pspc {
       // system().compressor().compress(system.w()));
 
       // Evaluate new Hamiltonian
+      simulator().computeWC();
+      simulator().computeMcHamiltonian();
       double newHamiltonian = simulator().mcHamiltonian();
 
       // Accept or reject move

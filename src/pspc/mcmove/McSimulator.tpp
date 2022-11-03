@@ -30,7 +30,8 @@ namespace Pspc {
    McSimulator<D>::McSimulator(System<D>& system)
    : Manager< McMove<D> >(),
      systemPtr_(&system),
-     randomPtr_(&system.random())
+     randomPtr_(&system.random()),
+     hasMcHamiltonian_(false)
    {  setClassName("McSimulator"); }
 
    /*
@@ -89,6 +90,8 @@ namespace Pspc {
    template <int D>
    void McSimulator<D>::setup()
    {
+      UTIL_CHECK(system().w().hasData());
+      UTIL_CHECK(system().hasCFields());
 
       // Allocate mcState_, if necessary.
       if (!mcState_.isAllocated) {
@@ -97,13 +100,17 @@ namespace Pspc {
          mcState_.allocate(nMonomer, dimensions);
       }
 
-      // Call setup fucntion of each McMove
+      // Eigenanalysis of the projected chi matrix.
+      analyzeChi();
+
+      // Compute field components and MC Hamiltonian for initial state
+      computeWC();
+      computeMcHamiltonian();
+
+      // Call setup function of each McMove
       for (int iMove = 0; iMove < size(); ++iMove) {
          (*this)[iMove].setup();
       }
-
-      // Eigenanalysis of the projected chi matrix.
-      // analyzeChi();
    }
 
    /*
@@ -112,8 +119,8 @@ namespace Pspc {
    template <int D>
    McMove<D>& McSimulator<D>::chooseMove()
    {
-      int iMove;
-      iMove = randomPtr_->drawFrom(&probabilities_[0], size());
+      UTIL_CHECK(size() > 0);
+      int iMove = randomPtr_->drawFrom(&probabilities_[0], size());
       return (*this)[iMove];
    }
 
@@ -123,7 +130,8 @@ namespace Pspc {
    template <int D>
    void McSimulator<D>::output()
    {
-      for (int i=0; i< size(); i++) {
+      UTIL_CHECK(size() > 0);
+      for (int i=0; i < size(); i++) {
          (*this)[i].output();
       }
    }
@@ -134,6 +142,7 @@ namespace Pspc {
    template <int D>
    void McSimulator<D>::simulate(int nStep)
    {
+      UTIL_CHECK(size() > 0);
 
       setup();
       Log::file() << std::endl;

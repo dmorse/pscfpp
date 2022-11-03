@@ -155,7 +155,8 @@ namespace Pspc
       *
       *  The default implementation is empty.
       */
-      virtual void attemptMove() {};
+      virtual void attemptMove() 
+      {};
 
    private:
 

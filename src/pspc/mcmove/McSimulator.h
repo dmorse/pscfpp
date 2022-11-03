@@ -195,9 +195,12 @@ namespace Pspc {
       // Private data members
 
       /**
-      * Array of McMove probabilities.
+      * Eigenvector components of w on a real space grid.
+      *
+      * Each field component corresponds to a point-wise projection of w 
+      * onto an eigenvector of the projected chi matrix.
       */
-      DArray<double>  probabilities_;
+      DArray< RField<D> > wc_;
 
       /**
       * Projected chi matrix
@@ -208,12 +211,9 @@ namespace Pspc {
       DMatrix<double> chiP_;
 
       /**
-      * Components of w on a real space grid.
-      *
-      * Each field component corresponds to the projection of w onto an 
-      * eigenvector of the projected chi matrix.
+      * Eigenvectors of the projected chi matrix.
       */
-      DArray< RField<D> > wc_;
+      DMatrix<double> chiEvecs_;
 
       /**
       * Eigenvalues of the projected chi matrix.
@@ -221,9 +221,9 @@ namespace Pspc {
       DArray<double>  chiEvals_;
 
       /**
-      * Eigenvectors of the projected chi matrix.
+      * Array of McMove probabilities.
       */
-      DMatrix<double> chiEvecs_;
+      DArray<double>  probabilities_;
 
       /**
       * State saved during MC simulation.
@@ -236,11 +236,6 @@ namespace Pspc {
       double mcHamiltonian_;
 
       /**
-      * Has the MC Hamiltonian been computed for the current w and c fields?
-      */ 
-      bool hasMcHamiltonian_;
-
-      /**
       * Pointer to parent System.
       */
       System<D>* systemPtr_;
@@ -249,6 +244,12 @@ namespace Pspc {
       * Pointer to random number generator.
       */
       Random* randomPtr_;
+
+      /**
+      * Has the MC Hamiltonian been computed for the current w and c fields?
+      */ 
+      bool hasMcHamiltonian_;
+
 
       // Private member functions
 
