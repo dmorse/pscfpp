@@ -40,9 +40,20 @@ namespace Pspc
       * \param dimensions  dimensions of discretization grid
       */ 
       void allocate(int nMonomer, IntVec<D> const & dimensions);
-  
-      /// Chemical potential fields, r-grid format.
+ 
+      /**
+      * Chemical potential fields, r-grid format, indexed by monomer.
+      */
       DArray< RField<D> > w;
+
+      /**
+      * Chemical potential fields, r-grid format, indexed by eigenvector.
+      *
+      * Each field is a component projected on pointwise onto a
+      * eigenvector of the projected chi matrix, with indices that
+      * correspond to eigenvector indices.
+      */
+      DArray< RField<D> > wc;
 
       /// Monte-Carlo Hamiltonian value.
       double mcHamiltonian;

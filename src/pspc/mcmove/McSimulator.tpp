@@ -204,6 +204,7 @@ namespace Pspc {
       int nMonomer = system().mixture().nMonomer();
       for (int i = 0; i < nMonomer; ++i) {
          mcState_.w[i] = system().w().rgrid(i);
+         mcState_.wc[i] = wc_[i];
       }
       mcState_.mcHamiltonian  = mcHamiltonian_;
       mcState_.hasData = true;
@@ -219,8 +220,12 @@ namespace Pspc {
    {
       UTIL_CHECK(mcState_.isAllocated);
       UTIL_CHECK(mcState_.hasData);
+      const int nMonomer = system().mixture().nMonomer();
 
       system().setWRGrid(mcState_.w); 
+      for (int i = 0; i < nMonomer; ++i) {
+         wc_[i] = mcState_.wc[i];
+      }
       mcHamiltonian_ = mcState_.mcHamiltonian;
       mcState_.hasData = false;
       hasMcHamiltonian_ = true;
@@ -242,14 +247,12 @@ namespace Pspc {
          system().computeFreeEnergy();
       }
 
-      double h = system().fHelmholtz();
-
       // Compute quadratic contribution from field components
       int i, j;
       double sum = 0.0;
       double prefactor, w;
       for (j = 0; j < nMonomer - 1; ++j) {
-         RField<D> const & wc = wRGridComponents_[j];
+         RField<D> const & wc = wc_[j];
          prefactor = -0.5/chiEvals_[j];
          for (i = 0; i < meshSize; ++i) {
             w = wc[i];
@@ -257,8 +260,8 @@ namespace Pspc {
          }
       }
       sum /= double(meshSize);
-      h += sum;
 
+      mcHamiltonian_ = system().fHelmholtz() + sum;
       // Multiply by (system volume)/(monomer volume)
 
       hasMcHamiltonian_ = true;
@@ -364,15 +367,19 @@ namespace Pspc {
 
    }
 
+   /*
+   * Compute the eigenvector components of the w fields, using the
+   * eigenvectors chiEvecs_ of the projected chi matrix as a basis.
+   */
    template <int D>
-   void McSimulator<D>::computeWComponents()
+   void McSimulator<D>::computeWC()
    {
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
       int i, j, k;
 
       for (j = 0; j < nMonomer; ++j) {
-         RField<D>& wc = wRGridComponents_[j];
+         RField<D>& wc = wc_[j];
          for (i = 0; i < meshSize; ++i) {
             wc[i] = 0.0;
          }
@@ -386,6 +393,7 @@ namespace Pspc {
       }
 
    }
+
 }
 }
 #endif

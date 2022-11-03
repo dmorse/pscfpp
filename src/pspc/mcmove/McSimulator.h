@@ -159,17 +159,20 @@ namespace Pspc {
       {  return chiEvecs_; }
 
       /**
-      * Compute and store the components of the field in basis chiEvecs.
+      * Compute and store the eigenvector components of the w fields.
       */
-      void computeWComponents();
+      void computeWC();
 
       /**
-      * Get a component of the w fields in basis chiEvecs.
+      * Get an eigenvector component of the w fields.
+      *
+      * Each component is a point-wise projection of the w fields onto
+      * a corresponding eigenvector of the projected chi matrix.
       *
       * \int i eigenvector / eigenvalue index
       */
-      RField<D> const & wRGridComponent(int i) const
-      {   return wRGridComponents_[i]; }
+      RField<D> const & wc(int i) const
+      {   return wc_[i]; }
 
       /**
       * Get parent system by reference.
@@ -210,7 +213,7 @@ namespace Pspc {
       * Each field component corresponds to the projection of w onto an 
       * eigenvector of the projected chi matrix.
       */
-      DArray< RField<D> > wRGridComponents_;
+      DArray< RField<D> > wc_;
 
       /**
       * Eigenvalues of the projected chi matrix.
