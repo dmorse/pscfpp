@@ -681,9 +681,9 @@ namespace Pspc
       std::string groupName() const;
 
       /**
-      * Have c fields been computed from the current w field?
+      * Does this system have an Iterator object?
       */
-      bool hasCFields() const;
+      bool hasIterator() const;
 
       /**
       * Does this system have a Sweep object?
@@ -705,6 +705,21 @@ namespace Pspc
       * Does this system have a Compressor object?
       */
       bool hasCompressor() const;
+
+      /**
+      * Does this system have an initialized McSimulator?
+      */
+      bool hasMcSimulator() const;
+
+      /**
+      * Have c fields been computed from the current w fields?
+      */
+      bool hasCFields() const;
+
+      /**
+      * Has the free energy been computed from the current w fields?
+      */
+      bool hasFreeEnergy() const;
 
       ///@}
 
@@ -853,9 +868,9 @@ namespace Pspc
       bool hasMixture_;
 
       /**
-      * Has an McSimulator been initialized?
+      * Has the McSimulator been initialized?
       */
-      bool hasMcMoves_;
+      bool hasMcSimulator_;
 
       /**
       * Has memory been allocated for fields in grid format?
@@ -1065,10 +1080,10 @@ namespace Pspc
    inline Mask<D>& System<D>::mask()
    {  return mask_; }
 
-   // Have the c fields been computed for the current w fields?
+   // Does the system have an Iterator object?
    template <int D>
-   inline bool System<D>::hasCFields() const
-   {  return hasCFields_; }
+   inline bool System<D>::hasIterator() const
+   {  return (iteratorPtr_ != 0); }
 
    // Does the system have a Sweep object?
    template <int D>
@@ -1090,6 +1105,16 @@ namespace Pspc
    inline bool System<D>::hasCompressor() const
    {  return (compressorPtr_ != 0); }
 
+   // Does the system have an initialized McSimulator ?
+   template <int D>
+   inline bool System<D>::hasMcSimulator() const
+   {  return (hasMcSimulator_); }
+
+   // Have the c fields been computed for the current w fields?
+   template <int D>
+   inline bool System<D>::hasCFields() const
+   {  return hasCFields_; }
+
    // Get the precomputed Helmholtz free energy per monomer / kT.
    template <int D>
    inline double System<D>::fHelmholtz() const
@@ -1105,6 +1130,11 @@ namespace Pspc
       UTIL_CHECK(hasFreeEnergy_);
       return pressure_; 
    }
+
+   // Has the free energy been computed for the current w fields?
+   template <int D>
+   inline bool System<D>::hasFreeEnergy() const
+   {  return hasFreeEnergy_; }
 
    #ifndef PSPC_SYSTEM_TPP
    // Suppress implicit instantiation

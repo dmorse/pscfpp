@@ -74,7 +74,7 @@ namespace Pspc
       fHelmholtz_(0.0),
       pressure_(0.0),
       hasMixture_(false),
-      hasMcMoves_(false),
+      hasMcSimulator_(false),
       isAllocatedRGrid_(false),
       isAllocatedBasis_(false),
       hasCFields_(false),
@@ -263,20 +263,17 @@ namespace Pspc
       }
 
       // Optionally read an McSimulator
-      if (compressorPtr_) {
+      //if (compressorPtr_) {
 
          readParamCompositeOptional(in, mcSimulator_);
 
          if (mcSimulator_.isActive()) {
-            hasMcMoves_ = true;
-            //mcState_.allocate(mixture_.nMonomer(), 
-            //                  domain_.mesh().dimensions());
-         } else 
-         if (ParamComponent::echo()) {
-            Log::file() << indent() << "  McSimulator{ [absent] }\n";
+            hasMcSimulator_ = true;
+         } else {
+            hasMcSimulator_ = false;
          }
 
-      }
+      //}
 
    }
 
@@ -904,7 +901,8 @@ namespace Pspc
    template <int D>
    void System<D>::simulate(int nStep)
    {
-      UTIL_CHECK(hasMcMoves_);
+      UTIL_CHECK(hasCompressor());
+      UTIL_CHECK(hasMcSimulator_);
       mcSimulator_.simulate(nStep);
    }
 

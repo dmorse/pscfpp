@@ -113,6 +113,11 @@ namespace Pspc {
       void restoreMcState();
 
       /**
+      * Output statistics for all moves.
+      */
+      void output();
+
+      /**
       * Return probability of move i.
       *
       * \param i index for McMove
@@ -120,10 +125,11 @@ namespace Pspc {
       */
       double probability(int i) const;
 
-      /**
-      * Output statistics for all moves.
-      */
-      void output();
+      double chiPvalue(int i) const
+      {  return chiPvalues_[i]; }
+
+      DArray<double> const & chiPvector(int i) const
+      {  return chiPvectors_[i]; }
 
       /**
       * Get parent system by reference.
@@ -143,10 +149,30 @@ namespace Pspc {
        
    private:
 
+      // Private data members
+
       /**
       * Array of McMove probabilities.
       */
       DArray<double>  probabilities_;
+
+      /**
+      * Projected chi matrix
+      *
+      * Projected matrix chiP_ = P*chi*P, where P is projection matrix that 
+      * projects onto the subspace orthogonal to the vector e = [1, ... , 1].
+      */
+      DMatrix<double> chiP_;
+
+      /**
+      * Eigenvalues of the projected chi matrix.
+      */
+      DArray<double>  chiPvalues_;
+
+      /**
+      * Eigenvectors of the projected chi matrix.
+      */
+      DArray< DArray<double> >  chiPvectors_;
 
       /**
       * State saved during MC simulation.
@@ -168,13 +194,22 @@ namespace Pspc {
       */
       System<D>* systemPtr_;
 
-      /*
+      /**
       * Pointer to random number generator.
       */
       Random* randomPtr_;
 
-      /// Return pointer to a new McMoveFactory.
+      // Private member functions
+
+      /**
+      * Return pointer to a new McMoveFactory.
+      */
       virtual Factory< McMove<D> >* newDefaultFactory() const;
+
+      /**
+      * Perform eigenvalue analysis of projected chi matrix.
+      */
+      void analyzeChi();
 
    };
 

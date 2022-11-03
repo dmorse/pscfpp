@@ -116,6 +116,11 @@ namespace Pscf {
       const;
 
       /**
+      * Return the chi matrix by const reference.
+      */
+      DMatrix<double> const & chi() const;
+
+      /**
       * Return one element of the chi matrix.
       *
       * \param i row index
@@ -180,6 +185,9 @@ namespace Pscf {
 
    inline int Interaction::nMonomer() const
    {  return nMonomer_; }
+
+   inline DMatrix<double> const &  Interaction::chi() const
+   {  return chi_; }
 
    inline double Interaction::chi(int i, int j) const
    {  return chi_(i, j); }

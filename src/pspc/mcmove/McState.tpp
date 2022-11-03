@@ -21,9 +21,10 @@ using namespace Util;
    */
    template <int D>
    McState<D>::McState() 
-     : w(),  
+     : w(), 
        mcHamiltonian(0.0), 
-       hasData(false)
+       hasData(false),
+       isAllocated(false)
    {}
 
    /*
@@ -36,6 +37,7 @@ using namespace Util;
       for (int i = 0; i < nMonomer; ++i) {
          w[i].allocate(dimensions);
       }
+      isAllocated = true;
    }
 
 }

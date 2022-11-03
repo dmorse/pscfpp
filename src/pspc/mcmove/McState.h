@@ -50,6 +50,9 @@ namespace Pspc
       /// Is this struct being used to store data?
       bool hasData;
 
+      /// Has memory be allocated for the w field?
+      bool isAllocated;
+
    };
 
    #ifndef PSPC_MC_STATE_TPP

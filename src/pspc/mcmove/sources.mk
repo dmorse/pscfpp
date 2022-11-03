@@ -1,7 +1,6 @@
 pspc_mcmove_= \
   pspc/mcmove/McMove.cpp \
   pspc/mcmove/McMoveFactory.cpp \
-  pspc/mcmove/McMoveManager.cpp \
   pspc/mcmove/McState.cpp \
   pspc/mcmove/McSimulator.cpp 
 

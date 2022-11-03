@@ -16,6 +16,8 @@
 #include <util/random/Random.h>
 #include <util/global.h>
 
+#include <gsl/gsl_eigen.h>
+
 namespace Pscf {
 namespace Pspc {
 
@@ -53,31 +55,56 @@ namespace Pspc {
    {
       Manager< McMove<D> >::readParameters(in);
 
-      // Allocate and store probabilities
-      probabilities_.allocate(size());
-      double  totalProbability = 0.0;
-      int     iMove;
-      for (iMove = 0; iMove < size(); ++iMove) {
-         probabilities_[iMove] = (*this)[iMove].probability();
-         totalProbability += probabilities_[iMove];
+      if (size() > 0) {
+
+         // Allocate and store probabilities
+         probabilities_.allocate(size());
+         double  totalProbability = 0.0;
+         int     iMove;
+         for (iMove = 0; iMove < size(); ++iMove) {
+            probabilities_[iMove] = (*this)[iMove].probability();
+            totalProbability += probabilities_[iMove];
+         }
+   
+         // Allocate and store and normalize probabilities
+         for (iMove = 0; iMove < size(); ++iMove) {
+            probabilities_[iMove] = probabilities_[iMove]/totalProbability;
+            (*this)[iMove].setProbability(probabilities_[iMove]);
+         }
+
       }
 
-      // Allocate and store and normalize probabilities
-      for (iMove = 0; iMove < size(); ++iMove) {
-         probabilities_[iMove] = probabilities_[iMove]/totalProbability;
-         (*this)[iMove].setProbability(probabilities_[iMove]);
+      // Allocate projected chi matrix chiP_ and associated arrays
+      const int nMonomer = system().mixture().nMonomer();
+      chiP_.allocate(nMonomer, nMonomer);
+      chiPvalues_.allocate(nMonomer);
+      chiPvectors_.allocate(nMonomer);
+      for (int i=0; i < nMonomer; ++i) {
+         chiPvectors_[i].allocate(nMonomer);
       }
+
+      analyzeChi();
    }
 
    /*
-   * Initialize all moves just prior to a run.
+   * Initialize just prior to a run.
    */
    template <int D>
    void McSimulator<D>::setup()
    {
+
+      // Allocate mcState_, if necessary.
+      if (!mcState_.isAllocated) {
+         const int nMonomer = system().mixture().nMonomer();
+         const IntVec<D> dimensions = system().domain().mesh().dimensions();
+         mcState_.allocate(nMonomer, dimensions);
+      }
+
+      // Call setup fucntion of each McMove
       for (int iMove = 0; iMove < size(); ++iMove) {
          (*this)[iMove].setup();
       }
+
    }
 
    /*
@@ -171,8 +198,8 @@ namespace Pspc {
    template <int D>
    void McSimulator<D>::saveMcState()
    {
-      //UTIL_CHECK(system().isAllocatedRGrid());
       UTIL_CHECK(system().w().hasData());
+      UTIL_CHECK(mcState_.isAllocated);
       UTIL_CHECK(!mcState_.hasData);
 
       int nMonomer = system().mixture().nMonomer();
@@ -191,6 +218,9 @@ namespace Pspc {
    template <int D>
    void McSimulator<D>::restoreMcState()
    {
+      UTIL_CHECK(mcState_.isAllocated);
+      UTIL_CHECK(mcState_.hasData);
+
       system().setWRGrid(mcState_.w); 
       mcHamiltonian_ = mcState_.mcHamiltonian;
       mcState_.hasData = false;
@@ -203,17 +233,119 @@ namespace Pspc {
    template <int D>
    void McSimulator<D>::computeMcHamiltonian()
    {
-      UTIL_CHECK(system().domain().basis().isInitialized());
       UTIL_CHECK(system().w().hasData());
-      //UTIL_CHECK(hasCFields_);
+      UTIL_CHECK(system().hasCFields());
 
-      system().computeFreeEnergy();
+      // Compute free energy if necessary
+      if (!system().hasFreeEnergy()) {
+         system().computeFreeEnergy();
+      }
 
-      /// Computation, sets mcHamiltonian_
+      double h = system().fHelmholtz();
 
       hasMcHamiltonian_ = true;
    }
 
+   template <int D>
+   void McSimulator<D>::analyzeChi()
+   {
+      const int nMonomer = system().mixture().nMonomer();
+      DMatrix<double> const & chi = system().interaction().chi();
+      double d = 1.0/double(nMonomer);
+      int i, j, k;
+
+      // Compute projection matrix P
+      DMatrix<double> P;
+      P.allocate(nMonomer, nMonomer);
+      for (i = 0; i < nMonomer; ++i) {
+         for (j = 0; j < nMonomer; ++j) {
+            P(i,j) = -d;
+         }
+         P(i,i) += 1.0;
+      }
+
+      // Compute T = chi*P (temporary matrix)
+      DMatrix<double> T;
+      T.allocate(nMonomer, nMonomer);
+      for (i = 0; i < nMonomer; ++i) {
+         for (j = 0; j < nMonomer; ++j) {
+            T(i, j) = 0.0;
+            for (k = 0; k < nMonomer; ++k) {
+               T(i,j) += chi(i,k)*P(k,j);
+            }
+         }
+      }
+
+      // Allocate GSL matrix to hold elements of chiP
+      gsl_matrix* A = gsl_matrix_alloc(nMonomer, nMonomer);
+
+      // Compute chiP = = P*chi*P = P*T
+      DMatrix<double> chiP;
+      chiP.allocate(nMonomer, nMonomer);
+      for (i = 0; i < nMonomer; ++i) {
+         for (j = 0; j < nMonomer; ++j) {
+            chiP(i, j) = 0.0;
+            for (k = 0; k < nMonomer; ++k) {
+               chiP(i,j) += P(i,k)*T(k,j);
+            }
+            gsl_matrix_set(A, i, j, chiP(i, j));
+         }
+      }
+
+      // Compute eigenvalues and eigenvectors of chiP
+      gsl_eigen_symmv_workspace* work = gsl_eigen_symmv_alloc(nMonomer);
+      gsl_vector* Avals = gsl_vector_alloc(nMonomer);
+      gsl_matrix* Avecs = gsl_matrix_alloc(nMonomer, nMonomer);
+      int error;
+      error = gsl_eigen_symmv(A, Avals, Avecs, work);
+
+      // Copy eigenpairs with non-null eigenvalues
+      int nNull =  0;
+      int iNull = -1;
+      k = 0;
+      double val;
+      for (i = 0; i < nMonomer; ++i) {
+         val = gsl_vector_get(Avals, i);
+         if (abs(val) < 1.0E-8) {
+            ++nNull;
+            iNull = i;
+         } else {
+            chiPvalues_[k] = val;
+            for (j = 0; j < nMonomer; ++j) {
+               UTIL_CHECK(chiPvectors_[k].capacity() == nMonomer);
+               chiPvectors_[k][j] = gsl_matrix_get(Avecs, j, i);
+            }
+            if (chiPvectors_[k][0] < 0.0) {
+               for (j = 0; j < nMonomer; ++j) {
+                  chiPvectors_[k][j] = -chiPvectors_[k][j];
+               }
+            }
+            ++k;
+         }
+      }
+      UTIL_CHECK(nNull == 1);
+      UTIL_CHECK(iNull >= 0);
+    
+      // Copy eigenpair with null eigenvalue 
+      chiPvalues_[nMonomer-1] = 0.0;
+      for (i = 0; i < nMonomer; ++i) {
+         chiPvectors_[nMonomer-1][i] = gsl_matrix_get(Avecs, i, iNull);
+      }
+
+      #if 0
+      // Debugging 
+      for (i = 0; i < nMonomer; ++i) {
+         Log::file() << "Eigenpair " << i << "\n";
+         Log::file() << "value  =  " << chiPvalues_[i] << "\n";
+         Log::file() << "vector = [ "; 
+         for (j = 0; j < nMonomer; ++j) {
+            Log::file() << chiPvectors_[i][j] << "   ";
+         }
+         Log::file() << "]\n";
+      }
+      #endif
+
+   }
 }
 }
 #endif
