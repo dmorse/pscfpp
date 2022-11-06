@@ -192,6 +192,11 @@ namespace Pscf
       LatticeSystem lattice() const
       {  return lattice_; }
 
+      /** 
+      * Get the generalized volume (i.e., length) of the unit cell,
+      */
+      double volume() const;
+
       using UnitCellBase<1>::isInitialized;
 
    private:
@@ -319,6 +324,11 @@ namespace Pscf
       LatticeSystem lattice() const
       {  return lattice_; }
 
+      /** 
+      * Get the generalized volume (i.e., area) of the unit cell,
+      */
+      double volume() const;
+
    private:
 
       // Lattice system (square, rectangular, etc.)
@@ -445,6 +455,11 @@ namespace Pscf
       */
       LatticeSystem lattice() const
       {  return lattice_; }
+
+      /** 
+      * Get the volume of the unit cell,
+      */
+      double volume() const;
 
    private:
 

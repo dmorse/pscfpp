@@ -82,6 +82,7 @@ namespace Pspc {
       chiEvecs_.allocate(nMonomer, nMonomer);
 
       analyzeChi();
+
    }
 
    /*
@@ -248,30 +249,72 @@ namespace Pspc {
    {
       UTIL_CHECK(system().w().hasData());
       UTIL_CHECK(system().hasCFields());
-      const int nMonomer = system().mixture().nMonomer();
-      const int meshSize = system().domain().mesh().size();
+      hasMcHamiltonian_ = false;
 
-      // Compute free energy if necessary
-      if (!system().hasFreeEnergy()) {
-         system().computeFreeEnergy();
-      }
+      Mixture<D> const & mixture = system().mixture();
+      Domain<D> const & domain = system().domain();
 
-      // Compute quadratic contribution from field components
-      int i, j;
-      double sum = 0.0;
-      double prefactor, w;
-      for (j = 0; j < nMonomer - 1; ++j) {
-         RField<D> const & wc = wc_[j];
-         prefactor = -0.5/chiEvals_[j];
-         for (i = 0; i < meshSize; ++i) {
-            w = wc[i];
-            sum += prefactor*w*w;
+      const int nMonomer = mixture.nMonomer();
+      const int meshSize = domain.mesh().size();
+
+      const int np = mixture.nPolymer();
+      const int ns = mixture.nSolvent();
+      double phi, mu;
+      double lnQ = 0.0;
+
+      // Compute polymer ideal gas contributions to lnQ
+      if (np > 0) {
+         Polymer<D> const * polymerPtr;
+         double length;
+         for (int i = 0; i < np; ++i) {
+            polymerPtr = &mixture.polymer(i);
+            phi = polymerPtr->phi();
+            mu = polymerPtr->mu();
+            length = polymerPtr->length();
+            // Recall: mu = ln(phi/q)
+            if (phi > 1.0E-08) {
+               lnQ += phi*( -mu + 1.0 )/length;
+            }
          }
       }
-      sum /= double(meshSize);
 
-      mcHamiltonian_ = system().fHelmholtz() + sum;
-      // Multiply by (system volume)/(monomer volume)
+      // Compute solvent ideal gas contributions to lnQ
+      if (ns > 0) {
+         Solvent<D> const * solventPtr;
+         double size;
+         for (int i = 0; i < ns; ++i) {
+            solventPtr = &mixture.solvent(i);
+            phi = solventPtr->phi();
+            mu = solventPtr->mu();
+            size = solventPtr->size();
+            // Recall: mu = ln(phi/q)
+            if (phi > 1.0E-8) {
+               lnQ += phi*( -mu + 1.0 )/size;
+            }
+         }
+      }
+      // lnQ now contains a value per monomer
+
+      // Compute quadratic field contribution HW
+      int i, j;
+      double prefactor, w;
+      double HW = 0.0;
+      for (j = 0; j < nMonomer - 1; ++j) {
+         prefactor = -0.5*double(nMonomer)/chiEvals_[j];
+         RField<D> const & wc = wc_[j];
+         for (i = 0; i < meshSize; ++i) {
+            w = wc[i];
+            HW += prefactor*w*w;
+         }
+      }
+      HW /= double(meshSize);  
+      // HW now contains a value per monomer
+
+      // Compute final MC Hamiltonian
+      mcHamiltonian_ = HW - lnQ;
+      const double vSystem  = domain.unitCell().volume();
+      const double vMonomer = mixture.vMonomer();
+      mcHamiltonian_ *= vSystem/vMonomer;
 
       hasMcHamiltonian_ = true;
    }
@@ -306,9 +349,6 @@ namespace Pspc {
          }
       }
 
-      // Allocate GSL matrix to hold elements of chiP
-      gsl_matrix* A = gsl_matrix_alloc(nMonomer, nMonomer);
-
       // Compute chiP = = P*chi*P = P*T
       DMatrix<double> chiP;
       chiP.allocate(nMonomer, nMonomer);
@@ -318,29 +358,47 @@ namespace Pspc {
             for (k = 0; k < nMonomer; ++k) {
                chiP(i,j) += P(i,k)*T(k,j);
             }
+         }
+      }
+
+      // Eigenvalue calculations use data structures and 
+      // functions from the Gnu Scientific Library (GSL)
+
+      // Allocate GSL matrix A to hold elements of chiP
+      gsl_matrix* A = gsl_matrix_alloc(nMonomer, nMonomer);
+
+      // Copy DMatrix<double> chiP to gsl_matrix A
+      for (i = 0; i < nMonomer; ++i) {
+         for (j = 0; j < nMonomer; ++j) {
             gsl_matrix_set(A, i, j, chiP(i, j));
          }
       }
 
-      // Compute eigenvalues and eigenvectors of chiP
+      // Compute eigenvalues and eigenvectors of chiP (or A)
       gsl_eigen_symmv_workspace* work = gsl_eigen_symmv_alloc(nMonomer);
       gsl_vector* Avals = gsl_vector_alloc(nMonomer);
       gsl_matrix* Avecs = gsl_matrix_alloc(nMonomer, nMonomer);
       int error;
       error = gsl_eigen_symmv(A, Avals, Avecs, work);
 
+      // Requirements: 
+      // - A has exactly one zero eigenvalue, with eigenvector (1,...,1)
+      // - All other eigenvalues must be negative.
+
       // Copy eigenpairs with non-null eigenvalues
-      int nNull =  0;
-      int iNull = -1;
-      k = 0;
+      int iNull = -1;  // index for null eigenvalue
+      int nNull =  0;  // number of null eigenvalue
+      k = 0;           // re-ordered index for non-null eigenvalue
       double val;
       for (i = 0; i < nMonomer; ++i) {
          val = gsl_vector_get(Avals, i);
          if (abs(val) < 1.0E-8) {
             ++nNull;
             iNull = i;
+            UTIL_CHECK(nNull <= 1);
          } else {
             chiEvals_[k] = val;
+            UTIL_CHECK(val < 0.0);
             for (j = 0; j < nMonomer; ++j) {
                chiEvecs_(k, j) = gsl_matrix_get(Avecs, j, i);
             }
@@ -355,14 +413,39 @@ namespace Pspc {
       UTIL_CHECK(nNull == 1);
       UTIL_CHECK(iNull >= 0);
     
-      // Copy eigenpair with null eigenvalue 
-      chiEvals_[nMonomer-1] = 0.0;
-      for (i = 0; i < nMonomer; ++i) {
-         chiEvecs_(nMonomer-1, i) = gsl_matrix_get(Avecs, i, iNull);
+      // Set eigenpair with zero eigenvalue 
+      i = nMonomer - 1;
+      chiEvals_[i] = 0.0;
+      for (j = 0; j < nMonomer; ++j) {
+         chiEvecs_(i, j) = gsl_matrix_get(Avecs, j, iNull);
+      }
+      if (chiEvecs_(i, 0) < 0) {
+         for (j = 0; j < nMonomer; ++j) {
+            chiEvecs_(i, j) = -chiEvecs_(i, j);
+         }
+      }
+
+      // Normalize all eigenvectors so that the sum of squares = nMonomer
+      double vec, norm, prefactor;
+      for (i = 0;  i < nMonomer; ++i) {
+         norm = 0.0;
+         for (j = 0;  j < nMonomer; ++j) {
+            vec = chiEvecs_(i, j);
+            norm += vec*vec;
+         } 
+         prefactor = sqrt( double(nMonomer)/norm );
+         for (j = 0;  j < nMonomer; ++j) {
+            chiEvecs_(i, j) *= prefactor;
+         } 
+      }
+
+      // Check final eigenvector is (1, ..., 1)
+      for (j = 0; j < nMonomer; ++j) {
+         UTIL_CHECK(abs(chiEvecs_(nMonomer-1, j) - 1.0) < 1.0E-8);
       }
 
       #if 0
-      // Debugging 
+      // Debugging output
       for (i = 0; i < nMonomer; ++i) {
          Log::file() << "Eigenpair " << i << "\n";
          Log::file() << "value  =  " << chiEvals_[i] << "\n";

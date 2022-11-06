@@ -250,4 +250,15 @@ namespace Pscf
       setLattice();
    }
 
+   /*
+   * Get the generalized 2D volume (area) of the unit cell. 
+   */
+   double UnitCell<2>::volume() const
+   {
+      double a = 0.0;
+      a += rBasis_[0][0]*rBasis_[1][1];
+      a -= rBasis_[0][1]*rBasis_[1][0];
+      return a;
+   }
+
 }
