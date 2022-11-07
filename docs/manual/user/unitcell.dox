@@ -142,8 +142,8 @@ discussed below:
   <tr> 
     <td> monoclinic </td>
     <td> 3 </td>
-    <td> a, c, beta </td>
-    <td> 2 orthogonal basis vectors of equal lengths a=b.
+    <td> a, b, c, beta </td>
+    <td> 2 orthogonal basis vectors of lengths a and b.
          A third vector of length c is orthogonal to vector b.
          Angle beta is the angle between vectors a and c. </td>
   </tr> 
