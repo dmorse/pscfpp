@@ -295,10 +295,11 @@ namespace Pspc {
       }
       // lnQ now contains a value per monomer
 
-      // Compute quadratic field contribution HW
+      // Compute field contribution HW
       int i, j;
       double prefactor, w;
       double HW = 0.0;
+      // Compute quadratic field contribution to HW
       for (j = 0; j < nMonomer - 1; ++j) {
          prefactor = -0.5*double(nMonomer)/chiEvals_[j];
          RField<D> const & wc = wc_[j];
@@ -306,6 +307,11 @@ namespace Pspc {
             w = wc[i];
             HW += prefactor*w*w;
          }
+      }
+      // Subtract average of Langrange multiplier field
+      RField<D> const & xi = wc_[nMonomer-1];
+      for (i = 0; i < meshSize; ++i) {
+         HW -= xi[i];
       }
       HW /= double(meshSize);  
       // HW now contains a value per monomer
@@ -470,17 +476,25 @@ namespace Pspc {
       const int meshSize = system().domain().mesh().size();
       int i, j, k;
 
+      // Loop over eigenvectors (j is an eigenvector index)
       for (j = 0; j < nMonomer; ++j) {
+
+         // Loop over grid points to zero out field wc_[j]
          RField<D>& wc = wc_[j];
          for (i = 0; i < meshSize; ++i) {
             wc[i] = 0.0;
          }
+
+         // Loop over monomer types (k is a monomer index)
          for (k = 0; k < nMonomer; ++k) {
-            double vec = chiEvecs_(j, k);
+            double vec = chiEvecs_(j, k)/double(nMonomer);
+
+            // Loop over grid points
             RField<D> const & w = system().w().rgrid(k);
             for (i = 0; i < meshSize; ++i) {
-                wc[i] += vec*w[i];
+               wc[i] += vec*w[i];
             }
+
          }
       }
 
