@@ -23,7 +23,7 @@ System{
     )
   }
   Domain{
-    unitCell     cubic 3.0E+00
+    unitCell     cubic     3.0E+00
     mesh         32   32   32
     groupName    I_a_-3_d
   }

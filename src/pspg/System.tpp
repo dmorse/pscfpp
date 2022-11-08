@@ -406,6 +406,12 @@ namespace Pspg
             readEcho(in, filename);
             readWRGrid(filename);
          } else
+         if (command == "SET_UNIT_CELL") {
+            UnitCell<D> unitCell;
+            in >> unitCell;
+            Log::file() << "   " << unitCell << std::endl;
+            setUnitCell(unitCell);
+         } else
          if (command == "COMPUTE") {
             compute();
          } else
@@ -817,6 +823,7 @@ namespace Pspg
          allocateFieldsBasis(filename); 
       }
 
+      // Read w fields
       w_.readBasis(filename, domain_.unitCell());
       wavelist().computeKSq(domain_.unitCell());
       wavelist().computedKSq(domain_.unitCell());
@@ -877,7 +884,7 @@ namespace Pspg
    void System<D>::setUnitCell(UnitCell<D> const & unitCell)
    {
       UTIL_CHECK(domain_.unitCell().lattice() == unitCell.lattice());
-      domain_.unitCell() = unitCell;
+      domain_.setUnitCell(unitCell);
       wavelist().computeKSq(domain_.unitCell());
       wavelist().computedKSq(domain_.unitCell());
       mixture_.setupUnitCell(unitCell, wavelist());
@@ -890,7 +897,7 @@ namespace Pspg
    void System<D>::setUnitCell(FSArray<double, 6> const & parameters)
    {
       UTIL_CHECK(domain_.unitCell().nParameter() == parameters.size());
-      domain_.unitCell().setParameters(parameters);
+      domain_.setUnitCell(parameters);
       wavelist().computeKSq(domain_.unitCell());
       wavelist().computedKSq(domain_.unitCell());
       mixture_.setupUnitCell(domain_.unitCell(), wavelist());

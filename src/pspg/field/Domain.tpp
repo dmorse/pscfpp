@@ -104,9 +104,82 @@ namespace Pspg
       // Initialize mesh, fft and basis
       mesh_.setDimensions(nGrid);
       fft_.setup(mesh_.dimensions());
-      basis_.makeBasis(mesh_, unitCell_, groupName_);
+
+      // Initialize group and basis
+      readGroup(groupName_, group_);
+      basis_.makeBasis(mesh_, unitCell_, group_);
       
       isInitialized_ = true;
+   }
+
+   /*
+   * Set the unit cell, make basis if needed.
+   */
+   template <int D>
+   void Domain<D>::setUnitCell(UnitCell<D> const & unitCell)
+   {
+      if (lattice_ == UnitCell<D>::Null) {
+         lattice_ = unitCell.lattice();
+      } else {
+         UTIL_CHECK(lattice_ == unitCell.lattice());
+      }
+      unitCell_ = unitCell;
+      if (!basis_.isInitialized()) {
+         makeBasis();
+      }
+   }
+
+   /*
+   * Set the unit cell, make basis if needed.
+   */
+   template <int D>
+   void Domain<D>::setUnitCell(typename UnitCell<D>::LatticeSystem lattice,
+                               FSArray<double, 6> const & parameters)
+   {
+      if (lattice_ == UnitCell<D>::Null) {
+         lattice_ = lattice;
+      } else {
+         UTIL_CHECK(lattice_ == lattice);
+      }
+      unitCell_.set(lattice, parameters);
+      if (!basis_.isInitialized()) {
+         makeBasis();
+      }
+   }
+
+   /*
+   * Set parameters of the associated unit cell, make basis if needed.
+   */
+   template <int D>
+   void Domain<D>::setUnitCell(FSArray<double, 6> const & parameters)
+   {
+      UTIL_CHECK(unitCell_.lattice() != UnitCell<D>::Null);
+      UTIL_CHECK(unitCell_.nParameter() == parameters.size());
+      unitCell_.setParameters(parameters);
+      if (!basis_.isInitialized()) {
+         makeBasis();
+      }
+   }
+
+   template <int D>
+   void Domain<D>::makeBasis() 
+   {
+      UTIL_CHECK(mesh_.size() > 0);
+      UTIL_CHECK(unitCell_.lattice() != UnitCell<D>::Null);
+
+      #if 0
+      // Check group, read from file if necessary
+      if (group_.size() == 1) {
+         UTIL_CHECK(groupName_ != "");
+         readGroup(groupName_, group_);
+      }
+      #endif
+
+      // Check basis, construct if not initialized
+      if (!basis().isInitialized()) {
+         basis_.makeBasis(mesh_, unitCell_, group_);
+      }
+      UTIL_CHECK(basis().isInitialized());
    }
 
 } // namespace Pspg

@@ -88,6 +88,41 @@ namespace Pspg
       */
       void readFieldHeader(std::istream& in, int& nMonomer);
 
+      /**
+      * Set the unit cell, given a UnitCell<D> object.
+      *
+      * Initializes basis if not done previously.
+      *
+      * \param unitCell new unit cell
+      */
+      void setUnitCell(UnitCell<D> const & unitCell);
+
+      /**
+      * Set the unit cell state, given the lattice and parameters.
+      *
+      * Initializes basis if not done previously.
+      *
+      * \param lattice  lattice system
+      * \param parameters array of unit cell parameters
+      */
+      void setUnitCell(typename UnitCell<D>::LatticeSystem lattice,
+                       FSArray<double, 6> const & parameters);
+
+      /**
+      * Set unit cell parameters.
+      *
+      * Initializes basis if not done previously.
+      * Lattice system must already be set to non-null value on entry.
+      *
+      * \param parameters array of unit cell parameters
+      */
+      void setUnitCell(FSArray<double, 6> const & parameters);
+
+      /**
+      * Construct basis if not done already.
+      */
+      void makeBasis();
+
       //@}
       /// \name Accessors 
       //@{
