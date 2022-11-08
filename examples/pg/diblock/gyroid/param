@@ -19,18 +19,20 @@ System{
   }
   Interaction{
     chi( 
-         1   0   20.0
-    }
+         1   0   15.0
+    )
   }
   Domain{
-    unitCell cubic 3.0E+00
-    mesh     32 32 32
-    groupName I_a_-3_d
+    unitCell     cubic     3.0E+00
+    mesh         32   32   32
+    groupName    I_a_-3_d
   }
   AmIteratorBasis{
-    maxItr 500
-    epsilon 1e-5
-    maxHist 30
+    maxItr       500
+    epsilon      1.0e-8
+    maxHist      30
     isFlexible   1
   }
 }
+
+    lattice      cubic 

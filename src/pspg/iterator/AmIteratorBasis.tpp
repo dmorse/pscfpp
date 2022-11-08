@@ -22,7 +22,7 @@ namespace Pspg{
    template <int D>
    AmIteratorBasis<D>::AmIteratorBasis(System<D>& system)
    : Iterator<D>(system)
-   { setClassName("AmIteratorBasis"); }
+   {  setClassName("AmIteratorBasis"); }
 
    template <int D>
    AmIteratorBasis<D>::~AmIteratorBasis()
@@ -260,9 +260,10 @@ namespace Pspg{
    template <int D>
    void AmIteratorBasis<D>::getResidual(DArray<double>& resid)
    {
-      const int n = nElements();
+      UTIL_CHECK(system().basis().isInitialized());
       const int nMonomer = system().mixture().nMonomer();
       const int nBasis = system().basis().nBasis();
+      const int n = nElements();
 
       // Initialize residuals
       for (int i = 0 ; i < n; ++i) {
@@ -318,7 +319,7 @@ namespace Pspg{
    template <int D>
    void AmIteratorBasis<D>::update(DArray<double>& newGuess)
    {
-      // Convert back to field format
+      UTIL_CHECK(system().basis().isInitialized());
       const int nMonomer = system().mixture().nMonomer();
       const int nBasis = system().basis().nBasis();
 

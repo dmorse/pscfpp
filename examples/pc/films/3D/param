@@ -23,8 +23,8 @@ System{
     )
   }
   Domain{
-    unitCell       tetragonal    2.0    4.2
     mesh           32    32    68
+    lattice        tetragonal 
     groupName      P_4%m_m_m
   }
   AmIteratorFilm{
@@ -45,3 +45,5 @@ System{
     ]
   }
 }
+
+    unitCell       tetragonal    2.0    4.2

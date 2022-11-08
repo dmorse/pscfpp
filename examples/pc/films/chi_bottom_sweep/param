@@ -23,8 +23,8 @@ System{
     )
   }
   Domain{
-    unitCell       rectangular    1.6    3.0
     mesh           64    96
+    lattice        rectangular  
     groupName      p_m
   }
   AmIteratorFilm{
@@ -46,3 +46,5 @@ System{
     ]
   }
 }
+
+    unitCell       rectangular    1.6    3.0

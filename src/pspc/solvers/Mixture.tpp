@@ -19,8 +19,7 @@ namespace Pspc
 
    template <int D>
    Mixture<D>::Mixture()
-    : vMonomer_(1.0),
-      ds_(-1.0),
+    : ds_(-1.0),
       meshPtr_(0),
       unitCellPtr_(0),
       hasStress_(false)

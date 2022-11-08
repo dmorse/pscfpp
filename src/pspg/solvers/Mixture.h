@@ -149,10 +149,12 @@ namespace Pspg
       */
       double stress(int parameterId) const;
 
+      #if 0
       /**
       * Get monomer reference volume.
       */
       double vMonomer() const;
+      #endif
 
       /**
       * Is the ensemble canonical (i.e, closed for all species)?
@@ -182,9 +184,11 @@ namespace Pspg
 
       /// Derivatives of free energy w/ respect to cell parameters.
       FArray<double, 6> stress_;
-    
+   
+      #if 0 
       /// Monomer reference volume (set to 1.0 by default).
       double vMonomer_;
+      #endif
 
       /// Optimal contour length step size.
       double ds_;
@@ -205,12 +209,14 @@ namespace Pspg
 
    // Inline member function
 
+   #if 0
    /*
    * Get monomer reference volume (public).
    */
    template <int D>
    inline double Mixture<D>::vMonomer() const
    {  return vMonomer_; }
+   #endif
 
    /*
    * Get Mesh<D> by constant reference (private).

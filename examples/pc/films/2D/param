@@ -23,8 +23,8 @@ System{
     )
   }
   Domain{
-    unitCell       rectangular    2.0    2.0
     mesh           64    64
+    lattice        rectangular 
     groupName      p_1
   }
   AmIteratorFilm{
@@ -39,3 +39,5 @@ System{
     chiTop[ 20 0 ]
   }
 }
+
+    unitCell       rectangular    2.0    2.0

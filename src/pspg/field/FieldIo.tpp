@@ -339,6 +339,7 @@ namespace Pspg
    {
       int nMonomer = fields.capacity();
       UTIL_CHECK(nMonomer > 0);
+      UTIL_CHECK(basis().isInitialized());
 
       // Write header
       writeFieldHeader(out, nMonomer, unitCell);
@@ -937,8 +938,9 @@ namespace Pspg
    FieldIo<D>::convertBasisToKGrid(DArray<double> const& components,
                                    RDFieldDft<D>& dft) const
    {
-      int nStar = basis().nStar();
-      int nBasis = basis().nBasis();
+      UTIL_CHECK(basis().isInitialized());
+      const int nStar = basis().nStar();
+      const int nBasis = basis().nBasis();
 
       // Allocate dft_out
       int kSize = 1;
@@ -1063,9 +1065,9 @@ namespace Pspg
                                         DArray<double>& components) 
    const
    {
-
-      int nStar = basis().nStar();       // Number of stars
-      int nBasis = basis().nBasis();     // Number of basis functions
+      UTIL_CHECK(basis().isInitialized());
+      const int nStar = basis().nStar();       // Number of stars
+      const int nBasis = basis().nBasis();     // Number of basis functions
 
       // Allocate dft_in
       int kSize = 1;
@@ -1209,8 +1211,8 @@ namespace Pspg
                                         DArray< RDFieldDft<D> >& out) 
    const
    {
-      UTIL_ASSERT(in.capacity() == out.capacity());
-      int n = in.capacity();
+      UTIL_CHECK(in.capacity() == out.capacity());
+      const int n = in.capacity();
 
       for (int i = 0; i < n; ++i) {
          convertBasisToKGrid(in[i], out[i]);
@@ -1238,9 +1240,9 @@ namespace Pspg
    FieldIo<D>::convertBasisToRGrid(DArray< DArray<double> > const & in,
                                    DArray< RDField<D> >& out) const
    {
-      UTIL_ASSERT(in.capacity() == out.capacity());
-
-      int nMonomer = in.capacity();
+      UTIL_CHECK(basis().isInitialized());
+      UTIL_CHECK(in.capacity() == out.capacity());
+      const int nMonomer = in.capacity();
 
       DArray< RDFieldDft<D> > workDft;
       workDft.allocate(nMonomer);
@@ -1261,22 +1263,24 @@ namespace Pspg
                                         DArray< DArray<double> > & out) 
    const
    {
-      UTIL_ASSERT(in.capacity() == out.capacity());
+      UTIL_CHECK(basis().isInitialized());
+      UTIL_CHECK(in.capacity() == out.capacity());
+      const int nMonomer = in.capacity();
 
-      int nMonomer = in.capacity();
-
+      // Allocate work space
       DArray< RDFieldDft<D> > workDft;
       workDft.allocate(nMonomer);
       for(int i = 0; i < nMonomer; ++i) {
          workDft[i].allocate(mesh().dimensions());
       }
 
+      // Forward FFT, then KGrid to Basis
       for (int i = 0; i < nMonomer; ++i) {
          fft().forwardTransformSafe(in[i], workDft [i]);
       }
-
       convertKGridToBasis(workDft, out);
 
+      // Deallocate work space
       for (int i = 0; i < nMonomer; ++i) {
          workDft[i].deallocate();
       }
