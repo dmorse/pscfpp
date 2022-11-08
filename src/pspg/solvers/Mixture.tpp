@@ -19,8 +19,7 @@ namespace Pspg
 
    template <int D>
    Mixture<D>::Mixture()
-    : vMonomer_(1.0),
-      ds_(-1.0),
+    : ds_(-1.0),
       nUnitCellParams_(0),
       meshPtr_(0),
       hasStress_(false)
@@ -34,8 +33,6 @@ namespace Pspg
    void Mixture<D>::readParameters(std::istream& in)
    {
       MixtureTmpl< Polymer<D>, Solvent<D> >::readParameters(in);
-      vMonomer_ = 1.0; // Default value
-      readOptional(in, "vMonomer", vMonomer_);
       read(in, "ds", ds_);
 
       UTIL_CHECK(nMonomer() > 0);

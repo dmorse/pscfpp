@@ -224,7 +224,7 @@ namespace Pspg
    }
 
    template <int D>
-   void WaveList<D>::computeKSq(UnitCell<D> const & unitCell){
+   void WaveList<D>::computeKSq(UnitCell<D> const & unitCell) {
       //pass for now
    }
 

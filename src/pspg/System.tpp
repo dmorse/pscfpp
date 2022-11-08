@@ -214,15 +214,15 @@ namespace Pspg
       readParamComposite(in, domain_);
 
       mixture().setMesh(mesh());
-      wavelist().allocate(domain_.mesh(), domain_.unitCell());
 
       // Construct wavelist
+      wavelist().allocate(domain_.mesh(), domain_.unitCell());
+      wavelist().computeMinimumImages(domain_.mesh(), domain_.unitCell());
 
       // Allocate memory for w and c fields
       allocateFieldsGrid();
       if (domain_.basis().isInitialized()) {
           allocateFieldsBasis();
-          wavelist().computeMinimumImages(domain_.mesh(), domain_.unitCell());
       }
 
       // Initialize iterator
@@ -815,12 +815,12 @@ namespace Pspg
       // get unit cell parameters, initialize basis and allocate fields.
       if (!isAllocatedBasis_) {
          allocateFieldsBasis(filename); 
-         wavelist().computeMinimumImages(domain_.mesh(), domain_.unitCell());
       }
 
       w_.readBasis(filename, domain_.unitCell());
-      mixture_.setupUnitCell(domain_.unitCell(), wavelist());
+      wavelist().computeKSq(domain_.unitCell());
       wavelist().computedKSq(domain_.unitCell());
+      mixture_.setupUnitCell(domain_.unitCell(), wavelist());
       hasCFields_ = false;
    }
 
@@ -831,12 +831,12 @@ namespace Pspg
       // get unit cell parameters, initialize basis and allocate fields.
       if (!isAllocatedBasis_) {
          allocateFieldsBasis(filename);  
-         wavelist().computeMinimumImages(domain_.mesh(), domain_.unitCell());
       }
 
       w_.readRGrid(filename, domain_.unitCell());
-      mixture_.setupUnitCell(domain_.unitCell(), wavelist());
+      wavelist().computeKSq(domain_.unitCell());
       wavelist().computedKSq(domain_.unitCell());
+      mixture_.setupUnitCell(domain_.unitCell(), wavelist());
       hasCFields_ = false;
    }
 
@@ -878,8 +878,9 @@ namespace Pspg
    {
       UTIL_CHECK(domain_.unitCell().lattice() == unitCell.lattice());
       domain_.unitCell() = unitCell;
-      mixture_.setupUnitCell(unitCell, wavelist());
+      wavelist().computeKSq(domain_.unitCell());
       wavelist().computedKSq(domain_.unitCell());
+      mixture_.setupUnitCell(unitCell, wavelist());
    }
 
    /*
@@ -890,8 +891,9 @@ namespace Pspg
    {
       UTIL_CHECK(domain_.unitCell().nParameter() == parameters.size());
       domain_.unitCell().setParameters(parameters);
-      mixture_.setupUnitCell(domain_.unitCell(), wavelist());
+      wavelist().computeKSq(domain_.unitCell());
       wavelist().computedKSq(domain_.unitCell());
+      mixture_.setupUnitCell(domain_.unitCell(), wavelist());
    }
 
    // Primary SCFT Computations
@@ -1193,7 +1195,6 @@ namespace Pspg
       // get unit cell parameters, initialize basis and allocate fields.
       if (!isAllocatedBasis_) {
          allocateFieldsBasis(inFileName); 
-         wavelist().computeMinimumImages(domain_.mesh(), domain_.unitCell());
       }
 
       // Read, convert and write fields
@@ -1258,7 +1259,6 @@ namespace Pspg
       // get unit cell parameters, initialize basis and allocate fields.
       if (!isAllocatedBasis_) {
          allocateFieldsBasis(inFileName); 
-         wavelist().computeMinimumImages(domain_.mesh(), domain_.unitCell());
       }
 
       // Read, convert and write fields
@@ -1283,7 +1283,6 @@ namespace Pspg
       // get unit cell parameters, initialize basis and allocate fields.
       if (!isAllocatedBasis_) {
          allocateFieldsBasis(inFileName); 
-         wavelist().computeMinimumImages(domain_.mesh(), domain_.unitCell());
       }
 
       // Read, convert and write fields
@@ -1304,7 +1303,6 @@ namespace Pspg
       // get unit cell parameters, initialize basis and allocate fields.
       if (!isAllocatedBasis_) {
          allocateFieldsBasis(inFileName); 
-         wavelist().computeMinimumImages(domain_.mesh(), domain_.unitCell());
       }
 
       // Read, convert and write fields
@@ -1331,7 +1329,6 @@ namespace Pspg
       // get unit cell parameters, initialize basis and allocate fields.
       if (!isAllocatedBasis_) {
          allocateFieldsBasis(inFileName); 
-         wavelist().computeMinimumImages(domain_.mesh(), domain_.unitCell());
       }
       UTIL_CHECK(domain_.basis().isInitialized());
       const int nBasis = domain_.basis().nBasis();
@@ -1384,7 +1381,6 @@ namespace Pspg
       // get unit cell parameters, initialize basis and allocate fields.
       if (!isAllocatedBasis_) {
          allocateFieldsBasis(inFileName); 
-         wavelist().computeMinimumImages(domain_.mesh(), domain_.unitCell());
       }
       UTIL_CHECK(domain_.basis().isInitialized());
       const int nBasis = domain_.basis().nBasis();

@@ -23,8 +23,8 @@ System{
     )
   }
   Domain{
-    unitCell       lamellar    1.9
     mesh           64
+    lattice        lamellar  
     groupName      P_1
   }
   AmIteratorFilm{
@@ -39,3 +39,5 @@ System{
     chiTop[    0 0 ]
   }
 }
+
+    unitCell       lamellar    1.9
