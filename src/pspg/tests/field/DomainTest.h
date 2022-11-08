@@ -62,7 +62,9 @@ public:
       TEST_ASSERT(domain.mesh().dimension(1) == 32);
       TEST_ASSERT(domain.mesh().dimension(2) == 32);
       TEST_ASSERT(domain.unitCell().lattice() == UnitCell<3>::Cubic);
-      TEST_ASSERT(domain.basis().nBasis() == 489);
+      if (domain.basis().isInitialized()) {
+         TEST_ASSERT(domain.basis().nBasis() == 489);
+      }
    }
 
    void testReadHeader() 

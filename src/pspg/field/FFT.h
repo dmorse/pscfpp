@@ -10,13 +10,13 @@
 
 #include <pspg/field/RDField.h>
 #include <pspg/field/RDFieldDft.h>
+#include <pspg/math/GpuResources.h>
 #include <pscf/math/IntVec.h>
 #include <util/global.h>
 
 #include <cufft.h>
 #include <cuda.h>
 #include <cuda_runtime.h>
-#include <pspg/math/GpuResources.h>
 
 namespace Pscf {
 namespace Pspg {
@@ -199,8 +199,6 @@ void scaleRealData(cudaReal* data, cudaReal scale, int size) {
 
 }
 }
-
-
 
 //#include "FFT.tpp"
 #endif

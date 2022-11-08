@@ -282,6 +282,7 @@ public:
 
       // Read reference solution
       system.readWBasis("in/diblock/hex/omega.ref");
+      TEST_ASSERT(system.basis().isInitialized());
 
       // Make reference copy of w fields
       DArray< DArray<double> > b_wFields_check;
@@ -291,6 +292,7 @@ public:
       // PSPC tests start from the reference solution, 
       // rather than a nearby solution, so I guess do that here too?
       // system.readWBasis("in/diblock/hex/omega.in");
+      Log::file() << "Beginning iteration \n";
       int error = system.iterate();
       if (error) {
          TEST_THROW("Iterator failed to converge.");
