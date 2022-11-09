@@ -1,5 +1,1 @@
-cd init
-./make_rgrid.py
-cd ..
-cp init/c.rf in/c.rf
 pscf_pc1 -p param -c command -e

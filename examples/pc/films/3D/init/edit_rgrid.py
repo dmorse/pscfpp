@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import math
-import numpy as np
 
 rgrid = open('bcc.rgrid','r')
 lines = list(rgrid)
@@ -10,12 +9,13 @@ rgrid.close()
 paramfile = open('../param','r')
 paramlines = list(paramfile)
 paramfile.close()
-params = list(map(float,paramlines[25].split()[2:]))
-grid = list(map(int,paramlines[26].split()[1:])) 
+params = [float(lines[8].strip())]
+grid = list(map(int,paramlines[25].split()[1:])) 
 
 normalVecId = int(paramlines[34].split()[1])
 t = float(paramlines[35].split()[1])
 T = float(paramlines[36].split()[1])
+params.append(params[0] * 2 + T)
 L = params[1]
 
 lines_new = []

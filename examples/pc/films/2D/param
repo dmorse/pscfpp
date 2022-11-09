@@ -31,6 +31,7 @@ System{
     maxItr       1000
     epsilon      1e-6
     maxHist      50 
+    isFlexible   1
     flexibleParams       1    0
     normalVecId          1
     interfaceThickness   0.08     

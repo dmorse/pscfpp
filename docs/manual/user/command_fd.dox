@@ -87,7 +87,7 @@ The following table shows a list of available commands for pscf_fd:
   </tr>
   <tr> 
     <td> WRITE_VERTEX_Q </td>
-    <td> filename [string], polymerId [int], vertexId [int] </td>
+    <td> polymerId [int], vertexId [int], filename [string] </td>
     <td> Write propagator (q) field to a file for a specified vertex
          (vertexId) in a specified polymer (polymerId). </td>
   </tr>
