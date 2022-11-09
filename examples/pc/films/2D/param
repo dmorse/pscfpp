@@ -28,7 +28,7 @@ System{
     groupName      p_1
   }
   AmIteratorFilm{
-    maxItr       1000
+    maxItr       2000
     epsilon      1e-6
     maxHist      50 
     isFlexible   1
