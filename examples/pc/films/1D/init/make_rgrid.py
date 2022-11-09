@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import math
-import numpy as np
 
 n_interfaces = 2
 
@@ -24,7 +23,7 @@ line = '    {:.9f}    {:.9f}\n'
 
 for x in range(0,grid[0]):
     x_coord = x * params[0] / grid[0]
-    rhoW = 0.5*(1+np.tanh(4*(((.5*(T-L))+np.abs(x_coord-(L/2)))/t)));
+    rhoW = 0.5*(1+math.tanh(4*(((.5*(T-L))+math.fabs(x_coord-(L/2)))/t)));
     rho = 1-rhoW
     if x_coord < (T/2):
         lines.append(line.format(rho*0.1,rho*0.9))
@@ -35,7 +34,7 @@ for x in range(0,grid[0]):
             lines.append(line.format(rho*0.1,rho*0.9)) 
     else:
         x = x_coord - (T/2)
-        rhoB = 0.4 * np.cos(x * n_interfaces * np.pi / (L-T)) + 0.5
+        rhoB = 0.4 * math.cos(x * n_interfaces * math.pi / (L-T)) + 0.5
         rhoA = 1-rhoB
         lines.append(line.format(rhoA*rho,rhoB*rho))
     linenum += 1
