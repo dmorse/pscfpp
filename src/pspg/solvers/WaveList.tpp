@@ -115,15 +115,19 @@ namespace Pspg
 
    template <int D>
    void WaveList<D>::allocate(Mesh<D> const & mesh, 
-                              UnitCell<D> const & unitCell) {
+                              UnitCell<D> const & unitCell) 
+   {
+      UTIL_CHECK(mesh.size() > 0);
+      UTIL_CHECK(unitCell.nParameter() > 0);
 
-      kSize_ = 1;
       rSize_ = mesh.size();
-      nParams_ = unitCell.nParameter();
       dimensions_ = mesh.dimensions();
+      nParams_ = unitCell.nParameter();
 
+      // Compute DFT mesh size kSize_
+      kSize_ = 1;
       for(int i = 0; i < D; ++i) {
-         if( i < D - 1) {
+         if (i < D - 1) {
             kSize_ *= mesh.dimension(i);
          } else {
             kSize_ *= (mesh.dimension(i)/ 2 + 1);
@@ -168,6 +172,10 @@ namespace Pspg
                                           UnitCell<D> const & unitCell) {
       // Precondition
       UTIL_CHECK (deviceIsAllocated_);
+      UTIL_CHECK (mesh.size() > 0);
+      UTIL_CHECK (unitCell.nParameter() > 0);
+      UTIL_CHECK (unitCell.lattice() != UnitCell<D>::Null);
+      UTIL_CHECK (unitCell.isInitialized());
 
       MeshIterator<D> itr(mesh.dimensions());
       IntVec<D> waveId;
@@ -264,8 +272,7 @@ namespace Pspg
       );
       
       delete[] tempMinImage;
-      computedKSq(unitCell);
-      hasMinimumImages_;
+      hasMinimumImages_ = true;
    }
 
    template <int D>
@@ -282,6 +289,9 @@ namespace Pspg
 
       // Precondition
       UTIL_CHECK (hasMinimumImages_);
+      UTIL_CHECK (unitCell.nParameter() > 0);
+      UTIL_CHECK (unitCell.lattice() != UnitCell<D>::Null);
+      UTIL_CHECK (unitCell.isInitialized());
 
       // GPU resources
       int nBlocks, nThreads;

@@ -216,9 +216,9 @@ namespace Pspg
 
       mixture().setMesh(mesh());
 
-      // Allocate memory for wavelist
       UTIL_CHECK(domain_.mesh().size() > 0);
       UTIL_CHECK(domain_.unitCell().nParameter() > 0);
+      UTIL_CHECK(domain_.unitCell().lattice() != UnitCell<D>::Null);
       wavelist().allocate(domain_.mesh(), domain_.unitCell());
 
       // Allocate memory for w and c fields
@@ -343,6 +343,10 @@ namespace Pspg
          tmpFieldsBasis_[i].allocate(nBasis);
       }
 
+      // Allocate memory for wavelist
+      UTIL_CHECK(domain_.mesh().size() > 0);
+      UTIL_CHECK(domain_.unitCell().nParameter() > 0);
+      UTIL_CHECK(domain_.unitCell().isInitialized() > 0);
       wavelist().computeMinimumImages(domain_.mesh(), domain_.unitCell());
 
       isAllocatedBasis_ = true;
@@ -363,13 +367,13 @@ namespace Pspg
 
       // Read field file header, and initialize basis if needed
       int nMonomer;
-      UnitCell<D> unitCell;
-      domain_.fieldIo().readFieldHeader(file, nMonomer, unitCell);
+      domain_.fieldIo().readFieldHeader(file, nMonomer, domain_.unitCell());
       // FieldIo::readFieldHeader initializes a basis if needed
       file.close();
       UTIL_CHECK(mixture_.nMonomer() == nMonomer);
       UTIL_CHECK(domain_.unitCell().nParameter() > 0);
       UTIL_CHECK(domain_.unitCell().lattice() != UnitCell<D>::Null);
+      UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(domain_.basis().isInitialized());
       UTIL_CHECK(domain_.basis().nBasis() > 0);
 
@@ -919,7 +923,6 @@ namespace Pspg
    template <int D>
    void System<D>::compute(bool needStress)
    {
-      Log::file() << "Entering System::compute\n";
       UTIL_CHECK(w_.hasData());
 
       // Solve the modified diffusion equation (without iteration)
@@ -928,14 +931,12 @@ namespace Pspg
 
       // Convert c fields from r-grid to basis format
       if (w_.isSymmetric()) {
-         Log::file() << "Converting RGridToBasis in System::compute\n";
          fieldIo().convertRGridToBasis(c_.rgrid(), c_.basis());
       }
 
       if (needStress) {
          mixture().computeStress(wavelist());
       }
-      Log::file() << "Exiting System::compute\n";
    }
 
    /*

@@ -103,7 +103,6 @@ namespace Pscf
       // Note: Parameter isContinuation is currently unused 
 
       // Initialization and allocate operations on entry to loop.
-      Log::file() << "Entering Iterator setup\n";
       setup();
 
       // Preconditions for generic algorithm.
@@ -125,7 +124,6 @@ namespace Pscf
 
       // Solve MDE for initial state
       timerMDE.start();
-      Log::file() << "Entering initial evalute() in Iteratore::solve)\n";
       evaluate();
       timerMDE.stop();
 
@@ -365,7 +363,6 @@ namespace Pscf
    template <typename Iterator, typename T>
    void AmIteratorTmpl<Iterator,T>::updateGuess()
    {
-      Log::file() << "Entering Iterator::updateGuess() \n";
 
       // Contribution of the last solution
       setEqual(fieldTrial_, fieldHists_[0]);
@@ -386,7 +383,6 @@ namespace Pscf
       // Update system using new trial field
       update(fieldTrial_);
 
-      Log::file() << "Exiting Iterator::updateGuess() \n";
       return;
    }
 

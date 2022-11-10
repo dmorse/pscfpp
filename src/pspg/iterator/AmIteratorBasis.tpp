@@ -247,7 +247,6 @@ namespace Pspg{
    template <int D>
    void AmIteratorBasis<D>::evaluate()
    {
-      Log::file() << "Entering AmIteratorBasis::evaluate()\n";
       // Solve MDEs for current omega field
       system().compute();
 
@@ -255,7 +254,6 @@ namespace Pspg{
       if (isFlexible_) {
          system().mixture().computeStress(system().wavelist());
       }
-      Log::file() << "Exiting AmIteratorBasis::evaluate()\n";
    }
 
    // Compute the residual for the current system state

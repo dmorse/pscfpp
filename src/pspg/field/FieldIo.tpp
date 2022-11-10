@@ -1301,7 +1301,6 @@ namespace Pspg
    FieldIo<D>::convertBasisToRGrid(DArray< DArray<double> > const & in,
                                    DArray< RDField<D> >& out) const
    {
-      Log::file() << "Entering convertBasisToRGrid \n";
       UTIL_CHECK(basis().isInitialized());
       UTIL_CHECK(in.capacity() == out.capacity());
       const int nMonomer = in.capacity();
@@ -1325,7 +1324,6 @@ namespace Pspg
                                         DArray< DArray<double> > & out) 
    const
    {
-      Log::file() << "Entering convertRGridToBasis \n";
       UTIL_CHECK(basis().isInitialized());
       UTIL_CHECK(in.capacity() == out.capacity());
       const int nMonomer = in.capacity();
