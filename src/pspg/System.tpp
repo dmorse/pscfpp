@@ -26,6 +26,7 @@
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
 
+#include <cmath>
 #include <string>
 #include <getopt.h>
 
@@ -215,9 +216,10 @@ namespace Pspg
 
       mixture().setMesh(mesh());
 
-      // Construct wavelist
+      // Allocate memory for wavelist
+      UTIL_CHECK(domain_.mesh().size() > 0);
+      UTIL_CHECK(domain_.unitCell().nParameter() > 0);
       wavelist().allocate(domain_.mesh(), domain_.unitCell());
-      wavelist().computeMinimumImages(domain_.mesh(), domain_.unitCell());
 
       // Allocate memory for w and c fields
       allocateFieldsGrid();
@@ -327,6 +329,7 @@ namespace Pspg
       UTIL_CHECK(nMonomer > 0);
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(!isAllocatedBasis_);
+      UTIL_CHECK(domain_.unitCell().nParameter() > 0);
       UTIL_CHECK(domain_.basis().isInitialized());
       const int nBasis = basis().nBasis();
       UTIL_CHECK(nBasis > 0);
@@ -339,6 +342,9 @@ namespace Pspg
       for (int i = 0; i < nMonomer; ++i) {
          tmpFieldsBasis_[i].allocate(nBasis);
       }
+
+      wavelist().computeMinimumImages(domain_.mesh(), domain_.unitCell());
+
       isAllocatedBasis_ = true;
    }
 
@@ -362,6 +368,8 @@ namespace Pspg
       // FieldIo::readFieldHeader initializes a basis if needed
       file.close();
       UTIL_CHECK(mixture_.nMonomer() == nMonomer);
+      UTIL_CHECK(domain_.unitCell().nParameter() > 0);
+      UTIL_CHECK(domain_.unitCell().lattice() != UnitCell<D>::Null);
       UTIL_CHECK(domain_.basis().isInitialized());
       UTIL_CHECK(domain_.basis().nBasis() > 0);
 
@@ -911,6 +919,7 @@ namespace Pspg
    template <int D>
    void System<D>::compute(bool needStress)
    {
+      Log::file() << "Entering System::compute\n";
       UTIL_CHECK(w_.hasData());
 
       // Solve the modified diffusion equation (without iteration)
@@ -919,12 +928,14 @@ namespace Pspg
 
       // Convert c fields from r-grid to basis format
       if (w_.isSymmetric()) {
+         Log::file() << "Converting RGridToBasis in System::compute\n";
          fieldIo().convertRGridToBasis(c_.rgrid(), c_.basis());
       }
 
       if (needStress) {
          mixture().computeStress(wavelist());
       }
+      Log::file() << "Exiting System::compute\n";
    }
 
    /*
@@ -1222,7 +1233,6 @@ namespace Pspg
       // get unit cell parameters, initialize basis and allocate fields.
       if (!isAllocatedBasis_) {
          allocateFieldsBasis(inFileName); 
-         wavelist().computeMinimumImages(domain_.mesh(), domain_.unitCell());
       }
 
       // Read, convert and write fields

@@ -8,7 +8,6 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-
 #include "WaveList.h"
 #include "cuComplex.h"
 #include <pspg/math/GpuResources.h>
@@ -17,9 +16,9 @@ namespace Pscf {
 namespace Pspg
 {
 
-   //need a reference table that maps index to a pair wavevector
-   //ideally we can have a group of thread dealing with only
-   //the non-implicit part and the implicit part
+   // Need a reference table that maps index to a pair wavevector
+   // Ideally we can have a group of thread dealing with only
+   // the non-implicit part and the implicit part
    static __global__ 
    void makeDksqHelperWave(cudaReal* dksq, const int* waveBz,
                            const cudaReal* dkkBasis,
@@ -76,10 +75,19 @@ namespace Pspg
       }
    }
 
-
-
    template <int D>
-   WaveList<D>::WaveList() {
+   WaveList<D>::WaveList()
+    : minImage_d(nullptr),
+      dkSq_(nullptr),
+      partnerIdTable(nullptr),
+      partnerIdTable_d(nullptr),
+      kSize_(0),
+      rSize_(0),
+      nParams_(0),
+      deviceIsAllocated_(false),
+      hasMinimumImages_(false)
+   {
+      #if 0
       minImage_d = nullptr;
       dkSq_ = nullptr;
       partnerIdTable = nullptr;
@@ -88,6 +96,7 @@ namespace Pspg
       rSize_ = 0;
       nParams_ = 0;
       deviceIsAllocated_ = false;
+      #endif
    }
 
    template <int D>
@@ -122,30 +131,44 @@ namespace Pspg
       }
 
       minImage_.allocate(kSize_);
-      gpuErrchk(cudaMalloc((void**) &minImage_d, sizeof(int) * rSize_ * D));
+      gpuErrchk(
+         cudaMalloc((void**) &minImage_d, sizeof(int) * rSize_ * D)
+      );
 
       kSq_ = new cudaReal[rSize_];
-      gpuErrchk(cudaMalloc((void**) &dkSq_, sizeof(cudaReal) * rSize_ * nParams_));
+      gpuErrchk(
+         cudaMalloc((void**) &dkSq_, sizeof(cudaReal) * rSize_ * nParams_)
+      );
 
       partnerIdTable = new int[mesh.size()];
-      gpuErrchk(cudaMalloc((void**) &partnerIdTable_d, sizeof(int) * mesh.size()));
+      gpuErrchk(
+         cudaMalloc((void**) &partnerIdTable_d, sizeof(int) * mesh.size())
+      );
 
       selfIdTable = new int[mesh.size()];
-      gpuErrchk(cudaMalloc((void**) &selfIdTable_d, sizeof(int) * mesh.size()));
+      gpuErrchk(
+         cudaMalloc((void**) &selfIdTable_d, sizeof(int) * mesh.size())
+      );
 
       implicit = new bool[mesh.size()];
-      gpuErrchk(cudaMalloc((void**) &implicit_d, sizeof(bool) * mesh.size()));
+      gpuErrchk(
+         cudaMalloc((void**) &implicit_d, sizeof(bool) * mesh.size())
+      );
 
       dkkBasis = new cudaReal[6 * D * D];
-      gpuErrchk(cudaMalloc((void**) &dkkBasis_d, sizeof(cudaReal) * 6 * D * D));
+      gpuErrchk(
+         cudaMalloc((void**) &dkkBasis_d, sizeof(cudaReal) * 6 * D * D)
+      );
 
       deviceIsAllocated_ = true;
-      
    }
 
    template <int D>
    void WaveList<D>::computeMinimumImages(Mesh<D> const & mesh, 
                                           UnitCell<D> const & unitCell) {
+      // Precondition
+      UTIL_CHECK (deviceIsAllocated_);
+
       MeshIterator<D> itr(mesh.dimensions());
       IntVec<D> waveId;
       IntVec<D> G2;
@@ -161,8 +184,8 @@ namespace Pspg
       int* invertedIdTable = new int[rSize_];
 
       for (itr.begin(); !itr.atEnd(); ++itr) {         
-         //if not implicit
-         if(itr.position(D - 1) < mesh.dimension(D-1)/2 + 1) {
+         // If not implicit
+         if (itr.position(D - 1) < mesh.dimension(D-1)/2 + 1) {
             implicit[kDimRank] = false;
             selfIdTable[kDimRank] = itr.rank();
             invertedIdTable[itr.rank()] = kDimRank;
@@ -181,7 +204,8 @@ namespace Pspg
 
          #if 0
          //we get position but set mesh dim to be larger, should be okay
-         shiftToMinimum(itr.position(), mesh.dimensions(), minImage_ + (itr.rank() * D));
+         shiftToMinimum(itr.position(), mesh.dimensions(), 
+                        minImage_ + (itr.rank() * D));
          #endif
 
          // We get position but set mesh dim to be larger, should be okay
@@ -205,22 +229,43 @@ namespace Pspg
          partnerIdTable[invertedIdTable[itr.rank()]] = invertedIdTable[partnerId];
       }
 
-      /*std::cout<<"Sum kDimRank implicitRank: "<<kDimRank + (implicitRank-kSize_)<<std::endl;
-      std::cout<<"This is kDimRank sanity check "<<kDimRank<<std::endl;
-      for(int i = 0; i < rSize_; i++) {
-         std::cout<<i<<' '<<selfIdTable[i]<<' '<<partnerIdTable[i]<<' '<<implicit[i]<<std::endl;
-         }*/
-      gpuErrchk(cudaMemcpy(minImage_d, tempMinImage, sizeof(int) * rSize_ * D, cudaMemcpyHostToDevice));
+      #if 0
+      /*
+      std::cout<< "Sum kDimRank implicitRank: "
+                << kDimRank + (implicitRank-kSize_)<<std::endl;
+      std::cout<< "This is kDimRank sanity check "<<kDimRank<<std::endl;
+      for (int i = 0; i < rSize_; i++) {
+         std::cout << i << ' '
+                   << selfIdTable[i]<< ' '<<partnerIdTable[i]<<' '
+                   << implicit[i] << std::endl;
+         }
+      */
+      #endif
 
-      //partner is much smaller but we keep this for now
-      gpuErrchk(cudaMemcpy(partnerIdTable_d, partnerIdTable, sizeof(int) * mesh.size(), cudaMemcpyHostToDevice));
+      gpuErrchk(
+         cudaMemcpy(minImage_d, tempMinImage, 
+                    sizeof(int) * rSize_ * D, cudaMemcpyHostToDevice)
+      );
 
-      gpuErrchk(cudaMemcpy(selfIdTable_d, selfIdTable, sizeof(int) * mesh.size(), cudaMemcpyHostToDevice));
+      // Partner is much smaller but we keep this for now
+      gpuErrchk(
+         cudaMemcpy(partnerIdTable_d, partnerIdTable, 
+                    sizeof(int) * mesh.size(), cudaMemcpyHostToDevice)
+      );
 
-      gpuErrchk(cudaMemcpy(implicit_d, implicit, sizeof(bool) * mesh.size(), cudaMemcpyHostToDevice));
+      gpuErrchk(
+         cudaMemcpy(selfIdTable_d, selfIdTable, 
+                    sizeof(int) * mesh.size(), cudaMemcpyHostToDevice)
+      );
+
+      gpuErrchk(
+         cudaMemcpy(implicit_d, implicit, 
+                    sizeof(bool) * mesh.size(), cudaMemcpyHostToDevice)
+      );
       
       delete[] tempMinImage;
       computedKSq(unitCell);
+      hasMinimumImages_;
    }
 
    template <int D>
@@ -231,9 +276,12 @@ namespace Pspg
    template <int D>
    void WaveList<D>::computedKSq(UnitCell<D> const & unitCell)
    {
-      //dkkbasis is something determined from unit cell size
-      //min image needs to be on device but okay since its only done once
-      //second to last parameter is number of stars originally
+      // dkkbasis is something determined from unit cell size
+      // min image needs to be on device but okay since its only done once.
+      // Second to last parameter is number of stars originally
+
+      // Precondition
+      UTIL_CHECK (hasMinimumImages_);
 
       // GPU resources
       int nBlocks, nThreads;

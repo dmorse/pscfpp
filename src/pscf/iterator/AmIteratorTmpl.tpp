@@ -103,6 +103,7 @@ namespace Pscf
       // Note: Parameter isContinuation is currently unused 
 
       // Initialization and allocate operations on entry to loop.
+      Log::file() << "Entering Iterator setup\n";
       setup();
 
       // Preconditions for generic algorithm.
@@ -124,13 +125,13 @@ namespace Pscf
 
       // Solve MDE for initial state
       timerMDE.start();
+      Log::file() << "Entering initial evalute() in Iteratore::solve)\n";
       evaluate();
       timerMDE.stop();
 
       // Iterative loop
       bool done;
       for (int itr = 0; itr < maxItr_; ++itr) {
-
 
          // Append current field to fieldHists_ ringbuffer
          getCurrent(temp_);
@@ -169,7 +170,7 @@ namespace Pscf
             // is no need to continue to the next iteration.
             break;
             
-         }else if (done) {
+         } else if (done) {
 
             // Stop timers
             timerAM.stop();
@@ -364,6 +365,7 @@ namespace Pscf
    template <typename Iterator, typename T>
    void AmIteratorTmpl<Iterator,T>::updateGuess()
    {
+      Log::file() << "Entering Iterator::updateGuess() \n";
 
       // Contribution of the last solution
       setEqual(fieldTrial_, fieldHists_[0]);
@@ -384,6 +386,7 @@ namespace Pscf
       // Update system using new trial field
       update(fieldTrial_);
 
+      Log::file() << "Exiting Iterator::updateGuess() \n";
       return;
    }
 

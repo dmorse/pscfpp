@@ -137,6 +137,8 @@ namespace Pspg
 
       bool deviceIsAllocated_;
 
+      bool hasMinimumImages_;
+
    };
 
    template <int D>

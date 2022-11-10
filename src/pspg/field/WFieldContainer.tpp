@@ -167,6 +167,7 @@ namespace Pspg
    void 
    WFieldContainer<D>::setBasis(DArray< DArray<double> > const & fields)
    {
+      Log::file() << "Entering WFieldContainer::setBasis \n";
       UTIL_CHECK(isAllocatedBasis_);
       UTIL_CHECK(fields.capacity() == nMonomer_);
 
@@ -182,6 +183,7 @@ namespace Pspg
       }
 
       // Update system wFieldsRGrid
+      Log::file() << "convertBasisToRGrid in WFieldContainer::setBasis \n";
       fieldIoPtr_->convertBasisToRGrid(basis_, rgrid_);
 
       hasData_ = true;
@@ -195,6 +197,7 @@ namespace Pspg
    void WFieldContainer<D>::setRGrid(DArray< RDField<D> > const & fields,
                                     bool isSymmetric)
    {
+      Log::file() << "Entering WFieldContainer::setRGrid \n";
       UTIL_CHECK(isAllocatedRGrid_);
       UTIL_CHECK(fields.capacity() == nMonomer_);
 
@@ -205,6 +208,7 @@ namespace Pspg
       }
 
       if (isSymmetric) {
+         Log::file() << "Enter convertRGridToBasis in WFieldContainer::setRGrid \n";
          fieldIoPtr_->convertRGridToBasis(rgrid_, basis_);
       }
 
@@ -246,10 +250,12 @@ namespace Pspg
    void WFieldContainer<D>::readBasis(std::istream& in, 
                                       UnitCell<D>& unitCell)
    {
+      Log::file() << "Entering WFieldContainer::readBasis \n";
       UTIL_CHECK(isAllocatedBasis());
       fieldIoPtr_->readFieldsBasis(in, basis_, unitCell);
 
       // Update system wFieldsRGrid
+      Log::file() << "convertBasisToRGrid in WFieldContainer::readBasis \n";
       fieldIoPtr_->convertBasisToRGrid(basis_, rgrid_);
 
       hasData_ = true;

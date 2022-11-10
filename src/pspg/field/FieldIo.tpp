@@ -836,8 +836,11 @@ namespace Pspg
    #endif
 
    /*
-   * Read common part of field header and extract 
-   * the number of monomers (number of fields) in the file.
+   * Read common part of field header.
+   *
+   * Return the number of monomers in the file.
+   * Set the unitCell.
+   * If necessary, make the Basis.
    */
    template <int D>
    void FieldIo<D>::readFieldHeader(std::istream& in, 
@@ -1298,6 +1301,7 @@ namespace Pspg
    FieldIo<D>::convertBasisToRGrid(DArray< DArray<double> > const & in,
                                    DArray< RDField<D> >& out) const
    {
+      Log::file() << "Entering convertBasisToRGrid \n";
       UTIL_CHECK(basis().isInitialized());
       UTIL_CHECK(in.capacity() == out.capacity());
       const int nMonomer = in.capacity();
@@ -1321,6 +1325,7 @@ namespace Pspg
                                         DArray< DArray<double> > & out) 
    const
    {
+      Log::file() << "Entering convertRGridToBasis \n";
       UTIL_CHECK(basis().isInitialized());
       UTIL_CHECK(in.capacity() == out.capacity());
       const int nMonomer = in.capacity();
