@@ -19,14 +19,16 @@ System{
          1   1   0.0
   }
   Domain{
-    unitCell cubic 4.0E+00
-    mesh     64 64 64
+    mesh       64 64 64
+    lattice    cubic 
     groupName  P_m_-3_n
   }
-  AmIterator{
+  AmIteratorGrid{
     maxItr 500
     epsilon 1e-5
     maxHist 20
     isFlexible   1
   }
 }
+
+    unitCell cubic 4.0E+00

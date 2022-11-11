@@ -23,8 +23,8 @@ System{
     )
   }
   Domain{
-    unitCell    hexagonal   1.6908669157
     mesh        24   24
+    lattice     hexagonal 
     groupName   p_6_m_m
   }
   AmIteratorBasis{
@@ -35,4 +35,4 @@ System{
   }
 }
 
-    lattice     hexagonal 
+    unitCell    hexagonal   1.6908669157
