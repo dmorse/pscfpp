@@ -26,18 +26,15 @@ System{
   }
   Interaction{
      chi(
-          0   0   0.0
           1   0   30.0
-          1   1   0.0
           2   0   30.0
           2   1   100.0
-          2   2   0.0
      )
   }
   Domain{
-     mesh        100
-     lattice     lamellar
-     groupName   P_-1
+     mesh          100
+     lattice       lamellar
+     groupName     P_-1
   }
   AmIterator{
     maxItr       200

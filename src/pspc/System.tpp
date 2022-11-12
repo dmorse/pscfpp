@@ -195,12 +195,6 @@ namespace Pspc
       UTIL_CHECK(ns >= 0);
       UTIL_CHECK(np + ns > 0);
 
-      // Initialize homogeneous object 
-      // NOTE: THIS OBJECT IS NOT USED AT ALL.
-      homogeneous_.setNMolecule(np+ns);
-      homogeneous_.setNMonomer(nm);
-      initHomogeneous();
-
       // Read the Interaction{ ... } block
       interaction().setNMonomer(nm);
       readParamComposite(in, interaction());
@@ -233,6 +227,12 @@ namespace Pspc
             sweepFactoryPtr_->readObjectOptional(in, *this, className, 
                                                  isEnd);
       }
+
+      // Initialize homogeneous object 
+      // NOTE: THIS OBJECT IS NOT USED AT ALL.
+      homogeneous_.setNMolecule(np+ns);
+      homogeneous_.setNMonomer(nm);
+      initHomogeneous();
 
    }
 
@@ -317,6 +317,7 @@ namespace Pspc
       const int nMonomer = mixture_.nMonomer();
       UTIL_CHECK(nMonomer > 0);
       UTIL_CHECK(isAllocatedRGrid_);
+      UTIL_CHECK(!isAllocatedBasis_);
       UTIL_CHECK(domain_.basis().isInitialized());
       const int nBasis = domain_.basis().nBasis();
       UTIL_CHECK(nBasis > 0);
@@ -347,8 +348,7 @@ namespace Pspc
 
       // Read field file header, and initialize basis if needed
       int nMonomer;
-      UnitCell<D> unitCell;
-      domain_.fieldIo().readFieldHeader(file, nMonomer, unitCell);
+      domain_.fieldIo().readFieldHeader(file, nMonomer, domain_.unitCell());
       // FieldIo::readFieldHeader initializes a basis if needed
       file.close();
       UTIL_CHECK(mixture_.nMonomer() == nMonomer);
@@ -357,6 +357,29 @@ namespace Pspc
 
       // Allocate memory for fields
       allocateFieldsBasis(); 
+   }
+
+   /*
+   * Peek at field file header, initialize basis if necessary.
+   */
+   template <int D>
+   void System<D>::readFieldHeader(std::string filename)
+   {
+      UTIL_CHECK(hasMixture_);
+      UTIL_CHECK(mixture_.nMonomer() > 0);
+
+      // Open field file
+      std::ifstream file;
+      fileMaster_.openInputFile(filename, file);
+
+      // Read field file header, and initialize basis if needed
+      int nMonomer;
+      domain_.fieldIo().readFieldHeader(file, nMonomer, domain_.unitCell());
+      // FieldIo::readFieldHeader initializes a basis if needed
+      file.close();
+      UTIL_CHECK(mixture_.nMonomer() == nMonomer);
+      UTIL_CHECK(domain_.basis().isInitialized());
+      UTIL_CHECK(domain_.basis().nBasis() > 0);
    }
 
    /*
@@ -673,7 +696,8 @@ namespace Pspc
       // If basis fields are not allocated, peek at field file header to 
       // get unit cell parameters, initialize basis and allocate fields.
       if (!isAllocatedBasis_) {
-         allocateFieldsBasis(filename); 
+         readFieldHeader(filename); 
+         allocateFieldsBasis();
       }
 
       // Read w fields
@@ -692,7 +716,8 @@ namespace Pspc
       // If basis fields are not allocated, peek at field file header to 
       // get unit cell parameters, initialize basis and allocate fields.
       if (!isAllocatedBasis_) {
-         allocateFieldsBasis(filename); 
+         readFieldHeader(filename); 
+         allocateFieldsBasis();
       }
 
       // Read w fields
@@ -734,6 +759,9 @@ namespace Pspc
    {
       domain_.setUnitCell(unitCell);
       mixture_.setupUnitCell(domain_.unitCell());
+      if (!isAllocatedBasis_) {
+         allocateFieldsBasis();
+      }
    }
 
    /*
@@ -746,6 +774,9 @@ namespace Pspc
    {
       domain_.setUnitCell(lattice, parameters);
       mixture_.setupUnitCell(domain_.unitCell());
+      if (!isAllocatedBasis_) {
+         allocateFieldsBasis();
+      }
    }
 
    /*
@@ -1340,7 +1371,8 @@ namespace Pspc
       // If basis fields are not allocated, peek at field file header to 
       // get unit cell parameters, initialize basis and allocate fields.
       if (!isAllocatedBasis_) {
-         allocateFieldsBasis(inFileName); 
+         readFieldHeader(inFileName); 
+         allocateFieldsBasis();
       }
 
       // Read, convert, and write fields
@@ -1361,7 +1393,8 @@ namespace Pspc
       // If basis fields are not allocated, peek at field file header to 
       // get unit cell parameters, initialize basis and allocate fields.
       if (!isAllocatedBasis_) {
-         allocateFieldsBasis(inFileName); 
+         readFieldHeader(inFileName); 
+         allocateFieldsBasis();
       }
 
       // Read, convert and write fields
@@ -1381,7 +1414,8 @@ namespace Pspc
       // If basis fields are not allocated, peek at field file header to 
       // get unit cell parameters, initialize basis and allocate fields.
       if (!isAllocatedBasis_) {
-         allocateFieldsBasis(inFileName); 
+         readFieldHeader(inFileName); 
+         allocateFieldsBasis();
       }
 
       // Read, convert and write fields
@@ -1405,7 +1439,8 @@ namespace Pspc
       // If basis fields are not allocated, peek at field file header to 
       // get unit cell parameters, initialize basis and allocate fields.
       if (!isAllocatedBasis_) {
-         allocateFieldsBasis(inFileName); 
+         readFieldHeader(inFileName); 
+         allocateFieldsBasis();
       }
 
       // Read, convert and write fields
@@ -1430,7 +1465,8 @@ namespace Pspc
       // If basis fields are not allocated, peek at field file header to 
       // get unit cell parameters, initialize basis and allocate fields.
       if (!isAllocatedBasis_) {
-         allocateFieldsBasis(inFileName); 
+         readFieldHeader(inFileName); 
+         allocateFieldsBasis();
       }
 
       // Read, convert and write fields
@@ -1453,7 +1489,8 @@ namespace Pspc
       // If basis fields are not allocated, peek at field file header to 
       // get unit cell parameters, initialize basis and allocate fields.
       if (!isAllocatedBasis_) {
-         allocateFieldsBasis(inFileName); 
+         readFieldHeader(inFileName); 
+         allocateFieldsBasis();
       }
 
       // Read, convert and write fields
@@ -1475,7 +1512,8 @@ namespace Pspc
       // If basis fields are not allocated, peek at field file header to 
       // get unit cell parameters, initialize basis and allocate fields.
       if (!isAllocatedBasis_) {
-         allocateFieldsBasis(inFileName); 
+         readFieldHeader(inFileName); 
+         allocateFieldsBasis();
       }
 
       // Read fields
@@ -1546,7 +1584,8 @@ namespace Pspc
       // If basis fields are not allocated, peek at field file header to 
       // get unit cell parameters, initialize basis and allocate fields.
       if (!isAllocatedBasis_) {
-         allocateFieldsBasis(inFileName); 
+         readFieldHeader(inFileName); 
+         allocateFieldsBasis();
       }
       const int nb = domain_.basis().nBasis();
       UTIL_CHECK(nb > 0);

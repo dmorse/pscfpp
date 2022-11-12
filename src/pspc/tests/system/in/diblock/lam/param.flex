@@ -23,9 +23,9 @@ System{
      )
   }
   Domain{
-     mesh     32
-     lattice  Lamellar   
-     groupName P_-1
+     mesh        32
+     lattice     Lamellar   
+     groupName   P_-1
   }
   AmIterator{
      maxItr 300

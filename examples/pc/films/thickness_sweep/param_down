@@ -23,8 +23,8 @@ System{
     )
   }
   Domain{
-    unitCell       lamellar    2.5
     mesh           96
+    lattice        lamellar  
     groupName      P_1
   }
   AmIteratorFilm{
@@ -48,3 +48,5 @@ System{
     ]   
   }
 }
+
+    unitCell       lamellar    2.5

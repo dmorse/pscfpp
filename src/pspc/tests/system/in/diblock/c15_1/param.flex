@@ -14,14 +14,14 @@ System{
     ds   0.01
   }
   Interaction{
-    chi  0   0   0.0
+    chi(  
          1   0   25.0
-         1   1   0.0
+    ) 
   }
   Domain{
-    mesh              32  32  32
-    lattice           Cubic  
-    groupName         F_d_-3_m:1 
+    mesh            32  32  32
+    lattice         cubic  
+    groupName       F_d_-3_m:1 
   }
   AmIterator{
     maxItr   800

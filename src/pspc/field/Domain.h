@@ -76,12 +76,14 @@ namespace Pspc
       virtual void readParameters(std::istream& in);
 
       /**
-      * Read initialization data from header of an r-grid field file.
+      * Read header of an r-grid field file to initialize this Domain.
+      *
+      * Useful for unit testing.
       *
       * \param in input parameter stream
       * \param nMonomer number of monomers in field file (output)
       */
-      void readFieldHeader(std::istream& in, int& nMonomer);
+      void readRGridFieldHeader(std::istream& in, int& nMonomer);
 
       /**
       * Set unit cell. 

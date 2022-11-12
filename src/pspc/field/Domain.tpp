@@ -84,9 +84,14 @@ namespace Pspc
       }
       isInitialized_ = true;
    }
- 
+
+   /*
+   * Read header of r-grid field in order to initialize the Domain.
+   *
+   * Useful for unit testing.
+   */ 
    template <int D> 
-   void Domain<D>::readFieldHeader(std::istream& in, int& nMonomer)
+   void Domain<D>::readRGridFieldHeader(std::istream& in, int& nMonomer)
    {
       // Read common section of standard field header
       int ver1, ver2;
