@@ -8,7 +8,7 @@ include $(SRC_DIR)/pspg/include.mk
 #--------------------------------------------------------------------
 # Main targets 
 
-.PHONY= all includes
+.PHONY= all clean includes
 
 all: $(pspg_field_OBJS) 
 

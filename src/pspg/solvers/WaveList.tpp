@@ -84,7 +84,7 @@ namespace Pspg
       kSize_(0),
       rSize_(0),
       nParams_(0),
-      deviceIsAllocated_(false),
+      isAllocated_(false),
       hasMinimumImages_(false)
    {
       #if 0
@@ -95,13 +95,13 @@ namespace Pspg
       kSize_ = 0;
       rSize_ = 0;
       nParams_ = 0;
-      deviceIsAllocated_ = false;
+      isAllocated_ = false;
       #endif
    }
 
    template <int D>
    WaveList<D>::~WaveList() {
-      if (deviceIsAllocated_) {
+      if (isAllocated_) {
          cudaFree(minImage_d);
          cudaFree(dkSq_);
          cudaFree(partnerIdTable_d);
@@ -119,6 +119,7 @@ namespace Pspg
    {
       UTIL_CHECK(mesh.size() > 0);
       UTIL_CHECK(unitCell.nParameter() > 0);
+      UTIL_CHECK(!isAllocated_);
 
       rSize_ = mesh.size();
       dimensions_ = mesh.dimensions();
@@ -164,14 +165,14 @@ namespace Pspg
          cudaMalloc((void**) &dkkBasis_d, sizeof(cudaReal) * 6 * D * D)
       );
 
-      deviceIsAllocated_ = true;
+      isAllocated_ = true;
    }
 
    template <int D>
    void WaveList<D>::computeMinimumImages(Mesh<D> const & mesh, 
                                           UnitCell<D> const & unitCell) {
       // Precondition
-      UTIL_CHECK (deviceIsAllocated_);
+      UTIL_CHECK (isAllocated_);
       UTIL_CHECK (mesh.size() > 0);
       UTIL_CHECK (unitCell.nParameter() > 0);
       UTIL_CHECK (unitCell.lattice() != UnitCell<D>::Null);

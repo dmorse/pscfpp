@@ -48,7 +48,6 @@ namespace Pspg
       interactionPtr_(0),
       iteratorPtr_(0),
       iteratorFactoryPtr_(0),
-      wavelistPtr_(0),
       sweepPtr_(0),
       sweepFactoryPtr_(0),
       w_(),
@@ -65,7 +64,6 @@ namespace Pspg
       w_.setFieldIo(domain_.fieldIo());
 
       interactionPtr_ = new Interaction();
-      wavelistPtr_ = new WaveList<D>();
       iteratorFactoryPtr_ = new IteratorFactory<D>(*this);
       sweepFactoryPtr_ = new SweepFactory<D>(*this);
 
@@ -81,9 +79,6 @@ namespace Pspg
    {
       if (interactionPtr_) {
          delete interactionPtr_;
-      }
-      if (wavelistPtr_) {
-         delete wavelistPtr_;
       }
       if (iteratorPtr_) {
          delete iteratorPtr_;
@@ -202,11 +197,6 @@ namespace Pspg
       UTIL_CHECK(ns >= 0);
       UTIL_CHECK(np + ns > 0);
 
-      // Initialize homogeneous object
-      homogeneous_.setNMolecule(np+ns);
-      homogeneous_.setNMonomer(nm);
-      initHomogeneous();
-
       // Read the Interaction{ ... } block
       interaction().setNMonomer(mixture().nMonomer());
       readParamComposite(in, interaction());
@@ -215,11 +205,9 @@ namespace Pspg
       readParamComposite(in, domain_);
 
       mixture().setMesh(mesh());
-
       UTIL_CHECK(domain_.mesh().size() > 0);
       UTIL_CHECK(domain_.unitCell().nParameter() > 0);
       UTIL_CHECK(domain_.unitCell().lattice() != UnitCell<D>::Null);
-      wavelist().allocate(domain_.mesh(), domain_.unitCell());
 
       // Allocate memory for w and c fields
       allocateFieldsGrid();
@@ -231,7 +219,7 @@ namespace Pspg
       std::string className;
       bool isEnd;
       iteratorPtr_
-            = iteratorFactoryPtr_->readObject(in, *this, className, isEnd);
+          = iteratorFactoryPtr_->readObject(in, *this, className, isEnd);
       if (!iteratorPtr_) {
          std::string msg = "Unrecognized Iterator subclass name ";
          msg += className;
@@ -244,6 +232,11 @@ namespace Pspg
       if (sweepPtr_) {
          sweepPtr_->setSystem(*this);
       }
+
+      // Initialize homogeneous object
+      homogeneous_.setNMolecule(np+ns);
+      homogeneous_.setNMonomer(nm);
+      initHomogeneous();
 
    }
 
@@ -330,6 +323,7 @@ namespace Pspg
       UTIL_CHECK(isAllocatedGrid_);
       UTIL_CHECK(!isAllocatedBasis_);
       UTIL_CHECK(domain_.unitCell().nParameter() > 0);
+      UTIL_CHECK(domain_.mesh().size() > 0);
       UTIL_CHECK(domain_.basis().isInitialized());
       const int nBasis = basis().nBasis();
       UTIL_CHECK(nBasis > 0);
@@ -343,11 +337,11 @@ namespace Pspg
          tmpFieldsBasis_[i].allocate(nBasis);
       }
 
-      // Allocate memory for wavelist
-      UTIL_CHECK(domain_.mesh().size() > 0);
-      UTIL_CHECK(domain_.unitCell().nParameter() > 0);
-      UTIL_CHECK(domain_.unitCell().isInitialized() > 0);
-      wavelist().computeMinimumImages(domain_.mesh(), domain_.unitCell());
+      // Allocate memory for waveList
+      if (!domain_.waveList().hasMinimumImages()) {
+         domain_.waveList().computeMinimumImages(domain_.mesh(), 
+                                                 domain_.unitCell());
+      }
 
       isAllocatedBasis_ = true;
    }
@@ -837,9 +831,9 @@ namespace Pspg
 
       // Read w fields
       w_.readBasis(filename, domain_.unitCell());
-      wavelist().computeKSq(domain_.unitCell());
-      wavelist().computedKSq(domain_.unitCell());
-      mixture_.setupUnitCell(domain_.unitCell(), wavelist());
+      domain_.waveList().computeKSq(domain_.unitCell());
+      domain_.waveList().computedKSq(domain_.unitCell());
+      mixture_.setupUnitCell(domain_.unitCell(), domain_.waveList());
       hasCFields_ = false;
    }
 
@@ -853,9 +847,9 @@ namespace Pspg
       }
 
       w_.readRGrid(filename, domain_.unitCell());
-      wavelist().computeKSq(domain_.unitCell());
-      wavelist().computedKSq(domain_.unitCell());
-      mixture_.setupUnitCell(domain_.unitCell(), wavelist());
+      domain_.waveList().computeKSq(domain_.unitCell());
+      domain_.waveList().computedKSq(domain_.unitCell());
+      mixture_.setupUnitCell(domain_.unitCell(), domain_.waveList());
       hasCFields_ = false;
    }
 
@@ -897,9 +891,7 @@ namespace Pspg
    {
       UTIL_CHECK(domain_.unitCell().lattice() == unitCell.lattice());
       domain_.setUnitCell(unitCell);
-      wavelist().computeKSq(domain_.unitCell());
-      wavelist().computedKSq(domain_.unitCell());
-      mixture_.setupUnitCell(unitCell, wavelist());
+      mixture_.setupUnitCell(unitCell, domain_.waveList());
    }
 
    /*
@@ -910,9 +902,7 @@ namespace Pspg
    {
       UTIL_CHECK(domain_.unitCell().nParameter() == parameters.size());
       domain_.setUnitCell(parameters);
-      wavelist().computeKSq(domain_.unitCell());
-      wavelist().computedKSq(domain_.unitCell());
-      mixture_.setupUnitCell(domain_.unitCell(), wavelist());
+      mixture_.setupUnitCell(domain_.unitCell(), domain_.waveList());
    }
 
    // Primary SCFT Computations
@@ -935,7 +925,7 @@ namespace Pspg
       }
 
       if (needStress) {
-         mixture().computeStress(wavelist());
+         mixture().computeStress(domain_.waveList());
       }
    }
 
@@ -962,7 +952,7 @@ namespace Pspg
 
       if (!error) {
          if (!iterator().isFlexible()) {
-            mixture().computeStress(wavelist());
+            mixture().computeStress(domain_.waveList());
          }
          computeFreeEnergy();
          writeThermo(Log::file());

@@ -242,7 +242,7 @@ namespace Pspg{
       system().compute();
       // Compute stress if done
       if (isFlexible_) {
-         system().mixture().computeStress(system().wavelist());
+         system().mixture().computeStress(system().domain().waveList());
       }
    }
 

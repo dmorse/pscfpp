@@ -105,6 +105,12 @@ namespace Pspg
       */
       int kSize() const;
 
+      bool isAllocated() const
+      {  return isAllocated_; }
+
+      bool hasMinimumImages() const
+      {  return hasMinimumImages_; }
+
    private:
 
       // Bare C array holding precomputed minimum images
@@ -135,7 +141,7 @@ namespace Pspg
 
       DArray< IntVec<D> > minImage_;
 
-      bool deviceIsAllocated_;
+      bool isAllocated_;
 
       bool hasMinimumImages_;
 

@@ -10,6 +10,7 @@
 
 #include <util/param/ParamComposite.h>     // base class
 
+#include <pspg/solvers/WaveList.h>         // member
 #include <pspg/field/FieldIo.h>            // member
 #include <pspg/field/FFT.h>                // member
 
@@ -36,6 +37,7 @@ namespace Pspg
    *    - a SpaceGroup
    *    - a Basis
    *    - an Fft 
+   *    - a WaveList
    *    - a FieldIo
    *    - a lattice system enumeration value
    *    - a groupName string
@@ -86,7 +88,7 @@ namespace Pspg
       * \param in input parameter stream
       * \param nMonomer number of monomers in field file (output)
       */
-      void readFieldHeader(std::istream& in, int& nMonomer);
+      void readRGridFieldHeader(std::istream& in, int& nMonomer);
 
       /**
       * Set the unit cell, given a UnitCell<D> object.
@@ -173,6 +175,16 @@ namespace Pspg
       FFT<D> const & fft() const;
 
       /**
+      * Get the WaveList object by reference.
+      */
+      WaveList<D>& waveList();
+
+      /**
+      * Get associated WaveList object by const reference.
+      */
+      WaveList<D> const & waveList() const;
+
+      /**
       * Get associated FieldIo object.
       */
       FieldIo<D>& fieldIo();
@@ -214,14 +226,19 @@ namespace Pspg
       SpaceGroup<D> group_;
 
       /**
-      * Pointer to a Basis object
+      * Basis object
       */
       Basis<D> basis_;
 
       /**
-      * FFT object to be used by iterator
+      * FFT object.
       */
       FFT<D> fft_;
+
+      /**
+      * WaveList object to be used by solvers.
+      */
+      WaveList<D> waveList_;
 
       /**
       * FieldIo object for field input/output operations
@@ -292,10 +309,20 @@ namespace Pspg
    inline FFT<D>& Domain<D>::fft()
    {  return fft_; }
 
-   // Get the FFT<D> object.
+   // Get the FFT<D> object by const reference.
    template <int D>
    inline FFT<D> const & Domain<D>::fft() const
    {  return fft_; }
+
+   // Get the WaveList<D> object.
+   template <int D>
+   inline WaveList<D>& Domain<D>::waveList()
+   {  return waveList_; }
+
+   // Get the WaveList<D> object by const reference.
+   template <int D>
+   inline WaveList<D> const & Domain<D>::waveList() const
+   {  return waveList_; }
 
    // Get the FieldIo<D> object.
    template <int D>

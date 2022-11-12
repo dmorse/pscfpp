@@ -65,6 +65,7 @@ namespace Pspg
       }
 
       read(in, "mesh", mesh_);
+      UTIL_CHECK(mesh().size() > 0);
       fft_.setup(mesh_.dimensions());
 
       // If no unit cell was read, read lattice system 
@@ -72,13 +73,18 @@ namespace Pspg
          read(in, "lattice", lattice_);
          unitCell_.set(lattice_);
       }
+      UTIL_CHECK(unitCell().lattice() != UnitCell<D>::Null);
+      UTIL_CHECK(unitCell().nParameter() > 0);
+
+      // Allocate memory for WaveList
+      waveList().allocate(mesh(), unitCell());
 
       // Read group name and initialize space group
       read(in, "groupName", groupName_);
       readGroup(groupName_, group_);
 
       // Make symmetry-adapted basis
-      if (hasUnitCell) {
+      if (unitCell().isInitialized()) {
           basis().makeBasis(mesh(), unitCell(), group_);
       }
 
@@ -87,7 +93,7 @@ namespace Pspg
    
  
    template <int D> 
-   void Domain<D>::readFieldHeader(std::istream& in, int& nMonomer)
+   void Domain<D>::readRGridFieldHeader(std::istream& in, int& nMonomer)
    {
       // Read common section of standard field header
       int ver1, ver2;
@@ -127,6 +133,8 @@ namespace Pspg
       if (!basis_.isInitialized()) {
          makeBasis();
       }
+      waveList_.computeKSq(unitCell_);
+      waveList_.computedKSq(unitCell_);
    }
 
    /*
@@ -145,6 +153,8 @@ namespace Pspg
       if (!basis_.isInitialized()) {
          makeBasis();
       }
+      waveList_.computeKSq(unitCell_);
+      waveList_.computedKSq(unitCell_);
    }
 
    /*
@@ -159,6 +169,8 @@ namespace Pspg
       if (!basis_.isInitialized()) {
          makeBasis();
       }
+      waveList_.computeKSq(unitCell_);
+      waveList_.computedKSq(unitCell_);
    }
 
    template <int D>
@@ -166,6 +178,8 @@ namespace Pspg
    {
       UTIL_CHECK(mesh_.size() > 0);
       UTIL_CHECK(unitCell_.lattice() != UnitCell<D>::Null);
+      UTIL_CHECK(unitCell_.nParameter() > 0);
+      UTIL_CHECK(unitCell_.isInitialized());
 
       #if 0
       // Check group, read from file if necessary
@@ -180,6 +194,13 @@ namespace Pspg
          basis_.makeBasis(mesh_, unitCell_, group_);
       }
       UTIL_CHECK(basis().isInitialized());
+
+      // Compute minimum images in WaveList
+      UTIL_CHECK(waveList().isAllocated());
+      if (!waveList().hasMinimumImages()) {
+         waveList().computeMinimumImages(mesh(), unitCell());
+      }
+
    }
 
 } // namespace Pspg
