@@ -23,8 +23,8 @@ System{
     )
   }
   Domain{
-    unitCell       lamellar    2.5
     mesh           96
+    lattice        lamellar  
     groupName      P_1
   }
   AmIteratorFilm{
@@ -39,12 +39,14 @@ System{
     chiTop[    20 0 ]
   }
   LinearSweep{
-    ns            20  
+    ns            16  
     baseFileName  out/d
     writeRhoRGrid 1
     nParameter    1   
     parameters[
-                  cell_param  0  -0.50
+                  cell_param  0  -0.40
     ]   
   }
 }
+
+    unitCell       lamellar    2.5

@@ -23,8 +23,8 @@ System{
     )
   }
   Domain{
-    unitCell      cubic     4.0E+00
     mesh          64 64 64
+    lattice       cubic  
     groupName     F_m_-3_m
   }
   AmIteratorGrid{
@@ -34,3 +34,5 @@ System{
     isFlexible   1
   }
 }
+
+    unitCell      cubic     4.0E+00

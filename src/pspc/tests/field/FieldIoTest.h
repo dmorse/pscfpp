@@ -78,7 +78,7 @@ public:
    {
       std::ifstream in;
       openInputFile(filename, in);
-      domain.readFieldHeader(in, nMonomer_);
+      domain.readRGridFieldHeader(in, nMonomer_);
       in.close();
    }
 

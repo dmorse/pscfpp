@@ -925,6 +925,16 @@ namespace Pspc
       void allocateFieldsBasis(std::string filename);
 
       /**
+      * Read a field file header, make basis if not done previously.
+      * 
+      * Used to peek at a file header to get initial unit cell parameters,
+      * use this to initialize basis if not done previously.
+      *
+      * \param filename name of field file
+      */
+      void readFieldHeader(std::string filename);
+
+      /**
       * Initialize Homogeneous::Mixture object.
       */
       void initHomogeneous();

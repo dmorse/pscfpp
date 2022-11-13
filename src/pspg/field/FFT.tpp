@@ -146,12 +146,12 @@ namespace Pspg
       //perform fft
       #ifdef SINGLE_PRECISION
       if(cufftExecR2C(fPlan_, rField.cDField(), kField.cDField()) != CUFFT_SUCCESS) {
-         std::cout<<"CUFFT error: forward"<<std::endl;
+         std::cout << "CUFFT error: forward" << std::endl;
          return;
       }
       #else
       if(cufftExecD2Z(fPlan_, rField.cDField(), kField.cDField()) != CUFFT_SUCCESS) {
-         std::cout<<"CUFFT error: forward"<<std::endl;
+         std::cout << "CUFFT error: forward" << std::endl;
          return;
       }
       #endif
@@ -165,11 +165,10 @@ namespace Pspg
    void FFT<D>::forwardTransformSafe(RDField<D> const & rField, RDFieldDft<D>& kField)
    const
    {
-      UTIL_CHECK(rFieldCopy_.capacity()==rField.capacity());
+      UTIL_CHECK(rFieldCopy_.capacity() == rField.capacity());
 
       rFieldCopy_ = rField;
       forwardTransform(rFieldCopy_, kField);
-      
    }
 
    /*
@@ -187,12 +186,12 @@ namespace Pspg
 
       #ifdef SINGLE_PRECISION
       if(cufftExecC2R(iPlan_, kField.cDField(), rField.cDField()) != CUFFT_SUCCESS) {
-         std::cout<<"CUFFT error: inverse"<<std::endl;
+         std::cout << "CUFFT error: inverse" << std::endl;
          return;
       }
       #else
       if(cufftExecZ2D(iPlan_, kField.cDField(), rField.cDField()) != CUFFT_SUCCESS) {
-         std::cout<<"CUFFT error: inverse"<<std::endl;
+         std::cout << "CUFFT error: inverse" << std::endl;
          return;
       }
       #endif

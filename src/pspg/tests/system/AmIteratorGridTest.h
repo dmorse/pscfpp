@@ -27,7 +27,7 @@ public:
    void testIterate1D_lam_rigid()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/testIterate1D_lam_rigid.log");
+      openLogFile("out/testIterateGrid1D_lam_rigid.log");
 
       System<1> system;
       setupSystem<1>(system,"in/diblock/lam/param.rigid_grid");
@@ -81,7 +81,7 @@ public:
    void testIterate1D_lam_flex()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/testIterate1D_lam_flex.log");
+      openLogFile("out/testIterateGrid1D_lam_flex.log");
 
       System<1> system;
       setupSystem<1>(system,"in/diblock/lam/param.flex_grid"); 
@@ -124,7 +124,7 @@ public:
    void testIterate1D_lam_soln()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/testIterate1D_lam_soln.log");
+      openLogFile("out/testIterateGrid1D_lam_soln.log");
 
       System<1> system;
       setupSystem<1>(system,"in/solution/lam/param.grid"); 
@@ -165,7 +165,7 @@ public:
    void testIterate1D_lam_blend()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/testIterate1D_lam_blend.log");
+      openLogFile("out/testIterateGrid1D_lam_blend.log");
 
       System<1> system;
       setupSystem<1>(system,"in/blend/lam/param.closed_grid"); 
@@ -205,7 +205,7 @@ public:
    void testIterate1D_lam_open_soln()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/testIterate1D_lam_open_soln.log");
+      openLogFile("out/testIterateGrid1D_lam_open_soln.log");
 
       System<1> system;
       setupSystem<1>(system,"in/solution/lam_open/param.grid"); 
@@ -249,7 +249,7 @@ public:
    void testIterate1D_lam_open_blend()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/testIterate1D_lam_open_blend.log");
+      openLogFile("out/testIterateGrid1D_lam_open_blend.log");
 
       System<1> system;
       setupSystem<1>(system,"in/blend/lam/param.open_grid"); 
@@ -291,7 +291,7 @@ public:
    void testIterate2D_hex_rigid()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/testIterate2D_hex_rigid.log");
+      openLogFile("out/testIterateGrid2D_hex_rigid.log");
 
       System<2> system;
       setupSystem<2>(system,"in/diblock/hex/param.rigid_grid"); 
@@ -337,7 +337,7 @@ public:
    void testIterate2D_hex_flex()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/testIterate2D_hex_flex.log");
+      openLogFile("out/testIterateGrid2D_hex_flex.log");
 
       System<2> system;
       setupSystem<2>(system,"in/diblock/hex/param.flex_grid"); 
@@ -381,7 +381,7 @@ public:
    void testIterate3D_bcc_rigid()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/testIterate3D_bcc_rigid.log");
+      openLogFile("out/testIterateGrid3D_bcc_rigid.log");
 
       System<3> system;
       setupSystem<3>(system,"in/diblock/bcc/param.rigid_grid"); 
@@ -424,7 +424,7 @@ public:
    void testIterate3D_bcc_flex()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/testIterate3D_bcc_flex.log");
+      openLogFile("out/testIterateGrid3D_bcc_flex.log");
 
       System<3> system;
       setupSystem<3>(system,"in/diblock/bcc/param.flex_grid"); 

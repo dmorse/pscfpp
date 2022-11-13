@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import math
-import numpy as np
 
 n_interfaces = 2
 
@@ -26,9 +25,9 @@ for y in range(0,grid[1]):
     for x in range(0,grid[0]):
         x_coord = x * params[0] / grid[0]
         y_coord = y * params[1] / grid[1]
-        rhoW = 0.5*(1+np.tanh(4*(((.5*(T-L))+np.abs(y_coord-(L/2)))/t)));
+        rhoW=0.5*(1+math.tanh(4*(((.5*(T-L))+math.fabs(y_coord-(L/2)))/t)));
         rho = 1-rhoW
-        rhoB = 0.4 * np.cos(x_coord * n_interfaces * np.pi / params[0]) + 0.5
+        rhoB = 0.4 * math.cos(x_coord*n_interfaces*math.pi/params[0]) + 0.5
         rhoA = 1-rhoB
         lines.append(line.format(rhoA*rho,rhoB*rho))
         linenum += 1

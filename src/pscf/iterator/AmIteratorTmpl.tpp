@@ -131,7 +131,6 @@ namespace Pscf
       bool done;
       for (int itr = 0; itr < maxItr_; ++itr) {
 
-
          // Append current field to fieldHists_ ringbuffer
          getCurrent(temp_);
          fieldHists_.append(temp_);
@@ -169,7 +168,7 @@ namespace Pscf
             // is no need to continue to the next iteration.
             break;
             
-         }else if (done) {
+         } else if (done) {
 
             // Stop timers
             timerAM.stop();

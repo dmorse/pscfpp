@@ -115,40 +115,37 @@ namespace Pspc
    template <int D, typename IteratorType>
    void FilmIteratorBase<D, IteratorType>::setup()
    {
+      UTIL_CHECK(system().basis().isInitialized());
+      UTIL_CHECK(system().unitCell().isInitialized());
+
+      // Allocate the mask and external field containers if needed
+      if (!system().mask().isAllocated()) {
+         system().mask().allocate(system().basis().nBasis(), 
+                                 system().mesh().dimensions());
+      }
+      if (!isAthermal()) {
+         if (!system().h().isAllocatedRGrid()) {
+            system().h().allocateRGrid(system().mesh().dimensions());
+         }
+         if (!system().h().isAllocatedBasis()) {
+            system().h().allocateBasis(system().basis().nBasis());
+         }
+      }
+
+      // Ensure that space group symmetry is compatible with the wall
+      checkSpaceGroup();
+
       if (ungenerated_) {
-
-         UTIL_CHECK(system().basis().isInitialized());
-         UTIL_CHECK(system().unitCell().isInitialized());
-
-         // Allocate the mask and external field containers if needed
-         if (!system().mask().isAllocated()) {
-            system().mask().allocate(system().basis().nBasis(), 
-                                    system().mesh().dimensions());
-         }
-         if (!isAthermal()) {
-            if (!system().h().isAllocatedRGrid()) {
-               system().h().allocateRGrid(system().mesh().dimensions());
-            }
-            if (!system().h().isAllocatedBasis()) {
-               system().h().allocateBasis(system().basis().nBasis());
-            }
-         }
-
-         // Ensure that space group symmetry is compatible with the wall
-         checkSpaceGroup();
-
          // Generate the field representation of the walls (and external
          // fields if needed) and provide them to iterator_ to use during 
-         // iteration. This sets ungenerated_ = false.
+         // iteration. 
          generateWallFields();
-
+         ungenerated_ = false;
       } else {
-
          // Update the concentration field of the walls based on the
          // current state of Domain<D> and provide it to iterator_, as
          // well as the external fields for each species if needed
          updateWallFields(); 
-
       }
    }
 
@@ -158,7 +155,6 @@ namespace Pspc
    template <int D, typename IteratorType>
    int FilmIteratorBase<D, IteratorType>::solve(bool isContinuation)
    {
-
       // Setup the FilmIteratorBase object, set external fields and mask
       setup();
 
@@ -178,8 +174,7 @@ namespace Pspc
    {
       UTIL_CHECK(interfaceThickness() > 0);
       UTIL_CHECK(wallThickness() > interfaceThickness());
-
-      if (ungenerated_) ungenerated_ = false;
+      UTIL_CHECK(system().mask().isAllocated());
 
       // Ensure that unit cell is compatible with wall
       checkLatticeVectors();
@@ -252,9 +247,6 @@ namespace Pspc
    template <int D, typename IteratorType>
    void FilmIteratorBase<D, IteratorType>::updateWallFields() 
    {
-      // Ensure that the space group symmetry is compatible with the wall
-      checkSpaceGroup();
-
       // Check if system lattice parameters are different than parameters_
       FSArray<double, 6> sysParams = 
          system().domain().unitCell().parameters();
@@ -307,6 +299,8 @@ namespace Pspc
       }
 
       // If this point is reached, external field must be generated
+      UTIL_CHECK(system().h().isAllocatedRGrid());
+      UTIL_CHECK(system().h().isAllocatedBasis());
       int nm = system().mixture().nMonomer();
 
       // Get length L of the lattice basis vector normal to the walls

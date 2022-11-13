@@ -23,8 +23,8 @@ System{
     )
   }
   Domain{
-    unitCell       cubic     3.0E+00
     mesh           32   32    32
+    lattice        cubic 
     groupName      I_m_-3_m
   }
   Iterator{
@@ -35,4 +35,4 @@ System{
   }
 }
 
-    lattice        cubic 
+    unitCell       cubic     3.0E+00

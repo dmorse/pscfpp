@@ -23,9 +23,9 @@ System{
     )
   }
   Domain{
-    unitCell    hexagonal   1.6908669157
     mesh        24   24
-    groupName       p_6_m_m
+    lattice     hexagonal 
+    groupName   p_6_m_m
   }
   AmIteratorBasis{
     maxItr   200
@@ -34,3 +34,5 @@ System{
     isFlexible   1
   }
 }
+
+    unitCell    hexagonal   1.6908669157

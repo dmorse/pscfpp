@@ -13,7 +13,6 @@
 #include <pspg/solvers/Mixture.h>          // member
 #include <pspg/field/Domain.h>             // member
 #include <pspg/field/FieldIo.h>            // member
-#include <pspg/solvers/WaveList.h>         // member
 #include <pspg/field/WFieldContainer.h>    // member
 #include <pspg/field/CFieldContainer.h>    // member
 #include <pspg/field/RDField.h>            // member
@@ -575,11 +574,6 @@ namespace Pspg
       Domain<D> const & domain() const;
 
       /**
-      * Get container for wavevector data.
-      */
-      WaveList<D> & wavelist();
-
-      /**
       * Get the iterator by reference.
       */
       Iterator<D>& iterator();
@@ -675,11 +669,6 @@ namespace Pspg
       * Pointer to iterator factory object
       */
       IteratorFactory<D>* iteratorFactoryPtr_;
-
-      /**
-      * Container for wavevector data.
-      */
-      WaveList<D>* wavelistPtr_;
 
       /**
       * Pointer to an Sweep object
@@ -874,11 +863,6 @@ namespace Pspg
    inline
    Homogeneous::Mixture& System<D>::homogeneous()
    {  return homogeneous_; }
-
-   // Get the WaveList<D> object.
-   template <int D>
-   inline WaveList<D>& System<D>::wavelist()
-   {  return *wavelistPtr_; }
 
    // Get container of w fields (const reference)
    template <int D>

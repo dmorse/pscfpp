@@ -22,6 +22,7 @@
 
 #include <iomanip>
 #include <string>
+#include <cmath>
 
 namespace Pscf {
 namespace Pspg
@@ -835,8 +836,11 @@ namespace Pspg
    #endif
 
    /*
-   * Read common part of field header and extract 
-   * the number of monomers (number of fields) in the file.
+   * Read common part of field header.
+   *
+   * Return the number of monomers in the file.
+   * Set the unitCell.
+   * If necessary, make the Basis.
    */
    template <int D>
    void FieldIo<D>::readFieldHeader(std::istream& in, 
@@ -938,11 +942,14 @@ namespace Pspg
    FieldIo<D>::convertBasisToKGrid(DArray<double> const& components,
                                    RDFieldDft<D>& dft) const
    {
+      UTIL_CHECK(mesh().dimensions() == dft.meshDimensions());
       UTIL_CHECK(basis().isInitialized());
-      const int nStar = basis().nStar();
       const int nBasis = basis().nBasis();
+      const int nStar = basis().nStar();
+      UTIL_CHECK(nBasis > 0);
+      UTIL_CHECK(nStar >= nBasis);
 
-      // Allocate dft_out
+      // Compute DFT array size
       int kSize = 1;
       for (int i = 0; i < D; i++) {
          if (i == D - 1) {
@@ -952,6 +959,9 @@ namespace Pspg
             kSize *= mesh().dimension(i);
          }
       }
+      kSize = dft.capacity();
+      
+      // Allocate dft_out
       cudaComplex* dft_out;
       dft_out = new cudaComplex[kSize];
 
@@ -991,6 +1001,8 @@ namespace Pspg
          if (starPtr->invertFlag == 0) {
 
             // Make complex coefficient for star basis function
+            UTIL_ASSERT(!isnan(components[ib]));
+            UTIL_ASSERT(!isinf(components[ib]));
             component = std::complex<double>(components[ib], 0.0);
 
             // Loop over waves in closed star
@@ -998,6 +1010,8 @@ namespace Pspg
                wavePtr = &basis().wave(iw);
                if (!wavePtr->implicit) {
                   coeff = component*(wavePtr->coeff);
+                  UTIL_ASSERT(!isnan(coeff.real()));
+                  UTIL_ASSERT(!isnan(coeff.imag()));
                   indices = wavePtr->indicesDft;
                   rank = dftMesh.rank(indices);
                   dft_out[rank].x = coeff.real();
@@ -1009,6 +1023,11 @@ namespace Pspg
          } else
          if (starPtr->invertFlag == 1) {
 
+            UTIL_ASSERT(!isnan(components[ib]));
+            UTIL_ASSERT(!isnan(components[ib+1]));
+            UTIL_ASSERT(!isinf(components[ib]));
+            UTIL_ASSERT(!isinf(components[ib+1]));
+
             // Loop over waves in first star
             component = std::complex<double>(components[ib],
                                              -components[ib+1]);
@@ -1018,10 +1037,12 @@ namespace Pspg
                wavePtr = &basis().wave(iw);
                if (!(wavePtr->implicit)) {
                   coeff = component*(wavePtr->coeff);
+                  UTIL_ASSERT(!isnan(coeff.real()));
+                  UTIL_ASSERT(!isnan(coeff.imag()));
                   indices = wavePtr->indicesDft;
                   rank = dftMesh.rank(indices);
-                  dft_out[rank].x = coeff.real();
-                  dft_out[rank].y = coeff.imag();
+                  dft_out[rank].x = (cudaReal)coeff.real();
+                  dft_out[rank].y = (cudaReal)coeff.imag();
                }
             }
 
@@ -1035,10 +1056,12 @@ namespace Pspg
                wavePtr = &basis().wave(iw);
                if (!(wavePtr->implicit)) {
                   coeff = component*(wavePtr->coeff);
+                  UTIL_ASSERT(!isnan(coeff.real()));
+                  UTIL_ASSERT(!isnan(coeff.imag()));
                   indices = wavePtr->indicesDft;
                   rank = dftMesh.rank(indices);
-                  dft_out[rank].x = coeff.real();
-                  dft_out[rank].y = coeff.imag();
+                  dft_out[rank].x = (cudaReal)coeff.real();
+                  dft_out[rank].y = (cudaReal)coeff.imag();
                }
             }
 
@@ -1092,7 +1115,8 @@ namespace Pspg
       // Declare variables needed in loop over stars
       typename Basis<D>::Star const* starPtr;  // pointer to current star
       typename Basis<D>::Wave const* wavePtr;  // pointer to current wave
-      std::complex<double> component;          // coefficient for star
+      std::complex<double> component;          // component for star
+      std::complex<double> coefficient;        // coefficient in basis
       int rank;                                // dft grid rank of wave
       int is;                                  // star index
       int ib;                                  // basis index
@@ -1142,18 +1166,55 @@ namespace Pspg
             }
             UTIL_CHECK(wavePtr->starId == is);
 
-            // Compute component value
+            // Compute component value 
             rank = dftMesh.rank(wavePtr->indicesDft);
             component =
                    std::complex<double>(dft_in[rank].x, dft_in[rank].y);
-            component /= wavePtr->coeff;
+            bool componentError = false;
+            #if UTIL_DEBUG
+            if (std::isnan(component.real())) componentError = true;
+            if (std::isnan(component.imag())) componentError = true;
+            #endif
+            coefficient = wavePtr->coeff;
+            #if UTIL_DEUG
+            if (std::isnan(coefficient.real())) componentError = true;
+            if (std::isnan(coefficient.imag())) componentError = true;
+            if (std::isnormal(coefficient))     componentError = true;
+            #endif
+            component /= coefficient;
+            #if UTIL_DEBUG
+            if (std::isnan(component.real())) componentError = true;
+            if (std::isnan(component.imag())) componentError = true;
+            if (std::isinf(component.real())) componentError = true;
+            if (std::isinf(component.imag())) componentError = true;
+            #endif
 
             // Verify that imaginary component is very small
             #ifdef SINGLE_PRECISION
-            UTIL_CHECK(abs(component.imag()) < 1.0E-03);
+            if (abs(component.imag()) > 1.0E-4) componentError = true;
             #else
-            UTIL_CHECK(abs(component.imag()) < 1.0E-8);
+            if (abs(component.imag()) > 1.0E-8) componentError = true;
             #endif
+
+            // Verbose reporting of any detected error
+            if (componentError) {
+               std::complex<double> waveComponent =
+                   std::complex<double>(dft_in[rank].x, dft_in[rank].y);
+               Log::file() 
+                  << " Error in FieldIo::convertKGridToBasis\n"
+                  << "Star  Id        " << starPtr->starId << "\n"
+                  << "Basis Id        " << starPtr->basisId << "\n"
+                  << "Star WaveBz     " << starPtr->waveBz << "\n"
+                  << "Wave indices    " << wavePtr->indicesDft << "\n"
+                  << "Wave coeff      " << wavePtr->indicesDft << "\n"
+                  << "Wave component  " << Dbl(waveComponent.real()) 
+                                        << Dbl(waveComponent.imag()) << "\n"
+                  << "Wave coefficient" << Dbl(coefficient.real()) 
+                                        << Dbl(coefficient.imag()) << "\n"
+                  << "Star component  " << Dbl(component.real()) 
+                                        << Dbl(component.imag()) << "\n";
+               UTIL_THROW("Error: Component error in FieldIo::convertKGridToBasis");
+            }
 
             // Store real part
             components[ib] = component.real();

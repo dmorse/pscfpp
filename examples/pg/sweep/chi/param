@@ -23,11 +23,11 @@ System{
     )
   }
   Domain{
-    unitCell        Lamellar   1.3835952906
     mesh            40
+    lattice         lamellar   
     groupName       P_-1
   }
-  AmIterator{
+  Iterator{
     maxItr        100
     epsilon       1e-12
     maxHist       10
@@ -42,3 +42,5 @@ System{
     ]
   }
 }
+
+    unitCell        Lamellar   1.3835952906

@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import math
-import numpy as np
 
 rgrid = open('preamble','r')
 lines = list(rgrid)
@@ -12,7 +11,7 @@ params = list(map(float,lines[8].split()))
 paramfile = open('../param','r')
 paramlines = list(paramfile)
 paramfile.close()
-T = float(paramlines[36].split()[1])
+T = float(paramlines[37].split()[1])
 
 linenum = 15
 line = '    {:.9f}    {:.9f}\n'
