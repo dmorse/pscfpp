@@ -879,9 +879,10 @@ namespace Pspc
    void System<D>::computeFreeEnergy()
    {
       UTIL_CHECK(domain_.basis().isInitialized());
-      UTIL_CHECK(hasCFields_);
       UTIL_CHECK(w_.hasData());
       UTIL_CHECK(w_.isSymmetric());
+      UTIL_CHECK(hasCFields_);
+      UTIL_CHECK(!hasFreeEnergy_);
 
       // Initialize to zero
       fHelmholtz_ = 0.0;

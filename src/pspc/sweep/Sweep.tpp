@@ -293,6 +293,7 @@ namespace Pspc {
    {
       int i = nAccept() - 1;
       double sNew = s(0);
+      if (!system().hasFreeEnergy()) system().computeFreeEnergy();
       out << Int(i,5) << Dbl(sNew)
           << Dbl(system().fHelmholtz(),16)
           << Dbl(system().pressure(),16);
