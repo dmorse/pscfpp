@@ -1138,7 +1138,7 @@ namespace Pspc
    // Get the precomputed pressure (units of kT / monomer volume).
    template <int D>
    inline double System<D>::pressure() const
-   {  
+   {
       UTIL_CHECK(hasFreeEnergy_);
       return pressure_; 
    }
