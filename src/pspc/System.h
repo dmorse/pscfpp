@@ -649,11 +649,6 @@ namespace Pspc
       std::string groupName() const;
 
       /**
-      * Have c fields been computed from the current w field?
-      */
-      bool hasCFields() const;
-
-      /**
       * Does this system have a Sweep object?
       */
       bool hasSweep() const;
@@ -668,6 +663,16 @@ namespace Pspc
        * is constrained)?
        */
       bool hasMask() const;
+
+      /**
+      * Have c fields been computed from the current w fields?
+      */
+      bool hasCFields() const;
+
+      /**
+      * Has the free energy been computed from the current w fields?
+      */
+      bool hasFreeEnergy() const;
 
       ///@}
 
@@ -817,6 +822,11 @@ namespace Pspc
       * fields in System::w_ container.
       */
       bool hasCFields_;
+
+      /**
+      * Has the free energy been computed for the current w and c fields?
+      */ 
+      bool hasFreeEnergy_;
 
       // Private member functions
 
@@ -985,11 +995,6 @@ namespace Pspc
    inline Mask<D>& System<D>::mask()
    {  return mask_; }
 
-   // Have the c fields been computed for the current w fields?
-   template <int D>
-   inline bool System<D>::hasCFields() const
-   {  return hasCFields_; }
-
    // Does the system have a Sweep object?
    template <int D>
    inline bool System<D>::hasSweep() const
@@ -1005,15 +1010,31 @@ namespace Pspc
    inline bool System<D>::hasMask() const
    {  return mask_.hasData(); }
 
+   // Have the c fields been computed for the current w fields?
+   template <int D>
+   inline bool System<D>::hasCFields() const
+   {  return hasCFields_; }
+
+   // Has the free energy been computed for the current w fields?
+   template <int D>
+   inline bool System<D>::hasFreeEnergy() const
+   {  return hasFreeEnergy_; }
+
    // Get the precomputed Helmoltz free energy per monomer / kT.
    template <int D>
    inline double System<D>::fHelmholtz() const
-   {  return fHelmholtz_; }
+   {
+      UTIL_CHECK(hasFreeEnergy_);
+      return fHelmholtz_; 
+   }
 
    // Get the precomputed pressure (units of kT / monomer volume).
    template <int D>
    inline double System<D>::pressure() const
-   {  return pressure_; }
+   {
+      UTIL_CHECK(hasFreeEnergy_);
+      return pressure_; 
+   }
 
    #ifndef PSPC_SYSTEM_TPP
    // Suppress implicit instantiation
