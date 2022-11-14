@@ -900,7 +900,6 @@ namespace Pspc
          if (!iterator().isFlexible()) {
             mixture().computeStress();
          }
-         computeFreeEnergy();
          writeThermo(Log::file());
       }
 
@@ -1117,8 +1116,12 @@ namespace Pspc
    * Write thermodynamic properties to file.
    */
    template <int D>
-   void System<D>::writeThermo(std::ostream& out) const
+   void System<D>::writeThermo(std::ostream& out)
    {
+      if (!hasFreeEnergy_) {
+         computeFreeEnergy();
+      }
+
       out << std::endl;
       out << "fHelmholtz    " << Dbl(fHelmholtz(), 18, 11) << std::endl;
       out << "pressure      " << Dbl(pressure(), 18, 11) << std::endl;

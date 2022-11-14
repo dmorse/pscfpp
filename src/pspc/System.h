@@ -425,9 +425,11 @@ namespace Pspc
       * pressure (in units of kT per monomer volume), and the
       * volume fraction and chemical potential of each species.
       *
+      * If necessary, computes free energy (making it non-const).
+      *
       * \param out output stream
       */
-      void writeThermo(std::ostream& out) const;
+      void writeThermo(std::ostream& out);
 
       /**
       * Output information about stars and symmetrized basis functions.

@@ -291,12 +291,15 @@ namespace Pspc {
    template <int D>
    void Sweep<D>::outputSummary(std::ostream& out)
    {
+      Log::file() << "Entering Sweep::outputSummary\n";
       int i = nAccept() - 1;
       double sNew = s(0);
+      if (!system().hasFreeEnergy()) system().computeFreeEnergy();
       out << Int(i,5) << Dbl(sNew)
           << Dbl(system().fHelmholtz(),16)
           << Dbl(system().pressure(),16);
       out << std::endl;
+      Log::file() << "Exiting Sweep::outputSummary\n";
    }
 
    template <int D>
