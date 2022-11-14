@@ -865,6 +865,7 @@ namespace Pspc
       // Solve the modified diffusion equation (without iteration)
       mixture_.compute(w_.rgrid(), c_.rgrid(), mask_.phiTot());
       hasCFields_ = true;
+      hasFreeEnergy_ = false;
 
       // Compute stress if requested
       if (needStress) {
@@ -888,6 +889,8 @@ namespace Pspc
       UTIL_CHECK(iteratorPtr_);
       UTIL_CHECK(w_.hasData());
       UTIL_CHECK(w_.isSymmetric());
+      hasCFields_ = false;
+      hasFreeEnergy_ = false;
 
       Log::file() << std::endl;
       Log::file() << std::endl;
