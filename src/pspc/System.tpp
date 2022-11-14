@@ -68,7 +68,9 @@ namespace Pspc
       pressure_(0.0),
       hasMixture_(false),
       isAllocatedRGrid_(false),
-      isAllocatedBasis_(false)
+      isAllocatedBasis_(false),
+      hasCFields_(false),
+      hasFreeEnergy_(false)
    {  
       setClassName("System"); 
       domain_.setFileMaster(fileMaster_);
@@ -704,6 +706,7 @@ namespace Pspc
       w_.readBasis(filename, domain_.unitCell());
       mixture_.setupUnitCell(domain_.unitCell());
       hasCFields_ = false;
+      hasFreeEnergy_ = false;
    }
 
    /*
@@ -724,6 +727,7 @@ namespace Pspc
       w_.readRGrid(filename, domain_.unitCell());
       mixture_.setupUnitCell(domain_.unitCell());
       hasCFields_ = false;
+      hasFreeEnergy_ = false;
    }
 
    /*
@@ -736,6 +740,7 @@ namespace Pspc
       UTIL_CHECK(isAllocatedBasis_);
       w_.setBasis(fields);
       hasCFields_ = false;
+      hasFreeEnergy_ = false;
    }
 
    /*
@@ -747,6 +752,7 @@ namespace Pspc
       UTIL_CHECK(isAllocatedRGrid_);
       w_.setRGrid(fields);
       hasCFields_ = false;
+      hasFreeEnergy_ = false;
    }
 
    // Unit Cell Modifier / Setter 
@@ -804,6 +810,7 @@ namespace Pspc
       // Solve the modified diffusion equation (without iteration)
       mixture_.compute(w_.rgrid(), c_.rgrid(), mask_.phiTot());
       hasCFields_ = true;
+      hasFreeEnergy_ = false;
 
       // Compute stress if requested
       if (needStress) {
@@ -828,6 +835,7 @@ namespace Pspc
       UTIL_CHECK(w_.hasData());
       UTIL_CHECK(w_.isSymmetric());
       hasCFields_ = false;
+      hasFreeEnergy_ = false;
 
       Log::file() << std::endl;
       Log::file() << std::endl;
@@ -841,7 +849,6 @@ namespace Pspc
          if (!iterator().isFlexible()) {
             mixture().computeStress();
          }
-         computeFreeEnergy();
          writeThermo(Log::file());
       }
       return error;
@@ -999,14 +1006,19 @@ namespace Pspc
          }
       }
 
+      hasFreeEnergy_ = true;
    }
 
    /*
    * Write thermodynamic properties to file.
    */
    template <int D>
-   void System<D>::writeThermo(std::ostream& out) const
+   void System<D>::writeThermo(std::ostream& out)
    {
+      if (!hasFreeEnergy_) {
+         computeFreeEnergy();
+      }
+
       out << std::endl;
       out << "fHelmholtz    " << Dbl(fHelmholtz(), 18, 11) << std::endl;
       out << "pressure      " << Dbl(pressure(), 18, 11) << std::endl;
@@ -1617,6 +1629,7 @@ namespace Pspc
                                          domain_.unitCell());
 
       hasCFields_ = false;
+      hasFreeEnergy_ = false;
    }
 
 } // namespace Pspc
