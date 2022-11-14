@@ -1015,11 +1015,6 @@ namespace Pspc
    inline bool System<D>::hasCFields() const
    {  return hasCFields_; }
 
-   // Has the free energy been computed for the current w fields?
-   template <int D>
-   inline bool System<D>::hasFreeEnergy() const
-   {  return hasFreeEnergy_; }
-
    // Get the precomputed Helmoltz free energy per monomer / kT.
    template <int D>
    inline double System<D>::fHelmholtz() const
@@ -1035,6 +1030,11 @@ namespace Pspc
       UTIL_CHECK(hasFreeEnergy_);
       return pressure_; 
    }
+
+   // Has the free energy been computed for the current w fields?
+   template <int D>
+   inline bool System<D>::hasFreeEnergy() const
+   {  return hasFreeEnergy_; }
 
    #ifndef PSPC_SYSTEM_TPP
    // Suppress implicit instantiation
