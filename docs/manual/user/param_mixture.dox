@@ -25,7 +25,37 @@ including information about the length and connectivity of the blocks),
 the monomer type and volume of each solvent species, and the composition 
 of the mixture.
 
-The Mixture block in a parameter file for any PSCF program has the format
+\section user_param_mixture_sec Format (Overview)
+
+Here is the Mixture block from the example parameter file shown previously
+\code
+  Mixture{
+     nMonomer   2
+     monomers[
+                1.0  
+                1.0 
+     ]
+     nPolymer   2
+     Polymer{
+        nBlock  2
+        blocks[
+                0   0.5
+                1   0.5
+        ]
+        phi     0.6
+     }
+     Polymer{
+        nBlock  1
+        blocks[
+                0   1.0
+        ]
+        phi     0.4
+     }
+     ds   0.01
+  }
+\endcode
+The format for the mixture block in any PSCF parameter file is described
+somewhat more generally below:
 \code
 Mixture{
   nMonomer   int
@@ -41,10 +71,10 @@ Mixture{
 }
 \endcode
 The asterisk after nSolvent and vMonomer indicates that thse are optional 
-parameters. Note that nSolvent is set to 0 by default.  The number of 
-Polymer subblocks must equal nPolymer, and the number of Solvent subblocks 
-must equal nSolvent.  There may thus not be any Solvent subblocks if the 
-optional nSolvent parameter entry is absent.
+parameters.  The number of Polymer subblocks must equal nPolymer, and the 
+number of Solvent subblocks must equal nSolvent.  Note that the optional
+parameter nSolvent is set to 0 by default. There thus must be no Solvent 
+subblocks if the Solvent parameter is absent.
 
 The meanings of parameters and subblocks are described in the following
 table:
@@ -147,7 +177,7 @@ of the class Pscf::Monomer, as discussed \subpage pscf_Monomer_page "here".
 \section user_param_polymer_sec Polymer
 
 The Mixture block always contains one or more Polymer blocks, each of 
-which contains information about a specific polymer molecules species. 
+which contains information about a specific polymer molecule species. 
 The format for a polymer block is
 \code
     Polymer{

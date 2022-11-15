@@ -1,0 +1,123 @@
+namespace Pscf{
+namespace Fd1d{
+/*! 
+\page fd1d_AmIterator_page Fd1d::AmIterator
+
+An Fd1d::AmIterator<D> object is an iterator that solves the 1D SCFT 
+equations using an Anderson-Mixing algorithm.
+
+\section fd1d_AmIterator_param_sec Parameter File 
+
+An example of the parameter file format for this iterator is shown below:
+\code
+  AmIterator{
+    maxItr       100
+    epsilon      1e-8
+    maxHist      50
+    errorType    relNormResid
+  }
+\endcode
+The format of this block is described more formally below:
+\code
+AmIterator{
+   maxItr          int
+   epsilon         real 
+   maxHist         int  
+   errorType*      enumeration ("normResid", "maxResid", or "relNormResid", "relNormResid" by default)
+}
+\endcode
+Here, as elsewhere, labels followed by an asterisk (*) represent optional 
+parameters. The meaning of the various parameters are described below:
+<table>
+  <tr>
+    <td> <b> Label </b>  </td>
+    <td> <b> Description </b>  </td>
+  </tr>
+  <tr>
+    <td>  maxItr </td>
+    <td> Maximum number of iterations that will be attempted </td>
+  </tr>
+  <tr>
+    <td>  epsilon </td>
+    <td> Desired tolerance for convergence - iteration stops if 
+         the magnitude of the error drops below epsilon.  </td>
+  </tr>
+  <tr>
+    <td> maxHist  </td>
+    <td> Maximum number of previous trial solultions that will be 
+         retained in memory for use by the AM algorithm. </td>
+  </tr>
+  <tr>
+    <td> errorType </td>
+    <td> Identifer for the type of variable used to define scalar
+         error . The only allowed values are "maxResid", "normResid", 
+         and "relNormResid", as discussed below. Optional, and equal
+         to "relNormResid" by default. </td>
+  </tr>
+</table>
+The iterative loop exits if the number of iterations has reached
+maxItr or if the magnitude of the scalar error drops below epsilon. 
+
+<b> errorType </b>: Several different definitions may be used for 
+the scalar error, depending on the value of the identifier errorType. 
+
+  - If errorType == maxResid, then the scalar error is take to be
+    the maximum of the absolute magnitude of the elements of the 
+    residual vector (the L infinity norm of the residual vector).
+
+  - If errorType == normResid, then the scalar error is take to be
+    the L2 norm of the residual vector.
+
+  - If errorType == normResid, then the scalar error is take to be
+    the ratio of the L2 norm of the residual vector to the L2 norm of 
+    the w field, as in Stasiak and Matsen, Eur. Phys, Journel E, 2012. 
+
+
+\section fd1d_AmIterator_residual_sec Residual Definition
+
+This iterator defines nMonomer residual expressions at each grid point, 
+and stops iteration when a scalar norm derived from the residual vector
+becomes less then epsilon. In what follows, to describe how the residuals 
+are defined , we use zero based indices monomer types, and use the 
+notation \f$ M \f$ to denote the number of monomer types, which is 
+labelled nMonomer in the parameter file.  
+
+The SCF equations at each grid point require that a quantity \f$ g_{i} \f$ 
+vanish for each mononomer type \f$ i = 0, \ldots, M - 1\f$, where
+\f[
+    g_{i} \equiv
+    \sum_{j=0}^{M-1} \chi_{ij}\phi_{j} + \xi - w_{i} 
+\f]
+where \f$ \phi_{i} \f$ and \f$ w_{i} \f$ are the volume fraction and 
+chemical potential field for monomers of type i, \f$ \xi \f$ is a 
+Langrange multiplier pressure field, and where all fields are evaluated 
+at the same location (i.e., the same grid point).
+The first \f$ M \f$ residuals at each grid point, which we denote by
+\f$ r_{0}, \ldots, r_{N_{\rm m} - 2} \f$, are given by differences 
+\f[
+  r_{i} = g_{i+1} - g_{0}
+\f]
+between values of \f$ g_{j} \f$ for monomer indices i+1 and 0.
+
+The last residual at each grid point is given by the difference
+\f[
+  r_{M-1} = 
+  \sum_{i=0}^{M-1}\phi_{i} - 1
+\f]
+between the sum of volume fractions and unity.
+
+In canonical ensemble (i.e., when a value of phi rather than mu is specified
+for every molecular species, giving a closed system) the spatial average of 
+the sum of volume fractions of all species, averaged over all grid points, 
+can be shown to vanish exactly by construction. This means that, in this 
+case, one of the incompressibility constraints is redundant. In the same 
+case, the solution of the resulting problem is also not unique, becase the 
+residual equations are invariant by a shift in the Lagrange multiplier field 
+at all grid point points by any spatially homgeneous constant. To remove both 
+problems, in this case, the incompressibility constraint at the last grid 
+point is replaced by a requirement that the w field value for the last 
+monomer type must equal zero at this grid point by convention.
+
+*/
+}
+}

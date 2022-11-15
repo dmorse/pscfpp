@@ -3,18 +3,23 @@
 
 The AmIterator algorithm used by the pscf_pc programs solves the SCFT 
 equations for a periodic system using the Anderson Mixing algorithm. 
-The variant of this algorithm used here is almost identical to that 
-described by Arora et al., which is also implemented in the Fortran 
-version of PSCF.  This algorithm varies the fields by adjusting the
-compoments of the field in a basis of symmetry adapated basis functions, 
-thus preserving the space-group symmetry of the fields throughout the 
+
+The variant of this algorithm implemented here is almost identical to that 
+described by Arora et al. [Arora, Morse, Bates, and Dorfman, J. Chem.
+Phys. vol. 146, 244902 (2017)], which described the implementation of
+this algorithm in the earlier Fortran version of PSCF.  The version of
+this algorithm used here adjusts the fields by adjusting the compoments 
+of the field in a basis of symmetry adapated basis functions, thus 
+preserving the space-group symmetry of the fields throughout the 
 iteration process.  The algorithm can be used to either solve the SCFT 
 equations for a rigid unit cell or to solve the SCFT equations and also 
 optimize some or all of the unit cell parameters of a flexible unit cell 
 so as to minimize the free energy density, depending on the value of 
-"isFlexible" or "flexibleParams", as described below. 
+"isFlexible" and "flexibleParams", as described below. 
 
-An example of the parameter file format for this iterator is shown
+\section pspc_AmIterator_parameter_sec Parameter File
+
+A typcial example of the parameter file format for this iterator is shown
 below:
 \code
   AmIterator{
@@ -91,8 +96,8 @@ parameters. The meaning of the various parameters are described below:
          true (optional). </td>
   </tr>
 </table>
-The iterative loop exits if the number of iterations has reached
-maxItr or if the magnitude of the scalar error drops below epsilon. 
+The iterative loop exits if the number of iterations has reached maxItr 
+or if the magnitude of the scalar error drops below epsilon. 
 
 <b> errorType </b>: Several different definitions may be used for 
 the scalar error, depending on the value of the identifier errorType. 
@@ -116,5 +121,57 @@ arising from errors in the SCFT equations for the w fields in a fixed
 unit cell. This variable is irrelevant if isFlexible is false, and should 
 normally be ommitted in this case. 
 
+\section pspc_AmIterator_residual_sec Residual Definition
+
+The vector of residuals used in this algorithm is described by Eqs. 
+(10-13) of the article by Arora et al. (J. Chem. Phys. 2017).  To 
+describe the residuals here, we use zero based indexing for monomer 
+types and basis functions, us use \f$ N_{b} \f$ to denote the number 
+of basis functions (referred to in the source code as Nbasis), and 
+use \f$ N_{m} \f$ to denote the number of monomer types (referred to 
+elsewhere as nMonomer).
+
+The vector of residuals for a calculation for a rigid unit cell (i.e., 
+one with isFlexible set false) has \f$ N_{b}N_{m} \f$ (or nBasis*nMonomer) 
+scalar residuals.  
+Let \f$ w_{ia} \f$ and \f$ \phi_{ai} \f$ denote the coefficients of 
+basis function a in the symmetry-adapted Fourier expansions of the 
+chemical potential field \f$ w_{i} \f$ and volume fraction 
+\f$ \phi_{i} \f$ for monomer type i, respectively.
+The residual component \f$ R_{ai}\f$ associated with basis function 
+a and monomer type i is given, as in Eq. (10) of Arora et al. 
+(JCP 2017), as 
+\f[
+  R_{ai} = \sum_{j=0}^{N_{m}-1} 
+           \left ( \chi_{ij} \phi_{aj} - P_{ij}w_{aj} \right ) 
+  \quad.
+\f]
+Here, \f$ P_{ij} \f$ is an element of an idempotent 
+\f$ N_{m} \times N_{m} \f$ matrix \f$  P \f$ that can be 
+expressed in matrix notation as
+\f[
+  P  = I
+  - \frac{\epsilon \epsilon^{T} \chi^{-1} }
+        { \epsilon^{T} \chi^{-1} \epsilon }
+ \quad.
+\f]
+where \f$ \chi^{-1} \f$ is the matrix inverse of the \f$\chi\f$ 
+matrix, and \f$\epsilon\f$ is a \f$ N_{m} \f$-component column 
+vector with elements given by \f$ \epsilon_{i} = 1 \f$ for all 
+\f$ i = 0, \ldots, N_{m}-1 \f$.
+
+The vector of residuals for a calculation with a flexible unit 
+cell (with isFleixble set true) has an additional stress residual 
+associated with each flexible unit cell parameter. The residual
+\f$ R_{m} \f$ associated with flexible unit cell parameter 
+\f$ \theta_{m} \f$ is given by
+\f[
+    R_{m} = -S\frac{\partial f}{\partial \theta_{m}}
+\f]
+where \f$ f \f$ is the free energy per monomer (i.e., the free 
+energy density times the monomer reference volume) in units in 
+which \f$ kT = 1 \f$, while \f$F\f$ is an arbitrary prefactor whose 
+value is given by the parameter scaleStress (which is 10.0 by 
+default).
 
 */

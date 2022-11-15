@@ -1,5 +1,5 @@
-#ifndef FD1D_Fd_ITERATOR_H
-#define FD1D_Fd_ITERATOR_H
+#ifndef FD1D_BINARY_RELAX_ITERATOR_H
+#define FD1D_BINARY_RELAX_ITERATOR_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -27,7 +27,7 @@ namespace Fd1d
    *
    * \ingroup Fd1d_Iterator_Module
    */
-   class FdIterator : public Iterator
+   class BinaryRelaxIterator : public Iterator
    {
     
    public:
@@ -45,19 +45,19 @@ namespace Fd1d
       /**
       *Default constructor.
       */
-      FdIterator();
+      BinaryRelaxIterator();
     
       /**
       * Constructor.
       *
       * \param system parent System object.
       */
-      FdIterator(System& system);
+      BinaryRelaxIterator(System& system);
     
       /**
       * Destructor.
       */
-      virtual ~FdIterator();
+      virtual ~BinaryRelaxIterator();
     
       /**
       * Read all parameters and initialize.
@@ -115,8 +115,8 @@ namespace Fd1d
       /// Mixing parameter for Wminus
       double lambdaMinus_;
       
-      /// Max iteration
-      int maxIterations_;
+      /// Max number of iterations
+      int maxIter_;
     
       /// Have arrays been allocated?
       bool isAllocated_;

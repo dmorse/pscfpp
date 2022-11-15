@@ -1,17 +1,20 @@
 namespace Pscf{
 namespace Fd1d{
 /*! 
-\page fd1d_FdIterator_page Fd1d::FdIterator
+\page fd1d_BinaryRelaxIterator_page Fd1d::BinaryRelaxIterator
 
-An FdIterator solves is an iterator that uses the simple relaxation 
+An BinaryRelaxIterator solves is an iterator that uses the simple relaxation 
 method presented by F. Drolet and G.H. Fredrickson to solve the SCFT 
 equations of a 1D problem with only two monomer types, such as an AB 
 block copolymer or A/B polymer blend. The iteration algorithm will
 halt if applied to a system with more than two types of monomer.
 
-The parameter file format for an FdIterator object is:
+\section fd1d_BinaryRelaxIterator_parameter_sec Parameter File
+
+The parameter file format for an BinaryRelaxIterator parameter file block 
+is:
 \code
-FdIterator{
+BinaryRelaxIterator{
    epsilon           real
    lambdaPlus        real
    lambdaMinus       real
@@ -21,6 +24,10 @@ FdIterator{
 
 Parameters are described below:
 <table>
+  <tr>
+    <td> <b> Label </b>  </td>
+    <td> <b> Description </b>  </td>
+  </tr>
   <tr>
     <td> epsilon </td>
     <td> Error tolerance.  </td>
@@ -38,8 +45,8 @@ Parameters are described below:
     <td> maximum number of iterations attempted. </td>
   </tr>
 </table>
-Iteration stops when the scalar error is less than epsilon.
-The total error is defined in FdIterator as a root-mean-square of errors 
+Iteration stops when the scalar error is less than epsilon.  The total 
+error is defined in BinaryRelaxIterator as a root-mean-square of errors 
 at individual grid pointw. 
 
 */

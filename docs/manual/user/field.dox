@@ -19,7 +19,7 @@ The pscf_fd program for one-dimensional problems uses a simpler
 specified at nodes of a regular one-dimensional grid. 
 
 
-<h3> Contents: </h3>
+<h2> Contents: </h2>
 Different field file formats are described in the pages linked below.
 
 <ul style="list-style: none;">

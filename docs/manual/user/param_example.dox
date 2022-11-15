@@ -120,7 +120,7 @@ SCFT equations.
 </ul>
 
 The parameter files required to initialize a simple SCFT calculations 
-performed using pscf_pcNd or Pscf_pgNd for periodic microstructures
+performed using a pscf_pc or pscf_pg program for periodic microstructures
 programs have a similar structure to that shown above, with analogous 
 top level blocks that appear in the same order. Parameter files for all 
 three types of program use exactly the same format for the Mixture and 
