@@ -35,8 +35,9 @@ Elements in which a single digit number appears as a subcript to another such nu
 Each slash ("/") in a Hermann Mauguin name is replaced by a percent sign ("%") symbol. For example P_4\%m_m_m is the PSCF identifier for space group \f$P4/mmm\f$.
 </li>
 <li>
-Different possible settings of a space group (i.e., different choices of origin) are indicated by a a colon (":") followed by a setting number at the end of the space group name. 
+Different possible settings of a space group (e.g., due to different choices of origin) are indicated by a a colon (":") followed by a single digit or letter at the end of the space group name. 
 For example F_d_-3_m:2 is the PSCF identifier for setting 2 of space group \f$Fd\overline{3}m\f$, which has two settings labelled "1" and "2". 
+Some space groups for crystals in the trigonal crystal system can be represented using either a hexagonal or rhombohedral Bravais lattice, which are identified with names that end in suffixes ":H" or ":R", respectively.
 Such setting labels are only used for space groups for which two or more setting are listed in the international tables.
 </li>
 </ul>
@@ -100,7 +101,9 @@ There are 230 possible 3D space groups. The international crystallographic
 tables lists 2 "settings" for some space groups, which differ in the 
 convention for the placement of the origin. PSCF identifiers for space 
 groups for which two or more settings are listed end in a colon followed 
-by an integer id (1 or 2) for the setting.
+by an integer id (1 or 2) for the setting. Trigonal groups that may be
+represented using either a hexagonal or rhombohedral Bravais lattice
+sometimes have two settings distinguished by subscripts "H" or "R". 
 
 Group identifiers:
 | Number | Symbol                  | Crystal System |

@@ -17,17 +17,6 @@ namespace Fd1d
 {
    using namespace Util;
 
-   // Default constructor
-   BinaryRelaxIterator::BinaryRelaxIterator()
-    : Iterator(),
-      epsilon_(0.0),
-      lambdaPlus_(0.0),
-      lambdaMinus_(0.0),
-      maxIter_(200),
-      isAllocated_(false),
-      isCanonical_(true)
-   {  setClassName("BinaryRelaxIterator"); }
-
    // Constructor
    BinaryRelaxIterator::BinaryRelaxIterator(System& system)
     : Iterator(system),
@@ -47,16 +36,16 @@ namespace Fd1d
    void BinaryRelaxIterator::readParameters(std::istream& in)
    {
       UTIL_CHECK(domain().nx() > 0);
-      read(in, "maxIter", maxIter_);
       read(in, "epsilon", epsilon_);
+      read(in, "maxIter", maxIter_);
       read(in, "lambdaPlus", lambdaPlus_);
       read(in, "lambdaMinus", lambdaMinus_);
 
-      setup();
+      allocate();
    }
 
    // Allocate required memory (called by readParameters)
-   void BinaryRelaxIterator::setup()
+   void BinaryRelaxIterator::allocate()
    {
       if (isAllocated_) return;
       int nm = mixture().nMonomer();  // number of monomer types
@@ -96,10 +85,12 @@ namespace Fd1d
          w0 = wOld[0][i];
          w1 = wOld[1][i];
          wm = w1 - w0;
-         dWp = lambdaPlus_ * (c1 + c0 - 1.0);
-         dWm = lambdaMinus_ * 0.5*( c0 - c1 - wm/chi);
+         dWp = c1 + c0 - 1.0;
+         dWm = 0.5*( c0 - c1 - wm/chi);
          dWpNorm += dWp*dWp;
          dWmNorm += dWm*dWm;
+         dWp *= lambdaPlus_;
+         dWm *= lambdaMinus_;
          dW[0][i] = dWp -  dWm;
          dW[1][i] = dWp + dWm;
       }

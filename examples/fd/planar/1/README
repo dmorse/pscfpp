@@ -1,2 +1,3 @@
-./run_nr : run scft with Newton-Raphson iterator  (NrIterator)
-./run_am : run scft with Anderson-Mixing iterator (AmIterator)
+./run_nr : run scft with Newton-Raphson iterator    (NrIterator)
+./run_am : run scft with Anderson-Mixing iterator   (AmIterator)
+./run_br : run scft with simple relaxation iterator (BinaryRelaxIterator)
