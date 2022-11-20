@@ -31,19 +31,25 @@ namespace Fd1d{
       AmIteratorTmpl<Iterator, DArray<double> >::readParameters(in);
    }
 
-   // Compute and return L2 norm of residual vector
-   double AmIterator::findNorm(DArray<double> const & hist)
+   // Assign one vector to another: a = b
+   void AmIterator::setEqual(DArray<double>& a, DArray<double> const & b)
+   {  a = b; }
+
+   // Compute and return inner product of two vectors 
+   double AmIterator::dotProduct(DArray<double> const & a, 
+                                 DArray<double> const & b)
    {
-      const int n = hist.capacity();
-      double normResSq = 0.0;
+      const int n = a.capacity();
+      UTIL_CHECK(n == b.capacity());
+      double product = 0.0;
       for (int i = 0; i < n; i++) {
-         normResSq += hist[i] * hist[i];
+         product += a[i] * b[i];
       }
-      return sqrt(normResSq);
+      return product;
    }
 
    // Compute and return maximum element of residual vector.
-   double AmIterator::findMaxAbs(DArray<double> const & hist)
+   double AmIterator::maxAbs(DArray<double> const & hist)
    {
       const int n = hist.capacity();
       double maxRes = 0.0;
@@ -73,6 +79,7 @@ namespace Fd1d{
       basis.append(newbasis);
    }
 
+   #if 0
    // Compute one element of U matrix of by computing a dot product
    double
    AmIterator::computeUDotProd(RingBuffer< DArray<double> > const& resBasis,
@@ -99,7 +106,9 @@ namespace Fd1d{
       }
       return dotprod;
    }
+   #endif
 
+   #if 0
    // Update entire U matrix
    void AmIterator::updateU(DMatrix<double> & U,
                             RingBuffer<DArray<double> > const & resBasis,
@@ -127,12 +136,10 @@ namespace Fd1d{
                             int nHist)
    {
       for (int m = 0; m < nHist; ++m) {
-         v[m] = computeVDotProd(resCurrent,resBasis,m);
+         v[m] = dotProduct(resCurrent, resBasis[m]);
       }
    }
-
-   void AmIterator::setEqual(DArray<double>& a, DArray<double> const & b)
-   {  a = b; }
+   #endif
 
    void AmIterator::addHistories(DArray<double>& trial,
                                  RingBuffer< DArray<double> > const& basis,

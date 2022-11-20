@@ -73,23 +73,28 @@ namespace Pspc
       double scaleStress_;
       
       /**
-      * Find L2 norm of a residual vector.
+      * Assign one field to another.
+      * 
+      * \param a the field to be set (lhs of assignment)
+      * \param b the field for it to be set to (rhs of assigment)
       */
-      double findNorm(DArray<double> const & hist);
+      void setEqual(DArray<double>& a, DArray<double> const & b);
+
+      /**
+      * Compute the inner product of two vectors
+      */
+      double dotProduct(DArray<double> const & a, DArray<double> const & b);
 
       /**
       * Find the maximum magnitude element of a residual vector.
       */
-      double findMaxAbs(DArray<double> const & hist);
+      double maxAbs(DArray<double> const & hist);
 
+      #if 0
       /**
-      * Update the basis for residual or field vectors.
-      * 
-      * \param basis RingBuffer of residual or field basis vectors
-      * \param hists RingBuffer of past residual or field vectors
+      * Find L2 norm of a residual vector.
       */
-      void updateBasis(RingBuffer<DArray<double> > & basis, 
-                       RingBuffer<DArray<double> > const & hists);
+      double findNorm(DArray<double> const & hist);
 
       /**
       * Compute the dot product for one element of the U matrix.
@@ -135,14 +140,16 @@ namespace Pspc
                    DArray<double> const & resCurrent, 
                    RingBuffer<DArray<double> > const & resBasis, 
                    int nHist);
+      #endif
 
       /**
-      * Assign one field to another.
+      * Update the basis for residual or field vectors.
       * 
-      * \param a the field to be set (lhs of assignment)
-      * \param b the field for it to be set to (rhs of assigment)
+      * \param basis RingBuffer of residual or field basis vectors
+      * \param hists RingBuffer of past residual or field vectors
       */
-      void setEqual(DArray<double>& a, DArray<double> const & b);
+      void updateBasis(RingBuffer<DArray<double> > & basis, 
+                       RingBuffer<DArray<double> > const & hists);
 
       /**
       * Add linear combination of basis vectors to trial field.

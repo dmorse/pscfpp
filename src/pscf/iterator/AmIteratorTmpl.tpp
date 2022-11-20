@@ -19,6 +19,8 @@ namespace Pscf
 
    using namespace Util;
 
+   // Public member functions
+
    /*
    * Constructor
    */
@@ -61,37 +63,6 @@ namespace Pscf
          UTIL_THROW("Invalid iterator error type in parameter file.");
       }
 
-   }
-
-   /*
-   * Allocate memory required by the Anderson-Mixing algorithm, if needed.
-   */
-   template <typename Iterator, typename T>
-   void AmIteratorTmpl<Iterator,T>::allocateAM()
-   {
-      // If already allocated, do nothing and return
-      if (isAllocated_) return;
-
-      // Determine number of elements in a residual vector
-      nElem_ = nElements();
-
-      // Allocate ring buffers
-      fieldHists_.allocate(maxHist_+1);
-      fieldBasis_.allocate(maxHist_+1);
-      resHists_.allocate(maxHist_+1);
-      resBasis_.allocate(maxHist_+1);
-
-      // Allocate arrays used in iteration
-      fieldTrial_.allocate(nElem_);
-      resTrial_.allocate(nElem_);
-      temp_.allocate(nElem_);
-
-      // Allocate arrays/matrices used in coefficient calculation
-      U_.allocate(maxHist_, maxHist_);
-      v_.allocate(maxHist_);
-      coeffs_.allocate(maxHist_);
-
-      isAllocated_ = true;
    }
 
    /*
@@ -149,7 +120,11 @@ namespace Pscf
          }
 
          timerResid.start();
-         computeResidual();
+         // Compute residual vector
+         getResidual(temp_);
+
+         // Append current residual to resHists_ ringbuffer
+         resHists_.append(temp_);
          timerResid.stop();
 
          // Test for convergence.
@@ -205,20 +180,20 @@ namespace Pscf
 
          } else {
 
-            // Compute optimal linear combination coefficients for
-            // building the updated field guess
+            // Compute optimal coefficients for basis vectors
             timerCoeff.start();
-            findResidCoeff();
+            computeResidCoeff();
             timerCoeff.stop();
 
-            // Build the updated field
+            // Compute the trial updated field and update the system
             timerOmega.start();
             updateGuess();
             timerOmega.stop();
 
             timerAM.stop();
 
-            // Solve the fixed point equation
+            // Perform the main calculation of the parent system -
+            // solve MDEs, compute phi's, compute stress if needed
             timerMDE.start();
             evaluate();
             timerMDE.stop();
@@ -226,16 +201,57 @@ namespace Pscf
          }
 
       }
+
       // Failure: iteration counter itr reached maxItr without converging
       timerTotal.stop();
 
       Log::file() << "Iterator failed to converge.\n";
       cleanUp();
       return 1;
+
    }
+
+   // Protected member function
+
+   /*
+   * Allocate memory required by the Anderson-Mixing algorithm, if needed.
+   * (protected, non-virtual)
+   */
+   template <typename Iterator, typename T>
+   void AmIteratorTmpl<Iterator,T>::allocateAM()
+   {
+      // If already allocated, do nothing and return
+      if (isAllocated_) return;
+
+      // Determine number of elements in a residual vector
+      nElem_ = nElements();
+
+      // Allocate ring buffers
+      fieldHists_.allocate(maxHist_+1);
+      fieldBasis_.allocate(maxHist_+1);
+      resHists_.allocate(maxHist_+1);
+      resBasis_.allocate(maxHist_+1);
+
+      // Allocate arrays used in iteration
+      fieldTrial_.allocate(nElem_);
+      resTrial_.allocate(nElem_);
+      temp_.allocate(nElem_);
+
+      // Allocate arrays/matrices used in coefficient calculation
+      U_.allocate(maxHist_, maxHist_);
+      v_.allocate(maxHist_);
+      coeffs_.allocate(maxHist_);
+
+      isAllocated_ = true;
+   }
+
+   // Private non-virtual member functions
+
+   // Private virtual member functions
 
    /*
    * Initialize just before entry to iterative loop.
+   * (virtual)
    */
    template <typename Iterator, typename T>
    void AmIteratorTmpl<Iterator,T>::setup()
@@ -245,17 +261,49 @@ namespace Pscf
       allocateAM();
    }
 
-   // Compute residual and append to history.
+   /*
+   * Compute L2 norm of a vector.
+   */
    template <typename Iterator, typename T>
-   void AmIteratorTmpl<Iterator,T>::computeResidual()
+   double AmIteratorTmpl<Iterator,T>::norm(T const & a)
    {
-      // Get residuals
-      getResidual(temp_);
+      double normSq = dotProduct(a, a);
+      return sqrt(normSq);
+   }
 
-      // Store residuals in residual history ringbuffer
-      resHists_.append(temp_);
+   // Update entire U matrix
+   template <typename Iterator, typename T>
+   void 
+   AmIteratorTmpl<Iterator, T> ::updateU(DMatrix<double> & U,
+                            RingBuffer<T> const & resBasis,
+                            int nHist)
+   {
+      // Update matrix U by shifting elements diagonally
+      int maxHist = U.capacity1();
+      for (int m = maxHist-1; m > 0; --m) {
+         for (int n = maxHist-1; n > 0; --n) {
+            U(m,n) = U(m-1,n-1);
+         }
+      }
 
-      return;
+      // Compute U matrix's new row 0 and col 0
+      for (int m = 0; m < nHist; ++m) {
+         double dotprod = dotProduct(resBasis[0],resBasis[m]);
+         U(m,0) = dotprod;
+         U(0,m) = dotprod;
+      }
+   }
+
+   template <typename Iterator, typename T>
+   void 
+   AmIteratorTmpl<Iterator, T>::updateV(DArray<double> & v,
+                                        T const & resCurrent,
+                                        RingBuffer<T> const & resBasis,
+                                        int nHist)
+   {
+      for (int m = 0; m < nHist; ++m) {
+         v[m] = dotProduct(resCurrent, resBasis[m]);
+      }
    }
 
    template <typename Iterator, typename T>
@@ -263,15 +311,15 @@ namespace Pscf
    {
 
       // Find max residual vector element
-      double maxRes  = findMaxAbs(resHists_[0]);
+      double maxRes  = maxAbs(resHists_[0]);
       Log::file() << "Max Residual  = " << Dbl(maxRes,15) << std::endl;
 
       // Find norm of residual vector
-      double normRes = findNorm(resHists_[0]);
+      double normRes = norm(resHists_[0]);
       Log::file() << "Residual Norm = " << Dbl(normRes,15) << std::endl;
 
       // Find norm of residual vector relative to field
-      double relNormRes = normRes/findNorm(fieldHists_[0]);
+      double relNormRes = normRes/norm(fieldHists_[0]);
       Log::file() << "Relative Norm = " << Dbl(relNormRes,15) << std::endl;
 
       // Check if calculation has diverged (normRes will be NaN)
@@ -292,9 +340,11 @@ namespace Pscf
 
    }
 
-   // Compute coefficients of basis vectors.
+   /*
+   * Compute coefficients of basis vectors.
+   */
    template <typename Iterator, typename T>
-   void AmIteratorTmpl<Iterator,T>::findResidCoeff()
+   void AmIteratorTmpl<Iterator,T>::computeResidCoeff()
    {
       // Initialize matrix and vector of residual dot products
       // if this is the first iteration
@@ -309,7 +359,7 @@ namespace Pscf
          return;
       }
 
-      // Update basis vectors spanning differences of past residual vectors
+      // Update basis spanning differences of past residual vectors
       updateBasis(resBasis_, resHists_);
 
       // Update the U matrix and v vector.
@@ -364,17 +414,20 @@ namespace Pscf
    void AmIteratorTmpl<Iterator,T>::updateGuess()
    {
 
-      // Contribution of the last solution
+      // Set field and residual trial vectors to current values
       setEqual(fieldTrial_, fieldHists_[0]);
       setEqual(resTrial_, resHists_[0]);
 
-      // If at least two histories
+      // Add linear combinations of field and residual basis vectors
       if (nHist_ > 0) {
-         // Update the basis vectors of field histories
+
+         // Update basis spanning differences of past field vectors
          updateBasis(fieldBasis_,fieldHists_);
-         // Combine histories into trial guess and predicted error
+
+         // Combine basis vectors into trial guess and predicted residual
          addHistories(fieldTrial_, fieldBasis_, coeffs_, nHist_);
          addHistories(resTrial_, resBasis_, coeffs_, nHist_);
+
       }
 
       // Correct for predicted error
@@ -396,6 +449,40 @@ namespace Pscf
       fieldBasis_.clear();
       return;
    }
+
+
+   #if 0
+   // Commented out functions - removed
+
+   // Compute dot product of two basis vectors
+   template <typename Iterator, typename T>
+   double 
+   AmIteratorTmpl<Iterator,T>::computeUDotProd(RingBuffer<T> const & basis,
+                                           int m, int n)
+   {  return dotProduct(basis[m], basis[n]); }
+
+   // Compute dot product of current residual and a basis vector
+   template <typename Iterator, typename T>
+   double 
+   AmIteratorTmpl<Iterator,T>::computeVDotProd(T const & current,
+                                               RingBuffer<T> const & basis,
+                                               int m)
+   {  return dotProduct(current[m], basis[m]); }
+
+   // Compute residual and append to history.
+   template <typename Iterator, typename T>
+   void AmIteratorTmpl<Iterator,T>::computeResidual()
+   {
+      // Get residuals
+      getResidual(temp_);
+
+      // Store residuals in residual history ringbuffer
+      resHists_.append(temp_);
+
+      return;
+   }
+
+   #endif
 
 }
 #endif

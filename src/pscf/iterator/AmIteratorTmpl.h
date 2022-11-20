@@ -24,13 +24,14 @@ namespace Pscf {
    * Template for Anderson mixing iterator algorithm.
    *
    * Anderson mixing is an algorithm for solving a system of N nonlinear
-   * equations of the form g_{i}(x) = 0 for i = 0, ..., N-1, where x
-   * denotes a vector or array of unknown coordinate values. A vector or
-   * array of unknowns is referred here a "field", while a vector or array 
-   * of values of the errors g_{0},..., g_{N-1} is referred to as a residual.
+   * equations of the form r_{i}(x) = 0 for i = 0, ..., N-1, where x
+   * denotes a vector or array of unknown coordinate values. A vector 
+   * of array of unknowns is referred here a "field" vector, while a 
+   * vector or array of values of the errors r_{0},..., r_{N-1} is 
+   * referred to as a residual vector.
    *
-   * The type T is the type of the data structure used to store both field
-   * residual vectors.
+   * The type T is the type of the data structure used to store both 
+   * field and residual vectors.
    *
    * \ingroup Pscf_Iterator_Module
    */
@@ -66,22 +67,14 @@ namespace Pscf {
 
    protected:
 
+      /// Type of error criterion used to test convergence 
+      std::string errorType_;
+
       // Members of parent classes with non-dependent names
       using Iterator::setClassName;
       using ParamComposite::read;
       using ParamComposite::readOptional;
 
-      /**
-      * Initialize just before entry to iterative loop.
-      *
-      * This function is called by the solve method just before entering
-      * the loop over iterations. It must call the protected allocateAM()
-      * to allocate memory required by the AM algorithm. The default
-      * implementation just calls allocateAM(). Re-implementations by
-      * subclasses may add additional operations.
-      */ 
-      virtual void setup();
-     
       /**
       * Allocate memory required by AM algorithm, if necessary.
       *
@@ -92,11 +85,10 @@ namespace Pscf {
 
    private:
 
+      // Private member variables
+
       /// Error tolerance.
       double epsilon_;
-
-      /// Type of error checked for convergence (maxResid or normResid).
-      std::string errorType_;
 
       /// Free parameter for minimization.
       double lambda_;
@@ -149,59 +141,51 @@ namespace Pscf {
       /// Workspace for calculations
       T temp_;
 
+      // --- Non-virtual private functions (implemented here) ---- //
+
+      #if 0
       /**
       * Compute a vector of residuals, add to history.
       */
       void computeResidual();
-
-      /**
-      * Check if solution is converge within specified tolerance.
-      *
-      * \return true if error < epsilon and false if error >= epsilon
-      */
-      bool isConverged();
+      #endif
 
       /**
       * Compute the coefficients that would minimize residual L2 norm.
       */
-      void findResidCoeff();
+      void computeResidCoeff();
 
       /**
-      * Rebuild predicted wFields from minimized coefficients
+      * Compute the trial field and set in the system.
+      *
+      * This implements a two-step process:
+      *   - Correct the current state and predicted residual by adding 
+      *     linear combination of state and residual basis vectors. 
+      *   - Call addPredictedError to attempt to correct predicted 
+      *     residual
       */
       void updateGuess();
 
-      /**
-      * Clean up after a call to solve(), enabling future calls to solve.
-      */
-      void cleanUp();
-
-      // ---- Methods for doing AM iterator math ---- //
+      // --- Private virtual functions with default implementations --- //
 
       /**
-      * Find the L2 norm of a residual vector.
+      * Find the L2 norm of a vector (calls dotProduct internally).
       *
       * \param hist residual vector
       */
-      virtual double findNorm(T const & hist) = 0;
+      virtual double norm(T const & hist);
 
       /**
-      * Find the maximum magnitude element of a residual vector.
+      * Initialize just before entry to iterative loop.
       *
-      * \param hist residual vector
-      */
-      virtual double findMaxAbs(T const & hist) = 0;
-
-      /**
-      * Update the basis of residual vectors.
-      * 
-      * \param basis RingBuffer of residual basis vectors
-      * \param hists RingBuffer of history of residual vectors
-      */
-      virtual 
-      void updateBasis(RingBuffer<T> & basis, 
-                       RingBuffer<T> const & hists) = 0;
-
+      * This function is called by the solve method just before entering
+      * the loop over iterations. It must call the protected allocateAM()
+      * to allocate memory required by the AM algorithm. The default
+      * implementation just calls allocateAM(). Re-implementations by
+      * subclasses may add additional operations.
+      */ 
+      virtual void setup();
+     
       /**
       * Update the U matrix.
       * 
@@ -210,7 +194,7 @@ namespace Pscf {
       * \param nHist number of histories stored at this iteration
       */      
       virtual void updateU(DMatrix<double> & U, 
-                           RingBuffer<T> const & resBasis, int nHist) = 0;
+                           RingBuffer<T> const & resBasis, int nHist);
 
       /**
       * Update the v vector.
@@ -221,8 +205,22 @@ namespace Pscf {
       * \param nHist number of histories stored at this iteration
       */
       virtual void updateV(DArray<double> & v, T const & resCurrent, 
-                           RingBuffer<T> const & resBasis, int nHist) = 0;
+                           RingBuffer<T> const & resBasis, int nHist);
       
+      /**
+      * Check if solution is converge within specified tolerance.
+      *
+      * \return true if error < epsilon and false if error >= epsilon
+      */
+      virtual bool isConverged();
+
+      /**
+      * Clean up after a call to solve(), enabling future calls to solve.
+      */
+      virtual void cleanUp();
+
+      // --- Pure virtual methods for doing AM iterator math --- //
+
       /**
       * Set one field equal to another.
       *
@@ -230,6 +228,34 @@ namespace Pscf {
       * \param b the field value to assign (rhs of assignment)
       */
       virtual void setEqual(T& a, T const & b) = 0;
+
+      /**
+      * Compute the inner product of two vectors.
+      *
+      * \param a first vector
+      * \param b second vector
+      */
+      virtual double dotProduct(T const & a, T const & b) = 0;
+
+      /**
+      * Find the maximum magnitude element of a residual vector.
+      *
+      * \param hist residual vector
+      */
+      virtual double maxAbs(T const & hist) = 0;
+
+      /**
+      * Update a basis that spans differences of past vectors.
+      *
+      * This function is applied to update bases for both residual
+      * vectors and field vectors.
+      * 
+      * \param basis RingBuffer of residual basis vectors
+      * \param hists RingBuffer of history of residual vectors
+      */
+      virtual 
+      void updateBasis(RingBuffer<T> & basis, 
+                       RingBuffer<T> const & hists) = 0;
 
       /**
       * Add linear combination of field basis vectors to the trial field.
@@ -256,15 +282,15 @@ namespace Pscf {
       void addPredictedError(T& fieldTrial, T const & resTrial, 
                              double lambda) = 0;
 
-      // -- Functions to exchange data with the parent system - //
+      // -- Pure virtual functions to exchange data with parent system -- //
      
       /** 
-      * Does the system has an initial guess?
+      * Does the system have an initial guess?
       */
       virtual bool hasInitialGuess() = 0;
      
       /** 
-      * Return the number of elements in a field or residual vector.
+      * Compute and retur the number of residual or field vector elements.
       */
       virtual int nElements() = 0;
 

@@ -66,6 +66,41 @@ namespace Pspc{
       readOptional(in, "scaleStress", scaleStress_);
    }
 
+   // Private virtual functions used to implement AM algorithm
+
+   template <int D>
+   void AmIterator<D>::setEqual(DArray<double>& a, DArray<double> const & b)
+   {  a = b; }
+
+   // Compute and return inner product of two vectors.
+   template <int D>
+   double AmIterator<D>::dotProduct(DArray<double> const & a, 
+                                    DArray<double> const & b)
+   {
+      const int n = a.capacity();
+      UTIL_CHECK(b.capacity() == n);
+      double product = 0.0;
+      for (int i = 0; i < n; i++) {
+         product += a[i] * b[i];
+      }
+      return product;
+   }
+
+
+   // Compute and return maximum element of a vector.
+   template <int D>
+   double AmIterator<D>::maxAbs(DArray<double> const & hist)
+   {
+      const int n = hist.capacity();
+      double max = 0.0;
+      for (int i = 0; i < n; i++) {
+         if (fabs(hist[i]) > max)
+            max = fabs(hist[i]);
+      }
+      return max;
+   }
+
+   #if 0
    // Compute and return L2 norm of residual vector
    template <int D>
    double AmIterator<D>::findNorm(DArray<double> const & hist)
@@ -78,41 +113,6 @@ namespace Pspc{
       }
 
       return sqrt(normResSq);
-   }
-
-   // Compute and return maximum element of residual vector.
-   template <int D>
-   double AmIterator<D>::findMaxAbs(DArray<double> const & hist)
-   {
-      const int n = hist.capacity();
-      double maxRes = 0.0;
-
-      for (int i = 0; i < n; i++) {
-         if (fabs(hist[i]) > maxRes)
-            maxRes = fabs(hist[i]);
-      }
-
-      return maxRes;
-   }
-
-   // Update basis
-   template <int D>
-   void AmIterator<D>::updateBasis(RingBuffer<DArray<double> > & basis,
-                                   RingBuffer<DArray<double> > const & hists)
-   {
-      // Make sure at least two histories are stored
-      UTIL_CHECK(hists.size() >= 2);
-
-      const int n = hists[0].capacity();
-      DArray<double> newbasis;
-      newbasis.allocate(n);
-
-      for (int i = 0; i < n; i++) {
-         // sequential histories basis vectors
-         newbasis[i] = hists[0][i] - hists[1][i]; 
-      }
-
-      basis.append(newbasis);
    }
 
    // Compute one element of U matrix of by computing a dot product
@@ -182,10 +182,27 @@ namespace Pspc{
          v[m] = computeVDotProd(resCurrent,resBasis,m);
       }
    }
+   #endif
 
+   // Update basis
    template <int D>
-   void AmIterator<D>::setEqual(DArray<double>& a, DArray<double> const & b)
-   {  a = b; }
+   void AmIterator<D>::updateBasis(RingBuffer<DArray<double> > & basis,
+                                   RingBuffer<DArray<double> > const & hists)
+   {
+      // Make sure at least two histories are stored
+      UTIL_CHECK(hists.size() >= 2);
+
+      const int n = hists[0].capacity();
+      DArray<double> newbasis;
+      newbasis.allocate(n);
+
+      for (int i = 0; i < n; i++) {
+         // sequential histories basis vectors
+         newbasis[i] = hists[0][i] - hists[1][i]; 
+      }
+
+      basis.append(newbasis);
+   }
 
    template <int D>
    void
@@ -214,30 +231,24 @@ namespace Pspc{
       }
    }
 
+   // Private virtual functions to exchange data with parent system
+
    // Does the system have an initial field guess?
    template <int D>
    bool AmIterator<D>::hasInitialGuess()
-   {
-      return system().w().hasData();
-   }
+   {  return system().w().hasData(); }
 
-   // Compute and return the number of elements in a field vector
+   // Compute and return number of elements in a residual vector
    template <int D>
    int AmIterator<D>::nElements()
    {
       const int nMonomer = system().mixture().nMonomer();
       const int nBasis = system().basis().nBasis();
-
       int nEle = nMonomer*nBasis;
 
-      nEle += nFlexibleParams();
-
-      #if 0
-      Log::file() << "nMonomer    = " << nMonomer << "\n";
-      Log::file() << "nBasis      = " << nMonomer << "\n";
-      Log::file() << "flex params = " << nFlexibleParams() << "\n";
-      Log::file() << "nEle        = " << nEle << "\n";
-      #endif
+      if (isFlexible()) {
+         nEle += nFlexibleParams();
+      }
 
       return nEle;
    }
@@ -280,7 +291,8 @@ namespace Pspc{
    {
       // Solve MDEs for current omega field
       system().compute();
-      // Compute stress if done
+
+      // Compute stress if required
       if (isFlexible()) {
          system().mixture().computeStress();
       }
