@@ -6,9 +6,9 @@
 
 Users must run a bash script named "setup" before attempting to compile 
 any code.  This script is located in the pscfpp/ root directory, and 
-should be executed from this directory. The setup script installs several
-files that are needed to compile pscfpp but that are not created by 
-cloning the github repository.  Most of the files installed by this script 
+must be executed from this directory. The setup script installs several
+files that are needed to compile pscfpp but that are not installed by 
+cloning the github repository. Some of the files installed by this script 
 are files that the user may need to modify in order to customize or extend 
 the package. These include include configuration files that a user may need 
 to modify in order to adapt the simpatico build system to a particular 
@@ -22,14 +22,12 @@ as the main configuration file for compilation. It assigns values to
 makefile variables that define the compiler executable names for C++ 
 and CUDA code, command line options passed to the compilers, and paths 
 for required external libraries. The copy of this file in pscfpp/bld 
-is the main configuration file for a standard out-of-source build, in 
+is used as the main configuration file for an out-of-source build, in 
 which intermediate files are created in the bld/ directory tree. The 
-brief overview of directions for compilation given on a previous page 
-give contain instructions for an out-of-source build, which we recommend 
-for most users who are not working on modifications of the source 
-code.  The copy in the pscfpp/src directory is the main configuration 
-file for an in-source build, which is a convenient alternative for use
-during development.
+copy in the pscfpp/src directory is the main configuration file for 
+an in-source build.  The brief overview of directions for compilation 
+given on a previous page give contain instructions for an out-of-source 
+build.
 
 \section install_setup_default_sec Default configuration 
 
@@ -40,27 +38,34 @@ then enter:
 > ./setup
 \endcode
 Note the dot and backslash ("./") before the name of the script.  These 
-must be included to tell the unix shell to look for a script named setup 
-in the current working directory, rather than searching the directories 
-listed in the PATH environment variable for a command with this name.
+must be included to tell the unix shell to look for an executable file 
+named setup in the current working directory, rather than searching the 
+directories listed in the PATH environment variable for an executable 
+with this name.
 
-The default configuration should work for either linux or for a Mac with 
-an Intel CPU in which homebrew was used to install GSL and FFTW. The 
-definitions used in the default configuration are defined in a file
-pscfpp/make/compiler/default. 
+The default configuration should work for either linux or for a Mac 
+with an Intel CPU in which homebrew was used to install GSL and FFTW. 
+The definitions used in the default configuration are defined in a 
+file pscfpp/make/compiler/default. 
 
-\section install_setup_homebrewm1_sec Macs with Homebrew and Apple Silicon
+\section install_setup_homebrewm1_sec Macs with Apple Silicon and Homebrew 
 
-To create an environment that should work correctly for a newer Mac
-with Apple silicon (i.e., the M1 chip) on which Homebrew has used to 
-install dependencies, enter:
+To create an environment that should work correctly for a newer Mac with
+Apple silicon (i.e., the M1 chip) on which Homebrew has used to install 
+dependencies, enter:
 \code
-> ./setup homebrew-m1
+> ./setup mac-si-homebrew
 \endcode
-This will use a compiler setup file pscfpp/make/compiler/homebrew-m1 
-that was designed for such an environment. This setup file add paths
-to appropriate subdirectories of /opt/homebrew to the search paths 
-used by the compiler. 
+This will use a compiler setup file pscfpp/make/compiler/mac-si-homebrew
+that was designed for such an environment. This setup file add paths to 
+appropriate subdirectories of /opt/homebrew to the search paths used by 
+the compiler. 
+
+The hardware used for a Mac OS system is relevant when using homebrew
+because the homebrew project decided to use the introduction of new
+hardware as an opportunity to introduce new conventions for paths without
+breaking backwards compatibility. As a result, homebrew actually uses 
+different path conventions on Intel and Apple-Si Macs.
 
 \section install_setup_local_file_sec Customized configuration
 

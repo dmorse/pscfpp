@@ -12,19 +12,7 @@ controlled by a system of unix makefiles.
 PSCF is distributed only as source code, and must be compiled by the 
 user.  All source code that is designed to run on a conventional CPU 
 is written in ANSI 2011 C++ language standard.  Code that is written 
-for an NVIDIA graphics processing unit (GPU) is written in UDA.
-
-In order to compile in Mac OS X, the computer must be configured to 
-resemble a unix command-line development environment by installing 
-the Command Line Tools package for XCode.  In recent versions of 
-Mac OS X, it is not necessary to install the much larger XCode 
-integrated development environment (IDE) to obtain just the command 
-line tools, though some users may prefer to install XCode. If you do 
-choose to install the XCode package, installation of the Command Line
-Tools is offered as an option during the installation process.
-Instructions for installing just the command line tools are available 
-<a href= https://osxdaily.com/2014/02/12/install-command-line-tools-mac-os-x/>
-online</a>. 
+for an NVIDIA graphics processing unit (GPU) is written in CUDA.
 
 \section require_overview_section Overview 
 
@@ -65,18 +53,32 @@ Users who wish to generate a local copy of this html documentation,
 as web pages that reside on their own computer, will also need to
 install the "doxygen" documentation utility.
 
+\section require_mac_commandtools_section Mac OS X Command tools
+
+In order to compile the PSCF CPU programs in Mac OS X, the computer must
+first be configured to provide a unix command-line development environment 
+by installing the Command Line Tools package for XCode.  In recent 
+versions of Mac OS X, it is not necessary to install the much larger 
+XCode integrated development environment (IDE) to obtain just the command 
+line tools, though some users may prefer to install XCode. If you choose
+to install the XCode package, installation of the Command Line Tools is 
+offered as an option during the installation process.  Instructions for 
+installing just the command line tools are available 
+<a href= https://osxdaily.com/2014/02/12/install-command-line-tools-mac-os-x/>
+online</a>. 
+
 \section require_git_section Git client
 
 The source code for the C++/CUDA version of PSCF described here is hosted 
-on the github server, at <a href=http://github.com>github</a>, as project 
-dmorse/pscfpp.  The older fortran PSCF program is maintained in a separate 
-github repository, as project dmorse/pscf.  The source code of the new 
-version may be obtained by using a git version control manager to clone 
-the public <a href=https://github.com/dmorse/pscfpp>git repository</a>. 
+on the github server, at <a href=http://github.com>github.com</a>, as 
+project dmorse/pscfpp.  The older fortran PSCF program is maintained in 
+a separate github repository, as project dmorse/pscf.  The source code of 
+the new version may be obtained by using a git version control manager to 
+clone the public 
+<a href=https://github.com/dmorse/pscfpp>git repository</a>. 
 To do this, a git client must be installed on your computer.
 
-Before attempting to use git to clone the source code, you can check 
-whether a git client is already installed by entering 
+One can check whether a git client is already installed by entering 
 \code
 > which git
 \endcode 
@@ -122,8 +124,8 @@ compiler for C++ development on Mac OS X. The clang compiler accepts
 almost all the same command line options as the gnu compiler, and thus 
 functions as a drop-in replacement for the gnu compiler.  
 
-It is possible to instead configure the build system during the initial 
-setup process so as to use a different C++ compiler.  When the gcc or 
+It is possible to configure the build system during the initial setup 
+process so as to instead use a different C++ compiler.  When the gcc or 
 clang compiler is not used for compilation, however, the PSCF build 
 system will still invoke the "g++" command to use the g++ compiler to 
 analyse dependencies among source files. The PSCF makefile system thus 

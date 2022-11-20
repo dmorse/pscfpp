@@ -20,15 +20,22 @@ Instructions:
      Change directory (cd) to the pscfpp/ root directory.
 
    - **Setup:**
-     Invoke the "setup" script from the pscfpp/ root directory.  Enter
-     the command
+     Invoke the "setup" script from the pscfpp/ root directory.  To setup
+     the build system with default compiler options appropriate to most
+     linux systems, enter the command
      \code
      > ./setup
      \endcode
-     to setup the build system with default compiler options. Alternatively,
-     invoke the setup script with a filename argument that is the name of a 
-     compiler configuration file that contains non-default compiler options, 
-     as discussed \ref install_setup_page "here").
+     Alternatively, to customize compiler options, invoke the setup script
+     with a filename argument that is the name of a compiler configuration 
+     file that contains non-default compiler options, as discussed 
+     \ref install_setup_page "here"). An environment appropriate for 
+     compiling on a Mac OS X system with Apple silicon hardware (e.g., an 
+     M1 or M2 chip) in which the dependencies have been installed using 
+     the homebrew package mamager can be created by entering 
+     \code
+     > ./setup mac-m1-homebrew"
+     \endcode
 
    - **Compile all cpu programs:**
      From the pscfpp/ directory, enter
@@ -48,7 +55,6 @@ Instructions:
      install executables named "pscf_pg1", "pscf_pg2" and "pscf_pg3"
      in the pscfpp/bin directory.
 
-
 The "make all-cpu" and "make pspg" commands will each also create a large
 number of intermediate object (*.o), dependency (*.d) and library (*.a)
 files in subdirectories of the pscfpp/bld directory (the default build
@@ -56,13 +62,14 @@ directory).
 
 Each of the above steps is discussed in more detail in the following pages.
 
-The above instructions perform an "out-of-source" build in which intermediate
-files created during compilation process are left in the pscfpp/bld directory
-tree. It is also possible to perform an "in-source" in which these files are
-created in the pscfpp/src directory that also contains the C++ and CUDA
-source files. The option of in-source compilation is discussed in more detail
-\ref install_inout_page "here".  We recommend out-of-source compilation for
-package users who are not actively working on development.
+The above instructions will perform an "out-of-source" build in which 
+intermediate files created during compilation process are left in the 
+pscfpp/bld directory tree. It is also possible to perform an "in-source" 
+in which these files are created in the pscfpp/src directory that also 
+contains the C++ and CUDA source files. The option of in-source compilation 
+is discussed in more detail \ref install_inout_page "here".  We recommend 
+the use of out-of-source compilation for package users who are not actively 
+working on development, and in-source compilation during development.
 
 <BR>
 \ref install_source_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

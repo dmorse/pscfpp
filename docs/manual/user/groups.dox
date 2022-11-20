@@ -9,7 +9,7 @@ algorithms that constrain the chemical potential fields to be symmetric
 under all operations of a specified crystallographic space group. Each
 possible space group is identified in PSCF by a unique identifer string.
 
-<h3> Space Group Identifier Strings </h3>
+\section user_groups_identifier_sec Space Group Identifier Strings 
 
 The space group identifiers used in PSCF are ASCII strings with no white
 space that are constructed as mangled forms of the Hermann Mauguin space
@@ -58,7 +58,7 @@ A vector with elements given by rational numbers (fractions) is used to represen
 
 Identifier strings for all of the standard 1D, 2D and 3D space groups are listed below:
 
-<h3> 1D Space Groups </h3>
+\section user_groups_1D_sec 1D Space Groups 
 There are only two possible symmetry groups for one-dimensionally periodic
 structures: Space group \c P_-1 has an inversion center at the origin, 
 giving centrosymmetric lamellar structures, while space group \c P_1 does 
@@ -70,7 +70,8 @@ Group identifiers:
 | 1      | \c P_-1 | Inversion symmetry |
 | 2      | \c P_1  | No symmetry |
 
-<h3> 2D Space Groups </h3>
+
+\section user_groups_2D_sec 2D Space Groups 
 
 There are 17 possible 2D symmetry groups, also known as plane groups.
 
@@ -95,7 +96,8 @@ Group identifiers:
 | 16     | \c p_6     | hexagonal |
 | 17     | \c p_6_m_m | hexagonal |
 
-<h3> 3D Space Groups </h3>
+
+\section user_groups_3D_sec 3D Space Groups 
 
 There are 230 possible 3D space groups. The international crystallographic 
 tables lists 2 "settings" for some space groups, which differ in the 

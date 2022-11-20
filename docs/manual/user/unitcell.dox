@@ -27,7 +27,7 @@ The value of D is known from which program is being used. The list of
 allowed lattice system identifiers is different for systems that are
 periodic in 1, 2, or 3 spatial dimensions.
 
-<h3> 1D Systems </h3>
+\section user_unitcell_1D_sec 1D Systems 
 
 There is only possible Bravais lattice for a one dimensionally periodic
 system, which is referred to here as "lamellar". A 1D lamellar system
@@ -39,7 +39,8 @@ of d = 5.6 in the chosen system of length units would thus be
     lamellar  5.6 
 \endcode
 
-<h3> 2D Systems </h3>
+\section user_unitcell_2D_sec 2D Systems 
+
 There are 4 conventional 2D lattice systems (square, hexagonal, 
 rectangular, and oblique). The pscf code also allows the user to specify 
 a "rhombic" unit cell, which is an oblique unit cell in which the two 
@@ -91,12 +92,12 @@ provided in radians, and not in degrees.
   </tr> 
 </table>
 
-<h3> 3D Systems </h3>
+\section user_unitcell_3D_sec 3D Systems 
 
 In what follows we use the letters a, b, c both to denote lengths of the 
-three basis vectors and as labels to identify the actual vectors.
-Different definitions of angles are used for different lattice systems, 
-as discussed below:
+three Bravais lattice basis vectors and as labels to identify the actual 
+vectors.  Different definitions of angles are used for different lattice 
+systems, as discussed below:
 <table>
   <tr> 
     <td> <b>lattice system  </b> </td>

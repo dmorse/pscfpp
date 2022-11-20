@@ -15,6 +15,15 @@ namespace Pscf
    /**
    * Base class for a molecular species (polymer or solvent).
    *
+   * Species is a base class for both polymeric and solvent species.
+   * Each Species has values of phi, mu and q, and an ensemble that are
+   * defined as protected variables. The value of either phi or mu must 
+   * be provided as an input parameter, and value of the other variable
+   * must then be computed. The class that actually solves the 
+   * single-molecule statistical mechanics problem must be a subclass
+   * of Species so that it may directly modify the protected variable
+   * phi or mu (depending on the ensemble) and q.
+   *
    * \ingroup Pscf_Chem_Module
    */
    class Species
@@ -32,22 +41,22 @@ namespace Pscf
       Species();
    
       /**
-      * Get overall volume fraction for this species.
+      * Get the overall volume fraction for this species.
       */
       double phi() const;
    
       /**
-      * Get chemical potential for this species (units kT=1).
+      * Get the chemical potential for this species (units kT=1).
       */
       double mu() const;
    
       /**
-      * Get molecular partition function for this species.
+      * Get the molecular partition function for this species.
       */
       double q() const;
    
       /**
-      * Get statistical ensemble for this species (open or closed).
+      * Get the statistical ensemble for this species (open or closed).
       */
       Ensemble ensemble();
    
