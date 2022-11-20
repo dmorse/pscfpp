@@ -358,40 +358,26 @@ namespace Pspc {
    template <int D>
    inline
    DArray< DArray<double> > const & WFieldContainer<D>::basis() const
-   {
-      UTIL_ASSERT(hasData_);
-      UTIL_ASSERT(isSymmetric_);
-      return basis_;
-   }
+   {  return basis_; }
 
    // Get one field in basis format (const)
    template <int D>
    inline
    DArray<double> const & WFieldContainer<D>::basis(int id) const
-   {
-      UTIL_ASSERT(hasData_);
-      UTIL_ASSERT(isSymmetric_);
-      return basis_[id];
-   }
+   {  return basis_[id]; }
 
    // Get all fields in r-grid format (const)
    template <int D>
    inline
    DArray< RField<D> > const &
    WFieldContainer<D>::rgrid() const
-   {
-      UTIL_ASSERT(hasData_);
-      return rgrid_;
-   }
+   {  return rgrid_; }
 
    // Get one field in r-grid format (const)
    template <int D>
    inline
    RField<D> const & WFieldContainer<D>::rgrid(int id) const
-   {
-      UTIL_ASSERT(hasData_);
-      return rgrid_[id];
-   }
+   {  return rgrid_[id]; }
 
    // Has memory been allocated for fields in r-grid format?
    template <int D>

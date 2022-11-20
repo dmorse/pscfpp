@@ -50,7 +50,6 @@ namespace Pspg
       */
       void readParameters(std::istream& in);
 
-      using AmIteratorTmpl<Iterator<D>, DArray<double> >::setup;
       using AmIteratorTmpl<Iterator<D>, DArray<double> >::solve;
       using AmIteratorTmpl<Iterator<D>, DArray<double> >::setClassName;
       using Iterator<D>::isFlexible;
@@ -67,23 +66,28 @@ namespace Pspg
       double scaleStress_;
 
       /**
+      * Set a vector equal to another (assign a = b)
+      * 
+      * \param a the field to be set (LHS, result)
+      * \param b the field for it to be set to (RHS, input)
+      */
+      void setEqual(DArray<double>& a, DArray<double> const & b);
+
+      /**
+      * Compute the inner product of two real vectors.
+      */
+      double dotProduct(DArray<double> const & a, DArray<double> const & b);
+
+      /**
+      * Find the maximum magnitude element of a vector.
+      */
+      double maxAbs(DArray<double> const & hist);
+
+      #if 0
+      /**
       * Find norm of a residual vector.
       */
       double findNorm(DArray<double> const & hist);
-
-      /**
-      * Find the maximum magnitude element of a residual vector.
-      */
-      double findMaxAbs(DArray<double> const & hist);
-
-      /**
-      * Update the series of residual vectors.
-      * 
-      * \param basis RingBuffer of residual or field basis vectors
-      * \param hists RingBuffer of pase residual or field vectors
-      */
-      void updateBasis(RingBuffer< DArray<double> > & basis, 
-                       RingBuffer< DArray<double> > const & hists);
 
       /**
       * Compute the dot product for an element of the U matrix.
@@ -129,14 +133,16 @@ namespace Pspg
                    DArray<double> const & resCurrent, 
                    RingBuffer<DArray<double> > const & resBasis, 
                    int nHist);
+      #endif
 
       /**
-      * Set a vector equal to another. 
+      * Update the series of residual vectors.
       * 
-      * \param a the field to be set (LHS, result)
-      * \param b the field for it to be set to (RHS, input)
+      * \param basis RingBuffer of residual or field basis vectors
+      * \param hists RingBuffer of pase residual or field vectors
       */
-      void setEqual(DArray<double>& a, DArray<double> const & b);
+      void updateBasis(RingBuffer< DArray<double> > & basis, 
+                       RingBuffer< DArray<double> > const & hists);
 
       /**
       * Compute trial field so as to minimize L2 norm of residual.

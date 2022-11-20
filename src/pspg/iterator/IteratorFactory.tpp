@@ -38,7 +38,7 @@ namespace Pspg {
       } else 
       if (className == "AmIteratorGrid") {
          ptr = new AmIteratorGrid<D>(*sysPtr_);
-      } 
+      }
 
       return ptr;
    }
