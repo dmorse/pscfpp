@@ -76,6 +76,13 @@ namespace Pscf {
       using ParamComposite::readOptional;
 
       /**
+      * Read and validate the optional errorType parameter.
+      *
+      * \param in input filestream
+      */
+      void virtual readErrorType(std::istream& in);
+
+      /**
       * Allocate memory required by AM algorithm, if necessary.
       *
       * If the required memory has been allocated previously, this 
@@ -142,13 +149,6 @@ namespace Pscf {
       T temp_;
 
       // --- Non-virtual private functions (implemented here) ---- //
-
-      #if 0
-      /**
-      * Compute a vector of residuals, add to history.
-      */
-      void computeResidual();
-      #endif
 
       /**
       * Compute the coefficients that would minimize residual L2 norm.

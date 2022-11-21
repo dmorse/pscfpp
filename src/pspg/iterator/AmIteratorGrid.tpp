@@ -36,6 +36,7 @@ namespace Pspg{
    {
       // Call parent class readParameters 
       AmIteratorTmpl<Iterator<D>,FieldCUDA>::readParameters(in);
+      AmIteratorTmpl<Iterator<D>,FieldCUDA>::readErrorType(in);
 
       // Default parameter values
       isFlexible_ = 0;

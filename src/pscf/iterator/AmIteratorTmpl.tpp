@@ -26,7 +26,8 @@ namespace Pscf
    */
    template <typename Iterator, typename T>
    AmIteratorTmpl<Iterator,T>::AmIteratorTmpl()
-    : epsilon_(0),
+    : errorType_("relNormResid"),
+      epsilon_(0),
       lambda_(0),
       nHist_(0),
       maxHist_(0),
@@ -53,8 +54,16 @@ namespace Pscf
 
       maxHist_ = 50;
       readOptional(in, "maxHist", maxHist_);
+   }
 
-      errorType_ = "relNormResid"; // default type of error
+   /*
+   * Read and validate errorType string parameter.
+   */
+   template <typename Iterator, typename T>
+   void AmIteratorTmpl<Iterator,T>::readErrorType(std::istream& in)
+   {
+      // Read optional string
+      // Note: errorType_ is initialized to "relNormResid" in constructor
       readOptional(in, "errorType", errorType_);
 
       if (!(errorType_ == "normResid"
@@ -62,7 +71,6 @@ namespace Pscf
          || errorType_ == "relNormResid")) {
          UTIL_THROW("Invalid iterator error type in parameter file.");
       }
-
    }
 
    /*
@@ -449,40 +457,6 @@ namespace Pscf
       fieldBasis_.clear();
       return;
    }
-
-
-   #if 0
-   // Commented out functions - removed
-
-   // Compute dot product of two basis vectors
-   template <typename Iterator, typename T>
-   double 
-   AmIteratorTmpl<Iterator,T>::computeUDotProd(RingBuffer<T> const & basis,
-                                           int m, int n)
-   {  return dotProduct(basis[m], basis[n]); }
-
-   // Compute dot product of current residual and a basis vector
-   template <typename Iterator, typename T>
-   double 
-   AmIteratorTmpl<Iterator,T>::computeVDotProd(T const & current,
-                                               RingBuffer<T> const & basis,
-                                               int m)
-   {  return dotProduct(current[m], basis[m]); }
-
-   // Compute residual and append to history.
-   template <typename Iterator, typename T>
-   void AmIteratorTmpl<Iterator,T>::computeResidual()
-   {
-      // Get residuals
-      getResidual(temp_);
-
-      // Store residuals in residual history ringbuffer
-      resHists_.append(temp_);
-
-      return;
-   }
-
-   #endif
 
 }
 #endif

@@ -35,6 +35,7 @@ namespace Pspc{
    {
       // Call parent class readParameters
       AmIteratorTmpl<Iterator<D>, DArray<double> >::readParameters(in);
+      AmIteratorTmpl<Iterator<D>, DArray<double> >::readErrorType(in);
 
       // Default parameter values
       isFlexible_ = 0; 

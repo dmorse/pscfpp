@@ -27,8 +27,9 @@ namespace Fd1d{
    // Read parameters from file
    void AmIterator::readParameters(std::istream& in)
    {
-      // Call parent class readParameters
+      // Call parent class readParameters and readErrorType functions
       AmIteratorTmpl<Iterator, DArray<double> >::readParameters(in);
+      AmIteratorTmpl<Iterator, DArray<double> >::readErrorType(in);
    }
 
    // Assign one vector to another: a = b

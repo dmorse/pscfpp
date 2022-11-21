@@ -454,7 +454,15 @@ public:
          std::cout << "\nMax error = " << bComparison.maxDiff() << "\n";
       }
       system.writeWBasis("out/w_2D.bf");
-      TEST_ASSERT(bComparison.maxDiff() < 1.0E-5);
+     
+      double epsilon = 1.0E-5;
+      double diff = bComparison.maxDiff();
+      if (diff > epsilon) {
+         std::cout   << "\n";
+         std::cout   << "maxDiff" << diff << "\n";
+         Log::file() << "maxDiff" << diff << "\n";
+      }
+      TEST_ASSERT(bComparison.maxDiff() < epsilon);
    }
 
    void testSweep() // test sweep along chiBottom and lattice parameter

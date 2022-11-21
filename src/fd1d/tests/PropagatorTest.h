@@ -32,6 +32,9 @@ public:
       Block block;
    }
 
+   /*
+   * Test solution for a homogeneous field, homogeneous initial condition.
+   */
    void testPlanarSolve1()
    {
       printMethod(TEST_FUNC);
@@ -67,20 +70,26 @@ public:
       b.setupSolver(w);
       b.propagator(0).solve();
 
-      std::cout << "\n Head:\n";
+      //std::cout << "\n Head:\n";
       for (int i = 0; i < nx; ++i) {
-         std::cout << "  " << b.propagator(0).head()[i];
+         TEST_ASSERT(abs(b.propagator(0).head()[i] - 1.0) < 1.0E-8);
+         //std::cout << "  " << b.propagator(0).head()[i];
       }
-      std::cout << "\n";
+      //std::cout << "\n";
 
-      std::cout << "\n Tail:\n";
+      //std::cout << "\n Tail:\n";
+      double expected = exp(-wc*b.length());
       for (int i = 0; i < nx; ++i) {
-         std::cout << "  " << b.propagator(0).tail()[i];
+         //std::cout << "  " << b.propagator(0).tail()[i];
+         TEST_ASSERT(abs(b.propagator(0).tail()[i] - expected) < 1.0E-5);
       }
-      std::cout << "\n";
-      std::cout << exp(-wc*b.length()) << "\n";
+      //std::cout << "\n";
+      //std::cout << exp(-wc*b.length()) << "\n";
    }
 
+   /*
+   * Test for a homogeneous field, sinusoidal initial condition.
+   */
    void testPlanarSolve2()
    {
       printMethod(TEST_FUNC);
@@ -116,23 +125,34 @@ public:
       b.setupSolver(w);
       b.propagator(0).solve(q);
 
+      #if 0
       std::cout << "\n Head:\n";
       for (int i = 0; i < nx; ++i) {
          std::cout << "  " << b.propagator(0).head()[i];
       }
       std::cout << "\n";
-
-      std::cout << "\n Tail:\n";
-      for (int i = 0; i < nx; ++i) {
-         std::cout << "  " 
-                   << b.propagator(0).tail()[i]/b.propagator(0).head()[i];
-      }
-      std::cout << "\n";
+      #endif
 
       double dx = (xMax - xMin)/double(nx - 1);
       double k = 2.0*sin(Constants::Pi/double(nx-1))/dx;
       double f = k*k*step*step/6.0 + wc;
-      std::cout << exp(-f*length) << "\n";
+      double expected = exp(-f*length);
+
+      //std::cout << "\n Tail:\n";
+      double head, tail, ratio;
+      for (int i = 0; i < nx; ++i) {
+         head = b.propagator(0).head()[i];
+         if (abs(head) > 1.0E-6) {
+            tail = b.propagator(0).tail()[i];
+            ratio = tail/head;
+            //std::cout << "  " << ratio ;
+            TEST_ASSERT( abs(ratio - expected) < 1.0E-5 );
+         }
+      }
+      //std::cout << "\n";
+      //std::cout << expected << "\n";
+      //std::cout << "\n";
+
    }
 
    void testCylinderSolve1()
@@ -172,7 +192,7 @@ public:
       b.setupSolver(w);
       b.propagator(0).solve(q);
 
-      std::cout << "\n";
+      //std::cout << "\n";
       double final = exp(-length*wc);
       double value;
       for (int i = 0; i < nx; ++i) {
@@ -276,7 +296,7 @@ public:
       b.setupSolver(w);
       b.propagator(0).solve(q);
 
-      std::cout << "\n";
+      // std::cout << "\n";
       double final = exp(-length*wc);
       double value;
       for (int i = 0; i < nx; ++i) {
