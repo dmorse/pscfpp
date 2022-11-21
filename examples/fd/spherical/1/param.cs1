@@ -51,12 +51,3 @@ System{
   }
 }
 
-
-  CompositionSweep{
-     ns                    200
-     baseFileName         csl/
-     homogeneousMode         1
-     dPhi             -0.01222
-                       0.01222
-  }
-

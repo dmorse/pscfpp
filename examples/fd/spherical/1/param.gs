@@ -50,11 +50,3 @@ System{
   }
 }
 
-  MuSweep{
-     ns                    200
-     baseFileName          gs/
-     homogeneousMode         1
-     dMu              +0.40000
-                       0.00000
-  }
-

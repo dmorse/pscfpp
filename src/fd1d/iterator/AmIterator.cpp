@@ -80,68 +80,7 @@ namespace Fd1d{
       basis.append(newbasis);
    }
 
-   #if 0
-   // Compute one element of U matrix of by computing a dot product
-   double
-   AmIterator::computeUDotProd(RingBuffer< DArray<double> > const& resBasis,
-                               int m, int n)
-   {
-      const int nr = resBasis[0].capacity();
-      double dotprod = 0.0;
-      for (int i = 0; i < nr; i++) {
-         dotprod += resBasis[m][i] * resBasis[n][i];
-      }
-      return dotprod;
-   }
-
-   // Compute one element of V vector by computing a dot product
-   double
-   AmIterator::computeVDotProd(DArray<double> const & resCurrent,
-                               RingBuffer<DArray<double> > const& resBasis,
-                               int m)
-   {
-      const int nr = resBasis[0].capacity();
-      double dotprod = 0.0;
-      for (int i = 0; i < nr; i++) {
-         dotprod += resCurrent[i] * resBasis[m][i];
-      }
-      return dotprod;
-   }
-   #endif
-
-   #if 0
-   // Update entire U matrix
-   void AmIterator::updateU(DMatrix<double> & U,
-                            RingBuffer<DArray<double> > const & resBasis,
-                            int nHist)
-   {
-      // Update matrix U by shifting elements diagonally
-      int maxHist = U.capacity1();
-      for (int m = maxHist-1; m > 0; --m) {
-         for (int n = maxHist-1; n > 0; --n) {
-            U(m,n) = U(m-1,n-1);
-         }
-      }
-
-      // Compute U matrix's new row 0 and col 0
-      for (int m = 0; m < nHist; ++m) {
-         double dotprod = computeUDotProd(resBasis,0,m);
-         U(m,0) = dotprod;
-         U(0,m) = dotprod;
-      }
-   }
-
-   void AmIterator::updateV(DArray<double> & v,
-                            DArray<double> const & resCurrent,
-                            RingBuffer<DArray<double> > const & resBasis,
-                            int nHist)
-   {
-      for (int m = 0; m < nHist; ++m) {
-         v[m] = dotProduct(resCurrent, resBasis[m]);
-      }
-   }
-   #endif
-
+   // Add linear combination of basis vector to current trial state
    void AmIterator::addHistories(DArray<double>& trial,
                                  RingBuffer< DArray<double> > const& basis,
                                  DArray<double> coeffs,

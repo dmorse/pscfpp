@@ -101,94 +101,11 @@ namespace Pspc{
       return max;
    }
 
-   #if 0
-   // Compute and return L2 norm of residual vector
-   template <int D>
-   double AmIterator<D>::findNorm(DArray<double> const & hist)
-   {
-      const int n = hist.capacity();
-      double normResSq = 0.0;
-
-      for (int i = 0; i < n; i++) {
-         normResSq += hist[i] * hist[i];
-      }
-
-      return sqrt(normResSq);
-   }
-
-   // Compute one element of U matrix of by computing a dot product
-   template <int D>
-   double
-   AmIterator<D>::computeUDotProd(RingBuffer<DArray<double> > const & resBasis,
-                                  int m, int n)
-   {
-      const int length = resBasis[0].capacity();
-
-      double dotprod = 0.0;
-      for(int i = 0; i < length; i++) {
-         dotprod += resBasis[m][i] * resBasis[n][i];
-      }
-
-      return dotprod;
-   }
-
-   // Compute one element of V vector by computing a dot product
-   template <int D>
-   double
-   AmIterator<D>::computeVDotProd(DArray<double> const & resCurrent,
-                                  RingBuffer<DArray<double> > const & resBasis,
-                                  int m)
-   {
-      const int length = resBasis[0].capacity();
-
-      double dotprod = 0.0;
-      for(int i = 0; i < length; i++) {
-         dotprod += resCurrent[i] * resBasis[m][i];
-      }
-
-      return dotprod;
-   }
-
-   // Update entire U matrix
-   template <int D>
-   void AmIterator<D>::updateU(DMatrix<double> & U,
-                               RingBuffer<DArray<double> > const & resBasis,
-                               int nHist)
-   {
-      // Update matrix U by shifting elements diagonally
-      int maxHist = U.capacity1();
-      for (int m = maxHist-1; m > 0; --m) {
-         for (int n = maxHist-1; n > 0; --n) {
-            U(m,n) = U(m-1,n-1);
-         }
-      }
-
-      // Compute U matrix's new row 0 and col 0
-      for (int m = 0; m < nHist; ++m) {
-         double dotprod = computeUDotProd(resBasis,0,m);
-         U(m,0) = dotprod;
-         U(0,m) = dotprod;
-      }
-   }
-
-   template <int D>
-   void AmIterator<D>::updateV(DArray<double> & v,
-                               DArray<double> const & resCurrent,
-                               RingBuffer<DArray<double> > const & resBasis,
-                               int nHist)
-   {
-      // Compute U matrix's new row 0 and col 0
-      // Also, compute each element of v_ vector
-      for (int m = 0; m < nHist; ++m) {
-         v[m] = computeVDotProd(resCurrent,resBasis,m);
-      }
-   }
-   #endif
-
    // Update basis
    template <int D>
-   void AmIterator<D>::updateBasis(RingBuffer<DArray<double> > & basis,
-                                   RingBuffer<DArray<double> > const & hists)
+   void 
+   AmIterator<D>::updateBasis(RingBuffer< DArray<double> > & basis,
+                              RingBuffer< DArray<double> > const & hists)
    {
       // Make sure at least two histories are stored
       UTIL_CHECK(hists.size() >= 2);

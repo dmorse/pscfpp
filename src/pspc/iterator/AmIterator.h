@@ -90,58 +90,6 @@ namespace Pspc
       */
       double maxAbs(DArray<double> const & hist);
 
-      #if 0
-      /**
-      * Find L2 norm of a residual vector.
-      */
-      double findNorm(DArray<double> const & hist);
-
-      /**
-      * Compute the dot product for one element of the U matrix.
-      * 
-      * \param resBasis RingBuffer of residual basis vectors.
-      * \param m row of the U matrix
-      * \param n column of the U matrix
-      */
-      double computeUDotProd(RingBuffer<DArray<double> > const & resBasis, 
-                             int m, int n);
-
-      /**
-      * Compute the dot product for one element of the v vector.
-      * 
-      * \param resCurrent current residual vector 
-      * \param resBasis RingBuffer of residual basis vectors
-      * \param m row index of the v vector
-      */
-      double computeVDotProd(DArray<double> const & resCurrent, 
-                             RingBuffer<DArray<double> > const & resBasis, 
-                             int m);
-
-      /**
-      * Update the U matrix.
-      * 
-      * \param U U matrix
-      * \param resBasis RingBuffer of residual basis vectors.
-      * \param nHist number of past states
-      */
-      void updateU(DMatrix<double> & U, 
-                   RingBuffer<DArray<double> > const & resBasis, 
-                   int nHist);
-
-      /**
-      * Update the v vector.
-      * 
-      * \param v v vector
-      * \param resCurrent current residual vector 
-      * \param resBasis RingBuffer of residual basis vectors.
-      * \param nHist number of past states 
-      */
-      void updateV(DArray<double> & v, 
-                   DArray<double> const & resCurrent, 
-                   RingBuffer<DArray<double> > const & resBasis, 
-                   int nHist);
-      #endif
-
       /**
       * Update the basis for residual or field vectors.
       * 
