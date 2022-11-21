@@ -72,8 +72,8 @@ namespace Fd1d{
       DArray<double> newbasis;
       newbasis.allocate(n);
 
+      // Basis vector is different of last to vectors
       for (int i = 0; i < n; i++) {
-         // sequential histories basis vectors
          newbasis[i] = hists[0][i] - hists[1][i];
       }
 

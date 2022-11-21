@@ -23,7 +23,10 @@ namespace Pscf {
     : ns_(0),
       baseFileName_(),
       writeRhoRGrid_(false),
-      historyCapacity_(historyCapacity)
+      historyCapacity_(historyCapacity),
+      historySize_(0),
+      nAccept_(0),
+      reuseState_(true)
    {  setClassName("SweepTmpl"); }
 
    /*
@@ -42,14 +45,15 @@ namespace Pscf {
       // Default values
       baseFileName_ = "";
 
-      // Read
+      // Read parameters
       read<int>(in, "ns", ns_);
       readOptional<std::string>(in, "baseFileName", baseFileName_);
       readOptional<int>(in, "historyCapacity", historyCapacity_);
+      readOptional<bool>(in, "reuseIteratorState", reuseState_);
       readOptional<bool>(in, "writeRhoRGrid", writeRhoRGrid_);
-      UTIL_CHECK(historyCapacity_ > 0);
 
       // Allocate required arrays
+      UTIL_CHECK(historyCapacity_ > 0);
       states_.allocate(historyCapacity_);
       stateHistory_.allocate(historyCapacity_);
       sHistory_.allocate(historyCapacity_);
@@ -73,6 +77,7 @@ namespace Pscf {
       // Solve for initial state of sweep
       double sNew = 0.0;
       Log::file() << std::endl;
+      Log::file() << "===========================================\n";
       Log::file() << "Attempt s = " << sNew << std::endl;
 
       int error;
@@ -96,6 +101,7 @@ namespace Pscf {
             // Set a new contour variable value sNew
             sNew = s(0) + ds; 
             Log::file() << std::endl;
+            Log::file() << "===========================================\n";
             Log::file() << "Attempt s = " << sNew << std::endl;
 
             // Set non-adjustable system parameters to new values
@@ -107,7 +113,7 @@ namespace Pscf {
             extrapolate(sNew);
 
             // Attempt iterative SCFT solution
-            isContinuation = true;
+            isContinuation = reuseState_;
             error = solve(isContinuation);
 
             // Process success or failure
@@ -133,6 +139,7 @@ namespace Pscf {
             finished = true;
          }
       }
+      Log::file() << "===========================================\n";
 
       // Clean up after end of the entire sweep
       cleanup();
