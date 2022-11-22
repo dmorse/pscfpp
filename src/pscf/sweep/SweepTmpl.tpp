@@ -49,7 +49,7 @@ namespace Pscf {
       read<int>(in, "ns", ns_);
       readOptional<std::string>(in, "baseFileName", baseFileName_);
       readOptional<int>(in, "historyCapacity", historyCapacity_);
-      readOptional<bool>(in, "reuseIteratorState", reuseState_);
+      readOptional<bool>(in, "reuseState", reuseState_);
       readOptional<bool>(in, "writeRhoRGrid", writeRhoRGrid_);
 
       // Allocate required arrays

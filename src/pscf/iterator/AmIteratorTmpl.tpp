@@ -35,7 +35,7 @@ namespace Pscf
       itr_(0),
       maxItr_(0),
       nElem_(0),
-      isVerbose_(false),
+      verbose_(0),
       outputTime_(false),
       isAllocated_(false)
    {  setClassName("AmIteratorTmpl"); }
@@ -59,8 +59,8 @@ namespace Pscf
       maxHist_ = 50;
       readOptional(in, "maxHist", maxHist_);
 
-      isVerbose_ = false;
-      readOptional(in, "isVerbose", isVerbose_);
+      verbose_ = 0;
+      readOptional(in, "verbose", verbose_);
 
       outputTime_ = false;
       readOptional(in, "showTiming", outputTime_);
@@ -86,7 +86,7 @@ namespace Pscf
       Timer timerStress;
       Timer timerAM;
       Timer timerResid;
-      Timer timerConverged;
+      Timer timerError;
       Timer timerCoeff;
       Timer timerOmega;
       Timer timerTotal;
@@ -100,7 +100,6 @@ namespace Pscf
       timerMDE.stop();
 
       // Iterative loop
-      bool done;
       nBasis_ = fieldBasis_.size();
       for (itr_ = 0; itr_ < maxItr_; ++itr_) {
 
@@ -110,7 +109,7 @@ namespace Pscf
 
          timerAM.start();
 
-         if (isVerbose_) {
+         if (verbose_ > 1) {
             Log::file() << "------------------------------- \n";
          }
          Log::file() << " Iteration " << Int(itr_,5);
@@ -130,27 +129,36 @@ namespace Pscf
          resHists_.append(temp_);
          timerResid.stop();
 
-         // Test for convergence.
-         // Also outputs error measures to Log::file()
-         timerConverged.start();
-         done = isConverged();
-         timerConverged.stop();
+         // Compute scalar error, output report to log file.
+         timerError.start();
+         double error = computeError(verbose_);
+         if (verbose_ < 2) {
+             Log::file() << ",  error  = " << Dbl(error, 15) << "\n";
+         }
+         timerError.stop();
 
          // Output additional details of this iteration to the log file
          outputToLog();
 
-         if (done) {
+         // Check for convergence
+         if (error < epsilon_) {
 
             // Stop timers
             timerAM.stop();
             timerTotal.stop();
 
-            if (isVerbose_) {
+            if (verbose_ > 1) {
                Log::file() << "-------------------------------\n";
             }
             Log::file() << " Converged\n";
 
-            // Output timing results
+            // Output error report if not done previously
+            if (verbose_ == 1) {
+               Log::file() << "\n";
+               computeError(2); 
+            }
+
+            // Output timing results, if requested.
             if (outputTime_) {
                double total = timerTotal.time();
                Log::file() << "\n";
@@ -166,8 +174,8 @@ namespace Pscf
                            << timerCoeff.time()  << " s,  "
                            << timerCoeff.time()/total << "\n";
                Log::file() << "checking convergence: "
-                           << timerConverged.time()  << " s,  "
-                           << timerConverged.time()/total << "\n";
+                           << timerError.time()  << " s,  "
+                           << timerError.time()/total << "\n";
                Log::file() << "updating guess:       "
                            << timerOmega.time()  << " s,  "
                            << timerOmega.time()/total << "\n";
@@ -288,7 +296,6 @@ namespace Pscf
       // If first iteration and history is empty
       // then initialize U, v and coeff arrays
       if (itr_ == 0 && nBasis_ == 0) {
-         Log::file() << "Zeroing U, v, coeff \n";
          int m, n;
          for (m = 0; m < maxHist_; ++m) {
             v_[m] = 0.0;
@@ -451,11 +458,11 @@ namespace Pscf
    }
 
    template <typename Iterator, typename T>
-   bool AmIteratorTmpl<Iterator,T>::isConverged()
+   double AmIteratorTmpl<Iterator,T>::computeError(int verbose)
    {
       double error = 0.0;
 
-      if (isVerbose_) {
+      if (verbose > 1) {
 
          Log::file() << "\n";
 
@@ -467,6 +474,10 @@ namespace Pscf
          double normRes = norm(resHists_[0]);
          Log::file() << "Residual Norm = " << Dbl(normRes,15) << "\n";
    
+         // Find root-mean-squared residual element value
+         double rmsRes = normRes/sqrt(nElem_);
+         Log::file() << "RMS Residual  = " << Dbl(rmsRes,15) << "\n";
+
          // Find norm of residual vector relative to field
          double normField = norm(fieldHists_[0]);
          double relNormRes = normRes/normField;
@@ -480,6 +491,8 @@ namespace Pscf
             error = maxRes;
          } else if (errorType_ == "normResid_") {
             error = normRes;
+         } else if (errorType_ == "rmsResid_") {
+            error = normRes/sqrt(nElem_);
          } else if (errorType_ == "relNormResid") {
             error = relNormRes;
          } else {
@@ -493,6 +506,8 @@ namespace Pscf
             error = maxAbs(resHists_[0]);
          } else if (errorType_ == "normResid_") {
             error = norm(resHists_[0]);
+         } else if (errorType_ == "rmsResid_") {
+            error = norm(resHists_[0])/sqrt(nElem_);
          } else if (errorType_ == "relNormResid") {
             double normRes = norm(resHists_[0]);
             double normField = norm(fieldHists_[0]);
@@ -500,11 +515,10 @@ namespace Pscf
          } else {
             UTIL_THROW("Invalid iterator error type in parameter file.");
          }
-
-         Log::file() << ",  error  = " << Dbl(error, 15) << "\n";
+         //Log::file() << ",  error  = " << Dbl(error, 15) << "\n";
       }
 
-      return (error < epsilon_);
+      return error;
    }
 
 }

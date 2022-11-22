@@ -107,19 +107,32 @@ namespace Pscf {
       virtual void clear();
 
       /**
+      * Compute and return error used to test for convergence.
+      *
+      * \param verbose  verbosity level of output report
+      * \return error  measure used to test for convergence.
+      */
+      virtual double computeError(int verbose);
+
+      /**
       * Return the current residual vector by const reference.
       */
-      T const & residual();
+      T const & residual() const;
 
       /**
       * Return the current field or state vector by const reference.
       */
-      T const & field();
+      T const & field() const;
+
+      /**
+      * Verbosity level.
+      */
+      int verbose() const;
 
       /**
       * Have data structures required by the AM algorithm been allocated?
       */
-      bool isAllocatedAM();
+      bool isAllocatedAM() const;
 
    private:
 
@@ -146,8 +159,8 @@ namespace Pscf {
       /// Number of elements in field or residual vectors.
       int nElem_; 
 
-      /// Should verbose output be written to log file?
-      bool isVerbose_;
+      /// Verbosity level.
+      int verbose_;
 
       /// Output summary of timing results?
       bool outputTime_;
@@ -236,13 +249,6 @@ namespace Pscf {
       virtual void updateV(DArray<double> & v, T const & resCurrent, 
                            RingBuffer<T> const & resBasis, int nHist);
       
-      /**
-      * Check if solution is converge within specified tolerance.
-      *
-      * \return true if error < epsilon and false if error >= epsilon
-      */
-      virtual bool isConverged();
-
       // --- Pure virtual methods for doing AM iterator math --- //
 
       /**
@@ -363,21 +369,28 @@ namespace Pscf {
    * Return the current residual vector by const reference.
    */
    template <typename Iterator, typename T>
-   T const & AmIteratorTmpl<Iterator,T>::residual()
+   T const & AmIteratorTmpl<Iterator,T>::residual() const
    {  return resHists_[0]; }
 
    /*
    * Return the current state vector by const reference.
    */
    template <typename Iterator, typename T>
-   T const & AmIteratorTmpl<Iterator,T>::field()
+   T const & AmIteratorTmpl<Iterator,T>::field() const
    {  return fieldHists_[0]; }
+
+   /*
+   * Should the log output be verbose?
+   */
+   template <typename Iterator, typename T>
+   int AmIteratorTmpl<Iterator,T>::verbose() const
+   {  return verbose_; }
 
    /*
    * Has memory required by AM algorithm been allocated?
    */
    template <typename Iterator, typename T>
-   bool AmIteratorTmpl<Iterator,T>::isAllocatedAM()
+   bool AmIteratorTmpl<Iterator,T>::isAllocatedAM() const
    {  return isAllocated_; }
 
 }

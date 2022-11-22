@@ -440,8 +440,8 @@ public:
       TEST_ASSERT(eq(system.mask().phiTot(), 8.999959528399e-01));
       
       // Check that lattice parameters are correct
-      TEST_ASSERT((system.unitCell().parameter(0) - 1.6448756523) < 1e-6);
-      TEST_ASSERT(eq(system.unitCell().parameter(1),3.0));
+      TEST_ASSERT((system.unitCell().parameter(0) - 1.6448756523) < 1.0e-6);
+      TEST_ASSERT(eq(system.unitCell().parameter(1), 3.0));
 
       // Check converged field is correct by comparing to reference
       UnitCell<2> unitCell; // UnitCell object to pass to FieldIo functions
@@ -456,13 +456,17 @@ public:
       system.writeWBasis("out/w_2D.bf");
      
       double epsilon = 1.0E-5;
-      double diff = bComparison.maxDiff();
+      //double diff = bComparison.maxDiff();
+      double diff = bComparison.rmsDiff();
       if (diff > epsilon) {
          std::cout   << "\n";
-         std::cout   << "maxDiff" << diff << "\n";
-         Log::file() << "maxDiff" << diff << "\n";
+         std::cout   << "diff    = " << diff << "\n";
+         std::cout   << "epsilon = " << epsilon << "\n";
+         Log::file() << "\n";
+         Log::file() << "diff    = " << diff << "\n";
+         Log::file() << "epsilon = " << epsilon << "\n";
       }
-      TEST_ASSERT(bComparison.maxDiff() < epsilon);
+      TEST_ASSERT(diff < epsilon);
    }
 
    void testSweep() // test sweep along chiBottom and lattice parameter

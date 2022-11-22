@@ -28,12 +28,11 @@ System{
      maxItr       200
      epsilon      1.0E-8
      maxHist      50
-     isVerbose    0
+     verbose      1
   }
   Sweep{
      ns                   10
      baseFileName         sweep/
-     reuseIteratorState   1
      nParameter           1
      parameters[
         block   0   0   0.1

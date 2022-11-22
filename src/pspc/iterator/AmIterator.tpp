@@ -34,14 +34,17 @@ namespace Pspc{
    void AmIterator<D>::readParameters(std::istream& in)
    {
       // Call parent class readParameters
-      AmIteratorTmpl<Iterator<D>, DArray<double> >::readParameters(in);
-      AmIteratorTmpl<Iterator<D>, DArray<double> >::readErrorType(in);
+      AmIteratorTmpl< Iterator<D>, DArray<double> >::readParameters(in);
+      AmIteratorTmpl< Iterator<D>, DArray<double> >::readErrorType(in);
 
       // Default parameter values
       isFlexible_ = 0; 
       scaleStress_ = 10.0;
 
       int np = system().unitCell().nParameter();
+      UTIL_CHECK(np > 0);
+      UTIL_CHECK(np <= 6);
+      UTIL_CHECK(system().unitCell().lattice() != UnitCell<D>::Null);
 
       // Read optional isFlexible boolean
       readOptional(in, "isFlexible", isFlexible_);
@@ -95,8 +98,9 @@ namespace Pspc{
       const int n = hist.capacity();
       double max = 0.0;
       for (int i = 0; i < n; i++) {
-         if (fabs(hist[i]) > max)
+         if (fabs(hist[i]) > max) {
             max = fabs(hist[i]);
+         }
       }
       return max;
    }
@@ -114,8 +118,8 @@ namespace Pspc{
       DArray<double> newbasis;
       newbasis.allocate(n);
 
+      // New basis vector is difference between two most recent states
       for (int i = 0; i < n; i++) {
-         // sequential histories basis vectors
          newbasis[i] = hists[0][i] - hists[1][i]; 
       }
 
@@ -182,8 +186,7 @@ namespace Pspc{
       const DArray< DArray<double> > * currSys = &system().w().basis();
 
       for (int i = 0; i < nMonomer; i++) {
-         for (int k = 0; k < nBasis; k++)
-         {
+         for (int k = 0; k < nBasis; k++) {
             curr[i*nBasis+k] = (*currSys)[i][k];
          }
       }
@@ -224,7 +227,7 @@ namespace Pspc{
       const int nMonomer = system().mixture().nMonomer();
       const int nBasis = system().basis().nBasis();
 
-      // Initialize residuals
+      // Initialize residual vector to zero
       for (int i = 0 ; i < n; ++i) {
          resid[i] = 0.0;
       }
@@ -232,11 +235,15 @@ namespace Pspc{
       // Compute SCF residual vector elements
       for (int i = 0; i < nMonomer; ++i) {
          for (int j = 0; j < nMonomer; ++j) {
+            double chi = system().interaction().chi(i,j);
+            double p = system().interaction().idemp(i,j);
+            DArray<double> const & c = system().c().basis(j);
+            DArray<double> const & w = system().w().basis(j);
             for (int k = 0; k < nBasis; ++k) {
                int idx = i*nBasis + k;
-               resid[idx] +=
-                  system().interaction().chi(i,j)*system().c().basis(j)[k] -
-                  system().interaction().idemp(i,j)*system().w().basis(j)[k];
+               resid[idx] += chi*c[k] - p*w[k];
+               //system().interaction().chi(i,j)*system().c().basis(j)[k] -
+               //system().interaction().idemp(i,j)*system().w().basis(j)[k];
             }
          }
       }
@@ -345,7 +352,7 @@ namespace Pspc{
 
          for (int i = 0; i < nParam; i++) {
             if (flexibleParams_[i]) {
-               parameters[i] = 1/scaleStress_ * 
+               parameters[i] = 1.0/scaleStress_ * 
                                newGuess[nMonomer*nBasis + counter];
                counter++;
             }
@@ -360,14 +367,17 @@ namespace Pspc{
    template<int D>
    void AmIterator<D>::outputToLog()
    {
-      if (isFlexible()) {
+      if (isFlexible() && verbose() > 1) {
          const int nParam = system().unitCell().nParameter();
          for (int i = 0; i < nParam; i++) {
-            Log::file() << "Cell Param  " << i << " = "
-                        << Dbl(system().unitCell().parameters()[i], 15)
-                        << "  " 
-                        << Dbl(system().mixture().stress(i), 15)
-                        << "\n";
+            if (flexibleParams_[i]) {
+               Log::file() 
+                      << " Cell Param  " << i << " = "
+                      << Dbl(system().unitCell().parameters()[i], 15)
+                      << " , stress = " 
+                      << Dbl(system().mixture().stress(i), 15)
+                      << "\n";
+            }
          }
       }
    }
