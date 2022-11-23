@@ -29,7 +29,7 @@ System{
   }
   AmIteratorFilm{
     maxItr         1000
-    epsilon        1.0e-11
+    epsilon        5.0e-12
     maxHist        50 
     isFlexible     1
     normalVecId          0

@@ -500,7 +500,7 @@ public:
          Log::file() << "diff    = " << diff << "\n";
          Log::file() << "epsilon = " << epsilon << "\n";
       }
-      TEST_ASSERT(diff < 1.0E-5);
+      TEST_ASSERT(diff < epsilon);
    }
 
    void testFreeEnergy() // test System::computeFreeEnergy with mask/h fields
