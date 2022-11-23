@@ -28,15 +28,15 @@ System{
     groupName      P_1
   }
   AmIteratorFilm{
-    maxItr       1000
-    epsilon      1e-12
-    maxHist      50 
-    isFlexible   1
+    maxItr         1000
+    epsilon        1.0e-11
+    maxHist        50 
+    isFlexible     1
     normalVecId          0
     interfaceThickness   0.08     
     wallThickness        0.2
-    chiBottom[ 10 10 ]
-    chiTop[ 0 0 ]
+    chiBottom[ 10.0 10.0 ]
+    chiTop[ 0.0 0.0 ]
   }
   LinearSweep{
     ns            5   
