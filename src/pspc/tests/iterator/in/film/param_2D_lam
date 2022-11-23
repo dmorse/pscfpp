@@ -28,15 +28,16 @@ System{
     groupName      p_2_m_m
   }
   AmIteratorFilm{
-    maxItr           2000
-    epsilon          5.0e-8
-    maxHist          50 
-    isFlexible       1
-    flexibleParams       1  1
+    maxItr               2000
+    epsilon              5.0e-8
+    maxHist              50 
+    verbose              1
+    isFlexible           1
+    flexibleParams       1   1
     normalVecId          1
     interfaceThickness   0.15     
     wallThickness        0.3
-    chiBottom[ 20.0 0.0 ]
-    chiTop[    20.0 0.0 ]
+    chiBottom[  20.0  0.0  ]
+    chiTop[  20.0  0.0  ]
   }
 }

@@ -456,8 +456,8 @@ public:
       system.writeWBasis("out/w_2D.bf");
      
       double epsilon = 1.0E-5;
-      //double diff = bComparison.maxDiff();
-      double diff = bComparison.rmsDiff();
+      double diff = bComparison.maxDiff();
+      //double diff = bComparison.rmsDiff();
       if (diff > epsilon) {
          std::cout   << "\n";
          std::cout   << "diff    = " << diff << "\n";
