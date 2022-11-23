@@ -12,6 +12,7 @@
 #include <pspc/System.h>
 #include <pscf/inter/Interaction.h>
 #include <util/global.h>
+#include <cmath>
 
 namespace Pscf{
 namespace Pspc{
@@ -83,23 +84,28 @@ namespace Pspc{
    {
       const int n = a.capacity();
       UTIL_CHECK(b.capacity() == n);
+      double value;
       double product = 0.0;
       for (int i = 0; i < n; i++) {
+         value = a[i];
+         UTIL_CHECK(!std::isnan(value));
          product += a[i] * b[i];
       }
       return product;
    }
 
-
    // Compute and return maximum element of a vector.
    template <int D>
-   double AmIterator<D>::maxAbs(DArray<double> const & hist)
+   double AmIterator<D>::maxAbs(DArray<double> const & a)
    {
-      const int n = hist.capacity();
+      const int n = a.capacity();
       double max = 0.0;
+      double value;
       for (int i = 0; i < n; i++) {
-         if (fabs(hist[i]) > max) {
-            max = fabs(hist[i]);
+         value = a[i];
+         UTIL_CHECK(!std::isnan(value));
+         if (fabs(value) > max) {
+            max = fabs(value);
          }
       }
       return max;
