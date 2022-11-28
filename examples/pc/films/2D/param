@@ -10,12 +10,12 @@ System{
       type    linear
       nBlock  2
       blocks[
-              0  0.4
-              1  0.6
+              0  0.5
+              1  0.5
       ]
       phi     1.0
     }
-    ds   0.01
+    ds   0.005
   }
   Interaction{
     chi(  
@@ -23,22 +23,19 @@ System{
     )
   }
   Domain{
-    mesh           64    64
-    lattice        rectangular 
-    groupName      p_1
+    mesh           48    96
+    lattice        rectangular
+    groupName      p_2_m_m
   }
   AmIteratorFilm{
-    maxItr       2000
+    maxItr       1000
     epsilon      1e-6
     maxHist      50 
     isFlexible   1
-    flexibleParams       1    0
     normalVecId          1
-    interfaceThickness   0.08     
-    wallThickness        0.25
-    chiBottom[ 20 0 ]
-    chiTop[ 20 0 ]
+    interfaceThickness   0.2     
+    wallThickness        0.4
+    chiBottom[   5  0  ]
+    chiTop[      5  0  ]
   }
 }
-
-    unitCell       rectangular    2.0    2.0

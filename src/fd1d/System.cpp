@@ -280,7 +280,12 @@ namespace Fd1d
       while (readNext) {
 
          inBuffer >> command;
-         Log::file() << command;
+
+         if (inBuffer.eof()) {
+            break;
+         } else {
+            Log::file() << command;
+         }
 
          if (command == "FINISH") {
             Log::file() << std::endl;
@@ -292,6 +297,7 @@ namespace Fd1d
          } else
          if (command == "COMPUTE") {
             // Solve the modified diffusion equation, without iteration
+            Log::file() << std::endl;
             compute();
          } else
          if (command == "ITERATE") {

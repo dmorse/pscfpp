@@ -34,10 +34,12 @@ namespace Pspg
 
    public:
 
+      #if 0
       /**
       * Default constructor.
       */
       Iterator();
+      #endif
 
       /**
       * Constructor.
@@ -52,11 +54,6 @@ namespace Pspg
       ~Iterator();
 
       /**
-      * Setup iterator.
-      */
-      virtual void setup() = 0;
-
-      /**
       * Iterate to solution.
       *
       * \param isContinuation  true iff continuation within a sweep
@@ -64,19 +61,20 @@ namespace Pspg
       */
       virtual int solve(bool isContinuation) = 0;
 
-      /// Return whether the unit cell is flexible during iteration.
-      inline bool isFlexible() {return isFlexible_;}
+      /**
+      * Is the unit cell flexible (true) or rigid (false).
+      */
+      bool isFlexible() const;
 
    protected:
+
+      /// Is the unit cell flexible during iteration?
+      bool isFlexible_;
 
       /**
       * Return reference to parent system.
       */
-      System<D>& system() 
-      {  return *sysPtr_;}
-
-      /// Is the unit cell flexible during iteration?
-      bool isFlexible_;
+      System<D>& system();
 
    private:
 
@@ -85,18 +83,25 @@ namespace Pspg
       
    };
 
-   template<int D>
-   inline Iterator<D>::Iterator()
-   {  setClassName("Iterator"); }
-
+   // Constructor
    template<int D>
    inline Iterator<D>::Iterator(System<D>& system)
-   : sysPtr_(&system)
+   : isFlexible_(false),
+     sysPtr_(&system)
    {  setClassName("Iterator"); }
 
+   // Destructor
    template<int D>
    inline Iterator<D>::~Iterator()
    {}
+
+   template<int D>
+   inline bool Iterator<D>::isFlexible() const
+   {  return isFlexible_; }
+
+   template<int D>
+   inline System<D>& Iterator<D>::system() 
+   {  return *sysPtr_; }
 
 } // namespace Pspg
 } // namespace Pscf

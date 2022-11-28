@@ -4,8 +4,8 @@ AmIteratorFilm{
   maxHist      50 
   isFlexible   1
   normalVecId          2
-  interfaceThickness   0.08     
-  wallThickness        0.2
+  interfaceThickness   0.2     
+  wallThickness        0.4
   chiBottom[ 3 0 ]
   chiTop[ 3 0 ]
 }

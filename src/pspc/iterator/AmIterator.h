@@ -63,6 +63,7 @@ namespace Pspc
       using ParamComposite::readOptional;
       using ParamComposite::readOptionalFSArray;
       using ParamComposite::setClassName;
+      using AmIteratorTmpl< Iterator<D>, DArray<double> >::verbose;
       using Iterator<D>::system;
       using Iterator<D>::isFlexible_;
       using Iterator<D>::flexibleParams_;

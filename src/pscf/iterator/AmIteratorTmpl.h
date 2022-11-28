@@ -26,9 +26,9 @@ namespace Pscf {
    * Anderson mixing is an algorithm for solving a system of N nonlinear
    * equations of the form r_{i}(x) = 0 for i = 0, ..., N-1, where x
    * denotes a vector or array of unknown coordinate values. A vector 
-   * of array of unknowns is referred here a "field" vector, while a 
+   * of array of unknowns is referred here the "field" vector, while a 
    * vector or array of values of the errors r_{0},..., r_{N-1} is 
-   * referred to as a residual vector.
+   * referred to as the residual vector.
    *
    * The type T is the type of the data structure used to store both 
    * field and residual vectors.
@@ -76,11 +76,22 @@ namespace Pscf {
       using ParamComposite::readOptional;
 
       /**
-      * Read and validate the optional errorType parameter.
+      * Read and validate the optional errorType string parameter.
+      *
+      * Virtual to allow extension of allowed errorType string values.
       *
       * \param in input filestream
       */
       void virtual readErrorType(std::istream& in);
+
+      /**
+      * Find the L2 norm of a vector. 
+      *
+      * The default implementation calls dotProduct internally. 
+      *
+      * \param hist residual vector
+      */
+      virtual double norm(T const & hist);
 
       /**
       * Allocate memory required by AM algorithm, if necessary.
@@ -89,6 +100,39 @@ namespace Pscf {
       * function does nothing and returns.
       */
       void allocateAM();
+
+      /**
+      * Clear memory from history and basis vector containers.
+      */
+      virtual void clear();
+
+      /**
+      * Compute and return error used to test for convergence.
+      *
+      * \param verbose  verbosity level of output report
+      * \return error  measure used to test for convergence.
+      */
+      virtual double computeError(int verbose);
+
+      /**
+      * Return the current residual vector by const reference.
+      */
+      T const & residual() const;
+
+      /**
+      * Return the current field or state vector by const reference.
+      */
+      T const & field() const;
+
+      /**
+      * Verbosity level.
+      */
+      int verbose() const;
+
+      /**
+      * Have data structures required by the AM algorithm been allocated?
+      */
+      bool isAllocatedAM() const;
 
    private:
 
@@ -100,11 +144,14 @@ namespace Pscf {
       /// Free parameter for minimization.
       double lambda_;
 
-      /// Number of previous steps to use to compute next state. 
-      int nHist_;
+      /// Number of basis vectors defined as differences.
+      int nBasis_;
 
-      /// Maximum number of previous states to retain.
+      /// Maximum number of basis vectors
       int maxHist_;
+
+      /// Current iteration counter.
+      int itr_;
 
       /// Maximum number of iterations to attempt.
       int maxItr_;
@@ -112,8 +159,11 @@ namespace Pscf {
       /// Number of elements in field or residual vectors.
       int nElem_; 
 
-      /// Boolean indicating whether the calculation has diverged to NaN.
-      bool diverged_;
+      /// Verbosity level.
+      int verbose_;
+
+      /// Output summary of timing results?
+      bool outputTime_;
 
       /// Has the allocate function been called.
       bool isAllocated_;
@@ -151,7 +201,7 @@ namespace Pscf {
       // --- Non-virtual private functions (implemented here) ---- //
 
       /**
-      * Compute the coefficients that would minimize residual L2 norm.
+      * Compute optimal coefficients of residual basis vectors.
       */
       void computeResidCoeff();
 
@@ -169,22 +219,14 @@ namespace Pscf {
       // --- Private virtual functions with default implementations --- //
 
       /**
-      * Find the L2 norm of a vector (calls dotProduct internally).
-      *
-      * \param hist residual vector
-      */
-      virtual double norm(T const & hist);
-
-      /**
       * Initialize just before entry to iterative loop.
       *
       * This function is called by the solve method just before entering
-      * the loop over iterations. It must call the protected allocateAM()
-      * to allocate memory required by the AM algorithm. The default
-      * implementation just calls allocateAM(). Re-implementations by
-      * subclasses may add additional operations.
+      * the loop over iterations. 
+      *
+      * \param isContinuation true iff continuation within a sweep
       */ 
-      virtual void setup();
+      virtual void setup(bool isContinuation);
      
       /**
       * Update the U matrix.
@@ -207,25 +249,13 @@ namespace Pscf {
       virtual void updateV(DArray<double> & v, T const & resCurrent, 
                            RingBuffer<T> const & resBasis, int nHist);
       
-      /**
-      * Check if solution is converge within specified tolerance.
-      *
-      * \return true if error < epsilon and false if error >= epsilon
-      */
-      virtual bool isConverged();
-
-      /**
-      * Clean up after a call to solve(), enabling future calls to solve.
-      */
-      virtual void cleanUp();
-
       // --- Pure virtual methods for doing AM iterator math --- //
 
       /**
-      * Set one field equal to another.
+      * Set one vector equal to another.
       *
-      * \param a the field to be set (lhs of assignment)
-      * \param b the field value to assign (rhs of assignment)
+      * \param a the vector to be set (lhs of assignment)
+      * \param b the vector value to assign (rhs of assignment)
       */
       virtual void setEqual(T& a, T const & b) = 0;
 
@@ -290,7 +320,11 @@ namespace Pscf {
       virtual bool hasInitialGuess() = 0;
      
       /** 
-      * Compute and retur the number of residual or field vector elements.
+      * Compute and return the number of residual or field vector elements.
+      *
+      * The private variable nElem_ is assigned the return value of this 
+      * function on entry to allocateAM to set the number of elements of
+      * the residual and field vectors.
       */
       virtual int nElements() = 0;
 
@@ -303,18 +337,22 @@ namespace Pscf {
 
       /**
       * Run a calculation to update the system state.
+      *
+      * This function normally solves the modified diffusion equations,
+      * calculates monomer concentration fields, and computes stresses 
+      * if appropriate. 
       */
       virtual void evaluate() = 0;
 
       /**
-      * Compute residual vector.
+      * Compute the residual vector from the current system state.
       *
       * \param resid current residual vector.
       */
       virtual void getResidual(T& resid) = 0;
 
       /**
-      * Update the system with a passed in trial field.
+      * Update the system with a passed in trial field vector.
       *
       * \param newGuess new field vector (input)
       */
@@ -326,7 +364,35 @@ namespace Pscf {
       virtual void outputToLog() = 0;
 
    };
-   
+  
+   /*
+   * Return the current residual vector by const reference.
+   */
+   template <typename Iterator, typename T>
+   T const & AmIteratorTmpl<Iterator,T>::residual() const
+   {  return resHists_[0]; }
+
+   /*
+   * Return the current state vector by const reference.
+   */
+   template <typename Iterator, typename T>
+   T const & AmIteratorTmpl<Iterator,T>::field() const
+   {  return fieldHists_[0]; }
+
+   /*
+   * Should the log output be verbose?
+   */
+   template <typename Iterator, typename T>
+   int AmIteratorTmpl<Iterator,T>::verbose() const
+   {  return verbose_; }
+
+   /*
+   * Has memory required by AM algorithm been allocated?
+   */
+   template <typename Iterator, typename T>
+   bool AmIteratorTmpl<Iterator,T>::isAllocatedAM() const
+   {  return isAllocated_; }
+
 }
 #include "AmIteratorTmpl.tpp"
 #endif
