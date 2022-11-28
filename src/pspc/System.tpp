@@ -408,7 +408,12 @@ namespace Pspc
       while (readNext) {
 
          in >> command;
-         Log::file() << command <<std::endl;
+
+         if (in.eof()) {
+            break;
+         } else {
+            Log::file() << command << std::endl;
+         }
 
          if (command == "FINISH") {
             Log::file() << std::endl;
