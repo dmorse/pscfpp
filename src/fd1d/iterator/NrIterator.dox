@@ -60,7 +60,7 @@ chemical potential field for monomers of type i, \f$ \xi \f$ is a
 Langrange multiplier pressure field, and where all fields are evaluated 
 at the same location (i.e., the same grid point).
 The first \f$ M \f$ residuals at each grid point, which we denote by
-\f$ r_{0}, \ldots, r_{N_{\rm m} - 2} \f$, are given by differences 
+\f$ r_{0}, \ldots, r_{M - 2} \f$, are given by differences 
 \f[
   r_{i} = g_{i+1} - g_{0}
 \f]
@@ -73,17 +73,26 @@ The last residual at each grid point is given by the difference
 \f]
 between the sum of volume fractions and unity.
 
-In canonical ensemble (i.e., when a value of phi rather than mu is specified
-for every molecular species, giving a closed system) the spatial average of 
-the sum of volume fractions of all species, averaged over all grid points, 
-can be shown to vanish exactly by construction. This means that, in this 
-case, one of the incompressibility constraints is redundant. In the same 
-case, the solution of the resulting problem is also not unique, becase the 
-residual equations are invariant by a shift in the Lagrange multiplier field 
-at all grid point points by any spatially homgeneous constant. To remove both 
-problems, in this case, the incompressibility constraint at the last grid 
-point is replaced by a requirement that the w field value for the last 
-monomer type must equal zero at this grid point by convention.
+\section fd1d_NrIterator_canonical_sec Closed Systems (Canonical Ensemble)
+
+The residual equations must be modified slightly for the case in which 
+a value of phi rather than mu is specified for every molecular species, 
+giving a closed system or a canonical statistical mechanical ensemble.
+In this case, it may be shown that the solution of the modified diffusion
+equation yields concentration fields for which the spatial average of 
+the sum of volume fractions of all species, averaged over the domain
+volume, is always exactly equal to 1, for any choice of w fields. This 
+means that, in this case, one of the incompressibility constraints is 
+redundant, since the incompressibility constraint at the last grid point
+would automatically satisfied if the constraints at the other points 
+were all satisfied. In addition, in this case, the solution of the SCF 
+equations is also not unique, because the residual values can be shown 
+to be invariant under a shift in the Lagrange multiplier field at all 
+grid point points by any spatially homgeneous constant. To address both 
+problems, in the case of a closed system, the incompressibility 
+constraint at the last grid point is replaced by a requirement that the 
+w field value for the last monomer type must equal zero at this grid 
+point, by convention.
 
 */
 }

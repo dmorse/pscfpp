@@ -170,8 +170,20 @@ associated with each flexible unit cell parameter. The residual
 \f]
 where \f$ f \f$ is the free energy per monomer (i.e., the free 
 energy density times the monomer reference volume) in units in 
-which \f$ kT = 1 \f$, while \f$F\f$ is an arbitrary prefactor whose 
-value is given by the parameter scaleStress (which is 10.0 by 
-default).
+which \f$ kT = 1 \f$, while \f$S\f$ is an arbitrary prefactor 
+whose value is given by the parameter scaleStress. (The factor
+\f$S\f$ is set to 10.0 by default).
+
+\section pspc_AmIterator_closed_sec Closed Systems (Canonical Ensemble)
+
+A slight modification of the residual definition is required in the case 
+case when a value of phi rather than mu is specified for every molecular 
+species, giving a closed system, or a canonical statistical ensemble.  In 
+this case, the solution of the SCF problem is not unique, becase the values
+of the residuals defined above can be shown to be invariant under a shift 
+in all of the chemical potential fields at all grid point points by any 
+spatially homgeneous constant.  To obtain a unique solution, in this case
+the spatial average of the Laplace multiplier field \f$ \xi({\bf r}) \f$ 
+is implicitly set to zero by convention.
 
 */
