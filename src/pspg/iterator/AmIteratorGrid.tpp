@@ -19,20 +19,24 @@ namespace Pspg{
 
    using namespace Util;
 
+   // Constructor
    template <int D>
    AmIteratorGrid<D>::AmIteratorGrid(System<D>& system)
    : Iterator<D>(system)
    {}
 
+   // Destructor
    template <int D>
    AmIteratorGrid<D>::~AmIteratorGrid()
    {}
 
+   // Read parameter file block 
    template <int D>
    void AmIteratorGrid<D>::readParameters(std::istream& in)
    {
       // Call parent class readParameters 
       AmIteratorTmpl<Iterator<D>,FieldCUDA>::readParameters(in);
+      AmIteratorTmpl<Iterator<D>,FieldCUDA>::readErrorType(in);
 
       // Default parameter values
       isFlexible_ = 0;
@@ -43,48 +47,45 @@ namespace Pspg{
       readOptional(in, "scaleStress", scaleStress_);
    }
 
+   // Virtual functions used to implement AM algorithm
 
    template <int D>
-   double AmIteratorGrid<D>::findNorm(FieldCUDA const & hist) 
+   void AmIteratorGrid<D>::setEqual(FieldCUDA& a, FieldCUDA const & b)
    {
-      const int n = hist.capacity();
-      double normResSq = (double)gpuInnerProduct(hist.cDField(), hist.cDField(), n);
-
-      return sqrt(normResSq);
-   }
-
-   template <int D>
-   double AmIteratorGrid<D>::findMaxAbs(FieldCUDA const & hist)
-   {
-      // use parallel reduction to find maximum.
-
-      // number of data points, each step of the way.
-      int n = hist.capacity();
-      cudaReal max = gpuMaxAbs(hist.cDField(), n);
-
-      return (double)max;
-
-   }
-
-   template <int D>
-   void AmIteratorGrid<D>::updateBasis(RingBuffer<FieldCUDA> & basis, 
-                                   RingBuffer<FieldCUDA> const & hists)
-   {
-      // Make sure at least two histories are stored
-      UTIL_CHECK(hists.size() >= 2);
-
-      const int n = hists[0].capacity();
-      FieldCUDA newbasis;
-      newbasis.allocate(n);
-
       // GPU resources
       int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+      ThreadGrid::setThreadsLogical(a.capacity(), nBlocks, nThreads);
+      
+      UTIL_CHECK(b.capacity() == a.capacity());
+      assignReal<<<nBlocks, nThreads>>>(a.cDField(), b.cDField(), a.capacity());
+   }
 
-      pointWiseBinarySubtract<<<nBlocks,nThreads>>>
-            (hists[0].cDField(),hists[1].cDField(),newbasis.cDField(),n);
+   template <int D>
+   double AmIteratorGrid<D>::dotProduct(FieldCUDA const & a, 
+                                        FieldCUDA const& b) 
+   {
+      const int n = a.capacity();
+      UTIL_CHECK(b.capacity() == n);
+      double product = (double)gpuInnerProduct(a.cDField(), b.cDField(), n);
+      return product;
+   }
 
-      basis.append(newbasis);
+   template <int D>
+   double AmIteratorGrid<D>::maxAbs(FieldCUDA const & a)
+   {
+      int n = a.capacity();
+      cudaReal max = gpuMaxAbs(a.cDField(), n);
+      return (double)max;
+   }
+
+   #if 0
+   template <int D>
+   double AmIteratorGrid<D>::norm(FieldCUDA const & a) 
+   {
+      const int n = a.capacity();
+      double normResSq;
+      normResSq = (double)gpuInnerProduct(a.cDField(), a.cDField(), n);
+      return sqrt(normResSq);
    }
 
    template <int D>
@@ -92,6 +93,8 @@ namespace Pspg{
    AmIteratorGrid<D>::computeUDotProd(RingBuffer<FieldCUDA> const & resBasis, 
                                   int n, int m)
    {
+      const int n = resBasis[n].capacity();
+      UTIL_CHECK(resBasis[m].capacity() == n);
       return (double)gpuInnerProduct(resBasis[n].cDField(),
                                      resBasis[m].cDField(), 
                                      resBasis[n].capacity());
@@ -99,8 +102,8 @@ namespace Pspg{
 
    template <int D>
    double AmIteratorGrid<D>::computeVDotProd(FieldCUDA const & resCurrent, 
-                                         RingBuffer<FieldCUDA> const & resBasis, 
-                                         int m)
+                                       RingBuffer<FieldCUDA> const & resBasis, 
+                                       int m)
    {
       return (double)gpuInnerProduct(resCurrent.cDField(), 
                                      resBasis[m].cDField(), 
@@ -140,16 +143,27 @@ namespace Pspg{
          v[m] = computeVDotProd(resCurrent,resBasis,m);
       }
    }
+   #endif
 
    template <int D>
-   void AmIteratorGrid<D>::setEqual(FieldCUDA& a, FieldCUDA const & b)
+   void AmIteratorGrid<D>::updateBasis(RingBuffer<FieldCUDA> & basis, 
+                                   RingBuffer<FieldCUDA> const & hists)
    {
+      // Make sure at least two histories are stored
+      UTIL_CHECK(hists.size() >= 2);
+
+      const int n = hists[0].capacity();
+      FieldCUDA newbasis;
+      newbasis.allocate(n);
+
       // GPU resources
       int nBlocks, nThreads;
-      ThreadGrid::setThreadsLogical(a.capacity(), nBlocks, nThreads);
-      
-      UTIL_CHECK(b.capacity() == a.capacity());
-      assignReal<<<nBlocks, nThreads>>>(a.cDField(), b.cDField(), a.capacity());
+      ThreadGrid::setThreadsLogical(n, nBlocks, nThreads);
+
+      pointWiseBinarySubtract<<<nBlocks,nThreads>>>
+            (hists[0].cDField(),hists[1].cDField(),newbasis.cDField(),n);
+
+      basis.append(newbasis);
    }
 
    template <int D>

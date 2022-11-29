@@ -1,33 +1,53 @@
 #!/usr/bin/env python
 
+# Imports
 import math
+import numpy as np
 
+# Number of A/B interfaces in unit cell
+n_interfaces = 2
+
+# Get data from "preamble" file
 rgrid = open('preamble','r')
 lines = list(rgrid)
 rgrid.close()
-grid = list(map(int,lines[14].split()))
+grid_new = list(map(int,lines[14].split())) 
 params = list(map(float,lines[8].split()))
 
+# Get data from param file
 paramfile = open('../param','r')
 paramlines = list(paramfile)
 paramfile.close()
-T = float(paramlines[37].split()[1])
+normalVec = int(paramlines[34].split()[1])
+t = float(paramlines[35].split()[1])
+T = float(paramlines[36].split()[1])
+L = params[normalVec]
 
+# Setup to loop through gridpoints
 linenum = 15
 line = '    {:.9f}    {:.9f}\n'
 
-for y in range(0,grid[1]):
-    for x in range(0,grid[0]):
-        y_coord = y * params[1] / grid[1]
-        x_coord = x * params[0] / grid[0]
-        if y_coord < (T/2) or y_coord > (params[1] - (T/2)):
-            lines.append(line.format(0,0))
-        elif x_coord < 0.4 or (1 < x_coord and x_coord < 1.4): 
-            lines.append(line.format(0.8,0.2))
-        else:
-            lines.append(line.format(0.2,0.8))
+# Loop through gridpoints
+for y in range(0,int(grid_new[1])):
+    for x in range(0,grid_new[0]):
+        
+        # Get x and y coords at this gridpoint
+        x_coord = x * params[0] / grid_new[0]
+        y_coord = y * params[1] / grid_new[1]
+
+        # Calculate wall and polymer volume fractions
+        rhoW = 0.5*(1+np.tanh(4*(((.5*(T-L))+np.abs(y_coord-(L/2)))/t)));
+        rho = 1-rhoW
+
+        # Estimate A and B compositions using a cosine
+        rhoB = 0.4 * np.cos(x_coord * n_interfaces * np.pi / params[0]) + 0.5
+        rhoA = 1-rhoB
+
+        # Add data to lines list
+        lines.append(line.format(rhoA*rho,rhoB*rho))
         linenum += 1
 
+# Write lines list to file
 rgrid = open('c.rf','w')
 rgrid.writelines(lines)
 rgrid.close()

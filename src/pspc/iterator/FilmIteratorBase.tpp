@@ -176,6 +176,8 @@ namespace Pspc
       UTIL_CHECK(wallThickness() > interfaceThickness());
       UTIL_CHECK(system().mask().isAllocated());
 
+      if (ungenerated_) ungenerated_ = false;
+
       // Ensure that unit cell is compatible with wall
       checkLatticeVectors();
 

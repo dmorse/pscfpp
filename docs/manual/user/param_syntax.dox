@@ -288,7 +288,7 @@ For example, the row format for elements of 2 x 3 matrix named
 In this example, the value of the matrix element in row 0 and column 
 1 is 23.0, while the value in row 1 and column 2 is 21.3.
 
-\section user_param_syntax_optional_section Optional Elements
+\section user_param_syntax_optional_section Optional Blocks and Parameters
 
 Each labelled element in a parameter file (i.e, each block or parameter) 
 may be either required or optional. Most elements required. 
@@ -300,11 +300,11 @@ error message to standard output that explains what label it expected
 to find.
 
 The entry for an optional block or parameter may be either be present
-or absent.  If the label associated with an optional block or parameter 
-is absent, the program will continue on and try to instead match the 
-label that was found at that location with the label associated with 
-the next expected element.  Optional parameters that are omitted from 
-a parameter file are assigned default values. 
+in the parameter file or absent.  If the label associated with an optional 
+block or parameter is absent, the program will continue on and try to 
+instead match the label that was found at that location with the label 
+associated with the next expected element.  Optional parameters that 
+are omitted from a parameter file are usually assigned default values. 
 
 When echoing of the parameter file is enabled, by invoking a program 
 with the -e command line option, the name of each omitted optional 
@@ -312,13 +312,20 @@ parameter is echoed to standard output followed by the string "[absent]"
 to indicate that it was omitted.
 
 Some parameters or blocks in a parameter file may also be required or 
-allowed only if parameters that have been read previously take on 
-specific values.  Generally, the PSCF parameter file format does not 
-require or allow entry of parameters that are already known to be 
-meaningless or irrelevent on the basis of parameter values that appear 
-earlier in the parameter file. For example, Solvent blocks may appear
-in the Mixture block only if the optional parameter nSolvent has been
-assigned a positive value. 
+allowed only if other parameters that appear earlier in the file are
+present or have been assigned particular values.  Generally, the PSCF 
+parameter file format does not require or allow entry of parameters 
+that are already known to be meaningless or irrelevent on the basis 
+of the information given in earlier parts of the parameter file. 
+
+For example, the Mixture block of any PSCF program contains an optional
+parameter nSolvent that may appear immediately after the parameter 
+nPolymer. The parameter nSolvent is assigned a default value of zero 
+if it is absent. If nSolvent is present and is assigned a nonzero value,
+then the Mixture block must contain a corresponding number of Solvent 
+blocks immediately after the Polymer blocks. Solvent blocks may not 
+appear, however, if nSolvent is set to zero either explicitly or by 
+default. 
 
 \section user_param_syntax_selectable_section Selectable Blocks
 
@@ -326,7 +333,10 @@ Some blocks in a PSCF parameter file are "selectable".  A selectable
 block is one that may contain the initial label and format appropriate 
 to any of several blocks that are associated with C++ classes that 
 serve analogous functions but that are based on somewhat different 
-algorithms. 
+algorithms.  As already noted, the block that represents an iterator 
+in a PSCF program is always a selectable block. The use of a selectable 
+block for the iterator allows users to specify a choice from among 
+several different available iterator algorithms. 
 
 The users choice of one of several valid options for a selectable block 
 is specified by the label used in the opening line for the block, which 
@@ -334,62 +344,47 @@ contains a label for the block immediately followed by an opening curly
 bracket. That block label is compared to a list of label strings for
 available options.  If the label in the parameter files matches one such
 string, the option corresponding to that label is selected. Different
-options for a selectable block may require different parameter file 
-formats and may require different parameters. The format of the body 
-of a selectable block must be consistent with the label in the first
-line. 
+options for a selectable block generally different parameter file 
+formats that may contain different parameters. The format of the body 
+of a selectable block must be that appropriate to the algorithm specified
+by the label in the first line of the block.
 
-As already noted, the block that represents an iterator in a PSCF 
-program is always a selectable block. The use of a selectable block 
-for iterators allows users to specify a choice from among several 
-different available iterator algorithms. A selectable block is also
-for "sweep" algorithms that perform continuation of solutions along 
-a sequence of points along a line through parameter space, as 
-discussed \ref user_param_sweep_page "here". 
-
-In a selectable parameter file block, the name of the desired subclass 
-is identified by the class name label that appears in the opening line 
-of the block.  The use of selectable blocks allows a user to choose at 
-run time from among several possible alternative algorithms or other 
-elements of a computation.
-
-In the above example, the NRIterator 
-block appears at a location at the program expects to find the name 
-of one of several possible subclasses of the Fd1d::Iterator base class, 
-which implement different iterator algorithms. The appearance of a block 
-that begins with the name "NRIterator" tells the program that the user 
-has selected a Newton-Raphsom iterator that is implemented by the class 
-Fd1d::NRIterator, which is a subclass of Fd1d::Iterator. Different 
-subclasses of Fd1d::Iterator implement different iteration algorithms,
-and generally require different input parameters, define different 
-parameter file block formats.
+A default choice is generally defined for each selectable block. The
+default choice may be selected either by using the generic name for 
+the type of element rather than the name for a specific algorithm. 
+In the example shown on the previous page, the default choice of a 
+iterator is a Newton-Raphson iterator that is implemented by a class 
+named NRIterator. Because it is the default choice, this algorithm may 
+be selected by using a parameter file in which the block begins either 
+with the generic label "Iterator" or the specific label "NrIterator". 
  
 <i> Technical comments (for users familiar with C++): </i>
 
 The implementation of selectable parameter file blocks in PSCF is
 based on C++ inheritance and polymorphism. The different options for 
 a selectable block are always implemented by different subclasses of 
-a common base class. The base class defines a common interface for 
+a common base class. The base class defines a shared C++ interface for 
 objects of the relevant type.  The generic name of the block in the
 parameter file (i.e., the name that can also be used as a label to 
-select the default option) is simply the name of the relevant base 
-class.  The parent object has a member variable which is a pointer
-to an instance of the base class.
+select the default option) is always the name of the relevant base 
+class.  The parent object (e.g., the System) has a member variable 
+which is a pointer to an instance of the base class.
 
 For example, different iteration algorithms for a particular PSCF
 program are subclasses of a base class named "Iterator", which defines
-a common interface for iteration algorithms. The parent System object 
-has a private member variable of type Iterator* that can point to an
-object of class Iterator.
+a common interface for iteration algorithms used by that program. The 
+parent System object has a private member variable of type Iterator* 
+that can point to an instance of any subclass of class Iterator.
 
 If the block label input for a selectable block matches the name of 
 an available subclass of the relevant base class (e.g., a subclass
-of Iterator), then an instance of the selected subclass is constructed.
-The address of that new object is also assigned to the base class pointer 
-owned by the parent class (i.e., the Iterator* pointer). 
-The "readParameters" member function of the new object is then invoked 
-to read the body of the selectable block, using a block format 
-appropriate to the chosen subclass. 
+of Iterator), then an instance of the selected subclass is constructed 
+after the opening line of the block is read and interpreted.  The address 
+of that new object is also assigned to the base class pointer owned by 
+the parent class (i.e., the Iterator* pointer variable owned by the 
+parent System).  The "readParameters" member function of the new object 
+is then invoked to read the body of the selectable block, using a block 
+format appropriate to the chosen subclass. 
 
 <BR>
 \ref user_param_example_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

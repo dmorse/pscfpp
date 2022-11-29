@@ -1,0 +1,38 @@
+System{
+  Mixture{
+     nMonomer  2
+     monomers  1.0  
+               1.0 
+     nPolymer  1
+     Polymer{
+        type    linear
+        nBlock  2
+        blocks  0  0.5
+                1  0.5
+        phi     1.0
+     }
+     ds   0.01
+  }
+  Interaction{
+     chi(
+        0  1    20.0
+     )
+  }
+  Domain{
+     mode planar
+     xMin 0.0
+     xMax 1.7
+     nx   101
+  }
+  Iterator{
+     epsilon   0.00000001
+  }
+  Sweep{
+     ns             10
+     baseFileName   sweep/
+     nParameter     1
+     parameters[
+        block   0   0   0.1
+     ]
+  }
+}

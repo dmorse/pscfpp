@@ -15,7 +15,7 @@ System{
       ]
       phi     1.0
     }
-    ds   0.01
+    ds   0.005
   }
   Interaction{
     chi(  
@@ -33,8 +33,8 @@ System{
     maxHist      50 
     isFlexible   1
     normalVecId          2
-    interfaceThickness   0.15     
-    wallThickness        0.3
+    interfaceThickness   0.2     
+    wallThickness        0.4
     chiBottom[  
                  0
                  0

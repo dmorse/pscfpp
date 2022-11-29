@@ -5,7 +5,7 @@
  * Distributed under the terms of the GNU General Public License.
  */
 
-#include "FdIterator.h"
+#include "BinaryRelaxIterator.h"
 #include <fd1d/System.h>
 #include <pscf/inter/Interaction.h>
 #include <util/misc/Log.h>
@@ -17,46 +17,35 @@ namespace Fd1d
 {
    using namespace Util;
 
-   // Default constructor
-   FdIterator::FdIterator()
-    : Iterator(),
-      epsilon_(0.0),
-      lambdaPlus_(0.0),
-      lambdaMinus_(0.0),
-      maxIterations_(200),
-      isAllocated_(false),
-      isCanonical_(true)
-   {  setClassName("FdIterator"); }
-
    // Constructor
-   FdIterator::FdIterator(System& system)
+   BinaryRelaxIterator::BinaryRelaxIterator(System& system)
     : Iterator(system),
       epsilon_(0.0),
       lambdaPlus_(0.0),
       lambdaMinus_(0.0),
-      maxIterations_(200),
+      maxIter_(200),
       isAllocated_(false),
       isCanonical_(true)
-   {  setClassName("FdIterator"); }
+   {  setClassName("BinaryRelaxIterator"); }
 
    // Destructor
-   FdIterator::~FdIterator()
+   BinaryRelaxIterator::~BinaryRelaxIterator()
    {}
 
    // Read parameter file block and allocate memory
-   void FdIterator::readParameters(std::istream& in)
+   void BinaryRelaxIterator::readParameters(std::istream& in)
    {
       UTIL_CHECK(domain().nx() > 0);
       read(in, "epsilon", epsilon_);
+      read(in, "maxIter", maxIter_);
       read(in, "lambdaPlus", lambdaPlus_);
       read(in, "lambdaMinus", lambdaMinus_);
-      read(in, "maxIterations", maxIterations_);
 
-      setup();
+      allocate();
    }
 
    // Allocate required memory (called by readParameters)
-   void FdIterator::setup()
+   void BinaryRelaxIterator::allocate()
    {
       if (isAllocated_) return;
       int nm = mixture().nMonomer();  // number of monomer types
@@ -78,7 +67,7 @@ namespace Fd1d
       isAllocated_ = true;
    }
  
-   void FdIterator::computeDW(Array<WField> const & wOld, 
+   void BinaryRelaxIterator::computeDW(Array<WField> const & wOld, 
                               Array<CField> const & cFields,
                               Array<WField> & dW,
                               double & dWNorm)
@@ -96,10 +85,12 @@ namespace Fd1d
          w0 = wOld[0][i];
          w1 = wOld[1][i];
          wm = w1 - w0;
-         dWp = lambdaPlus_ * (c1 + c0 - 1.0);
-         dWm = lambdaMinus_ * 0.5*( c0 - c1 - wm/chi);
+         dWp = c1 + c0 - 1.0;
+         dWm = 0.5*( c0 - c1 - wm/chi);
          dWpNorm += dWp*dWp;
          dWmNorm += dWm*dWm;
+         dWp *= lambdaPlus_;
+         dWm *= lambdaMinus_;
          dW[0][i] = dWp -  dWm;
          dW[1][i] = dWp + dWm;
       }
@@ -107,7 +98,7 @@ namespace Fd1d
       dWNorm = sqrt(dWNorm);
    }
 
-   void FdIterator::updateWFields(Array<WField> const & wOld,
+   void BinaryRelaxIterator::updateWFields(Array<WField> const & wOld,
                                   Array<WField> const & dW,
                                   Array<WField> & wNew)
    {
@@ -138,8 +129,7 @@ namespace Fd1d
 
    }
 
-
-   int FdIterator::solve(bool isContinuation)
+   int BinaryRelaxIterator::solve(bool isContinuation)
    {
       //Declare Timer
       Timer timerTotal;
@@ -183,7 +173,7 @@ namespace Fd1d
     
       // Iterative loop
       int i, j, k;
-      for (i = 0; i < maxIterations_; ++i) {
+      for (i = 0; i < maxIter_; ++i) {
          Log::file() << "iteration " << i
          << " , error = " << dWNorm_
          << std::endl;

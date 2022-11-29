@@ -51,11 +51,11 @@ can be found by following the links in the table below:
 
 \section user_param_pg_sweep_sec Sweep
 
-The default sweep algorithm for the pscf_pg programs is a general linear 
-sweep that can be invoked using a block that starts either with the 
-generic label Sweep or the specific label LinearSweep. The required 
-parameter file format has been described \ref user_param_sweep_linear_sec 
-"here". 
+The only sweep algorithm currently available for use with pspc_pg is a
+general linear sweep algorithm. This can be invoked by including a block 
+that starts either with the generic label Sweep or the specific label 
+LinearSweep.  The required parameter file format for a linear sweep has 
+been described \ref user_param_sweep_linear_sec "here". 
 
 
 <BR>

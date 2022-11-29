@@ -2,8 +2,8 @@
 
 // Subclasses of Iterator 
 #include "NrIterator.h"
-#include "FdIterator.h"
 #include "AmIterator.h"
+#include "BinaryRelaxIterator.h"
 
 namespace Pscf {
 namespace Fd1d {
@@ -31,8 +31,8 @@ namespace Fd1d {
       // Try to match classname
       if (className == "Iterator" || className == "NrIterator") {
          ptr = new NrIterator(*sysPtr_);
-      } else if (className == "FdIterator") {
-         ptr = new FdIterator(*sysPtr_);
+      } else if (className == "BinaryRelaxIterator") {
+         ptr = new BinaryRelaxIterator(*sysPtr_);
       } else if (className == "AmIterator") {
          ptr = new AmIterator(*sysPtr_);
       }

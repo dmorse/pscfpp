@@ -24,13 +24,16 @@ System{
      xMax 1.7
      nx   101
   }
-  Iterator{
-     epsilon   0.00000001
+  AmIterator{
+     maxItr       200
+     epsilon      1.0E-8
+     maxHist      50
+     verbose      1
   }
   Sweep{
-     ns            10
-     baseFileName  sweep/
-     nParameter    1
+     ns                   10
+     baseFileName         sweep/
+     nParameter           1
      parameters[
         block   0   0   0.1
      ]

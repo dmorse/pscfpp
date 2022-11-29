@@ -83,9 +83,11 @@ explained \ref developer_source_page "here".
 
 Some subdirectories of the pscfpp/src directory are maintained in separate 
 github repositories and are imported into the pscfpp repository as git 
-"submodules". (See chapter 7.11 of the Pro Git online book). Specifically, 
-the src/util and src/tests directories are submodules that contain clones 
-of the dmorse/util and dmorse/test repositories on github, respectively. 
+"submodules". (See 
+[chapter 7.11](https://git-scm.com/book/en/v2/Git-Tools-Submodules) of the 
+Pro Git online book). Specifically, the src/util and src/tests directories 
+are submodules that contain clones of the dmorse/util and dmorse/test 
+repositories on github, respectively. 
 
 The use of the "--recursive" option of the git clone command given above 
 should automatically create clones of these submodules in the appropriate 
@@ -95,8 +97,34 @@ using the "--recursive" option, however, would create a version of the
 pscfpp directory tree in which the src/util and src/tests directories 
 are empty. If you find yourself with a repository clone in which one or 
 both of these repositories is empty, you can either clone pscfpp again 
-with the recursive option, or read chapter 7.11 of the online Pro Git 
-book for instructions on how to manually fetch and update these submodules.
+with the recursive option, or initialize and update the submodules by calling
+\code
+> git submodule update --init
+\endcode
+
+Also note that git does not update submodules automatically when you switch
+to a different version or branch of the main software. Because of this, you
+may need to manually update the submodules if you switch to a different 
+version of PSCF, since different versions of this software are associated 
+with different versions of the submodules. An error will likely occur during 
+compilation of the software if any submodule is not properly updated. 
+
+You can check if you have the correct version of the submodules by running 
+"git status" from your pscfpp directory. If, for example, your util submodule
+is the wrong version, you will see the following output:
+\code
+# Changes not staged for commit:
+#   (use "git add <file>..." to update what will be committed)
+#   (use "git checkout -- <file>..." to discard changes in working directory)
+#
+#	modified:   src/util (new commits)
+\endcode
+This indicates that your submodule is different ("modified") from the version
+that is associated with your current version of PSCF. To update the submodule
+to the appropriate version, run 
+\code
+> git submodule update
+\endcode
 
 <BR>
 \ref install_require_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

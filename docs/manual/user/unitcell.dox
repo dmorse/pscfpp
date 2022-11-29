@@ -3,48 +3,48 @@
 \ref user_groups_page  (Next) 
 <BR>
 
-The input files for pscf_pcNd and pscf_pgNd use a standard format to 
-specify crystal systems types and unit cell parameters for periodic
-structures. The data required to describe a Bravai lattice is input
-on a single line with the general format
+The input files for pscf_pc and pscf_pg programs use a standard format 
+to specify crystal systems types and unit cell parameters for periodic
+structures. The data required to describe a Bravai lattice is input on
+a single line with the general format
 \code
-    latticeSystem   p[0] ... p[N-1]
+    lattice  p[0] ... p[N-1]
 \endcode
-in which latticeSystem denotes a string that identifies a particular
-a crystallographic lattice system (e.g., cubic, orthorhombic, etc) 
-and p[0] .... p[N-1] indicates a list of N parameters required to 
-specify the lengths and relative angles of the basis vectors for a 
-lattice of that type.  The number N of parameters required to fully
-describe the unit cell is different for different lattice systems.
-For example, a 3D cubic lattice can be specified by giving a single
-parameter, which is the length of any of the three orthogonal basis
-vectors, whereas 6 parameters are required to describe a 3D triclinic
-lattice.  
+in which "lattice" denotes a string that identifies a particular a 
+crystallographic lattice system (e.g., cubic, orthorhombic, etc) and 
+p[0] .... p[N-1] indicates a list of N parameters required to specify 
+the lengths and relative angles of the basis vectors for a lattice of 
+that type.  The number N of parameters required to fully describe the 
+unit cell is different for different lattice systems.  For example, a 
+3D cubic lattice can be specified by giving a single parameter, which 
+is the length of any of the three orthogonal basis vectors, whereas 6 
+parameters are required to describe a 3D triclinic lattice.  
 
-Because the pscf package requires the user to use different programs 
-to simulate systems of different dimensionality, it is not necessary 
-for this data format explicitly specify the dimensionality D of space. 
+Because the PSCF package requires the user to use different programs 
+to simulate systems of different dimensionality, it is not necessary for 
+this data format to explicitly specify the dimensionality D of space. 
 The value of D is known from which program is being used. The list of 
 allowed lattice system identifiers is different for systems that are
 periodic in 1, 2, or 3 spatial dimensions.
 
-<h3> 1D Systems </h3>
+\section user_unitcell_1D_sec 1D Systems 
 
 There is only possible Bravais lattice for a one dimensionally periodic
 system, which is referred to here as "lamellar". A 1D lamellar system
 only has one lattice parameter, which is the repeat distance along the
-direction in which the system is periodic, denoted here by d.
-The text representation of a unit cell for a lamellar phase with lattice 
-spacing of d = 5.6 in the chosen system of units would thus be
+direction in which the system is periodic, denoted here by d.  The text 
+representation of a unit cell for a lamellar phase with lattice spacing 
+of d = 5.6 in the chosen system of length units would thus be
 \code
     lamellar  5.6 
 \endcode
 
-<h3> 2D Systems </h3>
-There are 4 conventional 2D lattice systems (square, hexagonal, rectangular,
-and oblique). The pscf code also allows the user to specify a "rhombic"
-unit cell, which is an oblique unit cell in which the two basis vectors
-have equal magnitude. 
+\section user_unitcell_2D_sec 2D Systems 
+
+There are 4 conventional 2D lattice systems (square, hexagonal, 
+rectangular, and oblique). The pscf code also allows the user to specify 
+a "rhombic" unit cell, which is an oblique unit cell in which the two 
+basis vectors have equal magnitude. 
 
 The names of the lattice systems, and the list of parameter required by
 each is listed below. Throughout, let a and b denote the lengths of the
@@ -92,11 +92,12 @@ provided in radians, and not in degrees.
   </tr> 
 </table>
 
-<h3> 3D Systems </h3>
+\section user_unitcell_3D_sec 3D Systems 
 
-In what follows we use the letters a, b, c both to denote lengths of the three basis vectors and as labels to identify the actual vectors.
-Different definitions of angles are used for different lattice systems, as
-discussed below:
+In what follows we use the letters a, b, c both to denote lengths of the 
+three Bravais lattice basis vectors and as labels to identify the actual 
+vectors.  Different definitions of angles are used for different lattice 
+systems, as discussed below:
 <table>
   <tr> 
     <td> <b>lattice system  </b> </td>
@@ -153,7 +154,8 @@ discussed below:
     <td> a, b, c, phi, theta, gamma </td>
     <td> 3 non-orthogonal basis vectors of uequal lengths a, b, and c.
          Gamma is the angle between a and b.
-         Theta is the angle between c and a vector z that is perpendicular to a and b.
+         Theta is the angle between c and a vector z that is perpendicular 
+         to a and b.
          Phi is the angle between the a-z and c-z planes. </td>
   </tr> 
 </table>

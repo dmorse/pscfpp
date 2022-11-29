@@ -15,7 +15,7 @@ System{
       ]
       phi     1.0
     }
-    ds   0.01
+    ds   0.005
   }
   Interaction{
     chi(  
@@ -29,24 +29,22 @@ System{
   }
   AmIteratorFilm{
     maxItr       2000
-    epsilon      1e-9
-    maxHist      50 
+    epsilon      1e-10
+    maxHist      25 
     isFlexible   0
     normalVecId          0
-    interfaceThickness   0.15     
-    wallThickness        0.3
+    interfaceThickness   0.2     
+    wallThickness        0.4
     chiBottom[ 20 0 ]
     chiTop[    20 0 ]
   }
   LinearSweep{
-    ns            40  
+    ns            20  
     baseFileName  out/
     writeRhoRGrid 1
     nParameter    1   
     parameters[
-                  cell_param  0  1.0
+                  cell_param  0  0.5
     ]   
   }
 }
-
-    unitCell       lamellar    2.5

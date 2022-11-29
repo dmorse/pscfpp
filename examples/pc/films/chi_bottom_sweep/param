@@ -15,7 +15,7 @@ System{
       ]
       phi     1.0
     }
-    ds   0.01
+    ds   0.005
   }
   Interaction{
     chi(  
@@ -23,8 +23,8 @@ System{
     )
   }
   Domain{
-    mesh           64    96
-    lattice        rectangular  
+    mesh           48    96
+    lattice        rectangular
     groupName      p_m
   }
   AmIteratorFilm{
@@ -33,8 +33,8 @@ System{
     maxHist      50 
     isFlexible   1
     normalVecId          1
-    interfaceThickness   0.15     
-    wallThickness        0.3
+    interfaceThickness   0.2     
+    wallThickness        0.4
   }
   LinearSweep{
     ns            40
@@ -46,5 +46,3 @@ System{
     ]
   }
 }
-
-    unitCell       rectangular    1.6    3.0

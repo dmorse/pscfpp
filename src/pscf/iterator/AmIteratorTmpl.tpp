@@ -11,6 +11,7 @@
 #include <pscf/inter/Interaction.h>
 #include <util/containers/FArray.h>
 #include <util/format/Dbl.h>
+#include <util/format/Int.h>
 #include <util/misc/Timer.h>
 #include <cmath>
 
@@ -19,17 +20,23 @@ namespace Pscf
 
    using namespace Util;
 
+   // Public member functions
+
    /*
    * Constructor
    */
    template <typename Iterator, typename T>
    AmIteratorTmpl<Iterator,T>::AmIteratorTmpl()
-    : epsilon_(0),
+    : errorType_("relNormResid"),
+      epsilon_(0),
       lambda_(0),
-      nHist_(0),
+      nBasis_(0),
       maxHist_(0),
+      itr_(0),
+      maxItr_(0),
       nElem_(0),
-      diverged_(false),
+      verbose_(0),
+      outputTime_(false),
       isAllocated_(false)
    {  setClassName("AmIteratorTmpl"); }
 
@@ -52,7 +59,176 @@ namespace Pscf
       maxHist_ = 50;
       readOptional(in, "maxHist", maxHist_);
 
-      errorType_ = "relNormResid"; // default type of error
+      verbose_ = 0;
+      readOptional(in, "verbose", verbose_);
+
+      outputTime_ = false;
+      readOptional(in, "showTiming", outputTime_);
+   }
+
+   /*
+   * Solve iteratively.
+   */
+   template <typename Iterator, typename T>
+   int AmIteratorTmpl<Iterator,T>::solve(bool isContinuation)
+   {
+      // Note: Parameter isContinuation is currently unused 
+
+      // Initialization and allocate operations on entry to loop.
+      setup(isContinuation);
+
+      // Preconditions for generic algorithm.
+      UTIL_CHECK(hasInitialGuess());
+      UTIL_CHECK(isAllocated_);
+
+      // Timers for analyzing performance
+      Timer timerMDE;
+      Timer timerStress;
+      Timer timerAM;
+      Timer timerResid;
+      Timer timerError;
+      Timer timerCoeff;
+      Timer timerOmega;
+      Timer timerTotal;
+
+      // Start overall timer
+      timerTotal.start();
+
+      // Solve MDE for initial state
+      timerMDE.start();
+      evaluate();
+      timerMDE.stop();
+
+      // Iterative loop
+      nBasis_ = fieldBasis_.size();
+      for (itr_ = 0; itr_ < maxItr_; ++itr_) {
+
+         // Append current field to fieldHists_ ringbuffer
+         getCurrent(temp_);
+         fieldHists_.append(temp_);
+
+         timerAM.start();
+
+         if (verbose_ > 1) {
+            Log::file() << "------------------------------- \n";
+         }
+         Log::file() << " Iteration " << Int(itr_,5);
+
+
+         if (nBasis_ < maxHist_) {
+            lambda_ = 1.0 - pow(0.9, nBasis_ + 1);
+         } else {
+            lambda_ = 1.0;
+         }
+
+         // Compute residual vector
+         timerResid.start();
+         getResidual(temp_);
+
+         // Append current residual to resHists_ ringbuffer
+         resHists_.append(temp_);
+         timerResid.stop();
+
+         // Compute scalar error, output report to log file.
+         timerError.start();
+         double error = computeError(verbose_);
+         if (verbose_ < 2) {
+             Log::file() << ",  error  = " << Dbl(error, 15) << "\n";
+         }
+         timerError.stop();
+
+         // Output additional details of this iteration to the log file
+         outputToLog();
+
+         // Check for convergence
+         if (error < epsilon_) {
+
+            // Stop timers
+            timerAM.stop();
+            timerTotal.stop();
+
+            if (verbose_ > 1) {
+               Log::file() << "-------------------------------\n";
+            }
+            Log::file() << " Converged\n";
+
+            // Output error report if not done previously
+            if (verbose_ == 1) {
+               Log::file() << "\n";
+               computeError(2); 
+            }
+
+            // Output timing results, if requested.
+            if (outputTime_) {
+               double total = timerTotal.time();
+               Log::file() << "\n";
+               Log::file() << "Iterator times contributions:\n";
+               Log::file() << "\n";
+               Log::file() << "MDE solution:         "
+                           << timerMDE.time()  << " s,  "
+                           << timerMDE.time()/total << "\n";
+               Log::file() << "residual computation: "
+                           << timerResid.time()  << " s,  "
+                           << timerResid.time()/total << "\n";
+               Log::file() << "mixing coefficients:  "
+                           << timerCoeff.time()  << " s,  "
+                           << timerCoeff.time()/total << "\n";
+               Log::file() << "checking convergence: "
+                           << timerError.time()  << " s,  "
+                           << timerError.time()/total << "\n";
+               Log::file() << "updating guess:       "
+                           << timerOmega.time()  << " s,  "
+                           << timerOmega.time()/total << "\n";
+               Log::file() << "total time:           "
+                           << total << " s  \n";
+            }
+            Log::file() << "\n";
+
+            // Successful completion (i.e., converged within tolerance)
+            return 0;
+
+         } else {
+
+            // Compute optimal coefficients for basis vectors
+            timerCoeff.start();
+            computeResidCoeff();
+            timerCoeff.stop();
+
+            // Compute the trial updated field and update the system
+            timerOmega.start();
+            updateGuess();
+            timerOmega.stop();
+
+            timerAM.stop();
+
+            // Perform the main calculation of the parent system -
+            // solve MDEs, compute phi's, compute stress if needed
+            timerMDE.start();
+            evaluate();
+            timerMDE.stop();
+
+         }
+
+      }
+
+      // Failure: iteration counter itr reached maxItr without converging
+      timerTotal.stop();
+
+      Log::file() << "Iterator failed to converge.\n";
+      return 1;
+
+   }
+
+   // Protected member functions
+
+   /*
+   * Read and validate errorType string parameter.
+   */
+   template <typename Iterator, typename T>
+   void AmIteratorTmpl<Iterator,T>::readErrorType(std::istream& in)
+   {
+      // Read optional string
+      // Note: errorType_ is initialized to "relNormResid" in constructor
       readOptional(in, "errorType", errorType_);
 
       if (!(errorType_ == "normResid"
@@ -60,11 +236,11 @@ namespace Pscf
          || errorType_ == "relNormResid")) {
          UTIL_THROW("Invalid iterator error type in parameter file.");
       }
-
    }
 
    /*
    * Allocate memory required by the Anderson-Mixing algorithm, if needed.
+   * (protected, non-virtual)
    */
    template <typename Iterator, typename T>
    void AmIteratorTmpl<Iterator,T>::allocateAM()
@@ -72,14 +248,14 @@ namespace Pscf
       // If already allocated, do nothing and return
       if (isAllocated_) return;
 
-      // Determine number of elements in a residual vector
+      // Compute and set number of elements in a residual vector
       nElem_ = nElements();
 
       // Allocate ring buffers
       fieldHists_.allocate(maxHist_+1);
-      fieldBasis_.allocate(maxHist_+1);
       resHists_.allocate(maxHist_+1);
-      resBasis_.allocate(maxHist_+1);
+      fieldBasis_.allocate(maxHist_);
+      resBasis_.allocate(maxHist_);
 
       // Allocate arrays used in iteration
       fieldTrial_.allocate(nElem_);
@@ -94,263 +270,95 @@ namespace Pscf
       isAllocated_ = true;
    }
 
-   /*
-   * Solve iteratively.
-   */
    template <typename Iterator, typename T>
-   int AmIteratorTmpl<Iterator,T>::solve(bool isContinuation)
+   void AmIteratorTmpl<Iterator,T>::clear()
    {
-      // Note: Parameter isContinuation is currently unused 
+      if (!isAllocated_) return;
 
-      // Initialization and allocate operations on entry to loop.
-      setup();
-
-      // Preconditions for generic algorithm.
-      UTIL_CHECK(hasInitialGuess());
-      UTIL_CHECK(isAllocated_);
-
-      // Timers for analyzing performance
-      Timer timerMDE;
-      Timer timerStress;
-      Timer timerAM;
-      Timer timerResid;
-      Timer timerConverged;
-      Timer timerCoeff;
-      Timer timerOmega;
-      Timer timerTotal;
-
-      // Start overall timer
-      timerTotal.start();
-
-      // Solve MDE for initial state
-      timerMDE.start();
-      evaluate();
-      timerMDE.stop();
-
-      // Iterative loop
-      bool done;
-      for (int itr = 0; itr < maxItr_; ++itr) {
-
-         // Append current field to fieldHists_ ringbuffer
-         getCurrent(temp_);
-         fieldHists_.append(temp_);
-
-         timerAM.start();
-
-         Log::file()<<"---------------------"<<std::endl;
-         Log::file()<<" Iteration  "<<itr<<std::endl;
-
-         if (itr < maxHist_) {
-            lambda_ = 1.0 - pow(0.9, itr+1);
-            nHist_ = itr;
-         } else {
-            lambda_ = 1.0;
-            nHist_ = maxHist_;
-         }
-
-         timerResid.start();
-         computeResidual();
-         timerResid.stop();
-
-         // Test for convergence.
-         // Also outputs error measures to Log::file()
-         timerConverged.start();
-         done = isConverged();
-         timerConverged.stop();
-
-         // Output additional details of this iteration to the log file
-         outputToLog();
-
-         if (diverged_) {
-
-            // If calculation diverged, some residual values are
-            // NaN. In this case, the calculation failed, and there
-            // is no need to continue to the next iteration.
-            break;
-            
-         } else if (done) {
-
-            // Stop timers
-            timerAM.stop();
-            timerTotal.stop();
-
-            Log::file() << "----------CONVERGED----------"<< std::endl;
-
-            // Output timing results
-            Log::file() << "\n";
-            Log::file() << "Iterator times contributions:\n";
-            Log::file() << "\n";
-            Log::file() << "MDE solution:         "
-                        << timerMDE.time()  << " s,  "
-                        << timerMDE.time()/timerTotal.time() << "\n";
-            Log::file() << "residual computation: "
-                        << timerResid.time()  << " s,  "
-                        << timerResid.time()/timerTotal.time() << "\n";
-            Log::file() << "mixing coefficients:  "
-                        << timerCoeff.time()  << " s,  "
-                        << timerCoeff.time()/timerTotal.time() << "\n";
-            Log::file() << "checking convergence: "
-                        << timerConverged.time()  << " s,  "
-                        << timerConverged.time()/timerTotal.time() << "\n";
-            Log::file() << "updating guess:       "
-                        << timerOmega.time()  << " s,  "
-                        << timerOmega.time()/timerTotal.time() << "\n";
-            Log::file() << "total time:           "
-                        << timerTotal.time()   << " s  ";
-            Log::file() << "\n\n";
-
-            // Successful completion (i.e., converged within tolerance)
-            cleanUp();
-            return 0;
-
-         } else {
-
-            // Compute optimal linear combination coefficients for
-            // building the updated field guess
-            timerCoeff.start();
-            findResidCoeff();
-            timerCoeff.stop();
-
-            // Build the updated field
-            timerOmega.start();
-            updateGuess();
-            timerOmega.stop();
-
-            timerAM.stop();
-
-            // Solve the fixed point equation
-            timerMDE.start();
-            evaluate();
-            timerMDE.stop();
-
-         }
-
-      }
-      // Failure: iteration counter itr reached maxItr without converging
-      timerTotal.stop();
-
-      Log::file() << "Iterator failed to converge.\n";
-      cleanUp();
-      return 1;
-   }
-
-   /*
-   * Initialize just before entry to iterative loop.
-   */
-   template <typename Iterator, typename T>
-   void AmIteratorTmpl<Iterator,T>::setup()
-   {
-      // Allocate memory required by AM algorithm if not done earlier.
-      // If already allocated, do nothing and return.
-      allocateAM();
-   }
-
-   // Compute residual and append to history.
-   template <typename Iterator, typename T>
-   void AmIteratorTmpl<Iterator,T>::computeResidual()
-   {
-      // Get residuals
-      getResidual(temp_);
-
-      // Store residuals in residual history ringbuffer
-      resHists_.append(temp_);
+      // Clear histories and bases (ring buffers)
+      Log::file() << "Clearing ring buffers\n";
+      resHists_.clear();
+      fieldHists_.clear();
+      resBasis_.clear();
+      fieldBasis_.clear();
 
       return;
    }
 
+   // Private non-virtual member functions
+
+   /*
+   * Compute coefficients of basis vectors.
+   */
    template <typename Iterator, typename T>
-   bool AmIteratorTmpl<Iterator,T>::isConverged()
+   void AmIteratorTmpl<Iterator,T>::computeResidCoeff()
    {
-
-      // Find max residual vector element
-      double maxRes  = findMaxAbs(resHists_[0]);
-      Log::file() << "Max Residual  = " << Dbl(maxRes,15) << std::endl;
-
-      // Find norm of residual vector
-      double normRes = findNorm(resHists_[0]);
-      Log::file() << "Residual Norm = " << Dbl(normRes,15) << std::endl;
-
-      // Find norm of residual vector relative to field
-      double relNormRes = normRes/findNorm(fieldHists_[0]);
-      Log::file() << "Relative Norm = " << Dbl(relNormRes,15) << std::endl;
-
-      // Check if calculation has diverged (normRes will be NaN)
-      if (std::isnan(normRes)) {
-         diverged_ = true;
-         return false;
-      }
-
-      // Check if total error is below tolerance
-      if (errorType_ == "normResid")
-         return normRes < epsilon_;
-      else if (errorType_ == "relNormResid")
-         return relNormRes < epsilon_;
-      else if (errorType_ == "maxResid")
-         return maxRes < epsilon_;
-      else
-         UTIL_THROW("Invalid iterator error type in parameter file.");
-
-   }
-
-   // Compute coefficients of basis vectors.
-   template <typename Iterator, typename T>
-   void AmIteratorTmpl<Iterator,T>::findResidCoeff()
-   {
-      // Initialize matrix and vector of residual dot products
-      // if this is the first iteration
-      if (nHist_ == 0) {
-         for (int m = 0; m < maxHist_; ++m) {
+      // If first iteration and history is empty
+      // then initialize U, v and coeff arrays
+      if (itr_ == 0 && nBasis_ == 0) {
+         int m, n;
+         for (m = 0; m < maxHist_; ++m) {
             v_[m] = 0.0;
             coeffs_[m] = 0.0;
-            for (int n = 0; n < maxHist_; ++n) {
+            for (n = 0; n < maxHist_; ++n) {
                U_(m, n) = 0.0;
             }
          }
-         return;
       }
 
-      // Update basis vectors spanning differences of past residual vectors
+      // Do nothing else on first iteration
+      if (itr_ == 0) return;
+
+      // Update basis spanning differences of past field vectors
+      updateBasis(fieldBasis_, fieldHists_);
+
+      // Update basis spanning differences of past residual vectors
       updateBasis(resBasis_, resHists_);
 
+      // Update nBasis_
+      nBasis_ = fieldBasis_.size();
+      UTIL_CHECK(fieldBasis_.size() == nBasis_);
+
       // Update the U matrix and v vector.
-      updateU(U_, resBasis_, nHist_);
-      updateV(v_, resHists_[0], resBasis_, nHist_);
+      updateU(U_, resBasis_, nBasis_);
+      updateV(v_, resHists_[0], resBasis_, nBasis_);
       // Note: resHists_[0] is the current residual vector
 
       // Solve matrix equation problem to compute coefficients
       // that minmize the L2 norm of the residual vector.
-      if (nHist_ == 1) {
+      if (nBasis_ == 1) {
          // Solve explicitly for coefficient
          coeffs_[0] = v_[0] / U_(0,0);
       } else
-      if (nHist_ < maxHist_) {
+      if (nBasis_ < maxHist_) {
 
          // Create temporary smaller version of U_, v_, coeffs_ .
          // This is done to avoid reallocating U_ with each iteration.
          DMatrix<double> tempU;
          DArray<double> tempv,tempcoeffs;
-         tempU.allocate(nHist_,nHist_);
-         tempv.allocate(nHist_);
-         tempcoeffs.allocate(nHist_);
-         for (int i = 0; i < nHist_; ++i) {
+         tempU.allocate(nBasis_,nBasis_);
+         tempv.allocate(nBasis_);
+         tempcoeffs.allocate(nBasis_);
+         for (int i = 0; i < nBasis_; ++i) {
             tempv[i] = v_[i];
-            for (int j = 0; j < nHist_; ++j) {
+            for (int j = 0; j < nBasis_; ++j) {
                tempU(i,j) = U_(i,j);
             }
          }
 
          // Solve matrix equation
          LuSolver solver;
-         solver.allocate(nHist_);
+         solver.allocate(nBasis_);
          solver.computeLU(tempU);
          solver.solve(tempv,tempcoeffs);
 
          // Transfer solution to full-sized member variable
-         for (int i = 0; i < nHist_; ++i) {
+         for (int i = 0; i < nBasis_; ++i) {
             coeffs_[i] = tempcoeffs[i];
          }
+
       } else
-      if (nHist_ == maxHist_) {
+      if (nBasis_ == maxHist_) {
          LuSolver solver;
          solver.allocate(maxHist_);
          solver.computeLU(U_);
@@ -364,17 +372,17 @@ namespace Pscf
    void AmIteratorTmpl<Iterator,T>::updateGuess()
    {
 
-      // Contribution of the last solution
+      // Set field and residual trial vectors to current values
       setEqual(fieldTrial_, fieldHists_[0]);
       setEqual(resTrial_, resHists_[0]);
 
-      // If at least two histories
-      if (nHist_ > 0) {
-         // Update the basis vectors of field histories
-         updateBasis(fieldBasis_,fieldHists_);
-         // Combine histories into trial guess and predicted error
-         addHistories(fieldTrial_, fieldBasis_, coeffs_, nHist_);
-         addHistories(resTrial_, resBasis_, coeffs_, nHist_);
+      // Add linear combinations of field and residual basis vectors
+      if (nBasis_ > 0) {
+
+         // Combine basis vectors into trial guess and predicted residual
+         addHistories(fieldTrial_, fieldBasis_, coeffs_, nBasis_);
+         addHistories(resTrial_, resBasis_, coeffs_, nBasis_);
+
       }
 
       // Correct for predicted error
@@ -386,15 +394,131 @@ namespace Pscf
       return;
    }
 
+   // Private virtual member functions
+
+   /*
+   * Initialize just before entry to iterative loop.
+   * (virtual)
+   */
    template <typename Iterator, typename T>
-   void AmIteratorTmpl<Iterator,T>::cleanUp()
+   void AmIteratorTmpl<Iterator,T>::setup(bool isContinuation)
    {
-      // Clear ring buffers
-      resHists_.clear();
-      resBasis_.clear();
-      fieldHists_.clear();
-      fieldBasis_.clear();
-      return;
+      if (!isAllocated_) {
+         allocateAM();
+      } else {
+         if (!isContinuation) {
+            clear();
+         }
+      }
+   }
+
+   /*
+   * Compute L2 norm of a vector.
+   */
+   template <typename Iterator, typename T>
+   double AmIteratorTmpl<Iterator,T>::norm(T const & a)
+   {
+      double normSq = dotProduct(a, a);
+      return sqrt(normSq);
+   }
+
+   // Update entire U matrix
+   template <typename Iterator, typename T>
+   void 
+   AmIteratorTmpl<Iterator, T> ::updateU(DMatrix<double> & U,
+                            RingBuffer<T> const & resBasis,
+                            int nHist)
+   {
+      // Update matrix U by shifting elements diagonally
+      int maxHist = U.capacity1();
+      for (int m = maxHist-1; m > 0; --m) {
+         for (int n = maxHist-1; n > 0; --n) {
+            U(m,n) = U(m-1,n-1);
+         }
+      }
+
+      // Compute U matrix's new row 0 and col 0
+      for (int m = 0; m < nHist; ++m) {
+         double dotprod = dotProduct(resBasis[0],resBasis[m]);
+         U(m,0) = dotprod;
+         U(0,m) = dotprod;
+      }
+   }
+
+   template <typename Iterator, typename T>
+   void 
+   AmIteratorTmpl<Iterator, T>::updateV(DArray<double> & v,
+                                        T const & resCurrent,
+                                        RingBuffer<T> const & resBasis,
+                                        int nHist)
+   {
+      for (int m = 0; m < nHist; ++m) {
+         v[m] = dotProduct(resCurrent, resBasis[m]);
+      }
+   }
+
+   template <typename Iterator, typename T>
+   double AmIteratorTmpl<Iterator,T>::computeError(int verbose)
+   {
+      double error = 0.0;
+
+      if (verbose > 1) {
+
+         Log::file() << "\n";
+
+         // Find max residual vector element
+         double maxRes  = maxAbs(resHists_[0]);
+         Log::file() << "Max Residual  = " << Dbl(maxRes,15) << "\n";
+   
+         // Find norm of residual vector
+         double normRes = norm(resHists_[0]);
+         Log::file() << "Residual Norm = " << Dbl(normRes,15) << "\n";
+   
+         // Find root-mean-squared residual element value
+         double rmsRes = normRes/sqrt(nElem_);
+         Log::file() << "RMS Residual  = " << Dbl(rmsRes,15) << "\n";
+
+         // Find norm of residual vector relative to field
+         double normField = norm(fieldHists_[0]);
+         double relNormRes = normRes/normField;
+         Log::file() << "Relative Norm = " << Dbl(relNormRes,15) << "\n";
+   
+         // Check if calculation has diverged (normRes will be NaN)
+         UTIL_CHECK(!std::isnan(normRes));
+   
+         // Set error value
+         if (errorType_ == "maxResid") {
+            error = maxRes;
+         } else if (errorType_ == "normResid_") {
+            error = normRes;
+         } else if (errorType_ == "rmsResid_") {
+            error = normRes/sqrt(nElem_);
+         } else if (errorType_ == "relNormResid") {
+            error = relNormRes;
+         } else {
+            UTIL_THROW("Invalid iterator error type in parameter file.");
+         }
+
+      } else {
+
+         // Set error value
+         if (errorType_ == "maxResid") {
+            error = maxAbs(resHists_[0]);
+         } else if (errorType_ == "normResid_") {
+            error = norm(resHists_[0]);
+         } else if (errorType_ == "rmsResid_") {
+            error = norm(resHists_[0])/sqrt(nElem_);
+         } else if (errorType_ == "relNormResid") {
+            double normRes = norm(resHists_[0]);
+            double normField = norm(fieldHists_[0]);
+            error = normRes/normField;
+         } else {
+            UTIL_THROW("Invalid iterator error type in parameter file.");
+         }
+         //Log::file() << ",  error  = " << Dbl(error, 15) << "\n";
+      }
+
+      return error;
    }
 
 }

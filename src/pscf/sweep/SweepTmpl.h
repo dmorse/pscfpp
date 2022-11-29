@@ -282,6 +282,9 @@ namespace Pscf {
       /// Number of converged solutions accepted thus far.
       int nAccept_;
 
+      /// Should the state of the iterator be re-used during continuation.
+      bool reuseState_;
+
       /**
       * Accept a new solution, and update history.
       *

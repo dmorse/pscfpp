@@ -37,6 +37,17 @@ System{
   NrIterator{
      epsilon   0.0000001
   }
+  LinearSweep{
+     ns                5
+     baseFileName      out/spherical
+     nParameter        2
+     parameters[
+        phi_polymer    0    0.0100
+        phi_polymer    1   -0.0100
+     ]
+  }
+}
+
   CompositionSweep{
      ns                5
      baseFileName      out/spherical
@@ -44,6 +55,5 @@ System{
      homogeneousMode   1
      dPhi              +0.0100  -0.0100
   }
-}
 
    nSolvent  0

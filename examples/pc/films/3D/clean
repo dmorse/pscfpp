@@ -2,4 +2,5 @@ rm -f out/*
 rm -f in/w.bf
 rm -f in/c.bf
 rm -f in/c.kf
+rm -f in/w.rf
 rm -f init/c.rf

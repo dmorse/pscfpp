@@ -5,6 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <fd1d/solvers/Mixture.h>
+#include <util/tests/LogFileUnitTest.h>
 
 #include <fstream>
 
@@ -12,33 +13,20 @@ using namespace Util;
 using namespace Pscf;
 using namespace Pscf::Fd1d;
 
-class MixtureTest : public UnitTest 
+class MixtureTest : public LogFileUnitTest 
 {
-
-private:
-
-   std::ofstream logFile_;
 
 public:
 
    void setUp()
-   {}
+   {  ParamComponent::setEcho(true); }
 
    void tearDown()
    {
-      if (logFile_.is_open()) {
-         logFile_.close();
-      }
+      closeLogFile();
       ParamComponent::setEcho(false);
    }
 
-   void openLogFile(char const * filename)
-   {
-      openOutputFile(filename, logFile_);
-      Log::setFile(logFile_);
-      ParamComponent::setEcho(true);
-   }
-  
    void testConstructor()
    {
       printMethod(TEST_FUNC);
@@ -60,9 +48,9 @@ public:
       domain.readParam(in);
       mix.setDomain(domain);
 
-      std::cout << "\n";
-      mix.writeParam(std::cout);
-      domain.writeParam(std::cout);
+      Log::file() << "\n";
+      mix.writeParam(Log::file());
+      domain.writeParam(Log::file());
    }
 
    void testReadParameters2()
@@ -82,14 +70,15 @@ public:
 
       TEST_ASSERT(eq(mix.vMonomer(), 0.05));
 
-      std::cout << "\n";
-      mix.writeParam(std::cout);
-      domain.writeParam(std::cout);
+      Log::file() << "\n";
+      mix.writeParam(Log::file());
+      domain.writeParam(Log::file());
    }
 
    void testSolve()
    {
       printMethod(TEST_FUNC);
+      openLogFile("out/MixtureTestSolve.log");
 
       std::ifstream in;
       openInputFile("in/Mixture", in);
@@ -100,9 +89,9 @@ public:
       domain.readParam(in);
       mix.setDomain(domain);
 
-      std::cout << "\n";
-      mix.writeParam(std::cout);
-      domain.writeParam(std::cout);
+      Log::file() << "\n";
+      mix.writeParam(Log::file());
+      domain.writeParam(Log::file());
 
       int nMonomer = mix.nMonomer();
       DArray<Mixture::WField> wFields;
@@ -124,21 +113,25 @@ public:
       }
       mix.compute(wFields, cFields);
 
+      double q00 = mix.polymer(0).propagator(0, 0).computeQ();
+      double q01 = mix.polymer(0).propagator(0, 1).computeQ();
+      double q10 = mix.polymer(0).propagator(1, 0).computeQ();
+      double q11 = mix.polymer(0).propagator(1, 1).computeQ();
+      TEST_ASSERT(abs(q01 - q00) < 1.0E-5);
+      TEST_ASSERT(abs(q10 - q00) < 1.0E-5);
+      TEST_ASSERT(abs(q11 - q00) < 1.0E-5);
+
       // Test if same Q is obtained from different methods
-      std::cout << "Propagator(0,0), Q = " 
-                << mix.polymer(0).propagator(0, 0).computeQ() << "\n";
-      std::cout << "Propagator(1,0), Q = " 
-                << mix.polymer(0).propagator(1, 0).computeQ() << "\n";
-      std::cout << "Propagator(1,1), Q = " 
-                << mix.polymer(0).propagator(1, 1).computeQ() << "\n";
-      std::cout << "Propagator(0,1), Q = " 
-                << mix.polymer(0).propagator(0, 1).computeQ() << "\n";
+      Log::file() << "Propagator(0,0), Q = " << q00 << "\n";
+      Log::file() << "Propagator(0,1), Q = " << q10 << "\n";
+      Log::file() << "Propagator(1,0), Q = " << q01 << "\n";
+      Log::file() << "Propagator(0,1), Q = " << q11 << "\n";
 
       // Test spatial integral of block concentration
       double sum0 = domain.spatialAverage(cFields[0]);
       double sum1 = domain.spatialAverage(cFields[1]);
-      std::cout << "Volume fraction of block 0 = " << sum0 << "\n";
-      std::cout << "Volume fraction of block 1 = " << sum1 << "\n";
+      Log::file() << "Volume fraction of block 0 = " << sum0 << "\n";
+      Log::file() << "Volume fraction of block 1 = " << sum1 << "\n";
       
    }
 };

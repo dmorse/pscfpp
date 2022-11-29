@@ -173,13 +173,6 @@ namespace Pspc
       */
       double stress(int n) const;
 
-      #if 0
-      /**
-      * Get monomer reference volume.
-      */
-      double vMonomer() const;
-      #endif
-
       /**
       * Is this mixture being treated in canonical ensemble?
       *
@@ -207,11 +200,6 @@ namespace Pspc
 
    private:
 
-      #if 0
-      /// Monomer reference volume (set to 1.0 by default).
-      double vMonomer_;
-      #endif
-
       /// Optimal contour length step size.
       double ds_;
 
@@ -233,13 +221,6 @@ namespace Pspc
    };
 
    // Inline member function
-
-   #if 0
-   // Get monomer reference volume (public).
-   template <int D>
-   inline double Mixture<D>::vMonomer() const
-   {  return vMonomer_; }
-   #endif
 
    // Stress with respect to unit cell parameter n.
    template <int D>

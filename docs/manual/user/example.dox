@@ -11,22 +11,25 @@ in the pscfpp/examples directory of the PSCF repository.
 
 Each top level subdirectory of the examples root directory contains 
 examples of simulations of a particular program or set of closely related 
-program. For example, the pcD directory contains examples that use the 
+program. For example, the pc directory contains examples that use the 
 pscf_pc1, pscf_pc2 or pscf_pc3 CPU programs for periodic microstructres.
 The next level of subdirectory specifies a type of physical system. For 
-example, the pscf_pc3/diblock/ subdirectory contains examples of 
-computations involving three-dimensional structures of diblock copolymer 
-melts. Lower level subdirectories contain specific examples.
+example, the pc/diblock/ subdirectory contains examples of computations 
+involving three-dimensional structures of diblock copolymer melts. Lower 
+level subdirectories such as pc/diblock/gyroid contain one or more
+examples for a specific crystal structure.
 
 \section examples_layout_sec Input files
 
 The input files for each example are in a separate directory, which we 
-will refer to as an example directory.  
-Each example directory contains a set of input files that include at 
-least one parameter file, at least one command file and an input chemical 
-potential file.
-Generally, the parameter file is named "param" and the command file is 
-named "command".
+will refer to as an example directory.  Each example directory contains 
+a set of input files that include at least one parameter file, at least 
+one command file and an input chemical potential file.
+In the simplest and most common case, there is a single parameter file 
+named "param" and a single command file is named "command". Directories
+that contain two or more closely related examples generally contain a
+filed README or CONTENTS that explains how to use the files to run 
+different examples.
 
 A typical example directory contains files and subdirectories with the 
 following names:
@@ -46,30 +49,57 @@ execute to run the simulation and clean up afterwards, respectively.
 
 \section examples_simulate_sec Running an example
 
-Users may run example simulations either by running the "run" script that 
+Users may run example simulations either by executing the "run" script that 
 is provided with most examples, or by invoking the relevant simulation 
-program from the command line. 
+program from the command line. The run script is a bash script that 
+contains a line that gives the required executable command name and 
+arguments, so it is useful for users to examine the text of the "run"
+script in order to see an example of the relevant command.
 
 To use a "run" script, simply issue the command
 \code
-  > .\run
+  > ./run
 \endcode
-from within the directory containing the example and the "run" file. 
+from within the directory containing the example and the "run" script
+file. 
 
 To use pscf_pc3 to run a simple example computation with the above 
-directory structure, one could change directory (cd) to the main directory 
-for the example and issue the command 
+directory structure, one could change directory (cd) to the directory 
+containing the example and issue the command 
 \code
     > pscf_pc3 -e -p param -c command 
 \endcode
-This command would send log output to the terminal.  To run the 
-calculation in background and redirect the log output to a file out/log 
-one would instead type
+This command would send log output to the terminal.  The "run" script
+simply issues this command or something very similar to it for you.  To 
+run the calculation in background and redirect the log output to a file 
+out/log, one could instead type
 \code
     > pscf_pc3 -e -p param -c command > out/log &
 \endcode
-Commands to use a different program are similar except for the 
-replacement of pscf_pc3 by the appropriate executable name.
+A command to execute a different PSCF programs would have a similar 
+syntax except for the replacement of the executable name pscf_pc3 by 
+a different executable name, such as pscf_pc2 or pscf_fd.
+
+Note: In the above examples, we recommend issuing the command "./run"
+rather than simply "run" to execute the run script. Most users will
+need to include the "./" prefix in order to tell the unix shell to 
+look for the executable file named "run" in the current working 
+directory, rather than in one of the standard system directories 
+that contain executable files. The prefix is unnecessary if and only
+if the users PATH variable has been modified so as to include the 
+current working directory among the list of directories in which to 
+search for an executable file.
+
+\section examples_clean_sec Cleaning Up
+
+After running an example, you may run the command
+\code
+> ./clean
+\endcode
+in order to execute a script that removes any output data files 
+created by the example. Most output files are created in the out/ 
+directory, so this script normally removes all files in this 
+directory.
 
 <BR>
 \ref user_command_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

@@ -1,69 +1,71 @@
 /*! \page user_usage_page 3.2 Running a Program
 
-\ref user_files_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_param_page (Next) 
+\ref user_files_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_param_page (Next)
 <BR>
 
-<h3> Command Line Interface </h3>
 
-All of the PSCF programs are designed to be run from a unix command line, 
-and all have a similar command line interface. The names of the parameter 
-and command files required to perform a computation are passed to the the 
-program as arguments of the "-p" and "-c" command line options, respectively.  
-Names of other input and output files are provided as arguments to commands 
+All of the PSCF programs are designed to be run from a unix command line,
+and all have a similar command line interface. The names of the parameter
+and command files required to perform a computation are passed to the the
+program as arguments of the "-p" and "-c" command line options, respectively.
+Names of other input and output files are provided as arguments to commands
 in the command file.
 
-As an example, consider use of the program pscf_pc3, which is used to 
-model three-dimensional periodic microstructures.  To run this program 
-using a parameter file named "param" and command file named "commands" 
+\section user_param_usage_example_sec Example
+
+As an example, consider use of the program pscf_pc3, which is used to
+model three-dimensional periodic microstructures.  To run this program
+using a parameter file named "param" and command file named "commands"
 that are both in the current working directory, one would enter:
 \code
    pscf_pc3 -p param -c commands
 \endcode
-The analagous command to invoke a different PSCF program would use a 
-different executable name (e.g., pscf_fd1d for the program for 
-one-dimensional finite-difference calculations) but identical command 
+The analagous command to invoke a different PSCF program would use a
+different executable name (e.g., pscf_fd1d for the program for
+one-dimensional finite-difference calculations) but identical command
 line options.
 
-During execution, some log information is written to standard output, 
-which outputs to a terminal by default. This log output can be re-directed 
-to a file by using the unix ">" output redirect operator. For example, 
+During execution, some log information is written to standard output,
+which outputs to a terminal by default. This log output can be re-directed
+to a file by using the unix ">" output redirect operator. For example,
 the command
 \code
   pscf_pc3 -p param -c commands > log
 \endcode
 would direct standard output to a file named "log" in the current working
-directory.  Standard output should normally be redirected to a file when 
-a job is run in background or in a queue. 
+directory.  Standard output should normally be redirected to a file when
+a job is run in background or in a queue.
 
-<h3> Echoing the Parameter File </h3>
+\section user_param_usage_echo_sec Echoing the Parameter File
 
-All PSCF programs accept a command line option "-e" that causes the 
-contents of each line of the parameter file to be echoed to standard 
-output as the parameter file is being read. For example, to invoke 
-the program pscf_pc3 with echoing of the parameter file to a log file, 
+All PSCF programs accept a command line option "-e" that causes the
+contents of each line of the parameter file to be echoed to standard
+output as the parameter file is being read. For example, to invoke
+the program pscf_pc3 with echoing of the parameter file to a log file,
 one could enter
 \code
    pscf_pc3 -e -p param -c commands > log
 \endcode
 This option is very useful for locating errors in the parameter file.
-When an error is detected while reading a parameter file, the echoed 
-output ends immediately before the line at which the error is detected, 
-and is followed by an error message that explains what the program 
-knows about the nature of the error. 
+When an error is detected while reading a parameter file, the echoed
+output ends immediately before the line at which the error is detected,
+and is followed by an error message that explains what the program
+knows about the nature of the error.
 
-PSCF parameter files are fixed format files in which every element is 
+PSCF parameter files are fixed format files in which every element is
 preceded by a label string (e.g., the name of a parameter or a block of
 parameters). During processing of the parameter file, the program reads
-each such label and compares it to a label that it expects to appear 
-next in the file. Error messages that are generated in response to 
-parameter file syntax errors output both the expected label string and 
-the string that was read from file. This information is usually enough 
-to allow a user to identify the source of trouble and fix it.
+each such label and compares it to a label that it expects to appear
+next in the file. Error messages that are generated in response to
+parameter file syntax errors output both the expected label string and
+the string that was read from file. This error message is usually 
+enough to allow a user to identify and fix the first error encountered
+by the parser.
 
-<h3> Command Line Options </h3>
+\section user_param_usage_options_sec Command Line Options 
 
-All PSCF programs can be invoked with any of the following command line 
+All PSCF programs can be invoked with any of the following command line
 options:
 <ul>
   <li> -e: Activates echoing of the parameter file to standard output.</li>
@@ -73,22 +75,37 @@ options:
   <li> -o filename: Specifies a prefix string for output data files </li>
   </li>
 </ul>
-The -p and -c options are required, while others are optional.
 
-The -e (echo) option causes each parameter in the parameter file to be echoed to standard output immediately after it is read. This option takes no arguments.
+Comments:
 
-The -p (parameter) option takes a required string parameter, which is the name of a parameter file.  
+  - The -p and -c options are required, while others are optional.
 
-The -c (command) option takes a required string parameter, which is the name of a command file. 
+  - The -p (parameter) option takes a string parameter, which is the name of a parameter file.
 
-The -i (input prefix) option takes a required string parameter, which is a prefix that will be prepended to the names (i.e., paths) for all input data files. 
+  - The -c (command) option takes a string parameter, which is the name of a command file.
 
-The -o (output prefix) option takes a required string parameter, which is a prefix that will be prepended to the names (paths) for all output data files. 
+  - The -i (input prefix) option takes a string parameter, which is a prefix that will be prepended to the names (i.e., paths) for all input data files.
 
+  - The -o (output prefix) option takes a string parameter, which is a prefix that will be prepended to the names (paths) for all output data files.
+
+  - Prefix strings that end in a directory separator (e.g., "out/") can
+    be used to read all input files from a specific subdirectory or write 
+    all output files to a subdirectory.
+
+Example:
+
+The command
+\code
+   pscf_pc3 -e -p param -c commands -i in/ -o out/ > log
+\endcode
+would run the program pscf_pc3 using a parameter file named "param" and
+a command file named "commands", while echoing the parameter file during
+initialization, and reading all input files from subdirectory "in/" and
+writing all output files to subdirectory "out/". 
 
 <BR>
-\ref user_files_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_page (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_param_page (Next) 
+\ref user_files_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_page (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_param_page (Next)
 
 */

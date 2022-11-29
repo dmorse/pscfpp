@@ -26,7 +26,8 @@ each field. The data section contains exactly N_star rows of data, each
 of which contains coefficients associated with one basis function, along 
 with information about an associated star of wavevectors.  
 
-<h3> Example: 3D Gyroid Phase </h3>
+
+\section user_field_basis_gyroid_sec Example: 3D Gyroid Phase 
 
 Below is an example of a c file output from a simulation of a gyroid 
 phase for a diblock copolymer melt. A section of the middle of this file 
@@ -68,8 +69,9 @@ has been removed, as indicated by the vertical dots.
      5.879116047898E-05 -5.879115755266E-05      14  14  12     6
 
 \endcode
+<BR>
 
-<h3> Example: 1D Lamellar Phase </h3>
+\section user_field_basis_lamellar_sec Example: 1D Gyroid Phase 
 
 Below is an example the c field file output for a small simulation of a
 centro-symmetric lamellar phase of a diblock copolymer melt:
@@ -112,8 +114,9 @@ centro-symmetric lamellar phase of a diblock copolymer melt:
     -1.475930488937E-13 -4.916067553040E-14      20     1
 
 \endcode
+<BR>
 
-<h3> Header Section </h3>
+\section user_field_basis_header_sec Header Section
 
 Each field file begins with a header section that contains information
 about the crystallographic unit cell, space group and basis that is 
@@ -166,7 +169,8 @@ specified by the string crystal_system, as discussed
 for each combination of values for dim and crystal_system are listed 
 \ref user_groups_page "here". 
 
-<h3> Data Section </h3>
+    
+\section user_field_basis_data_sec Data Section
 
 The data section of this file format contains N_star rows, each of which 
 contains information associated with a particular basis function.  Each 

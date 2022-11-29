@@ -22,8 +22,8 @@ Clean up of kernel functions
    One possibile set of semantic units for vector operations:
 
        LHS (result):
-        vr - real vector
-        vc - complex vector
+        vecr - real vector
+        vecc - complex vector
 
        Operations:
        Sub   -> subtract
@@ -42,21 +42,21 @@ Clean up of kernel functions
    Example kernel names (called with CUDA <<< ... >>> ) syntax
 
        // Unary operations (vrOpA => v = v Op A)
-       subtractUniform          -> vrSubR
-       addUniform               -> vrAddR
-       pointWiseSubtract        -> vrSubV
-       pointWiseAdd             -> vrAddV
-       scaleReal                -> vrMulR
-       scaleComplex             -> vcMulR
+       subtractUniform          -> vecrSubR
+       addUniform               -> vecrAddR
+       pointWiseSubtract        -> vecrSubV
+       pointWiseAdd             -> vecrAddV
+       scaleReal                -> vecrMulR
+       scaleComplex             -> veccMulR
 
        // Binary operations (vrAOpB => v = A Op B)
-       pointWiseBinarySubtract  -> vrSubVV
-       pointWiseBinaryAdd       -> vrAddVV
+       pointWiseBinarySubtract  -> vecrSubVV
+       pointWiseBinaryAdd       -> vecrAddVV
 
        // Assignment operations (LHS = 
-       assign uniform           -> vrEqR
-       assign vector            -> vrEqV
-       assign exp of vector     -> vrExpV
+       assign uniform           -> vecrEqR
+       assign vector            -> vecrEqV
+       assign exp of vector     -> vecrExpV
 
        Corresponding functions that return a complex-valued vector
        will start with vc. Arguments on the RHS side will use C for
