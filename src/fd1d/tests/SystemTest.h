@@ -94,10 +94,21 @@ public:
       mix.compute(sys.wFields(), sys.cFields());
 
       // Test if same Q is obtained from different methods
-      Log::file() << mix.polymer(0).propagator(0, 0).computeQ() << "\n";
-      Log::file() << mix.polymer(0).propagator(1, 0).computeQ() << "\n";
-      Log::file() << mix.polymer(0).propagator(1, 1).computeQ() << "\n";
-      Log::file() << mix.polymer(0).propagator(0, 1).computeQ() << "\n";
+      double q00 = mix.polymer(0).propagator(0, 0).computeQ();
+      double q01 = mix.polymer(0).propagator(0, 1).computeQ();
+      double q10 = mix.polymer(0).propagator(1, 0).computeQ();
+      double q11 = mix.polymer(0).propagator(1, 1).computeQ();
+
+      setVerbose(1);
+      if (verbose() > 0) {
+         Log::file() << q00 << "\n";
+         Log::file() << q01 << "\n";
+         Log::file() << q10 << "\n";
+         Log::file() << q11 << "\n";
+      }
+      UTIL_ASSERT(abs((q01 - q00)/q00) < 1.0E-6);
+      UTIL_ASSERT(abs((q10 - q00)/q00) < 1.0E-6);
+      UTIL_ASSERT(abs((q11 - q00)/q00) < 1.0E-6);
 
       // Test spatial integral of block concentration
       double sum0 = domain.spatialAverage(sys.cField(0));

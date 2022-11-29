@@ -27,23 +27,30 @@ namespace Fd1d{
    // Read parameters from file
    void AmIterator::readParameters(std::istream& in)
    {
-      // Call parent class readParameters
+      // Call parent class readParameters and readErrorType functions
       AmIteratorTmpl<Iterator, DArray<double> >::readParameters(in);
+      AmIteratorTmpl<Iterator, DArray<double> >::readErrorType(in);
    }
 
-   // Compute and return L2 norm of residual vector
-   double AmIterator::findNorm(DArray<double> const & hist)
+   // Assign one vector to another: a = b
+   void AmIterator::setEqual(DArray<double>& a, DArray<double> const & b)
+   {  a = b; }
+
+   // Compute and return inner product of two vectors 
+   double AmIterator::dotProduct(DArray<double> const & a, 
+                                 DArray<double> const & b)
    {
-      const int n = hist.capacity();
-      double normResSq = 0.0;
+      const int n = a.capacity();
+      UTIL_CHECK(n == b.capacity());
+      double product = 0.0;
       for (int i = 0; i < n; i++) {
-         normResSq += hist[i] * hist[i];
+         product += a[i] * b[i];
       }
-      return sqrt(normResSq);
+      return product;
    }
 
    // Compute and return maximum element of residual vector.
-   double AmIterator::findMaxAbs(DArray<double> const & hist)
+   double AmIterator::maxAbs(DArray<double> const & hist)
    {
       const int n = hist.capacity();
       double maxRes = 0.0;
@@ -65,75 +72,15 @@ namespace Fd1d{
       DArray<double> newbasis;
       newbasis.allocate(n);
 
+      // Basis vector is different of last to vectors
       for (int i = 0; i < n; i++) {
-         // sequential histories basis vectors
          newbasis[i] = hists[0][i] - hists[1][i];
       }
 
       basis.append(newbasis);
    }
 
-   // Compute one element of U matrix of by computing a dot product
-   double
-   AmIterator::computeUDotProd(RingBuffer< DArray<double> > const& resBasis,
-                               int m, int n)
-   {
-      const int nr = resBasis[0].capacity();
-      double dotprod = 0.0;
-      for (int i = 0; i < nr; i++) {
-         dotprod += resBasis[m][i] * resBasis[n][i];
-      }
-      return dotprod;
-   }
-
-   // Compute one element of V vector by computing a dot product
-   double
-   AmIterator::computeVDotProd(DArray<double> const & resCurrent,
-                               RingBuffer<DArray<double> > const& resBasis,
-                               int m)
-   {
-      const int nr = resBasis[0].capacity();
-      double dotprod = 0.0;
-      for (int i = 0; i < nr; i++) {
-         dotprod += resCurrent[i] * resBasis[m][i];
-      }
-      return dotprod;
-   }
-
-   // Update entire U matrix
-   void AmIterator::updateU(DMatrix<double> & U,
-                            RingBuffer<DArray<double> > const & resBasis,
-                            int nHist)
-   {
-      // Update matrix U by shifting elements diagonally
-      int maxHist = U.capacity1();
-      for (int m = maxHist-1; m > 0; --m) {
-         for (int n = maxHist-1; n > 0; --n) {
-            U(m,n) = U(m-1,n-1);
-         }
-      }
-
-      // Compute U matrix's new row 0 and col 0
-      for (int m = 0; m < nHist; ++m) {
-         double dotprod = computeUDotProd(resBasis,0,m);
-         U(m,0) = dotprod;
-         U(0,m) = dotprod;
-      }
-   }
-
-   void AmIterator::updateV(DArray<double> & v,
-                            DArray<double> const & resCurrent,
-                            RingBuffer<DArray<double> > const & resBasis,
-                            int nHist)
-   {
-      for (int m = 0; m < nHist; ++m) {
-         v[m] = computeVDotProd(resCurrent,resBasis,m);
-      }
-   }
-
-   void AmIterator::setEqual(DArray<double>& a, DArray<double> const & b)
-   {  a = b; }
-
+   // Add linear combination of basis vector to current trial state
    void AmIterator::addHistories(DArray<double>& trial,
                                  RingBuffer< DArray<double> > const& basis,
                                  DArray<double> coeffs,

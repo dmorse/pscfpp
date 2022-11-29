@@ -8,13 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/math/LuSolver.h>
-
-#include <util/containers/DArray.h>
-#include <util/containers/FArray.h>
-#include <util/containers/FSArray.h>
-#include <util/containers/DMatrix.h>
-#include <util/containers/RingBuffer.h>
+#include <util/containers/DArray.h>     // member template
+#include <util/containers/DMatrix.h>    // member template
+#include <util/containers/RingBuffer.h> // member template
 
 namespace Pscf {
 
@@ -24,13 +20,18 @@ namespace Pscf {
    * Template for Anderson mixing iterator algorithm.
    *
    * Anderson mixing is an algorithm for solving a system of N nonlinear
-   * equations of the form g_{i}(x) = 0 for i = 0, ..., N-1, where x
-   * denotes a vector or array of unknown coordinate values. A vector or
-   * array of unknowns is referred here a "field", while a vector or array 
-   * of values of the errors g_{0},..., g_{N-1} is referred to as a residual.
+   * equations of the form r_{i}(x) = 0 for i = 0, ..., N-1, where x
+   * denotes a vector or array of unknown coordinate values. A vector 
+   * of array of unknowns is referred here the "field" vector, while a 
+   * vector or array of values of the errors r_{0},..., r_{N-1} is 
+   * referred to as the residual vector.
    *
-   * The type T is the type of the data structure used to store both field
-   * residual vectors.
+   * The template parameter Iterator is a base class that must be derived
+   * from Util::ParamComposite, and must declare a virtual solve(bool) 
+   * function with the same interface as that declared here.
+   *
+   * The template type parameter T is the type of the data structure used 
+   * to store both field and residual vectors. 
    *
    * \ingroup Pscf_Iterator_Module
    */
@@ -66,22 +67,33 @@ namespace Pscf {
 
    protected:
 
+      /// Type of error criterion used to test convergence 
+      std::string errorType_;
+
       // Members of parent classes with non-dependent names
       using Iterator::setClassName;
       using ParamComposite::read;
       using ParamComposite::readOptional;
 
       /**
-      * Initialize just before entry to iterative loop.
+      * Read and validate the optional errorType string parameter.
       *
-      * This function is called by the solve method just before entering
-      * the loop over iterations. It must call the protected allocateAM()
-      * to allocate memory required by the AM algorithm. The default
-      * implementation just calls allocateAM(). Re-implementations by
-      * subclasses may add additional operations.
-      */ 
-      virtual void setup();
-     
+      * Virtual to allow extension of allowed errorType string values.
+      *
+      * \param in input filestream
+      */
+      void virtual readErrorType(std::istream& in);
+
+      /**
+      * Find the L2 norm of a vector. 
+      *
+      * The default implementation calls dotProduct internally. 
+      * Virtual to allow more optimized versions.
+      *
+      * \param hist residual vector
+      */
+      virtual double norm(T const & hist);
+
       /**
       * Allocate memory required by AM algorithm, if necessary.
       *
@@ -90,22 +102,72 @@ namespace Pscf {
       */
       void allocateAM();
 
+      /**
+      * Clear information about history.
+      *
+      * This function clears the the history and basis vector ring 
+      * buffer containers.
+      */
+      virtual void clear();
+
+      /**
+      * Initialize just before entry to iterative loop.
+      *
+      * This function is called by the solve function before entering the
+      * loop over iterations. The default functions calls allocateAM() 
+      * if isAllocatedAM() is false, and otherwise calls clear() if 
+      * isContinuation is false.
+      *
+      * \param isContinuation true iff continuation within a sweep
+      */ 
+      virtual void setup(bool isContinuation);
+     
+      /**
+      * Compute and return error used to test for convergence.
+      *
+      * \param verbose  verbosity level of output report
+      * \return error  measure used to test for convergence.
+      */
+      virtual double computeError(int verbose);
+
+      /**
+      * Return the current residual vector by const reference.
+      */
+      T const & residual() const;
+
+      /**
+      * Return the current field or state vector by const reference.
+      */
+      T const & field() const;
+
+      /**
+      * Verbosity level, allowed values 0, 1, or 2.
+      */
+      int verbose() const;
+
+      /**
+      * Have data structures required by the AM algorithm been allocated?
+      */
+      bool isAllocatedAM() const;
+
    private:
+
+      // Private member variables
 
       /// Error tolerance.
       double epsilon_;
 
-      /// Type of error checked for convergence (maxResid or normResid).
-      std::string errorType_;
-
       /// Free parameter for minimization.
       double lambda_;
 
-      /// Number of previous steps to use to compute next state. 
-      int nHist_;
+      /// Number of basis vectors defined as differences.
+      int nBasis_;
 
-      /// Maximum number of previous states to retain.
+      /// Maximum number of basis vectors
       int maxHist_;
+
+      /// Current iteration counter.
+      int itr_;
 
       /// Maximum number of iterations to attempt.
       int maxItr_;
@@ -113,23 +175,26 @@ namespace Pscf {
       /// Number of elements in field or residual vectors.
       int nElem_; 
 
-      /// Boolean indicating whether the calculation has diverged to NaN.
-      bool diverged_;
+      /// Verbosity level.
+      int verbose_;
 
-      /// Has the allocate function been called.
-      bool isAllocated_;
+      /// Output summary of timing results?
+      bool outputTime_;
+
+      /// Has the allocateAM function been called.
+      bool isAllocatedAM_;
 
       /// History of previous field vectors.
-      RingBuffer< T > fieldHists_;
+      RingBuffer<T> fieldHists_;
 
       /// Basis vectors of field histories (differences of fields).
-      RingBuffer< T > fieldBasis_;
+      RingBuffer<T> fieldBasis_;
 
       /// History of residual vectors.
-      RingBuffer< T > resHists_;
+      RingBuffer<T> resHists_;
 
       /// Basis vectors of residual histories (differences of residuals)
-      RingBuffer< T > resBasis_;
+      RingBuffer<T> resBasis_;
 
       /// Matrix containing the dot products of vectors in resBasis_
       DMatrix<double> U_;
@@ -149,58 +214,25 @@ namespace Pscf {
       /// Workspace for calculations
       T temp_;
 
-      /**
-      * Compute a vector of residuals, add to history.
-      */
-      void computeResidual();
+      // --- Non-virtual private functions (implemented here) ---- //
 
       /**
-      * Check if solution is converge within specified tolerance.
+      * Compute optimal coefficients of residual basis vectors.
+      */
+      void computeResidCoeff();
+
+      /**
+      * Compute the trial field and set in the system.
       *
-      * \return true if error < epsilon and false if error >= epsilon
-      */
-      bool isConverged();
-
-      /**
-      * Compute the coefficients that would minimize residual L2 norm.
-      */
-      void findResidCoeff();
-
-      /**
-      * Rebuild predicted wFields from minimized coefficients
+      * This implements a two-step process:
+      *   - Correct the current state and predicted residual by adding 
+      *     linear combination of state and residual basis vectors. 
+      *   - Call addPredictedError to attempt to correct predicted 
+      *     residual
       */
       void updateGuess();
 
-      /**
-      * Clean up after a call to solve(), enabling future calls to solve.
-      */
-      void cleanUp();
-
-      // ---- Methods for doing AM iterator math ---- //
-
-      /**
-      * Find the L2 norm of a residual vector.
-      *
-      * \param hist residual vector
-      */
-      virtual double findNorm(T const & hist) = 0;
-
-      /**
-      * Find the maximum magnitude element of a residual vector.
-      *
-      * \param hist residual vector
-      */
-      virtual double findMaxAbs(T const & hist) = 0;
-
-      /**
-      * Update the basis of residual vectors.
-      * 
-      * \param basis RingBuffer of residual basis vectors
-      * \param hists RingBuffer of history of residual vectors
-      */
-      virtual 
-      void updateBasis(RingBuffer<T> & basis, 
-                       RingBuffer<T> const & hists) = 0;
+      // --- Private virtual functions with default implementations --- //
 
       /**
       * Update the U matrix.
@@ -210,7 +242,7 @@ namespace Pscf {
       * \param nHist number of histories stored at this iteration
       */      
       virtual void updateU(DMatrix<double> & U, 
-                           RingBuffer<T> const & resBasis, int nHist) = 0;
+                           RingBuffer<T> const & resBasis, int nHist);
 
       /**
       * Update the v vector.
@@ -221,15 +253,45 @@ namespace Pscf {
       * \param nHist number of histories stored at this iteration
       */
       virtual void updateV(DArray<double> & v, T const & resCurrent, 
-                           RingBuffer<T> const & resBasis, int nHist) = 0;
+                           RingBuffer<T> const & resBasis, int nHist);
       
+      // --- Pure virtual methods for doing AM iterator math --- //
+
       /**
-      * Set one field equal to another.
+      * Set one vector equal to another.
       *
-      * \param a the field to be set (lhs of assignment)
-      * \param b the field value to assign (rhs of assignment)
+      * \param a the vector to be set (lhs of assignment)
+      * \param b the vector value to assign (rhs of assignment)
       */
       virtual void setEqual(T& a, T const & b) = 0;
+
+      /**
+      * Compute the inner product of two vectors.
+      *
+      * \param a first vector
+      * \param b second vector
+      */
+      virtual double dotProduct(T const & a, T const & b) = 0;
+
+      /**
+      * Find the maximum magnitude element of a residual vector.
+      *
+      * \param hist residual vector
+      */
+      virtual double maxAbs(T const & hist) = 0;
+
+      /**
+      * Update a basis that spans differences of past vectors.
+      *
+      * This function is applied to update bases for both residual
+      * vectors and field vectors.
+      * 
+      * \param basis RingBuffer of residual basis vectors
+      * \param hists RingBuffer of history of residual vectors
+      */
+      virtual 
+      void updateBasis(RingBuffer<T> & basis, 
+                       RingBuffer<T> const & hists) = 0;
 
       /**
       * Add linear combination of field basis vectors to the trial field.
@@ -256,15 +318,19 @@ namespace Pscf {
       void addPredictedError(T& fieldTrial, T const & resTrial, 
                              double lambda) = 0;
 
-      // -- Functions to exchange data with the parent system - //
+      // -- Pure virtual functions to exchange data with parent system -- //
      
       /** 
-      * Does the system has an initial guess?
+      * Does the system have an initial guess?
       */
       virtual bool hasInitialGuess() = 0;
      
       /** 
-      * Return the number of elements in a field or residual vector.
+      * Compute and return the number of residual or field vector elements.
+      *
+      * The private variable nElem_ is assigned the return value of this 
+      * function on entry to allocateAM to set the number of elements of
+      * the residual and field vectors.
       */
       virtual int nElements() = 0;
 
@@ -277,18 +343,22 @@ namespace Pscf {
 
       /**
       * Run a calculation to update the system state.
+      *
+      * This function normally solves the modified diffusion equations,
+      * calculates monomer concentration fields, and computes stresses 
+      * if appropriate. 
       */
       virtual void evaluate() = 0;
 
       /**
-      * Compute residual vector.
+      * Compute the residual vector from the current system state.
       *
       * \param resid current residual vector.
       */
       virtual void getResidual(T& resid) = 0;
 
       /**
-      * Update the system with a passed in trial field.
+      * Update the system with a passed in trial field vector.
       *
       * \param newGuess new field vector (input)
       */
@@ -300,7 +370,35 @@ namespace Pscf {
       virtual void outputToLog() = 0;
 
    };
-   
+  
+   /*
+   * Return the current residual vector by const reference.
+   */
+   template <typename Iterator, typename T>
+   T const & AmIteratorTmpl<Iterator,T>::residual() const
+   {  return resHists_[0]; }
+
+   /*
+   * Return the current field/state vector by const reference.
+   */
+   template <typename Iterator, typename T>
+   T const & AmIteratorTmpl<Iterator,T>::field() const
+   {  return fieldHists_[0]; }
+
+   /*
+   * Integer level for verbosity of the log output (0-2).
+   */
+   template <typename Iterator, typename T>
+   int AmIteratorTmpl<Iterator,T>::verbose() const
+   {  return verbose_; }
+
+   /*
+   * Has memory required by AM algorithm been allocated?
+   */
+   template <typename Iterator, typename T>
+   bool AmIteratorTmpl<Iterator,T>::isAllocatedAM() const
+   {  return isAllocatedAM_; }
+
 }
 #include "AmIteratorTmpl.tpp"
 #endif

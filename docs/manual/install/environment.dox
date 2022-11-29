@@ -19,8 +19,7 @@ Rationale:
     are installed in the pscfpp/bin directory.  The directory that
     contains these files must be added to the user's PATH variable 
     in order to allow the unix shell to find these executable files 
-    when they are invoked by name in a command executed from any 
-    other directory. 
+    when they are invoked by name from the command line.
 
   - The pscfpp/lib/python directory contains a python script that is 
     used by the build system during compilation to generate information 

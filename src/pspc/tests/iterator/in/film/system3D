@@ -23,7 +23,7 @@ System{
     )
   }
   Domain{
-    unitCell       tetragonal  2.0  4.2
+    unitCell       tetragonal  2.0  4.4
     mesh           32 32 68
     groupName      P_4%m_m_m
   }
@@ -33,8 +33,8 @@ System{
     maxHist      50 
     isFlexible   1
     normalVecId          2
-    interfaceThickness   0.08     
-    wallThickness        0.2
+    interfaceThickness   0.2    
+    wallThickness        0.4
     chiBottom[ 3 0 ]
     chiTop[ 3 0 ]
   }

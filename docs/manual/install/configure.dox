@@ -24,21 +24,21 @@ single C++ namespace. We refer to these top-level subdirectories of bld/
 and src/ as "namespace-level" subdirectories.
 
 The setup script installs a set of makefiles and makefile fragments in
-each build directory.  After setup (i.e., after the setup script has 
-been run), each build directories will contain a set of 6 makefile 
-fragments that we refer to as configuration files. The build configuration 
-files all files named "config.mk" that are located either in the root of 
-the build directory (i.e., in src/ or bld/) or in one the 5 namespace-level 
-subdirectories of the build directory. These 6 configuration files are 
-included by other makefiles during compilation process.
+each build directory.  After the setup script has been run, each build
+directory will contain 6 files named "config.mk", with one in the root
+root of the build directory (i.e., in src/ and bld/) and one in each of
+the 5 namespace-level subdirectories of the build directory. These 6 
+files, which we refer to as configuration files, makefile fragments 
+that are included by other makefiles during compilation process.
 
 The config.mk file in the root directory of the build directory tree 
 (e.g., in the src/ directory) is the main build configuration file. 
 This file controls the choice of compiler and general options that are 
-applied to all code.  The config.mk files in the namespace level control 
-more specialized options that are only relevant for code in specific 
-namespaces.  The six config.mk files in each build directory together 
-specify the configuration of any code compiled in that directory. 
+applied to all code.  The config.mk files in the namespace level 
+directories specify more specialized options that are only relevant 
+for code in specific namespaces. The six config.mk files in each 
+build directory together specify the configuration of any code 
+that is compiled in that directory tree.
 
 The build configuration files in each build directory are installed
 by the setup script, and are not stored in the pscfpp repository. 
@@ -61,16 +61,16 @@ must be invoked from the root directory of the build directory tree
 or disable features of code built in that build directory, without 
 effecting code built elsewhere.
 
-The use of a configure script is one of many features of pscfpp
-that is borrowed from the "simpatico" molecular dynamics simulation
-package. Simpatico has many optional compile-time features that can 
-be enabled or disabled prior to compilation by invoking the configure
-script with corresponding command line options. The only optional
-feature of the programs of the pscfpp package is current the option
-to enable extra debugging sanity checks. The use of a script to
-enable and disable a single option is arguably overkill, but we 
-have provided script to provide a mechanism for manipulating any
-future compile-time options.
+Comment: The use of a configure script is one of many features of 
+pscfpp that is borrowed from the "simpatico" molecular dynamics 
+simulation package. Simpatico has many optional compile-time features 
+that can be enabled or disabled prior to compilation by invoking the 
+configure script with corresponding command line options. The only 
+optional feature of the programs of the pscfpp package is current 
+the option to enable extra debugging sanity checks. The use of a 
+script to enable and disable a single option is arguably overkill, 
+but we have provided script to provide a mechanism for manipulating 
+any future compile-time options.
 
 \subsection install_configure_query_sub The "query" option
 
@@ -128,51 +128,8 @@ To disable debugging before compiling, one would instead enter
 \code 
 > ./configure -d0
 \endcode
-These and any other desired changes in compile-time configuration must 
+These or any other desired changes in compile-time configuration must 
 be made before invoking make to compile a program.  
-
-\section install_configure_features Optional features
-
-The following table lists information about the most important compile 
-time options. The configure script enables or disables each such optional
-feature by commenting out or uncommenting the definition of a particular 
-makefile variable that is defined (or not) within a particular config.mk
-configuration file within the relevant build directory. Each row of the 
-table lists (in order):
- 
-  - description: description of the feature 
-
-  - option: the associated command line option for the configure script
-
-  - default: whether the feature is ON or OFF by default
-
-  - variable: the name of the associated makefile variable 
-
-  - file: path to the config.mk configuration file that contains the 
-    definition of the makefile variable.
-
-All paths to configuration files are given relative to the root of the 
-build directory. The file name "config.mk" thus refers to the main
-configuration file in the root directory of a build directory, while
-
-The optional features are:
-<table>
-  <tr> 
-    <td> <b>description</b> </td>
-    <td> <b>option </b> </td>
-    <td> <b>default </b> </td>
-    <td> <b>variable</b> </td>
-    <td> <b>file  </b> </td>
-  </tr>
-  <tr> 
-    <td> Debugging - additional error checks </td>
-    <td> -d </td>
-    <td> OFF </td>
-    <td> UTIL_DEBUG </td>
-    <td> config.mk </td>
-  </tr>
-</table>
-
 
 <BR>
 \ref install_targets_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

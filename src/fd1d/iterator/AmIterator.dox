@@ -1,0 +1,157 @@
+namespace Pscf{
+namespace Fd1d{
+/*! 
+\page fd1d_AmIterator_page Fd1d::AmIterator
+
+An Fd1d::AmIterator<D> object is an iterator that solves the 1D SCFT 
+equations using an Anderson-Mixing algorithm.
+
+\section fd1d_AmIterator_param_sec Parameter File 
+
+An example of the parameter file format for this iterator is shown below:
+\code
+  AmIterator{
+    maxItr       100
+    epsilon      1e-8
+    maxHist      50
+    errorType    relNormResid
+  }
+\endcode
+The format of this block is described more formally below:
+\code
+AmIterator{
+   maxItr          int
+   epsilon         real 
+   maxHist         int  
+   verbose*        int (0, 1, or 2, 0 by default)
+   showTiming*     bool (0 or 1)
+   errorType*      enumeration ("normResid", "maxResid", or "relNormResid", "relNormResid" by default)
+  
+}
+\endcode
+Here, as elsewhere, labels followed by an asterisk (*) represent optional 
+parameters. The meaning of the various parameters are described below:
+<table>
+  <tr>
+    <td> <b> Label </b>  </td>
+    <td> <b> Description </b>  </td>
+  </tr>
+  <tr>
+    <td>  maxItr </td>
+    <td> Maximum number of iterations that will be attempted </td>
+  </tr>
+  <tr>
+    <td>  epsilon </td>
+    <td> Desired tolerance for convergence - iteration stops if 
+         the magnitude of the error drops below epsilon.  </td>
+  </tr>
+  <tr>
+    <td> maxHist  </td>
+    <td> Maximum number of previous trial solultions that will be 
+         retained in memory for use by the AM algorithm. </td>
+  </tr>
+  <tr>
+    <td> verbose* </td>
+    <td> Optional integer with allowed values 0, 1, or 2 for the level of 
+         verbosity of error reporting during iteration.  Increasing value 
+         indicates increasing verbosity. Set to 0 (concise) by default.
+    </td>
+  </tr>
+  <tr>
+    <td> showTime* </td>
+    <td> Optional boolean (0 or 1). Set true (1) to output a report of 
+         components of wall clock time during iteration, or (0) to skip.
+         Set false (0) by default. 
+    </td>
+  </tr>
+  <tr>
+    <td> errorType </td>
+    <td> Identifer for the type of scalar error compared to epsilon to
+         test convergence.  Allowed values are "maxResid", "normResid", 
+         "rmsResid" and "relNormResid", as discussed below. Optional, and 
+         equal to "relNormResid" by default. </td>
+  </tr>
+</table>
+The iterative loop exits if the number of iterations has reached maxItr 
+or if the magnitude of the scalar error is less than epsilon. 
+
+<b> errorType </b>: Several different definitions may be used for 
+the scalar error, depending on the value of the identifier errorType. 
+
+  - If errorType == maxResid, then the scalar error is take to be
+    the maximum of the absolute magnitude of the elements of the 
+    residual vector (the L infinity norm of the residual vector).
+
+  - If errorType == normResid, then the scalar error is take to be
+    the L2 norm of the residual vector (i.e., the sum of the squares
+    of all residual elements).
+
+  - If errorType == rmsResid, then the scalar error is the root mean
+    squared magnitude per element. This is equal to the L2 norm over 
+    the square root of the number of elements.
+
+  - If errorType == normResid, then the scalar error is take to be
+    the ratio of the L2 norm of the residual vector to the L2 norm of 
+    the w field, as in Stasiak and Matsen, Eur. Phys, Journel E, 2012. 
+
+
+\section fd1d_AmIterator_residual_sec Residual Definition
+
+The algorithm is designed to reduce the values of the elements of a 
+vector of residuals (i.e., errors) until they are zero to within some
+tolerance, as defined by one of the scalar norms discussed above.
+The definition of the vector of residuals used in this algorithm is 
+analogous to that given in Eq.  (10) of the article by  Arora et al. 
+[Arora, Morse, Bates and Dorfman, J. Chem.  Phys. vol. 146 224902 (2017)].
+The main difference is that here residual values are associated with 
+values at grid points, rather than coefficients in the Fourier expansion
+used in the algorithm described in that reference.  To describe the 
+residuals expressions here, we use zero based indexing for monomer types, 
+use \f$ N_{x} \f$ to denote the number of grid points (referred to in the 
+parameter file and source code as nx), and use \f$ N_{m} \f$ to denote 
+the number of monomer types (referred to elsewhere as nMonomer).
+
+The vector of residuals for a pscf_fd calculation has \f$ N_{x}N_{m} \f$ 
+(or nx * nMonomer) scalar residuals.  Let \f$ w_{ia} \f$ and 
+\f$ \phi_{ai} \f$ denote the values of the chemical potential field 
+\f$ w_{i} \f$ and volume fraction \f$ \phi_{i} \f$ for monomer type 
+i at grid point \f$a\f$, respectively,  The corresponding residual 
+component \f$ R_{ai}\f$ associated with grid point \f$ a \f$ and monomer 
+type \f$ i \f$ is given, by analogy to Eq. (10) of Arora et al. (JCP 2017), 
+as 
+\f[
+  R_{ai} = \sum_{j=0}^{N_{m}-1} 
+           \left ( \chi_{ij} \phi_{aj} - P_{ij}w_{aj} \right ) 
+  \quad.
+\f]
+where \f$ P_{ij} \f$ is an element of an idempotent 
+\f$ N_{m} \times N_{m} \f$ matrix \f$  P \f$ that can be 
+expressed in matrix notation as
+\f[
+  P  = I
+  - \frac{\epsilon \epsilon^{T} \chi^{-1} }
+        { \epsilon^{T} \chi^{-1} \epsilon }
+ \quad.
+\f]
+Here, \f$ I \f$ is the identity matrix,
+\f$ \chi^{-1} \f$ is the matrix inverse of the \f$\chi\f$ matrix, 
+and \f$\epsilon\f$ is a \f$ N_{m} \f$-component column vector with 
+elements given by \f$ \epsilon_{i} = 1 \f$ for all 
+\f$ i = 0, \ldots, N_{m}-1 \f$.
+
+\section fd1d_AmIterator_closed_sec Closed Systems (Canonical Ensemble)
+
+A slight modification of the residual definition is required in the case 
+case when a value of phi rather than mu is specified for every molecular 
+species, giving a closed system, or a canonical statistical ensemble.  In 
+this case, the solution of the SCF problem is not unique, becase the values
+of the residuals defined above can be shown to be invariant under a shift 
+in all of the chemical potential fields at all grid point points by any 
+spatially homgeneous constant.  To obtain a unique solution, the update
+procedure shifts the chemical potential fields so as to guarantee that
+w field value for the last monomer type at the last grid point is 
+forced to equal zero by convention.
+
+*/
+}
+}

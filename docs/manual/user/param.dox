@@ -8,7 +8,7 @@ This section describes the format and contents of the parameter files used by al
 The parameter files required by the different PSCF programs use a similar syntax, but differ in some details. 
 In the following pages, we first describe elements that are common to the parameter file formats for all programs, starting with a simple example, and then describes the formats for particular programs in greater detail. 
 
-<h3> Contents:</h3>
+<h2> Contents:</h2>
    <ul style="list-style: none;">
    <li> \subpage user_param_example_page  "3.3.1 Example" </li>
    <li> \subpage user_param_syntax_page   "3.3.2 Syntax" </li>

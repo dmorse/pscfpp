@@ -4,8 +4,10 @@
 \ref user_usage_page (Next) 
 <BR>
 
+\section user_files_types_sec Types of File
+
 To perform a typical self-consistent field theory (SCFT) calculation, a 
-pscf program generally reads at least three different types of input file:
+pscf program generally reads three different types of input file:
 <ul>
    <li> a \ref user_files_parameter_section "parameter" file </li>
    <li> a \ref user_files_command_section "command" file </li>
@@ -13,21 +15,41 @@ pscf program generally reads at least three different types of input file:
 </ul>
 All pscf programs use similar formats for the parameter and command files. 
 The contents and formats of these two types of file are discussed briefly 
-below and in more detail in several subsequent pages. Programs that are 
-designed to treat periodic microstructue use formats for field files that 
-are backwards compatible with those used by the older Fortran PSCF program.
+below and in more detail in several subsequent pages. A field files contains
+a description of a set of fields (i.e., functions of position) that are 
+associated with different monomer types.  Every SCFT calculation must 
+read an input file that contains an initial guess for the self-consistent
+field chemical potential fields.
 
-When any pscf program is executed, the parameter file is processes first.
+\section user_files_parameter_section Parameter file
+
+When any pscf program is executed, the parameter file is processed first.  
 This file defines the basic parameters of a physical problem of interest, 
-and is used to initialize the state of the program.
-The parameter file contains basic physical information about chemical 
-structures (e.g., monomer properties and block polymer structures), the 
-composition of the system of interest, interactions among the constituents 
-(Flory-Huggins chi parameters), a description of the spatial domain of 
-interest (e.g., a unit cell of a periodic structure) and a spatial 
-discretization of that domain, and some other algorithmic parameters. 
-The name of the parameter file is specified as command line argument when 
-a pscf program is invoked, as the argument of the "-p" command line option.
+and is used to initialize the state of the program.  The parameter file 
+contains basic physical information about chemical structures (e.g., 
+monomer properties and block polymer structures), the composition of the 
+system of interest, interactions among the constituents (Flory-Huggins 
+chi parameters), a description of the spatial domain of interest (e.g., 
+a unit cell of a periodic structure), a description of a spatial 
+discretization of that domain, and some other algorithmic parameters.  
+The name of the parameter file is specified as command line argument 
+when a PSCF program is invoked, as the argument of the "-p" command line 
+option.
+
+The parameter file for a simple SCFT calculation generally contains the 
+following 4 sections:
+
+- Mixture: Description of the structure of all molecular species and 
+  composition of a mixture
+- Interaction: Flory-Huggins interaction parameters 
+- Domain: Description of a spatial domain or unit cell, and a spatial 
+  discretization.
+- Iterator: Algorithmic parameters used by an iterative solver
+
+An example of a simple parameter file for the pscf_fd program is 
+presented and discussed \ref user_param_example_page "here" .
+
+\section user_files_command_section Command file
 
 The command file is processed after the parameter file, and controls 
 program flow after initialization.  The command file is a script that 
@@ -45,22 +67,10 @@ and monomer concentration fields to output files.  The names of these
 input and output field files and various other data files are specified 
 as parameters of commands within the command file.
 
-\section user_files_parameter_section Parameter file
-
-The parameter file for a simple SCFT calculation generally contains the 
-following 4 sections:
-
-- Mixture: Molecular structure and volume fraction or chemical potential of each molecular species within a mixture.
-- Interaction: Flory-Huggins chi parameters 
-- Domain: Description of a spatial domain or unit cell, and a spatial discretization for that domain.
-- Iterator: Parameters to initialize an iterative solver
-
-\section user_files_command_section Command file
-
-A command file contains a sequence of commands that are read and executed 
-in the order listed. Each line of a command file starts with a capitalized 
-command name, followed by zero or more arguments. The minimal command file 
-for a simple SCFT calculation performed by pscf_pc3D looks like this:
+Each line of a command file starts with a capitalized command name, 
+followed by zero or more arguments. A simple command file for using 
+one of the pscf_pc programs to perform an SCFT calculation might look 
+like this:
 \code
 READ_W_BASIS      in/w.bf
 ITERATE           

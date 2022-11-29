@@ -153,22 +153,23 @@ this algorithm).
 
 <i> 
 Technical note: Source code files that are specific to different PSCF 
-programs are defined in different C++ namespaces. This allows classes 
-that play analogous roles in different programs but that differ in some 
-details to be given the the same name. The LinearSweep classes for the 
-pscf_fd, pscf_pc and pscf_pg programs are actually different 
-classes defined in different namespaces that have identical or nearly 
-identical user interfaces and implement completely analogous algorithms. 
-The common user interface for these classes is described here. </i>
+programs are defined in different C++ implementation level namespaces 
+(i.e., in Pscf::Fd1d, Pscf::Pspc and Pscf::Pspg). This allows classes 
+that play analogous roles in different programs to be given the same
+name. The LinearSweep classes for the pscf_fd, pscf_pc and pscf_pg 
+programs are actually different classes defined in different namespaces 
+that have identical or nearly identical user interfaces and implement 
+closely analogous algorithms.  The common user interface for these 
+classes is described here. </i>
 
-Here parameter file format for a LinearSweep is summarized below:
+The parameter file format for a LinearSweep is summarized below:
 \code
-   LinearSweep{
+  LinearSweep{
        ns              int
        baseFileName    string
        nParameter      int
        parameters      Array [ SweepParameter ]
-   }
+  }
 \endcode
 The purpose of the parameters in this block are explained below:
 <table>
@@ -225,26 +226,24 @@ by 0.3. Values of all parameters at the initial state (corresponding
 to s=0) are given by the values that were set before the sweep began.
 
 The "parameters" array must contain exactly nParameter entries, each
-on a separate line. Each entry in this array contains the data required
-to a create an object of type SweepParameter that described how one
-input parameter should be modified. 
+on a separate line. Each entry in this array describes how one input 
+parameter should be modified. 
 
-The file format each line of the "parameters" array (corresponding to
-a single parameter) contains an identifier for a specific input 
-parameter followed by amount by which the value of that parameter 
-should change over the course of the sweep.  The parameter identifier 
-in each such entry contains a name string that identifies the type of 
-variable, such as "block" for a block length or "chi" for an interaction 
+The file format each line of the "parameters" array (corresponding to 
+a single parameter) contains an identifier for a specific input parameter 
+followed by amount by which the value of that parameter should change 
+over the course of the sweep.  The parameter identifier in each such 
+entry contains a name string that identifies the type of variable, 
+such as "block" for a block length or "chi" for an interaction 
 parameter. This string is followed by either one or two integer indices 
 that specify which variable of that type should be changed.  For example, 
 the string "block" must be followed by two integers, the first being an
 index for the polymer species the block belongs to, and the second  
-being an index for that block within that polymer. Some other types of 
-parameter can be uniqued identified using only a single index. For 
-example the description of a parameter that specifies a volume 
-fraction or chemical potential of a polymer or solvent molecular species 
-requires a single index to identify the polymer or solvent species of 
-interest.
+being an index for that block within that polymer. Some other types 
+of parameter can be uniqued identified using only a single index. For 
+example the description of a parameter that specifies a volume fraction 
+or chemical potential of a polymer or solvent molecular species requires 
+a single index to identify the polymer or solvent species of interest.
 
 The general format for a line in the parameters array for a parameter
 that is specified by two indices is:

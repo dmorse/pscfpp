@@ -18,7 +18,8 @@ column after the first gives the values of the field associated with
 a specific monomer type, listed in order of increasing monomer type
 index.
 
-<h3> Example: </h3>
+\section user_field_fd1d_example_sec Example:
+
 An example of a w (chemical potential) is shown below, with a large 
 section of the data section omitted:
 
@@ -52,8 +53,9 @@ nm     2
   399  -5.96942323357e+00  -5.38083020152e-07
   400  -5.96942303333e+00   0.00000000000e+00
 \endcode
+<BR>
 
-<h3> Boundary conditions: </h3>
+\section user_field_fd1d_bc_sec Boundary Conditions:
 
 The pscf_fd program solves the underlying modified diffusion equation
 using a boundary condition that requires the 1D spatial derivative of 

@@ -46,17 +46,23 @@ namespace Pscf {
       ///@{
 
       /**
-      * Set value of phi (volume fraction), if ensemble is closed.
+      * Set input value of phi (volume fraction), if ensemble is closed.
       *
-      * \throw Exception if ensemble is open
+      * This function may be used to modify phi during a sweep, after
+      * initialization. An exception is thrown if this function is called
+      * when the ensemble is open on entry.
+      *
       * \param phi desired volume fraction for this species
       */
       void setPhi(double phi);
 
       /**
-      * Set value of mu (chemical potential), if ensemble is closed.
+      * Set input value of mu (chemical potential), if ensemble is open.
       *
-      * \throw Exception if ensemble is closed
+      * This function may be used to modify mu during a sweep, after
+      * initialization. An Exception is thrown if this function is called
+      * when the ensemble is closed on entry.
+      *
       * \param mu  desired chemical potential for this species
       */
       void setMu(double mu);

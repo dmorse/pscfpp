@@ -12,12 +12,21 @@
 
 namespace Pscf {
 
+   /*
+   * Constructor
+   */
    SolventDescriptor::SolventDescriptor()
    {  setClassName("SolventDescriptor"); }
 
+   /*
+   * Destructor
+   */
    SolventDescriptor::~SolventDescriptor()
    {}
 
+   /*
+   * Read contents of parameter file block
+   */
    void SolventDescriptor::readParameters(std::istream& in)
    {
       read<int>(in, "monomerId", monomerId_);
@@ -31,18 +40,11 @@ namespace Pscf {
          ensemble_ = Species::Open;
          read(in, "mu", mu_);
       }
-
-      #if 0
-      ensemble_ = Species::Closed;
-      readOptional<Species::Ensemble>(in, "ensemble", ensemble_);
-      if (ensemble_ == Species::Closed) {
-         read(in, "phi", phi_);
-      } else {
-         read(in, "mu", mu_);
-      }
-      #endif
    }
 
+   /*
+   * Rest phi to a new value, if closed ensemble.
+   */
    void SolventDescriptor::setPhi(double phi)
    {
       UTIL_CHECK(ensemble() == Species::Closed);  
@@ -51,6 +53,9 @@ namespace Pscf {
       phi_ = phi;
    }
 
+   /*
+   * Rest mu to a new value, if open ensemble.
+   */
    void SolventDescriptor::setMu(double mu)
    {
       UTIL_CHECK(ensemble() == Species::Open);  

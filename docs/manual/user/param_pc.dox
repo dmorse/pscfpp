@@ -1,6 +1,6 @@
 /*! \page user_param_pc_page 3.3.7 pscf_pc (Periodic Problems, CPU)
 
-\ref user_param_fd_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_param_fd_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref user_param_pg_page  (Next)
 <BR>
 
@@ -8,15 +8,15 @@ The pscf_pc and pscf_pg programs for periodic systems use nearly identical
 parameter file formats, and so are discussed together here.
 
 \section user_param_pc_example_sec Example
-An example of a parameter file for the program pscf_pc3D is shown below. 
+An example of a parameter file for the program pscf_pc3D is shown below.
 
 \code
 System{
   Mixture{
     nMonomer  2
     monomers[
-              A   1.0  
-              B   1.0 
+              A   1.0
+              B   1.0
     ]
     nPolymer  1
     Polymer{
@@ -36,8 +36,8 @@ System{
     )
   }
   Domain{
-    unitCell         cubic       1.9254998725
     mesh             32  32  32
+    lattice          cubic
     groupName        I_m_-3_m
   }
   Iterator{
@@ -51,8 +51,8 @@ System{
 
 \section user_param_pc_system_sec File Format
 
-The main System block of a parameter file for any of the pscf_pc and 
-pscf_pg programs for has the same overall structure as that used by 
+The main System block of a parameter file for any of the pscf_pc and
+pscf_pg programs for has the same overall structure as that used by
 pscf_fd program, and is described by the same format skeleton:
 \code
 System{
@@ -63,93 +63,131 @@ System{
   Sweep#*{ ... }
 }
 \endcode
-As for pscf_fd, the Sweep block is optional, and Iterator and Sweep blocks 
-(if present) are both selectable blocks.  The purposes of these top-level 
-blocks have all been discussed previously in the discussion of pscf_fd, and 
-will not be repeated here.  Formats of the Mixture and Interaction blocks 
-are the same for all PSCF programs, and so have also been discussed 
-previously. Below, we discuss the contents of the Domain, Iterator, and 
+As for pscf_fd, the Sweep block is optional, and Iterator and Sweep blocks
+(if present) are both selectable blocks.  The purposes of these top-level
+blocks have all been discussed previously in the discussion of pscf_fd, and
+will not be repeated here.  Formats of the Mixture and Interaction blocks
+are the same for all PSCF programs, and so have also been discussed
+previously. Below, we discuss the contents of the Domain, Iterator, and
 Sweep blocks.
 
 \section user_param_pc_domain_sec Domain Block
 
-The Domain block contains information required to describe both unit 
-cell of the periodic structure, the regular mesh that is used to 
-discretize fields within each unit cell, and the space group of the 
+The Domain block contains information required to describe both unit
+cell of the periodic structure, the regular mesh that is used to
+discretize fields within each unit cell, and the space group of the
 desired solution.
 The parameter file format is discussed below, as well as in separate
-page \subpage pspc_Domain_page "here". 
+page \subpage pspc_Domain_page "here".
 
 An example of the format of this block is shown below:
 \code
   Domain{
-    unitCell    cubic   1.9254998725
     mesh        32  32  32
+    lattice     cubic
     groupName   I_m_-3_m
   }
 \endcode
-The unitCell, mesh and groupName parameter lines are discussed separately 
+The unitCell, mesh and groupName parameter lines are discussed separately
 below.
-
-<b> unitCell </b>
-
-The line that begins with the label unitCell contains information 
-required to specify an initial value of the crystal unit cell.  The data 
-on this line contains a string that specifies the desired crystal system 
-followed by one or more unit cell parameters. The format is thus
-\code
-   unitCell   crystalSystem  param[0] ..... param[m]
-\endcode
-where m denotes the number of independent parameters required to
-describe a unit cell of the specified crystal system. The allowed 
-values of the crystalSystem string for a 3D structure currently 
-include "cubic", "tetragonal" and "orthorhombic".  The cubic
-crystal system used in the parameter file only requires one unit
-cell parameter, which is the length of each axis of a simple 
-cubic unit cell. 
-
-Note: The list of unit cell parameters that is input in the parameter 
-file is actually only used within an algorithm that constructs a 
-set of symmetry adapted Fourier basis functions, and then discarded.
-Values of initial guesses for initial unit cell dimensions of a system 
-to which we want to apply self-consistent field theory are obtained 
-later by reading a file that contains an initial guess for the monomer 
-chemical potential fields (w-fields), which also contains corresponding 
-unit cell dimensions.
 
 <b> mesh  </b>
 
-The value is the variable "mesh" is a vector of integers that specifies 
-the number of grid points along each direction of the uniform spatial 
-mesh used to discretize fields within each unit cell.  The format is
+The value of the variable "mesh" is a vector of integers that specifies
+the number of grid points along each direction of the uniform spatial
+mesh used to discretize fields within each unit cell of the crystal.
+The number of integers is equal to the dimensionality D of the periodic
+unit cell.  The format is
 \code
    mesh   N[0] .... N[D-1]
 \endcode
-where D is the dimension of space (i.e., the number of periodic
-directions), and N[i] is the number of grid points along axis
-number i, for i = 0,...,D-1.
+where N[i] is the number of grid points along axis number i, for
+i = 0 ,..., D-1.
+
+The dimensions N[0], ... , N[D-1] of the spatial mesh are initialized
+to the values given in the parameter file and cannot be changed during
+the lifetime of a program, except by rerunning the program with a
+modified parameter file.
+
+<b> lattice </b>
+
+The value of the parameter "lattice" is given by string that specifies the
+desired crystal system type.  The set of allowed values for this string
+depends on the dimensionality of space.  There are 7 allowed values of
+the lattice string for a 3D structure, corresponding to the 7 types of
+3D crystal system, with names given by the strings "cubic", "tetragonal",
+"orthorhombic", "hexagonal", "rhombohedral", "monoclinic", and "triclinic".
+The allowed values for a 2D system include "square", "rectangular",
+"hexagonal" "rhombic" and "oblique".  There is only allowed lattice
+system for a 1D crystal, which is referred to here as  "lamellar". A 
+more detailed discussion of each of the possible lattice systems is 
+given in a separate page that documents conventions for
+\ref user_unitcell_page "unit cells".
 
 <b> groupName </b>:
 
-The value of the string parameter "spaceGroup" must be an standard
-identifier for the crystallographic space group of the desired 
-structure. 
-Each of the allowed values of the groupName string corresponds to a 
-modified version of the name of the space group, as listed in the 
-international tables of crystallography. In the above example, the 
-groupName string I_m_-3_m is a modified form of the name 
-\f$Im\overline{3}m\f$ for the space group for a BCC lattice.  
+The value of the string parameter "spaceGroup" is an identifier
+for the crystallographic space group of the desired structure.
+Each of the allowed values of the groupName string corresponds to a
+modified version of the name of a space group, as listed in the
+international tables of crystallography. In the above example, the
+groupName string I_m_-3_m is a modified form of the name
+\f$Im\overline{3}m\f$ for the space group for a BCC lattice.
 Identifiers for crystallographic space groups are discussed and
-listed \ref user_groups_page "here". 
+listed \ref user_groups_page "here".
+
+The groupName is used to look up and read a representation of a
+space group that is used to generate a symmetry-adapted Fourier
+basis in which every basis function is invariant under all the
+elements of the specified space group. The algorithm used to
+construct this basis requires knowledge of a set of initial values
+for the unit cell parameters. The basis is thus normally constructed
+immediately after the first time unit cell parameters are
+initialized, e.g., by reading the values given in a file that
+contains a description of a field.
+
+<b> Unit cell parameters </b>:
+
+To completely describe the Bravais lattice for a crystal, one must 
+assign values to a list of parameters that give the lengths of the 
+edges of the unit cell (or the Bravais lattice vectors) and, in 
+some cases, angles between some of these edges. The number of 
+unit cell parameters required to describe a unit cell is different 
+for different lattice system. For example, a 3D cubic crystal can 
+be described using a single parameter that gives the length of any 
+edge of a cubic unit cell. Three parameters are required to describe
+an orthorhombic unit cell, to specify lengths of three orthogonal 
+Bravais basis vectors, while 6 parameters are required for a 
+a triclinic cell to specify 3 independent unit cell lengths and 3 
+independent angles. An array of unit cell parameters for each unit 
+cell type that lists the required parameters in some pre-specified 
+order. Conventions for the meaning of the required parameters and 
+the order in which they are listed are described for each unit cell 
+type in the documentation for \ref user_unitcell_page "unit cells".
+
+Note that values for unit cell parameters are not specified in the 
+parameter file the pscf_pc programs. These parameters values are 
+instead specified within the header of any file that describes a 
+field using a format that can be read by a pscf_pc or pscf_pg 
+program.  Values for unit cell parameters are thus normally first
+ assigned values during execution of the first command in the 
+command file that causes the program to read a field from file. 
+There also exists a command named SET_UNIT_CELL that user can 
+invoke to manually set or reset the unit cell parameters at any 
+point during the processing of the command file.
+
+The unit cell parameters for a crystal may be changed multiple 
+times during program execution.
+
 
 \section user_param_pc_Iterator_section Iterators
 
-The default Iterator for the pscf_pc and pscf_pg programs uses an 
-Anderson-Mixing (AM) iterator algorithm. This can be invoked using 
-either the generic label "Iterator" or the specific label "AmIterator".  
-The only other iterator currently available is an Anderson-Mixing 
-iterator designed specifically for problems in which a polymer melt or 
-mixture is confined to a thin film (see \ref user_thin_films_page ). 
+The default Iterator for the pscf_pc and pscf_pg programs uses an
+Anderson-Mixing (AM) iterator algorithm. This can be invoked using
+either the generic label "Iterator" or the specific label "AmIterator".
+The only other iterator currently available is an Anderson-Mixing
+iterator designed specifically for problems in which a polymer melt or
+mixture is confined to a thin film (see \ref user_thin_films_page ).
 
 Descriptions of the parameter file formats for the available iterators
 can be found by following the links in the table below:
@@ -164,7 +202,7 @@ can be found by following the links in the table below:
   </tr>
   <tr>
     <td> \subpage pspc_AmIteratorFilm_page "AmIteratorFilm" </td>
-    <td> Thin Film Anderson Mixing iterator. Uses the Anderson Mixing 
+    <td> Thin Film Anderson Mixing iterator. Uses the Anderson Mixing
          algorithm to solve the SCFT equations for a system that is
          confined to a thin film. </td>
   </tr>
@@ -172,14 +210,15 @@ can be found by following the links in the table below:
 
 \section user_param_pc_sweep_sec Sweep
 
-The default sweep for the pscf_pc programs is a linear sweep algorithm 
-that can be invoked using a block that starts either with the generic 
-label Sweep or the specific label LinearSweep. The required parameter 
-file format has been described \ref user_param_sweep_linear_sec "here". 
+The only sweep algorithm currently avaiable for use with pspc_pc is a
+general linear sweep algorithm. This can be invoked by including a block
+that starts either with the generic label Sweep or the specific label
+LinearSweep.  The required parameter file format for a linear sweep has
+been described \ref user_param_sweep_linear_sec "here".
 
 <BR>
-\ref user_param_fd_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_param_page     (Up)   &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_param_fd_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_param_page     (Up)   &nbsp; &nbsp; &nbsp; &nbsp;
 \ref user_param_pg_page  (Next)
 
 */

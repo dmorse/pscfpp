@@ -113,9 +113,13 @@ is given in the links in the table below:
 <td> Newton-Raphson iterator </td>
 </tr>
 <tr>
-<td> \subpage fd1d_FdIterator_page "FdIterator" </td>
-<td> Relaxation algorithm for AB (two monomer) systems, as described
-     by Fredrickson and Drolet </td>
+<td> \subpage fd1d_AmIterator_page "AmIterator" </td>
+<td> Anderson-Mixing iterator </td>
+</tr>
+<tr>
+<td> \subpage fd1d_BinaryRelaxIterator_page "BinaryRelaxIterator" </td>
+<td> Simple relaxation algorithm for AB (two monomer) systems, as 
+     described by Fredrickson and Drolet </td>
 </tr>
 </table>
 </table>

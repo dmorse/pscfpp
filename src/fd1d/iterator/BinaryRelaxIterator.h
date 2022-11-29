@@ -1,5 +1,5 @@
-#ifndef FD1D_Fd_ITERATOR_H
-#define FD1D_Fd_ITERATOR_H
+#ifndef FD1D_BINARY_RELAX_ITERATOR_H
+#define FD1D_BINARY_RELAX_ITERATOR_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -23,11 +23,18 @@ namespace Fd1d
    using namespace Util;
 
    /**
-   * Fd relaxation Iterator for SCF equations.
+   * Relaxation iterator for SCF equations for two-monomer system.
+   *
+   * This class implements the simple Picard-type relaxation iterator 
+   * for systems with two monomer types that was introduced by Drolet and 
+   * Fredrickson (PRL, 1999).
+   * 
+   * Reference:
+   * F. Drolet & G.H. Fredrickson, Phys. Rev. Lett. vol. 83, 4317 (1999).
    *
    * \ingroup Fd1d_Iterator_Module
    */
-   class FdIterator : public Iterator
+   class BinaryRelaxIterator : public Iterator
    {
     
    public:
@@ -41,23 +48,18 @@ namespace Fd1d
       * Monomer concentration / volume fraction field.
       */
       typedef Mixture::CField CField;
-    
-      /**
-      *Default constructor.
-      */
-      FdIterator();
-    
+   
       /**
       * Constructor.
       *
       * \param system parent System object.
       */
-      FdIterator(System& system);
+      BinaryRelaxIterator(System& system);
     
       /**
       * Destructor.
       */
-      virtual ~FdIterator();
+      virtual ~BinaryRelaxIterator();
     
       /**
       * Read all parameters and initialize.
@@ -115,8 +117,8 @@ namespace Fd1d
       /// Mixing parameter for Wminus
       double lambdaMinus_;
       
-      /// Max iteration
-      int maxIterations_;
+      /// Max number of iterations
+      int maxIter_;
     
       /// Have arrays been allocated?
       bool isAllocated_;
@@ -127,14 +129,15 @@ namespace Fd1d
       /**
       * Allocate required memory.
       */
-      void setup();
+      void allocate();
     
       /**
-      * Compute the increment of chemical potential field
-      * \param wOld array of old chemical potential fields (input)
-      * \param cFields monomer concentration fields (input)
-      * \param dW, the change of chemical potential field (output)
-      * \param dWNorm, the norm of change of chemical potential field (output)
+      * Compute residuals and increments of chemical potential fields.
+      *
+      * \param wOld  array of old chemical potential fields (input)
+      * \param cFields  monomer concentration fields (input)
+      * \param dW  change of w fields (output)
+      * \param dWNorm scalar residual (output)
       */
       void computeDW(Array<WField> const & wOld, 
                      Array<CField> const & cFields,
@@ -142,7 +145,7 @@ namespace Fd1d
                      double & dWNorm);
      
       /**
-      * Increment the chemical potential fields
+      * Update the chemical potential fields
       *
       * \param wold array of old chemical potential fields (input)
       * \param dW_ array of increment of chemical potential fields (input)

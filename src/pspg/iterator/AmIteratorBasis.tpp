@@ -19,20 +19,24 @@ namespace Pspg{
 
    using namespace Util;
 
+   // Constructor
    template <int D>
    AmIteratorBasis<D>::AmIteratorBasis(System<D>& system)
    : Iterator<D>(system)
    {  setClassName("AmIteratorBasis"); }
 
+   // Destructor
    template <int D>
    AmIteratorBasis<D>::~AmIteratorBasis()
    {}
 
+   // Read parameter file block
    template <int D>
    void AmIteratorBasis<D>::readParameters(std::istream& in)
    {
       // Call parent class readParameters 
       AmIteratorTmpl<Iterator<D>,DArray<double> >::readParameters(in);
+      AmIteratorTmpl<Iterator<D>,DArray<double> >::readErrorType(in);
 
       // Default parameter values
       isFlexible_ = 0;
@@ -43,54 +47,50 @@ namespace Pspg{
       readOptional(in, "scaleStress", scaleStress_);
    }
 
+   // -- Virtual functions used to implement AM mixing algorithm --  //
 
    template <int D>
-   double AmIteratorBasis<D>::findNorm(DArray<double>  const & hist) 
+   void AmIteratorBasis<D>::setEqual(DArray<double>& a, DArray<double> const & b)
+   {  a = b; }
+
+   template <int D>
+   double AmIteratorBasis<D>::dotProduct(DArray<double> const & a,
+                                         DArray<double> const & b) 
    {
-      const int n = hist.capacity();
-      double data;
-      double normResSq = 0.0;
+      const int n = a.capacity();
+      UTIL_CHECK(b.capacity() == n);
+      double product = 0.0;
       for (int i=0; i < n; ++i) {
-         data = hist[i];
-         normResSq += data*data;
+         product += a[i]*b[i];
       } 
-      return sqrt(normResSq);
+      return product;
    }
 
    // Compute and return maximum element of residual vector.
    template <int D>
-   double AmIteratorBasis<D>::findMaxAbs(DArray<double> const & hist)
+   double AmIteratorBasis<D>::maxAbs(DArray<double> const & a)
    {
-      const int n = hist.capacity();
-      double maxRes = 0.0;
-
+      const int n = a.capacity();
+      double max = 0.0;
       for (int i = 0; i < n; i++) {
-         if (fabs(hist[i]) > maxRes)
-            maxRes = fabs(hist[i]);
+         if (fabs(a[i]) > max)
+            max = fabs(a[i]);
       }
-
-      return maxRes;
+      return max;
    }
 
-   // Update basis
+   #if 0
    template <int D>
-   void 
-   AmIteratorBasis<D>::updateBasis(RingBuffer<DArray<double> > & basis,
-                                   RingBuffer<DArray<double> > const& hists)
+   double AmIteratorBasis<D>::norm(DArray<double>  const & a) 
    {
-      // Make sure at least two histories are stored
-      UTIL_CHECK(hists.size() >= 2);
-
-      const int n = hists[0].capacity();
-      DArray<double> newbasis;
-      newbasis.allocate(n);
-
-      for (int i = 0; i < n; i++) {
-         // sequential histories basis vectors
-         newbasis[i] = hists[0][i] - hists[1][i]; 
+      const int n = a.capacity();
+      double data;
+      double normSq = 0.0;
+      for (int i=0; i < n; ++i) {
+         data = a[i];
+         normSq += data*data;
       }
-
-      basis.append(newbasis);
+      return sqrt(normSq);
    }
 
    // Compute one element of U matrix of by computing a dot product
@@ -160,10 +160,28 @@ namespace Pspg{
          v[m] = computeVDotProd(resCurrent,resBasis,m);
       }
    }
+   #endif
 
+   // Update basis
    template <int D>
-   void AmIteratorBasis<D>::setEqual(DArray<double>& a, DArray<double> const & b)
-   {  a = b; }
+   void 
+   AmIteratorBasis<D>::updateBasis(RingBuffer<DArray<double> > & basis,
+                                   RingBuffer<DArray<double> > const& hists)
+   {
+      // Make sure at least two histories are stored
+      UTIL_CHECK(hists.size() >= 2);
+
+      const int n = hists[0].capacity();
+      DArray<double> newbasis;
+      newbasis.allocate(n);
+
+      for (int i = 0; i < n; i++) {
+         // sequential histories basis vectors
+         newbasis[i] = hists[0][i] - hists[1][i]; 
+      }
+
+      basis.append(newbasis);
+   }
 
    template <int D>
    void
@@ -329,11 +347,11 @@ namespace Pspg{
       // Restructure in format of monomers, basis functions
       for (int i = 0; i < nMonomer; i++) {
          wField[i].allocate(nBasis);
-         for (int k = 0; k < nBasis; k++)
-         {
+         for (int k = 0; k < nBasis; k++) {
             wField[i][k] = newGuess[i*nBasis + k];
          }
       }
+
       // If canonical, explicitly set homogeneous field components
       if (system().mixture().isCanonical()) {
          for (int i = 0; i < nMonomer; ++i) {

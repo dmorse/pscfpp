@@ -59,6 +59,7 @@ namespace Pspc
       *
       * \param mesh  associated spatial discretization Mesh<D>
       * \param fft   associated FFT object for fast transforms
+      * \param lattice  lattice system type (enumeration value)
       * \param groupName space group name string
       * \param group  associated SpaceGroup object
       * \param basis  associated Basis object
@@ -124,7 +125,7 @@ namespace Pspc
       * and closes the file. 
       *
       * \param filename  name of output file
-      * \param fields  field to be written (symmetry adapted basis format)
+      * \param field  field to be written (symmetry adapted basis format)
       * \param unitCell  associated crystallographic unit cell
       */
       void writeFieldBasis(std::string filename, 

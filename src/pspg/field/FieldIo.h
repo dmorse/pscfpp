@@ -53,7 +53,9 @@ namespace Pspg
       *
       * \param mesh  associated spatial discretization Mesh<D>
       * \param fft   associated FFT object for fast transforms
+      * \param lattice  lattice system type (enumeration value)
       * \param groupName space group name string
+      * \param group  associated space group
       * \param basis  associated Basis object
       * \param fileMaster  associated FileMaster (for file paths)
       */

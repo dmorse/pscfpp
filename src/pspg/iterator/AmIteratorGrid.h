@@ -50,7 +50,6 @@ namespace Pspg
       */
       void readParameters(std::istream& in);
 
-      using AmIteratorTmpl<Iterator<D>,FieldCUDA>::setup;
       using AmIteratorTmpl<Iterator<D>,FieldCUDA>::solve;
       using Iterator<D>::isFlexible;
 
@@ -65,24 +64,35 @@ namespace Pspg
       /// How are stress residuals scaled in error calculation?
       double scaleStress_;
 
+      // Virtual functions used to implement AM algorithm
+      
       /**
-      * Find norm of a residual vector.
+      * Set vector a equal to vector b (a = b).
+      * 
+      * \param a the field to be set (LHS, result)
+      * \param b the field for it to be set to (RHS, input)
       */
-      double findNorm(FieldCUDA const & hist);
+      void setEqual(FieldCUDA& a, FieldCUDA const & b);
+
+      /**
+      * Compute and return inner product of two real fields.
+      */
+      double dotProduct(FieldCUDA const & a, FieldCUDA const & b);
 
       /**
       * Find the maximum magnitude element of a residual vector.
+      *  
+      * \param a input vector
       */
-      double findMaxAbs(FieldCUDA const & hist);
+      double maxAbs(FieldCUDA const & a);
 
+      #if 0
       /**
-      * Update the series of residual vectors.
-      * 
-      * \param basis RingBuffer of basis vectors.
-      * \param hists RingBuffer of previous vectors.
+      * Find norm of a residual vector.
+      *  
+      * \param a input vector
       */
-      void updateBasis(RingBuffer<FieldCUDA> & basis, 
-                       RingBuffer<FieldCUDA> const & hists);
+      double norm(FieldCUDA const & a);
 
       /**
       * Compute the dot product for an element of the U matrix.
@@ -128,14 +138,16 @@ namespace Pspg
                    FieldCUDA const & resCurrent, 
                    RingBuffer<FieldCUDA> const & resBasis, 
                    int nHist);
+      #endif
 
       /**
-      * Set a vector equal to another. 
+      * Update the series of residual vectors.
       * 
-      * \param a the field to be set (LHS, result)
-      * \param b the field for it to be set to (RHS, input)
+      * \param basis RingBuffer of basis vectors.
+      * \param hists RingBuffer of previous vectors.
       */
-      void setEqual(FieldCUDA& a, FieldCUDA const & b);
+      void updateBasis(RingBuffer<FieldCUDA> & basis, 
+                       RingBuffer<FieldCUDA> const & hists);
 
       /**
       * Compute trial field so as to minimize L2 norm of residual.

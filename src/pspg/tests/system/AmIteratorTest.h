@@ -155,7 +155,7 @@ public:
       setupSystem<1>(system,"in/blend/lam/param.closed"); 
 
       // Make reference copy of w fields
-      system.readWBasis("in/blend/lam/w.ref_closed");
+      system.readWBasis("in/blend/lam/w.ref");
       DArray< DArray<double> > b_wFields_check;
       copyFieldsBasis(b_wFields_check, system.w().basis());
 
@@ -177,6 +177,7 @@ public:
       comparison.compare(b_wFields_check, b_wFields);
       double diff = comparison.maxDiff();
       double epsilon = 5.0E-7;
+      //setVerbose(1);
       if (verbose() > 0 || diff > epsilon) {
          Log::file() << "\n";
          Log::file() << "Max diff = " << comparison.maxDiff() << "\n";

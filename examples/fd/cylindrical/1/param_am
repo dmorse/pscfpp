@@ -30,8 +30,9 @@ System{
      xMax            4.00
      nx               401
   }
-  Iterator{
-     epsilon   0.0000001
+  AmIterator{
+     maxItr      500
+     epsilon     1.0E-8
+     errorType   maxResid
   }
 }
-

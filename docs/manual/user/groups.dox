@@ -9,7 +9,7 @@ algorithms that constrain the chemical potential fields to be symmetric
 under all operations of a specified crystallographic space group. Each
 possible space group is identified in PSCF by a unique identifer string.
 
-<h3> Space Group Identifier Strings </h3>
+\section user_groups_identifier_sec Space Group Identifier Strings 
 
 The space group identifiers used in PSCF are ASCII strings with no white
 space that are constructed as mangled forms of the Hermann Mauguin space
@@ -35,8 +35,9 @@ Elements in which a single digit number appears as a subcript to another such nu
 Each slash ("/") in a Hermann Mauguin name is replaced by a percent sign ("%") symbol. For example P_4\%m_m_m is the PSCF identifier for space group \f$P4/mmm\f$.
 </li>
 <li>
-Different possible settings of a space group (i.e., different choices of origin) are indicated by a a colon (":") followed by a setting number at the end of the space group name. 
+Different possible settings of a space group (e.g., due to different choices of origin) are indicated by a a colon (":") followed by a single digit or letter at the end of the space group name. 
 For example F_d_-3_m:2 is the PSCF identifier for setting 2 of space group \f$Fd\overline{3}m\f$, which has two settings labelled "1" and "2". 
+Some space groups for crystals in the trigonal crystal system can be represented using either a hexagonal or rhombohedral Bravais lattice, which are identified with names that end in suffixes ":H" or ":R", respectively.
 Such setting labels are only used for space groups for which two or more setting are listed in the international tables.
 </li>
 </ul>
@@ -57,7 +58,7 @@ A vector with elements given by rational numbers (fractions) is used to represen
 
 Identifier strings for all of the standard 1D, 2D and 3D space groups are listed below:
 
-<h3> 1D Space Groups </h3>
+\section user_groups_1D_sec 1D Space Groups 
 There are only two possible symmetry groups for one-dimensionally periodic
 structures: Space group \c P_-1 has an inversion center at the origin, 
 giving centrosymmetric lamellar structures, while space group \c P_1 does 
@@ -69,7 +70,8 @@ Group identifiers:
 | 1      | \c P_-1 | Inversion symmetry |
 | 2      | \c P_1  | No symmetry |
 
-<h3> 2D Space Groups </h3>
+
+\section user_groups_2D_sec 2D Space Groups 
 
 There are 17 possible 2D symmetry groups, also known as plane groups.
 
@@ -94,13 +96,16 @@ Group identifiers:
 | 16     | \c p_6     | hexagonal |
 | 17     | \c p_6_m_m | hexagonal |
 
-<h3> 3D Space Groups </h3>
+
+\section user_groups_3D_sec 3D Space Groups 
 
 There are 230 possible 3D space groups. The international crystallographic 
 tables lists 2 "settings" for some space groups, which differ in the 
 convention for the placement of the origin. PSCF identifiers for space 
 groups for which two or more settings are listed end in a colon followed 
-by an integer id (1 or 2) for the setting.
+by an integer id (1 or 2) for the setting. Trigonal groups that may be
+represented using either a hexagonal or rhombohedral Bravais lattice
+sometimes have two settings distinguished by subscripts "H" or "R". 
 
 Group identifiers:
 | Number | Symbol                  | Crystal System |

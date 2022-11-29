@@ -50,16 +50,16 @@ namespace Pspg
       */
       void readParameters(std::istream& in);
 
-      using AmIteratorTmpl<Iterator<D>, DArray<double> >::setup;
-      using AmIteratorTmpl<Iterator<D>, DArray<double> >::solve;
-      using AmIteratorTmpl<Iterator<D>, DArray<double> >::setClassName;
       using Iterator<D>::isFlexible;
+      using AmIteratorTmpl<Iterator<D>, DArray<double> >::solve;
 
    protected:
 
       using ParamComposite::readOptional;
       using Iterator<D>::system;
       using Iterator<D>::isFlexible_;
+      using AmIteratorTmpl<Iterator<D>, DArray<double> >::setClassName;
+      using AmIteratorTmpl<Iterator<D>, DArray<double> >::verbose;
 
    private:
 
@@ -67,14 +67,22 @@ namespace Pspg
       double scaleStress_;
 
       /**
-      * Find norm of a residual vector.
+      * Set a vector equal to another (assign a = b)
+      * 
+      * \param a the field to be set (LHS, result)
+      * \param b the field for it to be set to (RHS, input)
       */
-      double findNorm(DArray<double> const & hist);
+      void setEqual(DArray<double>& a, DArray<double> const & b);
 
       /**
-      * Find the maximum magnitude element of a residual vector.
+      * Compute the inner product of two real vectors.
       */
-      double findMaxAbs(DArray<double> const & hist);
+      double dotProduct(DArray<double> const & a, DArray<double> const & b);
+
+      /**
+      * Find the maximum magnitude element of a vector.
+      */
+      double maxAbs(DArray<double> const & hist);
 
       /**
       * Update the series of residual vectors.
@@ -84,59 +92,6 @@ namespace Pspg
       */
       void updateBasis(RingBuffer< DArray<double> > & basis, 
                        RingBuffer< DArray<double> > const & hists);
-
-      /**
-      * Compute the dot product for an element of the U matrix.
-      * 
-      * \param resBasis RingBuffer of residual basis vectors.
-      * \param m row of the U matrix
-      * \param n column of the U matrix
-      */
-      double computeUDotProd(RingBuffer<DArray<double> > const & resBasis, 
-                             int m, int n);
-
-      /**
-      * Compute the dot product for an element of the v vector.
-      * 
-      * \param resCurrent current residual vector
-      * \param resBasis RingBuffer of residual basis vectors
-      * \param m row index for element of the v vector
-      */
-      double computeVDotProd(DArray<double> const & resCurrent, 
-                             RingBuffer<DArray<double> > const & resBasis, 
-                             int m);
-
-      /**
-      * Update the U matrix.
-      * 
-      * \param U U matrix (dot products of residual basis vectors)
-      * \param resBasis RingBuffer residual basis vectors
-      * \param nHist current number of previous states
-      */
-      void updateU(DMatrix<double> & U, 
-                   RingBuffer<DArray<double> > const & resBasis, 
-                   int nHist);
-
-      /**
-      * Update the v vector.
-      * 
-      * \param v v vector
-      * \param resCurrent current residual vector 
-      * \param resBasis RingBuffer of residual basis vectors
-      * \param nHist number of histories stored at this iteration
-      */
-      void updateV(DArray<double> & v, 
-                   DArray<double> const & resCurrent, 
-                   RingBuffer<DArray<double> > const & resBasis, 
-                   int nHist);
-
-      /**
-      * Set a vector equal to another. 
-      * 
-      * \param a the field to be set (LHS, result)
-      * \param b the field for it to be set to (RHS, input)
-      */
-      void setEqual(DArray<double>& a, DArray<double> const & b);
 
       /**
       * Compute trial field so as to minimize L2 norm of residual.

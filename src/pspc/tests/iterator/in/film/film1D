@@ -1,11 +1,11 @@
 AmIteratorFilm{
-  maxItr       1000
+  maxItr       2000
   epsilon      1e-12
-  maxHist      50 
-  isFlexible   1
+  maxHist      100 
+  isFlexible   0
   normalVecId          0
-  interfaceThickness   0.08     
-  wallThickness        0.2
-  chiBottom[ 10 10 ]
-  chiTop[ 0 0 ]
+  interfaceThickness   0.2     
+  wallThickness        0.4
+  chiBottom[   0.0   0.0  ]
+  chiTop[      40.0  0.0  ]
 }

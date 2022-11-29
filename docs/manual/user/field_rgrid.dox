@@ -11,7 +11,7 @@ mesh that covers one unit cell of a periodic structure. This mesh
 is the same one as that used by the pseudo-spectral algorithm for 
 solving the modified diffusion equation. 
 
-<h3> Example: 2D Hex Phase </h3>
+\section user_field_rgrid_hex_sec Example: 2D Hex Phase 
 
 Here is example of a converged omega field for a hex phase of
 a diblock copolymer melt:
@@ -43,8 +43,9 @@ ngrid
        0.999219800      19.890258066
        0.570887775      19.658020087
 \endcode
+<BR>
 
-<h3> File Format </h3>
+\section user_field_rgrid_format_sec File Format 
 
 Like other field formats, this file format contains a header 
 section with crystallographic information followed by a data section. 
