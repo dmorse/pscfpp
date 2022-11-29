@@ -8,13 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include <pscf/math/LuSolver.h>
-
-#include <util/containers/DArray.h>
-#include <util/containers/FArray.h>
-#include <util/containers/FSArray.h>
-#include <util/containers/DMatrix.h>
-#include <util/containers/RingBuffer.h>
+#include <util/containers/DArray.h>     // member template
+#include <util/containers/DMatrix.h>    // member template
+#include <util/containers/RingBuffer.h> // member template
 
 namespace Pscf {
 
@@ -30,8 +26,12 @@ namespace Pscf {
    * vector or array of values of the errors r_{0},..., r_{N-1} is 
    * referred to as the residual vector.
    *
-   * The type T is the type of the data structure used to store both 
-   * field and residual vectors.
+   * The template parameter Iterator is a base class that must be derived
+   * from Util::ParamComposite, and must declare a virtual solve(bool) 
+   * function with the same interface as that declared here.
+   *
+   * The template type parameter T is the type of the data structure used 
+   * to store both field and residual vectors. 
    *
    * \ingroup Pscf_Iterator_Module
    */
@@ -88,6 +88,7 @@ namespace Pscf {
       * Find the L2 norm of a vector. 
       *
       * The default implementation calls dotProduct internally. 
+      * Virtual to allow more optimized versions.
       *
       * \param hist residual vector
       */
@@ -102,10 +103,25 @@ namespace Pscf {
       void allocateAM();
 
       /**
-      * Clear memory from history and basis vector containers.
+      * Clear information about history.
+      *
+      * This function clears the the history and basis vector ring 
+      * buffer containers.
       */
       virtual void clear();
 
+      /**
+      * Initialize just before entry to iterative loop.
+      *
+      * This function is called by the solve function before entering the
+      * loop over iterations. The default functions calls allocateAM() 
+      * if isAllocatedAM() is false, and otherwise calls clear() if 
+      * isContinuation is false.
+      *
+      * \param isContinuation true iff continuation within a sweep
+      */ 
+      virtual void setup(bool isContinuation);
+     
       /**
       * Compute and return error used to test for convergence.
       *
@@ -125,7 +141,7 @@ namespace Pscf {
       T const & field() const;
 
       /**
-      * Verbosity level.
+      * Verbosity level, allowed values 0, 1, or 2.
       */
       int verbose() const;
 
@@ -165,20 +181,20 @@ namespace Pscf {
       /// Output summary of timing results?
       bool outputTime_;
 
-      /// Has the allocate function been called.
-      bool isAllocated_;
+      /// Has the allocateAM function been called.
+      bool isAllocatedAM_;
 
       /// History of previous field vectors.
-      RingBuffer< T > fieldHists_;
+      RingBuffer<T> fieldHists_;
 
       /// Basis vectors of field histories (differences of fields).
-      RingBuffer< T > fieldBasis_;
+      RingBuffer<T> fieldBasis_;
 
       /// History of residual vectors.
-      RingBuffer< T > resHists_;
+      RingBuffer<T> resHists_;
 
       /// Basis vectors of residual histories (differences of residuals)
-      RingBuffer< T > resBasis_;
+      RingBuffer<T> resBasis_;
 
       /// Matrix containing the dot products of vectors in resBasis_
       DMatrix<double> U_;
@@ -218,16 +234,6 @@ namespace Pscf {
 
       // --- Private virtual functions with default implementations --- //
 
-      /**
-      * Initialize just before entry to iterative loop.
-      *
-      * This function is called by the solve method just before entering
-      * the loop over iterations. 
-      *
-      * \param isContinuation true iff continuation within a sweep
-      */ 
-      virtual void setup(bool isContinuation);
-     
       /**
       * Update the U matrix.
       * 
@@ -373,14 +379,14 @@ namespace Pscf {
    {  return resHists_[0]; }
 
    /*
-   * Return the current state vector by const reference.
+   * Return the current field/state vector by const reference.
    */
    template <typename Iterator, typename T>
    T const & AmIteratorTmpl<Iterator,T>::field() const
    {  return fieldHists_[0]; }
 
    /*
-   * Should the log output be verbose?
+   * Integer level for verbosity of the log output (0-2).
    */
    template <typename Iterator, typename T>
    int AmIteratorTmpl<Iterator,T>::verbose() const
@@ -391,7 +397,7 @@ namespace Pscf {
    */
    template <typename Iterator, typename T>
    bool AmIteratorTmpl<Iterator,T>::isAllocatedAM() const
-   {  return isAllocated_; }
+   {  return isAllocatedAM_; }
 
 }
 #include "AmIteratorTmpl.tpp"

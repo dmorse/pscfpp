@@ -9,6 +9,7 @@
 */
 
 #include <pscf/inter/Interaction.h>
+#include <pscf/math/LuSolver.h>
 #include <util/containers/FArray.h>
 #include <util/format/Dbl.h>
 #include <util/format/Int.h>
@@ -37,7 +38,7 @@ namespace Pscf
       nElem_(0),
       verbose_(0),
       outputTime_(false),
-      isAllocated_(false)
+      isAllocatedAM_(false)
    {  setClassName("AmIteratorTmpl"); }
 
    /*
@@ -79,7 +80,7 @@ namespace Pscf
 
       // Preconditions for generic algorithm.
       UTIL_CHECK(hasInitialGuess());
-      UTIL_CHECK(isAllocated_);
+      UTIL_CHECK(isAllocatedAM_);
 
       // Timers for analyzing performance
       Timer timerMDE;
@@ -246,7 +247,7 @@ namespace Pscf
    void AmIteratorTmpl<Iterator,T>::allocateAM()
    {
       // If already allocated, do nothing and return
-      if (isAllocated_) return;
+      if (isAllocatedAM_) return;
 
       // Compute and set number of elements in a residual vector
       nElem_ = nElements();
@@ -267,13 +268,13 @@ namespace Pscf
       v_.allocate(maxHist_);
       coeffs_.allocate(maxHist_);
 
-      isAllocated_ = true;
+      isAllocatedAM_ = true;
    }
 
    template <typename Iterator, typename T>
    void AmIteratorTmpl<Iterator,T>::clear()
    {
-      if (!isAllocated_) return;
+      if (!isAllocatedAM_) return;
 
       // Clear histories and bases (ring buffers)
       Log::file() << "Clearing ring buffers\n";
@@ -403,7 +404,7 @@ namespace Pscf
    template <typename Iterator, typename T>
    void AmIteratorTmpl<Iterator,T>::setup(bool isContinuation)
    {
-      if (!isAllocated_) {
+      if (!isAllocatedAM()) {
          allocateAM();
       } else {
          if (!isContinuation) {
