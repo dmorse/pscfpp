@@ -52,7 +52,6 @@ namespace Pspc
       void readParameters(std::istream& in);
 
       // Inherited public member functions
-      using AmIteratorTmpl<Compressor<D>, DArray<double> >::setup;
       using AmIteratorTmpl<Compressor<D>, DArray<double> >::solve;
       using AmIteratorTmpl<Compressor<D>, DArray<double> >::setClassName;
 
@@ -63,6 +62,8 @@ namespace Pspc
       using Compressor<D>::system;
 
    private:
+
+      //using AmIteratorTmpl<Compressor<D>, DArray<double> >::setup;
 
       /**
       * Find L2 norm of a residual vector.
