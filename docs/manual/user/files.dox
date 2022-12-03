@@ -1,6 +1,6 @@
-/*! \page user_files_page 3.1 Input Files
+/*! \page user_files_page 3.2 Input Files
 
-\ref user_page (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_model_page (Prev) 
 \ref user_usage_page (Next) 
 <BR>
 
@@ -92,6 +92,7 @@ basis from a file named in/w.bf
 - FINISH: finish execution and halt the main program
 
 <BR>
+\ref user_model_page (Prev) 
 \ref user_page (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_usage_page (Next) 
 

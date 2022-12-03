@@ -1,7 +1,7 @@
-/*! \page user_param_syntax_page 3.3.2 Syntax
+/*! \page user_param_syntax_page 3.4.2 Syntax
 
 \ref user_param_example_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_param_mixture_page (Next) 
+\ref user_param_format_page (Next) 
 <BR>
 
 This page gives a more complete discussion of syntactical conventions
@@ -389,6 +389,6 @@ format appropriate to the chosen subclass.
 <BR>
 \ref user_param_example_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_param_page          (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_param_mixture_page  (Next) 
+\ref user_param_format_page  (Next) 
 
 */

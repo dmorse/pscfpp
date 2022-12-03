@@ -6,14 +6,15 @@
 
 <h2> Contents:</h2>
    <ul style="list-style: none;">
-   <li> \subpage user_files_page   </li>
-   <li> \subpage user_usage_page   </li>
-   <li> \subpage user_param_page   </li>
-   <li> \subpage user_command_page </li>
-   <li> \subpage user_example_page </li>
-   <li> \subpage user_field_page   </li>
-   <li> \subpage user_unitcell_page  </li>
-   <li> \subpage user_groups_page  </li>
+   <li> \subpage user_model_page    </li>
+   <li> \subpage user_files_page    </li>
+   <li> \subpage user_usage_page    </li>
+   <li> \subpage user_param_page    </li>
+   <li> \subpage user_command_page  </li>
+   <li> \subpage user_example_page  </li>
+   <li> \subpage user_field_page    </li>
+   <li> \subpage user_unitcell_page </li>
+   <li> \subpage user_groups_page   </li>
    <li> \subpage user_thin_films_page   </li>
    </ul>
 

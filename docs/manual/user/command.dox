@@ -1,4 +1,4 @@
-/*! \page user_command_page 3.4 Command Files
+/*! \page user_command_page 3.5 Command Files
 
  \ref user_param_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref user_example_page (Next) 
@@ -23,9 +23,9 @@ Each of the following subpages gives more detailed information about
 commands available for specific programs.
 
    <ul style="list-style: none;">
-   <li> \subpage user_command_fd_page      "3.4.1 pscf_fd" </li>
-   <li> \subpage user_command_pc_page      "3.4.2 pscf_pcD (CPU)" </li>
-   <li> \subpage user_command_pg_page      "3.4.3 pscf_pgD (GPU)"</li>
+   <li> \subpage user_command_fd_page      "3.5.1 pscf_fd" </li>
+   <li> \subpage user_command_pc_page      "3.5.2 pscf_pcD (CPU)" </li>
+   <li> \subpage user_command_pg_page      "3.5.3 pscf_pgD (GPU)"</li>
    </ul>
 
  <BR>

@@ -1,4 +1,4 @@
-/*! \page user_param_page 3.3 Parameter Files
+/*! \page user_param_page 3.4 Parameter Files
 
 \ref user_usage_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_command_page (Next) 
@@ -10,14 +10,14 @@ In the following pages, we first describe elements that are common to the parame
 
 <h2> Contents:</h2>
    <ul style="list-style: none;">
-   <li> \subpage user_param_example_page  "3.3.1 Example" </li>
-   <li> \subpage user_param_syntax_page   "3.3.2 Syntax" </li>
-   <li> \subpage user_param_format_page   "3.3.3 Format Descriptions" </li>
-   <li> \subpage user_param_mixture_page  "3.3.4 Mixture Block" </li>
-   <li> \subpage user_param_sweep_page    "3.3.5 Parameter Sweeps" </li>
-   <li> \subpage user_param_fd_page       "3.3.6 pscf_fd (1D Problems)" </li>
-   <li> \subpage user_param_pc_page       "3.3.7 pscf_pc (Periodic Structures, CPU)" </li>
-   <li> \subpage user_param_pg_page       "3.3.8 pscf_pg (Periodic Structures, GPU)" </li>
+   <li> \subpage user_param_example_page  "3.4.1 Example" </li>
+   <li> \subpage user_param_syntax_page   "3.4.2 Syntax" </li>
+   <li> \subpage user_param_format_page   "3.4.3 Format Descriptions" </li>
+   <li> \subpage user_param_mixture_page  "3.4.4 Mixture Block" </li>
+   <li> \subpage user_param_sweep_page    "3.4.5 Parameter Sweeps" </li>
+   <li> \subpage user_param_fd_page       "3.4.6 pscf_fd (1D Problems)" </li>
+   <li> \subpage user_param_pc_page       "3.4.7 pscf_pc (Periodic, CPU)" </li>
+   <li> \subpage user_param_pg_page       "3.4.8 pscf_pg (Periodic, GPU)" </li>
    </ul>
 <BR>
 \ref user_usage_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

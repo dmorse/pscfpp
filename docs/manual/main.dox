@@ -23,6 +23,7 @@ mixtures.
  </li>
  <li> \subpage user_page "3. User Guide"
    <ul style="list-style: none;">
+   <li> \ref user_model_page     </li>
    <li> \ref user_files_page     </li>
    <li> \ref user_usage_page     </li>
    <li> \ref user_param_page     </li>
