@@ -1,0 +1,388 @@
+/*! \page user_theory_page 3.11 Appendix: Self-Consistent Field Theory
+
+\ref user_thin_films_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref developer_page  (Next) 
+<BR>
+
+PSCF solves self-consistent field theory (SCFT) equations for an 
+incompressible mixture of any number of block copolymer species and 
+point-like solvent molecular species. 
+
+In what follows, let \f$ C \f$ be the number of distinct monomer or solvent 
+types in the system. Let \f$ P\f$ denote the number of polymer species and 
+\f$ S\f$ be the number of solvent species.  Here, we use a convention in 
+which integer indices \f$ \alpha, \beta = 1, \ldots, C\f$ indicate monomer 
+types, and indices \f$ i, j\f$ denote molecular species.  Species indices 
+are ordered with all polymeric species listed first, so that species index 
+values in the range \f$ i, j = 1, \ldots, P\f$ denote polymeric species, 
+and values in the range \f$ P+1,\ldots, P+S \f$ denote solvent species.
+
+\section user_theory_scf_sec Self-Consistent Field Equations
+
+SCFT for a liquid of flexible polymers is based on a mean-field 
+approximation that allows us to predict properties of an interacting 
+liquid by considering considering the behavior of a corresponding gas of 
+noninteracting molecules in a spatially inhomogeneous chemical potential 
+landscape. In what follows, let \f$ k_{B}Tw_{\alpha}(\textbf{r})\f$ 
+denote the chemical potential field for monomers of type \f$ \alpha\f$ , 
+which gives the free energy cost of placing such a monomer at location
+\f$ \textbf{r}\f$ . Let \f$ \phi_{\alpha}(\textbf{r})\f$ denote the
+corresponding average volume fraction of monomers of type \f$ \alpha\f$ 
+at position \f$ \textbf{r} \f$ .
+
+The monomer chemical potential fields are given, within the standard 
+approximation for excess free energies in terms of binary Flory-Huggins 
+interaction parameters, as functions
+\f[
+   w_{\alpha}(\textbf{r}) = \sum_{\beta = 1}^{C}
+   \chi_{\alpha\beta} \phi_{\beta}(\textbf{r}) + \xi(\textbf{r})
+\f]
+in which \f$ \chi_{\alpha\beta} \f$ is a binary interaction parameter 
+for interactions between monomers of types \f$ \alpha\f$ and \f$ \beta\f$ ,
+for which \f$ \chi_{\alpha\beta} = \chi_{\beta\alpha}\f$ ,
+and \f$ \xi(\textbf{r}) \f$ is a Lagrange multiplier pressure field.  
+
+The Lagrange multiplier field \f$ \xi(\textbf{r})\f$ must be chosen such 
+that the monomer concentrations satisfy the incompressibility constraint
+\f[
+   1 = \sum_{\alpha=1}^{C} \phi_{\alpha}(\textbf{r}) \quad.
+\f]
+
+\section user_theory_polymer_sec Polymer Species
+
+Each polymer within mixture that can be treated by PSCF must be an acyclic 
+branched block polymer constructed by connecting blocks at junctions.  
+Linear polymers are treated as a special case of acyclic branched polymers. 
+Homopolymers are treated as a special case of polymer with only one block.
+Let \f$ B_{i} \f$ denote the number of blocks in block polymer species 
+number \f$ i \f$.  
+
+Each block within such a block polymer polymer connects two vertices. 
+Each such vertex is either a chain end that is attached to a single block 
+or a junction at which two or more blocks are connected. In the language 
+of graph theory, every allowed polymer structure thus corresponds to an 
+acyclic connected graph (also known as a tree) with some number of "edges" 
+(or blocks) and "nodes" (or vertices).  A standard theorem tells us that 
+a connected acyclic branched polymer (or graph) with \f$ B_{i} \f$ blocks 
+or edges must have exactly \f$ B_{i} + 1 \f$ vertices or nodes.
+
+PSCF assigns each block with a polymer with \f$ B \f$ blocks an integer
+index in the range \f$ [0, \ldots, B-1 ]\f$, and each vertex (i.e.,
+junction or chain end) and index in the range \f$ [ 0, \ldots, B ]\f$.
+By convention, we use indices \f$ a \f$ and \f$ b \f$ for block indices.
+The structure of a polymer can thus be characterized by assigning each
+block a monomer type, a contour length, and an integer ids for the two
+vertices at which the ends of the block terminate. The length of each
+block is given by the ratio of the volume occupied by the block to 
+the value of a monomer reference volume. Let \f$ L_{ai} \f$ denote 
+the length of block \f$ a \f$ of polymer species \f$ i \f$. 
+
+\subsection user_theory_polymer_sub Modified Diffusion Equation
+
+For each block, we define two "propagator" functions, denoted generically 
+by \f$ q( \textbf{r}, s) \f$, that are functions functions of position 
+\f$ \textbf{r} \f$ and a contour variable \f$ s \f$, each of which is 
+associated with one of the two directions in which the block may be 
+traversed. Each propgator may thus be said to originate at one of the 
+two vertices to which the associated block is connected and terminate 
+at the other attached vertex. The contour variable parameter \f$ s \f$ 
+is defined for each propagator \f$ q(\textbf{r},s) \f$ such that 
+\f$ s = 0 \f$ at the vertex at which the propagator originates and 
+\f$ s = L \f$ at the vertex at which the propagator terminates, where 
+\f$ L \f$ is the contour length of the block. When we need to distinguish 
+between the propagators associated with a single block, we will sometimes 
+refer to them instead as \f$ q \f$ and \f$ q^{\dagger} \f$. 
+
+Each such propagator obeys partial differential equation that we refer 
+to as the modified diffusion equation (MDE):
+\f[
+
+  \frac{\partial q}{\partial s} =  -H_{\alpha}q_{i} 
+
+\f]
+in which \f$ \alpha\f$ is the monomer type of the associated block, 
+and \f$ H_{\alpha}\f$ is a linear diferential operator
+\f[
+
+  H_{\alpha} = -\frac{b_{\alpha}^{2}}{6}\nabla^{2} 
+             + w_{\alpha}(\textbf{r})
+
+\f]
+in which \f$ b_{\alpha} \f$ is the statistical segment length for 
+monomers of type \f$ \alpha \f$ , and \f$ w_{\alpha}\f$ is the 
+corresponding self-consistent chemical potential field in thermal
+energy units.
+
+For each vertex that is connected to \f$ M \f$ blocks, there are
+\f$ M \f$ propagators that originate at that vertex, which we
+refer to as "outgoing" propagators, and \f$ M \f$ propagators
+that terminate at that vertex, which we refer to as "incoming" 
+propagators. A chain end is vertex that is only connected to one 
+block, whereas junction is a vertex that is connected to  two or 
+more different blocks.
+
+The initial condition for propagators that originate at a chain
+end requires that
+\f[
+   q(\textbf{r},s=0) = 1
+\f]
+throughout the spatial domain of the problem of interest.
+
+The initial condition for any propagator that originates at a 
+junction requires instead that \f$ q(\textbf{r}, s) \f$ is equal 
+to the pointwise product of values of incoming propagators associated 
+with other blocks that terminate at the same junction. The product of 
+incoming propagator values used to initialize the value of an outgoing 
+propagator \f$ q(\textbf{r}, s) \f$ at position \f$ \textbf{r} \f$ 
+is a product of values of all incoming propagators for that vertex, 
+evaluated at the same position \f$ \textbf{r} \f$, while excluding 
+the incoming propagator that is associated with the same block as the 
+outgoing propagator of interest from the product. In the simple case 
+of a linear polymer, this requires that initial condition at 
+\f$ s = 0 \f$ for each outgoing propagator at each junction is simply 
+equal to the value of the incoming propagator associated with the 
+other block that is attached to that junction.
+
+\subsection user_theory_products_sub Propagators Products 
+
+The probability of finding a specific monomer that is located a contour 
+distance \f$ s \f$ from one of the two vertices that are connected by a 
+block located at a specified position \f$ \textbf{r} \f$ is proportional 
+to the product 
+\f[
+     q(\textbf{r},s) q^{\dagger}(\textbf{r},L-s) \quad,
+\f]
+in which we have used \f$ q \f$ and \f$ q^{\dagger} \f$ to denote the 
+two propagators associated with that block, and arbitrarily taken 
+\f$ s \f$ to be the contour distance measured from the vertex at which 
+\f$ q(\textbf{r},s) \f$ originates, while \f$ L \f$ denotes the length 
+of the block. 
+
+It is straightforward to show that the value of the product 
+\f$ q q^{\dagger}\f$ at \f$ s=0 \f$, corresponding to the vertex at 
+which \f$ q \f$ originates, is equal to the product of the final values 
+of all the incoming propagators for this vertex.
+To show this, note that \f$ q^{\dagger}(\textbf{r},s=0) \f$ is the final 
+value for the incoming propagator associated with the block of interest, 
+while the initial condition for \f$ q \f$ requires that its value at 
+\f$ s=0 \f$ be equal to the product of the final values of incoming 
+propagators associated with all other blocks (if any) that are attached 
+to that vertex.  If \f$ q \f$ originates at a chain end, then 
+\f$q(\textbf{r}, s) = 1\f$, and so this product simply yields the value 
+of the one incoming propagagator \f$ q^{\dagger}(\textbf{r}, s) \f$ at 
+that chain end. By applying similar reasoning to the vertex at which 
+\f$ q^{\dagger} \f$ originates and \f$q\f$ terminates, we may show that 
+the value of the product \f$ q q^{\dagger} \f$ at \f$s=L\f$ must equal 
+the product of final values of all of the incoming propagators for this 
+vertex. 
+
+Consider the integral the behavior of the spatial integral
+\f[
+   I(s) \equiv 
+   \int d\textbf{r} \; q (\textbf{r},s) q^{\dagger}(\textbf{r},L-s)
+\f]
+evaluated at a fixed contour coordinate \f$ s \f$ within some specified 
+block, where the integral is taken over the entire spatial domain for 
+the model of interest.  It is straightforward to show that the value of 
+\f$ I(s)\f$ is actually independent of the the value of the the contour 
+coordinate \f$ s \f$. To show this, note that
+\f{eqnarray*} 
+  \frac{dI(s)}{ds} & = & \frac{d}{ds} 
+  \int d\textbf{r} \; 
+  q (\textbf{r},s) q^{\dagger}(\textbf{r},L-s) \\
+  & = & 
+  \int d\textbf{r} \;  \left \{
+  \frac{\partial q (\textbf{r},s)}{\partial s} 
+  q^{\dagger}(\textbf{r},L-s)  
+  - q (\textbf{r},s) 
+  \frac{\partial q^{\dagger}(\textbf{r},L-s)}{\partial s}  
+  \right \} \\
+  & = & 
+  \int d\textbf{r} \;  \left \{
+  [ \hat{H} q (\textbf{r},s) ] q^{\dagger}(\textbf{r},L-s) 
+  - q (\textbf{r},s) [\hat{H} q^{\dagger}(\textbf{r},L-s)]  
+  \right \}
+  \quad.
+\f}
+We may then use the fact that the operator \f$ \hat{H} \f$ (like the 
+analogous quantum mechanical Hamiltonian operator for a particle 
+in a potential) can be shown to be a self-adjoint or Hermitian 
+differential operator to show that the two terms in the right-hand-side 
+of the last line of the above equation must cancel, giving
+\f[
+    dI(s)/ds = 0 \quad.
+\f]
+The fact that the value of this integral is independent of \f$ s \f$
+within each block also implies that it must have the same value in
+the limits \f$ s=0 \f$ and \f$ s=L \f$, corresponding to its values at 
+the two attached vertices. Combining this with our previous observations, 
+we find that the spatial integral of the product of incoming propagators 
+must have the same value at any two vertices that are directly attached
+by a block.  Because all vertices in a polymer are connected by some
+sequence of blocks, this implies that the value of this spatial 
+integral must be the same for every vertex in any acyclic branched 
+polymer.
+
+\subsection user_theory_bigQ_sub Molecular Partition Function
+
+Let \f$ Q_{i} \f$ denote a normalized single-chain partition function 
+for a polymer molecule of species \f$ i \f$ in a specified set of 
+effective monomer potential fields. We define the value of this quantity 
+to be given by the spatial average (i.e., the integral over the entire 
+spatial domain of the problem divided by the volume of this domain) of 
+the product of the values of the incoming propagators evaluated at a 
+vertex of the polymer. The above discussion implies that we should get
+the same value for this quantity by evaluating it using any vertex in
+a polymer. A particularly compact expression for this quantity may be 
+obtained by evaluating it at any chain end, for which we obtain
+\f[
+   Q_{i} = \frac{1}{V} \int \! d\textbf{r} \; q^{\dagger}(\textbf{r},L)
+\f]
+where \f$q^{\dagger}(\textbf{r}, L)\f$ denotes the final value of 
+the single incoming propagator at that chain end, where \f$ L \f$ 
+is the length of the attached block. Here, the integral is taken 
+over the entire spatial domain for the problem of interest, while 
+\f$ V \f$ is the generalized volume of that domain. In the the case 
+of a periodic structure, the required spatial average may be evaluated 
+by evaluating the integral over one crystallographic unit cell and 
+then dividing by the generalized volume of that unit cell  (i.e., the 
+volume per unit cell for a 3D crystal, area per 2D unit cell for a 2D 
+structure such as a hexagonal cylinder phase, or the length per unit 
+cell in a 1D lamellar phase).
+
+\subsection user_theory_phi_sub Block Volume Fractions
+
+Let \f$ \phi_{ai}(\textbf{r})\f$ denote the local volume fraction of 
+monomers belonging to block \f$ a \f$ of polymer species \f$ i \f$.
+This quantity is given by a product
+\f[
+   \phi_{a i}(\textbf{r}) =  
+   \frac{\overline{\phi}_{i}}{L_{i}Q_{i}}
+   \int\limits_{0}^{L_{ai}} \! ds \;
+    q(\textbf{r},s) q^{\dagger}(\textbf{r},s)
+\f]
+in which \f$ \overline{\phi}_{i}\f$ is the average overall volume 
+fraction of molecule species \f$ i \f$ within the mixture, \f$ L_{ai} \f$ 
+is the contour length of the block of interest, and \f$ L_{i} \f$ is the 
+sum of the contour lengths of all of the blocks of species \f$ i \f$.
+
+\section user_theory_solvent_sec Solvent Species
+
+Each solvent species \f$ i\f$ is associated with a specific 
+monomer type \f$ \alpha\f$ and a ``size" \f$ N_i\f$ . A "monomer" 
+type that is assigned to a solvent species may or may not also be 
+contained within one or more of the polymeric species. 
+
+In the single molecule problem for solvent species, the free energy 
+penalty for a solvent molecule of monomer type \f$ \alpha\f$ to be 
+located at position \f$ \textbf{r} \f$ is given by 
+\f$ k_{B}T N_{i} w_{\alpha}(\textbf{r})\f$ .
+This yields a solvent volume fraction field
+\f$ \phi_{i}(\textbf{r}) \propto \exp(-N_{i}w_{\alpha}(\textbf{r})) \f$ . 
+
+The normalized overall partition for such a point-like species is given by 
+an integral 
+\f[
+   Q_{i} = \frac{1}{V}
+   \int \! d\textbf{r} \; \exp(-N_{i}w_{\alpha}(\textbf{r}))
+\f]
+The contribution of solvent species \f$ i\f$ of type \f$ \alpha\f$ to 
+the local volume fraction of \f$ \alpha \f$ is given by a ratio
+\f[
+
+   \phi_{\alpha}^{(i)}(\textbf{r}) = 
+   \frac{\overline{\phi}_{i}}{Q_{i}} 
+   \exp(-N_{i}w_{\alpha}(\textbf{r}))
+
+\f]
+in which \f$ \overline{\phi}_{i} \f$ is the overall volume fraction of
+species \f$ i \f$ within the mixture. 
+
+The total volume fraction \f$ \phi_{\alpha}(\textbf{r}) \f$ for each
+monomer type \f$ \alpha\f$ is simply the sum of volume fractions for
+all polymer blocks and all solvent species that contain monomers of
+of type \f$ \alpha\f$ .
+
+\section user_theory_thermo_sec Thermodynamic Properties
+
+The Helmholtz free energy per monomer reference volume, as given in 
+the output file, is given by a sum
+\f{eqnarray*}
+    \frac{F v}{Vk_{B}T} 
+    & = & \sum_{i=1}^{P+S} \frac{\overline{\phi}_{i}}{N_{i}} 
+    \left [ \ln ( \overline{\phi}_{i} / Q_{i}) - 1 \right ] \\
+    & & - \frac{1}{V}
+          \sum_{\alpha=1}^{C} 
+          \int \! d\textbf{r} \; 
+          w_{\alpha}(\textbf{r})
+          \phi_{\alpha}(\textbf{r}) \\
+    & & +  \frac{1}{2V} 
+          \sum_{\alpha, \beta =1}^{C}  \chi_{\alpha\beta}
+          \int \! d\textbf{r} \; 
+          \phi_{\alpha}(\textbf{r})
+          \phi_{\beta}(\textbf{r})
+
+\f}
+Note that the sum over species in the first line is a sum over all 
+species, including polymeric and solvent species, with different ways 
+of defining \f$ Q_{i} \f$ for different types of molecule.
+
+The corresponding chemical potential \f$ \mu_{i}\f$ for species \f$ i\f$ 
+is given by
+\f[
+
+    \frac{\mu_{i}}{k_{B}T} = \ln(\overline{\phi}_{i}/Q_{i})
+
+\f]
+The value given in the output files is \f$ \mu_{i}/k_{B}T \f$ .
+
+The macroscopic physical pressure \f$ P\f$ is computed from the identity
+\f[
+    P = - \frac{F}{V} 
+        + \sum_{i=1}\frac{\mu_{i}\overline{\phi}_{i}}{N_{i}v} 
+\f]
+in which \f$ F / V \f$ is the Helmholtz free energy density and
+\f$ \overline{\phi}_{i}/(N_{i}v) \f$ is the average number of molecules 
+of species \f$ i \f$ per unit volume. The value given in the output file 
+is the dimensionless value \f$ Pv/k_{B}T \f$ .
+
+\section user_theory_ensemble_sec Open and Closed Ensembles
+
+PSCF can be carry out calculations using either canonical ensemble or 
+grand-canonical ensemble. 
+
+In canonical ensemble a value of the overall volume fraction 
+\f$ \overline{\phi}_{i} \f$ must be given for each species in 
+the input parameter file, and values of chemical potential are 
+computed from the solution.
+
+In grand canonical ensemble, a value of the normalized chemical 
+potential \f$ \mu_{i}/k_{B}T \f$ must be given for each species in
+the input parameter file, and average volume fractions for each
+species are computed.
+
+In grand-canonical ensemble, values for the Lagrange multplier
+field \f$ \xi(\textbf{r}) \f$ and the macroscopic pressure \f$ P\f$ 
+are uniquely determined by the values for the chemical potentials. 
+
+In canonical ensemble, the value of the Lagrange multplier field 
+\f$ \xi(\textbf{r}) \f$ is defined only to within a arbitrary
+spatially homogeneous constant. As a result, the chemical potentials
+and the macroscopic pressure \f$ P \f$ are also undefined in this
+ensemble, unless an additional constraint is imposed. PSCF resolves 
+this ambiguity by requiring, as a matter of convention, that the 
+spatial average of \f$ \xi(\textbf{r}) \f$ vanish. In this ensemble,
+PSCF also outputs values for the pressure, chemical potentials, and 
+\f$ w \f$ fields that are all consistent with this convention
+for the average value of \f$ \xi \f$ . Values for the Hemholtz free
+energy density of an incompressible liquid can, however, be shown 
+to be independent of changes in the value of \f$ \xi \f$ by a 
+homogeneous constant, and are thus independent of this choice of
+convention.
+
+<BR>
+\ref user_thin_films_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_page    (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref developer_page    (Next) 
+
+*/
