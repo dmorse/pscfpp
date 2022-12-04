@@ -33,6 +33,7 @@ mixtures.
    <li> \ref user_unitcell_page  </li>
    <li> \ref user_groups_page  </li>
    <li> \ref user_thin_films_page  </li>
+   <li> \ref user_theory_page  </li>
    </ul>
  </li>
  <li> \subpage developer_page "4. Developer Information"
