@@ -123,6 +123,19 @@ Features specific to programs for periodic structures include:
 
   - Efficient Anderson-mixing iteration algorithm
 
+Features specific to the pscf_pc CPU programs for periodic structures are:
+
+  - Inhomogeneous density constraint (a "mask")
+
+  - External fields
+
+  - Thin polymer films
+
+The general "mask" and external field features are used in pscf_pc to 
+implement simulations of thin films, using a mask to constrain a polymer
+material to a slit within a periodic supercell, and external fields to
+represent interactions with the top and bottom surface.
+
 \section about_repo_sec Cloning the Source Code
 
 The source code may be obtained by using a git version control system

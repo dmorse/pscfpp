@@ -193,8 +193,8 @@ Descriptions of the parameter file formats for the available iterators
 can be found by following the links in the table below:
 <table>
   <tr>
-    <td> Label </td>
-    <td> Description  </td>
+    <td> <b> Class </b> </td>
+    <td> <b> Description  </b> </td>
   </tr>
   <tr>
     <td> \subpage pspc_AmIterator_page "AmIterator" </td>

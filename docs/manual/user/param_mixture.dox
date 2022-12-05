@@ -186,7 +186,7 @@ The format for a polymer block is
         nBlock int
         blocks Array [ Block ] (nBlock elements)
         phi*   real  (in range [0,1])
-        mu     real  (required iff phi is omitted)
+        mu     real  (required if and only if phi is absent)
     }
 \endcode
 The meaning of different parameters is summarized in the table below:
@@ -215,7 +215,7 @@ The meaning of different parameters is summarized in the table below:
     <td> Volume fraction of this species (real, optional).  </td>
   </tr>
   <tr>
-    <td> mu* </td>
+    <td> mu </td>
     <td> Chemical potential of this species (real, must be
          present if and only if phi is absent). </td>
   </tr>

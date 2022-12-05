@@ -24,8 +24,8 @@ commands available for specific programs.
 
    <ul style="list-style: none;">
    <li> \subpage user_command_fd_page      "3.5.1 pscf_fd" </li>
-   <li> \subpage user_command_pc_page      "3.5.2 pscf_pcD (CPU)" </li>
-   <li> \subpage user_command_pg_page      "3.5.3 pscf_pgD (GPU)"</li>
+   <li> \subpage user_command_pc_page      "3.5.2 pscf_pc (periodic, CPU)" </li>
+   <li> \subpage user_command_pg_page      "3.5.3 pscf_pg (periodic, GPU)"</li>
    </ul>
 
  <BR>

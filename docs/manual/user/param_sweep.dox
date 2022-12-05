@@ -10,7 +10,7 @@ a line through the space of possible input parameter values. We refer
 to this kind of calculation as a "sweep".  All of the PSCF programs can 
 perform sweep operations.
 
-\section user_param_sweep_definition Concept
+\section user_param_sweep_concept_sec Sweep Concept
 
 To perform a sweep, the program attempts to solve a sequence of SCFT problems 
 for choices of input parameters (e.g., block lengths, chi parameters, species
@@ -130,14 +130,15 @@ System{
 The only new element in this example is the Sweep block, which is discussed
 below.
 
-\section user_param_sweep_command_sec Command
+\section user_param_sweep_command_sec SWEEP Command
 
 A sweep is actually performed by including a command named "SWEEP" in
 the command file. The SWEEP command does not take any parameters, and
 performs the sequence of calculations described in the Sweep block of 
 the parameter file. The SWEEP block must appear after a command that
 initializes the w files with an initial guess for the solution of the
-first point of the sweep.
+first point of the sweep, e.g., by reading an initial guess from a
+file. 
  
 \section user_param_sweep_linear_sec LinearSweep
 
@@ -149,7 +150,7 @@ implemented for each PSCF program by a class named LinearSweep. This
 algorithm can be selected by including a Sweep block with the appropriate
 format that starts either with a line containing the generic name Sweep
 (to select the default algorithm) or LinearSweep (to explicitly select
-this algorithm). 
+the implementation provided by this class). 
 
 <i> 
 Technical note: Source code files that are specific to different PSCF 
@@ -246,12 +247,14 @@ The "parameters" array must contain exactly nParameter entries, each
 on a separate line. Each entry in this array describes how one input 
 parameter should be modified. 
 
+\section user_param_sweep_parameters_sec Sweepable Parameters
+
 The file format each line of the "parameters" array (corresponding to 
-a single parameter) contains an identifier for a specific input parameter 
-followed by amount by which the value of that parameter should change 
-over the course of the sweep.  The parameter identifier in each such 
-entry contains a name string that identifies the type of variable, 
-such as "block" for a block length or "chi" for an interaction 
+a single parameter) in a LinearSweep contains an identifier for a specific 
+input parameter followed by amount by which the value of that parameter 
+should change over the course of the sweep.  The parameter identifier 
+in each such entry contains a name string that identifies the type of 
+variable, such as "block" for a block length or "chi" for an interaction 
 parameter. This string is followed by either one or two integer indices 
 that specify which variable of that type should be changed.  For example, 
 the string "block" must be followed by two integers, the first being an
@@ -347,21 +350,27 @@ the chi matrix maintained by Interaction. Changes to element chi(i, j)
 automatically also update chi(j, i) for i !\ j, thus maintaining the 
 symmetry of the matrix.
 
-The only type of parameter change listed above that is not applicable
-to one-dimensional simulations performed by pscf_fd is the unit_cell
-type. In a calculation for a periodic structure performed using a
-pscf_pc or pscf_pg program, a "unit_cell" parameter is one of the 
-parameters that determine the the size and shape of the crystal unit 
-for a system of specified latttice type, such as the length of each
-edge of a cubic unit cell, or the lengths of the three edges of an
-orthorhombic crystal, or the value of the angle between two edges for
-a non-orthogonal crystal type.  PSCF uses a set of standard conventions 
-for a list of parameters required to describe each unit cell type for 
-1, 2 and 3 dimensional structures, as described here.
-A unit_cell parameter can only be changed explicitly in calculations 
-in which each SCFT calculation is carried out in a rigid unit cell,
-rather than a calculation using a flexible unit cell in which the
-unit cell parameters are adjusted to minimize the free energy density.
+Parameters of type "cell_param" are only usable in simulations of 
+periodic structure performed using a pscf_pc or pscf_pg program, for
+simulations with a rigid unit cell in which the parameters are not
+automatically optimized so as to minimize the free energy density.
+In this case, a "unit_cell" parameter is one of the parameters that 
+determine the the size and shape of the crystal unit for a system of 
+specified latttice type. Examples include the length of each edge of 
+a cubic unit cell, the lengths of the three edges of an orthorhombic 
+crystal, or the value of the angle between two edges for a non-orthogonal 
+crystal lattice type.  PSCF uses a set of standard conventions for a 
+list of parameters required to describe each unit cell type for 1, 2 
+and 3 dimensional structures of various crystal lattice system types.
+These conventions are described \ref user_unit_cell_page "here".
+The uid index for a cell_parameter is a zero based integer index 
+that identifies which parameter in such a list is being varied.
+
+The chi_top and chi_bottom parameters are only applicable to 
+simulations of thin films performed with pscf_pc program, as discussed
+\ref user_thin_films_page "here". These are used to vary the effective
+interaction parameters for interactions of a specific monomer type 
+with the top or bottom surface of a thin film. 
 
 <BR>
 \ref user_param_mixture_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
