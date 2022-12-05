@@ -64,7 +64,7 @@ namespace Pscf
       readOptional(in, "verbose", verbose_);
 
       outputTime_ = false;
-      readOptional(in, "showTiming", outputTime_);
+      readOptional(in, "outputTime", outputTime_);
    }
 
    /*

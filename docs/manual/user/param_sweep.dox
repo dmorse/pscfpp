@@ -165,10 +165,12 @@ classes is described here. </i>
 The parameter file format for a LinearSweep is summarized below:
 \code
   LinearSweep{
-       ns              int
-       baseFileName    string
-       nParameter      int
-       parameters      Array [ SweepParameter ]
+       ns                int
+       baseFileName      string
+       historyCapacity*  int
+       reuseState*       bool
+       nParameter        int
+       parameters        Array [ SweepParameter ]
   }
 \endcode
 The purpose of the parameters in this block are explained below:
@@ -186,6 +188,21 @@ The purpose of the parameters in this block are explained below:
     <td> 
     string that is added as a prefix to the names of all files 
     output during the sweep. </td>
+  </tr>
+  <tr>
+    <td> historyCapacity* </td>
+    <td> 
+    integer that gives the maximum number of previous states to use 
+    to compute initial guesses by extrapolation.  Optional, and 
+    equal to 3 by default. </td>
+  </tr>
+  <tr>
+    <td> reuseState* </td>
+    <td> 
+    boolean, set to 1 (true) to re-use information about linear 
+    response to perturbations acquired during iteration at the
+    previoius state within a sweep, or 0 (false) to always restart 
+    the history.  Optional, and true default. </td>
   </tr>
   <tr>
     <td> nParameter </td>

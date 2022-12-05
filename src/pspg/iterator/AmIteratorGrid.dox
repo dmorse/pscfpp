@@ -16,6 +16,8 @@ AmIterator{
    maxItr         int
    epsilon        real 
    maxHist        int  
+   verbose*         int (0-2, 0 by default)
+   outputTime*      bool (false by default)
    errorType*     enumeration ("normResid", "maxResid", or "relNormResid", "relNormResid" by default)
    isFlexible*    bool (0 or 1, 0/false by default)   
    scaleStress*   real (10.0 by default)
@@ -41,6 +43,16 @@ parameters. The meaning of the various parameters are described below:
     <td> maxHist  </td>
     <td> Maximum number of previous trial solultions that will be 
          retained in memory for used by the AM algorithm. </td>
+  </tr>
+  <tr>
+    <td> verbose* </td>
+    <td> Integer level 0-2 for verbosity of log output during iteration.
+         Optional, and 0 (concise) by default. </td>
+  </tr>
+  <tr>
+    <td> showTime* </td>
+    <td> Set to 1 (true) to report wall clock time components in log file. 
+         Optional, and 0 (false) by default. </td>
   </tr>
   <tr>
     <td> errorType </td>

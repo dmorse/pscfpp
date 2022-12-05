@@ -11,21 +11,23 @@ equations using an Anderson-Mixing algorithm.
 An example of the parameter file format for this iterator is shown below:
 \code
   AmIterator{
-    maxItr       100
-    epsilon      1e-8
-    maxHist      50
-    errorType    relNormResid
+    maxItr        100
+    epsilon       1e-8
+    maxHist       50
+    verbose*      int (0-2, 0 by default)
+    errorType     relNormResid
   }
 \endcode
 The format of this block is described more formally below:
 \code
-AmIterator{
-   maxItr          int
-   epsilon         real 
-   maxHist         int  
-   verbose*        int (0, 1, or 2, 0 by default)
-   showTiming*     bool (0 or 1)
-   errorType*      enumeration ("normResid", "maxResid", or "relNormResid", "relNormResid" by default)
+ AmIterator{
+   maxItr        int
+   epsilon       real 
+   maxHist       int  
+   verbose*      int (0-2, 0 by default)
+   outputTime*   bool (false by default)
+   errorType*    enumeration ("normResid", "maxResid", or "relNormResid")
+                    "relNormResid" by default)
   
 }
 \endcode
@@ -52,9 +54,9 @@ parameters. The meaning of the various parameters are described below:
   </tr>
   <tr>
     <td> verbose* </td>
-    <td> Optional integer with allowed values 0, 1, or 2 for the level of 
-         verbosity of error reporting during iteration.  Increasing value 
-         indicates increasing verbosity. Set to 0 (concise) by default.
+    <td> Optional integer with allowed values 0-2 for the level of 
+         verbosity of output to log file during iteration.  
+         Set to 0 (concise) by default.
     </td>
   </tr>
   <tr>
