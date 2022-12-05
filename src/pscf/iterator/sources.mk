@@ -1,5 +1,5 @@
 pscf_iterator_= \
-  pscf/iterator/AmbdResidual.cpp 
+  pscf/iterator/AmbdInteraction.cpp 
 
 pscf_iterator_SRCS=\
      $(addprefix $(SRC_DIR)/, $(pscf_iterator_))

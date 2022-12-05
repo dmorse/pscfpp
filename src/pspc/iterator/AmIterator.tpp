@@ -38,6 +38,9 @@ namespace Pspc{
       AmIteratorTmpl< Iterator<D>, DArray<double> >::readParameters(in);
       AmIteratorTmpl< Iterator<D>, DArray<double> >::readErrorType(in);
 
+      // Allocate local modified copy of Interaction class
+      interaction_.allocate(system().mixture().nMonomer());
+
       // Default parameter values
       isFlexible_ = 0; 
       scaleStress_ = 10.0;
@@ -71,8 +74,19 @@ namespace Pspc{
       readOptional(in, "scaleStress", scaleStress_);
    }
 
+   // Protected virtual function
+
+   // Setup before entering iteration loop
+   template <int D>
+   void AmIterator<D>::setup(bool isContinuation)
+   {
+      AmIteratorTmpl<Iterator<D>, DArray<double> >::setup(isContinuation);
+      interaction_.update(system().interaction());
+   }
+
    // Private virtual functions used to implement AM algorithm
 
+   // Assign one array to another
    template <int D>
    void AmIterator<D>::setEqual(DArray<double>& a, DArray<double> const & b)
    {  a = b; }
@@ -241,15 +255,13 @@ namespace Pspc{
       // Compute SCF residual vector elements
       for (int i = 0; i < nMonomer; ++i) {
          for (int j = 0; j < nMonomer; ++j) {
-            double chi = system().interaction().chi(i,j);
-            double p = system().interaction().idemp(i,j);
+            double chi = interaction_.chi(i,j);
+            double p = interaction_.idemp(i,j);
             DArray<double> const & c = system().c().basis(j);
             DArray<double> const & w = system().w().basis(j);
             for (int k = 0; k < nBasis; ++k) {
                int idx = i*nBasis + k;
                resid[idx] += chi*c[k] - p*w[k];
-               //system().interaction().chi(i,j)*system().c().basis(j)[k] -
-               //system().interaction().idemp(i,j)*system().w().basis(j)[k];
             }
          }
       }
@@ -260,7 +272,7 @@ namespace Pspc{
             for (int k = 0; k < nBasis; ++k) {
                int idx = i*nBasis + k;
                resid[idx] -= system().mask().basis()[k] / 
-                             system().interaction().sum_inv();
+                             interaction_.sum_inv();
             }
          }
       }
@@ -272,7 +284,7 @@ namespace Pspc{
             for (int j = 0; j < nMonomer; ++j) {
                for (int k = 0; k < nBasis; ++k) {
                   int idx = i*nBasis + k;
-                  resid[idx] += system().interaction().idemp(i,j) * 
+                  resid[idx] += interaction_.idemp(i,j) * 
                                 system().h().basis(j)[k];
                }
             }
@@ -285,7 +297,7 @@ namespace Pspc{
          double phiTot = system().mask().phiTot();
 
          for (int i = 0; i < nMonomer; ++i) {
-            resid[i*nBasis] -= phiTot / system().interaction().sum_inv();
+            resid[i*nBasis] -= phiTot / interaction_.sum_inv();
          }
       } else {
          // Explicitly set homogeneous residual components
@@ -341,11 +353,12 @@ namespace Pspc{
       }
       // If canonical, explicitly set homogeneous field components
       if (system().mixture().isCanonical()) {
+         double chi;
          for (int i = 0; i < nMonomer; ++i) {
             wField[i][0] = 0.0; // initialize to 0
             for (int j = 0; j < nMonomer; ++j) {
-               wField[i][0] +=
-                 system().interaction().chi(i,j) * system().c().basis(j)[0];
+               chi = interaction_.chi(i,j);
+               wField[i][0] += chi * system().c().basis(j)[0];
             }
          }
       }

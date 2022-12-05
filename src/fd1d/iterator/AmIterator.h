@@ -10,6 +10,7 @@
 
 #include "Iterator.h"
 #include <fd1d/solvers/Mixture.h>
+#include <pscf/iterator/AmbdInteraction.h>
 #include <pscf/iterator/AmIteratorTmpl.h>
 
 namespace Pscf {
@@ -58,7 +59,17 @@ namespace Fd1d
       // Inherited protected members
       using Iterator::system;
 
+      /**
+      * Setup iterator just before entering iteration loop.
+      *
+      * \param isContinuation Is this a continuation within a sweep?
+      */
+      void setup(bool isContinuation);
+
    private:
+
+      // Local copy of interaction, adapted for use AMBD residual definition
+      AmbdInteraction interaction_;
 
       // -- Virtual functions used to implement AM algorithm -- //
 

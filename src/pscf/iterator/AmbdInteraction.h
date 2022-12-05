@@ -1,5 +1,5 @@
-#ifndef PSCF_AMBD_RESIDUAL_H
-#define PSCF_AMBD_RESIDUAL_H
+#ifndef PSCF_AMBD_INTERACTION_H
+#define PSCF_AMBD_INTERACTION_H
 
 /*
 * PSCF - Polymer Self-Consistent Field Theory
@@ -18,7 +18,7 @@ namespace Pscf {
    using namespace Util;
 
    /**
-   * Quantities required to compute residual defn. of Arora et al.
+   * Modified interaction to compute residual defn. of Arora et al.
    *
    * This class computes and provides access to several auxiliary 
    * quantities that are computed from knowledge of the chi matrix, and 
@@ -29,9 +29,9 @@ namespace Pscf {
    * A. Arora, D.C. Morse, F.S. Bates and K.D Dorfman,
    * J. Chem. Phys vol. 146, 244902 (2017).
    * 
-   * \ingroup Pscf_Inter_Module
+   * \ingroup Pscf_Iterator_Module
    */
-   class AmbdResidual 
+   class AmbdInteraction 
    {
 
    public:
@@ -39,12 +39,12 @@ namespace Pscf {
       /**
       * Constructor.
       */
-      AmbdResidual();
+      AmbdInteraction();
 
       /**
       * Destructor.
       */
-      virtual ~AmbdResidual();
+      virtual ~AmbdInteraction();
 
       /**
       * Set number of monomers and allocate required memory.
@@ -118,19 +118,19 @@ namespace Pscf {
 
    // Inline function
 
-   inline int AmbdResidual::nMonomer() const
+   inline int AmbdInteraction::nMonomer() const
    {  return nMonomer_; }
 
-   inline double AmbdResidual::chi(int i, int j) const
+   inline double AmbdInteraction::chi(int i, int j) const
    {  return chi_(i, j); }
 
-   inline double AmbdResidual::chiInverse(int i, int j) const
+   inline double AmbdInteraction::chiInverse(int i, int j) const
    {  return chiInverse_(i, j); }
 
-   inline double AmbdResidual::idemp(int i, int j) const
+   inline double AmbdInteraction::idemp(int i, int j) const
    {  return idemp_(i, j); }
 
-   inline double AmbdResidual::sum_inv() const
+   inline double AmbdInteraction::sum_inv() const
    {  return sum_inv_; }
 
 } // namespace Pscf

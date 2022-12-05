@@ -5,7 +5,7 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "AmbdResidual.h"
+#include "AmbdInteraction.h"
 #include <pscf/math/LuSolver.h>
 
 namespace Pscf 
@@ -16,7 +16,7 @@ namespace Pscf
    /*
    * Constructor.
    */
-   AmbdResidual::AmbdResidual()
+   AmbdInteraction::AmbdInteraction()
     : nMonomer_(0),
       isAllocated_(false)
    {}
@@ -24,13 +24,13 @@ namespace Pscf
    /*
    * Destructor.
    */
-   AmbdResidual::~AmbdResidual()
+   AmbdInteraction::~AmbdInteraction()
    {}
 
    /*
    * Set the number of monomer types and allocate memory.
    */
-   void AmbdResidual::allocate(int nMonomer)
+   void AmbdInteraction::allocate(int nMonomer)
    {  
       UTIL_CHECK(isAllocated_ == false);
       nMonomer_ = nMonomer; 
@@ -40,7 +40,7 @@ namespace Pscf
       isAllocated_ = true;
    }
 
-   void AmbdResidual::update(Interaction const & interaction)
+   void AmbdInteraction::update(Interaction const & interaction)
    {
 
       // Allocate memory if not done previously

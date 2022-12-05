@@ -8,8 +8,9 @@
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "Iterator.h"
-#include <pscf/iterator/AmIteratorTmpl.h>                 
+#include "Iterator.h"                        // base class
+#include <pscf/iterator/AmIteratorTmpl.h>    // base class template                
+#include <pscf/iterator/AmbdInteraction.h>   // member variable
 
 namespace Pscf {
 namespace Pspc
@@ -68,8 +69,19 @@ namespace Pspc
       using Iterator<D>::isFlexible_;
       using Iterator<D>::flexibleParams_;
 
+
+      /**
+      * Setup iterator just before entering iteration loop.
+      *
+      * \param isContinuation Is this a continuation within a sweep?
+      */
+      void setup(bool isContinuation);
+
    private:
       
+      // Local copy of interaction, adapted for use AMBD residual definition
+      AmbdInteraction interaction_;
+
       /// How are stress residuals scaled in error calculation?
       double scaleStress_;
       

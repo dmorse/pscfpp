@@ -17,7 +17,8 @@ namespace Fd1d{
 
    // Constructor
    AmIterator::AmIterator(System& system)
-   : Iterator(system)
+   : Iterator(system),
+     interaction_()
    {  setClassName("AmIterator"); }
 
    // Destructor
@@ -30,6 +31,16 @@ namespace Fd1d{
       // Call parent class readParameters and readErrorType functions
       AmIteratorTmpl<Iterator, DArray<double> >::readParameters(in);
       AmIteratorTmpl<Iterator, DArray<double> >::readErrorType(in);
+
+      const int nMonomer = system().mixture().nMonomer(); 
+      interaction_.allocate(nMonomer);
+   }
+
+   // Setup before entering iteration loop
+   void AmIterator::setup(bool isContinuation)
+   {
+      AmIteratorTmpl<Iterator, DArray<double> >::setup(isContinuation);
+      interaction_.update(system().interaction());
    }
 
    // Assign one vector to another: a = b
@@ -179,7 +190,7 @@ namespace Fd1d{
       const int nr = nm*nx;
 
        // Initialize residuals
-      const double shift = -1.0/system().interaction().sum_inv();
+      const double shift = -1.0/interaction_.sum_inv();
       for (int i = 0 ; i < nr; ++i) {
          resid[i] = shift;
       }
@@ -191,8 +202,8 @@ namespace Fd1d{
          for (j = 0; j < nm; ++j) {
             DArray<double>& cField = system().cField(j);
             DArray<double>& wField = system().wField(j);
-            chi = system().interaction().chi(i,j);
-            p   = system().interaction().idemp(i,j);
+            chi = interaction_.chi(i,j);
+            p   = interaction_.idemp(i,j);
             for (k = 0; k < nx; ++k) {
                int idx = i*nx + k;
                resid[idx] += chi*cField[k] - p*wField[k];
