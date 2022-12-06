@@ -82,17 +82,26 @@ namespace Pscf {
       double chiInverse(int i, int j) const;
 
       /** 
-      * Return one element of the idempotent matrix.
+      * Return one element of the potent matrix P.
+      *
+      * This matrix is defined by AMBD as:
+      * 
+      *     P = I - e e^{T} chi^{-1} /S
+      *
+      * where I is the Nmonomer x Nmonomer identity matrix, the column
+      * vector e is a vector for which e_i = 1 for all i, and S is
+      * the sum of the N^{2} elements of the matrix chi^{-1}, also 
+      * given by S = e^{T} chi^{-1} e.
       *   
       * \param i row index
       * \param j column index
       */  
-      double idemp(int i, int j) const; 
+      double p(int i, int j) const; 
 
       /** 
-      * Return sum of elements of chiInverse.
+      * Return sum of elements of the inverse chi matrix.
       */  
-      double sum_inv() const;
+      double sumChiInverse() const;
 
       /**
       * Get number of monomer types.
@@ -108,10 +117,10 @@ namespace Pscf {
       DMatrix<double> chiInverse_;
 
       // Idempotent matrix P used in residual definition.
-      DMatrix<double> idemp_;
+      DMatrix<double> p_;
 
       // Sum of elements of matrix chiInverse_
-      double sum_inv_;
+      double sumChiInverse_;
 
       /// Number of monomers
       int nMonomer_;
@@ -132,11 +141,11 @@ namespace Pscf {
    inline double AmbdInteraction::chiInverse(int i, int j) const
    {  return chiInverse_(i, j); }
 
-   inline double AmbdInteraction::idemp(int i, int j) const
-   {  return idemp_(i, j); }
+   inline double AmbdInteraction::p(int i, int j) const
+   {  return p_(i, j); }
 
-   inline double AmbdInteraction::sum_inv() const
-   {  return sum_inv_; }
+   inline double AmbdInteraction::sumChiInverse() const
+   {  return sumChiInverse_; }
 
 } // namespace Pscf
 #endif

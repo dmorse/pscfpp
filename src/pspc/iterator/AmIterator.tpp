@@ -256,7 +256,7 @@ namespace Pspc{
       for (int i = 0; i < nMonomer; ++i) {
          for (int j = 0; j < nMonomer; ++j) {
             double chi = interaction_.chi(i,j);
-            double p = interaction_.idemp(i,j);
+            double p = interaction_.p(i,j);
             DArray<double> const & c = system().c().basis(j);
             DArray<double> const & w = system().w().basis(j);
             for (int k = 0; k < nBasis; ++k) {
@@ -272,7 +272,7 @@ namespace Pspc{
             for (int k = 0; k < nBasis; ++k) {
                int idx = i*nBasis + k;
                resid[idx] -= system().mask().basis()[k] / 
-                             interaction_.sum_inv();
+                             interaction_.sumChiInverse();
             }
          }
       }
@@ -284,7 +284,7 @@ namespace Pspc{
             for (int j = 0; j < nMonomer; ++j) {
                for (int k = 0; k < nBasis; ++k) {
                   int idx = i*nBasis + k;
-                  resid[idx] += interaction_.idemp(i,j) * 
+                  resid[idx] += interaction_.p(i,j) * 
                                 system().h().basis(j)[k];
                }
             }
@@ -297,7 +297,7 @@ namespace Pspc{
          double phiTot = system().mask().phiTot();
 
          for (int i = 0; i < nMonomer; ++i) {
-            resid[i*nBasis] -= phiTot / interaction_.sum_inv();
+            resid[i*nBasis] -= phiTot / interaction_.sumChiInverse();
          }
       } else {
          // Explicitly set homogeneous residual components

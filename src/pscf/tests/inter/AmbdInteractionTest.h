@@ -58,6 +58,9 @@ public:
       double sum;
       for (i = 0; i < nMonomer; ++i) {
          for (j = 0; j < nMonomer; ++j) {
+            TEST_ASSERT(eq(u.chi(i,j), v.chi(i,j)));
+            TEST_ASSERT(eq(u.chiInverse(i,j), v.chiInverse(i,j)));
+            TEST_ASSERT(eq(u.p(i,j), v.idemp(i,j)));
             sum = 0.0;
             for (k = 0; k < nMonomer; ++k) {
               sum += u.chi(i,k)*u.chiInverse(k,j);
@@ -69,6 +72,7 @@ public:
             }
          }
       }
+      TEST_ASSERT(eq(v.sum_inv(), u.sumChiInverse()));
 
    }
 
@@ -96,7 +100,7 @@ public:
       double sum;
       for (i = 0; i < nMonomer; ++i) {
          for (j = 0; j < nMonomer; ++j) {
-            TEST_ASSERT(eq(v.idemp(i,j), u.idemp(i,j)));
+            TEST_ASSERT(eq(u.p(i,j), v.idemp(i,j)));
             sum = 0.0;
             for (k = 0; k < nMonomer; ++k) {
                sum += u.chi(i,k)*u.chiInverse(k,j);
@@ -108,7 +112,7 @@ public:
             }
          }
       }
-      TEST_ASSERT(eq(v.sum_inv(), u.sum_inv()));
+      TEST_ASSERT(eq(v.sum_inv(), u.sumChiInverse()));
 
    }
 

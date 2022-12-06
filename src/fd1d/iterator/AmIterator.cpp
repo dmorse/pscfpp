@@ -190,7 +190,7 @@ namespace Fd1d{
       const int nr = nm*nx;
 
        // Initialize residuals
-      const double shift = -1.0/interaction_.sum_inv();
+      const double shift = -1.0/interaction_.sumChiInverse();
       for (int i = 0 ; i < nr; ++i) {
          resid[i] = shift;
       }
@@ -203,7 +203,7 @@ namespace Fd1d{
             DArray<double>& cField = system().cField(j);
             DArray<double>& wField = system().wField(j);
             chi = interaction_.chi(i,j);
-            p   = interaction_.idemp(i,j);
+            p   = interaction_.p(i,j);
             for (k = 0; k < nx; ++k) {
                int idx = i*nx + k;
                resid[idx] += chi*cField[k] - p*wField[k];
