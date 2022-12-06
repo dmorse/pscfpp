@@ -30,9 +30,11 @@ namespace Pscf
    /*
    * Set the number of monomer types and allocate memory.
    */
-   void AmbdInteraction::allocate(int nMonomer)
+   void AmbdInteraction::setNMonomer(int nMonomer)
    {  
       UTIL_CHECK(isAllocated_ == false);
+      UTIL_CHECK(nMonomer_ == 0);
+      UTIL_CHECK(nMonomer > 0);
       nMonomer_ = nMonomer; 
       chi_.allocate(nMonomer, nMonomer);
       chiInverse_.allocate(nMonomer, nMonomer);
@@ -45,8 +47,9 @@ namespace Pscf
 
       // Allocate memory if not done previously
       if (!isAllocated_) {
-         allocate(interaction.nMonomer());
+         setNMonomer(interaction.nMonomer());
       }
+      UTIL_CHECK(nMonomer_ == interaction.nMonomer());
 
       int i, j, k;
 
@@ -54,9 +57,11 @@ namespace Pscf
       for (i = 0; i < nMonomer_; ++i) {
          for (j = 0; j < nMonomer_; ++j) {
            chi_(i, j) = interaction.chi(i, j);
+           chiInverse_(i, j) = interaction.chiInverse(i, j);
          }
       }
 
+      #if 0
       if (nMonomer() == 2) {
          double det = chi_(0,0)*chi_(1, 1) - chi_(0,1)*chi_(1,0);
          double norm = chi_(0,0)*chi_(0, 0) + chi_(1,1)*chi_(1,1)
@@ -75,6 +80,7 @@ namespace Pscf
          solver.computeLU(chi_);
          solver.inverse(chiInverse_);
       }
+      #endif
 
       double sum = 0;
       for (i = 0; i < nMonomer(); ++i) {

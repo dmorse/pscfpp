@@ -20,12 +20,17 @@ namespace Pscf {
    /**
    * Modified interaction to compute residual defn. of Arora et al.
    *
-   * This class computes and provides access to several auxiliary 
-   * quantities that are computed from knowledge of the chi matrix, and 
-   * that are needed to compute the SCFT residual for multi-component 
-   * systems as defined by Arora, Morse, Bates and Dorfman (AMBD) for 
-   * use in Anderson-mixing iteration in the following reference:
+   * This class computes and provides access to copies of chi and as
+   * well as several other auxiliary quantities that are needed to 
+   * compute the SCFT residual for multi-component systems as defined
+   * by Arora, Morse, Bates and Dorfman (AMBD) (JCP 2017) for use
+   * in Anderson-mixing iteration (see reference below). The class
+   * is designed to be used as a augmented local copy of the
+   * interaction class within iterator classes that use this residual
+   * definition. When used in this way, it should be updated just 
+   * before entering the iteration loop.
    * 
+   * Reference:
    * A. Arora, D.C. Morse, F.S. Bates and K.D Dorfman,
    * J. Chem. Phys vol. 146, 244902 (2017).
    * 
@@ -51,7 +56,7 @@ namespace Pscf {
       *
       * \param nMonomer number of different monomer types
       */
-      void allocate(int nMonomer);
+      void setNMonomer(int nMonomer);
 
       /**
       * Update all computed quantities.

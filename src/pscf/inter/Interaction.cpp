@@ -29,7 +29,14 @@ namespace Pscf {
    * Set the number of monomer types.
    */
    void Interaction::setNMonomer(int nMonomer)
-   {  nMonomer_ = nMonomer; }
+   {  
+      UTIL_CHECK(nMonomer_ == 0);
+      UTIL_CHECK(nMonomer > 0);
+      nMonomer_ = nMonomer; 
+      chi_.allocate(nMonomer, nMonomer);
+      chiInverse_.allocate(nMonomer, nMonomer);
+      idemp_.allocate(nMonomer, nMonomer);
+   }
 
    /*
    * Read chi matrix from file.
@@ -37,9 +44,6 @@ namespace Pscf {
    void Interaction::readParameters(std::istream& in)
    {
       UTIL_CHECK(nMonomer() > 0);
-      chi_.allocate(nMonomer(), nMonomer());
-      chiInverse_.allocate(nMonomer(), nMonomer());
-      idemp_.allocate(nMonomer(), nMonomer());
       readDSymmMatrix(in, "chi", chi_, nMonomer());
 
       // Compute relevant AM iterator quantities.

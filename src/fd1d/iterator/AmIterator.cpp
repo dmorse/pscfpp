@@ -33,7 +33,7 @@ namespace Fd1d{
       AmIteratorTmpl<Iterator, DArray<double> >::readErrorType(in);
 
       const int nMonomer = system().mixture().nMonomer(); 
-      interaction_.allocate(nMonomer);
+      interaction_.setNMonomer(nMonomer);
    }
 
    // Setup before entering iteration loop

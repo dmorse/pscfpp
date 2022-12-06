@@ -39,7 +39,7 @@ namespace Pspc{
       AmIteratorTmpl< Iterator<D>, DArray<double> >::readErrorType(in);
 
       // Allocate local modified copy of Interaction class
-      interaction_.allocate(system().mixture().nMonomer());
+      interaction_.setNMonomer(system().mixture().nMonomer());
 
       // Default parameter values
       isFlexible_ = 0; 
