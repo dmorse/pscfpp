@@ -10,6 +10,7 @@
 
 #include "Iterator.h"
 #include <pscf/iterator/AmIteratorTmpl.h>                 
+#include <pscf/iterator/AmbdInteraction.h>   // member variable
 
 namespace Pscf {
 namespace Pspg
@@ -61,7 +62,17 @@ namespace Pspg
       using AmIteratorTmpl<Iterator<D>, DArray<double> >::setClassName;
       using AmIteratorTmpl<Iterator<D>, DArray<double> >::verbose;
 
+      /**
+      * Setup iterator just before entering iteration loop.
+      *
+      * \param isContinuation Is this a continuation within a sweep?
+      */
+      void setup(bool isContinuation);
+
    private:
+
+      // Local copy of interaction, adapted for use AMBD residual definition
+      AmbdInteraction interaction_;
 
       /// How are stress residuals scaled in error calculation?
       double scaleStress_;
