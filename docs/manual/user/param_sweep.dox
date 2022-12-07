@@ -362,7 +362,7 @@ crystal, or the value of the angle between two edges for a non-orthogonal
 crystal lattice type.  PSCF uses a set of standard conventions for a 
 list of parameters required to describe each unit cell type for 1, 2 
 and 3 dimensional structures of various crystal lattice system types.
-These conventions are described \ref user_unit_cell_page "here".
+These conventions are described \ref user_unitcell_page "here".
 The uid index for a cell_parameter is a zero based integer index 
 that identifies which parameter in such a list is being varied.
 
