@@ -185,9 +185,6 @@ namespace Fd1d
       hasDomain_ = true;
       allocateFields();
 
-      // Initialize iterator
-      //readParamComposite(in, iterator());
-
       // Instantiate and initialize an Iterator 
       std::string className;
       bool isEnd;
@@ -199,7 +196,7 @@ namespace Fd1d
          UTIL_THROW(msg.c_str());
       }
 
-      // Optionally instantiate a Sweep object
+      // Optionally instantiate and initialize a Sweep object
       sweepPtr_ = 
          sweepFactoryPtr_->readObjectOptional(in, *this, className, isEnd);
       if (sweepPtr_) {

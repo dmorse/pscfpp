@@ -9,7 +9,7 @@
 #include <fstream>
 
 using namespace Pscf;
-//using namespace Util;
+using namespace Util;
 
 class BlockDescriptorTest : public UnitTest 
 {
@@ -17,7 +17,9 @@ class BlockDescriptorTest : public UnitTest
 public:
 
    void setUp()
-   {}
+   {
+      // setVerbose(1);
+   }
 
    void tearDown()
    {}
@@ -31,7 +33,6 @@ public:
 
    void testReadWrite() {
       printMethod(TEST_FUNC);
-      //printEndl();
 
       std::ifstream in;
       openInputFile("in/BlockDescriptor", in);
@@ -47,8 +48,10 @@ public:
       TEST_ASSERT(v.vertexId(1) == 4);
       TEST_ASSERT(eq(v.length(), 2.0));
       TEST_ASSERT(v.polymerType() == PolymerType::Branched);
-      std::cout << std::endl ;
-      std::cout << v << std::endl ;
+      if (verbose() > 0) {
+         printEndl();
+         std::cout << v << std::endl ;
+      }
 
       v.setPolymerType(PolymerType::Linear);
       v.setId(2);
@@ -60,10 +63,15 @@ public:
       TEST_ASSERT(v.vertexId(1) == 3);
       TEST_ASSERT(eq(v.length(), 3.0));
       TEST_ASSERT(v.polymerType() == PolymerType::Linear);
-      std::cout << v << std::endl ;
+      if (verbose() > 0) {
+         std::cout << v << std::endl ;
+      }
 
       v.setPolymerType(PolymerType::Branched);
-      std::cout << v << std::endl ;
+      TEST_ASSERT(v.polymerType() == PolymerType::Branched);
+      if (verbose() > 0) {
+         std::cout << v << std::endl ;
+      }
    }
 
 };

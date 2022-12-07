@@ -56,11 +56,15 @@ namespace Homogeneous {
 
       /**
       * Set the number of molecular species and allocate memory.
+      *
+      * \param nMolecule number of molecular species (polymer and solvent)
       */
-      void setNMolecule(int nMonomer);
+      void setNMolecule(int nMolecule);
       
       /**
       * Set the number of monomer types.
+      *
+      * \param nMolecule number of monomer types.
       */
       void setNMonomer(int nMonomer);
 
@@ -117,7 +121,7 @@ namespace Homogeneous {
       //@{
  
       /**
-      * Get a molecule object.
+      * Get a molecule object (non-const reference).
       *
       * \param id integer molecule species index (0 <= id < nMolecule)
       */
@@ -155,7 +159,7 @@ namespace Homogeneous {
       double pressure() const;
 
       /**
-      * Get number of molecule species.
+      * Get number of molecule species (polymer + solvent).
       */
       int nMolecule() const;
 
@@ -248,7 +252,7 @@ namespace Homogeneous {
       LuSolver* solverPtr_;
 
       /**
-      * Number of molecule species.
+      * Number of molecule species (polymers and solvent).
       */
       int nMolecule_;
 

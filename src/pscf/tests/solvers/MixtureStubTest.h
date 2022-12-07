@@ -16,10 +16,14 @@ class MixtureStubTest : public UnitTest
 public:
 
    void setUp()
-   {}
+   {
+      //setVerbose(1);
+   }
 
    void tearDown()
-   {}
+   {
+      setVerbose(0);
+   }
 
   
    void testConstructor()
@@ -31,14 +35,17 @@ public:
    void testReadParam() 
    {
       printMethod(TEST_FUNC);
-      printEndl();
 
       std::ifstream in;
       openInputFile("in/Mixture", in);
 
       MixtureStub sys;
       sys.readParam(in);
-      sys.writeParam(std::cout);
+
+      if (verbose() > 0) {
+         std::cout << std::endl;
+         sys.writeParam(std::cout);
+      }
    }
 
 };

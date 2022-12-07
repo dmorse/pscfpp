@@ -35,7 +35,7 @@ public:
       bool isValid = true;
       int i, j, k;
       if (verbose) {
-         Log::file() << std::endl;
+         std::cout << std::endl;
       }
       for (i = 0; i < D; ++i ) {
          for (j = 0; j < D; ++j ) {
@@ -45,7 +45,7 @@ public:
             }
             sum = sum/twoPi;
             if (verbose) {
-               Log::file() << Dbl(sum, 15, 5);
+               std::cout << Dbl(sum, 15, 5);
             }
             if (i == j) {
                sum -= 1.0;
@@ -55,7 +55,7 @@ public:
             }
          }
          if (verbose) {
-            Log::file() << std::endl;
+            std::cout << std::endl;
          }
       }
       return isValid;
@@ -202,7 +202,6 @@ public:
    void test2DHexagonal() 
    {
       printMethod(TEST_FUNC);
-      printEndl();
 
       UnitCell<2> v;
       std::ifstream in;
@@ -214,6 +213,7 @@ public:
       TEST_ASSERT(isValidDerivative(v));
 
       #if 0
+      printEndl();
       std::cout.width(20);
       std::cout.precision(6);
       std::cout << v << std::endl ;
@@ -231,16 +231,14 @@ public:
       x[0] = -4;
       x[1] = +5;
       IntVec<2> y;
-     
-      std::cout << "Before shift " << x << std::endl;
+   
+      // Test shiftToMinimum function 
       y = shiftToMinimum(x, d, v);
-      std::cout << "After shift  " << y << std::endl;
       TEST_ASSERT(y[0] == 4);
       TEST_ASSERT(y[1] == -3);
       y = shiftToMinimum(y, d, v);
       TEST_ASSERT(y[0] == 4);
       TEST_ASSERT(y[1] == -3);
-      //std::cout << "After again  " << y << std::endl;
 
       // Test assignment
       UnitCell<2> u;
@@ -296,7 +294,6 @@ public:
    void test2DRhombic() 
    {
       printMethod(TEST_FUNC);
-      printEndl();
 
       UnitCell<2> v;
       std::ifstream in;
@@ -333,7 +330,6 @@ public:
    void test2DOblique() 
    {
       printMethod(TEST_FUNC);
-      printEndl();
 
       UnitCell<2> v;
       std::ifstream in;

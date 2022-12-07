@@ -9,7 +9,7 @@
 #include <fstream>
 
 using namespace Pscf;
-//using namespace Util;
+using namespace Util;
 
 class PolymerTypeTest : public UnitTest 
 {
@@ -17,14 +17,17 @@ class PolymerTypeTest : public UnitTest
 public:
 
    void setUp()
-   {}
+   {
+      //setVerbose(1);
+   }
 
    void tearDown()
-   {}
+   {
+      setVerbose(0);
+   }
 
    void testReadWrite() {
       printMethod(TEST_FUNC);
-      printEndl();
 
       std::ifstream in;
       openInputFile("in/PolymerType", in);
@@ -32,10 +35,15 @@ public:
       PolymerType::Enum b;
       in >> b;
       TEST_ASSERT(b == PolymerType::Branched);
-      std::cout << b << "  ";
+      if (verbose() > 0) {
+         printEndl();
+         std::cout << b << "  ";
+      }
       in >> b;
       TEST_ASSERT(b == PolymerType::Linear);
-      std::cout << b << std::endl ;
+      if (verbose() > 0) {
+         std::cout << b << std::endl ;
+      }
 
       // If uncommented out, this one fails to read "Thingy"
       //in >> b;

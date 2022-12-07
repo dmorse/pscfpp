@@ -56,7 +56,7 @@ public:
       openLogFile("out/SystemTestReadParameters.log");
 
       std::ifstream in;
-      openInputFile("in/planar1.prm", in);
+      openInputFile("in/planar1_nr.prm", in);
 
       System sys;
       sys.readParam(in);
@@ -73,7 +73,7 @@ public:
       openLogFile("out/SystemTestSolveMdePlanar.log");
 
       std::ifstream in;
-      openInputFile("in/planar1.prm", in);
+      openInputFile("in/planar1_nr.prm", in);
 
       System sys;
       sys.readParam(in);
@@ -126,7 +126,7 @@ public:
       openLogFile("out/SystemTestSolveMdeSpherical.log");
 
       std::ifstream in;
-      openInputFile("in/spherical1.prm", in);
+      openInputFile("in/spherical1_nr.prm", in);
 
       System sys;
       sys.readParam(in);
@@ -167,7 +167,7 @@ public:
       openLogFile("out/SystemTestIteratorPlanar.log");
 
       std::ifstream in;
-      openInputFile("in/planar2.prm", in);
+      openInputFile("in/planar2_nr.prm", in);
 
       System sys;
       sys.readParam(in);
@@ -224,7 +224,7 @@ public:
       openLogFile("out/SystemTestIteratorSpherical.log");
 
       std::ifstream in;
-      openInputFile("in/spherical1.prm", in);
+      openInputFile("in/spherical1_nr.prm", in);
 
       System sys;
       sys.readParam(in);
@@ -287,7 +287,7 @@ public:
       openLogFile("out/SystemTestFieldInput.log");
 
       std::ifstream in;
-      openInputFile("in/planar2.prm", in);
+      openInputFile("in/planar2_nr.prm", in);
 
       System sys;
       sys.readParam(in);
@@ -321,7 +321,7 @@ public:
       std::ifstream in;
       Log::file() << "\n";
 
-      openInputFile("in/planar2.prm", in);
+      openInputFile("in/planar2_nr.prm", in);
       sys.readParam(in);
       in.close();
 
@@ -345,7 +345,7 @@ public:
       std::ifstream in;
       Log::file() << "\n";
 
-      openInputFile("in/spherical2.prm", in);
+      openInputFile("in/spherical2_nr.prm", in);
       sys.readParam(in);
       in.close();
 
@@ -371,7 +371,7 @@ public:
       std::ifstream in;
       Log::file() << "\n";
 
-      openInputFile("in/spherical3.prm", in);
+      openInputFile("in/spherical3_nr.prm", in);
       sys.readParam(in);
       in.close();
       // Log::file() << "Finished reading param file" << std::endl;

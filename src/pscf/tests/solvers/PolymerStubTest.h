@@ -17,10 +17,12 @@ class PolymerStubTest : public UnitTest
 public:
 
    void setUp()
-   {}
+   {
+      //setVerbose(1);
+   }
 
    void tearDown()
-   {}
+   {  setVerbose(0); }
 
   
    void testConstructor()
@@ -32,7 +34,6 @@ public:
    void testReadParam() 
    {
       printMethod(TEST_FUNC);
-      printEndl();
 
       std::ifstream in;
       openInputFile("in/Polymer", in);
@@ -40,8 +41,10 @@ public:
       PolymerStub p;
       p.readParam(in);
 
-      p.writeParam(std::cout);
-
+      if (verbose() > 0) {
+         std::cout << std::endl;
+         p.writeParam(std::cout);
+      }
     
       #if 0
       for (int i = 0; i < p.nVertex(); ++i) {
@@ -49,13 +52,15 @@ public:
       }
       #endif
 
-      std::cout << "\nVertices: id, size, block ids\n";
-      for (int i = 0; i < p.nVertex(); ++i) {
-         std::cout << i << "  " << p.vertex(i).size();
-         for (int j = 0; j < p.vertex(i).size(); ++j) {
-            std::cout << "  " << p.vertex(i).inPropagatorId(j)[0];
+      if (verbose() > 0) {
+         std::cout << "\nVertices: id, size, block ids\n";
+         for (int i = 0; i < p.nVertex(); ++i) {
+            std::cout << i << "  " << p.vertex(i).size();
+            for (int j = 0; j < p.vertex(i).size(); ++j) {
+               std::cout << "  " << p.vertex(i).inPropagatorId(j)[0];
+            }
+            std::cout << std::endl;
          }
-         std::cout << "\n";
       }
 
       #if 0
@@ -64,13 +69,17 @@ public:
                    << p.propagatorId(i)[1] << "\n";
       }
       #endif
-      
-      std::cout << "\nPropagator order:\n";
+     
+      if (verbose() > 0) { 
+         std::cout << "\nPropagator order:\n";
+      }
       Pair<int> propId;
       PropagatorStub* propPtr = 0;
       for (int i = 0; i < p.nPropagator(); ++i) {
          propId = p.propagatorId(i);
-         std::cout << propId[0] << "  " << propId[1] << "\n";
+         if (verbose() > 0) {
+            std::cout << propId[0] << "  " << propId[1] << "\n";
+         }
          propPtr = &p.propagator(i);
          TEST_ASSERT(propPtr->block().id() == propId[0]);
          TEST_ASSERT(propPtr->directionId() == propId[1]);
@@ -88,7 +97,6 @@ public:
    void testReadStarParam() 
    {
       printMethod(TEST_FUNC);
-      printEndl();
 
       std::ifstream in;
       openInputFile("in/Polymer2", in);
@@ -96,7 +104,10 @@ public:
       PolymerStub p;
       p.readParam(in);
 
-      p.writeParam(std::cout);
+      if (verbose() > 0) {
+         std::cout << std::endl;
+         p.writeParam(std::cout);
+      }
 
     
       #if 0
@@ -105,13 +116,16 @@ public:
       }
       #endif
 
-      std::cout << "\nVertices: id, size, block ids\n";
-      for (int i = 0; i < p.nVertex(); ++i) {
-         std::cout << i << "  " << p.vertex(i).size();
-         for (int j = 0; j < p.vertex(i).size(); ++j) {
-            std::cout << "  " << p.vertex(i).inPropagatorId(j)[0];
+      if (verbose() > 0) {
+         std::cout << std::endl;
+         std::cout << "\nVertices: id, size, block ids\n";
+         for (int i = 0; i < p.nVertex(); ++i) {
+            std::cout << i << "  " << p.vertex(i).size();
+            for (int j = 0; j < p.vertex(i).size(); ++j) {
+               std::cout << "  " << p.vertex(i).inPropagatorId(j)[0];
+            }
+            std::cout << "\n";
          }
-         std::cout << "\n";
       }
 
       #if 0
@@ -120,13 +134,17 @@ public:
                    << p.propagatorId(i)[1] << "\n";
       }
       #endif
-      
-      std::cout << "\nPropagator order:\n";
+     
+      if (verbose() > 0) { 
+         std::cout << "\nPropagator order:\n";
+      }
       Pair<int> propId;
       PropagatorStub* propPtr = 0;
       for (int i = 0; i < p.nPropagator(); ++i) {
          propId = p.propagatorId(i);
-         std::cout << propId[0] << "  " << propId[1] << "\n";
+         if (verbose() > 0) {
+            std::cout << propId[0] << "  " << propId[1] << "\n";
+         }
          propPtr = &p.propagator(i);
          TEST_ASSERT(propPtr->block().id() == propId[0]);
          TEST_ASSERT(propPtr->directionId() == propId[1]);

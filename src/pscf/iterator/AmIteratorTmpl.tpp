@@ -34,7 +34,7 @@ namespace Pscf
       nBasis_(0),
       maxHist_(0),
       itr_(0),
-      maxItr_(0),
+      maxItr_(200),
       nElem_(0),
       verbose_(0),
       outputTime_(false),
@@ -54,31 +54,39 @@ namespace Pscf
    template <typename Iterator, typename T>
    void AmIteratorTmpl<Iterator,T>::readParameters(std::istream& in)
    {
-      read(in, "maxItr", maxItr_);
+      // Error tolerance for scalar error. Stop when error < epsilon.
       read(in, "epsilon", epsilon_);
 
+      // Maximum number of iterations, optional parameter.
+      // Default set in constructor (200) or before calling this function
+      readOptional(in, "maxItr", maxItr_);
+
+      // Maximum number of previous states in history
       maxHist_ = 50;
       readOptional(in, "maxHist", maxHist_);
 
+      // Verbosity level of error reporting, values 0-2
+      // verbose_ = 0 => concise
+      // verbose_ = 1 => report all error measures at end
+      // verbose_ = 2 => report all error measures each step
       verbose_ = 0;
       readOptional(in, "verbose", verbose_);
 
+      // Flag to output timing results (true) or skip (false)
       outputTime_ = false;
       readOptional(in, "outputTime", outputTime_);
    }
 
    /*
-   * Solve iteratively.
+   * Iteratively solve a SCF problem.
    */
    template <typename Iterator, typename T>
    int AmIteratorTmpl<Iterator,T>::solve(bool isContinuation)
    {
-      // Note: Parameter isContinuation is currently unused 
-
       // Initialization and allocate operations on entry to loop.
       setup(isContinuation);
 
-      // Preconditions for generic algorithm.
+      // Preconditions for generic Anderson-mixing (AM) algorithm.
       UTIL_CHECK(hasInitialGuess());
       UTIL_CHECK(isAllocatedAM_);
 
