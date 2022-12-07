@@ -131,19 +131,6 @@ namespace Pscf {
       */
       double chiInverse(int i, int j) const;
 
-      /** 
-      * Return one element of the idempotent matrix.
-      *   
-      * \param i row index
-      * \param j column index
-      */  
-      double idemp(int i, int j) const; 
-
-      /** 
-      * Return sum of elements of chiInverse.
-      */  
-      double sum_inv() const;
-
       /**
       * Get number of monomer types.
       */
@@ -157,19 +144,11 @@ namespace Pscf {
       // Inverse of matrix chi_.
       DMatrix<double> chiInverse_;
 
-      // Idempotent matrix used in residual in formulation
-      // of Arora et al. 
-      DMatrix<double> idemp_;
-
-      // Sum of elements of matrix chiInverse_
-      double sum_inv_;
-
       /// Number of monomers
       int nMonomer_;
 
       /**
-      * Compute the inverse of the chi matrix, along with the
-      * corresponding idempotent matrix and sum of all elements.
+      * Compute the inverse of the chi matrix.
       * Must be called after making any changes to the chi matrix.
       */
       void updateMembers();
@@ -186,12 +165,6 @@ namespace Pscf {
 
    inline double Interaction::chiInverse(int i, int j) const
    {  return chiInverse_(i, j); }
-
-   inline double Interaction::idemp(int i, int j) const
-   {  return idemp_(i, j); }
-
-   inline double Interaction::sum_inv() const
-   {  return sum_inv_; }
 
 } // namespace Pscf
 #endif
