@@ -24,7 +24,7 @@ Instructions:
      the build system with default compiler options appropriate to most
      linux systems, enter the command
      \code
-     > ./setup
+     ./setup
      \endcode
      Alternatively, to customize compiler options, invoke the setup script
      with a filename argument that is the name of a compiler configuration 
@@ -34,22 +34,22 @@ Instructions:
      M1 or M2 chip) in which the dependencies have been installed using 
      the homebrew package mamager can be created by entering 
      \code
-     > ./setup mac-m1-homebrew
+     ./setup mac-m1-homebrew
      \endcode
 
    - **Compile all CPU programs:**
      From the pscfpp/ directory, enter
      \code
-     > make all-cpu
+     make all-cpu
      \endcode
      If successful, this will install executables named "pscf_fd",
      "pscf_pc1", "pscf_pc2" and "pscf_pc3" in the pscfpp/bin directory.
 
    - **Compile GPU-enabled programs:**
-     To compile the GPU accelerated executables on a machine with an
-     appropriate NVIDIA GPU and a CUDA compiler, invoke
+     To compile the GPU enabled programs on a machine with an appropriate 
+     NVIDIA GPU and a CUDA compiler, enter
      \code
-     > make pspg
+     make pspg
      \endcode
      from within the pscfpp/ root directory.  If successful, this will
      install executables named "pscf_pg1", "pscf_pg2" and "pscf_pg3"

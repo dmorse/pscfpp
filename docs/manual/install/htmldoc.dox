@@ -15,7 +15,7 @@ the resulting html files.
 If the doxygen program is installed on your machine, you can us it to generate 
 a local copy of this html manual.  To check whether doxygen is installed, enter 
 \code
-> which doxygen
+which doxygen
 \endcode
  from the command line. If a valid path to a file named doxygen is returned, 
 then doxygen is already installed. If doxygen is not installed, install it 
@@ -25,28 +25,33 @@ downloading from the doxygen web page.
 Once doxygen is installed, simply change directory to the pscfpp/ root 
 directory and enter
 \code
-> make html 
+make html 
 \endcode
 The resulting html files will be installed in the pscfpp/docs/html/ directory. 
 
-\section install_doc_read_sec Reading the documentation
+\section install_doc_read_sec Reading local documentation
  
 The main page of the html documentation is a file named docs/html/index.html.
 To begin reading your local copy of the documentation, simply open this file 
 in any web browser. To read the documentation on a linux system using the 
 firefox browser, enter
 \code
-> firefox docs/html/index.html
+firefox docs/html/index.html
 \endcode
 from the pscfpp/ root directory. On a Mac, one can instead use the "open" 
 command to open this file with the default web browser by entering
 \code
-> open docs/html/index.html
+open docs/html/index.html
 \endcode 
 from a terminal. Alternatively, one can use the Finder to navigate to the 
 pscfpp/docs/html folder, double click on any file in that directory with 
 an *.html file extension, and then click on the "main page" button in the
 upper left to go to the main page (i.e., the index.html page).
+
+The computer on which you read the documentation will need to have an
+active internet connection in order for some mathematical expressions 
+to be formatted correctly. This is a result of the use of the MathJax
+online browser-side interpreter to format math in this manual.
 
 \section install_doc_source_sec Manual Source Files
 
@@ -64,7 +69,7 @@ C++ header file.
 To delete all html documentation from the docs/html directory and start
 over, enter
 \code
-> make clean-html
+make clean-html
 \endcode
 from the pscfpp/ directory or, equivalently, enter "make clean" from the 
 pscfpp/docs directory.

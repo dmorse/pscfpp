@@ -13,20 +13,22 @@ on Nvidia graphics processing units (GPUs).
 The source code for PSCF is maintained in the github repository
 <a href=https://github.com/dmorse/pscfpp/>https://github.com/dmorse/pscfpp</a>.
 
-This C++ version of PSCF is intended to supersede an older Fortran
-program of the same name. The older Fortran PSCF program is maintained
-in a separate github.com repository at
+\section about_history_sec History
+
+The current C++ version of PSCF is intended to supersede an older 
+Fortran program of the same name. This older Fortran version of PSCF is 
+maintained in a separate github.com repository at
 <a href= https://github.com/dmorse/pscf/>https://github.com/dmorse/pscf</a>
 for details.
-This new code currently provides almost all of the capabilities of the
-older Fortran program, and some significant new capabilities, as discussed
-below.
+The current C++ version provides almost all of the capabilities of the 
+older Fortran program, and some significant new capabilities, as 
+discussed below.
 
-Differences between this C++ version of PSCF and the older Fortran
-program and some expected advantages of the new code include:
+Differences between the current C++ version of PSCF and the older Fortran
+program, and some expected advantages of the new code include:
 <ul>
   <li>
-  The new version is written as an extensible package that contains
+  The current version is written as an extensible package that contains
   several different programs designed for use with different geometries,
   boundary conditions, algorithms or hardware, implemented within a
   common framework.
@@ -37,14 +39,15 @@ program and some expected advantages of the new code include:
   polymers and linear homopolymers allowed by the Fortran PSCF code.
   </li>
   <li>
-  Adoption of C++ as a base language has simplified implementation
-  of a variant that that uses graphical process units (GPUs).
+  Adoption of C++ as a base language has simplified implementation of
+  a programs that use graphical process units (GPUs) to accelerate
+  computation.
   </li>
 </ul>
 
 \section about_programs_sec Programs
 
-Currently, the package contains the following set of programs:
+The current version of PSCF contains the following set of executable programs:
 
    - <b> pscf_fd </b> : A one-dimensional finite difference program.
 
@@ -89,20 +92,20 @@ Features that are common to all of the PSCF programs include:
 
   - Mixtures of any number of block polymers, homopolymers, and solvent species
 
-  - Arbitrarily complex linear or acyclic branched block polymers
+  - Arbitrarily complex acyclic branched block polymers, as well as linear polymers.
 
   - Canonical, grand-canonical or mixed statistical ensembles -
     Users may specify either a volume fraction or a chemical potential
     for each species
 
   - Efficient simulation of sequences of parameter choices along a path 
-    in parameter space by continuation of solutions ("sweep" functionality)
+    in parameter space using extrapolation to compute initial guesses.
 
   - Examples of converged solutions and input scripts
 
   - Thorough user and developer documentation
 
-  - Open source code
+  - Open source code 
 
 Features specific to programs for periodic structures include:
 
@@ -125,16 +128,16 @@ Features specific to programs for periodic structures include:
 
 Features specific to the pscf_pc CPU programs for periodic structures are:
 
-  - Inhomogeneous density constraint (a "mask")
+  - Inhomogeneous density constraints (a "mask")
 
   - External fields
 
   - Thin polymer films
 
-The general "mask" and external field features are used in pscf_pc to 
-implement simulations of thin films, using a mask to constrain a polymer
-material to a slit within a periodic supercell, and external fields to
-represent interactions with the top and bottom surface.
+The "mask" and external field features are used in the pscf_pc programs 
+to implement simulations of thin films, using a mask to constrain a 
+polymer material to a slit within a periodic supercell, and external 
+fields to represent interactions with the top and bottom surface.
 
 \section about_repo_sec Cloning the Source Code
 
@@ -176,19 +179,21 @@ To begin reading the documentation, point a browser at the file
 pscfpp/docs/html/index.html, which contains the main page of the
 web manual.
 
+Formatting of some mathematical expressions within this web manual 
+relies on the use of a MathJax interpreter that is provided by a 
+remote server, and which thus requires an internet connection to 
+function. Mathematical expressions in local copies of this manual
+will thus be formatted correctly only if the computer is connected 
+to the internet.
+
 \section about_dependencies_sec Dependencies
 
 The PSCF source code is written using C++ as the primary language, with
 CUDA used in some programs for GPU acceleration. PSCF is only provided
 in source file format - all programs must be compiled from source.
-This package was developed on linux and and Mac OS X operating systems
-using standard unix utilities, and is designed to run on these or other
-unix-like systems.
-
-To compile and run this or other unix software on Mac OS X, you must
-first install the unix command line tools. These tools are provided as
-part of the much larger XCode Mac development environment, but can also
-be installed separately.
+PSCF was developed on linux and and Mac OS X operating systems using 
+standard unix utilities, and is designed to be compiled and run on these 
+or other unix-like systems.
 
 The CPU-based programs within the PSCF package depend on the following
 external libraries:
@@ -211,7 +216,7 @@ different operating system environments and different package managers.
 Instructions for some common environments are given in the web manual.
 
 Complete directions for compiling and installing PSCF are provided in
-\ref install_page "section 2" of this manual.
+\ref install_page "section 2" of this manual. 
 
 \section about_license_sec License
 
