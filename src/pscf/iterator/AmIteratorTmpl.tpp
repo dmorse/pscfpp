@@ -32,7 +32,7 @@ namespace Pscf
       epsilon_(0),
       lambda_(0),
       nBasis_(0),
-      maxHist_(0),
+      maxHist_(50),
       itr_(0),
       maxItr_(200),
       nElem_(0),
@@ -62,18 +62,18 @@ namespace Pscf
       readOptional(in, "maxItr", maxItr_);
 
       // Maximum number of previous states in history
-      maxHist_ = 50;
+      // Default set in constructor (50) or before calling this function
       readOptional(in, "maxHist", maxHist_);
 
       // Verbosity level of error reporting, values 0-2
+      // Initialized to 0 by default in constructor
       // verbose_ = 0 => concise
       // verbose_ = 1 => report all error measures at end
-      // verbose_ = 2 => report all error measures each step
-      verbose_ = 0;
+      // verbose_ = 2 => report all error measures every iteration
       readOptional(in, "verbose", verbose_);
 
       // Flag to output timing results (true) or skip (false)
-      outputTime_ = false;
+      // Initialized to false by default in constructor
       readOptional(in, "outputTime", outputTime_);
    }
 

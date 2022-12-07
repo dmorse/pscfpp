@@ -28,8 +28,8 @@ System{
     groupName     F_m_-3_m
   }
   AmIteratorGrid{
+    epsilon 1.0e-5
     maxItr 500
-    epsilon 1e-5
     maxHist 20
     isFlexible   1
   }

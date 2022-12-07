@@ -1,0 +1,5 @@
+(cd 1; ./clean)
+(cd 2; ./clean)
+(cd 3; ./clean)
+(cd 4; ./clean)
+(cd 5; ./clean)

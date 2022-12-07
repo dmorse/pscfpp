@@ -34,6 +34,7 @@ public:
          logFile_.close();
       }
       ParamComponent::setEcho(false);
+      setVerbose(0);
    }
 
    void openLogFile(char const * filename)
@@ -42,7 +43,6 @@ public:
       Log::setFile(logFile_);
       ParamComponent::setEcho(true);
    }
-
   
    void testConstructor()
    {
@@ -161,10 +161,10 @@ public:
       Log::file() << "Volume fraction of block 1 = " << sum1 << "\n";
    }
 
-   void testIteratorPlanar()
+   void testIteratorPlanarNr()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/SystemTestIteratorPlanar.log");
+      openLogFile("out/SystemTestIteratorPlanarNr.log");
 
       std::ifstream in;
       openInputFile("in/planar2_nr.prm", in);
@@ -198,30 +198,30 @@ public:
       mix.compute(sys.wFields(), sys.cFields());
 
       std::ofstream out;
-      openOutputFile("out/initialPlanar.w", out);
+      openOutputFile("out/initialPlanarNr.w", out);
       fieldIo.writeFields(sys.wFields(), out);
       out.close();
 
-      openOutputFile("out/initialPlanar.c", out);
+      openOutputFile("out/initialPlanarNr.c", out);
       fieldIo.writeFields(sys.cFields(), out);
       out.close();
 
       sys.iterator().solve();
 
-      openOutputFile("out/finalPlanar.w", out);
+      openOutputFile("out/finalPlanarNr.w", out);
       fieldIo.writeFields(sys.wFields(), out);
       out.close();
 
-      openOutputFile("out/finalPlanar.c", out);
+      openOutputFile("out/finalPlanarNr.c", out);
       fieldIo.writeFields(sys.cFields(), out);
       out.close();
 
    }
 
-   void testIteratorSpherical()
+   void testIteratorSphericalNr()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/SystemTestIteratorSpherical.log");
+      openLogFile("out/SystemTestIteratorSphericalNr.log");
 
       std::ifstream in;
       openInputFile("in/spherical1_nr.prm", in);
@@ -261,21 +261,78 @@ public:
                 << domain.spatialAverage(sys.cField(1)) << "\n";
 
       std::ofstream out;
-      openOutputFile("out/initialSpherical.w", out);
+      openOutputFile("out/initialSphericalNr.w", out);
       fieldIo.writeFields(sys.wFields(), out);
       out.close();
 
-      openOutputFile("out/initialSpherical.c", out);
+      openOutputFile("out/initialSphericalNr.c", out);
       fieldIo.writeFields(sys.cFields(), out);
       out.close();
 
       sys.iterator().solve();
 
-      openOutputFile("out/finalSpherical.w", out);
+      openOutputFile("out/finalSphericalNr.w", out);
       fieldIo.writeFields(sys.wFields(), out);
       out.close();
 
-      openOutputFile("out/finalSpherical.c", out);
+      openOutputFile("out/finalSphericalNr.c", out);
+      fieldIo.writeFields(sys.cFields(), out);
+      out.close();
+
+   }
+
+   void testIteratorPlanarAm()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/SystemTestIteratorPlanarAm.log");
+
+      std::ifstream in;
+      openInputFile("in/planar2_am.prm", in);
+
+      System sys;
+      sys.readParam(in);
+      FieldIo fieldIo;
+      fieldIo.associate(sys.domain(), sys.fileMaster());
+
+      Log::file() << "\n";
+      sys.writeParam(Log::file());
+
+      Mixture& mix = sys.mixture();
+      Domain& domain = sys.domain();
+
+      double nx = (double)domain.nx();
+      double cs;
+      double chi = 20.0;
+      for (int i = 0; i < nx; ++i) {
+         cs = cos(Constants::Pi*double(i)/double(nx-1));
+         sys.wField(0)[i] = chi*(-0.5*cs + 0.25*cs*cs);
+         sys.wField(1)[i] = chi*(+0.5*cs + 0.25*cs*cs);
+      }
+      double shift = sys.wField(1)[nx-1];
+      for (int i = 0; i < nx; ++i) {
+         sys.wField(0)[i] -= shift;
+         sys.wField(1)[i] -= shift;
+      }
+
+      // Compute initial state
+      mix.compute(sys.wFields(), sys.cFields());
+
+      std::ofstream out;
+      openOutputFile("out/initialPlanarAm.w", out);
+      fieldIo.writeFields(sys.wFields(), out);
+      out.close();
+
+      openOutputFile("out/initialPlanarAm.c", out);
+      fieldIo.writeFields(sys.cFields(), out);
+      out.close();
+
+      sys.iterator().solve();
+
+      openOutputFile("out/finalPlanarAm.w", out);
+      fieldIo.writeFields(sys.wFields(), out);
+      out.close();
+
+      openOutputFile("out/finalPlanarAm.c", out);
       fieldIo.writeFields(sys.cFields(), out);
       out.close();
 
@@ -396,8 +453,9 @@ TEST_ADD(SystemTest, testConstructor)
 TEST_ADD(SystemTest, testReadParameters)
 TEST_ADD(SystemTest, testSolveMdePlanar)
 TEST_ADD(SystemTest, testSolveMdeSpherical)
-TEST_ADD(SystemTest, testIteratorPlanar)
-TEST_ADD(SystemTest, testIteratorSpherical)
+TEST_ADD(SystemTest, testIteratorPlanarNr)
+TEST_ADD(SystemTest, testIteratorSphericalNr)
+TEST_ADD(SystemTest, testIteratorPlanarAm)
 TEST_ADD(SystemTest, testFieldInput)
 TEST_ADD(SystemTest, testReadCommandsPlanar)
 TEST_ADD(SystemTest, testReadCommandsSpherical)

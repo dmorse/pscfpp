@@ -21,11 +21,11 @@ System{
   Domain{
     mesh        64    64    32
     lattice     tetragonal 
-    groupName P_42%m_n_m
+    groupName   P_42%m_n_m
   }
   AmIteratorGrid{
+    epsilon  1.0e-5
     maxItr   1000
-    epsilon  1e-5
     maxHist  20
     isFlexible   1
   }

@@ -28,8 +28,8 @@ System{
     groupName      I_m_-3_m
   }
   Iterator{
+    epsilon 1.0e-8
     maxItr  400
-    epsilon 1e-8
     maxHist 30
     isFlexible   1
   }

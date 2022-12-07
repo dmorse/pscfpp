@@ -32,9 +32,10 @@ System{
     groupName       I_41_3_2
   }
   AmIterator{
+    epsilon      1.0e-8
     maxItr       1000
-    epsilon      1e-8
     maxHist      40
+    verbose      1
     isFlexible   1
   }
 }
