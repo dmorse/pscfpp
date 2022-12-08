@@ -8,9 +8,9 @@ in CUDA.
 
 ## History
 
-This C++/CUDA version of PSCF is intended to supersede the older
-Fortran PSCF program. The older Fortran program is maintained in a
-separate github.com repository at https://github.com/dmorse/pscf.
+This C++/CUDA version of PSCF is intended to supersede an older Fortran 
+program of the same name. The older Fortran PSCF program is maintained 
+in a separate github.com repository at https://github.com/dmorse/pscf.
 This new version currently provides almost all of the capabilities of
 the older Fortran program, and several important new capabilities, as
 discussed below.
@@ -28,38 +28,37 @@ version and expected advantages of the new code include:
      copolymers and linear homopolymers allowed by the Fortran PSCF code.
 
    - Adoption of C/C++ as a base language has simplified implementation
-     of programs that that uses graphical processing units (GPUs).
+     of programs that that use graphical processing units (GPUs).
 
 ## Programs
 
-Currently, the package contains the following SCFT programs:
+PSCF contains the following set of executable programs:
 
-   - **pscf_fd** : A one-dimensional finite difference program for problems
-     that involve variation in a single spatial coordinate in Cartesian,
-     cylindrical or spherical coordinates.
+   - **pscf_fd** : A one-dimensional finite difference program.
 
-   - **pscf_pc** : CPU-based pseudo-spectral solvers for periodic
-     microstructures that are periodic in 1, 2, or 3 coordinates.
+   - **pscf_pc**: CPU programs for periodic structures that are periodic
+     in 1, 2, or 3 coordinates.
 
-   - **pscf_pg**: Analogous GPU-enabled pseudo-spectral solvers for period
-     microstructures in 1, 2 or 3 dimensions.
+   - **pscf_pg**: GPU accelerated programs for period microstructures in
+     1, 2 or 3 dimensions.
 
-*psf_fd* : The one-dimensional finite difference program is useful for
-treating problems involving flat or curved interfaces, as well as cylindrical
-or spherical copolymer micelles. The executable for this program is named
-pscf_fd. The suffix "fd" stands for "finite difference".
+Comments:
 
-*pscf_pc* : The pseudo-spectral CPU programs for periodic microstructures
+**psf_fd** : The one-dimensional finite difference program is designed to
+treat problems that vary in only one coordinate, in Cartesian, cyndrical
+or spherical coordinates. It is useful for treating problems involving 
+flat or curved interfaces, as well as cylindrical or spherical copolymer 
+micelles. The executable for this program is named pscf_fd. The suffix 
+"fd" stands for "finite difference".
+
+**pscf_pc** : The pseudo-spectral CPU programs for periodic microstructures
 are closely analogous to the older PSCF Fortran program, and provide similar
 capabilties and performance.  Different executable files are used in the
-new code to solve 1, 2 and 3 dimensionally periodic structures, which are
-named pscf_pc1, pscf_pc2 and pscf_pc3, respectively. In these names, "pc"
-stands for "periodic CPU".  These programs allow the user to search for a
-solution with any specified crystal system type and space group symmetry,
-and provide efficient algorithms to relax the unit cell parameters so as
-to minimize the free energy.
+new package to solve 1, 2 and 3 dimensionally periodic structures, which 
+are named pscf_pc1, pscf_pc2 and pscf_pc3, respectively. In these names, 
+"pc" stands for "periodic CPU".  
 
-*pscf_pg* : The GPU-accelerated pseudo-spectral programs for periodic
+**pscf_pg** : The GPU-accelerated pseudo-spectral programs for periodic
 structures are based on algorithms similar to those used in the CPU
 pseudo-spectral programs, and provide almost identical capabilities.
 The GPU accelerated programs for solving 1, 2 and 3 dimensionally periodic
@@ -69,22 +68,24 @@ structures are named pscf_pg1, pscf_pg2 and pscf_pg3, respectively, where
 ## Features
 
 All PSCF programs are designed to treat an incompressible mixture of
-block polymers, linear homopolymers and small molecule (point-particle)
-solvents species. All polymeric species are treated using the standard
-Gaussian model of a polymer as a continuous random walk.
+block polymers, homopolymers and small molecule (point-particle) solvent 
+species. All polymeric species are treated using the standard Gaussian 
+model of a polymer as a continuous random walk.
 
 Features that are common to all of the PSCF programs include:
 
   - Mixtures of any number of block polymers, homopolymers, and solvent species
 
-  - Arbitrarily complex acyclic branched block polymers, as well as linear polymers.
+  - Arbitrarily complex acyclic branched block polymers, as well as linear block polymers.
 
   - Canonical, grand-canonical or mixed statistical ensembles -
-    Users may specify either a volume fraction or a chemical potential
+    users may specify either a volume fraction or a chemical potential
     for each species
 
   - Efficient simulation of sequences of parameter choices along a path
     in parameter space using extrapolation to compute initial guesses.
+
+  - Efficient Anderson-mixing iteration algorithms
 
   - Examples of converged solutions and input scripts
 
@@ -108,8 +109,6 @@ Features specific to programs for periodic structures include:
 
   - High accuracy pseudo-spectral solution of the modified diffusion
     equation
-
-  - Efficient Anderson-mixing iteration algorithms
 
 Features specific to the pscf_pc CPU programs for periodic structures are:
 

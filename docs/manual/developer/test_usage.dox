@@ -1,7 +1,7 @@
 /*! \page developer_test_usage_page 4.5.2 Test Framework Usage
 
 \ref developer_test_design_page  (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_test_organization_page  (Next)  
+\ref developer_test_organization_page  (Next)
 <BR>
 
 Three simple programs that illustrate usage of the test framework are given in the test/examples/ subdirectory. The basic usage pattern is also described below:
@@ -10,7 +10,7 @@ Three simple programs that illustrate usage of the test framework are given in t
 
 A unit test class is a class that is derived from UnitTest, and that contains one or more test functions. Each test function must takes no arguments and must have a void return value.  Test functions can be named whatever you wish.
 
-Each test function must use the TEST_ASSERT(expr) macro to assert the truth of one or more logical expressions. If the argument of any TEST_ASSERT macro in a test function is false, the test associated with that function fails. 
+Each test function must use the TEST_ASSERT(expr) macro to assert the truth of one or more logical expressions. If the argument of any TEST_ASSERT macro in a test function is false, the test associated with that function fails.
 
 Below, we an example of a trivial test class named TestA, with three test functions named test1, test2 and test3. This definition is copied from src/test/examples/example1.cpp. In this trivial example, each of the test functions contains one assertion of an expression that is obviously false (test1 and test 2) or obvioiusly true (for test 3).
 
@@ -66,10 +66,10 @@ To run a unit test, one must call the run() method of an instance of the associa
    TEST_RUNNER(TestA) runner;
    runner.run()
 \endcode
-The first line creates an instance of TestA_Runner named runner. The run method, which is invoked in the second line, runs all of the registered test functions, in the order in which they were added, and reports the number of successes and failures. 
+The first line creates an instance of TestA_Runner named runner. The run method, which is invoked in the second line, runs all of the registered test functions, in the order in which they were added, and reports the number of successes and failures.
 
 <BR>
 \ref developer_test_design_page (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
 \ref developer_test_page  (Up) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_test_organization_page (Next) 
+\ref developer_test_organization_page (Next)
 */

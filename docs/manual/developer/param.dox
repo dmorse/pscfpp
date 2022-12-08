@@ -7,79 +7,79 @@ namespace McMd
 \ref developer_test_page  (Next)
 <BR>
 
-The format of the parameter file (discussed in \ref user_param_page) 
-consists of a set of nested blocks, in which each block contains 
-the data required to initialize an instance of a particular class. 
-Each class that reads data from the parameter file is derived 
+The format of the parameter file (discussed in \ref user_param_page)
+consists of a set of nested blocks, in which each block contains
+the data required to initialize an instance of a particular class.
+Each class that reads data from the parameter file is derived
 from the Util::ParamComposite base class, and must provide an
-implementation of one or the other (but not both) of the 
+implementation of one or the other (but not both) of the
 following two virtual functions:
 \code
    void readParameters(std::istream& in);
    void readParam(std::istream& in);
 \endcode
-The readParameters() method to defines the file format for the body of 
-a parameter file block, excluding the lines containing the opening and 
-closing brackets.  The readParam() method defines the file format for 
-a parameter file block.  The default implementation of 
-ParamComposite::readParam() calls readParameters() and adds opening and 
-closing lines.  Most subclasses of ParamComposite re-implement the 
-readParameters() method and rely on the default implementation of 
-readParam() to provide the opening and closing lines. A few (including 
+The readParameters() method to defines the file format for the body of
+a parameter file block, excluding the lines containing the opening and
+closing brackets.  The readParam() method defines the file format for
+a parameter file block.  The default implementation of
+ParamComposite::readParam() calls readParameters() and adds opening and
+closing lines.  Most subclasses of ParamComposite re-implement the
+readParameters() method and rely on the default implementation of
+readParam() to provide the opening and closing lines. A few (including
 all the Manager classes) instead re-implement readParam().
 
-The source code for the readParameters() or readParam() method of a class 
-is thus the most reliable documentation of the format of the associated 
-parameter file block. It is thus useful for users, as well as developers, 
-to be able to read the implementation of these method, so that they can 
-check the source code to resolve any questions about the file format. 
-In the examples below, we discuss the implementation of a readParameters() 
+The source code for the readParameters() or readParam() method of a class
+is thus the most reliable documentation of the format of the associated
+parameter file block. It is thus useful for users, as well as developers,
+to be able to read the implementation of these method, so that they can
+check the source code to resolve any questions about the file format.
+In the examples below, we discuss the implementation of a readParameters()
 function.
 
-The implementation of readParameters() typically uses a several 
-protected methods that are inherited from the parent Util::ParamComposite 
+The implementation of readParameters() typically uses a several
+protected methods that are inherited from the parent Util::ParamComposite
 class. These are:
 <ul style="list-style: none;">
-<li> read < T >(std::istream& in, const char* label, T& data) 
+<li> read < T >(std::istream& in, const char* label, T& data)
 is a method template that reads an single parameter of type T. </li>
-<li> readParamComposite(std::istream& in, ParamComposite& child) 
+<li> readParamComposite(std::istream& in, ParamComposite& child)
 invokes the readParam() method of a child ParamComposite object. </li>
 </ul>
 In these methods, the parameter "in" represents an input stream.
 The parameter "label" is a string literal that represents the
-expect value of the label string for a parameter or a parameter 
-block.  Other more specialized read* methods to read parameters 
-that are represented by arrays and matrices are discussed in the 
+expect value of the label string for a parameter or a parameter
+block.  Other more specialized read* methods to read parameters
+that are represented by arrays and matrices are discussed in the
 class documentation for Util::ParamComposite.
 
-As an example, consider a class A that has an int member variable 
-var1_, a double member var2_, and a member thingy_ that is an 
+As an example, consider a class A that has an int member variable
+var1_, a double member var2_, and a member thingy_ that is an
 instance of another class B:
 \code
 
    using namepace Util;
 
-   class A : public ParamComposite 
+   class A : public ParamComposite
    {
-   
+
    public:
-   
+
       // other methods
-   
+
       void readParameters(std::istream& in);
-   
+
       // other methods
-   
+
    private:
-   
+
       int    var1_;
       double var2_;
       B      thingy_;
    }
 \endcode
 We assume here that B is a also subclass of ParamComposite, which
-is associated with a nested subblock in the parameter file format 
-for class A. 
+is associated with a nested subblock in the parameter file format
+for class A.
 
 The parameter block format for class A might look like this:
 \code
@@ -91,10 +91,10 @@ A{
   }
 }
 \endcode
-where B{ ... } represents the (unspecified) parameter file format 
-for class B. 
+where B{ ... } represents the (unspecified) parameter file format
+for class B.
 
-The minimum implementation of A::readParam() required to parse this 
+The minimum implementation of A::readParam() required to parse this
 file format is show below:
 \code
 
@@ -106,18 +106,18 @@ file format is show below:
    }
 
 \endcode
-For a real class, the implementation of readParam() might also 
-contain code to validate input, allocate any required memory, and 
-do whatever else is required to initialize an instance of A. 
+For a real class, the implementation of readParam() might also
+contain code to validate input, allocate any required memory, and
+do whatever else is required to initialize an instance of A.
 
-The expected label strings "var1", and "var2" are all passed as 
-string literals to the relevant read* methods. Each of these 
-methods throws an Exception, and thereby abort program execution, 
+The expected label strings "var1", and "var2" are all passed as
+string literals to the relevant read* methods. Each of these
+methods throws an Exception, and thereby abort program execution,
 if the expected label is not found. The readParam() method of a
 ParamComposite also checks that class name before the opening
 bracket in the opening line of a parameter file block matches
-the expected class name, or compares this name to a list of 
-possible names in the case of a polymorphic parameter file 
+the expected class name, or compares this name to a list of
+possible names in the case of a polymorphic parameter file
 block.
 
 <BR>

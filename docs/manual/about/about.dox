@@ -101,6 +101,8 @@ Features that are common to all of the PSCF programs include:
   - Efficient simulation of sequences of parameter choices along a path 
     in parameter space using extrapolation to compute initial guesses.
 
+  - Efficient Anderson-mixing iteration algorithms
+
   - Examples of converged solutions and input scripts
 
   - Thorough user and developer documentation
@@ -123,8 +125,6 @@ Features specific to programs for periodic structures include:
 
   - High accuracy pseudo-spectral solution of the modified diffusion 
     equation
-
-  - Efficient Anderson-mixing iteration algorithm
 
 Features specific to the pscf_pc CPU programs for periodic structures are:
 
@@ -227,6 +227,13 @@ License or (at your option) any later version.  PSCF is distributed
 without any warranty, without even the implied warranty of merchantability
 or fitness for a particular purpose.  See the LICENSE file or the
 <a href=http://www.gnu.org/licenses/>gnu web page</a> for details.
+
+
+\section about_support_sec Support
+
+Development of PSCF is supported by the National Science Foundation
+program for Cyberinfrastructure for Sustained Scientific Development
+(CSSI) under Grant No. 2103627.
 
 \section about_contributors_sec Contributors
 

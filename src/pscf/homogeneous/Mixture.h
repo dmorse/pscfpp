@@ -64,7 +64,7 @@ namespace Homogeneous {
       /**
       * Set the number of monomer types.
       *
-      * \param nMolecule number of monomer types.
+      * \param nMonomer number of monomer types.
       */
       void setNMonomer(int nMonomer);
 

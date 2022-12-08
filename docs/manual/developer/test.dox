@@ -3,19 +3,19 @@
 \ref developer_standards_page  (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
 <BR>
 
-The src/test/ directory contains source code for a simple unit test framework that is used to construct unit tests for individual classes. Usage examples are provided in what follows, and in the src/test/examples directory. 
+The src/test/ directory contains source code for a simple unit test framework that is used to construct unit tests for individual classes. Usage examples are provided in what follows, and in the src/test/examples directory.
 
 Each of the namespace level subdirectories of the src/ directory has a subdirectory named tests/ that contains unit tests for the code in that namespace.  The unit tests are not compiled by makefiles that compiles the classes in the src/ directory. A composite test containing all of the unit tests of classes in a particular namespace may be compiled by cd'ing to the tests/ subdirectory of the directory that holds the source code for that namespace, and then entering "make all" (to compile the tests) and "make run" (to run them).  Entering  "make all" from a subdirectory of tests/ will generally creates an executable, named named "Test", that runs all of the tests in that directory. Some unit test directories contain a separate makefile target to build an executable for tests that require MPI, often called MpiTest.
 
 \sa \ref Test_Module "Unit Test Framework Module"
 
-<h2> Contents:</h2> 
+<h2> Contents:</h2>
    <ul style="list-style: none;">
    <li> \subpage developer_test_design_page </li>
    <li> \subpage developer_test_usage_page </li>
    <li> \subpage developer_test_organization_page </li>
    </ul>
- 
+
 
 <BR>
 \ref developer_standards_page  (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
