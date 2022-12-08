@@ -1,5 +1,6 @@
 (cd bcc; ./clean)
 (cd c15_1; ./clean)
 (cd c15_2; ./clean)
+(cd gyr; ./clean)
 (cd hex; ./clean)
 (cd lam; ./clean)

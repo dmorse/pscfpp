@@ -56,7 +56,7 @@ public:
       openLogFile("out/SystemTestReadParameters.log");
 
       std::ifstream in;
-      openInputFile("in/planar1_nr.prm", in);
+      openInputFile("in/planar_nr1.prm", in);
 
       System sys;
       sys.readParam(in);
@@ -73,7 +73,7 @@ public:
       openLogFile("out/SystemTestSolveMdePlanar.log");
 
       std::ifstream in;
-      openInputFile("in/planar1_nr.prm", in);
+      openInputFile("in/planar_nr1.prm", in);
 
       System sys;
       sys.readParam(in);
@@ -126,7 +126,7 @@ public:
       openLogFile("out/SystemTestSolveMdeSpherical.log");
 
       std::ifstream in;
-      openInputFile("in/spherical1_nr.prm", in);
+      openInputFile("in/spherical_nr1.prm", in);
 
       System sys;
       sys.readParam(in);
@@ -161,13 +161,16 @@ public:
       Log::file() << "Volume fraction of block 1 = " << sum1 << "\n";
    }
 
-   void testIteratorPlanarNr()
+   /*
+   * Test NR iterator on input field generated within function.
+   */
+   void testIteratorPlanarNr1()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/SystemTestIteratorPlanarNr.log");
+      openLogFile("out/SystemTestIteratorPlanarNr1.log");
 
       std::ifstream in;
-      openInputFile("in/planar2_nr.prm", in);
+      openInputFile("in/planar_nr2.prm", in);
 
       System sys;
       sys.readParam(in);
@@ -198,33 +201,95 @@ public:
       mix.compute(sys.wFields(), sys.cFields());
 
       std::ofstream out;
-      openOutputFile("out/initialPlanarNr.w", out);
+      openOutputFile("out/initialPlanarNr1.w", out);
       fieldIo.writeFields(sys.wFields(), out);
       out.close();
 
-      openOutputFile("out/initialPlanarNr.c", out);
+      openOutputFile("out/initialPlanarNr1.c", out);
       fieldIo.writeFields(sys.cFields(), out);
       out.close();
 
       sys.iterator().solve();
 
-      openOutputFile("out/finalPlanarNr.w", out);
+      openOutputFile("out/finalPlanarNr1.w", out);
       fieldIo.writeFields(sys.wFields(), out);
       out.close();
 
-      openOutputFile("out/finalPlanarNr.c", out);
+      openOutputFile("out/finalPlanarNr1.c", out);
       fieldIo.writeFields(sys.cFields(), out);
       out.close();
 
    }
 
-   void testIteratorSphericalNr()
+   /*
+   * Test NR iterator on input w field read from file.
+   */
+   void testIteratorPlanarNr2()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/SystemTestIteratorSphericalNr.log");
+      openLogFile("out/SystemTestIteratorPlanarNr2.log");
 
       std::ifstream in;
-      openInputFile("in/spherical1_nr.prm", in);
+      openInputFile("in/planar_nr2.prm", in);
+
+      System sys;
+      sys.readParam(in);
+      in.close();
+
+      FieldIo fieldIo;
+      fieldIo.associate(sys.domain(), sys.fileMaster());
+
+      Log::file() << "\n";
+      // sys.writeParam(Log::file());
+
+      openInputFile("in/planar.w", in);
+      fieldIo.readFields(sys.wFields(), in);
+      in.close();
+
+      sys.iterator().solve();
+
+      std::ofstream out;
+      out.open("out/planarNr2.c");
+      fieldIo.writeFields(sys.cFields(), out);
+      out.close();
+
+   }
+
+   /*
+   * Test NR iterator controlled by a command file.
+   */
+   void testIteratorPlanarNr3()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/SystemTestIteratorPlanarNr3.log");
+
+      System sys;
+      std::ifstream in;
+      Log::file() << "\n";
+
+      openInputFile("in/planar_nr2.prm", in);
+      sys.readParam(in);
+      in.close();
+
+      // Set System filemaster prefixes to unit test file prefix
+      sys.fileMaster().setInputPrefix(filePrefix());
+      sys.fileMaster().setOutputPrefix(filePrefix());
+
+      openInputFile("in/planar_nr.cmd", in);
+      sys.readCommands(in);
+      in.close();
+   }
+
+   /*
+   * Test NR iterator on input field generated within function.
+   */
+   void testIteratorSphericalNr1()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/SystemTestIteratorSphericalNr1.log");
+
+      std::ifstream in;
+      openInputFile("in/spherical_nr1.prm", in);
 
       System sys;
       sys.readParam(in);
@@ -261,33 +326,57 @@ public:
                 << domain.spatialAverage(sys.cField(1)) << "\n";
 
       std::ofstream out;
-      openOutputFile("out/initialSphericalNr.w", out);
+      openOutputFile("out/initialSphericalNr1.w", out);
       fieldIo.writeFields(sys.wFields(), out);
       out.close();
 
-      openOutputFile("out/initialSphericalNr.c", out);
+      openOutputFile("out/initialSphericalNr1.c", out);
       fieldIo.writeFields(sys.cFields(), out);
       out.close();
 
       sys.iterator().solve();
 
-      openOutputFile("out/finalSphericalNr.w", out);
+      openOutputFile("out/finalSphericalNr1.w", out);
       fieldIo.writeFields(sys.wFields(), out);
       out.close();
 
-      openOutputFile("out/finalSphericalNr.c", out);
+      openOutputFile("out/finalSphericalNr1.c", out);
       fieldIo.writeFields(sys.cFields(), out);
       out.close();
 
    }
 
-   void testIteratorPlanarAm()
+   void testIteratorSphericalNr3()
+   {
+      printMethod(TEST_FUNC);
+      openLogFile("out/SystemTestIteratorSphericalNr3.log");
+
+      System sys;
+      std::ifstream in;
+      Log::file() << "\n";
+
+      openInputFile("in/spherical_nr2.prm", in);
+      sys.readParam(in);
+      in.close();
+
+      TEST_ASSERT(!sys.domain().isShell());
+
+      // Set System filemaster prefixes to unit test file prefix
+      sys.fileMaster().setInputPrefix(filePrefix());
+      sys.fileMaster().setOutputPrefix(filePrefix());
+
+      openInputFile("in/spherical_nr.cmd", in);
+      sys.readCommands(in);
+      in.close();
+   }
+
+   void testIteratorPlanarAm1()
    {
       printMethod(TEST_FUNC);
       openLogFile("out/SystemTestIteratorPlanarAm.log");
 
       std::ifstream in;
-      openInputFile("in/planar2_am.prm", in);
+      openInputFile("in/planar_am2.prm", in);
 
       System sys;
       sys.readParam(in);
@@ -338,91 +427,35 @@ public:
 
    }
 
-   void testFieldInput()
+   /*
+   * Test AM iterator controlled by a command file.
+   */
+   void testIteratorPlanarAm3()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/SystemTestFieldInput.log");
-
-      std::ifstream in;
-      openInputFile("in/planar2_nr.prm", in);
-
-      System sys;
-      sys.readParam(in);
-      in.close();
-
-      FieldIo fieldIo;
-      fieldIo.associate(sys.domain(), sys.fileMaster());
-
-      Log::file() << "\n";
-      // sys.writeParam(Log::file());
-
-      openInputFile("in/planar.w", in);
-      fieldIo.readFields(sys.wFields(), in);
-      in.close();
-
-      sys.iterator().solve();
-
-      std::ofstream out;
-      out.open("out/c2");
-      fieldIo.writeFields(sys.cFields(), out);
-      out.close();
-
-   }
-
-   void testReadCommandsPlanar()
-   {
-      printMethod(TEST_FUNC);
-      openLogFile("out/SystemTestReadCommandsPlanar.log");
+      openLogFile("out/SystemTestIteratorPlanarAm3.log");
 
       System sys;
       std::ifstream in;
       Log::file() << "\n";
 
-      openInputFile("in/planar2_nr.prm", in);
+      openInputFile("in/planar_am2.prm", in);
       sys.readParam(in);
       in.close();
 
       // Set System filemaster prefixes to unit test file prefix
-      Log::file() << "Test file prefix = |" 
-                << filePrefix() << "|" << std::endl;
       sys.fileMaster().setInputPrefix(filePrefix());
       sys.fileMaster().setOutputPrefix(filePrefix());
 
-      openInputFile("in/planar.cmd", in);
+      openInputFile("in/planar_am.cmd", in);
       sys.readCommands(in);
       in.close();
    }
 
-   void testReadCommandsSpherical()
+   void testSweepSpherical()
    {
       printMethod(TEST_FUNC);
-      openLogFile("out/SystemTestReadCommandsSpherical.log");
-
-      System sys;
-      std::ifstream in;
-      Log::file() << "\n";
-
-      openInputFile("in/spherical2_nr.prm", in);
-      sys.readParam(in);
-      in.close();
-
-      TEST_ASSERT( !sys.domain().isShell() );
-
-      // Set System filemaster prefixes to unit test file prefix
-      Log::file() << "Test file prefix = |" 
-                << filePrefix() << "|" << std::endl;
-      sys.fileMaster().setInputPrefix(filePrefix());
-      sys.fileMaster().setOutputPrefix(filePrefix());
-
-      openInputFile("in/spherical2.cmd", in);
-      sys.readCommands(in);
-      in.close();
-   }
-
-   void testReadCommandsSphericalSweep()
-   {
-      printMethod(TEST_FUNC);
-      openLogFile("out/SystemTestReadCommandsSphericalSweep.log");
+      openLogFile("out/SystemTestSweepSpherical.log");
 
       System sys;
       std::ifstream in;
@@ -431,21 +464,19 @@ public:
       openInputFile("in/spherical3_nr.prm", in);
       sys.readParam(in);
       in.close();
-      // Log::file() << "Finished reading param file" << std::endl;
       sys.writeParam(Log::file());
 
       TEST_ASSERT( !sys.domain().isShell() );
 
       // Set System filemaster prefixes to unit test file prefix
-      //Log::file() << "Test file prefix = |" 
-      //            << filePrefix() << "|" << std::endl;
       sys.fileMaster().setInputPrefix(filePrefix());
       sys.fileMaster().setOutputPrefix(filePrefix());
 
-      openInputFile("in/spherical3.cmd", in);
+      openInputFile("in/sphericalSweep.cmd", in);
       sys.readCommands(in);
       in.close();
    }
+
 };
 
 TEST_BEGIN(SystemTest)
@@ -453,13 +484,14 @@ TEST_ADD(SystemTest, testConstructor)
 TEST_ADD(SystemTest, testReadParameters)
 TEST_ADD(SystemTest, testSolveMdePlanar)
 TEST_ADD(SystemTest, testSolveMdeSpherical)
-TEST_ADD(SystemTest, testIteratorPlanarNr)
-TEST_ADD(SystemTest, testIteratorSphericalNr)
-TEST_ADD(SystemTest, testIteratorPlanarAm)
-TEST_ADD(SystemTest, testFieldInput)
-TEST_ADD(SystemTest, testReadCommandsPlanar)
-TEST_ADD(SystemTest, testReadCommandsSpherical)
-TEST_ADD(SystemTest, testReadCommandsSphericalSweep)
+TEST_ADD(SystemTest, testIteratorPlanarNr1)
+TEST_ADD(SystemTest, testIteratorPlanarNr2)
+TEST_ADD(SystemTest, testIteratorPlanarNr3)
+TEST_ADD(SystemTest, testIteratorSphericalNr1)
+TEST_ADD(SystemTest, testIteratorSphericalNr3)
+TEST_ADD(SystemTest, testIteratorPlanarAm1)
+TEST_ADD(SystemTest, testIteratorPlanarAm3)
+TEST_ADD(SystemTest, testSweepSpherical)
 TEST_END(SystemTest)
 
 #endif
