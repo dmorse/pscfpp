@@ -1,7 +1,7 @@
 namespace McMd
 {
 
-/*! \page developer_param_page 4.4 Parameter File I/O
+/*! \page developer_param_page Parameter File I/O
 
 \ref developer_standards_page   (Prev)   &nbsp; &nbsp; &nbsp; &nbsp;
 \ref developer_test_page  (Next)

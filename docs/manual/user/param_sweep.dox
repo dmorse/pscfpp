@@ -1,4 +1,4 @@
-/*! \page user_param_sweep_page 3.4.5 Parameter Sweeps
+/*! \page user_param_sweep_page Parameter File - Parameter Sweeps
 
 \ref user_param_mixture_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_param_fd_page       (Next) 
@@ -140,7 +140,7 @@ initializes the w files with an initial guess for the solution of the
 first point of the sweep, e.g., by reading an initial guess from a
 file. 
  
-\section user_param_sweep_linear_sec LinearSweep
+\section user_param_sweep_linear_sec Class LinearSweep
 
 The default implementation of sweep for all PSCF programs is a general 
 linear sweep algorithm. This algorithm may be selected by using the 
@@ -162,6 +162,8 @@ programs are actually different classes defined in different namespaces
 that have identical or nearly identical user interfaces and implement 
 closely analogous algorithms.  The common user interface for these 
 classes is described here. </i>
+
+\subsection user_param_sweep_linear_param_sub Parameter File Format
 
 The parameter file format for a LinearSweep is summarized below:
 \code
@@ -247,7 +249,7 @@ The "parameters" array must contain exactly nParameter entries, each
 on a separate line. Each entry in this array describes how one input 
 parameter should be modified. 
 
-\section user_param_sweep_parameters_sec Sweepable Parameters
+\subsection user_param_sweep_linear_parameters_sec Sweep Parameters
 
 The file format each line of the "parameters" array (corresponding to 
 a single parameter) in a LinearSweep contains an identifier for a specific 

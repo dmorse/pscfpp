@@ -1,7 +1,7 @@
 namespace McMd
 {
 
-/*! \page developer_build_page 4.2 Build System
+/*! \page developer_build_page Build System
 
 \ref developer_source_page  (Prev)
 \ref developer_standards_page  (Next)

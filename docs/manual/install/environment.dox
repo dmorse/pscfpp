@@ -1,4 +1,4 @@
-/*! \page install_environment_page 2.4 Environment Variables
+/*! \page install_environment_page Environment Variables
 
 \ref install_overview_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref install_setup_page (Next) 
@@ -27,43 +27,44 @@ Rationale:
     the PYTHONPATH variable in order to allow the python interpreter to
     find this script for use during compilation.
 
-To make these changes using a bash shell, add some variant of the 
-following lines to the .profile or .bash_profile file in your user 
-home directory (these files are run each time a new terminal window
-is opened):
+The required changes to a users shell environment should be made in
+a manner that guarantees that these changes are automatically in place
+whenever that user is logged on. To accomplish this, commands that apply
+the required modifications to PATH and PYTHON path should be added to 
+a configuration file in the users home directory that is read and 
+executed whenever the user launches a login shell (e.g., to the .profile
+or .bash_profile file on systems that use a bash shell or the .zprofile 
+file on systems that use a zsh unix shell, as discussed in more detail
+below). An example of the required commands is shown below:
 \code
 PSCFPP_DIR=${HOME}/pscfpp
 export PATH=${PATH}:/${PSCFPP_DIR}/bin
 export PYTHONPATH=${PYTHONPATH}:/${PSCFPP_DIR}/lib/python
 \endcode
-The value of PSCFPP_DIR should be set to the path to the pscfpp root 
-directory (i.e., the root of the directory tree created by cloning the 
-pscfpp git repository).  In the above fragment, as an example, it is 
-assumed that this is a subdirectory named pscfpp within the users 
-home directory. 
+The value of the shell variable PSCFPP_DIR that appears in this example 
+should be set to the absolute path to the pscfpp root directory (i.e., 
+the root of the directory tree created by cloning the pscfpp git 
+repository).  In the above example, it is assumed that this is a 
+subdirectory named pscfpp within the users home directory, where ${HOME} 
+is an environment variable that expands to the path to the users home 
+directory.
 
-After adding an appropriate variant of these lines to the .profile or
-.bash_profile, log out, log back in, and then enter "echo $PATH" and 
-"echo $PYTHONPATH" to make sure that PATH and PYTHONPATH have been 
-set correctly (they should contain full paths to the bin/ and python/
-directories, respectively). 
+The name of the file to which these commands should be added depends
+on which unix shell is being used. Different unix shells are used by
+default in different linux and Mac OS X operatings systems. 
 
-NOTE FOR MAC USERS: The default terminal on a Mac is a zsh terminal,
-not a bash terminal. The distinction should not cause problems with
-pscfpp usage, but zsh terminal users may need to perform an 
-additional step to set up the environment. The zsh terminal may not
-run .bash_profile or .profile upon opening a new terminal window. 
-If you followed the steps above but the correct paths do not appear
-in your $PATH and $PYTHONPATH variables, you can add the following
-to the file titled .zshrc in your home directory:
-\code
-if [ -f ~/.bash_profile ]; then 
-    . ~/.bash_profile;
-fi
-\endcode
-This will ensure that .bash_profile is run each time a new terminal
-window is opened, and your $PATH and $PYTHONPATH variables should
-then be correct.
+The bash shell is the default shell on most linux systems.
+The bash shell reads files named .profile and/or .bash_profile in the 
+users home directory, if either exists, when the user opens a login 
+shell by logging in to the system. Users who are using a bash shell
+should put these commands in one of these files. 
+
+Recent versions of the Mac OS operating system instead use zsh (also
+known as the Z shell) by default within the Mac Terminal app. We 
+recommend that mac users who are using zsh from within the Terminal
+app place these commands in a file named .zprofile. The .zprofile
+file is executed by Terminal app opens every time you open a new 
+terminal window.
 
 <BR>
 \ref install_overview_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

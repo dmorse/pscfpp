@@ -5,46 +5,46 @@ theory for spatially inhomgeneous structures of block copolymers and polymer
 mixtures.
 
 <h2>Contents:</h2>
-<ul style="list-style: none;">
- <li> \subpage about_page "1. About"
+<ol type="1">
+ <li> \subpage about_page 
  </li>
- <li> \subpage install_page "2. Installation"
-   <ul style="list-style: none;">
-   <li> \ref install_require_page  </li>
-   <li> \ref install_source_page  </li>
-   <li> \ref install_overview_page  </li>
-   <li> \ref install_environment_page  </li>
-   <li> \ref install_setup_page  </li>
-   <li> \ref install_inout_page  </li>
-   <li> \ref install_targets_page  </li>
-   <li> \ref install_configure_page  </li>
-   <li> \ref install_doc_page  </li>
-   </ul>
- </li>
- <li> \subpage user_page "3. User Guide"
-   <ul style="list-style: none;">
-   <li> \ref user_model_page     </li>
-   <li> \ref user_files_page     </li>
-   <li> \ref user_usage_page     </li>
-   <li> \ref user_param_page     </li>
-   <li> \ref user_command_page  </li>
-   <li> \ref user_example_page  </li>
-   <li> \ref user_field_page  </li>
-   <li> \ref user_unitcell_page  </li>
-   <li> \ref user_groups_page  </li>
-   <li> \ref user_thin_films_page  </li>
-   <li> \ref user_theory_page  </li>
-   </ul>
- </li>
- <li> \subpage developer_page "4. Developer Information"
-   <ul style="list-style: none;">
-   <li> \ref developer_source_page </li>
-   <li> \ref developer_build_page </li>
-   <li> \ref developer_standards_page </li>
-   <li> \ref developer_param_page  </li>
-   <li> \ref developer_test_page </li>
-   </ul>
- </li>
-</ul>
+ <li> \subpage install_page
+    <ol type="1">
+    <li> \ref install_require_page  </li>
+    <li> \ref install_source_page  </li>
+    <li> \ref install_overview_page  </li>
+    <li> \ref install_environment_page  </li>
+    <li> \ref install_setup_page  </li>
+    <li> \ref install_inout_page  </li>
+    <li> \ref install_targets_page  </li>
+    <li> \ref install_configure_page  </li>
+    <li> \ref install_doc_page  </li>
+    </ol>
+  </li>
+  <li> \subpage user_page 
+    <ol type="1">
+    <li> \ref user_model_page     </li>
+    <li> \ref user_files_page     </li>
+    <li> \ref user_usage_page     </li>
+    <li> \ref user_param_page     </li>
+    <li> \ref user_command_page  </li>
+    <li> \ref user_example_page  </li>
+    <li> \ref user_field_page  </li>
+    <li> \ref user_unitcell_page  </li>
+    <li> \ref user_groups_page  </li>
+    <li> \ref user_thin_films_page  </li>
+    <li> \ref user_theory_page  </li>
+    </ol>
+  </li>
+  <li> \subpage developer_page 
+    <ol type="1">
+    <li> \ref developer_source_page </li>
+    <li> \ref developer_build_page </li>
+    <li> \ref developer_standards_page </li>
+    <li> \ref developer_param_page  </li>
+    <li> \ref developer_test_page </li>
+    </ol>
+  </li>
+</ol>
  
 */

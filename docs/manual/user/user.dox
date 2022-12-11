@@ -1,11 +1,11 @@
-/*! \page user_page 3 User Guide
+/*! \page user_page User Guide
 
 \ref install_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref developer_page (Next)
 <BR>
 
 <h2> Contents:</h2>
-   <ul style="list-style: none;">
+   <ol>
    <li> \subpage user_model_page    </li>
    <li> \subpage user_files_page    </li>
    <li> \subpage user_usage_page    </li>
@@ -17,7 +17,7 @@
    <li> \subpage user_groups_page   </li>
    <li> \subpage user_thin_films_page   </li>
    <li> \subpage user_theory_page   </li>
-   </ul>
+   </ol>
 
 <BR>
 \ref install_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

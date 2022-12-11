@@ -1,4 +1,4 @@
-/*! \page user_field_page 3.7 Field Files
+/*! \page user_field_page Field Files
 
  \ref user_example_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref user_unitcell_page   (Next) 
@@ -22,12 +22,12 @@ specified at nodes of a regular one-dimensional grid.
 <h2> Contents: </h2>
 Different field file formats are described in the pages linked below.
 
-<ul style="list-style: none;">
+<ol>
   <li> \subpage user_field_basis_page  </li>
   <li> \subpage user_field_rgrid_page  </li>
   <li> \subpage user_field_kgrid_page  </li>
   <li> \subpage user_field_fd1d_page   </li>
-</ul>
+</ol>
 
  <BR>
  \ref user_example_page    (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

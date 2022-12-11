@@ -1,4 +1,4 @@
-/*! \page user_param_syntax_page 3.4.2 Syntax
+/*! \page user_param_syntax_page Parameter File - Syntax
 
 \ref user_param_example_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_param_format_page (Next) 
@@ -288,7 +288,7 @@ For example, the row format for elements of 2 x 3 matrix named
 In this example, the value of the matrix element in row 0 and column 
 1 is 23.0, while the value in row 1 and column 2 is 21.3.
 
-\section user_param_syntax_optional_section Optional Blocks and Parameters
+\section user_param_syntax_optional_section Optional Elements
 
 Each labelled element in a parameter file (i.e, each block or parameter) 
 may be either required or optional. Most elements required. 
