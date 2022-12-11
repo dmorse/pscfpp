@@ -29,7 +29,13 @@ namespace Pscf {
    * Set the number of monomer types.
    */
    void Interaction::setNMonomer(int nMonomer)
-   {  nMonomer_ = nMonomer; }
+   {  
+      UTIL_CHECK(nMonomer_ == 0);
+      UTIL_CHECK(nMonomer > 0);
+      nMonomer_ = nMonomer; 
+      chi_.allocate(nMonomer, nMonomer);
+      chiInverse_.allocate(nMonomer, nMonomer);
+   }
 
    /*
    * Read chi matrix from file.
@@ -37,9 +43,6 @@ namespace Pscf {
    void Interaction::readParameters(std::istream& in)
    {
       UTIL_CHECK(nMonomer() > 0);
-      chi_.allocate(nMonomer(), nMonomer());
-      chiInverse_.allocate(nMonomer(), nMonomer());
-      idemp_.allocate(nMonomer(), nMonomer());
       readDSymmMatrix(in, "chi", chi_, nMonomer());
 
       // Compute relevant AM iterator quantities.
@@ -50,7 +53,6 @@ namespace Pscf {
    {
       UTIL_CHECK(chi_.isAllocated());
       UTIL_CHECK(chiInverse_.isAllocated());
-      UTIL_CHECK(idemp_.isAllocated());
 
       if (nMonomer() == 2) {
          double det = chi_(0,0)*chi_(1, 1) - chi_(0,1)*chi_(1,0);
@@ -70,29 +72,6 @@ namespace Pscf {
          solver.computeLU(chi_);
          solver.inverse(chiInverse_);
       }
-
-      double sum = 0;
-      int i, j, k;
-
-      for (i = 0; i < nMonomer(); ++i) {
-         idemp_(0,i) = 0;
-         for (j = 0; j < nMonomer(); ++j) {
-            idemp_(0,i) -= chiInverse_(j,i);
-         }
-         sum -= idemp_(0,i);
-         for (k = 0; k < nMonomer(); ++k) { //row
-            idemp_(k,i) = idemp_(0,i);
-         }
-      }
-
-      for (i = 0; i < nMonomer(); ++i) { //row
-         for (j = 0; j < nMonomer(); ++j) { //coloumn
-            idemp_(i,j) /= sum;
-         }
-         idemp_(i,i) += 1.0 ;
-      }
-      
-      sum_inv_ = sum;
 
    }
 

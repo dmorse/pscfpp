@@ -1,4 +1,4 @@
-/*! \page user_example_page 3.5 Examples
+/*! \page user_example_page Examples
 
 \ref user_command_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_field_page (Next)
@@ -58,7 +58,7 @@ script in order to see an example of the relevant command.
 
 To use a "run" script, simply issue the command
 \code
-  > ./run
+ ./run
 \endcode
 from within the directory containing the example and the "run" script
 file. 
@@ -67,14 +67,14 @@ To use pscf_pc3 to run a simple example computation with the above
 directory structure, one could change directory (cd) to the directory 
 containing the example and issue the command 
 \code
-    > pscf_pc3 -e -p param -c command 
+ pscf_pc3 -e -p param -c command 
 \endcode
 This command would send log output to the terminal.  The "run" script
 simply issues this command or something very similar to it for you.  To 
 run the calculation in background and redirect the log output to a file 
 out/log, one could instead type
 \code
-    > pscf_pc3 -e -p param -c command > out/log &
+ pscf_pc3 -e -p param -c command > out/log &
 \endcode
 A command to execute a different PSCF programs would have a similar 
 syntax except for the replacement of the executable name pscf_pc3 by 
@@ -94,7 +94,7 @@ search for an executable file.
 
 After running an example, you may run the command
 \code
-> ./clean
+ ./clean
 \endcode
 in order to execute a script that removes any output data files 
 created by the example. Most output files are created in the out/ 

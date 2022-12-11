@@ -28,8 +28,8 @@ System{
     groupName      P_1
   }
   AmIteratorFilm{
+    epsilon      1.0e-12
     maxItr       2500
-    epsilon      1e-12
     maxHist      50 
     isFlexible   0
     normalVecId          0

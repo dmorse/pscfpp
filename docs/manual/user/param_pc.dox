@@ -1,4 +1,4 @@
-/*! \page user_param_pc_page 3.3.7 pscf_pc (Periodic Problems, CPU)
+/*! \page user_param_pc_page Parameter File - pscf_pc 
 
 \ref user_param_fd_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref user_param_pg_page  (Next)
@@ -193,12 +193,12 @@ Descriptions of the parameter file formats for the available iterators
 can be found by following the links in the table below:
 <table>
   <tr>
-    <td> Label </td>
-    <td> Description  </td>
+    <td> <b> Class </b> </td>
+    <td> <b> Description  </b> </td>
   </tr>
   <tr>
     <td> \subpage pspc_AmIterator_page "AmIterator" </td>
-    <td> Anderson Mixing iterator for periodic structures.  </td>
+    <td> Anderson Mixing iterator for periodic structures (default) </td>
   </tr>
   <tr>
     <td> \subpage pspc_AmIteratorFilm_page "AmIteratorFilm" </td>

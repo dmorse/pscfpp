@@ -33,13 +33,15 @@ below:
 The format of this block is described more formally below:
 \code
 AmIterator{
-   maxItr          int
-   epsilon         real 
-   maxHist         int  
-   errorType*      enumeration ("normResid", "maxResid", or "relNormResid", "relNormResid" by default)
-   isFlexible*     bool (0 or 1, 0/false by default)
-   flexibleParams* Array [ bool ] (nParameters elements, each element 0 or 1)  
-   scaleStress*    real (10.0 by default)
+   maxItr           int
+   epsilon          real 
+   maxHist          int  
+   verbose*         int (0-2, 0 by default)
+   outputTime*      bool (false by default)
+   errorType*       enumeration ("normResid", "maxResid", or "relNormResid", "relNormResid" by default)
+   isFlexible*      bool (0 or 1, 0/false by default)
+   flexibleParams*  Array [ bool ] (nParameters elements)
+   scaleStress*     real (10.0 by default)
 }
 \endcode
 Here, as elsewhere, labels followed by an asterisk (*) represent optional 
@@ -59,9 +61,19 @@ parameters. The meaning of the various parameters are described below:
          the magnitude of the error drops below epsilon.  </td>
   </tr>
   <tr>
-    <td> maxHist  </td>
+    <td> maxHist* </td>
     <td> Maximum number of previous trial solultions that will be 
          retained in memory for used by the AM algorithm. </td>
+  </tr>
+  <tr>
+    <td> verbose* </td>
+    <td> Integer level 0, 1, 2 for verbosity of log output during iteration.
+         Optional, and 0 (concise) by default. </td>
+  </tr>
+  <tr>
+    <td> showTime* </td>
+    <td> Set to 1 (true) to report wall clock time components in log file. 
+         Optional, and 0 (false) by default. </td>
   </tr>
   <tr>
     <td> errorType </td>
@@ -73,25 +85,22 @@ parameters. The meaning of the various parameters are described below:
   <tr>
     <td> isFlexible </td>
     <td> Set isFlexible true to enable or false to disable iterative 
-         optimization of the unit cell parameters so as to minimize the 
-         free energy.  
-         Optional and false by default.  </td>
+         optimization of unit cell parameters so as to minimize the 
+         free energy density. Optional and false by default.  </td>
   </tr>
   <tr>
-    <td> flexibleParams </td>
+    <td> flexibleParams* </td>
     <td> Use flexibleParams to declare only *some* lattice parameters
-         as flexible. **This entry is only allowed if isFlexible is set
-         set to true.** This array should contain one entry for each 
-         lattice parameter, and each entry should be either 1 (true,
-         parameter is flexible) or 0 (false, parameter is fixed). 
-         For example, `flexibleParams[ 0 1 0 1 ]` will set the second
-         and fourth lattice parameters as flexible, and fix the other 
-         two. If isFlexible is true but flexibleParams is not provided, 
-         then all lattice parameters will be flexible. </td>
+         as flexible. **This optional entry is allowed only if isFlexible 
+         is true.** This array must contain one entry for each lattice 
+         parameter, with a value 1 (true) if the parameter is flexible
+         or 0 (false) if the parameter value is fixed.
+         If isFlexible is true but flexibleParams is absent, then all
+         all lattice parameters will be flexible. </td>
   </tr>
   <tr>
     <td> scaleStress </td>
-    <td> Constant factor by which stress components are multipled in
+    <td> Constant factor by which stress components are multiplied in
          the definition of the residual attempted if isFlexible is
          true (optional). </td>
   </tr>

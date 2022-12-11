@@ -9,7 +9,7 @@
 #include <fstream>
 
 using namespace Pscf;
-//using namespace Util;
+using namespace Util;
 
 class MonomerTest : public UnitTest 
 {
@@ -17,7 +17,9 @@ class MonomerTest : public UnitTest
 public:
 
    void setUp()
-   {}
+   {
+      //setVerbose(1);
+   }
 
    void tearDown()
    {}
@@ -31,14 +33,17 @@ public:
 
    void testReadWrite() {
       printMethod(TEST_FUNC);
-      printEndl();
 
       Monomer v;
       std::ifstream in;
       openInputFile("in/Monomer", in);
 
       in >> v;
-      std::cout << v << std::endl ;
+      TEST_ASSERT(eq(v.kuhn(), 5.0));
+      if (verbose() > 0) {
+         printEndl();
+         std::cout << v << std::endl ;
+      }
    }
 
 };

@@ -8,8 +8,10 @@
 #include "chem/ChemTestComposite.h"
 #include "solvers/SolversTestComposite.h"
 #include "inter/InterTestComposite.h"
+#include "homogeneous/HomogeneousTestComposite.h"
 #include "mesh/MeshTestComposite.h"
 #include "crystal/CrystalTestComposite.h"
+
 #include <util/param/BracketPolicy.h>
 #include <util/global.h>
 
@@ -18,6 +20,7 @@ addChild(new MathTestComposite, "math/");
 addChild(new ChemTestComposite, "chem/");
 addChild(new SolversTestComposite, "solvers/");
 addChild(new InterTestComposite, "inter/");
+addChild(new HomogeneousTestComposite, "homogeneous/");
 addChild(new MeshTestComposite, "mesh/");
 addChild(new CrystalTestComposite, "crystal/");
 TEST_COMPOSITE_END

@@ -24,8 +24,8 @@ System{
      nx   101
   }
   AmIterator{
-     maxItr    200
      epsilon   1.0E-8
+     maxItr    200
      maxHist   50
   }
 }

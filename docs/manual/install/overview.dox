@@ -1,4 +1,4 @@
-/*! \page install_overview_page 2.3 Installation Overview
+/*! \page install_overview_page Installation Overview
 
 \ref install_source_page (Prev)       &nbsp; &nbsp; &nbsp; &nbsp;
 \ref install_environment_page (Next)
@@ -24,7 +24,7 @@ Instructions:
      the build system with default compiler options appropriate to most
      linux systems, enter the command
      \code
-     > ./setup
+     ./setup
      \endcode
      Alternatively, to customize compiler options, invoke the setup script
      with a filename argument that is the name of a compiler configuration 
@@ -34,22 +34,22 @@ Instructions:
      M1 or M2 chip) in which the dependencies have been installed using 
      the homebrew package mamager can be created by entering 
      \code
-     > ./setup mac-m1-homebrew"
+     ./setup mac-m1-homebrew
      \endcode
 
-   - **Compile all cpu programs:**
+   - **Compile all CPU programs:**
      From the pscfpp/ directory, enter
      \code
-     > make all-cpu
+     make all-cpu
      \endcode
      If successful, this will install executables named "pscf_fd",
      "pscf_pc1", "pscf_pc2" and "pscf_pc3" in the pscfpp/bin directory.
 
-   - **Compile GPU accelerated programs:**
-     To compile the GPU accelerated executables on a machine with an
-     appropriate NVIDIA GPU and a CUDA compiler, invoke
+   - **Compile GPU-enabled programs:**
+     To compile the GPU enabled programs on a machine with an appropriate 
+     NVIDIA GPU and a CUDA compiler, enter
      \code
-     > make pspg
+     make pspg
      \endcode
      from within the pscfpp/ root directory.  If successful, this will
      install executables named "pscf_pg1", "pscf_pg2" and "pscf_pg3"
@@ -57,8 +57,8 @@ Instructions:
 
 The "make all-cpu" and "make pspg" commands will each also create a large
 number of intermediate object (*.o), dependency (*.d) and library (*.a)
-files in subdirectories of the pscfpp/bld directory (the default build
-directory).
+files in subdirectories of the pscfpp/bld directory (which is the default 
+build directory).
 
 Each of the above steps is discussed in more detail in the following pages.
 
@@ -66,10 +66,11 @@ The above instructions will perform an "out-of-source" build in which
 intermediate files created during compilation process are left in the 
 pscfpp/bld directory tree. It is also possible to perform an "in-source" 
 in which these files are created in the pscfpp/src directory that also 
-contains the C++ and CUDA source files. The option of in-source compilation 
-is discussed in more detail \ref install_inout_page "here".  We recommend 
-the use of out-of-source compilation for package users who are not actively 
-working on development, and in-source compilation during development.
+contains all C++ and CUDA source code files. The option of in-source 
+compilation is discussed in more detail \ref install_inout_page "here".  
+We recommend the use of out-of-source compilation for package users who 
+are not actively working on development. Some developers find in-source 
+compilation convenient during development.
 
 <BR>
 \ref install_source_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

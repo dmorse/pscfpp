@@ -31,8 +31,8 @@ System{
      nx               401
   }
   AmIterator{
-     maxItr      500
      epsilon     1.0E-8
+     maxItr      500
      errorType   maxResid
   }
 }

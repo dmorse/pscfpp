@@ -17,10 +17,12 @@ class BlockStubTest : public UnitTest
 public:
 
    void setUp()
-   {}
+   {
+      //setVerbose(1);
+   }
 
    void tearDown()
-   {}
+   { setVerbose(0); }
 
   
    void testConstructor()
@@ -36,7 +38,6 @@ public:
 
    void testReadWrite() {
       printMethod(TEST_FUNC);
-      printEndl();
 
       BlockStub v;
       std::ifstream in;
@@ -47,7 +48,12 @@ public:
       TEST_ASSERT(eq(v.length(), 2.0));
       TEST_ASSERT(v.vertexId(0) == 3);
       TEST_ASSERT(v.vertexId(1) == 4);
-      std::cout << v << std::endl ;
+
+      if (verbose() > 0) {
+         std::cout << std::endl ;
+         std::cout << v << std::endl ;
+      }
+
    }
 
 };

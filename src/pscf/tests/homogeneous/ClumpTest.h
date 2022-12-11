@@ -5,11 +5,12 @@
 #include <test/UnitTestRunner.h>
 
 #include <pscf/homogeneous/Clump.h>
+#include <util/misc/Log.h>
 
 #include <fstream>
 
 using namespace Pscf;
-//using namespace Util;
+using namespace Util;
 
 class ClumpTest : public UnitTest 
 {
@@ -17,7 +18,9 @@ class ClumpTest : public UnitTest
 public:
 
    void setUp()
-   {}
+   {
+      //setVerbose(1);
+   }
 
    void tearDown()
    {}
@@ -37,12 +40,10 @@ public:
       clump.setSize(2.0);
       TEST_ASSERT(clump.monomerId() == 0);
       TEST_ASSERT(eq(clump.size(), 2.0));
-      // std::cout << std::endl << clump << std::endl ;
    } 
 
    void testReadWrite() {
       printMethod(TEST_FUNC);
-      printEndl();
 
       Homogeneous::Clump clump;
       std::ifstream in;
@@ -51,7 +52,10 @@ public:
       in >> clump;
       TEST_ASSERT(clump.monomerId() == 0);
       TEST_ASSERT(eq(clump.size(), 2.0));
-      std::cout << clump << std::endl ;
+      if (verbose() > 0) {
+         printEndl();
+         Log::file() << clump << std::endl ;
+      }
    }
 
 };

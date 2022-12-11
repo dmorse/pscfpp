@@ -1,168 +1,238 @@
-/*! \page user_unitcell_page 3.7 Crystal Unit Cells
-\ref user_field_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_groups_page  (Next) 
+/*! \page user_unitcell_page Crystal Unit Cells
+\ref user_field_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_groups_page  (Next)
 <BR>
 
-The input files for pscf_pc and pscf_pg programs use a standard format 
-to specify crystal systems types and unit cell parameters for periodic
-structures. The data required to describe a Bravai lattice is input on
-a single line with the general format
-\code
-    lattice  p[0] ... p[N-1]
-\endcode
-in which "lattice" denotes a string that identifies a particular a 
-crystallographic lattice system (e.g., cubic, orthorhombic, etc) and 
-p[0] .... p[N-1] indicates a list of N parameters required to specify 
-the lengths and relative angles of the basis vectors for a lattice of 
-that type.  The number N of parameters required to fully describe the 
-unit cell is different for different lattice systems.  For example, a 
-3D cubic lattice can be specified by giving a single parameter, which 
-is the length of any of the three orthogonal basis vectors, whereas 6 
-parameters are required to describe a 3D triclinic lattice.  
+The input files for pscf_pc and pscf_pg programs use a shared set of
+conventions to describe crystallographic unit cells (i.e,. Bravais
+lattices).
 
-Because the PSCF package requires the user to use different programs 
-to simulate systems of different dimensionality, it is not necessary for 
-this data format to explicitly specify the dimensionality D of space. 
-The value of D is known from which program is being used. The list of 
-allowed lattice system identifiers is different for systems that are
-periodic in 1, 2, or 3 spatial dimensions.
+\section user_unitcell_description_sec Unit Cell Descriptors
 
-\section user_unitcell_1D_sec 1D Systems 
+Three different types of information are required to completely describe
+a crystal lattice, as discussed below:
 
-There is only possible Bravais lattice for a one dimensionally periodic
-system, which is referred to here as "lamellar". A 1D lamellar system
-only has one lattice parameter, which is the repeat distance along the
-direction in which the system is periodic, denoted here by d.  The text 
-representation of a unit cell for a lamellar phase with lattice spacing 
-of d = 5.6 in the chosen system of length units would thus be
-\code
-    lamellar  5.6 
-\endcode
+<em> Spatial dimension </em>: The spatial dimension of a lattice, denoted
+   here by D, is a positive integer that gives the number coordinates along
+   which the structure is periodic, e.g., D=1 for a lamellar phase,
+   D=2 for hexagonally packed cylinders, or D=3 for a three dimensional
+   crystal such a BCC lattice.
 
-\section user_unitcell_2D_sec 2D Systems 
+<em> Lattice system identifier </em>: The lattice system identifier is a
+   string that names one of the allowed crystallographic lattice systems
+   (e.g., cubic, orthorhombic, etc) for a crystal of the specified
+   dimensionality.  The set of allowed values of this string identifier
+   is different for 1, 2, and 3 dimensional crystals.
 
-There are 4 conventional 2D lattice systems (square, hexagonal, 
-rectangular, and oblique). The pscf code also allows the user to specify 
-a "rhombic" unit cell, which is an oblique unit cell in which the two 
-basis vectors have equal magnitude. 
+<em> Lattice parameters </em>: Values of the lattice parameters specify
+   the size and shape of the unit cell by specifying values for the
+   lengths lengths of the Bravais lattice basis vectors (corresponding
+   to the lengths of edges of the unit cell) and, when necessary, values
+   of angles between such vectors.
+
+The number of parameters required to describe a unit cell is different
+for different lattice systems.  For example, a 3D cubic lattice can be
+specified by giving a single parameter, which is the length of any of
+the three orthogonal basis vectors, whereas 6 parameters (3 lengths and
+three angles) are required to describe a 3D triclinic lattice.  By
+convention, the required lattice parameters for each lattice system
+type are always listed in a specific order that is described below for
+each of the possible 1, 2 and 3 dimensional lattice systems.
+
+These three different types of information are provided to a pscf_pc or
+pscf_pg program in different ways:
+
+<em> Spatial dimension </em>: Because the PSCF package requires the user
+to use different executable programs to simulate periodic systems of
+different dimensionality, it is not necessary for the user to explicitly
+specify the spatial dimensionality D of the crystal of interest. This is
+already known from the user's choice of an executable file name, such
+pscf_pc2 for a structure such as a 2D hexagonal lattice with dimensionality
+D=2, or pscf_pc3 for a fully three dimensional crystal with D=3.
+
+<em> Lattice system identifier </em> : A string identifier for a lattice
+system is a required parameter in the parameter file format for all pscf_pc
+and pscf_pg programs. This identifier is given as the value of the parameter
+with the label "lattice" within the Domain block of the parameter file.
+The choice of lattice system that is specified in the parameter file
+cannot be changed during later stages of program execution. To perform
+calculations involving several different lattice systems, one must instead
+execute the relevant program or programs several times with different
+input parameter files.
+
+<em> Lattice parameters </em>: Values for the lattice parameters
+(i.e., lengths of the edges of the unit cell and angles between them) do
+not appear in the parameter file, but are instead normally provided within
+an input field file that is read by the program. All of the field file
+formats used by pscf_pc and pscf_pg contain a file header that contains
+lattice system identifier and a list of lattice parameters. The lattice
+system identifier in the header of any field file read by the program
+must agree with that declared in the parameter file - the program will
+halt execution with an error message if they do not.  Users can also
+explicitly set or modify lattice parameter values by executing the
+SET_LATTICE_PARAMETERS command, which takes a list of lattice parameter
+values as command arguments.
+
+Allowed values of the lattice system identifier and conventions for the
+meaning and conventional order of required unit cell parameters for
+each lattice system type are described below for 1, 2 and 3 dimensional
+systems.
+
+\section user_unitcell_1D_sec 1D Systems
+
+There is only possible lattice system for a one dimensionally periodic
+system, which is identifed by the string "lamellar". A 1D lamellar
+system only has one lattice parameter, which is the repeat distance
+along the direction in which the system is periodic, denoted here by
+d.
+
+This information is repeated below in tabular format analogous to that
+used for 2D and 3D systems. In this format, the "lattice system" column
+gives the allowed values (or value) for the lattice system identifier
+string, N is the number of required input parameters for each lattice
+system, "parameters" gives the name(s) of all required parameters in the
+order in which they must be listed in any input file, and "description"
+describes the meaning of those parameters.
+
+<table>
+  <tr>
+    <td> <b>lattice system  </b> </td>
+    <td> <b>N </b> </td>
+    <td> <b>parameters </b> </td>
+    <td> <b>description </b> </td>
+  </tr>
+  <tr>
+    <td> lamellar </td>
+    <td> 1 </td>
+    <td> d </td>
+    <td> d is the lamellar repeat distance  </td>
+  </tr>
+</table>
+
+\section user_unitcell_2D_sec 2D Systems
+
+There are 4 conventional 2D lattice systems (square, hexagonal,
+rectangular, and oblique). The pscf code also allows the user to specify
+a "rhombic" unit cell, which is an oblique unit cell in which the two
+basis vectors have equal magnitude.
 
 The names of the lattice systems, and the list of parameter required by
 each is listed below. Throughout, let a and b denote the lengths of the
 lattice basis vectors, and let alpha denote the angle between these two
-vectors. When a value for the parameter alpha is required, it must be 
+vectors. When a value for the parameter alpha is required, it must be
 provided in radians, and not in degrees.
 <table>
-  <tr> 
+  <tr>
     <td> <b>lattice system  </b> </td>
     <td> <b>N </b> </td>
     <td> <b>parameters </b> </td>
     <td> <b>description </b> </td>
   </tr>
-  <tr> 
+  <tr>
     <td> square </td>
     <td> 1 </td>
     <td> a </td>
     <td> 2 orthogonal basis vectors of equal length a=b </td>
-  </tr> 
-  <tr> 
+  </tr>
+  <tr>
     <td> hexagonal </td>
     <td> 1 </td>
     <td> a </tr>
     <td> 2 basis vectors of length a=b separated by 120 degrees  </td>
-  </tr> 
-  <tr> 
+  </tr>
+  <tr>
     <td> rectangular </td>
     <td> 2 </td>
     <td> a, b </tr>
     <td> 2 orthogonal basis vectors of unequal lengths a and b </td>
-  </tr> 
-  <tr> 
+  </tr>
+  <tr>
     <td> rhombic </td>
     <td> 2 </td>
     <td> a, alpha </tr>
-    <td> 
-     2 basis vectors of equal length a separated by an angle alpha (radians) 
+    <td>
+     2 basis vectors of equal length a separated by an angle alpha (radians)
     </td>
-  </tr> 
-  <tr> 
+  </tr>
+  <tr>
     <td> oblique </td>
     <td> 3 </td>
     <td> a, b, alpha </tr>
     <td> 2 basis vectors of unequal lengths a and b separated by an angle alpha (radians) </td>
-  </tr> 
+  </tr>
 </table>
 
-\section user_unitcell_3D_sec 3D Systems 
+\section user_unitcell_3D_sec 3D Systems
 
-In what follows we use the letters a, b, c both to denote lengths of the 
-three Bravais lattice basis vectors and as labels to identify the actual 
-vectors.  Different definitions of angles are used for different lattice 
+In what follows we use the letters a, b, c both to denote lengths of the
+three Bravais lattice basis vectors and as labels to identify the actual
+vectors.  Different definitions of angles are used for different lattice
 systems, as discussed below:
 <table>
-  <tr> 
+  <tr>
     <td> <b>lattice system  </b> </td>
     <td> <b>N </b> </td>
     <td> <b>parameters </b> </td>
     <td> <b>description </b> </td>
   </tr>
-  <tr> 
+  <tr>
     <td> cubic </td>
     <td> 1 </td>
     <td> a </td>
     <td> 3 orthogonal basis vectors of equal length a=b=c. </td>
-  </tr> 
-  <tr> 
+  </tr>
+  <tr>
     <td> tetragonal </td>
     <td> 2 </td>
     <td> a, c </td>
     <td> 3 orthogonal basis vectors, with a=b but c unequal to a or b.</td>
-  </tr> 
-  <tr> 
+  </tr>
+  <tr>
     <td> orthorhombic </td>
     <td> 3 </td>
     <td> a, b, c </td>
     <td> 3 orthogonal basis vectors of generally unequal lengths a, b and c.
-  </tr> 
-  <tr> 
+  </tr>
+  <tr>
     <td> hexagonal </td>
     <td> 2 </td>
     <td> a, c </td>
     <td> Two lattice vectors of equal length a=b are separated by 120 degrees.
          A third vector of length c is perpendicular to a and b.
-    </td> 
-  </tr> 
-  <tr> 
+    </td>
+  </tr>
+  <tr>
     <td> rhombohedral </td>
     <td> 2 </td>
     <td> a, beta </td>
-    <td> 
+    <td>
     3 lattice vectors of equal length a=b=c, with the same angle beta
     between any two of these vectors.
     </td>
-  </tr> 
-  <tr> 
+  </tr>
+  <tr>
     <td> monoclinic </td>
     <td> 3 </td>
     <td> a, b, c, beta </td>
     <td> 2 orthogonal basis vectors of lengths a and b.
          A third vector of length c is orthogonal to vector b.
          Angle beta is the angle between vectors a and c. </td>
-  </tr> 
-  <tr> 
+  </tr>
+  <tr>
     <td> triclinic </td>
     <td> 6 </td>
     <td> a, b, c, phi, theta, gamma </td>
     <td> 3 non-orthogonal basis vectors of uequal lengths a, b, and c.
          Gamma is the angle between a and b.
-         Theta is the angle between c and a vector z that is perpendicular 
+         Theta is the angle between c and a vector z that is perpendicular
          to a and b.
          Phi is the angle between the a-z and c-z planes. </td>
-  </tr> 
+  </tr>
 </table>
 
 
 <BR>
-\ref user_field_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_page        (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_groups_page (Next) 
+\ref user_field_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_page        (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_groups_page (Next)
 */

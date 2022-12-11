@@ -1,21 +1,21 @@
 namespace McMd
 {
 
-/*! \page developer_source_page 4.1 Directory Structure
+/*! \page developer_source_page Directory Structure
 
 \ref developer_build_page  (Next)
 <BR>
 
 \section srcdir_source Source code directory
 
-All C++ and CUDA files for PSCF, are in the pscfpp/src/ directory tree.  The header and source file for each class are in the same directory. 
-The name of each C++ file is the same as the class name, followed by an extension to indicate file type. 
-We use extension .h to indicate a header file, .tpp to indicate the implementation of a class template, .cpp to indicate a C++ source file, and .cu to indicate a CUDA source file.  
-All class names and corresponding file names are upper space camel (like Util::Vector or Pscf::Basis).  
+All C++ and CUDA files for PSCF, are in the pscfpp/src/ directory tree.  The header and source file for each class are in the same directory.
+The name of each C++ file is the same as the class name, followed by an extension to indicate file type.
+We use extension .h to indicate a header file, .tpp to indicate the implementation of a class template, .cpp to indicate a C++ source file, and .cu to indicate a CUDA source file.
+All class names and corresponding file names are upper space camel (like Util::Vector or Pscf::Basis).
 
-The source code in pscfpp/src is divided among two top-level namespaces, named Util and Pscf. 
+The source code in pscfpp/src is divided among two top-level namespaces, named Util and Pscf.
 
-The Util namespace contains a collection of utilities for scientific computation that is also used by other projects. All code in the Util namespace is contained in the src/util directory. This directory contains the contents of a separate github git repository (repository dmorse/util) that is imported into the pscfpp as a submodule. 
+The Util namespace contains a collection of utilities for scientific computation that is also used by other projects. All code in the Util namespace is contained in the src/util directory. This directory contains the contents of a separate github git repository (repository dmorse/util) that is imported into the pscfpp as a submodule.
 
 The Pscf namespace contains all C++ and CUDA code that is specific to the PSCF project. The Pscf namespace contains several enclosed namespaces that each contain code that is used only by one program or set of closely related programs.
 
@@ -26,26 +26,26 @@ The main subdirectories of src/ are:
  - src/pscf/ contains code defined directly in the Pscf namespace, which is
    accessible to all PSCF programs.
 
- - src/fd1d/ contains all code in the Pscf::Fd1d namespace, which is only 
+ - src/fd1d/ contains all code in the Pscf::Fd1d namespace, which is only
    used by the pscf_fd 1D finite element program.
 
- - src/pspc/ contains all code in the Pscf::Pspc namespace, which is only 
+ - src/pspc/ contains all code in the Pscf::Pspc namespace, which is only
    used by the pscf_pcNd C++ CPU programs for periodic structures.
 
  - src/pspg/ contains all code for the Pscf::Pspc namespace, which is
    only used by the pscf_pgNd CUDA GPU programs for periodic structures.
 
-These five directories will be referred to in what follows as "namespace" 
-level subdirectories of src/.  The PSCF makefile system constructs a 
-static library in each of these namespace level directories that contains 
-compiled code for all of the classes and global functions defined in that 
-directory. The src/fd1d, src/pspc, and src/pspg each contain one or more 
+These five directories will be referred to in what follows as "namespace"
+level subdirectories of src/.  The PSCF makefile system constructs a
+static library in each of these namespace level directories that contains
+compiled code for all of the classes and global functions defined in that
+directory. The src/fd1d, src/pspc, and src/pspg each contain one or more
 main program source files that are also compiled and installed by the
 build system.
- 
-Each of the five namespace level source directories contains a 
+
+Each of the five namespace level source directories contains a
 subdirectory named tests/ that contains unit tests for classes defined
-in the associated name space. These unit tests are not automatically 
+in the associated name space. These unit tests are not automatically
 compiled or run by the build system that compiles the source code.
 
 <BR>

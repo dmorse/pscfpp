@@ -28,8 +28,8 @@ System{
     groupName      p_2_m_m
   }
   AmIteratorFilm{
-    maxItr               2000
     epsilon              1.0e-6
+    maxItr               2000
     maxHist              50 
     verbose              1
     isFlexible           1

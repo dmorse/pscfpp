@@ -1,0 +1,415 @@
+/*! \page user_model_page Model and Parameters
+
+\ref user_page        (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_files_page   (Next) 
+<BR>
+
+\section user_model_overview_sec Physical Model (Overview)
+
+All of the programs in the PSCF software package are designed to compute 
+properties of a system that contains an incompressible liquid mixture of 
+one or more block polymers and zero or more small molecule solvents. Each 
+polymer species in such a mixture may be either a linear block polymer or 
+an acyclic branched polymer with a user-specified structure. Homopolymers 
+are treated as a special case of a linear block polymer with only one 
+block. Conformations of individual polymers is treated using a model of 
+polymer segments as continuous random walks, as discussed below. Solvent 
+species, when present, are treated as structureless point-like particles 
+that occupy a specified volume per particle. 
+
+The only model for interactions among molecule that is currently 
+implemented is one that treats the mixture as an incompressible liquid, 
+and that uses a symmetric matrix of Flory-Huggins parameters to 
+characterize binary interactions among blocks and solvents of different 
+monomer types. 
+
+Both polymers and solvent species are constructed from a finite set of
+monomer types. Each block within a block polymer is assigned a monomer 
+type (identified by an integer type index) and a block length (given 
+as a floating point number). The length of a block determines how much 
+volume it occupies within an incompressible liquid, as well as the root 
+mean-square (RMS) end-to-end length of the block in a homogeneous 
+liquid.  Each small-molecule solvent species is assigned a monomer type 
+index and a steric volume.
+
+The information required to describe the chemical composition of a 
+model thus includes:
+
+  - The number of different monomer types present in the system and 
+    a value for the statistical segment length of each monomer.
+
+  - A description of each polymer species that includes the length
+    and monomer type of each block and description of how the blocks
+    are connected at junctions. 
+
+  - A specification of the monomer type and size (i.e., volume) of
+    each solvent species. 
+
+  - A value for either the volume fraction or chemical potential of
+    each polymer and solvent species.
+
+  - A value for a binary Flory-Huggins interaction parameter
+    \f$ \chi_{ij} \f$ for interactions between monomers of types
+    \f$ i \f$ and \f$ j \f$ for each distinct pair of monomer
+    types.
+
+Other user-provided input parameters required as initialize a SCFT 
+calculation include:
+
+  -  Parameters that describe the unit cell (for periodic structures) 
+     or spatial domain within which the self-consistent field equations 
+     will be solved.
+
+  -  Parameters that define a spatial discretization for the unit cell 
+     or spatial domain and a step size for discretization of polymer 
+     contour length,
+
+as well as a variety of other algorithmic parameter and options.
+
+\section user_model_energy_sec Energy Units
+
+In all input parameter and output values with units that involve 
+energy, PSCF uses "thermal" units for energy in which \f$ k_{B}T = 1\f$,
+where \f$ k_{B} \f$ is Boltmann's constant and \f$ T \f$ is absolute 
+temperature.
+
+\section user_model_length_sec Length Units
+
+PSCF allows the user to use any system of units for quantities that 
+involve units of length, as long as the same choice of units is used 
+for all input parameters.  The only required parameters for a standard
+SCFT calculation that have units involving length are the values of 
+the statistical segment lengths, and values (or initial guesses) for 
+the dimensions of the crystal unit cell or spatial domain of the 
+system of interest.  Users may initialize a calculation using input 
+files in which these parameters are define either using some a 
+microscopic length unit (e.g., Angstroms or nanometers) or in which
+they are defined using some user-defined system of non-dimensional 
+units. Different common choice of conventions are discussed below.
+
+If user-supplied input parameters are consistently assigned values 
+that were defined using some unit of length, output values will be
+reported using the same units for length.  Thus, in simulations of 
+a periodic microstructures in which one or more dimensions of the 
+crystal unit cell are iteratively ajdusted so as to minimize the 
+free energy density, output values for the optimized unit cell 
+parameters will be reported in the same length units as those used 
+for relevant input parameters.  
+
+Most outputs of an SCFT calculation other than the optimal values 
+for unit cell parameters, such as the free energy per chain in a 
+one-component block polymer melt or the compositions associated with 
+phase boundaries in a phase portrait) can be shown to depend on 
+input parameters with units of lengths only through the values of 
+ratios of lengths involving unit cell or domain dimensions and 
+unperturbed coil sizes (i.e., RMS end-to-end lengths or radii of 
+gyration) of polymers or blocks of the polymer species present 
+within a system. 
+
+\section user_model_continuous_sec Continuous Chain Model
+
+PSCF uses a model of polymers as continuous random walks. In this model, 
+a specific configuration of a single block of length \f$ L \f$ within 
+a block polymer can be characterized by a continous path 
+\f$ \textbf{R}(s) \f$ that gives the position \f$ {\bf R} \f$ of a point 
+along the polymer as a function of a dimensionless contour coordinate 
+\f$ s \f$, for values of \f$ s \in [0, L] \f$.  A chain segment between 
+points with contour coordinates \f$ s \f$ and \f$ s' \f$ within a block 
+of monomer type \f$ \alpha \f$ is assumed to exhibit a mean-squared 
+end-to-end length in a homogeneous mixture given by
+\f[
+    \langle |{\bf R}(s) - {\bf R}(s')|^{2} \rangle_{0}
+    = |s-s'| b_{\alpha}^{2} \quad,
+\f]
+in which \f$ b_{\alpha} \f$ is a statistical segment length for chain 
+segments of type \f$ \alpha \f$. Here, \f$ \langle \cdots \rangle_{0} \f$ 
+denotes a statistical average over random-walk configurations within
+a homogeneous mixture.  In an incompressible mixture, each such segment 
+of contour length \f$ |s-s'| \f$ is assumed to occupy a volume 
+\f$ V(s,s') \f$ given by
+\f[
+    V(s,s') = v|s-s'| \quad,
+\f]
+where \f$ v \f$ is a constant steric volume per polymer contour length.
+We refer to the parameter \f$ v \f$ as the monomer reference volume.
+
+In the above discussion of the continuous chain model, we introduced
+the notion of a dimensionless "contour length" of a chemically homogeneous 
+segment of polymer, such as a block within a block polymer. The simplest 
+way one might try to define such a length is to take it equal to the 
+number of chemical monomers within that segment. Even that definition 
+leaves some ambiguity, however, because one always has some freedom 
+to redefine what one means by a monomer by grouping together two or 
+more elementary chemical repeat units into a larger unit that we may
+then treat as a "monomer".  For example, when describing a long linear 
+alkane (i.e., linear polyethylene) one could treat either a 1-carbon or 
+2-carbon unit as a "monomer". This regrouping operation changes the
+value one would obtain for the number of monomers in a given chain 
+segment, as well as the required values of the monomer statistical 
+segment length and volume per monomer. For example a 100 carbon alkane 
+segment could be described as having a "length" of 100 units using 
+one-carbon monomers or 50 units for two-carbon monomers, using 
+different values for the statistical segment length \f$ b \f$ and 
+the volume \f$ v \f$ per monomer in these two cases.
+
+In the continuous chain model used in PSCF, we implicitly assume that 
+the number of elementary chemical repeat units in any chain segment of 
+interest is sufficiently large that we may ignore details of chemical
+structure and characterize positions along a polymer by some sort of
+real (rather than integer) contour coordinate \f$ s \f$.  The contour 
+length \f$ |s-s'| \f$ of a segment between two points on the same 
+chain with contour coordinates \f$ s \f$ and \f$ s' \f$ is then assumed 
+to be proportional, but generally not equal, to the number of elementary 
+chemical repeat units contained in the chain segment between those 
+points. As a result, the dimensionless contour length of a chain 
+segment is also proportional to the molecular weight of that segment. 
+Values for the constants of proportionality that determine the number 
+of elementary chemical repeat units and molecular weight per unit 
+contour length for each type of block are not, however, specified by 
+the equations used within PSCF. The software is instead designed to
+allow to choose from among a variety of possible conventions for these 
+constants of proportionality. The cost of this flexibility is, of 
+course, that it places responsibility on the user to choose and 
+understand a convention and to make sure that the chosen convention is 
+accurately reflected in the values of user-supplied input parameters.
+
+The only restriction that PSCF places on the definition of polymer
+contour lengths is that a requirement that, as a matter of convention, 
+chain segments of equal contour length but different monomer type
+correspond to the same volume within an incompressible melt. The 
+steric volume of any chain segment of contour length \f$ L \f$ is 
+thus given by \f$ v L \f$ , for segments of any monomer type, using
+the same value for the monomer reference volume \f$ v \f$ for blocks
+of any monomer type. The requirement that the same monomer reference 
+volume be used for all monomer types does not cause any loss of 
+generality in a model of polymers as continuous random walks, as 
+long as different values may be assigned for the values of the
+statistical segment lengths of different monomer types.
+
+There are two common types of convention for block contour lengths
+that we refer to here as "experimentalist" and "theorist" conventions.
+Both are described below. Experimentalist conventions are generally 
+the most convenient choice for computational studies that are being 
+used to predict behavior for a particular experimental system with 
+blocks of known chemistry and molecular weight. Theorist conventions 
+are instead more convenient for studies of trends with changes in 
+parameters, and for studies of phase maps for classes of systems 
+for which it is known that which predictions of relevant thermodynamic
+properties can be parameterized by a small set of dimensionless 
+parameters.
+
+\subsection user_model_experimentalist_sub "Experimentalist" Conventions
+
+In an "experimentalist" convention, a monomer (or unit of contour
+length) is defined for each monomer type so as to correspond to a
+segment with a molecular weight chosen so that the volume occupied
+by that segment in a polymer melt is equal to a chosen value for a
+monomer reference volume \f$ v \f$. This is a standard approach used 
+in the literature in studies that compare experimental results to 
+predictions of the Flory-Huggins theory for polymer solutions and 
+mixtures, the random-phase approximation (RPA) theory of small-angle 
+scattering and/or to SCFT predictions for inhomogeneous structures.
+In such studies, the reference volume \f$ v \f$ is usually chosen 
+to have a value of of order 50 - 100 cubic Angstrom that is comparable 
+to the volume of some common hydrocarbon chemical repeat unit, but 
+the choice of an exact value is arbitrary. In a system that contains 
+two or more different types of monomer, it generally not possible to 
+choose a single value for the reference volume that corresponds to 
+the volume per chemical repeat unit of every monomer type, because 
+the volume per repeat unit is generally different for different 
+types of monomer.
+
+The contour length \f$ L \f$ of a chemically homogeneous polymer segment 
+of some known molecular weight \f$ M \f$ and monomers of type \f$ a \f$
+may be expressed as a ratio 
+\f[
+   L  = M/m_{\alpha} \quad,
+\f]
+in which \f$ m_{\alpha} \f$ is a molecular weight per unit contour length 
+for monomers of type \f$ a \f$. The quantity \f$ m_{\alpha} \f$ must be 
+defined for each monomer type such that the volume occupied per chain 
+segment of molecular weight \f$ m_{\alpha} \f$ in a polymer melt 
+corresponds to the chosen value of \f$ v \f$. If a melt of homopolymers 
+containing monomers of type \f$ \alpha \f$ exhibits a density 
+\f$ \rho_{\alpha} \f$ in grams per volume at the tempeature and pressure 
+of interest, then the value of \f$ m_{\alpha} \f$ for that monomer type 
+is given in grams per mole as 
+\f[
+   m_{\alpha} = \rho_{\alpha} v N_{\rm A} \quad
+\f]
+where \f$ N_{\rm A} \f$ is Avogadro's number.  If \f$ \rho_{\alpha} \f$ 
+is given in grams per cubic centimeter and \f$ v \f$ is given in cubic 
+Angstroms, then a numerical conversion factor of \f$ 10^{-24} \f$ cubic 
+centimeter per cubic Angstrom is also required to obtain consistent
+units.
+
+The value for the statistical segment length \f$ b_{\alpha} \f$ associated 
+with a specific monomer type is then given by
+\f[
+   b^{2}_{\alpha} = m \frac{R_{e}^{2}(M)}{M}
+\f]
+where \f$ R_{e}^{2}(M) \f$ denotes the mean-squared end-to-end length 
+for a homopolymer chain of molecular weight \f$ M \f$ and monomer type
+\f$ \alpha \f$.
+Note that the ratio \f$ R_{e}^{2}(M)/M \f$ is independent of molecular 
+weight for chains with random-walk statistics. If a value for the
+statistical segment length is known for some other definition of a 
+monomer unit (such as a chemical repeat unit, or an effective monomer 
+defined using a different value for \f$ v \f$ ), then the ratio 
+\f$ R_{e}^{2}/M \f$ may be replaced by ratio of the square of the 
+statistical segment length for that monomer definition divided by the 
+molecular weight per monomer. In experimentalist conventions, Angstrom 
+or nanometer units are usually used for all lengths.
+
+\subsection user_model_theorist_sub "Theorist" Conventions
+
+In a "theorist" convention, contour coordinates are scaled so as to 
+define the overall contour length of some reference chain or chain 
+segment to be equal to 1.0 by convention.  The reference chain is 
+often chosen to correspond to either an entire molecule of some 
+polymer species that is present in the system, or one block of 
+one such  species.  This is equivalent to setting the "monomer" 
+reference volume equal to the entire volume of the reference polymer 
+or block.  Because the equations implemented by PSCF require that the 
+volume per contour length must be the same for blocks of different 
+monomer types, values of ratios of block or chain lengths must be
+equal to ratios of the corresponding occupied volumes. In this
+convention, the length assigned to each block of each polymer in 
+a system must thus be equal to the ratio of the actual volume of 
+that block to the volume of the reference chain. 
+
+For example, in a system that contains a single linear block copolymer 
+species, the length of the entire polymer is often set equal to 1.0 by 
+convention. To do so, we must assign the blocks of that polymer lengths 
+that are each less than or equal to 1.0 and that add to exactly 1.0. 
+In the case of a one-component block polymer melt, the value of each 
+such block length is then equal to the volume fraction of that block. 
+
+The use of theorists convention for contour lengths is compatible
+with the use of either physical Angstrom or nanometer length units 
+or with the use of a convenient system of non-dimensionalized units 
+for length. The simplest scheme for definining non-dimensionalized 
+lengths is to define the statistical segment length of one monomer 
+type to be equal to 1.0 by convention. In this case, one must then 
+assign every other monomer type a statistical segment length given 
+by the ratio of its actual statistical segment length (e.g., a
+statistical segment length defined using an experimentalist 
+convention to that of the reference monomer type.
+
+All of the examples shown in this user's manual use a theorist
+convention in which the overall length of one type of polymer (i.e., 
+the sum of the length of the blocks for a block polymer) is set to 1.0 
+by convention, and in which the statistical segment length of at least 
+one species is set to 1.0. This type of convention is also used in the 
+input files for all of the examples provided with PSCF.
+
+\section user_model_solvent_sec Solvent Species
+
+PSCF allows user to model polymer solutions by including zero or more
+"solvent" species in addition to one or more polymer species. Each
+solvent molecule is treated as a mobile but structureless point-like 
+particle that occupies some volume within an incompressible mixture. 
+Solvent species can be used to model either rigid small-molecule 
+solvent molecules or oligomeric chain molecules that much shorter 
+than all of the "polymer" species present in the same system. 
+
+Each solvent species is assigned a monomer type that is selected from 
+among the same set of monomer types that can be used to describe 
+copolymer blocks. A solvent that has properties that are distinct from 
+those of any of the monomers used to construct the polymer species can 
+be assigned an extra monomer type that is simply not used as the 
+monomer type for any polymer block. A solvent species can instead 
+be assigned a mononer type that is the same as that assigned to 
+one or block polymer blocks if that solvent species represents a 
+small oligomer of the specified monomer type, or another species 
+with physical properties very similar to those of such an oligomer. 
+The input file format for PSCF requires that a monomer type that 
+this is only associated with a solvent species must must still be 
+assigned a statistical segment length value, but in this case that 
+segment length value is simply left unused.
+
+Each solvent species is also assigned a volume per molecule. This 
+is specified in the PSCF input files by a dimensionless parameter 
+labelled "size". The value of the size parameter is equal to the 
+ratio of the solvent volume to that of a the mononer reference 
+volume. The "size" parameter for a solvent species is thus closely 
+analogous to the "length" parameter for copolymer block, since 
+both are defined as volumes measured in units of the monomer 
+reference volume.
+
+If one describes a polymer solution using "theorist" units in which 
+the reference volume it defined to be equal to the total volume of 
+some reference polymer species, then values for the solvent size 
+parameter will usually much less than 1.0. Thus for example, a system 
+with a homopolymer of length 1.0 and a solvent with a size equal to 
+0.01 could be used to describe a homopolymer solution in which the 
+polymer volume is 100 times greater than that of the solvent.  It 
+is also valid, and sometimes more convenient, to describe a solution
+using a theorist convention in which the volume of the solvent species 
+is taken as the reference volume. In this case, the solvent size wil
+be set equal to 1.0 by convention, and the lengths for polymer blocks 
+will generally be much greater than 1.
+
+\section user_model_thermo_sec Thermodynamic Properties
+
+The output produced by PSCF after finding a solution to a SCFT 
+problem generally includes values for the Helmholtz free energy density 
+and the thermodynamic pressure.
+
+\subsection user_model_helmholtz_sub Helmholtz Free Energy
+
+The value of the Helmholtz free energy that is reported by PSCF in output 
+files is indicated in those files by a label "fHelmholtz", which will be 
+denoted here by the symbol \f$ \tilde{f} \f$.  The reported value is 
+actually the free energy per monomer reference volume in thermal energy 
+units. That is, the value reported for "fHelmholtz" for a system with a 
+total Helmholtz free energy \f$ F \f$ and associated volume \f$ V \f$ is 
+given by ratio
+\f[
+    \tilde{f} \equiv \frac{Fv}{Vk_{B}T}
+\f]
+where \f$ v \f$ is the monomer reference volume. In the special case 
+of a one-component block polymer melt for which the input parameters 
+are given using the theorists convention that overall chain length 
+is equal to 1.0, the monomer reference volume is equal to the volume 
+per chain, and thus this reported value is also the free energy per 
+chain in thermal energy units. More generally, in a mixture, one can 
+obtain the free energy associated with the volume occupied by a 
+molecular species by multiplying the overall contour length (for 
+polymers) or size (for solvents) of the species by the value reported 
+for "fHelmholtz". 
+
+\subsection user_model_pressure_sub Pressure and Grand-Canonical Free Energy
+
+The value of "pressure" reported by  PSCF in output files system is a 
+non-dimensionalized thermodynamic pressure that is computed from the 
+value of the grand-canonical free energy density.  
+Let \f$ \Phi \f$ denote the so-called "grand" or "grand-canonical" 
+free energy
+\f[
+   \Phi \equiv F - \sum_{a}\mu_{a}N_{a} \quad,
+\f]
+in which the sum is taken over all polymer and solvent molecular
+species in the system, \f$ \mu_{a} \f$ is the chemical potential of 
+species \f$ a \f$, and \f$ N_{a} \f$ is the total number of molecules 
+of species \f$ a \f$ in the system. We define a thermodynamic pressure 
+\f$ P \f$ via the identity 
+\f[ 
+    \Phi = -PV  \quad,
+\f] 
+where \f$ V \f$ is total system volume. The value reported by PSCF for 
+the "pressure", which is denoted here by \f$ \tilde{p} \f$, is actually 
+the value of the ratio
+\f[
+    \tilde{p} = \frac{Pv}{k_{B}T} = -\frac{\Phi v}{Vk_{B}T} \quad.
+\f]
+The value of pressure reported by PSCF is thus \f$ -1 \f$ times the 
+grand-canonical free energy per monomer reference volume, in thermal 
+energy units.
+
+
+<BR>
+\ref user_page       (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_files_page (Next) 
+
+*/

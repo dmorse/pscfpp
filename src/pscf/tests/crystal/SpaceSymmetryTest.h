@@ -19,10 +19,12 @@ class SpaceSymmetryTest : public UnitTest
 public:
 
    void setUp()
-   {}
+   {
+     //setVerbose(1);
+   }
 
    void tearDown()
-   {}
+   { setVerbose(0); }
  
    template <int D>
    bool isValid(SpaceSymmetry<D> cell)
@@ -33,7 +35,6 @@ public:
    void test2DIdentity() 
    {
       printMethod(TEST_FUNC);
-      printEndl();
       SpaceSymmetry<2> E = SpaceSymmetry<2>::identity();
       TEST_ASSERT(E.R(0,0) == 1);
       TEST_ASSERT(E.R(1,0) == 0);
@@ -41,42 +42,54 @@ public:
       TEST_ASSERT(E.R(1,1) == 1);
       TEST_ASSERT(E.t(0) == 0);
       TEST_ASSERT(E.t(1) == 0);
+      //std::cout << std::endl;
       //std::cout << SpaceSymmetry<2>::identity() << std::endl;
    }
 
    void test2DConstruct() 
    {
       printMethod(TEST_FUNC);
-      printEndl();
 
       SpaceSymmetry<2> A;
       A.R(0,0) = 0;
-      A.R(1,0) = 1;
       A.R(0,1) = -1;
+      A.R(1,0) = 1;
       A.R(1,1) = 0;
       A.t(0) = 0;
       A.t(1) = Rational(1, 2);
 
-      std::cout << A << std::endl;
+      if (verbose() > 0) {
+         std::cout << std::endl;
+         std::cout << A << std::endl;
+      }
    }
 
    void test2DRead() 
    {
       printMethod(TEST_FUNC);
-      printEndl();
      
       std::ifstream in;
       openInputFile("in/Symmetry2D", in);
 
       SpaceSymmetry<2> A;
       in >> A;
-      std::cout << A;
+      TEST_ASSERT(A.R(0,0) == 0);
+      TEST_ASSERT(A.R(0,1) == 1);
+      TEST_ASSERT(A.R(1,0) == -1);
+      TEST_ASSERT(A.R(1,1) == 0);
+      TEST_ASSERT(A.t(0) == Rational(1,2));
+      TEST_ASSERT(A.t(1) == 0);
+
+      if (verbose() > 0) {
+         std::cout << std::endl;
+         std::cout << A << std::endl;
+      }
    }
 
    void test2DEquality() 
    {
       printMethod(TEST_FUNC);
-      // printEndl();
+      // std::cout << std::endl();
 
       SpaceSymmetry<2> A;
       A.R(0,0) = 0;
@@ -106,7 +119,7 @@ public:
    void test2DInvertMultiply() 
    {
       printMethod(TEST_FUNC);
-      // printEndl();
+      // std::cout << std::endl();
 
       SpaceSymmetry<2> A;
       A.R(0,0) = 0;
@@ -142,7 +155,7 @@ public:
    void test3DInvertMultiply() 
    {
       printMethod(TEST_FUNC);
-      //printEndl();
+      //std::cout << std::endl();
 
       SpaceSymmetry<3> A;
       A.R(0,0) =  0;
@@ -198,14 +211,12 @@ public:
       B = A.inverse();
       //std::cout << B << std::endl;
       C = A*B;
-      //std::cout << C << std::endl;
       TEST_ASSERT(C == SpaceSymmetry<3>::identity());
    }
 
    void testShiftOrigin() 
    {
       printMethod(TEST_FUNC);
-      //printEndl();
 
       SpaceSymmetry<3> A;
       A.R(0,0) =  0;

@@ -19,12 +19,15 @@ class MeshIteratorTest : public UnitTest
 public:
 
    void setUp()
-   {}
+   {
+      //setVerbose(1);
+   }
 
    void tearDown()
    {}
  
-   void test3D(IntVec<3>& d) {
+   void test3D(IntVec<3>& d) 
+   {
       MeshIterator<3> iter;
       iter.setDimensions(d);
 
@@ -33,7 +36,10 @@ public:
       int i ;       // current rank
       int ip ;      // previous rank
       for (iter.begin(); !iter.atEnd(); ++iter) {
-         std::cout << iter.rank() << "   " << iter.position() << std::endl;
+         if (verbose() > 0) {
+            std::cout << iter.rank() << "   " 
+                        << iter.position() << std::endl;
+         }
          if (iter.rank() == 0) {
             x = iter.position();
             i = iter.rank();
@@ -61,11 +67,11 @@ public:
             }
          }
       }
-      std::cout << std::endl;
 
    }
 
-   void test2D(IntVec<2>& d) {
+   void test2D(IntVec<2>& d) 
+   {
       MeshIterator<2> iter;
       iter.setDimensions(d);
 
@@ -74,7 +80,10 @@ public:
       int i ;       // current rank
       int ip ;      // previous rank
       for (iter.begin(); !iter.atEnd(); ++iter) {
-         std::cout << iter.rank() << "   " << iter.position() << std::endl;
+         if (verbose() > 0) {
+            std::cout << iter.rank() << "   " 
+                      << iter.position() << std::endl;
+         }
          if (iter.rank() == 0) {
             x = iter.position();
             i = iter.rank();
@@ -95,24 +104,37 @@ public:
             }
          }
       }
-      std::cout << std::endl;
 
    }
 
-   void testMeshIterator3D() {
+   void testMeshIterator3D() 
+   {
       printMethod(TEST_FUNC);
-      printEndl();
+      if (verbose() > 0) {
+         std::cout << std::endl;
+      }
 
       IntVec<3> d;
       d[0] = 2;
       d[1] = 1;
       d[2] = 3;
       test3D(d);
+      if (verbose() > 0) {
+         std::cout << std::endl;
+      }
 
       d[0] = 1;
       d[1] = 3;
       d[2] = 2;
       test3D(d);
+   }
+
+   void testMeshIterator2D() 
+   {
+      printMethod(TEST_FUNC);
+      if (verbose() > 0) {
+         std::cout << std::endl;
+      }
 
       IntVec<2> twoD;
       twoD[0] = 2;
@@ -124,6 +146,7 @@ public:
 
 TEST_BEGIN(MeshIteratorTest)
 TEST_ADD(MeshIteratorTest, testMeshIterator3D)
+TEST_ADD(MeshIteratorTest, testMeshIterator2D)
 TEST_END(MeshIteratorTest)
 
 #endif

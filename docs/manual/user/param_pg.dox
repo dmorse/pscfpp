@@ -1,4 +1,4 @@
-/*! \page user_param_pg_page 3.3.8 pscf_pg (Periodic Problems, GPU)
+/*! \page user_param_pg_page Parameter File - pscf_pg 
 
 \ref user_param_pc_page       (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_command_page  (Next)
@@ -34,18 +34,18 @@ Descriptions of the parameter file formats for the available iterators
 can be found by following the links in the table below:
 <table>
   <tr>
-    <td> Label </td>
-    <td> Description  </td>
+    <td> <b> Class </b> </td>
+    <td> <b> Description </b> </td>
   </tr>
   <tr>
     <td> \subpage pspg_AmIteratorBasis_page "AmIteratorBasis" </td>
     <td> Anderson Mixing iterator for periodic structures, 
-         formulated using a symmetry-adapted basis.  </td>
+         formulated using a symmetry-adapted basis (default)  </td>
   </tr>
   <tr>
     <td> \subpage pspg_AmIteratorGrid_page "AmIteratorGrid" </td>
     <td> Anderson Mixing iterator for periodic structures, 
-         formulated using values defined a spatial grid.  </td>
+         formulated using values defined a spatial grid  </td>
   </tr>
 </table>
 

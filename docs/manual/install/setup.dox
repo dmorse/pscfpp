@@ -1,4 +1,4 @@
-/*! \page install_setup_page 2.5 Setup Script
+/*! \page install_setup_page Setup Script
 
 \ref install_environment_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref install_inout_page (Next) 
@@ -35,7 +35,7 @@ To create a default configuration appropriate for a generic unix-like
 environment, change directory (cd) to the pscfpp/ root directory, and 
 then enter:
 \code
-> ./setup
+./setup
 \endcode
 Note the dot and backslash ("./") before the name of the script.  These 
 must be included to tell the unix shell to look for an executable file 
@@ -54,7 +54,7 @@ To create an environment that should work correctly for a newer Mac with
 Apple silicon (i.e., the M1 chip) on which Homebrew has used to install 
 dependencies, enter:
 \code
-> ./setup mac-si-homebrew
+./setup mac-si-homebrew
 \endcode
 This will use a compiler setup file pscfpp/make/compiler/mac-si-homebrew
 that was designed for such an environment. This setup file add paths to 
@@ -86,9 +86,9 @@ the gsl and fftw libraries are in common locations.
 When the "setup" script is invoked with one argument, that argument is
 interpreted as the name of a file in the pscfpp/make/compiler directory
 that should be used as the compiler configuration file. For example, the 
-command "./setup homebrew-m1" causes the script system to read and copy 
-the contents of the file pscfpp/make/compiler/homebrew-m1.  The command 
-"./setup", with no argument, is equivalent to "./setup default". 
+command "./setup mac-si-homebrew" causes the script system to read and 
+copy the contents of the file pscfpp/make/compiler/mac-si-homebrew.  The 
+command "./setup", with no argument, is equivalent to "./setup default". 
 
 Users can create customized compiler configuration files to adapt 
 compiler options to their own computer. For example, suppose that a 
@@ -96,7 +96,7 @@ user created a file named pscfpp/make/compiler/local by making a copy
 of default file with that new name and then editing the variable 
 definitions in that file. Invoking the command
 \code
-\> ./setup local
+./setup local
 \endcode
 would then cause the setup script to create config.mk configuration 
 files in the src/ and bld/ directories that both include the contents 

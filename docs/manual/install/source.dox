@@ -1,9 +1,8 @@
-/*! \page install_source_page 2.2 Source Code
+/*! \page install_source_page Source Code
 
 \ref install_require_page (Prev)   &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref install_overview_page (Next) 
 <BR>
-
 
 The source code for the C++/CUDA version of PSCF is hosted on 
  <a href=http://github.com>github.com</a>, as project dmorse/pscfpp. The
@@ -22,7 +21,7 @@ To obtain a working copy of the pscfpp git repository, you should first
 change directory (cd) to the directory you would like to contain a newly
 created pscfpp directory. From there, then enter the command
 \code
-> git clone --recursive https://github.com/dmorse/pscfpp.git
+git clone --recursive https://github.com/dmorse/pscfpp.git
 \endcode
 This should create a complete copy of the PSCF source code in a new 
 subdirectory named "pscfpp/" of the working directory from which you 
@@ -59,7 +58,7 @@ directly, in which the repository URL starts with "https://github.com/..."
 The command to use ssh to clone a fork of pscfpp created by a user with 
 a github username JaneDoe would generally look like
 \code
-> git clone --recursive git@github.com:JaneDoe/pscfpp.git
+git clone --recursive git@github.com:JaneDoe/pscfpp.git
 \endcode
 The https protocol does not require any initial set up, but requires 
 password authentication every time a user pushes locally committed 
@@ -99,7 +98,7 @@ are empty. If you find yourself with a repository clone in which one or
 both of these repositories is empty, you can either clone pscfpp again 
 with the recursive option, or initialize and update the submodules by calling
 \code
-> git submodule update --init
+git submodule update --init
 \endcode
 
 Also note that git does not update submodules automatically when you switch
@@ -123,7 +122,7 @@ This indicates that your submodule is different ("modified") from the version
 that is associated with your current version of PSCF. To update the submodule
 to the appropriate version, run 
 \code
-> git submodule update
+git submodule update
 \endcode
 
 <BR>

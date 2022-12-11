@@ -1,4 +1,4 @@
-/*! \page developer_standards_page 4.3 Coding Standards
+/*! \page developer_standards_page Coding Standards
 
 \ref developer_build_page   (Prev)   &nbsp; &nbsp; &nbsp; &nbsp;
 \ref developer_param_page  (Next)
@@ -9,27 +9,27 @@ in the source code of PSCF:
 
 \section file_section Files
 
-  - Header files name use file extension *.h and source (implementation) files use *.cpp. 
+  - Header files name use file extension *.h and source (implementation) files use *.cpp.
 
-  - Write one public class per file. 
+  - Write one public class per file.
 
   - The base name of the header and implementation files should be the class name: The header and source files for a class named MyClass should be MyClass.h and MyClass.cpp.
 
   - Place the header and source file for each class in the same directory.
 
-  - Use header guards in all header files. 
+  - Use header guards in all header files.
 
 \section name_section Symbol Names
 
-  -  Names of functions and variables are lower case camel, as in "myVariable" or "myData".  
+  -  Names of functions and variables are lower case camel, as in "myVariable" or "myData".
 
-  -  Names of user-defined types (class, typedef, and enum) and namespaces are upper case camel, as in "MyClass" or "Util". 
+  -  Names of user-defined types (class, typedef, and enum) and namespaces are upper case camel, as in "MyClass" or "Util".
 
   -  Names of class member variable (other than static constants) must end with a trailing underscore, like "data_" or "outputFile_". All such variables are private or (occasionally) protected.
 
   -  Static constant class member variable names are upper case camel, as in "MaxDimension". These may be public.
 
-  -  Use plural nouns for names of arrays and other containers. An array of Atom objects might thus be named "atoms", or "atoms_" if it is a class member. 
+  -  Use plural nouns for names of arrays and other containers. An array of Atom objects might thus be named "atoms", or "atoms_" if it is a class member.
 
   -  Names of pointer variables end with a suffix Ptr.  A local Atom* pointer variable within a function might thus be called "atomPtr". An Atom* pointer class member variable might be called "atomPtr_". Do not use this convention for pointers that point at C arrays (and avoid bare C-arrays): The suffix "Ptr" denotes a pointer that will point at a single object.
 
@@ -37,7 +37,7 @@ in the source code of PSCF:
 
   - Use the same parameter names in the declaration of a function and in the corresponding definition.
 
-  - Names of functions that are not simple accessors (discussed below) should generally be verbs. 
+  - Names of functions that are not simple accessors (discussed below) should generally be verbs.
 
   - The name of a "setter" class member function that is passed a value for a member variable should begin with the prefix "set".  The name of the function parameter that holds the new value should be the same as the name of the member variable, without any trailing underscore. The same convention is used whether the value is passed by value or by reference. For example:
 \code
@@ -81,7 +81,7 @@ namespace Util
    class SillyClass : public Base
    {
       \\ ....
-   } 
+   }
 
 }
 #endif
@@ -105,7 +105,7 @@ namespace Util
       for (int i = 0; i < max; ++i) {
          param1++;
       }
-   
+
       if (param1 > 0) {
          return 0;
       } else {
@@ -116,13 +116,13 @@ namespace Util
 
   - For one-line functions, the function definition may be given on a single line, like this:
 \code
-   inline int SillyClass::data() 
+   inline int SillyClass::data()
    {  return data_; }
 \endcode
 
-  - Set off the operators  =, ==, <, >, +, and - by one space on either side.  Multipication (*) and division (/) operators may or may not be set off by white space. Make occasional exceptions to avoid line wraps. 
+  - Set off the operators  =, ==, <, >, +, and - by one space on either side.  Multipication (*) and division (/) operators may or may not be set off by white space. Make occasional exceptions to avoid line wraps.
 
-  - Use one space to separate keywords, parentheseses, and opening braces in conditional statements. Use one space after each semi-colon in for-loop statements, and one space after each comma in function parameter lists. 
+  - Use one space to separate keywords, parentheseses, and opening braces in conditional statements. Use one space after each semi-colon in for-loop statements, and one space after each comma in function parameter lists.
 
   - Do not follow opening parentheses or precede closing parentheses by a space. Do not add whitespace space before commas or semicolons.
 
@@ -132,14 +132,14 @@ namespace Util
 
   - Consecutive function declarations or definitions within a file, along with associated documentation blocks, should be separated by a single blank line.
 
-  - In class definitions, align "public:", "protected:", and "private:" declarations with the beginning of the class definition statement, and with the closing brace. List public members first, then protected, then private.  
-Within each block, list data members first, then methods.  
+  - In class definitions, align "public:", "protected:", and "private:" declarations with the beginning of the class definition statement, and with the closing brace. List public members first, then protected, then private.
+Within each block, list data members first, then methods.
 
   - List any friend declarations at the end of a class definition in a "pseudo-block" that is preceded by a comment "//friends:" on a line by itself, after the private members.  The "//friends:" comment should be aligned with "public:" and "private:" declarations.
 
-  - Inline method definitions should be given outside the class definition, within the header file. The word "inline" should be added to the function definition, but not the function declaration. 
- 
-  - Example (with doxygen documentation):  
+  - Inline method definitions should be given outside the class definition, within the header file. The word "inline" should be added to the function definition, but not the function declaration.
+
+  - Example (with doxygen documentation):
 \verbatim
 #ifndef UTIL_SILLY_CLASS_H
 #define UTIL_SILLY_CLASS_H
@@ -152,15 +152,15 @@ namespace Util
    */
    class SillyClass : public Base
    {
-   
+
    public:
- 
+
       /**
       * The first method.
       *
       * \param param1 a globble
-      * \param param2 a gloob 
-      */ 
+      * \param param2 a gloob
+      */
       int method1(int param1, double param2);
 
       /**
@@ -176,22 +176,22 @@ namespace Util
       Buddy& buddy();
 
    private:
-   
+
       int      data1_;
       Buddy* buddyPtr_;
-   
+
    //friends:
-   
+
       friend class Buddy;
-   
+
    };
 
    // Inline methods
 
-   inline const Buddy& SillyClass::buddy() const 
+   inline const Buddy& SillyClass::buddy() const
    {  return *buddyPtr_; }
 
-   inline Buddy& SillyClass::buddy() 
+   inline Buddy& SillyClass::buddy()
    {  return *buddyPtr_; }
 
 }
@@ -203,7 +203,7 @@ namespace Util
 PSCF uses the doxygen (www.doxygen.org) utility to create html documentation from documentations blocks that are extracted from the source code. Doxygen will extracts any multi-line comment that begin with a slash and two asterisks ("/**"), or single line comments that begin with three slashes ("///"), like this:
 \verbatim
 
-   /** 
+   /**
    * This comment will be extracted by doxygen (note the extra asterisk)
    */
 
@@ -216,9 +216,9 @@ PSCF uses the doxygen (www.doxygen.org) utility to create html documentation fro
    // Nor will this one.
 
 \endverbatim
-Comments within functions that you do not wish to be extracted by doxygen should use the usual form for C comments, using only a single asterisk for multi-line comments or only two slashes for for single line comments. 
+Comments within functions that you do not wish to be extracted by doxygen should use the usual form for C comments, using only a single asterisk for multi-line comments or only two slashes for for single line comments.
 
-  - Create dOxygen documentation blocks for public and protected named quantities, i.e., all classes, public and protected member functions, protected member variables, namespaces, global functions, typedefs, enums, and constants. 
+  - Create dOxygen documentation blocks for public and protected named quantities, i.e., all classes, public and protected member functions, protected member variables, namespaces, global functions, typedefs, enums, and constants.
 
   - The doxygen documentation block for a class should appear immediately above the first line of the class definition.
 
@@ -227,17 +227,17 @@ Comments within functions that you do not wish to be extracted by doxygen should
   - Prefer doxygen multiline comments for documentation of classes and class member functions.
 
   - Document all parameters of public and protected functions, using the dOxygen param keyword.
-  
+
   - The documentation for every class and public or protected function should begin with a brief single-sentence synopsis, which must end with a period and be followed by a blank line. This brief description is often sufficient. If needed, more detailed discussion may be given in one or more subsequent paragraphs, separated by blank lines.
 Example:
 \verbatim
 
    /**
-   * Align the universe. 
+   * Align the universe.
    *
    * This is a longer discussion of what the method does, and of how and
    * why it does it. It may also contain a discussion of assumptions, and
-   * of the algorithm. 
+   * of the algorithm.
    *
    * A longer discussion may contain two or more paragraphs, separated by
    * blank lines.
@@ -255,7 +255,7 @@ Example:
   - Do not use doxygen-style comments for the function definitions (implementations), when the definition is given outside the class definition. Use a conventional C/C++ comment format (with one asterisk or two slashes) above each function definition, like this:
 \verbatim
 
-   /* 
+   /*
    * Brief reminder of purpose. Possibly comments on implementation.
    */
    void MyClass:myFunction(int param)
@@ -267,7 +267,7 @@ Example:
 
 \section interface_section Interface Design
 
-  - All nonstatic class member variables should be private or (occassionally) protected.  
+  - All nonstatic class member variables should be private or (occassionally) protected.
 
   - Pass and return primitive C/C++ data types by value.  Pass primitive data types to functions by non-const reference only when they must be modified within the function.
 
@@ -275,8 +275,8 @@ Example:
 
   - Prefer references over pointers as function parameters. Pass pointers to functions only if: i) a null value for the pointer is a meaningful possibility, or ii) the pointer contains an address that must be re-assigned within the function.
 
-  - Prefer references over pointers as function return values. Return a pointer only if a null pointer is a meaningful possibility.  
-  - Practice strict "const correctness".  Mark function parameters and class member functions as const whenever possible. 
+  - Prefer references over pointers as function return values. Return a pointer only if a null pointer is a meaningful possibility.
+  - Practice strict "const correctness".  Mark function parameters and class member functions as const whenever possible.
 
   - Read-only access to a member variable of primitive type should be provided (when needed) by an accessor function that returns the member variable by value.  Read-only access to an object (class instance) that is owned by a class may be provided by an accessor function that returns the object by const reference. Read-write access to an object may be provided by an accessor that returns the object by non-const reference. Simple accessors that return by value or const references should be marked const.  For example, if a class has an int member variable data_ and a member object_ that is an instance of class Object, you might consider providing any or (none) of the following methods:
 \code
@@ -304,10 +304,10 @@ Example:
   - Providing an accessor function that returns a non-const reference to a member object is equivalent to making the member public, and should be used when this is what is desired. Do not simply make the data member public. For example, the McMd::Atom and McMd::McSimulation classes provide the following methods:
 \code
 
-   Util::Vector& Atom::position() 
+   Util::Vector& Atom::position()
    {  return system_; }
 
-   McMd::McSystem& McMd::McSimulation::system() 
+   McMd::McSystem& McMd::McSimulation::system()
    {  return system_; }
 
 \endcode
@@ -321,13 +321,13 @@ These provide pseudo-public access to the position of an Atom (represented as a 
 
   - Write access to a class instance may sometimes instead be provided by an explicit "set" function. The use of a set function is preferable when one needs to check preconditions or carry out operations necessary to guarantee data validity.
 
-\section data_section Data Structures 
+\section data_section Data Structures
 
   - Use the C++ iostream classes for all file IO. For consistency, avoid the C fscan() and fprint() methods. Use the wrapper classes in the src/format directory to simplify coding of formatted output to ostreams.
 
   - Use std::string to represent character strings whenever possible.
 
-  - Prefer the array container templates in src/util/containers over bare C arrays and STL containers. STL containers such as std::vector should be used when their is a need for their resizability. Our preference for the home-brewed containers is based on the fact that: 
+  - Prefer the array container templates in src/util/containers over bare C arrays and STL containers. STL containers such as std::vector should be used when their is a need for their resizability. Our preference for the home-brewed containers is based on the fact that:
     <ul>
     <li> The home-brewed containers provide optional bounds checking, which is enabled only when NDEBUG is not defined. </li>
     <li> Unlike std::vector, the home-brewed array classes are not automatically resizable, and so will never be silently moved to a new location in memory.
@@ -336,9 +336,9 @@ The lack of resizability is essential for algorithms that store pointers to part
 
 \section header_section Header File Includes
 
-  - In header files, use forward class declarations rather than including class headers when possible.  Forward declarations are sufficient for classes or class templates that used only in function declarations (as parameter or return types) or in the declaration of types for pointer member variables. Header files are generally necessary for base classes, member objects, and classes that are used in the implementation of inline functions. 
-  
-  - Header files that provide information required in another C++ file should normally be included explicitly, even if they would be indirectly included via another included header file. Reliance on indirect inclusion is fragile, and explicit inclusion helps document the dependency. Exceptions are: 
+  - In header files, use forward class declarations rather than including class headers when possible.  Forward declarations are sufficient for classes or class templates that used only in function declarations (as parameter or return types) or in the declaration of types for pointer member variables. Header files are generally necessary for base classes, member objects, and classes that are used in the implementation of inline functions.
+
+  - Header files that provide information required in another C++ file should normally be included explicitly, even if they would be indirectly included via another included header file. Reliance on indirect inclusion is fragile, and explicit inclusion helps document the dependency. Exceptions are:
        <ul>
        <li> A class implementation file MyClass.cpp may rely on indirect inclusion of header files that are included by the corresponding header file MyClass.h </li>
        <li> A derived class may sometimes rely on indirect inclusion of header files that are included by a base class. </li>
@@ -351,9 +351,9 @@ The lack of resizability is essential for algorithms that store pointers to part
 
 \section error_section Error Handling
 
-  - Include the file <util/global.h> in all files that use C assert() statements or that can throw exceptions. This automatically includes the "Exception.h" and "Log.h" header files, defines the UTIL_THROW(..) macro that is used to throw exceptions, and enables assert() statements if UTIL_DEBUG is defined, 
+  - Include the file <util/global.h> in all files that use C assert() statements or that can throw exceptions. This automatically includes the "Exception.h" and "Log.h" header files, defines the UTIL_THROW(..) macro that is used to throw exceptions, and enables assert() statements if UTIL_DEBUG is defined,
 
-  - For checks that are intended only for debugging, use C assert() statements or enclose the test in a ifndef UTIL_DEBUG .... endif conditional compilation block. 
+  - For checks that are intended only for debugging, use C assert() statements or enclose the test in a ifndef UTIL_DEBUG .... endif conditional compilation block.
 
   - Use the UTIL_THROW macro defined in src/util/global.h to throw Exception objects for all errors, except those caught in debugging mode by C assert() statements.  Like the standard assert() macro, this macro prints a message and showing the file and line number from which an Exception is thrown, as an aid to debugging.
 

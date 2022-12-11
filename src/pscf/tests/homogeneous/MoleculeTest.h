@@ -5,6 +5,7 @@
 #include <test/UnitTestRunner.h>
 
 #include <pscf/homogeneous/Molecule.h>
+#include <util/misc/Log.h>
 
 #include <fstream>
 
@@ -31,7 +32,6 @@ public:
 
    void testReadWrite() {
       printMethod(TEST_FUNC);
-      printEndl();
 
       Homogeneous::Molecule molecule;
       std::ifstream in;
@@ -44,7 +44,10 @@ public:
       TEST_ASSERT(molecule.clump(1).monomerId() == 1);
       TEST_ASSERT(eq(molecule.clump(1).size(), 3.0));
       TEST_ASSERT(eq(molecule.size(), 5.0));
-      molecule.writeParam(std::cout) ;
+      if (verbose() > 0) {
+         printEndl();
+         molecule.writeParam(Log::file());
+      }
    }
 
    void testSetters()

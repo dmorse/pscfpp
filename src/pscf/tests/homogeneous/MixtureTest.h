@@ -8,6 +8,7 @@
 #include <pscf/homogeneous/Molecule.h>
 #include <pscf/inter/Interaction.h>
 #include <util/containers/DArray.h>
+#include <util/misc/Log.h>
 
 #include <fstream>
 
@@ -20,12 +21,13 @@ class MixtureTest : public UnitTest
 public:
 
    void setUp()
-   {}
+   {
+      //setVerbose(1);
+   }
 
    void tearDown()
    {}
 
-  
    void testConstructor()
    {
       printMethod(TEST_FUNC);
@@ -34,7 +36,6 @@ public:
 
    void testReadWrite() {
       printMethod(TEST_FUNC);
-      printEndl();
 
       Homogeneous::Mixture mixture;
       std::ifstream in;
@@ -54,12 +55,15 @@ public:
       TEST_ASSERT(mixture.molecule(1).nClump() == 1);
       TEST_ASSERT(mixture.molecule(1).clump(0).monomerId() == 0);
       TEST_ASSERT(eq(mixture.molecule(1).clump(0).size(), 1.0));
-      mixture.writeParam(std::cout) ;
+
+      if (verbose() > 0) {
+         printEndl();
+         mixture.writeParam(Log::file());
+      }
    }
 
    void testSetComposition() {
       printMethod(TEST_FUNC);
-      printEndl();
 
       Homogeneous::Mixture mixture;
       std::ifstream in;
@@ -81,7 +85,6 @@ public:
 
    void testComputeMu() {
       printMethod(TEST_FUNC);
-      printEndl();
 
       Homogeneous::Mixture mixture;
       std::ifstream in;
@@ -114,19 +117,14 @@ public:
       w0 = mixture.c(1)*chi;
       w1 = mixture.c(0)*chi;
       mu0 = log(0.6) + w0*2.0 + w1*3.0 + xi*5.0;
-      //std::cout << "Mu(0) = " << mixture.mu(0) << std::endl;
-      //std::cout << "Mu(0) = " << mu0 << std::endl;
       TEST_ASSERT(eq(mixture.mu(0), mu0));
       mu1 = log(0.4) + w0*1.0 + xi*1.0;
-      //std::cout << "Mu(1) = " << mixture.mu(1) << std::endl;
-      //std::cout << "Mu(1) = " << mu1 << std::endl;
       TEST_ASSERT(eq(mixture.mu(1), mu1));
 
    }
 
    void testComputePhi() {
       printMethod(TEST_FUNC);
-      printEndl();
 
       Homogeneous::Mixture mixture;
       std::ifstream in;
@@ -168,8 +166,11 @@ public:
       TEST_ASSERT(eq(mixture.mu(1), mu[1]));
 
       mixture.computeFreeEnergy(interaction);
-      std::cout << "fHelmholtz = " << mixture.fHelmholtz() << "\n";
-      std::cout << "pressure   = " << mixture.pressure() << "\n";
+      if (verbose() > 0) {
+         printEndl();
+         Log::file() << "fHelmholtz = " << mixture.fHelmholtz() << "\n";
+         Log::file() << "pressure   = " << mixture.pressure() << "\n";
+      }
    }
 
 };

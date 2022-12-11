@@ -26,8 +26,8 @@ System{
     groupName     P_-1
   }
   Iterator{
-    maxItr     150
     epsilon    1.0e-12
+    maxItr     150
     maxHist    50
     isFlexible   1
   }

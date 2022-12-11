@@ -1,21 +1,23 @@
-/*! \page user_page 3 User Guide
+/*! \page user_page User Guide
 
 \ref install_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref developer_page (Next)
 <BR>
 
 <h2> Contents:</h2>
-   <ul style="list-style: none;">
-   <li> \subpage user_files_page   </li>
-   <li> \subpage user_usage_page   </li>
-   <li> \subpage user_param_page   </li>
-   <li> \subpage user_command_page </li>
-   <li> \subpage user_example_page </li>
-   <li> \subpage user_field_page   </li>
-   <li> \subpage user_unitcell_page  </li>
-   <li> \subpage user_groups_page  </li>
+   <ol>
+   <li> \subpage user_model_page    </li>
+   <li> \subpage user_files_page    </li>
+   <li> \subpage user_usage_page    </li>
+   <li> \subpage user_param_page    </li>
+   <li> \subpage user_command_page  </li>
+   <li> \subpage user_example_page  </li>
+   <li> \subpage user_field_page    </li>
+   <li> \subpage user_unitcell_page </li>
+   <li> \subpage user_groups_page   </li>
    <li> \subpage user_thin_films_page   </li>
-   </ul>
+   <li> \subpage user_theory_page   </li>
+   </ol>
 
 <BR>
 \ref install_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

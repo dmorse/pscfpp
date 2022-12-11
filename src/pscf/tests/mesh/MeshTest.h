@@ -19,14 +19,15 @@ class MeshTest : public UnitTest
 public:
 
    void setUp()
-   {}
+   {
+      // setVerbose(1);
+   }
 
    void tearDown()
    {}
  
    void test3DMesh() {
       printMethod(TEST_FUNC);
-      printEndl();
 
       Mesh<3> mesh;
       IntVec<3> d;
@@ -43,15 +44,18 @@ public:
       IntVec<3> q = mesh.position(rank);
       TEST_ASSERT(q == p);
 
-      //std::cout << "position = " << p << std::endl;
-      //std::cout << "rank     = " << rank << std::endl;
-      //std::cout << "position = " << q << std::endl;
+      if (verbose() > 0) {
+         printEndl();
+         std::cout << "position = " << p << std::endl;
+         std::cout << "rank     = " << rank << std::endl;
+         std::cout << "position = " << q << std::endl;
+      }
 
    }
 
-   void test3DMeshAssign() {
+   void test3DMeshAssign() 
+   {
       printMethod(TEST_FUNC);
-      printEndl();
 
       // Make reference mesh
       IntVec<3> d;
@@ -87,16 +91,20 @@ public:
 
    }
 
-   void test3DMeshIO() {
+   void test3DMeshIO() 
+   {
       printMethod(TEST_FUNC);
-      printEndl();
 
       Mesh<3> mesh;
       std::ifstream in;
       openInputFile("in/mesh3D", in);
       in >> mesh;
       in.close();
-      std::cout << mesh << std::endl;
+
+      if (verbose() > 0) {
+         printEndl();
+         std::cout << mesh << std::endl;
+      }
    }
 
 };

@@ -15,7 +15,7 @@
 #include <util/global.h>
 
 namespace Pscf {
-namespace Pspg{
+namespace Pspg {
 
    using namespace Util;
 
@@ -38,6 +38,9 @@ namespace Pspg{
       AmIteratorTmpl<Iterator<D>,FieldCUDA>::readParameters(in);
       AmIteratorTmpl<Iterator<D>,FieldCUDA>::readErrorType(in);
 
+      // Allocate local modified copy of Interaction class
+      interaction_.setNMonomer(system().mixture().nMonomer());
+
       // Default parameter values
       isFlexible_ = 0;
       scaleStress_ = 10.0;
@@ -47,7 +50,17 @@ namespace Pspg{
       readOptional(in, "scaleStress", scaleStress_);
    }
 
-   // Virtual functions used to implement AM algorithm
+   // Protected virtual function
+
+   // Setup before entering iteration loop
+   template <int D>
+   void AmIteratorGrid<D>::setup(bool isContinuation)
+   {
+      AmIteratorTmpl<Iterator<D>, FieldCUDA>::setup(isContinuation);
+      interaction_.update(system().interaction());
+   }
+
+   // Private virtual functions used to implement AM algorithm
 
    template <int D>
    void AmIteratorGrid<D>::setEqual(FieldCUDA& a, FieldCUDA const & b)
@@ -77,73 +90,6 @@ namespace Pspg{
       cudaReal max = gpuMaxAbs(a.cDField(), n);
       return (double)max;
    }
-
-   #if 0
-   template <int D>
-   double AmIteratorGrid<D>::norm(FieldCUDA const & a) 
-   {
-      const int n = a.capacity();
-      double normResSq;
-      normResSq = (double)gpuInnerProduct(a.cDField(), a.cDField(), n);
-      return sqrt(normResSq);
-   }
-
-   template <int D>
-   double 
-   AmIteratorGrid<D>::computeUDotProd(RingBuffer<FieldCUDA> const & resBasis, 
-                                  int n, int m)
-   {
-      const int n = resBasis[n].capacity();
-      UTIL_CHECK(resBasis[m].capacity() == n);
-      return (double)gpuInnerProduct(resBasis[n].cDField(),
-                                     resBasis[m].cDField(), 
-                                     resBasis[n].capacity());
-   }
-
-   template <int D>
-   double AmIteratorGrid<D>::computeVDotProd(FieldCUDA const & resCurrent, 
-                                       RingBuffer<FieldCUDA> const & resBasis, 
-                                       int m)
-   {
-      return (double)gpuInnerProduct(resCurrent.cDField(), 
-                                     resBasis[m].cDField(), 
-                                     resCurrent.capacity());
-   }
-
-   template <int D>
-   void AmIteratorGrid<D>::updateU(DMatrix<double> & U, 
-                               RingBuffer<FieldCUDA> const & resBasis, 
-                               int nHist)
-   {
-      // Update matrix U by shifting elements diagonally
-      int maxHist = U.capacity1();
-      for (int m = maxHist-1; m > 0; --m) {
-         for (int n = maxHist-1; n > 0; --n) {
-            U(m,n) = U(m-1,n-1); 
-         }
-      }
-
-      // Compute U matrix's new row 0 and col 0
-      for (int m = 0; m < nHist; ++m) {
-         double dotprod = computeUDotProd(resBasis,m,0);
-         U(m,0) = dotprod;
-         U(0,m) = dotprod;
-      }
-   }
-
-   template <int D>
-   void AmIteratorGrid<D>::updateV(DArray<double> & v, 
-                               FieldCUDA const & resCurrent, 
-                               RingBuffer<FieldCUDA> const & resBasis, 
-                               int nHist)
-   {
-      // Compute U matrix's new row 0 and col 0
-      // Also, compute each element of v_ vector
-      for (int m = 0; m < nHist; ++m) {
-         v[m] = computeVDotProd(resCurrent,resBasis,m);
-      }
-   }
-   #endif
 
    template <int D>
    void AmIteratorGrid<D>::updateBasis(RingBuffer<FieldCUDA> & basis, 
@@ -282,19 +228,19 @@ namespace Pspg{
             pointWiseAddScale<<<nBlocks, nThreads>>>
                 (resid.cDField() + startIdx,
                  system().c().rgrid(j).cDField(),
-                 system().interaction().chi(i, j),
+                 interaction_.chi(i, j),
                  nMesh);
             pointWiseAddScale<<<nBlocks, nThreads>>>
                 (resid.cDField() + startIdx,
                  system().w().rgrid(j).cDField(),
-                 -system().interaction().idemp(i, j),
+                 -interaction_.p(i, j),
                  nMesh);
          }
       }
 
       // If ensemble is not canonical, account for incompressibility. 
       if (!system().mixture().isCanonical()) {
-         cudaReal factor = 1/(cudaReal)system().interaction().sum_inv();
+         cudaReal factor = 1/(cudaReal)interaction_.sumChiInverse();
          for (int i = 0; i < nMonomer; ++i) {
             subtractUniform<<<nBlocks, nThreads>>>(resid.cDField() + i*nMesh,
                                                    factor, nMesh);
@@ -349,7 +295,7 @@ namespace Pspg{
             for (int j = 0; j < nMonomer; j++) {
                // Find average concentration for j monomers
                cAverage = findAverage(system().c().rgrid(j).cDField(), nMesh);
-               wAverage += system().interaction().chi(i,j) * cAverage;
+               wAverage += interaction_.chi(i,j) * cAverage;
             }
             addUniform<<<nBlocks, nThreads>>>(newGuess.cDField() + i*nMesh, 
                                               wAverage, nMesh); 

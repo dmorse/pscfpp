@@ -38,6 +38,9 @@ namespace Pspg{
       AmIteratorTmpl<Iterator<D>,DArray<double> >::readParameters(in);
       AmIteratorTmpl<Iterator<D>,DArray<double> >::readErrorType(in);
 
+      // Allocate local modified copy of Interaction class
+      interaction_.setNMonomer(system().mixture().nMonomer());
+
       // Default parameter values
       isFlexible_ = 0;
       scaleStress_ = 10.0;
@@ -47,10 +50,25 @@ namespace Pspg{
       readOptional(in, "scaleStress", scaleStress_);
    }
 
-   // -- Virtual functions used to implement AM mixing algorithm --  //
+   // -- Protected virtual function -- //
+
+   // Setup before entering iteration loop
+   template <int D>
+   void AmIteratorBasis<D>::setup(bool isContinuation)
+   {
+      // Setup by AM algorithm
+      AmIteratorTmpl<Iterator<D>, DArray<double> >::setup(isContinuation);
+
+      // Update chi matrix and related properties in member interaction_
+      interaction_.update(system().interaction());
+   }
+
+
+   // -- Private virtual functions used to implement AM algorithm --  //
 
    template <int D>
-   void AmIteratorBasis<D>::setEqual(DArray<double>& a, DArray<double> const & b)
+   void AmIteratorBasis<D>::setEqual(DArray<double>& a, 
+                                     DArray<double> const & b)
    {  a = b; }
 
    template <int D>
@@ -294,8 +312,8 @@ namespace Pspg{
             for (int k = 0; k < nBasis; ++k) {
                int idx = i*nBasis + k;
                resid[idx] +=
-                  system().interaction().chi(i,j)*system().c().basis(j)[k] -
-                  system().interaction().idemp(i,j)*system().w().basis(j)[k];
+                  interaction_.chi(i,j)*system().c().basis(j)[k] -
+                  interaction_.p(i,j)*system().w().basis(j)[k];
             }
          }
       }
@@ -303,7 +321,7 @@ namespace Pspg{
       // If not canonical, account for incompressibility
       if (!system().mixture().isCanonical()) {
          for (int i = 0; i < nMonomer; ++i) {
-            resid[i*nBasis] -= 1.0/system().interaction().sum_inv();
+            resid[i*nBasis] -= 1.0/interaction_.sumChiInverse();
          }
       } else {
          // Explicitly set homogeneous residual components
@@ -358,7 +376,7 @@ namespace Pspg{
             wField[i][0] = 0.0; // initialize to 0
             for (int j = 0; j < nMonomer; ++j) {
                wField[i][0] +=
-                 system().interaction().chi(i,j) * system().c().basis(j)[0];
+                 interaction_.chi(i,j) * system().c().basis(j)[0];
             }
          }
       }

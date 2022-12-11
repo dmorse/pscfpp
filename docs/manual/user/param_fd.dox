@@ -1,4 +1,4 @@
-/*! \page user_param_fd_page 3.3.6 pscf_fd (1D Problems)
+/*! \page user_param_fd_page Parameter File - pscf_fd
 
 \ref user_param_sweep_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_param_pc_page     (Next)
@@ -15,6 +15,8 @@ An example of a parameter file for an pscf_fd program was given
 \ref user_param_example_page "previously" as an example of the syntax.
 Please consult this example when looking at this discussion of the file
 format.
+
+\section user_param_fd_format_sec File Format
 
 The overall format for a pscf_fd parameter file is shown below in 
 skeleton form:
@@ -53,10 +55,56 @@ the Domain block for a simulation of a spherical micelle
 This example omits an optional parameter xMin that, when present, would
 appear immediately before xMax.
 
-The value of the mode parameter is an enumuration that specifies the 
-coordinate system. The allowed values for the value of this parameter
-"planar", "cylindrical" or "spherical". 
+The full format for the Domain block is
+\code
+  Domain{
+    mode*  enumeration ("planar", "cylindrical" or "spherical", "planar" by default)
+    xMin*  real (optional, 0 by default)
+    xMax   real
+    nx     int
+  }
+\endcode
+The meaning of the various parameters are given in tabular form below 
+<table>
+  <tr>
+    <td> <b> Label </b>  </td>
+    <td> <b> Description </b>  </td>
+  </tr>
+  <tr>
+    <td> mode* </td>
+    <td> enumeration ("planar", "cylindrical" or "spherical", "planar" by default)
+    </td>
+  </tr>
+  <tr>
+    <td> xMin* </td>
+    <td> 
+    Lower bound of coordinate domain. Optional and 0.0 by default.  </td>
+  </tr>
+  <tr>
+    <td> xMax </td>
+    <td> Upper bound of coordinate domain. </td>
+  </tr>
+  <tr>
+    <td> nx </td>
+    <td> Number of grid points used to discretize the domain. </td>
+  </tr>
+</table>
 
+Each parameter is discussed in more detail below:
+
+<b> mode </b>:
+The value of the optional "mode" parameter is an enumuration that specifies 
+the coordinate system.  The allowed input values for this parameter are the
+strings "planar", "cylindrical" or "spherical". Mode "planar" indicates a 
+Cartesian coordinate system appropriate to membrane or thin film, in which 
+the coordinate is measured normal to the film. Mode "cylindrical" indicates 
+a cylindrical coordinate system for a system with cylindrical rotational
+symmetry, in which the coordinate represents distance from an axis of
+rotation. Mode "spherical" indicates a spherical coordinate system for a 
+system with spherical symmetry, in which the coordinate represents distance 
+from the origin. 
+
+<b> xMin and xMax </b>:
 The parameters xMin and xMax specify the minimum and maximum values of
 the relevant spatial coordinate. The parameter xMin is optional, and is
 set to 0.0 default when the parameter is omitted.  In "planar" mode, 
@@ -64,25 +112,30 @@ xMin and xMax are the minimum and maximum values of a Cartesian
 coordinate, defining a slit bounded bounded by constant values of this 
 coordinate. In "cylindrical" and "spherical" mode, these are minimum 
 and maximum values of a radial coordinate. In cylindrical or spherical
-mode, xMin can be omitted to define a simply connected circular or 
-spherical domain of radius equal to xMax, or included and assigned a
-positive value to define a cylindrical or spherical annular region of
-inner radius xMin and outer radius xMax.
+mode, omitting xMin defines a simply connected circular or spherical 
+domain of radius equal to xMax that includes the origin.
+If the parameter xMin is present and is assigned a positive value less
+than xMax, the problem will be solved in a cylindrical or spherical 
+annular region of inner radius xMin and outer radius xMax.
 
+<b> nx </b>:
 The parameter nx specifies the number of equally spaced grid points 
 that will be used to discretize the spatial domain. Because this 
-includes both end-points, the number of grid points is is one greater 
+includes both end-points, the number of grid points is one greater 
 than the number of spatial steps. The distance between grid points in
 the underlying finite difference discretization, denoteed by dx, is 
 thus given by dx = (xMax - xMin)/(nx-1). 
 
-The pscf_fd program solves the modified diffusion equation subject to 
-von Neumann boundary conditions that require derivatives with respect 
-to the relevant Cartesian or radial normal coordinate must vanish at 
-the lower and upper bounds, xMin and xMax. In the special case of a 
-cylindrical or spherical geometry, for which xMin = 0.0, the requirement
-of a vanishing radial derivative at x=0 is necessary to guarantee that
-the solution is differential at the origin. 
+<b> Boundary Conditions </b>
+
+The pscf_fd program solves the modified diffusion equation subject 
+to von Neumann boundary conditions that require derivatives of the 
+propagators and concentration fields with respect to the relevant 
+Cartesian or radial normal coordinate must vanish at the lower and 
+upper bounds, xMin and xMax. In the special case of a cylindrical 
+or spherical geometry, for which xMin = 0.0, the requirement of a 
+vanishing radial derivative at x=0 is necessary to guarantee that 
+the gradient vector is continuous at the origin. 
 
 \section user_param_fd_iterator_sec Iterators
 
@@ -95,22 +148,26 @@ iterator, it may be chosen by including an iterator block in which the
 first line contains either the generic label "Iterator" or the specific 
 class name "NrIterator".  
 
-The only other iterator currently provided for us in pscf_fd is a simple
-relaxation iterator for systems with only two types of monomer. This
-iterator uses the algorithm presented by F. Drolet and G.H. Fredrickson
-and is implemented by a class named FdIterator.
+The AmIterator class provides an Anderson-Mixing algorithm. Preliminary 
+tests indicate that this is generally more efficient than the Newton-Raphson
+iterator, with an advantage that increases rapidly with increasing number
+of grid points.
+
+The BinaryRelaxiterator class implements a simple relaxation iterator for 
+AB systems with only two types of monomer, as described by F. Drolet and 
+G.H. Fredrickson (Phys. Rev. Lett, vol 83, 4317, 1999). 
 
 More detailed documentation of the input format for each available iterator
 is given in the links in the table below:
 
 <table>
 <tr>
-<td> Class </td>
-<td> Description </td>
+<td> <b> Class </b> </td>
+<td> <b> Description </b> </td>
 </tr>
 <tr>
 <td> \subpage fd1d_NrIterator_page "NrIterator" </td>
-<td> Newton-Raphson iterator </td>
+<td> Newton-Raphson iterator (default) </td>
 </tr>
 <tr>
 <td> \subpage fd1d_AmIterator_page "AmIterator" </td>
@@ -119,19 +176,10 @@ is given in the links in the table below:
 <tr>
 <td> \subpage fd1d_BinaryRelaxIterator_page "BinaryRelaxIterator" </td>
 <td> Simple relaxation algorithm for AB (two monomer) systems, as 
-     described by Fredrickson and Drolet </td>
+     described by Drolet and Fredrickson. </td>
 </tr>
 </table>
 </table>
-This Newton-Raphson iterator requires only one input parameter, the real
-parameter epsilon, which gives the desired tolerance in the solution of 
-the SCF equations.  The iterative loop stops when the scalar error 
-(computed as the maximum absolute value of an element of the residual 
-vector) becomes less then epsilon. 
-
-The NrIterator parameter block is also described 
-\subpage fd1d_NrIterator_page
-"here". 
 
 \section user_param_fd_sweep_sec Sweep
 
