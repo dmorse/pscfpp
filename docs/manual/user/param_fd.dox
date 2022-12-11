@@ -167,7 +167,7 @@ is given in the links in the table below:
 </tr>
 <tr>
 <td> \subpage fd1d_NrIterator_page "NrIterator" </td>
-<td> Newton-Raphson iterator </td>
+<td> Newton-Raphson iterator (default) </td>
 </tr>
 <tr>
 <td> \subpage fd1d_AmIterator_page "AmIterator" </td>

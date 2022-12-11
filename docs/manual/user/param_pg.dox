@@ -40,12 +40,12 @@ can be found by following the links in the table below:
   <tr>
     <td> \subpage pspg_AmIteratorBasis_page "AmIteratorBasis" </td>
     <td> Anderson Mixing iterator for periodic structures, 
-         formulated using a symmetry-adapted basis.  </td>
+         formulated using a symmetry-adapted basis (default)  </td>
   </tr>
   <tr>
     <td> \subpage pspg_AmIteratorGrid_page "AmIteratorGrid" </td>
     <td> Anderson Mixing iterator for periodic structures, 
-         formulated using values defined a spatial grid.  </td>
+         formulated using values defined a spatial grid  </td>
   </tr>
 </table>
 
