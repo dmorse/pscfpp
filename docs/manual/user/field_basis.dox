@@ -1,7 +1,7 @@
 /*! \page user_field_basis_page Field File - Symmetrized Basis (Periodic)
 
- \ref user_field_page       (Prev / Up) &nbsp; &nbsp; &nbsp; &nbsp;
- \ref user_field_rgrid_page (Next)
+ \ref user_field_fd1d_page   (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
+ \ref user_field_rgrid_page  (Next)
 <BR>
 
 The basis file format is one of three formats used by the pscf_pc and
@@ -71,7 +71,7 @@ has been removed, as indicated by the vertical dots.
 \endcode
 <BR>
 
-\section user_field_basis_lamellar_sec Example: 1D Gyroid Phase 
+\section user_field_basis_lamellar_sec Example: 1D Lamellar Phase 
 
 Below is an example the c field file output for a small simulation of a
 centro-symmetric lamellar phase of a diblock copolymer melt:

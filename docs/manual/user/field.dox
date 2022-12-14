@@ -1,32 +1,70 @@
 /*! \page user_field_page Field Files
 
- \ref user_example_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_unitcell_page   (Next) 
+\ref user_example_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_unitcell_page   (Next) 
 <BR>
 
-Each PSCF program can read and write files that contain chemical potential
-and monomer volume fraction fields. Several different file formats are used
-to represent these fields and other quantities that can be expressed
-mathematically as functions of one or more spatial coordinates.  
+Among the commands that can be used to in the command file for any PSCF 
+program are commands to read and write files that contain a set monomer 
+chemical potential fields for all monomer types, or corresponding sets
+of monomer volume fraction fields. 
 
-The pscf_pcN and pscf_pgN, which are both designed to treat periodic 
-microstructures, both use file formats similar to those that were originally 
-created for the older Fortran PSCF program. These formats are described 
-in the first three subsection listed below.
+\section user_field_types_sec Field Types: W and C Fields
 
-The pscf_fd program for one-dimensional problems uses a simpler 
-\ref user_field_fd1d_page "file format" in which values of fields 
+The excess field chemical potential fields associated with monomer type 
+\f$ \alpha \f$ is denoted by \f$ w_{\alpha} \f$ in the PSCF documentation 
+of \ref user_theory_page "SCFT". Correspondingly, monomer chemical 
+potential fields are referred to through the PSCF source code and in
+the names of commands as "w fields". 
+
+The average volume fraction of monomers of type \f$ \alpha \f$ at position 
+\f$ {\bf r} \f$, denoted by \f$ \phi_{\alpha}({\bf r}) \f$, is related to 
+the average concentration of such monomers, denoted by 
+\f$ \langle c_{\alpha}({\bf r}) \rangle \f$, by a relation
+\f[
+    \phi_{\alpha}({\bf r}) = v \langle c_{\alpha}({\bf r}) \rangle 
+    \quad,
+\f]
+in which \f$ v \f$ is the monomer reference volume. Volume fractions are 
+thus computed as average concentrations non-dimensionalized by \f$ v \f$.
+Volume fraction fields are referred to throughout the PSCF source code and 
+in relevant command names as "c fields", where "c" denotes concentration.
+
+To solve a SCFT problem, a PSCF program must first read in an initial 
+guess for a set of w fields from an input file. After a self-consistent 
+solution is found, solutions for the resulting converged w and c fields 
+are usually written to different output files.
+
+\section user_field_formats_sec Field File Formats
+Every PSCF program uses files with the same format or formats for w and c 
+fields.  Different field file formats are used by different programs, and 
+some programs can read and write multiple file formats. In each such 
+file format, a single file contains a description of the w or c fields 
+associated with all monomer types.
+
+The pscf_fd program for one-dimensional problems uses a relatively simple 
+\ref user_field_fd1d_page "file format" that contains values of fields 
 specified at nodes of a regular one-dimensional grid. 
 
+The pscf_pcN and pscf_pgN programs are both designed to treat periodic 
+microstructures, and both use the same file formats. These programs can
+read and write several file formats similar to those that were originally 
+created for the older Fortran PSCF program.  A "basis" file format 
+contains a representation of each field as a linear superposition of
+symmetry-adapated basis functions that are invariant under all of the 
+elements of a specified space group. Two other formats contain 
+representation of the field defined on the nodes of a regular grid,
+using either values on the real-space grid (r-grid format) or values
+of the discrete Fourier transform (k-grid format). 
 
 <h2> Contents: </h2>
 Different field file formats are described in the pages linked below.
 
 <ol>
+  <li> \subpage user_field_fd1d_page   </li>
   <li> \subpage user_field_basis_page  </li>
   <li> \subpage user_field_rgrid_page  </li>
   <li> \subpage user_field_kgrid_page  </li>
-  <li> \subpage user_field_fd1d_page   </li>
 </ol>
 
  <BR>
