@@ -427,6 +427,11 @@ namespace Pspc
             readEcho(in, filename);
             readWRGrid(filename);
          } else
+         if (command == "ESTIMATE_W_FROM_C") {
+            readEcho(in, inFileName);
+            readEcho(in, outFileName);
+            estimateWfromC(inFileName);
+         } else
          if (command == "SET_UNIT_CELL") {
             UnitCell<D> unitCell;
             in >> unitCell;
@@ -470,7 +475,7 @@ namespace Pspc
             compute();
          } else
          if (command == "ITERATE") {
-            // Attempt iteration to convergence
+            // Attempt to iteratively solve a single SCFT problem
             bool isContinuation = false;
             int fail = iterate(isContinuation);
             if (fail) {
@@ -478,7 +483,8 @@ namespace Pspc
             }
          } else
          if (command == "SWEEP") {
-            // Do a series of iterations.
+            // Attempt to solve a sequence of SCFT problems along a path
+            // through parameter space
             sweep();
          } else
          if (command == "WRITE_W_BASIS") {
@@ -632,11 +638,6 @@ namespace Pspc
                    << std::endl;
             }
          } else
-         if (command == "GUESS_W_FROM_C") {
-            readEcho(in, inFileName);
-            readEcho(in, outFileName);
-            guessWfromC(inFileName, outFileName);
-         } else
          if (command == "COMPARE_BASIS") {
 
             // Get two filenames for comparison
@@ -671,8 +672,7 @@ namespace Pspc
             // Compare and output report
             compare(Rfield1, Rfield2);
 
-         } else
-         {
+         } else {
             Log::file() << "Error: Unknown command  " 
                         << command << std::endl;
             readNext = false;
@@ -1588,13 +1588,12 @@ namespace Pspc
    }
 
    /*
-   * Construct guess for omega (w-field) from rho (c-field).
+   * Construct estimate for w fields from c fields, by setting xi=0.
    *
-   * Modifies wFields and wFieldsRGrid and outputs wFields.
+   * Modifies wFields and wFieldsRGrid.
    */
    template <int D>
-   void System<D>::guessWfromC(std::string const & inFileName, 
-                               std::string const & outFileName)
+   void System<D>::estimateWfromC(std::string const & filename)
    {
       const int nm = mixture_.nMonomer();
       UTIL_CHECK(nm > 0);
@@ -1602,20 +1601,20 @@ namespace Pspc
       // If basis fields are not allocated, peek at field file header to 
       // get unit cell parameters, initialize basis and allocate fields.
       if (!isAllocatedBasis_) {
-         readFieldHeader(inFileName); 
+         readFieldHeader(filename); 
          allocateFieldsBasis();
       }
       const int nb = domain_.basis().nBasis();
       UTIL_CHECK(nb > 0);
 
       // Read c fields and set unit cell
-      domain_.fieldIo().readFieldsBasis(inFileName, tmpFieldsBasis_, 
+      domain_.fieldIo().readFieldsBasis(filename, tmpFieldsBasis_, 
                                         domain_.unitCell());
 
       DArray<double> wtmp;
       wtmp.allocate(nm);
 
-      // Compute w fields from c fields
+      // Compute estimated w fields from c fields
       int i, j, k;
       for (i = 0; i < nb; ++i) {
          for (j = 0; j < nm;  ++j) {
@@ -1629,10 +1628,8 @@ namespace Pspc
          }
       }
 
-      // Set initial guess, and write to file
+      // Store initial guess for w fields
       w_.setBasis(tmpFieldsBasis_);
-      domain_.fieldIo().writeFieldsBasis(outFileName, w_.basis(), 
-                                         domain_.unitCell());
 
       hasCFields_ = false;
       hasFreeEnergy_ = false;

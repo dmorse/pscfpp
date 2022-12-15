@@ -125,7 +125,7 @@ namespace Pspg
       void readCommands();
 
       //@}
-      /// \name State Modifiers (Modify W Fields & Unit Cell)
+      /// \name W Field Modifiers 
       //@{
 
       /**
@@ -207,12 +207,32 @@ namespace Pspg
       void symmetrizeWFields();
 
       /**
+      * Construct trial w-fields from c-fields.
+      *
+      * This function reads concentration fields in symmetrized basis 
+      * format and constructs an initial guess for corresponding chemical 
+      * potential fields by setting the Lagrange multiplier field xi to 
+      * zero. The result is stored in the system w field container.
+      *
+      * Upon return, w().hasData() and w().isSymmetric() are true, while 
+      * hasCFields() is false. 
+      *
+      * \param filename  name of input c-field file (basis format)
+      */
+      void estimateWfromC(const std::string& filename);
+   
+      //@}
+      /// \name Unit Cell Modifiers 
+      //@{
+
+      /**
       * Set parameters of the associated unit cell.
       *
       * The lattice system declared within the input unitCell must agree 
       * with Domain::lattice() on input if Domain::lattice() is not null. 
-      * The value returned by Domain::lattice() is normally set in the
-      * Domain block of the parameter file, and does not change thereafter.
+      * The value returned by Domain::lattice() is normally set in the 
+      * Domain block of the parameter file, and may not change after it
+      * is initialized.
       *
       * \param unitCell  new UnitCell<D> (i.e., new parameters)
       */
@@ -521,24 +541,6 @@ namespace Pspg
       void basisToKGrid(const std::string & inFileName, 
                         const std::string & outFileName);
   
-      /**
-      * Construct trial w-fields from c-fields.
-      *
-      * This function reads concentration fields in symmetrized basis 
-      * format and constructs an initial guess for corresponding chemical 
-      * potential fields by setting the Lagrange multiplier field xi to 
-      * zero. The resulting guess is stored in in basis and r-grid 
-      * formats and is also output to a file in basis format.
-      *
-      * Upon return, w().hasData() and w().isSymmetric() are true and 
-      * hasCFields() is false. 
-      *
-      * \param inFileName  name of input c-field file (in, basis format)
-      * \param outFileName  name of output w-field file (out, basis format)
-      */
-      void guessWfromC(const std::string& inFileName, 
-                       const std::string& outFileName);
-   
       //@}
       /// \name Member Accessors
       //@{

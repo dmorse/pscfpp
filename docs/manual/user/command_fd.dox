@@ -3,33 +3,82 @@
 \ref user_command_pc_page (Next) 
 <BR>
 
-Here is a example of a minimal command file for pscf_fd:
+
+\section user_command_fd_example_sec Example: SCFT Calculation
+
+Here is a example of a command file for a single SCFT calculation 
+performed with pscf_fd. The example assumes that an initial guess
+for the w field is located in a subdirectory of the current working
+directory named "in", and that all outputs will be written to files 
+in a subdirectory named "out". 
 \code
-ITERATE       in/w
+READ_W        in/w
+ITERATE       
 WRITE_W       out/w
 WRITE_C       out/c
 WRITE_PARAM   out/data
 WRITE_THERMO  out/data
 FINISH
 \endcode
-The command "ITERATE in/w" instructs the program to read the file 
-in/w, which contains an initial guess for the chemical potential 
-field, then iteratively solve the self-consistent field equations 
-start from this initial guess.  The command "WRITE_W out/w" 
-writes the resulting converged set of chemical potential fields to 
-the file out/w. The command "WRITE_C out/c" writes the 
-corresponding monomer volume fraction fields to the file out/c.
-The command WRITE_PARAM writes the parameter file for this solution
-to the file out/data, and the subsequent command WRITE_THERMO appends
-thermodynamic data of the converged solution to the end of out/data.
-The script stops execution when it encounters the FINISH ommand.
+The effect of each command in this example is described below:
 
-The following table shows a list of available commands for pscf_fd:
+  - The command "READ_W in/w" reads the file in/w, which contains an 
+    initial guess for the chemical potential field
+
+  - ITERATE runs an iterative solver that attempts to solve the
+    self-consistent field equations, starting from the initial guess
+
+  - "WRITE_W out/w" writes the resulting converged set of 
+    chemical potential fields to the file out/w. 
+
+  - "WRITE_C out/c" writes the corresponding monomer volume fraction 
+    fields to the file out/c.
+
+  - "WRITE_PARAM out/data" writes the parameter file for this solution 
+    to the file out/data, to provide a record of the input parameters 
+
+  - WRITE_THERMO appends information about thermodynamic properties of
+    of the converged solution to the end of out/data.
+
+  - FINISH instructs the program to stop execution
+
+All pscf_fd that read or write field files use the same field file 
+format, described \ref user_field_fd1d_page "here".  Every PSCF command 
+file should end with a FINISH command.
+
+\section user_command_fd_sweep_sec Example: A Sweep
+
+Here is an example of a command file to perform a sweep. The SWEEP 
+command can only be used if the parameter file that was read by pscf_fd 
+before reading this command file contains an appropriate Sweep block.
+\code
+READ_W    in/w
+SWEEP
+FINISH
+\endcode
+The command "READ_W_BASIS in/w.bf" instructs the program to read an 
+initial guess for the chemical potentials fields at the initial state 
+of the sweep (the state s=0) from the file in/w.bf.  
+The SWEEP command actually executes the sweep operation.
+
+The command file for a sweep generally does not require any of the 
+explicit output commands that are shown as part of the example for a 
+single SCFT calculation.  These output commands are unnecessary for
+a sweep because information about the solution at each step in the sweep 
+is instead automatically output as part of the implementation of the 
+sweep operation. Adding output command after the SWEEP command would 
+in any case only output information that describes the last state in 
+the sweep (i.e., about the state s=1). 
+
+\section user_command_fd_commands_sec Commands
+The following table shows a list of available commands for pscf_fd, along 
+with descriptions of any required parameters and the action initiated by 
+each command: 
 <table>
   <tr> 
     <td> <b>command     </b> </td>
     <td> <b>parameter(s)</b> </td>
-    <td> <b>description </b> </td>
+    <td> <b>action </b> </td>
   </tr>
   <tr> 
     <td> READ_W </td>
@@ -39,7 +88,7 @@ The following table shows a list of available commands for pscf_fd:
   </tr>
   <tr> 
     <td> ITERATE </td>
-    <td> filename [string] (conditional) </td>
+    <td> </td>
     <td> Iteratively solve SCFT equations (after reading initial w fields) </td>
   </tr>
   <tr> 

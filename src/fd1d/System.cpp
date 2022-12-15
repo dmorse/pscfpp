@@ -298,12 +298,17 @@ namespace Fd1d
             compute();
          } else
          if (command == "ITERATE") {
-            // Attempt iteration to convergence
+            // Attempt iteratively solve a single SCFT problem
             bool isContinuation = false;
             int fail = iterate(isContinuation);
             if (fail) {
                readNext = false;
             }
+         } else
+         if (command == "SWEEP") {
+            // Attempt to solve a sequence of SCFT problems along a line
+            // through parameter space.
+            sweep();
          } else
          if (command == "COMPARE_HOMOGENEOUS") {
             int mode;
@@ -315,10 +320,6 @@ namespace Fd1d
             comparison.compute(mode);
             comparison.output(mode, Log::file());
          } else 
-         if (command == "SWEEP") {
-            // Do a series of iterations.
-            sweep();
-         } else
          if (command == "WRITE_W") {
             readEcho(inBuffer, filename);
             fieldIo_.writeFields(wFields(), filename);  
@@ -355,7 +356,8 @@ namespace Fd1d
             Log::file() << "vertexId  = " 
                         << Int(vertexId, 5) << std::endl;
             inBuffer >> filename;
-            Log::file() << "outfile   = " << Str(filename, 20) << std::endl;
+            Log::file() << "outfile   = " 
+                        << Str(filename, 20) << std::endl;
             fieldIo_.writeVertexQ(mixture_, polymerId, vertexId, filename);  
          } else
          if (command == "REMESH_W") {
@@ -376,7 +378,8 @@ namespace Fd1d
             Log::file() << "outfile = " << Str(filename, 20) << std::endl;
             fieldIo_.extend(wFields(), m, filename);
          } else {
-            Log::file() << "  Error: Unknown command  " << command << std::endl;
+            Log::file() << "  Error: Unknown command  " 
+                        << command << std::endl;
             readNext = false;
          }
 

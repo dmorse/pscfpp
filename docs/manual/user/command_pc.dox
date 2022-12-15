@@ -4,33 +4,14 @@
  \ref user_command_pg_page (Next) 
 <BR>
 
-\section user_command_pc_field_sec Field File Formats
-
-Many of the available commands for the pscf_pc programs cause the 
-program to read and/or write a set of chemical potential (w) fields or 
-monomer concentration (c) fields to or from file. Different commands 
-read or write files in different formats.  These programs can read and 
-write fields in any of the following three formats:
-
- - "basis" format contains real components of an expansion of the
-    field using a real symmetry-adapted Fourier basis
-
- - "r-grid" format contains real field values on nodes of a regular 
-    real-sapace grid
-
- - "k-grid" format contains complex components of a discrete Fourier 
-   transform (DFT) of a real field
-
-The "basis" and "r-grid" fromats are identical to corresponding formats
-used by the Fortran PSCF program.  The k-grid format is not compatible
-with that used by the Fortran program, because of differences in the 
-way that FFTs are stored and indexed internally.
-
 \section user_command_pc_scft_sec Example: SCFT Calculation
 
-Here is a example of a simple command file for any of pscf_pc programs for
-D-dimensionally periodic microstructures (i.e., for pscf_pc1, pscf_pc2, or 
-pscf_pc3) for a calculation the performs a single SCFT calculation:
+Below is an example of a simple command file for any of pscf_pc programs 
+for D-dimensionally periodic microstructures (i.e., for pscf_pc1, pscf_pc2, 
+or pscf_pc3) for a calculation the performs a single SCFT calculation. Note
+that the names of pscf_pc commands that read or write field files include
+a string "BASIS", "RGRID" or "KGRID" that specifies which of the three 
+available field formats to use:
 \code
 READ_W_BASIS    in/w.bf
 ITERATE         
@@ -54,8 +35,8 @@ while "WRITE_C_RGRID out/c.rf" writes the volume fraction fields in r-grid
 format. The command "WRITE_PARAM out/data" writes a param file for the 
 current system to a file. The following command, "WRITE_THERMO out/data", 
 appends the thermodynamic properties of the converged solution to the end 
-of out/data, which already contains the param file. The script stops 
-execution when it encounters the FINISH command.
+of out/data, which already contains the param file. Program execution
+stops when the program encounters a FINISH command.
 
 \section user_command_pc_sweep_sec Example: A Sweep
 
@@ -65,61 +46,11 @@ READ_W_BASIS    in/w.bf
 SWEEP
 FINISH
 \endcode
-The command "READ_W_BASIS in/w.bf" instructs the program to read 
-an initial guess for the chemical potentials fields at the initial 
-state of the sweep (the state s=0) from the file in/w.bf. 
-The SWEEP command actually executes a sweep operation, and is only
-valid if the corresponding parameter file contains a Sweep block.
+The command "READ_W_BASIS in/w.bf" instructs the program to read an 
+initial guess for the chemical potentials fields at the initial state 
+of the sweep (the state s=0) from the file in/w.bf.  The SWEEP command 
+actually executes a sweep operation. 
 
-Note that this example does not contain any of the explicit output 
-commands that were included in the example for a single SCFT 
-calculation.  Adding an output command after a sweep would only 
-output information about the last state in the sweep (i.e., the 
-state s=1). This is unnecessary because information about the 
-solution at each step in the sweep is instead normally output as 
-part of the implementation of the sweep operation.
-
-\section user_command_pc_h_mask_fields_sec External Fields and Masks
-
-In pspc, users are also able to impose external (h) fields and masks 
-on the unit cell of their calculation. Users can read in a set of 
-external fields (one field per monomer species) from a file using 
-the READ_H_BASIS and READ_H_RGRID commands, and can read in a mask 
-field using READ_MASK_BASIS and READ_MASK_RGRID. 
-
-An external field introduces an additional potential energy that 
-either favors or disfavors the presence of a particular species at
-each point in space. The external field contribution to free 
-energy is merely the volume-normalized overlap integral of each 
-species' concentration profile with its corresponding external 
-field. The fields can be positive or negative.
-
-A mask field imposes geometric confinement upon the system by 
-modifying the incompressibility constraint. Incompressibility in a 
-system with a mask is defined by the following equation:
-\f[
-   \sum_{\alpha=1}^{N_{\rm species}} \rho_\alpha({\bf r}) = 
-   \rho_{\rm mask}({\bf r}) 
-\f]
-where the summation is over all distinct monomer species, 
-<i>&rho;<sub>&alpha;</sub></i>(<b>r</b>) is the volume fraction of 
-species <i>&alpha;</i> at position <b>r</b>, and 
-<i>&rho;</i><sub>mask</sub>(<b>r</b>) is the mask field. So, if 
-<i>&rho;</i><sub>mask</sub>(<b>r</b>) = 1, then position <b>r</b>
-is occupied entirely by polymers, but if 
-<i>&rho;</i><sub>mask</sub>(<b>r</b>) = 0 then there are no 
-polymers at position <b>r</b>. This can be used, for example, to 
-impose confinement between walls, in a cylindrical cavity, in a 
-spherical pore, etc. Masks are the preferred method for geometric
-confinement in our SCFT software because their use doesn't require  
-any modifications of the boundary conditions; the unit cell is still
-periodic in all directions, and the only modifications required to
-impose a mask are applied to the iterator.
-
-External fields and masks are both generated internally by the 
-thin film feature described at \ref user_thin_films_page , and
-the fields can be written to a file at any time using the 
-additional mask and h field commands below.
 
 \section user_command_pc_commands_sec Commands
 
@@ -129,7 +60,7 @@ programs:
   <tr> 
     <td> <b>command     </b> </td>
     <td> <b>parameter(s)</b> </td>
-    <td> <b>description </b> </td>
+    <td> <b>action </b> </td>
   </tr>
   <tr> 
     <td> READ_W_BASIS </td>
@@ -143,6 +74,15 @@ programs:
     <td> filename [string] </td>
     <td> Read w fields from file filename, in real-space grid (r-grid) 
          format </td>
+  </tr>
+  <tr> 
+    <td> ESTIMATE_W_FROM_C </td>
+    <td> filename [string] </td>
+    <td> Read monomer concentration fields (c fields) in symmetry-adapted 
+         basis format from file filename, generate and store estimated
+         chemical potential fields (w fields), computed using the c fields
+         and chi values, assuming a vanishing Langrange multiplier field.
+         </td>
   </tr>
   <tr> 
     <td> READ_H_BASIS </td>
@@ -349,18 +289,49 @@ programs:
          check whether the fields have symmetry that matches the
          space group specified in the param file.  </td>
   </tr>
-  <tr> 
-    <td> GUESS_W_FROM_C </td>
-    <td> inFile [string], outFile [string] </td>
-    <td> Read monomer concentration fields (c fields) in symmetry-adapted 
-         basis format from file inFile, generate chemical potential 
-         fields (w fields) using the concentration fields and chi values, 
-         and write the potential fields to outFile in symmetry-adapted 
-         basis format.  Also stores potential fields to be used by future 
-         commands (e.g., ITERATE or SWEEP). </td>
-  </tr>
 </table>
 
+\section user_command_pc_h_mask_fields_sec External Fields and Masks
+
+In pspc, users are also able to impose external (h) fields and masks 
+on the unit cell of their calculation. Users can read in a set of 
+external fields (one field per monomer species) from a file using 
+the READ_H_BASIS and READ_H_RGRID commands, and can read in a mask 
+field using READ_MASK_BASIS and READ_MASK_RGRID. 
+
+An external field introduces an additional potential energy that 
+either favors or disfavors the presence of a particular species at
+each point in space. The external field contribution to free 
+energy is merely the volume-normalized overlap integral of each 
+species' concentration profile with its corresponding external 
+field. The fields can be positive or negative.
+
+A mask field imposes geometric confinement upon the system by 
+modifying the incompressibility constraint. Incompressibility in a 
+system with a mask is defined by the following equation:
+\f[
+   \sum_{\alpha=1}^{N_{\rm species}} \rho_\alpha({\bf r}) = 
+   \rho_{\rm mask}({\bf r}) 
+\f]
+where the summation is over all distinct monomer species, 
+<i>&rho;<sub>&alpha;</sub></i>(<b>r</b>) is the volume fraction of 
+species <i>&alpha;</i> at position <b>r</b>, and 
+<i>&rho;</i><sub>mask</sub>(<b>r</b>) is the mask field. So, if 
+<i>&rho;</i><sub>mask</sub>(<b>r</b>) = 1, then position <b>r</b>
+is occupied entirely by polymers, but if 
+<i>&rho;</i><sub>mask</sub>(<b>r</b>) = 0 then there are no 
+polymers at position <b>r</b>. This can be used, for example, to 
+impose confinement between walls, in a cylindrical cavity, in a 
+spherical pore, etc. Masks are the preferred method for geometric
+confinement in our SCFT software because their use doesn't require  
+any modifications of the boundary conditions; the unit cell is still
+periodic in all directions, and the only modifications required to
+impose a mask are applied to the iterator.
+
+External fields and masks are both generated internally by the 
+thin film feature described at \ref user_thin_films_page , and
+the fields can be written to a file at any time using the 
+additional mask and h field commands below.
 
  <BR>
  \ref user_command_fd_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
