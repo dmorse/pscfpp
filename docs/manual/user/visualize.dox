@@ -1,0 +1,22 @@
+/*! \page user_visualize_page Visualization 
+
+\ref user_example_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_unitcell_page (Next)
+<BR>
+
+An external package named Polymer Visual can be used by users of PSCF to
+generate figures showing the structure of the periodic structures predicted
+by the pscf_pc and pscf_pg programs. This package is designed to read 
+files containing the monomer concentration fields written in the r-grid 
+field file format used by pscf_pc and pscf_pg, and can generate several
+different types of plots that show the corresponding structure.  Polymer 
+Visual is written as a package of MATLAB functions, and may be downloaded 
+from the github repository 
+<a href="https://github.com/kdorfmanUMN/polymer_visual"> github.com/kdorfmanUMN/polymer_visual </a>, which also provides user documentation.
+
+<BR>
+\ref user_example_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_page (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_unitcell_page (Next)
+
+*/
