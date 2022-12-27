@@ -35,8 +35,8 @@ System{
      groupName   P_-1
   }
   AmIteratorGrid{
+    epsilon      5.0e-11
     maxItr       600
-    epsilon      5e-11
     maxHist      30
     isFlexible   1
   }
