@@ -41,6 +41,7 @@ System{
   LinearSweep{
     ns            20  
     baseFileName  out/
+    reuseState    0
     writeRhoRGrid 1
     nParameter    1   
     parameters[

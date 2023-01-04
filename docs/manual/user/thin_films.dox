@@ -122,6 +122,7 @@ System{
    LinearSweep{
       ns            20  
       baseFileName  out/
+      reuseState    0
       nParameter    3
       parameters[
                     cell_param  1  1.0
@@ -268,6 +269,14 @@ parameter from 4.3 to 5.3, and we sweep `chiBottom[1]` and `chiTop[1]` from
 identical, because asymmetric walls would break the symmetry of the space 
 group that we've chosen, so we'd need to switch to a different space group 
 to model bcc with asymmetric walls.
+
+Finally, notice that there is an additional line in the Sweep block: 
+`reuseState 0`. The reuseState feature typically improves convergence time
+for sweeps by using the last few iterations of the previous sweep step as
+the initial "histories" for the current sweep step. However, this feature 
+actually worsens convergence time when paired with a thin film thickness 
+(`cell_param`) sweep, and thus we include `reuseState 0` in the param file 
+to turn off the feature when sweeping film thickness.
 
 ## The effect of the parameter t
 
