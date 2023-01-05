@@ -265,18 +265,8 @@ namespace Pspc {
                                           system().w().basis(), 
                                           system().unitCell());
 
-      // Write c fields
-      outFileName = baseFileName_;
-      outFileName += indexString;
-      outFileName += "_c";
-      outFileName += ".bf";
-      UTIL_CHECK(system().hasCFields());
-      system().fieldIo().writeFieldsBasis(outFileName, 
-                                          system().c().basis(), 
-                                          system().unitCell());
-
-      // Write c rgrid files
-      if (writeRhoRGrid_) {
+      // Optionally write c rgrid files
+      if (writeCRGrid_) {
          outFileName = baseFileName_;
          outFileName += indexString;
          outFileName += "_c";
@@ -286,6 +276,28 @@ namespace Pspc {
                                              system().unitCell());
       }
 
+       // Optionally write c basis files
+      if (writeCBasis_) {
+         outFileName = baseFileName_;
+         outFileName += indexString;
+         outFileName += "_c";
+         outFileName += ".bf";
+         UTIL_CHECK(system().hasCFields());
+         system().fieldIo().writeFieldsBasis(outFileName, 
+                                             system().c().basis(), 
+                                             system().unitCell());
+      }
+
+      // Optionally write w rgrid files
+      if (writeWRGrid_) {
+         outFileName = baseFileName_;
+         outFileName += indexString;
+         outFileName += "_w";
+         outFileName += ".rf";
+         system().fieldIo().writeFieldsRGrid(outFileName, 
+                                             system().w().rgrid(), 
+                                             system().unitCell());
+      }
    }
 
    template <int D>

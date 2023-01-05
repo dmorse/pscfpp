@@ -127,7 +127,9 @@ namespace Pspc {
       // Protected members inherited from base class template SweepTmpl
       using SweepTmpl< BasisFieldState<D> >::ns_;
       using SweepTmpl< BasisFieldState<D> >::baseFileName_;
-      using SweepTmpl< BasisFieldState<D> >::writeRhoRGrid_;
+      using SweepTmpl< BasisFieldState<D> >::writeCRGrid_;
+      using SweepTmpl< BasisFieldState<D> >::writeCBasis_;
+      using SweepTmpl< BasisFieldState<D> >::writeWRGrid_;
       using SweepTmpl< BasisFieldState<D> >::initialize;
       using SweepTmpl< BasisFieldState<D> >::setCoefficients;
 

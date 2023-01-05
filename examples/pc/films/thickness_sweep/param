@@ -42,7 +42,7 @@ System{
     ns            20  
     baseFileName  out/
     reuseState    0
-    writeRhoRGrid 1
+    writeCRGrid   1
     nParameter    1   
     parameters[
                   cell_param  0  0.5

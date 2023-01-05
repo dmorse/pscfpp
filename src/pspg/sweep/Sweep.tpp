@@ -276,15 +276,8 @@ namespace Pspg {
       outFileName += ".bf";
       system().writeWBasis(outFileName);
 
-      // Write c fields
-      outFileName = baseFileName_;
-      outFileName += indexString;
-      outFileName += "_c";
-      outFileName += ".bf";
-      system().writeCBasis(outFileName);
-
-      // Write c rgrid files
-      if (writeRhoRGrid_) {
+      // Optionally write c rgrid files
+      if (writeCRGrid_) {
         outFileName = baseFileName_;
         outFileName += indexString;
         outFileName += "_c";
@@ -292,6 +285,23 @@ namespace Pspg {
         system().writeCRGrid(outFileName);
       }
 
+      // Optionally write c basis files
+      if (writeCBasis_) {
+         outFileName = baseFileName_;
+         outFileName += indexString;
+         outFileName += "_c";
+         outFileName += ".bf";
+         system().writeCBasis(outFileName);
+      }
+
+      // Optionally write w rgrid files
+      if (writeWRGrid_) {
+        outFileName = baseFileName_;
+        outFileName += indexString;
+        outFileName += "_w";
+        outFileName += ".rf";
+        system().writeWRGrid(outFileName);
+      }
    }
 
    template <int D>

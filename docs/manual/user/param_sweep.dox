@@ -172,11 +172,15 @@ The parameter file format for a LinearSweep is summarized below:
        baseFileName      string
        historyCapacity*  int
        reuseState*       bool
+       writeCRGrid*      bool
+       writeCBasis*      bool
+       writeWRGrid*      bool
        nParameter        int
        parameters        Array [ SweepParameter ]
   }
 \endcode
-The purpose of the parameters in this block are explained below:
+Parameters marked with an asterisk are optional. The purpose of the 
+parameters in this block are explained below:
 <table>
   <tr>
     <td> <b> Label </b>  </td>
@@ -206,6 +210,28 @@ The purpose of the parameters in this block are explained below:
     response to perturbations acquired during iteration at the
     previoius state within a sweep, or 0 (false) to always restart 
     the history.  Optional, and true default. </td>
+  </tr>
+  <tr>
+    <td> writeCRGrid* </td>
+    <td> 
+    boolean, set to 1 (true) to write the concentration fields in r-grid
+    format at each step of the sweep, or set to 0 (false) to do nothing. 
+    Optional, and false by default. Not relevant for pscf_fd. </td>
+  </tr>
+  <tr>
+    <td> writeCBasis* </td>
+    <td> 
+    boolean, set to 1 (true) to write the concentration fields in 
+    symmetry-adapted basis format at each step of the sweep, or set to 0
+    (false) to do nothing. Optional, and false by default. Not relevant
+    for pscf_fd. </td>
+  </tr>
+  <tr>
+    <td> writeWRGrid* </td>
+    <td> 
+    boolean, set to 1 (true) to write the potential fields in r-grid
+    format at each step of the sweep, or set to 0 (false) to do nothing. 
+    Optional, and false by default. Not relevant for pscf_fd. </td>
   </tr>
   <tr>
     <td> nParameter </td>

@@ -22,7 +22,9 @@ namespace Pscf {
    SweepTmpl<State>::SweepTmpl(int historyCapacity)
     : ns_(0),
       baseFileName_(),
-      writeRhoRGrid_(false),
+      writeCRGrid_(false),
+      writeCBasis_(false),
+      writeWRGrid_(false),
       historyCapacity_(historyCapacity),
       historySize_(0),
       nAccept_(0),
@@ -50,7 +52,9 @@ namespace Pscf {
       readOptional<std::string>(in, "baseFileName", baseFileName_);
       readOptional<int>(in, "historyCapacity", historyCapacity_);
       readOptional<bool>(in, "reuseState", reuseState_);
-      readOptional<bool>(in, "writeRhoRGrid", writeRhoRGrid_);
+      readOptional<bool>(in, "writeCRGrid", writeCRGrid_);
+      readOptional<bool>(in, "writeCBasis", writeCBasis_);
+      readOptional<bool>(in, "writeWRGrid", writeWRGrid_);
 
       // Allocate required arrays
       UTIL_CHECK(historyCapacity_ > 0);

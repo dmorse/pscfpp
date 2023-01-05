@@ -34,6 +34,9 @@ System{
   LinearSweep{
     ns            4
     baseFileName  out/
+    writeCRGrid   1
+    writeCBasis   1
+    writeWRGrid   1
     nParameter    2
     parameters[
            block  0 0 +0.08
