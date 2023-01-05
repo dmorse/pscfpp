@@ -1209,20 +1209,6 @@ namespace Pspc
       int is;                                  // star index
       int ib;                                  // basis index
 
-      // Check if kgrid has symmetry, and print a warning if it does not
-      bool symmetric;
-      symmetric = hasSymmetry(in, true);
-      if (!symmetric) {
-         Log::file() << "WARNING: non-negligible error in conversion to "
-                     << "symmetry-adapted basis format." 
-                     << std::endl
-                     << "See error values printed above."
-                     << "The field output by this operation will be "
-                     << std::endl
-                     << "a symmetrized version of the input field."
-                     << std::endl;
-      }
-
       // Initialize all components to zero 
       for (is = 0; is < basis().nBasis(); ++is) {
          out[is] = 0.0;
@@ -1324,8 +1310,30 @@ namespace Pspc
    {
       UTIL_ASSERT(in.capacity() == out.capacity());
       int n = in.capacity();
+      bool symmetric(true);
+
       for (int i = 0; i < n; ++i) {
+         // Check if kgrid has symmetry
+         bool tmp_sym = hasSymmetry(in[i], true);
+         if (!tmp_sym) symmetric = false;
+
          convertKGridToBasis(in[i], out[i]);
+      }
+
+      // Print warning if any input fields didn't meet symmetry of space group
+      if (!symmetric) {
+         Log::file() << std::endl
+                     << "WARNING: non-negligible error in conversion to "
+                     << "symmetry-adapted basis format." 
+                     << std::endl
+                     << "See error values printed above for each asymmetric "
+                     << "field."
+                     << std::endl
+                     << "The field that is output by this operation will be "
+                     << "a symmetrized version of"
+                     << std::endl
+                     << "the input field."
+                     << std::endl << std::endl;
       }
    }
 
@@ -1373,9 +1381,32 @@ namespace Pspc
       checkWorkDft();
 
       int n = in.capacity();
+      bool symmetric(true);
+
       for (int i = 0; i < n; ++i) {
          fft().forwardTransform(in[i], workDft_);
+
+         // Check if kgrid has symmetry
+         bool tmp_sym = hasSymmetry(workDft_, true);
+         if (!tmp_sym) symmetric = false;
+
          convertKGridToBasis(workDft_, out[i]);
+      }
+
+      // Print warning if any input fields didn't meet symmetry of space group
+      if (!symmetric) {
+         Log::file() << std::endl
+                     << "WARNING: non-negligible error in conversion to "
+                     << "symmetry-adapted basis format." 
+                     << std::endl
+                     << "   See error values printed above for each "
+                     << "asymmetric field."
+                     << std::endl
+                     << "   The field that is output by the above operation "
+                     << "will be a"
+                     << std::endl
+                     << "   symmetrized version of the input field."
+                     << std::endl << std::endl;
       }
    }
 
@@ -1511,7 +1542,8 @@ namespace Pspc
       if ((cancelledError < 1e-8) && (uncancelledError < 1e-8)) {
          return true;
       } else if (verbose) {
-         Log::file() << "Maximum coefficient of a cancelled star: "
+         Log::file() << std::endl
+                     << "Maximum coefficient of a cancelled star: "
                      << cancelledError << std::endl
                      << "Maximum error of coefficient for uncancelled star: "
                      << uncancelledError << std::endl;

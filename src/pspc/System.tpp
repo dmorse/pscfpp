@@ -1071,6 +1071,11 @@ namespace Pspc
          out << std::endl;
       }
 
+      out << "Lattice parameters:" << std::endl << "     ";
+      for (int i = 0; i < unitCell().nParameter(); ++i) {
+         out << "  " << Dbl(unitCell().parameter(i), 18, 11);
+      }
+      out << std::endl << std::endl;
    }
 
    /*

@@ -118,6 +118,8 @@ namespace Pscf {
 
             // Process success or failure
             if (error) {
+               Log::file() << "Backtrack and halve sweep step size:" 
+                           << std::endl;
 
                // Upon failure, reset state to last converged solution
                reset();
