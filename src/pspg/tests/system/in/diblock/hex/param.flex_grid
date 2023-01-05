@@ -24,8 +24,8 @@ System{
     groupName   p_6_m_m
   }
   AmIteratorGrid{
+    epsilon     1.0e-08
     maxItr      100
-    epsilon     1e-08
     maxHist     30
     isFlexible 1
   }
