@@ -10,6 +10,7 @@
 
 #include <pscf/inter/Interaction.h>
 #include <pscf/math/LuSolver.h>
+#include "NanException.h"
 #include <util/containers/FArray.h>
 #include <util/format/Dbl.h>
 #include <util/format/Int.h>
@@ -140,7 +141,13 @@ namespace Pscf
 
          // Compute scalar error, output report to log file.
          timerError.start();
-         double error = computeError(verbose_);
+         double error;
+         try {
+            error = computeError(verbose_);
+         } catch (const NanException&) {
+            Log::file() << ",  error  =             NaN" << std::endl;
+            break; // Exit loop if a NanException is caught
+         }
          if (verbose_ < 2) {
              Log::file() << ",  error  = " << Dbl(error, 15) << std::endl;
          }

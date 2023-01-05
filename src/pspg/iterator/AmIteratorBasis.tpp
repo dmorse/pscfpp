@@ -11,6 +11,7 @@
 #include "AmIteratorBasis.h"
 #include <pspg/System.h>
 #include <pscf/inter/Interaction.h>
+#include <pscf/iterator/NanException.h>
 #include <pspg/field/RDField.h>
 #include <util/global.h>
 
@@ -79,7 +80,12 @@ namespace Pspg{
       UTIL_CHECK(b.capacity() == n);
       double product = 0.0;
       for (int i=0; i < n; ++i) {
-         product += a[i]*b[i];
+         // if either value is NaN, throw NanException
+         if (std::isnan(a[i]) || std::isnan(b[i])) { 
+            throw NanException("AmIteratorBasis::dotProduct", __FILE__,
+                               __LINE__, 0);
+         }
+         product += a[i] * b[i];
       } 
       return product;
    }
@@ -90,9 +96,15 @@ namespace Pspg{
    {
       const int n = a.capacity();
       double max = 0.0;
+      double value;
       for (int i = 0; i < n; i++) {
-         if (fabs(a[i]) > max)
-            max = fabs(a[i]);
+         value = a[i];
+         if (std::isnan(value)) { // if value is NaN, throw NanException
+            throw NanException("AmIteratorBasis::dotProduct", __FILE__,
+                               __LINE__, 0);
+         }
+         if (fabs(value) > max)
+            max = fabs(value);
       }
       return max;
    }
