@@ -55,14 +55,20 @@ consisting of blocks connected at junction points. Homopolymers are treated
 as a special case of a block polymer with only one block.  Let \f$ B_{i} \f$ 
 denote the number of blocks in block polymer species number \f$ i \f$.
 
+\subsection user_theory_graph_sub Polymer Topology (Polymers as Graphs)
+
 Each block within a block polymer connects two vertices. Each such vertex 
 is either a junction to which two or more blocks are connected or a chain end
 to which only one block is attached.  In the language of graph theory, every 
-allowed polymer structure thus corresponds to an acyclic connected graph 
-(also known as a tree) with some number of "edges" (or blocks) and "nodes" 
-(or vertices).  A standard theorem of graph theory tells us that a connected 
-acyclic branched polymer (or graph) with \f$ B_{i} \f$ blocks or edges must 
-have exactly \f$ B_{i} + 1 \f$ vertices or nodes.
+allowed polymer structure corresponds to an acyclic connected graph (also 
+known as a tree) with some number of "edges" (or blocks) and "nodes" (or 
+vertices).  PSCF can only handle polymers with acyclic topologies, in which
+there is exactly one path (i.e., sequence of connected edges) connecting 
+any two vertices.  A standard theorem of graph theory aserts that any 
+connected acyclic graph with \f$ B_{i} \f$ edges must have exactly 
+\f$ B_{i} + 1 \f$ vertices or nodes. An acyclic block polymer with $B_{i}$
+blocks thus always has exactly $B_{i} + 1$ vertices, where the list of 
+vertices includes both junctions and free chain ends.
 
 PSCF assigns each block within a polymer species \f$ i \f$ with \f$ B_{i} \f$ 
 blocks an integer index in the range \f$ [0, \ldots, B_{i}-1 ]\f$, and 
@@ -101,7 +107,7 @@ Imagine a process in which break the connection between two vertices of
 a block polymer that are attached to opposite ends of the same bond by
 cutting that block at a specific contour coordinate within the block. 
 Cutting any block within an acyclic branched block polymer in this way 
-always divide the polymer into two disconnected pieces. This property is 
+always divide the polymer into two disconnected pieces. This property is
 one way of defining what we mean when we describe a polymer topology as 
 "acyclic": In acyclic polymer, there are no closed cycles that connect 
 any vertices by two or more distinct paths, and so there is thus exactly 

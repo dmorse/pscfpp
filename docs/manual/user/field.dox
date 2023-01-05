@@ -66,11 +66,11 @@ incompressible SCFT problem are related by a self-consistency condition
       + \xi({\bf r}) \quad.
 \f]
 Here, \f$\chi_{\alpha\beta}\f$ is a Flory-Huggins interaction parameter
-for interactions between monomers of types $\alpha$ and $\beta$, while
-$\xi({\br r})$ is a Langrange-multiplier field that must be chosen such 
-that the volume fractions satsify the incompressibility constraint given 
-above (i.e., such that the volume fractions add to 1 at every point in 
-the system).
+for interactions between monomers of types \f$\alpha\f$ and \f$\beta\f$, 
+while \f$\xi({\bf r})\f$ is a Langrange-multiplier field that must be 
+chosen such that the volume fractions satsify the incompressibility 
+constraint given above (i.e., such that the sum of the local monomer
+volume fractions is equal to 1 at every point in the system).
 
 Before attempting to solve an SCFT problem, each PSCF program must read
 a set of physical parameters from a parameter file and read in an initial
@@ -92,8 +92,9 @@ simple \ref user_field_fd1d_page "file format" that contains values of
 fields at nodes of a regular one-dimensional grid. 
 
 The pscf_pcN and pscf_pgN programs are both designed to treat periodic 
-structures, and use the same set of three field file formats. These 
-programs can read and write three field file formats:
+structures, and use the same set of several field file formats. 
+These programs can read and write the following three field file 
+formats:
 
   - A \ref user_field_basis_page "basis" file format contains the
     components for a representation of each field as a linear 
@@ -112,13 +113,14 @@ Each of these file formats for periodic structures contains a header
 section that includes a specification of the crystal system and unit
 and unit cell parameters for the crystallographic unit cell. The header 
 for the r-grid and k-grid format also contains values for the number 
-of grid points in each direction, which must match the values given 
-as elements of the mesh parameter in the parameter file. 
+of grid points in each direction. The grid dimensions given in such
+a field file header must match the dimensions given as elements of 
+the mesh parameter in the parameter file. 
 
 The basis and r-grid file formats used by the current C++ version of
 PSCF are compatible with those used by the older Fortran PSCF program.
-The k-grid format is not backwards compatible with the analogous k-grid
-format used by the Fortran program.
+The k-grid format is not backwards compatible with the analogous 
+k-grid format used by the Fortran program.
 
 The names of some command-file commands that instruct pscf_pc and 
 pscf_pg programs to read or write field files contain the strings
@@ -137,6 +139,6 @@ in more detail in the pages linked below:
 
  <BR>
  \ref user_param_page    (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_page            (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref user_page           (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref user_command_page   (Next) 
 */

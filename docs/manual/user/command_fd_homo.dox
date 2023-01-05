@@ -1,0 +1,162 @@
+/*! \page user_command_fd_homo_page Command for pscf_fd: COMPARE_HOMOGENEOUS
+\ref user_command_fd_page  (Up/Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_command_pc_page  (Next) 
+<BR>
+
+
+The COMPARE_HOMOGENEOUS command computes differences between properties of 
+an inhomogeneous system of interest, as predicted by SCFT, and those of an
+homogeneous reference system. The command takes an integer mode parameter,
+as discussed below. 
+
+\section user_command_fd_homo_mode_sec  Mode Parameter
+
+The integer mode parameter, which takes allowed values of 0, 1, and 2, 
+determines the nature of the homogeneous reference system to which the
+system of interest is compared:
+
+  - In mode 0 (i.e., when mode == 0), the pscf_fd program considers a
+    homogeneous reference system with the same overall (i.e., spatial 
+    average) volume fraction for each molecular species as that of the 
+    actual system. 
+
+  - In modes 1 and 2, the program uses a homogeneous reference system in 
+    which the chemical potentials for all species are equal to those of 
+    in the actual system.  
+
+The only difference between modes 1 and 2 is how the composition of the 
+reference system is computed. In both cases, the composition of the
+reference system is computed by iteratively solving for a list of species
+volume fractions for which the chemical potentials have values equal to
+those of the actual system. Under some circumstances of interest, the 
+solution to this problem is not unique - in systems that are susceptible
+to phase separation into two or more phases, there can exist two or more
+compositions that yield the same list of chemical potentials. Because the
+composition is computed, when this is true, the calculated composition of
+the reference system may depend on the choice of an initial guess. The
+only difference between modes 1 and 2 is a difference in the choice of
+initial guess of composition used for this iterative solution. In mode 
+1 the initial guess is chosen so as to give a volume fraction for each
+equal to the local volume fraction for all mononers of that species at
+the last grid point in the SCFT solution.  In mode 2, the initial guess 
+is instead chosen so as to give a composition equal to that found at the 
+first grid point. 
+
+\section user_command_fd_homo_phi_sec  Output Data (Equal Composition)
+
+In mode 0, an output report is written to standard output that includes
+the non-dimensional free energy per monomer "f(homo)" of the homogeneous 
+reference system, difference "delta f" between values of free energy per 
+monomer of the actual and reference system. These an all other free 
+energies are output using energy units with \f$ k_{B}T = 1 \f$. Free
+energies per monomer are computed by multiplying the free energy density
+(total free energy divided by total system volume) by the monomer volume.
+
+The output for mode 0 also contains values of the chemical potential
+"mu(homo)" and the species volume fraction "phi(homo)" for each polymer
+and solvent species in the homogneous reference system.
+
+For calculations that are performed using a Cartesian coordinate system,
+the value of the total system volume V(tot) is is actually the length 
+xmax - xmin of the calculation domain along a direction perpendicular to 
+the interface, or the volume per unit interfacial area. Correspondingly, 
+the values of "Phi (ex)" and "F (ex)" reported in this case are actually 
+values of free energy per unit interfacial area, in thermal energy units, 
+while values of "delta V" for each species are excess volumes per unit 
+area.
+
+For calculations that are performed using a cylindrical coordinate system,
+the value of the total system "volume" is actually the area of the domain,
+while values of excess free energies and excess volumes for individual
+species are also reported as excess free energy per unit length or excess 
+volume per unit length (i.e., excess area) along the axis of rotation of 
+the cylindrically symmetric system.
+
+\section user_command_fd_homo_mu_sec  Output Data (Equal Chemical Potential)
+
+In modes 1 and 2, the first part of the output report contains 
+non-dimensional values of the following overall thermodynamic properties:
+
+   - f(homo)  : Helmholtz free energy per monomer in homogeneous reference
+   - p(homo)  : pressure x monomer volume in homogeneous reference
+   - delta f  : difference between values of f (actual - homogeneous)
+   - delta p  : difference between values of p (actual - homogeneous)
+   - F (ex)   : total excess Helmholtz free energy
+   - Phi (ex) : total excess grand-canonical free energy
+   - V(tot)/v : Ratio of system volume to monomer reference volume
+
+Total excess properties are computed by taking the difference between the
+value in the inhomogemeous system of interest and that of a homogeneous
+reference system with the same volume and equal values for all chemical 
+potentials.  The value of F (ex) is equal to the value of "delta f" times 
+"V(tot)/v".  The value of Phi (ex) is equal to -1 times "delta p" times 
+"V(tot)/v". 
+
+The following properties of specific species are also output for each
+species:
+
+   - mu        : species chemical potential
+   - phi(homo) : species volume fraction in homogeneous reference system
+   - delta V   : Total excess volume of a species
+
+The total excess volume associated with a species can be interpreted as 
+a spatial integral of an excess volume fraction.  In an incompressible 
+system, the sum of values of delta V for different species must add to 
+zero. 
+
+Values of system volumes and total excess properties have the same 
+interpretation as for mode 0: In Cartesian coordinates, "V(tot)" is 
+actually a length (volume per area), and excess properties are computed 
+per unit area, whereas in cylindrical coordintes "V(tot)" is actually
+an area, while excess properties are reported as values per unit length
+along the axis of symmetry. 
+
+\section user_command_fd_homo_micelle_sec  Micelle Properties
+
+Properties of spherical and cylindrical micelles can be computed by
+performing a SCFT calculation in spherical or cylindrical coordinates
+for a cylindrical or spherical geometry that includes the origin in
+which a micelles is surrounded by a solvent rich region is large 
+enough to be homogeneous near the outer edge of the computational 
+domain (i.e., near the last grid point). Excess properties of micelles 
+can be computed by invoking the COMPARE_HOMOGENEOUS command 1 to obtain 
+a homogeneous reference system with a composition similar to that of 
+the solvent-rich region that surrounds the micelle. 
+
+\section user_command_fd_homo_interface_sec Interfacial Properties
+
+Interfacial properties can be computed by simulating a system that 
+contains two bulk-like phases separated by an interface, and using mode 
+1 or 2 to compare it to a homogeneous reference system of equal chemical 
+potentials.  
+
+In the case of a flat interface that is treated in Cartesian coordinates,
+the interfacial tension is given in thermal energy units by the reported
+value of "Phi (ex)". For such a flat interface, the same value for this
+excess grand-canonical free energy should be obtained using either mode 
+1 or mode 2, because the conditions for mechanical equilibrium require 
+that the same value of pressure (and thus the same grand-canonical free 
+energy density) must be obtained in the two coexisting bulk phases. 
+To compute other excess interfacial properties (e.g., excess Helmholtz 
+free energy and excess volume per interfacial area for each species), 
+however, the user to choose a convention to define a Gibbs dividing 
+surface, and to perform some calculations that are not automatically
+perfomed by the COMPARE_HOMOGENEOUS command. 
+
+Computation of any excess property for a curved cylindrical or spherical
+interface, including interfacial tension, requires the user to define a
+Gibbs dividing surface and perform some additional calculations beyond
+those performed by this command. 
+
+As a first step in a computation of excess interfacial properties that 
+require the  definition of a Gibbs dividing surface, it is sometimes useful 
+for a user to first invoke COMPARE_HOMOGENEOUS command twice with different
+mode parameter values of 1 and 2. The resulting outputs provide values of 
+species volume fractions and free energy densities in homogemeous systems
+with compositions that correspond to those of the two bulk phases that are 
+separated by the interface.
+
+<BR>
+\ref user_command_fd_page  (Up/Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_command_pc_page  (Next) 
+*/

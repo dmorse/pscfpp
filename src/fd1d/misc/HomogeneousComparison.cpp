@@ -15,10 +15,6 @@
 #include <util/format/Dbl.h>
 
 #include <string>
-//#include <ctime>
-//#include <iomanip>
-//#include <sstream>
-//#include <unistd.h>
 
 namespace Pscf {
 namespace Fd1d
@@ -45,86 +41,6 @@ namespace Fd1d
    */
    HomogeneousComparison::~HomogeneousComparison()
    {}
-
-   #if 0
-   void HomogeneousComparison::initHomogeneous()
-   {
-
-      // Set number of molecular species and monomers
-      int nm = mixture().nMonomer(); 
-      int np = mixture().nPolymer(); 
-      //int ns = mixture().nSolvent(); 
-      int ns = 0;
-      homogeneous_.setNMolecule(np+ns);
-      homogeneous_.setNMonomer(nm);
-      if (c_.isAllocated()) {
-         UTIL_CHECK(c_.capacity() == nm);
-      } else {
-         c_.allocate(nm);
-      }
-      UTIL_CHECK(homogeneous_.nMolecule() == np + ns);
-      UTIL_CHECK(homogeneous_.nMonomer() == nm);
-
-      int i;   // molecule index
-      int j;   // monomer index
-      int k;   // block or clump index
-      int nb;  // number of blocks
-      int nc;  // number of clumps
- 
-      // Loop over polymer molecule species
-      for (i = 0; i < np; ++i) {
-
-         // Initial array of clump sizes 
-         for (j = 0; j < nm; ++j) {
-            c_[j] = 0.0;
-         }
-
-         // Compute clump sizes for all monomer types.
-         nb = mixture().polymer(i).nBlock(); 
-         for (k = 0; k < nb; ++k) {
-            Block& block = mixture().polymer(i).block(k);
-            j = block.monomerId();
-            c_[j] += block.length();
-         }
- 
-         // Count the number of clumps of nonzero size
-         nc = 0;
-         for (j = 0; j < nm; ++j) {
-            if (c_[j] > 1.0E-8) {
-               ++nc;
-            }
-         }
-         homogeneous_.molecule(i).setNClump(nc);
- 
-         // Set clump properties for this Homogeneous::Molecule
-         k = 0; // Clump index
-         for (j = 0; j < nm; ++j) {
-            if (c_[j] > 1.0E-8) {
-               homogeneous_.molecule(i).clump(k).setMonomerId(j);
-               homogeneous_.molecule(i).clump(k).setSize(c_[j]);
-               ++k;
-            }
-         }
-         homogeneous_.molecule(i).computeSize();
-
-         #if 0
-         {
-            std::cout << "Molecule # " << i << std::endl;
-            nc = homogeneous_.molecule(i).nClump();
-            std::cout << "nClump = " << nc << std::endl;
-            double size;
-            for (k = 0; k < nc; ++k) {
-               j = homogeneous_.molecule(i).clump(k).monomerId();
-               size = homogeneous_.molecule(i).clump(k).size();
-               std::cout << k << "  " << j << "  " << size << "\n";
-            }
-         }
-         #endif
-        
-      }
-
-   }
-   #endif
 
    /*
    * Compute properties of a homogeneous reference system.
@@ -171,6 +87,8 @@ namespace Fd1d
             ix = 0;
          }
 
+         // Compute array p_
+         // Define: p_[i] = volume fraction of all blocks of polymer i
          for (int i = 0; i < np; ++i) {
             p_[i] = 0.0;
             int nb = mixture().polymer(i).nBlock();
@@ -179,14 +97,6 @@ namespace Fd1d
             }
          }
 
-         #if 0
-         std::cout << std::endl;
-         std::cout << "Composition at boundary " << std::endl;
-         for (int i = 0; i < np; ++i) {
-            std::cout << "phi[" << i << "] = " << p_[i] << std::endl;
-         }
-         #endif
-    
          double xi = 0.0;
          homogeneous().computePhi(interaction(), m_, p_, xi);
 
@@ -206,21 +116,26 @@ namespace Fd1d
    */
    void HomogeneousComparison::output(int mode, std::ostream& out)
    {
-      // Output free energies
-      out << std::endl;
       if (mode == 0) {
 
          // Output free energies
          double fHomo = homogeneous().fHelmholtz();
          double df = system().fHelmholtz() - fHomo;
-         out << "f (homo)    = " << Dbl(fHomo, 18, 11) << std::endl;
-         out << "delta f     = " << Dbl(df, 18, 11)    << std::endl;
-
-         // Output polymer properties
          out << std::endl;
-         out << "Polymers: i, mu(homo)[i], phi[i] " << std::endl;
+         out << "f (homo)    = " << Dbl(fHomo, 18, 11) 
+                                 << "   [per monomer volume]" << std::endl;
+         out << "delta f     = " << Dbl(df, 18, 11)  
+                                 << "   [per monomer volume]" << std::endl;
+
+         // Output species-specific properties
+         out << std::endl;
+         out << "Species:" << std::endl;
+         out << "    i"
+             << "      mu(homo)      "
+             << "      phi(homo)     "
+             << std::endl;
          for (int i = 0; i < homogeneous().nMolecule(); ++i) {
-            out << i  
+            out << Int(i,5)
                 << "  " << Dbl(homogeneous().mu(i), 18, 11)
                 << "  " << Dbl(homogeneous().phi(i), 18, 11) 
                 << std::endl;
@@ -236,23 +151,31 @@ namespace Fd1d
          double pEx   = system().pressure() - pHomo;
          double fEx   = system().fHelmholtz() - fHomo;
          double V     = domain().volume()/mixture().vMonomer();
-         double PExV  = -1.0*pEx*V;
-         double FExV  = fEx*V; 
-         out << "f (homo)   = " << Dbl(fHomo, 18, 11) << std::endl;
-         out << "p (homo)   = " << Dbl(pHomo, 18, 11) << std::endl;
-         out << "f (ex)     = " << Dbl(fEx, 18, 11)   << std::endl;
-         out << "p (ex)     = " << Dbl(pEx, 18, 11)   << std::endl;
-         out << "-p(ex)*V   = " << Dbl(PExV, 18, 11)  << std::endl;
-         out << "f(ex)*V    = " << Dbl(FExV, 18, 11)  << std::endl;
+         double PhiExTot = -1.0*pEx*V;
+         double fExTot   = fEx*V; 
+         out << std::endl;
+         out << "f (homo)   = " << Dbl(fHomo, 18, 11)     
+                                << "   [per monomer volume]" << std::endl;
+         out << "p (homo)   = " << Dbl(pHomo, 18, 11)     
+                                << "   [per monomer volume]" << std::endl;
+         out << "delta f    = " << Dbl(fEx, 18, 11)  
+                                << "   [per monomer volume]" << std::endl;
+         out << "delta p    = " << Dbl(pEx, 18, 11)  
+                                << "   [per monomer volume]" << std::endl;
+         out << "Phi (ex)   = " << Dbl(PhiExTot, 18, 11) 
+                                << "   [total]" << std::endl;
+         out << "F (ex)     = " << Dbl(fExTot, 18, 11)  
+                                << "   [total]" << std::endl;
+         out << "V(tot)/v   = " << Dbl(V, 18, 11) << std::endl;
 
-         // Output polymer properties
+         // Output species specific properties
          double dV; 
          out << std::endl;
-         out << "Polymers:" << std::endl;
+         out << "Species:" << std::endl;
          out << "    i"
-             << "      mu[i]         "
-             << "      phi(homo)[i]  "
-             << "      dV[i]         " 
+             << "      mu            "
+             << "      phi(homo)     "
+             << "      delta V       " 
              << std::endl;
          for (int i = 0; i < homogeneous().nMolecule(); ++i) {
             dV = mixture().polymer(i).phi() - homogeneous().phi(i);

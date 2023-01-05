@@ -226,18 +226,18 @@ may be expressed as a ratio
    L  = M/m_{\alpha} \quad,
 \f]
 in which \f$ m_{\alpha} \f$ is a molecular weight per unit contour length 
-for monomers of type \f$ a \f$. The quantity \f$ m_{\alpha} \f$ must be 
-defined for each monomer type such that the volume occupied per chain 
-segment of molecular weight \f$ m_{\alpha} \f$ in a polymer melt 
-corresponds to the chosen value of \f$ v \f$. If a melt of homopolymers 
-containing monomers of type \f$ \alpha \f$ exhibits a density 
-\f$ \rho_{\alpha} \f$ in grams per volume at the tempeature and pressure 
-of interest, then the value of \f$ m_{\alpha} \f$ for that monomer type 
-is given in grams per mole as 
+(or per monomer reference volume) for monomers of type \f$ a \f$. The 
+quantity \f$ m_{\alpha} \f$ must be defined for each monomer type such 
+that the volume occupied per chain segment of molecular weight 
+\f$ m_{\alpha} \f$ in a polymer melt corresponds to the chosen value 
+of \f$ v \f$. If a melt of homopolymers containing monomers of type 
+\f$ \alpha \f$ exhibits a density \f$ \rho_{\alpha} \f$ in grams per 
+volume at the tempeature and pressure of interest, then the value of 
+\f$ m_{\alpha} \f$ for that monomer type is given in grams per mole as 
 \f[
    m_{\alpha} = \rho_{\alpha} v N_{\rm A} \quad
 \f]
-where \f$ N_{\rm A} \f$ is Avogadro's number.  If \f$ \rho_{\alpha} \f$ 
+where \f$ N_{\rm A} \f$ is Avogadro's number. If \f$ \rho_{\alpha} \f$ 
 is given in grams per cubic centimeter and \f$ v \f$ is given in cubic 
 Angstroms, then a numerical conversion factor of \f$ 10^{-24} \f$ cubic 
 centimeter per cubic Angstrom is also required to obtain consistent
@@ -264,44 +264,45 @@ or nanometer units are usually used for all lengths.
 \subsection user_model_theorist_sub "Theorist" Conventions
 
 In a "theorist" convention, contour coordinates are scaled so as to 
-define the overall contour length of some reference chain or chain 
-segment to be equal to 1.0 by convention.  The reference chain is 
-often chosen to correspond to either an entire molecule of some 
-polymer species that is present in the system, or one block of 
-one such  species.  This is equivalent to setting the "monomer" 
-reference volume equal to the entire volume of the reference polymer 
-or block.  Because the equations implemented by PSCF require that the 
-volume per contour length must be the same for blocks of different 
-monomer types, values of ratios of block or chain lengths must be
-equal to ratios of the corresponding occupied volumes. In this
-convention, the length assigned to each block of each polymer in 
-a system must thus be equal to the ratio of the actual volume of 
-that block to the volume of the reference chain. 
+define the overall contour length of some reference chain or chain segment 
+to be equal to 1.0 by convention.  The reference chain is often chosen 
+to correspond to either an entire molecule of some polymer species that 
+is present in the system, or one block of one such  species.  This is 
+equivalent to setting the "monomer" reference volume equal to the 
+occupied volume of the entire reference polymer or block.  Because the 
+equations implemented by PSCF require that the volume per contour length 
+must be the same for blocks of different monomer types, values for 
+ratios of block or chain lengths must be equal to corresponding ratios 
+of occupied volumes. In this convention, the length assigned to each 
+block of each polymer must thus be equal to the ratio of the actual 
+volume of that block to the volume of the reference chain. 
 
-For example, in a system that contains a single linear block copolymer 
+For example, in a system that contains a single linear block polymer 
 species, the length of the entire polymer is often set equal to 1.0 by 
-convention. To do so, we must assign the blocks of that polymer lengths 
-that are each less than or equal to 1.0 and that add to exactly 1.0. 
+convention. In this convention, we  assign the blocks of that polymer 
+block lengths that are each less than 1 and that add to exactly 1.  
 In the case of a one-component block polymer melt, the value of each 
 such block length is then equal to the volume fraction of that block. 
 
-The use of theorists convention for contour lengths is compatible
+The use of theorist convention for contour lengths is compatible
 with the use of either physical Angstrom or nanometer length units 
 or with the use of a convenient system of non-dimensionalized units 
 for length. The simplest scheme for definining non-dimensionalized 
 lengths is to define the statistical segment length of one monomer 
 type to be equal to 1.0 by convention. In this case, one must then 
 assign every other monomer type a statistical segment length given 
-by the ratio of its actual statistical segment length (e.g., a
+by the ratio of its actual statistical segment length (e.g., its
 statistical segment length defined using an experimentalist 
-convention to that of the reference monomer type.
+convention) to that of the reference monomer type. Note that the 
+values of ratios of statistical segment lengths are unchanged by
+changes in one's convention for the monomer reference volume.
 
-All of the examples shown in this user's manual use a theorist
-convention in which the overall length of one type of polymer (i.e., 
-the sum of the length of the blocks for a block polymer) is set to 1.0 
-by convention, and in which the statistical segment length of at least 
-one species is set to 1.0. This type of convention is also used in the 
-input files for all of the examples provided with PSCF.
+All of the examples shown in this user's manual use a theorist convention 
+in which the overall length of one type of polymer (i.e., the sum of the 
+length of the blocks for a block polymer) is set to 1.0, and in which 
+the statistical segment length of at least one monomer type is set to 
+1.0. This type of convention is also used in the input files for all of 
+the examples provided with PSCF.
 
 \section user_model_solvent_sec Solvent Species
 

@@ -4,13 +4,17 @@
 <BR>
 
 
+This page describes the commands accepted by the pscf_fd program. 
+We begin by showing simple examples of complete command files.
+
 \section user_command_fd_example_sec Example: SCFT Calculation
 
 Here is a example of a command file for a single SCFT calculation 
-performed with pscf_fd. The example assumes that an initial guess
-for the w field is located in a subdirectory of the current working
-directory named "in", and that all outputs will be written to files 
-in a subdirectory named "out". 
+performed with pscf_fd.  The example assumes the use of a convention
+for locations of input and output files in which the initial guess 
+for the w field is located in a subdirectory of the current working 
+directory named "in", and in which all outputs are written to files 
+in a subdirectory named "out".  
 \code
 READ_W        in/w
 ITERATE       
@@ -23,24 +27,26 @@ FINISH
 The effect of each command in this example is described below:
 
   - The command "READ_W in/w" reads the file in/w, which contains an 
-    initial guess for the chemical potential field
+    initial guess for the chemical potential field, and save it to 
+    memory.
 
-  - ITERATE runs an iterative solver that attempts to solve the
-    self-consistent field equations, starting from the initial guess
+  - The command ITERATE runs an iterative solver that attempts to solve 
+    the self-consistent field equations, starting from the initial guess
+    that was provided by the READ_W command.
 
-  - "WRITE_W out/w" writes the resulting converged set of 
-    chemical potential fields to the file out/w. 
+  - "WRITE_W out/w" writes the resulting converged set of chemical
+    potential fields to the file out/w. 
 
   - "WRITE_C out/c" writes the corresponding monomer volume fraction 
     fields to the file out/c.
 
   - "WRITE_PARAM out/data" writes the parameter file for this solution 
-    to the file out/data, to provide a record of the input parameters 
+    to the file out/data, to provide a record of the input parameters.
 
-  - WRITE_THERMO appends information about thermodynamic properties of
-    of the converged solution to the end of out/data.
+  - "WRITE_THERMO out/data" appends information about thermodynamic 
+    properties of of the converged solution to the end of file out/data.
 
-  - FINISH instructs the program to stop execution
+  - FINISH instructs the main program to stop execution and return.
 
 All pscf_fd that read or write field files use the same field file 
 format, described \ref user_field_fd1d_page "here".  Every PSCF command 
@@ -61,14 +67,14 @@ initial guess for the chemical potentials fields at the initial state
 of the sweep (the state s=0) from the file in/w.bf.  
 The SWEEP command actually executes the sweep operation.
 
-The command file for a sweep generally does not require any of the 
-explicit output commands that are shown as part of the example for a 
-single SCFT calculation.  These output commands are unnecessary for
-a sweep because information about the solution at each step in the sweep 
-is instead automatically output as part of the implementation of the 
-sweep operation. Adding output command after the SWEEP command would 
-in any case only output information that describes the last state in 
-the sweep (i.e., about the state s=1). 
+Note that this example command file for a sweep does not contain any of 
+the explicit output commands that are shown as part of the example for 
+a single SCFT calculation.  These output commands are unnecessary for
+a sweep because information about the solution at each step in the 
+sweep is instead automatically output as part of the implementation of 
+the sweep operation. Adding output commands that output data after the 
+SWEEP command would in any case only output information that describes 
+the solution for the final state point of the sweep, for which s=1.
 
 \section user_command_fd_commands_sec Commands
 The following table shows a list of available commands for pscf_fd, along 
@@ -83,13 +89,20 @@ each command:
   <tr> 
     <td> READ_W </td>
     <td> filename [string] </td>
-    <td> Read w fields from file filename
+    <td> Read w fields from specified file (filename)
          </td>
+  </tr>
+  <tr> 
+    <td> COMPUTE </td>
+    <td> </td>
+    <td> Solve the modified diffusion equation for current w fields, 
+         without iteration. </td>
   </tr>
   <tr> 
     <td> ITERATE </td>
     <td> </td>
-    <td> Iteratively solve SCFT equations (after reading initial w fields) </td>
+    <td> Iteratively solve SCFT equations, using current w fields as an 
+         initial guess. </td>
   </tr>
   <tr> 
     <td> SWEEP </td>
@@ -108,31 +121,24 @@ each command:
     <td> Write monomer volume fraction (c) fields to file filename  </td>
   </tr>
   <tr> 
-    <td> WRITE_BLOCK_C </td>
+    <td> WRITE_C_BLOCK </td>
     <td> filename [string] </td>
-    <td> Write individual block/solvent volume fraction (c) fields to file
-         filename. The block c fields are given in the order that the blocks
-         appear in the param file, followed by the solvent fields in the
-         order that the solvents appear in the param file </td>
+    <td> Write volume fraction fields (c fields) for all individual polymer 
+         blocks and solvent species to file filename.  </td>
   </tr>
   <tr> 
     <td> WRITE_PARAM </td>
     <td> filename [string] </td>
-    <td> Write param file associated with the current system. Sweep blocks
-         are omitted. </td>
+    <td> Write param file associated with the current system. excluding any
+         Sweep block </td>
   </tr>
   <tr>
     <td> WRITE_THERMO </td>
     <td> filename [string] </td>
     <td> Write thermodynamic data (free energy, pressure, phi, and 
-         mu for each species) to a file. If file already exists, this
-         command will append thermodynamic data to the end of the 
-         file, rather than overwriting what is currently stored there.
+         mu for each species) to file filenae. If this file already exists, 
+         append thermodynamic data to the end of the file.
          </td>
-  <tr> 
-    <td> COMPARE_HOMOGENEOUS </td>
-    <td> mode [int] </td>
-    <td> Compare solution to homogeneous solution(s)  </td>
   </tr>
   <tr> 
     <td> WRITE_VERTEX_Q </td>
@@ -140,8 +146,144 @@ each command:
     <td> Write propagator (q) field to a file for a specified vertex
          (vertexId) in a specified polymer (polymerId). </td>
   </tr>
+  <tr> 
+    <td> COMPARE_HOMOGENEOUS </td>
+    <td> mode [int] </td>
+    <td> Compare solution to homogeneous solution(s)  </td>
+  </tr>
 </table>
 
+Individual commands and related groups of commands are discuss below in 
+greater detail:
+
+\section user_command_fd_input_sec W Field Input 
+
+The first command in a command file is usually a READ_W command, which 
+takes the name of an input file as an argument. This command reads an 
+initial guess for the chemical potential fields ("w fields") from the 
+specified file and assigns the current values for these fields equal 
+to the values read from this file. 
+
+\section user_command_fd_computation_sec Computation Commands
+
+The COMPUTE, ITERATE and SWEEP commands each perform a computation that 
+requires an initial guess for the w fields as an input. Each of these 
+commands must thus be preceded by a READ_W command that initializes the 
+w fields.
+
+The COMPUTE command performs a computation of the single molecule 
+partition functions and monomer concentrations for a system of 
+non-interacting molecules subjected to the current w-fields.  This 
+requires a solution of the modified diffusion equations for both
+directions for all blocks of each polymeric species and a simpler 
+calculation of concentrations for each solvent species.  The COMPUTE 
+command does not modify the w fields, but does modify the volume fraction 
+fields (c fields) associated with polymer blocks, solvent species and 
+monomer types. The resulting c fields generally do not satisfy the 
+self-consistenct field conditions.
+
+The ITERATE command attempts to obtain a solution to the self-consistent 
+field equations for a fixed set of parameters by iteratively adjusting 
+the w fields.  The choice of iteration algorithm is specified by the 
+Iterator block of the parameter file. Each iteration usually requires at 
+least one calculation similar to that performed once by the COMPUTE 
+command. 
+
+THE SWEEP command attempts to solve the SCFT equations at a sequence of 
+points along a path through the space of possible choices of input 
+parameters. This command can only be invoked if the parameter file 
+contains a SWEEP block, which defines the desired sequence of state 
+points.
+
+\section user_command_fd_dataout_sec Data Output Commands
+
+The WRITE_PARAM and WRITE_THERMO commands can be used to create a record 
+of the input parameters and computed thermodynamic properties associated 
+with a single SCFT calculation. 
+
+\anchor user_command_fd_param_sub 
+The WRITE_PARAM writes a slightly modified copy of the parameter 
+file to a file whose name that is specified as a command parameter. 
+The version of the parameter file written by this command outputs
+the current values for all parameters, and excludes any Sweep block.
+
+\anchor user_command_fd_thermo_sub 
+The WRITE_THERMO command outputs a report of values for thermodynamic 
+properties obtained after solution of a SCFT problem. The resulting 
+report includes values for the 
+\ref user_model_helmholtz_sub "Helmholtz free energy per monomer"
+\f$ \tilde{f} \f$ , denoted by "fHelmholtz" in the output file, 
+the \ref user_model_pressure_sub "nondimensionalized pressure" 
+\f$ \tilde{p} \f$, denoted by "pressure", the chemical potential and 
+volume fraction of each polymer and solvent molecular species, denoted 
+by "mu" and "phi", and the current values of the unit cell parameters. 
+All free energies, pressure and chemical potential values are output 
+using thermal energy units, in which \f$ k_{B}T = 1 \f$.
+
+If the file whose name is passed to the WRITE_THERMO command already 
+exists, the report of thermodynamic properties will be appended to 
+the end of this file, rather than overwriting the file.
+This is designed to allow users to output a parameter file block 
+that contains the input parameters followed by a report of computed 
+thermodynamic properties in a single file, if desired, by invoking 
+WRITE_PARAM and WRITE_THERMO with the same file name parameter.
+ 
+\section user_command_fd_fieldout_sec Field Output Commands
+
+The following commands can be used to output information about chemical
+potential and concentration fields after solving a SCFT problem.
+
+   - **WRITE_W** : Writes the current chemical potential fields 
+     (w fields) for all monomer types to an output file whose name
+     is specified as a command parameter.
+
+   - **WRITE_C** : Writes the current volume fraction / concentration
+     fields for all monomer types to a specified output file. 
+
+   - **WRITE_C_BLOCK** : Writes the current volume fraction / concentration
+     fields for all polymer blocks and monomer species to a single file,
+     with the field associated with each block or solvent species written
+     in a different column. 
+
+\anchor user_command_fd_writecblock_sub 
+The information provided by the WRTIE_C_BLOCK command is different 
+than and more detailed than that provided by the WRITE_C command when
+applied to systems in which the same monomer type id is assigned to 
+two or more blocks (on the same or different polymers) and/or solvent 
+species.  The file output by this command contains a header section 
+identical to that contained in any pscf_fd field file, followed by a 
+data section.  The format of the data section file is analogous to that 
+of pscf_fd field file that contains one field per monomer type, except 
+that each polymer block and solvent species is treated as a separate 
+monomer type, and thus output in a separate column of the data section.  
+
+Columns associated with blocks and species are output by the WRITE_C_BLOCK 
+command are listed from left to right in the same order that they appear 
+in the parameter file: Columns associated with polymer blocks are listed 
+first (i.e., to the left), followed by columns associated with solvent 
+species.  Columns associated with blocks of the same polymer appear 
+sequentially in order of increasing block id, while groups of columns 
+associated with different polymer species appear in order of increasing 
+polymer id.  Columns associated with solvent species appear after polymer 
+blocks, listed left to right in order of increasing polymer id. 
+
+\section user_command_fd_comparison_sec Compare to Homogeneous Reference 
+
+The COMPARE_HOMOGENEOUS command computes differences between properties 
+of an inhomogeneous system of interest, as predicted by SCFT, and those 
+of an homogeneous reference system. The command takes an integer mode 
+parameter with allowed values 0, 1, and 2 that determines the nature of 
+the homogeneous system used for this comparison.  In mode 0 (i.e., when 
+mode == 0), the inhomogeneous system is compared to a homogeneous system 
+with a composition equal to the spatial average composition of the system 
+of interest. In modes 1 and 2, the comparison is made to a homogeneous 
+system in which chemical potentials for all species are equal to those 
+of the system of interest.  
+
+Further details of the operation of this command are described in a 
+separate page \subpage user_command_fd_homo_page "here". These details
+include a description of the difference between modes 1 and 2 and a
+discussion of the format of the resulting report.
 
 <BR>
 \ref user_command_page    (Up) &nbsp; &nbsp; &nbsp; &nbsp; 

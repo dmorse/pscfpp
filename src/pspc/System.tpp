@@ -1330,8 +1330,6 @@ namespace Pspc
       int np, nb, ip, ib, id;
       np = mixture_.nPolymer();
       for (ip = 0; ip < np; ++ip) {
-         //Polymer<D> const * polymerPtr = &mixture_.polymer(ip);
-         //nb = polymerPtr->nBlock();
          nb = mixture_.polymer(ip).nBlock();
          for (ib = 0; ib < nb; ++ib) {
             for (id = 0; id < 2; ++id) {
