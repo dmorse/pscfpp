@@ -624,18 +624,25 @@ namespace Pspc
          } else
          if (command == "CHECK_RGRID_SYMMETRY") {
             readEcho(in, inFileName);
+            double epsilon;
+            in >> epsilon;
+            if (in.fail()) {
+               UTIL_THROW("Unable to read numerical parameter epsilon.");
+            }
+            Log::file() << " " << Dbl(epsilon, 20) << std::endl;
             bool hasSymmetry;
-            hasSymmetry = checkRGridFieldSymmetry(inFileName);
+            hasSymmetry = checkRGridFieldSymmetry(inFileName, epsilon);
             if (hasSymmetry) {
-               Log::file() 
+               Log::file() << std::endl
                    << "Symmetry of r-grid file matches this space group." 
-                   << std::endl;
+                   << std::endl << std::endl;
             } else {
-               Log::file() 
+               Log::file() << std::endl
                    << "Symmetry of r-grid file does not match this space group" 
                    << std::endl
-                   << "to within our error threshold of 1E-8."
-                   << std::endl;
+                   << "to within error threshold of "
+                   << Dbl(epsilon) << "."
+                   << std::endl << std::endl;
             }
          } else
          if (command == "COMPARE_BASIS") {
@@ -822,7 +829,7 @@ namespace Pspc
          mixture_.computeStress();
       }
 
-      // If w fields are symmetric, compute basis componens for c-fields
+      // If w fields are symmetric, compute basis components for c-fields
       if (w_.isSymmetric()) {
          UTIL_CHECK(c_.isAllocatedBasis());
          domain_.fieldIo().convertRGridToBasis(c_.rgrid(), c_.basis());
@@ -1528,7 +1535,8 @@ namespace Pspc
    * Convert fields from real-space grid to symmetry-adapted basis format.
    */
    template <int D>
-   bool System<D>::checkRGridFieldSymmetry(const std::string & inFileName) 
+   bool System<D>::checkRGridFieldSymmetry(const std::string & inFileName,
+                                           double epsilon) 
    {
       // If basis fields are not allocated, peek at field file header to 
       // get unit cell parameters, initialize basis and allocate fields.
@@ -1545,7 +1553,8 @@ namespace Pspc
       // Check symmetry for all fields
       for (int i = 0; i < mixture_.nMonomer(); ++i) {
          bool symmetric;
-         symmetric = domain_.fieldIo().hasSymmetry(tmpFieldsRGrid_[i]);
+         symmetric = domain_.fieldIo().hasSymmetry(tmpFieldsRGrid_[i],
+                                                   epsilon);
          if (!symmetric) {
             return false;
          }
