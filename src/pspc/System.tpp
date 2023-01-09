@@ -1330,6 +1330,7 @@ namespace Pspc
           fieldIo().writeFieldRGrid(file, propagator.q(i), 
                                     domain_.unitCell(), hasHeader);
       }
+      file.close();
    }
 
    /*
@@ -1371,6 +1372,7 @@ namespace Pspc
       fieldIo().writeFieldHeader(outFile, mixture_.nMonomer(),
                                  domain_.unitCell());
       domain_.basis().outputStars(outFile);
+      outFile.close();
    }
 
    /*
@@ -1385,6 +1387,7 @@ namespace Pspc
       fieldIo().writeFieldHeader(outFile, mixture_.nMonomer(), 
                                  domain_.unitCell());
       domain_.basis().outputWaves(outFile);
+      outFile.close();
    }
 
    // Field conversion command functions

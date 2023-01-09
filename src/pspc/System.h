@@ -430,8 +430,8 @@ namespace Pspc
       /**
       * Output information about stars and symmetrized basis functions.
       *
-      * This function opens a file with the specified filename and then
-      * calls Basis::outputStars.
+      * This function opens a file with the specified filename, calls
+      * Basis<D>::outputStars, and closes the file before returning.
       *
       * \param outFileName name of output file
       */
@@ -440,8 +440,8 @@ namespace Pspc
       /**
       * Output information about waves.
       *
-      * This function opens a file with the specified filename and then
-      * calls Basis::outputWaves.
+      * This function opens a file with the specified filename, calls
+      * Basis<D>::outputWaves, and closes the file before returning.
       *
       * \param outFileName name of output file for wave data
       */
@@ -531,13 +531,11 @@ namespace Pspc
       * Check if r-grid fields have the declared space group symmetry.
       *
       * \param inFileName name of input file
-      * \param epsilon error threshold used when comparing the k-grid and 
-      * symmetry-adapted formats to determine whether field has the declared 
-      * space group symmetry
+      * \param epsilon error threshold used when testing for symmetry
       * \return true if fields all have symmetry, false otherwise
       */
       bool checkRGridFieldSymmetry(const std::string & inFileName,
-                                   double epsilon);
+                                   double epsilon = 1.0E-8);
 
       //@}
       /// \name Member Accessors

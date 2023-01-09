@@ -1196,8 +1196,8 @@ namespace Pspc
    template <int D>
    void FieldIo<D>::convertKGridToBasis(RFieldDft<D> const & in, 
                                         DArray<double>& out,
-                                        bool checkSymmetry, double epsilon) 
-                                        const
+                                        bool checkSymmetry, 
+                                        double epsilon) const
    {
       UTIL_CHECK(basis().isInitialized());
 
@@ -1206,17 +1206,14 @@ namespace Pspc
          bool symmetric = hasSymmetry(in, epsilon, true);
          if (!symmetric) {
             Log::file() << std::endl
-                        << "WARNING: non-negligible error in conversion to "
-                        << "symmetry-adapted basis format." 
-                        << std::endl
-                        << "   See error values printed above for each "
-                        << "asymmetric field."
-                        << std::endl
-                        << "   The field that is output by the above operation "
-                        << "will be a"
-                        << std::endl
-                        << "   symmetrized version of the input field."
-                        << std::endl << std::endl;
+               << "WARNING: non-negligible error in conversion to "
+               << "symmetry-adapted basis format." << std::endl
+               << "   See error values printed above for each "
+               << "asymmetric field." << std::endl
+               << "   The field that is output by the above operation "
+               << "will be a" << std::endl
+               << "   symmetrized version of the input field."
+               << std::endl << std::endl;
          }
       }
 
@@ -1315,8 +1312,9 @@ namespace Pspc
    }
 
    template <int D>
-   void FieldIo<D>::convertBasisToKGrid(DArray< DArray <double> > const & in,
-                                        DArray< RFieldDft<D> >& out) const
+   void 
+   FieldIo<D>::convertBasisToKGrid(DArray< DArray <double> > const & in,
+                                   DArray< RFieldDft<D> >& out) const
    {
       UTIL_ASSERT(in.capacity() == out.capacity());
       int n = in.capacity();
@@ -1328,13 +1326,13 @@ namespace Pspc
    template <int D>
    void FieldIo<D>::convertKGridToBasis(DArray< RFieldDft<D> > const & in,
                                         DArray< DArray <double> > & out,
-                                        bool checkSymmetry, double epsilon) 
-                                        const
+                                        bool checkSymmetry, 
+                                        double epsilon) const
    {
       UTIL_ASSERT(in.capacity() == out.capacity());
       int n = in.capacity();
-      bool symmetric(true);
 
+      bool symmetric(true);
       for (int i = 0; i < n; ++i) {
          if (checkSymmetry) {
             // Check if kgrid has symmetry
@@ -1344,20 +1342,16 @@ namespace Pspc
          convertKGridToBasis(in[i], out[i], false);
       }
 
-      // Print warning if any input fields didn't meet symmetry of space group
+      // Print warning if any input field is assymmetric
       if (!symmetric) {
          Log::file() << std::endl
-                     << "WARNING: non-negligible error in conversion to "
-                     << "symmetry-adapted basis format." 
-                     << std::endl
-                     << "See error values printed above for each asymmetric "
-                     << "field."
-                     << std::endl
-                     << "The field that is output by this operation will be "
-                     << "a symmetrized version of"
-                     << std::endl
-                     << "the input field."
-                     << std::endl << std::endl;
+            << "WARNING: non-negligible error in conversion to "
+            << "symmetry-adapted basis format." << std::endl
+            << "See error values printed above for each asymmetric field."
+            << std::endl
+            << "The field that is output by this operation will be "
+            << "a symmetrized version of" << std::endl
+            << "the input field." << std::endl << std::endl;
       }
    }
 
@@ -1390,7 +1384,8 @@ namespace Pspc
    void 
    FieldIo<D>::convertRGridToBasis(RField<D> const & in,
                                    DArray<double> & out,
-                                   bool checkSymmetry, double epsilon) const
+                                   bool checkSymmetry, 
+                                   double epsilon) const
    {
       checkWorkDft();
       fft().forwardTransform(in, workDft_);
@@ -1401,14 +1396,15 @@ namespace Pspc
    void 
    FieldIo<D>::convertRGridToBasis(DArray< RField<D> > const & in,
                                    DArray< DArray <double> > & out,
-                                   bool checkSymmetry, double epsilon) const
+                                   bool checkSymmetry, 
+                                   double epsilon) const
    {
       UTIL_ASSERT(in.capacity() == out.capacity());
       checkWorkDft();
 
       int n = in.capacity();
-      bool symmetric(true);
 
+      bool symmetric(true);
       for (int i = 0; i < n; ++i) {
          fft().forwardTransform(in[i], workDft_);
          if (checkSymmetry) {
@@ -1419,23 +1415,23 @@ namespace Pspc
          convertKGridToBasis(workDft_, out[i], false);
       }
 
-      // Print warning if any input fields didn't meet symmetry of space group
+      // Print warning if any input fields is asymmetric
       if (!symmetric) {
          Log::file() << std::endl
-                     << "WARNING: non-negligible error in conversion to "
-                     << "symmetry-adapted basis format." 
-                     << std::endl
-                     << "   See error values printed above for each "
-                     << "asymmetric field."
-                     << std::endl
-                     << "   The field that is output by the above operation "
-                     << "will be a"
-                     << std::endl
-                     << "   symmetrized version of the input field."
-                     << std::endl << std::endl;
+             << "WARNING: non-negligible error in conversion to "
+             << "symmetry-adapted basis format." << std::endl
+             << "   See error values printed above for each "
+             << "asymmetric field." << std::endl
+             << "   The field that is output by the above operation "
+             << "will be a" << std::endl
+             << "   symmetrized version of the input field."
+             << std::endl << std::endl;
       }
    }
 
+   /*
+   * Apply inverse FFT to an array of k-grid fields.
+   */
    template <int D>
    void 
    FieldIo<D>::convertKGridToRGrid(DArray< RFieldDft<D> > & in,
@@ -1448,6 +1444,9 @@ namespace Pspc
       }
    }
 
+   /*
+   * Apply inverse FFT to a single k-grid field.
+   */
    template <int D>
    void 
    FieldIo<D>::convertKGridToRGrid(RFieldDft<D>& in, RField<D>& out) const
@@ -1455,6 +1454,9 @@ namespace Pspc
       fft().inverseTransformSafe(in, out);
    }
 
+   /*
+   * Apply forward FFT to an array of r-grid fields.
+   */
    template <int D>
    void 
    FieldIo<D>::convertRGridToKGrid(DArray< RField<D> > const & in,
@@ -1467,6 +1469,9 @@ namespace Pspc
       }
    }
 
+   /*
+   * Apply forward FFT to a single r-grid field.
+   */
    template <int D>
    void 
    FieldIo<D>::convertRGridToKGrid(RField<D> const & in,
