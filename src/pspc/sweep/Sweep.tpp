@@ -27,6 +27,9 @@ namespace Pspc {
    template <int D>
    Sweep<D>::Sweep() 
     : SweepTmpl< BasisFieldState<D> >(PSPC_HISTORY_CAPACITY),
+      writeCRGrid_(false),
+      writeCBasis_(false),
+      writeWRGrid_(false),
       systemPtr_(0)
    {}
 
@@ -36,6 +39,9 @@ namespace Pspc {
    template <int D>
    Sweep<D>::Sweep(System<D> & system) 
     : SweepTmpl< BasisFieldState<D> >(PSPC_HISTORY_CAPACITY),
+      writeCRGrid_(false),
+      writeCBasis_(false),
+      writeWRGrid_(false),
       systemPtr_(&system)
    {}
 
@@ -52,6 +58,21 @@ namespace Pspc {
    template <int D>
    void Sweep<D>::setSystem(System<D>& system) 
    {  systemPtr_ = &system; }
+
+   /*
+   * Read parameters
+   */
+   template <int D>
+   void Sweep<D>::readParameters(std::istream& in)
+   {
+      // Call the base class's readParameters function.
+      SweepTmpl< BasisFieldState<D> >::readParameters(in);
+      
+      // Read optional flags indicating which field types to output
+      readOptional(in, "writeCRGrid", writeCRGrid_);
+      readOptional(in, "writeCBasis", writeCBasis_);
+      readOptional(in, "writeWRGrid", writeWRGrid_);
+   }
 
    /*
    * Check allocation of one state object, allocate if necessary.
@@ -265,18 +286,8 @@ namespace Pspc {
                                           system().w().basis(), 
                                           system().unitCell());
 
-      // Write c fields
-      outFileName = baseFileName_;
-      outFileName += indexString;
-      outFileName += "_c";
-      outFileName += ".bf";
-      UTIL_CHECK(system().hasCFields());
-      system().fieldIo().writeFieldsBasis(outFileName, 
-                                          system().c().basis(), 
-                                          system().unitCell());
-
-      // Write c rgrid files
-      if (writeRhoRGrid_) {
+      // Optionally write c rgrid files
+      if (writeCRGrid_) {
          outFileName = baseFileName_;
          outFileName += indexString;
          outFileName += "_c";
@@ -286,6 +297,28 @@ namespace Pspc {
                                              system().unitCell());
       }
 
+       // Optionally write c basis files
+      if (writeCBasis_) {
+         outFileName = baseFileName_;
+         outFileName += indexString;
+         outFileName += "_c";
+         outFileName += ".bf";
+         UTIL_CHECK(system().hasCFields());
+         system().fieldIo().writeFieldsBasis(outFileName, 
+                                             system().c().basis(), 
+                                             system().unitCell());
+      }
+
+      // Optionally write w rgrid files
+      if (writeWRGrid_) {
+         outFileName = baseFileName_;
+         outFileName += indexString;
+         outFileName += "_w";
+         outFileName += ".rf";
+         system().fieldIo().writeFieldsRGrid(outFileName, 
+                                             system().w().rgrid(), 
+                                             system().unitCell());
+      }
    }
 
    template <int D>

@@ -1283,7 +1283,7 @@ namespace Pspg
 
    template <int D>
    void FieldIo<D>::convertKGridToBasis(DArray< RDFieldDft<D> > const & in,
-                                        DArray< DArray<double>> & out) 
+                                        DArray< DArray<double> > & out) 
    const
    {
 
