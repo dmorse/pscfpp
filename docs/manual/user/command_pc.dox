@@ -218,12 +218,12 @@ command or a group of closely related commands.
     </td> 
   </tr>
   <tr> 
-    <td> WRITE_WAVES </td>
+    <td> \ref user_command_pc_writewaves_sub "WRITE_WAVES" </td>
     <td> filename [string] </td>
     <td> Write list of all allowed wavevectors to file filename. </td>
   </tr>
   <tr> 
-    <td> WRITE_STARS </td>
+    <td> \ref user_command_pc_writestars_sub "WRITE_STARS" </td>
     <td> filename [string] </td>
     <td> Write a list of all wavevector stars to file filename. </td>
   </tr>
@@ -681,6 +681,45 @@ parameter out/q, then the file out/q_0_2_1.rf will contain all slices
 of the propagator associated with polymer 0, block 2 and direction 1. 
 
 \section user_command_pc_crystal_sec Crystallographic Information
+
+The commands WRITE_WAVES and WRITE_STARS allow the user to output 
+information about the symmetry-adapted basis that program has constructed
+for space group and mesh specified in the parameter file. This basis
+is constructed by identifying sets of allowed wavevectors that are 
+related by symmetry, which we refer to as "stars", and constructing 
+a basis function associated with each star as linear superpositions 
+of planes waves with wavevectors that belong to that star. The 
+coefficients of plane waves associated with wavevectors within such 
+superposition are complex numbers with the same absolute magnitude 
+and relative phases (i.e., differences between complex arguments) 
+that are determined by the requirement that each such function be 
+invariant under all operations of the specified space group.
+
+\anchor user_command_pc_writewaves_sub
+The WRITE_WAVES command outputs an ordered list of unique wavevectors
+that can appear in the expansion of a function with the specified
+space group symmetry, with associated information about each wavevector.
+The name of this command must be followed by the name of the file to 
+which this listing should be written.  Each allowed wavevector in the
+Fourier expansion of a periodic function may be expressed as linear
+superposition of reciprocal lattice basis vectors for the Bravais
+lattice for that crystal with integer coefficients. The number of
+required wavevectors is determined by the fact that field values
+are only defined on points are on nodes of a regular mesh that
+discretizes one unit cell of the crystal. The information about each
+wavevector that is output includes values of the integer indices of
+the wavevector (i.e., coefficients of the reciprocal lattice basis
+vectors), the index of the star to which it belongs, and the 
+coefficient of the associated plane wave with the sum of plane waves
+that defines the basis function associated with that star. The format
+of this report is defined by the outputWaves function of class template 
+Basis<int D>, which is defined in the file src/pscf/crystal/Basis.tpp.
+
+\anchor user_command_pc_writestars_sub
+The WRITE_STARS command outputs a more compact list of information
+about stars, or associated basis functions. The format of this report
+of this report is defined by the function outputStars of class template 
+Basis<int D>.
 
 \section user_command_pc_fieldops_sec Field File Manipulations
 
