@@ -122,6 +122,7 @@ System{
    LinearSweep{
       ns            20  
       baseFileName  out/
+      reuseState    0
       nParameter    3
       parameters[
                     cell_param  1  1.0
@@ -269,6 +270,14 @@ identical, because asymmetric walls would break the symmetry of the space
 group that we've chosen, so we'd need to switch to a different space group 
 to model bcc with asymmetric walls.
 
+Finally, notice that there is an additional line in the Sweep block: 
+`reuseState 0`. The reuseState feature typically improves convergence time
+for sweeps by using the last few iterations of the previous sweep step as
+the initial "histories" for the current sweep step. However, this feature 
+actually worsens convergence time when paired with a thin film thickness 
+(`cell_param`) sweep, and thus we include `reuseState 0` in the param file 
+to turn off the feature when sweeping film thickness.
+
 ## The effect of the parameter t
 
 It is important to note that the equation for *F*<sub>wall</sub> above has 
@@ -311,6 +320,28 @@ parameters are actually allowed to vary based on `normalVecId` and
 `unitCell`. If the user tries to define a unit cell that is incompatible 
 with the rules above (*e.g.,* a 2D unit cell with <i>&alpha;</i> &ne; 
 90&deg;), the software will throw an error.
+
+## A Note About The COMPUTE Command
+
+When using PSCF for bulk systems (those without a thin film constraint), 
+users can use the COMPUTE command in the command file to solve the MDEs
+and determine the concentration fields from a given set of potential (w) 
+fields. Based on the way the thin film code is implemented, the COMPUTE
+command will currently give the wrong result if the system in question 
+has a thin film constraint. This is because the code has to generate 
+external fields and a mask field to represent the upper and lower walls,
+which alter the other calculations that happen within the system, and these
+fields are not generated until the ITERATE command is called. 
+
+If the user wishes to simply solve the MDEs for a thin film system without 
+iterating to a solution, we recommend the following workaround: instead of
+calling COMPUTE, set the epsilon value of the iterator to a very large 
+number (say, 1e5) and call ITERATE. The MDE solution at Iteration 0 will 
+be "converged" because it will have an error value that is lower than 
+epsilon, and so the iteration procedure will terminate on Iteration 0 
+without ever updating the potential fields. Thus, the only operation 
+performed by ITERATE will be solving the MDEs, which will then allow the
+user to write the resulting concentration fields to a file.
 
 #  Space Groups
 

@@ -531,9 +531,13 @@ namespace Pspc
       * Check if r-grid fields have the declared space group symmetry.
       *
       * \param inFileName name of input file
+      * \param epsilon error threshold used when comparing the k-grid and 
+      * symmetry-adapted formats to determine whether field has the declared 
+      * space group symmetry
       * \return true if fields all have symmetry, false otherwise
       */
-      bool checkRGridFieldSymmetry(const std::string & inFileName);
+      bool checkRGridFieldSymmetry(const std::string & inFileName,
+                                   double epsilon);
 
       //@}
       /// \name Member Accessors

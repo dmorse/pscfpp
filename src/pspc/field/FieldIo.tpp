@@ -1195,9 +1195,30 @@ namespace Pspc
 
    template <int D>
    void FieldIo<D>::convertKGridToBasis(RFieldDft<D> const & in, 
-                                        DArray<double>& out) const
+                                        DArray<double>& out,
+                                        bool checkSymmetry, double epsilon) 
+                                        const
    {
       UTIL_CHECK(basis().isInitialized());
+
+      if (checkSymmetry) {
+         // Check if kgrid has symmetry
+         bool symmetric = hasSymmetry(in, epsilon, true);
+         if (!symmetric) {
+            Log::file() << std::endl
+                        << "WARNING: non-negligible error in conversion to "
+                        << "symmetry-adapted basis format." 
+                        << std::endl
+                        << "   See error values printed above for each "
+                        << "asymmetric field."
+                        << std::endl
+                        << "   The field that is output by the above operation "
+                        << "will be a"
+                        << std::endl
+                        << "   symmetrized version of the input field."
+                        << std::endl << std::endl;
+         }
+      }
 
       // Create Mesh<D> with dimensions of DFT Fourier grid.
       Mesh<D> dftMesh(in.dftDimensions());
@@ -1208,20 +1229,6 @@ namespace Pspc
       int rank;                                // dft grid rank of wave
       int is;                                  // star index
       int ib;                                  // basis index
-
-      // Check if kgrid has symmetry, and print a warning if it does not
-      bool symmetric;
-      symmetric = hasSymmetry(in, true);
-      if (!symmetric) {
-         Log::file() << "WARNING: non-negligible error in conversion to "
-                     << "symmetry-adapted basis format." 
-                     << std::endl
-                     << "See error values printed above."
-                     << "The field output by this operation will be "
-                     << std::endl
-                     << "a symmetrized version of the input field."
-                     << std::endl;
-      }
 
       // Initialize all components to zero 
       for (is = 0; is < basis().nBasis(); ++is) {
@@ -1320,12 +1327,37 @@ namespace Pspc
 
    template <int D>
    void FieldIo<D>::convertKGridToBasis(DArray< RFieldDft<D> > const & in,
-                                        DArray< DArray <double> > & out) const
+                                        DArray< DArray <double> > & out,
+                                        bool checkSymmetry, double epsilon) 
+                                        const
    {
       UTIL_ASSERT(in.capacity() == out.capacity());
       int n = in.capacity();
+      bool symmetric(true);
+
       for (int i = 0; i < n; ++i) {
-         convertKGridToBasis(in[i], out[i]);
+         if (checkSymmetry) {
+            // Check if kgrid has symmetry
+            bool tmp_sym = hasSymmetry(in[i], epsilon, true);
+            if (!tmp_sym) symmetric = false;
+         }
+         convertKGridToBasis(in[i], out[i], false);
+      }
+
+      // Print warning if any input fields didn't meet symmetry of space group
+      if (!symmetric) {
+         Log::file() << std::endl
+                     << "WARNING: non-negligible error in conversion to "
+                     << "symmetry-adapted basis format." 
+                     << std::endl
+                     << "See error values printed above for each asymmetric "
+                     << "field."
+                     << std::endl
+                     << "The field that is output by this operation will be "
+                     << "a symmetrized version of"
+                     << std::endl
+                     << "the input field."
+                     << std::endl << std::endl;
       }
    }
 
@@ -1357,25 +1389,50 @@ namespace Pspc
    template <int D>
    void 
    FieldIo<D>::convertRGridToBasis(RField<D> const & in,
-                                   DArray<double> & out) const
+                                   DArray<double> & out,
+                                   bool checkSymmetry, double epsilon) const
    {
       checkWorkDft();
       fft().forwardTransform(in, workDft_);
-      convertKGridToBasis(workDft_, out);
+      convertKGridToBasis(workDft_, out, checkSymmetry, epsilon);
    }
 
    template <int D>
    void 
    FieldIo<D>::convertRGridToBasis(DArray< RField<D> > const & in,
-                                   DArray< DArray <double> > & out) const
+                                   DArray< DArray <double> > & out,
+                                   bool checkSymmetry, double epsilon) const
    {
       UTIL_ASSERT(in.capacity() == out.capacity());
       checkWorkDft();
 
       int n = in.capacity();
+      bool symmetric(true);
+
       for (int i = 0; i < n; ++i) {
          fft().forwardTransform(in[i], workDft_);
-         convertKGridToBasis(workDft_, out[i]);
+         if (checkSymmetry) {
+            // Check if kgrid has symmetry
+            bool tmp_sym = hasSymmetry(workDft_, epsilon, true);
+            if (!tmp_sym) symmetric = false;
+         }
+         convertKGridToBasis(workDft_, out[i], false);
+      }
+
+      // Print warning if any input fields didn't meet symmetry of space group
+      if (!symmetric) {
+         Log::file() << std::endl
+                     << "WARNING: non-negligible error in conversion to "
+                     << "symmetry-adapted basis format." 
+                     << std::endl
+                     << "   See error values printed above for each "
+                     << "asymmetric field."
+                     << std::endl
+                     << "   The field that is output by the above operation "
+                     << "will be a"
+                     << std::endl
+                     << "   symmetrized version of the input field."
+                     << std::endl << std::endl;
       }
    }
 
@@ -1424,10 +1481,12 @@ namespace Pspc
    * if verbose == true and hasSymmetry == false.
    */
    template <int D>
-   bool FieldIo<D>::hasSymmetry(RField<D> const & in, bool verbose) const
+   bool FieldIo<D>::hasSymmetry(RField<D> const & in, double epsilon,
+                                bool verbose) const
    {
+      checkWorkDft();
       fft().forwardTransform(in, workDft_);
-      return hasSymmetry(workDft_, verbose);
+      return hasSymmetry(workDft_, epsilon, verbose);
    }
 
    /*
@@ -1436,7 +1495,8 @@ namespace Pspc
    * if verbose == true and hasSymmetry == false.
    */
    template <int D>
-   bool FieldIo<D>::hasSymmetry(RFieldDft<D> const & in, bool verbose) const
+   bool FieldIo<D>::hasSymmetry(RFieldDft<D> const & in, double epsilon,
+                                bool verbose) const
    {
       UTIL_CHECK(basis().isInitialized());
 
@@ -1472,7 +1532,9 @@ namespace Pspc
                   waveCoeff = std::complex<double>(in[rank][0], in[rank][1]);
                   if (std::abs(waveCoeff) > cancelledError) {
                      cancelledError = std::abs(waveCoeff);
-                     if ((!verbose) && (cancelledError > 1e-8)) return false;
+                     if ((!verbose) && (cancelledError > epsilon)) {
+                        return false;
+                     }
                   }
                }
             }
@@ -1493,7 +1555,7 @@ namespace Pspc
                      diff = waveCoeff - rootCoeff;
                      if (std::abs(diff) > uncancelledError) {
                         uncancelledError = std::abs(diff);
-                        if ((!verbose) && (uncancelledError > 1e-8)) {
+                        if ((!verbose) && (uncancelledError > epsilon)) {
                            return false;
                         }
                      }
@@ -1508,10 +1570,11 @@ namespace Pspc
 
       } //  end loop over star index is
 
-      if ((cancelledError < 1e-8) && (uncancelledError < 1e-8)) {
+      if ((cancelledError < epsilon) && (uncancelledError < epsilon)) {
          return true;
       } else if (verbose) {
-         Log::file() << "Maximum coefficient of a cancelled star: "
+         Log::file() << std::endl
+                     << "Maximum coefficient of a cancelled star: "
                      << cancelledError << std::endl
                      << "Maximum error of coefficient for uncancelled star: "
                      << uncancelledError << std::endl;

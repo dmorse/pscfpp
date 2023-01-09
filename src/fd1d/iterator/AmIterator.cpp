@@ -8,6 +8,7 @@
 #include "AmIterator.h"
 #include <fd1d/System.h>
 #include <pscf/inter/Interaction.h>
+#include <pscf/iterator/NanException.h>
 #include <util/global.h>
 
 namespace Pscf {
@@ -55,6 +56,10 @@ namespace Fd1d{
       UTIL_CHECK(n == b.capacity());
       double product = 0.0;
       for (int i = 0; i < n; i++) {
+         // if either value is NaN, throw NanException
+         if (std::isnan(a[i]) || std::isnan(b[i])) { 
+            throw NanException("AmIterator::dotProduct",__FILE__,__LINE__,0);
+         }
          product += a[i] * b[i];
       }
       return product;
@@ -65,9 +70,14 @@ namespace Fd1d{
    {
       const int n = hist.capacity();
       double maxRes = 0.0;
+      double value;
       for (int i = 0; i < n; i++) {
-         if (fabs(hist[i]) > maxRes)
-            maxRes = fabs(hist[i]);
+         value = hist[i];
+         if (std::isnan(value)) { // if value is NaN, throw NanException
+            throw NanException("AmIterator::dotProduct",__FILE__,__LINE__,0);
+         }
+         if (fabs(value) > maxRes)
+            maxRes = fabs(value);
       }
       return maxRes;
    }

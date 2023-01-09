@@ -41,7 +41,8 @@ System{
   LinearSweep{
     ns            20  
     baseFileName  out/
-    writeRhoRGrid 1
+    reuseState    0
+    writeCRGrid   1
     nParameter    1   
     parameters[
                   cell_param  0  0.5

@@ -39,7 +39,7 @@ System{
   LinearSweep{
     ns            40
     baseFileName  out/
-    writeRhoRGrid 1
+    writeCRGrid   1
     nParameter    1
     parameters[
                   chi_bottom  0  +20.0

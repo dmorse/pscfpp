@@ -26,7 +26,7 @@ namespace Pspg {
    void LinearSweep<D>::readParameters(std::istream& in)
    {
       // Call the base class's readParameters function.
-      SweepTmpl< BasisFieldState<D> >::readParameters(in);
+      Sweep<D>::readParameters(in);
       
       // Read in the number of sweep parameters and allocate.
       this->read(in, "nParameter", nParameter_);

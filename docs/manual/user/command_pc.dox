@@ -275,10 +275,11 @@ command or a group of closely related commands.
   </tr>
   <tr> 
     <td> CHECK_RGRID_SYMMETRY </td>
-    <td> inFile [string] </td>
+    <td> inFile [string], epsilon [double] </td>
     <td> Read fields from file inFile in real-space (r-grid) format,
          check whether the fields are invariant under all elements of
-         the space group specified in the param file.  </td>
+         the space group specified in the param file to within the
+         error threshold epsilon.  </td>
   </tr>
   <tr> 
     <td colspan="3" style="text-align:center"> 
