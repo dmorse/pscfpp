@@ -71,9 +71,9 @@ namespace Pspg {
       SweepTmpl< BasisFieldState<D> >::readParameters(in);
       
       // Read optional flags indicating which field types to output
-      readOptional<bool>(in, "writeCRGrid", writeCRGrid_);
-      readOptional<bool>(in, "writeCBasis", writeCBasis_);
-      readOptional<bool>(in, "writeWRGrid", writeWRGrid_);
+      readOptional(in, "writeCRGrid", writeCRGrid_);
+      readOptional(in, "writeCBasis", writeCBasis_);
+      readOptional(in, "writeWRGrid", writeWRGrid_);
    }
 
    /*
