@@ -832,7 +832,7 @@ namespace Pspc
       // If w fields are symmetric, compute basis components for c-fields
       if (w_.isSymmetric()) {
          UTIL_CHECK(c_.isAllocatedBasis());
-         domain_.fieldIo().convertRGridToBasis(c_.rgrid(), c_.basis());
+         domain_.fieldIo().convertRGridToBasis(c_.rgrid(), c_.basis(), false);
       }
 
    }

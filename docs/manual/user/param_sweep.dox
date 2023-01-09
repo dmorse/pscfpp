@@ -172,15 +172,17 @@ The parameter file format for a LinearSweep is summarized below:
        baseFileName      string
        historyCapacity*  int
        reuseState*       bool
-       writeCRGrid*      bool
-       writeCBasis*      bool
-       writeWRGrid*      bool
+       writeCRGrid*+     bool
+       writeCBasis*+     bool
+       writeWRGrid*+     bool
        nParameter        int
        parameters        Array [ SweepParameter ]
   }
 \endcode
-Parameters marked with an asterisk are optional. The purpose of the 
-parameters in this block are explained below:
+Parameters marked with an asterisk are optional. Parameters marked
+with a plus sign are only relevant to pscf_pc and pscf_pg, and cannot
+be used in pscf_fd. The purpose of the parameters in this block are 
+explained below:
 <table>
   <tr>
     <td> <b> Label </b>  </td>

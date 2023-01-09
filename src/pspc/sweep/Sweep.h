@@ -47,6 +47,13 @@ namespace Pspc {
       */
       void setSystem(System<D>& system);
 
+      /**
+      * Read parameters from param file.
+      * 
+      * \param in Input stream from param file.
+      */
+      virtual void readParameters(std::istream& in);
+
       // Public members inherited from base class template SweepTmpl
       using SweepTmpl< BasisFieldState<D> >::historyCapacity;
       using SweepTmpl< BasisFieldState<D> >::historySize;
@@ -124,14 +131,21 @@ namespace Pspc {
       System<D>& system()
       {  return *systemPtr_; }
 
-      // Protected members inherited from base class template SweepTmpl
+      /// Whether to write real space concentration field files. 
+      bool writeCRGrid_;
+
+      /// Whether to write concentration field files in basis format. 
+      bool writeCBasis_;
+
+      /// Whether to write real space potential field files. 
+      bool writeWRGrid_;
+
+      // Protected members inherited from base classes
       using SweepTmpl< BasisFieldState<D> >::ns_;
       using SweepTmpl< BasisFieldState<D> >::baseFileName_;
-      using SweepTmpl< BasisFieldState<D> >::writeCRGrid_;
-      using SweepTmpl< BasisFieldState<D> >::writeCBasis_;
-      using SweepTmpl< BasisFieldState<D> >::writeWRGrid_;
       using SweepTmpl< BasisFieldState<D> >::initialize;
       using SweepTmpl< BasisFieldState<D> >::setCoefficients;
+      using ParamComposite::readOptional;
 
    private:
 

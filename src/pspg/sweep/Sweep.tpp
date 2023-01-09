@@ -29,6 +29,9 @@ namespace Pspg {
    template <int D>
    Sweep<D>::Sweep() 
     : SweepTmpl< BasisFieldState<D> >(PSPG_HISTORY_CAPACITY),
+      writeCRGrid_(false),
+      writeCBasis_(false),
+      writeWRGrid_(false),
       systemPtr_(0)
    {}
 
@@ -38,6 +41,9 @@ namespace Pspg {
    template <int D>
    Sweep<D>::Sweep(System<D> & system) 
     : SweepTmpl< BasisFieldState<D> >(PSPG_HISTORY_CAPACITY),
+      writeCRGrid_(false),
+      writeCBasis_(false),
+      writeWRGrid_(false),
       systemPtr_(&system)
    {}
 
@@ -54,6 +60,21 @@ namespace Pspg {
    template <int D>
    void Sweep<D>::setSystem(System<D>& system) 
    {  systemPtr_ = &system; }
+
+   /*
+   * Read parameters
+   */
+   template <int D>
+   void Sweep<D>::readParameters(std::istream& in)
+   {
+      // Call the base class's readParameters function.
+      SweepTmpl< BasisFieldState<D> >::readParameters(in);
+      
+      // Read optional flags indicating which field types to output
+      readOptional<bool>(in, "writeCRGrid", writeCRGrid_);
+      readOptional<bool>(in, "writeCBasis", writeCBasis_);
+      readOptional<bool>(in, "writeWRGrid", writeWRGrid_);
+   }
 
    /*
    * Check allocation of one state object, allocate if necessary.

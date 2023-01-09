@@ -16,6 +16,8 @@ namespace Pscf {
    using namespace Util;
 
    /**
+   * Exception thrown when not-a-number (NaN) is encountered.
+   * 
    * An exception to be thrown when a required numerical parameter has a 
    * value of NaN. This may happen, for instance, as a result of dividing
    * by zero. A NanException is used rather than a generic Exception in 
