@@ -1,0 +1,121 @@
+/*! \page user_fourier_page Appendix: Periodic Functions
+
+\ref user_theory_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_page  (Next)
+<BR>
+
+This page describes the different numerical representations used in
+the pscf_pc and pscf_pg programs describe fields (functions of position)
+with the periodicity of a Bravais lattice. We will also consider a
+symmetry-adapted Fourier expansion appropriate for periodic fields 
+that are also known to be invariant under all symmetry operations 
+of a specified space group.  Throughout these notes, let \f$ D \f$ 
+denote the number of directions in which the field of interest are 
+taken to be periodic, which is the dimensionality of the space in 
+which these fields are defined. Allowed values of \f$ D \f$ are 
+\f$ D = 1 \f$ for lamellar structures, \f$ D = 2 f\$ for structures
+such as those involving two-dimensionally periodic arrangements of
+cylinders (e.g., hexagonally packed cylinders), and \f$ D = 3 \f$ 
+for crystals with full three-dimensional periodicity (e.g., 
+arrangements of spheres and 3D network structures).
+
+\section user_periodic_bravais_sec Bravais and Reciprocal Lattice
+
+Consider a D-dimensional periodic crystal defined by a Bravais lattice 
+with Bravais lattice basis vectors \f$ {\bf a}_{\alpha} \f$ for integer
+indices \f$ \alpha = 0, \ldots, D - 1\f$. The Bravais lattice  for the
+crystal is the set of all vectors of the form
+\f[
+   {\bf R} = \sum_{\alpha=0}^{D-1} m_{\alpha} {\bf a}_{\alpha}
+\f]
+with arbitrary integer values of \f$ m_{0}, \ldots, m_{D-1}\f$. 
+A field \f$ f({\bf r}) \f$ is said to have the periodicity of a crystal 
+if its invariant under translation by any Bravais lattice vector, i.e.,
+if
+\f[
+  f({\bf r} + {\bf R}) = f({\bf r})
+\f]
+for any D-dimensional position vector \f${\bf r}\f$ and any Bravais 
+lattice translation vector \f${\bf R}\f$ of the form given above.
+
+Let vectors \f$ {\bf b}_{0}, \ldots, {\bf b}_{D-1} \f$ denote 
+\f$ D \f$ reciprocal lattice basis vectors that are defined such 
+that
+\f[
+    {\bf a}_{\alpha} {\bf b}_{\beta} = 2\pi \delta_{\alpha \beta}
+\f]
+for \f$\alpha, \beta \in [0,..,D-1]\f$, where \f$\delta_{\alpha \beta}\f$ 
+is a Kronecker delta function. The reciprocal lattice is defined to be 
+the infinite set of all wavevectors with values of the form
+\f[
+   {\bf G} = \sum_{\alpha=0}^{D-1} n_{\alpha} {\bf b}_{\alpha}
+\f]
+with integer values of \f$ n_{0}, \ldots, n_{D-1}\f$.  In what follows, we 
+will sometimes refer to the integer indices \f$ n_{0}, \ldots, n_{D-1}\f$
+associated with this expansion of a reciprocal lattice vector as Miller 
+indices for that wavevector.
+
+Any field with the periodicity of a Bravais lattice may be expanded as
+a Fourier series
+\f[
+  f({\bf r}) = \sum_{{\bf G}} c_{{\bf G}} e^{i {\bf G} \cdot {\bf r}}
+  \quad,
+\f]
+in which \f$ {\bf G} \f$ denotes a reciprocal lattice vector, the sum
+is taken over the infinite set of all reciprocal lattice vectors, and
+\f$ c_{{\bf G}} \f$ is a Fourier amplitude associated with reciprocal
+lattice vector \f$ {\bf G} \f$. 
+
+\section user_periodic_reduced_sec Dimensionless Reduced Coordinates
+
+To describe periodic fields, it is also convenient to introduce 
+dimensionless reduced coordinates \f$ x_{0}, \ldots, x_{D-1} \f$ that 
+are defined such that any position vector \f$ {\bf r} \f$ can be 
+expressed as a sum 
+\f[
+  {\bf r} = \sum_{\alpha = 0}^{D-1} {\bf a}_{\alpha} x_{\alpha} \quad.
+\f]
+The primary unit cell is defined to be a region with which 
+\f$ 0 \leq x_{\alpha} < 1 \f$ for all \f$ \alpha = 0, \ldots, D-1 \f$.  
+This corresponds to a unit cell that is a parallelogram for D=2 or a 
+parallelopiped for D=3, for which the vectors connecting neighboring 
+corners are Bravais lattice basis vectors. 
+
+The requirement that a field be periodic under translations by Bravais 
+lattcan be expressed in terms of these reduced coordinates as a 
+requirement that value of the field be invariant under changes of any 
+of its reduced coordinates by addition of any integer. That is, if 
+\f$ f \f$ is a periodic function \f$ f(x_{0}, \ldots, x_{D-1}) \f$ of 
+these reduced coordinates, then
+\f[
+   f(x_{0} + k_{0}, \ldots, x_{D-1} + k_{D-1} ) 
+   = f(x_{0}, \ldots, x_{D-1} ) 
+\f]
+for arbitrary integer values of \f$ k_{0}, \ldots, k_{D-1} \f$. 
+
+\section user_periodic_grid_sec Spatial Mesh
+
+All fields in the pscf_pc and pscf_pg programs are represented 
+internally using values of fields on a regular D-dimensional mesh for 
+the space of the reduced coordinates \f$ x_{0}, \ldots, x_{D-1} \f$. 
+Let \f$ M_{\alpha} \f$ denote the number of mesh points per unit cell 
+along direction \f$ \alpha \f$ for each integer 
+\f$ \alpha = 0, \ldots, D-1 \f$. 
+The values of \f$ M_{0}, \ldots, M_{D-1} \f$ are specified in the 
+paramter file for a pscf_pc or pscf_pg program as values for elements 
+of the parameter "mesh", whose value is a vector with integer-valued
+elements.  Nodes on this mesh correspond to points at which each 
+coordinate \f$ x_{\alpha} \f$ with \f$\alpha \in [0, \ldots, D-1]\f$. 
+has a value given by
+\f[
+    x_{\alpha} = m_{\alpha}/M_{\alpha}
+\f]
+for some integer \f$ m_{\alpha} \in [0,\ldots,N_{\alpha}-1]\f$ for 
+nodes within the primary unit cell.
+
+<BR>
+\ref user_theory_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_page    (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref developer_page    (Next)
+
+*/

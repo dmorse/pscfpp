@@ -8,31 +8,36 @@ PSCF solves self-consistent field theory (SCFT) equations for an
 incompressible mixture of any number of block polymer species and 
 point-like solvent molecular species.
 
-In what follows, let \f$ C \f$ be the number of distinct monomer or solvent
-types in the system. Let \f$ P \f$ denote the number of polymer species and
-\f$ S\f$ be the number of solvent species.  Here, we use a convention in
-which integer indices \f$ \alpha, \beta = 1, \ldots, C\f$ indicate monomer
-types, and indices \f$ i, j\f$ denote molecular species.  Species indices
-are ordered with all polymeric species listed first, so that species index
-values in the range \f$ i, j = 1, \ldots, P\f$ denote polymeric species,
-and values in the range \f$ P+1,\ldots, P+S \f$ denote solvent species.
+In what follows, we consider a system with \f$ C \f$ distinct monomer 
+types, \f$ P \f$ block polymer species, \f$ S\f$ solvent species. We use
+a convention in which the symbols \f$ \alpha, \beta = 0, \ldots, C-1\f$ 
+are used as indices for monomer types, symbols \f$ a, b \f$ are used to 
+denote indices for blocks within a specific block polymer species, and 
+symbols \f$ i, j\f$ are used to denote molecular species indices.  In
+these notes, we use a convention in which species indices are ordered 
+with all polymeric species listed first, so that species index values 
+in the range \f$ i, j = 0, \ldots, P-1\f$ denote polymeric species, and 
+values in the range \f$ P,\ldots, P+S-1 \f$ denote solvent species.  
+To facilitate comparison of these notes with algorithm implementations 
+in source code, we use the 0-based indexing convention here that is 
+used in any C/C++ source code.
 
 \section user_theory_scf_sec Self-Consistent Field Approximation
 
 SCFT for a liquid of flexible polymers is based on a mean-field
-approximation that allows us to approximately predict properties of an 
-interacting liquid by considering considering the behavior of a 
+approximation that allows us to approximately predict properties of 
+an interacting liquid by considering considering the behavior of a 
 corresponding inhomogeneous gas of noninteracting molecules, which we 
-refer to as a ideal-gas reference system. The ideal gas reference system 
-is a system with the same chemical composition as the real system and 
-a inhomogeneous average concenration 
+refer to as an ideal-gas reference system. The ideal gas reference 
+system is a system with the same chemical composition as the real 
+system and an inhomogeneous average concenration 
 \f$ \langle c_{\alpha}({\bf r}) \rangle \f$ for monomers of each 
 type \f$ \alpha \f$ that is equal to the corresponding average monomer 
-concentration in the real, interacting system of interest.  This 
-inhomogeneity is induced in the ideal gas reference system by a set 
-of potential energy fields that couple to different types of monomer: 
-Each monomer of type \f$ \alpha \f$ at position \f$ {\bf r} \f$ 
-within this hypothetical ideal gas is subjected to a potential 
+concentration in the real system of interest.  This inhomogeneity is 
+induced in the ideal gas reference system by a set of potential 
+energy fields that couple to different types of monomer: Each 
+monomer of type \f$ \alpha \f$ at position \f$ {\bf r} \f$ within
+this hypothetical ideal gas is subjected to a potential 
 \f$ k_{B}Tw_{\alpha}(\textbf{r}) \f$. Physically, this potential 
 represents an excess free energy cost of placing a monomer of the 
 specified type at the specified position, due to interactions among
@@ -40,41 +45,80 @@ monomers of different types within an inhomogeneous structure.  Let
 \f$ \phi_{\alpha}(\textbf{r}) \f$ denote the corresponding average 
 volume fraction of monomers of type \f$ \alpha \f$ at position 
 \f$ \textbf{r} \f$ , given by a product 
-\f$ \phi_{\alpha}(\textbf{r}) = v \langle c_{\alpha}({\bf r}) \rangle\f$,
+\f[
+  \phi_{\alpha}(\textbf{r}) = v \langle c_{\alpha}({\bf r}) \rangle
+  \quad,
+\f]
+where \f$ v \f$ is a monomer reference volume that has the same value
+for all monomer types.
+
+In SCFT, the monomer chemical potential fields (or "w fields") 
+\f$ w_{0}, \ldots, w_{C-1} \f$ assumed to depend upon volume fraction 
+fields in a manner that reflects the effects of interaction among 
+species in the mixture. PSCF currently uses a simple approximation 
+for this dependence that is based on an inhomogeneous generalization 
+of the parameterization of excess free energy used in the Flory-Huggins 
+theory of homogeneous polymer mixtures. In this approximation, a 
+solution to the SCFT problem is required to satisfy a self-consistent 
+field (SCF) equations \anchor user_theory_scf_eqn
+\f[
+   w_{\alpha}({\bf r}) 
+   = \sum_{\beta=0}^{C-1} \chi_{\alpha\beta} \phi_{\beta}({\bf r}) 
+   + \xi({\bf r})
+\f]
+for all \f$ \alpha \in [0,C-1] \f$, in which \f$ \chi_{\alpha\beta}\f$ 
+is a binary Flory-Huggins dimensionless interaction parameter, defined
+such that \f$ \chi_{\alpha\beta} = \chi_{\beta\alpha} \f$. 
+Here, \f$ \xi({\bf r}) \f$ is a dimensionless Lagrange multiplier 
+pressure field that must be chosen so that the monomer concentrations
+in the ideal gas reference system satisfy an incompressibility 
+constraint requiring that \anchor user_theory_incompressibility_eqn
+\f[
+   1 = \sum_{\alpha=0}^{C-1} \phi_{\alpha}({\bf r})
+\f]
+at every position \f$ {\bf r} \f$ within the problem domain.
+
+In SCFT average monomer concentration and volume fraction fields are 
+computed as those of the ideal gas reference system. An iterative
+solution of an SCFT problem thus starts with an initial guess for
+the w fields for all monomer types, followed by iterative adjustment
+of these fields until the w fields and average monomer concentrations
+computed using these fields as inputs to the ideal gas model satisfy
+the above SCF equations and incompressibility constraint.
 
 \section user_theory_polymer_sec Polymer Species
 
-Each polymer species in a system modelled by PSCF must be a block polymer 
-consisting of blocks connected at junction points. Homopolymers are treated
-as a special case of a block polymer with only one block.  Let \f$ B_{i} \f$ 
-denote the number of blocks in block polymer species number \f$ i \f$.
+Each polymer species in a system modeled by PSCF must be a block polymer 
+consisting of one or more blocks connected at junction points. 
+Homopolymers are treated as a special case of a block polymer with 
+only one block.  Let \f$ B_{i} \f$ denote the number of blocks in block 
+polymer species number \f$ i \f$, for \f$ i = 0, \ldots, P-1 \f$.
 
 \subsection user_theory_graph_sub Polymer Topology 
 
 Each block within a block polymer connects two vertices. Each such vertex 
-is either a junction to which two or more blocks are connected or a chain end
-to which only one block is attached.  In the language of graph theory, every 
-allowed polymer structure corresponds to an acyclic connected graph (also 
-known as a tree) with some number of "edges" (or blocks) and "nodes" (or 
-vertices).  PSCF can only handle polymers with acyclic topologies, in which
-there is exactly one path (i.e., sequence of connected edges) connecting 
-any two vertices.  A standard theorem of graph theory aserts that any 
-connected acyclic graph with \f$ B_{i} \f$ edges must have exactly 
-\f$ B_{i} + 1 \f$ vertices or nodes. An acyclic block polymer with 
-\f$ B_{i} \f$ blocks thus always has exactly \f$B_{i} + 1\f$ vertices 
-(i.e., junctions and free chain ends).
+is either a junction to which two or more blocks are connected or a chain 
+end to which only one block is attached.  In the language of graph theory, 
+every allowed polymer structure corresponds to an acyclic connected graph 
+(also known as a "tree") with some number of "edges" (or blocks) and 
+"nodes" (or vertices).  PSCF can only handle polymers with the topology
+of a connected acyclic graph, in which there is exactly one path (i.e., 
+sequence of connected edges) connecting any two vertices.  A standard 
+theorem of graph theory aserts that any connected acyclic graph with 
+\f$ B_{i} \f$ edges must have exactly \f$ B_{i} + 1 \f$ vertices or 
+nodes. An acyclic block polymer with \f$ B_{i} \f$ blocks thus always has 
+exactly \f$B_{i} + 1\f$ vertices (i.e., junctions and free chain ends).
 
 PSCF assigns each block within a polymer species \f$i\f$ with \f$ B_{i} \f$ 
 blocks an integer index in the range \f$ [0, \ldots, B_{i}-1 ]\f$, and 
 assigns each vertex (each junction or chain end) an index value in the 
-range \f$ [ 0, \ldots, B_{i} ]\f$.  By convention, we use index variables 
-\f$ a \f$ and \f$ b \f$ for block identifiers.
-The structure of a polymer can thus be characterized by assigning each
-block a monomer type, a contour length, and a pair of integer ids for 
-the two vertices to which the block is attached. The length of each block 
-is given by the ratio of the volume occupied by the block to the value of 
-a monomer reference volume. Let \f$ L_{ia} \f$ denote the length of block 
-\f$ a \f$ of polymer species \f$ i \f$.
+range \f$ [ 0, \ldots, B_{i} ]\f$.  The structure of a polymer can thus 
+be characterized by assigning each block a monomer type, a contour length, 
+and a pair of integer ids for the two vertices to which the block is 
+attached. The length of each block is given by the ratio of the volume 
+occupied by the block to the value of a monomer reference volume. 
+Let \f$ L_{ia} \f$ denote the length of block \f$ a \f$ of polymer 
+species \f$ i \f$.
 
 \subsection user_theory_propagator_sub Propagator Functions
 
@@ -83,8 +127,8 @@ by \f$ q( \textbf{r}, s) \f$, each of which is associated with one of the
 two directions in which the block may be traversed.  Each propagator is
 said to originate at one of the two vertices to which the associated block 
 is attached and terminate at the other. The contour variable parameter 
-\f$ s \f$ is defined for each propagator \f$ q(\textbf{r},s) \f$ such that 
-\f$ s = 0 \f$ at the vertex at which the propagator originates and 
+\f$ s \f$ is defined for each propagator \f$ q(\textbf{r},s) \f$ such 
+that \f$ s = 0 \f$ at the vertex at which the propagator originates and 
 \f$ s = L \f$ at the vertex at which the propagator terminates, where
 \f$ L \f$ is the contour length of the block. When we need to distinguish
 between the propagators associated with a single block, we will sometimes
@@ -103,33 +147,37 @@ It is useful for some purposes to imagine a process in which we divide
 a block of length \f$ L \f$ into two blocks of length \f$ s \f$ and 
 \f$ L - s \f$ by adding a "virtual" two-fold junction at some coordinate 
 \f$ s \f$ within the block. This yields a two-fold vertex that is 
-connected to be blocks of the same monomer type. The insertion or removal 
-of this type of virtual vertex within the graph that we use to describe
-does not correspond to any change in our description of the underlying
-underlying molecule, and has no affect predictions of the theory for any 
-physical property.
+connected to two blocks of the same monomer type. The insertion or 
+removal of this type of virtual vertex modifies the graph that we use 
+to describe a polymer but does change our physical description of the 
+underlying underlying molecule. Insertion or removal of this sort of
+virtual 2-fold vertex thus has no affect predictions of the theory for 
+any physical property.
 
 \subsection user_theory_mde_sub Modified Diffusion Equation (MDE)
 
 Each propagator \f$ q(\textbf{r}, s) \f$ associated with a block of 
 monomer type \f$ \alpha \f$ can be shown to obey a partial 
-differential equation 
+differential equation \anchor user_theory_mde_eqn
 \f[
-  \frac{\partial q}{\partial s} =  -H_{\alpha}q_{i}
+  \frac{\partial q}{\partial s} =  -H_{\alpha} q
 \f]
-in which \f$ H_{\alpha} \f$ is a linear diferential operator
+in which \f$ H_{\alpha} \f$ is a linear differential operator whose
+action on any function \f$ f({\bf r}) \f$ of position is defined to 
+be
 \f[
-  H_{\alpha} = -\frac{b_{\alpha}^{2}}{6}\nabla^{2}
-             + w_{\alpha}(\textbf{r})
+  H_{\alpha} f({\bf r}) 
+  = - \frac{b_{\alpha}^{2}}{6} \nabla^{2} f({\bf r})
+    + w_{\alpha}(\textbf{r}) f({\bf r})
 \f]
 in which \f$ b_{\alpha} \f$ is the statistical segment length for 
-monomers of type \f$ \alpha \f$ , and \f$ w_{\alpha}\f$ is the SCF 
-chemical potential field for \f$ \alpha \f$ monomers, in thermal 
-energy units. We refer to this as the modified diffusion equation 
+monomers of type \f$ \alpha \f$ , and \f$ w_{\alpha}\f$ is the 
+dimensionless SCF chemical potential field for \f$ \alpha \f$ 
+monomers.  We refer to this as the modified diffusion equation 
 (MDE). Numerical solution of the MDE is the most computationally 
 expensive operation in any SCFT program.
 
-<em> MDE Initial Conditions </em>:
+<em> Initial Conditions </em>:
 
 The initial condition for propagators that originate at a chain end 
 requires that
@@ -142,7 +190,8 @@ The initial value \f$ q(\textbf{r}, s=0) \f$ of an outgoing propagator
 that originates at a junction that connects \f$ M \f$ blocks is given
 by a pointwise product of values of the \f$ M - 1 \f$ incoming 
 propagators for that junction, excluding the incoming propagator 
-associated with the same block as that of the outgoing propagator of interest.
+associated with the same block as that of the outgoing propagator of 
+interest.
 Suppose we denote the outgoing propagators associated with the M blocks 
 attached to an M-fold junction \f$ q_{i}({\bf r}, s) \f$, and denote 
 the final or "tail" values of the M incoming propagators 
@@ -195,7 +244,7 @@ is then given by, for example, by
 \f]
 Initial conditions for \f$ q_{1} \f$ and \f$ q_{2} \f$ are analogous.
 
-<em> MDE Boundary Conditions </em>:
+<em> Boundary Conditions </em>:
 
 In the pscf_pc and pscf_pg programs, the MDE for propagators in a 
 periodic structure is solved within a single unit cell, subject to 
@@ -330,7 +379,7 @@ Note that
   \frac{\partial q^{\dagger}(\textbf{r},L-s)}{\partial s}
   \right \} \\
   & = &
-  \int d\textbf{r} \;  \left \{
+  -\int d\textbf{r} \;  \left \{
   [ \hat{H} q (\textbf{r},s) ] q^{\dagger}(\textbf{r},L-s)
   - q (\textbf{r},s) [\hat{H} q^{\dagger}(\textbf{r},L-s)]
   \right \}
@@ -346,13 +395,15 @@ that
   [\hat{H} q (\textbf{r},s) ] q^{\dagger}(\textbf{r},L-s)
   = 
   \int d\textbf{r} \;  
-  q (\textbf{r},s) [\hat{H} q^{\dagger}(\textbf{r},L-s)
+  q (\textbf{r},s) [\hat{H} q^{\dagger}(\textbf{r},L-s) \quad,
 \f]
-and thus that
+implying a cancellation of the two terms in the integrand of the last 
+expression for \f$ dI(s)/ds \f$. This thus gives
 \f[
   dI(s)/ds = 0 
 \f]
-for any \f$ s \in [0,L] \f$. QED.
+for all \f$ s \in [0,L] \f$, implying that \f$ I(s) \f$ is independent 
+of \f$ s \f$ within each block.  QED.
 
 \anchor user_theory_theorem3
 <b> Theorem 3 </b>: The value of the spatial integral of the product
@@ -426,7 +477,7 @@ for the position \f$ {\bf r} \f$ of a monomer with contour position
 \f$ s \f$ with block \f$ a \f$ of a single polymer of species \f$ i \f$ 
 within a system that contains only a single polymer of this species, with 
 no non-bonded pair interactions.  By combining our previous 
-\ref user_theory_rhou "proportionality" that gives this quantity to 
+\ref user_theory_rhou_eqn "proportionality" that gives this quantity to 
 within a constant with the requirement that integral of this probability
 density over the problem domain must equal unity, we find that
 \f[
@@ -485,8 +536,8 @@ of polymer species \f$ i \f$.
 
 The total volume fraction \f$ \phi_{\alpha}(\textbf{r}) \f$ for each
 monomer type \f$ \alpha\f$ is simply the sum of volume fractions for 
-all polymer blocks and all solvent species that contain monomers of 
-type \f$ \alpha\f$ .
+all polymer blocks and all solvent species that have been assigned a
+monomer type index \f$ \alpha\f$ .
 
 \section user_theory_solvent_sec Solvent Species
 
@@ -503,7 +554,7 @@ penalty for a solvent molecule of monomer type \f$ \alpha\f$ to be
 located at position \f$ \textbf{r} \f$ is given by 
 \f$ k_{B}T L_{i} w_{\alpha}(\textbf{r}) \f$ .
 This implies the existence of a solvent volume fraction field
-\f$ \phi_{i}(\textbf{r}) \propto \exp(-L_{i}w_{\alpha}(\textbf{r})) \f$ .
+\f$ \phi_{i}(\textbf{r}) \propto \exp[-L_{i}w_{\alpha}(\textbf{r})] \f$ .
 
 We define a normalized molecular partition function \f$ Q_{i} \f$ for 
 solvent species \f$ i \f$ that is given by an integral
@@ -511,7 +562,7 @@ solvent species \f$ i \f$ that is given by an integral
    Q_{i} = \frac{1}{V}
    \int \! d\textbf{r} \; \exp (-L_{i}w_{\alpha}(\textbf{r}) )
 \f]
-for all \f$ i = P + 1, \ldots, P + S \f$ .
+for all \f$ i = P, \ldots, P + S - 1\f$ .
 The local volume fraction \f$ \phi_{i}(\textbf{r}) \f$ for solvent 
 species \f$ i \f$ is then given by a ratio
 \f[
@@ -520,7 +571,10 @@ species \f$ i \f$ is then given by a ratio
    \exp(-L_{i}w_{\alpha}(\textbf{r}))
 \f]
 in which \f$ \overline{\phi}_{i} \f$ is the overall volume fraction of 
-solvent species \f$ i \f$ within the mixture.
+solvent species \f$ i \f$ within the mixture. Note that the prefactor
+in this expression is chosen to guarantee that the spatial average of
+\f$ \phi_{i}(\textbf{r})\f$ (the integral divided by total volume) is 
+give by the parameter \f$ \overline{\phi}_{i} \f$.
 
 \section user_theory_ensemble_sec Open and Closed Ensembles
 
@@ -589,15 +643,15 @@ reference volume \f$ F v /k_{B}T \f$, as reported in output files, are
 given by
 \f{eqnarray*}
     \frac{F_{\rm id} v}{Vk_{B}T} 
-    & = & \sum_{i=1}^{P+S} \frac{\overline{\phi}_{i}}{L_{i}}
+    & = & \sum_{i=0}^{P+S-1} \frac{\overline{\phi}_{i}}{L_{i}}
     \left [ \ln ( \overline{\phi}_{i} / Q_{i} ) - 1 \right ] 
      - \frac{1}{V}
-       \sum_{\alpha=1}^{C}
+       \sum_{\alpha=0}^{C-1}
        \int \! d\textbf{r} \;
        w_{\alpha}(\textbf{r})
       \phi_{\alpha}(\textbf{r}) \\
    \frac{F_{\rm int} v}{Vk_{B}T} 
-     & = &  \frac{1}{2V} \sum_{\alpha, \beta =1}^{C}  
+     & = &  \frac{1}{2V} \sum_{\alpha, \beta =0}^{C-1}  
      \chi_{\alpha\beta} \int \! d\textbf{r} \; 
      \phi_{\alpha}(\textbf{r}) \phi_{\beta}(\textbf{r})
 \f}
@@ -612,32 +666,41 @@ solvent species.
 The macroscopic physical pressure \f$ P \f$ is computed from the identity
 \f[
     P = - \frac{F}{V}
-        + \sum_{i=1}\frac{\mu_{i}\overline{\phi}_{i}}{N_{i}v}
+        + \sum_{i=0}^{P+S-1}
+        \frac{\mu_{i}\overline{\phi}_{i}}{N_{i}v}
 \f]
 in which \f$ F / V \f$ is the Helmholtz free energy density and
 \f$ \overline{\phi}_{i}/(N_{i}v) \f$ is the average number of molecules
 of species \f$ i \f$ per unit volume. The value given in the output file
 is the dimensionless value \f$ Pv/k_{B}T \f$ .
 
-In grand-canonical ensemble, values for the Lagrange multplier
-field \f$ \xi(\textbf{r}) \f$ and the macroscopic pressure \f$ P\f$
-are uniquely determined by the values for the chemical potentials.
+In grand-canonical and mixed ensembles, values for the Lagrange multplier 
+field \f$ \xi(\textbf{r}) \f$ and the macroscopic pressure \f$ P\f$ are 
+uniquely determined by the values for the chemical potentials.
 
-In canonical ensemble, the value of the Lagrange multplier field
-\f$ \xi(\textbf{r}) \f$ is defined only to within a arbitrary
-spatially homogeneous constant. As a result, the chemical potentials
-and the macroscopic pressure \f$ P \f$ are also undefined in this
-ensemble, unless an additional constraint is imposed. PSCF resolves
-this ambiguity by requiring, as a matter of convention, that the
-spatial average of \f$ \xi(\textbf{r}) \f$ vanish. In this ensemble,
-PSCF also outputs values for the pressure, chemical potentials, and
-\f$ w \f$ fields that are all consistent with this convention
-for the average value of \f$ \xi \f$ . Values for the Hemholtz free
-energy density of an incompressible liquid can, however, be shown
-to be independent of changes in the value of \f$ \xi \f$ by a
-homogeneous constant, and are thus independent of this choice of
+In the special case of canonical ensemble, however, the value of the 
+Lagrange multplier field \f$ \xi(\textbf{r}) \f$ is not uniquely 
+determined by the SCF equations and incompressibility constraint. In
+this case, these equations can be shown to define \f$ \xi({\bf r}) \f$ 
+only to within shifts by an arbitrary spatially homogeneous constant. 
+As a result, the chemical potentials and the macroscopic pressure 
+\f$ P \f$ are also undefined in this ensemble, unless an additional 
+constraint is imposed to obtain a unique solution. 
+The implementations of the pscf_pc and pscf_pg codes for periodic systems
+resolve this ambiguity by requiring, as a matter of convention, that 
+the spatial average of \f$ \xi(\textbf{r}) \f$ vanish. The pscf_fd 
+code for one-dimensional problems instead uses a convention that 
+requires the value of \f$ w_{\alpha}({\bf r}) \f$ to vanish for the 
+last monomer (\f$ \alpha = C-1 \f$) at the last grid point equal zero.
+When a calculation is performed in canonical ensemble (by providing
+values of volume fractions for all species in the parameter file), PSCF 
+outputs values for the pressure, chemical potentials, and \f$ w \f$ 
+fields that are all consistent with this arbitrary convention used 
+to define a unique solution for \f$ \xi \f$.  Results for the Hemholtz 
+free energy density and volume fraction fields can, however, be shown 
+to be independent of changes in the value of \f$ \xi \f$ by a 
+homogeneous constant, and are thus independent of this choice of 
 convention.
-
 
 <BR>
 \ref user_thin_films_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
