@@ -184,9 +184,9 @@ namespace Pspc
       // Get the length L of the lattice basis vector normal to the walls
       RealVec<D> a;
       a = system().domain().unitCell().rBasis(normalVecId_);
-      double norm_sqd; // norm squared
+      double norm_sqd(0.0); // norm squared
       for (int i = 0; i < D; i++) {
-         norm_sqd = a[i]*a[i];
+         norm_sqd += a[i]*a[i];
       }
       double L(sqrt(norm_sqd));
 
