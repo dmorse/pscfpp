@@ -39,8 +39,8 @@ System{
     writeWRGrid   1
     nParameter    2
     parameters[
-           block  0 0 +0.08
-           block  0 1 -0.08
+           block  0 0 -0.08
+           block  0 1 +0.08
     ]
   }
 }
