@@ -88,6 +88,21 @@ namespace Pspc
       void allocate(int ns, const Mesh<D>& mesh);
 
       /**
+      * Reallocate memory used by this propagator.
+      * 
+      * This function is used when the value of ns is changed,
+      * which occurs during some parameter sweeps. 
+      * 
+      * The parameter ns is the number of values of s at which
+      * q(r,s) is calculated, including the end values at the
+      * terminating vertices. This is one more than the number 
+      * of contour variable steps. 
+      * 
+      * \param ns number of slices (including end points)
+      */ 
+      void reallocate(int ns);
+
+      /**
       * Solve the modified diffusion equation (MDE) for this block.
       *
       * This function computes an initial QField at the head of this
