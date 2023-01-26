@@ -25,6 +25,22 @@ namespace Pspc
    /**
    * MDE solver for one direction of one block.
    *
+   * A fully initialized Propagator<D> has an association with a 
+   * Block<D> that owns this propagator and its partner, and has an 
+   * association with a Mesh<D> that describes a spatial grid, in 
+   * addition to associations with partner and source Propagator<D>
+   * objects that are managed by the PropagatorTmpl base class template. 
+   *
+   * The associated Block<D> stores information required to numerically
+   * solve the modified diffusion equation (MDE), including the contour
+   * step size ds and all parameters that depend on ds. These quantities 
+   * are set and stored by the block because their values must be the 
+   * same for the two propagators owned by each block (i.e., this 
+   * propagator and its partner). The algorithm used by a propagator 
+   * to solve the the MDE simply repeatedly calls the step() function 
+   * of the associated block, because that function has access to all 
+   * the parameters used in the numerical solution.
+   *
    * \ingroup Pspc_Solver_Module
    */
    template <int D>
@@ -77,50 +93,59 @@ namespace Pspc
       /**
       * Allocate memory used by this propagator.
       * 
-      * The parameter ns is the number of values of s at which
-      * q(r,s) is calculated, including the end values at the
-      * terminating vertices. This is one more than the number 
-      * of contour variable steps. 
+      * The parameter ns is the number of values of s at which q(r,s) is
+      * calculated, including the end values at the terminating vertices.
+      * See docs for the function ns(), which returns this value.
+      *
+      * The address of the associated Mesh<D> object is retained.
+      *
+      * An Exception is thrown if the propagator is already allocated.
       * 
-      * \param ns number of slices (including end points)
-      * \param mesh spatial discretization mesh
+      * \param ns  number of slices (including end points)
+      * \param mesh  spatial discretization mesh
       */ 
       void allocate(int ns, const Mesh<D>& mesh);
 
       /**
       * Reallocate memory used by this propagator.
       * 
-      * This function is used when the value of ns is changed,
-      * which occurs during some parameter sweeps. 
+      * This function is used when the value of ns is changed after initial
+      * allocation. This occurs during parameter sweeps that change the
+      * block length. See the docs for the function ns() for the definition
+      * of ns.
+      *
+      * The spatial mesh is set by derefencing a pointer to the associated
+      * Mesh<D> object, which was set by a previous call to allocate.
       * 
-      * The parameter ns is the number of values of s at which
-      * q(r,s) is calculated, including the end values at the
-      * terminating vertices. This is one more than the number 
-      * of contour variable steps. 
+      * An Exception is thrown if the propagator has not been previously
+      * allocated, or if the parameter ns is equal to the current value.
       * 
-      * \param ns number of slices (including end points)
+      * \param ns  number of slices (including end points)
       */ 
       void reallocate(int ns);
 
       /**
       * Solve the modified diffusion equation (MDE) for this block.
       *
-      * This function computes an initial QField at the head of this
-      * block, and then solves the modified diffusion equation for 
-      * the block to propagate from the head to the tail. The initial
+      * This function computes an initial QField at the head of this 
+      * block, and then solves the modified diffusion equation (MDE) to
+      * propagate the solution from the head to the tail. The initial
       * QField at the head is computed by pointwise multiplication of
-      * of the tail QFields of all source propagators.
+      * the tail QFields of all source propagators. The MDE is solved
+      * by repeatedly calling the step() function of the associated
+      * Block<D> .
       */
       void solve();
   
       /**
       * Solve the MDE for a specified initial condition.
       *
-      * This function solves the modified diffusion equation for this 
-      * block with a specified initial condition, which is given by the
-      * function argument "head". 
+      * This function solves the modified diffusion equation (MDE) for 
+      * this block with a specified initial condition, which is given by 
+      * the function parameter "head". The MDE is solved by repeatedly
+      * calling the step() function of the associated Block<D>.
       *
-      * \param head initial condition of QField at head of block
+      * \param head  initial condition of QField at head of block
       */
       void solve(QField const & head);
  
@@ -159,7 +184,12 @@ namespace Pspc
       Block<D>& block();
 
       /**
-      * Number of contour slices, including head and tail.
+      * Number of values of s (or slices), including head and tail.
+      *
+      * The value of ns is the number of values of s at which q(r,s) is
+      * calculated, including the end values at the terminating vertices
+      * (the head and tail).  This is one more than the number of contour 
+      * variable steps. 
       */
       int ns() const;
 
@@ -186,10 +216,10 @@ namespace Pspc
 
    private:
      
-      // Array of statistical weight fields 
+      /// Array of statistical weight fields 
       DArray<QField> qFields_;
 
-      // Workspace
+      /// Workspace
       QField work_;
 
       /// Pointer to associated Block.

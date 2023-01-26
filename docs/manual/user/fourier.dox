@@ -248,7 +248,7 @@ referred to as "aliasing" of wavevectors. Any list of D Miller indices
 \f$ n_{0}, \ldots, n_{D-1} \f$ can be used to construct an associated
 reciprocal lattice wavevector \f$ {\bf G}(n_0, \ldots, n_{D-1}) \f$ in 
 which the Miller indices are components of the vector in a basis of 
-reciprocal lattice basis vectors, as \anchor user_fourier_Gofn_eqn "above".
+reciprocal lattice basis vectors, as \ref user_fourier_Gofn_eqn "above".
 Two  lists of integer Miller indices are referred to as "aliases" of one 
 another if these lists contain values for each index \f$ n_{i} \f$ that 
 are either equal or differ by some nonzero integer multiple of the number 
