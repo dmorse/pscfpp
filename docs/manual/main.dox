@@ -35,6 +35,7 @@ mixtures.
     <li> \ref user_groups_page  </li>
     <li> \ref user_thin_films_page  </li>
     <li> \ref user_theory_page  </li>
+    <li> \ref user_fourier_page  </li>
     </ol>
   </li>
   <li> \subpage developer_page 
