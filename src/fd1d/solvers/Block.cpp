@@ -20,6 +20,7 @@ namespace Fd1d
    Block::Block()
     : domainPtr_(0),
       ds_(0.0),
+      dsTarget_(0.0),
       ns_(0)
    {
       propagator(0).setBlock(*this);
@@ -42,7 +43,8 @@ namespace Fd1d
       domainPtr_ = &domain;
 
       // Set contour length discretization
-      ns_ = floor(length()/ds + 0.5) + 1;
+      dsTarget_ = ds;
+      ns_ = floor(length()/dsTarget_ + 0.5) + 1;
       if (ns_%2 == 0) {
          ns_ += 1;
       }
@@ -63,11 +65,25 @@ namespace Fd1d
       cField().allocate(nx);
    }
 
-   void Block::setLength(double length)
+   void Block::setLength(double newLength)
    {
-      BlockDescriptor::setLength(length);  
-      if (ns_ > 1) {
-         ds_ = length/double(ns_ - 1);
+      BlockDescriptor::setLength(newLength);  
+      if (dsTarget_ > 0) { // if setDiscretization has already been called
+         // Reset contour length discretization
+         UTIL_CHECK(ns_ > 0);
+         int oldNs = ns_;
+         ns_ = floor(length()/dsTarget_ + 0.5) + 1;
+         if (ns_%2 == 0) {
+            ns_ += 1;
+         }
+         ds_ = length()/double(ns_ - 1);
+
+         if (oldNs != ns_) {
+            // If propagators are already allocated and ns_ has changed, 
+            // reallocate memory for solutions to MDE
+            propagator(0).reallocate(ns_);
+            propagator(1).reallocate(ns_);
+         }
       }
    }
 
