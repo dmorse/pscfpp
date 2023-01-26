@@ -31,6 +31,9 @@ namespace Fd1d
    Propagator::~Propagator()
    {}
 
+   /*
+   * Allocate memory used by this propagator.
+   */
    void Propagator::allocate(int ns, int nx)
    {
       ns_ = ns;
@@ -41,6 +44,30 @@ namespace Fd1d
       }
       isAllocated_ = true;
    }
+
+   /*
+   * Reallocate memory used by this propagator using new ns value.
+   */
+   void Propagator::reallocate(int ns)
+   {
+      UTIL_CHECK(isAllocated_);
+      UTIL_CHECK(ns_ != ns);
+      ns_ = ns;
+
+      // Deallocate memory previously used by this propagator.
+      // NOTE: DArray::deallocate() calls "delete [] ptr", where ptr is a 
+      // pointer to the underlying C array. This will call the destructor
+      // for each element in the underlying C array, freeing all memory 
+      // that was allocated to the objects stored in the DArray.
+      qFields_.deallocate();
+
+      // Allocate memory in qFields_ using new value of ns
+      qFields_.allocate(ns);
+      for (int i = 0; i < ns; ++i) {
+         qFields_[i].allocate(nx_);
+      }
+   }
+
 
    bool Propagator::isAllocated() const
    {  return isAllocated_; }
