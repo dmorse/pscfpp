@@ -54,9 +54,9 @@ namespace Fd1d
       /**
       * Set length and readjust ds_ accordingly.
       *
-      * \param length  length (# of monomers) for this block
+      * \param newLength  length (# of monomers) for this block
       */
-      virtual void setLength(double length);
+      virtual void setLength(double newLength);
 
       /**
       * Set Crank-Nicholson solver for this block.
@@ -131,8 +131,11 @@ namespace Fd1d
       /// Pointer to associated Domain object.
       Domain const * domainPtr_;
 
-      /// Contour length step size.
+      /// Contour length step size (actual step size for this block).
       double ds_;
+
+      // Contour length step size (value input in param file).
+      double dsTarget_;
 
       /// Number of contour length steps = # grid points - 1.
       int ns_;

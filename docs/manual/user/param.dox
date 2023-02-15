@@ -1,7 +1,7 @@
 /*! \page user_param_page Parameter Files
 
 \ref user_usage_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_command_page (Next) 
+\ref user_field_page (Next) 
 <BR>
 
 This section describes the format and contents of the parameter files used by all of the PSCF programs.
@@ -22,6 +22,6 @@ In the following pages, we first describe elements that are common to the parame
 <BR>
 \ref user_usage_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_page  (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_command_page (Next) 
+\ref user_field_page (Next) 
 
 */

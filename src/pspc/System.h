@@ -186,6 +186,21 @@ namespace Pspc
       */
       void setWRGrid(DArray< RField<D> > const & fields);
 
+      /**
+      * Construct trial w-fields from c-fields.
+      *
+      * This function reads concentration fields in symmetrized basis
+      * format and constructs an initial guess for corresponding chemical
+      * potential fields by setting the Lagrange multiplier field xi to
+      * zero. The result is stored in the System w fields container
+      *
+      * Upon return, w().hasData() and w().isSymmetric() are set true,
+      * while hasCFields is set false.
+      *
+      * \param filename  name of input c-field file (basis format)
+      */
+      void estimateWfromC(const std::string& filename);
+
       //@}
       /// \name Unit Cell Modifiers
       //@{
@@ -434,8 +449,8 @@ namespace Pspc
       /**
       * Output information about stars and symmetrized basis functions.
       *
-      * This function opens a file with the specified filename and then
-      * calls Basis::outputStars.
+      * This function opens a file with the specified filename, calls
+      * Basis<D>::outputStars, and closes the file before returning.
       *
       * \param outFileName name of output file
       */
@@ -444,8 +459,8 @@ namespace Pspc
       /**
       * Output information about waves.
       *
-      * This function opens a file with the specified filename and then
-      * calls Basis::outputWaves.
+      * This function opens a file with the specified filename, calls
+      * Basis<D>::outputWaves, and closes the file before returning.
       *
       * \param outFileName name of output file for wave data
       */
@@ -510,24 +525,6 @@ namespace Pspc
                         const std::string & outFileName);
 
       /**
-      * Construct trial w-fields from c-fields.
-      *
-      * This function reads concentration fields in symmetrized basis
-      * format and constructs an initial guess for corresponding chemical
-      * potential fields by setting the Lagrange multiplier field xi to
-      * zero. The resulting guess is stored in the System w fields 
-      * container and is also output to a file in basis format.
-      *
-      * Upon return, w().hasData() and w().isSymmetric()are set true and
-      * hasCFields is set false.
-      *
-      * \param inFileName  name of input c-field file (in, basis format)
-      * \param outFileName  name of output w-field file (out, basis format)
-      */
-      void guessWfromC(const std::string& inFileName,
-                       const std::string& outFileName);
-
-      /**
       * Compare two field files in symmetrized basis format.
       *
       * Outputs maximum and root-mean-squared differences.
@@ -553,9 +550,11 @@ namespace Pspc
       * Check if r-grid fields have the declared space group symmetry.
       *
       * \param inFileName name of input file
+      * \param epsilon error threshold used when testing for symmetry
       * \return true if fields all have symmetry, false otherwise
       */
-      bool checkRGridFieldSymmetry(const std::string & inFileName);
+      bool checkRGridFieldSymmetry(const std::string & inFileName,
+                                   double epsilon = 1.0E-8);
 
       //@}
       /// \name Member Accessors

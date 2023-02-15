@@ -27,13 +27,17 @@ mixtures.
     <li> \ref user_files_page     </li>
     <li> \ref user_usage_page     </li>
     <li> \ref user_param_page     </li>
+    <li> \ref user_field_page  </li>
     <li> \ref user_command_page  </li>
     <li> \ref user_example_page  </li>
-    <li> \ref user_field_page  </li>
+    <li> \ref user_visualize_page  </li>
     <li> \ref user_unitcell_page  </li>
     <li> \ref user_groups_page  </li>
     <li> \ref user_thin_films_page  </li>
     <li> \ref user_theory_page  </li>
+    <li> \ref user_fourier_page  </li>
+    <li> \ref user_symmetry_page  </li>
+    <li> \ref user_basis_page  </li>
     </ol>
   </li>
   <li> \subpage developer_page 

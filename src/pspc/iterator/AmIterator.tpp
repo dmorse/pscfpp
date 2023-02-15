@@ -11,6 +11,7 @@
 #include "AmIterator.h"
 #include <pspc/System.h>
 #include <pscf/inter/Interaction.h>
+#include <pscf/iterator/NanException.h>
 #include <util/global.h>
 #include <cmath>
 
@@ -98,11 +99,12 @@ namespace Pspc{
    {
       const int n = a.capacity();
       UTIL_CHECK(b.capacity() == n);
-      double value;
       double product = 0.0;
       for (int i = 0; i < n; i++) {
-         value = a[i];
-         UTIL_CHECK(!std::isnan(value));
+         // if either value is NaN, throw NanException
+         if (std::isnan(a[i]) || std::isnan(b[i])) { 
+            throw NanException("AmIterator::dotProduct",__FILE__,__LINE__,0);
+         }
          product += a[i] * b[i];
       }
       return product;
@@ -117,7 +119,9 @@ namespace Pspc{
       double value;
       for (int i = 0; i < n; i++) {
          value = a[i];
-         UTIL_CHECK(!std::isnan(value));
+         if (std::isnan(value)) { // if value is NaN, throw NanException
+            throw NanException("AmIterator::dotProduct",__FILE__,__LINE__,0);
+         }
          if (fabs(value) > max) {
             max = fabs(value);
          }

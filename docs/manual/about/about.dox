@@ -34,9 +34,9 @@ program, and some expected advantages of the new code include:
   common framework.
   </li>
   <li>
-  The new code enables simulations of mixtures containing arbitrary
-  acyclic branched copolymers, in addition to the linear block
-  polymers and linear homopolymers allowed by the Fortran PSCF code.
+  The current version enables simulations of mixtures containing acyclic
+  branched copolymers, in addition to the linear block polymers and 
+  linear homopolymers allowed by the Fortran PSCF code.
   </li>
   <li>
   Adoption of C++ as a base language has simplified implementation of
@@ -47,46 +47,48 @@ program, and some expected advantages of the new code include:
 
 \section about_programs_sec Programs
 
-The current version of PSCF contains the following set of executable programs:
+The current version of PSCF contains the following executable programs:
 
    - <b> pscf_fd </b> : A one-dimensional finite difference program.
 
-   - <b> pscf_pc </b>: CPU programs for periodic structures that are periodic
-     in 1, 2, or 3 coordinates.
+   - <b> pscf_pc </b>: CPU programs for periodic structures that are 
+     periodic in 1, 2, or 3 coordinates.
 
-   - <b> pscf_pg </b>: GPU accelerated programs for period microstructures in
-     1, 2 or 3 dimensions.
+   - <b> pscf_pg </b>: GPU accelerated programs for period microstructures 
+     in 1, 2 or 3 dimensions.
 
 Comments:
 
-<b> pscf_pd </b>: The one-dimensional finite difference program is designed
-treat problems in which the solutions vary with only one spatial coordinate,
-which can be either a Cartesian coordinate or the radial coordinate for a
-problem with cylindrical or spherical symmetry. This is useful for treating
-problems involving flat or curved interfaces, as well as cylindrical and
-spherical copolymer micelles. The executable for this program is named
-pscf_fd. The suffix "fd" stands for "finite difference".
+<b> pscf_pd </b>: This program uses a simple one-dimensional finite 
+difference algorithm to treat problems in which all fields depend on only 
+one spatial coordinate. The coordinate of interest can can be either a 
+Cartesian coordinate or the radial coordinate for a problem with 
+cylindrical or spherical symmetry. This can be used to treat problems 
+involving flat or curved interfaces, as well as cylindrical and spherical 
+copolymer micelles. The suffix "fd" in the executable name pscf_fd stands
+for "finite difference".
 
 <b> pscf_pc </b>:
-The pseudo-spectral CPU programs for periodic microstructures are closely
-analogous to the older PSCF Fortran program, and provide similar capabilties
-and performance.  Different executable programs are used to solve problems
-that are period in 1, 2 or 3 spatial dimensions, which are named pscf_pc1,
+Several programs that use a psuedo-spectral algorithm to simulate periodic 
+microstructures on conventional CPU hardware provide capabilities and
+performance similar to that of the older Fortran program.  In the new
+package, different executable programs are used to solve problems that 
+are period in 1, 2 or 3 spatial dimensions, which are named pscf_pc1,
 pscf_pc2 and pscf_pc3, respectively. Here, "pc" stands for "periodic CPU".
 
 <b> pscf_pg </b>:
 The GPU-accelerated programs for periodic structures are closely analogous
-to the corresponding CPU programs, and provide almost identical capabilities,
-at higher speed.  The GPU accelerated programs for solving 1, 2 and 3
-dimensionally periodic structures are named pscf_pg1, pscf_pg2 and pscf_pg3,
-respectively, where "pg" stands for "periodic GPU".
+to the corresponding CPU programs, and provide almost identical 
+features, at higher speed.  The GPU accelerated programs for solving 1, 2 
+and 3 dimensionally periodic structures are named pscf_pg1, pscf_pg2 and 
+pscf_pg3, respectively, where "pg" stands for "periodic GPU".
 
 \section about_features_sec Features
 
 All PSCF programs are designed to treat an incompressible mixture of
-block polymers, linear homopolymers and small molecule (point-particle)
-solvents species. All polymeric species are treated using the standard
-Gaussian model of a polymer as a continuous random walk.
+block polymers, homopolymers and small molecule (point-particle) solvents 
+species. All polymeric species are treated using the standard Gaussian 
+model of a polymer as a continuous random walk.
 
 Features that are common to all of the PSCF programs include:
 
@@ -95,11 +97,12 @@ Features that are common to all of the PSCF programs include:
   - Arbitrarily complex acyclic branched block polymers, as well as linear polymers.
 
   - Canonical, grand-canonical or mixed statistical ensembles -
-    Users may specify either a volume fraction or a chemical potential
+    users may specify either a volume fraction or a chemical potential
     for each species
 
   - Efficient simulation of sequences of parameter choices along a path 
-    in parameter space using extrapolation to compute initial guesses.
+    in parameter space using extrapolation to generate initial guesses
+    for each state point.
 
   - Efficient Anderson-mixing iteration algorithms
 
@@ -126,6 +129,8 @@ Features specific to programs for periodic structures include:
   - High accuracy pseudo-spectral solution of the modified diffusion 
     equation
 
+  - Availability of a companion package <a href=https://github.com/kdorfmanUMN/polymer_visual/>Polymer Visual</a> for visualization of periodic structures.
+
 Features specific to the pscf_pc CPU programs for periodic structures are:
 
   - Inhomogeneous density constraints (a "mask")
@@ -136,8 +141,9 @@ Features specific to the pscf_pc CPU programs for periodic structures are:
 
 The "mask" and external field features are used in the pscf_pc programs 
 to implement simulations of thin films, using a mask to constrain a 
-polymer material to a slit within a periodic supercell, and external 
-fields to represent interactions with the top and bottom surface.
+polymer material to a slit within a periodic supercell, and using
+external fields to represent interactions of polymer with the top and 
+bottom surfaces.
 
 \section about_repo_sec Cloning the Source Code
 

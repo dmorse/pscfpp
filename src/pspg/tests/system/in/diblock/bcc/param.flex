@@ -24,8 +24,8 @@ System{
      groupName    I_m_-3_m
   }
   AmIteratorBasis{
+     epsilon     1.0e-8
      maxItr      1000
-     epsilon     1e-8
      maxHist     40
      isFlexible 1
   }

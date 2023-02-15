@@ -466,6 +466,11 @@ namespace Pspc
             readEcho(in, filename);
             readWRGrid(filename);
          } else
+         if (command == "ESTIMATE_W_FROM_C") {
+            readEcho(in, inFileName);
+            readEcho(in, outFileName);
+            estimateWfromC(inFileName);
+         } else
          if (command == "SET_UNIT_CELL") {
             UnitCell<D> unitCell;
             in >> unitCell;
@@ -509,7 +514,7 @@ namespace Pspc
             compute();
          } else
          if (command == "ITERATE") {
-            // Attempt iteration to convergence
+            // Attempt to iteratively solve a single SCFT problem
             bool isContinuation = false;
             int fail = iterate(isContinuation);
             if (fail) {
@@ -517,7 +522,8 @@ namespace Pspc
             }
          } else
          if (command == "SWEEP") {
-            // Do a series of iterations.
+            // Attempt to solve a sequence of SCFT problems along a path
+            // through parameter space
             sweep();
          } else
          if (command == "SIMULATE") {
@@ -669,24 +675,26 @@ namespace Pspc
          } else
          if (command == "CHECK_RGRID_SYMMETRY") {
             readEcho(in, inFileName);
+            double epsilon;
+            in >> epsilon;
+            if (in.fail()) {
+               UTIL_THROW("Unable to read numerical parameter epsilon.");
+            }
+            Log::file() << " " << Dbl(epsilon, 20) << std::endl;
             bool hasSymmetry;
-            hasSymmetry = checkRGridFieldSymmetry(inFileName);
+            hasSymmetry = checkRGridFieldSymmetry(inFileName, epsilon);
             if (hasSymmetry) {
-               Log::file() 
+               Log::file() << std::endl
                    << "Symmetry of r-grid file matches this space group." 
-                   << std::endl;
+                   << std::endl << std::endl;
             } else {
-               Log::file() 
+               Log::file() << std::endl
                    << "Symmetry of r-grid file does not match this space group" 
                    << std::endl
-                   << "to within our error threshold of 1E-8."
-                   << std::endl;
+                   << "to within error threshold of "
+                   << Dbl(epsilon) << "."
+                   << std::endl << std::endl;
             }
-         } else
-         if (command == "GUESS_W_FROM_C") {
-            readEcho(in, inFileName);
-            readEcho(in, outFileName);
-            guessWfromC(inFileName, outFileName);
          } else
          if (command == "COMPARE_BASIS") {
 
@@ -722,8 +730,7 @@ namespace Pspc
             // Compare and output report
             compare(Rfield1, Rfield2);
 
-         } else
-         {
+         } else {
             Log::file() << "Error: Unknown command  " 
                         << command << std::endl;
             readNext = false;
@@ -880,7 +887,7 @@ namespace Pspc
       // If w fields are symmetric, compute basis components for c-fields
       if (w_.isSymmetric()) {
          UTIL_CHECK(c_.isAllocatedBasis());
-         domain_.fieldIo().convertRGridToBasis(c_.rgrid(), c_.basis());
+         domain_.fieldIo().convertRGridToBasis(c_.rgrid(), c_.basis(), false);
       }
 
    }
@@ -1176,6 +1183,11 @@ namespace Pspc
          out << std::endl;
       }
 
+      out << "Lattice parameters:" << std::endl << "     ";
+      for (int i = 0; i < unitCell().nParameter(); ++i) {
+         out << "  " << Dbl(unitCell().parameter(i), 18, 11);
+      }
+      out << std::endl << std::endl;
    }
 
    /*
@@ -1423,6 +1435,7 @@ namespace Pspc
           fieldIo().writeFieldRGrid(file, propagator.q(i), 
                                     domain_.unitCell(), hasHeader);
       }
+      file.close();
    }
 
    /*
@@ -1435,8 +1448,6 @@ namespace Pspc
       int np, nb, ip, ib, id;
       np = mixture_.nPolymer();
       for (ip = 0; ip < np; ++ip) {
-         //Polymer<D> const * polymerPtr = &mixture_.polymer(ip);
-         //nb = polymerPtr->nBlock();
          nb = mixture_.polymer(ip).nBlock();
          for (ib = 0; ib < nb; ++ib) {
             for (id = 0; id < 2; ++id) {
@@ -1466,6 +1477,7 @@ namespace Pspc
       fieldIo().writeFieldHeader(outFile, mixture_.nMonomer(),
                                  domain_.unitCell());
       domain_.basis().outputStars(outFile);
+      outFile.close();
    }
 
    /*
@@ -1480,6 +1492,7 @@ namespace Pspc
       fieldIo().writeFieldHeader(outFile, mixture_.nMonomer(), 
                                  domain_.unitCell());
       domain_.basis().outputWaves(outFile);
+      outFile.close();
    }
 
    // Field conversion command functions
@@ -1630,7 +1643,8 @@ namespace Pspc
    * Convert fields from real-space grid to symmetry-adapted basis format.
    */
    template <int D>
-   bool System<D>::checkRGridFieldSymmetry(const std::string & inFileName) 
+   bool System<D>::checkRGridFieldSymmetry(const std::string & inFileName,
+                                           double epsilon) 
    {
       // If basis fields are not allocated, peek at field file header to 
       // get unit cell parameters, initialize basis and allocate fields.
@@ -1647,7 +1661,8 @@ namespace Pspc
       // Check symmetry for all fields
       for (int i = 0; i < mixture_.nMonomer(); ++i) {
          bool symmetric;
-         symmetric = domain_.fieldIo().hasSymmetry(tmpFieldsRGrid_[i]);
+         symmetric = domain_.fieldIo().hasSymmetry(tmpFieldsRGrid_[i],
+                                                   epsilon);
          if (!symmetric) {
             return false;
          }
@@ -1693,13 +1708,12 @@ namespace Pspc
    }
 
    /*
-   * Construct guess for omega (w-field) from rho (c-field).
+   * Construct estimate for w fields from c fields, by setting xi=0.
    *
-   * Modifies wFields and wFieldsRGrid and outputs wFields.
+   * Modifies wFields and wFieldsRGrid.
    */
    template <int D>
-   void System<D>::guessWfromC(std::string const & inFileName, 
-                               std::string const & outFileName)
+   void System<D>::estimateWfromC(std::string const & filename)
    {
       const int nm = mixture_.nMonomer();
       UTIL_CHECK(nm > 0);
@@ -1707,20 +1721,20 @@ namespace Pspc
       // If basis fields are not allocated, peek at field file header to 
       // get unit cell parameters, initialize basis and allocate fields.
       if (!isAllocatedBasis_) {
-         readFieldHeader(inFileName); 
+         readFieldHeader(filename); 
          allocateFieldsBasis();
       }
       const int nb = domain_.basis().nBasis();
       UTIL_CHECK(nb > 0);
 
       // Read c fields and set unit cell
-      domain_.fieldIo().readFieldsBasis(inFileName, tmpFieldsBasis_, 
+      domain_.fieldIo().readFieldsBasis(filename, tmpFieldsBasis_, 
                                         domain_.unitCell());
 
       DArray<double> wtmp;
       wtmp.allocate(nm);
 
-      // Compute w fields from c fields
+      // Compute estimated w fields from c fields
       int i, j, k;
       for (i = 0; i < nb; ++i) {
          for (j = 0; j < nm;  ++j) {
@@ -1734,10 +1748,8 @@ namespace Pspc
          }
       }
 
-      // Set initial guess, and write to file
+      // Store initial guess for w fields
       w_.setBasis(tmpFieldsBasis_);
-      domain_.fieldIo().writeFieldsBasis(outFileName, w_.basis(), 
-                                         domain_.unitCell());
 
       hasCFields_ = false;
       hasFreeEnergy_ = false;

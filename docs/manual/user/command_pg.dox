@@ -34,6 +34,14 @@ those available for the pscf_pc CPU-based programs.
          format </td>
   </tr>
   <tr> 
+    <td> ESTIMATE_W_FROM_C </td>
+    <td> filename [string] </td>
+    <td> Read monomer concentration fields in symmetry-adapted basis 
+         format from file filename, generate and store corresponding 
+         initial guesses for monomoer chemical potential fields.
+         </td>
+  </tr>
+  <tr> 
     <td> COMPUTE </td>
     <td> </td>
     <td> Solve modified diffusion equation for the current w fields </td>
@@ -190,17 +198,6 @@ those available for the pscf_pc CPU-based programs.
     <td> Read fields from file inFile in real-space (r-grid) format,
          check whether the fields have symmetry that matches the
          space group specified in the param file. 
-         </td>
-  </tr>
-  <tr> 
-    <td> GUESS_W_FROM_C </td>
-    <td> inFile [string], outFile [string] </td>
-    <td> Read monomer concentration fields in symmetry-adapted basis 
-         format from file inFile, generate chemical potential fields 
-         using the concentration fields and chi values, and write the 
-         potential fields to outFile in symmetry-adapted basis format.
-         Also stores potential fields to be used by future commands
-         (e.g., ITERATE or SWEEP).
          </td>
   </tr>
 </table>

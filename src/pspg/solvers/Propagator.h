@@ -24,6 +24,22 @@ namespace Pspg
    /**
    * MDE solver for one-direction of one block.
    *
+   * A fully initialized Propagator<D> has an association with a 
+   * Block<D> that owns this propagator and its partner, and has an 
+   * association with a Mesh<D> that describes a spatial grid, in 
+   * addition to associations with partner and source Propagator<D>
+   * objects that are managed by the PropagatorTmpl base class template. 
+   *
+   * The associated Block<D> stores information required to numerically
+   * solve the modified diffusion equation (MDE), including the contour
+   * step size ds and all parameters that depend on ds. These quantities 
+   * are set and stored by the block because their values must be the 
+   * same for the two propagators owned by each block (i.e., this 
+   * propagator and its partner). The algorithm used by a propagator 
+   * to solve the the MDE simply repeatedly calls the step() function 
+   * of the associated block, because that function has access to all 
+   * the parameters used in the numerical solution.
+   *
    * \ingroup Pspg_Solvers_Module
    */
    template <int D>
@@ -85,7 +101,7 @@ namespace Pspg
       * Solve the modified diffusion equation (MDE) for this block.
       *
       * This function computes an initial QField at the head of this
-      * block, and then solves the modified diffusion equation for 
+      * propagator, and then solves the modified diffusion equation for 
       * the block to propagate from the head to the tail. The initial
       * QField at the head is computed by pointwise multiplication of
       * of the tail QFields of all source propagators.
@@ -96,9 +112,9 @@ namespace Pspg
       * Solve the MDE for a specified initial condition.
       *
       * This function solves the modified diffusion equation for this
-      * block with a specified initial condition, which is given by 
-      * head parameter of the function. The function is intended for 
-      * use in testing.
+      * block with a specified initial condition, which is given by head
+      * parameter of the function. The function is intended for use in
+      * testing.
       *
       * \param head initial condition of QField at head of block
       */
@@ -107,10 +123,9 @@ namespace Pspg
       /**
       * Compute and return partition function for the molecule.
       *
-      * This function computes the partition function Q for the 
-      * molecule as a spatial average of the initial/head Qfield 
-      * for this propagator and the final/tail Qfield of its
-      * partner. 
+      * This function computes the partition function Q for the molecule
+      * as a spatial average of the product of the initial / head Qfield 
+      * for this propagator and the final / tail Qfield of its partner. 
       */ 
       double computeQ();
 
@@ -137,7 +152,7 @@ namespace Pspg
       Block<D>& block();
 
       /**
-      * Get the associated Block object by reference.
+      * Get the associated Block object by const reference.
       */
       Block<D> const & block() const;
 
@@ -185,9 +200,9 @@ namespace Pspg
       /// Is this propagator allocated?
       bool isAllocated_;
 
-	  //work array for inner product. Allocated and free-d in con and des
-	  cudaReal* d_temp_;
-	  cudaReal* temp_;
+      /// Work arrays for inner product. 
+      cudaReal* d_temp_;
+      cudaReal* temp_;
 
    };
 

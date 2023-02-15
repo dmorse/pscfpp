@@ -417,6 +417,12 @@ namespace Pspg
             readEcho(in, filename);
             readWRGrid(filename);
          } else
+         if (command == "ESTIMATE_W_FROM_C") {
+            // Read c field file in r-grid format
+            readEcho(in, inFileName);
+            readEcho(in, outFileName);
+            estimateWfromC(inFileName);
+         } else
          if (command == "SET_UNIT_CELL") {
             UnitCell<D> unitCell;
             in >> unitCell;
@@ -424,15 +430,19 @@ namespace Pspg
             setUnitCell(unitCell);
          } else
          if (command == "COMPUTE") {
+            // Solve the modified diffusion equation for current w fields
             compute();
          } else
          if (command == "ITERATE") {
+            // Attempt to iteratively solve a SCFT problem
             int error = iterate();
             if (error) {
                readNext = false;
             }
          } else
          if (command == "SWEEP") {
+            // Attempt to solve a sequence of SCFT problems along a path
+            // through parameter space
             sweep();
          } else
          if (command == "WRITE_W_BASIS") {
@@ -557,12 +567,6 @@ namespace Pspg
             readEcho(in, inFileName);
             readEcho(in, outFileName);
             basisToKGrid(inFileName, outFileName);
-         } else
-         if (command == "GUESS_W_FROM_C") {
-            // Read c field file in r-grid format
-            readEcho(in, inFileName);
-            readEcho(in, outFileName);
-            guessWfromC(inFileName, outFileName);
          } else {
             Log::file() << "  Error: Unknown command  " 
                         << command << std::endl;
@@ -818,6 +822,12 @@ namespace Pspg
          }
          out << std::endl;
       }
+   
+      out << "Lattice parameters:" << std::endl << "     ";
+      for (int i = 0; i < unitCell().nParameter(); ++i) {
+         out << "  " << Dbl(unitCell().parameter(i), 18, 11);
+      }
+      out << std::endl << std::endl;
    }
 
    // W-Field Modifier Functions
@@ -1326,13 +1336,12 @@ namespace Pspg
    }
 
    /*
-   * Construct guess for omega (w-field) from rho (c-field).
+   * Construct estimate for w-fields from c-fields.
    *
-   * Modifies wFields and wFieldsRGrid and also outputs wFields to file.
+   * Modifies wFields and wFieldsRGrid.
    */
    template <int D>
-   void System<D>::guessWfromC(std::string const & inFileName, 
-                               std::string const & outFileName)
+   void System<D>::estimateWfromC(std::string const & filename)
    {
       UTIL_CHECK(hasMixture_);
       const int nMonomer = mixture_.nMonomer();
@@ -1341,7 +1350,7 @@ namespace Pspg
       // If basis fields are not allocated, peek at field file header to 
       // get unit cell parameters, initialize basis and allocate fields.
       if (!isAllocatedBasis_) {
-         allocateFieldsBasis(inFileName); 
+         allocateFieldsBasis(filename); 
       }
       UTIL_CHECK(domain_.basis().isInitialized());
       const int nBasis = domain_.basis().nBasis();
@@ -1355,7 +1364,7 @@ namespace Pspg
       }
 
       // Read c fields from input file
-      fieldIo().readFieldsBasis(inFileName, tmpCFieldsBasis, 
+      fieldIo().readFieldsBasis(filename, tmpCFieldsBasis, 
                                 domain_.unitCell());
 
       // Compute w fields from c fields
@@ -1368,9 +1377,9 @@ namespace Pspg
             }
          }
       }
-      w_.setBasis(tmpFieldsBasis_);
 
-      fieldIo().writeFieldsBasis(outFileName, w_.basis(), unitCell());
+      // Store estimated w fields in System w container
+      w_.setBasis(tmpFieldsBasis_);
 
       hasCFields_ = false;
    }

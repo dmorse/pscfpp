@@ -1176,7 +1176,7 @@ namespace Pspg
             if (std::isnan(component.imag())) componentError = true;
             #endif
             coefficient = wavePtr->coeff;
-            #if UTIL_DEUG
+            #if UTIL_DEBUG
             if (std::isnan(coefficient.real())) componentError = true;
             if (std::isnan(coefficient.imag())) componentError = true;
             if (std::isnormal(coefficient))     componentError = true;
@@ -1283,7 +1283,7 @@ namespace Pspg
 
    template <int D>
    void FieldIo<D>::convertKGridToBasis(DArray< RDFieldDft<D> > const & in,
-                                        DArray< DArray<double>> & out) 
+                                        DArray< DArray<double> > & out) 
    const
    {
 

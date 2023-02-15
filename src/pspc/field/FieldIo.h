@@ -459,9 +459,17 @@ namespace Pspc
       *
       * \param in  complex DFT (k-grid) representation of a field.
       * \param out  coefficients of symmetry-adapted basis functions.
+      * \param checkSymmetry  boolean indicating whether to check that the 
+      * symmetry of the input field matches the space group symmetry. If
+      * input does not have correct symmetry, prints warning to Log::file().
+      * \param epsilon  if checkSymmetry = true, epsilon is the error 
+      * threshold used when comparing the k-grid and symmetry-adapted formats 
+      * to determine whether field has the declared space group symmetry.
       */
       void convertKGridToBasis(RFieldDft<D> const & in, 
-                               DArray<double> & out) const;
+                               DArray<double> & out,
+                               bool checkSymmetry = true,
+                               double epsilon = 1.0e-8) const;
 
       /**
       * Convert fields from Fourier transform (kgrid) to symmetrized basis.
@@ -471,9 +479,17 @@ namespace Pspc
       *
       * \param in  fields defined as discrete Fourier transforms (k-grid)
       * \param out  components of fields in symmetry adapted basis 
+      * \param checkSymmetry  boolean indicating whether to check that the 
+      * symmetry of the input field matches the space group symmetry. If
+      * input does not have correct symmetry, prints warning to Log::file().
+      * \param epsilon  if checkSymmetry = true, epsilon is the error 
+      * threshold used when comparing the k-grid and symmetry-adapted formats 
+      * to determine whether field has the declared space group symmetry.
       */
       void convertKGridToBasis(DArray< RFieldDft<D> > const & in,
-                               DArray< DArray<double> > & out) const;
+                               DArray< DArray<double> > & out,
+                               bool checkSymmetry = true,
+                               double epsilon = 1.0e-8) const;
 
       /**
       * Convert a field from symmetrized basis to spatial grid (r-grid).
@@ -498,18 +514,34 @@ namespace Pspc
       * 
       * \param in  field defined on real-space grid
       * \param out  field in symmetry adapted basis form
+      * \param checkSymmetry  boolean indicating whether to check that the 
+      * symmetry of the input field matches the space group symmetry. If
+      * input does not have correct symmetry, prints warning to Log::file()
+      * \param epsilon  if checkSymmetry = true, epsilon is the error 
+      * threshold used when comparing the k-grid and symmetry-adapted formats 
+      * to determine whether field has the declared space group symmetry
       */
       void convertRGridToBasis(RField<D> const & in,
-                               DArray<double> & out) const;
+                               DArray<double> & out,
+                               bool checkSymmetry = true, 
+                               double epsilon = 1.0e-8) const;
 
       /**
       * Convert fields from spatial grid (r-grid) to symmetrized basis.
       * 
       * \param in  fields defined on real-space grid
       * \param out  fields in symmetry adapted basis form
+      * \param checkSymmetry  boolean indicating whether to check that the 
+      * symmetry of the input field matches the space group symmetry. If
+      * input does not have correct symmetry, prints warning to Log::file()
+      * \param epsilon  if checkSymmetry = true, epsilon is the error 
+      * threshold used when comparing the k-grid and symmetry-adapted formats 
+      * to determine whether field has the declared space group symmetry
       */
       void convertRGridToBasis(DArray< RField<D> > const & in,
-                               DArray< DArray<double> > & out) const;
+                               DArray< DArray<double> > & out,
+                               bool checkSymmetry = true, 
+                               double epsilon = 1.0e-8) const;
 
       /**
       * Convert fields from k-grid (DFT) to real space (r-grid) format.
@@ -563,21 +595,29 @@ namespace Pspc
       * Check if an r-grid field has the declared space group symmetry.
       *
       * \param in field in real space grid (r-grid) format
+      * \param epsilon error threshold used when comparing the k-grid and
+      * symmetry-adapted formats to determine whether field has the declared
+      * space group symmetry.
       * \param verbose if field does not have symmetry and verbose = true,
       * function will write error values to Log::file().
       * \return true if the field is symmetric, false otherwise
       */
-      bool hasSymmetry(RField<D> const & in, bool verbose = true) const;
+      bool hasSymmetry(RField<D> const & in, double epsilon = 1.0e-8,
+                       bool verbose = true) const;
 
       /**
       * Check if a k-grid field has declared space group symmetry.
       *
       * \param in field in real space grid (r-grid) format
+      * \param epsilon error threshold used when comparing the k-grid and
+      * symmetry-adapted formats to determine whether field has the declared
+      * space group symmetry.
       * \param verbose if field does not have symmetry and verbose = true,
       * function will write error values to Log::file().
       * \return true if the field is symmetric, false otherwise
       */
-      bool hasSymmetry(RFieldDft<D> const & in, bool verbose = true) const;
+      bool hasSymmetry(RFieldDft<D> const & in, double epsilon = 1.0e-8,
+                       bool verbose = true) const;
 
       ///@}
 

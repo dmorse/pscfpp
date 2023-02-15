@@ -1,6 +1,6 @@
 /*! \page user_command_page Command Files
 
- \ref user_param_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref user_field_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref user_example_page (Next) 
 <BR>
 
@@ -29,7 +29,7 @@ commands available for specific programs.
 </ol>
 
  <BR>
- \ref user_param_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref user_field_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref user_page         (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref user_example_page (Next) 
 */

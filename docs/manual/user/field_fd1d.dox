@@ -1,27 +1,31 @@
 /*! \page user_field_fd1d_page Field File - One-Dimensional (pscf_fd)
 
- \ref user_field_kgrid_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_unitcell_page (Next) 
+ \ref user_field_page (Prev/Up) &nbsp; &nbsp; &nbsp; &nbsp; 
+ \ref user_field_basis_page (Next) 
 <BR>
 
-The pscf_fd program is designed for problems in which fields depend on 
-only a single variable, and uses a a regular one-dimensional mesh to 
-discretize the solutions.  This program uses a simple file format for
-w and c fields that contains a header and data section. 
+The pscf_fd program is designed for problems in which fields depend 
+on only a single variable, and uses a a regular one-dimensional mesh 
+to discretize the solutions.  This program uses a simple file format 
+for w and c fields that contains a header and data section. 
 
-The header provides values for the number of number of grid points, 
-denoted by nx, and the number of monomer types, denoted by nm.
+<b>Header</b>: The header provides values for
+  
+   - nx , the number of number of grid points
+   - nm , the number of monomer types.
 
-Each row in the data section starts with the index associated with a 
-grid point, followed by values of all fields at that grid point. Each
-column after the first gives the values of the field associated with 
-a specific monomer type, listed in order of increasing monomer type
-index.
+<b>Data section</b>: Each row in the data section starts with the index of a 
+grid point, followed by values of all fields at that grid point.  Each 
+column after the first gives the values of the field associated with a 
+specific monomer type, listed in order of increasing monomer type index.
+The first row (index 0) contains field values at the lower bound of the 
+coordinate (xmin), while the last row (index nx-1) contains values at the 
+upper bound (xmax). 
 
 \section user_field_fd1d_example_sec Example:
 
-An example of a w (chemical potential) is shown below, with a large 
-section of the data section omitted:
+An example of a w (chemical potential) file is shown below. A large part 
+of the data section has beem omitted, as indicated by vertical dots.
 
 \code
 nx     401
@@ -62,12 +66,12 @@ using a boundary condition that requires the 1D spatial derivative of
 the propagator to vanish at both endpoints. 
 
 An additional constraint is applied when a problem is solved in 
-canonical ensemble, in which values of volume fraction phi (rather 
-than chemical potential mu) are specified for all polymer and 
-solvent species. In this case, by convention, the value of the
-chemical potential is taken to zero for the last monomer type 
-at the last grid point. This convention is why a value of 0.0000 
-is visible for the last column of the last row in the above example.
+canonical ensemble, in which values of volume fraction phi (rather than 
+chemical potential mu) are specified for all polymer and solvent species. 
+In this case, the value of the chemical potential is taken to zero for 
+the last monomer type at the last grid point, by convention. This 
+convention is why a value of 0.0000 is shown for the last column of the 
+last row in the above example.
 
 <BR>
  \ref user_field_kgrid_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

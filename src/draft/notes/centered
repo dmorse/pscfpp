@@ -1,0 +1,85 @@
+Proposal for how to allow definition of "non-standard" Bravais lattice
+definitions, including but not limited to body- and face-centered lattices
+based on 2D or 3D orthogonal conventional lattices. 
+
+New Data Structures in UnitCell<D>
+
+ - bool isStandard_
+
+   Set true if the unit cell is one of the standard types used in the
+   way we have defined space groups, and false otherwise:
+
+ - nonStdBasis_ : FArray<D, Rational>
+
+   Components of basis vectors of non-standard cell (e.g., BCC) in a 
+   basis of Bravais basis vectors for the standard cell (e.g,. simple
+   cubic). In order to allow for the possibility that the standard cell 
+   is not a primitive cell, we must allow these components to be fractions 
+   (Util::Rational)
+
+ - stdBasis_ : FArrayVec<D, int>
+
+   Components of basis of standard cell in a basis of Bravais basis
+   vectors for the non-standard cell. In order for the conventional
+   Bravais lattice to be a subset of the non-standard Bravais lattice, 
+   these components must all be integers. If interpreted as matrix this 
+   must be the inverse of nonStdBasis_. If inversion of nonStdBasis_
+   doesn't yield a matrix of integers, throw and Exception with an
+   error message.
+
+ - UnitCell<D>: standardCell_
+
+   When creating a non-standard unit cell, create a private unit cell
+   of the related conventional type (e.g., square, cubic, orthorhombic).
+   We could consider making this read-only accessible through a public
+   function.
+
+Algorithm:
+
+  When a non-standard basis is somehow declared:
+
+     - Create nonStdBasis_ (hard coded or user input)
+
+     - Compute stdBasis by inversion using Rational math. Check that
+       all elements are integers, convert to int variables and store.
+
+  When space group is declared:
+
+      - Convert all operations of the space group to new basis, via
+        matrix transformations. Check that resulting rotation matrices
+        are all integers.
+
+      - Shift all translation vectors to range 0 <= t_i < 1
+
+      - Remove equivalent symmetry elements, keeping only one of
+        each set.
+
+      - Check that the remaining set of operations is actually a group.
+
+  When standard unit cell parameters are initialized or changed:
+
+  - Create private standardCell_ with conventional parameters
+
+  - Compute all private data for the non-standard unit cell from that
+    of enclosed standard unit cell, by matrix transformations
+
+Interface (first proposal, subject to reconsideration and modification):
+
+  In the parameter file, allow optional parameter basis in which the 
+  user can enter a non-standard set of Bravais lattice basis vectors as 
+  vectors of rational number (fractions), using the Util::Rational class.
+
+  Parameter file format:
+
+  nonStdBasis[
+      -1/2   1/2   1/2
+       1/2  -1/2   1/2
+       1/2   1/2  -1/2
+  ]
+
+  In the file header, allow for an optional element which lists these
+  basis components, in a similar format.
+
+  A field file is compatible with a parameter file if it has the same
+  lattice type (cubic, etc.) and, if any non-standard basis is declared,
+  exactly the same non-standard basis.

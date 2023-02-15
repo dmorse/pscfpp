@@ -36,9 +36,13 @@ namespace Pspc {
    Propagator<D>::~Propagator()
    {}
 
+   /*
+   * Allocate memory used by this propagator.
+   */
    template <int D>
    void Propagator<D>::allocate(int ns, const Mesh<D>& mesh)
    {
+      UTIL_CHECK(!isAllocated_);
       ns_ = ns;
       meshPtr_ = &mesh;
 
@@ -47,6 +51,34 @@ namespace Pspc {
          qFields_[i].allocate(mesh.dimensions());
       }
       isAllocated_ = true;
+   }
+
+   /*
+   * Reallocate memory used by this propagator using new ns value.
+   */
+   template <int D>
+   void Propagator<D>::reallocate(int ns)
+   {
+      UTIL_CHECK(isAllocated_);
+      UTIL_CHECK(ns_ != ns);
+      ns_ = ns;
+
+      // Deallocate all memory previously used by this propagator.
+      qFields_.deallocate();
+
+      // NOTE: The qFields_ container is a DArray<QField>, where QField
+      // is a typedef for DFields<D>. The DArray::deallocate() function
+      // calls "delete [] ptr", where ptr is a pointer to the underlying
+      // C array. The C++ delete [] command calls the destructor for
+      // each element in an array before deleting the array itself.
+      // The RField<D> destructor deletes the the double* array that 
+      // stores the field associated with each slice of the propagator.
+
+      // Allocate new memory for qFields_ using new value of ns
+      qFields_.allocate(ns);
+      for (int i = 0; i < ns; ++i) {
+         qFields_[i].allocate(meshPtr_->dimensions());
+      }
    }
 
    /*

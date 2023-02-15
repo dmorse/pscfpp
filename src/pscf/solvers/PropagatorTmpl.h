@@ -38,12 +38,12 @@ namespace Pscf
    * PropagatorTmpl<Propagator> to have a member variables that store 
    * pointers to other instances of derived class Propagator (or TP).
    *
-   * The TP propagator class is used in templates BlockTmpl, PolymerTmpl 
+   * The Propagator class is used in templates BlockTmpl, PolymerTmpl 
    * and SystemTmpl. The usage in those templates require that it define 
    * the following public typedefs and member functions:
    * \code
    *
-   *    class TP : public PropagatorTmpl<TP> 
+   *    class Propagator : public PropagatorTmpl<Propagator> 
    *    {
    *    public:
    * 
