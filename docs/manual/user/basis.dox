@@ -814,7 +814,7 @@ By \ref user_basis_closed_real_thrm "Theorem 2.9", this implies
 that, a real star function can be defined for every star of any 
 centro-symmetric group, 
 
-\section user_basis_fourier_sec Symmetry-Adapated Fourier Series (General)
+\section user_basis_fourier_sec Symmetry-Adapted Fourier Series: General
 
 PSCF creates a sequence of star functions, denoted here by 
 \f$ \phi_{0}({\bf r}, \phi_{1}({\bf r}), \phi_{2}({\bf r}), \ldots \f$,
@@ -857,13 +857,13 @@ Any complex or real field \f$ w({\bf r}) \f$ that is invariant under
 space group \f$ S \f$ can be expanded in such basis as a symmetry-adapted 
 Fourier series
 \f[
-   w({\bf r}) \simeq \sum_{i=0}^{N-1} c_{i} \phi_{i}({\bf r}) 
+   w({\bf r}) = \sum_{i=0}^{N-1} c_{i} \phi_{i}({\bf r}) 
 \f]
 with complex coefficients \f$ c_{0}, c_{1}, \ldots, c_{N-1} \f$, where
 \f$ N \f$ denotes the number of basis functions used to approximate the
 function in a truncated expansion.
 
-\section user_basis_real_sec Symmetry-Adapated Fourier Series (Real)
+\section user_basis_real_sec Symmetry-Adapted Fourier Series: Real Functions
 
 The concentration and chemical potential fields that appear in SCFT are 
 all real fields. The following constraints must be satisfied by the 
@@ -900,19 +900,42 @@ PSCF defines a corresponding sequence of real coefficients
      \f]
      and \f$ c_{i+1} = c_{i}^{*} \f$. 
 
-Alternative description:
-\f[
-   f_{1}({\bf r}) 
-   = [ \phi({\bf r}) + \phi^{*}({\bf r}) ]/\sqrt{2}
-   \quad,
-\f]
-and
-\f[
-   f_{2}({\bf r}) 
-   = [ \phi({\bf r}) - \phi^{*}({\bf r}) ]/(\sqrt{2}i)
-   \quad.
-\f]
+The following is alternative way of describing the resulting expansion
+of real functions. We define a set of real basis functions 
+\f$ f_{0}({\bf r}), f_{1}({\bf r}), \ldots \f$ that are related to the
+star basis functions described above as follows:
 
+   - For each function \f$ \phi_{i}({\bf r}) \f$ that is associated with
+     a closed star, we define
+     \f[  
+         f_{i}({\bf r}) = \phi_{i}({\bf r}) \quad.
+     \f]
+  
+   - For each pair of function 
+     \f$ \phi_{i}({\bf r}) \f$ that is associated 
+     \f$ \phi_{i+1}({\bf r}) = \phi_{i}^{*}({\bf r})\f$ that are
+     associated with a pair of open stars that are related by 
+     inversion, we define two corresponding real functions:
+     \f[
+        f_{i}({\bf r}) 
+        = [ \phi_{i}({\bf r}) + \phi^{*}_{i}({\bf r}) ]/\sqrt{2}
+        \quad,
+     \f]
+     and
+     \f[
+        f_{i+1}({\bf r}) = 
+        [ \phi_{i}({\bf r}) - \phi^{*}_{i}({\bf r}) ]/(\sqrt{2} i)
+        \quad.
+     \f]
+     that proportional to the real and imaginary parts of 
+     \f$ \phi_{i}({\bf r}) \f$.
+
+The resulting basis can be used to expand any real function with 
+the desired space group symmetry as an expansion
+\f[
+   w({\bf r}) = \sum_{i=0}^{N-1} a_{i} f_{i}({\bf r}) 
+\f]
+with real basis functions and real coefficients.
 
 <BR>
 \ref user_symmetry_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
