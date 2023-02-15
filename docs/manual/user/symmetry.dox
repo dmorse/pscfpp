@@ -1,0 +1,268 @@
+/*! \page user_symmetry_page Appendix: Space Group Symmetry
+
+\ref user_fourier_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_basis_page   (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+<BR>
+
+
+The space group of a crystal is a set of symmetry operations under which
+the structure is invariant. Space group symmetry operatioms generally
+involve combination of point group operations and translations by 
+fractions of a unit cell. Point group operations involve transformations
+such as inversion through the origin, reflection through a plane, or
+rotation around a symmetry axis by some fraction of a full rotation.
+
+\section user_symmetry_ops_sec Symmetry Operations 
+
+Every space group symmetry operation \f$ A \f$ is a function that maps 
+every position \f$ {\bf r} \f$ onto a new position \f$ A({\bf r}) \f$ 
+of the form
+\f[
+   A({\bf r}) =  R {\bf r} + {\bf t}
+\f]
+in which \f$ R \f$ is a linear operator that acts on the vector 
+\f$ {\bf r} \f$ to its right by applying a point group operation (e.g.,
+a reflection, rotation, or inversion) and \f$ {\bf t} \f$ is a translation
+vector. A translation vector associated with a space group symmetry 
+operation can be zero, giving a pure point group operation, or can be a 
+sum of translations by fractions of a unit cell along Bravais lattice 
+basis vectors.
+
+Notation: Here and hereafter, we use bold faced symbols to denote vectors 
+such as \f$ {\bf r} \f$.  We define an inner-product space for vectors by 
+defining the dot product \f$ {\bf a}\cdot{\bf b} \f$ of two vectors to be 
+given by the Euclidean norm computed using a Cartesian vector components.
+The norm of a vector, denoted by \f$ |{\bf a}| \f$, is then given by
+\f[ 
+     |{\bf a}| = \sqrt{{\bf a}\cdot{\bf a}}
+\f]
+The adjoint of any linear operator \f$ R \f$ in this vector space is 
+denoted by \f$ R^{T} \f$, and is defined by the requirement that
+\anchor user_symmetry_adjoint_def_eqn
+\f[
+  (R^{T}{\bf a}) \cdot {\bf b} = {\bf a} \cdot (R {\bf b})
+\f]
+for any two D-dimensional vectors \f$ {\bf a} \f$ and \f$ {\bf b} \f$.
+
+Point group symmetry operators are always orthogonal operators (i.e., 
+unitary operators in a real vector space), which do not change the norm 
+of the vector on which they operate. That is, for any point group 
+operator \f$ R \f$, 
+\f[
+   |R{\bf v}| = |{\bf v}|
+\f]
+for any vector \f$ {\bf v} \f$.  This implies that the representation 
+of \f$ R \f$ a defined using any orthormal vector must be an orthogonal 
+matrix. 
+
+Multiplication of symmetry elements is defined such that the product
+\f$ AB \f$ of two symmetry elements \f$ A \f$ and \f$ B \f$ is the
+operation whose effect on a vector is given by
+\f[
+     (AB)({\bf r}) \equiv A(B({\bf r})) \quad.
+\f]
+Multiplication of symmetry operations is not commutative: Generally,
+\f$ AB \neq BA \f$.
+
+The identity operation, denoted by \f$ E \f$, is the trivial operation 
+that maps every position onto itself, so that \f$ E({\bf r}) = {\bf r} \f$.
+This is represented by a pair 
+\f[ 
+   E = (I, 0)
+\f] 
+in which we use \f$ I \f$ to denote the identity point group operation,
+for which the matrix representation in any basis is an identity matrix.
+Mutlplication of any other symmetry operation \f$ A \f$ by the identity
+leaves \f$ A \f$ unchanged, such that \f$ EA = AE = A \f$.
+
+The inversion operation \f$ i \f$ is an operation that inverts the sign
+of all of the components of a vector, so that
+\f[
+   i({\bf r}) = -{\bf r}
+\f]
+for any position \f$ {\bf r} \f$. This operation is represented by a 
+pair
+\f[
+   i = (-I, 0) \quad,
+\f]
+where \f$ -I \f$ is the point group inversion operation. 
+
+Every space group symmetry operation \f$ A \f$ has an inverse 
+\f$ A^{-1} \f$ defined such that 
+\f[
+   A^{-1}A = A A^{-1} = E \quad.
+\f]
+The identity element is equal its own inverse, since \f$ EE = E \f$,
+as is the inversion element, since \f$ ii = E \f$.
+
+<b> Theorem (Inversion of Space Group Operations)</b> : If \f$A\f$ is a 
+space group symmetry operation 
+\f[
+   A = (R, {\bf t})
+\f]
+with point group operation \f$R\f$ and translation vector \f${\bf t}\f$,
+then 
+\f[
+   A^{-1} = (R^{-1}, -R^{-1}{\bf t}) \quad.
+\f]
+Proof: Confirm that \f$ A^{-1}A({\bf r}) = A^{-1}(R{\bf r} + {\bf t}) = 
+R^{-1}(R{\bf r} + {\bf t}) - R^{-1}{\bf t} = {\bf r} \f$ for any 
+\f${\bf r}\f$. 
+
+\section user_symmetry_group_sec Space Groups
+
+A space group is a set of symmetry operations for which multiplication 
+is defined as discussed by above, for which:
+
+   - The set includes the identity element \f$ E \f$
+
+   - If the set contains an element \f$ A \f$, it must also contain 
+     \f$ A^{-1} \f$. 
+
+   - If the set contains \f$ A \f$ and \f$ B \f$, it must also 
+     contain the product \f$ A B \f$.
+
+It is known that there are only 230 possible distinct 3D space groups, 
+17 possible distinct 2D plane groups, and 2 possible symmetry groups in 
+1D, as discussed \ref user_groups_page "here".  The data/groups directory 
+contains files that each list all of the symmetry elements for one of 
+these groups.
+
+A function \f$ f({\bf r}) \f$ with the periodicity of some Bravais lattice
+is said to be invariant under a particular space group if
+\f[
+   f(A({\bf r}) = f(R{\bf r} + {\bf t}) = f({\bf r})
+\f]
+for every element \f$ A = (R, {\bf t}) \f$ of the space group.
+
+\section user_symmetry_components_sec Vector Bases
+
+Different vector bases are used in PSCF for vectors that represent 
+positions or translations and for vectors that represent reciprocal
+lattice wavevectors.
+
+\subsection user_symmetry_components_bravais_sub Bravais Basis (Positions and Translations)
+
+It is convenient for to define components of position vectors such as a 
+position \f$ {\bf r} \f$ or a translation \f$ {\bf t} \f$ using a basis 
+of Bravais lattice basis vector. We refer to this as a Bravais basis.  
+Any position vector \f$ {\bf r} \f$ may be expressed in a Bravais basis 
+as a sum
+\f[
+  {\bf r} = \sum_{i=0}^{D-1} r_{i}{\bf a}_{i} 
+\f]
+in which \f$ {\bf a}_{0},\ldots, {\bf a}_{D-1} \f$ are Bravais lattice 
+basis vectors, while \f$ r_{0}, \ldots, r_{D-1} \f$ are components of
+\f$ {\bf r} \f$ in this basis, also known as reduced coordinates. 
+Similarly, the translational vector \f$ {\bf t} \f$ associated with a 
+space group symmetry may be expressed as a sum
+\f[
+  {\bf t} = t_{0}{\bf a}_{0} + \cdots t_{D-1}{\bf a}_{D-1}
+\f]
+in which the components \f$ t_{0}, \ldots, t_{D-1} \f$ are all rational 
+numbers (i.e., fractions) with small denominators, such as 
+\f$ \pm 1/2 \f$, \f$ 1/4 \f$, \f$ 2/3 \f$, etc.
+
+Notation: Here and hereafer, we use a notation in which the components of
+a vector \f$ {\bf a} \f$ in a specified basis are denoted by subscripted 
+variables \f$ a_{0}, \ldots, a_{D-1} \f$, using bold- and non-bold faced 
+versions of the same symbol for a vector and its components.
+
+A representation of a point group operator \f$ R \f$ as a matrix may 
+be defined by using a Bravais basis to define the components of the 
+vector \f$ R{\bf r} \f$ for any vector \f$ {\bf r} \f$. This gives a
+representation of \f$ R{\bf r} \f$ as a sum
+\f[
+   R {\bf r} = 
+   \sum_{i=0}^{D-1} \sum_{j=0}^{D-1} 
+   {\bf a}_{i} R_{ij} r_{j}
+\f]
+where \f$ (r_{0}, \ldots, r_{D-1}) \f$ are components of \f$ {\bf r} \f$ 
+and \f$ R_{ij} \f$ denotes a matrix element of \f$ R \f$ in a Bravais
+basis.  The matrix representation of a point group operation in a Bravais 
+basis must have matrix elements that are all integers (usually 0, 1, or 
+-1), in order to guarantee that this operation maps all Bravais lattice 
+vectors onto other Bravais lattice vectors.
+ 
+PSCF stores the representation of each symmetry operation \f$ A \f$
+internally as a pair 
+\f[ 
+    A = ( R, {\bf t}) 
+\f] 
+in which \f$ R \f$ is represented as a \f$ D \times D \f$ matrix with 
+integer matrix elements and \f$ {\bf t} \f$ represented as a vector 
+with \f$ D \f$ components that is represented as a rational number 
+(i.e., ratio of two integers). Each space group symmetry is represented 
+as an instance of a class Pscf::SpaceSymmetry<D>. Each element of 
+the translation vector \f$ {\bf t} \f$ is represented by an instance
+of class Util::Rational.
+
+\subsection user_symmetry_components_reciprocal_sub Reciprocal Basis (Wavevectors)
+
+It is convenient to express reciprocal lattice wavevectors in a basis of 
+reciprocal lattice basis vectors, which we refer to as a reciprocal basis. 
+In this representation, each reciprocal lattice wavevector \f$ G \f$ is
+expressed as a linear combination
+\f[
+  {\bf G} = \sum_{i=0}^{D-1} G_{i}{\bf b}_{i} 
+\f]
+in which \f$ {\bf b}_{0}, \ldots, {\bf b}_{D-1} \f$ are reciprocal 
+lattice basis vectors, defined such that 
+\f[
+  {\bf a}_{i}\cdot{\bf b}_{j} = 2\pi \delta_{ij} \quad,
+\f]
+for all \f$ i, j = 0, \ldots, D-1\f$, and in  which 
+\f$ G_{0}, \ldots, G_{D-1} \f$ are integer components (Miller indices).
+
+When a reciprocal basis is used for a wavevectors \f$ {\bf G} \f$ and 
+a Bravais basis is used for a position \f$ {\bf r} \f$, then the dot 
+product \f$ {\bf G}\cdot{\bf r} \f$ may be expressed as a sum
+\f[
+   {\bf G} \cdot {\bf r} 
+   = 2\pi \sum_{i=0}^{D-1} G_{i} r_{i} \quad,
+\f]
+where \f$ G_{0}, \ldots, G_{D-1} \f$ are the integer components of 
+\f$ {\bf G} \f$ in a reciprocal basis and \f$ r_{0}, \ldots, r_{D-1} \f$ 
+are reduced coordinates of \f$ {\bf r} \f$.
+
+\subsection user_symmetry_adjoint_matrix_sub Adjoint Operators in Wavevector Space
+
+Suppose that \f$ {\bf G} \f$ is a reciprocal lattice vector, \f$ R \f$ 
+is a linear operator that can be applied to a position vector, and
+\f[
+  {\bf G}' = R^{T}{\bf G}
+\f]
+is a wavevector obtained by applying the adjoint operator \f$ R^{T} \f$ 
+to \f$ {\bf G} \f$. To define \f$ R^{T}{\bf G} \f$, we must consider the 
+dot product of \f$ {\bf G} \f$ with \f$ R {\bf r} \f$ for arbitrary 
+\f$ {\bf G} \f$ and \f$ {\bf r} \f$ .  By using a basis of reciprocal 
+lattice basis vectors for \f$ {\bf G} \f$ a basis of Bravais lattice 
+basis vectors for \f$ R{\bf r} \f$, we may show
+\f[
+   {\bf G} \cdot R {\bf r} = 2\pi 
+   \sum_{i=0}^{D-1} \sum_{j=0}^{D-1} G_{i}R_{ij}r_{j}
+\f]
+for any \f$ {\bf G} \f$ and \f$ {\bf r} \f$ and
+\f$ (r_{0}, \ldots, r_{D-1} \f$  are components defined using
+reciprocal and Bravais lattice basis vectors, respectively. 
+Comparing this to the definition of a transpose, we conclude 
+that \f$ {\bf G}' \f$ may be expanded a sum
+\f[
+  {\bf G}' = \sum_{j=0}^{D-1} G_{j}' {\bf b}_{j}
+\f]
+with components
+\f[
+  G_{j}' 
+  = \sum_{i=0}^{D-1} G_{i} R_{ij} = \sum_{i=0}^{D-1} R_{ji}^{T} G_{i} 
+  \quad.
+\f]
+The matrix representation of the operator \f$ R^{T} \f$ in a reciprocal 
+basis (which we use for wavevectors), is thus given by the matrix 
+transpose of the matrix representation of \f$ R \f$ in a Bravais basis.
+
+<BR>
+\ref user_fourier_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_page    (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_basis_page  (Next) &nbsp; &nbsp; &nbsp; &nbsp;
+
+*/

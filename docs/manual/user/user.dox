@@ -6,19 +6,21 @@
 
 <h2> Contents:</h2>
    <ol>
-   <li> \subpage user_model_page    </li>
-   <li> \subpage user_files_page    </li>
-   <li> \subpage user_usage_page    </li>
-   <li> \subpage user_param_page    </li>
-   <li> \subpage user_field_page    </li>
-   <li> \subpage user_command_page  </li>
-   <li> \subpage user_example_page  </li>
-   <li> \subpage user_visualize_page  </li>
-   <li> \subpage user_unitcell_page </li>
-   <li> \subpage user_groups_page   </li>
-   <li> \subpage user_thin_films_page   </li>
-   <li> \subpage user_theory_page   </li>
+   <li> \subpage user_model_page     </li>
+   <li> \subpage user_files_page     </li>
+   <li> \subpage user_usage_page     </li>
+   <li> \subpage user_param_page     </li>
+   <li> \subpage user_field_page     </li>
+   <li> \subpage user_command_page   </li>
+   <li> \subpage user_example_page   </li>
+   <li> \subpage user_visualize_page </li>
+   <li> \subpage user_unitcell_page  </li>
+   <li> \subpage user_groups_page    </li>
+   <li> \subpage user_thin_films_page </li>
+   <li> \subpage user_theory_page    </li>
    <li> \subpage user_fourier_page   </li>
+   <li> \subpage user_symmetry_page  </li>
+   <li> \subpage user_basis_page     </li>
    </ol>
 
 <BR>

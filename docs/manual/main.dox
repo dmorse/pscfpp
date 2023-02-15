@@ -36,6 +36,8 @@ mixtures.
     <li> \ref user_thin_films_page  </li>
     <li> \ref user_theory_page  </li>
     <li> \ref user_fourier_page  </li>
+    <li> \ref user_symmetry_page  </li>
+    <li> \ref user_basis_page  </li>
     </ol>
   </li>
   <li> \subpage developer_page 

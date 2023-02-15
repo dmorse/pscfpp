@@ -318,7 +318,7 @@ to prove the following series of theorems about products of incoming
 propagators associated with any vertex in a polymer.
 
 \anchor user_theory_theorem1
-<b> Theorem 1 </b> :
+<b> Theorem 1.1 </b> :
 Suppose \f$ q({\bf r}, s) q^{\dagger}({\bf r},L-s)\f$ is the product
 of two propagators defined within a single block of length \f$ L \f$.
 The value of this product at \f$ s = 0 \f$, corresponding to its value 
@@ -351,7 +351,7 @@ at \f$ s = L \f$ may be obtained by completely analogous reasoning,
 with the roles of \f$ q \f$ and \f$ q^{\dagger} \f$ reversed. QED.
 
 \anchor user_theory_theorem2
-<b> Theorem 2 </b>: Let \f$ I(s) \f$ represent the spatial integral
+<b> Theorem 1.2 </b>: Let \f$ I(s) \f$ represent the spatial integral
 \f[
    I(s) \equiv
    \int d\textbf{r} \; q (\textbf{r},s) q^{\dagger}(\textbf{r},L-s)
@@ -406,12 +406,12 @@ for all \f$ s \in [0,L] \f$, implying that \f$ I(s) \f$ is independent
 of \f$ s \f$ within each block.  QED.
 
 \anchor user_theory_theorem3
-<b> Theorem 3 </b>: The value of the spatial integral of the product
+<b> Theorem 1.3 </b>: The value of the spatial integral of the product
 of incoming propagators associated with a vertex of an acyclic branched
 polymer has the same value for every vertex in the polymer, including
 any virtual 2-fold vertex inserted into any block of the polymer. 
 
-<em> Proof </em>: \ref user_theory_theorem2 "Theorem 2" shows that the value 
+<em> Proof </em>: \ref user_theory_theorem2 "Theorem 1.2" shows that the value 
 of the spatial integral \f$ I(s) \f$ of the product of incoming propagators 
 associated with a virtual 2-fold vertex inserted into any block of a polymer 
 is independent of the coordinate \f$ s \f$ within the block. Combining this 

@@ -1,7 +1,7 @@
 /*! \page user_fourier_page Appendix: Periodic Functions
 
 \ref user_theory_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_page  (Next)
+\ref user_symmetry_page  (Next)
 <BR>
 
 This page describes the different numerical representations used in
@@ -95,17 +95,17 @@ number \f$ C \f$.  Note that this constraint requires that that
 \section user_fourier_reduced_sec Reduced Coordinates
 
 It is convenient to introduce dimensionless reduced coordinates 
-\f$ x_{0}, \ldots, x_{D-1} \f$ associated with any Cartesian position 
+\f$ r_{0}, \ldots, r_{D-1} \f$ associated with any Cartesian position 
 vector \f$ {\bf r} \f$ within a crystal, which are defined such that
 \f[
-   {\bf r}(x_0, \ldots, x_{D-1})
-   = \sum_{\alpha = 0}^{D-1} {\bf a}_{\alpha} x_{\alpha}
+   {\bf r}(r_0, \ldots, r_{D-1})
+   = \sum_{\alpha = 0}^{D-1} {\bf a}_{\alpha} r_{\alpha}
   \quad.
 \f]
 The reduced coordinates are thus the components of \f$ {\bf r} \f$ 
 in a basis of Bravais lattice basis vectors.  
 The primary unit cell of a crystal is defined to be a region in 
-which \f$ 0 \leq x_{\alpha} < 1 \f$ for all \f$ \alpha = 0, \ldots, D-1 \f$.
+which \f$ 0 \leq r_{\alpha} < 1 \f$ for all \f$ \alpha = 0, \ldots, D-1 \f$.
 This corresponds to a unit domain in the space of reduced coordinates that
 is give by the domain \f$ [0,1) \f$ for D=1, a unit square for D=2 or a 
 unit cube for D=3.  This maps onto a unit cell in Cartesian coordinates 
@@ -115,12 +115,12 @@ basis vectors.
 
 Suppose that \f$ f({\bf r}) \f$ is a periodic function of the
 Cartesian position vector \f$ {\bf r} \f$ and that
-\f$ F(x_{0}, \ldots, x_{D-1}) \f$ is an equivalent function of
-the reduced coordinates \f$ x_{0}, \ldots, x_{D-1} \f$, defined
+\f$ F(r_{0}, \ldots, r_{D-1}) \f$ is an equivalent function of
+the reduced coordinates \f$ r_{0}, \ldots, r_{D-1} \f$, defined
 such that
 \f[
- F(x_{0}, \ldots, x_{D-1}) =
- f({\bf r}(x_{0},\ldots,x_{D-1}))
+ F(r_{0}, \ldots, r_{D-1}) =
+ f({\bf r}(r_{0},\ldots,r_{D-1}))
 \f]
 for any list of reduced coordinates.
 The requirement that a function \f$ f({\bf r})\f$ be periodic under
@@ -129,34 +129,34 @@ that \f$ F \f$ be invariant under changes of any reduced coordinate
 by addition of arbitrary integer.  That is, for any periodic function
 \f$ F \f$ of the reduced coordinates,
 \f[
-   F(x_{0} + k_{0}, \ldots, x_{D-1} + k_{D-1} )
-   = F(x_{0}, \ldots, x_{D-1} )
+   F(r_{0} + k_{0}, \ldots, r_{D-1} + k_{D-1} )
+   = F(r_{0}, \ldots, r_{D-1} )
 \f]
 for arbitrary integer values of \f$ k_{0}, \ldots, k_{D-1} \f$.
 
-Using the above expressions for \f$ {\bf r}(x_{0}, \ldots, x_{D-1}) \f$ and
+Using the above expressions for \f$ {\bf r}(r_{0}, \ldots, r_{D-1}) \f$ and
 \f$ {\bf G}(n_{0}, \ldots, n_{D-1}) \f$ and the bi-orthogonality relation 
 for Bravais and reciprocal basis vectors, it is straightforward to show 
 that
 \f[
    \exp \left (  i{\bf G} \cdot {\bf r} \right )
    = 
-   \exp \left ( 2\pi i \sum_{\alpha = 0}^{D-1} n_{\alpha} x_{\alpha} \right )
+   \exp \left ( 2\pi i \sum_{\alpha = 0}^{D-1} n_{\alpha} r_{\alpha} \right )
 \f]
 for any choice of reciprocal lattice vector \f$ {\bf G}(n_{0}, \ldots, n_{D-1}) \f$ 
-and any position vector \f$ {\bf r}(x_{0}, \ldots, x_{D-1}) \f$.
+and any position vector \f$ {\bf r}(r_{0}, \ldots, r_{D-1}) \f$.
 Upon substituting this into the general Fourier series expansion for 
 a periodic function \f$ f({\bf r})\f$ given 
 \ref user_fourier_fourierR_eqn "above", we find that the corresponding
-function \f$ F(x_{1}, \ldots, x_{D-1}) \f$ of the reduced coordinates may 
+function \f$ F(r_{1}, \ldots, r_{D-1}) \f$ of the reduced coordinates may 
 be expressed as an infinite series
 \anchor user_fourier_fourierX_eqn
 \f[
-  F(x_{0}, \ldots, x_{D-1}) =
+  F(r_{0}, \ldots, r_{D-1}) =
   \sum_{n_{0} = -\infty}^{\infty} \cdots
   \sum_{n_{D-1} = -\infty}^{\infty}
   \tilde{F}(n_{0},\ldots,n_{D-1})
-  \exp \left ( 2\pi i \sum_{\alpha = 0}^{D-1} n_{\alpha} x_{\alpha} \right )
+  \exp \left ( 2\pi i \sum_{\alpha = 0}^{D-1} n_{\alpha} r_{\alpha} \right )
 \f]
 in which the sum is taken over all integer values of each of the Miller 
 indices, and in which 
@@ -169,7 +169,7 @@ such that
 for the wavevector \f$ {\bf G}(n_{0}, \ldots, n_{D-1}) \f$.
 This form for the expansion of a periodic function of the reduced coordinates
 can also be justified as a special case of the general Fourier expansion 
-applied to a function \f$ F(x_{0}, \ldots, x_{D-1}) \f$ which has the 
+applied to a function \f$ F(r_{0}, \ldots, r_{D-1}) \f$ which has the 
 periodicity of a generalized cubic lattice with orthogonal Bravais lattice 
 basis vectors of unit magnitude.
 
@@ -177,7 +177,7 @@ basis vectors of unit magnitude.
 
 All fields in the pscf_pc and pscf_pg programs are represented internally
 using values of fields on a regular D-dimensional mesh in the space of the 
-reduced coordinates \f$ x_{0}, \ldots, x_{D-1} \f$.
+reduced coordinates \f$ r_{0}, \ldots, r_{D-1} \f$.
 Let \f$ M_{\alpha} \f$ denote the number of mesh points per unit cell 
 along direction \f$ \alpha \f$ for each integer direction index 
 \f$ \alpha = 0, \ldots, D-1 \f$.
@@ -185,10 +185,10 @@ The values of \f$ M_{0}, \ldots, M_{D-1} \f$ are specified in the
 paramter file for a pscf_pc or pscf_pg program as values for elements
 of the parameter "mesh", whose value is a vector with integer-valued
 elements.  Nodes on this mesh correspond to points at which each
-coordinate \f$ x_{\alpha} \f$ with \f$ \alpha \in [0, \ldots, D-1]\f$
+coordinate \f$ r_{\alpha} \f$ with \f$ \alpha \in [0, \ldots, D-1]\f$
 has a value given by
 \f[
-    x_{\alpha} = m_{\alpha}/M_{\alpha}
+    r_{\alpha} = m_{\alpha}/M_{\alpha}
 \f]
 for some integer \f$ m_{\alpha} \in [0,\ldots,M_{\alpha}-1] \f$ for
 nodes within the primary unit cell.
@@ -342,8 +342,8 @@ the Pscf::Basis<D> class.  The indexing scheme that we refer to here  as
 within the source code and documentation of the Pscf::Basis class template.
 
 <BR>
-\ref user_theory_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref user_page    (Up) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref developer_page    (Next)
+\ref user_theory_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_page          (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_symmetry_page (Next)
 
 */
