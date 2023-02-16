@@ -13,8 +13,8 @@ The format of the associated parameter block is identical to that used
 by AmIteratorBasis, as described below:
 \code
 AmIterator{
-   maxItr         int
    epsilon        real 
+   maxItr         int
    maxHist        int  
    verbose*         int (0-2, 0 by default)
    outputTime*      bool (false by default)
@@ -31,13 +31,13 @@ parameters. The meaning of the various parameters are described below:
     <td> <b> Description </b>  </td>
   </tr>
   <tr>
-    <td>  maxIter </td>
-    <td> Maximum number of iterations that will be attempted </td>
-  </tr>
-  <tr>
-    <td>  epsilon </td>
+    <td> epsilon </td>
     <td> Desired tolerance for convergence - iteration stops if 
          the magnitude of the error drops below epsilon.  </td>
+  </tr>
+  <tr>
+    <td> maxItr </td>
+    <td> Maximum number of iterations that will be attempted </td>
   </tr>
   <tr>
     <td> maxHist  </td>
@@ -62,14 +62,14 @@ parameters. The meaning of the various parameters are described below:
          to "relNormResid" by default. </td>
   </tr>
   <tr>
-    <td>  isFlexible </td>
+    <td> isFlexible </td>
     <td> Set isFlexible true to enable or false to disable iterative 
          optimization of the unit cell parameters so as to minimize the 
          free energy.  
          Optional and false by default.  </td>
   </tr>
   <tr>
-    <td>  scaleStress </td>
+    <td> scaleStress </td>
     <td> Constant factor by which stress components are multipled in
          the definition of the residual  attempted if isFlexible is
          true (optional). </td>

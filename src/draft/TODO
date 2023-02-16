@@ -3,23 +3,20 @@ v1.0
 
 Pscf:
 
-1) Separate code to compute idemp and chi_inv from ChiInteraction.
+1) Clean up reading of basis files constructed with different grid.
+   Consider creating new file format version.
 
 2) Review and modify interface of AmIteratorTmpl
 
+3) Separate code to compute idemp and chi_inv from ChiInteraction.
+
 Pspg:
 
-1) Review and clean up redundant GPU kernels
-
-Tools:
-
-1) Develop python scripts to read output files and analyze sweeps
+1) Review and clean up redundant GPU kernels (leave for v1.1?)
 
 Docs:
 
 1) Fully document param file formats for all classes.
-
-2) Document the model and systems of units in html documentation
 
 --------------------------------------------------------------------------
 v1.1
@@ -47,6 +44,11 @@ Docs:
 1) Develop read-the-docs user manual documentation.
 
 2) Improve developer documentation regarding build system, Parameter IO
+
+Tools:
+------
+
+1) Develop python scripts to read output files and analyze sweeps
 
 Docs
 -----
