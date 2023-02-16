@@ -6,28 +6,67 @@
 
 The basis file format is one of three formats used by the pscf_pc and
 pscf_pg programs to describe spatially periodic fields in systems with
-a specified crystal lattice type and space group symmetry. 
+a specified crystal lattice type and space group symmetry. This file
+format is basis on a symmetry-adapted Fourier basis in which each field
+is expanded using a set of basis functions that are superpositions of
+plane waves that are invariant under all operations in the space group.
 
-The symmetry-adapted basis file format for a systen with N_monomer 
-different types of monomer contains a description of a N_monomer fields 
-(one per monomer type) in which each field is expanded in a basis in 
-which all of the basis functions are eigenfunctions of the Laplacian 
-that invariant under the space group symmetries of the crystal. Each 
-of these basis functions is associated with a set of reciprocal lattice 
-vectors that are related by symmetry operations, which we refer to as a 
-"star".  The star of wavevectors associated with each basis function is 
-identified in the file format by giving the integer indices for a 
-characteristic wavevector in that star.
+\section user_field_basis_fourier_sec Symmetry-Adapted Fourier Basis
+
+Consider the basis file format for a chemical potential field for a
+system with nMonomer monomer types indexed by an integer
+\f$ \alpha = 0, \ldots,\f$ nMonomer - 1. Let \f$ w_{\alpha}(\textbf{r})\f$
+the monomer chemical potential field associated with monomer type 
+\f$ \alpha \f$ . The basis file format for such a field contains the 
+coefficients for an expansion of each field \f$ w_{\alpha} \f$ as a 
+generalized Fourier expansion of the form
+\f[
+    w_{\alpha}(\textbf{r}) =
+    \sum_{i=0}^{N_{basis}-1} w_{i\alpha} f_{i}(\textbf{r})
+\f]
+in which \f$ f_{i}(\textbf{r}) \f$ is a real basis function,
+\f$ w_{i\alpha} \f$ is an associated real coefficient, and
+\f$ N_{basis} \f$ is the number of basis functions used in the
+expansion.
+
+The type of symmetry-adapted Fourier basis used by PSCF is a set of 
+orthogonal basis functions 
+\f$ 
+ f_{0}(\textbf{r}), f_{1}(\textbf{r}), \ldots, f_{N_{basis}-1}(\textbf{r})
+\f$ 
+that are each invariant under all the symmetry operations belonging to 
+the space group whose name is specified in the parameter file. The basis 
+functions used by PSCF form satisfy an orthornmality condition that 
+requires that
+\f[
+   \frac{1}{V} \int \! d^{D}r \;
+   f_{i}(\textbf{r}) f_{j}(\textbf{r})
+   = \delta_{ij}
+\f]
+where the integral is taken over one unit cell of a periodic structure
+in D-dimensional space and \f$ V \f$ is the generalized volume (3D
+volume, 2D area, or 1D length) of the unit cell. Here, \f$ \delta_{ij} \f$ 
+denotes the Kronecker delta function, which is defined to be 
+\f$ \delta_{ij} = 1 \f$ for \f$ i=j \f$ and 0 otherwise. The basis 
+functions used by PSCF  are also all eigenfunctions of the Laplacian, 
+such that
+\f[
+   -\nabla^{2}f_{i}(\textbf{r}) = \lambda_{i} f_{i}(\textbf{r})
+\f]
+for each such basis function, with some eigenvalue 
+\f$ \lambda_{i} \geq 0 \f$.
+
+\section user_field_basis_examples_sec File Format: Overview and Examples
 
 This field file format consists of a header section followed by a data 
 section. The last line in the header section contains a value for a 
 parameter N_star, which is the number of basis functions used to expand 
 each field. The data section contains exactly N_star rows of data, each 
 of which contains coefficients associated with one basis function, along 
-with information about an associated star of wavevectors.  
+with the indices for an associated wavevector that is used as a label for
+the basis function. 
 
-
-\section user_field_basis_gyroid_sec Example: 3D Gyroid Phase 
+\subsection user_field_basis_gyroid_sub Example: 3D Gyroid Phase 
 
 Below is an example of a c file output from a simulation of a gyroid 
 phase for a diblock copolymer melt. A section of the middle of this file 
@@ -71,7 +110,7 @@ has been removed, as indicated by the vertical dots.
 \endcode
 <BR>
 
-\section user_field_basis_lamellar_sec Example: 1D Lamellar Phase 
+\subsection user_field_basis_lamellar_sub 1D Lamellar Phase 
 
 Below is an example the c field file output for a small simulation of a
 centro-symmetric lamellar phase of a diblock copolymer melt:
