@@ -44,8 +44,8 @@ namespace Fd1d
    void NrIterator::readParameters(std::istream& in)
    {
       maxItr_ = 400;
-      readOptional(in, "maxItr", maxItr_);
       read(in, "epsilon", epsilon_);
+      readOptional(in, "maxItr", maxItr_);
       setup();
    }
 

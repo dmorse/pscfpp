@@ -18,21 +18,21 @@ is not particularly robust in the face of a poor initial guess.
 The parameter file format for an Fd1d::NrIterator object is:
 \code
 NrIterator{
-   maxItr*       int (100 by default)
-   epsilon       real
+   epsilon     real
+   maxItr*     int (100 by default)
 }
 \endcode
 Note that maxItr is an optional parameter, which is set to 100 by default. 
 Parameters are described below:
 <table>
   <tr>
+    <td> epsilon </td>
+    <td> Error tolerance. 
+  </tr>
+  <tr>
     <td> maxItr* </td>
     <td> maximum number of iterations attempted (optional, 100 by default) 
          </td>
-  </tr>
-  <tr>
-    <td> epsilon </td>
-    <td> Error tolerance. 
   </tr>
 </table>
 Iteration stops when every element of the residual vector (described below)

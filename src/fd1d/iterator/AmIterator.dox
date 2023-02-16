@@ -11,8 +11,8 @@ equations using an Anderson-Mixing algorithm.
 An example of the parameter file format for this iterator is shown below:
 \code
   AmIterator{
-    maxItr        100
     epsilon       1e-8
+    maxItr        100
     maxHist       50
     verbose*      int (0-2, 0 by default)
     errorType     relNormResid
@@ -21,8 +21,8 @@ An example of the parameter file format for this iterator is shown below:
 The format of this block is described more formally below:
 \code
  AmIterator{
-   maxItr        int
    epsilon       real 
+   maxItr        int
    maxHist       int  
    verbose*      int (0-2, 0 by default)
    outputTime*   bool (false by default)
@@ -39,16 +39,16 @@ parameters. The meaning of the various parameters are described below:
     <td> <b> Description </b>  </td>
   </tr>
   <tr>
-    <td>  maxItr </td>
-    <td> Maximum number of iterations that will be attempted </td>
-  </tr>
-  <tr>
-    <td>  epsilon </td>
+    <td> epsilon </td>
     <td> Desired tolerance for convergence - iteration stops if 
          the magnitude of the error drops below epsilon.  </td>
   </tr>
   <tr>
-    <td> maxHist  </td>
+    <td> maxItr </td>
+    <td> Maximum number of iterations that will be attempted </td>
+  </tr>
+  <tr>
+    <td> maxHist </td>
     <td> Maximum number of previous trial solultions that will be 
          retained in memory for use by the AM algorithm. </td>
   </tr>
@@ -67,7 +67,7 @@ parameters. The meaning of the various parameters are described below:
     </td>
   </tr>
   <tr>
-    <td> errorType </td>
+    <td> errorType* </td>
     <td> Identifer for the type of scalar error compared to epsilon to
          test convergence.  Allowed values are "maxResid", "normResid", 
          "rmsResid" and "relNormResid", as discussed below. Optional, and 
