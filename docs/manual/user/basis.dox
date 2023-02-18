@@ -866,9 +866,20 @@ function in a truncated expansion.
 \section user_basis_real_sec Symmetry-Adapted Fourier Series: Real Functions
 
 The concentration and chemical potential fields that appear in SCFT are 
-all real fields. The following constraints must be satisfied by the 
-coefficients in the symmetry-adapated Fourier expansion of a real 
-function in a basis of star functions in order to obtain a real function:
+all real fields. An expansion of real fields can be constructed using
+either of two equivalent methods: We may either expand in a basis of
+star functions and place constraints on the complex coefficients in
+order to guarantee that the resulting sum is real, or we may construct
+a closely related expansion in terms of real basis functions with real
+coefficients. Both methods, and the relationship between them, are
+described below:
+
+\subsection user_basis_real_star_sub Expansion in Star Functions
+
+Consider the symmetry-adapted Fourier expansion of a real function using
+a basis of star functions.  The following constraints must be satisfied 
+by the coefficients in the expansion in order to guarantee that the sum
+is real:
 
    - The coefficient \f$ c_{i} \f$ of each real star function 
      \f$ \phi_{i}({\bf r}_{i}) \f$ that is associated with a closed 
@@ -898,21 +909,31 @@ PSCF defines a corresponding sequence of real coefficients
      \f[
          c_{i} = ( a_{i} - i a_{i+1} )/\sqrt{2}
      \f]
-     and \f$ c_{i+1} = c_{i}^{*} \f$. 
+     and
+     \f[
+         c_{i+1} = ( a_{i} + i a_{i+1} )/\sqrt{2} \quad,
+     \f]
+     such that \f$ c_{i+1} = c_{i}^{*} \f$. 
 
-The following is alternative way of describing the resulting expansion
-of real functions. We define a set of real basis functions 
+\subsection user_basis_real_real_sub Expansion in Real Basis Functions
+
+
+The expansion of a real basis that is described above can also be described 
+as an expansion in a closely related sequence of real basis function. For 
+this purpose, we define real basis functions 
 \f$ f_{0}({\bf r}), f_{1}({\bf r}), \ldots \f$ that are related to the
-star basis functions described above as follows:
+star basis functions 
+\f$ \phi_{0}({\bf r}, \phi_{1}({\bf r}), \phi_{2}({\bf r}), \ldots \f$,
+described above by the following rules:
 
-   - For each function \f$ \phi_{i}({\bf r}) \f$ that is associated with
-     a closed star, we define
+   - For each real star function \f$ \phi_{i}({\bf r}) \f$ that is 
+     associated with a closed star, we define
      \f[  
          f_{i}({\bf r}) = \phi_{i}({\bf r}) \quad.
      \f]
   
-   - For each pair of function 
-     \f$ \phi_{i}({\bf r}) \f$ that is associated 
+   - For each pair of star functions 
+     \f$ \phi_{i}({\bf r}) \f$ and
      \f$ \phi_{i+1}({\bf r}) = \phi_{i}^{*}({\bf r})\f$ that are
      associated with a pair of open stars that are related by 
      inversion, we define two corresponding real functions:
@@ -927,15 +948,21 @@ star basis functions described above as follows:
         [ \phi_{i}({\bf r}) - \phi^{*}_{i}({\bf r}) ]/(\sqrt{2} i)
         \quad.
      \f]
-     that proportional to the real and imaginary parts of 
-     \f$ \phi_{i}({\bf r}) \f$.
 
 The resulting basis can be used to expand any real function with 
 the desired space group symmetry as an expansion
 \f[
    w({\bf r}) = \sum_{i=0}^{N-1} a_{i} f_{i}({\bf r}) 
 \f]
-with real basis functions and real coefficients.
+with real basis functions and real coefficients. The sequence of
+real coefficients \f$ a_{0}, a_{1}, \ldots \f$ is the same as 
+that defined above to obtain an expansion of a real function in 
+terms star functions. To show this that the overall prefactor 
+of a star function \f$ c_{i}({\bf r}) \f$ that is the first of a 
+pair of complex conjugate functions associated with open stars 
+is a coefficient \f$ c_{i} = (a_{i} - ia_{i+1})/\sqrt{2} \f$ and 
+that \f$ c_{i+1} = c_{i}^{*} \f$, as in the above expansion in 
+star functions.
 
 <BR>
 \ref user_symmetry_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
