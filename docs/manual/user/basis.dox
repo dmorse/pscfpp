@@ -641,11 +641,6 @@ a vector space of dimension one. This corresponds to a set of solutions
 that can all be expressed as \f$ c f({\bf f}) \f$, in which \f$ c \f$
 is a complex constant and \f$ f({\bf r}) \f$ is a single solution.
 
-
-
-
-
-
 \section user_basis_closed_sec Closed Stars
 
 <b> Definition (Closed Stars) </b>: A set of wavevectors \f$ T \f$
@@ -829,12 +824,13 @@ space group \f$ S \f$. The following conventions are applied:
       \phi^{*}_{i}({\bf r})\phi_{j}({\bf r}) = \delta_{ij}
     \f]
     where the integral is taken over one unit cell and \f$ V \f$ represents
-    the generalized volume (3D volume, 2D area or 1D length) of one 
-    unit cell. 
+    the generalized volume (3D volume, 2D area or 1D length) of one unit 
+    cell. This 
 
-  - Functions in this sequence are ordered and assigned indices in order 
-    of nondecreasing magnitude of associated eigenvalues of the negative 
-    Laplacian \f$ -\nabla^{2} \f$. 
+  - Functions in this sequence are ordered and assigned indices in order of 
+    nondecreasing magnitude of associated eigenvalues of the negative Laplacian 
+    \f$ -\nabla^{2} \f$, as computed using the unit cell parameters that are
+    known when the basis is constructed. 
 
   - The first function \f$ \phi_{0}({\bf r}) \f$ is always the function 
     associated with the star that contains the single wavevector 
@@ -852,6 +848,32 @@ space group \f$ S \f$. The following conventions are applied:
     \f[
         \phi_{i+1}({\bf r}) = \phi^{*}_{i}({\bf r}) \quad.
     \f]
+
+  - The coefficient the wave associated with a characteristic wavevector 
+    of each star is taken to be a positive real number. The characteristic
+    wave of two stars that are related by inversion is chosen such that if
+    \f$ {\bf G} \f$ is the characteristic wave of the first star in such
+    a pair, then \f$ -{\bf G} \f$ is the characteristic wave of the second.
+    This convention is sufficient to guarantee that the associated star
+    functions will be complex conjugates.  A convention for choosing the 
+    characteristic wavevector for a closed star or the first star in a 
+    pair of open stars that are related by inversion is discussed below.
+
+By convention, the characteristic wavevector for a closed star or the first 
+of two open stars that are related by inversion is taken to be the first 
+wavevector for which the indices are "greatest" when lists of integer 
+indices are compared by comparing indices while treating the first index as 
+more signficant than the second (if any) and the second as more significant 
+than the third. According to this rule, a list of integers \f$ (i,j,k) \f$ 
+is "greater" than a list \f$ (l,m,n) \f$ if \f$ i >  l \f$, while 
+\f$( i, j, k )\f$ is greater than \f$ (i, m, n) \f$ if \f$ j >  m \f$,
+etc. The characteristic wave associated with a star of 48 wavevectors in 
+a simple cubic lattice that are related to  {-2, 3, 1} by permutations and 
+sign changes is thus the wave with indices (+3, +2, +1). When describing
+wavevectors that are used in discrete Fourier transforms of functions that 
+are defined only on the nodes of a lattice, the indices of each wave are
+taken for this purpose to be the indices of the minimum alias of each wave, 
+i.e., the image or alias the yields the smallest value for \f$|{\bf G}| \f$.
 
 Any complex or real field \f$ w({\bf r}) \f$ that is invariant under
 space group \f$ S \f$ can be expanded in such basis as a symmetry-adapted 
@@ -963,6 +985,13 @@ pair of complex conjugate functions associated with open stars
 is a coefficient \f$ c_{i} = (a_{i} - ia_{i+1})/\sqrt{2} \f$ and 
 that \f$ c_{i+1} = c_{i}^{*} \f$, as in the above expansion in 
 star functions.
+
+\subsection user_basis_real_waveofstar_sub Characteristic Waves
+
+In the file format used by PSCF for symmetry-adapted Fourier 
+expansion, each star function is identified by the indices of
+a particular wavevector in that star. Because the reading
+
 
 <BR>
 \ref user_symmetry_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
