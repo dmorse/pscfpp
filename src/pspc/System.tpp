@@ -554,6 +554,10 @@ namespace Pspc
             readEcho(in, filename);
             writeWaves(filename);
          } else 
+         if (command == "WRITE_GROUP") {
+            readEcho(in, filename);
+            writeGroup(filename, domain_.group());
+         } else 
          if (command == "BASIS_TO_RGRID") {
             readEcho(in, inFileName);
             readEcho(in, outFileName);

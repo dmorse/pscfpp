@@ -121,6 +121,16 @@ namespace Pscf
    template <int D>
    void readGroup(std::string groupName, SpaceGroup<D>& group);
 
+   /**
+   * Open and write a group file.
+   * 
+   * \param filename  output file name
+   * \param group  space group 
+   *
+   * \ingroup Pscf_Crystal_Module
+   */
+   template <int D>
+   void writeGroup(std::string filename, SpaceGroup<D> const & group);
 
    #ifndef PSCF_SPACE_GROUP_TPP
    extern template class SpaceGroup<1>;
@@ -129,6 +139,9 @@ namespace Pscf
    extern template void readGroup(std::string, SpaceGroup<1>& );
    extern template void readGroup(std::string, SpaceGroup<2>& );
    extern template void readGroup(std::string, SpaceGroup<3>& );
+   extern template void writeGroup(std::string, SpaceGroup<1> const &);
+   extern template void writeGroup(std::string, SpaceGroup<2> const &);
+   extern template void writeGroup(std::string, SpaceGroup<3> const &);
    #endif
 
 }

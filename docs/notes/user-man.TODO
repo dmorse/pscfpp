@@ -15,8 +15,6 @@ pscf_pc Commands
 
     Document output formats of WRITE_WAVES and WRITE_STARS
 
-    Consider adding a WRITE_GROUP command
-
     V1.1
 
     Consider adding a RESCALE command

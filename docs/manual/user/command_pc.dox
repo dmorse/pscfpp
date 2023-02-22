@@ -228,6 +228,11 @@ command or a group of closely related commands.
     <td> Write a list of all wavevector stars to file filename. </td>
   </tr>
   <tr> 
+    <td> \ref user_command_pc_writegroup_sub "WRITE_GROUP" </td>
+    <td> filename [string] </td>
+    <td> Write all group symmetry elements to file filename. </td>
+  </tr>
+  <tr> 
     <td colspan="3" style="text-align:center"> 
       \ref user_command_pc_fieldops_sec "Field File Operations"
     </td> 
@@ -737,6 +742,18 @@ The WRITE_STARS command outputs a more compact list of information
 about stars, or associated basis functions. The format of this report
 of this report is defined by the function outputStars of class template 
 Basis<int D>.
+
+\anchor user_command_pc_writegroup_sub
+The WRITE_GROUP command outputs a list of all of the symmetry operations
+in the space group.  In the resulting file, each symmetry operation is 
+output as a D X D matrix representation of a point group (e.g., a 
+reflection, rotation or inversion) followed by a displacement vector. 
+Both the point group operation matrix and the displacement vector are 
+defined using a basis of Bravais lattice basis vectors. In this basis, 
+elements of the point group matrix are all integers, while elements of 
+the translation vector are either zero or fractions such as 1/2, 1/3, 
+3/4, etc. A more detailed discussion of this representation of space
+group symmetry operations is given \ref user_symmetry_page "here". 
 
 \section user_command_pc_fieldops_sec Field File Manipulations
 
