@@ -87,10 +87,20 @@ each command:
     <td> <b>action </b> </td>
   </tr>
   <tr> 
+    <td colspan="3" style="text-align:center"> 
+      \ref user_command_fd_input_sec "Field Input"
+    </td> 
+  </tr>
+  <tr> 
     <td> READ_W </td>
     <td> filename [string] </td>
     <td> Read w fields from specified file (filename)
          </td>
+  </tr>
+  <tr> 
+    <td colspan="3" style="text-align:center"> 
+      \ref user_command_fd_computation_sec "Computation"
+    </td> 
   </tr>
   <tr> 
     <td> COMPUTE </td>
@@ -111,6 +121,30 @@ each command:
          file. </td>
   </tr>
   <tr> 
+    <td colspan="3" style="text-align:center"> 
+      \ref user_command_fd_dataout_sec "Data Output"
+    </td> 
+  </tr>
+  <tr> 
+    <td> WRITE_PARAM </td>
+    <td> filename [string] </td>
+    <td> Write param file associated with the current system. excluding any
+         Sweep block </td>
+  </tr>
+  <tr>
+    <td> WRITE_THERMO </td>
+    <td> filename [string] </td>
+    <td> Write thermodynamic data (free energy, pressure, phi, and 
+         mu for each species) to file filename. If this file already exists, 
+         append thermodynamic data to the end of the file.
+         </td>
+  </tr>
+  <tr> 
+    <td colspan="3" style="text-align:center"> 
+      \ref user_command_fd_fieldout_sec "Field Output"
+    </td> 
+  </tr>
+  <tr> 
     <td> WRITE_W </td>
     <td> filename [string] </td>
     <td> Write chemical potential (w) fields to file filename  </td>
@@ -127,24 +161,33 @@ each command:
          blocks and solvent species to file filename.  </td>
   </tr>
   <tr> 
-    <td> WRITE_PARAM </td>
-    <td> filename [string] </td>
-    <td> Write param file associated with the current system. excluding any
-         Sweep block </td>
-  </tr>
-  <tr>
-    <td> WRITE_THERMO </td>
-    <td> filename [string] </td>
-    <td> Write thermodynamic data (free energy, pressure, phi, and 
-         mu for each species) to file filenae. If this file already exists, 
-         append thermodynamic data to the end of the file.
-         </td>
-  </tr>
-  <tr> 
     <td> WRITE_VERTEX_Q </td>
     <td> polymerId [int], vertexId [int], filename [string] </td>
     <td> Write propagator (q) field to a file for a specified vertex
          (vertexId) in a specified polymer (polymerId). </td>
+  </tr>
+  <tr> 
+    <td colspan="3" style="text-align:center"> 
+      \ref user_command_fd_mesh_sec "Mesh Manipulation"
+    </td> 
+  </tr>
+  <tr> 
+    <td> REMESH_W </td>
+    <td> nx [int], outfile [string]</td>
+    <td> Write current w fields interpolated onto a new mesh with 
+         nx nodes to output file "filename" </td>
+  </tr>
+  <tr> 
+    <td> REMESH_W </td>
+    <td> m [int], filename </td>
+    <td> Write w fields extended to a mesh with m additional nodes 
+         with values that repeat values at the current last grid 
+         point, to output file "filename". </td>
+  </tr>
+  <tr> 
+    <td colspan="3" style="text-align:center"> 
+      \ref user_command_fd_comparison_sec "Compare to Homogenous Reference"
+    </td> 
   </tr>
   <tr> 
     <td> COMPARE_HOMOGENEOUS </td>
@@ -156,7 +199,7 @@ each command:
 Individual commands and related groups of commands are discuss below in 
 greater detail:
 
-\section user_command_fd_input_sec W Field Input 
+\section user_command_fd_input_sec Field Input 
 
 The first command in a command file is usually a READ_W command, which 
 takes the name of an input file as an argument. This command reads an 
@@ -164,7 +207,7 @@ initial guess for the chemical potential fields ("w fields") from the
 specified file and assigns the current values for these fields equal 
 to the values read from this file. 
 
-\section user_command_fd_computation_sec Computation Commands
+\section user_command_fd_computation_sec Computation 
 
 The COMPUTE, ITERATE and SWEEP commands each perform a computation that 
 requires an initial guess for the w fields as an input. Each of these 
@@ -195,7 +238,7 @@ parameters. This command can only be invoked if the parameter file
 contains a SWEEP block, which defines the desired sequence of state 
 points.
 
-\section user_command_fd_dataout_sec Data Output Commands
+\section user_command_fd_dataout_sec Data Output 
 
 The WRITE_PARAM and WRITE_THERMO commands can be used to create a record 
 of the input parameters and computed thermodynamic properties associated 
@@ -228,7 +271,7 @@ that contains the input parameters followed by a report of computed
 thermodynamic properties in a single file, if desired, by invoking 
 WRITE_PARAM and WRITE_THERMO with the same file name parameter.
  
-\section user_command_fd_fieldout_sec Field Output Commands
+\section user_command_fd_fieldout_sec Field Output 
 
 The following commands can be used to output information about chemical
 potential and concentration fields after solving a SCFT problem.
@@ -266,6 +309,23 @@ sequentially in order of increasing block id, while groups of columns
 associated with different polymer species appear in order of increasing 
 polymer id.  Columns associated with solvent species appear after polymer 
 blocks, listed left to right in order of increasing polymer id. 
+
+\section user_command_fd_mesh_sec Mesh Manipulation
+
+The REMESH_W and EXTEND_W can be used to change the mesh used to 
+define a problem, by changing resolution or extending the domain.
+
+The REMESH_W command allows a user to change the discretization 
+of the existing domain by writing a file that contains the current 
+w fields interpolated onto a mesh with a modified number of grid 
+points. The command takes the number nx of grid points of the new
+mesh and the name of the output file as parameters.
+
+The EXTEND_W command allows a user to extend the domain of the
+solution by adding new points with field values that are simply 
+copies of the values of w fields at the last grid point. The 
+command takes the number m of added grid points and the name of
+the output file as parameters. 
 
 \section user_command_fd_comparison_sec Compare to Homogeneous Reference 
 

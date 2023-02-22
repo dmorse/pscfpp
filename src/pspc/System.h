@@ -862,7 +862,7 @@ namespace Pspc
       void initHomogeneous();
 
       /**
-      * Read a filename string and echo to log file.
+      * Read a string and echo to log file.
       *
       * Used to read filenames in readCommands.
       *
@@ -870,6 +870,16 @@ namespace Pspc
       * \param string  string to read and echo
       */
       void readEcho(std::istream& in, std::string& string) const;
+
+      /**
+      * Read a floating point number and echo to log file.
+      *
+      * Used to read filenames in readCommands.
+      *
+      * \param in  input stream (i.e., input file)
+      * \param value  number to read and echo
+      */
+      void readEcho(std::istream& in, double& value) const;
 
    };
 
