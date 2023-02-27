@@ -35,6 +35,25 @@ namespace Pspc{
       // Call parent class readParameters
       AmIteratorTmpl<Compressor<D>, DArray<double> >::readParameters(in);
    }
+   
+      
+   // Initialize just before entry to iterative loop.
+   template <int D>
+   void AmCompressor<D>::setup(bool isContinuation)
+   {
+      // Allocate memory required by AM algorithm if not done earlier.
+      AmIteratorTmpl<Compressor<D>, DArray<double> >::setup(isContinuation);
+      //Store value of initial guess chemical potential fields
+      const int nMonomer = system().mixture().nMonomer();
+      const int meshSize = system().domain().mesh().size();
+      w0.allocate(nMonomer);
+      for (int i = 0; i < nMonomer; ++i) {
+         w0[i].allocate(meshSize);
+         for (int j = 0; j< meshSize; ++j){
+            w0[i][j] = system().w().rgrid(i)[j];
+         }
+      }      
+   }
 
    // Compute and return L2 norm of residual vector
    template <int D>
@@ -184,18 +203,24 @@ namespace Pspc{
    // Compute and return the number of elements in a field vector
    template <int D>
    int AmCompressor<D>::nElements()
-   {  return system().basis().nBasis(); }
+   {  return system().domain().mesh().size(); }
 
    // Get the current field from the system
    template <int D>
    void AmCompressor<D>::getCurrent(DArray<double>& curr)
    {
-      // Straighten out fields into linear arrays
-
-      const int nMonomer = system().mixture().nMonomer();
-      const int nBasis = system().basis().nBasis();
-
-      // Application of the template is not straightforward.
+      // Straighten out fields into  linear arrays
+      const int meshSize = system().domain().mesh().size();
+      const DArray< RField<D> > * currSys = &system().w().rgrid();
+      
+      /*
+      * The field that we are adjusting is the Langrange multiplier field 
+      * with number of grid pts components.The current value is the difference 
+      * between w and w0 for the first monomer (any monomer should give the same answer)
+      */
+      for (int i = 0; i < meshSize; i++){
+         curr[i] = (*currSys)[0][i] - w0[0][i];
+      }   
 
    }
 
@@ -210,18 +235,18 @@ namespace Pspc{
    {
       const int n = nElements();
       const int nMonomer = system().mixture().nMonomer();
-      const int nBasis = system().basis().nBasis();
+      const int meshSize = system().domain().mesh().size();
 
       // Initialize residuals
-      for (int i = 1 ; i < n; ++i) {
-         resid[i] = 0.0;
+      for (int i = 0 ; i < n; ++i) {
+         resid[i] = -1.0;
       }
-      resid[0] = -1.0;
+
 
        // Compute SCF residual vector elements
       for (int j = 0; j < nMonomer; ++j) {
-        for (int k = 0; k < nBasis; ++k) {
-           resid[k] += system().c().basis(j)[k];
+        for (int k = 0; k < meshSize; ++k) {
+           resid[k] += system().c().rgrid(j)[k];
         }
       }
 
@@ -233,9 +258,18 @@ namespace Pspc{
    {
       // Convert back to field format
       const int nMonomer = system().mixture().nMonomer();
-      const int nBasis = system().basis().nBasis();
-
-      // Need a strategy for this - it's not straightforward
+      const int meshSize = system().domain().mesh().size();
+      DArray< RField<D> > wField;
+      wField.allocate(nMonomer);
+      
+      //New field is the w0 + the newGuess for the Lagrange multiplier field
+      for (int i = 0; i < nMonomer; i++){
+         wField[i].allocate(meshSize);
+         for (int k = 0; k < meshSize; k++){
+            wField[i][k] = w0[i][k] + newGuess[k];
+         }
+      }
+      system().setWRGrid(wField);
 
    }
 

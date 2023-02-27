@@ -51,8 +51,27 @@ namespace Pspc
       */
       void readParameters(std::istream& in);
 
+      /**
+      * Initialize just before entry to iterative loop.
+      *
+      * This function is called by the solve function before entering the
+      * loop over iterations. Store the current values of the fields at the 
+      * beginning of iteration
+      *
+      * \param isContinuation true iff continuation within a sweep
+      */ 
+      void setup(bool isContinuation);      
+      
+      
+      /**
+      * compress to obtain partial saddle point w+
+      *
+      * \return 0 for convergence, 1 for failure
+      */
+      int compress();    
+      
+      
       // Inherited public member functions
-      using AmIteratorTmpl<Compressor<D>, DArray<double> >::solve;
       using AmIteratorTmpl<Compressor<D>, DArray<double> >::setClassName;
 
    protected:
@@ -62,8 +81,10 @@ namespace Pspc
       using Compressor<D>::system;
 
    private:
-
-      //using AmIteratorTmpl<Compressor<D>, DArray<double> >::setup;
+       /**
+       * Current values of the fields
+       */
+      DArray< DArray<double> > w0;  
 
       /**
       * Find L2 norm of a residual vector.
@@ -208,7 +229,12 @@ namespace Pspc
       void outputToLog();
 
    };
-
+   #ifndef PSPC_AM_COMPRESSOR_TPP
+   // Suppress implicit instantiation
+   extern template class AmCompressor<1>;
+   extern template class AmCompressor<2>;
+   extern template class AmCompressor<3>;
+   #endif
 } // namespace Pspc
 } // namespace Pscf
 #endif
