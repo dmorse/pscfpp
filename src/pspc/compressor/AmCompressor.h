@@ -87,14 +87,22 @@ namespace Pspc
       DArray< DArray<double> > w0;  
 
       /**
-      * Find L2 norm of a residual vector.
+      * Assign one field to another.
+      * 
+      * \param a the field to be set (lhs of assignment)
+      * \param b the field for it to be set to (rhs of assigment)
       */
-      double findNorm(DArray<double> const & hist);
+      void setEqual(DArray<double>& a, DArray<double> const & b);
+
+      /**
+      * Compute the inner product of two vectors
+      */
+      double dotProduct(DArray<double> const & a, DArray<double> const & b);
 
       /**
       * Find the maximum magnitude element of a residual vector.
       */
-      double findMaxAbs(DArray<double> const & hist);
+      double maxAbs(DArray<double> const & hist);
 
       /**
       * Update the basis for residual or field vectors.
@@ -104,59 +112,6 @@ namespace Pspc
       */
       void updateBasis(RingBuffer<DArray<double> > & basis, 
                        RingBuffer<DArray<double> > const & hists);
-
-      /**
-      * Compute the dot product for one element of the U matrix.
-      * 
-      * \param resBasis RingBuffer of residual basis vectors.
-      * \param m row of the U matrix
-      * \param n column of the U matrix
-      */
-      double computeUDotProd(RingBuffer<DArray<double> > const & resBasis, 
-                             int m, int n);
-
-      /**
-      * Compute the dot product for one element of the v vector.
-      * 
-      * \param resCurrent current residual vector 
-      * \param resBasis RingBuffer of residual basis vectors
-      * \param m row index of the v vector
-      */
-      double computeVDotProd(DArray<double> const & resCurrent, 
-                             RingBuffer<DArray<double> > const & resBasis, 
-                             int m);
-
-      /**
-      * Update the U matrix.
-      * 
-      * \param U U matrix
-      * \param resBasis RingBuffer of residual basis vectors.
-      * \param nHist number of past states
-      */
-      void updateU(DMatrix<double> & U, 
-                   RingBuffer<DArray<double> > const & resBasis, 
-                   int nHist);
-
-      /**
-      * Update the v vector.
-      * 
-      * \param v v vector
-      * \param resCurrent current residual vector 
-      * \param resBasis RingBuffer of residual basis vectors.
-      * \param nHist number of past states 
-      */
-      void updateV(DArray<double> & v, 
-                   DArray<double> const & resCurrent, 
-                   RingBuffer<DArray<double> > const & resBasis, 
-                   int nHist);
-
-      /**
-      * Assign one field to another.
-      * 
-      * \param a the field to be set (lhs of assignment)
-      * \param b the field for it to be set to (rhs of assigment)
-      */
-      void setEqual(DArray<double>& a, DArray<double> const & b);
 
       /**
       * Add linear combination of basis vectors to trial field.
@@ -228,13 +183,9 @@ namespace Pspc
       */
       void outputToLog();
 
+
    };
-   #ifndef PSPC_AM_COMPRESSOR_TPP
-   // Suppress implicit instantiation
-   extern template class AmCompressor<1>;
-   extern template class AmCompressor<2>;
-   extern template class AmCompressor<3>;
-   #endif
+
 } // namespace Pspc
 } // namespace Pscf
 #endif

@@ -34,6 +34,7 @@ namespace Pspc{
    {
       // Call parent class readParameters
       AmIteratorTmpl<Compressor<D>, DArray<double> >::readParameters(in);
+      AmIteratorTmpl<Compressor<D>, DArray<double> >::readErrorType(in);
    }
    
       
@@ -54,36 +55,60 @@ namespace Pspc{
          }
       }      
    }
-
-   // Compute and return L2 norm of residual vector
+   
    template <int D>
-   double AmCompressor<D>::findNorm(DArray<double> const & hist)
+   int AmCompressor<D>::compress()
    {
-      const int n = hist.capacity();
-      double normResSq = 0.0;
-      for (int i = 0; i < n; i++) {
-         normResSq += hist[i] * hist[i];
-      }
-      return sqrt(normResSq);
+    return AmIteratorTmpl<Compressor<D>, DArray<double> >::solve();
    }
 
-   // Compute and return maximum element of residual vector.
+   // Assign one array to another
    template <int D>
-   double AmCompressor<D>::findMaxAbs(DArray<double> const & hist)
+   void AmCompressor<D>::setEqual(DArray<double>& a, DArray<double> const & b)
+   {  a = b; }
+
+   // Compute and return inner product of two vectors.
+   template <int D>
+   double AmCompressor<D>::dotProduct(DArray<double> const & a, 
+                                    DArray<double> const & b)
    {
-      const int n = hist.capacity();
-      double maxRes = 0.0;
+      const int n = a.capacity();
+      UTIL_CHECK(b.capacity() == n);
+      double product = 0.0;
       for (int i = 0; i < n; i++) {
-         if (fabs(hist[i]) > maxRes)
-            maxRes = fabs(hist[i]);
+         // if either value is NaN, throw NanException
+         if (std::isnan(a[i]) || std::isnan(b[i])) { 
+            throw NanException("AmCompressor::dotProduct",__FILE__,__LINE__,0);
+         }
+         product += a[i] * b[i];
       }
-      return maxRes;
+      return product;
+   }
+
+   // Compute and return maximum element of a vector.
+   template <int D>
+   double AmCompressor<D>::maxAbs(DArray<double> const & a)
+   {
+      const int n = a.capacity();
+      double max = 0.0;
+      double value;
+      for (int i = 0; i < n; i++) {
+         value = a[i];
+         if (std::isnan(value)) { // if value is NaN, throw NanException
+            throw NanException("AmCompressor::dotProduct",__FILE__,__LINE__,0);
+         }
+         if (fabs(value) > max) {
+            max = fabs(value);
+         }
+      }
+      return max;
    }
 
    // Update basis
    template <int D>
-   void AmCompressor<D>::updateBasis(RingBuffer<DArray<double> > & basis,
-                                   RingBuffer<DArray<double> > const & hists)
+   void 
+   AmCompressor<D>::updateBasis(RingBuffer< DArray<double> > & basis,
+                              RingBuffer< DArray<double> > const & hists)
    {
       // Make sure at least two histories are stored
       UTIL_CHECK(hists.size() >= 2);
@@ -92,81 +117,13 @@ namespace Pspc{
       DArray<double> newbasis;
       newbasis.allocate(n);
 
+      // New basis vector is difference between two most recent states
       for (int i = 0; i < n; i++) {
-         // sequential histories basis vectors
          newbasis[i] = hists[0][i] - hists[1][i]; 
       }
 
       basis.append(newbasis);
    }
-
-   // Compute one element of U matrix of by computing a dot product
-   template <int D>
-   double
-   AmCompressor<D>::computeUDotProd(RingBuffer<DArray<double> > const & resBasis,
-                                  int m, int n)
-   {
-      const int length = resBasis[0].capacity();
-      double dotprod = 0.0;
-      for(int i = 0; i < length; i++) {
-         dotprod += resBasis[m][i] * resBasis[n][i];
-      }
-      return dotprod;
-   }
-
-   // Compute one element of V vector by computing a dot product
-   template <int D>
-   double
-   AmCompressor<D>::computeVDotProd(DArray<double> const & resCurrent,
-                                  RingBuffer<DArray<double> > const & resBasis,
-                                  int m)
-   {
-      const int length = resBasis[0].capacity();
-      double dotprod = 0.0;
-      for(int i = 0; i < length; i++) {
-         dotprod += resCurrent[i] * resBasis[m][i];
-      }
-      return dotprod;
-   }
-
-   // Update entire U matrix
-   template <int D>
-   void AmCompressor<D>::updateU(DMatrix<double> & U,
-                               RingBuffer<DArray<double> > const & resBasis,
-                               int nHist)
-   {
-      // Update matrix U by shifting elements diagonally
-      int maxHist = U.capacity1();
-      for (int m = maxHist-1; m > 0; --m) {
-         for (int n = maxHist-1; n > 0; --n) {
-            U(m,n) = U(m-1,n-1);
-         }
-      }
-
-      // Compute U matrix's new row 0 and col 0
-      for (int m = 0; m < nHist; ++m) {
-         double dotprod = computeUDotProd(resBasis,0,m);
-         U(m,0) = dotprod;
-         U(0,m) = dotprod;
-      }
-   }
-
-   template <int D>
-   void AmCompressor<D>::updateV(DArray<double> & v,
-                               DArray<double> const & resCurrent,
-                               RingBuffer<DArray<double> > const & resBasis,
-                               int nHist)
-   {
-      // Compute U matrix's new row 0 and col 0
-      // Also, compute each element of v_ vector
-      for (int m = 0; m < nHist; ++m) {
-         v[m] = computeVDotProd(resCurrent,resBasis,m);
-      }
-   }
-
-   template <int D>
-   void AmCompressor<D>::setEqual(DArray<double>& a, DArray<double> const & b)
-   {  a = b; }
 
    template <int D>
    void

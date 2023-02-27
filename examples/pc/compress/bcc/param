@@ -28,8 +28,8 @@ System{
     groupName      I_m_-3_m
   }
   AmCompressor{
+    epsilon      1.0e-10
     maxItr       300
-    epsilon      1.0e-5
     maxHist      50 
     errorType    normResid
   }
