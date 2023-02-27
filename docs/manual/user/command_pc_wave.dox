@@ -1,0 +1,225 @@
+/*! \page user_command_pc_wave_page Command for pscf_pc: WRITE_WAVES
+\ref user_command_pc_page  (Up/Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_command_pg_page  (Next) 
+<BR>
+
+THE WRITE_WAVES command accepted by pscf_pc and pscf_pg programs writes a 
+detailed description of the symmetry-adapted basis used by these programs. 
+Closely related information about the basis is also provided by the
+\ref user_command_pc_star_page "WRITE_STARS" command.
+
+<em> Essential background </em>: As background, before reading this 
+description of the output of the WRTIE_WAVES command, users should read 
+the discussion of the relationships between "stars" and basis functions 
+given in the documentation of the 
+\ref user_field_basis_page "basis file format". 
+Users who would like a more complete discussion of the underlying
+mathematics may also find it useful to consult appendices that discuss 
+\ref user_symmetry_page "space group symmetry operations"
+and
+\ref user_basis_page "symmetry-adapted Fourier series". 
+
+The type of symmetry-adapated Fourier basis used by the pscf_pc and
+pscf_pg programs is constructed by grouping all of the reciprocal lattice
+wavevectors used in a discrete Fourier transform of periodic functions 
+into subsets of wavevectors that are related to one another by space 
+group symmetry operations. 
+We refer to each such subset of symmetry-related wavevectors as a 
+\ref user_field_basis_star_sec "star" of wavevectors.
+A basis function that is invariant under all operations of the space group, 
+known as a \ref user_field_basis_starfunc_defn "star function", is created 
+as a linear superposition of waves with wavevectors that belong to each 
+\ref user_field_basis_uncancelled_sub "uncancelled" star. 
+The report created by the WRITE_WAVES command writes a list of all of 
+wavevectors that belong to uncancelled stars, in which the row associated 
+with each wavevector gives integer indices for the wavevector, the integer 
+index of the star to which that wavevector belongs, and the coefficients 
+of the corresponding wave within the associated star function 
+
+<em> For users who examine the source code </em>:
+The format of this report is defined by the outputWaves function of class 
+template Basis<int D>, which is defined in the file 
+src/pscf/crystal/Basis.tpp. 
+
+\section user_command_pc_wave_format_sec File Format
+
+The file created by the MAKE_WAVES command contains a header section 
+similar to that used for field files followed by a long data section.
+The last line of the data section contains the value for N_wave, which 
+is the total number of wavevectors listed in the data section.
+
+The data section contains one row for each reciprocal lattice wavevector 
+that belongs to an uncancelled star. 
+Wavevectors that belong to \ref user_field_basis_cancelled_sub "cancelled"
+stars are omitted.
+Waves that belong to the same star are are assigned a continuous block of 
+values for the index waveId, and are listed as a consecutive block within 
+this file. 
+Because all of the wavevectors in a star are related by symmetry 
+operations such as rotations and reflections, they are all reciprocal
+lattice vectors of equal magnitude. 
+Stars appear in increasing (or non-decreasing) order of the magnitude
+of the constituent wavevectors, as computed using the unit cell 
+parameters that were available when the basis was constructed.
+
+The format of each row of the data section is as follows
+\code
+     i  waveId  components[D]  starId  Re(c)   Im(c)
+\endcode
+in which:
+   
+   - i is an integer index that increases by one for each row in the 
+     data section. This is thus an integer index for uncancelled
+     waves.
+
+   - waveId is a unique integer index for each wavevector that is 
+     assigned to waves that belong to both cancelled and uncancelled 
+     stars.  Because the output created by MAKE_WAVES only includes 
+     wavevectors that belong to uncancelled stars, the lsting of 
+     values of this index has gaps that correspond to sets of waves 
+     that belong to cancelled stars.
+
+   - components[D] is a vector of D integer wave components of the 
+     wave in a basis of reciprocal lattice basis vectors, where
+     D = 1, 2 or 3 is the dimension of space. 
+
+   - starId is the index of the star to which the wave belong
+
+   - Re(c) and Im(c) are the real and imaginary parts of the
+     complex coefficient of the wave within a star function
+     (i.e., a basis function associated with this star)
+
+Please see the resources recommended above for definitions of what
+we mean by a star, a cancelled star, and a star function.
+
+\section user_command_pc_wave_gyroid_sec Example (Gyroid Phase) 
+
+An example of the file created by a WRITE_WAVES command is shown below 
+for a system with space group \f$ I a\overline{3} d \f$, or PSCF space 
+group identifier I_a_-3_d. This is the space group of the double gyroid 
+phase of a diblock copolymer. A long section has been removed from the
+data section of this file, as indicated by vertical dots. 
+
+The first row of the data section in this example (waveId = 0) represents 
+the zero wavevector, with integer components (0,0,0). This is the only 
+wave in the first star, which has a starId = 0. Every space group has a
+star consisting of just the zero vector, which is always the first line
+in the output of the WRITE_WAVES command.
+
+The next 24 rows (with i = 1, ..., 24 and waveId = 57, ..., 80) represent 
+wavevectors that belong to the {2,1,1} family of wavevectors, which all 
+belong to a star with starId = 6. This is the first star of nonzero 
+wavevectors that is allowed by the rules for systematic cancellations
+in crystals with this space group.
+
+The next 12 rows (with i = 25, ..., 36 and waveId = 81, ..., 92) represent 
+wavevectors that belong to the {2,2,0} family of wavevectors, which all 
+belong to a star with starId = 6. This is the first star of nonzero 
+wavevectors that is allowed by the rules for systematic cancellations
+in crystals with this space group.
+
+Stars of wavevectors for a cubic crystal are always sets of wavevectors
+with indices that are related to a list (h, k, l) by permutation and
+changes in sign of the indices. The number of wavevectors in such a star 
+is equal to 48 if h, k, l and all distinct and nonzero, and can be less
+than 48 if some of the indices are equal and/or zero, as is true for the
+{211} and {220} stars.
+
+Waves belonging to stars with starId values 1,...,5, which have waveId
+values 1, ..., 56, are not listed in this file because these stars are 
+all cancelled stars (corresponding to families of wavevectors that
+exhibit systematic cancellation in scattering experiments), and thus 
+cannot be used to construct symmetry-adapted basis functions. 
+
+The space group used in this example has an inversion center at the 
+origin. The existence of an inversion center at the origin can be 
+shown to always leads to star functions for which the coefficient of 
+every star is a real number. This is why the last column, which gives 
+the imaginary part of this coefficient for each wave, is zero in every 
+row of the data section.
+
+\code
+format   1   0
+dim
+          3
+crystal_system
+              cubic
+N_cell_param
+              1
+cell_param    
+      3.5985168166e+00
+group_name
+          I_a_-3_d
+N_monomer
+          2
+N_wave
+             13616
+       0       0    0    0    0     0    1.0000000e+00    0.0000000e+00
+       1      57    2    1    1     6    2.0412415e-01    0.0000000e+00
+       2      58    2    1   -1     6   -2.0412415e-01    0.0000000e+00
+       3      59    2   -1    1     6    2.0412415e-01    0.0000000e+00
+       4      60    2   -1   -1     6   -2.0412415e-01    0.0000000e+00
+       5      61    1    2    1     6    2.0412415e-01    0.0000000e+00
+       6      62    1    2   -1     6    2.0412415e-01    0.0000000e+00
+       7      63    1    1    2     6    2.0412415e-01    0.0000000e+00
+       8      64    1    1   -2     6   -2.0412415e-01    0.0000000e+00
+       9      65    1   -1    2     6   -2.0412415e-01    0.0000000e+00
+      10      66    1   -1   -2     6    2.0412415e-01    0.0000000e+00
+      11      67    1   -2    1     6   -2.0412415e-01    0.0000000e+00
+      12      68    1   -2   -1     6   -2.0412415e-01    0.0000000e+00
+      13      69   -1    2    1     6   -2.0412415e-01    0.0000000e+00
+      14      70   -1    2   -1     6   -2.0412415e-01    0.0000000e+00
+      15      71   -1    1    2     6    2.0412415e-01    0.0000000e+00
+      16      72   -1    1   -2     6   -2.0412415e-01    0.0000000e+00
+      17      73   -1   -1    2     6   -2.0412415e-01    0.0000000e+00
+      18      74   -1   -1   -2     6    2.0412415e-01    0.0000000e+00
+      19      75   -1   -2    1     6    2.0412415e-01    0.0000000e+00
+      20      76   -1   -2   -1     6    2.0412415e-01    0.0000000e+00
+      21      77   -2    1    1     6   -2.0412415e-01    0.0000000e+00
+      22      78   -2    1   -1     6    2.0412415e-01    0.0000000e+00
+      23      79   -2   -1    1     6   -2.0412415e-01    0.0000000e+00
+      24      80   -2   -1   -1     6    2.0412415e-01    0.0000000e+00
+      25      81    2    2    0     7    2.8867513e-01    0.0000000e+00
+      26      82    2    0    2     7    2.8867513e-01    0.0000000e+00
+      27      83    2    0   -2     7    2.8867513e-01    0.0000000e+00
+      28      84    2   -2    0     7    2.8867513e-01    0.0000000e+00
+      29      85    0    2    2     7    2.8867513e-01    0.0000000e+00
+      30      86    0    2   -2     7    2.8867513e-01    0.0000000e+00
+      31      87    0   -2    2     7    2.8867513e-01    0.0000000e+00
+      32      88    0   -2   -2     7    2.8867513e-01    0.0000000e+00
+      33      89   -2    2    0     7    2.8867513e-01    0.0000000e+00
+      34      90   -2    0    2     7    2.8867513e-01    0.0000000e+00
+      35      91   -2    0   -2     7    2.8867513e-01    0.0000000e+00
+      36      92   -2   -2    0     7    2.8867513e-01    0.0000000e+00
+
+       .       .    .    .    .     .          .                .
+       .       .    .    .    .     .          .                .
+       .       .    .    .    .     .          .                .
+       .       .    .    .    .     .          .                .
+       .       .    .    .    .     .          .                .
+
+   13597   32663   16   14   14   959    2.8867513e-01    0.0000000e+00
+   13598   32664   16   14  -14   959    2.8867513e-01    0.0000000e+00
+   13599   32665   16  -14   14   959    2.8867513e-01    0.0000000e+00
+   13600   32666   16  -14  -14   959    2.8867513e-01    0.0000000e+00
+   13601   32667   14   16   14   959    2.8867513e-01    0.0000000e+00
+   13602   32668   14   16  -14   959    2.8867513e-01    0.0000000e+00
+   13603   32669   14   14   16   959    2.8867513e-01    0.0000000e+00
+   13604   32670   14  -14   16   959    2.8867513e-01    0.0000000e+00
+   13605   32671  -14   16   14   959    2.8867513e-01    0.0000000e+00
+   13606   32672  -14   16  -14   959    2.8867513e-01    0.0000000e+00
+   13607   32673  -14   14   16   959    2.8867513e-01    0.0000000e+00
+   13608   32674  -14  -14   16   959    2.8867513e-01    0.0000000e+00
+   13609   32699   16   16   12   961    4.0824829e-01    0.0000000e+00
+   13610   32700   16   16  -12   961    4.0824829e-01    0.0000000e+00
+   13611   32701   16   12   16   961    4.0824829e-01    0.0000000e+00
+   13612   32702   16  -12   16   961    4.0824829e-01    0.0000000e+00
+   13613   32703   12   16   16   961    4.0824829e-01    0.0000000e+00
+   13614   32704  -12   16   16   961    4.0824829e-01    0.0000000e+00
+   13615   32767   16   16   16   968    1.0000000e+00    0.0000000e+00
+\endcode
+
+<BR>
+\ref user_command_pc_page  (Up/Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_command_pg_page  (Next) 
+*/

@@ -719,29 +719,21 @@ invariant under all operations of the specified space group.
 
 \anchor user_command_pc_writewaves_sub
 The WRITE_WAVES command outputs an ordered list of unique wavevectors
-that can appear in the expansion of a function with the specified
-space group symmetry, with associated information about each wavevector.
+that can appear in the expansion of a function with the specified space 
+group symmetry, with associated information about each wavevector.
 The name of this command must be followed by the name of the file to 
-which this listing should be written.  Each allowed wavevector in the
-Fourier expansion of a periodic function may be expressed as linear
-superposition of reciprocal lattice basis vectors for the Bravais
-lattice for that crystal with integer coefficients. The number of
-required wavevectors is determined by the fact that field values
-are only defined on points are on nodes of a regular mesh that
-discretizes one unit cell of the crystal. The information about each
-wavevector that is output includes values of the integer indices of
-the wavevector (i.e., coefficients of the reciprocal lattice basis
-vectors), the index of the star to which it belongs, and the 
-coefficient of the associated plane wave with the sum of plane waves
-that defines the basis function associated with that star. The format
-of this report is defined by the outputWaves function of class template 
-Basis<int D>, which is defined in the file src/pscf/crystal/Basis.tpp.
+which this listing should be written.  
+A discussion of the format of the file created by this command is given
+\subpage user_command_pc_wave_page "here" .
+
 
 \anchor user_command_pc_writestars_sub
 The WRITE_STARS command outputs a more compact list of information
-about stars, or associated basis functions. The format of this report
-of this report is defined by the function outputStars of class template 
-Basis<int D>.
+about stars, or associated basis functions. 
+The name of this command must be followed by the name of the file to 
+which this listing should be written.  
+A discussion of the format of the file created by this command is given
+\subpage user_command_pc_star_page "here" .
 
 \anchor user_command_pc_writegroup_sub
 The WRITE_GROUP command outputs a list of all of the symmetry operations

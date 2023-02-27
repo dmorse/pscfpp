@@ -1,0 +1,138 @@
+/*! \page user_command_pc_star_page Command for pscf_pc: WRITE_STARS
+\ref user_command_pc_page  (Up/Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_command_pg_page  (Next) 
+<BR>
+
+THE WRITE_STARS command accepted by pscf_pc and pscf_pg programs writes
+a compact report of information about the stars of wavevectors that are
+related by space group symmetries. A more detailed report that contains
+information about individual wavevectors within each such star may be
+obtained by invoking the \ref user_command_pc_wave_page "WRITE_WAVES" 
+command.
+
+<em> Conceptual background </em>: As background, before reading this 
+description of the output of the WRITE_STARS, we strongly recommend
+that users read the discussion of the relationships between "stars" 
+and basis functions given in the documentation of the 
+\ref user_field_basis_page "basis file format". 
+Users who would like a more complete discussion of the underlying
+mathematics may also find it useful to consult appendices that discuss 
+crystallographic space group \ref user_symmetry_page "symmetry operations"
+and \ref user_basis_page "symmetry-adapted bases".
+
+<em> For users who examine the source code </em>:
+The format of this report is defined by the outputStars function of 
+class template Basis<int D>, which is defined in the file 
+src/pscf/crystal/Basis.tpp.
+
+\section user_command_pc_star_format_sec File Format (Overview)
+
+The file created by the WRITE_STARS command contains a header section 
+similar to that used for field files, followed by a long data section.
+The last line of the header section contains the value for N_basis, 
+which is equal to both the total number of uncancelled stars and the 
+number of independent basis functions in the symmetry-adapated Fourier 
+expansion used by the program that wrote the file. 
+
+The data section contains one line per uncancelled star. Stars are 
+listed in order of increasing eigenvalue of the Laplacian as computed
+using the unit cell parameters that were available when the basis was
+constructed.  A large section of the data section that has been removed 
+from this example, as indicated by vertical dots. 
+
+The format of each row of the data section is as follows
+\code
+   basisId   starId   size  beginId   endId  starInvert  wave[D]  
+\endcode
+in which:
+
+   - basisId is an integer index for each uncancelled star, or basis 
+     function. This index increases by 1 for each row in the data 
+     section.
+
+   - starId is an integer index for each star. Values for this
+     index are assigned to both cancelled and uncancelled stars,
+     but only uncancelled stars are included in this report. The
+     starId is the star index reported for each wavevector in the 
+     file created by the WRITE_WAVES command.
+
+   - size is the number of waves in the star. 
+
+   - beginId is the wave index (waveId) of the first wave in the star 
+
+   - endId is one greater than the the wave index of the last wave in 
+     the star. 
+
+   - starInvert is a integer that can have allowed values of 0, 1, -1.
+     A value starInvert = 0 indicates that the star is closed under
+     inversion. Value of starInvert = +1 or -1 indicates that the 
+     star is the first or second star, respectively, in a pair of
+     open stars that are related to one another by inversion.
+     
+   - wave[D] is a vector of D integer wave components of a
+     characteristic wave that belongs to the star, which can
+     be used as an identifier for the star.
+
+The indices beginId and endId list indices of waves in an ordered list 
+of all waves, including those that belong to cancelled stars, in which 
+the waves that belong to a particular star are listed as a consecutive 
+block with indices beginId, ...., endId - 1. Only non-cancelled stars 
+are listed in this file format.
+
+\section user_command_pc_star_gyroid_sec Example (Gyroid Phase) 
+
+An example of the file created by a WRITE_STARS command is shown below 
+for a system with space group \f$ I a\overline{3} d \f$, or PSCF space
+group identifier I_a_-3_d. This is the space group of the double gyroid
+phase of a diblock copolymer. Because this space group is centrosymmetric
+(i.e., has an inversion center), all stars are closed under inversion,
+and so a value of starInvert = 0 is thus listed for every star. An 
+example of the output file created by the MAKE_WAVES command for the 
+same system is shown \ref user_command_pc_star_gyroid_sec "here". 
+
+Because \f$ I a \overline{3} \f$ space group has an inversion center, 
+every star of this space group is closed under inversion. For this 
+reason, a value of starInvert = 0 is listed for every star in this
+example. 
+
+\code
+format   1   0
+dim
+          3
+crystal_system
+              cubic
+N_cell_param
+              1
+cell_param    
+      3.5985168166e+00
+group_name
+          I_a_-3_d
+N_monomer
+          2
+N_basis
+                 357
+     0     0    1       0       1   0     0     0     0
+     1     6   24      57      81   0     2     1     1
+     2     7   12      81      93   0     2     2     0
+     3    14   48     203     251   0     3     2     1
+     4    15    6     251     257   0     4     0     0
+     5    21   24     365     389   0     4     2     0
+     6    23   24     437     461   0     3     3     2
+     .     .    .      .       .    .     .     .     .
+     .     .    .      .       .    .     .     .     .
+     .     .    .      .       .    .     .     .     .
+   348   933   24   32109   32133   0    15    15    10
+   349   934   24   32133   32157   0    16    14    10
+   350   943    6   32355   32361   0    16    16     8
+   351   946   48   32393   32441   0    15    14    13
+   352   950   24   32483   32507   0    16    14    12
+   353   958   24   32639   32663   0    15    15    14
+   354   959   12   32663   32675   0    16    14    14
+   355   961    6   32699   32705   0    16    16    12
+   356   968    1   32767   32768   0    16    16    16
+\endcode
+
+<BR>
+\ref user_command_pc_page  (Up/Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_command_pg_page  (Next) 
+*/

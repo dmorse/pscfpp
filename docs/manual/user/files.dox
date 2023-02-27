@@ -1,89 +1,93 @@
 /*! \page user_files_page Input Files
 
-\ref user_model_page (Prev) 
-\ref user_usage_page (Next) 
+\ref user_model_page (Prev)
+\ref user_usage_page (Next)
 <BR>
 
 \section user_files_types_sec Types of File
 
-To perform a typical self-consistent field theory (SCFT) calculation, a 
+To perform a typical self-consistent field theory (SCFT) calculation, a
 pscf program generally reads three different types of input file:
 <ul>
-   <li> a \ref user_files_parameter_section "parameter" file </li>
-   <li> a \ref user_files_command_section "command" file </li>
-   <li> a \ref user_files_command_section "field" file </li>
+   <li> a parameter file </li>
+   <li> a field file </li>
+   <li> a command file </li>
 </ul>
-All pscf programs use similar formats for the parameter and command files. 
-The contents and formats of these two types of file are discussed briefly 
-below and in more detail in several subsequent pages. A field files contains
-a description of a set of fields (i.e., functions of position) that are 
-associated with different monomer types.  Every SCFT calculation must 
-read an input file that contains an initial guess for the self-consistent
-field chemical potential fields.
+All pscf programs use similar formats for the parameter and command files.
+Several different formats are used for field files.
 
 \section user_files_parameter_section Parameter file
 
-When any pscf program is executed, the parameter file is processed first.  
-This file defines the basic parameters of a physical problem of interest, 
-and is used to initialize the state of the program.  The parameter file 
-contains basic physical information about chemical structures (e.g., 
-monomer properties and block polymer structures), the composition of the 
-system of interest, interactions among the constituents (Flory-Huggins 
-chi parameters), a description of the spatial domain of interest (e.g., 
-a unit cell of a periodic structure), a description of a spatial 
-discretization of that domain, and some other algorithmic parameters.  
-The name of the parameter file is specified as command line argument 
-when a PSCF program is invoked, as the argument of the "-p" command line 
+When any pscf program is executed, the parameter file is processed first.
+This file defines the basic parameters of a physical problem of interest,
+and is used to initialize the state of the program.  The parameter file
+contains basic physical information about chemical structures (e.g.,
+monomer properties and block polymer structures), the composition of the
+system of interest, interactions among the constituents (Flory-Huggins
+chi parameters), a description of the spatial domain of interest (e.g.,
+a unit cell of a periodic structure), a description of a spatial
+discretization of that domain, and some other algorithmic parameters.
+The name of the parameter file is specified as command line argument
+when a PSCF program is invoked, as the argument of the "-p" command line
 option.
 
-The parameter file for a simple SCFT calculation generally contains the 
+The parameter file for a simple SCFT calculation generally contains the
 following 4 sections:
 
-- Mixture: Description of the structure of all molecular species and 
+- Mixture: Description of the structure of all molecular species and
   composition of a mixture
-- Interaction: Flory-Huggins interaction parameters 
-- Domain: Description of a spatial domain or unit cell, and a spatial 
+- Interaction: Flory-Huggins interaction parameters
+- Domain: Description of a spatial domain or unit cell, and a spatial
   discretization.
 - Iterator: Algorithmic parameters used by an iterative solver
 
-An example of a simple parameter file for the pscf_fd program is 
+An example of a simple parameter file for the pscf_fd program is
 presented and discussed \ref user_param_example_page "here" .
+
+\section user_files_field_section Field file
+
+A field file contains a description of a set of fields (i.e., functions
+of position) that are associated with different monomer types.
+Every SCFT calculation must read an input file that contains an initial
+guess for the self-consistent field chemical potential fields.
+The name of the required input field file is given as a parameter to a
+command in the command file.
 
 \section user_files_command_section Command file
 
-The command file is processed after the parameter file, and controls 
-program flow after initialization.  The command file is a script that 
-contains a list of commands that are interpreted and executed in the 
-order they appear within the file.  The name of the command file is 
-also specified by a command line argument (the argument of the "-c" 
+The command file is processed after the parameter file, and controls
+program flow after initialization.  The command file is a script that
+contains a list of commands that are interpreted and executed in the
+order they appear within the file.  The name of the command file is
+also specified by a command line argument (the argument of the "-c"
 command line option).
 
-Many commands in a command file require field data to be read from or 
-written to specific data files.  For example, the first step in solving 
-a SCFT problem is usually to read an initial guess for the chemical 
-potential fields from an input field file. The last steps of such a 
-computation may then include writing the converged chemical potential 
-and monomer concentration fields to output files.  The names of these 
-input and output field files and various other data files are specified 
+Many commands in a command file require field data to be read from or
+written to specific data files.  For example, the first step in solving
+a SCFT problem is usually to read an initial guess for the chemical
+potential fields from an input field file. The last steps of such a
+computation may then include writing the converged chemical potential
+and monomer concentration fields to output files.  The names of these
+input and output field files and various other data files are specified
 as parameters of commands within the command file.
 
-Each line of a command file starts with a capitalized command name, 
-followed by zero or more arguments. A simple command file for using 
-one of the pscf_pc programs to perform an SCFT calculation might look 
+Each line of a command file starts with a capitalized command name,
+followed by zero or more arguments. A simple command file for using
+one of the pscf_pc programs to perform an SCFT calculation might look
 like this:
 \code
 READ_W_BASIS      in/w.bf
-ITERATE           
+ITERATE
 WRITE_W_BASIS     out/w.bf
 WRITE_C_RGRID     out/c.rf
-FINISH  
+FINISH
 \endcode
 This file instructs the program to:
 
-- READ_W_BASIS: Read in a chemical potential (w) field in symmetrized Fourier 
+- READ_W_BASIS: Read in a chemical potential (w) field in symmetrized Fourier
 basis from a file named in/w.bf
 
-- ITERATE: Iteratively solve the SCFT equation, using the iterator initialized in the parameter file. 
+- ITERATE: Iteratively solve the SCFT equation, using the iterator initialized in the parameter file.
 
 - WRITE_W_BASIS: Write the converged chemical potential fields (w-fields) in symmetrized Fourier basis format to a file out/w.bf
 
@@ -92,8 +96,8 @@ basis from a file named in/w.bf
 - FINISH: finish execution and halt the main program
 
 <BR>
-\ref user_model_page (Prev) 
-\ref user_page (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_usage_page (Next) 
+\ref user_model_page (Prev)
+\ref user_page (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_usage_page (Next)
 
 */

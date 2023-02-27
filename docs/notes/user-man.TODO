@@ -13,8 +13,6 @@ pscf_fd Commands
 pscf_pc Commands
 ----------------
 
-    Document output formats of WRITE_WAVES and WRITE_STARS
-
     V1.1
 
     Consider adding a RESCALE command

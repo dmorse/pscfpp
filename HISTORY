@@ -21,6 +21,7 @@ User-visible features
 * Anderson-mixing iterator for pscf_fd (fd)
 * New commands to read external field and mask from file (pc)
 * New commands to set unit cell parameters (pc and pg)
+* New commands to output group (pc and pg)
 * Allowed use of previous history by AmIterator during a sweep (all)
 
 User-visible changes
@@ -34,6 +35,7 @@ Documentation
 * New appendix summarizing SCFT working equations for branched polymers
 * New appendices on periodic fields, space group symmetry, bases
 * More complete documentation of parameter file block formats
+* More complete documentation of commands (fd and pc)
 
 Developer-visible changes
 -------------------------

@@ -864,14 +864,13 @@ namespace Pscf {
          starId = waves_[i].starId;
          if (outputAll || (!stars_[starId].cancel)) {
             out << Int(k, 8);
+            out << Int(i, 8);
             for (j = 0; j < D; ++j) {
                out << Int(waves_[i].indicesBz[j], 5);
             }
-            // out << " | ";
             out << Int(waves_[i].starId, 6);
             out << "  " << Dbl(waves_[i].coeff.real(), 15);
             out << "  " << Dbl(waves_[i].coeff.imag(), 15);
-            //out << Dbl(waves_[i].sqNorm, 20);
             out << std::endl;
             k++;
          }
@@ -892,12 +891,12 @@ namespace Pscf {
       }
 
       // Loop over stars
-      int i, j, k;
-      k = 0;
+      int i, j;
       for (i = 0; i < nStar_; ++i) {
          if (outputAll || (!stars_[i].cancel)) {
-            out << Int(k, 5)
-                << Int(stars_[i].size, 5)
+            out << Int(stars_[i].basisId, 6);  // basisId
+            out << Int(i, 6);                  // starId
+            out << Int(stars_[i].size, 5)
                 << Int(stars_[i].beginId, 8)
                 << Int(stars_[i].endId, 8)
                 << Int(stars_[i].invertFlag, 4);
@@ -907,9 +906,7 @@ namespace Pscf {
             for (j = 0; j < D; ++j) {
                out << Int(stars_[i].waveBz[j], 6);
             }
-            //out << Dbl(stars_[i].eigen, 15);
             out << std::endl;
-            ++k;
          }
       }
    }

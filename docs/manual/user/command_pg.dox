@@ -1,12 +1,18 @@
-/*! \page user_command_pg_page Commands - pscf_pg (GPU)
+/*! \page user_command_pg_page Commands - pscf_pg 
 
  \ref user_command_pc_page     (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref user_example_page (Next) 
 <BR>
 
-Most of the available commands for the pscf_pg programs GPU programs
-are similar to those used by the pscf_pc CPU programs, except for the
-following pscf_pc commands that are not available in pscf_pg programs:
+Most of the available commands for the pscf_pg programs GPU programs are 
+generally similar to those used by the pscf_pc CPU programs. 
+Users of pscf_pg programs should thus consult the documentation for
+\ref user_command_pc_page "pscf_pc commands" for a list of commands,
+with the differences listed below in mind.
+
+The only differences between pscf_pg and pscf_pg commands are that the 
+following following pscf_pc commands are currently not available in 
+pscf_pg:
 
    - Commands for reading and writing external fields
      (READ_H_BASIS, READ_H_RGRID, WRITE_H_BASIS, and WRITE_H_RGRID) .
@@ -20,9 +26,6 @@ The commands to read and write external fields are not available for
 pscf_pg programs because the underlying features have not yet been 
 implemented.
 
-Users of pscf_pg programs should consult the documentation for
-\ref user_command_pc_page "pscf_pc commands" for a list of commands,
-with these differences in mind.
 
  <BR>
  \ref user_command_pc_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
