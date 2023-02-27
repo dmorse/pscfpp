@@ -195,15 +195,15 @@ namespace Pspc
       typename Basis<D>::Star const * starPtr;
       typename Basis<D>::Star const * starPtr2;
       IntVec<D> waveIn, waveIn2;
+      int sizeIn, sizeIn2;
       int starId, starId2;
       int basisId, basisId2;
       int waveId, waveId2;
 
       std::complex<double> coeff, phasor;
       IntVec<D> waveBz, waveDft;
-      int nWaveVector;
       int nReversedPair = 0;
-      bool waveExists;
+      bool waveExists, sizeMatches;
 
       // Loop over stars in input file to read field components
       int i = 0;
@@ -211,23 +211,20 @@ namespace Pspc
 
          // Read next line of data
          for (int j = 0; j < nMonomer; ++j) {
-            in >> temp[j];               // field components
+            in >> temp[j];        // field components
          }
-         in >> waveIn;                   // wave of star
-         in >> nWaveVector;              // # of waves in star
+         in >> waveIn;            // wave of star
+         in >> sizeIn;            // # of waves in star
+         ++i;
+
+         sizeMatches = false;
+         waveExists = false;
 
          // Check if waveIn is in first Brillouin zone (FBZ) for the mesh.
          waveBz = shiftToMinimum(waveIn, mesh().dimensions(), unitCell);
          waveExists = (waveIn == waveBz);
 
-         if (!waveExists) {
-
-            //  If wave is not in FBZ, ignore and continue 
-            ++i;
-
-         } else {
-
-            // If wave is in FBZ, process the line
+         if (waveExists) {
 
             // Find the star containing waveIn
             waveDft = waveIn;
@@ -236,8 +233,23 @@ namespace Pspc
             starId = basis().wave(waveId).starId;
             starPtr = &basis().star(starId);
             UTIL_CHECK(!(starPtr->cancel));
-            //basisId = starId;
             basisId = starPtr->basisId;
+
+            if (starPtr->size == sizeIn) {
+               sizeMatches = true;
+            } else {
+               Log::file() 
+                  <<  "Warning: Inconsistent star size (line ignored)\n"
+                  <<  "wave from file = " << waveIn << "\n"
+                  <<  "size from file = " << sizeIn << "\n"
+                  <<  "size of star   = " << starPtr->size  
+                  << "\n";
+               sizeMatches = false;
+            }
+
+         }
+
+         if (waveExists && sizeMatches) { // Attempt to process wave
 
             if (starPtr->invertFlag == 0) {
 
@@ -249,26 +261,29 @@ namespace Pspc
                   }
 
                } else {
+
                   Log::file() 
                      <<  "Inconsistent wave of closed star on input\n"
                      <<  "wave from file = " << waveIn  << "\n"
                      <<  "starId of wave = " << starId  << "\n"
-                     <<  "waveBz of star = " << starPtr->waveBz  << "\n";
+                     <<  "waveBz of star = " << starPtr->waveBz  
+                     << "\n";
+
                }
-               ++i;  // increment input line counter i
 
             } else {
 
                // Read the next line
                for (int j = 0; j < nMonomer; ++j) {
-                  in >> temp2[j];               // components of field
+                  in >> temp2[j];          // components of field
                }
-               in >> waveIn2;                   // wave of star
-               in >> nWaveVector;               // # of wavevectors in star
+               in >> waveIn2;              // wave of star
+               in >> sizeIn2;              // # of wavevectors in star
+               ++i;
 
                // Check that waveIn2 is also in the 1st BZ
                waveBz = 
-                   shiftToMinimum(waveIn2, mesh().dimensions(), unitCell);
+                  shiftToMinimum(waveIn2, mesh().dimensions(), unitCell);
                UTIL_CHECK(waveIn2 == waveBz);
 
                // Identify the star containing waveIn2
@@ -279,6 +294,8 @@ namespace Pspc
                starPtr2 = &basis().star(starId2);
                UTIL_CHECK(!(starPtr2->cancel));
                basisId2 = starPtr2->basisId;
+               UTIL_CHECK(starPtr2->size == sizeIn2);
+               UTIL_CHECK(sizeIn == sizeIn2);
 
                if (starPtr->invertFlag == 1) {
 
@@ -314,8 +331,8 @@ namespace Pspc
                   UTIL_CHECK(waveIn2 == nVec);
 
                   /*
-                  * Consider two related stars, C and D, that are listed in
-                  * the order (C,D) in the basis used in this code (the 
+                  * Consider two related stars, C and D, that are listed 
+                  * in the order (C,D) in the basis used in this code (the 
                   * reading program), but that were listed in the opposite
                   * order (D,C) in the program that wrote the file (the
                   * writing program). In the basis of the reading program, 
@@ -374,11 +391,10 @@ namespace Pspc
                   UTIL_THROW("Invalid starInvert value");
                } 
 
-               // Increment counter by 2 because two lines were read 
-               i = i + 2;
-
             }   // if (wavePtr->invertFlag == 0) ... else ...
-         }   // if (!waveExists) ... else ...
+
+         }   // if (waveExists && sizeMatches) 
+
       }   // end while (i < nStarIn)
 
       if (nReversedPair > 0) {

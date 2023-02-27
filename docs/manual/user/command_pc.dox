@@ -228,53 +228,58 @@ command or a group of closely related commands.
     <td> Write a list of all wavevector stars to file filename. </td>
   </tr>
   <tr> 
+    <td> \ref user_command_pc_writegroup_sub "WRITE_GROUP" </td>
+    <td> filename [string] </td>
+    <td> Write all group symmetry elements to file filename. </td>
+  </tr>
+  <tr> 
     <td colspan="3" style="text-align:center"> 
       \ref user_command_pc_fieldops_sec "Field File Operations"
     </td> 
   </tr>
   <tr> 
-    <td> BASIS_TO_RGRID </td>
+    <td> 
+    \ref user_command_pc_conversion_sub "BASIS_TO_RGRID" </td>
     <td> inFile [string], outFile [string] </td>
     <td> Read fields from file inFile in symmetry-adapted basis format,
          write to file outFile in real-space grid (r-grid) format </td>
   </tr>
   <tr> 
-    <td> RGRID_TO_BASIS </td>
+    <td> 
+    \ref user_command_pc_conversion_sub "RGRID_TO_BASIS" </td>
     <td> inFile [string], outFile [string] </td>
     <td> Read fields from file inFile in real-space grid (r-grid) format, 
-         write to file outFile in symmetry-adapted basis format. Note: This
-         command *assumes* that the field has the space group symmetry
-         declared in the param file, without checking. </td>
+         write to file outFile in symmetry-adapted basis format.  </td>
   </tr>
   <tr> 
-    <td> KGRID_TO_RGRID </td>
+    <td> \ref user_command_pc_conversion_sub "KGRID_TO_RGRID" </td>
     <td> inFile [string], outFile [string] </td>
     <td> Read fields from file inFile in discrete Fourier transform
          (k-grid) format, write to file outFile in r-grid format </td>
   </tr>
   <tr> 
-    <td> RGRID_TO_KGRID </td>
+    <td> \ref user_command_pc_conversion_sub "RGRID_TO_KGRID" </td>
     <td> inFile [string], outFile [string] </td>
     <td> Read fields from file inFile in real-space (r-grid) format,
          write to outFile in discrete Fourier expansion (k-grid) format
          </td>
   </tr>
   <tr> 
-    <td> BASIS_TO_KGRID </td>
+    <td> \ref user_command_pc_conversion_sub "BASIS_TO_KGRID" </td>
     <td> inFile [string], outFile [string] </td>
     <td> Read fields from file inFile in symmetry-adapted basis format,
          write to outFile in discrete Fourier transform (k-grid) format
          </td>
   </tr>
   <tr> 
-    <td> KGRID_TO_BASIS </td>
+    <td> \ref user_command_pc_conversion_sub "KGRID_TO_BASIS" </td>
     <td> inFile [string], outFile [string] </td>
     <td> Read fields from file inFile in discrete Fourier transform
          (k-grid) format, write to file outFile in symmetry-adapted
          basis format. </td>
   </tr>
   <tr> 
-    <td> CHECK_RGRID_SYMMETRY </td>
+    <td> \ref user_command_pc_symmetry_sub "CHECK_RGRID_SYMMETRY" </td>
     <td> inFile [string], epsilon [double] </td>
     <td> Read fields from file inFile in real-space (r-grid) format,
          check whether the fields are invariant under all elements of
@@ -282,30 +287,46 @@ command or a group of closely related commands.
          error threshold epsilon.  </td>
   </tr>
   <tr> 
+    <td> \ref user_command_pc_compare_sub "COMPARE_BASIS" </td>
+    <td> file1 [string], file2 [string] </td>
+    <td> Read fields from files file1 and file2 in basis format,
+         compares all component of all fields and write a report 
+         of the magnitude of differences to the log output. </td>
+  </tr>
+  <tr> 
+    <td> \ref user_command_pc_compare_sub "COMPARE_RGRID" </td>
+    <td> file1 [string], file2 [string] </td>
+    <td> Read fields from files file1 and file2 in r-grid format,
+         compares values at all grid nodes and writes a report 
+         of the magnitude of differences to the log output. </td>
+  </tr>
+  <tr> 
     <td colspan="3" style="text-align:center"> 
     \ref user_command_pc_external_sec "External Fields"
     </td> 
   </tr>
   <tr> 
-    <td> READ_H_BASIS </td>
+    <td> \ref user_command_pc_external_sec "READ_H_BASIS" </td>
     <td> filename [string] </td>
     <td> Read external (h) fields from file filename, in symmetry-adapted
          basis format </td>
   </tr>
   <tr> 
-    <td> READ_H_RGRID </td>
+    <td> 
+    \ref user_command_pc_external_sec "READ_H_RGRID" </td>
     <td> filename [string] </td>
     <td> Read external (h) fields from file filename, in real-space grid 
          (r-grid) format </td>
   </tr>
   <tr> 
-    <td> WRITE_H_BASIS </td>
+    <td> 
+    \ref user_command_pc_external_sec "WRITE_H_BASIS" </td>
     <td> filename [string] </td>
     <td> Write external potential fields (h fields) to file filename,
          in symmetry adapted basis format  </td>
   </tr>
   <tr> 
-    <td> WRITE_H_RGRID </td>
+    <td> \ref user_command_pc_external_sec "WRITE_H_RGRID" </td>
     <td> filename [string] </td>
     <td> Write external potential fields (h fields) to file filename,
          in r-grid format  </td>
@@ -317,25 +338,25 @@ command or a group of closely related commands.
     </td> 
   </tr>
   <tr> 
-    <td> READ_MASK_BASIS </td>
+    <td> \ref user_command_pc_mask_sec "READ_MASK_BASIS" </td>
     <td> filename [string] </td>
     <td> Read a mask field from file filename, in symmetry-adapted
          basis format </td>
   </tr>
   <tr> 
-    <td> READ_MASK_RGRID </td>
+    <td> \ref user_command_pc_mask_sec "READ_MASK_RGRID" </td>
     <td> filename [string] </td>
     <td> Read a mask field from file filename, in real-space grid 
          (r-grid) format </td>
   </tr>
   <tr> 
-    <td> WRITE_MASK_BASIS </td>
+    <td> \ref user_command_pc_mask_sec "WRITE_MASK_BASIS" </td>
     <td> filename [string] </td>
     <td> Write mask field to file filename, in symmetry adapted basis 
          format  </td>
   </tr>
   <tr> 
-    <td> WRITE_MASK_RGRID </td>
+    <td> \ref user_command_pc_mask_sec "WRITE_MASK_RGRID" </td>
     <td> filename [string] </td>
     <td> Write mask field to file filename, in r-grid format  </td>
   </tr>
@@ -388,7 +409,7 @@ the input file but that do not exist in the current basis.
 
 *Technical note* : 
 The symmetry-adapted basis used by the pscf_pc programs is normally 
-created during the process of reading the first field file that that
+created during the process of reading the first field file that that 
 the program is instructed to read.  This basis is constructed immediately 
 after reading the header of that file, which contains a list of values 
 for the unit cell parameters. Initialization of the basis is delayed until 
@@ -398,11 +419,11 @@ that creates this basis. The choice of the initial values for the unit
 cell parameters that are obtained in this way can affect the order in 
 which basis functions are listed internally, because the basis functions 
 are symmetry-adapted eigenvalues of the Lapacian that are listed in an
-order of non-decreasing eigenvalues (or non-decreasing wavenumber)
-at the time of creation. The set of basis functions that is created
-for a particular mesh and space group is, however, independent of 
-the values of the unit cell parameter values that were used to 
-create this order during creation of the basis.
+order of non-decreasing eigenvalues (or non-decreasing wavenumber) at 
+the time of creation. The set of basis functions that is created for a 
+particular mesh and space group is, however, independent of the values 
+of the unit cell parameter values that were used to create this order 
+during creation of the basis.
 
 \anchor user_command_pc_estimatewc_sub 
 The ESTIMATE_W_FROM_C command reads a set of approximate monomer volume 
@@ -641,12 +662,12 @@ single file.  This command name must be followed by the name of the
 output file and values for the polymer index \f$ ip \f$ and block 
 index \f$ ib \f$, in that order.
 
-The output file produced by command contains a header section followed
-by a sequence of data sections, in which each data section contains the
-data for a single slice at an integer value of the counter variable 
-index. Data sections are listed in order of increasing countour variable
-index. The header section is similar to that of an r-grid file, except
-for the addition of line at the end that contain the word "nslice"
+The output file produced by this command contains a header section 
+followed by a sequence of data sections, in which each data section 
+contains the data for a single slice at an integer value of the countour
+variable index. Data sections are listed in order of increasing countour 
+variable index. The header section is similar to that of an r-grid file, 
+except for the addition of line at the end that contain the word "nslice"
 followed by the value of the number of slices.  Each data section begins 
 with a line containing the word "slice" followed by value of the contour
 variable index for the slice represented by that section. The value of 
@@ -722,7 +743,87 @@ about stars, or associated basis functions. The format of this report
 of this report is defined by the function outputStars of class template 
 Basis<int D>.
 
+\anchor user_command_pc_writegroup_sub
+The WRITE_GROUP command outputs a list of all of the symmetry operations
+in the space group.  In the resulting file, each symmetry operation is 
+output as a D X D matrix representation of a point group (e.g., a 
+reflection, rotation or inversion) followed by a displacement vector. 
+Both the point group operation matrix and the displacement vector are 
+defined using a basis of Bravais lattice basis vectors. In this basis, 
+elements of the point group matrix are all integers, while elements of 
+the translation vector are either zero or fractions such as 1/2, 1/3, 
+3/4, etc. A more detailed discussion of this representation of space
+group symmetry operations is given \ref user_symmetry_page "here". 
+
 \section user_command_pc_fieldops_sec Field File Manipulations
+
+The pscf_pc programs accept several commands that perform manipulations
+on field files, including conversions among different formats.
+
+\subsection user_command_pc_conversion_sub Field Format Conversions
+
+The 6 commands BASIS_TO_RGRID, RGRID_TO_BASIS, KGRID_TO_RGRID, 
+RGRID_TO_KGRID, BASIS_TO_KGRID and KGRID_TO_BASIS each reads a field
+file containing a set of fields in the format specified by the first 
+field file format descriptor in the command name (i.e., BASIS, RGRID, 
+or KGRID) and writes the same field to another file in the format 
+specified by the second descriptor. Each of these commands takes two
+file names as parameters, the first of which is the name of the input
+file, and the second of which is the name of the output file.  For 
+example, a command
+\code
+BASIS_TO_RGRID   out/w.bf   out/w.rf
+\endcode
+would read a file named "out/w.bf" that contains a set of fields in
+symmetry-adapted basis format, and writes a representation of the same 
+field to a file named "w.rf" in r-grid format.  As with all file names, 
+relative file names are interpreted as names defined relative to the
+current working directory. 
+
+These file conversion function do not have any effect on the w and 
+c fields that are stored in memory to represent the current state of 
+the system of primary interest. All of the mathematical operations 
+that these commands perform in to convert from one format to the 
+other are performed using private temporary arrays. 
+
+The r-grid and k-grid formats can be used to represent any real field, 
+but the basis format can only represent fields that are symmetric under 
+all symmetry elements of a specified space group, whose name is 
+specified both in the parameter file and in the header of the field
+file. The conversion from r-grid or k-grid formats to basis format are 
+thus only valid if the field contained in the r-grid or k-grid input 
+file actually has the assumed symmetry. The RGRID_TO_BASIS and
+KGRID_TO_BASIS check if the input field has the assumed symmetry,
+and output warnings if they finds that one or more fields are not 
+symmetric, but complete the attempted conversion. Applying either 
+of these conversion functions to a field that does not have the 
+specified space group symmetry is not a valid operation, however,
+and can modify the fields in unpredictable ways. 
+
+The conversion to a basis format from an r-grid or k-grid format is 
+guaranteed to be safe only if the declared space group is the trivial 
+group that contains only the identity element (1D group P_1, 2D 
+plane group p_1, or 3D space group P_1), with no nontrivial symmetry 
+elements. 
+
+\subsection user_command_pc_symmetry_sub Checking Space Group Symmetry
+
+The CHECK_RGRID_SYMMETRY command can be used to check whether a field
+that is represented in r-grid format has a specified space group 
+symmetry to within a specified tolerance. The command takes the name
+of an input file and error tolerance epsilon as parameters. It reads
+the file with the specified name, checks if it is invariant under all
+space group operations to within the specified tolerance, and writes
+a report to the log file. 
+
+\subsection user_command_pc_compare_sub Field File Comparisons
+
+The CHECK_BASIS and CHECK_RGRID commands each read a pair of field
+files in the same format (basis or rgrid format, respectively),
+computes differences between corresponding fields, and write a report 
+to the log file summarizing several measures of the magnitude of the 
+differences. These are useful for checking it the fields contained
+in two files that should be equivalent actually are. 
 
 \section user_command_pc_external_sec External Fields 
 
@@ -730,8 +831,12 @@ The pscf_pc programs accept several commands that allow users to input
 and output external chemical potential fields that act on monomers of 
 each type, in addition to the internally generated fields that arise
 in a self-consistent field approximation from interactions. External
-fields are referred to throughout the source code and documentation as
-"h" fields. 
+fields are referred to throughout the source code and documentation 
+as "h" fields. This feature was introduced into the code to allow 
+simulation of polymers in thin films or other confined geometries,
+for which external fields that act differently on different monomer
+types are used represent selective interactions of polymers with the 
+confining walls. 
 
 When nonzero external fields have been set, the self-consistent field 
 equations become equations of the form
@@ -752,10 +857,14 @@ external fields to represent interactions of different monomer types with
 the boundaries or "walls" the film.  The external fields that are used to
 define a thin film problem are generated algorithmically by the thin film
 iterator, as described \ref user_thin_films_page "here", rather than being
-read from a file.  Users thus do not need to use the READ_H_BASIS or 
-READ_H_RGRID commands in order to simulate a thin film, but can use the
-WRITE_H_BAIS or WRITE_H_RGRID commands to output and inspect the external
-fields that are generated internally by the thin film iterator.
+read from a file.  Users who use this sort of iterator to simulate a thin
+film thus do not need to use the READ_H_BASIS or READ_H_RGRID commands, 
+but can use the WRITE_H_BAIS or WRITE_H_RGRID commands to output and 
+inspect the external fields that are generated internally by the thin 
+film iterator.
+
+The READ_H_BASIS and READ_H_RGRID commands can be used to read in and
+set external fields that are specified in a pre-existing file. 
 
 \section user_command_pc_mask_sec Mask Field (Inhomogeneous Density Constraint)
 
@@ -775,6 +884,13 @@ at every point in the system, where \f$ m({\bf r}) \f$ is the mask field,
 volume, and the summation is over all distinct monomer types. Introduction 
 of a mask provides a simple way to impose geometric confinment within a 
 program that is designed for periodic systems.
+
+Users may input a mask from file basis or r-grid format using the commands 
+\anchor user_command_pc_readmaskbasis_cmd READ_MASK_BASIS or 
+\anchor user_command_pc_readmaskrgrid_cmd READ_MASK_RGRID, 
+or may output the current mask using the commands 
+\anchor user_command_pc_writemaskbasis_cmd WRITE_MASK_BASIS or
+\anchor user_command_pc_readmaskbasis_cmd WRITE_MASK_GRID.
 
 The mask that is used to confine a polymer to a thin film is generated 
 algorithmically by the thin film iterator, as described in more detail

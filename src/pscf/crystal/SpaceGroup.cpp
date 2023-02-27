@@ -18,4 +18,8 @@ namespace Pscf
    template void readGroup(std::string, SpaceGroup<2>& );
    template void readGroup(std::string, SpaceGroup<3>& );
 
+   template void writeGroup(std::string, SpaceGroup<1> const&);
+   template void writeGroup(std::string, SpaceGroup<2> const&);
+   template void writeGroup(std::string, SpaceGroup<3> const&);
+
 }

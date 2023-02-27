@@ -31,7 +31,8 @@ User-visible changes
 Documentation
 --------------
 * New discussion of standard polymer model, conventions for variables
-* New appendix summarizing SCFT working equations
+* New appendix summarizing SCFT working equations for branched polymers
+* New appendices on periodic fields, space group symmetry, bases
 * More complete documentation of parameter file block formats
 
 Developer-visible changes
