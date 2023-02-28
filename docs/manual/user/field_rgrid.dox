@@ -30,7 +30,7 @@ group_name
              P_6_m_m
 N_monomer           
                    2
-ngrid               
+mesh              
                   24                  24
        0.340581085      19.518839883
        0.570887775      19.658020087
@@ -50,14 +50,14 @@ ngrid
 Like other field formats, this file format contains a header section 
 with crystallographic information followed by a data section.  The header 
 section is similar that for the symmetry adapted format, except that the 
-last variable is an array "ngrid" of integers giving the number of grid 
+last variable is an array "mesh" of integers giving the number of grid 
 points in each direction. In this example, because it is a two-dimensional 
-crystal (dim = 2), this array contains two numbers, both ranging from 
-from 0, ..., 23,  indicating a grid in which there are 24 grid points 
-along each coordinate axis. To describe a hexagonal phase, we use a 
-non-orthogonal coordinate system in which each axis is parallel to one 
-of the Bravais lattice vectors, which in a hexagonal phase have an angle 
-of 60 degrees between them.
+crystal (dim = 2), this array contains two numbers, both equal to 24,
+indicating a grid in which there are 24 grid points along each coordinate 
+axis. To describe a hexagonal phase, we use a non-orthogonal coordinate 
+system in which each axis is parallel to one of the Bravais lattice 
+vectors, which in a hexagonal phase have an angle of 60 degrees between 
+them.
 
 The data section contains the values of fields associated with N_monomer 
 monomer types at grid points given by

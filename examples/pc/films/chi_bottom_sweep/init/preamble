@@ -11,5 +11,5 @@ group_name
                  p_m
 N_monomer                               
                    2
-ngrid                                   
+mesh                               
                   48                   96

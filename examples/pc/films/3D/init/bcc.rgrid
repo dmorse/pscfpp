@@ -1,17 +1,17 @@
  format  1  0
-dim                                     
+dim
                    3
-crystal_system                          
+crystal_system
                cubic
-N_cell_param                            
+N_cell_param
                    1
-cell_param                              
+cell_param
     2.0000000000E+00
-group_name                              
+group_name
             I_m_-3_m
-N_monomer                               
+N_monomer
                    2
-ngrid                                   
+mesh
                   32                  32                  32
        0.952517643       0.047482357
        0.950593748       0.049406252

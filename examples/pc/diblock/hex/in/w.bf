@@ -1,17 +1,17 @@
  format  1  0
-dim                                     
+dim
                    2
-crystal_system                          
+crystal_system
            hexagonal
-N_cell_param                            
+N_cell_param
                    1
-cell_param                              
+cell_param
     1.6908669157E+00
-group_name                              
+group_name
              p_6_m_m
-N_monomer                               
+N_monomer
                    2
-N_star                                  
+N_basis
                   61
   1.400000000000E+01  6.000000000000E+00       0   0     1
  -7.157517966271E+00  5.294313158447E+00       1   0     6

@@ -141,7 +141,13 @@ namespace Pspc
       // Read the number of stars into nStarIn
       std::string label;
       in >> label;
-      UTIL_CHECK(label == "N_star");
+      if (label != "N_star" && label != "N_basis") {
+         std::string msg =  "Error reading field file:\n";
+         msg += "Expected N_basis or N_star, but found [";
+         msg += label;
+         msg += "]";
+         UTIL_THROW(msg.c_str());
+      }
       int nStarIn;
       in >> nStarIn;
       UTIL_CHECK(nStarIn > 0);
@@ -433,7 +439,7 @@ namespace Pspc
       writeFieldHeader(out, nMonomer, unitCell);
       int nStar = basis().nStar();
       int nBasis = basis().nBasis();
-      out << "N_star       " << std::endl 
+      out << "N_basis      " << std::endl 
           << "             " << nBasis << std::endl;
 
       // Write fields
@@ -476,7 +482,6 @@ namespace Pspc
       int nMonomer;
       FieldIo<D>::readFieldHeader(in, nMonomer, unitCell);
 
-
       // If "fields" parameter is allocated, check if dimensions match
       // those of the system's mesh.  Otherwise, allocate.
       
@@ -499,7 +504,13 @@ namespace Pspc
       // Read and check input stream mesh dimensions
       std::string label;
       in >> label;
-      UTIL_CHECK(label == "ngrid");
+      if (label != "mesh" && label != "ngrid") {
+         std::string msg =  "Error reading field file:\n";
+         msg += "Expected mesh or ngrid, but found [";
+         msg += label;
+         msg += "]";
+         UTIL_THROW(msg.c_str());
+      }
       IntVec<D> nGrid;
       in >> nGrid;
       UTIL_CHECK(nGrid == mesh().dimensions());
@@ -607,7 +618,7 @@ namespace Pspc
       UTIL_CHECK(nMonomer > 0);
 
       writeFieldHeader(out, nMonomer, unitCell);
-      out << "ngrid" <<  std::endl
+      out << "mesh " <<  std::endl
           << "           " << mesh().dimensions() << std::endl;
 
       DArray<RField<D> > temp;
@@ -722,7 +733,13 @@ namespace Pspc
       // Read and check input stream mesh dimensions
       std::string label;
       in >> label;
-      UTIL_CHECK(label == "ngrid");
+      if (label != "mesh" && label != "ngrid") {
+         std::string msg =  "Error reading field file:\n";
+         msg += "Expected mesh or ngrid, but found [";
+         msg += label;
+         msg += "]";
+         UTIL_THROW(msg.c_str());
+      }
       IntVec<D> nGrid;
       in >> nGrid;
       UTIL_CHECK(nGrid == mesh().dimensions());
@@ -817,7 +834,7 @@ namespace Pspc
    {
       if (writeHeader) {
          writeFieldHeader(out, 1, unitCell);
-         out << "ngrid" <<  std::endl
+         out << "mesh " <<  std::endl
              << "           " << mesh().dimensions() << std::endl;
       }
 
@@ -932,7 +949,13 @@ namespace Pspc
       // Read and check input stream mesh dimensions
       std::string label;
       in >> label;
-      UTIL_CHECK(label == "ngrid");
+      if (label != "mesh" && label != "ngrid") {
+         std::string msg =  "Error reading field file:\n";
+         msg += "Expected mesh or ngrid, but found [";
+         msg += label;
+         msg += "]";
+         UTIL_THROW(msg.c_str());
+      }
       IntVec<D> nGrid;
       in >> nGrid;
       UTIL_CHECK(nGrid == mesh().dimensions());
@@ -981,7 +1004,7 @@ namespace Pspc
 
       // Write header
       writeFieldHeader(out, nMonomer, unitCell);
-      out << "ngrid" << std::endl 
+      out << "mesh " << std::endl 
           << "               " << mesh().dimensions() << std::endl;
 
       // Write fields

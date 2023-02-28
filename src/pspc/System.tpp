@@ -1334,7 +1334,7 @@ namespace Pspc
 
       // Write header
       fieldIo().writeFieldHeader(file, 1, domain_.unitCell());
-      file << "ngrid" << std::endl
+      file << "mesh " << std::endl
            << "          " << domain_.mesh().dimensions() << std::endl
            << "nslice"    << std::endl
            << "          " << ns << std::endl;

@@ -103,7 +103,7 @@ symmetry-adapted Fourier series.
 
 \subsection user_field_basis_format_data_sub Data Section
 
-The data section of a basis field file contains exactly N_star rows of
+The data section of a basis field file contains exactly N_basis rows of
 data, each of which contains information associated with one basis
 function in the symmetry-adapated basis used by the program that wrote
 the file. Each row contains N_monomer + dim + 1 numbers. The first
@@ -139,7 +139,7 @@ a corresponding monomer type.  The coefficient in column j of row i of
 the data section gives the coefficient of basis function
 \f$ f_{i}({\bf r} \f$ i in the expansion of the field associated with
 monomer with type index j, for j in the range 0 to N_monomer - 1 and i
-in the range 1 to N_star - 1.
+in the range 1 to N_basis - 1.
 
 The next dim values in each row, after the N_monomer floating point
 coefficients, give the integer indices of a specific reciprocal lattice
@@ -173,7 +173,7 @@ copolymer melt that was simulated using a 1D mesh with 40 grid points:
                      -1
    N_monomer
                       2
-   N_star
+   N_basis
                      21
      5.600000000000E-01  4.400000000000E-01       0     1
      2.179734275940E-01 -2.179734275841E-01       1     2
@@ -313,7 +313,7 @@ vertical dots.
               I_ a_-3_d
    N_monomer
                       2
-   N_star
+   N_basis
                     235
      3.000000000000E-01  7.000000000000E-01       0   0   0     1
     -2.942897932802E-01  2.942897932848E-01       2   1   1    24

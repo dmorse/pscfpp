@@ -1,6 +1,6 @@
-WRITE_WAVES     out/stars
-OUTPUT_WAVES     out/waves
-BASIS_TO_RGRID   in/omega        out/omega.rf
-RGRID_TO_BASIS   out/omega.rf    out/omega.bf
+BASIS_TO_RGRID   in/w.bf         out/w.rf
+RGRID_TO_BASIS   out/w.rf        out/w.bf
+WRITE_WAVES      out/waves
+WRITE_STARS      out/stars
 FINISH
 

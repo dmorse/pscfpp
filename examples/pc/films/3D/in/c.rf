@@ -1,17 +1,17 @@
  format  1  0
-dim                                     
+dim
                    3
-crystal_system                          
+crystal_system
           tetragonal
-N_cell_param                            
+N_cell_param
                    2
-cell_param                              
+cell_param
     2.0000000000E+00      4.4000000000E+00
-group_name                              
+group_name
            P_4%m_m_m
-N_monomer                               
+N_monomer
                    2
-ngrid                                   
+mesh
                   32          32          70
     0.000000000    0.000000000
     0.000000000    0.000000000

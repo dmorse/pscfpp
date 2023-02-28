@@ -13,11 +13,10 @@ description of the output of the WRTIE_WAVES command, users should read
 the discussion of the relationships between "stars" and basis functions 
 given in the documentation of the 
 \ref user_field_basis_page "basis file format". 
-Users who would like a more complete discussion of the underlying
-mathematics may also find it useful to consult appendices that discuss 
-\ref user_symmetry_page "space group symmetry operations"
-and
-\ref user_basis_page "symmetry-adapted Fourier series". 
+Users who seek a more complete discussion can also consult appendices 
+that discuss crystallographic space group
+\ref user_symmetry_page "symmetry operations" and
+\ref user_basis_page "symmetry-adapted bases".
 
 The type of symmetry-adapated Fourier basis used by the pscf_pc and
 pscf_pg programs is constructed by grouping all of the reciprocal lattice

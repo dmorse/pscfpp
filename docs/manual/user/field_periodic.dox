@@ -87,7 +87,7 @@ orthogonal directions:
               I_ a_-3_d
    N_monomer
                       2
-   N_grid
+   mesh 
                      32    32    32
 \endcode
 
@@ -138,19 +138,25 @@ combination of values for dim and crystal_system are listed
 The parameter N_monomer is a positive integers that gives the number
 of distinct monomer types for which fields are reported.
 
-<b> N_grid </b>:
-The N_grid parameter is a list of dim positive integers that give the 
-number of grid points in each direction in the mesh that is used for 
-numerical calculations. This parameter appears as the last line of the 
-header for r-grid and k-grid file formats, but does not appear in the 
-basis format.
-
 <b> N_basis </b>:
 The parameter N_basis is a positive integer that gives the number of 
 basis functions used in a Fourier-adapted Fourier series representation
-of the fields. This parameter only appears in the basis file format.
+of the fields. A label "N_star" will also be accepted as a synonym for
+"N_basis", to preserve backwards compatability with the label used by
+the older PSCF fortran program.  
+This parameter only appears in the basis file format.
 
-All of these parameters except N_grid and N_basis are required elements
+<b> mesh </b>:
+The mesh parameter is a list of dim positive integers that give the 
+mesh dimensions used for numerical calculations, i.e., the number of
+grid points in each direction in the mesh that covers a single unit 
+cell.  A label "ngrid" will also be accepted as a synonym for "mesh",
+to allow backwards compatibility with the label used by the PSCF 
+Fortran program.  This list of values appears as the last 
+parameter of the header for r-grid and k-grid file formats, but does 
+not appear in the basis format.
+
+All of these parameters except mesh and N_basis are required elements
 of the header in all three file formats.
 
 \section user_field_periodic_contents_sub Contents
