@@ -142,7 +142,8 @@ namespace Pspc
       std::string label;
       in >> label;
       if (label != "N_star" && label != "N_basis") {
-         std::string msg =  "Error reading field file:\n";
+         std::string msg =  "\n";
+         msg += "Error reading field file:\n";
          msg += "Expected N_basis or N_star, but found [";
          msg += label;
          msg += "]";
@@ -505,7 +506,8 @@ namespace Pspc
       std::string label;
       in >> label;
       if (label != "mesh" && label != "ngrid") {
-         std::string msg =  "Error reading field file:\n";
+         std::string msg =  "\n";
+         msg += "Error reading field file:\n";
          msg += "Expected mesh or ngrid, but found [";
          msg += label;
          msg += "]";
@@ -734,7 +736,8 @@ namespace Pspc
       std::string label;
       in >> label;
       if (label != "mesh" && label != "ngrid") {
-         std::string msg =  "Error reading field file:\n";
+         std::string msg =  "\n";
+         msg += "Error reading field file:\n";
          msg += "Expected mesh or ngrid, but found [";
          msg += label;
          msg += "]";
@@ -950,7 +953,8 @@ namespace Pspc
       std::string label;
       in >> label;
       if (label != "mesh" && label != "ngrid") {
-         std::string msg =  "Error reading field file:\n";
+         std::string msg =  "\n";
+         msg += "Error reading field file:\n";
          msg += "Expected mesh or ngrid, but found [";
          msg += label;
          msg += "]";

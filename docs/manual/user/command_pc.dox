@@ -391,6 +391,7 @@ setting them equal equal to the values that are given in this field
 file header.
 
 \anchor user_command_pc_readwbasis_sub
+<b> READ_W_BASIS</b>:
 The READ_W_BASIS command reads the coefficients of an expansion of
 the w fields in a symmetry-adapted Fourier basis from an input file
 whose name is specified as command parameter.
@@ -426,6 +427,7 @@ of the unit cell parameter values that were used to create this order
 during creation of the basis.
 
 \anchor user_command_pc_estimatewc_sub
+<b> ESTIMATE_W_FROM_C </b>:
 The ESTIMATE_W_FROM_C command reads a set of approximate monomer volume
 fraction fields in symmetry-adapted basis format from the file whose name
 is passed as an argument, and uses these to construct and store an
@@ -449,6 +451,7 @@ input file, and \f$ \chi_{\alpha\beta} \f$ is a binary Flory-Huggins
 interaction parameter.
 
 \anchor user_command_pc_readwrgrid_sub
+<b> READ_W_RGRID </b>:
 The READ_W_RGRID command reads the values of w fields in real-space
 grid (r-grid) format from an input file. The header of the an r-grid
 field file contains a description of the mesh, defined by the number
@@ -492,6 +495,7 @@ parameters as an input, which must have been initialized by a previous
 call to READ_W_BASIS, READ_W_RGRID, or ESTIMATE_W_FROM_C.
 
 \anchor user_command_pc_compute_sub
+<b> COMPUTE </b>:
 The COMPUTE command solves solves the single molecule statistical
 mechanics problem for all polymer and solvent species for a system of
 non-interacting molecules subjected to the current w-fields. This
@@ -499,6 +503,7 @@ modifies the current c-fields stored in program memory, but does not
 modify the w fields.
 
 \anchor user_command_pc_iterate_sub
+<b> ITERATE </b>:
 The ITERATE command attempts to iteratively solve the self
 self-consistent field equations for a fixed set of input parameters,
 and may optionally modify the unit cell parameter so as to minimize
@@ -515,6 +520,7 @@ unit cell parameters that are in memory on entry to iteration are
 used as initial guesses.
 
 \anchor user_command_pc_sweep_sub
+<b> SWEEP </b>:
 THE SWEEP command attempts to solve the SCFT equations at a sequence
 of points along a path through the space of possible choices of input
 parameters. This command may only be invoked if the parameter file
@@ -531,6 +537,7 @@ record of the input parameters and computed thermodynamic properties
 associated with an SCFT calculation.
 
 \anchor user_command_pc_param_sub
+<b> WRITE_PARAM </b>:
 The WRITE_PARAM writes a slightly modified copy of the parameter
 file to a file whose name that is specified as a command parameter.
 The version of the parameter file written by this command outputs
@@ -539,6 +546,7 @@ The output of this command is designed to serve as a record of the
 input parameters associated with a single SCFT calculation.
 
 \anchor user_command_pc_thermo_sub
+<b> WRITE_THERMO </b>:
 The WRITE_THERMO command outputs a report of values for thermodynamic
 properties obtained after solution of a SCFT problem. The resulting
 report includes values for the
@@ -561,10 +569,14 @@ WRITE_PARAM and WRITE_THERMO with the same file name parameter.
 
 \section user_command_pc_fieldout_sec Field Output Commands
 
+<b> WRITE_(W|C)_(FORMAT) Commands </b>:
 The WRITE_W_BASIS, WRITE_W_RGRID, WRITE_C_BASIS, and WRITE_C_RGRID
 can be used to output the current w fields (chemical potential fields)
 or c fields (volume fraction fields) associated with all different
-monomer types. Commands with names that end in BASIS output fields
+monomer types. Commands with names that include the string _W_ output
+the current w fields, while commands with names that include the string
+_C_ output the current c fields.
+Commands with names that end in BASIS output fields
 in basis format, and commands with names that end in RGRID output
 fields in r-grid format.
 
@@ -577,6 +589,7 @@ Symmetry is assumed to exist for c fields only if the c fields were
 computed from w fields that are known to be symmetric.
 
 \anchor user_command_pc_writecblock_sub
+<b> WRITE_C_BLOCK_RGRID </b>:
 The WRITE_C_BLOCK_RGRID command outputs the current volume fraction
 fields (c-fields) for all blocks of all polymers and for all solvent
 species r-grid format as separate fields within a single file. The
@@ -632,7 +645,8 @@ field file for a system with only one monomer type, in which all values
 are output in a single column, with nodes listed in the same order as
 in an r-grid field file.
 
-\anchor user_command_pc_writeqslice_sub
+\anchor user_command_pc_writeqslice_sub 
+<b> WRITE_Q_SLICE </b>:
 The command WRITE_Q_SLICE write the values of a propagator slice at
 a specified contour variable index \f$ is \f$ to an output file.
 This command named must be followed by the name of the output file,
@@ -641,7 +655,8 @@ and the direction index \f$ id \f$, in that order.
 The data section for output by this function is the same as that of
 an r-grid field file for a system with one monomer type.
 
-\anchor user_command_pc_writeqtail_sub
+\anchor user_command_pc_writeqtail_sub 
+<b> WRITE_Q_TAIL </b>:
 The command WRITE_Q_TAIL write the values of the propagator slice at a
 value of \f$ s \f$ equal to the length of the block, corresponding to
 the slice evaluated at the vertex at which the propagator terminates.
@@ -656,7 +671,8 @@ corresponding to the vertex at which it originates (i.e., the propagator
 variable index \f$ is = 0 \f$, corresponding to a contour variable
 \f$ s = 0 \f$,
 
-\anchor user_command_pc_writeq_sub
+\anchor user_command_pc_writeq_sub 
+<b> WRITE_Q </b>:
 The command WRITE_Q writes all slices of a specified propagator to a
 single file.  This command name must be followed by the name of the
 output file and values for the polymer index \f$ ip \f$ and block
@@ -683,7 +699,8 @@ computation.
 function Pspc::System<D>::writeQ, which defines the output format,
 and which is defined in the C++ file src/pspc/System.tpp.
 
-\anchor user_command_pc_writeqall_sub
+\anchor user_command_pc_writeqall_sub 
+<b> WRITE_Q_ALL </b>:
 The command WRITE_Q_ALL writes all slices of every propagator of every
 polymer to a set of files, with all the slices of each propagator
 written to a single file, but different propagators output in different
@@ -705,17 +722,21 @@ of the propagator associated with polymer 0, block 2 and direction 1.
 \section user_command_pc_crystal_sec Crystallographic Information
 
 The commands WRITE_WAVES and WRITE_STARS allow the user to output
-information about the symmetry-adapted basis that program has constructed
-for space group and mesh specified in the parameter file. This basis
-is constructed by identifying sets of allowed wavevectors that are
-related by symmetry, which we refer to as "stars", and constructing
-a basis function associated with each star as linear superpositions
-of planes waves with wavevectors that belong to that star. The
-coefficients of plane waves associated with wavevectors within such
-superposition are complex numbers with the same absolute magnitude
-and relative phases (i.e., differences between complex arguments)
-that are determined by the requirement that each such function be
-invariant under all operations of the specified space group.
+information about the symmetry-adapted basis that program has 
+constructed for space group and mesh specified in the parameter file. 
+The command WRITE_GROUP outputs all of the symmetry operations of 
+the space group.
+
+The symmetry-adpated basis used by pscf is constructed by identifying 
+sets of allowed wavevectors that are related by symmetry, which we 
+refer to as "stars", and constructing a basis function associated with 
+each star as linear superpositions of planes waves with wavevectors 
+that belong to that star. The coefficients of plane waves associated 
+with wavevectors within such superposition are complex numbers with 
+the same absolute magnitude and relative phases (i.e., differences 
+between complex arguments) that are determined by the requirement 
+that each such function be invariant under all operations of the 
+specified space group.
 
 \anchor user_command_pc_writewaves_sub
 The WRITE_WAVES command outputs an ordered list of unique wavevectors
@@ -723,29 +744,24 @@ that can appear in the expansion of a function with the specified space
 group symmetry, with associated information about each wavevector.
 The name of this command must be followed by the name of the file to
 which this listing should be written.
-A discussion of the format of the file created by this command is given
-\subpage user_command_pc_wave_page "here" .
-
+The format of the file created by this command is discussed
+\ref user_command_pc_wave_page "here" .
 
 \anchor user_command_pc_writestars_sub
-The WRITE_STARS command outputs a more compact list of information
-about stars, or associated basis functions.
+The WRITE_STARS command outputs a list of information about stars, or 
+associated basis functions.
 The name of this command must be followed by the name of the file to
 which this listing should be written.
-A discussion of the format of the file created by this command is given
-\subpage user_command_pc_star_page "here" .
+The format of the file created by this command is discussed
+\ref user_command_pc_star_page "here" .
 
 \anchor user_command_pc_writegroup_sub
 The WRITE_GROUP command outputs a list of all of the symmetry operations
-in the space group.  In the resulting file, each symmetry operation is
-output as a D X D matrix representation of a point group (e.g., a
-reflection, rotation or inversion) followed by a displacement vector.
-Both the point group operation matrix and the displacement vector are
-defined using a basis of Bravais lattice basis vectors. In this basis,
-elements of the point group matrix are all integers, while elements of
-the translation vector are either zero or fractions such as 1/2, 1/3,
-3/4, etc. A more detailed discussion of this representation of space
-group symmetry operations is given \ref user_symmetry_page "here".
+in the space group to a file.
+The name of the output file is given as a command argument that follows
+the command name.
+The format of the file created by this command is discussed
+\ref user_command_pc_group_page "here" .
 
 \section user_command_pc_fieldops_sec Field File Manipulations
 
@@ -889,6 +905,18 @@ algorithmically by the thin film iterator, as described in more detail
 \ref user_thin_films_page "here".  The resulting field can be written to
 a file for inspection using the WRITE_MASK_BASIS or WRITE_MASK_RGRID
 commands.
+
+\section user_command_pc_subpages_sec Contents (Subpages)
+
+Each of the following subpages gives more detailed information about
+output formats of files created by particular commands. Each is also
+referred to above in the discussion of the corresponding command.
+
+<ol>
+ <li> \subpage user_command_pc_wave_page  "WRITE_WAVES" </li>
+ <li> \subpage user_command_pc_star_page  "WRITE_STARS" </li>
+ <li> \subpage user_command_pc_group_page "WRITE_GROUP" </li>
+</ol>
 
 <BR>
  \ref user_command_fd_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

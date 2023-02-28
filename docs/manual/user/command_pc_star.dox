@@ -135,7 +135,7 @@ N_basis
 \section user_command_pc_star_altgyr_sec Example (Alternating Gyroid) 
 
 An example of the file created by a WRITE_STARS command is shown below 
-for a triblock copolymer system with space group \f$ I a 4_{1} 3 2 \f$, 
+for a triblock copolymer system with space group \f$ I 4_{1} 3 2 \f$, 
 or PSCF space group identifier I_41_3_2. This is the space group of the 
 alternating gyroid phase of an ABC triblock copolymer. 
 

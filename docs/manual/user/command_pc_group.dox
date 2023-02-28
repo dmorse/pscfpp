@@ -1,0 +1,603 @@
+/*! \page user_command_pc_group_page Command for pscf_pc: WRITE_STARS
+\ref user_command_pc_page  (Up/Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_command_pg_page  (Next) 
+<BR>
+
+THE WRITE_GROUP command accepted by pscf_pc and pscf_pg programs writes
+a file containing a list of all the symmetry operations of the current 
+space group. A discussion of symmetry operations and their representation
+is given as an \ref user_symmetry_page "appendix". A shorter overview is
+given here in a form sufficient to allow a user to understand the format
+of the file created by the WRITE_GROUP operation. The format used by
+the WRITE_GROUP command is the same as that used in the group files that 
+are distributed with pscf, which are located in subdirectories of the
+data/groups directory.
+
+\section user_command_pc_group_operations_sec Symmetry Operations
+
+A space group is defined by a set of crystallogrphic symmetry operations.
+Every space group symmetry operation \f$ A \f$ is a function that maps
+very position vector \f$ {\bf r} \f$ in a \f$ D \f$ dimensional space 
+onto a transformed position
+\f[
+    A({\bf r}) = R{\bf r} + {\bf t} \quad,
+\f]
+in which \f$ R \f$ is a linear operator that performs a point group 
+operation such as a rotation, reflection, or inversion on the vector 
+to its right, and \f$ {\bf t} \f$ is a translation vector. 
+Symmetry operations for which \f$ {\bf t} = 0 \f$ are referred to as 
+<em> symmorphic </em> operations, while those for which 
+\f$ {\bf t} \neq 0 \f$ are <em> non-symmorphic </em>. 
+Operations involving glide planes and screw axes are non-symmorphic.
+The translation vectors for non-symmorphic operations generally always
+the position by a rational fraction of a unit cell (e.g., 1/4 or 1/2)
+along one or more Bravais lattice basis vectors.
+
+Positions and symmetry operations are most conveniently expressed 
+using a Bravais lattice basis vectors, which we refer to as a Bravais 
+basis.  Let 
+\f[
+    {\bf a}_{0}, \ldots, {\bf a}_{D-1} 
+\f] 
+denote a list of the basis vectors used by PSCF to define the crystal 
+Bravais lattice.  Any position may be expanded in a Bravais basis as a 
+superposition
+\f[
+    {\bf r} = \sum_{i=0}^{D-1} r_{i} {\bf a}_{i} \quad,
+\f]
+in which \f$(r_{0}, \ldots, r_{D-1} \f$ are dimensionless components,
+which we refer to as reduced coordinates.
+
+Symmetry operations are also conveniently represented using a Bravais 
+basis.  Using such a basis, we may represent any point group operation 
+\f$ R \f$ as a matrix with integer elements, and a translation 
+\f$ {\bf t} \f$ as a vector with components given by rational numbers 
+(i.e., fractions such as 1/2, 1/4, 2/3, etc.) 
+If a symmetry operation \f$ A \f$ transforms a vector \f$ {\bf r} \f$
+onto a transformed vector given by
+\f[
+    {\bf r}' = A({\bf r}) 
+    = \sum_{i=0}^{D-1} r_{i}' {\bf a}_{i} \quad.
+\f]
+then the components of \f$ {\bf r}' \f$ can be expressed as a sum
+\f[
+    r_{i}' = 
+    \sum_{j=0}^{D-1} R_{ij} r_{j} + t_{i}
+\f]
+for \f$ i = 0, \ldots, D-1 \f$. 
+Here, \f$ R_{ij} \f$ is an element of a matrix representation of 
+the point group operation \f$ R \f$ and \f$ t_{i} \f$ is a component 
+of the translation vector \f$ {\bf t} \f$, defined in a Bravais 
+basis. The matrix elements of \f$ R \f$ in this basis must be integers 
+in order to guarantee that this point group operation maps the Bravais 
+lattice (i.e., the set of all positions with integer reduced component 
+values) onto itself. Components of the transalation vectors for 
+non-symmorphic operations are always fractions such as multiples of 
+1/2, 1/4 or 1/3 or multiples thereof when defined in a Bravais
+basis.
+
+\section user_command_pc_group_format_sec File Format
+
+The output of the WRITE_GROUP command displays a list of symmetry
+operations in which each operation for a three-dimensional crystal is 
+listed as a block of the form
+\code
+    R(0,0) R(0,1) R(0,2)
+    R(1,0) R(1,1) R(1,2)
+    R(2,0) R(2,1) R(2,2)
+    t(0)   t(1)   t(2)
+\endcode
+in which we use R(i,j) to denote \f$ R_{ij} \f$ and t(i) to 
+denote \f$ t_{i} \f$. Nonzero components of the translation vector 
+are written as rational fractions, in the form I/J, where i is an
+integer and J is an nonzero fractional integer, with J=2,3 or 4.
+The formats for one- and two-dimensional space group operations 
+are analogous, and generally contain D columns and D+1 rows to
+display a symmetry operation of a  D dimensional crystal.
+
+The first two lines of each group file give the dimension of space 
+and the number of symmetry operations in the group. The dimension of 
+space is denoted by a label "dim". The number of symmetry operations 
+in the group is denoted by a label "size".  These two lines are 
+followed by a list of all symmetry operations, each of which is 
+output int the format shown above, with one empty line between 
+successive symmetry operations. The order in which symmetry 
+operations are listed has no significance - a group is a set of 
+operations, defined without regard to order.
+
+\section user_command_pc_group_example_sec Example
+
+An example is shown below of the file created by the WRITE_GROUP 
+command for a system with space group \f$ Ia\overline{3}d \f$. 
+The resulting file is identical to that distributed with the pscf 
+package as the file pscfpp/data/groups/3/I_a_-3_d .  
+
+\code
+dim  3
+size 96
+
+  1  0  0
+  0  1  0
+  0  0  1
+  0  0  0
+
+  1  0  0
+  0  0 -1
+  0  1  0
+  1/4  1/4  3/4
+
+  1  0  0
+  0  0  1
+  0 -1  0
+  1/4  3/4  3/4
+
+  0  0  1
+  0  1  0
+ -1  0  0
+  1/4  3/4  3/4
+
+  0  0 -1
+  0  1  0
+  1  0  0
+  1/4  3/4  1/4
+
+  0 -1  0
+  1  0  0
+  0  0  1
+  1/4  3/4  1/4
+
+  0  1  0
+ -1  0  0
+  0  0  1
+  1/4  1/4  3/4
+
+  0  0  1
+  1  0  0
+  0  1  0
+  0  0  0
+
+  0  1  0
+  0  0  1
+  1  0  0
+  0  0  0
+
+  0 -1  0
+  0  0 -1
+  1  0  0
+  0  1/2  0
+
+  0  0  1
+ -1  0  0
+  0 -1  0
+  0  0  1/2
+
+  0 -1  0
+  0  0  1
+ -1  0  0
+  1/2  0  0
+
+  0  0 -1
+ -1  0  0
+  0  1  0
+  0  1/2  0
+
+  0  0 -1
+  1  0  0
+  0 -1  0
+  1/2  0  0
+
+  0  1  0
+  0  0 -1
+ -1  0  0
+  0  0  1/2
+
+  1  0  0
+  0 -1  0
+  0  0 -1
+  0  0  1/2
+
+ -1  0  0
+  0  1  0
+  0  0 -1
+  1/2  0  0
+
+ -1  0  0
+  0 -1  0
+  0  0  1
+  0  1/2  0
+
+  0  1  0
+  1  0  0
+  0  0 -1
+  1/4  3/4  3/4
+
+  0 -1  0
+ -1  0  0
+  0  0 -1
+  1/4  1/4  1/4
+
+  0  0  1
+  0 -1  0
+  1  0  0
+  1/4  1/4  3/4
+
+  0  0 -1
+  0 -1  0
+ -1  0  0
+  1/4  1/4  1/4
+
+ -1  0  0
+  0  0  1
+  0  1  0
+  1/4  3/4  1/4
+
+ -1  0  0
+  0  0 -1
+  0 -1  0
+  1/4  1/4  1/4
+
+ -1  0  0
+  0 -1  0
+  0  0 -1
+  0  0  0
+
+ -1  0  0
+  0  0  1
+  0 -1  0
+  3/4  3/4  1/4
+
+ -1  0  0
+  0  0 -1
+  0  1  0
+  3/4  1/4  1/4
+
+  0  0 -1
+  0 -1  0
+  1  0  0
+  3/4  1/4  1/4
+
+  0  0  1
+  0 -1  0
+ -1  0  0
+  3/4  1/4  3/4
+
+  0  1  0
+ -1  0  0
+  0  0 -1
+  3/4  1/4  3/4
+
+  0 -1  0
+  1  0  0
+  0  0 -1
+  3/4  3/4  1/4
+
+  0  0 -1
+ -1  0  0
+  0 -1  0
+  0  0  0
+
+  0 -1  0
+  0  0 -1
+ -1  0  0
+  0  0  0
+
+  0  1  0
+  0  0  1
+ -1  0  0
+  0  1/2  0
+
+  0  0 -1
+  1  0  0
+  0  1  0
+  0  0  1/2
+
+  0  1  0
+  0  0 -1
+  1  0  0
+  1/2  0  0
+
+  0  0  1
+  1  0  0
+  0 -1  0
+  0  1/2  0
+
+  0  0  1
+ -1  0  0
+  0  1  0
+  1/2  0  0
+
+  0 -1  0
+  0  0  1
+  1  0  0
+  0  0  1/2
+
+ -1  0  0
+  0  1  0
+  0  0  1
+  0  0  1/2
+
+  1  0  0
+  0 -1  0
+  0  0  1
+  1/2  0  0
+
+  1  0  0
+  0  1  0
+  0  0 -1
+  0  1/2  0
+
+  0 -1  0
+ -1  0  0
+  0  0  1
+  3/4  1/4  1/4
+
+  0  1  0
+  1  0  0
+  0  0  1
+  3/4  3/4  3/4
+
+  0  0 -1
+  0  1  0
+ -1  0  0
+  3/4  3/4  1/4
+
+  0  0  1
+  0  1  0
+  1  0  0
+  3/4  3/4  3/4
+
+  1  0  0
+  0  0 -1
+  0 -1  0
+  3/4  1/4  3/4
+
+  1  0  0
+  0  0  1
+  0  1  0
+  3/4  3/4  3/4
+
+  1  0  0
+  0  1  0
+  0  0  1
+  1/2  1/2  1/2
+
+  1  0  0
+  0  0 -1
+  0  1  0
+  3/4  3/4  1/4
+
+  1  0  0
+  0  0  1
+  0 -1  0
+  3/4  1/4  1/4
+
+  0  0  1
+  0  1  0
+ -1  0  0
+  3/4  1/4  1/4
+
+  0  0 -1
+  0  1  0
+  1  0  0
+  3/4  1/4  3/4
+
+  0 -1  0
+  1  0  0
+  0  0  1
+  3/4  1/4  3/4
+
+  0  1  0
+ -1  0  0
+  0  0  1
+  3/4  3/4  1/4
+
+  0  0  1
+  1  0  0
+  0  1  0
+  1/2  1/2  1/2
+
+  0  1  0
+  0  0  1
+  1  0  0
+  1/2  1/2  1/2
+
+  0 -1  0
+  0  0 -1
+  1  0  0
+  1/2  0  1/2
+
+  0  0  1
+ -1  0  0
+  0 -1  0
+  1/2  1/2  0
+
+  0 -1  0
+  0  0  1
+ -1  0  0
+  0  1/2  1/2
+
+  0  0 -1
+ -1  0  0
+  0  1  0
+  1/2  0  1/2
+
+  0  0 -1
+  1  0  0
+  0 -1  0
+  0  1/2  1/2
+
+  0  1  0
+  0  0 -1
+ -1  0  0
+  1/2  1/2  0
+
+  1  0  0
+  0 -1  0
+  0  0 -1
+  1/2  1/2  0
+
+ -1  0  0
+  0  1  0
+  0  0 -1
+  0  1/2  1/2
+
+ -1  0  0
+  0 -1  0
+  0  0  1
+  1/2  0  1/2
+
+  0  1  0
+  1  0  0
+  0  0 -1
+  3/4  1/4  1/4
+
+  0 -1  0
+ -1  0  0
+  0  0 -1
+  3/4  3/4  3/4
+
+  0  0  1
+  0 -1  0
+  1  0  0
+  3/4  3/4  1/4
+
+  0  0 -1
+  0 -1  0
+ -1  0  0
+  3/4  3/4  3/4
+
+ -1  0  0
+  0  0  1
+  0  1  0
+  3/4  1/4  3/4
+
+ -1  0  0
+  0  0 -1
+  0 -1  0
+  3/4  3/4  3/4
+
+ -1  0  0
+  0 -1  0
+  0  0 -1
+  1/2  1/2  1/2
+
+ -1  0  0
+  0  0  1
+  0 -1  0
+  1/4  1/4  3/4
+
+ -1  0  0
+  0  0 -1
+  0  1  0
+  1/4  3/4  3/4
+
+  0  0 -1
+  0 -1  0
+  1  0  0
+  1/4  3/4  3/4
+
+  0  0  1
+  0 -1  0
+ -1  0  0
+  1/4  3/4  1/4
+
+  0  1  0
+ -1  0  0
+  0  0 -1
+  1/4  3/4  1/4
+
+  0 -1  0
+  1  0  0
+  0  0 -1
+  1/4  1/4  3/4
+
+  0  0 -1
+ -1  0  0
+  0 -1  0
+  1/2  1/2  1/2
+
+  0 -1  0
+  0  0 -1
+ -1  0  0
+  1/2  1/2  1/2
+
+  0  1  0
+  0  0  1
+ -1  0  0
+  1/2  0  1/2
+
+  0  0 -1
+  1  0  0
+  0  1  0
+  1/2  1/2  0
+
+  0  1  0
+  0  0 -1
+  1  0  0
+  0  1/2  1/2
+
+  0  0  1
+  1  0  0
+  0 -1  0
+  1/2  0  1/2
+
+  0  0  1
+ -1  0  0
+  0  1  0
+  0  1/2  1/2
+
+  0 -1  0
+  0  0  1
+  1  0  0
+  1/2  1/2  0
+
+ -1  0  0
+  0  1  0
+  0  0  1
+  1/2  1/2  0
+
+  1  0  0
+  0 -1  0
+  0  0  1
+  0  1/2  1/2
+
+  1  0  0
+  0  1  0
+  0  0 -1
+  1/2  0  1/2
+
+  0 -1  0
+ -1  0  0
+  0  0  1
+  1/4  3/4  3/4
+
+  0  1  0
+  1  0  0
+  0  0  1
+  1/4  1/4  1/4
+
+  0  0 -1
+  0  1  0
+ -1  0  0
+  1/4  1/4  3/4
+
+  0  0  1
+  0  1  0
+  1  0  0
+  1/4  1/4  1/4
+
+  1  0  0
+  0  0 -1
+  0 -1  0
+  1/4  3/4  1/4
+
+  1  0  0
+  0  0  1
+  0  1  0
+  1/4  1/4  1/4
+\endcode
+
+<BR>
+\ref user_command_pc_page  (Up/Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
+\ref user_command_pg_page  (Next) 
+*/

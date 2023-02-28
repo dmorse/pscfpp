@@ -1369,7 +1369,7 @@ namespace Pspc
                filename += toString(ib);
                filename += "_";
                filename += toString(id);
-               filename += ".rf";
+               filename += ".rq";
                writeQ(filename, ip, ib, id);
             }
          }

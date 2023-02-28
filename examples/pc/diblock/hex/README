@@ -1,3 +1,8 @@
-Enter:
+To run SCFT calculation, enter ./run, or:
 
 pscf_pc2 -e -p param -c command
+
+
+To run conversion example script, enter:
+
+pscf_pc2 -e -p param -c convert
