@@ -1,44 +1,45 @@
-/*! \page user_field_page Fields and Field Files
+/*! \page user_field_page Field Files
 
 \ref user_param_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
 \ref user_command_page   (Next) 
 <BR>
 
-Among the commands that can be used to in the command file for any PSCF 
-program are commands to read and write files that contain information 
-about the concentrations of different types of monomer (referred to as 
-"c fields") or about corresponding monomer chemical potential fields 
-(referred to as "w" fields). 
+Among the commands that can be issued from the command file for any 
+PSCF program are several commands to read and write files that specify
+local concentrations of different types of monomer (referred to as "c 
+fields") or corresponding monomer chemical potential fields (referred 
+to as "w" fields). 
 
 Because PSCF uses a continuous chain model in which there are not 
 actually any discrete monomers, we use the word "monomer" in what 
 follows to refer to the amount of material that corresponds to one unit 
-of contour length within a block of a block polymer, or (equivalently) 
-that occupies a volume within an incompressible liquid equal to the
-monomer reference volume \f$ v\f$ 
+of contour length within a block of a block polymer. This is equivalent
+to the length of chain that occupies a volume within an incompressible 
+liquid equal to one monomer reference volume \f$ v\f$ 
 
-\section user_field_c_sec Monomer Concentration Fields 
+\section user_field_c_sec Monomer Concentration / Volume Fraction Fields
 
 The average volume fraction of monomers of type \f$ \alpha \f$ at any 
-position \f$ {\bf r} \f$ within an incompressible mixture is denoted 
-by \f$ \phi_{\alpha}({\bf r}) \f$. This volume fraction is related to 
-the average concentration of such monomers, denoted by 
+position \f$ {\bf r} \f$ within an incompressible mixture is denoted by 
+\f$ \phi_{\alpha}({\bf r}) \f$. This volume fraction is related to the 
+average concentration of such monomers, denoted by 
 \f$ \langle c_{\alpha}({\bf r}) \rangle \f$, by the relation
 \f[
    \phi_{\alpha}({\bf r}) = v \, \langle c_{\alpha}({\bf r}) \rangle 
    \quad,
 \f]
 in which \f$ v \f$ is the monomer reference volume. Monomer volume 
-fractions are thus equal to monomer concentrations that have been
+fractions are thus equivalent to monomer concentrations that have been
 non-dimensionalized by a monomer volume \f$ v \f$.  Reflecting this 
-connection, volume fraction fields are referred to throughout the 
-PSCF source code and in some command names as "c fields", where 
-"c" denotes concentration.
+relationship, volume fraction fields are referred to throughout the 
+PSCF source code and in some command names as "c fields", where "c" 
+denotes concentration.
 
 A converged solution to an SCFT problem for an incompressible system 
 must have average monomer concentrations for different monomer types 
 that add to  a total concentration \f$ c_{0} \equiv 1/v \f$, so as
 to obtain volume fractions that satisfy a constraint
+\anchor user_field_incompressible_eqn
 \f[
    \sum_{\alpha=1}^{C} \phi_{\alpha}({\bf r}) = 1
 \f]
@@ -60,6 +61,7 @@ commands as "w fields".
 
 The volume fraction and chemical potential fields in any solution of an 
 incompressible SCFT problem are related by a self-consistency condition
+\anchor user_field_scf_eqn
 \f[
    w_{\alpha}({\bf r}) 
    = \sum_{\beta=1}^{C} \chi_{\alpha \beta} \phi_{\beta}({\bf r})
@@ -67,74 +69,38 @@ incompressible SCFT problem are related by a self-consistency condition
 \f]
 Here, \f$\chi_{\alpha\beta}\f$ is a Flory-Huggins interaction parameter
 for interactions between monomers of types \f$\alpha\f$ and \f$\beta\f$, 
-while \f$\xi({\bf r})\f$ is a Langrange-multiplier field that must be 
-chosen such that the volume fractions satsify the incompressibility 
-constraint given above (i.e., such that the sum of the local monomer
-volume fractions is equal to 1 at every point in the system).
+while \f$\xi({\bf r})\f$ is a Langrange-multiplier field that is chosen
+so as to yield volume fraction fields that satisfy the incompressibility 
+constraint given \ref user_field_incompressible_eqn "above" (i.e., for
+which the sum of the local monomer volume fractions is equal to 1 at 
+every point in the system).
 
 Before attempting to solve an SCFT problem, each PSCF program must read
 a set of physical parameters from a parameter file and read in an initial
 guess for the w fields from an input field file.  After a solution is 
 obtained, the resulting converged w and c fields are usually written to 
-different output files.
+output files.
 
 \section user_field_formats_sec Field File Formats
 
 Every PSCF program can read and write w and c fields using one or more
-file formats that are designed for field files. The same format or 
-formats are used for w and c fields.  In each such file format, a single 
-file contains a description of the w or c fields associated with all of
-the different types of monomer present in a system.
+file formats designed for field files. The same format or formats are 
+always used for w and c fields.  In each such file format, a single file 
+contains a description of the w or c fields associated with all of the 
+different types of monomer present in a system.  
+
 Different field file formats are used by different PSCF programs.
-
-The pscf_fd program for one-dimensional problems uses a relatively 
-simple \ref user_field_fd1d_page "file format" that contains values of 
-fields at nodes of a regular one-dimensional grid. 
-
-The pscf_pcN and pscf_pgN programs are both designed to treat periodic 
-structures, and use the same set of several field file formats. 
-These programs can read and write the following three field file 
-formats:
-
-  - A \ref user_field_basis_page "basis" file format contains the
-    components for a representation of each field as a linear 
-    superposition of symmetry-adapated basis functions, in which
-    each basis function is invariant under all of the elements of 
-    a specified space group. 
-
-  - A \ref user_field_rgrid_page "r-grid" file format contains the 
-    values of fields defined on the nodes of a regular grid. 
-
-  - A \ref user_field_kgrid_page "k-grid" file format that contains 
-    the discrete Fourier transform of fields defined on a regular 
-    grid.
-
-Each of these file formats for periodic structures contains a header
-section that includes a specification of the crystal system and unit
-and unit cell parameters for the crystallographic unit cell. The header 
-for the r-grid and k-grid format also contains values for the number 
-of grid points in each direction. The grid dimensions given in such
-a field file header must match the dimensions given as elements of 
-the mesh parameter in the parameter file. 
-
-The basis and r-grid file formats used by the current C++ version of
-PSCF are compatible with those used by the older Fortran PSCF program.
-The k-grid format is not backwards compatible with the analogous 
-k-grid format used by the Fortran program.
-
-The names of some command-file commands that instruct pscf_pc and 
-pscf_pg programs to read or write field files contain the strings
-"BASIS", "RGRID", or "KGRID" to indicate a desired field file format.
-
-<h2> Contents: </h2>
-All of the field file formats used by different programs are described 
-in more detail in the pages linked below:
+The fd1d program for one-dimensional problems uses a simple field 
+format that lists values of fields on the nodes of a one-dimensional 
+grid. 
+The pscf_pc and pscf_pg programs, which both treat periodic structures, 
+use the same set of three different formats to describe periodic fields. 
+File formats used by different programs are described in more detail 
+in the sub-pages linked below:
 
 <ol>
   <li> \subpage user_field_fd1d_page   </li>
-  <li> \subpage user_field_basis_page  </li>
-  <li> \subpage user_field_rgrid_page  </li>
-  <li> \subpage user_field_kgrid_page  </li>
+  <li> \subpage user_field_periodic_page  </li>
 </ol>
 
  <BR>

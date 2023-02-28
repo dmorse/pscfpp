@@ -1,7 +1,7 @@
-/*! \page user_field_fd1d_page Field File - One-Dimensional (pscf_fd)
+/*! \page user_field_fd1d_page Field File - 1D Fields (pscf_fd)
 
  \ref user_field_page (Prev/Up) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_field_basis_page (Next) 
+ \ref user_field_periodic_page (Next) 
 <BR>
 
 The pscf_fd program is designed for problems in which fields depend 
@@ -76,5 +76,5 @@ last row in the above example.
 <BR>
  \ref user_field_kgrid_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref user_field_page        (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_unitcell_page     (Next) 
+ \ref user_field_periodic_page  (Next) 
 */

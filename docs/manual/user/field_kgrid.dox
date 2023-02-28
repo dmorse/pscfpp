@@ -1,7 +1,7 @@
 /*! \page user_field_kgrid_page Field File - K-Grid (Periodic)
 
  \ref user_field_rgrid_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_unitcell_page   (Next) 
+ \ref user_command_page      (Next) 
 <BR>
 
 The pscf_pc and pscf_gp programs for periodic systems can also read 
@@ -11,38 +11,38 @@ The required file format is very similar to that used for the
 coordinate space grid. The file consists of a header and a data 
 section. The format of the header is identical to that used for 
 the coordinate grid format, and includes a list of the number of 
-grid points used in each direction, denoted by ngrid.
+grid points used in each direction, denoted by mesh.
 
 The data section contains the Fourier coefficients obtained by a 
 discrete Fourier transform of each field at wavevectors given by
 \f[
-    \textbf{k}(n_1, \ldots, n_{D}) = \sum_{i=1}^{\textrm{D}}
+    \textbf{k}(n_1, \ldots, n_{D}) = \sum_{i=0}^{\textrm{D}-1}
     n_{i}\textbf{b}_{i}
 \f]
 where \f$D\f$ is the dimensionality of the crystal (i.e., dim
 in the header file), \f$\textbf{b}_{i}\f$ is a reciprocal lattice 
 basis vector, \f$N_{i}\f$ is the number of grid points along 
-direction \f$i\f$, and \f$n_{i}\f$ is an integer in the 
-range \f$0 \leq n_{D} \leq N_{1}/2\f$ for the last index and 
-\f$0 \leq n_{i} \leq N_{i} - 1\f$ for indices \f$i < D\f$. 
+direction \f$i\f$, and \f$n_{i}\f$ is an integer in the range 
+\f$0 \leq n_{D-1} \leq N_{1}/2\f$ for the last index and 
+\f$0 \leq n_{i} \leq N_{i} - 1\f$ for indices \f$i < D-1\f$. 
 The number of rows in the data section is equal to the total 
 number of such wavevectors, and each row contains values of 
-Fourier coefficients associated with a single wavevector, 
-with coefficients for fields associated with different monomer 
-types in different columnns. 
+Fourier coefficients associated with a single wavevector, with 
+coefficients for fields associated with different monomer types 
+in different columnns. 
 
 Coefficients for different wavevectors are output in sequential
-order, using the last index (e.g., \f$n_{3}\f$ for a 3D crystal) 
+order, using the last index (e.g., \f$n_{2}\f$ for a 3D crystal) 
 as the most rapidly varying (inner-most) loop index. This is 
 implemented by a fortran loop of the form
 \code
-   do n1 = 0, ngrid(1) - 1
-     do n2 = 0, ngrid(2) - 1
-       do n3 = 0, ngrid(3)/2
-         [Read or write coefficients for wavevector k(n1, n2, n3)]
-        enddo
-     enddo
-   enddo
+   for (n0 = 0; n0 < N0; ++n0) {
+      for (n1 = 0; n1 < N1: ++n1) {
+         for (n2 = 0; n2 < N2/2; ++n2) {
+            [Read or write coefficients for wavevector k(n0, n1, n2)]
+         }
+      }
+   }
 \endcode
 
 Note that this is not the same as the way that the k-grid files
@@ -54,5 +54,5 @@ k-grid files are not compatible between the two codes.
 <BR>
  \ref user_field_rgrid_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref user_field_page        (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_field_fd1d_page  (Next) 
+ \ref user_command_page      (Next) 
 */

@@ -96,5 +96,16 @@ namespace Pscf
       }
    }
 
+   /*
+   * Open an output file and write group to file. 
+   */
+   template <int D>
+   void writeGroup(std::string filename, SpaceGroup<D> const & group)
+   {
+      std::ofstream out;
+      out.open(filename);
+      out << group;
+   }
+
 }
 #endif

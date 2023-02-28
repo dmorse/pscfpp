@@ -411,20 +411,11 @@ Example:
   - Providing an accessor function that returns a non-const reference to a 
     member object is equivalent to making the member public, and should be 
     used when this is the desired behavior. Do not instead simply make the 
-    data member public. For example, the McMd::Atom and McMd::McSimulation 
-    classes in the simpatico package provide the following methods:
-\code
+    data member a public member.
 
-   Util::Vector& Atom::position()
-   {  return system_; }
-
-   McMd::McSystem& McMd::McSimulation::system()
-   {  return system_; }
-
-\endcode
-These provide pseudo-public access to the position of an Atom (represented 
-as a Util::Vector) and to the system component of an McSimulation. The 
-advantages of this scheme are:
+Accessors that return non-const references provide pseudo-public access to 
+data members (i.e., variables or objects).  The advantages of this scheme 
+over simply making selected data members public are:
      <ul>
      <li> Uniform interface: All members must be accessed through accessors, 
 so users need not remember which members are public and which are accessed 

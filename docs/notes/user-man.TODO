@@ -1,0 +1,30 @@
+
+pscf_fd Commands
+----------------
+
+    V1.1 ?
+
+    Consider adding a RESCALE command
+
+    Consider removing documentation of WRITE_Q_VERTEX command ?
+
+    Consider adding commands to output propagators?
+
+pscf_pc Commands
+----------------
+
+    V1.1
+
+    Consider adding a RESCALE command
+
+    Consider adding a function and command to symmetrize a field
+
+Theory
+------
+
+    V1.1
+
+    Add discussion of propagators as ratio's of partition functions
+
+    Add derivation of Chapman-Kolmogorov equation
+     

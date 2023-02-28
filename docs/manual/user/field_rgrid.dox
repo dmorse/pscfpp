@@ -4,12 +4,12 @@
  \ref user_field_kgrid_page   (Next) 
 <BR>
 
-The R-Grid file format is used by the pscf_pc and pscf_pg programs 
-to describe fields in a spatially periodic microstructure. This 
-format outputs the values of set of fields on the nodes of a regular 
-mesh that covers one unit cell of a periodic structure. This mesh 
-is the same one as that used by the pseudo-spectral algorithm for 
-solving the modified diffusion equation. 
+The r-grid file format is used by the pscf_pc and pscf_pg programs to 
+describe fields in a spatially periodic microstructure. This format 
+outputs the values of set of fields on the nodes of a regular mesh that 
+covers one unit cell of a periodic structure. This mesh is the same 
+one as that used by the pseudo-spectral algorithm for solving the 
+modified diffusion equation. 
 
 \section user_field_rgrid_hex_sec Example: 2D Hex Phase 
 
@@ -30,7 +30,7 @@ group_name
              P_6_m_m
 N_monomer           
                    2
-ngrid               
+mesh              
                   24                  24
        0.340581085      19.518839883
        0.570887775      19.658020087
@@ -47,23 +47,23 @@ ngrid
 
 \section user_field_rgrid_format_sec File Format 
 
-Like other field formats, this file format contains a header 
-section with crystallographic information followed by a data section. 
-The header section is similar that for the symmetry adapted format, except 
-that the last variable is an array "ngrid" of integers giving the number
-of grid points in each direction. In this example, because it is a
-two-dimensional crystal (dim = 2), this array contains two numbers,
-both 24, indicating a grid in which there are 24 grid points along
-each coordinate axis. To describe a hexagonal phase, we use a 
-non-orthogonal coordinate system in which each axis is parallel to 
-one of the Bravais lattice vectors, which in a hexagonal phase have 
-an angle of 60 degrees between them.
+Like other field formats, this file format contains a header section 
+with crystallographic information followed by a data section.  The header 
+section is similar that for the symmetry adapted format, except that the 
+last variable is an array "mesh" of integers giving the number of grid 
+points in each direction. In this example, because it is a two-dimensional 
+crystal (dim = 2), this array contains two numbers, both equal to 24,
+indicating a grid in which there are 24 grid points along each coordinate 
+axis. To describe a hexagonal phase, we use a non-orthogonal coordinate 
+system in which each axis is parallel to one of the Bravais lattice 
+vectors, which in a hexagonal phase have an angle of 60 degrees between 
+them.
 
 The data section contains the values of fields associated with N_monomer 
 monomer types at grid points given by
 \f[
-    \textbf{r}(n_1, \ldots, n_{D}) = \sum_{i=1}^{\textrm{D}}
-    \frac{n_{i}}{N_{i}}\textbf{a}_{1}
+    \textbf{r}(n_1, \ldots, n_{D}) = \sum_{i=0}^{\textrm{D}-1}
+    \frac{n_{i}}{N_{i}}\textbf{a}_{i}
 \f]
 where \f$D\f$ is the dimensionality of the crystal (denoted by "dim" 
 in the header file), \f$\textbf{a}_{i}\f$is a Bravais lattice vector, 
@@ -72,27 +72,31 @@ in the header file), \f$\textbf{a}_{i}\f$is a Bravais lattice vector,
 The number of rows in the data section is equal to the total number 
 of grid points. Each row in this section contains values of all field 
 components at a single grid point. The number of columns is equal to 
-the number of monomer types, so that data in column \f$\alpha\f$ 
-contains the values of the field associated with monomer type 
-\f$\alpha\f$. 
+the number of monomer types, so that data in column \f$\alpha\f$, 
+with columns numbered as \f$ \alpha = 0, 1, \ldots \f$, contains the 
+values of the field associated with monomer type index \f$\alpha\f$. 
 
-Grid points are listed in order using index \f$n_{1}\f$ as the most 
-rapidly varying (innermost) loop index. This is implemented in the 
-field_io_mod module, in subroutines output_field_grid and 
-input_field_grid as a fortran loop of the form::
-
+Grid points are listed in order using the first index \f$n_{0}\f$ as 
+the most rapidly varying (innermost) loop index. This order, which is
+the opposite of the order in which elements of an array are stored in
+in C/C++, is used to maintain backwards compatbility with order used 
+in the file format defined in the older fortran version of PSCF. This 
+is implemented for a three-dimensional crystal as a loop that can be
+given as pseudo-code of the form:
 \code
-   do n3 = 0, ngrid(3) - 1
-     do n2 = 0, ngrid(2) - 1
-       do n1 = 0, ngrid(1) - 1
-          [Read or write data at grid point r(n1, n2, n3)]
-       enddo
-     enddo
-   enddo
+   for (n2 = 0; n2 < N2; ++n2) {
+      for (n1 = 0; n1 < N1; ++n1) {
+         for (n0 = 0; n0 < N0; ++n1) {
+            [Read or write data at grid point r(n0, n1, n2)]
+         }
+      }
+   }
 \endcode
+in which capitalized symbols (N0, N1, N2) denote the number of grid 
+points in each direction and lower case-variables (n0, n1, n2) denote 
+indices for a particular grid point.
 
-
- <BR>
+<BR>
  \ref user_field_basis_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref user_field_page        (Up)   &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref user_field_kgrid_page  (Next) 

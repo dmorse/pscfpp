@@ -1,31 +1,31 @@
-/*! \page user_command_pc_page Commands - pscf_pc 
+/*! \page user_command_pc_page Commands - pscf_pc
 
- \ref user_command_fd_page     (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_command_pg_page (Next) 
+ \ref user_command_fd_page     (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+ \ref user_command_pg_page (Next)
 <BR>
 
 The pscf_pc programs accept a larger set of commands than the simpler
 pscf_fd program, though the basic commands are similar. The number of
-commands is larger in part as a result of the fact that pscf_pc programs 
-can use several different formats to read and write field files.  By 
-convention, the names of commands that read or write a field file in 
-symmetry-adapted basis format end with a suffix _BASIS, while names 
+commands is larger in part as a result of the fact that pscf_pc programs
+can use several different formats to read and write field files.  By
+convention, the names of commands that read or write a field file in
+symmetry-adapted basis format end with a suffix _BASIS, while names
 of commands that read or write files in read-space grid (r-grid) format
-end with a suffic _RGRID. The pscf_pc programs also accept a set of 
-commands that can be used convert between different possible field 
+end with a suffic _RGRID. The pscf_pc programs also accept a set of
+commands that can be used convert between different possible field
 file formats.
 
 \section user_command_pc_scft_sec Example: SCFT Calculation
 
-Below is an example of a simple command file for any of pscf_pc programs 
-for D-dimensionally periodic microstructures (i.e., for pscf_pc1, pscf_pc2, 
+Below is an example of a simple command file for any of pscf_pc programs
+for D-dimensionally periodic microstructures (i.e., for pscf_pc1, pscf_pc2,
 or pscf_pc3) for a calculation the performs a single SCFT calculation. Note
 that the names of pscf_pc commands that read or write field files include
-a string "BASIS", "RGRID" or "KGRID" that specifies which of the three 
+a string "BASIS", "RGRID" or "KGRID" that specifies which of the three
 available field formats to use:
 \code
 READ_W_BASIS    in/w.bf
-ITERATE         
+ITERATE
 WRITE_W_BASIS   out/w.bf
 WRITE_C_BASIS   out/c.bf
 WRITE_C_RGRID   out/c.rf
@@ -34,19 +34,19 @@ WRITE_THERMO    out/data
 FINISH
 \endcode
 The command "READ_W_BASIS in/w.bf" reads an initial guess for the
-chemical potentials fields from the file in/w.bf, which must contain 
-the components of the fields in "basis" format, as coefficients in an 
-expansion in a symmetry-adapted Fourier basis functions.  The ITERATE 
-command attempts to iteratively solve the SCFT equations starting from 
-this initial guess.  The command "WRITE_W_BASIS out/w.bf" writes the 
-resulting converged set of chemical potential fields to file out/w.bf 
-in symmetry-adapted basis format. The command "WRITE_C_BASIS out/c.bf" 
-writes the corresponding monomer volume fraction fields to the file 
-out/c.bf in the same format, while "WRITE_C_RGRID out/c.rf" writes the 
+chemical potentials fields from the file in/w.bf, which must contain
+the components of the fields in "basis" format, as coefficients in an
+expansion in a symmetry-adapted Fourier basis functions.  The ITERATE
+command attempts to iteratively solve the SCFT equations starting from
+this initial guess.  The command "WRITE_W_BASIS out/w.bf" writes the
+resulting converged set of chemical potential fields to file out/w.bf
+in symmetry-adapted basis format. The command "WRITE_C_BASIS out/c.bf"
+writes the corresponding monomer volume fraction fields to the file
+out/c.bf in the same format, while "WRITE_C_RGRID out/c.rf" writes the
 volume fraction fields in r-grid format, which can be used for subsequent
-visualization. The command "WRITE_PARAM out/data" writes a param file 
-for the current system to the file out/data. The command, 
-"WRITE_THERMO out/data", appends the thermodynamic properties of the 
+visualization. The command "WRITE_PARAM out/data" writes a param file
+for the current system to the file out/data. The command,
+"WRITE_THERMO out/data", appends the thermodynamic properties of the
 converged solution to the end of the same file.  The FINISH command
 instructs the main program to finish execution and return.
 
@@ -58,153 +58,153 @@ READ_W_BASIS    in/w.bf
 SWEEP
 FINISH
 \endcode
-The command "READ_W_BASIS in/w.bf" reads an initial guess for the 
-chemical potentials fields at the initial state of the sweep (the 
-state s=0) from the file in/w.bf.  The SWEEP command actually 
-executes a sweep operation. 
+The command "READ_W_BASIS in/w.bf" reads an initial guess for the
+chemical potentials fields at the initial state of the sweep (the
+state s=0) from the file in/w.bf.  The SWEEP command actually
+executes a sweep operation.
 
 \section user_command_pc_commands_sec Commands
 
 The following table shows a list of available commands for the pscf_pc.
-Clickable command names link to a more detailed discussions of that 
+Clickable command names link to a more detailed discussions of that
 command or a group of closely related commands.
 <table>
-  <tr> 
+  <tr>
     <td> <b>command     </b> </td>
     <td> <b>parameter(s)</b> </td>
     <td> <b>action </b> </td>
   </tr>
-  <tr> 
-    <td colspan="3" style="text-align:center"> 
+  <tr>
+    <td colspan="3" style="text-align:center">
       \ref user_command_pc_fieldin_sec "W Field Initialization"
-    </td> 
+    </td>
   </tr>
-  <tr> 
+  <tr>
     <td> \ref user_command_pc_readwbasis_sub "READ_W_BASIS" </td>
     <td> filename [string] </td>
-    <td> 
+    <td>
       Read w fields from file filename, in symmetry-adapted basis format
     </td>
   </tr>
-  <tr> 
+  <tr>
     <td> \ref user_command_pc_estimatewc_sub "ESTIMATE_W_FROM_C" </td>
     <td> filename [string] </td>
-    <td> Read c fields in symmetry-adapted basis format from file filename, 
+    <td> Read c fields in symmetry-adapted basis format from file filename,
          compute estimated w fields as initial guesses for iteration. </td>
   </tr>
-  <tr> 
+  <tr>
     <td> \ref user_command_pc_readwrgrid_sub "READ_W_RGRID" </td>
     <td> filename [string] </td>
-    <td> Read w fields from file filename, in real-space grid (r-grid) 
+    <td> Read w fields from file filename, in real-space grid (r-grid)
          format. See \ref user_command_pc_readwrgrid_sub "discussion"
          for constraints on usage. </td>
   </tr>
-  <tr> 
-    <td colspan="3" style="text-align:center"> 
+  <tr>
+    <td colspan="3" style="text-align:center">
       \ref user_command_pc_compute_sec "Computation"
-    </td> 
+    </td>
   </tr>
-  <tr> 
+  <tr>
     <td> \ref user_command_pc_compute_sub "COMPUTE" </td>
     <td> </td>
     <td> Solve modified diffusion equation for the current w fields </td>
   </tr>
-  <tr> 
+  <tr>
     <td> \ref user_command_pc_iterate_sub "ITERATE" </td>
     <td> </td>
-    <td> Iteratively solve SCFT equations (after initializing 
+    <td> Iteratively solve SCFT equations (after initializing
          w fields) </td>
   </tr>
-  <tr> 
+  <tr>
     <td> \ref user_command_pc_sweep_sub "SWEEP" </td>
     <td> </td>
-    <td> Perform a sweep, as specified by the Sweep object in the param 
+    <td> Perform a sweep, as specified by the Sweep object in the param
          file. </td>
   </tr>
-  <tr> 
-    <td colspan="3" style="text-align:center"> 
+  <tr>
+    <td colspan="3" style="text-align:center">
      \ref user_command_pc_dataout_sec "Data Output"
-    </td> 
+    </td>
   </tr>
-  <tr> 
+  <tr>
     <td> \ref user_command_pc_param_sub "WRITE_PARAM" </td>
     <td> filename [string] </td>
-    <td> Write the param file associated with the current computation to 
+    <td> Write the param file associated with the current computation to
          specified file "filename", excluding any Sweep block </td>
   </tr>
   <tr>
     <td> \ref user_command_pc_thermo_sub "WRITE_THERMO" </td>
     <td> filename [string] </td>
     <td> Write thermodynamic data (free energy, pressure, phi, and mu
-         for each species) to file filename. 
+         for each species) to file filename.
          See \ref user_command_pc_thermo_sub "discussion"
          </td>
-  </tr> 
-  <tr> 
-    <td colspan="3" style="text-align:center"> 
-      \ref user_command_pc_fieldout_sec "Field Output"
-    </td> 
   </tr>
-  <tr> 
-    <td> 
-   \ref user_command_pc_fieldout_sec 
+  <tr>
+    <td colspan="3" style="text-align:center">
+      \ref user_command_pc_fieldout_sec "Field Output"
+    </td>
+  </tr>
+  <tr>
+    <td>
+   \ref user_command_pc_fieldout_sec
     "WRITE_W_BASIS" </td>
     <td> filename [string] </td>
     <td> Write w fields to file filename, in symmetry-adapted basis format
          </td>
   </tr>
-  <tr> 
+  <tr>
     <td> \ref user_command_pc_fieldout_sec "WRITE_W_RGRID" </td>
     <td> filename [string] </td>
     <td> Write w fields to file filename, in real-space grid (r-grid) format
          </td>
   </tr>
-  <tr> 
-    <td> \ref user_command_pc_fieldout_sec "WRITE_C_BASIS" </td> 
+  <tr>
+    <td> \ref user_command_pc_fieldout_sec "WRITE_C_BASIS" </td>
     <td> filename [string] </td>
     <td> Write monomer volume fraction fields (c fields) to file filename,
          in symmetry adapted basis format  </td>
   </tr>
-  <tr> 
+  <tr>
     <td> \ref user_command_pc_fieldout_sec "WRITE_C_RGRID" </td>
     <td> filename [string] </td>
     <td> Write monomer volume fraction fields (c fields) to file filename,
          in r-grid format  </td>
   </tr>
-  <tr> 
+  <tr>
     <td> \ref user_command_pc_writecblock_sub "WRITE_C_BLOCK_RGRID" </td>
     <td> filename [string] </td>
     <td> Write volume fraction fields (c fields) for all individual polymer
          blocks and solvent species to file filename, in r-grid format. </td>
   </tr>
-  <tr> 
-    <td colspan="3" style="text-align:center"> 
-      \ref user_command_pc_qout_sec "Propagator Output" 
-    </td> 
+  <tr>
+    <td colspan="3" style="text-align:center">
+      \ref user_command_pc_qout_sec "Propagator Output"
+    </td>
   </tr>
-  <tr> 
+  <tr>
     <td> \ref user_command_pc_writeqslice_sub "WRITE_Q_SLICE" </td>
     <td> filename [string], ip[int], ib[int], id[int], is[int] </td>
-    <td> Write a single "slice" of a propagator at fixed contour step 
-         number is, for direction id (id=0 or 1), block number ib, and 
+    <td> Write a single "slice" of a propagator at fixed contour step
+         number is, for direction id (id=0 or 1), block number ib, and
          polymer number ip to a file named filename, in r-grid format.
          </td>
   </tr>
-  <tr> 
+  <tr>
     <td> \ref user_command_pc_writeqtail_sub "WRITE_Q_TAIL" </td>
     <td> filename [string], ip[int], ib[int], id[int] </td>
-    <td> Write the final slice (or "tail") of the propagator for direction 
-         id (id=0 or 1), block ib, and polymer ip to file filename, in 
+    <td> Write the final slice (or "tail") of the propagator for direction
+         id (id=0 or 1), block ib, and polymer ip to file filename, in
          r-grid format. </td>
   </tr>
-  <tr> 
+  <tr>
     <td> \ref user_command_pc_writeq_sub "WRITE_Q" </td>
     <td> filename [string], ip[int], ib[int], id[int] </td>
-    <td> Write an entire propagator (all slices) for direction id, block ib, 
-         and polymer ip to a file named filename, in r-grid format. 
+    <td> Write an entire propagator (all slices) for direction id, block ib,
+         and polymer ip to a file named filename, in r-grid format.
          </td>
   </tr>
-  <tr> 
+  <tr>
     <td> \ref user_command_pc_writeqall_sub "WRITE_Q_ALL" </td>
     <td> basename [string] </td>
     <td> Write all propagators for both directions of all blocks of all
@@ -212,130 +212,151 @@ command or a group of closely related commands.
          that begin with a common prefix given by the basename parameter.
      </td>
   </tr>
-  <tr> 
-    <td colspan="3" style="text-align:center"> 
-      \ref user_command_pc_crystal_sec "Crystallographic Information" 
-    </td> 
+  <tr>
+    <td colspan="3" style="text-align:center">
+      \ref user_command_pc_crystal_sec "Crystallographic Information"
+    </td>
   </tr>
-  <tr> 
+  <tr>
     <td> \ref user_command_pc_writewaves_sub "WRITE_WAVES" </td>
     <td> filename [string] </td>
     <td> Write list of all allowed wavevectors to file filename. </td>
   </tr>
-  <tr> 
+  <tr>
     <td> \ref user_command_pc_writestars_sub "WRITE_STARS" </td>
     <td> filename [string] </td>
     <td> Write a list of all wavevector stars to file filename. </td>
   </tr>
-  <tr> 
-    <td colspan="3" style="text-align:center"> 
-      \ref user_command_pc_fieldops_sec "Field File Operations"
-    </td> 
+  <tr>
+    <td> \ref user_command_pc_writegroup_sub "WRITE_GROUP" </td>
+    <td> filename [string] </td>
+    <td> Write all group symmetry elements to file filename. </td>
   </tr>
-  <tr> 
-    <td> BASIS_TO_RGRID </td>
+  <tr>
+    <td colspan="3" style="text-align:center">
+      \ref user_command_pc_fieldops_sec "Field File Operations"
+    </td>
+  </tr>
+  <tr>
+    <td>
+    \ref user_command_pc_conversion_sub "BASIS_TO_RGRID" </td>
     <td> inFile [string], outFile [string] </td>
     <td> Read fields from file inFile in symmetry-adapted basis format,
          write to file outFile in real-space grid (r-grid) format </td>
   </tr>
-  <tr> 
-    <td> RGRID_TO_BASIS </td>
+  <tr>
+    <td>
+    \ref user_command_pc_conversion_sub "RGRID_TO_BASIS" </td>
     <td> inFile [string], outFile [string] </td>
-    <td> Read fields from file inFile in real-space grid (r-grid) format, 
-         write to file outFile in symmetry-adapted basis format. Note: This
-         command *assumes* that the field has the space group symmetry
-         declared in the param file, without checking. </td>
+    <td> Read fields from file inFile in real-space grid (r-grid) format,
+         write to file outFile in symmetry-adapted basis format.  </td>
   </tr>
-  <tr> 
-    <td> KGRID_TO_RGRID </td>
+  <tr>
+    <td> \ref user_command_pc_conversion_sub "KGRID_TO_RGRID" </td>
     <td> inFile [string], outFile [string] </td>
     <td> Read fields from file inFile in discrete Fourier transform
          (k-grid) format, write to file outFile in r-grid format </td>
   </tr>
-  <tr> 
-    <td> RGRID_TO_KGRID </td>
+  <tr>
+    <td> \ref user_command_pc_conversion_sub "RGRID_TO_KGRID" </td>
     <td> inFile [string], outFile [string] </td>
     <td> Read fields from file inFile in real-space (r-grid) format,
          write to outFile in discrete Fourier expansion (k-grid) format
          </td>
   </tr>
-  <tr> 
-    <td> BASIS_TO_KGRID </td>
+  <tr>
+    <td> \ref user_command_pc_conversion_sub "BASIS_TO_KGRID" </td>
     <td> inFile [string], outFile [string] </td>
     <td> Read fields from file inFile in symmetry-adapted basis format,
          write to outFile in discrete Fourier transform (k-grid) format
          </td>
   </tr>
-  <tr> 
-    <td> KGRID_TO_BASIS </td>
+  <tr>
+    <td> \ref user_command_pc_conversion_sub "KGRID_TO_BASIS" </td>
     <td> inFile [string], outFile [string] </td>
     <td> Read fields from file inFile in discrete Fourier transform
          (k-grid) format, write to file outFile in symmetry-adapted
          basis format. </td>
   </tr>
-  <tr> 
-    <td> CHECK_RGRID_SYMMETRY </td>
+  <tr>
+    <td> \ref user_command_pc_symmetry_sub "CHECK_RGRID_SYMMETRY" </td>
     <td> inFile [string], epsilon [double] </td>
     <td> Read fields from file inFile in real-space (r-grid) format,
          check whether the fields are invariant under all elements of
          the space group specified in the param file to within the
          error threshold epsilon.  </td>
   </tr>
-  <tr> 
-    <td colspan="3" style="text-align:center"> 
-    \ref user_command_pc_external_sec "External Fields"
-    </td> 
+  <tr>
+    <td> \ref user_command_pc_compare_sub "COMPARE_BASIS" </td>
+    <td> file1 [string], file2 [string] </td>
+    <td> Read fields from files file1 and file2 in basis format,
+         compares all component of all fields and write a report
+         of the magnitude of differences to the log output. </td>
   </tr>
-  <tr> 
-    <td> READ_H_BASIS </td>
+  <tr>
+    <td> \ref user_command_pc_compare_sub "COMPARE_RGRID" </td>
+    <td> file1 [string], file2 [string] </td>
+    <td> Read fields from files file1 and file2 in r-grid format,
+         compares values at all grid nodes and writes a report
+         of the magnitude of differences to the log output. </td>
+  </tr>
+  <tr>
+    <td colspan="3" style="text-align:center">
+    \ref user_command_pc_external_sec "External Fields"
+    </td>
+  </tr>
+  <tr>
+    <td> \ref user_command_pc_external_sec "READ_H_BASIS" </td>
     <td> filename [string] </td>
     <td> Read external (h) fields from file filename, in symmetry-adapted
          basis format </td>
   </tr>
-  <tr> 
-    <td> READ_H_RGRID </td>
+  <tr>
+    <td>
+    \ref user_command_pc_external_sec "READ_H_RGRID" </td>
     <td> filename [string] </td>
-    <td> Read external (h) fields from file filename, in real-space grid 
+    <td> Read external (h) fields from file filename, in real-space grid
          (r-grid) format </td>
   </tr>
-  <tr> 
-    <td> WRITE_H_BASIS </td>
+  <tr>
+    <td>
+    \ref user_command_pc_external_sec "WRITE_H_BASIS" </td>
     <td> filename [string] </td>
     <td> Write external potential fields (h fields) to file filename,
          in symmetry adapted basis format  </td>
   </tr>
-  <tr> 
-    <td> WRITE_H_RGRID </td>
+  <tr>
+    <td> \ref user_command_pc_external_sec "WRITE_H_RGRID" </td>
     <td> filename [string] </td>
     <td> Write external potential fields (h fields) to file filename,
          in r-grid format  </td>
   </tr>
-  <tr> 
-    <td colspan="3" style="text-align:center"> 
-    \ref user_command_pc_mask_sec 
-    "Mask Field (Inhomogeneous Density Constraint)" 
-    </td> 
+  <tr>
+    <td colspan="3" style="text-align:center">
+    \ref user_command_pc_mask_sec
+    "Mask Field (Inhomogeneous Density Constraint)"
+    </td>
   </tr>
-  <tr> 
-    <td> READ_MASK_BASIS </td>
+  <tr>
+    <td> \ref user_command_pc_mask_sec "READ_MASK_BASIS" </td>
     <td> filename [string] </td>
     <td> Read a mask field from file filename, in symmetry-adapted
          basis format </td>
   </tr>
-  <tr> 
-    <td> READ_MASK_RGRID </td>
+  <tr>
+    <td> \ref user_command_pc_mask_sec "READ_MASK_RGRID" </td>
     <td> filename [string] </td>
-    <td> Read a mask field from file filename, in real-space grid 
+    <td> Read a mask field from file filename, in real-space grid
          (r-grid) format </td>
   </tr>
-  <tr> 
-    <td> WRITE_MASK_BASIS </td>
+  <tr>
+    <td> \ref user_command_pc_mask_sec "WRITE_MASK_BASIS" </td>
     <td> filename [string] </td>
-    <td> Write mask field to file filename, in symmetry adapted basis 
+    <td> Write mask field to file filename, in symmetry adapted basis
          format  </td>
   </tr>
-  <tr> 
-    <td> WRITE_MASK_RGRID </td>
+  <tr>
+    <td> \ref user_command_pc_mask_sec "WRITE_MASK_RGRID" </td>
     <td> filename [string] </td>
     <td> Write mask field to file filename, in r-grid format  </td>
   </tr>
@@ -346,109 +367,109 @@ provided below.
 
 \section user_command_pc_fieldin_sec W Field Initialization
 
-The READ_W_BASIS, ESTIMATE_W_FROM_C and READ_W_RGRID commands allow 
-a user to set or reset the w fields that are stored in program 
-memory. The READ_W_BASIS and ESTIMATE_W_FROM_C commands both read files 
-in symmetry-adapted basis format. The READ_W_RGRID command reads w files 
-in real-space grid (r-grid) format, which does not require the fields 
-to have any particular space group symmetry.  One of these commands 
-must be invoked to initialize the w fields before invoking any of 
+The READ_W_BASIS, ESTIMATE_W_FROM_C and READ_W_RGRID commands allow
+a user to set or reset the w fields that are stored in program
+memory. The READ_W_BASIS and ESTIMATE_W_FROM_C commands both read files
+in symmetry-adapted basis format. The READ_W_RGRID command reads w files
+in real-space grid (r-grid) format, which does not require the fields
+to have any particular space group symmetry.  One of these commands
+must be invoked to initialize the w fields before invoking any of
 the computation commands. The w fields must normally be initialized
-by either the READ_W_BASIS or ESTIMATE_W_FROM_C command prior to any 
-operation which assumes the existence of a specified space group 
+by either the READ_W_BASIS or ESTIMATE_W_FROM_C command prior to any
+operation which assumes the existence of a specified space group
 symmetry.
 
-Each of these three field initialization commands reads a field file 
-that contains a header section that includes information about the 
+Each of these three field initialization commands reads a field file
+that contains a header section that includes information about the
 crystallographic unit cell and the space group name, as well as the
-number of monomer types. The description of the unit cell type and 
-space group name given in this header section must match those 
+number of monomer types. The description of the unit cell type and
+space group name given in this header section must match those
 declared in the parameter file, as must the value of the number of
-monomer types. Each of these three commands sets or resets the values 
-of unit cell parameters that are stored in program memory, by 
-setting them equal equal to the values that are given in this field 
-file header. 
+monomer types. Each of these three commands sets or resets the values
+of unit cell parameters that are stored in program memory, by
+setting them equal equal to the values that are given in this field
+file header.
 
-\anchor user_command_pc_readwbasis_sub 
+\anchor user_command_pc_readwbasis_sub
 The READ_W_BASIS command reads the coefficients of an expansion of
 the w fields in a symmetry-adapted Fourier basis from an input file
 whose name is specified as command parameter.
 
-The code that reads files in basis format that is used by both 
-READ_W_BASIS and ESTIMATE_W_FROM_C can read files that were generated 
-for a structure that has the space group symmetry declared in the 
+The code that reads files in basis format that is used by both
+READ_W_BASIS and ESTIMATE_W_FROM_C can read files that were generated
+for a structure that has the space group symmetry declared in the
 parameter file but that is defined on a different computation mesh
-mesh, with different number of grid points along each direction, than 
-that described by the "mesh" parameter in the parameter file. This 
-code initializes to zero the coefficients of any basis function that 
-exists in the current basis (which is created for the mesh declared 
-in the parameter file) but does appear in the input file. It also 
+mesh, with different number of grid points along each direction, than
+that described by the "mesh" parameter in the parameter file. This
+code initializes to zero the coefficients of any basis function that
+exists in the current basis (which is created for the mesh declared
+in the parameter file) but does appear in the input file. It also
 ignores values for coefficients of basis functions that appear in
-the input file but that do not exist in the current basis. 
+the input file but that do not exist in the current basis.
 
-*Technical note* : 
-The symmetry-adapted basis used by the pscf_pc programs is normally 
+*Technical note* :
+The symmetry-adapted basis used by the pscf_pc programs is normally
 created during the process of reading the first field file that that
-the program is instructed to read.  This basis is constructed immediately 
-after reading the header of that file, which contains a list of values 
-for the unit cell parameters. Initialization of the basis is delayed until 
-this point in program execution because values for unit cell parameters 
-are not provided in the parameter file, and required by the algorithm 
-that creates this basis. The choice of the initial values for the unit 
-cell parameters that are obtained in this way can affect the order in 
-which basis functions are listed internally, because the basis functions 
+the program is instructed to read.  This basis is constructed immediately
+after reading the header of that file, which contains a list of values
+for the unit cell parameters. Initialization of the basis is delayed until
+this point in program execution because values for unit cell parameters
+are not provided in the parameter file, and required by the algorithm
+that creates this basis. The choice of the initial values for the unit
+cell parameters that are obtained in this way can affect the order in
+which basis functions are listed internally, because the basis functions
 are symmetry-adapted eigenvalues of the Lapacian that are listed in an
-order of non-decreasing eigenvalues (or non-decreasing wavenumber)
-at the time of creation. The set of basis functions that is created
-for a particular mesh and space group is, however, independent of 
-the values of the unit cell parameter values that were used to 
-create this order during creation of the basis.
+order of non-decreasing eigenvalues (or non-decreasing wavenumber) at
+the time of creation. The set of basis functions that is created for a
+particular mesh and space group is, however, independent of the values
+of the unit cell parameter values that were used to create this order
+during creation of the basis.
 
-\anchor user_command_pc_estimatewc_sub 
-The ESTIMATE_W_FROM_C command reads a set of approximate monomer volume 
-fraction fields in symmetry-adapted basis format from the file whose name 
-is passed as an argument, and uses these to construct and store an 
-estimate of the corresponding w fields. This is intended to allow users 
-to construct an initial guess for w fields needed as an input to the 
-ITERATE and SWEEP commands from an initial guess for the volume fraction 
-fields for the structure of interest. The initial guess for the volume 
-fraction fields does not need to be perfect, just close enough to the 
-final structure to allow a chosen iteration algorithm to converge.  
+\anchor user_command_pc_estimatewc_sub
+The ESTIMATE_W_FROM_C command reads a set of approximate monomer volume
+fraction fields in symmetry-adapted basis format from the file whose name
+is passed as an argument, and uses these to construct and store an
+estimate of the corresponding w fields. This is intended to allow users
+to construct an initial guess for w fields needed as an input to the
+ITERATE and SWEEP commands from an initial guess for the volume fraction
+fields for the structure of interest. The initial guess for the volume
+fraction fields does not need to be perfect, just close enough to the
+final structure to allow a chosen iteration algorithm to converge.
 
-The estimated w fields are computed by setting the Lagrange multiplier 
-field to zero in the self-consistent field condition, giving an estimated 
+The estimated w fields are computed by setting the Lagrange multiplier
+field to zero in the self-consistent field condition, giving an estimated
 w field
 \f[
-   w_{\alpha}({\bf r}) = 
+   w_{\alpha}({\bf r}) =
    \sum_{\beta} \chi_{\alpha\beta}\phi_{\beta}({\bf r})
 \f]
-for monomer type \f$ \alpha \f$, in which \f$ \phi_{\beta} ({\bf r}) \f$ 
-is the volume fraction of monomer type \f$ \beta \f$, as read from the 
+for monomer type \f$ \alpha \f$, in which \f$ \phi_{\beta} ({\bf r}) \f$
+is the volume fraction of monomer type \f$ \beta \f$, as read from the
 input file, and \f$ \chi_{\alpha\beta} \f$ is a binary Flory-Huggins
-interaction parameter. 
+interaction parameter.
 
-\anchor user_command_pc_readwrgrid_sub 
+\anchor user_command_pc_readwrgrid_sub
 The READ_W_RGRID command reads the values of w fields in real-space
 grid (r-grid) format from an input file. The header of the an r-grid
-field file contains a description of the mesh, defined by the number 
-of grid points in each direction. These values must exactly equal the 
-values given in the parameter file by the elements of the "mesh" 
-parameter, or the program will output an error message and stop 
-execution. 
+field file contains a description of the mesh, defined by the number
+of grid points in each direction. These values must exactly equal the
+values given in the parameter file by the elements of the "mesh"
+parameter, or the program will output an error message and stop
+execution.
 
-The READ_W_RGRID command cannot be used to initialize w fields for 
-subsequent use in an SCFT simulation of a structure with a specified 
+The READ_W_RGRID command cannot be used to initialize w fields for
+subsequent use in an SCFT simulation of a structure with a specified
 symmetry, for reasons that are explained below.
 Users who wish to perform an SCFT calculation for a structure with a
-specified space group should thus initialize the w fields using either 
+specified space group should thus initialize the w fields using either
 the READ_W_BASIS or ESTIMATE_W_FROM_C commands, rather than READ_W_RGRID.
 The r-grid file format can represent a field with no particular space
-group symmetry. When w fields are read in r-grid format using this 
-command, the pscf_pc program thus assumes that the w fields and any 
-fields that are computed from them may not be symmetric under the 
-elements of the space group declared in the parameter file. Because 
-the existing iteration algorithms for pscf_pc programs all use an 
-expansion of the fields in symmetry-adapted basis, the ITERATE and 
+group symmetry. When w fields are read in r-grid format using this
+command, the pscf_pc program thus assumes that the w fields and any
+fields that are computed from them may not be symmetric under the
+elements of the space group declared in the parameter file. Because
+the existing iteration algorithms for pscf_pc programs all use an
+expansion of the fields in symmetry-adapted basis, the ITERATE and
 SWEEP command thus cannot be invoked when the current w fields
 were initialized using the READ_W_RGRID command. W fields that were
 initialize with the READ_W_RGRID command may, however, be used by
@@ -456,103 +477,103 @@ the COMPUTE command, which uses an algorithm that does not assume
 the existence of any space group symmetry.
 
 The READ_W_RGRID command is thus currently of very limited utility in
-the pscf_pc programs. It was implemented as a starting point for later 
-development of stochastic field theoretic simulation algorithms in 
-which the fluctuating field generally do not exhibit any special 
+the pscf_pc programs. It was implemented as a starting point for later
+development of stochastic field theoretic simulation algorithms in
+which the fluctuating field generally do not exhibit any special
 symmetry.
 
 \section user_command_pc_compute_sec Computation Commands
 
-The COMPUTE, ITERATE and SWEEP commands perform the primary computations 
-involved in a self-consistent field calculation.  Each performs the 
-same operation as the analogous command for the pscf_fd program. Each 
+The COMPUTE, ITERATE and SWEEP commands perform the primary computations
+involved in a self-consistent field calculation.  Each performs the
+same operation as the analogous command for the pscf_fd program. Each
 of these commands requires an initialized set of w fields and unit cell
-parameters as an input, which must have been initialized by a previous 
+parameters as an input, which must have been initialized by a previous
 call to READ_W_BASIS, READ_W_RGRID, or ESTIMATE_W_FROM_C.
 
 \anchor user_command_pc_compute_sub
-The COMPUTE command solves solves the single molecule statistical 
-mechanics problem for all polymer and solvent species for a system of 
+The COMPUTE command solves solves the single molecule statistical
+mechanics problem for all polymer and solvent species for a system of
 non-interacting molecules subjected to the current w-fields. This
-modifies the current c-fields stored in program memory, but does not 
-modify the w fields. 
+modifies the current c-fields stored in program memory, but does not
+modify the w fields.
 
 \anchor user_command_pc_iterate_sub
-The ITERATE command attempts to iteratively solve the self 
+The ITERATE command attempts to iteratively solve the self
 self-consistent field equations for a fixed set of input parameters,
 and may optionally modify the unit cell parameter so as to minimize
 the Helmholtz free energy density. The choice of iteration algorithm
-and parameters for that algorithm must be declared in the parameter 
-file, which is read before the command file. The parameters of the 
-iteration algorithm generally include a boolean "isFlexible" flag 
+and parameters for that algorithm must be declared in the parameter
+file, which is read before the command file. The parameters of the
+iteration algorithm generally include a boolean "isFlexible" flag
 that determines whether the iteration algorithm treat the unit cell
-as flexible (isFlexible == true) or rigid (isFlexible == false).  
-Iteration modifies the current w fields (i.e., the fields that are 
-stored in program memory), and modifies the unit cell parameters if 
-and only if the unit cell is treated as flexible.  The w fields and 
-unit cell parameters that are in memory on entry to iteration are 
-used as initial guesses. 
+as flexible (isFlexible == true) or rigid (isFlexible == false).
+Iteration modifies the current w fields (i.e., the fields that are
+stored in program memory), and modifies the unit cell parameters if
+and only if the unit cell is treated as flexible.  The w fields and
+unit cell parameters that are in memory on entry to iteration are
+used as initial guesses.
 
 \anchor user_command_pc_sweep_sub
-THE SWEEP command attempts to solve the SCFT equations at a sequence 
-of points along a path through the space of possible choices of input 
+THE SWEEP command attempts to solve the SCFT equations at a sequence
+of points along a path through the space of possible choices of input
 parameters. This command may only be invoked if the parameter file
 contains a Sweep block, which defines this set of state points. The
 SWEEP command uses the current w fields and unit cell parameters as
 initial guesses for the first state point in the sequence, and then
 generates initial guesses for subsequent points by extrapolation of
-the solutions obtained at previous points. 
+the solutions obtained at previous points.
 
 \section user_command_pc_dataout_sec Data Output Commands
 
-The WRITE_PARAM and WRITE_THERMO commands can be used to create a 
+The WRITE_PARAM and WRITE_THERMO commands can be used to create a
 record of the input parameters and computed thermodynamic properties
-associated with an SCFT calculation. 
+associated with an SCFT calculation.
 
-\anchor user_command_pc_param_sub 
-The WRITE_PARAM writes a slightly modified copy of the parameter 
-file to a file whose name that is specified as a command parameter. 
+\anchor user_command_pc_param_sub
+The WRITE_PARAM writes a slightly modified copy of the parameter
+file to a file whose name that is specified as a command parameter.
 The version of the parameter file written by this command outputs
 the current values for all parameters, and excludes any Sweep block.
-The output of this command is designed to serve as a record of the 
-input parameters associated with a single SCFT calculation. 
+The output of this command is designed to serve as a record of the
+input parameters associated with a single SCFT calculation.
 
-\anchor user_command_pc_thermo_sub 
-The WRITE_THERMO command outputs a report of values for thermodynamic 
-properties obtained after solution of a SCFT problem. The resulting 
-report includes values for the 
+\anchor user_command_pc_thermo_sub
+The WRITE_THERMO command outputs a report of values for thermodynamic
+properties obtained after solution of a SCFT problem. The resulting
+report includes values for the
 \ref user_model_helmholtz_sub "Helmholtz free energy per monomer"
-\f$ \tilde{f} \f$ , denoted by "fHelmholtz" in the output file, 
-the \ref user_model_pressure_sub "nondimensionalized pressure" 
-\f$ \tilde{p} \f$, denoted by "pressure", the chemical potential and 
-volume fraction of each polymer and solvent molecular species, denoted 
-by "mu" and "phi", and the current values of the unit cell parameters. 
-All free energies, pressure and chemical potential values are output 
+\f$ \tilde{f} \f$ , denoted by "fHelmholtz" in the output file,
+the \ref user_model_pressure_sub "nondimensionalized pressure"
+\f$ \tilde{p} \f$, denoted by "pressure", the chemical potential and
+volume fraction of each polymer and solvent molecular species, denoted
+by "mu" and "phi", and the current values of the unit cell parameters.
+All free energies, pressure and chemical potential values are output
 using thermal energy units, in which \f$ k_{B}T = 1 \f$.
 
-If the file whose name is passed to the WRITE_THERMO command already 
-exists, the report of thermodynamic properties will be appended to 
+If the file whose name is passed to the WRITE_THERMO command already
+exists, the report of thermodynamic properties will be appended to
 the end of this file, rather than overwriting the file.
-This is designed to allow users to output a parameter file block 
-that contains the input parameters followed by a report of computed 
-thermodynamic properties in a single file, if desired, by invoking 
+This is designed to allow users to output a parameter file block
+that contains the input parameters followed by a report of computed
+thermodynamic properties in a single file, if desired, by invoking
 WRITE_PARAM and WRITE_THERMO with the same file name parameter.
- 
+
 \section user_command_pc_fieldout_sec Field Output Commands
 
-The WRITE_W_BASIS, WRITE_W_RGRID, WRITE_C_BASIS, and WRITE_C_RGRID 
+The WRITE_W_BASIS, WRITE_W_RGRID, WRITE_C_BASIS, and WRITE_C_RGRID
 can be used to output the current w fields (chemical potential fields)
-or c fields (volume fraction fields) associated with all different 
+or c fields (volume fraction fields) associated with all different
 monomer types. Commands with names that end in BASIS output fields
-in basis format, and commands with names that end in RGRID output 
-fields in r-grid format. 
+in basis format, and commands with names that end in RGRID output
+fields in r-grid format.
 
 Fields can be output in symmetry-adapted basis format only if those
 fields are known to have the specified space group symmetry. This
-symmetry is known to exist for w fields only if they were initialized 
-using the READ_W_BASIS or ESTIMATE_W_FROM_C commands, and subsequently 
-modified by iteration algorithms that maintain space group symmetry. 
-Symmetry is assumed to exist for c fields only if the c fields were 
+symmetry is known to exist for w fields only if they were initialized
+using the READ_W_BASIS or ESTIMATE_W_FROM_C commands, and subsequently
+modified by iteration algorithms that maintain space group symmetry.
+Symmetry is assumed to exist for c fields only if the c fields were
 computed from w fields that are known to be symmetric.
 
 \anchor user_command_pc_writecblock_sub
@@ -561,229 +582,316 @@ fields (c-fields) for all blocks of all polymers and for all solvent
 species r-grid format as separate fields within a single file. The
 resulting file has a data section analogous to that produced by the
 \ref user_command_fd_writecblock_sub "WRITE_C_BLOCK" command of
-the pscf_fd program.  The resulting file contains a header section 
-identical to that contained in any r-grid field file, followed by a 
-data section.  The format of the data section is similar to that of 
-an r-grid field file that contain one field per monomer type, except 
-that each polymer block and solvent species is treated as a separate 
-monomer type, and thus output in a separate column of the data 
-section.  Blocks and solvent species are output in the order in which 
+the pscf_fd program.  The resulting file contains a header section
+identical to that contained in any r-grid field file, followed by a
+data section.  The format of the data section is similar to that of
+an r-grid field file that contain one field per monomer type, except
+that each polymer block and solvent species is treated as a separate
+monomer type, and thus output in a separate column of the data
+section.  Blocks and solvent species are output in the order in which
 they appear within the parameter file, as in the output of the
-\ref user_command_fd_writecblock_sub "WRITE_C_BLOCK" command of the 
+\ref user_command_fd_writecblock_sub "WRITE_C_BLOCK" command of the
 pscf_fd program.
 
 \section user_command_pc_qout_sec Propagator Output
 
 In the inner loop of a SCFT calculation, a modified diffusion equation
-(MDE) is solved within every block of every polymer to obtain a set of 
-so-called propagator functions. Each polymer block has two associated 
-propagator functions, each associated with one of the two directions 
-in which the block can be traversed.  Each propagator function 
-\f$ q({\bf r}, s) \f$ is a function of position \f$ {\bf r} \f$ and a 
-contour variable \f$ s \f$ measured within a block as a contour distance 
-from the vertex at which the propagator originates.  Each such propagator 
-function is associated with a particular direction (identified by index 
-id = 0 or 1), a particular block (block index ib), and a particular 
+(MDE) is solved within every block of every polymer to obtain a set of
+so-called propagator functions. Each polymer block has two associated
+propagator functions, each associated with one of the two directions
+in which the block can be traversed.  Each propagator function
+\f$ q({\bf r}, s) \f$ is a function of position \f$ {\bf r} \f$ and a
+contour variable \f$ s \f$ measured within a block as a contour distance
+from the vertex at which the propagator originates.  Each such propagator
+function is associated with a particular direction (identified by index
+id = 0 or 1), a particular block (block index ib), and a particular
 polymer (polymer index ip).  We refer to the function of position alone
-that is obtained by evaluating a propagator at a fixed value of \f$ s \f$ 
+that is obtained by evaluating a propagator at a fixed value of \f$ s \f$
 as a "slice".  Because the MDE for each such propagator is computed
 numerically at evenly spaced values of \f$ s \f$, a computationally
-accessible slice may be identified by a integer contour step index 
-\f$ is \f$ that is equal to zero at the vertex at which the propagator 
+accessible slice may be identified by a integer contour step index
+\f$ is \f$ that is equal to zero at the vertex at which the propagator
 originates, and increases with increasing distance \f$ s \f$ from that
 vertex.
 
 The pscf_pc programs accept several commands that output propagators
-and propagator slices to one or more files. The names for these commands 
-start with a string "WRITE_Q", followed by a suffix that describes what 
-information is output by invoking the command. All of these commands take 
-a filename string as a parameter, and all but one of them take values of 
-several integer indices needed to identify a particular propagator or 
-slice.  
+and propagator slices to one or more files. The names for these commands
+start with a string "WRITE_Q", followed by a suffix that describes what
+information is output by invoking the command. All of these commands take
+a filename string as a parameter, and all but one of them take values of
+several integer indices needed to identify a particular propagator or
+slice.
 
-All of these commands use file formats that report values of slices on 
-the nodes of the regular real-space grid that is used internally in 
-computations, analogous to the r-grid file format for w and c fields. 
-The file format always starts with a header section identical to that 
+All of these commands use file formats that report values of slices on
+the nodes of the regular real-space grid that is used internally in
+computations, analogous to the r-grid file format for w and c fields.
+The file format always starts with a header section identical to that
 of an r-grid field file, followed by a data section in which the values
-of each slice are output in a format analogous to that of a r-grid 
+of each slice are output in a format analogous to that of a r-grid
 field file for a system with only one monomer type, in which all values
-are output in a single column, with nodes listed in the same order as 
+are output in a single column, with nodes listed in the same order as
 in an r-grid field file.
 
 \anchor user_command_pc_writeqslice_sub
-The command WRITE_Q_SLICE write the values of a propagator slice at 
-a specified contour variable index \f$ is \f$ to an output file. 
-This command named must be followed by the name of the output file, 
-and values for the polymer index \f$ ip \f$, the block index \f$ ib \f$ 
+The command WRITE_Q_SLICE write the values of a propagator slice at
+a specified contour variable index \f$ is \f$ to an output file.
+This command named must be followed by the name of the output file,
+and values for the polymer index \f$ ip \f$, the block index \f$ ib \f$
 and the direction index \f$ id \f$, in that order.
-The data section for output by this function is the same as that of 
+The data section for output by this function is the same as that of
 an r-grid field file for a system with one monomer type.
 
 \anchor user_command_pc_writeqtail_sub
-The command WRITE_Q_TAIL write the values of the propagator slice at a 
-value of \f$ s \f$ equal to the length of the block, corresponding to 
+The command WRITE_Q_TAIL write the values of the propagator slice at a
+value of \f$ s \f$ equal to the length of the block, corresponding to
 the slice evaluated at the vertex at which the propagator terminates.
-This command named must be followed by the name of the output file, and 
+This command named must be followed by the name of the output file, and
 values for the polymer index \f$ ip \f$ and the block index \f$ ib \f$,
-in that order.  The resulting output file has the same format as that 
+in that order.  The resulting output file has the same format as that
 used by WRITE_Q_SLICE.
 
-Users may instead output the value of slice of a propagator 
-corresponding to the vertex at which it originates (i.e., the propagator 
-"head" rather than "tail"), by invoking WRITE_Q_SLICE with a contour 
-variable index \f$ is = 0 \f$, corresponding to a contour variable 
+Users may instead output the value of slice of a propagator
+corresponding to the vertex at which it originates (i.e., the propagator
+"head" rather than "tail"), by invoking WRITE_Q_SLICE with a contour
+variable index \f$ is = 0 \f$, corresponding to a contour variable
 \f$ s = 0 \f$,
 
 \anchor user_command_pc_writeq_sub
-The command WRITE_Q writes all slices of a specified propagator to a 
-single file.  This command name must be followed by the name of the 
-output file and values for the polymer index \f$ ip \f$ and block 
+The command WRITE_Q writes all slices of a specified propagator to a
+single file.  This command name must be followed by the name of the
+output file and values for the polymer index \f$ ip \f$ and block
 index \f$ ib \f$, in that order.
 
-The output file produced by command contains a header section followed
-by a sequence of data sections, in which each data section contains the
-data for a single slice at an integer value of the counter variable 
-index. Data sections are listed in order of increasing countour variable
-index. The header section is similar to that of an r-grid file, except
-for the addition of line at the end that contain the word "nslice"
-followed by the value of the number of slices.  Each data section begins 
+The output file produced by this command contains a header section
+followed by a sequence of data sections, in which each data section
+contains the data for a single slice at an integer value of the countour
+variable index. Data sections are listed in order of increasing countour
+variable index. The header section is similar to that of an r-grid file,
+except for the addition of line at the end that contain the word "nslice"
+followed by the value of the number of slices.  Each data section begins
 with a line containing the word "slice" followed by value of the contour
-variable index for the slice represented by that section. The value of 
-the slice index ranges from 0 for the first slice (the "head") to 
-nslice - 1 for the last (the "tail"). The format of the remainder of each 
-data section is the same as that of the data section of an r-grid field 
-file for a system containing one monomer type, which consists of a single 
-column of numbers containing the values of the associated propagator 
-slice on the nodes of the regular spatial mesh used throughout the 
+variable index for the slice represented by that section. The value of
+the slice index ranges from 0 for the first slice (the "head") to
+nslice - 1 for the last (the "tail"). The format of the remainder of each
+data section is the same as that of the data section of an r-grid field
+file for a system containing one monomer type, which consists of a single
+column of numbers containing the values of the associated propagator
+slice on the nodes of the regular spatial mesh used throughout the
 computation.
 
-*For readers who inspect the source code*: This command calls the 
-function Pspc::System<D>::writeQ, which defines the output format, 
+*For readers who inspect the source code*: This command calls the
+function Pspc::System<D>::writeQ, which defines the output format,
 and which is defined in the C++ file src/pspc/System.tpp.
 
 \anchor user_command_pc_writeqall_sub
-The command WRITE_Q_ALL writes all slices of every propagator of every 
-polymer to a set of files, with all the slices of each propagator 
-written to a single file, but different propagators output in different 
-files.  This command name must be followed by the value of a string 
-parameter "basename" that contains a common prefix for the names of 
-the resulting file set of output files. 
+The command WRITE_Q_ALL writes all slices of every propagator of every
+polymer to a set of files, with all the slices of each propagator
+written to a single file, but different propagators output in different
+files.  This command name must be followed by the value of a string
+parameter "basename" that contains a common prefix for the names of
+the resulting file set of output files.
 
-Each of files created by this command has the same format as that of 
-a file created by the \ref user_command_pc_writeq_sub "WRITE_Q" command.  
-The name of the file containing the propagator associated with polymer 
-ip, block ib, and direction id is given by a string of the form 
-(basename)_(ip)_(ib)_(id).rf, where (basename) denotes the value of 
-the basename command parameter, and where (ip), (ib), and (id) denote 
-string representations of the values of the non-negative integers ip, 
+Each of files created by this command has the same format as that of
+a file created by the \ref user_command_pc_writeq_sub "WRITE_Q" command.
+The name of the file containing the propagator associated with polymer
+ip, block ib, and direction id is given by a string of the form
+(basename)_(ip)_(ib)_(id).rf, where (basename) denotes the value of
+the basename command parameter, and where (ip), (ib), and (id) denote
+string representations of the values of the non-negative integers ip,
 ib, and id. Thus, for example, if the command is passed a basename
-parameter out/q, then the file out/q_0_2_1.rf will contain all slices 
-of the propagator associated with polymer 0, block 2 and direction 1. 
+parameter out/q, then the file out/q_0_2_1.rf will contain all slices
+of the propagator associated with polymer 0, block 2 and direction 1.
 
 \section user_command_pc_crystal_sec Crystallographic Information
 
-The commands WRITE_WAVES and WRITE_STARS allow the user to output 
+The commands WRITE_WAVES and WRITE_STARS allow the user to output
 information about the symmetry-adapted basis that program has constructed
 for space group and mesh specified in the parameter file. This basis
-is constructed by identifying sets of allowed wavevectors that are 
-related by symmetry, which we refer to as "stars", and constructing 
-a basis function associated with each star as linear superpositions 
-of planes waves with wavevectors that belong to that star. The 
-coefficients of plane waves associated with wavevectors within such 
-superposition are complex numbers with the same absolute magnitude 
-and relative phases (i.e., differences between complex arguments) 
-that are determined by the requirement that each such function be 
+is constructed by identifying sets of allowed wavevectors that are
+related by symmetry, which we refer to as "stars", and constructing
+a basis function associated with each star as linear superpositions
+of planes waves with wavevectors that belong to that star. The
+coefficients of plane waves associated with wavevectors within such
+superposition are complex numbers with the same absolute magnitude
+and relative phases (i.e., differences between complex arguments)
+that are determined by the requirement that each such function be
 invariant under all operations of the specified space group.
 
 \anchor user_command_pc_writewaves_sub
 The WRITE_WAVES command outputs an ordered list of unique wavevectors
-that can appear in the expansion of a function with the specified
-space group symmetry, with associated information about each wavevector.
-The name of this command must be followed by the name of the file to 
-which this listing should be written.  Each allowed wavevector in the
-Fourier expansion of a periodic function may be expressed as linear
-superposition of reciprocal lattice basis vectors for the Bravais
-lattice for that crystal with integer coefficients. The number of
-required wavevectors is determined by the fact that field values
-are only defined on points are on nodes of a regular mesh that
-discretizes one unit cell of the crystal. The information about each
-wavevector that is output includes values of the integer indices of
-the wavevector (i.e., coefficients of the reciprocal lattice basis
-vectors), the index of the star to which it belongs, and the 
-coefficient of the associated plane wave with the sum of plane waves
-that defines the basis function associated with that star. The format
-of this report is defined by the outputWaves function of class template 
-Basis<int D>, which is defined in the file src/pscf/crystal/Basis.tpp.
+that can appear in the expansion of a function with the specified space
+group symmetry, with associated information about each wavevector.
+The name of this command must be followed by the name of the file to
+which this listing should be written.
+A discussion of the format of the file created by this command is given
+\subpage user_command_pc_wave_page "here" .
+
 
 \anchor user_command_pc_writestars_sub
 The WRITE_STARS command outputs a more compact list of information
-about stars, or associated basis functions. The format of this report
-of this report is defined by the function outputStars of class template 
-Basis<int D>.
+about stars, or associated basis functions.
+The name of this command must be followed by the name of the file to
+which this listing should be written.
+A discussion of the format of the file created by this command is given
+\subpage user_command_pc_star_page "here" .
+
+\anchor user_command_pc_writegroup_sub
+The WRITE_GROUP command outputs a list of all of the symmetry operations
+in the space group.  In the resulting file, each symmetry operation is
+output as a D X D matrix representation of a point group (e.g., a
+reflection, rotation or inversion) followed by a displacement vector.
+Both the point group operation matrix and the displacement vector are
+defined using a basis of Bravais lattice basis vectors. In this basis,
+elements of the point group matrix are all integers, while elements of
+the translation vector are either zero or fractions such as 1/2, 1/3,
+3/4, etc. A more detailed discussion of this representation of space
+group symmetry operations is given \ref user_symmetry_page "here".
 
 \section user_command_pc_fieldops_sec Field File Manipulations
 
-\section user_command_pc_external_sec External Fields 
+The pscf_pc programs accept several commands that perform manipulations
+on field files, including conversions among different formats.
+
+\subsection user_command_pc_conversion_sub Field Format Conversions
+
+The 6 commands BASIS_TO_RGRID, RGRID_TO_BASIS, KGRID_TO_RGRID,
+RGRID_TO_KGRID, BASIS_TO_KGRID and KGRID_TO_BASIS each reads a field
+file containing a set of fields in the format specified by the first
+field file format descriptor in the command name (i.e., BASIS, RGRID,
+or KGRID) and writes the same field to another file in the format
+specified by the second descriptor. Each of these commands takes two
+file names as parameters, the first of which is the name of the input
+file, and the second of which is the name of the output file.  For
+example, a command
+\code
+BASIS_TO_RGRID   out/w.bf   out/w.rf
+\endcode
+would read a file named "out/w.bf" that contains a set of fields in
+symmetry-adapted basis format, and writes a representation of the same
+field to a file named "w.rf" in r-grid format.  As with all file names,
+relative file names are interpreted as names defined relative to the
+current working directory.
+
+These file conversion function do not have any effect on the w and
+c fields that are stored in memory to represent the current state of
+the system of primary interest. All of the mathematical operations
+that these commands perform in to convert from one format to the
+other are performed using private temporary arrays.
+
+The r-grid and k-grid formats can be used to represent any real field,
+but the basis format can only represent fields that are symmetric under
+all symmetry elements of a specified space group, whose name is
+specified both in the parameter file and in the header of the field
+file. The conversion from r-grid or k-grid formats to basis format are
+thus only valid if the field contained in the r-grid or k-grid input
+file actually has the assumed symmetry. The RGRID_TO_BASIS and
+KGRID_TO_BASIS check if the input field has the assumed symmetry,
+and output warnings if they finds that one or more fields are not
+symmetric, but complete the attempted conversion. Applying either
+of these conversion functions to a field that does not have the
+specified space group symmetry is not a valid operation, however,
+and can modify the fields in unpredictable ways.
+
+The conversion to a basis format from an r-grid or k-grid format is
+guaranteed to be safe only if the declared space group is the trivial
+group that contains only the identity element (1D group P_1, 2D
+plane group p_1, or 3D space group P_1), with no nontrivial symmetry
+elements.
+
+\subsection user_command_pc_symmetry_sub Checking Space Group Symmetry
+
+The CHECK_RGRID_SYMMETRY command can be used to check whether a field
+that is represented in r-grid format has a specified space group
+symmetry to within a specified tolerance. The command takes the name
+of an input file and error tolerance epsilon as parameters. It reads
+the file with the specified name, checks if it is invariant under all
+space group operations to within the specified tolerance, and writes
+a report to the log file.
+
+\subsection user_command_pc_compare_sub Field File Comparisons
+
+The CHECK_BASIS and CHECK_RGRID commands each read a pair of field
+files in the same format (basis or rgrid format, respectively),
+computes differences between corresponding fields, and write a report
+to the log file summarizing several measures of the magnitude of the
+differences. These are useful for checking it the fields contained
+in two files that should be equivalent actually are.
+
+\section user_command_pc_external_sec External Fields
 
 The pscf_pc programs accept several commands that allow users to input
-and output external chemical potential fields that act on monomers of 
+and output external chemical potential fields that act on monomers of
 each type, in addition to the internally generated fields that arise
 in a self-consistent field approximation from interactions. External
-fields are referred to throughout the source code and documentation as
-"h" fields. 
+fields are referred to throughout the source code and documentation
+as "h" fields. This feature was introduced into the code to allow
+simulation of polymers in thin films or other confined geometries,
+for which external fields that act differently on different monomer
+types are used represent selective interactions of polymers with the
+confining walls.
 
-When nonzero external fields have been set, the self-consistent field 
+When nonzero external fields have been set, the self-consistent field
 equations become equations of the form
 \f[
-   w_{\alpha}({\bf r}) 
-   = \sum_{\beta} \chi_{\alpha\beta}\phi_{\beta}({\bf r}) 
+   w_{\alpha}({\bf r})
+   = \sum_{\beta} \chi_{\alpha\beta}\phi_{\beta}({\bf r})
    + \xi({\bf r}) + h_{\alpha}({\bf r})
 \f]
-for each monomer type \f$ \alpha \f$, in which \f$ h_{\alpha}({\bf r}) \f$ 
-is the external field for monomers of type \f$ \alpha \f$, 
-\f$ \xi ({\bf r}) \f$ is the Lagrange multiplier local pressure field that 
+for each monomer type \f$ \alpha \f$, in which \f$ h_{\alpha}({\bf r}) \f$
+is the external field for monomers of type \f$ \alpha \f$,
+\f$ \xi ({\bf r}) \f$ is the Lagrange multiplier local pressure field that
 imposes incompressibility, and \f$ \chi_{\alpha\beta} \f$ is the binary
-Flory-Huggins interaction parameter for  monomers of types \f$ \alpha \f$ 
-and \f$ \beta \f$. 
+Flory-Huggins interaction parameter for  monomers of types \f$ \alpha \f$
+and \f$ \beta \f$.
 
-Simulations of polymer liquids confined to thin films generally may use 
-external fields to represent interactions of different monomer types with 
+Simulations of polymer liquids confined to thin films generally may use
+external fields to represent interactions of different monomer types with
 the boundaries or "walls" the film.  The external fields that are used to
 define a thin film problem are generated algorithmically by the thin film
 iterator, as described \ref user_thin_films_page "here", rather than being
-read from a file.  Users thus do not need to use the READ_H_BASIS or 
-READ_H_RGRID commands in order to simulate a thin film, but can use the
-WRITE_H_BAIS or WRITE_H_RGRID commands to output and inspect the external
-fields that are generated internally by the thin film iterator.
+read from a file.  Users who use this sort of iterator to simulate a thin
+film thus do not need to use the READ_H_BASIS or READ_H_RGRID commands,
+but can use the WRITE_H_BAIS or WRITE_H_RGRID commands to output and
+inspect the external fields that are generated internally by the thin
+film iterator.
+
+The READ_H_BASIS and READ_H_RGRID commands can be used to read in and
+set external fields that are specified in a pre-existing file.
 
 \section user_command_pc_mask_sec Mask Field (Inhomogeneous Density Constraint)
 
-A polymer fluid can be confined to a specified region by introducing a 
-"mask" field that modifies the incompressibility constraint.  A mask field 
+A polymer fluid can be confined to a specified region by introducing a
+"mask" field that modifies the incompressibility constraint.  A mask field
 is a dimensionless function of position, denoted here by \f$ m({\bf r}) \f$,
-that has a value very close to 1 throughout a region to which the polymer 
-material is confined and a value very close to 0 throughout a region from 
-which the material is being excluded. The incompressibility constraint for 
+that has a value very close to 1 throughout a region to which the polymer
+material is confined and a value very close to 0 throughout a region from
+which the material is being excluded. The incompressibility constraint for
 a system that is subjected to a mask is modified so as to require that
 \f[
-   v \sum_{\alpha=1} c_\alpha({\bf r}) = m({\bf r}) 
+   v \sum_{\alpha=1} c_\alpha({\bf r}) = m({\bf r})
 \f]
 at every point in the system, where \f$ m({\bf r}) \f$ is the mask field,
-\f$ c_{\alpha}({\bf r}) \f$ is the number concentration of monomers of type 
-\f$ \alpha \f$ at point \f$ {\bf r} \f$, \f$ v \f$ is the monomer reference 
-volume, and the summation is over all distinct monomer types. Introduction 
-of a mask provides a simple way to impose geometric confinment within a 
+\f$ c_{\alpha}({\bf r}) \f$ is the number concentration of monomers of type
+\f$ \alpha \f$ at point \f$ {\bf r} \f$, \f$ v \f$ is the monomer reference
+volume, and the summation is over all distinct monomer types. Introduction
+of a mask provides a simple way to impose geometric confinment within a
 program that is designed for periodic systems.
 
-The mask that is used to confine a polymer to a thin film is generated 
+Users may input a mask from file basis or r-grid format using the commands
+\anchor user_command_pc_readmaskbasis_cmd READ_MASK_BASIS or
+\anchor user_command_pc_readmaskrgrid_cmd READ_MASK_RGRID,
+or may output the current mask using the commands
+\anchor user_command_pc_writemaskbasis_cmd WRITE_MASK_BASIS or
+\anchor user_command_pc_readmaskbasis_cmd WRITE_MASK_GRID.
+
+The mask that is used to confine a polymer to a thin film is generated
 algorithmically by the thin film iterator, as described in more detail
-\ref user_thin_films_page "here".  The resulting field can be written to 
-a file for inspection using the WRITE_MASK_BASIS or WRITE_MASK_RGRID 
+\ref user_thin_films_page "here".  The resulting field can be written to
+a file for inspection using the WRITE_MASK_BASIS or WRITE_MASK_RGRID
 commands.
 
 <BR>
- \ref user_command_fd_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_command_page      (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_command_pg_page   (Next) 
+ \ref user_command_fd_page   (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+ \ref user_command_page      (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+ \ref user_command_pg_page   (Next)
 */

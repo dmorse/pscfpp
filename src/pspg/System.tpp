@@ -538,6 +538,10 @@ namespace Pspg
             readEcho(in, outFileName);
             writeWaves(outFileName);
          } else 
+         if (command == "WRITE_GROUP") {
+            readEcho(in, filename);
+            writeGroup(filename, domain_.group());
+         } else 
          if (command == "BASIS_TO_RGRID") {
             readEcho(in, inFileName);
             readEcho(in, outFileName);

@@ -5,13 +5,13 @@ crystal_system
               cubic
 N_cell_param
               1
-cell_param    
+cell_param
       6.9947877423e+00
 group_name
           F_d_-3_m:1
 N_monomer
           2
-N_star       
+N_basis
              249
     1.8750000000e+01    6.2499999997e+00       0    0    0    1
    -4.1186724981e-03    6.3144628056e-02       1    1    1    8

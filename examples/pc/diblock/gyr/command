@@ -1,4 +1,7 @@
 READ_W_BASIS  in/w.bf
+WRITE_WAVES   out/waves
+WRITE_STARS   out/stars
+WRITE_GROUP   out/group
 ITERATE
 WRITE_PARAM   out/prm
 WRITE_THERMO  out/dat

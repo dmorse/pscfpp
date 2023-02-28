@@ -1,134 +1,179 @@
 /*! \page user_field_basis_page Field File - Symmetrized Basis (Periodic)
 
- \ref user_field_fd1d_page   (Prev)  &nbsp; &nbsp; &nbsp; &nbsp;
- \ref user_field_rgrid_page  (Next)
+ \ref user_field_periodic_page  (Prev/Up)  &nbsp; &nbsp; &nbsp; &nbsp;
+ \ref user_field_rgrid_page     (Next)
 <BR>
 
 The basis file format is one of three formats used by the pscf_pc and
 pscf_pg programs to describe spatially periodic fields in systems with
 a specified crystal lattice type and space group symmetry. This file
 format is basis on a symmetry-adapted Fourier basis in which each field
-is expanded using a set of basis functions that are superpositions of
-plane waves that are invariant under all operations in the space group.
+is expanded using a set of basis functions that are invariant under all
+symmetry operations in a specified space group.  This file format can
+be used to describe either chemical potential fields (w fields) or
+concentration / volume fraction fields (c fields).
+
+Consider the basis file format for the chemical potential fields in a
+system with N_monomer monomer types.  Let \f$ w_{\alpha}(\textbf{r}) \f$
+denote the monomer chemical potential field associated with monomer type
+\f$ \alpha \f$ , for any integer \f$ \alpha = 0, \ldots, \f$ N_monomer - 1 .
+The basis file format for such a field contains the coefficients for an
+expansion of each such field as a generalized Fourier series
+\f[
+   w_{\alpha}(\textbf{r}) =
+   \sum_{i=0}^{N_{\rm b}-1} a_{i\alpha} f_{i}(\textbf{r})
+\f]
+in which \f$ f_{i}(\textbf{r}) \f$ is a real basis function with
+the prescribed symmetry, \f$ a_{i\alpha} \f$ is an associated real
+coefficient, and \f$ N_{\rm b} \f$ is the number of basis functions
+used in the expansion.
 
 \section user_field_basis_fourier_sec Symmetry-Adapted Fourier Basis
 
-Consider the basis file format for a chemical potential field for a
-system with nMonomer monomer types indexed by an integer
-\f$ \alpha = 0, \ldots,\f$ nMonomer - 1. Let \f$ w_{\alpha}(\textbf{r})\f$
-the monomer chemical potential field associated with monomer type 
-\f$ \alpha \f$ . The basis file format for such a field contains the 
-coefficients for an expansion of each field \f$ w_{\alpha} \f$ as a 
-generalized Fourier expansion of the form
+The symmetry-adapted Fourier basis used by the pscf_pc and pscf_pg
+programs is a finite sequence of of real orthogonal basis functions,
+denoted here by
 \f[
-    w_{\alpha}(\textbf{r}) =
-    \sum_{i=0}^{N_{basis}-1} w_{i\alpha} f_{i}(\textbf{r})
+  f_{0}(\textbf{r}), f_{1}(\textbf{r}), \ldots, f_{N_{\rm b}-1}(\textbf{r})
+  \quad,
 \f]
-in which \f$ f_{i}(\textbf{r}) \f$ is a real basis function,
-\f$ w_{i\alpha} \f$ is an associated real coefficient, and
-\f$ N_{basis} \f$ is the number of basis functions used in the
-expansion.
+such that every function in the sequence is invariant (i.e., symmetric)
+under all the symmetry operations in a specified space group.  The number
+of functions in this basis, denoted by \f$ N_{\rm b} \f$, depends upon
+the space group and the dimensions of the mesh that is used to discretize
+all fields in these programs (i.e., the number of grid points in each
+direction).  The name of the relevant space group is specified both in
+the parameter file and the field file header. The mesh dimensions are
+specified in the parameter file.
 
-The type of symmetry-adapted Fourier basis used by PSCF is a set of 
-orthogonal basis functions 
-\f$ 
- f_{0}(\textbf{r}), f_{1}(\textbf{r}), \ldots, f_{N_{basis}-1}(\textbf{r})
-\f$ 
-that are each invariant under all the symmetry operations belonging to 
-the space group whose name is specified in the parameter file. The basis 
-functions used by PSCF form satisfy an orthornmality condition that 
-requires that
+Each of these symmetry-adapted basis functions is equal to a sum of plane
+waves with wavevectors \f$ {\bf G}_{0}, {\bf G}_{1}, \ldots \f$ that
+belong to the reciprocal lattice for the crystal, and that are related to
+to one another either by symmetry operations of the space group or (for
+non-centrosymmetric groups) by the inversion operation
+\f$ {\bf G} \rightarrow -{\bf G} \f$, or both.
+These relationships imply that the wavevectors in such a set must all be
+vectors of equal magnitude \f$ |{\bf G}_{0}| = |{\bf G}_{1}| = \cdots \f$.
+Each basis function
+\f$ f_{i}({\bf r}) \f$ can thus be expressed as a sum of the form
+\f[
+    f_{i}({\bf r}) =
+    \sum_{a=0}^{M_{i}-1} d_{ia} e^{i{\bf G}_{a}\cdot {\bf r}}
+    \quad,
+\f]
+in which \f$ M_{i} \f$ is the number of plane waves in the expansion, and
+\f$ d_{ia} \f$ is a complex coefficient of the plane wave with wavevector
+\f$ {\bf G}_{a} \f$ in the expansion of basis function
+\f$ f_{i}({\bf r}) \f$.
+
+The basis functions used by PSCF form satisfy an orthonormality condition
+that requires that
 \f[
    \frac{1}{V} \int \! d^{D}r \;
    f_{i}(\textbf{r}) f_{j}(\textbf{r})
    = \delta_{ij}
 \f]
-where the integral is taken over one unit cell of a periodic structure
-in D-dimensional space and \f$ V \f$ is the generalized volume (3D
-volume, 2D area, or 1D length) of the unit cell. Here, \f$ \delta_{ij} \f$ 
-denotes the Kronecker delta function, which is defined to be 
-\f$ \delta_{ij} = 1 \f$ for \f$ i=j \f$ and 0 otherwise. The basis 
-functions used by PSCF  are also all eigenfunctions of the Laplacian, 
-such that
-\f[
-   -\nabla^{2}f_{i}(\textbf{r}) = \lambda_{i} f_{i}(\textbf{r})
-\f]
-for each such basis function, with some eigenvalue 
-\f$ \lambda_{i} \geq 0 \f$.
+where the integral is taken over one unit cell of a periodic structure in
+D-dimensional space and \f$ V \f$ is the generalized volume (3D volume,
+2D area, or 1D length) of the unit cell. Here, \f$ \delta_{ij} \f$
+denotes the Kronecker delta function, which is defined to be
+\f$ \delta_{ij} = 1 \f$ for \f$ i=j \f$ and 0 for \f$ i \neq j \f$.
+A corresponding condition for functions that are defined on the points
+of a regular grid replaces the average over space, given in the above
+expression as an integeral divided by a volume, by an average over
+all grid points.
 
-\section user_field_basis_examples_sec File Format: Overview and Examples
+\section user_field_basis_format_sec File Format
 
-This field file format consists of a header section followed by a data 
-section. The last line in the header section contains a value for a 
-parameter N_star, which is the number of basis functions used to expand 
-each field. The data section contains exactly N_star rows of data, each 
-of which contains coefficients associated with one basis function, along 
-with the indices for an associated wavevector that is used as a label for
-the basis function. 
+This basis field file format consists of a header section followed by a
+data section. Readers may find it useful to also refer to the examples of
+field files given below for a \ref user_field_basis_lamellar_sec "lamellar"
+and \ref user_field_basis_gyroid_sec "gyroid" phase.
 
-\subsection user_field_basis_gyroid_sub Example: 3D Gyroid Phase 
+\subsection user_field_basis_format_header_sub Header Section
 
-Below is an example of a c file output from a simulation of a gyroid 
-phase for a diblock copolymer melt. A section of the middle of this file 
-has been removed, as indicated by the vertical dots.
+Each field file begins with a header section that contains information
+about the crystallographic unit cell, space group, the number of monomers
+and the number of basis functions that is required to interpret the data 
+section. The format of the header is similar for r-grid, k-grid, and 
+basis file formats, and is described \ref user_field_periodic_header_sec 
+"here" . The last parameter in the header section of a basis field file 
+is a parameter "N_basis" that gives the number of basis functions in the 
+symmetry-adapted Fourier series. 
+
+\subsection user_field_basis_format_data_sub Data Section
+
+The data section of a basis field file contains exactly N_basis rows of
+data, each of which contains information associated with one basis
+function in the symmetry-adapated basis used by the program that wrote
+the file. Each row contains N_monomer + dim + 1 numbers. The first
+N_monomer values in each row are real (floating point) numbers, while
+the remaining values are integers.
+
+As an example, consider the format of a row in the data section that
+is associated with basis function number \f$ i \f$. Let a[j] denote
+the coefficient of basis function \f$ i \f$ in the expansion of the
+field associated with monomer type \f$ j \f$. The format of each such
+row is
 \code
-
-    format  1  0
-   dim
-                      3
-   crystal_system
-                  cubic
-   N_cell_param
-                      1
-   cell_param
-       3.6735414146E+00
-   group_name
-              I_ a_-3_d
-   N_monomer
-                      2
-   N_star
-                    235
-     3.000000000000E-01  7.000000000000E-01       0   0   0     1
-    -2.942897932802E-01  2.942897932848E-01       2   1   1    24
-    -9.425546329793E-02  9.425546327223E-02       2   2   0    12
-    -3.864399409689E-03  3.864399436086E-03       3   2   1    48
-    -1.483047814338E-02  1.483047815806E-02       4   0   0     6
-    -3.546446264855E-02  3.546446265383E-02       4   2   0    24
-     3.138519869858E-02 -3.138519870524E-02       3   3   2    24
-     2.003121375277E-02 -2.003121374994E-02       4   2   2    24
-     1.572048423239E-02 -1.572048424396E-02       4   3   1    48
-    -1.376822797257E-02  1.376822798292E-02       5   2   1    48
-    -1.063353913450E-02  1.063353913935E-02       4   4   0    12
-            .                   .                 .   .   .    .
-            .                   .                 .   .   .    .
-            .                   .                 .   .   .    .
-    -7.575067702553E-05  7.575067344206E-05      13  13  10    24
-    -2.570604494615E-05  2.570604263390E-05      14  12  10    24
-    -5.627606758688E-05  5.627606408758E-05      14  14   8     6
-     5.879116047898E-05 -5.879115755266E-05      14  14  12     6
-
+   a[N_monomer] wave[dim] size
 \endcode
-<BR>
+in which:
 
-\subsection user_field_basis_lamellar_sub 1D Lamellar Phase 
+   - a[N_monomer] denotes a list of N_monomer floating point numbers that
+     represent the coefficients of basis function i in the expansions of
+     fields associated with monomer types 0, ...,  N_monomer - 1.
 
-Below is an example the c field file output for a small simulation of a
-centro-symmetric lamellar phase of a diblock copolymer melt:
+   - wave[dim] denotes a list of dim (or D) integers that give the
+     integer components of the reciprocal lattice wavevector for one
+     of the waves that is superposed to construct basis function i.
+
+   - size is the number of inequivalaent plane waves within a 
+     \ref user_field_basis_star_sec "star" of waves that are related 
+     by space group symmetries among the waves that are superposed to 
+     construct the relevant basis function.
+
+Each of the first N_monomer columns of the data section thus contains a
+list of the coefficients of the expansion of the field associated with
+a corresponding monomer type.  The coefficient in column j of row i of
+the data section gives the coefficient of basis function
+\f$ f_{i}({\bf r} \f$ i in the expansion of the field associated with
+monomer with type index j, for j in the range 0 to N_monomer - 1 and i
+in the range 1 to N_basis - 1.
+
+The next dim values in each row, after the N_monomer floating point
+coefficients, give the integer indices of a specific reciprocal lattice
+wavevector that belongs to the set of wavevectors associated with that
+basis function. The program that reads this file uses this list of
+wavevector indices to uniquely identify the family of wavevectors
+associated with the basis function represented by a particular row
+in the data section, and thus uniquely identify the relevant basis
+function. The use of such identifier for each basis function in this
+file format is required by the fact that basis functions are generally 
+not listed in any fixed order, as discussed in more detail
+\ref user_field_basis_order_sec "below".
+
+\section user_field_basis_lamellar_sec Example: 1D Lamellar Phase
+
+Below is an example the concentration / volume fraction field file output
+for a small simulation of a centro-symmetric lamellar phase of a diblock
+copolymer melt that was simulated using a 1D mesh with 40 grid points:
+
 \code
    format  1  0
    dim
                       1
    crystal_system
-             'lamellar'
+               lamellar
    N_cell_param
                       1
    cell_param
        1.3835952906E+00
    group_name
-                   '-1'
+                     -1
    N_monomer
                       2
-   N_star
+   N_basis
                      21
      5.600000000000E-01  4.400000000000E-01       0     1
      2.179734275940E-01 -2.179734275841E-01       1     2
@@ -155,131 +200,672 @@ centro-symmetric lamellar phase of a diblock copolymer melt:
 \endcode
 <BR>
 
-\section user_field_basis_header_sec Header Section
+The description of a unit cell for a 1D lamellar phase requires only a
+single unit cell parameter, and so a value of N_cell_parameter = 1 is
+specified in the field file header. The required parameter is the repeat
+period, given here as approximately 1.3859 . The program that wrote this
+file used theorist units in which the total length of the diblock
+copolymer (the sum of the block lengths) was set to 1.0 and statistical
+segment lengths for both monomer types were also set to 1.0, thus
+implicitly setting the unperturbed root-mean-squared end of the polymer
+equal to 1.0. The repeat period for this crystal was thus 1.3859 times
+the unperturbed r.m.s. end-to-end length of the block copolymer.
 
-Each field file begins with a header section that contains information
-about the crystallographic unit cell, space group and basis that is 
-required to interpret the data section. The first line of the header 
-specifies a file format version number (file format v1.0). The rest of 
-the header contains parameter values, each of which is given as a parameter
-label on one line followed by a value on the next line. The header contains 
-values for the following parameters, in the following order:
+The group_name identifier of "-1" given in the field file header
+specifies that this is a centrosymmetric 1D crystal in which all fields
+are symmetric under the inversion operation, \f$ x \rightarrow -x \f$,
+where \f$ x \f$ denotes a 1D coordinate measured along the direction
+normal to the layers.  This symmetry requires that the volume fraction
+field \f$ \phi_{\alpha}(x) \f$ for monomer type \f$ \alpha \f$ at 1D
+coordinate \f$ x \f$ must be even in \f$ x \f$, such that
+\f[
+   \phi_{\alpha}(-x) = \phi_{\alpha}(-x)
+\f]
+for each monomer type \f$ \alpha = 0, 1 \f$.
 
-<table>
-   <tr>
-     <td> Parameter </td>
-     <td> Description </td>
-   </tr>
-   <tr>
-     <td> dim </td>
-     <td> dimensionality of the crystal periodicity 
-          (int, with value 1, 2, or 3) </td>
-   </tr>
-   <tr>
-     <td> crystal_system </td>
-     <td> identifier for the crystal system (string) </td>
-   </tr>
-   <tr>
-     <td> cell_param </td>
-     <td> list of cell parameter values (list of real values) </td>
-   </tr>
-   <tr>
-     <td> group_name </td>
-     <td> identifier for the crystallographic space group (string) </td>
-   </tr>
-   <tr>
-     <td>  N_monomer </td>
-     <td> the number of distinct monomer types (int) </td>
-   </tr>
-   <tr>
-     <td>  N_star </td>
-     <td> number of basis functions in the expansion (int) </td>
-   </tr>
-</table>
-The value of the parameter dim is number of dimension in which each field 
-is periodic. For example, dim=1 for a lamellar phase, dim=2 for a hexagonal 
-phase, and dim=3 for a 3D cubic or orthorhombic crystal.  The value of the
-parameter cell_param is a list of real unit parameters, which give lengths
-of unit cell edges and (when required) angles between those edges. The 
-number of unit cell parameters required in this list and the meaning of 
-those parameters depends upon the value of dim and type of unit cell 
-specified by the string crystal_system, as discussed 
-\ref user_unitcell_page "here".  Allowed values of the group_name string 
-for each combination of values for dim and crystal_system are listed 
-\ref user_groups_page "here". 
+The symmetry-adapted basis that is automatically constructed by PSCF
+programs to expand functions with this symmetry is a cosine basis.
+To define such a basis for a function that is defined on the nodes
+of a grid, we define wavenumbers
+\f[
+   k_{n} = 2\pi n /L
+\f]
+for \f$ n = 0, 1, 2, 3, ..., N/2 \f$ where \f$ L \f$ is the lamellar
+period, and \f$ N \f$ is the number of nodes (i.e., grid points) in
+the mesh used by the program that wrote this file.
+The program that wrote the above file used a grid with \f$ N = 40 \f$
+nodes, for which even functions can be described by a basis of 21
+cosine functions.
+The basis function with index \f$ n = 0 \f$ is a homogeneous function
+\f[
+   f_{0}(x) = e^{i k_{0}x} = 1 \quad.
+\f]
+Functions for \f$ n = 1, 2, \ldots, 19 \f$ in this expansion are
+normalized cosines
+\f[
+   f_{i}(x) = \sqrt{2} \cos( k_{n} x)
+   = \frac{1}{2} \left ( e^{ik_{n}x} + e^{-ik_{n}x} \right )
+\f]
+that can each be be written as a sum of two plane waves with
+wavenumbers \f$ \pm k_{n} \f$.
+The basis function with index \f$ n = N/2 \f$ is a function
+\f[
+   f_{N/2}(x) = \cos( k_{N/2} x) = e^{ i \pi x/L } \quad.
+\f]
+This last basis function is somewhat special, as discussed below.
 
-    
-\section user_field_basis_data_sec Data Section
+The differences between the basis function with index \f$ n = N/2 = 20 \f$
+and those with \f$ 0 < n < N/2 \f$ are a consequences of the fact that
+that periodic functions are defined internally in the pscf_pc and
+pscf_pg programs only on the nodes of a regular grid, rather than
+at arbitrary points in a continuum. The Fourier representation of
+each field is thus based on a discrete Fourier transform (DFT) with
+a finite number of waves rather than an infinite Fourier series.
+The function \f$ f_{N/2}(x)$ \f$ with an even value of \f$ N \f$
+has alternating values of \f$ \pm 1 \f$ at values of \f$ x \f$ that
+lie on the nodes of a grid with \f$ N = 40 \f$ nodes, corresponding to
+values \f$ x_{m} = m L / N \f$ for integers \f$ m = 0, \ldots, N -1 \f$.
+Values of this basis function at values of \f$ x \f$ that lie on the
+nodes of this grid can be expressed as a single complex exponential
+wave, rather than a sum of two distinct waves, because, on this grid,
+wavenumbers \f$ k_{n} \f$ and \f$ k_{-n} \f$ with \f$ n = N/2 \f$ are
+\"aliases\" of one another that yield equal values for
+\f$ e^{ik_{n}x_{m} } = e^{ -ik_{n}x_{m} } \f$ if evaluated at any
+position \f$ x_{m} \f$ that corresponds to one of the nodes. Generally,
+wavenumbers (in 1D) or wavevectors (in 2D or 3D) for which the indices
+associated with a particular direction differ by integer multiples of the
+number of grid points along each that direction are aliases of one
+another, or equivalent, in this sense.  Waves that are aliases of one
+another in this sense are counted as equivalent by the algorithm that
+constructs basis functions for functions that are defined on a lattice.
 
-The data section of this file format contains N_star rows, each of which 
-contains information associated with a particular basis function.  Each 
-row contains a list of N_monomer real coefficients in the first N_monomer 
-columns, followed by dim+1 integers, where dim is the dimensionality 
-of the crystal. In each of the two examples given above, N_monomer = 2.
+The integer that appears in the third column of each row in the data
+section of the above example gives the integer index \f$ n \f$ for
+an associated wavenumber \f$ k_{n} \f$, which ranges from 0 to 20 in
+this example.
 
-Each of the first N_monomer columns of the data section contains a list 
-of the coefficients of the expansion of the field associated with a 
-corresponding monomer type. Fields associated with different monomer 
-types are listed in order of increasing monomer type index, which
-corresponds to the order in which the monomer statistical segment length
-values are listed in the "monomers" array within the parameter file.
-The coefficient in column a of row i of the data section gives the
-coefficient of basis function number i-1 in the expansion of the field 
-associated with monomer with type index a-1, for a in the range 1 to 
-N_monomer and i in the range 1 to N_star.
+The integer that appears in the fourth colum of each row in this
+example is the number of inequivalent waves used in the expansion of
+the associated basis function. This number has a value of \f$ 1 \f$ for
+\f$ n = 0 \f$ (or \f$ k_{n} = 0 \f$ ), a value of \f$ 2 \f$ for the 19
+cosine basis functions with \f$ n =1, \ldots, 19 \f$, and a value of
+\f$ 1 \f$ for the cosine function with \f$ n = N/2 = 20 \f$ as a
+result of aliasing of wavenumbers used in a discrete Fourier transform.
 
-The integers in the last dim+1 columns of each row of the data section 
-contain information about a star of wavevectors that is associated with 
-the basis function represented by that row.  The first dim integers in 
-each row, after the N_monomer basis function coefficients, give the 
-integer indices of one wavevector in that star, which serves as a label 
-for the basis function. The last integer in each row is the number of 
-wavevectors in the associated star, which we will refer to as the 
-multiplicity of star. 
+\section user_field_basis_gyroid_sec Example: 3D Gyroid Phase
 
-The first basis function in the symmetry adapted Fourier expansion,
-which is given in the first row of the data section, is always the
-spatially homogeneous function which is equal to 1.0 throughout the
-unit cell. This homogeneous function is associated with a star 
-containing the single wavevector k = 0, for which all dim indices 
-are zero, which has a multiplicity of 1. 
+Below is an example of a c file output from a simulation of a gyroid
+phase for a diblock copolymer melt. A long section of the middle of
+the data section of this file has been removed, as indicated by
+vertical dots.
+\code
 
-Consider the above example of 3D gyroid phase for a system with 
-N_monomer = 2.  The first two columns in the data section contain 
-expansion coefficients.  In the first row of the data section, 
-columns 3-5 contain the indices "0 0 0" of the wavevector k=0 that 
+    format  1  0
+   dim
+                      3
+   crystal_system
+                  cubic
+   N_cell_param
+                      1
+   cell_param
+       3.6735414146E+00
+   group_name
+              I_ a_-3_d
+   N_monomer
+                      2
+   N_basis
+                    235
+     3.000000000000E-01  7.000000000000E-01       0   0   0     1
+    -2.942897932802E-01  2.942897932848E-01       2   1   1    24
+    -9.425546329793E-02  9.425546327223E-02       2   2   0    12
+    -3.864399409689E-03  3.864399436086E-03       3   2   1    48
+    -1.483047814338E-02  1.483047815806E-02       4   0   0     6
+    -3.546446264855E-02  3.546446265383E-02       4   2   0    24
+     3.138519869858E-02 -3.138519870524E-02       3   3   2    24
+     2.003121375277E-02 -2.003121374994E-02       4   2   2    24
+     1.572048423239E-02 -1.572048424396E-02       4   3   1    48
+    -1.376822797257E-02  1.376822798292E-02       5   2   1    48
+    -1.063353913450E-02  1.063353913935E-02       4   4   0    12
+            .                   .                 .   .   .    .
+            .                   .                 .   .   .    .
+            .                   .                 .   .   .    .
+    -7.575067702553E-05  7.575067344206E-05      13  13  10    24
+    -2.570604494615E-05  2.570604263390E-05      14  12  10    24
+    -5.627606758688E-05  5.627606408758E-05      14  14   8     6
+     5.879116047898E-05 -5.879115755266E-05      14  14  12     6
+
+\endcode
+<BR>
+
+Data in the header section of this file is analogous to that given
+above in the simpler lamellar example. Because this is a cubic
+crystal, only a single unit cell parameter is again required to
+specify the size of the unit cell, and so N_cell_parameter is again
+equal to 1. The unit cell parameter for a cubic crystal is the
+length of any edges of a conventional cubic unit cell along any of
+three orthogonal directions. The group_name identifier I_a_-3_d is
+an ascii identifer for space group \f$ Ia\overline{3}d \f$, the
+space group of the gyroid phase.
+
+The \f$ Ia\overline{3}d \f$ space group is a centro-symmetric cubic
+group with an inversion center at the origin of space.  Each of the
+symmetry-adapted basis functions used to expand functions with this
+space group symmetry are superpositions of waves with wavevectors
+that belong to a family or star of wavevectors with integer indices
+are related to a set of integers {hkl} by permutations of the order
+in which indices are listed and/or changes in the sign of one or
+more indices. The number of wavevectors in each such star is less
+than or equal to 48, with 48 wavevectors in the star for stars in
+which the integers h, k, and l are all unequal and nonzero.
+
+Consider the above example of 3D gyroid phase for a system with
+N_monomer = 2.  The first two columns in the data section contain
+expansion coefficients.  In the first row of the data section,
+columns 3-5 contain the indices "0 0 0" of the wavevector k=0 that
 is associated with the homogeneous function, and column 6 contains
-a multiplicity of 1.  The second row contains the coefficients for 
-the basis function associated with the {211} family or "star" of 
-wavevectors, which is identified in columns 3-5 by the label 
+a multiplicity of 1.  The second row contains the coefficients for
+the basis function associated with the {211} family or "star" of
+wavevectors, which is identified in columns 3-5 by the label
 "2 1 1".  This star contains 24 distinct wavevectors, which can
-be generated by allowing for changes in sign of each index and 
+be generated by allowing for changes in sign of each index and
 choosing from among 3 possible locations of the unique index of
 absolute magnitude 2.  As a result, column 6 contains a multiplicity
-of 24.  The {211} family is the first star of non-zero wavevectors 
-from which it possible to construct a nonzero basis function that 
-is invariant under all of the symmetries of space group of the 
-gyroid structure.  The stars that can be used to construct a 
-basis function are precisely those that satisfy the reflection 
-rules for allowed reflections in scattering from a particular 
-space group symmetry, for which the {211} family gives the first 
-allowed family of reflections in scattering from a gyroid crystal.
+of 24.
 
-Consider the second example, which is a 1D lamellar phase with inversion 
-symmetry (i.e., a centro-symmetric lamellar phase). The first basis 
-function is the constant function f(r)=1, with a wavevector index 
-"0" in column 3 and a multiplicity 1 in column 4. All subsequent basis 
-functions are proportional to cosine functions with periods given by 
-d/n for positive integer n, where d is the lamellar period.  The 
-multiplicity of the star associated with each such cosine basis 
-function is 2, as indicated in the last column, since each such 
-function can be expressed as a superposition of two plane waves 
-with wavenumbers of opposite sign but equal magnitude.  Specifically,
-row n+1 of the data section is associated for n > 0 with a pair of 
-wavevectors of magnitude 2 pi n/d, which are identified by an integer 
-wavevector index n in column 3.
+The {211} family is the first star of non-zero wavevectors from
+which it possible to construct a nonzero basis function that is
+invariant under all of the symmetries of space group of the gyroid
+structure.  The stars that can be used to construct a nonzero
+basis function are precisely those that satisfy the reflection
+rules for allowed reflections in scattering from a crystal with
+a particular space group symmetry. For any crystal with space group
+\f$ Ia\overline{3}d\f$, {211} family gives the first allowed
+family of scattering reflections in small angle X-ray or neutron
+scattering. The symmetry-adapated Fourier series expansion for
+functions that are invariant under elements of a space groups
+that leads systematic cancellations only contains basis functions
+or "stars" that are not \"cancelled\" (i.e., those that obey the
+rules for allowed reflections).
+
+\section user_field_basis_star_sec Stars and Star Functions
+
+The algorithm that the PSCF programs for periodic structures uses to
+generate a symmetry-adapted Fourier basis is based on:
+
+  -  Grouping of all distinguishable wavevectors used in a
+     discrete Fourier transform (DFT) into sets of wavectors that
+     are related by symmetries of the space group, which we refer
+     to as "stars"
+
+  -  Construction of a symmetry-adapted basis function associated
+     with each such star, which we refer to as a "star function".
+
+Each star function is constructed as a superposition of plane waves
+with wavevectors that all belong to a single star, and that are thus
+related to each other by symmetry. The resulting set of star functions
+form an symmetry-adapted basis in which some functions may be complex
+rather than real functions of position. This basis of star functions
+is then used to construct a closely related basis real basis functions
+of the type described above.
+
+The remainder of this section summarizes the relationship between
+stars and symmetry-adapted basis functions in a form sufficient to
+allow users to understand the basis file format for field files.
+A more detailed discussion of the underlying mathematics is given 
+as an \ref user_basis_page "appendix". That appendix provides more 
+precise notation and definitions, and includes proofs of variety 
+of assertions about mathematical facts that are made here without 
+proof.
+
+\anchor user_field_basis_star_defn
+<b> Definition (Star) </b>:
+A star \f$ T \f$ of a space group \f$ S \f$ is a set of reciprocal
+lattice wavevectors that are are all related to one another by
+symmetry operations in \f$ S \f$. Every wavevevector belongs to one
+and only one star of a specified space group.
+
+Example: In the case of a cubic crystal such as the BCC or double
+gyroid phase, each star is a set of wavevectors with indices that
+are related to a triplet of integers \f$ (hkl) \f$ with
+\f$ h \geq k \geq l \geq 0 \f$ by permutations and changes in sign.
+In such a crystal, every wavevector belongs to one such star or
+family of wavevectors.
+
+\anchor user_field_basis_starfunc_defn
+<b> Definition (Star Function) </b>:
+A star function associated with a star \f$ T \f$ of a space group
+\f$ S \f$ is a nonzero function of position that is a superposition of
+complex exponential plane waves with wavevectors in \f$ T \f$ that yields
+a function that is invariant under all symmetry operations in \f$ S \f$.
+If \f$ T \f$ is a star with \f$ M \f$ wavevectors
+\f$ {\bf G}_{0}, \ldots, {\bf G}_{M-1} \f$, then a star function
+\f$ \phi({\bf r}) \f$ associated with \f$ T \f$ is a sum of the form
+\f[
+   \phi({\bf r}) = \sum_{i=0}^{M-1} c_{i} e^{i{\bf G}\cdot {\bf r}}
+\f]
+in which the coefficients \f$ c_{0}, \ldots, c_{M-1} \f$ are generally
+complex numbers.
+
+The requirement that a star function be invariant under all elements of
+a space group can be expressed as a a set of homogeneous linear equation
+that relate the coefficients \f$ c_{0}, \ldots, c_{M-1} \f$ of different
+waves in the above expansion.
+These relationships among coefficients are discussed in detail in the
+associated \ref user_basis_page "appendix".
+The form of these equations can be shown to require that these coefficients
+all have equal absolute magnitude
+\f[
+   |c_{0}| = |c_{1}| = \cdots |c_{M-1}| \quad,
+\f]
+and impose relationships among the complex phases (arguments) of
+different coefficients.
+These symmetry relationships generally only define a star function
+associated with a particular star to within an arbitrary multiplicative
+constant: If \f$ \phi({\bf r}) \f$ is a nonzero function of the above
+form that is invariant under all elements of a space group, then so is
+\f$ c \phi({\bf r}) \f$, for any complex constant \f$ c \f$.
+
+In many common, relatively simple cases, it is possible to choose the
+coefficients \f$ c_{0}, \ldots, c_{M-1} \f$ to all be real numbers.
+In the case of a symmorphic space group, in which the symmetry elements
+only involve point group operations (i.e., reflections, rotations, and
+inversions) with no associated translations (i.e., no glide planes or
+screw axes), the coefficients associated with different wavevectors in
+a star must all be equal, and are always chosen by convention to be
+equal, positive real numbers. For any group with an inversion center
+at the origin, it is always possible to chose these coefficients to
+all be real. In the general case of a non-symmorphic space group with
+no inversion center at the origin, however, we must all these coefficients
+to be complex numbers of equal magnitude but generally unequal phase
+(complex argument).
+
+\subsection user_field_basis_cancelled_sub Cancelled Stars
+
+There exist some stars of some space groups for which the only solution
+to the set of homogeneous linear equations that relate the coefficients
+of waves in a star function is the trivial solution
+\f[
+   c_{0} = \cdots = c_{M-1} = 0 \quad
+\f]
+When this occurs, it is not possible to define an associated star
+function. Such stars are said to be <em> cancelled </em>.
+
+The uncancelled stars of a space group are always the same as those
+that obey the rules for allowed reflections in a scattering experiment.
+Conversely, the cancelled stars (if any) are those which exhibit
+systematic cancellations or absences in scattering experiments.
+
+One common situation that leads to the existence of cancelled stars
+is if the Bravais lattice for a face- or body-centered 3D lattice is
+defined so as to give a conventional non-primitive unit cell, e.g., by
+using a simple cubic Bravais lattice with orthogonal Bravais basis
+vectors to describe a body-centered or face-centered cubic lattice.
+When using such a convention for the Bravais lattice, the associated
+space group will contain one or more symmetry operations that simply
+translate the lattice by a fraction of a unit cell, thus translating
+the origin to a body- or face-centered lattice site.  The existence of
+this sort of purely translational symmetry generally yields selection
+rules that cause some stars of wavevectors in the Bravais lattice of
+the declared Bravais lattice to be cancelled. In this case, some
+families of wavevectors are cancelled because they are vectors that
+belong to the reciprocal lattice of the declared Bravais lattice
+(e.g., the simple cubic lattice) that actually do not belong to the
+reciprocal lattice of the primitive body- or face-centered lattice.
+The code used by pscf_pc and pscf_pg programs to generate basis
+functions currently uses a conventional Bravais lattice with orthogonal
+basis vectors by default for these sorts of centered lattices, which
+leads to the appearance of cancelled stars (i.e, systematic
+cancellation) of the space groups used to describe such lattices.
+
+In the above example of a field file for a gyroid phase with space
+group \f$ I a \overline{3} d \f$, the {211} star of wavevectors is the
+first star of nonzero wavevectors that is not cancelled. Cancellation
+of the {100}, {111}, and {210} wavevectors can be understood as direct
+results of the fact that the \f$ I a \overline{3} d \f$ is based on
+body-centered-cubic lattice. Other cancellations, such as the
+cancellation of the {110} star, are consequences of the existence of
+other symmetry operations in this space group.
+
+\subsection user_field_basis_uncancelled_sub Uncancelled Stars
+
+A basis for complex or real functions with the symmetry of a specified
+space group can be constructed from the star functions associated with
+all uncancelled stars of that space group.
+
+\anchor user_field_basis_closed_defn
+Uncancelled stars may be either closed or open under inversion:
+
+   - A star \f$ T \f$ is <em> closed </em> (or, more precisely, closed
+     under inversion) if, for every wavevector \f$ {\bf G} \f$ in
+     \f$ T \f$, the wavevector \f$ -{\bf G} \f$ is also in \f$ T \f$.
+
+   - A star \f$ T \f$ is <em> open </em> (or open under inversion) if,
+     for every wavevector \f$ {\bf G} \f$ in \f$ T \f$, \f$-{\bf G}\f$
+     is not in \f$ T \f$.
+
+The following theorems about uncancelled stars and star functions are
+proved in an \ref user_basis_page "appendix":
+
+   - Every wavevector belongs to exactly one star.
+
+   - If a star is not cancelled, there exists an associated star
+     function that is unique to within an arbitrary prefactor.
+
+   - Every uncancelled star is either open or closed.
+
+   - It is always possible to chose a prefactor for a star function
+     associated with an uncancelled closed star so as to obtain a
+     real function of position.
+
+   - If \f$ T \f$ is an uncancelled open star, there exists another
+     star \f$ T' \f$ such that, for every wavevector
+     \f$ {\bf G} \in T \f$, \f$ -{\bf G} \in T' \f$. Such pairs of
+     open stars are said to be related by inversion.
+
+   - If \f$ T \f$ and \f$ T' \f$ are a pair of open stars that are
+     related by inversion, then it is possible to choose prefactors of
+     a star function \f$ \phi({\bf r}) \f$ associated with \f$ T \f$
+     and a star function \f$ \phi'({\bf r}) \f$ associated with
+     \f$ T' \f$ such that \f$ \phi'({\bf r}) \f$ and
+     \f$ \phi({\bf r}) \f$ are complex conjugates of one another.
+
+\subsection user_field_basis_starbasis_sub Conventions for Star Functions
+
+The PSCF programs for periodic functions generates a sequence of
+uncancelled stars and associated star functions, such that each such
+star and its associated star function are both assigned an integer
+index in the range \f$ 0, \ldots , N_{\rm b} - 1 \f$.  We denote the
+resulting star functions here by
+\f$ \phi_{0}({\bf r}), \ldots, \phi_{N_{\rm b}-1}({\bf r}) \f$ .
+
+These functions are defined so as to obey the following conventions:
+
+   - All star functions associated with closed stars are real functions
+     of position.
+
+   - Star functions associated with pairs of open stars that are
+     related by inversion are assigned consecutive indices and are
+     defined to be complex conjugates of one another, such that, e.g.,
+     \f[
+         \phi_{i+1}({\bf r}) = \phi_{i}^{*}({\bf r})
+     \f]
+     for such a pair of stars with indices \f$ i \f$ and \f$ i+1 \f$.
+
+   - All star functions satisfy an orthonormality relation:
+     \f[
+        \frac{1}{V}\int d^{D}r \;
+        \phi^{*}_{i}({\bf r}) \phi_{j}({\bf r})
+        = \delta_{ij}
+     \f]
+     where the integral is taken over one unit cell and \f$ V \f$ is
+     the generalized volume per unit cell. This normalization can be
+     shown to implies that every coefficient in the expansion of a
+     star function for a star with \f$ M \f$ distinct waves is a
+     complex number of modulus \f$ 1/\sqrt{M} \f$.
+
+   - The overall sign or phase of each basis function is fixed by
+     choosing a "characteristic wavevector" from among the
+     wavevectors in each star, and requiring that the coefficient
+     of the wave with that wavevector be a real positive number.
+
+   - The characteristic wavevectors of two stars that are related
+     by inversion must be chosen such that, if \f$ {\bf G} \f$ is
+     the characteristic wavevector of one star in such a pair,
+     then \f$ -{\bf G} \f$ is the characteristic wavevector of
+     the other. This relationship is required to guarantee that
+     the star functions associated with two such stars be complex
+     conjugates.
+
+The conventions described above are sufficient to define a unique
+star function associated with each star if they are supplemented
+by a convention for choosing a "characteristic wavevector" from
+among the waves in each star. The convention for characteristic
+wavevectors used in PSCF is discussed below.
+
+Because each star functions is a superposition of plane waves
+with wavevectors of equal magnitude, each of them is also an
+eigenfunction of the Laplacian. Each such star function
+\f$ \phi_{i}({\bf r}) \f$ thus satisfies an eigenvalue equation
+\f[
+   -\nabla^{2}\phi_{i}(\textbf{r}) = \lambda_{i} \phi_{i}(\textbf{r})
+   \quad.
+\f]
+with an eigenvalue \f$ \lambda_{i} \geq 0 \f$ equal to the square
+magnitude \f$ |{\bf G}|^{2} \f$ of any of the wavevectors in
+the associated star.
+
+Any complex or real field \f$ w({\bf r}) \f$ that is invariant
+under all elements of space group \f$ S \f$ can be expanded in
+a basis of such star functions as a Fourier series
+\f[
+   w({\bf r}) = \sum_{i=0}^{N_{\rm b} -1 } c_{i} \phi_{i}({\bf r})
+\f]
+with complex coefficients \f$ c_{0}, c_{1}, \ldots, c_{N-1} \f$,
+where \f$ N_{\rm b} \f$ denotes the number of basis functions
+used in the expansion.
+
+\subsection user_field_basis_waveofstar_sec Characteristic Wavevectors
+
+By convention, the characteristic wavevector for a closed star or the
+first of two open stars that are related by inversion is taken to be
+the reciprocal lattice wavevector in the star for which the integer
+components are "greatest" when lists of integer components are compared while treating components that appear earlier in the list as more
+signficant than indices that appear later. The components of such a
+wavevector are its components in a basis of reciprocal lattice basis
+vectors, which are integers for any wavevector that belongs to the
+reciprocal lattice (i.e., any wavevector with a periodicity commensurate with that of the crystal Bravais lattice).  According to this
+rule for ordering lists of integers, a list of integer components
+\f$ (i,j,k) \f$ for a three-dimensional wavevector is "greater" than
+a list \f$ (l,m,n) \f$ if \f$ i >  l \f$, while a list
+\f$(i, j, k )\f$ is greater than \f$ (i, m, n) \f$ if \f$ j >  m \f$,
+etc. For example, the characteristic wavevector associated with a
+star of 48 wavevectors in a simple cubic lattice that are related
+to  (-2, 3, 1) by permutations and sign changes is thus the
+wavevector with indices (3, 2, 1).
+
+Wavevectors that are used in discrete Fourier transforms of
+functions that are defined only on the nodes of a regular grid
+are normally defined only modulo changes in indices by integer
+multiples of the number of grid points in each direction.
+To define a unique list of integer components for each such
+wavevector, we define the components of each reciprocal lattice
+wavevector to be the indices of an image or alias of the
+wavevector that yields the minimum possible value for the
+wavevector norm \f$|{\bf G}| \f$.  If two or more aliases of
+a wavevector yield vectors of exactly equal norm, we choose
+the image for which the list of indices is "greatest" by the
+definition discussed above, in which indices that appear
+earlier in the list are treated as more signficant.  This
+convention requires, for example, that in the case of a
+one-dimensional periodic structure with a period \f$L\f$ that
+is defined on a regular grid of \f$ N \f$ grid points, for
+even \f$ N\f$, the distinct reciprocal lattice wavenumbers are
+defined to be \f$ G_{n} = n 2\pi /L \f$ where \f$ n \f$ is an
+integer in the range \f$ -N/2 < n \leq N/2 \f$. The rules
+discussed above provide a natural generalization of this
+convention to periodic functions in two or three dimensions.
+
+\section user_field_basis_real_sec Real Functions
+
+The concentration and chemical potential fields that appear in
+SCFT calculations are real (rather than complex) functions of
+position. Such functions can be expanded in a basis of complex
+star functions, but the resulting expansion generally requires
+the use of complex coefficients for some star functions.
+It is more convenient for most purposes to express real fields
+as a linear combination of real basis functions.
+
+The PSCF programs for periodic functions use the following rules
+to construct a sequence of real basis functions denoted here by
+\f$ f_{0}({\bf r}), \ldots, f_{N_{\rm b}-1}({\bf r}) \f$:
+
+   - If \f$ \phi_{i}({\bf r}) \f$ is a star function associated
+     with a closed star, then we define
+     \f[
+         f_{i}({\bf r}) = \phi_{i}({\bf r}) \quad.
+     \f]
+
+   - If \f$ \phi_{i}({\bf r}) \f$ and
+     \f$ \phi_{i+1}({\bf r}) = \phi_{i}^{*}({\bf r})\f$ are
+     star functions associated with a pair of open stars that
+     are related by inversion, we define two corresponding real
+     functions:
+     \f[
+        f_{i}({\bf r})
+        = [ \phi_{i}({\bf r}) + \phi^{*}_{i}({\bf r}) ]/\sqrt{2}
+        \quad,
+     \f]
+     and
+     \f[
+        f_{i+1}({\bf r}) =
+        [ \phi_{i}({\bf r}) - \phi^{*}_{i}({\bf r}) ]/(\sqrt{2} i)
+        \quad.
+     \f]
+
+It is straightforward to confirm that the resulting functions are
+real, orthonormal in the required sense, and eigenfunctions of the
+Laplacian.
+In the special case of a centro-symmetric group, for which all
+stars are closed, the resulting sequence of real functions is
+identical to the sequence of star functions, which are already
+all real function in this case.  For non-centrosymmetric groups,
+however, this yields a different basis that spans the same
+function space as that spanned by the corresponding star
+functions.
+
+The resulting sequence \f$ f_{0}, \ldots, f_{N_{\rm b}-1} \f$
+provides a convenient basis for expanding any real function
+\f$ w({\bf r}) \f$ with the desired space group symmetry as a
+superposition
+\f[
+   w({\bf r}) = \sum_{i=0}^{N_{\rm b}-1} a_{i} f_{i}({\bf r})
+\f]
+with real coefficients
+\f$ a_{0}, a_{1}, \ldots, N_{\rm b} -1 \f$.
+
+The resulting expansion of a real function in real basis functions
+can also be expressed as an equivalent expansion in a basis of
+star functions, of the form
+\f[
+   w({\bf r}) = \sum_{i=0}^{N_{\rm b}-1} c_{i} \phi_{i}({\bf r})
+\f]
+with the following rules for the complex coefficients
+\f$ c_{0}, \ldots, c_{N_{\rm b}-1} \f$:
+
+   - The coefficient \f$ c_{i} \f$ of any star function that is
+     associated with a closed star is given by
+     \f[
+         c_{i} = a_{i} \quad,
+     \f]
+     giving a real Fourier coefficient.
+
+   - The coefficients \f$ c_{i} \f$ and \f$ c_{i+1} \f$ of two
+     star functions that are associated with open stars that are
+     related by inversion are given by
+     \f[
+         c_{i} = ( a_{i} - i a_{i+1} )/\sqrt{2}
+     \f]
+     and
+     \f[
+         c_{i+1} = ( a_{i} + i a_{i+1} )/\sqrt{2} \quad,
+     \f]
+     respectively, giving \f$ c_{i+1} = c_{i}^{*} \f$.
+
+\section user_field_basis_format2_sec File Format (Revisited)
+
+The above discussion allows us to give a somewhat more precise 
+description of the format of data section of a basis field file.
+Consider row number \f$ i \f$ of the data section, for 
+\f$ i = 0, \ldots, N_{\rm b} \f$ for a system that contains 
+N_monomer different monomer types.
+
+Each of the first N_monomer columns of of this row contain a 
+value for the coefficient \f$ a_{i} \f$ of the real basis function
+\f$ f_{i}({\bf r}) \f$ in the symmetry-adapated expansion of a
+field associated with a particular monomer type in a basis of real 
+functions, with columns listed in order of increasing monomer type 
+index.
+
+The next dim entries in such a row (where dim is the dimension 
+of space) are integers that give the integer components of the
+characteristic wavevector of star \f$ i \f$ (i.e., the star with 
+index \f$ i \f$, which is associated with star function 
+\f$ \phi_{i}({\bf r}) \f$ ), defined using the numbering scheme 
+described above.
+
+The last entry in row \f$ i \f$ is the number \f$ M_{i} \f$ of 
+wavevectors in star \f$ i \f$. The number of waves that are 
+superposed to create the real basis function \f$ f_{i}({\bf r}) \f$ 
+is equal to \f$ M_i \f$ if star \f$ i \f$ is closed under 
+inversion (in which case \f$ f_{i}({\bf r}) = \phi_{i}({\bf r})\f$
+) and is equal to \f$ 2M_{i} \f$ if star \f$ i \f$ is open under 
+inversion (in which case \f$ f_{i}({\bf r}) \f$ is a superposition
+of \f$ \phi_{i}({\bf r}) \f$ and its complex conjugate). 
+
+\section user_field_basis_order_sec Ordering of Basis Functions
+
+The order in which star functions or associated real basis functions
+are listed and assigned indices by a pscf_pc or pscf_pg program is
+chosen so as to give eigenvalues of the operator \f$ - \nabla^{2} \f$
+that were ordered in increasing (or at least non-decreasing) order
+when the basis was constructed. The eigenvalues of \f$ -\nabla^{2} \f$
+for a given basis function are given by the square magnitudes of
+associated wavevectors, generally depend on the values of unit cell
+parameters. The order of the eigenvalues of the Laplacian for a set
+of symmetry-adapted basis is actually independent of the values of
+the unit cell parameter for several common, highly symmetric lattice 
+systems, including all 1D lamellar, 2D square or hexagonal, and 3D 
+cubic crystals.  For less symmetric crystal systems, however, such 
+as oblique or rectangular 2D crystals and tetragonal, orthorhombic,
+triclinic or monoclinic 3D crystals, the order in which basis
+functions are listed in such an ordered sequence generally does
+depend on the values of unit cell parameters such as the unit
+cell lengths along different axes.
+
+The set of basis functions that is created to describe functions
+with a specified space group only depends on the space group and
+the numerical discretization mesh (i.e., the number of grid points
+in each direction. The order in which basis functions are assigned
+indices and stored internally generally depends, however, upon the
+values of the unit cell parameters that were available when the
+basis was constructed.
+
+The pscf_pc and pscf_pg programs normally create a symmetry-adapted
+basis immediately after the first time the program reads a set of
+values for unit cell parameters from a file. This usually happens
+the first time the program executes a command that reads a chemical
+potential or concentration field from file. All of the field file
+formats used by pscf_pc and pscf_pg programs contain a complete
+description of the unit cell, including unit cell parameter values.
+The space group name and mesh dimensions are given in the parameter
+file, which is read before the command file or any field files, but
+the parameter file does not contain values of unit cell parameters.
+The space group and mesh specified in the parameter file cannot be
+changed after they are initialized with values provided in the
+parameter file.  Similarly, the symmetry-adapted Fourier basis is
+normally initialized only once during each execution of a program,
+when the program first obtains access to a set of unit cell parameters,
+and remains unchanged during the rest of the program execution.
+
+This order in which the basis functions are assigned indices during
+construction of the basis determines the order in which rows
+associated with different basis functions are written to an output
+file when a pscf_pc or pscf_pg program writes any field to a file
+in basis format.
+Values of unit cell parameters can be modified during execution of
+a SCFT program, after the basis is constructed, by iteration
+algorithms that adjust these parameters so as to minimize free energy.
+The order in which rows associated with different basis functions
+are written to such a field file thus may not orrespond to the order
+in which they would be listed if the basis were re-constructed using
+the unit cell parameters listed in the header of the field file. When
+such a file is read, the code that reads the file thus cannot assume
+that fows associated with different basis functions will appear in
+any particular order, and must instead use the wavevector indices
+that appear in each row of the data section to identity the
+associated basis function.
 
 <BR>
- \ref user_field_page        (Prev / Up) &nbsp; &nbsp; &nbsp; &nbsp;
- \ref user_field_rgrid_page  (Next)
+ \ref user_field_periodic_page (Prev/Up)  &nbsp; &nbsp; &nbsp; &nbsp;
+ \ref user_field_rgrid_page    (Next)
 */

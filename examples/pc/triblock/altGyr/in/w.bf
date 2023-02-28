@@ -1,17 +1,17 @@
  format  1  0
-dim                                     
+dim
                    3
-crystal_system                          
+crystal_system
              cubic
-N_cell_param                            
+N_cell_param
                    1
-cell_param                              
+cell_param
     2.2348701424E+00
-group_name                              
+group_name
             I_41_3_2
-N_monomer                               
+N_monomer
                    3
-N_star                                  
+N_basis
                  987
   1.513300000000E+01  6.162000000000E+00  1.513300000000E+01       0   0   0     1
   7.207663214817E+00 -6.773254308415E-14 -7.207663214817E+00       1   1   0    12

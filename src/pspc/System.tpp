@@ -430,7 +430,23 @@ namespace Pspc
    void System<D>::readEcho(std::istream& in, std::string& string) const
    {
       in >> string;
+      if (in.fail()) {
+          UTIL_THROW("Unable to read string parameter.");
+      }
       Log::file() << " " << Str(string, 20) << std::endl;
+   }
+
+   /*
+   * Read a floating point number and echo to log file (used in readCommands).
+   */
+   template <int D>
+   void System<D>::readEcho(std::istream& in, double& value) const
+   {
+      in >> value;
+      if (in.fail()) {
+          UTIL_THROW("Unable to read floating point parameter.");
+      }
+      Log::file() << " " << Dbl(value, 20) << std::endl;
    }
 
    
@@ -476,38 +492,6 @@ namespace Pspc
             in >> unitCell;
             Log::file() << "   " << unitCell << std::endl;
             setUnitCell(unitCell);
-         } else
-         if (command == "READ_H_BASIS") {
-            readEcho(in, filename);
-            if (!h_.isAllocatedBasis()) {
-               h_.allocateBasis(basis().nBasis());
-            }
-            if (!h_.isAllocatedRGrid()) {
-               h_.allocateRGrid(mesh().dimensions());
-            }
-            h_.readBasis(filename, domain_.unitCell());
-         } else
-         if (command == "READ_H_RGRID") {
-            readEcho(in, filename);
-            if (!h_.isAllocatedRGrid()) {
-               h_.allocateRGrid(mesh().dimensions());
-            }
-            h_.readRGrid(filename, domain_.unitCell());
-         } else
-         if (command == "READ_MASK_BASIS") {
-            UTIL_CHECK(domain_.basis().isInitialized());
-            readEcho(in, filename);
-            if (!mask_.isAllocated()) {
-               mask_.allocate(basis().nBasis(), mesh().dimensions());
-            }
-            mask_.readBasis(filename, domain_.unitCell());
-         } else
-         if (command == "READ_MASK_RGRID") {
-            readEcho(in, filename);
-            if (!mask_.isAllocated()) {
-               mask_.allocate(basis().nBasis(), mesh().dimensions());
-            }
-            mask_.readBasis(filename, domain_.unitCell());
          } else
          if (command == "COMPUTE") {
             // Solve the modified diffusion equation, without iteration
@@ -621,27 +605,9 @@ namespace Pspc
             readEcho(in, filename);
             writeWaves(filename);
          } else 
-         if (command == "WRITE_MASK_BASIS") {
+         if (command == "WRITE_GROUP") {
             readEcho(in, filename);
-            UTIL_CHECK(mask_.hasData());
-            UTIL_CHECK(mask_.isSymmetric());
-            fieldIo().writeFieldBasis(filename, mask_.basis(), unitCell());
-         } else 
-         if (command == "WRITE_MASK_RGRID") {
-            readEcho(in, filename);
-            UTIL_CHECK(mask_.hasData());
-            fieldIo().writeFieldRGrid(filename, mask_.rgrid(), unitCell());
-         } else 
-         if (command == "WRITE_H_BASIS") {
-            readEcho(in, filename);
-            UTIL_CHECK(h_.hasData());
-            UTIL_CHECK(h_.isSymmetric());
-            fieldIo().writeFieldsBasis(filename, h_.basis(), unitCell());
-         } else 
-         if (command == "WRITE_H_RGRID") {
-            readEcho(in, filename);
-            UTIL_CHECK(h_.hasData());
-            fieldIo().writeFieldsRGrid(filename, h_.rgrid(), unitCell());
+            writeGroup(filename, domain_.group());
          } else 
          if (command == "BASIS_TO_RGRID") {
             readEcho(in, inFileName);
@@ -674,13 +640,9 @@ namespace Pspc
             kGridToBasis(inFileName, outFileName);
          } else
          if (command == "CHECK_RGRID_SYMMETRY") {
-            readEcho(in, inFileName);
             double epsilon;
-            in >> epsilon;
-            if (in.fail()) {
-               UTIL_THROW("Unable to read numerical parameter epsilon.");
-            }
-            Log::file() << " " << Dbl(epsilon, 20) << std::endl;
+            readEcho(in, inFileName);
+            readEcho(in, epsilon);
             bool hasSymmetry;
             hasSymmetry = checkRGridFieldSymmetry(inFileName, epsilon);
             if (hasSymmetry) {
@@ -725,11 +687,65 @@ namespace Pspc
                                               domain_.unitCell());
             domain_.fieldIo().readFieldsRGrid(filecompare2, Rfield2, 
                                               domain_.unitCell());
-            // Note: Rfield1 and Rfield2 will be allocated by readFieldsRGrid
+            // Note: Rfield1, Rfield2 will be allocated by readFieldsRGrid
 
             // Compare and output report
             compare(Rfield1, Rfield2);
 
+         } else 
+         if (command == "READ_H_BASIS") {
+            readEcho(in, filename);
+            if (!h_.isAllocatedBasis()) {
+               h_.allocateBasis(basis().nBasis());
+            }
+            if (!h_.isAllocatedRGrid()) {
+               h_.allocateRGrid(mesh().dimensions());
+            }
+            h_.readBasis(filename, domain_.unitCell());
+         } else
+         if (command == "READ_H_RGRID") {
+            readEcho(in, filename);
+            if (!h_.isAllocatedRGrid()) {
+               h_.allocateRGrid(mesh().dimensions());
+            }
+            h_.readRGrid(filename, domain_.unitCell());
+         } else
+         if (command == "WRITE_H_BASIS") {
+            readEcho(in, filename);
+            UTIL_CHECK(h_.hasData());
+            UTIL_CHECK(h_.isSymmetric());
+            fieldIo().writeFieldsBasis(filename, h_.basis(), unitCell());
+         } else 
+         if (command == "WRITE_H_RGRID") {
+            readEcho(in, filename);
+            UTIL_CHECK(h_.hasData());
+            fieldIo().writeFieldsRGrid(filename, h_.rgrid(), unitCell());
+         } else 
+         if (command == "READ_MASK_BASIS") {
+            UTIL_CHECK(domain_.basis().isInitialized());
+            readEcho(in, filename);
+            if (!mask_.isAllocated()) {
+               mask_.allocate(basis().nBasis(), mesh().dimensions());
+            }
+            mask_.readBasis(filename, domain_.unitCell());
+         } else
+         if (command == "READ_MASK_RGRID") {
+            readEcho(in, filename);
+            if (!mask_.isAllocated()) {
+               mask_.allocate(basis().nBasis(), mesh().dimensions());
+            }
+            mask_.readBasis(filename, domain_.unitCell());
+         } else
+         if (command == "WRITE_MASK_BASIS") {
+            readEcho(in, filename);
+            UTIL_CHECK(mask_.hasData());
+            UTIL_CHECK(mask_.isSymmetric());
+            fieldIo().writeFieldBasis(filename, mask_.basis(), unitCell());
+         } else 
+         if (command == "WRITE_MASK_RGRID") {
+            readEcho(in, filename);
+            UTIL_CHECK(mask_.hasData());
+            fieldIo().writeFieldRGrid(filename, mask_.rgrid(), unitCell());
          } else {
             Log::file() << "Error: Unknown command  " 
                         << command << std::endl;
@@ -1423,7 +1439,7 @@ namespace Pspc
 
       // Write header
       fieldIo().writeFieldHeader(file, 1, domain_.unitCell());
-      file << "ngrid" << std::endl
+      file << "mesh " << std::endl
            << "          " << domain_.mesh().dimensions() << std::endl
            << "nslice"    << std::endl
            << "          " << ns << std::endl;

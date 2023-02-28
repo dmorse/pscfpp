@@ -1,206 +1,31 @@
-/*! \page user_command_pg_page Commands - pscf_pg (GPU)
+/*! \page user_command_pg_page Commands - pscf_pg 
 
  \ref user_command_pc_page     (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref user_example_page (Next) 
 <BR>
 
-Most of the available commands for the pscf_pg programs GPU programs
-are similar to those used by the pscf_pc CPU programs. The GPU and
-CPU programs for periodic structures use the same set of file formats.
+Most of the available commands for the pscf_pg programs GPU programs are 
+generally similar to those used by the pscf_pc CPU programs. 
+Users of pscf_pg programs should thus consult the documentation for
+\ref user_command_pc_page "pscf_pc commands" for a list of commands,
+with the differences listed below in mind.
 
-\section user_command_pg_commands_section Commands
+The only differences between pscf_pg and pscf_pg commands are that the 
+following following pscf_pc commands are currently not available in 
+pscf_pg:
 
-The following table shows a list of available commands for the pscf_pg
-GPU accelerated programs periodic microstructures (i.e., pscf_pg1,
-pscf_pg2, and pscf_pg3). Almost all of the commands are identical to 
-those available for the pscf_pc CPU-based programs.
+   - Commands for reading and writing external fields
+     (READ_H_BASIS, READ_H_RGRID, WRITE_H_BASIS, and WRITE_H_RGRID) .
 
-<table>
-  <tr> 
-    <td> <b>command     </b> </td>
-    <td> <b>parameter(s)</b> </td>
-    <td> <b>description </b> </td>
-  </tr>
-  <tr> 
-    <td> READ_W_BASIS </td>
-    <td> filename [string] </td>
-    <td> Read w fields from file filename, in symmetry-adapted basis format
-         </td>
-  </tr>
-  <tr> 
-    <td> READ_W_RGRID </td>
-    <td> filename [string] </td>
-    <td> Read w fields from file filename, in real-space grid (r-grid) 
-         format </td>
-  </tr>
-  <tr> 
-    <td> ESTIMATE_W_FROM_C </td>
-    <td> filename [string] </td>
-    <td> Read monomer concentration fields in symmetry-adapted basis 
-         format from file filename, generate and store corresponding 
-         initial guesses for monomoer chemical potential fields.
-         </td>
-  </tr>
-  <tr> 
-    <td> COMPUTE </td>
-    <td> </td>
-    <td> Solve modified diffusion equation for the current w fields </td>
-  </tr>
-  <tr> 
-    <td> ITERATE </td>
-    <td> </td>
-    <td> Iteratively solve SCFT equations (after initializing 
-         w fields) </td>
-  </tr>
-  <tr> 
-    <td> SWEEP </td>
-    <td> </td>
-    <td> Perform a sweep, as specified by the Sweep object in the param 
-         file. </td>
-  </tr>
-  <tr> 
-    <td> WRITE_W_BASIS </td>
-    <td> filename [string] </td>
-    <td> Write w fields to file filename, in symmetry-adapted basis format
-         </td>
-  </tr>
-  <tr> 
-    <td> WRITE_W_RGRID </td>
-    <td> filename [string] </td>
-    <td> Write w fields to file filename, in real-space grid (r-grid) format
-         </td>
-  </tr>
-  <tr> 
-    <td> WRITE_C_BASIS </td>
-    <td> filename [string] </td>
-    <td> Write monomer volume fraction fields (c fields) to file filename,
-         in symmetry adapted basis format  </td>
-  </tr>
-  <tr> 
-    <td> WRITE_C_RGRID </td>
-    <td> filename [string] </td>
-    <td> Write monomer volume fraction fields (c fields) to file filename,
-         in r-grid format  </td>
-  </tr>
-  <tr> 
-    <td> WRITE_C_BLOCK_RGRID </td>
-    <td> filename [string] </td>
-    <td> Write all individual block and solvent volume fraction fields 
-         (c fields) to file filename, in r-grid format. The block c fields 
-         are given in the order that the blocks appear in the param file, 
-         followed by the solvent fields in the order that the solvents 
-         appear in the param file </td>
-  </tr>
-  <tr> 
-    <td> WRITE_Q_SLICE </td>
-    <td> filename [string], ip[int], ib[int], id[int], is[int] </td>
-    <td> Write a "slice" of a propagator at fixed contour variable to file, 
-         in real-space grid (r-grid) format. This command writes the slice
-         at contour step is, for direction id (id=0 or 1), of block ib of
-         polymer ip to file named filename.
-         </td>
-  </tr>
-  <tr> 
-    <td> WRITE_Q_TAIL </td>
-    <td> filename [string], ip[int], ib[int], id[int] </td>
-    <td> Write the final "slice" (or tail) of a propagator to a file, 
-         in real-space grid (r-grid) format. This command writes the final
-         slice of a propagor for direction id (id=0 or 1), of block ib of
-         polymer ip to file named filename.
-         </td>
-  </tr>
-  <tr> 
-    <td> WRITE_Q </td>
-    <td> filename [string], ip[int], ib[int], id[int] </td>
-    <td> Write all "slice" of a specific propagator to a file, in 
-         real-space grid (r-grid) format. This command writes a single
-         file containing all slices for direction id (id=0 or 1), of 
-         block ib of polymer ip to file named filename.
-         </td>
-  </tr>
-  <tr> 
-    <td> WRITE_Q_ALL </td>
-    <td> basename [string] </td>
-    <td> Write all propagators for both directions of all blocks of 
-         all propagators to file, with each propagator in a different
-         file, in real-space grid (r-grid) format. This file containing
-         the propagator for polymer ip, block ib, and direction id has
-         a name of the form (basename)_ip_ib_id.rf.
-         </td>
-  </tr>
-  <tr> 
-    <td> WRITE_PARAM </td>
-    <td> filename [string] </td>
-    <td> Write version of the param file associated with the current 
-         that omits any Sweep block.  </td>
-  </tr>
-  <tr>
-    <td> WRITE_THERMO </td>
-    <td> filename [string] </td>
-    <td> Write thermodynamic data (free energy, pressure, phi, and 
-         mu for each species) to a file. If file already exists, this
-         command will append thermodynamic data to the end of the 
-         file, rather than overwriting the file. 
-         </td>
-  </tr> 
-  <tr> 
-    <td> WRITE_STARS </td>
-    <td> filename [string] </td>
-    <td> Write a list of all stars to file filename. </td>
-  </tr>
-  <tr> 
-    <td> WRITE_WAVES </td>
-    <td> filename [string] </td>
-    <td> Write a list of all waves to file filename. </td>
-  </tr>
-  <tr> 
-    <td> RGRID_TO_BASIS </td>
-    <td> inFile [string], outFile [string] </td>
-    <td> Read fields from file inFile in real-space grid (r-grid) format, 
-         write to file outFile in symmetry-adapted basis format </td>
-  </tr>
-  <tr> 
-    <td> BASIS_TO_RGRID </td>
-    <td> inFile [string], outFile [string] </td>
-    <td> Read fields from file inFile in symmetry-adapted basis format,
-         write to file outFile in real-space grid (r-grid) format </td>
-  </tr>
-  <tr> 
-    <td> KGRID_TO_RGRID </td>
-    <td> inFile [string], outFile [string] </td>
-    <td> Read fields from file inFile in discrete Fourier expansion 
-         (k-grid) format, write to file outFile in r-grid format </td>
-  </tr>
-  <tr> 
-    <td> RGRID_TO_KGRID </td>
-    <td> inFile [string], outFile [string] </td>
-    <td> Read fields from file inFile in real-space (r-grid) format,
-         write to outFile in discrete Fourier expansion (k-grid) format
-         </td>
-  </tr>
-  <tr> 
-    <td> KGRID_TO_BASIS </td>
-    <td> inFile [string], outFile [string] </td>
-    <td> Read fields from file inFile in discrete Fourier expansion 
-         (k-grid) format, write to file outFile in symmetry-adapted
-         basis format </td>
-  </tr>
-  <tr> 
-    <td> BASIS_TO_KGRID </td>
-    <td> inFile [string], outFile [string] </td>
-    <td> Read fields from file inFile in symmetry-adapted basis format,
-         write to outFile in discrete Fourier expansion (k-grid) format
-         </td>
-  </tr>
-  <tr> 
-    <td> CHECK_RGRID_SYMMETRY </td>
-    <td> inFile [string] </td>
-    <td> Read fields from file inFile in real-space (r-grid) format,
-         check whether the fields have symmetry that matches the
-         space group specified in the param file. 
-         </td>
-  </tr>
-</table>
+   - Commands for reading and writing external mask fields 
+     (READ_MASK_BASIS, READ_MASK_RGRID, WRITE_MASK_BASIS, WRITE_MASK_RGRID).
+
+   - Commands COMPARE_BASIS and COMPARE_RGRID
+
+The commands to read and write external fields are not available for
+pscf_pg programs because the underlying features have not yet been 
+implemented.
+
 
  <BR>
  \ref user_command_pc_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

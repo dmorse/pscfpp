@@ -443,28 +443,29 @@ namespace Pspc
                                RFieldDft<D>& dft) const;
    
       /**
-      * Convert fields from symmetrized basis to Fourier transform (kgrid).
+      * Convert fields from symmetrized basis to Fourier transform (k-grid).
       * 
       * The in and out parameters are arrays of fields, in which element
       * number i is the field associated with monomer type i. 
       *
-      * \param in  components of fields in symmetry adapted basis 
-      * \param out fields defined as discrete Fourier transforms (k-grid)
+      * \param in  fields expanded in symmetry-adapted Fourier basis 
+      * \param out  fields defined as discrete Fourier transforms (k-grid)
       */
       void convertBasisToKGrid(DArray< DArray<double> > const & in,
                                DArray< RFieldDft<D> >& out) const;
 
       /**
-      * Convert a field from Fourier transform (k-grid) to symmetrized basis.
+      * Convert a field from Fourier transform (kgrid) to symmetrized basis.
       *
-      * \param in  complex DFT (k-grid) representation of a field.
-      * \param out  coefficients of symmetry-adapted basis functions.
-      * \param checkSymmetry  boolean indicating whether to check that the 
-      * symmetry of the input field matches the space group symmetry. If
-      * input does not have correct symmetry, prints warning to Log::file().
-      * \param epsilon  if checkSymmetry = true, epsilon is the error 
-      * threshold used when comparing the k-grid and symmetry-adapted formats 
-      * to determine whether field has the declared space group symmetry.
+      * If the checkSymmetry parameter is true, this function checks if 
+      * the input field satisfies the space group symmetry to within a 
+      * tolerance given by the epsilon parameter, and prints a warning to 
+      * Log::file() if it does not. 
+      *
+      * \param in  discrete Fourier transform (k-grid) of a field
+      * \param out  components of field in asymmetry-adapted Fourier basis
+      * \param checkSymmetry  flag indicating whether to check symmetry
+      * \param epsilon  error tolerance for symmetry test (if any)
       */
       void convertKGridToBasis(RFieldDft<D> const & in, 
                                DArray<double> & out,
@@ -472,19 +473,20 @@ namespace Pspc
                                double epsilon = 1.0e-8) const;
 
       /**
-      * Convert fields from Fourier transform (kgrid) to symmetrized basis.
+      * Convert fields from Fourier transform (k-grid) to symmetrized basis.
       * 
       * The in and out parameters are each an array of fields, in which
       * element i is the field associated with monomer type i. 
       *
+      * If the checkSymmetry parameter is true, this function checks if 
+      * the input fields all satisfies the space group symmetry to within
+      * a tolerance given by the parameter epsilon, and prints a warning 
+      * to Log::file() if one or more fields do not. 
+      *
       * \param in  fields defined as discrete Fourier transforms (k-grid)
       * \param out  components of fields in symmetry adapted basis 
-      * \param checkSymmetry  boolean indicating whether to check that the 
-      * symmetry of the input field matches the space group symmetry. If
-      * input does not have correct symmetry, prints warning to Log::file().
-      * \param epsilon  if checkSymmetry = true, epsilon is the error 
-      * threshold used when comparing the k-grid and symmetry-adapted formats 
-      * to determine whether field has the declared space group symmetry.
+      * \param checkSymmetry  flag indicate whether to check symmetry
+      * \param epsilon  error tolerance for symmetry test (if any)
       */
       void convertKGridToBasis(DArray< RFieldDft<D> > const & in,
                                DArray< DArray<double> > & out,
