@@ -11,7 +11,7 @@ group_name
           P_1
 N_monomer
           1
-N_star       
+N_basis
              64
     8.9461021637e-01       0    1
    -1.4607939992e-01       1    1
