@@ -8,10 +8,10 @@ detailed description of the symmetry-adapted basis used by these programs.
 Closely related information about the basis is also provided by the
 \ref user_command_pc_star_page "WRITE_STARS" command.
 
-<em> Essential background </em>: As background, before reading this 
-description of the output of the WRTIE_WAVES command, users should read 
-the discussion of the relationships between "stars" and basis functions 
-given in the documentation of the 
+<em> Conceptual background </em>: As background, before reading this 
+description of the output of the WRTIE_WAVES command, we strongly recommend
+that users read the discussion of the relationships between "stars" and 
+basis functions given in the documentation of the 
 \ref user_field_basis_page "basis file format". 
 Users who seek a more complete discussion can also consult appendices 
 that discuss crystallographic space group

@@ -2,16 +2,16 @@
 = PSCF (C++/Cuda) History  =
 ============================
 
-This file documents changes to the C++/Cuda version of PSCF. Source code for
-this project is in the dmorse/pscfpp github repository.
+This file documents changes to the C++/Cuda version of PSCF. Source code 
+for this project is in the dmorse/pscfpp github.com repository.
 
 The following labels are used below to indicate which programs or sets of
 programs are affected by specific changes:
 
-   pc - Pseudo-spectral CPU code for periodic structures
-   pg - Pseudo-spectral GPU code for periodic structures
-   fd - Finite element code for one-dimension (1D) problems
-   all  - all programs (fd, pc, and pg)
+  pc  - CPU code for periodic structures (pscf_pc)
+  pg  - GPU code for periodic structures (pscf_pg)
+  fd  - CPU finite difference code for 1D problems (pscf_fd)
+  all - all programs (fd, pc, and pg)
 
 Pscf++ v1.0.0
 ==============
@@ -26,16 +26,19 @@ User-visible features
 
 User-visible changes
 ---------------------
-* Remove unit cell parameters from paramete file (pc, pg)
+* Remove unit cell parameters from parameter file (pc, pg)
 * Changed format of AmIterator parameter blocks (all)
+* Changed default format of field files (backwards compatible) (pc, pg)
+  (N_star -> N_basis, ngrid -> mesh in header sections)
 
 Documentation
 --------------
 * New discussion of standard polymer model, conventions for variables
 * New appendix summarizing SCFT working equations for branched polymers
-* New appendices on periodic fields, space group symmetry, bases
+* New appendices on periodic fields, symmetry, basis
 * More complete documentation of parameter file block formats
 * More complete documentation of commands (fd and pc)
+* Documentation of wave, star, and group output formats
 
 Developer-visible changes
 -------------------------
@@ -121,6 +124,7 @@ Developer-visible changes
 * Created unit tests for Pspg (GPU) code (pg)
 * Reorganization / clean-up of Cuda kernels (pg)
 * Class template for Anderson-mixing iterator algorithms (pc and pg)
+* Class template for sweeps
 
 Remaining known bugs
 --------------------

@@ -112,7 +112,7 @@ describes the meaning of those parameters.
 \section user_unitcell_2D_sec 2D Systems
 
 There are 4 conventional 2D lattice systems (square, hexagonal,
-rectangular, and oblique). The pscf code also allows the user to specify
+rectangular, and oblique). The code also allows the user to specify
 a "rhombic" unit cell, which is an oblique unit cell in which the two
 basis vectors have equal magnitude.
 

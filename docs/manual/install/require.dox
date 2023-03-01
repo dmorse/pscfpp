@@ -32,8 +32,8 @@ system on which the code is compiled and run must have:
 A git client is needed to obtain the source code, by cloning the git
 repository in which PSCF is maintained on the github.com site. A python
 interpreter is needed during compilation because the build system
-that compiles PSCF uses several python scripts, which are provided
-as part of the source code. A git client, C++ compiler and python
+that compiles PSCF uses several python scripts that are provided 
+in the source code repository. A git client, C++ compiler and python
 interpreter will normally come pre-installed in either the most
 common linux distributions or in a Mac OS operating system in which
 command line tools have been installed.  The GNU scientific library

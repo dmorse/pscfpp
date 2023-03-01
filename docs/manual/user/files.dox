@@ -7,18 +7,18 @@
 \section user_files_types_sec Types of File
 
 To perform a typical self-consistent field theory (SCFT) calculation, a
-pscf program generally reads three different types of input file:
+PSCF program generally reads three different types of input file:
 <ul>
    <li> a parameter file </li>
    <li> a field file </li>
    <li> a command file </li>
 </ul>
-All pscf programs use similar formats for the parameter and command files.
+All PSCF programs use similar formats for the parameter and command files.
 Several different formats are used for field files.
 
 \section user_files_parameter_section Parameter file
 
-When any pscf program is executed, the parameter file is processed first.
+When any PSCF program is executed, the parameter file is processed first.
 This file defines the basic parameters of a physical problem of interest,
 and is used to initialize the state of the program.  The parameter file
 contains basic physical information about chemical structures (e.g.,

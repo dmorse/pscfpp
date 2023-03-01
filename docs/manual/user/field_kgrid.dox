@@ -47,7 +47,7 @@ implemented by a fortran loop of the form
 
 Note that this is not the same as the way that the k-grid files
 are written in the Fortran version of PSCF, which have the number
-of gridpoints halved in the first index (`n1` in the code above)
+of gridpoints halved in the first index (`n0` in the code above)
 rather than the last index, as is the case here. This means that
 k-grid files are not compatible between the two codes.
 

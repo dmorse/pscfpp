@@ -87,7 +87,14 @@ namespace Pspg
       // Read number of stars from field file into StarIn
       std::string label;
       in >> label;
-      UTIL_CHECK(label == "N_star");
+      if (label != "N_star" && label != "N_basis") {
+         std::string msg =  "\n";
+         msg += "Error reading field file:\n";
+         msg += "Expected N_basis or N_star, but found [";
+         msg += label;
+         msg += "]";
+         UTIL_THROW(msg.c_str());
+      }
       int nStarIn;
       in >> nStarIn;
       UTIL_CHECK(nStarIn > 0);
@@ -344,7 +351,7 @@ namespace Pspg
 
       // Write header
       writeFieldHeader(out, nMonomer, unitCell);
-      out << "N_star       " << std::endl
+      out << "N_basis      " << std::endl
           << "             " << basis().nBasis() << std::endl;
 
       // Define nStar and nBasis
@@ -399,7 +406,14 @@ namespace Pspg
       // Read grid dimensions
       std::string label;
       in >> label;
-      UTIL_CHECK(label == "ngrid");
+      if (label != "mesh" && label != "ngrid") {
+         std::string msg =  "\n";
+         msg += "Error reading field file:\n";
+         msg += "Expected mesh or ngrid, but found [";
+         msg += label;
+         msg += "]";
+         UTIL_THROW(msg.c_str());
+      }
       IntVec<D> nGrid;
       in >> nGrid;
       UTIL_CHECK(nGrid == mesh().dimensions());
@@ -473,7 +487,7 @@ namespace Pspg
       UTIL_CHECK(nMonomer > 0);
 
       writeFieldHeader(out, nMonomer, unitCell);
-      out << "ngrid" <<  std::endl
+      out << "mesh " <<  std::endl
           << "           " << mesh().dimensions() << std::endl;
 
       DArray<cudaReal*> temp_out;
@@ -549,11 +563,17 @@ namespace Pspg
 
       std::string label;
       in >> label;
-      UTIL_CHECK(label == "ngrid");
+      if (label != "mesh" && label != "ngrid") {
+         std::string msg =  "\n";
+         msg += "Error reading field file:\n";
+         msg += "Expected mesh or ngrid, but found [";
+         msg += label;
+         msg += "]";
+         UTIL_THROW(msg.c_str());
+      }
       IntVec<D> nGrid;
       in >> nGrid;
       UTIL_CHECK(nGrid == mesh().dimensions());
-
 
       cudaReal* temp_out = new cudaReal[mesh().size()];
 
@@ -618,7 +638,7 @@ namespace Pspg
 
       if (writeHeader) {
          writeFieldHeader(out, 1, unitCell);
-         out << "ngrid" <<  std::endl
+         out << "mesh " <<  std::endl
              << "           " << mesh().dimensions() << std::endl;
       }
 
@@ -688,7 +708,14 @@ namespace Pspg
       UTIL_CHECK(nMonomer == fields.capacity());
       std::string label;
       in >> label;
-      UTIL_CHECK(label == "ngrid");
+      if (label != "mesh" && label != "ngrid") {
+         std::string msg =  "\n";
+         msg += "Error reading field file:\n";
+         msg += "Expected mesh or ngrid, but found [";
+         msg += label;
+         msg += "]";
+         UTIL_THROW(msg.c_str());
+      }
       IntVec<D> nGrid;
       in >> nGrid;
       UTIL_CHECK(nGrid == mesh().dimensions());
@@ -752,7 +779,7 @@ namespace Pspg
 
       // Write header
       writeFieldHeader(out, nMonomer, unitCell);
-      out << "ngrid" << std::endl
+      out << "mesh " << std::endl
           << "               " << mesh().dimensions() << std::endl;
 
       DArray<cudaComplex*> temp_out;

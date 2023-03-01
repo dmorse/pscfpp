@@ -103,7 +103,14 @@ namespace Pspg
       // Read grid dimensions
       std::string label;
       in >> label;
-      UTIL_CHECK(label == "ngrid");
+      if (label != "mesh" && label != "ngrid") {
+         std::string msg =  "\n";
+         msg += "Error reading field file:\n";
+         msg += "Expected mesh or ngrid, but found [";
+         msg += label;
+         msg += "]";
+         UTIL_THROW(msg.c_str());
+      }
       IntVec<D> nGrid;
       in >> nGrid;
 
