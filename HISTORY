@@ -38,7 +38,7 @@ Documentation
 * New appendices on periodic fields, symmetry, basis
 * More complete documentation of parameter file block formats
 * More complete documentation of commands (fd and pc)
-* Documentation of wave and star output formats
+* Documentation of wave, star, and group output formats
 
 Developer-visible changes
 -------------------------
@@ -124,6 +124,7 @@ Developer-visible changes
 * Created unit tests for Pspg (GPU) code (pg)
 * Reorganization / clean-up of Cuda kernels (pg)
 * Class template for Anderson-mixing iterator algorithms (pc and pg)
+* Class template for sweeps
 
 Remaining known bugs
 --------------------

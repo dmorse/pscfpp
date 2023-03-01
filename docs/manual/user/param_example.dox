@@ -4,7 +4,7 @@
 \ref user_param_syntax_page (Next) 
 <BR>
 
-The different programs in the pscf package use parameter files with 
+The different programs in the PSCF package use parameter files with 
 similar structure and syntax, with slight differences in some elements. 
 It is useful to illustrate common elements by showing an example.
 

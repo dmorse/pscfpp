@@ -109,7 +109,7 @@ operations, defined without regard to order.
 
 An example is shown below of the file created by the WRITE_GROUP 
 command for a system with space group \f$ Ia\overline{3}d \f$. 
-The resulting file is identical to that distributed with the pscf 
+The resulting file is identical to that distributed with the PSCF
 package as the file pscfpp/data/groups/3/I_a_-3_d .  
 
 \code

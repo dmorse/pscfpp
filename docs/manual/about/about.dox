@@ -69,16 +69,16 @@ copolymer micelles. The suffix "fd" in the executable name pscf_fd stands
 for "finite difference".
 
 <b> pscf_pc </b>:
-Several programs that use a psuedo-spectral algorithm to simulate periodic 
-microstructures on conventional CPU hardware provide capabilities and
-performance similar to that of the older Fortran program.  In the new
-package, different executable programs are used to solve problems that 
-are period in 1, 2 or 3 spatial dimensions, which are named pscf_pc1,
-pscf_pc2 and pscf_pc3, respectively. Here, "pc" stands for "periodic CPU".
+These programs use a psuedo-spectral algorithm to simulate periodic 
+microstructures on conventional CPU hardware, thus reproducing and
+extending the capabilities of the older Fortran PSCF program.  In the new
+package, different executable programs named pscf_pc1, pscf_pc2 and 
+pscf_pc3 are used to solve problems that are periodic in 1, 2 or 3 
+spatial dimensions, respectively. Here, "pc" stands for "periodic CPU".
 
 <b> pscf_pg </b>:
-The GPU-accelerated programs for periodic structures are closely analogous
-to the corresponding CPU programs, and provide almost identical 
+The GPU-accelerated programs for periodic structures are closely 
+analogous to the corresponding CPU programs, and provide almost identical 
 features, at higher speed.  The GPU accelerated programs for solving 1, 2 
 and 3 dimensionally periodic structures are named pscf_pg1, pscf_pg2 and 
 pscf_pg3, respectively, where "pg" stands for "periodic GPU".
@@ -94,15 +94,16 @@ Features that are common to all of the PSCF programs include:
 
   - Mixtures of any number of block polymers, homopolymers, and solvent species
 
-  - Arbitrarily complex acyclic branched block polymers, as well as linear polymers.
+  - Polymers may be arbitrarily complex acyclic branched block polymers, as 
+    well as linear polymers.
 
   - Canonical, grand-canonical or mixed statistical ensembles -
     users may specify either a volume fraction or a chemical potential
     for each species
 
-  - Efficient simulation of sequences of parameter choices along a path 
-    in parameter space using extrapolation to generate initial guesses
-    for each state point.
+  - Efficient simulation of sequences of parameter choices along paths 
+    in parameter space ("sweeps") using extrapolation to generate good
+    initial guesses for each state point.
 
   - Efficient Anderson-mixing iteration algorithms
 
@@ -112,15 +113,16 @@ Features that are common to all of the PSCF programs include:
 
   - Open source code 
 
-Features specific to programs for periodic structures include:
+Features specific to pscf_pc and pscf_pg programs for periodic structures 
+include:
 
   - Ordered phases with 1, 2 or 3 dimensional periodicity
 
   - All possible 2D and 3D lattice systems (i.e., orthorhombic, monoclinic,
     etc.).
 
-  - Automatic optimization of unit parameters so so as to minimize 
-    free energy
+  - Automatic optimization of unit parameters so so as to minimize free 
+    energy
 
   - Imposition of any user-selected space-group symmetry
 
@@ -147,6 +149,7 @@ bottom surfaces.
 
 \section about_repo_sec Cloning the Source Code
 
+The PSCF C++ package is currently only provided in source code form.
 The source code may be obtained by using a git version control system
 client to clone the github source code repository. To do so on a machine
 with a git client installed, enter the command:
@@ -161,19 +164,19 @@ documentation, including all required git submodules.
 
 \section about_documentation_sec Documentation
 
-Documentation is provides as an html web manual that contains both
+Documentation is provided as an html web manual that contains both
 user and developer documentation. An online copy of the documentation 
 of a recent major release is available online at 
 <a ref=https://dmorse.github.io/pscfpp-man/>
 https://dmorse.github.io/pscfpp-man </a>.
 
-The PSCF repository contains all of the source files from which the 
-web manual is generated. This makes it possible for users to generate 
-a local copy of the manual on their own computer. The web manual is 
-created using the doxygen documentation utility. In order to generate 
-the documentation, doxygen must be installed on your computer, and 
-the directory containing the doxygen executable must be in your unix
-command search PATH.
+The PSCF source code repository contains all of the source files from 
+which the web manual is generated. This makes it possible for users to 
+generate a local copy of the manual on their own computer. The web 
+manual is created using the doxygen documentation utility. In order to 
+generate a local copy of the documentation, doxygen must be installed 
+on your computer, and the directory containing the doxygen executable 
+must be in your unix command search PATH.
 
 To generate documentation, change directory (cd) to the pscfpp/ root
 directory and then enter
@@ -182,7 +185,7 @@ directory and then enter
 \endcode
 This should create many html files in the pscfpp/docs/html directory.
 To begin reading the documentation, point a browser at the file
-pscfpp/docs/html/index.html, which contains the main page of the
+pscfpp/docs/html/index.html, which contains the main page of this
 web manual.
 
 Formatting of some mathematical expressions within this web manual 
@@ -195,11 +198,10 @@ to the internet.
 \section about_dependencies_sec Dependencies
 
 The PSCF source code is written using C++ as the primary language, with
-CUDA used in some programs for GPU acceleration. PSCF is only provided
-in source file format - all programs must be compiled from source.
-PSCF was developed on linux and and Mac OS X operating systems using 
-standard unix utilities, and is designed to be compiled and run on these 
-or other unix-like systems.
+CUDA used in some programs for GPU acceleration.  PSCF was developed on
+ linux and and Mac OS X operating systems using standard unix utilities, 
+and is designed to be compiled and run in these or other unix-like 
+environments.
 
 The CPU-based programs within the PSCF package depend on the following
 external libraries:
