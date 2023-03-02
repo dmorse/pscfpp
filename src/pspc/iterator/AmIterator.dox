@@ -39,7 +39,7 @@ AmIterator{
    verbose*         int (0-2, 0 by default)
    outputTime*      bool (false by default)
    errorType*       enumeration ("normResid", "maxResid", or "relNormResid", "relNormResid" by default)
-   isFlexible*      bool (0 or 1, 0/false by default)
+   isFlexible*      bool (0 or 1, 1/true by default)
    flexibleParams*  Array [ bool ] (nParameters elements)
    scaleStress*     real (10.0 by default)
 }
@@ -76,17 +76,17 @@ parameters. The meaning of the various parameters are described below:
          Optional, and 0 (false) by default. </td>
   </tr>
   <tr>
-    <td> errorType </td>
+    <td> errorType* </td>
     <td> Identifer for the type of variable used to define scalar
          error . The only allowed values are "maxResid", "normResid", 
          and "relNormResid", as discussed below. Optional, and equal
          to "relNormResid" by default. </td>
   </tr>
   <tr>
-    <td> isFlexible </td>
+    <td> isFlexible* </td>
     <td> Set isFlexible true to enable or false to disable iterative 
          optimization of unit cell parameters so as to minimize the 
-         free energy density. Optional and false by default.  </td>
+         free energy density. Optional and true by default.  </td>
   </tr>
   <tr>
     <td> flexibleParams* </td>

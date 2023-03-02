@@ -4,30 +4,39 @@
 \ref install_inout_page (Next) 
 <BR>
 
-Users must run a bash script named "setup" before attempting to compile 
-any code.  This script is located in the pscfpp/ root directory, and 
-must be executed from this directory. The setup script installs several
-files that are needed to compile pscfpp but that are not installed by 
-cloning the github repository. Some of the files installed by this script 
-are files that the user may need to modify in order to customize or extend 
-the package. These include include configuration files that a user may need 
-to modify in order to adapt the simpatico build system to a particular 
-environment or to enable optional features. It is only necessary to invoke 
-the setup script once, before the first time you compile any code.
+Users must run a bash script named "setup" after installing all required
+dependencies before attempting to compile any code in the PSCF package. 
+This script is located in the pscfpp/ root directory, and must be executed 
+from this directory.  It is usually only necessary to invoke the setup 
+script once, before the first time you compile any code.
+
+\section install_setup_purpose_sec Purpose
+
+The setup script installs several files that are needed to compile pscfpp 
+but that are not installed by cloning the github repository. Most of the 
+files installed by this script are files that the user may need to modify 
+in order to customize or extend the package. These include include 
+configuration files that a user may need to modify in order to adapt the 
+simpatico build system to a particular environment or to enable optional 
+features. 
 
 The most important file created by the setup script is a file named 
-config.mk that is installed the root directory of both the pscfpp/bld 
-and pscfpp/src directory trees. This is a makefile fragment that acts 
-as the main configuration file for compilation. It assigns values to 
-makefile variables that define the compiler executable names for C++ 
-and CUDA code, command line options passed to the compilers, and paths 
-for required external libraries. The copy of this file in pscfpp/bld 
-is used as the main configuration file for an out-of-source build, in 
-which intermediate files are created in the bld/ directory tree. The 
-copy in the pscfpp/src directory is the main configuration file for 
-an in-source build.  The brief overview of directions for compilation 
-given on a previous page give contain instructions for an out-of-source 
-build.
+config.mk that is installed in the root directory of both the pscfpp/bld 
+and pscfpp/src directory trees. This is a makefile fragment that acts as 
+the main configuration file for compilation. It assigns values to makefile 
+variables that define the compiler executable names for C++ and CUDA 
+code, command line options passed to the compilers, paths to various 
+directories used by the package during compilation or execution (e.g.,
+paths to source code, build, installation and data directories), and 
+paths for required external libraries. 
+
+The copy of the config.mk file that is installed in the the pscfpp/bld 
+directory is used as the main configuration file for an out-of-source 
+build, in which intermediate files are created in the bld/ directory 
+tree. The copy in the pscfpp/src directory is the main configuration 
+file for an in-source build.  The brief overview of directions for 
+compilation given on a previous page give instructions for an 
+out-of-source build.
 
 \section install_setup_default_sec Default configuration 
 
@@ -43,10 +52,10 @@ named setup in the current working directory, rather than searching the
 directories listed in the PATH environment variable for an executable 
 with this name.
 
-The default configuration should work for either linux or for a Mac 
-with an Intel CPU in which homebrew was used to install GSL and FFTW. 
-The definitions used in the default configuration are defined in a 
-file pscfpp/make/compiler/default. 
+The default configuration should work for most linux environments. 
+It also should work for a Mac with an Intel CPU in which homebrew was 
+used to install GSL and FFTW.  The definitions used in the default 
+configuration are defined in a file pscfpp/make/compiler/default. 
 
 \section install_setup_homebrewm1_sec Macs with Apple Silicon and Homebrew 
 
@@ -63,9 +72,10 @@ the compiler.
 
 The hardware used for a Mac OS system is relevant when using homebrew
 because the homebrew project decided to use the introduction of new
-hardware as an opportunity to introduce new conventions for paths without
-breaking backwards compatibility. As a result, homebrew actually uses 
-different path conventions on Intel and Apple-Si Macs.
+hardware (apple silicon vs Intel) as an opportunity to introduce new 
+conventions for paths without breaking backwards compatibility on 
+existing computers. As a result, homebrew actually uses different path 
+conventions on Intel and Apple-Si Macs.
 
 \section install_setup_local_file_sec Customized configuration
 
@@ -79,15 +89,16 @@ compiler names, compiler options and paths to external libraries.
 When the "setup" script is invoked with no argument, as indicated above, 
 the setup script uses a file named pscfpp/make/compiler/default for this
 purpose. This file contains a default configuration appropriate for a 
-system in which the gnu g++ C++ compiler is used to compile C++ files, 
-the nVidia nvcc compiler is used to compile CUDA files, and paths to 
-the gsl and fftw libraries are in common locations.
+system in which the g++ command is used to invoke the gnu C++ compiler 
+to compile C++ files, the nvcc command is used to invoke the nVidia 
+compiler is used to compile CUDA files, and paths to the gsl and fftw 
+libraries are in common locations.
 
 When the "setup" script is invoked with one argument, that argument is
 interpreted as the name of a file in the pscfpp/make/compiler directory
 that should be used as the compiler configuration file. For example, the 
 command "./setup mac-si-homebrew" causes the script system to read and 
-copy the contents of the file pscfpp/make/compiler/mac-si-homebrew.  The 
+use the contents of the file pscfpp/make/compiler/mac-si-homebrew.  The 
 command "./setup", with no argument, is equivalent to "./setup default". 
 
 Users can create customized compiler configuration files to adapt 
@@ -104,25 +115,28 @@ of the new file make/compiler/local.
 
 In order to create a customized compiler configuration file, a user
 will need to understand the meanings of some of the variables defined 
-in such files. Toward this end, we recommend that you first run the 
+in such files. Toward this end, we recommend that users first run the 
 setup script with no argument and then read the comments in the file 
 bld/config.mk that is created by the setup script. These comments 
 briefly explain the meaning and use of each of the makefile variables. 
 If you compare the resulting file to the file make/compiler/default, 
 you will see that the "default" compiler setup file will have simply 
-been copied into the middle part of the bld/config.mk file. 
+been copied into the middle part of the bld/config.mk file. For most
+users, the first step in creating a custom configuration file will be
+to copy either the default or mac-si-homebrew file in the make/compiler
+directory to another file with a different name in the same directory, 
+and use this copied file as a starting point for modifications.
 
-Users may change values of variables defined in the main configuration 
-file either by creating a customized compiler setup file in the 
-make/compiler directory before running the setup script, as described 
-above, or by directly editing the files bld/config.mk and/or 
-src/config.mk files after running the setup script. The advantages of 
-creating a custom compiler setup file in the make/compiler 
-directory are that:
+Users can change values of variables defined in the main config.mk
+configuration files either by creating a customized compiler setup file 
+in the make/compiler directory before running the setup script, as 
+described above, or by directly editing the files bld/config.mk and/or 
+src/config.mk files after running the setup script. The advantages 
+of making changes by creating a custom compiler setup file are that:
 
-   - Changes made in customized compiler setup file will be copied
-     to both src/config.mk and bld/config.mk and will thus be used 
-     in both in-source and out-of-source builds.
+   - Changes made in custom compiler setup file will be copied to
+     both src/config.mk and bld/config.mk by the setup script and 
+     will thus be used in both in-source and out-of-source builds.
 
    - The files src/config.mk and bld/config.mk will be erased if you 
      invoke "make veryclean" to start over with a fresh configuration, 
@@ -130,7 +144,8 @@ directory are that:
      the "veryclean" target. 
 
 We thus recommend that users who need to customize the main config.mk
-file do so, if possible, by creating a customized compiler setup file.
+file do so, when possible, by creating a customized compiler setup 
+file.
 
 <BR>
 \ref install_environment_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

@@ -22,7 +22,7 @@ AmIterator{
    verbose*       int (0-2, 0 by default)
    outputTime*    bool (false by default)
    errorType*     enumeration ("normResid", "maxResid", or "relNormResid", "relNormResid" by default)
-   isFlexible*    bool (0 or 1, 0/false by default)   
+   isFlexible*    bool (0 or 1, 1/true by default)   
    scaleStress*   real (10.0 by default)
 }
 \endcode

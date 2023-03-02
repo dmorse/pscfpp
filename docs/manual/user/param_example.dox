@@ -149,11 +149,12 @@ one-dimensional arrays) or by parentheses (as a syntax for specifying
 nonzero values of a matrix). Names of array-valued parameters are 
 usually given as plural nouns. 
 
-As an examples of a one-dimensional array-valued parameters, see the 
-"monomers" parameter in the Mixture block. The value of each element 
-in this array is a floating point number that is given on a line by
-itself, which gives the statistical segment length of a particular 
-type of monomer.
+As an example of a one-dimensional array-valued parameter, see the 
+"monomers" parameter in the Mixture block, which begins with a line
+containing the string "monomers[" and ends with a closing square
+bracket. The value of each element in this array is a floating point 
+number that is given on a line by itself, which gives the statistical 
+segment length of a particular type of monomer. 
 
 The value of the "chi" parameter within the Interaction block is a 
 symmetric matrix or two-dimensional array. The distinct nonzero elements 
@@ -231,33 +232,50 @@ when the SCF equations are solved to within a user-specified accuracy.
 The iterator algorithm used in this example does not require any 
 other input parameters.
 
-\section user_param_example_iterator_sec Selection of Iterator Algorithm
+<b> Iterator </b>:
 
-All PSCF programs are designed to allow a user to select from a list of 
-available iteration algorithms, or to use a default choice.  The default 
-iterator algorithm may always be invoked by including a block that starts 
-with the generic label "Iterator" before an opening bracket, as done here.  
-The default algorithm for the pscf_fd program, which is used in the above 
-example, is a Newton-Raphson algorithm that is actually implemented by a 
-C++ class named NrIterator.  
+The iterator block is a "selectable" block that allows a user to specify 
+both a choice of an iteration algorithm from among a list of available 
+algorithms, as well as provides values for parameters that are required 
+by the chosen algorithm.  The name of the desired algorithm is specified 
+by the label used in the opening line of the iterator block, in which 
+this label is immediately followed by an opening curly bracket. 
 
-When two or more iteration algorithms are available, a non-default 
-iteration algorithm may be chosen by replacing the generic "Iterator" 
-block label by a label that specifies the name of the class that 
-implements the desired algorithm as the first line of the iterator 
-block. The rest block that starts with such a line must contain the 
-parameters and format required by the specified class or algorithm, 
-which is generally different for different algorithms. 
+The label used in the opening line of the iterator block can either be 
+the generic label "Iterator", as in this example, which is used to 
+indicate that the user would like to use a default choice for the 
+iterator algorithm, or can be a label for a specific algorithm, such as 
+"AmIterator" for an Anderson-Mixing algorithm.  The default iterator 
+algorithm for the pscf_fd program is a Newton-Raphson algorithm, which 
+can also be invoked more explicitly by using the name NrIterator as a 
+label for this block.  
 
-The default choice of iteration algorithm may be invoked either by 
-using the generic label "Iterator" or the name of the class that 
-implements the default algorithm.  For program pscf_fd, the 
-Newton-Raphson iterator may thus be invoked by either using the generic 
-name "Iterator" or the specific class name "NRIterator" in the iterator 
-block label string.  
+In the above example, the use of the generic label "Iterator" as the
+block label indicates that the user would like to use the default 
+Newton-Raphson iterator algorithm. The only parameter required by this 
+algorithm is an "epsilon" parameter that specifies the maximum error
+allowed in a converged solution, which determines the criterion for 
+when iteration should stop.
+
+If the user wanted to run a pscf_fd simulation using an Anderson-Mixing 
+algorithm, the Iterator block in the above example could be replaced by
+a block that might look like
+\code
+   AmIterator{
+      epsilon 0.00000001
+      maxItr  200
+   }
+\endcode
+The parameter file format for each iterator algorithm is unique, since
+different algorithms may require different lists of required and optional 
+parameters. In this example, we have included an optional parameter
+maxItr that determines the maximum number of iterations that should be 
+attempted before giving up.  The body of the iterator block must have 
+a format consistent with that required by the algorithm specified in 
+the block label. 
 
 For simplicity, almost all of the examples shown in this user manual 
-use the default iterator algorithm for each program. Most examples in
+use the default iterator algorithm for each program. Most examples in 
 this manual thus contain an iterator block that starts with the string 
 "Iterator{"  on a line by itself. 
 

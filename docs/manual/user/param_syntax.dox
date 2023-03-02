@@ -344,12 +344,12 @@ contains a label for the block immediately followed by an opening curly
 bracket. That block label is compared to a list of label strings for
 available options.  If the label in the parameter files matches one such
 string, the option corresponding to that label is selected. Different
-options for a selectable block generally different parameter file 
-formats that may contain different parameters. The format of the body 
-of a selectable block must be that appropriate to the algorithm specified
-by the label in the first line of the block.
+options for a selectable block generally require different parameters,
+and thus different parameter file formats.  The format of the body of 
+a selectable block must thus match the format required by the algorithm 
+specified by the block label.
 
-A default choice is generally defined for each selectable block. The
+A default choice is normally defined for each selectable block. The
 default choice may be selected either by using the generic name for 
 the type of element rather than the name for a specific algorithm. 
 In the example shown on the previous page, the default choice of a 

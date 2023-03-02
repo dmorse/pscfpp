@@ -55,18 +55,17 @@ parameters. The meaning of the various parameters are described below:
          Optional, and 0 (false) by default. </td>
   </tr>
   <tr>
-    <td> errorType </td>
+    <td> errorType* </td>
     <td> Identifer for the type of variable used to define scalar
          error . The only allowed values are "maxResid", "normResid", 
          and "relNormResid", as discussed below. Optional, and equal
          to "relNormResid" by default. </td>
   </tr>
   <tr>
-    <td> isFlexible </td>
+    <td> isFlexible* </td>
     <td> Set isFlexible true to enable or false to disable iterative 
-         optimization of the unit cell parameters so as to minimize the 
-         free energy.  
-         Optional and false by default.  </td>
+         optimization of the unit cell parameters so as to minimize 
+         the free energy. Optional and 1/true by default.  </td>
   </tr>
   <tr>
     <td> scaleStress </td>

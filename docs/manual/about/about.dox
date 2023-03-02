@@ -18,8 +18,7 @@ The source code for PSCF is maintained in the github repository
 The current C++ version of PSCF is intended to supersede an older 
 Fortran program of the same name. This older Fortran version of PSCF is 
 maintained in a separate github.com repository at
-<a href= https://github.com/dmorse/pscf/>https://github.com/dmorse/pscf</a>
-for details.
+<a href= https://github.com/dmorse/pscf/>https://github.com/dmorse/pscf</a> .
 The current C++ version provides almost all of the capabilities of the 
 older Fortran program, and some significant new capabilities, as 
 discussed below.
@@ -59,14 +58,14 @@ The current version of PSCF contains the following executable programs:
 
 Comments:
 
-<b> pscf_pd </b>: This program uses a simple one-dimensional finite 
-difference algorithm to treat problems in which all fields depend on only 
-one spatial coordinate. The coordinate of interest can can be either a 
-Cartesian coordinate or the radial coordinate for a problem with 
-cylindrical or spherical symmetry. This can be used to treat problems 
-involving flat or curved interfaces, as well as cylindrical and spherical 
-copolymer micelles. The suffix "fd" in the executable name pscf_fd stands
-for "finite difference".
+<b> pscf_pd </b>: This program uses a one-dimensional finite difference 
+algorithm to treat problems in which all fields depend on only one spatial 
+coordinate. The coordinate of interest can can be either a Cartesian 
+coordinate for problems with a planar geometry or a radial coordinate 
+for problem with cylindrical or spherical symmetry. This can be used to 
+treat problems involving flat or curved interfaces, as well as cylindrical 
+and spherical copolymer micelles. The suffix "fd" in the executable name 
+pscf_fd stands for "finite difference".
 
 <b> pscf_pc </b>:
 These programs use a psuedo-spectral algorithm to simulate periodic 
@@ -85,17 +84,18 @@ pscf_pg3, respectively, where "pg" stands for "periodic GPU".
 
 \section about_features_sec Features
 
-All PSCF programs are designed to treat an incompressible mixture of
-block polymers, homopolymers and small molecule (point-particle) solvents 
-species. All polymeric species are treated using the standard Gaussian 
-model of a polymer as a continuous random walk.
+All PSCF programs are designed to treat an incompressible mixture of one
+or more block polymers or homopolymer species with zero or more small 
+molecule (point-particle) solvents species. All polymeric species are 
+treated using the standard Gaussian model of each polymer block as a 
+continuous random walk.
 
 Features that are common to all of the PSCF programs include:
 
   - Mixtures of any number of block polymers, homopolymers, and solvent species
 
   - Polymers may be arbitrarily complex acyclic branched block polymers, as 
-    well as linear polymers.
+    well as linear polymers
 
   - Canonical, grand-canonical or mixed statistical ensembles -
     users may specify either a volume fraction or a chemical potential
@@ -103,7 +103,7 @@ Features that are common to all of the PSCF programs include:
 
   - Efficient simulation of sequences of parameter choices along paths 
     in parameter space ("sweeps") using extrapolation to generate good
-    initial guesses for each state point.
+    initial guesses for each new state point
 
   - Efficient Anderson-mixing iteration algorithms
 
@@ -131,7 +131,9 @@ include:
   - High accuracy pseudo-spectral solution of the modified diffusion 
     equation
 
-  - Availability of a companion package <a href=https://github.com/kdorfmanUMN/polymer_visual/>Polymer Visual</a> for visualization of periodic structures.
+  - Availability of a companion package 
+   <a href=https://github.com/kdorfmanUMN/polymer_visual/>Polymer Visual</a> 
+   for visualization of periodic structures.
 
 Features specific to the pscf_pc CPU programs for periodic structures are:
 
@@ -141,11 +143,11 @@ Features specific to the pscf_pc CPU programs for periodic structures are:
 
   - Thin polymer films
 
-The "mask" and external field features are used in the pscf_pc programs 
-to implement simulations of thin films, using a mask to constrain a 
-polymer material to a slit within a periodic supercell, and using
-external fields to represent interactions of polymer with the top and 
-bottom surfaces.
+The "mask" and external field features are used in the pscf_pc programs to 
+implement simulations of thin films, using a mask to constrain a polymer 
+material to a slit within a periodic supercell, and using external fields 
+to represent selective interactions of different monomer types with the 
+top and bottom surfaces.
 
 \section about_repo_sec Cloning the Source Code
 
@@ -164,9 +166,9 @@ documentation, including all required git submodules.
 
 \section about_documentation_sec Documentation
 
-Documentation is provided as an html web manual that contains both
-user and developer documentation. An online copy of the documentation 
-of a recent major release is available online at 
+Documentation is provided as an html web manual that contains both user 
+and developer documentation. An online copy of the documentation of a 
+recent major release is available online at 
 <a ref=https://dmorse.github.io/pscfpp-man/>
 https://dmorse.github.io/pscfpp-man </a>.
 

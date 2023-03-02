@@ -62,9 +62,9 @@ should put these commands in one of these files.
 Recent versions of the Mac OS operating system instead use zsh (also
 known as the Z shell) by default within the Mac Terminal app. We 
 recommend that mac users who are using zsh from within the Terminal
-app place these commands in a file named .zprofile. The .zprofile
-file is executed by Terminal app opens every time you open a new 
-terminal window.
+app place these commands in a file named .zprofile. The Terminal 
+app treats every terminal window as new login shell, and executes 
+the .zprofile file every time you open a new terminal window.
 
 <BR>
 \ref install_overview_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

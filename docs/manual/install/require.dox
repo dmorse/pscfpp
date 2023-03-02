@@ -11,8 +11,8 @@ controlled by a system of unix makefiles.
 
 PSCF is distributed only as source code, and must be compiled by the
 user.  All source code that is designed to run on a conventional CPU
-is written in ANSI 2011 C++ language standard.  Code that is written
-for an NVIDIA graphics processing unit (GPU) is written in CUDA.
+is written in ANSI 2011 C++ language standard.  Code that is run on
+an NVIDIA graphics processing unit (GPU) is written in CUDA.
 
 \section require_overview_section Overview
 
@@ -31,16 +31,16 @@ system on which the code is compiled and run must have:
 
 A git client is needed to obtain the source code, by cloning the git
 repository in which PSCF is maintained on the github.com site. A python
-interpreter is needed during compilation because the build system
-that compiles PSCF uses several python scripts that are provided 
-in the source code repository. A git client, C++ compiler and python
-interpreter will normally come pre-installed in either the most
-common linux distributions or in a Mac OS operating system in which
-command line tools have been installed.  The GNU scientific library
-is used by several programs within the package for linear algebra
-operations.  The FFTW Fast Fourier transform library is used by
-the CPU version of the pseudo-spectral algorithm for periodic
-microstructures.
+interpreter is needed during compilation because the build system that 
+compiles PSCF uses several python scripts that are provided in the 
+source code repository. A git client, C++ compiler and python interpreter 
+will normally come pre-installed in either the most common linux 
+distributions or in a Mac OS operating system in which 
+\ref require_mac_commandtools_section "command line tools" have been 
+installed.  The GNU scientific library is used by several programs within 
+the package for linear algebra operations.  The FFTW Fast Fourier 
+transform library is used extensively by the pscf_pc programs for 
+periodic microstructures.
 
 In order compile GPU-enabled programs, the system must also have:
 
@@ -50,9 +50,9 @@ In order compile GPU-enabled programs, the system must also have:
 
 The CUFFT library is provided with the CUDA development environment.
 
-Users who wish to generate a local copy of this html documentation,
-as web pages that reside on their own computer, will also need to
-install the "doxygen" documentation utility.
+Users who wish to generate a local copy of this html documentation, as 
+web pages that reside on their own computer, will also need to install 
+the "doxygen" documentation utility.
 
 \section require_mac_commandtools_section Mac OS X Command tools
 
@@ -234,7 +234,7 @@ modifies these search paths is provided as part of pscf, as discussed
 
 At the University of Minnesota, PSCF is often run on a cluster provided
 by the Minnesota Supercomputer Institute (MSI).  The computer clusters
-at MSI, like many similar multi-user clusters, use the linux "module"
+at MSI, like many similar multi-user facilities, use the linux "module"
 command to allow users to load particular software packages, including
 particular choices of compiler. The "module" command is the user interface
 to the "Modules" package, which is a system for automating changes in a

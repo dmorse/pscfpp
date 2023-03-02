@@ -86,7 +86,7 @@ given as pseudo-code of the form:
 \code
    for (n2 = 0; n2 < N2; ++n2) {
       for (n1 = 0; n1 < N1; ++n1) {
-         for (n0 = 0; n0 < N0; ++n1) {
+         for (n0 = 0; n0 < N0; ++n0) {
             [Read or write data at grid point r(n0, n1, n2)]
          }
       }
