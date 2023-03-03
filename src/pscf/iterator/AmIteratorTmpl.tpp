@@ -505,9 +505,9 @@ namespace Pscf
          // Set error value
          if (errorType_ == "maxResid") {
             error = maxRes;
-         } else if (errorType_ == "normResid_") {
+         } else if (errorType_ == "normResid") {
             error = normRes;
-         } else if (errorType_ == "rmsResid_") {
+         } else if (errorType_ == "rmsResid") {
             error = normRes/sqrt(nElem_);
          } else if (errorType_ == "relNormResid") {
             error = relNormRes;
@@ -520,9 +520,9 @@ namespace Pscf
          // Set error value
          if (errorType_ == "maxResid") {
             error = maxAbs(resHists_[0]);
-         } else if (errorType_ == "normResid_") {
+         } else if (errorType_ == "normResid") {
             error = norm(resHists_[0]);
-         } else if (errorType_ == "rmsResid_") {
+         } else if (errorType_ == "rmsResid") {
             error = norm(resHists_[0])/sqrt(nElem_);
          } else if (errorType_ == "relNormResid") {
             double normRes = norm(resHists_[0]);

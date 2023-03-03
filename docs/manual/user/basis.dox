@@ -489,7 +489,7 @@ for which the coefficients of all waves are zero.
 
 The stars of a space group that are cancelled are the same as the ones
 for which systematic cancellations of scattering intensities are observed
-in scattering experiments.  Nonzero star functions to not exist for
+in scattering experiments.  Nonzero star functions do not exist for
 cancelled stars The Fourier series expansion of periodic functions with
 a specified space group symmetry in a basis of star functions thus uses
 only star functions that are associated with uncancelled stars (i.e.,
@@ -744,15 +744,16 @@ this implies that there exists a real constant \f$ d \f$ such that
 \f$ T \f$ is <em>open</em> under inversion if, for every wavevector
 \f$ {\bf G} \in T\f$, \f$ -{\bf G} \notin T \f$.
 
-Note that we have <em> not </em> defined set of wavevectors to be 
-open under inversion if and only if is not closed. According to this
-definition, a set \f$ T \f$ is open only if, for <em> every </em> 
-wavevector \f$ {\bf G} \in T\f$, \f$ -{\bf G} \notin T \f$. A set
-of wavevectors can thus be neither open nor closed if it contains
-a subset of wavevectors for which the inverse is also in the set, 
-and another subset of wavevectors for which the inverse is not in 
-the set.  It turns out, however, that this intermediate case 
-cannot occur for a star of a space group.
+Note that this definition does <em> not </em> define set of wavevectors 
+to be open under inversion if and only if it is not closed. The above
+definition is more restrictive: A set \f$ T \f$ is open only if, for 
+<em> every </em> wavevector \f$ {\bf G} \in T\f$, \f$ -{\bf G} \notin T\f$. 
+A set of wavevectors can thus be neither open nor closed if it 
+contains a non-empty subset of wavevectors for which the inverse is also 
+in the set, and another non-empty subset for which the inverse of each 
+wavevector is not in the set.  It turns out, however, that this 
+hypothetical intermediate case cannot occur for a star of a space 
+group.
 
 <b> Theorem 16 (Stars Are Either Open or Closed) </b>:
 Every star of a space group must be either open or closed.
