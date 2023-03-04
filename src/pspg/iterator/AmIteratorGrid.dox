@@ -18,7 +18,7 @@ AmIterator{
    maxHist*       int (50 by default0
    verbose*       int (0-2, 0 by default)
    outputTime*    bool (false by default)
-   errorType*     enumeration ("normResid", "maxResid", or "relNormResid", "relNormResid" by default)
+   errorType*     string ("norm", "rms", "max", or "relNorm", "relNorm" by default)
    isFlexible*    bool (0 or 1, 0/false by default)   
    scaleStress*   real (10.0 by default)
 }
@@ -58,10 +58,9 @@ parameters. The meaning of the various parameters are described below:
   </tr>
   <tr>
     <td> errorType* </td>
-    <td> Identifer for the type of variable used to define scalar
-         error . The only allowed values are "maxResid", "normResid", 
-         and "relNormResid", as discussed below. Optional, and equal
-         to "relNormResid" by default. </td>
+    <td> String identifer for the type of variable used to define scalar
+         error . The only allowed values are "norm", "rms", "max", "relNorm", 
+         NormResid". Optional, and equal to "relNorm" by default. </td>
   </tr>
   <tr>
     <td> isFlexible* </td>

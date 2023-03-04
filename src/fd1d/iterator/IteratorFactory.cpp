@@ -29,13 +29,13 @@ namespace Fd1d {
       if (ptr) return ptr;
  
       // Try to match classname
-      if (className == "Iterator" || className == "NrIterator") {
+      if (className == "Iterator" || className == "AmIterator") {
+         ptr = new AmIterator(*sysPtr_);
+      } else if (className == "NrIterator") {
          ptr = new NrIterator(*sysPtr_);
       } else if (className == "BinaryRelaxIterator") {
          ptr = new BinaryRelaxIterator(*sysPtr_);
-      } else if (className == "AmIterator") {
-         ptr = new AmIterator(*sysPtr_);
-      }
+      } 
 
       return ptr;
    }

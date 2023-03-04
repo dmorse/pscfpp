@@ -98,13 +98,31 @@ namespace Pscf {
       void setMaxHist(int maxHist);
 
       /**
-      * Read and validate the optional errorType string parameter.
+      * Set and validate value of errorType string.
       *
-      * Virtual to allow extension of allowed errorType string values.
+      * Provided to allow subclasses to set a modified default value 
+      * before calling readParameters, in which errorType is optional.
+      * Global default, set in constructor, is relNormResid = 50.
+      *
+      * \param errorType error type string
+      */
+      void setErrorType(std::string errorType);
+
+      /**
+      * Read and validate the optional errorType string parameter.
       *
       * \param in input filestream
       */
-      void virtual readErrorType(std::istream& in);
+      void readErrorType(std::istream& in);
+
+      /**
+      * Checks if a string is a valid error type.
+      *
+      * Virtual to allow extension of allowed error type string values.
+      *
+      * \return true if type is valid, false otherwise.
+      */
+      virtual bool isValidErrorType();
 
       /**
       * Find the L2 norm of a vector. 

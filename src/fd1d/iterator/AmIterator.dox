@@ -15,7 +15,7 @@ An example of the parameter file format for this iterator is shown below:
     maxItr        100
     maxHist       50
     verbose       int (0-2, 0 by default)
-    errorType     relNormResid
+    errorType     relNorm
   }
 \endcode
 The format of this block is described more formally below:
@@ -26,8 +26,8 @@ The format of this block is described more formally below:
    maxHist*      int (50 by default)
    verbose*      int (0-2, 0 by default)
    outputTime*   bool (false by default)
-   errorType*    enumeration ("normResid", "maxResid", or "relNormResid")
-                    "relNormResid" by default)
+   errorType*    string ("norm", "rms", "max", or "relNorm".
+                    "relNorm" by default)
   
 }
 \endcode
@@ -71,9 +71,9 @@ parameters. The meaning of the various parameters are described below:
   <tr>
     <td> errorType* </td>
     <td> Identifer for the type of scalar error compared to epsilon to
-         test convergence.  Allowed values are "maxResid", "normResid", 
-         "rmsResid" and "relNormResid", as discussed below. Optional, 
-         and equal to "relNormResid" by default. </td>
+         test convergence.  Allowed values are "norm", "rms", "max" and 
+         "relNorm", as discussed below. Optional, and set to "relNorm" by 
+         default. </td>
   </tr>
 </table>
 The iterative loop exits if the number of iterations has reached maxItr 
@@ -82,19 +82,19 @@ or if the magnitude of the scalar error is less than epsilon.
 <b> errorType </b>: Several different definitions may be used for 
 the scalar error, depending on the value of the identifier errorType. 
 
-  - If errorType == maxResid, then the scalar error is take to be
-    the maximum of the absolute magnitude of the elements of the 
-    residual vector (the L infinity norm of the residual vector).
+  - If errorType == norm, then the scalar error is take to be
+    the L2 norm of the residual vector defined below (i.e., the sum of 
+    the squares of all residual elements).
 
-  - If errorType == normResid, then the scalar error is take to be
-    the L2 norm of the residual vector (i.e., the sum of the squares
-    of all residual elements).
-
-  - If errorType == rmsResid, then the scalar error is the root mean
+  - If errorType == rms, then the scalar error is the root mean
     squared magnitude per element. This is equal to the L2 norm over 
     the square root of the number of elements.
 
-  - If errorType == normResid, then the scalar error is take to be
+  - If errorType == max, then the scalar error is take to be
+    the maximum of the absolute magnitude of the elements of the 
+    residual vector (the L infinity norm of the residual vector).
+
+  - If errorType == norm, then the scalar error is take to be
     the ratio of the L2 norm of the residual vector to the L2 norm of 
     the w field, as in Stasiak and Matsen, Eur. Phys, Journel E, 2012. 
 

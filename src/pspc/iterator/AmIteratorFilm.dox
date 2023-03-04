@@ -11,7 +11,7 @@ AmIteratorFilm{
    epsilon             float
    maxItr*             int (200 by default)
    maxHist*            int (50 by default) 
-   errorType*          enumeration ("normResid", "maxResid", or "relNormResid", "relNormResid" by default)
+   errorType*          string ("norm", "rms", "max", or "relNorm", "relNorm" by default)
    isFlexible*         bool (0 or 1, 0 by default)   
    flexibleParams*     Array [ bool ] (nParameters elements, each element 0 or 1)
    scaleStress*        float (10.0 by default)
