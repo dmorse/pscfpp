@@ -24,7 +24,7 @@ System{
      xMax 1.7
      nx   101
   }
-  Iterator{
+  NrIterator{
      epsilon   0.00000001
   }
   Sweep{

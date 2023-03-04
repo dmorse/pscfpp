@@ -14,10 +14,10 @@ by AmIteratorBasis, as described below:
 \code
 AmIterator{
    epsilon        real 
-   maxItr         int
-   maxHist        int  
-   verbose*         int (0-2, 0 by default)
-   outputTime*      bool (false by default)
+   maxItr*        int (200 by default)
+   maxHist*       int (50 by default0
+   verbose*       int (0-2, 0 by default)
+   outputTime*    bool (false by default)
    errorType*     enumeration ("normResid", "maxResid", or "relNormResid", "relNormResid" by default)
    isFlexible*    bool (0 or 1, 0/false by default)   
    scaleStress*   real (10.0 by default)
@@ -36,13 +36,15 @@ parameters. The meaning of the various parameters are described below:
          the magnitude of the error drops below epsilon.  </td>
   </tr>
   <tr>
-    <td> maxItr </td>
-    <td> Maximum number of iterations that will be attempted </td>
+    <td> maxItr* </td>
+    <td> Maximum number of iterations that will be attempted 
+         (200 by default) </td>
   </tr>
   <tr>
-    <td> maxHist  </td>
+    <td> maxHist* </td>
     <td> Maximum number of previous trial solultions that will be 
-         retained in memory for used by the AM algorithm. </td>
+         retained in memory for used by the AM algorithm 
+         (50 by default) </td>
   </tr>
   <tr>
     <td> verbose* </td>
@@ -68,10 +70,10 @@ parameters. The meaning of the various parameters are described below:
          the free energy. Optional and 1/true by default.  </td>
   </tr>
   <tr>
-    <td> scaleStress </td>
+    <td> scaleStress* </td>
     <td> Constant factor by which stress components are multipled in
          the definition of the residual  attempted if isFlexible is
-         true (optional). </td>
+         true (10.0 by default). </td>
   </tr>
 </table>
 The iterative loop exits if the number of iterations has reaches

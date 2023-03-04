@@ -32,10 +32,10 @@ namespace Pscf
     : errorType_("relNormResid"),
       epsilon_(0),
       lambda_(0),
-      nBasis_(0),
-      maxHist_(50),
-      itr_(0),
       maxItr_(200),
+      maxHist_(50),
+      nBasis_(0),
+      itr_(0),
       nElem_(0),
       verbose_(0),
       outputTime_(false),
@@ -236,6 +236,20 @@ namespace Pscf
    }
 
    // Protected member functions
+
+   /*
+   * Set value of maxItr.
+   */
+   template <typename Iterator, typename T>
+   void AmIteratorTmpl<Iterator,T>::setMaxItr(int maxItr)
+   {  maxItr_ = maxItr; }
+
+   /*
+   * Set value of maxHist (number of retained previous states)
+   */
+   template <typename Iterator, typename T>
+   void AmIteratorTmpl<Iterator,T>::setMaxHist(int maxHist)
+   {  maxHist_ = maxHist; }
 
    /*
    * Read and validate errorType string parameter.

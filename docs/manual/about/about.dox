@@ -143,7 +143,7 @@ Features specific to the pscf_pc CPU programs for periodic structures are:
 
   - Thin polymer films
 
-The "mask" and external field features are used in the pscf_pc programs to 
+The mask and external field features are used in the pscf_pc programs to 
 implement simulations of thin films, using a mask to constrain a polymer 
 material to a slit within a periodic supercell, and using external fields 
 to represent selective interactions of different monomer types with the 

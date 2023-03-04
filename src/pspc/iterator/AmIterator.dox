@@ -34,8 +34,8 @@ The format of this block is described more formally below:
 \code
 AmIterator{
    epsilon          real 
-   maxItr           int
-   maxHist          int  
+   maxItr*          int (200 by default)
+   maxHist*         int (50 by default)
    verbose*         int (0-2, 0 by default)
    outputTime*      bool (false by default)
    errorType*       enumeration ("normResid", "maxResid", or "relNormResid", "relNormResid" by default)
@@ -57,13 +57,15 @@ parameters. The meaning of the various parameters are described below:
          the magnitude of the error drops below epsilon.  </td>
   </tr>
   <tr>
-    <td> maxItr </td>
-    <td> Maximum number of iterations that will be attempted </td>
+    <td> maxItr* </td>
+    <td> Maximum number of iterations that will be attempted 
+         (200 by default) </td>
   </tr>
   <tr>
     <td> maxHist* </td>
     <td> Maximum number of previous trial solultions that will be 
-         retained in memory for used by the AM algorithm. </td>
+         retained in memory for used by the AM algorithm 
+         (50 by default) </td>
   </tr>
   <tr>
     <td> verbose* </td>

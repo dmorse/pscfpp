@@ -6,3 +6,11 @@ Subdirectory contents:
   3/    AB diblock copolymer melt, sweep length of one block
   4/    AB diblock copolymer melt, linear sweep of several variables
   5/    AB diblock copolymer melt solution, sweep solvent phi
+
+Some examples contain two or more "run" scripts that use different
+iterators, with different script names that indicate the iterator 
+algorithm. Generally, the correspondence is:
+
+   run_nr -> Newton-Raphson iterator (NrIterator)
+   run_am -> Anderson mixing iterator (AmIterator)
+   run_br -> Binary relaxation iterator (BinaryRelaxIterator)

@@ -14,7 +14,7 @@ An example of the parameter file format for this iterator is shown below:
     epsilon       1e-8
     maxItr        100
     maxHist       50
-    verbose*      int (0-2, 0 by default)
+    verbose       int (0-2, 0 by default)
     errorType     relNormResid
   }
 \endcode
@@ -22,8 +22,8 @@ The format of this block is described more formally below:
 \code
  AmIterator{
    epsilon       real 
-   maxItr        int
-   maxHist       int  
+   maxItr*       int (200 by default)
+   maxHist*      int (50 by default)
    verbose*      int (0-2, 0 by default)
    outputTime*   bool (false by default)
    errorType*    enumeration ("normResid", "maxResid", or "relNormResid")
@@ -41,16 +41,18 @@ parameters. The meaning of the various parameters are described below:
   <tr>
     <td> epsilon </td>
     <td> Desired tolerance for convergence - iteration stops if 
-         the magnitude of the error drops below epsilon.  </td>
+         the magnitude of the error drops below epsilon  </td>
   </tr>
   <tr>
-    <td> maxItr </td>
-    <td> Maximum number of iterations that will be attempted </td>
+    <td> maxItr* </td>
+    <td> Maximum number of iterations that will be attempted
+         (200 by default) </td>
   </tr>
   <tr>
-    <td> maxHist </td>
+    <td> maxHist* </td>
     <td> Maximum number of previous trial solultions that will be 
-         retained in memory for use by the AM algorithm. </td>
+         retained in memory for use by the AM algorithm 
+         (50 by default) </td>
   </tr>
   <tr>
     <td> verbose* </td>
@@ -70,8 +72,8 @@ parameters. The meaning of the various parameters are described below:
     <td> errorType* </td>
     <td> Identifer for the type of scalar error compared to epsilon to
          test convergence.  Allowed values are "maxResid", "normResid", 
-         "rmsResid" and "relNormResid", as discussed below. Optional, and 
-         equal to "relNormResid" by default. </td>
+         "rmsResid" and "relNormResid", as discussed below. Optional, 
+         and equal to "relNormResid" by default. </td>
   </tr>
 </table>
 The iterative loop exits if the number of iterations has reached maxItr 

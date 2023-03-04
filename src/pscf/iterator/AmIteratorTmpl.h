@@ -76,6 +76,28 @@ namespace Pscf {
       using ParamComposite::readOptional;
 
       /**
+      * Set value of maxItr.
+      *
+      * Provided to allow subclasses to set a modified default value 
+      * before calling readParameters, in which maxItr is optional.
+      * Global default, set in constructor, is maxItr = 200.
+      *
+      * \param maxItr  maximum number of iterations attempted
+      */
+      void setMaxItr(int maxItr);
+
+      /**
+      * Set value of maxHist (number of retained previous states)
+      *
+      * Provided to allow subclasses to set a modified default value 
+      * before calling readParameters, in which maxItr is optional.
+      * Global default, set in constructor, is maxHist = 50.
+      *
+      * \param maxHist  maximum number of retained previous states
+      */
+      void setMaxHist(int maxHist);
+
+      /**
       * Read and validate the optional errorType string parameter.
       *
       * Virtual to allow extension of allowed errorType string values.
@@ -160,17 +182,17 @@ namespace Pscf {
       /// Free parameter for minimization.
       double lambda_;
 
-      /// Number of basis vectors defined as differences.
-      int nBasis_;
+      /// Maximum number of iterations to attempt.
+      int maxItr_;
 
       /// Maximum number of basis vectors
       int maxHist_;
 
+      /// Number of basis vectors defined as differences.
+      int nBasis_;
+
       /// Current iteration counter.
       int itr_;
-
-      /// Maximum number of iterations to attempt.
-      int maxItr_;
 
       /// Number of elements in field or residual vectors.
       int nElem_; 

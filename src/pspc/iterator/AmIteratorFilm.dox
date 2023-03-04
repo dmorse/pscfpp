@@ -9,8 +9,8 @@ The parameter file format for an AmIteratorFilm object is:
 \code
 AmIteratorFilm{
    epsilon             float
-   maxItr              int
-   maxHist             int  
+   maxItr*             int (200 by default)
+   maxHist*            int (50 by default) 
    errorType*          enumeration ("normResid", "maxResid", or "relNormResid", "relNormResid" by default)
    isFlexible*         bool (0 or 1, 0 by default)   
    flexibleParams*     Array [ bool ] (nParameters elements, each element 0 or 1)
@@ -29,18 +29,20 @@ elements.
 Parameters and subblocks are described below:
 <table>
   <tr>
-    <td> maxItr </td>
-    <td> Maximum number of iterations that will be attempted </td>
-  </tr>
-  <tr>
     <td> epsilon </td>
     <td> Error tolerance. Iteration stops if the scalar error drops below 
          this value. </td>
   </tr>
   <tr>
-    <td> maxHist </td>
+    <td> maxItr* </td>
+    <td> Maximum number of iterations that will be attempted 
+         (200 by default) </td>
+  </tr>
+  <tr>
+    <td> maxHist* </td>
     <td> The number of histories (previous state space points) to use to 
-         construct a new trial state during each iteration. </td>
+         construct a new trial state during each iteration
+         (50 by default) </td>
   </tr>
   <tr>
     <td> errorType* </td>

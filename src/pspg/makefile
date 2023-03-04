@@ -30,7 +30,8 @@ clean:
 	rm -f $(PSCF_PG1).o $(PSCF_PG1).d
 	rm -f $(PSCF_PG3).o $(PSCF_PG2).d
 	rm -f $(PSCF_PG3).o $(PSCF_PG3).d
-	rm -f *.o *.d */*.o */*.d
+	rm -f *.o */*.o
+	rm -f *.d */*.d
 	cd tests; $(MAKE) clean
 
 veryclean:

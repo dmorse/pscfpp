@@ -257,32 +257,34 @@ This last basis function is somewhat special, as discussed below.
 The differences between the basis function with index \f$ n = N/2 = 20 \f$
 and those with \f$ 0 < n < N/2 \f$ are a consequences of the fact that
 that periodic functions are defined internally in the pscf_pc and
-pscf_pg programs only on the nodes of a regular grid, rather than
+pscf_pg programs only on the nodes of a regular grid, rather than 
 at arbitrary points in a continuum. The Fourier representation of
 each field is thus based on a discrete Fourier transform (DFT) with
 a finite number of waves rather than an infinite Fourier series.
-The function \f$ f_{N/2}(x)$ \f$ with an even value of \f$ N \f$
-has alternating values of \f$ \pm 1 \f$ at values of \f$ x \f$ that
-lie on the nodes of a grid with \f$ N = 40 \f$ nodes, corresponding to
-values \f$ x_{m} = m L / N \f$ for integers \f$ m = 0, \ldots, N -1 \f$.
-Values of this basis function at values of \f$ x \f$ that lie on the
-nodes of this grid can be expressed as a single complex exponential
-wave, rather than a sum of two distinct waves, because, on this grid,
-wavenumbers \f$ k_{n} \f$ and \f$ k_{-n} \f$ with \f$ n = N/2 \f$ are
-\"aliases\" of one another that yield equal values for
+The function \f$ f_{N/2}(x) \f$ with an even value of \f$ N \f$ has 
+alternating values of \f$ \pm 1 \f$ at values of \f$ x \f$ that lie 
+on the nodes of a grid, corresponding to values \f$ x_{m} = m L / N \f$ 
+for integers \f$ m = 0, \ldots, N -1 \f$.  Values of this basis function 
+at values of \f$ x \f$ that lie on the nodes of this grid can be 
+expressed as a single complex exponential wave, rather than a sum 
+of two distinct waves, because, on this grid, wavenumbers \f$ k_{n} \f$ 
+and \f$ k_{-n} \f$  with \f$ n = N/2 \f$ are \"aliases\" or \"images"\ 
+of one another that yield equal values for
 \f$ e^{ik_{n}x_{m} } = e^{ -ik_{n}x_{m} } \f$ if evaluated at any
 position \f$ x_{m} \f$ that corresponds to one of the nodes. Generally,
 wavenumbers (in 1D) or wavevectors (in 2D or 3D) for which the indices
-associated with a particular direction differ by integer multiples of the
-number of grid points along each that direction are aliases of one
-another, or equivalent, in this sense.  Waves that are aliases of one
-another in this sense are counted as equivalent by the algorithm that
-constructs basis functions for functions that are defined on a lattice.
+associated with a particular direction differ by integer multiples of 
+the number of grid points along each that direction are aliases of one
+another, and thus equivalent for this purpose, as discussed in more 
+detail in an \ref user_fourier_alias_sub "appendix".  Waves that are 
+aliases of one another in this sense are counted as equivalent by the 
+algorithm that constructs basis functions for functions that are 
+defined on a lattice.
 
 The integer that appears in the third column of each row in the data
-section of the above example gives the integer index \f$ n \f$ for
-an associated wavenumber \f$ k_{n} \f$, which ranges from 0 to 20 in
-this example.
+section of the above example gives the integer index \f$ n \f$ for an 
+associated wavenumber \f$ k_{n} \f$, which ranges from 0 to 20 in this 
+example.
 
 The integer that appears in the fourth colum of each row in this
 example is the number of inequivalent waves used in the expansion of
@@ -294,10 +296,10 @@ result of aliasing of wavenumbers used in a discrete Fourier transform.
 
 \section user_field_basis_gyroid_sec Example: 3D Gyroid Phase
 
-Below is an example of a c file output from a simulation of a gyroid
-phase for a diblock copolymer melt. A long section of the middle of
-the data section of this file has been removed, as indicated by
-vertical dots.
+Below is an example of a c field output from a simulation of a gyroid
+phase for a diblock copolymer melt. A long section of the middle of the 
+data section of this file has been removed, as indicated by vertical 
+dots.
 \code
 
     format  1  0

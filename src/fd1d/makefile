@@ -24,12 +24,12 @@ clean:
 	rm -f $(fd1d_OBJS) $(fd1d_OBJS:.o=.d)
 	rm -f $(PSCF_FD).o $(PSCF_FD).d
 	rm -f $(fd1d_LIB)
+	rm -f *.o */*.o
+	rm -f *.d */*.d
 	cd tests; $(MAKE) clean
 
 veryclean:
 	$(MAKE) clean
-	-rm -f *.o */*.o
-	-rm -f *.d */*.d
 	-rm -f lib*.a
 
 

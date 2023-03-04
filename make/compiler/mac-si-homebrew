@@ -36,9 +36,9 @@ CXXFLAGS_FAST= -Wall $(CXX_STD) -O3 -ffast-math -Winline
 TESTFLAGS= -Wall $(CXX_STD)
 
 # ---------------------------------------------------------------
-# Cuda compiler and options (*.cu files)
+# CUDA compiler and options (*.cu files)
 
-# Cuda compiler command
+# CUDA compiler command
 NVXX=nvcc
 
 # Flags always passed to cuda compiler
