@@ -118,7 +118,7 @@ namespace Fd1d
       double lambdaMinus_;
       
       /// Max number of iterations
-      int maxIter_;
+      int maxItr_;
     
       /// Have arrays been allocated?
       bool isAllocated_;

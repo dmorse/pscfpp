@@ -82,22 +82,21 @@ or if the magnitude of the scalar error is less than epsilon.
 <b> errorType </b>: Several different definitions may be used for 
 the scalar error, depending on the value of the identifier errorType. 
 
-  - If errorType == norm, then the scalar error is take to be
-    the L2 norm of the residual vector defined below (i.e., the sum of 
-    the squares of all residual elements).
+  - If errorType == norm, then the scalar error is take to be the L2 norm
+    of the residual vector defined below (i.e., the sum of the squares of 
+    all residual elements).
 
-  - If errorType == rms, then the scalar error is the root mean
-    squared magnitude per element. This is equal to the L2 norm over 
-    the square root of the number of elements.
+  - If errorType == rms, then the scalar error is the root mean squared
+    magnitude per element. This is equal to the L2 norm divided by the 
+    square root of the number of elements.
 
-  - If errorType == max, then the scalar error is take to be
-    the maximum of the absolute magnitude of the elements of the 
-    residual vector (the L infinity norm of the residual vector).
+  - If errorType == max, then the scalar error is take to be the 
+    maximum of the absolute magnitude of the elements of the residual 
+    vector (the L infinity norm of the residual vector).
 
-  - If errorType == norm, then the scalar error is take to be
-    the ratio of the L2 norm of the residual vector to the L2 norm of 
-    the w field, as in Stasiak and Matsen, Eur. Phys, Journel E, 2012. 
-
+  - If errorType == norm, then the scalar error is take to be the ratio 
+    of the L2 norm of the residual vector to the L2 norm of the w field, 
+    as in Stasiak and Matsen, Eur. Phys, Journel E, 2012. 
 
 \section fd1d_AmIterator_residual_sec Residual Definition
 
@@ -145,16 +144,16 @@ elements given by \f$ \epsilon_{i} = 1 \f$ for all
 
 \section fd1d_AmIterator_closed_sec Closed Systems (Canonical Ensemble)
 
-A slight modification of the residual definition is required in the case 
-case when a value of phi rather than mu is specified for every molecular 
-species, giving a closed system, or a canonical statistical ensemble.  In 
-this case, the solution of the SCF problem is not unique, becase the values
-of the residuals defined above can be shown to be invariant under a shift 
-in all of the chemical potential fields at all grid point points by any 
-spatially homgeneous constant.  To obtain a unique solution, the update
-procedure shifts the chemical potential fields so as to guarantee that
-w field value for the last monomer type at the last grid point is 
-forced to equal zero by convention.
+A slight modification of the residual definition is required in the case
+when a value of phi rather than mu is specified for every molecular 
+species, giving a closed system, or a canonical statistical ensemble. In 
+this case, the solution of the SCF problem is not unique, becase the 
+values of the residuals defined above can be shown to be invariant under 
+a shift in all of the chemical potential fields at all grid point points 
+by any spatially homgeneous constant.  To obtain a unique solution, the 
+update procedure shifts the chemical potential fields so as to guarantee 
+that the w field value for the last monomer type at the last grid point 
+is forced to equal zero by convention.
 
 */
 }

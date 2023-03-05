@@ -109,8 +109,11 @@ parameters. The meaning of the various parameters are described below:
 The iterative loop exits if the number of iterations has reached maxItr 
 or if the magnitude of the scalar error drops below epsilon. 
 
-<b> errorType </b>: Several different definitions may be used for the scalar 
-error, depending on the value of the identifier errorType. 
+<b> errorType </b>: Several different definitions may be used for 
+the scalar error, depending on the value of the identifier errorType.  
+All of them ar based on computation of different types of norm of the
+residual vector, defined as discussed 
+\ref pspc_AmIterator_residual_sec "below".
 
   - If errorType == norm, then the scalar error is take to be the L2 
     norm of the residual vector (square-root of sum of squares of the
@@ -124,9 +127,9 @@ error, depending on the value of the identifier errorType.
     maximum of the absolute magnitude of the elements of the 
     residual vector (the L infinity norm of the residual vector).
 
-  - If errorType == relNorm, then the scalar error is take to be
-    the ratio of the L2 norm of the residual vector to the L2 norm of 
-    the w field, as in Stasiak and Matsen, Eur. Phys, Journel E, 2012. 
+  - If errorType == relNorm, then the scalar error is take to be the ratio
+    of the L2 norm of the residual vector to the L2 norm of the w field,
+    as in Stasiak and Matsen, Eur. Phys. J. E <b> 34 </b>, 110 (2011).
 
 <b> scaleStress </b>: If isFlexible is true, the choice of a value for 
 the parameter scaleStress determines how strongly the definition of the 
