@@ -1,24 +1,4 @@
 --------------------------------------------------------------------------
-v1.0
-
-Pscf:
-
-1) Clean up reading of basis files constructed with different grid.
-   Consider creating new file format version.
-
-2) Review and modify interface of AmIteratorTmpl
-
-3) Separate code to compute idemp and chi_inv from ChiInteraction.
-
-Pspg:
-
-1) Review and clean up redundant GPU kernels (leave for v1.1?)
-
-Docs:
-
-1) Fully document param file formats for all classes.
-
---------------------------------------------------------------------------
 v1.1
 
 Pscf
@@ -37,13 +17,17 @@ API).
 Pspc:
 -----
 
-1) Introduce working prototype of Field Theoretic Monte Carlo
+1) Introduce working prototype of Field Theoretic Monte Carlo (v1.2?)
 
 Docs:
 
-1) Develop read-the-docs user manual documentation.
+1) Develop read-the-docs user manual documentation (?)
 
 2) Improve developer documentation regarding build system, Parameter IO
+
+Pspg:
+
+1) Review and clean up redundant GPU kernels (leave for v1.1?)
 
 Tools:
 ------

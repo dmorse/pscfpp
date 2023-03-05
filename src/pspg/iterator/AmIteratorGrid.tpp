@@ -42,7 +42,7 @@ namespace Pspg {
       interaction_.setNMonomer(system().mixture().nMonomer());
 
       // Default parameter values
-      isFlexible_ = 0;
+      isFlexible_ = 1;
       scaleStress_ = 10.0;
 
       // Read in additional parameters

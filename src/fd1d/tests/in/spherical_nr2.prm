@@ -35,9 +35,8 @@ System{
      xMax          2.700 
      nx              201
   }
-  Iterator{
+  NrIterator{
      epsilon   0.0000001
   }
 }
 
-   nSolvent  0

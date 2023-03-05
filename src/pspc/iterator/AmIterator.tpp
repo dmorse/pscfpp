@@ -43,7 +43,7 @@ namespace Pspc{
       interaction_.setNMonomer(system().mixture().nMonomer());
 
       // Default parameter values
-      isFlexible_ = 0; 
+      isFlexible_ = 1; 
       scaleStress_ = 10.0;
 
       int np = system().unitCell().nParameter();
@@ -51,7 +51,7 @@ namespace Pspc{
       UTIL_CHECK(np <= 6);
       UTIL_CHECK(system().unitCell().lattice() != UnitCell<D>::Null);
 
-      // Read optional isFlexible boolean
+      // Read optional isFlexible boolean (true by default)
       readOptional(in, "isFlexible", isFlexible_);
 
       // Populate flexibleParams_ based on isFlexible_ (all 0s or all 1s),

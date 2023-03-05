@@ -10,8 +10,8 @@ System{
         type    linear
         nBlock  2
         blocks[
-           0   0.125
-           1   0.875
+             0  0.125  
+             1  0.875 
         ]
         phi     0.018223
      }
@@ -19,7 +19,7 @@ System{
         type    linear
         nBlock  1
         blocks[
-           1   1.000
+             1   1.000  
         ]
         phi     0.981777
      }
@@ -28,7 +28,7 @@ System{
   }
   Interaction{
      chi(
-         0  1    88.5
+        0  1    88.5
      )
   }
   Domain{
@@ -36,11 +36,18 @@ System{
      xMax           4.00
      nx              401
   }
-  FdIterator{
-     epsilon   1e-9
-     lambdaPlus 1
-     lambdaMinus 1
-     maxIterations 100000
+  AmIterator{
+     epsilon   0.0000001
+  }
+  Sweep{
+     ns                    200
+     baseFileName         csl/
+     homogeneousMode         1
+     nParameter              2
+     parameters[
+        phi_polymer    0     -0.01222
+        phi_polymer    1      0.01222
+     ]
   }
 }
 

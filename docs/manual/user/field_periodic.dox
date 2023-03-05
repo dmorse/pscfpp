@@ -1,11 +1,11 @@
 /*! \page user_field_periodic_page Field File - Periodic Fields (pscf_pc and pscf_pg)
 
-\ref user_field_fd1d_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
-\ref user_command_page     (Next) 
+\ref user_field_fd1d_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_command_page     (Next)
 <BR>
 
-The pscf_pcN and pscf_pgN programs are both designed to treat periodic 
-structures, and use the same set of several field file formats.  
+The pscf_pcN and pscf_pgN programs are both designed to treat periodic
+structures, and use the same set of several field file formats.
 
 \section user_field_periodic_formats_sec File Formats
 
@@ -13,65 +13,65 @@ The pscf_pc and pscf_pg programs can all read and write fields using
 following three field file formats:
 
   - A \ref user_field_basis_page "basis" file format contains the
-    components for a representation of each field as a linear 
+    components for a representation of each field as a linear
     superposition of symmetry-adapated basis functions, in which
-    each basis function is invariant under all of the elements of 
-    a specified space group. 
+    each basis function is invariant under all of the elements of
+    a specified space group.
 
-  - A \ref user_field_rgrid_page "r-grid" file format contains the 
-    values of fields defined on the nodes of a regular grid. 
+  - A \ref user_field_rgrid_page "r-grid" file format contains the
+    values of fields defined on the nodes of a regular grid.
 
-  - A \ref user_field_kgrid_page "k-grid" file format that contains 
-    the discrete Fourier transform of fields defined on a regular 
+  - A \ref user_field_kgrid_page "k-grid" file format that contains
+    the discrete Fourier transform of fields defined on a regular
     grid.
 
 Each of these file formats for periodic structures contains a header
 section that includes a specification of the crystal system and unit
-and unit cell parameters for the crystallographic unit cell. The header 
+and unit cell parameters for the crystallographic unit cell. The header
 for the r-grid and k-grid format also contains a list of the mesh
 dimensions, i.e., the number of grid points in each direction of the
-mesh that was used by the program that wrote the file. 
+mesh that was used by the program that wrote the file.
 
 The dimensions of the mesh used by the program that reads a file in
-r-grid or k-grid format (as given in the parameter file) must match 
+r-grid or k-grid format (as given in the parameter file) must match
 the dimensions of the mesh used by the program that wrote the file
-(as declared in the field file header for these formats). 
+(as declared in the field file header for these formats).
 
-The basis format is instead designed to allow users to change mesh 
+The basis format is instead designed to allow users to change mesh
 dimensions: A instance of a program for which a particular list of
 mesh dimensions is declared in the parameter file can usually read
-and correctly intepret a field file that was created using a basis 
-designed for a different mesh. (There are still occasional situations 
+and correctly intepret a field file that was created using a basis
+designed for a different mesh. (There are still occasional situations
 in which this translation fails, which we in the process of fixing).
-The basis format can thus usually be used to change resolution by, 
-for example, using a converged solution obtained with a coarse mesh 
+The basis format can thus usually be used to change resolution by,
+for example, using a converged solution obtained with a coarse mesh
 as an initial guess for the solution on a refined mesh.
 
-The current C++ version of PSCF can also read the basis and r-grid 
-file formats used by the older Fortran PSCF program.  The k-grid 
-format used by the current version is not backwards compatible with 
+The current C++ version of PSCF can also read the basis and r-grid
+file formats used by the older Fortran PSCF program.  The k-grid
+format used by the current version is not backwards compatible with
 the analogous k-grid format used by the Fortran program.
 
-The names of some command-file commands that instruct pscf_pc and 
+The names of some command-file commands that instruct pscf_pc and
 pscf_pg programs to read or write field files contain the strings
-"BASIS", "RGRID", or "KGRID" to indicate the use of a particular 
+"BASIS", "RGRID", or "KGRID" to indicate the use of a particular
 field file format.
 
 \section user_field_periodic_header_sec Header Section
 
-Each of the three field file formats described above contains a 
+Each of the three field file formats described above contains a
 header section followed by a data section. The header section has
-an almost identical form in all three file formats, and contains 
+an almost identical form in all three file formats, and contains
 information about the dimensionality of space, the crystallographic
 unit cell, the space group, and the mesh or basis used to represent
-the fields. 
+the fields.
 
 
 \subsection user_field_periodic_header_example_sub Example
 
-As an example, here is header section of a r-grid field file for 
-a double gyroid phase (space group \f$ Ia \overline{3}d \f$ that 
-was computed using a mesh with 32 grid points along each of three 
+As an example, here is header section of a r-grid field file for
+a double gyroid phase (space group \f$ Ia \overline{3}d \f$ that
+was computed using a mesh with 32 grid points along each of three
 orthogonal directions:
 \code
     format  1  0
@@ -87,25 +87,25 @@ orthogonal directions:
               I_ a_-3_d
    N_monomer
                       2
-   mesh 
+   mesh
                      32    32    32
 \endcode
 
 \subsection user_field_periodic_header_description_sub Description
 
-The first line of the header specifies a file format version number 
-(file format v1.0). 
+The first line of the header specifies a file format version number
+(file format v1.0).
 
-The rest of the header contains parameter values, each of which is given 
-as a parameter label on one line followed by a value on the next line. 
-The header of a field file may contain values for the following parameters, 
+The rest of the header contains parameter values, each of which is given
+as a parameter label on one line followed by a value on the next line.
+The header of a field file may contain values for the following parameters,
 in the following order:
 
 <b> dim </b>:
-The value of the parameter dim is number of dimension in which each field is 
-periodic. For example, dim=1 for a lamellar phase, dim=2 for a hexagonal phase, 
-and dim=3 for a 3D cubic or orthorhombic crystal. This quantity is also 
-referred to by the symbol D throughout the source code and in some other parts 
+The value of the parameter dim is number of dimension in which each field is
+periodic. For example, dim=1 for a lamellar phase, dim=2 for a hexagonal phase,
+and dim=3 for a 3D cubic or orthorhombic crystal. This quantity is also
+referred to by the symbol D throughout the source code and in some other parts
 of the web documentation.
 
 <b> crystal_system </b>:
@@ -114,18 +114,18 @@ i.e., the type of Bravais lattice. Allowed values of this string for each
 value of dim are listed \ref user_unitcell_page "here".
 
 <b> N_cell_param </b>:
-The parameter N_cell_param is a positive integer that gives the number of 
-real parameters that are required to describe the unit cell for the specified 
-crystal_system.  This number can range from 1 for 1D lamellar, 2D square 
-or hexagonal or 3D cubic crystals, 3 from for a 3D orthorhombic crystal, 
+The parameter N_cell_param is a positive integer that gives the number of
+real parameters that are required to describe the unit cell for the specified
+crystal_system.  This number can range from 1 for 1D lamellar, 2D square
+or hexagonal or 3D cubic crystals, 3 from for a 3D orthorhombic crystal,
 up to 6 for a 3D triclinic lattice.
 
 <b> cell_param </b>:
 The value of cell_param is a list of N_cell_param real numbers required
 to describe the unit cell, separated by spaces. These parameters generally
-specify lengths of Bravais basis vectors or unit cell edges and (when 
-required) angles between those vectors.  The number, order, and the 
-meaning of those parameters depends upon the value of the crystal_system 
+specify lengths of Bravais basis vectors or unit cell edges and (when
+required) angles between those vectors.  The number, order, and the
+meaning of those parameters depends upon the value of the crystal_system
 identifier, as discussed \ref user_unitcell_page "here".
 
 <b> group_name </b>:
@@ -139,21 +139,21 @@ The parameter N_monomer is a positive integers that gives the number
 of distinct monomer types for which fields are reported.
 
 <b> N_basis </b>:
-The parameter N_basis is a positive integer that gives the number of 
+The parameter N_basis is a positive integer that gives the number of
 basis functions used in a Fourier-adapted Fourier series representation
 of the fields. A label "N_star" will also be accepted as a synonym for
 "N_basis", to preserve backwards compatability with the label used by
-the older PSCF fortran program.  
+the older PSCF fortran program.
 This parameter only appears in the basis file format.
 
 <b> mesh </b>:
-The mesh parameter is a list of dim positive integers that give the 
+The mesh parameter is a list of dim positive integers that give the
 mesh dimensions used for numerical calculations, i.e., the number of
-grid points in each direction in the mesh that covers a single unit 
+grid points in each direction in the mesh that covers a single unit
 cell.  A label "ngrid" will also be accepted as a synonym for "mesh",
-to allow backwards compatibility with the label used by the PSCF 
-Fortran program.  This list of values appears as the last 
-parameter of the header for r-grid and k-grid file formats, but does 
+to allow backwards compatibility with the label used by the PSCF
+Fortran program.  This list of values appears as the last
+parameter of the header for r-grid and k-grid file formats, but does
 not appear in the basis format.
 
 All of these parameters except mesh and N_basis are required elements
@@ -161,7 +161,7 @@ of the header in all three file formats.
 
 \section user_field_periodic_contents_sub Contents
 
-The three field file formats for periodic fields are described in more 
+The three field file formats for periodic fields are described in more
 detail in the sub-pages linked below:
 
 <ol>
@@ -171,7 +171,7 @@ detail in the sub-pages linked below:
 </ol>
 
  <BR>
- \ref user_field_fd1d_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_field_page       (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
- \ref user_command_page     (Next) 
+ \ref user_field_fd1d_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+ \ref user_field_page       (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+ \ref user_command_page     (Next)
 */

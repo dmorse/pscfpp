@@ -6,11 +6,12 @@
 
 Below is a brief overview of instructions for compiling all of the PSCF
 programs using default settings. The directions given here and in
-subsequent pages assume that you have already cloned the pscfpp repository 
-and installed all required dependencies, and that the root directory of 
-the repository is named pscfpp/.
+subsequent pages assume that you have already cloned the pscfpp repository
+and installed all required dependencies. The descriptions assume that the 
+root directory of the repository is named pscfpp/. You are free to rename 
+the root directory before running or rerunning the setup script.
 
-Instructions:
+<h2> Instructions </h2>
 
    - **Set environment variables:**
      Modify the users PATH and PYTHONPATH unix environment variables,
@@ -27,12 +28,12 @@ Instructions:
      ./setup
      \endcode
      Alternatively, to customize compiler options, invoke the setup script
-     with a filename argument that is the name of a compiler configuration 
-     file that contains non-default compiler options, as discussed 
-     \ref install_setup_page "here"). An environment appropriate for 
-     compiling on a Mac OS X system with Apple silicon hardware (e.g., an 
-     M1 or M2 chip) in which the dependencies have been installed using 
-     the homebrew package mamager can be created by entering 
+     with a filename argument that is the name of a compiler configuration
+     file that contains non-default compiler options, as discussed
+     \ref install_setup_page "here"). An environment appropriate for
+     compiling on a Mac OS X system with Apple silicon hardware (e.g., an
+     M1 or M2 chip) in which the dependencies have been installed using
+     the homebrew package mamager can be created by entering
      \code
      ./setup mac-m1-homebrew
      \endcode
@@ -46,7 +47,7 @@ Instructions:
      "pscf_pc1", "pscf_pc2" and "pscf_pc3" in the pscfpp/bin directory.
 
    - **Compile GPU-enabled programs:**
-     To compile the GPU enabled programs on a machine with an appropriate 
+     To compile the GPU enabled programs on a machine with an appropriate
      NVIDIA GPU and a CUDA compiler, enter
      \code
      make pspg
@@ -57,20 +58,21 @@ Instructions:
 
 The "make all-cpu" and "make pspg" commands will each also create a large
 number of intermediate object (*.o), dependency (*.d) and library (*.a)
-files in subdirectories of the pscfpp/bld directory (which is the default 
+files in subdirectories of the pscfpp/bld directory (which is the default
 build directory).
 
 Each of the above steps is discussed in more detail in the following pages.
 
-The above instructions will perform an "out-of-source" build in which 
-intermediate files created during compilation process are left in the 
-pscfpp/bld directory tree. It is also possible to perform an "in-source" 
-in which these files are created in the pscfpp/src directory that also 
-contains all C++ and CUDA source code files. The option of in-source 
-compilation is discussed in more detail \ref install_inout_page "here".  
-We recommend the use of out-of-source compilation for package users who 
-are not actively working on development. Some developers find in-source 
-compilation convenient during development.
+<h2> Out-of-source vs. In-Source Compilation </h2>
+The above instructions will perform an "out-of-source" build in which
+intermediate files created during compilation process are left in the
+pscfpp/bld directory tree. It is also possible to perform an "in-source"
+build in which these files are created in the pscfpp/src directory that
+also contains all C++ and CUDA source code files. The option of in-source
+compilation is discussed in more detail \ref install_inout_page "here".
+We recommend the use of out-of-source compilation for package users who
+are not actively working on development. Developers may find in-source
+compilation more convenient during development.
 
 <BR>
 \ref install_source_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

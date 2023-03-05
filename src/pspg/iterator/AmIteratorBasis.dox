@@ -17,12 +17,12 @@ below:
 \code
 AmIterator{
    epsilon        real 
-   maxItr         int
-   maxHist        int  
+   maxItr*        int (200 by default)
+   maxHist*       int (50 by default0
    verbose*       int (0-2, 0 by default)
    outputTime*    bool (false by default)
-   errorType*     enumeration ("normResid", "maxResid", or "relNormResid", "relNormResid" by default)
-   isFlexible*    bool (0 or 1, 0/false by default)   
+   errorType*     string ("norm", "rms", "max", or "relNorm", "relNorm" by default)
+   isFlexible*    bool (0 or 1, 1/true by default)   
    scaleStress*   real (10.0 by default)
 }
 \endcode
@@ -39,13 +39,15 @@ parameters. The meaning of the various parameters are described below:
          the magnitude of the error drops below epsilon.  </td>
   </tr>
   <tr>
-    <td> maxItr </td>
-    <td> Maximum number of iterations that will be attempted </td>
+    <td> maxItr* </td>
+    <td> Maximum number of iterations that will be attempted 
+         (200 by default) </td>
   </tr>
   <tr>
-    <td> maxHist </td>
+    <td> maxHist* </td>
     <td> Maximum number of previous trial solultions that will be 
-         retained in memory for used by the AM algorithm. </td>
+         retained in memory for used by the AM algorithm
+         (50 by default) </td>
   </tr>
   <tr>
     <td> verbose* </td>
@@ -60,19 +62,18 @@ parameters. The meaning of the various parameters are described below:
   <tr>
     <td> errorType* </td>
     <td> Identifer for the type of variable used to define scalar
-         error . The only allowed values are "maxResid", "normResid", 
-         and "relNormResid". Optional, and equal to "relNormResid" 
-         by default. </td>
+         error . The allowed values are "norm", "rms", "max", and "relNorm".
+         Optional, and set to "relNorm" by default. </td>
   </tr>
   <tr>
-    <td> isFlexible </td>
+    <td> isFlexible* </td>
     <td> Set isFlexible true to enable or false to disable iterative 
          optimization of the unit cell parameters so as to minimize the 
          free energy.  
-         Optional and false by default.  </td>
+         Optional and true by default.  </td>
   </tr>
   <tr>
-    <td> scaleStress </td>
+    <td> scaleStress* </td>
     <td> Constant factor by which stress components are multipled in
          the definition of the residual  attempted if isFlexible is
          true (optional). </td>
@@ -81,8 +82,10 @@ parameters. The meaning of the various parameters are described below:
 The iterative loop exits if the number of iterations has reaches
 maxItr or if the magnitude of the scalar error drops below epsilon. 
 
-Further discussion of the meanings of some variables is given in the 
-documentation for the Pspc \ref pspc_AmIterator_page "AmIterator" 
-algorithm.
+The Pspg::AmIteratorBasis class is nearly identical to the corresponding
+Pspc::AmIterator class used by the pscf_pc programs. The same definition 
+of the the residual vector is used in both classes.  Please see the
+documentation of the Pspc \ref pspc_AmIterator_page "AmIterator" class
+for the residual definition and some other details. 
 
 */

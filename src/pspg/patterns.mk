@@ -22,7 +22,7 @@ LIBS=$(PSPG_LIBS)
 INCLUDES+=$(GSL_INC)
 LIBS+=$(GSL_LIB) 
 
-# Add paths to Cuda FFT library
+# Add paths to CUDA FFT library
 PSPG_DEFS+=-DPSPG_FFTW -DGPU_OUTER
 INCLUDES+=$(CUFFT_INC)
 LIBS+=$(CUFFT_LIB)

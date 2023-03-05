@@ -23,7 +23,7 @@ namespace Fd1d
       epsilon_(0.0),
       lambdaPlus_(0.0),
       lambdaMinus_(0.0),
-      maxIter_(200),
+      maxItr_(200),
       isAllocated_(false),
       isCanonical_(true)
    {  setClassName("BinaryRelaxIterator"); }
@@ -37,7 +37,7 @@ namespace Fd1d
    {
       UTIL_CHECK(domain().nx() > 0);
       read(in, "epsilon", epsilon_);
-      read(in, "maxIter", maxIter_);
+      read(in, "maxIter", maxItr_);
       read(in, "lambdaPlus", lambdaPlus_);
       read(in, "lambdaMinus", lambdaMinus_);
 
@@ -173,7 +173,7 @@ namespace Fd1d
     
       // Iterative loop
       int i, j, k;
-      for (i = 0; i < maxIter_; ++i) {
+      for (i = 0; i < maxItr_; ++i) {
          Log::file() << "iteration " << i
          << " , error = " << dWNorm_
          << std::endl;

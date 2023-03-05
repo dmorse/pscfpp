@@ -32,12 +32,12 @@ clean:
 	rm -f $(PSCF_PC1).o $(PSCF_PC1).d
 	rm -f $(PSCF_PC2).o $(PSCF_PC2).d
 	rm -f $(PSCF_PC3).o $(PSCF_PC3).d
+	rm -f *.o */*.o
+	rm -f *.d */*.d
 	cd tests; $(MAKE) clean
 
 veryclean:
 	$(MAKE) clean
-	-rm -f *.o */*.o
-	-rm -f *.d */*.d
 	-rm -f lib*.a
 
 # Executable targets

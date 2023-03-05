@@ -5,11 +5,12 @@
 <BR>
 
 The parameter file format for SCFT calculations using the pscf_pg
-GPU-accelerated programs is almost identical to that for the pscf_pc 
-programs. The Mixture and Interaction blocks use the same format as
-the other PSCF programs, and the Domain block has the same format as
-that used by the pscf_pc programs. The only differences are differences
-in the available iterators.
+GPU-accelerated programs is almost identical to the parameter file 
+format for the \ref user_param_pc_page "pscf_pc programs". 
+The Mixture and Interaction blocks use the same format as the other PSCF 
+programs, and the Domain block has the same format as that used by the 
+pscf_pc programs. The only differences are differences in the available 
+iterators.
 
 \section user_param_pg_iterator_sec Iterators
 

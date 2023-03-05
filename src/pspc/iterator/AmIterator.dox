@@ -19,14 +19,13 @@ so as to minimize the free energy density, depending on the value of
 
 \section pspc_AmIterator_parameter_sec Parameter File
 
-A typcial example of the parameter file format for this iterator is shown
+A typical example of the parameter file format for this iterator is shown
 below:
 \code
   AmIterator{
     epsilon      1e-8
     maxItr       100
     maxHist      50
-    errorType    relNormResid
     isFlexible   1
   }
 \endcode
@@ -34,12 +33,12 @@ The format of this block is described more formally below:
 \code
 AmIterator{
    epsilon          real 
-   maxItr           int
-   maxHist          int  
+   maxItr*          int (200 by default)
+   maxHist*         int (50 by default)
    verbose*         int (0-2, 0 by default)
    outputTime*      bool (false by default)
-   errorType*       enumeration ("normResid", "maxResid", or "relNormResid", "relNormResid" by default)
-   isFlexible*      bool (0 or 1, 0/false by default)
+   errorType*       string ("norm", "rms", "max", or "relNorm", "relNorm" by default)
+   isFlexible*      bool (0 or 1, 1/true by default)
    flexibleParams*  Array [ bool ] (nParameters elements)
    scaleStress*     real (10.0 by default)
 }
@@ -57,13 +56,15 @@ parameters. The meaning of the various parameters are described below:
          the magnitude of the error drops below epsilon.  </td>
   </tr>
   <tr>
-    <td> maxItr </td>
-    <td> Maximum number of iterations that will be attempted </td>
+    <td> maxItr* </td>
+    <td> Maximum number of iterations that will be attempted 
+         (200 by default) </td>
   </tr>
   <tr>
     <td> maxHist* </td>
     <td> Maximum number of previous trial solultions that will be 
-         retained in memory for used by the AM algorithm. </td>
+         retained in memory for used by the AM algorithm 
+         (50 by default) </td>
   </tr>
   <tr>
     <td> verbose* </td>
@@ -76,17 +77,17 @@ parameters. The meaning of the various parameters are described below:
          Optional, and 0 (false) by default. </td>
   </tr>
   <tr>
-    <td> errorType </td>
+    <td> errorType* </td>
     <td> Identifer for the type of variable used to define scalar
-         error . The only allowed values are "maxResid", "normResid", 
-         and "relNormResid", as discussed below. Optional, and equal
-         to "relNormResid" by default. </td>
+         error . The only allowed values are "norm", "rms" "max", and 
+         "relNorm", as discussed below. Optional, and equal to "relNorm" 
+         by default. </td>
   </tr>
   <tr>
-    <td> isFlexible </td>
+    <td> isFlexible* </td>
     <td> Set isFlexible true to enable or false to disable iterative 
          optimization of unit cell parameters so as to minimize the 
-         free energy density. Optional and false by default.  </td>
+         free energy density. Optional and true by default.  </td>
   </tr>
   <tr>
     <td> flexibleParams* </td>
@@ -109,18 +110,26 @@ The iterative loop exits if the number of iterations has reached maxItr
 or if the magnitude of the scalar error drops below epsilon. 
 
 <b> errorType </b>: Several different definitions may be used for 
-the scalar error, depending on the value of the identifier errorType. 
+the scalar error, depending on the value of the identifier errorType.  
+All of them ar based on computation of different types of norm of the
+residual vector, defined as discussed 
+\ref pspc_AmIterator_residual_sec "below".
 
-  - If errorType == maxResid, then the scalar error is take to be
-    the maximum of the absolute magnitude of the elements of the 
+  - If errorType == norm, then the scalar error is take to be the L2 
+    norm of the residual vector (square-root of sum of squares of the
+    elements) of the residual vector as defined below. 
+
+  - If errorType == rms, then the scalar error is take to be the 
+    root-mean-square magnitude of elements of the residual vector (the 
+    L2 norm divided by the square root of the number of elements).
+
+  - If errorType == max, then the scalar error is take to be the
+    maximum of the absolute magnitude of the elements of the 
     residual vector (the L infinity norm of the residual vector).
 
-  - If errorType == normResid, then the scalar error is take to be
-    the L2 norm of the residual vector.
-
-  - If errorType == normResid, then the scalar error is take to be
-    the ratio of the L2 norm of the residual vector to the L2 norm of 
-    the w field, as in Stasiak and Matsen, Eur. Phys, Journel E, 2012. 
+  - If errorType == relNorm, then the scalar error is take to be the ratio
+    of the L2 norm of the residual vector to the L2 norm of the w field,
+    as in Stasiak and Matsen, Eur. Phys. J. E <b> 34 </b>, 110 (2011).
 
 <b> scaleStress </b>: If isFlexible is true, the choice of a value for 
 the parameter scaleStress determines how strongly the definition of the 

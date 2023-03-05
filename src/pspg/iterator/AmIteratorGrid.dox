@@ -14,11 +14,11 @@ by AmIteratorBasis, as described below:
 \code
 AmIterator{
    epsilon        real 
-   maxItr         int
-   maxHist        int  
-   verbose*         int (0-2, 0 by default)
-   outputTime*      bool (false by default)
-   errorType*     enumeration ("normResid", "maxResid", or "relNormResid", "relNormResid" by default)
+   maxItr*        int (200 by default)
+   maxHist*       int (50 by default0
+   verbose*       int (0-2, 0 by default)
+   outputTime*    bool (false by default)
+   errorType*     string ("norm", "rms", "max", or "relNorm", "relNorm" by default)
    isFlexible*    bool (0 or 1, 0/false by default)   
    scaleStress*   real (10.0 by default)
 }
@@ -36,13 +36,15 @@ parameters. The meaning of the various parameters are described below:
          the magnitude of the error drops below epsilon.  </td>
   </tr>
   <tr>
-    <td> maxItr </td>
-    <td> Maximum number of iterations that will be attempted </td>
+    <td> maxItr* </td>
+    <td> Maximum number of iterations that will be attempted 
+         (200 by default) </td>
   </tr>
   <tr>
-    <td> maxHist  </td>
+    <td> maxHist* </td>
     <td> Maximum number of previous trial solultions that will be 
-         retained in memory for used by the AM algorithm. </td>
+         retained in memory for used by the AM algorithm 
+         (50 by default) </td>
   </tr>
   <tr>
     <td> verbose* </td>
@@ -55,30 +57,38 @@ parameters. The meaning of the various parameters are described below:
          Optional, and 0 (false) by default. </td>
   </tr>
   <tr>
-    <td> errorType </td>
-    <td> Identifer for the type of variable used to define scalar
-         error . The only allowed values are "maxResid", "normResid", 
-         and "relNormResid", as discussed below. Optional, and equal
-         to "relNormResid" by default. </td>
+    <td> errorType* </td>
+    <td> String identifer for the type of variable used to define scalar
+         error . The only allowed values are "norm", "rms", "max", and
+         "relNorm". Optional, set to "relNorm" by default. </td>
   </tr>
   <tr>
-    <td> isFlexible </td>
+    <td> isFlexible* </td>
     <td> Set isFlexible true to enable or false to disable iterative 
-         optimization of the unit cell parameters so as to minimize the 
-         free energy.  
-         Optional and false by default.  </td>
+         optimization of the unit cell parameters so as to minimize the
+         free energy. Optional and set 1/true by default.</td>
   </tr>
   <tr>
-    <td> scaleStress </td>
+    <td> scaleStress* </td>
     <td> Constant factor by which stress components are multipled in
-         the definition of the residual  attempted if isFlexible is
-         true (optional). </td>
+         the definition of the residual vector if isFlexible is true 
+         (10.0 by default). </td>
   </tr>
 </table>
 The iterative loop exits if the number of iterations has reaches
 maxItr or if the magnitude of the scalar error drops below epsilon. 
 
-Further details are given in the documentation for the Pspc 
-\ref pspc_AmIterator_page "AmIterator" algorithm.
+The Pspg::AmIteratorGrid uses a definition of the residual vector that 
+analogous to that used by Pspg::AmIteratorBasis and Pspc::AmIterator,
+except that residal components associated with errors in the SCF
+equations are defined as components of the relevant difference in
+fields at particular grid points, rather than components of these
+differences in a Fourier-adapated Fourier series. One result of 
+this difference is that the magnitude of erors obtained for 
+corresponding states with the same errorType flag will generally be 
+different (sometimes very different) for the AmIteratorGrid and 
+AmIteratorBasis programs. See the documentation for the Pspc
+\ref pspc_AmIterator_page "AmIterator" algorithm for the definition
+fo the residual field and some other details.
 
 */

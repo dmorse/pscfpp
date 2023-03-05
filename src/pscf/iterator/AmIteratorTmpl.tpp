@@ -32,10 +32,10 @@ namespace Pscf
     : errorType_("relNormResid"),
       epsilon_(0),
       lambda_(0),
-      nBasis_(0),
-      maxHist_(50),
-      itr_(0),
       maxItr_(200),
+      maxHist_(50),
+      nBasis_(0),
+      itr_(0),
       nElem_(0),
       verbose_(0),
       outputTime_(false),
@@ -58,15 +58,15 @@ namespace Pscf
       // Error tolerance for scalar error. Stop when error < epsilon.
       read(in, "epsilon", epsilon_);
 
-      // Maximum number of iterations, optional parameter.
+      // Maximum number of iterations (optional parameter)
       // Default set in constructor (200) or before calling this function
       readOptional(in, "maxItr", maxItr_);
 
-      // Maximum number of previous states in history
+      // Maximum number of previous states in history (optional)
       // Default set in constructor (50) or before calling this function
       readOptional(in, "maxHist", maxHist_);
 
-      // Verbosity level of error reporting, values 0-2
+      // Verbosity level of error reporting, values 0-2 (optional)
       // Initialized to 0 by default in constructor
       // verbose_ = 0 => concise
       // verbose_ = 1 => report all error measures at end
@@ -238,6 +238,36 @@ namespace Pscf
    // Protected member functions
 
    /*
+   * Set value of maxItr.
+   */
+   template <typename Iterator, typename T>
+   void AmIteratorTmpl<Iterator,T>::setMaxItr(int maxItr)
+   {  maxItr_ = maxItr; }
+
+   /*
+   * Set value of maxHist (number of retained previous states)
+   */
+   template <typename Iterator, typename T>
+   void AmIteratorTmpl<Iterator,T>::setMaxHist(int maxHist)
+   {  maxHist_ = maxHist; }
+
+   /*
+   * Set and validate value of error type string.
+   */
+   template <typename Iterator, typename T>
+   void AmIteratorTmpl<Iterator,T>::setErrorType(std::string errorType)
+   {  
+      errorType_ = errorType; 
+
+      if (!isValidErrorType()) {
+         std::string msg = "Invalid iterator error type [";
+         msg += errorType;
+         msg += "] input in AmIteratorTmpl::setErrorType";
+         UTIL_THROW(msg.c_str());
+      }
+   }
+
+   /*
    * Read and validate errorType string parameter.
    */
    template <typename Iterator, typename T>
@@ -247,11 +277,32 @@ namespace Pscf
       // Note: errorType_ is initialized to "relNormResid" in constructor
       readOptional(in, "errorType", errorType_);
 
-      if (!(errorType_ == "normResid"
-         || errorType_ == "maxResid"
-         || errorType_ == "relNormResid")) {
-         UTIL_THROW("Invalid iterator error type in parameter file.");
+      if (!isValidErrorType()) {
+         std::string msg = "Invalid iterator error type [";
+         msg += errorType_;
+         msg += "] in parameter file";
+         UTIL_THROW(msg.c_str());
       }
+
+   }
+
+   template <typename Iterator, typename T>
+   bool AmIteratorTmpl<Iterator,T>::isValidErrorType()
+   {
+      // Process possible synonyms
+      if (errorType_ == "norm") errorType_ = "normResid";
+      if (errorType_ == "rms") errorType_ = "rmsResid";
+      if (errorType_ == "max") errorType_ = "maxResid";
+      if (errorType_ == "relNorm") errorType_ = "relNormResid";
+
+      // Check value
+      bool valid;
+      valid = (errorType_ == "normResid"
+            || errorType_ == "rmsResid"
+            || errorType_ == "maxResid"
+            || errorType_ == "relNormResid");
+      return valid; 
+
    }
 
    /*
@@ -505,10 +556,10 @@ namespace Pscf
          // Set error value
          if (errorType_ == "maxResid") {
             error = maxRes;
-         } else if (errorType_ == "normResid_") {
+         } else if (errorType_ == "normResid") {
             error = normRes;
-         } else if (errorType_ == "rmsResid_") {
-            error = normRes/sqrt(nElem_);
+         } else if (errorType_ == "rmsResid") {
+            error = rmsRes;
          } else if (errorType_ == "relNormResid") {
             error = relNormRes;
          } else {
@@ -520,9 +571,9 @@ namespace Pscf
          // Set error value
          if (errorType_ == "maxResid") {
             error = maxAbs(resHists_[0]);
-         } else if (errorType_ == "normResid_") {
+         } else if (errorType_ == "normResid") {
             error = norm(resHists_[0]);
-         } else if (errorType_ == "rmsResid_") {
+         } else if (errorType_ == "rmsResid") {
             error = norm(resHists_[0])/sqrt(nElem_);
          } else if (errorType_ == "relNormResid") {
             double normRes = norm(resHists_[0]);
@@ -532,6 +583,7 @@ namespace Pscf
             UTIL_THROW("Invalid iterator error type in parameter file.");
          }
          //Log::file() << ",  error  = " << Dbl(error, 15) << "\n";
+
       }
 
       return error;

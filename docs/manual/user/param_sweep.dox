@@ -152,8 +152,8 @@ format that starts either with a line containing the generic name Sweep
 (to select the default algorithm) or LinearSweep (to explicitly select
 the implementation provided by this class). 
 
-<i> 
-Technical note: Source code files that are specific to different PSCF 
+<em>Technical note: </em>
+Source code files that are specific to different PSCF 
 programs are defined in different C++ implementation level namespaces 
 (i.e., in Pscf::Fd1d, Pscf::Pspc and Pscf::Pspg). This allows classes 
 that play analogous roles in different programs to be given the same
@@ -161,7 +161,7 @@ name. The LinearSweep classes for the pscf_fd, pscf_pc and pscf_pg
 programs are actually different classes defined in different namespaces 
 that have identical or nearly identical user interfaces and implement 
 closely analogous algorithms.  The common user interface for these 
-classes is described here. </i>
+classes is described here. 
 
 \subsection user_param_sweep_linear_param_sub Parameter File Format
 

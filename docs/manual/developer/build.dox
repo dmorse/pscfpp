@@ -292,9 +292,9 @@ This command attempts to include a *.d dependency file for each *.o object file 
 
 \section make_makefile Example: A Namespace Directory makefile
 
-As an example of how the system works, here are the essential parts of the namespace level makefile from the directory bld/serial/inter. The actual makefile also includes "clean" and "veryclean" targets" that have been excluded for clarity. Corresponding makefiles in bld/parallel/inter and src/inter are identical:
-\code
+As an example of how the system works, here are the essential parts of the namespace level makefile from the directory bld/serial/inter. The actual makefile also includes "clean" and "veryclean" targets that have been excluded for clarity. Corresponding makefiles in bld/parallel/inter and src/inter are identical:
 
+\code
 BLD_DIR_REL =..
 include $(BLD_DIR_REL)/config.mk
 include $(BLD_DIR)/util/config.mk

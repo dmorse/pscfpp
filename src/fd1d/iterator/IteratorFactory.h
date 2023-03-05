@@ -22,6 +22,9 @@ namespace Fd1d {
    /**
    * Factory for subclasses of Iterator.
    *
+   * The default iterator, invoked by className Iterator, is the
+   * Anderson mixing iterator (className AmIterator).
+   * 
    * \ingroup Fd1d_Iterator_Module
    */
    class IteratorFactory : public Factory<Iterator> 
@@ -29,7 +32,11 @@ namespace Fd1d {
 
    public:
 
-      /// Constructor
+      /**
+      * Constructor
+      *
+      * \param system  parent System object
+      */
       IteratorFactory(System& system);
 
       /**

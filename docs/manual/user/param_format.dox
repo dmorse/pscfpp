@@ -4,14 +4,14 @@
 \ref user_param_mixture_page  (Next)
 <BR>
 
-Users of PSCF require precise documentation of the required format for
-each block that can appear with a parameter file of a PSCF program.
-To describe the required formats concisely, in what follows we will
-use a representation in which the allowed format for each type of block
-is summarized using a form similar to that of the actual block,
-supplemented by notation to indicate the types of parameters and special
-symbols to indicate the existence of other syntactical elements such as
-array-valued parameters, optional elements and selectable subblocks.
+Users of PSCF require precise documentation of the required format for 
+each block that can appear with a parameter file of a PSCF program.  To 
+describe such formats concisely, we use a representation in which the 
+allowed format for each type of block is summarized using a form similar 
+to that of the actual block, supplemented by notation to indicate the 
+data types of parameter values and special symbols to indicate the 
+existence of other syntactical elements such as array-valued parameters, 
+optional parameters or subblocks and selectable subblocks.
 
 \section user_format_examples_sec Examples
 
@@ -29,15 +29,15 @@ System{
 This description should look familiar, except for the inclusion of a
 Sweep{...} block, which is an optional element that was omitted from our
 example file.  In such a description, the syntax Label{...} is used to
-indicate a nested subblock, for which the format of the subblock must be
-described separately elsewherre.  The appearance of an asterisk (*) symbol
+indicate a nested subblock, for which the format of the subblock must 
+be described separately separately.  The appearance of an asterisk (*) 
 after any block or parameter label is used to indicate that the element
-is optional (i.e., omittable).  Subblocks and parameters that do not
-contain an asterisk are thus all required.  The appearance of a "\#"
-symbol after a subblock label is used to indicate that the block is
-selectable. The above description thus indicates that the Iterator
-block is thus a required selectable element, while the Sweep block is
-an optional selectable element.
+is optional (i.e., omittable).  Parameters and subblock labels that are
+not followed by an asterisk are thus required elements. The appearance 
+of a "\#" symbol after a subblock label is used to indicate that the 
+subblock is selectable. The above description thus indicates that the 
+Iterator block is a required selectable element, while the Sweep block
+is an optional selectable element.
 
 As a second example, the format for a Mixture block in any PSCF parameter
 file can be given compactly as follows:
@@ -66,7 +66,7 @@ comments enclosed in parentheses.
 
 This sort of compact format description must be generally supplemented by
 a table and/or text that contains an explanation of the the meaning of
-each parameters, comments about allowed values for particular parameters,
+each parameter, comments about allowed values for particular parameters,
 values for dimensions of arrays or matrices, relationships among choices
 of parameter values, and any other required supplementary information.
 
@@ -103,7 +103,7 @@ examples, are used in this type of parameter file format summary:
    can be used to select the default choice for this block.
 
  - <b> Optional elements </b>: Optional subblocks and parameters (i.e.,
-   elements that may be ommitted from the file) are indicated by an
+   elements that may be omitted from the file) are indicated by an
    asterisk after the subblock or parameter label. The label for an
    optional simple parameter is thus
    \code

@@ -1,3 +1,48 @@
-This directory contains source files in namespace Pscf::Fd1d which are 
-needed to implement one-dimensional finite-difference implementation of
-polymer self-consistent field theory. 
+This directory contains C++ files specific to the implementation of 
+a one-dimensional finite difference implementation of polymer SCFT.
+All code in this directory is defined in C++ namespace Pscf::Fd1d.
+
+Subdirectories:
+
+domain/    - classes that define the spatial domain
+iterator/  - iterative SCF equation solvers
+misc/      - miscellaneous utility classes
+solvers/   - modified diffusion equation solvers
+sweep/     - classes to implement continuation of solutions ("sweep")
+tests/     - unit cell tests for Fd1d code
+
+C++ Files:
+
+pscf_fd.cpp - Main program 
+System.h    - System class (main object)
+System.cpp  - System class (main object) 
+SystemAccess.h   - base class for concise access to a System 
+SystemAccess.cpp - base class for concise access to a System
+
+Makefile and makefile fragments:
+
+source.mk    - list of source files (makefile fragment)
+patterns.mk  - pattern rules for src/fd1d (makefile fragment)
+include.mk   - header of makefile includes (makefile fragment)
+makefile     - main makefile for src/fd1d directory tree
+config.mk    - configuration file (installed by setup script)
+
+Doxygen documentation files:
+
+fd1d.mod     - definition of Fd1d doxygen module 
+pscf_fd.dox  - command line interface documentation for pscf_fd
+
+
+Main Program Usage:
+
+The usual command line usage is to invoke
+
+     pscf_fd -e -p param -c command
+
+from the directory containing the files "param" and "command". Here, 
+"param" denotes the name of a parameter file and "command" denotes 
+the name of a command file.  The -e option causes the parameter file to 
+be echoed to standard output as it is read.  
+
+See the html documentation for information about the format of the
+parameter and command files. 

@@ -27,19 +27,19 @@ include:
 During compilation, all of these intermediate files are placed in a
 directory that we will refer as the "build" directory.
 
-All C++ header and source files for PSCF are contained in the pscfpp/src/
-directory tree. The build directory used by PSCF may either be the same
-as the src/ directory or it may be a separate directory, depending on
-whether the code is compiled "in-source" or "out-of-source".  When PSCF
-is built "in-source", each *.o and *.d file that is created by
-compiling a source file (extension *.cpp or *.cu) is placed in the same
-directory as the corresponding source file.  When PSCF is instead built
+All C++ and CUDA header and source files for PSCF are contained in the 
+pscfpp/src/ directory tree. The build directory used by PSCF may either 
+be the same as the src/ directory or it may be a separate directory, 
+depending on whether the code is compiled "in-source" or "out-of-source".
+When PSCF is built "in-source", each *.o and *.d file that is created 
+by compiling a source file (extension *.cpp or *.cu) is placed in the 
+same directory as the corresponding source file.  When PSCF is built
 "out-of-source", these intermediate files are instead placed in an
 equivalent location in a separate build directory tree with the same
 directory structure.  By default, pscfpp/bld is used as the build
-directory tree for out-of-source builds. All executable program files
-are installed in the pscfpp/bin directory, for either in-source or
-out-of-source compilation.
+directory tree for out-of-source builds. By default, all executable 
+program files are installed in the pscfpp/bin directory, for either 
+in-source or out-of-source compilation.
 
 We refer to the two directories src/ and bld/ in what follows as standard
 build directories.  The bld/ directory has a directory structure analogous

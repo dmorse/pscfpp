@@ -21,8 +21,8 @@ that are both in the current working directory, one would enter:
 \code
    pscf_pc3 -p param -c commands
 \endcode
-The analagous command to invoke a different PSCF program would use a
-different executable name (e.g., pscf_fd1d for the program for
+The analagous command to invoke a different PSCF program would use a 
+different executable name (e.g., pscf_fd to run the program for
 one-dimensional finite-difference calculations) but identical command
 line options.
 
@@ -41,27 +41,26 @@ a job is run in background or in a queue.
 
 All PSCF programs accept a command line option "-e" that causes the
 contents of each line of the parameter file to be echoed to standard
-output as the parameter file is being read. For example, to invoke
+output while the parameter file is being read. For example, to invoke
 the program pscf_pc3 with echoing of the parameter file to a log file,
 one could enter
 \code
    pscf_pc3 -e -p param -c commands > log
 \endcode
-This option is very useful for locating errors in the parameter file.
-When an error is detected while reading a parameter file, the echoed
-output ends immediately before the line at which the error is detected,
-and is followed by an error message that explains what the program
-knows about the nature of the error.
+The "echo" option is very useful for locating errors in the parameter 
+file.  When an error is detected while reading a parameter file, the 
+echoed output ends immediately before the line at which the error is 
+detected, and is followed by an error message with any avaiable 
+information about the nature of the error.
 
-PSCF parameter files are fixed format files in which every element is
-preceded by a label string (e.g., the name of a parameter or a block of
-parameters). During processing of the parameter file, the program reads
-each such label and compares it to a label that it expects to appear
-next in the file. Error messages that are generated in response to
-parameter file syntax errors output both the expected label string and
-the string that was read from file. This error message is usually 
-enough to allow a user to identify and fix the first error encountered
-by the parser.
+PSCF parameter files are fixed-format files in which every element is 
+preceded by a label string that gives the name of a parameter or a block 
+of parameters. During processing of the parameter file, the program reads 
+each such label and compares it to a label that it expects to appear next 
+in the file. Error messages that are generated in response to parameter 
+file syntax errors output both the expected label string and the label 
+string that was actually read from file. This error message is usually 
+enough to allow a user to identify and fix such an error.
 
 \section user_param_usage_options_sec Command Line Options 
 
@@ -80,13 +79,19 @@ Comments:
 
   - The -p and -c options are required, while others are optional.
 
-  - The -p (parameter) option takes a string parameter, which is the name of a parameter file.
+  - The -p (parameter) option takes a string parameter, which is the 
+    name of a parameter file.
 
-  - The -c (command) option takes a string parameter, which is the name of a command file.
+  - The -c (command) option takes a string parameter, which is the name 
+    of a command file.
 
-  - The -i (input prefix) option takes a string parameter, which is a prefix that will be prepended to the names (i.e., paths) for all input data files.
+  - The -i (input prefix) option takes a string parameter, which is a 
+    prefix that will be prepended to the names (i.e., paths) for all 
+    input data files.
 
-  - The -o (output prefix) option takes a string parameter, which is a prefix that will be prepended to the names (paths) for all output data files.
+  - The -o (output prefix) option takes a string parameter, which is a 
+    prefix that will be prepended to the names (paths) for all output 
+    data files.
 
   - Prefix strings that end in a directory separator (e.g., "out/") can
     be used to read all input files from a specific subdirectory or write 

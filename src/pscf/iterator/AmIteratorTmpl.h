@@ -76,13 +76,53 @@ namespace Pscf {
       using ParamComposite::readOptional;
 
       /**
-      * Read and validate the optional errorType string parameter.
+      * Set value of maxItr.
       *
-      * Virtual to allow extension of allowed errorType string values.
+      * Provided to allow subclasses to set a modified default value 
+      * before calling readParameters, in which maxItr is optional.
+      * Global default, set in constructor, is maxItr = 200.
+      *
+      * \param maxItr  maximum number of iterations attempted
+      */
+      void setMaxItr(int maxItr);
+
+      /**
+      * Set value of maxHist (number of retained previous states)
+      *
+      * Provided to allow subclasses to set a modified default value 
+      * before calling readParameters, in which maxItr is optional.
+      * Global default, set in constructor, is maxHist = 50.
+      *
+      * \param maxHist  maximum number of retained previous states
+      */
+      void setMaxHist(int maxHist);
+
+      /**
+      * Set and validate value of errorType string.
+      *
+      * Provided to allow subclasses to set a modified default value 
+      * before calling readParameters, in which errorType is optional.
+      * Global default, set in constructor, is relNormResid = 50.
+      *
+      * \param errorType error type string
+      */
+      void setErrorType(std::string errorType);
+
+      /**
+      * Read and validate the optional errorType string parameter.
       *
       * \param in input filestream
       */
-      void virtual readErrorType(std::istream& in);
+      void readErrorType(std::istream& in);
+
+      /**
+      * Checks if a string is a valid error type.
+      *
+      * Virtual to allow extension of allowed error type string values.
+      *
+      * \return true if type is valid, false otherwise.
+      */
+      virtual bool isValidErrorType();
 
       /**
       * Find the L2 norm of a vector. 
@@ -160,17 +200,17 @@ namespace Pscf {
       /// Free parameter for minimization.
       double lambda_;
 
-      /// Number of basis vectors defined as differences.
-      int nBasis_;
+      /// Maximum number of iterations to attempt.
+      int maxItr_;
 
       /// Maximum number of basis vectors
       int maxHist_;
 
+      /// Number of basis vectors defined as differences.
+      int nBasis_;
+
       /// Current iteration counter.
       int itr_;
-
-      /// Maximum number of iterations to attempt.
-      int maxItr_;
 
       /// Number of elements in field or residual vectors.
       int nElem_; 

@@ -9,9 +9,10 @@ The parameter file format for an AmIteratorFilm object is:
 \code
 AmIteratorFilm{
    epsilon             float
-   maxItr              int
-   maxHist             int  
-   errorType*          enumeration ("normResid", "maxResid", or "relNormResid", "relNormResid" by default)
+   maxItr*             int (200 by default)
+   maxHist*            int (50 by default) 
+   errorType*          string ("norm", "rms", "max", or "relNorm".
+                       "relNorm" by default)
    isFlexible*         bool (0 or 1, 0 by default)   
    flexibleParams*     Array [ bool ] (nParameters elements, each element 0 or 1)
    scaleStress*        float (10.0 by default)
@@ -29,28 +30,30 @@ elements.
 Parameters and subblocks are described below:
 <table>
   <tr>
-    <td> maxItr </td>
-    <td> Maximum number of iterations that will be attempted </td>
-  </tr>
-  <tr>
     <td> epsilon </td>
     <td> Error tolerance. Iteration stops if the scalar error drops below 
          this value. </td>
   </tr>
   <tr>
-    <td> maxHist </td>
+    <td> maxItr* </td>
+    <td> Maximum number of iterations that will be attempted 
+         (200 by default) </td>
+  </tr>
+  <tr>
+    <td> maxHist* </td>
     <td> The number of histories (previous state space points) to use to 
-         construct a new trial state during each iteration. </td>
+         construct a new trial state during each iteration
+         (50 by default) </td>
   </tr>
   <tr>
     <td> errorType* </td>
     <td> Error type to use to define the scalar error that is compared
-         to epsilon to test for convergence.
-         If "maxResid", use the maximum component of the residual vector.
-         If "normResid", use the L2 norm of the residual vector. 
-         If "relNormResid", use the L2 norm of the vector of residuals 
-         divided by the L2 norm of the vector of omega field elements, 
-         as in Stasiak and Matsen, EPJE, 2011. </td>
+         to epsilon to test for convergence.  Allowed values of this
+         string are "norm", "rms", "max" and "relNorm", with "relNorm"
+         set by default. All error types are defined in terms of some
+         sort of norm of the residual vector.  Definitions are the same
+         as for the \ref pspc_AmIterator_page "AmIterator" algorithm.
+         </td>
   </tr>
   <tr>
     <td> isFlexible* </td>
