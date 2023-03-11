@@ -839,12 +839,14 @@ namespace Pspc
       */
       void allocateFieldsBasis();
 
+      #if 0
       /**
       * Read field file header and allocate memory for basis fields.
       *
       * \param filename name of field file
       */
       void allocateFieldsBasis(std::string filename);
+      #endif
 
       /**
       * Read a field file header, make basis if not done previously.

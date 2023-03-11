@@ -42,6 +42,7 @@ public:
    
       // Setup system
       BasisFieldStateTest::SetUpSystem(system);
+      TEST_ASSERT(system.domain().basis().isInitialized());
 
       // Read in file one way
       system.readWBasis("in/bcc/omega.ref");
@@ -140,6 +141,10 @@ public:
       openInputFile("in/bcc/param.flex", in);
       system.readParam(in);
       in.close();
+
+      FSArray<double, 6> parameters;
+      parameters.append(1.759);
+      system.setUnitCell(parameters);
    }
 
 };

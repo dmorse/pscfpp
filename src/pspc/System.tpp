@@ -335,6 +335,7 @@ namespace Pspc
       isAllocatedBasis_ = true;
    }
 
+   #if 0
    /*
    * Peek at field file header, initialize basis, allocate basis fields.
    */
@@ -350,7 +351,8 @@ namespace Pspc
 
       // Read field file header, and initialize basis if needed
       int nMonomer;
-      domain_.fieldIo().readFieldHeader(file, nMonomer, domain_.unitCell());
+      domain_.fieldIo().readFieldHeader(file, nMonomer, 
+                                        domain_.unitCell());
       // FieldIo::readFieldHeader initializes a basis if needed
       file.close();
       UTIL_CHECK(mixture_.nMonomer() == nMonomer);
@@ -360,9 +362,10 @@ namespace Pspc
       // Allocate memory for fields
       allocateFieldsBasis(); 
    }
+   #endif
 
    /*
-   * Peek at field file header, initialize basis if necessary.
+   * Peek at field file header, initialize unit cell parameters and basis.
    */
    template <int D>
    void System<D>::readFieldHeader(std::string filename)
@@ -376,10 +379,16 @@ namespace Pspc
 
       // Read field file header, and initialize basis if needed
       int nMonomer;
-      domain_.fieldIo().readFieldHeader(file, nMonomer, domain_.unitCell());
+      domain_.fieldIo().readFieldHeader(file, nMonomer, 
+                                        domain_.unitCell());
       // FieldIo::readFieldHeader initializes a basis if needed
       file.close();
+
+      // Postconditions
       UTIL_CHECK(mixture_.nMonomer() == nMonomer);
+      UTIL_CHECK(domain_.unitCell().nParameter() > 0);
+      UTIL_CHECK(domain_.unitCell().lattice() != UnitCell<D>::Null);
+      UTIL_CHECK(domain_.unitCell().isInitialized());
       UTIL_CHECK(domain_.basis().isInitialized());
       UTIL_CHECK(domain_.basis().nBasis() > 0);
    }
@@ -398,7 +407,7 @@ namespace Pspc
    }
 
    /*
-   * Read a floating point number and echo to log file (used in readCommands).
+   * Read floating point number, echo to log file (used in readCommands).
    */
    template <int D>
    void System<D>::readEcho(std::istream& in, double& value) const
@@ -445,7 +454,6 @@ namespace Pspc
          } else
          if (command == "ESTIMATE_W_FROM_C") {
             readEcho(in, inFileName);
-            readEcho(in, outFileName);
             estimateWfromC(inFileName);
          } else
          if (command == "SET_UNIT_CELL") {
@@ -821,6 +829,9 @@ namespace Pspc
    {
       domain_.setUnitCell(parameters);
       mixture_.setupUnitCell(domain_.unitCell());
+      if (!isAllocatedBasis_) {
+         allocateFieldsBasis();
+      }
    }
 
    // Primary SCFT Computations
@@ -1626,6 +1637,7 @@ namespace Pspc
    template <int D>
    void System<D>::estimateWfromC(std::string const & filename)
    {
+      UTIL_CHECK(hasMixture_);
       const int nm = mixture_.nMonomer();
       UTIL_CHECK(nm > 0);
 

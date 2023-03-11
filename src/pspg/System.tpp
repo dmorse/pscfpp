@@ -376,6 +376,35 @@ namespace Pspg
    }
 
    /*
+   * Peek at field file header, initialize unit cell parameters and basis.
+   */
+   template <int D>
+   void System<D>::readFieldHeader(std::string filename)
+   {
+      UTIL_CHECK(hasMixture_);
+      UTIL_CHECK(mixture_.nMonomer() > 0);
+
+      // Open field file
+      std::ifstream file;
+      fileMaster_.openInputFile(filename, file);
+
+      // Read field file header, and initialize basis if needed
+      int nMonomer;
+      domain_.fieldIo().readFieldHeader(file, nMonomer, 
+                                        domain_.unitCell());
+      // FieldIo::readFieldHeader initializes a basis if needed
+      file.close();
+
+      // Postconditions
+      UTIL_CHECK(mixture_.nMonomer() == nMonomer);
+      UTIL_CHECK(domain_.unitCell().nParameter() > 0);
+      UTIL_CHECK(domain_.unitCell().lattice() != UnitCell<D>::Null);
+      UTIL_CHECK(domain_.unitCell().isInitialized());
+      UTIL_CHECK(domain_.basis().isInitialized());
+      UTIL_CHECK(domain_.basis().nBasis() > 0);
+   }
+
+   /*
    * Read a filename string and echo to log file (used in readCommands).
    */
    template <int D>
@@ -420,7 +449,6 @@ namespace Pspg
          if (command == "ESTIMATE_W_FROM_C") {
             // Read c field file in r-grid format
             readEcho(in, inFileName);
-            readEcho(in, outFileName);
             estimateWfromC(inFileName);
          } else
          if (command == "SET_UNIT_CELL") {

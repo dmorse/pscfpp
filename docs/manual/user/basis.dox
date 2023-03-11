@@ -160,8 +160,8 @@ equivalent.
 Two wavevectors that are related by in this way can said to be related
 by symmetry operation \f$ A \f$ or \f$ A^{-1} \f$.
 
-Observe that the notation defined above, which the operator appears
-to the right of the wavevector on which it acts, allows use to treat
+Observe that the notation defined above, in which the operator appears
+to the right of the wavevector on which it acts, allows us to treat
 application of symmetry operators to wavevectors as an associative
 operation.  That is, if
 \f$ A = (R_{A}, {\bf t}_{A} )\f$ and \f$ B=(R_{B}, {\bf t}_{B} ) \f$
@@ -341,11 +341,11 @@ superposition of these waves is also an eigenfunction of the Laplacian
 with the same eigenvalue.
 
 <b> Theorem 8 (Star Functions of Different Stars are Orthogonal ) </b>:
-If \f$ \phi({\bf r}) \f$ and \f$ \phi'({\bf r}) \f$ are star functions
+If \f$ f({\bf r}) \f$ and \f$ g({\bf r}) \f$ are star functions
 associated with different stars of the same space group, then they are
 orthogonal, in the sense that
 \f[
-    \int d^{D}r \; \phi^{*}({\bf r}) \phi'({\bf r}) = 0 \quad,
+    \int d^{D}r \; f^{*}({\bf r}) g({\bf r}) = 0 \quad,
 \f]
 where the integral is taken over one unit cell of the lattice.
 

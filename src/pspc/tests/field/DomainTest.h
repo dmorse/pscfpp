@@ -50,6 +50,7 @@ public:
       in.close();
    }
 
+   #if 0
    void testReadParam() 
    {
       printMethod(TEST_FUNC);
@@ -68,6 +69,7 @@ public:
       TEST_ASSERT(domain.unitCell().lattice() == UnitCell<3>::Cubic);
       TEST_ASSERT(domain.basis().nBasis() == 489);
    }
+   #endif
 
    void testReadParamHeader() 
    {
@@ -131,7 +133,7 @@ public:
 };
 
 TEST_BEGIN(DomainTest)
-TEST_ADD(DomainTest, testReadParam)
+//TEST_ADD(DomainTest, testReadParam)
 TEST_ADD(DomainTest, testReadParamHeader)
 TEST_ADD(DomainTest, testReadHeader)
 TEST_END(DomainTest)

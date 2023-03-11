@@ -19,8 +19,8 @@ System{
           1   1   0.0
   }
   Domain{
-    unitCell Lamellar   1.3835952906
-    mesh                 40
+    mesh      40
+    lattice   lamellar   
     groupName P_-1
   }
   AmIterator{
@@ -37,3 +37,5 @@ System{
                   block  0 1 +0.08
   }
 }
+
+    unitCell Lamellar   1.3835952906

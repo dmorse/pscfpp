@@ -780,6 +780,13 @@ namespace Pspg
       void allocateFieldsBasis(std::string filename);
 
       /**
+      * Read field file header and initialize unit cell and basis.
+      *
+      * \param filename name of field file
+      */
+      void readFieldHeader(std::string filename);
+
+      /**
       * Initialize Homogeneous::Mixture object (private).
       */
       void initHomogeneous();

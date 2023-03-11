@@ -1,6 +1,6 @@
-/*! \page install_require_page System Requirements
+/*! \page install_require_page Dependencies
 
-\ref install_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref install_page (Up/ Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref install_source_page (Next)
 <BR>
 
@@ -271,8 +271,7 @@ be entered automatically on login by adding them to the users .profile
 or .bash_profile script.
 
 <BR>
-\ref install_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
-\ref install_page (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref install_page (Up / Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref install_source_page (Next)
 
 */
