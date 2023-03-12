@@ -238,6 +238,10 @@ public:
       openInputFile(fname, in);
       system.readParam(in);
       in.close();
+
+      FSArray<double, 6> parameters;
+      parameters.append(1.3835);
+      system.setUnitCell(parameters);
    }
 
    double testLinearSweepParam(std::string paramname)

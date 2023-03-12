@@ -20,7 +20,7 @@ pscf_pg:
    - Commands for reading and writing external mask fields 
      (READ_MASK_BASIS, READ_MASK_RGRID, WRITE_MASK_BASIS, WRITE_MASK_RGRID).
 
-   - Commands COMPARE_BASIS and COMPARE_RGRID
+   - Commands CHECK_RGRID_SYMMETRY, COMPARE_BASIS and COMPARE_RGRID
 
 The commands to read and write external fields are not available for
 pscf_pg programs because the underlying features have not yet been 

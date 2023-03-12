@@ -56,13 +56,16 @@ namespace Pspg
    {
       UTIL_CHECK(hasFileMaster_);
 
+      bool hasUnitCell = false;
+      // Uncomment for backwards compatibility for old format (<v1.0)
+      #if 0
       // Optionally read unit cell
       readOptional(in, "unitCell", unitCell_);
-      bool hasUnitCell = false;
       if (unitCell_.lattice() != UnitCell<D>::Null) {
          lattice_ = unitCell_.lattice();
          hasUnitCell = true;
       }
+      #endif
 
       read(in, "mesh", mesh_);
       UTIL_CHECK(mesh().size() > 0);

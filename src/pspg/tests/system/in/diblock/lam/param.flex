@@ -30,4 +30,3 @@ System{
      isFlexible 1
   }
 }
-     unitCell Lamellar   1.4814442100

@@ -1,8 +1,8 @@
 System{
   Mixture{
      nMonomer  2
-     monomers  1.0  
-               1.0 
+     monomers  1.0
+               1.0
      nPolymer  1
      Polymer{
         type    linear
@@ -19,9 +19,9 @@ System{
           1   1   0.0
   }
   Domain{
-    unitCell Lamellar   1.3835952906
-    mesh                 40
-    groupName P_-1
+    mesh       40
+    lattice    lamellar
+    groupName  P_-1
   }
   AmIteratorBasis{
     epsilon 1.0e-12
@@ -36,3 +36,4 @@ System{
      parameters    kuhn  0 +0.80
   }
 }
+    unitCell Lamellar   1.3835952906

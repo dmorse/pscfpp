@@ -23,7 +23,7 @@ System{
      ds   0.01
   }
   Interaction{
-     chi(  
+     chi(
           1   0   30.0
           2   0   30.0
           2   1   100.0
@@ -41,5 +41,3 @@ System{
     isFlexible   1
   }
 }
-
-     unitCell    lamellar   1.6213247000E+01

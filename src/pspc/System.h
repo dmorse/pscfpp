@@ -315,6 +315,24 @@ namespace Pspc
       //@{
 
       /**
+      * Write parameter file to an ostream, omitting any sweep block.
+      *
+      * \param out output stream
+      */
+      void writeParamNoSweep(std::ostream& out) const;
+
+      /**
+      * Write thermodynamic properties to a file.
+      *
+      * This function outputs Helmholtz free energy per monomer,
+      * pressure (in units of kT per monomer volume), and the
+      * volume fraction and chemical potential of each species.
+      *
+      * \param out output stream
+      */
+      void writeThermo(std::ostream& out);
+
+      /**
       * Write chemical potential fields in symmetrized basis format.
       *
       * \param filename name of output file
@@ -408,24 +426,6 @@ namespace Pspc
       * \param basename  common prefix for output file names
       */
       void writeQAll(std::string const & basename);
-
-      /**
-      * Write parameter file to an ostream, omitting any sweep block.
-      *
-      * \param out output stream
-      */
-      void writeParamNoSweep(std::ostream& out) const;
-
-      /**
-      * Write thermodynamic properties to a file.
-      *
-      * This function outputs Helmholtz free energy per monomer,
-      * pressure (in units of kT per monomer volume), and the
-      * volume fraction and chemical potential of each species.
-      *
-      * \param out output stream
-      */
-      void writeThermo(std::ostream& out);
 
       /**
       * Output information about stars and symmetrized basis functions.
@@ -838,15 +838,6 @@ namespace Pspc
       * Allocate memory for fields in basis format (private)
       */
       void allocateFieldsBasis();
-
-      #if 0
-      /**
-      * Read field file header and allocate memory for basis fields.
-      *
-      * \param filename name of field file
-      */
-      void allocateFieldsBasis(std::string filename);
-      #endif
 
       /**
       * Read a field file header, make basis if not done previously.

@@ -86,14 +86,6 @@ namespace Pspg
       void setOptions(int argc, char **argv);
 
       /**
-      * Explicitly set number of blocks and number of threads.
-      *
-      * \param nBlocks number of blocks
-      * \param nThreads number of threads per block
-      */
-      void setGpuResources (int nBlocks, int nThreads);
-
-      /**
       * Read input parameters (with opening and closing lines).
       *
       * \param in input parameter stream
@@ -230,16 +222,29 @@ namespace Pspg
       *
       * The lattice system declared within the input unitCell must agree 
       * with Domain::lattice() on input if Domain::lattice() is not null. 
-      * The value returned by Domain::lattice() is normally set in the 
-      * Domain block of the parameter file, and may not change after it
-      * is initialized.
       *
       * \param unitCell  new UnitCell<D> (i.e., new parameters)
       */
       void setUnitCell(UnitCell<D> const & unitCell);
 
       /**
+      * Set state of the associated unit cell.
+      *
+      * The lattice argument must agree with Domain::lattice() on input 
+      * if Domain::lattice() is not null, and the size of the parameters
+      * array must agree with the expected number of lattice parameters.
+      *  
+      * \param lattice  lattice system
+      * \param parameters  array of new unit cell parameters.
+      */
+      void setUnitCell(typename UnitCell<D>::LatticeSystem lattice,
+                       FSArray<double, 6> const & parameters);
+
+      /**
       * Set parameters of the associated unit cell.
+      *
+      * The size of the parameters array must agree with the expected
+      * number of parameters for the current lattice type.
       *
       * \param parameters  array of new unit cell parameters.
       */
@@ -345,6 +350,22 @@ namespace Pspg
       //@{
 
       /**
+      * Write parameter file to an ostream, omitting the sweep block.
+      */
+      void writeParamNoSweep(std::ostream& out) const;
+
+      /**
+      * Write thermodynamic properties to a file.
+      *
+      * This function outputs Helmholtz free energy per monomer,
+      * pressure (in units of kT per monomer volume), and the
+      * volume fraction and chemical potential of each species.
+      *
+      * \param out output stream
+      */
+      void writeThermo(std::ostream& out);
+
+      /**
       * Write chemical potential fields in symmetry adapted basis format.
       *
       * \param filename name of output file
@@ -438,22 +459,6 @@ namespace Pspg
       * \param basename  common prefix for output file names
       */
       void writeQAll(std::string const & basename);
-
-      /**
-      * Write parameter file to an ostream, omitting the sweep block.
-      */
-      void writeParamNoSweep(std::ostream& out) const;
-
-      /**
-      * Write thermodynamic properties to a file.
-      *
-      * This function outputs Helmholtz free energy per monomer,
-      * pressure (in units of kT per monomer volume), and the
-      * volume fraction and chemical potential of each species.
-      *
-      * \param out output stream
-      */
-      void writeThermo(std::ostream& out);
 
       /**
       * Output information about stars and symmetrized basis functions.
@@ -758,6 +763,8 @@ namespace Pspg
       */
       RDField<D> workArray_;
 
+      // Private member functions
+      
       /**
       * Allocate memory for fields in grid formats (private).
       *
@@ -773,23 +780,11 @@ namespace Pspg
       void allocateFieldsBasis();
 
       /**
-      * Read field file header and allocate memory for basis fields.
-      *
-      * \param filename name of field file
-      */
-      void allocateFieldsBasis(std::string filename);
-
-      /**
       * Read field file header and initialize unit cell and basis.
       *
       * \param filename name of field file
       */
       void readFieldHeader(std::string filename);
-
-      /**
-      * Initialize Homogeneous::Mixture object (private).
-      */
-      void initHomogeneous();
 
       /**
       * Read a filename string and echo to log file.
@@ -800,6 +795,21 @@ namespace Pspg
       * \param string  string to read and echo
       */
       void readEcho(std::istream& in, std::string& string) const;
+
+      /**
+      * Read a floating point number and echo to log file.
+      *
+      * Used to read filenames in readCommands.
+      *
+      * \param in  input stream (i.e., input file)
+      * \param value  number to read and echo
+      */
+      void readEcho(std::istream& in, double& value) const;
+
+      /**
+      * Initialize Homogeneous::Mixture object (private).
+      */
+      void initHomogeneous();
 
    };
 
