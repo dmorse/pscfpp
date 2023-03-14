@@ -43,7 +43,7 @@
 #   >  ./configure -d0 
 #
 #-----------------------------------------------------------------------
-while getopts "d:g:q" opt; do
+while getopts "d:qh" opt; do
 
   if [ -n "$MACRO" ]; then 
     MACRO=""
@@ -64,6 +64,25 @@ while getopts "d:g:q" opt; do
       else
          echo "-d OFF - debugging" >&2
       fi
+      ;;
+    h)
+      echo "The configure script may be called prior to compiling to enable"
+      echo "or disable specific compile time features, or query which features" 
+      echo "are currently set to be enabled. This script must be called from"
+      echo "the directory that contains the configure script file, and only"
+      echo "effects code built in the same directory tree."
+      echo " "
+      echo "Command Line Options:"
+      echo "-q           query: lists options that are enabled / disabled."
+      echo "-h           help: prints explanation of options (this command)"
+      echo " "
+      echo "Each of the following options enables or disables a feature by"
+      echo "defining or undefining a corresponding preprocessor macro. Each"
+      echo "such option echo takes 0 or 1 as a required argument, using 1 to"
+      echo "enable a feature or 0 to disable one." 
+      echo " "
+      echo "-d (0|1)   debugging            (undefines/defines UTIL_DEBUG)"
+      echo " "
       ;;
   esac
 

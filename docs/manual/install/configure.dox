@@ -5,121 +5,32 @@
 <BR>
 
 The PSCF build system is designed to allow users to enable or disable
-conditional compilation of some optional features during compilation.
-Thus far, the only such optional feature is the "debug" feature that
+conditional compilation of optional features during compilation.
+Thus far, the only such optional feature is the "debugging" feature that
 is used to add additional run-time sanity checks (such as run-time
 checking of array index bounds) at a slight cost in performance. The
-system used to enable and disable this feature is, as described below,
-is designed to be rather general, to allow later additional of other
-optional features.
-
-\section install_configure_build_directories_section Build configuration files
-
-The directories src/ and bld/ contain similar directory structures, and
-similar sets of makefiles and makefile fragments.  In what follows, we
-will refer src/ and bld/ generically as build directories. Both of these
-directories contains a set of five subdirectories named util/, pscf/,
-fd1d/, pscpc/, and pspg/ that each contain C++ source files from a
-single C++ namespace. We refer to these top-level subdirectories of bld/
-and src/ as "namespace-level" subdirectories.
-
-The setup script installs a set of makefiles and makefile fragments in
-each build directory.  After the setup script has been run, each build
-directory will contain 6 files named "config.mk", with one in the root
-root of the build directory (i.e., in src/ and bld/) and one in each of
-the 5 namespace-level subdirectories of the build directory. These 6
-files, which we refer to as configuration files, makefile fragments
-that are included by other makefiles during compilation process.
-
-The config.mk file in the root directory of the build directory tree
-(e.g., in the src/ directory) is the main build configuration file.
-This file controls the choice of compiler and general options that are
-applied to all code.  The config.mk files in the namespace level
-directories specify more specialized options that are only relevant
-for code in specific namespaces. The six config.mk files in each
-build directory together specify the configuration of any code
-that is compiled in that directory tree.
-
-The build configuration files in each build directory are installed
-by the setup script, and are not stored in the pscfpp repository.
-This is done so that users may edit these files without destroying
-synchronization with the repository. Users may change the
-configuration of code built in a particular build directory after
-running the setup script but before compiling either by editing
-these configuration files. Some changes to these files can also be
-made from the command line by using the configure script, as discussed
-below.
+system used to enable and disable this feature is designed to be 
+flexible enough to allow later additional of other optional features.
 
 \section install_configure_configure The "configure" script
 
-The root pscfpp/ directory and the three standard build directories
-(bld/parallel, bld/serial or src/) each contain a unix bash script
-named "configure" that can be used to enable or disable particular
-compile time features. The configure script in each build directory
-must be invoked from the root directory of the build directory tree
-(i.e., the directory that contains the script), and can be used enable
-or disable features of code built in that build directory, without
-effecting code built elsewhere.
+The pscfpp/src and pscfpp/bld directories are used as build directories
+for in-source and out-of source compilation, respectively. After the setup
+script has been run, each of these two standard build directories will
+contain a unix bash script named "configure". The configure script can
+be used to modify configuration files that control what features are
+enabled when code is compiled.  The configure script in each build
+directory must be invoked from the directory that contains the script
+(which is the root of the src/ or bld/ directory tree) before invoking
+the "make" utility to actually compile code.
 
-Comment: The use of a configure script is one of many features of
-pscfpp that is borrowed from the "simpatico" molecular dynamics
-simulation package. Simpatico has many optional compile-time features
-that can be enabled or disabled prior to compilation by invoking the
-configure script with corresponding command line options. The only
-optional feature of the programs of the pscfpp package is current
-the option to enable extra debugging sanity checks. The use of a
-script to enable and disable a single option is arguably overkill,
-but we have provided script to provide a mechanism for manipulating
-any future compile-time options.
+\subsection install_configure_change_sub Enabling/disabling Debugging
 
-\subsection install_configure_query_sub The "query" option
-
-The -q command line option of a configure script may be used to query
-which optional features are currently set to be enabled or disabled,
-and the current values of variables that specify the choice of compiler
-and environment. To see how this works, after the setup script has been run,
-changed directory (cd) to the bld/serial directory and then enter
-\code
-./configure -q
-\endcode
-The -q command line option cause the script to print a list of which
-optional features are currently enabled, and the name of the current
-choice of compiler. The resulting output for the default configuration
-should look something like this:
-\code
--d  OFF - debugging
-\endcode
-if debugging is disabled (the default configuration), or
-\code
--d  ON - debugging
-\endcode
-
-\subsection install_configure_help_sub The "help" option
-
-If the configure script is invoked with the -h ("help") option, by entering
-\code
-./configure -h
-\endcode
-this will cause list of all command line options accepted by the configure
-script to be printed to the terminal. The output also includes some
-information about what C++ preprocessor macros are defined or undefined
-by specific commands. 
-
-\subsection install_configure_change_sub Enabling/disabling optional features
-
-In the output produced by invoking configure with the -q option, each line
-of the output before the last two begins with the name of the command
-line option for the configure script (a dash followed by a letter)
-that can be used to enable or disable an associated feature.  This
-information is also output by the invoking configure with -h option.
-The "debugging" feature is enabled or disabled using the "-d" option. 
-Each compile-time feature can be enabled by using the associated command
-line option followed by "1" (ON), or disabled by using the option followed
-by "0" (OFF), and then compiling or recompiling the desired programs.
-
-For example, to enable debugging (which enables extensive run-time sanity
-checks, at a slight cost in speed) in code built in one build directory,
-one would enter
+The "debugging" feature is enabled or disabled by invoking configure
+script with the "-d" option with an option parameter "1" to enable
+or "0" to disable, before compiling source code.
+To enable debugging in the code built in one build directory one would
+enter
 \code
 ./configure -d1
 \endcode
@@ -128,8 +39,65 @@ To disable debugging before compiling, one would instead enter
 \code
 ./configure -d0
 \endcode
-These or any other desired changes in compile-time configuration must
-be made before invoking make to compile a program. 
+These commands change the configuration used during compilation, and
+so must be invoked before compiling any relevant source code.
+
+\subsection install_configure_query_sub The "query" option
+
+The -q command line option of the configure script may be used to query
+what optional features are currently set to be enabled or disabled the
+next time the code is compiled.  To see how this works, changed
+directory (cd) to the bld/serial directory and then enter
+\code
+./configure -q
+\endcode
+This should result in the output
+\code
+-d  OFF - debugging
+\endcode
+if debugging is disabled (the default configuration), or
+\code
+-d  ON - debugging
+\endcode
+if debugging has been enabled.
+
+\subsection install_configure_help_sub The "help" option
+
+Invoking the configure script with the -h ("help") option, by entering
+\code
+./configure -h
+\endcode
+produces a list list of all command line options accepted by the script.
+
+\section install_configure_build_directories_section Build configuration files
+
+The configuration of the build system is actually defined by the contents
+of a set of files named "config.mk" in the src/ and bld/ directories.
+These files, which we refer to as build configuration files, are makefile
+fragments that are included by other makefiles during the build process. The
+configure script works by editing the build configuration files.  Users may
+also edit these files directly if they are comfortable doing so.
+
+The directories src/ and bld/ contain analogous directory structures, and
+similar sets of build configuration files.  In what follows, we will refer
+to src/ and bld/ generically as build directories. Both of these directories
+contains a set of five subdirectories named util/, pscf/, fd1d/, pscpc/, and
+pspg/ that each contain C++ source files from a single C++ namespace. We
+refer to these top-level subdirectories of bld/ and src/ as "namespace-level"
+subdirectories.
+
+After the setup script has been run, each build directory will contain 6
+build configuration files files named "config.mk", with one in the root
+of the build directory (i.e., in src/ and bld/) and one in each of the 5
+namespace-level subdirectories of that directory.
+The config.mk file in the root directory of each build directory tree
+is the main build configuration file for code built in that directory.
+This file controls the choice of compiler and general options that are
+applied to all code.  The config.mk files in the namespace level
+directories specify more specialized options that are only relevant for
+code in specific namespaces. The six config.mk files in each build
+directory together specify the configuration of any code that is
+compiled in that directory tree.
 
 <BR>
 \ref install_targets_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp;

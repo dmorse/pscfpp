@@ -35,7 +35,7 @@ the root directory before running or rerunning the setup script.
      M1 or M2 chip) in which the dependencies have been installed using
      the homebrew package mamager can be created by entering
      \code
-     ./setup mac-m1-homebrew
+     ./setup mac-si-homebrew
      \endcode
 
    - **Compile all CPU programs:**

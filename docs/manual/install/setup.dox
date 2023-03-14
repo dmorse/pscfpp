@@ -60,7 +60,7 @@ configuration are defined in a file pscfpp/make/compiler/default.
 \section install_setup_homebrewm1_sec Macs with Apple Silicon and Homebrew 
 
 To create an environment that should work correctly for a newer Mac with
-Apple silicon (i.e., the M1 chip) on which Homebrew has used to install 
+Apple silicon (i.e., the M1 chip) on which Homebrew was used to install 
 dependencies, enter:
 \code
 ./setup mac-si-homebrew
@@ -90,7 +90,7 @@ When the "setup" script is invoked with no argument, as indicated above,
 the setup script uses a file named pscfpp/make/compiler/default for this
 purpose. This file contains a default configuration appropriate for a 
 system in which the g++ command is used to invoke the gnu C++ compiler 
-to compile C++ files, the nvcc command is used to invoke the nVidia 
+to compile C++ files, the nvcc command is used to invoke the NVIDIA 
 compiler is used to compile CUDA files, and paths to the gsl and fftw 
 libraries are in common locations.
 
@@ -131,8 +131,8 @@ Users can change values of variables defined in the main config.mk
 configuration files either by creating a customized compiler setup file 
 in the make/compiler directory before running the setup script, as 
 described above, or by directly editing the files bld/config.mk and/or 
-src/config.mk files after running the setup script. The advantages 
-of making changes by creating a custom compiler setup file are that:
+src/config.mk files after running the setup script. The advantages of 
+making changes by creating a custom compiler setup file are that:
 
    - Changes made in custom compiler setup file will be copied to
      both src/config.mk and bld/config.mk by the setup script and 
@@ -142,10 +142,6 @@ of making changes by creating a custom compiler setup file are that:
      invoke "make veryclean" to start over with a fresh configuration, 
      but setup files in the make/compiler directory are not erased by 
      the "veryclean" target. 
-
-We thus recommend that users who need to customize the main config.mk
-file do so, when possible, by creating a customized compiler setup 
-file.
 
 <BR>
 \ref install_environment_page (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 

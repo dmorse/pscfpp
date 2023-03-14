@@ -330,35 +330,36 @@ default.
 \section user_param_syntax_selectable_section Selectable Blocks
 
 Some blocks in a PSCF parameter file are "selectable".  A selectable 
-block is one that may contain the initial label and format appropriate 
-to any of several blocks that are associated with C++ classes that 
-serve analogous functions but that are based on somewhat different 
-algorithms.  As already noted, the block that represents an iterator 
-in a PSCF program is always a selectable block. The use of a selectable 
-block for the iterator allows users to specify a choice from among 
-several different available iterator algorithms. 
+block is one that may contain any of several blocks that are associated 
+with C++ classes that serve analogous purposes but that rely on 
+different algorithms.  As already noted, the block that represents an 
+iterator in a PSCF program is always a selectable block. The use of a 
+selectable block for the iterator allows users to specify a choice 
+from among several different available iterator algorithms. 
 
 The users choice of one of several valid options for a selectable block 
 is specified by the label used in the opening line for the block, which 
-contains a label for the block immediately followed by an opening curly 
-bracket. That block label is compared to a list of label strings for
-available options.  If the label in the parameter files matches one such
-string, the option corresponding to that label is selected. Different
+ends with an opening curly bracket. That block label is compared to a 
+list of label strings for available options.  If the label for a 
+selectable block in the parameter files matches one such string, the 
+option corresponding to that label is selected. Different possible
 options for a selectable block generally require different parameters,
-and thus different parameter file formats.  The format of the body of 
-a selectable block must thus match the format required by the algorithm 
-specified by the block label.
+and thus require different parameter file formats.  The format of the 
+body of a selectable block must match the format expected for the type 
+of block declared in the block label. 
 
 A default choice is normally defined for each selectable block. The
 default choice may be selected either by using the generic name for 
-the type of element rather than the name for a specific algorithm. 
-In the example shown on the previous page, the default choice of a 
-iterator is a Newton-Raphson iterator that is implemented by a class 
-named NRIterator. Because it is the default choice, this algorithm may 
-be selected by using a parameter file in which the block begins either 
-with the generic label "Iterator" or the specific label "NrIterator". 
+the type of element (e.g., "Iterator") or the name for a specific 
+algorithm.  In the example shown on the previous page, the default 
+choice of a iterator is an Anderson-Mixing iterator that is implemented 
+by a class named AmIterator. Because it is the default choice, this 
+algorithm may be selected by using a parameter file in which the 
+block begins with the generic label "Iterator", as in the example. 
+The same algorithm may also be selected, however, by using a block 
+that starts with the specific label "AmIterator".
  
-<i> Technical comments (for users familiar with C++): </i>
+<i> Technical comments (for users familiar with C++: </i>
 
 The implementation of selectable parameter file blocks in PSCF is
 based on C++ inheritance and polymorphism. The different options for 
@@ -372,9 +373,9 @@ which is a pointer to an instance of the base class.
 
 For example, different iteration algorithms for a particular PSCF
 program are subclasses of a base class named "Iterator", which defines
-a common interface for iteration algorithms used by that program. The 
-parent System object has a private member variable of type Iterator* 
-that can point to an instance of any subclass of class Iterator.
+a common interface for SCFT iteration algorithms. The parent System 
+object has a private member variable of type Iterator* that can 
+point to an instance of any subclass of class Iterator.
 
 If the block label input for a selectable block matches the name of 
 an available subclass of the relevant base class (e.g., a subclass

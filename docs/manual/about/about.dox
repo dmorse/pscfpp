@@ -7,11 +7,11 @@
 \section about_pscf_sec About PSCF
 
 PSCF is a package of software for solving the Edwards-Helfand
-self-consistent theory (SCFT) for polymer liquids. The acronym PSCF stands 
-for "polymer self-consistent field".  The version presented here is written 
-primarily in C++, with some CUDA code for programs that make use of 
-Nvidia graphics processing units (GPUs).  The source code for PSCF is 
-maintained in the github repository
+self-consistent theory (SCFT) for polymer liquids. PSCF stands for 
+"polymer self-consistent field".  The version presented here is written 
+primarily in C++, with some CUDA code for programs that make use of NVIDIA 
+graphics processing units (GPUs).  The source code for PSCF is maintained 
+in the github repository
 <a href=https://github.com/dmorse/pscfpp/>https://github.com/dmorse/pscfpp</a>.
 
 \section about_history_sec History
@@ -218,8 +218,8 @@ and not FFTW. The pscf_pc CPU-based programs for spatially periodic
 structures require both GSL and FFTW.
 
 The GPU-accelerated pscf_pg programs can only run on a computer with an
-appropriate Nvidia GPU. To compile or run these programs, the system must
-also have an Nvidia CUDA development environment that provides the cuFFT
+appropriate NVIDIA GPU. To compile or run these programs, the system must
+also have an NVIDIA CUDA development environment that provides the cuFFT
 gpu-accelerated fast Fourier transform library.
 
 Complete directions for compiling and installing PSCF are provided in

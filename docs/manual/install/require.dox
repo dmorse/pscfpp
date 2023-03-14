@@ -32,23 +32,24 @@ system on which the code is compiled and run must have:
 A git client is needed to obtain the source code, by cloning the git
 repository in which PSCF is maintained on the github.com site. A python
 interpreter is needed during compilation because the build system that 
-compiles PSCF uses several python scripts that are provided in the 
-source code repository. A git client, C++ compiler and python interpreter 
+compiles PSCF uses several python scripts that are provided within 
+the PSCF repository. A git client, C++ compiler and python interpreter 
 will normally come pre-installed in either the most common linux 
 distributions or in a Mac OS operating system in which 
 \ref require_mac_commandtools_section "command line tools" have been 
-installed.  The GNU scientific library is used by several programs within 
-the package for linear algebra operations.  The FFTW Fast Fourier 
+installed.  The GNU scientific library is used by several programs 
+within the package for linear algebra operations.  The FFTW Fast Fourier 
 transform library is used extensively by the pscf_pc programs for 
 periodic microstructures.
 
-In order compile GPU-enabled programs, the system must also have:
+In order to compile GPU-enabled programs, the user's system must also 
+have:
 
-   - an NVidia graphics card
-   - the NVidia NVCC CUDA compiler
-   - the CUFFT GPU-accelerated fast Fourier transform library.
+   - an NVIDIA graphics card
+   - the NVIDIA nvcc C++/CUDA compiler 
+   - the cuFFT GPU-accelerated fast Fourier transform library.
 
-The CUFFT library is provided with the CUDA development environment.
+The cuFFT library is provided with the CUDA development environment.
 
 Users who wish to generate a local copy of this html documentation, as 
 web pages that reside on their own computer, will also need to install 
@@ -60,9 +61,9 @@ In order to compile the PSCF CPU programs in Mac OS X, the computer must
 first be configured to provide a unix command-line development environment
 by installing the Command Line Tools package for XCode.  In recent 
 versions of Mac OS X, it is not necessary to install the rather large 
-XCode integrated development environment (IDE) to obtain just the 
-command line tools. The command line tools package is all that is 
-needed to compile and use PSCF.
+XCode integrated development environment (IDE) to obtain just the command 
+line tools. The command line tools package is all that is needed to 
+compile and use PSCF.
 
 To install just the command line tools, follow the instructions given
 <a href= https://osxdaily.com/2014/02/12/install-command-line-tools-mac-os-x/>
@@ -139,16 +140,16 @@ installation of the command line tools package.
 
 By default, the PSCF build system invokes a C++ compiler using the
 compiler commnd name "g++". On linux systems, this command normally
-invokes the gnu compiler collection (gcc) C++ compiler. On a MacIntosh
+invokes the gnu compiler collection (GCC) C++ compiler. On a MacIntosh
 running Mac OS X that is set up for C++ developent (see above), the "g++"
-command is normally a link to the clang compiler, which is the default
-compiler for C++ development on Mac OS X. The clang compiler accepts
+command is normally a link to the Clang compiler, which is the default
+compiler for C++ development on Mac OS X. The Clang compiler accepts
 almost all the same command line options as the gnu compiler, and thus
 functions as a drop-in replacement for the gnu C++ compiler. 
 
 It is possible to configure the build system during the initial setup
-process so as to instead use a different C++ compiler.  When the gcc or
-clang compiler is not used for compilation, however, the PSCF build
+process so as to instead use a different C++ compiler.  When the GCC 
+or Clang compiler is not used for compilation, however, the PSCF build
 system will still invoke the "g++" command with appropriate options to
 analyse dependencies among source files. The PSCF makefile system thus
 always requires that the "g++" command be available on the build system.
@@ -170,7 +171,7 @@ detail \ref install_setup_page "here".
 
 To compile the GPU-accelerated program, the system must also have an
 appropriate NVIDIA GPU and a CUDA development package installed. The
-NVIDIA NVCC C++/CUDA compiler is designed to integrate with the GNU
+NVIDIA nvcc C++/CUDA compiler is designed to integrate with the GNU
 g++ compiler, so we recommend using the GNU compiler to compile C++
 source files if you are planning to compile CUDA code for use on the
 same machine.
@@ -185,7 +186,7 @@ later using the commands:
 sudo apt install libfftw3-dev  
 sudo apt install libgsl-dev  
 \endcode
-To also install doxygen documentation generator utility, use the command
+To also install the doxygen documentation generator utility, use the command
 \code
 sudo apt install doxygen
 \endcode
@@ -198,11 +199,10 @@ If you are not already using a package manager for managing unix programs
 on Max OS X, we recommend that you install the <a href="https://brew.sh/">
 Homebrew </a> package manager, following instructions given on the Homebrew
 web site. Possible alternatives include the older MacPorts or Fink package
-managers, or compiling the required directly from source files obtained
-from package home pages.
+managers, or compiling the required packages directly from source files 
+obtained from package home pages.
 
-After the Homebrew system is installed, you may install the GSL and FFTW
-packages with the commands
+Using Homebrew, you may install the GSL and FFTW packages with the commands
 \code
 brew install gsl
 brew install fftw
@@ -219,7 +219,7 @@ macs that use Intel cpus:
 On Macs with Intel cpus, homebrew installed links to required header and
 library files in subdirectories of the /usr/local directory.
 Because /usr/local is  one of the standard directories in which a unix
-shell normally looks for such files, pscfpp can be installed on such
+shell normally looks for such files, PSCF can be installed on such
 machines using a default configuration for the makefile system that is
 the same as the default used on linux machines.
 
@@ -227,7 +227,7 @@ On Macs with Apple silicon, homebrew instead installs all files in
 /opt/homebrew.  This requires users to add paths to this directory and/or
 some of its subdirectories to the search paths used by the compiler to
 find header and library files.  A compiler configuration file that
-modifies these search paths is provided as part of pscf, as discussed
+modifies these search paths is provided as part of PSCF, as discussed
 \ref install_setup_homebrewm1_sec "here".
 
 \section install_require_module Linux Software Modules
@@ -236,7 +236,7 @@ At the University of Minnesota, PSCF is often run on a cluster provided
 by the Minnesota Supercomputer Institute (MSI).  The computer clusters
 at MSI, like many similar multi-user facilities, use the linux "module"
 command to allow users to load particular software packages, including
-particular choices of compiler. The "module" command is the user interface
+particular choices of compiler. The module command is the user interface
 to the "Modules" package, which is a system for automating changes in a
 users unix shell environment that are required in order to use particular
 software packages.
@@ -261,8 +261,8 @@ module load fftw/3.3.6-double-gnu-7.2.0
 module load cuda
 \endcode
 before compiling PSCF. We use a version of fftw that was compiled with
-gcc version 7.2.0, rather than the most recent version, because the
-current version of CUDA (v10.0) isn't compatible with gcc versions with
+GCC version 7.2.0, rather than the most recent version, because the
+current version of CUDA (v10.0) isn't compatible with GCC versions with
 primary version numbers greater than 7.
 
 These module load commands can be either be entered manually from the
