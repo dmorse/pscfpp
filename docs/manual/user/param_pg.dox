@@ -46,7 +46,7 @@ can be found by following the links in the table below:
   <tr>
     <td> \subpage pspg_AmIteratorGrid_page "AmIteratorGrid" </td>
     <td> Anderson Mixing iterator for periodic structures, 
-         formulated using values defined a spatial grid  </td>
+         formulated using values defined on a spatial grid  </td>
   </tr>
 </table>
 

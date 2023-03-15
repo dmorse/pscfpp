@@ -268,7 +268,7 @@ for integers \f$ m = 0, \ldots, N -1 \f$.  Values of this basis function
 at values of \f$ x \f$ that lie on the nodes of this grid can be 
 expressed as a single complex exponential wave, rather than a sum 
 of two distinct waves, because, on this grid, wavenumbers \f$ k_{n} \f$ 
-and \f$ k_{-n} \f$  with \f$ n = N/2 \f$ are \"aliases\" or \"images"\ 
+and \f$ k_{-n} \f$  with \f$ n = N/2 \f$ are "aliases" or "images"
 of one another that yield equal values for
 \f$ e^{ik_{n}x_{m} } = e^{ -ik_{n}x_{m} } \f$ if evaluated at any
 position \f$ x_{m} \f$ that corresponds to one of the nodes. Generally,
@@ -386,7 +386,7 @@ family of scattering reflections in small angle X-ray or neutron
 scattering. The symmetry-adapated Fourier series expansion for
 functions that are invariant under elements of a space groups
 that leads systematic cancellations only contains basis functions
-or "stars" that are not \"cancelled\" (i.e., those that obey the
+or "stars" that are not "cancelled" (i.e., those that obey the
 rules for allowed reflections).
 
 \section user_field_basis_star_sec Stars and Star Functions

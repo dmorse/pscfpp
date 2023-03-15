@@ -1,5 +1,6 @@
 The src/pscf directory contains source files in namespace Pscf that can be 
 used in several different implementations of self-consistent field theory. 
+All code defined in this directory is defined in the Pscf C++ namespace.
 
 Subdirectories:
 

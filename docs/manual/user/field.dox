@@ -6,18 +6,49 @@
 
 Among the commands that can be issued from the command file for any 
 PSCF program are several commands to read and write files that specify
-local concentrations of different types of monomer (referred to as "c 
-fields") or corresponding monomer chemical potential fields (referred 
-to as "w" fields). 
+local concentrations or volume fractions of different types of monomer 
+(referred to as "c fields") or corresponding monomer chemical potential 
+fields (referred to as "w" fields). 
+
+\section user_field_formats_sec Field File Formats
+
+Every PSCF program can read and write w and c fields using one or more
+file formats designed for field files. Each program uses the same file
+format or formats for w and c fields.  In each such file format, a 
+single file contains a description of the w or c fields associated with 
+all of the different types of monomer present in a system.  
+
+Different field file formats are used by different programs.
+The fd1d program for one-dimensional problems uses a simple format that 
+lists values of fields on the nodes of a one-dimensional grid. 
+The pscf_pc and pscf_pg programs, which both treat periodic structures, 
+use the same set of three different formats to describe periodic fields. 
+File formats used by different programs are described in more detail 
+in the sub-pages linked below.
+
+<h2> Contents :</h2>
+<ol>
+  <li> \subpage user_field_fd1d_page "1D Fields"  </li>
+  <li> \subpage user_field_periodic_page "Period Fields" 
+    <ul>
+      <li> \ref user_field_basis_page "Basis Format" </li>
+      <li> \ref user_field_rgrid_page "R-Grid Format" </li>
+      <li> \ref user_field_kgrid_page "K-Grid Format" </li>
+    </ul>
+  </li>
+</ol>
+
+The physical meanings of the c- and w-fields is discussed in more detail
+below.
+
+\section user_field_c_sec Monomer Concentration / Volume Fraction Fields
 
 Because PSCF uses a continuous chain model in which there are not 
 actually any discrete monomers, we use the word "monomer" in what 
 follows to refer to the amount of material that corresponds to one unit 
 of contour length within a block of a block polymer. This is equivalent
 to the length of chain that occupies a volume within an incompressible 
-liquid equal to one monomer reference volume \f$ v\f$ 
-
-\section user_field_c_sec Monomer Concentration / Volume Fraction Fields
+liquid equal to one monomer reference volume \f$ v\f$. 
 
 The average volume fraction of monomers of type \f$ \alpha \f$ at any 
 position \f$ {\bf r} \f$ within an incompressible mixture is denoted by 
@@ -37,11 +68,11 @@ denotes concentration.
 
 A converged solution to an SCFT problem for an incompressible system 
 must have average monomer concentrations for different monomer types 
-that add to  a total concentration \f$ c_{0} \equiv 1/v \f$, so as
-to obtain volume fractions that satisfy a constraint
+that add to  a total local concentration \f$ c_{0} \equiv 1/v \f$, so 
+as to obtain volume fractions that satisfy a constraint
 \anchor user_field_incompressible_eqn
 \f[
-   \sum_{\alpha=1}^{C} \phi_{\alpha}({\bf r}) = 1
+   \sum_{\alpha=0}^{C-1} \phi_{\alpha}({\bf r}) = 1
 \f]
 at every point in the system.
 
@@ -64,7 +95,7 @@ incompressible SCFT problem are related by a self-consistency condition
 \anchor user_field_scf_eqn
 \f[
    w_{\alpha}({\bf r}) 
-   = \sum_{\beta=1}^{C} \chi_{\alpha \beta} \phi_{\beta}({\bf r})
+   = \sum_{\beta=0}^{C-1} \chi_{\alpha \beta} \phi_{\beta}({\bf r})
       + \xi({\bf r}) \quad.
 \f]
 Here, \f$\chi_{\alpha\beta}\f$ is a Flory-Huggins interaction parameter
@@ -81,29 +112,7 @@ guess for the w fields from an input field file.  After a solution is
 obtained, the resulting converged w and c fields are usually written to 
 output files.
 
-\section user_field_formats_sec Field File Formats
-
-Every PSCF program can read and write w and c fields using one or more
-file formats designed for field files. The same format or formats are 
-always used for w and c fields.  In each such file format, a single file 
-contains a description of the w or c fields associated with all of the 
-different types of monomer present in a system.  
-
-Different field file formats are used by different PSCF programs.
-The fd1d program for one-dimensional problems uses a simple field 
-format that lists values of fields on the nodes of a one-dimensional 
-grid. 
-The pscf_pc and pscf_pg programs, which both treat periodic structures, 
-use the same set of three different formats to describe periodic fields. 
-File formats used by different programs are described in more detail 
-in the sub-pages linked below:
-
-<ol>
-  <li> \subpage user_field_fd1d_page   </li>
-  <li> \subpage user_field_periodic_page  </li>
-</ol>
-
- <BR>
+<BR>
  \ref user_param_page    (Prev) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref user_page           (Up) &nbsp; &nbsp; &nbsp; &nbsp; 
  \ref user_command_page   (Next) 

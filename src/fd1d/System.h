@@ -33,6 +33,29 @@ namespace Fd1d
    /**
    * Main class in SCFT simulation of one system.
    *
+   * A System has (among other components):
+   *
+   *    - a Mixture (a container for polymer and solvent solvers)
+   *    - an Interaction (list of binary chi parameters)
+   *    - a Domain (description of the unit cell and discretization)
+   *    - Monomer chemical fields 
+   *    - Monomer concentration fields 
+   *    - An Iterator
+   *
+   * A system may also optionally contain a Sweep object.
+   *
+   * A minimal main program that uses this class to implement a program
+   * might look something like this:
+   * \code
+   *   int main(int argc, char **argv) {
+   *      Pscf::Fd1d::System system;
+   *      system.setOptions(argc, argv);
+   *      system.readParam();
+   *      system.readCommands();
+   *   }
+   * \endcode
+   * The actual main program is given in the file pscf_fd.cpp.
+   *
    * \ref user_param_fd_page "Parameter File Format"
    * \ingroup Pscf_Fd1d_Module
    */
@@ -90,11 +113,6 @@ namespace Fd1d
       * \param in input parameter stream
       */
       virtual void readParameters(std::istream& in);
-
-      /**
-      * Write parameter file to an ostream, omitting the sweep block. 
-      */
-      void writeParamNoSweep(std::ostream& out) const;
 
       /**
       * Read command script.
@@ -184,19 +202,30 @@ namespace Fd1d
       */
       double pressure() const;
 
+      //@}
+      /// \name Thermodynamic Data Output
+      ///@{
+
+      /**
+      * Write parameter file to an ostream, omitting any Sweep block. 
+      *
+      * \param out output stream 
+      */
+      void writeParamNoSweep(std::ostream& out) const;
+
       /**
       * Write thermodynamic properties to a file. 
       *
       * This function outputs Helmholtz free energy per monomer,
-      * pressure (in units of kT per monomer volume), and the
-      * volume fraction and chemical potential of each species.
+      * pressure (in units of kT per monomer volume), and the volume
+      * fraction phi and chemical potential mu of each species.
       *
       * \param out output stream 
       */
       void writeThermo(std::ostream& out);
 
       ///@}
-      /// \name Output Operations (correspond to command file commands)
+      /// \name Field Output 
       //@{
       
       /**
@@ -224,15 +253,6 @@ namespace Fd1d
       * \param filename name of output file
       */
       void writeBlockC(std::string  const & filename);
-
-      #if 0
-      /**
-      * Write parameter file to an ostream, omitting any sweep block. 
-      *
-      * \param out output stream 
-      */
-      void writeParamNoSweep(std::ostream& out) const;
-      #endif
 
       //@}
       /// \name Field Accessors
@@ -267,7 +287,7 @@ namespace Fd1d
       CField& cField(int monomerId);
 
       ///@}
-      /// \name Member object accessors (get sub-objects by reference)
+      /// \name Member object accessors 
       ///@{
 
       /**

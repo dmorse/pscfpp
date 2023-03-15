@@ -44,13 +44,14 @@ The effect of each command in this example is described below:
     to the file out/data, to provide a record of the input parameters.
 
   - "WRITE_THERMO out/data" appends information about thermodynamic 
-    properties of of the converged solution to the end of file out/data.
+    properties of the converged solution to the end of file out/data.
 
   - FINISH instructs the main program to stop execution and return.
 
 All pscf_fd that read or write field files use the same field file 
-format, described \ref user_field_fd1d_page "here".  Every PSCF command 
-file should end with a FINISH command.
+format, described \ref user_field_fd1d_page "here".  The last line
+in every PSCF command script must be a FINISH command. Anything that
+appears after the FINISH command will be ignored.
 
 \section user_command_fd_sweep_sec Example: A Sweep
 
@@ -246,7 +247,7 @@ with a single SCFT calculation.
 
 \anchor user_command_fd_param_sub 
 The WRITE_PARAM writes a slightly modified copy of the parameter 
-file to a file whose name that is specified as a command parameter. 
+file to a file whose name is given as a command parameter. 
 The version of the parameter file written by this command outputs
 the current values for all parameters, and excludes any Sweep block.
 
@@ -259,9 +260,8 @@ report includes values for the
 the \ref user_model_pressure_sub "nondimensionalized pressure" 
 \f$ \tilde{p} \f$, denoted by "pressure", the chemical potential and 
 volume fraction of each polymer and solvent molecular species, denoted 
-by "mu" and "phi", and the current values of the unit cell parameters. 
-All free energies, pressure and chemical potential values are output 
-using thermal energy units, in which \f$ k_{B}T = 1 \f$.
+by "mu" and "phi".  All free energies, pressure and chemical potential 
+values are output using thermal energy units, in which \f$ k_{B}T = 1 \f$.
 
 If the file whose name is passed to the WRITE_THERMO command already 
 exists, the report of thermodynamic properties will be appended to 
@@ -269,7 +269,10 @@ the end of this file, rather than overwriting the file.
 This is designed to allow users to output a parameter file block 
 that contains the input parameters followed by a report of computed 
 thermodynamic properties in a single file, if desired, by invoking 
-WRITE_PARAM and WRITE_THERMO with the same file name parameter.
+WRITE_PARAM and WRITE_THERMO with the same file name parameter. The
+example command file shown above uses this pattern, by providing the
+same filename "out/data" as a parameter for both the WRITE_PARAM and 
+WRITE_THERMO commands.
  
 \section user_command_fd_fieldout_sec Field Output 
 

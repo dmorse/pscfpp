@@ -54,6 +54,19 @@ namespace Pspg
    * file contains a Sweep block.  In a parameter file format, the main 
    * block is a System{ ... } block that contains subblocks for sub-objects.
    *
+   * A minimal main program that uses this class template to implement a 
+   * program for 3-dimensional structures (D=3) looks something like this:
+   * \code
+   *   int main(int argc, char **argv) {
+   *      Pscf::Pspg::System<3> system;
+   *      system.setOptions(argc, argv);
+   *      system.readParam();
+   *      system.readCommands();
+   *   }
+   * \endcode
+   * This main program is given for D=1, 2, and 3 dimensional structures
+   * in the files pscf_pg1.cpp, pscf_pg2.cpp, and pscf_pg3.cpp
+   *
    * \ingroup Pscf_Pspg_Module
    */
    template <int D>

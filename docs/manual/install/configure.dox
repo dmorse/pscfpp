@@ -24,7 +24,7 @@ directory must be invoked from the directory that contains the script
 (which is the root of the src/ or bld/ directory tree) before invoking
 the "make" utility to actually compile code.
 
-\subsection install_configure_change_sub Enabling/disabling Debugging
+\subsection install_configure_change_sub Enabling or disabling debugging
 
 The "debugging" feature is enabled or disabled by invoking configure
 script with the "-d" option with an option parameter "1" to enable
