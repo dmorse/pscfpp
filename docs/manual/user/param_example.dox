@@ -6,13 +6,12 @@
 
 The different programs in the PSCF package use parameter files with
 similar structure and syntax, with slight differences in some elements.
-It is useful to illustrate common elements by showing an example.
+To illustrate common elements, we start with an example.
 
 \section user_param_example_file Example File
 
-Below, we show an example of a complete parameter file for a simple 1D
-SCFT calculation performed using a finite-difference discretization by
-program pscf_fd:
+Shown below is a complete parameter file for a simple 1D SCFT calculation 
+performed by program pscf_fd:
 
 \code
 System{
@@ -63,15 +62,14 @@ A in a one-dimensional planar geometry.
 
 \section user_param_example_structure_sec File Structure
 
-Before discussing details of the format for particular elements of this
-file, note the overall structure of the file:
-This parameter file consists of a set of nested blocks that each begin
+Before considering details, note the overall structure of this example:
+Each parameter file consists of a set of nested blocks that each begin
 and end with lines containing matching curly brackets, using a syntax
-similar to that of a C program. Each such parameter file block begins
-with a line that contains a label for the block (System, Mixture, etc.)
-followed immediately by an opening curly bracket "{". Each block ends
-with a matching closing curly bracket on a line by itself.  The skeleton
-structure of the main blocks within this example is show below:
+similar to that of a C program. Each parameter file block begins with 
+a line that contains a label for the block (System, Mixture, etc.)
+followed immediately by an opening curly bracket "{". Each such block ends 
+with a matching closing curly bracket on a line by itself.  The structure
+of the main blocks in this example is show in skeleton form below:
 \code
 System{
   Mixture{
@@ -88,18 +86,19 @@ System{
   }
 }
 \endcode
-The main block of a parameter file, which encloses all the data in
-the file, is always labelled "System". The purpose of each subblock
+The main block of a parameter file, which encloses all the data in the 
+file, is always labelled "System". The purpose of each primary subblock 
 of the main "System" block is briefly described below.
 <ul>
 <li>
 Mixture: The Mixture block contains a description of the chemical
-composition of a mixture of containing one or more polymer and solvent
+composition of a system that may contain several polymer and solvent
 molecular species. This includes a description of the structure of each
 molecular species and a specification of either the volume fraction
-phi or chemical mu of every species.  In this example, the Mixture
+phi or chemical mu of each species.  In this example, the Mixture
 block contains two Polymer{ ... } subblocks, each of which contains
-information about one of the two polymer species in a binary mixture.
+information about one of the two polymer species in a binary polymer
+mixture.
 </li>
 <li>
 Interaction: This block contains values for the Flory-Huggins chi
@@ -108,8 +107,8 @@ types.
 </li>
 <li>
 Domain: The domain block contains geometrical information about the
-spatial domain over which the SCFT equations should be solved and
-a description of the spatial discretization used to numerically solve
+spatial domain over which the SCFT equations should be solved and a 
+description of the spatial discretization used to numerically solve
 the field equations.
 </li>
 <li>
@@ -121,33 +120,36 @@ SCFT equations.
 
 The parameter files required to initialize a simple SCFT calculations
 performed using a pscf_pc or pscf_pg program have a similar structure,
-with analogous top level blocks that appear in the same order. Parameter
+with analogous top level blocks appearing in the same order. Parameter
 files for all three types of program use exactly the same format for
-the Mixture and Interaction blocks, but differ in details of the
-formats of the Domain and Iterator block.  The skeleton structure shown
-in this example is specfic to simple SCFT calculations - a somewhat
-different sequence of top-level subblocks may be required to initialize
-more complicated calculations, such as a simulation of a sequence of
-SCFT calculations along a line through parameter space (known as a
-"sweep").
+the Mixture and Interaction blocks, but generally different formats for 
+the Domain and Iterator block.  The skeleton structure shown above is 
+specfic to simple SCFT calculations - a somewhat different sequence of 
+top-level subblocks may be required to initialize more complicated 
+calculations. For example, a simulation of a sequence of SCFT 
+calculations along a line through parameter space (known as a "sweep")
+would require an additional "Sweep" block, as discussed elsewhere.
 
-Each block in a parameter file may contain a sequence of subblocks
-(each delimited by matching curly braces) and parameter entries. Each
-parameter entry starts with a label indicating the name of a parameter
-followed by information about the parameter value.
+\section user_param_example_elements_sec Parameters
 
-Each parameter entry for a simple parameter, for which the value can
-be represented by a single number or string, appears on a single line
-containing a label that gives the parameter name followed by the
-parameter value. For examples of this, look for the nMonomer and nPolymer
-parameters within the Mixture block.
+Each block in a parameter file may contain a sequence of nested
+subblocks (each delimited by matching curly braces) and parameter 
+entries. Each parameter entry starts with a label indicating the name 
+of a parameter followed by information about the parameter value.
 
-Labels for some other parameters refer to names of 1D arrays of 2D
-matrices of values. In these cases, lists of elements of the array
-or matrix are delimited by either matched square brackets (for
-one-dimensional arrays) or by parentheses (for some matrices or
-two-dimensional arrays).  Names of array-valued parameters are
-often given as plural nouns.
+<b> Single Parameters </b>: Each entry for a single parameter, for 
+which the value can be represented by a single number or some other 
+compact string representation, appears on a single line that contains 
+a label giving the parameter name followed by the parameter value. 
+For examples of this, look for the nMonomer and nPolymer parameters 
+within the Mixture block.
+
+<b> Array and Matrix-Valued Parameters </b>: Labels for some other 
+parameters refer to names of 1D arrays of 2D matrices of values. In 
+these cases, lists of elements of the array or matrix are delimited 
+by either matched square brackets (for one-dimensional arrays) or by 
+parentheses (for some matrices or two-dimensional arrays).  Names of 
+array-valued parameters are often given as plural nouns.
 
 As an example of a one-dimensional array-valued parameter, see the
 "monomers" parameter in the Mixture block, which begins with a line
@@ -164,7 +166,7 @@ zero-based convention), followed by the value of the matrix
 element. The resulting list of nonzero matrix elements is enclosed
 by opening and closing parentheses.
 
-\section user_param_example_discussion_sec File Contents
+\section user_param_example_discussion_sec Contents of Example
 
 <b> Mixture  </b>:
 

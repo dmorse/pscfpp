@@ -392,7 +392,7 @@ namespace Pspc
          } else 
          if (command == "WRITE_GROUP") {
             readEcho(in, filename);
-            writeGroup(filename, domain_.group());
+            writeGroup(filename);
          } else 
          if (command == "BASIS_TO_RGRID") {
             readEcho(in, inFileName);
@@ -611,7 +611,7 @@ namespace Pspc
    * Set new w-field values, using r-grid fields as inputs.
    */
    template <int D>
-   void System<D>::setWRGrid(DArray<Field> const & fields)
+   void System<D>::setWRGrid(DArray< RField<D> > const & fields)
    {
       UTIL_CHECK(isAllocatedRGrid_);
       w_.setRGrid(fields);
@@ -1070,7 +1070,7 @@ namespace Pspc
       UTIL_CHECK(hasCFields_);
 
       // Create and allocate the DArray of fields to be written
-      DArray<Field> blockCFields;
+      DArray< RField<D> > blockCFields;
       blockCFields.allocate(mixture_.nSolvent() + mixture_.nBlock());
       int n = blockCFields.capacity();
       for (int i = 0; i < n; i++) {
@@ -1198,36 +1198,45 @@ namespace Pspc
    * Write description of symmetry-adapted stars and basis to file.
    */
    template <int D>
-   void System<D>::writeStars(const std::string & outFileName) const
+   void System<D>::writeStars(std::string const & filename) const
    {
       UTIL_CHECK(domain_.basis().isInitialized());
-      std::ofstream outFile;
-      fileMaster_.openOutputFile(outFileName, outFile);
-      fieldIo().writeFieldHeader(outFile, mixture_.nMonomer(),
+      std::ofstream file;
+      fileMaster_.openOutputFile(filename, file);
+      fieldIo().writeFieldHeader(file, mixture_.nMonomer(),
                                  domain_.unitCell());
-      domain_.basis().outputStars(outFile);
-      outFile.close();
+      domain_.basis().outputStars(file);
+      file.close();
    }
 
    /*
    * Write a list of waves and associated stars to file.
    */
    template <int D>
-   void System<D>::writeWaves(const std::string & outFileName) const
+   void System<D>::writeWaves(std::string const & filename) const
    {
       UTIL_CHECK(domain_.basis().isInitialized());
-      std::ofstream outFile;
-      fileMaster_.openOutputFile(outFileName, outFile);
-      fieldIo().writeFieldHeader(outFile, mixture_.nMonomer(), 
+      std::ofstream file;
+      fileMaster_.openOutputFile(filename, file);
+      fieldIo().writeFieldHeader(file, mixture_.nMonomer(), 
                                  domain_.unitCell());
-      domain_.basis().outputWaves(outFile);
-      outFile.close();
+      domain_.basis().outputWaves(file);
+      file.close();
    }
 
-   // Field conversion command functions
+   /*
+   * Write all elements of the space group to a file.
+   */
+   template <int D>
+   void System<D>::writeGroup(const std::string & filename) const
+   {  
+      Pscf::writeGroup(filename, domain_.group()); 
+   }
+
+   // Field format conversion functions
 
    /*
-   * Convert fields from symmetry-adpated basis to real-space grid format.
+   * Convert fields from symmetry-adapted basis to real-space grid format.
    */
    template <int D>
    void System<D>::basisToRGrid(const std::string & inFileName,
@@ -1266,7 +1275,8 @@ namespace Pspc
       UnitCell<D> tmpUnitCell;
       fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_, tmpUnitCell);
       fieldIo().convertRGridToBasis(tmpFieldsRGrid_, tmpFieldsBasis_);
-      fieldIo().writeFieldsBasis(outFileName, tmpFieldsBasis_, tmpUnitCell);
+      fieldIo().writeFieldsBasis(outFileName, tmpFieldsBasis_, 
+                                              tmpUnitCell);
    }
 
    /*

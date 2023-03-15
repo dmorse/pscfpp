@@ -39,7 +39,8 @@ program and some expected advantages of the new code include:
   linear homopolymers allowed by the Fortran PSCF code.
   </li>
   <li>
-  Use of graphics processing units (GPUs) to accelerate some programs.
+  The current version uses graphics processing units (GPUs) to dramatically
+  accelerate some programs.
   </li>
 </ul>
 

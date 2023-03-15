@@ -20,14 +20,15 @@ Each monomer type is assigned an integer index and a statistical segment
 length.  Each copolymer block and each solvent species is assigned an
 integer parameter named monomerId that specifies the type of monomer from
 which it is constructed.  The Mixture block contains information that
-specifies the structure of each polymer species within the mixture (
-including information about the length and connectivity of the blocks),
+specifies the structure of each polymer species within the mixture 
+(including information about the length and connectivity of the blocks),
 the monomer type and volume of each solvent species, and the composition
 of the mixture.
 
-\section user_param_mixture_sec Format (Overview)
+\section user_param_mixture_example_sec Example
 
-Here is the Mixture block from the example parameter file shown previously
+For reference, here is the Mixture block from the example parameter file 
+shown \ref user_param_example_page "previously" :
 \code
   Mixture{
      nMonomer   2
@@ -54,6 +55,9 @@ Here is the Mixture block from the example parameter file shown previously
      ds   0.01
   }
 \endcode
+
+\section user_param_mixture_format_sec Mixture Block Format 
+
 The format for the mixture block in any PSCF parameter file is described
 somewhat more generally below:
 \code
@@ -70,11 +74,11 @@ Mixture{
   ds         real
 }
 \endcode
-The asterisk after nSolvent and vMonomer indicates that thse are optional
-parameters.  The number of Polymer subblocks must equal nPolymer, and the
-number of Solvent subblocks must equal nSolvent.  Note that the optional
-parameter nSolvent is set to 0 by default. There thus must be no Solvent
-subblocks if the Solvent parameter is absent.
+ The asterisks after the nSolvent and vMonomer labels indicates that 
+these are optional parameters.  The number of Polymer subblocks must 
+equal nPolymer, and the number of Solvent subblocks must equal nSolvent.
+Because the optional parameter nSolvent is set to 0 by default, there 
+cannot be any Solvent subblocks if the nSolvent parameter is absent.
 
 The meanings of parameters and subblocks are described in the following
 table:
@@ -162,9 +166,9 @@ in different implementations.
 
 Each implementation-level namespace contain  a class or class template 
 named Mixture. There is a class named Mixture in the Fd1d namespace, 
-and a class template Mixture<int D> in the Pspc and Pspg namespaces, 
-where D is the integer dimensionality of space. The mixture object 
-in pscf_pc2 program for 2D periodic structures is an object of type 
+and Mixture<D> class templates in the Pspc and Pspg namespaces, where 
+D is the integer dimensionality of space. The mixture object in the 
+pscf_pc2 program for 2D periodic structures is an object of type 
 Mixture<2>, where the dimensionality of space is defined by the template
 parameter D=2.  All of the Mixture classes and class templates are 
 derived from an instance of a class template named Pscf::MixtureTmpl. 
@@ -172,8 +176,8 @@ All of these Mixture classes use the same parameter file format, which
 is described above. Most of that format is defined in the readParameters 
 member function of the Pscf::MixtureTmpl base class template.
 
-The array "monomers" is implemented internally as an array of instances
-of the class Pscf::Monomer, as discussed \subpage pscf_Monomer_page "here".
+The array "monomers" is implemented internally as an array of instances of
+the class Pscf::Monomer, as discussed \subpage pscf_Monomer_page "here".
 
 \section user_param_polymer_sec Polymer
 
@@ -206,17 +210,17 @@ The meaning of different parameters is summarized in the table below:
   </tr>
   <tr>
     <td> blocks </td>
-    <td> Array in which each element contains a description of one
+    <td> array in which each element contains a description of one
          block, represented internally by an object of type "Block".
     </td>
   </tr>
   <tr>
     <td> phi* </td>
-    <td> Volume fraction of this species (real, optional).  </td>
+    <td> volume fraction of this species (real, optional).  </td>
   </tr>
   <tr>
     <td> mu </td>
-    <td> Chemical potential of this species (real, must be
+    <td> chemical potential of this species (real, must be
          present if and only if phi is absent). </td>
   </tr>
 </table>
@@ -224,7 +228,7 @@ The meaning of different parameters is summarized in the table below:
 Comments:
 
   - The "type" parameter is an optional enumeration value that can be
-    assigned values "linear", to specify a linear block polymer, or
+    assigned a value "linear", to specify a linear block polymer, or
     "branched" to specify a general acyclic branched block polymer. If
     absent, this parameter is set to "linear" by default.
 
@@ -232,21 +236,22 @@ Comments:
     contains a description of one block of a block polymer, listed in the
     order of increasing block index.  The description of each block is
     stored internally in an object of type "Block", as indicated by the
-    notation "Array [ Block ]" in the above format description.
+    notation "Array [ Block ]" in the above format description. 
 
   - The required text representation for each Block in the "blocks" array
     is different depending on whether the value of the type parameter for
     the polymer is \ref user_param_block_linear_sub "linear" (the default)
-    or \ref user_param_block_branched_sub "branched", as discussed below.
+    or \ref user_param_block_branched_sub "branched", as discussed 
+    \ref user_param_block_sec "below" .
 
   - The last parameter in a Polymer block must be either a value for
     phi, which is the volume fraction occupied by the polymer species,
-    or mu, which is the chemical potential for that species. The block
-    must contain either a phi parameter or a mu parameter in this
-    location, but may not contain both.
+    or a value for mu, which is the chemical potential for that species. 
+    The block must contain either a phi parameter or a mu parameter in 
+    this location, but may not contain both.
 
-  - When the parameter phi is present, its value must lie in the range
-    [0,1].
+  - When the volume fraction parameter phi is present, its value must lie 
+    in the range [0,1].
 
 Descriptions of parameter file formats for individual blocks of linear and
 branched polymers are discussed separately below.

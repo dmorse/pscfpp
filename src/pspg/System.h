@@ -44,13 +44,15 @@ namespace Pspg
    * A System has (among other components):
    *
    *    - a Mixture (a container for polymer and solvent solvers)
-   *    - a Domain (a description of the crystal domain and discretization)
-   *    - an Iterator
+   *    - an Interaction (list of chi parameters)
+   *    - a Domain (a description of the unit cell and discretization)
    *    - a container of monomer chemical potential fields (w fields)
    *    - a container of monomer concentration fields (c fields)
+   *    - an Iterator
    *
-   * In a parameter file format, the main block is a System{ ... } block
-   * that contains subblocks for sub-objects.
+   * A System may also optionally contain a Sweep objects, if the parameter
+   * file contains a Sweep block.  In a parameter file format, the main 
+   * block is a System{ ... } block that contains subblocks for sub-objects.
    *
    * \ingroup Pscf_Pspg_Module
    */
@@ -80,8 +82,13 @@ namespace Pspg
       /**
       * Process command line options.
       *
+      * This function takes the same arguments as any C/C++ main program
+      * function. The arguments of the main function should d be passed 
+      * to this function unaltered, to allow this function to process the
+      * command line options.
+      *
       * \param argc number of command line arguments
-      * \param argv array of argument strings
+      * \param argv array of pointers to command line arguments
       */
       void setOptions(int argc, char **argv);
 
@@ -94,6 +101,9 @@ namespace Pspg
 
       /**
       * Read input parameters from default param file.
+      *
+      * This function reads the parameter file set by the -p command
+      * line option.
       */
       void readParam();
 
@@ -113,6 +123,9 @@ namespace Pspg
 
       /**
       * Read commands from default command file.
+      *
+      * This function reads the parameter file set by the -c command
+      * line option.
       */
       void readCommands();
 
@@ -243,8 +256,8 @@ namespace Pspg
       /**
       * Set parameters of the associated unit cell.
       *
-      * The size of the parameters array must agree with the expected
-      * number of parameters for the current lattice type.
+      * The size of the FSArray<double, 6> parameters must agree with the 
+      * expected number of parameters for the current lattice type.
       *
       * \param parameters  array of new unit cell parameters.
       */
@@ -292,7 +305,11 @@ namespace Pspg
       * energy and pressure are computed if and only if convergence is
       * obtained.
       *
-      * \pre The w().hasData() flag must be true on entry.
+      * \pre The w().hasData() flag must be true on entry, to confirm
+      * that chemical potential fields have been set. 
+      *
+      * \pre The w().isSymmetric() flag must be set true if the chosen 
+      * iterator uses a basis representation, and thus requires this.
       *
       * \param isContinuation  true iff continuation within a sweep
       * \return returns 0 for successful convergence, 1 for failure
@@ -346,24 +363,40 @@ namespace Pspg
       double pressure() const;
 
       //@}
-      /// \name Output Operations (correspond to command file commands)
+      /// \name Thermodynamic Data Output 
       //@{
 
       /**
       * Write parameter file to an ostream, omitting the sweep block.
+      *
+      * This function omits the Sweep block of the parameter file, if
+      * any, in order to allow the output produced during a sweep to refer
+      * only to parameters relevant to a single state point, and to be
+      * rerunnable as a parameter file for a single SCFT calculation.
       */
       void writeParamNoSweep(std::ostream& out) const;
 
       /**
       * Write thermodynamic properties to a file.
       *
-      * This function outputs Helmholtz free energy per monomer,
-      * pressure (in units of kT per monomer volume), and the
-      * volume fraction and chemical potential of each species.
+      * This function outputs Helmholtz free energy per monomer, pressure
+      * (in units of kT per monomer volume), the volume fraction and 
+      * chemical potential of each species, and unit cell parameters.
+      *
+      * If parameter "out" is a file that already exists, this function
+      * will append this information to the end of the file, rather than 
+      * overwriting that file. Calling writeParamNoSweep and writeThermo 
+      * in succession with the same file will thus produce a single file
+      * containing both input parameters and resulting thermodynanic
+      * properties.
       *
       * \param out output stream
       */
       void writeThermo(std::ostream& out);
+
+      //@}
+      /// \name Field Output 
+      //@{
 
       /**
       * Write chemical potential fields in symmetry adapted basis format.
@@ -404,6 +437,10 @@ namespace Pspg
       * \param filename name of output file
       */
       void writeBlockCRGrid(const std::string & filename) const;
+
+      //@}
+      /// \name Propagator Output 
+      //@{
 
       /**
       * Write specified slice of a propagator at fixed s in r-grid format.
@@ -460,15 +497,19 @@ namespace Pspg
       */
       void writeQAll(std::string const & basename);
 
+      //@}
+      /// \name Crystallographic Data Output 
+      //@{
+
       /**
       * Output information about stars and symmetrized basis functions.
       *
       * This function opens a file with the specified filename and then
       * calls Basis::outputStars.
       *
-      * \param outFileName name of output file
+      * \param filename name of output file
       */
-      void writeStars(const std::string & outFileName) const;
+      void writeStars(const std::string & filename) const;
    
       /**
       * Output information about waves.
@@ -476,20 +517,27 @@ namespace Pspg
       * This function opens a file with the specified filename and then
       * calls Basis::outputWaves.
       *
-      * \param outFileName name of output file for wave data
+      * \param filename name of output file 
       */
-      void writeWaves(const std::string & outFileName) const;
+      void writeWaves(const std::string & filename) const;
    
+      /**
+      * Output all elements of the space group.
+      *
+      * \param filename name of output file 
+      */
+      void writeGroup(std::string const & filename) const;
+
       //@}
-      /// \name Field Operations (correspond to command file commands)
+      /// \name Field File Operations
       //@{
 
       /**
       * Convert a field from symmetry-adapted basis to r-grid format.
       *
-      * This function uses the arrays that stored monomer concentration
-      * fields for temporary storage, and thus corrupts any previously
-      * stored values. As a result, flag hasCFields is false on output.
+      * This and other field conversion functions do not change the w 
+      * or c fields stored by this System - all required calculations 
+      * are performed using temporary or mutable memory. 
       *
       * \param inFileName name of input file
       * \param outFileName name of output file
@@ -500,9 +548,12 @@ namespace Pspg
       /**
       * Convert a field from real-space grid to symmetrized basis format.
       *
-      * This function uses the arrays that stored monomer concentration
-      * fields for temporary storage, and thus corrupts any previously
-      * stored values. As a result, flag hasCFields is false on return.
+      * This function checks if the input fields have the declared space
+      * group symmetry, and prints a warning if it detects deviations
+      * that exceed some small threshhold, but proceeds to attempt the
+      * conversion even if such an error is detected. Converting a field 
+      * that does not have the declared space group symmetry to basis
+      * format is a destructive operation that modifies the fields.
       *
       * \param inFileName name of input file
       * \param outFileName name of output file
@@ -530,6 +581,13 @@ namespace Pspg
 
       /**
       * Convert fields from Fourier (k-grid) to symmetrized basis format.
+      *
+      * This function checks if the input fields have the declared space
+      * group symmetry, and prints a warning if it detects deviations
+      * that exceed some small threshhold, but proceeds to attempt the
+      * conversion even if such an error is detected. Converting a field 
+      * that does not have the declared space group symmetry to basis
+      * format is a destructive operation that modifies the fields.
       *
       * \param inFileName name of input file
       * \param outFileName name of output file
@@ -619,10 +677,6 @@ namespace Pspg
       * Get FileMaster by reference.
       */
       FileMaster& fileMaster();
-
-      //@}
-      /// \name Accessors (return by value)
-      //@{
 
       /**
       * Have monomer concentration fields (c fields) been computed?

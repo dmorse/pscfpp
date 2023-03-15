@@ -123,7 +123,7 @@ command or a group of closely related commands.
   </tr>
   <tr>
     <td colspan="3" style="text-align:center">
-     \ref user_command_pc_dataout_sec "Data Output"
+     \ref user_command_pc_dataout_sec "Thermodynamic Data Output"
     </td>
   </tr>
   <tr>

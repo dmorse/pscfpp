@@ -232,6 +232,24 @@ namespace Pspg
           allocateFieldsBasis();
       }
 
+      // Optionally instantiate an Iterator object
+      std::string className;
+      bool isEnd;
+      iteratorPtr_ = 
+         iteratorFactoryPtr_->readObjectOptional(in, *this, className, 
+                                                 isEnd);
+      if (!iteratorPtr_) {
+         Log::file() << "Notification: No iterator was constructed\n";
+      }
+
+      // Optionally instantiate a Sweep object (if an iterator exists)
+      if (iteratorPtr_) {
+         sweepPtr_ = 
+            sweepFactoryPtr_->readObjectOptional(in, *this, className, 
+                                                 isEnd);
+      }
+
+      #if 0
       // Initialize iterator
       std::string className;
       bool isEnd;
@@ -249,6 +267,7 @@ namespace Pspg
       if (sweepPtr_) {
          sweepPtr_->setSystem(*this);
       }
+      #endif
 
       // Initialize homogeneous object
       homogeneous_.setNMolecule(np+ns);
@@ -402,16 +421,17 @@ namespace Pspg
             writeQAll(filename);
          } else
          if (command == "WRITE_STARS") {
-            readEcho(in, outFileName);
-            writeStars(outFileName);
+            readEcho(in, filename);
+            writeStars(filename);
          } else
          if (command == "WRITE_WAVES") {
-            readEcho(in, outFileName);
-            writeWaves(outFileName);
+            readEcho(in, filename);
+            writeWaves(filename);
          } else 
          if (command == "WRITE_GROUP") {
             readEcho(in, filename);
-            writeGroup(filename, domain_.group());
+            writeGroup(filename);
+            //writeGroup(filename, domain_.group());
          } else 
          if (command == "BASIS_TO_RGRID") {
             readEcho(in, inFileName);
@@ -1075,11 +1095,11 @@ namespace Pspg
    * Write description of symmetry-adapted stars and basis to file.
    */
    template <int D>
-   void System<D>::writeStars(const std::string & outFileName) const
+   void System<D>::writeStars(const std::string & filename) const
    {
       UTIL_CHECK(domain_.basis().isInitialized());
       std::ofstream outFile;
-      fileMaster_.openOutputFile(outFileName, outFile);
+      fileMaster_.openOutputFile(filename, outFile);
       fieldIo().writeFieldHeader(outFile, mixture_.nMonomer(),
                                  unitCell());
       basis().outputStars(outFile);
@@ -1089,17 +1109,26 @@ namespace Pspg
    * Write a list of waves and associated stars to file.
    */
    template <int D>
-   void System<D>::writeWaves(const std::string & outFileName) const
+   void System<D>::writeWaves(const std::string & filename) const
    {
       UTIL_CHECK(domain_.basis().isInitialized());
       std::ofstream outFile;
-      fileMaster_.openOutputFile(outFileName, outFile);
+      fileMaster_.openOutputFile(filename, outFile);
       fieldIo().writeFieldHeader(outFile, mixture_.nMonomer(), 
                                  unitCell());
       basis().outputWaves(outFile);
    }
 
-   // Field Operations
+   /*
+   * Write all elements of the space group to a file.
+   */
+   template <int D>
+   void System<D>::writeGroup(const std::string & filename) const
+   {  
+      Pscf::writeGroup(filename, domain_.group()); 
+   }
+
+   // Field File Operations
 
    /*
    * Convert fields from symmetry-adpated basis to real-space grid format.

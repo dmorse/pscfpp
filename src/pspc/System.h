@@ -46,13 +46,14 @@ namespace Pspc
    * A System has (among other components):
    *
    *    - a Mixture (a container for polymer and solvent solvers)
-   *    - a Domain (a description of the crystal domain and discretization)
-   *    - an Iterator
-   *    - Monomer chemical fields in both basis and grid formats
-   *    - Monomer concentration fields in both basis and grid formats
+   *    - an Interaction (list of binary chi parameters)
+   *    - a Domain (description of the unit cell and discretization)
+   *    - Monomer chemical fields (a WFieldContainer)
+   *    - Monomer concentration fields (a CFieldContainer)
    *
-   * In a parameter file format, the main block is a System{...} block that
-   * contains subblocks for sub-objects.
+   * A system may also optionally contain Iterator and Sweep objects.
+   * In a parameter file format, the main block is a System{...} block 
+   * that contains subblocks for sub-objects.
    *
    * \ref user_param_pc_page "Parameter File Format"
    * \ingroup Pscf_Pspc_Module
@@ -62,9 +63,6 @@ namespace Pspc
    {
 
    public:
-
-      /// Field defined on an real-space grid (an r-grid)
-      typedef RField<D> Field;
 
       /// \name Construction and Destruction
       //@{
@@ -85,6 +83,14 @@ namespace Pspc
 
       /**
       * Process command line options.
+      *
+      * This function takes the same arguments as any C/C++ main program
+      * function. The arguments of the main function should d be passed 
+      * to this function unaltered, to allow this function to process the
+      * command line options.
+      *
+      * \param argc number of command line arguments
+      * \param argv array of pointers to command line arguments
       */
       void setOptions(int argc, char **argv);
 
@@ -97,6 +103,9 @@ namespace Pspc
 
       /**
       * Read input parameters from default param file.
+      *
+      * This function reads the parameter file set by the -p command
+      * line option.
       */
       void readParam();
 
@@ -116,6 +125,9 @@ namespace Pspc
 
       /**
       * Read commands from default command file.
+      *
+      * This function reads the parameter file set by the -c command
+      * line option.
       */
       void readCommands();
 
@@ -127,13 +139,13 @@ namespace Pspc
       * Read chemical potential fields in symmetry adapted basis format.
       *
       * This function opens and reads the file with the name given by the
-      * "filename" string, which must contain chemical potential fields
-      * in symmetry-adapted basis format. The function copies these
-      * fields to set new values for the system w fields in basis format, 
-      * and also computes and resets the system w fields in r-space 
-      * format. On exit, both w().basis() and w().rgrid() have been 
-      * reset, w().hasData and w().isSymmetric() are true, and 
-      * hasCFields() is false.
+      * "filename" string parameter, which must contain chemical potential 
+      * fields in symmetry-adapted basis format. The function sets the
+      * system w fields equal to those given in this file, by copying
+      * elements of the representation in basis format and computing the
+      * representation in r-grid format. On exit, both w().basis() and
+      * w().rgrid() have been reset, w().hasData and w().isSymmetric() 
+      * are true, and hasCFields() is false.
       *
       * \param filename name of input w-field basis file
       */
@@ -143,7 +155,7 @@ namespace Pspc
       * Read chemical potential fields in real space grid (r-grid) format.
       *
       * This function opens and reads the file with the name given by the
-      * "filename" string, which must contains chemical potential fields
+      * "filename" string, which must contain chemical potential fields
       * in real space grid (r-grid) format. The function sets values for 
       * system w fields in r-grid format. It does not set attempt to set
       * field values in symmetry-adapted basis format, because it cannot
@@ -171,9 +183,9 @@ namespace Pspc
       * Set new w fields, in real-space (r-grid) format.
       *
       * This function set values for w fields in r-grid format, but does
-      * not set components the symmetry-adapted basis format.  On exit, 
-      * w.rgrid() is reset, w().hasData() is true, hasCFields() is false 
-      * and w().isSymmetric() is false.
+      * not set components the symmetry-adapted basis format. On return,
+      * w.rgrid() is reset, w().hasData() is true, w().isSymmetric() is 
+      * false, and hasCFields() is false.
       *
       * \param fields  array of new w (chemical potential) fields
       */
@@ -201,6 +213,9 @@ namespace Pspc
       /**
       * Set parameters of the associated unit cell.
       *
+      * The lattice set in this UnitCell must agree with any lattice
+      * value that was set previously in the parameter file.
+      * 
       * \param unitCell  new UnitCell<D> (i.e., new parameters)
       */
       void setUnitCell(UnitCell<D> const & unitCell);
@@ -208,6 +223,9 @@ namespace Pspc
       /**
       * Set state of the associated unit cell.
       *
+      * The lattice parameter must agree with any lattice value that
+      * was set previously in the parameter file.
+      * 
       * \param lattice  lattice system
       * \param parameters  array of new unit cell parameters.
       */
@@ -217,6 +235,9 @@ namespace Pspc
       /**
       * Set parameters of the associated unit cell.
       *
+      * The size of the FSArray<double> parameters must match the
+      * expected number of parameters for the current lattice type.
+      * 
       * \param parameters  array of new unit cell parameters.
       */
       void setUnitCell(FSArray<double, 6> const & parameters);
@@ -233,8 +254,8 @@ namespace Pspc
       * subjected to the currrent chemical potential fields. This
       * requires solution of the modified diffusion equation for all 
       * polymers, computation of Boltzmann weights for all solvents, 
-      * computation of molecular partition * functions for all species, 
-      * and computation of concentration fields for blocks and solvents, 
+      * computation of molecular partition functions for all species, 
+      * computation of concentration fields for blocks and solvents, 
       * and computation of overall concentrations for all monomer types. 
       * This function does not compute the canonical (Helmholtz) free 
       * energy or grand-canonical free energy (i.e., pressure). Upon 
@@ -242,6 +263,9 @@ namespace Pspc
       *
       * If argument needStress == true, then this function also calls
       * Mixture<D>::computeStress() to compute the stress.
+      *
+      * \pre The w().hasData() flag must be true on entry, to confirm
+      * that chemical potential fields have been set.
       *
       * \param needStress true if stress is needed, false otherwise
       */
@@ -258,7 +282,11 @@ namespace Pspc
       * desired tolerance.  The Helmholtz free energy and pressure are 
       * computed if and only if convergence is obtained.
       *
-      * \pre The w().hasData() flag must be true on entry.
+      * \pre The w().hasData() flag must be true on entry, to confirm
+      * that chemical potential fields have been set. 
+      *
+      * \pre The w().isSymmetric() flag must be set true if the chosen 
+      * iterator uses a basis representation, and thus requires this.
       *
       * \param isContinuation true if continuation within a sweep.
       * \return returns 0 for successful convergence, 1 for failure.
@@ -289,8 +317,9 @@ namespace Pspc
       * Compute free energy density and pressure for current fields.
       *
       * This function should be called after a successful call of
-      * Iterator::solve(). Resulting values are stored and then
-      * accessed by the fHelmholtz() and pressure() functions.
+      * System::iterate() or Iterator::solve(). Resulting values are 
+      * stored and then accessed by the fHelmholtz() and pressure() 
+      * functions.
       */
       void computeFreeEnergy();
 
@@ -311,11 +340,16 @@ namespace Pspc
       double pressure() const;
 
       //@}
-      /// \name Output Operations (correspond to command file commands)
+      /// \name Thermodynamic Data Output 
       //@{
 
       /**
       * Write parameter file to an ostream, omitting any sweep block.
+      *
+      * This function omits the Sweep block of the parameter file, if
+      * any, in order to allow the output produced during a sweep to refer
+      * only to parameters relevant to a single state point, and to be
+      * rerunnable as a parameter file for a single SCFT calculation.
       *
       * \param out output stream
       */
@@ -324,13 +358,24 @@ namespace Pspc
       /**
       * Write thermodynamic properties to a file.
       *
-      * This function outputs Helmholtz free energy per monomer,
-      * pressure (in units of kT per monomer volume), and the
-      * volume fraction and chemical potential of each species.
+      * This function outputs Helmholtz free energy per monomer, pressure
+      * (in units of kT per monomer volume), the volume fraction and 
+      * chemical potential of each species, and all unit cell parameters.
+      * 
+      * If parameter "out" is a file that already exists, this function
+      * will append this information to the end of the file, rather than 
+      * overwriting that file. Calling writeParamNoSweep and writeThermo 
+      * in succession with the same file will thus produce a single file
+      * containing both input parameters and resulting thermodynanic
+      * properties.
       *
       * \param out output stream
       */
       void writeThermo(std::ostream& out);
+
+      //@}
+      /// \name Field Output 
+      //@{
 
       /**
       * Write chemical potential fields in symmetrized basis format.
@@ -365,12 +410,17 @@ namespace Pspc
       *
       * Writes concentrations for all blocks of all polymers and all
       * solvent species in r-grid format. Columns associated with blocks
-      * appear ordered by polymer id and then by block id, followed by
-      * solvent species ordered by solvent id.
+      * appear ordered by polymer id and then by block id, with blocks
+      * of the same polymer listed sequentially, followed by columns
+      * associated with solvent species ordered by solvent id.
       *
       * \param filename name of output file
       */
       void writeBlockCRGrid(const std::string & filename) const;
+
+      //@}
+      /// \name Propagator Output 
+      //@{
 
       /**
       * Write slice of a propagator at fixed s in r-grid format.
@@ -427,15 +477,19 @@ namespace Pspc
       */
       void writeQAll(std::string const & basename);
 
+      //@}
+      /// \name Crystallographic Information
+      //@{
+
       /**
       * Output information about stars and symmetrized basis functions.
       *
       * This function opens a file with the specified filename, calls
       * Basis<D>::outputStars, and closes the file before returning.
       *
-      * \param outFileName name of output file
+      * \param filename name of output file 
       */
-      void writeStars(const std::string & outFileName) const;
+      void writeStars(std::string const & filename) const;
 
       /**
       * Output information about waves.
@@ -443,17 +497,32 @@ namespace Pspc
       * This function opens a file with the specified filename, calls
       * Basis<D>::outputWaves, and closes the file before returning.
       *
-      * \param outFileName name of output file for wave data
+      * \param filename name of output file 
       */
-      void writeWaves(const std::string & outFileName) const;
+      void writeWaves(std::string const & filename) const;
+
+      /**
+      * Output all elements of the space group.
+      *
+      * \param filename name of output file 
+      */
+      void writeGroup(std::string const & filename) const;
 
       //@}
-      /// \name Field Operations (correspond to command file commands)
+      /// \name Field File Manipulations 
       //@{
 
       /**
       * Convert a field from symmetrized basis format to r-grid format.
       *
+      * This function reads a field file in basis format, converts the 
+      * fields to r-grid format, and writes the fields in r-grid format 
+      * to a different file. 
+      *
+      * This and other field conversion functions do not change the w 
+      * or c fields stored by this System - all required calculations 
+      * are performed using temporary or mutable memory. 
+      * 
       * \param inFileName name of input file (basis format)
       * \param outFileName name of output file (r-grid format)
       */
@@ -462,6 +531,14 @@ namespace Pspc
 
       /**
       * Convert a field from real-space grid to symmetrized basis format.
+      *
+      * This function checks if the input fields have the declared space
+      * group symmetry, and prints a warning if it detects deviations
+      * that exceed some small threshhold, but proceeds to attempt the
+      * conversion even if such an error is detected. Converting a field 
+      * that does not have the declared space group symmetry to basis
+      * format is a destructive operation that modifies the field in
+      * unpredictable ways.
       *
       * \param inFileName name of input file (r-grid format)
       * \param outFileName name of output file (basis format)
@@ -489,6 +566,14 @@ namespace Pspc
 
       /**
       * Convert fields from Fourier (k-grid) to symmetrized basis format.
+      *
+      * This function checks if the input fields have the declared space
+      * group symmetry, and prints a warning if it detects deviations
+      * that exceed some small threshhold, but proceeds to attempt the
+      * conversion even if such an error is detected. Converting a field 
+      * that does not have the declared space group symmetry to basis
+      * format is a destructive operation that modifies the field in
+      * unpredictable ways.
       *
       * \param inFileName name of input file (k-grid format)
       * \param outFileName name of output file (basis format)
@@ -658,9 +743,9 @@ namespace Pspc
       bool hasExternalFields() const;
 
       /**
-       * Does this system have a mask (field to which the total density 
-       * is constrained)?
-       */
+      * Does this system have a mask (field to which the total density 
+      * is constrained)?
+      */
       bool hasMask() const;
 
       /**
@@ -763,7 +848,7 @@ namespace Pspc
       *
       * Indexed by monomer typeId, size = nMonomer.
       */
-      mutable DArray<RFieldDft<D> > tmpFieldsKGrid_;
+      mutable DArray< RFieldDft<D> > tmpFieldsKGrid_;
 
       /**
       * Helmholtz free energy per monomer / kT.
@@ -791,6 +876,9 @@ namespace Pspc
 
       /**
       * Pressure times monomer volume / kT.
+      * 
+      * This quantity is -1 times the grand-canonical free energy per
+      * monomer, divided by kT.
       */
       double pressure_;
 
@@ -840,7 +928,7 @@ namespace Pspc
       void allocateFieldsBasis();
 
       /**
-      * Read a field file header, make basis if not done previously.
+      * Read a field file header, make the basis if not done previously.
       * 
       * Used to peek at a file header to get initial unit cell parameters,
       * use this to initialize basis if not done previously.
@@ -848,11 +936,6 @@ namespace Pspc
       * \param filename name of field file
       */
       void readFieldHeader(std::string filename);
-
-      /**
-      * Initialize Homogeneous::Mixture object.
-      */
-      void initHomogeneous();
 
       /**
       * Read a string and echo to log file.
@@ -873,6 +956,11 @@ namespace Pspc
       * \param value  number to read and echo
       */
       void readEcho(std::istream& in, double& value) const;
+
+      /**
+      * Initialize Homogeneous::Mixture object.
+      */
+      void initHomogeneous();
 
    };
 

@@ -22,22 +22,21 @@ System{
    Mixture{ ... }
    Interaction{ .... }
    Domain{ ... }
-   Iterator#{ ... }
+   Iterator#*{ ... }
    Sweep#*{ ... }
 }
 \endcode
 This description should look familiar, except for the inclusion of a
 Sweep{...} block, which is an optional element that was omitted from our
 example file.  In such a description, the syntax Label{...} is used to
-indicate a nested subblock, for which the format of the subblock must
-be described separately separately.  The appearance of an asterisk (*)
-after any block or parameter label is used to indicate that the element
-is optional (i.e., omittable).  Parameters and subblock labels that are
-not followed by an asterisk are thus required elements. The appearance
-of a "#" symbol after a subblock label is used to indicate that the
-subblock is selectable. The above description thus indicates that the
-Iterator block is a required selectable element, while the Sweep block
-is an optional selectable element.
+indicate a nested subblock, for which the format of the subblock must be 
+described separately somewhere else.  The appearance of an asterisk (*) 
+after any block or parameter label is used to indicate that the element is 
+optional (i.e., omittable).  Parameters and subblock labels that are not 
+followed by an asterisk thus indicate required elements. The appearance
+of a "#" symbol after a block label indicate that the block is selectable. 
+The above description thus indicates that the Iterator and Sweep blocks 
+are both optional selectable elements.
 
 \section user_format_example2_sec Example 2
 
