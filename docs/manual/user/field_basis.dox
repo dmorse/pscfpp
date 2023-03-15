@@ -276,7 +276,7 @@ wavenumbers (in 1D) or wavevectors (in 2D or 3D) for which the indices
 associated with a particular direction differ by integer multiples of 
 the number of grid points along each that direction are aliases of one
 another, and thus equivalent for this purpose, as discussed in more 
-detail in an \ref user_fourier_alias_sub "appendix".  Waves that are 
+detail in \ref user_fourier_dft_alias_sub "appendix".  Waves that are 
 aliases of one another in this sense are counted as equivalent by the 
 algorithm that constructs basis functions for functions that are 
 defined on a lattice.

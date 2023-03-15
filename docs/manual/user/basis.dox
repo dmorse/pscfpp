@@ -620,7 +620,7 @@ the existence of unary contradictions for any wave in the star.
 
 \subsection user_basis_noncancel_sub Uncancelled Stars
 
-\anchor user_basis_starfunc_uniqueness_thrm
+\anchor user_basis_starfunc_dimension_thrm
 <b> Theorem 13 (Dimension of the System of Phase Relationships) </b>:
 If \f$ T \f$ is a star of space group \f$ S \f$ that contains \f$ M \f$
 wavevectors, and the phase relationships among wavevectors in \f$ T \f$
@@ -834,7 +834,7 @@ set \f$ T' = \{ -{\bf G}_{0}, \ldots, -{\bf G}_{M-1} \} \f$ that is
 the inverse of \f$ T \f$.
 Because \f$ \phi({\bf r}) \f$ is invariant under group \f$ S \f$, so 
 is \f$ \phi^{*}({\bf r}) \f$, by
-\anchor user_basis_symmfunc_conj_thrm "Theorem 2".
+\ref user_basis_symmfunc_conj_thrm "Theorem 2".
 This implies that \f$ \phi^{*}({\bf r}) \f$ is a star function 
 associated with \f$ T '\f$, the inverse of star \f$ T \f$.
 

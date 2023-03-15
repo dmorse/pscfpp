@@ -38,8 +38,8 @@ namespace Fd1d
    *    - a Mixture (a container for polymer and solvent solvers)
    *    - an Interaction (list of binary chi parameters)
    *    - a Domain (description of the unit cell and discretization)
-   *    - Monomer chemical fields 
-   *    - Monomer concentration fields 
+   *    - monomer chemical potential fields 
+   *    - monomer concentration fields 
    *    - An Iterator
    *
    * A system may also optionally contain a Sweep object.

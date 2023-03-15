@@ -48,8 +48,8 @@ namespace Pspc
    *    - a Mixture (a container for polymer and solvent solvers)
    *    - an Interaction (list of binary chi parameters)
    *    - a Domain (description of the unit cell and discretization)
-   *    - Monomer chemical fields (a WFieldContainer)
-   *    - Monomer concentration fields (a CFieldContainer)
+   *    - a container of monomer chemical potential fields 
+   *    - a container of monomer concentration fields 
    *
    * A system may also optionally contain Iterator and Sweep objects.
    * In a parameter file format, the main block is a System{...} block 

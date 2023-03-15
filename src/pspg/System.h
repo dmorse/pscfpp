@@ -50,9 +50,7 @@ namespace Pspg
    *    - a container of monomer concentration fields (c fields)
    *    - an Iterator
    *
-   * A System may also optionally contain a Sweep objects, if the parameter
-   * file contains a Sweep block.  In a parameter file format, the main 
-   * block is a System{ ... } block that contains subblocks for sub-objects.
+   * A System may also optionally contain Iterator and Sweep objects.
    *
    * A minimal main program that uses this class template to implement a 
    * program for 3-dimensional structures (D=3) looks something like this:
