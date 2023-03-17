@@ -32,4 +32,3 @@ System{
   }
 }
 
-    unitCell  Cubic   6.9947873

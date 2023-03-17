@@ -59,7 +59,7 @@ System{
   Mixture{ ...  }
   Interaction{ ...  }
   Domain{ ...  }
-  Iterator#{ ... }
+  Iterator#*{ ... }
   Sweep#*{ ... }
 }
 \endcode
@@ -207,6 +207,10 @@ can be found by following the links in the table below:
          confined to a thin film. </td>
   </tr>
 </table>
+
+The iterator class is formally optional (i.e., the program will finish
+reading the parameter file if is omitted), but it is needed to perform
+an iterative SCFT calculation.
 
 \section user_param_pc_sweep_sec Sweep
 

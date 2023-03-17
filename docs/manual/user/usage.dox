@@ -65,40 +65,52 @@ enough to allow a user to identify and fix such an error.
 \section user_param_usage_options_sec Command Line Options 
 
 All PSCF programs can be invoked with any of the following command line
-options:
-<ul>
-  <li> -e: Activates echoing of the parameter file to standard output.</li>
-  <li> -p filename: Specifies the name of a parameter file </li>
-  <li> -c filename: Specifies the name of a command file </li>
-  <li> -i filename: Specifies a prefix string for input data files </li>
-  <li> -o filename: Specifies a prefix string for output data files </li>
-  </li>
-</ul>
+options listed in the table shown below. 
+<table>
+  <tr> 
+     <td> <b> Option </b> </td>
+     <td> <b> Argument </b> </td>
+     <td> <b> Description </b> </td>
+  </tr>
+  <tr> 
+     <td> -e </td> 
+     <td>    </td>
+     <td> Activates echoing of the parameter file to standard output </td>
+  </tr>
+  <tr> 
+     <td> -p </td>
+     <td> filename </td>
+     <td> Gives the filename of the parameter file (required) </td>
+  </tr>
+  <tr> 
+     <td> -c </td>
+     <td> filename </td>
+     <td> Gives the filename of the command file  (required) </td>
+  </tr>
+  <tr> 
+     <td> -i </td>
+     <td> prefix </td>
+     <td> Specifies a prefix string that will be prepended to the
+          names paths all input data files </td>
+  </tr>
+  <tr> 
+     <td> -o </td>
+     <td> prefix </td>
+     <td> Specifies a prefix string that will be prepended to the 
+          the names (paths) for all output data files </td>
+  </tr>
+</table>
+Only the -p and -c options are required, while others may be omitted.
+The blank entry in the argument column for the -e option indicates 
+that this option does not take an argument. The "prefix" arguments of 
+the -i and -o options can be paths to directories that end in directory
+separator characters, such as "in/" or "out/", in order to place all
+input or output files in specified directories. These prefixes are
+prepended to names of input and output files whose names are given in 
+the command file, but are not added to the names of the parameter and
+command files. 
 
-Comments:
-
-  - The -p and -c options are required, while others are optional.
-
-  - The -p (parameter) option takes a string parameter, which is the 
-    name of a parameter file.
-
-  - The -c (command) option takes a string parameter, which is the name 
-    of a command file.
-
-  - The -i (input prefix) option takes a string parameter, which is a 
-    prefix that will be prepended to the names (i.e., paths) for all 
-    input data files.
-
-  - The -o (output prefix) option takes a string parameter, which is a 
-    prefix that will be prepended to the names (paths) for all output 
-    data files.
-
-  - Prefix strings that end in a directory separator (e.g., "out/") can
-    be used to read all input files from a specific subdirectory or write 
-    all output files to a subdirectory.
-
-Example:
-
+<em> Example </em>:
 The command
 \code
    pscf_pc3 -e -p param -c commands -i in/ -o out/ > log

@@ -29,8 +29,8 @@ System{
           2   2   0.0
   }
   Domain{
-    unitCell    lamellar   1.6213247000E+01
     mesh        100
+    lattice     lamellar
     groupName   P_-1
   }
   Iterator{
@@ -46,3 +46,5 @@ System{
      parameters    solvent  0  +0.004
   }
 }
+
+    unitCell    lamellar   1.6213247000E+01

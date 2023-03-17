@@ -13,6 +13,17 @@ programs are affected by specific changes:
   fd  - CPU finite difference code for 1D problems (pscf_fd)
   all - all programs (fd, pc, and pg)
 
+Pscf++ v1.0.2 (Patch)
+==============
+
+* Corrected errors in web documentation
+
+Pscf++ v1.0.1 (Patch)
+==============
+
+* Fixed bug in ESTIMATE_W_FROM_C command (pc, pg)
+* Commented out code allowing use of unitCell in parameter file (pc, pg)
+
 Pscf++ v1.0.0
 ==============
 

@@ -1,13 +1,13 @@
 /*!
-\page pscf_pg3d_page pscf_pg3d - Pseudo-Spectral 3D Periodic (GPU)
+\page pscf_pg3_page pscf_pg3 - Pseudo-Spectral 3D Periodic (GPU)
 
 Polymer Self-Consistent Field Theory - 3D Periodic (GPU)
 
-\section pscf_pg3d_usage_section Usage
+\section pscf_pg3_usage_section Usage
 
-    pscf_pg3d [-e] [-p file] [-c file] [-i prefix] [-o prefix]
+    pscf_pg3 [-e] [-p file] [-c file] [-i prefix] [-o prefix]
 
-\section pscf_pg3d_options_section Command Line Options
+\section pscf_pg3_options_section Command Line Options
 
 Normal usage requires both a parameter file (-p option) and
 a command file (-c option). The other options are truly optional.

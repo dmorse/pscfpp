@@ -142,16 +142,17 @@ the gradient vector is continuous at the origin.
 The Iterator block provides data required by the iterator used to solve 
 the nonlinear self-consistent field (SCF) equations.  
 
-The default iterator for pscf_fd is a Newton-Raphson iterator that is 
-implemented by a class named NrIterator. Because this is the default 
+The default iterator for pscf_fd is an Anderson-mixing algorithm that is
+implemented by a class named AmIterator.  Because this is the default 
 iterator, it may be chosen by including an iterator block in which the 
 first line contains either the generic label "Iterator" or the specific 
-class name "NrIterator".  
+class name "AmIterator".  
 
-The AmIterator class provides an Anderson-Mixing algorithm. Preliminary 
-tests indicate that this is generally more efficient than the Newton-Raphson
-iterator, with an advantage that increases rapidly with increasing number
-of grid points.
+The NrIterator class implements a Newton-Raphson iterator. Under 
+favorable conditions, this may converge in only a few steps, but the
+cost for step is high, and grows rapidly with increasing number of 
+grid points. This iterator is not efficient for large problems (more
+than approxinately 1000 grid points). 
 
 The BinaryRelaxiterator class implements a simple relaxation iterator for 
 AB systems with only two types of monomer, as described by F. Drolet and 
@@ -166,12 +167,12 @@ is given in the links in the table below:
 <td> <b> Description </b> </td>
 </tr>
 <tr>
-<td> \subpage fd1d_NrIterator_page "NrIterator" </td>
-<td> Newton-Raphson iterator (default) </td>
+<td> \subpage fd1d_AmIterator_page "AmIterator" </td>
+<td> Anderson-Mixing iterator (default) </td>
 </tr>
 <tr>
-<td> \subpage fd1d_AmIterator_page "AmIterator" </td>
-<td> Anderson-Mixing iterator </td>
+<td> \subpage fd1d_NrIterator_page "NrIterator" </td>
+<td> Newton-Raphson iterator </td>
 </tr>
 <tr>
 <td> \subpage fd1d_BinaryRelaxIterator_page "BinaryRelaxIterator" </td>

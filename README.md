@@ -2,9 +2,9 @@
 # PSCF - Polymer Self-Consistent Field Theory (C++/CUDA)
 
 PSCF is a package of software for solving the Edwards-Helfand
-self-consistent field theory (SCFT) of polymer liquids. The version
-described here is written primarily in C++, with GPU accelerated code
-in CUDA.
+self-consistent field theory (SCFT) of polymer liquids. The acronym
+PSCF stands for "Polymer Self-Consistent Field". The version described 
+here is written primarily in C++, with GPU accelerated code in CUDA.
 
 ## History
 
@@ -27,12 +27,11 @@ version and expected advantages of the new code include:
      acyclic branched copolymers, in addition to the linear block
      copolymers and linear homopolymers allowed by the Fortran PSCF code.
 
-   - Adoption of C/C++ as a base language has simplified implementation
-     of programs that that use graphical processing units (GPUs).
+   - Use of graphics processing units (GPUs) to accelerate some programs.
 
 ## Programs
 
-PSCF contains the following set of executable programs:
+PSCF contains the following executable programs and sets of programs:
 
    - **pscf_fd** : A one-dimensional finite difference program.
 
@@ -45,7 +44,7 @@ PSCF contains the following set of executable programs:
 Comments:
 
 **psf_fd** : The one-dimensional finite difference program is designed to
-treat problems that vary in only one coordinate, in Cartesian, cyndrical
+treat problems that vary in only one coordinate, in Cartesian, cylindrical
 or spherical coordinates. It is useful for treating problems involving 
 flat or curved interfaces, as well as cylindrical or spherical copolymer 
 micelles. The executable for this program is named pscf_fd. The suffix 
@@ -140,6 +139,12 @@ is necessary to clone several git submodules that are maintained in
 separate repositories. This command will create a new directory called
 pscfpp/ that contains all of the source code and associated
 documentation, including all required git submodules.
+
+We do not recommend that users obtain the source code by simply
+downloading a zip or tar file from the PSCF github repository, because 
+this file will not contain source code for the other git repositories 
+that are automatically downloaded and installed as submodules by the 
+above git command.
 
 ## Documentation
 

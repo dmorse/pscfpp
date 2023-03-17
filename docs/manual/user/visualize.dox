@@ -4,20 +4,21 @@
 \ref user_unitcell_page (Next)
 <BR>
 
-An external package named Polymer Visual is available that is designed to
-allow users of PSCF to generate figures that characterize the kinds of 
-periodic structures predicted by the pscf_pc and pscf_pg programs. This 
-package is designed to read files containing the monomer concentration 
-fields written in the \ref user_field_rgrid_page "r-grid" field file format 
-used by pscf_pc and pscf_pg. Polymer Visual can generate several different 
-types of color plots, including plots that show volume fractions along 
-one- and two-dimensional cuts through a structure, and three-dimensional 
-perspective plots.
+An external visualization package named 
+<a href="https://github.com/kdorfmanUMN/polymer_visual">Polymer Visual</a>
+is available. This package is designed to allow users of PSCF to generate 
+figures that characterize the kinds of periodic structures predicted by 
+the pscf_pc and pscf_pg programs. Polymer Visual can read files containing 
+the monomer concentration fields written in the 
+\ref user_field_rgrid_page "r-grid" field file format used by pscf_pc 
+and pscf_pg, and can generate several different types of color plots, 
+including plots that show volume fractions along one- and two-dimensional 
+cuts through a structure, and three-dimensional perspective plots.
 
-Polymer Visual is written as a package of MATLAB functions, and may be 
+Polymer Visual is written as a package of MATLAB functions. It may be 
 cloned or downloaded as a zip file from the github repository 
 <a href="https://github.com/kdorfmanUMN/polymer_visual"> github.com/kdorfmanUMN/polymer_visual </a>.
-The main web page of that repository provides a complete user manual,
+The main web page of that repository provides a complete user manual, 
 which includes some examples of the different types of plots that can be 
 generated.
 

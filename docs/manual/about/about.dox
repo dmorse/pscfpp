@@ -7,10 +7,11 @@
 \section about_pscf_sec About PSCF
 
 PSCF is a package of software for solving the Edwards-Helfand
-self-consistent theory for polymer liquids. The version presented here is
-written primarily in C++, with some CUDA code for programs that can run
-on Nvidia graphics processing units (GPUs).
-The source code for PSCF is maintained in the github repository
+self-consistent theory (SCFT) for polymer liquids. PSCF stands for 
+"polymer self-consistent field".  The version presented here is written 
+primarily in C++, with some CUDA code for programs that make use of NVIDIA 
+graphics processing units (GPUs).  The source code for PSCF is maintained 
+in the github repository
 <a href=https://github.com/dmorse/pscfpp/>https://github.com/dmorse/pscfpp</a>.
 
 \section about_history_sec History
@@ -24,7 +25,7 @@ older Fortran program, and some significant new capabilities, as
 discussed below.
 
 Differences between the current C++ version of PSCF and the older Fortran
-program, and some expected advantages of the new code include:
+program and some expected advantages of the new code include:
 <ul>
   <li>
   The current version is written as an extensible package that contains
@@ -38,15 +39,15 @@ program, and some expected advantages of the new code include:
   linear homopolymers allowed by the Fortran PSCF code.
   </li>
   <li>
-  Adoption of C++ as a base language has simplified implementation of
-  a programs that use graphical process units (GPUs) to accelerate
-  computation.
+  The current version uses graphics processing units (GPUs) to dramatically
+  accelerate some programs.
   </li>
 </ul>
 
 \section about_programs_sec Programs
 
-The current version of PSCF contains the following executable programs:
+The PSCF package currently contains the following executable programs
+and groups of programs:
 
    - <b> pscf_fd </b> : A one-dimensional finite difference program.
 
@@ -58,21 +59,19 @@ The current version of PSCF contains the following executable programs:
 
 Comments:
 
-<b> pscf_pd </b>: This program uses a one-dimensional finite difference 
-algorithm to treat problems in which all fields depend on only one spatial 
-coordinate. The coordinate of interest can can be either a Cartesian 
-coordinate for problems with a planar geometry or a radial coordinate 
-for problem with cylindrical or spherical symmetry. This can be used to 
-treat problems involving flat or curved interfaces, as well as cylindrical 
-and spherical copolymer micelles. The suffix "fd" in the executable name 
-pscf_fd stands for "finite difference".
+<b> pscf_fd </b>: This one-dimensional finite-difference program is 
+designed to treat problems that vary in only one spatial coordinate, in
+Cartesian, cylindrical or spherical coordinates. It is useful for treating
+flat or curved interfaces, as well as spherical or cylindrical micelles.
+The suffix "fd" in the executable name pscf_fd stands for "finite 
+difference".
 
 <b> pscf_pc </b>:
 These programs use a psuedo-spectral algorithm to simulate periodic 
 microstructures on conventional CPU hardware, thus reproducing and
-extending the capabilities of the older Fortran PSCF program.  In the new
-package, different executable programs named pscf_pc1, pscf_pc2 and 
-pscf_pc3 are used to solve problems that are periodic in 1, 2 or 3 
+extending the capabilities of the older Fortran PSCF program.  In the
+current version, different executable programs named pscf_pc1, pscf_pc2 
+and pscf_pc3 are used to solve problems that are periodic in 1, 2 or 3 
 spatial dimensions, respectively. Here, "pc" stands for "periodic CPU".
 
 <b> pscf_pg </b>:
@@ -92,22 +91,22 @@ continuous random walk.
 
 Features that are common to all of the PSCF programs include:
 
-  - Mixtures of any number of block polymers, homopolymers, and solvent species
+  - Mixtures may contain any number of block polymers, homopolymers, and 
+    solvent species
 
-  - Polymers may be arbitrarily complex acyclic branched block polymers, as 
-    well as linear polymers
+  - Polymers may be arbitrarily complex acyclic branched block polymers, 
+    as well as linear polymers
 
   - Canonical, grand-canonical or mixed statistical ensembles -
     users may specify either a volume fraction or a chemical potential
     for each species
 
-  - Efficient simulation of sequences of parameter choices along paths 
-    in parameter space ("sweeps") using extrapolation to generate good
-    initial guesses for each new state point
+  - Efficient simulation of sequences of states along paths in parameter
+    space ("sweeps")
 
   - Efficient Anderson-mixing iteration algorithms
 
-  - Examples of converged solutions and input scripts
+  - A variety of examples, with complete input files
 
   - Thorough user and developer documentation
 
@@ -118,22 +117,19 @@ include:
 
   - Ordered phases with 1, 2 or 3 dimensional periodicity
 
-  - All possible 2D and 3D lattice systems (i.e., orthorhombic, monoclinic,
-    etc.).
+  - All 2D and 3D lattice systems (i.e., orthorhombic, monoclinic, etc.).
 
-  - Automatic optimization of unit parameters so so as to minimize free 
-    energy
+  - Automatic optimization of unit parameters to minimize free energy
 
   - Imposition of any user-selected space-group symmetry
 
   - Built-in "database" of all 230 3D space groups and 17 2D plane groups
 
-  - High accuracy pseudo-spectral solution of the modified diffusion 
-    equation
+  - Accurate pseudo-spectral solution of the modified diffusion equation
 
   - Availability of a companion package 
-   <a href=https://github.com/kdorfmanUMN/polymer_visual/>Polymer Visual</a> 
-   for visualization of periodic structures.
+    <a href=https://github.com/kdorfmanUMN/polymer_visual/>Polymer Visual</a> 
+    for visualization of periodic structures.
 
 Features specific to the pscf_pc CPU programs for periodic structures are:
 
@@ -144,9 +140,9 @@ Features specific to the pscf_pc CPU programs for periodic structures are:
   - Thin polymer films
 
 The mask and external field features are used in the pscf_pc programs to 
-implement simulations of thin films, using a mask to constrain a polymer 
-material to a slit within a periodic supercell, and using external fields 
-to represent selective interactions of different monomer types with the 
+implement simulations of thin films. A mask is used to constrain a polymer 
+material to a slit within a periodic supercell, and external fields are
+used represent selective interactions of different monomer types with the 
 top and bottom surfaces.
 
 \section about_repo_sec Cloning the Source Code
@@ -158,11 +154,17 @@ with a git client installed, enter the command:
 \code
 git clone --recursive https://github.com/dmorse/pscfpp.git
 \endcode
-Note the use of the --recursive option to the git clone command. This
-is necessary to clone several git submodules that are maintained in
-separate repositories. This command will create a new directory called
-pscfpp/ that contains all of the source code and associated
-documentation, including all required git submodules.
+Note the use of the --recursive option to the git clone command. This is 
+necessary to clone several git submodules that are maintained in separate 
+github repositories. This command will create a new directory called 
+pscfpp/ that contains all of the source code and associated documentation, 
+including all required git submodules.
+
+We do not recommend that users obtain the source code by instead 
+downloading a zip or tar file from the PSCF github repository, because 
+this file will not contain source code for the other git repositories 
+that are automatically downloaded and installed as submodules by the 
+above git command.
 
 \section about_documentation_sec Documentation
 
@@ -172,8 +174,8 @@ recent major release is available online at
 <a ref=https://dmorse.github.io/pscfpp-man/>
 https://dmorse.github.io/pscfpp-man </a>.
 
-The PSCF source code repository contains all of the source files from 
-which the web manual is generated. This makes it possible for users to 
+The PSCF source code repository contains all of the files from which 
+the web manual is generated. This makes it possible for users to 
 generate a local copy of the manual on their own computer. The web 
 manual is created using the doxygen documentation utility. In order to 
 generate a local copy of the documentation, doxygen must be installed 
@@ -200,10 +202,10 @@ to the internet.
 \section about_dependencies_sec Dependencies
 
 The PSCF source code is written using C++ as the primary language, with
-CUDA used in some programs for GPU acceleration.  PSCF was developed on
- linux and and Mac OS X operating systems using standard unix utilities, 
+CUDA used in some programs for GPU kernels.  PSCF was developed on
+linux and and Mac OS X operating systems using standard unix utilities, 
 and is designed to be compiled and run in these or other unix-like 
-environments.
+environments. 
 
 The CPU-based programs within the PSCF package depend on the following
 external libraries:
@@ -218,15 +220,13 @@ structures require both GSL and FFTW.
 
 The GPU-accelerated pscf_pg programs can only run on a computer with an
 appropriate NVIDIA GPU. To compile or run these programs, the system must
-also have an NVIDIA CUDA development environment that provides the CUFFT
-fast Fourier transform library.
-
-Procedures for installing these dependencies are different for
-different operating system environments and different package managers.
-Instructions for some common environments are given in the web manual.
+also have an NVIDIA CUDA development environment that provides the cuFFT
+gpu-accelerated fast Fourier transform library.
 
 Complete directions for compiling and installing PSCF are provided in
-\ref install_page "section 2" of this manual. 
+\ref install_page "section 2" of this manual. These include instructions
+for installing the dependencies listed above in several operating
+system environments using several common package managers.
 
 \section about_license_sec License
 

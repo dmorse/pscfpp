@@ -30,7 +30,7 @@ System{
   }
   Domain{
      mesh        100
-     lattice     lamellar  
+     lattice     lamellar
      groupName   P_-1
   }
   AmIteratorGrid{
@@ -41,4 +41,3 @@ System{
   }
 }
 
-     unitCell    lamellar   1.6213247000E+01

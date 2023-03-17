@@ -36,5 +36,3 @@ System{
   }
 }
 
-    lattice     hexagonal
-    unitCell    hexagonal   1.6908668724

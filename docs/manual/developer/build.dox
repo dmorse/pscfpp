@@ -33,10 +33,10 @@ The main subdirectories of src/ are:
    used by the pscf_fd 1D finite element program.
 
  - src/pspc/ contains all code in the Pscf::Pspc namespace, which is only
-   used by the pscf_pcNd C++ CPU programs for periodic structures.
+   used by the pscf_pc C++ CPU programs for periodic structures.
 
  - src/pspg/ contains all code for the Pscf::Pspc namespace, which is
-   only used by the pscf_pgNd CUDA GPU programs for periodic structures.
+   only used by the pscf_pg CUDA GPU programs for periodic structures.
 
 These five directories will be referred to in what follows as "namespace"
 level subdirectories of src/.  The PSCF makefile system constructs a

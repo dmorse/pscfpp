@@ -17,18 +17,18 @@
 #include <pspg/math/GpuResources.h>
 
 #include <pscf/inter/Interaction.h>
-#include <pscf/crystal/shiftToMinimum.h>
+#include <pscf/math/IntVec.h>
 #include <pscf/homogeneous/Clump.h>
 
 #include <util/param/BracketPolicy.h>
-#include <util/misc/ioUtil.h>
 #include <util/format/Str.h>
 #include <util/format/Int.h>
 #include <util/format/Dbl.h>
+#include <util/misc/ioUtil.h>
 
-#include <cmath>
 #include <string>
-#include <getopt.h>
+#include <unistd.h>
+//#include <getopt.h>
 
 namespace Pscf {
 namespace Pspg
@@ -179,6 +179,23 @@ namespace Pspg
    }
 
    /*
+   * Read parameter file (including open and closing brackets).
+   */
+   template <int D>
+   void System<D>::readParam(std::istream& in)
+   {
+      readBegin(in, className().c_str());
+      readParameters(in);
+      readEnd(in);
+   }
+
+   /*
+   * Read default parameter file.
+   */
+   template <int D>
+   void System<D>::readParam()
+   {  readParam(fileMaster().paramFile()); }
+   /*
    * Read parameters and initialize.
    */
    template <int D>
@@ -215,6 +232,24 @@ namespace Pspg
           allocateFieldsBasis();
       }
 
+      // Optionally instantiate an Iterator object
+      std::string className;
+      bool isEnd;
+      iteratorPtr_ = 
+         iteratorFactoryPtr_->readObjectOptional(in, *this, className, 
+                                                 isEnd);
+      if (!iteratorPtr_) {
+         Log::file() << "Notification: No iterator was constructed\n";
+      }
+
+      // Optionally instantiate a Sweep object (if an iterator exists)
+      if (iteratorPtr_) {
+         sweepPtr_ = 
+            sweepFactoryPtr_->readObjectOptional(in, *this, className, 
+                                                 isEnd);
+      }
+
+      #if 0
       // Initialize iterator
       std::string className;
       bool isEnd;
@@ -232,157 +267,13 @@ namespace Pspg
       if (sweepPtr_) {
          sweepPtr_->setSystem(*this);
       }
+      #endif
 
       // Initialize homogeneous object
       homogeneous_.setNMolecule(np+ns);
       homogeneous_.setNMonomer(nm);
       initHomogeneous();
 
-   }
-
-   /*
-   * Read parameter file (including open and closing brackets).
-   */
-   template <int D>
-   void System<D>::readParam(std::istream& in)
-   {
-      readBegin(in, className().c_str());
-      readParameters(in);
-      readEnd(in);
-   }
-
-   /*
-   * Read default parameter file.
-   */
-   template <int D>
-   void System<D>::readParam()
-   {  readParam(fileMaster().paramFile()); }
-
-   /*
-   * Write parameter file, omitting the sweep block.
-   */
-   template <int D>
-   void System<D>::writeParamNoSweep(std::ostream& out) const
-   {
-      out << "System{" << std::endl;
-      mixture_.writeParam(out);
-      interaction().writeParam(out);
-      domain_.writeParam(out);
-      iteratorPtr_->writeParam(out);
-      out << "}" << std::endl;
-   }
-
-   /*
-   * Allocate memory for fields.
-   */
-   template <int D>
-   void System<D>::allocateFieldsGrid()
-   {
-      // Preconditions
-      UTIL_CHECK(hasMixture_);
-      int nMonomer = mixture().nMonomer();
-      UTIL_CHECK(nMonomer > 0);
-      UTIL_CHECK(domain_.mesh().size() > 0);
-      UTIL_CHECK(!isAllocatedGrid_);
-
-      // Alias for mesh dimensions
-      IntVec<D> const & dimensions = domain_.mesh().dimensions();
-
-      // Allocate W Fields
-      w_.setNMonomer(nMonomer);
-      w_.allocateRGrid(dimensions);
-
-      // Allocate C Fields
-      c_.setNMonomer(nMonomer);
-      c_.allocateRGrid(dimensions);
-
-      // Allocate temporary work space
-      tmpFieldsRGrid_.allocate(nMonomer);
-      tmpFieldsKGrid_.allocate(nMonomer);
-      for (int i = 0; i < nMonomer; ++i) {
-         tmpFieldsRGrid_[i].allocate(dimensions);
-         tmpFieldsKGrid_[i].allocate(dimensions);
-      }
-
-      workArray_.allocate(mesh().size());
-      ThreadGrid::setThreadsLogical(mesh().size());
-
-      isAllocatedGrid_ = true;
-   }
-
-   /*
-   * Allocate memory for fields.
-   */
-   template <int D>
-   void System<D>::allocateFieldsBasis()
-   {
-      // Preconditions and constants
-      UTIL_CHECK(hasMixture_);
-      const int nMonomer = mixture().nMonomer();
-      UTIL_CHECK(nMonomer > 0);
-      UTIL_CHECK(isAllocatedGrid_);
-      UTIL_CHECK(!isAllocatedBasis_);
-      UTIL_CHECK(domain_.unitCell().nParameter() > 0);
-      UTIL_CHECK(domain_.mesh().size() > 0);
-      UTIL_CHECK(domain_.basis().isInitialized());
-      const int nBasis = basis().nBasis();
-      UTIL_CHECK(nBasis > 0);
-
-      w_.allocateBasis(nBasis);
-      c_.allocateBasis(nBasis);
-
-      // Temporary work space
-      tmpFieldsBasis_.allocate(nMonomer);
-      for (int i = 0; i < nMonomer; ++i) {
-         tmpFieldsBasis_[i].allocate(nBasis);
-      }
-
-      // Allocate memory for waveList
-      if (!domain_.waveList().hasMinimumImages()) {
-         domain_.waveList().computeMinimumImages(domain_.mesh(), 
-                                                 domain_.unitCell());
-      }
-
-      isAllocatedBasis_ = true;
-   }
-
-   /*
-   * Peek at field file header, initialize basis, allocate basis fields.
-   */
-   template <int D>
-   void System<D>::allocateFieldsBasis(std::string filename)
-   {
-      UTIL_CHECK(hasMixture_);
-      UTIL_CHECK(mixture_.nMonomer() > 0);
-
-      // Open field file
-      std::ifstream file;
-      fileMaster_.openInputFile(filename, file);
-
-      // Read field file header, and initialize basis if needed
-      int nMonomer;
-      domain_.fieldIo().readFieldHeader(file, nMonomer, domain_.unitCell());
-      // FieldIo::readFieldHeader initializes a basis if needed
-      file.close();
-      UTIL_CHECK(mixture_.nMonomer() == nMonomer);
-      UTIL_CHECK(domain_.unitCell().nParameter() > 0);
-      UTIL_CHECK(domain_.unitCell().lattice() != UnitCell<D>::Null);
-      UTIL_CHECK(domain_.unitCell().isInitialized());
-      UTIL_CHECK(domain_.basis().isInitialized());
-      UTIL_CHECK(domain_.basis().nBasis() > 0);
-
-      // Allocate memory for fields
-      allocateFieldsBasis(); 
-   }
-
-   /*
-   * Read a filename string and echo to log file (used in readCommands).
-   */
-   template <int D>
-   void System<D>::readEcho(std::istream& in, std::string& string) const
-   {
-      in >> string;
-      Log::file() << " " << Str(string, 20) << std::endl;
    }
 
    /*
@@ -420,7 +311,6 @@ namespace Pspg
          if (command == "ESTIMATE_W_FROM_C") {
             // Read c field file in r-grid format
             readEcho(in, inFileName);
-            readEcho(in, outFileName);
             estimateWfromC(inFileName);
          } else
          if (command == "SET_UNIT_CELL") {
@@ -444,6 +334,21 @@ namespace Pspg
             // Attempt to solve a sequence of SCFT problems along a path
             // through parameter space
             sweep();
+         } else
+         if (command == "WRITE_PARAM") {
+            readEcho(in, filename);
+            std::ofstream file;
+            fileMaster().openOutputFile(filename, file);
+            writeParamNoSweep(file);
+            file.close();
+         } else
+         if (command == "WRITE_THERMO") {
+            readEcho(in, filename);
+            std::ofstream file;
+            fileMaster().openOutputFile(filename, file, 
+                                        std::ios_base::app);
+            writeThermo(file);
+            file.close();
          } else
          if (command == "WRITE_W_BASIS") {
             UTIL_CHECK(w_.hasData());
@@ -515,32 +420,18 @@ namespace Pspg
             readEcho(in, filename);
             writeQAll(filename);
          } else
-         if (command == "WRITE_PARAM") {
-            readEcho(in, filename);
-            std::ofstream file;
-            fileMaster().openOutputFile(filename, file);
-            writeParamNoSweep(file);
-            file.close();
-         } else
-         if (command == "WRITE_THERMO") {
-            readEcho(in, filename);
-            std::ofstream file;
-            fileMaster().openOutputFile(filename, file, 
-                                        std::ios_base::app);
-            writeThermo(file);
-            file.close();
-         } else
          if (command == "WRITE_STARS") {
-            readEcho(in, outFileName);
-            writeStars(outFileName);
+            readEcho(in, filename);
+            writeStars(filename);
          } else
          if (command == "WRITE_WAVES") {
-            readEcho(in, outFileName);
-            writeWaves(outFileName);
+            readEcho(in, filename);
+            writeWaves(filename);
          } else 
          if (command == "WRITE_GROUP") {
             readEcho(in, filename);
-            writeGroup(filename, domain_.group());
+            writeGroup(filename);
+            //writeGroup(filename, domain_.group());
          } else 
          if (command == "BASIS_TO_RGRID") {
             readEcho(in, inFileName);
@@ -591,87 +482,249 @@ namespace Pspg
       readCommands(fileMaster().commandFile());
    }
 
+   // W-Field Modifier Functions
+
    /*
-   * Initialize Pscf::Homogeneous::Mixture homogeneous_ member.
+   * Read w-field in symmetry adapted basis format.
    */
    template <int D>
-   void System<D>::initHomogeneous()
+   void System<D>::readWBasis(const std::string & filename)
    {
-
-      // Set number of molecular species and monomers
-      int nm = mixture().nMonomer();
-      int np = mixture().nPolymer();
-      int ns = mixture().nSolvent();
-
-      UTIL_CHECK(homogeneous_.nMolecule() == np + ns);
-      UTIL_CHECK(homogeneous_.nMonomer() == nm);
-
-      int i;   // molecule index
-      int j;   // monomer index
-
-      // Loop over polymer molecule species
-      if (np > 0) {
-
-         DArray<double> cTmp;
-         cTmp.allocate(nm);
-
-         int k;   // block or clump index
-         int nb;  // number of blocks
-         int nc;  // number of clumps
-         for (i = 0; i < np; ++i) {
-
-            // Initial array of clump sizes
-            for (j = 0; j < nm; ++j) {
-               cTmp[j] = 0.0;
-            }
-
-            // Compute clump sizes for all monomer types.
-            nb = mixture_.polymer(i).nBlock();
-            for (k = 0; k < nb; ++k) {
-               Block<D>& block = mixture_.polymer(i).block(k);
-               j = block.monomerId();
-               cTmp[j] += block.length();
-            }
-
-            // Count the number of clumps of nonzero size
-            nc = 0;
-            for (j = 0; j < nm; ++j) {
-               if (cTmp[j] > 1.0E-8) {
-                  ++nc;
-               }
-            }
-            homogeneous_.molecule(i).setNClump(nc);
-
-            // Set clump properties for this Homogeneous::Molecule
-            k = 0; // Clump index
-            for (j = 0; j < nm; ++j) {
-               if (cTmp[j] > 1.0E-8) {
-                  homogeneous_.molecule(i).clump(k).setMonomerId(j);
-                  homogeneous_.molecule(i).clump(k).setSize(cTmp[j]);
-                  ++k;
-               }
-            }
-            homogeneous_.molecule(i).computeSize();
-
-         }
+      // If basis fields are not allocated, peek at field file header to 
+      // get unit cell parameters, initialize basis and allocate fields.
+      if (!isAllocatedBasis_) {
+         readFieldHeader(filename); 
+         allocateFieldsBasis(); 
       }
 
-      // Add solvent contributions
-      if (ns > 0) {
-         double size;
-         int monomerId;
-         for (int is = 0; is < ns; ++is) {
-            i = is + np;
-            monomerId = mixture_.solvent(is).monomerId();
-            size = mixture_.solvent(is).size();
-            homogeneous_.molecule(i).setNClump(1);
-            homogeneous_.molecule(i).clump(0).setMonomerId(monomerId);
-            homogeneous_.molecule(i).clump(0).setSize(size);
-            homogeneous_.molecule(i).computeSize();
-         }
-      }
-
+      // Read w fields
+      w_.readBasis(filename, domain_.unitCell());
+      domain_.waveList().computeKSq(domain_.unitCell());
+      domain_.waveList().computedKSq(domain_.unitCell());
+      mixture_.setupUnitCell(domain_.unitCell(), domain_.waveList());
+      hasCFields_ = false;
    }
+
+   template <int D>
+   void System<D>::readWRGrid(const std::string & filename)
+   {
+      // If basis fields are not allocated, peek at field file header to 
+      // get unit cell parameters, initialize basis and allocate fields.
+      if (!isAllocatedBasis_) {
+         readFieldHeader(filename);  
+         allocateFieldsBasis();  
+      }
+
+      w_.readRGrid(filename, domain_.unitCell());
+      domain_.waveList().computeKSq(domain_.unitCell());
+      domain_.waveList().computedKSq(domain_.unitCell());
+      mixture_.setupUnitCell(domain_.unitCell(), domain_.waveList());
+      hasCFields_ = false;
+   }
+
+   /*
+   * Set new w-field values.
+   */
+   template <int D>
+   void System<D>::setWBasis(DArray< DArray<double> > const & fields)
+   {
+      w_.setBasis(fields);
+      hasCFields_ = false;
+   }
+
+   /*
+   * Set new w-field values, using r-grid fields as inputs.
+   */
+   template <int D>
+   void System<D>::setWRGrid(DArray< RDField<D> > const & fields)
+   {
+      w_.setRGrid(fields);
+      hasCFields_ = false;
+   }
+
+   /*
+   * Set new w-field values, using unfoldeded array of r-grid fields.
+   */
+   template <int D>
+   void System<D>::setWRGrid(DField<cudaReal> & fields)
+   {
+      w_.setRGrid(fields);
+      hasCFields_ = false;
+   }
+
+   /*
+   * Construct estimate for w-fields from c-fields.
+   *
+   * Modifies wFields and wFieldsRGrid.
+   */
+   template <int D>
+   void System<D>::estimateWfromC(std::string const & filename)
+   {
+      UTIL_CHECK(hasMixture_);
+      const int nMonomer = mixture_.nMonomer();
+      UTIL_CHECK(nMonomer > 0);
+
+      // If basis fields are not allocated, peek at field file header to 
+      // get unit cell parameters, initialize basis and allocate fields.
+      if (!isAllocatedBasis_) {
+         readFieldHeader(filename); 
+         allocateFieldsBasis(); 
+      }
+      UTIL_CHECK(domain_.basis().isInitialized());
+      const int nBasis = domain_.basis().nBasis();
+      UTIL_CHECK(nBasis > 0);
+
+      // Allocate temporary storage
+      DArray< DArray<double> > tmpCFieldsBasis;
+      tmpCFieldsBasis.allocate(nMonomer);
+      for (int i = 0; i < nMonomer; ++i) {
+         tmpCFieldsBasis[i].allocate(nBasis);
+      }
+
+      // Read c fields from input file
+      fieldIo().readFieldsBasis(filename, tmpCFieldsBasis, 
+                                domain_.unitCell());
+
+      // Compute w fields from c fields
+      for (int i = 0; i < nBasis; ++i) {
+         for (int j = 0; j < nMonomer; ++j) {
+            tmpFieldsBasis_[j][i] = 0.0;
+            for (int k = 0; k < nMonomer; ++k) {
+               tmpFieldsBasis_[j][i] += interaction().chi(j,k) 
+                                        * tmpCFieldsBasis[k][i];
+            }
+         }
+      }
+
+      // Store estimated w fields in System w container
+      w_.setBasis(tmpFieldsBasis_);
+
+      hasCFields_ = false;
+   }
+
+   /*
+   * Set new w-field values, using array of r-grid fields as input.
+   */
+   template <int D>
+   void System<D>::symmetrizeWFields()
+   {  w_.symmetrize(); }
+
+   // Unit Cell Modifiers
+
+   /*
+   * Set the associated unit cell.
+   */
+   template <int D>
+   void System<D>::setUnitCell(UnitCell<D> const & unitCell)
+   {
+      domain_.setUnitCell(unitCell);
+      mixture_.setupUnitCell(unitCell, domain_.waveList());
+      if (!isAllocatedBasis_) {
+         allocateFieldsBasis();
+      }
+   }
+
+   /*
+   * Set the associated unit cell.
+   */
+   template <int D>
+   void 
+   System<D>::setUnitCell(typename UnitCell<D>::LatticeSystem lattice,
+                          FSArray<double, 6> const & parameters)
+   {
+      domain_.setUnitCell(lattice, parameters);
+      mixture_.setupUnitCell(domain_.unitCell(), domain_.waveList());
+      if (!isAllocatedBasis_) {
+         allocateFieldsBasis();
+      }
+   }
+
+   /*
+   * Set parameters of the associated unit cell.
+   */
+   template <int D>
+   void System<D>::setUnitCell(FSArray<double, 6> const & parameters)
+   {
+      domain_.setUnitCell(parameters);
+      mixture_.setupUnitCell(domain_.unitCell(), domain_.waveList());
+      if (!isAllocatedBasis_) {
+         allocateFieldsBasis();
+      }
+   }
+
+   // Primary SCFT Computations
+
+   /*
+   * Solve MDE for current w-fields, without iteration.
+   */
+   template <int D>
+   void System<D>::compute(bool needStress)
+   {
+      UTIL_CHECK(w_.hasData());
+
+      // Solve the modified diffusion equation (without iteration)
+      mixture().compute(w_.rgrid(), c_.rgrid());
+      hasCFields_ = true;
+
+      // Convert c fields from r-grid to basis format
+      if (w_.isSymmetric()) {
+         fieldIo().convertRGridToBasis(c_.rgrid(), c_.basis());
+      }
+
+      if (needStress) {
+         mixture().computeStress(domain_.waveList());
+      }
+   }
+
+   /*
+   * Iteratively solve a SCFT problem for specified parameters.
+   */
+   template <int D>
+   int System<D>::iterate(bool isContinuation)
+   {
+      UTIL_CHECK(w_.hasData());
+      hasCFields_ = false;
+
+      Log::file() << std::endl;
+      Log::file() << std::endl;
+
+      // Call iterator
+      int error = iterator().solve(isContinuation);
+
+      hasCFields_ = true;
+
+      if (w_.isSymmetric()) {
+         fieldIo().convertRGridToBasis(c_.rgrid(), c_.basis());
+      }
+
+      if (!error) {
+         if (!iterator().isFlexible()) {
+            mixture().computeStress(domain_.waveList());
+         }
+         computeFreeEnergy();
+         writeThermo(Log::file());
+      }
+      return error;
+   }
+
+   /*
+   * Perform sweep along a line in parameter space.
+   */
+   template <int D>
+   void System<D>::sweep()
+   {
+      UTIL_CHECK(w_.hasData());
+      UTIL_CHECK(w_.isSymmetric());
+      UTIL_CHECK(sweepPtr_);
+      UTIL_CHECK(hasSweep());
+      Log::file() << std::endl;
+      Log::file() << std::endl;
+
+      // Perform sweep
+      sweepPtr_->sweep();
+   }
+
+   // Thermodynamic Properties
 
    /*
    * Compute Helmholtz free energy and pressure
@@ -786,6 +839,24 @@ namespace Pspg
 
    }
 
+   // Output Operations
+
+   /*
+   * Write parameter file, omitting the sweep block.
+   */
+   template <int D>
+   void System<D>::writeParamNoSweep(std::ostream& out) const
+   {
+      out << "System{" << std::endl;
+      mixture_.writeParam(out);
+      interaction().writeParam(out);
+      domain_.writeParam(out);
+      if (iteratorPtr_) {
+         iteratorPtr_->writeParam(out);
+      }
+      out << "}" << std::endl;
+   }
+
    template <int D>
    void System<D>::writeThermo(std::ostream& out)
    {
@@ -832,168 +903,6 @@ namespace Pspg
          out << "  " << Dbl(unitCell().parameter(i), 18, 11);
       }
       out << std::endl << std::endl;
-   }
-
-   // W-Field Modifier Functions
-
-   /*
-   * Read w-field in symmetry adapted basis format.
-   */
-   template <int D>
-   void System<D>::readWBasis(const std::string & filename)
-   {
-      // If basis fields are not allocated, peek at field file header to 
-      // get unit cell parameters, initialize basis and allocate fields.
-      if (!isAllocatedBasis_) {
-         allocateFieldsBasis(filename); 
-      }
-
-      // Read w fields
-      w_.readBasis(filename, domain_.unitCell());
-      domain_.waveList().computeKSq(domain_.unitCell());
-      domain_.waveList().computedKSq(domain_.unitCell());
-      mixture_.setupUnitCell(domain_.unitCell(), domain_.waveList());
-      hasCFields_ = false;
-   }
-
-   template <int D>
-   void System<D>::readWRGrid(const std::string & filename)
-   {
-      // If basis fields are not allocated, peek at field file header to 
-      // get unit cell parameters, initialize basis and allocate fields.
-      if (!isAllocatedBasis_) {
-         allocateFieldsBasis(filename);  
-      }
-
-      w_.readRGrid(filename, domain_.unitCell());
-      domain_.waveList().computeKSq(domain_.unitCell());
-      domain_.waveList().computedKSq(domain_.unitCell());
-      mixture_.setupUnitCell(domain_.unitCell(), domain_.waveList());
-      hasCFields_ = false;
-   }
-
-   /*
-   * Set new w-field values.
-   */
-   template <int D>
-   void System<D>::setWBasis(DArray< DArray<double> > const & fields)
-   {
-      w_.setBasis(fields);
-      hasCFields_ = false;
-   }
-
-   /*
-   * Set new w-field values, using r-grid fields as inputs.
-   */
-   template <int D>
-   void System<D>::setWRGrid(DArray< RDField<D> > const & fields)
-   {
-      w_.setRGrid(fields);
-      hasCFields_ = false;
-   }
-
-   /*
-   * Set new w-field values, using unfoldeded array of r-grid fields.
-   */
-   template <int D>
-   void System<D>::setWRGrid(DField<cudaReal> & fields)
-   {
-      w_.setRGrid(fields);
-      hasCFields_ = false;
-   }
-
-   /*
-   * Set parameters of the associated unit cell.
-   */
-   template <int D>
-   void System<D>::setUnitCell(UnitCell<D> const & unitCell)
-   {
-      UTIL_CHECK(domain_.unitCell().lattice() == unitCell.lattice());
-      domain_.setUnitCell(unitCell);
-      mixture_.setupUnitCell(unitCell, domain_.waveList());
-   }
-
-   /*
-   * Set parameters of the associated unit cell.
-   */
-   template <int D>
-   void System<D>::setUnitCell(FSArray<double, 6> const & parameters)
-   {
-      UTIL_CHECK(domain_.unitCell().nParameter() == parameters.size());
-      domain_.setUnitCell(parameters);
-      mixture_.setupUnitCell(domain_.unitCell(), domain_.waveList());
-   }
-
-   // Primary SCFT Computations
-
-   /*
-   * Solve MDE for current w-fields, without iteration.
-   */
-   template <int D>
-   void System<D>::compute(bool needStress)
-   {
-      UTIL_CHECK(w_.hasData());
-
-      // Solve the modified diffusion equation (without iteration)
-      mixture().compute(w_.rgrid(), c_.rgrid());
-      hasCFields_ = true;
-
-      // Convert c fields from r-grid to basis format
-      if (w_.isSymmetric()) {
-         fieldIo().convertRGridToBasis(c_.rgrid(), c_.basis());
-      }
-
-      if (needStress) {
-         mixture().computeStress(domain_.waveList());
-      }
-   }
-
-   /*
-   * Iteratively solve a SCFT problem for specified parameters.
-   */
-   template <int D>
-   int System<D>::iterate(bool isContinuation)
-   {
-      UTIL_CHECK(w_.hasData());
-      hasCFields_ = false;
-
-      Log::file() << std::endl;
-      Log::file() << std::endl;
-
-      // Call iterator
-      int error = iterator().solve(isContinuation);
-
-      hasCFields_ = true;
-
-      if (w_.isSymmetric()) {
-         fieldIo().convertRGridToBasis(c_.rgrid(), c_.basis());
-      }
-
-      if (!error) {
-         if (!iterator().isFlexible()) {
-            mixture().computeStress(domain_.waveList());
-         }
-         computeFreeEnergy();
-         writeThermo(Log::file());
-      }
-      return error;
-   }
-
-   /*
-   * Perform sweep along a line in parameter space.
-   */
-   template <int D>
-   void System<D>::sweep()
-   {
-      UTIL_CHECK(w_.hasData());
-      UTIL_CHECK(w_.isSymmetric());
-      UTIL_CHECK(sweepPtr_);
-      UTIL_CHECK(hasSweep());
-      Log::file() << std::endl;
-      Log::file() << std::endl;
-
-      // Perform sweep
-      sweepPtr_->sweep();
    }
 
    /*
@@ -1081,7 +990,7 @@ namespace Pspg
       RDField<D> field;
       field.allocate(mesh().size());
       cudaMemcpy(field.cDField(), propagator.q(segmentId),
-                 mesh().size() * sizeof(cudaReal), cudaMemcpyDeviceToDevice);
+               mesh().size() * sizeof(cudaReal), cudaMemcpyDeviceToDevice);
       fieldIo().writeFieldRGrid(filename, field, unitCell());
    }
 
@@ -1186,11 +1095,11 @@ namespace Pspg
    * Write description of symmetry-adapted stars and basis to file.
    */
    template <int D>
-   void System<D>::writeStars(const std::string & outFileName) const
+   void System<D>::writeStars(const std::string & filename) const
    {
       UTIL_CHECK(domain_.basis().isInitialized());
       std::ofstream outFile;
-      fileMaster_.openOutputFile(outFileName, outFile);
+      fileMaster_.openOutputFile(filename, outFile);
       fieldIo().writeFieldHeader(outFile, mixture_.nMonomer(),
                                  unitCell());
       basis().outputStars(outFile);
@@ -1200,17 +1109,26 @@ namespace Pspg
    * Write a list of waves and associated stars to file.
    */
    template <int D>
-   void System<D>::writeWaves(const std::string & outFileName) const
+   void System<D>::writeWaves(const std::string & filename) const
    {
       UTIL_CHECK(domain_.basis().isInitialized());
       std::ofstream outFile;
-      fileMaster_.openOutputFile(outFileName, outFile);
+      fileMaster_.openOutputFile(filename, outFile);
       fieldIo().writeFieldHeader(outFile, mixture_.nMonomer(), 
                                  unitCell());
       basis().outputWaves(outFile);
    }
 
-   // Field Operations
+   /*
+   * Write all elements of the space group to a file.
+   */
+   template <int D>
+   void System<D>::writeGroup(const std::string & filename) const
+   {  
+      Pscf::writeGroup(filename, domain_.group()); 
+   }
+
+   // Field File Operations
 
    /*
    * Convert fields from symmetry-adpated basis to real-space grid format.
@@ -1222,14 +1140,16 @@ namespace Pspg
       // If basis fields are not allocated, peek at field file header to 
       // get unit cell parameters, initialize basis and allocate fields.
       if (!isAllocatedBasis_) {
-         allocateFieldsBasis(inFileName); 
+         readFieldHeader(inFileName); 
+         allocateFieldsBasis(); 
       }
 
       // Read, convert and write fields
       UnitCell<D> tmpUnitCell;
       fieldIo().readFieldsBasis(inFileName, tmpFieldsBasis_, tmpUnitCell);
       fieldIo().convertBasisToRGrid(tmpFieldsBasis_, tmpFieldsRGrid_);
-      fieldIo().writeFieldsRGrid(outFileName, tmpFieldsRGrid_, tmpUnitCell);
+      fieldIo().writeFieldsRGrid(outFileName, tmpFieldsRGrid_, 
+                                 tmpUnitCell);
    }
 
    /*
@@ -1242,14 +1162,16 @@ namespace Pspg
       // If basis fields are not allocated, peek at field file header to 
       // get unit cell parameters, initialize basis and allocate fields.
       if (!isAllocatedBasis_) {
-         allocateFieldsBasis(inFileName); 
+         readFieldHeader(inFileName); 
+         allocateFieldsBasis(); 
       }
 
       // Read, convert and write fields
       UnitCell<D> tmpUnitCell;
       fieldIo().readFieldsRGrid(inFileName, tmpFieldsRGrid_, tmpUnitCell);
       fieldIo().convertRGridToBasis(tmpFieldsRGrid_, tmpFieldsBasis_);
-      fieldIo().writeFieldsBasis(outFileName, tmpFieldsBasis_, tmpUnitCell);
+      fieldIo().writeFieldsBasis(outFileName, tmpFieldsBasis_, 
+                                 tmpUnitCell);
    }
 
    /*
@@ -1262,7 +1184,8 @@ namespace Pspg
       // If basis fields are not allocated, peek at field file header to 
       // get unit cell parameters, initialize basis and allocate fields.
       if (!isAllocatedBasis_) {
-         allocateFieldsBasis(inFileName); 
+         readFieldHeader(inFileName); 
+         allocateFieldsBasis(); 
       }
 
       // Read, convert and write fields
@@ -1285,7 +1208,8 @@ namespace Pspg
       // If basis fields are not allocated, peek at field file header to 
       // get unit cell parameters, initialize basis and allocate fields.
       if (!isAllocatedBasis_) {
-         allocateFieldsBasis(inFileName); 
+         readFieldHeader(inFileName); 
+         allocateFieldsBasis(); 
       }
 
       // Read, convert and write fields
@@ -1309,14 +1233,16 @@ namespace Pspg
       // If basis fields are not allocated, peek at field file header to 
       // get unit cell parameters, initialize basis and allocate fields.
       if (!isAllocatedBasis_) {
-         allocateFieldsBasis(inFileName); 
+         readFieldHeader(inFileName); 
+         allocateFieldsBasis(); 
       }
 
       // Read, convert and write fields
       UnitCell<D> tmpUnitCell;
       fieldIo().readFieldsKGrid(inFileName, tmpFieldsKGrid_, tmpUnitCell);
       fieldIo().convertKGridToBasis(tmpFieldsKGrid_, tmpFieldsBasis_);
-      fieldIo().writeFieldsBasis(outFileName, tmpFieldsBasis_, tmpUnitCell);
+      fieldIo().writeFieldsBasis(outFileName, tmpFieldsBasis_, 
+                                 tmpUnitCell);
    }
 
    /*
@@ -1329,71 +1255,227 @@ namespace Pspg
       // If basis fields are not allocated, peek at field file header to 
       // get unit cell parameters, initialize basis and allocate fields.
       if (!isAllocatedBasis_) {
-         allocateFieldsBasis(inFileName); 
+         readFieldHeader(inFileName); 
+         allocateFieldsBasis(); 
       }
 
       // Read, convert and write fields
       UnitCell<D> tmpUnitCell;
       fieldIo().readFieldsBasis(inFileName, tmpFieldsBasis_, tmpUnitCell);
       fieldIo().convertBasisToKGrid(tmpFieldsBasis_, tmpFieldsKGrid_);
-      fieldIo().writeFieldsKGrid(outFileName, tmpFieldsKGrid_, tmpUnitCell);
+      fieldIo().writeFieldsKGrid(outFileName, tmpFieldsKGrid_, 
+                                 tmpUnitCell);
+   }
+
+   // Private member functions
+
+   /*
+   * Allocate memory for fields.
+   */
+   template <int D>
+   void System<D>::allocateFieldsGrid()
+   {
+      // Preconditions
+      UTIL_CHECK(hasMixture_);
+      int nMonomer = mixture().nMonomer();
+      UTIL_CHECK(nMonomer > 0);
+      UTIL_CHECK(domain_.mesh().size() > 0);
+      UTIL_CHECK(!isAllocatedGrid_);
+
+      // Alias for mesh dimensions
+      IntVec<D> const & dimensions = domain_.mesh().dimensions();
+
+      // Allocate W Fields
+      w_.setNMonomer(nMonomer);
+      w_.allocateRGrid(dimensions);
+
+      // Allocate C Fields
+      c_.setNMonomer(nMonomer);
+      c_.allocateRGrid(dimensions);
+
+      // Allocate temporary work space
+      tmpFieldsRGrid_.allocate(nMonomer);
+      tmpFieldsKGrid_.allocate(nMonomer);
+      for (int i = 0; i < nMonomer; ++i) {
+         tmpFieldsRGrid_[i].allocate(dimensions);
+         tmpFieldsKGrid_[i].allocate(dimensions);
+      }
+
+      workArray_.allocate(mesh().size());
+      ThreadGrid::setThreadsLogical(mesh().size());
+
+      isAllocatedGrid_ = true;
    }
 
    /*
-   * Construct estimate for w-fields from c-fields.
-   *
-   * Modifies wFields and wFieldsRGrid.
+   * Allocate memory for fields.
    */
    template <int D>
-   void System<D>::estimateWfromC(std::string const & filename)
+   void System<D>::allocateFieldsBasis()
    {
+      // Preconditions and constants
       UTIL_CHECK(hasMixture_);
-      const int nMonomer = mixture_.nMonomer();
+      const int nMonomer = mixture().nMonomer();
       UTIL_CHECK(nMonomer > 0);
-
-      // If basis fields are not allocated, peek at field file header to 
-      // get unit cell parameters, initialize basis and allocate fields.
-      if (!isAllocatedBasis_) {
-         allocateFieldsBasis(filename); 
-      }
+      UTIL_CHECK(isAllocatedGrid_);
+      UTIL_CHECK(!isAllocatedBasis_);
+      UTIL_CHECK(domain_.unitCell().nParameter() > 0);
+      UTIL_CHECK(domain_.mesh().size() > 0);
       UTIL_CHECK(domain_.basis().isInitialized());
-      const int nBasis = domain_.basis().nBasis();
+      const int nBasis = basis().nBasis();
       UTIL_CHECK(nBasis > 0);
 
-      // Allocate temporary storage
-      DArray< DArray<double> > tmpCFieldsBasis;
-      tmpCFieldsBasis.allocate(nMonomer);
+      w_.allocateBasis(nBasis);
+      c_.allocateBasis(nBasis);
+
+      // Temporary work space
+      tmpFieldsBasis_.allocate(nMonomer);
       for (int i = 0; i < nMonomer; ++i) {
-         tmpCFieldsBasis[i].allocate(nBasis);
+         tmpFieldsBasis_[i].allocate(nBasis);
       }
 
-      // Read c fields from input file
-      fieldIo().readFieldsBasis(filename, tmpCFieldsBasis, 
-                                domain_.unitCell());
+      // Allocate memory for waveList
+      if (!domain_.waveList().hasMinimumImages()) {
+         domain_.waveList().computeMinimumImages(domain_.mesh(), 
+                                                 domain_.unitCell());
+      }
 
-      // Compute w fields from c fields
-      for (int i = 0; i < nBasis; ++i) {
-         for (int j = 0; j < nMonomer; ++j) {
-            tmpFieldsBasis_[j][i] = 0.0;
-            for (int k = 0; k < nMonomer; ++k) {
-               tmpFieldsBasis_[j][i] += interaction().chi(j,k) 
-                                        * tmpCFieldsBasis[k][i];
+      isAllocatedBasis_ = true;
+   }
+
+   /*
+   * Peek at field file header, initialize unit cell parameters and basis.
+   */
+   template <int D>
+   void System<D>::readFieldHeader(std::string filename)
+   {
+      UTIL_CHECK(hasMixture_);
+      UTIL_CHECK(mixture_.nMonomer() > 0);
+
+      // Open field file
+      std::ifstream file;
+      fileMaster_.openInputFile(filename, file);
+
+      // Read field file header, and initialize basis if needed
+      int nMonomer;
+      domain_.fieldIo().readFieldHeader(file, nMonomer, 
+                                        domain_.unitCell());
+      // FieldIo::readFieldHeader initializes a basis if needed
+      file.close();
+
+      // Postconditions
+      UTIL_CHECK(mixture_.nMonomer() == nMonomer);
+      UTIL_CHECK(domain_.unitCell().nParameter() > 0);
+      UTIL_CHECK(domain_.unitCell().lattice() != UnitCell<D>::Null);
+      UTIL_CHECK(domain_.unitCell().isInitialized());
+      UTIL_CHECK(domain_.basis().isInitialized());
+      UTIL_CHECK(domain_.basis().nBasis() > 0);
+   }
+
+   /*
+   * Read a filename string and echo to log file (used in readCommands).
+   */
+   template <int D>
+   void System<D>::readEcho(std::istream& in, std::string& string) const
+   {
+      in >> string;
+      Log::file() << " " << Str(string, 20) << std::endl;
+   }
+
+   /*
+   * Read floating point number, echo to log file (used in readCommands).
+   */
+   template <int D>
+   void System<D>::readEcho(std::istream& in, double& value) const
+   {
+      in >> value;
+      if (in.fail()) {
+          UTIL_THROW("Unable to read floating point parameter.");
+      }
+      Log::file() << " " << Dbl(value, 20) << std::endl;
+   }
+
+   /*
+   * Initialize Pscf::Homogeneous::Mixture homogeneous_ member.
+   */
+   template <int D>
+   void System<D>::initHomogeneous()
+   {
+
+      // Set number of molecular species and monomers
+      int nm = mixture().nMonomer();
+      int np = mixture().nPolymer();
+      int ns = mixture().nSolvent();
+
+      UTIL_CHECK(homogeneous_.nMolecule() == np + ns);
+      UTIL_CHECK(homogeneous_.nMonomer() == nm);
+
+      int i;   // molecule index
+      int j;   // monomer index
+
+      // Loop over polymer molecule species
+      if (np > 0) {
+
+         DArray<double> cTmp;
+         cTmp.allocate(nm);
+
+         int k;   // block or clump index
+         int nb;  // number of blocks
+         int nc;  // number of clumps
+         for (i = 0; i < np; ++i) {
+
+            // Initial array of clump sizes
+            for (j = 0; j < nm; ++j) {
+               cTmp[j] = 0.0;
             }
+
+            // Compute clump sizes for all monomer types.
+            nb = mixture_.polymer(i).nBlock();
+            for (k = 0; k < nb; ++k) {
+               Block<D>& block = mixture_.polymer(i).block(k);
+               j = block.monomerId();
+               cTmp[j] += block.length();
+            }
+
+            // Count the number of clumps of nonzero size
+            nc = 0;
+            for (j = 0; j < nm; ++j) {
+               if (cTmp[j] > 1.0E-8) {
+                  ++nc;
+               }
+            }
+            homogeneous_.molecule(i).setNClump(nc);
+
+            // Set clump properties for this Homogeneous::Molecule
+            k = 0; // Clump index
+            for (j = 0; j < nm; ++j) {
+               if (cTmp[j] > 1.0E-8) {
+                  homogeneous_.molecule(i).clump(k).setMonomerId(j);
+                  homogeneous_.molecule(i).clump(k).setSize(cTmp[j]);
+                  ++k;
+               }
+            }
+            homogeneous_.molecule(i).computeSize();
+
          }
       }
 
-      // Store estimated w fields in System w container
-      w_.setBasis(tmpFieldsBasis_);
+      // Add solvent contributions
+      if (ns > 0) {
+         double size;
+         int monomerId;
+         for (int is = 0; is < ns; ++is) {
+            i = is + np;
+            monomerId = mixture_.solvent(is).monomerId();
+            size = mixture_.solvent(is).size();
+            homogeneous_.molecule(i).setNClump(1);
+            homogeneous_.molecule(i).clump(0).setMonomerId(monomerId);
+            homogeneous_.molecule(i).clump(0).setSize(size);
+            homogeneous_.molecule(i).computeSize();
+         }
+      }
 
-      hasCFields_ = false;
    }
-
-   /*
-   * Set new w-field values, using array of r-grid fields as input.
-   */
-   template <int D>
-   void System<D>::symmetrizeWFields()
-   {  w_.symmetrize(); }
 
    #if 0
    /*
@@ -1406,7 +1488,8 @@ namespace Pspg
       // If basis fields are not allocated, peek at field file header to 
       // get unit cell parameters, initialize basis and allocate fields.
       if (!isAllocatedBasis_) {
-         allocateFieldsBasis(inFileName); 
+         readFieldHeader(inFileName); 
+         allocateFieldsBasis(); 
       }
       UTIL_CHECK(domain_.basis().isInitialized());
       const int nBasis = domain_.basis().nBasis();

@@ -140,6 +140,10 @@ public:
       openInputFile("in/bcc/param.flex", in);
       system.readParam(in);
       in.close();
+
+      FSArray<double, 6> parameters;
+      parameters.append(1.75);
+      system.setUnitCell(parameters);
    }
 
 };

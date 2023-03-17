@@ -1,6 +1,6 @@
 /*! \page user_model_page Model and Parameters
 
-\ref user_page        (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_page        (Prev / Up) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref user_files_page   (Next)
 <BR>
 
@@ -436,7 +436,7 @@ grand-canonical free energy per monomer reference volume, in thermal
 energy units.
 
 <BR>
-\ref user_page       (Up) &nbsp; &nbsp; &nbsp; &nbsp;
+\ref user_page       (Prev / Up) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref user_files_page (Next)
 
 */

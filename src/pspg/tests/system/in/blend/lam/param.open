@@ -1,8 +1,8 @@
 System{
   Mixture{
      nMonomer  2
-     monomers  1.0  
-               1.0 
+     monomers  1.0
+               1.0
      nPolymer  3
      Polymer{
         type      linear
@@ -32,7 +32,7 @@ System{
   }
   Domain{
     mesh               40
-    lattice            lamellar  
+    lattice            lamellar
     groupName P_-1
   }
   AmIteratorBasis{
@@ -42,4 +42,3 @@ System{
     isFlexible  1
   }
 }
-    unitCell Lamellar    1.5077084389 

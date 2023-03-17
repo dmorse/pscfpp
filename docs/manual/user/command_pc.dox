@@ -123,7 +123,7 @@ command or a group of closely related commands.
   </tr>
   <tr>
     <td colspan="3" style="text-align:center">
-     \ref user_command_pc_dataout_sec "Data Output"
+     \ref user_command_pc_dataout_sec "Thermodynamic Data Output"
     </td>
   </tr>
   <tr>
@@ -701,9 +701,9 @@ column of numbers containing the values of the associated propagator
 slice on the nodes of the regular spatial mesh used throughout the
 computation.
 
-*For readers who inspect the source code*: This command calls the
-function Pspc::System<D>::writeQ, which defines the output format,
-and which is defined in the C++ file src/pspc/System.tpp.
+<em> Comment for readers who read the source code </em>: This command 
+calls the function Pspc::System::writeQ, which defines the output 
+format, and is defined in the C++ file src/pspc/System.tpp.
 
 \anchor user_command_pc_writeqall_sub 
 <b> WRITE_Q_ALL </b>:

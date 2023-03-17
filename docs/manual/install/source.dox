@@ -19,7 +19,7 @@ book as a tutorial and reference.
 
 To obtain a working copy of the pscfpp git repository, you should first
 change directory (cd) to the directory you would like to contain a newly
-created pscfpp directory. From there, then enter the command
+created pscfpp directory. From there, enter the command
 \code
 git clone --recursive https://github.com/dmorse/pscfpp.git
 \endcode

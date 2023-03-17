@@ -55,15 +55,19 @@ namespace Pspc
    template <int D>
    void Domain<D>::readParameters(std::istream& in)
    {
+      // Preconditins
+      UTIL_CHECK(!isInitialized_);
       UTIL_CHECK(hasFileMaster_);
 
-      // Optionally read unit cell
-      readOptional(in, "unitCell", unitCell_);
       bool hasUnitCell = false; 
+      // Uncomment for backwards compatibility with old format (< v1.0)
+      #if 0
+      readOptional(in, "unitCell", unitCell_);
       if (unitCell_.lattice() != UnitCell<D>::Null) { 
          lattice_ = unitCell_.lattice();
          hasUnitCell = true; 
       }
+      #endif
 
       read(in, "mesh", mesh_);
       fft_.setup(mesh_.dimensions());
