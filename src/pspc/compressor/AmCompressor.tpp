@@ -34,37 +34,81 @@ namespace Pspc{
    {
       // Call parent class readParameters
       AmIteratorTmpl<Compressor<D>, DArray<double> >::readParameters(in);
+      AmIteratorTmpl<Compressor<D>, DArray<double> >::readErrorType(in);
+   }
+   
+      
+   // Initialize just before entry to iterative loop.
+   template <int D>
+   void AmCompressor<D>::setup(bool isContinuation)
+   {
+      // Allocate memory required by AM algorithm if not done earlier.
+      AmIteratorTmpl<Compressor<D>, DArray<double> >::setup(isContinuation);
+      //Store value of initial guess chemical potential fields
+      const int nMonomer = system().mixture().nMonomer();
+      const int meshSize = system().domain().mesh().size();
+      w0.allocate(nMonomer);
+      for (int i = 0; i < nMonomer; ++i) {
+         w0[i].allocate(meshSize);
+         for (int j = 0; j< meshSize; ++j){
+            w0[i][j] = system().w().rgrid(i)[j];
+         }
+      }      
+   }
+   
+   template <int D>
+   int AmCompressor<D>::compress()
+   {
+    return AmIteratorTmpl<Compressor<D>, DArray<double> >::solve();
    }
 
-   // Compute and return L2 norm of residual vector
+   // Assign one array to another
    template <int D>
-   double AmCompressor<D>::findNorm(DArray<double> const & hist)
+   void AmCompressor<D>::setEqual(DArray<double>& a, DArray<double> const & b)
+   {  a = b; }
+
+   // Compute and return inner product of two vectors.
+   template <int D>
+   double AmCompressor<D>::dotProduct(DArray<double> const & a, 
+                                    DArray<double> const & b)
    {
-      const int n = hist.capacity();
-      double normResSq = 0.0;
+      const int n = a.capacity();
+      UTIL_CHECK(b.capacity() == n);
+      double product = 0.0;
       for (int i = 0; i < n; i++) {
-         normResSq += hist[i] * hist[i];
+         // if either value is NaN, throw NanException
+         if (std::isnan(a[i]) || std::isnan(b[i])) { 
+            throw NanException("AmCompressor::dotProduct",__FILE__,__LINE__,0);
+         }
+         product += a[i] * b[i];
       }
-      return sqrt(normResSq);
+      return product;
    }
 
-   // Compute and return maximum element of residual vector.
+   // Compute and return maximum element of a vector.
    template <int D>
-   double AmCompressor<D>::findMaxAbs(DArray<double> const & hist)
+   double AmCompressor<D>::maxAbs(DArray<double> const & a)
    {
-      const int n = hist.capacity();
-      double maxRes = 0.0;
+      const int n = a.capacity();
+      double max = 0.0;
+      double value;
       for (int i = 0; i < n; i++) {
-         if (fabs(hist[i]) > maxRes)
-            maxRes = fabs(hist[i]);
+         value = a[i];
+         if (std::isnan(value)) { // if value is NaN, throw NanException
+            throw NanException("AmCompressor::dotProduct",__FILE__,__LINE__,0);
+         }
+         if (fabs(value) > max) {
+            max = fabs(value);
+         }
       }
-      return maxRes;
+      return max;
    }
 
    // Update basis
    template <int D>
-   void AmCompressor<D>::updateBasis(RingBuffer<DArray<double> > & basis,
-                                   RingBuffer<DArray<double> > const & hists)
+   void 
+   AmCompressor<D>::updateBasis(RingBuffer< DArray<double> > & basis,
+                              RingBuffer< DArray<double> > const & hists)
    {
       // Make sure at least two histories are stored
       UTIL_CHECK(hists.size() >= 2);
@@ -73,81 +117,13 @@ namespace Pspc{
       DArray<double> newbasis;
       newbasis.allocate(n);
 
+      // New basis vector is difference between two most recent states
       for (int i = 0; i < n; i++) {
-         // sequential histories basis vectors
          newbasis[i] = hists[0][i] - hists[1][i]; 
       }
 
       basis.append(newbasis);
    }
-
-   // Compute one element of U matrix of by computing a dot product
-   template <int D>
-   double
-   AmCompressor<D>::computeUDotProd(RingBuffer<DArray<double> > const & resBasis,
-                                  int m, int n)
-   {
-      const int length = resBasis[0].capacity();
-      double dotprod = 0.0;
-      for(int i = 0; i < length; i++) {
-         dotprod += resBasis[m][i] * resBasis[n][i];
-      }
-      return dotprod;
-   }
-
-   // Compute one element of V vector by computing a dot product
-   template <int D>
-   double
-   AmCompressor<D>::computeVDotProd(DArray<double> const & resCurrent,
-                                  RingBuffer<DArray<double> > const & resBasis,
-                                  int m)
-   {
-      const int length = resBasis[0].capacity();
-      double dotprod = 0.0;
-      for(int i = 0; i < length; i++) {
-         dotprod += resCurrent[i] * resBasis[m][i];
-      }
-      return dotprod;
-   }
-
-   // Update entire U matrix
-   template <int D>
-   void AmCompressor<D>::updateU(DMatrix<double> & U,
-                               RingBuffer<DArray<double> > const & resBasis,
-                               int nHist)
-   {
-      // Update matrix U by shifting elements diagonally
-      int maxHist = U.capacity1();
-      for (int m = maxHist-1; m > 0; --m) {
-         for (int n = maxHist-1; n > 0; --n) {
-            U(m,n) = U(m-1,n-1);
-         }
-      }
-
-      // Compute U matrix's new row 0 and col 0
-      for (int m = 0; m < nHist; ++m) {
-         double dotprod = computeUDotProd(resBasis,0,m);
-         U(m,0) = dotprod;
-         U(0,m) = dotprod;
-      }
-   }
-
-   template <int D>
-   void AmCompressor<D>::updateV(DArray<double> & v,
-                               DArray<double> const & resCurrent,
-                               RingBuffer<DArray<double> > const & resBasis,
-                               int nHist)
-   {
-      // Compute U matrix's new row 0 and col 0
-      // Also, compute each element of v_ vector
-      for (int m = 0; m < nHist; ++m) {
-         v[m] = computeVDotProd(resCurrent,resBasis,m);
-      }
-   }
-
-   template <int D>
-   void AmCompressor<D>::setEqual(DArray<double>& a, DArray<double> const & b)
-   {  a = b; }
 
    template <int D>
    void
@@ -184,18 +160,24 @@ namespace Pspc{
    // Compute and return the number of elements in a field vector
    template <int D>
    int AmCompressor<D>::nElements()
-   {  return system().basis().nBasis(); }
+   {  return system().domain().mesh().size(); }
 
    // Get the current field from the system
    template <int D>
    void AmCompressor<D>::getCurrent(DArray<double>& curr)
    {
-      // Straighten out fields into linear arrays
-
-      const int nMonomer = system().mixture().nMonomer();
-      const int nBasis = system().basis().nBasis();
-
-      // Application of the template is not straightforward.
+      // Straighten out fields into  linear arrays
+      const int meshSize = system().domain().mesh().size();
+      const DArray< RField<D> > * currSys = &system().w().rgrid();
+      
+      /*
+      * The field that we are adjusting is the Langrange multiplier field 
+      * with number of grid pts components.The current value is the difference 
+      * between w and w0 for the first monomer (any monomer should give the same answer)
+      */
+      for (int i = 0; i < meshSize; i++){
+         curr[i] = (*currSys)[0][i] - w0[0][i];
+      }   
 
    }
 
@@ -210,18 +192,18 @@ namespace Pspc{
    {
       const int n = nElements();
       const int nMonomer = system().mixture().nMonomer();
-      const int nBasis = system().basis().nBasis();
+      const int meshSize = system().domain().mesh().size();
 
       // Initialize residuals
-      for (int i = 1 ; i < n; ++i) {
-         resid[i] = 0.0;
+      for (int i = 0 ; i < n; ++i) {
+         resid[i] = -1.0;
       }
-      resid[0] = -1.0;
+
 
        // Compute SCF residual vector elements
       for (int j = 0; j < nMonomer; ++j) {
-        for (int k = 0; k < nBasis; ++k) {
-           resid[k] += system().c().basis(j)[k];
+        for (int k = 0; k < meshSize; ++k) {
+           resid[k] += system().c().rgrid(j)[k];
         }
       }
 
@@ -233,9 +215,18 @@ namespace Pspc{
    {
       // Convert back to field format
       const int nMonomer = system().mixture().nMonomer();
-      const int nBasis = system().basis().nBasis();
-
-      // Need a strategy for this - it's not straightforward
+      const int meshSize = system().domain().mesh().size();
+      DArray< RField<D> > wField;
+      wField.allocate(nMonomer);
+      
+      //New field is the w0 + the newGuess for the Lagrange multiplier field
+      for (int i = 0; i < nMonomer; i++){
+         wField[i].allocate(meshSize);
+         for (int k = 0; k < meshSize; k++){
+            wField[i][k] = w0[i][k] + newGuess[k];
+         }
+      }
+      system().setWRGrid(wField);
 
    }
 

@@ -4,7 +4,7 @@
 #include "CompressorFactory.h"  
 
 // Subclasses of Compressor 
-//#include "AmCompressor.h"
+#include "AmCompressor.h"
 
 namespace Pscf {
 namespace Pspc {
@@ -32,13 +32,11 @@ namespace Pspc {
       ptr = trySubfactories(className);
       if (ptr) return ptr;
 
-      #if f0 
       // Try to match classname
       if (className == "Compressor" || className == "AmCompressor") {
          ptr = new AmCompressor<D>(*sysPtr_);
       } 
-      #endif
-
+      
       return ptr;
    }
 
