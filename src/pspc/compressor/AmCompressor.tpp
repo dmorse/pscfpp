@@ -20,7 +20,8 @@ namespace Pspc{
    // Constructor
    template <int D>
    AmCompressor<D>::AmCompressor(System<D>& system)
-   : Compressor<D>(system)
+   : Compressor<D>(system),
+     isAllocated_(false)
    {  setClassName("AmCompressor"); }
 
    // Destructor
@@ -41,15 +42,27 @@ namespace Pspc{
    // Initialize just before entry to iterative loop.
    template <int D>
    void AmCompressor<D>::setup(bool isContinuation)
-   {
-      // Allocate memory required by AM algorithm if not done earlier.
-      AmIteratorTmpl<Compressor<D>, DArray<double> >::setup(isContinuation);
-      //Store value of initial guess chemical potential fields
+   {  
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
-      w0.allocate(nMonomer);
+      // Allocate memory required by AM algorithm if not done earlier.
+      AmIteratorTmpl<Compressor<D>, DArray<double> >::setup(isContinuation);
+      
+      // Allocate memory required by compressor if not done earlier.
+      if (!isAllocated_){
+         newBasis_.allocate(meshSize);
+         w0.allocate(nMonomer);
+         wFieldTmp_.allocate(nMonomer);
+         for (int i = 0; i < nMonomer; ++i) {
+            w0[i].allocate(meshSize);
+            wFieldTmp_[i].allocate(meshSize);
+         }
+            
+         isAllocated_ = true;
+      }
+      
+      // Store value of initial guess chemical potential fields
       for (int i = 0; i < nMonomer; ++i) {
-         w0[i].allocate(meshSize);
          for (int j = 0; j< meshSize; ++j){
             w0[i][j] = system().w().rgrid(i)[j];
          }
@@ -114,15 +127,13 @@ namespace Pspc{
       UTIL_CHECK(hists.size() >= 2);
 
       const int n = hists[0].capacity();
-      DArray<double> newbasis;
-      newbasis.allocate(n);
 
       // New basis vector is difference between two most recent states
       for (int i = 0; i < n; i++) {
-         newbasis[i] = hists[0][i] - hists[1][i]; 
+         newBasis_[i] = hists[0][i] - hists[1][i]; 
       }
 
-      basis.append(newbasis);
+      basis.append(newBasis_);
    }
 
    template <int D>
@@ -199,7 +210,6 @@ namespace Pspc{
          resid[i] = -1.0;
       }
 
-
        // Compute SCF residual vector elements
       for (int j = 0; j < nMonomer; ++j) {
         for (int k = 0; k < meshSize; ++k) {
@@ -216,18 +226,14 @@ namespace Pspc{
       // Convert back to field format
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
-      DArray< RField<D> > wField;
-      wField.allocate(nMonomer);
       
       //New field is the w0 + the newGuess for the Lagrange multiplier field
       for (int i = 0; i < nMonomer; i++){
-         wField[i].allocate(meshSize);
          for (int k = 0; k < meshSize; k++){
-            wField[i][k] = w0[i][k] + newGuess[k];
+            wFieldTmp_[i][k] = w0[i][k] + newGuess[k];
          }
       }
-      system().setWRGrid(wField);
-
+      system().setWRGrid(wFieldTmp_);
    }
 
    template<int D>

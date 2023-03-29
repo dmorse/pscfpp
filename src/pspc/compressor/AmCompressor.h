@@ -9,6 +9,7 @@
 */
 
 #include "Compressor.h"
+#include <pspc/field/RField.h>
 #include <pscf/iterator/AmIteratorTmpl.h>                 
 
 namespace Pscf {
@@ -81,10 +82,26 @@ namespace Pspc
       using Compressor<D>::system;
 
    private:
-       /**
-       * Current values of the fields
-       */
-      DArray< DArray<double> > w0;  
+      /**
+      * Current values of the fields
+      */
+      DArray< RField<D> > w0;  
+
+      /**
+      * Has the variable been allocated?
+      */
+      bool isAllocated_;
+      
+      /**
+      * Template w Field used in update function
+      */
+      
+      DArray< RField<D> > wFieldTmp_;
+      
+      /**
+      * New Basis variable used in updateBasis function 
+      */
+      DArray<double> newBasis_;
 
       /**
       * Assign one field to another.
@@ -182,7 +199,10 @@ namespace Pspc
       * Outputs relevant system details to the iteration log.
       */
       void outputToLog();
-
+      
+      
+      
+      
 
    };
 
