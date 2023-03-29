@@ -22,10 +22,10 @@ namespace Pspc {
    * Constructor.
    */
    template <int D>
-   McMove<D>::McMove(McSimulator<D>& simulator) 
-    : simulatorPtr_(&simulator),
-      systemPtr_(&(simulator.system())),
-      randomPtr_(&(systemPtr_->random())),
+   McMove<D>::McMove(McSimulator<D>& mcSimulator) 
+    : mcSimulatorPtr_(&mcSimulator),
+      systemPtr_(&(mcSimulator.system())),
+      randomPtr_(&(mcSimulator.random())),
       nAttempt_(0),
       nAccept_(0)
    {}
@@ -72,10 +72,10 @@ namespace Pspc {
       incrementNAttempt();
 
       // Get current Hamiltonian
-      double oldHamiltonian = simulator().mcHamiltonian();
+      double oldHamiltonian = mcSimulator().mcHamiltonian();
 
       // Save current state 
-      simulator().saveMcState();
+      mcSimulator().saveMcState();
 
       // Attempt modification
       attemptMove();
@@ -84,9 +84,9 @@ namespace Pspc {
       // system().compressor().compress(system.w()));
 
       // Evaluate new Hamiltonian
-      simulator().computeWC();
-      simulator().computeMcHamiltonian();
-      double newHamiltonian = simulator().mcHamiltonian();
+      mcSimulator().computeWC();
+      mcSimulator().computeMcHamiltonian();
+      double newHamiltonian = mcSimulator().mcHamiltonian();
 
       // Accept or reject move
       bool accept = false;
@@ -95,7 +95,7 @@ namespace Pspc {
       if (accept) {
           incrementNAccept();
       } else {
-          simulator().restoreMcState();
+          mcSimulator().restoreMcState();
       }
 
       return accept;

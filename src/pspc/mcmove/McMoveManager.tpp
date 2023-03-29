@@ -1,3 +1,6 @@
+#ifndef PSPC_MC_MOVE_MANAGER_TPP
+#define PSPC_MC_MOVE_MANAGER_TPP
+
 /*
 * Simpatico - Simulation Package for Polymeric and Molecular Liquids
 *
@@ -21,7 +24,8 @@ namespace Pspc {
    * Constructor.
    */
    template <int D>
-   McMoveManager<D>::McMoveManager(McSimulator<D>& mcSimulator, System<D>& system)
+   McMoveManager<D>::McMoveManager(McSimulator<D>& mcSimulator, 
+                                   System<D>& system)
    : Manager< McMove<D> >(),
      mcSimulatorPtr_(&mcSimulator),
      systemPtr_(&system),
@@ -46,6 +50,7 @@ namespace Pspc {
    template <int D>
    void McMoveManager<D>::readParameters(std::istream &in)
    {
+      // Read parameters for all McMove<D> objects
       Manager< McMove<D> >::readParameters(in);
 
       // Allocate and store probabilities
@@ -99,3 +104,4 @@ namespace Pspc {
 
 }
 }
+#endif

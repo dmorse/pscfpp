@@ -42,7 +42,7 @@ namespace Pspc
       *
       * \param system parent System object.
       */
-      McMove(McSimulator<D>& simulator);
+      McMove(McSimulator<D>& mcSimulator);
 
       /**
       * Destructor.
@@ -133,7 +133,7 @@ namespace Pspc
       /**
       * Get parent McSimulator object.
       */
-      McSimulator<D>& simulator();
+      McSimulator<D>& mcSimulator();
 
       /**
       * Get Random number generator of parent System.
@@ -161,7 +161,7 @@ namespace Pspc
    private:
 
       /// Pointer to parent McSimulator object
-      McSimulator<D>* simulatorPtr_;
+      McSimulator<D>* mcSimulatorPtr_;
 
       /// Pointer to parent System object
       System<D>* systemPtr_;
@@ -223,8 +223,8 @@ namespace Pspc
    * Get parent McSimulator object.
    */
    template <int D>
-   inline McSimulator<D>& McMove<D>::simulator()
-   {  return *simulatorPtr_; }
+   inline McSimulator<D>& McMove<D>::mcSimulator()
+   {  return *mcSimulatorPtr_; }
 
    /*
    * Get Random number generator.

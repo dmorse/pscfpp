@@ -47,7 +47,8 @@ namespace Pspc {
    template <int D>
    void McSimulator<D>::readParameters(std::istream &in)
    {
-      mcMoveManager_.readParameters(in);
+      // Read block of mc move data inside
+      readParamComposite(in, mcMoveManager_);
 
       // Allocate projected chi matrix chiP_ and associated arrays
       const int nMonomer = system().mixture().nMonomer();
@@ -120,7 +121,6 @@ namespace Pspc {
                   << " sec" << std::endl;
       Log::file() << std::endl;
 
-      #if 0
       // Print McMove acceptance statistics
       long attempt;
       long accept;
@@ -131,7 +131,7 @@ namespace Pspc {
            << setw(12) << right << "Accepted"
            << setw(15) << right << "AcceptRate"
            << endl;
-      int nMove = size();
+      int nMove = mcMoveManager_.size();
       for (int iMove = 0; iMove < nMove; ++iMove) {
          attempt = mcMoveManager_[iMove].nAttempt();
          accept  = mcMoveManager_[iMove].nAccept();
@@ -144,7 +144,6 @@ namespace Pspc {
               << endl;
       }
       Log::file() << endl;
-      #endif
 
    }
 

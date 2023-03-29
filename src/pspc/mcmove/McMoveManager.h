@@ -39,9 +39,10 @@ namespace Pspc {
       /**
       * Constructor.
       *
-      * \param simulation parent MCsimulator
+      * \param mcSimulator parent McSimulator
+      * \param system parent System
       */
-      McMoveManager(McSimulator<D>& simulator, System<D>& system);
+      McMoveManager(McSimulator<D>& mcSimulator, System<D>& system);
 
       /**
       * Destructor.

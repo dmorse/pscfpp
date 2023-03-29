@@ -10,6 +10,7 @@
 
 #include "McState.h"                     // member
 #include "McMoveManager.h"               // member
+
 #include <util/param/Manager.h>          // base class template
 #include <util/param/ParamComposite.h>   // base class
 #include <util/random/Random.h>          // member
@@ -25,8 +26,7 @@ namespace Pspc {
    template <int D> class McMove;
 
    /**
-   * A Monte-Carlo simulation of system
-   *
+   * Resources for a Monte-Carlo simulation of system.
    */
    template <int D>
    class McSimulator : public ParamComposite
@@ -47,7 +47,7 @@ namespace Pspc {
       ~McSimulator();
 
       /**
-      * Read instructions for creating McMove objects.
+      * Read parameters for a MC simulation.
       *
       * \param in input parameter stream
       */
@@ -130,7 +130,7 @@ namespace Pspc {
       {  return chiEvecs_; }
 
       /**
-      * Compute and store the eigenvector components of the w fields.
+      * Compute and store the eigenvector components of the current w fields.
       */
       void computeWC();
 
@@ -151,16 +151,15 @@ namespace Pspc {
       System<D>& system();
 
       /**
-      * Get random number generator by reference.
-      */
-      Random& random();
-
-   protected:
-      /**
       * Get McMoveManger
       */
       McMoveManager<D>& mcMoveManager();
       
+      /**
+      * Get random number generator by reference.
+      */
+      Random& random();
+
    private:
       
       // Private data members
@@ -181,7 +180,7 @@ namespace Pspc {
       mutable McState<D> mcState_;
 
       /**
-      * Manger for Monte Carlo Move.
+      * Pointer to the parent system.
       */
       System<D>* systemPtr_;  
 
@@ -228,6 +227,9 @@ namespace Pspc {
       */
       void analyzeChi();
 
+      /**
+      * Called at the beginning of the simulation member function.
+      */
       void setup();
 
    };
