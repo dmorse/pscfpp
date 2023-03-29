@@ -2,18 +2,19 @@
 #define PSPC_MC_SIMULATOR_H
 
 /*
-* Simpatico - Simulation Package for Polymeric and Molecular Liquids
+* PSCF - Polymer Self-Consistent Field Theory
 *
-* Copyright 2010 - 2017, The Regents of the University of Minnesota
+* Copyright 2016 - 2022, The Regents of the University of Minnesota
 * Distributed under the terms of the GNU General Public License.
 */
 
-#include "McMove.h"                      // base class template parameter
 #include "McState.h"                     // member
+#include "McMoveManager.h"               // member
 #include <util/param/Manager.h>          // base class template
+#include <util/param/ParamComposite.h>   // base class
+#include <util/random/Random.h>          // member
 #include <util/containers/DArray.h>      // member template
-
-namespace Util { class Random; }
+#include <util/containers/DMatrix.h>     // member template
 
 namespace Pscf {
 namespace Pspc {
@@ -21,17 +22,14 @@ namespace Pspc {
    using namespace Util;
 
    template <int D> class System;
+   template <int D> class McMove;
 
    /**
-   * Manager for a set of McMove objects.
+   * A Monte-Carlo simulation of system
    *
-   * \sa \ref mcMd_mcMove_McSimulator_page "parameter file format"
-   *
-   * \ingroup Pspc_Manager_Module
-   * \ingroup Pspc_McMove_Module
    */
    template <int D>
-   class McSimulator : public Manager< McMove<D> >
+   class McSimulator : public ParamComposite
    {
 
    public:
@@ -76,20 +74,6 @@ namespace Pspc {
       double mcHamiltonian() const;
 
       /**
-      * Initialize at beginning of system run.
-      *
-      * This method calls the initialize method for every McMove.
-      */
-      void setup();
-
-      /**
-      * Choose an McMove at random, using specified probabilities.
-      *
-      * \return chosen McMove
-      */
-      McMove<D>& chooseMove();
-
-      /**
       * Save a copy of the Monte-Carlo state.
       *
       * This function and restoreMcState() are intended for use in 
@@ -111,19 +95,6 @@ namespace Pspc {
       * by a previous call to the function saveMcState().
       */
       void restoreMcState();
-
-      /**
-      * Output statistics for all moves.
-      */
-      void output();
-
-      /**
-      * Return probability of move i.
-      *
-      * \param i index for McMove
-      * \return probability of McMove number i
-      */
-      double probability(int i) const;
 
       /**
       * Get an array of the eigenvalues of the projected chi matrix.
@@ -184,15 +155,35 @@ namespace Pspc {
       */
       Random& random();
 
-      using Manager< McMove<D> >::size;
-
    protected:
-
-      using Manager< McMove<D> >::setClassName;
-       
+      /**
+      * Get McMoveManger
+      */
+      McMoveManager<D>& mcMoveManager();
+      
    private:
-
+      
       // Private data members
+
+      /**
+      * Manger for Monte Carlo Move.
+      */
+      McMoveManager<D> mcMoveManager_;  
+      
+      /**
+      * Random number generator
+      */
+      Random random_;
+      
+      /**
+      * State saved during MC simulation.
+      */
+      mutable McState<D> mcState_;
+
+      /**
+      * Manger for Monte Carlo Move.
+      */
+      System<D>* systemPtr_;  
 
       /**
       * Eigenvector components of w on a real space grid.
@@ -221,63 +212,43 @@ namespace Pspc {
       DArray<double>  chiEvals_;
 
       /**
-      * Array of McMove probabilities.
-      */
-      DArray<double>  probabilities_;
-
-      /**
-      * State saved during MC simulation.
-      */
-      mutable McState<D> mcState_;
-
-      /**
       * Monte-Carlo System Hamiltonian (extensive value).
       */
       double mcHamiltonian_;
-
-      /**
-      * Pointer to parent System.
-      */
-      System<D>* systemPtr_;
-
-      /**
-      * Pointer to random number generator.
-      */
-      Random* randomPtr_;
 
       /**
       * Has the MC Hamiltonian been computed for the current w and c fields?
       */ 
       bool hasMcHamiltonian_;
 
-
       // Private member functions
-
-      /**
-      * Return pointer to a new McMoveFactory.
-      */
-      virtual Factory< McMove<D> >* newDefaultFactory() const;
-
+       
       /**
       * Perform eigenvalue analysis of projected chi matrix.
       */
       void analyzeChi();
 
+      void setup();
+
    };
 
    // Inline functions
 
-   /*
-   * Return probability of move number i
-   */
+   // Get the Monte-Carlo move manager.
    template <int D>
-   inline double McSimulator<D>::probability(int i) const
-   {
-      assert(i >= 0);  
-      assert(i < size());  
-      return probabilities_[i];
-   }
+   inline McMoveManager<D>& McSimulator<D>::mcMoveManager()
+   {  return mcMoveManager_; }
 
+   // Get the random number generator.
+   template <int D>
+   inline Random& McSimulator<D>::random()
+   {  return random_; }
+   
+   // Get the parent system.
+   template <int D>
+   inline System<D>& McSimulator<D>::system()
+   {  return *systemPtr_; }
+   
    // Get the precomputed MC Hamiltonian
    template <int D>
    inline double McSimulator<D>::mcHamiltonian() const
@@ -286,21 +257,12 @@ namespace Pspc {
       return mcHamiltonian_; 
    }
 
-   // Get the precomputed MC Hamiltonian
-   template <int D>
-   inline System<D>& McSimulator<D>::system()
-   {  
-      UTIL_CHECK(systemPtr_);
-      return *systemPtr_; 
-   }
-
-   // Get the precomputed MC Hamiltonian
-   template <int D>
-   inline Random& McSimulator<D>::random()
-   {  
-      UTIL_CHECK(randomPtr_);
-      return *randomPtr_; 
-   }
+   #ifndef PSPC_MC_SIMULATOR_TPP
+   // Suppress implicit instantiation
+   extern template class McSimulator<1>;
+   extern template class McSimulator<2>;
+   extern template class McSimulator<3>;
+   #endif
 
 }
 }

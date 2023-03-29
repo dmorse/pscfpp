@@ -15,8 +15,8 @@ namespace Pspc {
    * Constructor
    */
    template <int D>
-   McMoveFactory<D>::McMoveFactory(System<D>& system)
-    : sysPtr_(&system)
+   McMoveFactory<D>::McMoveFactory(McSimulator<D>& mcSimulator)
+    : mcSimulatorPtr_(&mcSimulator)
    {}
 
    /* 
@@ -34,7 +34,7 @@ namespace Pspc {
       #if 0 
       // Try to match classname
       if (className == "FourierMove") {
-         ptr = new FilmMcMove<D, AmMcMove<D> >(*sysPtr_);
+         ptr = new FilmMcMove<D, AmMcMove<D> >(*mcSimulatorPtr_);
       }
       #endif
 

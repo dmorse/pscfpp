@@ -10,7 +10,7 @@
 
 #include <util/param/Factory.h>  
 #include <pspc/mcmove/McMove.h>
-#include <pspc/System.h>
+#include <pspc/mcmove/McSimulator.h>
 
 #include <string>
 
@@ -32,8 +32,10 @@ namespace Pspc {
 
       /**
       * Constructor.
+      *
+      * \param mcSimulator parent McSimulator<D> object
       */
-      McMoveFactory(System<D>& system);
+      McMoveFactory(McSimulator<D>& mcSimulator);
 
       /**
       * Method to create any McMove supplied with PSCF.
@@ -47,8 +49,8 @@ namespace Pspc {
 
    private:
 
-      /// Pointer to the parent system.
-      System<D>* sysPtr_;
+      /// Pointer to the parent mcSimulator.
+      McSimulator<D>* mcSimulatorPtr_;
 
    };
 

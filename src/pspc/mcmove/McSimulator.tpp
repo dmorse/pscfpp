@@ -28,9 +28,9 @@ namespace Pspc {
    */
    template <int D>
    McSimulator<D>::McSimulator(System<D>& system)
-   : Manager< McMove<D> >(),
+   : mcMoveManager_(*this, system),
+     random_(),
      systemPtr_(&system),
-     randomPtr_(&system.random()),
      hasMcHamiltonian_(false)
    {  setClassName("McSimulator"); }
 
@@ -41,39 +41,13 @@ namespace Pspc {
    McSimulator<D>::~McSimulator()
    {}
 
-   /*
-   * Return a pointer to a new McMoveFactory object.
-   */
-   template <int D>
-   Factory< McMove<D> >* McSimulator<D>::newDefaultFactory() const
-   {  return new McMoveFactory<D>(*systemPtr_); }
-
    /* 
    * Read instructions for creating objects from file.
    */
    template <int D>
    void McSimulator<D>::readParameters(std::istream &in)
    {
-      Manager< McMove<D> >::readParameters(in);
-
-      if (size() > 0) {
-
-         // Allocate and store probabilities
-         probabilities_.allocate(size());
-         double  totalProbability = 0.0;
-         int     iMove;
-         for (iMove = 0; iMove < size(); ++iMove) {
-            probabilities_[iMove] = (*this)[iMove].probability();
-            totalProbability += probabilities_[iMove];
-         }
-   
-         // Allocate and store and normalize probabilities
-         for (iMove = 0; iMove < size(); ++iMove) {
-            probabilities_[iMove] = probabilities_[iMove]/totalProbability;
-            (*this)[iMove].setProbability(probabilities_[iMove]);
-         }
-
-      }
+      mcMoveManager_.readParameters(in);
 
       // Allocate projected chi matrix chiP_ and associated arrays
       const int nMonomer = system().mixture().nMonomer();
@@ -82,7 +56,6 @@ namespace Pspc {
       chiEvecs_.allocate(nMonomer, nMonomer);
 
       analyzeChi();
-
    }
 
    /*
@@ -108,33 +81,7 @@ namespace Pspc {
       computeWC();
       computeMcHamiltonian();
 
-      // Call setup function of each McMove
-      for (int iMove = 0; iMove < size(); ++iMove) {
-         (*this)[iMove].setup();
-      }
-   }
-
-   /*
-   * Choose a McMove at random.
-   */
-   template <int D>
-   McMove<D>& McSimulator<D>::chooseMove()
-   {
-      UTIL_CHECK(size() > 0);
-      int iMove = randomPtr_->drawFrom(&probabilities_[0], size());
-      return (*this)[iMove];
-   }
-
-   /*
-   * Output statistics for every move.
-   */
-   template <int D>
-   void McSimulator<D>::output()
-   {
-      UTIL_CHECK(size() > 0);
-      for (int i=0; i < size(); i++) {
-         (*this)[i].output();
-      }
+      mcMoveManager_.setup();
    }
 
    /*
@@ -143,7 +90,7 @@ namespace Pspc {
    template <int D>
    void McSimulator<D>::simulate(int nStep)
    {
-      UTIL_CHECK(size() > 0);
+      UTIL_CHECK(mcMoveManager_.size() > 0);
 
       setup();
       Log::file() << std::endl;
@@ -154,14 +101,14 @@ namespace Pspc {
       for (int iStep = 0; iStep < nStep; ++iStep) {
 
          // Choose and attempt an McMove
-         chooseMove().move();
+         mcMoveManager_.chooseMove().move();
 
       }
       timer.stop();
       double time = timer.time();
 
       // Output results of move statistics to files
-      output();
+      mcMoveManager_.output();
 
       // Output time for the simulation run
       Log::file() << std::endl;
@@ -173,6 +120,7 @@ namespace Pspc {
                   << " sec" << std::endl;
       Log::file() << std::endl;
 
+      #if 0
       // Print McMove acceptance statistics
       long attempt;
       long accept;
@@ -185,10 +133,10 @@ namespace Pspc {
            << endl;
       int nMove = size();
       for (int iMove = 0; iMove < nMove; ++iMove) {
-         attempt = (*this)[iMove].nAttempt();
-         accept  = (*this)[iMove].nAccept();
+         attempt = mcMoveManager_[iMove].nAttempt();
+         accept  = mcMoveManager_[iMove].nAccept();
          Log::file() << setw(32) << left
-              << (*this)[iMove].className()
+              << mcMoveManager_[iMove].className()
               << setw(12) << right << attempt
               << setw(12) << accept
               << setw(15) << fixed << setprecision(6)
@@ -196,6 +144,7 @@ namespace Pspc {
               << endl;
       }
       Log::file() << endl;
+      #endif
 
    }
 
