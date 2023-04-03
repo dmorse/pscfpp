@@ -1,0 +1,49 @@
+System{
+  Mixture{
+     nMonomer  2
+     monomers[
+               1.0  
+               1.0 
+     ]
+     nPolymer  1
+     Polymer{
+        type    linear
+        nBlock  2
+        blocks[
+                0   0.56
+                1   0.44
+        ]
+        phi     1.0
+     }
+     ds   0.01
+  }
+  Interaction{
+     chi(
+          1   0   12.0
+     )
+  }
+  Domain{
+    mesh        40
+    lattice     lamellar  
+    groupName   P_-1
+  }
+  AmCompressor{
+    epsilon      1.0e-8
+    maxItr       300
+    maxHist      50 
+    errorType    normResid
+  }
+  
+  McSimulator{
+    McMoveManager{
+        RealMove{
+            probability    1
+            A     0
+		
+        }
+    }
+  }
+
+}
+
+    unitCell Lamellar   1.3835952906

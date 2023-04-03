@@ -12,6 +12,7 @@
 
 #include <pspc/System.h>
 #include <util/archives/Serializable_includes.h>
+#include <pspc/compressor/Compressor.h>
 
 namespace Pscf {
 namespace Pspc {
@@ -81,7 +82,7 @@ namespace Pspc {
       attemptMove();
 
       // Call compressor
-      // system().compressor().compress(system.w()));
+      system().compressor().compress();
 
       // Evaluate new Hamiltonian
       mcSimulator().computeWC();

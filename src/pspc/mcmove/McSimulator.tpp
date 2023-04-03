@@ -55,7 +55,11 @@ namespace Pspc {
       chiP_.allocate(nMonomer, nMonomer);
       chiEvals_.allocate(nMonomer);
       chiEvecs_.allocate(nMonomer, nMonomer);
-
+      wc_.allocate(nMonomer);
+      const int meshSize = system().domain().mesh().size();
+      for (int i = 0; i < nMonomer; ++i) {
+            wc_[i].allocate(meshSize);
+      }
       analyzeChi();
    }
 
@@ -64,24 +68,24 @@ namespace Pspc {
    */
    template <int D>
    void McSimulator<D>::setup()
-   {
+   {  
       UTIL_CHECK(system().w().hasData());
+      system().compute();
       UTIL_CHECK(system().hasCFields());
-
       // Allocate mcState_, if necessary.
       if (!mcState_.isAllocated) {
          const int nMonomer = system().mixture().nMonomer();
          const IntVec<D> dimensions = system().domain().mesh().dimensions();
          mcState_.allocate(nMonomer, dimensions);
       }
-
+      
+      
+      
       // Eigenanalysis of the projected chi matrix.
       analyzeChi();
-
       // Compute field components and MC Hamiltonian for initial state
       computeWC();
       computeMcHamiltonian();
-
       mcMoveManager_.setup();
    }
 
@@ -157,7 +161,7 @@ namespace Pspc {
    {
       UTIL_CHECK(system().w().hasData());
       UTIL_CHECK(mcState_.isAllocated);
-      UTIL_CHECK(!mcState_.hasData);
+      //UTIL_CHECK(!mcState_.hasData);
 
       int nMonomer = system().mixture().nMonomer();
       for (int i = 0; i < nMonomer; ++i) {
@@ -423,10 +427,8 @@ namespace Pspc {
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
       int i, j, k;
-
       // Loop over eigenvectors (j is an eigenvector index)
       for (j = 0; j < nMonomer; ++j) {
-
          // Loop over grid points to zero out field wc_[j]
          RField<D>& wc = wc_[j];
          for (i = 0; i < meshSize; ++i) {
@@ -445,6 +447,16 @@ namespace Pspc {
 
          }
       }
+  
+      // Debugging output
+      #if 0
+      Log::file() << "wc " << wc_.capacity() << "\n";
+      for (i = 0; i < 10; ++i) {
+         Log::file() << "wc_1 " << wc_[0][i] << "\n";
+         Log::file() << "wc_2 " << wc_[1][i] << "\n";
+      }
+      #endif
+
 
    }
 
