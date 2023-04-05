@@ -37,11 +37,11 @@ System{
   McSimulator{
     McMoveManager{
       RealMove{
-        probability   0.3
-        A             10
+        probability   0.5
+        A             0.1
       }
       TestMove{
-        probability   0.7
+        probability   0.5
         A             0
       }
 	}

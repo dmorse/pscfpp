@@ -26,7 +26,8 @@ namespace Pspc {
    */
    template <int D>
    RealMove<D>::RealMove(McSimulator<D>& simulator) 
-    : McMove<D>(simulator)
+    : McMove<D>(simulator),
+      isAllocated_(false)
    { setClassName("RealMove"); }
 
    /*
@@ -48,6 +49,23 @@ namespace Pspc {
       read(in, "A", A_);
    }
    
+   template <int D>
+   void RealMove<D>::setup()
+   {  
+      McMove<D>::setup();
+      const int nMonomer = system().mixture().nMonomer();
+      const int meshSize = system().domain().mesh().size();
+      if (!isAllocated_){
+         wFieldTmp_.allocate(nMonomer);
+         for (int i = 0; i < nMonomer; ++i) {
+            wFieldTmp_[i].allocate(meshSize);
+         }
+         isAllocated_ = true;
+      }
+   }
+   
+   
+   
    /*
    * Attempt unconstrained move
    */
@@ -56,21 +74,17 @@ namespace Pspc {
    {
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
-      DArray< RField<D> > wField;
-      wField.allocate(nMonomer);
-      
-      
+
       //New field is the w0 + the newGuess for the Lagrange multiplier field
       for (int i = 0; i < nMonomer; i++){
-         wField[i].allocate(meshSize);
          for (int k = 0; k < meshSize; k++){
             //Random number generator
             double r = random().uniform(-A_,A_);
             //Log::file() << "random change " << r << "\n";
-            wField[i][k] = system().w().rgrid()[i][k] + r;
+            wFieldTmp_[i][k] = system().w().rgrid()[i][k] + r;
          }
       }
-      system().setWRGrid(wField);
+      system().setWRGrid(wFieldTmp_);
 
    }
 

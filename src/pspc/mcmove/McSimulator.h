@@ -97,6 +97,16 @@ namespace Pspc {
       void restoreMcState();
 
       /**
+      * Clear the saved copy of the Monte-Carlo state.
+      *
+      * This function, restoreMcState(), and saveMcState() are intended to be used 
+      * together in the implementation of Monte-Carlo moves. If an 
+      * attempted move is accepted, clearMcState() is called to
+      * clear mcState_.hasData
+      */
+      void clearMcState();
+      
+      /**
       * Get an array of the eigenvalues of the projected chi matrix.
       *
       * The projected chi matrix is given by the matrix product P*chi*P,

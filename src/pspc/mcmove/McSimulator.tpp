@@ -70,8 +70,6 @@ namespace Pspc {
    void McSimulator<D>::setup()
    {  
       UTIL_CHECK(system().w().hasData());
-      system().compute();
-      UTIL_CHECK(system().hasCFields());
       // Allocate mcState_, if necessary.
       if (!mcState_.isAllocated) {
          const int nMonomer = system().mixture().nMonomer();
@@ -84,6 +82,7 @@ namespace Pspc {
       // Eigenanalysis of the projected chi matrix.
       analyzeChi();
       // Compute field components and MC Hamiltonian for initial state
+      system().compute();
       computeWC();
       computeMcHamiltonian();
       mcMoveManager_.setup();
@@ -161,7 +160,7 @@ namespace Pspc {
    {
       UTIL_CHECK(system().w().hasData());
       UTIL_CHECK(mcState_.isAllocated);
-      //UTIL_CHECK(!mcState_.hasData);
+      UTIL_CHECK(!mcState_.hasData);
 
       int nMonomer = system().mixture().nMonomer();
       for (int i = 0; i < nMonomer; ++i) {
@@ -191,6 +190,17 @@ namespace Pspc {
       mcHamiltonian_ = mcState_.mcHamiltonian;
       mcState_.hasData = false;
       hasMcHamiltonian_ = true;
+   }
+   
+   /*
+   * Clear the saved Monte-Carlo state.
+   *
+   * Used when an attempted Monte-Carlo move is accepted.
+   */
+   template <int D>
+   void McSimulator<D>::clearMcState()
+   {
+      mcState_.hasData = false;
    }
 
    /*

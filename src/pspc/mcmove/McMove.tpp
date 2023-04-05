@@ -95,6 +95,7 @@ namespace Pspc {
       accept = random().metropolis(weight);
       if (accept) {
           incrementNAccept();
+          mcSimulator().clearMcState();
       } else {
           mcSimulator().restoreMcState();
       }

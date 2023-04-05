@@ -11,7 +11,9 @@
 #include "McMove.h"                          //base class
 #include <util/global.h>
 #include <util/containers/DArray.h>
+#include <pspc/field/RField.h>
 #include <util/param/ParamComposite.h>
+
 
 namespace Pscf {
 namespace Pspc
@@ -56,9 +58,13 @@ namespace Pspc
       */
       void output();
       
-      // Inherited public member function
+      /**
+      * Setup before the beginning of each simulation run
+      */
+      void setup();
       
-      using McMove<D>::setup;
+      
+      // Inherited public member function
       using McMove<D>::move;
       using McMove<D>::readProbability;
       using ParamComposite::read;
@@ -85,6 +91,14 @@ namespace Pspc
       
       /// Move step size is randomly selected from uniform distribution [-A, A]
       double A_;
+      
+      /// wField after attempt McMove. local variable wFieldTmp_ used in attemptMove() function
+      DArray< RField<D> > wFieldTmp_;
+      
+      /**
+      * Has the variable been allocated?
+      */
+      bool isAllocated_;
       
    
    };
