@@ -75,7 +75,7 @@ namespace Pspc {
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
 
-      //New field is the w0 + the newGuess for the Lagrange multiplier field
+      //attampt move with delta W randomly chosen from uniform distribution [-A, A] 
       for (int i = 0; i < nMonomer; i++){
          for (int k = 0; k < meshSize; k++){
             //Random number generator

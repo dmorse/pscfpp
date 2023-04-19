@@ -10,8 +10,8 @@ System{
         type    linear
         nBlock  2
         blocks[
-                0   0.56
-                1   0.44
+                0   0.5
+                1   0.5
         ]
         phi     1.0
      }
@@ -19,7 +19,7 @@ System{
   }
   Interaction{
      chi(
-          1   0   12.0
+          1   0   10.0
      )
   }
   Domain{
@@ -28,7 +28,7 @@ System{
     groupName   P_-1
   }
   AmCompressor{
-    epsilon      1.0e-8
+    epsilon      1.0e-6
     maxItr       300
     maxHist      50 
     errorType    normResid
@@ -36,11 +36,17 @@ System{
   
   McSimulator{
     McMoveManager{
-        RealMove{
-            probability    1
-            A     0
-		
+        FourierMove{
+            probability     1
+            A               2
+            F*              20.990
+            epsilon         9.27
         }
+        
+        RealMove{
+            probability     0
+            A               1.9
+      }
     }
   }
 
