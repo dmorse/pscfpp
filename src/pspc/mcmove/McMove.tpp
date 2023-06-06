@@ -88,10 +88,12 @@ namespace Pspc {
       mcSimulator().computeWC();
       mcSimulator().computeMcHamiltonian();
       double newHamiltonian = mcSimulator().mcHamiltonian();
-
+      Log::file() << "newHamiltonian" << newHamiltonian;
+      Log::file() << "oldHamiltonian" << oldHamiltonian;
       // Accept or reject move
       bool accept = false;
       double weight = exp(-(newHamiltonian - oldHamiltonian));
+      Log::file() << "weight" << weight ;
       accept = random().metropolis(weight);
       if (accept) {
           incrementNAccept();

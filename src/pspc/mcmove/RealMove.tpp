@@ -74,8 +74,8 @@ namespace Pspc {
    {
       const int nMonomer = system().mixture().nMonomer();
       const int meshSize = system().domain().mesh().size();
-
-      //attampt move with delta W randomly chosen from uniform distribution [-A, A] 
+      #if 0
+      //attampt move with rigid field change randomly chosen from uniform distribution [-A, A] 
       for (int i = 0; i < nMonomer; i++){
          for (int k = 0; k < meshSize; k++){
             //Random number generator
@@ -84,6 +84,17 @@ namespace Pspc {
             wFieldTmp_[i][k] = system().w().rgrid()[i][k] + r;
          }
       }
+      #endif
+      
+      for (int k = 0; k < meshSize; k++){
+         Util::Random::SeedType seed = 0;
+         random().setSeed(seed);
+         double r = random().uniform(-A_,A_);
+         wFieldTmp_[0][k] = system().w().rgrid()[0][k] - r;
+         wFieldTmp_[1][k] = system().w().rgrid()[1][k] + r;
+      }
+      
+      
       system().setWRGrid(wFieldTmp_);
 
    }

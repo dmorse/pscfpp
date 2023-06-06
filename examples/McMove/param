@@ -15,42 +15,43 @@ System{
         ]
         phi     1.0
      }
-     ds   0.01
+     vMonomer  0.01
+     ds   0.02
   }
   Interaction{
      chi(
-          1   0   0.001
+          1   0   13
      )
   }
   Domain{
-    mesh        40
-    lattice     lamellar  
+    mesh           16    16    16
+    lattice     cubic   
     groupName   P_-1
   }
   AmCompressor{
-    epsilon      1.0e-6
-    maxItr       300
-    maxHist      50 
+    epsilon      1.0e-4
+    maxItr       200
+    maxHist      30     
+    verbose	 0
     errorType    normResid
-    verbose	 2
   }
   
   McSimulator{
     McMoveManager{
         FourierMove{
             probability     0
-            A               2
+            A               0
             F*              20.990
-            epsilon         9.27
+            epsilon         2.64737
         }
         
         RealMove{
             probability     1
-            A               0.2
+            A               0.4
       }
     }
   }
 
 }
 
-    unitCell Lamellar   1.3835952906
+    unitCell cubic   1.3835952906

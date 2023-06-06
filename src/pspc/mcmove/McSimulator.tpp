@@ -102,6 +102,7 @@ namespace Pspc {
       // Main Monte Carlo loop
       Timer timer;
       timer.start();
+
       for (int iStep = 0; iStep < nStep; ++iStep) {
 
          // Choose and attempt an McMove
@@ -255,6 +256,7 @@ namespace Pspc {
             }
          }
       }
+      Log::file() << "-lnQ " << -lnQ<< "\n";
       // lnQ now contains a value per monomer
 
       // Compute field contribution HW
@@ -264,26 +266,30 @@ namespace Pspc {
       // Compute quadratic field contribution to HW
       for (j = 0; j < nMonomer - 1; ++j) {
          prefactor = -0.5*double(nMonomer)/chiEvals_[j];
+         Log::file() << "chiEvals" << chiEvals_[j]<< "\n";
          RField<D> const & wc = wc_[j];
          for (i = 0; i < meshSize; ++i) {
             w = wc[i];
             HW += prefactor*w*w;
          }
       }
+      
+      
       // Subtract average of Langrange multiplier field
       RField<D> const & xi = wc_[nMonomer-1];
       for (i = 0; i < meshSize; ++i) {
          HW -= xi[i];
       }
+
       HW /= double(meshSize);  
       // HW now contains a value per monomer
-
+      Log::file() << "HW " << HW<< "\n";
       // Compute final MC Hamiltonian
       mcHamiltonian_ = HW - lnQ;
+      Log::file()<< "mcHamiltonian " << mcHamiltonian_<< "\n";
       const double vSystem  = domain.unitCell().volume();
       const double vMonomer = mixture.vMonomer();
       mcHamiltonian_ *= vSystem/vMonomer;
-
       hasMcHamiltonian_ = true;
    }
 
