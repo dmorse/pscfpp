@@ -37,7 +37,7 @@ namespace Pscf
       nBasis_(0),
       itr_(0),
       nElem_(0),
-      verbose_(0),
+      verbose_(1),
       outputTime_(false),
       isAllocatedAM_(false)
    {  setClassName("AmIteratorTmpl"); }
@@ -66,11 +66,12 @@ namespace Pscf
       // Default set in constructor (50) or before calling this function
       readOptional(in, "maxHist", maxHist_);
 
-      // Verbosity level of error reporting, values 0-2 (optional)
-      // Initialized to 0 by default in constructor
-      // verbose_ = 0 => concise
-      // verbose_ = 1 => report all error measures at end
-      // verbose_ = 2 => report all error measures every iteration
+      // Verbosity level of error reporting, values 0-3 (optional)
+      // Initialized to 1 by default in constructor
+      // verbose_ = 0 => FTS
+      // verbose_ = 1 => concise
+      // verbose_ = 2 => report all error measures at end
+      // verbose_ = 3 => report all error measures every iteration
       readOptional(in, "verbose", verbose_);
 
       // Flag to output timing results (true) or skip (false)
@@ -119,10 +120,13 @@ namespace Pscf
 
          timerAM.start();
 
-         if (verbose_ > 1) {
+         if (verbose_ > 2) {
             Log::file() << "------------------------------- \n";
          }
-         Log::file() << " Iteration " << Int(itr_,5);
+         
+         if (verbose_ > 0){
+            Log::file() << " Iteration " << Int(itr_,5);
+         }
 
 
          if (nBasis_ < maxHist_) {
@@ -148,7 +152,7 @@ namespace Pscf
             Log::file() << ",  error  =             NaN" << std::endl;
             break; // Exit loop if a NanException is caught
          }
-         if (verbose_ < 2) {
+         if (verbose_ > 0 && verbose_ < 3) {
              Log::file() << ",  error  = " << Dbl(error, 15) << std::endl;
          }
          timerError.stop();
@@ -163,42 +167,47 @@ namespace Pscf
             timerAM.stop();
             timerTotal.stop();
 
-            if (verbose_ > 1) {
+            if (verbose_ > 2) {
                Log::file() << "-------------------------------\n";
             }
-            Log::file() << " Converged\n";
+            
+            if (verbose_ > 0) {
+               Log::file() << " Converged\n";
+            }
 
             // Output error report if not done previously
-            if (verbose_ == 1) {
+            if (verbose_ == 2) {
                Log::file() << "\n";
                computeError(2); 
             }
 
             // Output timing results, if requested.
-            if (outputTime_) {
-               double total = timerTotal.time();
+            if (verbose_ > 0){
+               if (outputTime_) {
+                  double total = timerTotal.time();
+                  Log::file() << "\n";
+                  Log::file() << "Iterator times contributions:\n";
+                  Log::file() << "\n";
+                  Log::file() << "MDE solution:         "
+                              << timerMDE.time()  << " s,  "
+                              << timerMDE.time()/total << "\n";
+                  Log::file() << "residual computation: "
+                              << timerResid.time()  << " s,  "
+                              << timerResid.time()/total << "\n";
+                  Log::file() << "mixing coefficients:  "
+                              << timerCoeff.time()  << " s,  "
+                              << timerCoeff.time()/total << "\n";
+                  Log::file() << "checking convergence: "
+                              << timerError.time()  << " s,  "
+                              << timerError.time()/total << "\n";
+                  Log::file() << "updating guess:       "
+                              << timerOmega.time()  << " s,  "
+                              << timerOmega.time()/total << "\n";
+                  Log::file() << "total time:           "
+                              << total << " s  \n";
+               }
                Log::file() << "\n";
-               Log::file() << "Iterator times contributions:\n";
-               Log::file() << "\n";
-               Log::file() << "MDE solution:         "
-                           << timerMDE.time()  << " s,  "
-                           << timerMDE.time()/total << "\n";
-               Log::file() << "residual computation: "
-                           << timerResid.time()  << " s,  "
-                           << timerResid.time()/total << "\n";
-               Log::file() << "mixing coefficients:  "
-                           << timerCoeff.time()  << " s,  "
-                           << timerCoeff.time()/total << "\n";
-               Log::file() << "checking convergence: "
-                           << timerError.time()  << " s,  "
-                           << timerError.time()/total << "\n";
-               Log::file() << "updating guess:       "
-                           << timerOmega.time()  << " s,  "
-                           << timerOmega.time()/total << "\n";
-               Log::file() << "total time:           "
-                           << total << " s  \n";
             }
-            Log::file() << "\n";
 
             // Successful completion (i.e., converged within tolerance)
             return 0;
@@ -343,7 +352,9 @@ namespace Pscf
       if (!isAllocatedAM_) return;
 
       // Clear histories and bases (ring buffers)
-      Log::file() << "Clearing ring buffers\n";
+      if (verbose_ > 0) {
+         Log::file() << "Clearing ring buffers\n";
+      }
       resHists_.clear();
       fieldHists_.clear();
       resBasis_.clear();

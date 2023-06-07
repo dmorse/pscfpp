@@ -266,7 +266,6 @@ namespace Pspc {
       // Compute quadratic field contribution to HW
       for (j = 0; j < nMonomer - 1; ++j) {
          prefactor = -0.5*double(nMonomer)/chiEvals_[j];
-         Log::file() << "chiEvals" << chiEvals_[j]<< "\n";
          RField<D> const & wc = wc_[j];
          for (i = 0; i < meshSize; ++i) {
             w = wc[i];
@@ -286,7 +285,6 @@ namespace Pspc {
       Log::file() << "HW " << HW<< "\n";
       // Compute final MC Hamiltonian
       mcHamiltonian_ = HW - lnQ;
-      Log::file()<< "mcHamiltonian " << mcHamiltonian_<< "\n";
       const double vSystem  = domain.unitCell().volume();
       const double vMonomer = mixture.vMonomer();
       mcHamiltonian_ *= vSystem/vMonomer;
