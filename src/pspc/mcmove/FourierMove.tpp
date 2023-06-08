@@ -201,7 +201,7 @@ namespace Pspc {
             }
          }
       }
-      Log::file() << " FourierMove" << "\n";
+      //Log::file() << " FourierMove" << "\n";
       
       // Convert Fourier (k-grid) format back to Real grid format
       for (int i = 0; i < nMonomer; ++i) {
