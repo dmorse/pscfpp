@@ -286,9 +286,11 @@ namespace Pspc {
 
       HW /= double(meshSize);  
       // HW now contains a value per monomer
+      
       #if 0
       Log::file() << "HW " << HW<< "\n";
       #endif
+      
       // Compute final MC Hamiltonian
       mcHamiltonian_ = HW - lnQ;
       const double vSystem  = domain.unitCell().volume();
