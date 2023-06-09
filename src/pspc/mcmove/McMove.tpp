@@ -12,6 +12,7 @@
 
 #include <pspc/System.h>
 #include <util/archives/Serializable_includes.h>
+#include <pspc/compressor/Compressor.h>
 
 namespace Pscf {
 namespace Pspc {
@@ -81,19 +82,22 @@ namespace Pspc {
       attemptMove();
 
       // Call compressor
-      // system().compressor().compress(system.w()));
+      system().compressor().compress();
 
       // Evaluate new Hamiltonian
       mcSimulator().computeWC();
       mcSimulator().computeMcHamiltonian();
       double newHamiltonian = mcSimulator().mcHamiltonian();
-
+      //Log::file() << "newHamiltonian" << newHamiltonian << "\n";
+      //Log::file() << "oldHamiltonian" << oldHamiltonian << "\n";
       // Accept or reject move
       bool accept = false;
       double weight = exp(-(newHamiltonian - oldHamiltonian));
+      //Log::file() << "weight" << weight << "\n";
       accept = random().metropolis(weight);
       if (accept) {
           incrementNAccept();
+          mcSimulator().clearMcState();
       } else {
           mcSimulator().restoreMcState();
       }
