@@ -38,16 +38,9 @@ System{
   
   McSimulator{
     McMoveManager{
-        FourierMove{
-            probability     0.5
-            A               0
-            F*              20.990
-            epsilon         2.64737
-        }
-        
         RealMove{
-            probability     0.5
-            A               0
+            probability     1
+            A               0.4
       }
     }
   }
