@@ -35,7 +35,6 @@ System{
     verbose	 0
     errorType    normResid
   }
-  
   McSimulator{
     McMoveManager{
         RealMove{
@@ -44,7 +43,6 @@ System{
       }
     }
   }
-
 }
 
     unitCell cubic   1.3835952906
