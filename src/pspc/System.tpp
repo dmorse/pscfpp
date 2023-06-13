@@ -1159,7 +1159,7 @@ namespace Pspc
    void System<D>::writeCRGrid(const std::string & filename) const
    {
       UTIL_CHECK(isAllocatedRGrid_);
-      UTIL_CHECK(hasCFields_);
+      //UTIL_CHECK(hasCFields_);
       domain_.fieldIo().writeFieldsRGrid(filename, c_.rgrid(), 
                                          domain_.unitCell());
    }

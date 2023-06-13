@@ -5,8 +5,9 @@ pspc_mcmove_= \
   pspc/mcmove/McMoveManager.cpp \
   pspc/mcmove/Analyzer.cpp \
   pspc/mcmove/AnalyzerManager.cpp \
-  pspc/mcmove/McSimulator.cpp 
-
+  pspc/mcmove/McSimulator.cpp \
+  pspc/mcmove/RealMove.cpp 
+  
 pspc_mcmove_SRCS=\
      $(addprefix $(SRC_DIR)/, $(pspc_mcmove_))
 pspc_mcmove_OBJS=\
