@@ -10,7 +10,7 @@
 
 #include "McState.h"                     // member
 #include "McMoveManager.h"               // member
-
+#include "AnalyzerManager.h"               // member
 #include <util/param/Manager.h>          // base class template
 #include <util/param/ParamComposite.h>   // base class
 #include <util/random/Random.h>          // member
@@ -161,14 +161,25 @@ namespace Pspc {
       System<D>& system();
 
       /**
+      * Get AnalyzerManger
+      */
+      AnalyzerManager<D>& analyzerManager();
+      
+      /**
       * Get McMoveManger
       */
-      McMoveManager<D>& mcMoveManager();
+      McMoveManager<D>& mcMoveManager();     
       
       /**
       * Get random number generator by reference.
       */
       Random& random();
+      
+            
+      /**
+      * Return the Monte Carlo step index
+      */
+      long iStep();
 
    private:
       
@@ -179,6 +190,10 @@ namespace Pspc {
       */
       McMoveManager<D> mcMoveManager_;  
       
+      /**
+      * Manger for Monte Carlo Analyzer.
+      */
+      AnalyzerManager<D> analyzerManager_;        
       /**
       * Random number generator
       */
@@ -230,6 +245,11 @@ namespace Pspc {
       */ 
       bool hasMcHamiltonian_;
 
+      /**
+      * Count Monte Carlo step 
+      */
+      long iStep_;
+      
       // Private member functions
        
       /**
@@ -241,7 +261,7 @@ namespace Pspc {
       * Called at the beginning of the simulation member function.
       */
       void setup();
-
+      
    };
 
    // Inline functions
@@ -251,6 +271,11 @@ namespace Pspc {
    inline McMoveManager<D>& McSimulator<D>::mcMoveManager()
    {  return mcMoveManager_; }
 
+   // Get the Monte-Carlo analyzer manager.
+   template <int D>
+   inline AnalyzerManager<D>& McSimulator<D>::analyzerManager()
+   {  return analyzerManager_; }
+   
    // Get the random number generator.
    template <int D>
    inline Random& McSimulator<D>::random()
@@ -269,6 +294,11 @@ namespace Pspc {
       return mcHamiltonian_; 
    }
 
+   template <int D>
+   inline long McSimulator<D>::iStep() 
+   {  
+      return iStep_; 
+   }
    #ifndef PSPC_MC_SIMULATOR_TPP
    // Suppress implicit instantiation
    extern template class McSimulator<1>;

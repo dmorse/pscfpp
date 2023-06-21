@@ -11,6 +11,7 @@
 #include "McSimulator.h"
 #include <pspc/System.h>
 #include <pspc/mcmove/McMoveFactory.h>
+#include <pspc/mcmove/AnalyzerFactory.h>
 
 #include <util/misc/Timer.h>
 #include <util/random/Random.h>
@@ -29,6 +30,7 @@ namespace Pspc {
    template <int D>
    McSimulator<D>::McSimulator(System<D>& system)
    : mcMoveManager_(*this, system),
+     analyzerManager_(*this, system),
      random_(),
      systemPtr_(&system),
      hasMcHamiltonian_(false)
@@ -49,7 +51,9 @@ namespace Pspc {
    {
       // Read block of mc move data inside
       readParamComposite(in, mcMoveManager_);
-
+      // Read block of analyzer
+      Analyzer<D>::baseInterval = 0; // default value
+      readParamCompositeOptional(in, analyzerManager_);
       // Allocate projected chi matrix chiP_ and associated arrays
       const int nMonomer = system().mixture().nMonomer();
       chiP_.allocate(nMonomer, nMonomer);
@@ -86,6 +90,10 @@ namespace Pspc {
       computeWC();
       computeMcHamiltonian();
       mcMoveManager_.setup();
+      if (analyzerManager_.size() > 0){
+         analyzerManager_.setup();
+      }
+      
    }
 
    /*
@@ -105,8 +113,17 @@ namespace Pspc {
 
       for (int iStep = 0; iStep < nStep; ++iStep) {
 
+         if (Analyzer<D>::baseInterval != 0) {
+            if (iStep % Analyzer<D>::baseInterval == 0) {
+               if (analyzerManager_.size() > 0) {
+                  iStep_ = iStep;
+                  analyzerManager_.sample(iStep);
+               }
+            }
+         }
          // Choose and attempt an McMove
          mcMoveManager_.chooseMove().move();
+         
 
       }
       timer.stop();

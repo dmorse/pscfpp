@@ -40,8 +40,17 @@ System{
     McMoveManager{
         RealMove{
             probability     1
-            A               0.4
+            A               0.5
       }
+      }
+    AnalyzerManager{
+        baseInterval    1
+        TrajectoryWriter{
+            interval        3
+            outputFileName  trajectory
+      }
+      }
+
     }
   }
 

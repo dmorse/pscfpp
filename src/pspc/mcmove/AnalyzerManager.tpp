@@ -3,6 +3,7 @@
 
 #include "AnalyzerManager.h" 
 #include "Analyzer.h" 
+#include <pspc/mcmove/AnalyzerFactory.h>
 #include <util/archives/Serializable_includes.h>
 
 namespace Pscf {
@@ -14,8 +15,10 @@ namespace Pspc {
    * Constructor.
    */
    template <int D>
-   AnalyzerManager<D>::AnalyzerManager()
-   : Manager< Analyzer<D> >()
+   AnalyzerManager<D>::AnalyzerManager(McSimulator<D>& mcSimulator, System<D>& system)
+   : Manager< Analyzer<D> >(),
+     mcSimulatorPtr_(&mcSimulator),
+     systemPtr_(&system)
    {  setClassName("AnalyzerManager"); }
 
    /*
@@ -24,7 +27,13 @@ namespace Pspc {
    template <int D>
    AnalyzerManager<D>::~AnalyzerManager()
    {} 
-
+   
+   /*
+   * Return a pointer to a new AnalyzerFactory object.
+   */
+   template <int D>
+   Factory< Analyzer<D> >* AnalyzerManager<D>::newDefaultFactory() const
+   {  return new AnalyzerFactory<D>(*mcSimulatorPtr_, *systemPtr_); }
    /*
    * Read parameter file. 
    *
