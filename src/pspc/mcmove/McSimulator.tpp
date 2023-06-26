@@ -131,6 +131,9 @@ namespace Pspc {
 
       // Output results of move statistics to files
       mcMoveManager_.output();
+      if (Analyzer<D>::baseInterval > 0){
+         analyzerManager_.output();
+      }
 
       // Output time for the simulation run
       Log::file() << std::endl;
@@ -186,6 +189,8 @@ namespace Pspc {
          mcState_.wc[i] = wc_[i];
       }
       mcState_.mcHamiltonian  = mcHamiltonian_;
+      mcState_.mcIdealHamiltonian  = mcIdealHamiltonian_;
+      mcState_.mcFieldHamiltonian  = mcFieldHamiltonian_;
       mcState_.hasData = true;
    }
 
@@ -206,6 +211,8 @@ namespace Pspc {
          wc_[i] = mcState_.wc[i];
       }
       mcHamiltonian_ = mcState_.mcHamiltonian;
+      mcIdealHamiltonian_ = mcState_.mcIdealHamiltonian;
+      mcFieldHamiltonian_ = mcState_.mcFieldHamiltonian;
       mcState_.hasData = false;
       hasMcHamiltonian_ = true;
    }
@@ -312,6 +319,8 @@ namespace Pspc {
       mcHamiltonian_ = HW - lnQ;
       const double vSystem  = domain.unitCell().volume();
       const double vMonomer = mixture.vMonomer();
+      mcFieldHamiltonian_ = vSystem/vMonomer * HW;
+      mcIdealHamiltonian_ = vSystem/vMonomer * lnQ;
       mcHamiltonian_ *= vSystem/vMonomer;
       hasMcHamiltonian_ = true;
    }

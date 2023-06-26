@@ -57,6 +57,12 @@ namespace Pspc
 
       /// Monte-Carlo Hamiltonian value.
       double mcHamiltonian;
+      
+      /// Monte-Carlo ideal gas contribution to Hamiltonian value.
+      double mcIdealHamiltonian;
+      
+      /// Monte-Carlo field part contribution to Hamiltonian value.
+      double mcFieldHamiltonian;
 
       /// Is this struct being used to store data?
       bool hasData;

@@ -180,6 +180,16 @@ namespace Pspc {
       * Return the Monte Carlo step index
       */
       long iStep();
+      
+      /**
+      * Get the ideal gas contribution (lnQ) to Hamiltonian used in Monte-Carlo simulations.
+      */
+      double mcIdealHamiltonian() const;
+      
+      /**
+      * Get the ideal field contribution (HW) to Hamiltonian used in Monte-Carlo simulations.
+      */
+      double mcFieldHamiltonian() const;
 
    private:
       
@@ -250,6 +260,16 @@ namespace Pspc {
       */
       long iStep_;
       
+      /**
+      * Ideal gas contributions (lnQ) to Monte-Carlo System Hamiltonian
+      */
+      double mcIdealHamiltonian_;
+      
+      /**
+      * Field contribution (HW) to Monte-Carlo System Hamiltonian
+      */
+      double mcFieldHamiltonian_;
+      
       // Private member functions
        
       /**
@@ -293,12 +313,30 @@ namespace Pspc {
       UTIL_CHECK(hasMcHamiltonian_);
       return mcHamiltonian_; 
    }
+   
+   // Get the precomputed MC Hamiltonian
+   template <int D>
+   inline double McSimulator<D>::mcIdealHamiltonian() const
+   {  
+      UTIL_CHECK(hasMcHamiltonian_);
+      return mcIdealHamiltonian_; 
+   }
+   
+   // Get the precomputed MC Hamiltonian
+   template <int D>
+   inline double McSimulator<D>::mcFieldHamiltonian() const
+   {  
+      UTIL_CHECK(hasMcHamiltonian_);
+      return mcFieldHamiltonian_; 
+   }
 
    template <int D>
    inline long McSimulator<D>::iStep() 
    {  
       return iStep_; 
    }
+   
+   
    #ifndef PSPC_MC_SIMULATOR_TPP
    // Suppress implicit instantiation
    extern template class McSimulator<1>;

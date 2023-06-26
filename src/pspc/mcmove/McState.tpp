@@ -23,7 +23,9 @@ using namespace Util;
    McState<D>::McState() 
      : w(),
        wc(), 
-       mcHamiltonian(0.0), 
+       mcHamiltonian(0.0),
+       mcIdealHamiltonian(0.0),
+       mcFieldHamiltonian(0.0), 
        hasData(false),
        isAllocated(false)
    {}

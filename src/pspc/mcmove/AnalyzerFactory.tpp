@@ -5,6 +5,7 @@
 
 // Subclasses of Analyzer 
 #include "TrajectoryWriter.h"
+#include "McHamiltonianAnalyzer.h"
 
 namespace Pscf {
 namespace Pspc {
@@ -36,7 +37,9 @@ namespace Pspc {
       // Try to match classname
       if (className == "TrajectoryWriter") {
          ptr = new TrajectoryWriter<D>(*mcSimulatorPtr_, *sysPtr_);
-      } 
+      } else if (className == "McHamiltonianAnalyzer") {
+         ptr = new McHamiltonianAnalyzer<D>(*mcSimulatorPtr_, *sysPtr_);
+      }
 
       return ptr;
    }

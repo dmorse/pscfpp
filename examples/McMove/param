@@ -46,9 +46,13 @@ System{
     AnalyzerManager{
         baseInterval    1
         TrajectoryWriter{
-            interval        3
+            interval        2
             outputFileName  trajectory
       }
+        McHamiltonianAnalyzer{
+            interval        2
+            outputFileName  mcHamiltonian
+            nSamplePerBlock 2
       }
 
     }

@@ -23,7 +23,7 @@ namespace Pspc
    /**
    * Periodically write snapshots to a trajectory file
    *
-   * \ingroup Pspc_McMove_Module
+   * \ingroup Pspc_Analyzer_Module
    */
    template <int D>
    class TrajectoryWriter : public Analyzer<D>
@@ -43,7 +43,7 @@ namespace Pspc
       {} 
    
       /**
-      * Read interval.
+      * Read interval and output file name.
       *
       * \param in input parameter file
       */
@@ -111,8 +111,8 @@ namespace Pspc
       long isInitialized_;
       
       /**
-       * Pointer to parent Simulator
-       */
+      * Pointer to parent Simulator
+      */
       McSimulator<D>* mcSimulatorPtr_;     
       /**
       * Pointer to the parent system.
@@ -137,7 +137,7 @@ namespace Pspc
       * \param iStep MC time step index
       */
       void writeFrame(std::ofstream& out, long iStep);
-      //void writeFrame(std::ofstream& out);
+
       /** 
       * Return reference to parent system.
       */      
