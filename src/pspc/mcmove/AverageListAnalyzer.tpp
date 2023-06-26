@@ -47,7 +47,7 @@ namespace Pspc
    void AverageListAnalyzer<D>::readParameters(std::istream& in) 
    {
       Analyzer<D>::readParameters(in);
-      read<int>(in,"nSamplePerBlock", nSamplePerBlock_);
+      read(in,"nSamplePerBlock", nSamplePerBlock_);
       if (nSamplePerBlock()) {
          system().fileMaster().openOutputFile(outputFileName(), outputFile_);
       }

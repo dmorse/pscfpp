@@ -42,7 +42,7 @@ namespace Pspc {
    template <int D>
    void AnalyzerManager<D>::readParameters(std::istream &in)
    {
-      read<long>(in,"baseInterval", Analyzer<D>::baseInterval);
+      read(in,"baseInterval", Analyzer<D>::baseInterval);
       Manager< Analyzer<D> >::readParameters(in);
    }
 

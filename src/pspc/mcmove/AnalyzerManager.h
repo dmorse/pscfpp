@@ -3,6 +3,7 @@
 
 #include "Analyzer.h"                  // template parameter
 #include <util/param/Manager.h>        // base class template
+#include <util/param/ParamComposite.h>
 
 namespace Pscf {
 namespace Pspc {
