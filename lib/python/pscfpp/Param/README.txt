@@ -1,11 +1,12 @@
 User Instructions:
-    This is a tool to parse the PSCF parameter file and store all values within
-    it in a single object. Users can access and modify the stored values of the
-    parameters after parsing by using specific statements (commands). 
+    This is a tool to parse the PSCF parameter file and store all values 
+    within it in a single object. Users can access and modify the stored 
+    values of the parameters after parsing by using specific statements 
+    (commands). 
 
     Using Parser:
-        A Composite object, representing any block of the parameter file that is 
-        identified by opening and closing curly brackets ('{' and '}'), 
+        A Composite object, representing any block of the parameter file that 
+        is identified by opening and closing curly brackets ('{' and '}'), 
         stores all the entries within the block in a form that allows each 
         element within it to be accessed and modified. 
 
