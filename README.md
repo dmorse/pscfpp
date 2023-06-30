@@ -98,16 +98,16 @@ Features that are common to all of the PSCF programs include:
 
 Features specific to programs for periodic structures include:
 
-  - Ordered phases with 1, 2 or 3 dimensional periodicity
-
   - High accuracy pseudo-spectral solution of the modified diffusion
     equation
 
-  - All possible 2D and 3D lattice systems (i.e., orthorhombic, monoclinic,
-    etc.).
+  - Ordered phases with 1, 2 or 3 dimensional periodicity
 
-  - Automatic optimization of unit parameters so so as to minimize
-    free energy
+  - All possible 2D and 3D lattice systems (i.e., orthorhombic, monoclinic,
+    etc.)
+
+  - Automatic optimization of unit parameters so as to minimize free 
+    energy
 
   - Imposition of any user-selected space-group symmetry
 
@@ -125,10 +125,11 @@ Features specific to the pscf_pc CPU programs for periodic structures are:
 
   - Thin polymer films
 
-The "mask" and external field features are used in the pscf_pc programs
-to implement simulations of thin films, using a mask to constrain a
-polymer material to a slit within a periodic supercell, and external
-fields to represent interactions with the top and bottom surface.
+The mask and external field features are used in the pscf_pc programs
+to implement simulations of thin films. A mask is used to constrain a
+polymer material to a slit within a periodic supercell, and localized
+external fields are used to represent interactions with the top and 
+bottom surfaces.
 
 ## Getting the source code
 
@@ -162,7 +163,6 @@ of the documentation of a recent version is available online at
   <https://dmorse.github.io/pscfpp-man>
 
 After cloning the source code, you can use the 
-
 [doxygen](<https://www.doxygen.nl/index.html>) documentation
 generation program to generate a local copy of this documentation.
 To do this, the doxygen application must be installed on your computer, 
