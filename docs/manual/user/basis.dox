@@ -168,7 +168,7 @@ are space group operations and \f$ {\bf G} \f$ is a wavevector, then
 where \f$ AB \f$ denotes a product of symmetry operations, defined such
 that \f$ (AB)({\bf r}) = A(B({\bf r})) \f$ for any \f$ {\bf r} \f$.
 
-\section user_basis_mesh_sec Symmetry on a Grid
+\section user_basis_mesh_sec Symmetry Operations on a Grid
 
 Numerical computations in the PSCF programs for periodic systems are 
 actually performed using periodic fields that are actually defined at 
@@ -179,7 +179,7 @@ that is defined on a grid by operations of a space group, we must
 require that the grid be compatible with operations of that group, in 
 the following sense.
 
-<b> Definition (Compatible grid) </b>: 
+<b> Definition (Compatible Grid) </b>: 
 A regular grid of values for the reduced position coordinates within
 a unit cell of a crystal is said to be compatible with a space group 
 symmetry operation \f$ A \f$ if, for the position \f$ {\bf r} \f$ of 
@@ -193,9 +193,9 @@ and \f$ A \f$ is a symmetry operation, then a transformed function
 \f$ fA \f$ can be defined on the same grid if and only if the grid 
 is compatible with \f$ A \f$ in the above sense.  If the grid is 
 compatible with \f$ A \f$, then we may define a function \f$ f' = fA \f$ 
-by requiring that \f$ f'({\bf r}) = f(A({\bf r}) \f$ for all nodes 
+by requiring that \f$ f'({\bf r}) = f(A({\bf r})) \f$ for all nodes 
 of the grid, thereby obtaining a clear relationship between values 
-of \f$ f \f$ and \f$ f' \f$ on (generally) different nodes.  
+of \f$ f \f$ and \f$ f' \f$ on (generally) different nodes.
 Conversely, if \f$ f \f$ is defined on a grid that is not compatible 
 with \f$ A \f$, then this equation become meaningless, and so we 
 cannot define a transformed function \f$f A \f$ on the same grid.
