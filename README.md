@@ -114,7 +114,7 @@ Features specific to programs for periodic structures include:
   - Built-in "database" of all 230 3D space groups and 17 2D plane groups
 
   - Availability of a companion package 
-    [Polymer Visual] (<https://github.com/kdorfmanUMN/polymer_visual/>)
+    [Polymer Visual](<https://github.com/kdorfmanUMN/polymer_visual/>)
     for visualization of periodic structures
 
 Features specific to the pscf_pc CPU programs for periodic structures are:
@@ -195,9 +195,9 @@ be installed separately.
 The CPU-based programs within the PSCF package depend on the following
 external libraries:
 
-  - [GSL - Gnu Scientific Library](<https://www.gnu.org/software/gsl/>)
+  - [GSL](<https://www.gnu.org/software/gsl/>) - GNU Scientific Library
 
-  - [FFTW](<https://www.fftw.org/>) fast Fourier transform library
+  - [FFTW](<https://www.fftw.org/>) Fast Fourier Transform library
 
 The one-dimensional finite difference program pscf_fd requires only GSL, 
 and not FFTW. The pscf_pc CPU-based programs for spatially periodic
