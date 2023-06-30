@@ -69,17 +69,18 @@ difference".
 <b> pscf_pc </b>:
 These programs use a psuedo-spectral algorithm to simulate periodic 
 microstructures on conventional CPU hardware, thus reproducing and
-extending the capabilities of the older Fortran PSCF program.  In the
-current version, different executable programs named pscf_pc1, pscf_pc2 
-and pscf_pc3 are used to solve problems that are periodic in 1, 2 or 3 
-spatial dimensions, respectively. Here, "pc" stands for "periodic CPU".
+extending the capabilities of the older Fortran PSCF program. Different 
+executable programs named pscf_pc1, pscf_pc2 and pscf_pc3 are used to 
+solve problems that are periodic in 1, 2 or 3 spatial dimensions, 
+respectively. Here, "pc" stands for "periodic CPU".
 
 <b> pscf_pg </b>:
-The GPU-accelerated programs for periodic structures are closely 
-analogous to the corresponding CPU programs, and provide almost identical 
-features, at higher speed.  The GPU accelerated programs for solving 1, 2 
-and 3 dimensionally periodic structures are named pscf_pg1, pscf_pg2 and 
-pscf_pg3, respectively, where "pg" stands for "periodic GPU".
+These GPU-accelerated programs for periodic structures are closely 
+analogous to the corresponding pscf_pc CPU-based programs, and provide 
+almost identical features, at higher speed.  The GPU accelerated programs 
+for solving 1, 2 and 3 dimensionally periodic structures are named 
+pscf_pg1, pscf_pg2 and pscf_pg3, respectively, where "pg" stands for 
+"periodic GPU".
 
 \section about_features_sec Features
 
@@ -97,9 +98,9 @@ Features that are common to all of the PSCF programs include:
   - Polymers may be arbitrarily complex acyclic branched block polymers, 
     as well as linear polymers
 
-  - Canonical, grand-canonical or mixed statistical ensembles -
-    users may specify either a volume fraction or a chemical potential
-    for each species
+  - Users may specify either a volume fraction or a chemical potential
+    for each species, allowing use of canonical, grand-canonical or
+    or mixed statistical mechanical ensembles
 
   - Efficient simulation of sequences of states along paths in parameter
     space ("sweeps")
@@ -115,6 +116,8 @@ Features that are common to all of the PSCF programs include:
 Features specific to pscf_pc and pscf_pg programs for periodic structures 
 include:
 
+  - Accurate pseudo-spectral solution of the modified diffusion equation
+
   - Ordered phases with 1, 2 or 3 dimensional periodicity
 
   - All 2D and 3D lattice systems (i.e., orthorhombic, monoclinic, etc.).
@@ -124,8 +127,6 @@ include:
   - Imposition of any user-selected space-group symmetry
 
   - Built-in "database" of all 230 3D space groups and 17 2D plane groups
-
-  - Accurate pseudo-spectral solution of the modified diffusion equation
 
   - Availability of a companion package 
     <a href=https://github.com/kdorfmanUMN/polymer_visual/>Polymer Visual</a> 
@@ -155,16 +156,17 @@ with a git client installed, enter the command:
 git clone --recursive https://github.com/dmorse/pscfpp.git
 \endcode
 Note the use of the --recursive option to the git clone command. This is 
-necessary to clone several git submodules that are maintained in separate 
+necessary to clone two git submodules that are maintained in separate 
 github repositories. This command will create a new directory called 
 pscfpp/ that contains all of the source code and associated documentation, 
 including all required git submodules.
 
-We do not recommend that users obtain the source code by instead 
-downloading a zip or tar file from the PSCF github repository, because 
-this file will not contain source code for the other git repositories 
-that are automatically downloaded and installed as submodules by the 
-above git command.
+We do *not* recommend that users obtain the source code by instead 
+downloading a zip or tar file from the PSCF github repository. A 
+repository that is created by unpacking such a file will not contain 
+source code for the other git repositories that are automatically 
+downloaded and installed as submodules by use of the git clone 
+command with the "recursive" option.
 
 \section about_documentation_sec Documentation
 
@@ -187,25 +189,25 @@ directory and then enter
 \code
    > make html
 \endcode
-This should create many html files in the pscfpp/docs/html directory.
-To begin reading the documentation, point a browser at the file
-pscfpp/docs/html/index.html, which contains the main page of this
-web manual.
+This should create many html files in the docs/html directory of the
+pscfpp/ root directory.  To begin reading the documentation, point a 
+browser at the file docs/html/index.html, which contains the main page 
+of this web manual.
 
 Formatting of some mathematical expressions within this web manual 
 relies on the use of a MathJax interpreter that is provided by a 
 remote server, and which thus requires an internet connection to 
-function. Mathematical expressions in local copies of this manual
-will thus be formatted correctly only if the computer is connected 
-to the internet.
+function. Mathematical expressions in local copies of this manual may 
+thus not be formatted correctly if the computer is not connected to 
+the internet.
 
 \section about_dependencies_sec Dependencies
 
 The PSCF source code is written using C++ as the primary language, with
-CUDA used in some programs for GPU kernels.  PSCF was developed on
-linux and and Mac OS X operating systems using standard unix utilities, 
-and is designed to be compiled and run in these or other unix-like 
-environments. 
+CUDA used in some programs for GPU kernels.  The C++ version of PSCF was 
+developed on linux and and Mac OS X operating systems using standard unix 
+utilities, and is designed to be compiled and run in these or other 
+unix-like environments. 
 
 The CPU-based programs within the PSCF package depend on the following
 external libraries:

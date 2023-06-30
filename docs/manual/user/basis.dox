@@ -12,17 +12,13 @@ We refer to the resulting basis as a symmetry-adapted Fourier basis,
 and the expansion as a symmetry-adapated Fourier series. This page
 discusses the mathematics underlying the construction of such a basis.
 
-Computations in the PSCF programs for periodic systems are performed
-using periodic fields defined on a regular grid, with Fourier transforms
-defined using a discrete Fourier transform. For simplicity, discussion
-given here uses notation appropriate to functions that are defined in a
-continuum.  Everything presented here applies equally well to functions
-defined on a grid, however, with the understanding that values of such
-functions are only defined for positions that lie on nodes of the grid,
-and that wavevectors that are aliases of one another should be
-understood to be equivalent.
+The discussion given here uses a notation appropriate to periodic fields 
+that are defined within a continuous D-dimensional vector space. We 
+show below how all of the results can be interpreted so as to also apply 
+to functions that are defined on the nodes of a regular grid, subject to
+some restriction on the nature of the grid.
 
-\section user_basis_symmfunc_sec Transformation and Symmetry of Fields
+\section user_basis_symmfunc_sec Transformation of Fields
 
 <b> Definition (Field) </b>: We refer to any complex-valued periodic
 function of D-dimensional position within a crystal as a <em> field </em>.
@@ -71,7 +67,6 @@ If \f$ f(R{\bf r} + {\bf t}) = f({\bf r})\f$ for all \f$ {\bf r} \f$,
 then \f$ c f(R{\bf r} + {\bf t}) = c f({\bf r}) \f$ and
      \f$ f^{*}(R{\bf r} + {\bf t}) = f^{*}({\bf r}) \f$,
 proving both of the above theorems.
-
 
 \section user_basis_wave_sec Transformation of Plane Waves
 
@@ -173,6 +168,102 @@ are space group operations and \f$ {\bf G} \f$ is a wavevector, then
 where \f$ AB \f$ denotes a product of symmetry operations, defined such
 that \f$ (AB)({\bf r}) = A(B({\bf r})) \f$ for any \f$ {\bf r} \f$.
 
+\section user_basis_mesh_sec Symmetry on a Grid
+
+Numerical computations in the PSCF programs for periodic systems are 
+actually performed using periodic fields that are actually defined at 
+positions corresponding to the the nodes of a regular grid. Fourier 
+transforms for such functions are defined by a discrete Fourier 
+transform.  In order for us to define the transformation of a function 
+that is defined on a grid by operations of a space group, we must 
+require that the grid be compatible with operations of that group, in 
+the following sense.
+
+<b> Definition (Compatible grid) </b>: 
+A regular grid of values for the reduced position coordinates within
+a unit cell of a crystal is said to be compatible with a space group 
+symmetry operation \f$ A \f$ if, for the position \f$ {\bf r} \f$ of 
+every node of the grid, the transformed position \f$ A({\bf r}) \f$
+is also the location of a node of the same grid. Such a mesh is said
+to be compatible with a space group \f$ S \f$ if it is compatible 
+with every symmetry element of the space group. 
+
+If \f$ f \f$ is a function that is defined on the nodes of a grid, 
+and \f$ A \f$ is a symmetry operation, then a transformed function 
+\f$ fA \f$ can be defined on the same grid if and only if the grid 
+is compatible with \f$ A \f$ in the above sense.  If the grid is 
+compatible with \f$ A \f$, then we may define a function \f$ f' = fA \f$ 
+by requiring that \f$ f'({\bf r}) = f(A({\bf r}) \f$ for all nodes 
+of the grid, thereby obtaining a clear relationship between values 
+of \f$ f \f$ and \f$ f' \f$ on (generally) different nodes.  
+Conversely, if \f$ f \f$ is defined on a grid that is not compatible 
+with \f$ A \f$, then this equation become meaningless, and so we 
+cannot define a transformed function \f$f A \f$ on the same grid.
+
+To apply arguments about space group symmetry to functions that are 
+defined only on the nodes of a grid, it is thus necessary to restrict 
+the discussion to functions that are defined on the nodes of a grid 
+that is compatible with the space group of interest. In practice, 
+this requirement imposes two types constraints on the choice of 
+values for the number of grid points in each direction of the grid:
+
+The first type of constraint requires that, if there exist symmetry 
+operations in the space group that map one Bravais lattice basis vector 
+onto another, equal number of grid points must be used along directions 
+that are related in this manner. Relevant operations include diagonal 
+reflections in cubic or tetragonal 3D lattices, or 3 fold rotations.
+This type of requirement implies, for example, that one must use 
+equal numbers of grid points along all orthogonal directions in a 
+3D cubic lattice or 2D square lattice, along directions associated
+with two different Bravais basis vectors of a 2D hexagonal lattice,
+or along directions that directions that are related by symmetry in 
+a 3D tetragonal lattice.
+
+The second type of constraint requires that the number of grid points
+along each direction must be chosen so that the mesh is mapped onto 
+itself under all space group operations that involve translations by 
+fractions of a unit cell. Thus, for example, if a space group contains
+operations for which the translation vector \f$ {\bf t} \f$ for which
+the component associated with a particular direction is 1/4 when
+when expressed in a Bravais basis, corresponding to translation by a 
+quarter of a unit cell along that direction, then the number of grid
+points along that direction must be a multiple of 4. 
+
+The algorithm used by PSCF to construct symmetry-adapted basis functions 
+will fail if the user chooses a set of grid dimensions that do not 
+satisfy these compatibility conditions.
+
+For simplicity, our discussion of transformation and symmetry of 
+fields is presented using a notation appropriate to fields that are 
+defined in a continuum.  All of the definitions and theorems presented 
+here are, however, equally applicable to functions that are defined in 
+on the node of a regular grid if the following assumptions and 
+constraints are understood to apply:
+
+   - The grid must be compatible with all elements of the space 
+     group of interest.
+
+   - Values of functions of position must be understood to only be
+     defined for positions that lie on nodes of the mesh. In this 
+     context, any statement that some condition is satisfied for 
+     *every* position \f$ {\bf r} \f$ must be understood to mean 
+     that it is satisfied for every node of the grid. For example,
+     we define a real field for this purpose to be a field that 
+     has real values at all nodes of the grid.
+
+   - Wavevectors that are aliases of one another must be understood
+     to be equal, i.e., to be different ways of representing the same 
+     quantity, and to thus satisfy an equality.  If the wavevectors 
+     in a list are said to be "distinct" then, in this context, the
+     statement implies that no two wavevectors in the list are 
+     aliases of one another.
+
+When interpreted using these assumptions, all of the definitions and 
+theorems presented on this page (including those already give above)
+apply equally well to periodic functions that are defined on an 
+appropriate regular periodic grid or in one unit cell of a continuous 
+vector space. 
+
 \section user_basis_star_sec Wavevector Stars
 
 The first step in the algorithm used by PSCF to construct symmetry
@@ -201,13 +292,15 @@ Two simple examples may help illustrate the idea:
 
 Wavevectors in a star are always related by point group operations
 associated with elements of the space group, as described above, and
-are always vectors of equal magnitude.  More formal definitions are
-given below.
+are always vectors of equal magnitude.  The magnitude of a wavevector 
+defined to describe functions functions that are defined on a grid is
+defined to be the magnitude of a minimum image (i.e., the magnitude
+of an image or alias of minimum magnitude). 
 
 \anchor user_basis_star_defn
 <b> Definition (Star) </b>: A <em>star</em> star \f$ T \f$ of a space 
-group \f$ S \f$ is a set of reciprocal lattice vectors with the 
-following two properties:
+group \f$ S \f$ is a set of distinct reciprocal lattice vectors with 
+the following two properties:
 
    - Closure under \f$ S \f$: For each wavevector \f${\bf G} \in T\f$ 
      and symmetry operation \f$ A \in S\f$, \f$ {\bf G}A \in T \f$.
@@ -343,15 +436,22 @@ with the same eigenvalue.
 <b> Theorem 8 (Star Functions of Different Stars are Orthogonal ) </b>:
 If \f$ f({\bf r}) \f$ and \f$ g({\bf r}) \f$ are star functions
 associated with different stars of the same space group, then they are
-orthogonal, in the sense that
+orthogonal, in the sense that 
 \f[
     \int d^{D}r \; f^{*}({\bf r}) g({\bf r}) = 0 \quad,
 \f]
-where the integral is taken over one unit cell of the lattice.
+where the integral is taken over one unit cell of the lattice. 
+An analogous statement holds for functions that are defined on the
+nodes of a regular grid, with orthogonality defined by the vanishing
+of a sum over nodes of one unit cell of the grid, rather than an
+integral.
 
 <em> Proof </em>: Orthogonality of star functions follows from the
 fact that waves with different wavevectors are orthogonal in the same
 sense, and that the intersection of different stars is an empty set.
+Orthogonality is defined using an integral over one unit cell for
+periodic functions, as in the theorem statement, and using an analogous 
+sum over nodes of the grid for functions that are defined on a grid. 
 
 The relationship among coefficients in this expansion of a star
 function may be determined by requiring that the function be symmetric
@@ -683,23 +783,23 @@ The resulting system of equations always has a non-empty set of
 nontrivial solutions, and is thus not cancelled.
 
 \anchor user_basis_starfunc_uniqueness_thrm
-<b> Theorem 14 (Uniqueness of Star Functions to Within Constant) </b>:
+<b> Theorem 14 (Uniqueness of Star Functions to Within a Constant) </b>:
 If two functions \f$ f({\bf r}) \f$ and \f$ g({\bf r}) \f$ are both
-nonzero star functions associated with of a star \f$ T \f$ of space 
-group \f$ S \f$, then 
+nonzero star functions associated with a single star \f$ T \f$ of 
+a space group \f$ S \f$, then 
 \f[
    g({\bf r}) = c f({\bf r})
 \f]
-for some nonzero constant \f$ c \f$. 
+for some nonzero complex constant \f$ c \f$. 
 
-<em> Proof </em>: Consider a star \f$ T \f$ with \f$ M \f$ wavevectors
-\f$ {\bf G}_{1}, \ldots, {\bf G}_{M}  \f$. By theorem 13, the phase
-relationships of an an uncancelled star form a system of \f$ M -1 \f$
-homogeneous equations for \f$ M \f$ unknown coefficients.  The set of
-solutions for the resulting set of equations is thus a vector space 
-with dimension 1, corresponding to a set of solutions that can all 
-be expressed as \f$ c f({\bf f}) \f$, in which \f$ c \f$ is a complex 
-constant and \f$ f({\bf r}) \f$ is any single nonzero solution.
+<em> Proof </em>: Consider a star \f$ T \f$ with \f$ M \f$ distinct 
+wavevectors \f$ {\bf G}_{1}, \ldots, {\bf G}_{M}  \f$. By theorem 13, 
+the phase relationships of an an uncancelled star form a system of 
+\f$ M -1 \f$ homogeneous equations for \f$ M \f$ unknown coefficients.  
+The set of solutions for the resulting set of equations is thus a vector 
+space with dimension 1. This corresponds to a set of solutions that 
+can all be expressed as \f$ c f({\bf f}) \f$, in which \f$ c \f$ is a 
+complex constant and \f$ f({\bf r}) \f$ is any single nonzero solution.
 
 \section user_basis_closed_sec Closed Stars
 

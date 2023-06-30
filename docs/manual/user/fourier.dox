@@ -78,8 +78,8 @@ with reciprocal lattice vector \f$ {\bf G} \f$.  The Fourier coefficient
   e^{-i {\bf G} \cdot {\bf r}} f({\bf r}) \quad,
 \f]
 in which the integral is a D-dimensional integral over one unit cell,
-and \f$ V_{\rm cell} \f$ is the general volume of the unit cell (e.g.,
-the length for D=1, area for D=2, or volume for D=3).
+and \f$ V_{\rm cell} \f$ is the generalzed volume of the unit cell 
+(i.e., the unit cell length for D=1, area for D=2, or volume for D=3).
 
 The general Fourier series given above can be used to expand either
 real- or complex valued periodic functions of position. If \f$ f \f$

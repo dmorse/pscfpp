@@ -262,17 +262,18 @@ is a wavevector obtained by applying the adjoint operator \f$ R^{T} \f$
 to \f$ {\bf G} \f$. To define \f$ R^{T}{\bf G} \f$, we must consider the
 dot product of \f$ {\bf G} \f$ with \f$ R {\bf r} \f$ for arbitrary
 \f$ {\bf G} \f$ and \f$ {\bf r} \f$ .  By using a basis of reciprocal
-lattice basis vectors for \f$ {\bf G} \f$ a basis of Bravais lattice
+lattice basis vectors for \f$ {\bf G} \f$ and a basis of Bravais lattice
 basis vectors for \f$ R{\bf r} \f$, we may show
 \f[
    {\bf G} \cdot R {\bf r} = 2\pi
    \sum_{i=0}^{D-1} \sum_{j=0}^{D-1} G_{i}R_{ij}r_{j}
 \f]
-for any \f$ {\bf G} \f$ and \f$ {\bf r} \f$ and
-\f$ (r_{0}, \ldots, r_{D-1}) \f$  are components defined using reciprocal 
-and Bravais lattice basis vectors, respectively.  Comparing this to the 
-definition of an adjoint, we conclude that \f$ {\bf G}' \f$ may be expanded 
-as a sum
+for any \f$ {\bf G} \f$ and \f$ {\bf r} \f$, where
+\f$ (G_{0}, \ldots, G_{D-1}) \f$ are compoments of \f$ {\bf G} \f$
+in a reciprocal lattice basis and
+\f$ (r_{0}, \ldots, r_{D-1}) \f$  are components of \f$ {\bf r} \f$
+in a Bravais lattice basis.  Comparing this to the definition of an 
+adjoint, we conclude that \f$ {\bf G}' \f$ may be expanded as a sum
 \f[
   {\bf G}' = \sum_{j=0}^{D-1} G_{j}' {\bf b}_{j}
 \f]

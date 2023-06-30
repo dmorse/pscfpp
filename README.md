@@ -18,16 +18,17 @@ discussed below.
 Differences between the C++/CUDA version of PSCF and the older Fortran
 version and expected advantages of the new code include:
 
-   - PSCF (C++/CUDA) is an extensible package of several different
+   - The new version is an extensible package of several different
      programs designed for use with different geometries, boundary
      conditions, algorithms or hardware, implemented within a common
      framework.
 
-   - PSCF (C++/CUDA) enables simulations of mixtures containing arbitrary
+   - The new version enables simulations of mixtures containing arbitrary
      acyclic branched copolymers, in addition to the linear block
      copolymers and linear homopolymers allowed by the Fortran PSCF code.
 
-   - Use of graphics processing units (GPUs) to accelerate some programs.
+   - The new version enables use of graphics processing units (GPUs) to
+     dramatically accelerate some programs.
 
 ## Programs
 
@@ -69,20 +70,23 @@ structures are named pscf_pg1, pscf_pg2 and pscf_pg3, respectively, where
 All PSCF programs are designed to treat an incompressible mixture of
 block polymers, homopolymers and small molecule (point-particle) solvent 
 species. All polymeric species are treated using the standard Gaussian 
-model of a polymer as a continuous random walk.
+model of a single polymer block as a continuous random walk.
 
 Features that are common to all of the PSCF programs include:
 
-  - Mixtures of any number of block polymers, homopolymers, and solvent species
+  - Mixtures of any number of block polymers, homopolymers, and solvent 
+    species
 
-  - Arbitrarily complex acyclic branched block polymers, as well as linear block polymers.
+  - Arbitrarily complex acyclic branched block polymers, as well as linear 
+    block polymers
 
   - Canonical, grand-canonical or mixed statistical ensembles -
     users may specify either a volume fraction or a chemical potential
     for each species
 
   - Efficient simulation of sequences of parameter choices along a path
-    in parameter space using extrapolation to compute initial guesses.
+    in parameter space (a "sweep") using extrapolation to compute initial 
+    guesses
 
   - Efficient Anderson-mixing iteration algorithms
 
@@ -96,6 +100,9 @@ Features specific to programs for periodic structures include:
 
   - Ordered phases with 1, 2 or 3 dimensional periodicity
 
+  - High accuracy pseudo-spectral solution of the modified diffusion
+    equation
+
   - All possible 2D and 3D lattice systems (i.e., orthorhombic, monoclinic,
     etc.).
 
@@ -106,8 +113,9 @@ Features specific to programs for periodic structures include:
 
   - Built-in "database" of all 230 3D space groups and 17 2D plane groups
 
-  - High accuracy pseudo-spectral solution of the modified diffusion
-    equation
+  - Availability of a companion package 
+    [Polymer Visual] (<https://github.com/kdorfmanUMN/polymer_visual/>)
+    for visualization of periodic structures
 
 Features specific to the pscf_pc CPU programs for periodic structures are:
 
@@ -153,28 +161,31 @@ of the documentation of a recent version is available online at
 
   <https://dmorse.github.io/pscfpp-man>
 
-After cloning the source code, you can use the doxygen documentation
+After cloning the source code, you can use the 
+
+[doxygen](<https://www.doxygen.nl/index.html>) documentation
 generation program to generate a local copy of this documentation.
-To do this, doxygen must be installed on your computer, and the
-directory containing the doxygen executable must be in your command
-search PATH. To generate documentation:
+To do this, the doxygen application must be installed on your computer, 
+and the directory containing the doxygen executable must be in your 
+command search PATH. To generate documentation:
 
    - Change directory (cd) to the pscfpp/ root directory
 
    - Enter "make html"
 
-This should create many html files in the pscfpp/docs/html directory.
-To begin reading the documentation, point a browser at the file
-pscfpp/docs/html/index.html, which is the main page of the manual.
+This should create many html files in the docs/html subdirectory of the 
+pscfpp/ root directory.  To begin reading the resulting documentation, 
+point a browser at the file docs/html/index.html within this directory. 
+This file is the main page of the manual.
 
 ## Dependencies
 
 The PSCF source code is written using C++ as the primary language, with
 CUDA used in some programs for GPU acceleration. PSCF is only provided
-in source file format - all programs must be compiled from source.
-This package was developed on linux and and Mac OS X operating systems
-using standard unix utilities, and is designed to run on these or other
-unix-like systems.
+in source file format, and so must be compiled from source.
+PSCF has been developed on both linux and and Mac OS X operating 
+systems using standard unix utilities, and is designed to run on these 
+or other unix-like systems.
 
 To compile and run this or other unix software on Mac OS X, you must
 first install the unix command line tools. These tools are provided as
@@ -184,11 +195,11 @@ be installed separately.
 The CPU-based programs within the PSCF package depend on the following
 external libraries:
 
-  - Gnu scientific library (GSL)
+  - [GSL - Gnu Scientific Library](<https://www.gnu.org/software/gsl/>)
 
-  - FFTW fast Fourier transform library
+  - [FFTW](<https://www.fftw.org/>) fast Fourier transform library
 
-The one-dimensional finite difference program pscf_fd requires only GSL,
+The one-dimensional finite difference program pscf_fd requires only GSL, 
 and not FFTW. The pscf_pc CPU-based programs for spatially periodic
 structures require both GSL and FFTW.
 
