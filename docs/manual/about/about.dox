@@ -46,41 +46,30 @@ program and some expected advantages of the new code include:
 
 \section about_programs_sec Programs
 
-The PSCF package currently contains the following executable programs
-and groups of programs:
+PSCF contains the following executable programs and sets of programs:
 
-   - <b> pscf_fd </b> : A one-dimensional finite difference program.
+   - **pscf_fd** : The pscf_fd program is a simple finite difference 
+     program that is designed to treat one-dimensional problems in 
+     Cartesian, cylindrical or spherical coordinates. It is useful for 
+     treating problems involving flat and curved interfaces, as well as 
+     cylindrical or spherical copolymer micelles.  The suffix "fd" in 
+     the name pscf_fd stands for "finite difference".
+     
+   - **pscf_pc** : The pscf_pc programs are CPU-based programs that use 
+     a pseudo-spectral algorithm to treat periodic microstructures. 
+     These programs are closely analogous to the older PSCF Fortran 
+     program, and provide similar capabilties. Different executable files 
+     named pscf_pc1, pscf_pc2 and pscf_pc3 are used to solve 1, 2 and 3 
+     dimensionally periodic structures, respectively. The suffix "pc" 
+     in these names stands for "periodic CPU".  
+     
+   - **pscf_pg** : The pscf_pg programs are GPU-accelerated programs for 
+     periodic structures. They are based on algorithms similar to those 
+     used in the pscf_pc CPU programs, and provide almost identical 
+     capabilities.  The GPU-accelerated programs for solving 1, 2 and 3 
+     dimensionally periodic structures are named pscf_pg1, pscf_pg2 and 
+     pscf_pg3, respectively, where "pg" stands for "periodic GPU".
 
-   - <b> pscf_pc </b>: CPU programs for periodic structures that are 
-     periodic in 1, 2, or 3 coordinates.
-
-   - <b> pscf_pg </b>: GPU accelerated programs for period microstructures 
-     in 1, 2 or 3 dimensions.
-
-Comments:
-
-<b> pscf_fd </b>: This one-dimensional finite-difference program is 
-designed to treat problems that vary in only one spatial coordinate, in
-Cartesian, cylindrical or spherical coordinates. It is useful for treating
-flat or curved interfaces, as well as spherical or cylindrical micelles.
-The suffix "fd" in the executable name pscf_fd stands for "finite 
-difference".
-
-<b> pscf_pc </b>:
-These programs use a psuedo-spectral algorithm to simulate periodic 
-microstructures on conventional CPU hardware, thus reproducing and
-extending the capabilities of the older Fortran PSCF program. Different 
-executable programs named pscf_pc1, pscf_pc2 and pscf_pc3 are used to 
-solve problems that are periodic in 1, 2 or 3 spatial dimensions, 
-respectively. Here, "pc" stands for "periodic CPU".
-
-<b> pscf_pg </b>:
-These GPU-accelerated programs for periodic structures are closely 
-analogous to the corresponding pscf_pc CPU-based programs, and provide 
-almost identical features, at higher speed.  The GPU accelerated programs 
-for solving 1, 2 and 3 dimensionally periodic structures are named 
-pscf_pg1, pscf_pg2 and pscf_pg3, respectively, where "pg" stands for 
-"periodic GPU".
 
 \section about_features_sec Features
 
@@ -111,7 +100,7 @@ Features that are common to all of the PSCF programs include:
 
   - Thorough user and developer documentation
 
-  - Open source code 
+  - Open source code written in object oriented C++
 
 Features specific to pscf_pc and pscf_pg programs for periodic structures 
 include:
@@ -212,9 +201,11 @@ unix-like environments.
 The CPU-based programs within the PSCF package depend on the following
 external libraries:
 
-  - Gnu scientific library (GSL)
 
-  - FFTW fast Fourier transform library
+  - <a href=https://www.gnu.org/software/gsl/>GSL</a> -
+    GNU Scientific Library
+
+  - <a href=https://www.fftw.org/>FFTW</a> - Fast Fourier Transform library
 
 The one-dimensional finite difference program pscf_fd requires only GSL,
 and not FFTW. The pscf_pc CPU-based programs for spatially periodic
