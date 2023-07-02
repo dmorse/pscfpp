@@ -1,4 +1,4 @@
-/*! \page user_fourier_page Appendix: Periodic Functions
+/*! \page user_fourier_page Appendix: Periodic Functions and Fourier Series
 
 \ref user_theory_page  (Prev) &nbsp; &nbsp; &nbsp; &nbsp;
 \ref user_symmetry_page  (Next)
@@ -323,11 +323,11 @@ scheme used in the above definitions of the forward and inverse DFT
 operations.
 
 \subsection user_fourier_minindex_sub Minimal or Brillouin Zone (BZ) Indices
-The minimal indices of a wavevector are indices that are chosen so
-as to give a corresponding Cartesian wavevector
+The minimal indices of a wavevector are indices that are chosen so as 
+to give a corresponding Cartesian wavevector
 \f$ {\bf G}(n_{0}, \ldots, n_{D-1}) \f$ as defined
-\ref user_fourier_Gofn_eqn "above"
-for which the magnitude  \f$ |{\bf G}| \f$ is minimum.
+\ref user_fourier_Gofn_eqn "above" as an expansion in reciprocal lattice
+basis vectors for which the magnitude  \f$ |{\bf G}| \f$ is minimal.
 The indices obtained using this convention are referred to in parts
 of the PSCF source code as "Brillouin zone" indices because the
 underlying geometrical construction is analogous to that used to

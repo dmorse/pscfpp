@@ -324,7 +324,7 @@ to prove the following series of theorems about products of incoming
 propagators associated with any vertex in a polymer.
 
 \anchor user_theory_theorem1
-<b> Theorem 1 </b> :
+<b> Theorem A.1 </b> :
 Suppose \f$ q({\bf r}, s) q^{\dagger}({\bf r},L-s)\f$ is the product
 of two propagators defined within a single block of length \f$ L \f$.
 The value of this product at \f$ s = 0 \f$, corresponding to its value
@@ -357,7 +357,7 @@ at \f$ s = L \f$ may be obtained by completely analogous reasoning,
 with the roles of \f$ q \f$ and \f$ q^{\dagger} \f$ reversed. 
 
 \anchor user_theory_theorem2
-<b> Theorem 2 </b>: Let \f$ I(s) \f$ represent the spatial integral
+<b> Theorem A.2 </b>: Let \f$ I(s) \f$ represent the spatial integral
 \f[
    I(s) \equiv
    \int d\textbf{r} \; q (\textbf{r},s) q^{\dagger}(\textbf{r},L-s)
@@ -367,9 +367,9 @@ of length \f$ L \f$, where \f$ s \f$ is the contour variable for a
 point within that block.
 If the propagators \f$ q \f$ and \f$ q^{\dagger} \f$ obey a modified
 diffusion equation within some domain, subject to periodic, Dirichlet,
-von Neumann or Robin boundary conditions, then the quantity
-\f$I(s)\f$ is independent of the contour coordinate
-\f$ s \f$ for \f$ s \in [0,L] \f$.
+von Neumann or Robin boundary conditions, then the value of 
+\f$I(s)\f$ is independent of contour coordinate \f$ s \f$ for all
+\f$ s \in [0,L] \f$.
 
 <em> Proof </em>:
 Note that
@@ -412,22 +412,22 @@ for all \f$ s \in [0,L] \f$, implying that \f$ I(s) \f$ is independent
 of \f$ s \f$ within each block.  
 
 \anchor user_theory_theorem3
-<b> Theorem 3 </b>: The value of the spatial integral of the product
+<b> Theorem A.3 </b>: The value of the spatial integral of the product
 of incoming propagators associated with a vertex of an acyclic branched
 polymer has the same value for every vertex in the polymer, including
 any virtual 2-fold vertex inserted into any block of the polymer.
 
-<em> Proof </em>: \ref user_theory_theorem2 "Theorem 2" shows that the value
-of the spatial integral \f$ I(s) \f$ of the product of incoming propagators
-associated with a virtual 2-fold vertex inserted into any block of a polymer
-is independent of the coordinate \f$ s \f$ within the block. Combining this
-with \ref user_theory_theorem1 "theorem 1", we may show that the integral 
-of the product of incoming propagators must have the same value for any 
-vertices that are directly connected by a block.  Because all vertices in 
-a polymer are connected by some sequence of blocks, this implies that the 
-value of this spatial integral must be the same for every vertex in any 
-acyclic branched polymer, including virtual vertices that we insert at 
-any point within any block.
+<em> Proof </em>: \ref user_theory_theorem2 "Theorem A.2" shows that the 
+value of the spatial integral \f$ I(s) \f$ of the product of incoming 
+propagators associated with a virtual 2-fold vertex inserted into any 
+block of a polymer is independent of the coordinate \f$ s \f$ within the 
+block. Combining this with \ref user_theory_theorem1 "theorem 1", we may 
+show that the integral of the product of incoming propagators must have 
+the same value for any vertices that are directly connected by a block.  
+Because all vertices in a polymer are connected by some sequence of blocks, 
+this implies that the value of this spatial integral must be the same for 
+every vertex in any acyclic branched polymer, including virtual vertices 
+that we insert at any point within any block.
 
 \subsection user_theory_bigQ_sub Molecular Partition Function
 
@@ -438,7 +438,7 @@ We define the value of \f$ Q_{i} \f$ to be equal to the spatial average
 (i.e., the integral over the entire spatial domain of the problem
 divided by the volume of this domain) of the product of the values of
 the incoming propagators evaluated at any vertex of the polymer. The
-statement of theorem 3 implies that we should get the same value for
+statement of theorem A.3 implies that we should get the same value for
 \f$ Q_{i} \f$ by evaluating it using any vertex in a polymer of species
 \f$ i \f$. Different values for \f$ Q_{i} \f$ are, however, generally
 obtained for different species within a mixture.
@@ -463,13 +463,13 @@ cell in a 1D lamellar phase).
 Another potentially useful expression for \f$ Q_{i} \f$ may be obtained
 by considering a virtual 2-fold vertex inserted at contour coordinate
 \f$ s \f$ within any block \f$ a \f$ of length \f$ L_{ia} \f$ of a
-polymer species of \f$ i \f$ and using the result of theorem 3 to show
+polymer species of \f$ i \f$ and using the result of theorem A.3 to show
 that \anchor user_theory_Q2vertex
 \f[
    Q_{i} = \frac{1}{V}
    \int d\textbf{r} \; q (\textbf{r},s) q^{\dagger}(\textbf{r},L-s)
 \f]
-where \f$ L \f$ is the length of the chosen block, and where theorem 3
+where \f$ L \f$ is the length of the chosen block, and where theorem A.3
 guarantees that the value of the RHS of this equation is actually
 independent of the choice of values for \f$ s \f$ and block index
 \f$ a \f$.
@@ -494,7 +494,7 @@ density over the problem domain must equal unity, we find that
 in which \f$ q \f$ and \f$ q^{\dagger} \f$ are the two propagators
 associated with the block of interest, \f$ L_{ia} \f$ is the length of
 this block, and \f$ I_{ia}(s) \f$ is the spatial integral defined in
-the statement of \ref user_theory_theorem2 "theorem 2", defined here
+the statement of \ref user_theory_theorem2 "theorem A.2", defined here
 for monomer with contour coordinate \f$ s \f$ within block \f$ a \f$
 of polymer species \f$ i \f$.
 Using the expression given \ref user_theory_Q2vertex "above" to relate
