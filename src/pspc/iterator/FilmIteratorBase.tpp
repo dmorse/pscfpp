@@ -87,7 +87,7 @@ namespace Pspc
          UTIL_THROW("wallThickness and interfaceThickness must be >0");
       }
 
-      // Allocate chiBottom_ and chiTop_ and set to zero before optionally 
+      // Allocate chiBottom_ and chiTop_ and set to zero before 
       // reading them in
       int nm = system().mixture().nMonomer();
       chiBottom_.allocate(nm);
@@ -96,8 +96,8 @@ namespace Pspc
          chiBottom_[i] = 0.0;
          chiTop_[i] = 0.0;
       }
-      readOptionalDArray(in, "chiBottom", chiBottom_, nm);
-      readOptionalDArray(in, "chiTop", chiTop_, nm);
+      readDArray(in, "chiBottom", chiBottom_, nm);
+      readDArray(in, "chiTop", chiTop_, nm);
 
       // If lattice parameters are flexible, determine which parameters
       // are allowed to vary, store them in this object, and pass them

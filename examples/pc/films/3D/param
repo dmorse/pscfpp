@@ -36,14 +36,12 @@ System{
     interfaceThickness   0.2     
     wallThickness        0.4
     chiBottom[  
-                 0
-                 0
+                 0.0
+                 0.0
     ]
     chiTop[
-                 0
-                 0
+                 0.0
+                 0.0
     ]
   }
 }
-
-    unitCell       tetragonal    2.0    4.2

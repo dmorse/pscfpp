@@ -35,10 +35,19 @@ System{
     normalVecId          1
     interfaceThickness   0.2     
     wallThickness        0.4
+    chiBottom[
+                         0.0
+                         0.0
+    ]
+    chiTop[
+                         0.0
+                         0.0
+    ]
   }
   LinearSweep{
     ns            40
     baseFileName  out/
+    reuseState    0
     writeCRGrid   1
     nParameter    1
     parameters[
