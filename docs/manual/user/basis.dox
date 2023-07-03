@@ -98,16 +98,13 @@ origin to the face centered point.  These constraints on mesh dimensions
 are discussed in somewhat more detail \ref user_symmetry_invariant_def 
 "here".
 
-The algorithm used by PSCF to construct symmetry-adapted basis functions 
-can fail if a user enters a list of mesh dimensions in the parameter 
-file that do not satisfy the types of requirements discussed above. 
-Currently, the use of an inappropriate choice of mesh dimensions can 
-lead to failure of internal consistency checks that cause the program 
-to output a somewhat obscure error message before halting execution. 
-Current plans for PSCF include implementation of a function that 
-explicitly checks all constraints on the allowed mesh dimensions 
-and outputs a more informative error message upon failure, but this 
-has not been completed.
+The algorithm that PSCF uses to construct symmetry-adapted basis functions
+will fail if parameter file contains a list of mesh dimensions and a space
+group identifier that are incompatible, because the mesh would not be
+invariant under all operations of the chosen space group.
+If the mesh dimensions and space group are found to be incompatible, the 
+pscf_pc and pscf_pg programs will write a message to the log file that 
+explains the nature of the error, and then halt execution. 
 
 \section user_basis_star_sec Wavevector Stars
 
