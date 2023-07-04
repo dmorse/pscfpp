@@ -29,27 +29,26 @@ every vector \f$ {\bf R} \f$ that can be expressed as a sum
    {\bf R} = \sum_{\alpha=0}^{D-1} m_{\alpha} {\bf a}_{\alpha}
 \f]
 with arbitrary integer values of the indices \f$ m_{0},\ldots,m_{D-1} \f$.
-A field \f$ f({\bf r}) \f$ is said to have the periodicity of this
-lattice if it is  invariant under translation by any Bravais lattice
-vector, i.e., if
+A function \f$ f({\bf r}) \f$ of position \f$ {\bf r} \f$ is said 
+to have the periodicity of this lattice if it is  invariant under 
+translation by any Bravais lattice vector, i.e., if
 \f[
   f({\bf r} + {\bf R}) = f({\bf r})
 \f]
-for any D-dimensional position vector \f$ {\bf r} \f$ and any
-translation vector \f$ {\bf R} \f$ that belongs to the Bravais lattice.
+for any D-dimensional position vector \f$ {\bf r} \f$ and any translation 
+vector \f$ {\bf R} \f$ that belongs to the Bravais lattice.
 
 \section user_fourier_reciprocal_sec Reciprocal Lattice
 
-Let vectors \f$ {\bf b}_{0}, \ldots, {\bf b}_{D-1} \f$ denote
-\f$ D \f$ reciprocal lattice basis vectors that are defined such
-that
+Let \f$ {\bf b}_{0}, \ldots, {\bf b}_{D-1} \f$ denote \f$ D \f$ 
+reciprocal lattice basis vectors that are defined such that
 \f[
   {\bf a}_{\alpha} \cdot {\bf b}_{\beta} = 2\pi \delta_{\alpha \beta}
 \f]
 for \f$ \alpha, \beta \in [0,..,D-1] \f$, where \f$ \delta_{\alpha \beta}\f$
-is a Kronecker delta function. The reciprocal lattice associated with this
-Bravais lattice is defined to be the infinite set containing every vector
-\f$ {\bf } \f$ that can be expressed as a sum
+is a Kronecker delta function. The reciprocal lattice associated with 
+a Bravais lattice is defined to be the infinite set containing every 
+wavevector \f$ {\bf G} \f$ that can be expressed as a sum
 \anchor user_fourier_Gofn_eqn
 \f[
    {\bf G}(n_{0}, \ldots, n_{D-1})
@@ -60,17 +59,18 @@ we will sometimes refer to the integer indices \f$ n_{0}, \ldots, n_{D-1}\f$
 that appear in this expansion of a reciprocal lattice vector as Miller
 indices for that wavevector.
 
-Any field with the periodicity of a Bravais lattice may be expanded as a
-Fourier series \anchor user_fourier_fourierR_eqn
+Any continuous function \f$ f({\bf r}) \f$ of position \f$ {\bf r} \f$ with 
+the periodicity of a Bravais lattice may be expanded as a Fourier series 
+\anchor user_fourier_fourierR_eqn
 \f[
   f({\bf r}) = \sum_{{\bf G}} \tilde{f}({\bf G})
   e^{i {\bf G} \cdot {\bf r}}
   \quad,
 \f]
-in which \f$ {\bf G} \f$ denotes a reciprocal lattice vector, the sum
-is taken over the infinite set of all reciprocal lattice vectors, and
+in which \f$ {\bf G} \f$ denotes a reciprocal lattice vector, the sum 
+is taken over the infinite set of all reciprocal lattice vectors, and 
 \f$ \tilde{f}({\bf G}) \f$ is a complex Fourier coefficient associated
-with reciprocal lattice vector \f$ {\bf G} \f$.  The Fourier coefficient
+with wavevector \f$ {\bf G} \f$.  The Fourier coefficient 
 \f$ \tilde{f}({\bf G}) \f$ is equal to the value of the integral
 \f[
   \tilde{f}({\bf G}) =  \frac{1}{V_{\rm cell}}
@@ -81,10 +81,10 @@ in which the integral is a D-dimensional integral over one unit cell,
 and \f$ V_{\rm cell} \f$ is the generalzed volume of the unit cell 
 (i.e., the unit cell length for D=1, area for D=2, or volume for D=3).
 
-The general Fourier series given above can be used to expand either
-real- or complex valued periodic functions of position. If \f$ f \f$
-is a real-value function, then its Fourier coefficients must satisfies
-the condition
+The type of Fourier series defined above can be used to expand either 
+real- or complex valued periodic functions of position. If \f$ f \f$ is 
+a real-valued function, then its Fourier coefficients must satisfy the 
+condition
 \f[
    \tilde{f}(-{\bf G}) = \tilde{f}^{*}({\bf G})
 \f]
@@ -165,30 +165,31 @@ indices, and in which
 \f$ \tilde{F}(n_{0}, \ldots, n_{D-1}) \f$ is a Fourier amplitude defined
 such that
 \f[
-   \tilde{f}({\bf G}(n_{0},\ldots,n_{D-1}) \equiv
+   \tilde{f}({\bf G}(n_{0},\ldots,n_{D-1})) \equiv
    \tilde{F}(n_{0}, \ldots, n_{D-1})
 \f]
-for the wavevector \f$ {\bf G}(n_{0}, \ldots, n_{D-1}) \f$.
-This form for the expansion of a periodic function of the reduced coordinates
-can also be justified as a special case of the general Fourier expansion
-applied to a function \f$ F(r_{0}, \ldots, r_{D-1}) \f$ which has the
-periodicity of a generalized cubic lattice with orthogonal Bravais lattice
-basis vectors of unit magnitude.
+for the wavevector \f$ {\bf G}(n_{0}, \ldots, n_{D-1}) \f$ with integer
+components \f$n_{0}, \ldots, n_{D-1}\f$.
+This form of the Fourier series is also special case of the general 
+Fourier expansion of a periodic function, as applied here to a function 
+\f$ F(r_{0}, \ldots, r_{D-1}) \f$ that has the periodicity of a generalized 
+cubic lattice with orthogonal Bravais lattice basis vectors of unit 
+magnitude.
 
 \section user_fourier_grid_sec Mesh Discretization
 
 All fields in the pscf_pc and pscf_pg programs are represented internally
-using values of fields on a regular D-dimensional mesh in the space of the
-reduced coordinates \f$ r_{0}, \ldots, r_{D-1} \f$.
+using values of fields on a regular D-dimensional mesh in the space of 
+the reduced coordinates \f$ r_{0}, \ldots, r_{D-1} \f$.
 Let \f$ M_{\alpha} \f$ denote the number of mesh points per unit cell
 along direction \f$ \alpha \f$ for each integer direction index
 \f$ \alpha = 0, \ldots, D-1 \f$.
 The values of \f$ M_{0}, \ldots, M_{D-1} \f$ are specified in the
 paramter file for a pscf_pc or pscf_pg program as values for elements
 of the parameter "mesh", whose value is a vector with integer-valued
-elements.  Nodes on this mesh correspond to points at which each
+elements.  Nodes on this mesh correspond to points at which each reduced
 coordinate \f$ r_{\alpha} \f$ with \f$ \alpha \in [0, \ldots, D-1]\f$
-has a value given by
+has a value 
 \f[
     r_{\alpha} = m_{\alpha}/M_{\alpha}
 \f]
@@ -198,8 +199,8 @@ nodes within the primary unit cell.
 \section user_fourier_dft_sec Discrete Fourier Transform (DFT)
 
 Let \f$ F \f$ denote a function that is defined only on the nodes of such
-a regular grid, where \f$ F(m_{0}, \ldots, m_{D-1}) \f$ denotes the value of
-\f$ F \f$ on the grid node with integer indices
+a regular mesh, where \f$ F(m_{0}, \ldots, m_{D-1}) \f$ denotes the value 
+of \f$ F \f$ on the mesh node with integer indices
 \f$ m_{0}, \ldots, m_{D-1} \f$.
 
 \subsection user_fourier_dft_forward_sub Forward DFT
@@ -216,16 +217,16 @@ Let \f$ \tilde{F} \f$ denote the discrete Fourier transform (DFT) of
   -2\pi i \sum_{\alpha = 0}^{D-1} n_{\alpha} m_{\alpha}/M_{\alpha}
   \right )
 \f]
-in which \f$ M_{\rm tot} \f$ denotes the total number of grid points
+in which \f$ M_{\rm tot} \f$ denotes the total number of mesh points
 in the primary unit cell of the mesh, given by the product
 \f[
    M_{\rm tot} = M_{0} \cdots M_{D-1} \quad.
 \f]
-of the numbers of grid points in each direction.
+of the numbers of mesh points in each direction.
 
 \subsection user_fourier_dft_inverse_sub Inverse DFT
 
-A periodic function \f$ F \f$ that is defined on the nodes of grid can
+A periodic function \f$ F \f$ that is defined on the nodes of mesh can
 can be expanded in terms of its DFT \f$ \tilde{F} \f$ by applying an
 inverse discrete Fourier transform
 \anchor user_fourier_dftinverse_eqn
@@ -239,7 +240,7 @@ inverse discrete Fourier transform
   \right )
 \f]
 Here, as elsewhere in this discussion \f$ F(m_0, \ldots, m_{D-1}) \f$
-denotes the value of the function \f$ F \f$ at the grid point with
+denotes the value of the function \f$ F \f$ at the mesh point with
 integer mesh indices \f$ m_{0}, \ldots, m_{D-1} \f$.  Note that the
 sums over the indices \f$ n_{0}, \ldots, n_{D-1} \f$ in an inverse
 discrete DFT extend only over a finite number of values
@@ -251,64 +252,70 @@ inverse DFT, defined using the conventions given above, are implemented for
 the field container classes used by pscf_pc programs by the member functions
 forwardTransform and inverseTransform defined in the class Pscf::Pspc::FFT<D>,
 respectively. The class Pscf::Pspc::FFT<D> is an instantiation of the class
-template Pscf::Pscf::FFT, in which D=1, 2, or 3 is a template parameter that
-represents the dimensionality of space.  These member functions are simple
-wrappers around functions provided by the open source FFTW package.
+template Pscf::Pspc::FFT , in which D=1, 2, or 3 is a template parameter 
+that represents the dimensionality of space.  These member functions are 
+simple wrappers around functions provided by the open source FFTW package.
 Equivalent operations are implemented for the field container classes used
-by the pscf_pg programs by corresponding functions of the class Pscf::Pspg::FFT<D>,
-whch are wrappers around functions provided by the cuFFT CUDA library, which
-implements FFTs on a GPU.
+by the pscf_pg programs by corresponding member functions of the class 
+template Pscf::Pspg::FFT that are wrappers around functions provided by 
+the cuFFT CUDA library, which implements FFTs on a GPU.
 
 \subsection user_fourier_dft_alias_sub Wavevector Aliasing
 
-The discrete Fourier transform \f$ \tilde{f} (n_0, \ldots, n_{D-1}) \f$ is
+The discrete Fourier transform \f$ \tilde{F} (n_0, \ldots, n_{D-1}) \f$ is
 a function of \f$ D \f$ integer indices, and is thus itself defined on a
 lattice in reciprocal space.  It is straightforward to show that the DFT
 \f$ \tilde{F} \f$ defined above is itself a periodic function in reciprocal
- space, for which \f$ \tilde{F} \f$ is invariant under a shift of the
-Miller index \f$ n_{\alpha} \f$ associated with direction \f$ \alpha \f$
-by any multiple of the number of grid points \f$ M_{\alpha} \f$
-along direction \f$ \alpha \f$. That is, for any DFT \f$ \tilde{F} \f$,
+space, for which \f$ \tilde{F}(n_0, \ldots, n_{D-1}) \f$ is invariant 
+under a shift of the index \f$ n_{\alpha} \f$ associated with direction 
+\f$ \alpha \f$ by any multiple of the number of mesh points 
+\f$ M_{\alpha} \f$ along direction \f$ \alpha \f$. That is, for any 
+DFT \f$ \tilde{F} \f$, we have
 \f[
   \tilde{F}(n_{0} + k_{0}M_{0}, \ldots, n_{D-1} + k_{D-1}M_{D-1}
   = \tilde{F}(n_{0}, \ldots, n_{D-1})
 \f]
 for any choice of integers \f$ k_{0}, \ldots, k_{D=1} \f$.
-To show this, we simply note that the effect of changing \f$ n_{\alpha}\f$
-to \f$ n_{\alpha} + k_{\alpha} M_{\alpha} \f$ within the
+
+<em> Proof </em>: To prove this statement, we simply note that 
+the effect of changing \f$ n_{\alpha}\f$ to 
+\f$ n_{\alpha} + k_{\alpha} M_{\alpha} \f$ within the
 \ref user_fourier_dftdef_eqn "sum" that defines \f$ \tilde{f} \f$ is
 to shift the argument of the exponential by a corresponding integer
-multiple \f$ m_{\alpha}k_{\alpha}2\pi i \f$ of \f$ 2\pi i \f$, which
-has no effect on the value of the exponential.
+multiple \f$ m_{\alpha}k_{\alpha}2\pi i \f$ of \f$ 2\pi i \f$, and
+that changing the argument of an exponential by an integer multiple
+of \f$ 2\pi i \f$ leaves the value of the exponential unchanged.
 
-This periodic property of discrete Fourier transforms is sometimes
-referred to as "aliasing" of wavevectors. Any list of D Miller indices
-\f$ n_{0}, \ldots, n_{D-1} \f$ can be used to construct an associated
-reciprocal lattice wavevector \f$ {\bf G}(n_0, \ldots, n_{D-1}) \f$ in
-which the Miller indices are components of the vector in a basis of
-reciprocal lattice basis vectors, as \ref user_fourier_Gofn_eqn "above".
-Two  lists of integer Miller indices are referred to as "aliases" of one
-another if these lists contain values for each index \f$ n_{i} \f$ that
-are either equal or differ by some nonzero integer multiple of the number
-\f$ N_{i} \f$ of grid points along direction \f$ i \f$, for each
-\f$ i = 0, \ldots , D-1 \f$ .
-Reciprocal lattice vectors for which the Miller indices are aliases are
-also said to be aliases of one another.
+This periodicity of the value of any discrete Fourier transforms is 
+sometimes referred to as "aliasing" of wavevectors. Any list of D Miller
+integer indices \f$ n_{0}, \ldots, n_{D-1} \f$ can be used to construct 
+an associated reciprocal lattice wavevector 
+\f$ {\bf G}(n_0, \ldots, n_{D-1}) \f$ in which the Miller indices are 
+components of the vector in a basis of reciprocal lattice basis vectors, 
+as \ref user_fourier_Gofn_eqn "above".  Two  lists of integer Miller 
+indices are referred to as "aliases" of one another if these lists 
+contain values for each index \f$ n_{i} \f$ that are either equal or 
+that differ by some nonzero integer multiple of the number \f$ M_{i} \f$ 
+of mesh points along direction \f$ i \f$, 
+for each \f$ i = 0, \ldots , D-1 \f$ .
+Reciprocal lattice wavevectors for which the Miller indices are aliases 
+are also said to be aliases of one another.
+
 Reciprocal lattice vectors that are aliases of one another yield values
 for the complex exponential \f$ \exp( i {\bf G}\cdots {\bf r} ) \f$ that
 are equal for any position vector \f$ {\bf r} \f$ that is a node of the
-relevant grid, but that are generally unequal for values of \f$ {\bf r} \f$
-that do not lie on this grid.  Wavevectors that are aliases of one another
-are thus treated as equivalent within forward and inverse DFT operations,
-in which values of the underlying field are only defined on the nodes of
-a grid.
+relevant mesh, but that would generally unequal if evaluated for values 
+of \f$ {\bf r} \f$ that do not lie on this mesh.  Wavevectors that are 
+aliases of one another are thus treated as equivalent within forward and 
+inverse DFT operations, in which values of the underlying field are 
+only defined on the nodes of a mesh.
 
 \section user_fourier_kindex_sec Wavevector Indexing Schemes
 
 The phenomena of aliasing of wavevectors for fields that are defined on
-a grid means that there are infinite number of ways of defining Miller
+a mesh means that there are infinite number of ways of defining Miller
 indices so as to generate aliases of a particular wavevector, by adding
-or subtracting integer multiples of the number of grid points to each
+or subtracting integer multiples of the number of mesh points to each
 index.  Two different conventions are used in PSCF assign a unique list
 of indices to each wavevector within a DFT. We refer to the resulting
 conventions for lists of indices here as (1) discrete Fourier transform
@@ -318,7 +325,7 @@ or DFT indices and (2) Minimal indices.
 The DFT indices of a wavevector are defined such that the index
 \f$ n_{i} \f$ associated with reduced coordinate \f$ i \f$ is required
 to be in the range \f$ 0, \ldots, N_{i} - 1 \f$, where \f$ N_{i} \f$ is
-the number of grid points in direction \f$ i \f$. This is the indexing
+the number of mesh points in direction \f$ i \f$. This is the indexing
 scheme used in the above definitions of the forward and inverse DFT
 operations.
 
