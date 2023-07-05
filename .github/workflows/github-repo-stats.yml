@@ -9,6 +9,7 @@ on:
 
 jobs:
   j1:
+    if: github.repository == 'dcmorse/pscfpp'
     name: github-repo-stats
     runs-on: ubuntu-latest
     steps:
